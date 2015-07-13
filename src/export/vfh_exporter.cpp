@@ -519,6 +519,7 @@ int VRayExporter::processAnimatedNode(OP_Node *op_node)
 	int process = true;
 
 	if (m_is_animation && (m_timeCurrent > m_timeStart)) {
+		// TODO: Need to go through inputs...
 		process = op_node->hasAnimatedParms();
 	}
 
