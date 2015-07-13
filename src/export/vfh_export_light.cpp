@@ -119,7 +119,7 @@ VRay::Plugin VRayExporter::exportLight(OBJ_Node *obj_node)
 		pluginDesc.addAttribute(Attrs::PluginAttr("intensity", obj_light->evalFloat("light_intensity", 0, t)));
 		pluginDesc.addAttribute(Attrs::PluginAttr("enabled",   obj_light->evalInt("light_enable", 0, t)));
 
-		if (lightType != 7) {
+		if (lightType != VRayLightSun) {
 			pluginDesc.addAttribute(Attrs::PluginAttr("color", Attrs::PluginAttr::AttrTypeColor,
 															   obj_light->evalFloat("light_color", 0, t),
 															   obj_light->evalFloat("light_color", 1, t),
