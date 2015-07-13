@@ -67,11 +67,16 @@ link_with_boost(${PROJECT_NAME})
 
 # Install shelf and icon locally
 #
+file(GLOB VFH_PY_SCRIPTS ${CMAKE_SOURCE_DIR}/deploy/scripts/*.py)
+
 install(FILES       ${CMAKE_SOURCE_DIR}/deploy/vfh.shelf
 		DESTINATION ${HOUDINI_HOME_PATH}/toolbar)
 
 install(FILES       ${CMAKE_SOURCE_DIR}/deploy/ROP_vray.svg
 		DESTINATION ${HOUDINI_HOME_PATH}/config/Icons)
+
+install(FILES       ${VFH_PY_SCRIPTS}
+		DESTINATION ${HOUDINI_HOME_PATH}/scripts/vfh)
 
 # Install to local share
 #

@@ -1,20 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <shelfDocument>
 	<toolshelf name="vray_render" label="V-Ray">
-		<memberTool name="vray_render"/>
+		<memberTool name="vray_render_start"/>
+		<memberTool name="vray_physical_camera"/>
 	</toolshelf>
 
-	<tool name="vray_render" label="Render" icon="ROP_vray.svg">
+	<tool name="vray_render_start" label="Render" icon="ROP_vray.svg">
 		<script scriptType="python">
-<![CDATA[
-import hou
+<![CDATA[import hou
+import sys
+import os
 
-vrayNode = hou.node("/out/vray_renderer1")
-if not vrayNode:
-	vrayNode = hou.node("/out").createNode("vray_renderer")
+vfh_python_path = os.path.join(hou.homeHoudiniDirectory(), "scripts")
 
-if vrayNode:
-	vrayNode.parm('execute').pressButton()
+if vfh_python_path not in sys.path:
+    sys.path.append(vfh_python_path)
+
+from vfh import vfh_rop
+
+vfh_rop.render()
+]]>
+		</script>
+	</tool>
+
+	<tool name="vray_physical_camera" label="Physical Camera" icon="ROP_vray.svg">
+		<script scriptType="python">
+<![CDATA[import hou
+import sys
+import os
+
+vfh_python_path = os.path.join(hou.homeHoudiniDirectory(), "scripts")
+
+if vfh_python_path not in sys.path:
+    sys.path.append(vfh_python_path)
+
+from vfh import vfh_camera
+
+vfh_camera.add_physical_camera_attributes()
 ]]>
 		</script>
 	</tool>
