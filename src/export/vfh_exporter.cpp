@@ -52,18 +52,6 @@ VRayExporter::ExporterInstances  VRayExporter::Instances;
 
 VRay::Transform VRayExporter::Matrix4ToTransform(const UT_Matrix4D &m4, bool flip)
 {
-#if 0
-	static VRay::Matrix flipM;
-	static int flipMinit = 0;
-	if (!flipMinit) {
-		flipMinit = 1;
-		for (int i = 0; i < 3; ++i) {
-			for (int j = 0; j < 3; ++j) {
-				flipM[i][j] = gFlipMatrix[i][j];
-			}
-		}
-	}
-#endif
 	VRay::Transform tm;
 	for (int i = 0; i < 3; ++i) {
 		for (int j = 0; j < 3; ++j) {
@@ -73,12 +61,8 @@ VRay::Transform VRayExporter::Matrix4ToTransform(const UT_Matrix4D &m4, bool fli
 	}
 
 	if (flip) {
-#if 0
-		tm.matrix = tm.matrix * flipM;
-#else
 		VUtils::swap(tm.matrix[1], tm.matrix[2]);
 		tm.matrix[2] = -tm.matrix[2];
-#endif
 	}
 
 	return tm;
@@ -399,10 +383,7 @@ void VRayExporter::exportCamera(OP_Node *camera)
 
 	const float fovx  = 2.0f * atanf((apx / 2.0f) / focal);
 
-	Attrs::PluginDesc renderView;
-	renderView.pluginName = "Camera";
-	renderView.pluginID   = "RenderView";
-
+	Attrs::PluginDesc renderView("cameraView", "RenderView");
 	renderView.addAttribute(Attrs::PluginAttr("transform", VRayExporter::GetOBJTransform(obj_camera, m_context)));
 	renderView.addAttribute(Attrs::PluginAttr("fov", fovx));
 
@@ -428,7 +409,7 @@ int VRayExporter::exportSettings(OP_Node *rop)
 {
 	for (const auto &sp : Parm::RenderSettingsPlugins) {
 		const Parm::VRayPluginInfo *pluginInfo = Parm::GetVRayPluginInfo(sp);
-		if (NOT(pluginInfo)) {
+		if (!pluginInfo) {
 			PRINT_ERROR("Plugin \"%s\" description is not found!",
 						sp.c_str());
 		}
@@ -439,7 +420,7 @@ int VRayExporter::exportSettings(OP_Node *rop)
 		}
 	}
 
-	Attrs::PluginDesc pluginDesc("SettingsUnitsInfo", "SettingsUnitsInfo");
+	Attrs::PluginDesc pluginDesc("settingsUnitsInfo", "SettingsUnitsInfo");
 	pluginDesc.addAttribute(Attrs::PluginAttr("scene_upDir", VRay::Vector(0.0f, 1.0f, 0.0f)));
 	exportPlugin(pluginDesc);
 
@@ -530,6 +511,18 @@ VRay::Plugin VRayExporter::exportConnectedVop(OP_Node *op_node, const UT_String 
 	}
 
 	return VRay::Plugin();
+}
+
+
+int VRayExporter::processAnimatedNode(OP_Node *op_node)
+{
+	int process = true;
+
+	if (m_is_animation && (m_timeCurrent > m_timeStart)) {
+		process = op_node->hasAnimatedParms();
+	}
+
+	return process;
 }
 
 
@@ -641,6 +634,7 @@ VRay::Plugin VRayExporter::exportMaterial(SHOP_Node *shop_node)
 				   vop_node->getName().buffer(),
 				   opType.buffer());
 
+		// TODO: Create custom material output
 		if (opType == "collect") {
 			const unsigned num_inputs = vop_node->getNumVisibleInputs();
 			for (unsigned i = 0; i < num_inputs; ++i) {
@@ -648,7 +642,6 @@ VRay::Plugin VRayExporter::exportMaterial(SHOP_Node *shop_node)
 				if (input) {
 					OP_Node *connNode = input->getNode();
 					if (connNode) {
-						// TODO: Create MltMulti
 						// Return first connected by now
 						return exportVop(connNode);
 					}
@@ -764,7 +757,7 @@ void VRayExporter::TraverseOBJ(OBJ_Node *obj_node, void *data)
 	if (obj_node) {
 		const OBJ_OBJECT_TYPE &ob_type = obj_node->getObjectType();
 
-		PRINT_INFO("Processing node %s:\"%s\"%s [%i|%i]",
+		PRINT_INFO("Processing %s node: \"%s\"%s [%i|%i]",
 				   obj_node->getOpType(),
 				   obj_node->getName().buffer(),
 				   ObjectTypeToString(ob_type).c_str(),
@@ -849,29 +842,13 @@ int VRayExporter::isAborted()
 }
 
 
-static bool DelOpCallbacks(OP_Node &op_node, void *data)
-{
-	VRayExporter *exporter = (VRayExporter*)data;
-
-	exporter->delOpCallback(&op_node, VRayExporter::RtCallbackLight);
-	exporter->delOpCallback(&op_node, VRayExporter::RtCallbackNode);
-	exporter->delOpCallback(&op_node, VRayExporter::RtCallbackNodeData);
-	exporter->delOpCallback(&op_node, VRayExporter::RtCallbackView);
-	exporter->delOpCallback(&op_node, VRayExporter::RtCallbackVop);
-
-	return 0;
-}
-
-
 void VRayExporter::resetOpCallbacks()
 {
-	OP_Network *obj_manager = OPgetDirector()->getManager("obj");
+	for (auto const &item : m_opRegCallbacks) {
+		delOpCallback(item.op_node, item.cb);
+	}
 
-	delOpCallback(obj_manager, VRayExporter::RtCallbackObjManager);
-
-	obj_manager->traverseChildren(DelOpCallbacks, this, true);
-
-	OPgetDirector()->getManager("shop")->traverseChildren(DelOpCallbacks, this, true);
+	m_opRegCallbacks.clear();
 }
 
 
@@ -881,6 +858,9 @@ void VRayExporter::addOpCallback(OP_Node *op_node, OP_EventMethod cb)
 		PRINT_INFO("addOpInterest(%s)",
 				   op_node->getName().buffer());
 		op_node->addOpInterest(this, cb);
+
+		// Store registered callback for faster removal
+		m_opRegCallbacks.push_back(CbItem(op_node, cb, this));
 	}
 }
 
@@ -897,8 +877,8 @@ void VRayExporter::delOpCallback(OP_Node *op_node, OP_EventMethod cb)
 
 void VRayExporter::addRtCallbacks()
 {
-	m_renderer.addCbOnImageReady(VRayRendererCallback::CallbackVoid(boost::bind(&VRayExporter::resetOpCallbacks, this)));
-	m_renderer.addCbOnRendererClose(VRayRendererCallback::CallbackVoid(boost::bind(&VRayExporter::resetOpCallbacks, this)));
+	m_renderer.addCbOnImageReady(VRayRendererCallback::CbVoid(boost::bind(&VRayExporter::resetOpCallbacks, this)));
+	m_renderer.addCbOnRendererClose(VRayRendererCallback::CbVoid(boost::bind(&VRayExporter::resetOpCallbacks, this)));
 }
 
 
@@ -982,7 +962,16 @@ void VRayExporter::setRenderSize(int w, int h)
 
 int VRayExporter::renderFrame(int locked)
 {
-	return m_renderer.startRender(locked);
+	if (m_workMode == ExpWorkMode::ExpRender || m_workMode == ExpWorkMode::ExpExportRender) {
+		m_renderer.startRender(locked);
+	}
+	if (m_workMode == ExpWorkMode::ExpExport || m_workMode == ExpWorkMode::ExpExportRender) {
+		if (m_exportFilepath.empty()) {
+		}
+		else {
+			exportVrscene(m_exportFilepath);
+		}
+	}
 }
 
 
@@ -992,19 +981,35 @@ int VRayExporter::renderSequence(int start, int end, int step, int locked)
 }
 
 
-int VRayExporter::exportScene(const std::string &filepath)
+int VRayExporter::exportVrscene(const std::string &filepath)
 {
 	return m_renderer.exportScene(filepath);
 }
 
 
+int VRayExporter::clearKeyFrames(fpreal toTime)
+{
+	m_renderer.clearFrames(toTime);
+}
+
+
 void VRayExporter::setAnimation(bool on)
 {
+	m_is_animation = on;
+
 	m_renderer.setAnimation(on);
 }
 
 
-void VRayForHoudini::VRayExporter::addAbortCallback()
+void VRayExporter::setAbortCb(VRay::VRayRenderer &renderer)
 {
+	if (renderer.isAborted()) {
+		setAbort();
+	}
+}
 
+
+void VRayExporter::addAbortCallback()
+{
+	m_renderer.addCbOnImageReady(VRayRendererCallback::CbVRayRenderer(boost::bind(&VRayExporter::setAbortCb, this, _1)));
 }

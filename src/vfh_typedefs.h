@@ -26,5 +26,6 @@
 
 typedef std::set<std::string>     StringSet;
 typedef std::vector<std::string>  StringVector;
+typedef std::set<float>           FloatSet;
 
 #endif // VRAY_FOR_HOUDINI_TYPEDEFS_H

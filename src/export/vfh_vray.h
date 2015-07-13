@@ -36,8 +36,6 @@
 #include <mesh_objects_info.h>
 #include <mesh_sets_info.h>
 
-const VUtils::Matrix gFlipMatrix = VUtils::makeRotMatrixZ(M_PI_2) * VUtils::makeRotMatrixY(M_PI_2);
-
 // For HDK to work properly
 #undef itoa
 

@@ -13,7 +13,6 @@
 // Chaos Software Ltd.
 //
 
-
 #include "vfh_plugin_info.h"
 
 

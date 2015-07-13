@@ -58,7 +58,7 @@ void VRayPluginRenderer::RtCallbackOnImageReady(VRay::VRayRenderer &renderer, vo
 				cb.cb();
 			}
 			if (cb.cb_vray) {
-				cb.cb_vray(renderer, userData);
+				cb.cb_vray(renderer);
 			}
 		}
 	}
@@ -136,8 +136,6 @@ void VRayPluginRenderer::setMode(int mode)
 	m_vray->setOnRendererClose(VRayPluginRenderer::RtCallbackOnRendererClose, (void*)&m_cbOnRendererClose);
 
 	// Stop before new export
-	// NOTE: AppSDK guys it should work without stop,
-	// for me without stop deletePlugin is not updating the result
 	m_vray->stop();
 }
 
@@ -296,6 +294,10 @@ void VRayPluginRenderer::resetObjects()
 
 void VRayPluginRenderer::syncObjects()
 {
+	if (!m_vray) {
+		return;
+	}
+
 	typedef VUtils::HashSet<const char*> RemoveKeys;
 	RemoveKeys removeKeys;
 
@@ -344,11 +346,13 @@ int VRayPluginRenderer::exportScene(const std::string &filepath)
 
 int VRayPluginRenderer::startRender(int locked)
 {
-	PRINT_INFO("Starting render...");
+	PRINT_INFO("Starting render for frame %.3f...",
+			   m_vray->getCurrentTime());
 
 	m_vray->showFrameBuffer(true, true);
 
 	m_vray->start();
+
 	if (locked) {
 		m_vray->waitForImageReady();
 	}
@@ -415,25 +419,19 @@ void VRayPluginRenderer::VRayDone()
 }
 
 
-static void ContinueSequence(VRay::VRayRenderer &r, void*)
-{
-	if (!(r.isSequenceDone() || r.isAborted())) {
-		r.continueSequence();
-	}
-}
-
-
 void VRayForHoudini::VRayPluginRenderer::setAnimation(bool on)
 {
 	m_vray->useAnimatedValues(on);
-
-	if (on) {
-		m_cbOnImageReady.insert(VRayRendererCallback(VRayRendererCallback::CallbackVRay(&ContinueSequence)));
-	}
 }
 
 
-void VRayForHoudini::VRayPluginRenderer::setFrame(float frame)
+void VRayForHoudini::VRayPluginRenderer::setFrame(fpreal frame)
 {
-	m_vray->setCurrentFrame(frame);
+	m_vray->setCurrentTime(frame);
+}
+
+
+int VRayPluginRenderer::clearFrames(fpreal toTime)
+{
+	m_vray->clearAllPropertyValuesUpToTime(toTime);
 }

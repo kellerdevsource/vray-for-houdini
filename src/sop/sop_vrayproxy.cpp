@@ -80,14 +80,16 @@ OP_ERROR SOP::VRayProxy::cookMySop(OP_Context &context)
 					// Points
 					for (int v = 0; v < numPreviewVerts; ++v) {
 						VUtils::Vector vert = verts[v];
-						if (flipAxis) {
-							vert = gFlipMatrix * vert;
-						}
 
 						VUtils::Matrix tm;
 						tm.f[0].set(scale, 0.0f, 0.0f);
 						tm.f[1].set(0.0f, scale, 0.0f);
 						tm.f[2].set(0.0f, 0.0f, scale);
+
+						if (flipAxis) {
+							VUtils::swap(tm[1], tm[2]);
+							tm[2] = -tm[2];
+						}
 
 						vert = tm * vert;
 

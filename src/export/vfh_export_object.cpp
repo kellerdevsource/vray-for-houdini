@@ -115,7 +115,7 @@ VRay::Plugin VRayExporter::exportNode(OBJ_Node *obj_node, VRay::Plugin material,
 VRay::Plugin VRayExporter::exportNodeData(SOP_Node *geom_node, SHOPToID &shopToID)
 {
 	VRay::Plugin geom;
-	if (geom_node) {
+	if (geom_node && processAnimatedNode(geom_node)) {
 		addOpCallback(geom_node, VRayExporter::RtCallbackNodeData);
 
 		OP_Operator     *geomOp     = geom_node->getOperator();
@@ -139,10 +139,9 @@ VRay::Plugin VRayExporter::exportNodeData(SOP_Node *geom_node, SHOPToID &shopToI
 					const GU_Detail *gdp = gdl.getGdp();
 
 					VRay::Plugin mesh = exportGeomStaticMesh(mesh_node, gdp, shopToID);
-					if (NOT(mesh)) {
-						PRINT_ERROR("Geometry export failed!");
-					}
-					else {
+					// NOTE: Could be actually empty if mesh is not animated and we're exporting
+					// animation. Real errors are checked inside.
+					if (mesh) {
 						geomPluginDesc.addAttribute(Attrs::PluginAttr("mesh", mesh));
 					}
 				}

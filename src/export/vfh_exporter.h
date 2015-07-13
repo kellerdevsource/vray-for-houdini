@@ -38,9 +38,37 @@ enum VRayLightType {
 	VRayLightSun       = 7,
 };
 
+
+struct CbItem {
+	CbItem():
+		op_node(nullptr),
+		cb(nullptr),
+		cb_data(nullptr)
+	{}
+
+	CbItem(OP_Node *op_node, OP_EventMethod cb, void *cb_data):
+		op_node(op_node),
+		cb(cb),
+		cb_data(cb_data)
+	{}
+
+	OP_Node        *op_node;
+	OP_EventMethod  cb;
+	void           *cb_data;
+};
+typedef std::vector<CbItem> CbItems;
+
+
 class VRayExporter
 {
 public:
+	// NOTE: Keep in sync with "render_export_mode"
+	enum ExpWorkMode {
+		ExpRender = 0,
+		ExpExportRender,
+		ExpExport,
+	};
+
 	typedef std::set<VRayExporter*> ExporterInstances;
 	static ExporterInstances        Instances;
 
@@ -82,13 +110,22 @@ public:
 
 	int                     renderFrame(int locked=false);
 	int                     renderSequence(int start, int end, int step, int locked=false);
-	int                     exportScene(const std::string &filepath);
+
+	int                     exportVrscene(const std::string &filepath);
+
+	int                     clearKeyFrames(fpreal toTime);
 
 	void                    setAnimation(bool on);
 	void                    setFrame(float frame);
 	void                    setRop(OP_Node *rop) { m_rop = rop; }
 	void                    setMode(int mode) { m_renderMode = mode; }
+	void                    setWorkMode(ExpWorkMode mode) { m_workMode = mode; }
 	void                    setContext(const OP_Context &ctx) { m_context = ctx; }
+
+	void                    setAbort() { m_is_aborted = true; }
+	void                    setAbortCb(VRay::VRayRenderer &renderer);
+
+	void                    setExportFilepath(const UT_String &path) { m_exportFilepath = path; }
 
 	void                    setRenderSize(int w, int h);
 
@@ -125,6 +162,18 @@ private:
 	OP_Node                *m_rop;
 	int                     m_renderMode;
 	int                     m_is_aborted;
+
+	std::string             m_exportFilepath;
+	ExpWorkMode             m_workMode;
+
+	CbItems                 m_opRegCallbacks;
+
+	int                     m_is_animation;
+	fpreal                  m_timeStart;
+	fpreal                  m_timeEnd;
+	fpreal                  m_timeCurrent;
+
+	int                     processAnimatedNode(OP_Node *op_node);
 
 public:
 	void                    phxAddSimumation(VRay::Plugin sim);

@@ -113,6 +113,8 @@ void JsonPluginDescGenerator::init()
 	// Some compilers doesn't support initialization lists still.
 	// Move elsewhere...
 	//
+	// RenderSettingsPlugins.insert("SettingsRTEngine");
+
 	RenderSettingsPlugins.insert("SettingsOptions");
 	RenderSettingsPlugins.insert("SettingsColorMapping");
 	RenderSettingsPlugins.insert("SettingsDMCSampler");
@@ -124,9 +126,9 @@ void JsonPluginDescGenerator::init()
 	RenderSettingsPlugins.insert("SettingsRaycaster");
 	RenderSettingsPlugins.insert("SettingsRegionsGenerator");
 	RenderSettingsPlugins.insert("SettingsOutput");
-#if 0
-	RenderSettingsPlugins.insert("SettingsRTEngine");
-#endif
+
+	RenderSettingsPlugins.insert("SettingsCamera");
+	RenderSettingsPlugins.insert("SettingsMotionBlur");
 
 	RenderGIPlugins.insert("SettingsGI");
 	RenderGIPlugins.insert("SettingsLightCache");

@@ -337,14 +337,15 @@ struct PluginDesc {
 } // namespace Attrs
 
 struct VRayRendererCallback {
-	typedef boost::function<void(void)>                        CallbackVoid;
-	typedef boost::function<void(VRay::VRayRenderer&, void*)>  CallbackVRay;
+	typedef boost::function<void (void)>                 CbVoid;
+	typedef boost::function<void (VRay::VRayRenderer&)>  CbVRayRenderer;
 
 	VRayRendererCallback() {}
-	VRayRendererCallback(CallbackVoid _cb):
+	VRayRendererCallback(CbVoid _cb):
 	    cb(_cb)
 	{}
-	VRayRendererCallback(CallbackVRay _cb):
+
+	VRayRendererCallback(CbVRayRenderer _cb):
 	    cb_vray(_cb)
 	{}
 
@@ -352,8 +353,8 @@ struct VRayRendererCallback {
 		return cb || cb_vray;
 	}
 
-	CallbackVoid cb;
-	CallbackVRay cb_vray;
+	CbVoid          cb;
+	CbVRayRenderer  cb_vray;
 };
 
 typedef std::set<VRayRendererCallback> VRayRendererCallbacks;
@@ -387,7 +388,8 @@ public:
 	void                          syncObjects();
 
 	void                          setAnimation(bool on);
-	void                          setFrame(float frame);
+	void                          setFrame(fpreal frame);
+	int                           clearFrames(fpreal toTime);
 
 	int                           exportScene(const std::string &filepath);
 	int                           startRender(int locked=false);

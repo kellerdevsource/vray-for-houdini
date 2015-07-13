@@ -34,14 +34,6 @@ class VRayRendererNode:
 		public ROP_Node
 {
 public:
-	// NOTE: Keep in sync with "render_export_mode"
-	enum ExpWorkMode {
-		ExpRender = 0,
-		ExpExportRender,
-		ExpExport,
-	};
-
-public:
 	/// Provides access to our parm templates.
 	static OP_TemplatePair      *getTemplatePair();
 	/// Provides access to our variables.
@@ -62,9 +54,15 @@ protected:
 private:
 	VRayExporter                 m_exporter;
 
+	int                          renderKeyFrame(fpreal time, int locked=false);
+	int                          exportKeyFrame(const OP_Context &context);
+	int                          clearKeyFrames(fpreal toTime);
+
 	int                          m_frames;
+	fpreal                       m_time_start;
 	fpreal                       m_time_end;
 	ROP_RENDER_CODE              m_error;
+	FloatSet                     m_exportedFrames;
 
 public:
 	static void                  register_operator(OP_OperatorTable *table);
