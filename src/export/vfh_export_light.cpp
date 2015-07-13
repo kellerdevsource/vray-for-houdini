@@ -29,7 +29,7 @@ void VRayExporter::RtCallbackLight(OP_Node *caller, void *callee, OP_EventType t
 {
 	VRayExporter *exporter = (VRayExporter*)callee;
 
-	PRINT_INFO("RTCbObjNode: %s from \"%s\"",
+	PRINT_INFO("RtCallbackLight: %s from \"%s\"",
 			   OPeventToString(type), caller->getName().buffer());
 
 	if (   type == OP_PARM_CHANGED
