@@ -16,34 +16,13 @@ _skipped_types = {
 
 _type_to_parm_func = {
     'BOOL'   : hou.ToggleParmTemplate,
-    # 'COLOR'  : bpy.props.FloatVectorProperty,
-    # 'ACOLOR' : bpy.props.FloatVectorProperty,
-    # 'VECTOR' : bpy.props.FloatVectorProperty,
-    # 'ENUM'   : bpy.props.EnumProperty,
+    'ENUM'   : hou.MenuParmTemplate,
     'FLOAT'  : hou.FloatParmTemplate,
     'INT'    : hou.IntParmTemplate,
-    # 'STRING' : bpy.props.StringProperty,
-
-    # 'TRANSFORM' : bpy.props.StringProperty,
-    # 'MATRIX'    : bpy.props.StringProperty,
-
-    # 'BRDF'     : bpy.props.StringProperty,
-    # 'GEOMETRY' : bpy.props.StringProperty,
-    # 'MATERIAL' : bpy.props.StringProperty,
-    # 'PLUGIN'   : bpy.props.StringProperty,
-    # 'UVWGEN'   : bpy.props.StringProperty,
-
-    # 'INT_TEXTURE'   : bpy.props.IntProperty,
-    # 'FLOAT_TEXTURE' : bpy.props.FloatProperty,
-    # 'TEXTURE'       : bpy.props.FloatVectorProperty,
-    # 'VECTOR_TEXTURE' : bpy.props.FloatVectorProperty,
-
-    # 'OUTPUT_COLOR'             : bpy.props.FloatVectorProperty,
-    # 'OUTPUT_PLUGIN'            : bpy.props.StringProperty,
-    # 'OUTPUT_FLOAT_TEXTURE'     : bpy.props.FloatProperty,
-    # 'OUTPUT_TEXTURE'           : bpy.props.FloatVectorProperty,
-    # 'OUTPUT_VECTOR_TEXTURE'    : bpy.props.FloatVectorProperty,
-    # 'OUTPUT_TRANSFORM_TEXTURE' : bpy.props.FloatVectorProperty,
+    'COLOR'  : hou.FloatParmTemplate,
+    'ACOLOR' : hou.FloatParmTemplate,
+    'VECTOR' : hou.FloatParmTemplate,
+    'STRING' : hou.StringParmTemplate,
 }
 
 
@@ -60,8 +39,6 @@ def getNameFromAttr(attr):
 def add_attribute(propGroup, attrDesc, prefix=None):
     if attrDesc['type'] in _skipped_types:
         return
-
-    # TODO: Widget attributes
     if attrDesc['type'].startswith('WIDGET_'):
         return
 
@@ -77,105 +54,78 @@ def add_attribute(propGroup, attrDesc, prefix=None):
 
     parm_args = {}
 
-    if 'default' in attrDesc:
-        if attrDesc['type'] in {'INT'}:
-            parm_args['default_value'] = [attrDesc['default']]
-            parm_args['naming_scheme'] = hou.parmNamingScheme.Base1
-            parm_args['num_components'] = 1
-            parm_args['min'] = 0
-            parm_args['max'] = 1024
+    if attrDesc['type'] in {'BOOL'}:
+        # BOOL must have 'default' in the description
+        parm_args['default_value'] = attrDesc['default']
 
-        elif attrDesc['type'] in {'FLOAT'}:
-            parm_args['default_value'] = [attrDesc['default']]
-            parm_args['naming_scheme'] = hou.parmNamingScheme.Base1
-            parm_args['num_components'] = 1
-            parm_args['min'] = 0.0
-            parm_args['max'] = 1024.0
+    elif attrDesc['type'] in {'STRING'}:
+        string_type = hou.stringParmType.Regular
+        file_type   = hou.fileType.Any
 
-        elif attrDesc['type'] in {'BOOL'}:
-            parm_args['default_value'] = attrDesc['default']
+        if 'subtype' in attrDesc:
+            str_subtype = attrDesc['subtype']
+            if str_subtype == 'FILE_PATH':
+                string_type = hou.stringParmType.FileReference
+                file_type   = hou.fileType.Any
+            elif str_subtype == 'DIR_PATH':
+                string_type = hou.stringParmType.FileReference
+                file_type   = hou.fileType.Directory
 
-        parm_args['disable_when'] = ""
-
-    # attrArgs = {
-    #     'attr'        : attrDesc['attr'],
-    #     'description' : attrDesc['desc'],
-    # }
-
-    # if 'default' in attrDesc:
-    #     attrArgs['default'] = attrDesc['default']
-
-    # if 'update' in attrDesc:
-    #     attrArgs['update'] = attrDesc['update']
-
-    # defUi = {
-    #     'min'      : -1<<20,
-    #     'max'      :  1<<20,
-    #     'soft_min' : 0,
-    #     'soft_max' : 64,
-    # }
-
-
-    if attrDesc['type'] in {'STRING'}:
-        pass
+        parm_args['string_type'] = string_type
+        parm_args['file_type']   = file_type
+        parm_args['num_components'] = 1
 
     elif attrDesc['type'] in {'COLOR', 'ACOLOR', 'TEXTURE'}:
-        # c = attrDesc['default']
-        # attrArgs['subtype'] = 'COLOR'
-        # attrArgs['default'] = (c[0], c[1], c[2])
-        # attrArgs['min'] = 0.0
-        # attrArgs['max'] = 1.0
-        pass
+        c = attrDesc['default']
+
+        parm_args['naming_scheme'] = hou.parmNamingScheme.RGBA
+        parm_args['default_value']  = c
+        parm_args['num_components'] = len(c)
 
     elif attrDesc['type'] in {'VECTOR'}:
-        # if 'subtype' not in attrDesc:
-        #     attrArgs['subtype'] = 'TRANSLATION'
-        # attrArgs['precision'] = 3
-        pass
+        v = attrDesc['default']
+
+        parm_args['naming_scheme'] = hou.parmNamingScheme.XYZW
+        parm_args['default_value']  = v
+        parm_args['num_components'] = len(v)
 
     elif attrDesc['type'] in {'FLOAT', 'FLOAT_TEXTURE'}:
-        # attrArgs['precision'] = attrDesc.get('precision', 3)
-        pass
+        if 'default' in attrDesc:
+            parm_args['default_value'] = [attrDesc['default']]
+        parm_args['naming_scheme'] = hou.parmNamingScheme.Base1
+        parm_args['num_components'] = 1
 
     elif attrDesc['type'] in {'INT', 'INT_TEXTURE'}:
-        pass
+        if 'default' in attrDesc:
+            parm_args['default_value'] = [attrDesc['default']]
+        parm_args['naming_scheme'] = hou.parmNamingScheme.Base1
+        parm_args['num_components'] = 1
 
     elif attrDesc['type'] in {'TRANSFORM', 'MATRIX'}:
-        # Currenlty used as fake string attribute
-        # attrArgs['size']    = 16
-        # attrArgs['subtype'] = 'MATRIX'
-        # attrArgs['default'] = (1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,0)
-        # Override default
-        # attrArgs['default'] = ""
         pass
 
     elif attrDesc['type'] in {'ENUM'}:
-        # NOTE: JSON parser returns lists but need tuples
-        # attrArgs['items'] = (tuple(item) for item in attrDesc['items'])
-        pass
+        parm_args['menu_items']  = [item[0] for item in attrDesc['items']]
+        parm_args['menu_labels'] = [item[1] for item in attrDesc['items']]
 
-    # if 'options' in attrDesc:
-    #     options = set()
-    #     for opt in attrDesc['options'].split():
-    #         options.add(opt)
-    #     attrArgs['options'] = options
+    # TODO: Parse widget and extract active conditions
+    # Active State
+    # parm_args['disable_when'] = ""
 
-    # for optionalKey in {'size', 'precision', 'subtype'}:
-    #     if optionalKey in attrDesc:
-    #         attrArgs[optionalKey] = attrDesc[optionalKey]
+    if attrDesc['type'] in {'INT', 'INT_TEXTURE', 'FLOAT', 'FLOAT_TEXTURE'}:
+        if 'ui' in attrDesc:
+            ui_desc = attrDesc['ui']
 
-    # if attrDesc['type'] in {'INT', 'INT_TEXTURE', 'FLOAT', 'FLOAT_TEXTURE'}:
-    #     if 'ui' not in attrDesc:
-    #         attrDesc['ui'] = defUi
-
-    #     attrArgs['min'] = attrDesc['ui'].get('min', defUi['min'])
-    #     attrArgs['max'] = attrDesc['ui'].get('max', defUi['max'])
-    #     attrArgs['soft_min'] = attrDesc['ui'].get('soft_min', attrArgs['min'])
-    #     attrArgs['soft_max'] = attrDesc['ui'].get('soft_max', attrArgs['max'])
+            if 'min' in ui_desc:
+                parm_args['min'] = ui_desc['min']
+            if 'max' in ui_desc:
+                parm_args['max'] = ui_desc['max']
 
     propGroup.addParmTemplate(parm_func(parm_name, parm_label, **parm_args))
 
 
 def add_attributes(propGroup, pluginDesc, prefix=None):
+    # TODO: Parse widget and insert parameters in widget defined order
+
     for attrDesc in pluginDesc['PluginParams']:
         add_attribute(propGroup, attrDesc, prefix)
