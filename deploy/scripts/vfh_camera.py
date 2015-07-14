@@ -6,13 +6,14 @@ from . import vfh_json
 from . import vfh_attrs
 
 def add_physical_camera_attributes():
-    CameraPhysicalDesc = vfh_json.getPluginDesc('CameraPhysical')
+    physCamPlugID = 'CameraPhysical'
+    CameraPhysicalDesc = vfh_json.getPluginDesc(physCamPlugID)
 
     if not CameraPhysicalDesc:
         sys.stderr.write("CameraPhysical plugin description is not found!\n")
 
     else:
-        cameraTabName = "V-Ray Physical Camera"
+        physCamTabName = "V-Ray Physical Camera"
 
         for node in hou.selectedNodes():
             if node.type().name() == "cam":
@@ -20,11 +21,14 @@ def add_physical_camera_attributes():
 
                 ptg = node.parmTemplateGroup()
 
-                vrayFolder = ptg.findFolder(cameraTabName)
-                if not vrayFolder:
-                    vrayFolder = hou.FolderParmTemplate("vray.CameraPhysical", cameraTabName)
+                vrayFolder = ptg.findFolder(physCamTabName)
 
-                    vfh_attrs.add_attributes(vrayFolder, CameraPhysicalDesc, prefix='CameraPhysical')
+                # TODO: Update method generate newerly added attributes if folder already exists
+                if not vrayFolder:
+                    vrayFolder = hou.FolderParmTemplate("vray.%s" % physCamPlugID, physCamTabName)
+
+
+                    vfh_attrs.add_attributes(vrayFolder, CameraPhysicalDesc, prefix=physCamPlugID)
 
                     ptg.append(vrayFolder)
 
