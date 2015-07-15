@@ -1,0 +1,3 @@
+[submodule "deploy/plugins_desc"]
+	path = deploy/plugins_desc
+	url = https://github.com/bdancer/plugins_desc.git
