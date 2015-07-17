@@ -529,17 +529,23 @@ void VRayPluginRenderer::resetCallbacks()
 
 void VRayForHoudini::VRayPluginRenderer::setAnimation(bool on)
 {
-	m_vray->useAnimatedValues(on);
+	if (m_vray) {
+		m_vray->useAnimatedValues(on);
+	}
 }
 
 
 void VRayForHoudini::VRayPluginRenderer::setFrame(fpreal frame)
 {
-	m_vray->setCurrentTime(frame);
+	if (m_vray) {
+		m_vray->setCurrentTime(frame);
+	}
 }
 
 
 int VRayPluginRenderer::clearFrames(fpreal toTime)
 {
-	m_vray->clearAllPropertyValuesUpToTime(toTime);
+	if (m_vray) {
+		m_vray->clearAllPropertyValuesUpToTime(toTime);
+	}
 }
