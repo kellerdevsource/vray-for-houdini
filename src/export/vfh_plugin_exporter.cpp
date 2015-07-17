@@ -504,7 +504,7 @@ void VRayPluginRenderer::VRayInit()
 		try {
 			bool init_vfb = true;
 #ifdef __APPLE__
-			bool init_vfb = false;
+			init_vfb = false;
 #endif
 			VRayPluginRenderer::g_vrayInit = new VRay::VRayInit(init_vfb);
 		}
