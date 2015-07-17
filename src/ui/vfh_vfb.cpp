@@ -131,6 +131,7 @@ VfbWindow::VfbWindow(QWidget *parent, Qt::WindowFlags f):
 	QMainWindow(parent, f),
 	m_widget(this)
 {
+	setWindowFlags(windowFlags() | Qt::CustomizeWindowHint | Qt::WindowStaysOnTopHint);
 	setCentralWidget(&m_widget);
 }
 
