@@ -15,7 +15,11 @@
 
 #include "vfh_plugin_exporter.h"
 
+#include <QtCore/QString>
 #include <boost/bind.hpp>
+
+
+#define PRINT_CALLBACK_CALLS  0
 
 
 using namespace VRayForHoudini;
@@ -25,42 +29,137 @@ using namespace VRayForHoudini::Attrs;
 VRay::VRayInit *VRayPluginRenderer::g_vrayInit = nullptr;
 
 
-void VRayPluginRenderer::RtCallbackOnDumpMessage(VRay::VRayRenderer&, const char *msg, int level, void*)
+static void OnDumpMessage(VRay::VRayRenderer &renderer, const char *msg, int level, void *userData)
 {
+	QString message(msg);
+	message = message.simplified();
+
 	if (level <= VRay::MessageError) {
-		PRINT_ERROR("V-Ray: %s", msg);
+		PRINT_ERROR("V-Ray: %s", message.toAscii().constData());
 	}
 	else if (level > VRay::MessageError && level <= VRay::MessageWarning) {
-		PRINT_WARN("V-Ray: %s", msg);
+		PRINT_WARN("V-Ray: %s", message.toAscii().constData());
 	}
 	else if (level > VRay::MessageWarning && level <= VRay::MessageInfo) {
-		PRINT_INFO("V-Ray: %s", msg);
+		PRINT_INFO("V-Ray: %s", message.toAscii().constData());
+	}
+
+	CbSetOnDumpMessage *callbacks = reinterpret_cast<CbSetOnDumpMessage*>(userData);
+	for (CbSetOnDumpMessage::CbTypeArray::const_iterator cbIt = callbacks->m_cbTyped.begin(); cbIt != callbacks->m_cbTyped.end(); ++cbIt) {
+		(*cbIt)(renderer, msg, level);
+	}
+	for (CbSetOnDumpMessage::CbVoidArray::const_iterator cbIt = callbacks->m_cbVoid.begin(); cbIt != callbacks->m_cbVoid.end(); ++cbIt) {
+		(*cbIt)();
 	}
 }
 
 
-void VRayPluginRenderer::RtCallbackOnRendererClose(VRay::VRayRenderer &renderer, void *userData)
+static void OnProgress(VRay::VRayRenderer &renderer, const char *msg, int elementNumber, int elementsCount, void *userData)
 {
-	PRINT_WARN("VRayPluginRenderer::RtCallbackOnRendererClose()");
+	QString message(msg);
+	message = message.simplified();
+
+	const float percentage = 100.0 * elementNumber / elementsCount;
+
+	PRINT_INFO("V-Ray: %s %.1f%%",
+			   message.toAscii().constData(), percentage);
+
+	CbSetOnProgress *callbacks = reinterpret_cast<CbSetOnProgress*>(userData);
+	for (CbSetOnProgress::CbTypeArray::const_iterator cbIt = callbacks->m_cbTyped.begin(); cbIt != callbacks->m_cbTyped.end(); ++cbIt) {
+		(*cbIt)(renderer, msg, elementNumber, elementsCount);
+	}
+	for (CbSetOnProgress::CbVoidArray::const_iterator cbIt = callbacks->m_cbVoid.begin(); cbIt != callbacks->m_cbVoid.end(); ++cbIt) {
+		(*cbIt)();
+	}
 }
 
 
-void VRayPluginRenderer::RtCallbackOnImageReady(VRay::VRayRenderer &renderer, void *userData)
+static void OnRendererClose(VRay::VRayRenderer &renderer, void *userData)
 {
-	PRINT_WARN("VRayPluginRenderer::RtCallbackOnImageReady()");
+#if PRINT_CALLBACK_CALLS
+	PRINT_WARN("VRayPluginRenderer::OnRendererClose()");
+#endif
+	CbSetOnRendererClose *callbacks = reinterpret_cast<CbSetOnRendererClose*>(userData);
+	for (CbSetOnRendererClose::CbTypeArray::const_iterator cbIt = callbacks->m_cbTyped.begin(); cbIt != callbacks->m_cbTyped.end(); ++cbIt) {
+		(*cbIt)(renderer);
+	}
+	for (CbSetOnRendererClose::CbVoidArray::const_iterator cbIt = callbacks->m_cbVoid.begin(); cbIt != callbacks->m_cbVoid.end(); ++cbIt) {
+		(*cbIt)();
+	}
+}
 
-	VRayRendererCallbacks *callbacks = (VRayRendererCallbacks*)userData;
 
-	for (VRayRendererCallbacks::const_iterator cbIt = callbacks->begin(); cbIt != callbacks->end(); ++cbIt) {
-		VRayRendererCallback cb = *cbIt;
-		if (cb) {
-			if (cb.cb) {
-				cb.cb();
-			}
-			if (cb.cb_vray) {
-				cb.cb_vray(renderer);
-			}
-		}
+static void OnImageReady(VRay::VRayRenderer &renderer, void *userData)
+{
+#if PRINT_CALLBACK_CALLS
+	PRINT_WARN("VRayPluginRenderer::OnImageReady()");
+#endif
+	CbSetOnImageReady *callbacks = reinterpret_cast<CbSetOnImageReady*>(userData);
+	for (CbSetOnImageReady::CbTypeArray::const_iterator cbIt = callbacks->m_cbTyped.begin(); cbIt != callbacks->m_cbTyped.end(); ++cbIt) {
+		(*cbIt)(renderer);
+	}
+	for (CbSetOnImageReady::CbVoidArray::const_iterator cbIt = callbacks->m_cbVoid.begin(); cbIt != callbacks->m_cbVoid.end(); ++cbIt) {
+		(*cbIt)();
+	}
+}
+
+
+static void OnRTImageUpdated(VRay::VRayRenderer &renderer, VRay::VRayImage *img , void *userData)
+{
+#if PRINT_CALLBACK_CALLS
+	PRINT_WARN("VRayPluginRenderer::OnRTImageUpdated()");
+#endif
+	CbSetOnRTImageUpdated *callbacks = reinterpret_cast<CbSetOnRTImageUpdated*>(userData);
+	for (CbSetOnRTImageUpdated::CbTypeArray::const_iterator cbIt = callbacks->m_cbTyped.begin(); cbIt != callbacks->m_cbTyped.end(); ++cbIt) {
+		(*cbIt)(renderer, img);
+	}
+	for (CbSetOnRTImageUpdated::CbVoidArray::const_iterator cbIt = callbacks->m_cbVoid.begin(); cbIt != callbacks->m_cbVoid.end(); ++cbIt) {
+		(*cbIt)();
+	}
+}
+
+
+static void OnBucketInit(VRay::VRayRenderer &renderer, int x, int y, int w, int h, const char *host, void *userData)
+{
+#if PRINT_CALLBACK_CALLS
+	PRINT_WARN("VRayPluginRenderer::OnBucketReady()");
+#endif
+	CbSetOnBucketInit *callbacks = reinterpret_cast<CbSetOnBucketInit*>(userData);
+	for (CbSetOnBucketInit::CbTypeArray::const_iterator cbIt = callbacks->m_cbTyped.begin(); cbIt != callbacks->m_cbTyped.end(); ++cbIt) {
+		(*cbIt)(renderer, x, y, w, h, host);
+	}
+	for (CbSetOnBucketInit::CbVoidArray::const_iterator cbIt = callbacks->m_cbVoid.begin(); cbIt != callbacks->m_cbVoid.end(); ++cbIt) {
+		(*cbIt)();
+	}
+}
+
+
+static void OnBucketFailed(VRay::VRayRenderer &renderer, int x, int y, int w, int h, const char *host, void *userData)
+{
+#if PRINT_CALLBACK_CALLS
+	PRINT_WARN("VRayPluginRenderer::OnBucketReady()");
+#endif
+	CbSetOnBucketFailed *callbacks = reinterpret_cast<CbSetOnBucketFailed*>(userData);
+	for (CbSetOnBucketFailed::CbTypeArray::const_iterator cbIt = callbacks->m_cbTyped.begin(); cbIt != callbacks->m_cbTyped.end(); ++cbIt) {
+		(*cbIt)(renderer, x, y, w, h, host);
+	}
+	for (CbSetOnBucketFailed::CbVoidArray::const_iterator cbIt = callbacks->m_cbVoid.begin(); cbIt != callbacks->m_cbVoid.end(); ++cbIt) {
+		(*cbIt)();
+	}
+}
+
+
+static void OnBucketReady(VRay::VRayRenderer &renderer, int x, int y, const char *host, VRay::VRayImage *img, void *userData)
+{
+#if PRINT_CALLBACK_CALLS
+	PRINT_WARN("VRayPluginRenderer::OnBucketReady()");
+#endif
+	CbSetOnBucketReady *callbacks = reinterpret_cast<CbSetOnBucketReady*>(userData);
+	for (CbSetOnBucketReady::CbTypeArray::const_iterator cbIt = callbacks->m_cbTyped.begin(); cbIt != callbacks->m_cbTyped.end(); ++cbIt) {
+		(*cbIt)(renderer, x, y, host, img);
+	}
+	for (CbSetOnBucketReady::CbVoidArray::const_iterator cbIt = callbacks->m_cbVoid.begin(); cbIt != callbacks->m_cbVoid.end(); ++cbIt) {
+		(*cbIt)();
 	}
 }
 
@@ -92,6 +191,7 @@ void VRayPluginRenderer::init(int reInit)
 		try {
 			VRay::RendererOptions options;
 			options.keepRTRunning = true;
+			options.showFrameBuffer = false;
 
 			// TODO: Distributed rendering settings
 			options.noDR = true;
@@ -128,27 +228,23 @@ void VRayPluginRenderer::setMode(int mode)
 		return;
 	}
 
-	m_vray->setOnDumpMessage(VRayPluginRenderer::RtCallbackOnDumpMessage);
 	m_vray->setRenderMode((VRay::RendererOptions::RenderMode)mode);
 	m_vray->setAutoCommit(true);
 
-	m_vray->setOnImageReady(VRayPluginRenderer::RtCallbackOnImageReady,       (void*)&m_cbOnImageReady);
-	m_vray->setOnRendererClose(VRayPluginRenderer::RtCallbackOnRendererClose, (void*)&m_cbOnRendererClose);
+	m_vray->setOnDumpMessage(OnDumpMessage,       (void*)&m_callbacks.m_cbOnDumpMessage);
+	m_vray->setOnProgress(OnProgress,             (void*)&m_callbacks.m_cbOnProgress);
+
+	m_vray->setOnRendererClose(OnRendererClose,   (void*)&m_callbacks.m_cbOnRendererClose);
+	m_vray->setOnImageReady(OnImageReady,         (void*)&m_callbacks.m_cbOnImageReady);
+
+	m_vray->setOnRTImageUpdated(OnRTImageUpdated, (void*)&m_callbacks.m_cbOnRTImageUpdated);
+
+	m_vray->setOnBucketInit(OnBucketInit,         (void*)&m_callbacks.m_cbOnBucketInit);
+	m_vray->setOnBucketFailed(OnBucketFailed,     (void*)&m_callbacks.m_cbOnBucketFailed);
+	m_vray->setOnBucketReady(OnBucketReady,       (void*)&m_callbacks.m_cbOnBucketReady);
 
 	// Stop before new export
 	m_vray->stop();
-}
-
-
-void VRayPluginRenderer::addCbOnImageReady(const VRayRendererCallback &cb)
-{
-	m_cbOnImageReady.insert(cb);
-}
-
-
-void VRayPluginRenderer::addCbOnRendererClose(const VRayRendererCallback &cb)
-{
-	m_cbOnRendererClose.insert(cb);
 }
 
 
@@ -349,8 +445,6 @@ int VRayPluginRenderer::startRender(int locked)
 	PRINT_INFO("Starting render for frame %.3f...",
 			   m_vray->getCurrentTime());
 
-	m_vray->showFrameBuffer(true, true);
-
 	m_vray->start();
 
 	if (locked) {
@@ -366,8 +460,6 @@ int VRayPluginRenderer::startSequence(int start, int end, int step, int locked)
 	PRINT_INFO("Starting sequence render (%i-%i,%i)...",
 			   start, end, step);
 
-	m_vray->showFrameBuffer(true, true);
-
 	VRay::SubSequenceDesc seq;
 	seq.start = start;
 	seq.end   = end;
@@ -380,6 +472,12 @@ int VRayPluginRenderer::startSequence(int start, int end, int step, int locked)
 	}
 
 	return 0;
+}
+
+
+void VRayPluginRenderer::stopRender()
+{
+	m_vray->stop();
 }
 
 
@@ -404,7 +502,11 @@ void VRayPluginRenderer::VRayInit()
 
 	if (NOT(VRayPluginRenderer::g_vrayInit)) {
 		try {
-			VRayPluginRenderer::g_vrayInit = new VRay::VRayInit(true);
+			bool init_vfb = true;
+#ifdef __APPLE__
+			bool init_vfb = false;
+#endif
+			VRayPluginRenderer::g_vrayInit = new VRay::VRayInit(init_vfb);
 		}
 		catch (...) {
 			VRayPluginRenderer::g_vrayInit = nullptr;
@@ -416,6 +518,12 @@ void VRayPluginRenderer::VRayInit()
 void VRayPluginRenderer::VRayDone()
 {
 	FreePtr(VRayPluginRenderer::g_vrayInit);
+}
+
+
+void VRayPluginRenderer::resetCallbacks()
+{
+	m_callbacks.clear();
 }
 
 

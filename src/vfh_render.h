@@ -20,6 +20,8 @@
 #include "vfh_vray.h"
 #include "vfh_exporter.h"
 
+#include "ui/vfh_vfb.h"
+
 #include <ROP/ROP_Node.h>
 
 
@@ -52,6 +54,7 @@ protected:
 	virtual ROP_RENDER_CODE      endRender() VRAY_OVERRIDE;
 
 private:
+	UI::VFB                      m_vfb;
 	VRayExporter                 m_exporter;
 
 	int                          renderKeyFrame(fpreal time, int locked=false);

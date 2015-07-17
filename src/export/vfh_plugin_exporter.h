@@ -336,28 +336,71 @@ struct PluginDesc {
 
 } // namespace Attrs
 
-struct VRayRendererCallback {
-	typedef boost::function<void (void)>                 CbVoid;
-	typedef boost::function<void (VRay::VRayRenderer&)>  CbVRayRenderer;
 
-	VRayRendererCallback() {}
-	VRayRendererCallback(CbVoid _cb):
-	    cb(_cb)
-	{}
+typedef boost::function<void (void)>                                                          CbVoid;
 
-	VRayRendererCallback(CbVRayRenderer _cb):
-	    cb_vray(_cb)
-	{}
+typedef boost::function<void (VRay::VRayRenderer&)>                                           CbOnRendererClose;
+typedef boost::function<void (VRay::VRayRenderer&)>                                           CbOnImageReady;
 
-	operator bool () const {
-		return cb || cb_vray;
+typedef boost::function<void (VRay::VRayRenderer&, VRay::VRayImage*)>                         CbOnRTImageUpdated;
+
+typedef boost::function<void (VRay::VRayRenderer&, int, int, int, int, const char*)>          CbOnBucketInit;
+typedef boost::function<void (VRay::VRayRenderer&, int, int, int, int, const char*)>          CbOnBucketFailed;
+typedef boost::function<void (VRay::VRayRenderer&, int, int, const char*, VRay::VRayImage*)>  CbOnBucketReady;
+
+typedef boost::function<void (VRay::VRayRenderer&, const char*, int)>                         CbOnDumpMessage;
+typedef boost::function<void (VRay::VRayRenderer&, const char*, int, int)>                    CbOnProgress;
+
+template <typename CbT>
+struct CbBase
+{
+	typedef std::vector<CbVoid>  CbVoidArray;
+	typedef std::vector<CbT>     CbTypeArray;
+
+	void add(CbT cb)    { m_cbTyped.push_back(cb); }
+	void add(CbVoid cb) { m_cbVoid.push_back(cb);  }
+
+	void clear() {
+		m_cbVoid.clear();
+		m_cbTyped.clear();
 	}
 
-	CbVoid          cb;
-	CbVRayRenderer  cb_vray;
+	CbVoidArray m_cbVoid;
+	CbTypeArray m_cbTyped;
 };
 
-typedef std::set<VRayRendererCallback> VRayRendererCallbacks;
+
+typedef CbBase<CbOnRendererClose>   CbSetOnRendererClose;
+typedef CbBase<CbOnImageReady>      CbSetOnImageReady;
+typedef CbBase<CbOnRTImageUpdated>  CbSetOnRTImageUpdated;
+typedef CbBase<CbOnBucketInit>      CbSetOnBucketInit;
+typedef CbBase<CbOnBucketFailed>    CbSetOnBucketFailed;
+typedef CbBase<CbOnBucketReady>     CbSetOnBucketReady;
+typedef CbBase<CbOnDumpMessage>     CbSetOnDumpMessage;
+typedef CbBase<CbOnProgress>        CbSetOnProgress;
+
+
+struct CbCollection {
+	void clear() {
+		m_cbOnRendererClose.clear();
+		m_cbOnImageReady.clear();
+		m_cbOnRTImageUpdated.clear();
+		m_cbOnBucketInit.clear();
+		m_cbOnBucketFailed.clear();
+		m_cbOnBucketReady.clear();
+		m_cbOnDumpMessage.clear();
+		m_cbOnProgress.clear();
+	}
+
+	CbSetOnRendererClose   m_cbOnRendererClose;
+	CbSetOnImageReady      m_cbOnImageReady;
+	CbSetOnRTImageUpdated  m_cbOnRTImageUpdated;
+	CbSetOnBucketInit      m_cbOnBucketInit;
+	CbSetOnBucketFailed    m_cbOnBucketFailed;
+	CbSetOnBucketReady     m_cbOnBucketReady;
+	CbSetOnDumpMessage     m_cbOnDumpMessage;
+	CbSetOnProgress        m_cbOnProgress;
+};
 
 
 class VRayPluginRenderer {
@@ -394,15 +437,12 @@ public:
 	int                           exportScene(const std::string &filepath);
 	int                           startRender(int locked=false);
 	int                           startSequence(int start, int end, int step, int locked=false);
-	int                           preRender();
-	int                           preFrame();
-	int                           renderFrame();
-	int                           finishFrame();
-	int                           postFrame();
-	int                           postRender();
-	int                           finishRender();
+
+	void                          stopRender();
 
 	int                           isRtRunning();
+
+	void                          showVFB(const bool show=true) { m_vray->showFrameBuffer(show, true); }
 
 private:
 	VRay::Plugin                  newPlugin(const Attrs::PluginDesc &pluginDesc);
@@ -417,16 +457,26 @@ public:
 	static void                   VRayDone();
 
 public:
-	static void                   RtCallbackOnRendererClose(VRay::VRayRenderer&, void*);
-	static void                   RtCallbackOnImageReady(VRay::VRayRenderer&, void*);
-	static void                   RtCallbackOnDumpMessage(VRay::VRayRenderer&, const char *msg, int level, void*);
+	void                          resetCallbacks();
 
-	void                          addCbOnRendererClose(const VRayRendererCallback &cb);
-	void                          addCbOnImageReady(const VRayRendererCallback &cb);
+	void                          addCbOnRendererClose(CbOnRendererClose cb)   { m_callbacks.m_cbOnRendererClose.add(cb); }
+	void                          addCbOnRendererClose(CbVoid cb)              { m_callbacks.m_cbOnRendererClose.add(cb); }
+	void                          addCbOnImageReady(CbOnImageReady cb)         { m_callbacks.m_cbOnImageReady.add(cb); }
+	void                          addCbOnImageReady(CbVoid cb)                 { m_callbacks.m_cbOnImageReady.add(cb); }
+	void                          addCbOnRTImageUpdated(CbOnRTImageUpdated cb) { m_callbacks.m_cbOnRTImageUpdated.add(cb); }
+	void                          addCbOnRTImageUpdated(CbVoid cb)             { m_callbacks.m_cbOnRTImageUpdated.add(cb); }
+	void                          addCbOnBucketInit(CbOnBucketInit cb)         { m_callbacks.m_cbOnBucketInit.add(cb); }
+	void                          addCbOnBucketInit(CbVoid cb)                 { m_callbacks.m_cbOnBucketInit.add(cb); }
+	void                          addCbOnBucketReady(CbOnBucketReady cb)       { m_callbacks.m_cbOnBucketReady.add(cb); }
+	void                          addCbOnBucketReady(CbVoid cb)                { m_callbacks.m_cbOnBucketReady.add(cb); }
+	void                          addCbOnBucketFailed(CbOnBucketFailed cb)     { m_callbacks.m_cbOnBucketFailed.add(cb); }
+	void                          addCbOnBucketFailed(CbVoid cb)               { m_callbacks.m_cbOnBucketFailed.add(cb); }
+	void                          addCbOnDumpMessage(CbOnDumpMessage cb)       { m_callbacks.m_cbOnDumpMessage.add(cb); }
+	void                          addCbOnDumpMessage(CbVoid cb)                { m_callbacks.m_cbOnDumpMessage.add(cb); }
+	void                          addCbOnProgress(CbOnProgress cb)             { m_callbacks.m_cbOnProgress.add(cb); }
+	void                          addCbOnProgress(CbVoid cb)                   { m_callbacks.m_cbOnProgress.add(cb); }
 
-	VRayRendererCallbacks         m_cbOnRendererClose;
-	VRayRendererCallbacks         m_cbOnImageReady;
-
+	CbCollection                  m_callbacks;
 };
 
 } // namespace VRayForHoudini

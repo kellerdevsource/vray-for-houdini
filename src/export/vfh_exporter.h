@@ -130,7 +130,7 @@ public:
 	void                    setRenderSize(int w, int h);
 
 	OP_Context             &getContext()  { return m_context;   }
-	VRayPluginRenderer     *getRenderer() { return &m_renderer; }
+	VRayPluginRenderer     &getRenderer() { return m_renderer; }
 	OP_Node                *getRop()      { return m_rop; }
 
 	VRay::Plugin            exportGeomStaticMesh(SOP_Node *sop_node, const GU_Detail *gdp, SHOPToID &shopToID);

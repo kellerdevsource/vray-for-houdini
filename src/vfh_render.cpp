@@ -24,9 +24,19 @@
 #include <ROP/ROP_Templates.h>
 #include <UT/UT_Interrupt.h>
 
+#include <boost/bind.hpp>
+
 
 using namespace VRayForHoudini;
 
+
+static PRM_Name     parm_render_vfb_mode("render_vfb_mode", "Framebuffer");
+static PRM_Name     parm_render_vfb_mode_items[] = {
+	PRM_Name("Native"),
+	PRM_Name("Simple"),
+	PRM_Name(),
+};
+static PRM_ChoiceList parm_render_vfb_mode_menu(PRM_CHOICELIST_SINGLE, parm_render_vfb_mode_items);
 
 static PRM_Name     parm_render_sep_render("render_sep_render", "Render Settings");
 static PRM_Name     parm_render_camera("render_camera", "Camera");
@@ -75,6 +85,7 @@ static PRM_Template *getTemplates()
 	RenderSettingsItems.push_back(PRM_Template(PRM_STRING_E, PRM_TYPE_DYNAMIC_PATH, 1, &parm_render_camera, &parm_render_camera_def));
 	RenderSettingsItems.push_back(PRM_Template(PRM_ORD, 1, &parm_render_render_mode, PRMzeroDefaults, &parm_render_render_mode_menu));
 	RenderSettingsItems.push_back(PRM_Template(PRM_ORD, 1, &parm_render_export_mode, PRMzeroDefaults, &parm_render_export_mode_menu));
+	RenderSettingsItems.push_back(PRM_Template(PRM_ORD, 1, &parm_render_vfb_mode, PRMzeroDefaults, &parm_render_vfb_mode_menu));
 
 	RenderSettingsItems.push_back(PRM_Template(PRM_HEADING, 1, &parm_render_sep_export));
 	RenderSettingsItems.push_back(PRM_Template(PRM_FILE_E, PRM_TYPE_DYNAMIC_PATH, 1, &parm_render_export_path, &parm_render_export_path_def));
@@ -82,6 +93,7 @@ static PRM_Template *getTemplates()
 	RenderSettingsItems.push_back(PRM_Template(PRM_HEADING, 1, &parm_render_sep_networks));
 	RenderSettingsItems.push_back(PRM_Template(PRM_STRING_E, PRM_TYPE_DYNAMIC_PATH, 1, &parm_render_net_render_channels, &Parm::PRMemptyStringDefault));
 	RenderSettingsItems.push_back(PRM_Template(PRM_STRING_E, PRM_TYPE_DYNAMIC_PATH, 1, &parm_render_net_environment,     &Parm::PRMemptyStringDefault));
+
 
 	RenderSettingsSwitcherTabs.push_back(PRM_Default(RenderSettingsItems.size(), "Globals"));
 
@@ -319,6 +331,8 @@ int VRayRendererNode::startRender(int nframes, fpreal tstart, fpreal tend)
 				// addOpInterest(this, VRayRendererNode::RtCallbackRop);
 			}
 
+			m_exporter.getRenderer().resetCallbacks();
+
 			m_exporter.setRop(this);
 			m_exporter.setMode(renderMode);
 			m_exporter.setAnimation(is_animation);
@@ -326,6 +340,40 @@ int VRayRendererNode::startRender(int nframes, fpreal tstart, fpreal tend)
 			m_exporter.setExportFilepath(exportFilepath);
 
 			m_exporter.setRenderSize(imageWidth, imageHeight);
+
+#ifdef __APPLE__
+			const int useVFB = 1;
+#else
+			const int useVFB = evalInt(parm_render_vfb_mode.getToken(), 0, 0.0);
+#endif
+			if (useVFB == 0) {
+#ifndef __APPLE__
+				m_vfb.free();
+				m_exporter.getRenderer().showVFB(true);
+#endif
+			}
+			else if (useVFB == 1) {
+#ifndef __APPLE__
+				m_exporter.getRenderer().showVFB(false);
+#endif
+				m_vfb.init();
+				m_vfb.resize(imageWidth, imageHeight);
+				m_vfb.show();
+
+				m_vfb.set_abort_callback(UI::AbortCb(boost::bind(&VRayPluginRenderer::stopRender, &m_exporter.getRenderer())));
+
+				m_exporter.getRenderer().addCbOnDumpMessage(CbOnDumpMessage(boost::bind(&UI::VFB::on_dump_message, &m_vfb, _1, _2, _3)));
+				m_exporter.getRenderer().addCbOnProgress(CbOnProgress(boost::bind(&UI::VFB::on_progress, &m_vfb, _1, _2, _3, _4)));
+
+				m_exporter.getRenderer().addCbOnImageReady(CbOnImageReady(boost::bind(&UI::VFB::on_image_ready, &m_vfb, _1)));
+
+				m_exporter.getRenderer().addCbOnBucketInit(CbOnBucketInit(boost::bind(&UI::VFB::on_bucket_init, &m_vfb, _1, _2, _3, _4, _5, _6)));
+				m_exporter.getRenderer().addCbOnBucketFailed(CbOnBucketFailed(boost::bind(&UI::VFB::on_bucket_failed, &m_vfb, _1, _2, _3, _4, _5, _6)));
+				m_exporter.getRenderer().addCbOnBucketReady(CbOnBucketReady(boost::bind(&UI::VFB::on_bucket_ready, &m_vfb, _1, _2, _3, _4, _5)));
+
+				m_exporter.getRenderer().addCbOnRTImageUpdated(CbOnRTImageUpdated(boost::bind(&UI::VFB::on_rt_image_updated, &m_vfb, _1, _2)));
+
+			}
 
 			if (is_animation) {
 				m_exporter.addAbortCallback();

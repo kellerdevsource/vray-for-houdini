@@ -878,8 +878,8 @@ void VRayExporter::delOpCallback(OP_Node *op_node, OP_EventMethod cb)
 
 void VRayExporter::addRtCallbacks()
 {
-	m_renderer.addCbOnImageReady(VRayRendererCallback::CbVoid(boost::bind(&VRayExporter::resetOpCallbacks, this)));
-	m_renderer.addCbOnRendererClose(VRayRendererCallback::CbVoid(boost::bind(&VRayExporter::resetOpCallbacks, this)));
+	m_renderer.addCbOnImageReady(CbVoid(boost::bind(&VRayExporter::resetOpCallbacks, this)));
+	m_renderer.addCbOnRendererClose(CbVoid(boost::bind(&VRayExporter::resetOpCallbacks, this)));
 }
 
 
@@ -1012,5 +1012,5 @@ void VRayExporter::setAbortCb(VRay::VRayRenderer &renderer)
 
 void VRayExporter::addAbortCallback()
 {
-	m_renderer.addCbOnImageReady(VRayRendererCallback::CbVRayRenderer(boost::bind(&VRayExporter::setAbortCb, this, _1)));
+	m_renderer.addCbOnImageReady(CbOnImageReady(boost::bind(&VRayExporter::setAbortCb, this, _1)));
 }
