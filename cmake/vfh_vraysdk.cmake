@@ -54,17 +54,23 @@ foreach(_maya_version ${_maya_versons})
 	endif()
 endforeach()
 
-set(VRAYSDK_INCPATH "" CACHE PATH "V-Ray SDK include path")
-set(VRAYSDK_LIBPATH "" CACHE PATH "V-Ray SDK library path")
+set(CGR_VRAYSDK_INCPATH "" CACHE PATH "V-Ray SDK include path")
+set(CGR_VRAYSDK_LIBPATH "" CACHE PATH "V-Ray SDK library path")
 
-if(VRAYSDK_INCPATH STREQUAL "")
-	set(VRAYSDK_INCPATH ${vray_for_maya_incpaths})
+set(VRAYSDK_INCPATH "" CACHE PATH "")
+set(VRAYSDK_LIBPATH "" CACHE PATH "")
+
+if(NOT CGR_VRAYSDK_INCPATH STREQUAL "")
+	set(VRAYSDK_INCPATH ${CGR_VRAYSDK_INCPATH} CACHE PATH "" FORCE)
+else()
+	set(VRAYSDK_INCPATH ${vray_for_maya_incpaths} CACHE PATH "" FORCE)
 endif()
 
-if(VRAYSDK_LIBPATH STREQUAL "")
-	set(VRAYSDK_LIBPATH ${vray_for_maya_libpaths})
+if(NOT CGR_VRAYSDK_LIBPATH STREQUAL "")
+	set(VRAYSDK_LIBPATH ${CGR_VRAYSDK_LIBPATH} CACHE PATH "" FORCE)
+else()
+	set(VRAYSDK_LIBPATH ${vray_for_maya_libpaths} CACHE PATH "" FORCE)
 endif()
-
 
 macro(use_vray_sdk)
 	if(WIN32)
