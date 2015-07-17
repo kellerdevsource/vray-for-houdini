@@ -137,8 +137,8 @@ if(USE_LAUNCHER)
 			"export VRAY_PLUGIN_DESC_PATH=${CMAKE_SOURCE_DIR}/deploy/plugins_desc\n"
 			"\n"
 			"export HOUDINI13_VOLUME_COMPATIBILITY=1\n"
-			"export HFS=${HOUDINI_INSTALL_ROOT}\n"
-			"export VRAY_SDK=${APPSDK_ROOT}\n"
+			"export HFS=\"${HOUDINI_INSTALL_ROOT}\"\n"
+			"export VRAY_SDK=\"${APPSDK_ROOT}\"\n"
 			"export LD_LIBRARY_PATH=$VRAY_SDK/bin\n"
 			"export VRAY_PATH=$VRAY_SDK/bin\n"
 			"export PATH=$HFS/bin:$VRAY_PATH:$PATH\n"
@@ -150,7 +150,7 @@ if(USE_LAUNCHER)
 			"\n"
 			"source ${HFS_ENV_FILE}\n"
 			"\n"
-			"\"${HOUDINI_INSTALL_ROOT}/bin/houdini\" -foreground $*\n"
+			"\"${HOUDINI_BIN_PATH}/houdini\" -foreground $*\n"
 		)
 	endif()
 endif()

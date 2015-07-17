@@ -45,6 +45,7 @@ if (APPLE)
 
 	set(HOUDINI_HOME_PATH "$ENV{HOME}/Library/Preferences/houdini/${HOUDINI_VERSION}")
 
+	set(HOUDINI_BIN_PATH "${HOUDINI_INSTALL_ROOT}/Houdini FX.app/Contents/MacOS")
 elseif(WIN32)
 	set(HOUDINI_DEF_PATH "C:/Program Files/Side Effects Software/Houdini ${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD}")
 	if (HOUDINI_DEFAULT_PATH)
@@ -61,6 +62,7 @@ elseif(WIN32)
 
 	set(HOUDINI_HOME_PATH "${USER_HOME}/houdini${HOUDINI_VERSION}")
 
+	set(HOUDINI_BIN_PATH "${HOUDINI_INSTALL_ROOT}/bin")
 else()
 	set(HOUDINI_DEF_PATH "/opt/hfs${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD}")
 	if (HOUDINI_DEFAULT_PATH)
@@ -71,6 +73,8 @@ else()
 	set(HOUDINI_LIB_PATH     "${HOUDINI_INSTALL_ROOT}/dsolib")
 
 	set(HOUDINI_HOME_PATH "$ENV{HOME}/houdini${HOUDINI_VERSION}")
+
+	set(HOUDINI_BIN_PATH "${HOUDINI_INSTALL_ROOT}/bin")
 endif()
 
 # Local install plugin path
