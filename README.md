@@ -29,7 +29,7 @@ Compilation
 
   `"507"` is controlled with CMake variable **APPSDK_VERSION**
   
-  `{linux, windows, osx}` is appended automatically by CMake scripts.
+  `{linux, windows, darwin}` is appended automatically by CMake scripts.
 
 * Clone this repository with submodules
 
