@@ -104,7 +104,7 @@ endif()
 
 # Create program launcher with all needed environment variables
 #
-option(USE_LAUNCHER "Create launcher" OFF)
+option(USE_LAUNCHER "Create launcher" ON)
 if(USE_LAUNCHER)
 	if(WIN32)
 		set(HFS_RUN_FILE "$ENV{USERPROFILE}/Desktop/hfs.bat")
@@ -150,7 +150,7 @@ if(USE_LAUNCHER)
 			"\n"
 			"source ${HFS_ENV_FILE}\n"
 			"\n"
-			"${HOUDINI_INSTALL_ROOT}/bin/houdini -foreground $*\n"
+			"\"${HOUDINI_INSTALL_ROOT}/bin/houdini\" -foreground $*\n"
 		)
 	endif()
 endif()

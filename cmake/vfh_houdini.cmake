@@ -157,7 +157,11 @@ else()
 		list(APPEND HOUDINI_LINK_FLAGS
 			z
 			dl
+			tbb
 			pthread
+			QtCore
+			QtGui
+			"-framework Cocoa"
 		)
 
 	else()

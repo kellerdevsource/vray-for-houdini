@@ -153,8 +153,11 @@ void JsonPluginDescGenerator::parseData()
 		if (filePath.endsWith(".json")) {
 			QFileInfo fileInfo(filePath);
 
+#ifdef __APPLE__
+			std::ifstream fileStream(filePath.toAscii().constData());
+#else
 			std::ifstream fileStream(filePath.toStdString());
-
+#endif
 			const std::string &fileName = fileInfo.baseName().toStdString();
 
 			try {
