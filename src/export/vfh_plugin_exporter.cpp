@@ -548,4 +548,5 @@ int VRayPluginRenderer::clearFrames(fpreal toTime)
 	if (m_vray) {
 		m_vray->clearAllPropertyValuesUpToTime(toTime);
 	}
+	return 0;
 }

@@ -541,6 +541,8 @@ int VRayRendererNode::renderKeyFrame(fpreal time, int locked)
 			   time);
 
 	m_exporter.renderFrame(locked);
+
+	return 0;
 }
 
 
@@ -602,7 +604,7 @@ int VRayRendererNode::clearKeyFrames(fpreal toTime)
 	PRINT_ERROR("VRayRendererNode::clearKeyFrames(%.3f)",
 				toTime);
 
-	m_exporter.clearKeyFrames(toTime);
+	return m_exporter.clearKeyFrames(toTime);
 }
 
 

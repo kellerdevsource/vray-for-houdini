@@ -973,6 +973,7 @@ int VRayExporter::renderFrame(int locked)
 			exportVrscene(m_exportFilepath);
 		}
 	}
+	return 0;
 }
 
 
@@ -990,7 +991,7 @@ int VRayExporter::exportVrscene(const std::string &filepath)
 
 int VRayExporter::clearKeyFrames(fpreal toTime)
 {
-	m_renderer.clearFrames(toTime);
+	return m_renderer.clearFrames(toTime);
 }
 
 
