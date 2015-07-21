@@ -193,7 +193,7 @@ if(INSTALL_RELEASE)
 						   ${CMAKE_BINARY_DIR}/deploy/hfs.bat
 						   @ONLY)
 
-			install(FILES       ${CMAKE_SOURCE_DIR}/deploy/hfs.bat
+			install(FILES       ${CMAKE_BINARY_DIR}/deploy/hfs.bat
 					DESTINATION ${INSTALL_RELEASE_PATH}
 					RENAME      "hfs${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD}.bat")
 
