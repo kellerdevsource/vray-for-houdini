@@ -20,7 +20,7 @@ set VRAY_SDK=%LAUNCHER_LOCATION%\appsdk
 set VRAY_PATH=%VRAY_SDK%\bin
 
 :: V-Ray JSON plugin descriptions
-set VRAY_PLUGIN_DESC_PATH=%LAUNCHER_LOCATION%\vray_json
+set VRAY_PLUGIN_DESC_PATH=%LAUNCHER_LOCATION%\plugins_desc
 
 :: Add libs to path
 set PATH=%HFS%\bin;%VRAY_PATH%;%PATH%
