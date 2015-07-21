@@ -104,7 +104,6 @@ macro(link_with_vray_sdk _name)
 		openexr_s
 		pimglib_s
 		plugman_s
-		putils_s
 		# pll_s
 		treeparser_s
 		vutils_s
