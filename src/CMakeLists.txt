@@ -78,30 +78,6 @@ install(FILES       ${CMAKE_SOURCE_DIR}/deploy/ROP_vray.svg
 install(FILES       ${VFH_PY_SCRIPTS}
 		DESTINATION ${HOUDINI_HOME_PATH}/scripts/vfh)
 
-# Install to local share
-#
-option(USE_LOCAL_INSTALL "Install to local share" OFF)
-if(USE_LOCAL_INSTALL)
-	set(VFH_LOCAL_INSTALL_PATH "" CACHE PATH "Local install root path")
-	if(${VFH_LOCAL_INSTALL_PATH} STREQUAL "")
-		message(FATAL_ERROR "USE_LOCAL_INSTALL is ON, but VFH_LOCAL_INSTALL_PATH is not set!")
-	else()
-		cgr_install_runtime(${PROJECT_NAME} ${VFH_LOCAL_INSTALL_PATH}/dso)
-
-		install(FILES       ${CMAKE_SOURCE_DIR}/deploy/vfh.shelf
-				DESTINATION ${VFH_LOCAL_INSTALL_PATH}/deploy)
-
-		install(FILES       ${CMAKE_SOURCE_DIR}/deploy/ROP_vray.svg
-				DESTINATION ${VFH_LOCAL_INSTALL_PATH}/deploy)
-
-		install(FILES       ${CMAKE_SOURCE_DIR}/deploy/hfs.bat
-				DESTINATION ${VFH_LOCAL_INSTALL_PATH})
-
-		install(FILES       ${CMAKE_SOURCE_DIR}/INSTALL.txt
-				DESTINATION ${VFH_LOCAL_INSTALL_PATH})
-	endif()
-endif()
-
 # Create program launcher with all needed environment variables
 #
 option(USE_LAUNCHER "Create launcher" ON)
@@ -177,6 +153,82 @@ if(USE_LAUNCHER)
 			"source ${HFS_ENV_FILE}\n"
 			"\n"
 			"\"${HOUDINI_BIN_PATH}/houdini\" -foreground $*\n"
+		)
+	endif()
+endif()
+
+
+# Install to local share
+#
+option(INSTALL_RELEASE "Install release build for distribution" OFF)
+if(INSTALL_RELEASE)
+	set(INSTALL_RELEASE_PATH "" CACHE PATH "Release install path")
+
+	if(NOT "${CMAKE_BUILD_TYPE}" STREQUAL "Release")
+		message(WARNING "INSTALL_RELEASE is ON, but CMAKE_BUILD_TYPE is not \"Release\" (${CMAKE_BUILD_TYPE})!")
+	endif()
+
+	if("${INSTALL_RELEASE_PATH}" STREQUAL "")
+		message(FATAL_ERROR "INSTALL_RELEASE is ON, but INSTALL_RELEASE_PATH is not set!")
+	else()
+
+		# Copy plugin
+		cgr_install_runtime(${PROJECT_NAME} ${INSTALL_RELEASE_PATH}/dso)
+
+		# Copy UI & scripts
+		install(FILES       ${CMAKE_SOURCE_DIR}/deploy/vfh.shelf
+				DESTINATION ${INSTALL_RELEASE_PATH}/deploy)
+
+		install(FILES       ${CMAKE_SOURCE_DIR}/deploy/ROP_vray.svg
+				DESTINATION ${INSTALL_RELEASE_PATH}/deploy)
+
+		install(FILES       ${VFH_PY_SCRIPTS}
+				DESTINATION ${INSTALL_RELEASE_PATH}/deploy/scripts/vfh)
+
+		# Copy startup file
+		if(WIN32)
+			install(FILES       ${CMAKE_SOURCE_DIR}/deploy/hfs.bat
+					DESTINATION ${INSTALL_RELEASE_PATH})
+		elseif(APPLE)
+			install(FILES       ${CMAKE_SOURCE_DIR}/deploy/hfs_osx.sh
+					DESTINATION ${INSTALL_RELEASE_PATH}
+					PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ GROUP_EXECUTE WORLD_READ OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
+					RENAME      "hfs.sh")
+		else()
+			configure_file(${CMAKE_SOURCE_DIR}/deploy/hfs_linux.sh.in
+						   ${CMAKE_BINARY_DIR}/deploy/hfs_linux.sh
+						   @ONLY)
+
+			install(FILES       ${CMAKE_BINARY_DIR}/deploy/hfs_linux.sh
+					DESTINATION ${INSTALL_RELEASE_PATH}
+					PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ GROUP_EXECUTE WORLD_READ OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
+					RENAME      "hfs.sh")
+		endif()
+
+		# Copy AppSDK
+		file(GLOB APPSDK_BIN         "${APPSDK_ROOT}/bin/*.*")
+		file(GLOB APPSDK_VRAYPLUGINS "${APPSDK_ROOT}/bin/plugins/*.*")
+		file(GLOB APPSDK_VRLSERVICE  "${APPSDK_ROOT}/bin/vrlservice/*.*")
+
+		file(INSTALL    ${APPSDK_BIN}
+			DESTINATION ${INSTALL_RELEASE_PATH}/appsdk/bin
+			USE_SOURCE_PERMISSIONS
+		)
+
+		file(INSTALL    ${APPSDK_VRAYPLUGINS}
+			DESTINATION ${INSTALL_RELEASE_PATH}/appsdk/bin/plugins
+			USE_SOURCE_PERMISSIONS
+		)
+
+		file(INSTALL    ${APPSDK_VRLSERVICE}
+			DESTINATION ${INSTALL_RELEASE_PATH}/appsdk/bin/vrlservice
+			USE_SOURCE_PERMISSIONS
+		)
+
+		# JSON plugin descriptions
+		install(DIRECTORY   ${CMAKE_SOURCE_DIR}/deploy/plugins_desc
+				DESTINATION ${INSTALL_RELEASE_PATH}
+				PATTERN ".git" EXCLUDE
 		)
 	endif()
 endif()

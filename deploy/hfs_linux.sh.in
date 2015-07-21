@@ -1,0 +1,45 @@
+# V-Ray For Houdini Linux Launcher
+#
+
+# Use OpenVDB < 3
+#
+export HOUDINI13_VOLUME_COMPATIBILITY=1
+
+export HOUDINI_VER_MAJOR=@HOUDINI_VERSION@
+export HOUDINI_VER_FULL=${HOUDINI_VER_MAJOR}.@HOUDINI_VERSION_BUILD@
+
+# DO NOT EDIT STUFF BELOW
+#
+export LAUNCHER_LOCATION=`dirname $0`
+export HFS="/opt/hfs${HOUDINI_VER_FULL}"
+
+# V-Ray Application SDK variables
+export VRAY_SDK="${LAUNCHER_LOCATION}/vray"
+export VRAY_PATH="${VRAY_SDK}/bin"
+
+# V-Ray JSON plugin descriptions
+export VRAY_PLUGIN_DESC_PATH="${LAUNCHER_LOCATION}/plugins_desc"
+
+# Add libs to path
+export PATH=${HFS}/bin:${VRAY_PATH}:${PATH}
+export LD_LIBRARY_PATH=${VRAY_SDK}/bin:${LD_LIBRARY_PATH}
+
+# Report loading errors
+export HOUDINI_DSO_ERROR=1
+
+# Install Files
+export HOUDINI_USER_DIR=${HOME}/houdini${HOUDINI_VER_MAJOR}
+
+cp "${LAUNCHER_LOCATION}/dso/vray_for_houdini.dll" "${HOUDINI_USER_DIR}/dso"
+cp "${LAUNCHER_LOCATION}/deploy/vfh.shelf"         "${HOUDINI_USER_DIR}/toolbar"
+cp "${LAUNCHER_LOCATION}/deploy/ROP_vray.svg"      "${HOUDINI_USER_DIR}/config/Icons"
+
+mkdir "${HOUDINI_USER_DIR}/scripts"
+cp -R "${LAUNCHER_LOCATION}/deploy/scripts/vfh" "${HOUDINI_USER_DIR}/scripts"
+
+# TODO: export plugins for Phoenix
+# export VRAY_FOR_HOUDINI_PLUGINS=${HOUDINI_USER_DIR}/vray_for_houdini
+# cp "${LAUNCHER_LOCATION}/deploy/plugins/*.so" "${VRAY_FOR_HOUDINI_PLUGINS}"
+
+# Start Houdini
+"${HFS}/bin/houdini" -foreground $*
