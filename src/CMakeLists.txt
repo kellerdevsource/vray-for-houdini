@@ -185,15 +185,26 @@ if(INSTALL_RELEASE)
 		install(FILES       ${VFH_PY_SCRIPTS}
 				DESTINATION ${INSTALL_RELEASE_PATH}/deploy/scripts/vfh)
 
-		# Copy startup file
+		# Generate & copy startup file
 		if(WIN32)
+			configure_file(${CMAKE_SOURCE_DIR}/deploy/hfs.bat.in
+						   ${CMAKE_BINARY_DIR}/deploy/hfs.bat
+						   @ONLY)
+
 			install(FILES       ${CMAKE_SOURCE_DIR}/deploy/hfs.bat
-					DESTINATION ${INSTALL_RELEASE_PATH})
+					DESTINATION ${INSTALL_RELEASE_PATH}
+					RENAME      "hfs${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD}.bat")
+
 		elseif(APPLE)
-			install(FILES       ${CMAKE_SOURCE_DIR}/deploy/hfs_osx.sh
+			configure_file(${CMAKE_SOURCE_DIR}/deploy/hfs_osx.sh.in
+						   ${CMAKE_BINARY_DIR}/deploy/hfs_osx.sh
+						   @ONLY)
+
+			install(FILES       ${CMAKE_BINARY_DIR}/deploy/hfs_osx.sh
 					DESTINATION ${INSTALL_RELEASE_PATH}
 					PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ GROUP_EXECUTE WORLD_READ OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
-					RENAME      "hfs.sh")
+					RENAME      "hfs${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD}.sh")
+
 		else()
 			configure_file(${CMAKE_SOURCE_DIR}/deploy/hfs_linux.sh.in
 						   ${CMAKE_BINARY_DIR}/deploy/hfs_linux.sh
@@ -202,7 +213,7 @@ if(INSTALL_RELEASE)
 			install(FILES       ${CMAKE_BINARY_DIR}/deploy/hfs_linux.sh
 					DESTINATION ${INSTALL_RELEASE_PATH}
 					PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ GROUP_EXECUTE WORLD_READ OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
-					RENAME      "hfs.sh")
+					RENAME      "hfs${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD}.sh")
 		endif()
 
 		# Copy AppSDK
