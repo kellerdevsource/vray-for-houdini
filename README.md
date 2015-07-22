@@ -40,7 +40,7 @@ Compilation
   ```
   cmake -G Ninja \
     -DCMAKE_BUILD_TYPE=Debug \
-    -DUSE_LANCHER=ON \
+    -DUSE_LAUNCHER=ON \
     -DHOUDINI_VERSION=14.0 -DHOUDINI_VERSION_BUILD=361 \
     -DAPPSDK_PATH=${HOME}/src/appsdk -DAPPSDK_VERSION=507 \
     ${HOME}/dev/vray-for-houdini
@@ -50,7 +50,7 @@ Compilation
 
   It'll build and install plugins (with icons, shelfs, etc) into the default Houdini's user settings directory.
   
-  CMake variable `USE_LANCHER` will generate `${HOME}/bin/hfs` script with all needed environment varibales.
+  CMake variable `USE_LAUNCHER` will generate `${HOME}/bin/hfs` script with all needed environment variables.
   
   Use it to launch Houdini (or copy variable definitions to your environment).
 
