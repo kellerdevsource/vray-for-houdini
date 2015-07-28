@@ -170,6 +170,10 @@ void JsonPluginDescGenerator::parseData()
 			}
 		}
 	}
+
+	if (NOT(parsedData.size())) {
+		PRINT_ERROR("No descriptions parsed! May be VRAY_PLUGIN_DESC_PATH points to an empty / incorrect directory?");
+	}
 }
 
 
