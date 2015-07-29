@@ -27,7 +27,7 @@ namespace VRayForHoudini {
 namespace UI {
 
 typedef boost::function<void (void)> AbortCb;
-
+typedef VUtils::CriticalSection      VfbMutex;
 
 struct VfbOptions {
 	VfbOptions():
@@ -93,6 +93,7 @@ public:
 
 private:
 	QPixmap          m_pixmap;
+	VfbMutex         m_csect;
 
 };
 
@@ -148,6 +149,7 @@ public:
 private:
 	VfbWindow *m_window;
 	AbortCb    m_abortCb;
+	VfbMutex   m_csect;
 
 };
 

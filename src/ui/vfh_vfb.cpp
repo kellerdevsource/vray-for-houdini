@@ -43,7 +43,7 @@ void VfbWidget::paintEvent(QPaintEvent *e)
 	PRINT_INFO("VfbDraw::paintEvent");
 #endif
 
-	if (m_vfb) {
+	if (m_vfb && m_csect.tryEnter()) {
 		QPainter painter(this);
 
 		const int width  = m_vfb->getWidth();
@@ -123,6 +123,8 @@ void VfbWidget::paintEvent(QPaintEvent *e)
 			painter.setPen(text_pen);
 			painter.drawText(status_text, m_status);
 		}
+
+		m_csect.leave();
 	}
 }
 
@@ -195,6 +197,7 @@ void VFB::show()
 	PRINT_INFO("VFB::show");
 #endif
 	m_window->show();
+	m_window->raise();
 }
 
 
@@ -234,7 +237,11 @@ void VFB::on_rt_image_updated(VRay::VRayRenderer&, VRay::VRayImage *img)
 #if PRINT_UI_CALLS
 	PRINT_INFO("VFB::on_rt_image_updated");
 #endif
-	m_window->m_widget.m_vfb->draw(img, 0, 0);
+	if (m_csect.tryEnter()) {
+		m_window->m_widget.m_vfb->draw(img, 0, 0);
+		m_csect.leave();
+	}
+
 	m_window->m_widget.update();
 }
 
@@ -244,8 +251,12 @@ void VFB::on_image_ready(VRay::VRayRenderer &renderer)
 #if PRINT_UI_CALLS
 	PRINT_INFO("VFB::on_image_ready");
 #endif
-	m_window->m_widget.m_vfb->draw(renderer.getImage(), 0, 0);
-	m_window->m_widget.m_status.clear();
+	if (m_csect.tryEnter()) {
+		m_window->m_widget.m_vfb->draw(renderer.getImage(), 0, 0);
+		m_window->m_widget.m_status.clear();
+		m_csect.leave();
+	}
+
 	m_window->m_widget.update();
 }
 
@@ -255,11 +266,15 @@ void VFB::on_bucket_init(VRay::VRayRenderer&, int x, int y, int w, int h, const 
 #if PRINT_UI_CALLS
 	PRINT_INFO("VFB::on_bucket_init");
 #endif
-	VRay::LocalVRayImage rect(m_window->m_widget.m_vfb->crop(x, y, w, h));
-	rect->addColor(VRay::Color(0.0f, 0.3f, 0.0f));
+	if (m_csect.tryEnter()) {
+		VRay::LocalVRayImage rect(m_window->m_widget.m_vfb->crop(x, y, w, h));
+		rect->addColor(VRay::Color(0.0f, 0.0f, 0.0f));
 
-	m_window->m_widget.m_buckets.append(VfbBucket(x, y, w, h));
-	m_window->m_widget.m_vfb->draw(rect, x, y);
+		m_window->m_widget.m_buckets.append(VfbBucket(x, y, w, h));
+		m_window->m_widget.m_vfb->draw(rect, x, y);
+		m_csect.leave();
+	}
+
 	m_window->m_widget.update();
 }
 
@@ -269,11 +284,15 @@ void VFB::on_bucket_failed(VRay::VRayRenderer&, int x, int y, int w, int h, cons
 #if PRINT_UI_CALLS
 	PRINT_INFO("VFB::on_bucket_failed");
 #endif
-	VRay::LocalVRayImage rect(m_window->m_widget.m_vfb->crop(x, y, w, h));
-	rect->addColor(VRay::Color(0.3f, -0.3f, 0.0f));
+	if (m_csect.tryEnter()) {
+		VRay::LocalVRayImage rect(m_window->m_widget.m_vfb->crop(x, y, w, h));
+		rect->addColor(VRay::Color(0.0f, 0.0f, 0.0f));
 
-	m_window->m_widget.m_buckets.removeAll(VfbBucket(x, y, w, h));
-	m_window->m_widget.m_vfb->draw(rect, x, y);
+		m_window->m_widget.m_buckets.removeAll(VfbBucket(x, y, w, h));
+		m_window->m_widget.m_vfb->draw(rect, x, y);
+		m_csect.leave();
+	}
+
 	m_window->m_widget.update();
 }
 
@@ -283,8 +302,12 @@ void VFB::on_bucket_ready(VRay::VRayRenderer&, int x, int y, const char *host, V
 #if PRINT_UI_CALLS
 	PRINT_INFO("VFB::on_bucket_ready");
 #endif
-	m_window->m_widget.m_buckets.removeAll(VfbBucket(x, y));
-	m_window->m_widget.m_vfb->draw(img, x, y);
+	if (m_csect.tryEnter()) {
+		m_window->m_widget.m_buckets.removeAll(VfbBucket(x, y));
+		m_window->m_widget.m_vfb->draw(img, x, y);
+		m_csect.leave();
+	}
+
 	m_window->m_widget.update();
 }
 
@@ -294,7 +317,11 @@ void VFB::on_dump_message(VRay::VRayRenderer&, const char *msg, int level)
 	QString message;
 	message.sprintf(STRINGIZE(CGR_PLUGIN_NAME) ": %s", msg);
 
-	m_window->m_widget.m_status = message.simplified();
+	if (m_csect.tryEnter()) {
+		m_window->m_widget.m_status = message.simplified();
+		m_csect.leave();
+	}
+
 	m_window->m_widget.update();
 }
 
@@ -306,6 +333,10 @@ void VFB::on_progress(VRay::VRayRenderer&, const char *msg, int elementNumber, i
 	QString message;
 	message.sprintf(STRINGIZE(CGR_PLUGIN_NAME) ": %s %.0f%%", msg, percentage);
 
-	m_window->m_widget.m_status = message.simplified();
+	if (m_csect.tryEnter()) {
+		m_window->m_widget.m_status = message.simplified();
+		m_csect.leave();
+	}
+
 	m_window->m_widget.update();
 }
