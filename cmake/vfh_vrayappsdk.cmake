@@ -20,7 +20,7 @@
 
 string(TOLOWER "${CMAKE_HOST_SYSTEM_NAME}" _HOST_SYSTEM_NAME)
 
-set(APPSDK_VERSION "447" CACHE STRING "V-Ray AppSDK verstion")
+set(APPSDK_VERSION "447" CACHE STRING "V-Ray AppSDK version")
 set(APPSDK_PATH "$ENV{HOME}/src/appsdk_releases" CACHE PATH "V-Ray AppSDK location")
 set(APPSDK_ROOT "${APPSDK_PATH}/${APPSDK_VERSION}/${_HOST_SYSTEM_NAME}" CACHE PATH "V-Ray AppSDK root" FORCE)
 
@@ -30,10 +30,15 @@ macro(use_vray_appsdk)
 		message(FATAL_ERROR "V-Ray AppSDK root (\"${APPSDK_ROOT}\") doesn't exist!")
 	endif()
 
-	message(STATUS "Using V-Ray AppSDK: ${APPSDK_ROOT}")
+	find_library(VRAY_APPSDK_LIB
+		NAMES VRaySDKLibrary
+		PATHS ${APPSDK_ROOT}/bin
+	)
 
-	if(NOT EXISTS ${APPSDK_ROOT}/cpp/include)
-		message(FATAL_ERROR "V-Ray AppSDK is not found under \"${APPSDK_ROOT}\"!")
+	if(NOT VRAY_APPSDK_LIB)
+		message(FATAL_ERROR "V-Ray AppSDK libraries are not found! Check APPSDK_PATH variable (current search path ${APPSDK_ROOT}/bin)")
+	else()
+		message(STATUS "Using V-Ray AppSDK: ${APPSDK_ROOT}")
 	endif()
 
 	include_directories(${APPSDK_ROOT}/cpp/include)
