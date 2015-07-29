@@ -86,8 +86,20 @@ macro(use_vray_sdk)
 		)
 	endif()
 
-	message(STATUS "Using V-Ray SDK include path: ${VRAYSDK_INCPATH}")
-	message(STATUS "Using V-Ray SDK library path: ${VRAYSDK_LIBPATH}")
+	find_library(VRAY_LIB_VUTILS_S
+		NAMES vutils_s
+		PATHS ${VRAYSDK_LIBPATH}
+		NO_DEFAULT_PATH
+	)
+
+	if(NOT VRAY_LIB_VUTILS_S)
+		message(FATAL_ERROR "V-Ray SDK libraries / headers are not found!\n"
+							"V-Ray SDK from V-Ray For Maya installation is utilized by default.\n"
+							"Install V-Ray For Maya or point CGR_VRAYSDK_INCPATH and CGR_VRAYSDK_LIBPATH variables to the SDK location.")
+	else()
+		message(STATUS "Using V-Ray SDK include path: ${VRAYSDK_INCPATH}")
+		message(STATUS "Using V-Ray SDK library path: ${VRAYSDK_LIBPATH}")
+	endif()
 
 	include_directories(${VRAYSDK_INCPATH})
 	link_directories(${VRAYSDK_LIBPATH})
