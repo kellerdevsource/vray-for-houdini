@@ -195,6 +195,19 @@ endif()
 
 
 macro(use_houdini_sdk)
+	find_library(HDK_LIB_GEO
+		NAMES HoudiniGEO
+		PATHS ${HOUDINI_LIB_PATH}
+	)
+
+	if(NOT HDK_LIB_GEO)
+		message(FATAL_ERROR "Houdini SDK is not found! Check HOUDINI_VERSION / HOUDINI_VERSION_BUILD variables!")
+	else()
+		message(STATUS "Using Houdini ${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD}: ${HOUDINI_INSTALL_ROOT}")
+		message(STATUS "Using HDK include path: ${HOUDINI_INCLUDE_PATH}")
+		message(STATUS "Using HDK library path: ${HOUDINI_LIB_PATH}")
+	endif()
+
 	add_definitions(${HOUDINI_DEFINES})
 	include_directories(${HOUDINI_INCLUDE_PATH})
 	link_directories(${HOUDINI_LIB_PATH})
@@ -209,4 +222,3 @@ macro(houdini_plugin name sources)
 	install(TARGETS ${libraryName} DESTINATION ${HOUDINI_PLUGIN_PATH})
 endmacro()
 
-message(STATUS "Using Houdini ${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD}: ${HOUDINI_INSTALL_ROOT}")
