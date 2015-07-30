@@ -35,7 +35,15 @@ Compilation
   
   `{linux, windows, darwin}` is appended automatically by CMake scripts.
 
-* Clone this repository with submodules
+* Clone this repository with submodules:
+
+  ```
+  git clone https://github.com/ChaosGroup/vray-for-houdini.git
+  cd vray-for-houdini
+  git submodule update --init --recursive
+  git submodule foreach git checkout master
+  git submodule foreach git pull --rebase origin master
+  ```
 
 * Choose build directory on top of the source directory and generate a suitable project.
   
