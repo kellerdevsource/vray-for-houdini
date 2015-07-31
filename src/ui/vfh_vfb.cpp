@@ -67,15 +67,16 @@ void VfbWidget::paintEvent(QPaintEvent *e)
 						g = VUtils::Min(g, 1.0f);
 						b = VUtils::Min(b, 1.0f);
 					}
+					if (m_options.forceAlpha) {
+						a = 1;
+					}
 
 					img.setPixel(w, h, qRgba(r * 255.0f, g * 255.0f, b * 255.0f, a * 255.0f));
 				}
 			}
 
-			m_pixmap = QPixmap::fromImage(img);
-
 			painter.fillRect(0, 0, width, height, Qt::SolidPattern);
-			painter.drawPixmap(0, 0, m_pixmap);
+			painter.drawImage(0, 0, img);
 		}
 
 		if (m_buckets.size()) {

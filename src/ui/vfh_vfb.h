@@ -31,10 +31,12 @@ typedef VUtils::CriticalSection      VfbMutex;
 
 struct VfbOptions {
 	VfbOptions():
-		clamp(true)
+		clamp(true),
+		forceAlpha(true)
 	{}
 
 	int clamp;
+	int forceAlpha;
 };
 
 
