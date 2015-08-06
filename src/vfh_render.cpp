@@ -306,6 +306,7 @@ int VRayRendererNode::startRender(int nframes, fpreal tstart, fpreal tend)
 			renderMode = 4;
 		}
 
+		m_exporter.getRenderer().resetCallbacks();
 		if (m_exporter.init(renderMode)) {
 			PRINT_ERROR("V-Ray is not initialized!");
 
@@ -330,8 +331,6 @@ int VRayRendererNode::startRender(int nframes, fpreal tstart, fpreal tend)
 			if (!hasOpInterest(this, VRayRendererNode::RtCallbackRop)) {
 				// addOpInterest(this, VRayRendererNode::RtCallbackRop);
 			}
-
-			m_exporter.getRenderer().resetCallbacks();
 
 			m_exporter.setRop(this);
 			m_exporter.setMode(renderMode);
