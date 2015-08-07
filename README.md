@@ -69,4 +69,4 @@ Compilation
 Known Issues
 ------------
 
-* V-Ray Frame Buffer is not working correctly in OS X at this moment.
+* Native V-Ray Frame Buffer is not working on OS X; use "Simple" Qt based VFB for now (ROP -> VFB -> "Simple")
