@@ -1,0 +1,150 @@
+
+
+#define SPACING_HEIGHT	0.1
+
+
+
+previewMode.val = SELECT_MENU
+{
+    "Vertex Clustering (fast)"
+    "Refined Clustering (quality)"
+    "Face Skipping (very fast)"
+}
+
+selection.val := "";
+
+exportMode.val := 0;
+filepath.val := "$HOME";
+filename.val := "";
+
+includeTransform.val := 0;
+overwriteFiles.val := 0;
+previewLastSelected.val := 0;
+
+exportAnimation.val := 0;
+animPlayback.val := 0;
+animStart.val := 1;
+animEnd.val := 10;
+
+exportVelocity.val := 1;
+velocityStart.val := 0.0;
+velocityEnd.val := 0.05;
+
+exportPCL.val := 0;
+pointSize.val := 0.5;
+
+facesInPreview.val := 100;
+strandsInPreview.val := 100;
+previewMode.val := 1;
+exportColors.val := 0;
+ignoreHidden.val := 1;
+voxelPerMesh.val := 0;
+maxFacesPerVoxel.val := 20000;
+
+autoCreateProxies.val := 0;
+newNodeName.val := "";
+backup.val := 1;
+
+
+dlg.vrproxy = DIALOG "Create V-Ray Proxy"
+{
+LAYOUT(vertical) STRETCH MARGIN(0.1) SPACING(SPACING_HEIGHT) LOOK(plain) EXCLUSIVE
+VALUE(show.val)
+
+    SEPARATOR;
+
+    STRING_FIELD "Selection: " VALUE(selection.val);
+
+    SEPARATOR;
+
+    FILENAME_FIELD "Path:" VALUE(filepath.val) HSTRETCH;
+
+
+
+    SEPARATOR;
+
+    RADIO_BUTTON "Export all selected objects in a single file"     SENDS(1) VALUE(exportMode.val);
+    RADIO_BUTTON "Export each selected object in a separate file"   SENDS(0) VALUE(exportMode.val);
+
+    STRING_FIELD "File name:" VALUE(filename.val);
+
+    TOGGLE_BUTTON "Include node transformation"         VALUE(includeTransform.val);
+    TOGGLE_BUTTON "Overwrite existing vrmesh file"      VALUE(overwriteFiles.val);
+    TOGGLE_BUTTON "Use last selected mesh as preview"   VALUE(previewLastSelected.val);
+
+
+
+    SEPARATOR;
+
+    TOGGLE_BUTTON "Export animation" VALUE(exportAnimation.val);
+
+    {
+	LAYOUT(vertical) SPACING(SPACING_HEIGHT)
+	VALUE(exportAnimationGR.val)
+
+        TOGGLE_BUTTON "Export velocity (slower, enables motion blur)" VALUE(exportVelocity.val);
+        {
+	    LAYOUT(vertical) SPACING(SPACING_HEIGHT)
+    	VALUE(exportVelocityGR.val)
+
+            FLOAT_FIELD "Velocity interval start:"   VALUE(velocityStart.val);
+            FLOAT_FIELD "Velocity interval end:"     VALUE(velocityEnd.val);
+        }
+
+        RADIO_BUTTON "Use playback range"   SENDS(0) VALUE(animPlayback.val);
+        RADIO_BUTTON "Use animation range"  SENDS(1) VALUE(animPlayback.val);
+        RADIO_BUTTON "Specify range"        SENDS(2) VALUE(animPlayback.val);
+        {
+	    LAYOUT(vertical) SPACING(SPACING_HEIGHT)
+    	VALUE(animPlaybackGR.val)
+
+            INT_FIELD "Start frame:" VALUE(animStart.val);
+            INT_FIELD "End frame:"   VALUE(animEnd.val);
+        }
+    }
+
+
+
+    SEPARATOR;
+
+    TOGGLE_BUTTON "Export point clouds" VALUE(exportPCL.val);
+    FLOAT_FIELD "Lowest level point size:" VALUE(pointSize.val);
+
+
+
+    SEPARATOR;
+
+    INT_FIELD "Faces in preview:" VALUE(facesInPreview.val);
+    INT_FIELD "Strands in preview:" VALUE(strandsInPreview.val);
+    SELECT_MENU_BUTTON "Preview type:" MENU(previewMode.val);
+
+    TOGGLE_BUTTON "Export vertex colors" VALUE(exportColors.val);
+    TOGGLE_BUTTON "Ignore hidden and templated objects" VALUE(ignoreHidden.val);
+    TOGGLE_BUTTON "One voxel per mesh" VALUE(voxelPerMesh.val);
+    INT_FIELD "Faces per voxel:" VALUE(maxFacesPerVoxel.val);
+
+
+
+    SEPARATOR;
+
+    TOGGLE_BUTTON "Automatically create proxies" VALUE(autoCreateProxies.val);
+    {
+	LAYOUT(vertical) SPACING(SPACING_HEIGHT)
+    VALUE(autoCreateProxiesGR.val)
+
+        STRING_FIELD "New node name:" VALUE(newNodeName.val);
+        TOGGLE_BUTTON "Make backup (experimental)" VALUE(backup.val);
+    }
+
+
+
+    SEPARATOR;
+
+    {
+	LAYOUT(horizontal) SPACING(SPACING_HEIGHT) JUSTIFY(center,center) HSTRETCH
+
+	    ACTION_BUTTON "Create Proxy" VALUE(createProxy.val);
+    }
+
+}
+

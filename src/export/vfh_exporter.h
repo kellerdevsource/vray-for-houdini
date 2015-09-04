@@ -133,7 +133,8 @@ public:
 	VRayPluginRenderer     &getRenderer() { return m_renderer; }
 	OP_Node                *getRop()      { return m_rop; }
 
-	VRay::Plugin            exportGeomStaticMesh(SOP_Node *sop_node, const GU_Detail *gdp, SHOPToID &shopToID);
+	void                    exportGeomStaticMeshDesc(const GU_Detail &gdp, SHOPToID &shopToID, Attrs::PluginDesc &geomPluginDesc);
+	VRay::Plugin            exportGeomStaticMesh(SOP_Node &sop_node, const GU_Detail &gdp, SHOPToID &shopToID);
 	VRay::Plugin            exportGeomMayaHair(SOP_Node *sop_node, const GU_Detail *gdp);
 	void                    exportGeomMayaHairGeom(SOP_Node *sop_node, const GU_Detail *gdp, Attrs::PluginDesc &pluginDesc);
 

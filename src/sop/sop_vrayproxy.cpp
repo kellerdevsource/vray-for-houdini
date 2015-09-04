@@ -69,51 +69,13 @@ OP_ERROR SOP::VRayProxy::cookMySop(OP_Context &context)
 				UT_Interrupt *boss = UTgetInterrupt();
 
 				if(boss->opStart("Building V-Ray Scene Preview Mesh")) {
+					if (proxy->getNumFrames()) {
+						proxy->setCurrentFrame(context.getFloatFrame());
+					}
+
 					VUtils::MeshVoxel *previewVoxel = proxy->getVoxel(proxy->getNumVoxels() - 1);
-
-					VUtils::VertGeomData *verts = previewVoxel->getVertGeomData();
-					VUtils::FaceTopoData *faces = previewVoxel->getFaceTopoData();
-
-					const int numPreviewFaces = previewVoxel->getNumFaces();
-					const int numPreviewVerts = numPreviewFaces * 3;
-
-					// Points
-					for (int v = 0; v < numPreviewVerts; ++v) {
-						VUtils::Vector vert = verts[v];
-
-						VUtils::Matrix tm;
-						tm.f[0].set(scale, 0.0f, 0.0f);
-						tm.f[1].set(0.0f, scale, 0.0f);
-						tm.f[2].set(0.0f, 0.0f, scale);
-
-						if (flipAxis) {
-							VUtils::swap(tm[1], tm[2]);
-							tm[2] = -tm[2];
-						}
-
-						vert = tm * vert;
-
-#if UT_MAJOR_VERSION_INT < 14
-						GEO_Point *point = gdp->appendPointElement();
-						point->setPos(UT_Vector4F(vert.x, vert.y, vert.z));
-#else
-						GA_Offset pointOffs = gdp->appendPoint();
-						gdp->setPos3(pointOffs, UT_Vector4F(vert.x, vert.y, vert.z));
-#endif
-					}
-
-					// Faces
-					for (int f = 0; f < numPreviewFaces; ++f) {
-						const VUtils::FaceTopoData &face = faces[f];
-
-						GU_PrimPoly *poly = GU_PrimPoly::build(gdp, 3, GU_POLY_CLOSED, 0);
-
-						for (int c = 0; c < 3; ++c) {
-							poly->setVertexPoint(c, face.v[c]);
-						}
-
-						poly->reverse();
-					}
+					createMeshProxyGeometry(previewVoxel, scale, flipAxis);
+					createHairProxyGeometry(previewVoxel, scale, flipAxis);
 
 					proxy->releaseVoxel(previewVoxel);
 				}
@@ -150,4 +112,110 @@ OP::VRayNode::PluginResult SOP::VRayProxy::asPluginDesc(Attrs::PluginDesc &plugi
 	exporter->setAttrsFromOpNode(pluginDesc, this);
 
 	return OP::VRayNode::PluginResultSuccess;
+}
+
+
+void SOP::VRayProxy::createMeshProxyGeometry(VUtils::MeshVoxel *voxel, float scale, bool flipAxis)
+{
+	VUtils::VertGeomData *verts = voxel->getVertGeomData();
+	VUtils::FaceTopoData *faces = voxel->getFaceTopoData();
+
+	const int numPreviewFaces =voxel->getNumFaces();
+	const int numPreviewVerts = numPreviewFaces * 3;
+
+	GA_Offset voffset = gdp->getNumVertexOffsets();
+
+	// Points
+	for (int v = 0; v < numPreviewVerts; ++v) {
+		VUtils::Vector vert = verts[v];
+
+		VUtils::Matrix tm;
+		tm.f[0].set(scale, 0.0f, 0.0f);
+		tm.f[1].set(0.0f, scale, 0.0f);
+		tm.f[2].set(0.0f, 0.0f, scale);
+
+		if (flipAxis) {
+			VUtils::swap(tm[1], tm[2]);
+			tm[2] = -tm[2];
+		}
+
+		vert = tm * vert;
+
+	#if UT_MAJOR_VERSION_INT < 14
+		GEO_Point *point = gdp->appendPointElement();
+		point->setPos(UT_Vector4F(vert.x, vert.y, vert.z));
+	#else
+		GA_Offset pointOffs = gdp->appendPoint();
+		gdp->setPos3(pointOffs, UT_Vector4F(vert.x, vert.y, vert.z));
+	#endif
+	}
+
+	// Faces
+	for (int f = 0; f < numPreviewFaces; ++f) {
+		const VUtils::FaceTopoData &face = faces[f];
+
+		GU_PrimPoly *poly = GU_PrimPoly::build(gdp, 3, GU_POLY_CLOSED, 0);
+
+		for (int c = 0; c < 3; ++c) {
+			poly->setVertexPoint(c, voffset + face.v[c]);
+		}
+
+		poly->reverse();
+	}
+}
+
+
+void SOP::VRayProxy::createHairProxyGeometry(VUtils::MeshVoxel *voxel, float scale, bool flipAxis)
+{
+	VUtils::MeshChannel * verts_ch = voxel->getChannel(HAIR_VERT_CHANNEL);
+	VUtils::MeshChannel * strands_ch = voxel->getChannel(HAIR_NUM_VERT_CHANNEL);
+	//    no hair geometry => exit
+	if ( NOT(verts_ch) || NOT(strands_ch) ) {
+		return;
+	}
+
+	int numVerts = verts_ch->numElements;
+	int numStrands = strands_ch->numElements;
+
+	VUtils::VertGeomData * verts = (VUtils::VertGeomData *)verts_ch->data;
+	int * strands = (int *)strands_ch->data;
+
+	GA_Offset voffset = gdp->getNumVertexOffsets();
+
+	// Points
+	for (int i = 0; i < numVerts; ++i) {
+		VUtils::Vector vert = verts[i];
+
+		VUtils::Matrix tm;
+		tm.f[0].set(scale, 0.0f, 0.0f);
+		tm.f[1].set(0.0f, scale, 0.0f);
+		tm.f[2].set(0.0f, 0.0f, scale);
+
+		if (flipAxis) {
+			VUtils::swap(tm[1], tm[2]);
+			tm[2] = -tm[2];
+		}
+
+		vert = tm * vert;
+
+	#if UT_MAJOR_VERSION_INT < 14
+		GEO_Point *point = gdp->appendPointElement();
+		point->setPos(UT_Vector4F(vert.x, vert.y, vert.z));
+	#else
+		GA_Offset pointOffs = gdp->appendPoint();
+		gdp->setPos3(pointOffs, UT_Vector4F(vert.x, vert.y, vert.z));
+	#endif
+	}
+
+	// Strands
+	for (int i = 0; i < numStrands; ++i) {
+		int &vertsPerStrand = strands[i];
+
+		GU_PrimPoly *poly = GU_PrimPoly::build(gdp, vertsPerStrand, GU_POLY_OPEN, 0);
+		for (int j = 0; j < vertsPerStrand; ++j) {
+			poly->setVertexPoint(j, voffset + j);
+		}
+
+		voffset += vertsPerStrand;
+	}
 }

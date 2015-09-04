@@ -132,17 +132,23 @@ VRay::Plugin VRayExporter::exportNodeData(SOP_Node *geom_node, SHOPToID &shopToI
 					PRINT_ERROR("Geometry node is not connected!");
 				}
 				else {
+					VRay::Plugin mesh;
 					SOP_Node *mesh_node = mesh_op_node->castToSOPNode();
-
 					// Export base mesh
-					GU_DetailHandleAutoReadLock gdl(mesh_node->getCookedGeoHandle(m_context));
-					const GU_Detail *gdp = gdl.getGdp();
+					if (mesh_node){
+						GU_DetailHandleAutoReadLock gdl(mesh_node->getCookedGeoHandle(m_context));
+						const GU_Detail *gdp = gdl.getGdp();
+						if (gdp) {
+							mesh = exportGeomStaticMesh(*mesh_node, *gdp, shopToID);
+						}
+					}
 
-					VRay::Plugin mesh = exportGeomStaticMesh(mesh_node, gdp, shopToID);
 					// NOTE: Could be actually empty if mesh is not animated and we're exporting
 					// animation. Real errors are checked inside.
 					if (mesh) {
 						geomPluginDesc.addAttribute(Attrs::PluginAttr("mesh", mesh));
+					} else {
+						PRINT_ERROR("Geometry export failed!");
 					}
 				}
 			}
@@ -193,7 +199,7 @@ VRay::Plugin VRayExporter::exportNodeData(SOP_Node *geom_node, SHOPToID &shopToI
 					geom = exportGeomMayaHair(geom_node, gdp);
 				}
 				else {
-					geom = exportGeomStaticMesh(geom_node, gdp, shopToID);
+					geom = exportGeomStaticMesh(*geom_node, *gdp, shopToID);
 				}
 			}
 		}

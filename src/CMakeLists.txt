@@ -67,16 +67,17 @@ link_with_boost(${PROJECT_NAME})
 
 # Install shelf and icon locally
 #
-file(GLOB VFH_PY_SCRIPTS ${CMAKE_SOURCE_DIR}/deploy/scripts/*.py)
-
 install(FILES       ${CMAKE_SOURCE_DIR}/deploy/vfh.shelf
 		DESTINATION ${HOUDINI_HOME_PATH}/toolbar)
 
 install(FILES       ${CMAKE_SOURCE_DIR}/deploy/ROP_vray.svg
 		DESTINATION ${HOUDINI_HOME_PATH}/config/Icons)
 
-install(FILES       ${VFH_PY_SCRIPTS}
-		DESTINATION ${HOUDINI_HOME_PATH}/scripts/vfh)
+# Install py modules locally
+#
+install(DIRECTORY   ${CMAKE_SOURCE_DIR}/deploy/scripts/python/vfh
+		DESTINATION ${HOUDINI_HOME_PATH}/scripts/python)
+
 
 # Create program launcher with all needed environment variables
 #
@@ -142,8 +143,8 @@ if(INSTALL_RELEASE)
 		install(FILES       ${CMAKE_SOURCE_DIR}/deploy/ROP_vray.svg
 				DESTINATION ${INSTALL_RELEASE_PATH}/deploy)
 
-		install(FILES       ${VFH_PY_SCRIPTS}
-				DESTINATION ${INSTALL_RELEASE_PATH}/deploy/scripts/vfh)
+		install(DIRECTORY   ${CMAKE_SOURCE_DIR}/deploy/scripts/python/vfh
+				DESTINATION ${INSTALL_RELEASE_PATH}/deploy/scripts/python)
 
 		# Generate & copy startup file
 		if(WIN32)

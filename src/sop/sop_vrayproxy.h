@@ -35,6 +35,9 @@ public:
 protected:
 	virtual void              setPluginType() VRAY_OVERRIDE;
 
+	void createMeshProxyGeometry(VUtils::MeshVoxel *voxel, float scale, bool flipAxis);
+	void createHairProxyGeometry(VUtils::MeshVoxel *voxel, float scale, bool flipAxis);
+
 }; // VRayProxy
 
 } // namespace SOP

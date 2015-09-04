@@ -30,6 +30,7 @@
 #include "vop/meta/vop_meta_def.h"
 #include "vop/rc/vop_rc_def.h"
 #include "vop/env/vop_env_def.h"
+#include "cmd/vfh_cmd_register.h"
 
 // For newShopOperator()
 #include <SHOP/SHOP_Node.h>
@@ -163,7 +164,6 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFSSS2);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFSSS2Complex);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFSampled);
-	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFScanned);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFSkinComplex);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFVRayMtl);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFWard);
@@ -385,4 +385,9 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "UVWGEN", UVWGenPlanarWorld);
 	VFH_VOP_ADD_OPERATOR(table, "UVWGEN", UVWGenProjection);
 	VFH_VOP_ADD_OPERATOR(table, "UVWGEN", UVWGenSwitch);
+}
+
+void CMDextendLibrary(CMD_Manager *cman)
+{
+	CMD::RegisterCommands(cman);
 }

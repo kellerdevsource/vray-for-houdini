@@ -25,28 +25,28 @@
 using namespace VRayForHoudini;
 
 
-VRay::Plugin VRayExporter::exportGeomStaticMesh(SOP_Node *sop_node, const GU_Detail *gdp, SHOPToID &shopToID)
+void VRayExporter::exportGeomStaticMeshDesc(const GU_Detail &gdp, SHOPToID &shopToID, Attrs::PluginDesc &geomPluginDesc)
 {
-	const int numPoints = gdp->getNumPoints();
+	const int numPoints = gdp.getNumPoints();
 
 	PRINT_INFO("  Mesh: %i points", numPoints);
 
 	VUtils::VectorRefList vertices(numPoints);
 	VUtils::VectorRefList normals;
 
-	GA_ROAttributeRef h = gdp->findFloatTuple(GA_ATTRIB_POINT, "N", 3);
+	GA_ROAttributeRef h = gdp.findFloatTuple(GA_ATTRIB_POINT, "N", 3);
 	const GA_ROHandleV3 N_h(h.getAttribute());
 	if (N_h.isValid()) {
 		normals = VUtils::VectorRefList(numPoints);
 	}
 
 	int v = 0;
-	for (GA_Iterator pIt(gdp->getPointRange()); !pIt.atEnd(); pIt.advance(), ++v) {
+	for (GA_Iterator pIt(gdp.getPointRange()); !pIt.atEnd(); pIt.advance(), ++v) {
 #if UT_MAJOR_VERSION_INT < 14
-		const GEO_Point *pt = gdp->getGEOPoint(*pIt);
+		const GEO_Point *pt = gdp.getGEOPoint(*pIt);
 		const UT_Vector4 &p = pt->getPos();
 #else
-		const UT_Vector3 &p = gdp->getPos3(*pIt);
+		const UT_Vector3 &p = gdp.getPos3(*pIt);
 #endif
 		vertices[v].set(p[0], p[1], p[2]);
 
@@ -64,14 +64,14 @@ VRay::Plugin VRayExporter::exportGeomStaticMesh(SOP_Node *sop_node, const GU_Det
 	//   [x] edge_visibility
 	//
 
-	GA_ROAttributeRef ref_shop_materialpath = gdp->findStringTuple(GA_ATTRIB_PRIMITIVE, "shop_materialpath");
+	GA_ROAttributeRef ref_shop_materialpath = gdp.findStringTuple(GA_ATTRIB_PRIMITIVE, "shop_materialpath");
 	const GA_ROHandleS hndl_shop_materialpath(ref_shop_materialpath.getAttribute());
 
 	int numFaces = 0;
 	int numMtlIDs = 0;
-	for (GA_Iterator offIt(gdp->getPrimitiveRange()); !offIt.atEnd(); offIt.advance()) {
+	for (GA_Iterator offIt(gdp.getPrimitiveRange()); !offIt.atEnd(); offIt.advance()) {
 		const GA_Offset off = *offIt;
-		const GEO_Primitive *prim = gdp->getGEOPrimitive(off);
+		const GEO_Primitive *prim = gdp.getGEOPrimitive(off);
 
 		if (prim->getTypeId().get() == GEO_PRIMPOLYSOUP) {
 			const GU_PrimPolySoup *polySoup = static_cast<const GU_PrimPolySoup*>(prim);
@@ -94,11 +94,11 @@ VRay::Plugin VRayExporter::exportGeomStaticMesh(SOP_Node *sop_node, const GU_Det
 #if 0
 	if (shopToID.size()) {
 		PRINT_INFO("Materials list: %i",
-				   shopToID.size());
+					shopToID.size());
 
 		for (SHOPToID::iterator oIt = shopToID.begin(); oIt != shopToID.end(); ++oIt) {
 			PRINT_INFO("  %i: \"%s\"",
-					   oIt.data(), oIt.key());
+						oIt.data(), oIt.key());
 		}
 	}
 #endif
@@ -111,10 +111,10 @@ VRay::Plugin VRayExporter::exportGeomStaticMesh(SOP_Node *sop_node, const GU_Det
 
 	Mesh::MapChannels map_channels_data;
 
-	for (GA_Iterator jt(gdp->getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
-		const GEO_Primitive *prim = gdp->getGEOPrimitive(*jt);
+	for (GA_Iterator jt(gdp.getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
+		const GEO_Primitive *prim = gdp.getGEOPrimitive(*jt);
 
-		const GA_AttributeDict &vertex_attrs = gdp->vertexAttribs();
+		const GA_AttributeDict &vertex_attrs = gdp.vertexAttribs();
 		for (const auto &vaIt : vertex_attrs) {
 			const GA_Attribute *vertex_attr = vaIt;
 			if (vertex_attr->getScope() == GA_SCOPE_PUBLIC) {
@@ -131,7 +131,7 @@ VRay::Plugin VRayExporter::exportGeomStaticMesh(SOP_Node *sop_node, const GU_Det
 
 						for (GEO_PrimPolySoup::PolygonIterator psIt(*polySoup); !psIt.atEnd(); ++psIt) {
 							for (GEO_PrimPolySoup::VertexIterator vIt(psIt); !vIt.atEnd(); ++vIt) {
-								const GA_Offset &vOff = gdp->vertexPoint(vIt.offset());
+								const GA_Offset &vOff = gdp.vertexPoint(vIt.offset());
 								const UT_Vector3 &v = hndl_vertex_attr.get(vOff);
 
 								map_channel.verticesSet.insert(Mesh::MapVertex(v));
@@ -157,7 +157,7 @@ VRay::Plugin VRayExporter::exportGeomStaticMesh(SOP_Node *sop_node, const GU_Det
 		Mesh::MapChannel  &map_channel = mcIt.second;
 
 		PRINT_INFO("  Found map channel: %s",
-				   map_channel_name.c_str());
+					map_channel_name.c_str());
 
 #if CGR_USE_LIST_RAW_TYPES
 		map_channel.vertices = VUtils::VectorRefList(map_channel.verticesSet.size());
@@ -181,9 +181,9 @@ VRay::Plugin VRayExporter::exportGeomStaticMesh(SOP_Node *sop_node, const GU_Det
 	int faceVertIndex = 0;
 	int faceMtlIDIndex = 0;
 	int faceEdgeVisIndex = 0;
-	for (GA_Iterator jt(gdp->getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
+	for (GA_Iterator jt(gdp.getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
 		const GA_Offset off = *jt;
-		const GEO_Primitive *prim = gdp->getGEOPrimitive(off);
+		const GEO_Primitive *prim = gdp.getGEOPrimitive(off);
 
 		int mtlId = 0;
 
@@ -250,7 +250,7 @@ VRay::Plugin VRayExporter::exportGeomStaticMesh(SOP_Node *sop_node, const GU_Det
 
 	// Process map channels (uv and other tuple(3) attributes)
 	//
-	const GA_AttributeDict &vertex_attrs = gdp->vertexAttribs();
+	const GA_AttributeDict &vertex_attrs = gdp.vertexAttribs();
 	for (const auto &vaIt : vertex_attrs) {
 		const GA_Attribute *vertex_attr = vaIt;
 		if (vertex_attr->getScope() == GA_SCOPE_PUBLIC) {
@@ -262,8 +262,8 @@ VRay::Plugin VRayExporter::exportGeomStaticMesh(SOP_Node *sop_node, const GU_Det
 
 				int faceMapVertIndex = 0;
 
-				for (GA_Iterator jt(gdp->getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
-					const GEO_Primitive *face = gdp->getGEOPrimitive(*jt);
+				for (GA_Iterator jt(gdp.getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
+					const GEO_Primitive *face = gdp.getGEOPrimitive(*jt);
 					Mesh::MapChannel &map_channel = map_channels_data[vertex_attr->getName()];
 
 					const int &v0 = map_channel.verticesSet.find(Mesh::MapVertex(hndl_vertex_attr.get(face->getVertexOffset(0))))->index;
@@ -292,7 +292,7 @@ VRay::Plugin VRayExporter::exportGeomStaticMesh(SOP_Node *sop_node, const GU_Det
 		map_channel.verticesSet.clear();
 	}
 
-	Attrs::PluginDesc geomPluginDesc(sop_node, "GeomStaticMesh", "Geom@");
+	//	description
 	geomPluginDesc.addAttribute(Attrs::PluginAttr("vertices", vertices));
 	geomPluginDesc.addAttribute(Attrs::PluginAttr("faces", faces));
 	geomPluginDesc.addAttribute(Attrs::PluginAttr("face_mtlIDs", face_mtlIDs));
@@ -306,7 +306,6 @@ VRay::Plugin VRayExporter::exportGeomStaticMesh(SOP_Node *sop_node, const GU_Det
 
 	if (map_channels_data.size()) {
 		VRay::ValueList map_channel_names;
-
 		VRay::ValueList map_channels;
 
 		int i = 0;
@@ -329,6 +328,13 @@ VRay::Plugin VRayExporter::exportGeomStaticMesh(SOP_Node *sop_node, const GU_Det
 		geomPluginDesc.addAttribute(Attrs::PluginAttr("map_channel_names", map_channel_names));
 		geomPluginDesc.addAttribute(Attrs::PluginAttr("map_channels",      map_channels));
 	}
+}
+
+
+VRay::Plugin VRayExporter::exportGeomStaticMesh(SOP_Node &sop_node, const GU_Detail &gdp, SHOPToID &shopToID)
+{
+	Attrs::PluginDesc geomPluginDesc(&sop_node, "GeomStaticMesh", "Geom@");
+	exportGeomStaticMeshDesc(gdp, shopToID, geomPluginDesc);
 
 	return exportPlugin(geomPluginDesc);
 }
