@@ -41,7 +41,7 @@ include_directories(export/utils)
 include_directories(utils)
 
 file(GLOB_RECURSE SOURCES "*.cpp")
-file(GLOB_RECURSE HEADERS "*.h")
+file(GLOB_RECURSE HEADERS "*.h" "*.hpp")
 
 # *.aur preview
 CHECK_INCLUDE_FILE(FluidInterface.h HAS_PHOENIX)
