@@ -246,8 +246,7 @@ OP::VRayNode::PluginResult SOP::PhxShaderCache::asPluginDesc(Attrs::PluginDesc &
 	OP_Node     *vdbFileNode = nullptr;
 	VRay::Plugin phxShaderCache;
 
-	VRay::Transform phxMatchTm;
-	phxMatchTm.matrix.addDiagonal(VRay::Vector(2.0f,2.0f,2.0f));
+	VRay::Transform nodeTm = VRayExporter::GetOBJTransform(parent->castToOBJNode(), ctx);
 
 	VRay::Transform phxTm;
 	phxTm.matrix.makeIdentity();
@@ -300,15 +299,25 @@ OP::VRayNode::PluginResult SOP::PhxShaderCache::asPluginDesc(Attrs::PluginDesc &
 
 								UT_Matrix4D m4;
 								vol->getTransform4(m4);
+								UT_Vector3 center = vol->baryCenter();
 
+//								phxTm matrix to convert from voxel space to object local space
+//								voxel space is defined to be the 2-radius cube from (-1,-1,-1) to (1,1,1) centered at (0,0,0)
+//								need to scale uniformly by 2 as for TexMayaFluid seems to span from (0,0,0) to (1,1,1)
 								phxTm = VRayExporter::Matrix4ToTransform(m4);
+								phxTm.offset.set(center.x(), center.y(), center.z());
 #if 1
-								// phxTm.matrix.makeInverse();
-								phxTm.offset.makeZero();
 								phxTm.matrix.v0.x *= 2.0f;
 								phxTm.matrix.v1.y *= 2.0f;
 								phxTm.matrix.v2.z *= 2.0f;
 #endif
+//								phxMatchTm matrix to convert from voxel space to world space
+//								needed for TexMayaFluidTransformed
+//								sould match with transform for PhxShaderSim, WHY?
+								VRay::Transform phxMatchTm;
+								phxMatchTm.offset = nodeTm.matrix * phxTm.offset + nodeTm.offset;
+								phxMatchTm.matrix = nodeTm.matrix * phxTm.matrix;
+
 								PRINT_INFO("Volume \"%s\": %i x %i x %i",
 										   texType.c_str(), res[0], res[1], res[2]);
 								PRINT_APPSDK_TM("Volume tm", phxTm);
@@ -363,7 +372,7 @@ OP::VRayNode::PluginResult SOP::PhxShaderCache::asPluginDesc(Attrs::PluginDesc &
 								Attrs::PluginDesc fluidTexTm(conNode, "TexMayaFluidTransformed", primPluginNamePrefix+"Tm@");
 								fluidTexTm.addAttribute(Attrs::PluginAttr("fluid_tex", exporter->exportPlugin(fluidTex)));
 								fluidTexTm.addAttribute(Attrs::PluginAttr("fluid_value_scale", 1.0f));
-								fluidTexTm.addAttribute(Attrs::PluginAttr("object_to_world", phxTm));
+								fluidTexTm.addAttribute(Attrs::PluginAttr("object_to_world", phxMatchTm));
 
 								VRay::Plugin fluidTexPlugin = exporter->exportPlugin(fluidTexTm);
 
@@ -458,11 +467,8 @@ OP::VRayNode::PluginResult SOP::PhxShaderCache::asPluginDesc(Attrs::PluginDesc &
 		}
 	}
 
-	VRay::Transform nodeTm = VRayExporter::GetOBJTransform(parent->castToOBJNode(), ctx);
-	// phxTm.matrix.makeInverse();
-	nodeTm.matrix = phxTm.matrix * nodeTm.matrix;
-	// nodeTm.matrix = phxMatchTm.matrix * nodeTm.matrix;
-	// nodeTm.offset = phxTm.matrix * nodeTm.offset + phxTm.offset;
+	nodeTm.offset = nodeTm.matrix * phxTm.offset + nodeTm.offset;
+	nodeTm.matrix = nodeTm.matrix * phxTm.matrix;
 
 	phxShaderSimDesc.addAttribute(Attrs::PluginAttr("node_transform", nodeTm));
 
