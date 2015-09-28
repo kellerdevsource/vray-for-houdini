@@ -16,9 +16,9 @@ Compilation
     - Linux: GCC > 4.8.x
     - OS X: Any available
 
-* CMake
+* CMake 3.3.x
 
-* Ninja (optional)
+* Ninja (> 1.5.x, optional)
 
 
 ### Installation
