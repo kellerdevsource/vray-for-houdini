@@ -117,7 +117,7 @@ OP_Node* VFH_VRAY_NODE_CREATOR(OP_Network *parent, const char *name, OP_Operator
 		/* Parm definitions  */ OpParmTemplate, \
 		/* Min # of inputs   */ 0, \
 		/* Max # of inputs   */ VOP_VARIABLE_INOUT_MAX, \
-		/* VOP network mask  */ "*", \
+		/* VOP network mask  */ "VRay", \
 		/* Local variables   */ 0, \
 		/* Special flags     */ OP_FLAG_UNORDERED \
 	); \
@@ -133,7 +133,7 @@ OP_Node* VFH_VRAY_NODE_CREATOR(OP_Network *parent, const char *name, OP_Operator
 		/* Parm definitions  */ Parm::GeneratePrmTemplate(OpPluginType, OpPluginID), \
 		/* Min # of inputs   */ 0, \
 		/* Max # of inputs   */ VOP_VARIABLE_INOUT_MAX, \
-		/* VOP network mask  */ "*", \
+		/* VOP network mask  */ "VRay", \
 		/* Local variables   */ 0, \
 		/* Special flags     */ OpFlags \
 	); \
