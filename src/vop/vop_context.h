@@ -34,6 +34,7 @@ public:
 	virtual bool allowOperatorAsChild(OP_Operator *op) VRAY_OVERRIDE;
 };
 
+
 class VRayMaterialBuilder:
 		public SHOP_Node
 {

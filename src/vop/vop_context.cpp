@@ -14,6 +14,7 @@
 //
 
 #include "vop_context.h"
+#include "vfh_defines.h"
 
 #include <SHOP/SHOP_Operator.h>
 #include <VOP/VOP_OperatorInfo.h>
@@ -40,7 +41,6 @@ VOP::VRayMaterialBuilder::VRayMaterialBuilder(OP_Network *parent, const char *na
 
 	auto info = static_cast<SHOP_OperatorInfo *>(entry->getOpSpecificData());
 	info->setShaderType(shader_type);
-	info->setRenderMask("VRay");
 	info->setNumOutputs(0);
 }
 
@@ -49,28 +49,6 @@ OP_ERROR VOP::VRayMaterialBuilder::cookMe(OP_Context &context)
 {
 	return error();
 }
-
-
-//OP_OperatorTable *VOP::VRayMaterialBuilder::getCustomOperatorTable()
-//{
-//	static OP_OperatorTable table;
-
-//	// We chain our custom VOP operators onto the default VOP operator table.
-//	OP_OperatorTable *vopTable = OP_Network::getOperatorTable(VOP_TABLE_NAME);
-//	vopTable->map_begin()
-//	for (auto it = vopTable->begin(); it.atEnd(); ++it) {
-//		it.
-//	}
-//	vopTable->iterator
-//	// Procedurally create some simple operator types for illustrative purposes.
-//	table.addOperator(new sop_CustomVopOperator("hdk_inout11_", "In-Out 1-1"));
-//	table.addOperator(new sop_CustomVopOperator("hdk_inout21_", "In-Out 2-1"));
-//	table.addOperator(new sop_CustomVopOperator("hdk_inout12_", "In-Out 1-2"));
-//	table.addOperator(new sop_CustomVopOperator("hdk_inout22_", "In-Out 2-2"));
-//	// Notify observers of the operator table that it has been changed.
-//	table.notifyUpdateTableSinksOfUpdate();
-//	return &table;
-//}
 
 
 VOP::MaterialContext::MaterialContext(OP_Network *parent, const char *name, OP_Operator *entry):
