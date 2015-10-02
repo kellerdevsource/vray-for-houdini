@@ -622,7 +622,7 @@ VRay::Plugin VRayExporter::exportVop(OP_Node *op_node)
 
 VRay::Plugin VRayExporter::exportMaterial(SHOP_Node *shop_node)
 {
-	OP_Node *op_node = VRayExporter::FindChildNodeByType(shop_node, "collect");
+	OP_Node *op_node = VRayExporter::FindChildNodeByType(shop_node, "vray_material_output");
 	if (NOT(op_node)) {
 		PRINT_ERROR("Output \"Collect\" node is not found in material tree!");
 	}
@@ -636,7 +636,7 @@ VRay::Plugin VRayExporter::exportMaterial(SHOP_Node *shop_node)
 				   opType.buffer());
 
 		// TODO: Create custom material output
-		if (opType == "collect") {
+		if (opType == "vray_material_output") {
 			const unsigned num_inputs = vop_node->getNumVisibleInputs();
 			for (unsigned i = 0; i < num_inputs; ++i) {
 				OP_Input *input = vop_node->getInputReferenceConst(i);

@@ -18,7 +18,7 @@
 
 #include "vop_node_base.h"
 #include "vop_MtlMulti.h"
-
+#include "vop_MaterialOutput.h"
 
 namespace VRayForHoudini {
 namespace VOP {
