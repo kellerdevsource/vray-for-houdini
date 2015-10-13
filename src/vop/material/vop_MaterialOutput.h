@@ -26,13 +26,6 @@
 namespace VRayForHoudini {
 namespace VOP {
 
-enum MtlType {
-	MTL_SURFACE = VOP_SURFACE_SHADER,
-	MTL_DISPLACEMENT = VOP_DISPLACEMENT_SHADER,
-	MTL_GEOMETRY = VOP_GEOMETRY_SHADER,
-	MTL_MISC = VOP_TYPE_VOID
-};
-
 class MaterialOutput:
 		public VOP_Node
 {
