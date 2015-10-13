@@ -555,7 +555,7 @@ VRay::Plugin VRayExporter::exportVop(OP_Node *op_node)
 			   vop_node->getName().buffer(),
 			   opType.buffer())
 
-	if (opType == "switch") {
+			if (opType == "switch") {
 		const int &switcher = vop_node->evalInt("switcher", 0, 0.0);
 		if (switcher > 0) {
 			UT_String inputName;
@@ -622,40 +622,33 @@ VRay::Plugin VRayExporter::exportVop(OP_Node *op_node)
 
 VRay::Plugin VRayExporter::exportMaterial(SHOP_Node *shop_node)
 {
+	VRay::Plugin material;
+
 	OP_Node *op_node = VRayExporter::FindChildNodeByType(shop_node, "vray_material_output");
-	if (NOT(op_node)) {
-		PRINT_ERROR("Output \"Collect\" node is not found in material tree!");
+	if (!op_node) {
+		PRINT_ERROR("Can't find \"V-Ray Material Output\" operator under \"%s\"!",
+					shop_node->getName().buffer());
 	}
 	else {
 		VOP_Node *vop_node = op_node->castToVOPNode();
 
-		const UT_String &opType = vop_node->getOperator()->getName();
+		PRINT_INFO("Exporting material \"%s\"...",
+				   vop_node->getName().buffer());
 
-		PRINT_INFO("Exporting material \"%s\" [%s]...",
-				   vop_node->getName().buffer(),
-				   opType.buffer());
-
-		// TODO: Create custom material output
-		if (opType == "vray_material_output") {
-			const unsigned num_inputs = vop_node->getNumVisibleInputs();
-			for (unsigned i = 0; i < num_inputs; ++i) {
-				OP_Input *input = vop_node->getInputReferenceConst(i);
-				if (input) {
-					OP_Node *connNode = input->getNode();
-					if (connNode) {
-						// Return first connected by now
-						return exportVop(connNode);
-					}
+		const unsigned num_inputs = vop_node->getNumVisibleInputs();
+		for (unsigned i = 0; i < num_inputs; ++i) {
+			OP_Input *input = vop_node->getInputReferenceConst(i);
+			if (input) {
+				OP_Node *connNode = input->getNode();
+				if (connNode) {
+					// Return first connected by now
+					material = exportVop(connNode);
 				}
 			}
 		}
-		else {
-			PRINT_ERROR("Unsupported VOP node: %s",
-						opType.buffer());
-		}
 	}
 
-	return VRay::Plugin();
+	return material;
 }
 
 
@@ -904,8 +897,8 @@ void VRayExporter::RtCallbackObjManager(OP_Node *caller, void *callee, OP_EventT
 			   OPeventToString(type), caller->getName().buffer());
 
 	if (   type == OP_CHILD_CREATED
-		|| type == OP_CHILD_DELETED
-		)
+		   || type == OP_CHILD_DELETED
+		   )
 	{
 		OP_Network *obj_manager = OPgetDirector()->getManager("obj");
 		obj_manager->traverseChildren(VRayExporter::TraverseOBJs, exporter, false);
