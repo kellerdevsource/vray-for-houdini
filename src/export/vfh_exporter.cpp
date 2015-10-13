@@ -684,10 +684,6 @@ VRay::Plugin VRayExporter::exportMtlOut(OP_Node *op_node)
 				material = exportPlugin(pluginDesc);
 			}
 		}
-		else {
-			PRINT_ERROR("Unsupported input type for node \"%s\", input %d!",
-						mtl_out->getName().buffer(), idx);
-		}
 	}
 
 	return material;
