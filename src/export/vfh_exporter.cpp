@@ -654,7 +654,6 @@ VRay::Plugin VRayExporter::exportMaterial(SHOP_Node *shop_node)
 
 
 #ifdef CGR_HAS_VRAYSCENE
-
 VRay::Plugin VRayExporter::exportVRayScene(OBJ_Node *obj_node, SOP_Node *geom_node)
 {
 	SOP::VRayScene *vraySceneNode = static_cast<SOP::VRayScene*>(geom_node);
