@@ -99,5 +99,5 @@ void VOP::MaterialOutput::getAllowedInputTypeInfosSubclass(unsigned idx, VOP_Vop
 	type_infos.append(typeGeom);
 	VOP_TypeInfo typeMisc(static_cast<VOP_Type>(MTL_MISC));
 	type_infos.append(typeMisc);
-
+	type_infos.append(VOP_TypeInfo(VOP_TYPE_BSDF));
 }
