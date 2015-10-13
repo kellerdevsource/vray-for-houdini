@@ -307,12 +307,20 @@ VRay::Plugin VRayExporter::exportObject(OBJ_Node *obj_node)
 						mtl = exportPlugin(mtlMultiDesc);
 					}
 				}
+				else {
+					PRINT_INFO("  No material found for \"%s\"!",
+							   obj_node->getName().buffer());
+				}
 
 				// Export default grey material
 				if (NOT(mtl)) {
-					Attrs::PluginDesc pluginDesc("BRDFDiffuse@Clay", "BRDFDiffuse");
-					pluginDesc.addAttribute(Attrs::PluginAttr("color", 0.5f, 0.5f, 0.5f));
-					mtl = exportPlugin(pluginDesc);
+					Attrs::PluginDesc brdfDesc("BRDFDiffuse@Clay", "BRDFDiffuse");
+					brdfDesc.addAttribute(Attrs::PluginAttr("color", 0.5f, 0.5f, 0.5f));
+
+					Attrs::PluginDesc mtlDesc("Mtl@Clay", "MtlSingleBRDF");
+					mtlDesc.addAttribute(Attrs::PluginAttr("brdf", exportPlugin(brdfDesc)));
+
+					mtl = exportPlugin(mtlDesc);
 				}
 
 				exportNode(obj_node, mtl, geom);
