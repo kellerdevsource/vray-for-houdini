@@ -641,8 +641,9 @@ VRay::Plugin VRayExporter::exportMaterial(SHOP_Node *shop_node)
 			if (input) {
 				OP_Node *connNode = input->getNode();
 				if (connNode) {
-					// Return first connected by now
 					material = exportVop(connNode);
+					// Return first connected by now
+					break;
 				}
 			}
 		}
