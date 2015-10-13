@@ -55,20 +55,23 @@ void VOP::MaterialOutput::getCode(UT_String &, const VOP_CodeGenContext &)
 
 void VOP::MaterialOutput::getInputNameSubclass(UT_String &in, int idx) const
 {
-	const std::string &label = boost::str(boost::format("shader%i") % (idx + 1));
+	static boost::format FmtShader("shader%i");
+
+	const std::string &label = boost::str(FmtShader % (idx + 1));
 	in = label.c_str();
 }
 
 
 int VOP::MaterialOutput::getInputFromNameSubclass(const UT_String &in) const
 {
-	auto name = static_cast<const tchar *>(in);
-	const tchar *baseName = "shader";
-	const int baseLen = vutils_strlen(baseName);
-	if (vutils_strcmp_n(name, baseName, baseLen)) {
-		return (vutils_atoi(name + baseLen) - 1);
+	int inputIndex = -1;
+	int inputTmp = -1;
+
+	if (sscanf(in.buffer(), "shader%i", &inputTmp) == 1) {
+		inputIndex = inputTmp - 1;
 	}
-	return -1;
+
+	return inputIndex;
 }
 
 
@@ -91,13 +94,9 @@ void VOP::MaterialOutput::getInputTypeInfoSubclass(VOP_TypeInfo &type_info, int 
 
 void VOP::MaterialOutput::getAllowedInputTypeInfosSubclass(unsigned idx, VOP_VopTypeInfoArray &type_infos)
 {
-	VOP_TypeInfo typeSurf(static_cast<VOP_Type>(MTL_SURFACE));
-	type_infos.append(typeSurf);
-	VOP_TypeInfo typeDispl(static_cast<VOP_Type>(MTL_DISPLACEMENT));
-	type_infos.append(typeDispl);
-	VOP_TypeInfo typeGeom(static_cast<VOP_Type>(MTL_GEOMETRY));
-	type_infos.append(typeGeom);
-	VOP_TypeInfo typeMisc(static_cast<VOP_Type>(MTL_MISC));
-	type_infos.append(typeMisc);
 	type_infos.append(VOP_TypeInfo(VOP_TYPE_BSDF));
+	type_infos.append(VOP_TypeInfo(VOP_SURFACE_SHADER));
+	type_infos.append(VOP_TypeInfo(VOP_DISPLACEMENT_SHADER));
+	type_infos.append(VOP_TypeInfo(VOP_GEOMETRY_SHADER));
+	type_infos.append(VOP_TypeInfo(VOP_TYPE_VOID));
 }
