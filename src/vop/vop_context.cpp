@@ -14,9 +14,10 @@
 //
 
 #include "vop_context.h"
+#include "vfh_defines.h"
 
 #include <SHOP/SHOP_Operator.h>
-
+#include <VOP/VOP_OperatorInfo.h>
 
 using namespace VRayForHoudini;
 
@@ -24,6 +25,30 @@ using namespace VRayForHoudini;
 static PRM_Template templates[] = {
 	PRM_Template()
 };
+
+
+bool VOP::VRayMaterialBuilderOperatorFilter::allowOperatorAsChild(OP_Operator *op)
+{
+	auto info = static_cast<const VOP_OperatorInfo *>(op->getOpSpecificData());
+	return ((info)? info->getVopnetMask().startsWith("VRay") : false);
+}
+
+
+VOP::VRayMaterialBuilder::VRayMaterialBuilder(OP_Network *parent, const char *name, OP_Operator *entry, SHOP_TYPE shader_type):
+	SHOP_Node(parent, name, entry, shader_type)
+{
+	setOperatorTable(getOperatorTable(VOP_TABLE_NAME));
+
+	auto info = static_cast<SHOP_OperatorInfo *>(entry->getOpSpecificData());
+	info->setShaderType(shader_type);
+	info->setNumOutputs(0);
+}
+
+
+OP_ERROR VOP::VRayMaterialBuilder::cookMe(OP_Context &context)
+{
+	return error();
+}
 
 
 VOP::MaterialContext::MaterialContext(OP_Network *parent, const char *name, OP_Operator *entry):
@@ -95,8 +120,8 @@ const char *VOP::MaterialContext::getFileExtension(int binary) const
 
 void VOP::MaterialContext::register_operator(OP_OperatorTable *table)
 {
-	OP_Operator *op = new OP_Operator("vray_material",
-									  "V-Ray Material",
+	OP_Operator *op = new OP_Operator("vray_material_context",
+									  "V-Ray Material Context",
 									  VOP::MaterialContext::creator,
 									  templates,
 									  0);
@@ -112,7 +137,7 @@ void VOP::MaterialContext::register_shop_operator(OP_OperatorTable *table)
 {
 	SHOP_Operator *op = new SHOP_Operator("vray_material",
 										  "V-Ray Material",
-										  VOP::MaterialContext::creator,
+										  VOP::VRayMaterialBuilder::creator,
 										  templates,
 										  0,
 										  0,

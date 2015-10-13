@@ -20,10 +20,43 @@
 
 #include <OP/OP_OperatorTable.h>
 #include <OP/OP_Network.h>
+#include <SHOP/SHOP_Node.h>
 
 
 namespace VRayForHoudini {
 namespace VOP {
+
+
+class VRayMaterialBuilderOperatorFilter:
+		public OP_OperatorFilter
+{
+public:
+	virtual bool allowOperatorAsChild(OP_Operator *op) VRAY_OVERRIDE;
+};
+
+
+class VRayMaterialBuilder:
+		public SHOP_Node
+{
+public:
+	static OP_Node            *creator(OP_Network *parent, const char *name, OP_Operator *entry) { return new VRayMaterialBuilder(parent, name, entry); }
+
+public:
+/// Allow VOPs only as children
+	virtual const char        *getChildType() const VRAY_OVERRIDE { return VOP_OPTYPE_NAME; }
+	virtual OP_OpTypeId        getChildTypeID() const VRAY_OVERRIDE { return VOP_OPTYPE_ID; }
+	virtual OP_OperatorFilter *getOperatorFilter() VRAY_OVERRIDE{ return &m_opFilter; }
+
+	virtual OP_ERROR           cookMe(OP_Context &context) VRAY_OVERRIDE;
+
+protected:
+	VRayMaterialBuilder(OP_Network *parent, const char *name, OP_Operator *entry, SHOP_TYPE shader_type=SHOP_VOP_MATERIAL);
+	virtual ~VRayMaterialBuilder() {}
+
+protected:
+	VRayMaterialBuilderOperatorFilter m_opFilter;
+};
+
 
 class MaterialContext:
 		public OP_Network

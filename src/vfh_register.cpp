@@ -112,6 +112,8 @@ void newVopOperator(OP_OperatorTable *table)
 {
 	PRINT_WARN("newVopOperator()");
 
+	VOP::MaterialOutput::register_operator(table);
+
 	VFH_VOP_ADD_OPERATOR(table, "SETTINGS", SettingsEnvironment);
 
 	VFH_VOP_ADD_OPERATOR(table, "EFFECT", EnvironmentFog);
