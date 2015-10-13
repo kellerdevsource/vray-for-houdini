@@ -403,6 +403,37 @@ struct CbCollection {
 };
 
 
+struct AppSdkInit {
+	AppSdkInit()
+	    : m_vrayInit(nullptr)
+	{
+		try {
+			m_vrayInit = new VRay::VRayInit(true);
+		}
+		catch (std::exception &e) {
+			PRINT_INFO("Error initializing V-Ray library! Error: \"%s\"",
+					   e.what());
+			m_vrayInit = nullptr;
+		}
+	}
+
+	~AppSdkInit() {
+		FreePtr(m_vrayInit);
+	}
+
+	operator bool () const {
+		return !!(m_vrayInit);
+	}
+
+private:
+	AppSdkInit(const AppSdkInit&) = delete;
+	AppSdkInit& operator=(const AppSdkInit&) = delete;
+
+	VRay::VRayInit *m_vrayInit;
+
+};
+
+
 class VRayPluginRenderer {
 	struct PluginUsed {
 		PluginUsed() {}
@@ -416,6 +447,8 @@ class VRayPluginRenderer {
 	};
 
 	typedef VUtils::HashMap<PluginUsed> PluginUsage;
+
+	static AppSdkInit             vrayInit;
 
 public:
 	VRayPluginRenderer();
@@ -450,11 +483,6 @@ private:
 public:
 	VRay::VRayRenderer           *m_vray;
 	PluginUsage                   m_pluginUsage;
-
-	static VRay::VRayInit        *g_vrayInit;
-
-	static void                   VRayInit();
-	static void                   VRayDone();
 
 public:
 	void                          resetCallbacks();

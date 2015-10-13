@@ -26,7 +26,7 @@ using namespace VRayForHoudini;
 using namespace VRayForHoudini::Attrs;
 
 
-VRay::VRayInit *VRayPluginRenderer::g_vrayInit = nullptr;
+AppSdkInit VRayPluginRenderer::vrayInit;
 
 
 static void OnDumpMessage(VRay::VRayRenderer &renderer, const char *msg, int level, void *userData)
@@ -179,7 +179,7 @@ VRayPluginRenderer::~VRayPluginRenderer()
 
 void VRayPluginRenderer::init(int reInit)
 {
-	if (NOT(VRayPluginRenderer::g_vrayInit)) {
+	if (!VRayPluginRenderer::vrayInit) {
 		return;
 	}
 
@@ -493,31 +493,6 @@ int VRayPluginRenderer::isRtRunning()
 		}
 	}
 	return is_rt_running;
-}
-
-
-void VRayPluginRenderer::VRayInit()
-{
-	PRINT_INFO("VRayPluginRenderer::VRayInit()");
-
-	if (NOT(VRayPluginRenderer::g_vrayInit)) {
-		try {
-			bool init_vfb = true;
-#ifdef __APPLE__
-			init_vfb = false;
-#endif
-			VRayPluginRenderer::g_vrayInit = new VRay::VRayInit(init_vfb);
-		}
-		catch (...) {
-			VRayPluginRenderer::g_vrayInit = nullptr;
-		}
-	}
-}
-
-
-void VRayPluginRenderer::VRayDone()
-{
-	FreePtr(VRayPluginRenderer::g_vrayInit);
 }
 
 

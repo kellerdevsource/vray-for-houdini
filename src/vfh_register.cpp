@@ -55,16 +55,12 @@ void unregister(void *)
 		}
 		VRayExporter::Instances.clear();
 	}
-
-	VRayPluginRenderer::VRayDone();
 }
 
 
 void newDriverOperator(OP_OperatorTable *table)
 {
 	PRINT_WARN("newDriverOperator()");
-
-	VRayPluginRenderer::VRayInit();
 
 	VRayRendererNode::register_operator(table);
 
