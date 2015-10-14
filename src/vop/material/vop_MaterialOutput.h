@@ -35,12 +35,13 @@ public:
 
 public:
 	virtual void              getCode(UT_String &codestr, const VOP_CodeGenContext &context) VRAY_OVERRIDE;
-	virtual unsigned          getNumVisibleInputs() const VRAY_OVERRIDE { return nConnectedInputs() + 1; }
 
 protected:
 	MaterialOutput(OP_Network *parent, const char *name, OP_Operator *entry) : VOP_Node(parent, name, entry) { }
 	virtual                  ~MaterialOutput() { }
 
+	virtual bool              willAutoconvertInputType(int idx) VRAY_OVERRIDE { return false; }
+	virtual bool              generateErrorsSubclass() VRAY_OVERRIDE;
 	virtual void              getInputNameSubclass(UT_String &in, int idx) const VRAY_OVERRIDE;
 	virtual int               getInputFromNameSubclass(const UT_String &in) const VRAY_OVERRIDE;
 	virtual void              getInputTypeInfoSubclass(VOP_TypeInfo &type_info, int idx) VRAY_OVERRIDE;

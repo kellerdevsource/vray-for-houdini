@@ -100,6 +100,8 @@ public:
 	VRay::Plugin            exportLight(OBJ_Node *obj_node);
 
 	VRay::Plugin            exportMaterial(SHOP_Node *shop_node);
+	VRay::Plugin            exportMtlOut(OP_Node *op_node);
+
 	VRay::Plugin            exportVop(OP_Node *op_node);
 
 #ifdef CGR_HAS_VRAYSCENE
@@ -202,6 +204,7 @@ public:
 	static void             RtCallbackNodeData(OP_Node *caller, void *callee, OP_EventType type, void *data);
 	static void             RtCallbackView(OP_Node *caller, void *callee, OP_EventType type, void *data);
 	static void             RtCallbackVop(OP_Node *caller, void *callee, OP_EventType type, void *data);
+	static void             RtCallbackMtlOut(OP_Node *caller, void *callee, OP_EventType type, void *data);
 
 	static void             CallbackSequence();
 

@@ -20,6 +20,7 @@
 #include <OP/OP_Input.h>
 
 #include <boost/format.hpp>
+#include <unordered_set>
 
 using namespace VRayForHoudini;
 
@@ -35,8 +36,8 @@ void VOP::MaterialOutput::register_operator(OP_OperatorTable *table)
 									   "V-Ray Material Output",
 									   VOP::MaterialOutput::creator,
 									   templates,
-									   0,
-									   VOP_VARIABLE_INOUT_MAX,
+									   2,
+									   2,
 									   "VRay",
 									   0,
 									   OP_FLAG_UNORDERED,
@@ -53,25 +54,65 @@ void VOP::MaterialOutput::getCode(UT_String &, const VOP_CodeGenContext &)
 }
 
 
+bool VOP::MaterialOutput::generateErrorsSubclass()
+{
+	bool hasErr = VOP_Node::generateErrorsSubclass();
+	if (hasErr) {
+		return hasErr;
+	}
+
+	std::unordered_set<std::string> inpTypes;
+	for (int idx = 0; idx < nConnectedInputs(); ++idx) {
+		UT_String inpName;
+		getInputName(inpName, idx);
+
+		if (inpTypes.count(inpName.buffer())) {
+			addError(VOP_INPUT_TYPE_COLLISION);
+			hasErr = true;
+			break;
+		}
+		inpTypes.insert(inpName.buffer());
+	}
+
+	return hasErr;
+}
+
 void VOP::MaterialOutput::getInputNameSubclass(UT_String &in, int idx) const
 {
-	static boost::format FmtShader("shader%i");
+	static boost::format FmtShader("Input%i");
 
-	const std::string &label = boost::str(FmtShader % (idx + 1));
-	in = label.c_str();
+	switch (getInputType(idx)) {
+		case VOP_TYPE_BSDF:
+		case VOP_SURFACE_SHADER:
+			in = "Material";
+			break;
+		case VOP_GEOMETRY_SHADER:
+			in = "Geometry";
+			break;
+		default:
+			const std::string &label = boost::str(FmtShader % (idx + 1));
+			in = label.c_str();
+	}
+
 }
 
 
 int VOP::MaterialOutput::getInputFromNameSubclass(const UT_String &in) const
 {
-	int inputIndex = -1;
-	int inputTmp = -1;
-
-	if (sscanf(in.buffer(), "shader%i", &inputTmp) == 1) {
-		inputIndex = inputTmp - 1;
+	int idx = -1;
+	if (sscanf(in.buffer(), "Input%i", &idx) == 1) {
+		return idx - 1;
 	}
 
-	return inputIndex;
+	for (idx = 0; idx < nConnectedInputs(); ++idx) {
+		UT_String inpName;
+		getInputName(inpName, idx);
+		if (in.equal(inpName)) {
+			return idx;
+		}
+	}
+
+	return -1;
 }
 
 
@@ -96,7 +137,5 @@ void VOP::MaterialOutput::getAllowedInputTypeInfosSubclass(unsigned idx, VOP_Vop
 {
 	type_infos.append(VOP_TypeInfo(VOP_TYPE_BSDF));
 	type_infos.append(VOP_TypeInfo(VOP_SURFACE_SHADER));
-	type_infos.append(VOP_TypeInfo(VOP_DISPLACEMENT_SHADER));
 	type_infos.append(VOP_TypeInfo(VOP_GEOMETRY_SHADER));
-	type_infos.append(VOP_TypeInfo(VOP_TYPE_VOID));
 }
