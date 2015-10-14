@@ -136,7 +136,5 @@ void VOP::MaterialOutput::getAllowedInputTypeInfosSubclass(unsigned idx, VOP_Vop
 {
 	type_infos.append(VOP_TypeInfo(VOP_TYPE_BSDF));
 	type_infos.append(VOP_TypeInfo(VOP_SURFACE_SHADER));
-	type_infos.append(VOP_TypeInfo(VOP_DISPLACEMENT_SHADER));
 	type_infos.append(VOP_TypeInfo(VOP_GEOMETRY_SHADER));
-	type_infos.append(VOP_TypeInfo(VOP_TYPE_VOID));
 }
