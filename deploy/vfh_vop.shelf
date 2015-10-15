@@ -1027,7 +1027,7 @@
         <contextOpType>Vop/VRayNodeRenderChannelBumpNormals</contextOpType>
     </toolMenuContext>
 
-    <toolSubmenu>Render channel</toolSubmenu>
+    <toolSubmenu>Render Channel</toolSubmenu>
 
     <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelBumpNormals', nodename="bumpnormals")]]></script>
 </tool>
@@ -1039,7 +1039,7 @@
         <contextOpType>Vop/VRayNodeRenderChannelColor</contextOpType>
     </toolMenuContext>
 
-    <toolSubmenu>Render channel</toolSubmenu>
+    <toolSubmenu>Render Channel</toolSubmenu>
 
     <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelColor', nodename="colorchannel")]]></script>
 </tool>
@@ -1051,7 +1051,7 @@
         <contextOpType>Vop/VRayNodeRenderChannelCoverage</contextOpType>
     </toolMenuContext>
 
-    <toolSubmenu>Render channel</toolSubmenu>
+    <toolSubmenu>Render Channel</toolSubmenu>
 
     <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelCoverage', nodename="coverage")]]></script>
 </tool>
@@ -1063,7 +1063,7 @@
         <contextOpType>Vop/VRayNodeRenderChannelDRBucket</contextOpType>
     </toolMenuContext>
 
-    <toolSubmenu>Render channel</toolSubmenu>
+    <toolSubmenu>Render Channel</toolSubmenu>
 
     <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelDRBucket', nodename="drbucket")]]></script>
 </tool>
@@ -1075,7 +1075,7 @@
         <contextOpType>Vop/VRayNodeRenderChannelExtraTex</contextOpType>
     </toolMenuContext>
 
-    <toolSubmenu>Render channel</toolSubmenu>
+    <toolSubmenu>Render Channel</toolSubmenu>
 
     <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelExtraTex', nodename="extratex")]]></script>
 </tool>
@@ -1087,7 +1087,7 @@
         <contextOpType>Vop/VRayNodeRenderChannelGlossiness</contextOpType>
     </toolMenuContext>
 
-    <toolSubmenu>Render channel</toolSubmenu>
+    <toolSubmenu>Render Channel</toolSubmenu>
 
     <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelGlossiness', nodename="glossiness")]]></script>
 </tool>
@@ -1099,7 +1099,7 @@
         <contextOpType>Vop/VRayNodeRenderChannelLightSelect</contextOpType>
     </toolMenuContext>
 
-    <toolSubmenu>Render channel</toolSubmenu>
+    <toolSubmenu>Render Channel</toolSubmenu>
 
     <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelLightSelect', nodename="lightselect")]]></script>
 </tool>
@@ -1111,7 +1111,7 @@
         <contextOpType>Vop/VRayNodeRenderChannelMultiMatte</contextOpType>
     </toolMenuContext>
 
-    <toolSubmenu>Render channel</toolSubmenu>
+    <toolSubmenu>Render Channel</toolSubmenu>
 
     <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelMultiMatte', nodename="multimatte")]]></script>
 </tool>
@@ -1123,7 +1123,7 @@
         <contextOpType>Vop/VRayNodeRenderChannelNodeID</contextOpType>
     </toolMenuContext>
 
-    <toolSubmenu>Render channel</toolSubmenu>
+    <toolSubmenu>Render Channel</toolSubmenu>
 
     <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelNodeID', nodename="nodeid")]]></script>
 </tool>
@@ -1135,7 +1135,7 @@
         <contextOpType>Vop/VRayNodeRenderChannelNormals</contextOpType>
     </toolMenuContext>
 
-    <toolSubmenu>Render channel</toolSubmenu>
+    <toolSubmenu>Render Channel</toolSubmenu>
 
     <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelNormals', nodename="normals")]]></script>
 </tool>
@@ -1147,7 +1147,7 @@
         <contextOpType>Vop/VRayNodeRenderChannelObjectSelect</contextOpType>
     </toolMenuContext>
 
-    <toolSubmenu>Render channel</toolSubmenu>
+    <toolSubmenu>Render Channel</toolSubmenu>
 
     <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelObjectSelect', nodename="objectselect")]]></script>
 </tool>
@@ -1159,7 +1159,7 @@
         <contextOpType>Vop/VRayNodeRenderChannelRenderID</contextOpType>
     </toolMenuContext>
 
-    <toolSubmenu>Render channel</toolSubmenu>
+    <toolSubmenu>Render Channel</toolSubmenu>
 
     <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelRenderID', nodename="renderid")]]></script>
 </tool>
@@ -1171,7 +1171,7 @@
         <contextOpType>Vop/VRayNodeRenderChannelVelocity</contextOpType>
     </toolMenuContext>
 
-    <toolSubmenu>Render channel</toolSubmenu>
+    <toolSubmenu>Render Channel</toolSubmenu>
 
     <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelVelocity', nodename="velocity")]]></script>
 </tool>
@@ -1183,7 +1183,7 @@
         <contextOpType>Vop/VRayNodeRenderChannelZDepth</contextOpType>
     </toolMenuContext>
 
-    <toolSubmenu>Render channel</toolSubmenu>
+    <toolSubmenu>Render Channel</toolSubmenu>
 
     <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelZDepth', nodename="z-depth")]]></script>
 </tool>

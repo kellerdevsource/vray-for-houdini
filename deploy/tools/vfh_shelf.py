@@ -43,7 +43,7 @@ for pluginID in sorted(PLUGINS_DESCS):
         menu_name = "Mapping"
 
     if menu_name != "BRDF":
-        menu_name = menu_name.capitalize()
+        menu_name = menu_name.title()
 
     tools += TOOL_TMPL.format(
         CONTEXT="vop",
