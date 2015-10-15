@@ -629,9 +629,9 @@ void VRayExporter::RtCallbackMtlOut(OP_Node *caller, void *callee, OP_EventType 
 	PRINT_INFO("RtCallbackMtl: %s from \"%s\"",
 			   OPeventToString(type), caller->getName().buffer());
 
-	if (   type == OP_PARM_CHANGED
-		   || type == OP_INPUT_CHANGED
-		   || type == OP_INPUT_REWIRED)
+	if (type == OP_PARM_CHANGED ||
+		type == OP_INPUT_CHANGED ||
+		type == OP_INPUT_REWIRED)
 	{
 		exporter->exportMtlOut(caller);
 	}
@@ -654,20 +654,18 @@ VRay::Plugin VRayExporter::exportMtlOut(OP_Node *op_node)
 		VOP::NodeBase *input = dynamic_cast<VOP::NodeBase*>(mtl_out->getInput(idx));
 		if (input) {
 			switch (mtl_out->getInputType(idx)) {
-				case VOP_SURFACE_SHADER:
-				{
+				case VOP_SURFACE_SHADER: {
 					material = exportVop(input);
 					break;
 				}
-				case VOP_TYPE_BSDF:
-				{
+				case VOP_TYPE_BSDF: {
 					VRay::Plugin pluginBRDF = exportVop(input);
-					Attrs::PluginDesc mtlPluginDesc;
-					mtlPluginDesc.pluginName = Attrs::PluginDesc::GetPluginName(input, "Mtl@");
-					mtlPluginDesc.pluginID   = "MtlSingleBRDF";
-					mtlPluginDesc.addAttribute(Attrs::PluginAttr("brdf", pluginBRDF));
-					material = exportPlugin(mtlPluginDesc);
 
+					// Wrap BRDF into MtlSingleBRDF for RT GPU to work properly
+					Attrs::PluginDesc mtlPluginDesc(input, "MtlSingleBRDF", "Mtl@");
+					mtlPluginDesc.addAttribute(Attrs::PluginAttr("brdf", pluginBRDF));
+
+					material = exportPlugin(mtlPluginDesc);
 					break;
 				}
 				default:
@@ -676,10 +674,13 @@ VRay::Plugin VRayExporter::exportMtlOut(OP_Node *op_node)
 			}
 
 			if (material) {
-				Attrs::PluginDesc pluginDesc;
-				pluginDesc.pluginName = Attrs::PluginDesc::GetPluginName(mtl_out->getParent(), "Mtl@");
-				pluginDesc.pluginID   = "MtlRenderStats";
+				// Wrap material into MtlRenderStats to always have the same material name
+				// Used when rewiring materials when running interactive RT session
+				// TODO: Do not use for non-interactive export
+				//
+				Attrs::PluginDesc pluginDesc(mtl_out->getParent(), "MtlRenderStats", "Mtl@");
 				pluginDesc.addAttribute(Attrs::PluginAttr("base_mtl", material));
+
 				material = exportPlugin(pluginDesc);
 			}
 		}
@@ -964,9 +965,10 @@ void VRayExporter::RtCallbackObjManager(OP_Node *caller, void *callee, OP_EventT
 	PRINT_INFO("RtCallbackObjManager: %s from \"%s\"",
 			   OPeventToString(type), caller->getName().buffer());
 
-	if (   type == OP_CHILD_CREATED
-		   || type == OP_CHILD_DELETED
-		   )
+	// NOTE: Use OP_GROUPLIST_CHANGED instead of OP_CHILD_CREATED,
+	// OP_CHILD_CREATED gives intermediate node, not the final one
+	if (type == OP_GROUPLIST_CHANGED ||
+		type == OP_CHILD_DELETED)
 	{
 		OP_Network *obj_manager = OPgetDirector()->getManager("obj");
 		obj_manager->traverseChildren(VRayExporter::TraverseOBJs, exporter, false);
