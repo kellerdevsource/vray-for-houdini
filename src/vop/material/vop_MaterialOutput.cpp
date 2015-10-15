@@ -93,7 +93,6 @@ void VOP::MaterialOutput::getInputNameSubclass(UT_String &in, int idx) const
 			const std::string &label = boost::str(FmtShader % (idx + 1));
 			in = label.c_str();
 	}
-
 }
 
 

@@ -677,16 +677,11 @@ VRay::Plugin VRayExporter::exportMtlOut(OP_Node *op_node)
 				// Wrap material into MtlRenderStats to always have the same material name
 				// Used when rewiring materials when running interactive RT session
 				// TODO: Do not use for non-interactive export
-				//
 				Attrs::PluginDesc pluginDesc(mtl_out->getParent(), "MtlRenderStats", "Mtl@");
 				pluginDesc.addAttribute(Attrs::PluginAttr("base_mtl", material));
 
 				material = exportPlugin(pluginDesc);
 			}
-		}
-		else {
-			PRINT_ERROR("Unsupported input type for node \"%s\", input %d!",
-						mtl_out->getName().buffer(), idx);
 		}
 	}
 
