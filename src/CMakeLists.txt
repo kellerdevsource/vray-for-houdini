@@ -67,7 +67,9 @@ link_with_boost(${PROJECT_NAME})
 
 # Install shelf and icon locally
 #
-install(FILES       ${CMAKE_SOURCE_DIR}/deploy/vfh.shelf
+file(GLOB VFH_SHELVES ${CMAKE_SOURCE_DIR}/deploy/vfh*.shelf)
+
+install(FILES       ${VFH_SHELVES}
 		DESTINATION ${HOUDINI_HOME_PATH}/toolbar)
 
 install(FILES       ${CMAKE_SOURCE_DIR}/deploy/ROP_vray.svg
@@ -137,7 +139,7 @@ if(INSTALL_RELEASE)
 		cgr_install_runtime(${PROJECT_NAME} ${INSTALL_RELEASE_PATH}/dso)
 
 		# Copy UI & scripts
-		install(FILES       ${CMAKE_SOURCE_DIR}/deploy/vfh.shelf
+		install(FILES       ${VFH_SHELVES}
 				DESTINATION ${INSTALL_RELEASE_PATH}/deploy)
 
 		install(FILES       ${CMAKE_SOURCE_DIR}/deploy/ROP_vray.svg

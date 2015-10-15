@@ -20,6 +20,8 @@
 
 #include "sop/sop_vrayproxy.h"
 #include "sop/sop_vrayscene.h"
+#include "vop/vop_node_base.h"
+
 #include "vfh_exporter.h"
 
 #include <SHOP/SHOP_Node.h>
@@ -231,6 +233,8 @@ VRay::Plugin VRayExporter::exportObject(OBJ_Node *obj_node)
 #endif
 		}
 		else {
+			std::vector<SHOPOutput> shopOutList;
+
 			VRayForHoudini::SHOPToID shopToID;
 			VRay::Plugin geom = exportNodeData(geom_node, shopToID);
 			if (geom) {
@@ -241,41 +245,17 @@ VRay::Plugin VRayExporter::exportObject(OBJ_Node *obj_node)
 					PRINT_INFO("  Found material: \"%s\" [%s]",
 							   shop_node->getName().buffer(), shop_node->getOperator()->getName().buffer());
 
-					const UT_String &shopOpName = shop_node->getOperator()->getName();
-
-					if (shopOpName.equal("material")) {
-						Attrs::PluginDesc mtlMultiDesc(shop_node, "MtlMulti");
-
-						const int numMaterials = shop_node->evalInt("num_materials", 0, 0.0);
-
-						VRay::ValueList mtls_list;
-						VRay::ValueList ids_list;
-
-						for (int i = 1; i <= numMaterials; ++i) {
-							UT_String mtl_name;
-							shop_node->evalStringInst("shop_materialpath#", &i, mtl_name, 0, 0.0);
-
-							if (mtl_name.buffer()) {
-								OP_Node *op_node = OPgetDirector()->findNode(mtl_name.buffer());
-
-								mtls_list.push_back(VRay::Value(exportMaterial(op_node->castToSHOPNode())));
-							}
-						}
-
-						mtlMultiDesc.addAttribute(Attrs::PluginAttr("mtls_list", mtls_list));
-						mtlMultiDesc.addAttribute(Attrs::PluginAttr("ids_list",  ids_list));
-
-						mtl = exportPlugin(mtlMultiDesc);
-					}
-					else {
-						mtl = exportMaterial(shop_node);
-					}
+					SHOPOutput shopOut;
+					mtl = exportMaterial(shop_node, &shopOut);
+					shopOutList.push_back(shopOut);
 				}
 				else if (shopToID.size()) {
 					if (shopToID.size() == 1) {
 						OP_Node *op_node = OPgetDirector()->findNode(shopToID.begin().key());
 						if (op_node) {
-							mtl = exportMaterial(op_node->castToSHOPNode());
+							SHOPOutput shopOut;
+							mtl = exportMaterial(op_node->castToSHOPNode(), &shopOut);
+							shopOutList.push_back(shopOut);
 						}
 					}
 					else {
@@ -296,8 +276,11 @@ VRay::Plugin VRayExporter::exportObject(OBJ_Node *obj_node)
 								PRINT_INFO(" %i: \"%s\"",
 										   material_id, shop_materialpath);
 
-								mtls_list.push_back(VRay::Value(exportMaterial(op_node->castToSHOPNode())));
+								SHOPOutput shopOut;
+								mtls_list.push_back(VRay::Value(exportMaterial(op_node->castToSHOPNode(), &shopOut)));
 								ids_list.push_back(material_id);
+
+								shopOutList.push_back(shopOut);
 							}
 						}
 

@@ -18,6 +18,8 @@
 
 #include "vop_node_base.h"
 #include "vop_MtlMulti.h"
+#include "vop_GeomDisplacedMesh.h"
+#include "vop_GeomStaticSmoothedMesh.h"
 #include "vop_MaterialOutput.h"
 
 namespace VRayForHoudini {

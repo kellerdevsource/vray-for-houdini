@@ -20,6 +20,8 @@
 
 #include "obj/obj_node_base.h"
 #include "vop/vop_node_base.h"
+#include "vop/material/vop_mtl_def.h"
+
 #include "sop/sop_vrayproxy.h"
 #include "sop/sop_vrayscene.h"
 
@@ -620,7 +622,79 @@ VRay::Plugin VRayExporter::exportVop(OP_Node *op_node)
 }
 
 
-VRay::Plugin VRayExporter::exportMaterial(SHOP_Node *shop_node)
+void VRayExporter::RtCallbackMtlOut(OP_Node *caller, void *callee, OP_EventType type, void *data)
+{
+	VRayExporter *exporter = (VRayExporter*)callee;
+
+	PRINT_INFO("RtCallbackMtl: %s from \"%s\"",
+			   OPeventToString(type), caller->getName().buffer());
+
+	if (type == OP_PARM_CHANGED ||
+		type == OP_INPUT_CHANGED ||
+		type == OP_INPUT_REWIRED)
+	{
+		exporter->exportMtlOut(caller);
+	}
+	else if (type == OP_NODE_PREDELETE) {
+		caller->removeOpInterest(exporter, VRayExporter::RtCallbackMtlOut);
+	}
+}
+
+
+VRay::Plugin VRayExporter::exportMtlOut(OP_Node *op_node)
+{
+	VRay::Plugin material;
+
+	VOP::MaterialOutput *mtl_out = static_cast<VOP::MaterialOutput *>(op_node);
+	if (mtl_out->error() < UT_ERROR_ABORT ) {
+		PRINT_INFO("Exporting material output \"%s\"...",
+				   mtl_out->getName().buffer());
+
+		const int idx = mtl_out->getInputFromName("Material");
+		VOP::NodeBase *input = dynamic_cast<VOP::NodeBase*>(mtl_out->getInput(idx));
+		if (input) {
+			switch (mtl_out->getInputType(idx)) {
+				case VOP_SURFACE_SHADER: {
+					material = exportVop(input);
+					break;
+				}
+				case VOP_TYPE_BSDF: {
+					VRay::Plugin pluginBRDF = exportVop(input);
+
+					// Wrap BRDF into MtlSingleBRDF for RT GPU to work properly
+					Attrs::PluginDesc mtlPluginDesc(input, "MtlSingleBRDF", "Mtl@");
+					mtlPluginDesc.addAttribute(Attrs::PluginAttr("brdf", pluginBRDF));
+
+					material = exportPlugin(mtlPluginDesc);
+					break;
+				}
+				default:
+					PRINT_ERROR("Unsupported input type for node \"%s\", input %d!",
+								mtl_out->getName().buffer(), idx);
+			}
+
+			if (material) {
+				// Wrap material into MtlRenderStats to always have the same material name
+				// Used when rewiring materials when running interactive RT session
+				// TODO: Do not use for non-interactive export
+				//
+				Attrs::PluginDesc pluginDesc(mtl_out->getParent(), "MtlRenderStats", "Mtl@");
+				pluginDesc.addAttribute(Attrs::PluginAttr("base_mtl", material));
+
+				material = exportPlugin(pluginDesc);
+			}
+		}
+		else {
+			PRINT_ERROR("Unsupported input type for node \"%s\", input %d!",
+						mtl_out->getName().buffer(), idx);
+		}
+	}
+
+	return material;
+}
+
+
+VRay::Plugin VRayExporter::exportMaterial(SHOP_Node *shop_node, SHOPOutput *shopOutput)
 {
 	VRay::Plugin material;
 
@@ -630,22 +704,17 @@ VRay::Plugin VRayExporter::exportMaterial(SHOP_Node *shop_node)
 					shop_node->getName().buffer());
 	}
 	else {
-		VOP_Node *vop_node = op_node->castToVOPNode();
+		VOP::MaterialOutput *mtl_out = static_cast<VOP::MaterialOutput *>(op_node);
 
-		PRINT_INFO("Exporting material \"%s\"...",
-				   vop_node->getName().buffer());
+		addOpCallback(mtl_out, VRayExporter::RtCallbackMtlOut);
+		material = exportMtlOut(mtl_out);
 
-		const unsigned num_inputs = vop_node->getNumVisibleInputs();
-		for (unsigned i = 0; i < num_inputs; ++i) {
-			OP_Input *input = vop_node->getInputReferenceConst(i);
-			if (input) {
-				OP_Node *connNode = input->getNode();
-				if (connNode) {
-					material = exportVop(connNode);
-					// Return first connected by now
-					break;
-				}
-			}
+		if (shopOutput) {
+			int idx = mtl_out->getInputFromName("Material");
+			shopOutput->m_material = mtl_out->getInput(idx);
+
+			idx = mtl_out->getInputFromName("Geometry");
+			shopOutput->m_geometry = mtl_out->getInput(idx);
 		}
 	}
 
@@ -654,7 +723,6 @@ VRay::Plugin VRayExporter::exportMaterial(SHOP_Node *shop_node)
 
 
 #ifdef CGR_HAS_VRAYSCENE
-
 VRay::Plugin VRayExporter::exportVRayScene(OBJ_Node *obj_node, SOP_Node *geom_node)
 {
 	SOP::VRayScene *vraySceneNode = static_cast<SOP::VRayScene*>(geom_node);
@@ -897,9 +965,10 @@ void VRayExporter::RtCallbackObjManager(OP_Node *caller, void *callee, OP_EventT
 	PRINT_INFO("RtCallbackObjManager: %s from \"%s\"",
 			   OPeventToString(type), caller->getName().buffer());
 
-	if (   type == OP_CHILD_CREATED
-		   || type == OP_CHILD_DELETED
-		   )
+	// NOTE: Use OP_GROUPLIST_CHANGED instead of OP_CHILD_CREATED,
+	// OP_CHILD_CREATED gives intermediate node, not the final one
+	if (type == OP_GROUPLIST_CHANGED ||
+		type == OP_CHILD_DELETED)
 	{
 		OP_Network *obj_manager = OPgetDirector()->getManager("obj");
 		obj_manager->traverseChildren(VRayExporter::TraverseOBJs, exporter, false);
