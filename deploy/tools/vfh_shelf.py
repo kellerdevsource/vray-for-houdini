@@ -29,7 +29,7 @@ for filePath in descDirpath.glob("*/*.json"):
 
 tools = ""
 
-for pluginID in PLUGINS_DESCS:
+for pluginID in sorted(PLUGINS_DESCS):
     pluginDesc = PLUGINS_DESCS[pluginID]
 
     name = pluginDesc['Name']
