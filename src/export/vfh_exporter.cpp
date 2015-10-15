@@ -677,7 +677,7 @@ VRay::Plugin VRayExporter::exportMtlOut(OP_Node *op_node)
 
 			if (material) {
 				Attrs::PluginDesc pluginDesc;
-				pluginDesc.pluginName = Attrs::PluginDesc::GetPluginName(mtl_out->getParent());
+				pluginDesc.pluginName = Attrs::PluginDesc::GetPluginName(mtl_out->getParent(), "Mtl@");
 				pluginDesc.pluginID   = "MtlRenderStats";
 				pluginDesc.addAttribute(Attrs::PluginAttr("base_mtl", material));
 				material = exportPlugin(pluginDesc);
@@ -693,7 +693,7 @@ VRay::Plugin VRayExporter::exportMtlOut(OP_Node *op_node)
 }
 
 
-VRay::Plugin VRayExporter::exportMaterial(SHOP_Node *shop_node)
+VRay::Plugin VRayExporter::exportMaterial(SHOP_Node *shop_node, SHOPOutput *shopOutput)
 {
 	VRay::Plugin material;
 
@@ -708,10 +708,12 @@ VRay::Plugin VRayExporter::exportMaterial(SHOP_Node *shop_node)
 		addOpCallback(mtl_out, VRayExporter::RtCallbackMtlOut);
 		material = exportMtlOut(mtl_out);
 
-		const int idx = mtl_out->getInputFromName("Geometry");
-		OP_Node *input = mtl_out->getInput(idx);
-		if (input) {
-			// TODO: need to return displacement node
+		if (shopOutput) {
+			int idx = mtl_out->getInputFromName("Material");
+			shopOutput->m_material = mtl_out->getInput(idx);
+
+			idx = mtl_out->getInputFromName("Geometry");
+			shopOutput->m_geometry = mtl_out->getInput(idx);
 		}
 	}
 

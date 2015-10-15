@@ -424,7 +424,7 @@ PRM_Template* Parm::GeneratePrmTemplate(const std::string &pluginType, const std
 		}
 	}
 	else if (pluginType == "GEOMETRY") {
-		pluginInfo->outputs.push_back(SocketDesc(PRM_Name("Geometry", "Geometry"), VOP_TYPE_BSDF));
+		pluginInfo->outputs.push_back(SocketDesc(PRM_Name("Geometry", "Geometry"), VOP_GEOMETRY_SHADER));
 	}
 	else if (pluginType == "RENDERCHANNEL" && NOT(pluginID == "SettingsRenderChannels")) {
 		pluginInfo->outputs.push_back(SocketDesc(PRM_Name("Channel", "Channel"), VOP_TYPE_VOID));
@@ -727,12 +727,6 @@ PRM_Template* Parm::GeneratePrmTemplate(const std::string &pluginType, const std
 		}
 		else if (pluginID == "GeomPlane") {
 			SOP::GeomPlane::AddAttributes(pluginInfo);
-		}
-		else if (pluginID == "GeomDisplacedMesh") {
-			SOP::GeomDisplacedMesh::AddAttributes(pluginInfo);
-		}
-		else if (pluginID == "GeomStaticSmoothedMesh") {
-			SOP::GeomStaticSmoothedMesh::AddAttributes(pluginInfo);
 		}
 		else if (pluginID == "CustomTextureOutput") {
 			VOP::TextureOutput::AddAttributes(pluginInfo);

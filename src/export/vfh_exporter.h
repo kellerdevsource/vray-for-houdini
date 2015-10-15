@@ -29,6 +29,15 @@
 namespace VRayForHoudini {
 
 typedef VUtils::HashMap<int> SHOPToID;
+struct SHOPOutput {
+	SHOPOutput():
+		m_material(nullptr),
+		m_geometry(nullptr)
+	{ }
+
+	OP_Node *m_material;
+	OP_Node *m_geometry;
+};
 
 enum VRayLightType {
 	VRayLightOmni      = 0,
@@ -99,7 +108,7 @@ public:
 
 	VRay::Plugin            exportLight(OBJ_Node *obj_node);
 
-	VRay::Plugin            exportMaterial(SHOP_Node *shop_node);
+	VRay::Plugin            exportMaterial(SHOP_Node *shop_node, SHOPOutput *shopOutput = nullptr);
 	VRay::Plugin            exportMtlOut(OP_Node *op_node);
 
 	VRay::Plugin            exportVop(OP_Node *op_node);

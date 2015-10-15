@@ -85,8 +85,6 @@ void newSopOperator(OP_OperatorTable *table)
 	VFH_SOP_ADD_OPERATOR_AUTO(table, "GEOMETRY", GeomPlane);
 
 	VFH_SOP_ADD_OPERATOR_AUTO_INPUTS(table, "GEOMETRY", GeomMayaHair, 1, 1);
-	VFH_SOP_ADD_OPERATOR_AUTO_INPUTS(table, "GEOMETRY", GeomDisplacedMesh, 1, 1);
-	VFH_SOP_ADD_OPERATOR_AUTO_INPUTS(table, "GEOMETRY", GeomStaticSmoothedMesh, 1, 1);
 #ifdef CGR_HAS_VRAYSCENE
 	VFH_SOP_ADD_OPERATOR_AUTO(table,           "GEOMETRY", VRayScene);
 #endif
@@ -183,6 +181,9 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", MtlVRmat);
 	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", MtlWrapper);
 	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", MtlWrapperMaya);
+
+	VFH_VOP_ADD_OPERATOR(table, "GEOMETRY", GeomDisplacedMesh);
+	VFH_VOP_ADD_OPERATOR(table, "GEOMETRY", GeomStaticSmoothedMesh);
 
 	VFH_VOP_ADD_OPERATOR_CUSTOM(table, "TEXTURE", MetaImageFile, VOP::MetaImageFile::GetPrmTemplate());
 
