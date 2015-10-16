@@ -88,6 +88,7 @@ if(USE_LAUNCHER)
 	if(WIN32)
 		set(HFS_RUN_FILE_IN  "${CMAKE_SOURCE_DIR}/misc/hfs.bat.in")
 		set(HFS_RUN_FILE_OUT "${CMAKE_BINARY_DIR}/misc/hfs.bat")
+		set(HFS_RUN_FILE_DST "$ENV{USERPROFILE}/Desktop")
 
 		configure_file(${HFS_RUN_FILE_IN} ${HFS_RUN_FILE_OUT} @ONLY)
 
