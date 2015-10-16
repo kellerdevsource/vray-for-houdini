@@ -108,7 +108,7 @@ public:
 
 	VRayProxyCache() :
 		m_proxy(nullptr)
-	{ m_frameCache.setEvictCallback(typename FrameCache::CbEvict(boost::bind(&VRayProxyCache::evictFrame, this, _1, _2))); }
+	{ m_frameCache.setEvictCallback(FrameCache::CbEvict(boost::bind(&VRayProxyCache::evictFrame, this, _1, _2))); }
 
 	~VRayProxyCache()
 	{ reset(); }
@@ -247,7 +247,7 @@ public:
 
 		CachedFrame& frameData = m_frameCache[frameIdx];
 		for (auto const &itemKey : frameData.m_itemKeys) {
-			typename ItemCache::iterator itemIt = m_itemCache.find(itemKey);
+			ItemCache::iterator itemIt = m_itemCache.find(itemKey);
 			vassert( itemIt != m_itemCache.end() );
 
 			CachedItem &itemData = *itemIt;
