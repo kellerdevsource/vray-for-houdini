@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<shelfDocument>
+    <tool name="object_VRayNodeLightDome" label="V-Ray Dome Light" icon="ROP_vray">
+        <readOnly/>
+
+        <toolMenuContext name="network">
+            <contextOpType>Object/VRayNodeLightDome</contextOpType>
+        </toolMenuContext>
+
+        <toolSubmenu>Render</toolSubmenu>
+
+        <script scriptType="python"><![CDATA[import objecttoolutils; objecttoolutils.genericTool(kwargs, 'VRayNodeLightDome', nodename="domelight")]]></script>
+    </tool>
+</shelfDocument>

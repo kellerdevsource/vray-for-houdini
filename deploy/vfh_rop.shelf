@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<shelfDocument>
+    <tool name="driver_vray_renderer" label="Renderer" icon="ROP_vray">
+        <readOnly/>
+
+        <toolMenuContext name="network">
+            <contextOpType>Driver/vray_renderer</contextOpType>
+        </toolMenuContext>
+
+        <toolSubmenu>Render/V-Ray</toolSubmenu>
+
+        <script scriptType="python"><![CDATA[import drivertoolutils; drivertoolutils.genericTool(kwargs, 'vray_renderer', nodename="vray")]]></script>
+    </tool>
+
+    <tool name="driver_vray_render_channels" label="Render Channels" icon="ROP_vray">
+        <readOnly/>
+
+        <toolMenuContext name="network">
+            <contextOpType>Driver/vray_render_channels</contextOpType>
+        </toolMenuContext>
+
+        <toolSubmenu>Render/V-Ray</toolSubmenu>
+
+        <script scriptType="python"><![CDATA[import drivertoolutils; drivertoolutils.genericTool(kwargs, 'vray_render_channels', nodename="render_channels")]]></script>
+    </tool>
+
+    <tool name="driver_vray_environment" label="Environment" icon="ROP_vray">
+        <readOnly/>
+
+        <toolMenuContext name="network">
+            <contextOpType>Driver/vray_environment</contextOpType>
+        </toolMenuContext>
+
+        <toolSubmenu>Render/V-Ray</toolSubmenu>
+
+        <script scriptType="python"><![CDATA[import drivertoolutils; drivertoolutils.genericTool(kwargs, 'vray_environment', nodename="env")]]></script>
+    </tool>
+</shelfDocument>
