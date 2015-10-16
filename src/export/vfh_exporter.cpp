@@ -689,7 +689,7 @@ VRay::Plugin VRayExporter::exportMtlOut(OP_Node *op_node)
 }
 
 
-VRay::Plugin VRayExporter::exportMaterial(SHOP_Node *shop_node, SHOPOutput *shopOutput)
+VRay::Plugin VRayExporter::exportMaterial(SHOP_Node *shop_node, SHOPInfo *shopOutput)
 {
 	VRay::Plugin material;
 
@@ -705,6 +705,7 @@ VRay::Plugin VRayExporter::exportMaterial(SHOP_Node *shop_node, SHOPOutput *shop
 		material = exportMtlOut(mtl_out);
 
 		if (shopOutput) {
+			shopOutput->m_shop = shop_node;
 			int idx = mtl_out->getInputFromName("Material");
 			shopOutput->m_material = mtl_out->getInput(idx);
 
