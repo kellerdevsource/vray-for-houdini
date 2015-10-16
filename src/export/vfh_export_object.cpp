@@ -31,6 +31,23 @@
 using namespace VRayForHoudini;
 
 
+SHOP_Node *VRayExporter::objGetMaterialNode(OBJ_Node *obj_node, fpreal t)
+{
+	SHOP_Node *shop_node = nullptr;
+
+#if UT_MAJOR_VERSION_INT >= 15
+	OP_Node *op_node = obj_node->getMaterialNode(t);
+	if (op_node) {
+		shop_node = op_node->castToSHOPNode();
+	}
+#else
+	shop_node = obj_node->getMaterialNode(t);
+#endif
+
+	return shop_node;
+}
+
+
 void VRayExporter::RtCallbackNode(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
 	VRayExporter *exporter = (VRayExporter*)callee;
@@ -53,7 +70,7 @@ void VRayExporter::RtCallbackNode(OP_Node *caller, void *callee, OP_EventType ty
 		VRay::Plugin mtl;
 		// XXX: Get parameter and check it's name
 		if (idx == 19) {
-			SHOP_Node *shop_node = obj_node->getMaterialNode(0.0);
+			SHOP_Node *shop_node = exporter->objGetMaterialNode(obj_node);
 			if (shop_node) {
 				mtl = exporter->exportMaterial(shop_node);
 			}
@@ -259,7 +276,7 @@ VRay::Plugin VRayExporter::exportObject(OBJ_Node *obj_node)
 			if (geom) {
 				VRay::Plugin mtl;
 
-				SHOP_Node *shop_node = obj_node->getMaterialNode(t);
+				SHOP_Node *shop_node = objGetMaterialNode(obj_node, t);
 				if (shop_node) {
 					PRINT_INFO("  Found material: \"%s\" [%s]",
 							   shop_node->getName().buffer(), shop_node->getOperator()->getName().buffer());

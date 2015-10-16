@@ -15,6 +15,7 @@
 
 #include "vfh_exporter.h"
 #include "vfh_mesh_utils.h"
+#include "vfh_ga_utils.h"
 
 #include <SOP/SOP_Node.h>
 #include <GU/GU_Detail.h>
@@ -124,7 +125,9 @@ void VRayExporter::exportGeomStaticMeshDesc(const GU_Detail &gdp, SHOPToID &shop
 						continue;
 					}
 
-					Mesh::MapChannel &map_channel = map_channels_data[vertex_attr->getName()];
+					const char *vertexAttrName = GA::getGaAttributeName(*vertex_attr);
+
+					Mesh::MapChannel &map_channel = map_channels_data[vertexAttrName];
 
 					if (prim->getTypeId().get() == GEO_PRIMPOLYSOUP) {
 						const GU_PrimPolySoup *polySoup = static_cast<const GU_PrimPolySoup*>(prim);
@@ -262,9 +265,11 @@ void VRayExporter::exportGeomStaticMeshDesc(const GU_Detail &gdp, SHOPToID &shop
 
 				int faceMapVertIndex = 0;
 
+				const char *vertexAttrName = GA::getGaAttributeName(*vertex_attr);
+
 				for (GA_Iterator jt(gdp.getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
 					const GEO_Primitive *face = gdp.getGEOPrimitive(*jt);
-					Mesh::MapChannel &map_channel = map_channels_data[vertex_attr->getName()];
+					Mesh::MapChannel &map_channel = map_channels_data[vertexAttrName];
 
 					const int &v0 = map_channel.verticesSet.find(Mesh::MapVertex(hndl_vertex_attr.get(face->getVertexOffset(0))))->index;
 					const int &v1 = map_channel.verticesSet.find(Mesh::MapVertex(hndl_vertex_attr.get(face->getVertexOffset(1))))->index;

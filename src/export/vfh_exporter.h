@@ -152,6 +152,8 @@ public:
 	VRay::Plugin            exportGeomMayaHair(SOP_Node *sop_node, const GU_Detail *gdp);
 	void                    exportGeomMayaHairGeom(SOP_Node *sop_node, const GU_Detail *gdp, Attrs::PluginDesc &pluginDesc);
 
+	SHOP_Node              *objGetMaterialNode(OBJ_Node *obj, fpreal t=0.0);
+
 public:
 	static OP_Input               *getConnectedInput(OP_Node *op_node, const std::string &inputName);
 	static OP_Node                *getConnectedNode(OP_Node *op_node, const std::string &inputName);
