@@ -64,7 +64,6 @@ VRay::Transform VRayExporter::Matrix4ToTransform(const UT_Matrix4D &m4, bool fli
 
 	if (flip) {
 		VUtils::swap(tm.matrix[1], tm.matrix[2]);
-		tm.matrix[2] = -tm.matrix[2];
 	}
 
 	return tm;
