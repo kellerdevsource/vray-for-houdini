@@ -31,6 +31,7 @@
 
 using namespace VRayForHoudini;
 
+
 enum DataError {
 	DE_INVALID_GEOM = 1,
 	DE_NO_GEOM,
@@ -354,12 +355,13 @@ private:
 
 		const double animOffset = opParams.evalFloat("anim_offset", 0, 0.0f);
 		const double animSpeed = opParams.evalFloat("anim_speed", 0, 0.0f);
-		return static_cast<FrameKey>(std::round(VUtils::calcFrameIndex(frame,
+
+		return static_cast<FrameKey>(VUtils::fast_round((VUtils::calcFrameIndex(frame,
 															static_cast<VUtils::MeshFileAnimType::Enum>(animType),
 															animStart,
 															animLength,
 															animOffset,
-															animSpeed)));
+															animSpeed))));
 	}
 
 	VUtils::MeshVoxel *getPreviewVoxel(const FrameKey &frameKey) const

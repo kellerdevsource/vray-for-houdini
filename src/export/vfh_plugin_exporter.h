@@ -457,8 +457,8 @@ struct AppSdkInit {
 	}
 
 private:
-	AppSdkInit(const AppSdkInit&) = delete;
-	AppSdkInit& operator=(const AppSdkInit&) = delete;
+	AppSdkInit(const AppSdkInit&);
+	AppSdkInit& operator=(const AppSdkInit&);
 
 	VRay::VRayInit *m_vrayInit;
 
