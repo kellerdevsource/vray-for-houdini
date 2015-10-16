@@ -95,10 +95,11 @@ void VRayExporter::RtCallbackNodeData(OP_Node *caller, void *callee, OP_EventTyp
 	PRINT_INFO("RtCallbackNodeData: %s from \"%s\"",
 			   OPeventToString(type), caller->getName().buffer());
 
-	if (   type == OP_PARM_CHANGED
-		|| type == OP_INPUT_CHANGED
-		|| type == OP_INPUT_REWIRED
-		)
+	if (type == OP_PARM_CHANGED ||
+		type == OP_INPUT_CHANGED ||
+		// TODO: Improve handling by checking the exact flag if possible
+		type == OP_FLAG_CHANGED ||
+		type == OP_INPUT_REWIRED)
 	{
 		OP_Network *parent = caller->getParent();
 		if (parent) {
