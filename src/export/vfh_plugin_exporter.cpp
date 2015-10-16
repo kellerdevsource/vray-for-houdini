@@ -228,7 +228,14 @@ void VRayPluginRenderer::setMode(int mode)
 		return;
 	}
 
-	m_vray->setRenderMode((VRay::RendererOptions::RenderMode)mode);
+	VRay::RendererOptions::RenderMode renderMode = static_cast<VRay::RendererOptions::RenderMode>(mode);
+	m_vray->setRenderMode(renderMode);
+	if (renderMode == VRay::RendererOptions::RENDER_MODE_RT_CPU) {
+		VRay::RendererOptions options = m_vray->getOptions();
+		options.numThreads = VUtils::getNumProcessors() - 1;
+		m_vray->setOptions(options);
+	}
+
 	m_vray->setAutoCommit(true);
 
 	m_vray->setOnDumpMessage(OnDumpMessage,       (void*)&m_callbacks.m_cbOnDumpMessage);
