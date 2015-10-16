@@ -218,9 +218,9 @@ VRayRendererNode::~VRayRendererNode()
 {
 	PRINT_WARN("~VRayRendererNode()");
 
-	if (hasOpInterest(this, VRayRendererNode::RtCallbackRop)) {
-		removeOpInterest(this, VRayRendererNode::RtCallbackRop);
-	}
+#if 0
+	m_exporter.delOpCallback(this, VRayRendererNode::RtCallbackRop);
+#endif
 }
 
 
@@ -328,9 +328,11 @@ int VRayRendererNode::startRender(int nframes, fpreal tstart, fpreal tend)
 
 			executePreRenderScript(m_time_start);
 
+#if 0
 			if (!hasOpInterest(this, VRayRendererNode::RtCallbackRop)) {
-				// addOpInterest(this, VRayRendererNode::RtCallbackRop);
+				addOpInterest(this, VRayRendererNode::RtCallbackRop);
 			}
+#endif
 
 			m_exporter.setRop(this);
 			m_exporter.setMode(renderMode);

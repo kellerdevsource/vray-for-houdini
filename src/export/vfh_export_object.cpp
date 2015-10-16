@@ -66,8 +66,7 @@ void VRayExporter::RtCallbackNode(OP_Node *caller, void *callee, OP_EventType ty
 		exporter->exportNode(obj_node, mtl, VRay::Plugin());
 	}
 	else if (type == OP_NODE_PREDELETE) {
-		// TODO: Remove object for RT
-		caller->removeOpInterest(exporter, VRayExporter::RtCallbackNode);
+		exporter->delOpCallback(caller, VRayExporter::RtCallbackNode);
 	}
 }
 
@@ -93,7 +92,7 @@ void VRayExporter::RtCallbackNodeData(OP_Node *caller, void *callee, OP_EventTyp
 		}
 	}
 	else if (type == OP_NODE_PREDELETE) {
-		caller->removeOpInterest(exporter, VRayExporter::RtCallbackNodeData);
+		exporter->delOpCallback(caller, VRayExporter::RtCallbackNodeData);
 	}
 }
 

@@ -365,7 +365,7 @@ void VRayExporter::RtCallbackView(OP_Node *caller, void *callee, OP_EventType ty
 		exporter->exportCamera(caller);
 	}
 	else if (type == OP_NODE_PREDELETE) {
-		caller->removeOpInterest(exporter, VRayExporter::RtCallbackView);
+		exporter->delOpCallback(caller, VRayExporter::RtCallbackView);
 	}
 }
 
@@ -541,7 +541,7 @@ void VRayExporter::RtCallbackVop(OP_Node *caller, void *callee, OP_EventType typ
 		exporter->exportVop(caller);
 	}
 	else if (type == OP_NODE_PREDELETE) {
-		caller->removeOpInterest(exporter, VRayExporter::RtCallbackVop);
+		exporter->delOpCallback(caller, VRayExporter::RtCallbackVop);
 	}
 }
 
@@ -568,7 +568,7 @@ VRay::Plugin VRayExporter::exportVop(OP_Node *op_node)
 	else if (opType.startsWith("VRayNode")) {
 		VOP::NodeBase *vrayNode = static_cast<VOP::NodeBase*>(vop_node);
 
-		addOpCallback(vop_node, VRayExporter::RtCallbackVop);
+		addOpCallback(op_node, VRayExporter::RtCallbackVop);
 
 		Attrs::PluginDesc pluginDesc;
 
@@ -635,7 +635,7 @@ void VRayExporter::RtCallbackMtlOut(OP_Node *caller, void *callee, OP_EventType 
 		exporter->exportMtlOut(caller);
 	}
 	else if (type == OP_NODE_PREDELETE) {
-		caller->removeOpInterest(exporter, VRayExporter::RtCallbackMtlOut);
+		exporter->delOpCallback(caller, VRayExporter::RtCallbackMtlOut);
 	}
 }
 
@@ -700,7 +700,8 @@ VRay::Plugin VRayExporter::exportMaterial(SHOP_Node *shop_node, SHOPOutput *shop
 	else {
 		VOP::MaterialOutput *mtl_out = static_cast<VOP::MaterialOutput *>(op_node);
 
-		addOpCallback(mtl_out, VRayExporter::RtCallbackMtlOut);
+		addOpCallback(op_node, VRayExporter::RtCallbackMtlOut);
+
 		material = exportMtlOut(mtl_out);
 
 		if (shopOutput) {
@@ -914,7 +915,9 @@ int VRayExporter::isAborted()
 void VRayExporter::resetOpCallbacks()
 {
 	for (auto const &item : m_opRegCallbacks) {
-		delOpCallback(item.op_node, item.cb);
+		if (item.op_node->hasOpInterest(this, item.cb)) {
+			item.op_node->removeOpInterest(this, item.cb);
+		}
 	}
 
 	m_opRegCallbacks.clear();
@@ -926,6 +929,7 @@ void VRayExporter::addOpCallback(OP_Node *op_node, OP_EventMethod cb)
 	if (isRt() && !op_node->hasOpInterest(this, cb)) {
 		PRINT_INFO("addOpInterest(%s)",
 				   op_node->getName().buffer());
+
 		op_node->addOpInterest(this, cb);
 
 		// Store registered callback for faster removal
@@ -939,7 +943,18 @@ void VRayExporter::delOpCallback(OP_Node *op_node, OP_EventMethod cb)
 	if (op_node->hasOpInterest(this, cb)) {
 		PRINT_INFO("removeOpInterest(%s)",
 				   op_node->getName().buffer());
+
 		op_node->removeOpInterest(this, cb);
+
+		for (CbItems::iterator cbIt = m_opRegCallbacks.begin(); cbIt != m_opRegCallbacks.end();) {
+			CbItem &item = *cbIt;
+			if (item.op_node == op_node) {
+				m_opRegCallbacks.erase(cbIt++);
+			}
+			else {
+				++cbIt;
+			}
+		}
 	}
 }
 
@@ -983,7 +998,7 @@ void VRayExporter::RtCallbackObjManager(OP_Node *caller, void *callee, OP_EventT
 		VRayExporter::TraverseOBJ(reinterpret_cast<OBJ_Node*>(data), exporter);
 	}
 	else if (type == OP_NODE_PREDELETE) {
-		caller->removeOpInterest(exporter, VRayExporter::RtCallbackObjManager);
+		exporter->delOpCallback(caller, VRayExporter::RtCallbackObjManager);
 	}
 }
 

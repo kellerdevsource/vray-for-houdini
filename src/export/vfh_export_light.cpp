@@ -40,7 +40,7 @@ void VRayExporter::RtCallbackLight(OP_Node *caller, void *callee, OP_EventType t
 		VRayExporter::TraverseOBJ(caller->castToOBJNode(), exporter);
 	}
 	else if (type == OP_NODE_PREDELETE) {
-		caller->removeOpInterest(exporter, VRayExporter::RtCallbackLight);
+		exporter->delOpCallback(caller, VRayExporter::RtCallbackLight);
 	}
 }
 
