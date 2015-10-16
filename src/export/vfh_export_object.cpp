@@ -25,6 +25,7 @@
 #include "vfh_exporter.h"
 
 #include <SHOP/SHOP_Node.h>
+#include <PRM/PRM_Parm.h>
 
 
 using namespace VRayForHoudini;
@@ -43,7 +44,26 @@ void VRayExporter::RtCallbackNode(OP_Node *caller, void *callee, OP_EventType ty
 		|| type == OP_FLAG_CHANGED  /* visibility */
 		)
 	{
-		exporter->exportNode(caller->castToOBJNode(), VRay::Plugin(), VRay::Plugin());
+		OBJ_Node *obj_node = caller->castToOBJNode();
+
+		const unsigned idx = reinterpret_cast<long>(data);
+
+		PRINT_INFO("  Parameter: %i",
+				   idx);
+
+		VRay::Plugin mtl;
+		// XXX: Get parameter and check it's name
+		if (idx == 19) {
+			SHOP_Node *shop_node = obj_node->getMaterialNode(0.0);
+			if (shop_node) {
+				mtl = exporter->exportMaterial(shop_node);
+			}
+			if (!mtl) {
+				mtl = exporter->exportDefaultMaterial();
+			}
+		}
+
+		exporter->exportNode(obj_node, mtl, VRay::Plugin());
 	}
 	else if (type == OP_NODE_PREDELETE) {
 		// TODO: Remove object for RT
@@ -297,13 +317,7 @@ VRay::Plugin VRayExporter::exportObject(OBJ_Node *obj_node)
 
 				// Export default grey material
 				if (NOT(mtl)) {
-					Attrs::PluginDesc brdfDesc("BRDFDiffuse@Clay", "BRDFDiffuse");
-					brdfDesc.addAttribute(Attrs::PluginAttr("color", 0.5f, 0.5f, 0.5f));
-
-					Attrs::PluginDesc mtlDesc("Mtl@Clay", "MtlSingleBRDF");
-					mtlDesc.addAttribute(Attrs::PluginAttr("brdf", exportPlugin(brdfDesc)));
-
-					mtl = exportPlugin(mtlDesc);
+					mtl = exportDefaultMaterial();
 				}
 
 				exportNode(obj_node, mtl, geom);

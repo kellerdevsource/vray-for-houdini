@@ -109,6 +109,7 @@ public:
 	VRay::Plugin            exportLight(OBJ_Node *obj_node);
 
 	VRay::Plugin            exportMaterial(SHOP_Node *shop_node, SHOPOutput *shopOutput = nullptr);
+	VRay::Plugin            exportDefaultMaterial();
 	VRay::Plugin            exportMtlOut(OP_Node *op_node);
 
 	VRay::Plugin            exportVop(OP_Node *op_node);

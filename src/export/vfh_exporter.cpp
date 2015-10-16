@@ -716,6 +716,18 @@ VRay::Plugin VRayExporter::exportMaterial(SHOP_Node *shop_node, SHOPOutput *shop
 }
 
 
+VRay::Plugin VRayExporter::exportDefaultMaterial()
+{
+	Attrs::PluginDesc brdfDesc("BRDFDiffuse@Clay", "BRDFDiffuse");
+	brdfDesc.addAttribute(Attrs::PluginAttr("color", 0.5f, 0.5f, 0.5f));
+
+	Attrs::PluginDesc mtlDesc("Mtl@Clay", "MtlSingleBRDF");
+	mtlDesc.addAttribute(Attrs::PluginAttr("brdf", exportPlugin(brdfDesc)));
+
+	return exportPlugin(mtlDesc);
+}
+
+
 #ifdef CGR_HAS_VRAYSCENE
 VRay::Plugin VRayExporter::exportVRayScene(OBJ_Node *obj_node, SOP_Node *geom_node)
 {
@@ -966,6 +978,9 @@ void VRayExporter::RtCallbackObjManager(OP_Node *caller, void *callee, OP_EventT
 	{
 		OP_Network *obj_manager = OPgetDirector()->getManager("obj");
 		obj_manager->traverseChildren(VRayExporter::TraverseOBJs, exporter, false);
+	}
+	else if (type == OP_CHILD_CREATED) {
+		VRayExporter::TraverseOBJ(reinterpret_cast<OBJ_Node*>(data), exporter);
 	}
 	else if (type == OP_NODE_PREDELETE) {
 		caller->removeOpInterest(exporter, VRayExporter::RtCallbackObjManager);
