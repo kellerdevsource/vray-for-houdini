@@ -375,6 +375,17 @@ VRay::Plugin VRayPluginRenderer::exportPlugin(const Attrs::PluginDesc &pluginDes
 }
 
 
+void VRayPluginRenderer::removePlugin(const Attrs::PluginDesc &pluginDesc)
+{
+	if (m_vray) {
+		VRay::Plugin plugin = m_vray->getPlugin(pluginDesc.pluginName);
+		if (plugin) {
+			m_vray->removePlugin(plugin);
+		}
+	}
+}
+
+
 VRay::Plugin VRayPluginRenderer::newPlugin(const Attrs::PluginDesc &pluginDesc)
 {
 	VRay::Plugin plug = m_vray->newPlugin(pluginDesc.pluginName, pluginDesc.pluginID);

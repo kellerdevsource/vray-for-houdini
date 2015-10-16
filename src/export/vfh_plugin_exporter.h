@@ -21,6 +21,9 @@
 
 #include <OP/OP_Node.h>
 #include <OP/OP_Network.h>
+#include <OBJ/OBJ_Node.h>
+
+#include <boost/format.hpp>
 
 
 namespace VRayForHoudini {
@@ -257,6 +260,11 @@ typedef std::vector<PluginAttr> PluginAttrs;
 struct PluginDesc {
 	PluginDesc() {}
 
+	PluginDesc(OBJ_Node *obj_node, const std::string &pluginID):
+		pluginID(pluginID),
+		pluginName(PluginDesc::getPluginName(obj_node))
+	{}
+
 	PluginDesc(OP_Node *op_node, const std::string &pluginID):
 		pluginID(pluginID),
 		pluginName(PluginDesc::GetPluginName(op_node))
@@ -318,7 +326,7 @@ struct PluginDesc {
 	void showAttributes() const {
 		PRINT_INFO("Plugin \"%s.%s\" parameters:",
 				   pluginID.c_str(), pluginName.c_str())
-		for (const auto &pIt : pluginAttrs) {
+				for (const auto &pIt : pluginAttrs) {
 			const PluginAttr &p = pIt;
 			PRINT_INFO("  %s [%s]",
 					   p.paramName.c_str(), p.typeStr());
@@ -330,6 +338,29 @@ struct PluginDesc {
 		pluginName.append("|");
 		pluginName.append(op_node->getParentNetwork()->getName().buffer());
 		pluginName.append(suffix);
+		return pluginName;
+	}
+
+	static std::string getPluginName(OBJ_Node *obj_node) {
+		std::string pluginName;
+
+		const OBJ_OBJECT_TYPE ob_type = obj_node->getObjectType();
+		if (ob_type & OBJ_LIGHT) {
+			static boost::format FmtLight("Light@%s");
+			pluginName = boost::str(FmtLight
+									% obj_node->getName().buffer());
+		}
+		else if (ob_type & OBJ_CAMERA) {
+			static boost::format FmtCamera("Camera@%s");
+			pluginName = boost::str(FmtCamera
+									% obj_node->getName().buffer());
+		}
+		else if (ob_type == OBJ_GEOMETRY) {
+			static boost::format FmtObject("Node@%s");
+			pluginName = boost::str(FmtObject
+									% obj_node->getName().buffer());
+		}
+
 		return pluginName;
 	}
 };
@@ -405,7 +436,7 @@ struct CbCollection {
 
 struct AppSdkInit {
 	AppSdkInit()
-	    : m_vrayInit(nullptr)
+		: m_vrayInit(nullptr)
 	{
 		try {
 			m_vrayInit = new VRay::VRayInit(true);
@@ -460,6 +491,8 @@ public:
 	void                          setMode(int mode);
 
 	VRay::Plugin                  exportPlugin(const Attrs::PluginDesc &pluginDesc);
+	void                          removePlugin(const Attrs::PluginDesc &pluginDesc);
+
 	void                          resetObjects();
 	void                          syncObjects();
 

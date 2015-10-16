@@ -35,17 +35,16 @@ void VRayExporter::RtCallbackNode(OP_Node *caller, void *callee, OP_EventType ty
 {
 	VRayExporter *exporter = (VRayExporter*)callee;
 
+	OBJ_Node *obj_node = caller->castToOBJNode();
+
 	PRINT_INFO("RtCallbackNode: %s from \"%s\"",
-			   OPeventToString(type), caller->getName().buffer());
+			   OPeventToString(type), obj_node->getName().buffer());
 
-	if (   type == OP_PARM_CHANGED
-		|| type == OP_INPUT_CHANGED
-		|| type == OP_INPUT_REWIRED /* parenting  */
-		|| type == OP_FLAG_CHANGED  /* visibility */
-		)
+	if (type == OP_PARM_CHANGED ||
+		type == OP_INPUT_CHANGED ||
+		type == OP_INPUT_REWIRED || /* parenting */
+		type == OP_FLAG_CHANGED) /* visibility */
 	{
-		OBJ_Node *obj_node = caller->castToOBJNode();
-
 		const unsigned idx = reinterpret_cast<long>(data);
 
 		PRINT_INFO("  Parameter: %i",
@@ -67,6 +66,7 @@ void VRayExporter::RtCallbackNode(OP_Node *caller, void *callee, OP_EventType ty
 	}
 	else if (type == OP_NODE_PREDELETE) {
 		exporter->delOpCallback(caller, VRayExporter::RtCallbackNode);
+		exporter->removePlugin(obj_node);
 	}
 }
 
@@ -114,7 +114,7 @@ VRay::Plugin VRayExporter::exportNode(OBJ_Node *obj_node, VRay::Plugin material,
 				flipTm = true;
 			}
 
-			Attrs::PluginDesc pluginDesc(obj_node, "Node", "Node@");
+			Attrs::PluginDesc pluginDesc(obj_node, "Node");
 			if (geometry) {
 				pluginDesc.addAttribute(Attrs::PluginAttr("geometry", geometry));
 			}

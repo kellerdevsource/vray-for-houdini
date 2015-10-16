@@ -989,6 +989,7 @@ void VRayExporter::RtCallbackObjManager(OP_Node *caller, void *callee, OP_EventT
 	// NOTE: Use OP_GROUPLIST_CHANGED instead of OP_CHILD_CREATED,
 	// OP_CHILD_CREATED gives intermediate node, not the final one
 	if (type == OP_GROUPLIST_CHANGED ||
+		type == OP_CHILD_REORDERED || /* undo */
 		type == OP_CHILD_DELETED)
 	{
 		OP_Network *obj_manager = OPgetDirector()->getManager("obj");
@@ -1033,6 +1034,18 @@ void VRayExporter::exportDone()
 VRay::Plugin VRayExporter::exportPlugin(const Attrs::PluginDesc &pluginDesc)
 {
 	return m_renderer.exportPlugin(pluginDesc);
+}
+
+
+void VRayExporter::removePlugin(OBJ_Node *node)
+{
+	removePlugin(Attrs::PluginDesc(Attrs::PluginDesc::getPluginName(node), ""));
+}
+
+
+void VRayExporter::removePlugin(const Attrs::PluginDesc &pluginDesc)
+{
+	m_renderer.removePlugin(pluginDesc);
 }
 
 

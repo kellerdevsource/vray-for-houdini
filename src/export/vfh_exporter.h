@@ -119,6 +119,8 @@ public:
 #endif
 
 	VRay::Plugin            exportPlugin(const Attrs::PluginDesc &pluginDesc);
+	void                    removePlugin(OBJ_Node *node);
+	void                    removePlugin(const Attrs::PluginDesc &pluginDesc);
 
 	int                     renderFrame(int locked=false);
 	int                     renderSequence(int start, int end, int step, int locked=false);
