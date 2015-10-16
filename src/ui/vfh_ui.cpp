@@ -74,6 +74,8 @@ void ActiveStateDeps::activateElements(const std::string &pluginID, OP_Node *op_
 			const std::string &affectedProp = iIt.first;
 			const StateInfo   &stateInfo    = iIt.second;
 
+			// TODO: Check if enum and get the actual enum value
+			//
 			int activeValue = op_node->evalInt(stateInfo.conditionAttr.c_str(), 0, 0.0f);
 
 			bool state = true;
