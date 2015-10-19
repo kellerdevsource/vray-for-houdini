@@ -1,17 +1,16 @@
 #
-# Copyright (c) 2014, Chaos Software Ltd
+# Copyright (c) 2015, Chaos Software Ltd
 #
-# Build system based on CMake
+# V-Ray For Houdini
 #
 # Andrei Izrantcev <andrei.izrantcev@chaosgroup.com>
 #
-# All rights reserved. These coded instructions, statements and
-# computer programs contain unpublished information proprietary to
-# Chaos Group Ltd, which is protected by the appropriate copyright
-# laws and may not be disclosed to third parties or copied or
-# duplicated, in whole or in part, without prior written consent of
-# Chaos Group Ltd.
+# ACCESSIBLE SOURCE CODE WITHOUT DISTRIBUTION OF MODIFICATION LICENSE
 #
+# Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
+#
+
+include(CheckIncludeFile)
 
 option(HOUDINI_DEFAULT_PATH "Use default Houdini installation path" ON)
 
@@ -195,17 +194,24 @@ endif()
 
 
 macro(use_houdini_sdk)
-	find_library(HDK_LIB_GEO
-		NAMES HoudiniGEO
-		PATHS ${HOUDINI_LIB_PATH}
-	)
+	if(WIN32)
+		find_library(HDK_LIB_GEO
+			NAMES openvdb_sesi
+			PATHS ${HOUDINI_LIB_PATH}
+		)
+	else()
+		find_library(HDK_LIB_GEO
+			NAMES HoudiniGEO
+			PATHS ${HOUDINI_LIB_PATH}
+		)
+	endif()
+
+	message(STATUS "Using Houdini ${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD}: ${HOUDINI_INSTALL_ROOT}")
+	message(STATUS "Using HDK include path: ${HOUDINI_INCLUDE_PATH}")
+	message(STATUS "Using HDK library path: ${HOUDINI_LIB_PATH}")
 
 	if(NOT HDK_LIB_GEO)
 		message(FATAL_ERROR "Houdini SDK is not found! Check HOUDINI_VERSION / HOUDINI_VERSION_BUILD variables!")
-	else()
-		message(STATUS "Using Houdini ${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD}: ${HOUDINI_INSTALL_ROOT}")
-		message(STATUS "Using HDK include path: ${HOUDINI_INCLUDE_PATH}")
-		message(STATUS "Using HDK library path: ${HOUDINI_LIB_PATH}")
 	endif()
 
 	add_definitions(${HOUDINI_DEFINES})

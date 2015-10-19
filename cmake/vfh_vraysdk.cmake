@@ -5,17 +5,9 @@
 #
 # Andrei Izrantcev <andrei.izrantcev@chaosgroup.com>
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
+# ACCESSIBLE SOURCE CODE WITHOUT DISTRIBUTION OF MODIFICATION LICENSE
 #
-# http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 #
 
 set(_maya_versons "2017;2016;2015;2014")
@@ -77,6 +69,9 @@ else()
 endif()
 
 macro(use_vray_sdk)
+	message(STATUS "Using V-Ray SDK include path: ${VRAYSDK_INCPATH}")
+	message(STATUS "Using V-Ray SDK library path: ${VRAYSDK_LIBPATH}")
+
 	if(WIN32)
 		# Both V-Ray SDK and HDK defines some basic types,
 		# tell V-Ray SDK not to define them
@@ -86,19 +81,10 @@ macro(use_vray_sdk)
 		)
 	endif()
 
-	find_library(VRAY_LIB_VUTILS_S
-		NAMES vutils_s
-		PATHS ${VRAYSDK_LIBPATH}
-		NO_DEFAULT_PATH
-	)
-
-	if(NOT VRAY_LIB_VUTILS_S)
+	if(NOT EXISTS ${VRAYSDK_INCPATH})
 		message(FATAL_ERROR "V-Ray SDK libraries / headers are not found!\n"
 							"V-Ray SDK from V-Ray For Maya installation is utilized by default.\n"
 							"Install V-Ray For Maya or point CGR_VRAYSDK_INCPATH and CGR_VRAYSDK_LIBPATH variables to the SDK location.")
-	else()
-		message(STATUS "Using V-Ray SDK include path: ${VRAYSDK_INCPATH}")
-		message(STATUS "Using V-Ray SDK library path: ${VRAYSDK_LIBPATH}")
 	endif()
 
 	include_directories(${VRAYSDK_INCPATH})

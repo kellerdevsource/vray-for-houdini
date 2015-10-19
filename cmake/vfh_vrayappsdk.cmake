@@ -5,17 +5,9 @@
 #
 # Andrei Izrantcev <andrei.izrantcev@chaosgroup.com>
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
+# ACCESSIBLE SOURCE CODE WITHOUT DISTRIBUTION OF MODIFICATION LICENSE
 #
-# http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 #
 
 string(TOLOWER "${CMAKE_HOST_SYSTEM_NAME}" _HOST_SYSTEM_NAME)
@@ -26,19 +18,10 @@ set(APPSDK_ROOT "${APPSDK_PATH}/${APPSDK_VERSION}/${_HOST_SYSTEM_NAME}" CACHE PA
 
 
 macro(use_vray_appsdk)
+	message(STATUS "Using V-Ray AppSDK: ${APPSDK_ROOT}")
+
 	if(NOT EXISTS ${APPSDK_ROOT})
 		message(FATAL_ERROR "V-Ray AppSDK root (\"${APPSDK_ROOT}\") doesn't exist!")
-	endif()
-
-	find_library(VRAY_APPSDK_LIB
-		NAMES VRaySDKLibrary
-		PATHS ${APPSDK_ROOT}/bin
-	)
-
-	if(NOT VRAY_APPSDK_LIB)
-		message(FATAL_ERROR "V-Ray AppSDK libraries are not found! Check APPSDK_PATH variable (current search path ${APPSDK_ROOT}/bin)")
-	else()
-		message(STATUS "Using V-Ray AppSDK: ${APPSDK_ROOT}")
 	endif()
 
 	include_directories(${APPSDK_ROOT}/cpp/include)
