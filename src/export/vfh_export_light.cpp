@@ -29,18 +29,20 @@ void VRayExporter::RtCallbackLight(OP_Node *caller, void *callee, OP_EventType t
 {
 	VRayExporter *exporter = (VRayExporter*)callee;
 
+	OBJ_Node *obj_node = caller->castToOBJNode();
+
 	PRINT_INFO("RtCallbackLight: %s from \"%s\"",
 			   OPeventToString(type), caller->getName().buffer());
 
-	if (   type == OP_PARM_CHANGED
-		|| type == OP_INPUT_CHANGED
-		|| type == OP_INPUT_REWIRED
-		)
+	if (type == OP_PARM_CHANGED ||
+		type == OP_INPUT_CHANGED ||
+		type == OP_INPUT_REWIRED)
 	{
-		VRayExporter::TraverseOBJ(caller->castToOBJNode(), exporter);
+		exporter->exportLight(obj_node);
 	}
 	else if (type == OP_NODE_PREDELETE) {
-		exporter->delOpCallback(caller, VRayExporter::RtCallbackLight);
+		exporter->delOpCallbacks(caller);
+		exporter->removePlugin(obj_node);
 	}
 }
 

@@ -945,17 +945,14 @@ void VRayExporter::delOpCallback(OP_Node *op_node, OP_EventMethod cb)
 				   op_node->getName().buffer());
 
 		op_node->removeOpInterest(this, cb);
-
-		for (CbItems::iterator cbIt = m_opRegCallbacks.begin(); cbIt != m_opRegCallbacks.end();) {
-			CbItem &item = *cbIt;
-			if (item.op_node == op_node) {
-				m_opRegCallbacks.erase(cbIt++);
-			}
-			else {
-				++cbIt;
-			}
-		}
 	}
+}
+
+
+void VRayExporter::delOpCallbacks(OP_Node *op_node)
+{
+	m_opRegCallbacks.erase(std::remove_if(m_opRegCallbacks.begin(), m_opRegCallbacks.end(),
+										  [op_node](CbItem &item) { return item.op_node == op_node; }), m_opRegCallbacks.end());
 }
 
 
@@ -999,7 +996,7 @@ void VRayExporter::RtCallbackObjManager(OP_Node *caller, void *callee, OP_EventT
 		VRayExporter::TraverseOBJ(reinterpret_cast<OBJ_Node*>(data), exporter);
 	}
 	else if (type == OP_NODE_PREDELETE) {
-		exporter->delOpCallback(caller, VRayExporter::RtCallbackObjManager);
+		exporter->delOpCallback(reinterpret_cast<OBJ_Node*>(data), VRayExporter::RtCallbackObjManager);
 	}
 }
 

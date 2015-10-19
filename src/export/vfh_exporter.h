@@ -202,6 +202,8 @@ public:
 
 	void                    addOpCallback(OP_Node *op_node, OP_EventMethod cb);
 	void                    delOpCallback(OP_Node *op_node, OP_EventMethod cb);
+	void                    delOpCallbacks(OP_Node *op_node);
+
 	void                    resetOpCallbacks();
 
 	int                     isRt();
