@@ -68,7 +68,7 @@ void VRayExporter::exportGeomMayaHairGeom(SOP_Node *sop_node, const GU_Detail *g
 
 VRay::Plugin VRayExporter::exportGeomMayaHair(SOP_Node *sop_node, const GU_Detail *gdp)
 {
-	Attrs::PluginDesc geomMayaHairDesc(sop_node, "GeomMayaHair", "Hair@");
+	Attrs::PluginDesc geomMayaHairDesc(VRayExporter::getPluginName(sop_node, "Hair"), "GeomMayaHair");
 	exportGeomMayaHairGeom(sop_node, gdp, geomMayaHairDesc);
 	return exportPlugin(geomMayaHairDesc);
 }

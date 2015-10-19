@@ -211,7 +211,7 @@ OP::VRayNode::PluginResult VOP::TexLayered::asPluginDesc(Attrs::PluginDesc &plug
 				const float blend_amount = evalFloatInst(rpm_name_tex_blend_amount.getToken(), &i, 0, t);
 
 				if (blend_amount != 1.0f) {
-					Attrs::PluginDesc blendDesc(this, "TexAColorOp", paramPrefix);
+					Attrs::PluginDesc blendDesc(VRayExporter::getPluginName(this, paramPrefix), "TexAColorOp");
 					blendDesc.pluginAttrs.push_back(Attrs::PluginAttr("mode", 0)); // Mode: "result_a"
 					blendDesc.pluginAttrs.push_back(Attrs::PluginAttr("color_a", tex_plugin));
 					blendDesc.pluginAttrs.push_back(Attrs::PluginAttr("mult_a", 1.0f));

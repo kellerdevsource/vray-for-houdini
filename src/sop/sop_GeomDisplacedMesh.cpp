@@ -52,7 +52,7 @@ OP::VRayNode::PluginResult SOP::GeomDisplacedMesh::asPluginDesc(Attrs::PluginDes
 	PRINT_WARN("OP::GeomDisplacedMesh::asPluginDesc()");
 
 	pluginDesc.pluginID   = pluginID.c_str();
-	pluginDesc.pluginName = Attrs::PluginDesc::GetPluginName(this, "Dspl@");
+	pluginDesc.pluginName = VRayExporter::getPluginName(this, "Dspl@");
 
 	// Displacement texture
 	//
@@ -69,7 +69,7 @@ OP::VRayNode::PluginResult SOP::GeomDisplacedMesh::asPluginDesc(Attrs::PluginDes
 				PRINT_ERROR("Texture node export failed!");
 			}
 			else {
-				pluginDesc.pluginAttrs.push_back(Attrs::PluginAttr("displacement_tex_color", texture));
+				pluginDesc.add(Attrs::PluginAttr("displacement_tex_color", texture));
 
 				// Check if plugin has "out_intensity" output
 				bool hasOutIntensity = false;
@@ -85,13 +85,13 @@ OP::VRayNode::PluginResult SOP::GeomDisplacedMesh::asPluginDesc(Attrs::PluginDes
 
 				// Wrap texture with TexOutput
 				if (NOT(hasOutIntensity)) {
-					Attrs::PluginDesc texOutputDesc(tex_node, "TexOutput", "Out@");
-					texOutputDesc.pluginAttrs.push_back(Attrs::PluginAttr("texmap", texture));
+					Attrs::PluginDesc texOutputDesc(VRayExporter::getPluginName(tex_node, "Out@"), "TexOutput");
+					texOutputDesc.add(Attrs::PluginAttr("texmap", texture));
 
 					texture = exporter->exportPlugin(texOutputDesc);
 				}
 
-				pluginDesc.pluginAttrs.push_back(Attrs::PluginAttr("displacement_tex_float", texture, "out_intensity"));
+				pluginDesc.add(Attrs::PluginAttr("displacement_tex_float", texture, "out_intensity"));
 			}
 		}
 	}

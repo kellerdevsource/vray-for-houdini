@@ -333,7 +333,7 @@ void VRayExporter::exportGeomStaticMeshDesc(const GU_Detail &gdp, SHOPToID &shop
 
 VRay::Plugin VRayExporter::exportGeomStaticMesh(SOP_Node &sop_node, const GU_Detail &gdp, SHOPToID &shopToID)
 {
-	Attrs::PluginDesc geomPluginDesc(&sop_node, "GeomStaticMesh", "Geom@");
+	Attrs::PluginDesc geomPluginDesc(VRayExporter::getPluginName(&sop_node, "Geom"), "GeomStaticMesh");
 	exportGeomStaticMeshDesc(gdp, shopToID, geomPluginDesc);
 
 	return exportPlugin(geomPluginDesc);

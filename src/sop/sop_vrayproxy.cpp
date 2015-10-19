@@ -658,7 +658,7 @@ OP::VRayNode::PluginResult SOP::VRayProxy::asPluginDesc(Attrs::PluginDesc &plugi
 	}
 
 	pluginDesc.pluginID   = pluginID.c_str();
-	pluginDesc.pluginName = Attrs::PluginDesc::GetPluginName(this);
+	pluginDesc.pluginName = VRayExporter::getPluginName(this);
 
 	pluginDesc.pluginAttrs.push_back(Attrs::PluginAttr("file", path.buffer()));
 	pluginDesc.pluginAttrs.push_back(Attrs::PluginAttr("flip_axis", evalInt("flip_axis", 0, 0.0f)));

@@ -133,4 +133,13 @@ template <typename T, int N>
 char (&ArraySizeHelper(T (&array)[N]))[N];
 #define CountOf(array) (sizeof(ArraySizeHelper(array)))
 
+#define MemberEq(member) (member == other.member)
+#define MemberNotEq(member) (!(member == other.member))
+
+/// Disables copy-constructor and assignment operator
+#define VfhDisableCopy(cls) \
+private: \
+	cls(const cls&); \
+	cls& operator=(const cls&);
+
 #endif // VRAY_FOR_HOUDINI_UTIL_DEFINES_H
