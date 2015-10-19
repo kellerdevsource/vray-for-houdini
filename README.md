@@ -1,5 +1,11 @@
-V-Ray For Houdini (Early Access)
-================================
+V-Ray For Houdini
+=================
+
+License
+-------
+
+    https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
+
 
 Compilation
 -----------
@@ -69,4 +75,4 @@ Compilation
 Known Issues
 ------------
 
-* Native V-Ray Frame Buffer is not working on OS X; use "Simple" Qt based VFB for now (ROP -> VFB -> "Simple")
+* Native V-Ray Frame Buffer is not working on OS X; simplified Qt based VFB is used for now.

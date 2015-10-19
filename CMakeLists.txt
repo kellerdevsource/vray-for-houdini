@@ -3,14 +3,9 @@
 #
 # V-Ray For Houdini
 #
-# Andrei Izrantcev <andrei.izrantcev@chaosgroup.com>
-# 
-# All rights reserved. These coded instructions, statements and
-# computer programs contain unpublished information proprietary to
-# Chaos Group Ltd, which is protected by the appropriate copyright
-# laws and may not be disclosed to third parties or copied or
-# duplicated, in whole or in part, without prior written consent of
-# Chaos Group Ltd.
+# ACCESSIBLE SOURCE CODE WITHOUT DISTRIBUTION OF MODIFICATION LICENSE
+#
+# Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 #
 
 cmake_minimum_required(VERSION 3.0.0)
