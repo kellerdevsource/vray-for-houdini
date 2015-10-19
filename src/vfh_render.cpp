@@ -457,11 +457,6 @@ ROP_RENDER_CODE VRayRendererNode::renderFrame(fpreal time, UT_Interrupt *boss)
 			// We don't need this data anymore
 			clearKeyFrames(mb_start);
 
-#if 0
-			m_exportedFrames.erase(std::remove_if(m_exportedFrames.begin(), m_exportedFrames.end(),
-												  [=] (float t) { return t < mb_start; } ),
-								   m_exportedFrames.end());
-#else
 			for (FloatSet::iterator tIt = m_exportedFrames.begin(); tIt != m_exportedFrames.end();) {
 				if (*tIt < mb_start) {
 					m_exportedFrames.erase(tIt++);
@@ -470,7 +465,6 @@ ROP_RENDER_CODE VRayRendererNode::renderFrame(fpreal time, UT_Interrupt *boss)
 					++tIt;
 				}
 			}
-#endif
 
 			// Export motion blur data
 			fpreal subframe = mb_start;
