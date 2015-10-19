@@ -108,11 +108,48 @@ public:
 	typedef FrameCache::size_type size_type;
 
 	VRayProxyCache() :
-		m_proxy(nullptr)
-	{ m_frameCache.setEvictCallback(FrameCache::CbEvict(boost::bind(&VRayProxyCache::evictFrame, this, _1, _2))); }
+		m_proxy(nullptr),
+		m_frameCache(new FrameCache()),
+		m_itemCache(new ItemCache())
+	{ m_frameCache->setEvictCallback(FrameCache::CbEvict(boost::bind(&VRayProxyCache::evictFrame, this, _1, _2))); }
+
+	VRayProxyCache(VRayProxyCache&& other)
+	{
+		m_proxy = other.m_proxy;
+		m_filepath = other.m_filepath;
+		m_frameCache = other.m_frameCache;
+		m_itemCache = other.m_itemCache;
+		m_frameCache->setEvictCallback(FrameCache::CbEvict(boost::bind(&VRayProxyCache::evictFrame, this, _1, _2)));
+
+		other.m_proxy = nullptr;
+		other.m_filepath = "";
+		other.m_frameCache = std::shared_ptr<FrameCache>();
+		other.m_itemCache = std::shared_ptr<ItemCache>();
+
+	}
+
+	VRayProxyCache& operator=(VRayProxyCache&& other)
+	{
+		if (this == &other) {
+			return *this;
+		}
+
+		m_proxy = other.m_proxy;
+		m_filepath = other.m_filepath;
+		m_frameCache = other.m_frameCache;
+		m_itemCache = other.m_itemCache;
+		m_frameCache->setEvictCallback(FrameCache::CbEvict(boost::bind(&VRayProxyCache::evictFrame, this, _1, _2)));
+
+		other.m_proxy = nullptr;
+		other.m_filepath = "";
+		other.m_frameCache = std::shared_ptr<FrameCache>();
+		other.m_itemCache = std::shared_ptr<ItemCache>();
+		return *this;
+	}
 
 	~VRayProxyCache()
 	{ reset(); }
+
 
 /// @brief Clears previous cache, if any, and attempts to initialize the new .vrmesh file
 ///        cache capacity is defined by playback range at the time of initialization
@@ -162,8 +199,8 @@ public:
 			nFrames = std::max(m_proxy->getNumFrames(), 1);
 		}
 
-		m_frameCache.setCapacity(nFrames);
-		m_itemCache.setCapacity(nFrames);
+		m_frameCache->setCapacity(nFrames);
+		m_itemCache->setCapacity(nFrames);
 
 		return res;
 	}
@@ -182,12 +219,12 @@ public:
 /// @brief Clears cache
 	void clearCache()
 	{
-		m_frameCache.clear();
-		m_itemCache.clear();
+		m_frameCache->clear();
+		m_itemCache->clear();
 	}
 
-	size_type capacity() const { return m_frameCache.capacity(); }
-	size_type size() const { return m_frameCache.size(); }
+	size_type capacity() const { return m_frameCache->capacity(); }
+	size_type size() const { return m_frameCache->size(); }
 	int empty() const { return (size() == 0); }
 
 /// @brief Checks if a frame is cached
@@ -246,10 +283,10 @@ public:
 			m_proxy->releaseVoxel(previewVoxel);
 		}
 
-		CachedFrame& frameData = m_frameCache[frameIdx];
+		CachedFrame& frameData = (*m_frameCache)[frameIdx];
 		for (auto const &itemKey : frameData.m_itemKeys) {
-			ItemCache::iterator itemIt = m_itemCache.find(itemKey);
-			vassert( itemIt != m_itemCache.end() );
+			ItemCache::iterator itemIt = m_itemCache->find(itemKey);
+			vassert( itemIt != m_itemCache->end() );
 
 			CachedItem &itemData = *itemIt;
 			GU_DetailPtr item = itemData.m_item;
@@ -266,15 +303,15 @@ public:
 private:
 	int checkCached(const FrameKey &frameIdx)
 	{
-		if (NOT(m_frameCache.contains(frameIdx))) {
+		if (NOT(m_frameCache->contains(frameIdx))) {
 			return false;
 		}
 
 //		if in cache check if all items from the collection are cached
 		int inCache = true;
-		CachedFrame &frameData = m_frameCache[frameIdx];
+		CachedFrame &frameData = (*m_frameCache)[frameIdx];
 		for (const auto &itemKey : frameData.m_itemKeys) {
-			if (NOT(m_itemCache.contains(itemKey))) {
+			if (NOT(m_itemCache->contains(itemKey))) {
 				erase(frameIdx);
 				inCache = false;
 				break;
@@ -290,7 +327,7 @@ private:
 		}
 
 //		insert new item in frameCache
-		CachedFrame &frameData = m_frameCache[frameIdx];
+		CachedFrame &frameData = (*m_frameCache)[frameIdx];
 		frameData.m_itemKeys.resize(geometry.size());
 
 //		cache each geometry type individually
@@ -301,13 +338,13 @@ private:
 			ItemKey itemKey = hasher(geom);
 			frameData.m_itemKeys[i] = itemKey;
 
-			if (m_itemCache.contains(itemKey)) {
+			if (m_itemCache->contains(itemKey)) {
 //				in itemCache only increase ref count
-				CachedItem &itemData = m_itemCache[itemKey];
+				CachedItem &itemData = (*m_itemCache)[itemKey];
 				++itemData.m_refCnt;
 			} else {
 //				not in itemCache insert as new item and init ref count to 1
-				CachedItem &itemData = m_itemCache[itemKey];
+				CachedItem &itemData = (*m_itemCache)[itemKey];
 				itemData.m_item = createProxyGeometry(geom);
 				itemData.m_refCnt = 1;
 			}
@@ -318,24 +355,24 @@ private:
 
 	int erase(const FrameKey &frameIdx)
 	{
-		if (NOT(m_frameCache.contains(frameIdx))) {
+		if (NOT(m_frameCache->contains(frameIdx))) {
 			return false;
 		}
 
-		CachedFrame &frameData = m_frameCache[frameIdx];
+		CachedFrame &frameData = (*m_frameCache)[frameIdx];
 		evictFrame(frameIdx, frameData);
 
-		return m_frameCache.erase(frameIdx);
+		return m_frameCache->erase(frameIdx);
 	}
 
 	void evictFrame(const FrameKey &frameIdx, CachedFrame &frameData)
 	{
 		for (const auto &itemKey : frameData.m_itemKeys) {
-			if (m_itemCache.contains(itemKey)) {
-				CachedItem& itemData = m_itemCache[itemKey];
+			if (m_itemCache->contains(itemKey)) {
+				CachedItem& itemData = (*m_itemCache)[itemKey];
 				--itemData.m_refCnt;
 				if (itemData.m_refCnt <= 0) {
-					m_itemCache.erase(itemKey);
+					m_itemCache->erase(itemKey);
 				}
 			}
 		}
@@ -508,12 +545,12 @@ private:
 private:
 	VUtils::MeshFile *m_proxy;
 	VUtils::CharString m_filepath;
-	FrameCache m_frameCache;
-	ItemCache m_itemCache;
+	std::shared_ptr<FrameCache> m_frameCache;
+	std::shared_ptr<ItemCache> m_itemCache;
 };
 
 
-typedef Caches::LRUCache< std::string, VRayProxyCache > VRayProxyCacheMan;
+typedef Caches::LRUCache< std::string, VRayProxyCache> VRayProxyCacheMan;
 
 static const int cacheCapacity = 10;
 static VRayProxyCacheMan g_cacheMan(cacheCapacity);
