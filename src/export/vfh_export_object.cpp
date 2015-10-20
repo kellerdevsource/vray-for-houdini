@@ -206,34 +206,29 @@ VRay::Plugin VRayExporter::exportObject(OBJ_Node *obj_node)
 		else {
 			VRayForHoudini::SHOPToID shopToID;
 			VRay::Plugin geom = exportNodeData(geom_node, shopToID);
+
 			if (geom) {
 				VRay::Plugin mtl;
-
-				VRay::Plugin texPlugin;
-				SHOPInfo shopInfo;
 
 				SHOP_Node *shop_node = obj_node->getMaterialNode(t);
 				if (shop_node) {
 					PRINT_INFO("  Found material: \"%s\" [%s]",
 							   shop_node->getName().buffer(), shop_node->getOperator()->getName().buffer());
 
-					mtl = exportMaterial(shop_node, &shopInfo);
+					mtl = exportMaterial(shop_node);
 				}
 				else if (shopToID.size()) {
 					if (shopToID.size() == 1) {
 						OP_Node *op_node = OPgetDirector()->findNode(shopToID.begin().key());
 						if (op_node) {
-							mtl = exportMaterial(op_node->castToSHOPNode(), &shopInfo);
+							mtl = exportMaterial(op_node->castToSHOPNode());
 						}
 					}
 					else {
 						Attrs::PluginDesc mtlMultiDesc(geom_node, "MtlMulti", "Mtl@");
-						Attrs::PluginDesc texMultiDesc(geom_node, "TexMulti", "Tex@");
 
 						VRay::ValueList mtls_list;
 						VRay::IntList   ids_list;
-						VRay::ValueList tex_list;
-						VRay::IntList   texids_list;
 
 						PRINT_INFO("Adding MtlMulti:");
 
@@ -247,22 +242,8 @@ VRay::Plugin VRayExporter::exportObject(OBJ_Node *obj_node)
 								PRINT_INFO(" %i: \"%s\"",
 										   material_id, shop_materialpath);
 
-								SHOPInfo currShopInfo;
-								mtls_list.push_back(VRay::Value(exportMaterial(op_node->castToSHOPNode(), &currShopInfo)));
+								mtls_list.push_back(VRay::Value(exportMaterial(op_node->castToSHOPNode())));
 								ids_list.push_back(material_id);
-
-								if (NOT(shopInfo.m_geometry)) {
-									shopInfo = currShopInfo;
-								}
-
-								if (currShopInfo.m_geometry) {
-									int idx = currShopInfo.m_geometry->getInputFromName("displacement_tex_color");
-									OP_Node *vop_node = currShopInfo.m_geometry->getInput(idx);
-									if (vop_node) {
-										tex_list.push_back(VRay::Value(exportVop(vop_node)));
-										texids_list.push_back(material_id);
-									}
-								}
 							}
 						}
 
@@ -270,38 +251,12 @@ VRay::Plugin VRayExporter::exportObject(OBJ_Node *obj_node)
 						mtlMultiDesc.addAttribute(Attrs::PluginAttr("ids_list",  ids_list));
 
 						mtl = exportPlugin(mtlMultiDesc);
-
-						texMultiDesc.addAttribute(Attrs::PluginAttr("textures_list", tex_list));
-						texMultiDesc.addAttribute(Attrs::PluginAttr("ids_list", texids_list));
-
-						texPlugin = exportPlugin(texMultiDesc);
 					}
 				}
 
-//				Export geometry displacement if any
-				if (shopInfo.m_geometry) {
-					VOP::NodeBase *displ = static_cast<VOP::NodeBase *>(shopInfo.m_geometry);
-					Attrs::PluginDesc pluginDesc;
-					pluginDesc.pluginName = Attrs::PluginDesc::GetPluginName(obj_node, "Geom@");
-					pluginDesc.pluginID   = displ->getVRayPluginID();
-					pluginDesc.addAttribute(Attrs::PluginAttr("mesh", geom));
-
-					if (texPlugin) {
-						pluginDesc.addAttribute(Attrs::PluginAttr("displacement_tex_color", texPlugin));
-					}
-
-					OP::VRayNode::PluginResult res = displ->asPluginDesc(pluginDesc, this, obj_node);
-					if (res == OP::VRayNode::PluginResultError) {
-						PRINT_ERROR("Error creating plugin descripion for node: \"%s\" [%s]",
-									displ->getName().buffer(), displ->getOperator()->getName().buffer());
-					}
-					else if (res == OP::VRayNode::PluginResultNA ||
-							 res == OP::VRayNode::PluginResultContinue)
-					{
-						setAttrsFromOpNode(pluginDesc, displ);
-					}
-
-					geom = exportPlugin(pluginDesc);
+				VRay::Plugin geomDispl = exportDisplacement(obj_node, geom);
+				if (geomDispl) {
+					geom = geomDispl;
 				}
 
 				// Export default grey material

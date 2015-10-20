@@ -70,6 +70,16 @@ struct CbItem {
 typedef std::vector<CbItem> CbItems;
 
 
+struct ExportContext {
+	ExportContext(OBJ_Node *obj = nullptr):
+		object(obj)
+	{ }
+
+	OBJ_Node *object;
+	VRay::Plugin plugin;
+};
+
+
 class VRayExporter
 {
 public:
@@ -110,8 +120,9 @@ public:
 
 	VRay::Plugin            exportLight(OBJ_Node *obj_node);
 
-	VRay::Plugin            exportMaterial(SHOP_Node *shop_node, SHOPInfo *shopOutput = nullptr);
+	VRay::Plugin            exportMaterial(SHOP_Node *shop_node);
 	VRay::Plugin            exportMtlOut(OP_Node *op_node);
+	VRay::Plugin            exportDisplacement(OBJ_Node *obj_node, VRay::Plugin &geomPlugin);
 
 	VRay::Plugin            exportVop(OP_Node *op_node);
 
@@ -215,7 +226,8 @@ public:
 	static void             RtCallbackNodeData(OP_Node *caller, void *callee, OP_EventType type, void *data);
 	static void             RtCallbackView(OP_Node *caller, void *callee, OP_EventType type, void *data);
 	static void             RtCallbackVop(OP_Node *caller, void *callee, OP_EventType type, void *data);
-	static void             RtCallbackMtlOut(OP_Node *caller, void *callee, OP_EventType type, void *data);
+	static void             RtCallbackMtl(OP_Node *caller, void *callee, OP_EventType type, void *data);
+	static void             RtCallbackShop(OP_Node *caller, void *callee, OP_EventType type, void *data);
 
 	static void             CallbackSequence();
 
