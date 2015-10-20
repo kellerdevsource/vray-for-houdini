@@ -580,74 +580,7 @@ VRay::Plugin VRayExporter::exportVop(OP_Node *op_node)
 }
 
 
-void VRayExporter::RtCallbackMtlOut(OP_Node *caller, void *callee, OP_EventType type, void *data)
-{
-	VRayExporter *exporter = (VRayExporter*)callee;
-
-	PRINT_INFO("RtCallbackMtl: %s from \"%s\"",
-			   OPeventToString(type), caller->getName().buffer());
-
-	if (type == OP_PARM_CHANGED ||
-		type == OP_INPUT_CHANGED ||
-		type == OP_INPUT_REWIRED)
-	{
-		exporter->exportMtlOut(caller);
-	}
-	else if (type == OP_NODE_PREDELETE) {
-		exporter->delOpCallback(caller, VRayExporter::RtCallbackMtlOut);
-	}
-}
-
-
-VRay::Plugin VRayExporter::exportMtlOut(OP_Node *op_node)
-{
-	VRay::Plugin material;
-
-	VOP::MaterialOutput *mtl_out = static_cast<VOP::MaterialOutput *>(op_node);
-	if (mtl_out->error() < UT_ERROR_ABORT ) {
-		PRINT_INFO("Exporting material output \"%s\"...",
-				   mtl_out->getName().buffer());
-
-		const int idx = mtl_out->getInputFromName("Material");
-		VOP::NodeBase *input = dynamic_cast<VOP::NodeBase*>(mtl_out->getInput(idx));
-		if (input) {
-			switch (mtl_out->getInputType(idx)) {
-				case VOP_SURFACE_SHADER: {
-					material = exportVop(input);
-					break;
-				}
-				case VOP_TYPE_BSDF: {
-					VRay::Plugin pluginBRDF = exportVop(input);
-
-					// Wrap BRDF into MtlSingleBRDF for RT GPU to work properly
-					Attrs::PluginDesc mtlPluginDesc(input, "MtlSingleBRDF", "Mtl@");
-					mtlPluginDesc.addAttribute(Attrs::PluginAttr("brdf", pluginBRDF));
-
-					material = exportPlugin(mtlPluginDesc);
-					break;
-				}
-				default:
-					PRINT_ERROR("Unsupported input type for node \"%s\", input %d!",
-								mtl_out->getName().buffer(), idx);
-			}
-
-			if (material) {
-				// Wrap material into MtlRenderStats to always have the same material name
-				// Used when rewiring materials when running interactive RT session
-				// TODO: Do not use for non-interactive export
-				Attrs::PluginDesc pluginDesc(mtl_out->getParent(), "MtlRenderStats", "Mtl@");
-				pluginDesc.addAttribute(Attrs::PluginAttr("base_mtl", material));
-
-				material = exportPlugin(pluginDesc);
-			}
-		}
-	}
-
-	return material;
-}
-
-
-VRay::Plugin VRayExporter::exportMaterial(SHOP_Node *shop_node, SHOPOutput *shopOutput)
+VRay::Plugin VRayExporter::exportMaterial(SHOP_Node *shop_node)
 {
 	VRay::Plugin material;
 
@@ -658,21 +591,143 @@ VRay::Plugin VRayExporter::exportMaterial(SHOP_Node *shop_node, SHOPOutput *shop
 	}
 	else {
 		VOP::MaterialOutput *mtl_out = static_cast<VOP::MaterialOutput *>(op_node);
+		addOpCallback(mtl_out, VRayExporter::RtCallbackShop);
 
-		addOpCallback(op_node, VRayExporter::RtCallbackMtlOut);
+		if (mtl_out->error() < UT_ERROR_ABORT ) {
+			PRINT_INFO("Exporting material output \"%s\"...",
+					   mtl_out->getName().buffer());
 
-		material = exportMtlOut(mtl_out);
+			const int idx = mtl_out->getInputFromName("Material");
+			VOP::NodeBase *input = dynamic_cast<VOP::NodeBase*>(mtl_out->getInput(idx));
+			if (input) {
+				switch (mtl_out->getInputType(idx)) {
+					case VOP_SURFACE_SHADER: {
+						material = exportVop(input);
+						break;
+					}
+					case VOP_TYPE_BSDF: {
+						VRay::Plugin pluginBRDF = exportVop(input);
 
-		if (shopOutput) {
-			int idx = mtl_out->getInputFromName("Material");
-			shopOutput->m_material = mtl_out->getInput(idx);
+						// Wrap BRDF into MtlSingleBRDF for RT GPU to work properly
+						Attrs::PluginDesc mtlPluginDesc(input, "MtlSingleBRDF", "Mtl@");
+						mtlPluginDesc.addAttribute(Attrs::PluginAttr("brdf", pluginBRDF));
 
-			idx = mtl_out->getInputFromName("Geometry");
-			shopOutput->m_geometry = mtl_out->getInput(idx);
+						material = exportPlugin(mtlPluginDesc);
+						break;
+					}
+					default:
+						PRINT_ERROR("Unsupported input type for node \"%s\", input %d!",
+									mtl_out->getName().buffer(), idx);
+				}
+
+//				if (material) {
+//					// Wrap material into MtlRenderStats to always have the same material name
+//					// Used when rewiring materials when running interactive RT session
+//					// TODO: Do not use for non-interactive export
+//					Attrs::PluginDesc pluginDesc(mtl_out->getParent(), "MtlRenderStats", "Mtl@");
+//					pluginDesc.addAttribute(Attrs::PluginAttr("base_mtl", material));
+
+//					material = exportPlugin(pluginDesc);
+//				}
+			}
 		}
 	}
 
 	return material;
+}
+
+
+void VRayExporter::RtCallbackShop(OP_Node *caller, void *callee, OP_EventType type, void *data)
+{
+	VRayExporter *exporter = (VRayExporter*)callee;
+
+	PRINT_INFO("RtCallbackDisplacement: %s from \"%s\"",
+			   OPeventToString(type), caller->getName().buffer());
+
+	if (type == OP_PARM_CHANGED ||
+		type == OP_INPUT_REWIRED)
+	{
+		UT_String callerPath;
+		caller->getFullPath(callerPath);
+
+		UT_String shopPath;
+		caller->getParent()->getFullPath(shopPath);
+		SHOP_Node *shop_node = OPgetDirector()->findSHOPNode(shopPath.buffer());
+
+		OP_NodeList refs;
+		shop_node->getExistingOpDependents(refs, true);
+		for (OP_Node *node : refs) {
+			UT_String nodePath;
+			node->getFullPath(nodePath);
+
+			OBJ_Node *obj_node = node->castToOBJNode();
+			if (obj_node) {
+				exporter->exportObject(obj_node);
+				continue;
+			}
+			SOP_Node *sop_node = node->castToSOPNode();
+			if (sop_node) {
+				obj_node = sop_node->getParent()->castToOBJNode();
+				exporter->exportObject(obj_node);
+				continue;
+			}
+		}
+	}
+	else if (type == OP_NODE_PREDELETE) {
+		exporter->delOpCallback(caller, VRayExporter::RtCallbackShop);
+	}
+}
+
+
+VRay::Plugin VRayExporter::exportDisplacement(OBJ_Node *obj_node, VRay::Plugin &geomPlugin)
+{
+	VRay::Plugin plugin;
+
+	UT_String shopPath;
+	obj_node->evalString(shopPath, "vray_displacement", 0, 0.0f);
+	SHOP_Node *shop_node = OPgetDirector()->findSHOPNode(shopPath.buffer());
+	if (NOT(shop_node)) {
+//		take displacement from the shop_materialpath
+		shop_node = obj_node->getMaterialNode(m_context.getTime());
+		if (NOT(shop_node)) {
+			return plugin;
+		}
+	}
+
+	OP_Node *op_node = VRayExporter::FindChildNodeByType(shop_node, "vray_material_output");
+	if (!op_node) {
+		PRINT_ERROR("Can't find \"V-Ray Material Output\" operator under \"%s\"!",
+					shop_node->getName().buffer());
+	}
+	else {
+		VOP::MaterialOutput *mtl_out = static_cast<VOP::MaterialOutput *>(op_node);
+		addOpCallback(mtl_out, VRayExporter::RtCallbackShop);
+
+		const int idx = mtl_out->getInputFromName("Geometry");
+		VOP::NodeBase *input = dynamic_cast<VOP::NodeBase*>(mtl_out->getInput(idx));
+		if (input && mtl_out->getInputType(idx) == VOP_GEOMETRY_SHADER) {
+			VOP::NodeBase *displ = static_cast<VOP::NodeBase *>(input);
+			Attrs::PluginDesc pluginDesc;
+			pluginDesc.pluginName = Attrs::PluginDesc::GetPluginName(obj_node, "Geom@");
+			pluginDesc.pluginID   = displ->getVRayPluginID();
+			pluginDesc.addAttribute(Attrs::PluginAttr("mesh", geomPlugin));
+
+			OP::VRayNode::PluginResult res = displ->asPluginDesc(pluginDesc, this, obj_node);
+			if (res == OP::VRayNode::PluginResultError) {
+				PRINT_ERROR("Error creating plugin descripion for node: \"%s\" [%s]",
+							displ->getName().buffer(), displ->getOperator()->getName().buffer());
+			}
+			else if (res == OP::VRayNode::PluginResultNA ||
+					 res == OP::VRayNode::PluginResultContinue)
+			{
+				setAttrsFromOpNode(pluginDesc, displ);
+			}
+
+			plugin = exportPlugin(pluginDesc);
+		}
+	}
+
+	return plugin;
 }
 
 

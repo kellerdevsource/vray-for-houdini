@@ -3,6 +3,7 @@
 	<toolshelf name="vray_render" label="V-Ray">
 		<memberTool name="vray_render_start"/>
 		<memberTool name="vray_physical_camera"/>
+		<memberTool name="vray_displacement"/>
 		<memberTool name="vray_proxy"/>
 	</toolshelf>
 
@@ -26,6 +27,17 @@ vfh_camera.add_physical_camera_attributes()
 		</script>
 	</tool>
 
+	<tool name="vray_displacement" label="Add Displacement" icon="ROP_vray.svg">
+		<script scriptType="python">
+<![CDATA[
+import vfh.shelftools.vrayattr as vrayattr
+
+vrayattr.applyDisplacementToSelection("VRayNodeGeomDisplacedMesh")
+
+]]>
+		</script>
+	</tool>
+
 	<tool name="vray_proxy" label="Export Proxy" icon="ROP_vray.svg">
 		<script scriptType="python">
 <![CDATA[
@@ -37,4 +49,6 @@ dialog.show(1)
 ]]>
 		</script>
 	</tool>
+
+
 </shelfDocument>
