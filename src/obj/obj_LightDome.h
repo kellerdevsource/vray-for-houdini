@@ -21,7 +21,7 @@ class LightDome:
 		public OBJ::LightNodeBase
 {
 public:
-	static void                 AddAttributes(Parm::VRayPluginInfo *pluginInfo);
+	static void                 addPrmTemplate(Parm::PRMTmplList &prmTemplate);
 
 public:
 	LightDome(OP_Network *parent, const char *name, OP_Operator *entry):LightNodeBase(parent, name, entry) {}

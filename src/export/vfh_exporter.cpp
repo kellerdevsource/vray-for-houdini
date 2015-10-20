@@ -11,12 +11,12 @@
 #include "vfh_defines.h"
 #include "vfh_exporter.h"
 #include "vfh_prm_globals.h"
+#include "vfh_prm_templates.h"
 #include "vfh_tex_utils.h"
 
 #include "obj/obj_node_base.h"
 #include "vop/vop_node_base.h"
 #include "vop/material/vop_mtl_def.h"
-
 #include "sop/sop_vrayproxy.h"
 #include "sop/sop_vrayscene.h"
 
@@ -138,17 +138,20 @@ void VRayExporter::TransformToMatrix4(const VUtils::TraceTransform &tm, UT_Matri
 }
 
 
-OP_Node *VRayExporter::GetCamera(OP_Node *rop)
+OBJ_Node *VRayExporter::GetCamera(OP_Node *rop)
 {
-	OP_Node *node = nullptr;
+	OBJ_Node *camera = nullptr;
 
 	UT_String camera_path;
-	rop->evalString(camera_path, "render_camera", 0, 0.0f);
+	rop->evalString(camera_path, "render_camera", 0, 0.0);
 	if (NOT(camera_path.equal(""))) {
-		node = OPgetDirector()->findNode(camera_path.buffer());
+		OP_Node *node = OPgetDirector()->findNode(camera_path.buffer());
+		if (node) {
+			camera = node->castToOBJNode();
+		}
 	}
 
-	return node;
+	return camera;
 }
 
 
@@ -168,104 +171,87 @@ OP_Node* VRayExporter::FindChildNodeByType(OP_Node *op_node, const std::string &
 }
 
 
-bool VRayExporter::setAttrValueFromOpNode(Attrs::PluginDesc &pluginDesc, const Parm::AttrDesc &attrDesc, OP_Node *opNode, bool checkPrefix)
+void VRayExporter::setAttrValueFromOpNode(Attrs::PluginDesc &pluginDesc, const Parm::AttrDesc &attrDesc, OP_Node *opNode, const std::string &prefix)
 {
-	const fpreal &t = m_context.getTime();
+	const std::string &parmName = prefix.empty()
+								  ? attrDesc.attr
+								  : boost::str(Parm::FmtPrefixManual % prefix % attrDesc.attr);
 
-	const char *parmName = attrDesc.attr.c_str();
-	const char *attrName = parmName;
-
-	// Check if parm name is prefixed with plugin name
-	// "PluginID.AttrName"
-	//
-	if (checkPrefix) {
-		if (attrName = strstr(parmName, ".")) {
-			attrName++;
-		}
-		else {
-			attrName = parmName;
-		}
-	}
-
+	if (Parm::isParmExist(*opNode, parmName)) {
+		const fpreal &t = m_context.getTime();
 #if 0
-	PRINT_INFO("Setting: %s[%s].%s (from %s.%s)",
-			   pluginDesc.pluginName.c_str(), pluginDesc.pluginID.c_str(),
-			   attrName, opNode->getName().buffer(), parmName);
+		PRINT_INFO("Setting: [%s] %s.%s (from %s.%s)",
+				   pluginDesc.pluginID.c_str(),
+				   pluginDesc.pluginName.c_str(), attrDesc.attr.c_str(),
+				   opNode->getName().buffer(), parmName.c_str());
 #endif
+		Attrs::PluginAttr attr;
+		attr.paramName = attrDesc.attr;
 
-	Attrs::PluginAttr attr;
-	attr.paramName = attrName;
-
-	if (attrDesc.value.type == Parm::eBool ||
-		attrDesc.value.type == Parm::eInt  ||
-		attrDesc.value.type == Parm::eTextureInt)
-	{
-		attr.paramType = Attrs::PluginAttr::AttrTypeInt;
-		attr.paramValue.valInt = opNode->evalInt(parmName, 0, t);
-	}
-	else if (attrDesc.value.type == Parm::eEnum) {
-		const int menuIndex = opNode->evalInt(parmName, 0, t);
-
-		const Parm::EnumItem &enumItem = attrDesc.value.defEnumItems[menuIndex];
-		if (enumItem.valueType == Parm::EnumItem::EnumValueInt) {
+		if (attrDesc.value.type == Parm::eBool ||
+			attrDesc.value.type == Parm::eInt  ||
+			attrDesc.value.type == Parm::eTextureInt)
+		{
 			attr.paramType = Attrs::PluginAttr::AttrTypeInt;
-			attr.paramValue.valInt = enumItem.value;
+			attr.paramValue.valInt = opNode->evalInt(parmName.c_str(), 0, t);
 		}
-		else {
+		else if (attrDesc.value.type == Parm::eEnum) {
+			const int menuIndex = opNode->evalInt(parmName.c_str(), 0, t);
+
+			const Parm::EnumItem &enumItem = attrDesc.value.defEnumItems[menuIndex];
+			if (enumItem.valueType == Parm::EnumItem::EnumValueInt) {
+				attr.paramType = Attrs::PluginAttr::AttrTypeInt;
+				attr.paramValue.valInt = enumItem.value;
+			}
+			else {
+				attr.paramType = Attrs::PluginAttr::AttrTypeString;
+				attr.paramValue.valString = enumItem.valueString;
+			}
+		}
+		else if (attrDesc.value.type == Parm::eFloat ||
+				 attrDesc.value.type == Parm::eTextureFloat) {
+			attr.paramType = Attrs::PluginAttr::AttrTypeFloat;
+			attr.paramValue.valFloat = (float)opNode->evalFloat(parmName.c_str(), 0, t);
+		}
+		else if (attrDesc.value.type == Parm::eColor  ||
+				 attrDesc.value.type == Parm::eAColor ||
+				 attrDesc.value.type == Parm::eTextureColor)
+		{
+			attr.paramType = Attrs::PluginAttr::AttrTypeColor;
+			attr.paramValue.valVector[0] = (float)opNode->evalFloat(parmName.c_str(), 0, t);
+			attr.paramValue.valVector[1] = (float)opNode->evalFloat(parmName.c_str(), 1, t);
+			attr.paramValue.valVector[2] = (float)opNode->evalFloat(parmName.c_str(), 2, t);
+			if (attrDesc.value.type != Parm::eColor) {
+				attr.paramValue.valVector[3] = (float)opNode->evalFloat(parmName.c_str(), 3, t);
+			}
+		}
+		else if (attrDesc.value.type == Parm::eString) {
+			UT_String buf;
+			opNode->evalString(buf, parmName.c_str(), 0, t);
+
 			attr.paramType = Attrs::PluginAttr::AttrTypeString;
-			attr.paramValue.valString = enumItem.valueString;
+			attr.paramValue.valString = buf.buffer();
 		}
-	}
-	else if (attrDesc.value.type == Parm::eFloat ||
-			 attrDesc.value.type == Parm::eTextureFloat) {
-		attr.paramType = Attrs::PluginAttr::AttrTypeFloat;
-		attr.paramValue.valFloat = (float)opNode->evalFloat(parmName, 0, t);
-	}
-	else if (attrDesc.value.type == Parm::eColor  ||
-			 attrDesc.value.type == Parm::eAColor ||
-			 attrDesc.value.type == Parm::eTextureColor)
-	{
-		attr.paramType = Attrs::PluginAttr::AttrTypeColor;
-		attr.paramValue.valVector[0] = (float)opNode->evalFloat(parmName, 0, t);
-		attr.paramValue.valVector[1] = (float)opNode->evalFloat(parmName, 1, t);
-		attr.paramValue.valVector[2] = (float)opNode->evalFloat(parmName, 2, t);
-		if (attrDesc.value.type != Parm::eColor) {
-			attr.paramValue.valVector[3] = (float)opNode->evalFloat(parmName, 3, t);
+		else if (attrDesc.value.type > Parm::eManualExportStart && attrDesc.value.type < Parm::eManualExportEnd) {
+			// These are fake params and must be handled manually
 		}
-	}
-	else if (attrDesc.value.type == Parm::eString) {
-		UT_String buf;
-		opNode->evalString(buf, parmName, 0, t);
+		else if (attrDesc.value.type < Parm::ePlugin) {
+			PRINT_ERROR("Unhandled param type: %s at %s [%i]",
+						parmName.c_str(), opNode->getOperator()->getName().buffer(), attrDesc.value.type);
+		}
 
-		attr.paramType = Attrs::PluginAttr::AttrTypeString;
-		attr.paramValue.valString = buf.buffer();
-	}
-	else if (attrDesc.value.type > Parm::eManualExportStart && attrDesc.value.type < Parm::eManualExportEnd) {
-		// These are fake params and must be handled manually
-		return 1;
-	}
-	else if (attrDesc.value.type < Parm::ePlugin) {
-		PRINT_ERROR("Unhandled param type: %s at %s [%i]",
-					parmName, opNode->getOperator()->getName().buffer(), attrDesc.value.type);
-		return 0;
-	}
+		pluginDesc.addAttribute(attr);
 
-	pluginDesc.addAttribute(attr);
-
-	return 1;
+	}
 }
 
 
-int VRayExporter::setAttrsFromOpNode(Attrs::PluginDesc &pluginDesc, OP_Node *opNode, bool checkPrefix, const std::string &prefix)
+int VRayExporter::setAttrsFromOpNode(Attrs::PluginDesc &pluginDesc, OP_Node *opNode, const std::string &prefix)
 {
-	const std::string &fullPluginID = checkPrefix
-									  ? prefix + pluginDesc.pluginID
-									  : pluginDesc.pluginID;
-
-	const Parm::VRayPluginInfo *pluginInfo = Parm::GetVRayPluginInfo(fullPluginID);
+	const Parm::VRayPluginInfo *pluginInfo = Parm::GetVRayPluginInfo(pluginDesc.pluginID);
 	if (NOT(pluginInfo)) {
 		PRINT_ERROR("Node \"%s\": Plugin \"%s\" description is not found!",
-					opNode->getName().buffer(), fullPluginID.c_str());
+					opNode->getName().buffer(), pluginDesc.pluginID.c_str());
 		return 1;
 	}
 
@@ -293,7 +279,7 @@ int VRayExporter::setAttrsFromOpNode(Attrs::PluginDesc &pluginDesc, OP_Node *opN
 
 		if (NOT(plugin_value)) {
 			// Provide some default mapping for textures
-			if (pluginInfo->pluginType == "TEXTURE" && attrName == "uvwgen") {
+			if (pluginInfo->pluginType == Parm::PluginTypeTexture && attrName == "uvwgen") {
 				Attrs::PluginDesc uvwGen(VRayExporter::getPluginName(opNode, "Uvw"), "UVWGenObject");
 				plugin_value = exportPlugin(uvwGen);
 			}
@@ -330,7 +316,7 @@ int VRayExporter::setAttrsFromOpNode(Attrs::PluginDesc &pluginDesc, OP_Node *opN
 				}
 			}
 			else {
-				setAttrValueFromOpNode(pluginDesc, attrDesc, opNode, checkPrefix);
+				setAttrValueFromOpNode(pluginDesc, attrDesc, opNode, prefix);
 			}
 		}
 		else {
@@ -415,7 +401,7 @@ int VRayExporter::exportSettings(OP_Node *rop)
 		}
 		else {
 			Attrs::PluginDesc pluginDesc(sp, sp);
-			setAttrsFromOpNode(pluginDesc, rop, true);
+			setAttrsFromOpNode(pluginDesc, rop, boost::str(Parm::FmtPrefix % sp));
 			exportPlugin(pluginDesc);
 		}
 	}

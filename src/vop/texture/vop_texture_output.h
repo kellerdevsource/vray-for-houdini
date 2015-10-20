@@ -22,7 +22,7 @@ class TextureOutput:
 		public NodeBase
 {
 public:
-	static void           AddAttributes(Parm::VRayPluginInfo *pluginInfo);
+	static void           addPrmTemplate(Parm::PRMTmplList &prmTemplate);
 
 public:
 	TextureOutput(OP_Network *parent, const char *name, OP_Operator *entry):NodeBase(parent, name, entry) {}

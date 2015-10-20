@@ -231,6 +231,7 @@ void VRayPluginRenderer::setMode(int mode)
 		options.keepRTRunning = true;
 		m_vray->setOptions(options);
 	}
+
 	m_vray->setAutoCommit(true);
 
 	m_vray->setOnDumpMessage(OnDumpMessage,       (void*)&m_callbacks.m_cbOnDumpMessage);

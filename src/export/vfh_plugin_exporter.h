@@ -49,7 +49,7 @@ struct CbBase
 	CbVoidArray m_cbVoid;
 	CbTypeArray m_cbTyped;
 
-	VfhDisableCopy(CbBase);
+	VfhDisableCopy(CbBase)
 };
 
 typedef CbBase<CbOnRendererClose>   CbSetOnRendererClose;
@@ -85,7 +85,7 @@ struct CbCollection {
 	CbSetOnDumpMessage     m_cbOnDumpMessage;
 	CbSetOnProgress        m_cbOnProgress;
 
-	VfhDisableCopy(CbCollection);
+	VfhDisableCopy(CbCollection)
 };
 
 
@@ -114,7 +114,7 @@ struct AppSdkInit {
 private:
 	VRay::VRayInit *m_vrayInit;
 
-	VfhDisableCopy(AppSdkInit);
+	VfhDisableCopy(AppSdkInit)
 };
 
 
@@ -165,6 +165,7 @@ public:
 	int                           isRtRunning();
 
 	void                          showVFB(const bool show=true) { m_vray->showFrameBuffer(show, true); }
+	void                          setAutoCommit(const bool enable) { m_vray->setAutoCommit(enable); }
 
 private:
 	VRay::Plugin                  newPlugin(const Attrs::PluginDesc &pluginDesc);

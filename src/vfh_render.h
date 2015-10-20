@@ -31,11 +31,7 @@ class VRayRendererNode:
 		public ROP_Node
 {
 public:
-	/// Provides access to our parm templates.
 	static OP_TemplatePair      *getTemplatePair();
-	/// Provides access to our variables.
-	static OP_VariablePair      *getVariablePair();
-	/// Creates an instance of this node.
 	static OP_Node              *myConstructor(OP_Network *net, const char*name, OP_Operator *op) { return new VRayRendererNode(net, name, op); }
 
 	virtual bool                 updateParmsFlags() VRAY_OVERRIDE;

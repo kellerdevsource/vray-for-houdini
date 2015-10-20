@@ -35,9 +35,9 @@ void VOP::MtlMulti::setPluginType()
 }
 
 
-void VOP::MtlMulti::AddAttributes(Parm::VRayPluginInfo *pluginInfo)
+void VOP::MtlMulti::addPrmTemplate(Parm::PRMTmplList &prmTemplate)
 {
-	pluginInfo->prm_template.push_back(PRM_Template(PRM_INT, 1, &rpm_name_mtl_count, PRMoneDefaults, /*choicelist*/ nullptr, &rpm_range_mtl_count));
+	prmTemplate.push_back(PRM_Template(PRM_INT, 1, &rpm_name_mtl_count, PRMoneDefaults, /*choicelist*/ nullptr, &rpm_range_mtl_count));
 }
 
 

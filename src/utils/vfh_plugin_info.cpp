@@ -9,7 +9,7 @@
 //
 
 #include "vfh_plugin_info.h"
-
+#include "vfh_prm_json.h"
 
 using namespace VRayForHoudini;
 using namespace VRayForHoudini::Parm;
@@ -28,19 +28,16 @@ VRayPluginInfo* VRayForHoudini::Parm::NewVRayPluginInfo(const std::string &plugi
 
 VRayPluginInfo* VRayForHoudini::Parm::GetVRayPluginInfo(const std::string &pluginID)
 {
+	VRayPluginInfo *pInfo = nullptr;
+
 	if (pluginsInfo.count(pluginID)) {
-		return pluginsInfo[pluginID];
+		pInfo = pluginsInfo[pluginID];
 	}
-	return nullptr;
-}
-
-
-const AttrDesc *VRayPluginInfo::getAttributeDesc(const std::string &attrName) const
-{
-	for (const auto &aIt : attributes) {
-		if (attrName == aIt.first) {
-			return &aIt.second;
-		}
+	else {
+		VRayPluginInfo *pluginInfo = Parm::generatePluginInfo(pluginID);
+		pluginsInfo[pluginID] = pluginInfo;
+		pInfo = pluginInfo;
 	}
-	return nullptr;
+
+	return pInfo;
 }

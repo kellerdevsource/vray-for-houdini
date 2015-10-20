@@ -8,6 +8,8 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
+#include "vfh_defines.h"
+#include "vfh_prm_json.h"
 #include "vfh_prm_def.h"
 
 
@@ -17,6 +19,11 @@ using namespace VRayForHoudini::Parm;
 
 ParmDefValue::PRM_DefaultPtrList ParmDefValue::PrmDefPtrList;
 ParmDefValue::PRM_DefaultPtrList ParmDefValue::PrmDefArrPtrList;
+
+
+boost::format Parm::FmtPrefix("%s.");
+boost::format Parm::FmtPrefixAuto("%s.%s");
+boost::format Parm::FmtPrefixManual("%s%s");
 
 
 const char *ParmDefValue::typeStr() const
@@ -68,4 +75,28 @@ const char *ParmDefValue::typeStr() const
 			break;
 	}
 	return "Unknown";
+}
+
+
+void Parm::addTabItems(Parm::TabItemDesc tabItemsDesc[], int tabItemsDescCount, PRMDefList &switcher, PRMTmplList &prmTemplate)
+{
+	for (int t = 0; t < tabItemsDescCount; ++t) {
+		const Parm::TabItemDesc &tabItemDesc = tabItemsDesc[t];
+
+		Parm::PRMTmplList *prmTmplList = Parm::generatePrmTemplate(tabItemDesc.pluginID,
+																   tabItemDesc.pluginID /* prefix for the attr name */);
+		if (prmTmplList) {
+			// Without list terminator
+			const int prmTmplCount = prmTmplList->size() - 1;
+			if (prmTmplCount > 0) {
+				// Add switcher tab
+				switcher.push_back(PRM_Default(prmTmplCount, tabItemDesc.label));
+
+				// Add tab items
+				for (int i = 0; i < prmTmplCount; ++i) {
+					prmTemplate.push_back((*prmTmplList)[i]);
+				}
+			}
+		}
+	}
 }

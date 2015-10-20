@@ -77,14 +77,13 @@ public:
 
 	int                     exportScene();
 
-	void                    fillCameraData(OP_Node &camera, ViewParams &viewParams);
-	void                    fillPhysicalCamera(ViewParams &viewParams, Attrs::PluginDesc &physCamDesc);
-
-	VRay::Plugin            exportRenderView(const ViewParams &viewParams);
-	VRay::Plugin            exportSettingsCameraDof(ViewParams &viewParams);
-	VRay::Plugin            exportCameraPhysical(ViewParams &viewParams);
-	VRay::Plugin            exportCameraDefault(ViewParams &viewParams);
-
+	int                     isPhysicalView(OBJ_Node &camera);
+	void                    fillCameraData(OBJ_Node &camera, ViewParams &viewParams);
+	void                    fillPhysicalCamera(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc);
+	void                    fillSettingsCameraDof(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc);
+	void                    fillCameraDefault(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc);
+	void                    fillSettingsCamera(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc);
+	void                    fillRenderView(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc);
 	int                     exportView();
 
 	int                     exportSettings(OP_Node *rop);
@@ -163,11 +162,11 @@ public:
 	static void             TransformToMatrix4(const VUtils::TraceTransform &tm, UT_Matrix4 &m);
 	static VRay::Transform  Matrix4ToTransform(const UT_Matrix4D &m4, bool flip=false);
 
-	static OP_Node         *GetCamera(OP_Node *rop);
+	static OBJ_Node        *GetCamera(OP_Node *rop);
 	static OP_Node         *FindChildNodeByType(OP_Node *op_node, const std::string &op_type);
 
-	bool                    setAttrValueFromOpNode(Attrs::PluginDesc &plugin, const Parm::AttrDesc &parmDesc, OP_Node *opNode, bool checkPrefix=false);
-	int                     setAttrsFromOpNode(Attrs::PluginDesc &plugin, OP_Node *opNode, bool checkPrefix=false, const std::string &prefix="");
+	void                    setAttrValueFromOpNode(Attrs::PluginDesc &plugin, const Parm::AttrDesc &parmDesc, OP_Node *opNode, const std::string &prefix="");
+	int                     setAttrsFromOpNode(Attrs::PluginDesc &plugin, OP_Node *opNode, const std::string &prefix="");
 
 	VRay::Plugin            exportConnectedVop(OP_Node *op_node, const UT_String &inputName);
 

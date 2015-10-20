@@ -21,7 +21,7 @@ class GeomStaticSmoothedMesh:
 		public SOP::NodeBase
 {
 public:
-	static void                 AddAttributes(Parm::VRayPluginInfo *pluginInfo);
+	static void                 addPrmTemplate(Parm::PRMTmplList &prmTemplate);
 
 public:
 	GeomStaticSmoothedMesh(OP_Network *parent, const char *name, OP_Operator *entry):NodeBase(parent, name, entry) {}
