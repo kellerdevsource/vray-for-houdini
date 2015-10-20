@@ -234,14 +234,11 @@ int VRayExporter::exportView()
 
 int ViewPluginsDesc::needReset(const ViewPluginsDesc &other) const
 {
-	const int camPhysDiff = cameraPhysical.isDifferent(other.cameraPhysical);
-	PRINT_INFO("camPhysDiff = %i", camPhysDiff);
-
 	// NOTE: No need to reset on RenderView, we handle it differently
 	//
 	return (settingsCameraDof.isDifferent(other.settingsCameraDof) ||
 			settingsCamera.isDifferent(other.settingsCamera) ||
-			camPhysDiff ||
+			cameraPhysical.isDifferent(other.cameraPhysical) ||
 			cameraDefault.isDifferent(other.cameraDefault));
 }
 
