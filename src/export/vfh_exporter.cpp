@@ -617,7 +617,7 @@ VRay::Plugin VRayExporter::exportMaterial(SHOP_Node *shop_node)
 						VRay::Plugin pluginBRDF = exportVop(input);
 
 						// Wrap BRDF into MtlSingleBRDF for RT GPU to work properly
-						Attrs::PluginDesc mtlPluginDesc(input, "MtlSingleBRDF", "Mtl@");
+						Attrs::PluginDesc mtlPluginDesc(VRayExporter::getPluginName(input, "Mtl@"), "MtlSingleBRDF");
 						mtlPluginDesc.addAttribute(Attrs::PluginAttr("brdf", pluginBRDF));
 
 						material = exportPlugin(mtlPluginDesc);
@@ -632,7 +632,7 @@ VRay::Plugin VRayExporter::exportMaterial(SHOP_Node *shop_node)
 					// Wrap material into MtlRenderStats to always have the same material name
 					// Used when rewiring materials when running interactive RT session
 					// TODO: Do not use for non-interactive export
-					Attrs::PluginDesc pluginDesc(mtl_out->getParent(), "MtlRenderStats", "Mtl@");
+					Attrs::PluginDesc pluginDesc(VRayExporter::getPluginName(mtl_out->getParent(), "Mtl@"), "MtlRenderStats");
 					pluginDesc.addAttribute(Attrs::PluginAttr("base_mtl", material));
 					material = exportPlugin(pluginDesc);
 				}
@@ -695,7 +695,7 @@ VRay::Plugin VRayExporter::exportDisplacement(OBJ_Node *obj_node, VRay::Plugin &
 	SHOP_Node *shop_node = OPgetDirector()->findSHOPNode(shopPath.buffer());
 	if (NOT(shop_node)) {
 		// Take displacement from the shop_materialpath
-		shop_node = obj_node->getMaterialNode(m_context.getTime());
+		shop_node = objGetMaterialNode(obj_node, m_context.getTime());
 		if (NOT(shop_node)) {
 			return plugin;
 		}
