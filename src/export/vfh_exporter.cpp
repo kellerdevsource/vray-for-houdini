@@ -690,9 +690,13 @@ VRay::Plugin VRayExporter::exportDisplacement(OBJ_Node *obj_node, VRay::Plugin &
 {
 	VRay::Plugin plugin;
 
-	UT_String shopPath;
-	obj_node->evalString(shopPath, "vray_displacement", 0, 0.0f);
-	SHOP_Node *shop_node = OPgetDirector()->findSHOPNode(shopPath.buffer());
+	SHOP_Node *shop_node = nullptr;
+	if (Parm::isParmExist(*obj_node, "vray_displacement")) {
+		UT_String shopPath;
+		obj_node->evalString(shopPath, "vray_displacement", 0, 0.0f);
+		shop_node = OPgetDirector()->findSHOPNode(shopPath.buffer());
+	}
+
 	if (NOT(shop_node)) {
 		// Take displacement from the shop_materialpath
 		shop_node = objGetMaterialNode(obj_node, m_context.getTime());
