@@ -75,6 +75,10 @@ install(FILES       ${CMAKE_SOURCE_DIR}/deploy/ROP_vray.svg
 install(DIRECTORY   ${CMAKE_SOURCE_DIR}/deploy/scripts/python/vfh
 		DESTINATION ${HOUDINI_HOME_PATH}/scripts/python)
 
+# Install custom node initialization scripts
+#
+install(DIRECTORY   ${CMAKE_SOURCE_DIR}/deploy/scripts/nodeinit/
+		DESTINATION ${HOUDINI_HOME_PATH}/scripts/)
 
 # Create program launcher with all needed environment variables
 #
