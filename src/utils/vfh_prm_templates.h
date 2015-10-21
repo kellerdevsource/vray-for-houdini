@@ -12,6 +12,8 @@
 #define VRAY_FOR_HOUDINI_PRM_TEMPLATES_H
 
 #include "vfh_prm_defaults.h"
+#include <PRM/PRM_Parm.h>
+
 
 class OP_Node;
 
