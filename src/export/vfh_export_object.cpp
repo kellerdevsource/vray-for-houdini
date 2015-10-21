@@ -153,35 +153,6 @@ VRay::Plugin VRayExporter::exportNodeData(SOP_Node *geom_node, SHOPToID &shopToI
 		Attrs::PluginDesc geomPluginDesc;
 
 		if (geomOpName.startsWith("VRayNode")) {
-			if (geomOpName.equal("VRayNodeGeomDisplacedMesh") ||
-				geomOpName.equal("VRayNodeGeomStaticSmoothedMesh"))
-			{
-				OP_Node *mesh_op_node = geom_node->getInput(0);
-				if (NOT(mesh_op_node)) {
-					PRINT_ERROR("Geometry node is not connected!");
-				}
-				else {
-					VRay::Plugin mesh;
-					SOP_Node *mesh_node = mesh_op_node->castToSOPNode();
-					// Export base mesh
-					if (mesh_node){
-						GU_DetailHandleAutoReadLock gdl(mesh_node->getCookedGeoHandle(m_context));
-						const GU_Detail *gdp = gdl.getGdp();
-						if (gdp) {
-							mesh = exportGeomStaticMesh(*mesh_node, *gdp, shopToID);
-						}
-					}
-
-					// NOTE: Could be actually empty if mesh is not animated and we're exporting
-					// animation. Real errors are checked inside.
-					if (mesh) {
-						geomPluginDesc.addAttribute(Attrs::PluginAttr("mesh", mesh));
-					} else {
-						PRINT_ERROR("Geometry export failed!");
-					}
-				}
-			}
-
 			SOP::NodeBase *vrayNode = static_cast<SOP::NodeBase*>(geom_node);
 
 			OP_Node *op_node = static_cast<OP_Node*>(geom_node);
@@ -260,10 +231,9 @@ VRay::Plugin VRayExporter::exportObject(OBJ_Node *obj_node)
 #endif
 		}
 		else {
-			std::vector<SHOPOutput> shopOutList;
-
 			VRayForHoudini::SHOPToID shopToID;
 			VRay::Plugin geom = exportNodeData(geom_node, shopToID);
+
 			if (geom) {
 				VRay::Plugin mtl;
 
@@ -272,17 +242,13 @@ VRay::Plugin VRayExporter::exportObject(OBJ_Node *obj_node)
 					PRINT_INFO("  Found material: \"%s\" [%s]",
 							   shop_node->getName().buffer(), shop_node->getOperator()->getName().buffer());
 
-					SHOPOutput shopOut;
-					mtl = exportMaterial(shop_node, &shopOut);
-					shopOutList.push_back(shopOut);
+					mtl = exportMaterial(shop_node);
 				}
 				else if (shopToID.size()) {
 					if (shopToID.size() == 1) {
 						OP_Node *op_node = OPgetDirector()->findNode(shopToID.begin().key());
 						if (op_node) {
-							SHOPOutput shopOut;
-							mtl = exportMaterial(op_node->castToSHOPNode(), &shopOut);
-							shopOutList.push_back(shopOut);
+							mtl = exportMaterial(op_node->castToSHOPNode());
 						}
 					}
 					else {
@@ -303,11 +269,8 @@ VRay::Plugin VRayExporter::exportObject(OBJ_Node *obj_node)
 								PRINT_INFO(" %i: \"%s\"",
 										   material_id, shop_materialpath);
 
-								SHOPOutput shopOut;
-								mtls_list.push_back(VRay::Value(exportMaterial(op_node->castToSHOPNode(), &shopOut)));
+								mtls_list.push_back(VRay::Value(exportMaterial(op_node->castToSHOPNode())));
 								ids_list.push_back(material_id);
-
-								shopOutList.push_back(shopOut);
 							}
 						}
 
@@ -317,9 +280,10 @@ VRay::Plugin VRayExporter::exportObject(OBJ_Node *obj_node)
 						mtl = exportPlugin(mtlMultiDesc);
 					}
 				}
-				else {
-					PRINT_INFO("  No material found for \"%s\"!",
-							   obj_node->getName().buffer());
+
+				VRay::Plugin geomDispl = exportDisplacement(obj_node, geom);
+				if (geomDispl) {
+					geom = geomDispl;
 				}
 
 				// Export default grey material
