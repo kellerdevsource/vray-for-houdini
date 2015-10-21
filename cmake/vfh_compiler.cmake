@@ -15,12 +15,15 @@ if(WIN32)
 	set(CMAKE_CXX_FLAGS "/wd4355 /w14996 /wd4800 /wd4244 /wd4305 /wd4251 /wd4275 /wd4396 /wd4018 /wd4267 /wd4146 /EHsc /GT /bigobj")
 
 else()
+	set(CMAKE_CXX_FLAGS       "-std=c++11")
+	set(CMAKE_CXX_FLAGS_DEBUG "-g -DNDEBUG")
+
 	if (APPLE)
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libstdc++")
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libstdc++")
 		add_definitions(-DBOOST_NO_CXX11_RVALUE_REFERENCES)
-	else()
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
 	endif()
+
+	add_definitions(-D__OPTIMIZE__)
 
 	# Houdini specific
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-attributes")
@@ -37,3 +40,5 @@ else()
 endif()
 
 message(STATUS "Using flags: ${CMAKE_CXX_FLAGS}")
+message(STATUS "  Release: ${CMAKE_CXX_FLAGS_RELEASE}")
+message(STATUS "  Debug:   ${CMAKE_CXX_FLAGS_DEBUG}")
