@@ -13,7 +13,7 @@
 #include <OP/OP_Node.h>
 
 
-int VRayForHoudini::Parm::isParmExist(OP_Node &node, const std::string &attrName)
+int VRayForHoudini::Parm::isParmExist(const OP_Node &node, const std::string &attrName)
 {
 	int parmExist = false;
 
@@ -29,7 +29,7 @@ int VRayForHoudini::Parm::isParmExist(OP_Node &node, const std::string &attrName
 }
 
 
-int VRayForHoudini::Parm::isParmSwitcher(OP_Node &node, const int index)
+int VRayForHoudini::Parm::isParmSwitcher(const OP_Node &node, const int index)
 {
 	int isSwitcher = false;
 
@@ -45,7 +45,7 @@ int VRayForHoudini::Parm::isParmSwitcher(OP_Node &node, const int index)
 }
 
 
-const PRM_Parm* VRayForHoudini::Parm::getParm(OP_Node &node, const int index)
+const PRM_Parm* VRayForHoudini::Parm::getParm(const OP_Node &node, const int index)
 {
 	const PRM_Parm *param = nullptr;
 
@@ -55,4 +55,41 @@ const PRM_Parm* VRayForHoudini::Parm::getParm(OP_Node &node, const int index)
 	}
 
 	return param;
+}
+
+
+const PRM_Parm *VRayForHoudini::Parm::getParm(const OP_Node &node, const std::string &attrName)
+{
+	const PRM_Parm *param = nullptr;
+
+	const PRM_ParmList *parmList = node.getParmList();
+	if (parmList) {
+		param = parmList->getParmPtr(attrName.c_str());
+	}
+
+	return param;
+}
+
+
+int VRayForHoudini::Parm::getParmInt(const OP_Node &node, const std::string &attrName, fpreal t)
+{
+	int value = 0;
+
+	if (isParmExist(node, attrName)) {
+		value = node.evalInt(attrName.c_str(), 0, t);
+	}
+
+	return value;
+}
+
+
+float VRayForHoudini::Parm::getParmFloat(const OP_Node &node, const std::string &attrName, fpreal t)
+{
+	float value = 0.0f;
+
+	if (isParmExist(node, attrName)) {
+		value = node.evalFloat(attrName.c_str(), 0, t);
+	}
+
+	return value;
 }

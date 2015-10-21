@@ -150,9 +150,10 @@ OP_TemplatePair* VRayRendererNode::getTemplatePair()
 }
 
 
-VRayRendererNode::VRayRendererNode(OP_Network *net, const char *name, OP_Operator *entry):
-	ROP_Node(net, name, entry),
-	m_error(ROP_CONTINUE_RENDER)
+VRayRendererNode::VRayRendererNode(OP_Network *net, const char *name, OP_Operator *entry)
+	: ROP_Node(net, name, entry)
+	, m_exporter(this)
+	, m_error(ROP_CONTINUE_RENDER)
 {
 }
 
@@ -271,7 +272,6 @@ int VRayRendererNode::startRender(int nframes, fpreal tstart, fpreal tend)
 			}
 #endif
 
-			m_exporter.setRop(this);
 			m_exporter.setMode(renderMode);
 			m_exporter.setAnimation(is_animation);
 			m_exporter.setWorkMode(workMode);

@@ -60,7 +60,7 @@ void VRayExporter::RtCallbackView(OP_Node *caller, void *callee, OP_EventType ty
 }
 
 
-static float getLensShift(OBJ_Node &camera)
+static float getLensShift(const OBJ_Node &camera)
 {
 	// TODO: getLensShift
 	return 0.0f;
@@ -77,7 +77,7 @@ static void aspectCorrectFovOrtho(ViewParams &viewParams)
 }
 
 
-int VRayExporter::isPhysicalView(OBJ_Node &camera)
+int VRayExporter::isPhysicalView(const OBJ_Node &camera)
 {
 	static const std::string paramUsePhysCam("CameraPhysical_use");
 
@@ -90,24 +90,34 @@ int VRayExporter::isPhysicalView(OBJ_Node &camera)
 }
 
 
-void VRayExporter::fillCameraData(OBJ_Node &camera, ViewParams &viewParams)
+void VRayExporter::fillCameraData(const OBJ_Node &camera, const OP_Node &rop, ViewParams &viewParams)
 {
 	const fpreal t = m_context.getTime();
 
 	const int imageWidth  = camera.evalFloat("res", 0, t);
 	const int imageHeight = camera.evalFloat("res", 1, t);
 
-	// From https://www.sidefx.com/docs/houdini13.0/ref/cameralenses
-	const float apx   = camera.evalFloat("aperture", 0, t);
-	const float focal = camera.evalFloat("focal", 0, t);
-	const float fovx  = 2.0f * atanf((apx / 2.0f) / focal);
+	float fov = 0.785398f;
+
+	viewParams.renderView.fovOverride = Parm::getParmInt(rop, "SettingsCamera.override_fov");
+	if (viewParams.renderView.fovOverride) {
+		fov = Parm::getParmFloat(rop, "SettingsCamera.fov");
+	}
+	else {
+		// From https://www.sidefx.com/docs/houdini13.0/ref/cameralenses
+		const float apx   = camera.evalFloat("aperture", 0, t);
+		const float focal = camera.evalFloat("focal", 0, t);
+		fov = 2.0f * atanf((apx / 2.0f) / focal);
+	}
 
 	viewParams.renderSize.w = imageWidth;
 	viewParams.renderSize.h = imageHeight;
-	viewParams.renderView.fov = fovx;
+	viewParams.renderView.fov = fov;
 	viewParams.renderView.tm = VRayExporter::GetOBJTransform(camera.castToOBJNode(), m_context);
 
-	aspectCorrectFovOrtho(viewParams);
+	if (!viewParams.renderView.fovOverride) {
+		aspectCorrectFovOrtho(viewParams);
+	}
 }
 
 
@@ -129,6 +139,7 @@ void VRayExporter::fillPhysicalCamera(const ViewParams &viewParams, Attrs::Plugi
 	const float lens_shift = camera.evalInt("CameraPhysical_auto_lens_shift", 0, 0.0)
 							 ? getLensShift(camera)
 							 : camera.evalFloat("CameraPhysical_lens_shift", 0, t);
+
 	pluginDesc.add(Attrs::PluginAttr("fov", viewParams.renderView.fov));
 	pluginDesc.add(Attrs::PluginAttr("horizontal_offset", horizontal_offset));
 	pluginDesc.add(Attrs::PluginAttr("vertical_offset",   vertical_offset));
@@ -164,7 +175,6 @@ void VRayExporter::fillCameraDefault(const ViewParams &viewParams, Attrs::Plugin
 
 void VRayExporter::fillSettingsCamera(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc)
 {
-	// NOTE: The field of view is always exported by the RenderView
 	pluginDesc.add(Attrs::PluginAttr("fov", -1.0f));
 
 	if (viewParams.usePhysicalCamera) {
@@ -204,7 +214,7 @@ int VRayExporter::exportView()
 		ViewParams viewParams(camera);
 		viewParams.usePhysicalCamera = isPhysicalView(*camera);
 
-		fillCameraData(*camera, viewParams);
+		fillCameraData(*camera, *m_rop, viewParams);
 		fillSettingsCamera(viewParams, viewParams.viewPlugins.settingsCamera);
 		fillRenderView(viewParams, viewParams.viewPlugins.renderView);
 
@@ -226,11 +236,11 @@ int VRayExporter::exportView()
 			removePlugin(ViewPluginsDesc::settingsCameraPluginName);
 			removePlugin(ViewPluginsDesc::settingsCameraDofPluginName);
 
+			exportPlugin(viewParams.viewPlugins.settingsCamera);
+
 			if (!viewParams.renderView.ortho && !viewParams.usePhysicalCamera) {
 				exportPlugin(viewParams.viewPlugins.settingsCameraDof);
 			}
-
-			exportPlugin(viewParams.viewPlugins.settingsCamera);
 		}
 
 		VRay::Plugin physCam;

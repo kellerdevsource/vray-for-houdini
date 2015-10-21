@@ -20,10 +20,14 @@ class OP_Node;
 namespace VRayForHoudini {
 namespace Parm {
 
-int isParmExist(OP_Node &node, const std::string &attrName);
-int isParmSwitcher(OP_Node &node, const int index);
+int isParmExist(const OP_Node &node, const std::string &attrName);
+int isParmSwitcher(const OP_Node &node, const int index);
 
-const PRM_Parm *getParm(OP_Node &node, const int index);
+const PRM_Parm *getParm(const OP_Node &node, const int index);
+const PRM_Parm *getParm(const OP_Node &node, const std::string &attrName);
+
+int    getParmInt(const OP_Node &node, const std::string &attrName, fpreal t=0.0);
+float  getParmFloat(const OP_Node &node, const std::string &attrName, fpreal t=0.0);
 
 } // namespace Parm
 } // namespace VRayForHoudini

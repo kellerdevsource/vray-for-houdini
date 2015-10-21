@@ -69,7 +69,7 @@ public:
 	typedef std::set<VRayExporter*> ExporterInstances;
 	static ExporterInstances        Instances;
 
-	VRayExporter();
+	VRayExporter(OP_Node *rop);
 	~VRayExporter();
 
 public:
@@ -77,8 +77,8 @@ public:
 
 	int                     exportScene();
 
-	int                     isPhysicalView(OBJ_Node &camera);
-	void                    fillCameraData(OBJ_Node &camera, ViewParams &viewParams);
+	int                     isPhysicalView(const OBJ_Node &camera);
+	void                    fillCameraData(const OBJ_Node &camera, const OP_Node &rop, ViewParams &viewParams);
 	void                    fillPhysicalCamera(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc);
 	void                    fillSettingsCameraDof(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc);
 	void                    fillCameraDefault(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc);
@@ -126,7 +126,7 @@ public:
 
 	void                    setAnimation(bool on);
 	void                    setFrame(float frame);
-	void                    setRop(OP_Node *rop) { m_rop = rop; }
+
 	void                    setMode(int mode) { m_renderMode = mode; }
 	void                    setWorkMode(ExpWorkMode mode) { m_workMode = mode; }
 	void                    setContext(const OP_Context &ctx) { m_context = ctx; }
@@ -140,7 +140,7 @@ public:
 
 	OP_Context             &getContext()  { return m_context;   }
 	VRayPluginRenderer     &getRenderer() { return m_renderer; }
-	OP_Node                *getRop()      { return m_rop; }
+	OP_Node                *getRop() { return m_rop; }
 
 	void                    exportGeomStaticMeshDesc(const GU_Detail &gdp, SHOPToID &shopToID, Attrs::PluginDesc &geomPluginDesc);
 	VRay::Plugin            exportGeomStaticMesh(SOP_Node &sop_node, const GU_Detail &gdp, SHOPToID &shopToID);
@@ -162,7 +162,7 @@ public:
 	static void             TransformToMatrix4(const VUtils::TraceTransform &tm, UT_Matrix4 &m);
 	static VRay::Transform  Matrix4ToTransform(const UT_Matrix4D &m4, bool flip=false);
 
-	static OBJ_Node        *GetCamera(OP_Node *rop);
+	static OBJ_Node        *GetCamera(const OP_Node *rop);
 	static OP_Node         *FindChildNodeByType(OP_Node *op_node, const std::string &op_type);
 
 	void                    setAttrValueFromOpNode(Attrs::PluginDesc &plugin, const Parm::AttrDesc &parmDesc, OP_Node *opNode, const std::string &prefix="");
@@ -171,9 +171,10 @@ public:
 	VRay::Plugin            exportConnectedVop(OP_Node *op_node, const UT_String &inputName);
 
 private:
+	OP_Node                *m_rop;
+
 	VRayPluginRenderer      m_renderer;
 	OP_Context              m_context;
-	OP_Node                *m_rop;
 	int                     m_renderMode;
 	int                     m_is_aborted;
 	ViewParams              m_viewParams;

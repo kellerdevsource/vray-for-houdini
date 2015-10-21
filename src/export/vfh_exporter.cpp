@@ -138,7 +138,7 @@ void VRayExporter::TransformToMatrix4(const VUtils::TraceTransform &tm, UT_Matri
 }
 
 
-OBJ_Node *VRayExporter::GetCamera(OP_Node *rop)
+OBJ_Node *VRayExporter::GetCamera(const OP_Node *rop)
 {
 	OBJ_Node *camera = nullptr;
 
@@ -343,8 +343,8 @@ int VRayExporter::setAttrsFromOpNode(Attrs::PluginDesc &pluginDesc, OP_Node *opN
 }
 
 
-VRayExporter::VRayExporter():
-	m_rop(nullptr)
+VRayExporter::VRayExporter(OP_Node *rop)
+	: m_rop(rop)
 {
 	VRayExporter::Instances.insert(this);
 }

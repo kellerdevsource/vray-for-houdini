@@ -555,7 +555,7 @@ VUtils::ErrorCode MeshToVRayProxy::getDescriptionForContext(OP_Context &context,
 
 	geomDescr.m_isHair = (hnd_guardhair.isValid() && hnd_hairid .isValid());
 
-	VRayExporter exporter;
+	VRayExporter exporter(nullptr);
 	if (  geomDescr.m_isHair ) {
 		exporter.exportGeomMayaHairGeom(sop_node, gdp, geomDescr.m_description);
 

@@ -34,19 +34,21 @@ struct RenderSizeParams {
 
 struct RenderViewParams {
 	RenderViewParams()
-	    : fov(0.785398f)
-	    , ortho(false)
-	    , ortho_width(1.0f)
-	    , use_clip_start(false)
-	    , clip_start(0.0f)
-	    , use_clip_end(false)
-	    , clip_end(1.0f)
+		: fov(0.785398f)
+		, fovOverride(false)
+		, ortho(false)
+		, ortho_width(1.0f)
+		, use_clip_start(false)
+		, clip_start(0.0f)
+		, use_clip_end(false)
+		, clip_end(1.0f)
 	{}
 
 	bool operator == (const RenderViewParams &other) const;
 	bool operator != (const RenderViewParams &other) const;
 
 	float            fov;
+	int              fovOverride;
 	VRay::Transform  tm;
 
 	int              ortho;
