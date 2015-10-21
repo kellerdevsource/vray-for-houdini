@@ -50,7 +50,7 @@ VRay::Plugin VRayExporter::exportLight(OBJ_Node *obj_node)
 	const UT_String &lightOpName = light_op->getName();
 
 	Attrs::PluginDesc pluginDesc;
-	pluginDesc.pluginName = Attrs::PluginDesc::getPluginName(obj_node);
+	pluginDesc.pluginName = VRayExporter::getPluginName(obj_node);
 
 	VRay::Transform tm = VRayExporter::GetOBJTransform(obj_node, m_context);
 	pluginDesc.addAttribute(Attrs::PluginAttr("transform", tm));

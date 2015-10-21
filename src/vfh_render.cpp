@@ -315,12 +315,6 @@ int VRayRendererNode::startRender(int nframes, fpreal tstart, fpreal tend)
 			UT_String exportFilepath;
 			evalString(exportFilepath, parm_render_export_path.getToken(), 0, 0.0);
 
-			const int imageWidth  = camera->evalFloat("res", 0, 0.0f);
-			const int imageHeight = camera->evalFloat("res", 1, 0.0f);
-
-			PRINT_INFO("Image size: %i x %i",
-					   imageWidth, imageHeight);
-
 			executePreRenderScript(m_time_start);
 
 #if 0
@@ -334,8 +328,6 @@ int VRayRendererNode::startRender(int nframes, fpreal tstart, fpreal tend)
 			m_exporter.setAnimation(is_animation);
 			m_exporter.setWorkMode(workMode);
 			m_exporter.setExportFilepath(exportFilepath);
-
-			m_exporter.setRenderSize(imageWidth, imageHeight);
 
 #ifdef __APPLE__
 			const int useVFB = 1;
@@ -353,7 +345,7 @@ int VRayRendererNode::startRender(int nframes, fpreal tstart, fpreal tend)
 				m_exporter.getRenderer().showVFB(false);
 #endif
 				m_vfb.init();
-				m_vfb.resize(imageWidth, imageHeight);
+				// m_vfb.resize();
 				m_vfb.show();
 
 				m_vfb.set_abort_callback(UI::AbortCb(boost::bind(&VRayPluginRenderer::stopRender, &m_exporter.getRenderer())));
@@ -544,7 +536,7 @@ int VRayRendererNode::exportKeyFrame(const OP_Context &context)
 	m_exporter.setFrame(context.getFloatFrame());
 	m_exporter.setContext(context);
 
-	int err = m_exporter.exportView(this);
+	int err = m_exporter.exportView();
 	if (err) {
 		m_error = ROP_ABORT_RENDER;
 	}

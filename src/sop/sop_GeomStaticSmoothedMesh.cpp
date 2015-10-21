@@ -52,7 +52,7 @@ OP::VRayNode::PluginResult SOP::GeomStaticSmoothedMesh::asPluginDesc(Attrs::Plug
 	PRINT_WARN("OP::GeomStaticSmoothedMesh::asPluginDesc()");
 
 	pluginDesc.pluginID   = pluginID.c_str();
-	pluginDesc.pluginName = Attrs::PluginDesc::GetPluginName(this, "Smth@");
+	pluginDesc.pluginName = VRayExporter::getPluginName(this, "Smooth@");
 
 	// Displacement texture
 	//
@@ -85,7 +85,7 @@ OP::VRayNode::PluginResult SOP::GeomStaticSmoothedMesh::asPluginDesc(Attrs::Plug
 
 				// Wrap texture with TexOutput
 				if (NOT(hasOutIntensity)) {
-					Attrs::PluginDesc texOutputDesc(tex_node, "TexOutput", "Out@");
+					Attrs::PluginDesc texOutputDesc(VRayExporter::getPluginName(tex_node, "Out@"), "TexOutput");
 					texOutputDesc.pluginAttrs.push_back(Attrs::PluginAttr("texmap", texture));
 
 					texture = exporter->exportPlugin(texOutputDesc);

@@ -122,7 +122,7 @@ VRay::Plugin VRayExporter::exportNode(OBJ_Node *obj_node, VRay::Plugin material,
 				flipTm = true;
 			}
 
-			Attrs::PluginDesc pluginDesc(obj_node, "Node");
+			Attrs::PluginDesc pluginDesc(VRayExporter::getPluginName(obj_node), "Node");
 			if (geometry) {
 				pluginDesc.addAttribute(Attrs::PluginAttr("geometry", geometry));
 			}
@@ -252,7 +252,7 @@ VRay::Plugin VRayExporter::exportObject(OBJ_Node *obj_node)
 						}
 					}
 					else {
-						Attrs::PluginDesc mtlMultiDesc(geom_node, "MtlMulti", "Mtl@");
+						Attrs::PluginDesc mtlMultiDesc(VRayExporter::getPluginName(geom_node, "Mtl"), "MtlMulti");
 
 						VRay::ValueList mtls_list;
 						VRay::IntList   ids_list;

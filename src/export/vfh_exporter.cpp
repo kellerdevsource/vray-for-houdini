@@ -39,12 +39,52 @@
 #include <OP/OP_Director.h>
 
 #include <boost/bind.hpp>
+#include <boost/format.hpp>
 
 
 using namespace VRayForHoudini;
 
 
 VRayExporter::ExporterInstances  VRayExporter::Instances;
+
+
+std::string VRayExporter::getPluginName(OP_Node *op_node, const std::string &prefix, const std::string &suffix)
+{
+	static boost::format FmtPlugin("%s@%s|%s|%s");
+
+	const std::string &pluginName = boost::str(FmtPlugin
+											   % prefix
+											   % op_node->getName().buffer()
+											   % op_node->getParentNetwork()->getName().buffer()
+											   % suffix);
+
+	return pluginName;
+}
+
+
+std::string VRayExporter::getPluginName(OBJ_Node *obj_node)
+{
+	std::string pluginName;
+
+	const OBJ_OBJECT_TYPE ob_type = obj_node->getObjectType();
+	if (ob_type & OBJ_LIGHT) {
+		static boost::format FmtLight("Light@%s");
+		pluginName = boost::str(FmtLight
+								% obj_node->getName().buffer());
+	}
+	else if (ob_type & OBJ_CAMERA) {
+		static boost::format FmtCamera("Camera@%s");
+		pluginName = boost::str(FmtCamera
+								% obj_node->getName().buffer());
+	}
+	else if (ob_type == OBJ_GEOMETRY) {
+		static boost::format FmtObject("Node@%s");
+		pluginName = boost::str(FmtObject
+								% obj_node->getName().buffer());
+	}
+
+	return pluginName;
+}
 
 
 VRay::Transform VRayExporter::Matrix4ToTransform(const UT_Matrix4D &m4, bool flip)
@@ -254,7 +294,7 @@ int VRayExporter::setAttrsFromOpNode(Attrs::PluginDesc &pluginDesc, OP_Node *opN
 		if (NOT(plugin_value)) {
 			// Provide some default mapping for textures
 			if (pluginInfo->pluginType == "TEXTURE" && attrName == "uvwgen") {
-				Attrs::PluginDesc uvwGen(opNode, "UVWGenObject", "UVWGen@");
+				Attrs::PluginDesc uvwGen(VRayExporter::getPluginName(opNode, "Uvw"), "UVWGenObject");
 				plugin_value = exportPlugin(uvwGen);
 			}
 		}
@@ -357,7 +397,7 @@ void VRayExporter::RtCallbackView(OP_Node *caller, void *callee, OP_EventType ty
 	if (type == OP_PARM_CHANGED ||
 		type == OP_INPUT_CHANGED)
 	{
-		exporter->exportCamera(caller);
+		exporter->exportView();
 	}
 	else if (type == OP_NODE_PREDELETE) {
 		exporter->delOpCallback(caller, VRayExporter::RtCallbackView);
@@ -540,7 +580,7 @@ VRay::Plugin VRayExporter::exportVop(OP_Node *op_node)
 		else if (res == OP::VRayNode::PluginResultNA ||
 				 res == OP::VRayNode::PluginResultContinue)
 		{
-			pluginDesc.pluginName = Attrs::PluginDesc::GetPluginName(vop_node);
+			pluginDesc.pluginName = VRayExporter::getPluginName(vop_node);
 			pluginDesc.pluginID   = vrayNode->getVRayPluginID();
 
 			setAttrsFromOpNode(pluginDesc, op_node);
@@ -620,15 +660,14 @@ VRay::Plugin VRayExporter::exportMaterial(SHOP_Node *shop_node)
 									mtl_out->getName().buffer(), idx);
 				}
 
-//				if (material) {
-//					// Wrap material into MtlRenderStats to always have the same material name
-//					// Used when rewiring materials when running interactive RT session
-//					// TODO: Do not use for non-interactive export
-//					Attrs::PluginDesc pluginDesc(mtl_out->getParent(), "MtlRenderStats", "Mtl@");
-//					pluginDesc.addAttribute(Attrs::PluginAttr("base_mtl", material));
-
-//					material = exportPlugin(pluginDesc);
-//				}
+				if (material) {
+					// Wrap material into MtlRenderStats to always have the same material name
+					// Used when rewiring materials when running interactive RT session
+					// TODO: Do not use for non-interactive export
+					Attrs::PluginDesc pluginDesc(mtl_out->getParent(), "MtlRenderStats", "Mtl@");
+					pluginDesc.addAttribute(Attrs::PluginAttr("base_mtl", material));
+					material = exportPlugin(pluginDesc);
+				}
 			}
 		}
 	}
@@ -687,7 +726,7 @@ VRay::Plugin VRayExporter::exportDisplacement(OBJ_Node *obj_node, VRay::Plugin &
 	obj_node->evalString(shopPath, "vray_displacement", 0, 0.0f);
 	SHOP_Node *shop_node = OPgetDirector()->findSHOPNode(shopPath.buffer());
 	if (NOT(shop_node)) {
-//		take displacement from the shop_materialpath
+		// Take displacement from the shop_materialpath
 		shop_node = obj_node->getMaterialNode(m_context.getTime());
 		if (NOT(shop_node)) {
 			return plugin;
@@ -701,15 +740,14 @@ VRay::Plugin VRayExporter::exportDisplacement(OBJ_Node *obj_node, VRay::Plugin &
 	}
 	else {
 		VOP::MaterialOutput *mtl_out = static_cast<VOP::MaterialOutput *>(op_node);
-		addOpCallback(mtl_out, VRayExporter::RtCallbackShop);
+
+		addOpCallback(op_node, VRayExporter::RtCallbackShop);
 
 		const int idx = mtl_out->getInputFromName("Geometry");
 		VOP::NodeBase *input = dynamic_cast<VOP::NodeBase*>(mtl_out->getInput(idx));
 		if (input && mtl_out->getInputType(idx) == VOP_GEOMETRY_SHADER) {
 			VOP::NodeBase *displ = static_cast<VOP::NodeBase *>(input);
-			Attrs::PluginDesc pluginDesc;
-			pluginDesc.pluginName = Attrs::PluginDesc::GetPluginName(obj_node, "Geom@");
-			pluginDesc.pluginID   = displ->getVRayPluginID();
+			Attrs::PluginDesc pluginDesc(VRayExporter::getPluginName(obj_node, "Geom@"), displ->getVRayPluginID());
 			pluginDesc.addAttribute(Attrs::PluginAttr("mesh", geomPlugin));
 
 			OP::VRayNode::PluginResult res = displ->asPluginDesc(pluginDesc, this, obj_node);
@@ -1050,7 +1088,13 @@ VRay::Plugin VRayExporter::exportPlugin(const Attrs::PluginDesc &pluginDesc)
 
 void VRayExporter::removePlugin(OBJ_Node *node)
 {
-	removePlugin(Attrs::PluginDesc(Attrs::PluginDesc::getPluginName(node), ""));
+	removePlugin(Attrs::PluginDesc(VRayExporter::getPluginName(node), ""));
+}
+
+
+void VRayExporter::removePlugin(const std::string &pluginName)
+{
+	removePlugin(Attrs::PluginDesc(pluginName, ""));
 }
 
 

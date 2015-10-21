@@ -40,7 +40,7 @@ void OBJ::LightDome::setPluginType()
 OP::VRayNode::PluginResult OBJ::LightDome::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter *exporter, OP_Node *parent)
 {
 	pluginDesc.pluginID   = pluginID.c_str();
-	pluginDesc.pluginName = Attrs::PluginDesc::getPluginName(this);
+	pluginDesc.pluginName = VRayExporter::getPluginName(this);
 
 	// Need to flip tm
 	VRay::Transform tm = VRayExporter::GetOBJTransform(parent->castToOBJNode(), exporter->getContext(), true);

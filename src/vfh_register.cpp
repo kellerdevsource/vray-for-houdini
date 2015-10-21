@@ -55,8 +55,6 @@ void unregister(void *)
 
 void newDriverOperator(OP_OperatorTable *table)
 {
-	PRINT_WARN("newDriverOperator()");
-
 	VRayRendererNode::register_operator(table);
 
 	VOP::RenderChannelsContext::register_operator(table);
@@ -68,8 +66,6 @@ void newDriverOperator(OP_OperatorTable *table)
 
 void newSopOperator(OP_OperatorTable *table)
 {
-	PRINT_WARN("newSopOperator()");
-
 #ifdef CGR_HAS_AUR
 	if (NOT(CacheIO::Initialize(CacheIO::INIT_OPENVDBIO|CacheIO::INIT_FIELD3DIO))) {
 		PRINT_ERROR("Failed to initialize Field3D and OpenVDB libraries! Viewport preview for Field3D and OpenVDB files will be not available!");
@@ -95,16 +91,12 @@ void newObjectOperator(OP_OperatorTable *table)
 
 void newShopOperator(OP_OperatorTable *table)
 {
-	PRINT_WARN("newShopOperator()");
-
 	VOP::MaterialContext::register_shop_operator(table);
 }
 
 
 void newVopOperator(OP_OperatorTable *table)
 {
-	PRINT_WARN("newVopOperator()");
-
 	VOP::MaterialOutput::register_operator(table);
 
 	VFH_VOP_ADD_OPERATOR(table, "SETTINGS", SettingsEnvironment);
@@ -380,6 +372,7 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "UVWGEN", UVWGenProjection);
 	VFH_VOP_ADD_OPERATOR(table, "UVWGEN", UVWGenSwitch);
 }
+
 
 void CMDextendLibrary(CMD_Manager *cman)
 {

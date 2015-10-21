@@ -225,12 +225,12 @@ void VRayPluginRenderer::setMode(int mode)
 
 	VRay::RendererOptions::RenderMode renderMode = static_cast<VRay::RendererOptions::RenderMode>(mode);
 	m_vray->setRenderMode(renderMode);
-	if (renderMode == VRay::RendererOptions::RENDER_MODE_RT_CPU) {
+	if (renderMode >= VRay::RendererOptions::RENDER_MODE_RT_CPU) {
 		VRay::RendererOptions options = m_vray->getOptions();
 		options.numThreads = VUtils::getNumProcessors() - 1;
+		options.keepRTRunning = true;
 		m_vray->setOptions(options);
 	}
-
 	m_vray->setAutoCommit(true);
 
 	m_vray->setOnDumpMessage(OnDumpMessage,       (void*)&m_callbacks.m_cbOnDumpMessage);
@@ -346,36 +346,78 @@ VRay::Plugin VRayPluginRenderer::exportPlugin(const Attrs::PluginDesc &pluginDes
 			else if (p.paramType == PluginAttr::AttrTypeRawListInt) {
 				plug.setValue(p.paramName,
 							  (void*)&p.paramValue.valRawListInt[0],
-							  p.paramValue.valRawListInt.size() * sizeof(int));
+						p.paramValue.valRawListInt.size() * sizeof(int));
 			}
 			else if (p.paramType == PluginAttr::AttrTypeRawListFloat) {
 				plug.setValue(p.paramName,
 							  (void*)&p.paramValue.valRawListFloat[0],
-							  p.paramValue.valRawListFloat.size() * sizeof(float));
+						p.paramValue.valRawListFloat.size() * sizeof(float));
 			}
 			else if (p.paramType == PluginAttr::AttrTypeRawListVector) {
 				plug.setValue(p.paramName,
 							  (void*)&p.paramValue.valRawListVector[0],
-							  p.paramValue.valRawListVector.size() * sizeof(VUtils::Vector));
+						p.paramValue.valRawListVector.size() * sizeof(VUtils::Vector));
 			}
 			else if (p.paramType == PluginAttr::AttrTypeRawListColor) {
 				plug.setValue(p.paramName,
 							  (void*)&p.paramValue.valRawListColor[0],
-							  p.paramValue.valRawListColor.size() * sizeof(VUtils::Color));
+						p.paramValue.valRawListColor.size() * sizeof(VUtils::Color));
 			}
 		}
+
+		commit();
 	}
 
 	return plug;
 }
 
 
-void VRayPluginRenderer::removePlugin(const Attrs::PluginDesc &pluginDesc)
+void VRayPluginRenderer::commit()
 {
 	if (m_vray) {
-		VRay::Plugin plugin = m_vray->getPlugin(pluginDesc.pluginName);
-		if (plugin) {
-			m_vray->removePlugin(plugin);
+		m_vray->commit();
+	}
+}
+
+
+void VRayPluginRenderer::setCamera(VRay::Plugin camera)
+{
+	if (m_vray) {
+		m_vray->setCamera(camera);
+	}
+}
+
+
+void VRayPluginRenderer::removePlugin(const Attrs::PluginDesc &pluginDesc)
+{
+	removePlugin(pluginDesc.pluginName);
+}
+
+
+void VRayPluginRenderer::removePlugin(const std::string &pluginName)
+{
+	if (m_vray) {
+		VRay::Plugin plugin = m_vray->getPlugin(pluginName);
+		if (!plugin) {
+			PRINT_WARN("VRayPluginRenderer::removePlugin: Plugin \"%s\" is not found!",
+					   pluginName.c_str());
+		}
+		else {
+			bool res = m_vray->removePlugin(plugin);
+
+			PRINT_WARN("VRayPluginRenderer::removePlugin: Removing \"%s\"...",
+					   plugin.getName().c_str());
+
+			if (res) {
+				commit();
+			}
+			else {
+				VRay::Error err = m_vray->getLastError();
+				if (err != VRay::SUCCESS) {
+					PRINT_ERROR("Error removing plugin: %s",
+								err.toString().c_str());
+				}
+			}
 		}
 	}
 }
@@ -479,7 +521,6 @@ int VRayPluginRenderer::startSequence(int start, int end, int step, int locked)
 	seq.step  = step;
 
 	m_vray->renderSequence(&seq, 1);
-	// m_vray->renderSequence();
 	if (locked) {
 		m_vray->waitForSequenceDone();
 	}

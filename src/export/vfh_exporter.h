@@ -16,6 +16,7 @@
 #include "vfh_vray.h"
 #include "vfh_plugin_exporter.h"
 #include "vfh_plugin_info.h"
+#include "vfh_export_view.h"
 
 #include <OP/OP_Node.h>
 #include <OBJ/OBJ_Node.h>
@@ -76,8 +77,15 @@ public:
 
 	int                     exportScene();
 
-	int                     exportView(OP_Node *rop);
-	void                    exportCamera(OP_Node *camera);
+	void                    fillCameraData(OP_Node &camera, ViewParams &viewParams);
+	void                    fillPhysicalCamera(ViewParams &viewParams, Attrs::PluginDesc &physCamDesc);
+
+	VRay::Plugin            exportRenderView(const ViewParams &viewParams);
+	VRay::Plugin            exportSettingsCameraDof(ViewParams &viewParams);
+	VRay::Plugin            exportCameraPhysical(ViewParams &viewParams);
+	VRay::Plugin            exportCameraDefault(ViewParams &viewParams);
+
+	int                     exportView();
 
 	int                     exportSettings(OP_Node *rop);
 	void                    exportRenderChannels(OP_Node *op_node);
@@ -107,6 +115,7 @@ public:
 
 	VRay::Plugin            exportPlugin(const Attrs::PluginDesc &pluginDesc);
 	void                    removePlugin(OBJ_Node *node);
+	void                    removePlugin(const std::string &pluginName);
 	void                    removePlugin(const Attrs::PluginDesc &pluginDesc);
 
 	int                     renderFrame(int locked=false);
@@ -146,7 +155,9 @@ public:
 	static OP_Node                *getConnectedNode(OP_Node *op_node, const std::string &inputName);
 	static const Parm::SocketDesc *getConnectedOutputType(OP_Node *op_node, const std::string &inputName);
 
-public:
+	static std::string             getPluginName(OP_Node *op_node, const std::string &prefix="", const std::string &suffix="");
+	static std::string             getPluginName(OBJ_Node *obj_node);
+
 	static VRay::Transform  GetOBJTransform(OBJ_Node *obj_node, OP_Context &context, bool flip=false);
 	static void             GetOBJTransform(OBJ_Node *obj_node, OP_Context &context, float tm[4][4]);
 	static void             TransformToMatrix4(const VUtils::TraceTransform &tm, UT_Matrix4 &m);
@@ -166,6 +177,7 @@ private:
 	OP_Node                *m_rop;
 	int                     m_renderMode;
 	int                     m_is_aborted;
+	ViewParams              m_viewParams;
 
 	std::string             m_exportFilepath;
 	ExpWorkMode             m_workMode;
