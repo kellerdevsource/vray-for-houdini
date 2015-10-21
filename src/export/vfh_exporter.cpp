@@ -1003,8 +1003,6 @@ void VRayExporter::RtCallbackObjManager(OP_Node *caller, void *callee, OP_EventT
 	PRINT_INFO("RtCallbackObjManager: %s from \"%s\"",
 			   OPeventToString(type), caller->getName().buffer());
 
-	// NOTE: Use OP_GROUPLIST_CHANGED instead of OP_CHILD_CREATED,
-	// OP_CHILD_CREATED gives intermediate node, not the final one
 	if (type == OP_GROUPLIST_CHANGED ||
 		type == OP_CHILD_REORDERED || /* undo */
 		type == OP_CHILD_DELETED)
