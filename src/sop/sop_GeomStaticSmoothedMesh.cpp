@@ -17,9 +17,9 @@ using namespace VRayForHoudini;
 static PRM_Name  parm_tex_network("tex_network", "Displace Texture");
 
 
-void SOP::GeomStaticSmoothedMesh::AddAttributes(Parm::VRayPluginInfo *pluginInfo)
+void SOP::GeomStaticSmoothedMesh::addPrmTemplate(Parm::PRMTmplList &prmTemplate)
 {
-	pluginInfo->prm_template.push_back(PRM_Template(PRM_STRING_E, PRM_TYPE_DYNAMIC_PATH, 1, &parm_tex_network, &Parm::PRMemptyStringDefault));
+	prmTemplate.push_back(PRM_Template(PRM_STRING_E, PRM_TYPE_DYNAMIC_PATH, 1, &parm_tex_network, &Parm::PRMemptyStringDefault));
 }
 
 

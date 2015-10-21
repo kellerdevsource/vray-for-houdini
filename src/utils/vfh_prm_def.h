@@ -22,9 +22,14 @@
 // For VOP_Type
 #include <VOP/VOP_Node.h>
 
+#include <boost/format.hpp>
 
 namespace VRayForHoudini {
 namespace Parm {
+
+extern boost::format FmtPrefix;
+extern boost::format FmtPrefixAuto;
+extern boost::format FmtPrefixManual;
 
 typedef std::vector<PRM_Template> PRMTmplList;
 typedef std::vector<PRM_Default>  PRMDefList;
@@ -55,6 +60,22 @@ enum ParmType {
 	eOutputTextureMatrix,
 	eOutputTextureTransform,
 	eUnknown,
+};
+
+enum PluginType {
+	PluginTypeUnknown = 0,
+	PluginTypeBRDF,
+	PluginTypeCamera,
+	PluginTypeRenderChannel,
+	PluginTypeEffect,
+	PluginTypeFilter,
+	PluginTypeGeometry,
+	PluginTypeLight,
+	PluginTypeMaterial,
+	PluginTypeObject,
+	PluginTypeSettings,
+	PluginTypeTexture,
+	PluginTypeUvwgen,
 };
 
 enum ParmSubtype {
@@ -212,6 +233,7 @@ struct AttrDesc {
 	// Custom template
 	PRMTmplList  custom_template;
 };
+
 typedef std::map<std::string, AttrDesc>       AttributeDescs;
 typedef std::map<std::string, AttributeDescs> PluginDescriptions;
 
@@ -233,6 +255,13 @@ struct SocketDesc {
 	VOP_Type  vopType;
 };
 typedef std::vector<SocketDesc> SocketsDesc;
+
+struct TabItemDesc {
+	const char *label;
+	const char *pluginID;
+};
+
+void addTabItems(Parm::TabItemDesc tabItemsDesc[], int tabItemsDescCount, PRMDefList &switcher, PRMTmplList &prmTemplate);
 
 } // namespace Parm
 } // namespace VRayForHoudini

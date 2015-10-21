@@ -20,50 +20,30 @@ using namespace VRayForHoudini;
 
 static PRM_Name           AttrTabsSwitcher("MetaImageFile");
 static Parm::PRMDefList   AttrTabsSwitcherTitles;
-static AttributesTabs     AttrTabs;
 static Parm::PRMTmplList  AttrItems;
+
+
+static Parm::TabItemDesc MetaImageFileTabItemsDesc[] = {
+	{ "Bitmap",     "BitmapBuffer"             },
+	{ "Texture",    "TexBitmap"                },
+	{ "UV",         "UVWGenMayaPlace2dTexture" },
+	{ "Projection", "UVWGenProjection"         }
+};
 
 
 PRM_Template* VOP::MetaImageFile::GetPrmTemplate()
 {
-	if (AttrItems.size()) {
-		return &AttrItems[0];
+	if (!AttrItems.size()) {
+		Parm::addTabItems(MetaImageFileTabItemsDesc, CountOf(MetaImageFileTabItemsDesc), AttrTabsSwitcherTitles, AttrItems);
+
+		AttrItems.push_back(PRM_Template()); // List terminator
+
+		AttrItems.insert(AttrItems.begin(),
+						 PRM_Template(PRM_SWITCHER,
+									  AttrTabsSwitcherTitles.size(),
+									  &AttrTabsSwitcher,
+									  &AttrTabsSwitcherTitles[0]));
 	}
-
-	AttrTabs.push_back(AttributesTab("Bitmap",
-									 "BitmapBuffer",
-									 Parm::GeneratePrmTemplate("TEXTURE", "BitmapBuffer", true, true, "VOP")));
-	AttrTabs.push_back(AttributesTab("Texture",
-								     "TexBitmap",
-								     Parm::GeneratePrmTemplate("TEXTURE", "TexBitmap", true, true, "VOP")));
-	AttrTabs.push_back(AttributesTab("UV",
-									 "UVWGenMayaPlace2dTexture",
-									 Parm::GeneratePrmTemplate("TEXTURE", "UVWGenMayaPlace2dTexture", true, true, "VOP")));
-	AttrTabs.push_back(AttributesTab("Projection",
-									 "UVWGenProjection",
-									 Parm::GeneratePrmTemplate("TEXTURE", "UVWGenProjection", true, true, "VOP")));
-
-	// TODO: Move to some function
-	//
-	for (const auto &tab : AttrTabs) {
-		PRM_Template *prm = tab.items;
-		int           prm_count = 0;
-		while (prm->getType() != PRM_LIST_TERMINATOR) {
-			prm_count++;
-			prm++;
-		}
-
-		AttrTabsSwitcherTitles.push_back(PRM_Default(prm_count, tab.label.c_str()));
-		for (int i = 0; i < prm_count; ++i) {
-			AttrItems.push_back(tab.items[i]);
-		}
-	}
-
-	AttrItems.insert(AttrItems.begin(),
-					 PRM_Template(PRM_SWITCHER,
-								  AttrTabsSwitcherTitles.size(),
-								  &AttrTabsSwitcher,
-								  &AttrTabsSwitcherTitles[0]));
 
 	return &AttrItems[0];
 }

@@ -13,18 +13,17 @@
 
 #include "vfh_prm_defaults.h"
 
+class OP_Node;
 
-struct AttributesTab {
-	AttributesTab(const std::string &label, const std::string &pluginID, PRM_Template *items):
-		label(label),
-		pluginID(pluginID),
-		items(items)
-	{}
-	std::string   label;
-	std::string   pluginID;
-	PRM_Template *items;
-};
+namespace VRayForHoudini {
+namespace Parm {
 
-typedef std::vector<AttributesTab> AttributesTabs;
+int isParmExist(OP_Node &node, const std::string &attrName);
+int isParmSwitcher(OP_Node &node, const int index);
+
+const PRM_Parm *getParm(OP_Node &node, const int index);
+
+} // namespace Parm
+} // namespace VRayForHoudini
 
 #endif

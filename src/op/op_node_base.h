@@ -29,10 +29,8 @@ public:
 		PluginResultNA,
 	};
 
-	VRayNode():
-		pluginType(""),
-		pluginID(""),
-		pluginInfo(nullptr)
+	VRayNode()
+		: pluginInfo(nullptr)
 	{}
 
 	/// Extra initialization
@@ -52,6 +50,7 @@ protected:
 	std::string               pluginID;
 	Parm::VRayPluginInfo     *pluginInfo;
 
+	VfhDisableCopy(VRayNode)
 };
 
 } // namespace OP

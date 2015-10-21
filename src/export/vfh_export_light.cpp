@@ -15,9 +15,9 @@
 using namespace VRayForHoudini;
 
 
-void VRayExporter::RtCallbackLight(OP_Node *caller, void *callee, OP_EventType type, void *data)
+void VRayExporter::RtCallbackLight(OP_Node *caller, void *callee, OP_EventType type, void* /*data*/)
 {
-	VRayExporter *exporter = (VRayExporter*)callee;
+	VRayExporter *exporter = reinterpret_cast<VRayExporter*>(callee);
 
 	OBJ_Node *obj_node = caller->castToOBJNode();
 
@@ -74,7 +74,7 @@ VRay::Plugin VRayExporter::exportLight(OBJ_Node *obj_node)
 
 	}
 	else {
-		const VRayLightType lightType = (VRayLightType)obj_light->evalInt("light_type", 0, 0.0);
+		const VRayLightType lightType = static_cast<VRayLightType>(obj_light->evalInt("light_type", 0, 0.0));
 
 		PRINT_INFO("  Found light: type = %i",
 				   lightType);

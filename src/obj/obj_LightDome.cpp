@@ -18,15 +18,16 @@ static PRM_Name  prm_heading("heading_vray_light_settings","V-Ray Light Settings
 static PRM_Name  prm_dome_tex("dome_tex_op", "Dome Texture");
 
 
-void OBJ::LightDome::AddAttributes(Parm::VRayPluginInfo *pluginInfo)
+void OBJ::LightDome::addPrmTemplate(Parm::PRMTmplList &prmTemplate)
 {
 	PRM_Template *defTmpl = OBJ_Light::getTemplateList(OBJ_PARMS_PLAIN);
 	while (defTmpl->getType() != PRM_LIST_TERMINATOR) {
-		pluginInfo->prm_template.push_back(*defTmpl);
+		prmTemplate.push_back(*defTmpl);
 		defTmpl++;
 	}
-	pluginInfo->prm_template.push_back(PRM_Template(PRM_HEADING, 1, &prm_heading));
-	pluginInfo->prm_template.push_back(PRM_Template(PRM_STRING_E, PRM_TYPE_DYNAMIC_PATH, 1, &prm_dome_tex, &Parm::PRMemptyStringDefault));
+
+	prmTemplate.push_back(PRM_Template(PRM_HEADING, 1, &prm_heading));
+	prmTemplate.push_back(PRM_Template(PRM_STRING_E, PRM_TYPE_DYNAMIC_PATH, 1, &prm_dome_tex, &Parm::PRMemptyStringDefault));
 }
 
 

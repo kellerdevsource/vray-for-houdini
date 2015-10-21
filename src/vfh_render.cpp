@@ -63,120 +63,79 @@ static PRM_Name  parm_render_sep_networks("render_sep_networks", "Networks");
 static PRM_Name  parm_render_net_render_channels("render_network_render_channels", "Render Channels");
 static PRM_Name  parm_render_net_environment("render_network_environment", "Environment");
 
+static PRM_Name          RenderSettingsSwitcherName("VRayRenderSettings");
+static Parm::PRMDefList  RenderSettingsSwitcherTabs;
+static Parm::PRMTmplList RenderSettingsPrmTemplate;
 
-static AttributesTabs RenderSettingsTabs;
-static PRM_Name              RenderSettingsSwitcherName("VRayRenderSettings");
-static Parm::PRMDefList      RenderSettingsSwitcherTabs;
-static Parm::PRMTmplList     RenderSettingsItems;
+static Parm::TabItemDesc RenderSettingsTabItemsDesc[] = {
+	{ "Options",        "SettingsOptions"          },
+	{ "Output",         "SettingsOutput"           },
+	{ "Color Mapping",  "SettingsColorMapping"     },
+	{ "DMC Sampler",    "SettingsDMCSampler"       },
+	{ "Image Sampler",  "SettingsImageSampler"     },
+	{ "GI",             "SettingsGI"               },
+	{ "Irradiance Map", "SettingsIrradianceMap"    },
+	{ "Light Cache",    "SettingsLightCache"       },
+	{ "Brute Force",    "SettingsDMCGI"            },
+	{ "Raycaster",      "SettingsRaycaster"        },
+	{ "Regions",        "SettingsRegionsGenerator" },
+	{ "Camera",         "SettingsCamera"           },
+	{ "DOF",            "SettingsCameraDof"        },
+	{ "Motion Blur",    "SettingsMotionBlur"       },
+	{ "RT",             "SettingsRTEngine"         }
+};
 
-
-static PRM_Template *getTemplates()
+static PRM_Template* getTemplates()
 {
-	if (RenderSettingsItems.size()) {
-		return &RenderSettingsItems[0];
+	if (!RenderSettingsPrmTemplate.size()) {
+		// Render / Exporter settings
+		//
+		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_HEADING, 1, &parm_render_sep_render));
+		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_STRING_E, PRM_TYPE_DYNAMIC_PATH, 1, &parm_render_camera, &parm_render_camera_def));
+		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_ORD, 1, &parm_render_render_mode, PRMzeroDefaults, &parm_render_render_mode_menu));
+		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_ORD, 1, &parm_render_export_mode, PRMzeroDefaults, &parm_render_export_mode_menu));
+		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_ORD, 1, &parm_render_vfb_mode, PRMzeroDefaults, &parm_render_vfb_mode_menu));
+
+		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_HEADING, 1, &parm_render_sep_export));
+		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_FILE_E, PRM_TYPE_DYNAMIC_PATH, 1, &parm_render_export_path, &parm_render_export_path_def));
+
+		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_HEADING, 1, &parm_render_sep_networks));
+		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_STRING_E, PRM_TYPE_DYNAMIC_PATH, 1, &parm_render_net_render_channels, &Parm::PRMemptyStringDefault));
+		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_STRING_E, PRM_TYPE_DYNAMIC_PATH, 1, &parm_render_net_environment,     &Parm::PRMemptyStringDefault));
+
+		RenderSettingsSwitcherTabs.push_back(PRM_Default(RenderSettingsPrmTemplate.size(), "Globals"));
+
+		// Renderer settings
+		//
+		Parm::addTabItems(RenderSettingsTabItemsDesc, CountOf(RenderSettingsTabItemsDesc), RenderSettingsSwitcherTabs, RenderSettingsPrmTemplate);
+
+		// Standard ROP settings
+		//
+		RenderSettingsPrmTemplate.push_back(theRopTemplates[ROP_TPRERENDER_TPLATE]);
+		RenderSettingsPrmTemplate.push_back(theRopTemplates[ROP_PRERENDER_TPLATE]);
+		RenderSettingsPrmTemplate.push_back(theRopTemplates[ROP_LPRERENDER_TPLATE]);
+		RenderSettingsPrmTemplate.push_back(theRopTemplates[ROP_TPREFRAME_TPLATE]);
+		RenderSettingsPrmTemplate.push_back(theRopTemplates[ROP_PREFRAME_TPLATE]);
+		RenderSettingsPrmTemplate.push_back(theRopTemplates[ROP_LPREFRAME_TPLATE]);
+		RenderSettingsPrmTemplate.push_back(theRopTemplates[ROP_TPOSTFRAME_TPLATE]);
+		RenderSettingsPrmTemplate.push_back(theRopTemplates[ROP_POSTFRAME_TPLATE]);
+		RenderSettingsPrmTemplate.push_back(theRopTemplates[ROP_LPOSTFRAME_TPLATE]);
+		RenderSettingsPrmTemplate.push_back(theRopTemplates[ROP_TPOSTRENDER_TPLATE]);
+		RenderSettingsPrmTemplate.push_back(theRopTemplates[ROP_POSTRENDER_TPLATE]);
+		RenderSettingsPrmTemplate.push_back(theRopTemplates[ROP_LPOSTRENDER_TPLATE]);
+		RenderSettingsSwitcherTabs.push_back(PRM_Default(12, "Scripts"));
+
+		RenderSettingsPrmTemplate.push_back(PRM_Template()); // List terminator
+
+		// Main switcher menu
+		RenderSettingsPrmTemplate.insert(RenderSettingsPrmTemplate.begin(),
+										 PRM_Template(PRM_SWITCHER,
+													  RenderSettingsSwitcherTabs.size(),
+													  &RenderSettingsSwitcherName,
+													  &RenderSettingsSwitcherTabs[0]));
 	}
 
-	RenderSettingsItems.push_back(PRM_Template(PRM_HEADING, 1, &parm_render_sep_render));
-	RenderSettingsItems.push_back(PRM_Template(PRM_STRING_E, PRM_TYPE_DYNAMIC_PATH, 1, &parm_render_camera, &parm_render_camera_def));
-	RenderSettingsItems.push_back(PRM_Template(PRM_ORD, 1, &parm_render_render_mode, PRMzeroDefaults, &parm_render_render_mode_menu));
-	RenderSettingsItems.push_back(PRM_Template(PRM_ORD, 1, &parm_render_export_mode, PRMzeroDefaults, &parm_render_export_mode_menu));
-	RenderSettingsItems.push_back(PRM_Template(PRM_ORD, 1, &parm_render_vfb_mode, PRMzeroDefaults, &parm_render_vfb_mode_menu));
-
-	RenderSettingsItems.push_back(PRM_Template(PRM_HEADING, 1, &parm_render_sep_export));
-	RenderSettingsItems.push_back(PRM_Template(PRM_FILE_E, PRM_TYPE_DYNAMIC_PATH, 1, &parm_render_export_path, &parm_render_export_path_def));
-
-	RenderSettingsItems.push_back(PRM_Template(PRM_HEADING, 1, &parm_render_sep_networks));
-	RenderSettingsItems.push_back(PRM_Template(PRM_STRING_E, PRM_TYPE_DYNAMIC_PATH, 1, &parm_render_net_render_channels, &Parm::PRMemptyStringDefault));
-	RenderSettingsItems.push_back(PRM_Template(PRM_STRING_E, PRM_TYPE_DYNAMIC_PATH, 1, &parm_render_net_environment,     &Parm::PRMemptyStringDefault));
-
-
-	RenderSettingsSwitcherTabs.push_back(PRM_Default(RenderSettingsItems.size(), "Globals"));
-
-	RenderSettingsTabs.push_back(AttributesTab("Options",
-											   "SettingsOptions",
-											   Parm::GeneratePrmTemplate("SETTINGS", "SettingsOptions", true, true)));
-	RenderSettingsTabs.push_back(AttributesTab("Output",
-											   "SettingsOutput",
-											   Parm::GeneratePrmTemplate("SETTINGS", "SettingsOutput", true, true)));
-	RenderSettingsTabs.push_back(AttributesTab("Color Mapping",
-											   "SettingsColorMapping",
-											   Parm::GeneratePrmTemplate("SETTINGS", "SettingsColorMapping", true, true)));
-	RenderSettingsTabs.push_back(AttributesTab("DMC Sampler",
-											   "SettingsDMCSampler",
-											   Parm::GeneratePrmTemplate("SETTINGS", "SettingsDMCSampler", true, true)));
-	RenderSettingsTabs.push_back(AttributesTab("Image Sampler",
-											   "SettingsImageSampler",
-											   Parm::GeneratePrmTemplate("SETTINGS", "SettingsImageSampler", true, true)));
-	RenderSettingsTabs.push_back(AttributesTab("GI",
-											   "SettingsGI",
-											   Parm::GeneratePrmTemplate("SETTINGS", "SettingsGI", true, true)));
-	RenderSettingsTabs.push_back(AttributesTab("Irradiance Map",
-											   "SettingsIrradianceMap",
-											   Parm::GeneratePrmTemplate("SETTINGS", "SettingsIrradianceMap", true, true)));
-	RenderSettingsTabs.push_back(AttributesTab("Light Cache",
-											   "SettingsLightCache",
-											   Parm::GeneratePrmTemplate("SETTINGS", "SettingsLightCache", true, true)));
-	RenderSettingsTabs.push_back(AttributesTab("Brute Force",
-											   "SettingsDMCGI",
-											   Parm::GeneratePrmTemplate("SETTINGS", "SettingsDMCGI", true, true)));
-	RenderSettingsTabs.push_back(AttributesTab("Raycaster",
-											   "SettingsRaycaster",
-											   Parm::GeneratePrmTemplate("SETTINGS", "SettingsRaycaster", true, true)));
-	RenderSettingsTabs.push_back(AttributesTab("Regions Generator",
-											   "SettingsRegionsGenerator",
-											   Parm::GeneratePrmTemplate("SETTINGS", "SettingsRegionsGenerator", true, true)));
-	RenderSettingsTabs.push_back(AttributesTab("Camera Override",
-											   "SettingsCamera",
-											   Parm::GeneratePrmTemplate("SETTINGS", "SettingsCamera", true, true)));
-	RenderSettingsTabs.push_back(AttributesTab("Motion Blur",
-											   "SettingsMotionBlur",
-											   Parm::GeneratePrmTemplate("SETTINGS", "SettingsMotionBlur", true, true)));
-	RenderSettingsTabs.push_back(AttributesTab("RT",
-											   "SettingsRTEngine",
-											   Parm::GeneratePrmTemplate("SETTINGS", "SettingsRTEngine", true, true)));
-
-	for (const auto &tab : RenderSettingsTabs) {
-		PRM_Template *prm = tab.items;
-		int           prm_count = 0;
-		while (prm->getType() != PRM_LIST_TERMINATOR) {
-			prm_count++;
-			prm++;
-		}
-
-		RenderSettingsSwitcherTabs.push_back(PRM_Default(prm_count, tab.label.c_str()));
-		for (int i = 0; i < prm_count; ++i) {
-			RenderSettingsItems.push_back(tab.items[i]);
-		}
-	}
-
-	RenderSettingsSwitcherTabs.push_back(PRM_Default(12, "Scripts"));
-	RenderSettingsItems.push_back(theRopTemplates[ROP_TPRERENDER_TPLATE]);
-	RenderSettingsItems.push_back(theRopTemplates[ROP_PRERENDER_TPLATE]);
-	RenderSettingsItems.push_back(theRopTemplates[ROP_LPRERENDER_TPLATE]);
-	RenderSettingsItems.push_back(theRopTemplates[ROP_TPREFRAME_TPLATE]);
-	RenderSettingsItems.push_back(theRopTemplates[ROP_PREFRAME_TPLATE]);
-	RenderSettingsItems.push_back(theRopTemplates[ROP_LPREFRAME_TPLATE]);
-	RenderSettingsItems.push_back(theRopTemplates[ROP_TPOSTFRAME_TPLATE]);
-	RenderSettingsItems.push_back(theRopTemplates[ROP_POSTFRAME_TPLATE]);
-	RenderSettingsItems.push_back(theRopTemplates[ROP_LPOSTFRAME_TPLATE]);
-	RenderSettingsItems.push_back(theRopTemplates[ROP_TPOSTRENDER_TPLATE]);
-	RenderSettingsItems.push_back(theRopTemplates[ROP_POSTRENDER_TPLATE]);
-	RenderSettingsItems.push_back(theRopTemplates[ROP_LPOSTRENDER_TPLATE]);
-
-	RenderSettingsItems.push_back(PRM_Template()); // List terminator
-
-	RenderSettingsItems.insert(RenderSettingsItems.begin(),
-							   PRM_Template(PRM_SWITCHER,
-											RenderSettingsSwitcherTabs.size(),
-											&RenderSettingsSwitcherName,
-											&RenderSettingsSwitcherTabs[0]));
-
-	PRINT_INFO("Render settings tabs: %lu",
-			   RenderSettingsSwitcherTabs.size());
-	PRINT_INFO("Render settings elements: %lu",
-			   RenderSettingsItems.size());
-
-	return &RenderSettingsItems[0];
+	return &RenderSettingsPrmTemplate[0];
 }
 
 
@@ -184,21 +143,10 @@ OP_TemplatePair* VRayRendererNode::getTemplatePair()
 {
 	static OP_TemplatePair *ropPair = 0;
 	if (!ropPair) {
-		OP_TemplatePair *base;
-		base = new OP_TemplatePair(getTemplates());
+		OP_TemplatePair *base = new OP_TemplatePair(getTemplates());
 		ropPair = new OP_TemplatePair(ROP_Node::getROPbaseTemplate(), base);
 	}
 	return ropPair;
-}
-
-
-OP_VariablePair* VRayRendererNode::getVariablePair()
-{
-	static OP_VariablePair *pair = 0;
-	if (!pair) {
-		pair = new OP_VariablePair(ROP_Node::myVariableList);
-	}
-	return pair;
 }
 
 
@@ -224,7 +172,7 @@ bool VRayRendererNode::updateParmsFlags()
 	bool changed = ROP_Node::updateParmsFlags();
 
 	bool gi_on = evalInt("SettingsGI.on", 0, 0);
-
+#if 0
 	for (const auto tab : RenderSettingsTabs) {
 		PRM_Template *prm = tab.items;
 
@@ -249,7 +197,7 @@ bool VRayRendererNode::updateParmsFlags()
 
 		UI::ActiveStateDeps::activateElements(tab.pluginID, this, changed);
 	}
-
+#endif
 	return changed;
 }
 
@@ -485,7 +433,7 @@ ROP_RENDER_CODE VRayRendererNode::renderFrame(fpreal time, UT_Interrupt *boss)
 
 		if (m_exporter.isAborted()) {
 			PRINT_WARN("Operation is aborted by the user!")
-			m_error = ROP_ABORT_RENDER;
+					m_error = ROP_ABORT_RENDER;
 		}
 		else {
 			m_exporter.setFrame(context.getFloatFrame());
@@ -592,14 +540,12 @@ int VRayRendererNode::clearKeyFrames(fpreal toTime)
 
 void VRayRendererNode::register_operator(OP_OperatorTable *table)
 {
-	OP_Operator *rop = new OP_Operator("vray_renderer",
-									   "V-Ray Renderer",
-									   VRayRendererNode::myConstructor,
-									   VRayRendererNode::getTemplatePair(),
-									   0,
-									   5,
-									   VRayRendererNode::getVariablePair(),
-									   OP_FLAG_GENERATOR);
+	OP_Operator *rop = new OP_Operator(/* Internal name     */ "vray_renderer",
+									   /* UI name           */ "V-Ray Renderer",
+									   /* How to create one */ VRayRendererNode::myConstructor,
+									   /* Parm definitions  */ VRayRendererNode::getTemplatePair(),
+									   /* Min # of inputs   */ 0,
+									   /* Max # of inputs   */ 0);
 
 	// Set icon
 	rop->setIconName("ROP_vray");

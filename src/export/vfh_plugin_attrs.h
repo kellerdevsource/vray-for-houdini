@@ -191,26 +191,26 @@ struct PluginAttr {
 
 	const char *typeStr() const {
 		switch (paramType) {
-			case AttrTypeInt: return "Int";
-			case AttrTypeFloat: return "Float";
-			case AttrTypeVector: return "Vector";
-			case AttrTypeColor: return "Color";
-			case AttrTypeAColor: return "AColor";
-			case AttrTypeTransform: return "Transform";
-			case AttrTypeString: return "String";
-			case AttrTypePlugin: return "Plugin";
-			case AttrTypeListInt: return "ListInt";
-			case AttrTypeListFloat: return "ListFloat";
-			case AttrTypeListVector: return "ListVector";
-			case AttrTypeListColor: return "ListColor";
-			case AttrTypeListTransform: return "ListTransform";
-			case AttrTypeListString: return "ListString";
-			case AttrTypeListPlugin: return "ListPlugin";
-			case AttrTypeListValue: return "ListValue";
-			case AttrTypeRawListInt: return "RawListInt";
-			case AttrTypeRawListFloat: return "RawListFloat";
-			case AttrTypeRawListVector: return "RawListVector";
-			case AttrTypeRawListColor: return "RawListColor";
+			case PluginAttr::AttrTypeInt: return "Int";
+			case PluginAttr::AttrTypeFloat: return "Float";
+			case PluginAttr::AttrTypeVector: return "Vector";
+			case PluginAttr::AttrTypeColor: return "Color";
+			case PluginAttr::AttrTypeAColor: return "AColor";
+			case PluginAttr::AttrTypeTransform: return "Transform";
+			case PluginAttr::AttrTypeString: return "String";
+			case PluginAttr::AttrTypePlugin: return "Plugin";
+			case PluginAttr::AttrTypeListInt: return "ListInt";
+			case PluginAttr::AttrTypeListFloat: return "ListFloat";
+			case PluginAttr::AttrTypeListVector: return "ListVector";
+			case PluginAttr::AttrTypeListColor: return "ListColor";
+			case PluginAttr::AttrTypeListTransform: return "ListTransform";
+			case PluginAttr::AttrTypeListString: return "ListString";
+			case PluginAttr::AttrTypeListPlugin: return "ListPlugin";
+			case PluginAttr::AttrTypeListValue: return "ListValue";
+			case PluginAttr::AttrTypeRawListInt: return "RawListInt";
+			case PluginAttr::AttrTypeRawListFloat: return "RawListFloat";
+			case PluginAttr::AttrTypeRawListVector: return "RawListVector";
+			case PluginAttr::AttrTypeRawListColor: return "RawListColor";
 			default:
 				break;
 		}
@@ -247,66 +247,24 @@ typedef std::vector<PluginAttr> PluginAttrs;
 
 struct PluginDesc {
 	PluginDesc() {}
-
 	PluginDesc(const std::string &pluginName, const std::string &pluginID):
 		pluginName(pluginName),
 		pluginID(pluginID)
 	{}
 
-	void addAttribute(const PluginAttr &attr) {
-		PluginAttr *_attr = get(attr.paramName);
-		if (_attr) {
-			*_attr = attr;
-		}
-		else {
-			pluginAttrs.push_back(attr);
-		}
-	}
+	bool              contains(const std::string &paramName) const;
+	void              addAttribute(const PluginAttr &attr);
+	void              add(const PluginAttr &attr);
+	const PluginAttr *get(const std::string &paramName) const;
+	PluginAttr       *get(const std::string &paramName);
 
-	void add(const PluginAttr &attr) {
-		addAttribute(attr);
-	}
+	bool              isDifferent(const PluginDesc &otherDesc) const;
+	bool              isEqual(const PluginDesc &otherDesc) const;
+	void              showAttributes() const;
 
-	std::string             pluginID;
-	std::string             pluginName;
-	PluginAttrs             pluginAttrs;
-
-	bool contains(const std::string &paramName) const {
-		if (get(paramName)) {
-			return true;
-		}
-		return false;
-	}
-
-	const PluginAttr *get(const std::string &paramName) const {
-		for (const auto &pIt : pluginAttrs) {
-			const PluginAttr &p = pIt;
-			if (paramName == p.paramName) {
-				return &p;
-			}
-		}
-		return nullptr;
-	}
-
-	PluginAttr *get(const std::string &paramName) {
-		for (auto &pIt : pluginAttrs) {
-			PluginAttr &p = pIt;
-			if (paramName == p.paramName) {
-				return &p;
-			}
-		}
-		return nullptr;
-	}
-
-	void showAttributes() const {
-		PRINT_INFO("Plugin \"%s.%s\" parameters:",
-				   pluginID.c_str(), pluginName.c_str())
-				for (const auto &pIt : pluginAttrs) {
-			const PluginAttr &p = pIt;
-			PRINT_INFO("  %s [%s]",
-					   p.paramName.c_str(), p.typeStr());
-		}
-	}
+	std::string       pluginID;
+	std::string       pluginName;
+	PluginAttrs       pluginAttrs;
 };
 
 } // namespace Attrs

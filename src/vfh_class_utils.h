@@ -31,7 +31,7 @@ OP_Node* VFH_VRAY_NODE_CREATOR(OP_Network *parent, const char *name, OP_Operator
 		/* Internal name     */ "VRayNode" STRINGIZE(OpClass), \
 		/* UI name           */ "V-Ray " STRINGIZE(OpClass), \
 		/* How to create one */ VFH_VRAY_NODE_CREATOR<OBJ::OpClass>, \
-		/* Parm definitions  */ Parm::GeneratePrmTemplate(OpPluginType, STRINGIZE(OpClass)), \
+		/* Parm definitions  */ Parm::getPrmTemplate(STRINGIZE(OpClass)), \
 		/* Min # of inputs   */ 0, \
 		/* Max # of inputs   */ 0 \
 	); \
@@ -70,7 +70,7 @@ OP_Node* VFH_VRAY_NODE_CREATOR(OP_Network *parent, const char *name, OP_Operator
 		/* Internal name     */ "VRayNode" STRINGIZE(OpClass), \
 		/* UI name           */ "V-Ray " STRINGIZE(OpClass), \
 		/* How to create one */ VFH_VRAY_NODE_CREATOR<SOP::OpClass>, \
-		/* Parm definitions  */ Parm::GeneratePrmTemplate(OpPluginType, STRINGIZE(OpClass)), \
+		/* Parm definitions  */ Parm::getPrmTemplate(STRINGIZE(OpClass)), \
 		/* Min # of inputs   */ 0, \
 		/* Max # of inputs   */ 0 \
 	); \
@@ -83,7 +83,7 @@ OP_Node* VFH_VRAY_NODE_CREATOR(OP_Network *parent, const char *name, OP_Operator
 		/* Internal name     */ "VRayNode" STRINGIZE(OpClass), \
 		/* UI name           */ "V-Ray " STRINGIZE(OpClass), \
 		/* How to create one */ VFH_VRAY_NODE_CREATOR<SOP::OpClass>, \
-		/* Parm definitions  */ Parm::GeneratePrmTemplate(OpPluginType, STRINGIZE(OpClass)), \
+		/* Parm definitions  */ Parm::getPrmTemplate(STRINGIZE(OpClass)), \
 		/* Min # of inputs   */ MinInputs, \
 		/* Max # of inputs   */ MaxInputs \
 	); \
@@ -96,7 +96,7 @@ OP_Node* VFH_VRAY_NODE_CREATOR(OP_Network *parent, const char *name, OP_Operator
 		/* Internal name     */ "VRayNode" STRINGIZE(OpClass), \
 		/* UI name           */ "V-Ray " STRINGIZE(OpClass), \
 		/* How to create one */ VFH_VRAY_NODE_CREATOR<SOP::OpClass>, \
-		/* Parm definitions  */ Parm::GeneratePrmTemplate(OpPluginType, PluginID), \
+		/* Parm definitions  */ Parm::getPrmTemplate(PluginID), \
 		/* Min # of inputs   */ 0, \
 		/* Max # of inputs   */ 0 \
 	); \
@@ -125,7 +125,7 @@ OP_Node* VFH_VRAY_NODE_CREATOR(OP_Network *parent, const char *name, OP_Operator
 		/* Internal name     */ "VRayNode" STRINGIZE(OpClass), \
 		/* UI name           */ "V-Ray " STRINGIZE(OpClass), \
 		/* How to create one */ VFH_VRAY_NODE_CREATOR<VOP::OpClass>, \
-		/* Parm definitions  */ Parm::GeneratePrmTemplate(OpPluginType, OpPluginID), \
+		/* Parm definitions  */ Parm::getPrmTemplate(OpPluginID), \
 		/* Min # of inputs   */ 0, \
 		/* Max # of inputs   */ VOP_VARIABLE_INOUT_MAX, \
 		/* VOP network mask  */ "VRay", \

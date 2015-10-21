@@ -14,7 +14,7 @@
 using namespace VRayForHoudini;
 
 
-void VOP::TextureOutput::AddAttributes(Parm::VRayPluginInfo *pluginInfo)
+void VOP::TextureOutput::addPrmTemplate(Parm::PRMTmplList &prmTemplate)
 {
 }
 

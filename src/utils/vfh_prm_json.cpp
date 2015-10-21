@@ -12,7 +12,6 @@
 #include "vfh_prm_def.h"
 #include "vfh_prm_json.h"
 #include "vfh_prm_globals.h"
-#include "vfh_plugin_info.h"
 #include "vfh_ui.h"
 
 #include "vop/material/vop_MtlMulti.h"
@@ -30,6 +29,7 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/format.hpp>
 
 #define SKIP_TYPE(attrType) (\
 	attrType == "LIST"     || \
@@ -122,9 +122,6 @@ void JsonPluginDescGenerator::init()
 	RenderSettingsPlugins.insert("SettingsRegionsGenerator");
 	RenderSettingsPlugins.insert("SettingsOutput");
 
-	RenderSettingsPlugins.insert("SettingsCamera");
-	RenderSettingsPlugins.insert("SettingsMotionBlur");
-
 	RenderGIPlugins.insert("SettingsGI");
 	RenderGIPlugins.insert("SettingsLightCache");
 	RenderGIPlugins.insert("SettingsIrradianceMap");
@@ -174,16 +171,33 @@ void JsonPluginDescGenerator::parseData()
 
 JsonTree* JsonPluginDescGenerator::getTree(const std::string &pluginID)
 {
-	if (parsedData.count(pluginID)) {
-		return &parsedData[pluginID];
-	}
-	return nullptr;
+	return parsedData.count(pluginID) ? &parsedData[pluginID] : nullptr;
 }
 
 
 void JsonPluginDescGenerator::freeData()
 {
 	parsedData.clear();
+}
+
+
+static void makeSpaceSeparatedTitleCase(std::string &attrName)
+{
+	// Title case and "_" to space
+	for (int i = 0; i < attrName.length(); ++i) {
+		const char &c = attrName[i];
+		if (!(c >= 'A' && c <= 'Z')) {
+			if ((i == 0) || (attrName[i-1] == '_')) {
+				if (i) {
+					attrName[i-1] = ' ';
+				}
+				// Don't modify digits
+				if (!(c >= '0' && c <= '9')) {
+					attrName[i] -= 32;
+				}
+			}
+		}
+	}
 }
 
 
@@ -196,15 +210,18 @@ static bool AttrNeedWidget(const AttrDesc &attrDesc)
 }
 
 
-static PRM_Template AttrDescAsPrmTemplate(const AttrDesc &attrDesc)
+static PRM_Template AttrDescAsPrmTemplate(const AttrDesc &attrDesc, const std::string &prefix)
 {
+	// PRM_Name stores pointer to name so we have to store generated names
+	static std::vector<std::string> prmNames;
+	const std::string &attrName = prefix.empty()
+								  ? attrDesc.attr
+								  : boost::str(Parm::FmtPrefixAuto % prefix % attrDesc.attr);
+	prmNames.push_back(attrName);
+
+	PRM_Name *prm_name = new PRM_Name(prmNames.back().c_str(), attrDesc.label.c_str());
+
 	PRM_Template tmpl;
-
-	// TODO:
-	//  [ ] Collect and clean up ptrs (or does it really needed?)
-	//
-	PRM_Name *prm_name = new PRM_Name(attrDesc.attr.c_str(), attrDesc.label.c_str());
-
 	if (attrDesc.value.type == ParmType::eBool) {
 		tmpl = PRM_Template(PRM_TOGGLE, 1, prm_name, attrDesc.value.getDefBool());
 	}
@@ -361,86 +378,96 @@ static void ActiveStateProcessWidgetLayout(const std::string &pluginID, VRayPlug
 }
 
 
-static void AddAttrsTemplate(VRayPluginInfo *nodeType, const JsonItem &item, int &i)
+VRayPluginInfo* Parm::generatePluginInfo(const std::string &pluginID)
 {
-	for (const auto &at : item.second.get_child("attrs")) {
-		if (at.second.count("name")) {
-			const std::string &attrName = at.second.get_child("name").data();
-
-			if (NOT(attrName.empty()) && nodeType->attributes.count(attrName)) {
-				const AttrDesc &attrDesc = nodeType->attributes[attrName];
-
-				if (NOT(AttrNeedWidget(attrDesc))) {
-					continue;
-				}
-
-				nodeType->prm_template.push_back(AttrDescAsPrmTemplate(attrDesc));
-			}
-		}
-	}
-}
-
-
-PRM_Template* Parm::GeneratePrmTemplate(const std::string &pluginType, const std::string &pluginID, const bool &useWidget, const bool &usePrefix, const std::string &pluginPrefix)
-{
-	if (NOT(JsonPluginInfoParser.hasData())) {
+	if (!JsonPluginInfoParser.hasData()) {
 		JsonPluginInfoParser.init();
 		JsonPluginInfoParser.parseData();
 	}
 
-	const std::string &fullPluginID = usePrefix
-									  ? pluginPrefix + pluginID
-									  : pluginID;
-
-	VRayPluginInfo *pluginInfo = Parm::GetVRayPluginInfo(fullPluginID);
-	if (pluginInfo) {
-		return &pluginInfo->prm_template[0];
-	}
-
-	pluginInfo = Parm::NewVRayPluginInfo(fullPluginID);
-	pluginInfo->pluginType = pluginType;
-
-	// Create default outputs
-	if (pluginType == "BRDF") {
-		pluginInfo->outputs.push_back(SocketDesc(PRM_Name("BRDF", "BRDF"), VOP_TYPE_BSDF));
-	}
-	else if (pluginType == "MATERIAL") {
-		pluginInfo->outputs.push_back(SocketDesc(PRM_Name("Material", "Material"), VOP_SURFACE_SHADER));
-	}
-	else if (pluginType == "UVWGEN") {
-		pluginInfo->outputs.push_back(SocketDesc(PRM_Name("Mapping", "Mapping"), VOP_TYPE_VECTOR));
-	}
-	else if (pluginType == "TEXTURE") {
-		if (pluginID == "BitmapBuffer") {
-			pluginInfo->outputs.push_back(SocketDesc(PRM_Name("Bitmap", "Bitmap"), VOP_TYPE_VOID));
-		}
-		else {
-			pluginInfo->outputs.push_back(SocketDesc(PRM_Name("Output", "Output"), VOP_TYPE_COLOR));
-		}
-	}
-	else if (pluginType == "GEOMETRY") {
-		pluginInfo->outputs.push_back(SocketDesc(PRM_Name("Geometry", "Geometry"), VOP_GEOMETRY_SHADER));
-	}
-	else if (pluginType == "RENDERCHANNEL" && NOT(pluginID == "SettingsRenderChannels")) {
-		pluginInfo->outputs.push_back(SocketDesc(PRM_Name("Channel", "Channel"), VOP_TYPE_VOID));
-	}
-	else if (pluginType == "EFFECT") {
-		if (pluginID == "PhxShaderCache") {
-			pluginInfo->outputs.push_back(SocketDesc(PRM_Name("Cache", "Cache"), VOP_TYPE_VOID));
-		}
-		else {
-			pluginInfo->outputs.push_back(SocketDesc(PRM_Name("Effect", "Effect"), VOP_TYPE_VOID));
-		}
-	}
-
-#define CGR_DEBUG_JSON_ATTR_GEN 0
-#if CGR_DEBUG_JSON_ATTR_GEN
-	PRINT_INFO("Generating description: \"%s\"...",
-			   pluginID.c_str());
-#endif
+	VRayPluginInfo *pluginInfo = nullptr;
 
 	const JsonTree *jsonPluginDesc = JsonPluginInfoParser.getTree(pluginID);
 	if (jsonPluginDesc) {
+		const std::string &pluginTypeStr = jsonPluginDesc->get_child("Type").data();
+
+		Parm::PluginType pluginType = Parm::PluginTypeUnknown;
+
+		if (pluginTypeStr == "BRDF") {
+			pluginType = Parm::PluginTypeBRDF;
+		}
+		else if (pluginTypeStr == "MATERIAL") {
+			pluginType = Parm::PluginTypeMaterial;
+		}
+		else if (pluginTypeStr == "UVWGEN") {
+			pluginType = Parm::PluginTypeUvwgen;
+		}
+		else if (pluginTypeStr == "TEXTURE") {
+			pluginType = Parm::PluginTypeTexture;
+		}
+		else if (pluginTypeStr == "GEOMETRY") {
+			pluginType = Parm::PluginTypeGeometry;
+		}
+		else if (pluginTypeStr == "RENDERCHANNEL") {
+			pluginType = Parm::PluginTypeRenderChannel;
+		}
+		else if (pluginTypeStr == "EFFECT") {
+			pluginType = Parm::PluginTypeEffect;
+		}
+		else if (pluginTypeStr == "SETTINGS") {
+			pluginType = Parm::PluginTypeSettings;
+		}
+		else if (pluginTypeStr == "LIGHT") {
+			pluginType = Parm::PluginTypeLight;
+		}
+
+		pluginInfo = Parm::NewVRayPluginInfo(pluginID);
+		pluginInfo->pluginType = pluginType;
+
+		// Create default outputs
+		switch (pluginType) {
+			case Parm::PluginTypeBRDF: {
+				pluginInfo->outputs.push_back(SocketDesc(PRM_Name("BRDF", "BRDF"), VOP_TYPE_BSDF));
+				break;
+			}
+			case Parm::PluginTypeMaterial: {
+				pluginInfo->outputs.push_back(SocketDesc(PRM_Name("Material", "Material"), VOP_SURFACE_SHADER));
+				break;
+			}
+			case Parm::PluginTypeUvwgen: {
+				pluginInfo->outputs.push_back(SocketDesc(PRM_Name("Mapping", "Mapping"), VOP_TYPE_VECTOR));
+				break;
+			}
+			case Parm::PluginTypeTexture: {
+				if (pluginID == "BitmapBuffer") {
+					pluginInfo->outputs.push_back(SocketDesc(PRM_Name("Bitmap", "Bitmap"), VOP_TYPE_VOID));
+				}
+				else {
+					pluginInfo->outputs.push_back(SocketDesc(PRM_Name("Output", "Output"), VOP_TYPE_COLOR));
+				}
+				break;
+			}
+			case Parm::PluginTypeGeometry: {
+				pluginInfo->outputs.push_back(SocketDesc(PRM_Name("Geometry", "Geometry"), VOP_GEOMETRY_SHADER));
+				break;
+			}
+			case Parm::PluginTypeRenderChannel: {
+				if (pluginID != "SettingsRenderChannels") {
+					pluginInfo->outputs.push_back(SocketDesc(PRM_Name("Channel", "Channel"), VOP_TYPE_VOID));
+				}
+				break;
+			}
+			case Parm::PluginTypeEffect: {
+				if (pluginID == "PhxShaderCache") {
+					pluginInfo->outputs.push_back(SocketDesc(PRM_Name("Cache", "Cache"), VOP_TYPE_VOID));
+				}
+				else {
+					pluginInfo->outputs.push_back(SocketDesc(PRM_Name("Effect", "Effect"), VOP_TYPE_VOID));
+				}
+				break;
+			}
+		}
+
 		for (const auto &v : jsonPluginDesc->get_child("Parameters")) {
 			const std::string &attrName = v.second.get_child("attr").data();
 			const std::string &attrType = v.second.get_child("type").data();
@@ -462,36 +489,13 @@ PRM_Template* Parm::GeneratePrmTemplate(const std::string &pluginType, const std
 			}
 			else {
 				attrDesc.label = attrName;
-
-				// Title case and "_" to space
-				for (int i = 0; i < attrDesc.label.length(); ++i) {
-					const char &c = attrDesc.label[i];
-					if (c >= 'A' && c <= 'Z') {
-						continue;
-					}
-
-					if ((i == 0) || (attrDesc.label[i-1] == '_')) {
-						if (i) {
-							attrDesc.label[i-1] = ' ';
-						}
-						// Don't modify digits
-						if (NOT(c >= '0' && c <= '9')) {
-							attrDesc.label[i] -= 32;
-						}
-					}
-				}
+				makeSpaceSeparatedTitleCase(attrDesc.label);
 			}
 
-			attrDesc.attr = usePrefix
-							? pluginPrefix + pluginID + "." + attrName
-							: attrName;
+			attrDesc.attr = attrName;
 			attrDesc.desc = v.second.get_child("desc").data();
-#if CGR_DEBUG_JSON_ATTR_GEN
-			PRINT_INFO("Processing attribute: name=\"%s\" label=\"%s\"",
-					   attrDesc.attr.c_str(), attrDesc.label.c_str());
-#endif
-			VOP_Type socketType = VOP_TYPE_UNDEF;
 
+			VOP_Type socketType = VOP_TYPE_UNDEF;
 			if (attrType == "BOOL") {
 				attrDesc.value.type = ParmType::eBool;
 				attrDesc.value.defBool = v.second.get<bool>("default");
@@ -682,17 +686,9 @@ PRM_Template* Parm::GeneratePrmTemplate(const std::string &pluginType, const std
 
 			PRM_Name socketName(attrDesc.attr.c_str(), attrDesc.label.c_str());
 			if (MAPPABLE_TYPE(attrType)) {
-#if CGR_DEBUG_JSON_ATTR_GEN
-				PRINT_INFO("  Adding Input socket: \"%s\"...",
-						   attrName.c_str());
-#endif
 				pluginInfo->inputs.push_back(SocketDesc(socketName, socketType, attrDesc.value.type));
 			}
 			else if (OUTPUT_TYPE(attrType)) {
-#if CGR_DEBUG_JSON_ATTR_GEN
-				PRINT_INFO("  Adding Output socket: \"%s\"...",
-						   attrName.c_str());
-#endif
 				pluginInfo->outputs.push_back(SocketDesc(socketName, socketType, attrDesc.value.type));
 			}
 		}
@@ -711,24 +707,6 @@ PRM_Template* Parm::GeneratePrmTemplate(const std::string &pluginType, const std
 			rampAttrDesc.label = "Color Ramp";
 			rampAttrDesc.value.type = ParmType::eRamp;
 		}
-		else if (pluginID == "BRDFLayered") {
-			VOP::BRDFLayered::AddAttributes(pluginInfo);
-		}
-		else if (pluginID == "TexLayered") {
-			VOP::TexLayered::AddAttributes(pluginInfo);
-		}
-		else if (pluginID == "MtlMulti") {
-			VOP::MtlMulti::AddAttributes(pluginInfo);
-		}
-		else if (pluginID == "GeomPlane") {
-			SOP::GeomPlane::AddAttributes(pluginInfo);
-		}
-		else if (pluginID == "CustomTextureOutput") {
-			VOP::TextureOutput::AddAttributes(pluginInfo);
-		}
-		else if (pluginID == "LightDome") {
-			OBJ::LightDome::AddAttributes(pluginInfo);
-		}
 
 		// Parse widget and extract parameter active state
 		// information
@@ -737,78 +715,93 @@ PRM_Template* Parm::GeneratePrmTemplate(const std::string &pluginType, const std
 			for (const auto &w : jsonPluginDesc->get_child("Widget")) {
 				// For widget item
 				for (const auto &item : w.second.get_child("")) {
-					const UI::StateInfo &parentState = ActiveStateGetStateInfo(pluginID, item, usePrefix);
+					const UI::StateInfo &parentState = ActiveStateGetStateInfo(pluginID, item);
 
 					// If layout
 					if (item.second.count("attrs") || item.second.count("splits")) {
 						// If sub-layout
 						if (item.second.count("splits")) {
 							for (const auto &sp : item.second.get_child("splits")) {
-								ActiveStateProcessWidgetLayout(pluginID, pluginInfo, parentState, sp, usePrefix);
+								ActiveStateProcessWidgetLayout(pluginID, pluginInfo, parentState, sp);
 							}
 						}
 						else {
-							ActiveStateProcessWidgetLayout(pluginID, pluginInfo, parentState, item, usePrefix);
+							ActiveStateProcessWidgetLayout(pluginID, pluginInfo, parentState, item);
 						}
 					}
 				}
 			}
 		}
-
-#if CGR_DEBUG_JSON_ATTR_GEN
-		PRINT_INFO("Generating PRM_Template [%i] list for \"%s\":",
-				   pluginInfo->attributes.size(), pluginID.c_str());
-#endif
-		// NOTE:
-		//   Widget is optimized for Blender ATM,
-		//   thus all texturable params are missing.
-		//   Modify widgets to specify that attribute
-		//   is texturable and skip it if needed.
-		//
-#define CGR_USE_WIDGET 0
-#if CGR_USE_WIDGET
-		// Parse widget and extract parameter order
-		// Since all parameters in Houdini are inserted in one column,
-		// simply insert items in the order defined in widget
-		if (jsonPluginDesc->count("Widget")) {
-			// For widget
-			for (const auto &w : jsonPluginDesc->get_child("Widget")) {
-				// For widget item
-				for (const auto &item : w.second.get_child("")) {
-					// If layout
-					if (item.second.count("attrs") || item.second.count("splits")) {
-						hasWidget = true;
-
-						// If sub-layout
-						if (item.second.count("splits")) {
-							for (const auto &sp : item.second.get_child("splits")) {
-								AddAttrsTemplate(pluginInfo, sp, i);
-							}
-						}
-						else {
-							AddAttrsTemplate(pluginInfo, item, i);
-						}
-					}
-				}
-			}
-		}
-#else
-		for (const auto &aIt : pluginInfo->attributes) {
-			const AttrDesc &attrDesc = aIt.second;
-
-			if (NOT(AttrNeedWidget(attrDesc))) {
-				continue;
-			}
-
-			pluginInfo->prm_template.push_back(AttrDescAsPrmTemplate(attrDesc));
-		}
-#endif
-		pluginInfo->prm_template.push_back(PRM_Template()); // List terminator
 	}
 
-#if 0
-	UI::ActiveDependencies::showDependencies();
-#endif
+	return pluginInfo;
+}
 
-	return &pluginInfo->prm_template[0];
+
+PRMTmplList* Parm::generatePrmTemplate(const std::string &pluginID, const std::string &prefix)
+{
+	typedef std::map<std::string, PRMTmplList> PrmTemplatesMap;
+	static PrmTemplatesMap PrmTemplates;
+
+	PRMTmplList *prmTmplList = nullptr;
+
+	VRayPluginInfo *pluginInfo = Parm::GetVRayPluginInfo(pluginID);
+	if (!pluginInfo) {
+		pluginInfo = generatePluginInfo(pluginID);
+	}
+	if (pluginInfo) {
+		const std::string &tmplPluginID = prefix.empty()
+										  ? boost::str(Parm::FmtPrefixAuto % prefix % pluginID)
+										  : pluginID;
+
+		if (PrmTemplates.count(tmplPluginID)) {
+			prmTmplList = &PrmTemplates[tmplPluginID];
+		}
+		else {
+			prmTmplList = &PrmTemplates[tmplPluginID];
+
+			if (pluginID == "BRDFLayered") {
+				VOP::BRDFLayered::addPrmTemplate(*prmTmplList);
+			}
+			else if (pluginID == "TexLayered") {
+				VOP::TexLayered::addPrmTemplate(*prmTmplList);
+			}
+			else if (pluginID == "MtlMulti") {
+				VOP::MtlMulti::addPrmTemplate(*prmTmplList);
+			}
+			else if (pluginID == "GeomPlane") {
+				SOP::GeomPlane::addPrmTemplate(*prmTmplList);
+			}
+			else if (pluginID == "CustomTextureOutput") {
+				VOP::TextureOutput::addPrmTemplate(*prmTmplList);
+			}
+			else if (pluginID == "LightDome") {
+				OBJ::LightDome::addPrmTemplate(*prmTmplList);
+			}
+
+			for (auto &aIt : pluginInfo->attributes) {
+				AttrDesc &attrDesc = aIt.second;
+				if (AttrNeedWidget(attrDesc)) {
+					prmTmplList->push_back(AttrDescAsPrmTemplate(attrDesc, prefix));
+				}
+			}
+
+			prmTmplList->push_back(PRM_Template()); // List terminator
+		}
+	}
+
+	return prmTmplList;
+}
+
+
+PRM_Template* Parm::getPrmTemplate(const std::string &pluginID)
+{
+	PRM_Template *prmTmpl = nullptr;
+
+	PRMTmplList *prmTmplList = generatePrmTemplate(pluginID);
+	if (prmTmplList) {
+		prmTmpl = &(*prmTmplList)[0];
+	}
+
+	return prmTmpl;
 }

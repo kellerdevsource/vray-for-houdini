@@ -133,7 +133,10 @@ template <typename T, int N>
 char (&ArraySizeHelper(T (&array)[N]))[N];
 #define CountOf(array) (sizeof(ArraySizeHelper(array)))
 
+#define IsFloatEq(a, b) VUtils::isZero(a - b, 1e-6f)
+
 #define MemberEq(member) (member == other.member)
+#define MemberFloatEq(member) (IsFloatEq(member, other.member))
 #define MemberNotEq(member) (!(member == other.member))
 
 /// Disables copy-constructor and assignment operator
