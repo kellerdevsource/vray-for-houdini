@@ -27,3 +27,32 @@ int VRayForHoudini::Parm::isParmExist(OP_Node &node, const std::string &attrName
 
 	return parmExist;
 }
+
+
+int VRayForHoudini::Parm::isParmSwitcher(OP_Node &node, const int index)
+{
+	int isSwitcher = false;
+
+	const PRM_ParmList *parmList = node.getParmList();
+	if (parmList) {
+		const PRM_Parm *param = parmList->getParmPtr(index);
+		if (param) {
+			isSwitcher = param->getType().isSwitcher();
+		}
+	}
+
+	return isSwitcher;
+}
+
+
+const PRM_Parm* VRayForHoudini::Parm::getParm(OP_Node &node, const int index)
+{
+	const PRM_Parm *param = nullptr;
+
+	const PRM_ParmList *parmList = node.getParmList();
+	if (parmList) {
+		param = parmList->getParmPtr(index);
+	}
+
+	return param;
+}

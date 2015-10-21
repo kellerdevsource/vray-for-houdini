@@ -13,9 +13,12 @@
 #include "vop/vop_node_base.h"
 
 #include "vfh_exporter.h"
+#include "vfh_prm_templates.h"
 
 #include <SHOP/SHOP_Node.h>
 #include <PRM/PRM_Parm.h>
+
+#include <boost/algorithm/string.hpp>
 
 
 using namespace VRayForHoudini;
@@ -40,7 +43,7 @@ SHOP_Node *VRayExporter::objGetMaterialNode(OBJ_Node *obj_node, fpreal t)
 
 void VRayExporter::RtCallbackNode(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
-	VRayExporter *exporter = (VRayExporter*)callee;
+	VRayExporter *exporter = reinterpret_cast<VRayExporter*>(callee);
 
 	OBJ_Node *obj_node = caller->castToOBJNode();
 
@@ -52,20 +55,18 @@ void VRayExporter::RtCallbackNode(OP_Node *caller, void *callee, OP_EventType ty
 		type == OP_INPUT_REWIRED || /* parenting */
 		type == OP_FLAG_CHANGED) /* visibility */
 	{
-		const unsigned idx = reinterpret_cast<long>(data);
-
-		PRINT_INFO("  Parameter: %i",
-				   idx);
-
 		VRay::Plugin mtl;
-		// XXX: Get parameter and check it's name
-		if (idx == 19) {
-			SHOP_Node *shop_node = exporter->objGetMaterialNode(obj_node);
-			if (shop_node) {
-				mtl = exporter->exportMaterial(shop_node);
-			}
-			if (!mtl) {
-				mtl = exporter->exportDefaultMaterial();
+
+		const PRM_Parm *param = Parm::getParm(*caller, reinterpret_cast<long>(data));
+		if (param) {
+			if (boost::equals(param->getToken(), "shop_materialpath")) {
+				SHOP_Node *shop_node = exporter->objGetMaterialNode(obj_node);
+				if (shop_node) {
+					mtl = exporter->exportMaterial(shop_node);
+				}
+				if (!mtl) {
+					mtl = exporter->exportDefaultMaterial();
+				}
 			}
 		}
 
@@ -80,7 +81,7 @@ void VRayExporter::RtCallbackNode(OP_Node *caller, void *callee, OP_EventType ty
 
 void VRayExporter::RtCallbackNodeData(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
-	VRayExporter *exporter = (VRayExporter*)callee;
+	VRayExporter *exporter = reinterpret_cast<VRayExporter*>(callee);
 
 	PRINT_INFO("RtCallbackNodeData: %s from \"%s\"",
 			   OPeventToString(type), caller->getName().buffer());

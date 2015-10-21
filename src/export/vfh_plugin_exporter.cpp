@@ -384,6 +384,9 @@ void VRayPluginRenderer::commit()
 void VRayPluginRenderer::setCamera(VRay::Plugin camera)
 {
 	if (m_vray) {
+		// NOTE: This forces the update
+		m_vray->setCamera(VRay::Plugin());
+		// Now set a new camera
 		m_vray->setCamera(camera);
 	}
 }
@@ -404,6 +407,7 @@ void VRayPluginRenderer::removePlugin(const std::string &pluginName)
 					   pluginName.c_str());
 		}
 		else {
+			m_vray->setAutoCommit(false);
 			bool res = m_vray->removePlugin(plugin);
 
 			PRINT_WARN("VRayPluginRenderer::removePlugin: Removing \"%s\"...",
@@ -419,6 +423,7 @@ void VRayPluginRenderer::removePlugin(const std::string &pluginName)
 								err.toString().c_str());
 				}
 			}
+			m_vray->setAutoCommit(true);
 		}
 	}
 }

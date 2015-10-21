@@ -373,24 +373,6 @@ int VRayExporter::init(int mode)
 }
 
 
-void VRayExporter::RtCallbackView(OP_Node *caller, void *callee, OP_EventType type, void *data)
-{
-	VRayExporter *exporter = (VRayExporter*)callee;
-
-	PRINT_INFO("RtCallbackView: %s from \"%s\"",
-			   OPeventToString(type), caller->getName().buffer());
-
-	if (type == OP_PARM_CHANGED ||
-		type == OP_INPUT_CHANGED)
-	{
-		exporter->exportView();
-	}
-	else if (type == OP_NODE_PREDELETE) {
-		exporter->delOpCallback(caller, VRayExporter::RtCallbackView);
-	}
-}
-
-
 int VRayExporter::exportSettings(OP_Node *rop)
 {
 	for (const auto &sp : Parm::RenderSettingsPlugins) {
@@ -539,9 +521,9 @@ VRay::Plugin VRayExporter::exportVop(OP_Node *op_node)
 
 	PRINT_INFO("Exporting node \"%s\" [%s]...",
 			   vop_node->getName().buffer(),
-			   opType.buffer())
+			   opType.buffer());
 
-			if (opType == "switch") {
+	if (opType == "switch") {
 		const int &switcher = vop_node->evalInt("switcher", 0, 0.0);
 		if (switcher > 0) {
 			UT_String inputName;

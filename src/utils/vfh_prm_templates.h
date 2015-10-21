@@ -19,6 +19,9 @@ namespace VRayForHoudini {
 namespace Parm {
 
 int isParmExist(OP_Node &node, const std::string &attrName);
+int isParmSwitcher(OP_Node &node, const int index);
+
+const PRM_Parm *getParm(OP_Node &node, const int index);
 
 } // namespace Parm
 } // namespace VRayForHoudini

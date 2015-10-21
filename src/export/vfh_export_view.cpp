@@ -11,6 +11,8 @@
 #include "vfh_exporter.h"
 #include "vfh_prm_templates.h"
 
+#include <boost/algorithm/string.hpp>
+
 
 using namespace VRayForHoudini;
 
@@ -20,6 +22,42 @@ const std::string VRayForHoudini::ViewPluginsDesc::settingsCameraPluginName("set
 const std::string VRayForHoudini::ViewPluginsDesc::cameraPhysicalPluginName("cameraPhysical");
 const std::string VRayForHoudini::ViewPluginsDesc::cameraDefaultPluginName("cameraDefault");
 const std::string VRayForHoudini::ViewPluginsDesc::renderViewPluginName("renderView");
+
+
+void VRayExporter::RtCallbackView(OP_Node *caller, void *callee, OP_EventType type, void *data)
+{
+	VRayExporter *exporter = reinterpret_cast<VRayExporter*>(callee);
+
+	PRINT_INFO("RtCallbackView: %s from \"%s\"",
+			   OPeventToString(type), caller->getName().buffer());
+
+	if (type == OP_INPUT_CHANGED) {
+		exporter->exportView();
+	}
+	else if (type == OP_PARM_CHANGED) {
+		if (!Parm::isParmSwitcher(*caller, long(data))) {
+			bool procceedEvent = false;
+
+			if (caller->castToOBJNode()) {
+				procceedEvent = true;
+			}
+			else if (caller->castToROPNode()) {
+				const PRM_Parm *param = Parm::getParm(*caller, reinterpret_cast<long>(data));
+				if (param) {
+					procceedEvent = boost::starts_with(param->getToken(), "SettingsCamera") ||
+									boost::starts_with(param->getToken(), "SettingsMotionBlur");
+				}
+			}
+
+			if (procceedEvent) {
+				exporter->exportView();
+			}
+		}
+	}
+	else if (type == OP_NODE_PREDELETE) {
+		exporter->delOpCallback(caller, VRayExporter::RtCallbackView);
+	}
+}
 
 
 static float getLensShift(OBJ_Node &camera)
@@ -126,7 +164,14 @@ void VRayExporter::fillCameraDefault(const ViewParams &viewParams, Attrs::Plugin
 
 void VRayExporter::fillSettingsCamera(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc)
 {
+	// NOTE: The field of view is always exported by the RenderView
 	pluginDesc.add(Attrs::PluginAttr("fov", -1.0f));
+
+	if (viewParams.usePhysicalCamera) {
+		pluginDesc.add(Attrs::PluginAttr("type", 8));
+	}
+
+	setAttrsFromOpNode(pluginDesc, getRop(), "SettingsCamera.");
 }
 
 
@@ -145,87 +190,90 @@ void VRayExporter::fillSettingsCameraDof(const ViewParams &viewParams, Attrs::Pl
 
 int VRayExporter::exportView()
 {
-	OBJ_Node *camera = VRayExporter::GetCamera(m_rop);
-	if (!camera) {
-		PRINT_ERROR("Camera is not set!");
-		return 1;
-	}
-
-	addOpCallback(camera, VRayExporter::RtCallbackView);
-
-	ViewParams viewParams(camera);
-
-	fillCameraData(*camera, viewParams);
-	fillSettingsCamera(viewParams, viewParams.viewPlugins.settingsCamera);
-	fillRenderView(viewParams, viewParams.viewPlugins.renderView);
-
-	viewParams.usePhysicalCamera = isPhysicalView(*camera);
-	if (viewParams.usePhysicalCamera) {
-		fillPhysicalCamera(viewParams, viewParams.viewPlugins.cameraPhysical);
-	}
-	else {
-		fillCameraDefault(viewParams, viewParams.viewPlugins.cameraDefault);
-		fillSettingsCameraDof(viewParams, viewParams.viewPlugins.settingsCameraDof);
-	}
-
-	const bool needReset = m_viewParams.needReset(viewParams);
-	if (needReset) {
-		getRenderer().setAutoCommit(false);
-
-		removePlugin(ViewPluginsDesc::settingsCameraPluginName);
-		removePlugin(ViewPluginsDesc::settingsCameraDofPluginName);
-		removePlugin(ViewPluginsDesc::cameraPhysicalPluginName);
-		removePlugin(ViewPluginsDesc::cameraDefaultPluginName);
-		removePlugin(ViewPluginsDesc::renderViewPluginName);
-
-		exportPlugin(viewParams.viewPlugins.settingsCamera);
-	}
-
-	if (needReset &&
-		!viewParams.renderView.ortho &&
-		!viewParams.usePhysicalCamera)
-	{
-		exportPlugin(viewParams.viewPlugins.settingsCameraDof);
-	}
-
-	VRay::Plugin physCam;
-	VRay::Plugin defCam;
-	if (viewParams.usePhysicalCamera) {
-		physCam = exportPlugin(viewParams.viewPlugins.cameraPhysical);
-	}
-	else {
-		defCam = exportPlugin(viewParams.viewPlugins.cameraDefault);
-	}
-
-	VRay::Plugin renView;
-	const bool paramsChanged = m_viewParams.changedParams(viewParams);
-	if (needReset || paramsChanged) {
-		renView = exportPlugin(viewParams.viewPlugins.renderView);
-	}
-
-	if (needReset) {
-		if (physCam) {
-			getRenderer().setCamera(physCam);
+	static VUtils::FastCriticalSection csect;
+	if (csect.tryEnter()) {
+		OBJ_Node *camera = VRayExporter::GetCamera(m_rop);
+		if (!camera) {
+			PRINT_ERROR("Camera is not set!");
+			return 1;
 		}
-		else if (defCam) {
-			getRenderer().setCamera(defCam);
+
+		addOpCallback(camera, VRayExporter::RtCallbackView);
+		addOpCallback(getRop(), VRayExporter::RtCallbackView);
+
+		ViewParams viewParams(camera);
+		viewParams.usePhysicalCamera = isPhysicalView(*camera);
+
+		fillCameraData(*camera, viewParams);
+		fillSettingsCamera(viewParams, viewParams.viewPlugins.settingsCamera);
+		fillRenderView(viewParams, viewParams.viewPlugins.renderView);
+
+		if (viewParams.usePhysicalCamera) {
+			fillPhysicalCamera(viewParams, viewParams.viewPlugins.cameraPhysical);
 		}
-	}
+		else {
+			fillCameraDefault(viewParams, viewParams.viewPlugins.cameraDefault);
+			fillSettingsCameraDof(viewParams, viewParams.viewPlugins.settingsCameraDof);
+		}
 
-	if (m_viewParams.changedSize(viewParams)) {
-		setRenderSize(viewParams.renderSize.w, viewParams.renderSize.h);
-	}
+		const bool needReset = m_viewParams.needReset(viewParams);
+		if (needReset) {
+			getRenderer().setAutoCommit(false);
 
-	// Store new params
-	m_viewParams = viewParams;
+			removePlugin(ViewPluginsDesc::renderViewPluginName);
+			removePlugin(ViewPluginsDesc::cameraDefaultPluginName);
+			removePlugin(ViewPluginsDesc::cameraPhysicalPluginName);
+			removePlugin(ViewPluginsDesc::settingsCameraPluginName);
+			removePlugin(ViewPluginsDesc::settingsCameraDofPluginName);
 
-	if (needReset || paramsChanged) {
-		getRenderer().commit();
-	}
+			if (!viewParams.renderView.ortho && !viewParams.usePhysicalCamera) {
+				exportPlugin(viewParams.viewPlugins.settingsCameraDof);
+			}
 
-	// Restore autocommit
-	if (needReset) {
-		getRenderer().setAutoCommit(true);
+			exportPlugin(viewParams.viewPlugins.settingsCamera);
+		}
+
+		VRay::Plugin physCam;
+		VRay::Plugin defCam;
+		if (viewParams.usePhysicalCamera) {
+			physCam = exportPlugin(viewParams.viewPlugins.cameraPhysical);
+		}
+		else {
+			defCam = exportPlugin(viewParams.viewPlugins.cameraDefault);
+		}
+
+		VRay::Plugin renView;
+		const bool paramsChanged = m_viewParams.changedParams(viewParams);
+		if (needReset || paramsChanged) {
+			renView = exportPlugin(viewParams.viewPlugins.renderView);
+		}
+
+		if (needReset) {
+			if (physCam) {
+				getRenderer().setCamera(physCam);
+			}
+			else if (defCam) {
+				getRenderer().setCamera(defCam);
+			}
+		}
+
+		if (m_viewParams.changedSize(viewParams)) {
+			setRenderSize(viewParams.renderSize.w, viewParams.renderSize.h);
+		}
+
+		// Store new params
+		m_viewParams = viewParams;
+
+		if (needReset || paramsChanged) {
+			getRenderer().commit();
+		}
+
+		// Restore autocommit
+		if (needReset) {
+			getRenderer().setAutoCommit(true);
+		}
+
+		csect.leave();
 	}
 
 	return 0;
