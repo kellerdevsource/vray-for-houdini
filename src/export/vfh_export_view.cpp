@@ -174,16 +174,6 @@ void VRayExporter::fillRenderView(const ViewParams &viewParams, Attrs::PluginDes
 
 	// TODO: Set this only for viewport rendering
 	pluginDesc.add(Attrs::PluginAttr("use_scene_offset", false));
-
-	if (!isIPR()) {
-		pluginDesc.add(Attrs::PluginAttr("stereo_on",                 viewParams.renderView.stereoParams.use));
-		pluginDesc.add(Attrs::PluginAttr("stereo_eye_distance",       viewParams.renderView.stereoParams.stereo_eye_distance));
-		pluginDesc.add(Attrs::PluginAttr("stereo_interocular_method", viewParams.renderView.stereoParams.stereo_interocular_method));
-		pluginDesc.add(Attrs::PluginAttr("stereo_specify_focus",      viewParams.renderView.stereoParams.stereo_specify_focus));
-		pluginDesc.add(Attrs::PluginAttr("stereo_focus_distance",     viewParams.renderView.stereoParams.stereo_focus_distance));
-		pluginDesc.add(Attrs::PluginAttr("stereo_focus_method",       viewParams.renderView.stereoParams.stereo_focus_method));
-		pluginDesc.add(Attrs::PluginAttr("stereo_view",               viewParams.renderView.stereoParams.stereo_view));
-	}
 }
 
 
@@ -265,15 +255,15 @@ int VRayExporter::exportView()
 				exportPlugin(viewParams.viewPlugins.settingsCameraDof);
 			}
 
-			if (!isIPR() && viewParams.renderView.stereoParams.use) {
-				exportPlugin(viewParams.viewPlugins.stereoSettings);
-			}
-
 			if (viewParams.usePhysicalCamera) {
 				getRenderer().setCamera(exportPlugin(viewParams.viewPlugins.cameraPhysical));
 			}
 			else {
 				getRenderer().setCamera(exportPlugin(viewParams.viewPlugins.cameraDefault));
+			}
+
+			if (!isIPR() && viewParams.renderView.stereoParams.use) {
+				exportPlugin(viewParams.viewPlugins.stereoSettings);
 			}
 
 			exportPlugin(viewParams.viewPlugins.renderView);
