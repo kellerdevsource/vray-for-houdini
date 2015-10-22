@@ -297,7 +297,10 @@ void VRayExporter::exportGeomStaticMeshDesc(const GU_Detail &gdp, SHOPToID &shop
 	geomPluginDesc.addAttribute(Attrs::PluginAttr("faces", faces));
 	geomPluginDesc.addAttribute(Attrs::PluginAttr("face_mtlIDs", face_mtlIDs));
 	geomPluginDesc.addAttribute(Attrs::PluginAttr("edge_visibility", edge_visibility));
-	// geomPluginDesc.addAttribute(Attrs::PluginAttr("dynamic_geometry", true));
+
+	if (isIPR() && isGPU()) {
+		geomPluginDesc.addAttribute(Attrs::PluginAttr("dynamic_geometry", true));
+	}
 
 	if (normals.size()) {
 		geomPluginDesc.addAttribute(Attrs::PluginAttr("normals", normals));
