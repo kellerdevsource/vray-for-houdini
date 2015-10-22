@@ -39,7 +39,6 @@ def add_physical_camera_attributes():
                 if not vrayFolder:
                     vrayFolder = hou.FolderParmTemplate("vray.%s" % physCamPlugID, physCamTabName)
 
-
                     vfh_attrs.add_attributes(vrayFolder, CameraPhysicalDesc, prefix=physCamPlugID)
 
                     ptg.append(vrayFolder)
