@@ -253,9 +253,6 @@ int VRayExporter::exportView()
 
 			getRenderer().setAutoCommit(false);
 
-			// NOTE: This forces the update
-			getRenderer().setCamera(VRay::Plugin());
-
 			removePlugin(ViewPluginsDesc::settingsCameraPluginName);
 			removePlugin(ViewPluginsDesc::settingsCameraDofPluginName);
 			removePlugin(ViewPluginsDesc::stereoSettingsPluginName);
@@ -271,30 +268,21 @@ int VRayExporter::exportView()
 			if (!isIPR() && viewParams.renderView.stereoParams.use) {
 				exportPlugin(viewParams.viewPlugins.stereoSettings);
 			}
-		}
 
-		VRay::Plugin physCam;
-		VRay::Plugin defCam;
-		if (viewParams.usePhysicalCamera) {
-			physCam = exportPlugin(viewParams.viewPlugins.cameraPhysical);
-		}
-		else {
-			defCam = exportPlugin(viewParams.viewPlugins.cameraDefault);
-		}
-
-		VRay::Plugin renView;
-		const bool paramsChanged = m_viewParams.changedParams(viewParams);
-		if (needReset || paramsChanged) {
-			renView = exportPlugin(viewParams.viewPlugins.renderView);
-		}
-
-		if (needReset) {
-			if (physCam) {
-				getRenderer().setCamera(physCam);
+			if (viewParams.usePhysicalCamera) {
+				getRenderer().setCamera(exportPlugin(viewParams.viewPlugins.cameraPhysical));
 			}
-			else if (defCam) {
-				getRenderer().setCamera(defCam);
+			else {
+				getRenderer().setCamera(exportPlugin(viewParams.viewPlugins.cameraDefault));
 			}
+
+			exportPlugin(viewParams.viewPlugins.renderView);
+
+			getRenderer().commit();
+			getRenderer().setAutoCommit(true);
+		}
+		else if (m_viewParams.changedParams(viewParams)) {
+			exportPlugin(viewParams.viewPlugins.renderView);
 		}
 
 		if (m_viewParams.changedSize(viewParams)) {
@@ -303,15 +291,6 @@ int VRayExporter::exportView()
 
 		// Store new params
 		m_viewParams = viewParams;
-
-		if (needReset || paramsChanged) {
-			getRenderer().commit();
-		}
-
-		// Restore autocommit
-		if (needReset) {
-			getRenderer().setAutoCommit(true);
-		}
 
 		csect.leave();
 	}
