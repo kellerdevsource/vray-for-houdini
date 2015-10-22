@@ -128,10 +128,14 @@ def add_attribute(propGroup, attrDesc, prefix=None):
         if 'ui' in attrDesc:
             ui_desc = attrDesc['ui']
 
-            if 'min' in ui_desc:
-                parm_args['min'] = ui_desc['min']
-            if 'max' in ui_desc:
-                parm_args['max'] = ui_desc['max']
+            # Use soft bounds and allow manual override
+            if 'soft_min' in ui_desc:
+                parm_args['min'] = ui_desc['soft_min']
+            if 'soft_max' in ui_desc:
+                parm_args['max'] = ui_desc['soft_max']
+
+            parm_args['min_is_strict'] = False
+            parm_args['max_is_strict'] = False
 
     propGroup.addParmTemplate(parm_func(parm_name, parm_label, **parm_args))
 
