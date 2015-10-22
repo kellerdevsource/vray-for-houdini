@@ -156,6 +156,7 @@ public:
 	void                           setAbortCb(VRay::VRayRenderer &renderer);
 	void                           setExportFilepath(const std::string &path);
 	void                           setRenderSize(int w, int h);
+	void                           setSettingsRtEngine();
 
 	OP_Context                    &getContext()  { return m_context;   }
 	VRayPluginRenderer            &getRenderer() { return m_renderer; }

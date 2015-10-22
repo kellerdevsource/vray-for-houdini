@@ -202,7 +202,9 @@ int VRayPluginRenderer::initRenderer(int hasUI, int reInit)
 					m_vray->setOnBucketReady(OnBucketReady,       (void*)&m_callbacks.m_cbOnBucketReady);
 				}
 			}
-			catch (...) {
+			catch (std::exception &e) {
+				PRINT_INFO("Error initializing V-Ray! Error: \"%s\"",
+						   e.what());
 				m_vray = nullptr;
 			}
 		}
@@ -351,8 +353,6 @@ VRay::Plugin VRayPluginRenderer::exportPlugin(const Attrs::PluginDesc &pluginDes
 					   pluginDesc.pluginName.c_str(), pluginDesc.pluginID.c_str(), p.paramName.c_str(), plug.getValue(p.paramName).toString().c_str());
 #endif
 		}
-
-		commit();
 	}
 
 	return plug;

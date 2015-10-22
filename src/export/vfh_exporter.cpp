@@ -1086,6 +1086,10 @@ void VRayExporter::setIPR(int isIPR)
 void VRayExporter::setRendererMode(int mode)
 {
 	m_renderer.setRendererMode(mode);
+
+	if (mode >= 0) {
+		setSettingsRtEngine();
+	}
 }
 
 
@@ -1114,6 +1118,16 @@ void VRayExporter::setRenderSize(int w, int h)
 	}
 
 	m_renderer.setImageSize(w, h);
+}
+
+
+void VRayExporter::setSettingsRtEngine()
+{
+	VRay::Plugin settingsRTEngine = m_renderer.getVRay().getInstanceOrCreate("SettingsRTEngine");
+	// settingsRTEngine.setValue("undersampling", false);
+	// settingsRTEngine.setValue("gi_depth", 0);
+	settingsRTEngine.setValue("gpu_bundle_size", 128);
+	settingsRTEngine.setValue("gpu_samples_per_pixel", 1);
 }
 
 

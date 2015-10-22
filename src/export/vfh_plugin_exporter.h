@@ -168,6 +168,8 @@ public:
 
 	void                          resetCallbacks();
 
+	VRay::VRayRenderer           &getVRay() { return *m_vray; }
+
 private:
 	VRay::VRayRenderer           *m_vray;
 	CbCollection                  m_callbacks;
