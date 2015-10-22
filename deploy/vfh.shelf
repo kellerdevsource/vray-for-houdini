@@ -2,6 +2,7 @@
 <shelfDocument>
 	<toolshelf name="vray_render" label="V-Ray">
 		<memberTool name="vray_render_start"/>
+		<memberTool name="vray_render_ipr"/>
 		<memberTool name="vray_physical_camera"/>
 		<memberTool name="vray_displacement"/>
 		<memberTool name="vray_proxy"/>
@@ -13,6 +14,16 @@
 from vfh import vfh_rop
 
 vfh_rop.render()
+]]>
+		</script>
+	</tool>
+
+	<tool name="vray_render_ipr" label="IPR" icon="ROP_vray.svg">
+		<script scriptType="python">
+<![CDATA[import hou
+from vfh import vfh_rop
+
+vfh_rop.render_ipr()
 ]]>
 		</script>
 	</tool>

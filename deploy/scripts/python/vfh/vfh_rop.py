@@ -12,11 +12,21 @@
 
 import hou
 
-def render():
+
+def _getCreateRop():
     vrayNode = hou.node("/out/vray_renderer1")
 
     if not vrayNode:
         vrayNode = hou.node("/out").createNode("vray_renderer")
 
-    if vrayNode:
-        vrayNode.parm('execute').pressButton()
+    return vrayNode
+
+
+def render():
+    vrayNode = _getCreateRop()
+    vrayNode.parm('execute').pressButton()
+
+
+def render_ipr():
+    vrayNode = _getCreateRop()
+    vrayNode.parm('render_ipr').pressButton()
