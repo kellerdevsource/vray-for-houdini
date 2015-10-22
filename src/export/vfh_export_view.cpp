@@ -172,8 +172,9 @@ void VRayExporter::fillRenderView(const ViewParams &viewParams, Attrs::PluginDes
 	pluginDesc.add(Attrs::PluginAttr("orthographic", viewParams.renderView.ortho));
 	pluginDesc.add(Attrs::PluginAttr("orthographicWidth", viewParams.renderView.ortho_width));
 
-	// TODO: Set this only for viewport rendering
-	pluginDesc.add(Attrs::PluginAttr("use_scene_offset", false));
+	if (isIPR()) {
+		pluginDesc.add(Attrs::PluginAttr("use_scene_offset", false));
+	}
 }
 
 
