@@ -38,7 +38,7 @@ Compilation
   `"{HOME}/src/appsdk"` is controlled with CMake variable **APPSDK_PATH**
 
   `"507"` is controlled with CMake variable **APPSDK_VERSION**
-  
+
   `{linux, windows, darwin}` is appended automatically by CMake scripts.
 
 * Clone this repository with submodules:
@@ -52,7 +52,7 @@ Compilation
   ```
 
 * Choose build directory on top of the source directory and generate a suitable project.
-  
+
   For example, sources are cloned into `${HOME}/dev/vray-for-houdini`. Create build directory `${HOME}/build/vray-for-houdini` and run inside:
 
   ```
@@ -68,9 +68,9 @@ Compilation
   This will generate a Ninja project; build it and install with: `ninja install`
 
   It'll build and install plugins (with icons, shelfs, etc) into the default Houdini's user settings directory.
-  
-  CMake variable `USE_LAUNCHER` will generate `${HOME}/bin/hfs` script with all needed environment variables.
-  
+
+  Houdini launch wrapper script with all needed environment variables will be generated at `${HOME}/bin/hfs`.
+
   Use it to launch Houdini (or copy variable definitions to your environment).
 
 Known Issues
