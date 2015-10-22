@@ -60,6 +60,16 @@ static PRM_Name     parm_render_render_mode_items[] = {
 };
 static PRM_ChoiceList parm_render_render_mode_menu(PRM_CHOICELIST_SINGLE, parm_render_render_mode_items);
 
+static PRM_Name  parm_render_ipr_mode("render_irp_mode", "IPR Render Mode");
+static PRM_Name  parm_render_ipr_mode_items[] = {
+	PRM_Name("RT (CPU)"),
+	PRM_Name("RT (OpenCL)"),
+	PRM_Name("RT (CUDA)"),
+	PRM_Name(),
+};
+static PRM_ChoiceList parm_render_ipr_mode_menu(PRM_CHOICELIST_SINGLE, parm_render_ipr_mode_items);
+
+
 static PRM_Name  parm_render_sep_networks("render_sep_networks", "Networks");
 
 static PRM_Name          RenderSettingsSwitcherName("VRayRenderSettings");
@@ -95,6 +105,7 @@ static PRM_Template* getTemplates()
 		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_HEADING, 1, &parm_render_sep_render));
 		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_STRING_E, PRM_TYPE_DYNAMIC_PATH, 1, &parm_render_camera, &parm_render_camera_def));
 		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_ORD, 1, &parm_render_render_mode, PRMzeroDefaults, &parm_render_render_mode_menu));
+		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_ORD, 1, &parm_render_ipr_mode, PRMzeroDefaults, &parm_render_ipr_mode_menu));
 		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_ORD, 1, &parm_render_export_mode, PRMzeroDefaults, &parm_render_export_mode_menu));
 		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_ORD, 1, &parm_render_vfb_mode, PRMzeroDefaults, &parm_render_vfb_mode_menu));
 
@@ -160,6 +171,18 @@ static int getRendererMode(OP_Node &rop)
 		case 1: renderMode =  0; break; // RT CPU
 		case 2: renderMode =  1; break; // RT GPU (OpenCL)
 		case 3: renderMode =  4; break; // RT GPU (CUDA)
+	}
+	return renderMode;
+}
+
+
+static int getRendererIprMode(OP_Node &rop)
+{
+	int renderMode = rop.evalInt(parm_render_ipr_mode.getToken(), 0, 0.0);
+	switch (renderMode) {
+		case 0: renderMode =  0; break; // RT CPU
+		case 1: renderMode =  1; break; // RT GPU (OpenCL)
+		case 2: renderMode =  4; break; // RT GPU (CUDA)
 	}
 	return renderMode;
 }
@@ -264,15 +287,19 @@ int VRayRendererNode::initSession(int interactive, int nframes, fpreal tstart, f
 
 		executePreRenderScript(tstart);
 
-		// Whether to reinit V-Ray renderer
-		const int reinit = false;
+		// Whether to re-create V-Ray renderer
+		const int reCreate = true;
 
 		m_exporter.setIPR(!isBackground() && interactive);
 
-		if (m_exporter.initRenderer(!isBackground(), reinit)) {
+		if (m_exporter.initRenderer(!isBackground(), reCreate)) {
 			m_exporter.initExporter(getFrameBufferType(*this), nframes, tstart, tend);
 
-			m_exporter.setRendererMode(getRendererMode(*this));
+			const int rendererMode = interactive
+									 ? getRendererIprMode(*this)
+									 : getRendererMode(*this);
+
+			m_exporter.setRendererMode(rendererMode);
 			m_exporter.setWorkMode(getExporterWorkMode(*this));
 			m_exporter.setExportFilepath(getExportFilepath(*this));
 
