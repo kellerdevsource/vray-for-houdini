@@ -8,13 +8,11 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
-#include "vfh_render.h"
 #include "vfh_class_utils.h"
 
+#include "vfh_rop.h"
 #include "obj/obj_node_def.h"
-
 #include "sop/sop_node_def.h"
-
 #include "vop/vop_context.h"
 #include "vop/brdf/vop_brdf_def.h"
 #include "vop/brdf/vop_brdfvraymtl.h"

@@ -8,7 +8,7 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
-#include "vfh_render.h"
+#include "vfh_rop.h"
 #include "vfh_exporter.h"
 #include "vfh_prm_globals.h"
 #include "vfh_prm_json.h"
@@ -18,8 +18,6 @@
 
 #include <ROP/ROP_Templates.h>
 #include <UT/UT_Interrupt.h>
-
-#include <boost/bind.hpp>
 
 
 using namespace VRayForHoudini;
