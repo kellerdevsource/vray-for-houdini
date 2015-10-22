@@ -54,14 +54,13 @@ static PRM_Name     parm_render_render_mode("render_render_mode", "Render Mode")
 static PRM_Name     parm_render_render_mode_items[] = {
 	PRM_Name("Production"),
 	PRM_Name("RT (CPU)"),
+	PRM_Name("RT (OpenCL)"),
 	PRM_Name("RT (CUDA)"),
 	PRM_Name(),
 };
 static PRM_ChoiceList parm_render_render_mode_menu(PRM_CHOICELIST_SINGLE, parm_render_render_mode_items);
 
 static PRM_Name  parm_render_sep_networks("render_sep_networks", "Networks");
-static PRM_Name  parm_render_net_render_channels("render_network_render_channels", "Render Channels");
-static PRM_Name  parm_render_net_environment("render_network_environment", "Environment");
 
 static PRM_Name          RenderSettingsSwitcherName("VRayRenderSettings");
 static Parm::PRMDefList  RenderSettingsSwitcherTabs;
@@ -80,6 +79,7 @@ static Parm::TabItemDesc RenderSettingsTabItemsDesc[] = {
 	{ "Raycaster",      "SettingsRaycaster"        },
 	{ "Regions",        "SettingsRegionsGenerator" },
 	{ "Camera",         "SettingsCamera"           },
+	{ "Stereo",         "VRayStereoscopicSettings" },
 	{ "DOF",            "SettingsCameraDof"        },
 	{ "Motion Blur",    "SettingsMotionBlur"       },
 	{ "RT",             "SettingsRTEngine"         }
@@ -100,8 +100,8 @@ static PRM_Template* getTemplates()
 		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_FILE_E, PRM_TYPE_DYNAMIC_PATH, 1, &parm_render_export_path, &parm_render_export_path_def));
 
 		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_HEADING, 1, &parm_render_sep_networks));
-		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_STRING_E, PRM_TYPE_DYNAMIC_PATH, 1, &parm_render_net_render_channels, &Parm::PRMemptyStringDefault));
-		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_STRING_E, PRM_TYPE_DYNAMIC_PATH, 1, &parm_render_net_environment,     &Parm::PRMemptyStringDefault));
+		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_STRING_E, PRM_TYPE_DYNAMIC_PATH, 1, &Parm::parm_render_net_render_channels, &Parm::PRMemptyStringDefault));
+		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_STRING_E, PRM_TYPE_DYNAMIC_PATH, 1, &Parm::parm_render_net_environment,     &Parm::PRMemptyStringDefault));
 
 		RenderSettingsSwitcherTabs.push_back(PRM_Default(RenderSettingsPrmTemplate.size(), "Globals"));
 
@@ -150,12 +150,55 @@ OP_TemplatePair* VRayRendererNode::getTemplatePair()
 }
 
 
+static int getRendererMode(OP_Node &rop)
+{
+	int renderMode = rop.evalInt(parm_render_render_mode.getToken(), 0, 0.0);
+	switch (renderMode) {
+		case 0: renderMode = -1; break; // Production
+		case 1: renderMode =  0; break; // RT CPU
+		case 2: renderMode =  1; break; // RT GPU (OpenCL)
+		case 3: renderMode =  4; break; // RT GPU (CUDA)
+	}
+	return renderMode;
+}
+
+
+static VRayExporter::ExpWorkMode getExporterWorkMode(OP_Node &rop)
+{
+	return static_cast<VRayExporter::ExpWorkMode>(rop.evalInt(parm_render_export_mode.getToken(), 0, 0.0));
+}
+
+
+static std::string getExportFilepath(OP_Node &rop)
+{
+	UT_String exportFilepath;
+	rop.evalString(exportFilepath, parm_render_export_path.getToken(), 0, 0.0);
+	return exportFilepath.toStdString();
+}
+
+
+static int isBackground()
+{
+	return 0;
+}
+
+
+static int getFrameBufferType(OP_Node &rop)
+{
+	int fbType = isBackground() ? -1 : 0;
+
+	if (fbType >= 0) {
+		fbType = rop.evalInt(parm_render_vfb_mode.getToken(), 0, 0.0);
+	}
+
+	return fbType;
+}
+
+
 VRayRendererNode::VRayRendererNode(OP_Network *net, const char *name, OP_Operator *entry)
 	: ROP_Node(net, name, entry)
 	, m_exporter(this)
-	, m_error(ROP_CONTINUE_RENDER)
-{
-}
+{}
 
 
 VRayRendererNode::~VRayRendererNode()
@@ -172,33 +215,12 @@ bool VRayRendererNode::updateParmsFlags()
 {
 	bool changed = ROP_Node::updateParmsFlags();
 
-	bool gi_on = evalInt("SettingsGI.on", 0, 0);
-#if 0
-	for (const auto tab : RenderSettingsTabs) {
-		PRM_Template *prm = tab.items;
+	for (int t = 0; t < CountOf(RenderSettingsTabItemsDesc); ++t) {
+		const Parm::TabItemDesc &tabItemDesc = RenderSettingsTabItemsDesc[t];
 
-		while (prm->getType() != PRM_LIST_TERMINATOR) {
-			if (Parm::RenderGIPlugins.count(tab.pluginID)) {
-				bool process_param = true;
-
-				// On "SettingsGI" tab activate / deactivate
-				// everything except "on" parameter
-				//
-				if (tab.pluginID == "SettingsGI") {
-					if (StrEq(prm->getToken(), "SettingsGI.on")) {
-						process_param = false;
-					}
-				}
-				if (process_param) {
-					changed |= enableParm(prm->getToken(), gi_on);
-				}
-			}
-			prm++;
-		}
-
-		UI::ActiveStateDeps::activateElements(tab.pluginID, this, changed);
+		UI::ActiveStateDeps::activateElements(tabItemDesc.pluginID, this, changed, boost::str(Parm::FmtPrefix % tabItemDesc.pluginID));
 	}
-#endif
+
 	return changed;
 }
 
@@ -221,230 +243,47 @@ int VRayRendererNode::startRender(int nframes, fpreal tstart, fpreal tend)
 	PRINT_WARN("VRayRendererNode::startRender(%i, %.3ff, %.3f)",
 			   nframes, tstart, tend);
 
-	m_frames     = nframes;
-	m_time_start = tstart;
-	m_time_end   = tend;
+	ROP_RENDER_CODE error = ROP_ABORT_RENDER;
 
-	m_exportedFrames.clear();
-
-	// [ ] Add option to keep data
-	// [ ] Clear keyframes based on this options
-	//
-	// clearKeyFrames();
-
-	OP_Node *camera = VRayExporter::GetCamera(this);
-	if (!camera) {
+	if (!VRayExporter::getCamera(this)) {
 		PRINT_ERROR("Camera is not set!");
-
-		m_error = ROP_ABORT_RENDER;
 	}
 	else {
-		int renderMode = evalInt(parm_render_render_mode.getToken(), 0, 0.0);
-		if (renderMode == 0) {
-			renderMode = -1;
-		}
-		else if (renderMode == 1) {
-			renderMode = 0;
-		}
-		else if (renderMode == 2) {
-			renderMode = 4;
-		}
+		// Store end time for endRender() executePostRenderScript()
+		m_tend = tend;
 
-		m_exporter.getRenderer().resetCallbacks();
-		if (m_exporter.init(renderMode)) {
-			PRINT_ERROR("V-Ray is not initialized!");
+		executePreRenderScript(tstart);
 
-			m_error = ROP_ABORT_RENDER;
-		}
-		else {
-			const bool is_animation = m_frames > 1;
+		// Whether to reinit V-Ray renderer
+		const int reinit = false;
 
-			VRayExporter::ExpWorkMode workMode = (VRayExporter::ExpWorkMode)evalInt(parm_render_export_mode.getToken(), 0, 0.0);
+		if (m_exporter.initRenderer(!isBackground(), reinit)) {
+			m_exporter.initExporter(getFrameBufferType(*this), nframes, tstart, tend);
 
-			UT_String exportFilepath;
-			evalString(exportFilepath, parm_render_export_path.getToken(), 0, 0.0);
+			m_exporter.setRendererMode(getRendererMode(*this));
+			m_exporter.setWorkMode(getExporterWorkMode(*this));
+			m_exporter.setExportFilepath(getExportFilepath(*this));
 
-			executePreRenderScript(m_time_start);
-
-#if 0
-			if (!hasOpInterest(this, VRayRendererNode::RtCallbackRop)) {
-				addOpInterest(this, VRayRendererNode::RtCallbackRop);
-			}
-#endif
-
-			m_exporter.setMode(renderMode);
-			m_exporter.setAnimation(is_animation);
-			m_exporter.setWorkMode(workMode);
-			m_exporter.setExportFilepath(exportFilepath);
-
-#ifdef __APPLE__
-			const int useVFB = 1;
-#else
-			const int useVFB = evalInt(parm_render_vfb_mode.getToken(), 0, 0.0);
-#endif
-			if (useVFB == 0) {
-#ifndef __APPLE__
-				m_vfb.free();
-				m_exporter.getRenderer().showVFB(true);
-#endif
-			}
-			else if (useVFB == 1) {
-#ifndef __APPLE__
-				m_exporter.getRenderer().showVFB(false);
-#endif
-				m_vfb.init();
-				// m_vfb.resize();
-				m_vfb.show();
-
-				m_vfb.set_abort_callback(UI::AbortCb(boost::bind(&VRayPluginRenderer::stopRender, &m_exporter.getRenderer())));
-
-				m_exporter.getRenderer().addCbOnDumpMessage(CbOnDumpMessage(boost::bind(&UI::VFB::on_dump_message, &m_vfb, _1, _2, _3)));
-				m_exporter.getRenderer().addCbOnProgress(CbOnProgress(boost::bind(&UI::VFB::on_progress, &m_vfb, _1, _2, _3, _4)));
-
-				m_exporter.getRenderer().addCbOnImageReady(CbOnImageReady(boost::bind(&UI::VFB::on_image_ready, &m_vfb, _1)));
-
-				m_exporter.getRenderer().addCbOnBucketInit(CbOnBucketInit(boost::bind(&UI::VFB::on_bucket_init, &m_vfb, _1, _2, _3, _4, _5, _6)));
-				m_exporter.getRenderer().addCbOnBucketFailed(CbOnBucketFailed(boost::bind(&UI::VFB::on_bucket_failed, &m_vfb, _1, _2, _3, _4, _5, _6)));
-				m_exporter.getRenderer().addCbOnBucketReady(CbOnBucketReady(boost::bind(&UI::VFB::on_bucket_ready, &m_vfb, _1, _2, _3, _4, _5)));
-
-				m_exporter.getRenderer().addCbOnRTImageUpdated(CbOnRTImageUpdated(boost::bind(&UI::VFB::on_rt_image_updated, &m_vfb, _1, _2)));
-
-			}
-
-			if (is_animation) {
-				m_exporter.addAbortCallback();
-			}
-			else {
-				if (m_exporter.isRt()) {
-					m_exporter.addRtCallbacks();
-				}
-				else {
-					m_exporter.removeRtCallbacks();
-				}
-			}
-
-			m_exporter.exportSettings(this);
-
-			m_error = ROP_CONTINUE_RENDER;
+			error = m_exporter.getError();
 		}
 	}
 
-	PRINT_WARN("VRayRendererNode::startRender finished with %i",
-			   m_error);
-
-	return m_error;
+	return error;
 }
 
 
 ROP_RENDER_CODE VRayRendererNode::renderFrame(fpreal time, UT_Interrupt *boss)
 {
-	OP_Context context;
-	context.setTime(time);
-
 	PRINT_WARN("VRayRendererNode::renderFrame(%.3f)",
-			   context.getFloatFrame());
+			   time);
 
-	if (m_error == ROP_ABORT_RENDER) {
-		PRINT_ERROR("Rendering initialization error!");
-	}
-	else {
-		const bool is_animation = m_frames > 1;
-		const bool use_motion_blur = evalInt("SettingsMotionBlur.on", 0, 0.0);
+	executePreFrameScript(time);
 
-		if (is_animation && use_motion_blur) {
-			int mb_geom_samples = 1;
+	m_exporter.exportFrame(time);
 
-			// Duration in frames
-			fpreal mb_duration = 0.0f;
+	executePostFrameScript(time);
 
-			// Duration interval center
-			fpreal mb_interval_center = 0.0f;
-
-			const bool is_camera_physical = false;
-			if (is_camera_physical) {
-				// TODO: PhysicalCamera mb
-			}
-			else {
-				mb_duration        = evalFloat("SettingsMotionBlur.duration", 0, 0.0);
-				mb_interval_center = evalFloat("SettingsMotionBlur.interval_center", 0, 0.0);
-				mb_geom_samples    = evalInt("SettingsMotionBlur.geom_samples", 0, 0.0);
-			}
-
-			// Export motion blur interval
-			const fpreal frame_current = context.getFloatFrame();
-
-			PRINT_WARN("Frame current: %.3f",
-					   frame_current);
-
-			fpreal mb_start = frame_current - (mb_duration * (0.5 - mb_interval_center));
-			fpreal mb_end   = mb_start + mb_duration;
-
-			fpreal mb_frame_inc = mb_duration / (mb_geom_samples + 1);
-
-			PRINT_WARN("  MB duration: %.3f", mb_duration);
-			PRINT_WARN("  MB interval center: %.3f", mb_interval_center);
-			PRINT_WARN("  MB geom samples: %i", mb_geom_samples);
-
-			PRINT_WARN("  MB start: %.3f", mb_start);
-			PRINT_WARN("  MB end:   %.3f", mb_end);
-			PRINT_WARN("  MB inc:   %.3f", mb_frame_inc);
-
-			// We don't need this data anymore
-			clearKeyFrames(mb_start);
-
-			for (FloatSet::iterator tIt = m_exportedFrames.begin(); tIt != m_exportedFrames.end();) {
-				if (*tIt < mb_start) {
-					m_exportedFrames.erase(tIt++);
-				}
-				else {
-					++tIt;
-				}
-			}
-
-			// Export motion blur data
-			fpreal subframe = mb_start;
-			while (subframe <= mb_end) {
-				if (m_exporter.isAborted()) {
-					break;
-				}
-				if (!m_exportedFrames.count(subframe)) {
-					m_exportedFrames.insert(subframe);
-
-					context.setFrame(subframe);
-
-					PRINT_WARN("Exporting motion blur sub-frame: %.3f [time=%.3f]",
-							   context.getFloatFrame(), context.getTime());
-
-					exportKeyFrame(context);
-				}
-				subframe += mb_frame_inc;
-			}
-
-			// Set time back to original time for rendering
-			context.setTime(time);
-		}
-		else {
-			PRINT_WARN("Exporting frame: %.3f",
-					   context.getFloatFrame());
-
-			clearKeyFrames(context.getFloatFrame());
-			exportKeyFrame(context);
-		}
-
-		if (m_exporter.isAborted()) {
-			PRINT_WARN("Operation is aborted by the user!")
-					m_error = ROP_ABORT_RENDER;
-		}
-		else {
-			m_exporter.setFrame(context.getFloatFrame());
-			renderKeyFrame(context.getFloatFrame(), is_animation);
-		}
-	}
-
-	PRINT_WARN("VRayRendererNode::renderFrame finished with %i",
-			   m_error);
-
-	return m_error;
+	return m_exporter.getError();
 }
 
 
@@ -452,89 +291,11 @@ ROP_RENDER_CODE VRayRendererNode::endRender()
 {
 	PRINT_WARN("VRayRendererNode::endRender()");
 
-	m_exporter.exportDone();
+	m_exporter.exportEnd();
 
-	clearKeyFrames(SYS_FP64_MAX);
-
-	executePostRenderScript(m_time_end);
-
-	PRINT_WARN("VRayRendererNode::endRender finished with %i",
-			   m_error);
+	executePostRenderScript(m_tend);
 
 	return ROP_CONTINUE_RENDER;
-}
-
-
-int VRayRendererNode::renderKeyFrame(fpreal time, int locked)
-{
-	PRINT_INFO("VRayRendererNode::renderKeyFrame(%.3f)",
-			   time);
-
-	m_exporter.renderFrame(locked);
-
-	return 0;
-}
-
-
-int VRayRendererNode::exportKeyFrame(const OP_Context &context)
-{
-	// Execute the pre-render script.
-	executePreFrameScript(context.getTime());
-
-	m_exporter.setFrame(context.getFloatFrame());
-	m_exporter.setContext(context);
-
-	int err = m_exporter.exportView();
-	if (err) {
-		m_error = ROP_ABORT_RENDER;
-	}
-	else {
-		m_exporter.exportScene();
-
-		UT_String env_network_path;
-		evalString(env_network_path, parm_render_net_environment.getToken(), 0, 0.0f);
-		if (NOT(env_network_path.equal(""))) {
-			OP_Node *env_network = OPgetDirector()->findNode(env_network_path.buffer());
-			if (env_network) {
-				OP_Node *env_node = VRayExporter::FindChildNodeByType(env_network, "VRayNodeSettingsEnvironment");
-				if (NOT(env_node)) {
-					PRINT_ERROR("Node of type \"VRay SettingsEnvironment\" is not found!");
-				}
-				else {
-					m_exporter.exportEnvironment(env_node);
-					m_exporter.exportEffects(env_network);
-				}
-			}
-		}
-
-		UT_String channels_network_path;
-		evalString(channels_network_path, parm_render_net_render_channels.getToken(), 0, 0.0f);
-		if (NOT(channels_network_path.equal(""))) {
-			OP_Node *channels_network = OPgetDirector()->findNode(channels_network_path.buffer());
-			if (channels_network) {
-				OP_Node *chan_node = VRayExporter::FindChildNodeByType(channels_network, "VRayNodeRenderChannelsContainer");
-				if (NOT(chan_node)) {
-					PRINT_ERROR("Node of type \"VRay RenderChannelsContainer\" is not found!");
-				}
-				else {
-					m_exporter.exportRenderChannels(chan_node);
-				}
-			}
-		}
-	}
-
-	executePostFrameScript(context.getTime());
-
-	return err;
-}
-
-
-int VRayRendererNode::clearKeyFrames(fpreal toTime)
-{
-	PRINT_ERROR("VRayRendererNode::clearKeyFrames(%.3f)",
-				toTime);
-
-	return m_exporter.clearKeyFrames(toTime);
 }
 
 

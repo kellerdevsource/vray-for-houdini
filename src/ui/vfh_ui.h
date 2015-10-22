@@ -65,7 +65,7 @@ struct ActiveStateDeps
 
 	static void         showDependencies(const std::string &pluginID="");
 
-	static void         activateElements(const std::string &pluginID, OP_Node *op_node, bool &changed);
+	static void         activateElements(const std::string &pluginID, OP_Node *op_node, bool &changed, const std::string &prefix="");
 
 	static ActiveItems  activeItems;
 

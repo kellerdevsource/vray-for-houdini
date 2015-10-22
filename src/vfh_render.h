@@ -15,17 +15,12 @@
 #include "vfh_vray.h"
 #include "vfh_exporter.h"
 
-#include "ui/vfh_vfb.h"
-
 #include <ROP/ROP_Node.h>
-
 
 class OP_TemplatePair;
 class OP_VariablePair;
 
-
 namespace VRayForHoudini {
-
 
 class VRayRendererNode:
 		public ROP_Node
@@ -45,23 +40,11 @@ protected:
 	virtual ROP_RENDER_CODE      endRender() VRAY_OVERRIDE;
 
 private:
-	UI::VFB                      m_vfb;
 	VRayExporter                 m_exporter;
-
-	int                          renderKeyFrame(fpreal time, int locked=false);
-	int                          exportKeyFrame(const OP_Context &context);
-	int                          clearKeyFrames(fpreal toTime);
-
-	int                          m_frames;
-	fpreal                       m_time_start;
-	fpreal                       m_time_end;
-	ROP_RENDER_CODE              m_error;
-	FloatSet                     m_exportedFrames;
+	fpreal                       m_tend;
 
 public:
 	static void                  register_operator(OP_OperatorTable *table);
-
-public:
 	static void                  RtCallbackRop(OP_Node *caller, void *callee, OP_EventType type, void *data);
 
 };

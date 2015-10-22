@@ -24,7 +24,7 @@
 using namespace VRayForHoudini;
 
 
-SHOP_Node *VRayExporter::objGetMaterialNode(OBJ_Node *obj_node, fpreal t)
+SHOP_Node *VRayExporter::getObjMaterial(OBJ_Node *obj_node, fpreal t)
 {
 	SHOP_Node *shop_node = nullptr;
 
@@ -60,7 +60,7 @@ void VRayExporter::RtCallbackNode(OP_Node *caller, void *callee, OP_EventType ty
 		const PRM_Parm *param = Parm::getParm(*caller, reinterpret_cast<long>(data));
 		if (param) {
 			if (boost::equals(param->getToken(), "shop_materialpath")) {
-				SHOP_Node *shop_node = exporter->objGetMaterialNode(obj_node);
+				SHOP_Node *shop_node = exporter->getObjMaterial(obj_node);
 				if (shop_node) {
 					mtl = exporter->exportMaterial(shop_node);
 				}
@@ -132,7 +132,7 @@ VRay::Plugin VRayExporter::exportNode(OBJ_Node *obj_node, VRay::Plugin material,
 			}
 
 			pluginDesc.addAttribute(Attrs::PluginAttr("transform",
-													  VRayExporter::GetOBJTransform(obj_node, m_context, flipTm)));
+													  VRayExporter::getObjTransform(obj_node, m_context, flipTm)));
 
 			nodePlugin = exportPlugin(pluginDesc);
 		}
@@ -145,7 +145,7 @@ VRay::Plugin VRayExporter::exportNode(OBJ_Node *obj_node, VRay::Plugin material,
 VRay::Plugin VRayExporter::exportNodeData(SOP_Node *geom_node, SHOPToID &shopToID)
 {
 	VRay::Plugin geom;
-	if (geom_node && processAnimatedNode(geom_node)) {
+	if (geom_node && isNodeAnimated(geom_node)) {
 		addOpCallback(geom_node, VRayExporter::RtCallbackNodeData);
 
 		OP_Operator     *geomOp     = geom_node->getOperator();
@@ -238,7 +238,7 @@ VRay::Plugin VRayExporter::exportObject(OBJ_Node *obj_node)
 			if (geom) {
 				VRay::Plugin mtl;
 
-				SHOP_Node *shop_node = objGetMaterialNode(obj_node, t);
+				SHOP_Node *shop_node = getObjMaterial(obj_node, t);
 				if (shop_node) {
 					PRINT_INFO("  Found material: \"%s\" [%s]",
 							   shop_node->getName().buffer(), shop_node->getOperator()->getName().buffer());

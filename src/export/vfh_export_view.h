@@ -32,6 +32,30 @@ struct RenderSizeParams {
 };
 
 
+struct StereoViewParams {
+	StereoViewParams()
+		: use(false)
+		, stereo_eye_distance(6.5f)
+		, stereo_interocular_method(0)
+		, stereo_specify_focus(0)
+		, stereo_focus_distance(200.0f)
+		, stereo_focus_method(0)
+		, stereo_view(0)
+	{}
+
+	bool operator == (const StereoViewParams &other) const;
+	bool operator != (const StereoViewParams &other) const;
+
+	int    use;
+	float  stereo_eye_distance;
+	int    stereo_interocular_method;
+	int    stereo_specify_focus;
+	float  stereo_focus_distance;
+	int    stereo_focus_method;
+	int    stereo_view;
+};
+
+
 struct RenderViewParams {
 	RenderViewParams()
 		: fov(0.785398f)
@@ -47,6 +71,8 @@ struct RenderViewParams {
 	bool operator == (const RenderViewParams &other) const;
 	bool operator != (const RenderViewParams &other) const;
 
+	int              needReset(const RenderViewParams &other) const;
+
 	float            fov;
 	int              fovOverride;
 	VRay::Transform  tm;
@@ -58,6 +84,8 @@ struct RenderViewParams {
 	float            clip_start;
 	int              use_clip_end;
 	float            clip_end;
+
+	StereoViewParams stereoParams;
 };
 
 
@@ -67,6 +95,7 @@ struct ViewPluginsDesc {
 	static const std::string cameraPhysicalPluginName;
 	static const std::string cameraDefaultPluginName;
 	static const std::string renderViewPluginName;
+	static const std::string stereoSettingsPluginName;
 
 	ViewPluginsDesc()
 		: settingsCameraDof(settingsCameraDofPluginName, "SettingsCameraDof")
@@ -74,6 +103,7 @@ struct ViewPluginsDesc {
 		, cameraPhysical(cameraPhysicalPluginName, "CameraPhysical")
 		, cameraDefault(cameraDefaultPluginName, "CameraDefault")
 		, renderView(renderViewPluginName, "RenderView")
+		, stereoSettings(stereoSettingsPluginName, "VRayStereoscopicSettings")
 	{}
 
 	int                needReset(const ViewPluginsDesc &other) const;
@@ -83,6 +113,7 @@ struct ViewPluginsDesc {
 	Attrs::PluginDesc  cameraPhysical;
 	Attrs::PluginDesc  cameraDefault;
 	Attrs::PluginDesc  renderView;
+	Attrs::PluginDesc  stereoSettings;
 };
 
 

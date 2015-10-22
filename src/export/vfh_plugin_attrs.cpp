@@ -9,7 +9,7 @@
 //
 
 #include "vfh_plugin_attrs.h"
-#include "misc.h"
+#include "vfh_vray.h"
 
 #include <iostream>
 

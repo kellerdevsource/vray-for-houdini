@@ -138,22 +138,21 @@ public:
 	VRayPluginRenderer();
 	~VRayPluginRenderer();
 
-	void                          init(int reInit=false);
+	int                           initRenderer(int hasUI, int reInit);
 	void                          freeMem();
 	void                          setImageSize(const int w, const int h);
-	void                          setMode(int mode);
 
 	VRay::Plugin                  exportPlugin(const Attrs::PluginDesc &pluginDesc);
 	void                          removePlugin(const Attrs::PluginDesc &pluginDesc);
 	void                          removePlugin(const std::string &pluginName);
 
-	void                          resetObjects();
+	void                          resetPluginUsage();
 	void                          syncObjects();
 
 	void                          setAnimation(bool on);
 	void                          setFrame(fpreal frame);
 	void                          setCamera(VRay::Plugin camera);
-
+	void                          setRendererMode(int mode);
 	int                           clearFrames(fpreal toTime);
 
 	int                           exportScene(const std::string &filepath);

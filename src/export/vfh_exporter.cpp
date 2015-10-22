@@ -32,10 +32,6 @@
 #include <OBJ/OBJ_Node.h>
 #include <OBJ/OBJ_Light.h>
 #include <OBJ/OBJ_SubNet.h>
-
-#include <RE/RE_Render.h>
-#include <RE/RE_Window.h>
-
 #include <OP/OP_Director.h>
 
 #include <boost/bind.hpp>
@@ -105,7 +101,7 @@ VRay::Transform VRayExporter::Matrix4ToTransform(const UT_Matrix4D &m4, bool fli
 }
 
 
-VRay::Transform VRayExporter::GetOBJTransform(OBJ_Node *obj_node, OP_Context &context, bool flip)
+VRay::Transform VRayExporter::getObjTransform(OBJ_Node *obj_node, OP_Context &context, bool flip)
 {
 	UT_Matrix4D matrix;
 	obj_node->getLocalToWorldTransform(context, matrix);
@@ -114,7 +110,7 @@ VRay::Transform VRayExporter::GetOBJTransform(OBJ_Node *obj_node, OP_Context &co
 }
 
 
-void VRayExporter::GetOBJTransform(OBJ_Node *obj_node, OP_Context &context, float tm[4][4])
+void VRayExporter::getObjTransform(OBJ_Node *obj_node, OP_Context &context, float tm[4][4])
 {
 	UT_Matrix4D matrix;
 	obj_node->getLocalToWorldTransform(context, matrix);
@@ -138,7 +134,7 @@ void VRayExporter::TransformToMatrix4(const VUtils::TraceTransform &tm, UT_Matri
 }
 
 
-OBJ_Node *VRayExporter::GetCamera(const OP_Node *rop)
+OBJ_Node *VRayExporter::getCamera(const OP_Node *rop)
 {
 	OBJ_Node *camera = nullptr;
 
@@ -345,6 +341,9 @@ int VRayExporter::setAttrsFromOpNode(Attrs::PluginDesc &pluginDesc, OP_Node *opN
 
 VRayExporter::VRayExporter(OP_Node *rop)
 	: m_rop(rop)
+	, m_isIPR(false)
+	, m_isAnimation(false)
+	, m_error(ROP_CONTINUE_RENDER)
 {
 	VRayExporter::Instances.insert(this);
 }
@@ -360,20 +359,7 @@ VRayExporter::~VRayExporter()
 }
 
 
-int VRayExporter::init(int mode)
-{
-	m_renderer.init(false);
-	m_renderer.resetObjects();
-	m_renderer.setMode(mode);
-
-	m_phxSimulations.clear();
-	m_is_aborted = false;
-
-	return 0;
-}
-
-
-int VRayExporter::exportSettings(OP_Node *rop)
+int VRayExporter::exportSettings()
 {
 	for (const auto &sp : Parm::RenderSettingsPlugins) {
 		const Parm::VRayPluginInfo *pluginInfo = Parm::GetVRayPluginInfo(sp);
@@ -383,7 +369,7 @@ int VRayExporter::exportSettings(OP_Node *rop)
 		}
 		else {
 			Attrs::PluginDesc pluginDesc(sp, sp);
-			setAttrsFromOpNode(pluginDesc, rop, boost::str(Parm::FmtPrefix % sp));
+			setAttrsFromOpNode(pluginDesc, m_rop, boost::str(Parm::FmtPrefix % sp));
 			exportPlugin(pluginDesc);
 		}
 	}
@@ -482,11 +468,11 @@ VRay::Plugin VRayExporter::exportConnectedVop(OP_Node *op_node, const UT_String 
 }
 
 
-int VRayExporter::processAnimatedNode(OP_Node *op_node)
+int VRayExporter::isNodeAnimated(OP_Node *op_node)
 {
 	int process = true;
 
-	if (m_is_animation && (m_timeCurrent > m_timeStart)) {
+	if (isAnimation() && (m_timeCurrent > m_timeStart)) {
 		// TODO: Need to go through inputs...
 		process = op_node->hasAnimatedParms();
 	}
@@ -699,7 +685,7 @@ VRay::Plugin VRayExporter::exportDisplacement(OBJ_Node *obj_node, VRay::Plugin &
 
 	if (NOT(shop_node)) {
 		// Take displacement from the shop_materialpath
-		shop_node = objGetMaterialNode(obj_node, m_context.getTime());
+		shop_node = getObjMaterial(obj_node, m_context.getTime());
 		if (NOT(shop_node)) {
 			return plugin;
 		}
@@ -914,25 +900,9 @@ void VRayExporter::TraverseOBJ(OBJ_Node *obj_node, void *data)
 }
 
 
-int VRayExporter::isRt()
-{
-	int is_rt = false;
-	if (m_renderMode >= VRay::RendererOptions::RENDER_MODE_RT_CPU) {
-		is_rt = true;
-	}
-	return is_rt;
-}
-
-
-int VRayExporter::isRtRunning()
-{
-	return m_renderer.isRtRunning();
-}
-
-
 int VRayExporter::isAborted()
 {
-	return m_is_aborted;
+	return m_isAborted;
 }
 
 
@@ -950,14 +920,17 @@ void VRayExporter::resetOpCallbacks()
 
 void VRayExporter::addOpCallback(OP_Node *op_node, OP_EventMethod cb)
 {
-	if (isRt() && !op_node->hasOpInterest(this, cb)) {
-		PRINT_INFO("addOpInterest(%s)",
-				   op_node->getName().buffer());
+	// Install callbacks only for interactive session
+	if (isIPR()) {
+		if (!op_node->hasOpInterest(this, cb)) {
+			PRINT_INFO("addOpInterest(%s)",
+					   op_node->getName().buffer());
 
-		op_node->addOpInterest(this, cb);
+			op_node->addOpInterest(this, cb);
 
-		// Store registered callback for faster removal
-		m_opRegCallbacks.push_back(CbItem(op_node, cb, this));
+			// Store registered callback for faster removal
+			m_opRegCallbacks.push_back(OpInterestItem(op_node, cb, this));
+		}
 	}
 }
 
@@ -976,7 +949,7 @@ void VRayExporter::delOpCallback(OP_Node *op_node, OP_EventMethod cb)
 void VRayExporter::delOpCallbacks(OP_Node *op_node)
 {
 	m_opRegCallbacks.erase(std::remove_if(m_opRegCallbacks.begin(), m_opRegCallbacks.end(),
-										  [op_node](CbItem &item) { return item.op_node == op_node; }), m_opRegCallbacks.end());
+										  [op_node](OpInterestItem &item) { return item.op_node == op_node; }), m_opRegCallbacks.end());
 }
 
 
@@ -1044,6 +1017,42 @@ int VRayExporter::exportScene()
 }
 
 
+void VRayExporter::fillMotionBlurParams(MotionBlurParams &mbParams)
+{
+	OBJ_Node *camera = getCamera(m_rop);
+	if (camera && isPhysicalView(*camera)) {
+		const int cameraType = Parm::getParmInt(*camera, "CameraPhysical_type");
+		const float frameDuration = OPgetDirector()->getChannelManager()->getSecsPerSample();
+
+		switch (cameraType) {
+			// Still camera
+			case 0: {
+				mbParams.mb_duration        = 1.0f / (Parm::getParmFloat(*camera, "CameraPhysical_shutter_speed") * frameDuration);
+				mbParams.mb_interval_center = mbParams.mb_duration * 0.5f;
+				break;
+			}
+				// Cinematic camera
+			case 1: {
+				mbParams.mb_duration        = Parm::getParmFloat(*camera, "CameraPhysical_shutter_angle") / 360.0f;
+				mbParams.mb_interval_center = Parm::getParmFloat(*camera, "CameraPhysical_shutter_offset") / 360.0f + mbParams.mb_duration * 0.5f;
+				break;
+			}
+				// Video camera
+			case 2: {
+				mbParams.mb_duration        = 1.0f + Parm::getParmFloat(*camera, "CameraPhysical_latency") / frameDuration;
+				mbParams.mb_interval_center = -mbParams.mb_duration * 0.5f;
+				break;
+			}
+		}
+	}
+	else {
+		mbParams.mb_duration        = m_rop->evalFloat("SettingsMotionBlur.duration", 0, 0.0);
+		mbParams.mb_interval_center = m_rop->evalFloat("SettingsMotionBlur.interval_center", 0, 0.0);
+		mbParams.mb_geom_samples    = m_rop->evalInt("SettingsMotionBlur.geom_samples", 0, 0.0);
+	}
+}
+
+
 void VRayExporter::exportDone()
 {
 	m_renderer.syncObjects();
@@ -1080,8 +1089,18 @@ void VRayExporter::setFrame(float frame)
 }
 
 
+void VRayExporter::setRendererMode(int mode)
+{
+	m_renderer.setRendererMode(mode);
+}
+
+
 void VRayExporter::setRenderSize(int w, int h)
 {
+	if (m_vfb.isInitialized()) {
+		m_vfb.resize(w, h);
+	}
+
 	m_renderer.setImageSize(w, h);
 }
 
@@ -1093,11 +1112,13 @@ int VRayExporter::renderFrame(int locked)
 	}
 	if (m_workMode == ExpWorkMode::ExpExport || m_workMode == ExpWorkMode::ExpExportRender) {
 		if (m_exportFilepath.empty()) {
+			PRINT_ERROR("Export mode is selected, but no filepath specified!")
 		}
 		else {
 			exportVrscene(m_exportFilepath);
 		}
 	}
+
 	return 0;
 }
 
@@ -1122,8 +1143,7 @@ int VRayExporter::clearKeyFrames(fpreal toTime)
 
 void VRayExporter::setAnimation(bool on)
 {
-	m_is_animation = on;
-
+	m_isAnimation = on;
 	m_renderer.setAnimation(on);
 }
 
@@ -1139,4 +1159,247 @@ void VRayExporter::setAbortCb(VRay::VRayRenderer &renderer)
 void VRayExporter::addAbortCallback()
 {
 	m_renderer.addCbOnImageReady(CbOnImageReady(boost::bind(&VRayExporter::setAbortCb, this, _1)));
+}
+
+
+int VRayExporter::initRenderer(int hasUI, int reInit)
+{
+	return m_renderer.initRenderer(hasUI, reInit);
+}
+
+
+void VRayExporter::initExporter(int hasUI, int nframes, fpreal tstart, fpreal tend)
+{
+	m_frames    = nframes;
+	m_timeStart = tstart;
+	m_timeEnd   = tend;
+
+	setAnimation(nframes > 1);
+
+	m_renderer.resetPluginUsage();
+	m_exportedFrames.clear();
+	m_phxSimulations.clear();
+
+	m_isAborted = false;
+
+	OP_Node *camera = VRayExporter::getCamera(m_rop);
+	if (!camera) {
+		PRINT_ERROR("Camera is not set!");
+
+		m_error = ROP_ABORT_RENDER;
+	}
+	else {
+		getRenderer().resetCallbacks();
+
+#if 0
+		if (!hasOpInterest(this, VRayRendererNode::RtCallbackRop)) {
+			addOpInterest(this, VRayRendererNode::RtCallbackRop);
+		}
+#endif
+
+		if (hasUI >= 0) {
+#ifdef __APPLE__
+			// Forse Qt FB
+			const int hasUI = 1;
+			getRenderer().showVFB(false);
+#else
+#endif
+			if (hasUI == 0) {
+#ifndef __APPLE__
+				m_vfb.free();
+				getRenderer().showVFB(true);
+#endif
+			}
+			else if (hasUI == 1) {
+				m_vfb.init();
+				m_vfb.show();
+				m_vfb.set_abort_callback(UI::AbortCb(boost::bind(&VRayPluginRenderer::stopRender, &getRenderer())));
+
+				getRenderer().addCbOnDumpMessage(CbOnDumpMessage(boost::bind(&UI::VFB::on_dump_message, &m_vfb, _1, _2, _3)));
+				getRenderer().addCbOnProgress(CbOnProgress(boost::bind(&UI::VFB::on_progress, &m_vfb, _1, _2, _3, _4)));
+
+				getRenderer().addCbOnImageReady(CbOnImageReady(boost::bind(&UI::VFB::on_image_ready, &m_vfb, _1)));
+
+				getRenderer().addCbOnBucketInit(CbOnBucketInit(boost::bind(&UI::VFB::on_bucket_init, &m_vfb, _1, _2, _3, _4, _5, _6)));
+				getRenderer().addCbOnBucketFailed(CbOnBucketFailed(boost::bind(&UI::VFB::on_bucket_failed, &m_vfb, _1, _2, _3, _4, _5, _6)));
+				getRenderer().addCbOnBucketReady(CbOnBucketReady(boost::bind(&UI::VFB::on_bucket_ready, &m_vfb, _1, _2, _3, _4, _5)));
+
+				getRenderer().addCbOnRTImageUpdated(CbOnRTImageUpdated(boost::bind(&UI::VFB::on_rt_image_updated, &m_vfb, _1, _2)));
+
+			}
+		}
+
+		if (isAnimation()) {
+			addAbortCallback();
+		}
+		else {
+			removeRtCallbacks();
+			if (isIPR()) {
+				addRtCallbacks();
+			}
+		}
+
+		exportSettings();
+
+		m_error = ROP_CONTINUE_RENDER;
+	}
+
+	PRINT_WARN("VRayRendererNode::startRender finished with %i",
+			   m_error);
+}
+
+
+int VRayExporter::hasMotionBlur(OP_Node &rop, OBJ_Node &camera)
+{
+	int hasMB = false;
+	if (isPhysicalView(camera)) {
+		hasMB = camera.evalInt("CameraPhysical_use_moblur", 0, 0.0);
+	}
+	else {
+		hasMB = rop.evalInt("SettingsMotionBlur.on", 0, 0.0);
+	}
+	return hasMB;
+}
+
+
+void MotionBlurParams::calcParams(float frameCurrent)
+{
+	mb_start = frameCurrent - (mb_duration * (0.5 - mb_interval_center));
+	mb_end   = mb_start + mb_duration;
+	mb_frame_inc = mb_duration / (mb_geom_samples + 1);
+
+	PRINT_WARN("  MB frame: %.3f", frameCurrent);
+	PRINT_WARN("  MB duration: %.3f", mb_duration);
+	PRINT_WARN("  MB interval center: %.3f", mb_interval_center);
+	PRINT_WARN("  MB geom samples: %i", mb_geom_samples);
+	PRINT_WARN("  MB start: %.3f", mb_start);
+	PRINT_WARN("  MB end:   %.3f", mb_end);
+	PRINT_WARN("  MB inc:   %.3f", mb_frame_inc);
+}
+
+
+void VRayExporter::exportFrame(fpreal time)
+{
+	OP_Context context;
+	context.setTime(time);
+
+	if (m_error != ROP_ABORT_RENDER) {
+		if (hasMotionBlur(*m_rop, *getCamera(m_rop))) {
+			MotionBlurParams mbParams;
+			fillMotionBlurParams(mbParams);
+			mbParams.calcParams(context.getFloatFrame());
+
+			// We don't need this data anymore
+			clearKeyFrames(mbParams.mb_start);
+
+			for (FloatSet::iterator tIt = m_exportedFrames.begin(); tIt != m_exportedFrames.end();) {
+				if (*tIt < mbParams.mb_start) {
+					m_exportedFrames.erase(tIt++);
+				}
+				else {
+					++tIt;
+				}
+			}
+
+			// Export motion blur data
+			fpreal subframe = mbParams.mb_start;
+			while (subframe <= mbParams.mb_end) {
+				if (isAborted()) {
+					break;
+				}
+				if (!m_exportedFrames.count(subframe)) {
+					m_exportedFrames.insert(subframe);
+
+					context.setFrame(subframe);
+
+					PRINT_WARN("Exporting motion blur sub-frame: %.3f [time=%.3f]",
+							   context.getFloatFrame(), context.getTime());
+
+					exportKeyFrame(context);
+				}
+				subframe += mbParams.mb_frame_inc;
+			}
+
+			// Set time back to original time for rendering
+			context.setTime(time);
+		}
+		else {
+			PRINT_WARN("Exporting frame: %.3f",
+					   context.getFloatFrame());
+
+			clearKeyFrames(context.getFloatFrame());
+			exportKeyFrame(context);
+		}
+
+		if (isAborted()) {
+			PRINT_WARN("Operation is aborted by the user!")
+					m_error = ROP_ABORT_RENDER;
+		}
+		else {
+			setFrame(context.getFloatFrame());
+			renderFrame(isAnimation());
+		}
+	}
+
+	PRINT_WARN("VRayRendererNode::renderFrame finished with %i",
+			   m_error);
+
+}
+
+
+void VRayExporter::exportEnd()
+{
+	if (isAnimation()) {
+		clearKeyFrames(SYS_FP64_MAX);
+	}
+
+	m_error = ROP_CONTINUE_RENDER;
+}
+
+
+int VRayExporter::exportKeyFrame(const OP_Context &context)
+{
+	setFrame(context.getFloatFrame());
+	setContext(context);
+
+	int err = exportView();
+	if (err) {
+		m_error = ROP_ABORT_RENDER;
+	}
+	else {
+		exportScene();
+
+		UT_String env_network_path;
+		m_rop->evalString(env_network_path, Parm::parm_render_net_environment.getToken(), 0, 0.0f);
+		if (NOT(env_network_path.equal(""))) {
+			OP_Node *env_network = OPgetDirector()->findNode(env_network_path.buffer());
+			if (env_network) {
+				OP_Node *env_node = VRayExporter::FindChildNodeByType(env_network, "VRayNodeSettingsEnvironment");
+				if (NOT(env_node)) {
+					PRINT_ERROR("Node of type \"VRay SettingsEnvironment\" is not found!");
+				}
+				else {
+					exportEnvironment(env_node);
+					exportEffects(env_network);
+				}
+			}
+		}
+
+		UT_String channels_network_path;
+		m_rop->evalString(channels_network_path, Parm::parm_render_net_render_channels.getToken(), 0, 0.0f);
+		if (NOT(channels_network_path.equal(""))) {
+			OP_Node *channels_network = OPgetDirector()->findNode(channels_network_path.buffer());
+			if (channels_network) {
+				OP_Node *chan_node = VRayExporter::FindChildNodeByType(channels_network, "VRayNodeRenderChannelsContainer");
+				if (NOT(chan_node)) {
+					PRINT_ERROR("Node of type \"VRay RenderChannelsContainer\" is not found!");
+				}
+				else {
+					exportRenderChannels(chan_node);
+				}
+			}
+		}
+	}
+
+	return err;
 }

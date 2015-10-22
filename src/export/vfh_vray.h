@@ -15,8 +15,6 @@
 
 #include <vraysdk.hpp>
 
-#define NO_SSE
-
 #include <utils.h>
 #include <quaternion.h>
 #include <spectrum.h>

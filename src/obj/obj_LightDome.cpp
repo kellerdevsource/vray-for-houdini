@@ -44,7 +44,7 @@ OP::VRayNode::PluginResult OBJ::LightDome::asPluginDesc(Attrs::PluginDesc &plugi
 	pluginDesc.pluginName = VRayExporter::getPluginName(this);
 
 	// Need to flip tm
-	VRay::Transform tm = VRayExporter::GetOBJTransform(parent->castToOBJNode(), exporter->getContext(), true);
+	VRay::Transform tm = VRayExporter::getObjTransform(parent->castToOBJNode(), exporter->getContext(), true);
 	pluginDesc.addAttribute(Attrs::PluginAttr("transform", tm));
 
 	// Dome texture

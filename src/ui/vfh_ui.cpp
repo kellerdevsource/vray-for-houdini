@@ -9,6 +9,10 @@
 //
 
 #include "vfh_ui.h"
+#include "vfh_prm_def.h"
+#include "vfh_prm_templates.h"
+
+#include <boost/format.hpp>
 
 
 using namespace VRayForHoudini;
@@ -59,7 +63,7 @@ void ActiveStateDeps::showDependencies(const std::string &pluginID)
 }
 
 
-void ActiveStateDeps::activateElements(const std::string &pluginID, OP_Node *op_node, bool &changed)
+void ActiveStateDeps::activateElements(const std::string &pluginID, OP_Node *op_node, bool &changed, const std::string &prefix)
 {
 	if (activeItems.count(pluginID)) {
 #if 0
@@ -69,9 +73,13 @@ void ActiveStateDeps::activateElements(const std::string &pluginID, OP_Node *op_
 			const std::string &affectedProp = iIt.first;
 			const StateInfo   &stateInfo    = iIt.second;
 
+			const std::string &prmName = prefix.empty()
+										 ? stateInfo.conditionAttr
+										 : boost::str(Parm::FmtPrefixManual % prefix % stateInfo.conditionAttr);
+
 			// TODO: Check if enum and get the actual enum value
 			//
-			int activeValue = op_node->evalInt(stateInfo.conditionAttr.c_str(), 0, 0.0f);
+			int activeValue = op_node->evalInt(prmName.c_str(), 0, 0.0f);
 
 			bool state = true;
 

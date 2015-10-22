@@ -187,6 +187,12 @@ void VFB::free()
 }
 
 
+int VFB::isInitialized()
+{
+	return !!(m_window);
+}
+
+
 void VFB::show()
 {
 #if PRINT_UI_CALLS

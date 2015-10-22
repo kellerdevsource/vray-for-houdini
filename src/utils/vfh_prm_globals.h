@@ -13,12 +13,17 @@
 
 #include "vfh_typedefs.h"
 
+#include <PRM/PRM_Name.h>
+
 
 namespace VRayForHoudini {
 namespace Parm {
 
 extern StringSet RenderSettingsPlugins;
 extern StringSet RenderGIPlugins;
+
+extern PRM_Name  parm_render_net_render_channels;
+extern PRM_Name  parm_render_net_environment;
 
 } // namespace Parm
 } // namespace VRayForHoudini

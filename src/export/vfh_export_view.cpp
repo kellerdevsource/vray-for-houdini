@@ -22,6 +22,7 @@ const std::string VRayForHoudini::ViewPluginsDesc::settingsCameraPluginName("set
 const std::string VRayForHoudini::ViewPluginsDesc::cameraPhysicalPluginName("cameraPhysical");
 const std::string VRayForHoudini::ViewPluginsDesc::cameraDefaultPluginName("cameraDefault");
 const std::string VRayForHoudini::ViewPluginsDesc::renderViewPluginName("renderView");
+const std::string VRayForHoudini::ViewPluginsDesc::stereoSettingsPluginName("stereoSettings");
 
 
 void VRayExporter::RtCallbackView(OP_Node *caller, void *callee, OP_EventType type, void *data)
@@ -45,7 +46,8 @@ void VRayExporter::RtCallbackView(OP_Node *caller, void *callee, OP_EventType ty
 				const PRM_Parm *param = Parm::getParm(*caller, reinterpret_cast<long>(data));
 				if (param) {
 					procceedEvent = boost::starts_with(param->getToken(), "SettingsCamera") ||
-									boost::starts_with(param->getToken(), "SettingsMotionBlur");
+									boost::starts_with(param->getToken(), "SettingsMotionBlur") ||
+									boost::starts_with(param->getToken(), "VRayStereoscopic");
 				}
 			}
 
@@ -113,11 +115,19 @@ void VRayExporter::fillCameraData(const OBJ_Node &camera, const OP_Node &rop, Vi
 	viewParams.renderSize.w = imageWidth;
 	viewParams.renderSize.h = imageHeight;
 	viewParams.renderView.fov = fov;
-	viewParams.renderView.tm = VRayExporter::GetOBJTransform(camera.castToOBJNode(), m_context);
+	viewParams.renderView.tm = VRayExporter::getObjTransform(camera.castToOBJNode(), m_context);
 
 	if (!viewParams.renderView.fovOverride) {
 		aspectCorrectFovOrtho(viewParams);
 	}
+
+	viewParams.renderView.stereoParams.use = Parm::getParmInt(rop, "VRayStereoscopicSettings.use");
+	viewParams.renderView.stereoParams.stereo_eye_distance       = Parm::getParmFloat(rop, "VRayStereoscopicSettings.eye_distance");
+	viewParams.renderView.stereoParams.stereo_interocular_method = Parm::getParmInt(rop,   "VRayStereoscopicSettings.interocular_method");
+	viewParams.renderView.stereoParams.stereo_specify_focus      = Parm::getParmInt(rop,   "VRayStereoscopicSettings.specify_focus");
+	viewParams.renderView.stereoParams.stereo_focus_distance     = Parm::getParmFloat(rop, "VRayStereoscopicSettings.focus_distance");
+	viewParams.renderView.stereoParams.stereo_focus_method       = Parm::getParmInt(rop,   "VRayStereoscopicSettings.focus_method");
+	viewParams.renderView.stereoParams.stereo_view               = Parm::getParmInt(rop,   "VRayStereoscopicSettings.view");
 }
 
 
@@ -164,6 +174,14 @@ void VRayExporter::fillRenderView(const ViewParams &viewParams, Attrs::PluginDes
 
 	// TODO: Set this only for viewport rendering
 	pluginDesc.add(Attrs::PluginAttr("use_scene_offset", false));
+
+	pluginDesc.add(Attrs::PluginAttr("stereo_on",                 viewParams.renderView.stereoParams.use));
+	pluginDesc.add(Attrs::PluginAttr("stereo_eye_distance",       viewParams.renderView.stereoParams.stereo_eye_distance));
+	pluginDesc.add(Attrs::PluginAttr("stereo_interocular_method", viewParams.renderView.stereoParams.stereo_interocular_method));
+	pluginDesc.add(Attrs::PluginAttr("stereo_specify_focus",      viewParams.renderView.stereoParams.stereo_specify_focus));
+	pluginDesc.add(Attrs::PluginAttr("stereo_focus_distance",     viewParams.renderView.stereoParams.stereo_focus_distance));
+	pluginDesc.add(Attrs::PluginAttr("stereo_focus_method",       viewParams.renderView.stereoParams.stereo_focus_method));
+	pluginDesc.add(Attrs::PluginAttr("stereo_view",               viewParams.renderView.stereoParams.stereo_view));
 }
 
 
@@ -181,20 +199,13 @@ void VRayExporter::fillSettingsCamera(const ViewParams &viewParams, Attrs::Plugi
 		pluginDesc.add(Attrs::PluginAttr("type", 8));
 	}
 
-	setAttrsFromOpNode(pluginDesc, getRop(), "SettingsCamera.");
+	setAttrsFromOpNode(pluginDesc, m_rop, "SettingsCamera.");
 }
 
 
 void VRayExporter::fillSettingsCameraDof(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc)
 {
-#if 0
-	BL::Camera cameraData(viewParams.cameraObject.data());
-	if (cameraData) {
-		PointerRNA vrayCamera = RNA_pointer_get(&cameraData.ptr, "vray");
-		PointerRNA cameraDof = RNA_pointer_get(&vrayCamera, "SettingsCameraDof");
-		setAttrsFromPropGroupAuto(camDofDesc, &cameraDof, "SettingsCameraDof");
-	}
-#endif
+	setAttrsFromOpNode(pluginDesc, m_rop, "SettingsCameraDof.");
 }
 
 
@@ -202,14 +213,10 @@ int VRayExporter::exportView()
 {
 	static VUtils::FastCriticalSection csect;
 	if (csect.tryEnter()) {
-		OBJ_Node *camera = VRayExporter::GetCamera(m_rop);
-		if (!camera) {
-			PRINT_ERROR("Camera is not set!");
-			return 1;
-		}
+		OBJ_Node *camera = VRayExporter::getCamera(m_rop);
 
 		addOpCallback(camera, VRayExporter::RtCallbackView);
-		addOpCallback(getRop(), VRayExporter::RtCallbackView);
+		addOpCallback(m_rop, VRayExporter::RtCallbackView);
 
 		ViewParams viewParams(camera);
 		viewParams.usePhysicalCamera = isPhysicalView(*camera);
@@ -318,7 +325,26 @@ int ViewParams::needReset(const ViewParams &other) const
 {
 	return (MemberNotEq(usePhysicalCamera) ||
 			MemberNotEq(cameraObject) ||
-			viewPlugins.needReset(other.viewPlugins));
+			viewPlugins.needReset(other.viewPlugins) ||
+			renderView.needReset(other.renderView));
+}
+
+
+bool StereoViewParams::operator ==(const StereoViewParams &other) const
+{
+	return (MemberEq(use) &&
+			MemberFloatEq(stereo_eye_distance) &&
+			MemberEq(stereo_interocular_method) &&
+			MemberEq(stereo_specify_focus) &&
+			MemberFloatEq(stereo_focus_distance) &&
+			MemberEq(stereo_focus_method) &&
+			MemberEq(stereo_view));
+}
+
+
+bool StereoViewParams::operator !=(const StereoViewParams &other) const
+{
+	return !(*this == other);
 }
 
 
@@ -338,4 +364,11 @@ bool RenderViewParams::operator ==(const RenderViewParams &other) const
 bool RenderViewParams::operator !=(const RenderViewParams &other) const
 {
 	return !(*this == other);
+}
+
+
+int RenderViewParams::needReset(const RenderViewParams &other) const
+{
+	return ((stereoParams.use != other.stereoParams.use) ||
+			(other.stereoParams.use && (stereoParams != other.stereoParams)));
 }

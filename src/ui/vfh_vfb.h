@@ -126,6 +126,8 @@ public:
 	void       init();
 	void       free();
 
+	int        isInitialized();
+
 	void       show();
 	void       hide();
 	void       resize(int w, int h);
