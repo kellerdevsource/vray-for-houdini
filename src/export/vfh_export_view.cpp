@@ -301,7 +301,7 @@ int ViewPluginsDesc::needReset(const ViewPluginsDesc &other) const
 }
 
 
-int ViewPluginsDesc::reset()
+void ViewPluginsDesc::reset()
 {
 	settingsCameraDof.pluginAttrs.clear();
 	settingsCamera.pluginAttrs.clear();
@@ -334,7 +334,7 @@ int ViewParams::needReset(const ViewParams &other) const
 }
 
 
-int ViewParams::reset()
+void ViewParams::reset()
 {
 	usePhysicalCamera = false;
 	cameraObject = nullptr;
