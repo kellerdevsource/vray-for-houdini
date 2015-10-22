@@ -163,9 +163,9 @@ public:
 	ROP_RENDER_CODE                getError() const { return m_error; }
 
 	int                            isIPR() const { return m_isIPR; }
-	int                            isAborted();
+	int                            isAborted() const { return m_isAborted; }
 	int                            isAnimation() const { return m_isAnimation; }
-	int                            isPhysicalView(const OBJ_Node &camera);
+	int                            isPhysicalView(const OBJ_Node &camera) const;
 	int                            isNodeAnimated(OP_Node *op_node);
 	int                            hasMotionBlur(OP_Node &rop, OBJ_Node &camera);
 

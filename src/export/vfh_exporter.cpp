@@ -900,12 +900,6 @@ void VRayExporter::TraverseOBJ(OBJ_Node *obj_node, void *data)
 }
 
 
-int VRayExporter::isAborted()
-{
-	return m_isAborted;
-}
-
-
 void VRayExporter::resetOpCallbacks()
 {
 	for (auto const &item : m_opRegCallbacks) {

@@ -79,12 +79,12 @@ static void aspectCorrectFovOrtho(ViewParams &viewParams)
 }
 
 
-int VRayExporter::isPhysicalView(const OBJ_Node &camera)
+int VRayExporter::isPhysicalView(const OBJ_Node &camera) const
 {
 	static const std::string paramUsePhysCam("CameraPhysical_use");
 
 	int isPhysical = false;
-	if (Parm::isParmExist(camera, "CameraPhysical_use")) {
+	if (Parm::isParmExist(camera, paramUsePhysCam)) {
 		isPhysical = camera.evalInt(paramUsePhysCam.c_str(), 0, 0.0);
 	}
 
