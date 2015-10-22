@@ -61,6 +61,11 @@ link_with_vray_sdk(${PROJECT_NAME})
 link_with_vray_appsdk(${PROJECT_NAME})
 link_with_boost(${PROJECT_NAME})
 
+set(SRC_GIT_HASH "unknown")
+cgr_get_git_hash(${CMAKE_SOURCE_DIR} SRC_GIT_HASH)
+message(STATUS "Source revision: ${SRC_GIT_HASH}")
+set(INSTALL_RELEASE_SUBDIR "vfh-${SRC_GIT_HASH}")
+
 # Install shelf and icon locally
 #
 file(GLOB VFH_SHELVES ${CMAKE_SOURCE_DIR}/deploy/vfh*.shelf)
@@ -135,6 +140,8 @@ if(INSTALL_RELEASE)
 	if("${INSTALL_RELEASE_PATH}" STREQUAL "")
 		message(FATAL_ERROR "INSTALL_RELEASE is ON, but INSTALL_RELEASE_PATH is not set!")
 	else()
+		# Set install path
+		set(INSTALL_RELEASE_PATH ${INSTALL_RELEASE_PATH}/${INSTALL_RELEASE_SUBDIR})
 
 		# Copy plugin
 		cgr_install_runtime(${PROJECT_NAME} ${INSTALL_RELEASE_PATH}/dso)
