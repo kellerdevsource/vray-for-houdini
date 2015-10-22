@@ -148,6 +148,7 @@ public:
 
 	void                           setAnimation(bool on);
 	void                           setFrame(float frame);
+	void                           setIPR(int isIPR) { m_isIPR = isIPR; }
 	void                           setRendererMode(int mode);
 	void                           setWorkMode(ExpWorkMode mode) { m_workMode = mode; }
 	void                           setContext(const OP_Context &ctx) { m_context = ctx; }

@@ -39,6 +39,9 @@ protected:
 	virtual ROP_RENDER_CODE      renderFrame(fpreal time, UT_Interrupt *boss) VRAY_OVERRIDE;
 	virtual ROP_RENDER_CODE      endRender() VRAY_OVERRIDE;
 
+	int                          initSession(int interactive, int nframes, fpreal tstart, fpreal tend);
+	void                         startIPR();
+
 private:
 	VRayExporter                 m_exporter;
 	fpreal                       m_tend;
@@ -46,6 +49,7 @@ private:
 public:
 	static void                  register_operator(OP_OperatorTable *table);
 	static void                  RtCallbackRop(OP_Node *caller, void *callee, OP_EventType type, void *data);
+	static int                   RtStartSession(void *data, int index, float t, const PRM_Template *tplate);
 
 };
 

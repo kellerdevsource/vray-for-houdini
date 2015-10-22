@@ -23,6 +23,8 @@
 using namespace VRayForHoudini;
 
 
+static PRM_Name     parm_render_interactive("render_ipr", "Render IPR");
+
 static PRM_Name     parm_render_vfb_mode("render_vfb_mode", "Framebuffer");
 static PRM_Name     parm_render_vfb_mode_items[] = {
 	PRM_Name("Native"),
@@ -88,6 +90,8 @@ static PRM_Template* getTemplates()
 	if (!RenderSettingsPrmTemplate.size()) {
 		// Render / Exporter settings
 		//
+		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_CALLBACK, 1, &parm_render_interactive, 0, 0, 0, VRayRendererNode::RtStartSession));
+
 		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_HEADING, 1, &parm_render_sep_render));
 		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_STRING_E, PRM_TYPE_DYNAMIC_PATH, 1, &parm_render_camera, &parm_render_camera_def));
 		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_ORD, 1, &parm_render_render_mode, PRMzeroDefaults, &parm_render_render_mode_menu));
@@ -236,10 +240,18 @@ void VRayRendererNode::RtCallbackRop(OP_Node *caller, void *callee, OP_EventType
 }
 
 
-int VRayRendererNode::startRender(int nframes, fpreal tstart, fpreal tend)
+int VRayRendererNode::RtStartSession(void *data, int /*index*/, float /*t*/, const PRM_Template* /*tplate*/)
 {
-	PRINT_WARN("VRayRendererNode::startRender(%i, %.3ff, %.3f)",
-			   nframes, tstart, tend);
+	VRayRendererNode &rop = *reinterpret_cast<VRayRendererNode*>(data);
+	rop.startIPR();
+	return 1;
+}
+
+
+int VRayRendererNode::initSession(int interactive, int nframes, fpreal tstart, fpreal tend)
+{
+	PRINT_WARN("VRayRendererNode::initSession(%i, %i, %.3ff, %.3f)",
+			   interactive, nframes, tstart, tend);
 
 	ROP_RENDER_CODE error = ROP_ABORT_RENDER;
 
@@ -255,6 +267,8 @@ int VRayRendererNode::startRender(int nframes, fpreal tstart, fpreal tend)
 		// Whether to reinit V-Ray renderer
 		const int reinit = false;
 
+		m_exporter.setIPR(!isBackground() && interactive);
+
 		if (m_exporter.initRenderer(!isBackground(), reinit)) {
 			m_exporter.initExporter(getFrameBufferType(*this), nframes, tstart, tend);
 
@@ -267,6 +281,23 @@ int VRayRendererNode::startRender(int nframes, fpreal tstart, fpreal tend)
 	}
 
 	return error;
+}
+
+
+void VRayRendererNode::startIPR()
+{
+	if (initSession(true, 1, 0, 0)) {
+		m_exporter.exportFrame(OPgetDirector()->getChannelManager()->getEvaluateTime());
+	}
+}
+
+
+int VRayRendererNode::startRender(int nframes, fpreal tstart, fpreal tend)
+{
+	PRINT_WARN("VRayRendererNode::startRender(%i, %.3ff, %.3f)",
+			   nframes, tstart, tend);
+
+	return initSession(false, nframes, tstart, tend);
 }
 
 
