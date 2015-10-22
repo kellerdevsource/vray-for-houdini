@@ -119,19 +119,6 @@ private:
 
 
 class VRayPluginRenderer {
-	struct PluginUsed {
-		PluginUsed() {}
-		PluginUsed(const VRay::Plugin &p):
-			plugin(p),
-			used(true)
-		{}
-
-		VRay::Plugin  plugin;
-		int           used;
-	};
-
-	typedef VUtils::HashMap<PluginUsed> PluginUsage;
-
 	static AppSdkInit             vrayInit;
 
 public:
@@ -140,41 +127,27 @@ public:
 
 	int                           initRenderer(int hasUI, int reInit);
 	void                          freeMem();
-	void                          setImageSize(const int w, const int h);
 
 	VRay::Plugin                  exportPlugin(const Attrs::PluginDesc &pluginDesc);
 	void                          removePlugin(const Attrs::PluginDesc &pluginDesc);
 	void                          removePlugin(const std::string &pluginName);
-
-	void                          resetPluginUsage();
-	void                          syncObjects();
+	void                          commit();
 
 	void                          setAnimation(bool on);
 	void                          setFrame(fpreal frame);
 	void                          setCamera(VRay::Plugin camera);
 	void                          setRendererMode(int mode);
-	int                           clearFrames(fpreal toTime);
+	void                          setAutoCommit(const bool enable);
+	void                          setImageSize(const int w, const int h);
 
-	int                           exportScene(const std::string &filepath);
+	void                          showVFB(const bool show=true);
+	void                          clearFrames(fpreal toTime);
+
 	int                           startRender(int locked=false);
 	int                           startSequence(int start, int end, int step, int locked=false);
-
 	void                          stopRender();
-	void                          commit();
-	int                           isRtRunning();
 
-	void                          showVFB(const bool show=true) { m_vray->showFrameBuffer(show, true); }
-	void                          setAutoCommit(const bool enable) { m_vray->setAutoCommit(enable); }
-
-private:
-	VRay::Plugin                  newPlugin(const Attrs::PluginDesc &pluginDesc);
-
-public:
-	VRay::VRayRenderer           *m_vray;
-	PluginUsage                   m_pluginUsage;
-
-public:
-	void                          resetCallbacks();
+	int                           exportScene(const std::string &filepath);
 
 	void                          addCbOnRendererClose(CbOnRendererClose cb)   { m_callbacks.m_cbOnRendererClose.add(cb); }
 	void                          addCbOnRendererClose(CbVoid cb)              { m_callbacks.m_cbOnRendererClose.add(cb); }
@@ -193,6 +166,10 @@ public:
 	void                          addCbOnProgress(CbOnProgress cb)             { m_callbacks.m_cbOnProgress.add(cb); }
 	void                          addCbOnProgress(CbVoid cb)                   { m_callbacks.m_cbOnProgress.add(cb); }
 
+	void                          resetCallbacks();
+
+private:
+	VRay::VRayRenderer           *m_vray;
 	CbCollection                  m_callbacks;
 };
 

@@ -107,6 +107,7 @@ struct ViewPluginsDesc {
 	{}
 
 	int                needReset(const ViewPluginsDesc &other) const;
+	int                reset();
 
 	Attrs::PluginDesc  settingsCameraDof;
 	Attrs::PluginDesc  settingsCamera;
@@ -127,6 +128,7 @@ struct ViewParams {
 	int               changedParams(const ViewParams &other) const;
 	int               changedSize(const ViewParams &other) const;
 	int               needReset(const ViewParams &other) const;
+	int               reset();
 
 	RenderSizeParams  renderSize;
 	RenderViewParams  renderView;

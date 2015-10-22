@@ -1053,12 +1053,6 @@ void VRayExporter::fillMotionBlurParams(MotionBlurParams &mbParams)
 }
 
 
-void VRayExporter::exportDone()
-{
-	m_renderer.syncObjects();
-}
-
-
 VRay::Plugin VRayExporter::exportPlugin(const Attrs::PluginDesc &pluginDesc)
 {
 	return m_renderer.exportPlugin(pluginDesc);
@@ -1089,9 +1083,33 @@ void VRayExporter::setFrame(float frame)
 }
 
 
+void VRayExporter::setIPR(int isIPR)
+{
+	m_isIPR = isIPR;
+}
+
+
 void VRayExporter::setRendererMode(int mode)
 {
 	m_renderer.setRendererMode(mode);
+}
+
+
+void VRayExporter::setWorkMode(VRayExporter::ExpWorkMode mode)
+{
+	m_workMode = mode;
+}
+
+
+void VRayExporter::setContext(const OP_Context &ctx)
+{
+	m_context = ctx;
+}
+
+
+void VRayExporter::setAbort()
+{
+	m_isAborted = true;
 }
 
 
@@ -1135,9 +1153,9 @@ int VRayExporter::exportVrscene(const std::string &filepath)
 }
 
 
-int VRayExporter::clearKeyFrames(fpreal toTime)
+void VRayExporter::clearKeyFrames(fpreal toTime)
 {
-	return m_renderer.clearFrames(toTime);
+	m_renderer.clearFrames(toTime);
 }
 
 
@@ -1154,6 +1172,8 @@ void VRayExporter::setAbortCb(VRay::VRayRenderer &renderer)
 		setAbort();
 	}
 }
+
+void VRayExporter::setExportFilepath(const std::string &path) { m_exportFilepath = path; }
 
 
 void VRayExporter::addAbortCallback()
@@ -1176,7 +1196,7 @@ void VRayExporter::initExporter(int hasUI, int nframes, fpreal tstart, fpreal te
 
 	setAnimation(nframes > 1);
 
-	m_renderer.resetPluginUsage();
+	m_viewParams.reset();
 	m_exportedFrames.clear();
 	m_phxSimulations.clear();
 

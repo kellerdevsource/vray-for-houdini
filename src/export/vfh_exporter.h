@@ -102,6 +102,7 @@ public:
 	void                           fillCameraDefault(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc);
 	void                           fillSettingsCamera(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc);
 	void                           fillRenderView(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc);
+	void                           fillStereoSettings(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc);
 	void                           fillMotionBlurParams(MotionBlurParams &mbParams);
 
 	int                            exportView();
@@ -113,7 +114,6 @@ public:
 	void                           exportEffects(OP_Node *op_net);
 	void                           exportFrame(fpreal time);
 	void                           exportEnd();
-	void                           exportDone();
 
 	void                           exportGeomStaticMeshDesc(const GU_Detail &gdp, SHOPToID &shopToID, Attrs::PluginDesc &geomPluginDesc);
 	VRay::Plugin                   exportGeomStaticMesh(SOP_Node &sop_node, const GU_Detail &gdp, SHOPToID &shopToID);
@@ -144,17 +144,17 @@ public:
 	int                            renderFrame(int locked=false);
 	int                            renderSequence(int start, int end, int step, int locked=false);
 
-	int                            clearKeyFrames(fpreal toTime);
+	void                           clearKeyFrames(fpreal toTime);
 
 	void                           setAnimation(bool on);
 	void                           setFrame(float frame);
-	void                           setIPR(int isIPR) { m_isIPR = isIPR; }
+	void                           setIPR(int isIPR);
 	void                           setRendererMode(int mode);
-	void                           setWorkMode(ExpWorkMode mode) { m_workMode = mode; }
-	void                           setContext(const OP_Context &ctx) { m_context = ctx; }
-	void                           setAbort() { m_isAborted = true; }
+	void                           setWorkMode(ExpWorkMode mode);
+	void                           setContext(const OP_Context &ctx);
+	void                           setAbort();
 	void                           setAbortCb(VRay::VRayRenderer &renderer);
-	void                           setExportFilepath(const std::string &path) { m_exportFilepath = path; }
+	void                           setExportFilepath(const std::string &path);
 	void                           setRenderSize(int w, int h);
 
 	OP_Context                    &getContext()  { return m_context;   }

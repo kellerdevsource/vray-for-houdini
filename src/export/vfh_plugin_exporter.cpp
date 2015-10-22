@@ -178,7 +178,6 @@ int VRayPluginRenderer::initRenderer(int hasUI, int reInit)
 	if (VRayPluginRenderer::vrayInit) {
 		if (reInit) {
 			resetCallbacks();
-			resetPluginUsage();
 			freeMem();
 		}
 
@@ -227,6 +226,14 @@ void VRayPluginRenderer::setImageSize(const int w, const int h)
 }
 
 
+void VRayPluginRenderer::showVFB(const bool show)
+{
+	if (m_vray) {
+		m_vray->showFrameBuffer(show, true);
+	}
+}
+
+
 VRay::Plugin VRayPluginRenderer::exportPlugin(const Attrs::PluginDesc &pluginDesc)
 {
 #define CGR_DEBUG_APPSDK_VALUES  0
@@ -241,12 +248,13 @@ VRay::Plugin VRayPluginRenderer::exportPlugin(const Attrs::PluginDesc &pluginDes
 		return VRay::Plugin();
 	}
 
-	VRay::Plugin plug = newPlugin(pluginDesc);
-	if (NOT(plug)) {
-		PRINT_ERROR("Failed to create plugin: %s [%s]",
-					pluginDesc.pluginName.c_str(), pluginDesc.pluginID.c_str());
+	VRay::Plugin plug = m_vray->newPlugin(pluginDesc.pluginName, pluginDesc.pluginID);
+	VRay::Error err = m_vray->getLastError();
+	if (err != VRay::SUCCESS) {
+		PRINT_ERROR("Error creating plugin: %s",
+					err.toString().c_str());
 	}
-	else {
+	if (plug) {
 		for (const auto &pIt : pluginDesc.pluginAttrs) {
 			const PluginAttr &p = pIt;
 
@@ -362,9 +370,6 @@ void VRayPluginRenderer::commit()
 void VRayPluginRenderer::setCamera(VRay::Plugin camera)
 {
 	if (m_vray) {
-		// NOTE: This forces the update
-		m_vray->setCamera(VRay::Plugin());
-		// Now set a new camera
 		m_vray->setCamera(camera);
 	}
 }
@@ -403,81 +408,19 @@ void VRayPluginRenderer::removePlugin(const std::string &pluginName)
 					   pluginName.c_str());
 		}
 		else {
-			m_vray->setAutoCommit(false);
-			bool res = m_vray->removePlugin(plugin);
+			m_vray->removePlugin(plugin);
 
 			PRINT_WARN("VRayPluginRenderer::removePlugin: Removing \"%s\"...",
 					   plugin.getName().c_str());
 
-			if (res) {
-				commit();
-			}
-			else {
-				VRay::Error err = m_vray->getLastError();
-				if (err != VRay::SUCCESS) {
-					PRINT_ERROR("Error removing plugin: %s",
-								err.toString().c_str());
-				}
-			}
-			m_vray->setAutoCommit(true);
-		}
-	}
-}
-
-
-VRay::Plugin VRayPluginRenderer::newPlugin(const Attrs::PluginDesc &pluginDesc)
-{
-	VRay::Plugin plug;
-
-	if (m_vray) {
-		plug = m_vray->newPlugin(pluginDesc.pluginName, pluginDesc.pluginID);
-
-		if (!pluginDesc.pluginName.empty()) {
-			m_pluginUsage[pluginDesc.pluginName.c_str()] = PluginUsed(plug);
-		}
-	}
-
-	return plug;
-}
-
-
-void VRayPluginRenderer::resetPluginUsage()
-{
-	for (VRayPluginRenderer::PluginUsage::iterator pIt = m_pluginUsage.begin(); pIt != m_pluginUsage.end(); ++pIt) {
-		pIt.data().used = false;
-	}
-}
-
-
-void VRayPluginRenderer::syncObjects()
-{
-	if (m_vray) {
-		typedef VUtils::HashSet<const char*> RemoveKeys;
-		RemoveKeys removeKeys;
-
-		for (VRayPluginRenderer::PluginUsage::iterator pIt = m_pluginUsage.begin(); pIt != m_pluginUsage.end(); ++pIt) {
-			if (NOT(pIt.data().used)) {
-				removeKeys.insert(pIt.key());
-
-				bool res = m_vray->removePlugin(pIt.data().plugin);
-
-				PRINT_WARN("Removing: %s [%i]",
-						   pIt.data().plugin.getName().c_str(), res);
-
-				VRay::Error err = m_vray->getLastError();
-				if (err != VRay::SUCCESS) {
-					PRINT_ERROR("Error removing plugin: %s",
-								err.toString().c_str());
-				}
+			VRay::Error err = m_vray->getLastError();
+			if (err != VRay::SUCCESS) {
+				PRINT_ERROR("Error removing plugin: %s",
+							err.toString().c_str());
 			}
 		}
-
-		for (RemoveKeys::iterator kIt = removeKeys.begin(); kIt != removeKeys.end(); ++kIt) {
-			m_pluginUsage.erase(kIt.key());
-		}
 	}
 }
-
 
 int VRayPluginRenderer::exportScene(const std::string &filepath)
 {
@@ -548,21 +491,6 @@ void VRayPluginRenderer::stopRender()
 }
 
 
-int VRayPluginRenderer::isRtRunning()
-{
-	bool is_rt_running = false;
-	if (m_vray) {
-		const VRay::RendererOptions &options = m_vray->getOptions();
-		if (options.renderMode >= VRay::RendererOptions::RENDER_MODE_RT_CPU) {
-			if (true) {
-				is_rt_running = true;
-			}
-		}
-	}
-	return is_rt_running;
-}
-
-
 void VRayPluginRenderer::resetCallbacks()
 {
 	m_callbacks.clear();
@@ -585,10 +513,17 @@ void VRayForHoudini::VRayPluginRenderer::setFrame(fpreal frame)
 }
 
 
-int VRayPluginRenderer::clearFrames(fpreal toTime)
+void VRayPluginRenderer::clearFrames(fpreal toTime)
 {
 	if (m_vray) {
 		m_vray->clearAllPropertyValuesUpToTime(toTime);
 	}
-	return 0;
+}
+
+
+void VRayPluginRenderer::setAutoCommit(const bool enable)
+{
+	if (m_vray) {
+		m_vray->setAutoCommit(enable);
+	}
 }
