@@ -131,17 +131,17 @@ endif()
 #
 option(INSTALL_RELEASE "Install release build for distribution" OFF)
 if(INSTALL_RELEASE)
-	set(INSTALL_RELEASE_PATH "" CACHE PATH "Release install path")
+	set(INSTALL_RELEASE_ROOT "" CACHE PATH "Release install path")
 
 	if(NOT "${CMAKE_BUILD_TYPE}" STREQUAL "Release")
 		message(WARNING "INSTALL_RELEASE is ON, but CMAKE_BUILD_TYPE is not \"Release\" (${CMAKE_BUILD_TYPE})!")
 	endif()
 
-	if("${INSTALL_RELEASE_PATH}" STREQUAL "")
-		message(FATAL_ERROR "INSTALL_RELEASE is ON, but INSTALL_RELEASE_PATH is not set!")
+	if("${INSTALL_RELEASE_ROOT}" STREQUAL "")
+		message(FATAL_ERROR "INSTALL_RELEASE is ON, but INSTALL_RELEASE_ROOT is not set!")
 	else()
 		# Set install path
-		set(INSTALL_RELEASE_PATH ${INSTALL_RELEASE_PATH}/${INSTALL_RELEASE_SUBDIR})
+		set(INSTALL_RELEASE_PATH ${INSTALL_RELEASE_ROOT}/${INSTALL_RELEASE_SUBDIR})
 
 		# Copy plugin
 		cgr_install_runtime(${PROJECT_NAME} ${INSTALL_RELEASE_PATH}/dso)
@@ -215,5 +215,10 @@ if(INSTALL_RELEASE)
 				DESTINATION ${INSTALL_RELEASE_PATH}
 				PATTERN ".git" EXCLUDE
 		)
+
+		# Archive the installation directory
+		set(VFH_PACK ${CMAKE_BINARY_DIR}/vfh_pack.cmake)
+		configure_file(${CMAKE_SOURCE_DIR}/cmake/vfh_pack.cmake.in ${VFH_PACK})
+		install(SCRIPT ${VFH_PACK})
 	endif()
 endif()

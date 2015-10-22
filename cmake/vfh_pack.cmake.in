@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2015, Chaos Software Ltd
+#
+# V-Ray For Houdini
+#
+# Andrei Izrantcev <andrei.izrantcev@chaosgroup.com>
+#
+# ACCESSIBLE SOURCE CODE WITHOUT DISTRIBUTION OF MODIFICATION LICENSE
+#
+# Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
+#
+
+execute_process(
+	COMMAND
+		7z a -tzip -r ${INSTALL_RELEASE_SUBDIR}-hfs${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD}.zip ${INSTALL_RELEASE_SUBDIR}
+	WORKING_DIRECTORY
+		${INSTALL_RELEASE_ROOT}
+)
