@@ -1181,7 +1181,11 @@ void VRayExporter::setAbortCb(VRay::VRayRenderer &renderer)
 	}
 }
 
-void VRayExporter::setExportFilepath(const std::string &path) { m_exportFilepath = path; }
+
+void VRayExporter::setExportFilepath(const std::string &path)
+{
+	m_exportFilepath = path;
+}
 
 
 void VRayExporter::addAbortCallback()
