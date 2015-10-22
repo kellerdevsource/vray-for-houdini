@@ -50,11 +50,11 @@ foreach(_maya_version ${_maya_versons})
 	endif()
 endforeach()
 
-set(CGR_VRAYSDK_INCPATH "" CACHE PATH "V-Ray SDK include path")
-set(CGR_VRAYSDK_LIBPATH "" CACHE PATH "V-Ray SDK library path")
+set(CGR_VRAYSDK_INCPATH "" CACHE STRING "V-Ray SDK include path")
+set(CGR_VRAYSDK_LIBPATH "" CACHE STRING "V-Ray SDK library path")
 
-set(VRAYSDK_INCPATH "" CACHE PATH "")
-set(VRAYSDK_LIBPATH "" CACHE PATH "")
+set(VRAYSDK_INCPATH "" CACHE INTERNAL "")
+set(VRAYSDK_LIBPATH "" CACHE INTERNAL "")
 
 if(NOT CGR_VRAYSDK_INCPATH STREQUAL "")
 	set(VRAYSDK_INCPATH ${CGR_VRAYSDK_INCPATH} CACHE PATH "" FORCE)
