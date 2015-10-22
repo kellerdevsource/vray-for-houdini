@@ -10,6 +10,9 @@
 # Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 #
 
+include(FindGit)
+
+
 macro(link_with_boost _name)
 	if(WIN32)
 		set(BOOST_LIBS
@@ -30,4 +33,14 @@ macro(cgr_install_runtime _target _path)
 	else()
 		install(TARGETS ${_target}         DESTINATION ${_path})
 	endif()
+endmacro()
+
+
+macro(cgr_get_git_hash _dir _out_var)
+	execute_process(
+		COMMAND ${GIT_EXECUTABLE} rev-parse --short HEAD
+		WORKING_DIRECTORY ${_dir}
+		OUTPUT_VARIABLE ${_out_var}
+		OUTPUT_STRIP_TRAILING_WHITESPACE
+	)
 endmacro()
