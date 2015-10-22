@@ -57,10 +57,11 @@ Compilation
 
   ```
   cmake -G Ninja \
-    -DCMAKE_BUILD_TYPE=Debug \
-    -DUSE_LAUNCHER=ON \
-    -DHOUDINI_VERSION=14.0 -DHOUDINI_VERSION_BUILD=361 \
-    -DAPPSDK_PATH=${HOME}/src/appsdk -DAPPSDK_VERSION=507 \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DHOUDINI_VERSION=14.0 \
+    -DHOUDINI_VERSION_BUILD=361 \
+    -DAPPSDK_PATH=${HOME}/src/appsdk \
+    -DAPPSDK_VERSION=507 \
     ${HOME}/dev/vray-for-houdini
   ```
 
