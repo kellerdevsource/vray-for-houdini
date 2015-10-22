@@ -6,6 +6,7 @@
 # ACCESSIBLE SOURCE CODE WITHOUT DISTRIBUTION OF MODIFICATION LICENSE
 #
 # Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
+#
 
 # Python script invoked by the SHOP manager in Houdini when a "vray_material" context SHOP is being created.
 # For more info refer to:
