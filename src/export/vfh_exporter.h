@@ -163,6 +163,7 @@ public:
 	OP_Node                       &getRop() { return *m_rop; }
 	ROP_RENDER_CODE                getError() const { return m_error; }
 
+	int                            isGPU() const { return m_isGPU; }
 	int                            isIPR() const { return m_isIPR; }
 	int                            isAborted() const { return m_isAborted; }
 	int                            isAnimation() const { return m_isAnimation; }
@@ -208,6 +209,7 @@ private:
 	CbItems                        m_opRegCallbacks;
 	VRay::ValueList                m_phxSimulations;
 	int                            m_isIPR;
+	int                            m_isGPU;
 	int                            m_isAnimation;
 	fpreal                         m_timeStart;
 	fpreal                         m_timeEnd;

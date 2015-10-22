@@ -1086,7 +1086,7 @@ void VRayExporter::setIPR(int isIPR)
 void VRayExporter::setRendererMode(int mode)
 {
 	m_renderer.setRendererMode(mode);
-
+	m_isGPU = (mode >= 1);
 	if (mode >= 0) {
 		setSettingsRtEngine();
 	}
