@@ -99,7 +99,7 @@ if(USE_LAUNCHER)
 
 		message(STATUS "Generating Houdini run file (${HFS_RUN_FILE_DST})")
 		install(FILES       ${HFS_RUN_FILE_OUT}
-				DESTINATION "$ENV{USERPROFILE}/Desktop")
+				DESTINATION ${HFS_RUN_FILE_DST})
 	else()
 		set(HFS_ENV_FILE_DST "$ENV{HOME}/bin/hfs.env")
 		set(HFS_RUN_FILE_DST "$ENV{HOME}/bin/hfs")
