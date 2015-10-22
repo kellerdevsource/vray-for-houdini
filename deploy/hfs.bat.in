@@ -38,7 +38,8 @@ set HOUDINI_USER_DIR=%HOME%\houdini%HOUDINI_VER_MAJOR%
 
 xcopy /s /y "%LAUNCHER_LOCATION%\dso\vray_for_houdini.dll" "%HOUDINI_USER_DIR%\dso\"
 xcopy /s /y "%LAUNCHER_LOCATION%\deploy\ROP_vray.svg" "%HOUDINI_USER_DIR%\config\Icons\"
-xcopy /s /y "%LAUNCHER_LOCATION%\deploy\vfh.shelf" "%HOUDINI_USER_DIR%\toolbar\"
+xcopy /s /y "%LAUNCHER_LOCATION%\deploy\vfh*.shelf" "%HOUDINI_USER_DIR%\toolbar\"
+xcopy /s /y "%LAUNCHER_LOCATION%\deploy\scripts\*" "%HOUDINI_USER_DIR%\scripts\"
 :: xcopy /s /y "%LAUNCHER_LOCATION%\deploy\plugins\*.dll" "%VRAY_FOR_HOUDINI_PLUGINS%\"
 
 :: Start Houdini

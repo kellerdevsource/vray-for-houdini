@@ -156,7 +156,10 @@ if(INSTALL_RELEASE)
 		install(DIRECTORY   ${CMAKE_SOURCE_DIR}/deploy/scripts/python/vfh
 				DESTINATION ${INSTALL_RELEASE_PATH}/deploy/scripts/python)
 
-		# Generate & copy startup file
+		install(DIRECTORY   ${CMAKE_SOURCE_DIR}/deploy/scripts/nodeinit/
+				DESTINATION ${HOUDINI_HOME_PATH}/scripts/)
+
+			# Generate & copy startup file
 		if(WIN32)
 			configure_file(${CMAKE_SOURCE_DIR}/deploy/hfs.bat.in
 						   ${CMAKE_BINARY_DIR}/deploy/hfs.bat
