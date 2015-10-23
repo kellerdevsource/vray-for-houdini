@@ -16,6 +16,11 @@ import sys
 import tempfile
 
 
+def call(args):
+    print("-- Calling: %s" % " ".join(args))
+    return subprocess.call(args, cwd=os.getcwd())
+
+
 def upload(filepath):
     try:
         from configparser import ConfigParser
@@ -51,8 +56,7 @@ def upload(filepath):
         cmd.append('/passive')
         cmd.append('/script="%s"' % ftpScriptFilepath)
 
-        if not self.mode_test:
-            os.system(' '.join(cmd))
+        os.system(' '.join(cmd))
 
     else:
         cmd = ['curl']
@@ -72,8 +76,7 @@ def upload(filepath):
             subdir,
         ))
 
-        if not self.mode_test:
-            subprocess.call(cmd)
+        subprocess.call(cmd)
 
 
 def setup_msvc_2012():
@@ -166,9 +169,13 @@ def main(args):
     cmake.append('-DINSTALL_RELEASE_ROOT=%s' % ReleaseDir)
     cmake.append(args.src_dir)
 
-    print("-- Calling: %s" % " ".join(cmake))
+    ninja = ["ninja"]
+    ninja.append("install")
 
-    err = subprocess.call(cmake, cwd=os.getcwd())
+    err = call(cmake)
+
+    if not err:
+        call(ninja)
 
     if not err:
         if args.upload:
