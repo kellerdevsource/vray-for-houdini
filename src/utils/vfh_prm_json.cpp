@@ -98,6 +98,7 @@ public:
 private:
 	JsonDescs  parsedData;
 
+	VfhDisableCopy(JsonPluginDescGenerator)
 } JsonPluginInfoParser;
 
 
