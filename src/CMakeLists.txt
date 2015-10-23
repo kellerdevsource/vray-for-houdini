@@ -61,8 +61,13 @@ link_with_vray_sdk(${PROJECT_NAME})
 link_with_vray_appsdk(${PROJECT_NAME})
 link_with_boost(${PROJECT_NAME})
 
-set(SRC_GIT_HASH "unknown")
-cgr_get_git_hash(${CMAKE_SOURCE_DIR} SRC_GIT_HASH)
+set(CGR_SRC_HASH "" CACHE STRING "Sources hash (for Teamcity)")
+
+set(SRC_GIT_HASH ${CGR_SRC_HASH})
+if("${CGR_SRC_HASH}" STREQUAL "")
+	cgr_get_git_hash(${CMAKE_SOURCE_DIR} SRC_GIT_HASH)
+endif()
+
 message(STATUS "Source revision: ${SRC_GIT_HASH}")
 set(INSTALL_RELEASE_SUBDIR "vfh-${SRC_GIT_HASH}")
 
