@@ -9,6 +9,7 @@
 #
 
 import argparse
+import datetime
 import os
 import subprocess
 import sys
@@ -168,12 +169,13 @@ def main(args):
 
     err = subprocess.call(cmake, cwd=os.getcwd())
 
-    if not err and args.upload:
-        upload(os.path.join(ReleaseDir, "vfh-{SRC_GIT_HASH}-hfs{HOUDINI_VERSION}.{HOUDINI_VERSION_BUILD}.zip".format(
-            SRC_GIT_HASH=args.src_hash,
-            HOUDINI_VERSION=os.environ['CGR_HOUDINI_VERSION'],
-            HOUDINI_VERSION_BUILD=os.environ['CGR_HOUDINI_VERSION_BUILD'],
-        )))
+    if not err:
+        if args.upload:
+            upload(os.path.join(ReleaseDir, "vfh-{SRC_GIT_HASH}-hfs{HOUDINI_VERSION}.{HOUDINI_VERSION_BUILD}.zip".format(
+                SRC_GIT_HASH=args.src_hash,
+                HOUDINI_VERSION=os.environ['CGR_HOUDINI_VERSION'],
+                HOUDINI_VERSION_BUILD=os.environ['CGR_HOUDINI_VERSION_BUILD'],
+            )))
 
     return err
 
