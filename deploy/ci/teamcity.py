@@ -13,6 +13,7 @@ import datetime
 import os
 import subprocess
 import sys
+import tempfile
 
 
 def upload(filepath):
