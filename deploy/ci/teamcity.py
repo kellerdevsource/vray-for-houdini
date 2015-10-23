@@ -164,6 +164,8 @@ def main(args):
     cmake.append('-DINSTALL_RELEASE_ROOT=%s' % ReleaseDir)
     cmake.append(args.src_dir)
 
+    print("-- Calling: %s" % " ".join(cmake))
+
     err = subprocess.call(cmake, cwd=os.getcwd())
 
     if not err and args.upload:
