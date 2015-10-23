@@ -36,7 +36,7 @@ bool VOP::NodeBase::updateParmsFlags()
 
 	bool changed = VOP_Node::updateParmsFlags();
 
-	UI::ActiveStateDeps::activateElements(pluginID, this, changed);
+	UI::ActiveStateDeps::activateElements(pluginID, *this, changed);
 
 	return changed;
 }

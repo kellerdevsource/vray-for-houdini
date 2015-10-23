@@ -308,7 +308,7 @@ static PRM_Template AttrDescAsPrmTemplate(const AttrDesc &attrDesc, const std::s
 }
 
 
-static UI::StateInfo ActiveStateGetStateInfo(const std::string &pluginID, const JsonItem &item, bool prefix=false)
+static UI::StateInfo ActiveStateGetStateInfo(const JsonItem &item)
 {
 	UI::StateInfo stateInfo;
 
@@ -334,13 +334,6 @@ static UI::StateInfo ActiveStateGetStateInfo(const std::string &pluginID, const 
 			stateInfo.condition      = UI::StateInfo::CondEqual;
 		}
 		else {
-			try {
-				// TODO: bool
-				stateInfo.conditionValue = conditionDesc.get<int>("value");
-			}
-			catch (...) {
-				stateInfo.conditionValue = 0;
-			}
 			if (cond_type == "equal") {
 				stateInfo.condition = UI::StateInfo::CondEqual;
 			}
@@ -359,10 +352,28 @@ static UI::StateInfo ActiveStateGetStateInfo(const std::string &pluginID, const 
 			else if (cond_type == "less_or_equal") {
 				stateInfo.condition = UI::StateInfo::CondLessOrEqual;
 			}
-		}
+			else if (cond_type == "in") {
+				stateInfo.condition = UI::StateInfo::CondIn;
+			}
+			else if (cond_type == "not_in") {
+				stateInfo.condition = UI::StateInfo::CondNotIn;
+			}
 
-		if (prefix) {
-			stateInfo.conditionAttr = pluginID + "." + stateInfo.conditionAttr;
+			try {
+				if (stateInfo.condition == UI::StateInfo::CondIn ||
+					stateInfo.condition == UI::StateInfo::CondNotIn) {
+
+					for (const auto &item : conditionDesc.get_child("value")) {
+						stateInfo.conditionValues.push_back(item.second.get_value<int>());
+					}
+				}
+				else {
+					stateInfo.conditionValue = conditionDesc.get<int>("value");
+				}
+			}
+			catch (...) {
+				stateInfo.conditionValue = 0;
+			}
 		}
 	}
 
@@ -370,40 +381,36 @@ static UI::StateInfo ActiveStateGetStateInfo(const std::string &pluginID, const 
 }
 
 
-static void ActiveStateProcessWidgetLayout(const std::string &pluginID, VRayPluginInfo *nodeType, const UI::StateInfo &parentState, const JsonItem &item, bool prefix=false)
+static void ActiveStateProcessWidgetLayout(const std::string &pluginID, VRayPluginInfo *nodeType, const UI::StateInfo &parentState, const JsonItem &item)
 {
-	bool debug = false; // pluginID == "SettingsImageSampler";
+	bool debug = false; // pluginID == "SettingsGI";
+
+	// Current layout could have different active property
+	const UI::StateInfo &currenLayoutStateInfo = ActiveStateGetStateInfo(item);
 
 	for (const auto &at : item.second.get_child("attrs")) {
 		if (at.second.count("name")) {
 			const std::string &attrName = at.second.get_child("name").data();
-			const std::string &generatedAttrName = prefix
-												   ? pluginID + "." + attrName
-												   : attrName;
-
-			if (NOT(attrName.empty()) && nodeType->attributes.count(attrName)) {
+			if (!attrName.empty() && nodeType->attributes.count(attrName)) {
 				const AttrDesc &attrDesc = nodeType->attributes[attrName];
 
-				if (NOT(AttrNeedWidget(attrDesc))) {
-					continue;
-				}
+				if (AttrNeedWidget(attrDesc)) {
+					// Parent layout state
+					if (parentState) {
+						UI::ActiveStateDeps::addStateInfo(pluginID, attrName, parentState);
 
-				if (parentState) {
-					UI::ActiveStateDeps::addStateInfo(pluginID, generatedAttrName, parentState);
-
-					if (debug) {
-						PRINT_INFO("Active layout property: \"%s\" => \"%s\"",
-								   parentState.conditionAttr.c_str(), generatedAttrName.c_str());
+						if (debug) {
+							PRINT_INFO("Parent active layout property: \"%s\" => \"%s\"",
+									   parentState.conditionAttr.c_str(), attrName.c_str());
+						}
 					}
-				}
-				else {
-					const UI::StateInfo &stateInfo = ActiveStateGetStateInfo(pluginID, at, prefix);
-					if (stateInfo) {
-						UI::ActiveStateDeps::addStateInfo(pluginID, generatedAttrName, stateInfo);
+
+					if (currenLayoutStateInfo) {
+						UI::ActiveStateDeps::addStateInfo(pluginID, attrName, currenLayoutStateInfo);
 
 						if (debug) {
 							PRINT_INFO("Active attr property: \"%s\" => \"%s\"",
-									   stateInfo.conditionAttr.c_str(), generatedAttrName.c_str());
+									   currenLayoutStateInfo.conditionAttr.c_str(), attrName.c_str());
 						}
 					}
 				}
@@ -750,18 +757,17 @@ VRayPluginInfo* Parm::generatePluginInfo(const std::string &pluginID)
 			for (const auto &w : jsonPluginDesc->get_child("Widget")) {
 				// For widget item
 				for (const auto &item : w.second.get_child("")) {
-					const UI::StateInfo &parentState = ActiveStateGetStateInfo(pluginID, item);
+					const UI::StateInfo &parentState = ActiveStateGetStateInfo(item);
 
 					// If layout
-					if (item.second.count("attrs") || item.second.count("splits")) {
-						// If sub-layout
-						if (item.second.count("splits")) {
-							for (const auto &sp : item.second.get_child("splits")) {
-								ActiveStateProcessWidgetLayout(pluginID, pluginInfo, parentState, sp);
-							}
-						}
-						else {
-							ActiveStateProcessWidgetLayout(pluginID, pluginInfo, parentState, item);
+					if (item.second.count("attrs")) {
+						ActiveStateProcessWidgetLayout(pluginID, pluginInfo, parentState, item);
+					}
+
+					// If sub-layout
+					if (item.second.count("splits")) {
+						for (const auto &sp : item.second.get_child("splits")) {
+							ActiveStateProcessWidgetLayout(pluginID, pluginInfo, parentState, sp);
 						}
 					}
 				}

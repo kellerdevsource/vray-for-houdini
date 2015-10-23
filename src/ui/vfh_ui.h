@@ -20,6 +20,8 @@ namespace VRayForHoudini {
 namespace UI {
 
 struct StateInfo {
+	typedef std::vector<int> CondValues;
+
 	enum StateCondition {
 		CondNone = 0,
 		CondEqual,
@@ -28,6 +30,8 @@ struct StateInfo {
 		CondGreaterOrEqual,
 		CondLess,
 		CondLessOrEqual,
+		CondIn,
+		CondNotIn
 	};
 
 	enum StateVisual {
@@ -35,9 +39,10 @@ struct StateInfo {
 		VisualHide
 	};
 
-	StateInfo():
-		condition(StateCondition::CondNone),
-		visual(StateVisual::VisualDisable)
+	StateInfo()
+		: condition(StateCondition::CondNone)
+		, visual(StateVisual::VisualDisable)
+		, conditionValue(0)
 	{}
 
 	operator bool() const {
@@ -46,13 +51,16 @@ struct StateInfo {
 
 	std::string     conditionAttr;
 	int             conditionValue;
+	CondValues      conditionValues;
 	StateCondition  condition;
 	StateVisual     visual;
 
 };
 
-// <AffectedProp, StateInfo>
-typedef std::map<std::string, StateInfo>         ActiveDependency;
+typedef std::vector<StateInfo>                   StateInfos;
+
+// <AffectedProp, StateInfos>
+typedef std::map<std::string, StateInfos>        ActiveDependency;
 
 // <PluginID, ActiveItems>
 typedef std::map<std::string, ActiveDependency>  ActiveItems;
@@ -65,7 +73,7 @@ struct ActiveStateDeps
 
 	static void         showDependencies(const std::string &pluginID="");
 
-	static void         activateElements(const std::string &pluginID, OP_Node *op_node, bool &changed, const std::string &prefix="");
+	static void         activateElements(const std::string &pluginID, OP_Node &opNode, bool &changed, const std::string &prefix="");
 
 	static ActiveItems  activeItems;
 

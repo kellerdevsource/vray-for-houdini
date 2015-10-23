@@ -243,7 +243,7 @@ bool VRayRendererNode::updateParmsFlags()
 	for (int t = 0; t < CountOf(RenderSettingsTabItemsDesc); ++t) {
 		const Parm::TabItemDesc &tabItemDesc = RenderSettingsTabItemsDesc[t];
 
-		UI::ActiveStateDeps::activateElements(tabItemDesc.pluginID, this, changed, boost::str(Parm::FmtPrefix % tabItemDesc.pluginID));
+		UI::ActiveStateDeps::activateElements(tabItemDesc.pluginID, *this, changed, boost::str(Parm::FmtPrefix % tabItemDesc.pluginID));
 	}
 
 	return changed;

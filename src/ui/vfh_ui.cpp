@@ -12,8 +12,6 @@
 #include "vfh_prm_def.h"
 #include "vfh_prm_templates.h"
 
-#include <boost/format.hpp>
-
 
 using namespace VRayForHoudini;
 using namespace VRayForHoudini::UI;
@@ -24,97 +22,131 @@ ActiveItems ActiveStateDeps::activeItems;
 
 void ActiveStateDeps::addStateInfo(const std::string &pluginID, const std::string &affectedProp, const StateInfo &stateInfo)
 {
-	activeItems[pluginID][affectedProp] = stateInfo;
+	activeItems[pluginID][affectedProp].push_back(stateInfo);
 }
 
 
 bool ActiveStateDeps::hasStateInfo(const std::string &pluginID, const std::string &affectedProp)
 {
-	if (NOT(activeItems.count(pluginID)))
-		return false;
-	if (NOT(activeItems[pluginID].count(affectedProp)))
-		return false;
-	return true;
+	return activeItems.count(pluginID) && activeItems[pluginID].count(affectedProp);
 }
 
 
 void ActiveStateDeps::showDependencies(const std::string &pluginID)
 {
-	for (const auto &pIt : activeItems) {
-		if (NOT(pluginID.empty())) {
-			if (pIt.first != pluginID) {
-				continue;
-			}
-		}
-
-		PRINT_INFO("Plugin \"%s\" UI:",
-				   pIt.first.c_str());
-
-		for (const auto &iIt : pIt.second) {
+	if (activeItems.count(pluginID)) {
+		for (const auto &iIt : activeItems[pluginID]) {
 			const std::string &affectedProp = iIt.first;
-			const StateInfo   &stateInfo    = iIt.second;
 
-			PRINT_INFO("  Property \"%s\" affected by \"%s\" (mode: %s)",
-					   affectedProp.c_str(),
-					   stateInfo.conditionAttr.c_str(),
-					   stateInfo.visual == StateInfo::VisualDisable ? "disable" : "hide");
+			for (const auto &stateInfo : iIt.second) {
+				PRINT_INFO("  Property \"%s\" affected by \"%s\" (mode: %s)",
+						   affectedProp.c_str(),
+						   stateInfo.conditionAttr.c_str(),
+						   stateInfo.visual == StateInfo::VisualDisable ? "disable" : "hide");
+			}
 		}
 	}
 }
 
 
-void ActiveStateDeps::activateElements(const std::string &pluginID, OP_Node *op_node, bool &changed, const std::string &prefix)
+void ActiveStateDeps::activateElements(const std::string &pluginID, OP_Node &opNode, bool &changed, const std::string &prefix)
 {
 	if (activeItems.count(pluginID)) {
 #if 0
-		ActiveDependencies::showDependencies(pluginID);
+		ActiveStateDeps::showDependencies(pluginID);
 #endif
 		for (const auto &iIt : activeItems[pluginID]) {
 			const std::string &affectedProp = iIt.first;
-			const StateInfo   &stateInfo    = iIt.second;
 
-			const std::string &prmName = prefix.empty()
-										 ? stateInfo.conditionAttr
-										 : boost::str(Parm::FmtPrefixManual % prefix % stateInfo.conditionAttr);
+			StateInfo::StateVisual propVisual = StateInfo::VisualDisable;
+			bool propState = true;
 
-			// TODO: Check if enum and get the actual enum value
-			//
-			int activeValue = op_node->evalInt(prmName.c_str(), 0, 0.0f);
+			for (const auto &stateInfo : iIt.second) {
+				const std::string &prmName = prefix.empty()
+											 ? stateInfo.conditionAttr
+											 : boost::str(Parm::FmtPrefixManual % prefix % stateInfo.conditionAttr);
 
-			bool state = true;
+				const std::string &affectedName = prefix.empty()
+												  ? affectedProp
+												  : boost::str(Parm::FmtPrefixManual % prefix % affectedProp);
 
-			if (stateInfo.condition == StateInfo::CondEqual) {
-				state = activeValue == stateInfo.conditionValue;
-			}
-			else if (stateInfo.condition == StateInfo::CondNonEqual) {
-				state = activeValue != stateInfo.conditionValue;
-			}
-			else if (stateInfo.condition == StateInfo::CondGreater) {
-				state = activeValue > stateInfo.conditionValue;
-			}
-			else if (stateInfo.condition == StateInfo::CondGreaterOrEqual) {
-				state = activeValue >= stateInfo.conditionValue;
-			}
-			else if (stateInfo.condition == StateInfo::CondLess) {
-				state = activeValue < stateInfo.conditionValue;
-			}
-			else if (stateInfo.condition == StateInfo::CondLessOrEqual) {
-				state = activeValue <= stateInfo.conditionValue;
-			}
+				const PRM_Parm *parm = Parm::getParm(opNode, prmName);
+				if (parm) {
+					int activeValue = 0;
+					if (parm->getType() == PRM_ORD) {
+						// Enum
+						Parm::VRayPluginInfo *pluginInfo = Parm::GetVRayPluginInfo(pluginID);
+						if (pluginInfo && pluginInfo->attributes.count(stateInfo.conditionAttr)) {
+							const Parm::AttrDesc &attrDesc = pluginInfo->attributes[stateInfo.conditionAttr];
+							activeValue = Parm::getParmEnumExt(opNode, attrDesc, prmName, 0.0);
+						}
+					}
+					else {
+						// Assume int, bool
+						activeValue = Parm::getParmInt(opNode, prmName, 0.0);
+					}
+
+					bool state = true;
+					switch (stateInfo.condition) {
+						case StateInfo::CondEqual: {
+							state = activeValue == stateInfo.conditionValue;
+							break;
+						}
+						case StateInfo::CondNonEqual: {
+							state = activeValue != stateInfo.conditionValue;
+							break;
+						}
+						case StateInfo::CondGreater: {
+							state = activeValue > stateInfo.conditionValue;
+							break;
+						}
+						case StateInfo::CondGreaterOrEqual: {
+							state = activeValue >= stateInfo.conditionValue;
+							break;
+						}
+						case StateInfo::CondLess: {
+							state = activeValue < stateInfo.conditionValue;
+							break;
+						}
+						case StateInfo::CondLessOrEqual: {
+							state = activeValue <= stateInfo.conditionValue;
+							break;
+						}
+						case StateInfo::CondIn:
+						case StateInfo::CondNotIn: {
+							int inValues = false;
+							for (const auto &val : stateInfo.conditionValues) {
+								if (activeValue == val) {
+									inValues = true;
+									break;
+								}
+							}
+							state = stateInfo.condition == StateInfo::CondIn
+									? inValues
+									: !inValues;
+							break;
+						}
+					}
+
+					propVisual  = stateInfo.visual;
+					propState  &= state;
 #if 0
-			PRINT_INFO("Property \"%s\" affected by \"%s\" (mode: %s)",
-					   affectedProp.c_str(),
-					   stateInfo.conditionAttr.c_str(),
-					   stateInfo.visual == StateInfo::VisualDisable ? "disable" : "hide");
+					PRINT_INFO("Property \"%s\" affected by \"%s\" (mode: %s)",
+							   affectedProp.c_str(),
+							   stateInfo.conditionAttr.c_str(),
+							   stateInfo.visual == StateInfo::VisualDisable ? "disable" : "hide");
 
-			PRINT_INFO("  State property value = %i; condition value = %i; state value = %i",
-					   activeValue, stateInfo.conditionValue, state);
+					PRINT_INFO("  State property value = %i; condition value = %i; state value = %i",
+							   activeValue, stateInfo.conditionValue, state);
 #endif
-			if (stateInfo.visual == StateInfo::VisualDisable) {
-				changed |= op_node->enableParm(affectedProp.c_str(), state);
-			}
-			else if (stateInfo.visual == StateInfo::VisualHide) {
-				changed |= op_node->setVisibleState(affectedProp.c_str(), state);
+				}
+
+				if (propVisual == StateInfo::VisualDisable) {
+					changed |= opNode.enableParm(affectedName.c_str(), propState);
+				}
+				else if (stateInfo.visual == StateInfo::VisualHide) {
+					changed |= opNode.setVisibleState(affectedName.c_str(), propState);
+				}
 			}
 		}
 	}
