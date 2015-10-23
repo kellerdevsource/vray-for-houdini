@@ -149,6 +149,7 @@ def setup_msvc_2012():
 
 def main(args):
     ReleaseDir = "H:/release/vray_for_houdini/%s" % sys.platform
+    srcHash = args.src_hash[:7]
 
     cmake = ["cmake"]
     cmake.append('-GNinja')
@@ -164,7 +165,9 @@ def main(args):
         cmake.append('-DAPPSDK_PATH=%s' % "H:/src/appsdk")
     else:
         pass
-    cmake.append('-DCGR_SRC_HASH=%s' % args.src_hash[:7])
+    cmake.append('-DCGR_SRC_HASH=%s' % srcHash)
+    cmake.append('-DUSE_LAUNCHER=OFF')
+    cmake.append('-DINSTALL_LOCAL=OFF')
     cmake.append('-DINSTALL_RELEASE=ON')
     cmake.append('-DINSTALL_RELEASE_ROOT=%s' % ReleaseDir)
     cmake.append(args.src_dir)
@@ -180,7 +183,7 @@ def main(args):
     if not err:
         if args.upload:
             upload(os.path.join(ReleaseDir, "vfh-{SRC_GIT_HASH}-hfs{HOUDINI_VERSION}.{HOUDINI_VERSION_BUILD}.zip".format(
-                SRC_GIT_HASH=args.src_hash,
+                SRC_GIT_HASH=srcHash,
                 HOUDINI_VERSION=os.environ['CGR_HOUDINI_VERSION'],
                 HOUDINI_VERSION_BUILD=os.environ['CGR_HOUDINI_VERSION_BUILD'],
             )))
