@@ -73,6 +73,8 @@ set(INSTALL_RELEASE_SUBDIR "vfh-${SRC_GIT_HASH}")
 
 option(INSTALL_LOCAL "Install files locally" ON)
 if(INSTALL_LOCAL)
+	install(TARGETS ${PROJECT_NAME} DESTINATION ${HOUDINI_PLUGIN_PATH})
+
 	# Install shelf and icon locally
 	#
 	file(GLOB VFH_SHELVES ${CMAKE_SOURCE_DIR}/deploy/vfh*.shelf)
