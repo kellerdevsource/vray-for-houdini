@@ -39,9 +39,15 @@ void ActiveStateDeps::showDependencies(const std::string &pluginID)
 			const std::string &affectedProp = iIt.first;
 
 			for (const auto &stateInfo : iIt.second) {
+				const std::string affectedBy = stateInfo.conditionPlugin.empty()
+											   ? stateInfo.conditionAttr.c_str()
+											   : boost::str(Parm::FmtPrefixAuto
+															% stateInfo.conditionPlugin
+															% stateInfo.conditionAttr);
+
 				PRINT_INFO("  Property \"%s\" affected by \"%s\" (mode: %s)",
 						   affectedProp.c_str(),
-						   stateInfo.conditionAttr.c_str(),
+						   affectedBy.c_str(),
 						   stateInfo.visual == StateInfo::VisualDisable ? "disable" : "hide");
 			}
 		}
@@ -57,18 +63,21 @@ void ActiveStateDeps::activateElements(const std::string &pluginID, OP_Node &opN
 #endif
 		for (const auto &iIt : activeItems[pluginID]) {
 			const std::string &affectedProp = iIt.first;
+			const std::string &affectedName = prefix.empty()
+											  ? affectedProp
+											  : boost::str(Parm::FmtPrefixManual % prefix % affectedProp);
 
 			StateInfo::StateVisual propVisual = StateInfo::VisualDisable;
 			bool propState = true;
 
 			for (const auto &stateInfo : iIt.second) {
-				const std::string &prmName = prefix.empty()
-											 ? stateInfo.conditionAttr
-											 : boost::str(Parm::FmtPrefixManual % prefix % stateInfo.conditionAttr);
+				const std::string &attrPrefix = stateInfo.conditionPlugin.empty()
+												? prefix
+												: boost::str(Parm::FmtPrefix % stateInfo.conditionPlugin);
 
-				const std::string &affectedName = prefix.empty()
-												  ? affectedProp
-												  : boost::str(Parm::FmtPrefixManual % prefix % affectedProp);
+				const std::string &prmName = attrPrefix.empty()
+											 ? stateInfo.conditionAttr
+											 : boost::str(Parm::FmtPrefixManual % attrPrefix % stateInfo.conditionAttr);
 
 				const PRM_Parm *parm = Parm::getParm(opNode, prmName);
 				if (parm) {
@@ -140,12 +149,16 @@ void ActiveStateDeps::activateElements(const std::string &pluginID, OP_Node &opN
 							   activeValue, stateInfo.conditionValue, state);
 #endif
 				}
+			}
 
-				if (propVisual == StateInfo::VisualDisable) {
+			switch (propVisual) {
+				case StateInfo::VisualDisable: {
 					changed |= opNode.enableParm(affectedName.c_str(), propState);
+					break;
 				}
-				else if (stateInfo.visual == StateInfo::VisualHide) {
+				case StateInfo::VisualHide: {
 					changed |= opNode.setVisibleState(affectedName.c_str(), propState);
+					break;
 				}
 			}
 		}

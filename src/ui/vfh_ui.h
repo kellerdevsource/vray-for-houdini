@@ -50,6 +50,7 @@ struct StateInfo {
 	}
 
 	std::string     conditionAttr;
+	std::string     conditionPlugin;
 	int             conditionValue;
 	CondValues      conditionValues;
 	StateCondition  condition;

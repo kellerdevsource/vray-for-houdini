@@ -323,6 +323,10 @@ static UI::StateInfo ActiveStateGetStateInfo(const JsonItem &item)
 
 		stateInfo.conditionAttr = conditionDesc.get_child("prop").data();
 
+		if (conditionDesc.count("at")) {
+			stateInfo.conditionPlugin = conditionDesc.get_child("at").data();
+		}
+
 		std::string cond_type("equal");
 		if (conditionDesc.count("condition")) {
 			cond_type = conditionDesc.get_child("condition").data();
