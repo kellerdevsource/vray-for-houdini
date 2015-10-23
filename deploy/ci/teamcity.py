@@ -17,7 +17,8 @@ import tempfile
 
 
 def call(args):
-    print("-- Calling: %s" % " ".join(args))
+    sys.stdout.write("-- Calling: %s" % " ".join(args))
+    sys.stdout.flush()
     return subprocess.call(args, cwd=os.getcwd())
 
 
