@@ -71,25 +71,28 @@ endif()
 message(STATUS "Source revision: ${SRC_GIT_HASH}")
 set(INSTALL_RELEASE_SUBDIR "vfh-${SRC_GIT_HASH}")
 
-# Install shelf and icon locally
-#
-file(GLOB VFH_SHELVES ${CMAKE_SOURCE_DIR}/deploy/vfh*.shelf)
+option(INSTALL_LOCAL "Install files locally" ON)
+if(INSTALL_LOCAL)
+	# Install shelf and icon locally
+	#
+	file(GLOB VFH_SHELVES ${CMAKE_SOURCE_DIR}/deploy/vfh*.shelf)
 
-install(FILES       ${VFH_SHELVES}
-		DESTINATION ${HOUDINI_HOME_PATH}/toolbar)
+	install(FILES       ${VFH_SHELVES}
+			DESTINATION ${HOUDINI_HOME_PATH}/toolbar)
 
-install(FILES       ${CMAKE_SOURCE_DIR}/deploy/ROP_vray.svg
-		DESTINATION ${HOUDINI_HOME_PATH}/config/Icons)
+	install(FILES       ${CMAKE_SOURCE_DIR}/deploy/ROP_vray.svg
+			DESTINATION ${HOUDINI_HOME_PATH}/config/Icons)
 
-# Install py modules locally
-#
-install(DIRECTORY   ${CMAKE_SOURCE_DIR}/deploy/scripts/python/vfh
-		DESTINATION ${HOUDINI_HOME_PATH}/scripts/python)
+	# Install py modules locally
+	#
+	install(DIRECTORY   ${CMAKE_SOURCE_DIR}/deploy/scripts/python/vfh
+			DESTINATION ${HOUDINI_HOME_PATH}/scripts/python)
 
-# Install custom node initialization scripts
-#
-install(DIRECTORY   ${CMAKE_SOURCE_DIR}/deploy/scripts/nodeinit/
-		DESTINATION ${HOUDINI_HOME_PATH}/scripts/)
+	# Install custom node initialization scripts
+	#
+	install(DIRECTORY   ${CMAKE_SOURCE_DIR}/deploy/scripts/nodeinit/
+			DESTINATION ${HOUDINI_HOME_PATH}/scripts/)
+endif()
 
 # Create program launcher with all needed environment variables
 #
