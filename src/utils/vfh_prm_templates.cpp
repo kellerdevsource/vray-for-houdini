@@ -93,3 +93,18 @@ float VRayForHoudini::Parm::getParmFloat(const OP_Node &node, const std::string 
 
 	return value;
 }
+
+
+int VRayForHoudini::Parm::getParmEnumExt(const OP_Node &node, const VRayForHoudini::Parm::AttrDesc &attrDesc, const std::string &attrName, fpreal t)
+{
+	int value = node.evalInt(attrName.c_str(), 0, t);
+
+	if (value < attrDesc.value.defEnumItems.size()) {
+		const Parm::EnumItem &enumItem = attrDesc.value.defEnumItems[value];
+		if (enumItem.valueType == Parm::EnumItem::EnumValueInt) {
+			value = enumItem.value;
+		}
+	}
+
+	return value;
+}
