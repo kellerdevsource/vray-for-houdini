@@ -146,7 +146,7 @@ def main(args):
     ReleaseDir = "H:/release/vray_for_houdini/%s" % sys.platform
 
     cmake = ["cmake"]
-    cmake.append('-G \"Ninja\"')
+    cmake.append('-GNinja')
     cmake.append('-DCMAKE_BUILD_TYPE=%s' % os.environ['CGR_BUILD_TYPE'])
     cmake.append('-DHOUDINI_VERSION=%s'       % os.environ['CGR_HOUDINI_VERSION'])
     cmake.append('-DHOUDINI_VERSION_BUILD=%s' % os.environ['CGR_HOUDINI_VERSION_BUILD'])
