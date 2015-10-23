@@ -19,6 +19,9 @@ export VRAY_PATH="${VRAY_SDK}/bin"
 # V-Ray JSON plugin descriptions
 export VRAY_PLUGIN_DESC_PATH="${LAUNCHER_LOCATION}/plugins_desc"
 
+# Set VFB on top
+export VRAY_VFB_ALWAYS_ON_TOP=1
+
 # Houdini
 export HOUDINI_DSO_ERROR=1
 export HFS="@HOUDINI_FRAMEWORK_ROOT@/Resources"

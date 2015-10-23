@@ -19,6 +19,9 @@ set HFS=C:\Program Files\Side Effects Software\Houdini %HOUDINI_VER_FULL%
 set VRAY_SDK=%LAUNCHER_LOCATION%\appsdk
 set VRAY_PATH=%VRAY_SDK%\bin
 
+:: Set VFB on top
+set VRAY_VFB_ALWAYS_ON_TOP=1
+
 :: V-Ray JSON plugin descriptions
 set VRAY_PLUGIN_DESC_PATH=%LAUNCHER_LOCATION%\plugins_desc
 
