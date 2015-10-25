@@ -10,7 +10,9 @@ export HOUDINI_VER_FULL=${HOUDINI_VER_MAJOR}.@HOUDINI_VERSION_BUILD@
 
 # DO NOT EDIT STUFF BELOW
 #
-export LAUNCHER_LOCATION=`dirname $0`
+LAUNCHER_FILEPATH=`readlink -f $0`
+export LAUNCHER_LOCATION=`dirname ${LAUNCHER_FILEPATH}`
+
 export HFS="/opt/hfs${HOUDINI_VER_FULL}"
 
 # V-Ray Application SDK variables
