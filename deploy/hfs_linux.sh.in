@@ -39,10 +39,13 @@ mkdir -p "${HOUDINI_USER_DIR}/config/Icons"
 mkdir -p "${HOUDINI_USER_DIR}/scripts"
 
 cp -R "${LAUNCHER_LOCATION}/dso/vray_for_houdini.so" "${HOUDINI_USER_DIR}/dso/"
-cp -R "${LAUNCHER_LOCATION}/deploy/*.shelf"          "${HOUDINI_USER_DIR}/toolbar/"
 cp -R "${LAUNCHER_LOCATION}/deploy/ROP_vray.svg"     "${HOUDINI_USER_DIR}/config/Icons/"
 cp -R "${LAUNCHER_LOCATION}/deploy/scripts/python"   "${HOUDINI_USER_DIR}/scripts"
 cp -R "${LAUNCHER_LOCATION}/deploy/scripts/shop"     "${HOUDINI_USER_DIR}/scripts"
+
+for SHELF_FILE in `find "${LAUNCHER_LOCATION}/deploy" -name "*.shelf"`; do
+	cp -R "${SHELF_FILE}" "${HOUDINI_USER_DIR}/toolbar/"
+done
 
 # TODO: export plugins for Phoenix
 # export VRAY_FOR_HOUDINI_PLUGINS=${HOUDINI_USER_DIR}/vray_for_houdini
