@@ -63,7 +63,10 @@ def upload(filepath):
         cmd = ['curl']
         cmd.append('--no-epsv')
         cmd.append('--proxy')
-        cmd.append(self.use_proxy)
+        cmd.append('%s:%s' % (
+            config.get('vfh.nightlies.ftp', 'proxy_host'),
+            config.get('vfh.nightlies.ftp', 'proxy_port'),
+        ))
         cmd.append('--user')
         cmd.append('%s:%s' % (
             config.get('vfh.nightlies.ftp', 'user'),
