@@ -10,9 +10,18 @@
 # Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 #
 
-execute_process(
-	COMMAND
-		7z a -tzip -r ${INSTALL_RELEASE_SUBDIR}-hfs${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD}.zip ${INSTALL_RELEASE_SUBDIR}
-	WORKING_DIRECTORY
-		${INSTALL_RELEASE_ROOT}
-)
+if(WIN32)
+	execute_process(
+		COMMAND
+			7z a -tzip -r ${INSTALL_RELEASE_ARCHIVE_FILEPATH} ${INSTALL_RELEASE_SUBDIR}
+		WORKING_DIRECTORY
+			${INSTALL_RELEASE_ROOT}
+	)
+else()
+	execute_process(
+		COMMAND
+			tar jcf ${INSTALL_RELEASE_ARCHIVE_FILEPATH} ${INSTALL_RELEASE_SUBDIR}
+		WORKING_DIRECTORY
+			${INSTALL_RELEASE_ROOT}
+	)
+endif()
