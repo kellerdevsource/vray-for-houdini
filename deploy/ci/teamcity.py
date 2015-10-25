@@ -66,7 +66,7 @@ def upload(filepath):
         cmd.append('--proxy')
         cmd.append('%s:%s' % (
             config.get('vfh.nightlies.ftp', 'proxy_host'),
-            config.get('vfh.nightlies.ftp', 'proxy_port'),
+            config.get('vfh.nightlies.ftp', 'proxy_port_http'),
         ))
         cmd.append('--user')
         cmd.append('%s:%s' % (
