@@ -8,6 +8,7 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
+#include "vfh_defines.h"
 #include "vfh_class_utils.h"
 
 #include "vfh_rop.h"
@@ -53,6 +54,9 @@ void unregister(void *)
 
 void newDriverOperator(OP_OperatorTable *table)
 {
+	PRINT_INFO("Build %s from " __DATE__ ", " __TIME__,
+			   STRINGIZE(CGR_GIT_HASH));
+
 	VRayRendererNode::register_operator(table);
 
 	VOP::RenderChannelsContext::register_operator(table);

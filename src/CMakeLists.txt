@@ -69,6 +69,7 @@ if("${CGR_SRC_HASH}" STREQUAL "")
 endif()
 
 message(STATUS "Source revision: ${SRC_GIT_HASH}")
+add_definitions(-DCGR_GIT_HASH=${SRC_GIT_HASH})
 set(INSTALL_RELEASE_SUBDIR "vfh-${SRC_GIT_HASH}")
 
 file(GLOB VFH_SHELVES ${CMAKE_SOURCE_DIR}/deploy/vfh*.shelf)
