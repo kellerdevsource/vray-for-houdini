@@ -57,6 +57,7 @@ def upload(filepath):
         cmd.append('/passive')
         cmd.append('/script="%s"' % ftpScriptFilepath)
 
+        sys.stdout.write("-- Calling: %s" % " ".join(cmd))
         os.system(' '.join(cmd))
 
     else:
@@ -79,6 +80,8 @@ def upload(filepath):
             subdir,
         ))
 
+        sys.stdout.write("-- Calling: %s" % " ".join(cmd))
+        sys.stdout.flush()
         subprocess.call(cmd)
 
 
