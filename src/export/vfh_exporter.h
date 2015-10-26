@@ -190,7 +190,7 @@ public:
 	static OP_Node                *FindChildNodeByType(OP_Node *op_node, const std::string &op_type);
 
 	void                           setAttrValueFromOpNode(Attrs::PluginDesc &plugin, const Parm::AttrDesc &parmDesc, OP_Node *opNode, const std::string &prefix="");
-	int                            setAttrsFromOpNode(Attrs::PluginDesc &plugin, OP_Node *opNode, const std::string &prefix="");
+	void                           setAttrsFromOpNode(Attrs::PluginDesc &plugin, OP_Node *opNode, const std::string &prefix="");
 
 	VRay::Plugin                   exportConnectedVop(OP_Node *op_node, const UT_String &inputName);
 	void                           phxAddSimumation(VRay::Plugin sim);

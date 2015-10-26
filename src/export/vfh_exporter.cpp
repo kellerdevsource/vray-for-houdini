@@ -242,100 +242,95 @@ void VRayExporter::setAttrValueFromOpNode(Attrs::PluginDesc &pluginDesc, const P
 }
 
 
-int VRayExporter::setAttrsFromOpNode(Attrs::PluginDesc &pluginDesc, OP_Node *opNode, const std::string &prefix)
+void VRayExporter::setAttrsFromOpNode(Attrs::PluginDesc &pluginDesc, OP_Node *opNode, const std::string &prefix)
 {
 	const Parm::VRayPluginInfo *pluginInfo = Parm::GetVRayPluginInfo(pluginDesc.pluginID);
 	if (NOT(pluginInfo)) {
 		PRINT_ERROR("Node \"%s\": Plugin \"%s\" description is not found!",
 					opNode->getName().buffer(), pluginDesc.pluginID.c_str());
-		return 1;
 	}
+	else {
+		for (const auto &aIt : pluginInfo->attributes) {
+			const std::string    &attrName = aIt.first;
+			const Parm::AttrDesc &attrDesc = aIt.second;
 
-	for (const auto &aIt : pluginInfo->attributes) {
-		const std::string    &attrName = aIt.first;
-		const Parm::AttrDesc &attrDesc = aIt.second;
+			if (!(pluginDesc.contains(attrName) || attrDesc.custom_handling)) {
+				// Check if attribute value has a socket and is linked
+				bool hasSocket = false;
+				VRay::Plugin plugin_value = VRay::Plugin();
+				for (const auto &inSockInfo : pluginInfo->inputs) {
+					if (attrName == inSockInfo.name.getToken()) {
+						plugin_value = exportConnectedVop(opNode, attrName.c_str());
+						hasSocket = true;
+						break;
+					}
+				}
 
-		if (pluginDesc.contains(attrName)) {
-			continue;
-		}
+				if (!(hasSocket && attrDesc.linked_only && !plugin_value)) {
+					if (NOT(plugin_value)) {
+						// Provide some default mapping for textures
+						if (pluginInfo->pluginType == Parm::PluginTypeTexture && attrName == "uvwgen") {
+							Attrs::PluginDesc uvwGen(VRayExporter::getPluginName(opNode, "Uvw"), "UVWGenObject");
+							plugin_value = exportPlugin(uvwGen);
+						}
+					}
 
-		if (attrDesc.custom_handling) {
-			continue;
-		}
+					if (NOT(plugin_value)) {
+						if (attrDesc.value.type == Parm::eRamp) {
+							Texture::exportRampAttribute(*this, pluginDesc, opNode,
+														 /* Houdini ramp attr */ attrDesc.attr,
+														 /* V-Ray attr: colors */ attrDesc.value.defRamp.colors,
+														 /* V-Ray attr: pos    */ attrDesc.value.defRamp.positions,
+														 /* V-Ray attr: interp */ attrDesc.value.defRamp.interpolations,
+														 /* As color list not plugin */ false);
+						}
+						else if (attrDesc.value.type == Parm::eCurve) {
+							VRay::IntList    interpolations;
+							VRay::FloatList  positions;
+							VRay::FloatList  values;
+							VRay::FloatList *valuesPtr = attrDesc.value.defCurve.values.empty()
+														 ? nullptr
+														 : &values;
 
-		// Check if attribute value has a socket and is linked
-		//
-		VRay::Plugin plugin_value = VRay::Plugin();
-		for (const auto &inSockInfo : pluginInfo->inputs) {
-			if (attrName == inSockInfo.name.getToken()) {
-				plugin_value = exportConnectedVop(opNode, attrName.c_str());
-				break;
-			}
-		}
+							Texture::getCurveData(*this, opNode,
+												  /* Houdini curve attr */ attrDesc.attr,
+												  /* V-Ray attr: interp */ interpolations,
+												  /* V-Ray attr: x      */ positions,
+												  /* V-Ray attr: y      */ valuesPtr,
+												  /* Don't need handles */ false);
 
-		if (NOT(plugin_value)) {
-			// Provide some default mapping for textures
-			if (pluginInfo->pluginType == Parm::PluginTypeTexture && attrName == "uvwgen") {
-				Attrs::PluginDesc uvwGen(VRayExporter::getPluginName(opNode, "Uvw"), "UVWGenObject");
-				plugin_value = exportPlugin(uvwGen);
-			}
-		}
+							pluginDesc.addAttribute(Attrs::PluginAttr(attrDesc.value.defCurve.interpolations, interpolations));
+							pluginDesc.addAttribute(Attrs::PluginAttr(attrDesc.value.defCurve.positions,      positions));
+							if (valuesPtr) {
+								pluginDesc.addAttribute(Attrs::PluginAttr(attrDesc.value.defCurve.values,     values));
+							}
+						}
+						else {
+							setAttrValueFromOpNode(pluginDesc, attrDesc, opNode, prefix);
+						}
+					}
+					else {
+						PRINT_INFO("  Setting plugin value: %s = %s",
+								   attrName.c_str(), plugin_value.getName().c_str());
 
-		if (NOT(plugin_value)) {
-			if (attrDesc.value.type == Parm::eRamp) {
-				Texture::exportRampAttribute(*this, pluginDesc, opNode,
-											 /* Houdini ramp attr */ attrDesc.attr,
-											 /* V-Ray attr: colors */ attrDesc.value.defRamp.colors,
-											 /* V-Ray attr: pos    */ attrDesc.value.defRamp.positions,
-											 /* V-Ray attr: interp */ attrDesc.value.defRamp.interpolations,
-											 /* As color list not plugin */ true);
-			}
-			else if (attrDesc.value.type == Parm::eCurve) {
-				VRay::IntList    interpolations;
-				VRay::FloatList  positions;
-				VRay::FloatList  values;
-				VRay::FloatList *valuesPtr = attrDesc.value.defCurve.values.empty()
-											 ? nullptr
-											 : &values;
+						const Parm::SocketDesc *fromSocketInfo = getConnectedOutputType(opNode, attrName.c_str());
 
-				Texture::getCurveData(*this, opNode,
-									  /* Houdini curve attr */ attrDesc.attr,
-									  /* V-Ray attr: interp */ interpolations,
-									  /* V-Ray attr: x      */ positions,
-									  /* V-Ray attr: y      */ valuesPtr,
-									  /* Don't need handles */ false);
-
-				pluginDesc.addAttribute(Attrs::PluginAttr(attrDesc.value.defCurve.interpolations, interpolations));
-				pluginDesc.addAttribute(Attrs::PluginAttr(attrDesc.value.defCurve.positions,      positions));
-				if (valuesPtr) {
-					pluginDesc.addAttribute(Attrs::PluginAttr(attrDesc.value.defCurve.values,     values));
+						if (fromSocketInfo &&
+							fromSocketInfo->type >= Parm::ParmType::eOutputColor &&
+							fromSocketInfo->type  < Parm::ParmType::eUnknown)
+						{
+							PRINT_INFO("    Using output: %s (\"%s\")",
+									   fromSocketInfo->name.getToken(), fromSocketInfo->name.getLabel());
+							pluginDesc.addAttribute(Attrs::PluginAttr(attrName, plugin_value, fromSocketInfo->name.getToken()));
+						}
+						else {
+							pluginDesc.addAttribute(Attrs::PluginAttr(attrName, plugin_value));
+						}
+					}
 				}
 			}
-			else {
-				setAttrValueFromOpNode(pluginDesc, attrDesc, opNode, prefix);
-			}
-		}
-		else {
-			PRINT_INFO("  Setting plugin value: %s = %s",
-					   attrName.c_str(), plugin_value.getName().c_str());
-
-			const Parm::SocketDesc *fromSocketInfo = getConnectedOutputType(opNode, attrName.c_str());
-
-			if (fromSocketInfo &&
-				fromSocketInfo->type >= Parm::ParmType::eOutputColor &&
-				fromSocketInfo->type  < Parm::ParmType::eUnknown)
-			{
-				PRINT_INFO("    Using output: %s (\"%s\")",
-						   fromSocketInfo->name.getToken(), fromSocketInfo->name.getLabel());
-				pluginDesc.addAttribute(Attrs::PluginAttr(attrName, plugin_value, fromSocketInfo->name.getToken()));
-			}
-			else {
-				pluginDesc.addAttribute(Attrs::PluginAttr(attrName, plugin_value));
-			}
 		}
 	}
-
-	return 0;
 }
 
 

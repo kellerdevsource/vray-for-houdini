@@ -539,6 +539,15 @@ VRayPluginInfo* Parm::generatePluginInfo(const std::string &pluginID)
 				makeSpaceSeparatedTitleCase(attrDesc.label);
 			}
 
+			if (v.second.count("options")) {
+				for (const auto &item : v.second.get_child("options")) {
+					const std::string &option = item.second.get_value<std::string>("");
+					if (option == "LINKED_ONLY") {
+						attrDesc.linked_only = true;
+					}
+				}
+			}
+
 			attrDesc.attr = attrName;
 			attrDesc.desc = v.second.get_child("desc").data();
 
@@ -742,17 +751,12 @@ VRayPluginInfo* Parm::generatePluginInfo(const std::string &pluginID)
 
 		// Add specific attributes
 		//
+		// TODO: Add WIDGET_CURVE to JSON desc
 		if (pluginID == "TexFalloff") {
 			AttrDesc &curveAttrDesc = pluginInfo->attributes["curve"];
 			curveAttrDesc.attr  = "curve";
 			curveAttrDesc.label = "Falloff Curve";
 			curveAttrDesc.value.type = ParmType::eCurve;
-		}
-		else if (pluginID == "TexGradRamp" || pluginID == "TexRemap") {
-			AttrDesc &rampAttrDesc = pluginInfo->attributes["ramp"];
-			rampAttrDesc.attr  = "ramp";
-			rampAttrDesc.label = "Color Ramp";
-			rampAttrDesc.value.type = ParmType::eRamp;
 		}
 
 		// Parse widget and extract parameter active state

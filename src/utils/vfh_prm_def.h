@@ -219,8 +219,9 @@ struct ParmDefValue {
 
 
 struct AttrDesc {
-	AttrDesc():
-		custom_handling(0)
+	AttrDesc()
+		: custom_handling(false)
+		, linked_only(false)
 	{}
 
 	std::string  attr;
@@ -229,6 +230,7 @@ struct AttrDesc {
 
 	ParmDefValue value;
 	int          custom_handling;
+	int          linked_only;
 
 	// Custom template
 	PRMTmplList  custom_template;
