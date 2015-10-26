@@ -19,6 +19,12 @@
 #define CGR_MAX_NUM_POINTS 64
 
 
+static boost::format FmtPos("%s#pos");
+static boost::format FmtColor("%s#c");
+static boost::format FmtValue("%s#value");
+static boost::format FmtInterp("%s#interp");
+
+
 struct MyPoint {
 	float x;
 	float y;
@@ -29,6 +35,7 @@ void VRayForHoudini::Texture::exportRampAttribute(VRayExporter &exporter, Attrs:
 												  const std::string &rampAttrName,
 												  const std::string &colAttrName, const std::string &posAttrName, const std::string &typesAttrName, const bool asColor)
 {
+
 	const fpreal &t = exporter.getContext().getTime();
 
 	const std::string &pluginName = VRayExporter::getPluginName(op_node);
@@ -42,9 +49,9 @@ void VRayForHoudini::Texture::exportRampAttribute(VRayExporter &exporter, Attrs:
 
 	const bool needTypes = NOT(typesAttrName.empty());
 
-	const std::string &prmPosName    = boost::str(boost::format("%s#pos")    % rampAttrName);
-	const std::string &prmColName    = boost::str(boost::format("%s#c")      % rampAttrName);
-	const std::string &prmInterpName = boost::str(boost::format("%s#interp") % rampAttrName);
+	const std::string &prmPosName    = boost::str(FmtPos    % rampAttrName);
+	const std::string &prmColName    = boost::str(FmtColor  % rampAttrName);
+	const std::string &prmInterpName = boost::str(FmtInterp % rampAttrName);
 
 	VRay::ValueList colorPlugins;
 	VRay::ColorList colorList;
@@ -124,9 +131,9 @@ void VRayForHoudini::Texture::getCurveData(VRayExporter &exporter, OP_Node *op_n
 
 	MyPoint point[CGR_MAX_NUM_POINTS];
 
-	const std::string &prmPosName    = boost::str(boost::format("%s#pos")    % curveAttrName);
-	const std::string &prmValName    = boost::str(boost::format("%s#value")  % curveAttrName);
-	const std::string &prmInterpName = boost::str(boost::format("%s#interp") % curveAttrName);
+	const std::string &prmPosName    = boost::str(FmtPos    % curveAttrName);
+	const std::string &prmValName    = boost::str(FmtValue  % curveAttrName);
+	const std::string &prmInterpName = boost::str(FmtInterp % curveAttrName);
 
 	int p = 0;
 	for(int i = 1; i <= numPoints; ++i, ++p) {
