@@ -7,8 +7,16 @@ License
     https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 
 
-Compilation
------------
+Binary Builds
+-------------
+
+Binary builds are available at "V-Ray For Houdini" section at http://nightlies.chaosgroup.com/.
+
+You'll have to request access at support@chaosgroup.com for this section.
+
+
+Building From Source
+--------------------
 
 ### Requirements
 
@@ -72,8 +80,3 @@ Compilation
   Houdini launch wrapper script with all needed environment variables will be generated at `${HOME}/bin/hfs`.
 
   Use it to launch Houdini (or copy variable definitions to your environment).
-
-Known Issues
-------------
-
-* Native V-Ray Frame Buffer is not working on OS X; simplified Qt based VFB is used for now.
