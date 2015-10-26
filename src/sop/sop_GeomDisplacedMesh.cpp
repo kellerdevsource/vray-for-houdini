@@ -47,7 +47,7 @@ OP_ERROR SOP::GeomDisplacedMesh::cookMySop(OP_Context &context)
 }
 
 
-OP::VRayNode::PluginResult SOP::GeomDisplacedMesh::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter *exporter, OP_Node *parent)
+OP::VRayNode::PluginResult SOP::GeomDisplacedMesh::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, OP_Node *parent)
 {
 	PRINT_WARN("OP::GeomDisplacedMesh::asPluginDesc()");
 
@@ -64,7 +64,7 @@ OP::VRayNode::PluginResult SOP::GeomDisplacedMesh::asPluginDesc(Attrs::PluginDes
 			PRINT_ERROR("Texture node not found!");
 		}
 		else {
-			VRay::Plugin texture = exporter->exportVop(tex_node);
+			VRay::Plugin texture = exporter.exportVop(tex_node);
 			if (NOT(texture)) {
 				PRINT_ERROR("Texture node export failed!");
 			}
@@ -88,7 +88,7 @@ OP::VRayNode::PluginResult SOP::GeomDisplacedMesh::asPluginDesc(Attrs::PluginDes
 					Attrs::PluginDesc texOutputDesc(VRayExporter::getPluginName(tex_node, "Out@"), "TexOutput");
 					texOutputDesc.add(Attrs::PluginAttr("texmap", texture));
 
-					texture = exporter->exportPlugin(texOutputDesc);
+					texture = exporter.exportPlugin(texOutputDesc);
 				}
 
 				pluginDesc.add(Attrs::PluginAttr("displacement_tex_float", texture, "out_intensity"));

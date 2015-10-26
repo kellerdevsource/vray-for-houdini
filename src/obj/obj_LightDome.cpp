@@ -38,13 +38,13 @@ void OBJ::LightDome::setPluginType()
 }
 
 
-OP::VRayNode::PluginResult OBJ::LightDome::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter *exporter, OP_Node *parent)
+OP::VRayNode::PluginResult OBJ::LightDome::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, OP_Node *parent)
 {
 	pluginDesc.pluginID   = pluginID.c_str();
 	pluginDesc.pluginName = VRayExporter::getPluginName(this);
 
 	// Need to flip tm
-	VRay::Transform tm = VRayExporter::getObjTransform(parent->castToOBJNode(), exporter->getContext(), true);
+	VRay::Transform tm = VRayExporter::getObjTransform(parent->castToOBJNode(), exporter.getContext(), true);
 	pluginDesc.addAttribute(Attrs::PluginAttr("transform", tm));
 
 	// Dome texture
@@ -57,7 +57,7 @@ OP::VRayNode::PluginResult OBJ::LightDome::asPluginDesc(Attrs::PluginDesc &plugi
 			PRINT_ERROR("Texture node not found!");
 		}
 		else {
-			VRay::Plugin texture = exporter->exportVop(tex_node);
+			VRay::Plugin texture = exporter.exportVop(tex_node);
 			if (NOT(texture)) {
 				PRINT_ERROR("Texture node export failed!");
 			}

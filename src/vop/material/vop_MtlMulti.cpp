@@ -152,7 +152,7 @@ void VOP::MtlMulti::getCode(UT_String &codestr, const VOP_CodeGenContext &)
 }
 
 
-OP::VRayNode::PluginResult VOP::MtlMulti::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter *exporter, OP_Node *parent)
+OP::VRayNode::PluginResult VOP::MtlMulti::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, OP_Node *parent)
 {
 	const int mtls_count = evalInt(rpm_name_mtl_count.getToken(), 0, 0.0);
 
@@ -168,7 +168,7 @@ OP::VRayNode::PluginResult VOP::MtlMulti::asPluginDesc(Attrs::PluginDesc &plugin
 					   getName().buffer(), mtlSockName.c_str());
 		}
 		else {
-			VRay::Plugin mtl_plugin = exporter->exportVop(mtl_node);
+			VRay::Plugin mtl_plugin = exporter.exportVop(mtl_node);
 			if (NOT(mtl_plugin)) {
 				PRINT_ERROR("Node \"%s\": Failed to export material node connected to \"%s\", ignoring...",
 							getName().buffer(), mtlSockName.c_str());

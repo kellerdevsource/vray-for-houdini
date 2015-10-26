@@ -25,11 +25,11 @@ struct MyPoint {
 };
 
 
-void VRayForHoudini::Texture::exportRampAttribute(VRayExporter *exporter, Attrs::PluginDesc &pluginDesc, OP_Node *op_node,
+void VRayForHoudini::Texture::exportRampAttribute(VRayExporter &exporter, Attrs::PluginDesc &pluginDesc, OP_Node *op_node,
 												  const std::string &rampAttrName,
 												  const std::string &colAttrName, const std::string &posAttrName, const std::string &typesAttrName, const bool asColor)
 {
-	const fpreal &t = exporter->getContext().getTime();
+	const fpreal &t = exporter.getContext().getTime();
 
 	const std::string &pluginName = VRayExporter::getPluginName(op_node);
 
@@ -76,7 +76,7 @@ void VRayForHoudini::Texture::exportRampAttribute(VRayExporter *exporter, Attrs:
 			Attrs::PluginDesc colPluginDesc(colPluginName, "TexAColor");
 			colPluginDesc.pluginAttrs.push_back(Attrs::PluginAttr("texture", Attrs::PluginAttr::AttrTypeAColor, colR, colG, colB, 1.0f));
 
-			VRay::Plugin colPlugin = exporter->exportPlugin(colPluginDesc);
+			VRay::Plugin colPlugin = exporter.exportPlugin(colPluginDesc);
 			if (colPlugin) {
 				colorPlugins.push_back(VRay::Value(colPlugin));
 				positions.push_back(pos);
@@ -111,12 +111,12 @@ void VRayForHoudini::Texture::exportRampAttribute(VRayExporter *exporter, Attrs:
 }
 
 
-void VRayForHoudini::Texture::getCurveData(VRayExporter *exporter, OP_Node *op_node,
+void VRayForHoudini::Texture::getCurveData(VRayExporter &exporter, OP_Node *op_node,
 										   const std::string &curveAttrName,
 										   VRay::IntList &interpolations, VRay::FloatList &positions, VRay::FloatList *values,
 										   const bool needHandles)
 {
-	const fpreal &t = exporter->getContext().getTime();
+	const fpreal &t = exporter.getContext().getTime();
 
 	int numPoints = op_node->evalInt(curveAttrName.c_str(), 0, t);
 	if (NOT(numPoints))

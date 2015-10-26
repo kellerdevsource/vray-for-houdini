@@ -28,7 +28,7 @@ public:
 	virtual                    ~GeomPlane() {}
 
 	virtual OP_ERROR            cookMySop(OP_Context &context) VRAY_OVERRIDE;
-	virtual PluginResult        asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter *exporter, OP_Node *parent=nullptr) VRAY_OVERRIDE;
+	virtual PluginResult        asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, OP_Node *parent=nullptr) VRAY_OVERRIDE;
 
 protected:
 	virtual void                setPluginType() VRAY_OVERRIDE;

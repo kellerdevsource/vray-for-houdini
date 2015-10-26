@@ -232,9 +232,9 @@ OP_ERROR SOP::PhxShaderCache::cookMySop(OP_Context &context)
 }
 
 
-OP::VRayNode::PluginResult SOP::PhxShaderCache::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter *exporter, OP_Node *parent)
+OP::VRayNode::PluginResult SOP::PhxShaderCache::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, OP_Node *parent)
 {
-	OP_Context &ctx = exporter->getContext();
+	OP_Context &ctx = exporter.getContext();
 
 	const float t = ctx.getTime();
 
@@ -365,17 +365,17 @@ OP::VRayNode::PluginResult SOP::PhxShaderCache::asPluginDesc(Attrs::PluginDesc &
 								fluidTex.addAttribute(Attrs::PluginAttr("values", values));
 
 								Attrs::PluginDesc fluidTexTm(conNode, "TexMayaFluidTransformed", primPluginNamePrefix+"Tm@");
-								fluidTexTm.addAttribute(Attrs::PluginAttr("fluid_tex", exporter->exportPlugin(fluidTex)));
+								fluidTexTm.addAttribute(Attrs::PluginAttr("fluid_tex", exporter.exportPlugin(fluidTex)));
 								fluidTexTm.addAttribute(Attrs::PluginAttr("fluid_value_scale", 1.0f));
 								fluidTexTm.addAttribute(Attrs::PluginAttr("object_to_world", phxMatchTm));
 
-								VRay::Plugin fluidTexPlugin = exporter->exportPlugin(fluidTexTm);
+								VRay::Plugin fluidTexPlugin = exporter.exportPlugin(fluidTexTm);
 
 								if (texType == "density") {
 									Attrs::PluginDesc fluidTexAlpha(conNode, "PhxShaderTexAlpha", primPluginNamePrefix+"Alpha@");
 									fluidTexAlpha.addAttribute(Attrs::PluginAttr("ttex", fluidTexPlugin));
 
-									fluidTexPlugin = exporter->exportPlugin(fluidTexAlpha);
+									fluidTexPlugin = exporter.exportPlugin(fluidTexAlpha);
 								}
 
 								customFluidData[texType] = fluidTexPlugin;
@@ -391,12 +391,12 @@ OP::VRayNode::PluginResult SOP::PhxShaderCache::asPluginDesc(Attrs::PluginDesc &
 						velTexDesc.addAttribute(Attrs::PluginAttr("color_values", vel));
 
 						Attrs::PluginDesc velTexTmDesc(conNode, "TexMayaFluidTransformed", "Vel@Tm@");
-						velTexTmDesc.addAttribute(Attrs::PluginAttr("fluid_tex", exporter->exportPlugin(velTexDesc)));
+						velTexTmDesc.addAttribute(Attrs::PluginAttr("fluid_tex", exporter.exportPlugin(velTexDesc)));
 						velTexTmDesc.addAttribute(Attrs::PluginAttr("fluid_value_scale", 1.0f));
 
-						VRay::Plugin velTmTex = exporter->exportPlugin(velTexTmDesc);
+						VRay::Plugin velTmTex = exporter.exportPlugin(velTexTmDesc);
 
-						velTmTex = exporter->exportPlugin(velTexTmDesc);
+						velTmTex = exporter.exportPlugin(velTexTmDesc);
 
 						customFluidData["velocity"] = velTmTex;
 					}
@@ -405,12 +405,12 @@ OP::VRayNode::PluginResult SOP::PhxShaderCache::asPluginDesc(Attrs::PluginDesc &
 					phxShaderCacheDesc.addAttribute(Attrs::PluginAttr("grid_size_x", (float)res[0]));
 					phxShaderCacheDesc.addAttribute(Attrs::PluginAttr("grid_size_y", (float)res[1]));
 					phxShaderCacheDesc.addAttribute(Attrs::PluginAttr("grid_size_z", (float)res[2]));
-					exporter->setAttrsFromOpNode(phxShaderCacheDesc, this, true, "SOP");
+					exporter.setAttrsFromOpNode(phxShaderCacheDesc, this, true, "SOP");
 
 					// Skip "cache_path" exporting
 					phxShaderCacheDesc.get("cache_path")->paramType = Attrs::PluginAttr::AttrTypeIgnore;
 
-					phxShaderCache = exporter->exportPlugin(phxShaderCacheDesc);
+					phxShaderCache = exporter.exportPlugin(phxShaderCacheDesc);
 				}
 			}
 		}
@@ -434,9 +434,9 @@ OP::VRayNode::PluginResult SOP::PhxShaderCache::asPluginDesc(Attrs::PluginDesc &
 	if (NOT(phxShaderCache)) {
 		Attrs::PluginDesc phxShaderCacheDesc(this, "PhxShaderCache", "Cache@");
 		phxShaderCacheDesc.addAttribute(Attrs::PluginAttr("cache_path", path.buffer()));
-		exporter->setAttrsFromOpNode(phxShaderCacheDesc, this, true, "SOP");
+		exporter.setAttrsFromOpNode(phxShaderCacheDesc, this, true, "SOP");
 
-		phxShaderCache = exporter->exportPlugin(phxShaderCacheDesc);
+		phxShaderCache = exporter.exportPlugin(phxShaderCacheDesc);
 	}
 
 	Attrs::PluginDesc phxShaderSimDesc(this, "PhxShaderSim", "Sim@");
@@ -467,11 +467,11 @@ OP::VRayNode::PluginResult SOP::PhxShaderCache::asPluginDesc(Attrs::PluginDesc &
 
 	phxShaderSimDesc.addAttribute(Attrs::PluginAttr("node_transform", nodeTm));
 
-	exporter->setAttrsFromOpNode(phxShaderSimDesc, this, true, "SOP");
+	exporter.setAttrsFromOpNode(phxShaderSimDesc, this, true, "SOP");
 
-	VRay::Plugin phxShaderSim = exporter->exportPlugin(phxShaderSimDesc);
+	VRay::Plugin phxShaderSim = exporter.exportPlugin(phxShaderSimDesc);
 	if (phxShaderSim) {
-		exporter->phxAddSimumation(phxShaderSim);
+		exporter.phxAddSimumation(phxShaderSim);
 	}
 
 	// Plugin must be created here and do nothing after

@@ -26,7 +26,7 @@ void VOP::TextureOutput::setPluginType()
 }
 
 
-OP::VRayNode::PluginResult VOP::TextureOutput::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter *exporter, OP_Node *parent)
+OP::VRayNode::PluginResult VOP::TextureOutput::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, OP_Node *parent)
 {
 	return OP::VRayNode::PluginResultSuccess;
 }

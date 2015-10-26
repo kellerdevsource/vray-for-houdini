@@ -43,7 +43,7 @@ SHOP_Node *VRayExporter::getObjMaterial(OBJ_Node *obj_node, fpreal t)
 
 void VRayExporter::RtCallbackNode(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
-	VRayExporter *exporter = reinterpret_cast<VRayExporter*>(callee);
+	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
 
 	OBJ_Node *obj_node = caller->castToOBJNode();
 
@@ -60,28 +60,28 @@ void VRayExporter::RtCallbackNode(OP_Node *caller, void *callee, OP_EventType ty
 		const PRM_Parm *param = Parm::getParm(*caller, reinterpret_cast<long>(data));
 		if (param) {
 			if (boost::equals(param->getToken(), "shop_materialpath")) {
-				SHOP_Node *shop_node = exporter->getObjMaterial(obj_node);
+				SHOP_Node *shop_node = exporter.getObjMaterial(obj_node);
 				if (shop_node) {
-					mtl = exporter->exportMaterial(shop_node);
+					mtl = exporter.exportMaterial(shop_node);
 				}
 				if (!mtl) {
-					mtl = exporter->exportDefaultMaterial();
+					mtl = exporter.exportDefaultMaterial();
 				}
 			}
 		}
 
-		exporter->exportNode(obj_node, mtl, VRay::Plugin());
+		exporter.exportNode(obj_node, mtl, VRay::Plugin());
 	}
 	else if (type == OP_NODE_PREDELETE) {
-		exporter->delOpCallbacks(caller);
-		exporter->removePlugin(obj_node);
+		exporter.delOpCallbacks(caller);
+		exporter.removePlugin(obj_node);
 	}
 }
 
 
 void VRayExporter::RtCallbackNodeData(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
-	VRayExporter *exporter = reinterpret_cast<VRayExporter*>(callee);
+	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
 
 	PRINT_INFO("RtCallbackNodeData: %s from \"%s\"",
 			   OPeventToString(type), caller->getName().buffer());
@@ -96,12 +96,12 @@ void VRayExporter::RtCallbackNodeData(OP_Node *caller, void *callee, OP_EventTyp
 		if (parent) {
 			OBJ_Node *obj_node = parent->castToOBJNode();
 			if (obj_node) {
-				exporter->exportObject(obj_node);
+				exporter.exportObject(obj_node);
 			}
 		}
 	}
 	else if (type == OP_NODE_PREDELETE) {
-		exporter->delOpCallbacks(caller);
+		exporter.delOpCallbacks(caller);
 	}
 }
 
@@ -158,8 +158,7 @@ VRay::Plugin VRayExporter::exportNodeData(SOP_Node *geom_node, SHOPToID &shopToI
 
 			OP_Node *op_node = static_cast<OP_Node*>(geom_node);
 
-			// OP::VRayNode::PluginResult res = vrayNode->asPluginDesc(geomPluginDesc, this, static_cast<OP_Node*>(obj_node));
-			OP::VRayNode::PluginResult res = vrayNode->asPluginDesc(geomPluginDesc, this, static_cast<OP_Node*>(geom_node->getParent()));
+			OP::VRayNode::PluginResult res = vrayNode->asPluginDesc(geomPluginDesc, *this, static_cast<OP_Node*>(geom_node->getParent()));
 			if (res == OP::VRayNode::PluginResultError) {
 				PRINT_ERROR("Error creating plugin descripion for node: \"%s\" [%s]",
 							op_node->getName().buffer(),

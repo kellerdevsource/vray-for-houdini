@@ -283,7 +283,7 @@ int VRayExporter::setAttrsFromOpNode(Attrs::PluginDesc &pluginDesc, OP_Node *opN
 
 		if (NOT(plugin_value)) {
 			if (attrDesc.value.type == Parm::eRamp) {
-				Texture::exportRampAttribute(this, pluginDesc, opNode,
+				Texture::exportRampAttribute(*this, pluginDesc, opNode,
 											 /* Houdini ramp attr */ attrDesc.attr,
 											 /* V-Ray attr: colors */ attrDesc.value.defRamp.colors,
 											 /* V-Ray attr: pos    */ attrDesc.value.defRamp.positions,
@@ -298,7 +298,7 @@ int VRayExporter::setAttrsFromOpNode(Attrs::PluginDesc &pluginDesc, OP_Node *opN
 											 ? nullptr
 											 : &values;
 
-				Texture::getCurveData(this, opNode,
+				Texture::getCurveData(*this, opNode,
 									  /* Houdini curve attr */ attrDesc.attr,
 									  /* V-Ray attr: interp */ interpolations,
 									  /* V-Ray attr: x      */ positions,
@@ -483,7 +483,7 @@ int VRayExporter::isNodeAnimated(OP_Node *op_node)
 
 void VRayExporter::RtCallbackVop(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
-	VRayExporter *exporter = (VRayExporter*)callee;
+	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
 
 	PRINT_INFO("RtCallbackVop: %s from \"%s\"",
 			   OPeventToString(type), caller->getName().buffer());
@@ -491,10 +491,10 @@ void VRayExporter::RtCallbackVop(OP_Node *caller, void *callee, OP_EventType typ
 	if (type == OP_PARM_CHANGED ||
 		type == OP_INPUT_CHANGED)
 	{
-		exporter->exportVop(caller);
+		exporter.exportVop(caller);
 	}
 	else if (type == OP_NODE_PREDELETE) {
-		exporter->delOpCallback(caller, VRayExporter::RtCallbackVop);
+		exporter.delOpCallback(caller, VRayExporter::RtCallbackVop);
 	}
 }
 
@@ -525,7 +525,7 @@ VRay::Plugin VRayExporter::exportVop(OP_Node *op_node)
 
 		Attrs::PluginDesc pluginDesc;
 
-		OP::VRayNode::PluginResult res = vrayNode->asPluginDesc(pluginDesc, this, op_node);
+		OP::VRayNode::PluginResult res = vrayNode->asPluginDesc(pluginDesc, *this, op_node);
 		if (res == OP::VRayNode::PluginResultError) {
 			PRINT_ERROR("Error creating plugin descripion for node: \"%s\" [%s]",
 						vop_node->getName().buffer(),
@@ -632,7 +632,7 @@ VRay::Plugin VRayExporter::exportMaterial(SHOP_Node *shop_node)
 
 void VRayExporter::RtCallbackShop(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
-	VRayExporter *exporter = (VRayExporter*)callee;
+	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
 
 	PRINT_INFO("RtCallbackDisplacement: %s from \"%s\"",
 			   OPeventToString(type), caller->getName().buffer());
@@ -655,19 +655,19 @@ void VRayExporter::RtCallbackShop(OP_Node *caller, void *callee, OP_EventType ty
 
 			OBJ_Node *obj_node = node->castToOBJNode();
 			if (obj_node) {
-				exporter->exportObject(obj_node);
+				exporter.exportObject(obj_node);
 				continue;
 			}
 			SOP_Node *sop_node = node->castToSOPNode();
 			if (sop_node) {
 				obj_node = sop_node->getParent()->castToOBJNode();
-				exporter->exportObject(obj_node);
+				exporter.exportObject(obj_node);
 				continue;
 			}
 		}
 	}
 	else if (type == OP_NODE_PREDELETE) {
-		exporter->delOpCallback(caller, VRayExporter::RtCallbackShop);
+		exporter.delOpCallback(caller, VRayExporter::RtCallbackShop);
 	}
 }
 
@@ -708,7 +708,7 @@ VRay::Plugin VRayExporter::exportDisplacement(OBJ_Node *obj_node, VRay::Plugin &
 			Attrs::PluginDesc pluginDesc(VRayExporter::getPluginName(obj_node, "Geom@"), displ->getVRayPluginID());
 			pluginDesc.addAttribute(Attrs::PluginAttr("mesh", geomPlugin));
 
-			OP::VRayNode::PluginResult res = displ->asPluginDesc(pluginDesc, this, obj_node);
+			OP::VRayNode::PluginResult res = displ->asPluginDesc(pluginDesc, *this, obj_node);
 			if (res == OP::VRayNode::PluginResultError) {
 				PRINT_ERROR("Error creating plugin descripion for node: \"%s\" [%s]",
 							displ->getName().buffer(), displ->getOperator()->getName().buffer());
@@ -831,8 +831,9 @@ static std::string ObjectTypeToString(const OBJ_OBJECT_TYPE &ob_type)
 
 void VRayExporter::TraverseOBJ(OBJ_Node *obj_node, void *data)
 {
-	VRayExporter *exporter = (VRayExporter*)data;
-	const fpreal &t = exporter->getContext().getTime();
+	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(data);
+
+	const fpreal &t = exporter.getContext().getTime();
 
 	if (obj_node) {
 		const OBJ_OBJECT_TYPE &ob_type = obj_node->getObjectType();
@@ -858,18 +859,18 @@ void VRayExporter::TraverseOBJ(OBJ_Node *obj_node, void *data)
 			return;
 		}
 		else if (ob_type & OBJ_LIGHT) {
-			exporter->exportLight(obj_node);
+			exporter.exportLight(obj_node);
 		}
 		else if (ob_type & OBJ_CAMERA) {
 			/* Must go after OBJ_LIGHT */
 			return;
 		}
 		else if (ob_type == OBJ_GEOMETRY) {
-			exporter->exportObject(obj_node);
+			exporter.exportObject(obj_node);
 		}
 #if 0
 		else if (ob_type & OBJ_DOPNET) {
-			exporter->exportParticles(obj_node);
+			exporter.exportParticles(obj_node);
 		}
 #endif
 		else if (ob_type & OBJ_SUBNET) {
@@ -969,7 +970,7 @@ bool VRayExporter::TraverseOBJs(OP_Node &op_node, void *data)
 
 void VRayExporter::RtCallbackObjManager(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
-	VRayExporter *exporter = (VRayExporter*)callee;
+	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
 
 	PRINT_INFO("RtCallbackObjManager: %s from \"%s\"",
 			   OPeventToString(type), caller->getName().buffer());
@@ -979,13 +980,13 @@ void VRayExporter::RtCallbackObjManager(OP_Node *caller, void *callee, OP_EventT
 		type == OP_CHILD_DELETED)
 	{
 		OP_Network *obj_manager = OPgetDirector()->getManager("obj");
-		obj_manager->traverseChildren(VRayExporter::TraverseOBJs, exporter, false);
+		obj_manager->traverseChildren(VRayExporter::TraverseOBJs, &exporter, false);
 	}
 	else if (type == OP_CHILD_CREATED) {
-		VRayExporter::TraverseOBJ(reinterpret_cast<OBJ_Node*>(data), exporter);
+		VRayExporter::TraverseOBJ(reinterpret_cast<OBJ_Node*>(data), &exporter);
 	}
 	else if (type == OP_NODE_PREDELETE) {
-		exporter->delOpCallback(reinterpret_cast<OBJ_Node*>(data), VRayExporter::RtCallbackObjManager);
+		exporter.delOpCallback(reinterpret_cast<OBJ_Node*>(data), VRayExporter::RtCallbackObjManager);
 	}
 }
 

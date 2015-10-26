@@ -27,13 +27,13 @@ const std::string VRayForHoudini::ViewPluginsDesc::stereoSettingsPluginName("ste
 
 void VRayExporter::RtCallbackView(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
-	VRayExporter *exporter = reinterpret_cast<VRayExporter*>(callee);
+	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
 
 	PRINT_INFO("RtCallbackView: %s from \"%s\"",
 			   OPeventToString(type), caller->getName().buffer());
 
 	if (type == OP_INPUT_CHANGED) {
-		exporter->exportView();
+		exporter.exportView();
 	}
 	else if (type == OP_PARM_CHANGED) {
 		if (!Parm::isParmSwitcher(*caller, long(data))) {
@@ -52,12 +52,12 @@ void VRayExporter::RtCallbackView(OP_Node *caller, void *callee, OP_EventType ty
 			}
 
 			if (procceedEvent) {
-				exporter->exportView();
+				exporter.exportView();
 			}
 		}
 	}
 	else if (type == OP_NODE_PREDELETE) {
-		exporter->delOpCallback(caller, VRayExporter::RtCallbackView);
+		exporter.delOpCallback(caller, VRayExporter::RtCallbackView);
 	}
 }
 

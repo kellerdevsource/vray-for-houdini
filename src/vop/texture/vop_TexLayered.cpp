@@ -181,9 +181,9 @@ void VOP::TexLayered::getCode(UT_String &codestr, const VOP_CodeGenContext &)
 }
 
 
-OP::VRayNode::PluginResult VOP::TexLayered::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter *exporter, OP_Node *parent)
+OP::VRayNode::PluginResult VOP::TexLayered::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, OP_Node *parent)
 {
-	const fpreal &t = exporter->getContext().getTime();
+	const fpreal &t = exporter.getContext().getTime();
 
 	const int tex_count = evalInt(rpm_name_tex_count.getToken(), 0, 0.0);
 
@@ -201,7 +201,7 @@ OP::VRayNode::PluginResult VOP::TexLayered::asPluginDesc(Attrs::PluginDesc &plug
 					   getName().buffer(), texSockName.c_str());
 		}
 		else {
-			VRay::Plugin tex_plugin = exporter->exportVop(tex_node);
+			VRay::Plugin tex_plugin = exporter.exportVop(tex_node);
 			if (NOT(tex_plugin)) {
 				PRINT_ERROR("Node \"%s\": Failed to export texture node connected to \"%s\", ignoring...",
 							getName().buffer(), texSockName.c_str());
@@ -217,7 +217,7 @@ OP::VRayNode::PluginResult VOP::TexLayered::asPluginDesc(Attrs::PluginDesc &plug
 					blendDesc.pluginAttrs.push_back(Attrs::PluginAttr("mult_a", 1.0f));
 					blendDesc.pluginAttrs.push_back(Attrs::PluginAttr("result_alpha", blend_amount));
 
-					tex_plugin = exporter->exportPlugin(blendDesc);
+					tex_plugin = exporter.exportPlugin(blendDesc);
 				}
 
 				textures.push_back(VRay::Value(tex_plugin));

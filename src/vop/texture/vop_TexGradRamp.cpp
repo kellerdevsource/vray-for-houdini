@@ -22,7 +22,7 @@ void VOP::TexGradRamp::setPluginType()
 }
 
 
-OP::VRayNode::PluginResult VOP::TexGradRamp::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter *exporter, OP_Node *parent)
+OP::VRayNode::PluginResult VOP::TexGradRamp::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, OP_Node *parent)
 {
 	Texture::exportRampAttribute(exporter, pluginDesc, this,
 								 "ramp",

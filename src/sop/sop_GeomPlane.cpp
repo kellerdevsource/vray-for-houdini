@@ -72,7 +72,7 @@ OP_ERROR SOP::GeomPlane::cookMySop(OP_Context &context)
 }
 
 
-OP::VRayNode::PluginResult SOP::GeomPlane::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter *exporter, OP_Node *parent)
+OP::VRayNode::PluginResult SOP::GeomPlane::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, OP_Node *parent)
 {
 	pluginDesc.pluginID   = pluginID.c_str();
 	pluginDesc.pluginName = VRayExporter::getPluginName(this);

@@ -17,7 +17,7 @@ using namespace VRayForHoudini;
 
 void VRayExporter::RtCallbackLight(OP_Node *caller, void *callee, OP_EventType type, void* /*data*/)
 {
-	VRayExporter *exporter = reinterpret_cast<VRayExporter*>(callee);
+	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
 
 	OBJ_Node *obj_node = caller->castToOBJNode();
 
@@ -28,11 +28,11 @@ void VRayExporter::RtCallbackLight(OP_Node *caller, void *callee, OP_EventType t
 		type == OP_INPUT_CHANGED ||
 		type == OP_INPUT_REWIRED)
 	{
-		exporter->exportLight(obj_node);
+		exporter.exportLight(obj_node);
 	}
 	else if (type == OP_NODE_PREDELETE) {
-		exporter->delOpCallbacks(caller);
-		exporter->removePlugin(obj_node);
+		exporter.delOpCallbacks(caller);
+		exporter.removePlugin(obj_node);
 	}
 }
 
@@ -60,7 +60,7 @@ VRay::Plugin VRayExporter::exportLight(OBJ_Node *obj_node)
 
 		OP_Node *op_node = static_cast<OP_Node*>(obj_node);
 
-		OP::VRayNode::PluginResult res = vrayNode->asPluginDesc(pluginDesc, this, static_cast<OP_Node*>(obj_node));
+		OP::VRayNode::PluginResult res = vrayNode->asPluginDesc(pluginDesc, *this, static_cast<OP_Node*>(obj_node));
 		if (res == OP::VRayNode::PluginResultError) {
 			PRINT_ERROR("Error creating plugin descripion for node: \"%s\" [%s]",
 						op_node->getName().buffer(),

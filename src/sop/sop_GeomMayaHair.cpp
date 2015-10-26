@@ -38,12 +38,12 @@ OP_ERROR SOP::GeomMayaHair::cookMySop(OP_Context &context)
 }
 
 
-OP::VRayNode::PluginResult SOP::GeomMayaHair::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter *exporter, OP_Node *parent)
+OP::VRayNode::PluginResult SOP::GeomMayaHair::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, OP_Node *parent)
 {
 	pluginDesc.pluginID   = pluginID.c_str();
 	pluginDesc.pluginName = VRayExporter::getPluginName(this, "Hair@");
 
-	GU_DetailHandleAutoReadLock gdl(getCookedGeoHandle(exporter->getContext()));
+	GU_DetailHandleAutoReadLock gdl(getCookedGeoHandle(exporter.getContext()));
 
 	const GU_Detail *gdp = gdl.getGdp();
 	if (NOT(gdp)) {
@@ -51,8 +51,8 @@ OP::VRayNode::PluginResult SOP::GeomMayaHair::asPluginDesc(Attrs::PluginDesc &pl
 					getName().buffer());
 	}
 	else {
-		exporter->exportGeomMayaHairGeom(this, gdp, pluginDesc);
-		exporter->setAttrsFromOpNode(pluginDesc, this);
+		exporter.exportGeomMayaHairGeom(this, gdp, pluginDesc);
+		exporter.setAttrsFromOpNode(pluginDesc, this);
 	}
 
 	return OP::VRayNode::PluginResultContinue;

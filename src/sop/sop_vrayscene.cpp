@@ -122,7 +122,7 @@ OP_ERROR SOP::VRayScene::cookMySop(OP_Context &context)
 }
 
 
-OP::VRayNode::PluginResult SOP::VRayScene::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter *exporter, OP_Node *parent)
+OP::VRayNode::PluginResult SOP::VRayScene::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, OP_Node *parent)
 {
 	UT_String path;
 	evalString(path, "filepath", 0, 0.0f);
@@ -145,7 +145,7 @@ OP::VRayNode::PluginResult SOP::VRayScene::asPluginDesc(Attrs::PluginDesc &plugi
 
 	pluginDesc.pluginAttrs.push_back(Attrs::PluginAttr("filepath", path.buffer()));
 
-	exporter->setAttrsFromOpNode(pluginDesc, this);
+	exporter.setAttrsFromOpNode(pluginDesc, this);
 
 	return OP::VRayNode::PluginResultSuccess;
 }

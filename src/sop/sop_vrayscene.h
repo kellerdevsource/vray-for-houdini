@@ -30,7 +30,7 @@ public:
 
 	virtual OP_NodeFlags       &flags() VRAY_OVERRIDE;
 	virtual OP_ERROR            cookMySop(OP_Context &context) VRAY_OVERRIDE;
-	virtual PluginResult        asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter *exporter, OP_Node *parent=nullptr) VRAY_OVERRIDE;
+	virtual PluginResult        asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, OP_Node *parent=nullptr) VRAY_OVERRIDE;
 
 private:
 	static VRayScenePreviewMan  m_previewMan;

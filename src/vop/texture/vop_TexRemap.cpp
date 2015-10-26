@@ -22,7 +22,7 @@ void VOP::TexRemap::setPluginType()
 }
 
 
-OP::VRayNode::PluginResult VOP::TexRemap::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter *exporter, OP_Node *parent)
+OP::VRayNode::PluginResult VOP::TexRemap::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, OP_Node *parent)
 {
 	Texture::exportRampAttribute(exporter, pluginDesc, this,
 								 "ramp",

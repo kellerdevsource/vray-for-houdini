@@ -22,14 +22,14 @@ void VOP::TexFalloff::setPluginType()
 }
 
 
-OP::VRayNode::PluginResult VOP::TexFalloff::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter *exporter, OP_Node *parent)
+OP::VRayNode::PluginResult VOP::TexFalloff::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, OP_Node *parent)
 {
 	if (evalInt("use_blend_curve", 0, 0.0)) {
 		Attrs::PluginDesc subTexFalloffDesc(VRayExporter::getPluginName(this, "SubFalloff"), "TexFalloff");
 		subTexFalloffDesc.pluginAttrs.push_back(Attrs::PluginAttr("use_blend_input", false));
 		subTexFalloffDesc.pluginAttrs.push_back(Attrs::PluginAttr("blend_input", VRay::Plugin()));
 
-		VRay::Plugin subFalloffTex = exporter->exportPlugin(subTexFalloffDesc);
+		VRay::Plugin subFalloffTex = exporter.exportPlugin(subTexFalloffDesc);
 
 		VRay::FloatList points;
 		VRay::IntList   types;
@@ -40,7 +40,7 @@ OP::VRayNode::PluginResult VOP::TexFalloff::asPluginDesc(Attrs::PluginDesc &plug
 		texBezierCurveDesc.pluginAttrs.push_back(Attrs::PluginAttr("points", points));
 		texBezierCurveDesc.pluginAttrs.push_back(Attrs::PluginAttr("types", types));
 
-		VRay::Plugin texBezierCurve = exporter->exportPlugin(texBezierCurveDesc);
+		VRay::Plugin texBezierCurve = exporter.exportPlugin(texBezierCurveDesc);
 
 		pluginDesc.pluginAttrs.push_back(Attrs::PluginAttr("use_blend_input", true));
 		pluginDesc.pluginAttrs.push_back(Attrs::PluginAttr("blend_input", texBezierCurve));

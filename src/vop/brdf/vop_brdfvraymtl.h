@@ -28,7 +28,7 @@ public:
 	virtual void              getCode(UT_String &codestr, const VOP_CodeGenContext &context) VRAY_OVERRIDE;
 
 	// From OP::VRayNode
-	virtual PluginResult      asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter *exporter, OP_Node *parent=nullptr) VRAY_OVERRIDE;
+	virtual PluginResult      asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, OP_Node *parent=nullptr) VRAY_OVERRIDE;
 
 protected:
 	virtual void              setPluginType() VRAY_OVERRIDE;
