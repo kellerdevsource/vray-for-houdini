@@ -10,7 +10,7 @@ License
 Binary Builds
 -------------
 
-Binary builds are available at "V-Ray For Houdini" section at http://nightlies.chaosgroup.com/.
+Binary builds are available at "[V-Ray For Houdini](https://nightlies.chaosgroup.com/main#/vray4houdini)" section at http://nightlies.chaosgroup.com/.
 
 You'll have to request access at support@chaosgroup.com for this section.
 
