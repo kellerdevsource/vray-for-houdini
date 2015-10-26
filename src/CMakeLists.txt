@@ -221,11 +221,10 @@ if(INSTALL_RELEASE)
 			USE_SOURCE_PERMISSIONS
 		)
 
-		# JSON plugin descriptions
-		install(DIRECTORY   ${CMAKE_SOURCE_DIR}/deploy/plugins_desc
-				DESTINATION ${INSTALL_RELEASE_PATH}
-				PATTERN ".git" EXCLUDE
-		)
+		# Clone JSON plugin descriptions
+		set(VFH_CLONE_PLUGINS_DESC ${CMAKE_BINARY_DIR}/vfh_clone_plugins_desc.cmake)
+		configure_file(${CMAKE_SOURCE_DIR}/cmake/vfh_clone_plugins_desc.cmake.in ${VFH_CLONE_PLUGINS_DESC})
+		install(SCRIPT ${VFH_CLONE_PLUGINS_DESC})
 
 		# Archive the installation directory
 		set(VFH_PACK ${CMAKE_BINARY_DIR}/vfh_pack.cmake)
