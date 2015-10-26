@@ -134,6 +134,9 @@ VRay::Plugin VRayExporter::exportNode(OBJ_Node *obj_node, VRay::Plugin material,
 			pluginDesc.addAttribute(Attrs::PluginAttr("transform",
 													  VRayExporter::getObjTransform(obj_node, m_context, flipTm)));
 
+			pluginDesc.addAttribute(Attrs::PluginAttr("visible",
+													  obj_node->getVisible()));
+
 			nodePlugin = exportPlugin(pluginDesc);
 		}
 	}
@@ -216,7 +219,11 @@ VRay::Plugin VRayExporter::exportObject(OBJ_Node *obj_node)
 	VRay::Plugin obj_plugin = VRay::Plugin();
 
 	SOP_Node *geom_node = obj_node->getRenderSopPtr();
-	if (geom_node) {
+	if (!geom_node) {
+		PRINT_ERROR("OBJ \"%s\": Render SOP is not found!",
+					obj_node->getName().buffer());
+	}
+	else {
 		OP_Operator *geom_op = geom_node->getOperator();
 
 		const UT_String &geomOpName = geom_op->getName();
