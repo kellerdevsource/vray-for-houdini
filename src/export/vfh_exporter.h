@@ -97,6 +97,7 @@ public:
 	void                           initExporter(int hasUI, int nframes, fpreal tstart, fpreal tend);
 
 	void                           fillCameraData(const OBJ_Node &camera, const OP_Node &rop, ViewParams &viewParams);
+	void                           fillSettingsMotionBlur(ViewParams &viewParams);
 	void                           fillPhysicalCamera(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc);
 	void                           fillSettingsCameraDof(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc);
 	void                           fillCameraDefault(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc);
@@ -211,6 +212,7 @@ private:
 	int                            m_isIPR;
 	int                            m_isGPU;
 	int                            m_isAnimation;
+	int                            m_isMotionBlur;
 	fpreal                         m_timeStart;
 	fpreal                         m_timeEnd;
 	fpreal                         m_timeCurrent;

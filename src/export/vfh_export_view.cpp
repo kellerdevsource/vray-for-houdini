@@ -23,6 +23,7 @@ const std::string VRayForHoudini::ViewPluginsDesc::cameraPhysicalPluginName("cam
 const std::string VRayForHoudini::ViewPluginsDesc::cameraDefaultPluginName("cameraDefault");
 const std::string VRayForHoudini::ViewPluginsDesc::renderViewPluginName("renderView");
 const std::string VRayForHoudini::ViewPluginsDesc::stereoSettingsPluginName("stereoSettings");
+const std::string VRayForHoudini::ViewPluginsDesc::settingsMotionBlurPluginName("settingsMotionBlur");
 
 
 void VRayExporter::RtCallbackView(OP_Node *caller, void *callee, OP_EventType type, void *data)
@@ -131,6 +132,12 @@ void VRayExporter::fillCameraData(const OBJ_Node &camera, const OP_Node &rop, Vi
 }
 
 
+void VRayExporter::fillSettingsMotionBlur(ViewParams &viewParams)
+{
+	setAttrsFromOpNode(viewParams.viewPlugins.settingsMotionBlur, m_rop, "SettingsMotionBlur.");
+}
+
+
 void VRayExporter::fillPhysicalCamera(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc)
 {
 	OBJ_Node &camera = *viewParams.cameraObject;
@@ -223,6 +230,7 @@ int VRayExporter::exportView()
 		viewParams.usePhysicalCamera = isPhysicalView(*camera);
 
 		fillCameraData(*camera, *m_rop, viewParams);
+		fillSettingsMotionBlur(viewParams);
 		fillSettingsCamera(viewParams, viewParams.viewPlugins.settingsCamera);
 		fillRenderView(viewParams, viewParams.viewPlugins.renderView);
 
@@ -251,6 +259,7 @@ int VRayExporter::exportView()
 			removePlugin(ViewPluginsDesc::cameraDefaultPluginName);
 
 			exportPlugin(viewParams.viewPlugins.settingsCamera);
+			exportPlugin(viewParams.viewPlugins.settingsMotionBlur);
 
 			if (!viewParams.renderView.ortho && !viewParams.usePhysicalCamera) {
 				exportPlugin(viewParams.viewPlugins.settingsCameraDof);
@@ -295,6 +304,7 @@ int ViewPluginsDesc::needReset(const ViewPluginsDesc &other) const
 	// NOTE: No need to reset on RenderView, we handle it differently
 	//
 	return (settingsCameraDof.isDifferent(other.settingsCameraDof) ||
+			settingsMotionBlur.isDifferent(other.settingsMotionBlur) ||
 			settingsCamera.isDifferent(other.settingsCamera) ||
 			cameraPhysical.isDifferent(other.cameraPhysical) ||
 			cameraDefault.isDifferent(other.cameraDefault));
@@ -304,6 +314,7 @@ int ViewPluginsDesc::needReset(const ViewPluginsDesc &other) const
 void ViewPluginsDesc::reset()
 {
 	settingsCameraDof.pluginAttrs.clear();
+	settingsMotionBlur.pluginAttrs.clear();
 	settingsCamera.pluginAttrs.clear();
 	cameraPhysical.pluginAttrs.clear();
 	cameraDefault.pluginAttrs.clear();

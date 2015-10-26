@@ -1215,7 +1215,7 @@ void VRayExporter::initExporter(int hasUI, int nframes, fpreal tstart, fpreal te
 
 	m_isAborted = false;
 
-	OP_Node *camera = VRayExporter::getCamera(m_rop);
+	OBJ_Node *camera = VRayExporter::getCamera(m_rop);
 	if (!camera) {
 		PRINT_ERROR("Camera is not set!");
 
@@ -1274,6 +1274,11 @@ void VRayExporter::initExporter(int hasUI, int nframes, fpreal tstart, fpreal te
 
 		exportSettings();
 
+		m_isMotionBlur = hasMotionBlur(*m_rop, *camera);
+
+		// NOTE: Force animated values for motion blur
+		m_renderer.setAnimation(m_isMotionBlur);
+
 		m_error = ROP_CONTINUE_RENDER;
 	}
 
@@ -1317,7 +1322,7 @@ void VRayExporter::exportFrame(fpreal time)
 	context.setTime(time);
 
 	if (m_error != ROP_ABORT_RENDER) {
-		if (hasMotionBlur(*m_rop, *getCamera(m_rop))) {
+		if (m_isMotionBlur) {
 			MotionBlurParams mbParams;
 			fillMotionBlurParams(mbParams);
 			mbParams.calcParams(context.getFloatFrame());

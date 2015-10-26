@@ -91,6 +91,7 @@ struct RenderViewParams {
 
 struct ViewPluginsDesc {
 	static const std::string settingsCameraDofPluginName;
+	static const std::string settingsMotionBlurPluginName;
 	static const std::string settingsCameraPluginName;
 	static const std::string cameraPhysicalPluginName;
 	static const std::string cameraDefaultPluginName;
@@ -99,6 +100,7 @@ struct ViewPluginsDesc {
 
 	ViewPluginsDesc()
 		: settingsCameraDof(settingsCameraDofPluginName, "SettingsCameraDof")
+		, settingsMotionBlur(settingsMotionBlurPluginName, "SettingsMotionBlur")
 		, settingsCamera(settingsCameraPluginName, "SettingsCamera")
 		, cameraPhysical(cameraPhysicalPluginName, "CameraPhysical")
 		, cameraDefault(cameraDefaultPluginName, "CameraDefault")
@@ -110,6 +112,7 @@ struct ViewPluginsDesc {
 	void               reset();
 
 	Attrs::PluginDesc  settingsCameraDof;
+	Attrs::PluginDesc  settingsMotionBlur;
 	Attrs::PluginDesc  settingsCamera;
 	Attrs::PluginDesc  cameraPhysical;
 	Attrs::PluginDesc  cameraDefault;
