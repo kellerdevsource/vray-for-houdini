@@ -38,12 +38,13 @@ vfh_camera.add_physical_camera_attributes()
 		</script>
 	</tool>
 
-	<tool name="vray_displacement" label="Add Displacement" icon="ROP_vray.svg">
+	<tool name="vray_displacement" label="Displacement" icon="ROP_vray.svg">
 		<script scriptType="python">
 <![CDATA[
 import vfh.shelftools.vrayattr as vrayattr
 
-vrayattr.applyDisplacementToSelection("VRayNodeGeomDisplacedMesh")
+geoList = filter(lambda item: item.type().category().typeName() == 'OBJ' and item.type().name() == 'geo', hou.selectedNodes())
+map(vrayattr.addVRayDisplamentParams, geoList)
 
 ]]>
 		</script>

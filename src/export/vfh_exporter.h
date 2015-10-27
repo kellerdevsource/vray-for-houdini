@@ -121,6 +121,7 @@ public:
 	void                           exportGeomMayaHairGeom(SOP_Node *sop_node, const GU_Detail *gdp, Attrs::PluginDesc &pluginDesc);
 	VRay::Plugin                   exportGeomMayaHair(SOP_Node *sop_node, const GU_Detail *gdp);
 
+	void                           exportDisplacementDesc(OBJ_Node *obj_node, Attrs::PluginDesc &pluginDesc);
 	VRay::Plugin                   exportDisplacement(OBJ_Node *obj_node, VRay::Plugin &geomPlugin);
 	VRay::Plugin                   exportNodeData(SOP_Node *sop_node, SHOPToID &shopToID);
 	VRay::Plugin                   exportNode(OBJ_Node *obj_node, VRay::Plugin material, VRay::Plugin geometry);
