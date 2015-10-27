@@ -178,20 +178,6 @@ static PRM_Template* getTemplates()
 													  RenderSettingsSwitcherTabs.size(),
 													  &RenderSettingsSwitcherName,
 													  &RenderSettingsSwitcherTabs[0]));
-#if 0
-		int i = 0;
-		for (auto &prm : RenderSettingsPrmTemplate) {
-			PRM_Template &tmpl = prm;
-			std::cout << i++ << " ";
-
-			if (tmpl.getType().isSwitcher()) {
-				std::cout << "=== ";
-			}
-
-			std::cout << tmpl.getToken();
-			std::cout << std::endl;
-		}
-#endif
 	}
 
 	return &RenderSettingsPrmTemplate[0];
