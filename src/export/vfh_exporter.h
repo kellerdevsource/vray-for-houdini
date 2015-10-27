@@ -145,7 +145,7 @@ public:
 	int                            renderFrame(int locked=false);
 	int                            renderSequence(int start, int end, int step, int locked=false);
 
-	void                           clearKeyFrames(fpreal toTime);
+	void                           clearKeyFrames(float toTime);
 
 	void                           setAnimation(bool on);
 	void                           setFrame(float frame);

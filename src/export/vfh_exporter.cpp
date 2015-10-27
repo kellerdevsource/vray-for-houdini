@@ -1208,7 +1208,7 @@ int VRayExporter::renderFrame(int locked)
 {
 	setFrame(m_context.getFloatFrame());
 
-	Log::getLog().info("VRayExporter::renderFrame(%.3f)", m_context.getFloatFrame());
+	Log::getLog().debug("VRayExporter::renderFrame(%.3f)", m_context.getFloatFrame());
 
 	if (m_workMode == ExpWorkMode::ExpRender || m_workMode == ExpWorkMode::ExpExportRender) {
 		m_renderer.startRender(locked);
@@ -1238,14 +1238,19 @@ int VRayExporter::exportVrscene(const std::string &filepath)
 }
 
 
-void VRayExporter::clearKeyFrames(fpreal toTime)
+void VRayExporter::clearKeyFrames(float toTime)
 {
+	Log::getLog().debug("VRayExporter::clearKeyFrames(%.3f)",
+						toTime);
+
 	m_renderer.clearFrames(toTime);
 }
 
 
 void VRayExporter::setAnimation(bool on)
 {
+	Log::getLog().debug("VRayExporter::setAnimation(%i)", on);
+
 	m_isAnimation = on;
 	m_renderer.setAnimation(on);
 }
