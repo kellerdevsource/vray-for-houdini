@@ -303,6 +303,8 @@ int VRayRendererNode::initSession(int interactive, int nframes, fpreal tstart, f
 			m_exporter.setWorkMode(getExporterWorkMode(*this));
 			m_exporter.setExportFilepath(getExportFilepath(*this));
 
+			m_exporter.exportSettings();
+
 			error = m_exporter.getError();
 		}
 	}

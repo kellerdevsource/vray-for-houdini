@@ -1083,6 +1083,7 @@ void VRayExporter::setRendererMode(int mode)
 {
 	m_renderer.setRendererMode(mode);
 	m_isGPU = (mode >= 1);
+
 	if (mode >= 0) {
 		setSettingsRtEngine();
 	}
@@ -1109,6 +1110,9 @@ void VRayExporter::setAbort()
 
 void VRayExporter::setRenderSize(int w, int h)
 {
+	PRINT_INFO("VRayExporter::setRenderSize(%i, %i)",
+			   w, h);
+
 	if (m_vfb.isInitialized()) {
 		m_vfb.resize(w, h);
 	}
@@ -1120,10 +1124,23 @@ void VRayExporter::setRenderSize(int w, int h)
 void VRayExporter::setSettingsRtEngine()
 {
 	VRay::Plugin settingsRTEngine = m_renderer.getVRay().getInstanceOrCreate("SettingsRTEngine");
-	// settingsRTEngine.setValue("undersampling", false);
-	// settingsRTEngine.setValue("gi_depth", 0);
-	settingsRTEngine.setValue("gpu_bundle_size", 128);
-	settingsRTEngine.setValue("gpu_samples_per_pixel", 1);
+
+	if (isIPR()) {
+		settingsRTEngine.setValue("gpu_bundle_size", 64);
+		settingsRTEngine.setValue("gpu_samples_per_pixel", 1);
+	}
+
+	if (isStereoView()) {
+		settingsRTEngine.setValue("stereo_mode",         Parm::getParmInt(*m_rop, "VRayStereoscopicSettings.use"));
+		settingsRTEngine.setValue("stereo_eye_distance", Parm::getParmFloat(*m_rop, "VRayStereoscopicSettings.eye_distance"));
+		settingsRTEngine.setValue("stereo_focus",        Parm::getParmInt(*m_rop, "VRayStereoscopicSettings.focus_method"));
+	}
+}
+
+
+int VRayExporter::isStereoView() const
+{
+	return Parm::getParmInt(*m_rop, "VRayStereoscopicSettings.use");
 }
 
 
@@ -1204,7 +1221,7 @@ void VRayExporter::initExporter(int hasUI, int nframes, fpreal tstart, fpreal te
 
 	setAnimation(nframes > 1);
 
-	m_viewParams.reset();
+	m_viewParams = ViewParams();
 	m_exportedFrames.clear();
 	m_phxSimulations.clear();
 
@@ -1267,12 +1284,12 @@ void VRayExporter::initExporter(int hasUI, int nframes, fpreal tstart, fpreal te
 			}
 		}
 
-		exportSettings();
-
 		m_isMotionBlur = hasMotionBlur(*m_rop, *camera);
 
 		// NOTE: Force animated values for motion blur
-		m_renderer.setAnimation(m_isMotionBlur);
+		if (!isAnimation()) {
+			m_renderer.setAnimation(m_isMotionBlur);
+		}
 
 		m_error = ROP_CONTINUE_RENDER;
 	}
