@@ -483,7 +483,7 @@ void VRayForHoudini::VRayPluginRenderer::setFrame(fpreal frame)
 }
 
 
-void VRayPluginRenderer::clearFrames(fpreal toTime)
+void VRayPluginRenderer::clearFrames(float toTime)
 {
 	if (m_vray) {
 		m_vray->clearAllPropertyValuesUpToTime(toTime);

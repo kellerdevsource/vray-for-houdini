@@ -142,7 +142,7 @@ public:
 	void                          setImageSize(const int w, const int h);
 
 	void                          showVFB(const bool show=true);
-	void                          clearFrames(fpreal toTime);
+	void                          clearFrames(float toTime);
 
 	int                           startRender(int locked=false);
 	int                           startSequence(int start, int end, int step, int locked=false);

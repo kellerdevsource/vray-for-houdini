@@ -214,7 +214,6 @@ private:
 	int                            m_isMotionBlur;
 	fpreal                         m_timeStart;
 	fpreal                         m_timeEnd;
-	fpreal                         m_timeCurrent;
 	FloatSet                       m_exportedFrames;
 
 public:

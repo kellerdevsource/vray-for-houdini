@@ -465,9 +465,9 @@ int VRayExporter::isNodeAnimated(OP_Node *op_node)
 {
 	int process = true;
 
-	if (isAnimation() && (m_timeCurrent > m_timeStart)) {
-		// TODO: Need to go through inputs...
-		process = op_node->hasAnimatedParms();
+	if (isAnimation() && (m_context.getTime() > m_timeStart)) {
+		// TODO: Detect animation
+		// process = op_node->hasAnimatedParms();
 	}
 
 	return process;
@@ -1243,7 +1243,8 @@ void VRayExporter::clearKeyFrames(float toTime)
 	Log::getLog().debug("VRayExporter::clearKeyFrames(%.3f)",
 						toTime);
 
-	m_renderer.clearFrames(toTime);
+	// XXX: This wipes all the data!
+	// m_renderer.clearFrames(toTime);
 }
 
 
