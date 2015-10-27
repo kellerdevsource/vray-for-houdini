@@ -47,8 +47,7 @@ void VRayExporter::RtCallbackNode(OP_Node *caller, void *callee, OP_EventType ty
 
 	OBJ_Node *obj_node = caller->castToOBJNode();
 
-	PRINT_INFO("RtCallbackNode: %s from \"%s\"",
-			   OPeventToString(type), obj_node->getName().buffer());
+	Log::getLog().debug("RtCallbackNode: %s from \"%s\"", OPeventToString(type), obj_node->getName().buffer());
 
 	if (type == OP_PARM_CHANGED ||
 		type == OP_INPUT_CHANGED ||
@@ -83,8 +82,7 @@ void VRayExporter::RtCallbackNodeData(OP_Node *caller, void *callee, OP_EventTyp
 {
 	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
 
-	PRINT_INFO("RtCallbackNodeData: %s from \"%s\"",
-			   OPeventToString(type), caller->getName().buffer());
+	Log::getLog().debug("RtCallbackNodeData: %s from \"%s\"", OPeventToString(type), caller->getName().buffer());
 
 	if (type == OP_PARM_CHANGED ||
 		type == OP_INPUT_CHANGED ||
@@ -163,7 +161,7 @@ VRay::Plugin VRayExporter::exportNodeData(SOP_Node *geom_node, SHOPToID &shopToI
 
 			OP::VRayNode::PluginResult res = vrayNode->asPluginDesc(geomPluginDesc, *this, static_cast<OP_Node*>(geom_node->getParent()));
 			if (res == OP::VRayNode::PluginResultError) {
-				PRINT_ERROR("Error creating plugin descripion for node: \"%s\" [%s]",
+				Log::getLog().error("Error creating plugin descripion for node: \"%s\" [%s]",
 							op_node->getName().buffer(),
 							geomOpName.buffer());
 			}
@@ -187,7 +185,7 @@ VRay::Plugin VRayExporter::exportNodeData(SOP_Node *geom_node, SHOPToID &shopToI
 			// NOTE: Could happen, for example, with file node when file is
 			// missing
 			if (NOT(gdp)) {
-				PRINT_ERROR("Incorrect geometry detail!");
+				Log::getLog().error("Incorrect geometry detail!");
 			}
 			else {
 				// NOTE: Find the correct way to detect fur...
@@ -220,7 +218,7 @@ VRay::Plugin VRayExporter::exportObject(OBJ_Node *obj_node)
 
 	SOP_Node *geom_node = obj_node->getRenderSopPtr();
 	if (!geom_node) {
-		PRINT_ERROR("OBJ \"%s\": Render SOP is not found!",
+		Log::getLog().error("OBJ \"%s\": Render SOP is not found!",
 					obj_node->getName().buffer());
 	}
 	else {
@@ -228,7 +226,7 @@ VRay::Plugin VRayExporter::exportObject(OBJ_Node *obj_node)
 
 		const UT_String &geomOpName = geom_op->getName();
 
-		PRINT_INFO("  Render SOP: %s:\"%s\"",
+		Log::getLog().info("  Render SOP: %s:\"%s\"",
 				   geom_op->getName().buffer(),
 				   obj_node->getName().buffer());
 
@@ -246,7 +244,7 @@ VRay::Plugin VRayExporter::exportObject(OBJ_Node *obj_node)
 
 				SHOP_Node *shop_node = getObjMaterial(obj_node, t);
 				if (shop_node) {
-					PRINT_INFO("  Found material: \"%s\" [%s]",
+					Log::getLog().info("  Found material: \"%s\" [%s]",
 							   shop_node->getName().buffer(), shop_node->getOperator()->getName().buffer());
 
 					mtl = exportMaterial(shop_node);
@@ -264,7 +262,7 @@ VRay::Plugin VRayExporter::exportObject(OBJ_Node *obj_node)
 						VRay::ValueList mtls_list;
 						VRay::IntList   ids_list;
 
-						PRINT_INFO("Adding MtlMulti:");
+						Log::getLog().info("Adding MtlMulti:");
 
 						for (SHOPToID::iterator oIt = shopToID.begin(); oIt != shopToID.end(); ++oIt) {
 							const char *shop_materialpath = oIt.key();
@@ -273,7 +271,7 @@ VRay::Plugin VRayExporter::exportObject(OBJ_Node *obj_node)
 							if (op_node) {
 								const int &material_id = oIt.data();
 
-								PRINT_INFO(" %i: \"%s\"",
+								Log::getLog().info(" %i: \"%s\"",
 										   material_id, shop_materialpath);
 
 								mtls_list.push_back(VRay::Value(exportMaterial(op_node->castToSHOPNode())));

@@ -228,7 +228,7 @@ VRayRendererNode::VRayRendererNode(OP_Network *net, const char *name, OP_Operato
 
 VRayRendererNode::~VRayRendererNode()
 {
-	PRINT_WARN("~VRayRendererNode()");
+	Log::getLog().debug("~VRayRendererNode()");
 
 #if 0
 	m_exporter.delOpCallback(this, VRayRendererNode::RtCallbackRop);
@@ -254,8 +254,7 @@ void VRayRendererNode::RtCallbackRop(OP_Node *caller, void *callee, OP_EventType
 {
 	VRayRendererNode *rop = (VRayRendererNode*)callee;
 
-	PRINT_INFO("RtCallbackRop: %s from \"%s\"",
-			   OPeventToString(type), caller->getName().buffer());
+	Log::getLog().debug("RtCallbackRop: %s from \"%s\"", OPeventToString(type), caller->getName().buffer());
 
 	if (type == OP_NODE_PREDELETE) {
 		caller->removeOpInterest(rop, VRayRendererNode::RtCallbackRop);
@@ -273,13 +272,12 @@ int VRayRendererNode::RtStartSession(void *data, int /*index*/, float /*t*/, con
 
 int VRayRendererNode::initSession(int interactive, int nframes, fpreal tstart, fpreal tend)
 {
-	PRINT_WARN("VRayRendererNode::initSession(%i, %i, %.3ff, %.3f)",
-			   interactive, nframes, tstart, tend);
+	Log::getLog().debug("VRayRendererNode::initSession(%i, %i, %.3ff, %.3f)", interactive, nframes, tstart, tend);
 
 	ROP_RENDER_CODE error = ROP_ABORT_RENDER;
 
 	if (!VRayExporter::getCamera(this)) {
-		PRINT_ERROR("Camera is not set!");
+		Log::getLog().error("Camera is not set!");
 	}
 	else {
 		// Store end time for endRender() executePostRenderScript()
@@ -323,8 +321,7 @@ void VRayRendererNode::startIPR()
 
 int VRayRendererNode::startRender(int nframes, fpreal tstart, fpreal tend)
 {
-	PRINT_WARN("VRayRendererNode::startRender(%i, %.3ff, %.3f)",
-			   nframes, tstart, tend);
+	Log::getLog().debug("VRayRendererNode::startRender(%i, %.3f, %.3f)", nframes, tstart, tend);
 
 	return initSession(false, nframes, tstart, tend);
 }
@@ -332,8 +329,7 @@ int VRayRendererNode::startRender(int nframes, fpreal tstart, fpreal tend)
 
 ROP_RENDER_CODE VRayRendererNode::renderFrame(fpreal time, UT_Interrupt *boss)
 {
-	PRINT_WARN("VRayRendererNode::renderFrame(%.3f)",
-			   time);
+	Log::getLog().debug("VRayRendererNode::renderFrame(%.3f)", time);
 
 	executePreFrameScript(time);
 
@@ -347,7 +343,7 @@ ROP_RENDER_CODE VRayRendererNode::renderFrame(fpreal time, UT_Interrupt *boss)
 
 ROP_RENDER_CODE VRayRendererNode::endRender()
 {
-	PRINT_WARN("VRayRendererNode::endRender()");
+	Log::getLog().debug("VRayRendererNode::endRender()");
 
 	m_exporter.exportEnd();
 

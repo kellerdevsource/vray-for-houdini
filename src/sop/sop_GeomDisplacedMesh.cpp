@@ -49,7 +49,7 @@ OP_ERROR SOP::GeomDisplacedMesh::cookMySop(OP_Context &context)
 
 OP::VRayNode::PluginResult SOP::GeomDisplacedMesh::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, OP_Node *parent)
 {
-	PRINT_WARN("OP::GeomDisplacedMesh::asPluginDesc()");
+	Log::getLog().warning("OP::GeomDisplacedMesh::asPluginDesc()");
 
 	pluginDesc.pluginID   = pluginID.c_str();
 	pluginDesc.pluginName = VRayExporter::getPluginName(this, "Dspl@");
@@ -61,12 +61,12 @@ OP::VRayNode::PluginResult SOP::GeomDisplacedMesh::asPluginDesc(Attrs::PluginDes
 	if (NOT(tex_network.equal(""))) {
 		OP_Node *tex_node = OPgetDirector()->findNode(tex_network.buffer());
 		if (NOT(tex_node)) {
-			PRINT_ERROR("Texture node not found!");
+			Log::getLog().error("Texture node not found!");
 		}
 		else {
 			VRay::Plugin texture = exporter.exportVop(tex_node);
 			if (NOT(texture)) {
-				PRINT_ERROR("Texture node export failed!");
+				Log::getLog().error("Texture node export failed!");
 			}
 			else {
 				pluginDesc.add(Attrs::PluginAttr("displacement_tex_color", texture));

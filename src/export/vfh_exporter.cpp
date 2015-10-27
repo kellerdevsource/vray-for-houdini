@@ -176,7 +176,7 @@ void VRayExporter::setAttrValueFromOpNode(Attrs::PluginDesc &pluginDesc, const P
 	if (Parm::isParmExist(*opNode, parmName)) {
 		const fpreal &t = m_context.getTime();
 #if 0
-		PRINT_INFO("Setting: [%s] %s.%s (from %s.%s)",
+		Log::getLog().info("Setting: [%s] %s.%s (from %s.%s)",
 				   pluginDesc.pluginID.c_str(),
 				   pluginDesc.pluginName.c_str(), attrDesc.attr.c_str(),
 				   opNode->getName().buffer(), parmName.c_str());
@@ -232,7 +232,7 @@ void VRayExporter::setAttrValueFromOpNode(Attrs::PluginDesc &pluginDesc, const P
 			// These are fake params and must be handled manually
 		}
 		else if (attrDesc.value.type < Parm::ePlugin) {
-			PRINT_ERROR("Unhandled param type: %s at %s [%i]",
+			Log::getLog().error("Unhandled param type: %s at %s [%i]",
 						parmName.c_str(), opNode->getOperator()->getName().buffer(), attrDesc.value.type);
 		}
 
@@ -246,7 +246,7 @@ void VRayExporter::setAttrsFromOpNode(Attrs::PluginDesc &pluginDesc, OP_Node *op
 {
 	const Parm::VRayPluginInfo *pluginInfo = Parm::GetVRayPluginInfo(pluginDesc.pluginID);
 	if (NOT(pluginInfo)) {
-		PRINT_ERROR("Node \"%s\": Plugin \"%s\" description is not found!",
+		Log::getLog().error("Node \"%s\": Plugin \"%s\" description is not found!",
 					opNode->getName().buffer(), pluginDesc.pluginID.c_str());
 	}
 	else {
@@ -310,7 +310,7 @@ void VRayExporter::setAttrsFromOpNode(Attrs::PluginDesc &pluginDesc, OP_Node *op
 						}
 					}
 					else {
-						PRINT_INFO("  Setting plugin value: %s = %s",
+						Log::getLog().info("  Setting plugin value: %s = %s",
 								   attrName.c_str(), plugin_value.getName().c_str());
 
 						const Parm::SocketDesc *fromSocketInfo = getConnectedOutputType(opNode, attrName.c_str());
@@ -319,7 +319,7 @@ void VRayExporter::setAttrsFromOpNode(Attrs::PluginDesc &pluginDesc, OP_Node *op
 							fromSocketInfo->type >= Parm::ParmType::eOutputColor &&
 							fromSocketInfo->type  < Parm::ParmType::eUnknown)
 						{
-							PRINT_INFO("    Using output: %s (\"%s\")",
+							Log::getLog().info("    Using output: %s (\"%s\")",
 									   fromSocketInfo->name.getToken(), fromSocketInfo->name.getLabel());
 							pluginDesc.addAttribute(Attrs::PluginAttr(attrName, plugin_value, fromSocketInfo->name.getToken()));
 						}
@@ -346,7 +346,7 @@ VRayExporter::VRayExporter(OP_Node *rop)
 
 VRayExporter::~VRayExporter()
 {
-	PRINT_WARN("~VRayExporter()");
+	Log::getLog().debug("~VRayExporter()");
 
 	VRayExporter::Instances.erase(this);
 
@@ -354,12 +354,12 @@ VRayExporter::~VRayExporter()
 }
 
 
-int VRayExporter::exportSettings()
+void VRayExporter::exportSettings()
 {
 	for (const auto &sp : Parm::RenderSettingsPlugins) {
 		const Parm::VRayPluginInfo *pluginInfo = Parm::GetVRayPluginInfo(sp);
 		if (!pluginInfo) {
-			PRINT_ERROR("Plugin \"%s\" description is not found!",
+			Log::getLog().error("Plugin \"%s\" description is not found!",
 						sp.c_str());
 		}
 		else {
@@ -372,8 +372,6 @@ int VRayExporter::exportSettings()
 	Attrs::PluginDesc pluginDesc("settingsUnitsInfo", "SettingsUnitsInfo");
 	pluginDesc.addAttribute(Attrs::PluginAttr("scene_upDir", VRay::Vector(0.0f, 1.0f, 0.0f)));
 	exportPlugin(pluginDesc);
-
-	return 0;
 }
 
 
@@ -480,7 +478,7 @@ void VRayExporter::RtCallbackVop(OP_Node *caller, void *callee, OP_EventType typ
 {
 	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
 
-	PRINT_INFO("RtCallbackVop: %s from \"%s\"",
+	Log::getLog().info("RtCallbackVop: %s from \"%s\"",
 			   OPeventToString(type), caller->getName().buffer());
 
 	if (type == OP_PARM_CHANGED ||
@@ -500,7 +498,7 @@ VRay::Plugin VRayExporter::exportVop(OP_Node *op_node)
 
 	const UT_String &opType = vop_node->getOperator()->getName();
 
-	PRINT_INFO("Exporting node \"%s\" [%s]...",
+	Log::getLog().info("Exporting node \"%s\" [%s]...",
 			   vop_node->getName().buffer(),
 			   opType.buffer());
 
@@ -522,7 +520,7 @@ VRay::Plugin VRayExporter::exportVop(OP_Node *op_node)
 
 		OP::VRayNode::PluginResult res = vrayNode->asPluginDesc(pluginDesc, *this, op_node);
 		if (res == OP::VRayNode::PluginResultError) {
-			PRINT_ERROR("Error creating plugin descripion for node: \"%s\" [%s]",
+			Log::getLog().error("Error creating plugin descripion for node: \"%s\" [%s]",
 						vop_node->getName().buffer(),
 						opType.buffer());
 		}
@@ -561,7 +559,7 @@ VRay::Plugin VRayExporter::exportVop(OP_Node *op_node)
 		}
 	}
 	else {
-		PRINT_ERROR("Unsupported VOP node: %s",
+		Log::getLog().error("Unsupported VOP node: %s",
 					opType.buffer());
 	}
 
@@ -575,7 +573,7 @@ VRay::Plugin VRayExporter::exportMaterial(SHOP_Node *shop_node)
 
 	OP_Node *op_node = VRayExporter::FindChildNodeByType(shop_node, "vray_material_output");
 	if (!op_node) {
-		PRINT_ERROR("Can't find \"V-Ray Material Output\" operator under \"%s\"!",
+		Log::getLog().error("Can't find \"V-Ray Material Output\" operator under \"%s\"!",
 					shop_node->getName().buffer());
 	}
 	else {
@@ -583,7 +581,7 @@ VRay::Plugin VRayExporter::exportMaterial(SHOP_Node *shop_node)
 		addOpCallback(mtl_out, VRayExporter::RtCallbackShop);
 
 		if (mtl_out->error() < UT_ERROR_ABORT ) {
-			PRINT_INFO("Exporting material output \"%s\"...",
+			Log::getLog().info("Exporting material output \"%s\"...",
 					   mtl_out->getName().buffer());
 
 			const int idx = mtl_out->getInputFromName("Material");
@@ -605,7 +603,7 @@ VRay::Plugin VRayExporter::exportMaterial(SHOP_Node *shop_node)
 						break;
 					}
 					default:
-						PRINT_ERROR("Unsupported input type for node \"%s\", input %d!",
+						Log::getLog().error("Unsupported input type for node \"%s\", input %d!",
 									mtl_out->getName().buffer(), idx);
 				}
 
@@ -629,7 +627,7 @@ void VRayExporter::RtCallbackShop(OP_Node *caller, void *callee, OP_EventType ty
 {
 	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
 
-	PRINT_INFO("RtCallbackDisplacement: %s from \"%s\"",
+	Log::getLog().info("RtCallbackDisplacement: %s from \"%s\"",
 			   OPeventToString(type), caller->getName().buffer());
 
 	if (type == OP_PARM_CHANGED ||
@@ -688,7 +686,7 @@ VRay::Plugin VRayExporter::exportDisplacement(OBJ_Node *obj_node, VRay::Plugin &
 
 	OP_Node *op_node = VRayExporter::FindChildNodeByType(shop_node, "vray_material_output");
 	if (!op_node) {
-		PRINT_ERROR("Can't find \"V-Ray Material Output\" operator under \"%s\"!",
+		Log::getLog().error("Can't find \"V-Ray Material Output\" operator under \"%s\"!",
 					shop_node->getName().buffer());
 	}
 	else {
@@ -705,7 +703,7 @@ VRay::Plugin VRayExporter::exportDisplacement(OBJ_Node *obj_node, VRay::Plugin &
 
 			OP::VRayNode::PluginResult res = displ->asPluginDesc(pluginDesc, *this, obj_node);
 			if (res == OP::VRayNode::PluginResultError) {
-				PRINT_ERROR("Error creating plugin descripion for node: \"%s\" [%s]",
+				Log::getLog().error("Error creating plugin descripion for node: \"%s\" [%s]",
 							displ->getName().buffer(), displ->getOperator()->getName().buffer());
 			}
 			else if (res == OP::VRayNode::PluginResultNA ||
@@ -833,7 +831,7 @@ void VRayExporter::TraverseOBJ(OBJ_Node *obj_node, void *data)
 	if (obj_node) {
 		const OBJ_OBJECT_TYPE &ob_type = obj_node->getObjectType();
 
-		PRINT_INFO("Processing %s node: \"%s\"%s [%i|%i]",
+		Log::getLog().info("Processing %s node: \"%s\"%s [%i|%i]",
 				   obj_node->getOpType(),
 				   obj_node->getName().buffer(),
 				   ObjectTypeToString(ob_type).c_str(),
@@ -844,7 +842,7 @@ void VRayExporter::TraverseOBJ(OBJ_Node *obj_node, void *data)
 	if (obj_node && obj_node->getVisible()) {
 		const OBJ_OBJECT_TYPE &ob_type = obj_node->getObjectType();
 
-		PRINT_INFO("Processing node %s:\"%s\"%s [%i]",
+		Log::getLog().info("Processing node %s:\"%s\"%s [%i]",
 				   obj_node->getOpType(),
 				   obj_node->getName().buffer(),
 				   ObjectTypeToString(ob_type).c_str(),
@@ -887,7 +885,7 @@ void VRayExporter::TraverseOBJ(OBJ_Node *obj_node, void *data)
 		else {
 			OP_Node *op_node = obj_node->getRenderNodePtr();
 			if (op_node) {
-				PRINT_INFO("Found render node: %s",
+				Log::getLog().info("Found render node: %s",
 						   op_node->getName().buffer());
 				TraverseOBJ(op_node->castToOBJNode(), data);
 			}
@@ -913,7 +911,7 @@ void VRayExporter::addOpCallback(OP_Node *op_node, OP_EventMethod cb)
 	// Install callbacks only for interactive session
 	if (isIPR()) {
 		if (!op_node->hasOpInterest(this, cb)) {
-			PRINT_INFO("addOpInterest(%s)",
+			Log::getLog().info("addOpInterest(%s)",
 					   op_node->getName().buffer());
 
 			op_node->addOpInterest(this, cb);
@@ -928,7 +926,7 @@ void VRayExporter::addOpCallback(OP_Node *op_node, OP_EventMethod cb)
 void VRayExporter::delOpCallback(OP_Node *op_node, OP_EventMethod cb)
 {
 	if (op_node->hasOpInterest(this, cb)) {
-		PRINT_INFO("removeOpInterest(%s)",
+		Log::getLog().info("removeOpInterest(%s)",
 				   op_node->getName().buffer());
 
 		op_node->removeOpInterest(this, cb);
@@ -940,6 +938,39 @@ void VRayExporter::delOpCallbacks(OP_Node *op_node)
 {
 	m_opRegCallbacks.erase(std::remove_if(m_opRegCallbacks.begin(), m_opRegCallbacks.end(),
 										  [op_node](OpInterestItem &item) { return item.op_node == op_node; }), m_opRegCallbacks.end());
+}
+
+
+void VRayExporter::onDumpMessage(VRay::VRayRenderer &renderer, const char *msg, int level)
+{
+	QString message(msg);
+	message = message.simplified();
+
+#if 0
+	if (level <= VRay::MessageError) {
+		Log::getLog().error("V-Ray: %s", message.toAscii().constData());
+	}
+	else if (level > VRay::MessageError && level <= VRay::MessageWarning) {
+		Log::getLog().warning("V-Ray: %s", message.toAscii().constData());
+	}
+	else if (level > VRay::MessageWarning && level <= VRay::MessageInfo) {
+		Log::getLog().info("V-Ray: %s", message.toAscii().constData());
+	}
+#endif
+}
+
+
+void VRayExporter::onProgress(VRay::VRayRenderer &renderer, const char *msg, int elementNumber, int elementsCount)
+{
+	QString message(msg);
+	message = message.simplified();
+
+	const float percentage = 100.0 * elementNumber / elementsCount;
+
+#if 0
+	Log::getLog().info("V-Ray: %s %.1f%%",
+			   message.toAscii().constData(), percentage);
+#endif
 }
 
 
@@ -967,7 +998,7 @@ void VRayExporter::RtCallbackObjManager(OP_Node *caller, void *callee, OP_EventT
 {
 	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
 
-	PRINT_INFO("RtCallbackObjManager: %s from \"%s\"",
+	Log::getLog().info("RtCallbackObjManager: %s from \"%s\"",
 			   OPeventToString(type), caller->getName().buffer());
 
 	if (type == OP_GROUPLIST_CHANGED ||
@@ -986,14 +1017,52 @@ void VRayExporter::RtCallbackObjManager(OP_Node *caller, void *callee, OP_EventT
 }
 
 
-int VRayExporter::exportScene()
+void VRayExporter::exportScene()
 {
+	setFrame(m_context.getFloatFrame());
+
+	Log::getLog().debug("VRayExporter::exportScene(%.3f)",
+			   m_context.getFloatFrame());
+
+	exportView();
+
 	OP_Network *obj_manager = OPgetDirector()->getManager("obj");
 
 	// NOTE: Do not go recursively here, process childs manually
 	obj_manager->traverseChildren(VRayExporter::TraverseOBJs, this, false);
 
 	addOpCallback(obj_manager, VRayExporter::RtCallbackObjManager);
+
+	UT_String env_network_path;
+	m_rop->evalString(env_network_path, Parm::parm_render_net_environment.getToken(), 0, 0.0f);
+	if (NOT(env_network_path.equal(""))) {
+		OP_Node *env_network = OPgetDirector()->findNode(env_network_path.buffer());
+		if (env_network) {
+			OP_Node *env_node = VRayExporter::FindChildNodeByType(env_network, "VRayNodeSettingsEnvironment");
+			if (NOT(env_node)) {
+				Log::getLog().error("Node of type \"VRay SettingsEnvironment\" is not found!");
+			}
+			else {
+				exportEnvironment(env_node);
+				exportEffects(env_network);
+			}
+		}
+	}
+
+	UT_String channels_network_path;
+	m_rop->evalString(channels_network_path, Parm::parm_render_net_render_channels.getToken(), 0, 0.0f);
+	if (NOT(channels_network_path.equal(""))) {
+		OP_Node *channels_network = OPgetDirector()->findNode(channels_network_path.buffer());
+		if (channels_network) {
+			OP_Node *chan_node = VRayExporter::FindChildNodeByType(channels_network, "VRayNodeRenderChannelsContainer");
+			if (NOT(chan_node)) {
+				Log::getLog().error("Node of type \"VRay RenderChannelsContainer\" is not found!");
+			}
+			else {
+				exportRenderChannels(chan_node);
+			}
+		}
+	}
 
 	// Add simulations from OBJ
 	if (m_phxSimulations.size()) {
@@ -1002,8 +1071,6 @@ int VRayExporter::exportScene()
 
 		exportPlugin(phxSims);
 	}
-
-	return 0;
 }
 
 
@@ -1110,7 +1177,7 @@ void VRayExporter::setAbort()
 
 void VRayExporter::setRenderSize(int w, int h)
 {
-	PRINT_INFO("VRayExporter::setRenderSize(%i, %i)",
+	Log::getLog().info("VRayExporter::setRenderSize(%i, %i)",
 			   w, h);
 
 	if (m_vfb.isInitialized()) {
@@ -1146,12 +1213,16 @@ int VRayExporter::isStereoView() const
 
 int VRayExporter::renderFrame(int locked)
 {
+	setFrame(m_context.getFloatFrame());
+
+	Log::getLog().info("VRayExporter::renderFrame(%.3f)", m_context.getFloatFrame());
+
 	if (m_workMode == ExpWorkMode::ExpRender || m_workMode == ExpWorkMode::ExpExportRender) {
 		m_renderer.startRender(locked);
 	}
 	if (m_workMode == ExpWorkMode::ExpExport || m_workMode == ExpWorkMode::ExpExportRender) {
 		if (m_exportFilepath.empty()) {
-			PRINT_ERROR("Export mode is selected, but no filepath specified!")
+			Log::getLog().error("Export mode is selected, but no filepath specified!");
 		}
 		else {
 			exportVrscene(m_exportFilepath);
@@ -1215,25 +1286,23 @@ int VRayExporter::initRenderer(int hasUI, int reInit)
 
 void VRayExporter::initExporter(int hasUI, int nframes, fpreal tstart, fpreal tend)
 {
-	m_frames    = nframes;
-	m_timeStart = tstart;
-	m_timeEnd   = tend;
-
-	setAnimation(nframes > 1);
-
-	m_viewParams = ViewParams();
-	m_exportedFrames.clear();
-	m_phxSimulations.clear();
-
-	m_isAborted = false;
-
 	OBJ_Node *camera = VRayExporter::getCamera(m_rop);
 	if (!camera) {
-		PRINT_ERROR("Camera is not set!");
+		Log::getLog().error("Camera is not set!");
 
 		m_error = ROP_ABORT_RENDER;
 	}
 	else {
+		m_viewParams = ViewParams();
+		m_exportedFrames.clear();
+		m_phxSimulations.clear();
+		m_frames    = nframes;
+		m_timeStart = tstart;
+		m_timeEnd   = tend;
+		m_isAborted = false;
+
+		setAnimation(nframes > 1);
+
 		getRenderer().resetCallbacks();
 
 #if 0
@@ -1274,6 +1343,9 @@ void VRayExporter::initExporter(int hasUI, int nframes, fpreal tstart, fpreal te
 			}
 		}
 
+		m_renderer.addCbOnProgress(CbOnProgress(boost::bind(&VRayExporter::onProgress, this, _1, _2, _3, _4)));
+		m_renderer.addCbOnDumpMessage(CbOnDumpMessage(boost::bind(&VRayExporter::onDumpMessage, this, _1, _2, _3)));
+
 		if (isAnimation()) {
 			addAbortCallback();
 		}
@@ -1293,9 +1365,6 @@ void VRayExporter::initExporter(int hasUI, int nframes, fpreal tstart, fpreal te
 
 		m_error = ROP_CONTINUE_RENDER;
 	}
-
-	PRINT_WARN("VRayRendererNode::startRender finished with %i",
-			   m_error);
 }
 
 
@@ -1318,138 +1387,77 @@ void MotionBlurParams::calcParams(float frameCurrent)
 	mb_end   = mb_start + mb_duration;
 	mb_frame_inc = mb_duration / (mb_geom_samples + 1);
 
-	PRINT_WARN("  MB frame: %.3f", frameCurrent);
-	PRINT_WARN("  MB duration: %.3f", mb_duration);
-	PRINT_WARN("  MB interval center: %.3f", mb_interval_center);
-	PRINT_WARN("  MB geom samples: %i", mb_geom_samples);
-	PRINT_WARN("  MB start: %.3f", mb_start);
-	PRINT_WARN("  MB end:   %.3f", mb_end);
-	PRINT_WARN("  MB inc:   %.3f", mb_frame_inc);
+	Log::getLog().info("  MB frame: %.3f", frameCurrent);
+	Log::getLog().info("  MB duration: %.3f", mb_duration);
+	Log::getLog().info("  MB interval center: %.3f", mb_interval_center);
+	Log::getLog().info("  MB geom samples: %i", mb_geom_samples);
+	Log::getLog().info("  MB start: %.3f", mb_start);
+	Log::getLog().info("  MB end:   %.3f", mb_end);
+	Log::getLog().info("  MB inc:   %.3f", mb_frame_inc);
 }
 
 
 void VRayExporter::exportFrame(fpreal time)
 {
-	OP_Context context;
-	context.setTime(time);
+	m_context.setTime(time);
 
-	if (m_error != ROP_ABORT_RENDER) {
-		if (m_isMotionBlur) {
-			MotionBlurParams mbParams;
-			fillMotionBlurParams(mbParams);
-			mbParams.calcParams(context.getFloatFrame());
+	Log::getLog().debug("VRayExporter::exportFrame(%.3f)",
+			   m_context.getFloatFrame());
 
-			// We don't need this data anymore
-			clearKeyFrames(mbParams.mb_start);
+	if (!m_isMotionBlur) {
+		clearKeyFrames(m_context.getFloatFrame());
+		exportScene();
+	}
+	else {
+		MotionBlurParams mbParams;
+		fillMotionBlurParams(mbParams);
+		mbParams.calcParams(m_context.getFloatFrame());
 
-			for (FloatSet::iterator tIt = m_exportedFrames.begin(); tIt != m_exportedFrames.end();) {
-				if (*tIt < mbParams.mb_start) {
-					m_exportedFrames.erase(tIt++);
-				}
-				else {
-					++tIt;
-				}
+		// We don't need this data anymore
+		clearKeyFrames(mbParams.mb_start);
+
+		for (FloatSet::iterator tIt = m_exportedFrames.begin(); tIt != m_exportedFrames.end();) {
+			if (*tIt < mbParams.mb_start) {
+				m_exportedFrames.erase(tIt++);
+			}
+			else {
+				++tIt;
+			}
+		}
+
+		// Export motion blur data
+		fpreal subframe = mbParams.mb_start;
+		while (!isAborted() && (subframe <= mbParams.mb_end)) {
+			if (!m_exportedFrames.count(subframe)) {
+				m_exportedFrames.insert(subframe);
+				m_context.setFrame(subframe);
+				exportScene();
 			}
 
-			// Export motion blur data
-			fpreal subframe = mbParams.mb_start;
-			while (subframe <= mbParams.mb_end) {
-				if (isAborted()) {
-					break;
-				}
-				if (!m_exportedFrames.count(subframe)) {
-					m_exportedFrames.insert(subframe);
-
-					context.setFrame(subframe);
-
-					PRINT_WARN("Exporting motion blur sub-frame: %.3f [time=%.3f]",
-							   context.getFloatFrame(), context.getTime());
-
-					exportKeyFrame(context);
-				}
-				subframe += mbParams.mb_frame_inc;
-			}
-
-			// Set time back to original time for rendering
-			context.setTime(time);
-		}
-		else {
-			PRINT_WARN("Exporting frame: %.3f",
-					   context.getFloatFrame());
-
-			clearKeyFrames(context.getFloatFrame());
-			exportKeyFrame(context);
+			subframe += mbParams.mb_frame_inc;
 		}
 
-		if (isAborted()) {
-			PRINT_WARN("Operation is aborted by the user!")
-					m_error = ROP_ABORT_RENDER;
-		}
-		else {
-			setFrame(context.getFloatFrame());
-			renderFrame(isAnimation());
-		}
+		// Set time back to original time for rendering
+		m_context.setTime(time);
 	}
 
-	PRINT_WARN("VRayRendererNode::renderFrame finished with %i",
-			   m_error);
-
+	if (isAborted()) {
+		Log::getLog().info("Operation is aborted by the user!");
+		m_error = ROP_ABORT_RENDER;
+	}
+	else {
+		renderFrame(isAnimation());
+	}
 }
 
 
 void VRayExporter::exportEnd()
 {
+	Log::getLog().debug("VRayExporter::exportEnd()");
+
 	if (isAnimation()) {
 		clearKeyFrames(SYS_FP64_MAX);
 	}
 
 	m_error = ROP_CONTINUE_RENDER;
-}
-
-
-int VRayExporter::exportKeyFrame(const OP_Context &context)
-{
-	setFrame(context.getFloatFrame());
-	setContext(context);
-
-	int err = exportView();
-	if (err) {
-		m_error = ROP_ABORT_RENDER;
-	}
-	else {
-		exportScene();
-
-		UT_String env_network_path;
-		m_rop->evalString(env_network_path, Parm::parm_render_net_environment.getToken(), 0, 0.0f);
-		if (NOT(env_network_path.equal(""))) {
-			OP_Node *env_network = OPgetDirector()->findNode(env_network_path.buffer());
-			if (env_network) {
-				OP_Node *env_node = VRayExporter::FindChildNodeByType(env_network, "VRayNodeSettingsEnvironment");
-				if (NOT(env_node)) {
-					PRINT_ERROR("Node of type \"VRay SettingsEnvironment\" is not found!");
-				}
-				else {
-					exportEnvironment(env_node);
-					exportEffects(env_network);
-				}
-			}
-		}
-
-		UT_String channels_network_path;
-		m_rop->evalString(channels_network_path, Parm::parm_render_net_render_channels.getToken(), 0, 0.0f);
-		if (NOT(channels_network_path.equal(""))) {
-			OP_Node *channels_network = OPgetDirector()->findNode(channels_network_path.buffer());
-			if (channels_network) {
-				OP_Node *chan_node = VRayExporter::FindChildNodeByType(channels_network, "VRayNodeRenderChannelsContainer");
-				if (NOT(chan_node)) {
-					PRINT_ERROR("Node of type \"VRay RenderChannelsContainer\" is not found!");
-				}
-				else {
-					exportRenderChannels(chan_node);
-				}
-			}
-		}
-	}
-
-	return err;
 }

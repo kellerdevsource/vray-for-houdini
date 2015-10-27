@@ -30,7 +30,7 @@ void VRayExporter::RtCallbackView(OP_Node *caller, void *callee, OP_EventType ty
 {
 	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
 
-	PRINT_INFO("RtCallbackView: %s from \"%s\"",
+	Log::getLog().info("RtCallbackView: %s from \"%s\"",
 			   OPeventToString(type), caller->getName().buffer());
 
 	if (type == OP_INPUT_CHANGED) {
@@ -235,6 +235,8 @@ void VRayExporter::fillSettingsCameraDof(const ViewParams &viewParams, Attrs::Pl
 
 int VRayExporter::exportView()
 {
+	Log::getLog().debug("VRayExporter::exportView()");
+
 	static VUtils::FastCriticalSection csect;
 	if (csect.tryEnter()) {
 		csect.enter();
@@ -266,7 +268,7 @@ int VRayExporter::exportView()
 
 		const bool needReset = m_viewParams.needReset(viewParams);
 		if (needReset) {
-			PRINT_WARN("VRayExporter::exportView: Reseting view plugins...");
+			Log::getLog().warning("VRayExporter::exportView: Reseting view plugins...");
 
 			getRenderer().setAutoCommit(false);
 

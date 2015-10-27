@@ -18,6 +18,7 @@
 #include "vfh_plugin_info.h"
 #include "vfh_export_view.h"
 #include "vfh_vfb.h"
+#include "vfh_log.h"
 
 #include <OP/OP_Node.h>
 #include <OBJ/OBJ_Node.h>
@@ -107,9 +108,8 @@ public:
 	void                           fillMotionBlurParams(MotionBlurParams &mbParams);
 
 	int                            exportView();
-	int                            exportScene();
-	int                            exportKeyFrame(const OP_Context &context);
-	int                            exportSettings();
+	void                           exportScene();
+	void                           exportSettings();
 	void                           exportRenderChannels(OP_Node *op_node);
 	void                           exportEnvironment(OP_Node *op_node);
 	void                           exportEffects(OP_Node *op_net);
@@ -227,6 +227,9 @@ public:
 	void                           delOpCallback(OP_Node *op_node, OP_EventMethod cb);
 	void                           delOpCallbacks(OP_Node *op_node);
 
+	void                           onDumpMessage(VRay::VRayRenderer &renderer, const char *msg, int level);
+	void                           onProgress(VRay::VRayRenderer &renderer, const char *msg, int elementNumber, int elementsCount);
+
 	void                           resetOpCallbacks();
 	void                           addAbortCallback();
 	void                           addRtCallbacks();
@@ -239,6 +242,7 @@ public:
 	static void                    RtCallbackView(OP_Node *caller, void *callee, OP_EventType type, void *data);
 	static void                    RtCallbackVop(OP_Node *caller, void *callee, OP_EventType type, void *data);
 	static void                    RtCallbackShop(OP_Node *caller, void *callee, OP_EventType type, void *data);
+
 };
 
 } // namespace VRayForHoudini

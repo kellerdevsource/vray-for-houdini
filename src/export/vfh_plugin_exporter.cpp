@@ -26,19 +26,6 @@ AppSdkInit VRayPluginRenderer::vrayInit;
 
 static void OnDumpMessage(VRay::VRayRenderer &renderer, const char *msg, int level, void *userData)
 {
-	QString message(msg);
-	message = message.simplified();
-
-	if (level <= VRay::MessageError) {
-		PRINT_ERROR("V-Ray: %s", message.toAscii().constData());
-	}
-	else if (level > VRay::MessageError && level <= VRay::MessageWarning) {
-		PRINT_WARN("V-Ray: %s", message.toAscii().constData());
-	}
-	else if (level > VRay::MessageWarning && level <= VRay::MessageInfo) {
-		PRINT_INFO("V-Ray: %s", message.toAscii().constData());
-	}
-
 	CbSetOnDumpMessage *callbacks = reinterpret_cast<CbSetOnDumpMessage*>(userData);
 	for (CbSetOnDumpMessage::CbTypeArray::const_iterator cbIt = callbacks->m_cbTyped.begin(); cbIt != callbacks->m_cbTyped.end(); ++cbIt) {
 		(*cbIt)(renderer, msg, level);
@@ -51,14 +38,6 @@ static void OnDumpMessage(VRay::VRayRenderer &renderer, const char *msg, int lev
 
 static void OnProgress(VRay::VRayRenderer &renderer, const char *msg, int elementNumber, int elementsCount, void *userData)
 {
-	QString message(msg);
-	message = message.simplified();
-
-	const float percentage = 100.0 * elementNumber / elementsCount;
-
-	PRINT_INFO("V-Ray: %s %.1f%%",
-			   message.toAscii().constData(), percentage);
-
 	CbSetOnProgress *callbacks = reinterpret_cast<CbSetOnProgress*>(userData);
 	for (CbSetOnProgress::CbTypeArray::const_iterator cbIt = callbacks->m_cbTyped.begin(); cbIt != callbacks->m_cbTyped.end(); ++cbIt) {
 		(*cbIt)(renderer, msg, elementNumber, elementsCount);
@@ -72,7 +51,7 @@ static void OnProgress(VRay::VRayRenderer &renderer, const char *msg, int elemen
 static void OnRendererClose(VRay::VRayRenderer &renderer, void *userData)
 {
 #if PRINT_CALLBACK_CALLS
-	PRINT_WARN("VRayPluginRenderer::OnRendererClose()");
+	Log::getLog().warning("VRayPluginRenderer::OnRendererClose()");
 #endif
 	CbSetOnRendererClose *callbacks = reinterpret_cast<CbSetOnRendererClose*>(userData);
 	for (CbSetOnRendererClose::CbTypeArray::const_iterator cbIt = callbacks->m_cbTyped.begin(); cbIt != callbacks->m_cbTyped.end(); ++cbIt) {
@@ -87,7 +66,7 @@ static void OnRendererClose(VRay::VRayRenderer &renderer, void *userData)
 static void OnImageReady(VRay::VRayRenderer &renderer, void *userData)
 {
 #if PRINT_CALLBACK_CALLS
-	PRINT_WARN("VRayPluginRenderer::OnImageReady()");
+	Log::getLog().warning("VRayPluginRenderer::OnImageReady()");
 #endif
 	CbSetOnImageReady *callbacks = reinterpret_cast<CbSetOnImageReady*>(userData);
 	for (CbSetOnImageReady::CbTypeArray::const_iterator cbIt = callbacks->m_cbTyped.begin(); cbIt != callbacks->m_cbTyped.end(); ++cbIt) {
@@ -102,7 +81,7 @@ static void OnImageReady(VRay::VRayRenderer &renderer, void *userData)
 static void OnRTImageUpdated(VRay::VRayRenderer &renderer, VRay::VRayImage *img , void *userData)
 {
 #if PRINT_CALLBACK_CALLS
-	PRINT_WARN("VRayPluginRenderer::OnRTImageUpdated()");
+	Log::getLog().warning("VRayPluginRenderer::OnRTImageUpdated()");
 #endif
 	CbSetOnRTImageUpdated *callbacks = reinterpret_cast<CbSetOnRTImageUpdated*>(userData);
 	for (CbSetOnRTImageUpdated::CbTypeArray::const_iterator cbIt = callbacks->m_cbTyped.begin(); cbIt != callbacks->m_cbTyped.end(); ++cbIt) {
@@ -117,7 +96,7 @@ static void OnRTImageUpdated(VRay::VRayRenderer &renderer, VRay::VRayImage *img 
 static void OnBucketInit(VRay::VRayRenderer &renderer, int x, int y, int w, int h, const char *host, void *userData)
 {
 #if PRINT_CALLBACK_CALLS
-	PRINT_WARN("VRayPluginRenderer::OnBucketReady()");
+	Log::getLog().warning("VRayPluginRenderer::OnBucketReady()");
 #endif
 	CbSetOnBucketInit *callbacks = reinterpret_cast<CbSetOnBucketInit*>(userData);
 	for (CbSetOnBucketInit::CbTypeArray::const_iterator cbIt = callbacks->m_cbTyped.begin(); cbIt != callbacks->m_cbTyped.end(); ++cbIt) {
@@ -132,7 +111,7 @@ static void OnBucketInit(VRay::VRayRenderer &renderer, int x, int y, int w, int 
 static void OnBucketFailed(VRay::VRayRenderer &renderer, int x, int y, int w, int h, const char *host, void *userData)
 {
 #if PRINT_CALLBACK_CALLS
-	PRINT_WARN("VRayPluginRenderer::OnBucketReady()");
+	Log::getLog().warning("VRayPluginRenderer::OnBucketReady()");
 #endif
 	CbSetOnBucketFailed *callbacks = reinterpret_cast<CbSetOnBucketFailed*>(userData);
 	for (CbSetOnBucketFailed::CbTypeArray::const_iterator cbIt = callbacks->m_cbTyped.begin(); cbIt != callbacks->m_cbTyped.end(); ++cbIt) {
@@ -147,7 +126,7 @@ static void OnBucketFailed(VRay::VRayRenderer &renderer, int x, int y, int w, in
 static void OnBucketReady(VRay::VRayRenderer &renderer, int x, int y, const char *host, VRay::VRayImage *img, void *userData)
 {
 #if PRINT_CALLBACK_CALLS
-	PRINT_WARN("VRayPluginRenderer::OnBucketReady()");
+	Log::getLog().warning("VRayPluginRenderer::OnBucketReady()");
 #endif
 	CbSetOnBucketReady *callbacks = reinterpret_cast<CbSetOnBucketReady*>(userData);
 	for (CbSetOnBucketReady::CbTypeArray::const_iterator cbIt = callbacks->m_cbTyped.begin(); cbIt != callbacks->m_cbTyped.end(); ++cbIt) {
@@ -162,13 +141,13 @@ static void OnBucketReady(VRay::VRayRenderer &renderer, int x, int y, const char
 VRayPluginRenderer::VRayPluginRenderer()
 	: m_vray(nullptr)
 {
-	PRINT_WARN("VRayPluginRenderer()");
+	Log::getLog().debug("VRayPluginRenderer()");
 }
 
 
 VRayPluginRenderer::~VRayPluginRenderer()
 {
-	PRINT_WARN("~VRayPluginRenderer()");
+	Log::getLog().debug("~VRayPluginRenderer()");
 	freeMem();
 }
 
@@ -203,8 +182,8 @@ int VRayPluginRenderer::initRenderer(int hasUI, int reInit)
 				}
 			}
 			catch (std::exception &e) {
-				PRINT_INFO("Error initializing V-Ray! Error: \"%s\"",
-						   e.what());
+				Log::getLog().error("Error initializing V-Ray! Error: \"%s\"",
+									e.what());
 				m_vray = nullptr;
 			}
 		}
@@ -245,16 +224,16 @@ VRay::Plugin VRayPluginRenderer::exportPlugin(const Attrs::PluginDesc &pluginDes
 
 	if (pluginDesc.pluginID.empty()) {
 		// NOTE: Could be done intentionally to skip plugin creation
-		PRINT_WARN("[%s] PluginDesc.pluginID is not set!",
-				   pluginDesc.pluginName.c_str());
+		Log::getLog().warning("[%s] PluginDesc.pluginID is not set!",
+							  pluginDesc.pluginName.c_str());
 		return VRay::Plugin();
 	}
 
 	VRay::Plugin plug = m_vray->newPlugin(pluginDesc.pluginName, pluginDesc.pluginID);
 	VRay::Error err = m_vray->getLastError();
 	if (err != VRay::SUCCESS) {
-		PRINT_ERROR("Error creating plugin: %s",
-					err.toString().c_str());
+		Log::getLog().error("Error creating plugin: %s",
+							err.toString().c_str());
 	}
 	if (plug) {
 		for (const auto &pIt : pluginDesc.pluginAttrs) {
@@ -293,8 +272,8 @@ VRay::Plugin VRayPluginRenderer::exportPlugin(const Attrs::PluginDesc &pluginDes
 			else if (p.paramType == PluginAttr::AttrTypeString) {
 				plug.setValue(p.paramName, p.paramValue.valString);
 #if CGR_DEBUG_APPSDK_VALUES
-				PRINT_INFO("AttrTypeString:  %s [%s] = %s",
-						   p.paramName.c_str(), plug.getType().c_str(), plug.getValueAsString(p.paramName).c_str());
+				Log::getLog().debug("AttrTypeString:  %s [%s] = %s",
+									p.paramName.c_str(), plug.getType().c_str(), plug.getValueAsString(p.paramName).c_str());
 #endif
 			}
 			else if (p.paramType == PluginAttr::AttrTypeListPlugin) {
@@ -303,15 +282,15 @@ VRay::Plugin VRayPluginRenderer::exportPlugin(const Attrs::PluginDesc &pluginDes
 			else if (p.paramType == PluginAttr::AttrTypeListInt) {
 				plug.setValue(p.paramName, VRay::Value(p.paramValue.valListInt));
 #if CGR_DEBUG_APPSDK_VALUES
-				PRINT_INFO("AttrTypeListInt:  %s [%s] = %s",
-						   p.paramName.c_str(), plug.getType().c_str(), plug.getValueAsString(p.paramName).c_str());
+				Log::getLog().debug("AttrTypeListInt:  %s [%s] = %s",
+									p.paramName.c_str(), plug.getType().c_str(), plug.getValueAsString(p.paramName).c_str());
 #endif
 			}
 			else if (p.paramType == PluginAttr::AttrTypeListFloat) {
 				plug.setValue(p.paramName, VRay::Value(p.paramValue.valListFloat));
 #if CGR_DEBUG_APPSDK_VALUES
-				PRINT_INFO("AttrTypeListFloat:  %s [%s] = %s",
-						   p.paramName.c_str(), plug.getType().c_str(), plug.getValueAsString(p.paramName).c_str());
+				Log::getLog().debug("AttrTypeListFloat:  %s [%s] = %s",
+									p.paramName.c_str(), plug.getType().c_str(), plug.getValueAsString(p.paramName).c_str());
 #endif
 			}
 			else if (p.paramType == PluginAttr::AttrTypeListVector) {
@@ -323,8 +302,8 @@ VRay::Plugin VRayPluginRenderer::exportPlugin(const Attrs::PluginDesc &pluginDes
 			else if (p.paramType == PluginAttr::AttrTypeListValue) {
 				plug.setValue(p.paramName, VRay::Value(p.paramValue.valListValue));
 #if CGR_DEBUG_APPSDK_VALUES
-				PRINT_INFO("AttrTypeListValue:  %s [%s] = %s",
-						   p.paramName.c_str(), plug.getType().c_str(), plug.getValueAsString(p.paramName).c_str());
+				Log::getLog().debug("AttrTypeListValue:  %s [%s] = %s",
+									p.paramName.c_str(), plug.getType().c_str(), plug.getValueAsString(p.paramName).c_str());
 #endif
 			}
 			else if (p.paramType == PluginAttr::AttrTypeRawListInt) {
@@ -349,8 +328,8 @@ VRay::Plugin VRayPluginRenderer::exportPlugin(const Attrs::PluginDesc &pluginDes
 			}
 
 #if CGR_DEBUG_APPSDK_VALUES
-			PRINT_INFO("Setting plugin parameter: \"%s\" %s.%s = %s",
-					   pluginDesc.pluginName.c_str(), pluginDesc.pluginID.c_str(), p.paramName.c_str(), plug.getValue(p.paramName).toString().c_str());
+			Log::getLog().debug("Setting plugin parameter: \"%s\" %s.%s = %s",
+								pluginDesc.pluginName.c_str(), pluginDesc.pluginID.c_str(), p.paramName.c_str(), plug.getValue(p.paramName).toString().c_str());
 #endif
 		}
 	}
@@ -404,19 +383,16 @@ void VRayPluginRenderer::removePlugin(const std::string &pluginName)
 	if (m_vray) {
 		VRay::Plugin plugin = m_vray->getPlugin(pluginName);
 		if (!plugin) {
-			PRINT_WARN("VRayPluginRenderer::removePlugin: Plugin \"%s\" is not found!",
-					   pluginName.c_str());
+			Log::getLog().warning("VRayPluginRenderer::removePlugin: Plugin \"%s\" is not found!",
+								  pluginName.c_str());
 		}
 		else {
 			m_vray->removePlugin(plugin);
 
-			PRINT_WARN("VRayPluginRenderer::removePlugin: Removing \"%s\"...",
-					   plugin.getName().c_str());
-
 			VRay::Error err = m_vray->getLastError();
 			if (err != VRay::SUCCESS) {
-				PRINT_ERROR("Error removing plugin: %s",
-							err.toString().c_str());
+				Log::getLog().error("Error removing plugin: %s",
+									err.toString().c_str());
 			}
 		}
 	}
@@ -424,20 +400,16 @@ void VRayPluginRenderer::removePlugin(const std::string &pluginName)
 
 int VRayPluginRenderer::exportScene(const std::string &filepath)
 {
-	PRINT_INFO("Starting export to \"%s\"...",
-			   filepath.c_str());
-
 	int res = 0;
 
 	if (m_vray) {
+		Log::getLog().info("Starting export to \"%s\"...", filepath.c_str());
+
 		res = m_vray->exportScene(filepath.c_str());
-		if (res) {
-			PRINT_ERROR("Error exporting scene!");
-		}
+
 		VRay::Error err = m_vray->getLastError();
 		if (err != VRay::SUCCESS) {
-			PRINT_ERROR("Error: %s",
-						err.toString().c_str());
+			Log::getLog().error("Error exporting scene: %s", err.toString().c_str());
 		}
 	}
 
@@ -448,8 +420,7 @@ int VRayPluginRenderer::exportScene(const std::string &filepath)
 int VRayPluginRenderer::startRender(int locked)
 {
 	if (m_vray) {
-		PRINT_INFO("Starting render for frame %.3f...",
-				   m_vray->getCurrentTime());
+		Log::getLog().info("Starting render for frame %.3f...", m_vray->getCurrentTime());
 
 		m_vray->start();
 
@@ -464,10 +435,9 @@ int VRayPluginRenderer::startRender(int locked)
 
 int VRayPluginRenderer::startSequence(int start, int end, int step, int locked)
 {
-	PRINT_INFO("Starting sequence render (%i-%i,%i)...",
-			   start, end, step);
-
 	if (m_vray) {
+		Log::getLog().info("Starting sequence render (%i-%i,%i)...", start, end, step);
+
 		VRay::SubSequenceDesc seq;
 		seq.start = start;
 		seq.end   = end;

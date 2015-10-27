@@ -47,7 +47,7 @@ OP::VRayNode::PluginResult SOP::GeomMayaHair::asPluginDesc(Attrs::PluginDesc &pl
 
 	const GU_Detail *gdp = gdl.getGdp();
 	if (NOT(gdp)) {
-		PRINT_ERROR("Node \"%s\": Detail is NULL!",
+		Log::getLog().error("Node \"%s\": Detail is NULL!",
 					getName().buffer());
 	}
 	else {

@@ -43,7 +43,7 @@ void VRayForHoudini::Texture::exportRampAttribute(VRayExporter &exporter, Attrs:
 	int nPoints = op_node->evalInt(rampAttrName.c_str(), 0, 0.0f);
 
 #if CGR_DEBUG_RAMPS
-	PRINT_INFO("Ramp points: %i",
+	Log::getLog().info("Ramp points: %i",
 			   nPoints);
 #endif
 
@@ -67,7 +67,7 @@ void VRayForHoudini::Texture::exportRampAttribute(VRayExporter &exporter, Attrs:
 
 		const int interp = op_node->evalIntInst(prmInterpName.c_str(), &i, 0, t);
 #if CGR_DEBUG_RAMPS
-		PRINT_INFO(" %.3f: Color(%.3f,%.3f,%.3f) [%i]",
+		Log::getLog().info(" %.3f: Color(%.3f,%.3f,%.3f) [%i]",
 				   pos, colR, colG, colB, interp);
 #endif
 		const std::string &colPluginName = boost::str(boost::format("%sPos%i") % pluginName % i);

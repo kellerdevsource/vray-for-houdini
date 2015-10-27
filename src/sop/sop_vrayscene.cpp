@@ -44,7 +44,7 @@ OP_NodeFlags &SOP::VRayScene::flags()
 
 OP_ERROR SOP::VRayScene::cookMySop(OP_Context &context)
 {
-	PRINT_INFO("SOP::VRayScene::cookMySop()");
+	Log::getLog().info("SOP::VRayScene::cookMySop()");
 
 	const float t = context.getTime();
 
@@ -127,7 +127,7 @@ OP::VRayNode::PluginResult SOP::VRayScene::asPluginDesc(Attrs::PluginDesc &plugi
 	UT_String path;
 	evalString(path, "filepath", 0, 0.0f);
 	if (NOT(path.isstring())) {
-		PRINT_ERROR("VRayScene \"%s\": \"Filepath\" is not set!",
+		Log::getLog().error("VRayScene \"%s\": \"Filepath\" is not set!",
 					getName().buffer());
 		return OP::VRayNode::PluginResultError;
 	}

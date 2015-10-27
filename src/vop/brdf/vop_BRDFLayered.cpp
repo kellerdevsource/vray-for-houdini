@@ -214,7 +214,7 @@ OP::VRayNode::PluginResult VOP::BRDFLayered::asPluginDesc(Attrs::PluginDesc &plu
 
 		OP_Node *brdf_node = VRayExporter::getConnectedNode(this, brdfSockName);
 		if (NOT(brdf_node)) {
-			PRINT_WARN("Node \"%s\": BRDF node is not connected to \"%s\", ignoring...",
+			Log::getLog().warning("Node \"%s\": BRDF node is not connected to \"%s\", ignoring...",
 					   getName().buffer(), brdfSockName.c_str());
 		}
 		else {
@@ -222,7 +222,7 @@ OP::VRayNode::PluginResult VOP::BRDFLayered::asPluginDesc(Attrs::PluginDesc &plu
 
 			VRay::Plugin brdf_plugin = exporter.exportVop(brdf_node);
 			if (NOT(brdf_plugin)) {
-				PRINT_ERROR("Node \"%s\": Failed to export BRDF node connected to \"%s\", ignoring...",
+				Log::getLog().error("Node \"%s\": Failed to export BRDF node connected to \"%s\", ignoring...",
 							getName().buffer(), brdfSockName.c_str());
 			}
 			else {
@@ -242,7 +242,7 @@ OP::VRayNode::PluginResult VOP::BRDFLayered::asPluginDesc(Attrs::PluginDesc &plu
 				}
 
 				if (NOT(weight_plugin)) {
-					PRINT_ERROR("Node \"%s\": Failed to export BRDF weight node connected to \"%s\", ignoring...",
+					Log::getLog().error("Node \"%s\": Failed to export BRDF weight node connected to \"%s\", ignoring...",
 								getName().buffer(), brdfSockName.c_str());
 				}
 				else {

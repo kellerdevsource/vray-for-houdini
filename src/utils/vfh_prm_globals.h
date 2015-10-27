@@ -14,7 +14,7 @@
 #include "vfh_typedefs.h"
 
 #include <PRM/PRM_Name.h>
-
+#include <PRM/PRM_ChoiceList.h>
 
 namespace VRayForHoudini {
 namespace Parm {
@@ -24,6 +24,9 @@ extern StringSet RenderGIPlugins;
 
 extern PRM_Name  parm_render_net_render_channels;
 extern PRM_Name  parm_render_net_environment;
+
+extern PRM_Name        exporterLogLevelMenuName;
+extern PRM_ChoiceList  exporterLogLevelMenu;
 
 } // namespace Parm
 } // namespace VRayForHoudini

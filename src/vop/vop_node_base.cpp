@@ -10,7 +10,6 @@
 
 #include "vop_node_base.h"
 
-
 using namespace VRayForHoudini;
 using namespace Parm;
 
@@ -30,7 +29,7 @@ bool VOP::NodeBase::hasPluginInfo() const
 
 bool VOP::NodeBase::updateParmsFlags()
 {
-	// PRINT_INFO("VOP::NodeBase::updateParmsFlags()");
+	// Log::getLog().info("VOP::NodeBase::updateParmsFlags()\n");
 	// TODO: Hide / disable color attribute if texture is set
 	// NOTE: Input connections doesn't call this
 
@@ -44,8 +43,7 @@ bool VOP::NodeBase::updateParmsFlags()
 
 unsigned VOP::NodeBase::orderedInputs() const
 {
-	DEBUG_SOCKET("%s::orderedInputs()",
-				 getName().buffer());
+	// printf("%s::orderedInputs()\n", getName().buffer());
 
 	if (hasPluginInfo()) {
 		return pluginInfo->inputs.size();
@@ -57,17 +55,14 @@ unsigned VOP::NodeBase::orderedInputs() const
 
 unsigned VOP::NodeBase::getNumVisibleInputs() const
 {
-	DEBUG_SOCKET("%s::getNumVisibleInputs()",
-				 getName().buffer());
-
+	// printf("%s::getNumVisibleInputs()\n", getName().buffer());
 	return orderedInputs();
 }
 
 
 const char* VOP::NodeBase::inputLabel(unsigned idx) const
 {
-	DEBUG_SOCKET("%s::inputLabel(%i)",
-				 getName().buffer(), idx);
+	// printf("%s::inputLabel(%i)\n", getName().buffer(), idx);
 
 	if (hasPluginInfo() && (idx >= 0) && (idx < pluginInfo->inputs.size())) {
 		return pluginInfo->inputs[idx].name.getLabel();
@@ -79,8 +74,7 @@ const char* VOP::NodeBase::inputLabel(unsigned idx) const
 
 void VOP::NodeBase::getInputNameSubclass(UT_String &in, int idx) const
 {
-	DEBUG_SOCKET("%s::getInputNameSubclass(%i)",
-				 getName().buffer(), idx);
+	// printf("%s::getInputNameSubclass(%i)\n", getName().buffer(), idx);
 
 	if (hasPluginInfo() && (idx >= 0) && (idx < pluginInfo->inputs.size())) {
 		in = pluginInfo->inputs[idx].name.getToken();
@@ -90,8 +84,7 @@ void VOP::NodeBase::getInputNameSubclass(UT_String &in, int idx) const
 
 int VOP::NodeBase::getInputFromNameSubclass(const UT_String &in) const
 {
-	DEBUG_SOCKET("%s::getInputFromNameSubclass(%s)",
-				 getName().buffer(), in.buffer());
+	// printf("%s::getInputFromNameSubclass(%s)\n", getName().buffer(), in.buffer());
 
 	if (hasPluginInfo()) {
 		for (int i = 0; i < pluginInfo->inputs.size(); ++i) {
@@ -107,8 +100,7 @@ int VOP::NodeBase::getInputFromNameSubclass(const UT_String &in) const
 
 void VOP::NodeBase::getInputTypeInfoSubclass(VOP_TypeInfo &type_info, int idx)
 {
-	DEBUG_SOCKET("%s::getInputTypeInfoSubclass(%i)",
-				 getName().buffer(), idx);
+	// printf("%s::getInputTypeInfoSubclass(%i)\n", getName().buffer(), idx);
 
 	if (hasPluginInfo() && (idx >= 0) && (idx < pluginInfo->inputs.size())) {
 		const SocketDesc &socketTypeInfo = pluginInfo->inputs[idx];
@@ -119,8 +111,7 @@ void VOP::NodeBase::getInputTypeInfoSubclass(VOP_TypeInfo &type_info, int idx)
 
 void VOP::NodeBase::getAllowedInputTypeInfosSubclass(unsigned idx, VOP_VopTypeInfoArray &type_infos)
 {
-	DEBUG_SOCKET("%s::getAllowedInputTypeInfosSubclass(%i)",
-				 getName().buffer(), idx);
+	// printf("%s::getAllowedInputTypeInfosSubclass(%i)\n", getName().buffer(), idx);
 
 	if (hasPluginInfo() && (idx >= 0) && (idx < pluginInfo->inputs.size())) {
 		const SocketDesc &socketTypeInfo = pluginInfo->inputs[idx];
@@ -134,8 +125,7 @@ void VOP::NodeBase::getAllowedInputTypeInfosSubclass(unsigned idx, VOP_VopTypeIn
 
 unsigned VOP::NodeBase::getNumVisibleOutputs() const
 {
-	DEBUG_SOCKET("%s::getNumVisibleOutputs()",
-				 getName().buffer());
+	// printf("%s::getNumVisibleOutputs()\n", getName().buffer());
 
 	return maxOutputs();
 }
@@ -143,8 +133,7 @@ unsigned VOP::NodeBase::getNumVisibleOutputs() const
 
 unsigned VOP::NodeBase::maxOutputs() const
 {
-	DEBUG_SOCKET("%s::maxOutputs()",
-				 getName().buffer());
+	// printf("%s::maxOutputs()\n", getName().buffer());
 
 	if (hasPluginInfo()) {
 		return pluginInfo->outputs.size();
@@ -156,8 +145,7 @@ unsigned VOP::NodeBase::maxOutputs() const
 
 const char* VOP::NodeBase::outputLabel(unsigned idx) const
 {
-	DEBUG_SOCKET("%s::outputLabel(%i)",
-				 getName().buffer(), idx);
+	// printf("%s::outputLabel(%i)\n", getName().buffer(), idx);
 
 	if (hasPluginInfo() && (idx >= 0) && (idx < pluginInfo->outputs.size())) {
 		return pluginInfo->outputs[idx].name.getLabel();
@@ -169,8 +157,7 @@ const char* VOP::NodeBase::outputLabel(unsigned idx) const
 
 void VOP::NodeBase::getOutputNameSubclass(UT_String &name, int idx) const
 {
-	DEBUG_SOCKET("%s::getOutputNameSubclass(%i)",
-				 getName().buffer(), idx);
+	// printf("%s::getOutputNameSubclass(%i)\n", getName().buffer(), idx);
 
 	if (hasPluginInfo() && (idx >= 0) && (idx < pluginInfo->outputs.size())) {
 		name = pluginInfo->outputs[idx].name.getToken();
@@ -180,14 +167,13 @@ void VOP::NodeBase::getOutputNameSubclass(UT_String &name, int idx) const
 
 int VOP::NodeBase::getOutputFromName(const UT_String &out) const
 {
-	DEBUG_SOCKET("%s::getOutputFromName(%s)",
-				 getName().buffer(), out.buffer());
+	// printf("%s::getOutputFromName(%s)\n", getName().buffer(), out.buffer());
 
 	if (hasPluginInfo()) {
 		for (int i = 0; i < pluginInfo->outputs.size(); ++i) {
 			if (out == pluginInfo->outputs[i].name.getToken()) {
-				DEBUG_SOCKET(" %s => %i",
-							 out.buffer(), i);
+				printf(" %s => %i\n",
+					   out.buffer(), i);
 				return i;
 			}
 		}
@@ -199,8 +185,7 @@ int VOP::NodeBase::getOutputFromName(const UT_String &out) const
 
 void VOP::NodeBase::getOutputTypeInfoSubclass(VOP_TypeInfo &type_info, int idx)
 {
-	DEBUG_SOCKET("%s::getOutputTypeInfoSubclass(%i)",
-				 getName().buffer(), idx);
+	// printf("%s::getOutputTypeInfoSubclass(%i)", getName().buffer(), idx);
 
 	if (hasPluginInfo() && (idx >= 0) && (idx < pluginInfo->outputs.size())) {
 		const SocketDesc &socketTypeInfo = pluginInfo->outputs[idx];

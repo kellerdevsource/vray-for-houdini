@@ -639,7 +639,7 @@ VUtils::MeshVoxel* MeshToVRayProxy::getVoxel(int i, uint64 *memUsage)
 
 void MeshToVRayProxy::releaseVoxel(VUtils::MeshVoxel *voxel, uint64 *memUsage)
 {
-	PRINT_INFO("Release voxel");
+	Log::getLog().info("Release voxel");
 
 	if (voxel) {
 		if (memUsage) {
@@ -900,7 +900,7 @@ void MeshToVRayProxy::buildGeometryVoxel(VUtils::MeshVoxel& voxel, GeometryDescr
 
 	//    init vertex channel
 	if (hasVerts) {
-		PRINT_INFO("buildGeomVoxel populate VERT_GEOM_CHANNEL");
+		Log::getLog().info("buildGeomVoxel populate VERT_GEOM_CHANNEL");
 
 		VUtils::VectorRefList &vertices = meshDescr.getAttr("vertices").paramValue.valRawListVector;
 
@@ -910,7 +910,7 @@ void MeshToVRayProxy::buildGeometryVoxel(VUtils::MeshVoxel& voxel, GeometryDescr
 	}
 	//    init velocity channel
 	if (hasVelocities) {
-		PRINT_INFO("buildGeomVoxel populate VERT_VELOCITY_CHANNEL");
+		Log::getLog().info("buildGeomVoxel populate VERT_VELOCITY_CHANNEL");
 
 		VUtils::VectorRefList &velocities = meshDescr.getAttr("velocities").paramValue.valRawListVector;
 
@@ -920,7 +920,7 @@ void MeshToVRayProxy::buildGeometryVoxel(VUtils::MeshVoxel& voxel, GeometryDescr
 	}
 	//    init face channel
 	if (hasFaces) {
-		PRINT_INFO("buildGeomVoxel populate FACE_TOPO_CHANNEL");
+		Log::getLog().info("buildGeomVoxel populate FACE_TOPO_CHANNEL");
 
 		VUtils::IntRefList &faces = meshDescr.getAttr("faces").paramValue.valRawListInt;
 
@@ -930,7 +930,7 @@ void MeshToVRayProxy::buildGeometryVoxel(VUtils::MeshVoxel& voxel, GeometryDescr
 	}
 	//    init face info channel
 	if (hasMtlIDs) {
-		PRINT_INFO("buildGeomVoxel populate FACE_INFO_CHANNEL");
+		Log::getLog().info("buildGeomVoxel populate FACE_INFO_CHANNEL");
 
 		VUtils::IntRefList &faceMtlIDs = meshDescr.getAttr("face_mtlIDs").paramValue.valRawListInt;
 
@@ -942,7 +942,7 @@ void MeshToVRayProxy::buildGeometryVoxel(VUtils::MeshVoxel& voxel, GeometryDescr
 	}
 	//    init normals channels
 	if (hasNormals) {
-		PRINT_INFO("buildGeomVoxel populate VERT_NORMAL_CHANNEL");
+		Log::getLog().info("buildGeomVoxel populate VERT_NORMAL_CHANNEL");
 
 		VUtils::VectorRefList &normals = meshDescr.getAttr("normals").paramValue.valRawListVector;
 
@@ -969,7 +969,7 @@ void MeshToVRayProxy::buildGeometryVoxel(VUtils::MeshVoxel& voxel, GeometryDescr
 			VRay::VectorList &uv_verts = mapChannel[1].as<VRay::VectorList>();
 			VRay::IntList &uv_faces = mapChannel[2].as<VRay::IntList>();
 
-			PRINT_INFO("buildGeomVoxel populate VERT_TEX_CHANNEL %d", uvchannel_idx);
+			Log::getLog().info("buildGeomVoxel populate VERT_TEX_CHANNEL %d", uvchannel_idx);
 
 			VUtils::MeshChannel &uvverts_ch = voxel.channels[ ch_idx++ ];
 			uvverts_ch.init(sizeof(VUtils::VertGeomData), uv_verts.size(),  VERT_TEX_CHANNEL0 + uvchannel_idx, VERT_TEX_TOPO_CHANNEL0 + uvchannel_idx, MF_VERT_CHANNEL, false);
@@ -996,7 +996,7 @@ void MeshToVRayProxy::buildHairVoxel(VUtils::MeshVoxel& voxel, GeometryDescripti
 	int ch_idx = 0;
 
 	if ( hasVerts ) {
-		PRINT_INFO("buildHairVoxel populate HAIR_VERT_CHANNEL");
+		Log::getLog().info("buildHairVoxel populate HAIR_VERT_CHANNEL");
 		VUtils::VectorRefList &vertices = hairDescr.getAttr("hair_vertices").paramValue.valRawListVector;
 
 		VUtils::MeshChannel &vertices_ch = voxel.channels[ ch_idx++ ];
@@ -1005,7 +1005,7 @@ void MeshToVRayProxy::buildHairVoxel(VUtils::MeshVoxel& voxel, GeometryDescripti
 	}
 
 	if ( hasStrands ) {
-		PRINT_INFO("buildHairVoxel populate HAIR_NUM_VERT_CHANNEL");
+		Log::getLog().info("buildHairVoxel populate HAIR_NUM_VERT_CHANNEL");
 		VUtils::IntRefList &strands = hairDescr.getAttr("num_hair_vertices").paramValue.valRawListInt;
 
 		VUtils::MeshChannel &strands_ch = voxel.channels[ ch_idx++ ];
@@ -1014,7 +1014,7 @@ void MeshToVRayProxy::buildHairVoxel(VUtils::MeshVoxel& voxel, GeometryDescripti
 	}
 
 	if ( hasWidths ) {
-		PRINT_INFO("buildHairVoxel populate HAIR_WIDTH_CHANNEL");
+		Log::getLog().info("buildHairVoxel populate HAIR_WIDTH_CHANNEL");
 		VUtils::FloatRefList &widths = hairDescr.getAttr("widths").paramValue.valRawListFloat;
 
 		VUtils::MeshChannel &width_ch = voxel.channels[ ch_idx++ ];
@@ -1023,7 +1023,7 @@ void MeshToVRayProxy::buildHairVoxel(VUtils::MeshVoxel& voxel, GeometryDescripti
 	}
 
 	if ( hasVelocities ) {
-		PRINT_INFO("buildHairVoxel populate HAIR_VELOCITY_CHANNEL");
+		Log::getLog().info("buildHairVoxel populate HAIR_VELOCITY_CHANNEL");
 		VUtils::VectorRefList &velocities = hairDescr.getAttr("velocities").paramValue.valRawListVector;
 
 		VUtils::MeshChannel &velocities_ch = voxel.channels[ ch_idx++ ];
@@ -1076,21 +1076,21 @@ void MeshToVRayProxy::buildPreviewVoxel(VUtils::MeshVoxel& voxel)
 	int ch_idx = 0;
 	if ( numMeshObj ) {
 		//    vertex channel
-		PRINT_INFO("buildPreviewVoxel populate VERT_GEOM_CHANNEL");
+		Log::getLog().info("buildPreviewVoxel populate VERT_GEOM_CHANNEL");
 
 		VUtils::MeshChannel &verts_ch = voxel.channels[ ch_idx++ ];
 		verts_ch.init( sizeof(VUtils::VertGeomData), meshObjInfo.getTotalPreviewVertices(), VERT_GEOM_CHANNEL, FACE_TOPO_CHANNEL, MF_VERT_CHANNEL, false);
 		verts_ch.data = previewVerts;
 
 		//    face channel
-		PRINT_INFO("buildPreviewVoxel populate FACE_TOPO_CHANNEL");
+		Log::getLog().info("buildPreviewVoxel populate FACE_TOPO_CHANNEL");
 
 		VUtils::MeshChannel &face_ch = voxel.channels[ ch_idx++ ];
 		face_ch.init( sizeof(VUtils::FaceTopoData), meshObjInfo.getTotalPreviewElements(), FACE_TOPO_CHANNEL, 0, MF_TOPO_CHANNEL, false);
 		face_ch.data = previewFaces;
 
 		//    obj info channel
-		PRINT_INFO("buildPreviewVoxel populate OBJECT_INFO_CHANNEL");
+		Log::getLog().info("buildPreviewVoxel populate OBJECT_INFO_CHANNEL");
 
 		int bufLen = 0;
 		meshObjInfo.writeToBuffer(NULL, bufLen);
@@ -1102,21 +1102,21 @@ void MeshToVRayProxy::buildPreviewVoxel(VUtils::MeshVoxel& voxel)
 
 	if (numHairObj) {
 		//    vertex channel
-		PRINT_INFO("buildPreviewVoxel populate HAIR_VERT_CHANNEL");
+		Log::getLog().info("buildPreviewVoxel populate HAIR_VERT_CHANNEL");
 
 		VUtils::MeshChannel &verts_ch = voxel.channels[ ch_idx++ ];
 		verts_ch.init( sizeof(VUtils::VertGeomData), hairObjInfo.getTotalPreviewVertices(), HAIR_VERT_CHANNEL, HAIR_NUM_VERT_CHANNEL, MF_VERT_CHANNEL, false);
 		verts_ch.data = previewHairVerts;
 
 		//    strand channel
-		PRINT_INFO("buildPreviewVoxel populate HAIR_NUM_VERT_CHANNEL");
+		Log::getLog().info("buildPreviewVoxel populate HAIR_NUM_VERT_CHANNEL");
 
 		VUtils::MeshChannel &strands_ch = voxel.channels[ ch_idx++ ];
 		strands_ch.init( sizeof(int), hairObjInfo.getTotalPreviewElements(), HAIR_NUM_VERT_CHANNEL, 0, MF_NUM_VERT_CHANNEL, false);
 		strands_ch.data = previewStrands;
 
 		//    obj info channel
-		PRINT_INFO("buildPreviewVoxel populate HAIR_OBJECT_INFO_CHANNEL");
+		Log::getLog().info("buildPreviewVoxel populate HAIR_OBJECT_INFO_CHANNEL");
 
 		int bufLen = 0;
 		hairObjInfo.writeToBuffer(NULL, bufLen);
@@ -1128,7 +1128,7 @@ void MeshToVRayProxy::buildPreviewVoxel(VUtils::MeshVoxel& voxel)
 
 	if (numUVSets) {
 		//    uv sets channel
-		PRINT_INFO("buildPreviewVoxel populate MAYA_INFO_CHANNEL");
+		Log::getLog().info("buildPreviewVoxel populate MAYA_INFO_CHANNEL");
 		int bufLen = 0;
 		setsInfo.writeToBuffer(NULL, bufLen);
 

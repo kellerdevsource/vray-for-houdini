@@ -197,13 +197,13 @@ OP::VRayNode::PluginResult VOP::TexLayered::asPluginDesc(Attrs::PluginDesc &plug
 
 		OP_Node *tex_node = VRayExporter::getConnectedNode(this, texSockName);
 		if (NOT(tex_node)) {
-			PRINT_WARN("Node \"%s\": Texture node is not connected to \"%s\", ignoring...",
+			Log::getLog().warning("Node \"%s\": Texture node is not connected to \"%s\", ignoring...",
 					   getName().buffer(), texSockName.c_str());
 		}
 		else {
 			VRay::Plugin tex_plugin = exporter.exportVop(tex_node);
 			if (NOT(tex_plugin)) {
-				PRINT_ERROR("Node \"%s\": Failed to export texture node connected to \"%s\", ignoring...",
+				Log::getLog().error("Node \"%s\": Failed to export texture node connected to \"%s\", ignoring...",
 							getName().buffer(), texSockName.c_str());
 			}
 			else {

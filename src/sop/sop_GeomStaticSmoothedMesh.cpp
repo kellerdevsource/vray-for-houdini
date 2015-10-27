@@ -49,7 +49,7 @@ OP_ERROR SOP::GeomStaticSmoothedMesh::cookMySop(OP_Context &context)
 
 OP::VRayNode::PluginResult SOP::GeomStaticSmoothedMesh::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, OP_Node *parent)
 {
-	PRINT_WARN("OP::GeomStaticSmoothedMesh::asPluginDesc()");
+	Log::getLog().debug("OP::GeomStaticSmoothedMesh::asPluginDesc()");
 
 	pluginDesc.pluginID   = pluginID.c_str();
 	pluginDesc.pluginName = VRayExporter::getPluginName(this, "Smooth@");
@@ -61,12 +61,12 @@ OP::VRayNode::PluginResult SOP::GeomStaticSmoothedMesh::asPluginDesc(Attrs::Plug
 	if (NOT(tex_network.equal(""))) {
 		OP_Node *tex_node = OPgetDirector()->findNode(tex_network.buffer());
 		if (NOT(tex_node)) {
-			PRINT_ERROR("Texture node not found!");
+			Log::getLog().error("Texture node not found!");
 		}
 		else {
 			VRay::Plugin texture = exporter.exportVop(tex_node);
 			if (NOT(texture)) {
-				PRINT_ERROR("Texture node export failed!");
+				Log::getLog().error("Texture node export failed!");
 			}
 			else {
 				pluginDesc.pluginAttrs.push_back(Attrs::PluginAttr("displacement_tex_color", texture));

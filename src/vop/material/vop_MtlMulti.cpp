@@ -164,13 +164,13 @@ OP::VRayNode::PluginResult VOP::MtlMulti::asPluginDesc(Attrs::PluginDesc &plugin
 
 		OP_Node *mtl_node = VRayExporter::getConnectedNode(this, mtlSockName);
 		if (NOT(mtl_node)) {
-			PRINT_WARN("Node \"%s\": Material node is not connected to \"%s\", ignoring...",
+			Log::getLog().warning("Node \"%s\": Material node is not connected to \"%s\", ignoring...",
 					   getName().buffer(), mtlSockName.c_str());
 		}
 		else {
 			VRay::Plugin mtl_plugin = exporter.exportVop(mtl_node);
 			if (NOT(mtl_plugin)) {
-				PRINT_ERROR("Node \"%s\": Failed to export material node connected to \"%s\", ignoring...",
+				Log::getLog().error("Node \"%s\": Failed to export material node connected to \"%s\", ignoring...",
 							getName().buffer(), mtlSockName.c_str());
 			}
 			else {

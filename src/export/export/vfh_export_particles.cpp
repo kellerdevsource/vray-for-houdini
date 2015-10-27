@@ -31,12 +31,12 @@ VRay::Plugin VRayExporter::exportParticles(OBJ_Node *dop_network)
 {
 	POPNET_Node *popnet_node = dop_network->castToPOPNETNode();
 	if (popnet_node) {
-		PRINT_WARN("POPNET_Node");
+		Log::getLog().warning("POPNET_Node");
 	}
 
 	POP_Node *pop_node = dop_network->castToPOPNode();
 	if (pop_node) {
-		PRINT_WARN("POP_Node");
+		Log::getLog().warning("POP_Node");
 	}
 
 	const DOP_Parent *dop_parent = dop_network->castToDOPParent();
@@ -44,7 +44,7 @@ VRay::Plugin VRayExporter::exportParticles(OBJ_Node *dop_network)
 		const DOP_Engine &engine = dop_parent->getEngine();
 		int totalDopObjects = engine.getNumSimulationObjects();
 
-		PRINT_WARN("getNumSimulationObjects = %i",
+		Log::getLog().warning("getNumSimulationObjects = %i",
 				   totalDopObjects);
 
 		for (int i = 0; i < totalDopObjects; i++) {
@@ -54,14 +54,14 @@ VRay::Plugin VRayExporter::exportParticles(OBJ_Node *dop_network)
 			while (pos) {
 				UT_Vector3 t;
 				pos->getPosition(t);
-				PRINT_INFO("Pos: %.3f", t.x());
+				Log::getLog().info("Pos: %.3f", t.x());
 				pos++;
 			}
 #endif
 			const SIM_Data *sim_data = currObject->getConstNamedSubData("Geometry");
 			// sim_data->getPOPNode();
 			if (sim_data) {
-				PRINT_WARN("SIM_Object = %s; SIM_Object.getNumSubData = %i; SIM_Data.getNumSubData = %i",
+				Log::getLog().warning("SIM_Object = %s; SIM_Object.getNumSubData = %i; SIM_Data.getNumSubData = %i",
 						   currObject->getName().buffer(), currObject->getNumSubData(), sim_data->getNumSubData());
 			}
 
@@ -69,7 +69,7 @@ VRay::Plugin VRayExporter::exportParticles(OBJ_Node *dop_network)
 			const SIM_Geometry *geometry = static_cast<const SIM_Geometry*>(currObject->getConstNamedSubData(SIM_GEOMETRY_DATANAME));
 			if (geometry) {
 				geometry->getPositionPath(posPath);
-				PRINT_WARN("HAS GEO: %s",
+				Log::getLog().warning("HAS GEO: %s",
 						   posPath.buffer());
 
 				const SIM_Data *posData = currObject->getConstNamedSubData(posPath.buffer());
@@ -77,7 +77,7 @@ VRay::Plugin VRayExporter::exportParticles(OBJ_Node *dop_network)
 					posData = currObject->getConstNamedSubData("Position");
 				}
 				if (posData) {
-					PRINT_WARN("HAS SOME POS...");
+					Log::getLog().warning("HAS SOME POS...");
 				}
 
 				GU_ConstDetailHandle gdh = geometry->getGeometry();
@@ -104,7 +104,7 @@ VRay::Plugin VRayExporter::exportParticles(OBJ_Node *dop_network)
 
 			const SIM_Position *pos = static_cast<const SIM_Position*>(currObject->getConstNamedSubData(posPath.buffer()));
 			if (pos) {
-				PRINT_WARN("HAS POSITION");
+				Log::getLog().warning("HAS POSITION");
 			}
 		}
 	}
