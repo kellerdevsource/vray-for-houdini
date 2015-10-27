@@ -255,7 +255,9 @@ static int getFrameBufferType(OP_Node &rop)
 VRayRendererNode::VRayRendererNode(OP_Network *net, const char *name, OP_Operator *entry)
 	: ROP_Node(net, name, entry)
 	, m_exporter(this)
-{}
+{
+	Log::getLog().debug("VRayRendererNode()");
+}
 
 
 VRayRendererNode::~VRayRendererNode()
@@ -274,6 +276,24 @@ bool VRayRendererNode::updateParmsFlags()
 
 	for (int t = 0; t < CountOf(RenderSettingsTabItemsDesc); ++t) {
 		const Parm::TabItemDesc &tabItemDesc = RenderSettingsTabItemsDesc[t];
+
+		UI::ActiveStateDeps::activateElements(tabItemDesc.pluginID, *this, changed, boost::str(Parm::FmtPrefix % tabItemDesc.pluginID));
+	}
+
+	for (int t = 0; t < CountOf(GiSettingsTabItemsDesc); ++t) {
+		const Parm::TabItemDesc &tabItemDesc = GiSettingsTabItemsDesc[t];
+
+		UI::ActiveStateDeps::activateElements(tabItemDesc.pluginID, *this, changed, boost::str(Parm::FmtPrefix % tabItemDesc.pluginID));
+	}
+
+	for (int t = 0; t < CountOf(SamplersSettingsTabItemsDesc); ++t) {
+		const Parm::TabItemDesc &tabItemDesc = SamplersSettingsTabItemsDesc[t];
+
+		UI::ActiveStateDeps::activateElements(tabItemDesc.pluginID, *this, changed, boost::str(Parm::FmtPrefix % tabItemDesc.pluginID));
+	}
+
+	for (int t = 0; t < CountOf(CameraSettingsTabItemsDesc); ++t) {
+		const Parm::TabItemDesc &tabItemDesc = CameraSettingsTabItemsDesc[t];
 
 		UI::ActiveStateDeps::activateElements(tabItemDesc.pluginID, *this, changed, boost::str(Parm::FmtPrefix % tabItemDesc.pluginID));
 	}
