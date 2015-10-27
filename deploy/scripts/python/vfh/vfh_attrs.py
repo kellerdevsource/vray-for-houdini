@@ -14,134 +14,174 @@ import sys
 import re
 import hou
 
+import vfh.vfh_json as vfh_json
 
-_skipped_types = {
-    'LIST',
-    'INT_LIST',
-    'FLOAT_LIST',
-    'VECTOR_LIST',
-    'COLOR_LIST',
-    'MAPCHANNEL_LIST',
-    'TRANSFORM_LIST',
-    'TRANSFORM_TEXTURE',
-}
 
-_type_to_parm_func = {
-    'BOOL'   : hou.ToggleParmTemplate,
-    'ENUM'   : hou.MenuParmTemplate,
-    'FLOAT'  : hou.FloatParmTemplate,
-    'INT'    : hou.IntParmTemplate,
-    'COLOR'  : hou.FloatParmTemplate,
-    'ACOLOR' : hou.FloatParmTemplate,
-    'VECTOR' : hou.FloatParmTemplate,
-    'STRING' : hou.StringParmTemplate,
-}
+def BoolParmTemplate(parmName, parmLabel, parmDesc):
+    parmArgs = {}
+    if 'default' in parmDesc:
+        parmArgs['default_value'] = parmDesc['default']
+
+    return hou.ToggleParmTemplate(parmName, parmLabel, **parmArgs)
+
+
+def IntParmTemplate(parmName, parmLabel, parmDesc):
+    parmArgs = {}
+    parmArgs['naming_scheme'] = hou.parmNamingScheme.Base1
+    parmArgs['num_components'] = 1
+
+    if 'default' in parmDesc:
+        parmArgs['default_value'] = [parmDesc['default']]
+
+    if 'ui' in parmDesc:
+        parmArgs['min_is_strict'] = False
+        parmArgs['max_is_strict'] = False
+
+        ui_desc = parmDesc['ui']
+        # Use soft bounds and allow manual override
+        if 'soft_min' in ui_desc:
+            parmArgs['min'] = ui_desc['soft_min']
+        if 'soft_max' in ui_desc:
+            parmArgs['max'] = ui_desc['soft_max']
+
+    return hou.IntParmTemplate(parmName, parmLabel, **parmArgs)
+
+
+def FloatParmTemplate(parmName, parmLabel, parmDesc):
+    parmArgs = {}
+    parmArgs['naming_scheme'] = hou.parmNamingScheme.Base1
+    parmArgs['num_components'] = 1
+
+    if 'default' in parmDesc:
+        parmArgs['default_value'] = [parmDesc['default']]
+
+    if 'ui' in parmDesc:
+        parmArgs['min_is_strict'] = False
+        parmArgs['max_is_strict'] = False
+
+        ui_desc = parmDesc['ui']
+        # Use soft bounds and allow manual override
+        if 'soft_min' in ui_desc:
+            parmArgs['min'] = ui_desc['soft_min']
+        if 'soft_max' in ui_desc:
+            parmArgs['max'] = ui_desc['soft_max']
+
+    return hou.FloatParmTemplate(parmName, parmLabel, **parmArgs)
+
+
+def EnumParmTemplate(parmName, parmLabel, parmDesc):
+    parmArgs = {}
+    parmArgs['menu_items']  = [item[0] for item in parmDesc['items']]
+    parmArgs['menu_labels'] = [item[1] for item in parmDesc['items']]
+    parmArgs['default_value'] = next((i for i, x in enumerate(parmArgs['menu_items']) if x == parmDesc['default']), 0)
+    return hou.MenuParmTemplate(parmName, parmLabel, **parmArgs)
+
+
+def VectorParmTemplate(parmName, parmLabel, parmDesc):
+    v = parmDesc['default']
+    parmArgs = {}
+    parmArgs['naming_scheme'] = hou.parmNamingScheme.XYZW
+    parmArgs['default_value'] = v
+    parmArgs['num_components'] = len(v)
+    return hou.FloatParmTemplate(parmName, parmLabel, **parmArgs)
+
+
+def ColorParmTemplate(parmName, parmLabel, parmDesc):
+    v = parmDesc['default']
+    parmArgs = {}
+    parmArgs['naming_scheme'] = hou.parmNamingScheme.RGBA
+    parmArgs['default_value']  = v
+    parmArgs['num_components'] = len(v)
+    return hou.FloatParmTemplate(parmName, parmLabel, **parmArgs)
+
+
+def AColorParmTemplate(parmName, parmLabel, parmDesc):
+    v = parmDesc['default']
+    parmArgs = {}
+    parmArgs['naming_scheme'] = hou.parmNamingScheme.RGBA
+    parmArgs['default_value']  = v
+    parmArgs['num_components'] = len(v)
+    return hou.FloatParmTemplate(parmName, parmLabel, **parmArgs)
+
+
+def StringParmTemplate(parmName, parmLabel, parmDesc):
+    string_type = hou.stringParmType.Regular
+    file_type   = hou.fileType.Any
+
+    if 'subtype' in parmDesc:
+        str_subtype = parmDesc['subtype']
+        if str_subtype == 'FILE_PATH':
+            string_type = hou.stringParmType.FileReference
+            file_type   = hou.fileType.Any
+        elif str_subtype == 'DIR_PATH':
+            string_type = hou.stringParmType.FileReference
+            file_type   = hou.fileType.Directory
+
+    parmArgs = {}
+    parmArgs['string_type'] = string_type
+    parmArgs['file_type']   = file_type
+    parmArgs['num_components'] = 1
+    return hou.StringParmTemplate(parmName, parmLabel, **parmArgs)
+
+
+def TextureParmTemplate(parmName, parmLabel, parmDesc):
+    parmArgs = {}
+    parmArgs["string_type"] = hou.stringParmType.NodeReference
+    parmArgs["tags"] = {'spare_category': 'vray', 'opfilter': '!!VOP!!', 'oprelative': '.'}
+    parmArgs["script_callback_language"] = hou.scriptLanguage.Python
+    parmArgs['num_components'] = 1
+    return hou.StringParmTemplate(parmName, parmLabel, **parmArgs)
+
+
+def FloatTextureParmTemplate(parmName, parmLabel, parmDesc):
+    return TextureParmTemplate(parmName, parmLabel, parmDesc)
 
 
 # When there is no name specified for the attribute we could "guess" the name
 # from the attribute like: 'dist_near' will become "Dist Near"
 #
-def getNameFromAttr(attr):
-    attr_name = attr.replace("_", " ")
+def parmNameToParmLabel(parmName):
+    attr_name = parmName.replace("_", " ")
     attr_name = re.sub(r"\B([A-Z])", r" \1", attr_name)
-
     return attr_name.title()
 
 
-def add_attribute(propGroup, attrDesc, prefix=None):
-    if attrDesc['type'] in _skipped_types:
-        return
-    if attrDesc['type'].startswith('WIDGET_'):
-        return
-
-    if attrDesc['type'] not in _type_to_parm_func:
-        sys.stderr.write("Unimplemented attribute type %s!\n" % attrDesc['type'])
-        return
-
-    parm_func = _type_to_parm_func[attrDesc['type']]
-
-    # XXX: Why "dot" is allowed in C++, but is not allowed here?
-    parm_name  = "%s_%s" % (prefix, attrDesc['attr']) if prefix else attrDesc['attr']
-    parm_label = attrDesc.get('name', getNameFromAttr(attrDesc['attr']))
-
-    parm_args = {}
-
-    if attrDesc['type'] in {'BOOL'}:
-        # BOOL must have 'default' in the description
-        parm_args['default_value'] = attrDesc['default']
-
-    elif attrDesc['type'] in {'STRING'}:
-        string_type = hou.stringParmType.Regular
-        file_type   = hou.fileType.Any
-
-        if 'subtype' in attrDesc:
-            str_subtype = attrDesc['subtype']
-            if str_subtype == 'FILE_PATH':
-                string_type = hou.stringParmType.FileReference
-                file_type   = hou.fileType.Any
-            elif str_subtype == 'DIR_PATH':
-                string_type = hou.stringParmType.FileReference
-                file_type   = hou.fileType.Directory
-
-        parm_args['string_type'] = string_type
-        parm_args['file_type']   = file_type
-        parm_args['num_components'] = 1
-
-    elif attrDesc['type'] in {'COLOR', 'ACOLOR', 'TEXTURE'}:
-        c = attrDesc['default']
-
-        parm_args['naming_scheme'] = hou.parmNamingScheme.RGBA
-        parm_args['default_value']  = c
-        parm_args['num_components'] = len(c)
-
-    elif attrDesc['type'] in {'VECTOR'}:
-        v = attrDesc['default']
-
-        parm_args['naming_scheme'] = hou.parmNamingScheme.XYZW
-        parm_args['default_value']  = v
-        parm_args['num_components'] = len(v)
-
-    elif attrDesc['type'] in {'FLOAT', 'FLOAT_TEXTURE'}:
-        if 'default' in attrDesc:
-            parm_args['default_value'] = [attrDesc['default']]
-        parm_args['naming_scheme'] = hou.parmNamingScheme.Base1
-        parm_args['num_components'] = 1
-
-    elif attrDesc['type'] in {'INT', 'INT_TEXTURE'}:
-        if 'default' in attrDesc:
-            parm_args['default_value'] = [attrDesc['default']]
-        parm_args['naming_scheme'] = hou.parmNamingScheme.Base1
-        parm_args['num_components'] = 1
-
-    elif attrDesc['type'] in {'TRANSFORM', 'MATRIX'}:
-        pass
-
-    elif attrDesc['type'] in {'ENUM'}:
-        parm_args['menu_items']  = [item[0] for item in attrDesc['items']]
-        parm_args['menu_labels'] = [item[1] for item in attrDesc['items']]
-
-    # TODO: Parse widget and extract active conditions
-    # Active State
-    # parm_args['disable_when'] = ""
-
-    if attrDesc['type'] in {'INT', 'INT_TEXTURE', 'FLOAT', 'FLOAT_TEXTURE'}:
-        if 'ui' in attrDesc:
-            ui_desc = attrDesc['ui']
-
-            # Use soft bounds and allow manual override
-            if 'soft_min' in ui_desc:
-                parm_args['min'] = ui_desc['soft_min']
-            if 'soft_max' in ui_desc:
-                parm_args['max'] = ui_desc['soft_max']
-
-            parm_args['min_is_strict'] = False
-            parm_args['max_is_strict'] = False
-
-    propGroup.addParmTemplate(parm_func(parm_name, parm_label, **parm_args))
+CustomParmTemplates = {
+    'BOOL'          : BoolParmTemplate,
+    'INT'           : IntParmTemplate,
+    'FLOAT'         : FloatParmTemplate,
+    'ENUM'          : EnumParmTemplate,
+    'VECTOR'        : VectorParmTemplate,
+    'COLOR'         : ColorParmTemplate,
+    'ACOLOR'        : AColorParmTemplate,
+    'STRING'        : StringParmTemplate,
+    'TEXTURE'       : TextureParmTemplate,
+    'FLOAT_TEXTURE' : FloatTextureParmTemplate
+}
 
 
-def add_attributes(propGroup, pluginDesc, prefix=None):
-    # TODO: Parse widget and insert parameters in widget defined order
+def addPluginParm(ptg, parmDesc, parmPrefix = None, parmFolder = None):
+    parmName = "%s_%s" % (parmPrefix, parmDesc['attr']) if parmPrefix else parmDesc['attr']
+    parmTemplate = ptg.find(parmName)
+    if not parmTemplate:
+        parmType = parmDesc['type']
+        if parmType in CustomParmTemplates:
+            if not parmFolder and not ptg.findFolder('V-Ray'):
+                parmFolder = 'V-Ray'
+                ptg.append(hou.FolderParmTemplate("vray", "V-Ray"))
 
-    for attrDesc in pluginDesc['PluginParams']:
-        add_attribute(propGroup, attrDesc, prefix)
+            parmLabel = parmDesc.get('name', parmNameToParmLabel(parmDesc['attr']))
+            MyTemplate = CustomParmTemplates[parmType]
+            parmTemplate = MyTemplate(parmName, parmLabel, parmDesc)
+            ptg.appendToFolder(parmFolder, parmTemplate)
+        else:
+            sys.stderr.write("Unimplemented ParmTemplate for plugin parm type %s!\n" % parmType)
+
+    return parmTemplate
+
+
+def addPluginParms(ptg, pluginDesc, parmPrefix = None, parmFolder = None):
+    for parmDesc in pluginDesc['PluginParams']:
+        addPluginParm(ptg, parmDesc, parmPrefix = parmPrefix, parmFolder = parmFolder)
+
+
