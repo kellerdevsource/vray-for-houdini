@@ -27,14 +27,14 @@ void Logger::log(LogLevel level, const char *format, va_list args)
 							: level <= m_logLevel;
 
 	if (showMessage) {
-		vutils_cprintf(true, VUTILS_COLOR_MAGENTA "V-Ray For Houdini" VUTILS_COLOR_DEFAULT " | ");
+		vutils_cprintf(true, VUTILS_COLOR_MAGENTA "V-Ray For Houdini" VUTILS_COLOR_DEFAULT "|");
 
 		switch (level) {
-			case LogLevelInfo:    { vutils_cprintf(true, VUTILS_COLOR_BLUE   "   Info" VUTILS_COLOR_DEFAULT " | "); break; }
-			case LogLevelWarning: { vutils_cprintf(true, VUTILS_COLOR_YELLOW "Warning" VUTILS_COLOR_DEFAULT " | " VUTILS_COLOR_YELLOW); break; }
-			case LogLevelError:   { vutils_cprintf(true, VUTILS_COLOR_RED    "  Error" VUTILS_COLOR_DEFAULT " | " VUTILS_COLOR_RED); break; }
-			case LogLevelDebug:   { vutils_cprintf(true, VUTILS_COLOR_CYAN   "  Debug" VUTILS_COLOR_DEFAULT " | " VUTILS_COLOR_CYAN); break; }
-			case LogLevelMsg:     { vutils_cprintf(true, VUTILS_COLOR_GREEN  "    Msg" VUTILS_COLOR_DEFAULT " | " VUTILS_COLOR_GREEN); break; }
+			case LogLevelInfo:    { vutils_cprintf(true, VUTILS_COLOR_BLUE   "   Info" VUTILS_COLOR_DEFAULT "| "); break; }
+			case LogLevelWarning: { vutils_cprintf(true, VUTILS_COLOR_YELLOW "Warning" VUTILS_COLOR_DEFAULT "| " VUTILS_COLOR_YELLOW); break; }
+			case LogLevelError:   { vutils_cprintf(true, VUTILS_COLOR_RED    "  Error" VUTILS_COLOR_DEFAULT "| " VUTILS_COLOR_RED); break; }
+			case LogLevelDebug:   { vutils_cprintf(true, VUTILS_COLOR_CYAN   "  Debug" VUTILS_COLOR_DEFAULT "| " VUTILS_COLOR_CYAN); break; }
+			case LogLevelMsg:     { vutils_cprintf(true, VUTILS_COLOR_GREEN  "    Msg" VUTILS_COLOR_DEFAULT "| " VUTILS_COLOR_GREEN); break; }
 		}
 
 		vutils_cprintf(true, buf);
