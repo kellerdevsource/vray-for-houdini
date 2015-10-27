@@ -199,7 +199,7 @@ def addVRayDisplamentParamTemplate(ptg):
 
         params = { }
         params["string_type"] = hou.stringParmType.NodeReference
-        params["tags"] = {'spare_category': 'vray', 'opfilter': '!!SHOP/DISPLACEMENT!!', 'oprelative': '.'}
+        params["tags"] = {'spare_category': 'vray', 'opfilter': '!!SHOP!!', 'oprelative': '.'}
         params["script_callback_language"] = hou.scriptLanguage.Python
         params["conditionals"]={hou.parmCondType.HideWhen: "{ vray_displ_type != 0 }", hou.parmCondType.DisableWhen: "{ vray_use_displ == 0 }"}
         ptg.appendToFolder(shopnetFolder, hou.StringParmTemplate("vray_displshoppath", "Shop path", 1, **params))
