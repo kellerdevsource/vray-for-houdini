@@ -22,6 +22,7 @@ namespace Log {
 enum LogLevel {
 	LogLevelMsg = 0,
 	LogLevelInfo,
+	LogLevelProgress,
 	LogLevelWarning,
 	LogLevelError,
 	LogLevelDebug,
@@ -36,7 +37,10 @@ struct Logger {
 	void     warning(const tchar *format, ...);
 	void     error(const tchar *format, ...);
 	void     debug(const tchar *format, ...);
+	void     progress(const tchar *format, ...);
 	void     msg(const tchar *format, ...);
+
+	void     setLogLevel(LogLevel logLevel) { m_logLevel = logLevel; }
 
 private:
 	void     log(LogLevel level, const tchar *format, va_list args);

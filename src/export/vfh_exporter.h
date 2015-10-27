@@ -154,7 +154,6 @@ public:
 	void                           setWorkMode(ExpWorkMode mode);
 	void                           setContext(const OP_Context &ctx);
 	void                           setAbort();
-	void                           setAbortCb(VRay::VRayRenderer &renderer);
 	void                           setExportFilepath(const std::string &path);
 	void                           setRenderSize(int w, int h);
 	void                           setSettingsRtEngine();
@@ -173,7 +172,6 @@ public:
 	int                            isNodeAnimated(OP_Node *op_node);
 	int                            hasMotionBlur(OP_Node &rop, OBJ_Node &camera);
 
-public:
 	static OP_Input               *getConnectedInput(OP_Node *op_node, const std::string &inputName);
 	static OP_Node                *getConnectedNode(OP_Node *op_node, const std::string &inputName);
 	static const Parm::SocketDesc *getConnectedOutputType(OP_Node *op_node, const std::string &inputName);
@@ -226,14 +224,11 @@ public:
 	void                           addOpCallback(OP_Node *op_node, OP_EventMethod cb);
 	void                           delOpCallback(OP_Node *op_node, OP_EventMethod cb);
 	void                           delOpCallbacks(OP_Node *op_node);
+	void                           resetOpCallbacks();
 
 	void                           onDumpMessage(VRay::VRayRenderer &renderer, const char *msg, int level);
 	void                           onProgress(VRay::VRayRenderer &renderer, const char *msg, int elementNumber, int elementsCount);
-
-	void                           resetOpCallbacks();
-	void                           addAbortCallback();
-	void                           addRtCallbacks();
-	void                           removeRtCallbacks();
+	void                           onAbort(VRay::VRayRenderer &renderer);
 
 	static void                    RtCallbackObjManager(OP_Node *caller, void *callee, OP_EventType type, void *data);
 	static void                    RtCallbackLight(OP_Node *caller, void *callee, OP_EventType type, void *data);
