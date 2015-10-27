@@ -22,6 +22,7 @@
 
 using namespace VRayForHoudini;
 
+static PRM_Name     parm_render_scripts("parm_render_scripts", "Scripts");
 
 static PRM_Name     parm_render_interactive("render_ipr", "Render IPR");
 
@@ -80,20 +81,36 @@ static Parm::TabItemDesc RenderSettingsTabItemsDesc[] = {
 	{ "Options",        "SettingsOptions"          },
 	{ "Output",         "SettingsOutput"           },
 	{ "Color Mapping",  "SettingsColorMapping"     },
-	{ "DMC Sampler",    "SettingsDMCSampler"       },
-	{ "Image Sampler",  "SettingsImageSampler"     },
-	{ "GI",             "SettingsGI"               },
-	{ "Irradiance Map", "SettingsIrradianceMap"    },
-	{ "Light Cache",    "SettingsLightCache"       },
-	{ "Brute Force",    "SettingsDMCGI"            },
 	{ "Raycaster",      "SettingsRaycaster"        },
 	{ "Regions",        "SettingsRegionsGenerator" },
-	{ "Camera",         "SettingsCamera"           },
-	{ "Stereo",         "VRayStereoscopicSettings" },
-	{ "DOF",            "SettingsCameraDof"        },
-	{ "Motion Blur",    "SettingsMotionBlur"       },
 	{ "RT",             "SettingsRTEngine"         }
 };
+
+static PRM_Name          GiSettingsSwitcherName("VRayGiSettings");
+static Parm::PRMDefList  GiSettingsSwitcherTabs;
+static Parm::TabItemDesc GiSettingsTabItemsDesc[] = {
+	{ "GI",             "SettingsGI"               },
+	{ "Brute Force",    "SettingsDMCGI"            },
+	{ "Irradiance Map", "SettingsIrradianceMap"    },
+	{ "Light Cache",    "SettingsLightCache"       },
+};
+
+static PRM_Name          CameraSettingsSwitcherName("VRayCameraSettings");
+static Parm::PRMDefList  CameraSettingsSwitcherTabs;
+static Parm::TabItemDesc CameraSettingsTabItemsDesc[] = {
+	{ "Camera",         "SettingsCamera"           },
+	{ "Depth Of Field", "SettingsCameraDof"        },
+	{ "Motion Blur",    "SettingsMotionBlur"       },
+	{ "Stereo",         "VRayStereoscopicSettings" },
+};
+
+static PRM_Name          SamplersSettingsSwitcherName("VRaySamplersSettings");
+static Parm::PRMDefList  SamplersSettingsSwitcherTabs;
+static Parm::TabItemDesc SamplersSettingsTabItemsDesc[] = {
+	{ "DMC",            "SettingsDMCSampler"       },
+	{ "AA",             "SettingsImageSampler"     },
+};
+
 
 static PRM_Template* getTemplates()
 {
@@ -116,14 +133,9 @@ static PRM_Template* getTemplates()
 		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_STRING_E, PRM_TYPE_DYNAMIC_PATH, 1, &Parm::parm_render_net_render_channels, &Parm::PRMemptyStringDefault));
 		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_STRING_E, PRM_TYPE_DYNAMIC_PATH, 1, &Parm::parm_render_net_environment,     &Parm::PRMemptyStringDefault));
 
-		RenderSettingsSwitcherTabs.push_back(PRM_Default(RenderSettingsPrmTemplate.size(), "Globals"));
-
-		// Renderer settings
-		//
-		Parm::addTabItems(RenderSettingsTabItemsDesc, CountOf(RenderSettingsTabItemsDesc), RenderSettingsSwitcherTabs, RenderSettingsPrmTemplate);
-
 		// Standard ROP settings
 		//
+		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_HEADING, 1, &parm_render_scripts));
 		RenderSettingsPrmTemplate.push_back(theRopTemplates[ROP_TPRERENDER_TPLATE]);
 		RenderSettingsPrmTemplate.push_back(theRopTemplates[ROP_PRERENDER_TPLATE]);
 		RenderSettingsPrmTemplate.push_back(theRopTemplates[ROP_LPRERENDER_TPLATE]);
@@ -136,7 +148,27 @@ static PRM_Template* getTemplates()
 		RenderSettingsPrmTemplate.push_back(theRopTemplates[ROP_TPOSTRENDER_TPLATE]);
 		RenderSettingsPrmTemplate.push_back(theRopTemplates[ROP_POSTRENDER_TPLATE]);
 		RenderSettingsPrmTemplate.push_back(theRopTemplates[ROP_LPOSTRENDER_TPLATE]);
-		RenderSettingsSwitcherTabs.push_back(PRM_Default(12, "Scripts"));
+
+		RenderSettingsSwitcherTabs.push_back(PRM_Default(RenderSettingsPrmTemplate.size(), "Globals"));
+
+		// Renderer settings
+		//
+		Parm::addTabWithTabs("Camera",
+							 CameraSettingsTabItemsDesc, CountOf(CameraSettingsTabItemsDesc),
+							 CameraSettingsSwitcherTabs, CameraSettingsSwitcherName,
+							 RenderSettingsPrmTemplate, RenderSettingsSwitcherTabs);
+
+		Parm::addTabWithTabs("GI",
+							 GiSettingsTabItemsDesc, CountOf(GiSettingsTabItemsDesc),
+							 GiSettingsSwitcherTabs, GiSettingsSwitcherName,
+							 RenderSettingsPrmTemplate, RenderSettingsSwitcherTabs);
+
+		Parm::addTabWithTabs("Sampler",
+							 SamplersSettingsTabItemsDesc, CountOf(SamplersSettingsTabItemsDesc),
+							 SamplersSettingsSwitcherTabs, SamplersSettingsSwitcherName,
+							 RenderSettingsPrmTemplate, RenderSettingsSwitcherTabs);
+
+		Parm::addTabsItems(RenderSettingsTabItemsDesc, CountOf(RenderSettingsTabItemsDesc), RenderSettingsSwitcherTabs, RenderSettingsPrmTemplate);
 
 		RenderSettingsPrmTemplate.push_back(PRM_Template()); // List terminator
 
@@ -146,6 +178,20 @@ static PRM_Template* getTemplates()
 													  RenderSettingsSwitcherTabs.size(),
 													  &RenderSettingsSwitcherName,
 													  &RenderSettingsSwitcherTabs[0]));
+#if 0
+		int i = 0;
+		for (auto &prm : RenderSettingsPrmTemplate) {
+			PRM_Template &tmpl = prm;
+			std::cout << i++ << " ";
+
+			if (tmpl.getType().isSwitcher()) {
+				std::cout << "=== ";
+			}
+
+			std::cout << tmpl.getToken();
+			std::cout << std::endl;
+		}
+#endif
 	}
 
 	return &RenderSettingsPrmTemplate[0];

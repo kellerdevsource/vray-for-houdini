@@ -34,7 +34,7 @@ static Parm::TabItemDesc MetaImageFileTabItemsDesc[] = {
 PRM_Template* VOP::MetaImageFile::GetPrmTemplate()
 {
 	if (!AttrItems.size()) {
-		Parm::addTabItems(MetaImageFileTabItemsDesc, CountOf(MetaImageFileTabItemsDesc), AttrTabsSwitcherTitles, AttrItems);
+		Parm::addTabsItems(MetaImageFileTabItemsDesc, CountOf(MetaImageFileTabItemsDesc), AttrTabsSwitcherTitles, AttrItems);
 
 		AttrItems.push_back(PRM_Template()); // List terminator
 
