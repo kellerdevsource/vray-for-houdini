@@ -1421,7 +1421,7 @@ void VRayExporter::clearKeyFrames(float toTime)
 	Log::getLog().debug("VRayExporter::clearKeyFrames(%.3f)",
 						toTime);
 
-	// XXX: This wipes all the data!
+	// TODO: Replace with clearFramesUpToFrame()
 	// m_renderer.clearFrames(toTime);
 }
 
