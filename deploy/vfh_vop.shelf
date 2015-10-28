@@ -621,7 +621,7 @@
 
     <toolSubmenu>Light</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeLightAmbientMax', nodename="ambient(3dsmax)")]]></script>
+    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeLightAmbientMax', nodename="ambient_3dsmax")]]></script>
 </tool>
 
 <tool name="vop_VRayNodeLightDirect" label="Direct" icon="ROP_vray">
@@ -645,7 +645,7 @@
 
     <toolSubmenu>Light</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeLightDirectMax', nodename="direct(3dsmax)")]]></script>
+    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeLightDirectMax', nodename="direct_3dsmax")]]></script>
 </tool>
 
 <tool name="vop_VRayNodeLightDome" label="Dome" icon="ROP_vray">
@@ -681,7 +681,7 @@
 
     <toolSubmenu>Light</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeLightIESMax', nodename="ies(3dsmax)")]]></script>
+    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeLightIESMax', nodename="ies_3dsmax")]]></script>
 </tool>
 
 <tool name="vop_VRayNodeLightMesh" label="Mesh Light" icon="ROP_vray">
@@ -717,7 +717,7 @@
 
     <toolSubmenu>Light</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeLightOmniMax', nodename="omni(3dsmax)")]]></script>
+    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeLightOmniMax', nodename="omni_3dsmax")]]></script>
 </tool>
 
 <tool name="vop_VRayNodeLightRectangle" label="Rectangle" icon="ROP_vray">
@@ -765,7 +765,7 @@
 
     <toolSubmenu>Light</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeLightSpotMax', nodename="spot(3dsmax)")]]></script>
+    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeLightSpotMax', nodename="spot_3dsmax")]]></script>
 </tool>
 
 <tool name="vop_VRayNodeMayaGamma" label="Gamma" icon="ROP_vray">
@@ -789,7 +789,7 @@
 
     <toolSubmenu>Light</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeMayaLightDirect', nodename="direct(maya)")]]></script>
+    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeMayaLightDirect', nodename="direct_maya")]]></script>
 </tool>
 
 <tool name="vop_VRayNodeMtl2Sided" label="Two Sided" icon="ROP_vray">
@@ -2097,7 +2097,7 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexNoise', nodename="noise(maya)")]]></script>
+    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexNoise', nodename="noise_maya")]]></script>
 </tool>
 
 <tool name="vop_VRayNodeTexNoiseMax" label="Noise (3ds Max)" icon="ROP_vray">
@@ -2109,7 +2109,7 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexNoiseMax', nodename="noise(3dsmax)")]]></script>
+    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexNoiseMax', nodename="noise_3dsmax")]]></script>
 </tool>
 
 <tool name="vop_VRayNodeTexOutput" label="Output" icon="ROP_vray">
@@ -2529,7 +2529,7 @@
 
     <toolSubmenu>Mapping</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeUVWGenMayaPlace2dTexture', nodename="channel(named)")]]></script>
+    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeUVWGenMayaPlace2dTexture', nodename="channel_named")]]></script>
 </tool>
 
 <tool name="vop_VRayNodeUVWGenObject" label="Object" icon="ROP_vray">
@@ -2637,7 +2637,7 @@
 
     <toolSubmenu>Mapping</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodexsiUVWGenChannel', nodename="channel(xsi)")]]></script>
+    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodexsiUVWGenChannel', nodename="channel_xsi")]]></script>
 </tool>
 
 <tool name="vop_VRayNodexsiUVWGenEnvironment" label="Environment (XSI)" icon="ROP_vray">
@@ -2649,7 +2649,7 @@
 
     <toolSubmenu>Mapping</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodexsiUVWGenEnvironment', nodename="environment(xsi)")]]></script>
+    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodexsiUVWGenEnvironment', nodename="environment_xsi")]]></script>
 </tool>
 
 
