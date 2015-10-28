@@ -198,7 +198,7 @@ def main(args):
     err = call(cmake)
 
     if not err:
-        call(ninja)
+        err = call(ninja)
 
     if not err:
         if args.upload:
