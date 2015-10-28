@@ -21,7 +21,7 @@ def toCmakePath(path):
 
 
 def call(args):
-    sys.stdout.write("-- Calling: %s" % " ".join(args))
+    sys.stdout.write("-- Calling: %s\n" % " ".join(args))
     sys.stdout.flush()
     return subprocess.call(args, cwd=os.getcwd())
 
