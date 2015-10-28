@@ -238,6 +238,8 @@ public:
 	static void                    RtCallbackVop(OP_Node *caller, void *callee, OP_EventType type, void *data);
 	static void                    RtCallbackSurfaceShop(OP_Node *caller, void *callee, OP_EventType type, void *data);
 	static void                    RtCallbackDisplacementShop(OP_Node *caller, void *callee, OP_EventType type, void *data);
+	static void                    RtCallbackDisplacementVop(OP_Node *caller, void *callee, OP_EventType type, void *data);
+	static void                    RtCallbackDisplacementObj(OP_Node *caller, void *callee, OP_EventType type, void *data);
 
 };
 

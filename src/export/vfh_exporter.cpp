@@ -36,6 +36,7 @@
 
 #include <boost/bind.hpp>
 #include <boost/format.hpp>
+#include <boost/algorithm/string.hpp>
 
 
 using namespace VRayForHoudini;
@@ -574,15 +575,128 @@ void VRayExporter::RtCallbackSurfaceShop(OP_Node *caller, void *callee, OP_Event
 	Log::getLog().info("RtCallbackSurfaceShop: %s from \"%s\"",
 						OPeventToString(type), caller->getName().buffer());
 
-	if (type == OP_INPUT_REWIRED) {
-		UT_String shopPath;
-		caller->getParent()->getFullPath(shopPath);
-		SHOP_Node *shop_node = OPgetDirector()->findSHOPNode(shopPath.buffer());
+	if (type == OP_INPUT_REWIRED && caller->error() < UT_ERROR_ABORT) {
+		UT_String inputName;
+		const int idx = reinterpret_cast<long>(data);
+		caller->getInputName(inputName, idx);
 
-		exporter.exportMaterial(shop_node);
+		if (inputName.equal("Material")) {
+			SHOP_Node *shop_node = caller->getParent()->castToSHOPNode();
+			if (shop_node) {
+				UT_String shopPath;
+				shop_node->getFullPath(shopPath);
+
+				exporter.exportMaterial(shop_node);
+			}
+		}
 	}
 	else if (type == OP_NODE_PREDELETE) {
 		exporter.delOpCallback(caller, VRayExporter::RtCallbackSurfaceShop);
+	}
+}
+
+void VRayExporter::RtCallbackDisplacementObj(OP_Node *caller, void *callee, OP_EventType type, void *data)
+{
+	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
+
+	Log::getLog().info("RtCallbackDisplacementObj: %s from \"%s\"",
+						OPeventToString(type), caller->getName().buffer());
+
+	if (type == OP_PARM_CHANGED) {
+		const int idx = reinterpret_cast<long>(data);
+		const PRM_Parm *parm = Parm::getParm(*caller, idx);
+		if (parm) {
+			OBJ_Node *obj_node = caller->castToOBJNode();
+			if (   boost::equals(parm->getToken(), "vray_use_displ")
+				|| boost::equals(parm->getToken(), "vray_displ_type"))
+			{
+				exporter.exportObject(obj_node);
+			}
+			else {
+				VRay::Plugin geom;
+				exporter.exportDisplacement(obj_node, geom);
+			}
+		}
+	}
+	else if (type == OP_NODE_PREDELETE) {
+		exporter.delOpCallback(caller, VRayExporter::RtCallbackDisplacementObj);
+	}
+}
+
+
+void VRayExporter::RtCallbackDisplacementShop(OP_Node *caller, void *callee, OP_EventType type, void *data)
+{
+	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
+
+	Log::getLog().info("RtCallbackDisplacementShop: %s from \"%s\"",
+						OPeventToString(type), caller->getName().buffer());
+
+	if (type == OP_INPUT_REWIRED) {
+		UT_String inputName;
+		const int idx = reinterpret_cast<long>(data);
+		caller->getInputName(inputName, idx);
+
+		if (caller->error() < UT_ERROR_ABORT && inputName.equal("Geometry")) {
+			SHOP_Node *shop_node = caller->getParent()->castToSHOPNode();
+			if (shop_node) {
+				UT_String shopPath;
+				shop_node->getFullPath(shopPath);
+
+				OP_NodeList refs;
+				shop_node->getExistingOpDependents(refs, true);
+				for (OP_Node *node : refs) {
+					UT_String nodePath;
+					node->getFullPath(nodePath);
+
+					OBJ_Node *obj_node = node->castToOBJNode();
+					if (obj_node) {
+						VRay::Plugin geom;
+						exporter.exportDisplacement(obj_node, geom);
+					}
+				}
+			}
+		}
+	}
+	else if (type == OP_NODE_PREDELETE) {
+		exporter.delOpCallback(caller, VRayExporter::RtCallbackDisplacementShop);
+	}
+}
+
+
+void VRayExporter::RtCallbackDisplacementVop(OP_Node *caller, void *callee, OP_EventType type, void *data)
+{
+	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
+
+	Log::getLog().info("RtCallbackDisplacementVop: %s from \"%s\"",
+						OPeventToString(type), caller->getName().buffer());
+
+	if (   type == OP_PARM_CHANGED
+		|| type == OP_INPUT_REWIRED)
+	{
+		const int idx = reinterpret_cast<long>(data);
+		SHOP_Node *shop_node = caller->getParent()->castToSHOPNode();
+		if (   idx >= 0
+			&& shop_node)
+		{
+			UT_String shopPath;
+			shop_node->getFullPath(shopPath);
+
+			OP_NodeList refs;
+			shop_node->getExistingOpDependents(refs, true);
+			for (OP_Node *node : refs) {
+				UT_String nodePath;
+				node->getFullPath(nodePath);
+
+				OBJ_Node *obj_node = node->castToOBJNode();
+				if (obj_node) {
+					VRay::Plugin geom;
+					exporter.exportDisplacement(obj_node, geom);
+				}
+			}
+		}
+	}
+	else if (type == OP_NODE_PREDELETE) {
+		exporter.delOpCallback(caller, VRayExporter::RtCallbackDisplacementVop);
 	}
 }
 
@@ -643,36 +757,6 @@ VRay::Plugin VRayExporter::exportMaterial(SHOP_Node *shop_node)
 }
 
 
-void VRayExporter::RtCallbackDisplacementShop(OP_Node *caller, void *callee, OP_EventType type, void *data)
-{
-	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
-
-	Log::getLog().info("RtCallbackDisplacementShop: %s from \"%s\"",
-						OPeventToString(type), caller->getName().buffer());
-
-	if (type == OP_INPUT_REWIRED) {
-		UT_String shopPath;
-		caller->getParent()->getFullPath(shopPath);
-		SHOP_Node *shop_node = OPgetDirector()->findSHOPNode(shopPath.buffer());
-
-		OP_NodeList refs;
-		shop_node->getExistingOpDependents(refs, true);
-		for (OP_Node *node : refs) {
-			UT_String nodePath;
-			node->getFullPath(nodePath);
-
-			OBJ_Node *obj_node = node->castToOBJNode();
-			if (obj_node) {
-				exporter.exportObject(obj_node);
-			}
-		}
-	}
-	else if (type == OP_NODE_PREDELETE) {
-		exporter.delOpCallback(caller, VRayExporter::RtCallbackDisplacementShop);
-	}
-}
-
-
 void VRayExporter::exportDisplacementDesc(OBJ_Node *obj_node, Attrs::PluginDesc &pluginDesc)
 {
 	const std::string parmPrefix = boost::str(Parm::FmtPrefixManual % pluginDesc.pluginID % "_");
@@ -718,44 +802,51 @@ VRay::Plugin VRayExporter::exportDisplacement(OBJ_Node *obj_node, VRay::Plugin &
 {
 	VRay::Plugin plugin;
 
-	bool useDisplacement = Parm::isParmExist(*obj_node, "vray_use_displ") && obj_node->evalInt("vray_use_displ", 0, 0.0f);
+	addOpCallback(obj_node, VRayExporter::RtCallbackDisplacementObj);
+
+	bool useDisplacement = Parm::isParmExist(*obj_node, "vray_use_displ") && obj_node->evalInt("vray_use_displ", 0, 0.0);
 	if (useDisplacement) {
 		Attrs::PluginDesc pluginDesc;
-		const int displType = obj_node->evalInt("vray_displ_type", 0, 0.0f);
+		const int displType = obj_node->evalInt("vray_displ_type", 0, 0.0);
 		switch (displType) {
 			// use shopnet
 			case 0:
 			{
 				UT_String shopPath;
-				obj_node->evalString(shopPath, "vray_displshoppath", 0, 0.0f);
+				obj_node->evalString(shopPath, "vray_displshoppath", 0, 0.0);
 				SHOP_Node *shop_node = OPgetDirector()->findSHOPNode(shopPath.buffer());
 				if (shop_node) {
 					OP_Node *op_node = VRayExporter::FindChildNodeByType(shop_node, "vray_material_output");
 					if (op_node) {
 						VOP::MaterialOutput *mtl_out = static_cast<VOP::MaterialOutput *>(op_node);
-
 						addOpCallback(op_node, VRayExporter::RtCallbackDisplacementShop);
 
-						const int idx = mtl_out->getInputFromName("Geometry");
-						VOP::NodeBase *input = dynamic_cast<VOP::NodeBase*>(mtl_out->getInput(idx));
-						if (input) {
-							pluginDesc.pluginName = VRayExporter::getPluginName(obj_node, "Geom@");
-							pluginDesc.pluginID = input->getVRayPluginID();
-							pluginDesc.addAttribute(Attrs::PluginAttr("mesh", geomPlugin));
+						if (mtl_out->error() < UT_ERROR_ABORT ) {
+							const int idx = mtl_out->getInputFromName("Geometry");
+							VOP::NodeBase *input = dynamic_cast<VOP::NodeBase*>(mtl_out->getInput(idx));
+							if (input) {
+								addOpCallback(input, VRayExporter::RtCallbackDisplacementVop);
 
-							OP::VRayNode::PluginResult res = input->asPluginDesc(pluginDesc, *this, obj_node);
-							if (res == OP::VRayNode::PluginResultError) {
-								Log::getLog().error("Error creating plugin descripion for node: \"%s\" [%s]",
-											input->getName().buffer(), input->getOperator()->getName().buffer());
+								pluginDesc.pluginName = VRayExporter::getPluginName(obj_node, "Geom@");
+								pluginDesc.pluginID = input->getVRayPluginID();
+								if (geomPlugin) {
+									pluginDesc.addAttribute(Attrs::PluginAttr("mesh", geomPlugin));
+								}
+
+								OP::VRayNode::PluginResult res = input->asPluginDesc(pluginDesc, *this, obj_node);
+								if (res == OP::VRayNode::PluginResultError) {
+									Log::getLog().error("Error creating plugin descripion for node: \"%s\" [%s]",
+												input->getName().buffer(), input->getOperator()->getName().buffer());
+								}
+								else if (res == OP::VRayNode::PluginResultNA ||
+										 res == OP::VRayNode::PluginResultContinue)
+								{
+									setAttrsFromOpNode(pluginDesc, input);
+								}
 							}
-							else if (res == OP::VRayNode::PluginResultNA ||
-									 res == OP::VRayNode::PluginResultContinue)
-							{
-								setAttrsFromOpNode(pluginDesc, input);
-							}
+
+							plugin = exportPlugin(pluginDesc);
 						}
-
-						plugin = exportPlugin(pluginDesc);
 					}
 					else {
 						Log::getLog().error("Can't find \"V-Ray Material Output\" operator under \"%s\"!",
@@ -769,7 +860,9 @@ VRay::Plugin VRayExporter::exportDisplacement(OBJ_Node *obj_node, VRay::Plugin &
 			{
 				pluginDesc.pluginName = VRayExporter::getPluginName(obj_node, "Geom@");
 				pluginDesc.pluginID = "GeomDisplacedMesh";
-				pluginDesc.addAttribute(Attrs::PluginAttr("mesh", geomPlugin));
+				if (geomPlugin) {
+					pluginDesc.addAttribute(Attrs::PluginAttr("mesh", geomPlugin));
+				}
 				exportDisplacementDesc(obj_node, pluginDesc);
 
 				plugin = exportPlugin(pluginDesc);
@@ -780,7 +873,9 @@ VRay::Plugin VRayExporter::exportDisplacement(OBJ_Node *obj_node, VRay::Plugin &
 			{
 				pluginDesc.pluginName = VRayExporter::getPluginName(obj_node, "Geom@");
 				pluginDesc.pluginID = "GeomStaticSmoothedMesh";
-				pluginDesc.addAttribute(Attrs::PluginAttr("mesh", geomPlugin));
+				if (geomPlugin) {
+					pluginDesc.addAttribute(Attrs::PluginAttr("mesh", geomPlugin));
+				}
 				exportDisplacementDesc(obj_node, pluginDesc);
 
 				plugin = exportPlugin(pluginDesc);
