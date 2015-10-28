@@ -229,13 +229,15 @@ VRay::Plugin VRayPluginRenderer::exportPlugin(const Attrs::PluginDesc &pluginDes
 		return VRay::Plugin();
 	}
 
-	VRay::Plugin plug = m_vray->newPlugin(pluginDesc.pluginName, pluginDesc.pluginID);
-	VRay::Error err = m_vray->getLastError();
-	if (err != VRay::SUCCESS) {
-		Log::getLog().error("Error creating plugin: %s",
-							err.toString().c_str());
+	VRay::Plugin plug = m_vray->getOrCreatePlugin(pluginDesc.pluginName, pluginDesc.pluginID);
+	if (!plug) {
+		VRay::Error err = m_vray->getLastError();
+		if (err != VRay::SUCCESS) {
+			Log::getLog().error("Error creating plugin: %s",
+								err.toString().c_str());
+		}
 	}
-	if (plug) {
+	else {
 		for (const auto &pIt : pluginDesc.pluginAttrs) {
 			const PluginAttr &p = pIt;
 
