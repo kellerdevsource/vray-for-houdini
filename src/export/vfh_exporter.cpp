@@ -213,12 +213,15 @@ void VRayExporter::setAttrValueFromOpNode(Attrs::PluginDesc &pluginDesc, const P
 				 attrDesc.value.type == Parm::eAColor ||
 				 attrDesc.value.type == Parm::eTextureColor)
 		{
-			attr.paramType = Attrs::PluginAttr::AttrTypeColor;
-			attr.paramValue.valVector[0] = (float)opNode->evalFloat(parmName.c_str(), 0, t);
-			attr.paramValue.valVector[1] = (float)opNode->evalFloat(parmName.c_str(), 1, t);
-			attr.paramValue.valVector[2] = (float)opNode->evalFloat(parmName.c_str(), 2, t);
-			if (attrDesc.value.type != Parm::eColor) {
-				attr.paramValue.valVector[3] = (float)opNode->evalFloat(parmName.c_str(), 3, t);
+			const PRM_Parm *parm = Parm::getParm(*opNode, parmName);
+			if (parm && parm->getType().isFloatType()) {
+				attr.paramType = Attrs::PluginAttr::AttrTypeColor;
+				attr.paramValue.valVector[0] = (float)opNode->evalFloat(parmName.c_str(), 0, t);
+				attr.paramValue.valVector[1] = (float)opNode->evalFloat(parmName.c_str(), 1, t);
+				attr.paramValue.valVector[2] = (float)opNode->evalFloat(parmName.c_str(), 2, t);
+				if (attrDesc.value.type != Parm::eColor) {
+					attr.paramValue.valVector[3] = (float)opNode->evalFloat(parmName.c_str(), 3, t);
+				}
 			}
 		}
 		else if (attrDesc.value.type == Parm::eString) {
