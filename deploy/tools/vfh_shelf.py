@@ -34,6 +34,9 @@ for pluginID in sorted(PLUGINS_DESCS):
 
     name = pluginDesc['Name']
     node_name = name.replace(" ", "").lower()
+    for c in ";:@|(":
+        node_name = node_name.replace(c, "_")
+    node_name = node_name.replace(")", "")
 
     menu_name = pluginDesc['Type']
 
