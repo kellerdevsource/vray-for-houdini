@@ -30,7 +30,7 @@ void VRayExporter::RtCallbackView(OP_Node *caller, void *callee, OP_EventType ty
 {
 	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
 
-	PRINT_INFO("RtCallbackView: %s from \"%s\"",
+	Log::getLog().info("RtCallbackView: %s from \"%s\"",
 			   OPeventToString(type), caller->getName().buffer());
 
 	if (type == OP_INPUT_CHANGED) {
@@ -129,6 +129,14 @@ void VRayExporter::fillCameraData(const OBJ_Node &camera, const OP_Node &rop, Vi
 	viewParams.renderView.stereoParams.stereo_focus_distance     = Parm::getParmFloat(rop, "VRayStereoscopicSettings.focus_distance");
 	viewParams.renderView.stereoParams.stereo_focus_method       = Parm::getParmInt(rop,   "VRayStereoscopicSettings.focus_method");
 	viewParams.renderView.stereoParams.stereo_view               = Parm::getParmInt(rop,   "VRayStereoscopicSettings.view");
+	viewParams.renderView.stereoParams.adjust_resolution         = Parm::getParmInt(rop,   "VRayStereoscopicSettings.adjust_resolution");
+
+	if (isGPU() &&
+		viewParams.renderView.stereoParams.use &&
+		viewParams.renderView.stereoParams.adjust_resolution)
+	{
+		viewParams.renderSize.w *= 2;
+	}
 }
 
 
@@ -182,6 +190,16 @@ void VRayExporter::fillRenderView(const ViewParams &viewParams, Attrs::PluginDes
 	if (isIPR()) {
 		pluginDesc.add(Attrs::PluginAttr("use_scene_offset", false));
 	}
+
+	if (isGPU() && viewParams.renderView.stereoParams.use) {
+		pluginDesc.add(Attrs::PluginAttr("stereo_on",                 viewParams.renderView.stereoParams.use));
+		pluginDesc.add(Attrs::PluginAttr("stereo_eye_distance",       viewParams.renderView.stereoParams.stereo_eye_distance));
+		pluginDesc.add(Attrs::PluginAttr("stereo_interocular_method", viewParams.renderView.stereoParams.stereo_interocular_method));
+		pluginDesc.add(Attrs::PluginAttr("stereo_specify_focus",      viewParams.renderView.stereoParams.stereo_specify_focus));
+		pluginDesc.add(Attrs::PluginAttr("stereo_focus_distance",     viewParams.renderView.stereoParams.stereo_focus_distance));
+		pluginDesc.add(Attrs::PluginAttr("stereo_focus_method",       viewParams.renderView.stereoParams.stereo_focus_method));
+		pluginDesc.add(Attrs::PluginAttr("stereo_view",               viewParams.renderView.stereoParams.stereo_view));
+	}
 }
 
 
@@ -217,6 +235,8 @@ void VRayExporter::fillSettingsCameraDof(const ViewParams &viewParams, Attrs::Pl
 
 int VRayExporter::exportView()
 {
+	Log::getLog().debug("VRayExporter::exportView()");
+
 	static VUtils::FastCriticalSection csect;
 	if (csect.tryEnter()) {
 		csect.enter();
@@ -234,7 +254,7 @@ int VRayExporter::exportView()
 		fillSettingsCamera(viewParams, viewParams.viewPlugins.settingsCamera);
 		fillRenderView(viewParams, viewParams.viewPlugins.renderView);
 
-		if (!isIPR()) {
+		if (!isIPR() && !isGPU()) {
 			fillStereoSettings(viewParams, viewParams.viewPlugins.stereoSettings);
 		}
 
@@ -248,7 +268,7 @@ int VRayExporter::exportView()
 
 		const bool needReset = m_viewParams.needReset(viewParams);
 		if (needReset) {
-			PRINT_WARN("VRayExporter::exportView: Reseting view plugins...");
+			Log::getLog().warning("VRayExporter::exportView: Reseting view plugins...");
 
 			getRenderer().setAutoCommit(false);
 
@@ -272,7 +292,7 @@ int VRayExporter::exportView()
 				getRenderer().setCamera(exportPlugin(viewParams.viewPlugins.cameraDefault));
 			}
 
-			if (!isIPR() && viewParams.renderView.stereoParams.use) {
+			if (!isIPR() && !isGPU() && viewParams.renderView.stereoParams.use) {
 				exportPlugin(viewParams.viewPlugins.stereoSettings);
 			}
 
@@ -311,18 +331,6 @@ int ViewPluginsDesc::needReset(const ViewPluginsDesc &other) const
 }
 
 
-void ViewPluginsDesc::reset()
-{
-	settingsCameraDof.pluginAttrs.clear();
-	settingsMotionBlur.pluginAttrs.clear();
-	settingsCamera.pluginAttrs.clear();
-	cameraPhysical.pluginAttrs.clear();
-	cameraDefault.pluginAttrs.clear();
-	renderView.pluginAttrs.clear();
-	stereoSettings.pluginAttrs.clear();
-}
-
-
 int ViewParams::changedParams(const ViewParams &other) const
 {
 	return MemberNotEq(renderView);
@@ -342,14 +350,6 @@ int ViewParams::needReset(const ViewParams &other) const
 			MemberNotEq(cameraObject) ||
 			viewPlugins.needReset(other.viewPlugins) ||
 			renderView.needReset(other.renderView));
-}
-
-
-void ViewParams::reset()
-{
-	usePhysicalCamera = false;
-	cameraObject = nullptr;
-	viewPlugins.reset();
 }
 
 

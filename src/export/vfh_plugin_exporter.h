@@ -13,6 +13,7 @@
 
 #include "vfh_defines.h"
 #include "vfh_vray.h"
+#include "vfh_log.h"
 #include "vfh_plugin_attrs.h"
 
 #include <boost/function.hpp>
@@ -97,8 +98,8 @@ struct AppSdkInit {
 			m_vrayInit = new VRay::VRayInit(true);
 		}
 		catch (std::exception &e) {
-			PRINT_INFO("Error initializing V-Ray library! Error: \"%s\"",
-					   e.what());
+			Log::getLog().error("Error initializing V-Ray library! Error: \"%s\"",
+								e.what());
 			m_vrayInit = nullptr;
 		}
 	}
@@ -141,7 +142,7 @@ public:
 	void                          setImageSize(const int w, const int h);
 
 	void                          showVFB(const bool show=true);
-	void                          clearFrames(fpreal toTime);
+	void                          clearFrames(float toTime);
 
 	int                           startRender(int locked=false);
 	int                           startSequence(int start, int end, int step, int locked=false);

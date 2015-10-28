@@ -22,6 +22,7 @@
 
 using namespace VRayForHoudini;
 
+static PRM_Name     parm_render_scripts("parm_render_scripts", "Scripts");
 
 static PRM_Name     parm_render_interactive("render_ipr", "Render IPR");
 
@@ -80,20 +81,36 @@ static Parm::TabItemDesc RenderSettingsTabItemsDesc[] = {
 	{ "Options",        "SettingsOptions"          },
 	{ "Output",         "SettingsOutput"           },
 	{ "Color Mapping",  "SettingsColorMapping"     },
-	{ "DMC Sampler",    "SettingsDMCSampler"       },
-	{ "Image Sampler",  "SettingsImageSampler"     },
-	{ "GI",             "SettingsGI"               },
-	{ "Irradiance Map", "SettingsIrradianceMap"    },
-	{ "Light Cache",    "SettingsLightCache"       },
-	{ "Brute Force",    "SettingsDMCGI"            },
 	{ "Raycaster",      "SettingsRaycaster"        },
 	{ "Regions",        "SettingsRegionsGenerator" },
-	{ "Camera",         "SettingsCamera"           },
-	{ "Stereo",         "VRayStereoscopicSettings" },
-	{ "DOF",            "SettingsCameraDof"        },
-	{ "Motion Blur",    "SettingsMotionBlur"       },
 	{ "RT",             "SettingsRTEngine"         }
 };
+
+static PRM_Name          GiSettingsSwitcherName("VRayGiSettings");
+static Parm::PRMDefList  GiSettingsSwitcherTabs;
+static Parm::TabItemDesc GiSettingsTabItemsDesc[] = {
+	{ "GI",             "SettingsGI"               },
+	{ "Brute Force",    "SettingsDMCGI"            },
+	{ "Irradiance Map", "SettingsIrradianceMap"    },
+	{ "Light Cache",    "SettingsLightCache"       },
+};
+
+static PRM_Name          CameraSettingsSwitcherName("VRayCameraSettings");
+static Parm::PRMDefList  CameraSettingsSwitcherTabs;
+static Parm::TabItemDesc CameraSettingsTabItemsDesc[] = {
+	{ "Camera",         "SettingsCamera"           },
+	{ "Depth Of Field", "SettingsCameraDof"        },
+	{ "Motion Blur",    "SettingsMotionBlur"       },
+	{ "Stereo",         "VRayStereoscopicSettings" },
+};
+
+static PRM_Name          SamplersSettingsSwitcherName("VRaySamplersSettings");
+static Parm::PRMDefList  SamplersSettingsSwitcherTabs;
+static Parm::TabItemDesc SamplersSettingsTabItemsDesc[] = {
+	{ "DMC",            "SettingsDMCSampler"       },
+	{ "AA",             "SettingsImageSampler"     },
+};
+
 
 static PRM_Template* getTemplates()
 {
@@ -116,14 +133,9 @@ static PRM_Template* getTemplates()
 		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_STRING_E, PRM_TYPE_DYNAMIC_PATH, 1, &Parm::parm_render_net_render_channels, &Parm::PRMemptyStringDefault));
 		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_STRING_E, PRM_TYPE_DYNAMIC_PATH, 1, &Parm::parm_render_net_environment,     &Parm::PRMemptyStringDefault));
 
-		RenderSettingsSwitcherTabs.push_back(PRM_Default(RenderSettingsPrmTemplate.size(), "Globals"));
-
-		// Renderer settings
-		//
-		Parm::addTabItems(RenderSettingsTabItemsDesc, CountOf(RenderSettingsTabItemsDesc), RenderSettingsSwitcherTabs, RenderSettingsPrmTemplate);
-
 		// Standard ROP settings
 		//
+		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_HEADING, 1, &parm_render_scripts));
 		RenderSettingsPrmTemplate.push_back(theRopTemplates[ROP_TPRERENDER_TPLATE]);
 		RenderSettingsPrmTemplate.push_back(theRopTemplates[ROP_PRERENDER_TPLATE]);
 		RenderSettingsPrmTemplate.push_back(theRopTemplates[ROP_LPRERENDER_TPLATE]);
@@ -136,7 +148,27 @@ static PRM_Template* getTemplates()
 		RenderSettingsPrmTemplate.push_back(theRopTemplates[ROP_TPOSTRENDER_TPLATE]);
 		RenderSettingsPrmTemplate.push_back(theRopTemplates[ROP_POSTRENDER_TPLATE]);
 		RenderSettingsPrmTemplate.push_back(theRopTemplates[ROP_LPOSTRENDER_TPLATE]);
-		RenderSettingsSwitcherTabs.push_back(PRM_Default(12, "Scripts"));
+
+		RenderSettingsSwitcherTabs.push_back(PRM_Default(RenderSettingsPrmTemplate.size(), "Globals"));
+
+		// Renderer settings
+		//
+		Parm::addTabWithTabs("Camera",
+							 CameraSettingsTabItemsDesc, CountOf(CameraSettingsTabItemsDesc),
+							 CameraSettingsSwitcherTabs, CameraSettingsSwitcherName,
+							 RenderSettingsPrmTemplate, RenderSettingsSwitcherTabs);
+
+		Parm::addTabWithTabs("GI",
+							 GiSettingsTabItemsDesc, CountOf(GiSettingsTabItemsDesc),
+							 GiSettingsSwitcherTabs, GiSettingsSwitcherName,
+							 RenderSettingsPrmTemplate, RenderSettingsSwitcherTabs);
+
+		Parm::addTabWithTabs("Sampler",
+							 SamplersSettingsTabItemsDesc, CountOf(SamplersSettingsTabItemsDesc),
+							 SamplersSettingsSwitcherTabs, SamplersSettingsSwitcherName,
+							 RenderSettingsPrmTemplate, RenderSettingsSwitcherTabs);
+
+		Parm::addTabsItems(RenderSettingsTabItemsDesc, CountOf(RenderSettingsTabItemsDesc), RenderSettingsSwitcherTabs, RenderSettingsPrmTemplate);
 
 		RenderSettingsPrmTemplate.push_back(PRM_Template()); // List terminator
 
@@ -223,12 +255,14 @@ static int getFrameBufferType(OP_Node &rop)
 VRayRendererNode::VRayRendererNode(OP_Network *net, const char *name, OP_Operator *entry)
 	: ROP_Node(net, name, entry)
 	, m_exporter(this)
-{}
+{
+	Log::getLog().debug("VRayRendererNode()");
+}
 
 
 VRayRendererNode::~VRayRendererNode()
 {
-	PRINT_WARN("~VRayRendererNode()");
+	Log::getLog().debug("~VRayRendererNode()");
 
 #if 0
 	m_exporter.delOpCallback(this, VRayRendererNode::RtCallbackRop);
@@ -246,6 +280,24 @@ bool VRayRendererNode::updateParmsFlags()
 		UI::ActiveStateDeps::activateElements(tabItemDesc.pluginID, *this, changed, boost::str(Parm::FmtPrefix % tabItemDesc.pluginID));
 	}
 
+	for (int t = 0; t < CountOf(GiSettingsTabItemsDesc); ++t) {
+		const Parm::TabItemDesc &tabItemDesc = GiSettingsTabItemsDesc[t];
+
+		UI::ActiveStateDeps::activateElements(tabItemDesc.pluginID, *this, changed, boost::str(Parm::FmtPrefix % tabItemDesc.pluginID));
+	}
+
+	for (int t = 0; t < CountOf(SamplersSettingsTabItemsDesc); ++t) {
+		const Parm::TabItemDesc &tabItemDesc = SamplersSettingsTabItemsDesc[t];
+
+		UI::ActiveStateDeps::activateElements(tabItemDesc.pluginID, *this, changed, boost::str(Parm::FmtPrefix % tabItemDesc.pluginID));
+	}
+
+	for (int t = 0; t < CountOf(CameraSettingsTabItemsDesc); ++t) {
+		const Parm::TabItemDesc &tabItemDesc = CameraSettingsTabItemsDesc[t];
+
+		UI::ActiveStateDeps::activateElements(tabItemDesc.pluginID, *this, changed, boost::str(Parm::FmtPrefix % tabItemDesc.pluginID));
+	}
+
 	return changed;
 }
 
@@ -254,8 +306,7 @@ void VRayRendererNode::RtCallbackRop(OP_Node *caller, void *callee, OP_EventType
 {
 	VRayRendererNode *rop = (VRayRendererNode*)callee;
 
-	PRINT_INFO("RtCallbackRop: %s from \"%s\"",
-			   OPeventToString(type), caller->getName().buffer());
+	Log::getLog().debug("RtCallbackRop: %s from \"%s\"", OPeventToString(type), caller->getName().buffer());
 
 	if (type == OP_NODE_PREDELETE) {
 		caller->removeOpInterest(rop, VRayRendererNode::RtCallbackRop);
@@ -273,13 +324,12 @@ int VRayRendererNode::RtStartSession(void *data, int /*index*/, float /*t*/, con
 
 int VRayRendererNode::initSession(int interactive, int nframes, fpreal tstart, fpreal tend)
 {
-	PRINT_WARN("VRayRendererNode::initSession(%i, %i, %.3ff, %.3f)",
-			   interactive, nframes, tstart, tend);
+	Log::getLog().debug("VRayRendererNode::initSession(%i, %i, %.3ff, %.3f)", interactive, nframes, tstart, tend);
 
 	ROP_RENDER_CODE error = ROP_ABORT_RENDER;
 
 	if (!VRayExporter::getCamera(this)) {
-		PRINT_ERROR("Camera is not set!");
+		Log::getLog().error("Camera is not set!");
 	}
 	else {
 		// Store end time for endRender() executePostRenderScript()
@@ -303,6 +353,8 @@ int VRayRendererNode::initSession(int interactive, int nframes, fpreal tstart, f
 			m_exporter.setWorkMode(getExporterWorkMode(*this));
 			m_exporter.setExportFilepath(getExportFilepath(*this));
 
+			m_exporter.exportSettings();
+
 			error = m_exporter.getError();
 		}
 	}
@@ -321,8 +373,7 @@ void VRayRendererNode::startIPR()
 
 int VRayRendererNode::startRender(int nframes, fpreal tstart, fpreal tend)
 {
-	PRINT_WARN("VRayRendererNode::startRender(%i, %.3ff, %.3f)",
-			   nframes, tstart, tend);
+	Log::getLog().debug("VRayRendererNode::startRender(%i, %.3f, %.3f)", nframes, tstart, tend);
 
 	return initSession(false, nframes, tstart, tend);
 }
@@ -330,8 +381,7 @@ int VRayRendererNode::startRender(int nframes, fpreal tstart, fpreal tend)
 
 ROP_RENDER_CODE VRayRendererNode::renderFrame(fpreal time, UT_Interrupt *boss)
 {
-	PRINT_WARN("VRayRendererNode::renderFrame(%.3f)",
-			   time);
+	Log::getLog().debug("VRayRendererNode::renderFrame(%.3f)", time);
 
 	executePreFrameScript(time);
 
@@ -345,7 +395,7 @@ ROP_RENDER_CODE VRayRendererNode::renderFrame(fpreal time, UT_Interrupt *boss)
 
 ROP_RENDER_CODE VRayRendererNode::endRender()
 {
-	PRINT_WARN("VRayRendererNode::endRender()");
+	Log::getLog().debug("VRayRendererNode::endRender()");
 
 	m_exporter.exportEnd();
 

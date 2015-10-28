@@ -41,6 +41,7 @@ struct StereoViewParams {
 		, stereo_focus_distance(200.0f)
 		, stereo_focus_method(0)
 		, stereo_view(0)
+		, adjust_resolution(false)
 	{}
 
 	bool operator == (const StereoViewParams &other) const;
@@ -53,6 +54,7 @@ struct StereoViewParams {
 	float  stereo_focus_distance;
 	int    stereo_focus_method;
 	int    stereo_view;
+	int    adjust_resolution;
 };
 
 
@@ -109,7 +111,6 @@ struct ViewPluginsDesc {
 	{}
 
 	int                needReset(const ViewPluginsDesc &other) const;
-	void               reset();
 
 	Attrs::PluginDesc  settingsCameraDof;
 	Attrs::PluginDesc  settingsMotionBlur;
@@ -122,7 +123,10 @@ struct ViewPluginsDesc {
 
 
 struct ViewParams {
-	ViewParams() {}
+	ViewParams()
+		: usePhysicalCamera(false)
+		, cameraObject(nullptr)
+	{}
 	ViewParams(OBJ_Node *camera)
 		: usePhysicalCamera(false)
 		, cameraObject(camera)
@@ -131,7 +135,6 @@ struct ViewParams {
 	int               changedParams(const ViewParams &other) const;
 	int               changedSize(const ViewParams &other) const;
 	int               needReset(const ViewParams &other) const;
-	void              reset();
 
 	RenderSizeParams  renderSize;
 	RenderViewParams  renderView;

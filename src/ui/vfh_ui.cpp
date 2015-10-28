@@ -44,11 +44,12 @@ void ActiveStateDeps::showDependencies(const std::string &pluginID)
 											   : boost::str(Parm::FmtPrefixAuto
 															% stateInfo.conditionPlugin
 															% stateInfo.conditionAttr);
-
-				PRINT_INFO("  Property \"%s\" affected by \"%s\" (mode: %s)",
-						   affectedProp.c_str(),
-						   affectedBy.c_str(),
-						   stateInfo.visual == StateInfo::VisualDisable ? "disable" : "hide");
+#if 0
+				printf("  Property \"%s\" affected by \"%s\" (mode: %s)\n",
+					   affectedProp.c_str(),
+					   affectedBy.c_str(),
+					   stateInfo.visual == StateInfo::VisualDisable ? "disable" : "hide");
+#endif
 			}
 		}
 	}
@@ -140,13 +141,13 @@ void ActiveStateDeps::activateElements(const std::string &pluginID, OP_Node &opN
 					propVisual  = stateInfo.visual;
 					propState  &= state;
 #if 0
-					PRINT_INFO("Property \"%s\" affected by \"%s\" (mode: %s)",
-							   affectedProp.c_str(),
-							   stateInfo.conditionAttr.c_str(),
-							   stateInfo.visual == StateInfo::VisualDisable ? "disable" : "hide");
+					printf("Property \"%s\" affected by \"%s\" (mode: %s)\n",
+						   affectedProp.c_str(),
+						   stateInfo.conditionAttr.c_str(),
+						   stateInfo.visual == StateInfo::VisualDisable ? "disable" : "hide");
 
-					PRINT_INFO("  State property value = %i; condition value = %i; state value = %i",
-							   activeValue, stateInfo.conditionValue, state);
+					printf("  State property value = %i; condition value = %i; state value = %i\n",
+						   activeValue, stateInfo.conditionValue, state);
 #endif
 				}
 			}

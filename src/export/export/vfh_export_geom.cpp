@@ -25,7 +25,7 @@ void VRayExporter::exportGeomStaticMeshDesc(const GU_Detail &gdp, SHOPToID &shop
 {
 	const int numPoints = gdp.getNumPoints();
 
-	PRINT_INFO("  Mesh: %i points", numPoints);
+	Log::getLog().info("  Mesh: %i points", numPoints);
 
 	VUtils::VectorRefList vertices(numPoints);
 	VUtils::VectorRefList normals;
@@ -89,11 +89,11 @@ void VRayExporter::exportGeomStaticMeshDesc(const GU_Detail &gdp, SHOPToID &shop
 	}
 #if 0
 	if (shopToID.size()) {
-		PRINT_INFO("Materials list: %i",
+		Log::getLog().info("Materials list: %i",
 					shopToID.size());
 
 		for (SHOPToID::iterator oIt = shopToID.begin(); oIt != shopToID.end(); ++oIt) {
-			PRINT_INFO("  %i: \"%s\"",
+			Log::getLog().info("  %i: \"%s\"",
 						oIt.data(), oIt.key());
 		}
 	}
@@ -154,7 +154,7 @@ void VRayExporter::exportGeomStaticMeshDesc(const GU_Detail &gdp, SHOPToID &shop
 		const std::string &map_channel_name = mcIt.first;
 		Mesh::MapChannel  &map_channel = mcIt.second;
 
-		PRINT_INFO("  Found map channel: %s",
+		Log::getLog().info("  Found map channel: %s",
 					map_channel_name.c_str());
 
 #if CGR_USE_LIST_RAW_TYPES

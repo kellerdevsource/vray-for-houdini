@@ -20,7 +20,7 @@ void VRayExporter::exportGeomMayaHairGeom(SOP_Node *sop_node, const GU_Detail *g
 {
 	const int numStrands = gdp->getPrimitiveRange().getEntries();
 
-	PRINT_INFO("  Fur: %i strands", numStrands);
+	Log::getLog().info("  Fur: %i strands", numStrands);
 
 	VUtils::IntRefList num_hair_vertices(numStrands);
 

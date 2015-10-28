@@ -36,7 +36,7 @@ void SOP::GeomPlane::addPrmTemplate(Parm::PRMTmplList &prmTemplate)
 
 OP_ERROR SOP::GeomPlane::cookMySop(OP_Context &context)
 {
-	PRINT_INFO("SOP::GeomPlane::cookMySop()");
+	Log::getLog().info("SOP::GeomPlane::cookMySop()");
 
 	if(error() < UT_ERROR_ABORT) {
 		gdp->clearAndDestroy();

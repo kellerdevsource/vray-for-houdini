@@ -18,6 +18,7 @@
 #include "vfh_plugin_info.h"
 #include "vfh_export_view.h"
 #include "vfh_vfb.h"
+#include "vfh_log.h"
 
 #include <OP/OP_Node.h>
 #include <OBJ/OBJ_Node.h>
@@ -107,9 +108,8 @@ public:
 	void                           fillMotionBlurParams(MotionBlurParams &mbParams);
 
 	int                            exportView();
-	int                            exportScene();
-	int                            exportKeyFrame(const OP_Context &context);
-	int                            exportSettings();
+	void                           exportScene();
+	void                           exportSettings();
 	void                           exportRenderChannels(OP_Node *op_node);
 	void                           exportEnvironment(OP_Node *op_node);
 	void                           exportEffects(OP_Node *op_net);
@@ -146,7 +146,7 @@ public:
 	int                            renderFrame(int locked=false);
 	int                            renderSequence(int start, int end, int step, int locked=false);
 
-	void                           clearKeyFrames(fpreal toTime);
+	void                           clearKeyFrames(float toTime);
 
 	void                           setAnimation(bool on);
 	void                           setFrame(float frame);
@@ -155,7 +155,6 @@ public:
 	void                           setWorkMode(ExpWorkMode mode);
 	void                           setContext(const OP_Context &ctx);
 	void                           setAbort();
-	void                           setAbortCb(VRay::VRayRenderer &renderer);
 	void                           setExportFilepath(const std::string &path);
 	void                           setRenderSize(int w, int h);
 	void                           setSettingsRtEngine();
@@ -169,11 +168,11 @@ public:
 	int                            isIPR() const { return m_isIPR; }
 	int                            isAborted() const { return m_isAborted; }
 	int                            isAnimation() const { return m_isAnimation; }
+	int                            isStereoView() const;
 	int                            isPhysicalView(const OBJ_Node &camera) const;
 	int                            isNodeAnimated(OP_Node *op_node);
 	int                            hasMotionBlur(OP_Node &rop, OBJ_Node &camera);
 
-public:
 	static OP_Input               *getConnectedInput(OP_Node *op_node, const std::string &inputName);
 	static OP_Node                *getConnectedNode(OP_Node *op_node, const std::string &inputName);
 	static const Parm::SocketDesc *getConnectedOutputType(OP_Node *op_node, const std::string &inputName);
@@ -216,7 +215,6 @@ private:
 	int                            m_isMotionBlur;
 	fpreal                         m_timeStart;
 	fpreal                         m_timeEnd;
-	fpreal                         m_timeCurrent;
 	FloatSet                       m_exportedFrames;
 
 public:
@@ -226,11 +224,11 @@ public:
 	void                           addOpCallback(OP_Node *op_node, OP_EventMethod cb);
 	void                           delOpCallback(OP_Node *op_node, OP_EventMethod cb);
 	void                           delOpCallbacks(OP_Node *op_node);
-
 	void                           resetOpCallbacks();
-	void                           addAbortCallback();
-	void                           addRtCallbacks();
-	void                           removeRtCallbacks();
+
+	void                           onDumpMessage(VRay::VRayRenderer &renderer, const char *msg, int level);
+	void                           onProgress(VRay::VRayRenderer &renderer, const char *msg, int elementNumber, int elementsCount);
+	void                           onAbort(VRay::VRayRenderer &renderer);
 
 	static void                    RtCallbackObjManager(OP_Node *caller, void *callee, OP_EventType type, void *data);
 	static void                    RtCallbackLight(OP_Node *caller, void *callee, OP_EventType type, void *data);
@@ -238,7 +236,9 @@ public:
 	static void                    RtCallbackNodeData(OP_Node *caller, void *callee, OP_EventType type, void *data);
 	static void                    RtCallbackView(OP_Node *caller, void *callee, OP_EventType type, void *data);
 	static void                    RtCallbackVop(OP_Node *caller, void *callee, OP_EventType type, void *data);
-	static void                    RtCallbackShop(OP_Node *caller, void *callee, OP_EventType type, void *data);
+	static void                    RtCallbackSurfaceShop(OP_Node *caller, void *callee, OP_EventType type, void *data);
+	static void                    RtCallbackDisplacementShop(OP_Node *caller, void *callee, OP_EventType type, void *data);
+
 };
 
 } // namespace VRayForHoudini

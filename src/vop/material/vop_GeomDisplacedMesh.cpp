@@ -23,7 +23,7 @@ void VOP::GeomDisplacedMesh::setPluginType()
 
 OP::VRayNode::PluginResult VOP::GeomDisplacedMesh::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, OP_Node *parent)
 {
-	PRINT_WARN("OP::GeomDisplacedMesh::asPluginDesc()");
+	Log::getLog().warning("OP::GeomDisplacedMesh::asPluginDesc()");
 
 	// Displacement type
 	//

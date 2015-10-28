@@ -10,6 +10,7 @@
 
 #include "vfh_defines.h"
 #include "vfh_class_utils.h"
+#include "vfh_log.h"
 
 #include "vfh_rop.h"
 #include "obj/obj_node_def.h"
@@ -54,8 +55,8 @@ void unregister(void *)
 
 void newDriverOperator(OP_OperatorTable *table)
 {
-	PRINT_INFO("Build %s from " __DATE__ ", " __TIME__,
-			   STRINGIZE(CGR_GIT_HASH));
+	Log::getLog().info("Build %s from " __DATE__ ", " __TIME__,
+					   STRINGIZE(CGR_GIT_HASH));
 
 	VRayRendererNode::register_operator(table);
 
@@ -70,7 +71,7 @@ void newSopOperator(OP_OperatorTable *table)
 {
 #ifdef CGR_HAS_AUR
 	if (NOT(CacheIO::Initialize(CacheIO::INIT_OPENVDBIO|CacheIO::INIT_FIELD3DIO))) {
-		PRINT_ERROR("Failed to initialize Field3D and OpenVDB libraries! Viewport preview for Field3D and OpenVDB files will be not available!");
+		Log::getLog().error("Failed to initialize Field3D and OpenVDB libraries! Viewport preview for Field3D and OpenVDB files will be not available!");
 	}
 	VFH_SOP_ADD_OPERATOR_INPUTS(table, "GEOMETRY", PhxShaderCache, SOP::PhxShaderCache::GetPrmTemplate(), 0, 1);
 #endif

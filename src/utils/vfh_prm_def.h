@@ -263,7 +263,13 @@ struct TabItemDesc {
 	const char *pluginID;
 };
 
-void addTabItems(Parm::TabItemDesc tabItemsDesc[], int tabItemsDescCount, PRMDefList &switcher, PRMTmplList &prmTemplate);
+void addTabItems(const Parm::TabItemDesc &tabItemDesc, PRMDefList &switcher, PRMTmplList &prmTemplate);
+void addTabsItems(Parm::TabItemDesc tabItemsDesc[], int tabItemsDescCount, PRMDefList &switcher, PRMTmplList &prmTemplate);
+
+void addTabWithTabs(const char *label,
+					TabItemDesc tabItemsDesc[], int tabItemsDescCount,
+					PRMDefList &switcher, PRM_Name &switcherName,
+					PRMTmplList &prmTemplate, PRMDefList &mainSwitcher);
 
 } // namespace Parm
 } // namespace VRayForHoudini

@@ -100,7 +100,7 @@ SOP::FluidFrame* SOP::FluidCache::getData(const char *filePath, const int fluidR
 
 	CacheIOCommon::FrameData result;
 	if (CacheIO::FrameGetInfo(filePath, &result)) {
-		PRINT_INFO("Loading file \"%s\" [%i x %i x %i]...",
+		Log::getLog().info("Loading file \"%s\" [%i x %i x %i]...",
 				   filePath, result.gridDimensions[0], result.gridDimensions[1], result.gridDimensions[2]);
 
 		IFluidCore::VisualData vd;
@@ -166,7 +166,7 @@ SOP::FluidFrame* SOP::FluidCache::getData(const char *filePath, const int fluidR
 
 OP_ERROR SOP::PhxShaderCache::cookMySop(OP_Context &context)
 {
-	PRINT_INFO("%s cookMySop(%.3f)",
+	Log::getLog().info("%s cookMySop(%.3f)",
 			   getName().buffer(), context.getTime());
 
 	gdp->clearAndDestroy();
@@ -264,14 +264,14 @@ OP::VRayNode::PluginResult SOP::PhxShaderCache::asPluginDesc(Attrs::PluginDesc &
 
 			const GU_Detail *gdp = gdl.getGdp();
 			if (NOT(gdp)) {
-				PRINT_ERROR("%s: gdp is not ready!",
+				Log::getLog().error("%s: gdp is not ready!",
 							getName().buffer());
 			}
 			else {
 				GA_ROAttributeRef ref_name = gdp->findStringTuple(GA_ATTRIB_PRIMITIVE, "name");
 				const GA_ROHandleS hnd_name(ref_name.getAttribute());
 				if (hnd_name.isInvalid()) {
-					PRINT_ERROR("%s: \"name\" attribute not found! Can't export fluid data!",
+					Log::getLog().error("%s: \"name\" attribute not found! Can't export fluid data!",
 								getName().buffer());
 				}
 				else {
@@ -313,7 +313,7 @@ OP::VRayNode::PluginResult SOP::PhxShaderCache::asPluginDesc(Attrs::PluginDesc &
 								phxMatchTm.offset = nodeTm.matrix * phxTm.offset + nodeTm.offset;
 								phxMatchTm.matrix = nodeTm.matrix * phxTm.matrix;
 
-								PRINT_INFO("Volume \"%s\": %i x %i x %i",
+								Log::getLog().info("Volume \"%s\": %i x %i x %i",
 										   texType.c_str(), res[0], res[1], res[2]);
 								PRINT_APPSDK_TM("Volume tm", phxTm);
 
@@ -424,7 +424,7 @@ OP::VRayNode::PluginResult SOP::PhxShaderCache::asPluginDesc(Attrs::PluginDesc &
 	}
 
 	if (path.equal("") && NOT(phxShaderCache)) {
-		PRINT_ERROR("%s: \"Cache Path\" is not set!",
+		Log::getLog().error("%s: \"Cache Path\" is not set!",
 					getName().buffer());
 		return OP::VRayNode::PluginResultError;
 	}

@@ -21,7 +21,7 @@ void VRayExporter::RtCallbackLight(OP_Node *caller, void *callee, OP_EventType t
 
 	OBJ_Node *obj_node = caller->castToOBJNode();
 
-	PRINT_INFO("RtCallbackLight: %s from \"%s\"",
+	Log::getLog().info("RtCallbackLight: %s from \"%s\"",
 			   OPeventToString(type), caller->getName().buffer());
 
 	if (type == OP_PARM_CHANGED ||
@@ -62,7 +62,7 @@ VRay::Plugin VRayExporter::exportLight(OBJ_Node *obj_node)
 
 		OP::VRayNode::PluginResult res = vrayNode->asPluginDesc(pluginDesc, *this, static_cast<OP_Node*>(obj_node));
 		if (res == OP::VRayNode::PluginResultError) {
-			PRINT_ERROR("Error creating plugin descripion for node: \"%s\" [%s]",
+			Log::getLog().error("Error creating plugin descripion for node: \"%s\" [%s]",
 						op_node->getName().buffer(),
 						lightOpName.buffer());
 		}
@@ -76,7 +76,7 @@ VRay::Plugin VRayExporter::exportLight(OBJ_Node *obj_node)
 	else {
 		const VRayLightType lightType = static_cast<VRayLightType>(obj_light->evalInt("light_type", 0, 0.0));
 
-		PRINT_INFO("  Found light: type = %i",
+		Log::getLog().info("  Found light: type = %i",
 				   lightType);
 
 		// Point

@@ -35,7 +35,7 @@ VfbWidget::~VfbWidget()
 void VfbWidget::paintEvent(QPaintEvent *e)
 {
 #if PRINT_UI_CALLS
-	PRINT_INFO("VfbDraw::paintEvent");
+	Log::getLog().info("VfbDraw::paintEvent");
 #endif
 
 	if (m_vfb && m_csect.tryEnter()) {
@@ -141,7 +141,7 @@ VfbWindow::~VfbWindow()
 void VfbWindow::keyPressEvent(QKeyEvent *e)
 {
 #if PRINT_UI_CALLS
-	PRINT_INFO("VfbWidget::keyPressEvent");
+	Log::getLog().info("VfbWidget::keyPressEvent");
 #endif
 	if (e->key() == Qt::Key_Escape) {
 		if (m_abortCb) {
@@ -170,7 +170,7 @@ VFB::~VFB()
 void VFB::init()
 {
 #if PRINT_UI_CALLS
-	PRINT_INFO("VFB::init");
+	Log::getLog().info("VFB::init");
 #endif
 	if (!m_window) {
 		m_window = new VfbWindow(RE_QtWindow::mainQtWindow());
@@ -196,7 +196,7 @@ int VFB::isInitialized()
 void VFB::show()
 {
 #if PRINT_UI_CALLS
-	PRINT_INFO("VFB::show");
+	Log::getLog().info("VFB::show");
 #endif
 	m_window->show();
 	m_window->raise();
@@ -206,7 +206,7 @@ void VFB::show()
 void VFB::hide()
 {
 #if PRINT_UI_CALLS
-	PRINT_INFO("VFB::hide");
+	Log::getLog().info("VFB::hide");
 #endif
 	if (m_window) {
 		m_window->hide();
@@ -217,7 +217,7 @@ void VFB::hide()
 void VFB::resize(int w, int h)
 {
 #if PRINT_UI_CALLS
-	PRINT_INFO("VFB::resize");
+	Log::getLog().info("VFB::resize");
 #endif
 	m_window->resize(w, h);
 	m_window->m_widget.resize(w, h);
@@ -237,7 +237,7 @@ void VFB::set_abort_callback(const AbortCb &cb)
 void VFB::on_rt_image_updated(VRay::VRayRenderer&, VRay::VRayImage *img)
 {
 #if PRINT_UI_CALLS
-	PRINT_INFO("VFB::on_rt_image_updated");
+	Log::getLog().info("VFB::on_rt_image_updated");
 #endif
 	if (m_csect.tryEnter()) {
 		m_window->m_widget.m_vfb->draw(img, 0, 0);
@@ -251,7 +251,7 @@ void VFB::on_rt_image_updated(VRay::VRayRenderer&, VRay::VRayImage *img)
 void VFB::on_image_ready(VRay::VRayRenderer &renderer)
 {
 #if PRINT_UI_CALLS
-	PRINT_INFO("VFB::on_image_ready");
+	Log::getLog().info("VFB::on_image_ready");
 #endif
 	if (m_csect.tryEnter()) {
 		m_window->m_widget.m_vfb->draw(renderer.getImage(), 0, 0);
@@ -266,7 +266,7 @@ void VFB::on_image_ready(VRay::VRayRenderer &renderer)
 void VFB::on_bucket_init(VRay::VRayRenderer&, int x, int y, int w, int h, const char *host)
 {
 #if PRINT_UI_CALLS
-	PRINT_INFO("VFB::on_bucket_init");
+	Log::getLog().info("VFB::on_bucket_init");
 #endif
 	if (m_csect.tryEnter()) {
 		VRay::LocalVRayImage rect(m_window->m_widget.m_vfb->crop(x, y, w, h));
@@ -284,7 +284,7 @@ void VFB::on_bucket_init(VRay::VRayRenderer&, int x, int y, int w, int h, const 
 void VFB::on_bucket_failed(VRay::VRayRenderer&, int x, int y, int w, int h, const char *host)
 {
 #if PRINT_UI_CALLS
-	PRINT_INFO("VFB::on_bucket_failed");
+	Log::getLog().info("VFB::on_bucket_failed");
 #endif
 	if (m_csect.tryEnter()) {
 		VRay::LocalVRayImage rect(m_window->m_widget.m_vfb->crop(x, y, w, h));
@@ -302,7 +302,7 @@ void VFB::on_bucket_failed(VRay::VRayRenderer&, int x, int y, int w, int h, cons
 void VFB::on_bucket_ready(VRay::VRayRenderer&, int x, int y, const char *host, VRay::VRayImage *img)
 {
 #if PRINT_UI_CALLS
-	PRINT_INFO("VFB::on_bucket_ready");
+	Log::getLog().info("VFB::on_bucket_ready");
 #endif
 	if (m_csect.tryEnter()) {
 		m_window->m_widget.m_buckets.removeAll(VfbBucket(x, y));
@@ -317,7 +317,7 @@ void VFB::on_bucket_ready(VRay::VRayRenderer&, int x, int y, const char *host, V
 void VFB::on_dump_message(VRay::VRayRenderer&, const char *msg, int level)
 {
 	QString message;
-	message.sprintf(STRINGIZE(CGR_PLUGIN_NAME) ": %s", msg);
+	message.sprintf("%s", msg);
 
 	if (m_csect.tryEnter()) {
 		m_window->m_widget.m_status = message.simplified();
@@ -333,7 +333,7 @@ void VFB::on_progress(VRay::VRayRenderer&, const char *msg, int elementNumber, i
 	const float percentage = 100.0 * elementNumber / elementsCount;
 
 	QString message;
-	message.sprintf(STRINGIZE(CGR_PLUGIN_NAME) ": %s %.0f%%", msg, percentage);
+	message.sprintf("%s %.0f%%", msg, percentage);
 
 	if (m_csect.tryEnter()) {
 		m_window->m_widget.m_status = message.simplified();

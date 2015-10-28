@@ -54,12 +54,12 @@ OP::VRayNode::PluginResult OBJ::LightDome::asPluginDesc(Attrs::PluginDesc &plugi
 	if (NOT(dome_tex.equal(""))) {
 		OP_Node *tex_node = OPgetDirector()->findNode(dome_tex.buffer());
 		if (NOT(tex_node)) {
-			PRINT_ERROR("Texture node not found!");
+			Log::getLog().error("Texture node not found!");
 		}
 		else {
 			VRay::Plugin texture = exporter.exportVop(tex_node);
 			if (NOT(texture)) {
-				PRINT_ERROR("Texture node export failed!");
+				Log::getLog().error("Texture node export failed!");
 			}
 			else {
 				pluginDesc.addAttribute(Attrs::PluginAttr("dome_tex", texture));

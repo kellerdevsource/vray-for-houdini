@@ -104,8 +104,6 @@ private:
 
 void JsonPluginDescGenerator::init()
 {
-	PRINT_INFO("JsonPluginDescGenerator::init()");
-
 	// Some compilers doesn't support initialization lists still.
 	// Move elsewhere...
 	//
@@ -132,11 +130,11 @@ void JsonPluginDescGenerator::init()
 
 void JsonPluginDescGenerator::parseData()
 {
-	PRINT_INFO("JsonPluginDescGenerator::parseData()");
+	Log::getLog().info("Parse plugin description data...");
 
 	const char *jsonDescsFilepath = getenv("VRAY_PLUGIN_DESC_PATH");
 	if (NOT(jsonDescsFilepath)) {
-		PRINT_ERROR("VRAY_PLUGIN_DESC_PATH environment variable is not found!");
+		Log::getLog().error("VRAY_PLUGIN_DESC_PATH environment variable is not found!");
 		return;
 	}
 
@@ -158,14 +156,14 @@ void JsonPluginDescGenerator::parseData()
 				boost::property_tree::json_parser::read_json(fileStream, pTree);
 			}
 			catch (...) {
-				PRINT_ERROR("Error parsing %s",
+				Log::getLog().error("Error parsing %s",
 							fileName.c_str());
 			}
 		}
 	}
 
 	if (NOT(parsedData.size())) {
-		PRINT_ERROR("No descriptions parsed! May be VRAY_PLUGIN_DESC_PATH points to an empty / incorrect directory?");
+		Log::getLog().error("No descriptions parsed! May be VRAY_PLUGIN_DESC_PATH points to an empty / incorrect directory?");
 	}
 }
 
@@ -301,7 +299,7 @@ static PRM_Template AttrDescAsPrmTemplate(const AttrDesc &attrDesc, const std::s
 	}
 
 	if (tmpl.getType() == PRM_LIST_TERMINATOR) {
-		PRINT_ERROR("Incorrect attribute template: %s (%s)",
+		Log::getLog().error("Incorrect attribute template: %s (%s)",
 					prmName.getPrm()->getToken(), prmName.getPrm()->getLabel());
 	}
 
@@ -405,7 +403,7 @@ static void ActiveStateProcessWidgetLayout(const std::string &pluginID, VRayPlug
 						UI::ActiveStateDeps::addStateInfo(pluginID, attrName, parentState);
 
 						if (debug) {
-							PRINT_INFO("Parent active layout property: \"%s\" => \"%s\"",
+							Log::getLog().info("Parent active layout property: \"%s\" => \"%s\"",
 									   parentState.conditionAttr.c_str(), attrName.c_str());
 						}
 					}
@@ -414,7 +412,7 @@ static void ActiveStateProcessWidgetLayout(const std::string &pluginID, VRayPlug
 						UI::ActiveStateDeps::addStateInfo(pluginID, attrName, currenLayoutStateInfo);
 
 						if (debug) {
-							PRINT_INFO("Active attr property: \"%s\" => \"%s\"",
+							Log::getLog().info("Active attr property: \"%s\" => \"%s\"",
 									   currenLayoutStateInfo.conditionAttr.c_str(), attrName.c_str());
 						}
 					}

@@ -8,6 +8,10 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
+#include "vfh_log.h"
+#include "vfh_hashes.h" // For MurmurHash3_x86_32
+#include "vfh_lru_cache.hpp"
+
 #include "sop_vrayproxy.h"
 
 #include <GEO/GEO_Point.h>
@@ -16,9 +20,6 @@
 #include <HOM/HOM_BaseKeyframe.h>
 #include <HOM/HOM_playbar.h>
 #include <HOM/HOM_Module.h>
-
-#include "vfh_hashes.h" // For MurmurHash3_x86_32
-#include "utils/vfh_lru_cache.hpp"
 
 #include <bmpbuffer.h> // For bmpCheckAssetPath
 #include <vutils_memcpy.h> // For vutils_memcpy
@@ -574,7 +575,7 @@ OP_NodeFlags &SOP::VRayProxy::flags()
 
 OP_ERROR SOP::VRayProxy::cookMySop(OP_Context &context)
 {
-	PRINT_INFO("SOP::VRayProxy::cookMySop()");
+	Log::getLog().info("SOP::VRayProxy::cookMySop()");
 
 	if (NOT(gdp)) {
 		addError(SOP_MESSAGE, "Invalid geoemtry detail.");
@@ -652,7 +653,7 @@ OP::VRayNode::PluginResult SOP::VRayProxy::asPluginDesc(Attrs::PluginDesc &plugi
 	UT_String path;
 	evalString(path, "file", 0, 0.0f);
 	if (NOT(path.isstring())) {
-		PRINT_ERROR("VRayProxy \"%s\": \"File\" is not set!",
+		Log::getLog().error("VRayProxy \"%s\": \"File\" is not set!",
 					getName().buffer());
 		return OP::VRayNode::PluginResultError;
 	}
