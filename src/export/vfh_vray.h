@@ -26,7 +26,8 @@
 #include <misc.h>
 #include <ipctools.h>
 #include <uni.h>
-
+#include <bmpbuffer.h>
+#include <vutils_memcpy.h>
 #include <mesh_file.h>
 #include <mesh_objects_info.h>
 #include <mesh_sets_info.h>

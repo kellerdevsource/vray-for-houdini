@@ -21,9 +21,6 @@
 #include <HOM/HOM_playbar.h>
 #include <HOM/HOM_Module.h>
 
-#include <bmpbuffer.h> // For bmpCheckAssetPath
-#include <vutils_memcpy.h> // For vutils_memcpy
-
 
 using namespace VRayForHoudini;
 

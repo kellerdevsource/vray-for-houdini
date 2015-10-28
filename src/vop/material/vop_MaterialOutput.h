@@ -12,11 +12,9 @@
 #define VRAY_FOR_HOUDINI_VOP_MATERIALOUTPUT_H
 
 #include "vfh_defines.h"
+#include "vfh_vray.h" // For proper "systemstuff.h" inclusion
 
 #include <VOP/VOP_Node.h>
-
-#include "systemstuff.h"
-
 
 namespace VRayForHoudini {
 namespace VOP {

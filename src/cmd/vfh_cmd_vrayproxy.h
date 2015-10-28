@@ -13,9 +13,7 @@
 
 #include <CMD/CMD_Args.h>
 
-#include <systemstuff.h>
-
-
+#include "vfh_vray.h" // For proper "systemstuff.h" inclusion
 
 namespace VRayForHoudini {
 namespace CMD {

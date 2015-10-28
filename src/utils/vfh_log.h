@@ -12,8 +12,7 @@
 #define VRAY_FOR_HOUDINI_LOG_H
 
 #include "vfh_defines.h"
-
-#include <systemstuff.h>
+#include "vfh_vray.h" // For proper "systemstuff.h" inclusion
 
 
 namespace VRayForHoudini {
