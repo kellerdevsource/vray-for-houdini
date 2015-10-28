@@ -130,6 +130,7 @@ public:
 	void                          freeMem();
 
 	VRay::Plugin                  exportPlugin(const Attrs::PluginDesc &pluginDesc);
+	void                          exportPluginProperties(VRay::Plugin &plugin, const Attrs::PluginDesc &pluginDesc);
 	void                          removePlugin(const Attrs::PluginDesc &pluginDesc);
 	void                          removePlugin(const std::string &pluginName);
 	void                          commit();

@@ -1112,6 +1112,12 @@ VRay::Plugin VRayExporter::exportPlugin(const Attrs::PluginDesc &pluginDesc)
 }
 
 
+void VRayExporter::exportPluginProperties(VRay::Plugin &plugin, const Attrs::PluginDesc &pluginDesc)
+{
+	return m_renderer.exportPluginProperties(plugin, pluginDesc);
+}
+
+
 void VRayExporter::removePlugin(OBJ_Node *node)
 {
 	removePlugin(Attrs::PluginDesc(VRayExporter::getPluginName(node), ""));
@@ -1188,16 +1194,15 @@ void VRayExporter::setSettingsRtEngine()
 {
 	VRay::Plugin settingsRTEngine = m_renderer.getVRay().getInstanceOrCreate("SettingsRTEngine");
 
-	if (isIPR()) {
-		settingsRTEngine.setValue("gpu_bundle_size", 64);
-		settingsRTEngine.setValue("gpu_samples_per_pixel", 1);
-	}
+	Attrs::PluginDesc settingsRTEngineDesc(settingsRTEngine.getName(), "SettingsRTEngine");
 
-	if (isStereoView()) {
-		settingsRTEngine.setValue("stereo_mode",         Parm::getParmInt(*m_rop, "VRayStereoscopicSettings.use"));
-		settingsRTEngine.setValue("stereo_eye_distance", Parm::getParmFloat(*m_rop, "VRayStereoscopicSettings.eye_distance"));
-		settingsRTEngine.setValue("stereo_focus",        Parm::getParmInt(*m_rop, "VRayStereoscopicSettings.focus_method"));
-	}
+	settingsRTEngineDesc.addAttribute(Attrs::PluginAttr("stereo_mode",         isStereoView() ? Parm::getParmInt(*m_rop, "VRayStereoscopicSettings.use") : 0));
+	settingsRTEngineDesc.addAttribute(Attrs::PluginAttr("stereo_eye_distance", isStereoView() ? Parm::getParmFloat(*m_rop, "VRayStereoscopicSettings.eye_distance") : 0));
+	settingsRTEngineDesc.addAttribute(Attrs::PluginAttr("stereo_focus",        isStereoView() ? Parm::getParmInt(*m_rop, "VRayStereoscopicSettings.focus_method") : 0));
+
+	setAttrsFromOpNode(settingsRTEngineDesc, m_rop, "SettingsRTEngine.");
+
+	exportPluginProperties(settingsRTEngine, settingsRTEngineDesc);
 }
 
 
