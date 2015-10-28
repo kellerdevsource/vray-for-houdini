@@ -163,15 +163,25 @@ def getArchiveExt():
     return "tar.bz2"
 
 
+def getPlatformSuffix():
+    if sys.platform == 'win32':
+        return "windows"
+    elif sys.platform == 'linux':
+        return "linux"
+    return "osx"
+
+
 def main(args):
     srcHash = args.src_hash[:7]
 
     ReleaseDir = os.path.expanduser("~/release/vray_for_houdini/%s" % sys.platform)
-    ReleaseArchive = os.path.join(ReleaseDir, "vfh-{SRC_GIT_HASH}-hfs{HOUDINI_VERSION}.{HOUDINI_VERSION_BUILD}.{EXT}".format(
+    ReleaseArchive = os.path.join(ReleaseDir, "vfh-{BUILD_NUMBER}-{SRC_GIT_HASH}-hfs{HOUDINI_VERSION}.{HOUDINI_VERSION_BUILD}-{OS}.{EXT}".format(
         SRC_GIT_HASH=srcHash,
         HOUDINI_VERSION=os.environ['CGR_HOUDINI_VERSION'],
         HOUDINI_VERSION_BUILD=os.environ['CGR_HOUDINI_VERSION_BUILD'],
-        EXT=getArchiveExt()
+        EXT=getArchiveExt(),
+        OS=getPlatformSuffix(),
+        BUILD_NUMBER=os.environ['BUILD_NUMBER'],
     ))
 
     cmake = ["cmake"]
