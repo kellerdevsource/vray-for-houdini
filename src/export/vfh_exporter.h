@@ -121,6 +121,7 @@ public:
 	void                           exportGeomMayaHairGeom(SOP_Node *sop_node, const GU_Detail *gdp, Attrs::PluginDesc &pluginDesc);
 	VRay::Plugin                   exportGeomMayaHair(SOP_Node *sop_node, const GU_Detail *gdp);
 
+	void                           exportDisplacementDesc(OBJ_Node *obj_node, Attrs::PluginDesc &pluginDesc);
 	VRay::Plugin                   exportDisplacement(OBJ_Node *obj_node, VRay::Plugin &geomPlugin);
 	VRay::Plugin                   exportNodeData(SOP_Node *sop_node, SHOPToID &shopToID);
 	VRay::Plugin                   exportNode(OBJ_Node *obj_node, VRay::Plugin material, VRay::Plugin geometry);
@@ -236,7 +237,10 @@ public:
 	static void                    RtCallbackNodeData(OP_Node *caller, void *callee, OP_EventType type, void *data);
 	static void                    RtCallbackView(OP_Node *caller, void *callee, OP_EventType type, void *data);
 	static void                    RtCallbackVop(OP_Node *caller, void *callee, OP_EventType type, void *data);
-	static void                    RtCallbackShop(OP_Node *caller, void *callee, OP_EventType type, void *data);
+	static void                    RtCallbackSurfaceShop(OP_Node *caller, void *callee, OP_EventType type, void *data);
+	static void                    RtCallbackDisplacementShop(OP_Node *caller, void *callee, OP_EventType type, void *data);
+	static void                    RtCallbackDisplacementVop(OP_Node *caller, void *callee, OP_EventType type, void *data);
+	static void                    RtCallbackDisplacementObj(OP_Node *caller, void *callee, OP_EventType type, void *data);
 
 };
 

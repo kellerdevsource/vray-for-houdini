@@ -32,6 +32,72 @@ OP::VRayNode::PluginResult VOP::GeomDisplacedMesh::asPluginDesc(Attrs::PluginDes
 	pluginDesc.pluginAttrs.push_back(Attrs::PluginAttr("displace_2d",         int(displace_type == 1)));
 	pluginDesc.pluginAttrs.push_back(Attrs::PluginAttr("vector_displacement", int(displace_type == 2)));
 
+
+	const int idxTexCol = getInputFromName("displacement_tex_color");
+	OP_Node *texCol = getInput(idxTexCol);
+	const int idxTexFloat = getInputFromName("displacement_tex_float");
+	OP_Node *texFloat = getInput(idxTexFloat);
+
+	if (texCol) {
+		VRay::Plugin texture = exporter.exportVop(texCol);
+		if (texture) {
+			const Parm::SocketDesc *fromSocketInfo = exporter.getConnectedOutputType(this, "displacement_tex_color");
+
+			if (   fromSocketInfo
+				&& fromSocketInfo->type >= Parm::ParmType::eOutputColor
+				&& fromSocketInfo->type  < Parm::ParmType::eUnknown)
+			{
+				pluginDesc.addAttribute(Attrs::PluginAttr("displacement_tex_color", texture, fromSocketInfo->name.getToken()));
+			}
+			else {
+				pluginDesc.addAttribute(Attrs::PluginAttr("displacement_tex_color", texture));
+			}
+
+			if (NOT(texFloat)) {
+				// Check if plugin has "out_intensity" output
+				bool hasOutIntensity = false;
+				Parm::VRayPluginInfo *texPluginInfo = Parm::GetVRayPluginInfo(texture.getType());
+				if (texPluginInfo->outputs.size()) {
+					for (const auto &sock : texPluginInfo->outputs) {
+						if (StrEq(sock.name.getToken(), "out_intensity")) {
+							hasOutIntensity = true;
+							break;
+						}
+					}
+				}
+
+				// Wrap texture with TexOutput
+				if (NOT(hasOutIntensity)) {
+					Attrs::PluginDesc texOutputDesc(VRayExporter::getPluginName(texCol, "Out@"), "TexOutput");
+					texOutputDesc.add(Attrs::PluginAttr("texmap", texture));
+
+					texture = exporter.exportPlugin(texOutputDesc);
+					pluginDesc.add(Attrs::PluginAttr("displacement_tex_float", texture, "out_intensity"));
+				}
+			}
+		}
+	}
+
+
+	if (texFloat) {
+		VRay::Plugin texture = exporter.exportVop(texFloat);
+		if (texture) {
+			const Parm::SocketDesc *fromSocketInfo = exporter.getConnectedOutputType(this, "displacement_tex_float");
+
+			if (   fromSocketInfo
+				&& fromSocketInfo->type >= Parm::ParmType::eOutputColor
+				&& fromSocketInfo->type  < Parm::ParmType::eUnknown)
+			{
+				pluginDesc.addAttribute(Attrs::PluginAttr("displacement_tex_float", texture, fromSocketInfo->name.getToken()));
+			}
+			else {
+				pluginDesc.addAttribute(Attrs::PluginAttr("displacement_tex_float", texture));
+			}
+
+			pluginDesc.add(Attrs::PluginAttr("displacement_tex_color", texture));
+		}
+	}
+
 	return OP::VRayNode::PluginResultContinue;
 }
 
