@@ -16,6 +16,10 @@ import sys
 import tempfile
 
 
+def toCmakePath(path):
+    return os.path.normpath(path).replace("\\", "/")
+
+
 def call(args):
     sys.stdout.write("-- Calling: %s" % " ".join(args))
     sys.stdout.flush()
@@ -188,8 +192,8 @@ def main(args):
     cmake.append('-DUSE_LAUNCHER=OFF')
     cmake.append('-DINSTALL_LOCAL=OFF')
     cmake.append('-DINSTALL_RELEASE=ON')
-    cmake.append('-DINSTALL_RELEASE_ROOT=%s' % ReleaseDir)
-    cmake.append('-DINSTALL_RELEASE_ARCHIVE_FILEPATH=%s' % ReleaseArchive)
+    cmake.append('-DINSTALL_RELEASE_ROOT=%s' % toCmakePath(ReleaseDir))
+    cmake.append('-DINSTALL_RELEASE_ARCHIVE_FILEPATH=%s' % toCmakePath(ReleaseArchive))
     cmake.append(args.src_dir)
 
     ninja = ["ninja"]
