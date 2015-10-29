@@ -485,8 +485,9 @@ void VRayExporter::RtCallbackVop(OP_Node *caller, void *callee, OP_EventType typ
 	Log::getLog().info("RtCallbackVop: %s from \"%s\"",
 					   OPeventToString(type), caller->getName().buffer());
 
-	if (type == OP_PARM_CHANGED ||
-		type == OP_INPUT_CHANGED)
+	if (   type == OP_PARM_CHANGED
+		|| type == OP_INPUT_CHANGED
+		|| type == OP_INPUT_REWIRED)
 	{
 		exporter.exportVop(caller);
 	}
