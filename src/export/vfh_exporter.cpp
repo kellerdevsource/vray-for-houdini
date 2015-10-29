@@ -653,8 +653,7 @@ void VRayExporter::RtCallbackDisplacementShop(OP_Node *caller, void *callee, OP_
 
 					OBJ_Node *obj_node = node->castToOBJNode();
 					if (obj_node) {
-						VRay::Plugin geom;
-						exporter.exportDisplacement(obj_node, geom);
+						exporter.exportObject(obj_node);
 					}
 				}
 			}
@@ -830,7 +829,7 @@ VRay::Plugin VRayExporter::exportDisplacement(OBJ_Node *obj_node, VRay::Plugin &
 							if (input) {
 								addOpCallback(input, VRayExporter::RtCallbackDisplacementVop);
 
-								pluginDesc.pluginName = VRayExporter::getPluginName(obj_node, "Geom@");
+								pluginDesc.pluginName = VRayExporter::getPluginName(obj_node, boost::str(Parm::FmtPrefixManual % input->getVRayPluginID() % "@"));
 								pluginDesc.pluginID = input->getVRayPluginID();
 								if (geomPlugin) {
 									pluginDesc.addAttribute(Attrs::PluginAttr("mesh", geomPlugin));
@@ -861,7 +860,7 @@ VRay::Plugin VRayExporter::exportDisplacement(OBJ_Node *obj_node, VRay::Plugin &
 			// use GeomDisplacedMesh
 			case 1:
 			{
-				pluginDesc.pluginName = VRayExporter::getPluginName(obj_node, "Geom@");
+				pluginDesc.pluginName = VRayExporter::getPluginName(obj_node, "GeomDisplacedMesh@");
 				pluginDesc.pluginID = "GeomDisplacedMesh";
 				if (geomPlugin) {
 					pluginDesc.addAttribute(Attrs::PluginAttr("mesh", geomPlugin));
@@ -874,7 +873,7 @@ VRay::Plugin VRayExporter::exportDisplacement(OBJ_Node *obj_node, VRay::Plugin &
 			// use GeomStaticSmoothedMesh
 			case 2:
 			{
-				pluginDesc.pluginName = VRayExporter::getPluginName(obj_node, "Geom@");
+				pluginDesc.pluginName = VRayExporter::getPluginName(obj_node, "GeomStaticSmoothedMesh@");
 				pluginDesc.pluginID = "GeomStaticSmoothedMesh";
 				if (geomPlugin) {
 					pluginDesc.addAttribute(Attrs::PluginAttr("mesh", geomPlugin));
