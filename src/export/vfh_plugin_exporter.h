@@ -95,7 +95,11 @@ struct AppSdkInit {
 		: m_vrayInit(nullptr)
 	{
 		try {
+#ifdef __APPLE__
+			m_vrayInit = new VRay::VRayInit(false);
+#else
 			m_vrayInit = new VRay::VRayInit(true);
+#endif
 		}
 		catch (std::exception &e) {
 			Log::getLog().error("Error initializing V-Ray library! Error: \"%s\"",
