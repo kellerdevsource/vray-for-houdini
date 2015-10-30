@@ -99,6 +99,8 @@ void VRayExporter::RtCallbackNode(OP_Node *caller, void *callee, OP_EventType ty
 
 		const PRM_Parm *param = Parm::getParm(*caller, reinterpret_cast<long>(data));
 		if (param) {
+			// TODO: Use obj->getMaterialParmToken() instead of using "shop_materialpath" directly
+			//
 			if (boost::equals(param->getToken(), "shop_materialpath")) {
 				SHOP_Node *shop_node = exporter.getObjMaterial(obj_node);
 				if (shop_node) {
@@ -290,7 +292,8 @@ VRay::Plugin VRayExporter::exportObject(OBJ_Node *obj_node)
 					Log::getLog().info("  Found material: \"%s\" [%s]",
 							   shop_node->getName().buffer(), shop_node->getOperator()->getName().buffer());
 
-					mtl = exportMaterial(shop_node);
+					MtlContext ctx(obj_node);
+					mtl = exportMaterial(shop_node, ctx);
 				}
 				else if (expParams.shopToID.size()) {
 					if (expParams.shopToID.size() == 1) {

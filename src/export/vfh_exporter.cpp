@@ -27,6 +27,8 @@
 #include <SOP/SOP_Node.h>
 #include <VOP/VOP_Node.h>
 
+#include <PRM/PRM_ParmOwner.h>
+
 #include <OBJ/OBJ_Camera.h>
 #include <OBJ/OBJ_Geometry.h>
 #include <OBJ/OBJ_Node.h>
@@ -615,7 +617,7 @@ void VRayExporter::RtCallbackSurfaceShop(OP_Node *caller, void *callee, OP_Event
 	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
 
 	Log::getLog().info("RtCallbackSurfaceShop: %s from \"%s\"",
-						OPeventToString(type), caller->getName().buffer());
+					   OPeventToString(type), caller->getName().buffer());
 
 	if (type == OP_INPUT_REWIRED && caller->error() < UT_ERROR_ABORT) {
 		UT_String inputName;
@@ -642,7 +644,7 @@ void VRayExporter::RtCallbackDisplacementObj(OP_Node *caller, void *callee, OP_E
 	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
 
 	Log::getLog().info("RtCallbackDisplacementObj: %s from \"%s\"",
-						OPeventToString(type), caller->getName().buffer());
+					   OPeventToString(type), caller->getName().buffer());
 
 	if (type == OP_PARM_CHANGED) {
 		const int idx = reinterpret_cast<long>(data);
@@ -650,7 +652,7 @@ void VRayExporter::RtCallbackDisplacementObj(OP_Node *caller, void *callee, OP_E
 		if (parm) {
 			OBJ_Node *obj_node = caller->castToOBJNode();
 			if (   boost::equals(parm->getToken(), "vray_use_displ")
-				|| boost::equals(parm->getToken(), "vray_displ_type"))
+				   || boost::equals(parm->getToken(), "vray_displ_type"))
 			{
 				exporter.exportObject(obj_node);
 			}
@@ -671,7 +673,7 @@ void VRayExporter::RtCallbackDisplacementShop(OP_Node *caller, void *callee, OP_
 	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
 
 	Log::getLog().info("RtCallbackDisplacementShop: %s from \"%s\"",
-						OPeventToString(type), caller->getName().buffer());
+					   OPeventToString(type), caller->getName().buffer());
 
 	if (type == OP_INPUT_REWIRED) {
 		UT_String inputName;
@@ -709,15 +711,15 @@ void VRayExporter::RtCallbackDisplacementVop(OP_Node *caller, void *callee, OP_E
 	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
 
 	Log::getLog().info("RtCallbackDisplacementVop: %s from \"%s\"",
-						OPeventToString(type), caller->getName().buffer());
+					   OPeventToString(type), caller->getName().buffer());
 
 	if (   type == OP_PARM_CHANGED
-		|| type == OP_INPUT_REWIRED)
+		   || type == OP_INPUT_REWIRED)
 	{
 		const int idx = reinterpret_cast<long>(data);
 		SHOP_Node *shop_node = caller->getParent()->castToSHOPNode();
 		if (   idx >= 0
-			&& shop_node)
+			   && shop_node)
 		{
 			UT_String shopPath;
 			shop_node->getFullPath(shopPath);
@@ -739,62 +741,6 @@ void VRayExporter::RtCallbackDisplacementVop(OP_Node *caller, void *callee, OP_E
 	else if (type == OP_NODE_PREDELETE) {
 		exporter.delOpCallback(caller, VRayExporter::RtCallbackDisplacementVop);
 	}
-}
-
-
-VRay::Plugin VRayExporter::exportMaterial(SHOP_Node *shop_node)
-{
-	VRay::Plugin material;
-
-	OP_Node *op_node = VRayExporter::FindChildNodeByType(shop_node, "vray_material_output");
-	if (!op_node) {
-		Log::getLog().error("Can't find \"V-Ray Material Output\" operator under \"%s\"!",
-							shop_node->getName().buffer());
-	}
-	else {
-		VOP::MaterialOutput *mtl_out = static_cast<VOP::MaterialOutput *>(op_node);
-		addOpCallback(mtl_out, VRayExporter::RtCallbackSurfaceShop);
-
-		if (mtl_out->error() < UT_ERROR_ABORT ) {
-			Log::getLog().info("Exporting material output \"%s\"...",
-								mtl_out->getName().buffer());
-
-			const int idx = mtl_out->getInputFromName("Material");
-			VOP::NodeBase *input = dynamic_cast<VOP::NodeBase*>(mtl_out->getInput(idx));
-			if (input) {
-				switch (mtl_out->getInputType(idx)) {
-					case VOP_SURFACE_SHADER: {
-						material = exportVop(input);
-						break;
-					}
-					case VOP_TYPE_BSDF: {
-						VRay::Plugin pluginBRDF = exportVop(input);
-
-						// Wrap BRDF into MtlSingleBRDF for RT GPU to work properly
-						Attrs::PluginDesc mtlPluginDesc(VRayExporter::getPluginName(input, "Mtl@"), "MtlSingleBRDF");
-						mtlPluginDesc.addAttribute(Attrs::PluginAttr("brdf", pluginBRDF));
-
-						material = exportPlugin(mtlPluginDesc);
-						break;
-					}
-					default:
-						Log::getLog().error("Unsupported input type for node \"%s\", input %d!",
-											mtl_out->getName().buffer(), idx);
-				}
-
-				if (material) {
-					// Wrap material into MtlRenderStats to always have the same material name
-					// Used when rewiring materials when running interactive RT session
-					// TODO: Do not use for non-interactive export
-					Attrs::PluginDesc pluginDesc(VRayExporter::getPluginName(mtl_out->getParent(), "Mtl@"), "MtlRenderStats");
-					pluginDesc.addAttribute(Attrs::PluginAttr("base_mtl", material));
-					material = exportPlugin(pluginDesc);
-				}
-			}
-		}
-	}
-
-	return material;
 }
 
 
@@ -877,7 +823,7 @@ VRay::Plugin VRayExporter::exportDisplacement(OBJ_Node *obj_node, VRay::Plugin &
 								OP::VRayNode::PluginResult res = input->asPluginDesc(pluginDesc, *this, obj_node);
 								if (res == OP::VRayNode::PluginResultError) {
 									Log::getLog().error("Error creating plugin descripion for node: \"%s\" [%s]",
-												input->getName().buffer(), input->getOperator()->getName().buffer());
+														input->getName().buffer(), input->getOperator()->getName().buffer());
 								}
 								else if (res == OP::VRayNode::PluginResultNA ||
 										 res == OP::VRayNode::PluginResultContinue)
@@ -896,7 +842,7 @@ VRay::Plugin VRayExporter::exportDisplacement(OBJ_Node *obj_node, VRay::Plugin &
 				}
 				break;
 			}
-			// use GeomDisplacedMesh
+				// use GeomDisplacedMesh
 			case 1:
 			{
 				pluginDesc.pluginName = VRayExporter::getPluginName(obj_node, "GeomDisplacedMesh@");
@@ -909,7 +855,7 @@ VRay::Plugin VRayExporter::exportDisplacement(OBJ_Node *obj_node, VRay::Plugin &
 				plugin = exportPlugin(pluginDesc);
 				break;
 			}
-			// use GeomStaticSmoothedMesh
+				// use GeomStaticSmoothedMesh
 			case 2:
 			{
 				pluginDesc.pluginName = VRayExporter::getPluginName(obj_node, "GeomStaticSmoothedMesh@");
