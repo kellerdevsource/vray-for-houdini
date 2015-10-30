@@ -13,6 +13,7 @@
 
 #include <SHOP/SHOP_Operator.h>
 #include <VOP/VOP_OperatorInfo.h>
+#include <VOP/VOP_Operator.h>
 
 using namespace VRayForHoudini;
 
@@ -22,10 +23,19 @@ static PRM_Template templates[] = {
 };
 
 
-bool VOP::VRayMaterialBuilderOperatorFilter::allowOperatorAsChild(OP_Operator *op)
+VOP::VRayVOPContextOPFilter::VRayVOPContextOPFilter()
 {
+	m_allowedVOPs.insert("parameter");
+	m_allowedVOPs.insert("switch");
+}
+
+bool VOP::VRayVOPContextOPFilter::allowOperatorAsChild(OP_Operator *op)
+{
+	bool res = false;
 	auto info = static_cast<const VOP_OperatorInfo *>(op->getOpSpecificData());
-	return ((info)? info->getVopnetMask().startsWith("VRay") : false);
+	res |= ((info)? info->getVopnetMask().startsWith("VRay") : false);
+	res |= m_allowedVOPs.count(op->getName().buffer());
+	return res;
 }
 
 
