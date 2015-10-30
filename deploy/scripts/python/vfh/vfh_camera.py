@@ -32,7 +32,7 @@ def add_physical_camera_attributes():
                 ptg = node.parmTemplateGroup()
 
                 if not ptg.findFolder(physCamTabName):
-                    ptg.append(hou.FolderParmTemplate("vray.%s" % physCamPlugID, physCamTabName))
+                    vfh_attrs.insertInFolderAfterLastTab(ptg, ptg, hou.FolderParmTemplate("vray.%s" % physCamPlugID, physCamTabName))
 
                 vfh_attrs.addPluginParms(ptg, CameraPhysicalDesc, parmPrefix = physCamPlugID, parmFolder = physCamTabName)
                 node.setParmTemplateGroup(ptg)
