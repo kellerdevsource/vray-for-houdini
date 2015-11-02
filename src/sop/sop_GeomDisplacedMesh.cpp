@@ -49,7 +49,7 @@ OP_ERROR SOP::GeomDisplacedMesh::cookMySop(OP_Context &context)
 
 OP::VRayNode::PluginResult SOP::GeomDisplacedMesh::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, OP_Node *parent)
 {
-	Log::getLog().warning("OP::GeomDisplacedMesh::asPluginDesc()");
+	Log::getLog().debug("OP::GeomDisplacedMesh::asPluginDesc()");
 
 	pluginDesc.pluginID   = pluginID.c_str();
 	pluginDesc.pluginName = VRayExporter::getPluginName(this, "Dspl@");
