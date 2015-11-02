@@ -34,8 +34,7 @@
 #include <UT/UT_Exit.h>
 
 #ifdef CGR_HAS_AUR
-#  include "windows-types.h"
-#  include "CacheIO.h"
+#  include <aurinterface.h>
 #endif
 
 
@@ -70,9 +69,6 @@ void newDriverOperator(OP_OperatorTable *table)
 void newSopOperator(OP_OperatorTable *table)
 {
 #ifdef CGR_HAS_AUR
-	if (NOT(CacheIO::Initialize(CacheIO::INIT_OPENVDBIO|CacheIO::INIT_FIELD3DIO))) {
-		Log::getLog().error("Failed to initialize Field3D and OpenVDB libraries! Viewport preview for Field3D and OpenVDB files will be not available!");
-	}
 	VFH_SOP_ADD_OPERATOR_INPUTS(table, "GEOMETRY", PhxShaderCache, SOP::PhxShaderCache::GetPrmTemplate(), 0, 1);
 #endif
 

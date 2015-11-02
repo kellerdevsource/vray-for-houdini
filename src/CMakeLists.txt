@@ -18,6 +18,7 @@ include(vfh_macro)
 include(vfh_houdini)
 include(vfh_vrayappsdk)
 include(vfh_vraysdk)
+include(vfh_phoenix)
 
 add_definitions(-DVRAY_FOR_HOUDINI)
 
@@ -40,9 +41,10 @@ file(GLOB_RECURSE SOURCES "*.cpp")
 file(GLOB_RECURSE HEADERS "*.h" "*.hpp")
 
 # *.aur preview
-CHECK_INCLUDE_FILE(FluidInterface.h HAS_PHOENIX)
-if (HAS_PHOENIX)
+if (Phoenix_FOUND)
 	add_definitions(-DCGR_HAS_AUR)
+	include_directories(${Phoenix_INCLUDES})
+	link_directories(${Phoenix_LIBRARIES})
 endif()
 
 # *.vrscene preview
@@ -60,6 +62,10 @@ houdini_plugin(${PROJECT_NAME} "${SOURCES};${HEADERS}")
 link_with_vray_sdk(${PROJECT_NAME})
 link_with_vray_appsdk(${PROJECT_NAME})
 link_with_boost(${PROJECT_NAME})
+
+if (Phoenix_FOUND)
+	target_link_libraries(${PROJECT_NAME} aurloader)
+endif()
 
 set(CGR_SRC_HASH "" CACHE STRING "Sources hash (for Teamcity)")
 
