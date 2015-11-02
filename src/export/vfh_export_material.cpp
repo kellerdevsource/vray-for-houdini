@@ -16,6 +16,7 @@
 #include <SHOP/SHOP_Node.h>
 #include <SOP/SOP_Node.h>
 #include <GU/GU_Detail.h>
+#include <OP/OP_PropertyLookupList.h>
 
 
 using namespace VRayForHoudini;
@@ -71,9 +72,25 @@ VRay::Plugin VRayExporter::exportMaterial(SHOP_Node *shop_node, MtlContext ctx)
 		addOpCallback(mtl_out, VRayExporter::RtCallbackSurfaceShop);
 
 		if (ctx.getObject()) {
-#if 0
-			OBJ_Node *obj = ctx.getObject();
+			OBJ_Node &obj = *ctx.getObject();
 
+			OP_PropertyLookupList props;
+			obj.findParametersOrProperties(m_context.getTime(), props);
+
+			const int numObjParams = props.entries();
+
+			Log::getLog().msg("Obj: \"%s\" override properties: %i",
+							  obj.getName().buffer(), numObjParams);
+
+			for (int i = 0; i < numObjParams; ++i) {
+				const char *propName = props.getName(i);
+				OP_Node *fromNode = props.getSourceNode(i);
+
+				Log::getLog().msg("Obj: \"%s\" property \"%s\" from node \"%s\"",
+								  obj.getName().buffer(), propName, fromNode->getName().buffer());
+			}
+
+#if 0
 			Log::getLog().msg("obj->getMaterialParmToken() \"%s\"",
 							  obj->getMaterialParmToken());
 #if 1
