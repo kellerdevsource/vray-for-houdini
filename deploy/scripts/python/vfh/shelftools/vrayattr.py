@@ -19,10 +19,10 @@ from vfh import vfh_attrs
 
 def addVRayDisplamentParamTemplate(ptg):
     if not ptg.findFolder("V-Ray"):
-        ptg.append(hou.FolderParmTemplate("vray", "V-Ray"))
+        vfh_attrs.insertInFolderAfterLastTab(ptg, ptg, hou.FolderParmTemplate("vray", "V-Ray"))
 
     if not ptg.findFolder(("V-Ray", "Displacement")):
-        ptg.appendToFolder("V-Ray", hou.FolderParmTemplate("vray", "Displacement"))
+        vfh_attrs.insertInFolderAfterLastTab(ptg, ptg.findFolder('V-Ray'), hou.FolderParmTemplate("vray", "Displacement"))
 
     folder = ("V-Ray", "Displacement")
     # enable displacement

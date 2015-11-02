@@ -158,6 +158,24 @@ CustomParmTemplates = {
 }
 
 
+def getFirstNonTabParmTemplate(ptf):
+    return next((pt for pt in ptf.parmTemplates() if pt.type() != hou.parmTemplateType.Folder or pt.folderType() != hou.folderType.Tabs), None)
+
+
+def insertInFolderAfterLastTab(ptg, ptf, pt):
+    p = getFirstNonTabParmTemplate(ptf)
+    if p:
+        ptg.insertBefore(p, pt)
+        return
+
+    if isinstance(ptf, hou.ParmTemplateGroup):
+        ptg.append(pt)
+        return
+
+    if isinstance(ptf, hou.FolderParmTemplate):
+        ptg.appendToFolder(ptf, pt)
+
+
 def addPluginParm(ptg, parmDesc, parmPrefix = None, parmFolder = None):
     parmName = "%s_%s" % (parmPrefix, parmDesc['attr']) if parmPrefix else parmDesc['attr']
     parmTemplate = ptg.find(parmName)
@@ -166,7 +184,7 @@ def addPluginParm(ptg, parmDesc, parmPrefix = None, parmFolder = None):
         if parmType in CustomParmTemplates:
             if not parmFolder and not ptg.findFolder('V-Ray'):
                 parmFolder = 'V-Ray'
-                ptg.append(hou.FolderParmTemplate("vray", "V-Ray"))
+                insertInFolderAfterLastTab(ptg, ptg, hou.FolderParmTemplate("vray", "V-Ray"))
 
             parmLabel = parmDesc.get('name', parmNameToParmLabel(parmDesc['attr']))
             MyTemplate = CustomParmTemplates[parmType]

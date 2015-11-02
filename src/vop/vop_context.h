@@ -17,16 +17,21 @@
 #include <OP/OP_Network.h>
 #include <SHOP/SHOP_Node.h>
 
+#include <unordered_set>
 
 namespace VRayForHoudini {
 namespace VOP {
 
 
-class VRayMaterialBuilderOperatorFilter:
+class VRayVOPContextOPFilter:
 		public OP_OperatorFilter
 {
 public:
+	VRayVOPContextOPFilter();
 	virtual bool allowOperatorAsChild(OP_Operator *op) VRAY_OVERRIDE;
+
+private:
+	std::unordered_set<std::string> m_allowedVOPs;
 };
 
 
@@ -49,7 +54,7 @@ protected:
 	virtual ~VRayMaterialBuilder() {}
 
 protected:
-	VRayMaterialBuilderOperatorFilter m_opFilter;
+	VRayVOPContextOPFilter m_opFilter;
 };
 
 
