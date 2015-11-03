@@ -16,9 +16,69 @@
 #include <GU/GU_Detail.h>
 #include <GU/GU_PrimPolySoup.h>
 #include <UT/UT_Version.h>
-
+#include <GA/GA_PageHandle.h>
 
 using namespace VRayForHoudini;
+
+
+void pointAttrsAsMapChannels(const GU_Detail &gdp, Mesh::MapChannels &mapChannels)
+{
+	int nFaces = 0;
+	for (GA_Iterator primIt(gdp.getPrimitiveRange()); !primIt.atEnd(); primIt.advance())
+	{
+		const GEO_Primitive *prim = gdp.getGEOPrimitive(*primIt);
+		nFaces += std::max(static_cast<int>(prim->getVertexCount() - 2), 0);
+	}
+
+#if CGR_USE_LIST_RAW_TYPES
+	VUtils::IntRefList faces(nFaces * 3);
+#else
+	VRay::IntList faces(nFaces * 3);
+#endif
+
+	int faceVIdx = 0;
+	for (GA_Iterator primIt(gdp.getPrimitiveRange()); !primIt.atEnd(); primIt.advance())
+	{
+		const GEO_Primitive *prim = gdp.getGEOPrimitive(*primIt);
+		for (GA_Size localIdx = 1; localIdx < (prim->getVertexCount() - 1); ++localIdx)
+		{
+			faces[faceVIdx++] = prim->getPointIndex(0);
+			faces[faceVIdx++] = prim->getPointIndex(localIdx);
+			faces[faceVIdx++] = prim->getPointIndex(localIdx + 1);
+		}
+	}
+	vassert( faceVIdx == (nFaces * 3) );
+
+	GA_AttributeFilter float3Filter(GA_ATTRIB_FILTER_AND, GA_AttributeFilter::selectFloatTuple(false), GA_AttributeFilter::selectByTupleSize(3));
+	for (GA_AttributeDict::iterator attrIt = gdp.getAttributeDict(GA_ATTRIB_POINT).begin(GA_SCOPE_PUBLIC); !attrIt.atEnd(); ++attrIt)
+	{
+		UT_String attrName(attrIt.name());
+
+		if (float3Filter.match(attrIt.attrib()))
+		{
+			GA_ROPageHandleV3 paHdl(attrIt.attrib());
+			if (paHdl.isValid())
+			{
+				if (NOT(mapChannels.count(attrIt.name()))) {
+					Mesh::MapChannel &mapChannel = mapChannels[attrIt.name()];
+					mapChannel.name = attrIt.name();
+
+					GA_Offset start, end;
+					for (GA_Iterator it(gdp.getPointRange()); it.blockAdvance(start, end); )
+					{
+						paHdl.setPage(start);
+						for (GA_Offset offset = start; offset < end; ++offset)
+						{
+							const UT_Vector3 &val = paHdl.value(offset);
+							mapChannel.vertices.emplace_back(val[0], val[1], val[2]);
+						}
+					}
+					mapChannel.faces = faces;
+				}
+			}
+		}
+	}
+}
 
 
 void VRayExporter::exportGeomStaticMeshDesc(const GU_Detail &gdp, SHOPToID &shopToID, Attrs::PluginDesc &geomPluginDesc)
@@ -285,6 +345,8 @@ void VRayExporter::exportGeomStaticMeshDesc(const GU_Detail &gdp, SHOPToID &shop
 			}
 		}
 	}
+
+	pointAttrsAsMapChannels(gdp, map_channels_data);
 
 	// Cleanup hash
 	for (auto &mcIt : map_channels_data) {
