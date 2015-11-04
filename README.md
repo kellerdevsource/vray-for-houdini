@@ -24,6 +24,8 @@ Building From Source
 
 * Obtain **V-Ray SDK** (for example, from **V-Ray For Maya** nightly build)
 
+* Obtain **Phoenix SDK** (for example, from **Phonix For Maya** nightly build)
+
 * Compiler:
 
     - Windows: MSVC 2012
