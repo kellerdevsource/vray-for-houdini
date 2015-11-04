@@ -285,12 +285,19 @@ void VRayExporter::setAttrsFromOpNode(Attrs::PluginDesc &pluginDesc, OP_Node *op
 													  : boost::str(Parm::FmtPrefixManual % prefix % attrDesc.attr);
 
 						if (attrDesc.value.type == Parm::eRamp) {
+							static StringSet rampColorAsPluginList;
+							if (rampColorAsPluginList.empty()) {
+								rampColorAsPluginList.insert("PhxShaderSim");
+							}
+
+							const bool asColorList = rampColorAsPluginList.count(pluginDesc.pluginID);
+
 							Texture::exportRampAttribute(*this, pluginDesc, opNode,
 														 /* Houdini ramp attr */ parmName,
 														 /* V-Ray attr: colors */ attrDesc.value.defRamp.colors,
 														 /* V-Ray attr: pos    */ attrDesc.value.defRamp.positions,
 														 /* V-Ray attr: interp */ attrDesc.value.defRamp.interpolations,
-														 /* As color list not plugin */ false);
+														 /* As color list not plugin */ asColorList);
 						}
 						else if (attrDesc.value.type == Parm::eCurve) {
 
