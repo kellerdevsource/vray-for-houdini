@@ -280,15 +280,20 @@ void VRayExporter::setAttrsFromOpNode(Attrs::PluginDesc &pluginDesc, OP_Node *op
 					}
 
 					if (NOT(plugin_value)) {
+						const std::string &parmName = prefix.empty()
+													  ? attrDesc.attr
+													  : boost::str(Parm::FmtPrefixManual % prefix % attrDesc.attr);
+
 						if (attrDesc.value.type == Parm::eRamp) {
 							Texture::exportRampAttribute(*this, pluginDesc, opNode,
-														 /* Houdini ramp attr */ attrDesc.attr,
+														 /* Houdini ramp attr */ parmName,
 														 /* V-Ray attr: colors */ attrDesc.value.defRamp.colors,
 														 /* V-Ray attr: pos    */ attrDesc.value.defRamp.positions,
 														 /* V-Ray attr: interp */ attrDesc.value.defRamp.interpolations,
 														 /* As color list not plugin */ false);
 						}
 						else if (attrDesc.value.type == Parm::eCurve) {
+
 							VRay::IntList    interpolations;
 							VRay::FloatList  positions;
 							VRay::FloatList  values;
@@ -297,7 +302,7 @@ void VRayExporter::setAttrsFromOpNode(Attrs::PluginDesc &pluginDesc, OP_Node *op
 														 : &values;
 
 							Texture::getCurveData(*this, opNode,
-												  /* Houdini curve attr */ attrDesc.attr,
+												  /* Houdini curve attr */ parmName,
 												  /* V-Ray attr: interp */ interpolations,
 												  /* V-Ray attr: x      */ positions,
 												  /* V-Ray attr: y      */ valuesPtr,
