@@ -16,6 +16,10 @@ import sys
 import tempfile
 
 
+# Build mode: 'nightly', 'stable', 'debug'
+_cgr_build_mode = os.environ['CGR_BUILD_MODE']
+
+
 def toCmakePath(path):
     return os.path.normpath(path).replace("\\", "/")
 
@@ -53,7 +57,7 @@ def upload(filepath):
                 config.get('vfh.nightlies.ftp', 'proxy_port'),
             ))
             f.write('option transfer binary\n')
-            f.write('put %s /%s/\n' % (filepath, subdir))
+            f.write('put %s /%s/%s/\n' % (filepath, _cgr_build_mode, subdir))
             f.write('exit\n')
             f.write('\n')
 
@@ -79,8 +83,9 @@ def upload(filepath):
         ))
         cmd.append('--upload-file')
         cmd.append(filepath)
-        cmd.append('ftp://%s/%s/' % (
+        cmd.append('ftp://%s/%s/%s/' % (
             config.get('vfh.nightlies.ftp', 'host'),
+            _cgr_build_mode,
             subdir,
         ))
 
