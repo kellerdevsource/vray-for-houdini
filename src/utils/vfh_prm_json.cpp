@@ -521,6 +521,16 @@ VRayPluginInfo* Parm::generatePluginInfo(const std::string &pluginID)
 				continue;
 			}
 
+			if (v.second.count("available")) {
+				std::set<std::string> availableIn;
+				for (const auto &item : v.second.get_child("available")) {
+					availableIn.insert(item.second.get_value<std::string>(""));
+				}
+				if (!availableIn.count("HOUDINI")) {
+					continue;
+				}
+			}
+
 			AttrDesc &attrDesc = pluginInfo->attributes[attrName];
 
 			if (v.second.count("skip")) {
