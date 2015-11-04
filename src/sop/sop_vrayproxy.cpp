@@ -548,17 +548,12 @@ typedef Caches::LRUCache< std::string, VRayProxyCache > VRayProxyCacheMan;
 static const int cacheCapacity = 10;
 static VRayProxyCacheMan g_cacheMan(cacheCapacity);
 
-
-
-static PRM_Name     switcherCacheName("cacheswitcher", "");
-static PRM_Default  switcherCacheList[] = {
-	PRM_Default(1, "Cache"),        // 1 is number of parameters in tab
-};
-
+/// VRayProxy node cache params
 static PRM_Name prmCacheHeading("cacheheading", "VRayProxy Cache");
 static PRM_Name prmClearCache("clear_cache", "Clear Cache");
 
 static PRM_Name prmProxyHeading("vrayproxyheading", "VRayProxy Settings");
+
 
 void SOP::VRayProxy::addPrmTemplate(Parm::PRMTmplList &prmTemplate)
 {
