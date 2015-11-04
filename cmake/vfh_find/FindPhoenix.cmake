@@ -10,10 +10,16 @@
 
 set(_phoenix_for_maya_roots "")
 
+if(WIN32)
+    set(CGR_PHOENIX_SHARED aurloader.dll)
+else()
+    set(CGR_PHOENIX_SHARED libaurloader.so)
+endif()
+
 set(_maya_versons "2017;2016;2015;2014")
 foreach(_maya_version ${_maya_versons})
     if(WIN32)
-        set(_phoenix_for_maya_root "")
+        set(_phoenix_for_maya_root "C:/Program Files/Chaos Group/Phoenix FD/Maya ${_maya_version} for x64/SDK")
     elseif(APPLE)
         set(_phoenix_for_maya_root "")
     else()
@@ -31,7 +37,7 @@ find_path(Phoenix_INCLUDES include/aurinterface.h
     ${_phoenix_for_maya_roots}
 )
 
-find_path(Phoenix_LIBRARIES lib/libaurloader.a
+find_path(Phoenix_LIBRARIES lib/${CGR_PHOENIX_SHARED}
     ${_phoenix_for_maya_roots}
 )
 

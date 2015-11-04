@@ -25,9 +25,6 @@ set VRAY_VFB_ALWAYS_ON_TOP=1
 :: V-Ray JSON plugin descriptions
 set VRAY_PLUGIN_DESC_PATH=%LAUNCHER_LOCATION%\plugins_desc
 
-:: Add libs to path
-set PATH=%HFS%\bin;%VRAY_PATH%;%PATH%
-
 :: Report loading errors
 set HOUDINI_DSO_ERROR=1
 
@@ -36,14 +33,14 @@ if NOT DEFINED HOME set HOME=%USERPROFILE%\Documents
 
 set HOUDINI_USER_DIR=%HOME%\houdini%HOUDINI_VER_MAJOR%
 
-:: TODO: Set plugins for Phoenix
-:: set VRAY_FOR_HOUDINI_PLUGINS=%HOUDINI_USER_DIR%\vray_for_houdini
-
 xcopy /s /y "%LAUNCHER_LOCATION%\dso\vray_for_houdini.dll" "%HOUDINI_USER_DIR%\dso\"
 xcopy /s /y "%LAUNCHER_LOCATION%\deploy\ROP_vray.svg" "%HOUDINI_USER_DIR%\config\Icons\"
 xcopy /s /y "%LAUNCHER_LOCATION%\deploy\vfh*.shelf" "%HOUDINI_USER_DIR%\toolbar\"
 xcopy /s /y "%LAUNCHER_LOCATION%\deploy\scripts\*" "%HOUDINI_USER_DIR%\scripts\"
-:: xcopy /s /y "%LAUNCHER_LOCATION%\deploy\plugins\*.dll" "%VRAY_FOR_HOUDINI_PLUGINS%\"
+xcopy /s /y "%LAUNCHER_LOCATION%\deploy\lib\*" "%HOUDINI_USER_DIR%\vfh\lib"
+
+:: Add libs to path
+set PATH=%HFS%\bin;%VRAY_PATH%;%PATH%;%HOUDINI_USER_DIR%\vfh\lib
 
 :: Start Houdini
 start "V-Ray For Houdini" /D "%USERPROFILE%\Desktop\" "%HFS%\bin\houdini.exe" -foreground %*

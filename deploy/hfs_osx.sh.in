@@ -44,16 +44,26 @@ export DYLD_LIBRARY_PATH=${VRAY_SDK}/bin:${DYLD_LIBRARY_PATH}
 # Install Files
 export HOUDINI_USER_DIR=${HOME}/houdini${HOUDINI_VER_MAJOR}
 
-cp "${LAUNCHER_LOCATION}/dso/vray_for_houdini.so" "${HOUDINI_USER_DIR}/dso"
-cp "${LAUNCHER_LOCATION}/deploy/vfh.shelf"        "${HOUDINI_USER_DIR}/toolbar"
-cp "${LAUNCHER_LOCATION}/deploy/ROP_vray.svg"     "${HOUDINI_USER_DIR}/config/Icons"
-
+mkdir -p "${HOUDINI_USER_DIR}/dso"
+mkdir -p "${HOUDINI_USER_DIR}/toolbar"
+mkdir -p "${HOUDINI_USER_DIR}/config/Icons"
 mkdir -p "${HOUDINI_USER_DIR}/scripts"
-cp -R "${LAUNCHER_LOCATION}/deploy/scripts/vfh" "${HOUDINI_USER_DIR}/scripts"
+mkdir -p "${HOUDINI_USER_DIR}/vfh/lib"
 
-# TODO: export plugins for Phoenix
-# export VRAY_FOR_HOUDINI_PLUGINS=${HOUDINI_USER_DIR}/vray_for_houdini
-# cp "${LAUNCHER_LOCATION}/deploy/plugins/*.so" "${VRAY_FOR_HOUDINI_PLUGINS}"
+cp -R "${LAUNCHER_LOCATION}/dso/vray_for_houdini.so" "${HOUDINI_USER_DIR}/dso/"
+cp -R "${LAUNCHER_LOCATION}/deploy/ROP_vray.svg"     "${HOUDINI_USER_DIR}/config/Icons/"
+cp -R "${LAUNCHER_LOCATION}/deploy/scripts/python"   "${HOUDINI_USER_DIR}/scripts"
+cp -R "${LAUNCHER_LOCATION}/deploy/scripts/shop"     "${HOUDINI_USER_DIR}/scripts"
+
+# Copy shelves
+for SHELF_FILE in `find "${LAUNCHER_LOCATION}/deploy" -name "*.shelf"`; do
+	cp -R "${SHELF_FILE}" "${HOUDINI_USER_DIR}/toolbar/"
+done
+
+# Copy additional libraries
+for DSO_FILE in `find "${LAUNCHER_LOCATION}/deploy/lib" -name "*.so"`; do
+	cp -R "${DSO_FILE}" "${HOUDINI_USER_DIR}/vfh/lib/"
+done
 
 # Start Houdini
 "${HFS}/bin/houdini" -foreground $*

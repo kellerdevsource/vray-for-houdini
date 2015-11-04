@@ -14,6 +14,6 @@ set VRAY_SDK=@APPSDK_ROOT@
 set VRAY_PATH=%VRAY_SDK%/bin
 set VRAY_VFB_ALWAYS_ON_TOP=1
 
-set PATH=%HFS%/bin:%VRAY_PATH%:%PATH%
+set PATH=%HFS%/bin;%VRAY_PATH%;@HOUDINI_HOME_PATH@/vfh/lib;%PATH%
 
 "%HFS%/bin/houdini.exe" -foreground %*

@@ -101,6 +101,12 @@ if(INSTALL_LOCAL)
 	#
 	install(DIRECTORY   ${CMAKE_SOURCE_DIR}/deploy/scripts/nodeinit/
 			DESTINATION ${HOUDINI_HOME_PATH}/scripts)
+
+	if (Phoenix_FOUND)
+		install(FILES       ${Phoenix_LIBRARIES}/${CGR_PHOENIX_SHARED}
+				DESTINATION ${HOUDINI_HOME_PATH}/vfh/lib
+				PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+	endif()
 endif()
 
 # Create program launcher with all needed environment variables
@@ -226,6 +232,13 @@ if(INSTALL_RELEASE)
 			DESTINATION ${INSTALL_RELEASE_PATH}/appsdk/bin/vrlservice
 			USE_SOURCE_PERMISSIONS
 		)
+
+		# Copy Phoenix cache file loader library
+		if (Phoenix_FOUND)
+			install(FILES       ${Phoenix_LIBRARIES}/${CGR_PHOENIX_SHARED}
+					DESTINATION ${INSTALL_RELEASE_PATH}/deploy/lib
+					PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+		endif()
 
 		# Clone JSON plugin descriptions
 		set(VFH_CLONE_PLUGINS_DESC ${CMAKE_BINARY_DIR}/vfh_clone_plugins_desc.cmake)
