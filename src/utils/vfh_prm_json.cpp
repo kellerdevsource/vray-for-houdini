@@ -820,6 +820,9 @@ PRMTmplList* Parm::generatePrmTemplate(const std::string &pluginID, const std::s
 			else if (pluginID == "GeomPlane") {
 				SOP::GeomPlane::addPrmTemplate(*prmTmplList);
 			}
+			else if (pluginID == "GeomMeshFile") {
+				SOP::VRayProxy::addPrmTemplate(*prmTmplList);
+			}
 			else if (pluginID == "CustomTextureOutput") {
 				VOP::TextureOutput::addPrmTemplate(*prmTmplList);
 			}

@@ -20,12 +20,12 @@ class VRayProxy:
 		public SOP::NodeBase
 {
 public:
-	VRayProxy(OP_Network *parent, const char *name, OP_Operator *entry):
-		NodeBase(parent, name, entry)
-	{ }
+	static void               addPrmTemplate(Parm::PRMTmplList &prmTemplate);
+	static int                cbClearCache(void *data, int index, float t, const PRM_Template* tplate);
 
-	virtual	~VRayProxy()
-	{ }
+public:
+	VRayProxy(OP_Network *parent, const char *name, OP_Operator *entry): NodeBase(parent, name, entry) {}
+	virtual                  ~VRayProxy() {}
 
 	virtual OP_NodeFlags     &flags() VRAY_OVERRIDE;
 	virtual OP_ERROR          cookMySop(OP_Context &context) VRAY_OVERRIDE;
@@ -33,6 +33,7 @@ public:
 
 protected:
 	virtual void              setPluginType() VRAY_OVERRIDE;
+
 }; // VRayProxy
 
 } // namespace SOP
