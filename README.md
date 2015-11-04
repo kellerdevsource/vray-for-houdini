@@ -20,11 +20,11 @@ Building From Source
 
 ### Requirements
 
-* Obtain **V-Ray Application SDK** nightly build / license (write to support@chaosgroup.com)
+* **V-Ray Application SDK** nightly build / license (write to support@chaosgroup.com)
 
-* Obtain **V-Ray SDK** (for example, from **V-Ray For Maya** nightly build)
+* **V-Ray SDK** (for example, from **V-Ray For Maya** nightly build)
 
-* Obtain **Phoenix SDK** (for example, from **Phonix For Maya** nightly build)
+* **Phoenix SDK** (for example, from **Phonix For Maya** nightly build)
 
 * Compiler:
 
