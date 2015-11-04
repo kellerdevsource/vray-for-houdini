@@ -290,6 +290,7 @@ void VRayExporter::setAttrsFromOpNode(Attrs::PluginDesc &pluginDesc, OP_Node *op
 								rampColorAsPluginList.insert("PhxShaderSim");
 							}
 
+							// TODO: Move to attribute description
 							const bool asColorList = rampColorAsPluginList.count(pluginDesc.pluginID);
 
 							Texture::exportRampAttribute(*this, pluginDesc, opNode,
