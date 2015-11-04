@@ -287,26 +287,24 @@ OP::VRayNode::PluginResult SOP::PhxShaderCache::asPluginDesc(Attrs::PluginDesc &
 								vol->getTransform4(m4);
 								UT_Vector3 center = vol->baryCenter();
 
-								//								phxTm matrix to convert from voxel space to object local space
-								//								voxel space is defined to be the 2-radius cube from (-1,-1,-1) to (1,1,1) centered at (0,0,0)
-								//								need to scale uniformly by 2 as for TexMayaFluid seems to span from (0,0,0) to (1,1,1)
+								// phxTm matrix to convert from voxel space to object local space
+								// Voxel space is defined to be the 2-radius cube from (-1,-1,-1) to (1,1,1) centered at (0,0,0)
+								// Need to scale uniformly by 2 as for TexMayaFluid seems to span from (0,0,0) to (1,1,1)
 								phxTm = VRayExporter::Matrix4ToTransform(m4);
 								phxTm.offset.set(center.x(), center.y(), center.z());
-#if 1
 								phxTm.matrix.v0.x *= 2.0f;
 								phxTm.matrix.v1.y *= 2.0f;
 								phxTm.matrix.v2.z *= 2.0f;
-#endif
-								//								phxMatchTm matrix to convert from voxel space to world space
-								//								needed for TexMayaFluidTransformed
-								//								sould match with transform for PhxShaderSim, WHY?
+
+								// phxMatchTm matrix to convert from voxel space to world space
+								// Needed for TexMayaFluidTransformed
+								// Should match with transform for PhxShaderSim (?)
 								VRay::Transform phxMatchTm;
 								phxMatchTm.offset = nodeTm.matrix * phxTm.offset + nodeTm.offset;
 								phxMatchTm.matrix = nodeTm.matrix * phxTm.matrix;
 
-								Log::getLog().info("Volume \"%s\": %i x %i x %i",
-												   texType.c_str(), res[0], res[1], res[2]);
-								// PRINT_APPSDK_TM("Volume tm", phxTm);
+								Log::getLog().debug("Volume \"%s\": %i x %i x %i",
+													texType.c_str(), res[0], res[1], res[2]);
 
 								UT_VoxelArrayReadHandleF vh = vol->getVoxelHandle();
 
