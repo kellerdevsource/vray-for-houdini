@@ -9,14 +9,18 @@
 //
 
 #include "vfh_exporter.h"
+#include "vfh_prm_templates.h"
+
 #include "obj/obj_node_base.h"
 #include "vop/vop_node_base.h"
 #include "vop/material/vop_mtl_def.h"
 
 #include <SHOP/SHOP_Node.h>
 #include <SOP/SOP_Node.h>
-#include <GU/GU_Detail.h>
+#include <OP/OP_Options.h>
 #include <OP/OP_PropertyLookupList.h>
+#include <OP/OP_MultiparmInfo.h>
+#include <GU/GU_Detail.h>
 
 
 using namespace VRayForHoudini;
@@ -72,61 +76,108 @@ VRay::Plugin VRayExporter::exportMaterial(SHOP_Node *shop_node, MtlContext ctx)
 		addOpCallback(mtl_out, VRayExporter::RtCallbackSurfaceShop);
 
 		if (ctx.getObject()) {
+			const fpreal now = m_context.getTime();
+
 			OBJ_Node &obj = *ctx.getObject();
 
-			OP_PropertyLookupList props;
-			obj.findParametersOrProperties(m_context.getTime(), props);
+			SHOP_Node *shopNode = getObjMaterial(&obj, now);
+			if (shopNode) {
+				OP_PropertyLookupList props;
 
-			const int numObjParams = props.entries();
+				const PRM_ParmList *plist = obj.getParmList();
+				const int numObjParams = plist->getEntries();
 
-			Log::getLog().msg("Obj: \"%s\" override properties: %i",
-							  obj.getName().buffer(), numObjParams);
+				for(int pi = 0; pi < numObjParams; pi++) {
+					const PRM_Parm      *parm = plist->getParmPtr(pi);
+					const PRM_SpareData	*spare = parm->getSparePtr();
+					if (parm && spare && !parm->getBypassFlag()) {
+						if (spare->getValue(OBJ_MATERIAL_SPARE_TAG)) {
+							Log::getLog().msg("Material override parameter: \"%s\"",
+											  parm->getToken());
 
-			for (int i = 0; i < numObjParams; ++i) {
-				const char *propName = props.getName(i);
-				OP_Node *fromNode = props.getSourceNode(i);
+							props.addParm(parm->getToken(), &obj, nullptr);
 
-				Log::getLog().msg("Obj: \"%s\" property \"%s\" from node \"%s\"",
-								  obj.getName().buffer(), propName, fromNode->getName().buffer());
-			}
+							OP_Node *fromNode = nullptr;
+							PRM_Parm *fromParm = nullptr;
+							static_cast<OP_Node&>(obj).getParameterOrProperty(parm->getToken(), now, fromNode, fromParm, false);
+							if (fromNode) {
+								Log::getLog().msg("  fromNode: %s", fromNode->getName().buffer());
+							}
+							if (fromParm) {
+								Log::getLog().msg("  fromParm: %s", fromParm->getToken());
+							}
+#if 0
+							const PRM_Parm *shopParm = Parm::getParm(*shopNode, parm->getToken());
+							if (shopParm) {
+								// const PRM_SpareData	*shopParmSpare = shopParm->getSparePtr();
+								// if (shopParmSpare) {
+								// }
+							}
+#endif
+						}
+					}
+				}
+
+				shopNode->findParametersOrProperties(now, props);
+				for (int i = 0; i < props.entries(); ++i) {
+					auto node = props.getNode(i);
+					auto parm = props.getParmPtr(i);
+					if (parm) {
+						Log::getLog().msg("Prop[%d] %s := %s %s",
+										  i,
+										  props.getName(i),
+										  node ? node->getName().buffer() : "<missing>",
+										  parm ? parm->getToken() : "<missing>");
+
+						const PRM_SpareData	*spare = parm->getSparePtr();
+						if (spare && !parm->getBypassFlag()) {
+							OP_Node *fromNode = nullptr;
+							PRM_Parm *fromParm = nullptr;
+							shopNode->getParameterOrProperty(parm->getToken(), now, fromNode, fromParm, false);
+							if (fromNode) {
+								Log::getLog().msg("  fromNode: %s", fromNode->getName().buffer());
+							}
+							if (fromParm) {
+								Log::getLog().msg("  fromParm: %s", fromParm->getToken());
+							}
+						}
+					}
+				}
+
+				Log::getLog().msg(" SHOP hasOpDependents: %i", !shopNode->getOpDependents().isEmpty());
+				Log::getLog().msg(" OBJ  hasOpDependents: %i", !obj.getOpDependents().isEmpty());
+
+#define in :
 
 #if 0
-			Log::getLog().msg("obj->getMaterialParmToken() \"%s\"",
-							  obj->getMaterialParmToken());
+				OP_NodeList deps;
+				shopNode->getExistingOpDependents(deps, false);
+				for (const auto &dep in deps) {
+					Log::getLog().msg("  Dependents: %s", dep->getName().buffer());
+				}
+#endif
 #if 1
-			UT_StringArray outVars;
-			obj->getLocalVarNames(outVars);
-			for (const auto &outVar : outVars) {
-				Log::getLog().msg("Local var: \"%s\"",
-								  outVar.buffer());
-			}
-#endif
-			PRM_Template *tmpl = obj->getOperator()->getParmTemplates();
-			while(tmpl->getType() != PRM_LIST_TERMINATOR) {
-				tmpl->ta
-				tmpl++;
-			}
+				const OP_DependencyList &deps = shopNode->getOpDependents();
+				for (const auto &dep in deps) {
+					const PRM_RefId &getRefId = dep.getRefId();
+					const PRM_RefId &getSourceRefId = dep.getSourceRefId();
 
-			for (int i = 0; i < obj->getNumParms(); ++i) {
-				const PRM_Parm &parm = obj->getParm(i);
-				const PRM_SpareData *spareData = parm.getSparePtr();
-				if (spareData) {
-					// spareData->get
-				}
-#if 0
-				Log::getLog().msg("Parm: \"%s\" override %s",
-								  parm.getOverride(0));
+					Log::getLog().msg("  dep.getRefId().getParmRef() = %i | dep.getSourceRefId().getParmRef() = %i",
+									  getRefId.getParmRef(), getSourceRefId.getParmRef());
 
-				PRM_ParmOwner *parmOwner = parm.getParmOwner();
-				if (parmOwner) {
-					Log::getLog().msg("Parm: \"%s\" owned by \"%s\" is pending override %i",
-									  parm.getToken(),
-									  parmOwner->getFullPath().c_str(),
-									  parmOwner->isParmPendingOverride(nullptr, 0));
+//					const int getParmRef = getRefId.getParmRef();
+//					const PRM_Parm &prm = shopNode->getParm(getParmRef);
+//					Log::getLog().msg("  prm ref: %s",
+//									  prm.getToken());
 				}
 #endif
+
+				if (shopNode->hasMultiparmInfo()) {
+					OP_MultiparmInfo &mpInfo = shopNode->getMultiparmInfo();
+					Log::getLog().msg(" mpInfo: %i",
+									  mpInfo.entries());
+				}
 			}
-#endif
 		}
 
 		if (mtl_out->error() < UT_ERROR_ABORT ) {
@@ -170,4 +221,3 @@ VRay::Plugin VRayExporter::exportMaterial(SHOP_Node *shop_node, MtlContext ctx)
 
 	return material;
 }
-

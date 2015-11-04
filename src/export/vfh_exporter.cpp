@@ -177,6 +177,12 @@ void VRayExporter::setAttrValueFromOpNode(Attrs::PluginDesc &pluginDesc, const P
 								  : boost::str(Parm::FmtPrefixManual % prefix % attrDesc.attr);
 
 	if (Parm::isParmExist(*opNode, parmName)) {
+		const PRM_Parm *parm = Parm::getParm(*opNode, parmName);
+		if (parm->getParmOwner()->isPendingOverride()) {
+			Log::getLog().msg("Pending override: %s %s",
+							  opNode->getName().buffer(), parmName.c_str());
+		}
+
 		const fpreal &t = m_context.getTime();
 #if 0
 		Log::getLog().info("Setting: [%s] %s.%s (from %s.%s)",
