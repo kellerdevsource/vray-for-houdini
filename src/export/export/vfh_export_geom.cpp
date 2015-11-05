@@ -22,7 +22,7 @@
 using namespace VRayForHoudini;
 
 
-void VRayExporter::exportGeomStaticMeshDesc(const GU_Detail &gdp, SHOPToID &shopToID, Attrs::PluginDesc &geomPluginDesc)
+void VRayExporter::exportGeomStaticMeshDesc(const GU_Detail &gdp, GeomExportInfo &expInfo, Attrs::PluginDesc &geomPluginDesc)
 {
 	const int numPoints = gdp.getNumPoints();
 
@@ -83,8 +83,8 @@ void VRayExporter::exportGeomStaticMeshDesc(const GU_Detail &gdp, SHOPToID &shop
 
 		if (hndl_shop_materialpath.isValid()) {
 			const char *shop_materialpath = hndl_shop_materialpath.get(off);
-			if (shop_materialpath && (shopToID.find(shop_materialpath) == shopToID.end())) {
-				shopToID.insert(shop_materialpath, numMtlIDs++);
+			if (shop_materialpath && (expInfo.shopToID.find(shop_materialpath) == expInfo.shopToID.end())) {
+				expInfo.shopToID.insert(shop_materialpath, numMtlIDs++);
 			}
 		}
 	}
@@ -189,7 +189,7 @@ void VRayExporter::exportGeomStaticMeshDesc(const GU_Detail &gdp, SHOPToID &shop
 		if (hndl_shop_materialpath.isValid()) {
 			const char *shop_materialpath = hndl_shop_materialpath.get(off);
 			if (shop_materialpath) {
-				mtlId = shopToID[shop_materialpath];
+				mtlId = expInfo.shopToID[shop_materialpath];
 			}
 		}
 
@@ -379,10 +379,10 @@ void VRayExporter::exportGeomStaticMeshDesc(const GU_Detail &gdp, SHOPToID &shop
 }
 
 
-VRay::Plugin VRayExporter::exportGeomStaticMesh(SOP_Node &sop_node, const GU_Detail &gdp, SHOPToID &shopToID)
+VRay::Plugin VRayExporter::exportGeomStaticMesh(SOP_Node &sop_node, const GU_Detail &gdp, GeomExportInfo &expInfo)
 {
 	Attrs::PluginDesc geomPluginDesc(VRayExporter::getPluginName(&sop_node, "Geom"), "GeomStaticMesh");
-	exportGeomStaticMeshDesc(gdp, shopToID, geomPluginDesc);
+	exportGeomStaticMeshDesc(gdp, expInfo, geomPluginDesc);
 
 	return exportPlugin(geomPluginDesc);
 }
