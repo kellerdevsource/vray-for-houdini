@@ -20,7 +20,7 @@
 #include <HOM/HOM_BaseKeyframe.h>
 #include <HOM/HOM_playbar.h>
 #include <HOM/HOM_Module.h>
-
+#include <EXPR/EXPR_Lock.h>
 
 using namespace VRayForHoudini;
 
@@ -543,12 +543,42 @@ private:
 };
 
 
-typedef Caches::LRUCache< std::string, VRayProxyCache> VRayProxyCacheMan;
+typedef Caches::LRUCache< std::string, VRayProxyCache > VRayProxyCacheMan;
 
 static const int cacheCapacity = 10;
 static VRayProxyCacheMan g_cacheMan(cacheCapacity);
 
+/// VRayProxy node cache params
+static PRM_Name prmCacheHeading("cacheheading", "VRayProxy Cache");
+static PRM_Name prmClearCache("clear_cache", "Clear Cache");
 
+static PRM_Name prmProxyHeading("vrayproxyheading", "VRayProxy Settings");
+
+
+void SOP::VRayProxy::addPrmTemplate(Parm::PRMTmplList &prmTemplate)
+{
+	prmTemplate.push_back(PRM_Template(PRM_HEADING, 1, &prmCacheHeading));
+	prmTemplate.push_back(PRM_Template(PRM_CALLBACK, 1, &prmClearCache, 0, 0, 0, VRayProxy::cbClearCache));
+	prmTemplate.push_back(PRM_Template(PRM_HEADING, 1, &prmProxyHeading));
+}
+
+
+int SOP::VRayProxy::cbClearCache(void *data, int /*index*/, float t, const PRM_Template */*tplate*/)
+{
+	OP_Node *node = reinterpret_cast<OP_Node *>(data);
+	UT_String filepath;
+	{
+		EXPR_GlobalStaticLock::Scope scopedLock;
+		node->evalString(filepath, "file", 0, t);
+	}
+
+	if (g_cacheMan.contains(filepath.buffer())) {
+		VRayProxyCache &fileCache = g_cacheMan[filepath.buffer()];
+		fileCache.clearCache();
+	}
+
+	return 0;
+}
 
 
 void SOP::VRayProxy::setPluginType()
@@ -575,7 +605,7 @@ OP_ERROR SOP::VRayProxy::cookMySop(OP_Context &context)
 	Log::getLog().info("SOP::VRayProxy::cookMySop()");
 
 	if (NOT(gdp)) {
-		addError(SOP_MESSAGE, "Invalid geoemtry detail.");
+		addError(SOP_MESSAGE, "Invalid geometry detail.");
 		return error();
 	}
 
