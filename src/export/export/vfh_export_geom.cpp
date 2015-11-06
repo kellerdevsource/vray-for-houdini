@@ -35,71 +35,133 @@ struct GeomExportData
 };
 
 
-void exportVertexAttrAsMapChannel(const GU_Detail &gdp, const GA_Attribute &vertexAttr, int numFaces, GeomExportParams &expParams, Mesh::MapChannel &map_channel)
+void vertexAttrAsMapChannel(const GU_Detail &gdp, const GA_Attribute &vertexAttr, int numFaces, GeomExportParams &expParams, Mesh::MapChannel &map_channel)
 {
 	GA_ROPageHandleV3 vaPageHndl(&vertexAttr);
 	GA_ROHandleV3 vaHndl(&vertexAttr);
 
-	assert( vaPageHndl.isValid() );
-	assert( vaHndl.isValid() );
+	vassert( vaPageHndl.isValid() );
+	vassert( vaHndl.isValid() );
 
 
 	map_channel.name = GA::getGaAttributeName(vertexAttr);
 	Log::getLog().info("  Found map channel: %s",
 						map_channel.name.c_str());
 
-	GA_Offset start, end;
-	for (GA_Iterator it(gdp.getVertexRange()); it.blockAdvance(start, end); ) {
-		vaPageHndl.setPage(start);
-		for (GA_Offset offset = start; offset < end; ++offset) {
-			const UT_Vector3 &val = vaPageHndl.value(offset);
-			map_channel.verticesSet.insert(Mesh::MapVertex(val));
+	if (expParams.uvWeldThreshold > 0) {
+		// weld vertex attribute values before populating the map channel
+		GA_Offset start, end;
+		for (GA_Iterator it(gdp.getVertexRange()); it.blockAdvance(start, end); ) {
+			vaPageHndl.setPage(start);
+			for (GA_Offset offset = start; offset < end; ++offset) {
+				const UT_Vector3 &val = vaPageHndl.value(offset);
+				map_channel.verticesSet.insert(Mesh::MapVertex(val));
+			}
 		}
-	}
 
-	// Init map channel data
-#if CGR_USE_LIST_RAW_TYPES
-	map_channel.vertices = VUtils::VectorRefList(map_channel.verticesSet.size());
-	map_channel.faces = VUtils::IntRefList(numFaces * 3);
-#else
-	map_channel.vertices.resize(map_channel.verticesSet.size());
-	map_channel.faces.resize(numFaces * 3);
-#endif
+		// Init map channel data
+	#if CGR_USE_LIST_RAW_TYPES
+		map_channel.vertices = VUtils::VectorRefList(map_channel.verticesSet.size());
+		map_channel.faces = VUtils::IntRefList(numFaces * 3);
+	#else
+		map_channel.vertices.resize(map_channel.verticesSet.size());
+		map_channel.faces.resize(numFaces * 3);
+	#endif
 
-	int i = 0;
-	for (auto &mv: map_channel.verticesSet) {
-		mv.index = i;
-		map_channel.vertices[i++].set(mv.v[0], mv.v[1], mv.v[2]);
-	}
-	assert( i == map_channel.vertices.size() );
+		int i = 0;
+		for (auto &mv: map_channel.verticesSet) {
+			mv.index = i;
+			map_channel.vertices[i++].set(mv.v[0], mv.v[1], mv.v[2]);
+		}
+		vassert( i == map_channel.vertices.size() );
 
 
-	// Process map channels (uv and other tuple(3) attributes)
-	//
-	int faceMapVertIndex = 0;
-	for (GA_Iterator jt(gdp.getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
-		const GEO_Primitive *face = gdp.getGEOPrimitive(*jt);
+		// Process map channels (uv and other tuple(3) attributes)
+		//
+		int faceMapVertIndex = 0;
+		for (GA_Iterator jt(gdp.getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
+			const GEO_Primitive *face = gdp.getGEOPrimitive(*jt);
 
-		const int &v0 = map_channel.verticesSet.find(Mesh::MapVertex(vaHndl.get(face->getVertexOffset(0))))->index;
-		const int &v1 = map_channel.verticesSet.find(Mesh::MapVertex(vaHndl.get(face->getVertexOffset(1))))->index;
-		const int &v2 = map_channel.verticesSet.find(Mesh::MapVertex(vaHndl.get(face->getVertexOffset(2))))->index;
-
-		map_channel.faces[faceMapVertIndex++] = v0;
-		map_channel.faces[faceMapVertIndex++] = v1;
-		map_channel.faces[faceMapVertIndex++] = v2;
-
-		if (face->getVertexCount() == 4) {
-			const int &v3 = map_channel.verticesSet.find(Mesh::MapVertex(vaHndl.get(face->getVertexOffset(3))))->index;
+			const int &v0 = map_channel.verticesSet.find(Mesh::MapVertex(vaHndl.get(face->getVertexOffset(0))))->index;
+			const int &v1 = map_channel.verticesSet.find(Mesh::MapVertex(vaHndl.get(face->getVertexOffset(1))))->index;
+			const int &v2 = map_channel.verticesSet.find(Mesh::MapVertex(vaHndl.get(face->getVertexOffset(2))))->index;
 
 			map_channel.faces[faceMapVertIndex++] = v0;
+			map_channel.faces[faceMapVertIndex++] = v1;
 			map_channel.faces[faceMapVertIndex++] = v2;
-			map_channel.faces[faceMapVertIndex++] = v3;
-		}
-	}
-	assert( faceMapVertIndex == map_channel.faces.size() );
 
-	// Cleanup hash
-	map_channel.verticesSet.clear();
+			if (face->getVertexCount() == 4) {
+				const int &v3 = map_channel.verticesSet.find(Mesh::MapVertex(vaHndl.get(face->getVertexOffset(3))))->index;
+
+				map_channel.faces[faceMapVertIndex++] = v0;
+				map_channel.faces[faceMapVertIndex++] = v2;
+				map_channel.faces[faceMapVertIndex++] = v3;
+			}
+		}
+		vassert( faceMapVertIndex == map_channel.faces.size() );
+
+		// Cleanup hash
+		map_channel.verticesSet.clear();
+	}
+	else {
+		// populate map channel with original values
+
+		// Init map channel data
+	#if CGR_USE_LIST_RAW_TYPES
+		map_channel.vertices = VUtils::VectorRefList(gdp.getNumVertices());
+		map_channel.faces = VUtils::IntRefList(numFaces * 3);
+	#else
+		map_channel.vertices.resize(gdp.getNumVertices());
+		map_channel.faces.resize(numFaces * 3);
+	#endif
+
+		int i = 0;
+		GA_Offset start, end;
+		for (GA_Iterator it(gdp.getVertexRange()); it.blockAdvance(start, end); ) {
+			vaPageHndl.setPage(start);
+			for (GA_Offset offset = start; offset < end; ++offset) {
+				const UT_Vector3 &val = vaPageHndl.value(offset);
+				map_channel.vertices[i++].set(val[0], val[1], val[2]);
+			}
+		}
+		vassert( i == gdp.getNumVertices() );
+
+		i = 0;
+		GA_Index vi = 0;
+		for (GA_Iterator jt(gdp.getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
+			const GEO_Primitive *prim = gdp.getGEOPrimitive(*jt);
+
+			if (prim->getTypeId().get() == GEO_PRIMPOLYSOUP) {
+				const GU_PrimPolySoup *polySoup = static_cast<const GU_PrimPolySoup*>(prim);
+				for (GEO_PrimPolySoup::PolygonIterator psIt(*polySoup); !psIt.atEnd(); ++psIt) {
+					map_channel.faces[i++] = psIt.getVertexIndex(0);
+					map_channel.faces[i++] = psIt.getVertexIndex(1);
+					map_channel.faces[i++] = psIt.getVertexIndex(2);
+
+					if (psIt.getVertexCount() == 4) {
+						map_channel.faces[i++] = psIt.getVertexIndex(0);
+						map_channel.faces[i++] = psIt.getVertexIndex(2);
+						map_channel.faces[i++] = psIt.getVertexIndex(3);
+					}
+				}
+			}
+			else {
+				map_channel.faces[i++] = vi;
+				map_channel.faces[i++] = vi + 1;
+				map_channel.faces[i++] = vi + 2;
+
+				if (prim->getVertexCount() == 4) {
+					map_channel.faces[i++] = vi;
+					map_channel.faces[i++] = vi + 2;
+					map_channel.faces[i++] = vi + 3;
+				}
+			}
+
+			vi += prim->getVertexCount();
+		}
+
+		vassert( i == map_channel.faces.size() );
+	}
 }
 
 
@@ -122,7 +184,7 @@ void exportVertexAttrs(const GU_Detail &gdp, GeomExportParams &expParams, GeomEx
 			&& NOT(expData.map_channels_data.count(attrName)) )
 		{
 			Mesh::MapChannel &map_channel = expData.map_channels_data[attrName];
-			exportVertexAttrAsMapChannel(gdp, *attrIt.attrib(), expData.numFaces, expParams, map_channel);
+			vertexAttrAsMapChannel(gdp, *attrIt.attrib(), expData.numFaces, expParams, map_channel);
 		}
 	}
 }
@@ -168,7 +230,7 @@ void exportPointAttrs(const GU_Detail &gdp, GeomExportParams &expParams, GeomExp
 							map_channel.vertices[vidx++].set(val[0], val[1], val[2]);
 						}
 					}
-					assert( vidx == gdp.getNumPoints() );
+					vassert( vidx == gdp.getNumPoints() );
 				}
 			}
 		}
