@@ -328,7 +328,7 @@ void VRayExporter::exportGeomStaticMeshDesc(const GU_Detail &gdp, SHOPToID &shop
 			map_channels.push_back(VRay::Value(map_channel));
 		}
 
-		geomPluginDesc.addAttribute(Attrs::PluginAttr("map_channel_names", map_channel_names));
+		geomPluginDesc.addAttribute(Attrs::PluginAttr("map_channels_names", map_channel_names));
 		geomPluginDesc.addAttribute(Attrs::PluginAttr("map_channels",      map_channels));
 	}
 }
