@@ -184,7 +184,7 @@ VRay::Plugin VRayExporter::exportNode(OBJ_Node *obj_node, VRay::Plugin material,
 }
 
 
-VRay::Plugin VRayExporter::exportNodeData(SOP_Node *geom_node, GeomExportInfo &expInfo)
+VRay::Plugin VRayExporter::exportNodeData(SOP_Node *geom_node, GeomExportParams &expParams)
 {
 	VRay::Plugin geom;
 	if (geom_node && isNodeAnimated(geom_node)) {
@@ -241,7 +241,7 @@ VRay::Plugin VRayExporter::exportNodeData(SOP_Node *geom_node, GeomExportInfo &e
 					geom = exportGeomMayaHair(geom_node, gdp);
 				}
 				else {
-					geom = exportGeomStaticMesh(*geom_node, *gdp, expInfo);
+					geom = exportGeomStaticMesh(*geom_node, *gdp, expParams);
 				}
 			}
 		}
@@ -277,11 +277,10 @@ VRay::Plugin VRayExporter::exportObject(OBJ_Node *obj_node)
 #endif
 		}
 		else {
-			GeomExportInfo expInfo;
-			expInfo.mapChannelWeldThreshold = isSmoothed(*obj_node)? 1e-6f: -1.f;
-			expInfo.exportMtlIds = true;
+			GeomExportParams expParams;
+			expParams.uvWeldThreshold = isSmoothed(*obj_node)? expParams.uvWeldThreshold: -1.f;
 
-			VRay::Plugin geom = exportNodeData(geom_node, expInfo);
+			VRay::Plugin geom = exportNodeData(geom_node, expParams);
 
 			if (geom) {
 				VRay::Plugin mtl;
@@ -293,9 +292,9 @@ VRay::Plugin VRayExporter::exportObject(OBJ_Node *obj_node)
 
 					mtl = exportMaterial(shop_node);
 				}
-				else if (expInfo.shopToID.size()) {
-					if (expInfo.shopToID.size() == 1) {
-						OP_Node *op_node = OPgetDirector()->findNode(expInfo.shopToID.begin().key());
+				else if (expParams.shopToID.size()) {
+					if (expParams.shopToID.size() == 1) {
+						OP_Node *op_node = OPgetDirector()->findNode(expParams.shopToID.begin().key());
 						if (op_node) {
 							mtl = exportMaterial(op_node->castToSHOPNode());
 						}
@@ -308,7 +307,7 @@ VRay::Plugin VRayExporter::exportObject(OBJ_Node *obj_node)
 
 						Log::getLog().info("Adding MtlMulti:");
 
-						for (SHOPToID::iterator oIt = expInfo.shopToID.begin(); oIt != expInfo.shopToID.end(); ++oIt) {
+						for (SHOPToID::iterator oIt = expParams.shopToID.begin(); oIt != expParams.shopToID.end(); ++oIt) {
 							const char *shop_materialpath = oIt.key();
 
 							OP_Node *op_node = OPgetDirector()->findNode(shop_materialpath);
