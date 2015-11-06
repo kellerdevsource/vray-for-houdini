@@ -22,6 +22,55 @@
 using namespace VRayForHoudini;
 
 
+// Primitive color override example
+//   "diffuser" : 1.0, "diffuseg" : 1.0, "diffuseb" : 1.0
+// We don't care about the separate channels, we have to export attribute as "diffuse",
+// so we need to go through all the "material" nodes inside the network and collect actual
+// parameters
+//
+void VRayExporter::collectMaterialOverrideParameters(OBJ_Node &obj)
+{
+	const fpreal t = m_context.getTime();
+
+	for (int c = 0; c < obj.getNchildren(); ++c) {
+		OP_Node *node = obj.getChild(c);
+		if (node) {
+			const OP_Operator *nodeOp = node->getOperator();
+			if (nodeOp && nodeOp->getName() == "material") {
+				Log::getLog().msg("  Found material node: %s",
+								  node->getName().buffer());
+
+				const int numMaterials = node->evalInt("num_materials", 0, t);
+				for (int mtlIdx = 1; mtlIdx <= numMaterials; ++mtlIdx) {
+					static boost::format FmtShopPath("shop_materialpath%i");
+
+					UT_String shopMaterial;
+					node->evalString(shopMaterial, boost::str(FmtShopPath % mtlIdx).c_str(), 0, t);
+					if (shopMaterial.length()) {
+						static boost::format FmtNumLocal("num_local%i");
+
+						const int numLocal = node->evalInt(boost::str(FmtNumLocal % mtlIdx).c_str(), 0, t);
+						for (int localIdx = 1; localIdx <= numLocal; ++localIdx) {
+							static boost::format FmtLocalName("local%i_name%i");
+							static boost::format FmtLocalType("local%i_type%i");
+
+							UT_String localName;
+							node->evalString(localName, boost::str(FmtLocalName % mtlIdx % localIdx).c_str(), 0, t);
+							if (localName.length()) {
+								const int localType = node->evalInt(boost::str(FmtLocalType % mtlIdx % localIdx).c_str(), 0, t);
+
+								Log::getLog().msg("  Found override \"%s\" [%i] for material \"%s\"",
+												  localName.buffer(), localType, shopMaterial.buffer());
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+
 struct GeomExportData
 {
 	VUtils::VectorRefList vertices;

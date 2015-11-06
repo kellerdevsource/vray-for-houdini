@@ -99,13 +99,10 @@ void VRayExporter::RtCallbackNode(OP_Node *caller, void *callee, OP_EventType ty
 
 		const PRM_Parm *param = Parm::getParm(*caller, reinterpret_cast<long>(data));
 		if (param) {
-			// TODO: Use obj->getMaterialParmToken() instead of using "shop_materialpath" directly
-			//
 			if (boost::equals(param->getToken(), "shop_materialpath")) {
 				SHOP_Node *shop_node = exporter.getObjMaterial(obj_node);
 				if (shop_node) {
-					MtlContext ctx(obj_node);
-					mtl = exporter.exportMaterial(shop_node, ctx);
+					mtl = exporter.exportMaterial(shop_node);
 				}
 				if (!mtl) {
 					mtl = exporter.exportDefaultMaterial();
@@ -286,7 +283,6 @@ VRay::Plugin VRayExporter::exportObject(OBJ_Node *obj_node)
 			VRay::Plugin geom = exportNodeData(geom_node, expParams);
 
 			if (geom) {
-				MtlContext   mtlCtx(obj_node);
 				VRay::Plugin mtl;
 
 				SHOP_Node *shop_node = getObjMaterial(obj_node, t);
@@ -294,14 +290,13 @@ VRay::Plugin VRayExporter::exportObject(OBJ_Node *obj_node)
 					Log::getLog().info("  Found material: \"%s\" [%s]",
 							   shop_node->getName().buffer(), shop_node->getOperator()->getName().buffer());
 
-					MtlContext ctx(obj_node);
-					mtl = exportMaterial(shop_node, ctx);
+					mtl = exportMaterial(shop_node);
 				}
 				else if (expParams.shopToID.size()) {
 					if (expParams.shopToID.size() == 1) {
 						OP_Node *op_node = OPgetDirector()->findNode(expParams.shopToID.begin().key());
 						if (op_node) {
-							mtl = exportMaterial(op_node->castToSHOPNode(), mtlCtx);
+							mtl = exportMaterial(op_node->castToSHOPNode());
 						}
 					}
 					else {
@@ -322,7 +317,7 @@ VRay::Plugin VRayExporter::exportObject(OBJ_Node *obj_node)
 								Log::getLog().info(" %i: \"%s\"",
 										   material_id, shop_materialpath);
 
-								mtls_list.push_back(VRay::Value(exportMaterial(op_node->castToSHOPNode(), mtlCtx)));
+								mtls_list.push_back(VRay::Value(exportMaterial(op_node->castToSHOPNode())));
 								ids_list.push_back(material_id);
 							}
 						}

@@ -36,6 +36,7 @@ include_directories(vop/meta)
 include_directories(export)
 include_directories(export/utils)
 include_directories(utils)
+include_directories(${CMAKE_SOURCE_DIR}/extern/rapidjson/include)
 
 file(GLOB_RECURSE SOURCES "*.cpp")
 file(GLOB_RECURSE HEADERS "*.h" "*.hpp")

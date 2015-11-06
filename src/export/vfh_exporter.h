@@ -28,6 +28,7 @@ namespace VRayForHoudini {
 
 typedef VUtils::HashMap<int> SHOPToID;
 
+
 enum VRayLightType {
 	VRayLightOmni      = 0,
 	VRayLightRectangle = 2,
@@ -92,26 +93,6 @@ struct MotionBlurParams {
 };
 
 
-struct MtlContext {
-	MtlContext()
-		: m_object(nullptr)
-	{}
-	MtlContext(OBJ_Node *object)
-		: m_object(object)
-	{}
-
-	void      setObject(OBJ_Node *object) { m_object = object; }
-	OBJ_Node *getObject() { return m_object; }
-
-	int       hasMaterialOverrides();
-	int       hasMaterialPromotes();
-
-private:
-	// NOTE: Not const because of getRenderSopPtr()
-	OBJ_Node *m_object;
-};
-
-
 class VRayExporter
 {
 public:
@@ -151,6 +132,8 @@ public:
 	void                           exportFrame(fpreal time);
 	void                           exportEnd();
 
+	void                           collectMaterialOverrideParameters(OBJ_Node &obj);
+
 	void                           exportGeomStaticMeshDesc(const GU_Detail &gdp, GeomExportParams &expParams, Attrs::PluginDesc &geomPluginDesc);
 	VRay::Plugin                   exportGeomStaticMesh(SOP_Node &sop_node, const GU_Detail &gdp, GeomExportParams &expParams);
 	void                           exportGeomMayaHairGeom(SOP_Node *sop_node, const GU_Detail *gdp, Attrs::PluginDesc &pluginDesc);
@@ -164,7 +147,7 @@ public:
 	VRay::Plugin                   exportParticles(OBJ_Node *dop_network);
 	VRay::Plugin                   exportLight(OBJ_Node *obj_node);
 	VRay::Plugin                   exportVop(OP_Node *op_node);
-	VRay::Plugin                   exportMaterial(SHOP_Node *shop_node, MtlContext mtlCtx=MtlContext());
+	VRay::Plugin                   exportMaterial(SHOP_Node *shop_node);
 	VRay::Plugin                   exportDefaultMaterial();
 
 #ifdef CGR_HAS_VRAYSCENE

@@ -22,8 +22,26 @@
 #include <OP/OP_MultiparmInfo.h>
 #include <GU/GU_Detail.h>
 
+#include <PRM/PRM_ParmMicroNode.h>
+
 
 using namespace VRayForHoudini;
+
+
+struct MaterialOverrideLink {
+	MaterialOverrideLink(OP_Node &fromObject, const std::string &fromAttr, OP_Node &targetVOP)
+		: fromObject(fromObject)
+		, fromAttr(fromAttr)
+		, targetVOP(targetVOP)
+	{}
+
+	OP_Node     &fromObject; // Object that overrides the attribute value
+	std::string  fromAttr;   // Object's attrubute name (could be different from target VOP name)
+	OP_Node     &targetVOP;  // Target VOP to override property on
+};
+
+// Key: Target VOP attribute name
+typedef std::map<std::string, MaterialOverrideLink>  MaterialOverrideLinks;
 
 
 int MtlContext::hasMaterialOverrides()
@@ -81,6 +99,78 @@ VRay::Plugin VRayExporter::exportMaterial(SHOP_Node *shop_node, MtlContext ctx)
 			OBJ_Node &obj = *ctx.getObject();
 
 			SHOP_Node *shopNode = getObjMaterial(&obj, now);
+			if (shopNode) {
+				// Collect material override parameters
+				MaterialOverrideLinks mtlOverLinks;
+
+				const PRM_ParmList *objParmList  = obj.getParmList();
+				PRM_ParmList       *shopParmList = shopNode->getParmList();
+
+				if (objParmList && shopParmList) {
+					for(int pi = 0; pi < objParmList->getEntries(); pi++) {
+						const PRM_Parm *parm = objParmList->getParmPtr(pi);
+						if (parm && !parm->getBypassFlag()) {
+							const PRM_SpareData	*spare = parm->getSparePtr();
+							if (spare) {
+								// If the parameter is for material override it has OBJ_MATERIAL_SPARE_TAG tag
+								if (spare->getValue(OBJ_MATERIAL_SPARE_TAG)) {
+									std::string propOverName(parm->getToken());
+
+									int componentIndex = 0;
+
+									// We are interested in a property name (like "diffuse") not component name (like "diffuser"),
+									// so if the property is a compound value (like color) ||| append component suffix to get
+									// the correct reference (because references are per-component).
+									if (parm->getVectorSize() > 1) {
+										propOverName += "r";
+										// We don't care about the actual index
+										componentIndex = 0;
+									}
+
+									// Property index on a SHOP
+									const int propOverParmIdx = shopParmList->getParmIndex(propOverName.c_str());
+
+									printf("propOverParmIdx %i\n",
+										   propOverParmIdx);
+									if (propOverParmIdx >= 0) {
+										DEP_MicroNode &src = shopParmList->parmMicroNode(propOverParmIdx, componentIndex);
+
+										DEP_MicroNodeList outputs;
+										src.getOutputs(outputs);
+										for (int i = 0; i < outputs.entries(); ++i) {
+											PRM_ParmMicroNode *micronode = dynamic_cast<PRM_ParmMicroNode*>(outputs(i));
+											if (micronode) {
+												const PRM_Parm &referringParm = micronode->ownerParm();
+												PRM_ParmOwner  *referringParmOwner = referringParm.getParmOwner();
+												if (referringParmOwner) {
+													OP_Node *referringNode = referringParmOwner->castToOPNode();
+													if (referringNode) {
+														// Adding material override link
+														mtlOverLinks.emplace(std::piecewise_construct,
+																			 std::forward_as_tuple(referringParm.getToken()),
+																			 std::forward_as_tuple(static_cast<OP_Node&>(obj), propOverName, *referringNode));
+														break;
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+
+				for (const auto &mtlOverLink : mtlOverLinks) {
+					Log::getLog().msg("  Object's \'%s\' prop \'%s\' overrides \'%s\' from \'%s\'",
+									  mtlOverLink.second.fromObject.getName().buffer(),
+									  mtlOverLink.second.fromAttr.c_str(),
+									  mtlOverLink.first.c_str(),
+									  mtlOverLink.second.targetVOP.getName().buffer());
+				}
+			}
+
+#if 0
 			if (shopNode) {
 				OP_PropertyLookupList props;
 
@@ -178,6 +268,7 @@ VRay::Plugin VRayExporter::exportMaterial(SHOP_Node *shop_node, MtlContext ctx)
 									  mpInfo.entries());
 				}
 			}
+#endif
 		}
 
 		if (mtl_out->error() < UT_ERROR_ABORT ) {
