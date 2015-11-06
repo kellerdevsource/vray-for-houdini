@@ -24,7 +24,7 @@ using namespace VRayForHoudini;
 
 static PRM_Name     parm_render_scripts("parm_render_scripts", "Scripts");
 
-static PRM_Name     parm_render_interactive("render_ipr", "Render IPR");
+static PRM_Name     parm_render_interactive("render_rt", "Render RT");
 
 static PRM_Name     parm_render_vfb_mode("render_vfb_mode", "Framebuffer");
 static PRM_Name     parm_render_vfb_mode_items[] = {
@@ -54,18 +54,18 @@ static PRM_ChoiceList parm_render_export_mode_menu(PRM_CHOICELIST_SINGLE, parm_r
 static PRM_Name     parm_render_render_mode("render_render_mode", "Render Mode");
 static PRM_Name     parm_render_render_mode_items[] = {
 	PRM_Name("Production"),
-	PRM_Name("RT (CPU)"),
-	PRM_Name("RT (OpenCL)"),
-	PRM_Name("RT (CUDA)"),
+	PRM_Name("RT CPU"),
+	PRM_Name("GPU OpenCL"),
+	PRM_Name("GPU CUDA"),
 	PRM_Name(),
 };
 static PRM_ChoiceList parm_render_render_mode_menu(PRM_CHOICELIST_SINGLE, parm_render_render_mode_items);
 
-static PRM_Name  parm_render_ipr_mode("render_irp_mode", "IPR Render Mode");
+static PRM_Name  parm_render_ipr_mode("render_rt_mode", "RT Render Mode");
 static PRM_Name  parm_render_ipr_mode_items[] = {
-	PRM_Name("RT (CPU)"),
-	PRM_Name("RT (OpenCL)"),
-	PRM_Name("RT (CUDA)"),
+	PRM_Name("RT CPU"),
+	PRM_Name("GPU OpenCL"),
+	PRM_Name("GPU CUDA"),
 	PRM_Name(),
 };
 static PRM_ChoiceList parm_render_ipr_mode_menu(PRM_CHOICELIST_SINGLE, parm_render_ipr_mode_items);

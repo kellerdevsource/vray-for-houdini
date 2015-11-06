@@ -25,6 +25,6 @@ def render():
     vrayNode.parm('execute').pressButton()
 
 
-def render_ipr():
+def render_rt():
     vrayNode = _getCreateRop()
-    vrayNode.parm('render_ipr').pressButton()
+    vrayNode.parm('render_rt').pressButton()
