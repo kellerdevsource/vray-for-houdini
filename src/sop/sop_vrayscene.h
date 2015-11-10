@@ -15,7 +15,7 @@
 
 #include "sop_node_base.h"
 
-#include <vrayscene_preview_mesh.h>
+#include <vrscene_preview.h>
 
 
 namespace VRayForHoudini {
@@ -32,11 +32,12 @@ public:
 	virtual OP_ERROR            cookMySop(OP_Context &context) VRAY_OVERRIDE;
 	virtual PluginResult        asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, OP_Node *parent=nullptr) VRAY_OVERRIDE;
 
-private:
-	static VRayScenePreviewMan  m_previewMan;
-
 protected:
 	virtual void                setPluginType() VRAY_OVERRIDE;
+
+private:
+	VUtils::Vrscene::Preview::VrsceneSettings            getVrsceneSettings() const;
+	static VUtils::Vrscene::Preview::VrsceneDescManager  m_vrsceneMan;
 
 }; // VRayScene
 

@@ -47,12 +47,6 @@ if (Phoenix_FOUND)
 	link_directories(${Phoenix_LIBRARIES})
 endif()
 
-# *.vrscene preview
-CHECK_INCLUDE_FILE(vrayscene_preview_mesh.h HAS_VRSCENE)
-if (HAS_VRSCENE)
-	add_definitions(-DCGR_HAS_VRAYSCENE)
-endif()
-
 use_houdini_sdk()
 use_vray_sdk()
 use_vray_appsdk()

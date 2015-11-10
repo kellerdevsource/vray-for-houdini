@@ -34,7 +34,11 @@ enum VRayLightType {
 	VRayLightRectangle = 2,
 	VRayLightSphere    = 4,
 	VRayLightDome      = 6,
+#if UT_MAJOR_VERSION_INT < 15
 	VRayLightSun       = 7,
+#else
+	VRayLightSun       = 8,
+#endif
 };
 
 

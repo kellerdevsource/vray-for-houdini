@@ -87,6 +87,12 @@ macro(use_vray_sdk)
 
 	include_directories(${VRAYSDK_INCPATH})
 	link_directories(${VRAYSDK_LIBPATH})
+
+	# Check if there is vrscene preview library
+	find_path(CGR_HAS_VRSCENE vrscene_preview.h PATHS ${VRAYSDK_INCPATH})
+	if (CGR_HAS_VRSCENE)
+		add_definitions(-DCGR_HAS_VRAYSCENE)
+	endif()
 endmacro()
 
 
@@ -101,8 +107,6 @@ macro(link_with_vray_sdk _name)
 		pimglib_s
 		plugman_s
 		putils_s
-		# treeparser_s
-		# pll_s
 		vutils_s
 	)
 	list(APPEND VRAY_SDK_LIBS
@@ -114,6 +118,12 @@ macro(link_with_vray_sdk _name)
 		list(APPEND VRAY_SDK_LIBS
 			zlib_s
 			QtCore4
+		)
+	endif()
+	if(CGR_HAS_VRSCENE)
+		list(APPEND VRAY_SDK_LIBS
+			treeparser_s
+			vrscene_s
 		)
 	endif()
 	target_link_libraries(${_name} ${VRAY_SDK_LIBS})

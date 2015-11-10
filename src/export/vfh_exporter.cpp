@@ -919,16 +919,17 @@ VRay::Plugin VRayExporter::exportDefaultMaterial()
 
 
 #ifdef CGR_HAS_VRAYSCENE
+
 VRay::Plugin VRayExporter::exportVRayScene(OBJ_Node *obj_node, SOP_Node *geom_node)
 {
 	SOP::VRayScene *vraySceneNode = static_cast<SOP::VRayScene*>(geom_node);
 
 	Attrs::PluginDesc pluginDesc;
-	OP::VRayNode::PluginResult res = vraySceneNode->asPluginDesc(pluginDesc, this, static_cast<OP_Node*>(obj_node));
+	OP::VRayNode::PluginResult res = vraySceneNode->asPluginDesc(pluginDesc, *this, static_cast<OP_Node*>(obj_node));
 	if (res == OP::VRayNode::PluginResultSuccess) {
-		const bool flip_axis = vraySceneNode->evalInt("flip_axis", 0, 0.0f);
+		const bool flip_axis = vraySceneNode->evalInt("flip_axis", 0, 0.0);
 
-		pluginDesc.addAttribute(Attrs::PluginAttr("transform", VRayExporter::GetOBJTransform(obj_node, m_context, flip_axis)));
+		pluginDesc.addAttribute(Attrs::PluginAttr("transform", VRayExporter::getObjTransform(obj_node, m_context, flip_axis)));
 
 		return exportPlugin(pluginDesc);
 	}
