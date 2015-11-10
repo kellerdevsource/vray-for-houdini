@@ -12,7 +12,9 @@
 #include "vfh_log.h"
 
 #include <UT/UT_StackTrace.h>
+#include <UT/UT_String.h>
 
+#include <cstdio>
 
 using namespace VRayForHoudini;
 
@@ -39,7 +41,17 @@ void Error::ErrorChaser::crashHandler()
 		Log::getLog().error("Terminating due to unknown reason.");
 	}
 
-	UT_StackTrace stackTrace;
+	UT_String filename("$HIP/crash.vfhlog.$USER.$HIPNAME.txt");
+	filename.expandVariables();
+	FILE *file = vutils_fopen(filename.c_str(), "w");
+	if (file) {
+		Log::getLog().msg("Saving crash dump to %s", filename.c_str());
+	}
+	else {
+		file = stderr;
+	}
+
+	UT_StackTrace stackTrace(file);
 	stackTrace.setVerbose(true);
 	stackTrace.doTraceback();
 
