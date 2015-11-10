@@ -52,8 +52,8 @@ void unregister(void *)
 		VRayExporter::Instances.clear();
 	}
 
-	Error::GlobalErrorHandler &errHandler = Error::getGlobalErrorHandler();
-	errHandler.enable(false);
+	Error::ErrorChaser &errChaser = Error::getErrorChaser();
+	errChaser.enable(false);
 }
 
 
@@ -62,8 +62,8 @@ void newDriverOperator(OP_OperatorTable *table)
 	Log::getLog().info("Build %s from " __DATE__ ", " __TIME__,
 					   STRINGIZE(CGR_GIT_HASH));
 
-	Error::GlobalErrorHandler &errHandler = Error::getGlobalErrorHandler();
-	errHandler.enable(true);
+	Error::ErrorChaser &errChaser = Error::getErrorChaser();
+	errChaser.enable(true);
 
 	VRayRendererNode::register_operator(table);
 

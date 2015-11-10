@@ -17,18 +17,18 @@ namespace VRayForHoudini {
 namespace Error {
 
 
-class GlobalErrorHandler
+class ErrorChaser
 {
 public:
-	GlobalErrorHandler();
-	~GlobalErrorHandler();
+	ErrorChaser();
+	~ErrorChaser();
 
 	int isEnabled() const { return enabled; }
 	int enable(bool val);
 
 private:
-	static void terminateHandler();
-	static void printStacktrace();
+	static void crashHandler();
+	static void dumpStacktrace();
 
 private:
 	bool enabled;
@@ -36,7 +36,7 @@ private:
 
 };
 
-GlobalErrorHandler &getGlobalErrorHandler();
+ErrorChaser &getErrorChaser();
 
 } // namespace Error
 } // namespace VRayForHoudini

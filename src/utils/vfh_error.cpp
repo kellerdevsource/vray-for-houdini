@@ -11,22 +11,13 @@
 #include "vfh_error.h"
 #include "vfh_log.h"
 
-#include <stdexcept>
-#include <execinfo.h>
+#include <UT/UT_StackTrace.h>
 
 
 using namespace VRayForHoudini;
 
 
-void Error::GlobalErrorHandler::printStacktrace()
-{
-	void *array[20];
-	size_t size = backtrace(array, sizeof(array) / sizeof(array[0]));
-	backtrace_symbols_fd(array, size, STDERR_FILENO);
-}
-
-
-void Error::GlobalErrorHandler::terminateHandler()
+void Error::ErrorChaser::crashHandler()
 {
 	std::exception_ptr exptr = std::current_exception();
 	if (exptr != 0) {
@@ -45,29 +36,31 @@ void Error::GlobalErrorHandler::terminateHandler()
 		}
 	}
 	else {
-		Log::getLog().error("Terminated due to unknown reason.");
+		Log::getLog().error("Terminating due to unknown reason.");
 	}
 
-	printStacktrace();
+	UT_StackTrace stackTrace;
+	stackTrace.setVerbose(true);
+	stackTrace.doTraceback();
 
-	GlobalErrorHandler &errorHandler = getGlobalErrorHandler();
-	errorHandler.lastTerminateHnldr();
+	ErrorChaser &errChaser = getErrorChaser();
+	errChaser.lastTerminateHnldr();
 }
 
 
-Error::GlobalErrorHandler::GlobalErrorHandler():
+Error::ErrorChaser::ErrorChaser():
 	enabled(false),
 	lastTerminateHnldr(nullptr)
 { }
 
 
-Error::GlobalErrorHandler::~GlobalErrorHandler()
+Error::ErrorChaser::~ErrorChaser()
 {
 	enable(false);
 }
 
 
-int Error::GlobalErrorHandler::enable(bool val)
+int Error::ErrorChaser::enable(bool val)
 {
 	if (enabled == val) {
 		return false;
@@ -75,14 +68,14 @@ int Error::GlobalErrorHandler::enable(bool val)
 
 	if (val) {
 		vassert( isEnabled() == false );
-		vassert( errorHandler.lastTerminateHnldr == nullptr );
+		vassert( lastTerminateHnldr == nullptr );
 
-		lastTerminateHnldr = std::set_terminate(terminateHandler);
+		lastTerminateHnldr = std::set_terminate(crashHandler);
 		enabled = true;
 	}
 	else {
 		vassert( isEnabled() == true );
-		vassert( errorHandler.lastTerminateHnldr != nullptr );
+		vassert( lastTerminateHnldr != nullptr );
 
 		std::set_terminate(lastTerminateHnldr);
 		lastTerminateHnldr = nullptr;
@@ -93,8 +86,8 @@ int Error::GlobalErrorHandler::enable(bool val)
 }
 
 
-VRayForHoudini::Error::GlobalErrorHandler &VRayForHoudini::Error::getGlobalErrorHandler()
+VRayForHoudini::Error::ErrorChaser &VRayForHoudini::Error::getErrorChaser()
 {
-	static GlobalErrorHandler errorHandler;
-	return errorHandler;
+	static ErrorChaser errChaser;
+	return errChaser;
 }
