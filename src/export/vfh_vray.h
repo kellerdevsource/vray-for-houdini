@@ -35,4 +35,27 @@
 // For HDK to work properly
 #undef itoa
 
+inline VRay::Transform toAppSdkTm(const VUtils::TraceTransform &tm)
+{
+	return VRay::Transform(
+			VRay::Matrix(
+				VRay::Vector(tm.m.f[0].x, tm.m.f[0].y, tm.m.f[0].z),
+				VRay::Vector(tm.m.f[1].x, tm.m.f[1].y, tm.m.f[1].z),
+				VRay::Vector(tm.m.f[2].x, tm.m.f[2].y, tm.m.f[2].z)
+			),
+			VRay::Vector(tm.offs.x, tm.offs.y, tm.offs.z));
+}
+
+
+inline VUtils::TraceTransform toVutilsTm(const VRay::Transform &tm)
+{
+	return VUtils::TraceTransform(
+			VUtils::Matrix(
+				VUtils::Vector(tm.matrix.v0.x, tm.matrix.v0.y, tm.matrix.v0.z),
+				VUtils::Vector(tm.matrix.v1.x, tm.matrix.v1.y, tm.matrix.v1.z),
+				VUtils::Vector(tm.matrix.v2.x, tm.matrix.v2.y, tm.matrix.v2.z)
+			),
+			VUtils::Vector(tm.offset.x, tm.offset.y, tm.offset.z));
+}
+
 #endif // VRAY_FOR_HOUDINI_VRAY_H
