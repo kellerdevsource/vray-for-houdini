@@ -210,7 +210,7 @@ void VRayPluginRenderer::setImageSize(const int w, const int h)
 void VRayPluginRenderer::showVFB(const bool show)
 {
 	if (m_vray) {
-		m_vray->showFrameBuffer(show, true);
+		m_vray->vfb.show(show, true);
 	}
 }
 
