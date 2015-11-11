@@ -927,10 +927,6 @@ VRay::Plugin VRayExporter::exportVRayScene(OBJ_Node *obj_node, SOP_Node *geom_no
 	Attrs::PluginDesc pluginDesc;
 	OP::VRayNode::PluginResult res = vraySceneNode->asPluginDesc(pluginDesc, *this, static_cast<OP_Node*>(obj_node));
 	if (res == OP::VRayNode::PluginResultSuccess) {
-		const bool flip_axis = vraySceneNode->evalInt("flip_axis", 0, 0.0);
-
-		pluginDesc.addAttribute(Attrs::PluginAttr("transform", VRayExporter::getObjTransform(obj_node, m_context, flip_axis)));
-
 		return exportPlugin(pluginDesc);
 	}
 

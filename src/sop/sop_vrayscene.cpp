@@ -141,10 +141,19 @@ OP::VRayNode::PluginResult SOP::VRayScene::asPluginDesc(Attrs::PluginDesc &plugi
 		return OP::VRayNode::PluginResultError;
 	}
 
+	const bool flipAxis = evalInt("flip_axis", 0, 0.0);
+
 	pluginDesc.pluginID   = pluginID.c_str();
 	pluginDesc.pluginName = VRayExporter::getPluginName(parent->castToOBJNode());
 
-	pluginDesc.pluginAttrs.push_back(Attrs::PluginAttr("filepath", path.buffer()));
+	pluginDesc.addAttribute(Attrs::PluginAttr("filepath", path.buffer()));
+
+	VUtils::TraceTransform tm = toVutilsTm(VRayExporter::getObjTransform(parent->castToOBJNode(), exporter.getContext()));
+	if (flipAxis) {
+		tm.m = tm.m * VUtils::Vrscene::Preview::FlipMatrix;
+	}
+
+	pluginDesc.addAttribute(Attrs::PluginAttr("transform", toAppSdkTm(tm)));
 
 	exporter.setAttrsFromOpNode(pluginDesc, this);
 
