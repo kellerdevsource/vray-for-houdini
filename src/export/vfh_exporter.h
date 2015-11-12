@@ -42,6 +42,21 @@ enum VRayLightType {
 };
 
 
+struct MtlContext {
+	MtlContext(OBJ_Node *object)
+		: m_object(object)
+	{}
+
+	OBJ_Node *getObject() { return m_object; }
+
+	int       hasMaterialOverrides();
+	int       hasMaterialPromotes();
+
+private:
+	OBJ_Node *m_object;
+};
+
+
 struct GeomExportParams
 {
 	GeomExportParams():
@@ -147,7 +162,7 @@ public:
 	VRay::Plugin                   exportParticles(OBJ_Node *dop_network);
 	VRay::Plugin                   exportLight(OBJ_Node *obj_node);
 	VRay::Plugin                   exportVop(OP_Node *op_node);
-	VRay::Plugin                   exportMaterial(SHOP_Node *shop_node);
+	VRay::Plugin                   exportMaterial(SHOP_Node *shop_node, MtlContext &ctx);
 	VRay::Plugin                   exportDefaultMaterial();
 
 #ifdef CGR_HAS_VRAYSCENE

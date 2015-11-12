@@ -24,9 +24,10 @@ using namespace VRayForHoudini;
 
 // Primitive color override example
 //   "diffuser" : 1.0, "diffuseg" : 1.0, "diffuseb" : 1.0
-// We don't care about the separate channels, we have to export attribute as "diffuse",
-// so we need to go through all the "material" nodes inside the network and collect actual
-// parameters
+//
+// We don't care about the separate channels, we have to export attribute as "diffuse".
+// We need to go through all the "material" nodes inside the network and collect actual
+// parameter names. Then we'll bake float and color attributes as map channels.
 //
 void VRayExporter::collectMaterialOverrideParameters(OBJ_Node &obj)
 {

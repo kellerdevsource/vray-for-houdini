@@ -80,7 +80,7 @@ int MtlContext::hasMaterialPromotes()
 }
 
 
-VRay::Plugin VRayExporter::exportMaterial(SHOP_Node *shop_node, MtlContext ctx)
+VRay::Plugin VRayExporter::exportMaterial(SHOP_Node *shop_node, MtlContext &ctx)
 {
 	VRay::Plugin material;
 
@@ -118,20 +118,20 @@ VRay::Plugin VRayExporter::exportMaterial(SHOP_Node *shop_node, MtlContext ctx)
 
 									int componentIndex = 0;
 
-									// We are interested in a property name (like "diffuse") not component name (like "diffuser"),
+									// TODO: We are interested in a property name (like "diffuse") not component name (like "diffuser"),
 									// so if the property is a compound value (like color) ||| append component suffix to get
 									// the correct reference (because references are per-component).
 									if (parm->getVectorSize() > 1) {
+#if 0
 										propOverName += "r";
 										// We don't care about the actual index
 										componentIndex = 0;
+#endif
 									}
 
 									// Property index on a SHOP
 									const int propOverParmIdx = shopParmList->getParmIndex(propOverName.c_str());
 
-									printf("propOverParmIdx %i\n",
-										   propOverParmIdx);
 									if (propOverParmIdx >= 0) {
 										DEP_MicroNode &src = shopParmList->parmMicroNode(propOverParmIdx, componentIndex);
 

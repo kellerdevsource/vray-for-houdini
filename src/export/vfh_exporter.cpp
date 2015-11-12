@@ -636,7 +636,10 @@ void VRayExporter::RtCallbackSurfaceShop(OP_Node *caller, void *callee, OP_Event
 				UT_String shopPath;
 				shop_node->getFullPath(shopPath);
 
-				exporter.exportMaterial(shop_node);
+				// XXX: Pass all referred objects
+				MtlContext mtlCtx(nullptr);
+
+				exporter.exportMaterial(shop_node, mtlCtx);
 			}
 		}
 	}
