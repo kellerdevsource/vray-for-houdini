@@ -313,7 +313,6 @@ struct GeometryDescription
 	{
 		m_isHair = false;
 		m_description = Attrs::PluginDesc();
-		m_shopToID.clear();
 		m_transform.makeIdentity();
 		m_bbox.init();
 	}
@@ -321,7 +320,6 @@ struct GeometryDescription
 	OBJ_Geometry &m_node;
 	bool m_isHair;
 	Attrs::PluginDesc m_description;
-	SHOPToID m_shopToID;
 	VUtils::Transform m_transform;
 	VUtils::Box m_bbox;
 
@@ -355,7 +353,7 @@ private:
 	{ }
 
 	VUtils::ErrorCode cacheDescriptionForContext(const OP_Context &context, GeometryDescription &geomDescr) const;
-	VUtils::ErrorCode getDescriptionForContext(OP_Context &context, GeometryDescription& geomDescr) const;
+	VUtils::ErrorCode getDescriptionForContext(OP_Context &context, GeomExportParams &expParams, GeometryDescription& geomDescr) const;
 	void getTransformForContext(OP_Context &context, OBJ_Geometry& node, VUtils::Transform &transform) const;
 
 	void buildGeometryVoxel(VUtils::MeshVoxel& voxel, GeometryDescription &meshDescr);
@@ -458,7 +456,8 @@ VUtils::ErrorCode MeshToVRayProxy::cacheDescriptionForContext(const OP_Context &
 		return res;
 	}
 
-	res = getDescriptionForContext(cntx, geomDescr);
+	GeomExportParams expParams;
+	res = getDescriptionForContext(cntx, expParams, geomDescr);
 	if (res.error()) {
 		return res;
 	}
@@ -483,7 +482,7 @@ VUtils::ErrorCode MeshToVRayProxy::cacheDescriptionForContext(const OP_Context &
 	}
 
 	if (params.m_exportVelocity) {
-//		add velocities to description
+		// add velocities to description
 		VUtils::VectorRefList velocities(verts.size());
 		for (int i = 0; i < velocities.size(); ++i) {
 			velocities[i].set(0,0,0);
@@ -493,8 +492,12 @@ VUtils::ErrorCode MeshToVRayProxy::cacheDescriptionForContext(const OP_Context &
 		if (velocityInterval > 1e-6f) {
 			cntx.setFrame(context.getFloatFrame() + params.m_velocityEnd);
 
+			GeomExportParams nextExpParams;
+			nextExpParams.uvWeldThreshold = -1.f;
+			nextExpParams.exportMtlIds = false;
+
 			GeometryDescription nextDescr(geomDescr.m_node);
-			VUtils::ErrorCode err_code = getDescriptionForContext(cntx, nextDescr);
+			VUtils::ErrorCode err_code = getDescriptionForContext(cntx, nextExpParams, nextDescr);
 
 			if ( !err_code.error() ) {
 				VUtils::VectorRefList &nextVerts = nextDescr.getVertAttr().paramValue.valRawListVector;
@@ -527,7 +530,7 @@ void MeshToVRayProxy::getTransformForContext(OP_Context &context, OBJ_Geometry &
 	transform.offs.set(offs(0), offs(1), offs(2));
 }
 
-VUtils::ErrorCode MeshToVRayProxy::getDescriptionForContext(OP_Context &context, GeometryDescription& geomDescr) const
+VUtils::ErrorCode MeshToVRayProxy::getDescriptionForContext(OP_Context &context, GeomExportParams &expParams, GeometryDescription& geomDescr) const
 {
 	VUtils::ErrorCode res;
 
@@ -560,7 +563,7 @@ VUtils::ErrorCode MeshToVRayProxy::getDescriptionForContext(OP_Context &context,
 		exporter.exportGeomMayaHairGeom(sop_node, gdp, geomDescr.m_description);
 
 	} else {
-		exporter.exportGeomStaticMeshDesc(*gdp, geomDescr.m_shopToID, geomDescr.m_description);
+		exporter.exportGeomStaticMeshDesc(*gdp, expParams, geomDescr.m_description);
 	}
 
 	if (NOT(geomDescr.hasValidData())) {

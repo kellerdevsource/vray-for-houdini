@@ -41,6 +41,47 @@ SHOP_Node *VRayExporter::getObjMaterial(OBJ_Node *obj_node, fpreal t)
 }
 
 
+int isSmoothed(OBJ_Node &obj_node)
+{
+	bool res = false;
+	bool hasDispl = Parm::isParmExist(obj_node, "vray_use_displ") && obj_node.evalInt("vray_use_displ", 0, 0.0);
+	if (hasDispl) {
+		const int displType = obj_node.evalInt("vray_displ_type", 0, 0.0);
+		switch (displType) {
+			// from shopnet
+			case 0:
+			{
+				UT_String shopPath;
+				obj_node.evalString(shopPath, "vray_displshoppath", 0, 0.0);
+				SHOP_Node *shop_node = OPgetDirector()->findSHOPNode(shopPath.buffer());
+				if (shop_node) {
+					OP_Node *op_node = VRayExporter::FindChildNodeByType(shop_node, "vray_material_output");
+					if (   op_node
+						&& op_node->error() < UT_ERROR_ABORT)
+					{
+						const int idx = op_node->getInputFromName("Geometry");
+						VOP::NodeBase *input = dynamic_cast<VOP::NodeBase*>(op_node->getInput(idx));
+						if (   input
+							&& input->getVRayPluginID() == "GeomStaticSmoothedMesh")
+						{
+							res = true;
+						}
+					}
+				}
+				break;
+			}
+			case 2:
+			{
+				res = true;
+			}
+			default:
+				break;
+		}
+	}
+	return res;
+}
+
+
 void VRayExporter::RtCallbackNode(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
 	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
@@ -143,7 +184,7 @@ VRay::Plugin VRayExporter::exportNode(OBJ_Node *obj_node, VRay::Plugin material,
 }
 
 
-VRay::Plugin VRayExporter::exportNodeData(SOP_Node *geom_node, SHOPToID &shopToID)
+VRay::Plugin VRayExporter::exportNodeData(SOP_Node *geom_node, GeomExportParams &expParams)
 {
 	VRay::Plugin geom;
 	if (geom_node && isNodeAnimated(geom_node)) {
@@ -200,7 +241,7 @@ VRay::Plugin VRayExporter::exportNodeData(SOP_Node *geom_node, SHOPToID &shopToI
 					geom = exportGeomMayaHair(geom_node, gdp);
 				}
 				else {
-					geom = exportGeomStaticMesh(*geom_node, *gdp, shopToID);
+					geom = exportGeomStaticMesh(*geom_node, *gdp, expParams);
 				}
 			}
 		}
@@ -236,8 +277,10 @@ VRay::Plugin VRayExporter::exportObject(OBJ_Node *obj_node)
 #endif
 		}
 		else {
-			VRayForHoudini::SHOPToID shopToID;
-			VRay::Plugin geom = exportNodeData(geom_node, shopToID);
+			GeomExportParams expParams;
+			expParams.uvWeldThreshold = isSmoothed(*obj_node)? expParams.uvWeldThreshold: -1.f;
+
+			VRay::Plugin geom = exportNodeData(geom_node, expParams);
 
 			if (geom) {
 				VRay::Plugin mtl;
@@ -249,9 +292,9 @@ VRay::Plugin VRayExporter::exportObject(OBJ_Node *obj_node)
 
 					mtl = exportMaterial(shop_node);
 				}
-				else if (shopToID.size()) {
-					if (shopToID.size() == 1) {
-						OP_Node *op_node = OPgetDirector()->findNode(shopToID.begin().key());
+				else if (expParams.shopToID.size()) {
+					if (expParams.shopToID.size() == 1) {
+						OP_Node *op_node = OPgetDirector()->findNode(expParams.shopToID.begin().key());
 						if (op_node) {
 							mtl = exportMaterial(op_node->castToSHOPNode());
 						}
@@ -264,7 +307,7 @@ VRay::Plugin VRayExporter::exportObject(OBJ_Node *obj_node)
 
 						Log::getLog().info("Adding MtlMulti:");
 
-						for (SHOPToID::iterator oIt = shopToID.begin(); oIt != shopToID.end(); ++oIt) {
+						for (SHOPToID::iterator oIt = expParams.shopToID.begin(); oIt != expParams.shopToID.end(); ++oIt) {
 							const char *shop_materialpath = oIt.key();
 
 							OP_Node *op_node = OPgetDirector()->findNode(shop_materialpath);

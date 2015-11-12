@@ -42,6 +42,18 @@ enum VRayLightType {
 };
 
 
+struct GeomExportParams
+{
+	GeomExportParams():
+		uvWeldThreshold(1e-6f),
+		exportMtlIds(true)
+	{}
+
+	float uvWeldThreshold;
+	int exportMtlIds;
+	SHOPToID shopToID;
+};
+
 struct OpInterestItem {
 	OpInterestItem():
 		op_node(nullptr),
@@ -120,14 +132,14 @@ public:
 	void                           exportFrame(fpreal time);
 	void                           exportEnd();
 
-	void                           exportGeomStaticMeshDesc(const GU_Detail &gdp, SHOPToID &shopToID, Attrs::PluginDesc &geomPluginDesc);
-	VRay::Plugin                   exportGeomStaticMesh(SOP_Node &sop_node, const GU_Detail &gdp, SHOPToID &shopToID);
+	void                           exportGeomStaticMeshDesc(const GU_Detail &gdp, GeomExportParams &expParams, Attrs::PluginDesc &geomPluginDesc);
+	VRay::Plugin                   exportGeomStaticMesh(SOP_Node &sop_node, const GU_Detail &gdp, GeomExportParams &expParams);
 	void                           exportGeomMayaHairGeom(SOP_Node *sop_node, const GU_Detail *gdp, Attrs::PluginDesc &pluginDesc);
 	VRay::Plugin                   exportGeomMayaHair(SOP_Node *sop_node, const GU_Detail *gdp);
 
 	void                           exportDisplacementDesc(OBJ_Node *obj_node, Attrs::PluginDesc &pluginDesc);
 	VRay::Plugin                   exportDisplacement(OBJ_Node *obj_node, VRay::Plugin &geomPlugin);
-	VRay::Plugin                   exportNodeData(SOP_Node *sop_node, SHOPToID &shopToID);
+	VRay::Plugin                   exportNodeData(SOP_Node *sop_node, GeomExportParams &expParams);
 	VRay::Plugin                   exportNode(OBJ_Node *obj_node, VRay::Plugin material, VRay::Plugin geometry);
 	VRay::Plugin                   exportObject(OBJ_Node *obj_node);
 	VRay::Plugin                   exportParticles(OBJ_Node *dop_network);
