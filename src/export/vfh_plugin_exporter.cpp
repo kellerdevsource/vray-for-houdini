@@ -181,7 +181,7 @@ int VRayPluginRenderer::initRenderer(int hasUI, int reInit)
 					m_vray->setOnBucketReady(OnBucketReady,       (void*)&m_callbacks.m_cbOnBucketReady);
 				}
 			}
-			catch (std::exception &e) {
+			catch (VRay::VRayException &e) {
 				Log::getLog().error("Error initializing V-Ray! Error: \"%s\"",
 									e.what());
 				m_vray = nullptr;
