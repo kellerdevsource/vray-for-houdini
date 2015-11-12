@@ -71,8 +71,7 @@ void VRayExporter::collectMaterialOverrideParameters(OBJ_Node &obj)
 }
 
 
-struct GeomExportData
-{
+struct GeomExportData {
 	VUtils::VectorRefList vertices;
 	VUtils::VectorRefList normals;
 	VUtils::IntRefList faces;
@@ -89,13 +88,12 @@ void vertexAttrAsMapChannel(const GU_Detail &gdp, const GA_Attribute &vertexAttr
 	GA_ROPageHandleV3 vaPageHndl(&vertexAttr);
 	GA_ROHandleV3 vaHndl(&vertexAttr);
 
-	vassert( vaPageHndl.isValid() );
-	vassert( vaHndl.isValid() );
-
+	vassert(vaPageHndl.isValid());
+	vassert(vaHndl.isValid());
 
 	map_channel.name = GA::getGaAttributeName(vertexAttr);
 	Log::getLog().info("  Found map channel: %s",
-						map_channel.name.c_str());
+					   map_channel.name.c_str());
 
 	if (expParams.uvWeldThreshold > 0) {
 		// weld vertex attribute values before populating the map channel
@@ -109,21 +107,20 @@ void vertexAttrAsMapChannel(const GU_Detail &gdp, const GA_Attribute &vertexAttr
 		}
 
 		// Init map channel data
-	#if CGR_USE_LIST_RAW_TYPES
+#if CGR_USE_LIST_RAW_TYPES
 		map_channel.vertices = VUtils::VectorRefList(map_channel.verticesSet.size());
 		map_channel.faces = VUtils::IntRefList(numFaces * 3);
-	#else
+#else
 		map_channel.vertices.resize(map_channel.verticesSet.size());
 		map_channel.faces.resize(numFaces * 3);
-	#endif
+#endif
 
 		int i = 0;
 		for (auto &mv: map_channel.verticesSet) {
 			mv.index = i;
 			map_channel.vertices[i++].set(mv.v[0], mv.v[1], mv.v[2]);
 		}
-		vassert( i == map_channel.vertices.size() );
-
+		vassert(i == map_channel.vertices.size());
 
 		// Process map channels (uv and other tuple(3) attributes)
 		//
@@ -156,13 +153,13 @@ void vertexAttrAsMapChannel(const GU_Detail &gdp, const GA_Attribute &vertexAttr
 		// populate map channel with original values
 
 		// Init map channel data
-	#if CGR_USE_LIST_RAW_TYPES
+#if CGR_USE_LIST_RAW_TYPES
 		map_channel.vertices = VUtils::VectorRefList(gdp.getNumVertices());
 		map_channel.faces = VUtils::IntRefList(numFaces * 3);
-	#else
+#else
 		map_channel.vertices.resize(gdp.getNumVertices());
 		map_channel.faces.resize(numFaces * 3);
-	#endif
+#endif
 
 		int i = 0;
 		GA_Offset start, end;
@@ -173,7 +170,7 @@ void vertexAttrAsMapChannel(const GU_Detail &gdp, const GA_Attribute &vertexAttr
 				map_channel.vertices[i++].set(val[0], val[1], val[2]);
 			}
 		}
-		vassert( i == gdp.getNumVertices() );
+		vassert(i == gdp.getNumVertices());
 
 		i = 0;
 		GA_Index vi = 0;
@@ -209,7 +206,7 @@ void vertexAttrAsMapChannel(const GU_Detail &gdp, const GA_Attribute &vertexAttr
 			vi += prim->getVertexCount();
 		}
 
-		vassert( i == map_channel.faces.size() );
+		vassert(i == map_channel.faces.size());
 	}
 }
 
@@ -218,19 +215,17 @@ void exportVertexAttrs(const GU_Detail &gdp, GeomExportParams &expParams, GeomEx
 {
 	// add all vector3 vertex attributes to map_channels_data
 	GA_AttributeFilter float3Filter(GA_ATTRIB_FILTER_AND, GA_AttributeFilter::selectFloatTuple(), GA_AttributeFilter::selectByTupleSize(3));
-	for (GA_AttributeDict::iterator attrIt = gdp.getAttributeDict(GA_ATTRIB_VERTEX).begin(GA_SCOPE_PUBLIC); !attrIt.atEnd(); ++attrIt)
-	{
+	for (GA_AttributeDict::iterator attrIt = gdp.getAttributeDict(GA_ATTRIB_VERTEX).begin(GA_SCOPE_PUBLIC); !attrIt.atEnd(); ++attrIt) {
 		const std::string attrName(attrIt.name());
 		// "N" point attribute is handled separately as different plugin property
 		// so skip it here
-		if (StrEq(attrIt.name(), "N"))
-		{
+		if (StrEq(attrIt.name(), "N")) {
 			continue;
 		}
 
-		if (   attrIt.attrib()
-			&& float3Filter.match(attrIt.attrib())
-			&& NOT(expData.map_channels_data.count(attrName)) )
+		if (attrIt.attrib() &&
+			float3Filter.match(attrIt.attrib()) &&
+			NOT(expData.map_channels_data.count(attrName)))
 		{
 			Mesh::MapChannel &map_channel = expData.map_channels_data[attrName];
 			vertexAttrAsMapChannel(gdp, *attrIt.attrib(), expData.numFaces, expParams, map_channel);
@@ -243,14 +238,12 @@ void exportPointAttrs(const GU_Detail &gdp, GeomExportParams &expParams, GeomExp
 {
 	// add all vector3 point attributes to map_channels_data
 	GA_AttributeFilter float3Filter(GA_ATTRIB_FILTER_AND, GA_AttributeFilter::selectFloatTuple(), GA_AttributeFilter::selectByTupleSize(3));
-	for (GA_AttributeDict::iterator attrIt = gdp.getAttributeDict(GA_ATTRIB_POINT).begin(GA_SCOPE_PUBLIC); !attrIt.atEnd(); ++attrIt)
-	{
+	for (GA_AttributeDict::iterator attrIt = gdp.getAttributeDict(GA_ATTRIB_POINT).begin(GA_SCOPE_PUBLIC); !attrIt.atEnd(); ++attrIt) {
 		const std::string attrName(attrIt.name());
 		// "P" and "N" point attributes are handled separately as different plugin properties
 		// so skip them here
-		if (   StrEq(attrIt.name(), "P")
-			|| StrEq(attrIt.name(), "N"))
-		{
+		if (StrEq(attrIt.name(), "P") ||
+			StrEq(attrIt.name(), "N")) {
 			continue;
 		}
 
@@ -269,7 +262,6 @@ void exportPointAttrs(const GU_Detail &gdp, GeomExportParams &expParams, GeomExp
 					map_channel.vertices.resize(gdp.getNumPoints());
 					map_channel.faces.assign(expData.faces.get(), expData.faces.get() + expData.faces.size());
 #endif
-
 					GA_Offset start, end;
 					int vidx = 0;
 					for (GA_Iterator it(gdp.getPointRange()); it.blockAdvance(start, end); ) {
@@ -279,7 +271,7 @@ void exportPointAttrs(const GU_Detail &gdp, GeomExportParams &expParams, GeomExp
 							map_channel.vertices[vidx++].set(val[0], val[1], val[2]);
 						}
 					}
-					vassert( vidx == gdp.getNumPoints() );
+					vassert(vidx == gdp.getNumPoints());
 				}
 			}
 		}
@@ -321,7 +313,7 @@ void VRayExporter::exportGeomStaticMeshDesc(const GU_Detail &gdp, GeomExportPara
 
 	// NOTE: Support only tri-faces for now
 	// TODO:
-	//   [ ] > 4 vertex faces support (GU_PrimPacked)
+	//   [ ] > 4 vertex faces support
 	//   [x] edge_visibility
 	//
 	GA_ROAttributeRef ref_shop_materialpath = gdp.findStringTuple(GA_ATTRIB_PRIMITIVE, "shop_materialpath");
@@ -351,17 +343,7 @@ void VRayExporter::exportGeomStaticMeshDesc(const GU_Detail &gdp, GeomExportPara
 			}
 		}
 	}
-#if 0
-	if (shopToID.size()) {
-		Log::getLog().info("Materials list: %i",
-					expInfo.shopToID.size());
 
-		for (SHOPToID::iterator oIt = expInfo.shopToID.begin(); oIt != expInfo.shopToID.end(); ++oIt) {
-			Log::getLog().info("  %i: \"%s\"",
-						oIt.data(), oIt.key());
-		}
-	}
-#endif
 	expData.faces = VUtils::IntRefList(expData.numFaces * 3);
 	expData.face_mtlIDs = VUtils::IntRefList(expData.numFaces);
 	expData.edge_visibility = VUtils::IntRefList(expData.numFaces / 10 + ((expData.numFaces % 10 > 0) ? 1 : 0));
@@ -442,7 +424,6 @@ void VRayExporter::exportGeomStaticMeshDesc(const GU_Detail &gdp, GeomExportPara
 	exportVertexAttrs(gdp, expParams, expData);
 	exportPointAttrs(gdp, expParams, expData);
 
-	//	description
 	geomPluginDesc.addAttribute(Attrs::PluginAttr("vertices", expData.vertices));
 	geomPluginDesc.addAttribute(Attrs::PluginAttr("faces", expData.faces));
 	geomPluginDesc.addAttribute(Attrs::PluginAttr("face_mtlIDs", expData.face_mtlIDs));
