@@ -101,7 +101,7 @@ struct AppSdkInit {
 			m_vrayInit = new VRay::VRayInit(true);
 #endif
 		}
-		catch (std::exception &e) {
+		catch (VRay::VRayException &e) {
 			Log::getLog().error("Error initializing V-Ray library! Error: \"%s\"",
 								e.what());
 			m_vrayInit = nullptr;

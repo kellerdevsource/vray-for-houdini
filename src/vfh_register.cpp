@@ -11,6 +11,7 @@
 #include "vfh_defines.h"
 #include "vfh_class_utils.h"
 #include "vfh_log.h"
+#include "utils/vfh_error.h"
 
 #include "vfh_rop.h"
 #include "obj/obj_node_def.h"
@@ -26,6 +27,7 @@
 #include "vop/rc/vop_rc_def.h"
 #include "vop/env/vop_env_def.h"
 #include "cmd/vfh_cmd_register.h"
+
 
 // For newShopOperator()
 #include <SHOP/SHOP_Node.h>
@@ -49,6 +51,9 @@ void unregister(void *)
 		}
 		VRayExporter::Instances.clear();
 	}
+
+	Error::ErrorChaser &errChaser = Error::getErrorChaser();
+	errChaser.enable(false);
 }
 
 
@@ -56,6 +61,9 @@ void newDriverOperator(OP_OperatorTable *table)
 {
 	Log::getLog().info("Build %s from " __DATE__ ", " __TIME__,
 					   STRINGIZE(CGR_GIT_HASH));
+
+	Error::ErrorChaser &errChaser = Error::getErrorChaser();
+	errChaser.enable(true);
 
 	VRayRendererNode::register_operator(table);
 
