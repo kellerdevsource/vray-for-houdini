@@ -18,6 +18,7 @@ import tempfile
 
 # Build mode: 'nightly', 'stable', 'debug'
 _cgr_build_mode = os.environ['CGR_BUILD_MODE']
+_cgr_build_type = os.environ['CGR_BUILD_TYPE']
 
 
 def toCmakePath(path):
@@ -180,18 +181,19 @@ def main(args):
     srcHash = args.src_hash[:7]
 
     ReleaseDir = os.path.expanduser("~/release/vray_for_houdini/%s" % sys.platform)
-    ReleaseArchive = os.path.join(ReleaseDir, "vfh-{BUILD_NUMBER}-{SRC_GIT_HASH}-hfs{HOUDINI_VERSION}.{HOUDINI_VERSION_BUILD}-{OS}.{EXT}".format(
+    ReleaseArchive = os.path.join(ReleaseDir, "vfh-{BUILD_NUMBER}-{SRC_GIT_HASH}-hfs{HOUDINI_VERSION}.{HOUDINI_VERSION_BUILD}-{OS}{DEBUG}.{EXT}".format(
         SRC_GIT_HASH=srcHash,
         HOUDINI_VERSION=os.environ['CGR_HOUDINI_VERSION'],
         HOUDINI_VERSION_BUILD=os.environ['CGR_HOUDINI_VERSION_BUILD'],
         EXT=getArchiveExt(),
         OS=getPlatformSuffix(),
         BUILD_NUMBER=os.environ['BUILD_NUMBER'],
+        DEBUG="-dbg" if _cgr_build_type == "Debug" else "",
     ))
 
     cmake = ["cmake"]
     cmake.append('-GNinja')
-    cmake.append('-DCMAKE_BUILD_TYPE=%s' % os.environ['CGR_BUILD_TYPE'])
+    cmake.append('-DCMAKE_BUILD_TYPE=%s' % _cgr_build_type)
     cmake.append('-DHOUDINI_VERSION=%s'       % os.environ['CGR_HOUDINI_VERSION'])
     cmake.append('-DHOUDINI_VERSION_BUILD=%s' % os.environ['CGR_HOUDINI_VERSION_BUILD'])
     cmake.append('-DAPPSDK_VERSION=%s'        % os.environ['CGR_APPSDK_VERSION'])
@@ -208,6 +210,8 @@ def main(args):
     cmake.append('-DINSTALL_LOCAL=OFF')
     cmake.append('-DINSTALL_RELEASE=ON')
     cmake.append('-DINSTALL_RELEASE_ROOT=%s' % toCmakePath(ReleaseDir))
+    if _cgr_build_type == "Debug":
+        cmake.append('-DINSTALL_RELEASE_SUFFIX=-dbg')
     cmake.append('-DINSTALL_RELEASE_ARCHIVE_FILEPATH=%s' % toCmakePath(ReleaseArchive))
     cmake.append(args.src_dir)
 
