@@ -11,6 +11,7 @@
 if(WIN32)
 	# Houdini specific
 	set(CMAKE_CXX_FLAGS "/wd4355 /w14996 /wd4800 /wd4244 /wd4305 /wd4251 /wd4275 /wd4396 /wd4018 /wd4267 /wd4146 /EHsc /GT /bigobj")
+	set(CMAKE_CXX_FLAGS_DEBUG "/Od /MD /Zi /DNDEBUG")
 
 else()
 	set(CMAKE_CXX_FLAGS       "-std=c++11")
