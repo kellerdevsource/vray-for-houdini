@@ -281,6 +281,8 @@ VRay::Plugin VRayExporter::exportObject(OBJ_Node *obj_node)
 			GeomExportParams expParams;
 			expParams.uvWeldThreshold = isSmoothed(*obj_node)? expParams.uvWeldThreshold: -1.f;
 
+			collectMaterialOverrideParameters(*obj_node);
+
 			VRay::Plugin geom = exportNodeData(geom_node, expParams);
 
 			if (geom) {

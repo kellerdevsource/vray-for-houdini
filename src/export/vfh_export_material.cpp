@@ -29,19 +29,20 @@ using namespace VRayForHoudini;
 
 
 struct MaterialOverrideLink {
-	MaterialOverrideLink(OP_Node &fromObject, const std::string &fromAttr, OP_Node &targetVOP)
+	MaterialOverrideLink(OP_Node &fromObject, const std::string &fromAttr, OP_Node &targetVOP, const std::string &targetAttr)
 		: fromObject(fromObject)
 		, fromAttr(fromAttr)
 		, targetVOP(targetVOP)
+		, targetAttr(targetAttr)
 	{}
 
 	OP_Node     &fromObject; // Object that overrides the attribute value
 	std::string  fromAttr;   // Object's attrubute name (could be different from target VOP name)
 	OP_Node     &targetVOP;  // Target VOP to override property on
+	std::string  targetAttr; // Target VOP attrubute name
 };
 
-// Key: Target VOP attribute name
-typedef std::map<std::string, MaterialOverrideLink>  MaterialOverrideLinks;
+typedef std::vector<MaterialOverrideLink>  MaterialOverrideLinks;
 
 
 int MtlContext::hasMaterialOverrides()
@@ -82,7 +83,7 @@ int MtlContext::hasMaterialPromotes()
 
 VRay::Plugin VRayExporter::exportMaterial(SHOP_Node *shop_node, MtlContext &ctx)
 {
-	VRay::Plugin material;
+	VRay::Plugin material = exportDefaultMaterial();
 
 	OP_Node *op_node = VRayExporter::FindChildNodeByType(shop_node, "vray_material_output");
 	if (!op_node) {
@@ -146,9 +147,7 @@ VRay::Plugin VRayExporter::exportMaterial(SHOP_Node *shop_node, MtlContext &ctx)
 													OP_Node *referringNode = referringParmOwner->castToOPNode();
 													if (referringNode) {
 														// Adding material override link
-														mtlOverLinks.emplace(std::piecewise_construct,
-																			 std::forward_as_tuple(referringParm.getToken()),
-																			 std::forward_as_tuple(static_cast<OP_Node&>(obj), propOverName, *referringNode));
+														mtlOverLinks.emplace_back(static_cast<OP_Node&>(obj), propOverName, *referringNode, referringParm.getToken());
 														break;
 													}
 												}
@@ -163,10 +162,10 @@ VRay::Plugin VRayExporter::exportMaterial(SHOP_Node *shop_node, MtlContext &ctx)
 
 				for (const auto &mtlOverLink : mtlOverLinks) {
 					Log::getLog().msg("  Object's \'%s\' prop \'%s\' overrides \'%s\' from \'%s\'",
-									  mtlOverLink.second.fromObject.getName().buffer(),
-									  mtlOverLink.second.fromAttr.c_str(),
-									  mtlOverLink.first.c_str(),
-									  mtlOverLink.second.targetVOP.getName().buffer());
+									  mtlOverLink.fromObject.getName().buffer(),
+									  mtlOverLink.fromAttr.c_str(),
+									  mtlOverLink.targetAttr.c_str(),
+									  mtlOverLink.targetVOP.getName().buffer());
 				}
 			}
 		}
@@ -198,10 +197,10 @@ VRay::Plugin VRayExporter::exportMaterial(SHOP_Node *shop_node, MtlContext &ctx)
 											mtl_out->getName().buffer(), idx);
 				}
 
-				if (material) {
+
+				if (material && isIPR()) {
 					// Wrap material into MtlRenderStats to always have the same material name
 					// Used when rewiring materials when running interactive RT session
-					// TODO: Do not use for non-interactive export
 					Attrs::PluginDesc pluginDesc(VRayExporter::getPluginName(mtl_out->getParent(), "Mtl@"), "MtlRenderStats");
 					pluginDesc.addAttribute(Attrs::PluginAttr("base_mtl", material));
 					material = exportPlugin(pluginDesc);

@@ -12,14 +12,123 @@
 #include "vfh_mesh_utils.h"
 #include "vfh_ga_utils.h"
 
+#include <SHOP/SHOP_Node.h>
+#include <PRM/PRM_ParmMicroNode.h>
+
 #include <SOP/SOP_Node.h>
 #include <GU/GU_Detail.h>
 #include <GU/GU_PrimPolySoup.h>
 #include <UT/UT_Version.h>
 #include <GA/GA_PageHandle.h>
 
+#include "rapidjson/document.h"
+#include "rapidjson/error/en.h"
+
+#include <boost/algorithm/string.hpp>
+
+
+namespace rapidjson {
+
+static const char* TypeNames[] = {
+	"Null",
+	"False",
+	"True",
+	"Object",
+	"Array",
+	"String",
+	"Number",
+};
+
+}
+
 
 using namespace VRayForHoudini;
+
+
+struct GeomExportData {
+	VUtils::VectorRefList vertices;
+	VUtils::VectorRefList normals;
+	VUtils::IntRefList faces;
+	VUtils::IntRefList face_mtlIDs;
+	VUtils::IntRefList edge_visibility;
+	Mesh::MapChannels map_channels_data;
+	int numFaces;
+	int numMtlIDs;
+};
+
+
+//
+// MATERIAL OVERRIDE
+// * Go through all "material" OBJ child nodes and collect override attribute names and types.
+// * Find target VOP's to override attribute at.
+// * Bake color and float attributes into mesh's map channles.
+// * Check override type and descide whether to export a separate material or:
+//   - Override attribute with mesh's map channel (using TexUserColor or TexUser)
+//   - Override attribute with texture id map (using TexMultiID)
+//
+
+// Houdini override type
+enum HdkOverrideType {
+	HdkOverrideInt = 0,
+	HdkOverrideFloat,
+	HdkOverrideString,
+	HdkOverrideColor,
+	HdkOverrideTuple2,
+	HdkOverrideTuple3,
+	HdkOverrideTuple4,
+};
+
+
+// V-Ray override mode
+enum AttrOverrideMode {
+	AttrOverrideUnsupported = -1,
+	AttrOverrideMapChannelInt,
+	AttrOverrideMapChannelColor,
+	AttrOverrideMapChannelFloat,
+	AttrOverrideTexID,
+};
+
+
+struct AttrOverride {
+	// Override type
+	HdkOverrideType   overrideType;
+
+	// Override attr name in JSON string
+	std::string       overrideName;
+
+	// Target attribute on a VOP node to override
+	std::string       targetAttr;
+
+	// Target node to override attribute at
+	OP_Node          *targetNode;
+
+	// Map channel name to take attribute from
+	std::string       channelName;
+
+	// Face ID to map texture to
+	int               faceId;
+
+	// Bitmap filepath
+	std::string       filepath;
+
+	bool operator == (const AttrOverride &other) const {
+		// NOTE: faceId could be different and it's correct
+		return (MemberEq(overrideType) &&
+				MemberEq(targetAttr) &&
+				MemberEq(targetNode) &&
+				MemberEq(channelName) &&
+				MemberEq(filepath));
+	}
+
+	bool operator != (const AttrOverride &other) const { return !(*this == other); }
+
+};
+
+
+typedef std::vector<AttrOverride> AttrOverrides;
+
+
+AttrOverrides testAttrOverrides;
 
 
 // Primitive color override example
@@ -29,6 +138,63 @@ using namespace VRayForHoudini;
 // We need to go through all the "material" nodes inside the network and collect actual
 // parameter names. Then we'll bake float and color attributes as map channels.
 //
+
+static boost::format FmtR("%sr");
+
+
+struct RefVopParm {
+	RefVopParm()
+		: vop(nullptr)
+		, parm(nullptr)
+	{}
+	RefVopParm(OP_Node *_vop, const PRM_Parm *_parm)
+		: vop(_vop)
+		, parm(_parm)
+	{}
+
+	operator bool () const {
+		return (vop && parm);
+	}
+
+	OP_Node        *vop;
+	const PRM_Parm *parm;
+};
+
+
+static RefVopParm getVopFromShopPromote(SHOP_Node *shopNode, const std::string &attrName)
+{
+	RefVopParm refVop;
+
+	PRM_ParmList *shopParmList = shopNode->getParmList();
+	if (shopParmList) {
+		// Property index on a SHOP
+		const int parmIndex = shopParmList->getParmIndex(attrName.c_str());
+
+		if (parmIndex >= 0) {
+			DEP_MicroNode &src = shopParmList->parmMicroNode(parmIndex, 0);
+
+			DEP_MicroNodeList outputs;
+			src.getOutputs(outputs);
+			for (int i = 0; i < outputs.entries(); ++i) {
+				PRM_ParmMicroNode *micronode = dynamic_cast<PRM_ParmMicroNode*>(outputs(i));
+				if (micronode) {
+					const PRM_Parm &referringParm = micronode->ownerParm();
+					PRM_ParmOwner  *referringParmOwner = referringParm.getParmOwner();
+					if (referringParmOwner) {
+						refVop.vop  =  referringParmOwner->castToOPNode();
+						refVop.parm = &referringParm;
+						std::cout << referringParm.getToken() << std::endl;
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	return refVop;
+}
+
+
 void VRayExporter::collectMaterialOverrideParameters(OBJ_Node &obj)
 {
 	const fpreal t = m_context.getTime();
@@ -48,20 +214,52 @@ void VRayExporter::collectMaterialOverrideParameters(OBJ_Node &obj)
 					UT_String shopMaterial;
 					node->evalString(shopMaterial, boost::str(FmtShopPath % mtlIdx).c_str(), 0, t);
 					if (shopMaterial.length()) {
-						static boost::format FmtNumLocal("num_local%i");
+						OP_Node *shopOpNode = OPgetDirector()->findNode(shopMaterial.buffer());
+						if (shopOpNode) {
+							SHOP_Node *shopNode = shopOpNode->castToSHOPNode();
+							if (shopNode) {
+								static boost::format FmtNumLocal("num_local%i");
 
-						const int numLocal = node->evalInt(boost::str(FmtNumLocal % mtlIdx).c_str(), 0, t);
-						for (int localIdx = 1; localIdx <= numLocal; ++localIdx) {
-							static boost::format FmtLocalName("local%i_name%i");
-							static boost::format FmtLocalType("local%i_type%i");
+								const int numLocal = node->evalInt(boost::str(FmtNumLocal % mtlIdx).c_str(), 0, t);
+								for (int localIdx = 1; localIdx <= numLocal; ++localIdx) {
+									static boost::format FmtLocalName("local%i_name%i");
+									static boost::format FmtLocalType("local%i_type%i");
 
-							UT_String localName;
-							node->evalString(localName, boost::str(FmtLocalName % mtlIdx % localIdx).c_str(), 0, t);
-							if (localName.length()) {
-								const int localType = node->evalInt(boost::str(FmtLocalType % mtlIdx % localIdx).c_str(), 0, t);
+									UT_String localName;
+									node->evalString(localName, boost::str(FmtLocalName % mtlIdx % localIdx).c_str(), 0, t);
+									if (localName.length()) {
+										UT_String localTypeStr;
+										node->evalString(localTypeStr, boost::str(FmtLocalType % mtlIdx % localIdx).c_str(), 0, t);
 
-								Log::getLog().msg("  Found override \"%s\" [%i] for material \"%s\"",
-												  localName.buffer(), localType, shopMaterial.buffer());
+										Log::getLog().msg("  Found override \"%s\" [%s] for material \"%s\"",
+														  localName.buffer(), localTypeStr.buffer(), shopMaterial.buffer());
+
+										HdkOverrideType localType;
+										if (localTypeStr == "color") {
+											localType = HdkOverrideColor;
+										}
+										else if (localTypeStr == "float") {
+											localType = HdkOverrideFloat;
+										}
+										else if (localTypeStr == "int") {
+											localType = HdkOverrideInt;
+										}
+
+										// Find associated VOP
+										RefVopParm refVop = getVopFromShopPromote(shopNode, localName.buffer());
+										if (refVop) {
+											// If VOP is valid then add override
+											AttrOverride ao;
+											ao.overrideType = localType;
+											ao.overrideName = localName.buffer();
+
+											ao.targetAttr = refVop.parm->getToken();
+											ao.targetNode = refVop.vop;
+
+											testAttrOverrides.push_back(ao);
+										}
+									}
+								}
 							}
 						}
 					}
@@ -72,16 +270,68 @@ void VRayExporter::collectMaterialOverrideParameters(OBJ_Node &obj)
 }
 
 
-struct GeomExportData {
-	VUtils::VectorRefList vertices;
-	VUtils::VectorRefList normals;
-	VUtils::IntRefList faces;
-	VUtils::IntRefList face_mtlIDs;
-	VUtils::IntRefList edge_visibility;
-	Mesh::MapChannels map_channels_data;
-	int numFaces;
-	int numMtlIDs;
-};
+static void exportPrimitiveAttrs(const GU_Detail &gdp, GeomExportParams &expParams, GeomExportData &expData)
+{
+	const GA_ROHandleS materialOverrideHndl(gdp.findStringTuple(GA_ATTRIB_PRIMITIVE, "material_override"));
+	if (materialOverrideHndl.isValid()) {
+		for (GA_Iterator offIt(gdp.getPrimitiveRange()); !offIt.atEnd(); offIt.advance()) {
+			const GA_Offset off = *offIt;
+
+			const char *materialOverridePtr = materialOverrideHndl.get(off);
+			if (materialOverridePtr && *materialOverridePtr) {
+				std::string materialOverride(materialOverridePtr);
+
+				// "material_override" string is JSON, but slightly incorrect for some reason.
+				// Replace "'" with '"'
+				boost::replace_all(materialOverride, "\'", "\"");
+				// Remove last ','
+				std::size_t lastCommaPos = materialOverride.find_last_of(",");
+				if (lastCommaPos != std::string::npos) {
+					materialOverride.erase(lastCommaPos, 1);
+				}
+
+				rapidjson::Document document;
+				document.Parse(materialOverride.c_str());
+
+				rapidjson::ParseErrorCode err = document.GetParseError();
+				if (err) {
+					Log::getLog().error("String \"%s\" JSON parse error: %s (%u)",
+										materialOverridePtr, rapidjson::GetParseError_En(err), document.GetErrorOffset());
+				}
+				else {
+					for (rapidjson::Value::ConstMemberIterator itr = document.MemberBegin(); itr != document.MemberEnd(); ++itr) {
+						Log::getLog().msg("  Found override \"%s\" [%s]",
+										  itr->name.GetString(), rapidjson::TypeNames[itr->value.GetType()]);
+					}
+
+					// Since we can't get attribute name directly from the parsed data we'll:
+					//  * Go through the attribute names from override links
+					//  * Check if found
+					//  * Check it's type and bake if needed
+					//
+					for (const auto &ao : testAttrOverrides) {
+						if (ao.overrideType == HdkOverrideFloat) {
+							if (document.HasMember(ao.overrideName.c_str())) {
+								Log::getLog().msg("  Override float: \"%s\" for \"%s\" of \"%s\"",
+												  ao.overrideName.c_str(),
+												  ao.targetAttr.c_str(),
+												  ao.targetNode->getName().buffer());
+							}
+						}
+						else if (ao.overrideType == HdkOverrideColor) {
+							if (document.HasMember(boost::str(FmtR % ao.overrideName).c_str())) {
+								Log::getLog().msg("  Override color: \"%s\" for \"%s\" of \"%s\"",
+												  ao.overrideName.c_str(),
+												  ao.targetAttr.c_str(),
+												  ao.targetNode->getName().buffer());
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
 
 
 void vertexAttrAsMapChannel(const GU_Detail &gdp, const GA_Attribute &vertexAttr, int numFaces, GeomExportParams &expParams, Mesh::MapChannel &map_channel)
@@ -424,6 +674,7 @@ void VRayExporter::exportGeomStaticMeshDesc(const GU_Detail &gdp, GeomExportPara
 
 	exportVertexAttrs(gdp, expParams, expData);
 	exportPointAttrs(gdp, expParams, expData);
+	exportPrimitiveAttrs(gdp, expParams, expData);
 
 	geomPluginDesc.addAttribute(Attrs::PluginAttr("vertices", expData.vertices));
 	geomPluginDesc.addAttribute(Attrs::PluginAttr("faces", expData.faces));
