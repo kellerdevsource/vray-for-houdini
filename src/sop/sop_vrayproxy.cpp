@@ -212,8 +212,12 @@ public:
 /// @brief Clears cache
 	void clearCache()
 	{
-		m_frameCache->clear();
-		m_itemCache->clear();
+		if (m_frameCache) {
+			m_frameCache->clear();
+		}
+		if (m_itemCache) {
+			m_itemCache->clear();
+		}
 	}
 
 	size_type capacity() const { return m_frameCache->capacity(); }
