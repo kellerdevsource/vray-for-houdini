@@ -73,6 +73,7 @@ add_definitions(-DCGR_GIT_HASH=${SRC_GIT_HASH})
 set(INSTALL_RELEASE_SUBDIR "vfh-${SRC_GIT_HASH}${INSTALL_RELEASE_SUFFIX}")
 
 file(GLOB VFH_SHELVES ${CMAKE_SOURCE_DIR}/deploy/vfh*.shelf)
+file(GLOB VFH_BGEO ${CMAKE_SOURCE_DIR}/deploy/vfh*.bgeo)
 
 option(INSTALL_LOCAL "Install files locally" ON)
 if(INSTALL_LOCAL)
@@ -85,6 +86,9 @@ if(INSTALL_LOCAL)
 
 	install(FILES       ${CMAKE_SOURCE_DIR}/deploy/ROP_vray.svg
 			DESTINATION ${HOUDINI_HOME_PATH}/config/Icons)
+
+	install(FILES       ${VFH_BGEO}
+			DESTINATION ${HOUDINI_HOME_PATH}/geo)
 
 	# Install py modules locally
 	#
