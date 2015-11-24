@@ -10,6 +10,7 @@
 
 #include "obj_LightDome.h"
 
+#include <unordered_set>
 
 using namespace VRayForHoudini;
 
@@ -20,10 +21,29 @@ static PRM_Name  prm_dome_tex("dome_tex_op", "Dome Texture");
 
 void OBJ::LightDome::addPrmTemplate(Parm::PRMTmplList &prmTemplate)
 {
-	PRM_Template *defTmpl = OBJ_Light::getTemplateList(OBJ_PARMS_PLAIN);
-	while (defTmpl->getType() != PRM_LIST_TERMINATOR) {
-		prmTemplate.push_back(*defTmpl);
-		defTmpl++;
+	UT_String parmName;
+	PRM_Template *defTmplList = OBJ_Light::getTemplateList(OBJ_PARMS_PLAIN);
+	for (int i = 0; i < PRM_Template::countTemplates(defTmplList); ++i) {
+		prmTemplate.push_back(*(defTmplList + i));
+		PRM_Template &prmTmpl = prmTemplate.back();
+
+		int switcherIdx = -1;
+		int folderIdx = -1;
+		PRM_Template::getEnclosingSwitcherFolder(defTmplList, i, switcherIdx, folderIdx);
+		if (   switcherIdx == 0
+			&& folderIdx ==0 )
+		{
+			prmTmpl.getToken(parmName);
+			if (   parmName != "xOrd"
+				&& parmName != "rOrd"
+				&& parmName != "r"
+				&& parmName != "lookatpath"
+				&& parmName != "lookup" )
+			{
+				prmTmpl.setInvisible(true);
+			}
+		}
+
 	}
 
 	prmTemplate.push_back(PRM_Template(PRM_HEADING, 1, &prm_heading));
