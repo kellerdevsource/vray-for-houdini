@@ -131,8 +131,7 @@ void VRayExporter::fillCameraData(const OBJ_Node &camera, const OP_Node &rop, Vi
 	viewParams.renderView.stereoParams.stereo_view               = Parm::getParmInt(rop,   "VRayStereoscopicSettings.view");
 	viewParams.renderView.stereoParams.adjust_resolution         = Parm::getParmInt(rop,   "VRayStereoscopicSettings.adjust_resolution");
 
-	if (isGPU() &&
-		viewParams.renderView.stereoParams.use &&
+	if (viewParams.renderView.stereoParams.use &&
 		viewParams.renderView.stereoParams.adjust_resolution)
 	{
 		viewParams.renderSize.w *= 2;
