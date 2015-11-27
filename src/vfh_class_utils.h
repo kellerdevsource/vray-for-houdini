@@ -31,7 +31,7 @@ OP_Node* VFH_VRAY_NODE_CREATOR(OP_Network *parent, const char *name, OP_Operator
 		/* Internal name     */ "VRayNode" STRINGIZE(OpClass), \
 		/* UI name           */ "V-Ray " STRINGIZE(OpClass), \
 		/* How to create one */ VFH_VRAY_NODE_CREATOR<OBJ::OpClass>, \
-		/* Parm definitions  */ Parm::getPrmTemplate(STRINGIZE(OpClass)), \
+		/* Parm definitions  */ OBJ::OpClass::GetPrmTemplate(), \
 		/* Min # of inputs   */ 0, \
 		/* Max # of inputs   */ 0 \
 	); \

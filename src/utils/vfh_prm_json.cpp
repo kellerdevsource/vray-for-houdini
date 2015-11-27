@@ -836,9 +836,6 @@ PRMTmplList* Parm::generatePrmTemplate(const std::string &pluginID, const std::s
 			else if (pluginID == "CustomTextureOutput") {
 				VOP::TextureOutput::addPrmTemplate(*prmTmplList);
 			}
-			else if (pluginID == "LightDome") {
-				OBJ::LightDome::addPrmTemplate(*prmTmplList);
-			}
 
 			for (const auto &aIt : pluginInfo->attributes) {
 				const AttrDesc &attrDesc = aIt.second;

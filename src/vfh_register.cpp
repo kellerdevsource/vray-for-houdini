@@ -92,6 +92,15 @@ void newSopOperator(OP_OperatorTable *table)
 
 void newObjectOperator(OP_OperatorTable *table)
 {
+	VFH_OBJ_ADD_OPERATOR_AUTO(table, "LIGHT", SunLight);
+	VFH_OBJ_ADD_OPERATOR_AUTO(table, "LIGHT", LightDirect);
+	VFH_OBJ_ADD_OPERATOR_AUTO(table, "LIGHT", LightAmbient);
+	VFH_OBJ_ADD_OPERATOR_AUTO(table, "LIGHT", LightOmni);
+	VFH_OBJ_ADD_OPERATOR_AUTO(table, "LIGHT", LightSphere);
+	VFH_OBJ_ADD_OPERATOR_AUTO(table, "LIGHT", LightSpot);
+	VFH_OBJ_ADD_OPERATOR_AUTO(table, "LIGHT", LightRectangle);
+	VFH_OBJ_ADD_OPERATOR_AUTO(table, "LIGHT", LightMesh);
+	VFH_OBJ_ADD_OPERATOR_AUTO(table, "LIGHT", LightIES);
 	VFH_OBJ_ADD_OPERATOR_AUTO(table, "LIGHT", LightDome);
 }
 
