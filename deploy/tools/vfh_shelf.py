@@ -10,7 +10,7 @@ descDirpath = pathlib.Path(os.path.join(os.path.dirname(__file__), "..", "plugin
 
 
 def getPluginsDescs():
-    if len(PLUGINS_DESCS) != 0:
+    if PLUGINS_DESCS:
         return PLUGINS_DESCS
 
     for filePath in descDirpath.glob("*/*.json"):
