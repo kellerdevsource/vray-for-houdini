@@ -1,18 +1,372 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <shelfDocument>
-    <tool name="object_VRayNodeLightDome" label="V-Ray Dome Light" icon="ROP_vray">
-        <readOnly/>
+    <tool name="object_VRayNodeLightAmbient" label="LightAmbient" icon="ROP_vray">
+    <readOnly/>
 
-        <toolMenuContext name="viewer">
-            <contextNetType>OBJ</contextNetType>
-        </toolMenuContext>
+    <toolMenuContext name="viewer">
+        <contextNetType>OBJ</contextNetType>
+    </toolMenuContext>
 
-        <toolMenuContext name="network">
-            <contextOpType>Object/VRayNodeLightDome</contextOpType>
-        </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Object/VRayNodeLightAmbient</contextOpType>
+    </toolMenuContext>
 
-        <toolSubmenu>Render</toolSubmenu>
+    <toolSubmenu>V-Ray</toolSubmenu>
 
-        <script scriptType="python"><![CDATA[import objecttoolutils; objecttoolutils.genericTool(kwargs, 'VRayNodeLightDome', nodename="domelight")]]></script>
-    </tool>
+    <script scriptType="python">
+    <![CDATA[
+
+import objecttoolutils;
+objecttoolutils.genericTool(kwargs, 'VRayNodeLightAmbient', nodename="lightambient")
+
+    ]]>
+    </script>
+</tool>
+
+<tool name="object_VRayNodeLightAmbientMax" label="LightAmbientMax" icon="ROP_vray">
+    <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>OBJ</contextNetType>
+    </toolMenuContext>
+
+    <toolMenuContext name="network">
+        <contextOpType>Object/VRayNodeLightAmbientMax</contextOpType>
+    </toolMenuContext>
+
+    <toolSubmenu>V-Ray</toolSubmenu>
+
+    <script scriptType="python">
+    <![CDATA[
+
+import objecttoolutils;
+objecttoolutils.genericTool(kwargs, 'VRayNodeLightAmbientMax', nodename="lightambientmax")
+
+    ]]>
+    </script>
+</tool>
+
+<tool name="object_VRayNodeLightDirect" label="LightDirect" icon="ROP_vray">
+    <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>OBJ</contextNetType>
+    </toolMenuContext>
+
+    <toolMenuContext name="network">
+        <contextOpType>Object/VRayNodeLightDirect</contextOpType>
+    </toolMenuContext>
+
+    <toolSubmenu>V-Ray</toolSubmenu>
+
+    <script scriptType="python">
+    <![CDATA[
+
+import objecttoolutils;
+objecttoolutils.genericTool(kwargs, 'VRayNodeLightDirect', nodename="lightdirect")
+
+    ]]>
+    </script>
+</tool>
+
+<tool name="object_VRayNodeLightDirectMax" label="LightDirectMax" icon="ROP_vray">
+    <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>OBJ</contextNetType>
+    </toolMenuContext>
+
+    <toolMenuContext name="network">
+        <contextOpType>Object/VRayNodeLightDirectMax</contextOpType>
+    </toolMenuContext>
+
+    <toolSubmenu>V-Ray</toolSubmenu>
+
+    <script scriptType="python">
+    <![CDATA[
+
+import objecttoolutils;
+objecttoolutils.genericTool(kwargs, 'VRayNodeLightDirectMax', nodename="lightdirectmax")
+
+    ]]>
+    </script>
+</tool>
+
+<tool name="object_VRayNodeLightDome" label="LightDome" icon="ROP_vray">
+    <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>OBJ</contextNetType>
+    </toolMenuContext>
+
+    <toolMenuContext name="network">
+        <contextOpType>Object/VRayNodeLightDome</contextOpType>
+    </toolMenuContext>
+
+    <toolSubmenu>V-Ray</toolSubmenu>
+
+    <script scriptType="python">
+    <![CDATA[
+
+import objecttoolutils;
+objecttoolutils.genericTool(kwargs, 'VRayNodeLightDome', nodename="lightdome")
+
+    ]]>
+    </script>
+</tool>
+
+<tool name="object_VRayNodeLightIES" label="LightIES" icon="ROP_vray">
+    <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>OBJ</contextNetType>
+    </toolMenuContext>
+
+    <toolMenuContext name="network">
+        <contextOpType>Object/VRayNodeLightIES</contextOpType>
+    </toolMenuContext>
+
+    <toolSubmenu>V-Ray</toolSubmenu>
+
+    <script scriptType="python">
+    <![CDATA[
+
+import objecttoolutils;
+objecttoolutils.genericTool(kwargs, 'VRayNodeLightIES', nodename="lighties")
+
+    ]]>
+    </script>
+</tool>
+
+<tool name="object_VRayNodeLightIESMax" label="LightIESMax" icon="ROP_vray">
+    <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>OBJ</contextNetType>
+    </toolMenuContext>
+
+    <toolMenuContext name="network">
+        <contextOpType>Object/VRayNodeLightIESMax</contextOpType>
+    </toolMenuContext>
+
+    <toolSubmenu>V-Ray</toolSubmenu>
+
+    <script scriptType="python">
+    <![CDATA[
+
+import objecttoolutils;
+objecttoolutils.genericTool(kwargs, 'VRayNodeLightIESMax', nodename="lightiesmax")
+
+    ]]>
+    </script>
+</tool>
+
+<tool name="object_VRayNodeLightMesh" label="LightMesh" icon="ROP_vray">
+    <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>OBJ</contextNetType>
+    </toolMenuContext>
+
+    <toolMenuContext name="network">
+        <contextOpType>Object/VRayNodeLightMesh</contextOpType>
+    </toolMenuContext>
+
+    <toolSubmenu>V-Ray</toolSubmenu>
+
+    <script scriptType="python">
+    <![CDATA[
+
+import objecttoolutils;
+objecttoolutils.genericTool(kwargs, 'VRayNodeLightMesh', nodename="lightmesh")
+
+    ]]>
+    </script>
+</tool>
+
+<tool name="object_VRayNodeLightOmni" label="LightOmni" icon="ROP_vray">
+    <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>OBJ</contextNetType>
+    </toolMenuContext>
+
+    <toolMenuContext name="network">
+        <contextOpType>Object/VRayNodeLightOmni</contextOpType>
+    </toolMenuContext>
+
+    <toolSubmenu>V-Ray</toolSubmenu>
+
+    <script scriptType="python">
+    <![CDATA[
+
+import objecttoolutils;
+objecttoolutils.genericTool(kwargs, 'VRayNodeLightOmni', nodename="lightomni")
+
+    ]]>
+    </script>
+</tool>
+
+<tool name="object_VRayNodeLightOmniMax" label="LightOmniMax" icon="ROP_vray">
+    <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>OBJ</contextNetType>
+    </toolMenuContext>
+
+    <toolMenuContext name="network">
+        <contextOpType>Object/VRayNodeLightOmniMax</contextOpType>
+    </toolMenuContext>
+
+    <toolSubmenu>V-Ray</toolSubmenu>
+
+    <script scriptType="python">
+    <![CDATA[
+
+import objecttoolutils;
+objecttoolutils.genericTool(kwargs, 'VRayNodeLightOmniMax', nodename="lightomnimax")
+
+    ]]>
+    </script>
+</tool>
+
+<tool name="object_VRayNodeLightRectangle" label="LightRectangle" icon="ROP_vray">
+    <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>OBJ</contextNetType>
+    </toolMenuContext>
+
+    <toolMenuContext name="network">
+        <contextOpType>Object/VRayNodeLightRectangle</contextOpType>
+    </toolMenuContext>
+
+    <toolSubmenu>V-Ray</toolSubmenu>
+
+    <script scriptType="python">
+    <![CDATA[
+
+import objecttoolutils;
+objecttoolutils.genericTool(kwargs, 'VRayNodeLightRectangle', nodename="lightrectangle")
+
+    ]]>
+    </script>
+</tool>
+
+<tool name="object_VRayNodeLightSphere" label="LightSphere" icon="ROP_vray">
+    <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>OBJ</contextNetType>
+    </toolMenuContext>
+
+    <toolMenuContext name="network">
+        <contextOpType>Object/VRayNodeLightSphere</contextOpType>
+    </toolMenuContext>
+
+    <toolSubmenu>V-Ray</toolSubmenu>
+
+    <script scriptType="python">
+    <![CDATA[
+
+import objecttoolutils;
+objecttoolutils.genericTool(kwargs, 'VRayNodeLightSphere', nodename="lightsphere")
+
+    ]]>
+    </script>
+</tool>
+
+<tool name="object_VRayNodeLightSpot" label="LightSpot" icon="ROP_vray">
+    <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>OBJ</contextNetType>
+    </toolMenuContext>
+
+    <toolMenuContext name="network">
+        <contextOpType>Object/VRayNodeLightSpot</contextOpType>
+    </toolMenuContext>
+
+    <toolSubmenu>V-Ray</toolSubmenu>
+
+    <script scriptType="python">
+    <![CDATA[
+
+import objecttoolutils;
+objecttoolutils.genericTool(kwargs, 'VRayNodeLightSpot', nodename="lightspot")
+
+    ]]>
+    </script>
+</tool>
+
+<tool name="object_VRayNodeLightSpotMax" label="LightSpotMax" icon="ROP_vray">
+    <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>OBJ</contextNetType>
+    </toolMenuContext>
+
+    <toolMenuContext name="network">
+        <contextOpType>Object/VRayNodeLightSpotMax</contextOpType>
+    </toolMenuContext>
+
+    <toolSubmenu>V-Ray</toolSubmenu>
+
+    <script scriptType="python">
+    <![CDATA[
+
+import objecttoolutils;
+objecttoolutils.genericTool(kwargs, 'VRayNodeLightSpotMax', nodename="lightspotmax")
+
+    ]]>
+    </script>
+</tool>
+
+<tool name="object_VRayNodeMayaLightDirect" label="MayaLightDirect" icon="ROP_vray">
+    <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>OBJ</contextNetType>
+    </toolMenuContext>
+
+    <toolMenuContext name="network">
+        <contextOpType>Object/VRayNodeMayaLightDirect</contextOpType>
+    </toolMenuContext>
+
+    <toolSubmenu>V-Ray</toolSubmenu>
+
+    <script scriptType="python">
+    <![CDATA[
+
+import objecttoolutils;
+objecttoolutils.genericTool(kwargs, 'VRayNodeMayaLightDirect', nodename="mayalightdirect")
+
+    ]]>
+    </script>
+</tool>
+
+<tool name="object_VRayNodeSunLight" label="SunLight" icon="ROP_vray">
+    <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>OBJ</contextNetType>
+    </toolMenuContext>
+
+    <toolMenuContext name="network">
+        <contextOpType>Object/VRayNodeSunLight</contextOpType>
+    </toolMenuContext>
+
+    <toolSubmenu>V-Ray</toolSubmenu>
+
+    <script scriptType="python">
+    <![CDATA[
+
+import objecttoolutils;
+objecttoolutils.genericTool(kwargs, 'VRayNodeSunLight', nodename="sunlight")
+
+    ]]>
+    </script>
+</tool>
+
+
 </shelfDocument>
