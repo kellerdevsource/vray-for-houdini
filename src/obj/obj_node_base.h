@@ -23,36 +23,36 @@ namespace VRayForHoudini {
 namespace OBJ {
 
 
-struct VRayPluginType
+enum class VRayPluginType
 {
-	static constexpr const char Light[] = "LIGHT";
+	Light
 };
 
 
-struct VRayPluginID
+enum class VRayPluginID
 {
-	static constexpr const char SunLight[] = "SunLight";
-	static constexpr const char LightDirect[] = "LightDirect";
-	static constexpr const char LightAmbient[] = "LightAmbient";
-	static constexpr const char LightOmni[] = "LightOmni";
-	static constexpr const char LightSphere[] = "LightSphere";
-	static constexpr const char LightSpot[] = "LightSpot";
-	static constexpr const char LightRectangle[] = "LightRectangle";
-	static constexpr const char LightMesh[] = "LightMesh";
-	static constexpr const char LightIES[] = "LightIES";
-	static constexpr const char LightDome[] = "LightDome";
+	SunLight,
+	LightDirect,
+	LightAmbient,
+	LightOmni,
+	LightSphere,
+	LightSpot,
+	LightRectangle,
+	LightMesh,
+	LightIES,
+	LightDome
 };
 
+const char *getVRayPluginTypeName(VRayPluginType pluginType);
+const char *getVRayPluginIDName(VRayPluginID pluginID);
 
-template< const char *PluginID >
+
+template< VRayPluginID PluginID >
 class LightNodeBase:
 		public OP::VRayNode,
 		public OBJ_Light
 {
 public:
-	static const char* getPluginType() { return VRayPluginType::Light; }
-	static const char* getPluginID() { return PluginID; }
-
 	static PRM_Template*       GetPrmTemplate();
 	static int                 GetMyPrmTemplate(Parm::PRMTmplList &prmList, Parm::PRMDefList &prmFolders);
 
@@ -65,8 +65,8 @@ public:
 protected:
 	virtual void                setPluginType() VRAY_OVERRIDE
 	{
-		pluginType = getPluginType();
-		pluginID = getPluginID();
+		pluginType = getVRayPluginTypeName(VRayPluginType::Light);
+		pluginID = getVRayPluginIDName(PluginID);;
 	}
 };
 

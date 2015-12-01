@@ -14,6 +14,8 @@
 #include "vfh_class_utils.h"
 #include "vfh_prm_json.h"
 
+#include <map>
+
 
 namespace VRayForHoudini {
 namespace OBJ {
@@ -23,7 +25,39 @@ static PRM_Name vrayswitcher("vrayswitcher");
 static PRM_Name prm_dome_tex("dome_tex_op", "Dome Texture");
 
 
-template< const char *PluginID >
+const char *getVRayPluginTypeName(VRayPluginType pluginType)
+{
+	static std::map<VRayPluginType, const char *> pluginTypeNames;
+	if (NOT(pluginTypeNames.size())) {
+		pluginTypeNames[VRayPluginType::Light] = "LIGHT";
+	}
+
+	return pluginTypeNames[pluginType];
+}
+
+
+const char *getVRayPluginIDName(VRayPluginID pluginID)
+{
+	static std::map<VRayPluginID, const char *> pluginIDNames;
+	if (NOT(pluginIDNames.size())) {
+		pluginIDNames[VRayPluginID::SunLight] = "SunLight";
+		pluginIDNames[VRayPluginID::LightDirect] = "LightDirect";
+		pluginIDNames[VRayPluginID::LightAmbient] = "LightAmbient";
+		pluginIDNames[VRayPluginID::LightOmni] = "LightOmni";
+		pluginIDNames[VRayPluginID::LightSphere] = "LightSphere";
+		pluginIDNames[VRayPluginID::LightSpot] = "LightSpot";
+		pluginIDNames[VRayPluginID::LightRectangle] = "LightRectangle";
+		pluginIDNames[VRayPluginID::LightMesh] = "LightMesh";
+		pluginIDNames[VRayPluginID::LightIES] = "LightIES";
+		pluginIDNames[VRayPluginID::LightDome] = "LightDome";
+	}
+
+	return pluginIDNames[pluginID];
+}
+
+
+
+template< VRayPluginID PluginID >
 PRM_Template* LightNodeBase< PluginID >::GetPrmTemplate()
 {
 	static Parm::PRMDefList prmFolders;
@@ -80,10 +114,10 @@ PRM_Template* LightNodeBase< PluginID >::GetPrmTemplate()
 }
 
 
-template< const char *PluginID >
+template< VRayPluginID PluginID >
 int LightNodeBase< PluginID >::GetMyPrmTemplate(Parm::PRMTmplList &prmList, Parm::PRMDefList &prmFolders)
 {
-	Parm::PRMTmplList *plgPrmList = Parm::generatePrmTemplate(getPluginID());
+	Parm::PRMTmplList *plgPrmList = Parm::generatePrmTemplate( getVRayPluginIDName(PluginID) );
 	const int plgPrmCnt = plgPrmList->size()-1;
 
 	for (int i = 0; i < plgPrmCnt; ++i){
@@ -99,7 +133,7 @@ int LightNodeBase< PluginID >::GetMyPrmTemplate(Parm::PRMTmplList &prmList, Parm
 }
 
 
-template< const char *PluginID >
+template< VRayPluginID PluginID >
 OP::VRayNode::PluginResult LightNodeBase< PluginID >::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, OP_Node *parent)
 {
 	pluginDesc.pluginID   = pluginID.c_str();
@@ -143,7 +177,7 @@ int LightNodeBase< VRayPluginID::LightDome >::GetMyPrmTemplate(Parm::PRMTmplList
 									&prm_dome_tex,
 									&Parm::PRMemptyStringDefault) );
 
-	Parm::PRMTmplList *plgPrmList = Parm::generatePrmTemplate(getPluginID());
+	Parm::PRMTmplList *plgPrmList = Parm::generatePrmTemplate( getVRayPluginIDName(VRayPluginID::LightDome) );
 	// last element is list terminator
 	for (int i = 0; i < plgPrmList->size()-1; ++i){
 		prmList.push_back( (*plgPrmList)[i] );
@@ -191,19 +225,6 @@ OP::VRayNode::PluginResult LightNodeBase< VRayPluginID::LightDome >::asPluginDes
 
 	return OP::VRayNode::PluginResultContinue;
 }
-
-
-constexpr const char VRayPluginType::Light[];
-constexpr const char VRayPluginID::SunLight[];
-constexpr const char VRayPluginID::LightDirect[];
-constexpr const char VRayPluginID::LightAmbient[];
-constexpr const char VRayPluginID::LightOmni[];
-constexpr const char VRayPluginID::LightSphere[];
-constexpr const char VRayPluginID::LightSpot[];
-constexpr const char VRayPluginID::LightRectangle[];
-constexpr const char VRayPluginID::LightMesh[];
-constexpr const char VRayPluginID::LightIES[];
-constexpr const char VRayPluginID::LightDome[];
 
 
 // explicitly instantiate op node classes for light plugins
