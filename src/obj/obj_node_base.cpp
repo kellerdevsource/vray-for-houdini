@@ -14,6 +14,8 @@
 #include "vfh_class_utils.h"
 #include "vfh_prm_json.h"
 
+#include <SOP/SOP_Node.h>
+
 #include <map>
 
 
@@ -23,6 +25,7 @@ namespace OBJ {
 
 static PRM_Name vrayswitcher("vrayswitcher");
 static PRM_Name prm_dome_tex("dome_tex_op", "Dome Texture");
+static PRM_Name prm_geometrypath("obj_geometrypath", "Geometry");
 
 
 const char *getVRayPluginTypeName(VRayPluginType pluginType)
@@ -220,6 +223,78 @@ OP::VRayNode::PluginResult LightNodeBase< VRayPluginID::LightDome >::asPluginDes
 			else {
 				pluginDesc.addAttribute(Attrs::PluginAttr("dome_tex", texture));
 			}
+		}
+	}
+
+	return OP::VRayNode::PluginResultContinue;
+}
+
+
+// explicitly instantiate CustomPrmTemplates for LightMesh op node
+template<>
+int LightNodeBase< VRayPluginID::LightMesh >::GetMyPrmTemplate(Parm::PRMTmplList &prmList, Parm::PRMDefList &prmFolders)
+{
+	// add custom params
+	const int myPrmIdx = prmList.size();
+	prmList.push_back( PRM_Template(PRM_STRING_E,
+									PRM_TYPE_DYNAMIC_PATH,
+									1,
+									&prm_geometrypath,
+									&Parm::PRMemptyStringDefault) );
+
+	Parm::PRMTmplList *plgPrmList = Parm::generatePrmTemplate( getVRayPluginIDName(VRayPluginID::LightMesh) );
+	// last element is list terminator
+	for (int i = 0; i < plgPrmList->size()-1; ++i){
+		prmList.push_back( (*plgPrmList)[i] );
+	}
+
+	// put all plugin params in "V-Ray Light Setting" folder tab
+	// assume folders from prmFolders contain all param templates in prmList
+	// otherwise we need to calculate the index to properly insert our plugin params in the folder
+	const int myPrmCnt = prmList.size() - myPrmIdx;
+	prmFolders.emplace_back(myPrmCnt, "V-Ray Light");
+
+	return myPrmCnt;
+}
+
+
+template<>
+OP::VRayNode::PluginResult LightNodeBase< VRayPluginID::LightMesh >::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, OP_Node *parent)
+{
+	pluginDesc.pluginID   = pluginID.c_str();
+	pluginDesc.pluginName = VRayExporter::getPluginName(this);
+
+	// Need to flip tm
+	VRay::Transform tm = VRayExporter::getObjTransform(parent->castToOBJNode(), exporter.getContext(), true);
+	pluginDesc.addAttribute(Attrs::PluginAttr("transform", tm));
+
+	// Dome texture
+	//
+	UT_String geometrypath;
+	evalString(geometrypath, prm_geometrypath.getToken(), 0, 0.0f);
+	if (NOT(geometrypath.equal(""))) {
+		OP_Node *op_node = OPgetDirector()->findNode(geometrypath.buffer());
+		if (op_node) {
+			OBJ_Node *obj_node = op_node->castToOBJNode();
+			if (obj_node) {
+				SOP_Node *sop_node = obj_node->getRenderSopPtr();
+				GeomExportParams expParams;
+				expParams.exportMtlIds = false;
+				expParams.uvWeldThreshold = 0;
+				VRay::Plugin geometry = exporter.exportNodeData(sop_node, expParams);
+				if (geometry) {
+					pluginDesc.addAttribute(Attrs::PluginAttr("geometry", geometry));
+				}
+				else {
+					Log::getLog().error("Geometry node export failed!");
+				}
+			}
+			else {
+				Log::getLog().error("Geometry node not found!");
+			}
+		}
+		else {
+			Log::getLog().error("Geometry node not found!");
 		}
 	}
 

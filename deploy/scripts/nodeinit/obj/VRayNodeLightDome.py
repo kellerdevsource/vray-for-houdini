@@ -64,8 +64,6 @@ node_parm.set("keep")
 node_parm = cnode.parm("group");
 node_parm.setExpression("ifs(ch(\"../dome_spherical\"), \"gsphere\",\"ghemisphere\")")
 
-cnode = cnode.createOutputNode("null")
-cnode.setName("OUT")
 cnode.setRenderFlag(True)
 cnode.setDisplayFlag(True)
 
