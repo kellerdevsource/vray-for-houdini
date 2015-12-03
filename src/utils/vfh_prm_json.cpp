@@ -209,7 +209,7 @@ static bool AttrNeedWidget(const AttrDesc &attrDesc)
 }
 
 
-static PRM_Template AttrDescAsPrmTemplate(const AttrDesc &attrDesc, const std::string &prefix)
+static PRM_Template AttrDescAsPrmTemplate(const VRayPluginInfo &pluginInfo, const AttrDesc &attrDesc, const std::string &prefix)
 {
 	// PRM_Name stores pointer to name so we have to store generated names
 	//
@@ -259,18 +259,49 @@ static PRM_Template AttrDescAsPrmTemplate(const AttrDesc &attrDesc, const std::s
 	if (attrDesc.value.type == ParmType::eBool) {
 		tmpl = PRM_Template(PRM_TOGGLE, 1, prmName.getPrm(), attrDesc.value.getDefBool());
 	}
-	else if (attrDesc.value.type == ParmType::eInt ||
-			 attrDesc.value.type == ParmType::eTextureInt) {
+	else if (attrDesc.value.type == ParmType::eInt) {
 		tmpl = PRM_Template(PRM_INT, 1, prmName.getPrm(), attrDesc.value.getDefInt());
 	}
-	else if (attrDesc.value.type == ParmType::eFloat ||
-			 attrDesc.value.type == ParmType::eTextureFloat) {
+	else if (attrDesc.value.type == ParmType::eFloat) {
 		tmpl = PRM_Template(PRM_FLT, 1, prmName.getPrm(), attrDesc.value.getDefFloat());
 	}
 	else if (attrDesc.value.type == ParmType::eColor ||
-			 attrDesc.value.type == ParmType::eAColor ||
-			 attrDesc.value.type == ParmType::eTextureColor) {
+			 attrDesc.value.type == ParmType::eAColor) {
 		tmpl = PRM_Template(PRM_RGB_J, PRM_Template::PRM_EXPORT_TBX, 4, prmName.getPrm(), attrDesc.value.getDefColor());
+	}
+	else if (attrDesc.value.type == ParmType::eTextureInt) {
+		switch (pluginInfo.pluginType) {
+			case PluginTypeLight:
+			{
+				tmpl = PRM_Template(PRM_STRING_E, PRM_TYPE_DYNAMIC_PATH, 1, prmName.getPrm(), &Parm::PRMemptyStringDefault);
+				break;
+			}
+			default:
+				tmpl = PRM_Template(PRM_INT, 1, prmName.getPrm(), attrDesc.value.getDefInt());
+		}
+	}
+	else if (attrDesc.value.type == ParmType::eTextureFloat) {
+		switch (pluginInfo.pluginType) {
+			case PluginTypeLight:
+			{
+				tmpl = PRM_Template(PRM_STRING_E, PRM_TYPE_DYNAMIC_PATH, 1, prmName.getPrm(), &Parm::PRMemptyStringDefault);
+				break;
+			}
+			default:
+				tmpl = PRM_Template(PRM_FLT, 1, prmName.getPrm(), attrDesc.value.getDefFloat());
+		}
+	}
+	else if (attrDesc.value.type == ParmType::eTextureColor) {
+		switch (pluginInfo.pluginType) {
+			case PluginTypeLight:
+			{
+				tmpl = PRM_Template(PRM_STRING_E, PRM_TYPE_DYNAMIC_PATH, 1, prmName.getPrm(), &Parm::PRMemptyStringDefault);
+				break;
+			}
+			default:
+				tmpl = PRM_Template(PRM_RGB_J, PRM_Template::PRM_EXPORT_TBX, 4, prmName.getPrm(), attrDesc.value.getDefColor());
+		}
+
 	}
 	else if (attrDesc.value.type == ParmType::eEnum) {
 		PRM_Name *enumMenuItems = new PRM_Name[attrDesc.value.defEnumItems.size()+1];
@@ -840,7 +871,7 @@ PRMTmplList* Parm::generatePrmTemplate(const std::string &pluginID, const std::s
 			for (const auto &aIt : pluginInfo->attributes) {
 				const AttrDesc &attrDesc = aIt.second;
 				if (AttrNeedWidget(attrDesc)) {
-					prmTmplList->push_back(AttrDescAsPrmTemplate(attrDesc, prefix));
+					prmTmplList->push_back(AttrDescAsPrmTemplate(*pluginInfo, attrDesc, prefix));
 				}
 			}
 

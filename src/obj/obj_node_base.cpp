@@ -24,7 +24,6 @@ namespace OBJ {
 
 
 static PRM_Name vrayswitcher("vrayswitcher");
-static PRM_Name prm_dome_tex("dome_tex_op", "Dome Texture");
 static PRM_Name prm_geometrypath("obj_geometrypath", "Geometry");
 
 
@@ -172,63 +171,20 @@ int LightNodeBase< VRayPluginID::LightDome >::GetMyPrmTemplate(Parm::PRMTmplList
 		}
 	}
 
-	// add custom params
-	const int myPrmIdx = prmList.size();
-	prmList.push_back( PRM_Template(PRM_STRING_E,
-									PRM_TYPE_DYNAMIC_PATH,
-									1,
-									&prm_dome_tex,
-									&Parm::PRMemptyStringDefault) );
-
 	Parm::PRMTmplList *plgPrmList = Parm::generatePrmTemplate( getVRayPluginIDName(VRayPluginID::LightDome) );
-	// last element is list terminator
-	for (int i = 0; i < plgPrmList->size()-1; ++i){
+	const int plgPrmCnt = plgPrmList->size()-1;
+
+	for (int i = 0; i < plgPrmCnt; ++i){
 		prmList.push_back( (*plgPrmList)[i] );
 	}
 
 	// put all plugin params in "V-Ray Light Setting" folder tab
 	// assume folders from prmFolders contain all param templates in prmList
 	// otherwise we need to calculate the index to properly insert our plugin params in the folder
-	const int myPrmCnt = prmList.size() - myPrmIdx;
-	prmFolders.emplace_back(myPrmCnt, "V-Ray Light");
+	prmFolders.emplace_back(plgPrmCnt, "V-Ray Light");
 
-	return myPrmCnt;
+	return plgPrmCnt;
 }
-
-
-template<>
-OP::VRayNode::PluginResult LightNodeBase< VRayPluginID::LightDome >::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, OP_Node *parent)
-{
-	pluginDesc.pluginID   = pluginID.c_str();
-	pluginDesc.pluginName = VRayExporter::getPluginName(this);
-
-	// Need to flip tm
-	VRay::Transform tm = VRayExporter::getObjTransform(parent->castToOBJNode(), exporter.getContext(), true);
-	pluginDesc.addAttribute(Attrs::PluginAttr("transform", tm));
-
-	// Dome texture
-	//
-	UT_String dome_tex;
-	evalString(dome_tex, prm_dome_tex.getToken(), 0, 0.0f);
-	if (NOT(dome_tex.equal(""))) {
-		OP_Node *tex_node = OPgetDirector()->findNode(dome_tex.buffer());
-		if (NOT(tex_node)) {
-			Log::getLog().error("Texture node not found!");
-		}
-		else {
-			VRay::Plugin texture = exporter.exportVop(tex_node);
-			if (NOT(texture)) {
-				Log::getLog().error("Texture node export failed!");
-			}
-			else {
-				pluginDesc.addAttribute(Attrs::PluginAttr("dome_tex", texture));
-			}
-		}
-	}
-
-	return OP::VRayNode::PluginResultContinue;
-}
-
 
 // explicitly instantiate CustomPrmTemplates for LightMesh op node
 template<>
@@ -264,12 +220,7 @@ OP::VRayNode::PluginResult LightNodeBase< VRayPluginID::LightMesh >::asPluginDes
 	pluginDesc.pluginID   = pluginID.c_str();
 	pluginDesc.pluginName = VRayExporter::getPluginName(this);
 
-	// Need to flip tm
-	VRay::Transform tm = VRayExporter::getObjTransform(parent->castToOBJNode(), exporter.getContext(), true);
-	pluginDesc.addAttribute(Attrs::PluginAttr("transform", tm));
 
-	// Dome texture
-	//
 	UT_String geometrypath;
 	evalString(geometrypath, prm_geometrypath.getToken(), 0, 0.0f);
 	if (NOT(geometrypath.equal(""))) {

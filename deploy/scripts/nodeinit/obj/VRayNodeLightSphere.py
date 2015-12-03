@@ -13,6 +13,8 @@ import hou
 node = kwargs['node']
 
 cnode = node.createNode("sphere")
+node_parm = cnode.parm("scale")
+node_parm.setExpression("ch(\"../radius\")")
 
 cnode.setRenderFlag(True)
 cnode.setDisplayFlag(True)

@@ -53,18 +53,16 @@ VRay::Plugin VRayExporter::exportLight(OBJ_Node *obj_node)
 
 	OP::VRayNode *vrayNode = dynamic_cast<OP::VRayNode*>(obj_light);
 	if (vrayNode) {
-		OP_Node *op_node = static_cast<OP_Node*>(obj_node);
-
-		OP::VRayNode::PluginResult res = vrayNode->asPluginDesc(pluginDesc, *this, static_cast<OP_Node*>(obj_node));
+		OP::VRayNode::PluginResult res = vrayNode->asPluginDesc(pluginDesc, *this, obj_light);
 		if (res == OP::VRayNode::PluginResultError) {
 			Log::getLog().error("Error creating plugin descripion for node: \"%s\" [%s]",
-						op_node->getName().buffer(),
-						op_node->getOperator()->getName().buffer());
+						obj_light->getName().buffer(),
+						obj_light->getOperator()->getName().buffer());
 		}
 		else if (res == OP::VRayNode::PluginResultNA ||
 				 res == OP::VRayNode::PluginResultContinue)
 		{
-			setAttrsFromOpNode(pluginDesc, op_node);
+			setAttrsFromOpNode(pluginDesc, obj_light);
 		}
 
 	}
