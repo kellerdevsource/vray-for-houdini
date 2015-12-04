@@ -11,7 +11,10 @@
 #include "vfh_plugin_exporter.h"
 
 #include <QtCore/QString>
+#include <QtGui/QtGui>
 #include <boost/bind.hpp>
+
+#include <RE/RE_QtWindow.h>
 
 
 #define PRINT_CALLBACK_CALLS  0
@@ -148,6 +151,7 @@ VRayPluginRenderer::VRayPluginRenderer()
 VRayPluginRenderer::~VRayPluginRenderer()
 {
 	Log::getLog().debug("~VRayPluginRenderer()");
+
 	freeMem();
 }
 
@@ -182,6 +186,10 @@ int VRayPluginRenderer::initRenderer(int hasUI, int reInit)
 					m_vray->setOnBucketInit(OnBucketInit,         (void*)&m_callbacks.m_cbOnBucketInit);
 					m_vray->setOnBucketFailed(OnBucketFailed,     (void*)&m_callbacks.m_cbOnBucketFailed);
 					m_vray->setOnBucketReady(OnBucketReady,       (void*)&m_callbacks.m_cbOnBucketReady);
+
+					// VFB will take colors from QApplication::palette(),
+					// but Houdini's real palette is not stored there for some reason.
+					QApplication::setPalette(RE_QtWindow::mainQtWindow()->palette());
 				}
 			}
 			catch (VRay::VRayException &e) {
@@ -189,6 +197,11 @@ int VRayPluginRenderer::initRenderer(int hasUI, int reInit)
 									e.what());
 				m_vray = nullptr;
 			}
+#if 0
+			if (m_vray) {
+				m_vray->setFrameBufferParentWindow(RE_QtWindow::mainQtWindow());
+			}
+#endif
 		}
 	}
 
@@ -198,6 +211,13 @@ int VRayPluginRenderer::initRenderer(int hasUI, int reInit)
 
 void VRayPluginRenderer::freeMem()
 {
+	if (m_vray) {
+		QWidget *vfb = reinterpret_cast<QWidget*>(m_vray->getFrameBufferWindowHandle());
+		if (vfb) {
+			vfb->setParent(nullptr);
+		}
+	}
+
 	FreePtr(m_vray);
 }
 
@@ -215,6 +235,14 @@ void VRayPluginRenderer::showVFB(const bool show)
 	if (m_vray) {
 		m_vray->vfb.setAlwaysOnTop(true);
 		m_vray->vfb.show(show, true);
+
+		QWidget *vfb = reinterpret_cast<QWidget*>(m_vray->getFrameBufferWindowHandle());
+		if (vfb) {
+			vfb->setParent(RE_QtWindow::mainQtWindow());
+
+			// Set window to be always on top of the parent
+			vfb->setWindowFlags(Qt::Tool);
+		}
 	}
 }
 
