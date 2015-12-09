@@ -14,6 +14,7 @@
 
 #include <SHOP/SHOP_Node.h>
 #include <PRM/PRM_ParmMicroNode.h>
+#include <CH/CH_Channel.h>
 
 #include <SOP/SOP_Node.h>
 #include <GU/GU_Detail.h>
@@ -26,8 +27,12 @@
 
 #include <boost/algorithm/string.hpp>
 
+#include <unordered_set>
+#include <unordered_map>
+
 
 namespace rapidjson {
+
 
 static const char* TypeNames[] = {
 	"Null",
@@ -270,62 +275,177 @@ void VRayExporter::collectMaterialOverrideParameters(OBJ_Node &obj)
 }
 
 
-static void exportPrimitiveAttrs(const GU_Detail &gdp, GeomExportParams &expParams, GeomExportData &expData)
+struct PrimOverride
 {
+	typedef std::unordered_map< std::string, VRay::Vector > MtlOverrides;
+
+	PrimOverride(SHOP_Node *shopNode = nullptr):
+		shopNode(shopNode)
+	{}
+
+	SHOP_Node *shopNode;
+	MtlOverrides mtlOverrides;
+};
+
+
+rapidjson::ParseErrorCode parseMtlOverride(const char *mtlOverrideStr, rapidjson::Document &o_document)
+{
+	if (   NOT(mtlOverrideStr)
+		|| NOT(*mtlOverrideStr))
+	{
+		return rapidjson::kParseErrorDocumentEmpty;
+	}
+
+	// "material_override" string is JSON, but slightly incorrect for some reason.
+	// actually is a string representation of a python dict
+	std::string materialOverride(mtlOverrideStr);
+	// Replace "'" with '"'
+	boost::replace_all(materialOverride, "\'", "\"");
+	// Remove last ','
+	std::size_t lastCommaPos = materialOverride.find_last_of(",");
+	if (lastCommaPos != std::string::npos) {
+		materialOverride.erase(lastCommaPos, 1);
+	}
+
+	o_document.Parse(materialOverride.c_str());
+
+	return o_document.GetParseError();
+}
+
+
+int getPrimOverrides(const OP_Context &context, const GU_Detail &gdp, std::unordered_set< std::string > &o_mtlOverrideChannels, std::vector< PrimOverride > &o_primOverrides)
+{
+	const GA_ROHandleS materialPathHndl(gdp.findStringTuple(GA_ATTRIB_PRIMITIVE, "shop_materialpath"));
 	const GA_ROHandleS materialOverrideHndl(gdp.findStringTuple(GA_ATTRIB_PRIMITIVE, "material_override"));
-	if (materialOverrideHndl.isValid()) {
-		for (GA_Iterator offIt(gdp.getPrimitiveRange()); !offIt.atEnd(); offIt.advance()) {
-			const GA_Offset off = *offIt;
+	if (   !materialPathHndl.isValid()
+		|| !materialOverrideHndl.isValid())
+	{
+		return 0;
+	}
 
-			const char *materialOverridePtr = materialOverrideHndl.get(off);
-			if (materialOverridePtr && *materialOverridePtr) {
-				std::string materialOverride(materialOverridePtr);
+	o_primOverrides.resize(gdp.getNumPrimitives());
 
-				// "material_override" string is JSON, but slightly incorrect for some reason.
-				// Replace "'" with '"'
-				boost::replace_all(materialOverride, "\'", "\"");
-				// Remove last ','
-				std::size_t lastCommaPos = materialOverride.find_last_of(",");
-				if (lastCommaPos != std::string::npos) {
-					materialOverride.erase(lastCommaPos, 1);
+	int k = 0;
+	for (GA_Iterator offIt(gdp.getPrimitiveRange()); !offIt.atEnd(); offIt.advance(), ++k) {
+		const GA_Offset off = *offIt;
+		PrimOverride &primOverride = o_primOverrides[k];
+
+		const char *mtlShopPath = materialPathHndl.get(off);
+		primOverride.shopNode = OPgetDirector()->findSHOPNode( mtlShopPath );
+		if ( NOT(primOverride.shopNode) ) {
+			Log::getLog().error("Shop node \"%s\" for primitive number \"%d\" not found!",
+								mtlShopPath, k);
+			continue;
+		}
+
+		const char *mtlOverrideStr = materialOverrideHndl.get(off);
+		rapidjson::Document document;
+		rapidjson::ParseErrorCode err = parseMtlOverride(mtlOverrideStr, document);
+		if (err) {
+			Log::getLog().error("String \"%s\" JSON parse error: %s (%u)",
+								mtlOverrideStr, rapidjson::GetParseError_En(err), document.GetErrorOffset());
+			continue;
+		}
+
+		for (rapidjson::Value::ConstMemberIterator itr = document.MemberBegin(); itr != document.MemberEnd(); ++itr) {
+			const char *prmChName = itr->name.GetString();
+			int prmChIdx = -1;
+			PRM_Parm *prm = primOverride.shopNode->getParmList()->getParmPtrFromChannel(prmChName, &prmChIdx);
+			if (   NOT(prm)
+				|| prmChIdx < 0
+				|| prmChIdx >= 3)
+			{
+				continue;
+			}
+
+			// exlude overrides on string and toggle params - they won't be exported as map channels
+			const PRM_Type &prmType = prm->getType();
+			if ( NOT(prmType.isFloatType()) ) {
+				continue;
+			}
+
+			Log::getLog().msg("  Found override \"%s\" [%s] PRM_Name \"%s\"",
+							  prmChName, rapidjson::TypeNames[itr->value.GetType()], prm->getToken());
+
+			std::string channelName = prm->getToken();
+			if ( primOverride.mtlOverrides.count(channelName) == 0 ) {
+				o_mtlOverrideChannels.insert(channelName);
+
+				VRay::Vector &val = primOverride.mtlOverrides[ channelName ];
+				for (int i = 0; i < prm->getVectorSize() && i < 3; ++i) {
+					fpreal fval;
+					prm->getValue(context.getTime(), fval, i, context.getThread());
+					val[i] = fval;
+				}
+			}
+			VRay::Vector &val = primOverride.mtlOverrides[ channelName ];
+			val[ prmChIdx ] = itr->value.GetDouble();
+		}
+	}
+
+	return k;
+}
+
+
+static void exportPrimitiveAttrs(const OP_Context &context, const GU_Detail &gdp, GeomExportParams &expParams, GeomExportData &expData)
+{
+	std::unordered_set< std::string > mtlOverrideChannels;
+	std::vector< PrimOverride > primOverrides;
+	if ( getPrimOverrides(context, gdp, mtlOverrideChannels, primOverrides) > 0) {
+
+		for (const std::string channelName : mtlOverrideChannels ) {
+			Mesh::MapChannel &map_channel = expData.map_channels_data[ channelName ];
+			// max number of different vertices int hte channel is bounded by number of primitives
+			map_channel.vertices.resize(gdp.getNumPrimitives());
+			map_channel.faces.resize(expData.numFaces * 3);
+
+			int k = 0;
+			int vi = 0;
+			for (GA_Iterator offIt(gdp.getPrimitiveRange()); !offIt.atEnd(); offIt.advance(), ++k) {
+				const GEO_Primitive *prim = gdp.getGEOPrimitive(*offIt);
+
+				PrimOverride &primOverride = primOverrides[k];
+				if ( primOverride.shopNode ) {
+					VRay::Vector &val = map_channel.vertices[k];
+					// if the parameter is overriden by the primitive get the overriden value
+					if ( primOverride.mtlOverrides.count(channelName) ) {
+						val = primOverride.mtlOverrides[channelName];
+					}
+					// if the parameter exists on the shop node get the default from there
+					else if ( primOverride.shopNode->hasParm(channelName.c_str()) ) {
+						const PRM_Parm &prm = primOverride.shopNode->getParm(channelName.c_str());
+						for (int i = 0; i < prm.getVectorSize() && i < 3; ++i) {
+							fpreal fval;
+							prm.getValue(context.getTime(), fval, i, context.getThread());
+							val[i] = fval;
+						}
+					}
+					// finnaly there is no such param on the corresponding shop node so leave default value of Vector(0,0,0)
 				}
 
-				rapidjson::Document document;
-				document.Parse(materialOverride.c_str());
+				if (prim->getTypeId().get() == GEO_PRIMPOLYSOUP) {
+					const GU_PrimPolySoup *polySoup = static_cast<const GU_PrimPolySoup*>(prim);
+					for (GEO_PrimPolySoup::PolygonIterator psIt(*polySoup); !psIt.atEnd(); ++psIt) {
+						map_channel.faces[vi++] = k;
+						map_channel.faces[vi++] = k;
+						map_channel.faces[vi++] = k;
 
-				rapidjson::ParseErrorCode err = document.GetParseError();
-				if (err) {
-					Log::getLog().error("String \"%s\" JSON parse error: %s (%u)",
-										materialOverridePtr, rapidjson::GetParseError_En(err), document.GetErrorOffset());
+						if (psIt.getVertexCount() == 4) {
+							map_channel.faces[vi++] = k;
+							map_channel.faces[vi++] = k;
+							map_channel.faces[vi++] = k;
+						}
+					}
 				}
 				else {
-					for (rapidjson::Value::ConstMemberIterator itr = document.MemberBegin(); itr != document.MemberEnd(); ++itr) {
-						Log::getLog().msg("  Found override \"%s\" [%s]",
-										  itr->name.GetString(), rapidjson::TypeNames[itr->value.GetType()]);
-					}
+					map_channel.faces[vi++] = k;
+					map_channel.faces[vi++] = k;
+					map_channel.faces[vi++] = k;
 
-					// Since we can't get attribute name directly from the parsed data we'll:
-					//  * Go through the attribute names from override links
-					//  * Check if found
-					//  * Check it's type and bake if needed
-					//
-					for (const auto &ao : testAttrOverrides) {
-						if (ao.overrideType == HdkOverrideFloat) {
-							if (document.HasMember(ao.overrideName.c_str())) {
-								Log::getLog().msg("  Override float: \"%s\" for \"%s\" of \"%s\"",
-												  ao.overrideName.c_str(),
-												  ao.targetAttr.c_str(),
-												  ao.targetNode->getName().buffer());
-							}
-						}
-						else if (ao.overrideType == HdkOverrideColor) {
-							if (document.HasMember(boost::str(FmtR % ao.overrideName).c_str())) {
-								Log::getLog().msg("  Override color: \"%s\" for \"%s\" of \"%s\"",
-												  ao.overrideName.c_str(),
-												  ao.targetAttr.c_str(),
-												  ao.targetNode->getName().buffer());
-							}
-						}
+					if (prim->getVertexCount() == 4) {
+						map_channel.faces[vi++] = k;
+						map_channel.faces[vi++] = k;
+						map_channel.faces[vi++] = k;
 					}
 				}
 			}
@@ -674,7 +794,7 @@ void VRayExporter::exportGeomStaticMeshDesc(const GU_Detail &gdp, GeomExportPara
 
 	exportVertexAttrs(gdp, expParams, expData);
 	exportPointAttrs(gdp, expParams, expData);
-	exportPrimitiveAttrs(gdp, expParams, expData);
+	exportPrimitiveAttrs(m_context, gdp, expParams, expData);
 
 	geomPluginDesc.addAttribute(Attrs::PluginAttr("vertices", expData.vertices));
 	geomPluginDesc.addAttribute(Attrs::PluginAttr("faces", expData.faces));
