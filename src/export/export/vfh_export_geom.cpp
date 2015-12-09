@@ -13,6 +13,7 @@
 #include "vfh_ga_utils.h"
 
 #include <SHOP/SHOP_Node.h>
+#include <SHOP/SHOP_GeoOverride.h>
 #include <PRM/PRM_ParmMicroNode.h>
 #include <CH/CH_Channel.h>
 
@@ -22,29 +23,8 @@
 #include <UT/UT_Version.h>
 #include <GA/GA_PageHandle.h>
 
-#include "rapidjson/document.h"
-#include "rapidjson/error/en.h"
-
-#include <boost/algorithm/string.hpp>
-
 #include <unordered_set>
 #include <unordered_map>
-
-
-namespace rapidjson {
-
-
-static const char* TypeNames[] = {
-	"Null",
-	"False",
-	"True",
-	"Object",
-	"Array",
-	"String",
-	"Number",
-};
-
-}
 
 
 using namespace VRayForHoudini;
@@ -275,6 +255,20 @@ void VRayExporter::collectMaterialOverrideParameters(OBJ_Node &obj)
 }
 
 
+struct MtlChOverride
+{
+	MtlChOverride(SHOP_Node *node = nullptr, PRM_Parm *prm = nullptr, const char *chName = "\0"):
+		shopNode(node),
+		shopPrm(prm),
+		mapChannelName(chName)
+	{ }
+
+	SHOP_Node *shopNode;
+	PRM_Parm  *shopPrm;
+	std::string mapChannelName;
+};
+
+
 struct PrimOverride
 {
 	typedef std::unordered_map< std::string, VRay::Vector > MtlOverrides;
@@ -286,31 +280,6 @@ struct PrimOverride
 	SHOP_Node *shopNode;
 	MtlOverrides mtlOverrides;
 };
-
-
-rapidjson::ParseErrorCode parseMtlOverride(const char *mtlOverrideStr, rapidjson::Document &o_document)
-{
-	if (   NOT(mtlOverrideStr)
-		|| NOT(*mtlOverrideStr))
-	{
-		return rapidjson::kParseErrorDocumentEmpty;
-	}
-
-	// "material_override" string is JSON, but slightly incorrect for some reason.
-	// actually is a string representation of a python dict
-	std::string materialOverride(mtlOverrideStr);
-	// Replace "'" with '"'
-	boost::replace_all(materialOverride, "\'", "\"");
-	// Remove last ','
-	std::size_t lastCommaPos = materialOverride.find_last_of(",");
-	if (lastCommaPos != std::string::npos) {
-		materialOverride.erase(lastCommaPos, 1);
-	}
-
-	o_document.Parse(materialOverride.c_str());
-
-	return o_document.GetParseError();
-}
 
 
 int getPrimOverrides(const OP_Context &context, const GU_Detail &gdp, std::unordered_set< std::string > &o_mtlOverrideChannels, std::vector< PrimOverride > &o_primOverrides)
@@ -330,56 +299,67 @@ int getPrimOverrides(const OP_Context &context, const GU_Detail &gdp, std::unord
 		const GA_Offset off = *offIt;
 		PrimOverride &primOverride = o_primOverrides[k];
 
-		const char *mtlShopPath = materialPathHndl.get(off);
-		primOverride.shopNode = OPgetDirector()->findSHOPNode( mtlShopPath );
+		primOverride.shopNode = OPgetDirector()->findSHOPNode( materialPathHndl.get(off) );
 		if ( NOT(primOverride.shopNode) ) {
-			Log::getLog().error("Shop node \"%s\" for primitive number \"%d\" not found!",
-								mtlShopPath, k);
+			Log::getLog().error("Error for primitive #\"%d\": Shop node \"%s\" not found!",
+								k, materialPathHndl.get(off));
 			continue;
 		}
 
-		const char *mtlOverrideStr = materialOverrideHndl.get(off);
-		rapidjson::Document document;
-		rapidjson::ParseErrorCode err = parseMtlOverride(mtlOverrideStr, document);
-		if (err) {
-			Log::getLog().error("String \"%s\" JSON parse error: %s (%u)",
-								mtlOverrideStr, rapidjson::GetParseError_En(err), document.GetErrorOffset());
+		// material override is in the form of string representation of a python dict
+		// using HDK helper class SHOP_GeoOverride to parse that
+		SHOP_GeoOverride mtlOverride;
+		mtlOverride.load( materialOverrideHndl.get(off) );
+		if (mtlOverride.entries() <= 0) {
 			continue;
 		}
 
-		for (rapidjson::Value::ConstMemberIterator itr = document.MemberBegin(); itr != document.MemberEnd(); ++itr) {
-			const char *prmChName = itr->name.GetString();
-			int prmChIdx = -1;
-			PRM_Parm *prm = primOverride.shopNode->getParmList()->getParmPtrFromChannel(prmChName, &prmChIdx);
-			if (   NOT(prm)
-				|| prmChIdx < 0
-				|| prmChIdx >= 3)
+		const PRM_ParmList	*shopPrmList = primOverride.shopNode->getParmList();
+		UT_StringArray mtlOverrideChs;
+		mtlOverride.getKeys(mtlOverrideChs);
+		for ( const UT_StringHolder &chName : mtlOverrideChs) {
+			int chIdx = -1;
+			PRM_Parm *prm = shopPrmList->getParmPtrFromChannel(chName, &chIdx);
+			if (NOT(prm)) {
+				continue;
+			}
+
+			std::string channelName = prm->getToken();
+			// skip overrides on the 4th component of 4-tuple params
+			// if prm is a 4-tuple and the override is on 4th component
+			// we can not store the channel in VRay::Vector which has only 3 components
+			// TODO: need a way to export these
+			if (   chIdx < 0
+				|| chIdx >= 3)
+			{
+				continue;
+			}
+			// skip overrides on string and toggle params for now - they can't be exported as map channels
+			// TODO: need a way to export these
+			const PRM_Type &prmType = prm->getType();
+			if (   mtlOverride.isString(chName.buffer())
+				|| NOT(prmType.isFloatType()) )
 			{
 				continue;
 			}
 
-			// exlude overrides on string and toggle params - they won't be exported as map channels
-			const PRM_Type &prmType = prm->getType();
-			if ( NOT(prmType.isFloatType()) ) {
-				continue;
-			}
-
-			Log::getLog().msg("  Found override \"%s\" [%s] PRM_Name \"%s\"",
-							  prmChName, rapidjson::TypeNames[itr->value.GetType()], prm->getToken());
-
-			std::string channelName = prm->getToken();
 			if ( primOverride.mtlOverrides.count(channelName) == 0 ) {
 				o_mtlOverrideChannels.insert(channelName);
-
+				// get default value from the shop parameter
+				// so if the overrides are NOT on all param channels
+				// we still get the default value for the channel from the shop param
 				VRay::Vector &val = primOverride.mtlOverrides[ channelName ];
 				for (int i = 0; i < prm->getVectorSize() && i < 3; ++i) {
-					fpreal fval;
+					fpreal fval = 0;
 					prm->getValue(context.getTime(), fval, i, context.getThread());
 					val[i] = fval;
 				}
 			}
+			// override the channel value
 			VRay::Vector &val = primOverride.mtlOverrides[ channelName ];
-			val[ prmChIdx ] = itr->value.GetDouble();
+			fpreal fval = 0;
+			mtlOverride.import(chName, fval);
+			val[ chIdx ] = fval;
 		}
 	}
 
@@ -411,7 +391,7 @@ static void exportPrimitiveAttrs(const OP_Context &context, const GU_Detail &gdp
 					if ( primOverride.mtlOverrides.count(channelName) ) {
 						val = primOverride.mtlOverrides[channelName];
 					}
-					// if the parameter exists on the shop node get the default from there
+					// else if the parameter exists on the shop node get the default value from there
 					else if ( primOverride.shopNode->hasParm(channelName.c_str()) ) {
 						const PRM_Parm &prm = primOverride.shopNode->getParm(channelName.c_str());
 						for (int i = 0; i < prm.getVectorSize() && i < 3; ++i) {
@@ -420,9 +400,11 @@ static void exportPrimitiveAttrs(const OP_Context &context, const GU_Detail &gdp
 							val[i] = fval;
 						}
 					}
-					// finnaly there is no such param on the corresponding shop node so leave default value of Vector(0,0,0)
+					// finally there is no such param on the shop node so leave a default value of Vector(0,0,0)
 				}
 
+				// TODO: need to refactor this:
+				// for all map channels "faces" will be same  array so no need to recal it every time
 				if (prim->getTypeId().get() == GEO_PRIMPOLYSOUP) {
 					const GU_PrimPolySoup *polySoup = static_cast<const GU_PrimPolySoup*>(prim);
 					for (GEO_PrimPolySoup::PolygonIterator psIt(*polySoup); !psIt.atEnd(); ++psIt) {
@@ -792,9 +774,9 @@ void VRayExporter::exportGeomStaticMeshDesc(const GU_Detail &gdp, GeomExportPara
 		}
 	}
 
+	exportPrimitiveAttrs(m_context, gdp, expParams, expData);
 	exportVertexAttrs(gdp, expParams, expData);
 	exportPointAttrs(gdp, expParams, expData);
-	exportPrimitiveAttrs(m_context, gdp, expParams, expData);
 
 	geomPluginDesc.addAttribute(Attrs::PluginAttr("vertices", expData.vertices));
 	geomPluginDesc.addAttribute(Attrs::PluginAttr("faces", expData.faces));
