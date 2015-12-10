@@ -45,31 +45,24 @@ VRay::Plugin VRayExporter::exportLight(OBJ_Node *obj_node)
 
 	OBJ_Light *obj_light = obj_node->castToOBJLight();
 
-	OP_Operator *light_op = obj_light->getOperator();
-
-	const UT_String &lightOpName = light_op->getName();
-
 	Attrs::PluginDesc pluginDesc;
 	pluginDesc.pluginName = VRayExporter::getPluginName(obj_node);
 
 	VRay::Transform tm = VRayExporter::getObjTransform(obj_node, m_context);
 	pluginDesc.addAttribute(Attrs::PluginAttr("transform", tm));
 
-	if (lightOpName.startsWith("VRayNode")) {
-		OBJ::LightNodeBase *vrayNode = static_cast<OBJ::LightNodeBase*>(obj_light);
-
-		OP_Node *op_node = static_cast<OP_Node*>(obj_node);
-
-		OP::VRayNode::PluginResult res = vrayNode->asPluginDesc(pluginDesc, *this, static_cast<OP_Node*>(obj_node));
+	OP::VRayNode *vrayNode = dynamic_cast<OP::VRayNode*>(obj_light);
+	if (vrayNode) {
+		OP::VRayNode::PluginResult res = vrayNode->asPluginDesc(pluginDesc, *this, obj_light);
 		if (res == OP::VRayNode::PluginResultError) {
 			Log::getLog().error("Error creating plugin descripion for node: \"%s\" [%s]",
-						op_node->getName().buffer(),
-						lightOpName.buffer());
+						obj_light->getName().buffer(),
+						obj_light->getOperator()->getName().buffer());
 		}
 		else if (res == OP::VRayNode::PluginResultNA ||
 				 res == OP::VRayNode::PluginResultContinue)
 		{
-			setAttrsFromOpNode(pluginDesc, op_node);
+			setAttrsFromOpNode(pluginDesc, obj_light);
 		}
 
 	}

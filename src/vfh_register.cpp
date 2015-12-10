@@ -92,7 +92,16 @@ void newSopOperator(OP_OperatorTable *table)
 
 void newObjectOperator(OP_OperatorTable *table)
 {
-	VFH_OBJ_ADD_OPERATOR_AUTO(table, "LIGHT", LightDome);
+	VFH_OBJ_ADD_OPERATOR_AUTO(table, OBJ::VRayPluginType::Light, SunLight);
+	VFH_OBJ_ADD_OPERATOR_AUTO(table, OBJ::VRayPluginType::Light, LightDirect);
+	VFH_OBJ_ADD_OPERATOR_AUTO(table, OBJ::VRayPluginType::Light, LightAmbient);
+	VFH_OBJ_ADD_OPERATOR_AUTO(table, OBJ::VRayPluginType::Light, LightOmni);
+	VFH_OBJ_ADD_OPERATOR_AUTO(table, OBJ::VRayPluginType::Light, LightSphere);
+	VFH_OBJ_ADD_OPERATOR_AUTO(table, OBJ::VRayPluginType::Light, LightSpot);
+	VFH_OBJ_ADD_OPERATOR_AUTO(table, OBJ::VRayPluginType::Light, LightRectangle);
+	VFH_OBJ_ADD_OPERATOR_AUTO(table, OBJ::VRayPluginType::Light, LightMesh);
+	VFH_OBJ_ADD_OPERATOR_AUTO(table, OBJ::VRayPluginType::Light, LightIES);
+	VFH_OBJ_ADD_OPERATOR_AUTO(table, OBJ::VRayPluginType::Light, LightDome);
 }
 
 

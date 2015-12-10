@@ -264,8 +264,33 @@ void VRayExporter::setAttrsFromOpNode(Attrs::PluginDesc &pluginDesc, OP_Node *op
 				VRay::Plugin plugin_value = VRay::Plugin();
 				for (const auto &inSockInfo : pluginInfo->inputs) {
 					if (attrName == inSockInfo.name.getToken()) {
-						plugin_value = exportConnectedVop(opNode, attrName.c_str());
 						hasSocket = true;
+						plugin_value = exportConnectedVop(opNode, attrName.c_str());
+						if (!plugin_value) {
+							if (   attrDesc.value.type == Parm::eTextureInt
+								|| attrDesc.value.type == Parm::eTextureFloat
+								|| attrDesc.value.type == Parm::eTextureColor)
+							{
+								const std::string &parmName = prefix.empty()
+															  ? attrDesc.attr
+															  : boost::str(Parm::FmtPrefixManual % prefix % attrDesc.attr);
+								const PRM_Parm *parm = Parm::getParm(*opNode, parmName);
+								if (parm) {
+									if(parm->getType().isStringType()) {
+										UT_String parmVal;
+										opNode->evalString(parmVal, parm->getToken(), 0, 0.0f);
+										OP_Node *tex_node = OPgetDirector()->findNode(parmVal.buffer());
+										if (tex_node) {
+											plugin_value = exportVop(tex_node);
+										}
+										if (attrDesc.linked_only) {
+											pluginDesc.addAttribute(Attrs::PluginAttr(attrName, plugin_value));
+											continue;
+										}
+									}
+								}
+							}
+						}
 						break;
 					}
 				}

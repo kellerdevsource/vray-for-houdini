@@ -3,17 +3,32 @@
     <tool name="vop_VRayNodeBRDFBlinn" label="Blinn" icon="ROP_vray">
     <readOnly/>
 
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeBRDFBlinn</contextOpType>
     </toolMenuContext>
 
     <toolSubmenu>BRDF</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeBRDFBlinn', nodename="blinn")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFBlinn', nodename="blinn")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeBRDFBump" label="Bump" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeBRDFBump</contextOpType>
@@ -21,11 +36,22 @@
 
     <toolSubmenu>BRDF</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeBRDFBump', nodename="bump")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFBump', nodename="bump")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeBRDFCSV" label="CSV" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeBRDFCSV</contextOpType>
@@ -33,11 +59,22 @@
 
     <toolSubmenu>BRDF</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeBRDFCSV', nodename="csv")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFCSV', nodename="csv")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeBRDFCarPaint" label="Car Paint" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeBRDFCarPaint</contextOpType>
@@ -45,11 +82,22 @@
 
     <toolSubmenu>BRDF</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeBRDFCarPaint', nodename="carpaint")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFCarPaint', nodename="carpaint")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeBRDFCookTorrance" label="Cook Torrance" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeBRDFCookTorrance</contextOpType>
@@ -57,11 +105,22 @@
 
     <toolSubmenu>BRDF</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeBRDFCookTorrance', nodename="cooktorrance")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFCookTorrance', nodename="cooktorrance")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeBRDFDiffuse" label="Diffuse" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeBRDFDiffuse</contextOpType>
@@ -69,11 +128,22 @@
 
     <toolSubmenu>BRDF</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeBRDFDiffuse', nodename="diffuse")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFDiffuse', nodename="diffuse")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeBRDFDiffuse_forSSS" label="Diffuse For SSS" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeBRDFDiffuse_forSSS</contextOpType>
@@ -81,11 +151,22 @@
 
     <toolSubmenu>BRDF</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeBRDFDiffuse_forSSS', nodename="diffuseforsss")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFDiffuse_forSSS', nodename="diffuseforsss")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeBRDFFlakes" label="Flakes" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeBRDFFlakes</contextOpType>
@@ -93,11 +174,22 @@
 
     <toolSubmenu>BRDF</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeBRDFFlakes', nodename="flakes")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFFlakes', nodename="flakes")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeBRDFGGX" label="GGX" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeBRDFGGX</contextOpType>
@@ -105,11 +197,22 @@
 
     <toolSubmenu>BRDF</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeBRDFGGX', nodename="ggx")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFGGX', nodename="ggx")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeBRDFGlass" label="Glass" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeBRDFGlass</contextOpType>
@@ -117,11 +220,22 @@
 
     <toolSubmenu>BRDF</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeBRDFGlass', nodename="glass")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFGlass', nodename="glass")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeBRDFGlassGlossy" label="Glass Glossy" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeBRDFGlassGlossy</contextOpType>
@@ -129,11 +243,22 @@
 
     <toolSubmenu>BRDF</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeBRDFGlassGlossy', nodename="glassglossy")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFGlassGlossy', nodename="glassglossy")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeBRDFHOPS" label="HOPS" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeBRDFHOPS</contextOpType>
@@ -141,11 +266,22 @@
 
     <toolSubmenu>BRDF</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeBRDFHOPS', nodename="hops")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFHOPS', nodename="hops")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeBRDFHair" label="Hair" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeBRDFHair</contextOpType>
@@ -153,11 +289,22 @@
 
     <toolSubmenu>BRDF</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeBRDFHair', nodename="hair")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFHair', nodename="hair")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeBRDFHair2" label="Hair 2" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeBRDFHair2</contextOpType>
@@ -165,11 +312,22 @@
 
     <toolSubmenu>BRDF</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeBRDFHair2', nodename="hair2")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFHair2', nodename="hair2")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeBRDFHair3" label="Hair 3" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeBRDFHair3</contextOpType>
@@ -177,11 +335,22 @@
 
     <toolSubmenu>BRDF</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeBRDFHair3', nodename="hair3")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFHair3', nodename="hair3")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeBRDFLayered" label="Layered" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeBRDFLayered</contextOpType>
@@ -189,11 +358,22 @@
 
     <toolSubmenu>BRDF</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeBRDFLayered', nodename="layered")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFLayered', nodename="layered")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeBRDFLight" label="Light" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeBRDFLight</contextOpType>
@@ -201,11 +381,22 @@
 
     <toolSubmenu>BRDF</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeBRDFLight', nodename="light")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFLight', nodename="light")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeBRDFMirror" label="Mirror" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeBRDFMirror</contextOpType>
@@ -213,11 +404,22 @@
 
     <toolSubmenu>BRDF</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeBRDFMirror', nodename="mirror")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFMirror', nodename="mirror")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeBRDFPhong" label="Phong" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeBRDFPhong</contextOpType>
@@ -225,11 +427,22 @@
 
     <toolSubmenu>BRDF</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeBRDFPhong', nodename="phong")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFPhong', nodename="phong")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeBRDFSSS" label="SSS" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeBRDFSSS</contextOpType>
@@ -237,11 +450,22 @@
 
     <toolSubmenu>BRDF</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeBRDFSSS', nodename="sss")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFSSS', nodename="sss")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeBRDFSSS2" label="SSS 2" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeBRDFSSS2</contextOpType>
@@ -249,11 +473,22 @@
 
     <toolSubmenu>BRDF</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeBRDFSSS2', nodename="sss2")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFSSS2', nodename="sss2")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeBRDFSSS2Complex" label="SSS 2 Complex" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeBRDFSSS2Complex</contextOpType>
@@ -261,11 +496,22 @@
 
     <toolSubmenu>BRDF</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeBRDFSSS2Complex', nodename="sss2complex")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFSSS2Complex', nodename="sss2complex")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeBRDFSampled" label="Sampled" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeBRDFSampled</contextOpType>
@@ -273,11 +519,22 @@
 
     <toolSubmenu>BRDF</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeBRDFSampled', nodename="sampled")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFSampled', nodename="sampled")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeBRDFScanned" label="Scanned" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeBRDFScanned</contextOpType>
@@ -285,11 +542,22 @@
 
     <toolSubmenu>BRDF</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeBRDFScanned', nodename="scanned")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFScanned', nodename="scanned")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeBRDFSkinComplex" label="Skin" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeBRDFSkinComplex</contextOpType>
@@ -297,11 +565,22 @@
 
     <toolSubmenu>BRDF</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeBRDFSkinComplex', nodename="skin")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFSkinComplex', nodename="skin")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeBRDFVRayMtl" label="VRayMtl" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeBRDFVRayMtl</contextOpType>
@@ -309,11 +588,22 @@
 
     <toolSubmenu>BRDF</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeBRDFVRayMtl', nodename="vraymtl")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFVRayMtl', nodename="vraymtl")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeBRDFWard" label="Ward" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeBRDFWard</contextOpType>
@@ -321,11 +611,22 @@
 
     <toolSubmenu>BRDF</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeBRDFWard', nodename="ward")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFWard', nodename="ward")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeBakeView" label="Bake" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeBakeView</contextOpType>
@@ -333,11 +634,22 @@
 
     <toolSubmenu>Settings</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeBakeView', nodename="bake")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBakeView', nodename="bake")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeBitmapBuffer" label="Image File" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeBitmapBuffer</contextOpType>
@@ -345,11 +657,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeBitmapBuffer', nodename="imagefile")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBitmapBuffer', nodename="imagefile")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeCameraPhysical" label="Physical Camera" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeCameraPhysical</contextOpType>
@@ -357,11 +680,22 @@
 
     <toolSubmenu>Camera</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeCameraPhysical', nodename="physicalcamera")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeCameraPhysical', nodename="physicalcamera")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeColorCorrect" label="Color Correct" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeColorCorrect</contextOpType>
@@ -369,11 +703,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeColorCorrect', nodename="colorcorrect")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeColorCorrect', nodename="colorcorrect")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeColorCorrection" label="Color Correction" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeColorCorrection</contextOpType>
@@ -381,11 +726,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeColorCorrection', nodename="colorcorrection")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeColorCorrection', nodename="colorcorrection")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeEnvFogMeshGizmo" label="Fog Gizmo" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeEnvFogMeshGizmo</contextOpType>
@@ -393,11 +749,22 @@
 
     <toolSubmenu>Effect</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeEnvFogMeshGizmo', nodename="foggizmo")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeEnvFogMeshGizmo', nodename="foggizmo")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeEnvironmentFog" label="Fog" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeEnvironmentFog</contextOpType>
@@ -405,11 +772,22 @@
 
     <toolSubmenu>Effect</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeEnvironmentFog', nodename="fog")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeEnvironmentFog', nodename="fog")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeFilterArea" label="Area" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeFilterArea</contextOpType>
@@ -417,11 +795,22 @@
 
     <toolSubmenu>Settings</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeFilterArea', nodename="area")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeFilterArea', nodename="area")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeFilterBox" label="Box" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeFilterBox</contextOpType>
@@ -429,11 +818,22 @@
 
     <toolSubmenu>Settings</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeFilterBox', nodename="box")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeFilterBox', nodename="box")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeFilterCatmullRom" label="Catmull-Rom" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeFilterCatmullRom</contextOpType>
@@ -441,11 +841,22 @@
 
     <toolSubmenu>Settings</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeFilterCatmullRom', nodename="catmull-rom")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeFilterCatmullRom', nodename="catmull-rom")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeFilterCookVariable" label="Cook Variable" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeFilterCookVariable</contextOpType>
@@ -453,11 +864,22 @@
 
     <toolSubmenu>Settings</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeFilterCookVariable', nodename="cookvariable")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeFilterCookVariable', nodename="cookvariable")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeFilterGaussian" label="Gaussian" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeFilterGaussian</contextOpType>
@@ -465,11 +887,22 @@
 
     <toolSubmenu>Settings</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeFilterGaussian', nodename="gaussian")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeFilterGaussian', nodename="gaussian")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeFilterLanczos" label="Lanczos" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeFilterLanczos</contextOpType>
@@ -477,11 +910,22 @@
 
     <toolSubmenu>Settings</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeFilterLanczos', nodename="lanczos")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeFilterLanczos', nodename="lanczos")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeFilterMitNet" label="Mitchell-Netravali" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeFilterMitNet</contextOpType>
@@ -489,11 +933,22 @@
 
     <toolSubmenu>Settings</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeFilterMitNet', nodename="mitchell-netravali")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeFilterMitNet', nodename="mitchell-netravali")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeFilterSinc" label="Sinc" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeFilterSinc</contextOpType>
@@ -501,11 +956,22 @@
 
     <toolSubmenu>Settings</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeFilterSinc', nodename="sinc")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeFilterSinc', nodename="sinc")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeFilterTriangle" label="Triangle" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeFilterTriangle</contextOpType>
@@ -513,11 +979,22 @@
 
     <toolSubmenu>Settings</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeFilterTriangle', nodename="triangle")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeFilterTriangle', nodename="triangle")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeFloatToTex" label="FloatToTex" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeFloatToTex</contextOpType>
@@ -525,11 +1002,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeFloatToTex', nodename="floattotex")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeFloatToTex', nodename="floattotex")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeGeomDisplacedMesh" label="Displacement" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeGeomDisplacedMesh</contextOpType>
@@ -537,11 +1025,22 @@
 
     <toolSubmenu>Geometry</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeGeomDisplacedMesh', nodename="displacement")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeGeomDisplacedMesh', nodename="displacement")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeGeomMayaHair" label="Hair" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeGeomMayaHair</contextOpType>
@@ -549,11 +1048,22 @@
 
     <toolSubmenu>Geometry</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeGeomMayaHair', nodename="hair")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeGeomMayaHair', nodename="hair")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeGeomMeshFile" label="VRayProxy" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeGeomMeshFile</contextOpType>
@@ -561,11 +1071,22 @@
 
     <toolSubmenu>Geometry</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeGeomMeshFile', nodename="vrayproxy")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeGeomMeshFile', nodename="vrayproxy")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeGeomPlane" label="Infinite Plane" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeGeomPlane</contextOpType>
@@ -573,11 +1094,22 @@
 
     <toolSubmenu>Geometry</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeGeomPlane', nodename="infiniteplane")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeGeomPlane', nodename="infiniteplane")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeGeomStaticMesh" label="Mesh" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeGeomStaticMesh</contextOpType>
@@ -585,11 +1117,22 @@
 
     <toolSubmenu>Geometry</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeGeomStaticMesh', nodename="mesh")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeGeomStaticMesh', nodename="mesh")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeGeomStaticSmoothedMesh" label="Subdivision" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeGeomStaticSmoothedMesh</contextOpType>
@@ -597,11 +1140,22 @@
 
     <toolSubmenu>Geometry</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeGeomStaticSmoothedMesh', nodename="subdivision")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeGeomStaticSmoothedMesh', nodename="subdivision")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeLightAmbient" label="Ambient" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeLightAmbient</contextOpType>
@@ -609,11 +1163,22 @@
 
     <toolSubmenu>Light</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeLightAmbient', nodename="ambient")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeLightAmbient', nodename="ambient")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeLightAmbientMax" label="Ambient (3ds max)" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeLightAmbientMax</contextOpType>
@@ -621,11 +1186,22 @@
 
     <toolSubmenu>Light</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeLightAmbientMax', nodename="ambient_3dsmax")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeLightAmbientMax', nodename="ambient_3dsmax")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeLightDirect" label="Direct" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeLightDirect</contextOpType>
@@ -633,11 +1209,22 @@
 
     <toolSubmenu>Light</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeLightDirect', nodename="direct")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeLightDirect', nodename="direct")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeLightDirectMax" label="Direct (3ds max)" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeLightDirectMax</contextOpType>
@@ -645,11 +1232,22 @@
 
     <toolSubmenu>Light</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeLightDirectMax', nodename="direct_3dsmax")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeLightDirectMax', nodename="direct_3dsmax")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeLightDome" label="Dome" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeLightDome</contextOpType>
@@ -657,11 +1255,22 @@
 
     <toolSubmenu>Light</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeLightDome', nodename="dome")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeLightDome', nodename="dome")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeLightIES" label="IES" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeLightIES</contextOpType>
@@ -669,11 +1278,22 @@
 
     <toolSubmenu>Light</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeLightIES', nodename="ies")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeLightIES', nodename="ies")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeLightIESMax" label="IES (3ds max)" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeLightIESMax</contextOpType>
@@ -681,11 +1301,22 @@
 
     <toolSubmenu>Light</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeLightIESMax', nodename="ies_3dsmax")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeLightIESMax', nodename="ies_3dsmax")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeLightMesh" label="Mesh Light" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeLightMesh</contextOpType>
@@ -693,11 +1324,22 @@
 
     <toolSubmenu>Light</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeLightMesh', nodename="meshlight")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeLightMesh', nodename="meshlight")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeLightOmni" label="Omni" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeLightOmni</contextOpType>
@@ -705,11 +1347,22 @@
 
     <toolSubmenu>Light</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeLightOmni', nodename="omni")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeLightOmni', nodename="omni")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeLightOmniMax" label="Omni (3ds max)" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeLightOmniMax</contextOpType>
@@ -717,11 +1370,22 @@
 
     <toolSubmenu>Light</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeLightOmniMax', nodename="omni_3dsmax")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeLightOmniMax', nodename="omni_3dsmax")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeLightRectangle" label="Rectangle" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeLightRectangle</contextOpType>
@@ -729,11 +1393,22 @@
 
     <toolSubmenu>Light</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeLightRectangle', nodename="rectangle")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeLightRectangle', nodename="rectangle")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeLightSphere" label="Sphere" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeLightSphere</contextOpType>
@@ -741,11 +1416,22 @@
 
     <toolSubmenu>Light</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeLightSphere', nodename="sphere")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeLightSphere', nodename="sphere")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeLightSpot" label="Spot" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeLightSpot</contextOpType>
@@ -753,11 +1439,22 @@
 
     <toolSubmenu>Light</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeLightSpot', nodename="spot")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeLightSpot', nodename="spot")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeLightSpotMax" label="Spot (3ds max)" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeLightSpotMax</contextOpType>
@@ -765,11 +1462,22 @@
 
     <toolSubmenu>Light</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeLightSpotMax', nodename="spot_3dsmax")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeLightSpotMax', nodename="spot_3dsmax")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeMayaGamma" label="Gamma" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeMayaGamma</contextOpType>
@@ -777,11 +1485,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeMayaGamma', nodename="gamma")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeMayaGamma', nodename="gamma")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeMayaLightDirect" label="Direct (Maya)" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeMayaLightDirect</contextOpType>
@@ -789,11 +1508,22 @@
 
     <toolSubmenu>Light</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeMayaLightDirect', nodename="direct_maya")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeMayaLightDirect', nodename="direct_maya")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeMtl2Sided" label="Two Sided" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeMtl2Sided</contextOpType>
@@ -801,11 +1531,22 @@
 
     <toolSubmenu>Material</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeMtl2Sided', nodename="twosided")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeMtl2Sided', nodename="twosided")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeMtlBump" label="Bump" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeMtlBump</contextOpType>
@@ -813,11 +1554,22 @@
 
     <toolSubmenu>Material</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeMtlBump', nodename="bump")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeMtlBump', nodename="bump")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeMtlDoubleSided" label="Double Sided" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeMtlDoubleSided</contextOpType>
@@ -825,11 +1577,22 @@
 
     <toolSubmenu>Material</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeMtlDoubleSided', nodename="doublesided")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeMtlDoubleSided', nodename="doublesided")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeMtlGLSL" label="GLSL" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeMtlGLSL</contextOpType>
@@ -837,11 +1600,22 @@
 
     <toolSubmenu>Material</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeMtlGLSL', nodename="glsl")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeMtlGLSL', nodename="glsl")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeMtlMaterialID" label="Material ID" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeMtlMaterialID</contextOpType>
@@ -849,11 +1623,22 @@
 
     <toolSubmenu>Material</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeMtlMaterialID', nodename="materialid")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeMtlMaterialID', nodename="materialid")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeMtlMulti" label="Multi ID" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeMtlMulti</contextOpType>
@@ -861,11 +1646,22 @@
 
     <toolSubmenu>Material</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeMtlMulti', nodename="multiid")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeMtlMulti', nodename="multiid")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeMtlObjBBox" label="Object Bounding" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeMtlObjBBox</contextOpType>
@@ -873,11 +1669,22 @@
 
     <toolSubmenu>Material</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeMtlObjBBox', nodename="objectbounding")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeMtlObjBBox', nodename="objectbounding")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeMtlOverride" label="Override" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeMtlOverride</contextOpType>
@@ -885,11 +1692,22 @@
 
     <toolSubmenu>Material</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeMtlOverride', nodename="override")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeMtlOverride', nodename="override")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeMtlRenderStats" label="Render Stats" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeMtlRenderStats</contextOpType>
@@ -897,11 +1715,22 @@
 
     <toolSubmenu>Material</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeMtlRenderStats', nodename="renderstats")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeMtlRenderStats', nodename="renderstats")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeMtlRoundEdges" label="Round Edges" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeMtlRoundEdges</contextOpType>
@@ -909,11 +1738,22 @@
 
     <toolSubmenu>Material</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeMtlRoundEdges', nodename="roundedges")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeMtlRoundEdges', nodename="roundedges")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeMtlSingleBRDF" label="Single" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeMtlSingleBRDF</contextOpType>
@@ -921,11 +1761,22 @@
 
     <toolSubmenu>Material</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeMtlSingleBRDF', nodename="single")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeMtlSingleBRDF', nodename="single")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeMtlStreakFade" label="Streak Fade" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeMtlStreakFade</contextOpType>
@@ -933,11 +1784,22 @@
 
     <toolSubmenu>Material</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeMtlStreakFade', nodename="streakfade")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeMtlStreakFade', nodename="streakfade")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeMtlVRmat" label="VRmat" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeMtlVRmat</contextOpType>
@@ -945,11 +1807,22 @@
 
     <toolSubmenu>Material</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeMtlVRmat', nodename="vrmat")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeMtlVRmat', nodename="vrmat")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeMtlWrapper" label="Wrapper" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeMtlWrapper</contextOpType>
@@ -957,11 +1830,22 @@
 
     <toolSubmenu>Material</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeMtlWrapper', nodename="wrapper")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeMtlWrapper', nodename="wrapper")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeNode" label="Node" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeNode</contextOpType>
@@ -969,11 +1853,22 @@
 
     <toolSubmenu>Node</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeNode', nodename="node")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeNode', nodename="node")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodePhxShaderCache" label="Phoenix Cache" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodePhxShaderCache</contextOpType>
@@ -981,11 +1876,22 @@
 
     <toolSubmenu>Effect</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodePhxShaderCache', nodename="phoenixcache")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodePhxShaderCache', nodename="phoenixcache")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodePhxShaderSim" label="Phoenix Data" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodePhxShaderSim</contextOpType>
@@ -993,11 +1899,22 @@
 
     <toolSubmenu>Effect</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodePhxShaderSim', nodename="phoenixdata")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodePhxShaderSim', nodename="phoenixdata")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodePhxShaderSimVol" label="Phoenix Shader" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodePhxShaderSimVol</contextOpType>
@@ -1005,11 +1922,22 @@
 
     <toolSubmenu>Effect</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodePhxShaderSimVol', nodename="phoenixshader")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodePhxShaderSimVol', nodename="phoenixshader")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeRTEngine" label="Realtime Engine" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeRTEngine</contextOpType>
@@ -1017,11 +1945,22 @@
 
     <toolSubmenu>Settings</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeRTEngine', nodename="realtimeengine")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeRTEngine', nodename="realtimeengine")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeRenderChannelBumpNormals" label="Bump Normals" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeRenderChannelBumpNormals</contextOpType>
@@ -1029,11 +1968,22 @@
 
     <toolSubmenu>Render Channel</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelBumpNormals', nodename="bumpnormals")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelBumpNormals', nodename="bumpnormals")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeRenderChannelColor" label="Color Channel" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeRenderChannelColor</contextOpType>
@@ -1041,11 +1991,22 @@
 
     <toolSubmenu>Render Channel</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelColor', nodename="colorchannel")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelColor', nodename="colorchannel")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeRenderChannelCoverage" label="Coverage" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeRenderChannelCoverage</contextOpType>
@@ -1053,11 +2014,22 @@
 
     <toolSubmenu>Render Channel</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelCoverage', nodename="coverage")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelCoverage', nodename="coverage")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeRenderChannelDRBucket" label="DR Bucket" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeRenderChannelDRBucket</contextOpType>
@@ -1065,11 +2037,22 @@
 
     <toolSubmenu>Render Channel</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelDRBucket', nodename="drbucket")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelDRBucket', nodename="drbucket")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeRenderChannelExtraTex" label="ExtraTex" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeRenderChannelExtraTex</contextOpType>
@@ -1077,11 +2060,22 @@
 
     <toolSubmenu>Render Channel</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelExtraTex', nodename="extratex")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelExtraTex', nodename="extratex")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeRenderChannelGlossiness" label="Glossiness" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeRenderChannelGlossiness</contextOpType>
@@ -1089,11 +2083,22 @@
 
     <toolSubmenu>Render Channel</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelGlossiness', nodename="glossiness")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelGlossiness', nodename="glossiness")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeRenderChannelLightSelect" label="Light Select" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeRenderChannelLightSelect</contextOpType>
@@ -1101,11 +2106,22 @@
 
     <toolSubmenu>Render Channel</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelLightSelect', nodename="lightselect")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelLightSelect', nodename="lightselect")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeRenderChannelMultiMatte" label="MultiMatte" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeRenderChannelMultiMatte</contextOpType>
@@ -1113,11 +2129,22 @@
 
     <toolSubmenu>Render Channel</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelMultiMatte', nodename="multimatte")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelMultiMatte', nodename="multimatte")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeRenderChannelNodeID" label="Node ID" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeRenderChannelNodeID</contextOpType>
@@ -1125,11 +2152,22 @@
 
     <toolSubmenu>Render Channel</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelNodeID', nodename="nodeid")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelNodeID', nodename="nodeid")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeRenderChannelNormals" label="Normals" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeRenderChannelNormals</contextOpType>
@@ -1137,11 +2175,22 @@
 
     <toolSubmenu>Render Channel</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelNormals', nodename="normals")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelNormals', nodename="normals")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeRenderChannelObjectSelect" label="Object Select" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeRenderChannelObjectSelect</contextOpType>
@@ -1149,11 +2198,22 @@
 
     <toolSubmenu>Render Channel</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelObjectSelect', nodename="objectselect")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelObjectSelect', nodename="objectselect")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeRenderChannelRenderID" label="Render ID" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeRenderChannelRenderID</contextOpType>
@@ -1161,11 +2221,22 @@
 
     <toolSubmenu>Render Channel</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelRenderID', nodename="renderid")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelRenderID', nodename="renderid")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeRenderChannelVelocity" label="Velocity" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeRenderChannelVelocity</contextOpType>
@@ -1173,11 +2244,22 @@
 
     <toolSubmenu>Render Channel</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelVelocity', nodename="velocity")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelVelocity', nodename="velocity")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeRenderChannelZDepth" label="Z-Depth" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeRenderChannelZDepth</contextOpType>
@@ -1185,11 +2267,22 @@
 
     <toolSubmenu>Render Channel</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelZDepth', nodename="z-depth")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelZDepth', nodename="z-depth")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeRenderView" label="Render view" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeRenderView</contextOpType>
@@ -1197,11 +2290,22 @@
 
     <toolSubmenu>Camera</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeRenderView', nodename="renderview")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeRenderView', nodename="renderview")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeSettingsCamera" label="Camera" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeSettingsCamera</contextOpType>
@@ -1209,11 +2313,22 @@
 
     <toolSubmenu>Settings</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeSettingsCamera', nodename="camera")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeSettingsCamera', nodename="camera")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeSettingsCameraDof" label="SettingsCameraDof" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeSettingsCameraDof</contextOpType>
@@ -1221,11 +2336,22 @@
 
     <toolSubmenu>Settings</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeSettingsCameraDof', nodename="settingscameradof")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeSettingsCameraDof', nodename="settingscameradof")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeSettingsCaustics" label="Caustics" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeSettingsCaustics</contextOpType>
@@ -1233,11 +2359,22 @@
 
     <toolSubmenu>Settings</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeSettingsCaustics', nodename="caustics")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeSettingsCaustics', nodename="caustics")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeSettingsColorMapping" label="SettingsColorMapping" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeSettingsColorMapping</contextOpType>
@@ -1245,11 +2382,22 @@
 
     <toolSubmenu>Settings</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeSettingsColorMapping', nodename="settingscolormapping")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeSettingsColorMapping', nodename="settingscolormapping")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeSettingsCurrentFrame" label="Current Frame" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeSettingsCurrentFrame</contextOpType>
@@ -1257,11 +2405,22 @@
 
     <toolSubmenu>Settings</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeSettingsCurrentFrame', nodename="currentframe")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeSettingsCurrentFrame', nodename="currentframe")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeSettingsDMCGI" label="Brute Force" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeSettingsDMCGI</contextOpType>
@@ -1269,11 +2428,22 @@
 
     <toolSubmenu>Settings</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeSettingsDMCGI', nodename="bruteforce")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeSettingsDMCGI', nodename="bruteforce")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeSettingsDMCSampler" label="DMC Sampler" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeSettingsDMCSampler</contextOpType>
@@ -1281,11 +2451,22 @@
 
     <toolSubmenu>Settings</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeSettingsDMCSampler', nodename="dmcsampler")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeSettingsDMCSampler', nodename="dmcsampler")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeSettingsDefaultDisplacement" label="Default Displacement" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeSettingsDefaultDisplacement</contextOpType>
@@ -1293,11 +2474,22 @@
 
     <toolSubmenu>Settings</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeSettingsDefaultDisplacement', nodename="defaultdisplacement")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeSettingsDefaultDisplacement', nodename="defaultdisplacement")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeSettingsEXR" label="SettingsEXR" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeSettingsEXR</contextOpType>
@@ -1305,11 +2497,22 @@
 
     <toolSubmenu>Settings</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeSettingsEXR', nodename="settingsexr")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeSettingsEXR', nodename="settingsexr")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeSettingsEnvironment" label="Environment" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeSettingsEnvironment</contextOpType>
@@ -1317,11 +2520,22 @@
 
     <toolSubmenu>Settings</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeSettingsEnvironment', nodename="environment")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeSettingsEnvironment', nodename="environment")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeSettingsGI" label="Global Illumination" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeSettingsGI</contextOpType>
@@ -1329,11 +2543,22 @@
 
     <toolSubmenu>Settings</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeSettingsGI', nodename="globalillumination")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeSettingsGI', nodename="globalillumination")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeSettingsImageSampler" label="Image Sampler" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeSettingsImageSampler</contextOpType>
@@ -1341,11 +2566,22 @@
 
     <toolSubmenu>Settings</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeSettingsImageSampler', nodename="imagesampler")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeSettingsImageSampler', nodename="imagesampler")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeSettingsIrradianceMap" label="SettingsIrradianceMap" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeSettingsIrradianceMap</contextOpType>
@@ -1353,11 +2589,22 @@
 
     <toolSubmenu>Settings</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeSettingsIrradianceMap', nodename="settingsirradiancemap")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeSettingsIrradianceMap', nodename="settingsirradiancemap")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeSettingsJPEG" label="SettingsJPEG" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeSettingsJPEG</contextOpType>
@@ -1365,11 +2612,22 @@
 
     <toolSubmenu>Settings</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeSettingsJPEG', nodename="settingsjpeg")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeSettingsJPEG', nodename="settingsjpeg")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeSettingsLightCache" label="SettingsLightCache" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeSettingsLightCache</contextOpType>
@@ -1377,11 +2635,22 @@
 
     <toolSubmenu>Settings</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeSettingsLightCache', nodename="settingslightcache")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeSettingsLightCache', nodename="settingslightcache")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeSettingsLightLinker" label="Settings Light Linker" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeSettingsLightLinker</contextOpType>
@@ -1389,11 +2658,22 @@
 
     <toolSubmenu>Settings</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeSettingsLightLinker', nodename="settingslightlinker")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeSettingsLightLinker', nodename="settingslightlinker")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeSettingsLightTree" label="Light Tree" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeSettingsLightTree</contextOpType>
@@ -1401,11 +2681,22 @@
 
     <toolSubmenu>Settings</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeSettingsLightTree', nodename="lighttree")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeSettingsLightTree', nodename="lighttree")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeSettingsMotionBlur" label="Motion Blur" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeSettingsMotionBlur</contextOpType>
@@ -1413,11 +2704,22 @@
 
     <toolSubmenu>Settings</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeSettingsMotionBlur', nodename="motionblur")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeSettingsMotionBlur', nodename="motionblur")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeSettingsOptions" label="Options" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeSettingsOptions</contextOpType>
@@ -1425,11 +2727,22 @@
 
     <toolSubmenu>Settings</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeSettingsOptions', nodename="options")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeSettingsOptions', nodename="options")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeSettingsOutput" label="Output" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeSettingsOutput</contextOpType>
@@ -1437,11 +2750,22 @@
 
     <toolSubmenu>Settings</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeSettingsOutput', nodename="output")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeSettingsOutput', nodename="output")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeSettingsPNG" label="PNG" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeSettingsPNG</contextOpType>
@@ -1449,11 +2773,22 @@
 
     <toolSubmenu>Settings</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeSettingsPNG', nodename="png")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeSettingsPNG', nodename="png")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeSettingsPhotonMap" label="Photon Map" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeSettingsPhotonMap</contextOpType>
@@ -1461,11 +2796,22 @@
 
     <toolSubmenu>Settings</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeSettingsPhotonMap', nodename="photonmap")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeSettingsPhotonMap', nodename="photonmap")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeSettingsPtexBaker" label="Ptex Baker" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeSettingsPtexBaker</contextOpType>
@@ -1473,11 +2819,22 @@
 
     <toolSubmenu>Settings</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeSettingsPtexBaker', nodename="ptexbaker")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeSettingsPtexBaker', nodename="ptexbaker")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeSettingsRTEngine" label="Realtime Engine Settings" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeSettingsRTEngine</contextOpType>
@@ -1485,11 +2842,22 @@
 
     <toolSubmenu>Settings</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeSettingsRTEngine', nodename="realtimeenginesettings")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeSettingsRTEngine', nodename="realtimeenginesettings")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeSettingsRaycaster" label="Raycaster" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeSettingsRaycaster</contextOpType>
@@ -1497,11 +2865,22 @@
 
     <toolSubmenu>Settings</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeSettingsRaycaster', nodename="raycaster")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeSettingsRaycaster', nodename="raycaster")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeSettingsRegionsGenerator" label="Regions Generator" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeSettingsRegionsGenerator</contextOpType>
@@ -1509,11 +2888,22 @@
 
     <toolSubmenu>Settings</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeSettingsRegionsGenerator', nodename="regionsgenerator")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeSettingsRegionsGenerator', nodename="regionsgenerator")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeSettingsRenderChannels" label="Render Channels" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeSettingsRenderChannels</contextOpType>
@@ -1521,11 +2911,22 @@
 
     <toolSubmenu>Settings</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeSettingsRenderChannels', nodename="renderchannels")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeSettingsRenderChannels', nodename="renderchannels")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeSettingsSGI" label="SettingsSGI" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeSettingsSGI</contextOpType>
@@ -1533,11 +2934,22 @@
 
     <toolSubmenu>Settings</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeSettingsSGI', nodename="settingssgi")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeSettingsSGI', nodename="settingssgi")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeSettingsTGA" label="SettingsTGA" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeSettingsTGA</contextOpType>
@@ -1545,11 +2957,22 @@
 
     <toolSubmenu>Settings</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeSettingsTGA', nodename="settingstga")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeSettingsTGA', nodename="settingstga")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeSettingsTIFF" label="SettingsTIFF" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeSettingsTIFF</contextOpType>
@@ -1557,11 +2980,22 @@
 
     <toolSubmenu>Settings</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeSettingsTIFF', nodename="settingstiff")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeSettingsTIFF', nodename="settingstiff")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeSettingsUnitsInfo" label="SettingsUnitsInfo" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeSettingsUnitsInfo</contextOpType>
@@ -1569,11 +3003,22 @@
 
     <toolSubmenu>Settings</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeSettingsUnitsInfo', nodename="settingsunitsinfo")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeSettingsUnitsInfo', nodename="settingsunitsinfo")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeSettingsVFB" label="SettingsVFB" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeSettingsVFB</contextOpType>
@@ -1581,11 +3026,22 @@
 
     <toolSubmenu>Settings</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeSettingsVFB', nodename="settingsvfb")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeSettingsVFB', nodename="settingsvfb")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeSettingsVRST" label="SettingsVRST" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeSettingsVRST</contextOpType>
@@ -1593,11 +3049,22 @@
 
     <toolSubmenu>Settings</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeSettingsVRST', nodename="settingsvrst")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeSettingsVRST', nodename="settingsvrst")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeSettingsVertexBaker" label="SettingsVertexBaker" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeSettingsVertexBaker</contextOpType>
@@ -1605,11 +3072,22 @@
 
     <toolSubmenu>Settings</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeSettingsVertexBaker', nodename="settingsvertexbaker")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeSettingsVertexBaker', nodename="settingsvertexbaker")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeSphereFade" label="Sphere Fade" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeSphereFade</contextOpType>
@@ -1617,11 +3095,22 @@
 
     <toolSubmenu>Effect</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeSphereFade', nodename="spherefade")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeSphereFade', nodename="spherefade")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeSphereFadeGizmo" label="Sphere Fade Gizmo" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeSphereFadeGizmo</contextOpType>
@@ -1629,11 +3118,22 @@
 
     <toolSubmenu>Effect</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeSphereFadeGizmo', nodename="spherefadegizmo")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeSphereFadeGizmo', nodename="spherefadegizmo")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeSphericalHarmonicsExporter" label="Spherical Harmonics Exporter" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeSphericalHarmonicsExporter</contextOpType>
@@ -1641,11 +3141,22 @@
 
     <toolSubmenu>Settings</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeSphericalHarmonicsExporter', nodename="sphericalharmonicsexporter")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeSphericalHarmonicsExporter', nodename="sphericalharmonicsexporter")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeSphericalHarmonicsRenderer" label="Spherical Harmonics Renderer" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeSphericalHarmonicsRenderer</contextOpType>
@@ -1653,11 +3164,22 @@
 
     <toolSubmenu>Settings</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeSphericalHarmonicsRenderer', nodename="sphericalharmonicsrenderer")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeSphericalHarmonicsRenderer', nodename="sphericalharmonicsrenderer")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeSunLight" label="Sun" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeSunLight</contextOpType>
@@ -1665,11 +3187,22 @@
 
     <toolSubmenu>Light</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeSunLight', nodename="sun")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeSunLight', nodename="sun")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexAColor" label="Color" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexAColor</contextOpType>
@@ -1677,11 +3210,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexAColor', nodename="color")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexAColor', nodename="color")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexAColorOp" label="Color Operations" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexAColorOp</contextOpType>
@@ -1689,11 +3233,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexAColorOp', nodename="coloroperations")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexAColorOp', nodename="coloroperations")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexBerconWood" label="Bercon Wood" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexBerconWood</contextOpType>
@@ -1701,11 +3256,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexBerconWood', nodename="berconwood")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexBerconWood', nodename="berconwood")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexBitmap" label="Image Texture" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexBitmap</contextOpType>
@@ -1713,11 +3279,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexBitmap', nodename="imagetexture")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexBitmap', nodename="imagetexture")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexBlend" label="Blend" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexBlend</contextOpType>
@@ -1725,11 +3302,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexBlend', nodename="blend")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexBlend', nodename="blend")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexBulge" label="Bulge" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexBulge</contextOpType>
@@ -1737,11 +3325,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexBulge', nodename="bulge")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexBulge', nodename="bulge")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexCellular" label="Cellular" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexCellular</contextOpType>
@@ -1749,11 +3348,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexCellular', nodename="cellular")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexCellular', nodename="cellular")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexChecker" label="Checker" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexChecker</contextOpType>
@@ -1761,11 +3371,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexChecker', nodename="checker")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexChecker', nodename="checker")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexCloth" label="Cloth" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexCloth</contextOpType>
@@ -1773,11 +3394,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexCloth', nodename="cloth")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexCloth', nodename="cloth")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexColorExponential" label="Color Exponential" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexColorExponential</contextOpType>
@@ -1785,11 +3417,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexColorExponential', nodename="colorexponential")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexColorExponential', nodename="colorexponential")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexColorToFloat" label="Color To Float" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexColorToFloat</contextOpType>
@@ -1797,11 +3440,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexColorToFloat', nodename="colortofloat")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexColorToFloat', nodename="colortofloat")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexCombineColor" label="Combine Color" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexCombineColor</contextOpType>
@@ -1809,11 +3463,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexCombineColor', nodename="combinecolor")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexCombineColor', nodename="combinecolor")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexCombineFloat" label="Combine Float" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexCombineFloat</contextOpType>
@@ -1821,11 +3486,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexCombineFloat', nodename="combinefloat")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexCombineFloat', nodename="combinefloat")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexCompMax" label="Comp Max" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexCompMax</contextOpType>
@@ -1833,11 +3509,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexCompMax', nodename="compmax")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexCompMax', nodename="compmax")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexCurvature" label="Curvature" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexCurvature</contextOpType>
@@ -1845,11 +3532,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexCurvature', nodename="curvature")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexCurvature', nodename="curvature")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexDirt" label="Dirt" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexDirt</contextOpType>
@@ -1857,11 +3555,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexDirt', nodename="dirt")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexDirt', nodename="dirt")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexDistance" label="Distance" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexDistance</contextOpType>
@@ -1869,11 +3578,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexDistance', nodename="distance")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexDistance', nodename="distance")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexEdges" label="Edges" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexEdges</contextOpType>
@@ -1881,11 +3601,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexEdges', nodename="edges")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexEdges', nodename="edges")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexFalloff" label="Falloff" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexFalloff</contextOpType>
@@ -1893,11 +3624,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexFalloff', nodename="falloff")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexFalloff', nodename="falloff")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexFloatOp" label="Float Operations" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexFloatOp</contextOpType>
@@ -1905,11 +3647,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexFloatOp', nodename="floatoperations")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexFloatOp', nodename="floatoperations")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexFloatToColor" label="Float To Color" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexFloatToColor</contextOpType>
@@ -1917,11 +3670,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexFloatToColor', nodename="floattocolor")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexFloatToColor', nodename="floattocolor")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexFresnel" label="Fresnel" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexFresnel</contextOpType>
@@ -1929,11 +3693,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexFresnel', nodename="fresnel")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexFresnel', nodename="fresnel")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexGradRamp" label="Gradient Ramp" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexGradRamp</contextOpType>
@@ -1941,11 +3716,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexGradRamp', nodename="gradientramp")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexGradRamp', nodename="gradientramp")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexGradient" label="Gradient" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexGradient</contextOpType>
@@ -1953,11 +3739,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexGradient', nodename="gradient")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexGradient', nodename="gradient")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexGranite" label="Granite" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexGranite</contextOpType>
@@ -1965,11 +3762,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexGranite', nodename="granite")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexGranite', nodename="granite")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexGrid" label="Grid" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexGrid</contextOpType>
@@ -1977,11 +3785,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexGrid', nodename="grid")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexGrid', nodename="grid")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexHairSampler" label="Hair Sampler" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexHairSampler</contextOpType>
@@ -1989,11 +3808,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexHairSampler', nodename="hairsampler")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexHairSampler', nodename="hairsampler")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexInvert" label="Invert" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexInvert</contextOpType>
@@ -2001,11 +3831,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexInvert', nodename="invert")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexInvert', nodename="invert")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexLayered" label="Layered" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexLayered</contextOpType>
@@ -2013,11 +3854,22 @@
 
     <toolSubmenu>System</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexLayered', nodename="layered")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexLayered', nodename="layered")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexLeather" label="Leather" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexLeather</contextOpType>
@@ -2025,11 +3877,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexLeather', nodename="leather")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexLeather', nodename="leather")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexMarbleMax" label="MarbleMax" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexMarbleMax</contextOpType>
@@ -2037,11 +3900,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexMarbleMax', nodename="marblemax")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexMarbleMax', nodename="marblemax")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexMaskMax" label="MaskMax" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexMaskMax</contextOpType>
@@ -2049,11 +3923,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexMaskMax', nodename="maskmax")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexMaskMax', nodename="maskmax")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexMayaContrast" label="MayaContrast" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexMayaContrast</contextOpType>
@@ -2061,11 +3946,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexMayaContrast', nodename="mayacontrast")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexMayaContrast', nodename="mayacontrast")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexMeshVertexColorChannel" label="Mesh Vertex Channel" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexMeshVertexColorChannel</contextOpType>
@@ -2073,11 +3969,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexMeshVertexColorChannel', nodename="meshvertexchannel")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexMeshVertexColorChannel', nodename="meshvertexchannel")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexMix" label="Mix" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexMix</contextOpType>
@@ -2085,11 +3992,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexMix', nodename="mix")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexMix', nodename="mix")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexNoise" label="Noise (Maya)" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexNoise</contextOpType>
@@ -2097,11 +4015,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexNoise', nodename="noise_maya")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexNoise', nodename="noise_maya")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexNoiseMax" label="Noise (3ds Max)" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexNoiseMax</contextOpType>
@@ -2109,11 +4038,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexNoiseMax', nodename="noise_3dsmax")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexNoiseMax', nodename="noise_3dsmax")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexOutput" label="Output" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexOutput</contextOpType>
@@ -2121,11 +4061,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexOutput', nodename="output")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexOutput', nodename="output")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexParticleId" label="Particle ID" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexParticleId</contextOpType>
@@ -2133,11 +4084,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexParticleId', nodename="particleid")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexParticleId', nodename="particleid")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexPtex" label="Ptex" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexPtex</contextOpType>
@@ -2145,11 +4107,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexPtex', nodename="ptex")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexPtex', nodename="ptex")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexRemap" label="Remap" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexRemap</contextOpType>
@@ -2157,11 +4130,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexRemap', nodename="remap")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexRemap', nodename="remap")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexRemapFloat" label="Remap Float" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexRemapFloat</contextOpType>
@@ -2169,11 +4153,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexRemapFloat', nodename="remapfloat")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexRemapFloat', nodename="remapfloat")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexRgbaCombine" label="RGBA Combine" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexRgbaCombine</contextOpType>
@@ -2181,11 +4176,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexRgbaCombine', nodename="rgbacombine")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexRgbaCombine', nodename="rgbacombine")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexRock" label="Rock" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexRock</contextOpType>
@@ -2193,11 +4199,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexRock', nodename="rock")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexRock', nodename="rock")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexSampler" label="Sampler" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexSampler</contextOpType>
@@ -2205,11 +4222,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexSampler', nodename="sampler")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexSampler', nodename="sampler")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexSky" label="Sky" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexSky</contextOpType>
@@ -2217,11 +4245,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexSky', nodename="sky")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexSky', nodename="sky")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexSmoke" label="Smoke" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexSmoke</contextOpType>
@@ -2229,11 +4268,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexSmoke', nodename="smoke")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexSmoke', nodename="smoke")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexSnow" label="Snow" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexSnow</contextOpType>
@@ -2241,11 +4291,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexSnow', nodename="snow")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexSnow', nodename="snow")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexSoftbox" label="Soft Box" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexSoftbox</contextOpType>
@@ -2253,11 +4314,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexSoftbox', nodename="softbox")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexSoftbox', nodename="softbox")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexSpeckle" label="Speckle" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexSpeckle</contextOpType>
@@ -2265,11 +4337,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexSpeckle', nodename="speckle")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexSpeckle', nodename="speckle")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexSplat" label="Splat" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexSplat</contextOpType>
@@ -2277,11 +4360,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexSplat', nodename="splat")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexSplat', nodename="splat")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexStencil" label="Stencil" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexStencil</contextOpType>
@@ -2289,11 +4383,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexStencil', nodename="stencil")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexStencil', nodename="stencil")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexStucco" label="Stucco" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexStucco</contextOpType>
@@ -2301,11 +4406,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexStucco', nodename="stucco")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexStucco', nodename="stucco")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexSwirl" label="Swirl" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexSwirl</contextOpType>
@@ -2313,11 +4429,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexSwirl', nodename="swirl")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexSwirl', nodename="swirl")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexTemperature" label="Temperature" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexTemperature</contextOpType>
@@ -2325,11 +4452,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexTemperature', nodename="temperature")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexTemperature', nodename="temperature")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexTemperatureToColor" label="Temperature To Color" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexTemperatureToColor</contextOpType>
@@ -2337,11 +4475,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexTemperatureToColor', nodename="temperaturetocolor")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexTemperatureToColor', nodename="temperaturetocolor")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexTiles" label="Tiles" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexTiles</contextOpType>
@@ -2349,11 +4498,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexTiles', nodename="tiles")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexTiles', nodename="tiles")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexUserColor" label="User Color" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexUserColor</contextOpType>
@@ -2361,11 +4521,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexUserColor', nodename="usercolor")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexUserColor', nodename="usercolor")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexUserScalar" label="User Scalar" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexUserScalar</contextOpType>
@@ -2373,11 +4544,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexUserScalar', nodename="userscalar")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexUserScalar', nodename="userscalar")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexVector" label="Vector To Texture" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexVector</contextOpType>
@@ -2385,11 +4567,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexVector', nodename="vectortotexture")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexVector', nodename="vectortotexture")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexVectorOp" label="Vector Operations" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexVectorOp</contextOpType>
@@ -2397,11 +4590,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexVectorOp', nodename="vectoroperations")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexVectorOp', nodename="vectoroperations")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexVectorProduct" label="Vector Product" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexVectorProduct</contextOpType>
@@ -2409,11 +4613,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexVectorProduct', nodename="vectorproduct")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexVectorProduct', nodename="vectorproduct")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexVectorToColor" label="Vector To Color" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexVectorToColor</contextOpType>
@@ -2421,11 +4636,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexVectorToColor', nodename="vectortocolor")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexVectorToColor', nodename="vectortocolor")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexVoxelData" label="Voxel Data" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexVoxelData</contextOpType>
@@ -2433,11 +4659,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexVoxelData', nodename="voxeldata")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexVoxelData', nodename="voxeldata")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexWater" label="Water" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexWater</contextOpType>
@@ -2445,11 +4682,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexWater', nodename="water")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexWater', nodename="water")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeTexWood" label="Wood" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexWood</contextOpType>
@@ -2457,11 +4705,22 @@
 
     <toolSubmenu>Texture</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeTexWood', nodename="wood")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexWood', nodename="wood")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeUVWGenBercon" label="Bercon" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeUVWGenBercon</contextOpType>
@@ -2469,11 +4728,22 @@
 
     <toolSubmenu>Mapping</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeUVWGenBercon', nodename="bercon")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeUVWGenBercon', nodename="bercon")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeUVWGenC4D" label="C4D" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeUVWGenC4D</contextOpType>
@@ -2481,11 +4751,22 @@
 
     <toolSubmenu>Mapping</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeUVWGenC4D', nodename="c4d")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeUVWGenC4D', nodename="c4d")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeUVWGenChannel" label="Channel" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeUVWGenChannel</contextOpType>
@@ -2493,11 +4774,22 @@
 
     <toolSubmenu>Mapping</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeUVWGenChannel', nodename="channel")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeUVWGenChannel', nodename="channel")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeUVWGenEnvironment" label="Environment" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeUVWGenEnvironment</contextOpType>
@@ -2505,11 +4797,22 @@
 
     <toolSubmenu>Mapping</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeUVWGenEnvironment', nodename="environment")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeUVWGenEnvironment', nodename="environment")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeUVWGenExplicit" label="Explicit" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeUVWGenExplicit</contextOpType>
@@ -2517,11 +4820,22 @@
 
     <toolSubmenu>Mapping</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeUVWGenExplicit', nodename="explicit")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeUVWGenExplicit', nodename="explicit")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeUVWGenMayaPlace2dTexture" label="Channel (Named)" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeUVWGenMayaPlace2dTexture</contextOpType>
@@ -2529,11 +4843,22 @@
 
     <toolSubmenu>Mapping</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeUVWGenMayaPlace2dTexture', nodename="channel_named")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeUVWGenMayaPlace2dTexture', nodename="channel_named")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeUVWGenObject" label="Object" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeUVWGenObject</contextOpType>
@@ -2541,11 +4866,22 @@
 
     <toolSubmenu>Mapping</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeUVWGenObject', nodename="object")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeUVWGenObject', nodename="object")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeUVWGenObjectBBox" label="Bounding Box" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeUVWGenObjectBBox</contextOpType>
@@ -2553,11 +4889,22 @@
 
     <toolSubmenu>Mapping</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeUVWGenObjectBBox', nodename="boundingbox")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeUVWGenObjectBBox', nodename="boundingbox")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeUVWGenPlanarWorld" label="World" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeUVWGenPlanarWorld</contextOpType>
@@ -2565,11 +4912,22 @@
 
     <toolSubmenu>Mapping</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeUVWGenPlanarWorld', nodename="world")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeUVWGenPlanarWorld', nodename="world")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeUVWGenProjection" label="Projection" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeUVWGenProjection</contextOpType>
@@ -2577,11 +4935,22 @@
 
     <toolSubmenu>Mapping</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeUVWGenProjection', nodename="projection")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeUVWGenProjection', nodename="projection")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeUVWGenSwitch" label="Switch" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeUVWGenSwitch</contextOpType>
@@ -2589,11 +4958,22 @@
 
     <toolSubmenu>Mapping</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeUVWGenSwitch', nodename="switch")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeUVWGenSwitch', nodename="switch")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeVRayScene" label="VRayScene" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeVRayScene</contextOpType>
@@ -2601,11 +4981,22 @@
 
     <toolSubmenu>Geometry</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeVRayScene', nodename="vrayscene")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeVRayScene', nodename="vrayscene")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeVRayStereoscopicSettings" label="VRayStereoscopicSettings" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeVRayStereoscopicSettings</contextOpType>
@@ -2613,11 +5004,22 @@
 
     <toolSubmenu>Settings</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeVRayStereoscopicSettings', nodename="vraystereoscopicsettings")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeVRayStereoscopicSettings', nodename="vraystereoscopicsettings")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodeVolumeVRayToon" label="Toon" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeVolumeVRayToon</contextOpType>
@@ -2625,11 +5027,22 @@
 
     <toolSubmenu>Effect</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodeVolumeVRayToon', nodename="toon")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeVolumeVRayToon', nodename="toon")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodexsiUVWGenChannel" label="Channel (XSI)" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodexsiUVWGenChannel</contextOpType>
@@ -2637,11 +5050,22 @@
 
     <toolSubmenu>Mapping</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodexsiUVWGenChannel', nodename="channel_xsi")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodexsiUVWGenChannel', nodename="channel_xsi")
+
+    ]]>
+    </script>
 </tool>
 
 <tool name="vop_VRayNodexsiUVWGenEnvironment" label="Environment (XSI)" icon="ROP_vray">
     <readOnly/>
+
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
 
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodexsiUVWGenEnvironment</contextOpType>
@@ -2649,9 +5073,15 @@
 
     <toolSubmenu>Mapping</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, 'VRayNodexsiUVWGenEnvironment', nodename="environment_xsi")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodexsiUVWGenEnvironment', nodename="environment_xsi")
+
+    ]]>
+    </script>
 </tool>
 
 
 </shelfDocument>
-

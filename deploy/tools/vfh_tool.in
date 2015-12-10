@@ -1,11 +1,22 @@
 <tool name="{CONTEXT}_{OP_NAME}" label="{ITEM_NAME}" icon="ROP_vray">
     <readOnly/>
 
+    <toolMenuContext name="viewer">
+        <contextNetType>{NET_CONTEXT}</contextNetType>
+    </toolMenuContext>
+
     <toolMenuContext name="network">
         <contextOpType>{OP_CONTEXT}/{OP_NAME}</contextOpType>
     </toolMenuContext>
 
     <toolSubmenu>{ITEM_MENU}</toolSubmenu>
 
-    <script scriptType="python"><![CDATA[import voptoolutils; voptoolutils.genericTool(kwargs, '{OP_NAME}', nodename="{OP_NODE_NAME}")]]></script>
+    <script scriptType="python">
+    <![CDATA[
+
+import {CONTEXT}toolutils;
+{CONTEXT}toolutils.genericTool(kwargs, '{OP_NAME}', nodename="{OP_NODE_NAME}")
+
+    ]]>
+    </script>
 </tool>
