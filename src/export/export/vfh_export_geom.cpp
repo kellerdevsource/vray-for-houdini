@@ -282,7 +282,7 @@ struct PrimOverride
 };
 
 
-int getPrimOverrides(const OP_Context &context, const GU_Detail &gdp, std::unordered_set< std::string > &o_mtlOverrideChannels, std::vector< PrimOverride > &o_primOverrides)
+int getPrimOverrides(const OP_Context &context, const GU_Detail &gdp, std::unordered_set< std::string > &o_mapChannelOverrides, std::vector< PrimOverride > &o_primOverrides)
 {
 	const GA_ROHandleS materialPathHndl(gdp.findStringTuple(GA_ATTRIB_PRIMITIVE, "shop_materialpath"));
 	const GA_ROHandleS materialOverrideHndl(gdp.findStringTuple(GA_ATTRIB_PRIMITIVE, "material_override"));
@@ -314,7 +314,7 @@ int getPrimOverrides(const OP_Context &context, const GU_Detail &gdp, std::unord
 			continue;
 		}
 
-		const PRM_ParmList	*shopPrmList = primOverride.shopNode->getParmList();
+		const PRM_ParmList *shopPrmList = primOverride.shopNode->getParmList();
 		UT_StringArray mtlOverrideChs;
 		mtlOverride.getKeys(mtlOverrideChs);
 		for ( const UT_StringHolder &chName : mtlOverrideChs) {
@@ -344,7 +344,7 @@ int getPrimOverrides(const OP_Context &context, const GU_Detail &gdp, std::unord
 			}
 
 			if ( primOverride.mtlOverrides.count(channelName) == 0 ) {
-				o_mtlOverrideChannels.insert(channelName);
+				o_mapChannelOverrides.insert(channelName);
 				// get default value from the shop parameter
 				// so if the overrides are NOT on all param channels
 				// we still get the default value for the channel from the shop param
@@ -369,11 +369,11 @@ int getPrimOverrides(const OP_Context &context, const GU_Detail &gdp, std::unord
 
 static void exportPrimitiveAttrs(const OP_Context &context, const GU_Detail &gdp, GeomExportParams &expParams, GeomExportData &expData)
 {
-	std::unordered_set< std::string > mtlOverrideChannels;
+	std::unordered_set< std::string > mapChannelOverrides;
 	std::vector< PrimOverride > primOverrides;
-	if ( getPrimOverrides(context, gdp, mtlOverrideChannels, primOverrides) > 0) {
+	if ( getPrimOverrides(context, gdp, mapChannelOverrides, primOverrides) > 0) {
 
-		for (const std::string channelName : mtlOverrideChannels ) {
+		for (const std::string channelName : mapChannelOverrides ) {
 			Mesh::MapChannel &map_channel = expData.map_channels_data[ channelName ];
 			// max number of different vertices int hte channel is bounded by number of primitives
 			map_channel.vertices.resize(gdp.getNumPrimitives());
@@ -404,7 +404,7 @@ static void exportPrimitiveAttrs(const OP_Context &context, const GU_Detail &gdp
 				}
 
 				// TODO: need to refactor this:
-				// for all map channels "faces" will be same  array so no need to recal it every time
+				// for all map channels "faces" will be same  array so no need to recalc it every time
 				if (prim->getTypeId().get() == GEO_PRIMPOLYSOUP) {
 					const GU_PrimPolySoup *polySoup = static_cast<const GU_PrimPolySoup*>(prim);
 					for (GEO_PrimPolySoup::PolygonIterator psIt(*polySoup); !psIt.atEnd(); ++psIt) {

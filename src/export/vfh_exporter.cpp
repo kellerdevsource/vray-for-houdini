@@ -170,17 +170,13 @@ OP_Node* VRayExporter::FindChildNodeByType(OP_Node *op_node, const std::string &
 }
 
 
-void VRayExporter::setAttrValueFromOpNode(Attrs::PluginDesc &pluginDesc, const Parm::AttrDesc &attrDesc, OP_Node *opNode, const std::string &prefix)
+void VRayExporter::setAttrValueFromOpNode(Attrs::PluginDesc &pluginDesc, const Parm::AttrDesc &attrDesc, OP_Node &opNode, const std::string &parmName)
 {
-	const std::string &parmName = prefix.empty()
-								  ? attrDesc.attr
-								  : boost::str(Parm::FmtPrefixManual % prefix % attrDesc.attr);
-
-	if (Parm::isParmExist(*opNode, parmName)) {
-		const PRM_Parm *parm = Parm::getParm(*opNode, parmName);
+	if (Parm::isParmExist(opNode, parmName)) {
+		const PRM_Parm *parm = Parm::getParm(opNode, parmName);
 		if (parm->getParmOwner()->isPendingOverride()) {
 			Log::getLog().msg("Pending override: %s %s",
-							  opNode->getName().buffer(), parmName.c_str());
+							  opNode.getName().buffer(), parmName.c_str());
 		}
 
 		const fpreal &t = m_context.getTime();
@@ -188,7 +184,7 @@ void VRayExporter::setAttrValueFromOpNode(Attrs::PluginDesc &pluginDesc, const P
 		Log::getLog().info("Setting: [%s] %s.%s (from %s.%s)",
 						   pluginDesc.pluginID.c_str(),
 						   pluginDesc.pluginName.c_str(), attrDesc.attr.c_str(),
-						   opNode->getName().buffer(), parmName.c_str());
+						   opNode.getName().buffer(), parmName.c_str());
 #endif
 		Attrs::PluginAttr attr;
 		attr.paramName = attrDesc.attr;
@@ -198,10 +194,10 @@ void VRayExporter::setAttrValueFromOpNode(Attrs::PluginDesc &pluginDesc, const P
 			attrDesc.value.type == Parm::eTextureInt)
 		{
 			attr.paramType = Attrs::PluginAttr::AttrTypeInt;
-			attr.paramValue.valInt = opNode->evalInt(parmName.c_str(), 0, t);
+			attr.paramValue.valInt = opNode.evalInt(parmName.c_str(), 0, t);
 		}
 		else if (attrDesc.value.type == Parm::eEnum) {
-			const int menuIndex = opNode->evalInt(parmName.c_str(), 0, t);
+			const int menuIndex = opNode.evalInt(parmName.c_str(), 0, t);
 
 			const Parm::EnumItem &enumItem = attrDesc.value.defEnumItems[menuIndex];
 			if (enumItem.valueType == Parm::EnumItem::EnumValueInt) {
@@ -216,26 +212,26 @@ void VRayExporter::setAttrValueFromOpNode(Attrs::PluginDesc &pluginDesc, const P
 		else if (attrDesc.value.type == Parm::eFloat ||
 				 attrDesc.value.type == Parm::eTextureFloat) {
 			attr.paramType = Attrs::PluginAttr::AttrTypeFloat;
-			attr.paramValue.valFloat = (float)opNode->evalFloat(parmName.c_str(), 0, t);
+			attr.paramValue.valFloat = (float)opNode.evalFloat(parmName.c_str(), 0, t);
 		}
 		else if (attrDesc.value.type == Parm::eColor  ||
 				 attrDesc.value.type == Parm::eAColor ||
 				 attrDesc.value.type == Parm::eTextureColor)
 		{
-			const PRM_Parm *parm = Parm::getParm(*opNode, parmName);
+			const PRM_Parm *parm = Parm::getParm(opNode, parmName);
 			if (parm && parm->getType().isFloatType()) {
 				attr.paramType = Attrs::PluginAttr::AttrTypeColor;
-				attr.paramValue.valVector[0] = (float)opNode->evalFloat(parmName.c_str(), 0, t);
-				attr.paramValue.valVector[1] = (float)opNode->evalFloat(parmName.c_str(), 1, t);
-				attr.paramValue.valVector[2] = (float)opNode->evalFloat(parmName.c_str(), 2, t);
+				attr.paramValue.valVector[0] = (float)opNode.evalFloat(parmName.c_str(), 0, t);
+				attr.paramValue.valVector[1] = (float)opNode.evalFloat(parmName.c_str(), 1, t);
+				attr.paramValue.valVector[2] = (float)opNode.evalFloat(parmName.c_str(), 2, t);
 				if (attrDesc.value.type != Parm::eColor) {
-					attr.paramValue.valVector[3] = (float)opNode->evalFloat(parmName.c_str(), 3, t);
+					attr.paramValue.valVector[3] = (float)opNode.evalFloat(parmName.c_str(), 3, t);
 				}
 			}
 		}
 		else if (attrDesc.value.type == Parm::eString) {
 			UT_String buf;
-			opNode->evalString(buf, parmName.c_str(), 0, t);
+			opNode.evalString(buf, parmName.c_str(), 0, t);
 
 			attr.paramType = Attrs::PluginAttr::AttrTypeString;
 			attr.paramValue.valString = buf.buffer();
@@ -245,7 +241,7 @@ void VRayExporter::setAttrValueFromOpNode(Attrs::PluginDesc &pluginDesc, const P
 		}
 		else if (attrDesc.value.type < Parm::ePlugin) {
 			Log::getLog().error("Unhandled param type: %s at %s [%i]",
-								parmName.c_str(), opNode->getOperator()->getName().buffer(), attrDesc.value.type);
+								parmName.c_str(), opNode.getOperator()->getName().buffer(), attrDesc.value.type);
 		}
 
 		pluginDesc.addAttribute(attr);
@@ -356,7 +352,7 @@ void VRayExporter::setAttrsFromOpNode(Attrs::PluginDesc &pluginDesc, OP_Node *op
 							}
 						}
 						else {
-							setAttrValueFromOpNode(pluginDesc, attrDesc, opNode, prefix);
+							setAttrValueFromOpNode(pluginDesc, attrDesc, *opNode, parmName);
 						}
 					}
 					else {
@@ -581,6 +577,13 @@ VRay::Plugin VRayExporter::exportVop(OP_Node *op_node)
 			pluginDesc.pluginName = VRayExporter::getPluginName(vop_node);
 			pluginDesc.pluginID   = vrayNode->getVRayPluginID();
 
+			MtlContext &mtlContext = MtlContext::GetInstance();
+			if (mtlContext.hasOverrides()) {
+				pluginDesc.pluginName = VRayExporter::getPluginName(vop_node, "MtlVOP@", mtlContext.getObject()->getName().toStdString());
+				exportVOPOverrides(mtlContext, vrayNode, pluginDesc);
+			}
+
+
 			setAttrsFromOpNode(pluginDesc, op_node);
 
 			if (vrayNode->getVRayPluginType() == "RENDERCHANNEL") {
@@ -637,9 +640,9 @@ void VRayExporter::RtCallbackSurfaceShop(OP_Node *caller, void *callee, OP_Event
 				shop_node->getFullPath(shopPath);
 
 				// XXX: Pass all referred objects
-				MtlContext mtlCtx(nullptr);
+				MtlContext mtlCtx;
 
-				exporter.exportMaterial(shop_node, mtlCtx);
+				exporter.exportMaterial(*shop_node, mtlCtx);
 			}
 		}
 	}

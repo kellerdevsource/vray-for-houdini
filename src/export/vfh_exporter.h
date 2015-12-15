@@ -24,7 +24,11 @@
 #include <OBJ/OBJ_Node.h>
 #include <ROP/ROP_Node.h>
 
+#include <unordered_map>
+
 namespace VRayForHoudini {
+
+class VRayExporter;
 
 typedef VUtils::HashMap<int> SHOPToID;
 
@@ -42,19 +46,71 @@ enum VRayLightType {
 };
 
 
+
 struct MtlContext {
-	MtlContext(OBJ_Node *object)
-		: m_object(object)
-	{}
 
-	OBJ_Node *getObject() { return m_object; }
+public:
+	enum MTLOverrideType {
+		MTLO_NONE = 0,
+		MTLO_OBJ,
+		MTLO_GEO
+	};
 
-	int       hasMaterialOverrides();
-	int       hasMaterialPromotes();
+public:
+	static MtlContext& GetInstance();
+
+public:
+	MtlContext();
+	~MtlContext();
+
+	// common context
+	SHOP_Node       *getTargetNode() const { return m_shopNode; }
+	VRayExporter    *getExporter() const { return m_exporter; }
+
+	void             init(VRayExporter &exporter, OBJ_Node &object, SHOP_Node &shopNode);
+	void             clear();
+	bool             isValid() const { return (m_exporter && m_objNode && m_shopNode); }
+
+	// material context
+	OBJ_Node        *getObject() const { return m_objNode; }
+	bool             hasOverrides() const { return (isValid() && m_overrideType != MTLO_NONE && m_shopOverrrides.size()); }
+	MTLOverrideType  getOverridesType() const { return (isValid()? m_overrideType : MTLO_NONE); }
+
+	// vop context
+	bool             hasOverrides(VOP_Node &vopNode) const { return (hasOverrides() && m_vopOverrides.count( vopNode.getUniqueId() )); }
+	bool             getOverrideName(VOP_Node &vopNode, const std::string &prmName, std::string &o_overrideName) const;
+
+//	int       hasMaterialOverrides();
+//	int       hasMaterialPromotes();
 
 private:
-	OBJ_Node *m_object;
+	void initVOPOverrides();
+	void initSHOPOverrides();
+
+private:
+	// common context
+	/// exporter
+	VRayExporter *m_exporter;
+	/// target node
+	SHOP_Node *m_shopNode;
+	/// context node
+	OBJ_Node *m_objNode;
+
+	typedef std::unordered_map< std::string, std::string > OverrideMap;
+	typedef std::unordered_map< int, OverrideMap >         VOPOverrideMap;
+
+	// mtl specific context
+	/// type of the mtl overrides for current context (object, shop), if any
+	/// MTLO_NONE = no mtl overrides
+	/// MTLO_OBJ = mtl overrides specified on the object node
+	/// MTLO_GEO = per primitive mtl overrides stored as map channels on the geometry
+	MTLOverrideType m_overrideType;
+	/// table mapping <shop parm name> to <overriding (object parm name/map channel name)>
+	OverrideMap m_shopOverrrides;
+	/// table mapping <vop unique node id> to < table mapping <vop parm name> to <overriding shop parm name> >
+	VOPOverrideMap m_vopOverrides;
 };
+
 
 
 struct GeomExportParams
@@ -162,7 +218,7 @@ public:
 	VRay::Plugin                   exportParticles(OBJ_Node *dop_network);
 	VRay::Plugin                   exportLight(OBJ_Node *obj_node);
 	VRay::Plugin                   exportVop(OP_Node *op_node);
-	VRay::Plugin                   exportMaterial(SHOP_Node *shop_node, MtlContext &ctx);
+	VRay::Plugin                   exportMaterial(SHOP_Node &shop_node, MtlContext &ctx);
 	VRay::Plugin                   exportDefaultMaterial();
 
 #ifdef CGR_HAS_VRAYSCENE
@@ -223,11 +279,14 @@ public:
 	static VRay::Transform         Matrix4ToTransform(const UT_Matrix4D &m4, bool flip=false);
 	static OP_Node                *FindChildNodeByType(OP_Node *op_node, const std::string &op_type);
 
-	void                           setAttrValueFromOpNode(Attrs::PluginDesc &plugin, const Parm::AttrDesc &parmDesc, OP_Node *opNode, const std::string &prefix="");
+	void                           setAttrValueFromOpNode(Attrs::PluginDesc &plugin, const Parm::AttrDesc &parmDesc, OP_Node &opNode, const std::string &parmName);
 	void                           setAttrsFromOpNode(Attrs::PluginDesc &plugin, OP_Node *opNode, const std::string &prefix="");
 
 	VRay::Plugin                   exportConnectedVop(OP_Node *op_node, const UT_String &inputName);
 	void                           phxAddSimumation(VRay::Plugin sim);
+
+	// TODO FIX: this is insanely ugly
+	void                           exportVOPOverrides(MtlContext &mtlContext, VOP_Node *vopNode, Attrs::PluginDesc &pluginDesc);
 
 private:
 	OP_Node                       *m_rop;
