@@ -95,72 +95,38 @@ def upload(filepath):
         subprocess.call(cmd)
 
 
+# Setup Visual Studio 2012 variables for command line usage
+#
 def setup_msvc_2012():
-    # Setup Visual Studio 2012 variables for usage from command line
-    # Assumes default installation path
-    #
-    PATH = os.environ['PATH'].split(';')
-    PATH.extend([
-        r'C:\Program Files (x86)\CMake\bin',
-        r'C:\Program Files (x86)\HTML Help Workshop',
-        r'C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Bin',
-        r'C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Bin\x64',
-        r'C:\Program Files (x86)\Microsoft SDKs\Windows\v8.0A\bin\NETFX 4.0 Tools\x64',
-        r'C:\Program Files (x86)\Microsoft SDKs\Windows\v8.0A\bin\NETFX4.0 Tools',
-        r'C:\Program Files (x86)\Microsoft Visual Studio 11.0\Common7\IDE',
-        r'C:\Program Files (x86)\Microsoft Visual Studio 11.0\Common7\IDE\CommonExtensions\Microsoft\TestWindow',
-        r'C:\Program Files (x86)\Microsoft Visual Studio 11.0\Common7\Tools',
-        r'C:\Program Files (x86)\Microsoft Visual Studio 11.0\Team Tools\Performance Tools',
-        r'C:\Program Files (x86)\Microsoft Visual Studio 11.0\Team Tools\Performance Tools\x64',
-        r'C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\BIN\amd64',
-        r'C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\VCPackages',
-        r'C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common',
-        r'C:\Program Files (x86)\Windows Kits\8.0\bin\x64',
-        r'C:\Program Files (x86)\Windows Kits\8.0\bin\x86',
-        r'C:\Program Files (x86)\Windows Kits\8.1\Windows Performance Toolkit',
-        r'C:\Program Files (x86)\WinSCP',
-        r'C:\Program Files\Common Files\Autodesk Shared',
-        r'C:\Program Files\Git\cmd',
-        r'C:\Program Files\Git\mingw64\bin',
-        r'C:\Program Files\Microsoft SQL Server\110\Tools\Binn',
-        r'C:\Program Files\SlikSvn\bin',
-        r'C:\ProgramData\Oracle\Java\javapath',
-        r'C:\Users\bdancer\AppData\Local\atom\bin',
-        r'C:\Windows',
-        r'C:\Windows\Microsoft.NET\Framework64\v3.5',
-        r'C:\Windows\Microsoft.NET\Framework64\v4.0.30319',
-        r'C:\Windows\system32',
-        r'C:\Windows\System32\Wbem',
-        r'C:\Windows\System32\WindowsPowerShell\v1.0',
-    ])
+    cgrSdkPath = os.environ['CGR_SDK']
 
-    INCLUDE = (
-        r'C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\ATLMFC\INCLUDE',
-        r'C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\INCLUDE',
-        r'C:\Program Files (x86)\Windows Kits\8.0\include\shared',
-        r'C:\Program Files (x86)\Windows Kits\8.0\include\um',
-        r'C:\Program Files (x86)\Windows Kits\8.0\include\winrt',
-    )
+    env = {
+        'INCLUDE' : [
+            "{CGR_SDK}/msvs2012/PlatformSDK/Include/shared",
+            "{CGR_SDK}/msvs2012/PlatformSDK/Include/um",
+            "{CGR_SDK}/msvs2012/PlatformSDK/Include/winrt",
+            "{CGR_SDK}/msvs2012/include",
+            "{CGR_SDK}/msvs2012/atlmfc/include",
+        ],
 
-    LIB = (
-        r'C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\ATLMFC\LIB\amd64',
-        r'C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\LIB\amd64',
-        r'C:\Program Files (x86)\Windows Kits\8.0\lib\win8\um\x64',
-    )
+        'LIB' : [
+            "{CGR_SDK}/msvs2012/PlatformSDK/Lib/win8/um/x64",
+            "{CGR_SDK}/msvs2012/atlmfc/lib/amd64",
+            "{CGR_SDK}/msvs2012/lib/amd64",
+        ],
 
-    LIBPATH = (
-        r'C:\Program Files (x86)\Microsoft SDKs\Windows\v8.0\ExtensionSDKs\Microsoft.VCLibs\11.0\References\CommonConfiguration\neutral',
-        r'C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\ATLMFC\LIB\amd64',
-        r'C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\LIB\amd64',
-        r'C:\Program Files (x86)\Windows Kits\8.0\References\CommonConfiguration\Neutral',
-        r'C:\Windows\Microsoft.NET\Framework64\v3.5',
-        r'C:\Windows\Microsoft.NET\Framework64\v4.0.30319',
-    )
+        'PATH' : os.environ['PATH'].split(';') + [
+            "C:/Program Files (x86)/CMake/bin",
+            "C:/Program Files/SlikSvn/bin",
+            "C:/Program Files/Git/bin",
+            "{CGR_SDK}/msvs2012/bin/amd64",
+            "{CGR_SDK}/msvs2012/bin",
+            "{CGR_SDK}/msvs2012/PlatformSDK/bin/x64",
+        ],
+    }
 
-    os.environ['PATH']    = ";".join(PATH)
-    os.environ['INCLUDE'] = ";".join(INCLUDE)
-    os.environ['LIB']     = ";".join(LIB)
-    os.environ['LIBPATH'] = ";".join(LIBPATH)
+    for var in env:
+        os.environ[var] = ";".join(env[var]).format(CGR_SDK=cgrSdkPath)
 
 
 def getArchiveExt():
