@@ -141,7 +141,7 @@ void VRayExporter::fillCameraData(const OBJ_Node &camera, const OP_Node &rop, Vi
 
 void VRayExporter::fillSettingsMotionBlur(ViewParams &viewParams)
 {
-	setAttrsFromOpNode(viewParams.viewPlugins.settingsMotionBlur, m_rop, "SettingsMotionBlur.");
+	setAttrsFromOpNodePrms(viewParams.viewPlugins.settingsMotionBlur, m_rop, "SettingsMotionBlur.");
 }
 
 
@@ -172,7 +172,7 @@ void VRayExporter::fillPhysicalCamera(const ViewParams &viewParams, Attrs::Plugi
 
 	// Can't use auto prefix here, because Python doesn't allow to add
 	// template with "." in name
-	setAttrsFromOpNode(pluginDesc, &camera, "CameraPhysical_");
+	setAttrsFromOpNodePrms(pluginDesc, &camera, "CameraPhysical_");
 }
 
 
@@ -204,7 +204,7 @@ void VRayExporter::fillRenderView(const ViewParams &viewParams, Attrs::PluginDes
 
 void VRayExporter::fillStereoSettings(const ViewParams& /*viewParams*/, Attrs::PluginDesc &pluginDesc)
 {
-	setAttrsFromOpNode(pluginDesc, m_rop, "VRayStereoscopicSettings.");
+	setAttrsFromOpNodePrms(pluginDesc, m_rop, "VRayStereoscopicSettings.");
 }
 
 
@@ -222,13 +222,13 @@ void VRayExporter::fillSettingsCamera(const ViewParams &viewParams, Attrs::Plugi
 		pluginDesc.add(Attrs::PluginAttr("type", 8));
 	}
 
-	setAttrsFromOpNode(pluginDesc, m_rop, "SettingsCamera.");
+	setAttrsFromOpNodePrms(pluginDesc, m_rop, "SettingsCamera.");
 }
 
 
 void VRayExporter::fillSettingsCameraDof(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc)
 {
-	setAttrsFromOpNode(pluginDesc, m_rop, "SettingsCameraDof.");
+	setAttrsFromOpNodePrms(pluginDesc, m_rop, "SettingsCameraDof.");
 }
 
 

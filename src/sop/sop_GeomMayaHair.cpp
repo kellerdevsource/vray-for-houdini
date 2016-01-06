@@ -52,7 +52,7 @@ OP::VRayNode::PluginResult SOP::GeomMayaHair::asPluginDesc(Attrs::PluginDesc &pl
 	}
 	else {
 		exporter.exportGeomMayaHairGeom(this, gdp, pluginDesc);
-		exporter.setAttrsFromOpNode(pluginDesc, this);
+		exporter.setAttrsFromOpNodePrms(pluginDesc, this);
 	}
 
 	return OP::VRayNode::PluginResultContinue;

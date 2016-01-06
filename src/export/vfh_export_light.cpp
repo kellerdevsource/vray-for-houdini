@@ -64,7 +64,7 @@ VRay::Plugin VRayExporter::exportLight(OBJ_Node *obj_node)
 		else if (res == OP::VRayNode::PluginResultNA ||
 				 res == OP::VRayNode::PluginResultContinue)
 		{
-			setAttrsFromOpNode(pluginDesc, obj_light);
+			setAttrsFromOpNodePrms(pluginDesc, obj_light);
 		}
 
 	}

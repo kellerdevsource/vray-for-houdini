@@ -216,8 +216,9 @@ public:
 	static VRay::Transform         Matrix4ToTransform(const UT_Matrix4D &m4, bool flip=false);
 	static OP_Node                *FindChildNodeByType(OP_Node *op_node, const std::string &op_type);
 
-	void                           setAttrValueFromOpNode(Attrs::PluginDesc &plugin, const Parm::AttrDesc &parmDesc, OP_Node &opNode, const std::string &parmName);
-	void                           setAttrsFromOpNode(Attrs::PluginDesc &plugin, OP_Node *opNode, const std::string &prefix="", ExportContext *parentContext = nullptr);
+	void                           setAttrValueFromOpNodePrm(Attrs::PluginDesc &plugin, const Parm::AttrDesc &parmDesc, OP_Node &opNode, const std::string &parmName);
+	void                           setAttrsFromOpNodePrms(Attrs::PluginDesc &plugin, OP_Node *opNode, const std::string &prefix="");
+	void                           setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDesc, OP_Node *opNode, ExportContext *parentContext=nullptr);
 
 	VRay::Plugin                   exportConnectedVop(OP_Node *op_node, const UT_String &inputName, ExportContext *parentContext = nullptr);
 	void                           phxAddSimumation(VRay::Plugin sim);

@@ -25,6 +25,14 @@ OP::VRayNode::PluginResult VOP::GeomDisplacedMesh::asPluginDesc(Attrs::PluginDes
 {
 	Log::getLog().warning("OP::GeomDisplacedMesh::asPluginDesc()");
 
+	ECFnOBJNode fnObjContext(parentContext);
+	if (NOT(fnObjContext.isValid())) {
+		return OP::VRayNode::PluginResultError;
+	}
+
+	pluginDesc.pluginName = VRayExporter::getPluginName(fnObjContext.getTargetNode(), boost::str(Parm::FmtPrefixManual % pluginID % "@"));
+	pluginDesc.pluginID = pluginID;
+
 	// Displacement type
 	//
 	const int &displace_type = evalInt("type", 0, 0.0);

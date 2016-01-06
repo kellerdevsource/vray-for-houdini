@@ -211,7 +211,7 @@ VRay::Plugin VRayExporter::exportNodeData(SOP_Node *geom_node, GeomExportParams 
 			else if (res == OP::VRayNode::PluginResultNA ||
 					 res == OP::VRayNode::PluginResultContinue)
 			{
-				setAttrsFromOpNode(geomPluginDesc, op_node);
+				setAttrsFromOpNodePrms(geomPluginDesc, op_node);
 			}
 
 			geom = exportPlugin(geomPluginDesc);

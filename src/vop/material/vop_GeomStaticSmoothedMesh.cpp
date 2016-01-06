@@ -25,6 +25,14 @@ OP::VRayNode::PluginResult VOP::GeomStaticSmoothedMesh::asPluginDesc(Attrs::Plug
 {
 	Log::getLog().warning("OP::GeomStaticSmoothedMesh::asPluginDesc()");
 
+	ECFnOBJNode fnObjContext(parentContext);
+	if (NOT(fnObjContext.isValid())) {
+		return OP::VRayNode::PluginResultError;
+	}
+
+	pluginDesc.pluginName = VRayExporter::getPluginName(fnObjContext.getTargetNode(), boost::str(Parm::FmtPrefixManual % pluginID % "@"));
+	pluginDesc.pluginID = pluginID;
+
 	return OP::VRayNode::PluginResultContinue;
 }
 

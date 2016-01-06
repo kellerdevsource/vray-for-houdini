@@ -166,7 +166,7 @@ void VRayExporter::setAttrsFromSHOPOverrides(Attrs::PluginDesc &pluginDesc, VOP_
 			{
 				std::string overridingPrmName;
 				if (mtlContext.getOverrideName(vopNode, attrName, overridingPrmName)) {
-					setAttrValueFromOpNode(pluginDesc, attrDesc, *mtlContext.getObjectNode(), overridingPrmName);
+					setAttrValueFromOpNodePrm(pluginDesc, attrDesc, *mtlContext.getObjectNode(), overridingPrmName);
 				}
 				break;
 			}

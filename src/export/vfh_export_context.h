@@ -28,6 +28,7 @@ class VRayExporter;
 class ECFnOBJNode;
 class ECFnSHOPOverrides;
 
+
 enum ContextType {
 	CT_NULL = 0,
 	CT_OBJ,
@@ -89,7 +90,6 @@ private:
 	/// table mapping <vop unique node id> to < table mapping <vop parm name> to <overriding shop parm name> >
 	VOPOverrideMap m_vopOverrides;
 };
-
 
 
 class ECFnOBJNode
