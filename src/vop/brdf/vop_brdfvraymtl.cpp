@@ -28,7 +28,7 @@ void VOP::BRDFVRayMtl::getCode(UT_String &codestr, const VOP_CodeGenContext &)
 }
 
 
-OP::VRayNode::PluginResult VOP::BRDFVRayMtl::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, OP_Node *parent)
+OP::VRayNode::PluginResult VOP::BRDFVRayMtl::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
 {
 	// TODO:
 #if 0

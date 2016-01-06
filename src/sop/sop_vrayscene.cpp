@@ -131,7 +131,7 @@ OP_ERROR SOP::VRayScene::cookMySop(OP_Context &context)
 }
 
 
-OP::VRayNode::PluginResult SOP::VRayScene::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, OP_Node *parent)
+OP::VRayNode::PluginResult SOP::VRayScene::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
 {
 	UT_String path;
 	evalString(path, "filepath", 0, 0.0f);
@@ -144,11 +144,11 @@ OP::VRayNode::PluginResult SOP::VRayScene::asPluginDesc(Attrs::PluginDesc &plugi
 	const bool flipAxis = evalInt("flip_axis", 0, 0.0);
 
 	pluginDesc.pluginID   = pluginID.c_str();
-	pluginDesc.pluginName = VRayExporter::getPluginName(parent->castToOBJNode());
+	pluginDesc.pluginName = VRayExporter::getPluginName(parentContext->getTarget()->castToOBJNode());
 
 	pluginDesc.addAttribute(Attrs::PluginAttr("filepath", path.buffer()));
 
-	VUtils::TraceTransform tm = toVutilsTm(VRayExporter::getObjTransform(parent->castToOBJNode(), exporter.getContext()));
+	VUtils::TraceTransform tm = toVutilsTm(VRayExporter::getObjTransform(parent->getTarget()->castToOBJNode(), exporter.getContext()));
 	if (flipAxis) {
 		tm.m = tm.m * VUtils::Vrscene::Preview::FlipMatrix;
 	}

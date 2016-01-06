@@ -88,7 +88,7 @@ unsigned VOP::RenderChannelsContainer::orderedInputs() const
 }
 
 
-OP::VRayNode::PluginResult VOP::RenderChannelsContainer::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, OP_Node *parent)
+OP::VRayNode::PluginResult VOP::RenderChannelsContainer::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
 {
 	pluginDesc.pluginID   = pluginID.c_str();
 	pluginDesc.pluginName = "RenderChannels";
@@ -105,7 +105,7 @@ OP::VRayNode::PluginResult VOP::RenderChannelsContainer::asPluginDesc(Attrs::Plu
 					   getName().buffer(), chanSockName.c_str());
 		}
 		else {
-			VRay::Plugin chan_plugin = exporter.exportVop(chan_node);
+			VRay::Plugin chan_plugin = exporter.exportVop(chan_node, parentContext);
 			if (NOT(chan_plugin)) {
 				Log::getLog().error("Node \"%s\": Failed to export render channel node connected to \"%s\", ignoring...",
 							getName().buffer(), chanSockName.c_str());

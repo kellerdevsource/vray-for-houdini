@@ -21,7 +21,7 @@ void VOP::GeomStaticSmoothedMesh::setPluginType()
 }
 
 
-OP::VRayNode::PluginResult VOP::GeomStaticSmoothedMesh::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, OP_Node *parent)
+OP::VRayNode::PluginResult VOP::GeomStaticSmoothedMesh::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
 {
 	Log::getLog().warning("OP::GeomStaticSmoothedMesh::asPluginDesc()");
 

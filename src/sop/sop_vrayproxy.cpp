@@ -777,7 +777,7 @@ OP_ERROR SOP::VRayProxy::cookMySop(OP_Context &context)
 }
 
 
-OP::VRayNode::PluginResult SOP::VRayProxy::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, OP_Node *parent)
+OP::VRayNode::PluginResult SOP::VRayProxy::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
 {
 	vassert( exporter );
 

@@ -21,7 +21,7 @@ void VOP::GeomDisplacedMesh::setPluginType()
 }
 
 
-OP::VRayNode::PluginResult VOP::GeomDisplacedMesh::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, OP_Node *parent)
+OP::VRayNode::PluginResult VOP::GeomDisplacedMesh::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
 {
 	Log::getLog().warning("OP::GeomDisplacedMesh::asPluginDesc()");
 
@@ -39,7 +39,7 @@ OP::VRayNode::PluginResult VOP::GeomDisplacedMesh::asPluginDesc(Attrs::PluginDes
 	OP_Node *texFloat = getInput(idxTexFloat);
 
 	if (texCol) {
-		VRay::Plugin texture = exporter.exportVop(texCol);
+		VRay::Plugin texture = exporter.exportVop(texCol, parentContext);
 		if (texture) {
 			const Parm::SocketDesc *fromSocketInfo = exporter.getConnectedOutputType(this, "displacement_tex_color");
 

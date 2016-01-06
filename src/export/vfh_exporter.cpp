@@ -250,7 +250,7 @@ void VRayExporter::setAttrValueFromOpNode(Attrs::PluginDesc &pluginDesc, const P
 }
 
 
-void VRayExporter::setAttrsFromOpNode(Attrs::PluginDesc &pluginDesc, OP_Node *opNode, const std::string &prefix)
+void VRayExporter::setAttrsFromOpNode(Attrs::PluginDesc &pluginDesc, OP_Node *opNode, const std::string &prefix, ExportContext *parentContext)
 {
 	const Parm::VRayPluginInfo *pluginInfo = Parm::GetVRayPluginInfo(pluginDesc.pluginID);
 	if (NOT(pluginInfo)) {
@@ -268,8 +268,9 @@ void VRayExporter::setAttrsFromOpNode(Attrs::PluginDesc &pluginDesc, OP_Node *op
 				VRay::Plugin plugin_value = VRay::Plugin();
 				for (const auto &inSockInfo : pluginInfo->inputs) {
 					if (attrName == inSockInfo.name.getToken()) {
+						plugin_value = exportConnectedVop(opNode, attrName.c_str(), parentContext);
 						hasSocket = true;
-						plugin_value = exportConnectedVop(opNode, attrName.c_str());
+
 						if (!plugin_value) {
 							if (   attrDesc.value.type == Parm::eTextureInt
 								|| attrDesc.value.type == Parm::eTextureFloat
@@ -492,14 +493,14 @@ const Parm::SocketDesc* VRayExporter::getConnectedOutputType(OP_Node *op_node, c
 }
 
 
-VRay::Plugin VRayExporter::exportConnectedVop(OP_Node *op_node, const UT_String &inputName)
+VRay::Plugin VRayExporter::exportConnectedVop(OP_Node *op_node, const UT_String &inputName, ExportContext *parentContext)
 {
 	const unsigned input_idx = op_node->getInputFromName(inputName);
 	OP_Input *input = op_node->getInputReferenceConst(input_idx);
 	if (input) {
 		OP_Node *connNode = input->getNode();
 		if (connNode) {
-			return exportVop(connNode);
+			return exportVop(connNode, parentContext);
 		}
 	}
 
@@ -539,7 +540,7 @@ void VRayExporter::RtCallbackVop(OP_Node *caller, void *callee, OP_EventType typ
 }
 
 
-VRay::Plugin VRayExporter::exportVop(OP_Node *op_node)
+VRay::Plugin VRayExporter::exportVop(OP_Node *op_node, ExportContext *parentContext)
 {
 	VOP_Node *vop_node = op_node->castToVOPNode();
 
@@ -555,7 +556,7 @@ VRay::Plugin VRayExporter::exportVop(OP_Node *op_node)
 			UT_String inputName;
 			inputName.sprintf("input%i", switcher);
 
-			return exportConnectedVop(vop_node, inputName);
+			return exportConnectedVop(vop_node, inputName, parentContext);
 		}
 	}
 	else if (opType.startsWith("VRayNode")) {
@@ -565,7 +566,7 @@ VRay::Plugin VRayExporter::exportVop(OP_Node *op_node)
 
 		Attrs::PluginDesc pluginDesc;
 
-		OP::VRayNode::PluginResult res = vrayNode->asPluginDesc(pluginDesc, *this, op_node);
+		OP::VRayNode::PluginResult res = vrayNode->asPluginDesc(pluginDesc, *this, parentContext);
 		if (res == OP::VRayNode::PluginResultError) {
 			Log::getLog().error("Error creating plugin descripion for node: \"%s\" [%s]",
 								vop_node->getName().buffer(),
@@ -577,14 +578,20 @@ VRay::Plugin VRayExporter::exportVop(OP_Node *op_node)
 			pluginDesc.pluginName = VRayExporter::getPluginName(vop_node);
 			pluginDesc.pluginID   = vrayNode->getVRayPluginID();
 
-			MtlContext &mtlContext = MtlContext::GetInstance();
-			if (mtlContext.hasOverrides()) {
-				pluginDesc.pluginName = VRayExporter::getPluginName(vop_node, "MtlVOP@", mtlContext.getObject()->getName().toStdString());
-				exportVOPOverrides(mtlContext, vrayNode, pluginDesc);
+
+			ECFnSHOPOverrides mtlContext(parentContext);
+			if (   mtlContext.isValid()
+				&& mtlContext.hasOverrides())
+			{
+				OBJ_Node *objNode = mtlContext.getObjectNode();
+				pluginDesc.pluginName = VRayExporter::getPluginName(vop_node, "MtlOverride@", objNode->getName().toStdString());
+
+				if (mtlContext.hasOverrides(*vop_node)) {
+					setAttrsFromSHOPOverrides(pluginDesc, *vop_node, mtlContext);
+				}
 			}
 
-
-			setAttrsFromOpNode(pluginDesc, op_node);
+			setAttrsFromOpNode(pluginDesc, vop_node, "", parentContext);
 
 			if (vrayNode->getVRayPluginType() == "RENDERCHANNEL") {
 				Attrs::PluginAttr *attr_chan_name = pluginDesc.get("name");
@@ -620,36 +627,6 @@ VRay::Plugin VRayExporter::exportVop(OP_Node *op_node)
 	return VRay::Plugin();
 }
 
-
-void VRayExporter::RtCallbackSurfaceShop(OP_Node *caller, void *callee, OP_EventType type, void *data)
-{
-	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
-
-	Log::getLog().info("RtCallbackSurfaceShop: %s from \"%s\"",
-					   OPeventToString(type), caller->getName().buffer());
-
-	if (type == OP_INPUT_REWIRED && caller->error() < UT_ERROR_ABORT) {
-		UT_String inputName;
-		const int idx = reinterpret_cast<long>(data);
-		caller->getInputName(inputName, idx);
-
-		if (inputName.equal("Material")) {
-			SHOP_Node *shop_node = caller->getParent()->castToSHOPNode();
-			if (shop_node) {
-				UT_String shopPath;
-				shop_node->getFullPath(shopPath);
-
-				// XXX: Pass all referred objects
-				MtlContext mtlCtx;
-
-				exporter.exportMaterial(*shop_node, mtlCtx);
-			}
-		}
-	}
-	else if (type == OP_NODE_PREDELETE) {
-		exporter.delOpCallback(caller, VRayExporter::RtCallbackSurfaceShop);
-	}
-}
 
 void VRayExporter::RtCallbackDisplacementObj(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
@@ -832,7 +809,7 @@ VRay::Plugin VRayExporter::exportDisplacement(OBJ_Node *obj_node, VRay::Plugin &
 									pluginDesc.addAttribute(Attrs::PluginAttr("mesh", geomPlugin));
 								}
 
-								OP::VRayNode::PluginResult res = input->asPluginDesc(pluginDesc, *this, obj_node);
+								OP::VRayNode::PluginResult res = input->asPluginDesc(pluginDesc, *this);
 								if (res == OP::VRayNode::PluginResultError) {
 									Log::getLog().error("Error creating plugin descripion for node: \"%s\" [%s]",
 														input->getName().buffer(), input->getOperator()->getName().buffer());
@@ -886,18 +863,6 @@ VRay::Plugin VRayExporter::exportDisplacement(OBJ_Node *obj_node, VRay::Plugin &
 	}
 
 	return plugin;
-}
-
-
-VRay::Plugin VRayExporter::exportDefaultMaterial()
-{
-	Attrs::PluginDesc brdfDesc("BRDFDiffuse@Clay", "BRDFDiffuse");
-	brdfDesc.addAttribute(Attrs::PluginAttr("color", 0.5f, 0.5f, 0.5f));
-
-	Attrs::PluginDesc mtlDesc("Mtl@Clay", "MtlSingleBRDF");
-	mtlDesc.addAttribute(Attrs::PluginAttr("brdf", exportPlugin(brdfDesc)));
-
-	return exportPlugin(mtlDesc);
 }
 
 
