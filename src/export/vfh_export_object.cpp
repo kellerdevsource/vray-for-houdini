@@ -102,7 +102,7 @@ void VRayExporter::RtCallbackNode(OP_Node *caller, void *callee, OP_EventType ty
 			if (boost::equals(param->getToken(), "shop_materialpath")) {
 				SHOP_Node *shop_node = exporter.getObjMaterial(obj_node);
 				if (shop_node) {
-					ExportContext expContext;
+					ExportContext expContext(CT_OBJ, exporter, *obj_node);
 					mtl = exporter.exportMaterial(*shop_node, expContext);
 				}
 				if (!mtl) {
@@ -281,8 +281,6 @@ VRay::Plugin VRayExporter::exportObject(OBJ_Node *obj_node)
 		else {
 			GeomExportParams expParams;
 			expParams.uvWeldThreshold = isSmoothed(*obj_node)? expParams.uvWeldThreshold: -1.f;
-
-			collectMaterialOverrideParameters(*obj_node);
 
 			VRay::Plugin geom = exportNodeData(geom_node, expParams);
 

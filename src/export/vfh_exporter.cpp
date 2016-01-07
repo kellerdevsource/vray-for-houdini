@@ -541,7 +541,44 @@ void VRayExporter::RtCallbackVop(OP_Node *caller, void *callee, OP_EventType typ
 		|| type == OP_INPUT_CHANGED
 		|| type == OP_INPUT_REWIRED)
 	{
-		exporter.exportVop(caller);
+
+		SHOP_Node *shop_node = caller->getParent()->castToSHOPNode();
+		if (NOT(shop_node)) {
+			exporter.exportVop(caller);
+			return;
+		}
+
+		UT_String nodePath;
+		shop_node->getFullPath(nodePath);
+		std::cout << "---SHOP Node: " << nodePath.buffer() << std::endl;
+
+		std::unordered_map<int, OBJ_Node *> dependenObjList;
+		OP_NodeList dependentNodeList;
+		shop_node->getExistingOpDependents(dependentNodeList, true);
+		for (OP_Node *node : dependentNodeList) {
+			node->getFullPath(nodePath);
+
+			std::cout << "---" << nodePath.buffer() << std::endl;
+
+			OBJ_Node *obj_node = node->castToOBJNode();
+			if (NOT(obj_node)) {
+				obj_node = node->getParent()->castToOBJNode();
+			}
+
+			if (obj_node) {
+				dependenObjList.emplace(obj_node->getUniqueId(), obj_node);
+			}
+		}
+
+		for (const auto &nodeEntry : dependenObjList) {
+			OBJ_Node *obj_node = nodeEntry.second;
+			ExportContext objContext(CT_OBJ, exporter, *obj_node);
+			SHOPExportContext mtlContext(exporter, *shop_node, objContext);
+			ECFnSHOPOverrides fnMtlOverrides(&mtlContext);
+			fnMtlOverrides.initOverrides();
+
+			exporter.exportVop(caller, &mtlContext);
+		}
 	}
 	else if (type == OP_NODE_PREDELETE) {
 		exporter.delOpCallback(caller, VRayExporter::RtCallbackVop);

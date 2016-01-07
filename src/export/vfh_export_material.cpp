@@ -68,7 +68,9 @@ VRay::Plugin VRayExporter::exportMaterial(SHOP_Node &shop_node, ExportContext &p
 
 		SHOPExportContext mtlContext(*this, shop_node, parentContext);
 		ECFnSHOPOverrides fnSHOPOverrides(&mtlContext);
-		fnSHOPOverrides.initOverrides();
+		if (fnSHOPOverrides.isValid()) {
+			fnSHOPOverrides.initOverrides();
+		}
 
 		if (mtlOut->error() < UT_ERROR_ABORT ) {
 			Log::getLog().info("Exporting material output \"%s\"...",
