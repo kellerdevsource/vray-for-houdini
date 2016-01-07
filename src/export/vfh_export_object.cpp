@@ -99,6 +99,9 @@ void VRayExporter::RtCallbackNode(OP_Node *caller, void *callee, OP_EventType ty
 
 		const PRM_Parm *param = Parm::getParm(*caller, reinterpret_cast<long>(data));
 		if (param) {
+			// If the parameter is for material override it has OBJ_MATERIAL_SPARE_TAG tag
+			const PRM_SpareData	*spare = param->getSparePtr();
+
 			if (boost::equals(param->getToken(), "shop_materialpath")) {
 				SHOP_Node *shop_node = exporter.getObjMaterial(obj_node);
 				if (shop_node) {
@@ -107,6 +110,14 @@ void VRayExporter::RtCallbackNode(OP_Node *caller, void *callee, OP_EventType ty
 				}
 				if (!mtl) {
 					mtl = exporter.exportDefaultMaterial();
+				}
+			}
+			else if (spare && spare->getValue(OBJ_MATERIAL_SPARE_TAG))
+			{
+				SHOP_Node *shop_node = exporter.getObjMaterial(obj_node);
+				if (shop_node) {
+					ExportContext expContext(CT_OBJ, exporter, *obj_node);
+					mtl = exporter.exportMaterial(*shop_node, expContext);
 				}
 			}
 		}
