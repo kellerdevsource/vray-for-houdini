@@ -91,6 +91,9 @@ VRay::Plugin VRayExporter::exportMaterial(SHOP_Node &shop_node, ExportContext &p
 
 							// Wrap BRDF into MtlSingleBRDF for RT GPU to work properly
 							Attrs::PluginDesc mtlPluginDesc(VRayExporter::getPluginName(vopNode, "Mtl@"), "MtlSingleBRDF");
+							if (fnSHOPOverrides.hasOverrides()) {
+								mtlPluginDesc.pluginName = VRayExporter::getPluginName(vopNode, "Mtl@", fnSHOPOverrides.getObjectNode()->getName().buffer());
+							}
 							mtlPluginDesc.addAttribute(Attrs::PluginAttr("brdf", pluginBRDF));
 
 							material = exportPlugin(mtlPluginDesc);
@@ -105,6 +108,10 @@ VRay::Plugin VRayExporter::exportMaterial(SHOP_Node &shop_node, ExportContext &p
 						// Wrap material into MtlRenderStats to always have the same material name
 						// Used when rewiring materials when running interactive RT session
 						Attrs::PluginDesc pluginDesc(VRayExporter::getPluginName(mtlOut->getParent(), "Mtl@"), "MtlRenderStats");
+						if (fnSHOPOverrides.hasOverrides()) {
+							pluginDesc.pluginName = VRayExporter::getPluginName(mtlOut->getParent(), "Mtl@", fnSHOPOverrides.getObjectNode()->getName().buffer());
+						}
+
 						pluginDesc.addAttribute(Attrs::PluginAttr("base_mtl", material));
 						material = exportPlugin(pluginDesc);
 					}
