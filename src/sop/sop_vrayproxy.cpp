@@ -89,11 +89,15 @@ class VRayProxyCache
 private:
 	typedef unsigned FrameKey;
 	typedef Hash::MHash ItemKey;
+	typedef std::vector<ItemKey> ItemKeys;
 	typedef GU_DetailPtr Item;
 
 	struct CachedFrame
 	{
-		std::vector<ItemKey> m_itemKeys;
+		bool hasItemKeys(const LoadType &loadType) const { return (m_keys.count(loadType) > 0); }
+		ItemKeys &getItemKeys(const LoadType &loadType) { return m_keys[loadType]; }
+
+		std::unordered_map< LoadType, ItemKeys, std::hash<int>, std::equal_to<int> > m_keys;
 	};
 
 	struct CachedItem
@@ -201,7 +205,11 @@ public:
 		}
 
 		m_frameCache->setCapacity(nFrames);
-		m_itemCache->setCapacity(nFrames);
+		// TODO: need to set item cache capacity to a reasonable value
+		//       when switching bewtween preview or full geometry
+		//       or item cache might be too big for preview
+		//       or too small for full geometry to hold all voxels
+		m_itemCache->setCapacity(nFrames * m_proxy->getNumVoxels());
 
 		return res;
 	}
@@ -240,14 +248,17 @@ public:
 ///         NOTE: if frame is cached but a geometry for that frame is missing
 ///               removes the cached frame and returns false
 ///               (could happen if the geometry was evicted from the geometry cache)
-	int checkFrameCached(const OP_Context &context, const OP_Parameters &opParams)
+	int checkFrameCached(const OP_Context &context, const OP_Parameters &opParams) const
 	{
 		if (NOT(m_proxy)) {
 			return false;
 		}
 
+		fpreal t = context.getTime();
 		FrameKey frameIdx = getFrameIdx(context, opParams);
-		return checkCached(frameIdx);
+		LoadType loadType = static_cast<LoadType>(opParams.evalInt("loadtype", 0, t));
+
+		return checkCached(frameIdx, loadType);
 	}
 
 /// @brief Merges the geometry for a frame into the GU_Detail passed
@@ -272,67 +283,74 @@ public:
 		FrameKey frameIdx = getFrameIdx(context, opParams);
 		LoadType loadType = static_cast<LoadType>(opParams.evalInt("loadtype", 0, t));
 
-		switch (loadType) {
-			case LT_BBOX:
-			{
-				createBBoxGeometry(frameIdx, gdp);
-				return res;
-			}
-			case LT_FULLGEO:
-			{
-				std::vector<Geometry> geometryList;
-				// last voxel in file is reserved for preview geometry
-				for (int i = 0; i < m_proxy->getNumVoxels() - 1; ++i) {
-					VUtils::MeshVoxel *voxel = getVoxel(frameIdx, i);
-					vassert( voxel );
-					getPreviewGeometry(*voxel, geometryList);
-				}
+		if (loadType == LT_BBOX) {
+			createBBoxGeometry(frameIdx, gdp);
+			return res;
+		}
 
-				for (int i = 0; i < geometryList.size(); ++i) {
-					const Geometry &geom = geometryList[i];
-					GU_DetailPtr gdpPtr = createProxyGeometry(geom);
-					if (gdpPtr) {
-						gdp.merge(*gdpPtr);
+		const int numVoxels = m_proxy->getNumVoxels();
+//		if not in cache load preview voxel and cache corresponding GU_Detail(s)
+		if (NOT(checkCached(frameIdx, loadType))) {
+			std::vector< VUtils::MeshVoxel* > voxels;
+			std::vector< Geometry > geometry;
+			switch (loadType) {
+				case LT_PREVIEWGEO:
+				{
+					voxels.reserve(1);
+					geometry.reserve(2);
+					// last voxel in file is reserved for preview geometry
+					VUtils::MeshVoxel *voxel = getVoxel(frameIdx, numVoxels - 1);
+					if (voxel) {
+						voxels.push_back(voxel);
+						getPreviewGeometry(*voxel, geometry);
+					}
+					break;
+				}
+				case LT_FULLGEO:
+				{
+					voxels.reserve(numVoxels);
+					geometry.reserve(2 * numVoxels);
+					// last voxel in file is reserved for preview geometry, so skip it
+					for (int i = 0; i < numVoxels - 1; ++i) {
+						VUtils::MeshVoxel *voxel = getVoxel(frameIdx, i);
+						if (voxel) {
+							voxels.push_back(voxel);
+							getPreviewGeometry(*voxel, geometry);
+						}
+					}
+					break;
+				}
+				default:
+					break;
+			}
+
+			if (geometry.size()) {
+				insert(frameIdx, loadType, geometry);
+			}
+			else {
+				res.setError(__FUNCTION__, DE_NO_GEOM, "No geometry found for context #%0.3f.", context.getFloatFrame());
+			}
+
+			for (VUtils::MeshVoxel *voxel : voxels) {
+				m_proxy->releaseVoxel(voxel);
+			}
+		}
+
+		if (m_frameCache->contains(frameIdx)) {
+			CachedFrame &frameData = (*m_frameCache)[frameIdx];
+			if ( frameData.hasItemKeys(loadType) ) {
+				for (auto const &itemKey : frameData.getItemKeys(loadType)) {
+					ItemCache::iterator itemIt = m_itemCache->find(itemKey);
+					vassert( itemIt != m_itemCache->end() );
+
+					CachedItem &itemData = *itemIt;
+					GU_DetailPtr item = itemData.m_item;
+					if (item) {
+						gdp.merge(*item);
+					} else {
+						res.setError(__FUNCTION__, DE_INVALID_GEOM, "Invalid geometry found for context #%0.3f.", context.getFloatFrame());
 					}
 				}
-
-				return res;
-			}
-			default:
-				break;
-		}
-
-//		if not in cache load preview voxel and cache corresponding GU_Detail(s)
-		if (NOT(checkCached(frameIdx))) {
-			// last voxel in file is reserved for preview geometry
-			VUtils::MeshVoxel *previewVoxel = getVoxel(frameIdx, m_proxy->getNumVoxels() - 1);
-			if (NOT(previewVoxel)) {
-				res.setError(__FUNCTION__, DE_NO_GEOM, "No preview geometry found for context #%0.3f.", context.getFloatFrame());
-				return res;
-			}
-
-			std::vector<Geometry> previewGeometry;
-			getPreviewGeometry(*previewVoxel, previewGeometry);
-			if (NOT(previewGeometry.size())) {
-				res.setError(__FUNCTION__, DE_NO_GEOM, "No preview geometry found for context #%0.3f.", context.getFloatFrame());
-				return res;
-			}
-
-			insert(frameIdx, previewGeometry);
-			m_proxy->releaseVoxel(previewVoxel);
-		}
-
-		CachedFrame& frameData = (*m_frameCache)[frameIdx];
-		for (auto const &itemKey : frameData.m_itemKeys) {
-			ItemCache::iterator itemIt = m_itemCache->find(itemKey);
-			vassert( itemIt != m_itemCache->end() );
-
-			CachedItem &itemData = *itemIt;
-			GU_DetailPtr item = itemData.m_item;
-			if (item) {
-				gdp.merge(*item);
-			} else {
-				res.setError(__FUNCTION__, DE_INVALID_GEOM, "Invalid geometry found for context #%0.3f.", context.getFloatFrame());
 			}
 		}
 
@@ -340,18 +358,21 @@ public:
 	}
 
 private:
-	int checkCached(const FrameKey &frameIdx)
+	int checkCached(const FrameKey &frameIdx, const LoadType &loadType) const
 	{
 		if (NOT(m_frameCache->contains(frameIdx))) {
 			return false;
 		}
 
+		CachedFrame &frameData = (*m_frameCache)[frameIdx];
+		if (NOT(frameData.hasItemKeys(loadType))) {
+			return false;
+		}
+
 //		if in cache check if all items from the collection are cached
 		int inCache = true;
-		CachedFrame &frameData = (*m_frameCache)[frameIdx];
-		for (const auto &itemKey : frameData.m_itemKeys) {
+		for (const auto &itemKey : frameData.getItemKeys(loadType)) {
 			if (NOT(m_itemCache->contains(itemKey))) {
-				erase(frameIdx);
 				inCache = false;
 				break;
 			}
@@ -359,15 +380,16 @@ private:
 		return inCache;
 	}
 
-	int insert(const FrameKey &frameIdx, const std::vector<Geometry> &geometry)
+	int insert(const FrameKey &frameIdx, const LoadType &loadType, const std::vector<Geometry> &geometry)
 	{
-		if (checkCached(frameIdx)) {
+		if (checkCached(frameIdx, loadType)) {
 			return false;
 		}
 
 //		insert new item in frameCache
 		CachedFrame &frameData = (*m_frameCache)[frameIdx];
-		frameData.m_itemKeys.resize(geometry.size());
+		ItemKeys &itemKeys = frameData.getItemKeys(loadType);
+		itemKeys.resize(geometry.size());
 
 //		cache each geometry type individually
 		GeometryHash hasher;
@@ -375,7 +397,7 @@ private:
 		for (int i = 0; i < geometry.size(); ++i) {
 			const Geometry &geom = geometry[i];
 			ItemKey itemKey = hasher(geom);
-			frameData.m_itemKeys[i] = itemKey;
+			itemKeys[i] = itemKey;
 
 			if (m_itemCache->contains(itemKey)) {
 //				in itemCache only increase ref count
@@ -406,12 +428,17 @@ private:
 
 	void evictFrame(const FrameKey &frameIdx, CachedFrame &frameData)
 	{
-		for (const auto &itemKey : frameData.m_itemKeys) {
-			if (m_itemCache->contains(itemKey)) {
-				CachedItem& itemData = (*m_itemCache)[itemKey];
-				--itemData.m_refCnt;
-				if (itemData.m_refCnt <= 0) {
-					m_itemCache->erase(itemKey);
+		for (const auto &keyPair : frameData.m_keys) {
+			const LoadType &loadType = keyPair.first;
+			const ItemKeys &itemKeys = keyPair.second;
+
+			for (const auto &itemKey : itemKeys) {
+				if (m_itemCache->contains(itemKey)) {
+					CachedItem& itemData = (*m_itemCache)[itemKey];
+					--itemData.m_refCnt;
+					if (itemData.m_refCnt <= 0) {
+						m_itemCache->erase(itemKey);
+					}
 				}
 			}
 		}
