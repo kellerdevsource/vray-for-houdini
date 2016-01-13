@@ -32,9 +32,17 @@ enum DataError {
 };
 
 
+enum LoadType {
+	LT_BBOX = 0,
+	LT_PREVIEWGEO,
+	LT_FULLGEO
+};
+
+
 typedef std::shared_ptr<GU_Detail>                 GU_DetailPtr;
 typedef uint32                                     VoxelType;
 typedef std::pair<VoxelType, VUtils::MeshVoxel* >  Geometry;
+
 
 struct GeometryHash
 {
@@ -260,10 +268,44 @@ public:
 			return res;
 		}
 
+		fpreal t = context.getTime();
 		FrameKey frameIdx = getFrameIdx(context, opParams);
+		LoadType loadType = static_cast<LoadType>(opParams.evalInt("loadtype", 0, t));
+
+		switch (loadType) {
+			case LT_BBOX:
+			{
+				createBBoxGeometry(frameIdx, gdp);
+				return res;
+			}
+			case LT_FULLGEO:
+			{
+				std::vector<Geometry> geometryList;
+				// last voxel in file is reserved for preview geometry
+				for (int i = 0; i < m_proxy->getNumVoxels() - 1; ++i) {
+					VUtils::MeshVoxel *voxel = getVoxel(frameIdx, i);
+					vassert( voxel );
+					getPreviewGeometry(*voxel, geometryList);
+				}
+
+				for (int i = 0; i < geometryList.size(); ++i) {
+					const Geometry &geom = geometryList[i];
+					GU_DetailPtr gdpPtr = createProxyGeometry(geom);
+					if (gdpPtr) {
+						gdp.merge(*gdpPtr);
+					}
+				}
+
+				return res;
+			}
+			default:
+				break;
+		}
+
 //		if not in cache load preview voxel and cache corresponding GU_Detail(s)
 		if (NOT(checkCached(frameIdx))) {
-			VUtils::MeshVoxel *previewVoxel = getPreviewVoxel(frameIdx);
+			// last voxel in file is reserved for preview geometry
+			VUtils::MeshVoxel *previewVoxel = getVoxel(frameIdx, m_proxy->getNumVoxels() - 1);
 			if (NOT(previewVoxel)) {
 				res.setError(__FUNCTION__, DE_NO_GEOM, "No preview geometry found for context #%0.3f.", context.getFloatFrame());
 				return res;
@@ -398,18 +440,23 @@ private:
 															animSpeed))));
 	}
 
-	VUtils::MeshVoxel *getPreviewVoxel(const FrameKey &frameKey) const
+	VUtils::MeshVoxel *getVoxel(const FrameKey &frameKey, int voxelIdx) const
 	{
-		VUtils::MeshVoxel *previewVoxel = nullptr;
-		if ( m_proxy && m_proxy->getNumVoxels()) {
-			if ( m_proxy->getNumFrames() ) {
-				m_proxy->setCurrentFrame(frameKey);
-			}
+		vassert( m_proxy );
 
-			previewVoxel = m_proxy->getVoxel(m_proxy->getNumVoxels() - 1);
+		VUtils::MeshVoxel *voxel = nullptr;
+		if (   voxelIdx < 0
+			|| voxelIdx >= m_proxy->getNumVoxels() )
+		{
+			return voxel;
 		}
 
-		return previewVoxel;
+		if ( m_proxy->getNumFrames() ) {
+			m_proxy->setCurrentFrame(frameKey);
+		}
+
+		voxel = m_proxy->getVoxel(voxelIdx);
+		return voxel;
 	}
 
 	void getPreviewGeometry(VUtils::MeshVoxel &voxel, std::vector<Geometry> &geometry) const
@@ -535,6 +582,20 @@ private:
 		return gdp;
 	}
 
+	void createBBoxGeometry(const FrameKey &frameKey, GU_Detail &gdp) const
+	{
+		if ( m_proxy->getNumFrames() ) {
+			m_proxy->setCurrentFrame(frameKey);
+		}
+
+		VUtils::Box bbox= m_proxy->getBBox();
+		const VUtils::Vector &bboxMin = bbox.c(0);
+		const VUtils::Vector &bboxMax = bbox.c(1);
+		gdp.cube(bboxMin[0], bboxMax[0],
+				bboxMin[1], bboxMax[1],
+				bboxMin[2], bboxMax[2]);
+	}
+
 private:
 	VRayProxyCache(const VRayProxyCache &other);
 	VRayProxyCache & operator =(const VRayProxyCache &other);
@@ -552,16 +613,28 @@ typedef Caches::LRUCache< std::string, VRayProxyCache > VRayProxyCacheMan;
 static const int cacheCapacity = 10;
 static VRayProxyCacheMan g_cacheMan(cacheCapacity);
 
-/// VRayProxy node cache params
+/// VRayProxy node params
+///
 static PRM_Name prmCacheHeading("cacheheading", "VRayProxy Cache");
 static PRM_Name prmClearCache("clear_cache", "Clear Cache");
 
+static PRM_Name prmLoadType("loadtype", "Load");
+static PRM_Name prmLoadTypeItems[] = {
+	PRM_Name("Bounding Box"),
+	PRM_Name("Preview Geometry"),
+	PRM_Name("Full Geometry"),
+	PRM_Name(),
+};
+static PRM_ChoiceList prmLoadTypeMenu(PRM_CHOICELIST_SINGLE, prmLoadTypeItems);
+
 static PRM_Name prmProxyHeading("vrayproxyheading", "VRayProxy Settings");
+
 
 
 void SOP::VRayProxy::addPrmTemplate(Parm::PRMTmplList &prmTemplate)
 {
 	prmTemplate.push_back(PRM_Template(PRM_HEADING, 1, &prmCacheHeading));
+	prmTemplate.push_back(PRM_Template(PRM_ORD, 1, &prmLoadType, PRMoneDefaults, &prmLoadTypeMenu));
 	prmTemplate.push_back(PRM_Template(PRM_CALLBACK, 1, &prmClearCache, 0, 0, 0, VRayProxy::cbClearCache));
 	prmTemplate.push_back(PRM_Template(PRM_HEADING, 1, &prmProxyHeading));
 }
