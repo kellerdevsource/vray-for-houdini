@@ -16,6 +16,7 @@
 
 #include <GEO/GEO_Point.h>
 #include <GU/GU_PrimPoly.h>
+#include <GU/GU_PackedGeometry.h>
 #include <HOM/HOM_Vector2.h>
 #include <HOM/HOM_BaseKeyframe.h>
 #include <HOM/HOM_playbar.h>
@@ -39,7 +40,6 @@ enum LoadType {
 };
 
 
-typedef std::shared_ptr<GU_Detail>                 GU_DetailPtr;
 typedef uint32                                     VoxelType;
 typedef std::pair<VoxelType, VUtils::MeshVoxel* >  Geometry;
 
@@ -90,7 +90,7 @@ private:
 	typedef unsigned FrameKey;
 	typedef Hash::MHash ItemKey;
 	typedef std::vector<ItemKey> ItemKeys;
-	typedef GU_DetailPtr Item;
+	typedef GU_DetailHandle Item;
 
 	struct CachedFrame
 	{
@@ -344,9 +344,9 @@ public:
 					vassert( itemIt != m_itemCache->end() );
 
 					CachedItem &itemData = *itemIt;
-					GU_DetailPtr item = itemData.m_item;
-					if (item) {
-						gdp.merge(*item);
+					GU_DetailHandle &gdpHndl = itemData.m_item;
+					if (gdpHndl.isValid()) {
+						GU_PackedGeometry::packGeometry(gdp, gdpHndl);
 					} else {
 						res.setError(__FUNCTION__, DE_INVALID_GEOM, "Invalid geometry found for context #%0.3f.", context.getFloatFrame());
 					}
@@ -406,7 +406,7 @@ private:
 			} else {
 //				not in itemCache insert as new item and init ref count to 1
 				CachedItem &itemData = (*m_itemCache)[itemKey];
-				itemData.m_item = createProxyGeometry(geom);
+				createProxyGeometry(geom, itemData.m_item);
 				itemData.m_refCnt = 1;
 			}
 		}
@@ -499,37 +499,37 @@ private:
 		}
 	}
 
-	GU_DetailPtr createProxyGeometry(const Geometry &geom) const
+	int createProxyGeometry(const Geometry &geom, GU_DetailHandle &gdpHndl) const
 	{
 		VoxelType voxelType = geom.first;
 		VUtils::MeshVoxel *voxel = geom.second;
 		if (voxel) {
 			if (voxelType & MVF_GEOMETRY_VOXEL) {
-				return createMeshProxyGeometry(*voxel);
+				return createMeshProxyGeometry(*voxel, gdpHndl);
 
 			} else if (voxelType & MVF_HAIR_GEOMETRY_VOXEL) {
-				return createHairProxyGeometry(*voxel);
+				return createHairProxyGeometry(*voxel, gdpHndl);
 			}
 		}
 
-		return GU_DetailPtr();
+		return false;
 	}
 
-	GU_DetailPtr createMeshProxyGeometry(VUtils::MeshVoxel &voxel) const
+	int createMeshProxyGeometry(VUtils::MeshVoxel &voxel, GU_DetailHandle &gdpHndl) const
 	{
 		VUtils::MeshChannel *verts_ch = voxel.getChannel(VERT_GEOM_CHANNEL);
 		VUtils::MeshChannel *faces_ch = voxel.getChannel(FACE_TOPO_CHANNEL);
 		if ( NOT(verts_ch) || NOT(faces_ch) ) {
-			return GU_DetailPtr();
+			return false;
 		}
 
 		VUtils::VertGeomData *verts = static_cast<VUtils::VertGeomData *>(verts_ch->data);
 		VUtils::FaceTopoData *faces = static_cast<VUtils::FaceTopoData *>(faces_ch->data);
 		if (NOT(verts) || NOT(faces)) {
-			return GU_DetailPtr();
+			return false;
 		}
 
-		GU_DetailPtr gdp = std::make_shared<GU_Detail>();
+		GU_Detail *gdp = new GU_Detail();
 		int numVerts = verts_ch->numElements;
 		int numFaces = faces_ch->numElements;
 		GA_Offset voffset = gdp->getNumVertexOffsets();
@@ -551,7 +551,7 @@ private:
 		for (int f = 0; f < numFaces; ++f) {
 			const VUtils::FaceTopoData &face = faces[f];
 
-			GU_PrimPoly *poly = GU_PrimPoly::build(gdp.get(), 3, GU_POLY_CLOSED, 0);
+			GU_PrimPoly *poly = GU_PrimPoly::build(gdp, 3, GU_POLY_CLOSED, 0);
 			for (int c = 0; c < 3; ++c) {
 				poly->setVertexPoint(c, voffset + face.v[c]);
 			}
@@ -559,24 +559,25 @@ private:
 			poly->reverse();
 		}
 
-		return gdp;
+		gdpHndl.allocateAndSet(gdp);
+		return true;
 	}
 
-	GU_DetailPtr createHairProxyGeometry(VUtils::MeshVoxel &voxel) const
+	int createHairProxyGeometry(VUtils::MeshVoxel &voxel, GU_DetailHandle &gdpHndl) const
 	{
 		VUtils::MeshChannel *verts_ch = voxel.getChannel(HAIR_VERT_CHANNEL);
 		VUtils::MeshChannel *strands_ch = voxel.getChannel(HAIR_NUM_VERT_CHANNEL);
 		if ( NOT(verts_ch) || NOT(strands_ch) ) {
-			return GU_DetailPtr();
+			return false;
 		}
 
 		VUtils::VertGeomData *verts = static_cast<VUtils::VertGeomData *>(verts_ch->data);
 		int *strands = static_cast<int *>(strands_ch->data);
 		if (NOT(verts) || NOT(strands)) {
-			return GU_DetailPtr();
+			return false;
 		}
 
-		GU_DetailPtr gdp = std::make_shared<GU_Detail>();
+		GU_Detail *gdp = new GU_Detail();
 		int numVerts = verts_ch->numElements;
 		int numStrands = strands_ch->numElements;
 		GA_Offset voffset = gdp->getNumVertexOffsets();
@@ -598,7 +599,7 @@ private:
 		for (int i = 0; i < numStrands; ++i) {
 			int &vertsPerStrand = strands[i];
 
-			GU_PrimPoly *poly = GU_PrimPoly::build(gdp.get(), vertsPerStrand, GU_POLY_OPEN, 0);
+			GU_PrimPoly *poly = GU_PrimPoly::build(gdp, vertsPerStrand, GU_POLY_OPEN, 0);
 			for (int j = 0; j < vertsPerStrand; ++j) {
 				poly->setVertexPoint(j, voffset + j);
 			}
@@ -606,7 +607,8 @@ private:
 			voffset += vertsPerStrand;
 		}
 
-		return gdp;
+		gdpHndl.allocateAndSet(gdp);
+		return true;
 	}
 
 	void createBBoxGeometry(const FrameKey &frameKey, GU_Detail &gdp) const
