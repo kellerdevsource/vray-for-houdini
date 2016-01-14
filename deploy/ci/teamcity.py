@@ -121,6 +121,7 @@ def setup_msvc_2012():
             "C:/Program Files (x86)/CMake/bin",
             "C:/Program Files/SlikSvn/bin",
             "C:/Program Files/Git/bin",
+            "C:/Program Files (x86)/WinSCP",
             "{CGR_SDK}/msvs2012/bin/amd64",
             "{CGR_SDK}/msvs2012/bin",
             "{CGR_SDK}/msvs2012/PlatformSDK/bin/x64",
