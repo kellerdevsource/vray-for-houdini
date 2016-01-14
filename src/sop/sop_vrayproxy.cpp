@@ -532,18 +532,18 @@ private:
 		GU_Detail *gdp = new GU_Detail();
 		int numVerts = verts_ch->numElements;
 		int numFaces = faces_ch->numElements;
-		GA_Offset voffset = gdp->getNumVertexOffsets();
 
 		// Points
+		GA_Offset voffset = gdp->appendPointBlock(numVerts);
 		for (int v = 0; v < numVerts; ++v) {
-			VUtils::Vector vert = verts[v];
+			VUtils::Vector &vert = verts[v];
+			GA_Offset pointOffs = voffset + v;
 
 #if UT_MAJOR_VERSION_INT < 14
-			GEO_Point *point = gdp->appendPointElement();
+			GEO_Point *point = gdp->getGEOPoint(pointOffs);
 			point->setPos(UT_Vector4F(vert.x, vert.y, vert.z));
 #else
-			GA_Offset pointOffs = gdp->appendPoint();
-			gdp->setPos3(pointOffs, UT_Vector4F(vert.x, vert.y, vert.z));
+			gdp->setPos3(pointOffs, UT_Vector3F(vert.x, vert.y, vert.z));
 #endif
 		}
 
@@ -580,18 +580,18 @@ private:
 		GU_Detail *gdp = new GU_Detail();
 		int numVerts = verts_ch->numElements;
 		int numStrands = strands_ch->numElements;
-		GA_Offset voffset = gdp->getNumVertexOffsets();
 
 		// Points
-		for (int i = 0; i < numVerts; ++i) {
-			VUtils::Vector vert = verts[i];
+		GA_Offset voffset = gdp->appendPointBlock(numVerts);
+		for (int v = 0; v < numVerts; ++v) {
+			VUtils::Vector &vert = verts[v];
+			GA_Offset pointOffs = voffset + v;
 
 #if UT_MAJOR_VERSION_INT < 14
-			GEO_Point *point = gdp->appendPointElement();
+			GEO_Point *point = gdp->getGEOPoint(pointOffs);
 			point->setPos(UT_Vector4F(vert.x, vert.y, vert.z));
 #else
-			GA_Offset pointOffs = gdp->appendPoint();
-			gdp->setPos3(pointOffs, UT_Vector4F(vert.x, vert.y, vert.z));
+			gdp->setPos3(pointOffs, UT_Vector3F(vert.x, vert.y, vert.z));
 #endif
 		}
 
@@ -708,8 +708,6 @@ OP_NodeFlags &SOP::VRayProxy::flags()
 
 OP_ERROR SOP::VRayProxy::cookMySop(OP_Context &context)
 {
-	Log::getLog().info("SOP::VRayProxy::cookMySop()");
-
 	if (NOT(gdp)) {
 		addError(SOP_MESSAGE, "Invalid geometry detail.");
 		return error();
