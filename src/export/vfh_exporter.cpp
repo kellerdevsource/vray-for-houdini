@@ -638,7 +638,7 @@ VRay::Plugin VRayExporter::exportVop(OP_Node *op_node, ExportContext *parentCont
 			{
 				OBJ_Node *objNode = mtlContext.getObjectNode();
 				//TODO: need consistent naming for surface/displacement/other vops and their overrides
-				pluginDesc.pluginName = VRayExporter::getPluginName(vop_node, "MtlOverride@", objNode->getName().toStdString());
+				pluginDesc.pluginName = VRayExporter::getPluginName(vop_node, "", objNode->getName().toStdString());
 
 				if (mtlContext.hasOverrides(*vop_node)) {
 					setAttrsFromSHOPOverrides(pluginDesc, *vop_node, mtlContext);

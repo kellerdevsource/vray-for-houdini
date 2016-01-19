@@ -133,34 +133,18 @@ void ECFnSHOPOverrides::initOverrides()
 void ECFnSHOPOverrides::initVOPOverrides()
 {
 	SHOP_Node *shopNode = getTargetNode();
-	PRM_ParmList *shopPrmList = shopNode->getParmList();
 
-	DEP_MicroNodeList micronodes;
-	shopPrmList->getParmMicroNodes(micronodes);
-	// loop through all param channels on our shop node that are linked
-	for (DEP_MicroNode *micronode : micronodes) {
-		PRM_ParmMicroNode *prmMicronode = dynamic_cast<PRM_ParmMicroNode*>(micronode);
-		if (!prmMicronode) {
-			continue;
-		}
+	const OP_DependencyList &depList = shopNode->getOpDependents();
+	for (OP_DependencyList::reverse_iterator it = depList.rbegin(); !it.atEnd(); it.advance()) {
+		const OP_Dependency &dep = *it;
+		OP_Node *opNode = shopNode->lookupNode(dep.getRefOpId(), false);
+		if (shopNode->isSubNode(opNode)) {
+			const PRM_Parm &vopPrm = opNode->getParm(dep.getRefId().getParmRef());
+			const PRM_Parm &shopPrm = shopNode->getParm(dep.getSourceRefId().getParmRef());
 
-		PRM_Parm &shopPrm = prmMicronode->ownerParm();
-		UT_String channelToken;
-		shopPrm.getChannelToken(channelToken, prmMicronode->subIndex());
-
-		// find all parameters linking to current channel
-		UT_ValArray<PRM_Parm *> parms;
-		UT_IntArray parmsubidxs;
-		shopNode->getParmsThatReference(channelToken.buffer(), parms, parmsubidxs);
-		for (PRM_Parm *parm : parms) {
-			OP_Node *node = parm->getParmOwner()->castToOPNode();
-			// if the owner node is a child of the shop node => it's a vop node
-			// add a link <vop parm name> to <shop parm name> to the corresponding vop table
-			if ( shopNode->isSubNode(node) ) {
-				SHOPExportContext::OverrideMap &vopOverrides = m_context->m_vopOverrides[ node->getUniqueId() ];
-				if ( !vopOverrides.count( parm->getToken() ) ) {
-					vopOverrides[ parm->getToken() ] = shopPrm.getToken();
-				}
+			SHOPExportContext::OverrideMap &vopOverrides = m_context->m_vopOverrides[ opNode->getUniqueId() ];
+			if ( !vopOverrides.count( vopPrm.getToken() ) ) {
+				vopOverrides[ vopPrm.getToken() ] = shopPrm.getToken();
 			}
 		}
 	}
