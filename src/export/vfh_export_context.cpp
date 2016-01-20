@@ -162,31 +162,21 @@ void ECFnSHOPOverrides::initSHOPOverrides()
 
 	if (objNode->getMaterialNode(t) == shopNode) {
 		// overrides are specified on the object node if any
-		DEP_MicroNodeList micronodes;
-		shopPrmList->getParmMicroNodes(micronodes);
-		for (DEP_MicroNode *micronode : micronodes) {
-			PRM_ParmMicroNode *prmMicronode = dynamic_cast<PRM_ParmMicroNode*>(micronode);
-			if (NOT(prmMicronode)) {
-				continue;
-			}
+		const OP_DependencyList &depList = shopNode->getOpDependents();
+		for (OP_DependencyList::reverse_iterator it = depList.rbegin(); !it.atEnd(); it.advance()) {
+			const OP_Dependency &dep = *it;
+			OP_Node *opNode = shopNode->lookupNode(dep.getRefOpId(), false);
+			if (shopNode->isSubNode(opNode)) {
+				const PRM_Parm &shopPrm = shopNode->getParm(dep.getSourceRefId().getParmRef());
 
-			PRM_Parm &prm = prmMicronode->ownerParm();
-			if (m_context->m_shopOverrrides.count(prm.getToken())) {
-				// we already have a link for this shop parameter
-				continue;
-			}
-
-			PRM_Parm *objPrmOverride = objPrmList->getParmPtr(prm.getToken());
-			if (    objPrmOverride
-				&& !objPrmOverride->getBypassFlag())
-			{
-				const PRM_SpareData	*spare = objPrmOverride->getSparePtr();
-				// If the parameter is for material override it has OBJ_MATERIAL_SPARE_TAG tag
-				if (   spare
-					&& spare->getValue(OBJ_MATERIAL_SPARE_TAG))
-				{
-					// we have override on object level
-					m_context->m_shopOverrrides[ prm.getToken() ] = objPrmOverride->getToken();
+				PRM_Parm *objPrm = objPrmList->getParmPtr(shopPrm.getToken());
+				if (objPrm && !objPrm->getBypassFlag()) {
+					const PRM_SpareData	*spare = objPrm->getSparePtr();
+					// If the parameter is for material override it has OBJ_MATERIAL_SPARE_TAG tag
+					if (spare && spare->getValue(OBJ_MATERIAL_SPARE_TAG)) {
+						// we have override on object level
+						m_context->m_shopOverrrides[ shopPrm.getToken() ] = objPrm->getToken();
+					}
 				}
 			}
 		}

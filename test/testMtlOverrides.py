@@ -205,13 +205,11 @@ class TestMtlOverrides(unittest.TestCase):
                             self.assertIsInstance( plgVop[ vopPrmName ], vray.Plugin )
                             continue
 
-                        print shopNode.name(), vopNode.name(), vopPrmName
-
                         if prm.parmTemplate().numComponents() <= 1:
                             self.assertEqual( plgVop[ vopPrmName ] , prm.eval() )
 
                         elif prm.componentIndex() < len(plgVop[ vopPrmName ]):
-                            self.assertEqual( plgVop[ vopPrmName ][ prm.componentIndex() ] , prm.eval() )
+                            self.assertAlmostEqual(plgVop[ vopPrmName ][ prm.componentIndex() ], objPrm.eval(), places=7)
 
 
     def test_exportVRayMaterialWithAndWithNoOverrides(self):
