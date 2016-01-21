@@ -357,6 +357,8 @@ void VRayExporter::setAttrsFromOpNodePrms(Attrs::PluginDesc &pluginDesc, OP_Node
 													 /* V-Ray attr: pos    */ attrDesc.value.defRamp.positions,
 													 /* V-Ray attr: interp */ attrDesc.value.defRamp.interpolations,
 													 /* As color list not plugin */ asColorList);
+
+						pluginDesc.addAttribute(Attrs::PluginAttr(attrName, Attrs::PluginAttr::AttrTypeIgnore));
 					}
 					else if (attrDesc.value.type == Parm::eCurve) {
 

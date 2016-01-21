@@ -10,6 +10,7 @@
 
 #include "vfh_exporter.h"
 #include "vfh_prm_templates.h"
+#include "vfh_tex_utils.h"
 
 #include "obj/obj_node_base.h"
 #include "vop/vop_node_base.h"
@@ -175,7 +176,19 @@ void VRayExporter::setAttrsFromSHOPOverrides(Attrs::PluginDesc &pluginDesc, VOP_
 			{
 				std::string overridingPrmName;
 				if (mtlContext.getOverrideName(vopNode, attrName, overridingPrmName)) {
-					setAttrValueFromOpNodePrm(pluginDesc, attrDesc, *mtlContext.getObjectNode(), overridingPrmName);
+
+					if (attrDesc.value.type == Parm::eRamp) {
+						Texture::exportRampAttribute(*this, pluginDesc, mtlContext.getObjectNode(),
+													 /* Houdini ramp attr */ overridingPrmName,
+													 /* V-Ray attr: colors */ attrDesc.value.defRamp.colors,
+													 /* V-Ray attr: pos    */ attrDesc.value.defRamp.positions,
+													 /* V-Ray attr: interp */ attrDesc.value.defRamp.interpolations,
+													 /* As color list not plugin */ false);
+						pluginDesc.addAttribute(Attrs::PluginAttr(attrName, Attrs::PluginAttr::AttrTypeIgnore));
+					}
+					else {
+						setAttrValueFromOpNodePrm(pluginDesc, attrDesc, *mtlContext.getObjectNode(), overridingPrmName);
+					}
 				}
 				break;
 			}

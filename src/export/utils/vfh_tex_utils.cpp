@@ -35,10 +35,9 @@ void VRayForHoudini::Texture::exportRampAttribute(VRayExporter &exporter, Attrs:
 												  const std::string &rampAttrName,
 												  const std::string &colAttrName, const std::string &posAttrName, const std::string &typesAttrName, const bool asColor)
 {
-
 	const fpreal &t = exporter.getContext().getTime();
 
-	const std::string &pluginName = VRayExporter::getPluginName(op_node);
+	const std::string &pluginName = VRayExporter::getPluginName(op_node, rampAttrName);
 
 	int nPoints = op_node->evalInt(rampAttrName.c_str(), 0, 0.0f);
 
