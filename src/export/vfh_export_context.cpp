@@ -14,6 +14,7 @@
 #include <PRM/PRM_ParmMicroNode.h>
 #include <OBJ/OBJ_Node.h>
 #include <SHOP/SHOP_Node.h>
+#include <SHOP/SHOP_Util.h>
 
 
 using namespace VRayForHoudini;
@@ -168,15 +169,11 @@ void ECFnSHOPOverrides::initSHOPOverrides()
 			OP_Node *opNode = shopNode->lookupNode(dep.getRefOpId(), false);
 			if (shopNode->isSubNode(opNode)) {
 				const PRM_Parm &shopPrm = shopNode->getParm(dep.getSourceRefId().getParmRef());
+				const PRM_Parm *objPrm = objPrmList->getParmPtr(shopPrm.getToken());
 
-				PRM_Parm *objPrm = objPrmList->getParmPtr(shopPrm.getToken());
 				if (objPrm && !objPrm->getBypassFlag()) {
-					const PRM_SpareData	*spare = objPrm->getSparePtr();
-					// If the parameter is for material override it has OBJ_MATERIAL_SPARE_TAG tag
-					if (spare && spare->getValue(OBJ_MATERIAL_SPARE_TAG)) {
-						// we have override on object level
-						m_context->m_shopOverrrides[ shopPrm.getToken() ] = objPrm->getToken();
-					}
+					// if we have parameter with matching name override on object level
+					m_context->m_shopOverrrides[ shopPrm.getToken() ] = objPrm->getToken();
 				}
 			}
 		}

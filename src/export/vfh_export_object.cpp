@@ -85,48 +85,53 @@ int isSmoothed(OBJ_Node &obj_node)
 void VRayExporter::RtCallbackNode(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
 	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
-
 	OBJ_Node *obj_node = caller->castToOBJNode();
 
 	Log::getLog().debug("RtCallbackNode: %s from \"%s\"", OPeventToString(type), obj_node->getName().buffer());
 
-	if (type == OP_PARM_CHANGED ||
-		type == OP_INPUT_CHANGED ||
-		type == OP_INPUT_REWIRED || /* parenting */
-		type == OP_FLAG_CHANGED) /* visibility */
-	{
-		VRay::Plugin mtl;
-
-		const PRM_Parm *param = Parm::getParm(*caller, reinterpret_cast<long>(data));
-		if (param) {
-			// If the parameter is for material override it has OBJ_MATERIAL_SPARE_TAG tag
-			const PRM_SpareData	*spare = param->getSparePtr();
-
-			if (boost::equals(param->getToken(), "shop_materialpath")) {
+	switch (type) {
+		case OP_PARM_CHANGED:
+		{
+			VRay::Plugin mtl;
+			const PRM_Parm *objPrm = Parm::getParm(*caller, reinterpret_cast<long>(data));
+			if (objPrm) {
 				SHOP_Node *shop_node = exporter.getObjMaterial(obj_node);
 				if (shop_node) {
-					ExportContext expContext(CT_OBJ, exporter, *obj_node);
-					mtl = exporter.exportMaterial(*shop_node, expContext);
+					if (boost::equals(objPrm->getToken(), "shop_materialpath")) {
+						ExportContext expContext(CT_OBJ, exporter, *obj_node);
+						mtl = exporter.exportMaterial(*shop_node, expContext);
+						if (!mtl) {
+							mtl = exporter.exportDefaultMaterial();
+						}
+					}
+					else {
+						PRM_Parm *shopPrm = shop_node->getParmList()->getParmPtr(objPrm->getToken());
+
+						if (shopPrm && (objPrm->getType() == shopPrm->getType())) {
+							ExportContext expContext(CT_OBJ, exporter, *obj_node);
+							mtl = exporter.exportMaterial(*shop_node, expContext);
+						}
+					}
+
 				}
-				if (!mtl) {
-					mtl = exporter.exportDefaultMaterial();
-				}
-			}
-			else if (spare && spare->getValue(OBJ_MATERIAL_SPARE_TAG))
-			{
-				SHOP_Node *shop_node = exporter.getObjMaterial(obj_node);
-				if (shop_node) {
-					ExportContext expContext(CT_OBJ, exporter, *obj_node);
-					mtl = exporter.exportMaterial(*shop_node, expContext);
-				}
+				exporter.exportNode(obj_node, mtl, VRay::Plugin());
 			}
 		}
-
-		exporter.exportNode(obj_node, mtl, VRay::Plugin());
-	}
-	else if (type == OP_NODE_PREDELETE) {
-		exporter.delOpCallbacks(caller);
-		exporter.removePlugin(obj_node);
+		case OP_INPUT_CHANGED:
+		case OP_INPUT_REWIRED:
+		case OP_FLAG_CHANGED:
+		{
+			exporter.exportNode(obj_node, VRay::Plugin(), VRay::Plugin());
+			break;
+		}
+		case OP_NODE_PREDELETE:
+		{
+			exporter.delOpCallbacks(caller);
+			exporter.removePlugin(obj_node);
+			break;
+		}
+		default:
+			break;
 	}
 }
 
