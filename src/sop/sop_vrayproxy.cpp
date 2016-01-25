@@ -777,7 +777,7 @@ OP_ERROR SOP::VRayProxy::cookMySop(OP_Context &context)
 }
 
 
-OP::VRayNode::PluginResult SOP::VRayProxy::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, OP_Node *parent)
+OP::VRayNode::PluginResult SOP::VRayProxy::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
 {
 	vassert( exporter );
 
@@ -795,7 +795,7 @@ OP::VRayNode::PluginResult SOP::VRayProxy::asPluginDesc(Attrs::PluginDesc &plugi
 	pluginDesc.pluginAttrs.push_back(Attrs::PluginAttr("file", path.buffer()));
 	pluginDesc.pluginAttrs.push_back(Attrs::PluginAttr("flip_axis", evalInt("flip_axis", 0, 0.0f)));
 
-	exporter.setAttrsFromOpNode(pluginDesc, this);
+	exporter.setAttrsFromOpNodePrms(pluginDesc, this);
 
 	return OP::VRayNode::PluginResultSuccess;
 }

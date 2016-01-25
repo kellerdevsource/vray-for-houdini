@@ -12,6 +12,7 @@
 #define VRAY_FOR_HOUDINI_OP_NODE_BASE_H
 
 #include "vfh_exporter.h"
+#include "vfh_export_context.h"
 
 #include <OP/OP_Node.h>
 
@@ -41,7 +42,7 @@ public:
 	Parm::VRayPluginInfo     *getVRayPluginInfo() const { return pluginInfo; }
 
 	/// Export as plugin description
-	virtual PluginResult      asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, OP_Node *parent=nullptr) { return PluginResult::PluginResultNA; }
+	virtual PluginResult      asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext=nullptr) { return PluginResult::PluginResultNA; }
 
 protected:
 	/// Defines V-Ray plugin type

@@ -47,7 +47,7 @@ OP_ERROR SOP::GeomStaticSmoothedMesh::cookMySop(OP_Context &context)
 }
 
 
-OP::VRayNode::PluginResult SOP::GeomStaticSmoothedMesh::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, OP_Node *parent)
+OP::VRayNode::PluginResult SOP::GeomStaticSmoothedMesh::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
 {
 	Log::getLog().debug("OP::GeomStaticSmoothedMesh::asPluginDesc()");
 

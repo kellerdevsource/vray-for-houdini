@@ -12,18 +12,25 @@
 #include "vfh_mesh_utils.h"
 #include "vfh_ga_utils.h"
 
+#include <SHOP/SHOP_Node.h>
+#include <SHOP/SHOP_GeoOverride.h>
+#include <PRM/PRM_ParmMicroNode.h>
+#include <CH/CH_Channel.h>
+
 #include <SOP/SOP_Node.h>
 #include <GU/GU_Detail.h>
 #include <GU/GU_PrimPolySoup.h>
 #include <UT/UT_Version.h>
 #include <GA/GA_PageHandle.h>
 
+#include <unordered_set>
+#include <unordered_map>
+
 
 using namespace VRayForHoudini;
 
 
-struct GeomExportData
-{
+struct GeomExportData {
 	VUtils::VectorRefList vertices;
 	VUtils::VectorRefList normals;
 	VUtils::IntRefList faces;
@@ -35,18 +42,203 @@ struct GeomExportData
 };
 
 
+//
+// MATERIAL OVERRIDE
+// * Go through all "material" OBJ child nodes and collect override attribute names and types.
+// * Find target VOP's to override attribute at.
+// * Bake color and float attributes into mesh's map channles.
+// * Check override type and descide whether to export a separate material or:
+//   - Override attribute with mesh's map channel (using TexUserColor or TexUser)
+//   - Override attribute with texture id map (using TexMultiID)
+//
+// Primitive color override example
+//   "diffuser" : 1.0, "diffuseg" : 1.0, "diffuseb" : 1.0
+//
+// We don't care about the separate channels, we have to export attribute as "diffuse".
+// We need to go through all the "material" nodes inside the network and collect actual
+// parameter names. Then we'll bake float and color attributes as map channels.
+//
+
+
+
+struct PrimOverride
+{
+	typedef std::unordered_map< std::string, VRay::Vector > MtlOverrides;
+
+	PrimOverride(SHOP_Node *shopNode = nullptr):
+		shopNode(shopNode)
+	{}
+
+	SHOP_Node *shopNode;
+	MtlOverrides mtlOverrides;
+};
+
+
+int getPrimOverrides(const OP_Context &context, const GU_Detail &gdp, std::unordered_set< std::string > &o_mapChannelOverrides, std::vector< PrimOverride > &o_primOverrides)
+{
+	const GA_ROHandleS materialPathHndl(gdp.findStringTuple(GA_ATTRIB_PRIMITIVE, "shop_materialpath"));
+	const GA_ROHandleS materialOverrideHndl(gdp.findStringTuple(GA_ATTRIB_PRIMITIVE, "material_override"));
+	if (   !materialPathHndl.isValid()
+		|| !materialOverrideHndl.isValid())
+	{
+		return 0;
+	}
+
+	o_primOverrides.resize(gdp.getNumPrimitives());
+
+	int k = 0;
+	for (GA_Iterator offIt(gdp.getPrimitiveRange()); !offIt.atEnd(); offIt.advance(), ++k) {
+		const GA_Offset off = *offIt;
+		PrimOverride &primOverride = o_primOverrides[k];
+
+		primOverride.shopNode = OPgetDirector()->findSHOPNode( materialPathHndl.get(off) );
+		if ( NOT(primOverride.shopNode) ) {
+			Log::getLog().error("Error for primitive #\"%d\": Shop node \"%s\" not found!",
+								k, materialPathHndl.get(off));
+			continue;
+		}
+
+		// material override is in the form of string representation of a python dict
+		// using HDK helper class SHOP_GeoOverride to parse that
+		SHOP_GeoOverride mtlOverride;
+		mtlOverride.load( materialOverrideHndl.get(off) );
+		if (mtlOverride.entries() <= 0) {
+			continue;
+		}
+
+		const PRM_ParmList *shopPrmList = primOverride.shopNode->getParmList();
+		UT_StringArray mtlOverrideChs;
+		mtlOverride.getKeys(mtlOverrideChs);
+		for ( const UT_StringHolder &chName : mtlOverrideChs) {
+			int chIdx = -1;
+			PRM_Parm *prm = shopPrmList->getParmPtrFromChannel(chName, &chIdx);
+			if (NOT(prm)) {
+				continue;
+			}
+
+			std::string channelName = prm->getToken();
+			// skip overrides on the 4th component of 4-tuple params
+			// if prm is a 4-tuple and the override is on 4th component
+			// we can not store the channel in VRay::Vector which has only 3 components
+			// TODO: need a way to export these
+			if (   chIdx < 0
+				|| chIdx >= 3)
+			{
+				continue;
+			}
+			// skip overrides on string and toggle params for now - they can't be exported as map channels
+			// TODO: need a way to export these
+			const PRM_Type &prmType = prm->getType();
+			if (   mtlOverride.isString(chName.buffer())
+				|| NOT(prmType.isFloatType()) )
+			{
+				continue;
+			}
+
+			if ( primOverride.mtlOverrides.count(channelName) == 0 ) {
+				o_mapChannelOverrides.insert(channelName);
+				// get default value from the shop parameter
+				// so if the overrides are NOT on all param channels
+				// we still get the default value for the channel from the shop param
+				VRay::Vector &val = primOverride.mtlOverrides[ channelName ];
+				for (int i = 0; i < prm->getVectorSize() && i < 3; ++i) {
+					fpreal fval = 0;
+					prm->getValue(context.getTime(), fval, i, context.getThread());
+					val[i] = fval;
+				}
+			}
+			// override the channel value
+			VRay::Vector &val = primOverride.mtlOverrides[ channelName ];
+			fpreal fval = 0;
+			mtlOverride.import(chName, fval);
+			val[ chIdx ] = fval;
+		}
+	}
+
+	return k;
+}
+
+
+static void exportPrimitiveAttrs(const OP_Context &context, const GU_Detail &gdp, GeomExportParams &expParams, GeomExportData &expData)
+{
+	std::unordered_set< std::string > mapChannelOverrides;
+	std::vector< PrimOverride > primOverrides;
+	if ( getPrimOverrides(context, gdp, mapChannelOverrides, primOverrides) > 0) {
+
+		for (const std::string channelName : mapChannelOverrides ) {
+			Mesh::MapChannel &map_channel = expData.map_channels_data[ channelName ];
+			// max number of different vertices int hte channel is bounded by number of primitives
+			map_channel.vertices.resize(gdp.getNumPrimitives());
+			map_channel.faces.resize(expData.numFaces * 3);
+
+			int k = 0;
+			int vi = 0;
+			for (GA_Iterator offIt(gdp.getPrimitiveRange()); !offIt.atEnd(); offIt.advance(), ++k) {
+				const GEO_Primitive *prim = gdp.getGEOPrimitive(*offIt);
+
+				PrimOverride &primOverride = primOverrides[k];
+				if ( primOverride.shopNode ) {
+					VRay::Vector &val = map_channel.vertices[k];
+					// if the parameter is overriden by the primitive get the overriden value
+					if ( primOverride.mtlOverrides.count(channelName) ) {
+						val = primOverride.mtlOverrides[channelName];
+					}
+					// else if the parameter exists on the shop node get the default value from there
+					else if ( primOverride.shopNode->hasParm(channelName.c_str()) ) {
+						const PRM_Parm &prm = primOverride.shopNode->getParm(channelName.c_str());
+						for (int i = 0; i < prm.getVectorSize() && i < 3; ++i) {
+							fpreal fval;
+							prm.getValue(context.getTime(), fval, i, context.getThread());
+							val[i] = fval;
+						}
+					}
+					// finally there is no such param on the shop node so leave a default value of Vector(0,0,0)
+				}
+
+				// TODO: need to refactor this:
+				// for all map channels "faces" will be same  array so no need to recalc it every time
+				if (prim->getTypeId().get() == GEO_PRIMPOLYSOUP) {
+					const GU_PrimPolySoup *polySoup = static_cast<const GU_PrimPolySoup*>(prim);
+					for (GEO_PrimPolySoup::PolygonIterator psIt(*polySoup); !psIt.atEnd(); ++psIt) {
+						map_channel.faces[vi++] = k;
+						map_channel.faces[vi++] = k;
+						map_channel.faces[vi++] = k;
+
+						if (psIt.getVertexCount() == 4) {
+							map_channel.faces[vi++] = k;
+							map_channel.faces[vi++] = k;
+							map_channel.faces[vi++] = k;
+						}
+					}
+				}
+				else {
+					map_channel.faces[vi++] = k;
+					map_channel.faces[vi++] = k;
+					map_channel.faces[vi++] = k;
+
+					if (prim->getVertexCount() == 4) {
+						map_channel.faces[vi++] = k;
+						map_channel.faces[vi++] = k;
+						map_channel.faces[vi++] = k;
+					}
+				}
+			}
+		}
+	}
+}
+
+
 void vertexAttrAsMapChannel(const GU_Detail &gdp, const GA_Attribute &vertexAttr, int numFaces, GeomExportParams &expParams, Mesh::MapChannel &map_channel)
 {
 	GA_ROPageHandleV3 vaPageHndl(&vertexAttr);
 	GA_ROHandleV3 vaHndl(&vertexAttr);
 
-	vassert( vaPageHndl.isValid() );
-	vassert( vaHndl.isValid() );
-
+	vassert(vaPageHndl.isValid());
+	vassert(vaHndl.isValid());
 
 	map_channel.name = GA::getGaAttributeName(vertexAttr);
 	Log::getLog().info("  Found map channel: %s",
-						map_channel.name.c_str());
+					   map_channel.name.c_str());
 
 	if (expParams.uvWeldThreshold > 0) {
 		// weld vertex attribute values before populating the map channel
@@ -60,21 +252,20 @@ void vertexAttrAsMapChannel(const GU_Detail &gdp, const GA_Attribute &vertexAttr
 		}
 
 		// Init map channel data
-	#if CGR_USE_LIST_RAW_TYPES
+#if CGR_USE_LIST_RAW_TYPES
 		map_channel.vertices = VUtils::VectorRefList(map_channel.verticesSet.size());
 		map_channel.faces = VUtils::IntRefList(numFaces * 3);
-	#else
+#else
 		map_channel.vertices.resize(map_channel.verticesSet.size());
 		map_channel.faces.resize(numFaces * 3);
-	#endif
+#endif
 
 		int i = 0;
 		for (auto &mv: map_channel.verticesSet) {
 			mv.index = i;
 			map_channel.vertices[i++].set(mv.v[0], mv.v[1], mv.v[2]);
 		}
-		vassert( i == map_channel.vertices.size() );
-
+		vassert(i == map_channel.vertices.size());
 
 		// Process map channels (uv and other tuple(3) attributes)
 		//
@@ -107,13 +298,13 @@ void vertexAttrAsMapChannel(const GU_Detail &gdp, const GA_Attribute &vertexAttr
 		// populate map channel with original values
 
 		// Init map channel data
-	#if CGR_USE_LIST_RAW_TYPES
+#if CGR_USE_LIST_RAW_TYPES
 		map_channel.vertices = VUtils::VectorRefList(gdp.getNumVertices());
 		map_channel.faces = VUtils::IntRefList(numFaces * 3);
-	#else
+#else
 		map_channel.vertices.resize(gdp.getNumVertices());
 		map_channel.faces.resize(numFaces * 3);
-	#endif
+#endif
 
 		int i = 0;
 		GA_Offset start, end;
@@ -124,7 +315,7 @@ void vertexAttrAsMapChannel(const GU_Detail &gdp, const GA_Attribute &vertexAttr
 				map_channel.vertices[i++].set(val[0], val[1], val[2]);
 			}
 		}
-		vassert( i == gdp.getNumVertices() );
+		vassert(i == gdp.getNumVertices());
 
 		i = 0;
 		GA_Index vi = 0;
@@ -160,7 +351,7 @@ void vertexAttrAsMapChannel(const GU_Detail &gdp, const GA_Attribute &vertexAttr
 			vi += prim->getVertexCount();
 		}
 
-		vassert( i == map_channel.faces.size() );
+		vassert(i == map_channel.faces.size());
 	}
 }
 
@@ -169,19 +360,17 @@ void exportVertexAttrs(const GU_Detail &gdp, GeomExportParams &expParams, GeomEx
 {
 	// add all vector3 vertex attributes to map_channels_data
 	GA_AttributeFilter float3Filter(GA_ATTRIB_FILTER_AND, GA_AttributeFilter::selectFloatTuple(), GA_AttributeFilter::selectByTupleSize(3));
-	for (GA_AttributeDict::iterator attrIt = gdp.getAttributeDict(GA_ATTRIB_VERTEX).begin(GA_SCOPE_PUBLIC); !attrIt.atEnd(); ++attrIt)
-	{
+	for (GA_AttributeDict::iterator attrIt = gdp.getAttributeDict(GA_ATTRIB_VERTEX).begin(GA_SCOPE_PUBLIC); !attrIt.atEnd(); ++attrIt) {
 		const std::string attrName(attrIt.name());
 		// "N" point attribute is handled separately as different plugin property
 		// so skip it here
-		if (StrEq(attrIt.name(), "N"))
-		{
+		if (StrEq(attrIt.name(), "N")) {
 			continue;
 		}
 
-		if (   attrIt.attrib()
-			&& float3Filter.match(attrIt.attrib())
-			&& NOT(expData.map_channels_data.count(attrName)) )
+		if (attrIt.attrib() &&
+			float3Filter.match(attrIt.attrib()) &&
+			NOT(expData.map_channels_data.count(attrName)))
 		{
 			Mesh::MapChannel &map_channel = expData.map_channels_data[attrName];
 			vertexAttrAsMapChannel(gdp, *attrIt.attrib(), expData.numFaces, expParams, map_channel);
@@ -194,14 +383,12 @@ void exportPointAttrs(const GU_Detail &gdp, GeomExportParams &expParams, GeomExp
 {
 	// add all vector3 point attributes to map_channels_data
 	GA_AttributeFilter float3Filter(GA_ATTRIB_FILTER_AND, GA_AttributeFilter::selectFloatTuple(), GA_AttributeFilter::selectByTupleSize(3));
-	for (GA_AttributeDict::iterator attrIt = gdp.getAttributeDict(GA_ATTRIB_POINT).begin(GA_SCOPE_PUBLIC); !attrIt.atEnd(); ++attrIt)
-	{
+	for (GA_AttributeDict::iterator attrIt = gdp.getAttributeDict(GA_ATTRIB_POINT).begin(GA_SCOPE_PUBLIC); !attrIt.atEnd(); ++attrIt) {
 		const std::string attrName(attrIt.name());
 		// "P" and "N" point attributes are handled separately as different plugin properties
 		// so skip them here
-		if (   StrEq(attrIt.name(), "P")
-			|| StrEq(attrIt.name(), "N"))
-		{
+		if (StrEq(attrIt.name(), "P") ||
+			StrEq(attrIt.name(), "N")) {
 			continue;
 		}
 
@@ -220,7 +407,6 @@ void exportPointAttrs(const GU_Detail &gdp, GeomExportParams &expParams, GeomExp
 					map_channel.vertices.resize(gdp.getNumPoints());
 					map_channel.faces.assign(expData.faces.get(), expData.faces.get() + expData.faces.size());
 #endif
-
 					GA_Offset start, end;
 					int vidx = 0;
 					for (GA_Iterator it(gdp.getPointRange()); it.blockAdvance(start, end); ) {
@@ -230,7 +416,7 @@ void exportPointAttrs(const GU_Detail &gdp, GeomExportParams &expParams, GeomExp
 							map_channel.vertices[vidx++].set(val[0], val[1], val[2]);
 						}
 					}
-					vassert( vidx == gdp.getNumPoints() );
+					vassert(vidx == gdp.getNumPoints());
 				}
 			}
 		}
@@ -272,7 +458,7 @@ void VRayExporter::exportGeomStaticMeshDesc(const GU_Detail &gdp, GeomExportPara
 
 	// NOTE: Support only tri-faces for now
 	// TODO:
-	//   [ ] > 4 vertex faces support (GU_PrimPacked)
+	//   [ ] > 4 vertex faces support
 	//   [x] edge_visibility
 	//
 	GA_ROAttributeRef ref_shop_materialpath = gdp.findStringTuple(GA_ATTRIB_PRIMITIVE, "shop_materialpath");
@@ -302,17 +488,7 @@ void VRayExporter::exportGeomStaticMeshDesc(const GU_Detail &gdp, GeomExportPara
 			}
 		}
 	}
-#if 0
-	if (shopToID.size()) {
-		Log::getLog().info("Materials list: %i",
-					expInfo.shopToID.size());
 
-		for (SHOPToID::iterator oIt = expInfo.shopToID.begin(); oIt != expInfo.shopToID.end(); ++oIt) {
-			Log::getLog().info("  %i: \"%s\"",
-						oIt.data(), oIt.key());
-		}
-	}
-#endif
 	expData.faces = VUtils::IntRefList(expData.numFaces * 3);
 	expData.face_mtlIDs = VUtils::IntRefList(expData.numFaces);
 	expData.edge_visibility = VUtils::IntRefList(expData.numFaces / 10 + ((expData.numFaces % 10 > 0) ? 1 : 0));
@@ -390,10 +566,10 @@ void VRayExporter::exportGeomStaticMeshDesc(const GU_Detail &gdp, GeomExportPara
 		}
 	}
 
+	exportPrimitiveAttrs(m_context, gdp, expParams, expData);
 	exportVertexAttrs(gdp, expParams, expData);
 	exportPointAttrs(gdp, expParams, expData);
 
-	//	description
 	geomPluginDesc.addAttribute(Attrs::PluginAttr("vertices", expData.vertices));
 	geomPluginDesc.addAttribute(Attrs::PluginAttr("faces", expData.faces));
 	geomPluginDesc.addAttribute(Attrs::PluginAttr("face_mtlIDs", expData.face_mtlIDs));

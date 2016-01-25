@@ -21,7 +21,7 @@ void VOP::SettingsEnvironment::setPluginType()
 }
 
 
-OP::VRayNode::PluginResult VOP::SettingsEnvironment::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, OP_Node *parent)
+OP::VRayNode::PluginResult VOP::SettingsEnvironment::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
 {
 	// TODO: Effects
 	//

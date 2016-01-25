@@ -181,7 +181,7 @@ void VOP::TexLayered::getCode(UT_String &codestr, const VOP_CodeGenContext &)
 }
 
 
-OP::VRayNode::PluginResult VOP::TexLayered::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, OP_Node *parent)
+OP::VRayNode::PluginResult VOP::TexLayered::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
 {
 	const fpreal &t = exporter.getContext().getTime();
 
@@ -201,7 +201,7 @@ OP::VRayNode::PluginResult VOP::TexLayered::asPluginDesc(Attrs::PluginDesc &plug
 					   getName().buffer(), texSockName.c_str());
 		}
 		else {
-			VRay::Plugin tex_plugin = exporter.exportVop(tex_node);
+			VRay::Plugin tex_plugin = exporter.exportVop(tex_node, parentContext);
 			if (NOT(tex_plugin)) {
 				Log::getLog().error("Node \"%s\": Failed to export texture node connected to \"%s\", ignoring...",
 							getName().buffer(), texSockName.c_str());

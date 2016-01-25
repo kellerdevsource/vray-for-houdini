@@ -136,7 +136,7 @@ int LightNodeBase< PluginID >::GetMyPrmTemplate(Parm::PRMTmplList &prmList, Parm
 
 
 template< VRayPluginID PluginID >
-OP::VRayNode::PluginResult LightNodeBase< PluginID >::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, OP_Node *parent)
+OP::VRayNode::PluginResult LightNodeBase< PluginID >::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
 {
 	pluginDesc.pluginID   = pluginID.c_str();
 	pluginDesc.pluginName = VRayExporter::getPluginName(this);
@@ -215,7 +215,7 @@ int LightNodeBase< VRayPluginID::LightMesh >::GetMyPrmTemplate(Parm::PRMTmplList
 
 
 template<>
-OP::VRayNode::PluginResult LightNodeBase< VRayPluginID::LightMesh >::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, OP_Node *parent)
+OP::VRayNode::PluginResult LightNodeBase< VRayPluginID::LightMesh >::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
 {
 	pluginDesc.pluginID   = pluginID.c_str();
 	pluginDesc.pluginName = VRayExporter::getPluginName(this);

@@ -223,7 +223,7 @@ OP_ERROR SOP::PhxShaderCache::cookMySop(OP_Context &context)
 }
 
 
-OP::VRayNode::PluginResult SOP::PhxShaderCache::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, OP_Node *parent)
+OP::VRayNode::PluginResult SOP::PhxShaderCache::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
 {
 	OP_Context &ctx = exporter.getContext();
 
@@ -232,7 +232,7 @@ OP::VRayNode::PluginResult SOP::PhxShaderCache::asPluginDesc(Attrs::PluginDesc &
 	OP_Node     *vdbFileNode = nullptr;
 	VRay::Plugin phxShaderCache;
 
-	VRay::Transform nodeTm = VRayExporter::getObjTransform(parent->castToOBJNode(), ctx);
+	VRay::Transform nodeTm = VRayExporter::getObjTransform(parentContext->getTarget()->castToOBJNode(), ctx);
 
 	VRay::Transform phxTm;
 	phxTm.matrix.makeIdentity();

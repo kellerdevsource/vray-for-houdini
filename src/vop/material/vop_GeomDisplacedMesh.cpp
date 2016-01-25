@@ -21,9 +21,17 @@ void VOP::GeomDisplacedMesh::setPluginType()
 }
 
 
-OP::VRayNode::PluginResult VOP::GeomDisplacedMesh::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, OP_Node *parent)
+OP::VRayNode::PluginResult VOP::GeomDisplacedMesh::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
 {
 	Log::getLog().warning("OP::GeomDisplacedMesh::asPluginDesc()");
+
+	ECFnOBJNode fnObjContext(parentContext);
+	if (NOT(fnObjContext.isValid())) {
+		return OP::VRayNode::PluginResultError;
+	}
+
+	pluginDesc.pluginName = VRayExporter::getPluginName(fnObjContext.getTargetNode(), boost::str(Parm::FmtPrefixManual % pluginID % "@"));
+	pluginDesc.pluginID = pluginID;
 
 	// Displacement type
 	//
@@ -39,7 +47,7 @@ OP::VRayNode::PluginResult VOP::GeomDisplacedMesh::asPluginDesc(Attrs::PluginDes
 	OP_Node *texFloat = getInput(idxTexFloat);
 
 	if (texCol) {
-		VRay::Plugin texture = exporter.exportVop(texCol);
+		VRay::Plugin texture = exporter.exportVop(texCol, parentContext);
 		if (texture) {
 			const Parm::SocketDesc *fromSocketInfo = exporter.getConnectedOutputType(this, "displacement_tex_color");
 

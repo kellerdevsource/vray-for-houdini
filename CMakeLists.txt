@@ -14,4 +14,7 @@ set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_CURRENT_SOURCE_DIR}/cmake;${
 
 project(vray_for_houdini)
 
+include(CTest)
+
 add_subdirectory(src)
+add_subdirectory(test)

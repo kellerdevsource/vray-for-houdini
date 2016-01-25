@@ -22,7 +22,7 @@ void VOP::TexFalloff::setPluginType()
 }
 
 
-OP::VRayNode::PluginResult VOP::TexFalloff::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, OP_Node *parent)
+OP::VRayNode::PluginResult VOP::TexFalloff::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
 {
 	if (evalInt("use_blend_curve", 0, 0.0)) {
 		Attrs::PluginDesc subTexFalloffDesc(VRayExporter::getPluginName(this, "SubFalloff"), "TexFalloff");

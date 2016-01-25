@@ -198,7 +198,7 @@ void VOP::BRDFLayered::getCode(UT_String &codestr, const VOP_CodeGenContext &)
 }
 
 
-OP::VRayNode::PluginResult VOP::BRDFLayered::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, OP_Node *parent)
+OP::VRayNode::PluginResult VOP::BRDFLayered::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
 {
 	const fpreal &t = exporter.getContext().getTime();
 
@@ -220,7 +220,7 @@ OP::VRayNode::PluginResult VOP::BRDFLayered::asPluginDesc(Attrs::PluginDesc &plu
 		else {
 			const std::string &weightSockName = boost::str(boost::format("weight_%i") % i);
 
-			VRay::Plugin brdf_plugin = exporter.exportVop(brdf_node);
+			VRay::Plugin brdf_plugin = exporter.exportVop(brdf_node, parentContext);
 			if (NOT(brdf_plugin)) {
 				Log::getLog().error("Node \"%s\": Failed to export BRDF node connected to \"%s\", ignoring...",
 							getName().buffer(), brdfSockName.c_str());
@@ -230,7 +230,7 @@ OP::VRayNode::PluginResult VOP::BRDFLayered::asPluginDesc(Attrs::PluginDesc &plu
 
 				OP_Node *weight_node = VRayExporter::getConnectedNode(this, weightSockName);
 				if (weight_node) {
-					weight_plugin = exporter.exportVop(weight_node);
+					weight_plugin = exporter.exportVop(weight_node, parentContext);
 				}
 				else {
 					const float weight_value = evalIntInst("brdf#weight", &i, 0, t);

@@ -38,7 +38,7 @@ OP_ERROR SOP::GeomMayaHair::cookMySop(OP_Context &context)
 }
 
 
-OP::VRayNode::PluginResult SOP::GeomMayaHair::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, OP_Node *parent)
+OP::VRayNode::PluginResult SOP::GeomMayaHair::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
 {
 	pluginDesc.pluginID   = pluginID.c_str();
 	pluginDesc.pluginName = VRayExporter::getPluginName(this, "Hair@");
@@ -52,7 +52,7 @@ OP::VRayNode::PluginResult SOP::GeomMayaHair::asPluginDesc(Attrs::PluginDesc &pl
 	}
 	else {
 		exporter.exportGeomMayaHairGeom(this, gdp, pluginDesc);
-		exporter.setAttrsFromOpNode(pluginDesc, this);
+		exporter.setAttrsFromOpNodePrms(pluginDesc, this);
 	}
 
 	return OP::VRayNode::PluginResultContinue;

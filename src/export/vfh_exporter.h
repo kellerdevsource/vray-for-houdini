@@ -20,11 +20,18 @@
 #include "vfh_vfb.h"
 #include "vfh_log.h"
 
+
+#include "vfh_export_context.h"
+
+
 #include <OP/OP_Node.h>
 #include <OBJ/OBJ_Node.h>
 #include <ROP/ROP_Node.h>
 
+#include <unordered_map>
+
 namespace VRayForHoudini {
+
 
 typedef VUtils::HashMap<int> SHOPToID;
 
@@ -53,6 +60,7 @@ struct GeomExportParams
 	int exportMtlIds;
 	SHOPToID shopToID;
 };
+
 
 struct OpInterestItem {
 	OpInterestItem():
@@ -144,8 +152,8 @@ public:
 	VRay::Plugin                   exportObject(OBJ_Node *obj_node);
 	VRay::Plugin                   exportParticles(OBJ_Node *dop_network);
 	VRay::Plugin                   exportLight(OBJ_Node *obj_node);
-	VRay::Plugin                   exportVop(OP_Node *op_node);
-	VRay::Plugin                   exportMaterial(SHOP_Node *shop_node);
+	VRay::Plugin                   exportVop(OP_Node *op_node, ExportContext *parentContext = nullptr);
+	VRay::Plugin                   exportMaterial(SHOP_Node &shop_node, ExportContext &parentContext);
 	VRay::Plugin                   exportDefaultMaterial();
 
 #ifdef CGR_HAS_VRAYSCENE
@@ -206,11 +214,14 @@ public:
 	static VRay::Transform         Matrix4ToTransform(const UT_Matrix4D &m4, bool flip=false);
 	static OP_Node                *FindChildNodeByType(OP_Node *op_node, const std::string &op_type);
 
-	void                           setAttrValueFromOpNode(Attrs::PluginDesc &plugin, const Parm::AttrDesc &parmDesc, OP_Node *opNode, const std::string &prefix="");
-	void                           setAttrsFromOpNode(Attrs::PluginDesc &plugin, OP_Node *opNode, const std::string &prefix="");
+	void                           setAttrValueFromOpNodePrm(Attrs::PluginDesc &plugin, const Parm::AttrDesc &parmDesc, OP_Node &opNode, const std::string &parmName);
+	void                           setAttrsFromOpNodePrms(Attrs::PluginDesc &plugin, OP_Node *opNode, const std::string &prefix="");
+	void                           setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDesc, OP_Node *opNode, ExportContext *parentContext=nullptr);
 
-	VRay::Plugin                   exportConnectedVop(OP_Node *op_node, const UT_String &inputName);
+	VRay::Plugin                   exportConnectedVop(OP_Node *op_node, const UT_String &inputName, ExportContext *parentContext = nullptr);
 	void                           phxAddSimumation(VRay::Plugin sim);
+
+	void                           setAttrsFromSHOPOverrides(Attrs::PluginDesc &pluginDesc, VOP_Node &vopNode, ECFnSHOPOverrides &mtlContext);
 
 private:
 	OP_Node                       *m_rop;
