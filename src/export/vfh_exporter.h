@@ -140,8 +140,6 @@ public:
 	void                           exportFrame(fpreal time);
 	void                           exportEnd();
 
-	void                           collectMaterialOverrideParameters(OBJ_Node &obj);
-
 	void                           exportGeomStaticMeshDesc(const GU_Detail &gdp, GeomExportParams &expParams, Attrs::PluginDesc &geomPluginDesc);
 	VRay::Plugin                   exportGeomStaticMesh(SOP_Node &sop_node, const GU_Detail &gdp, GeomExportParams &expParams);
 	void                           exportGeomMayaHairGeom(SOP_Node *sop_node, const GU_Detail *gdp, Attrs::PluginDesc &pluginDesc);
