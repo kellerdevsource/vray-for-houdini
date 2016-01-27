@@ -29,7 +29,7 @@ Building From Source
 * Compiler:
 
     - Windows: MSVC 2012
-    - Linux: GCC > 4.8.x
+    - Linux: GCC 4.8.x
     - OS X: Any available
 
 * CMake 3.3.x
