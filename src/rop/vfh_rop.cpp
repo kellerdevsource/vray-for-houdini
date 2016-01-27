@@ -366,7 +366,7 @@ int VRayRendererNode::initSession(int interactive, int nframes, fpreal tstart, f
 void VRayRendererNode::startIPR()
 {
 	if (initSession(true, 1, 0, 0)) {
-		m_exporter.exportFrame(OPgetDirector()->getChannelManager()->getEvaluateTime());
+		m_exporter.exportFrame(OPgetDirector()->getChannelManager()->getEvaluateTime(SYSgetSTID()));
 	}
 }
 
