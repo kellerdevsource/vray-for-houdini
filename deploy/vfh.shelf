@@ -1,66 +1,82 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <shelfDocument>
-	<toolshelf name="vray_render" label="V-Ray">
-		<memberTool name="vray_render_start"/>
-		<memberTool name="vray_render_rt"/>
-		<memberTool name="vray_physical_camera"/>
-		<memberTool name="vray_displacement"/>
-		<memberTool name="vray_proxy"/>
-	</toolshelf>
 
-	<tool name="vray_render_start" label="Render" icon="ROP_vray.svg">
-		<script scriptType="python">
-<![CDATA[import hou
+<toolshelf name="vray_render" label="V-Ray">
+    <memberTool name="vray_render_start"/>
+    <memberTool name="vray_render_rt"/>
+    <memberTool name="vray_physical_camera"/>
+    <memberTool name="vray_displacement"/>
+    <memberTool name="vray_proxy"/>
+</toolshelf>
+
+
+<tool name="vray_render_start" label="Render" icon="ROP_vray.svg">
+    <script scriptType="python">
+<![CDATA[
+
+import hou
 from vfh import vfh_rop
 
 vfh_rop.render()
-]]>
-		</script>
-	</tool>
 
-	<tool name="vray_render_rt" label="Render RT" icon="ROP_vray.svg">
-		<script scriptType="python">
-<![CDATA[import hou
+]]>
+    </script>
+</tool>
+
+
+<tool name="vray_render_rt" label="Render RT" icon="ROP_vray.svg">
+    <script scriptType="python">
+<![CDATA[
+
+import hou
 from vfh import vfh_rop
 
 vfh_rop.render_rt()
-]]>
-		</script>
-	</tool>
 
-	<tool name="vray_physical_camera" label="Physical Camera" icon="ROP_vray.svg">
-		<script scriptType="python">
-<![CDATA[import hou
+]]>
+    </script>
+</tool>
+
+
+<tool name="vray_physical_camera" label="Physical Camera" icon="ROP_vray.svg">
+    <script scriptType="python">
+<![CDATA[
+
+import hou
 from vfh import vfh_camera
 
 vfh_camera.add_physical_camera_attributes()
-]]>
-		</script>
-	</tool>
 
-	<tool name="vray_displacement" label="Displacement" icon="ROP_vray.svg">
-		<script scriptType="python">
+]]>
+    </script>
+</tool>
+
+
+<tool name="vray_displacement" label="Displacement" icon="ROP_vray.svg">
+    <script scriptType="python">
 <![CDATA[
+
 import vfh.shelftools.vrayattr as vrayattr
 
 geoList = filter(lambda item: item.type().category().typeName() == 'OBJ' and item.type().name() == 'geo', hou.selectedNodes())
 map(vrayattr.addVRayDisplamentParams, geoList)
 
 ]]>
-		</script>
-	</tool>
+    </script>
+</tool>
 
-	<tool name="vray_proxy" label="Export Proxy" icon="ROP_vray.svg">
-		<script scriptType="python">
+
+<tool name="vray_proxy" label="Export Proxy" icon="ROP_vray.svg">
+    <script scriptType="python">
 <![CDATA[
+
 import vfh.shelftools.vrayproxy as vrayproxy
 
 dialog = vrayproxy.VRayProxyDialog()
 dialog.show(1)
 
 ]]>
-		</script>
-	</tool>
-
+    </script>
+</tool>
 
 </shelfDocument>

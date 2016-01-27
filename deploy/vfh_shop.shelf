@@ -1,14 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <shelfDocument>
-    <tool name="shop_vray_material" label="V-Ray Material" icon="ROP_vray">
-        <readOnly/>
 
-        <toolMenuContext name="network">
-            <contextOpType>Shop/vray_material</contextOpType>
-        </toolMenuContext>
+<tool name="shop_vray_material" label="V-Ray Material" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="network">
+        <contextOpType>Shop/vray_material</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>Material</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
 
-        <toolSubmenu>Material</toolSubmenu>
+import shoptoolutils
+shoptoolutils.genericTool(kwargs, 'vray_material', nodename="vraymtl")
 
-        <script scriptType="python"><![CDATA[import shoptoolutils; shoptoolutils.genericTool(kwargs, 'vray_material', nodename="vraymtl")]]></script>
-    </tool>
+]]>
+    </script>
+</tool>
+
 </shelfDocument>

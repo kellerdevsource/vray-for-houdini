@@ -1,38 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <shelfDocument>
-    <tool name="driver_vray_renderer" label="Renderer" icon="ROP_vray">
-        <readOnly/>
 
-        <toolMenuContext name="network">
-            <contextOpType>Driver/vray_renderer</contextOpType>
-        </toolMenuContext>
+<tool name="driver_vray_renderer" label="V-Ray Renderer" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="network">
+        <contextOpType>Driver/vray_renderer</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
 
-        <toolSubmenu>Render/V-Ray</toolSubmenu>
+import drivertoolutils
+drivertoolutils.genericTool(kwargs, 'vray_renderer', nodename="vray")
 
-        <script scriptType="python"><![CDATA[import drivertoolutils; drivertoolutils.genericTool(kwargs, 'vray_renderer', nodename="vray")]]></script>
-    </tool>
+]]>
+    </script>
+</tool>
 
-    <tool name="driver_vray_render_channels" label="Render Channels" icon="ROP_vray">
-        <readOnly/>
 
-        <toolMenuContext name="network">
-            <contextOpType>Driver/vray_render_channels</contextOpType>
-        </toolMenuContext>
+<tool name="driver_vray_render_channels" label="V-Ray Render Channels" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="network">
+        <contextOpType>Driver/vray_render_channels</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
 
-        <toolSubmenu>Render/V-Ray</toolSubmenu>
+import drivertoolutils
+drivertoolutils.genericTool(kwargs, 'vray_render_channels', nodename="render_channels")
 
-        <script scriptType="python"><![CDATA[import drivertoolutils; drivertoolutils.genericTool(kwargs, 'vray_render_channels', nodename="render_channels")]]></script>
-    </tool>
+]]>
+    </script>
+</tool>
 
-    <tool name="driver_vray_environment" label="Environment" icon="ROP_vray">
-        <readOnly/>
 
-        <toolMenuContext name="network">
-            <contextOpType>Driver/vray_environment</contextOpType>
-        </toolMenuContext>
+<tool name="driver_vray_environment" label="V-Ray Environment" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="network">
+        <contextOpType>Driver/vray_environment</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
 
-        <toolSubmenu>Render/V-Ray</toolSubmenu>
+import drivertoolutils
+drivertoolutils.genericTool(kwargs, 'vray_environment', nodename="env")
 
-        <script scriptType="python"><![CDATA[import drivertoolutils; drivertoolutils.genericTool(kwargs, 'vray_environment', nodename="env")]]></script>
-    </tool>
+]]>
+    </script>
+</tool>
+
 </shelfDocument>
