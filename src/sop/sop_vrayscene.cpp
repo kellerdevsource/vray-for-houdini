@@ -148,14 +148,14 @@ OP::VRayNode::PluginResult SOP::VRayScene::asPluginDesc(Attrs::PluginDesc &plugi
 
 	pluginDesc.addAttribute(Attrs::PluginAttr("filepath", path.buffer()));
 
-	VUtils::TraceTransform tm = toVutilsTm(VRayExporter::getObjTransform(parent->getTarget()->castToOBJNode(), exporter.getContext()));
+	VUtils::TraceTransform tm = toVutilsTm(VRayExporter::getObjTransform(parentContext->getTarget()->castToOBJNode(), exporter.getContext()));
 	if (flipAxis) {
 		tm.m = tm.m * VUtils::Vrscene::Preview::FlipMatrix;
 	}
 
 	pluginDesc.addAttribute(Attrs::PluginAttr("transform", toAppSdkTm(tm)));
 
-	exporter.setAttrsFromOpNode(pluginDesc, this);
+	exporter.setAttrsFromOpNodePrms(pluginDesc, this);
 
 	return OP::VRayNode::PluginResultSuccess;
 }

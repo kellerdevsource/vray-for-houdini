@@ -929,8 +929,10 @@ VRay::Plugin VRayExporter::exportVRayScene(OBJ_Node *obj_node, SOP_Node *geom_no
 {
 	SOP::VRayScene *vraySceneNode = static_cast<SOP::VRayScene*>(geom_node);
 
+	ExportContext ctx(CT_OBJ, *this, *static_cast<OP_Node*>(obj_node));
+
 	Attrs::PluginDesc pluginDesc;
-	OP::VRayNode::PluginResult res = vraySceneNode->asPluginDesc(pluginDesc, *this, static_cast<OP_Node*>(obj_node));
+	OP::VRayNode::PluginResult res = vraySceneNode->asPluginDesc(pluginDesc, *this, &ctx);
 	if (res == OP::VRayNode::PluginResultSuccess) {
 		return exportPlugin(pluginDesc);
 	}

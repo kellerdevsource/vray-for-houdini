@@ -394,7 +394,7 @@ OP::VRayNode::PluginResult SOP::PhxShaderCache::asPluginDesc(Attrs::PluginDesc &
 					phxShaderCacheDesc.addAttribute(Attrs::PluginAttr("grid_size_x", (float)res[0]));
 					phxShaderCacheDesc.addAttribute(Attrs::PluginAttr("grid_size_y", (float)res[1]));
 					phxShaderCacheDesc.addAttribute(Attrs::PluginAttr("grid_size_z", (float)res[2]));
-					exporter.setAttrsFromOpNode(phxShaderCacheDesc, this, "PhxShaderCache.");
+					exporter.setAttrsFromOpNodePrms(phxShaderCacheDesc, this, "PhxShaderCache.");
 
 					// Skip "cache_path" exporting
 					phxShaderCacheDesc.get("cache_path")->paramType = Attrs::PluginAttr::AttrTypeIgnore;
@@ -423,7 +423,7 @@ OP::VRayNode::PluginResult SOP::PhxShaderCache::asPluginDesc(Attrs::PluginDesc &
 	if (NOT(phxShaderCache)) {
 		Attrs::PluginDesc phxShaderCacheDesc(VRayExporter::getPluginName(this, "Cache"), "PhxShaderCache");
 		phxShaderCacheDesc.addAttribute(Attrs::PluginAttr("cache_path", path.buffer()));
-		exporter.setAttrsFromOpNode(phxShaderCacheDesc, this, "PhxShaderCache.");
+		exporter.setAttrsFromOpNodePrms(phxShaderCacheDesc, this, "PhxShaderCache.");
 
 		phxShaderCache = exporter.exportPlugin(phxShaderCacheDesc);
 	}
@@ -456,7 +456,7 @@ OP::VRayNode::PluginResult SOP::PhxShaderCache::asPluginDesc(Attrs::PluginDesc &
 
 	phxShaderSimDesc.addAttribute(Attrs::PluginAttr("node_transform", nodeTm));
 
-	exporter.setAttrsFromOpNode(phxShaderSimDesc, this, "PhxShaderSim.");
+	exporter.setAttrsFromOpNodePrms(phxShaderSimDesc, this, "PhxShaderSim.");
 
 	VRay::Plugin phxShaderSim = exporter.exportPlugin(phxShaderSimDesc);
 	if (phxShaderSim) {
