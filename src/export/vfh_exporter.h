@@ -155,6 +155,7 @@ public:
 	VRay::Plugin                   exportVop(OP_Node *op_node, ExportContext *parentContext = nullptr);
 	VRay::Plugin                   exportMaterial(SHOP_Node &shop_node, ExportContext &parentContext);
 	VRay::Plugin                   exportDefaultMaterial();
+	VRay::Plugin                   exportVRayClipper(OBJ_Node &clipperNode);
 
 #ifdef CGR_HAS_VRAYSCENE
 	VRay::Plugin                   exportVRayScene(OBJ_Node *obj_node, SOP_Node *geom_node);
@@ -268,6 +269,7 @@ public:
 	static void                    RtCallbackDisplacementShop(OP_Node *caller, void *callee, OP_EventType type, void *data);
 	static void                    RtCallbackDisplacementVop(OP_Node *caller, void *callee, OP_EventType type, void *data);
 	static void                    RtCallbackDisplacementObj(OP_Node *caller, void *callee, OP_EventType type, void *data);
+	static void                    RtCallbackVRayClipper(OP_Node *caller, void *callee, OP_EventType type, void *data);
 
 };
 

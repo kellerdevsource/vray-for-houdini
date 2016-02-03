@@ -15,6 +15,7 @@
 
 #include <OBJ/OBJ_Node.h>
 #include <OBJ/OBJ_Light.h>
+#include <OBJ/OBJ_Geometry.h>
 
 #include "vfh_vray.h"
 
@@ -22,16 +23,17 @@
 namespace VRayForHoudini {
 namespace OBJ {
 
-
 enum class VRayPluginType
 {
-	Light
+	Light = 0,
+	Geometry,
+	MAX_PLUGINTYPE
 };
 
 
 enum class VRayPluginID
 {
-	SunLight,
+	SunLight = 0,
 	LightDirect,
 	LightAmbient,
 	LightOmni,
@@ -40,7 +42,9 @@ enum class VRayPluginID
 	LightRectangle,
 	LightMesh,
 	LightIES,
-	LightDome
+	LightDome,
+	VRayClipper,
+	MAX_PLUGINID
 };
 
 const char *getVRayPluginTypeName(VRayPluginType pluginType);
@@ -70,6 +74,23 @@ protected:
 	}
 };
 
+
+class VRayClipper:
+		public OBJ_Geometry,
+		public OP::VRayNode
+{
+public:
+	static PRM_Template*       GetPrmTemplate();
+
+public:
+	VRayClipper(OP_Network *parent, const char *name, OP_Operator *entry):OBJ_Geometry(parent, name, entry) { }
+	virtual                    ~VRayClipper() { }
+
+	virtual PluginResult        asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext=nullptr) VRAY_OVERRIDE;
+
+protected:
+	virtual void                setPluginType() VRAY_OVERRIDE;
+};
 
 } // namespace OBJ
 } // namespace VRayForHoudini

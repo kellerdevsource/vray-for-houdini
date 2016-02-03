@@ -17,6 +17,8 @@
 
 #include <SHOP/SHOP_Node.h>
 #include <PRM/PRM_Parm.h>
+#include <OP/OP_Bundle.h>
+#include <OP/OP_BundleList.h>
 
 #include <boost/algorithm/string.hpp>
 
@@ -162,6 +164,34 @@ void VRayExporter::RtCallbackNodeData(OP_Node *caller, void *callee, OP_EventTyp
 }
 
 
+void VRayExporter::RtCallbackVRayClipper(OP_Node *caller, void *callee, OP_EventType type, void *data)
+{
+	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
+	OBJ_Node *clipperNode = caller->castToOBJNode();
+
+	Log::getLog().debug("RtCallbackVRayClipper: %s from \"%s\"", OPeventToString(type), clipperNode->getName().buffer());
+
+	switch (type) {
+		case OP_PARM_CHANGED:
+		case OP_INPUT_CHANGED:
+		case OP_INPUT_REWIRED:
+		case OP_FLAG_CHANGED:
+		{
+			exporter.exportVRayClipper(*clipperNode);
+			break;
+		}
+		case OP_NODE_PREDELETE:
+		{
+			exporter.delOpCallbacks(caller);
+			exporter.removePlugin(clipperNode);
+			break;
+		}
+		default:
+			break;
+	}
+}
+
+
 VRay::Plugin VRayExporter::exportNode(OBJ_Node *obj_node, VRay::Plugin material, VRay::Plugin geometry)
 {
 	VRay::Plugin nodePlugin;
@@ -289,7 +319,10 @@ VRay::Plugin VRayExporter::exportObject(OBJ_Node *obj_node)
 				   geom_op->getName().buffer(),
 				   obj_node->getName().buffer());
 
-		if (geomOpName.equal("VRayNodeVRayScene")) {
+		if (obj_node->getOperator()->getName().equal("VRayNodeVRayClipper")) {
+			obj_plugin = exportVRayClipper(*obj_node);
+		}
+		else if (geomOpName.equal("VRayNodeVRayScene")) {
 #ifdef CGR_HAS_VRAYSCENE
 			obj_plugin = exportVRayScene(obj_node, geom_node);
 #endif
@@ -359,10 +392,95 @@ VRay::Plugin VRayExporter::exportObject(OBJ_Node *obj_node)
 					mtl = exportDefaultMaterial();
 				}
 
-				exportNode(obj_node, mtl, geom);
+				obj_plugin = exportNode(obj_node, mtl, geom);
 			}
 		}
 	}
 
 	return obj_plugin;
+}
+
+
+VRay::Plugin VRayExporter::exportVRayClipper(OBJ_Node &clipperNode)
+{
+	addOpCallback(&clipperNode, VRayExporter::RtCallbackVRayClipper);
+	fpreal t = getContext().getTime();
+
+	// TODO: get node list from prim attribute
+	Attrs::PluginDesc pluginDesc(VRayExporter::getPluginName(&clipperNode, ""), "VRayClipper");
+
+	// find and export clipping geometry plugins
+	UT_String nodePath;
+	clipperNode.evalString(nodePath, "clip_mesh", 0, 0, t);
+	OP_Node *opNode = OPgetDirector()->findNode(nodePath.buffer());
+	VRay::Plugin clipNodePlugin;
+	if (   opNode
+		&& opNode->getOpTypeID() == OBJ_OPTYPE_ID
+		&& opNode->getUniqueId() != clipperNode.getUniqueId())
+	{
+		OBJ_Node *objNode = opNode->castToOBJNode();
+		if (objNode->getObjectType() == OBJ_GEOMETRY) {
+			if (objNode->getVisible()) {
+				Attrs::PluginDesc clipNodePluginDesc(VRayExporter::getPluginName(objNode), "Node");
+				clipNodePlugin = exportPlugin(clipNodePluginDesc);
+			}
+			else {
+				clipNodePlugin = exportObject(objNode);
+			}
+		}
+	}
+
+	pluginDesc.addAttribute(Attrs::PluginAttr("clip_mesh", clipNodePlugin));
+
+	// find and export excussion node plugins
+	UT_String nodeMask;
+	clipperNode.evalString(nodeMask, "exclusion_nodes", 0, 0, t);
+
+	// get a manager that contains objects
+	OP_Network *objMan = OPgetDirector()->getManager("obj");
+
+	UT_String bundle_name;
+	OP_Bundle *bundle = OPgetDirector()->getBundles()->getPattern(bundle_name, objMan, objMan, nodeMask, "!!OBJ!!");
+	// get the node list for processing
+	OP_NodeList nodeList;
+	bundle->getMembers(nodeList);
+	// release the internal bundle created by getPattern()
+	OPgetDirector()->getBundles()->deReferenceBundle(bundle_name);
+
+	VRay::ValueList nodePluginList;
+	nodePluginList.reserve(nodeList.size());
+	for (OP_Node *node : nodeList) {
+		OBJ_Node *objNode = node->castToOBJNode();
+		if (   NOT(objNode)
+			|| NOT(node->getVisible())
+			|| objNode->getObjectType() != OBJ_GEOMETRY)
+		{
+			continue;
+		}
+
+		Attrs::PluginDesc nodePluginDesc(VRayExporter::getPluginName(objNode), "Node");
+		VRay::Plugin nodePlugin = exportPlugin(nodePluginDesc);
+		if (NOT(nodePlugin)) {
+			continue;
+		}
+
+		nodePluginList.emplace_back(nodePlugin);
+	}
+
+	pluginDesc.addAttribute(Attrs::PluginAttr("exclusion_nodes", nodePluginList));
+
+	// transform
+	pluginDesc.addAttribute(Attrs::PluginAttr("transform", VRayExporter::getObjTransform(&clipperNode, m_context, NOT(clipNodePlugin))));
+
+	// material
+	SHOP_Node *shopNode = getObjMaterial(&clipperNode, t);
+	if (shopNode) {
+		ExportContext objContext(CT_OBJ, *this, clipperNode);
+		VRay::Plugin mtlPlugin = exportMaterial(*shopNode, objContext);
+		pluginDesc.addAttribute(Attrs::PluginAttr("material", mtlPlugin));
+	}
+
+	setAttrsFromOpNodePrms(pluginDesc, &clipperNode);
+
+	return exportPlugin(pluginDesc);
 }

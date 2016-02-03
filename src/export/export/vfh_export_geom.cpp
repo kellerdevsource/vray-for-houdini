@@ -277,16 +277,16 @@ void vertexAttrAsMapChannel(const GU_Detail &gdp, const GA_Attribute &vertexAttr
 			const int &v1 = map_channel.verticesSet.find(Mesh::MapVertex(vaHndl.get(face->getVertexOffset(1))))->index;
 			const int &v2 = map_channel.verticesSet.find(Mesh::MapVertex(vaHndl.get(face->getVertexOffset(2))))->index;
 
-			map_channel.faces[faceMapVertIndex++] = v0;
-			map_channel.faces[faceMapVertIndex++] = v1;
 			map_channel.faces[faceMapVertIndex++] = v2;
+			map_channel.faces[faceMapVertIndex++] = v1;
+			map_channel.faces[faceMapVertIndex++] = v0;
 
 			if (face->getVertexCount() == 4) {
 				const int &v3 = map_channel.verticesSet.find(Mesh::MapVertex(vaHndl.get(face->getVertexOffset(3))))->index;
 
-				map_channel.faces[faceMapVertIndex++] = v0;
-				map_channel.faces[faceMapVertIndex++] = v2;
 				map_channel.faces[faceMapVertIndex++] = v3;
+				map_channel.faces[faceMapVertIndex++] = v2;
+				map_channel.faces[faceMapVertIndex++] = v0;
 			}
 		}
 		vassert( faceMapVertIndex == map_channel.faces.size() );
@@ -325,26 +325,26 @@ void vertexAttrAsMapChannel(const GU_Detail &gdp, const GA_Attribute &vertexAttr
 			if (prim->getTypeId().get() == GEO_PRIMPOLYSOUP) {
 				const GU_PrimPolySoup *polySoup = static_cast<const GU_PrimPolySoup*>(prim);
 				for (GEO_PrimPolySoup::PolygonIterator psIt(*polySoup); !psIt.atEnd(); ++psIt) {
-					map_channel.faces[i++] = psIt.getVertexIndex(0);
-					map_channel.faces[i++] = psIt.getVertexIndex(1);
 					map_channel.faces[i++] = psIt.getVertexIndex(2);
+					map_channel.faces[i++] = psIt.getVertexIndex(1);
+					map_channel.faces[i++] = psIt.getVertexIndex(0);
 
 					if (psIt.getVertexCount() == 4) {
-						map_channel.faces[i++] = psIt.getVertexIndex(0);
-						map_channel.faces[i++] = psIt.getVertexIndex(2);
 						map_channel.faces[i++] = psIt.getVertexIndex(3);
+						map_channel.faces[i++] = psIt.getVertexIndex(2);
+						map_channel.faces[i++] = psIt.getVertexIndex(0);
 					}
 				}
 			}
 			else {
-				map_channel.faces[i++] = vi;
-				map_channel.faces[i++] = vi + 1;
 				map_channel.faces[i++] = vi + 2;
+				map_channel.faces[i++] = vi + 1;
+				map_channel.faces[i++] = vi;
 
 				if (prim->getVertexCount() == 4) {
-					map_channel.faces[i++] = vi;
-					map_channel.faces[i++] = vi + 2;
 					map_channel.faces[i++] = vi + 3;
+					map_channel.faces[i++] = vi + 2;
+					map_channel.faces[i++] = vi;
 				}
 			}
 
@@ -451,7 +451,6 @@ void VRayExporter::exportGeomStaticMeshDesc(const GU_Detail &gdp, GeomExportPara
 		if (N_h.isValid()) {
 			UT_Vector3 N(N_h.get(*pIt));
 			N.normalize();
-			N = -N; // NOTE: Have no idea why...
 			expData.normals[v].set(N[0], N[1], N[2]);
 		}
 	}
@@ -516,16 +515,16 @@ void VRayExporter::exportGeomStaticMeshDesc(const GU_Detail &gdp, GeomExportPara
 			const GU_PrimPolySoup *polySoup = static_cast<const GU_PrimPolySoup*>(prim);
 
 			for (GEO_PrimPolySoup::PolygonIterator psIt(*polySoup); !psIt.atEnd(); ++psIt) {
-				expData.faces[faceVertIndex++] = psIt.getPointIndex(0);
-				expData.faces[faceVertIndex++] = psIt.getPointIndex(1);
 				expData.faces[faceVertIndex++] = psIt.getPointIndex(2);
+				expData.faces[faceVertIndex++] = psIt.getPointIndex(1);
+				expData.faces[faceVertIndex++] = psIt.getPointIndex(0);
 
 				expData.face_mtlIDs[faceMtlIDIndex++] = mtlId;
 
 				if (psIt.getVertexCount() == 4) {
-					expData.faces[faceVertIndex++] = psIt.getPointIndex(0);
-					expData.faces[faceVertIndex++] = psIt.getPointIndex(2);
 					expData.faces[faceVertIndex++] = psIt.getPointIndex(3);
+					expData.faces[faceVertIndex++] = psIt.getPointIndex(2);
+					expData.faces[faceVertIndex++] = psIt.getPointIndex(0);
 
 					expData.edge_visibility[faceEdgeVisIndex/10] |= (3 << ((faceEdgeVisIndex%10)*3));
 					faceEdgeVisIndex++;
@@ -541,16 +540,16 @@ void VRayExporter::exportGeomStaticMeshDesc(const GU_Detail &gdp, GeomExportPara
 			}
 		}
 		else {
-			expData.faces[faceVertIndex++] = prim->getPointIndex(0);
-			expData.faces[faceVertIndex++] = prim->getPointIndex(1);
 			expData.faces[faceVertIndex++] = prim->getPointIndex(2);
+			expData.faces[faceVertIndex++] = prim->getPointIndex(1);
+			expData.faces[faceVertIndex++] = prim->getPointIndex(0);
 
 			expData.face_mtlIDs[faceMtlIDIndex++] = mtlId;
 
 			if (prim->getVertexCount() == 4) {
-				expData.faces[faceVertIndex++] = prim->getPointIndex(0);
-				expData.faces[faceVertIndex++] = prim->getPointIndex(2);
 				expData.faces[faceVertIndex++] = prim->getPointIndex(3);
+				expData.faces[faceVertIndex++] = prim->getPointIndex(2);
+				expData.faces[faceVertIndex++] = prim->getPointIndex(0);
 
 				expData.edge_visibility[faceEdgeVisIndex/10] |= (3 << ((faceEdgeVisIndex%10)*3));
 				faceEdgeVisIndex++;
