@@ -23,40 +23,41 @@ namespace VRayForHoudini {
 namespace OBJ {
 
 
-static PRM_Name vrayswitcher("vrayswitcher");
-static PRM_Name prm_geometrypath("obj_geometrypath", "Geometry");
-
-
 const char *getVRayPluginTypeName(VRayPluginType pluginType)
 {
-	static std::map<VRayPluginType, const char *> pluginTypeNames;
-	if (NOT(pluginTypeNames.size())) {
-		pluginTypeNames[VRayPluginType::Light] = "LIGHT";
-	}
+	static const char* pluginTypeNames[static_cast<typename std::underlying_type<VRayPluginType>::type>( VRayPluginType::MAX_PLUGINTYPE )] =
+	{
+		"LIGHT",
+		"GEOMETRY"
+	};
 
-	return pluginTypeNames[pluginType];
+	return (pluginType < VRayPluginType::MAX_PLUGINTYPE)? pluginTypeNames[static_cast<typename std::underlying_type<VRayPluginType>::type>( pluginType )] : nullptr;
 }
 
 
 const char *getVRayPluginIDName(VRayPluginID pluginID)
 {
-	static std::map<VRayPluginID, const char *> pluginIDNames;
-	if (NOT(pluginIDNames.size())) {
-		pluginIDNames[VRayPluginID::SunLight] = "SunLight";
-		pluginIDNames[VRayPluginID::LightDirect] = "LightDirect";
-		pluginIDNames[VRayPluginID::LightAmbient] = "LightAmbient";
-		pluginIDNames[VRayPluginID::LightOmni] = "LightOmni";
-		pluginIDNames[VRayPluginID::LightSphere] = "LightSphere";
-		pluginIDNames[VRayPluginID::LightSpot] = "LightSpot";
-		pluginIDNames[VRayPluginID::LightRectangle] = "LightRectangle";
-		pluginIDNames[VRayPluginID::LightMesh] = "LightMesh";
-		pluginIDNames[VRayPluginID::LightIES] = "LightIES";
-		pluginIDNames[VRayPluginID::LightDome] = "LightDome";
-	}
+	static const char* pluginIDNames[static_cast<typename std::underlying_type<VRayPluginID>::type>( VRayPluginID::MAX_PLUGINID )] =
+	{
+		"SunLight",
+		"LightDirect",
+		"LightAmbient",
+		"LightOmni",
+		"LightSphere",
+		"LightSpot",
+		"LightRectangle",
+		"LightMesh",
+		"LightIES",
+		"LightDome",
+		"VRayClipper"
+	};
 
-	return pluginIDNames[pluginID];
+	return (pluginID < VRayPluginID::MAX_PLUGINID)? pluginIDNames[static_cast<typename std::underlying_type<VRayPluginID>::type>( pluginID )] : nullptr;
 }
 
+
+static PRM_Name vrayswitcher("vrayswitcher");
+static PRM_Name prm_geometrypath("obj_geometrypath", "Geometry");
 
 
 template< VRayPluginID PluginID >
@@ -264,6 +265,92 @@ template class LightNodeBase< VRayPluginID::LightRectangle >;
 template class LightNodeBase< VRayPluginID::LightMesh >;
 template class LightNodeBase< VRayPluginID::LightIES >;
 template class LightNodeBase< VRayPluginID::LightDome >;
+
+
+///////                           VRayClipper definition
+///
+
+
+static PRM_Name prm_clip_mesh("clip_mesh", "Clip Mesh");
+static PRM_Name prm_exclusion_nodes("exclusion_nodes", "Exclude");
+
+
+PRM_Template* VRayClipper::GetPrmTemplate()
+{
+	static Parm::PRMDefList prmFolders;
+	static Parm::PRMTmplList prmList;
+
+	if (NOT(prmList.size())) {
+		PRM_Template *defPrmList = OBJ_Geometry::getTemplateList(OBJ_PARMS_PLAIN);
+		const int defPrmCnt = PRM_Template::countTemplates(defPrmList);
+
+		if (defPrmCnt > 0) {
+			prmList.insert(prmList.begin(), defPrmList, defPrmList + defPrmCnt);
+		}
+		else {
+			prmList.push_back( PRM_Template(PRM_SWITCHER,
+											0,
+											&vrayswitcher,
+											0) );
+		}
+
+		// add custom params
+		const int myPrmIdx = prmList.size();
+		prmList.push_back( PRM_Template(PRM_STRING_E,
+										PRM_TYPE_DYNAMIC_PATH,
+										1,
+										&prm_clip_mesh,
+										&Parm::PRMemptyStringDefault) );
+
+		prmList.push_back( PRM_Template(PRM_STRING_E,
+										PRM_TYPE_DYNAMIC_PATH_LIST,
+										1,
+										&prm_exclusion_nodes,
+										&Parm::PRMemptyStringDefault) );
+
+		Parm::PRMTmplList *plgPrmList = Parm::generatePrmTemplate( getVRayPluginIDName(VRayPluginID::VRayClipper) );
+		// last element is list terminator
+		for (int i = 0; i < plgPrmList->size()-1; ++i){
+			prmList.push_back( (*plgPrmList)[i] );
+		}
+
+		// put all plugin params in "V-Ray" folder tab
+		// assume folders from prmFolders contain all param templates in prmList
+		// otherwise we need to calculate the index to properly insert our plugin params in the folder
+		const int myPrmCnt = prmList.size() - myPrmIdx;
+
+		// assign switcher folders
+		PRM_Template &switcher = prmList[0];
+
+		PRM_Default *beginFolder = switcher.getFactoryDefaults();
+		PRM_Default *endFolder = beginFolder + switcher.getVectorSize();
+		prmFolders.insert(prmFolders.begin(), beginFolder, endFolder );
+		prmFolders.emplace_back(myPrmCnt, "V-Ray");
+
+		switcher.assign(switcher, prmFolders.size(), prmFolders.data());
+
+		// add param list terminator
+		prmList.push_back(PRM_Template());
+	}
+
+	return prmList.data();
+}
+
+
+OP::VRayNode::PluginResult VRayClipper::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
+{
+	pluginDesc.pluginID   = pluginID.c_str();
+	pluginDesc.pluginName = VRayExporter::getPluginName(this, "");
+
+	return OP::VRayNode::PluginResultContinue;
+}
+
+
+void VRayClipper::setPluginType()
+{
+	pluginType = getVRayPluginTypeName(VRayPluginType::Geometry);
+	pluginID = getVRayPluginIDName(VRayPluginID::VRayClipper);
+}
 
 
 }

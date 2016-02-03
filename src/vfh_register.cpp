@@ -102,6 +102,7 @@ void newObjectOperator(OP_OperatorTable *table)
 	VFH_OBJ_ADD_OPERATOR_AUTO(table, OBJ::VRayPluginType::Light, LightMesh);
 	VFH_OBJ_ADD_OPERATOR_AUTO(table, OBJ::VRayPluginType::Light, LightIES);
 	VFH_OBJ_ADD_OPERATOR_AUTO(table, OBJ::VRayPluginType::Light, LightDome);
+	VFH_OBJ_ADD_OPERATOR_AUTO(table, OBJ::VRayPluginType::Geometry, VRayClipper);
 }
 
 

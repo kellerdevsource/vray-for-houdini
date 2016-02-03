@@ -33,7 +33,7 @@ OP_Node* VFH_VRAY_NODE_CREATOR(OP_Network *parent, const char *name, OP_Operator
 		/* How to create one */ VFH_VRAY_NODE_CREATOR<OBJ::OpClass>, \
 		/* Parm definitions  */ OBJ::OpClass::GetPrmTemplate(), \
 		/* Min # of inputs   */ 0, \
-		/* Max # of inputs   */ 0 \
+		/* Max # of inputs   */ 1 \
 	); \
 	op##OpClass->setIconName("ROP_vray"); \
 	table->addOperator(op##OpClass);
