@@ -25,19 +25,19 @@ namespace OBJ {
 
 const char *getVRayPluginTypeName(VRayPluginType pluginType)
 {
-	static const char* pluginTypeNames[static_cast<typename std::underlying_type<VRayPluginType>::type>( VRayPluginType::MAX_PLUGINTYPE )] =
+	static const char* pluginTypeNames[static_cast<std::underlying_type<VRayPluginType>::type>( VRayPluginType::MAX_PLUGINTYPE )] =
 	{
 		"LIGHT",
 		"GEOMETRY"
 	};
 
-	return (pluginType < VRayPluginType::MAX_PLUGINTYPE)? pluginTypeNames[static_cast<typename std::underlying_type<VRayPluginType>::type>( pluginType )] : nullptr;
+	return (pluginType < VRayPluginType::MAX_PLUGINTYPE)? pluginTypeNames[static_cast<std::underlying_type<VRayPluginType>::type>( pluginType )] : nullptr;
 }
 
 
 const char *getVRayPluginIDName(VRayPluginID pluginID)
 {
-	static const char* pluginIDNames[static_cast<typename std::underlying_type<VRayPluginID>::type>( VRayPluginID::MAX_PLUGINID )] =
+	static const char* pluginIDNames[static_cast<std::underlying_type<VRayPluginID>::type>( VRayPluginID::MAX_PLUGINID )] =
 	{
 		"SunLight",
 		"LightDirect",
@@ -52,7 +52,7 @@ const char *getVRayPluginIDName(VRayPluginID pluginID)
 		"VRayClipper"
 	};
 
-	return (pluginID < VRayPluginID::MAX_PLUGINID)? pluginIDNames[static_cast<typename std::underlying_type<VRayPluginID>::type>( pluginID )] : nullptr;
+	return (pluginID < VRayPluginID::MAX_PLUGINID)? pluginIDNames[static_cast<std::underlying_type<VRayPluginID>::type>( pluginID )] : nullptr;
 }
 
 
