@@ -1335,6 +1335,64 @@ void VRayExporter::setIPR(int isIPR)
 }
 
 
+void VRayExporter::setDRSettings()
+{
+	VRay::VRayRenderer &vray = m_renderer.getVRay();
+	// clean up all previously set hosts
+	vray.removeHosts(vray.getAllHosts());
+
+	const int nDRHosts = Parm::getParmInt(*m_rop, "drhost_cnt");
+	const bool drEnabled = Parm::getParmInt(*m_rop, "dr_enabled") && (nDRHosts > 0);
+
+	VRay::RendererOptions options = vray.getOptions();
+	options.noDR = NOT(drEnabled);
+	vray.setOptions(options);
+
+	if (drEnabled) {
+		UT_String defaultHostPort;
+		m_rop->evalString(defaultHostPort, "drhost_port", 0, 0.0f);
+
+		UT_String drhosts;
+		for (int i = 1; i <= nDRHosts; ++i) {
+			const int hostEnabled = m_rop->evalIntInst("drhost#_enabled", &i, 0, 0.0f);
+			if (NOT(hostEnabled)) {
+				continue;
+			}
+
+			UT_String hostAddress;
+			m_rop->evalStringInst("drhost#_address", &i, hostAddress, 0, 0.0f);
+			// if address not set use default
+			if (NOT(hostAddress.isstring())) {
+				hostAddress = "localhost";
+			}
+
+			UT_String hostPort;
+			const int useDefaultPort = m_rop->evalIntInst("drhost#_usedefaultport", &i, 0, 0.0f);
+			if (NOT(useDefaultPort)) {
+				m_rop->evalStringInst("drhost#_port", &i, hostPort, 0, 0.0f);
+			}
+
+			// if port not set use default
+			if (NOT(hostPort.isstring())) {
+				hostPort = defaultHostPort;
+			}
+
+			// skip empty parameter port
+			if (NOT(hostPort.isstring())) {
+				continue;
+			}
+
+			drhosts.append(hostAddress.buffer());
+			drhosts.append(':');
+			drhosts.append(hostPort.buffer());
+			drhosts.append(';');
+		}
+
+		vray.addHosts(drhosts);
+	}
+}
+
+
 void VRayExporter::setRendererMode(int mode)
 {
 	m_renderer.setRendererMode(mode);

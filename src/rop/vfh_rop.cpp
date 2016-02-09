@@ -111,6 +111,27 @@ static Parm::TabItemDesc SamplersSettingsTabItemsDesc[] = {
 	{ "AA",             "SettingsImageSampler"     },
 };
 
+static PRM_Default       default_DRHost_address(0.0, "localhost");
+static PRM_Default       default_DRHost_port(0.0, "20207");
+static PRM_Name          parm_DR_enabled("dr_enabled", "Enabled");
+static PRM_Name          parm_DefaultDRHost_port("drhost_port", "Default Port");
+static PRM_Name          parm_DRHost_count("drhost_cnt", "Number of Hosts");
+static PRM_Range         parm_DRHost_countrange(PRM_RANGE_RESTRICTED, 1, PRM_RANGE_UI, 31);
+static PRM_Name          parm_DRHost_enabled("drhost#_enabled", "Enanbled");
+static PRM_Name          parm_DRHost_address("drhost#_address", "Host Address");
+static PRM_Name          parm_DRHost_usedefaultport("drhost#_usedefaultport", "Use Default Port");
+static PRM_Name          parm_DRHost_port("drhost#_port", "Host Port");
+static PRM_Conditional   condition_DRDisabled("{ dr_enabled == 0 }");
+static PRM_Conditional   condition_DRHostDisabled("{ dr_enabled == 0 } { drhost#_enabled == 0 }");
+static PRM_Conditional   condition_DRHostPortDisabled("{ dr_enabled == 0 } { drhost#_enabled == 0 } { drhost#_usedefaultport == 1 }");
+
+static PRM_Template      DRHostPrmTemplate[] = {
+	PRM_Template(PRM_TOGGLE_E, 1, &parm_DRHost_enabled, PRMoneDefaults,0,0,0,0,1,0,&condition_DRDisabled),
+	PRM_Template(PRM_STRING_E, 1, &parm_DRHost_address, &default_DRHost_address,0,0,0,0,1,0,&condition_DRHostDisabled),
+	PRM_Template(PRM_TOGGLE_E, 1, &parm_DRHost_usedefaultport, PRMoneDefaults,0,0,0,0,1,0,&condition_DRHostDisabled),
+	PRM_Template(PRM_STRING_E, 1, &parm_DRHost_port, &default_DRHost_port,0,0,0,0,1,0,&condition_DRHostPortDisabled),
+	PRM_Template()
+};
 
 static PRM_Template* getTemplates()
 {
@@ -169,6 +190,14 @@ static PRM_Template* getTemplates()
 							 RenderSettingsPrmTemplate, RenderSettingsSwitcherTabs);
 
 		Parm::addTabsItems(RenderSettingsTabItemsDesc, CountOf(RenderSettingsTabItemsDesc), RenderSettingsSwitcherTabs, RenderSettingsPrmTemplate);
+
+		// DR Settings
+		const int DRPrmIdx = RenderSettingsPrmTemplate.size();
+		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_TOGGLE_E, 1, &parm_DR_enabled, PRMzeroDefaults));
+		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_STRING_E, 1, &parm_DefaultDRHost_port, &default_DRHost_port,0,0,0,0,1,0,&condition_DRDisabled));
+		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_MULTITYPE_LIST, DRHostPrmTemplate, 1, &parm_DRHost_count,0,&parm_DRHost_countrange,0,0,&condition_DRDisabled));
+		RenderSettingsSwitcherTabs.push_back(PRM_Default(RenderSettingsPrmTemplate.size() - DRPrmIdx, "DR"));
+
 
 		RenderSettingsPrmTemplate.push_back(PRM_Template()); // List terminator
 
@@ -349,6 +378,7 @@ int VRayRendererNode::initSession(int interactive, int nframes, fpreal tstart, f
 									 ? getRendererIprMode(*this)
 									 : getRendererMode(*this);
 
+			m_exporter.setDRSettings();
 			m_exporter.setRendererMode(rendererMode);
 			m_exporter.setWorkMode(getExporterWorkMode(*this));
 			m_exporter.setExportFilepath(getExportFilepath(*this));

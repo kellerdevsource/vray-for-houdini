@@ -50,7 +50,6 @@ public:
 	static void                  register_operator(OP_OperatorTable *table);
 	static void                  RtCallbackRop(OP_Node *caller, void *callee, OP_EventType type, void *data);
 	static int                   RtStartSession(void *data, int index, float t, const PRM_Template *tplate);
-
 };
 
 } // namespace VRayForHoudini

@@ -177,6 +177,7 @@ public:
 	void                           setAnimation(bool on);
 	void                           setFrame(float frame);
 	void                           setIPR(int isIPR);
+	void                           setDRSettings();
 	void                           setRendererMode(int mode);
 	void                           setWorkMode(ExpWorkMode mode);
 	void                           setContext(const OP_Context &ctx);
