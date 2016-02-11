@@ -268,7 +268,7 @@ OP::VRayNode::PluginResult SOP::PhxShaderCache::asPluginDesc(Attrs::PluginDesc &
 				else {
 					int res[3];
 
-					VUtils::ColorRefList vel;
+					VRay::VUtils::ColorRefList vel;
 
 					for (GA_Iterator offIt(gdp->getPrimitiveRange()); !offIt.atEnd(); offIt.advance()) {
 						const GA_Offset off = *offIt;
@@ -314,11 +314,11 @@ OP::VRayNode::PluginResult SOP::PhxShaderCache::asPluginDesc(Attrs::PluginDesc &
 
 								if (isVelX || isVelY || isVelZ) {
 									if (NOT(vel.count())) {
-										vel = VUtils::ColorRefList(voxCount);
+										vel = VRay::VUtils::ColorRefList(voxCount);
 									}
 								}
 
-								VUtils::FloatRefList values(voxCount);
+								VRay::VUtils::FloatRefList values(voxCount);
 								for (int x = 0; x < res[0]; ++x) {
 									for (int y = 0; y < res[1]; ++y) {
 										for (int z = 0; z < res[2]; ++z) {
