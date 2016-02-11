@@ -41,6 +41,8 @@ struct PluginAttr {
 		AttrTypeRawListFloat,
 		AttrTypeRawListVector,
 		AttrTypeRawListColor,
+		AttrTypeRawListCharString,
+		AttrTypeRawListValue,
 	};
 
 	PluginAttr() {
@@ -165,28 +167,40 @@ struct PluginAttr {
 		paramValue.valListValue = attrValue;
 	}
 
-	PluginAttr(const std::string &attrName, const VUtils::IntRefList &attrValue) {
+	PluginAttr(const std::string &attrName, const VRay::VUtils::IntRefList &attrValue) {
 		paramName = attrName;
 		paramType = PluginAttr::AttrTypeRawListInt;
 		paramValue.valRawListInt = attrValue;
 	}
 
-	PluginAttr(const std::string &attrName, const VUtils::FloatRefList &attrValue) {
+	PluginAttr(const std::string &attrName, const VRay::VUtils::FloatRefList &attrValue) {
 		paramName = attrName;
 		paramType = PluginAttr::AttrTypeRawListFloat;
 		paramValue.valRawListFloat = attrValue;
 	}
 
-	PluginAttr(const std::string &attrName, const VUtils::VectorRefList &attrValue) {
+	PluginAttr(const std::string &attrName, const VRay::VUtils::VectorRefList &attrValue) {
 		paramName = attrName;
 		paramType = PluginAttr::AttrTypeRawListVector;
 		paramValue.valRawListVector = attrValue;
 	}
 
-	PluginAttr(const std::string &attrName, const VUtils::ColorRefList &attrValue) {
+	PluginAttr(const std::string &attrName, const VRay::VUtils::ColorRefList &attrValue) {
 		paramName = attrName;
 		paramType = PluginAttr::AttrTypeRawListColor;
 		paramValue.valRawListColor = attrValue;
+	}
+
+	PluginAttr(const std::string &attrName, const VRay::VUtils::CharStringRefList &attrValue) {
+		paramName = attrName;
+		paramType = PluginAttr::AttrTypeRawListCharString;
+		paramValue.valRawListCharString = attrValue;
+	}
+
+	PluginAttr(const std::string &attrName, const VRay::VUtils::ValueRefList &attrValue) {
+		paramName = attrName;
+		paramType = PluginAttr::AttrTypeRawListValue;
+		paramValue.valRawListValue = attrValue;
 	}
 
 	const char *typeStr() const {
@@ -211,6 +225,8 @@ struct PluginAttr {
 			case PluginAttr::AttrTypeRawListFloat: return "RawListFloat";
 			case PluginAttr::AttrTypeRawListVector: return "RawListVector";
 			case PluginAttr::AttrTypeRawListColor: return "RawListColor";
+			case PluginAttr::AttrTypeRawListCharString: return "RawListCharString";
+			case PluginAttr::AttrTypeRawListValue: return "RawListValue";
 			default:
 				break;
 		}
@@ -232,10 +248,12 @@ struct PluginAttr {
 		VRay::ValueList     valListValue;
 		VRay::ColorList     valListColor;
 
-		VUtils::ColorRefList  valRawListColor;
-		VUtils::VectorRefList valRawListVector;
-		VUtils::IntRefList    valRawListInt;
-		VUtils::FloatRefList  valRawListFloat;
+		VRay::VUtils::IntRefList         valRawListInt;
+		VRay::VUtils::FloatRefList       valRawListFloat;
+		VRay::VUtils::VectorRefList      valRawListVector;
+		VRay::VUtils::ColorRefList       valRawListColor;
+		VRay::VUtils::CharStringRefList  valRawListCharString;
+		VRay::VUtils::ValueRefList       valRawListValue;
 	} paramValue;
 
 	std::string             paramName;

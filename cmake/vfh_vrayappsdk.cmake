@@ -22,6 +22,8 @@ macro(use_vray_appsdk)
 		message(FATAL_ERROR "V-Ray AppSDK root (\"${APPSDK_ROOT}\") doesn't exist!")
 	endif()
 
+	add_definitions(-DVRAY_SDK_INTEROPERABILITY)
+
 	include_directories(${APPSDK_ROOT}/cpp/include)
 	link_directories(${APPSDK_ROOT}/bin)
 	link_directories(${APPSDK_ROOT}/lib)

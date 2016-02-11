@@ -18,9 +18,6 @@
 #include "vfh_hashes.h"
 
 
-#define CGR_USE_LIST_RAW_TYPES 0
-
-
 namespace VRayForHoudini {
 namespace Mesh {
 
@@ -63,13 +60,8 @@ typedef boost::unordered_set<MapVertex, MapVertexHash> VertexSet;
 struct MapChannel {
 	std::string           name;
 	VertexSet             verticesSet;
-#if CGR_USE_LIST_RAW_TYPES
-	VUtils::VectorRefList vertices;
-	VUtils::IntRefList    faces;
-#else
-	VRay::VectorList      vertices;
-	VRay::IntList         faces;
-#endif
+	VRay::VUtils::VectorRefList vertices;
+	VRay::VUtils::IntRefList    faces;
 };
 typedef std::map<std::string, MapChannel> MapChannels;
 

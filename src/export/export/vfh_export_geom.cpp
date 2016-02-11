@@ -31,11 +31,12 @@ using namespace VRayForHoudini;
 
 
 struct GeomExportData {
-	VUtils::VectorRefList vertices;
-	VUtils::VectorRefList normals;
-	VUtils::IntRefList faces;
-	VUtils::IntRefList face_mtlIDs;
-	VUtils::IntRefList edge_visibility;
+
+	VRay::VUtils::VectorRefList vertices;
+	VRay::VUtils::VectorRefList normals;
+	VRay::VUtils::IntRefList faces;
+	VRay::VUtils::IntRefList face_mtlIDs;
+	VRay::VUtils::IntRefList edge_visibility;
 	Mesh::MapChannels map_channels_data;
 	int numFaces;
 	int numMtlIDs;
@@ -168,8 +169,8 @@ static void exportPrimitiveAttrs(const OP_Context &context, const GU_Detail &gdp
 		for (const std::string channelName : mapChannelOverrides ) {
 			Mesh::MapChannel &map_channel = expData.map_channels_data[ channelName ];
 			// max number of different vertices int hte channel is bounded by number of primitives
-			map_channel.vertices.resize(gdp.getNumPrimitives());
-			map_channel.faces.resize(expData.numFaces * 3);
+			map_channel.vertices = VRay::VUtils::VectorRefList(gdp.getNumPrimitives());
+			map_channel.faces = VRay::VUtils::IntRefList(expData.numFaces * 3);
 
 			int k = 0;
 			int vi = 0;
@@ -252,13 +253,8 @@ void vertexAttrAsMapChannel(const GU_Detail &gdp, const GA_Attribute &vertexAttr
 		}
 
 		// Init map channel data
-#if CGR_USE_LIST_RAW_TYPES
-		map_channel.vertices = VUtils::VectorRefList(map_channel.verticesSet.size());
-		map_channel.faces = VUtils::IntRefList(numFaces * 3);
-#else
-		map_channel.vertices.resize(map_channel.verticesSet.size());
-		map_channel.faces.resize(numFaces * 3);
-#endif
+		map_channel.vertices = VRay::VUtils::VectorRefList(map_channel.verticesSet.size());
+		map_channel.faces = VRay::VUtils::IntRefList(numFaces * 3);
 
 		int i = 0;
 		for (auto &mv: map_channel.verticesSet) {
@@ -298,13 +294,8 @@ void vertexAttrAsMapChannel(const GU_Detail &gdp, const GA_Attribute &vertexAttr
 		// populate map channel with original values
 
 		// Init map channel data
-#if CGR_USE_LIST_RAW_TYPES
-		map_channel.vertices = VUtils::VectorRefList(gdp.getNumVertices());
-		map_channel.faces = VUtils::IntRefList(numFaces * 3);
-#else
-		map_channel.vertices.resize(gdp.getNumVertices());
-		map_channel.faces.resize(numFaces * 3);
-#endif
+		map_channel.vertices = VRay::VUtils::VectorRefList(gdp.getNumVertices());
+		map_channel.faces = VRay::VUtils::IntRefList(numFaces * 3);
 
 		int i = 0;
 		GA_Offset start, end;
@@ -400,13 +391,9 @@ void exportPointAttrs(const GU_Detail &gdp, GeomExportParams &expParams, GeomExp
 					map_channel.name = attrName;
 
 					// we can use same face indices as for mesh vertices
-#if CGR_USE_LIST_RAW_TYPES
-					map_channel.vertices = VUtils::VectorRefList(gdp.getNumPoints());
+					map_channel.vertices = VRay::VUtils::VectorRefList(gdp.getNumPoints());
 					map_channel.faces = expData.faces;
-#else
-					map_channel.vertices.resize(gdp.getNumPoints());
-					map_channel.faces.assign(expData.faces.get(), expData.faces.get() + expData.faces.size());
-#endif
+
 					GA_Offset start, end;
 					int vidx = 0;
 					for (GA_Iterator it(gdp.getPointRange()); it.blockAdvance(start, end); ) {
@@ -430,12 +417,12 @@ void VRayExporter::exportGeomStaticMeshDesc(const GU_Detail &gdp, GeomExportPara
 	Log::getLog().info("  Mesh: %i points", numPoints);
 
 	GeomExportData expData;
-	expData.vertices = VUtils::VectorRefList(numPoints);
+	expData.vertices = VRay::VUtils::VectorRefList(numPoints);
 
 	GA_ROAttributeRef h = gdp.findFloatTuple(GA_ATTRIB_POINT, "N", 3);
 	const GA_ROHandleV3 N_h(h.getAttribute());
 	if (N_h.isValid()) {
-		expData.normals = VUtils::VectorRefList(numPoints);
+		expData.normals = VRay::VUtils::VectorRefList(numPoints);
 	}
 
 	int v = 0;
@@ -488,12 +475,12 @@ void VRayExporter::exportGeomStaticMeshDesc(const GU_Detail &gdp, GeomExportPara
 		}
 	}
 
-	expData.faces = VUtils::IntRefList(expData.numFaces * 3);
-	expData.face_mtlIDs = VUtils::IntRefList(expData.numFaces);
-	expData.edge_visibility = VUtils::IntRefList(expData.numFaces / 10 + ((expData.numFaces % 10 > 0) ? 1 : 0));
+	expData.faces = VRay::VUtils::IntRefList(expData.numFaces * 3);
+	expData.face_mtlIDs = VRay::VUtils::IntRefList(expData.numFaces);
+	expData.edge_visibility = VRay::VUtils::IntRefList(expData.numFaces / 10 + ((expData.numFaces % 10 > 0) ? 1 : 0));
 
 	// Reset some arrays
-	memset(expData.edge_visibility.ptr, 0, expData.edge_visibility.size() * sizeof(int));
+	memset(expData.edge_visibility.get(), 0, expData.edge_visibility.size() * sizeof(int));
 
 	int faceVertIndex = 0;
 	int faceMtlIDIndex = 0;
@@ -584,24 +571,24 @@ void VRayExporter::exportGeomStaticMeshDesc(const GU_Detail &gdp, GeomExportPara
 	}
 
 	if (expData.map_channels_data.size()) {
-		VRay::ValueList map_channel_names;
-		VRay::ValueList map_channels;
+		VRay::VUtils::ValueRefList map_channel_names(expData.map_channels_data.size());
+		VRay::VUtils::ValueRefList map_channels(expData.map_channels_data.size());
 
 		int i = 0;
 		for (const auto &mcIt : expData.map_channels_data) {
 			const std::string      &map_channel_name = mcIt.first;
 			const Mesh::MapChannel &map_channel_data = mcIt.second;
 
-			// Channel name attribute
-			map_channel_names.push_back(VRay::Value(map_channel_name));
-
 			// Channel data
-			VRay::ValueList map_channel;
-			map_channel.push_back(VRay::Value(i++));
-			map_channel.push_back(VRay::Value(map_channel_data.vertices));
-			map_channel.push_back(VRay::Value(map_channel_data.faces));
+			VRay::VUtils::ValueRefList map_channel(3);
+			map_channel[0].setDouble(i);
+			map_channel[1].setListVector(map_channel_data.vertices);
+			map_channel[2].setListInt(map_channel_data.faces);
 
-			map_channels.push_back(VRay::Value(map_channel));
+			map_channels[i].setList(map_channel);
+			// Channel name attribute
+			map_channel_names[i].setString(map_channel_name.c_str());
+			++i;
 		}
 
 		geomPluginDesc.addAttribute(Attrs::PluginAttr("map_channels_names", map_channel_names));

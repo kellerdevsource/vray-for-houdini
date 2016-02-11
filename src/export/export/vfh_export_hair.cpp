@@ -22,7 +22,7 @@ void VRayExporter::exportGeomMayaHairGeom(SOP_Node *sop_node, const GU_Detail *g
 
 	Log::getLog().info("  Fur: %i strands", numStrands);
 
-	VUtils::IntRefList num_hair_vertices(numStrands);
+	VRay::VUtils::IntRefList num_hair_vertices(numStrands);
 
 	int hair_vertex_index = 0;
 	int hair_vertex_total = 0;
@@ -36,8 +36,8 @@ void VRayExporter::exportGeomMayaHairGeom(SOP_Node *sop_node, const GU_Detail *g
 		hair_vertex_total += numVertices;
 	}
 
-	VUtils::VectorRefList hair_vertices(hair_vertex_total);
-	VUtils::FloatRefList  widths(hair_vertex_total);
+	VRay::VUtils::VectorRefList hair_vertices(hair_vertex_total);
+	VRay::VUtils::FloatRefList  widths(hair_vertex_total);
 
 	GA_ROAttributeRef ref_width(gdp->findAttribute(GA_ATTRIB_PRIMITIVE, "width"));
 	const GA_ROHandleF hnd_width(ref_width.getAttribute());

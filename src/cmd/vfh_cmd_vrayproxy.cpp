@@ -313,14 +313,16 @@ struct GeometryDescription
 	{
 		m_isHair = false;
 		m_description = Attrs::PluginDesc();
-		m_transform.makeIdentity();
+		// make identity
+		m_transform.matrix.makeIdentity();
+		m_transform.offset.makeZero();
 		m_bbox.init();
 	}
 
 	OBJ_Geometry &m_node;
 	bool m_isHair;
 	Attrs::PluginDesc m_description;
-	VUtils::Transform m_transform;
+	VRay::Transform m_transform;
 	VUtils::Box m_bbox;
 
 private:
@@ -354,7 +356,7 @@ private:
 
 	VUtils::ErrorCode cacheDescriptionForContext(const OP_Context &context, GeometryDescription &geomDescr) const;
 	VUtils::ErrorCode getDescriptionForContext(OP_Context &context, GeomExportParams &expParams, GeometryDescription& geomDescr) const;
-	void getTransformForContext(OP_Context &context, OBJ_Geometry& node, VUtils::Transform &transform) const;
+	void getTransformForContext(OP_Context &context, OBJ_Geometry& node, VRay::Transform &transform) const;
 
 	void buildGeometryVoxel(VUtils::MeshVoxel& voxel, GeometryDescription &meshDescr);
 	void buildHairVoxel(VUtils::MeshVoxel& voxel, GeometryDescription &hairDescr);
@@ -465,27 +467,29 @@ VUtils::ErrorCode MeshToVRayProxy::cacheDescriptionForContext(const OP_Context &
 	//    transform normals
 	if (params.m_includeTransform) {
 		if (geomDescr.m_description.contains("normals")) {
-			VUtils::VectorRefList &normals = geomDescr.getAttr("normals").paramValue.valRawListVector;
-			VUtils::Matrix nm = VUtils::normalTransformMatrix(geomDescr.m_transform.m);
+			VRay::VUtils::VectorRefList &normals = geomDescr.getAttr("normals").paramValue.valRawListVector;
+			// calc nm(normal matrix) = transpose(inverse(matrix))
+			VRay::Matrix nm = geomDescr.m_transform.matrix;
+			nm = VRay::Matrix(nm[1]^nm[2], nm[2]^nm[0], nm[0]^nm[1]);
 			for (int i = 0; i < normals.size(); ++i) {
 				normals[i] = nm * normals[i];
 			}
 		}
 	}
 
-	VUtils::VectorRefList &verts = geomDescr.getVertAttr().paramValue.valRawListVector;
+	VRay::VUtils::VectorRefList &verts = geomDescr.getVertAttr().paramValue.valRawListVector;
 
 	//    calc bbox
 	geomDescr.m_bbox.init();
 	for (int i = 0; i < verts.size(); ++i) {
-		geomDescr.m_bbox += verts[i];
+		geomDescr.m_bbox += VUtils::Vector(verts[i].x, verts[i].y, verts[i].z);
 	}
 
 	if (params.m_exportVelocity) {
 		// add velocities to description
-		VUtils::VectorRefList velocities(verts.size());
+		VRay::VUtils::VectorRefList velocities(verts.size());
 		for (int i = 0; i < velocities.size(); ++i) {
-			velocities[i].set(0,0,0);
+			velocities[i].set(0.f,0.f,0.f);
 		}
 
 		float velocityInterval = params.m_velocityEnd - params.m_velocityStart;
@@ -500,8 +504,8 @@ VUtils::ErrorCode MeshToVRayProxy::cacheDescriptionForContext(const OP_Context &
 			VUtils::ErrorCode err_code = getDescriptionForContext(cntx, nextExpParams, nextDescr);
 
 			if ( !err_code.error() ) {
-				VUtils::VectorRefList &nextVerts = nextDescr.getVertAttr().paramValue.valRawListVector;
-			//        if no change in topology calc velocities
+				VRay::VUtils::VectorRefList &nextVerts = nextDescr.getVertAttr().paramValue.valRawListVector;
+				// if no change in topology calc velocities
 				if (verts.size() == nextVerts.size() ) {
 					float dt = 1.f/velocityInterval;
 					for (int i = 0; i < velocities.size(); ++i) {
@@ -517,17 +521,17 @@ VUtils::ErrorCode MeshToVRayProxy::cacheDescriptionForContext(const OP_Context &
 	return res;
 }
 
-void MeshToVRayProxy::getTransformForContext(OP_Context &context, OBJ_Geometry &node, VUtils::Transform &transform) const
+void MeshToVRayProxy::getTransformForContext(OP_Context &context, OBJ_Geometry &node, VRay::Transform &transform) const
 {
 	UT_Matrix4 mat;
 	UT_Vector3 offs;
 	node.getLocalToWorldTransform(context, mat);
 	mat.getTranslates(offs);
 
-	transform.m.setCol(0, VUtils::Vector(mat(0,0), mat(0,1), mat(0,2)));
-	transform.m.setCol(1, VUtils::Vector(mat(1,0), mat(1,1), mat(1,2)));
-	transform.m.setCol(2, VUtils::Vector(mat(2,0), mat(2,1), mat(2,2)));
-	transform.offs.set(offs(0), offs(1), offs(2));
+	transform.matrix.setCol(0, VRay::Vector(mat(0,0), mat(0,1), mat(0,2)));
+	transform.matrix.setCol(1, VRay::Vector(mat(1,0), mat(1,1), mat(1,2)));
+	transform.matrix.setCol(2, VRay::Vector(mat(2,0), mat(2,1), mat(2,2)));
+	transform.offset.set(offs(0), offs(1), offs(2));
 }
 
 VUtils::ErrorCode MeshToVRayProxy::getDescriptionForContext(OP_Context &context, GeomExportParams &expParams, GeometryDescription& geomDescr) const
@@ -572,15 +576,17 @@ VUtils::ErrorCode MeshToVRayProxy::getDescriptionForContext(OP_Context &context,
 	}
 
 	if (params.m_includeTransform) {
-		VUtils::VectorRefList &verts = geomDescr.getVertAttr().paramValue.valRawListVector;
+		VRay::VUtils::VectorRefList &verts = geomDescr.getVertAttr().paramValue.valRawListVector;
 		getTransformForContext(context, geomDescr.m_node, geomDescr.m_transform);
 
 		for (int i = 0; i < verts.size(); ++i) {
-			verts[i] = geomDescr.m_transform * verts[i];
+			verts[i] = geomDescr.m_transform.matrix * verts[i] + geomDescr.m_transform.offset;
 		}
 
 	} else {
-		geomDescr.m_transform.makeIdentity();
+		// make identity
+		geomDescr.m_transform.matrix.makeIdentity();
+		geomDescr.m_transform.offset.makeZero();
 	}
 
 	return res;
@@ -905,7 +911,7 @@ void MeshToVRayProxy::buildGeometryVoxel(VUtils::MeshVoxel& voxel, GeometryDescr
 	if (hasVerts) {
 		Log::getLog().info("buildGeomVoxel populate VERT_GEOM_CHANNEL");
 
-		VUtils::VectorRefList &vertices = meshDescr.getAttr("vertices").paramValue.valRawListVector;
+		VRay::VUtils::VectorRefList &vertices = meshDescr.getAttr("vertices").paramValue.valRawListVector;
 
 		VUtils::MeshChannel &verts_ch = voxel.channels[ ch_idx++ ];
 		verts_ch.init( sizeof(VUtils::VertGeomData), vertices.size(), VERT_GEOM_CHANNEL, FACE_TOPO_CHANNEL, MF_VERT_CHANNEL, false);
@@ -915,7 +921,7 @@ void MeshToVRayProxy::buildGeometryVoxel(VUtils::MeshVoxel& voxel, GeometryDescr
 	if (hasVelocities) {
 		Log::getLog().info("buildGeomVoxel populate VERT_VELOCITY_CHANNEL");
 
-		VUtils::VectorRefList &velocities = meshDescr.getAttr("velocities").paramValue.valRawListVector;
+		VRay::VUtils::VectorRefList &velocities = meshDescr.getAttr("velocities").paramValue.valRawListVector;
 
 		VUtils::MeshChannel &velocity_ch = voxel.channels[ ch_idx++ ];
 		velocity_ch.init( sizeof(VUtils::VertGeomData), velocities.size(), VERT_VELOCITY_CHANNEL, FACE_TOPO_CHANNEL, MF_VERT_CHANNEL, false);
@@ -925,7 +931,7 @@ void MeshToVRayProxy::buildGeometryVoxel(VUtils::MeshVoxel& voxel, GeometryDescr
 	if (hasFaces) {
 		Log::getLog().info("buildGeomVoxel populate FACE_TOPO_CHANNEL");
 
-		VUtils::IntRefList &faces = meshDescr.getAttr("faces").paramValue.valRawListInt;
+		VRay::VUtils::IntRefList &faces = meshDescr.getAttr("faces").paramValue.valRawListInt;
 
 		VUtils::MeshChannel &face_ch = voxel.channels[ ch_idx++ ];
 		face_ch.init(sizeof(VUtils::FaceTopoData), faces.size() / 3, FACE_TOPO_CHANNEL, 0, MF_TOPO_CHANNEL, false);
@@ -935,7 +941,7 @@ void MeshToVRayProxy::buildGeometryVoxel(VUtils::MeshVoxel& voxel, GeometryDescr
 	if (hasMtlIDs) {
 		Log::getLog().info("buildGeomVoxel populate FACE_INFO_CHANNEL");
 
-		VUtils::IntRefList &faceMtlIDs = meshDescr.getAttr("face_mtlIDs").paramValue.valRawListInt;
+		VRay::VUtils::IntRefList &faceMtlIDs = meshDescr.getAttr("face_mtlIDs").paramValue.valRawListInt;
 
 		VUtils::MeshChannel &faceinfo_ch = voxel.channels[ ch_idx++ ];
 		faceinfo_ch.init(sizeof(VUtils::FaceInfoData), faceMtlIDs.size(), FACE_INFO_CHANNEL, 0, MF_FACE_CHANNEL, true);
@@ -947,13 +953,13 @@ void MeshToVRayProxy::buildGeometryVoxel(VUtils::MeshVoxel& voxel, GeometryDescr
 	if (hasNormals) {
 		Log::getLog().info("buildGeomVoxel populate VERT_NORMAL_CHANNEL");
 
-		VUtils::VectorRefList &normals = meshDescr.getAttr("normals").paramValue.valRawListVector;
+		VRay::VUtils::VectorRefList &normals = meshDescr.getAttr("normals").paramValue.valRawListVector;
 
 		VUtils::MeshChannel &normal_ch = voxel.channels[ ch_idx++ ];
 		normal_ch.init(sizeof(VUtils::VertGeomData), normals.count(), VERT_NORMAL_CHANNEL, VERT_NORMAL_TOPO_CHANNEL, MF_VERT_CHANNEL, false);
 		normal_ch.data = normals.get();
 
-		VUtils::IntRefList &facenormals = meshDescr.getAttr("faceNormals").paramValue.valRawListInt;
+		VRay::VUtils::IntRefList &facenormals = meshDescr.getAttr("faceNormals").paramValue.valRawListInt;
 
 		VUtils::MeshChannel &facenormal_ch = voxel.channels[ ch_idx++ ];
 		facenormal_ch.init(sizeof(VUtils::FaceTopoData), facenormals.count() / 3, VERT_NORMAL_TOPO_CHANNEL, 0, MF_TOPO_CHANNEL, false);
@@ -1000,7 +1006,7 @@ void MeshToVRayProxy::buildHairVoxel(VUtils::MeshVoxel& voxel, GeometryDescripti
 
 	if ( hasVerts ) {
 		Log::getLog().info("buildHairVoxel populate HAIR_VERT_CHANNEL");
-		VUtils::VectorRefList &vertices = hairDescr.getAttr("hair_vertices").paramValue.valRawListVector;
+		VRay::VUtils::VectorRefList &vertices = hairDescr.getAttr("hair_vertices").paramValue.valRawListVector;
 
 		VUtils::MeshChannel &vertices_ch = voxel.channels[ ch_idx++ ];
 		vertices_ch.init( sizeof(VUtils::VertGeomData), vertices.size(), HAIR_VERT_CHANNEL, HAIR_NUM_VERT_CHANNEL, MF_VERT_CHANNEL, false);
@@ -1009,7 +1015,7 @@ void MeshToVRayProxy::buildHairVoxel(VUtils::MeshVoxel& voxel, GeometryDescripti
 
 	if ( hasStrands ) {
 		Log::getLog().info("buildHairVoxel populate HAIR_NUM_VERT_CHANNEL");
-		VUtils::IntRefList &strands = hairDescr.getAttr("num_hair_vertices").paramValue.valRawListInt;
+		VRay::VUtils::IntRefList &strands = hairDescr.getAttr("num_hair_vertices").paramValue.valRawListInt;
 
 		VUtils::MeshChannel &strands_ch = voxel.channels[ ch_idx++ ];
 		strands_ch.init( sizeof(int), strands.size(), HAIR_NUM_VERT_CHANNEL, 0, MF_NUM_VERT_CHANNEL, false);
@@ -1018,7 +1024,7 @@ void MeshToVRayProxy::buildHairVoxel(VUtils::MeshVoxel& voxel, GeometryDescripti
 
 	if ( hasWidths ) {
 		Log::getLog().info("buildHairVoxel populate HAIR_WIDTH_CHANNEL");
-		VUtils::FloatRefList &widths = hairDescr.getAttr("widths").paramValue.valRawListFloat;
+		VRay::VUtils::FloatRefList &widths = hairDescr.getAttr("widths").paramValue.valRawListFloat;
 
 		VUtils::MeshChannel &width_ch = voxel.channels[ ch_idx++ ];
 		width_ch.init( sizeof(float), widths.size(), HAIR_WIDTH_CHANNEL, HAIR_NUM_VERT_CHANNEL, MF_VERT_CHANNEL, false);
@@ -1027,7 +1033,7 @@ void MeshToVRayProxy::buildHairVoxel(VUtils::MeshVoxel& voxel, GeometryDescripti
 
 	if ( hasVelocities ) {
 		Log::getLog().info("buildHairVoxel populate HAIR_VELOCITY_CHANNEL");
-		VUtils::VectorRefList &velocities = hairDescr.getAttr("velocities").paramValue.valRawListVector;
+		VRay::VUtils::VectorRefList &velocities = hairDescr.getAttr("velocities").paramValue.valRawListVector;
 
 		VUtils::MeshChannel &velocities_ch = voxel.channels[ ch_idx++ ];
 		velocities_ch.init( sizeof(VUtils::VertGeomData), velocities.size(), HAIR_VELOCITY_CHANNEL, HAIR_NUM_VERT_CHANNEL, MF_VERT_CHANNEL, false);
@@ -1163,7 +1169,7 @@ void MeshToVRayProxy::createHairPreviewGeometry(VUtils::ObjectInfoChannelData &o
 			continue;
 		}
 
-		VUtils::IntRefList &strands = meshDescr.getAttr("num_hair_vertices").paramValue.valRawListInt;
+		VRay::VUtils::IntRefList &strands = meshDescr.getAttr("num_hair_vertices").paramValue.valRawListInt;
 		for (int i = 0; i < strands.count(); ++i) {
 			maxVertsPerStrand = VUtils::Max(maxVertsPerStrand, strands[i]);
 		}
@@ -1191,8 +1197,8 @@ void MeshToVRayProxy::createHairPreviewGeometry(VUtils::ObjectInfoChannelData &o
 				continue;
 			}
 
-			VUtils::IntRefList &strands = meshDescr.getAttr("num_hair_vertices").paramValue.valRawListInt;
-			VUtils::VectorRefList &vertices = meshDescr.getAttr("hair_vertices").paramValue.valRawListVector;
+			VRay::VUtils::IntRefList &strands = meshDescr.getAttr("num_hair_vertices").paramValue.valRawListInt;
+			VRay::VUtils::VectorRefList &vertices = meshDescr.getAttr("hair_vertices").paramValue.valRawListVector;
 
 			int numStrandsPrevObj = numPreviewStrands;
 
@@ -1204,7 +1210,8 @@ void MeshToVRayProxy::createHairPreviewGeometry(VUtils::ObjectInfoChannelData &o
 				if (p0 != p1 && numPreviewStrands < maxPreviewStrands) {
 					previewStrands[ numPreviewStrands++ ] = strands[i];
 					for(int k = 0; k < strands[i]; ++k) {
-						previewHairVerts[ numPreviewVerts++ ] = vertices[voffset + k];
+						VRay::Vector &v = vertices[voffset + k];
+						previewHairVerts[ numPreviewVerts++ ].set(v.x, v.y, v.z);
 					}
 
 					if (numPreviewStrands >= maxPreviewStrands)
@@ -1261,7 +1268,7 @@ void MeshToVRayProxy::simplifyFaceSampling(int &numPreviewVerts, int &numPreview
 			continue;
 		}
 
-		VUtils::IntRefList &faces = meshDescr.getAttr("faces").paramValue.valRawListInt;
+		VRay::VUtils::IntRefList &faces = meshDescr.getAttr("faces").paramValue.valRawListInt;
 		nTotalFaces += faces.count() / 3;
 	}
 
@@ -1282,8 +1289,8 @@ void MeshToVRayProxy::simplifyFaceSampling(int &numPreviewVerts, int &numPreview
 				continue;
 			}
 
-			VUtils::VectorRefList &vertices = meshDescr.getAttr("vertices").paramValue.valRawListVector;
-			VUtils::IntRefList &faces = meshDescr.getAttr("faces").paramValue.valRawListInt;
+			VRay::VUtils::VectorRefList &vertices = meshDescr.getAttr("vertices").paramValue.valRawListVector;
+			VRay::VUtils::IntRefList &faces = meshDescr.getAttr("faces").paramValue.valRawListInt;
 
 			int numFacesPrevObj = numPreviewFaces;
 
@@ -1292,8 +1299,9 @@ void MeshToVRayProxy::simplifyFaceSampling(int &numPreviewVerts, int &numPreview
 				int p1 = (i+1) * nFaces;
 				if (p0 != p1 && numPreviewFaces < maxPreviewFaces) {
 					for(int k = 0; k < 3; ++k) {
+						VRay::Vector &v = vertices[faces[i*3+k]];
 						previewFaces[numPreviewFaces].v[k] = numPreviewVerts;
-						previewVerts[numPreviewVerts++] = vertices[faces[i*3+k]];
+						previewVerts[numPreviewVerts++].set(v.x, v.y, v.z);
 					}
 
 					numPreviewFaces++;
@@ -1330,14 +1338,14 @@ void MeshToVRayProxy::simplifyMesh(int &numPreviewVerts, int &numPreviewFaces,
 			continue;
 		}
 
-		VUtils::VectorRefList &vertices = meshDescr.getAttr("vertices").paramValue.valRawListVector;
-		VUtils::IntRefList &faces = meshDescr.getAttr("faces").paramValue.valRawListInt;
+		VRay::VUtils::VectorRefList &vertices = meshDescr.getAttr("vertices").paramValue.valRawListVector;
+		VRay::VUtils::IntRefList &faces = meshDescr.getAttr("faces").paramValue.valRawListInt;
 
 		objInfo.addVoxelData(j, vertices.count(), faces.count());
 
 		int vertOffset = mesh.countVertices();
 		for (int i = 0; i != vertices.size(); ++i)
-			mesh.addVertex( vertices[i] );
+			mesh.addVertex(VUtils::Vector(vertices[i].x, vertices[i].y, vertices[i].z));
 
 		for (int i = 0; i != faces.size();) {
 			int nullValues[3] = {-1,-1,-1};
