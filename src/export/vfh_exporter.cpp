@@ -285,7 +285,7 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 
 		if (plugin_value) {
 			Log::getLog().info("  Setting plugin value: %s = %s",
-							   attrName.c_str(), plugin_value.getName().c_str());
+							   attrName.c_str(), plugin_value.getName());
 
 			const Parm::SocketDesc *fromSocketInfo = getConnectedOutputType(opNode, attrName.c_str());
 
