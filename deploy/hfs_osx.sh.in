@@ -61,9 +61,11 @@ for SHELF_FILE in `find "${LAUNCHER_LOCATION}/deploy" -name "*.shelf"`; do
 done
 
 # Copy additional libraries
-for DSO_FILE in `find "${LAUNCHER_LOCATION}/deploy/lib" -name "*.so"`; do
-	cp -R "${DSO_FILE}" "${HOUDINI_USER_DIR}/vfh/lib/"
-done
+if [ -d "${LAUNCHER_LOCATION}/deploy/lib" ]; then
+	for DSO_FILE in `find "${LAUNCHER_LOCATION}/deploy/lib" -name "*.so"`; do
+		cp -R "${DSO_FILE}" "${HOUDINI_USER_DIR}/vfh/lib/"
+	done
+fi
 
 # Start Houdini
 "${HFS}/bin/houdini" -foreground $*
