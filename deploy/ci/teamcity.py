@@ -146,11 +146,24 @@ def getPlatformSuffix():
     return "osx"
 
 
+def getCompilerPath():
+    if sys.platform == 'win32':
+        return "{CGR_SDK}/msvs2012".format(CGR_SDK=os.environ['CGR_SDK'])
+    if sys.platform == 'linux':
+        return os.environ.get('CGR_CXX_COMPILER', "/usr/bin/g++-4.9.3")
+    return ""
+
+
+def getCompilerVersion():
+    compilerPath = getCompilerPath()
+    return compilerPath[compilerPath.rfind("/")+1:]
+
+
 def main(args):
     srcHash = args.src_hash[:7]
 
     ReleaseDir = os.path.expanduser("%s/vray_for_houdini/%s" % (_cgr_release_root, sys.platform))
-    ReleaseArchive = os.path.join(ReleaseDir, "vfh-{BUILD_NUMBER}-{SRC_GIT_HASH}-hfs{HOUDINI_VERSION}.{HOUDINI_VERSION_BUILD}-{OS}{DEBUG}.{EXT}".format(
+    ReleaseArchive = os.path.join(ReleaseDir, "vfh-{BUILD_NUMBER}-{SRC_GIT_HASH}-hfs{HOUDINI_VERSION}.{HOUDINI_VERSION_BUILD}-{OS}-{CXX_COMPILER}{DEBUG}.{EXT}".format(
         SRC_GIT_HASH=srcHash,
         HOUDINI_VERSION=os.environ['CGR_HOUDINI_VERSION'],
         HOUDINI_VERSION_BUILD=os.environ['CGR_HOUDINI_VERSION_BUILD'],
@@ -158,6 +171,7 @@ def main(args):
         OS=getPlatformSuffix(),
         BUILD_NUMBER=os.environ['BUILD_NUMBER'],
         DEBUG="-dbg" if _cgr_build_type == "Debug" else "",
+        CXX_COMPILER=getCompilerVersion(),
     ))
 
     cmake = ["cmake"]
@@ -168,7 +182,7 @@ def main(args):
     cmake.append('-DAPPSDK_VERSION=%s'        % os.environ['CGR_APPSDK_VERSION'])
 
     if sys.platform == 'linux':
-        cmake.append('-DCMAKE_CXX_COMPILER=%s' % os.environ.get('CGR_CXX_COMPILER', "/usr/bin/g++-4.9.3"))
+        cmake.append('-DCMAKE_CXX_COMPILER=%s' % getCompilerPath())
     elif sys.platform == 'win32':
         setup_msvc_2012()
         cmake.append('-DAPPSDK_PATH=%s' % "H:/src/appsdk")
