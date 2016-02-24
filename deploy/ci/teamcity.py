@@ -168,7 +168,7 @@ def main(args):
     cmake.append('-DAPPSDK_VERSION=%s'        % os.environ['CGR_APPSDK_VERSION'])
 
     if sys.platform == 'linux':
-        cmake.append('-DCMAKE_CXX_COMPILER=/usr/bin/g++-4.9.3')
+        cmake.append('-DCMAKE_CXX_COMPILER=%s' % os.environ.get('CGR_CXX_COMPILER', "/usr/bin/g++-4.9.3"))
     elif sys.platform == 'win32':
         setup_msvc_2012()
         cmake.append('-DAPPSDK_PATH=%s' % "H:/src/appsdk")
