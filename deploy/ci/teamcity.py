@@ -162,18 +162,19 @@ def main(args):
 
     cmake = ["cmake"]
     cmake.append('-GNinja')
+
+    if sys.platform == 'linux':
+        cmake.append('-DCMAKE_CXX_COMPILER=%s' % os.environ.get('CGR_CXX_COMPILER', "/usr/bin/g++-4.9.3"))
+
     cmake.append('-DCMAKE_BUILD_TYPE=%s' % _cgr_build_type)
     cmake.append('-DHOUDINI_VERSION=%s'       % os.environ['CGR_HOUDINI_VERSION'])
     cmake.append('-DHOUDINI_VERSION_BUILD=%s' % os.environ['CGR_HOUDINI_VERSION_BUILD'])
     cmake.append('-DAPPSDK_VERSION=%s'        % os.environ['CGR_APPSDK_VERSION'])
 
-    if sys.platform == 'linux':
-        cmake.append('-DCMAKE_CXX_COMPILER=%s' % os.environ.get('CGR_CXX_COMPILER', "/usr/bin/g++-4.9.3"))
-    elif sys.platform == 'win32':
+    if sys.platform == 'win32':
         setup_msvc_2012()
         cmake.append('-DAPPSDK_PATH=%s' % "H:/src/appsdk")
-    else:
-        pass
+
     cmake.append('-DCGR_SRC_HASH=%s' % srcHash)
     cmake.append('-DUSE_LAUNCHER=OFF')
     cmake.append('-DINSTALL_LOCAL=OFF')
