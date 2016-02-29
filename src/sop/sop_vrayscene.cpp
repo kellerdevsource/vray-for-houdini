@@ -71,7 +71,7 @@ OP_ERROR SOP::VRayScene::cookMySop(OP_Context &context)
 			using namespace VUtils;
 			const Vrscene::Preview::VrsceneSettings &vrsceneSettings = getVrsceneSettings();
 
-			Vrscene::Preview::VrsceneDesc *vrsceneDesc = m_vrsceneMan.getVrsceneDesc(path.buffer(), vrsceneSettings);
+			Vrscene::Preview::VrsceneDesc *vrsceneDesc = m_vrsceneMan.getVrsceneDesc(path.buffer(), &vrsceneSettings);
 			if (vrsceneDesc) {
 				const bool flipAxis = evalInt("flip_axis", 0, 0.0);
 
@@ -93,7 +93,7 @@ OP_ERROR SOP::VRayScene::cookMySop(OP_Context &context)
 								for (int v = 0; v < vertices.count(); ++v) {
 									VUtils::Vector vert = tm * vertices[v];
 									if (flipAxis) {
-										vert = VUtils::Vrscene::Preview::FlipMatrix * vert;
+										vert = VUtils::Vrscene::Preview::flipMatrix * vert;
 									}
 #if UT_MAJOR_VERSION_INT < 14
 									GEO_Point *point = gdp->appendPointElement();
@@ -150,7 +150,7 @@ OP::VRayNode::PluginResult SOP::VRayScene::asPluginDesc(Attrs::PluginDesc &plugi
 
 	VUtils::TraceTransform tm = toVutilsTm(VRayExporter::getObjTransform(parentContext->getTarget()->castToOBJNode(), exporter.getContext()));
 	if (flipAxis) {
-		tm.m = tm.m * VUtils::Vrscene::Preview::FlipMatrix;
+		tm.m = tm.m * VUtils::Vrscene::Preview::flipMatrix;
 	}
 
 	pluginDesc.addAttribute(Attrs::PluginAttr("transform", toAppSdkTm(tm)));
