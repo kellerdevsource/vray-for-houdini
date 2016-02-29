@@ -30,6 +30,7 @@
 
 #include <unordered_map>
 
+
 namespace VRayForHoudini {
 
 
@@ -145,16 +146,18 @@ public:
 	void                           exportGeomMayaHairGeom(SOP_Node *sop_node, const GU_Detail *gdp, Attrs::PluginDesc &pluginDesc);
 	VRay::Plugin                   exportGeomMayaHair(SOP_Node *sop_node, const GU_Detail *gdp);
 
+	VRay::Plugin                   exportObject(OBJ_Node *obj_node);
+	VRay::Plugin                   exportNode(OBJ_Node *obj_node, VRay::Plugin material, VRay::Plugin geometry);
+	VRay::Plugin                   exportNodeData(SOP_Node *sop_node, GeomExportParams &expParams);
+	VRay::Plugin                   exportParticles(OBJ_Node *dop_network);
+
 	void                           exportDisplacementDesc(OBJ_Node *obj_node, Attrs::PluginDesc &pluginDesc);
 	VRay::Plugin                   exportDisplacement(OBJ_Node *obj_node, VRay::Plugin &geomPlugin);
-	VRay::Plugin                   exportNodeData(SOP_Node *sop_node, GeomExportParams &expParams);
-	VRay::Plugin                   exportNode(OBJ_Node *obj_node, VRay::Plugin material, VRay::Plugin geometry);
-	VRay::Plugin                   exportObject(OBJ_Node *obj_node);
-	VRay::Plugin                   exportParticles(OBJ_Node *dop_network);
 	VRay::Plugin                   exportLight(OBJ_Node *obj_node);
 	VRay::Plugin                   exportVop(OP_Node *op_node, ExportContext *parentContext = nullptr);
 	VRay::Plugin                   exportMaterial(SHOP_Node &shop_node, ExportContext &parentContext);
 	VRay::Plugin                   exportDefaultMaterial();
+
 	VRay::Plugin                   exportVRayClipper(OBJ_Node &clipperNode);
 
 #ifdef CGR_HAS_VRAYSCENE

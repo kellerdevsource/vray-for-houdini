@@ -299,106 +299,106 @@ VRay::Plugin VRayExporter::exportNodeData(SOP_Node *geom_node, GeomExportParams 
 }
 
 
-VRay::Plugin VRayExporter::exportObject(OBJ_Node *obj_node)
-{
-	const fpreal t = m_context.getTime();
+//VRay::Plugin VRayExporter::exportObject(OBJ_Node *obj_node)
+//{
+//	const fpreal t = m_context.getTime();
 
-	VRay::Plugin obj_plugin = VRay::Plugin();
+//	VRay::Plugin obj_plugin = VRay::Plugin();
 
-	SOP_Node *geom_node = obj_node->getRenderSopPtr();
-	if (!geom_node) {
-		Log::getLog().error("OBJ \"%s\": Render SOP is not found!",
-					obj_node->getName().buffer());
-	}
-	else {
-		OP_Operator *geom_op = geom_node->getOperator();
+//	SOP_Node *geom_node = obj_node->getRenderSopPtr();
+//	if (!geom_node) {
+//		Log::getLog().error("OBJ \"%s\": Render SOP is not found!",
+//					obj_node->getName().buffer());
+//	}
+//	else {
+//		OP_Operator *geom_op = geom_node->getOperator();
 
-		const UT_String &geomOpName = geom_op->getName();
+//		const UT_String &geomOpName = geom_op->getName();
 
-		Log::getLog().info("  Render SOP: %s:\"%s\"",
-				   geom_op->getName().buffer(),
-				   obj_node->getName().buffer());
+//		Log::getLog().info("  Render SOP: %s:\"%s\"",
+//				   geom_op->getName().buffer(),
+//				   obj_node->getName().buffer());
 
-		if (obj_node->getOperator()->getName().equal("VRayNodeVRayClipper")) {
-			obj_plugin = exportVRayClipper(*obj_node);
-		}
-		else if (geomOpName.equal("VRayNodeVRayScene")) {
-#ifdef CGR_HAS_VRAYSCENE
-			obj_plugin = exportVRayScene(obj_node, geom_node);
-#endif
-		}
-		else {
-			GeomExportParams expParams;
-			expParams.uvWeldThreshold = isSmoothed(*obj_node)? expParams.uvWeldThreshold: -1.f;
+//		if (obj_node->getOperator()->getName().equal("VRayNodeVRayClipper")) {
+//			obj_plugin = exportVRayClipper(*obj_node);
+//		}
+//		else if (geomOpName.equal("VRayNodeVRayScene")) {
+//#ifdef CGR_HAS_VRAYSCENE
+//			obj_plugin = exportVRayScene(obj_node, geom_node);
+//#endif
+//		}
+//		else {
+//			GeomExportParams expParams;
+//			expParams.uvWeldThreshold = isSmoothed(*obj_node)? expParams.uvWeldThreshold: -1.f;
 
-			VRay::Plugin geom = exportNodeData(geom_node, expParams);
+//			VRay::Plugin geom = exportNodeData(geom_node, expParams);
 
-			if (geom) {
-				VRay::Plugin mtl;
-				ExportContext objContext(CT_OBJ, *this, *obj_node);
+//			if (geom) {
+//				VRay::Plugin mtl;
+//				ExportContext objContext(CT_OBJ, *this, *obj_node);
 
-				SHOP_Node *shop_node = getObjMaterial(obj_node, t);
-				if (shop_node) {
-					Log::getLog().info("  Found material: \"%s\" [%s]",
-							   shop_node->getName().buffer(), shop_node->getOperator()->getName().buffer());
+//				SHOP_Node *shop_node = getObjMaterial(obj_node, t);
+//				if (shop_node) {
+//					Log::getLog().info("  Found material: \"%s\" [%s]",
+//							   shop_node->getName().buffer(), shop_node->getOperator()->getName().buffer());
 
-					mtl = exportMaterial(*shop_node, objContext);
-				}
-				else if (expParams.shopToID.size()) {
-					if (expParams.shopToID.size() == 1) {
-						SHOP_Node *shop_node = OPgetDirector()->findSHOPNode(expParams.shopToID.begin().key());
-						if (shop_node) {
-							mtl = exportMaterial(*shop_node, objContext);
-						}
-					}
-					else {
-						Attrs::PluginDesc mtlMultiDesc(VRayExporter::getPluginName(geom_node, "Mtl"), "MtlMulti");
+//					mtl = exportMaterial(*shop_node, objContext);
+//				}
+//				else if (expParams.shopToID.size()) {
+//					if (expParams.shopToID.size() == 1) {
+//						SHOP_Node *shop_node = OPgetDirector()->findSHOPNode(expParams.shopToID.begin().key());
+//						if (shop_node) {
+//							mtl = exportMaterial(*shop_node, objContext);
+//						}
+//					}
+//					else {
+//						Attrs::PluginDesc mtlMultiDesc(VRayExporter::getPluginName(geom_node, "Mtl"), "MtlMulti");
 
-						VRay::ValueList mtls_list;
-						VRay::IntList   ids_list;
+//						VRay::ValueList mtls_list;
+//						VRay::IntList   ids_list;
 
-						Log::getLog().info("Adding MtlMulti:");
+//						Log::getLog().info("Adding MtlMulti:");
 
-						for (SHOPToID::iterator oIt = expParams.shopToID.begin(); oIt != expParams.shopToID.end(); ++oIt) {
-							const char *shop_materialpath = oIt.key();
+//						for (SHOPToID::iterator oIt = expParams.shopToID.begin(); oIt != expParams.shopToID.end(); ++oIt) {
+//							const char *shop_materialpath = oIt.key();
 
-							SHOP_Node *shop_node = OPgetDirector()->findSHOPNode(shop_materialpath);
-							if (shop_node) {
+//							SHOP_Node *shop_node = OPgetDirector()->findSHOPNode(shop_materialpath);
+//							if (shop_node) {
 
-								const int &material_id = oIt.data();
+//								const int &material_id = oIt.data();
 
-								Log::getLog().info(" %i: \"%s\"",
-										   material_id, shop_materialpath);
+//								Log::getLog().info(" %i: \"%s\"",
+//										   material_id, shop_materialpath);
 
-								mtls_list.push_back(VRay::Value(exportMaterial(*shop_node, objContext)));
-								ids_list.push_back(material_id);
-							}
-						}
+//								mtls_list.push_back(VRay::Value(exportMaterial(*shop_node, objContext)));
+//								ids_list.push_back(material_id);
+//							}
+//						}
 
-						mtlMultiDesc.addAttribute(Attrs::PluginAttr("mtls_list", mtls_list));
-						mtlMultiDesc.addAttribute(Attrs::PluginAttr("ids_list",  ids_list));
+//						mtlMultiDesc.addAttribute(Attrs::PluginAttr("mtls_list", mtls_list));
+//						mtlMultiDesc.addAttribute(Attrs::PluginAttr("ids_list",  ids_list));
 
-						mtl = exportPlugin(mtlMultiDesc);
-					}
-				}
+//						mtl = exportPlugin(mtlMultiDesc);
+//					}
+//				}
 
-				VRay::Plugin geomDispl = exportDisplacement(obj_node, geom);
-				if (geomDispl) {
-					geom = geomDispl;
-				}
+//				VRay::Plugin geomDispl = exportDisplacement(obj_node, geom);
+//				if (geomDispl) {
+//					geom = geomDispl;
+//				}
 
-				// Export default grey material
-				if (NOT(mtl)) {
-					mtl = exportDefaultMaterial();
-				}
+//				// Export default grey material
+//				if (NOT(mtl)) {
+//					mtl = exportDefaultMaterial();
+//				}
 
-				obj_plugin = exportNode(obj_node, mtl, geom);
-			}
-		}
-	}
+//				obj_plugin = exportNode(obj_node, mtl, geom);
+//			}
+//		}
+//	}
 
-	return obj_plugin;
-}
+//	return obj_plugin;
+//}
 
 
 VRay::Plugin VRayExporter::exportVRayClipper(OBJ_Node &clipperNode)
@@ -484,3 +484,4 @@ VRay::Plugin VRayExporter::exportVRayClipper(OBJ_Node &clipperNode)
 
 	return exportPlugin(pluginDesc);
 }
+

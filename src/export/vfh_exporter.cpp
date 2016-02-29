@@ -49,12 +49,11 @@ VRayExporter::ExporterInstances  VRayExporter::Instances;
 
 std::string VRayExporter::getPluginName(OP_Node *op_node, const std::string &prefix, const std::string &suffix)
 {
-	static boost::format FmtPlugin("%s@%s|%s|%s");
+	static boost::format FmtPlugin("%s@%s|%s");
 
 	const std::string &pluginName = boost::str(FmtPlugin
 											   % prefix
-											   % op_node->getName().buffer()
-											   % op_node->getParentNetwork()->getName().buffer()
+											   % op_node->getFullPath().buffer()
 											   % suffix);
 
 	return pluginName;
@@ -69,17 +68,17 @@ std::string VRayExporter::getPluginName(OBJ_Node *obj_node)
 	if (ob_type & OBJ_LIGHT) {
 		static boost::format FmtLight("Light@%s");
 		pluginName = boost::str(FmtLight
-								% obj_node->getName().buffer());
+								% obj_node->getFullPath().buffer());
 	}
 	else if (ob_type & OBJ_CAMERA) {
 		static boost::format FmtCamera("Camera@%s");
 		pluginName = boost::str(FmtCamera
-								% obj_node->getName().buffer());
+								% obj_node->getFullPath().buffer());
 	}
 	else if (ob_type == OBJ_GEOMETRY) {
 		static boost::format FmtObject("Node@%s");
 		pluginName = boost::str(FmtObject
-								% obj_node->getName().buffer());
+								% obj_node->getFullPath().buffer());
 	}
 
 	return pluginName;
