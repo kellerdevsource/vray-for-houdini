@@ -24,7 +24,7 @@ Building From Source
 
 * **V-Ray SDK** (for example, from **V-Ray For Maya** nightly build)
 
-* **Phoenix SDK** (for example, from **Phonix For Maya** nightly build)
+* **Phoenix SDK** (for example, from **Phonix For Maya** nightly build; optional, used to load *.aur files preview)
 
 * Compiler:
 
