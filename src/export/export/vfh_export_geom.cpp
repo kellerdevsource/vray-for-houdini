@@ -44,7 +44,6 @@ public:
 
 	PolyMeshExporter& setSubdivApplied(bool val) { m_hasSubdivApplied = val; }
 	int exportGeometry();
-	int getPluginDesc(Attrs::PluginDesc &pluginDesc);
 
 private:
 
@@ -71,15 +70,13 @@ PolyMeshExporter::PolyMeshExporter(const GU_Detail &gdp, VRayExporter &pluginExp
 { }
 
 
-
 struct GeomExportData {
-
 	VRay::VUtils::VectorRefList vertices;
 	VRay::VUtils::VectorRefList normals;
-	VRay::VUtils::IntRefList faces;
-	VRay::VUtils::IntRefList face_mtlIDs;
-	VRay::VUtils::IntRefList edge_visibility;
-	Mesh::MapChannels map_channels_data;
+	VRay::VUtils::IntRefList    faces;
+	VRay::VUtils::IntRefList    edge_visibility;
+	VRay::VUtils::IntRefList    face_mtlIDs;
+	Mesh::MapChannels           map_channels_data;
 	int numPoints;
 	int numFaces;
 	int numMtlIDs;
@@ -104,6 +101,30 @@ struct GeomExportData {
 //
 
 
+struct SHOPHasher
+{
+	typedef uint32     result_type;
+
+	static result_type getSHOPId(const UT_String &shopPath)
+	{
+		return (NOT(shopPath.isstring()))? 0 : shopPath.hash();
+	}
+
+	result_type operator()(const SHOP_Node *shopNode) const
+	{
+		return (NOT(shopNode))? 0 : getSHOPId(shopNode->getFullPath());
+	}
+
+	result_type operator()(const UT_String &shopPath) const
+	{
+		return getSHOPId(shopPath);
+	}
+};
+
+
+typedef std::unordered_set< UT_String , SHOPHasher > SHOPList;
+
+
 
 struct PrimOverride
 {
@@ -118,7 +139,7 @@ struct PrimOverride
 };
 
 
-int getPrimOverrides(const OP_Context &context, const GU_Detail &gdp, std::unordered_set< std::string > &o_mapChannelOverrides, std::vector< PrimOverride > &o_primOverrides)
+int getPerPrimMtlOverrides(const OP_Context &context, const GU_Detail &gdp, std::unordered_set< std::string > &o_mapChannelOverrides, std::vector< PrimOverride > &o_primOverrides)
 {
 	const GA_ROHandleS materialPathHndl(gdp.findStringTuple(GA_ATTRIB_PRIMITIVE, "shop_materialpath"));
 	const GA_ROHandleS materialOverrideHndl(gdp.findStringTuple(GA_ATTRIB_PRIMITIVE, "material_override"));
@@ -134,10 +155,8 @@ int getPrimOverrides(const OP_Context &context, const GU_Detail &gdp, std::unord
 	for (GA_Iterator jt(gdp.getPrimitiveRange()); !jt.atEnd(); jt.advance(), ++k) {
 		const GA_Offset off = *jt;
 		const GEO_Primitive *prim = gdp.getGEOPrimitive(off);
-
-		GA_PrimitiveTypeId primType = prim->getTypeId();
-		if (   primType != GEO_PRIMPOLY
-			&& primType != GEO_PRIMPOLYSOUP)
+		if (   prim->getTypeId() != GEO_PRIMPOLY
+			&& prim->getTypeId() != GEO_PRIMPOLYSOUP)
 		{
 			continue;
 		}
@@ -169,9 +188,8 @@ int getPrimOverrides(const OP_Context &context, const GU_Detail &gdp, std::unord
 			}
 
 			std::string channelName = prm->getToken();
-			// skip overrides on the 4th component of 4-tuple params
-			// if prm is a 4-tuple and the override is on 4th component
-			// we can not store the channel in VRay::Vector which has only 3 components
+			// skip overrides of 4th component on 4-tuple params
+			// we can not store the 4th channel in VRay::Vector which has only 3 components
 			// TODO: need a way to export these
 			if (   chIdx < 0
 				|| chIdx >= 3)
@@ -211,25 +229,24 @@ int getPrimOverrides(const OP_Context &context, const GU_Detail &gdp, std::unord
 }
 
 
-static void exportPrimitiveAttrs(const OP_Context &context, const GU_Detail &gdp, GeomExportParams &expParams, GeomExportData &expData)
+static void getMtlOverrides(const OP_Context &context, const GU_Detail &gdp, GeomExportData &expData)
 {
 	std::unordered_set< std::string > mapChannelOverrides;
 	std::vector< PrimOverride > primOverrides;
-	if ( getPrimOverrides(context, gdp, mapChannelOverrides, primOverrides) > 0) {
+	if ( getPerPrimMtlOverrides(context, gdp, mapChannelOverrides, primOverrides) > 0) {
 
 		for (const std::string channelName : mapChannelOverrides ) {
 			Mesh::MapChannel &map_channel = expData.map_channels_data[ channelName ];
-			// max number of different vertices int hte channel is bounded by number of primitives
+			// max number of different vertices int the channel is bounded by number of primitives
 			map_channel.vertices = VRay::VUtils::VectorRefList(gdp.getNumPrimitives());
 			map_channel.faces = VRay::VUtils::IntRefList(expData.numFaces * 3);
 
 			int k = 0;
-			int vi = 0;
+			int faceVertIndex = 0;
 			for (GA_Iterator jt(gdp.getPrimitiveRange()); !jt.atEnd(); jt.advance(), ++k) {
 				const GEO_Primitive *prim = gdp.getGEOPrimitive(*jt);
-				GA_PrimitiveTypeId primType = prim->getTypeId();
-				if (   primType != GEO_PRIMPOLY
-					&& primType != GEO_PRIMPOLYSOUP)
+				if (   prim->getTypeId() != GEO_PRIMPOLY
+					&& prim->getTypeId() != GEO_PRIMPOLYSOUP)
 				{
 					continue;
 				}
@@ -245,7 +262,7 @@ static void exportPrimitiveAttrs(const OP_Context &context, const GU_Detail &gdp
 					else if ( primOverride.shopNode->hasParm(channelName.c_str()) ) {
 						const PRM_Parm &prm = primOverride.shopNode->getParm(channelName.c_str());
 						for (int i = 0; i < prm.getVectorSize() && i < 3; ++i) {
-							fpreal fval;
+							fpreal fval = 0;
 							prm.getValue(context.getTime(), fval, i, context.getThread());
 							val[i] = fval;
 						}
@@ -255,30 +272,32 @@ static void exportPrimitiveAttrs(const OP_Context &context, const GU_Detail &gdp
 
 				// TODO: need to refactor this:
 				// for all map channels "faces" will be same  array so no need to recalc it every time
-				if (prim->getTypeId().get() == GEO_PRIMPOLYSOUP) {
-					const GU_PrimPolySoup *polySoup = static_cast<const GU_PrimPolySoup*>(prim);
-					for (GEO_PrimPolySoup::PolygonIterator psIt(*polySoup); !psIt.atEnd(); ++psIt) {
-						map_channel.faces[vi++] = k;
-						map_channel.faces[vi++] = k;
-						map_channel.faces[vi++] = k;
-
-						if (psIt.getVertexCount() == 4) {
-							map_channel.faces[vi++] = k;
-							map_channel.faces[vi++] = k;
-							map_channel.faces[vi++] = k;
+				switch (prim->getTypeId().get()) {
+					case GEO_PRIMPOLYSOUP:
+					{
+						const GU_PrimPolySoup *polySoup = static_cast<const GU_PrimPolySoup*>(prim);
+						for (GA_Size i = 0; i < polySoup->getPolygonCount(); ++i) {
+							GA_Size vCnt = std::max(polySoup->getPolygonSize(i) - 2, GA_Size(0));
+							for (GA_Size j = 0; j < vCnt; ++j) {
+								map_channel.faces[faceVertIndex++] = k;
+								map_channel.faces[faceVertIndex++] = k;
+								map_channel.faces[faceVertIndex++] = k;
+							}
 						}
+						break;
 					}
-				}
-				else {
-					map_channel.faces[vi++] = k;
-					map_channel.faces[vi++] = k;
-					map_channel.faces[vi++] = k;
-
-					if (prim->getVertexCount() == 4) {
-						map_channel.faces[vi++] = k;
-						map_channel.faces[vi++] = k;
-						map_channel.faces[vi++] = k;
+					case GEO_PRIMPOLY:
+					{
+						GA_Size vCnt = std::max(prim->getVertexCount() - 2, GA_Size(0));
+						for (GA_Size j = 0; j < vCnt; ++j) {
+							map_channel.faces[faceVertIndex++] = k;
+							map_channel.faces[faceVertIndex++] = k;
+							map_channel.faces[faceVertIndex++] = k;
+						}
+						break;
 					}
+					default:
+						;
 				}
 			}
 		}
@@ -291,8 +310,8 @@ void vertexAttrAsMapChannel(const GU_Detail &gdp, const GA_Attribute &vertexAttr
 	GA_ROPageHandleV3 vaPageHndl(&vertexAttr);
 	GA_ROHandleV3 vaHndl(&vertexAttr);
 
-	vassert(vaPageHndl.isValid());
-	vassert(vaHndl.isValid());
+	UT_ASSERT(vaPageHndl.isValid());
+	UT_ASSERT(vaHndl.isValid());
 
 	map_channel.name = GA::getGaAttributeName(vertexAttr);
 	Log::getLog().info("  Found map channel: %s",
@@ -318,7 +337,7 @@ void vertexAttrAsMapChannel(const GU_Detail &gdp, const GA_Attribute &vertexAttr
 			mv.index = i;
 			map_channel.vertices[i++].set(mv.v[0], mv.v[1], mv.v[2]);
 		}
-		vassert(i == map_channel.vertices.size());
+		UT_ASSERT( i == map_channel.vertices.size() );
 
 		// Process map channels (uv and other tuple(3) attributes)
 		//
@@ -348,7 +367,7 @@ void vertexAttrAsMapChannel(const GU_Detail &gdp, const GA_Attribute &vertexAttr
 				map_channel.faces[faceMapVertIndex++] = v0;
 			}
 		}
-		vassert( faceMapVertIndex == map_channel.faces.size() );
+		UT_ASSERT( faceMapVertIndex == map_channel.faces.size() );
 
 		// Cleanup hash
 		map_channel.verticesSet.clear();
@@ -369,7 +388,7 @@ void vertexAttrAsMapChannel(const GU_Detail &gdp, const GA_Attribute &vertexAttr
 				map_channel.vertices[i++].set(val[0], val[1], val[2]);
 			}
 		}
-		vassert(i == gdp.getNumVertices());
+		UT_ASSERT(i == gdp.getNumVertices());
 
 		i = 0;
 		GA_Index vi = 0;
@@ -411,7 +430,7 @@ void vertexAttrAsMapChannel(const GU_Detail &gdp, const GA_Attribute &vertexAttr
 			vi += prim->getVertexCount();
 		}
 
-		vassert(i == map_channel.faces.size());
+		UT_ASSERT( i == map_channel.faces.size() );
 	}
 }
 
@@ -439,7 +458,7 @@ void exportVertexAttrs(const GU_Detail &gdp, GeomExportParams &expParams, GeomEx
 }
 
 
-void exportPointAttrs(const GU_Detail &gdp, GeomExportParams &expParams, GeomExportData &expData)
+void exportPointAttrs(const GU_Detail &gdp, GeomExportData &expData)
 {
 	// add all vector3 point attributes to map_channels_data
 	GA_AttributeFilter float3Filter(GA_ATTRIB_FILTER_AND, GA_AttributeFilter::selectFloatTuple(), GA_AttributeFilter::selectByTupleSize(3));
@@ -472,7 +491,7 @@ void exportPointAttrs(const GU_Detail &gdp, GeomExportParams &expParams, GeomExp
 							map_channel.vertices[vidx++].set(val[0], val[1], val[2]);
 						}
 					}
-					vassert(vidx == gdp.getNumPoints());
+					UT_ASSERT( vidx == gdp.getNumPoints() );
 				}
 			}
 		}
@@ -480,10 +499,222 @@ void exportPointAttrs(const GU_Detail &gdp, GeomExportParams &expParams, GeomExp
 }
 
 
-#include <GA/GA_Options.h>
-#include <GA/GA_AIFCopyData.h>
-#include <GA/GA_AIFDelta.h>
-#include <GA/GA_AIFSharedStringTuple.h>
+bool isPrimPoly(GA_Primitive &prim)
+{
+	return (
+			   prim.getTypeId() == GEO_PRIMPOLY
+			|| prim.getTypeId() == GEO_PRIMPOLYSOUP
+			);
+}
+
+
+bool getDataFromAttribute(const GA_Attribute *attr, VRay::VUtils::VectorRefList &data)
+{
+	GA_ROAttributeRef attrRef(attr);
+	if (attrRef.isInvalid()) {
+		return false;
+	}
+
+	const GA_AIFTuple *aifTuple = attrRef.getAIFTuple();
+	if (NOT(aifTuple)) {
+		return false;
+	}
+
+	data = VRay::VUtils::VectorRefList(attr->getIndexMap().indexSize());
+	return aifTuple->getRange(attr, GA_Range(attr->getIndexMap()), &(data.get()->x));
+}
+
+
+GA_Size getNumFaces(const GU_Detail &gdp)
+{
+	GA_Size nFaces = 0;
+	for (GA_Iterator jt(gdp.getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
+		const GEO_Primitive *prim = gdp.getGEOPrimitive(*jt);
+
+		switch (prim->getTypeId().get()) {
+			case GEO_PRIMPOLYSOUP:
+			{
+				const GU_PrimPolySoup *polySoup = static_cast<const GU_PrimPolySoup*>(prim);
+				for (GA_Size i = 0; i < polySoup->getPolygonCount(); ++i) {
+					nFaces += std::max(polySoup->getPolygonSize(i) - 2, GA_Size(0));
+				}
+				break;
+			}
+			case GEO_PRIMPOLY:
+			{
+				nFaces += std::max(prim->getVertexCount() - 2, GA_Size(0));
+				break;
+			}
+			default:
+				;
+		}
+	}
+
+	return nFaces;
+}
+
+
+GA_Size getMeshFaces(const GU_Detail &gdp, VRay::VUtils::IntRefList &faces, VRay::VUtils::IntRefList &edge_visibility)
+{
+	GA_Size nFaces = getNumFaces(gdp);
+	if (nFaces <= 0) {
+		return nFaces;
+	}
+
+	// NOTE: Support only tri-faces for now
+	//   [ ] > 4 vertex faces support
+	//   [x] edge_visibility
+	//
+
+	faces = VRay::VUtils::IntRefList(nFaces*3);
+	edge_visibility = VRay::VUtils::IntRefList(nFaces/10 + (((nFaces%10) > 0)? 1 : 0));
+	std::memset(edge_visibility.get(), 0, edge_visibility.size() * sizeof(int));
+
+	int faceVertIndex = 0;
+	int faceEdgeVisIndex = 0;
+	for (GA_Iterator jt(gdp.getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
+		const GEO_Primitive *prim = gdp.getGEOPrimitive(*jt);
+
+		switch (prim->getTypeId().get()) {
+			case GEO_PRIMPOLYSOUP:
+			{
+				const GU_PrimPolySoup *polySoup = static_cast<const GU_PrimPolySoup*>(prim);
+				for (GEO_PrimPolySoup::PolygonIterator pst(*polySoup); !pst.atEnd(); ++pst) {
+					GA_Size vCnt = pst.getVertexCount();
+					if ( vCnt > 2) {
+						for (GA_Size i = 1; i < vCnt-1; ++i) {
+							faces[faceVertIndex++] = pst.getPointIndex(i+1);
+							faces[faceVertIndex++] = pst.getPointIndex(i);
+							faces[faceVertIndex++] = pst.getPointIndex(0);
+
+							// here the diagonal is invisible edge
+							// v(1)___v(2)
+							//    |  /|
+							//    | / |
+							//    |/__|
+							// v(0)   v(3)
+							// first edge v(i+1)->v(i) is always visible
+							// second edge v(i)->v(0) is visible only when i == 1
+							// third edge v(0)->v(i+1) is visible only when i+1 == vCnt-1
+							unsigned char edgeMask = 1 | ((i == 1) << 1) | ((i == (vCnt-2)) << 2);
+							edge_visibility[faceEdgeVisIndex/10] |= (edgeMask << ((faceEdgeVisIndex%10)*3));
+							++faceEdgeVisIndex;
+						}
+					}
+				}
+				break;
+			}
+			case GEO_PRIMPOLY:
+			{
+				GA_Size vCnt = prim->getVertexCount();
+				if ( vCnt > 2) {
+					for (GA_Size i = 1; i < vCnt-1; ++i) {
+						faces[faceVertIndex++] = prim->getPointIndex(i+1);
+						faces[faceVertIndex++] = prim->getPointIndex(i);
+						faces[faceVertIndex++] = prim->getPointIndex(0);
+
+						unsigned char edgeMask = (1 | ((i == 1) << 1) | ((i == (vCnt-2)) << 2));
+						edge_visibility[faceEdgeVisIndex/10] |= (edgeMask << ((faceEdgeVisIndex%10)*3));
+						++faceEdgeVisIndex;
+					}
+				}
+				break;
+			}
+			default:
+				;
+		}
+	}
+
+	UT_ASSERT( faceVertIndex == nFaces*3 );
+	UT_ASSERT( faceEdgeVisIndex == nFaces );
+	UT_ASSERT( edge_visibility.size() >= (faceEdgeVisIndex/10) );
+	UT_ASSERT( edge_visibility.size() <= (faceEdgeVisIndex/10 + 1) );
+
+	return nFaces;
+}
+
+
+GA_Size getMtlIds(const GU_Detail &gdp, VRay::VUtils::IntRefList &face_mtlIDs)
+{
+	GA_ROHandleS mtlpath(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GEO_STD_ATTRIB_MATERIAL));
+	if (mtlpath.isInvalid()) {
+		return 0;
+	}
+
+	GA_Size nFaces = getNumFaces(gdp);
+	if (nFaces <= 0) {
+		return 0;
+	}
+
+	face_mtlIDs = VRay::VUtils::IntRefList(nFaces);
+
+	int faceIndex = 0;
+	for (GA_Iterator jt(gdp.getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
+		const GEO_Primitive *prim = gdp.getGEOPrimitive(*jt);
+		int shopID = SHOPHasher::getSHOPId(mtlpath.get(*jt));
+
+		switch (prim->getTypeId().get()) {
+			case GEO_PRIMPOLYSOUP:
+			{
+				const GU_PrimPolySoup *polySoup = static_cast<const GU_PrimPolySoup*>(prim);
+				for (GA_Size i = 0; i < polySoup->getPolygonCount(); ++i) {
+					GA_Size nCnt = std::max(polySoup->getPolygonSize(i) - 2, GA_Size(0));
+					for (GA_Size j = 0; j < nCnt; ++j) {
+						face_mtlIDs[faceIndex++] = shopID;
+					}
+				}
+				break;
+			}
+			case GEO_PRIMPOLY:
+			{
+				GA_Size nCnt = std::max(prim->getVertexCount() - 2, GA_Size(0));
+				for (GA_Size j = 0; j < nCnt; ++j) {
+					face_mtlIDs[faceIndex++] = shopID;
+				}
+				break;
+			}
+			default:
+				;
+		}
+	}
+
+	UT_ASSERT( faceIndex == nFaces );
+	return nFaces;
+}
+
+
+
+int getSHOPList(const GU_Detail &gdp, SHOPList &shopList)
+{
+	GA_ROHandleS mtlpath(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GEO_STD_ATTRIB_MATERIAL));
+	if (mtlpath.isInvalid()) {
+		return 0;
+	}
+
+	int shopCnt = 0;
+	for (GA_Iterator jt(gdp.getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
+		const GEO_Primitive *prim = gdp.getGEOPrimitive(*jt);
+
+		switch (prim->getTypeId().get()) {
+			case GEO_PRIMPOLYSOUP:
+			case GEO_PRIMPOLY:
+			{
+				UT_String shoppath(mtlpath.get(*jt), false);
+				if (   OPgetDirector()->findSHOPNode(shoppath)
+					&& NOT(shopList.count(shoppath)) )
+				{
+					shopList.insert(shoppath);
+					++shopCnt;
+				}
+			}
+			default:
+				;
+		}
+	}
+
+	return shopCnt;
+}
+
 
 void VRayExporter::exportGeomStaticMeshDesc(const GU_Detail &gdp, GeomExportParams &expParams, Attrs::PluginDesc &geomPluginDesc)
 {
@@ -493,156 +724,20 @@ void VRayExporter::exportGeomStaticMeshDesc(const GU_Detail &gdp, GeomExportPara
 	Log::getLog().info("  Mesh: %i points", expData.numPoints);
 
 	// vertex positions
-	GA_ROAttributeRef p(gdp.findAttribute(GA_ATTRIB_POINT, GEO_STD_ATTRIB_POSITION));
-	if (p.isValid()) {
-		expData.vertices = VRay::VUtils::VectorRefList(expData.numPoints);
-		const GA_AIFTuple *aifTuple = p.getAIFTuple();
-		if (aifTuple) {
-			VRay::real *dest = &(expData.vertices.get()->x);
-			aifTuple->getRange(p, gdp.getPointRange(), dest);
-		}
-	}
-	// vertex normals
-	const GA_Attribute *nattr = gdp.findAttribute(GA_ATTRIB_POINT, GEO_STD_ATTRIB_NORMAL);
-	GA_ROAttributeRef n(nattr);
-	if (n.isValid()) {
-		expData.normals = VRay::VUtils::VectorRefList(expData.numPoints);
-		const GA_AIFTuple *aifTuple = n.getAIFTuple();
-		if (aifTuple) {
-			VRay::real *dest = &(expData.normals.get()->x);
-			aifTuple->getRange(n, gdp.getPointRange(), dest);
-		}
-	}
+	getDataFromAttribute(gdp.findAttribute(GA_ATTRIB_POINT, GEO_STD_ATTRIB_POSITION), expData.vertices);
+	UT_ASSERT( gdp.getNumPoints() == expData.vertices.size() );
+	// normals
+	getDataFromAttribute(gdp.findAttribute(GA_ATTRIB_POINT, GEO_STD_ATTRIB_NORMAL), expData.normals);
+	UT_ASSERT( gdp.getNumPoints() == expData.normals.size() );
+	// faces
+	expData.numFaces = getMeshFaces(gdp, expData.faces, expData.edge_visibility);
+	// mtl ids
+	expData.numMtlIDs = getMtlIds(gdp, expData.face_mtlIDs);
+	UT_ASSERT( expData.numFaces == expData.numMtlIDs );
 
-
-	// NOTE: Support only tri-faces for now
-	// TODO:
-	//   [ ] > 4 vertex faces support
-	//   [x] edge_visibility
-	//
-	GA_ROAttributeRef ref_shop_materialpath = gdp.findStringTuple(GA_ATTRIB_PRIMITIVE, GEO_STD_ATTRIB_MATERIAL);
-	const GA_ROHandleS hndl_shop_materialpath(ref_shop_materialpath.getAttribute());
-
-	expData.numFaces = 0;
-	expData.numMtlIDs = 0;
-	for (GA_Iterator jt(gdp.getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
-		const GA_Offset off = *jt;
-		const GEO_Primitive *prim = gdp.getGEOPrimitive(off);
-
-		GA_PrimitiveTypeId primType = prim->getTypeId();
-		if (   primType != GEO_PRIMPOLY
-			&& primType != GEO_PRIMPOLYSOUP)
-		{
-			continue;
-		}
-
-		if (prim->getTypeId() == GEO_PRIMPOLYSOUP) {
-			const GU_PrimPolySoup *polySoup = static_cast<const GU_PrimPolySoup*>(prim);
-
-			for (GEO_PrimPolySoup::PolygonIterator psIt(*polySoup); !psIt.atEnd(); ++psIt) {
-				expData.numFaces += (psIt.getVertexCount() == 4) ? 2 : 1;
-			}
-		}
-		else {
-			expData.numFaces += (prim->getVertexCount() == 4) ? 2 : 1;
-		}
-
-
-		if (hndl_shop_materialpath.isValid()) {
-			const char *shop_materialpath = hndl_shop_materialpath.get(off);
-			if (shop_materialpath && (expParams.shopToID.find(shop_materialpath) == expParams.shopToID.end())) {
-				expParams.shopToID.insert(shop_materialpath, expData.numMtlIDs++);
-			}
-		}
-	}
-
-	expData.faces = VRay::VUtils::IntRefList(expData.numFaces * 3);
-	expData.face_mtlIDs = VRay::VUtils::IntRefList(expData.numFaces);
-	expData.edge_visibility = VRay::VUtils::IntRefList(expData.numFaces / 10 + ((expData.numFaces % 10 > 0) ? 1 : 0));
-
-	// Reset some arrays
-	memset(expData.edge_visibility.get(), 0, expData.edge_visibility.size() * sizeof(int));
-
-	int faceVertIndex = 0;
-	int faceMtlIDIndex = 0;
-	int faceEdgeVisIndex = 0;
-	for (GA_Iterator jt(gdp.getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
-		const GA_Offset off = *jt;
-		const GEO_Primitive *prim = gdp.getGEOPrimitive(off);
-
-		GA_PrimitiveTypeId primType = prim->getTypeId();
-		if (   primType != GEO_PRIMPOLY
-			&& primType != GEO_PRIMPOLYSOUP)
-		{
-			continue;
-		}
-
-		int mtlId = 0;
-
-		if (hndl_shop_materialpath.isValid()) {
-			const char *shop_materialpath = hndl_shop_materialpath.get(off);
-			if (shop_materialpath) {
-				mtlId = expParams.shopToID[shop_materialpath];
-			}
-		}
-
-		if (prim->getTypeId().get() == GEO_PRIMPOLYSOUP) {
-			const GU_PrimPolySoup *polySoup = static_cast<const GU_PrimPolySoup*>(prim);
-
-			for (GEO_PrimPolySoup::PolygonIterator psIt(*polySoup); !psIt.atEnd(); ++psIt) {
-				expData.faces[faceVertIndex++] = psIt.getPointIndex(2);
-				expData.faces[faceVertIndex++] = psIt.getPointIndex(1);
-				expData.faces[faceVertIndex++] = psIt.getPointIndex(0);
-
-				expData.face_mtlIDs[faceMtlIDIndex++] = mtlId;
-
-				if (psIt.getVertexCount() == 4) {
-					expData.faces[faceVertIndex++] = psIt.getPointIndex(3);
-					expData.faces[faceVertIndex++] = psIt.getPointIndex(2);
-					expData.faces[faceVertIndex++] = psIt.getPointIndex(0);
-
-					expData.edge_visibility[faceEdgeVisIndex/10] |= (3 << ((faceEdgeVisIndex%10)*3));
-					faceEdgeVisIndex++;
-					expData.edge_visibility[faceEdgeVisIndex/10] |= (6 << ((faceEdgeVisIndex%10)*3));
-					faceEdgeVisIndex++;
-
-					expData.face_mtlIDs[faceMtlIDIndex++] = mtlId;
-				}
-				else {
-					expData.edge_visibility[faceEdgeVisIndex/10] |= (7 << ((faceEdgeVisIndex%10)*3));
-					faceEdgeVisIndex++;
-				}
-			}
-		}
-		else {
-			expData.faces[faceVertIndex++] = prim->getPointIndex(2);
-			expData.faces[faceVertIndex++] = prim->getPointIndex(1);
-			expData.faces[faceVertIndex++] = prim->getPointIndex(0);
-
-			expData.face_mtlIDs[faceMtlIDIndex++] = mtlId;
-
-			if (prim->getVertexCount() == 4) {
-				expData.faces[faceVertIndex++] = prim->getPointIndex(3);
-				expData.faces[faceVertIndex++] = prim->getPointIndex(2);
-				expData.faces[faceVertIndex++] = prim->getPointIndex(0);
-
-				expData.edge_visibility[faceEdgeVisIndex/10] |= (3 << ((faceEdgeVisIndex%10)*3));
-				faceEdgeVisIndex++;
-				expData.edge_visibility[faceEdgeVisIndex/10] |= (6 << ((faceEdgeVisIndex%10)*3));
-				faceEdgeVisIndex++;
-
-				expData.face_mtlIDs[faceMtlIDIndex++] = mtlId;
-			}
-			else {
-				expData.edge_visibility[faceEdgeVisIndex/10] |= (7 << ((faceEdgeVisIndex%10)*3));
-				faceEdgeVisIndex++;
-			}
-		}
-	}
-
-	exportPrimitiveAttrs(m_context, gdp, expParams, expData);
-	exportVertexAttrs(gdp, expParams, expData);
-	exportPointAttrs(gdp, expParams, expData);
+	getMtlOverrides(m_context, gdp, expData);
+//	exportVertexAttrs(gdp, expParams, expData);
+//	exportPointAttrs(gdp, expData);
 
 	geomPluginDesc.addAttribute(Attrs::PluginAttr("vertices", expData.vertices));
 	geomPluginDesc.addAttribute(Attrs::PluginAttr("faces", expData.faces));
@@ -687,7 +782,7 @@ void VRayExporter::exportGeomStaticMeshDesc(const GU_Detail &gdp, GeomExportPara
 
 VRay::Plugin VRayExporter::exportGeomStaticMesh(SOP_Node &sop_node, const GU_Detail &gdp, GeomExportParams &expParams)
 {
-	bool hasPolyGeometry = gdp.containsPrimitiveType(GEO_PRIMPOLY) || gdp.containsPrimitiveType(GEO_PRIMPOLY);
+	bool hasPolyGeometry = gdp.containsPrimitiveType(GEO_PRIMPOLY) || gdp.containsPrimitiveType(GEO_PRIMPOLYSOUP);
 	if ( NOT(hasPolyGeometry)) {
 		return VRay::Plugin();
 	}
@@ -696,8 +791,6 @@ VRay::Plugin VRayExporter::exportGeomStaticMesh(SOP_Node &sop_node, const GU_Det
 	exportGeomStaticMeshDesc(gdp, expParams, geomPluginDesc);
 	return exportPlugin(geomPluginDesc);
 }
-
-
 
 
 
@@ -745,7 +838,7 @@ bool GeometryExporter::hasSubdivApplied() const
 {
 	bool res = false;
 
-	fpreal t = m_pluginExporter.getContext().getTime();
+	fpreal t = m_context.getTime();
 	bool hasDispl = m_objNode.hasParm("vray_use_displ") && m_objNode.evalInt("vray_use_displ", 0, t);
 	if (NOT(hasDispl)) {
 		return res;
@@ -814,22 +907,76 @@ int GeometryExporter::exportGeometry()
 	PluginDescList &pluginList = m_detailToPluginDesc.at(detailHash);
 	m_pluginList.reserve(pluginList.size());
 
-	VRay::Transform tm = VRayExporter::getObjTransform(&m_objNode, m_pluginExporter.getContext());
+	VRay::Transform tm = VRayExporter::getObjTransform(&m_objNode, m_context);
+	SHOP_Node *shopNode = m_pluginExporter.getObjMaterial(&m_objNode, m_context.getTime());
 
 	int i = 0;
 	for (Attrs::PluginDesc &nodeDesc : pluginList) {
 //		TODO: need to fill in node with appropriate names and export them
-		VRay::Plugin mtl = m_pluginExporter.exportDefaultMaterial();
 		nodeDesc.pluginName = VRayExporter::getPluginName(&m_objNode, boost::str(Parm::FmtPrefixManual % "Node" % std::to_string(i++)));
-		nodeDesc.addAttribute(Attrs::PluginAttr("material", mtl));
 
-		Attrs::PluginAttr *attr = nodeDesc.get("transform");
-		if (attr) {
-			attr->paramValue.valTransform = tm * attr->paramValue.valTransform;
-		}
-		else {
+		Attrs::PluginAttr *attr = nullptr;
+
+		attr = nodeDesc.get("transform");
+		if (NOT(attr)) {
 			nodeDesc.addAttribute(Attrs::PluginAttr("transform", tm));
 		}
+		else {
+			attr->paramValue.valTransform = tm * attr->paramValue.valTransform;
+		}
+
+		attr = nodeDesc.get("material");
+		if (NOT(attr)) {
+			if (shopNode) {
+				ExportContext objContext(CT_OBJ, m_pluginExporter, m_objNode);
+				VRay::Plugin mtl = m_pluginExporter.exportMaterial(*shopNode, objContext);
+				nodeDesc.addAttribute(Attrs::PluginAttr("material", mtl));
+
+				// material overrides in "user_attributes"
+				UT_String userAtrs;
+
+				const OP_DependencyList &depList = shopNode->getOpDependents();
+				for (OP_DependencyList::reverse_iterator it = depList.rbegin(); !it.atEnd(); it.advance()) {
+					const OP_Dependency &dep = *it;
+					OP_Node *opNode = shopNode->lookupNode(dep.getRefOpId(), false);
+					if (shopNode->isSubNode(opNode)) {
+						const PRM_Parm &shopPrm = shopNode->getParm(dep.getSourceRefId().getParmRef());
+						const PRM_Parm *objPrm = m_objNode.getParmList()->getParmPtr(shopPrm.getToken());
+
+						if (   objPrm
+							&& objPrm->getType().isFloatType()
+							&& NOT(objPrm->getBypassFlag()) )
+						{
+							// if we have parameter with matching name override on object level
+							UT_StringArray prmValTokens;
+							for (int i = 0; i < objPrm->getVectorSize(); ++i) {
+								fpreal chval = m_objNode.evalFloat(objPrm, i, m_context.getTime());
+								prmValTokens.append( std::to_string(chval) );
+							}
+
+							UT_String prmValToken;
+							prmValTokens.join(",", prmValToken);
+
+							userAtrs += shopPrm.getToken();
+							userAtrs += "=";
+							userAtrs += prmValToken;
+							userAtrs += ";";
+						}
+					}
+				}
+
+				if (userAtrs.isstring()) {
+					nodeDesc.addAttribute(Attrs::PluginAttr("user_attributes", userAtrs));
+				}
+
+			}
+			else {
+				VRay::Plugin mtl = m_pluginExporter.exportDefaultMaterial();
+				nodeDesc.addAttribute(Attrs::PluginAttr("material", mtl));
+			}
+		}
+
+		// TODO: adjust other Node attrs
 
 		VRay::Plugin plugin = m_pluginExporter.exportPlugin(nodeDesc);
 		if (plugin) {
@@ -840,7 +987,6 @@ int GeometryExporter::exportGeometry()
 	return m_pluginList.size();
 }
 
-#include <GEO/GEO_PrimType.h>
 
 int GeometryExporter::exportDetail(SOP_Node &sop, GU_DetailHandleAutoReadLock &gdl, PluginDescList &pluginList)
 {
@@ -848,21 +994,58 @@ int GeometryExporter::exportDetail(SOP_Node &sop, GU_DetailHandleAutoReadLock &g
 	int nPlugins = 0;
 
 	const GU_Detail &gdp = *gdl.getGdp();
-	for (GA_Iterator jt(gdp.getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
-		const GA_Primitive *prim = gdp.getPrimitive(*jt);
-		if (GU_PrimPacked::isPackedPrimitive(*prim)) {
+
+	// packed prims
+	if (GU_PrimPacked::hasPackedPrimitives(gdp)) {
+		UT_Array<const GA_Primitive *> prims;
+		GU_PrimPacked::getPackedPrimitives(gdp, prims);
+		for (const GA_Primitive *prim : prims) {
 			const GU_PrimPacked *primPacked = dynamic_cast< const GU_PrimPacked * >(prim);
 			nPlugins += exportPacked(sop, *primPacked, pluginList);
 		}
 	}
 
-	VRay::Plugin plugin = m_pluginExporter.exportGeomStaticMesh(sop, gdp, m_expParams);
-	if (plugin) {
+	// polygonal geometry
+	VRay::Plugin geom = m_pluginExporter.exportGeomStaticMesh(sop, gdp, m_expParams);
+	if (geom) {
+		// add new node to our list of nodes
 		pluginList.push_back(Attrs::PluginDesc("", "Node"));
 		++nPlugins;
 
 		Attrs::PluginDesc &nodeDesc = pluginList.back();
-		nodeDesc.addAttribute(Attrs::PluginAttr("geometry", plugin));
+		// geoemtry
+		nodeDesc.addAttribute(Attrs::PluginAttr("geometry", geom));
+
+		// material
+		SHOPList shopList;
+		int nSHOPs = getSHOPList(gdp, shopList);
+		if (nSHOPs > 0) {
+			ExportContext objContext(CT_OBJ, m_pluginExporter, m_objNode);
+
+			VRay::ValueList mtls_list;
+			VRay::IntList   ids_list;
+			mtls_list.reserve(nSHOPs);
+			ids_list.reserve(nSHOPs);
+
+			for (const UT_String &shoppath : shopList) {
+				SHOP_Node *shopNode = OPgetDirector()->findSHOPNode(shoppath);
+				UT_ASSERT( shopNode );
+				mtls_list.emplace_back(m_pluginExporter.exportMaterial(*shopNode, objContext));
+				ids_list.emplace_back(SHOPHasher::getSHOPId(shoppath));
+			}
+
+			if (mtls_list.size() > 0) {
+
+				Attrs::PluginDesc mtlMultiDesc("", "MtlMulti");
+				mtlMultiDesc.pluginName = VRayExporter::getPluginName(&sop, boost::str(Parm::FmtPrefixManual % "Mtl" % std::to_string(gdp.getUniqueId())));
+
+				mtlMultiDesc.addAttribute(Attrs::PluginAttr("mtls_list", mtls_list));
+				mtlMultiDesc.addAttribute(Attrs::PluginAttr("ids_list",  ids_list));
+				VRay::Plugin mtl = m_pluginExporter.exportPlugin(mtlMultiDesc);
+
+				nodeDesc.addAttribute(Attrs::PluginAttr("material", mtl));
+			}
+		}
 	}
 
 	return nPlugins;
@@ -883,18 +1066,72 @@ int GeometryExporter::exportPacked(SOP_Node &sop, const GU_PrimPacked &prim, Plu
 	UT_Matrix4D xform;
 	prim.getFullTransform4(xform);
 	VRay::Transform tm = VRayExporter::Matrix4ToTransform(xform);
+	GA_ROHandleS mtlpath(prim.getDetail().findAttribute(GA_ATTRIB_PRIMITIVE, GEO_STD_ATTRIB_MATERIAL));
+	GA_ROHandleS mtlo(prim.getDetail().findAttribute(GA_ATTRIB_PRIMITIVE, "material_override"));
 
 	PluginDescList primPluginList = m_detailToPluginDesc.at(packedHash);
 	for (Attrs::PluginDesc &pluginDesc : primPluginList) {
 		pluginList.push_back(pluginDesc);
-		Attrs::PluginDesc &newNodeDesc = pluginList.back();
-		// TODO: adjust other props like mtls
-		Attrs::PluginAttr *attr = newNodeDesc.get("transform");
-		if (attr) {
-			attr->paramValue.valTransform =  tm * attr->paramValue.valTransform;
+		Attrs::PluginDesc &nodeDesc = pluginList.back();
+
+		Attrs::PluginAttr *attr = nullptr;
+
+		attr = nodeDesc.get("transform");
+		if (NOT(attr)) {
+			nodeDesc.addAttribute(Attrs::PluginAttr("transform", tm));
 		}
 		else {
-			newNodeDesc.addAttribute(Attrs::PluginAttr("transform", tm));
+			attr->paramValue.valTransform =  tm * attr->paramValue.valTransform;
+		}
+
+		attr = nodeDesc.get("material");
+		if (NOT(attr) && mtlpath.isValid()) {
+			const char *shoppath =  mtlpath.get(prim.getMapOffset());
+			SHOP_Node *shopNode = OPgetDirector()->findSHOPNode(shoppath);
+			if (shopNode) {
+				ExportContext objContext(CT_OBJ, m_pluginExporter, m_objNode);
+				VRay::Plugin mtl = m_pluginExporter.exportMaterial(*shopNode, objContext);
+				nodeDesc.addAttribute(Attrs::PluginAttr("material", mtl));
+
+				// material overrides in "user_attributes"
+				UT_Options overrides;
+				if (mtlo.isValid() && overrides.setFromPyDictionary(mtlo.get(prim.getMapOffset()))) {
+					UT_String userAtrs;
+
+					while (overrides.getNumOptions() > 0) {
+						UT_String key = overrides.begin().name();
+
+						int chIdx = -1;
+						PRM_Parm *prm = shopNode->getParmList()->getParmPtrFromChannel(key, &chIdx);
+						if (   NOT(prm)
+							|| NOT(prm->getType().isFloatType()) )
+						{
+							overrides.removeOption(key);
+							continue;
+						}
+
+						UT_StringArray prmValTokens;
+						for (int i = 0; i < prm->getVectorSize(); ++i) {
+							prm->getChannelToken(key, i);
+							fpreal chval = (overrides.hasOption(key))? overrides.getOptionF(key) : shopNode->evalFloat(prm, i, m_context.getTime());
+							prmValTokens.append( std::to_string(chval) );
+							overrides.removeOption(key);
+						}
+
+						UT_String prmValToken;
+						prmValTokens.join(",", prmValToken);
+
+						userAtrs += prm->getToken();
+						userAtrs += "=";
+						userAtrs += prmValToken;
+						userAtrs += ";";
+					}
+
+					if (userAtrs.isstring()) {
+						nodeDesc.addAttribute(Attrs::PluginAttr("user_attributes", userAtrs));
+					}
+				}
+			}
 		}
 	}
 
@@ -904,11 +1141,6 @@ int GeometryExporter::exportPacked(SOP_Node &sop, const GU_PrimPacked &prim, Plu
 
 int GeometryExporter::exportPrimitive(SOP_Node &sop, const GU_PrimPacked &prim, PluginDescList &pluginList)
 {
-	// vray proxy should load geometry as a single packed primitive
-	// may have to use custom packed primitive for that
-	// and create prim attibute "path" pointing to : op:<path to VRayProxy SOP>
-	// in order to be able to get query rest of the plugin settings
-	//
 	// packed primitives usually have a standart attribute "path"
 	// if exists it can eigther reference a file on disk or a sop node that created the paked primitive
 	// so we need to check for the attribute and if existing then either :
@@ -916,23 +1148,28 @@ int GeometryExporter::exportPrimitive(SOP_Node &sop, const GU_PrimPacked &prim, 
 	//                  interpret it as file path
 	//                  take geoemtry directly from packed GU_Detail
 	// otherwise take geoemtry directly from packed GU_Detail
+	//
+	// vray proxy loads geometry as a single packed primitive
+	// TODO: may have to use custom packed primitive for that
+	// and creates prim attibute "path" pointing to it: op:<path to VRayProxy SOP>
+	// in order to be able to query the plugin settings
 
 	int nPlugins = 0;
 
 	const GA_ROHandleS pathHndl(prim.getDetail().findAttribute(GA_ATTRIB_PRIMITIVE, "path"));
 	if (NOT(pathHndl.isValid())) {
 		// there is no path attribute =>
-		// take geometry taken directly from primitive's packed detail
+		// take geometry directly from primitive packed detail
 		GU_DetailHandleAutoReadLock gdl(prim.getPackedDetail());
 		if (gdl.isValid()) {
 			nPlugins = exportDetail(sop, gdl, pluginList);
 		}
 	}
 	else {
-		UT_StringRef path = pathHndl.get(prim.getMapOffset());
+		UT_StringHolder path = pathHndl.get(prim.getMapOffset());
 		if (NOT(path.isstring()) || NOT(path.length())) {
 			// there is no path attribute assigned =>
-			// take geometry taken directly from primitive's packed detail
+			// take geometry directly from primitive packed detail
 			GU_DetailHandleAutoReadLock gdl(prim.getPackedDetail());
 			if (gdl.isValid()) {
 				nPlugins = exportDetail(sop, gdl, pluginList);
@@ -941,8 +1178,8 @@ int GeometryExporter::exportPrimitive(SOP_Node &sop, const GU_PrimPacked &prim, 
 		else {
 			SOP_Node *sopref = OPgetDirector()->findSOPNode(path);
 			if (NOT(sopref)) {
-				// there is path attribute, but it is NOT holding a ref to SOP node =>
-				// interpret the string as filepath and export geometry as VRayProxy plugin
+				// there is path attribute, but it is NOT holding a ref to a SOP node =>
+				// interpret the string as filepath and export as VRayProxy plugin
 				// TODO: need to test - probably not working properly
 				Attrs::PluginDesc meshFileDesc(boost::str(Parm::FmtPrefixManual % "Geom" % std::to_string(path.hash())), "GeomMeshFile");
 				meshFileDesc.addAttribute(Attrs::PluginAttr("file", path));
@@ -956,8 +1193,8 @@ int GeometryExporter::exportPrimitive(SOP_Node &sop, const GU_PrimPacked &prim, 
 				SOP::VRayProxy *proxy = dynamic_cast< SOP::VRayProxy * >(sopref);
 				if (NOT(proxy)) {
 					// there is path attribute referencing an existing SOP, but it is NOT VRayProxy SOP =>
-					// take geometry from SOP's input detail if there is valid input else
-					// take geometry from primitive's packed detail
+					// take geometry from SOP's input detail if there is valid input
+					// else take geometry directly from primitive packed detail
 					OP_Node *inpnode = sopref->getInput(0);
 					SOP_Node *inpsop = nullptr;
 					if (inpnode && (inpsop = inpnode->castToSOPNode())) {
@@ -974,6 +1211,8 @@ int GeometryExporter::exportPrimitive(SOP_Node &sop, const GU_PrimPacked &prim, 
 					}
 				}
 				else {
+					// there is path attribute referencing a VRayProxy SOP =>
+					// export VRayProxy plugin
 					Attrs::PluginDesc proxyDesc;
 					OP::VRayNode::PluginResult res = proxy->asPluginDesc(proxyDesc, m_pluginExporter);
 

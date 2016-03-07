@@ -543,43 +543,45 @@ void VRayExporter::RtCallbackVop(OP_Node *caller, void *callee, OP_EventType typ
 		|| type == OP_INPUT_REWIRED)
 	{
 
-		SHOP_Node *shop_node = caller->getParent()->castToSHOPNode();
-		if (NOT(shop_node)) {
-			exporter.exportVop(caller);
-			return;
-		}
+		exporter.exportVop(caller, nullptr);
 
-		UT_String nodePath;
-		shop_node->getFullPath(nodePath);
-		std::cout << "---SHOP Node: " << nodePath.buffer() << std::endl;
+//		SHOP_Node *shop_node = caller->getParent()->castToSHOPNode();
+//		if (NOT(shop_node)) {
+//			exporter.exportVop(caller);
+//			return;
+//		}
 
-		std::unordered_map<int, OBJ_Node *> dependenObjList;
-		OP_NodeList dependentNodeList;
-		shop_node->getExistingOpDependents(dependentNodeList, true);
-		for (OP_Node *node : dependentNodeList) {
-			node->getFullPath(nodePath);
+//		UT_String nodePath;
+//		shop_node->getFullPath(nodePath);
+//		std::cout << "---SHOP Node: " << nodePath.buffer() << std::endl;
 
-			std::cout << "---" << nodePath.buffer() << std::endl;
+//		std::unordered_map<int, OBJ_Node *> dependenObjList;
+//		OP_NodeList dependentNodeList;
+//		shop_node->getExistingOpDependents(dependentNodeList, true);
+//		for (OP_Node *node : dependentNodeList) {
+//			node->getFullPath(nodePath);
 
-			OBJ_Node *obj_node = node->castToOBJNode();
-			if (NOT(obj_node)) {
-				obj_node = node->getParent()->castToOBJNode();
-			}
+//			std::cout << "---" << nodePath.buffer() << std::endl;
 
-			if (obj_node) {
-				dependenObjList.emplace(obj_node->getUniqueId(), obj_node);
-			}
-		}
+//			OBJ_Node *obj_node = node->castToOBJNode();
+//			if (NOT(obj_node)) {
+//				obj_node = node->getParent()->castToOBJNode();
+//			}
 
-		for (const auto &nodeEntry : dependenObjList) {
-			OBJ_Node *obj_node = nodeEntry.second;
-			ExportContext objContext(CT_OBJ, exporter, *obj_node);
-			SHOPExportContext mtlContext(exporter, *shop_node, objContext);
-			ECFnSHOPOverrides fnMtlOverrides(&mtlContext);
-			fnMtlOverrides.initOverrides();
+//			if (obj_node) {
+//				dependenObjList.emplace(obj_node->getUniqueId(), obj_node);
+//			}
+//		}
 
-			exporter.exportVop(caller, &mtlContext);
-		}
+//		for (const auto &nodeEntry : dependenObjList) {
+//			OBJ_Node *obj_node = nodeEntry.second;
+//			ExportContext objContext(CT_OBJ, exporter, *obj_node);
+//			SHOPExportContext mtlContext(exporter, *shop_node, objContext);
+//			ECFnSHOPOverrides fnMtlOverrides(&mtlContext);
+//			fnMtlOverrides.initOverrides();
+
+//			exporter.exportVop(caller, &mtlContext);
+//		}
 	}
 	else if (type == OP_NODE_PREDELETE) {
 		exporter.delOpCallback(caller, VRayExporter::RtCallbackVop);
@@ -633,18 +635,20 @@ VRay::Plugin VRayExporter::exportVop(OP_Node *op_node, ExportContext *parentCont
 			setAttrsFromOpNodeConnectedInputs(pluginDesc, vop_node, parentContext);
 
 			// handle VOP overrides if any
-			ECFnSHOPOverrides mtlContext(parentContext);
-			if (   mtlContext.isValid()
-				&& mtlContext.hasOverrides())
-			{
-				OBJ_Node *objNode = mtlContext.getObjectNode();
-				//TODO: need consistent naming for surface/displacement/other vops and their overrides
-				pluginDesc.pluginName = VRayExporter::getPluginName(vop_node, "", objNode->getName().toStdString());
+//			ECFnSHOPOverrides mtlContext(parentContext);
+//			if (   mtlContext.isValid()
+//				&& mtlContext.hasOverrides())
+//			{
+//				OBJ_Node *objNode = mtlContext.getObjectNode();
+//				//TODO: need consistent naming for surface/displacement/other vops and their overrides
+//				pluginDesc.pluginName = VRayExporter::getPluginName(vop_node, "", objNode->getName().toStdString());
 
-				if (mtlContext.hasOverrides(*vop_node)) {
-					setAttrsFromSHOPOverrides(pluginDesc, *vop_node, mtlContext);
-				}
-			}
+//				if (mtlContext.hasOverrides(*vop_node)) {
+//					setAttrsFromSHOPOverrides(pluginDesc, *vop_node, mtlContext);
+//				}
+//			}
+			setAttrsFromSHOPOverrides(pluginDesc, *vop_node);
+
 
 			setAttrsFromOpNodePrms(pluginDesc, vop_node);
 

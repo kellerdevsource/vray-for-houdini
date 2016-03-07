@@ -226,7 +226,7 @@ public:
 	VRay::Plugin                   exportConnectedVop(OP_Node *op_node, const UT_String &inputName, ExportContext *parentContext = nullptr);
 	void                           phxAddSimumation(VRay::Plugin sim);
 
-	void                           setAttrsFromSHOPOverrides(Attrs::PluginDesc &pluginDesc, VOP_Node &vopNode, ECFnSHOPOverrides &mtlContext);
+	void                           setAttrsFromSHOPOverrides(Attrs::PluginDesc &pluginDesc, VOP_Node &vopNode);
 
 private:
 	OP_Node                       *m_rop;
