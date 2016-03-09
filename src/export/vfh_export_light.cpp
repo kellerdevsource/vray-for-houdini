@@ -48,9 +48,6 @@ VRay::Plugin VRayExporter::exportLight(OBJ_Node *obj_node)
 	Attrs::PluginDesc pluginDesc;
 	pluginDesc.pluginName = VRayExporter::getPluginName(obj_node);
 
-	VRay::Transform tm = VRayExporter::getObjTransform(obj_node, m_context);
-	pluginDesc.addAttribute(Attrs::PluginAttr("transform", tm));
-
 	OP::VRayNode *vrayNode = dynamic_cast<OP::VRayNode*>(obj_light);
 	if (vrayNode) {
 		ExportContext expContext(CT_OBJ, *this, *obj_node);
@@ -66,6 +63,10 @@ VRay::Plugin VRayExporter::exportLight(OBJ_Node *obj_node)
 		{
 			setAttrsFromOpNodePrms(pluginDesc, obj_light);
 		}
+
+		bool isDomeLight = vrayNode->getVRayPluginID() == OBJ::getVRayPluginIDName(OBJ::VRayPluginID::LightDome);
+		VRay::Transform tm = VRayExporter::getObjTransform(obj_node, m_context, isDomeLight);
+		pluginDesc.addAttribute(Attrs::PluginAttr("transform", tm));
 
 	}
 	else {
@@ -111,6 +112,9 @@ VRay::Plugin VRayExporter::exportLight(OBJ_Node *obj_node)
 															   obj_light->evalFloat("light_color", 1, t),
 															   obj_light->evalFloat("light_color", 2, t)));
 		}
+
+		VRay::Transform tm = VRayExporter::getObjTransform(obj_node, m_context);
+		pluginDesc.addAttribute(Attrs::PluginAttr("transform", tm));
 	}
 
 	return exportPlugin(pluginDesc);
