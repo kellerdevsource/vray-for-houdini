@@ -318,31 +318,31 @@ void VRayExporter::setAttrsFromOpNodePrms(Attrs::PluginDesc &pluginDesc, OP_Node
 			const Parm::AttrDesc &attrDesc = aIt.second;
 
 			if (!(pluginDesc.contains(attrName) || attrDesc.custom_handling)) {
-				if (!attrDesc.linked_only) {
-					const std::string &parmName = prefix.empty()
-												  ? attrDesc.attr
-												  : boost::str(Parm::FmtPrefixManual % prefix % attrDesc.attr);
+				const std::string &parmName = prefix.empty()
+											  ? attrDesc.attr
+											  : boost::str(Parm::FmtPrefixManual % prefix % attrDesc.attr);
 
-					const PRM_Parm *parm = Parm::getParm(*opNode, parmName);
-					bool isTextureAttr = (   attrDesc.value.type == Parm::eTextureInt
-										|| attrDesc.value.type == Parm::eTextureFloat
-										|| attrDesc.value.type == Parm::eTextureColor);
+				const PRM_Parm *parm = Parm::getParm(*opNode, parmName);
+				bool isTextureAttr = (   attrDesc.value.type == Parm::eTextureInt
+									|| attrDesc.value.type == Parm::eTextureFloat
+									|| attrDesc.value.type == Parm::eTextureColor);
 
-					if ( isTextureAttr
-						&& parm
-						&& parm->getType().isStringType())
-					{
-						UT_String parmVal;
-						opNode->evalString(parmVal, parm->getToken(), 0, 0.0f);
-						OP_Node *tex_node = OPgetDirector()->findNode(parmVal.buffer());
-						if (tex_node) {
-							VRay::Plugin texPlugin = exportVop(tex_node);
-							if (texPlugin) {
-								pluginDesc.addAttribute(Attrs::PluginAttr(attrName, texPlugin));
-							}
+				if ( isTextureAttr
+					&& parm
+					&& parm->getType().isStringType())
+				{
+					UT_String parmVal;
+					opNode->evalString(parmVal, parm->getToken(), 0, 0.0f);
+					OP_Node *tex_node = OPgetDirector()->findNode(parmVal.buffer());
+					if (tex_node) {
+						VRay::Plugin texPlugin = exportVop(tex_node);
+						if (texPlugin) {
+							pluginDesc.addAttribute(Attrs::PluginAttr(attrName, texPlugin));
 						}
 					}
-					else if (attrDesc.value.type == Parm::eRamp) {
+				}
+				else if (!attrDesc.linked_only) {
+					if (attrDesc.value.type == Parm::eRamp) {
 						static StringSet rampColorAsPluginList;
 						if (rampColorAsPluginList.empty()) {
 							rampColorAsPluginList.insert("PhxShaderSim");
