@@ -83,7 +83,8 @@ static Parm::TabItemDesc RenderSettingsTabItemsDesc[] = {
 	{ "Color Mapping",  "SettingsColorMapping"     },
 	{ "Raycaster",      "SettingsRaycaster"        },
 	{ "Regions",        "SettingsRegionsGenerator" },
-	{ "RT",             "SettingsRTEngine"         }
+	{ "RT",             "SettingsRTEngine"         },
+	{ "Caustics",       "SettingsCaustics"         },
 };
 
 static PRM_Name          GiSettingsSwitcherName("VRayGiSettings");
