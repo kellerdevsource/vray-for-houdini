@@ -211,6 +211,38 @@ static bool AttrNeedWidget(const AttrDesc &attrDesc)
 
 static PRM_Template AttrDescAsPrmTemplate(const VRayPluginInfo &pluginInfo, const AttrDesc &attrDesc, const std::string &prefix)
 {
+	static struct PrmDefaultStorage {
+		typedef std::map<int, PRM_Default*> PrmDefaultMap;
+
+		PrmDefaultStorage() {}
+		~PrmDefaultStorage() {
+			for (auto &it : m_prmDefaultMap) {
+				delete it.second;
+			}
+		}
+
+		PRM_Default *getPrmDefault(int forValue) {
+			PRM_Default *defPrm = NULL;
+
+			PrmDefaultMap::const_iterator it = m_prmDefaultMap.find(forValue);
+			if (it != m_prmDefaultMap.end()) {
+				defPrm = it->second;
+			}
+			else {
+				defPrm = new PRM_Default();
+				defPrm->setOrdinal(forValue);
+				m_prmDefaultMap[forValue] = defPrm;
+			}
+
+			return defPrm;
+		}
+
+	private:
+		PrmDefaultMap m_prmDefaultMap;
+
+		VfhDisableCopy(PrmDefaultStorage);
+	} prmDefStorage;
+
 	// PRM_Name stores pointer to name so we have to store generated names
 	//
 	struct PrmNameInfo {
@@ -313,7 +345,7 @@ static PRM_Template AttrDescAsPrmTemplate(const VRayPluginInfo &pluginInfo, cons
 
 		PRM_ChoiceList *enumMenu = new PRM_ChoiceList(PRM_CHOICELIST_SINGLE, enumMenuItems);
 
-		tmpl = PRM_Template(PRM_ORD, 1, prmName.getPrm(), PRMzeroDefaults, enumMenu);
+		tmpl = PRM_Template(PRM_ORD, 1, prmName.getPrm(), prmDefStorage.getPrmDefault(attrDesc.value.defEnum), enumMenu);
 	}
 	else if (attrDesc.value.type == ParmType::eString) {
 		// TODO:
