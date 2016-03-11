@@ -165,6 +165,7 @@ def main(args):
 
     if sys.platform == 'linux':
         cmake.append('-DCMAKE_CXX_COMPILER=%s' % os.environ.get('CGR_CXX_COMPILER', "/usr/bin/g++-4.9.3"))
+        cmake.append('-DWITH_STATIC_LIBC=ON')
 
     cmake.append('-DCMAKE_BUILD_TYPE=%s' % _cgr_build_type)
     cmake.append('-DHOUDINI_VERSION=%s'       % os.environ['CGR_HOUDINI_VERSION'])
