@@ -22,9 +22,10 @@ def _getVRayRop():
 
     vray_node_types = hou.nodeType(hou.ropNodeTypeCategory(), "vray_renderer")
     vray_nodes = vray_node_types.instances()
-    sel_vray_nodes = [ i for i in vray_nodes if i.isSelected() ]
 
     if vray_nodes:
+        sel_vray_nodes = [i for i in vray_nodes if i.isSelected()]
+
         vray_rops = sel_vray_nodes if sel_vray_nodes else vray_nodes
 
         # Use first available
