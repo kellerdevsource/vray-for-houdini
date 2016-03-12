@@ -370,17 +370,28 @@ int VRayRendererNode::initSession(int interactive, int nframes, fpreal tstart, f
 
 		executePreRenderScript(tstart);
 
-		// Whether to re-create V-Ray renderer
-		const int reCreate = evalInt(parm_recreate_renderer.getToken(), 0, 0.0);
+		// Renderer mode (CPU / GPU)
+		const int rendererMode = interactive
+								 ? getRendererIprMode(*this)
+								 : getRendererMode(*this);
 
-		m_exporter.setIPR(!isBackground() && interactive);
+		// Interactive mode
+		const int wasRT = m_exporter.isIPR();
+		const int isRT  = (!isBackground() && interactive);
+
+		// Rendering device
+		const int wasGPU = m_exporter.isGPU();
+		const int isGPU  = (rendererMode > VRay::RendererOptions::RENDER_MODE_RT_CPU);
+
+		// Whether to re-create V-Ray renderer
+		const int reCreate = evalInt(parm_recreate_renderer.getToken(), 0, 0.0) ||
+							 (wasRT != isRT) |\
+							 (wasGPU != isGPU);
+
+		m_exporter.setIPR(isRT);
 
 		if (m_exporter.initRenderer(!isBackground(), reCreate)) {
 			m_exporter.initExporter(getFrameBufferType(*this), nframes, tstart, tend);
-
-			const int rendererMode = interactive
-									 ? getRendererIprMode(*this)
-									 : getRendererMode(*this);
 
 			m_exporter.setDRSettings();
 			m_exporter.setRendererMode(rendererMode);
