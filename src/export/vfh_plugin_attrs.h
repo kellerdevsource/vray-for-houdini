@@ -17,6 +17,8 @@
 namespace VRayForHoudini {
 namespace Attrs {
 
+const float RAD_TO_DEG = M_PI / 180.f;
+
 struct PluginAttr {
 	enum AttrType {
 		AttrTypeUnknown = 0,

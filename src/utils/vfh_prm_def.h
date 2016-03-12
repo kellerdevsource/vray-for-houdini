@@ -222,6 +222,7 @@ struct AttrDesc {
 	AttrDesc()
 		: custom_handling(false)
 		, linked_only(false)
+		, convert_to_radians(false)
 	{}
 
 	std::string  attr;
@@ -231,6 +232,7 @@ struct AttrDesc {
 	ParmDefValue value;
 	int          custom_handling;
 	int          linked_only;
+	int          convert_to_radians;
 
 	// Custom template
 	PRMTmplList  custom_template;

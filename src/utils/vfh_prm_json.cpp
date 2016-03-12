@@ -616,6 +616,9 @@ VRayPluginInfo* Parm::generatePluginInfo(const std::string &pluginID)
 					if (option == "LINKED_ONLY") {
 						attrDesc.linked_only = true;
 					}
+					else if (option == "EXPORT_AS_RADIANS") {
+						attrDesc.convert_to_radians = true;
+					}
 				}
 			}
 

@@ -213,6 +213,10 @@ void VRayExporter::setAttrValueFromOpNodePrm(Attrs::PluginDesc &pluginDesc, cons
 				 attrDesc.value.type == Parm::eTextureFloat) {
 			attr.paramType = Attrs::PluginAttr::AttrTypeFloat;
 			attr.paramValue.valFloat = (float)opNode.evalFloat(parmName.c_str(), 0, t);
+
+			if (attrDesc.convert_to_radians) {
+				attr.paramValue.valFloat *= Attrs::RAD_TO_DEG;
+			}
 		}
 		else if (attrDesc.value.type == Parm::eColor  ||
 				 attrDesc.value.type == Parm::eAColor ||
