@@ -14,6 +14,8 @@
 #include <SHOP/SHOP_Operator.h>
 #include <VOP/VOP_OperatorInfo.h>
 #include <VOP/VOP_Operator.h>
+#include <VOP/VOP_LanguageContextTypeList.h>
+
 
 using namespace VRayForHoudini;
 
@@ -39,8 +41,9 @@ bool VOP::VRayVOPContextOPFilter::allowOperatorAsChild(OP_Operator *op)
 }
 
 
-VOP::VRayMaterialBuilder::VRayMaterialBuilder(OP_Network *parent, const char *name, OP_Operator *entry, SHOP_TYPE shader_type):
-	SHOP_Node(parent, name, entry, shader_type)
+VOP::VRayMaterialBuilder::VRayMaterialBuilder(OP_Network *parent, const char *name, OP_Operator *entry, SHOP_TYPE shader_type)
+	: SHOP_Node(parent, name, entry, shader_type)
+	, m_codeGen(this, new VOP_LanguageContextTypeList(VOP_LANGUAGE_VEX, VOPconvertToContextType(VEX_SURFACE_CONTEXT)), 1, 1)
 {
 	setOperatorTable(getOperatorTable(VOP_TABLE_NAME));
 
@@ -53,6 +56,47 @@ VOP::VRayMaterialBuilder::VRayMaterialBuilder(OP_Network *parent, const char *na
 OP_ERROR VOP::VRayMaterialBuilder::cookMe(OP_Context &context)
 {
 	return error();
+}
+
+
+bool VOP::VRayMaterialBuilder::evalVariableValue(UT_String &value, int index, int thread)
+{
+	if (m_codeGen.getVariableString(index, value)) {
+		return true;
+	}
+
+	return SHOP_Node::evalVariableValue(value, index, thread);
+}
+
+
+bool VOP::VRayMaterialBuilder::hasVexShaderParameter(const char *parm_name)
+{
+	return m_codeGen.hasShaderParameter(parm_name);
+}
+
+void VOP::VRayMaterialBuilder::opChanged(OP_EventType reason, void *data)
+{
+	const int updateId = m_codeGen.beginUpdate();
+
+	SHOP_Node::opChanged(reason, data);
+
+	m_codeGen.ownerChanged(reason, data);
+	m_codeGen.endUpdate(updateId);
+}
+
+
+void VOP::VRayMaterialBuilder::finishedLoadingNetwork(bool is_child_call)
+{
+	m_codeGen.ownerFinishedLoadingNetwork();
+	SHOP_Node::finishedLoadingNetwork(is_child_call);
+}
+
+
+void VOP::VRayMaterialBuilder::addNode(OP_Node *node, int notify, int explicitly)
+{
+	m_codeGen.beforeAddNode(node);
+	SHOP_Node::addNode(node, notify, explicitly);
+	m_codeGen.afterAddNode(node);
 }
 
 

@@ -16,6 +16,7 @@
 #include <OP/OP_OperatorTable.h>
 #include <OP/OP_Network.h>
 #include <SHOP/SHOP_Node.h>
+#include <VOP/VOP_CodeGenerator.h>
 
 #include <unordered_set>
 
@@ -46,8 +47,14 @@ public:
 	virtual const char        *getChildType() const VRAY_OVERRIDE { return VOP_OPTYPE_NAME; }
 	virtual OP_OpTypeId        getChildTypeID() const VRAY_OVERRIDE { return VOP_OPTYPE_ID; }
 	virtual OP_OperatorFilter *getOperatorFilter() VRAY_OVERRIDE{ return &m_opFilter; }
-
 	virtual OP_ERROR           cookMe(OP_Context &context) VRAY_OVERRIDE;
+
+	virtual void               addNode(OP_Node *node, int notify, int explicitly) VRAY_OVERRIDE;
+	virtual VOP_CodeGenerator *getVopCodeGenerator() VRAY_OVERRIDE { return &m_codeGen; }
+	virtual bool               evalVariableValue(UT_String &value, int index, int thread) VRAY_OVERRIDE;
+	virtual bool               hasVexShaderParameter(const char *parm_name) VRAY_OVERRIDE;
+	virtual void               opChanged(OP_EventType reason, void *data) VRAY_OVERRIDE;
+	virtual void               finishedLoadingNetwork(bool is_child_call) VRAY_OVERRIDE;
 
 protected:
 	VRayMaterialBuilder(OP_Network *parent, const char *name, OP_Operator *entry, SHOP_TYPE shader_type=SHOP_VOP_MATERIAL);
@@ -55,6 +62,7 @@ protected:
 
 protected:
 	VRayVOPContextOPFilter m_opFilter;
+	VOP_CodeGenerator      m_codeGen;
 };
 
 
