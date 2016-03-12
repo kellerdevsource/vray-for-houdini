@@ -126,6 +126,8 @@ static PRM_Conditional   condition_DRDisabled("{ dr_enabled == 0 }");
 static PRM_Conditional   condition_DRHostDisabled("{ dr_enabled == 0 } { drhost#_enabled == 0 }");
 static PRM_Conditional   condition_DRHostPortDisabled("{ dr_enabled == 0 } { drhost#_enabled == 0 } { drhost#_usedefaultport == 1 }");
 
+static PRM_Name          parm_recreate_renderer("recreate_renderer", "Recreate Renderer");
+
 static PRM_Template      DRHostPrmTemplate[] = {
 	PRM_Template(PRM_TOGGLE_E, 1, &parm_DRHost_enabled, PRMoneDefaults,0,0,0,0,1,0,&condition_DRDisabled),
 	PRM_Template(PRM_STRING_E, 1, &parm_DRHost_address, &default_DRHost_address,0,0,0,0,1,0,&condition_DRHostDisabled),
@@ -147,6 +149,7 @@ static PRM_Template* getTemplates()
 		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_ORD, 1, &parm_render_ipr_mode, PRMzeroDefaults, &parm_render_ipr_mode_menu));
 		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_ORD, 1, &parm_render_export_mode, PRMzeroDefaults, &parm_render_export_mode_menu));
 		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_ORD, 1, &parm_render_vfb_mode, PRMzeroDefaults, &parm_render_vfb_mode_menu));
+		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_TOGGLE_E, 1, &parm_recreate_renderer, PRMzeroDefaults));
 
 		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_HEADING, 1, &parm_render_sep_export));
 		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_FILE_E, PRM_TYPE_DYNAMIC_PATH, 1, &parm_render_export_path, &parm_render_export_path_def));
@@ -368,7 +371,7 @@ int VRayRendererNode::initSession(int interactive, int nframes, fpreal tstart, f
 		executePreRenderScript(tstart);
 
 		// Whether to re-create V-Ray renderer
-		const int reCreate = true;
+		const int reCreate = evalInt(parm_recreate_renderer.getToken(), 0, 0.0);
 
 		m_exporter.setIPR(!isBackground() && interactive);
 
