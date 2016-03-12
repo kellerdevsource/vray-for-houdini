@@ -13,16 +13,17 @@ import hou
 
 def _createVRayRop():
     vrayNode = hou.node("/out").createNode("vray_renderer")
-    
+
     return vrayNode
-        
+
+
 def _getVRayRop():
     vrayROP = hou.node(hou.getenv("curVRayROP"))
-    
+
     vray_node_types = hou.nodeType(hou.ropNodeTypeCategory(), "vray_renderer")
     vray_nodes = vray_node_types.instances()
     sel_vray_nodes = [ i for i in vray_nodes if i.isSelected() ]
-    
+
     if len(sel_vray_nodes) > 0:
         vrayROP = sel_vray_nodes[0]
         hou.putenv("curVRayROP", vrayROP.path())
@@ -32,8 +33,7 @@ def _getVRayRop():
             hou.putenv("curVRayROP", vrayROP.path())
         else:
             vrayROP = hou.node(hou.getenv("curVRayROP"))
-    print "V-Ray Renderer Node: " + vrayROP.name()
-	
+
     return vrayROP
 
 
