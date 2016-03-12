@@ -24,8 +24,11 @@ def _getVRayRop():
     vray_nodes = vray_node_types.instances()
     sel_vray_nodes = [ i for i in vray_nodes if i.isSelected() ]
 
-    if len(sel_vray_nodes) > 0:
-        vrayROP = sel_vray_nodes[0]
+    if vray_nodes:
+        vray_rops = sel_vray_nodes if sel_vray_nodes else vray_nodes
+
+        # Use first available
+        vrayROP = vray_rops[0]
         hou.putenv("curVRayROP", vrayROP.path())
     else:
         if not vrayROP:
