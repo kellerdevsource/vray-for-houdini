@@ -12,9 +12,10 @@
 #include "vfh_defines.h"
 
 #include <SHOP/SHOP_Operator.h>
-#include <VOP/VOP_OperatorInfo.h>
 #include <VOP/VOP_Operator.h>
+#include <VOP/VOP_OperatorInfo.h>
 #include <VOP/VOP_LanguageContextTypeList.h>
+#include <VOP/VOP_ExportedParmsManager.h>
 
 
 using namespace VRayForHoudini;
@@ -97,6 +98,23 @@ void VOP::VRayMaterialBuilder::addNode(OP_Node *node, int notify, int explicitly
 	m_codeGen.beforeAddNode(node);
 	SHOP_Node::addNode(node, notify, explicitly);
 	m_codeGen.afterAddNode(node);
+}
+
+
+void VOP::VRayMaterialBuilder::ensureSpareParmsAreUpdatedSubclass()
+{
+	// Check if the spare parameter templates
+	// are out-of-date.
+	if (getVopCodeGenerator()
+		&& eventMicroNode(OP_SPAREPARM_MODIFIED)
+			.requiresUpdate(0.0))
+	{
+		// Call into the code generator to update
+		// the spare parameter templates.
+		getVopCodeGenerator()
+			->exportedParmsManager()
+			->updateOwnerSpareParmLayout();
+	}
 }
 
 
@@ -190,8 +208,8 @@ void VOP::MaterialContext::register_shop_operator(OP_OperatorTable *table)
 										  templates,
 										  0,
 										  0,
-										  nullptr,
-										  0,
+										  VOP_CodeGenerator::theLocalVariables,
+										  OP_FLAG_GENERATOR,
 										  SHOP_AUTOADD_NONE);
 
 	// Set icon
