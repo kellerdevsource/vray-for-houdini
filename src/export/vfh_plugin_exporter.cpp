@@ -155,21 +155,21 @@ VRayPluginRenderer::~VRayPluginRenderer()
 int VRayPluginRenderer::initRenderer(int hasUI, int reInit)
 {
 	if (VRayPluginRenderer::vrayInit) {
-		VRay::RendererOptions options;
-		options.keepRTRunning = true;
-		options.showFrameBuffer = hasUI;
-		options.noDR = true;
-
 		if (reInit) {
 			resetCallbacks();
 			freeMem();
 		}
 		else if (m_vray) {
-			m_vray->reset(options);
+			m_vray->reset();
 		}
 
 		if (!m_vray) {
 			try {
+				VRay::RendererOptions options;
+				options.keepRTRunning = true;
+				options.showFrameBuffer = hasUI;
+				options.noDR = true;
+
 				m_vray = new VRay::VRayRenderer(options);
 
 				m_vray->setOnDumpMessage(OnDumpMessage,       (void*)&m_callbacks.m_cbOnDumpMessage);
