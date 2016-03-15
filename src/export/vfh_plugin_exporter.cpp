@@ -158,6 +158,16 @@ VRayPluginRenderer::~VRayPluginRenderer()
 
 int VRayPluginRenderer::initRenderer(int hasUI, int reInit)
 {
+#ifdef VRAY_APPSDK_QT
+	// VFB will take colors from QApplication::palette(),
+	// but Houdini's real palette is not stored there for some reason.
+	QWidget *mainWidnow = RE_QtWindow::mainQtWindow();
+	if (mainWidnow) {
+		// Must be called before VRay::VRayRenderer(options)
+		QApplication::setPalette(mainWidnow->palette());
+	}
+#endif
+
 	if (VRayPluginRenderer::vrayInit) {
 		if (reInit) {
 			resetCallbacks();
@@ -172,7 +182,11 @@ int VRayPluginRenderer::initRenderer(int hasUI, int reInit)
 				VRay::RendererOptions options;
 				options.keepRTRunning = true;
 				options.showFrameBuffer = hasUI;
-				options.noDR = true;
+#if 0
+				options.useDefaultTheme = false;
+				// Use Maya buttons style
+				options.buttonsDrawStyle = 4;
+#endif
 
 				m_vray = new VRay::VRayRenderer(options);
 
@@ -186,12 +200,6 @@ int VRayPluginRenderer::initRenderer(int hasUI, int reInit)
 					m_vray->setOnBucketInit(OnBucketInit,         (void*)&m_callbacks.m_cbOnBucketInit);
 					m_vray->setOnBucketFailed(OnBucketFailed,     (void*)&m_callbacks.m_cbOnBucketFailed);
 					m_vray->setOnBucketReady(OnBucketReady,       (void*)&m_callbacks.m_cbOnBucketReady);
-
-					// VFB will take colors from QApplication::palette(),
-					// but Houdini's real palette is not stored there for some reason.
-#ifdef VRAY_APPSDK_QT
-					QApplication::setPalette(RE_QtWindow::mainQtWindow()->palette());
-#endif
 				}
 			}
 			catch (VRay::VRayException &e) {
@@ -223,15 +231,16 @@ void VRayPluginRenderer::setImageSize(const int w, const int h)
 void VRayPluginRenderer::showVFB(const bool show)
 {
 	if (m_vray) {
-		m_vray->vfb.setAlwaysOnTop(true);
-		m_vray->vfb.show(show, true);
 #ifdef VRAY_APPSDK_QT
 		QWidget *vfb = reinterpret_cast<QWidget*>(m_vray->vfb.getWindowHandle());
 		if (vfb) {
-			// Set window to be always on top of the parent
+			// This will make window float over the parent
 			vfb->setWindowFlags(Qt::Tool);
 		}
+#else
+		m_vray->vfb.setAlwaysOnTop(true);
 #endif
+		m_vray->vfb.show(show, true);
 	}
 }
 
