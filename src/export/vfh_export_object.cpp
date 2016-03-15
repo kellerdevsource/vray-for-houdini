@@ -420,13 +420,7 @@ VRay::Plugin VRayExporter::exportVRayClipper(OBJ_Node &clipperNode)
 	{
 		OBJ_Node *objNode = opNode->castToOBJNode();
 		if (objNode->getObjectType() == OBJ_GEOMETRY) {
-			if (objNode->getVisible()) {
-				Attrs::PluginDesc clipNodePluginDesc(VRayExporter::getPluginName(objNode), "Node");
-				clipNodePlugin = exportPlugin(clipNodePluginDesc);
-			}
-			else {
-				clipNodePlugin = exportObject(objNode);
-			}
+			clipNodePlugin = exportObject(objNode);
 		}
 	}
 

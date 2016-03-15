@@ -125,7 +125,6 @@ public:
 	std::string                  getVRayPluginID() const   { return "GeomStaticMesh"; }
 	std::string                  getVRayPluginName() const;
 	bool                         asPluginDesc(Attrs::PluginDesc &pluginDesc);
-	VRay::Plugin                 getVRayPlugin();
 
 private:
 	struct PrimOverride
@@ -307,21 +306,6 @@ bool PolyMeshExporter::asPluginDesc(Attrs::PluginDesc &pluginDesc)
 }
 
 
-VRay::Plugin PolyMeshExporter::getVRayPlugin()
-{
-	if (NOT(hasPolyGeometry())) {
-		return VRay::Plugin();
-	}
-
-	Attrs::PluginDesc pluginDesc;
-	if (NOT(asPluginDesc(pluginDesc))) {
-		return VRay::Plugin();
-	}
-
-	return m_pluginExporter.exportPlugin(pluginDesc);
-}
-
-
 VRay::VUtils::VectorRefList& PolyMeshExporter::getVertices()
 {
 	if (vertices.size() <= 0) {
@@ -431,7 +415,7 @@ int PolyMeshExporter::getMeshFaces(VRay::VUtils::IntRefList &faces, VRay::VUtils
 
 	faces = VRay::VUtils::IntRefList(nFaces*3);
 	edge_visibility = VRay::VUtils::IntRefList(nFaces/10 + (((nFaces%10) > 0)? 1 : 0));
-	std::memset(edge_visibility.get(), 0, edge_visibility.size() * sizeof(int));
+	std::memset(edge_visibility.get(), unsigned(-1), edge_visibility.size() * sizeof(int));
 
 	int faceVertIndex = 0;
 	int faceEdgeVisIndex = 0;
@@ -940,20 +924,24 @@ public:
 	GeometryExporter(OBJ_Geometry &node, VRayExporter &pluginExporter);
 	~GeometryExporter() { }
 
-	bool hasSubdivApplied() const;
-	int exportGeometry();
-	VRay::Plugin &getPluginAt(int idx) { return m_pluginList.at(idx); }
+	bool             hasSubdivApplied() const;
+	int              exportGeometry();
+	int              getNumPlugins() const { return m_pluginList.size(); }
+	VRay::Plugin&    getPluginAt(int idx) { return m_pluginList.at(idx); }
 
 private:
-	void cleanup();
-	int exportDetail(SOP_Node &sop, GU_DetailHandleAutoReadLock &gdl, PluginDescList &pluginList);
-	int exportPacked(SOP_Node &sop, const GU_PrimPacked &prim, PluginDescList &pluginList);
+	void             cleanup();
+	int              exportVRaySOP(SOP_Node &sop, PluginDescList &pluginList);
+	int              exportHair(SOP_Node &sop, GU_DetailHandleAutoReadLock &gdl, PluginDescList &pluginList);
+	int              exportDetail(SOP_Node &sop, GU_DetailHandleAutoReadLock &gdl, PluginDescList &pluginList);
+	int              exportPolyMesh(SOP_Node &sop, const GU_Detail &gdp, PluginDescList &pluginList);
 
-	uint getPrimPackedID(const GU_PrimPacked &prim);
-	int exportPrimPacked(SOP_Node &sop, const GU_PrimPacked &prim, PluginDescList &pluginList);
-	int exportAlembicRef(SOP_Node &sop, const GU_PrimPacked &prim, PluginDescList &pluginList);
-	int exportPackedDisk(SOP_Node &sop, const GU_PrimPacked &prim, PluginDescList &pluginList);
-	int exportPackedGeometry(SOP_Node &sop, const GU_PrimPacked &prim, PluginDescList &pluginList);
+	int              exportPacked(SOP_Node &sop, const GU_PrimPacked &prim, PluginDescList &pluginList);
+	uint             getPrimPackedID(const GU_PrimPacked &prim);
+	int              exportPrimPacked(SOP_Node &sop, const GU_PrimPacked &prim, PluginDescList &pluginList);
+	int              exportAlembicRef(SOP_Node &sop, const GU_PrimPacked &prim, PluginDescList &pluginList);
+	int              exportPackedDisk(SOP_Node &sop, const GU_PrimPacked &prim, PluginDescList &pluginList);
+	int              exportPackedGeometry(SOP_Node &sop, const GU_PrimPacked &prim, PluginDescList &pluginList);
 
 private:
 	OBJ_Geometry &m_objNode;
@@ -1040,12 +1028,26 @@ int GeometryExporter::exportGeometry()
 	}
 
 	uint detailHash = gdl.handle().hash();
-	exportDetail(*renderSOP, gdl, m_detailToPluginDesc[detailHash]);
+	const GU_Detail &gdp = *gdl.getGdp();
+
+	if (renderSOP->getOperator()->getName().startsWith("VRayNode")) {
+		exportVRaySOP(*renderSOP, m_detailToPluginDesc[detailHash]);
+	}
+	else {
+		GA_ROAttributeRef ref_guardhair(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, "guardhair"));
+		GA_ROAttributeRef ref_hairid(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, "hairid"));
+
+		if (ref_guardhair.isValid() && ref_hairid .isValid()) {
+			exportHair(*renderSOP, gdl, m_detailToPluginDesc[detailHash]);
+		}
+		else {
+			exportDetail(*renderSOP, gdl, m_detailToPluginDesc[detailHash]);
+		}
+	}
 
 	PluginDescList &pluginList = m_detailToPluginDesc.at(detailHash);
 	m_pluginList.reserve(pluginList.size());
 
-	VRay::Transform tm = VRayExporter::getObjTransform(&m_objNode, m_context);
 	SHOP_Node *shopNode = m_pluginExporter.getObjMaterial(&m_objNode, m_context.getTime());
 
 	int i = 0;
@@ -1055,6 +1057,24 @@ int GeometryExporter::exportGeometry()
 
 		Attrs::PluginAttr *attr = nullptr;
 
+		attr = nodeDesc.get("geometry");
+		if (attr) {
+			VRay::Plugin geomDispl = m_pluginExporter.exportDisplacement(&m_objNode, attr->paramValue.valPlugin);
+			if (geomDispl) {
+				attr->paramValue.valPlugin = geomDispl;
+			}
+		}
+
+		attr = nodeDesc.get("visible");
+		if (NOT(attr)) {
+			nodeDesc.addAttribute(Attrs::PluginAttr("visible", m_objNode.getVisible()));
+		}
+		else {
+			attr->paramValue.valInt = m_objNode.getVisible();
+		}
+
+		bool flipTm = (nodeDesc.pluginID == "GeomPlane")? true : false;
+		VRay::Transform tm = VRayExporter::getObjTransform(&m_objNode, m_context, flipTm);
 		attr = nodeDesc.get("transform");
 		if (NOT(attr)) {
 			nodeDesc.addAttribute(Attrs::PluginAttr("transform", tm));
@@ -1126,6 +1146,58 @@ int GeometryExporter::exportGeometry()
 }
 
 
+int GeometryExporter::exportVRaySOP(SOP_Node &sop, PluginDescList &pluginList)
+{
+	int nPlugins = 0;
+	SOP::NodeBase *vrayNode = UTverify_cast< SOP::NodeBase * >(&sop);
+
+	Attrs::PluginDesc geomDesc;
+	OP::VRayNode::PluginResult res = vrayNode->asPluginDesc(geomDesc, m_pluginExporter);
+
+	if (res == OP::VRayNode::PluginResultError) {
+		Log::getLog().error("Error creating plugin descripion for node: \"%s\" [%s]",
+					sop.getName().buffer(),
+					sop.getOperator()->getName().buffer());
+	}
+	else if (res == OP::VRayNode::PluginResultNA ||
+			 res == OP::VRayNode::PluginResultContinue)
+	{
+		m_pluginExporter.setAttrsFromOpNodePrms(geomDesc, &sop);
+	}
+
+	VRay::Plugin geom = m_pluginExporter.exportPlugin(geomDesc);
+
+	// add new node to our list of nodes
+	pluginList.push_back(Attrs::PluginDesc("", "Node"));
+	Attrs::PluginDesc &nodeDesc = pluginList.back();
+	nPlugins = 1;
+
+	// geometry
+	nodeDesc.addAttribute(Attrs::PluginAttr("geometry", geom));
+
+	return nPlugins;
+}
+
+
+int GeometryExporter::exportHair(SOP_Node &sop, GU_DetailHandleAutoReadLock &gdl, PluginDescList &pluginList)
+{
+	int nPlugins = 0;
+
+	VRay::Plugin geom = m_pluginExporter.exportGeomMayaHair(&sop, gdl.getGdp());
+	if (geom) {
+		// add new node to our list of nodes
+		pluginList.push_back(Attrs::PluginDesc("", "Node"));
+		Attrs::PluginDesc &nodeDesc = pluginList.back();
+		nPlugins = 1;
+
+		// geometry
+		nodeDesc.addAttribute(Attrs::PluginAttr("geometry", geom));
+	}
+
+	return nPlugins;
+}
+
+
 int GeometryExporter::exportDetail(SOP_Node &sop, GU_DetailHandleAutoReadLock &gdl, PluginDescList &pluginList)
 {
 //	TODO: verify nPlugins = ?
@@ -1144,15 +1216,27 @@ int GeometryExporter::exportDetail(SOP_Node &sop, GU_DetailHandleAutoReadLock &g
 	}
 
 	// polygonal geometry
+	nPlugins += exportPolyMesh(sop, gdp, pluginList);
+
+	return nPlugins;
+}
+
+
+int GeometryExporter::exportPolyMesh(SOP_Node &sop, const GU_Detail &gdp, PluginDescList &pluginList)
+{
+	int nPlugins = 0;
+
 	PolyMeshExporter polyMeshExporter(gdp, m_pluginExporter);
-	if (polyMeshExporter.hasPolyGeometry()) {
-		VRay::Plugin geom = polyMeshExporter.setSOPContext(&sop)
-											.setSubdivApplied(hasSubdivApplied())
-											.getVRayPlugin();
+	polyMeshExporter.setSOPContext(&sop)
+					.setSubdivApplied(hasSubdivApplied());
+
+	Attrs::PluginDesc geomDesc;
+	if (polyMeshExporter.asPluginDesc(geomDesc)) {
+		VRay::Plugin geom = m_pluginExporter.exportPlugin(geomDesc);
 
 		// add new node to our list of nodes
 		pluginList.push_back(Attrs::PluginDesc("", "Node"));
-		++nPlugins;
+		nPlugins = 1;
 
 		Attrs::PluginDesc &nodeDesc = pluginList.back();
 		// geoemtry
@@ -1481,21 +1565,23 @@ int GeometryExporter::exportPackedGeometry(SOP_Node &sop, const GU_PrimPacked &p
 VRay::Plugin VRayExporter::exportObject(OBJ_Node *obj_node)
 {
 	VRay::Plugin plugin;
-
 	if (NOT(obj_node)) {
 		return plugin;
 	}
 
-	OBJ_Geometry *obj_geo = obj_node->castToOBJGeometry();
-	if (NOT(obj_geo)) {
-		return plugin;
+	if (obj_node->getOperator()->getName().equal("VRayNodeVRayClipper")) {
+		plugin = exportVRayClipper(*obj_node);
 	}
+	else {
+		OBJ_Geometry *obj_geo = obj_node->castToOBJGeometry();
+		if (NOT(obj_geo)) {
+			return plugin;
+		}
 
-	GeometryExporter geoExporter(*obj_geo, *this);
-	int nPlugins = geoExporter.exportGeometry();
-
-	if (nPlugins > 0) {
-		plugin = geoExporter.getPluginAt(0);
+		GeometryExporter geoExporter(*obj_geo, *this);
+		if (geoExporter.exportGeometry() > 0) {
+			plugin = geoExporter.getPluginAt(0);
+		}
 	}
 
 	return plugin;
