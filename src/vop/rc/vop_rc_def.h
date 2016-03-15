@@ -13,7 +13,6 @@
 
 #include "vop_node_base.h"
 #include "vop_rc_container.h"
-#include "vop_rc_context.h"
 
 
 namespace VRayForHoudini {

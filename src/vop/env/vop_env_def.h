@@ -12,7 +12,6 @@
 #define VRAY_FOR_HOUDINI_VOP_NODE_ENVIRONMENT_DEF_H
 
 #include "vop_node_base.h"
-#include "vop_env_context.h"
 #include "vop_SettingsEnvironment.h"
 
 

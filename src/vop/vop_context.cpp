@@ -75,6 +75,7 @@ bool VOP::VRayMaterialBuilder::hasVexShaderParameter(const char *parm_name)
 	return m_codeGen.hasShaderParameter(parm_name);
 }
 
+
 void VOP::VRayMaterialBuilder::opChanged(OP_EventType reason, void *data)
 {
 	const int updateId = m_codeGen.beginUpdate();
@@ -118,89 +119,7 @@ void VOP::VRayMaterialBuilder::ensureSpareParmsAreUpdatedSubclass()
 }
 
 
-VOP::MaterialContext::MaterialContext(OP_Network *parent, const char *name, OP_Operator *entry):
-	OP_Network(parent, name, entry)
-{
-	setOperatorTable(getOperatorTable(VOP_TABLE_NAME));
-}
-
-
-const char* VOP::MaterialContext::getChildType() const
-{
-	return VOP_OPTYPE_NAME;
-}
-
-
-OP_OpTypeId VOP::MaterialContext::getChildTypeID() const
-{
-	return VOP_OPTYPE_ID;
-}
-
-
-const char *VOP::MaterialContext::getOpType() const
-{
-	return VOPNET_OPTYPE_NAME;
-}
-
-
-OP_OpTypeId VOP::MaterialContext::getOpTypeID() const
-{
-	return VOPNET_OPTYPE_ID;
-}
-
-
-OP_DataType VOP::MaterialContext::getCookedDataType() const
-{
-	return OP_NO_DATA;
-}
-
-
-int VOP::MaterialContext::saveCookedData(std::ostream &os, OP_Context &, int binary)
-{
-	return 0;
-}
-
-
-int VOP::MaterialContext::saveCookedData(const char *filename, OP_Context &)
-{
-	return 0;
-}
-
-
-OP_ERROR VOP::MaterialContext::cookMe(OP_Context &context)
-{
-	return error();
-}
-
-
-OP_ERROR VOP::MaterialContext::bypassMe(OP_Context &context, int &copied_input)
-{
-	return error();
-}
-
-
-const char *VOP::MaterialContext::getFileExtension(int binary) const
-{
-	return binary ? ".bhip" : ".hip";
-}
-
-
-void VOP::MaterialContext::register_operator(OP_OperatorTable *table)
-{
-	OP_Operator *op = new OP_Operator("vray_material_context",
-									  "V-Ray Material Context",
-									  VOP::MaterialContext::creator,
-									  templates,
-									  0);
-
-	// Set icon
-	op->setIconName("ROP_vray");
-
-	table->addOperator(op);
-}
-
-
-void VOP::MaterialContext::register_shop_operator(OP_OperatorTable *table)
+void VOP::VRayMaterialBuilder::register_shop_operator(OP_OperatorTable *table)
 {
 	SHOP_Operator *op = new SHOP_Operator("vray_material",
 										  "V-Ray Material",
@@ -217,3 +136,186 @@ void VOP::MaterialContext::register_shop_operator(OP_OperatorTable *table)
 
 	table->addOperator(op);
 }
+
+
+VOP::VRayVOPContext::VRayVOPContext(OP_Network *parent, const char *name, OP_Operator *entry):
+	OP_Network(parent, name, entry)
+	, m_codeGen(this, new VOP_LanguageContextTypeList(VOP_LANGUAGE_VEX, VOPconvertToContextType(VEX_CVEX_CONTEXT)), 1, 1)
+{
+	setOperatorTable(getOperatorTable(VOP_TABLE_NAME));
+}
+
+
+const char* VOP::VRayVOPContext::getChildType() const
+{
+	return VOP_OPTYPE_NAME;
+}
+
+
+OP_OpTypeId VOP::VRayVOPContext::getChildTypeID() const
+{
+	return VOP_OPTYPE_ID;
+}
+
+
+const char *VOP::VRayVOPContext::getOpType() const
+{
+	return VOPNET_OPTYPE_NAME;
+}
+
+
+OP_OpTypeId VOP::VRayVOPContext::getOpTypeID() const
+{
+	return VOPNET_OPTYPE_ID;
+}
+
+
+OP_DataType VOP::VRayVOPContext::getCookedDataType() const
+{
+	return OP_NO_DATA;
+}
+
+
+int VOP::VRayVOPContext::saveCookedData(std::ostream &os, OP_Context &, int binary)
+{
+	return 0;
+}
+
+
+int VOP::VRayVOPContext::saveCookedData(const char *filename, OP_Context &)
+{
+	return 0;
+}
+
+
+OP_ERROR VOP::VRayVOPContext::cookMe(OP_Context &context)
+{
+	return error();
+}
+
+
+OP_ERROR VOP::VRayVOPContext::bypassMe(OP_Context &context, int &copied_input)
+{
+	return error();
+}
+
+
+const char *VOP::VRayVOPContext::getFileExtension(int binary) const
+{
+	return binary ? ".bhip" : ".hip";
+}
+
+
+bool VOP::VRayVOPContext::evalVariableValue(UT_String &value, int index, int thread)
+{
+	if (m_codeGen.getVariableString(index, value)) {
+		return true;
+	}
+
+	return OP_Network::evalVariableValue(value, index, thread);
+}
+
+
+bool VOP::VRayVOPContext::hasVexShaderParameter(const char *parm_name)
+{
+	return m_codeGen.hasShaderParameter(parm_name);
+}
+
+
+void VOP::VRayVOPContext::opChanged(OP_EventType reason, void *data)
+{
+	const int updateId = m_codeGen.beginUpdate();
+
+	OP_Network::opChanged(reason, data);
+
+	m_codeGen.ownerChanged(reason, data);
+	m_codeGen.endUpdate(updateId);
+}
+
+
+void VOP::VRayVOPContext::finishedLoadingNetwork(bool is_child_call)
+{
+	m_codeGen.ownerFinishedLoadingNetwork();
+	OP_Network::finishedLoadingNetwork(is_child_call);
+}
+
+
+void VOP::VRayVOPContext::addNode(OP_Node *node, int notify, int explicitly)
+{
+	m_codeGen.beforeAddNode(node);
+	OP_Network::addNode(node, notify, explicitly);
+	m_codeGen.afterAddNode(node);
+}
+
+
+void VOP::VRayVOPContext::ensureSpareParmsAreUpdatedSubclass()
+{
+	// Check if the spare parameter templates
+	// are out-of-date.
+	if (getVopCodeGenerator()
+		&& eventMicroNode(OP_SPAREPARM_MODIFIED)
+			.requiresUpdate(0.0))
+	{
+		// Call into the code generator to update
+		// the spare parameter templates.
+		getVopCodeGenerator()
+			->exportedParmsManager()
+			->updateOwnerSpareParmLayout();
+	}
+}
+
+
+void VOP::VRayVOPContext::register_operator_vrayenvcontext(OP_OperatorTable *table)
+{
+	OP_Operator *op = new OP_Operator("vray_environment",
+									  "V-Ray Environment",
+									  VOP::VRayVOPContext::creator,
+									  templates,
+									  0,
+									  9999,
+									  VOP_CodeGenerator::theLocalVariables,
+									  OP_FLAG_GENERATOR
+									  );
+
+	// Set icon
+	op->setIconName("ROP_vray");
+
+	table->addOperator(op);
+}
+
+
+void VOP::VRayVOPContext::register_operator_vrayrccontext(OP_OperatorTable *table)
+{
+	OP_Operator *op = new OP_Operator("vray_render_channels",
+									  "V-Ray Render Channles",
+									  VOP::VRayVOPContext::creator,
+									  templates,
+									  0,
+									  9999,
+									  VOP_CodeGenerator::theLocalVariables,
+									  OP_FLAG_GENERATOR
+									  );
+
+	// Set icon
+	op->setIconName("ROP_vray");
+
+	table->addOperator(op);
+}
+
+
+void VOP::VRayVOPContext::register_operator(OP_OperatorTable *table)
+{
+	OP_Operator *op = new OP_Operator("vray_vopcontext",
+									  "V-Ray VOP Context",
+									  VOP::VRayVOPContext::creator,
+									  templates,
+									  0);
+
+	// Set icon
+	op->setIconName("ROP_vray");
+
+	table->addOperator(op);
+}
+
+
+

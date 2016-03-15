@@ -67,8 +67,8 @@ void newDriverOperator(OP_OperatorTable *table)
 
 	VRayRendererNode::register_operator(table);
 
-	VOP::RenderChannelsContext::register_operator(table);
-	VOP::EnvironmentContext::register_operator(table);
+	VOP::VRayVOPContext::register_operator_vrayrccontext(table);
+	VOP::VRayVOPContext::register_operator_vrayenvcontext(table);
 
 	UT_Exit::addExitCallback(unregister);
 }
@@ -108,7 +108,7 @@ void newObjectOperator(OP_OperatorTable *table)
 
 void newShopOperator(OP_OperatorTable *table)
 {
-	VOP::MaterialContext::register_shop_operator(table);
+	VOP::VRayMaterialBuilder::register_shop_operator(table);
 }
 
 

@@ -40,6 +40,7 @@ class VRayMaterialBuilder:
 		public SHOP_Node
 {
 public:
+	static void                register_shop_operator(OP_OperatorTable *table);
 	static OP_Node            *creator(OP_Network *parent, const char *name, OP_Operator *entry) { return new VRayMaterialBuilder(parent, name, entry); }
 
 public:
@@ -68,14 +69,19 @@ protected:
 };
 
 
-class MaterialContext:
+class VRayVOPContext:
 		public OP_Network
 {
 public:
-	static OP_Node            *creator(OP_Network *parent, const char *name, OP_Operator *entry) { return new MaterialContext(parent, name, entry); }
+	static void                register_operator_vrayenvcontext(OP_OperatorTable *table);
+	static void                register_operator_vrayrccontext(OP_OperatorTable *table);
+	static void                register_operator(OP_OperatorTable *table);
+	static OP_Node            *creator(OP_Network *parent, const char *name, OP_Operator *entry) { return new VRayVOPContext(parent, name, entry); }
 
+public:
 	virtual const char        *getChildType() const VRAY_OVERRIDE;
 	virtual OP_OpTypeId        getChildTypeID() const VRAY_OVERRIDE;
+	virtual OP_OperatorFilter *getOperatorFilter() VRAY_OVERRIDE { return &m_opFilter; }
 
 	virtual int                isNetwork() const VRAY_OVERRIDE { return true; }
 	virtual OP_OpTypeId        getOpTypeID() const VRAY_OVERRIDE;
@@ -88,15 +94,25 @@ public:
 	virtual OP_ERROR           bypassMe(OP_Context &context, int &copied_input) VRAY_OVERRIDE;
 	virtual const char        *getFileExtension(int binary) const VRAY_OVERRIDE;
 
-protected:
-	MaterialContext(OP_Network *parent, const char *name, OP_Operator *entry);
-	virtual                   ~MaterialContext() {}
+	virtual VOP_CodeGenerator *getVopCodeGenerator() VRAY_OVERRIDE { return &m_codeGen; }
+	virtual bool               evalVariableValue(UT_String &value, int index, int thread) VRAY_OVERRIDE;
+	virtual bool               hasVexShaderParameter(const char *parm_name) VRAY_OVERRIDE;
+	virtual void               opChanged(OP_EventType reason, void *data) VRAY_OVERRIDE;
 
-public:
-	static void                register_operator(OP_OperatorTable *table);
-	static void                register_shop_operator(OP_OperatorTable *table);
+protected:
+	VRayVOPContext(OP_Network *parent, const char *name, OP_Operator *entry);
+	virtual                   ~VRayVOPContext() {}
+
+	virtual void               addNode(OP_Node *node, int notify, int explicitly) VRAY_OVERRIDE;
+	virtual void               finishedLoadingNetwork(bool is_child_call) VRAY_OVERRIDE;
+	virtual void               ensureSpareParmsAreUpdatedSubclass() VRAY_OVERRIDE;
+
+protected:
+	VRayVOPContextOPFilter m_opFilter;
+	VOP_CodeGenerator      m_codeGen;
 
 };
+
 
 } // namespace VOP
 } // namespace VRayForHoudini
