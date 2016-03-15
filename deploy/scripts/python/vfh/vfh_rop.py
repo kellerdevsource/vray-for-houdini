@@ -11,7 +11,7 @@
 import hou
 
 def _validVrayRop(node):
-    if node != None:
+    if node:
         result = node.type().name() == 'vray_renderer'
     else:
         result = False
@@ -28,20 +28,16 @@ def _createVrayRop():
 def _getVrayRop():
     vrayRopPath = getattr(hou.session, 'curVrayRopPath', "")
     
-    # safety incase vrayRopPath gets overwritten with a different value type
-    if type(vrayRopPath) is not str:
-        vrayRopPath = ""
-    
     vrayRopType = hou.nodeType('Driver/vray_renderer')
     vrayRopNodes = vrayRopType.instances()
     vrayRopSelection = [i for i in vrayRopNodes if i.isSelected()]
     
-    if len(vrayRopSelection) > 0:
+    if vrayRopSelection:
         vrayRop = vrayRopSelection[0]
     else:
         vrayRop = hou.node(vrayRopPath)
         if not _validVrayRop(vrayRop):
-            if len(vrayRopNodes) > 0:
+            if vrayRopNodes:
                 vrayRop = vrayRopNodes[0]
             else:
                 vrayRop = _createVrayRop()
