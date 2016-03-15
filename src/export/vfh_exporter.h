@@ -111,9 +111,6 @@ public:
 		ExpExport,
 	};
 
-	typedef std::set<VRayExporter*> ExporterInstances;
-	static ExporterInstances        Instances;
-
 	VRayExporter(OP_Node *rop);
 	~VRayExporter();
 

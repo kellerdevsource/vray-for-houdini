@@ -94,6 +94,8 @@ struct AppSdkInit {
 	AppSdkInit()
 		: m_vrayInit(nullptr)
 	{
+		Log::getLog().debug("AppSdkInit()");
+
 		try {
 #ifdef __APPLE__
 			m_vrayInit = new VRay::VRayInit(false);
@@ -109,6 +111,7 @@ struct AppSdkInit {
 	}
 
 	~AppSdkInit() {
+		Log::getLog().debug("~AppSdkInit()");
 		FreePtr(m_vrayInit);
 	}
 

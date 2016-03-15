@@ -44,9 +44,6 @@
 using namespace VRayForHoudini;
 
 
-VRayExporter::ExporterInstances  VRayExporter::Instances;
-
-
 std::string VRayExporter::getPluginName(OP_Node *op_node, const std::string &prefix, const std::string &suffix)
 {
 	static boost::format FmtPlugin("%s@%s|%s|%s");
@@ -402,15 +399,13 @@ VRayExporter::VRayExporter(OP_Node *rop)
 	, m_isAnimation(false)
 	, m_error(ROP_CONTINUE_RENDER)
 {
-	VRayExporter::Instances.insert(this);
+	Log::getLog().debug("VRayExporter()");
 }
 
 
 VRayExporter::~VRayExporter()
 {
 	Log::getLog().debug("~VRayExporter()");
-
-	VRayExporter::Instances.erase(this);
 
 	resetOpCallbacks();
 }

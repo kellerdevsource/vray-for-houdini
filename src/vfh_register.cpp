@@ -45,13 +45,6 @@ using namespace VRayForHoudini;
 
 void unregister(void *)
 {
-	if (VRayExporter::Instances.size()) {
-		for (const auto &ptr : VRayExporter::Instances) {
-			delete ptr;
-		}
-		VRayExporter::Instances.clear();
-	}
-
 	Error::ErrorChaser &errChaser = Error::getErrorChaser();
 	errChaser.enable(false);
 }
