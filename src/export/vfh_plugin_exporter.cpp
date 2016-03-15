@@ -189,7 +189,9 @@ int VRayPluginRenderer::initRenderer(int hasUI, int reInit)
 
 					// VFB will take colors from QApplication::palette(),
 					// but Houdini's real palette is not stored there for some reason.
+#ifdef VRAY_APPSDK_QT
 					QApplication::setPalette(RE_QtWindow::mainQtWindow()->palette());
+#endif
 				}
 			}
 			catch (VRay::VRayException &e) {
@@ -197,11 +199,6 @@ int VRayPluginRenderer::initRenderer(int hasUI, int reInit)
 									e.what());
 				m_vray = nullptr;
 			}
-#if 0
-			if (m_vray) {
-				m_vray->setFrameBufferParentWindow(RE_QtWindow::mainQtWindow());
-			}
-#endif
 		}
 	}
 
@@ -211,13 +208,6 @@ int VRayPluginRenderer::initRenderer(int hasUI, int reInit)
 
 void VRayPluginRenderer::freeMem()
 {
-	if (m_vray) {
-		QWidget *vfb = reinterpret_cast<QWidget*>(m_vray->getFrameBufferWindowHandle());
-		if (vfb) {
-			vfb->setParent(nullptr);
-		}
-	}
-
 	FreePtr(m_vray);
 }
 
@@ -235,14 +225,13 @@ void VRayPluginRenderer::showVFB(const bool show)
 	if (m_vray) {
 		m_vray->vfb.setAlwaysOnTop(true);
 		m_vray->vfb.show(show, true);
-
-		QWidget *vfb = reinterpret_cast<QWidget*>(m_vray->getFrameBufferWindowHandle());
+#ifdef VRAY_APPSDK_QT
+		QWidget *vfb = reinterpret_cast<QWidget*>(m_vray->vfb.getWindowHandle());
 		if (vfb) {
-			vfb->setParent(RE_QtWindow::mainQtWindow());
-
 			// Set window to be always on top of the parent
 			vfb->setWindowFlags(Qt::Tool);
 		}
+#endif
 	}
 }
 
