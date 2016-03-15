@@ -415,7 +415,7 @@ int PolyMeshExporter::getMeshFaces(VRay::VUtils::IntRefList &faces, VRay::VUtils
 
 	faces = VRay::VUtils::IntRefList(nFaces*3);
 	edge_visibility = VRay::VUtils::IntRefList(nFaces/10 + (((nFaces%10) > 0)? 1 : 0));
-	std::memset(edge_visibility.get(), unsigned(-1), edge_visibility.size() * sizeof(int));
+	std::memset(edge_visibility.get(), 0, edge_visibility.size() * sizeof(int));
 
 	int faceVertIndex = 0;
 	int faceEdgeVisIndex = 0;
