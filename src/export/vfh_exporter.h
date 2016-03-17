@@ -246,6 +246,7 @@ public:
 	static void                    RtCallbackObjManager(OP_Node *caller, void *callee, OP_EventType type, void *data);
 	static void                    RtCallbackLight(OP_Node *caller, void *callee, OP_EventType type, void *data);
 	static void                    RtCallbackOBJGeometry(OP_Node *caller, void *callee, OP_EventType type, void *data);
+	static void                    RtCallbackSOPChanged(OP_Node *caller, void *callee, OP_EventType type, void *data);
 	static void                    RtCallbackView(OP_Node *caller, void *callee, OP_EventType type, void *data);
 	static void                    RtCallbackVop(OP_Node *caller, void *callee, OP_EventType type, void *data);
 	static void                    RtCallbackSurfaceShop(OP_Node *caller, void *callee, OP_EventType type, void *data);

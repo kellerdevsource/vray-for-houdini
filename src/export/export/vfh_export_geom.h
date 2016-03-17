@@ -34,14 +34,13 @@ public:
 	GeometryExporter(OBJ_Geometry &node, VRayExporter &pluginExporter);
 	~GeometryExporter() { }
 
-	bool             hasSubdivApplied() const;
-	int              exportGeometry();
-	int              exportNodes();
+	bool                 hasSubdivApplied() const;
+	void                 cleanup();
+	int                  exportGeometry();
 	int                  getNumPluginDesc() const;
 	Attrs::PluginDesc&   getPluginDescAt(int idx);
 
 private:
-	void             cleanup();
 	int              exportVRaySOP(SOP_Node &sop, PluginDescList &pluginList);
 	int              exportHair(SOP_Node &sop, GU_DetailHandleAutoReadLock &gdl, PluginDescList &pluginList);
 	int              exportDetail(SOP_Node &sop, GU_DetailHandleAutoReadLock &gdl, PluginDescList &pluginList);
@@ -59,7 +58,6 @@ private:
 	OP_Context   &m_context;
 	VRayExporter &m_pluginExporter;
 
-	// packed geometry detail
 	uint                 m_myDetailID;
 	DetailToPluginDesc   m_detailToPluginDesc;
 };
