@@ -67,12 +67,6 @@ VRay::Plugin VRayExporter::exportMaterial(SHOP_Node &shop_node, ExportContext &p
 		VOP::MaterialOutput *mtlOut = static_cast< VOP::MaterialOutput * >( mtlOutList(0) );
 		addOpCallback(mtlOut, VRayExporter::RtCallbackSurfaceShop);
 
-//		SHOPExportContext mtlContext(*this, shop_node, parentContext);
-//		ECFnSHOPOverrides fnSHOPOverrides(&mtlContext);
-//		if (fnSHOPOverrides.isValid()) {
-//			fnSHOPOverrides.initOverrides();
-//		}
-
 		if (mtlOut->error() < UT_ERROR_ABORT ) {
 			Log::getLog().info("Exporting material output \"%s\"...",
 							   mtlOut->getName().buffer());
@@ -84,19 +78,14 @@ VRay::Plugin VRayExporter::exportMaterial(SHOP_Node &shop_node, ExportContext &p
 				if (vopNode) {
 					switch (mtlOut->getInputType(idx)) {
 						case VOP_SURFACE_SHADER: {
-//							material = exportVop(vopNode, &mtlContext);
 							material = exportVop(vopNode);
 							break;
 						}
 						case VOP_TYPE_BSDF: {
-//							VRay::Plugin pluginBRDF = exportVop(vopNode, &mtlContext);
 							VRay::Plugin pluginBRDF = exportVop(vopNode);
 
 							// Wrap BRDF into MtlSingleBRDF for RT GPU to work properly
 							Attrs::PluginDesc mtlPluginDesc(VRayExporter::getPluginName(vopNode, "Mtl"), "MtlSingleBRDF");
-//							if (fnSHOPOverrides.hasOverrides()) {
-//								mtlPluginDesc.pluginName = VRayExporter::getPluginName(vopNode, "Mtl", fnSHOPOverrides.getObjectNode()->getName().toStdString());
-//							}
 							mtlPluginDesc.addAttribute(Attrs::PluginAttr("brdf", pluginBRDF));
 
 							material = exportPlugin(mtlPluginDesc);
@@ -111,9 +100,6 @@ VRay::Plugin VRayExporter::exportMaterial(SHOP_Node &shop_node, ExportContext &p
 						// Wrap material into MtlRenderStats to always have the same material name
 						// Used when rewiring materials when running interactive RT session
 						Attrs::PluginDesc pluginDesc(VRayExporter::getPluginName(&shop_node, "Mtl"), "MtlRenderStats");
-//						if (fnSHOPOverrides.hasOverrides()) {
-//							pluginDesc.pluginName = VRayExporter::getPluginName(&shop_node, "Mtl", fnSHOPOverrides.getObjectNode()->getName().toStdString());
-//						}
 
 						pluginDesc.addAttribute(Attrs::PluginAttr("base_mtl", material));
 						material = exportPlugin(pluginDesc);
@@ -230,106 +216,3 @@ void VRayExporter::setAttrsFromSHOPOverrides(Attrs::PluginDesc &pluginDesc, VOP_
 		}
 	}
 }
-
-
-//void VRayExporter::setAttrsFromSHOPOverrides(Attrs::PluginDesc &pluginDesc, VOP_Node &vopNode, ECFnSHOPOverrides &mtlContext)
-//{
-//	UT_ASSERT( mtlContext.isValid() );
-//	UT_ASSERT( mtlContext.hasOverrides() );
-//	UT_ASSERT( mtlContext.hasOverrides(vopNode) );
-
-//	const Parm::VRayPluginInfo *pluginInfo = Parm::GetVRayPluginInfo( pluginDesc.pluginID );
-//	if (!pluginInfo) {
-//		return;
-//	}
-
-//	MTLOverrideType overrideType = mtlContext.getOverrideType();
-//	// we have override
-//	for (const auto &aIt : pluginInfo->attributes) {
-//		const std::string    &attrName = aIt.first;
-//		const Parm::AttrDesc &attrDesc = aIt.second;
-
-//		int inpIdx = vopNode.getInputFromName(attrName.c_str());
-//		OP_Node *inpNode = vopNode.getInput(inpIdx);
-//		if (inpNode) {
-//			// if we have connected input for this attribute skip override
-//			// inputs take priority over everything else
-//			continue;
-//		}
-
-//		switch (overrideType) {
-//			case MTLO_OBJ:
-//			// MTLO_OBJ = override value is taken from a param on the corresponding object node
-//			{
-//				std::string overridingPrmName;
-//				if (mtlContext.getOverrideName(vopNode, attrName, overridingPrmName)) {
-
-//					if (attrDesc.value.type == Parm::eRamp) {
-//						Texture::exportRampAttribute(*this, pluginDesc, mtlContext.getObjectNode(),
-//													 /* Houdini ramp attr */ overridingPrmName,
-//													 /* V-Ray attr: colors */ attrDesc.value.defRamp.colors,
-//													 /* V-Ray attr: pos    */ attrDesc.value.defRamp.positions,
-//													 /* V-Ray attr: interp */ attrDesc.value.defRamp.interpolations,
-//													 /* As color list not plugin */ false);
-//						pluginDesc.addAttribute(Attrs::PluginAttr(attrName, Attrs::PluginAttr::AttrTypeIgnore));
-//					}
-//					else {
-//						setAttrValueFromOpNodePrm(pluginDesc, attrDesc, *mtlContext.getObjectNode(), overridingPrmName);
-//					}
-//				}
-//				break;
-//			}
-//			case MTLO_GEO:
-//			// MTLO_GEO = override value is taken from a map channel on the geometry
-//			{
-//				std::string overridingChName;
-//				if (mtlContext.getOverrideName(vopNode, attrName, overridingChName))
-//				{
-//					OBJ_Node *objNode = mtlContext.getObjectNode();
-//					switch (attrDesc.value.type) {
-//						case Parm::eTextureInt:
-//						{
-//							Attrs::PluginDesc mtlOverrideDesc;
-//							mtlOverrideDesc.pluginName = VRayExporter::getPluginName(&vopNode, attrName, objNode->getName().toStdString());
-//							mtlOverrideDesc.pluginID = "TexUserScalar";
-//							mtlOverrideDesc.addAttribute(Attrs::PluginAttr("user_attribute", overridingChName));
-//							VRay::Plugin mtlOverridePlg = exportPlugin(mtlOverrideDesc);
-//							pluginDesc.addAttribute(Attrs::PluginAttr(attrName, mtlOverridePlg, "scalar"));
-
-//							break;
-//						}
-//						case Parm::eTextureFloat:
-//						{
-//							Attrs::PluginDesc mtlOverrideDesc;
-//							mtlOverrideDesc.pluginName = VRayExporter::getPluginName(&vopNode, attrName, objNode->getName().toStdString());
-//							mtlOverrideDesc.pluginID = "TexUserScalar";
-//							mtlOverrideDesc.addAttribute(Attrs::PluginAttr("user_attribute", overridingChName));
-//							VRay::Plugin mtlOverridePlg = exportPlugin(mtlOverrideDesc);
-//							pluginDesc.addAttribute(Attrs::PluginAttr(attrName, mtlOverridePlg, "scalar"));
-
-//							break;
-//						}
-//						case Parm::eTextureColor:
-//						{
-//							Attrs::PluginDesc mtlOverrideDesc;
-//							mtlOverrideDesc.pluginName = VRayExporter::getPluginName(&vopNode, attrName, objNode->getName().toStdString());
-//							mtlOverrideDesc.pluginID = "TexUserColor";
-//							mtlOverrideDesc.addAttribute(Attrs::PluginAttr("user_attribute", overridingChName));
-//							VRay::Plugin mtlOverridePlg = exportPlugin(mtlOverrideDesc);
-//							pluginDesc.addAttribute(Attrs::PluginAttr(attrName, mtlOverridePlg, "color"));
-
-//							break;
-//						}
-//						default:
-//						// ignore other types for now
-//							;
-//					}
-
-//				}
-//				break;
-//			}
-//			default:
-//				;
-//		}
-//	}
-//}

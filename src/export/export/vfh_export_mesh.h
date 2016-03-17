@@ -98,9 +98,6 @@ struct SHOPHasher
 };
 
 
-typedef std::unordered_set< UT_String , SHOPHasher > SHOPList;
-
-
 class PolyMeshExporter
 {
 public:
@@ -128,8 +125,6 @@ public:
 	VRay::VUtils::IntRefList&    getEdgeVisibility();
 	VRay::VUtils::IntRefList&    getFaceMtlIDs();
 	MapChannels&                 getMapChannels();
-
-	int                          getSHOPList(SHOPList &shopList) const;
 
 	std::string                  getVRayPluginType() const { return "GEOMETRY"; }
 	std::string                  getVRayPluginID() const   { return "GeomStaticMesh"; }

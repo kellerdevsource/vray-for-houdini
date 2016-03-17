@@ -29,6 +29,42 @@ enum GEO_PrimPackedType
 };
 
 
+typedef std::unordered_set< UT_String , SHOPHasher > SHOPList;
+
+
+int getSHOPList(const GU_Detail &gdp, SHOPList &shopList)
+{
+	GA_ROHandleS mtlpath(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GEO_STD_ATTRIB_MATERIAL));
+	if (mtlpath.isInvalid()) {
+		return 0;
+	}
+
+	int shopCnt = 0;
+	for (GA_Iterator jt(gdp.getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
+		const GEO_Primitive *prim = gdp.getGEOPrimitive(*jt);
+
+		switch (prim->getTypeId().get()) {
+			case GEO_PRIMPOLYSOUP:
+			case GEO_PRIMPOLY:
+			{
+				UT_String shoppath(mtlpath.get(*jt), false);
+				if (   OPgetDirector()->findSHOPNode(shoppath)
+					&& NOT(shopList.count(shoppath)) )
+				{
+					shopList.insert(shoppath);
+					++shopCnt;
+				}
+			}
+			default:
+				;
+		}
+	}
+
+	return shopCnt;
+}
+
+
+
 GeometryExporter::GeometryExporter(OBJ_Geometry &node, VRayExporter &pluginExporter):
 	m_objNode(node),
 	m_context(pluginExporter.getContext()),
@@ -332,7 +368,7 @@ int GeometryExporter::exportPolyMesh(SOP_Node &sop, const GU_Detail &gdp, Plugin
 
 		// material
 		SHOPList shopList;
-		int nSHOPs = polyMeshExporter.getSHOPList(shopList);
+		int nSHOPs = getSHOPList(gdp, shopList);
 		if (nSHOPs > 0) {
 			ExportContext objContext(CT_OBJ, m_pluginExporter, m_objNode);
 

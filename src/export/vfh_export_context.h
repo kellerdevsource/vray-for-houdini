@@ -69,29 +69,6 @@ enum MTLOverrideType {
 };
 
 
-class SHOPExportContext : public ExportContext
-{
-	friend class ECFnSHOPOverrides;
-public:
-	SHOPExportContext(VRayExporter &exporter, SHOP_Node &shopNode, ExportContext &parentContext);
-	~SHOPExportContext() { }
-
-private:
-	typedef std::unordered_map< std::string, std::string > OverrideMap;
-	typedef std::unordered_map< int, OverrideMap >         VOPOverrideMap;
-
-	/// type of the mtl overrides for current context (object, shop), if any
-	/// MTLO_NONE = no mtl overrides
-	/// MTLO_OBJ = mtl overrides specified on the object node
-	/// MTLO_GEO = per primitive mtl overrides stored as map channels on the geometry
-	MTLOverrideType m_overrideType;
-	/// table mapping <shop parm name> to <overriding (object parm name/map channel name)>
-	OverrideMap m_shopOverrrides;
-	/// table mapping <vop unique node id> to < table mapping <vop parm name> to <overriding shop parm name> >
-	VOPOverrideMap m_vopOverrides;
-};
-
-
 class ECFnOBJNode
 {
 public:
@@ -104,33 +81,6 @@ public:
 private:
 	ExportContext *m_context;
 };
-
-
-class ECFnSHOPOverrides
-{
-public:
-	ECFnSHOPOverrides(ExportContext *ctx);
-	~ECFnSHOPOverrides()
-	{ }
-
-	bool             isValid() const;
-
-	void             initOverrides();
-	SHOP_Node*       getTargetNode() const;
-	OBJ_Node*        getObjectNode() const;
-	bool             hasOverrides() const;
-	bool             hasOverrides(VOP_Node &vopNode) const;
-	MTLOverrideType  getOverrideType() const;
-	bool             getOverrideName(VOP_Node &vopNode, const std::string &prmName, std::string &o_overrideName) const;
-
-private:
-	void initVOPOverrides();
-	void initSHOPOverrides();
-
-private:
-	SHOPExportContext *m_context;
-};
-
 
 }
 

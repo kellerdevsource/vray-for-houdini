@@ -65,38 +65,6 @@ bool PolyMeshExporter::hasPolyGeometry() const
 }
 
 
-int PolyMeshExporter::getSHOPList(SHOPList &shopList) const
-{
-	GA_ROHandleS mtlpath(m_gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GEO_STD_ATTRIB_MATERIAL));
-	if (mtlpath.isInvalid()) {
-		return 0;
-	}
-
-	int shopCnt = 0;
-	for (GA_Iterator jt(m_gdp.getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
-		const GEO_Primitive *prim = m_gdp.getGEOPrimitive(*jt);
-
-		switch (prim->getTypeId().get()) {
-			case GEO_PRIMPOLYSOUP:
-			case GEO_PRIMPOLY:
-			{
-				UT_String shoppath(mtlpath.get(*jt), false);
-				if (   OPgetDirector()->findSHOPNode(shoppath)
-					&& NOT(shopList.count(shoppath)) )
-				{
-					shopList.insert(shoppath);
-					++shopCnt;
-				}
-			}
-			default:
-				;
-		}
-	}
-
-	return shopCnt;
-}
-
-
 std::string PolyMeshExporter::getVRayPluginName() const
 {
 	std::string pluginName = boost::str(Parm::FmtPrefixManual % "Geom" % std::to_string(m_gdp.getUniqueId()));
