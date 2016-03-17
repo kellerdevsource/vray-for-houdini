@@ -13,6 +13,7 @@
 #include "vfh_includes.h"
 #include "vfh_class_utils.h"
 #include "vfh_prm_json.h"
+#include "vfh_export_geom.h"
 
 #include <SOP/SOP_Node.h>
 
@@ -229,13 +230,15 @@ OP::VRayNode::PluginResult LightNodeBase< VRayPluginID::LightMesh >::asPluginDes
 		if (op_node) {
 			OBJ_Node *obj_node = op_node->castToOBJNode();
 			if (obj_node) {
-				SOP_Node *sop_node = obj_node->getRenderSopPtr();
-				GeomExportParams expParams;
-				expParams.exportMtlIds = false;
-				expParams.uvWeldThreshold = 0;
-				VRay::Plugin geometry = exporter.exportNodeData(sop_node, expParams);
-				if (geometry) {
-					pluginDesc.addAttribute(Attrs::PluginAttr("geometry", geometry));
+				OBJ_Geometry * obj_geom = obj_node->castToOBJGeometry();
+				if (obj_geom) {
+					GeometryExporter geoExporter(*obj_geom, exporter);
+					if (geoExporter.exportGeometry() > 0) {
+						Attrs::PluginAttr *attr = geoExporter.getPluginDescAt(0).get("geometry");
+						if (attr) {
+							pluginDesc.addAttribute(Attrs::PluginAttr("geometry", attr->paramValue.valPlugin));
+						}
+					}
 				}
 				else {
 					Log::getLog().error("Geometry node export failed!");

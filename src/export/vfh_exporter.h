@@ -34,9 +34,6 @@
 namespace VRayForHoudini {
 
 
-typedef VUtils::HashMap<int> SHOPToID;
-
-
 enum VRayLightType {
 	VRayLightOmni      = 0,
 	VRayLightRectangle = 2,
@@ -47,19 +44,6 @@ enum VRayLightType {
 #else
 	VRayLightSun       = 8,
 #endif
-};
-
-
-struct GeomExportParams
-{
-	GeomExportParams():
-		uvWeldThreshold(1e-6f),
-		exportMtlIds(true)
-	{}
-
-	float uvWeldThreshold;
-	int exportMtlIds;
-	SHOPToID shopToID;
 };
 
 
@@ -141,14 +125,11 @@ public:
 	void                           exportFrame(fpreal time);
 	void                           exportEnd();
 
-	void                           exportGeomStaticMeshDesc(const GU_Detail &gdp, GeomExportParams &expParams, Attrs::PluginDesc &geomPluginDesc);
-	VRay::Plugin                   exportGeomStaticMesh(SOP_Node &sop_node, const GU_Detail &gdp, GeomExportParams &expParams);
 	void                           exportGeomMayaHairGeom(SOP_Node *sop_node, const GU_Detail *gdp, Attrs::PluginDesc &pluginDesc);
 	VRay::Plugin                   exportGeomMayaHair(SOP_Node *sop_node, const GU_Detail *gdp);
 
 	VRay::Plugin                   exportObject(OBJ_Node *obj_node);
-	VRay::Plugin                   exportNode(OBJ_Node *obj_node, VRay::Plugin material, VRay::Plugin geometry);
-	VRay::Plugin                   exportNodeData(SOP_Node *sop_node, GeomExportParams &expParams);
+	VRay::Plugin                   exportVRayClipper(OBJ_Node &clipperNode);
 	VRay::Plugin                   exportParticles(OBJ_Node *dop_network);
 
 	void                           exportDisplacementDesc(OBJ_Node *obj_node, Attrs::PluginDesc &pluginDesc);
@@ -158,7 +139,6 @@ public:
 	VRay::Plugin                   exportMaterial(SHOP_Node &shop_node, ExportContext &parentContext);
 	VRay::Plugin                   exportDefaultMaterial();
 
-	VRay::Plugin                   exportVRayClipper(OBJ_Node &clipperNode);
 
 #ifdef CGR_HAS_VRAYSCENE
 	VRay::Plugin                   exportVRayScene(OBJ_Node *obj_node, SOP_Node *geom_node);
@@ -265,8 +245,7 @@ public:
 
 	static void                    RtCallbackObjManager(OP_Node *caller, void *callee, OP_EventType type, void *data);
 	static void                    RtCallbackLight(OP_Node *caller, void *callee, OP_EventType type, void *data);
-	static void                    RtCallbackNode(OP_Node *caller, void *callee, OP_EventType type, void *data);
-	static void                    RtCallbackNodeData(OP_Node *caller, void *callee, OP_EventType type, void *data);
+	static void                    RtCallbackOBJGeometry(OP_Node *caller, void *callee, OP_EventType type, void *data);
 	static void                    RtCallbackView(OP_Node *caller, void *callee, OP_EventType type, void *data);
 	static void                    RtCallbackVop(OP_Node *caller, void *callee, OP_EventType type, void *data);
 	static void                    RtCallbackSurfaceShop(OP_Node *caller, void *callee, OP_EventType type, void *data);

@@ -14,6 +14,7 @@
 
 #include "vfh_exporter.h"
 #include "vfh_prm_templates.h"
+#include "vfh_export_geom.h"
 
 #include <SHOP/SHOP_Node.h>
 #include <PRM/PRM_Parm.h>
@@ -43,102 +44,61 @@ SHOP_Node *VRayExporter::getObjMaterial(OBJ_Node *obj_node, fpreal t)
 }
 
 
-int isSmoothed(OBJ_Node &obj_node)
-{
-	bool res = false;
-	bool hasDispl = Parm::isParmExist(obj_node, "vray_use_displ") && obj_node.evalInt("vray_use_displ", 0, 0.0);
-	if (hasDispl) {
-		const int displType = obj_node.evalInt("vray_displ_type", 0, 0.0);
-		switch (displType) {
-			// from shopnet
-			case 0:
-			{
-				UT_String shopPath;
-				obj_node.evalString(shopPath, "vray_displshoppath", 0, 0.0);
-				SHOP_Node *shop_node = OPgetDirector()->findSHOPNode(shopPath.buffer());
-				if (shop_node) {
-					OP_Node *op_node = VRayExporter::FindChildNodeByType(shop_node, "vray_material_output");
-					if (   op_node
-						&& op_node->error() < UT_ERROR_ABORT)
-					{
-						const int idx = op_node->getInputFromName("Geometry");
-						VOP::NodeBase *input = dynamic_cast<VOP::NodeBase*>(op_node->getInput(idx));
-						if (   input
-							&& input->getVRayPluginID() == "GeomStaticSmoothedMesh")
-						{
-							res = true;
-						}
-					}
-				}
-				break;
-			}
-			case 2:
-			{
-				res = true;
-			}
-			default:
-				break;
-		}
-	}
-	return res;
-}
+//void VRayExporter::RtCallbackNode(OP_Node *caller, void *callee, OP_EventType type, void *data)
+//{
+//	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
+//	OBJ_Node *obj_node = caller->castToOBJNode();
+
+//	Log::getLog().debug("RtCallbackNode: %s from \"%s\"", OPeventToString(type), obj_node->getName().buffer());
+
+//	switch (type) {
+//		case OP_PARM_CHANGED:
+//		{
+//			VRay::Plugin mtl;
+//			const PRM_Parm *objPrm = Parm::getParm(*caller, reinterpret_cast<long>(data));
+//			if (objPrm) {
+//				SHOP_Node *shop_node = exporter.getObjMaterial(obj_node);
+//				if (shop_node) {
+//					if (boost::equals(objPrm->getToken(), "shop_materialpath")) {
+//						ExportContext expContext(CT_OBJ, exporter, *obj_node);
+//						mtl = exporter.exportMaterial(*shop_node, expContext);
+//						if (!mtl) {
+//							mtl = exporter.exportDefaultMaterial();
+//						}
+//					}
+//					else {
+//						PRM_Parm *shopPrm = shop_node->getParmList()->getParmPtr(objPrm->getToken());
+
+//						if (shopPrm && (objPrm->getType() == shopPrm->getType())) {
+//							ExportContext expContext(CT_OBJ, exporter, *obj_node);
+//							mtl = exporter.exportMaterial(*shop_node, expContext);
+//						}
+//					}
+
+//				}
+//				exporter.exportNode(obj_node, mtl, VRay::Plugin());
+//			}
+//		}
+//		case OP_INPUT_CHANGED:
+//		case OP_INPUT_REWIRED:
+//		case OP_FLAG_CHANGED:
+//		{
+//			exporter.exportNode(obj_node, VRay::Plugin(), VRay::Plugin());
+//			break;
+//		}
+//		case OP_NODE_PREDELETE:
+//		{
+//			exporter.delOpCallbacks(caller);
+//			exporter.removePlugin(obj_node);
+//			break;
+//		}
+//		default:
+//			break;
+//	}
+//}
 
 
-void VRayExporter::RtCallbackNode(OP_Node *caller, void *callee, OP_EventType type, void *data)
-{
-	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
-	OBJ_Node *obj_node = caller->castToOBJNode();
-
-	Log::getLog().debug("RtCallbackNode: %s from \"%s\"", OPeventToString(type), obj_node->getName().buffer());
-
-	switch (type) {
-		case OP_PARM_CHANGED:
-		{
-			VRay::Plugin mtl;
-			const PRM_Parm *objPrm = Parm::getParm(*caller, reinterpret_cast<long>(data));
-			if (objPrm) {
-				SHOP_Node *shop_node = exporter.getObjMaterial(obj_node);
-				if (shop_node) {
-					if (boost::equals(objPrm->getToken(), "shop_materialpath")) {
-						ExportContext expContext(CT_OBJ, exporter, *obj_node);
-						mtl = exporter.exportMaterial(*shop_node, expContext);
-						if (!mtl) {
-							mtl = exporter.exportDefaultMaterial();
-						}
-					}
-					else {
-						PRM_Parm *shopPrm = shop_node->getParmList()->getParmPtr(objPrm->getToken());
-
-						if (shopPrm && (objPrm->getType() == shopPrm->getType())) {
-							ExportContext expContext(CT_OBJ, exporter, *obj_node);
-							mtl = exporter.exportMaterial(*shop_node, expContext);
-						}
-					}
-
-				}
-				exporter.exportNode(obj_node, mtl, VRay::Plugin());
-			}
-		}
-		case OP_INPUT_CHANGED:
-		case OP_INPUT_REWIRED:
-		case OP_FLAG_CHANGED:
-		{
-			exporter.exportNode(obj_node, VRay::Plugin(), VRay::Plugin());
-			break;
-		}
-		case OP_NODE_PREDELETE:
-		{
-			exporter.delOpCallbacks(caller);
-			exporter.removePlugin(obj_node);
-			break;
-		}
-		default:
-			break;
-	}
-}
-
-
-void VRayExporter::RtCallbackNodeData(OP_Node *caller, void *callee, OP_EventType type, void *data)
+void VRayExporter::RtCallbackOBJGeometry(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
 	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
 
@@ -150,13 +110,11 @@ void VRayExporter::RtCallbackNodeData(OP_Node *caller, void *callee, OP_EventTyp
 		type == OP_FLAG_CHANGED ||
 		type == OP_INPUT_REWIRED)
 	{
-		OP_Network *parent = caller->getParent();
-		if (parent) {
-			OBJ_Node *obj_node = parent->castToOBJNode();
-			if (obj_node) {
-				exporter.exportObject(obj_node);
-			}
+		OBJ_Node *obj_node = caller->castToOBJNode();
+		if (obj_node) {
+			exporter.exportObject(obj_node);
 		}
+
 	}
 	else if (type == OP_NODE_PREDELETE) {
 		exporter.delOpCallbacks(caller);
@@ -192,111 +150,111 @@ void VRayExporter::RtCallbackVRayClipper(OP_Node *caller, void *callee, OP_Event
 }
 
 
-VRay::Plugin VRayExporter::exportNode(OBJ_Node *obj_node, VRay::Plugin material, VRay::Plugin geometry)
-{
-	VRay::Plugin nodePlugin;
+//VRay::Plugin VRayExporter::exportNode(OBJ_Node *obj_node, VRay::Plugin material, VRay::Plugin geometry)
+//{
+//	VRay::Plugin nodePlugin;
 
-	if (obj_node) {
-		SOP_Node *geomNode = obj_node->getRenderSopPtr();
-		if (geomNode) {
-			addOpCallback(obj_node, VRayExporter::RtCallbackNode);
+//	if (obj_node) {
+//		SOP_Node *geomNode = obj_node->getRenderSopPtr();
+//		if (geomNode) {
+//			addOpCallback(obj_node, VRayExporter::RtCallbackNode);
 
-			OP_Operator     *geomOp     = geomNode->getOperator();
-			const UT_String &geomOpName = geomOp->getName();
+//			OP_Operator     *geomOp     = geomNode->getOperator();
+//			const UT_String &geomOpName = geomOp->getName();
 
-			bool flipTm = false;
-			if (geomOpName.equal("VRayNodeGeomPlane")) {
-				flipTm = true;
-			}
+//			bool flipTm = false;
+//			if (geomOpName.equal("VRayNodeGeomPlane")) {
+//				flipTm = true;
+//			}
 
-			Attrs::PluginDesc pluginDesc(VRayExporter::getPluginName(obj_node), "Node");
-			if (geometry) {
-				pluginDesc.addAttribute(Attrs::PluginAttr("geometry", geometry));
-			}
-			if (material) {
-				pluginDesc.addAttribute(Attrs::PluginAttr("material", material));
-			}
+//			Attrs::PluginDesc pluginDesc(VRayExporter::getPluginName(obj_node), "Node");
+//			if (geometry) {
+//				pluginDesc.addAttribute(Attrs::PluginAttr("geometry", geometry));
+//			}
+//			if (material) {
+//				pluginDesc.addAttribute(Attrs::PluginAttr("material", material));
+//			}
 
-			pluginDesc.addAttribute(Attrs::PluginAttr("transform",
-													  VRayExporter::getObjTransform(obj_node, m_context, flipTm)));
+//			pluginDesc.addAttribute(Attrs::PluginAttr("transform",
+//													  VRayExporter::getObjTransform(obj_node, m_context, flipTm)));
 
-			pluginDesc.addAttribute(Attrs::PluginAttr("visible",
-													  obj_node->getVisible()));
+//			pluginDesc.addAttribute(Attrs::PluginAttr("visible",
+//													  obj_node->getVisible()));
 
-			nodePlugin = exportPlugin(pluginDesc);
-		}
-	}
+//			nodePlugin = exportPlugin(pluginDesc);
+//		}
+//	}
 
-	return nodePlugin;
-}
+//	return nodePlugin;
+//}
 
 
-VRay::Plugin VRayExporter::exportNodeData(SOP_Node *geom_node, GeomExportParams &expParams)
-{
-	VRay::Plugin geom;
-	if (geom_node && isNodeAnimated(geom_node)) {
-		addOpCallback(geom_node, VRayExporter::RtCallbackNodeData);
+//VRay::Plugin VRayExporter::exportNodeData(SOP_Node *geom_node, GeomExportParams &expParams)
+//{
+//	VRay::Plugin geom;
+//	if (geom_node && isNodeAnimated(geom_node)) {
+//		addOpCallback(geom_node, VRayExporter::RtCallbackNodeData);
 
-		OP_Operator     *geomOp     = geom_node->getOperator();
-		const UT_String &geomOpName = geomOp->getName();
+//		OP_Operator     *geomOp     = geom_node->getOperator();
+//		const UT_String &geomOpName = geomOp->getName();
 
-		Attrs::PluginDesc geomPluginDesc;
+//		Attrs::PluginDesc geomPluginDesc;
 
-		if (geomOpName.startsWith("VRayNode")) {
-			SOP::NodeBase *vrayNode = static_cast<SOP::NodeBase*>(geom_node);
+//		if (geomOpName.startsWith("VRayNode")) {
+//			SOP::NodeBase *vrayNode = static_cast<SOP::NodeBase*>(geom_node);
 
-			OP_Node *op_node = static_cast<OP_Node*>(geom_node);
+//			OP_Node *op_node = static_cast<OP_Node*>(geom_node);
 
-			ExportContext objContext(CT_OBJ, *this, *geom_node->getParent());
-			OP::VRayNode::PluginResult res = vrayNode->asPluginDesc(geomPluginDesc, *this, &objContext);
-			if (res == OP::VRayNode::PluginResultError) {
-				Log::getLog().error("Error creating plugin descripion for node: \"%s\" [%s]",
-							op_node->getName().buffer(),
-							geomOpName.buffer());
-			}
-			else if (res == OP::VRayNode::PluginResultNA ||
-					 res == OP::VRayNode::PluginResultContinue)
-			{
-				setAttrsFromOpNodePrms(geomPluginDesc, op_node);
-			}
+//			ExportContext objContext(CT_OBJ, *this, *geom_node->getParent());
+//			OP::VRayNode::PluginResult res = vrayNode->asPluginDesc(geomPluginDesc, *this, &objContext);
+//			if (res == OP::VRayNode::PluginResultError) {
+//				Log::getLog().error("Error creating plugin descripion for node: \"%s\" [%s]",
+//							op_node->getName().buffer(),
+//							geomOpName.buffer());
+//			}
+//			else if (res == OP::VRayNode::PluginResultNA ||
+//					 res == OP::VRayNode::PluginResultContinue)
+//			{
+//				setAttrsFromOpNodePrms(geomPluginDesc, op_node);
+//			}
 
-			geom = exportPlugin(geomPluginDesc);
-		}
-#if 0
-		else if (geomOpName.equal("dopio")) {
-			geom = exportParticles(obj_node);
-		}
-#endif
-		else {
-			GU_DetailHandleAutoReadLock gdl(geom_node->getCookedGeoHandle(m_context));
-			const GU_Detail *gdp = gdl.getGdp();
+//			geom = exportPlugin(geomPluginDesc);
+//		}
+//#if 0
+//		else if (geomOpName.equal("dopio")) {
+//			geom = exportParticles(obj_node);
+//		}
+//#endif
+//		else {
+//			GU_DetailHandleAutoReadLock gdl(geom_node->getCookedGeoHandle(m_context));
+//			const GU_Detail *gdp = gdl.getGdp();
 
-			// NOTE: Could happen, for example, with file node when file is
-			// missing
-			if (NOT(gdp)) {
-				Log::getLog().error("Incorrect geometry detail!");
-			}
-			else {
-				// NOTE: Find the correct way to detect fur...
-				//
-				GA_ROAttributeRef ref_guardhair(gdp->findAttribute(GA_ATTRIB_PRIMITIVE, "guardhair"));
-				const GA_ROHandleI hnd_guardhair(ref_guardhair.getAttribute());
+//			// NOTE: Could happen, for example, with file node when file is
+//			// missing
+//			if (NOT(gdp)) {
+//				Log::getLog().error("Incorrect geometry detail!");
+//			}
+//			else {
+//				// NOTE: Find the correct way to detect fur...
+//				//
+//				GA_ROAttributeRef ref_guardhair(gdp->findAttribute(GA_ATTRIB_PRIMITIVE, "guardhair"));
+//				const GA_ROHandleI hnd_guardhair(ref_guardhair.getAttribute());
 
-				GA_ROAttributeRef ref_hairid(gdp->findAttribute(GA_ATTRIB_PRIMITIVE, "hairid"));
-				const GA_ROHandleI hnd_hairid(ref_hairid.getAttribute());
+//				GA_ROAttributeRef ref_hairid(gdp->findAttribute(GA_ATTRIB_PRIMITIVE, "hairid"));
+//				const GA_ROHandleI hnd_hairid(ref_hairid.getAttribute());
 
-				if (hnd_guardhair.isValid() && hnd_hairid .isValid()) {
-					geom = exportGeomMayaHair(geom_node, gdp);
-				}
-				else {
-					geom = exportGeomStaticMesh(*geom_node, *gdp, expParams);
-				}
-			}
-		}
-	}
+//				if (hnd_guardhair.isValid() && hnd_hairid .isValid()) {
+//					geom = exportGeomMayaHair(geom_node, gdp);
+//				}
+//				else {
+//					geom = exportGeomStaticMesh(*geom_node, *gdp, expParams);
+//				}
+//			}
+//		}
+//	}
 
-	return geom;
-}
+//	return geom;
+//}
 
 
 //VRay::Plugin VRayExporter::exportObject(OBJ_Node *obj_node)
@@ -399,6 +357,52 @@ VRay::Plugin VRayExporter::exportNodeData(SOP_Node *geom_node, GeomExportParams 
 
 //	return obj_plugin;
 //}
+
+
+VRay::Plugin VRayExporter::exportObject(OBJ_Node *obj_node)
+{
+	VRay::Plugin plugin;
+	if (NOT(obj_node)) {
+		return plugin;
+	}
+
+	SOP_Node *geom_node = obj_node->getRenderSopPtr();
+	if (!geom_node) {
+		Log::getLog().error("OBJ \"%s\": Render SOP is not found!",
+					obj_node->getName().buffer());
+	}
+	else {
+		Log::getLog().info("  Render SOP: %s:\"%s\"",
+				   geom_node->getOperator()->getName().buffer(),
+				   obj_node->getName().buffer());
+
+		if (obj_node->getOperator()->getName().equal("VRayNodeVRayClipper")) {
+			plugin = exportVRayClipper(*obj_node);
+		}
+		else if (obj_node->getOperator()->getName().equal("VRayNodeVRayScene")) {
+#ifdef CGR_HAS_VRAYSCENE
+			plugin = exportVRayScene(obj_node, geom_node);
+#endif
+		}
+		else {
+			OBJ_Geometry *obj_geo = obj_node->castToOBJGeometry();
+			if (obj_geo) {
+				addOpCallback(obj_geo, VRayExporter::RtCallbackOBJGeometry);
+
+				GeometryExporter geoExporter(*obj_geo, *this);
+				int nPlugins = geoExporter.exportGeometry();
+				for (int i = 0; i < nPlugins; ++i) {
+					VRay::Plugin nodePlugin = exportPlugin(geoExporter.getPluginDescAt(i));
+					if (NOT(plugin)) {
+						plugin = nodePlugin;
+					}
+				}
+			}
+		}
+	}
+
+	return plugin;
+}
 
 
 VRay::Plugin VRayExporter::exportVRayClipper(OBJ_Node &clipperNode)
