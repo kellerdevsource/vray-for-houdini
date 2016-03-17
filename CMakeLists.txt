@@ -16,5 +16,17 @@ project(vray_for_houdini)
 
 include(CTest)
 
-add_subdirectory(src)
-add_subdirectory(test)
+option(WITH_VRAY_FOR_HOUDINI "Build V-Ray For Houdini plugin" ON)
+if(WITH_VRAY_FOR_HOUDINI)
+	add_subdirectory(src)
+endif()
+
+option(WITH_TESTS "Run tests" OFF)
+if(WITH_TESTS)
+	add_subdirectory(test)
+endif()
+
+option(WITH_TEST_APP "Build AppSDK test applications" OFF)
+if(WITH_TEST_APP)
+	add_subdirectory(test/api)
+endif()
