@@ -19,7 +19,7 @@
 using namespace VRayForHoudini;
 
 
-bool PolyMeshExporter::isPrimPoly(GA_Primitive &prim)
+bool MeshExporter::isPrimPoly(GA_Primitive &prim)
 {
 	return (
 			   prim.getTypeId() == GEO_PRIMPOLY
@@ -28,7 +28,7 @@ bool PolyMeshExporter::isPrimPoly(GA_Primitive &prim)
 }
 
 
-bool PolyMeshExporter::getDataFromAttribute(const GA_Attribute *attr, VRay::VUtils::VectorRefList &data)
+bool MeshExporter::getDataFromAttribute(const GA_Attribute *attr, VRay::VUtils::VectorRefList &data)
 {
 	GA_ROAttributeRef attrRef(attr);
 	if (attrRef.isInvalid()) {
@@ -45,7 +45,7 @@ bool PolyMeshExporter::getDataFromAttribute(const GA_Attribute *attr, VRay::VUti
 }
 
 
-PolyMeshExporter::PolyMeshExporter(const GU_Detail &gdp, VRayExporter &pluginExporter):
+MeshExporter::MeshExporter(const GU_Detail &gdp, VRayExporter &pluginExporter):
 	m_gdp(gdp),
 	m_context(pluginExporter.getContext()),
 	m_pluginExporter(pluginExporter),
@@ -56,7 +56,7 @@ PolyMeshExporter::PolyMeshExporter(const GU_Detail &gdp, VRayExporter &pluginExp
 { }
 
 
-bool PolyMeshExporter::hasPolyGeometry() const
+bool MeshExporter::hasPolyGeometry() const
 {
 	return (
 			   m_gdp.containsPrimitiveType(GEO_PRIMPOLY)
@@ -65,14 +65,46 @@ bool PolyMeshExporter::hasPolyGeometry() const
 }
 
 
-std::string PolyMeshExporter::getVRayPluginName() const
+int MeshExporter::getSHOPList(SHOPList &shopList) const
+{
+	GA_ROHandleS mtlpath(m_gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GEO_STD_ATTRIB_MATERIAL));
+	if (mtlpath.isInvalid()) {
+		return 0;
+	}
+
+	int shopCnt = 0;
+	for (GA_Iterator jt(m_gdp.getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
+		const GEO_Primitive *prim = m_gdp.getGEOPrimitive(*jt);
+
+		switch (prim->getTypeId().get()) {
+			case GEO_PRIMPOLYSOUP:
+			case GEO_PRIMPOLY:
+			{
+				UT_String shoppath(mtlpath.get(*jt), false);
+				if (   OPgetDirector()->findSHOPNode(shoppath)
+					&& NOT(shopList.count(shoppath)) )
+				{
+					shopList.insert(shoppath);
+					++shopCnt;
+				}
+			}
+			default:
+				;
+		}
+	}
+
+	return shopCnt;
+}
+
+
+std::string MeshExporter::getVRayPluginName() const
 {
 	std::string pluginName = boost::str(Parm::FmtPrefixManual % "Geom" % std::to_string(m_gdp.getUniqueId()));
 	return (m_sopNode)? m_pluginExporter.getPluginName(m_sopNode, pluginName) : pluginName;
 }
 
 
-bool PolyMeshExporter::asPluginDesc(Attrs::PluginDesc &pluginDesc)
+bool MeshExporter::asPluginDesc(Attrs::PluginDesc &pluginDesc)
 {
 	if (NOT(hasPolyGeometry())) {
 		return false;
@@ -127,7 +159,7 @@ bool PolyMeshExporter::asPluginDesc(Attrs::PluginDesc &pluginDesc)
 }
 
 
-VRay::VUtils::VectorRefList& PolyMeshExporter::getVertices()
+VRay::VUtils::VectorRefList& MeshExporter::getVertices()
 {
 	if (vertices.size() <= 0) {
 		getDataFromAttribute(m_gdp.findAttribute(GA_ATTRIB_POINT, GEO_STD_ATTRIB_POSITION), vertices);
@@ -138,7 +170,7 @@ VRay::VUtils::VectorRefList& PolyMeshExporter::getVertices()
 }
 
 
-VRay::VUtils::VectorRefList& PolyMeshExporter::getNormals()
+VRay::VUtils::VectorRefList& MeshExporter::getNormals()
 {
 	if (normals.size() <= 0) {
 		getDataFromAttribute(m_gdp.findAttribute(GA_ATTRIB_POINT, GEO_STD_ATTRIB_NORMAL), normals);
@@ -149,7 +181,7 @@ VRay::VUtils::VectorRefList& PolyMeshExporter::getNormals()
 }
 
 
-VRay::VUtils::IntRefList& PolyMeshExporter::getFaces()
+VRay::VUtils::IntRefList& MeshExporter::getFaces()
 {
 	if (faces.size() <= 0) {
 		numFaces = getMeshFaces(faces, edge_visibility);
@@ -159,7 +191,7 @@ VRay::VUtils::IntRefList& PolyMeshExporter::getFaces()
 }
 
 
-VRay::VUtils::IntRefList& PolyMeshExporter::getEdgeVisibility()
+VRay::VUtils::IntRefList& MeshExporter::getEdgeVisibility()
 {
 	if (edge_visibility.size() <= 0) {
 		numFaces = getMeshFaces(faces, edge_visibility);
@@ -169,7 +201,7 @@ VRay::VUtils::IntRefList& PolyMeshExporter::getEdgeVisibility()
 }
 
 
-VRay::VUtils::IntRefList& PolyMeshExporter::getFaceMtlIDs()
+VRay::VUtils::IntRefList& MeshExporter::getFaceMtlIDs()
 {
 	if (face_mtlIDs.size() <= 0) {
 		numMtlIDs = getMtlIds(face_mtlIDs);
@@ -179,7 +211,7 @@ VRay::VUtils::IntRefList& PolyMeshExporter::getFaceMtlIDs()
 	return face_mtlIDs;
 }
 
-MapChannels& PolyMeshExporter::getMapChannels()
+MapChannels& MeshExporter::getMapChannels()
 {
 	if (map_channels_data.size() <= 0) {
 		int nMapChannels = 0;
@@ -193,7 +225,7 @@ MapChannels& PolyMeshExporter::getMapChannels()
 }
 
 
-GA_Size PolyMeshExporter::countFaces() const
+GA_Size MeshExporter::countFaces() const
 {
 	GA_Size nFaces = 0;
 	for (GA_Iterator jt(m_gdp.getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
@@ -222,7 +254,7 @@ GA_Size PolyMeshExporter::countFaces() const
 }
 
 
-int PolyMeshExporter::getMeshFaces(VRay::VUtils::IntRefList &faces, VRay::VUtils::IntRefList &edge_visibility)
+int MeshExporter::getMeshFaces(VRay::VUtils::IntRefList &faces, VRay::VUtils::IntRefList &edge_visibility)
 {
 	int nFaces = getNumFaces();
 	if (nFaces <= 0) {
@@ -302,7 +334,7 @@ int PolyMeshExporter::getMeshFaces(VRay::VUtils::IntRefList &faces, VRay::VUtils
 }
 
 
-int PolyMeshExporter::getMtlIds(VRay::VUtils::IntRefList &face_mtlIDs)
+int MeshExporter::getMtlIds(VRay::VUtils::IntRefList &face_mtlIDs)
 {
 	GA_ROHandleS mtlpath(m_gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GEO_STD_ATTRIB_MATERIAL));
 	if (mtlpath.isInvalid()) {
@@ -367,7 +399,7 @@ int PolyMeshExporter::getMtlIds(VRay::VUtils::IntRefList &face_mtlIDs)
 //   - Override attribute with texture id map (using TexMultiID)
 
 
-int PolyMeshExporter::getPerPrimMtlOverrides(std::unordered_set< std::string > &o_mapChannelOverrides, std::vector< PrimOverride > &o_primOverrides) const
+int MeshExporter::getPerPrimMtlOverrides(std::unordered_set< std::string > &o_mapChannelOverrides, std::vector< PrimOverride > &o_primOverrides) const
 {
 	const GA_ROHandleS materialPathHndl(m_gdp.findStringTuple(GA_ATTRIB_PRIMITIVE, "shop_materialpath"));
 	const GA_ROHandleS materialOverrideHndl(m_gdp.findStringTuple(GA_ATTRIB_PRIMITIVE, "material_override"));
@@ -457,7 +489,7 @@ int PolyMeshExporter::getPerPrimMtlOverrides(std::unordered_set< std::string > &
 }
 
 
-int PolyMeshExporter::getMtlOverrides(MapChannels &mapChannels)
+int MeshExporter::getMtlOverrides(MapChannels &mapChannels)
 {
 	int nMapChannels = 0;
 
@@ -539,7 +571,7 @@ int PolyMeshExporter::getMtlOverrides(MapChannels &mapChannels)
 }
 
 
-int PolyMeshExporter::getPointAttrs(MapChannels &mapChannels)
+int MeshExporter::getPointAttrs(MapChannels &mapChannels)
 {
 	// add all vector3 point attributes to map_channels_data
 	GA_AttributeFilter float3Filter = GA_AttributeFilter::selectAnd(
@@ -577,7 +609,7 @@ int PolyMeshExporter::getPointAttrs(MapChannels &mapChannels)
 }
 
 
-int PolyMeshExporter::getVertexAttrs(MapChannels &mapChannels)
+int MeshExporter::getVertexAttrs(MapChannels &mapChannels)
 {
 	// add all vector3 vertex attributes to map_channels_data
 	GA_AttributeFilter float3Filter = GA_AttributeFilter::selectAnd(
@@ -608,7 +640,7 @@ int PolyMeshExporter::getVertexAttrs(MapChannels &mapChannels)
 }
 
 
-void PolyMeshExporter::getVertexAttrAsMapChannel(const GA_Attribute &attr, MapChannel &mapChannel)
+void MeshExporter::getVertexAttrAsMapChannel(const GA_Attribute &attr, MapChannel &mapChannel)
 {
 	mapChannel.name = attr.getName();
 	Log::getLog().info("  Found map channel: %s",

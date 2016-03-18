@@ -21,6 +21,15 @@
 using namespace VRayForHoudini;
 
 
+
+// traverse through all primitives
+// polygonal primitives should be exported as single GeomStaticMesh
+// for packed primitives - need to hash what has alreay been exported
+// hash based on primitive id / detail id
+// @path=op:<path to vrayproxy> => VRayProxy plugin
+// @path=op:<path to SOP> => take input detail
+
+
 enum GEO_PrimPackedType
 {
 	GEO_PACKEDGEOMETRY = 24,
@@ -29,47 +38,12 @@ enum GEO_PrimPackedType
 };
 
 
-typedef std::unordered_set< UT_String , SHOPHasher > SHOPList;
-
-
-int getSHOPList(const GU_Detail &gdp, SHOPList &shopList)
-{
-	GA_ROHandleS mtlpath(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GEO_STD_ATTRIB_MATERIAL));
-	if (mtlpath.isInvalid()) {
-		return 0;
-	}
-
-	int shopCnt = 0;
-	for (GA_Iterator jt(gdp.getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
-		const GEO_Primitive *prim = gdp.getGEOPrimitive(*jt);
-
-		switch (prim->getTypeId().get()) {
-			case GEO_PRIMPOLYSOUP:
-			case GEO_PRIMPOLY:
-			{
-				UT_String shoppath(mtlpath.get(*jt), false);
-				if (   OPgetDirector()->findSHOPNode(shoppath)
-					&& NOT(shopList.count(shoppath)) )
-				{
-					shopList.insert(shoppath);
-					++shopCnt;
-				}
-			}
-			default:
-				;
-		}
-	}
-
-	return shopCnt;
-}
-
-
-
 GeometryExporter::GeometryExporter(OBJ_Geometry &node, VRayExporter &pluginExporter):
 	m_objNode(node),
 	m_context(pluginExporter.getContext()),
 	m_pluginExporter(pluginExporter),
-	m_myDetailID(0)
+	m_myDetailID(0),
+	m_exportGeometry(true)
 { }
 
 
@@ -149,7 +123,7 @@ void GeometryExporter::cleanup()
 }
 
 
-int GeometryExporter::exportGeometry()
+int GeometryExporter::exportNodes()
 {
 	SOP_Node *renderSOP = m_objNode.getRenderSopPtr();
 	if (NOT(renderSOP)) {
@@ -217,6 +191,10 @@ int GeometryExporter::exportGeometry()
 			attr->paramValue.valInt = m_objNode.getVisible();
 		}
 
+		if (NOT(m_exportGeometry)) {
+			continue;
+		}
+
 		attr = nodeDesc.get("material");
 		if (NOT(attr)) {
 			if (shopNode) {
@@ -282,6 +260,10 @@ int GeometryExporter::exportVRaySOP(SOP_Node &sop, PluginDescList &pluginList)
 	Attrs::PluginDesc &nodeDesc = pluginList.back();
 	int nPlugins = 1;
 
+	if (NOT(m_exportGeometry)) {
+		return nPlugins;
+	}
+
 	// geometry
 	SOP::NodeBase *vrayNode = UTverify_cast< SOP::NodeBase * >(&sop);
 
@@ -314,6 +296,10 @@ int GeometryExporter::exportHair(SOP_Node &sop, GU_DetailHandleAutoReadLock &gdl
 	pluginList.push_back(Attrs::PluginDesc("", "Node"));
 	Attrs::PluginDesc &nodeDesc = pluginList.back();
 	int nPlugins = 1;
+
+	if (NOT(m_exportGeometry)) {
+		return nPlugins;
+	}
 
 	VRay::Plugin geom = m_pluginExporter.exportGeomMayaHair(&sop, gdl.getGdp());
 	nodeDesc.addAttribute(Attrs::PluginAttr("geometry", geom));
@@ -350,7 +336,7 @@ int GeometryExporter::exportPolyMesh(SOP_Node &sop, const GU_Detail &gdp, Plugin
 {
 	int nPlugins = 0;
 
-	PolyMeshExporter polyMeshExporter(gdp, m_pluginExporter);
+	MeshExporter polyMeshExporter(gdp, m_pluginExporter);
 	polyMeshExporter.setSOPContext(&sop)
 					.setSubdivApplied(hasSubdivApplied());
 
@@ -360,6 +346,10 @@ int GeometryExporter::exportPolyMesh(SOP_Node &sop, const GU_Detail &gdp, Plugin
 		Attrs::PluginDesc &nodeDesc = pluginList.back();
 		nPlugins = 1;
 
+		if (NOT(m_exportGeometry)) {
+			return nPlugins;
+		}
+
 		// geometry
 		Attrs::PluginDesc geomDesc;
 		polyMeshExporter.asPluginDesc(geomDesc);
@@ -368,7 +358,7 @@ int GeometryExporter::exportPolyMesh(SOP_Node &sop, const GU_Detail &gdp, Plugin
 
 		// material
 		SHOPList shopList;
-		int nSHOPs = getSHOPList(gdp, shopList);
+		int nSHOPs = polyMeshExporter.getSHOPList(shopList);
 		if (nSHOPs > 0) {
 			ExportContext objContext(CT_OBJ, m_pluginExporter, m_objNode);
 
@@ -430,6 +420,10 @@ int GeometryExporter::exportPacked(SOP_Node &sop, const GU_PrimPacked &prim, Plu
 		}
 		else {
 			attr->paramValue.valTransform =  tm * attr->paramValue.valTransform;
+		}
+
+		if (NOT(m_exportGeometry)) {
+			continue;
 		}
 
 		attr = nodeDesc.get("material");
@@ -573,6 +567,10 @@ int GeometryExporter::exportAlembicRef(SOP_Node &sop, const GU_PrimPacked &prim,
 	VRay::Transform tm = VRayExporter::Matrix4ToTransform(UT_Matrix4D(xform));
 	nodeDesc.addAttribute(Attrs::PluginAttr("transform", tm));
 
+	if (NOT(m_exportGeometry)) {
+		return nPlugins;
+	}
+
 	// geometry
 	UT_String primname;
 	prim.getIntrinsic(prim.findIntrinsic("packedprimitivename"), primname);
@@ -611,6 +609,10 @@ int GeometryExporter::exportPackedDisk(SOP_Node &sop, const GU_PrimPacked &prim,
 	pluginList.push_back(Attrs::PluginDesc("", "Node"));
 	Attrs::PluginDesc &nodeDesc = pluginList.back();
 	int nPlugins = 1;
+
+	if (NOT(m_exportGeometry)) {
+		return nPlugins;
+	}
 
 	// geometry
 	UT_String primname;
@@ -684,6 +686,10 @@ int GeometryExporter::exportPackedGeometry(SOP_Node &sop, const GU_PrimPacked &p
 				Attrs::PluginDesc &nodeDesc = pluginList.back();
 				nPlugins = 1;
 
+				if (NOT(m_exportGeometry)) {
+					return nPlugins;
+				}
+
 				// geometry
 				Attrs::PluginDesc pluginDesc;
 				OP::VRayNode::PluginResult res = proxy->asPluginDesc(pluginDesc, m_pluginExporter);
@@ -697,12 +703,3 @@ int GeometryExporter::exportPackedGeometry(SOP_Node &sop, const GU_PrimPacked &p
 	return nPlugins;
 }
 
-// replace exporObject and exportNodeData
-// need to traverse through all primitives
-// polygonal primitives should be exported as single GeomStaticMesh
-// for packed primitives - need to hash whats alreay been exported
-// hash based on file path string, Node UID or GU_DetailHandle hash
-// @path=op:<path to vrayproxy> => VRayProxy plugin
-// @path =<any string, interpret as filepath> => VRayProxy plugin
-// @path=op:<path to node> => need to recursively handle primitive GU_Detail if not hashed
-// no @path => need to recursively handle primitive GU_Detail if not hashed

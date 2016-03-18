@@ -98,18 +98,21 @@ struct SHOPHasher
 };
 
 
-class PolyMeshExporter
+typedef std::unordered_set< UT_String , SHOPHasher > SHOPList;
+
+
+class MeshExporter
 {
 public:
 	static bool isPrimPoly(GA_Primitive &prim);
 	static bool getDataFromAttribute(const GA_Attribute *attr, VRay::VUtils::VectorRefList &data);
 
 public:
-	PolyMeshExporter(const GU_Detail &gdp, VRayExporter &pluginExporter);
-	~PolyMeshExporter() { }
+	MeshExporter(const GU_Detail &gdp, VRayExporter &pluginExporter);
+	~MeshExporter() { }
 
-	PolyMeshExporter& setSOPContext(SOP_Node *sop) { m_sopNode = sop; return *this; }
-	PolyMeshExporter& setSubdivApplied(bool val) { m_hasSubdivApplied = val; return *this; }
+	MeshExporter& setSOPContext(SOP_Node *sop) { m_sopNode = sop; return *this; }
+	MeshExporter& setSubdivApplied(bool val) { m_hasSubdivApplied = val; return *this; }
 
 	bool                         hasPolyGeometry() const;
 	bool                         hasSubdivApplied() const { return m_hasSubdivApplied; }
@@ -125,6 +128,8 @@ public:
 	VRay::VUtils::IntRefList&    getEdgeVisibility();
 	VRay::VUtils::IntRefList&    getFaceMtlIDs();
 	MapChannels&                 getMapChannels();
+
+	int                          getSHOPList(SHOPList &shopList) const;
 
 	std::string                  getVRayPluginType() const { return "GEOMETRY"; }
 	std::string                  getVRayPluginID() const   { return "GeomStaticMesh"; }

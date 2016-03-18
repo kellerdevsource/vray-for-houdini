@@ -44,66 +44,15 @@ SHOP_Node *VRayExporter::getObjMaterial(OBJ_Node *obj_node, fpreal t)
 }
 
 
-//void VRayExporter::RtCallbackNode(OP_Node *caller, void *callee, OP_EventType type, void *data)
-//{
-//	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
-//	OBJ_Node *obj_node = caller->castToOBJNode();
-
-//	Log::getLog().debug("RtCallbackNode: %s from \"%s\"", OPeventToString(type), obj_node->getName().buffer());
-
-//	switch (type) {
-//		case OP_PARM_CHANGED:
-//		{
-//			VRay::Plugin mtl;
-//			const PRM_Parm *objPrm = Parm::getParm(*caller, reinterpret_cast<long>(data));
-//			if (objPrm) {
-//				SHOP_Node *shop_node = exporter.getObjMaterial(obj_node);
-//				if (shop_node) {
-//					if (boost::equals(objPrm->getToken(), "shop_materialpath")) {
-//						ExportContext expContext(CT_OBJ, exporter, *obj_node);
-//						mtl = exporter.exportMaterial(*shop_node, expContext);
-//						if (!mtl) {
-//							mtl = exporter.exportDefaultMaterial();
-//						}
-//					}
-//					else {
-//						PRM_Parm *shopPrm = shop_node->getParmList()->getParmPtr(objPrm->getToken());
-
-//						if (shopPrm && (objPrm->getType() == shopPrm->getType())) {
-//							ExportContext expContext(CT_OBJ, exporter, *obj_node);
-//							mtl = exporter.exportMaterial(*shop_node, expContext);
-//						}
-//					}
-
-//				}
-//				exporter.exportNode(obj_node, mtl, VRay::Plugin());
-//			}
-//		}
-//		case OP_INPUT_CHANGED:
-//		case OP_INPUT_REWIRED:
-//		case OP_FLAG_CHANGED:
-//		{
-//			exporter.exportNode(obj_node, VRay::Plugin(), VRay::Plugin());
-//			break;
-//		}
-//		case OP_NODE_PREDELETE:
-//		{
-//			exporter.delOpCallbacks(caller);
-//			exporter.removePlugin(obj_node);
-//			break;
-//		}
-//		default:
-//			break;
-//	}
-//}
-
-
 void VRayExporter::RtCallbackOBJGeometry(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
-	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
-	OBJ_Node *obj_node = caller->castToOBJNode();
-
 	Log::getLog().debug("RtCallbackOBJGeometry: %s from \"%s\"", OPeventToString(type), caller->getName().buffer());
+
+	UT_ASSERT( caller->castToOBJNode() );
+	UT_ASSERT( caller->castToOBJNode()->castToOBJGeometry() );
+
+	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
+	OBJ_Geometry *obj_geo = caller->castToOBJNode()->castToOBJGeometry();
 
 	switch (type) {
 		case OP_PARM_CHANGED:
@@ -112,7 +61,14 @@ void VRayExporter::RtCallbackOBJGeometry(OP_Node *caller, void *callee, OP_Event
 		case OP_INPUT_CHANGED:
 		case OP_INPUT_REWIRED:
 		{
-			exporter.exportObject(obj_node);
+			GeometryExporter geoExporter(*obj_geo, exporter);
+			geoExporter.setExportGeometry(false);
+
+			int nPlugins = geoExporter.exportNodes();
+			for (int i = 0; i < nPlugins; ++i) {
+				exporter.exportPlugin(geoExporter.getPluginDescAt(i));
+			}
+
 			break;
 		}
 		case OP_NODE_PREDELETE:
@@ -128,10 +84,13 @@ void VRayExporter::RtCallbackOBJGeometry(OP_Node *caller, void *callee, OP_Event
 
 void VRayExporter::RtCallbackSOPChanged(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
-	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
-	OBJ_Node *obj_node = caller->getParent()->castToOBJNode();
-
 	Log::getLog().debug("RtCallbackSOPChanged: %s from \"%s\"", OPeventToString(type), caller->getName().buffer());
+
+	UT_ASSERT( caller->getCreator()->castToOBJNode() );
+	UT_ASSERT( caller->getCreator()->castToOBJNode()->castToOBJGeometry() );
+
+	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
+	OBJ_Geometry *obj_geo = caller->getCreator()->castToOBJNode()->castToOBJGeometry();
 
 	switch (type) {
 		case OP_PARM_CHANGED:
@@ -139,7 +98,12 @@ void VRayExporter::RtCallbackSOPChanged(OP_Node *caller, void *callee, OP_EventT
 		case OP_INPUT_CHANGED:
 		case OP_INPUT_REWIRED:
 		{
-			exporter.exportObject(obj_node);
+			GeometryExporter geoExporter(*obj_geo, exporter);
+			int nPlugins = geoExporter.exportNodes();
+			for (int i = 0; i < nPlugins; ++i) {
+				 exporter.exportPlugin(geoExporter.getPluginDescAt(i));
+			}
+
 			break;
 		}
 		case OP_NODE_PREDELETE:
@@ -167,6 +131,7 @@ void VRayExporter::RtCallbackVRayClipper(OP_Node *caller, void *callee, OP_Event
 		case OP_INPUT_REWIRED:
 		{
 			exporter.exportVRayClipper(*clipperNode);
+
 			break;
 		}
 		case OP_NODE_PREDELETE:
@@ -179,46 +144,6 @@ void VRayExporter::RtCallbackVRayClipper(OP_Node *caller, void *callee, OP_Event
 			break;
 	}
 }
-
-
-//VRay::Plugin VRayExporter::exportNode(OBJ_Node *obj_node, VRay::Plugin material, VRay::Plugin geometry)
-//{
-//	VRay::Plugin nodePlugin;
-
-//	if (obj_node) {
-//		SOP_Node *geomNode = obj_node->getRenderSopPtr();
-//		if (geomNode) {
-//			addOpCallback(obj_node, VRayExporter::RtCallbackNode);
-
-//			OP_Operator     *geomOp     = geomNode->getOperator();
-//			const UT_String &geomOpName = geomOp->getName();
-
-//			bool flipTm = false;
-//			if (geomOpName.equal("VRayNodeGeomPlane")) {
-//				flipTm = true;
-//			}
-
-//			Attrs::PluginDesc pluginDesc(VRayExporter::getPluginName(obj_node), "Node");
-//			if (geometry) {
-//				pluginDesc.addAttribute(Attrs::PluginAttr("geometry", geometry));
-//			}
-//			if (material) {
-//				pluginDesc.addAttribute(Attrs::PluginAttr("material", material));
-//			}
-
-//			pluginDesc.addAttribute(Attrs::PluginAttr("transform",
-//													  VRayExporter::getObjTransform(obj_node, m_context, flipTm)));
-
-//			pluginDesc.addAttribute(Attrs::PluginAttr("visible",
-//													  obj_node->getVisible()));
-
-//			nodePlugin = exportPlugin(pluginDesc);
-//		}
-//	}
-
-//	return nodePlugin;
-//}
-
 
 
 VRay::Plugin VRayExporter::exportObject(OBJ_Node *obj_node)
@@ -253,7 +178,7 @@ VRay::Plugin VRayExporter::exportObject(OBJ_Node *obj_node)
 				addOpCallback(geom_node, VRayExporter::RtCallbackSOPChanged);
 
 				GeometryExporter geoExporter(*obj_geo, *this);
-				int nPlugins = geoExporter.exportGeometry();
+				int nPlugins = geoExporter.exportNodes();
 				for (int i = 0; i < nPlugins; ++i) {
 					VRay::Plugin nodePlugin = exportPlugin(geoExporter.getPluginDescAt(i));
 					if (NOT(plugin)) {

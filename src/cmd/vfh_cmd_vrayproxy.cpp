@@ -560,7 +560,7 @@ VUtils::ErrorCode MeshToVRayProxy::getDescriptionForContext(OP_Context &context,
 		exporter.exportGeomMayaHairGeom(sop_node, gdp, geomDescr.m_description);
 	}
 	else {
-		PolyMeshExporter meshExporter(*gdp, exporter);
+		MeshExporter meshExporter(*gdp, exporter);
 		meshExporter.asPluginDesc(geomDescr.m_description);
 	}
 
