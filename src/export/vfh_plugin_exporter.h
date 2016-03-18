@@ -180,6 +180,8 @@ public:
 	VRay::VRayRenderer           &getVRay() { return *m_vray; }
 
 private:
+	void                          vfbParent(void *parent);
+
 	VRay::VRayRenderer           *m_vray;
 	CbCollection                  m_callbacks;
 };
