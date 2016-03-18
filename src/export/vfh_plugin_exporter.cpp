@@ -10,11 +10,13 @@
 
 #include "vfh_plugin_exporter.h"
 
-#include <QtCore/QString>
-#include <QtGui/QtGui>
 #include <boost/bind.hpp>
 
-#include <RE/RE_QtWindow.h>
+#ifdef VRAY_APPSDK_QT
+#  include <QtCore/QString>
+#  include <QtGui/QtGui>
+#  include <RE/RE_QtWindow.h>
+#endif
 
 
 #define PRINT_CALLBACK_CALLS  0
