@@ -27,6 +27,8 @@ macro(use_vray_appsdk)
 
 	if (APPSDK_QT)
 		add_definitions(-DVRAY_APPSDK_QT)
+	else()
+		remove_definitions(-DVRAY_APPSDK_QT)
 	endif()
 
 	add_definitions(-DVRAY_SDK_INTEROPERABILITY)
