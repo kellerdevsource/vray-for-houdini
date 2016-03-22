@@ -36,6 +36,7 @@ include_directories(vop/uvwgen)
 include_directories(vop/meta)
 include_directories(export)
 include_directories(export/utils)
+include_directories(export/export)
 include_directories(utils)
 
 file(GLOB_RECURSE SOURCES "*.cpp")
