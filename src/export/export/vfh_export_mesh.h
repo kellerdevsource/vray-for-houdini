@@ -16,6 +16,7 @@
 #include "vfh_defines.h"
 #include "vfh_plugin_attrs.h"
 #include "vfh_exporter.h"
+#include "vfh_material_override.h"
 
 #include <SOP/SOP_Node.h>
 #include <SHOP/SHOP_Node.h>
@@ -77,34 +78,10 @@ struct MapChannel
 typedef std::unordered_map<std::string, MapChannel> MapChannels;
 
 
-struct SHOPHasher
-{
-	typedef uint32     result_type;
-
-	static result_type getSHOPId(const UT_String &shopPath)
-	{
-		return (NOT(shopPath.isstring()))? 0 : shopPath.hash();
-	}
-
-	result_type operator()(const SHOP_Node *shopNode) const
-	{
-		return (NOT(shopNode))? 0 : getSHOPId(shopNode->getFullPath());
-	}
-
-	result_type operator()(const UT_String &shopPath) const
-	{
-		return getSHOPId(shopPath);
-	}
-};
-
-
-typedef std::unordered_set< UT_String , SHOPHasher > SHOPList;
-
-
 class MeshExporter
 {
 public:
-	static bool isPrimPoly(GA_Primitive &prim);
+	static bool isPrimPoly(const GA_Primitive &prim);
 	static bool getDataFromAttribute(const GA_Attribute *attr, VRay::VUtils::VectorRefList &data);
 
 public:

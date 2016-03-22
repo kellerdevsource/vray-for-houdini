@@ -51,18 +51,32 @@ void VRayExporter::RtCallbackOBJGeometry(OP_Node *caller, void *callee, OP_Event
 	UT_ASSERT( caller->castToOBJNode() );
 	UT_ASSERT( caller->castToOBJNode()->castToOBJGeometry() );
 
-	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
+	VRayExporter &exporter = *reinterpret_cast< VRayExporter* >(callee);
 	OBJ_Geometry *obj_geo = caller->castToOBJNode()->castToOBJGeometry();
 
+	int shouldReExport = false;
 	switch (type) {
-		case OP_PARM_CHANGED:
 		// TODO: Improve handling by checking the exact flag if possible
+		case OP_PARM_CHANGED:
+		{
+			// If the parameter is for material override it has OBJ_MATERIAL_SPARE_TAG tag
+			const PRM_Parm *prm = Parm::getParm(*caller, reinterpret_cast<long>(data));
+			if (prm) {
+				UT_StringRef prmToken = prm->getToken();
+				const PRM_SpareData	*spare = prm->getSparePtr();
+				shouldReExport =
+						(   prmToken.equal(obj_geo->getMaterialParmToken())
+						|| (spare && spare->getValue(OBJ_MATERIAL_SPARE_TAG))
+						);
+			}
+		}
 		case OP_FLAG_CHANGED:
 		case OP_INPUT_CHANGED:
 		case OP_INPUT_REWIRED:
 		{
+
 			GeometryExporter geoExporter(*obj_geo, exporter);
-			geoExporter.setExportGeometry(false);
+			geoExporter.setExportGeometry(shouldReExport);
 
 			int nPlugins = geoExporter.exportNodes();
 			for (int i = 0; i < nPlugins; ++i) {
@@ -89,7 +103,7 @@ void VRayExporter::RtCallbackSOPChanged(OP_Node *caller, void *callee, OP_EventT
 	UT_ASSERT( caller->getCreator()->castToOBJNode() );
 	UT_ASSERT( caller->getCreator()->castToOBJNode()->castToOBJGeometry() );
 
-	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
+	VRayExporter &exporter = *reinterpret_cast< VRayExporter* >(callee);
 	OBJ_Geometry *obj_geo = caller->getCreator()->castToOBJNode()->castToOBJGeometry();
 
 	switch (type) {
@@ -98,6 +112,11 @@ void VRayExporter::RtCallbackSOPChanged(OP_Node *caller, void *callee, OP_EventT
 		case OP_INPUT_CHANGED:
 		case OP_INPUT_REWIRED:
 		{
+			SOP_Node *geom_node = obj_geo->getRenderSopPtr();
+			if (geom_node) {
+				exporter.addOpCallback(geom_node, VRayExporter::RtCallbackSOPChanged);
+			}
+
 			GeometryExporter geoExporter(*obj_geo, exporter);
 			int nPlugins = geoExporter.exportNodes();
 			for (int i = 0; i < nPlugins; ++i) {
@@ -119,7 +138,7 @@ void VRayExporter::RtCallbackSOPChanged(OP_Node *caller, void *callee, OP_EventT
 
 void VRayExporter::RtCallbackVRayClipper(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
-	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
+	VRayExporter &exporter = *reinterpret_cast< VRayExporter* >(callee);
 	OBJ_Node *clipperNode = caller->castToOBJNode();
 
 	Log::getLog().debug("RtCallbackVRayClipper: %s from \"%s\"", OPeventToString(type), clipperNode->getName().buffer());

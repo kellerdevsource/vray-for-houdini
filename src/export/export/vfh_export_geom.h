@@ -13,6 +13,7 @@
 
 #include "vfh_vray.h"
 #include "vfh_exporter.h"
+#include "vfh_material_override.h"
 
 #include <OBJ/OBJ_Geometry.h>
 #include <GU/GU_PrimPacked.h>
@@ -54,14 +55,18 @@ private:
 	int              exportPackedDisk(SOP_Node &sop, const GU_PrimPacked &prim, PluginDescList &pluginList);
 	int              exportPackedGeometry(SOP_Node &sop, const GU_PrimPacked &prim, PluginDescList &pluginList);
 
+	VRay::Plugin     exportMaterial();
+	int getSHOPOverridesAsUserAttributes(UT_String& userAttrs) const;
+
 private:
 	OBJ_Geometry &m_objNode;
 	OP_Context   &m_context;
 	VRayExporter &m_pluginExporter;
 
+	bool                 m_exportGeometry;
 	uint                 m_myDetailID;
 	DetailToPluginDesc   m_detailToPluginDesc;
-	bool                 m_exportGeometry;
+	SHOPList             m_shopList;
 };
 
 

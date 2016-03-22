@@ -21,13 +21,7 @@
 using namespace VRayForHoudini;
 
 
-
-// traverse through all primitives
-// polygonal primitives should be exported as single GeomStaticMesh
-// for packed primitives - need to hash what has alreay been exported
-// hash based on primitive id / detail id
-// @path=op:<path to vrayproxy> => VRayProxy plugin
-// @path=op:<path to SOP> => take input detail
+const char *const VFH_ATTR_MATERIAL_ID = "switchmtl";
 
 
 enum GEO_PrimPackedType
@@ -153,28 +147,24 @@ int GeometryExporter::exportNodes()
 		}
 	}
 
-	PluginDescList &pluginList = m_detailToPluginDesc.at(m_myDetailID);
+	VRay::Transform tm = VRayExporter::getObjTransform(&m_objNode, m_context);
 
-	SHOP_Node *shopNode = m_pluginExporter.getObjMaterial(&m_objNode, m_context.getTime());
+	UT_String userAttrs;
+	getSHOPOverridesAsUserAttributes(userAttrs);
+
+	VRay::Plugin mtl;
+	if (m_exportGeometry) {
+		mtl = exportMaterial();
+	}
 
 	int i = 0;
+	PluginDescList &pluginList = m_detailToPluginDesc.at(m_myDetailID);
 	for (Attrs::PluginDesc &nodeDesc : pluginList) {
-//		TODO: need to fill in node with appropriate names and export them
+//		TODO: need to fill in node with appropriate names
 		nodeDesc.pluginName = VRayExporter::getPluginName(&m_objNode, boost::str(Parm::FmtPrefixManual % "Node" % std::to_string(i++)));
 
 		Attrs::PluginAttr *attr = nullptr;
 
-		bool flipTm = false;
-		attr = nodeDesc.get("geometry");
-		if (attr) {
-			flipTm = (std::string("GeomPlane") ==  attr->paramValue.valPlugin.getType())? true : false;
-			VRay::Plugin geomDispl = m_pluginExporter.exportDisplacement(&m_objNode, attr->paramValue.valPlugin);
-			if (geomDispl) {
-				attr->paramValue.valPlugin = geomDispl;
-			}
-		}
-
-		VRay::Transform tm = VRayExporter::getObjTransform(&m_objNode, m_context, flipTm);
 		attr = nodeDesc.get("transform");
 		if (NOT(attr)) {
 			nodeDesc.addAttribute(Attrs::PluginAttr("transform", tm));
@@ -191,58 +181,24 @@ int GeometryExporter::exportNodes()
 			attr->paramValue.valInt = m_objNode.getVisible();
 		}
 
-		if (NOT(m_exportGeometry)) {
-			continue;
+		attr = nodeDesc.get("geometry");
+		if (attr) {
+			VRay::Plugin geomDispl = m_pluginExporter.exportDisplacement(&m_objNode, attr->paramValue.valPlugin);
+			if (geomDispl) {
+				attr->paramValue.valPlugin = geomDispl;
+			}
 		}
 
 		attr = nodeDesc.get("material");
+		if (NOT(attr) && mtl) {
+			nodeDesc.addAttribute(Attrs::PluginAttr("material", mtl));
+		}
+
+		attr = nodeDesc.get(VFH_ATTR_MATERIAL_ID);
 		if (NOT(attr)) {
-			if (shopNode) {
-				ExportContext objContext(CT_OBJ, m_pluginExporter, m_objNode);
-				VRay::Plugin mtl = m_pluginExporter.exportMaterial(*shopNode, objContext);
-				nodeDesc.addAttribute(Attrs::PluginAttr("material", mtl));
-
-				// material overrides in "user_attributes"
-				UT_String userAtrs;
-
-				const OP_DependencyList &depList = shopNode->getOpDependents();
-				for (OP_DependencyList::reverse_iterator it = depList.rbegin(); !it.atEnd(); it.advance()) {
-					const OP_Dependency &dep = *it;
-					OP_Node *opNode = shopNode->lookupNode(dep.getRefOpId(), false);
-					if (shopNode->isSubNode(opNode)) {
-						const PRM_Parm &shopPrm = shopNode->getParm(dep.getSourceRefId().getParmRef());
-						const PRM_Parm *objPrm = m_objNode.getParmList()->getParmPtr(shopPrm.getToken());
-
-						if (   objPrm
-							&& objPrm->getType().isFloatType()
-							&& NOT(objPrm->getBypassFlag()) )
-						{
-							// if we have parameter with matching name override on object level
-							UT_StringArray prmValTokens;
-							for (int i = 0; i < objPrm->getVectorSize(); ++i) {
-								fpreal chval = m_objNode.evalFloat(objPrm, i, m_context.getTime());
-								prmValTokens.append( std::to_string(chval) );
-							}
-
-							UT_String prmValToken;
-							prmValTokens.join(",", prmValToken);
-
-							userAtrs += shopPrm.getToken();
-							userAtrs += "=";
-							userAtrs += prmValToken;
-							userAtrs += ";";
-						}
-					}
-				}
-
-				if (userAtrs.isstring()) {
-					nodeDesc.addAttribute(Attrs::PluginAttr("user_attributes", userAtrs));
-				}
-
-			}
-			else {
-				VRay::Plugin mtl = m_pluginExporter.exportDefaultMaterial();
-				nodeDesc.addAttribute(Attrs::PluginAttr("material", mtl));
+			// pass material overrides with "user_attributes"
+			if (userAttrs.isstring()) {
+				nodeDesc.addAttribute(Attrs::PluginAttr("user_attributes", userAttrs));
 			}
 		}
 
@@ -250,6 +206,104 @@ int GeometryExporter::exportNodes()
 	}
 
 	return pluginList.size();
+}
+
+
+VRay::Plugin GeometryExporter::exportMaterial()
+{
+	VRay::ValueList mtls_list;
+	VRay::IntList   ids_list;
+	mtls_list.reserve(m_shopList.size() + 1);
+	ids_list.reserve(m_shopList.size() + 1);
+
+	ExportContext objContext(CT_OBJ, m_pluginExporter, m_objNode);
+
+	SHOP_Node *shopNode = m_pluginExporter.getObjMaterial(&m_objNode, m_context.getTime());
+	if (shopNode) {
+		mtls_list.emplace_back(m_pluginExporter.exportMaterial(*shopNode, objContext));
+		ids_list.emplace_back(0);
+	}
+	else {
+		mtls_list.emplace_back(m_pluginExporter.exportDefaultMaterial());
+		ids_list.emplace_back(0);
+	}
+
+	SHOPHasher hasher;
+	for (const UT_String &shoppath : m_shopList) {
+		SHOP_Node *shopNode = OPgetDirector()->findSHOPNode(shoppath);
+		UT_ASSERT( shopNode );
+		mtls_list.emplace_back(m_pluginExporter.exportMaterial(*shopNode, objContext));
+		ids_list.emplace_back(hasher(shopNode));
+	}
+
+	Attrs::PluginDesc mtlDesc;
+	mtlDesc.pluginID = "MtlMulti";
+	mtlDesc.pluginName = VRayExporter::getPluginName(&m_objNode, "Mtl");
+
+	mtlDesc.addAttribute(Attrs::PluginAttr("mtls_list", mtls_list));
+	mtlDesc.addAttribute(Attrs::PluginAttr("ids_list",  ids_list));
+
+	Attrs::PluginDesc myMtlIDDesc;
+	myMtlIDDesc.pluginID = "TexUserScalar";
+	myMtlIDDesc.pluginName = VRayExporter::getPluginName(&m_objNode, "MtlID");
+
+	myMtlIDDesc.addAttribute(Attrs::PluginAttr("default_value",  0));
+	myMtlIDDesc.addAttribute(Attrs::PluginAttr("user_attribute",  VFH_ATTR_MATERIAL_ID));
+
+	VRay::Plugin myMtlID = m_pluginExporter.exportPlugin(myMtlIDDesc);
+
+	mtlDesc.addAttribute(Attrs::PluginAttr("mtlid_gen_float", myMtlID, "scalar"));
+
+	VRay::Plugin mtl = m_pluginExporter.exportPlugin(mtlDesc);
+	return mtl;
+}
+
+
+int GeometryExporter::getSHOPOverridesAsUserAttributes(UT_String &userAttrs) const
+{
+	int nOverrides = 0;
+
+	SHOP_Node *shopNode = m_pluginExporter.getObjMaterial(&m_objNode, m_context.getTime());
+	if (NOT(shopNode)) {
+		return nOverrides;
+	}
+
+	userAttrs += VFH_ATTR_MATERIAL_ID;
+	userAttrs += "=0;";
+
+	const PRM_ParmList *shopParmList = shopNode->getParmList();
+	const PRM_ParmList *objParmList = m_objNode.getParmList();
+
+	for (int i = 0; i < shopParmList->getEntries(); ++i) {
+		const PRM_Parm *shopPrm = shopParmList->getParmPtr(i);
+		const PRM_Parm *objPrm = objParmList->getParmPtr(shopPrm->getToken());
+
+		if (   objPrm
+			&& shopPrm->getType() == objPrm->getType()
+			&& objPrm->getType().isFloatType()
+			&& NOT(objPrm->getBypassFlag()) )
+		{
+			// we have parameter with matching name on the OBJ_Node
+			// => treat as override
+			UT_StringArray prmValTokens;
+			for (int i = 0; i < objPrm->getVectorSize(); ++i) {
+				fpreal chval = m_objNode.evalFloat(objPrm, i, m_context.getTime());
+				prmValTokens.append( std::to_string(chval) );
+			}
+
+			UT_String prmValToken;
+			prmValTokens.join(",", prmValToken);
+
+			userAttrs += shopPrm->getToken();
+			userAttrs += "=";
+			userAttrs += prmValToken;
+			userAttrs += ";";
+
+			++nOverrides;
+		}
+	}
+
+	return nOverrides;
 }
 
 
@@ -308,9 +362,14 @@ int GeometryExporter::exportHair(SOP_Node &sop, GU_DetailHandleAutoReadLock &gdl
 }
 
 
+// traverse through all primitives
+// polygonal primitives should be exported as single GeomStaticMesh
+// for packed primitives - need to hash what has alreay been exported
+// hash based on primitive id / detail id
+// @path=op:<path to vrayproxy> => VRayProxy plugin
+// @path=op:<path to SOP> => take input detail
 int GeometryExporter::exportDetail(SOP_Node &sop, GU_DetailHandleAutoReadLock &gdl, PluginDescList &pluginList)
 {
-//	TODO: verify nPlugins = ?
 	int nPlugins = 0;
 
 	const GU_Detail &gdp = *gdl.getGdp();
@@ -360,31 +419,30 @@ int GeometryExporter::exportPolyMesh(SOP_Node &sop, const GU_Detail &gdp, Plugin
 		SHOPList shopList;
 		int nSHOPs = polyMeshExporter.getSHOPList(shopList);
 		if (nSHOPs > 0) {
-			ExportContext objContext(CT_OBJ, m_pluginExporter, m_objNode);
-
 			VRay::ValueList mtls_list;
 			VRay::IntList   ids_list;
 			mtls_list.reserve(nSHOPs);
 			ids_list.reserve(nSHOPs);
 
+			ExportContext objContext(CT_OBJ, m_pluginExporter, m_objNode);
+
+			SHOPHasher hasher;
 			for (const UT_String &shoppath : shopList) {
 				SHOP_Node *shopNode = OPgetDirector()->findSHOPNode(shoppath);
 				UT_ASSERT( shopNode );
 				mtls_list.emplace_back(m_pluginExporter.exportMaterial(*shopNode, objContext));
-				ids_list.emplace_back(SHOPHasher::getSHOPId(shoppath));
+				ids_list.emplace_back(hasher(shopNode));
 			}
 
-			if (mtls_list.size() > 0) {
+			Attrs::PluginDesc mtlDesc;
+			mtlDesc.pluginID = "MtlMulti";
+			mtlDesc.pluginName = VRayExporter::getPluginName(&sop, boost::str(Parm::FmtPrefixManual % "Mtl" % std::to_string(gdp.getUniqueId())));
 
-				Attrs::PluginDesc mtlMultiDesc("", "MtlMulti");
-				mtlMultiDesc.pluginName = VRayExporter::getPluginName(&sop, boost::str(Parm::FmtPrefixManual % "Mtl" % std::to_string(gdp.getUniqueId())));
+			mtlDesc.addAttribute(Attrs::PluginAttr("mtls_list", mtls_list));
+			mtlDesc.addAttribute(Attrs::PluginAttr("ids_list",  ids_list));
 
-				mtlMultiDesc.addAttribute(Attrs::PluginAttr("mtls_list", mtls_list));
-				mtlMultiDesc.addAttribute(Attrs::PluginAttr("ids_list",  ids_list));
-				VRay::Plugin mtl = m_pluginExporter.exportPlugin(mtlMultiDesc);
-
-				nodeDesc.addAttribute(Attrs::PluginAttr("material", mtl));
-			}
+			nodeDesc.addAttribute(Attrs::PluginAttr("material", m_pluginExporter.exportPlugin(mtlDesc)));
+			nodeDesc.addAttribute(Attrs::PluginAttr(VFH_ATTR_MATERIAL_ID, 0));
 		}
 	}
 
@@ -408,6 +466,7 @@ int GeometryExporter::exportPacked(SOP_Node &sop, const GU_PrimPacked &prim, Plu
 	GA_ROHandleS mtlpath(prim.getDetail().findAttribute(GA_ATTRIB_PRIMITIVE, GEO_STD_ATTRIB_MATERIAL));
 	GA_ROHandleS mtlo(prim.getDetail().findAttribute(GA_ATTRIB_PRIMITIVE, "material_override"));
 
+	SHOPHasher hasher;
 	for (Attrs::PluginDesc &pluginDesc : primPluginList) {
 		pluginList.push_back(pluginDesc);
 		Attrs::PluginDesc &nodeDesc = pluginList.back();
@@ -422,42 +481,49 @@ int GeometryExporter::exportPacked(SOP_Node &sop, const GU_PrimPacked &prim, Plu
 			attr->paramValue.valTransform =  tm * attr->paramValue.valTransform;
 		}
 
-		if (NOT(m_exportGeometry)) {
-			continue;
-		}
 
-		attr = nodeDesc.get("material");
+		attr = nodeDesc.get(VFH_ATTR_MATERIAL_ID);
 		if (NOT(attr) && mtlpath.isValid()) {
-			const char *shoppath =  mtlpath.get(prim.getMapOffset());
+			const char *shoppath = mtlpath.get(prim.getMapOffset());
 			SHOP_Node *shopNode = OPgetDirector()->findSHOPNode(shoppath);
 			if (shopNode) {
-				ExportContext objContext(CT_OBJ, m_pluginExporter, m_objNode);
-				VRay::Plugin mtl = m_pluginExporter.exportMaterial(*shopNode, objContext);
-				nodeDesc.addAttribute(Attrs::PluginAttr("material", mtl));
+				// add material for export
+				m_shopList.insert(shoppath);
 
-				// material overrides in "user_attributes"
-				UT_Options overrides;
-				if (mtlo.isValid() && overrides.setFromPyDictionary(mtlo.get(prim.getMapOffset()))) {
-					UT_String userAtrs;
+				// pass material id with "user_attributes"
+				int shopID = hasher(shopNode);
+				nodeDesc.addAttribute(Attrs::PluginAttr(VFH_ATTR_MATERIAL_ID, shopID));
 
-					while (overrides.getNumOptions() > 0) {
-						UT_String key = overrides.begin().name();
+				UT_String userAtrs;
+
+				userAtrs += VFH_ATTR_MATERIAL_ID;
+				userAtrs += "=";
+				userAtrs += std::to_string(shopID);
+				userAtrs += ";";
+
+				// pass material overrides with "user_attributes"
+				UT_Options mtlOverridesDict;
+				if (   mtlo.isValid()
+					&& mtlOverridesDict.setFromPyDictionary(mtlo.get(prim.getMapOffset())) )
+				{
+					while (mtlOverridesDict.getNumOptions() > 0) {
+						UT_String key = mtlOverridesDict.begin().name();
 
 						int chIdx = -1;
 						PRM_Parm *prm = shopNode->getParmList()->getParmPtrFromChannel(key, &chIdx);
 						if (   NOT(prm)
 							|| NOT(prm->getType().isFloatType()) )
 						{
-							overrides.removeOption(key);
+							mtlOverridesDict.removeOption(key);
 							continue;
 						}
 
 						UT_StringArray prmValTokens;
 						for (int i = 0; i < prm->getVectorSize(); ++i) {
 							prm->getChannelToken(key, i);
-							fpreal chval = (overrides.hasOption(key))? overrides.getOptionF(key) : shopNode->evalFloat(prm, i, m_context.getTime());
+							fpreal chval = (mtlOverridesDict.hasOption(key))? mtlOverridesDict.getOptionF(key) : shopNode->evalFloat(prm, i, m_context.getTime());
 							prmValTokens.append( std::to_string(chval) );
-							overrides.removeOption(key);
+							mtlOverridesDict.removeOption(key);
 						}
 
 						UT_String prmValToken;
@@ -468,10 +534,10 @@ int GeometryExporter::exportPacked(SOP_Node &sop, const GU_PrimPacked &prim, Plu
 						userAtrs += prmValToken;
 						userAtrs += ";";
 					}
+				}
 
-					if (userAtrs.isstring()) {
-						nodeDesc.addAttribute(Attrs::PluginAttr("user_attributes", userAtrs));
-					}
+				if (userAtrs.isstring()) {
+					nodeDesc.addAttribute(Attrs::PluginAttr("user_attributes", userAtrs));
 				}
 			}
 		}
@@ -522,7 +588,7 @@ int GeometryExporter::exportPrimPacked(SOP_Node &sop, const GU_PrimPacked &prim,
 	// VRayProxy SOP loads geometry as PackedGeometry
 	// "path" attibute references the VRayProxy SOP: op:<path to VRayProxy SOP>
 	// to be able to query the plugin settings
-	// TODO: have to use custom packed primitive for that
+	// TODO: need to use custom packed primitive
 
 	int nPlugins = 0;
 

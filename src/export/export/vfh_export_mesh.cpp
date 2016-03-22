@@ -19,7 +19,7 @@
 using namespace VRayForHoudini;
 
 
-bool MeshExporter::isPrimPoly(GA_Primitive &prim)
+bool MeshExporter::isPrimPoly(const GA_Primitive &prim)
 {
 	return (
 			   prim.getTypeId() == GEO_PRIMPOLY
@@ -348,10 +348,12 @@ int MeshExporter::getMtlIds(VRay::VUtils::IntRefList &face_mtlIDs)
 
 	face_mtlIDs = VRay::VUtils::IntRefList(nFaces);
 
+	SHOPHasher hasher;
 	int faceIndex = 0;
 	for (GA_Iterator jt(m_gdp.getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
 		const GEO_Primitive *prim = m_gdp.getGEOPrimitive(*jt);
-		int shopID = SHOPHasher::getSHOPId(mtlpath.get(*jt));
+		SHOP_Node * shopNode = OPgetDirector()->findSHOPNode(mtlpath.get(*jt));
+		int shopID = hasher(shopNode);
 
 		switch (prim->getTypeId().get()) {
 			case GEO_PRIMPOLYSOUP:
@@ -415,9 +417,7 @@ int MeshExporter::getPerPrimMtlOverrides(std::unordered_set< std::string > &o_ma
 	for (GA_Iterator jt(m_gdp.getPrimitiveRange()); !jt.atEnd(); jt.advance(), ++k) {
 		const GA_Offset off = *jt;
 		const GEO_Primitive *prim = m_gdp.getGEOPrimitive(off);
-		if (   prim->getTypeId() != GEO_PRIMPOLY
-			&& prim->getTypeId() != GEO_PRIMPOLYSOUP)
-		{
+		if (NOT(isPrimPoly(*prim))) {
 			continue;
 		}
 
@@ -509,9 +509,7 @@ int MeshExporter::getMtlOverrides(MapChannels &mapChannels)
 			int faceVertIndex = 0;
 			for (GA_Iterator jt(m_gdp.getPrimitiveRange()); !jt.atEnd(); jt.advance(), ++k) {
 				const GEO_Primitive *prim = m_gdp.getGEOPrimitive(*jt);
-				if (   prim->getTypeId() != GEO_PRIMPOLY
-					&& prim->getTypeId() != GEO_PRIMPOLYSOUP)
-				{
+				if (NOT(isPrimPoly(*prim))) {
 					continue;
 				}
 
