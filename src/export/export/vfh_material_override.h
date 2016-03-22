@@ -34,8 +34,10 @@ struct SHOPHasher
 	result_type operator()(const SHOP_Node *shopNode) const
 	{
 		return (NOT(shopNode))? 0 : shopNode->getUniqueId();
-		// TODO: need to check why when swtching material using
-		// MtlMulti, TexUserScalar and user_attributes doesn't accept arbitrary integers
+		// there is a problem with using shop path hash as material id
+		// TexUserScalar reads material id from "user_attributes "as float
+		// and then casts it to int which results in a different id
+		// TODO: need to fix that
 		// return (NOT(shopNode))? 0 : getSHOPId(shopNode->getFullPath());
 	}
 

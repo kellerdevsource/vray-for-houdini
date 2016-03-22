@@ -46,9 +46,7 @@ void VRayExporter::RtCallbackSurfaceShop(OP_Node *caller, void *callee, OP_Event
 				UT_String shopPath;
 				shop_node->getFullPath(shopPath);
 
-				// XXX: Pass all referred objects
-				ExportContext expContext;
-				exporter.exportMaterial(*shop_node, expContext);
+				exporter.exportMaterial(*shop_node);
 			}
 		}
 	}
@@ -58,7 +56,7 @@ void VRayExporter::RtCallbackSurfaceShop(OP_Node *caller, void *callee, OP_Event
 }
 
 
-VRay::Plugin VRayExporter::exportMaterial(SHOP_Node &shop_node, ExportContext &parentContext)
+VRay::Plugin VRayExporter::exportMaterial(SHOP_Node &shop_node)
 {
 	VRay::Plugin material;
 	UT_ValArray<OP_Node *> mtlOutList;

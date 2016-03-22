@@ -136,7 +136,7 @@ public:
 	VRay::Plugin                   exportDisplacement(OBJ_Node *obj_node, VRay::Plugin &geomPlugin);
 	VRay::Plugin                   exportLight(OBJ_Node *obj_node);
 	VRay::Plugin                   exportVop(OP_Node *op_node, ExportContext *parentContext = nullptr);
-	VRay::Plugin                   exportMaterial(SHOP_Node &shop_node, ExportContext &parentContext);
+	VRay::Plugin                   exportMaterial(SHOP_Node &shop_node);
 	VRay::Plugin                   exportDefaultMaterial();
 
 

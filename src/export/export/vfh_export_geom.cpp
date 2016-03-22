@@ -190,15 +190,17 @@ int GeometryExporter::exportNodes()
 		}
 
 		attr = nodeDesc.get("material");
-		if (NOT(attr) && mtl) {
-			nodeDesc.addAttribute(Attrs::PluginAttr("material", mtl));
-		}
-
-		attr = nodeDesc.get(VFH_ATTR_MATERIAL_ID);
 		if (NOT(attr)) {
-			// pass material overrides with "user_attributes"
-			if (userAttrs.isstring()) {
-				nodeDesc.addAttribute(Attrs::PluginAttr("user_attributes", userAttrs));
+			if (mtl) {
+				nodeDesc.addAttribute(Attrs::PluginAttr("material", mtl));
+			}
+
+			attr = nodeDesc.get(VFH_ATTR_MATERIAL_ID);
+			if (NOT(attr)) {
+				// pass material overrides with "user_attributes"
+				if (userAttrs.isstring()) {
+					nodeDesc.addAttribute(Attrs::PluginAttr("user_attributes", userAttrs));
+				}
 			}
 		}
 
@@ -216,11 +218,9 @@ VRay::Plugin GeometryExporter::exportMaterial()
 	mtls_list.reserve(m_shopList.size() + 1);
 	ids_list.reserve(m_shopList.size() + 1);
 
-	ExportContext objContext(CT_OBJ, m_pluginExporter, m_objNode);
-
 	SHOP_Node *shopNode = m_pluginExporter.getObjMaterial(&m_objNode, m_context.getTime());
 	if (shopNode) {
-		mtls_list.emplace_back(m_pluginExporter.exportMaterial(*shopNode, objContext));
+		mtls_list.emplace_back(m_pluginExporter.exportMaterial(*shopNode));
 		ids_list.emplace_back(0);
 	}
 	else {
@@ -232,7 +232,7 @@ VRay::Plugin GeometryExporter::exportMaterial()
 	for (const UT_String &shoppath : m_shopList) {
 		SHOP_Node *shopNode = OPgetDirector()->findSHOPNode(shoppath);
 		UT_ASSERT( shopNode );
-		mtls_list.emplace_back(m_pluginExporter.exportMaterial(*shopNode, objContext));
+		mtls_list.emplace_back(m_pluginExporter.exportMaterial(*shopNode));
 		ids_list.emplace_back(hasher(shopNode));
 	}
 
@@ -405,6 +405,12 @@ int GeometryExporter::exportPolyMesh(SOP_Node &sop, const GU_Detail &gdp, Plugin
 		Attrs::PluginDesc &nodeDesc = pluginList.back();
 		nPlugins = 1;
 
+		SHOPList shopList;
+		int nSHOPs = polyMeshExporter.getSHOPList(shopList);
+		if (nSHOPs > 0) {
+			nodeDesc.addAttribute(Attrs::PluginAttr(VFH_ATTR_MATERIAL_ID, -1));
+		}
+
 		if (NOT(m_exportGeometry)) {
 			return nPlugins;
 		}
@@ -416,21 +422,17 @@ int GeometryExporter::exportPolyMesh(SOP_Node &sop, const GU_Detail &gdp, Plugin
 		nodeDesc.addAttribute(Attrs::PluginAttr("geometry", geom));
 
 		// material
-		SHOPList shopList;
-		int nSHOPs = polyMeshExporter.getSHOPList(shopList);
 		if (nSHOPs > 0) {
 			VRay::ValueList mtls_list;
 			VRay::IntList   ids_list;
 			mtls_list.reserve(nSHOPs);
 			ids_list.reserve(nSHOPs);
 
-			ExportContext objContext(CT_OBJ, m_pluginExporter, m_objNode);
-
 			SHOPHasher hasher;
 			for (const UT_String &shoppath : shopList) {
 				SHOP_Node *shopNode = OPgetDirector()->findSHOPNode(shoppath);
 				UT_ASSERT( shopNode );
-				mtls_list.emplace_back(m_pluginExporter.exportMaterial(*shopNode, objContext));
+				mtls_list.emplace_back(m_pluginExporter.exportMaterial(*shopNode));
 				ids_list.emplace_back(hasher(shopNode));
 			}
 
@@ -442,7 +444,6 @@ int GeometryExporter::exportPolyMesh(SOP_Node &sop, const GU_Detail &gdp, Plugin
 			mtlDesc.addAttribute(Attrs::PluginAttr("ids_list",  ids_list));
 
 			nodeDesc.addAttribute(Attrs::PluginAttr("material", m_pluginExporter.exportPlugin(mtlDesc)));
-			nodeDesc.addAttribute(Attrs::PluginAttr(VFH_ATTR_MATERIAL_ID, 0));
 		}
 	}
 
@@ -483,7 +484,9 @@ int GeometryExporter::exportPacked(SOP_Node &sop, const GU_PrimPacked &prim, Plu
 
 
 		attr = nodeDesc.get(VFH_ATTR_MATERIAL_ID);
-		if (NOT(attr) && mtlpath.isValid()) {
+		if (   NOT(attr)
+			&& mtlpath.isValid() )
+		{
 			const char *shoppath = mtlpath.get(prim.getMapOffset());
 			SHOP_Node *shopNode = OPgetDirector()->findSHOPNode(shoppath);
 			if (shopNode) {
@@ -579,16 +582,11 @@ uint GeometryExporter::getPrimPackedID(const GU_PrimPacked &prim)
 
 int GeometryExporter::exportPrimPacked(SOP_Node &sop, const GU_PrimPacked &prim, PluginDescList &pluginList)
 {
-	// packed primitives can be of different types:
+	// packed primitives can be of different types
+	// currently supporting:
 	//   AlembicRef - geometry in alembic file on disk
 	//   PackedDisk - geometry file on disk
 	//   PackedGeometry - in-mem geometry
-	//                  "path" attibute references a SOP ( Pack SOP/VRayProxy SOP )
-	//                  otherwise take geoemtry directly from packed GU_Detail
-	// VRayProxy SOP loads geometry as PackedGeometry
-	// "path" attibute references the VRayProxy SOP: op:<path to VRayProxy SOP>
-	// to be able to query the plugin settings
-	// TODO: need to use custom packed primitive
 
 	int nPlugins = 0;
 
@@ -702,6 +700,13 @@ int GeometryExporter::exportPackedDisk(SOP_Node &sop, const GU_PrimPacked &prim,
 
 int GeometryExporter::exportPackedGeometry(SOP_Node &sop, const GU_PrimPacked &prim, PluginDescList &pluginList)
 {
+	//PackedGeometry - in-mem geometry
+	//               "path" attibute references a SOP ( Pack SOP/VRayProxy SOP )
+	//               otherwise take geoemtry directly from packed GU_Detail
+	// VRayProxy SOP loads geometry as PackedGeometry
+	// "path" attibute references the VRayProxy SOP: op:<path to VRayProxy SOP> to query the plugin settings
+	// TODO: need to use custom packed primitive
+
 	int nPlugins = 0;
 
 	const GA_ROHandleS pathHndl(prim.getDetail().findAttribute(GA_ATTRIB_PRIMITIVE, "path"));

@@ -217,7 +217,6 @@ VRay::Plugin VRayExporter::exportVRayClipper(OBJ_Node &clipperNode)
 	addOpCallback(&clipperNode, VRayExporter::RtCallbackVRayClipper);
 	fpreal t = getContext().getTime();
 
-	// TODO: get node list from prim attribute
 	Attrs::PluginDesc pluginDesc(VRayExporter::getPluginName(&clipperNode, ""), "VRayClipper");
 
 	// find and export clipping geometry plugins
@@ -280,8 +279,7 @@ VRay::Plugin VRayExporter::exportVRayClipper(OBJ_Node &clipperNode)
 	// material
 	SHOP_Node *shopNode = getObjMaterial(&clipperNode, t);
 	if (shopNode) {
-		ExportContext objContext(CT_OBJ, *this, clipperNode);
-		VRay::Plugin mtlPlugin = exportMaterial(*shopNode, objContext);
+		VRay::Plugin mtlPlugin = exportMaterial(*shopNode);
 		pluginDesc.addAttribute(Attrs::PluginAttr("material", mtlPlugin));
 	}
 
@@ -289,4 +287,3 @@ VRay::Plugin VRayExporter::exportVRayClipper(OBJ_Node &clipperNode)
 
 	return exportPlugin(pluginDesc);
 }
-
