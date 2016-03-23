@@ -131,7 +131,6 @@ VRay::Plugin VRayExporter::exportDefaultMaterial()
 }
 
 
-
 void VRayExporter::setAttrsFromSHOPOverrides(Attrs::PluginDesc &pluginDesc, VOP_Node &vopNode)
 {
 	SHOP_Node *shopNode = vopNode.getParent()->castToSHOPNode();
@@ -144,72 +143,76 @@ void VRayExporter::setAttrsFromSHOPOverrides(Attrs::PluginDesc &pluginDesc, VOP_
 		return;
 	}
 
+	const fpreal t = m_context.getTime();
 
-
-	const OP_DependencyList &depList = shopNode->getOpDependents();
-	for (OP_DependencyList::reverse_iterator it = depList.rbegin(); !it.atEnd(); it.advance()) {
-		const OP_Dependency &dep = *it;
-		if (dep.getRefOpId() != vopNode.getUniqueId()) {
-			continue;
-		}
-
-		const PRM_Parm &vopPrm = vopNode.getParm(dep.getRefId().getParmRef());
-		const PRM_Parm &shopPrm = shopNode->getParm(dep.getSourceRefId().getParmRef());
-
-		const std::string attrName = vopPrm.getToken();
-		if (   vopPrm.getType().isFloatType()
-			&& pluginInfo->attributes.count(attrName)
-			&& NOT(pluginDesc.contains(attrName)) )
+	for (int i = 0; i < vopNode.nConnectedInputs(); ++i) {
+		int inpIdx = vopNode.getNthConnectedInput(i);
+		OP_Node * opNode = vopNode.getInput(inpIdx);
+		if (   opNode
+			&& opNode->getOperator()->getName().equal("parameter") )
 		{
-			const Parm::AttrDesc &attrDesc = pluginInfo->attributes.at(attrName);
-			switch (attrDesc.value.type) {
-				case Parm::eBool:
-				case Parm::eEnum:
-				case Parm::eInt:
-				case Parm::eTextureInt:
-				{
-					Attrs::PluginDesc mtlOverrideDesc(VRayExporter::getPluginName(&vopNode, attrName), "TexUserScalar");
-					mtlOverrideDesc.addAttribute(Attrs::PluginAttr("default_value", shopNode->evalInt(&shopPrm, 0, getContext().getTime())));
-					mtlOverrideDesc.addAttribute(Attrs::PluginAttr("user_attribute", shopPrm.getToken()));
+			UT_String inpName;
+			vopNode.getInputName(inpName, inpIdx);
+			const std::string attrName = inpName.toStdString();
 
-					VRay::Plugin overridePlg = exportPlugin(mtlOverrideDesc);
-					pluginDesc.addAttribute(Attrs::PluginAttr(attrName, overridePlg, "scalar"));
+			UT_String shopPrmToken;
+			opNode->evalString(shopPrmToken, "parmname", 0, t);
+			const PRM_Parm *shopPrm = shopNode->getParmList()->getParmPtr(shopPrmToken);
+			if (   shopPrm
+				&& shopPrm->getType().isFloatType()
+				&& pluginInfo->attributes.count(attrName)
+				&& NOT(pluginDesc.contains(attrName)))
+			{
+				const Parm::AttrDesc &attrDesc = pluginInfo->attributes.at(attrName);
+				switch (attrDesc.value.type) {
+					case Parm::eBool:
+					case Parm::eEnum:
+					case Parm::eInt:
+					case Parm::eTextureInt:
+					{
+						Attrs::PluginDesc mtlOverrideDesc(VRayExporter::getPluginName(&vopNode, attrName), "TexUserScalar");
+						mtlOverrideDesc.addAttribute(Attrs::PluginAttr("default_value", shopNode->evalInt(shopPrm, 0, t)));
+						mtlOverrideDesc.addAttribute(Attrs::PluginAttr("user_attribute", shopPrm->getToken()));
 
-					break;
-				}
-				case Parm::eFloat:
-				case Parm::eTextureFloat:
-				{
-					Attrs::PluginDesc mtlOverrideDesc(VRayExporter::getPluginName(&vopNode, attrName), "TexUserScalar");
-					mtlOverrideDesc.addAttribute(Attrs::PluginAttr("default_value", shopNode->evalFloat(&shopPrm, 0, getContext().getTime())));
-					mtlOverrideDesc.addAttribute(Attrs::PluginAttr("user_attribute", shopPrm.getToken()));
+						VRay::Plugin overridePlg = exportPlugin(mtlOverrideDesc);
+						pluginDesc.addAttribute(Attrs::PluginAttr(attrName, overridePlg, "scalar"));
 
-					VRay::Plugin overridePlg = exportPlugin(mtlOverrideDesc);
-					pluginDesc.addAttribute(Attrs::PluginAttr(attrName, overridePlg, "scalar"));
-
-					break;
-				}
-				case Parm::eColor:
-				case Parm::eAColor:
-				case Parm::eTextureColor:
-				{
-					Attrs::PluginDesc mtlOverrideDesc(VRayExporter::getPluginName(&vopNode, attrName), "TexUserColor");
-
-					Attrs::PluginAttr attr("default_color", Attrs::PluginAttr::AttrTypeAColor);
-					for (int i = 0; i < std::min(shopPrm.getVectorSize(), 4); ++i) {
-						attr.paramValue.valVector[i] = shopNode->evalFloat(&shopPrm, i, getContext().getTime());
+						break;
 					}
-					mtlOverrideDesc.addAttribute(attr);
-					mtlOverrideDesc.addAttribute(Attrs::PluginAttr("user_attribute", shopPrm.getToken()));
+					case Parm::eFloat:
+					case Parm::eTextureFloat:
+					{
+						Attrs::PluginDesc mtlOverrideDesc(VRayExporter::getPluginName(&vopNode, attrName), "TexUserScalar");
+						mtlOverrideDesc.addAttribute(Attrs::PluginAttr("default_value", shopNode->evalFloat(shopPrm, 0, t)));
+						mtlOverrideDesc.addAttribute(Attrs::PluginAttr("user_attribute", shopPrm->getToken()));
 
-					VRay::Plugin mtlOverridePlg = exportPlugin(mtlOverrideDesc);
-					pluginDesc.addAttribute(Attrs::PluginAttr(attrName, mtlOverridePlg, "color"));
+						VRay::Plugin overridePlg = exportPlugin(mtlOverrideDesc);
+						pluginDesc.addAttribute(Attrs::PluginAttr(attrName, overridePlg, "scalar"));
 
-					break;
+						break;
+					}
+					case Parm::eColor:
+					case Parm::eAColor:
+					case Parm::eTextureColor:
+					{
+						Attrs::PluginDesc mtlOverrideDesc(VRayExporter::getPluginName(&vopNode, attrName), "TexUserColor");
+
+						Attrs::PluginAttr attr("default_color", Attrs::PluginAttr::AttrTypeAColor);
+						for (int i = 0; i < std::min(shopPrm->getVectorSize(), 4); ++i) {
+							attr.paramValue.valVector[i] = shopNode->evalFloat(shopPrm, i, t);
+						}
+						mtlOverrideDesc.addAttribute(attr);
+						mtlOverrideDesc.addAttribute(Attrs::PluginAttr("user_attribute", shopPrm->getToken()));
+
+						VRay::Plugin mtlOverridePlg = exportPlugin(mtlOverrideDesc);
+						pluginDesc.addAttribute(Attrs::PluginAttr(attrName, mtlOverridePlg, "color"));
+
+						break;
+					}
+					default:
+					// ignore other types for now
+						;
 				}
-				default:
-				// ignore other types for now
-					;
 			}
 		}
 	}
