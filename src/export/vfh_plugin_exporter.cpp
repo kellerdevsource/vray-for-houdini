@@ -196,11 +196,8 @@ int VRayPluginRenderer::initRenderer(int hasUI, int reInit)
 				VRay::RendererOptions options;
 				options.keepRTRunning = true;
 				options.showFrameBuffer = hasUI;
-#if 0
-				options.useDefaultTheme = false;
-				// Use Maya buttons style
-				options.buttonsDrawStyle = 4;
-#endif
+				options.useDefaultVfbTheme = false;
+				options.vfbDrawStyle = VRay::RendererOptions::ThemeStyleMaya;
 
 				m_vray = new VRay::VRayRenderer(options);
 
