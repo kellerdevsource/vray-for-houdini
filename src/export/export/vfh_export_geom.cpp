@@ -314,12 +314,18 @@ int GeometryExporter::exportVRaySOP(SOP_Node &sop, PluginDescList &pluginList)
 	Attrs::PluginDesc &nodeDesc = pluginList.back();
 	int nPlugins = 1;
 
+	SOP::NodeBase *vrayNode = UTverify_cast< SOP::NodeBase * >(&sop);
+	if (vrayNode->getVRayPluginID() == "GeomPlane") {
+		VRay::Transform tm(1);
+		VRayExporter::flipTransform(tm);
+		nodeDesc.addAttribute(Attrs::PluginAttr("transform", tm));
+	}
+
 	if (NOT(m_exportGeometry)) {
 		return nPlugins;
 	}
 
 	// geometry
-	SOP::NodeBase *vrayNode = UTverify_cast< SOP::NodeBase * >(&sop);
 
 	ExportContext ctx(CT_OBJ, m_pluginExporter, *sop.getParent());
 
