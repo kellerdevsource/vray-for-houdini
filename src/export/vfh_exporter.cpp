@@ -100,12 +100,6 @@ VRay::Transform VRayExporter::Matrix4ToTransform(const UT_Matrix4D &m4, bool fli
 }
 
 
-void VRayExporter::flipTransform(VRay::Transform &tm)
-{
-	VUtils::swap(tm.matrix[1], tm.matrix[2]);
-}
-
-
 VRay::Transform VRayExporter::getObjTransform(OBJ_Node *obj_node, OP_Context &context, bool flip)
 {
 	UT_Matrix4D matrix;

@@ -194,7 +194,6 @@ public:
 
 	static void                    TransformToMatrix4(const VUtils::TraceTransform &tm, UT_Matrix4 &m);
 	static VRay::Transform         Matrix4ToTransform(const UT_Matrix4D &m4, bool flip=false);
-	static void                    flipTransform(VRay::Transform &tm);
 	static OP_Node                *FindChildNodeByType(OP_Node *op_node, const std::string &op_type);
 
 	void                           setAttrValueFromOpNodePrm(Attrs::PluginDesc &plugin, const Parm::AttrDesc &parmDesc, OP_Node &opNode, const std::string &parmName);
