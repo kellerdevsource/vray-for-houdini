@@ -20,7 +20,7 @@ Building From Source
 
 ### Requirements
 
-* **V-Ray Application SDK** nightly build / license (write to support@chaosgroup.com)
+* **V-Ray Application SDK** nightly Qt build / license (write to support@chaosgroup.com)
 
 * **V-Ray SDK** (for example, from **V-Ray For Maya** nightly build)
 
@@ -74,6 +74,8 @@ Building From Source
     -DAPPSDK_VERSION=507 \
     ${HOME}/dev/vray-for-houdini
   ```
+
+  If you are using Qt version of AppSDK (preffered) also add `-DAPPSDK_QT=ON`.
 
   This will generate a Ninja project; build it and install with: `ninja install`
 
