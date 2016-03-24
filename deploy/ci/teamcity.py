@@ -199,6 +199,9 @@ def main(args):
         if args.upload:
             upload(ReleaseArchive)
 
+    sys.stdout.write("##teamcity[setParameter name='env.CGR_ARTIFACTS' value='%s']" % (ReleaseArchive))
+    sys.stdout.flush()
+
     return err
 
 
