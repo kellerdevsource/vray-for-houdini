@@ -56,6 +56,7 @@ use_vray_appsdk()
 houdini_plugin(${PROJECT_NAME} "${SOURCES};${HEADERS}")
 
 link_with_vray_sdk(${PROJECT_NAME})
+link_with_vray(${PROJECT_NAME})
 link_with_vray_appsdk(${PROJECT_NAME})
 link_with_boost(${PROJECT_NAME})
 
