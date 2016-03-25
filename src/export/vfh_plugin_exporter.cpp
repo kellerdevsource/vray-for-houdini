@@ -12,11 +12,9 @@
 
 #include <boost/bind.hpp>
 
-#ifdef VRAY_APPSDK_QT
-#  include <QtCore/QString>
-#  include <QtGui/QtGui>
-#  include <RE/RE_QtWindow.h>
-#endif
+#include <QtCore/QString>
+#include <QtGui/QtGui>
+#include <RE/RE_QtWindow.h>
 
 
 #define PRINT_CALLBACK_CALLS  0
@@ -160,17 +158,14 @@ VRayPluginRenderer::~VRayPluginRenderer()
 
 void VRayPluginRenderer::vfbParent(void *parent)
 {
-#ifdef VRAY_APPSDK_QT
 	if (m_vray) {
 		m_vray->vfb.setParentWindow(parent);
 	}
-#endif
 }
 
 
 int VRayPluginRenderer::initRenderer(int hasUI, int reInit)
 {
-#ifdef VRAY_APPSDK_QT
 	// VFB will take colors from QApplication::palette(),
 	// but Houdini's real palette is not stored there for some reason.
 	QWidget *mainWindow = RE_QtWindow::mainQtWindow();
@@ -178,7 +173,6 @@ int VRayPluginRenderer::initRenderer(int hasUI, int reInit)
 		// Must be called before VRay::VRayRenderer(options)
 		QApplication::setPalette(mainWindow->palette());
 	}
-#endif
 
 	if (VRayPluginRenderer::vrayInit) {
 		vfbParent(nullptr);
@@ -242,7 +236,6 @@ void VRayPluginRenderer::setImageSize(const int w, const int h)
 void VRayPluginRenderer::showVFB(const bool show)
 {
 	if (m_vray) {
-#ifdef VRAY_APPSDK_QT
 		QWidget *mainWindow = RE_QtWindow::mainQtWindow();
 		if (mainWindow) {
 			QWidget *vfb = reinterpret_cast<QWidget*>(m_vray->vfb.getWindowHandle());
@@ -260,11 +253,8 @@ void VRayPluginRenderer::showVFB(const bool show)
 
 				vfb->setWindowFlags(windowFlags);
 			}
+			m_vray->vfb.show(show, true);
 		}
-#else
-		m_vray->vfb.setAlwaysOnTop(true);
-#endif
-		m_vray->vfb.show(show, true);
 	}
 }
 

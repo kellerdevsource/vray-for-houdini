@@ -75,8 +75,6 @@ Building From Source
     ${HOME}/dev/vray-for-houdini
   ```
 
-  If you are using Qt version of AppSDK (preffered) also add `-DAPPSDK_QT=ON`.
-
   This will generate a Ninja project; build it and install with: `ninja install`
 
   It'll build and install plugins (with icons, shelfs, etc) into the default Houdini's user settings directory.
