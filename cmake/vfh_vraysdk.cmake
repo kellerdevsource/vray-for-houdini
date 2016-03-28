@@ -132,7 +132,6 @@ endmacro()
 
 macro(link_with_vray _name)
 	set(VRAY_LIBS
-		cgauth
 		vray
 	)
 	target_link_libraries(${_name} ${VRAY_LIBS})
