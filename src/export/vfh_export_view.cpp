@@ -33,11 +33,13 @@ void VRayExporter::RtCallbackView(OP_Node *caller, void *callee, OP_EventType ty
 	Log::getLog().info("RtCallbackView: %s from \"%s\"",
 			   OPeventToString(type), caller->getName().buffer());
 
-	if (type == OP_INPUT_CHANGED) {
-		exporter.exportView();
-	}
-	else if (type == OP_PARM_CHANGED) {
-		if (!Parm::isParmSwitcher(*caller, long(data))) {
+	switch (type) {
+		case OP_PARM_CHANGED: {
+			if (Parm::isParmSwitcher(*caller, long(data))) {
+				break;
+			}
+		}
+		case OP_INPUT_CHANGED: {
 			bool procceedEvent = false;
 
 			if (caller->castToOBJNode()) {
@@ -55,10 +57,15 @@ void VRayExporter::RtCallbackView(OP_Node *caller, void *callee, OP_EventType ty
 			if (procceedEvent) {
 				exporter.exportView();
 			}
+
+			break;
 		}
-	}
-	else if (type == OP_NODE_PREDELETE) {
-		exporter.delOpCallback(caller, VRayExporter::RtCallbackView);
+		case OP_NODE_PREDELETE: {
+			exporter.delOpCallback(caller, VRayExporter::RtCallbackView);
+			break;
+		}
+		default:
+			break;
 	}
 }
 

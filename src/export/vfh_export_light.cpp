@@ -10,12 +10,13 @@
 
 #include "obj/obj_node_base.h"
 #include "vfh_exporter.h"
+#include "vfh_prm_templates.h"
 
 
 using namespace VRayForHoudini;
 
 
-void VRayExporter::RtCallbackLight(OP_Node *caller, void *callee, OP_EventType type, void* /*data*/)
+void VRayExporter::RtCallbackLight(OP_Node *caller, void *callee, OP_EventType type, void* data)
 {
 	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
 
@@ -24,15 +25,23 @@ void VRayExporter::RtCallbackLight(OP_Node *caller, void *callee, OP_EventType t
 	Log::getLog().info("RtCallbackLight: %s from \"%s\"",
 			   OPeventToString(type), caller->getName().buffer());
 
-	if (type == OP_PARM_CHANGED ||
-		type == OP_INPUT_CHANGED ||
-		type == OP_INPUT_REWIRED)
-	{
-		exporter.exportLight(obj_node);
-	}
-	else if (type == OP_NODE_PREDELETE) {
-		exporter.delOpCallbacks(caller);
-		exporter.removePlugin(obj_node);
+	switch (type) {
+		case OP_PARM_CHANGED: {
+			if (Parm::isParmSwitcher(*caller, long(data))) {
+				break;
+			}
+		}
+		case OP_INPUT_CHANGED:
+		case OP_INPUT_REWIRED: {
+			exporter.exportLight(obj_node);
+			break;
+		}
+		case OP_NODE_PREDELETE: {
+			exporter.removePlugin(obj_node);
+			break;
+		}
+		default:
+			break;
 	}
 }
 

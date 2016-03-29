@@ -56,9 +56,11 @@ void VRayExporter::RtCallbackOBJGeometry(OP_Node *caller, void *callee, OP_Event
 
 	int shouldReExport = false;
 	switch (type) {
-		// TODO: Improve handling by checking the exact flag if possible
-		case OP_PARM_CHANGED:
-		{
+		case OP_PARM_CHANGED: {
+			if (Parm::isParmSwitcher(*caller, long(data))) {
+				break;
+			}
+
 			// If the parameter is for material override it has OBJ_MATERIAL_SPARE_TAG tag
 			const PRM_Parm *prm = Parm::getParm(*caller, reinterpret_cast<long>(data));
 			if (prm) {
@@ -107,7 +109,11 @@ void VRayExporter::RtCallbackSOPChanged(OP_Node *caller, void *callee, OP_EventT
 	OBJ_Geometry *obj_geo = caller->getCreator()->castToOBJNode()->castToOBJGeometry();
 
 	switch (type) {
-		case OP_PARM_CHANGED:
+		case OP_PARM_CHANGED: {
+			if (Parm::isParmSwitcher(*caller, long(data))) {
+				break;
+			}
+		}
 		case OP_FLAG_CHANGED:
 		case OP_INPUT_CHANGED:
 		case OP_INPUT_REWIRED:
@@ -144,13 +150,16 @@ void VRayExporter::RtCallbackVRayClipper(OP_Node *caller, void *callee, OP_Event
 	Log::getLog().debug("RtCallbackVRayClipper: %s from \"%s\"", OPeventToString(type), clipperNode->getName().buffer());
 
 	switch (type) {
-		case OP_PARM_CHANGED:
+		case OP_PARM_CHANGED: {
+			if (Parm::isParmSwitcher(*caller, long(data))) {
+				break;
+			}
+		}
 		case OP_FLAG_CHANGED:
 		case OP_INPUT_CHANGED:
 		case OP_INPUT_REWIRED:
 		{
 			exporter.exportVRayClipper(*clipperNode);
-
 			break;
 		}
 		case OP_NODE_PREDELETE:

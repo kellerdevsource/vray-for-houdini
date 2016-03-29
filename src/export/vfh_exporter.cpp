@@ -537,14 +537,23 @@ void VRayExporter::RtCallbackVop(OP_Node *caller, void *callee, OP_EventType typ
 	Log::getLog().info("RtCallbackVop: %s from \"%s\"",
 					   OPeventToString(type), caller->getName().buffer());
 
-	if (   type == OP_PARM_CHANGED
-		|| type == OP_INPUT_CHANGED
-		|| type == OP_INPUT_REWIRED)
-	{
-		exporter.exportVop(caller, nullptr);
-	}
-	else if (type == OP_NODE_PREDELETE) {
-		exporter.delOpCallback(caller, VRayExporter::RtCallbackVop);
+	switch (type) {
+		case OP_PARM_CHANGED: {
+			if (Parm::isParmSwitcher(*caller, long(data))) {
+				break;
+			}
+		}
+		case OP_INPUT_CHANGED:
+		case OP_INPUT_REWIRED: {
+			exporter.exportVop(caller, nullptr);
+			break;
+		}
+		case OP_NODE_PREDELETE: {
+			exporter.delOpCallback(caller, VRayExporter::RtCallbackVop);
+			break;
+		}
+		default:
+			break;
 	}
 }
 
@@ -641,24 +650,33 @@ void VRayExporter::RtCallbackDisplacementObj(OP_Node *caller, void *callee, OP_E
 	Log::getLog().info("RtCallbackDisplacementObj: %s from \"%s\"",
 					   OPeventToString(type), caller->getName().buffer());
 
-	if (type == OP_PARM_CHANGED) {
-		const int idx = reinterpret_cast<long>(data);
-		const PRM_Parm *parm = Parm::getParm(*caller, idx);
-		if (parm) {
-			OBJ_Node *obj_node = caller->castToOBJNode();
-			if (   boost::equals(parm->getToken(), "vray_use_displ")
-				   || boost::equals(parm->getToken(), "vray_displ_type"))
-			{
-				exporter.exportObject(obj_node);
+	switch (type) {
+		case OP_PARM_CHANGED: {
+			if (Parm::isParmSwitcher(*caller, long(data))) {
+				break;
 			}
-			else {
-				VRay::Plugin geom;
-				exporter.exportDisplacement(obj_node, geom);
+
+			const PRM_Parm *parm = Parm::getParm(*caller, reinterpret_cast<long>(data));
+			if (parm) {
+				OBJ_Node *obj_node = caller->castToOBJNode();
+				if (boost::equals(parm->getToken(), "vray_use_displ") ||
+					boost::equals(parm->getToken(), "vray_displ_type"))
+				{
+					exporter.exportObject(obj_node);
+				}
+				else {
+					VRay::Plugin geom;
+					exporter.exportDisplacement(obj_node, geom);
+				}
 			}
+			break;
 		}
-	}
-	else if (type == OP_NODE_PREDELETE) {
-		exporter.delOpCallback(caller, VRayExporter::RtCallbackDisplacementObj);
+		case OP_NODE_PREDELETE: {
+			exporter.delOpCallback(caller, VRayExporter::RtCallbackDisplacementObj);
+			break;
+		}
+		default:
+			break;
 	}
 }
 
@@ -708,33 +726,40 @@ void VRayExporter::RtCallbackDisplacementVop(OP_Node *caller, void *callee, OP_E
 	Log::getLog().info("RtCallbackDisplacementVop: %s from \"%s\"",
 					   OPeventToString(type), caller->getName().buffer());
 
-	if (   type == OP_PARM_CHANGED
-		   || type == OP_INPUT_REWIRED)
-	{
-		const int idx = reinterpret_cast<long>(data);
-		SHOP_Node *shop_node = caller->getParent()->castToSHOPNode();
-		if (   idx >= 0
-			   && shop_node)
-		{
-			UT_String shopPath;
-			shop_node->getFullPath(shopPath);
-
-			OP_NodeList refs;
-			shop_node->getExistingOpDependents(refs, true);
-			for (OP_Node *node : refs) {
-				UT_String nodePath;
-				node->getFullPath(nodePath);
-
-				OBJ_Node *obj_node = node->castToOBJNode();
-				if (obj_node) {
-					VRay::Plugin geom;
-					exporter.exportDisplacement(obj_node, geom);
-				}
+	switch (type) {
+		case OP_PARM_CHANGED: {
+			if (Parm::isParmSwitcher(*caller, long(data))) {
+				break;
 			}
 		}
-	}
-	else if (type == OP_NODE_PREDELETE) {
-		exporter.delOpCallback(caller, VRayExporter::RtCallbackDisplacementVop);
+		case OP_INPUT_REWIRED: {
+			const int idx = reinterpret_cast<long>(data);
+			SHOP_Node *shop_node = caller->getParent()->castToSHOPNode();
+			if (idx >= 0 && shop_node) {
+				UT_String shopPath;
+				shop_node->getFullPath(shopPath);
+
+				OP_NodeList refs;
+				shop_node->getExistingOpDependents(refs, true);
+				for (OP_Node *node : refs) {
+					UT_String nodePath;
+					node->getFullPath(nodePath);
+
+					OBJ_Node *obj_node = node->castToOBJNode();
+					if (obj_node) {
+						VRay::Plugin geom;
+						exporter.exportDisplacement(obj_node, geom);
+					}
+				}
+			}
+			break;
+		}
+		case OP_NODE_PREDELETE: {
+			exporter.delOpCallback(caller, VRayExporter::RtCallbackDisplacementVop);
+			break;
+		}
+		default:
+			break;
 	}
 }
 
