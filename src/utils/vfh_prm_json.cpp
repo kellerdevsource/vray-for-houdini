@@ -13,6 +13,7 @@
 #include "vfh_prm_json.h"
 #include "vfh_prm_globals.h"
 #include "vfh_ui.h"
+#include "vfh_prm_templates.h"
 
 #include "vop/material/vop_MtlMulti.h"
 #include "vop/brdf/vop_BRDFLayered.h"
@@ -211,127 +212,83 @@ static bool AttrNeedWidget(const AttrDesc &attrDesc)
 
 static PRM_Template AttrDescAsPrmTemplate(const VRayPluginInfo &pluginInfo, const AttrDesc &attrDesc, const std::string &prefix)
 {
-	static struct PrmDefaultStorage {
-		typedef std::map<int, PRM_Default*> PrmDefaultMap;
-
-		PrmDefaultStorage() {}
-		~PrmDefaultStorage() {
-			for (auto &it : m_prmDefaultMap) {
-				delete it.second;
-			}
-		}
-
-		PRM_Default *getPrmDefault(int forValue) {
-			PRM_Default *defPrm = NULL;
-
-			PrmDefaultMap::const_iterator it = m_prmDefaultMap.find(forValue);
-			if (it != m_prmDefaultMap.end()) {
-				defPrm = it->second;
-			}
-			else {
-				defPrm = new PRM_Default();
-				defPrm->setOrdinal(forValue);
-				m_prmDefaultMap[forValue] = defPrm;
-			}
-
-			return defPrm;
-		}
-
-	private:
-		PrmDefaultMap m_prmDefaultMap;
-
-		VfhDisableCopy(PrmDefaultStorage);
-	} prmDefStorage;
-
-	// PRM_Name stores pointer to name so we have to store generated names
-	//
-	struct PrmNameInfo {
-		PrmNameInfo(const std::string &name, const std::string &label)
-			: m_name(name.c_str())
-			, m_label(label.c_str())
-			, m_prm(PRM_Name(m_name.ptr(), m_label.ptr()))
-		{}
-
-		PRM_Name           *getPrm() { return &m_prm; }
-
-	private:
-		VUtils::CharString  m_name;
-		VUtils::CharString  m_label;
-		PRM_Name            m_prm;
-
-		VfhDisableCopy(PrmNameInfo);
-	};
-
-	static struct PrmNameInfos {
-		PrmNameInfos() {}
-		~PrmNameInfos() {
-			for (const auto &prmNamePtr : m_prmNames) {
-				delete prmNamePtr;
-			}
-		}
-
-		PrmNameInfo &add(PrmNameInfo *prmNameInfo) {
-			m_prmNames.push_back(prmNameInfo);
-			return *m_prmNames.back();
-		}
-
-	private:
-		std::vector<PrmNameInfo*> m_prmNames;
-
-		VfhDisableCopy(PrmNameInfos);
-	} prmNameInfos;
-
 	const std::string &attrName = prefix.empty()
 								  ? attrDesc.attr
 								  : boost::str(Parm::FmtPrefixAuto % prefix % attrDesc.attr);
 
-	PrmNameInfo &prmName = prmNameInfos.add(new PrmNameInfo(attrName, attrDesc.label));
-
-	PRM_Template tmpl;
+	Parm::PRMFactory tmpl;
 	if (attrDesc.value.type == ParmType::eBool) {
-		tmpl = PRM_Template(PRM_TOGGLE, 1, prmName.getPrm(), attrDesc.value.getDefBool());
+		tmpl.setType(PRM_TOGGLE)
+			.setName(attrName, attrDesc.label)
+			.setDefault(attrDesc.value.getDefBool());
 	}
 	else if (attrDesc.value.type == ParmType::eInt) {
-		tmpl = PRM_Template(PRM_INT, 1, prmName.getPrm(), attrDesc.value.getDefInt());
+		tmpl.setType(PRM_INT)
+			.setName(attrName, attrDesc.label)
+			.setDefault(attrDesc.value.getDefInt());
 	}
 	else if (attrDesc.value.type == ParmType::eFloat) {
-		tmpl = PRM_Template(PRM_FLT, 1, prmName.getPrm(), attrDesc.value.getDefFloat());
+		tmpl.setType(PRM_FLT)
+			.setName(attrName, attrDesc.label)
+			.setDefault(attrDesc.value.getDefFloat());
 	}
 	else if (attrDesc.value.type == ParmType::eColor ||
-			 attrDesc.value.type == ParmType::eAColor) {
-		tmpl = PRM_Template(PRM_RGB_J, PRM_Template::PRM_EXPORT_TBX, 4, prmName.getPrm(), attrDesc.value.getDefColor());
+			 attrDesc.value.type == ParmType::eAColor)
+	{
+		tmpl.setType(PRM_RGB_J)
+			.setExportLevel(PRM_Template::PRM_EXPORT_TBX)
+			.setName(attrName, attrDesc.label)
+			.setVectorSize(4)
+			.setDefault(attrDesc.value.getDefColor());
 	}
 	else if (attrDesc.value.type == ParmType::eTextureInt) {
 		switch (pluginInfo.pluginType) {
 			case PluginTypeLight:
 			{
-				tmpl = PRM_Template(PRM_STRING_E, PRM_TYPE_DYNAMIC_PATH, 1, prmName.getPrm(), &Parm::PRMemptyStringDefault);
+				tmpl.setType(PRM_STRING_E)
+					.setTypeExtended(PRM_TYPE_DYNAMIC_PATH)
+					.setName(attrName, attrDesc.label)
+					.setDefault(&Parm::PRMemptyStringDefault);
 				break;
 			}
 			default:
-				tmpl = PRM_Template(PRM_INT, 1, prmName.getPrm(), attrDesc.value.getDefInt());
+				tmpl.setType(PRM_INT)
+					.setName(attrName, attrDesc.label)
+					.setDefault(attrDesc.value.getDefInt());
 		}
 	}
 	else if (attrDesc.value.type == ParmType::eTextureFloat) {
 		switch (pluginInfo.pluginType) {
 			case PluginTypeLight:
 			{
-				tmpl = PRM_Template(PRM_STRING_E, PRM_TYPE_DYNAMIC_PATH, 1, prmName.getPrm(), &Parm::PRMemptyStringDefault);
+				tmpl.setType(PRM_STRING_E)
+					.setTypeExtended(PRM_TYPE_DYNAMIC_PATH)
+					.setName(attrName, attrDesc.label)
+					.setDefault(&Parm::PRMemptyStringDefault);
 				break;
 			}
 			default:
-				tmpl = PRM_Template(PRM_FLT, 1, prmName.getPrm(), attrDesc.value.getDefFloat());
+				tmpl.setType(PRM_FLT)
+					.setName(attrName, attrDesc.label)
+					.setDefault(attrDesc.value.getDefFloat());
 		}
 	}
 	else if (attrDesc.value.type == ParmType::eTextureColor) {
 		switch (pluginInfo.pluginType) {
 			case PluginTypeLight:
 			{
-				tmpl = PRM_Template(PRM_STRING_E, PRM_TYPE_DYNAMIC_PATH, 1, prmName.getPrm(), &Parm::PRMemptyStringDefault);
+				tmpl.setType(PRM_STRING_E)
+					.setTypeExtended(PRM_TYPE_DYNAMIC_PATH)
+					.setName(attrName, attrDesc.label)
+					.setDefault(&Parm::PRMemptyStringDefault);
 				break;
 			}
 			default:
-				tmpl = PRM_Template(PRM_RGB_J, PRM_Template::PRM_EXPORT_TBX, 4, prmName.getPrm(), attrDesc.value.getDefColor());
+				tmpl.setType(PRM_RGB_J)
+					.setExportLevel(PRM_Template::PRM_EXPORT_TBX)
+					.setName(attrName, attrDesc.label)
+					.setVectorSize(4)
+					.setDefault(attrDesc.value.getDefColor());
 		}
 
 	}
@@ -345,28 +302,39 @@ static PRM_Template AttrDescAsPrmTemplate(const VRayPluginInfo &pluginInfo, cons
 
 		PRM_ChoiceList *enumMenu = new PRM_ChoiceList(PRM_CHOICELIST_SINGLE, enumMenuItems);
 
-		tmpl = PRM_Template(PRM_ORD, 1, prmName.getPrm(), prmDefStorage.getPrmDefault(attrDesc.value.defEnum), enumMenu);
+		tmpl.setType(PRM_ORD)
+			.setName(attrName, attrDesc.label)
+			.setChoiceList(enumMenu)
+			.setDefault(attrDesc.value.defEnum);
 	}
 	else if (attrDesc.value.type == ParmType::eString) {
 		// TODO:
 		//  [ ] Proper default value
 		//  [ ] Template type base on subtype (filepath, dirpath or name)
 		//
-		tmpl = PRM_Template(PRM_FILE, 1, prmName.getPrm(), &PRMemptyStringDefault);
+		tmpl.setType(PRM_FILE)
+			.setName(attrName, attrDesc.label)
+			.setDefault(&PRMemptyStringDefault);
 	}
 	else if (attrDesc.value.type == ParmType::eCurve) {
-		tmpl = PRM_Template(PRM_MULTITYPE_RAMP_FLT,  NULL /*tmpl*/, 1 /*vec_size*/, prmName.getPrm(), PRMtwoDefaults, NULL /*range*/, &Parm::PRMcurveDefault);
+		tmpl.setType(PRM_MULTITYPE_RAMP_FLT)
+			.setName(attrName, attrDesc.label)
+			.setDefault(PRMtwoDefaults)
+			.setSpareData(&Parm::PRMcurveDefault);
 	}
 	else if (attrDesc.value.type == ParmType::eRamp) {
-		tmpl = PRM_Template(PRM_MULTITYPE_RAMP_RGB,  NULL /*tmpl*/, 1 /*vec_size*/, prmName.getPrm(), PRMtwoDefaults, NULL /*range*/, &Parm::PRMrampDefault);
+		tmpl.setType(PRM_MULTITYPE_RAMP_RGB)
+			.setName(attrName, attrDesc.label)
+			.setDefault(PRMtwoDefaults)
+			.setSpareData(&Parm::PRMrampDefault);
 	}
 
 	if (tmpl.getType() == PRM_LIST_TERMINATOR) {
 		Log::getLog().error("Incorrect attribute template: %s (%s)",
-					prmName.getPrm()->getToken(), prmName.getPrm()->getLabel());
+					attrName.c_str(), attrDesc.label.c_str());
 	}
 
-	return tmpl;
+	return tmpl.getPRMTemplate();
 }
 
 

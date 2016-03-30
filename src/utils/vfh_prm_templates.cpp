@@ -425,6 +425,7 @@ Parm::PRMFactory& Parm::PRMFactory::setType(const PRM_Type &type)
 Parm::PRMFactory& Parm::PRMFactory::setType(const PRM_MultiType &multiType)
 {
 	m_prm->multiType = multiType;
+	m_prm->type = PRM_TYPE_BASIC_TYPE;
 	return *this;
 }
 
