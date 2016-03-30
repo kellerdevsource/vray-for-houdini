@@ -177,7 +177,7 @@ void VRayExporter::setAttrValueFromOpNodePrm(Attrs::PluginDesc &pluginDesc, cons
 
 		const fpreal &t = m_context.getTime();
 #if 0
-		Log::getLog().info("Setting: [%s] %s.%s (from %s.%s)",
+		Log::getLog().info("Setting: [%s] %s_%s (from %s_%s)",
 						   pluginDesc.pluginID.c_str(),
 						   pluginDesc.pluginName.c_str(), attrDesc.attr.c_str(),
 						   opNode.getName().buffer(), parmName.c_str());
@@ -1261,9 +1261,9 @@ void VRayExporter::fillMotionBlurParams(MotionBlurParams &mbParams)
 		}
 	}
 	else {
-		mbParams.mb_duration        = m_rop->evalFloat("SettingsMotionBlur.duration", 0, 0.0);
-		mbParams.mb_interval_center = m_rop->evalFloat("SettingsMotionBlur.interval_center", 0, 0.0);
-		mbParams.mb_geom_samples    = m_rop->evalInt("SettingsMotionBlur.geom_samples", 0, 0.0);
+		mbParams.mb_duration        = m_rop->evalFloat("SettingsMotionBlur_duration", 0, 0.0);
+		mbParams.mb_interval_center = m_rop->evalFloat("SettingsMotionBlur_interval_center", 0, 0.0);
+		mbParams.mb_geom_samples    = m_rop->evalInt("SettingsMotionBlur_geom_samples", 0, 0.0);
 	}
 }
 
@@ -1416,11 +1416,11 @@ void VRayExporter::setSettingsRtEngine()
 
 	Attrs::PluginDesc settingsRTEngineDesc(settingsRTEngine.getName(), "SettingsRTEngine");
 
-	settingsRTEngineDesc.addAttribute(Attrs::PluginAttr("stereo_mode",         isStereoView() ? Parm::getParmInt(*m_rop, "VRayStereoscopicSettings.use") : 0));
-	settingsRTEngineDesc.addAttribute(Attrs::PluginAttr("stereo_eye_distance", isStereoView() ? Parm::getParmFloat(*m_rop, "VRayStereoscopicSettings.eye_distance") : 0));
-	settingsRTEngineDesc.addAttribute(Attrs::PluginAttr("stereo_focus",        isStereoView() ? Parm::getParmInt(*m_rop, "VRayStereoscopicSettings.focus_method") : 0));
+	settingsRTEngineDesc.addAttribute(Attrs::PluginAttr("stereo_mode",         isStereoView() ? Parm::getParmInt(*m_rop, "VRayStereoscopicSettings_use") : 0));
+	settingsRTEngineDesc.addAttribute(Attrs::PluginAttr("stereo_eye_distance", isStereoView() ? Parm::getParmFloat(*m_rop, "VRayStereoscopicSettings_eye_distance") : 0));
+	settingsRTEngineDesc.addAttribute(Attrs::PluginAttr("stereo_focus",        isStereoView() ? Parm::getParmInt(*m_rop, "VRayStereoscopicSettings_focus_method") : 0));
 
-	setAttrsFromOpNodePrms(settingsRTEngineDesc, m_rop, "SettingsRTEngine.");
+	setAttrsFromOpNodePrms(settingsRTEngineDesc, m_rop, "SettingsRTEngine_");
 
 	exportPluginProperties(settingsRTEngine, settingsRTEngineDesc);
 }
@@ -1428,7 +1428,7 @@ void VRayExporter::setSettingsRtEngine()
 
 int VRayExporter::isStereoView() const
 {
-	return Parm::getParmInt(*m_rop, "VRayStereoscopicSettings.use");
+	return Parm::getParmInt(*m_rop, "VRayStereoscopicSettings_use");
 }
 
 
@@ -1587,7 +1587,7 @@ int VRayExporter::hasMotionBlur(OP_Node &rop, OBJ_Node &camera)
 		hasMB = camera.evalInt("CameraPhysical_use_moblur", 0, 0.0);
 	}
 	else {
-		hasMB = rop.evalInt("SettingsMotionBlur.on", 0, 0.0);
+		hasMB = rop.evalInt("SettingsMotionBlur_on", 0, 0.0);
 	}
 	return hasMB;
 }

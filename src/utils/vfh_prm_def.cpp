@@ -21,8 +21,8 @@ ParmDefValue::PRM_DefaultPtrList ParmDefValue::PrmDefPtrList;
 ParmDefValue::PRM_DefaultPtrList ParmDefValue::PrmDefArrPtrList;
 
 
-boost::format Parm::FmtPrefix("%s.");
-boost::format Parm::FmtPrefixAuto("%s.%s");
+boost::format Parm::FmtPrefix("%s_");
+boost::format Parm::FmtPrefixAuto("%s_%s");
 boost::format Parm::FmtPrefixManual("%s%s");
 
 

@@ -109,9 +109,9 @@ void VRayExporter::fillCameraData(const OBJ_Node &camera, const OP_Node &rop, Vi
 
 	float fov = 0.785398f;
 
-	viewParams.renderView.fovOverride = Parm::getParmInt(rop, "SettingsCamera.override_fov");
+	viewParams.renderView.fovOverride = Parm::getParmInt(rop, "SettingsCamera_override_fov");
 	if (viewParams.renderView.fovOverride) {
-		fov = Parm::getParmFloat(rop, "SettingsCamera.fov");
+		fov = Parm::getParmFloat(rop, "SettingsCamera_fov");
 	}
 	else {
 		// From https://www.sidefx.com/docs/houdini13.0/ref/cameralenses
@@ -129,14 +129,14 @@ void VRayExporter::fillCameraData(const OBJ_Node &camera, const OP_Node &rop, Vi
 		aspectCorrectFovOrtho(viewParams);
 	}
 
-	viewParams.renderView.stereoParams.use = Parm::getParmInt(rop, "VRayStereoscopicSettings.use");
-	viewParams.renderView.stereoParams.stereo_eye_distance       = Parm::getParmFloat(rop, "VRayStereoscopicSettings.eye_distance");
-	viewParams.renderView.stereoParams.stereo_interocular_method = Parm::getParmInt(rop,   "VRayStereoscopicSettings.interocular_method");
-	viewParams.renderView.stereoParams.stereo_specify_focus      = Parm::getParmInt(rop,   "VRayStereoscopicSettings.specify_focus");
-	viewParams.renderView.stereoParams.stereo_focus_distance     = Parm::getParmFloat(rop, "VRayStereoscopicSettings.focus_distance");
-	viewParams.renderView.stereoParams.stereo_focus_method       = Parm::getParmInt(rop,   "VRayStereoscopicSettings.focus_method");
-	viewParams.renderView.stereoParams.stereo_view               = Parm::getParmInt(rop,   "VRayStereoscopicSettings.view");
-	viewParams.renderView.stereoParams.adjust_resolution         = Parm::getParmInt(rop,   "VRayStereoscopicSettings.adjust_resolution");
+	viewParams.renderView.stereoParams.use = Parm::getParmInt(rop, "VRayStereoscopicSettings_use");
+	viewParams.renderView.stereoParams.stereo_eye_distance       = Parm::getParmFloat(rop, "VRayStereoscopicSettings_eye_distance");
+	viewParams.renderView.stereoParams.stereo_interocular_method = Parm::getParmInt(rop,   "VRayStereoscopicSettings_interocular_method");
+	viewParams.renderView.stereoParams.stereo_specify_focus      = Parm::getParmInt(rop,   "VRayStereoscopicSettings_specify_focus");
+	viewParams.renderView.stereoParams.stereo_focus_distance     = Parm::getParmFloat(rop, "VRayStereoscopicSettings_focus_distance");
+	viewParams.renderView.stereoParams.stereo_focus_method       = Parm::getParmInt(rop,   "VRayStereoscopicSettings_focus_method");
+	viewParams.renderView.stereoParams.stereo_view               = Parm::getParmInt(rop,   "VRayStereoscopicSettings_view");
+	viewParams.renderView.stereoParams.adjust_resolution         = Parm::getParmInt(rop,   "VRayStereoscopicSettings_adjust_resolution");
 
 	if (viewParams.renderView.stereoParams.use &&
 		viewParams.renderView.stereoParams.adjust_resolution)
@@ -148,7 +148,7 @@ void VRayExporter::fillCameraData(const OBJ_Node &camera, const OP_Node &rop, Vi
 
 void VRayExporter::fillSettingsMotionBlur(ViewParams &viewParams)
 {
-	setAttrsFromOpNodePrms(viewParams.viewPlugins.settingsMotionBlur, m_rop, "SettingsMotionBlur.");
+	setAttrsFromOpNodePrms(viewParams.viewPlugins.settingsMotionBlur, m_rop, "SettingsMotionBlur_");
 }
 
 
@@ -177,8 +177,6 @@ void VRayExporter::fillPhysicalCamera(const ViewParams &viewParams, Attrs::Plugi
 	pluginDesc.add(Attrs::PluginAttr("lens_shift",        lens_shift));
 	// pluginDesc.add(Attrs::PluginAttr("specify_focus",     true));
 
-	// Can't use auto prefix here, because Python doesn't allow to add
-	// template with "." in name
 	setAttrsFromOpNodePrms(pluginDesc, &camera, "CameraPhysical_");
 }
 
@@ -211,7 +209,7 @@ void VRayExporter::fillRenderView(const ViewParams &viewParams, Attrs::PluginDes
 
 void VRayExporter::fillStereoSettings(const ViewParams& /*viewParams*/, Attrs::PluginDesc &pluginDesc)
 {
-	setAttrsFromOpNodePrms(pluginDesc, m_rop, "VRayStereoscopicSettings.");
+	setAttrsFromOpNodePrms(pluginDesc, m_rop, "VRayStereoscopicSettings_");
 }
 
 
@@ -229,13 +227,13 @@ void VRayExporter::fillSettingsCamera(const ViewParams &viewParams, Attrs::Plugi
 		pluginDesc.add(Attrs::PluginAttr("type", 8));
 	}
 
-	setAttrsFromOpNodePrms(pluginDesc, m_rop, "SettingsCamera.");
+	setAttrsFromOpNodePrms(pluginDesc, m_rop, "SettingsCamera_");
 }
 
 
 void VRayExporter::fillSettingsCameraDof(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc)
 {
-	setAttrsFromOpNodePrms(pluginDesc, m_rop, "SettingsCameraDof.");
+	setAttrsFromOpNodePrms(pluginDesc, m_rop, "SettingsCameraDof_");
 }
 
 

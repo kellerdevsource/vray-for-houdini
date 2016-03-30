@@ -180,7 +180,7 @@ OP_ERROR SOP::PhxShaderCache::cookMySop(OP_Context &context)
 
 	UT_String path;
 	// NOTE: Path could be time dependent!
-	evalString(path, "PhxShaderCache.cache_path", 0, t);
+	evalString(path, "PhxShaderCache_cache_path", 0, t);
 	if (path.equal("")) {
 		return error();
 	}
@@ -203,7 +203,7 @@ OP_ERROR SOP::PhxShaderCache::cookMySop(OP_Context &context)
 
 		VUtils::Transform c2n(frameData->c2n);
 
-		const bool flipAxis = evalInt("PhxShaderCache.flip_yz", 0, 0.0f);
+		const bool flipAxis = evalInt("PhxShaderCache_flip_yz", 0, 0.0f);
 		if (flipAxis) {
 			VUtils::swap(c2n.m[1], c2n.m[2]);
 			c2n.m[2] = -c2n.m[2];
@@ -394,7 +394,7 @@ OP::VRayNode::PluginResult SOP::PhxShaderCache::asPluginDesc(Attrs::PluginDesc &
 					phxShaderCacheDesc.addAttribute(Attrs::PluginAttr("grid_size_x", (float)res[0]));
 					phxShaderCacheDesc.addAttribute(Attrs::PluginAttr("grid_size_y", (float)res[1]));
 					phxShaderCacheDesc.addAttribute(Attrs::PluginAttr("grid_size_z", (float)res[2]));
-					exporter.setAttrsFromOpNodePrms(phxShaderCacheDesc, this, "PhxShaderCache.");
+					exporter.setAttrsFromOpNodePrms(phxShaderCacheDesc, this, "PhxShaderCache_");
 
 					// Skip "cache_path" exporting
 					phxShaderCacheDesc.get("cache_path")->paramType = Attrs::PluginAttr::AttrTypeIgnore;
@@ -407,7 +407,7 @@ OP::VRayNode::PluginResult SOP::PhxShaderCache::asPluginDesc(Attrs::PluginDesc &
 
 	UT_String path;
 	// NOTE: Path could be time dependent!
-	evalString(path, "PhxShaderCache.cache_path", 0, t);
+	evalString(path, "PhxShaderCache_cache_path", 0, t);
 	if (path.equal("") && vdbFileNode) {
 		vdbFileNode->evalString(path, "file", 0, t);
 	}
@@ -423,7 +423,7 @@ OP::VRayNode::PluginResult SOP::PhxShaderCache::asPluginDesc(Attrs::PluginDesc &
 	if (NOT(phxShaderCache)) {
 		Attrs::PluginDesc phxShaderCacheDesc(VRayExporter::getPluginName(this, "Cache"), "PhxShaderCache");
 		phxShaderCacheDesc.addAttribute(Attrs::PluginAttr("cache_path", path.buffer()));
-		exporter.setAttrsFromOpNodePrms(phxShaderCacheDesc, this, "PhxShaderCache.");
+		exporter.setAttrsFromOpNodePrms(phxShaderCacheDesc, this, "PhxShaderCache_");
 
 		phxShaderCache = exporter.exportPlugin(phxShaderCacheDesc);
 	}
@@ -456,7 +456,7 @@ OP::VRayNode::PluginResult SOP::PhxShaderCache::asPluginDesc(Attrs::PluginDesc &
 
 	phxShaderSimDesc.addAttribute(Attrs::PluginAttr("node_transform", nodeTm));
 
-	exporter.setAttrsFromOpNodePrms(phxShaderSimDesc, this, "PhxShaderSim.");
+	exporter.setAttrsFromOpNodePrms(phxShaderSimDesc, this, "PhxShaderSim_");
 
 	VRay::Plugin phxShaderSim = exporter.exportPlugin(phxShaderSimDesc);
 	if (phxShaderSim) {

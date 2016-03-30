@@ -24,7 +24,7 @@ using namespace VRayForHoudini::Attrs;
 
 void VRayForHoudini::Attrs::PluginDesc::showAttributes() const
 {
-	printf("Plugin \"%s.%s\" parameters:\n",
+	printf("Plugin \"%s_%s\" parameters:\n",
 		   pluginID.c_str(), pluginName.c_str());
 
 	for (const auto &pIt : pluginAttrs) {

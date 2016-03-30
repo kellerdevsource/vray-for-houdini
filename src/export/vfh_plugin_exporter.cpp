@@ -381,7 +381,7 @@ void VRayPluginRenderer::exportPluginProperties(VRay::Plugin &plugin, const Attr
 		}
 
 #if CGR_DEBUG_APPSDK_VALUES
-		Log::getLog().debug("Setting plugin parameter: \"%s\" %s.%s = %s",
+		Log::getLog().debug("Setting plugin parameter: \"%s\" %s_%s = %s",
 							pluginDesc.pluginName.c_str(), pluginDesc.pluginID.c_str(), p.paramName.c_str(), plug.getValue(p.paramName).toString().c_str());
 #endif
 	}
