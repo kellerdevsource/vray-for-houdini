@@ -518,6 +518,9 @@ VRayPluginInfo* Parm::generatePluginInfo(const std::string &pluginID)
 				if (pluginID == "BitmapBuffer") {
 					pluginInfo->outputs.push_back(SocketDesc(PRM_Name("Bitmap", "Bitmap"), VOP_TYPE_VOID));
 				}
+				if (pluginID == "TexColorToFloat") {
+					pluginInfo->outputs.push_back(SocketDesc(PRM_Name("Output", "Output"), VOP_TYPE_FLOAT));
+				}
 				else {
 					pluginInfo->outputs.push_back(SocketDesc(PRM_Name("Output", "Output"), VOP_TYPE_COLOR));
 				}
