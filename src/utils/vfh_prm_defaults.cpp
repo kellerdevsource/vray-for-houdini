@@ -16,4 +16,6 @@ using namespace VRayForHoudini;
 
 PRM_Default    Parm::PRMemptyStringDefault(0.0f, "");
 PRM_SpareData  Parm::PRMcurveDefault(PRM_SpareToken("rampshowcontrolsdefault", "1"));
-PRM_SpareData  Parm::RPMrampDefault(PRM_SpareToken("rampcolordefault", "1pos ( 0 ) 1c ( 0 0 1 ) 1interp ( linear )  2pos ( 1 ) 2c ( 1 0 0 ) 2interp ( linear )"));
+PRM_SpareData  Parm::PRMrampDefault(PRM_SpareToken("rampcolordefault", "1pos ( 0 ) 1c ( 0 0 1 ) 1interp ( linear )  2pos ( 1 ) 2c ( 1 0 0 ) 2interp ( linear )"));
+PRM_Conditional Parm::PRMconditionHide(PRM_CONDTYPE_HIDE);
+PRM_Conditional Parm::PRMconditionDisable(PRM_CONDTYPE_DISABLE);

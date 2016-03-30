@@ -358,7 +358,7 @@ static PRM_Template AttrDescAsPrmTemplate(const VRayPluginInfo &pluginInfo, cons
 		tmpl = PRM_Template(PRM_MULTITYPE_RAMP_FLT,  NULL /*tmpl*/, 1 /*vec_size*/, prmName.getPrm(), PRMtwoDefaults, NULL /*range*/, &Parm::PRMcurveDefault);
 	}
 	else if (attrDesc.value.type == ParmType::eRamp) {
-		tmpl = PRM_Template(PRM_MULTITYPE_RAMP_RGB,  NULL /*tmpl*/, 1 /*vec_size*/, prmName.getPrm(), PRMtwoDefaults, NULL /*range*/, &Parm::RPMrampDefault);
+		tmpl = PRM_Template(PRM_MULTITYPE_RAMP_RGB,  NULL /*tmpl*/, 1 /*vec_size*/, prmName.getPrm(), PRMtwoDefaults, NULL /*range*/, &Parm::PRMrampDefault);
 	}
 
 	if (tmpl.getType() == PRM_LIST_TERMINATOR) {

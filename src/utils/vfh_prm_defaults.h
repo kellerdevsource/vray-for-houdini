@@ -11,7 +11,8 @@
 #ifndef VRAY_FOR_HOUDINI_PRM_DEFAULTS_H
 #define VRAY_FOR_HOUDINI_PRM_DEFAULTS_H
 
-#include <PRM/PRM_Default.h>
+
+#include <PRM/PRM_Include.h>
 #include <PRM/PRM_SpareData.h>
 
 
@@ -21,7 +22,10 @@ namespace Parm {
 
 extern PRM_Default    PRMemptyStringDefault;
 extern PRM_SpareData  PRMcurveDefault;
-extern PRM_SpareData  RPMrampDefault;
+extern PRM_SpareData  PRMrampDefault;
+extern PRM_Conditional PRMconditionHide;
+extern PRM_Conditional PRMconditionDisable;
+
 
 } // namespace Parm
 } // namespace VRayForHoudini

@@ -11,6 +11,7 @@
 #include "vfh_ui.h"
 #include "vfh_prm_def.h"
 #include "vfh_prm_templates.h"
+#include "vfh_plugin_info.h"
 
 
 using namespace VRayForHoudini;
