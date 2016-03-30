@@ -14,6 +14,11 @@
 
 #include <PRM/PRM_Include.h>
 
+#include <string>
+#include <vector>
+#include <list>
+#include <memory>
+
 
 class OP_Node;
 

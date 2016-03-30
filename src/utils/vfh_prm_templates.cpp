@@ -345,7 +345,21 @@ struct Parm::PRMFactory::PImplPRM
 
 
 	PImplPRM(const char *token, const char *label):
-		PImplPRM()
+		type(PRM_LIST_TERMINATOR),
+		typeExtended(PRM_TYPE_NONE),
+		exportLevel(PRM_Template::PRM_EXPORT_MIN),
+		multiType(PRM_MULTITYPE_NONE),
+		multiparms(nullptr),
+		name(nullptr),
+		defaults(PRMzeroDefaults),
+		vectorSize(1),
+		parmGroup(0),
+		range(nullptr),
+		choicelist(nullptr),
+		callbackFunc(0),
+		spareData(nullptr),
+		conditional(nullptr),
+		helpText(nullptr)
 	{
 		setName(token, label);
 	}
@@ -356,6 +370,8 @@ struct Parm::PRMFactory::PImplPRM
 		PRM_Name *name = createPRMName(token, label);
 		name->harden();
 		this->name = name;
+
+		return *this;
 	}
 
 	PRM_Type                   type;
