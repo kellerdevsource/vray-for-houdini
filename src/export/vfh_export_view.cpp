@@ -246,6 +246,16 @@ void VRayExporter::fillSettingsCamera(const ViewParams &viewParams, Attrs::Plugi
 
 void VRayExporter::fillSettingsCameraDof(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc)
 {
+	const fpreal t = m_context.getTime();
+	OBJ_Node *camera = VRayExporter::getCamera(m_rop);
+
+	fpreal focalDist = m_rop->evalFloat( "SettingsCameraDof_focal_dist", 0, t);
+	if (m_rop->evalInt("SettingsCameraDof_focus_from_camera", 0, t)) {
+		focalDist = camera->evalFloat("focus", 0, t);
+	}
+
+	pluginDesc.addAttribute(Attrs::PluginAttr("focal_dist", focalDist));
+
 	setAttrsFromOpNodePrms(pluginDesc, m_rop, "SettingsCameraDof_");
 }
 
