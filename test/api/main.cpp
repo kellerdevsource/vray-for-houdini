@@ -6,7 +6,7 @@
 static VRay::VRayInit vrayInit(true);
 
 
-static void onDumpMessage(VRay::VRayRenderer &/*renderer*/, const char *msg, int /*level*/, void */*userData*/)
+static void onDumpMessage(VRay::VRayRenderer &/*renderer*/, const char *msg, int /*level*/, void* /*userData*/)
 {
 	QString message(msg);
 	fprintf(stdout, "Message: %s\n",
@@ -16,7 +16,7 @@ static void onDumpMessage(VRay::VRayRenderer &/*renderer*/, const char *msg, int
 }
 
 
-static void onProgress(VRay::VRayRenderer &/*renderer*/, const char *msg, int elementNumber, int elementsCount, void */*userData*/)
+static void onProgress(VRay::VRayRenderer &/*renderer*/, const char *msg, int elementNumber, int elementsCount, void* /*userData*/)
 {
 	const float percentage = 100.0 * elementNumber / elementsCount;
 
