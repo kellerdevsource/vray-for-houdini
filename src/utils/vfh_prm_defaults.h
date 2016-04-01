@@ -23,8 +23,6 @@ namespace Parm {
 extern PRM_Default    PRMemptyStringDefault;
 extern PRM_SpareData  PRMcurveDefault;
 extern PRM_SpareData  PRMrampDefault;
-extern PRM_Conditional PRMconditionHide;
-extern PRM_Conditional PRMconditionDisable;
 
 
 } // namespace Parm

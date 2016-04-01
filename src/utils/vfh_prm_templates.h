@@ -107,7 +107,7 @@ public:
 	PRMFactory& setName(const std::string &token, const std::string &label);
 
 	/// Specify an extended type for this parameter.
-	PRMFactory& setTypeExtended(PRM_TypeExtended type);
+	PRMFactory& setTypeExtended(const PRM_TypeExtended &type);
 
 	/// Specify export level for this parameter.
 	PRMFactory& setExportLevel(const PRM_Template::PRM_Export &exportLevel);
@@ -123,6 +123,8 @@ public:
 	PRMFactory& setDefault(fpreal f, const char* s=nullptr, CH_StringMeaning meaning=CH_STRING_LITERAL);
 	PRMFactory& setDefault(const std::string&, CH_StringMeaning = CH_STRING_LITERAL);
 	PRMFactory& setDefault(const PRM_Default *d);
+	PRMFactory& setDefaults(const int items[], int nItems);
+	PRMFactory& setDefaults(const fpreal items[], int nItems);
 
 	PRMFactory& setCallbackFunc(const PRM_Callback&);
 
@@ -151,7 +153,7 @@ public:
 
 	PRMFactory& setParmGroup(int);
 
-	PRMFactory& setConditional(const PRM_ConditionalBase*);
+	PRMFactory& addConditional(const char *conditional, PRM_ConditionalType type = PRM_CONDTYPE_DISABLE);
 
 	PRMFactory& setHelpText(const char*);
 

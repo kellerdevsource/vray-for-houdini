@@ -410,6 +410,25 @@ VRayExporter::~VRayExporter()
 }
 
 
+void VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
+{
+	const fpreal t = m_context.getTime();
+	OBJ_Node *camera = VRayExporter::getCamera(m_rop);
+
+	fpreal pixelAspect = camera->evalFloat("aspect", 0, t);
+
+	UT_String resfraction;
+	m_rop->evalString(resfraction, "res_fraction", 0, t);
+	if (   m_rop->evalInt("override_camerares", 0, t)
+		&& NOT(resfraction.isFloat()) )
+	{
+		pixelAspect = m_rop->evalFloat("aspect_override", 0, t);
+	}
+
+	pluginDesc.addAttribute(Attrs::PluginAttr("img_pixelAspect", pixelAspect));
+}
+
+
 void VRayExporter::exportSettings()
 {
 	for (const auto &sp : Parm::RenderSettingsPlugins) {
@@ -420,6 +439,10 @@ void VRayExporter::exportSettings()
 		}
 		else {
 			Attrs::PluginDesc pluginDesc(sp, sp);
+			if (sp == "SettingsOutput") {
+				fillSettingsOutput(pluginDesc);
+			}
+
 			setAttrsFromOpNodePrms(pluginDesc, m_rop, boost::str(Parm::FmtPrefix % sp));
 			exportPlugin(pluginDesc);
 		}

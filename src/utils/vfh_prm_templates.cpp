@@ -387,7 +387,7 @@ struct Parm::PRMFactory::PImplPRM
 	const PRM_ChoiceList*      choicelist;
 	PRM_Callback               callbackFunc;
 	const PRM_SpareData*       spareData;
-	const PRM_ConditionalBase* conditional;
+	PRM_ConditionalGroup*      conditional;
 	const char*                helpText;
 };
 
@@ -460,7 +460,7 @@ Parm::PRMFactory& Parm::PRMFactory::setName(const std::string &token, const std:
 }
 
 
-Parm::PRMFactory& Parm::PRMFactory::setTypeExtended(PRM_TypeExtended type)
+Parm::PRMFactory& Parm::PRMFactory::setTypeExtended(const PRM_TypeExtended &type)
 {
 	m_prm->typeExtended = type;
 	return *this;
@@ -498,6 +498,38 @@ Parm::PRMFactory& Parm::PRMFactory::setDefault(const std::string &s, CH_StringMe
 Parm::PRMFactory& Parm::PRMFactory::setDefault(const PRM_Default* d)
 {
 	m_prm->defaults = d;
+	return *this;
+}
+
+
+Parm::PRMFactory& Parm::PRMFactory::setDefaults(const int items[], int nItems)
+{
+	if (nItems <= 0) {
+		return *this;
+	}
+
+	PRM_Default *defaults = createPRMDefaut(nItems);
+	for (int i = 0; i < nItems; ++i) {
+		defaults[i].setOrdinal(items[i]);
+	}
+
+	m_prm->defaults = defaults;
+	return *this;
+}
+
+
+Parm::PRMFactory& Parm::PRMFactory::setDefaults(const fpreal items[], int nItems)
+{
+	if (nItems <= 0) {
+		return *this;
+	}
+
+	PRM_Default *defaults = createPRMDefaut(nItems);
+	for (int i = 0; i < nItems; ++i) {
+		defaults[i].setFloat(items[i]);
+	}
+
+	m_prm->defaults = defaults;
 	return *this;
 }
 
@@ -588,9 +620,12 @@ Parm::PRMFactory& Parm::PRMFactory::setParmGroup(int n)
 }
 
 
-Parm::PRMFactory& Parm::PRMFactory::setConditional(const PRM_ConditionalBase* c)
+Parm::PRMFactory& Parm::PRMFactory::addConditional(const char *conditional, PRM_ConditionalType type)
 {
-	m_prm->conditional = c;
+	if (NOT(m_prm->conditional)) {
+		m_prm->conditional = new PRM_ConditionalGroup();
+	}
+	m_prm->conditional->addConditional(conditional, type);
 	return *this;
 }
 
@@ -615,7 +650,7 @@ PRM_Template Parm::PRMFactory::getPRMTemplate() const
 			const_cast<PRM_Range*>(m_prm->range),
 			const_cast<PRM_SpareData*>(m_prm->spareData),
 			m_prm->helpText,
-			const_cast<PRM_ConditionalBase*>(m_prm->conditional),
+			m_prm->conditional,
 			m_prm->callbackFunc);
 	}
 	else {
@@ -632,7 +667,7 @@ PRM_Template Parm::PRMFactory::getPRMTemplate() const
 			const_cast<PRM_SpareData*>(m_prm->spareData),
 			m_prm->parmGroup,
 			m_prm->helpText,
-			const_cast<PRM_ConditionalBase*>(m_prm->conditional));
+			m_prm->conditional);
 	}
 
 	return PRM_Template();

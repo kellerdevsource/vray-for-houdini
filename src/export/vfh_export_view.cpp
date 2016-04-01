@@ -104,8 +104,21 @@ void VRayExporter::fillCameraData(const OBJ_Node &camera, const OP_Node &rop, Vi
 {
 	const fpreal t = m_context.getTime();
 
-	const int imageWidth  = camera.evalFloat("res", 0, t);
-	const int imageHeight = camera.evalFloat("res", 1, t);
+	int imageWidth  = camera.evalInt("res", 0, t);
+	int imageHeight = camera.evalInt("res", 1, t);
+	if (rop.evalInt("override_camerares", 0, t)) {
+		UT_String resfraction;
+		rop.evalString(resfraction, "res_fraction", 0, t);
+		if (resfraction.isFloat()) {
+			fpreal k = resfraction.toFloat();
+			imageWidth  *= k;
+			imageHeight *= k;
+		}
+		else {
+			imageWidth  = rop.evalInt("res_override", 0, t);
+			imageHeight = rop.evalInt("res_override", 1, t);
+		}
+	}
 
 	float fov = 0.785398f;
 

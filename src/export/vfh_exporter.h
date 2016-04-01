@@ -112,6 +112,7 @@ public:
 	void                           fillRenderView(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc);
 	void                           fillStereoSettings(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc);
 	void                           fillMotionBlurParams(MotionBlurParams &mbParams);
+	void                           fillSettingsOutput(Attrs::PluginDesc &pluginDesc);
 
 	int                            exportView();
 	void                           exportScene();

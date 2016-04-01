@@ -35,8 +35,6 @@ static PRM_Name     parm_render_vfb_mode_items[] = {
 static PRM_ChoiceList parm_render_vfb_mode_menu(PRM_CHOICELIST_SINGLE, parm_render_vfb_mode_items);
 
 static PRM_Name     parm_render_sep_render("render_sep_render", "Render Settings");
-static PRM_Name     parm_render_camera("render_camera", "Camera");
-static PRM_Default  parm_render_camera_def(0, "/obj/cam1");
 
 static PRM_Name     parm_render_sep_export("render_sep_export", "Export Settings");
 static PRM_Name     parm_render_export_path("render_export_filepath", "Export Filepath");
@@ -136,6 +134,62 @@ static PRM_Template      DRHostPrmTemplate[] = {
 	PRM_Template()
 };
 
+static const char *res_fraction_items[] = {
+	"0.1",       "1/10 (One Tenth Resolution)",
+	"0.2",       "1/5 (One Fifth Resolution)",
+	"0.25",      "1/4 (Quarter Resolution)",
+	"0.3333333", "1/3 (One Third Resolution)",
+	"0.5",       "1/2 (Half Resolution)",
+	"0.6666666", "2/3 (Two Thirds Resolution)",
+	"0.75",      "3/4 (Three Quarter Resolution)",
+	"specific",  "User Specified Resolution",
+};
+
+static const int res_override_items[] = {
+	1280, 720
+};
+
+
+static PRM_Template* getCameraOverridesTemplate()
+{
+	static Parm::PRMList camOverrides;
+	if (NOT(camOverrides.size())) {
+		camOverrides.addPrm(
+					Parm::PRMFactory(PRM_STRING_E, "render_camera", "Camera")
+							.setTypeExtended(PRM_TYPE_DYNAMIC_PATH)
+							.setDefault("/obj/cam1")
+					);
+		camOverrides.addPrm(
+					Parm::PRMFactory(PRM_TOGGLE_E, "override_camerares", "Override Camera Resolution")
+							.setDefault(PRMzeroDefaults)
+					);
+		camOverrides.addPrm(
+					Parm::PRMFactory(PRM_ORD_E, "res_fraction", "Resolution Scale")
+							.setChoiceListItems(PRM_CHOICELIST_SINGLE, res_fraction_items, CountOf(res_fraction_items))
+							.setDefault("0.5")
+							.addConditional("{ override_camerares == 0 }", PRM_CONDTYPE_HIDE)
+							.addConditional("{ override_camerares == 0 }", PRM_CONDTYPE_DISABLE)
+					);
+		camOverrides.addPrm(
+					Parm::PRMFactory(PRM_INT_E, "res_override", "Resolution")
+							.setVectorSize(2)
+							.setDefaults( res_override_items, CountOf(res_override_items))
+							.addConditional("{ override_camerares == 0 }", PRM_CONDTYPE_HIDE)
+							.addConditional("{ override_camerares == 0 } { res_fraction != \"specific\" }", PRM_CONDTYPE_DISABLE)
+					);
+		camOverrides.addPrm(
+					Parm::PRMFactory(PRM_INT_E, "aspect_override", "Pixel Aspect Ratio")
+							.setDefault(1)
+							.setRange(PRM_RANGE_UI, 0, PRM_RANGE_UI, 2)
+							.addConditional("{ override_camerares == 0 }", PRM_CONDTYPE_HIDE)
+							.addConditional("{ override_camerares == 0 } { res_fraction != \"specific\" }", PRM_CONDTYPE_DISABLE)
+					);
+	}
+
+	return camOverrides.getPRMTemplate();
+}
+
+
 static PRM_Template* getTemplates()
 {
 	if (!RenderSettingsPrmTemplate.size()) {
@@ -144,7 +198,7 @@ static PRM_Template* getTemplates()
 		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_CALLBACK, 1, &parm_render_interactive, 0, 0, 0, VRayRendererNode::RtStartSession));
 
 		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_HEADING, 1, &parm_render_sep_render));
-		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_STRING_E, PRM_TYPE_DYNAMIC_PATH, 1, &parm_render_camera, &parm_render_camera_def));
+
 		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_ORD, 1, &parm_render_render_mode, PRMzeroDefaults, &parm_render_render_mode_menu));
 		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_ORD, 1, &parm_render_ipr_mode, PRMzeroDefaults, &parm_render_ipr_mode_menu));
 		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_ORD, 1, &parm_render_export_mode, PRMzeroDefaults, &parm_render_export_mode_menu));
@@ -221,7 +275,7 @@ OP_TemplatePair* VRayRendererNode::getTemplatePair()
 {
 	static OP_TemplatePair *ropPair = 0;
 	if (!ropPair) {
-		OP_TemplatePair *base = new OP_TemplatePair(getTemplates());
+		OP_TemplatePair *base = new OP_TemplatePair(getCameraOverridesTemplate(), new OP_TemplatePair(getTemplates()));
 		ropPair = new OP_TemplatePair(ROP_Node::getROPbaseTemplate(), base);
 	}
 	return ropPair;
