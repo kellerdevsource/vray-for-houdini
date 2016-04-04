@@ -8,6 +8,7 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
+#include "vfh_hou_utils.h"
 #include "vfh_plugin_exporter.h"
 
 #include <boost/bind.hpp>
@@ -452,7 +453,10 @@ int VRayPluginRenderer::exportScene(const std::string &filepath)
 {
 	int res = 0;
 
-	if (m_vray) {
+	if (HOU::isIndie()) {
+		Log::getLog().error("Export to the *.vrscene files is not allowed in Houdini Indie");
+	}
+	else if (m_vray) {
 		Log::getLog().info("Starting export to \"%s\"...", filepath.c_str());
 
 		res = m_vray->exportScene(filepath.c_str());

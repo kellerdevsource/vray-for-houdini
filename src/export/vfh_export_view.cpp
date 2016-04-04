@@ -10,6 +10,7 @@
 
 #include "vfh_exporter.h"
 #include "vfh_prm_templates.h"
+#include "vfh_hou_utils.h"
 
 #include <boost/algorithm/string.hpp>
 
@@ -291,6 +292,27 @@ int VRayExporter::exportView()
 		else {
 			fillCameraDefault(viewParams, viewParams.viewPlugins.cameraDefault);
 			fillSettingsCameraDof(viewParams, viewParams.viewPlugins.settingsCameraDof);
+		}
+
+		if (isAnimation() && HOU::isIndie()) {
+			const int maxIndieW = 1920;
+			const int maxIndieH = 1080;
+
+			const float aspect = float(maxIndieW) / float(maxIndieH);
+
+			if (viewParams.renderSize.w > maxIndieW) {
+				viewParams.renderSize.w = maxIndieW;
+				viewParams.renderSize.h = viewParams.renderSize.w / aspect;
+			}
+
+			if (viewParams.renderSize.h > maxIndieH) {
+				viewParams.renderSize.h = maxIndieH;
+				viewParams.renderSize.w = viewParams.renderSize.h * aspect;
+			}
+
+			Log::getLog().warning("Houdini Indie render resolution for animations is 1920 x 1080 maximum");
+			Log::getLog().warning("Clamping resolution to %i x %i",
+								  viewParams.renderSize.w, viewParams.renderSize.h);
 		}
 
 		const bool needReset = m_viewParams.needReset(viewParams);

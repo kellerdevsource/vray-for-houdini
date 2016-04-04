@@ -15,12 +15,16 @@
 #include "vfh_prm_def.h"
 #include "vfh_prm_templates.h"
 #include "vfh_ui.h"
+#include "vfh_hou_utils.h"
 
 #include <ROP/ROP_Templates.h>
 #include <UT/UT_Interrupt.h>
 
 
 using namespace VRayForHoudini;
+
+
+static const tchar apprenticeLimitMsg[] = "Third-party render engines are not allowed in Houdini Apprentice!";
 
 static PRM_Name     parm_render_scripts("parm_render_scripts", "Scripts");
 
@@ -403,8 +407,13 @@ void VRayRendererNode::RtCallbackRop(OP_Node *caller, void *callee, OP_EventType
 
 int VRayRendererNode::RtStartSession(void *data, int /*index*/, float /*t*/, const PRM_Template* /*tplate*/)
 {
-	VRayRendererNode &rop = *reinterpret_cast<VRayRendererNode*>(data);
-	rop.startIPR();
+	if (HOU::isApprentice()) {
+		Log::getLog().error(apprenticeLimitMsg);
+	}
+	else {
+		VRayRendererNode &rop = *reinterpret_cast<VRayRendererNode*>(data);
+		rop.startIPR();
+	}
 	return 1;
 }
 
@@ -472,9 +481,18 @@ void VRayRendererNode::startIPR()
 
 int VRayRendererNode::startRender(int nframes, fpreal tstart, fpreal tend)
 {
-	Log::getLog().debug("VRayRendererNode::startRender(%i, %.3f, %.3f)", nframes, tstart, tend);
+	int err = ROP_ABORT_RENDER;
 
-	return initSession(false, nframes, tstart, tend);
+	if (HOU::isApprentice()) {
+		Log::getLog().error(apprenticeLimitMsg);
+	}
+	else {
+		Log::getLog().debug("VRayRendererNode::startRender(%i, %.3f, %.3f)", nframes, tstart, tend);
+
+		err = initSession(false, nframes, tstart, tend);
+	}
+
+	return err;
 }
 
 
