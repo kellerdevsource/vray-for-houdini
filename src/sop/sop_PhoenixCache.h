@@ -13,7 +13,6 @@
 #define VRAY_FOR_HOUDINI_SOP_NODE_PHOENIX_CACHE_H
 
 #include "sop_node_base.h"
-#include "vfh_data_cache.h"
 
 
 namespace VRayForHoudini {
