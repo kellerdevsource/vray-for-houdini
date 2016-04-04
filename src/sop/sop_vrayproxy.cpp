@@ -79,7 +79,7 @@ class VRayProxyCache
 {
 /// VRayProxyCache caches .vrmesh preview geometry in memory for faster playback
 /// preview geometry for a frame is decomposed into mesh and hair geometry and
-/// cached individually as GU_Detail objects(houdini native geometry container)
+/// cached individually as GU_Detail objects (houdini geometry container)
 /// VRayProxyCache uses 2 LRUCaches - one for cached frames and second for cached geometry
 /// to allow storing same geometry only once, if used in different frames
 /// NOTE:
@@ -191,7 +191,7 @@ public:
 			return res;
 		}
 
-		vassert( m_proxy );
+		UT_ASSERT( m_proxy );
 
 //		init cache
 		HOM_Module &hou = HOM();
@@ -341,7 +341,7 @@ public:
 			if ( frameData.hasItemKeys(loadType) ) {
 				for (auto const &itemKey : frameData.getItemKeys(loadType)) {
 					ItemCache::iterator itemIt = m_itemCache->find(itemKey);
-					vassert( itemIt != m_itemCache->end() );
+					UT_ASSERT( itemIt != m_itemCache->end() );
 
 					CachedItem &itemData = *itemIt;
 					GU_DetailHandle &gdpHndl = itemData.m_item;
@@ -446,7 +446,7 @@ private:
 
 	FrameKey getFrameIdx(const OP_Context &context, const OP_Parameters &opParams) const
 	{
-		vassert( m_proxy );
+		UT_ASSERT( m_proxy );
 
 		const fpreal frame = context.getFloatFrame();
 		const int animType = opParams.evalInt("anim_type", 0, 0.0f);
@@ -469,7 +469,7 @@ private:
 
 	VUtils::MeshVoxel *getVoxel(const FrameKey &frameKey, int voxelIdx) const
 	{
-		vassert( m_proxy );
+		UT_ASSERT( m_proxy );
 
 		VUtils::MeshVoxel *voxel = nullptr;
 		if (   voxelIdx < 0
@@ -779,7 +779,7 @@ OP_ERROR SOP::VRayProxy::cookMySop(OP_Context &context)
 
 OP::VRayNode::PluginResult SOP::VRayProxy::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
 {
-	vassert( exporter );
+	UT_ASSERT( exporter );
 
 	UT_String path;
 	evalString(path, "file", 0, 0.0f);

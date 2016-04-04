@@ -18,7 +18,7 @@
 #include <boost/function.hpp>
 #include <boost/bind.hpp>
 
-#include <vassert.h>
+#include <UT/UT_Assert.h>
 
 namespace VRayForHoudini {
 namespace Caches {
@@ -56,16 +56,16 @@ private:
 //		using default copy constructor & copy assignment
 
 		const key_type &key() const
-		{ vassert( m_cm ); return (*m_keyIt); }
+		{ UT_ASSERT( m_cm ); return (*m_keyIt); }
 
 		typename Iter::pointer value()
-		{ vassert( m_cm ); return &(*m_cm)[ (*m_keyIt) ].first; }
+		{ UT_ASSERT( m_cm ); return &(*m_cm)[ (*m_keyIt) ].first; }
 
 		typename Iter::reference operator*() const
-		{ vassert( m_cm ); return (*m_cm)[ (*m_keyIt) ].first; }
+		{ UT_ASSERT( m_cm ); return (*m_cm)[ (*m_keyIt) ].first; }
 
 		typename Iter::pointer operator->() const
-		{ vassert( m_cm ); return &(*m_cm)[ (*m_keyIt) ].first; }
+		{ UT_ASSERT( m_cm ); return &(*m_cm)[ (*m_keyIt) ].first; }
 
 		Iter &operator++()
 		{ m_keyIt++; return *this; }
@@ -99,13 +99,13 @@ public:
 		m_capacity(defaultCapacity),
 		m_cacheMap(defaultCapacity),
 		m_mlruQueue(0)
-	{ vassert( defaultCapacity > 0); }
+	{ UT_ASSERT( defaultCapacity > 0); }
 
 	LRUCache(size_type capacity):
 		m_capacity(capacity),
 		m_cacheMap(capacity),
 		m_mlruQueue(0)
-	{ vassert( capacity > 0); }
+	{ UT_ASSERT( capacity > 0); }
 
 	~LRUCache()
 	{ clear(); }
@@ -122,7 +122,7 @@ public:
 
 	void setCapacity(const size_type &capacity)
 	{
-		vassert( capacity > 0);
+		UT_ASSERT( capacity > 0);
 		m_capacity = capacity;
 		while (size() > m_capacity ) {
 			evict();
@@ -260,14 +260,14 @@ public:
 /// @brief Evicts least recently used(LRU) element from cache
 	void evict()
 	{
-		vassert( NOT(m_mlruQueue.empty()) );
+		UT_ASSERT( NOT(m_mlruQueue.empty()) );
 
 //		find LRU item
 //		MRU item is at the front of the queue
 //		LRU item is at the back of the queue
 		const key_type& key = m_mlruQueue.back();
 		typename CacheMap::iterator it = m_cacheMap.find(key);
-		vassert( it != m_cacheMap.end() );
+		UT_ASSERT( it != m_cacheMap.end() );
 
 		if (m_cbEvictValue){
 			CachedData &item = it->second;
@@ -338,7 +338,7 @@ public:
 		m_sequenceCache(defaultCapacity),
 		m_itemCache(defaultCapacity)
 	{
-		vassert( defaultCapacity > 0);
+		UT_ASSERT( defaultCapacity > 0);
 		m_sequenceCache.setEvictCallback(typename SequenceCache::CbEvict(boost::bind(&Self::evictSequence, this, _1, _2)));
 	}
 
@@ -347,7 +347,7 @@ public:
 		m_sequenceCache(capacity),
 		m_itemCache(capacity)
 	{
-		vassert( capacity > 0);
+		UT_ASSERT( capacity > 0);
 		m_sequenceCache.setEvictCallback(typename SequenceCache::CbEvict(boost::bind(&Self::evictSequence, this, _1, _2)));
 	}
 
@@ -360,7 +360,7 @@ public:
 
 	void setCapacity(size_type capacity)
 	{
-		vassert( capacity > 0);
+		UT_ASSERT( capacity > 0);
 		m_capacity = capacity;
 		m_itemCache.setCapacity(capacity);
 		m_sequenceCache.setCapacity(capacity);
@@ -462,7 +462,7 @@ public:
 		int i = 0;
 		for (auto const &itemKey : seqData.m_itemKeys) {
 			typename ItemCache::iterator itemIt = m_itemCache.find(itemKey);
-			vassert( itemIt != m_itemCache.end() );
+			UT_ASSERT( itemIt != m_itemCache.end() );
 
 			ItemData &itemData = *itemIt;
 			(*res)[i++] = itemData.m_item;

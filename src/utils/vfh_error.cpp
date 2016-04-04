@@ -79,15 +79,15 @@ int Error::ErrorChaser::enable(bool val)
 	}
 
 	if (val) {
-		vassert( isEnabled() == false );
-		vassert( lastTerminateHnldr == nullptr );
+		UT_ASSERT( isEnabled() == false );
+		UT_ASSERT( lastTerminateHnldr == nullptr );
 
 		lastTerminateHnldr = std::set_terminate(crashHandler);
 		enabled = true;
 	}
 	else {
-		vassert( isEnabled() == true );
-		vassert( lastTerminateHnldr != nullptr );
+		UT_ASSERT( isEnabled() == true );
+		UT_ASSERT( lastTerminateHnldr != nullptr );
 
 		std::set_terminate(lastTerminateHnldr);
 		lastTerminateHnldr = nullptr;
