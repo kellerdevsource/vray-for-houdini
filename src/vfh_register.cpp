@@ -35,6 +35,7 @@
 
 #include <UT/UT_DSOVersion.h>
 #include <UT/UT_Exit.h>
+#include <UT/UT_IOTable.h>
 
 #ifdef CGR_HAS_AUR
 #  include <aurinterface.h>

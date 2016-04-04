@@ -10,6 +10,15 @@
 
 #include "io_vrmesh.h"
 
+#include "vfh_log.h"
+
+#include <GU/GU_Detail.h>
+#include <GU/GU_PrimVolume.h>
+#include <GEO/GEO_AttributeHandle.h>
+#include <SOP/SOP_Node.h>
+#include <UT/UT_Assert.h>
+
+
 using namespace VRayForHoudini;
 using namespace VRayForHoudini::IO;
 
@@ -49,8 +58,10 @@ int Vrmesh::checkMagicNumber(unsigned magic)
 }
 
 
-GA_Detail::IOStatus Vrmesh::fileLoad(GEO_Detail *, UT_IStream &, bool ate_magic)
+GA_Detail::IOStatus Vrmesh::fileLoad(GEO_Detail *, UT_IStream &stream, bool ate_magic)
 {
+	Log::getLog().info("Vrmesh::fileLoad(%s)", stream.getFilename());
+
 	return GA_Detail::IOStatus(true);
 }
 

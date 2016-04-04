@@ -13,13 +13,7 @@
 
 #include "vfh_vray.h"
 
-#include <GU/GU_Detail.h>
-#include <GU/GU_PrimVolume.h>
-#include <GEO/GEO_AttributeHandle.h>
 #include <GEO/GEO_IOTranslator.h>
-#include <SOP/SOP_Node.h>
-#include <UT/UT_Assert.h>
-#include <UT/UT_IOTable.h>
 
 namespace VRayForHoudini {
 namespace IO {
