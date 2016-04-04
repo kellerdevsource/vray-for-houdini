@@ -329,6 +329,8 @@ static PRM_Template AttrDescAsPrmTemplate(const VRayPluginInfo &pluginInfo, cons
 			.setSpareData(&Parm::PRMrampDefault);
 	}
 
+	tmpl.setHelpText(attrDesc.desc.c_str());
+
 	if (tmpl.getType() == PRM_LIST_TERMINATOR) {
 		Log::getLog().error("Incorrect attribute template: %s (%s)",
 					attrName.c_str(), attrDesc.label.c_str());
