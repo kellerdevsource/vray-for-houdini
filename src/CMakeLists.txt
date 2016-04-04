@@ -24,6 +24,7 @@ add_definitions(-DVRAY_FOR_HOUDINI)
 add_definitions(-DVRAYAPPSDK_VFB_HANDLE)
 
 include_directories(.)
+include_directories(io)
 include_directories(ui)
 include_directories(op)
 include_directories(sop)
