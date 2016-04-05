@@ -300,19 +300,23 @@ int VRayExporter::exportView()
 
 			const float aspect = float(maxIndieW) / float(maxIndieH);
 
-			if (viewParams.renderSize.w > maxIndieW) {
-				viewParams.renderSize.w = maxIndieW;
-				viewParams.renderSize.h = viewParams.renderSize.w / aspect;
-			}
+			if (viewParams.renderSize.w > maxIndieW ||
+				viewParams.renderSize.h > maxIndieH)
+			{
+				if (viewParams.renderSize.w > maxIndieW) {
+					viewParams.renderSize.w = maxIndieW;
+					viewParams.renderSize.h = viewParams.renderSize.w / aspect;
+				}
 
-			if (viewParams.renderSize.h > maxIndieH) {
-				viewParams.renderSize.h = maxIndieH;
-				viewParams.renderSize.w = viewParams.renderSize.h * aspect;
-			}
+				if (viewParams.renderSize.h > maxIndieH) {
+					viewParams.renderSize.h = maxIndieH;
+					viewParams.renderSize.w = viewParams.renderSize.h * aspect;
+				}
 
-			Log::getLog().warning("Houdini Indie render resolution for animations is 1920 x 1080 maximum");
-			Log::getLog().warning("Clamping resolution to %i x %i",
-								  viewParams.renderSize.w, viewParams.renderSize.h);
+				Log::getLog().warning("Houdini Indie render resolution for animations is 1920 x 1080 maximum");
+				Log::getLog().warning("Clamping resolution to %i x %i",
+									  viewParams.renderSize.w, viewParams.renderSize.h);
+			}
 		}
 
 		const bool needReset = m_viewParams.needReset(viewParams);
