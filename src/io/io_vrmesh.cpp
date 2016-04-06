@@ -11,6 +11,8 @@
 #include "io_vrmesh.h"
 
 #include "vfh_log.h"
+#include "vfh_utils_vrmesh.h"
+#include "uni.h"
 
 #include <GU/GU_Detail.h>
 #include <GU/GU_PrimVolume.h>
@@ -58,9 +60,65 @@ int Vrmesh::checkMagicNumber(unsigned magic)
 }
 
 
-GA_Detail::IOStatus Vrmesh::fileLoad(GEO_Detail *, UT_IStream &stream, bool ate_magic)
+GA_Detail::IOStatus Vrmesh::fileLoad(GEO_Detail *geo, UT_IStream &stream, bool /*ate_magic*/)
 {
-	Log::getLog().info("Vrmesh::fileLoad(%s)", stream.getFilename());
+	const char *filepath = stream.getFilename();
+	GU_Detail  *gdp = dynamic_cast<GU_Detail*>(geo);
+
+	if (gdp &&
+		filepath && *filepath &&
+		VUtils::uniPathOrFileExists(filepath))
+	{
+		Log::getLog().info("Vrmesh::fileLoad(%s)", filepath);
+
+		VUtils::MeshFile *proxy = VUtils::newDefaultMeshFile(filepath);
+		if (proxy) {
+			int res = proxy->init(filepath);
+			if (res && proxy->getNumVoxels()) {
+				if (proxy->getNumFrames()) {
+					// TODO: proxy->setCurrentFrame(t);
+				}
+
+				const int numVoxels = proxy->getNumVoxels();
+
+				// Search for compatible preview data:
+				//  [x] Mesh
+				//  [ ] Preview mesh
+				//  [ ] Hair
+				//  [ ] Particles
+				//
+				int previewVoxelIdx = -1;
+				int numHairVoxels   = 0;
+				int numGeomVoxels   = 0;
+				for (int voxelIdx = 0; voxelIdx < numVoxels; ++voxelIdx) {
+					const uint32 meshVoxelFlags = proxy->getVoxelFlags(voxelIdx);
+					if (meshVoxelFlags & MVF_GEOMETRY_VOXEL) {
+						numGeomVoxels++;
+					}
+					else if (meshVoxelFlags & MVF_PREVIEW_VOXEL) {
+						previewVoxelIdx = voxelIdx;
+					}
+					else if (meshVoxelFlags & MVF_HAIR_GEOMETRY_VOXEL) {
+						numHairVoxels++;
+					}
+				}
+
+				if (previewVoxelIdx >= 0 ||
+					numGeomVoxels ||
+					numHairVoxels)
+				{
+					GU_DetailHandle gdpHandle;
+					gdpHandle.allocateAndSet(gdp, false);
+
+					if (numGeomVoxels) {
+						Mesh::createMeshProxyGeometry(*proxy, MVF_GEOMETRY_VOXEL, gdpHandle);
+					}
+				}
+			}
+
+			VUtils::deleteDefaultMeshFile(proxy);
+		}
+	}
 
 	return GA_Detail::IOStatus(true);
 }
