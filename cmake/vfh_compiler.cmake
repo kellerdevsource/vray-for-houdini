@@ -25,6 +25,13 @@ else()
 
 	add_definitions(-D__OPTIMIZE__)
 
+	if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+		# Clang doesn't print colored diagnostics when invoked from Ninja
+		if (CMAKE_GENERATOR STREQUAL "Ninja")
+			set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fcolor-diagnostics")
+		endif()
+	endif()
+
 	# disable App SDK warnings
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-invalid-offsetof")
 
