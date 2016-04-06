@@ -28,12 +28,14 @@
 #include "vop/env/vop_env_def.h"
 #include "cmd/vfh_cmd_register.h"
 
+#include "io/io_vrmesh.h"
 
 // For newShopOperator()
 #include <SHOP/SHOP_Node.h>
 
 #include <UT/UT_DSOVersion.h>
 #include <UT/UT_Exit.h>
+#include <UT/UT_IOTable.h>
 
 #ifdef CGR_HAS_AUR
 #  include <aurinterface.h>
@@ -41,6 +43,23 @@
 
 
 using namespace VRayForHoudini;
+
+
+static void registerExtensions()
+{
+	UT_ExtensionList *geoextension = UTgetGeoExtensions();
+	if (geoextension && !geoextension->findExtension(IO::Vrmesh::extension)) {
+		geoextension->addExtension(IO::Vrmesh::extension);
+	}
+}
+
+
+void newGeometryIO(void *)
+{
+	GU_Detail::registerIOTranslator(new IO::Vrmesh());
+
+	registerExtensions();
+}
 
 
 void unregister(void *)
@@ -62,6 +81,8 @@ void newDriverOperator(OP_OperatorTable *table)
 
 	VOP::VRayVOPContext::register_operator_vrayrccontext(table);
 	VOP::VRayVOPContext::register_operator_vrayenvcontext(table);
+
+	registerExtensions();
 
 	UT_Exit::addExitCallback(unregister);
 }
