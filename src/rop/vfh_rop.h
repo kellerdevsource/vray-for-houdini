@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015, Chaos Software Ltd
+// c, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
