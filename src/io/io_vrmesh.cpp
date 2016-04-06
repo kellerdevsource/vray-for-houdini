@@ -25,6 +25,9 @@ using namespace VRayForHoudini;
 using namespace VRayForHoudini::IO;
 
 
+const char *Vrmesh::extension = "vrmesh";
+
+
 Vrmesh::Vrmesh(const Vrmesh &other)
 {
 	// TODO: If needed

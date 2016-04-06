@@ -22,7 +22,7 @@ class Vrmesh
 		: public GEO_IOTranslator
 {
 public:
-	constexpr static const char *extension = "vrmesh";
+	static const char *extension;
 
 	Vrmesh() {}
 	Vrmesh(const Vrmesh&);
