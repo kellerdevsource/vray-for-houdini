@@ -8,7 +8,7 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
-#include "vfh_vrayproxycache.h"
+#include "vfh_vrayproxyutils.h"
 
 #include <GU/GU_Detail.h>
 #include <GU/GU_DetailHandle.h>
@@ -22,6 +22,187 @@
 
 
 using namespace VRayForHoudini;
+
+
+namespace {
+
+
+enum DataError {
+	DE_INVALID_GEOM = 1,
+	DE_NO_GEOM,
+	DE_INVALID_FILE
+};
+
+
+static UT_Lock           theLock;
+static VRayProxyCacheMan theCacheMan;
+
+}
+
+
+VRayProxyCacheMan& VRayForHoudini::GetVRayProxyCacheManager()
+{
+	return theCacheMan;
+}
+
+
+GU_ConstDetailHandle VRayForHoudini::GetVRayProxyDetail(const VRayProxyParms &options)
+{
+	UT_AutoLock lock(theLock);
+
+	UT_StringHolder utfilepath = options.getFilepath();
+	if (NOT(utfilepath.isstring())) {
+		return GU_ConstDetailHandle();
+	}
+
+	const std::string filepath(utfilepath);
+	if (NOT(theCacheMan.contains(filepath))) {
+		// NOTE: insert entry in the cache
+		VRayProxyCache &cache = theCacheMan[filepath];
+		VUtils::ErrorCode errCode = cache.init(filepath.c_str());
+		if (errCode.error()) {
+			theCacheMan.erase(filepath);
+			return GU_ConstDetailHandle();
+		}
+	}
+
+	VRayProxyCache &cache = theCacheMan[filepath];
+	return cache.getFrame(options);
+}
+
+const UT_StringRef VRayProxyParms::thePathToken         = "path";
+const UT_StringRef VRayProxyParms::theFileToken         = "file";
+const UT_StringRef VRayProxyParms::theLODToken          = "lod";
+const UT_StringRef VRayProxyParms::theFrameToken        = "frame";
+const UT_StringRef VRayProxyParms::theAnimTypeToken     = "anim_type";
+const UT_StringRef VRayProxyParms::theAnimOffsetToken   = "anim_offset";
+const UT_StringRef VRayProxyParms::theAnimSpeedToken    = "anim_speed";
+const UT_StringRef VRayProxyParms::theAnimOverrideToken = "anim_override";
+const UT_StringRef VRayProxyParms::theAnimStartToken    = "anim_start";
+const UT_StringRef VRayProxyParms::theAnimLengthToken   = "anim_length";
+
+
+UT_StringHolder VRayProxyParms::getPath(const UT_Options &options)
+{
+	return ((options.hasOption(thePathToken))? options.getOptionS(thePathToken) : UT_StringHolder());
+}
+
+UT_StringHolder VRayProxyParms::getFilepath(const UT_Options &options)
+{
+	return ((options.hasOption(theFileToken))? options.getOptionS(theFileToken) : UT_StringHolder());
+}
+
+exint VRayProxyParms::getLOD(const UT_Options &options)
+{
+	return ((options.hasOption(theLODToken))? options.getOptionI(theLODToken) : LOD_PREVIEW);
+}
+
+fpreal64 VRayProxyParms::getFloatFrame(const UT_Options &options)
+{
+	return ((options.hasOption(theFrameToken))? options.getOptionF(theFrameToken) : 0.f);
+}
+
+exint VRayProxyParms::getAnimType(const UT_Options &options)
+{
+	return ((options.hasOption(theAnimTypeToken))? options.getOptionI(theAnimTypeToken) : VUtils::MeshFileAnimType::Loop);
+}
+
+fpreal64 VRayProxyParms::getAnimOffset(const UT_Options &options)
+{
+	return ((options.hasOption(theAnimOffsetToken))? options.getOptionF(theAnimOffsetToken) : 0.f);
+}
+
+fpreal64 VRayProxyParms::getAnimSpeed(const UT_Options &options)
+{
+	return ((options.hasOption(theAnimSpeedToken))? options.getOptionF(theAnimSpeedToken) : 1.f);
+}
+
+bool VRayProxyParms::getAnimOverride(const UT_Options &options)
+{
+	return ((options.hasOption(theAnimOverrideToken))? options.getOptionB(theAnimOverrideToken) : 0);
+}
+
+exint VRayProxyParms::getAnimStart(const UT_Options &options)
+{
+	return ((options.hasOption(theAnimStartToken))? options.getOptionI(theAnimStartToken) : 0);
+}
+
+exint VRayProxyParms::getAnimLength(const UT_Options &options)
+{
+	return ((options.hasOption(theAnimLengthToken))? options.getOptionI(theAnimLengthToken) : 0);
+}
+
+VRayProxyParms::VRayProxyParms():
+	m_lod(LOD_PREVIEW),
+	m_floatFrame(0),
+	m_animType(VUtils::MeshFileAnimType::Loop),
+	m_animOffset(0),
+	m_animSpeed(1),
+	m_animOverride(0),
+	m_animStart(0),
+	m_animLength(0)
+{ }
+
+VRayProxyParms::VRayProxyParms(const UT_Options &options):
+	m_path(getPath(options)),
+	m_filepath(getFilepath(options)),
+	m_lod(getLOD(options)),
+	m_floatFrame(getFloatFrame(options)),
+	m_animType(getAnimType(options)),
+	m_animOffset(getAnimOffset(options)),
+	m_animSpeed(getAnimSpeed(options)),
+	m_animOverride(getAnimOverride(options)),
+	m_animStart(getAnimStart(options)),
+	m_animLength(getAnimLength(options))
+{ }
+
+
+VRayProxyParms& VRayProxyParms::operator =(const UT_Options &options)
+{
+	m_path = getPath(options);
+	m_filepath = getFilepath(options);
+	m_lod = getLOD(options);
+	m_floatFrame = getFloatFrame(options);
+	m_animType = getAnimType(options);
+	m_animOffset = getAnimOffset(options);
+	m_animSpeed = getAnimSpeed(options);
+	m_animOverride = getAnimOverride(options);
+	m_animStart = getAnimStart(options);
+	m_animLength = getAnimLength(options);
+}
+
+
+bool VRayProxyParms::operator ==(const UT_Options &options) const
+{
+	return (
+			   m_path == getPath(options)
+			&& m_filepath == getFilepath(options)
+			&& m_lod == getLOD(options)
+			&& m_floatFrame == getFloatFrame(options)
+			&& m_animType == getAnimType(options)
+			&& m_animOffset == getAnimOffset(options)
+			&& m_animSpeed == getAnimSpeed(options)
+			&& m_animOverride == getAnimOverride(options)
+			&& m_animStart == getAnimStart(options)
+			&& m_animLength == getAnimLength(options)
+			);
+}
+
+bool VRayProxyParms::operator ==(const VRayProxyParms &options) const
+{
+	return (
+			   m_path == options.m_path
+			&& m_filepath == options.m_filepath
+			&& m_lod == options.m_lod
+			&& m_floatFrame == options.m_floatFrame
+			&& m_animType == options.m_animType
+			&& m_animOffset == options.m_animOffset
+			&& m_animSpeed == options.m_animSpeed
+			&& m_animOverride == options.m_animOverride
+			&& m_animStart == options.m_animStart
+			&& m_animLength == options.m_animLength
+			);
+}
 
 
 VRayProxyCache::GeometryHash::result_type VRayProxyCache::GeometryHash::operator()(const argument_type &val) const
@@ -54,7 +235,9 @@ VRayProxyCache::VRayProxyCache():
 	m_proxy(nullptr),
 	m_frameCache(new FrameCache()),
 	m_itemCache(new ItemCache())
-{ m_frameCache->setEvictCallback(FrameCache::CbEvict(boost::bind(&VRayProxyCache::evictFrame, this, _1, _2))); }
+{
+	m_frameCache->setEvictCallback(FrameCache::CbEvict(boost::bind(&VRayProxyCache::evictFrame, this, _1, _2)));
+}
 
 
 VRayProxyCache::VRayProxyCache(VRayProxyCache&& other)
@@ -93,17 +276,19 @@ VRayProxyCache& VRayProxyCache::operator=(VRayProxyCache&& other)
 
 
 VRayProxyCache::~VRayProxyCache()
-{ reset(); }
+{
+	reset();
+}
 
 
 VUtils::ErrorCode VRayProxyCache::init(const VUtils::CharString &filepath)
 {
 	VUtils::ErrorCode res;
 
-//		cleanup
+	// cleanup
 	reset();
 
-//		init file
+	// init file
 	VUtils::CharString path(filepath);
 	if (VUtils::bmpCheckAssetPath(path, NULL, NULL, false)) {
 		VUtils::MeshFile *proxy = VUtils::newDefaultMeshFile(filepath.ptr());
@@ -128,7 +313,7 @@ VUtils::ErrorCode VRayProxyCache::init(const VUtils::CharString &filepath)
 
 	UT_ASSERT( m_proxy );
 
-//		init cache
+	// init cache
 	HOM_Module &hou = HOM();
 	HOM_Vector2 *animRange = hou.playbar().playbackRange();
 	int nFrames = 1;
@@ -172,30 +357,27 @@ void VRayProxyCache::clearCache()
 }
 
 
-int VRayProxyCache::checkFrameCached(const UT_Options &options) const
+int VRayProxyCache::checkFrameCached(const VRayProxyParms &options) const
 {
 	if (NOT(m_proxy)) {
 		return false;
 	}
 
 	FrameKey frameIdx = getFrameIdx(options);
-	LOD lod = static_cast<LOD>(VRayProxyUtils::getLOD(options));
+	LOD lod = static_cast<LOD>(options.getLOD());
 
 	return checkCached(frameIdx, lod);
 }
 
 
-VUtils::ErrorCode VRayProxyCache::getFrame(const UT_Options &options, GU_Detail &gdp)
+GU_ConstDetailHandle VRayProxyCache::getFrame(const VRayProxyParms &options)
 {
-	VUtils::ErrorCode res;
-
 	if (NOT(m_proxy)) {
-		res.setError(__FUNCTION__, DE_INVALID_FILE, "Invalid file path!");
-		return res;
+		return GU_ConstDetailHandle();
 	}
 
 	FrameKey frameIdx = getFrameIdx(options);
-	LOD lod = static_cast<LOD>(VRayProxyUtils::getLOD(options));
+	LOD lod = static_cast<LOD>(options.getLOD());
 
 //	if (lod == LOD_BBOX) {
 //		createBBoxGeometry(frameIdx, gdp);
@@ -203,7 +385,7 @@ VUtils::ErrorCode VRayProxyCache::getFrame(const UT_Options &options, GU_Detail 
 //	}
 
 	const int numVoxels = m_proxy->getNumVoxels();
-//		if not in cache load preview voxel and cache corresponding GU_Detail(s)
+	// if not in cache load preview voxel and cache corresponding GU_Detail(s)
 	if (NOT(checkCached(frameIdx, lod))) {
 		std::vector< VUtils::MeshVoxel* > voxels;
 		std::vector< Geometry > geometry;
@@ -241,9 +423,6 @@ VUtils::ErrorCode VRayProxyCache::getFrame(const UT_Options &options, GU_Detail 
 		if (geometry.size()) {
 			insert(frameIdx, lod, geometry);
 		}
-		else {
-			res.setError(__FUNCTION__, DE_NO_GEOM, "No geometry found for context #%0.3f.", VRayProxyUtils::getFloatFrame(options));
-		}
 
 		for (VUtils::MeshVoxel *voxel : voxels) {
 			m_proxy->releaseVoxel(voxel);
@@ -252,24 +431,30 @@ VUtils::ErrorCode VRayProxyCache::getFrame(const UT_Options &options, GU_Detail 
 
 	if (m_frameCache->contains(frameIdx)) {
 		CachedFrame &frameData = (*m_frameCache)[frameIdx];
-		if ( frameData.hasItemKeys(lod) ) {
-			for (auto const &itemKey : frameData.getItemKeys(lod)) {
-				ItemCache::iterator itemIt = m_itemCache->find(itemKey);
-				UT_ASSERT( itemIt != m_itemCache->end() );
-
-				CachedItem &itemData = *itemIt;
-				GU_DetailHandle &gdpHndl = itemData.m_item;
-				if (gdpHndl.isValid()) {
-//						gdp.merge(*gdpHndl.peekDetail());
-					GU_PackedGeometry::packGeometry(gdp, gdpHndl);
-				} else {
-					res.setError(__FUNCTION__, DE_INVALID_GEOM, "Invalid geometry found for context #%0.3f.", VRayProxyUtils::getFloatFrame(options));
-				}
-			}
+		if ( frameData.hasDetail(lod) ) {
+			return GU_ConstDetailHandle(frameData.getDetail(lod));
 		}
 	}
 
-	return res;
+//	if (m_frameCache->contains(frameIdx)) {
+//		CachedFrame &frameData = (*m_frameCache)[frameIdx];
+//		if ( frameData.hasItemKeys(lod) ) {
+//			for (auto const &itemKey : frameData.getItemKeys(lod)) {
+//				ItemCache::iterator itemIt = m_itemCache->find(itemKey);
+//				UT_ASSERT( itemIt != m_itemCache->end() );
+
+//				CachedItem &itemData = *itemIt;
+//				GU_DetailHandle &gdpHndl = itemData.m_item;
+//				if (gdpHndl.isValid()) {
+//					GU_PackedGeometry::packGeometry(gdp, gdpHndl);
+//				} else {
+//					res.setError(__FUNCTION__, DE_INVALID_GEOM, "Invalid geometry found for context #%0.3f.", options.getFloatFrame()));
+//				}
+//			}
+//		}
+//	}
+
+	return GU_ConstDetailHandle();
 }
 
 
@@ -284,7 +469,7 @@ int VRayProxyCache::checkCached(const FrameKey &frameIdx, const LOD &lod) const
 		return false;
 	}
 
-//		if in cache check if all items from the collection are cached
+	// if in cache check if all items from the collection are cached
 	int inCache = true;
 	for (const auto &itemKey : frameData.getItemKeys(lod)) {
 		if (NOT(m_itemCache->contains(itemKey))) {
@@ -302,12 +487,12 @@ int VRayProxyCache::insert(const FrameKey &frameIdx, const LOD &lod, const std::
 		return false;
 	}
 
-//		insert new item in frameCache
+	// insert new item in frameCache
 	CachedFrame &frameData = (*m_frameCache)[frameIdx];
 	ItemKeys &itemKeys = frameData.getItemKeys(lod);
 	itemKeys.resize(geometry.size());
 
-//		cache each geometry type individually
+	// cache each geometry type individually
 	GeometryHash hasher;
 
 	for (int i = 0; i < geometry.size(); ++i) {
@@ -316,14 +501,38 @@ int VRayProxyCache::insert(const FrameKey &frameIdx, const LOD &lod, const std::
 		itemKeys[i] = itemKey;
 
 		if (m_itemCache->contains(itemKey)) {
-//				in itemCache only increase ref count
+			// in itemCache only increase ref count
 			CachedItem &itemData = (*m_itemCache)[itemKey];
 			++itemData.m_refCnt;
 		} else {
-//				not in itemCache insert as new item and init ref count to 1
+			// not in itemCache insert as new item and init ref count to 1
 			CachedItem &itemData = (*m_itemCache)[itemKey];
 			createProxyGeometry(geom, itemData.m_item);
 			itemData.m_refCnt = 1;
+		}
+	}
+
+	Item &gdh = frameData.getDetail(lod);
+	if (NOT(gdh.isValid())) {
+		gdh.allocateAndSet(new GU_Detail());
+	}
+
+	GU_DetailHandleAutoWriteLock gdl(gdh);
+	if (gdl.isValid()) {
+		GU_Detail *gdp = gdl.getGdp();
+		gdp->clearAndDestroy();
+
+		if ( frameData.hasItemKeys(lod) ) {
+			for (auto const &itemKey : frameData.getItemKeys(lod)) {
+				ItemCache::iterator itemIt = m_itemCache->find(itemKey);
+				UT_ASSERT( itemIt != m_itemCache->end() );
+
+				CachedItem &itemData = *itemIt;
+				GU_DetailHandle &gdpHndl = itemData.m_item;
+				if (gdpHndl.isValid()) {
+					gdp->merge(*gdpHndl.peekDetail());
+				}
+			}
 		}
 	}
 
@@ -363,18 +572,18 @@ void VRayProxyCache::evictFrame(const FrameKey &frameIdx, CachedFrame &frameData
 }
 
 
-VRayProxyCache::FrameKey VRayProxyCache::getFrameIdx(const UT_Options &options) const
+VRayProxyCache::FrameKey VRayProxyCache::getFrameIdx(const VRayProxyParms &options) const
 {
 	UT_ASSERT( m_proxy );
 
-	const fpreal64 frame      = VRayProxyUtils::getFloatFrame(options);
-	const exint    animType   = VRayProxyUtils::getAnimType(options);
-	const fpreal64 animOffset = VRayProxyUtils::getAnimOffset(options);
-	const fpreal64 animSpeed  = VRayProxyUtils::getAnimSpeed(options);
+	const fpreal64 frame      = options.getFloatFrame();
+	const exint    animType   = options.getAnimType();
+	const fpreal64 animOffset = options.getAnimOffset();
+	const fpreal64 animSpeed  = options.getAnimSpeed();
 
-	const bool  animOverride = VRayProxyUtils::getAnimOverride(options);
-	const exint animStart  = (animOverride)? VRayProxyUtils::getAnimStart(options) : 0;
-	exint       animLength = (animOverride)? VRayProxyUtils::getAnimLength(options) : 0;
+	const bool  animOverride = options.getAnimOverride();
+	const exint animStart  = (animOverride)? options.getAnimStart() : 0;
+	exint       animLength = (animOverride)? options.getAnimLength() : 0;
 	if (animLength <= 0) {
 		animLength = std::max(m_proxy->getNumFrames(), 1);
 	}
@@ -551,47 +760,3 @@ void VRayProxyCache::createBBoxGeometry(const FrameKey &frameKey, GU_Detail &gdp
 			bboxMin[1], bboxMax[1],
 			bboxMin[2], bboxMax[2]);
 }
-
-
-
-VRayProxyCacheMan& VRayForHoudini::GetVRayProxyCacheManager()
-{
-	static VRayProxyCacheMan theCacheMan;
-	return theCacheMan;
-}
-
-
-int VRayProxyUtils::getVRayProxyDetail(const UT_Options &options, GU_Detail &gdp)
-{
-	UT_StringHolder utfilepath = VRayProxyUtils::getFilepath(options);
-	if (NOT(utfilepath.isstring())) {
-		return false;
-	}
-
-	const std::string filepath(utfilepath);
-	VRayProxyCacheMan& theCacheMan = GetVRayProxyCacheManager();
-	if (NOT(theCacheMan.contains(filepath))) {
-		// NOTE: insert entry in the cache
-		VRayProxyCache &cache = theCacheMan[filepath];
-		VUtils::ErrorCode errCode = cache.init(filepath.c_str());
-		if (errCode.error()) {
-			theCacheMan.erase(filepath);
-			return false;
-		}
-	}
-
-	VRayProxyCache &cache = theCacheMan[filepath];
-	VUtils::ErrorCode errCode = cache.getFrame(options, gdp);
-
-	return true;
-}
-
-const UT_StringRef VRayProxyUtils::theLODToken          = "lod";
-const UT_StringRef VRayProxyUtils::theFileToken         = "file";
-const UT_StringRef VRayProxyUtils::theFrameToken        = "frame";
-const UT_StringRef VRayProxyUtils::theAnimTypeToken     = "anim_type";
-const UT_StringRef VRayProxyUtils::theAnimOffsetToken   = "anim_offset";
-const UT_StringRef VRayProxyUtils::theAnimSpeedToken    = "anim_speed";
-const UT_StringRef VRayProxyUtils::theAnimOverrideToken = "anim_override";
-const UT_StringRef VRayProxyUtils::theAnimStartToken    = "anim_start";
-const UT_StringRef VRayProxyUtils::theAnimLengthToken   = "anim_length";

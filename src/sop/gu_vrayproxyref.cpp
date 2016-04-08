@@ -10,7 +10,6 @@
 
 #include "gu_vrayproxyref.h"
 #include "vfh_log.h"
-#include "vfh_vrayproxycache.h"
 
 #include <GU/GU_PackedFactory.h>
 #include <GU/GU_PrimPacked.h>
@@ -41,11 +40,38 @@ public:
 VRayProxyFactory::VRayProxyFactory():
 	GU_PackedFactory("VRayProxyRef", "VRayProxyRef")
 {
-	registerIntrinsic( VRayProxyUtils::theLODToken,
-			IntGetterCast(&VRayProxyRef::getLOD) );
+	registerIntrinsic( VRayProxyParms::thePathToken,
+			StringGetterCast(&VRayProxyRef::getPath) );
 
-	registerIntrinsic( VRayProxyUtils::theFileToken,
-			StringHolderGetterCast(&VRayProxyRef::getFilepath) );
+	registerIntrinsic( VRayProxyParms::theFileToken,
+			StringGetterCast(&VRayProxyRef::getFilepath) );
+
+	registerIntrinsic( VRayProxyParms::theLODToken,
+			StringGetterCast(&VRayProxyRef::getLOD) );
+
+	registerIntrinsic( VRayProxyParms::theFrameToken,
+			FloatGetterCast(&VRayProxyRef::getFloatFrame) );
+
+	registerIntrinsic( VRayProxyParms::theAnimTypeToken,
+			IntGetterCast(&VRayProxyRef::getAnimType) );
+
+	registerIntrinsic( VRayProxyParms::theAnimOffsetToken,
+			IntGetterCast(&VRayProxyRef::getAnimType) );
+
+	registerIntrinsic( VRayProxyParms::theAnimSpeedToken,
+			FloatGetterCast(&VRayProxyRef::getAnimSpeed) );
+
+	registerIntrinsic( VRayProxyParms::theAnimOverrideToken,
+			BoolGetterCast(&VRayProxyRef::getAnimOverride) );
+
+	registerIntrinsic( VRayProxyParms::theAnimStartToken,
+			IntGetterCast(&VRayProxyRef::getAnimStart) );
+
+	registerIntrinsic( VRayProxyParms::theAnimLengthToken,
+			IntGetterCast(&VRayProxyRef::getAnimLength) );
+
+	registerIntrinsic( "geometryid",
+			IntGetterCast(&VRayProxyRef::getGeometryId) );
 }
 
 
@@ -79,24 +105,20 @@ void VRayProxyRef::install(GA_PrimitiveFactory *gafactory)
 VRayProxyRef::VRayProxyRef():
 	GU_PackedImpl(),
 	m_detail()
-{
-	GU_Detail *gdp = new GU_Detail();
-	m_detail.allocateAndSet(gdp);
-}
+{ }
 
 
 VRayProxyRef::VRayProxyRef(const VRayProxyRef &src):
 	GU_PackedImpl(src),
-	m_detail()
-{
-	GU_Detail *gdp = new GU_Detail();
-	m_detail.allocateAndSet(gdp);
-	updateFrom(src.m_options);
-}
+	m_detail(src.m_detail),
+	m_options(src.m_options)
+{ }
 
 
 VRayProxyRef::~VRayProxyRef()
-{ }
+{
+	clearDetail();
+}
 
 
 GU_PackedFactory* VRayProxyRef::getFactory() const
@@ -128,8 +150,8 @@ bool VRayProxyRef::isValid() const
 
 bool VRayProxyRef::save(UT_Options &options, const GA_SaveMap &map) const
 {
-	options.setOptionS(VRayProxyUtils::theFileToken, getFilepath())
-			.setOptionI(VRayProxyUtils::theLODToken, getLOD());
+	options.setOptionS(VRayProxyParms::theFileToken, m_options.getFilepath())
+			.setOptionI(VRayProxyParms::theLODToken, m_options.getLOD());
 
 	return true;
 }
@@ -219,77 +241,93 @@ void VRayProxyRef::countMemory(UT_MemoryCounter &counter, bool inclusive) const
 }
 
 
-bool VRayProxyRef::updateFrom(const UT_Options &options)
+template <typename T>
+bool VRayProxyRef::updateFrom(const T &options)
 {
+	bool res = false;
 	if (m_options == options) {
-		return false;
+		return res;
 	}
 
 	m_options = options;
-	GU_DetailHandleAutoWriteLock gdl(m_detail);
-	if (gdl.isValid()) {
-		GU_Detail *gdp = gdl.getGdp();
-		gdp->clearAndDestroy();
-		VRayProxyUtils::getVRayProxyDetail(m_options, *gdl.getGdp());
+	GU_ConstDetailHandle dtl = GetVRayProxyDetail(m_options);
+	if (dtl != getDetail()) {
+		setDetail(dtl);
 		getPrim()->getParent()->getPrimitiveList().bumpDataId();
+		res = true;
+
+		// Notify base primitive that topology has changed
+		topologyDirty();
 	}
 
-	// Notify base primitive that topology has changed
-	topologyDirty();
+	return res;
 }
 
 
-UT_StringHolder VRayProxyRef::getFilepath() const
+const char * VRayProxyRef::getPath() const
 {
-	return VRayProxyUtils::getFilepath(m_options);
+	return m_options.getPath();
 }
 
 
-exint VRayProxyRef::getLOD() const
+const char * VRayProxyRef::getFilepath() const
 {
-	return VRayProxyUtils::getLOD(m_options);
+	return m_options.getFilepath();
+}
+
+
+const char * VRayProxyRef::getLOD() const
+{
+	return (m_options.getLOD() == LOD_FULL)? "full" : "preview" ;
 }
 
 
 fpreal64 VRayProxyRef::getFloatFrame() const
 {
-	return VRayProxyUtils::getFloatFrame(m_options);
+	return m_options.getFloatFrame();
 }
 
 
 exint VRayProxyRef::getAnimType() const
 {
-	return VRayProxyUtils::getAnimType(m_options);
+	return m_options.getAnimType();
 }
 
 
 fpreal64 VRayProxyRef::getAnimOffset() const
 {
-	return VRayProxyUtils::getAnimOffset(m_options);
+	return m_options.getAnimOffset();
 }
 
 
 fpreal64 VRayProxyRef::getAnimSpeed() const
 {
-	return VRayProxyUtils::getAnimSpeed(m_options);
+	return m_options.getAnimSpeed();
 }
 
 
 bool VRayProxyRef::getAnimOverride() const
 {
-	return VRayProxyUtils::getAnimOverride(m_options);
+	return m_options.getAnimOverride();
 }
 
 
 exint VRayProxyRef::getAnimStart() const
 {
-	return VRayProxyUtils::getAnimStart(m_options);
+	return m_options.getAnimStart();
 }
 
 
 exint VRayProxyRef::getAnimLength() const
 {
-	return VRayProxyUtils::getAnimLength(m_options);
+	return m_options.getAnimLength();
+}
+
+
+exint VRayProxyRef::getGeometryId() const
+{
+	GU_DetailHandleAutoReadLock gdl(m_detail);
+	return (gdl.isValid())? gdl.getGdp()->getUniqueId() : -1;
 }
 
 

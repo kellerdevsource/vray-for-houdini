@@ -12,8 +12,8 @@
 #define VRAY_FOR_HOUDINI_VRAYPROXYCACHE_H
 
 #include "vfh_vray.h"
-#include "vfh_lru_cache.hpp"
 #include "vfh_hashes.h" // For MurmurHash3_x86_32
+#include "vfh_lru_cache.hpp"
 
 #include <GU/GU_DetailHandle.h>
 #include <UT/UT_Options.h>
@@ -28,17 +28,72 @@ enum LOD {
 	LOD_FULL,
 };
 
-
-enum DataError {
-	DE_INVALID_GEOM = 1,
-	DE_NO_GEOM,
-	DE_INVALID_FILE
-};
-
-
+class VRayProxyParms;
 class VRayProxyCache;
 typedef Caches::LRUCache< std::string, VRayProxyCache > VRayProxyCacheMan;
-VRayProxyCacheMan&   GetVRayProxyCacheManager();
+
+VRayProxyCacheMan&     GetVRayProxyCacheManager();
+GU_ConstDetailHandle   GetVRayProxyDetail(const VRayProxyParms &options);
+
+
+class VRayProxyParms
+{
+public:
+	static const UT_StringRef thePathToken;
+	static const UT_StringRef theLODToken;
+	static const UT_StringRef theFileToken;
+	static const UT_StringRef theFrameToken;
+	static const UT_StringRef theAnimTypeToken;
+	static const UT_StringRef theAnimOffsetToken;
+	static const UT_StringRef theAnimSpeedToken;
+	static const UT_StringRef theAnimOverrideToken;
+	static const UT_StringRef theAnimStartToken;
+	static const UT_StringRef theAnimLengthToken;
+
+	inline static UT_StringHolder   getPath(const UT_Options &options);
+	inline static UT_StringHolder   getFilepath(const UT_Options &options);
+	inline static exint             getLOD(const UT_Options &options);
+	inline static fpreal64          getFloatFrame(const UT_Options &options);
+	inline static exint             getAnimType(const UT_Options &options);
+	inline static fpreal64          getAnimOffset(const UT_Options &options);
+	inline static fpreal64          getAnimSpeed(const UT_Options &options);
+	inline static bool              getAnimOverride(const UT_Options &options);
+	inline static exint             getAnimStart(const UT_Options &options);
+	inline static exint             getAnimLength(const UT_Options &options);
+
+public:
+	VRayProxyParms();
+	VRayProxyParms(const UT_Options &options);
+	~VRayProxyParms()
+	{ }
+
+	VRayProxyParms&        operator =(const UT_Options &options);
+	bool                   operator ==(const UT_Options &options) const;
+	bool                   operator ==(const VRayProxyParms &options) const;
+
+	inline UT_StringHolder getPath() const { return m_path; }
+	inline UT_StringHolder getFilepath() const { return m_filepath; }
+	inline exint           getLOD() const { return m_lod; }
+	inline fpreal64        getFloatFrame() const { return m_floatFrame; }
+	inline exint           getAnimType() const { return m_animType; }
+	inline fpreal64        getAnimOffset() const { return m_animOffset; }
+	inline fpreal64        getAnimSpeed() const { return m_animSpeed; }
+	inline bool            getAnimOverride() const { return m_animOverride; }
+	inline exint           getAnimStart() const { return m_animStart; }
+	inline exint           getAnimLength() const { return m_animLength; }
+
+private:
+	UT_StringHolder m_path;
+	UT_StringHolder m_filepath;
+	exint           m_lod;
+	fpreal64        m_floatFrame;
+	exint           m_animType;
+	fpreal64        m_animOffset;
+	fpreal64        m_animSpeed;
+	bool            m_animOverride;
+	exint           m_animStart;
+	exint           m_animLength;
+};
 
 
 class VRayProxyCache
@@ -61,6 +116,7 @@ private:
 	typedef uint32                                     VoxelType;
 	typedef std::pair<VoxelType, VUtils::MeshVoxel* >  Geometry;
 
+
 	struct GeometryHash
 	{
 		typedef Hash::MHash result_type;
@@ -71,9 +127,13 @@ private:
 
 	struct CachedFrame
 	{
+		bool hasDetail(const LOD &lod) const { return (m_details.count(lod) > 0); }
+		Item &getDetail(const LOD &lod) { return m_details[lod]; }
+
 		bool hasItemKeys(const LOD &lod) const { return (m_keys.count(lod) > 0); }
 		ItemKeys &getItemKeys(const LOD &lod) { return m_keys[lod]; }
 
+		std::unordered_map< LOD, Item, std::hash<int>, std::equal_to<int> >     m_details;
 		std::unordered_map< LOD, ItemKeys, std::hash<int>, std::equal_to<int> > m_keys;
 	};
 
@@ -119,7 +179,7 @@ public:
 ///         NOTE: if frame is cached but a geometry for that frame is missing
 ///               removes the cached frame and returns false
 ///               (could happen if the geometry was evicted from the geometry cache)
-	int checkFrameCached(const UT_Options &options) const;
+	int checkFrameCached(const VRayProxyParms &options) const;
 
 /// @brief Merges the geometry for a frame into the GU_Detail passed
 ///        if the frame is not in cache loads the preview geometry for that frame
@@ -130,7 +190,7 @@ public:
 ///                           - DE_INVALID_FILE if cache is not initialized
 ///                           - DE_NO_GEOM if no preview geometry is found for that frame
 ///                           - DE_INVALID_GEOM if a cached geometry for that frame is invalid
-	VUtils::ErrorCode getFrame(const UT_Options &options, GU_Detail &gdp);
+	GU_ConstDetailHandle getFrame(const VRayProxyParms &options);
 
 private:
 	int    checkCached(const FrameKey &frameIdx, const LOD &lod) const;
@@ -138,7 +198,7 @@ private:
 	int    erase(const FrameKey &frameIdx);
 	void   evictFrame(const FrameKey &frameIdx, CachedFrame &frameData);
 
-	FrameKey             getFrameIdx(const UT_Options &options) const;
+	FrameKey             getFrameIdx(const VRayProxyParms &options) const;
 	VUtils::MeshVoxel*   getVoxel(const FrameKey &frameKey, int voxelIdx) const;
 	void                 getPreviewGeometry(VUtils::MeshVoxel &voxel, std::vector<Geometry> &geometry) const;
 	int                  createProxyGeometry(const Geometry &geom, GU_DetailHandle &gdpHndl) const;
@@ -156,79 +216,6 @@ private:
 	std::shared_ptr<FrameCache> m_frameCache;
 	std::shared_ptr<ItemCache>  m_itemCache;
 };
-
-
-class VRayProxyUtils
-{
-public:
-	static int getVRayProxyDetail(const UT_Options &options, GU_Detail &gdp);
-
-
-	static UT_StringHolder getFilepath(const UT_Options &options)
-	{
-		return ((options.hasOption(theFileToken))? options.getOptionS(theFileToken) : UT_StringHolder());
-	}
-
-
-	static exint getLOD(const UT_Options &options)
-	{
-		return ((options.hasOption(theLODToken))? options.getOptionI(theLODToken) : 1);
-	}
-
-
-	static fpreal64 getFloatFrame(const UT_Options &options)
-	{
-		return ((options.hasOption(theFrameToken))? options.getOptionF(theFrameToken) : 0.f);
-	}
-
-
-	static exint getAnimType(const UT_Options &options)
-	{
-		return ((options.hasOption(theAnimTypeToken))? options.getOptionI(theAnimTypeToken) : 0);
-	}
-
-
-	static fpreal64 getAnimOffset(const UT_Options &options)
-	{
-		return ((options.hasOption(theAnimOffsetToken))? options.getOptionF(theAnimOffsetToken) : 0.f);
-	}
-
-
-	static fpreal64 getAnimSpeed(const UT_Options &options)
-	{
-		return ((options.hasOption(theAnimSpeedToken))? options.getOptionF(theAnimSpeedToken) : 1.f);
-	}
-
-
-	static bool getAnimOverride(const UT_Options &options)
-	{
-		return ((options.hasOption(theAnimOverrideToken))? options.getOptionB(theAnimOverrideToken) : 0);
-	}
-
-
-	static exint getAnimStart(const UT_Options &options)
-	{
-		return ((options.hasOption(theAnimStartToken))? options.getOptionI(theAnimStartToken) : 0);
-	}
-
-
-	static exint getAnimLength(const UT_Options &options)
-	{
-		return ((options.hasOption(theAnimLengthToken))? options.getOptionI(theAnimLengthToken) : 0);
-	}
-
-public:
-	static const UT_StringRef theLODToken;
-	static const UT_StringRef theFileToken;
-	static const UT_StringRef theFrameToken;
-	static const UT_StringRef theAnimTypeToken;
-	static const UT_StringRef theAnimOffsetToken;
-	static const UT_StringRef theAnimSpeedToken;
-	static const UT_StringRef theAnimOverrideToken;
-	static const UT_StringRef theAnimStartToken;
-	static const UT_StringRef theAnimLengthToken;
-};
-
 
 } // namespace VRayForHoudini
 

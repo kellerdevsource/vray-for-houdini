@@ -12,6 +12,7 @@
 #define VRAY_FOR_HOUDINI_VRAYPROXYREF_H
 
 #include "vfh_vray.h"
+#include "vfh_vrayproxyutils.h"
 #include <GU/GU_PackedImpl.h>
 
 
@@ -63,30 +64,37 @@ public:
 	/// Count memory usage using a UT_MemoryCounter in order to count
 	/// shared memory correctly.
 	virtual void                   countMemory(UT_MemoryCounter &counter, bool inclusive) const VRAY_OVERRIDE;
+
+	virtual bool                   saveCachedBBox() const VRAY_OVERRIDE { return true; }
 	/// @}
 
 	/// @{
 	/// Member data accessors for intrinsics
-	const GU_ConstDetailHandle    getDetail() const { return m_detail; }
+	const GU_ConstDetailHandle &  getDetail() const { return m_detail; }
+	VRayProxyRef&                 setDetail(const GU_ConstDetailHandle &h) { m_detail = h; return *this; }
 
-	UT_StringHolder               getFilepath() const;
-	exint                         getLOD() const;
-	fpreal64                      getFloatFrame() const;
-	exint                         getAnimType() const;
-	fpreal64                      getAnimOffset() const;
-	fpreal64                      getAnimSpeed() const;
-	bool                          getAnimOverride() const;
-	exint                         getAnimStart() const;
-	exint                         getAnimLength() const;
+	inline const char *                  getPath() const;
+	inline const char *                  getFilepath() const;
+	inline const char *                  getLOD() const;
+	inline fpreal64                      getFloatFrame() const;
+	inline exint                         getAnimType() const;
+	inline fpreal64                      getAnimOffset() const;
+	inline fpreal64                      getAnimSpeed() const;
+	inline bool                          getAnimOverride() const;
+	inline exint                         getAnimStart() const;
+	inline exint                         getAnimLength() const;
+	inline exint                         getGeometryId() const;
 	/// @}
 
 private:
 	/// updateFrom() will update from UT_Options only
-	bool   updateFrom(const UT_Options &options);
+	template <typename T>
+	bool   updateFrom(const T &options);
+	void   clearDetail() { m_detail = GU_ConstDetailHandle(); }
 
 private:
-	GU_DetailHandle        m_detail;
-	UT_Options             m_options;
+	GU_ConstDetailHandle   m_detail;
+	VRayProxyParms         m_options;
 };
 
 

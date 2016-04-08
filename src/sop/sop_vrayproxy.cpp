@@ -12,17 +12,6 @@
 #include "vfh_log.h"
 #include "gu_vrayproxyref.h"
 
-//#include "vfh_hashes.h" // For MurmurHash3_x86_32
-//#include "vfh_lru_cache.hpp"
-
-//#include <GEO/GEO_Point.h>
-//#include <GU/GU_PrimPoly.h>
-//#include <GU/GU_PackedGeometry.h>
-//#include <HOM/HOM_Vector2.h>
-//#include <HOM/HOM_BaseKeyframe.h>
-//#include <HOM/HOM_playbar.h>
-//#include <HOM/HOM_Module.h>
-
 #include <GU/GU_PrimPacked.h>
 #include <EXPR/EXPR_Lock.h>
 
@@ -47,7 +36,6 @@ static PRM_ChoiceList prmLoadTypeMenu(PRM_CHOICELIST_SINGLE, prmLoadTypeItems);
 static PRM_Name prmProxyHeading("vrayproxyheading", "VRayProxy Settings");
 
 
-
 void SOP::VRayProxy::addPrmTemplate(Parm::PRMTmplList &prmTemplate)
 {
 	prmTemplate.push_back(PRM_Template(PRM_HEADING, 1, &prmCacheHeading));
@@ -66,12 +54,30 @@ int SOP::VRayProxy::cbClearCache(void *data, int /*index*/, float t, const PRM_T
 		node->evalString(filepath, "file", 0, t);
 	}
 
-//	if (g_cacheMan.contains(filepath.buffer())) {
-//		VRayProxyCache &fileCache = g_cacheMan[filepath.buffer()];
-//		fileCache.clearCache();
-//	}
+	VRayProxyCacheMan &theCacheMan = GetVRayProxyCacheManager();
+	if (theCacheMan.contains(filepath.buffer())) {
+		VRayProxyCache &fileCache = theCacheMan[filepath.buffer()];
+		fileCache.clearCache();
+	}
 
 	return 0;
+}
+
+
+SOP::VRayProxy::VRayProxy(OP_Network *parent, const char *name, OP_Operator *entry):
+	NodeBase(parent, name, entry)
+{
+	// This indicates that this SOP manually manages its data IDs,
+	// so that Houdini can identify what attributes may have changed,
+	// e.g. to reduce work for the viewport, or other SOPs that
+	// check whether data IDs have changed.
+	// By default, (i.e. if this line weren't here), all data IDs
+	// would be bumped after the SOP cook, to indicate that
+	// everything might have changed.
+	// If some data IDs don't get bumped properly, the viewport
+	// may not update, or SOPs that check data IDs
+	// may not cook correctly, so be *very* careful!
+	mySopFlags.setManagesDataIDs(true);
 }
 
 
@@ -110,7 +116,7 @@ OP_ERROR SOP::VRayProxy::cookMySop(OP_Context &context)
 		return error();
 	}
 
-	gdp->clearAndDestroy();
+	gdp->stashAll();
 
 	if (error() < UT_ERROR_ABORT) {
 		UT_Interrupt *boss = UTgetInterrupt();
@@ -128,8 +134,9 @@ OP_ERROR SOP::VRayProxy::cookMySop(OP_Context &context)
 					gdp->setPos3(pack->getPointOffset(0), pivot);
 					// Set the options on the sphere primitive
 					UT_Options options;
-					options.setOptionS("file", path)
-							.setOptionI("lod", 1)
+					options.setOptionS("path", this->getFullPath())
+							.setOptionS("file", path)
+							.setOptionI("lod", evalInt("loadtype", 0, t))
 							.setOptionF("frame", context.getFloatFrame())
 							.setOptionI("anim_type", evalInt("anim_type", 0, t))
 							.setOptionF("anim_offset", evalFloat("anim_offset", 0, t))
@@ -146,6 +153,7 @@ OP_ERROR SOP::VRayProxy::cookMySop(OP_Context &context)
 		}
 	}
 
+	gdp->destroyStashed();
 
 //	std::string filepath(path.buffer());
 //	int inCache = g_cacheMan.contains(filepath);
