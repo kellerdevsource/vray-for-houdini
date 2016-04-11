@@ -55,8 +55,11 @@ VRayProxyFactory::VRayProxyFactory():
 	registerIntrinsic( VRayProxyParms::theAnimTypeToken,
 			IntGetterCast(&VRayProxyRef::getAnimType) );
 
+	registerIntrinsic( "animtypename",
+			StringGetterCast(&VRayProxyRef::getAnimTypeName) );
+
 	registerIntrinsic( VRayProxyParms::theAnimOffsetToken,
-			IntGetterCast(&VRayProxyRef::getAnimType) );
+			FloatGetterCast(&VRayProxyRef::getAnimOffset) );
 
 	registerIntrinsic( VRayProxyParms::theAnimSpeedToken,
 			FloatGetterCast(&VRayProxyRef::getAnimSpeed) );
@@ -71,7 +74,7 @@ VRayProxyFactory::VRayProxyFactory():
 			IntGetterCast(&VRayProxyRef::getAnimLength) );
 
 	registerIntrinsic( "geometryid",
-			IntGetterCast(&VRayProxyRef::getGeometryId) );
+			IntGetterCast(&VRayProxyRef::getGeometryid) );
 }
 
 
@@ -278,7 +281,18 @@ const char * VRayProxyRef::getFilepath() const
 
 const char * VRayProxyRef::getLOD() const
 {
-	return (m_options.getLOD() == LOD_FULL)? "full" : "preview" ;
+	switch (m_options.getLOD()) {
+		case LOD_PREVIEW:
+		{
+			return "preview";
+		}
+		case LOD_FULL:
+		{
+			return "full";
+		}
+	}
+
+	return "";
 }
 
 
@@ -291,6 +305,31 @@ fpreal64 VRayProxyRef::getFloatFrame() const
 exint VRayProxyRef::getAnimType() const
 {
 	return m_options.getAnimType();
+}
+
+
+const char * VRayProxyRef::getAnimTypeName() const
+{
+	switch (m_options.getAnimType()) {
+		case VUtils::MeshFileAnimType::Loop:
+		{
+			return "loop";
+		}
+		case VUtils::MeshFileAnimType::Once:
+		{
+			return "once";
+		}
+		case VUtils::MeshFileAnimType::PingPong:
+		{
+			return "pingpong";
+		}
+		case VUtils::MeshFileAnimType::Still:
+		{
+			return "still";
+		}
+	}
+
+	return "";
 }
 
 
@@ -324,7 +363,7 @@ exint VRayProxyRef::getAnimLength() const
 }
 
 
-exint VRayProxyRef::getGeometryId() const
+exint VRayProxyRef::getGeometryid() const
 {
 	GU_DetailHandleAutoReadLock gdl(m_detail);
 	return (gdl.isValid())? gdl.getGdp()->getUniqueId() : -1;

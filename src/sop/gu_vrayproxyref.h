@@ -78,12 +78,13 @@ public:
 	inline const char *                  getLOD() const;
 	inline fpreal64                      getFloatFrame() const;
 	inline exint                         getAnimType() const;
+	inline const char *                  getAnimTypeName() const;
 	inline fpreal64                      getAnimOffset() const;
 	inline fpreal64                      getAnimSpeed() const;
 	inline bool                          getAnimOverride() const;
 	inline exint                         getAnimStart() const;
 	inline exint                         getAnimLength() const;
-	inline exint                         getGeometryId() const;
+	inline exint                         getGeometryid() const;
 	/// @}
 
 private:
