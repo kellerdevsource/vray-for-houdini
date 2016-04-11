@@ -14,22 +14,12 @@
 #include "vop/vop_node_base.h"
 
 #include <GU/GU_Detail.h>
-#include <GU/GU_PackedDisk.h>
-#include <GU/GU_PackedGeometry.h>
 
 
 using namespace VRayForHoudini;
 
 
 const char *const VFH_ATTR_MATERIAL_ID = "switchmtl";
-
-
-enum GEO_PrimPackedType
-{
-	GEO_PACKEDGEOMETRY = 24,
-	GEO_PACKEDDISK = 25,
-	GEO_ALEMBICREF = 28,
-};
 
 
 GeometryExporter::GeometryExporter(OBJ_Geometry &node, VRayExporter &pluginExporter):
@@ -554,26 +544,20 @@ uint GeometryExporter::getPrimPackedID(const GU_PrimPacked &prim)
 {
 	uint packedID = 0;
 
-	switch (prim.getTypeId().get()) {
-		case GEO_ALEMBICREF:
-		case GEO_PACKEDDISK:
-		{
-			UT_String primname;
-			prim.getIntrinsic(prim.findIntrinsic("packedprimitivename"), primname);
-			packedID = primname.hash();
-			break;
-		}
-		case GEO_PACKEDGEOMETRY:
-		{
-			int geoid = 0;
-			prim.getIntrinsic(prim.findIntrinsic("geometryid"), geoid);
-			packedID = geoid;
-			break;
-		}
-		default:
-		{
-			break;
-		}
+	if (prim.getTypeId() == GU_PrimPacked::lookupTypeId("AlembicRef")) {
+		UT_String primname;
+		prim.getIntrinsic(prim.findIntrinsic("packedprimitivename"), primname);
+		packedID = primname.hash();
+	}
+	else if (prim.getTypeId() == GU_PrimPacked::lookupTypeId("PackedDisk")) {
+		UT_String primname;
+		prim.getIntrinsic(prim.findIntrinsic("packedprimitivename"), primname);
+		packedID = primname.hash();
+	}
+	else if (prim.getTypeId() == GU_PrimPacked::lookupTypeId("PackedGeometry")) {
+		int geoid = 0;
+		prim.getIntrinsic(prim.findIntrinsic("geometryid"), geoid);
+		packedID = geoid;
 	}
 
 	return packedID;
@@ -590,28 +574,15 @@ int GeometryExporter::exportPrimPacked(SOP_Node &sop, const GU_PrimPacked &prim,
 
 	int nPlugins = 0;
 
-	switch (prim.getTypeId().get()) {
-		case GEO_ALEMBICREF:
-		{
-			nPlugins = exportAlembicRef(sop, prim, pluginList);
-			break;
-		}
-		case GEO_PACKEDDISK:
-		{
-			nPlugins = exportPackedDisk(sop, prim, pluginList);
-			break;
-		}
-		case GEO_PACKEDGEOMETRY:
-		{
-			nPlugins = exportPackedGeometry(sop, prim, pluginList);
-			break;
-		}
-		default:
-		{
-			break;
-		}
+	if (prim.getTypeId() == GU_PrimPacked::lookupTypeId("AlembicRef")) {
+		nPlugins = exportAlembicRef(sop, prim, pluginList);
 	}
-
+	else if (prim.getTypeId() == GU_PrimPacked::lookupTypeId("PackedDisk")) {
+		nPlugins = exportPackedDisk(sop, prim, pluginList);
+	}
+	else if (prim.getTypeId() == GU_PrimPacked::lookupTypeId("PackedGeometry")) {
+		nPlugins = exportPackedGeometry(sop, prim, pluginList);
+	}
 
 	return nPlugins;
 }
