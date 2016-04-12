@@ -10,6 +10,7 @@
 
 #include "sop_vrayproxy.h"
 #include "vfh_log.h"
+#include "vfh_prm_templates.h"
 #include "gu_vrayproxyref.h"
 
 #include <GU/GU_PrimPacked.h>
@@ -19,29 +20,44 @@
 using namespace VRayForHoudini;
 
 
-/// VRayProxy node params
-///
-static PRM_Name prmCacheHeading("cacheheading", "VRayProxy Cache");
-static PRM_Name prmClearCache("clear_cache", "Clear Cache");
-
-static PRM_Name prmLoadType("loadtype", "Load");
-static PRM_Name prmLoadTypeItems[] = {
-	PRM_Name("Bounding Box"),
-	PRM_Name("Preview Geometry"),
-	PRM_Name("Full Geometry"),
-	PRM_Name(),
-};
-static PRM_ChoiceList prmLoadTypeMenu(PRM_CHOICELIST_SINGLE, prmLoadTypeItems);
-
-static PRM_Name prmProxyHeading("vrayproxyheading", "VRayProxy Settings");
-
-
 void SOP::VRayProxy::addPrmTemplate(Parm::PRMTmplList &prmTemplate)
 {
-	prmTemplate.push_back(PRM_Template(PRM_HEADING, 1, &prmCacheHeading));
-	prmTemplate.push_back(PRM_Template(PRM_ORD, 1, &prmLoadType, PRMoneDefaults, &prmLoadTypeMenu));
-	prmTemplate.push_back(PRM_Template(PRM_CALLBACK, 1, &prmClearCache, 0, 0, 0, VRayProxy::cbClearCache));
-	prmTemplate.push_back(PRM_Template(PRM_HEADING, 1, &prmProxyHeading));
+	const char *lodItems[] = {
+		"bbox", "Bounding Box",
+		"preview", "Preview Geometry",
+		"full", "Full Geometry",
+	};
+
+	const char *viewportlodItems[] = {
+		GEOviewportLOD(GEO_VIEWPORT_FULL), GEOviewportLOD(GEO_VIEWPORT_FULL, true),
+		GEOviewportLOD(GEO_VIEWPORT_POINTS), GEOviewportLOD(GEO_VIEWPORT_POINTS, true),
+		GEOviewportLOD(GEO_VIEWPORT_BOX), GEOviewportLOD(GEO_VIEWPORT_BOX, true),
+		GEOviewportLOD(GEO_VIEWPORT_CENTROID), GEOviewportLOD(GEO_VIEWPORT_CENTROID, true),
+		GEOviewportLOD(GEO_VIEWPORT_HIDDEN), GEOviewportLOD(GEO_VIEWPORT_HIDDEN, true),
+	};
+
+	const char *missingfileItems[] = {
+		"error", "Report Error",
+		"empty", "No Geometry",
+	};
+
+	prmTemplate.push_back(Parm::PRMFactory(PRM_ORD, "loadtype", "Load")
+						.setDefault(PRMoneDefaults)
+						.setChoiceListItems(PRM_CHOICELIST_SINGLE, lodItems, CountOf(lodItems))
+						.getPRMTemplate());
+	prmTemplate.push_back(Parm::PRMFactory(PRM_ORD, "viewportlod", "Display As")
+						.setDefault(PRMzeroDefaults)
+						.setChoiceListItems(PRM_CHOICELIST_SINGLE, viewportlodItems, CountOf(viewportlodItems))
+						.getPRMTemplate());
+	prmTemplate.push_back(Parm::PRMFactory(PRM_ORD, "missingfile", "Missing File")
+						.setDefault(PRMzeroDefaults)
+						.setChoiceListItems(PRM_CHOICELIST_SINGLE, missingfileItems, CountOf(missingfileItems))
+						.getPRMTemplate());
+	prmTemplate.push_back(Parm::PRMFactory(PRM_CALLBACK, "reload", "Reload Geometry")
+						.setCallbackFunc(VRayProxy::cbClearCache)
+						.getPRMTemplate());
+	prmTemplate.push_back(Parm::PRMFactory(PRM_HEADING, "vrayproxyheading", "VRayProxy Settings")
+						.getPRMTemplate());
 }
 
 
@@ -62,7 +78,6 @@ int SOP::VRayProxy::cbClearCache(void *data, int /*index*/, float t, const PRM_T
 
 	return 0;
 }
-
 
 SOP::VRayProxy::VRayProxy(OP_Network *parent, const char *name, OP_Operator *entry):
 	NodeBase(parent, name, entry)
@@ -109,14 +124,20 @@ OP_ERROR SOP::VRayProxy::cookMySop(OP_Context &context)
 
 	const float t = context.getTime();
 
+	gdp->stashAll();
+
 	UT_String path;
 	evalString(path, "file", 0, t);
 	if (path.equal("")) {
-		addError(SOP_ERR_FILEGEO, "Invalid file path!");
+		UT_String missingfile;
+		evalString(missingfile, "missingfile", 0, t);
+		if (missingfile == "error") {
+			addError(SOP_ERR_FILEGEO, "Invalid file path!");
+		}
+
+		gdp->destroyStashed();
 		return error();
 	}
-
-	gdp->stashAll();
 
 	if (error() < UT_ERROR_ABORT) {
 		UT_Interrupt *boss = UTgetInterrupt();
@@ -125,7 +146,7 @@ OP_ERROR SOP::VRayProxy::cookMySop(OP_Context &context)
 				// Create a packed sphere primitive
 				GU_PrimPacked *pack = GU_PrimPacked::build(*gdp, "VRayProxyRef");
 				if (NOT(pack)) {
-					addWarning(SOP_MESSAGE, "Can't create a packed VRayProxyRef");
+					addWarning(SOP_MESSAGE, "Can't create packed primitive VRayProxyRef");
 				}
 				else {
 					// Set the location of the packed primitive's point.
@@ -149,9 +170,10 @@ OP_ERROR SOP::VRayProxy::cookMySop(OP_Context &context)
 							.setOptionI("flip_axis", evalInt("flip_axis", 0, t));
 
 					pack->implementation()->update(options);
-					pack->setViewportLOD(GEO_VIEWPORT_FULL);
 
-
+					UT_String viewportlod;
+					evalString(viewportlod, "viewportlod", 0, t);
+					pack->setViewportLOD(GEOviewportLOD(viewportlod));
 				}
 			}
 			boss->opEnd();
