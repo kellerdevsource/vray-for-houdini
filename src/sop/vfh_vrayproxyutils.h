@@ -16,6 +16,7 @@
 #include "vfh_lru_cache.hpp"
 
 #include <GU/GU_DetailHandle.h>
+#include <UT/UT_BoundingBox.h>
 #include <UT/UT_Options.h>
 
 
@@ -34,6 +35,7 @@ typedef Caches::LRUCache< std::string, VRayProxyCache > VRayProxyCacheMan;
 
 VRayProxyCacheMan&     GetVRayProxyCacheManager();
 GU_ConstDetailHandle   GetVRayProxyDetail(const VRayProxyParms &options);
+bool                   GetVRayProxyBounds(const VRayProxyParms &options, UT_BoundingBox &box);
 
 
 class VRayProxyParms
@@ -143,6 +145,7 @@ private:
 
 		std::unordered_map< LOD, Item, std::hash<int>, std::equal_to<int> >     m_details;
 		std::unordered_map< LOD, ItemKeys, std::hash<int>, std::equal_to<int> > m_keys;
+		VUtils::Box                                                             m_bbox;
 	};
 
 	struct CachedItem
@@ -199,6 +202,7 @@ public:
 ///                           - DE_NO_GEOM if no preview geometry is found for that frame
 ///                           - DE_INVALID_GEOM if a cached geometry for that frame is invalid
 	GU_ConstDetailHandle getFrame(const VRayProxyParms &options);
+	bool                 getBounds(const VRayProxyParms &options, UT_BoundingBox &box) const;
 
 private:
 	int    checkCached(const FrameKey &frameIdx, const LOD &lod) const;

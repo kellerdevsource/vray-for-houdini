@@ -70,6 +70,26 @@ GU_ConstDetailHandle VRayForHoudini::GetVRayProxyDetail(const VRayProxyParms &op
 	return cache.getFrame(options);
 }
 
+
+bool VRayForHoudini::GetVRayProxyBounds(const VRayProxyParms &options, UT_BoundingBox &box)
+{
+	UT_AutoLock lock(theLock);
+
+	UT_StringHolder utfilepath = options.getFilepath();
+	if (NOT(utfilepath.isstring())) {
+		return false;
+	}
+
+	const std::string filepath(utfilepath);
+	if (NOT(theCacheMan.contains(filepath))) {
+		return false;
+	}
+
+	VRayProxyCache &cache = theCacheMan[filepath];
+	return cache.getBounds(options, box);
+}
+
+
 const UT_StringRef VRayProxyParms::thePathToken         = "path";
 const UT_StringRef VRayProxyParms::theFileToken         = "file";
 const UT_StringRef VRayProxyParms::theLODToken          = "lod";
@@ -392,6 +412,24 @@ int VRayProxyCache::checkFrameCached(const VRayProxyParms &options) const
 }
 
 
+bool VRayProxyCache::getBounds(const VRayProxyParms &options, UT_BoundingBox &box) const
+{
+	if (NOT(m_proxy)) {
+		return false;
+	}
+
+	FrameKey frameIdx = getFrameIdx(options);
+	if (NOT(m_frameCache->contains(frameIdx))) {
+		return false;
+	}
+
+	CachedFrame &frameData = (*m_frameCache)[frameIdx];
+	box.initBounds(frameData.m_bbox.pmin.x, frameData.m_bbox.pmin.y, frameData.m_bbox.pmin.z);
+	box.enlargeBounds(frameData.m_bbox.pmax.x, frameData.m_bbox.pmax.y, frameData.m_bbox.pmax.z);
+	return true;
+}
+
+
 GU_ConstDetailHandle VRayProxyCache::getFrame(const VRayProxyParms &options)
 {
 	if (NOT(m_proxy)) {
@@ -511,6 +549,7 @@ int VRayProxyCache::insert(const FrameKey &frameIdx, const LOD &lod, const std::
 
 	// insert new item in frameCache
 	CachedFrame &frameData = (*m_frameCache)[frameIdx];
+	frameData.m_bbox = m_proxy->getBBox();
 	ItemKeys &itemKeys = frameData.getItemKeys(lod);
 	itemKeys.resize(geometry.size());
 

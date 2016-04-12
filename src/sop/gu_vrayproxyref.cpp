@@ -184,13 +184,10 @@ bool VRayProxyRef::getLocalTransform(UT_Matrix4D &m) const
 
 bool VRayProxyRef::getBounds(UT_BoundingBox &box) const
 {
-	// All spheres are unit spheres with transforms applied
-	box.initBounds(-1, -1, -1);
-	box.enlargeBounds(1, 1, 1);
 	// If computing the bounding box is expensive, you may want to cache the
 	// box by calling setBoxCache(box)
 	// SYSconst_cast(this)->setBoxCache(box);
-	return true;
+	return GetVRayProxyBounds(m_options, box);
 }
 
 
