@@ -17,6 +17,9 @@
 #include <UT/UT_MemoryCounter.h>
 #include <FS/UT_DSO.h>
 
+#include <OpenEXR/ImathLimits.h>
+#include <OpenEXR/ImathMath.h>
+
 
 using namespace VRayForHoudini;
 
@@ -40,6 +43,9 @@ public:
 VRayProxyFactory::VRayProxyFactory():
 	GU_PackedFactory("VRayProxyRef", "VRayProxyRef")
 {
+	registerIntrinsic( "geometryid",
+			IntGetterCast(&VRayProxyRef::getGeometryid) );
+
 	registerIntrinsic( VRayProxyParms::thePathToken,
 			StringGetterCast(&VRayProxyRef::getPath) );
 
@@ -73,8 +79,11 @@ VRayProxyFactory::VRayProxyFactory():
 	registerIntrinsic( VRayProxyParms::theAnimLengthToken,
 			IntGetterCast(&VRayProxyRef::getAnimLength) );
 
-	registerIntrinsic( "geometryid",
-			IntGetterCast(&VRayProxyRef::getGeometryid) );
+	registerIntrinsic( VRayProxyParms::theScaleToken,
+			FloatGetterCast(&VRayProxyRef::getScale) );
+
+	registerIntrinsic( VRayProxyParms::theFlipAxisToken,
+			IntGetterCast(&VRayProxyRef::getFlipAxis) );
 }
 
 
@@ -130,12 +139,6 @@ GU_PackedFactory* VRayProxyRef::getFactory() const
 }
 
 
-GU_PackedImpl* VRayProxyRef::copy() const
-{
-	return new VRayProxyRef(*this);
-}
-
-
 void VRayProxyRef::clearData()
 {
 	// This method is called when primitives are "stashed" during the cooking
@@ -145,16 +148,35 @@ void VRayProxyRef::clearData()
 }
 
 
-bool VRayProxyRef::isValid() const
-{
-	return m_detail.isValid();
-}
-
-
 bool VRayProxyRef::save(UT_Options &options, const GA_SaveMap &map) const
 {
 	options.setOptionS(VRayProxyParms::theFileToken, m_options.getFilepath())
 			.setOptionI(VRayProxyParms::theLODToken, m_options.getLOD());
+
+	return true;
+}
+
+
+bool VRayProxyRef::getLocalTransform(UT_Matrix4D &m) const
+{
+	fpreal64 scale = m_options.getScale();
+	if (   Imath::equalWithAbsError((float)scale, 1.f, Imath::limits<float>::epsilon())
+		&& NOT(m_options.getFlipAxis()) )
+	{
+		return false;
+	}
+
+	m.identity();
+	m.scale(scale, scale, scale);
+
+	if (m_options.getFlipAxis()) {
+		VUtils::swap(m(1,0), m(2,0));
+		VUtils::swap(m(1,1), m(2,1));
+		VUtils::swap(m(1,2), m(2,2));
+		m(2,0) = -m(2,0);
+		m(2,1) = -m(2,1);
+		m(2,2) = -m(2,2);
+	}
 
 	return true;
 }

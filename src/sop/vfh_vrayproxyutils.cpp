@@ -80,6 +80,8 @@ const UT_StringRef VRayProxyParms::theAnimSpeedToken    = "anim_speed";
 const UT_StringRef VRayProxyParms::theAnimOverrideToken = "anim_override";
 const UT_StringRef VRayProxyParms::theAnimStartToken    = "anim_start";
 const UT_StringRef VRayProxyParms::theAnimLengthToken   = "anim_length";
+const UT_StringRef VRayProxyParms::theScaleToken        = "scale";
+const UT_StringRef VRayProxyParms::theFlipAxisToken     = "flip_axis";
 
 
 UT_StringHolder VRayProxyParms::getPath(const UT_Options &options)
@@ -132,6 +134,16 @@ exint VRayProxyParms::getAnimLength(const UT_Options &options)
 	return ((options.hasOption(theAnimLengthToken))? options.getOptionI(theAnimLengthToken) : 0);
 }
 
+fpreal64 VRayProxyParms::getScale(const UT_Options &options)
+{
+	return ((options.hasOption(theScaleToken))? options.getOptionF(theScaleToken) : 1.f);
+}
+
+exint VRayProxyParms::getFlipAxis(const UT_Options &options)
+{
+	return ((options.hasOption(theFlipAxisToken))? options.getOptionI(theFlipAxisToken) : 0);
+}
+
 VRayProxyParms::VRayProxyParms():
 	m_lod(LOD_PREVIEW),
 	m_floatFrame(0),
@@ -140,7 +152,9 @@ VRayProxyParms::VRayProxyParms():
 	m_animSpeed(1),
 	m_animOverride(0),
 	m_animStart(0),
-	m_animLength(0)
+	m_animLength(0),
+	m_scale(1),
+	m_flipAxis(0)
 { }
 
 VRayProxyParms::VRayProxyParms(const UT_Options &options):
@@ -153,7 +167,9 @@ VRayProxyParms::VRayProxyParms(const UT_Options &options):
 	m_animSpeed(getAnimSpeed(options)),
 	m_animOverride(getAnimOverride(options)),
 	m_animStart(getAnimStart(options)),
-	m_animLength(getAnimLength(options))
+	m_animLength(getAnimLength(options)),
+	m_scale(getScale(options)),
+	m_flipAxis(getFlipAxis(options))
 { }
 
 
@@ -169,6 +185,8 @@ VRayProxyParms& VRayProxyParms::operator =(const UT_Options &options)
 	m_animOverride = getAnimOverride(options);
 	m_animStart = getAnimStart(options);
 	m_animLength = getAnimLength(options);
+	m_scale = getScale(options);
+	m_flipAxis = getFlipAxis(options);
 }
 
 
@@ -185,6 +203,8 @@ bool VRayProxyParms::operator ==(const UT_Options &options) const
 			&& m_animOverride == getAnimOverride(options)
 			&& m_animStart == getAnimStart(options)
 			&& m_animLength == getAnimLength(options)
+			&& m_scale == getScale(options)
+			&& m_flipAxis == getFlipAxis(options)
 			);
 }
 
@@ -201,6 +221,8 @@ bool VRayProxyParms::operator ==(const VRayProxyParms &options) const
 			&& m_animOverride == options.m_animOverride
 			&& m_animStart == options.m_animStart
 			&& m_animLength == options.m_animLength
+			&& m_scale == options.m_scale
+			&& m_flipAxis == options.m_flipAxis
 			);
 }
 

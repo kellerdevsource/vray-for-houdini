@@ -132,7 +132,8 @@ OP_ERROR SOP::VRayProxy::cookMySop(OP_Context &context)
 					UT_Vector3 pivot(0, 0, 0);
 					pack->setPivot(pivot);
 					gdp->setPos3(pack->getPointOffset(0), pivot);
-					// Set the options on the sphere primitive
+
+					// Set the options on the primitive
 					UT_Options options;
 					options.setOptionS("path", this->getFullPath())
 							.setOptionS("file", path)
@@ -143,10 +144,14 @@ OP_ERROR SOP::VRayProxy::cookMySop(OP_Context &context)
 							.setOptionF("anim_speed", evalFloat("anim_speed", 0, t))
 							.setOptionB("anim_override", evalInt("anim_override", 0, t))
 							.setOptionI("anim_start", evalInt("anim_start", 0, t))
-							.setOptionI("anim_length", evalInt("anim_length", 0, t));
+							.setOptionI("anim_length", evalInt("anim_length", 0, t))
+							.setOptionF("scale", evalFloat("scale", 0, t))
+							.setOptionI("flip_axis", evalInt("flip_axis", 0, t));
 
 					pack->implementation()->update(options);
 					pack->setViewportLOD(GEO_VIEWPORT_FULL);
+
+
 				}
 			}
 			boss->opEnd();
@@ -155,56 +160,9 @@ OP_ERROR SOP::VRayProxy::cookMySop(OP_Context &context)
 
 	gdp->destroyStashed();
 
-//	std::string filepath(path.buffer());
-//	int inCache = g_cacheMan.contains(filepath);
-//	VRayProxyCache &fileCache = g_cacheMan[filepath];
-//	if (NOT(inCache)) {
-//		VUtils::ErrorCode errCode = fileCache.init(path.buffer());
-//		if (errCode.error()) {
-//			g_cacheMan.erase(filepath);
-//			addError(SOP_ERR_FILEGEO, errCode.getErrorString().ptr());
-//			return error();
-//		}
-//	}
-
-//	const bool flipAxis = (evalInt("flip_axis", 0, 0.0f) != 0);
-//	const float scale   = evalFloat("scale", 0, 0.0f);
-
-//	gdp->clearAndDestroy();
-
-//	if (error() < UT_ERROR_ABORT) {
-//		UT_Interrupt *boss = UTgetInterrupt();
-//		if (boss) {
-//			if(boss->opStart("Building V-Ray Scene Preview Mesh")) {
-//				VUtils::ErrorCode errCode = fileCache.getFrame(context, *this, *gdp);
-//				if (errCode.error()) {
-//					addWarning(SOP_MESSAGE, errCode.getErrorString().ptr());
-//				}
-
-//	//			scale & flip axis
-//				UT_Matrix4 mat(1.f);
-//				mat(0,0) = scale;
-//				mat(1,1) = scale;
-//				mat(2,2) = scale;
-//	//			houdini uses row major matrix
-//				if (flipAxis) {
-//					VUtils::swap(mat(1,0), mat(2,0));
-//					VUtils::swap(mat(1,1), mat(2,1));
-//					VUtils::swap(mat(1,2), mat(2,2));
-//					mat(2,0) = -mat(2,0);
-//					mat(2,1) = -mat(2,1);
-//					mat(2,2) = -mat(2,2);
-//				}
-//				gdp->transform(mat, 0, 0, true, true, true, true, false, 0, true);
-//			}
-
-//			boss->opEnd();
-//		}
-//	}
-
-//#if UT_MAJOR_VERSION_INT < 14
-//	gdp->notifyCache(GU_CACHE_ALL);
-//#endif
+#if UT_MAJOR_VERSION_INT < 14
+	gdp->notifyCache(GU_CACHE_ALL);
+#endif
 
 	return error();
 }
@@ -212,21 +170,17 @@ OP_ERROR SOP::VRayProxy::cookMySop(OP_Context &context)
 
 OP::VRayNode::PluginResult SOP::VRayProxy::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
 {
-	UT_ASSERT( exporter );
-
+	fpreal t = exporter.getContext().getTime();
 	UT_String path;
-	evalString(path, "file", 0, 0.0f);
+	evalString(path, "file", 0, t);
 	if (NOT(path.isstring())) {
 		Log::getLog().error("VRayProxy \"%s\": \"File\" is not set!",
 					getName().buffer());
 		return OP::VRayNode::PluginResultError;
 	}
 
-	pluginDesc.pluginID   = pluginID.c_str();
-	pluginDesc.pluginName = VRayExporter::getPluginName(this);
-
 	pluginDesc.pluginAttrs.push_back(Attrs::PluginAttr("file", path.buffer()));
-	pluginDesc.pluginAttrs.push_back(Attrs::PluginAttr("flip_axis", evalInt("flip_axis", 0, 0.0f)));
+	pluginDesc.pluginAttrs.push_back(Attrs::PluginAttr("flip_axis", evalInt("flip_axis", 0, t)));
 
 	exporter.setAttrsFromOpNodePrms(pluginDesc, this);
 

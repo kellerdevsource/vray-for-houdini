@@ -49,6 +49,8 @@ public:
 	static const UT_StringRef theAnimOverrideToken;
 	static const UT_StringRef theAnimStartToken;
 	static const UT_StringRef theAnimLengthToken;
+	static const UT_StringRef theScaleToken;
+	static const UT_StringRef theFlipAxisToken;
 
 	inline static UT_StringHolder   getPath(const UT_Options &options);
 	inline static UT_StringHolder   getFilepath(const UT_Options &options);
@@ -60,6 +62,8 @@ public:
 	inline static bool              getAnimOverride(const UT_Options &options);
 	inline static exint             getAnimStart(const UT_Options &options);
 	inline static exint             getAnimLength(const UT_Options &options);
+	inline static fpreal64          getScale(const UT_Options &options);
+	inline static exint             getFlipAxis(const UT_Options &options);
 
 public:
 	VRayProxyParms();
@@ -81,6 +85,8 @@ public:
 	inline bool            getAnimOverride() const { return m_animOverride; }
 	inline exint           getAnimStart() const { return m_animStart; }
 	inline exint           getAnimLength() const { return m_animLength; }
+	inline fpreal64        getScale() const { return m_scale; }
+	inline exint           getFlipAxis() const { return m_flipAxis; }
 
 private:
 	UT_StringHolder m_path;
@@ -93,6 +99,8 @@ private:
 	bool            m_animOverride;
 	exint           m_animStart;
 	exint           m_animLength;
+	fpreal64        m_scale;
+	exint           m_flipAxis;
 };
 
 

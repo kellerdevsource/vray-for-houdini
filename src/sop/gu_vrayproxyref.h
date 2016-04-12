@@ -37,24 +37,26 @@ public:
 
 	/// @{
 	/// Virtual interface from GU_PackedImpl interface
-	virtual GU_PackedFactory*   getFactory() const VRAY_OVERRIDE;
-	virtual GU_PackedImpl*      copy() const VRAY_OVERRIDE;
-	virtual void                clearData() VRAY_OVERRIDE;
-	virtual bool                isValid() const VRAY_OVERRIDE;
+	virtual GU_PackedFactory* getFactory() const VRAY_OVERRIDE;
+	virtual GU_PackedImpl*    copy() const VRAY_OVERRIDE { return new VRayProxyRef(*this); }
+	virtual bool              isValid() const VRAY_OVERRIDE { return m_detail.isValid(); }
+	virtual void              clearData() VRAY_OVERRIDE;
 
 	virtual bool   load(const UT_Options &options, const GA_LoadMap &) VRAY_OVERRIDE
 	{ updateFrom(options); return true; }
 	virtual void   update(const UT_Options &options) VRAY_OVERRIDE
 	{ updateFrom(options); }
+	virtual bool   save(UT_Options &options, const GA_SaveMap &map) const VRAY_OVERRIDE;
 
 //	virtual bool   supportsJSONLoad() const VRAY_OVERRIDE
 //	{ return true; }
 //	virtual bool   loadFromJSON(const UT_JSONValueMap &options, const GA_LoadMap &) VRAY_OVERRIDE
 //	{ updateFrom(options); return true; }
 
-	virtual bool                   save(UT_Options &options, const GA_SaveMap &map) const VRAY_OVERRIDE;
+	virtual bool                   getLocalTransform(UT_Matrix4D &m) const VRAY_OVERRIDE;
 	virtual bool                   getBounds(UT_BoundingBox &box) const VRAY_OVERRIDE;
 	virtual bool                   getRenderingBounds(UT_BoundingBox &box) const VRAY_OVERRIDE;
+	virtual bool                   saveCachedBBox() const VRAY_OVERRIDE { return true; }
 	virtual void                   getVelocityRange(UT_Vector3 &min, UT_Vector3 &max) const VRAY_OVERRIDE;
 	virtual void                   getWidthRange(fpreal &min, fpreal &max) const VRAY_OVERRIDE;
 	virtual bool                   unpack(GU_Detail &destgdp) const VRAY_OVERRIDE;
@@ -64,8 +66,6 @@ public:
 	/// Count memory usage using a UT_MemoryCounter in order to count
 	/// shared memory correctly.
 	virtual void                   countMemory(UT_MemoryCounter &counter, bool inclusive) const VRAY_OVERRIDE;
-
-	virtual bool                   saveCachedBBox() const VRAY_OVERRIDE { return true; }
 	/// @}
 
 	/// @{
@@ -73,6 +73,7 @@ public:
 	const GU_ConstDetailHandle &  getDetail() const { return m_detail; }
 	VRayProxyRef&                 setDetail(const GU_ConstDetailHandle &h) { m_detail = h; return *this; }
 
+	inline exint                         getGeometryid() const;
 	inline const char *                  getPath() const;
 	inline const char *                  getFilepath() const;
 	inline const char *                  getLOD() const;
@@ -84,7 +85,8 @@ public:
 	inline bool                          getAnimOverride() const;
 	inline exint                         getAnimStart() const;
 	inline exint                         getAnimLength() const;
-	inline exint                         getGeometryid() const;
+	inline fpreal64                      getScale() const { return m_options.getScale(); }
+	inline exint                         getFlipAxis() const { return m_options.getFlipAxis(); }
 	/// @}
 
 private:
