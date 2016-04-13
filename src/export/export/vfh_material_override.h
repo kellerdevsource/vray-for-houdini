@@ -15,6 +15,7 @@
 #include "vfh_defines.h"
 
 #include <SHOP/SHOP_Node.h>
+#include <OP/OP_Director.h>
 
 #include <unordered_set>
 
@@ -33,22 +34,26 @@ struct SHOPHasher
 
 	result_type operator()(const SHOP_Node *shopNode) const
 	{
-		return (NOT(shopNode))? 0 : shopNode->getUniqueId();
 		// there is a problem with using shop path hash as material id
 		// TexUserScalar reads material id from "user_attributes "as float
 		// and then casts it to int which results in a different id
-		// TODO: need to fix that
+		// TODO: need to add TexUserInt plugin
 		// return (NOT(shopNode))? 0 : getSHOPId(shopNode->getFullPath());
+		return (NOT(shopNode))? 0 : shopNode->getUniqueId();
 	}
 
 	result_type operator()(const char *shopPath) const
 	{
-		return getSHOPId(shopPath);
+		// return getSHOPId(shopPath);
+		SHOP_Node *shopNode = OPgetDirector()->findSHOPNode(shopPath);
+		return (NOT(shopNode))? 0 : shopNode->getUniqueId();
 	}
 
 	result_type operator()(const std::string &shopPath) const
 	{
-		return getSHOPId(shopPath.c_str());
+		// return getSHOPId(shopPath.c_str());
+		SHOP_Node *shopNode = OPgetDirector()->findSHOPNode(shopPath.c_str());
+		return (NOT(shopNode))? 0 : shopNode->getUniqueId();
 	}
 };
 

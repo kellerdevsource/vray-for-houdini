@@ -166,7 +166,7 @@ OP_Node* VRayExporter::FindChildNodeByType(OP_Node *op_node, const std::string &
 }
 
 
-void VRayExporter::setAttrValueFromOpNodePrm(Attrs::PluginDesc &pluginDesc, const Parm::AttrDesc &attrDesc, OP_Node &opNode, const std::string &parmName)
+void VRayExporter::setAttrValueFromOpNodePrm(Attrs::PluginDesc &pluginDesc, const Parm::AttrDesc &attrDesc, OP_Node &opNode, const std::string &parmName) const
 {
 	if (Parm::isParmExist(opNode, parmName)) {
 		const PRM_Parm *parm = Parm::getParm(opNode, parmName);
@@ -389,6 +389,86 @@ void VRayExporter::setAttrsFromOpNodePrms(Attrs::PluginDesc &pluginDesc, OP_Node
 			}
 		}
 	}
+}
+
+
+bool VRayExporter::setAttrsFromUTOptions(Attrs::PluginDesc &pluginDesc, const UT_Options &options) const
+{
+	bool res = false;
+
+	const Parm::VRayPluginInfo *pluginInfo = Parm::GetVRayPluginInfo(pluginDesc.pluginID);
+	if (NOT(pluginInfo)) {
+		return res;
+	}
+
+	for (const auto &aIt : pluginInfo->attributes) {
+		const std::string    &attrName = aIt.first;
+		const Parm::AttrDesc &attrDesc = aIt.second;
+
+		if (NOT(options.hasOption(attrName))) {
+			continue;
+		}
+
+		Attrs::PluginAttr attr;
+		attr.paramName = attrDesc.attr;
+
+		if (   attrDesc.value.type == Parm::eBool
+			|| attrDesc.value.type == Parm::eInt
+			|| attrDesc.value.type == Parm::eTextureInt)
+		{
+			attr.paramType = Attrs::PluginAttr::AttrTypeInt;
+			attr.paramValue.valInt = options.getOptionI(attrName);
+		}
+		else if (attrDesc.value.type == Parm::eEnum) {
+			const Parm::EnumItem &enumItem = attrDesc.value.defEnumItems.at(0);
+			if (enumItem.valueType == Parm::EnumItem::EnumValueInt) {
+				attr.paramType = Attrs::PluginAttr::AttrTypeInt;
+				attr.paramValue.valInt = options.getOptionI(attrName);
+			}
+			else {
+				attr.paramType = Attrs::PluginAttr::AttrTypeString;
+				attr.paramValue.valString = options.getOptionS(attrName);
+			}
+		}
+		else if (   attrDesc.value.type == Parm::eFloat
+				 || attrDesc.value.type == Parm::eTextureFloat)
+		{
+			attr.paramType = Attrs::PluginAttr::AttrTypeFloat;
+			attr.paramValue.valFloat = options.getOptionF(attrName);
+
+			if (attrDesc.convert_to_radians) {
+				attr.paramValue.valFloat *= Attrs::RAD_TO_DEG;
+			}
+		}
+		else if (attrDesc.value.type == Parm::eColor)
+		{
+			attr.paramType = Attrs::PluginAttr::AttrTypeColor;
+			attr.paramValue.valVector[0] = options.getOptionV3(attrName)(0);
+			attr.paramValue.valVector[1] = options.getOptionV3(attrName)(1);
+			attr.paramValue.valVector[2] = options.getOptionV3(attrName)(2);
+		}
+		else if (   attrDesc.value.type == Parm::eAColor
+				 || attrDesc.value.type == Parm::eTextureColor)
+		{
+			attr.paramType = Attrs::PluginAttr::AttrTypeColor;
+			attr.paramValue.valVector[0] = options.getOptionV4(attrName)(0);
+			attr.paramValue.valVector[1] = options.getOptionV4(attrName)(1);
+			attr.paramValue.valVector[2] = options.getOptionV4(attrName)(2);
+			attr.paramValue.valVector[3] = options.getOptionV4(attrName)(3);
+		}
+		else if (attrDesc.value.type == Parm::eString)
+		{
+			attr.paramType = Attrs::PluginAttr::AttrTypeString;
+			attr.paramValue.valString = options.getOptionS(attrName);
+		}
+
+		if (attr.paramType != Attrs::PluginAttr::AttrTypeUnknown) {
+			pluginDesc.addAttribute(attr);
+			res = true;
+		}
+	}
+
+	return res;
 }
 
 

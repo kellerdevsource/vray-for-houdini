@@ -24,8 +24,9 @@ public:
 	static int                cbClearCache(void *data, int index, float t, const PRM_Template* tplate);
 
 public:
-	VRayProxy(OP_Network *parent, const char *name, OP_Operator *entry): NodeBase(parent, name, entry) {}
-	virtual                  ~VRayProxy() {}
+	VRayProxy(OP_Network *parent, const char *name, OP_Operator *entry);
+	virtual                  ~VRayProxy()
+	{ }
 
 	virtual OP_NodeFlags     &flags() VRAY_OVERRIDE;
 	virtual OP_ERROR          cookMySop(OP_Context &context) VRAY_OVERRIDE;

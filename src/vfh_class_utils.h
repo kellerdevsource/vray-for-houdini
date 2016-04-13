@@ -98,7 +98,9 @@ OP_Node* VFH_VRAY_NODE_CREATOR(OP_Network *parent, const char *name, OP_Operator
 		/* How to create one */ VFH_VRAY_NODE_CREATOR<SOP::OpClass>, \
 		/* Parm definitions  */ Parm::getPrmTemplate(PluginID), \
 		/* Min # of inputs   */ 0, \
-		/* Max # of inputs   */ 0 \
+		/* Max # of inputs   */ 0, \
+		/* Local variables   */ 0, \
+		/* Flags             */ OP_FLAG_GENERATOR \
 	); \
 	op##OpClass->setIconName("ROP_vray"); \
 	table->addOperator(op##OpClass);

@@ -10,26 +10,17 @@
 
 #include "vfh_export_geom.h"
 #include "vfh_export_mesh.h"
-#include "sop_vrayproxy.h"
+#include "gu_vrayproxyref.h"
+#include "sop/sop_node_base.h"
 #include "vop/vop_node_base.h"
 
 #include <GU/GU_Detail.h>
-#include <GU/GU_PackedDisk.h>
-#include <GU/GU_PackedGeometry.h>
 
 
 using namespace VRayForHoudini;
 
 
 const char *const VFH_ATTR_MATERIAL_ID = "switchmtl";
-
-
-enum GEO_PrimPackedType
-{
-	GEO_PACKEDGEOMETRY = 24,
-	GEO_PACKEDDISK = 25,
-	GEO_ALEMBICREF = 28,
-};
 
 
 GeometryExporter::GeometryExporter(OBJ_Geometry &node, VRayExporter &pluginExporter):
@@ -366,8 +357,6 @@ int GeometryExporter::exportHair(SOP_Node &sop, GU_DetailHandleAutoReadLock &gdl
 // polygonal primitives should be exported as single GeomStaticMesh
 // for packed primitives - need to hash what has alreay been exported
 // hash based on primitive id / detail id
-// @path=op:<path to vrayproxy> => VRayProxy plugin
-// @path=op:<path to SOP> => take input detail
 int GeometryExporter::exportDetail(SOP_Node &sop, GU_DetailHandleAutoReadLock &gdl, PluginDescList &pluginList)
 {
 	int nPlugins = 0;
@@ -554,26 +543,24 @@ uint GeometryExporter::getPrimPackedID(const GU_PrimPacked &prim)
 {
 	uint packedID = 0;
 
-	switch (prim.getTypeId().get()) {
-		case GEO_ALEMBICREF:
-		case GEO_PACKEDDISK:
-		{
-			UT_String primname;
-			prim.getIntrinsic(prim.findIntrinsic("packedprimitivename"), primname);
-			packedID = primname.hash();
-			break;
-		}
-		case GEO_PACKEDGEOMETRY:
-		{
-			int geoid = 0;
-			prim.getIntrinsic(prim.findIntrinsic("geometryid"), geoid);
-			packedID = geoid;
-			break;
-		}
-		default:
-		{
-			break;
-		}
+	if (prim.getTypeId() == GU_PrimPacked::lookupTypeId("AlembicRef")) {
+		UT_String primname;
+		prim.getIntrinsic(prim.findIntrinsic("packedprimitivename"), primname);
+		packedID = primname.hash();
+	}
+	else if (prim.getTypeId() == GU_PrimPacked::lookupTypeId("PackedDisk")) {
+		UT_String primname;
+		prim.getIntrinsic(prim.findIntrinsic("packedprimitivename"), primname);
+		packedID = primname.hash();
+	}
+	else if (prim.getTypeId() == GU_PrimPacked::lookupTypeId("VRayProxyRef")) {
+		auto vrayproxyref = UTverify_cast< const VRayProxyRef * >(prim.implementation());
+		packedID = vrayproxyref->getOptions().hash();
+	}
+	else if (prim.getTypeId() == GU_PrimPacked::lookupTypeId("PackedGeometry")) {
+		int geoid = 0;
+		prim.getIntrinsic(prim.findIntrinsic("geometryid"), geoid);
+		packedID = geoid;
 	}
 
 	return packedID;
@@ -590,28 +577,18 @@ int GeometryExporter::exportPrimPacked(SOP_Node &sop, const GU_PrimPacked &prim,
 
 	int nPlugins = 0;
 
-	switch (prim.getTypeId().get()) {
-		case GEO_ALEMBICREF:
-		{
-			nPlugins = exportAlembicRef(sop, prim, pluginList);
-			break;
-		}
-		case GEO_PACKEDDISK:
-		{
-			nPlugins = exportPackedDisk(sop, prim, pluginList);
-			break;
-		}
-		case GEO_PACKEDGEOMETRY:
-		{
-			nPlugins = exportPackedGeometry(sop, prim, pluginList);
-			break;
-		}
-		default:
-		{
-			break;
-		}
+	if (prim.getTypeId() == GU_PrimPacked::lookupTypeId("AlembicRef")) {
+		nPlugins = exportAlembicRef(sop, prim, pluginList);
 	}
-
+	else if (prim.getTypeId() == GU_PrimPacked::lookupTypeId("PackedDisk")) {
+		nPlugins = exportPackedDisk(sop, prim, pluginList);
+	}
+	else if (prim.getTypeId() == GU_PrimPacked::lookupTypeId("VRayProxyRef")) {
+		nPlugins = exportVRayProxyRef(sop, prim, pluginList);
+	}
+	else if (prim.getTypeId() == GU_PrimPacked::lookupTypeId("PackedGeometry")) {
+		nPlugins = exportPackedGeometry(sop, prim, pluginList);
+	}
 
 	return nPlugins;
 }
@@ -664,6 +641,41 @@ int GeometryExporter::exportAlembicRef(SOP_Node &sop, const GU_PrimPacked &prim,
 }
 
 
+int GeometryExporter::exportVRayProxyRef(SOP_Node &sop, const GU_PrimPacked &prim, PluginDescList &pluginList)
+{
+	pluginList.push_back(Attrs::PluginDesc("", "Node"));
+	Attrs::PluginDesc &nodeDesc = pluginList.back();
+
+	// transform
+	UT_Matrix4 xform;
+	prim.getIntrinsic(prim.findIntrinsic("packedlocaltransform"), xform);
+	xform.invert();
+
+	VRay::Transform tm = VRayExporter::Matrix4ToTransform(UT_Matrix4D(xform));
+	nodeDesc.addAttribute(Attrs::PluginAttr("transform", tm));
+
+	if (NOT(m_exportGeometry)) {
+		return 1;
+	}
+
+	// geometry
+	UT_String primname;
+	prim.getIntrinsic(prim.findIntrinsic("packedprimitivename"), primname);
+
+	Attrs::PluginDesc pluginDesc;
+	pluginDesc.pluginID = "GeomMeshFile";
+	pluginDesc.pluginName = VRayExporter::getPluginName(&sop, primname.toStdString());
+
+	auto vrayproxyref = UTverify_cast< const VRayProxyRef * >(prim.implementation());
+	m_pluginExporter.setAttrsFromUTOptions(pluginDesc, vrayproxyref->getOptions());
+
+	VRay::Plugin geom = m_pluginExporter.exportPlugin(pluginDesc);
+	nodeDesc.addAttribute(Attrs::PluginAttr("geometry", geom));
+
+	return 1;
+}
+
+
 int GeometryExporter::exportPackedDisk(SOP_Node &sop, const GU_PrimPacked &prim, PluginDescList &pluginList)
 {
 	// there is path attribute, but it is NOT holding a ref to a SOP node =>
@@ -701,11 +713,8 @@ int GeometryExporter::exportPackedDisk(SOP_Node &sop, const GU_PrimPacked &prim,
 int GeometryExporter::exportPackedGeometry(SOP_Node &sop, const GU_PrimPacked &prim, PluginDescList &pluginList)
 {
 	//PackedGeometry - in-mem geometry
-	//               "path" attibute references a SOP ( Pack SOP/VRayProxy SOP )
-	//               otherwise take geoemtry directly from packed GU_Detail
-	// VRayProxy SOP loads geometry as PackedGeometry
-	// "path" attibute references the VRayProxy SOP: op:<path to VRayProxy SOP> to query the plugin settings
-	// TODO: need to use custom packed primitive
+	//               "path" attibute references a SOP ( Pack )
+	//               otherwise take geometry directly from packed GU_Detail
 
 	int nPlugins = 0;
 
@@ -730,47 +739,25 @@ int GeometryExporter::exportPackedGeometry(SOP_Node &sop, const GU_PrimPacked &p
 			}
 		}
 		else {
-			SOP::VRayProxy *proxy = dynamic_cast< SOP::VRayProxy * >(sopref);
-			if (NOT(proxy)) {
-				// there is path attribute referencing a valid SOP, but it is NOT VRayProxy SOP =>
-				// take geometry from SOP's input detail if there is valid input
-				// else take geometry directly from primitive packed detail
-				OP_Node *inpnode = sopref->getInput(0);
-				SOP_Node *inpsop = nullptr;
-				if (inpnode && (inpsop = inpnode->castToSOPNode())) {
-					GU_DetailHandleAutoReadLock gdl(inpsop->getCookedGeoHandle(m_context));
-					if (gdl.isValid()) {
-						nPlugins = exportDetail(*sopref, gdl, pluginList);
-					}
-				}
-				else {
-					GU_DetailHandleAutoReadLock gdl(prim.getPackedDetail());
-					if (gdl.isValid()) {
-						nPlugins = exportDetail(sop, gdl, pluginList);
-					}
+			// there is path attribute referencing a valid SOP =>
+			// take geometry from SOP's input detail if there is valid input
+			// else take geometry directly from primitive packed detail
+			OP_Node *inpnode = sopref->getInput(0);
+			SOP_Node *inpsop = nullptr;
+			if (inpnode && (inpsop = inpnode->castToSOPNode())) {
+				GU_DetailHandleAutoReadLock gdl(inpsop->getCookedGeoHandle(m_context));
+				if (gdl.isValid()) {
+					nPlugins = exportDetail(*sopref, gdl, pluginList);
 				}
 			}
 			else {
-				// there is path attribute referencing a VRayProxy SOP =>
-				// export VRayProxy plugin
-				pluginList.push_back(Attrs::PluginDesc("", "Node"));
-				Attrs::PluginDesc &nodeDesc = pluginList.back();
-				nPlugins = 1;
-
-				if (NOT(m_exportGeometry)) {
-					return nPlugins;
+				GU_DetailHandleAutoReadLock gdl(prim.getPackedDetail());
+				if (gdl.isValid()) {
+					nPlugins = exportDetail(sop, gdl, pluginList);
 				}
-
-				// geometry
-				Attrs::PluginDesc pluginDesc;
-				OP::VRayNode::PluginResult res = proxy->asPluginDesc(pluginDesc, m_pluginExporter);
-
-				VRay::Plugin geom = m_pluginExporter.exportPlugin(pluginDesc);
-				nodeDesc.addAttribute(Attrs::PluginAttr("geometry", geom));
 			}
 		}
 	}
 
 	return nPlugins;
 }
-
