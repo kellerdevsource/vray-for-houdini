@@ -119,7 +119,7 @@ public:
 	{ }
 
 	VRayProxyParms& operator =(const UT_Options &options)
-	{ m_options = options; }
+	{ m_options = options; return *this; }
 	bool            operator ==(const UT_Options &options) const
 	{ return (m_options == options); }
 	bool            operator ==(const VRayProxyParms &other) const
