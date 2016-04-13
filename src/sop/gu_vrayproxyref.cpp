@@ -46,17 +46,11 @@ VRayProxyFactory::VRayProxyFactory():
 	registerIntrinsic( "geometryid",
 			IntGetterCast(&VRayProxyRef::getGeometryid) );
 
-	registerIntrinsic( VRayProxyParms::thePathToken,
-			StringGetterCast(&VRayProxyRef::getPath) );
-
 	registerIntrinsic( VRayProxyParms::theFileToken,
 			StringGetterCast(&VRayProxyRef::getFilepath) );
 
 	registerIntrinsic( VRayProxyParms::theLODToken,
 			StringGetterCast(&VRayProxyRef::getLOD) );
-
-	registerIntrinsic( VRayProxyParms::theFrameToken,
-			FloatGetterCast(&VRayProxyRef::getFloatFrame) );
 
 	registerIntrinsic( VRayProxyParms::theAnimTypeToken,
 			IntGetterCast(&VRayProxyRef::getAnimType) );
@@ -150,9 +144,7 @@ void VRayProxyRef::clearData()
 
 bool VRayProxyRef::save(UT_Options &options, const GA_SaveMap &map) const
 {
-	options.setOptionS(VRayProxyParms::theFileToken, m_options.getFilepath())
-			.setOptionI(VRayProxyParms::theLODToken, m_options.getLOD());
-
+	options.merge(m_options.getOptions());
 	return true;
 }
 
@@ -286,18 +278,6 @@ bool VRayProxyRef::updateFrom(const T &options)
 }
 
 
-const char * VRayProxyRef::getPath() const
-{
-	return m_options.getPath();
-}
-
-
-const char * VRayProxyRef::getFilepath() const
-{
-	return m_options.getFilepath();
-}
-
-
 const char * VRayProxyRef::getLOD() const
 {
 	switch (m_options.getLOD()) {
@@ -312,18 +292,6 @@ const char * VRayProxyRef::getLOD() const
 	}
 
 	return "";
-}
-
-
-fpreal64 VRayProxyRef::getFloatFrame() const
-{
-	return m_options.getFloatFrame();
-}
-
-
-exint VRayProxyRef::getAnimType() const
-{
-	return m_options.getAnimType();
 }
 
 
@@ -349,36 +317,6 @@ const char * VRayProxyRef::getAnimTypeName() const
 	}
 
 	return "";
-}
-
-
-fpreal64 VRayProxyRef::getAnimOffset() const
-{
-	return m_options.getAnimOffset();
-}
-
-
-fpreal64 VRayProxyRef::getAnimSpeed() const
-{
-	return m_options.getAnimSpeed();
-}
-
-
-bool VRayProxyRef::getAnimOverride() const
-{
-	return m_options.getAnimOverride();
-}
-
-
-exint VRayProxyRef::getAnimStart() const
-{
-	return m_options.getAnimStart();
-}
-
-
-exint VRayProxyRef::getAnimLength() const
-{
-	return m_options.getAnimLength();
 }
 
 

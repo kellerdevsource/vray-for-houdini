@@ -10,7 +10,8 @@
 
 #include "vfh_export_geom.h"
 #include "vfh_export_mesh.h"
-#include "sop_vrayproxy.h"
+#include "gu_vrayproxyref.h"
+#include "sop/sop_node_base.h"
 #include "vop/vop_node_base.h"
 
 #include <GU/GU_Detail.h>
@@ -553,9 +554,8 @@ uint GeometryExporter::getPrimPackedID(const GU_PrimPacked &prim)
 		packedID = primname.hash();
 	}
 	else if (prim.getTypeId() == GU_PrimPacked::lookupTypeId("VRayProxyRef")) {
-		int geoid = 0;
-		prim.getIntrinsic(prim.findIntrinsic("geometryid"), geoid);
-		packedID = geoid;
+		auto vrayproxyref = UTverify_cast< const VRayProxyRef * >(prim.implementation());
+		packedID = vrayproxyref->getOptions().hash();
 	}
 	else if (prim.getTypeId() == GU_PrimPacked::lookupTypeId("PackedGeometry")) {
 		int geoid = 0;
@@ -643,18 +643,6 @@ int GeometryExporter::exportAlembicRef(SOP_Node &sop, const GU_PrimPacked &prim,
 
 int GeometryExporter::exportVRayProxyRef(SOP_Node &sop, const GU_PrimPacked &prim, PluginDescList &pluginList)
 {
-	// there is path attribute referencing a VRayProxy SOP =>
-	// export VRayProxy plugin
-	UT_String path;
-	prim.getIntrinsic(prim.findIntrinsic("path"), path);
-
-	SOP_Node *sopref = OPgetDirector()->findSOPNode(path);
-	SOP::VRayProxy *proxy = (sopref)? UTverify_cast< SOP::VRayProxy* >(sopref) : nullptr;
-
-	if (NOT(proxy)) {
-		return 0;
-	}
-
 	pluginList.push_back(Attrs::PluginDesc("", "Node"));
 	Attrs::PluginDesc &nodeDesc = pluginList.back();
 
@@ -678,7 +666,8 @@ int GeometryExporter::exportVRayProxyRef(SOP_Node &sop, const GU_PrimPacked &pri
 	pluginDesc.pluginID = "GeomMeshFile";
 	pluginDesc.pluginName = VRayExporter::getPluginName(&sop, primname.toStdString());
 
-	OP::VRayNode::PluginResult res = proxy->asPluginDesc(pluginDesc, m_pluginExporter);
+	auto vrayproxyref = UTverify_cast< const VRayProxyRef * >(prim.implementation());
+	m_pluginExporter.setAttrsFromUTOptions(pluginDesc, vrayproxyref->getOptions());
 
 	VRay::Plugin geom = m_pluginExporter.exportPlugin(pluginDesc);
 	nodeDesc.addAttribute(Attrs::PluginAttr("geometry", geom));

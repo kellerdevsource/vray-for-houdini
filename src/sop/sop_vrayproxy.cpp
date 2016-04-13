@@ -143,7 +143,7 @@ OP_ERROR SOP::VRayProxy::cookMySop(OP_Context &context)
 		UT_Interrupt *boss = UTgetInterrupt();
 		if (boss) {
 			if(boss->opStart("Building V-Ray Scene Preview Mesh")) {
-				// Create a packed sphere primitive
+				// Create a packed primitive
 				GU_PrimPacked *pack = GU_PrimPacked::build(*gdp, "VRayProxyRef");
 				if (NOT(pack)) {
 					addWarning(SOP_MESSAGE, "Can't create packed primitive VRayProxyRef");
@@ -154,26 +154,64 @@ OP_ERROR SOP::VRayProxy::cookMySop(OP_Context &context)
 					pack->setPivot(pivot);
 					gdp->setPos3(pack->getPointOffset(0), pivot);
 
+					UT_String viewportlod;
+					evalString(viewportlod, "viewportlod", 0, t);
+					pack->setViewportLOD(GEOviewportLOD(viewportlod));
+
+					UT_String objectPath;
+					evalString(objectPath, "object_path", 0, t);
+
+					UT_String velocityColorSet;
+					evalString(velocityColorSet, "velocity_color_set", 0, t);
+
 					// Set the options on the primitive
 					UT_Options options;
-					options.setOptionS("path", this->getFullPath())
-							.setOptionS("file", path)
-							.setOptionI("lod", evalInt("loadtype", 0, t))
+					options.setOptionI("lod", evalInt("loadtype", 0, t))
 							.setOptionF("frame", context.getFloatFrame())
+							.setOptionS("file", path)
 							.setOptionI("anim_type", evalInt("anim_type", 0, t))
 							.setOptionF("anim_offset", evalFloat("anim_offset", 0, t))
 							.setOptionF("anim_speed", evalFloat("anim_speed", 0, t))
 							.setOptionB("anim_override", evalInt("anim_override", 0, t))
 							.setOptionI("anim_start", evalInt("anim_start", 0, t))
 							.setOptionI("anim_length", evalInt("anim_length", 0, t))
+							.setOptionB("compute_bbox", evalInt("compute_bbox", 0, t))
+							.setOptionB("compute_normals", evalInt("compute_normals", 0, t))
+							.setOptionI("first_map_channel", evalInt("first_map_channel", 0, t))
+							.setOptionI("flip_axis", evalInt("flip_axis", 0, t))
+							.setOptionB("flip_normals", evalInt("flip_normals", 0, t))
+							.setOptionI("hair_visibility_lists_type", evalInt("hair_visibility_lists_type", 0, t))
+							.setOptionF("hair_width_multiplier", evalFloat("hair_width_multiplier", 0, t))
+							.setOptionB("instancing", evalInt("instancing", 0, t))
+							.setOptionI("num_preview_faces", evalInt("num_preview_faces", 0, t))
+							.setOptionS("object_path", objectPath)
+							.setOptionI("particle_render_mode", evalInt("particle_render_mode", 0, t))
+							.setOptionI("particle_visibility_lists_type", evalInt("particle_visibility_lists_type", 0, t))
+							.setOptionF("particle_width_multiplier", evalFloat("particle_width_multiplier", 0, t))
+							.setOptionF("point_cloud_mult", evalFloat("point_cloud_mult", 0, t))
+							.setOptionB("primary_visibility", evalInt("primary_visibility", 0, t))
 							.setOptionF("scale", evalFloat("scale", 0, t))
-							.setOptionI("flip_axis", evalInt("flip_axis", 0, t));
+							.setOptionF("smooth_angle", evalFloat("smooth_angle", 0, t))
+							.setOptionB("smooth_uv", evalInt("smooth_uv", 0, t))
+							.setOptionB("smooth_uv_borders", evalInt("smooth_uv_borders", 0, t))
+							.setOptionI("sort_voxels", evalInt("sort_voxels", 0, t))
+							.setOptionB("subdiv_all_meshes", evalInt("subdiv_all_meshes", 0, t))
+							.setOptionI("subdiv_level", evalInt("subdiv_level", 0, t))
+							.setOptionB("subdiv_preserve_geom_borders", evalInt("subdiv_preserve_geom_borders", 0, t))
+							.setOptionB("subdiv_preserve_map_borders", evalInt("subdiv_preserve_map_borders", 0, t))
+							.setOptionI("subdiv_type", evalInt("subdiv_type", 0, t))
+							.setOptionB("subdiv_uvs", evalInt("subdiv_uvs", 0, t))
+							.setOptionB("use_alembic_offset", evalInt("use_alembic_offset", 0, t))
+							.setOptionB("use_face_sets", evalInt("use_face_sets", 0, t))
+							.setOptionB("use_full_names", evalInt("use_full_names", 0, t))
+							.setOptionB("use_point_cloud", evalInt("use_point_cloud", 0, t))
+							.setOptionS("velocity_color_set", velocityColorSet)
+							.setOptionF("velocity_multiplier", evalFloat("velocity_multiplier", 0, t))
+							.setOptionI("visibility_lists_type", evalInt("visibility_lists_type", 0, t))
+							;
 
 					pack->implementation()->update(options);
-
-					UT_String viewportlod;
-					evalString(viewportlod, "viewportlod", 0, t);
-					pack->setViewportLOD(GEOviewportLOD(viewportlod));
+					pack->setPathAttribute(getFullPath());
 				}
 			}
 			boss->opEnd();
@@ -193,6 +231,7 @@ OP_ERROR SOP::VRayProxy::cookMySop(OP_Context &context)
 OP::VRayNode::PluginResult SOP::VRayProxy::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
 {
 	fpreal t = exporter.getContext().getTime();
+
 	UT_String path;
 	evalString(path, "file", 0, t);
 	if (NOT(path.isstring())) {
@@ -201,8 +240,11 @@ OP::VRayNode::PluginResult SOP::VRayProxy::asPluginDesc(Attrs::PluginDesc &plugi
 		return OP::VRayNode::PluginResultError;
 	}
 
+	pluginDesc.pluginID   = pluginID;
+	pluginDesc.pluginName = VRayExporter::getPluginName(this);
+
 	pluginDesc.pluginAttrs.push_back(Attrs::PluginAttr("file", path.buffer()));
-	pluginDesc.pluginAttrs.push_back(Attrs::PluginAttr("flip_axis", evalInt("flip_axis", 0, t)));
+	pluginDesc.pluginAttrs.push_back(Attrs::PluginAttr("flip_axis", evalInt("flip_axis", 0, 0.0f)));
 
 	exporter.setAttrsFromOpNodePrms(pluginDesc, this);
 

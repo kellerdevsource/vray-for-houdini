@@ -41,7 +41,6 @@ bool                   GetVRayProxyBounds(const VRayProxyParms &options, UT_Boun
 class VRayProxyParms
 {
 public:
-	static const UT_StringRef thePathToken;
 	static const UT_StringRef theLODToken;
 	static const UT_StringRef theFileToken;
 	static const UT_StringRef theFrameToken;
@@ -54,55 +53,93 @@ public:
 	static const UT_StringRef theScaleToken;
 	static const UT_StringRef theFlipAxisToken;
 
-	inline static UT_StringHolder   getPath(const UT_Options &options);
-	inline static UT_StringHolder   getFilepath(const UT_Options &options);
-	inline static exint             getLOD(const UT_Options &options);
-	inline static fpreal64          getFloatFrame(const UT_Options &options);
-	inline static exint             getAnimType(const UT_Options &options);
-	inline static fpreal64          getAnimOffset(const UT_Options &options);
-	inline static fpreal64          getAnimSpeed(const UT_Options &options);
-	inline static bool              getAnimOverride(const UT_Options &options);
-	inline static exint             getAnimStart(const UT_Options &options);
-	inline static exint             getAnimLength(const UT_Options &options);
-	inline static fpreal64          getScale(const UT_Options &options);
-	inline static exint             getFlipAxis(const UT_Options &options);
+
+	static UT_StringHolder getFilepath(const UT_Options &options)
+	{
+		return ((options.hasOption(theFileToken))? options.getOptionS(theFileToken) : UT_StringHolder());
+	}
+
+	static exint getLOD(const UT_Options &options)
+	{
+		return ((options.hasOption(theLODToken))? options.getOptionI(theLODToken) : LOD_PREVIEW);
+	}
+
+	static fpreal64 getFloatFrame(const UT_Options &options)
+	{
+		return ((options.hasOption(theFrameToken))? options.getOptionF(theFrameToken) : 0.f);
+	}
+
+	static exint getAnimType(const UT_Options &options)
+	{
+		return ((options.hasOption(theAnimTypeToken))? options.getOptionI(theAnimTypeToken) : VUtils::MeshFileAnimType::Loop);
+	}
+
+	static fpreal64 getAnimOffset(const UT_Options &options)
+	{
+		return ((options.hasOption(theAnimOffsetToken))? options.getOptionF(theAnimOffsetToken) : 0.f);
+	}
+
+	static fpreal64 getAnimSpeed(const UT_Options &options)
+	{
+		return ((options.hasOption(theAnimSpeedToken))? options.getOptionF(theAnimSpeedToken) : 1.f);
+	}
+
+	static bool getAnimOverride(const UT_Options &options)
+	{
+		return ((options.hasOption(theAnimOverrideToken))? options.getOptionB(theAnimOverrideToken) : 0);
+	}
+
+	static exint getAnimStart(const UT_Options &options)
+	{
+		return ((options.hasOption(theAnimStartToken))? options.getOptionI(theAnimStartToken) : 0);
+	}
+
+	static exint getAnimLength(const UT_Options &options)
+	{
+		return ((options.hasOption(theAnimLengthToken))? options.getOptionI(theAnimLengthToken) : 0);
+	}
+
+	static fpreal64 getScale(const UT_Options &options)
+	{
+		return ((options.hasOption(theScaleToken))? options.getOptionF(theScaleToken) : 1.f);
+	}
+
+	static exint getFlipAxis(const UT_Options &options)
+	{
+		return ((options.hasOption(theFlipAxisToken))? options.getOptionI(theFlipAxisToken) : 0);
+	}
 
 public:
-	VRayProxyParms();
-	VRayProxyParms(const UT_Options &options);
+	VRayProxyParms()
+	{ }
+	VRayProxyParms(const UT_Options &options):
+		m_options(options)
+	{ }
 	~VRayProxyParms()
 	{ }
 
-	VRayProxyParms&        operator =(const UT_Options &options);
-	bool                   operator ==(const UT_Options &options) const;
-	bool                   operator ==(const VRayProxyParms &options) const;
+	VRayProxyParms& operator =(const UT_Options &options)
+	{ m_options = options; }
+	bool            operator ==(const UT_Options &options) const
+	{ return (m_options == options); }
+	bool            operator ==(const VRayProxyParms &other) const
+	{ return (m_options == other.m_options); }
 
-	inline UT_StringHolder getPath() const { return m_path; }
-	inline UT_StringHolder getFilepath() const { return m_filepath; }
-	inline exint           getLOD() const { return m_lod; }
-	inline fpreal64        getFloatFrame() const { return m_floatFrame; }
-	inline exint           getAnimType() const { return m_animType; }
-	inline fpreal64        getAnimOffset() const { return m_animOffset; }
-	inline fpreal64        getAnimSpeed() const { return m_animSpeed; }
-	inline bool            getAnimOverride() const { return m_animOverride; }
-	inline exint           getAnimStart() const { return m_animStart; }
-	inline exint           getAnimLength() const { return m_animLength; }
-	inline fpreal64        getScale() const { return m_scale; }
-	inline exint           getFlipAxis() const { return m_flipAxis; }
+	inline const UT_Options & getOptions() const { return m_options; }
+	inline UT_StringHolder    getFilepath() const { return getFilepath(m_options); }
+	inline exint              getLOD() const { return getLOD(m_options); }
+	inline fpreal64           getFloatFrame() const { return getFloatFrame(m_options); }
+	inline exint              getAnimType() const { return getAnimType(m_options); }
+	inline fpreal64           getAnimOffset() const { return getAnimOffset(m_options); }
+	inline fpreal64           getAnimSpeed() const { return getAnimSpeed(m_options); }
+	inline bool               getAnimOverride() const { return getAnimOverride(m_options); }
+	inline exint              getAnimStart() const { return getAnimStart(m_options); }
+	inline exint              getAnimLength() const { return getAnimLength(m_options); }
+	inline fpreal64           getScale() const { return getScale(m_options); }
+	inline exint              getFlipAxis() const { return getFlipAxis(m_options); }
 
 private:
-	UT_StringHolder m_path;
-	UT_StringHolder m_filepath;
-	exint           m_lod;
-	fpreal64        m_floatFrame;
-	exint           m_animType;
-	fpreal64        m_animOffset;
-	fpreal64        m_animSpeed;
-	bool            m_animOverride;
-	exint           m_animStart;
-	exint           m_animLength;
-	fpreal64        m_scale;
-	exint           m_flipAxis;
+	UT_Options      m_options;
 };
 
 

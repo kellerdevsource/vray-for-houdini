@@ -48,14 +48,15 @@ VRayProxyCacheMan& VRayForHoudini::GetVRayProxyCacheManager()
 
 GU_ConstDetailHandle VRayForHoudini::GetVRayProxyDetail(const VRayProxyParms &options)
 {
-	UT_AutoLock lock(theLock);
-
 	UT_StringHolder utfilepath = options.getFilepath();
 	if (NOT(utfilepath.isstring())) {
 		return GU_ConstDetailHandle();
 	}
 
 	const std::string filepath(utfilepath);
+
+	UT_AutoLock lock(theLock);
+
 	if (NOT(theCacheMan.contains(filepath))) {
 		// NOTE: insert entry in the cache
 		VRayProxyCache &cache = theCacheMan[filepath];
@@ -73,14 +74,15 @@ GU_ConstDetailHandle VRayForHoudini::GetVRayProxyDetail(const VRayProxyParms &op
 
 bool VRayForHoudini::GetVRayProxyBounds(const VRayProxyParms &options, UT_BoundingBox &box)
 {
-	UT_AutoLock lock(theLock);
-
 	UT_StringHolder utfilepath = options.getFilepath();
 	if (NOT(utfilepath.isstring())) {
 		return false;
 	}
 
 	const std::string filepath(utfilepath);
+
+	UT_AutoLock lock(theLock);
+
 	if (NOT(theCacheMan.contains(filepath))) {
 		return false;
 	}
@@ -90,7 +92,6 @@ bool VRayForHoudini::GetVRayProxyBounds(const VRayProxyParms &options, UT_Boundi
 }
 
 
-const UT_StringRef VRayProxyParms::thePathToken         = "path";
 const UT_StringRef VRayProxyParms::theFileToken         = "file";
 const UT_StringRef VRayProxyParms::theLODToken          = "lod";
 const UT_StringRef VRayProxyParms::theFrameToken        = "frame";
@@ -102,149 +103,6 @@ const UT_StringRef VRayProxyParms::theAnimStartToken    = "anim_start";
 const UT_StringRef VRayProxyParms::theAnimLengthToken   = "anim_length";
 const UT_StringRef VRayProxyParms::theScaleToken        = "scale";
 const UT_StringRef VRayProxyParms::theFlipAxisToken     = "flip_axis";
-
-
-UT_StringHolder VRayProxyParms::getPath(const UT_Options &options)
-{
-	return ((options.hasOption(thePathToken))? options.getOptionS(thePathToken) : UT_StringHolder());
-}
-
-UT_StringHolder VRayProxyParms::getFilepath(const UT_Options &options)
-{
-	return ((options.hasOption(theFileToken))? options.getOptionS(theFileToken) : UT_StringHolder());
-}
-
-exint VRayProxyParms::getLOD(const UT_Options &options)
-{
-	return ((options.hasOption(theLODToken))? options.getOptionI(theLODToken) : LOD_PREVIEW);
-}
-
-fpreal64 VRayProxyParms::getFloatFrame(const UT_Options &options)
-{
-	return ((options.hasOption(theFrameToken))? options.getOptionF(theFrameToken) : 0.f);
-}
-
-exint VRayProxyParms::getAnimType(const UT_Options &options)
-{
-	return ((options.hasOption(theAnimTypeToken))? options.getOptionI(theAnimTypeToken) : VUtils::MeshFileAnimType::Loop);
-}
-
-fpreal64 VRayProxyParms::getAnimOffset(const UT_Options &options)
-{
-	return ((options.hasOption(theAnimOffsetToken))? options.getOptionF(theAnimOffsetToken) : 0.f);
-}
-
-fpreal64 VRayProxyParms::getAnimSpeed(const UT_Options &options)
-{
-	return ((options.hasOption(theAnimSpeedToken))? options.getOptionF(theAnimSpeedToken) : 1.f);
-}
-
-bool VRayProxyParms::getAnimOverride(const UT_Options &options)
-{
-	return ((options.hasOption(theAnimOverrideToken))? options.getOptionB(theAnimOverrideToken) : 0);
-}
-
-exint VRayProxyParms::getAnimStart(const UT_Options &options)
-{
-	return ((options.hasOption(theAnimStartToken))? options.getOptionI(theAnimStartToken) : 0);
-}
-
-exint VRayProxyParms::getAnimLength(const UT_Options &options)
-{
-	return ((options.hasOption(theAnimLengthToken))? options.getOptionI(theAnimLengthToken) : 0);
-}
-
-fpreal64 VRayProxyParms::getScale(const UT_Options &options)
-{
-	return ((options.hasOption(theScaleToken))? options.getOptionF(theScaleToken) : 1.f);
-}
-
-exint VRayProxyParms::getFlipAxis(const UT_Options &options)
-{
-	return ((options.hasOption(theFlipAxisToken))? options.getOptionI(theFlipAxisToken) : 0);
-}
-
-VRayProxyParms::VRayProxyParms():
-	m_lod(LOD_PREVIEW),
-	m_floatFrame(0),
-	m_animType(VUtils::MeshFileAnimType::Loop),
-	m_animOffset(0),
-	m_animSpeed(1),
-	m_animOverride(0),
-	m_animStart(0),
-	m_animLength(0),
-	m_scale(1),
-	m_flipAxis(0)
-{ }
-
-VRayProxyParms::VRayProxyParms(const UT_Options &options):
-	m_path(getPath(options)),
-	m_filepath(getFilepath(options)),
-	m_lod(getLOD(options)),
-	m_floatFrame(getFloatFrame(options)),
-	m_animType(getAnimType(options)),
-	m_animOffset(getAnimOffset(options)),
-	m_animSpeed(getAnimSpeed(options)),
-	m_animOverride(getAnimOverride(options)),
-	m_animStart(getAnimStart(options)),
-	m_animLength(getAnimLength(options)),
-	m_scale(getScale(options)),
-	m_flipAxis(getFlipAxis(options))
-{ }
-
-
-VRayProxyParms& VRayProxyParms::operator =(const UT_Options &options)
-{
-	m_path = getPath(options);
-	m_filepath = getFilepath(options);
-	m_lod = getLOD(options);
-	m_floatFrame = getFloatFrame(options);
-	m_animType = getAnimType(options);
-	m_animOffset = getAnimOffset(options);
-	m_animSpeed = getAnimSpeed(options);
-	m_animOverride = getAnimOverride(options);
-	m_animStart = getAnimStart(options);
-	m_animLength = getAnimLength(options);
-	m_scale = getScale(options);
-	m_flipAxis = getFlipAxis(options);
-}
-
-
-bool VRayProxyParms::operator ==(const UT_Options &options) const
-{
-	return (
-			   m_path == getPath(options)
-			&& m_filepath == getFilepath(options)
-			&& m_lod == getLOD(options)
-			&& m_floatFrame == getFloatFrame(options)
-			&& m_animType == getAnimType(options)
-			&& m_animOffset == getAnimOffset(options)
-			&& m_animSpeed == getAnimSpeed(options)
-			&& m_animOverride == getAnimOverride(options)
-			&& m_animStart == getAnimStart(options)
-			&& m_animLength == getAnimLength(options)
-			&& m_scale == getScale(options)
-			&& m_flipAxis == getFlipAxis(options)
-			);
-}
-
-bool VRayProxyParms::operator ==(const VRayProxyParms &options) const
-{
-	return (
-			   m_path == options.m_path
-			&& m_filepath == options.m_filepath
-			&& m_lod == options.m_lod
-			&& m_floatFrame == options.m_floatFrame
-			&& m_animType == options.m_animType
-			&& m_animOffset == options.m_animOffset
-			&& m_animSpeed == options.m_animSpeed
-			&& m_animOverride == options.m_animOverride
-			&& m_animStart == options.m_animStart
-			&& m_animLength == options.m_animLength
-			&& m_scale == options.m_scale
-			&& m_flipAxis == options.m_flipAxis
-			);
-}
 
 
 VRayProxyCache::GeometryHash::result_type VRayProxyCache::GeometryHash::operator()(const argument_type &val) const

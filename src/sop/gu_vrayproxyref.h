@@ -73,18 +73,18 @@ public:
 	const GU_ConstDetailHandle &  getDetail() const { return m_detail; }
 	VRayProxyRef&                 setDetail(const GU_ConstDetailHandle &h) { m_detail = h; return *this; }
 
+	inline const UT_Options &            getOptions() const { return m_options.getOptions(); }
 	inline exint                         getGeometryid() const;
-	inline const char *                  getPath() const;
-	inline const char *                  getFilepath() const;
+	inline const char *                  getFilepath() const { return m_options.getFilepath(); }
 	inline const char *                  getLOD() const;
-	inline fpreal64                      getFloatFrame() const;
-	inline exint                         getAnimType() const;
+	inline fpreal64                      getFloatFrame() const { return m_options.getFloatFrame(); }
+	inline exint                         getAnimType() const { return m_options.getAnimType(); }
 	inline const char *                  getAnimTypeName() const;
-	inline fpreal64                      getAnimOffset() const;
-	inline fpreal64                      getAnimSpeed() const;
-	inline bool                          getAnimOverride() const;
-	inline exint                         getAnimStart() const;
-	inline exint                         getAnimLength() const;
+	inline fpreal64                      getAnimOffset() const { return m_options.getAnimOffset(); }
+	inline fpreal64                      getAnimSpeed() const { return m_options.getAnimSpeed(); }
+	inline bool                          getAnimOverride() const { return m_options.getAnimOverride(); }
+	inline exint                         getAnimStart() const { return m_options.getAnimStart(); }
+	inline exint                         getAnimLength() const { return m_options.getAnimLength(); }
 	inline fpreal64                      getScale() const { return m_options.getScale(); }
 	inline exint                         getFlipAxis() const { return m_options.getFlipAxis(); }
 	/// @}
