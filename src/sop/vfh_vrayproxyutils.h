@@ -174,8 +174,8 @@ private:
 
 	struct CachedFrame
 	{
-		bool hasDetail(const LOD &lod) const { return (m_details.count(lod) > 0); }
-		Item &getDetail(const LOD &lod) { return m_details[lod]; }
+		inline bool     hasDetail(const LOD &lod) const { return (m_details.count(lod) > 0); }
+		inline Item &   getDetail(const LOD &lod) { return m_details[lod]; }
 
 		bool hasItemKeys(const LOD &lod) const { return (m_keys.count(lod) > 0); }
 		ItemKeys &getItemKeys(const LOD &lod) { return m_keys[lod]; }
@@ -211,13 +211,13 @@ public:
 /// @param filepath - path to the .vrmesh file
 /// @return VUtils::ErrorCode - no error if initialized successfully
 ///                           - DE_INVALID_FILE if file initialization fails
-	VUtils::ErrorCode init(const VUtils::CharString &filepath);
+	VUtils::ErrorCode    init(const VUtils::CharString &filepath);
 
 /// @brief Clears cache and deletes current .vrmesh file, if any
-	void reset();
+	void                 reset();
 
 /// @brief Clears cache
-	void clearCache();
+	void                 clearCache();
 
 /// @brief Checks if a frame is cached
 /// @param context - contains evaluation time information i.e. the frame
@@ -227,7 +227,7 @@ public:
 ///         NOTE: if frame is cached but a geometry for that frame is missing
 ///               removes the cached frame and returns false
 ///               (could happen if the geometry was evicted from the geometry cache)
-	int checkFrameCached(const VRayProxyParms &options) const;
+	int                  isCached(const VRayProxyParms &options) const;
 
 /// @brief Merges the geometry for a frame into the GU_Detail passed
 ///        if the frame is not in cache loads the preview geometry for that frame
@@ -238,11 +238,11 @@ public:
 ///                           - DE_INVALID_FILE if cache is not initialized
 ///                           - DE_NO_GEOM if no preview geometry is found for that frame
 ///                           - DE_INVALID_GEOM if a cached geometry for that frame is invalid
-	GU_ConstDetailHandle getFrame(const VRayProxyParms &options);
+	GU_ConstDetailHandle getDetail(const VRayProxyParms &options);
 	bool                 getBounds(const VRayProxyParms &options, UT_BoundingBox &box) const;
 
 private:
-	int    checkCached(const FrameKey &frameIdx, const LOD &lod) const;
+	int    contains(const FrameKey &frameIdx, const LOD &lod) const;
 	int    insert(const FrameKey &frameIdx, const LOD &lod, const std::vector<Geometry> &geometry);
 	int    erase(const FrameKey &frameIdx);
 	void   evictFrame(const FrameKey &frameIdx, CachedFrame &frameData);
@@ -253,7 +253,7 @@ private:
 	int                  createProxyGeometry(const Geometry &geom, GU_DetailHandle &gdpHndl) const;
 	int                  createMeshProxyGeometry(VUtils::MeshVoxel &voxel, GU_DetailHandle &gdpHndl) const;
 	int                  createHairProxyGeometry(VUtils::MeshVoxel &voxel, GU_DetailHandle &gdpHndl) const;
-	void                 createBBoxGeometry(const FrameKey &frameKey, GU_Detail &gdp) const;
+	bool                 createBBoxGeometry(const FrameKey &frameKey, GU_Detail &gdp) const;
 
 private:
 	VRayProxyCache(const VRayProxyCache &other);

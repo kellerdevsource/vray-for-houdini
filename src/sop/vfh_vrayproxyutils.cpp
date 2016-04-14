@@ -68,7 +68,7 @@ GU_ConstDetailHandle VRayForHoudini::GetVRayProxyDetail(const VRayProxyParms &op
 	}
 
 	VRayProxyCache &cache = theCacheMan[filepath];
-	return cache.getFrame(options);
+	return cache.getDetail(options);
 }
 
 
@@ -257,16 +257,16 @@ void VRayProxyCache::clearCache()
 }
 
 
-int VRayProxyCache::checkFrameCached(const VRayProxyParms &options) const
+int VRayProxyCache::isCached(const VRayProxyParms &options) const
 {
 	if (NOT(m_proxy)) {
 		return false;
 	}
 
 	FrameKey frameIdx = getFrameIdx(options);
-	LOD lod = static_cast<LOD>(options.getLOD());
+	LOD lod = UTverify_cast< LOD >(options.getLOD());
 
-	return checkCached(frameIdx, lod);
+	return contains(frameIdx, lod);
 }
 
 
@@ -288,26 +288,39 @@ bool VRayProxyCache::getBounds(const VRayProxyParms &options, UT_BoundingBox &bo
 }
 
 
-GU_ConstDetailHandle VRayProxyCache::getFrame(const VRayProxyParms &options)
+GU_ConstDetailHandle VRayProxyCache::getDetail(const VRayProxyParms &options)
 {
 	if (NOT(m_proxy)) {
 		return GU_ConstDetailHandle();
 	}
 
 	FrameKey frameIdx = getFrameIdx(options);
-	LOD lod = static_cast<LOD>(options.getLOD());
-
-//	if (lod == LOD_BBOX) {
-//		createBBoxGeometry(frameIdx, gdp);
-//		return res;
-//	}
+	LOD lod = UTverify_cast< LOD >(options.getLOD());
 
 	const int numVoxels = m_proxy->getNumVoxels();
-	// if not in cache load preview voxel and cache corresponding GU_Detail(s)
-	if (NOT(checkCached(frameIdx, lod))) {
+	// if not in cache load and chache corresponding geometry
+	if (NOT(contains(frameIdx, lod))) {
 		std::vector< VUtils::MeshVoxel* > voxels;
 		std::vector< Geometry > geometry;
 		switch (lod) {
+			case LOD_BBOX:
+			{
+				if ( m_proxy->getNumFrames() ) {
+					m_proxy->setCurrentFrame(frameIdx);
+				}
+
+				CachedFrame &frameData = (*m_frameCache)[frameIdx];
+				Item &gdh = frameData.getDetail(lod);
+
+				if (NOT(gdh.isValid())) {
+					frameData.m_bbox = m_proxy->getBBox();
+
+					GU_Detail *gdp = new GU_Detail();
+					createBBoxGeometry(frameIdx, *gdp);
+					gdh.allocateAndSet(gdp);
+				}
+				break;
+			}
 			case LOD_PREVIEW:
 			{
 				voxels.reserve(1);
@@ -354,29 +367,11 @@ GU_ConstDetailHandle VRayProxyCache::getFrame(const VRayProxyParms &options)
 		}
 	}
 
-//	if (m_frameCache->contains(frameIdx)) {
-//		CachedFrame &frameData = (*m_frameCache)[frameIdx];
-//		if ( frameData.hasItemKeys(lod) ) {
-//			for (auto const &itemKey : frameData.getItemKeys(lod)) {
-//				ItemCache::iterator itemIt = m_itemCache->find(itemKey);
-//				UT_ASSERT( itemIt != m_itemCache->end() );
-
-//				CachedItem &itemData = *itemIt;
-//				GU_DetailHandle &gdpHndl = itemData.m_item;
-//				if (gdpHndl.isValid()) {
-//					GU_PackedGeometry::packGeometry(gdp, gdpHndl);
-//				} else {
-//					res.setError(__FUNCTION__, DE_INVALID_GEOM, "Invalid geometry found for context #%0.3f.", options.getFloatFrame()));
-//				}
-//			}
-//		}
-//	}
-
 	return GU_ConstDetailHandle();
 }
 
 
-int VRayProxyCache::checkCached(const FrameKey &frameIdx, const LOD &lod) const
+int VRayProxyCache::contains(const FrameKey &frameIdx, const LOD &lod) const
 {
 	if (NOT(m_frameCache->contains(frameIdx))) {
 		return false;
@@ -401,7 +396,7 @@ int VRayProxyCache::checkCached(const FrameKey &frameIdx, const LOD &lod) const
 
 int VRayProxyCache::insert(const FrameKey &frameIdx, const LOD &lod, const std::vector<Geometry> &geometry)
 {
-	if (checkCached(frameIdx, lod)) {
+	if (contains(frameIdx, lod)) {
 		return false;
 	}
 
@@ -666,16 +661,14 @@ int VRayProxyCache::createHairProxyGeometry(VUtils::MeshVoxel &voxel, GU_DetailH
 }
 
 
-void VRayProxyCache::createBBoxGeometry(const FrameKey &frameKey, GU_Detail &gdp) const
+bool VRayProxyCache::createBBoxGeometry(const FrameKey &frameKey, GU_Detail &gdp) const
 {
-	if ( m_proxy->getNumFrames() ) {
-		m_proxy->setCurrentFrame(frameKey);
-	}
-
 	VUtils::Box bbox= m_proxy->getBBox();
 	const VUtils::Vector &bboxMin = bbox.c(0);
 	const VUtils::Vector &bboxMax = bbox.c(1);
 	gdp.cube(bboxMin[0], bboxMax[0],
 			bboxMin[1], bboxMax[1],
 			bboxMin[2], bboxMax[2]);
+
+	return true;
 }
