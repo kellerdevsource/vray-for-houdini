@@ -155,10 +155,10 @@ class VRayProxyCache
 ///      2) currently cache capacity is defined by playback range at the time of initialization(might change in future)
 
 private:
-	typedef unsigned FrameKey;
-	typedef Hash::MHash ItemKey;
-	typedef std::vector<ItemKey> ItemKeys;
-	typedef GU_DetailHandle Item;
+	typedef unsigned        FrameKey;
+	typedef exint           DetailKey;
+	typedef Hash::MHash          HashKey;
+	typedef std::vector<HashKey> HashKeys;
 
 	typedef uint32                                     VoxelType;
 	typedef std::pair<VoxelType, VUtils::MeshVoxel* >  Geometry;
@@ -174,25 +174,36 @@ private:
 
 	struct CachedFrame
 	{
-		inline bool     hasDetail(const LOD &lod) const { return (m_details.count(lod) > 0); }
-		inline Item &   getDetail(const LOD &lod) { return m_details[lod]; }
+		typedef std::unordered_map< LOD, DetailKey, std::hash<int>, std::equal_to<int> > LODToDetailMap;
 
-		bool hasItemKeys(const LOD &lod) const { return (m_keys.count(lod) > 0); }
-		ItemKeys &getItemKeys(const LOD &lod) { return m_keys[lod]; }
+		inline bool              hasDetailKey(const LOD &lod) const
+		{ return (m_lodToDetail.count(lod) > 0); }
+		inline const DetailKey & getDetailKey(const LOD &lod) const
+		{ return m_lodToDetail.at(lod); }
+		inline void              setDetailKey(const LOD &lod, const DetailKey & key)
+		{ m_lodToDetail[lod] = key; }
+		inline int               eraseDetailKey(const LOD &lod)
+		{ return m_lodToDetail.erase(lod); }
 
-		std::unordered_map< LOD, Item, std::hash<int>, std::equal_to<int> >     m_details;
-		std::unordered_map< LOD, ItemKeys, std::hash<int>, std::equal_to<int> > m_keys;
-		VUtils::Box                                                             m_bbox;
+		VUtils::Box    m_bbox;
+		LODToDetailMap m_lodToDetail;
+
+
+//		bool               hasHashKeys(const LOD &lod) const { return (m_hashkeys.count(lod) > 0); }
+//		const HashKeys &   getHashKeys(const LOD &lod) const { return m_hashkeys.at(lod); }
+//		HashKeys &         getHashKeys(const LOD &lod) { return m_hashkeys[lod]; }
+
+//		std::unordered_map< LOD, HashKeys, std::hash<int>, std::equal_to<int> > m_hashkeys;
 	};
 
-	struct CachedItem
+	struct CachedDetail
 	{
-		Item m_item;
-		int m_refCnt;
+		GU_DetailHandle m_item;
+		int             m_refCnt;
 	};
 
-	typedef Caches::LRUCache< FrameKey, CachedFrame, std::hash<FrameKey>, std::equal_to<FrameKey> > FrameCache;
-	typedef Caches::LRUCache< ItemKey, CachedItem, std::hash<ItemKey>, std::equal_to<ItemKey> > ItemCache;
+	typedef Caches::LRUCache< FrameKey, CachedFrame, std::hash<FrameKey>, std::equal_to<FrameKey> >     FrameCache;
+	typedef Caches::LRUCache< DetailKey, CachedDetail, std::hash<DetailKey>, std::equal_to<DetailKey> > DetailCache;
 
 public:
 	typedef FrameCache::size_type size_type;
@@ -242,18 +253,19 @@ public:
 	bool                 getBounds(const VRayProxyParms &options, UT_BoundingBox &box) const;
 
 private:
-	int    contains(const FrameKey &frameIdx, const LOD &lod) const;
-	int    insert(const FrameKey &frameIdx, const LOD &lod, const std::vector<Geometry> &geometry);
-	int    erase(const FrameKey &frameIdx);
+	bool   cache(const FrameKey &frameIdx, const LOD &lod);
+	bool   contains(const FrameKey &frameIdx, const LOD &lod) const;
+	bool   insert(const FrameKey &frameIdx, const LOD &lod, const std::vector<Geometry> &geometry);
+	bool   erase(const FrameKey &frameIdx);
 	void   evictFrame(const FrameKey &frameIdx, CachedFrame &frameData);
 
 	FrameKey             getFrameIdx(const VRayProxyParms &options) const;
-	VUtils::MeshVoxel*   getVoxel(const FrameKey &frameKey, int voxelIdx) const;
+	VUtils::MeshVoxel*   getVoxel(const FrameKey &frameIdx, int voxelIdx) const;
 	void                 getPreviewGeometry(VUtils::MeshVoxel &voxel, std::vector<Geometry> &geometry) const;
-	int                  createProxyGeometry(const Geometry &geom, GU_DetailHandle &gdpHndl) const;
-	int                  createMeshProxyGeometry(VUtils::MeshVoxel &voxel, GU_DetailHandle &gdpHndl) const;
-	int                  createHairProxyGeometry(VUtils::MeshVoxel &voxel, GU_DetailHandle &gdpHndl) const;
-	bool                 createBBoxGeometry(const FrameKey &frameKey, GU_Detail &gdp) const;
+	bool                 createProxyGeometry(const Geometry &geom, GU_Detail &gdp) const;
+	bool                 createMeshProxyGeometry(VUtils::MeshVoxel &voxel, GU_Detail &gdp) const;
+	bool                 createHairProxyGeometry(VUtils::MeshVoxel &voxel, GU_Detail &gdp) const;
+	bool                 createBBoxGeometry(const FrameKey &frameIdx, GU_Detail &gdp) const;
 
 private:
 	VRayProxyCache(const VRayProxyCache &other);
@@ -262,8 +274,8 @@ private:
 private:
 	VUtils::CharString m_filepath;
 	VUtils::MeshFile *m_proxy;
-	std::shared_ptr<FrameCache> m_frameCache;
-	std::shared_ptr<ItemCache>  m_itemCache;
+	std::shared_ptr<FrameCache>   m_frameCache;
+	std::shared_ptr<DetailCache>  m_detailCache;
 };
 
 } // namespace VRayForHoudini
