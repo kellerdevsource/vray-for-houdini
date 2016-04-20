@@ -436,18 +436,15 @@ bool VRayProxyCache::insert(const FrameKey &frameIdx, const LOD &lod, const std:
 //	DetailKey key = gdp->getUniqueId();
 //	UT_ASSERT( NOT(m_detailCache->contains(key)) );
 
-//	CachedDetail &itemData = (*m_detailCache)[key];
-//	UT_ASSERT( NOT(itemData.m_item.isValid()) );
-//	UT_ASSERT( itemData.m_refCnt == 0 );
-
 //	for (int i = 0; i < geometry.size(); ++i) {
 //		const Geometry &geom = geometry[i];
 //		createProxyGeometry(geom, *gdp);
 //	}
 
-//	itemData.m_item.allocateAndSet(gdp);
-//	itemData.m_refCnt = 1;
+//	GU_DetailHandle &gdh = (*m_detailCache)[key];
+//	UT_ASSERT( NOT(gdh.isValid()) );
 
+//	gdh.allocateAndSet(gdp);
 //	frameData.setDetailKey(lod, key);
 
 
