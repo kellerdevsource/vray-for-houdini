@@ -87,6 +87,7 @@ static Parm::TabItemDesc RenderSettingsTabItemsDesc[] = {
 	{ "Regions",        "SettingsRegionsGenerator" },
 	{ "RT",             "SettingsRTEngine"         },
 	{ "Caustics",       "SettingsCaustics"         },
+	{ "Displacement",   "SettingsDefaultDisplacement" },
 };
 
 static PRM_Name          GiSettingsSwitcherName("VRayGiSettings");

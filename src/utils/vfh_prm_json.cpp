@@ -121,6 +121,8 @@ void JsonPluginDescGenerator::init()
 	RenderSettingsPlugins.insert("SettingsRaycaster");
 	RenderSettingsPlugins.insert("SettingsRegionsGenerator");
 	RenderSettingsPlugins.insert("SettingsOutput");
+	RenderSettingsPlugins.insert("SettingsCaustics");
+	RenderSettingsPlugins.insert("SettingsDefaultDisplacement");
 
 	RenderGIPlugins.insert("SettingsGI");
 	RenderGIPlugins.insert("SettingsLightCache");
