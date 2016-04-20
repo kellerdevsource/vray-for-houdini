@@ -11,6 +11,10 @@
 #include "gu_vrayproxyref.h"
 #include "vfh_log.h"
 
+#include <GT/GT_GEOPrimCollect.h>
+#include <GT/GT_GEOAttributeFilter.h>
+#include <GT/GT_PrimPackedDetail.h>
+
 #include <GU/GU_PackedFactory.h>
 #include <GU/GU_PrimPacked.h>
 #include <GU/GU_PackedContext.h>
@@ -20,12 +24,84 @@
 #include <OpenEXR/ImathLimits.h>
 #include <OpenEXR/ImathMath.h>
 
+#include <unordered_set>
+
 
 using namespace VRayForHoudini;
 
 
-namespace
+static const UT_StringRef theGeometryidToken   = "geometryid";
+static const UT_StringRef theAnimTypeNameToken = "animtypename";
+
+/// Hook to handle tesselation of vrayproxy primitives
+///
+/// When rendering proxy primitives, we collect all proxy
+/// primitives using same detail together based on detail id
+/// For each different detail id a separate GT primitive is generated
+class GT_PrimVRayProxyCollect : public GT_GEOPrimCollect
 {
+public:
+	/// Register the GT collector
+	static void registerPrimitive(const GA_PrimitiveTypeId &id);
+
+public:
+	/// Constructor.  The @c id is used to bind the collector to the proper
+	/// primitive type.
+	GT_PrimVRayProxyCollect(const GA_PrimitiveTypeId &id);
+	/// Destructor
+	virtual ~GT_PrimVRayProxyCollect();
+
+	/// Return a structure to capture similar proxy primitives
+	virtual GT_GEOPrimCollectData * beginCollecting(const GT_GEODetailListHandle &geometry,
+													const GT_RefineParms *parms) const;
+
+	/// When refining a single proxy primitive, we check to see
+	/// if a GT primitive for it has already beed generated
+	virtual GT_PrimitiveHandle collect(const GT_GEODetailListHandle &geometry,
+									   const GEO_Primitive *const* prim_list,
+									   int nsegments,
+									   GT_GEOPrimCollectData *data) const;
+
+	/// At the end of collecting, do nothing
+	virtual GT_PrimitiveHandle endCollecting(const GT_GEODetailListHandle &geometry,
+											 GT_GEOPrimCollectData *data) const;
+
+private:
+	GA_PrimitiveTypeId  m_primTypeId;
+};
+
+
+class GT_GEOPrimCollectGeoIDData : public GT_GEOPrimCollectData
+{
+public:
+	GT_GEOPrimCollectGeoIDData()
+	{ }
+	virtual ~GT_GEOPrimCollectGeoIDData()
+	{ }
+
+	bool hasPrim(const GA_Primitive *prim) const
+	{
+		int geoid = -1;
+		prim->getIntrinsic(prim->findIntrinsic(theGeometryidToken), geoid);
+		return m_geoidset.count(geoid);
+	}
+
+	int insert(const GA_Primitive *prim)
+	{
+		int geoid = -1;
+		prim->getIntrinsic(prim->findIntrinsic(theGeometryidToken), geoid);
+		if (geoid == -1) {
+			return geoid;
+		}
+
+		bool isInserted = m_geoidset.insert(geoid).second;
+		return ((isInserted)? geoid : -1);
+	}
+
+private:
+	std::unordered_set< int > m_geoidset;
+};
+
 
 class VRayProxyFactory:
 		public GU_PackedFactory
@@ -43,7 +119,7 @@ public:
 VRayProxyFactory::VRayProxyFactory():
 	GU_PackedFactory("VRayProxyRef", "VRayProxyRef")
 {
-	registerIntrinsic( "geometryid",
+	registerIntrinsic( theGeometryidToken,
 			IntGetterCast(&VRayProxyRef::getGeometryid) );
 
 	registerIntrinsic( VRayProxyParms::theFileToken,
@@ -55,7 +131,7 @@ VRayProxyFactory::VRayProxyFactory():
 	registerIntrinsic( VRayProxyParms::theAnimTypeToken,
 			IntGetterCast(&VRayProxyRef::getAnimType) );
 
-	registerIntrinsic( "animtypename",
+	registerIntrinsic( theAnimTypeNameToken,
 			StringGetterCast(&VRayProxyRef::getAnimTypeName) );
 
 	registerIntrinsic( VRayProxyParms::theAnimOffsetToken,
@@ -83,8 +159,6 @@ VRayProxyFactory::VRayProxyFactory():
 
 static VRayProxyFactory *theFactory = nullptr;
 
-}
-
 
 GA_PrimitiveTypeId VRayProxyRef::theTypeId(-1);
 
@@ -98,13 +172,15 @@ void VRayProxyRef::install(GA_PrimitiveFactory *gafactory)
 
 	theFactory = new VRayProxyFactory();
 	GU_PrimPacked::registerPacked(gafactory, theFactory);
-	if (theFactory->isRegistered()) {
-		theTypeId = theFactory->typeDef().getId();
-	}
-	else {
+	if (NOT(theFactory->isRegistered())) {
 		Log::getLog().error("Unable to register packed primitive %s from %s",
 					theFactory->name(), UT_DSO::getRunningFile());
+		return;
 	}
+
+	theTypeId = theFactory->typeDef().getId();
+	// Register the GT tesselation too (now we know what type id we have)
+	GT_PrimVRayProxyCollect::registerPrimitive(theTypeId);
 }
 
 
@@ -324,6 +400,114 @@ exint VRayProxyRef::getGeometryid() const
 {
 	GU_DetailHandleAutoReadLock gdl(m_detail);
 	return (gdl.isValid())? gdl.getGdp()->getUniqueId() : -1;
+}
+
+
+void GT_PrimVRayProxyCollect::registerPrimitive(const GA_PrimitiveTypeId &id)
+{
+	// Just construct.  The constructor registers itself.
+	new GT_PrimVRayProxyCollect(id);
+}
+
+
+GT_PrimVRayProxyCollect::GT_PrimVRayProxyCollect(const GA_PrimitiveTypeId &id)
+	: m_primTypeId(id)
+{
+	// Bind this collector to the given primitive id.  When GT refines
+	// primitives and hits the given primitive id, this collector will be
+	// invoked.
+	bind(m_primTypeId);
+}
+
+
+GT_PrimVRayProxyCollect::~GT_PrimVRayProxyCollect()
+{ }
+
+
+
+GT_GEOPrimCollectData * GT_PrimVRayProxyCollect::beginCollecting(const GT_GEODetailListHandle &geometry, const GT_RefineParms *parms) const
+{
+	// Collect the different detail ids
+	return new GT_GEOPrimCollectGeoIDData();
+}
+
+
+GT_PrimitiveHandle GT_PrimVRayProxyCollect::collect(const GT_GEODetailListHandle &geometry,
+												const GEO_Primitive *const* prim_list,
+												int nsegments,
+												GT_GEOPrimCollectData *data) const
+{
+	GT_GEOPrimCollectGeoIDData *collector = data->asPointer< GT_GEOPrimCollectGeoIDData >();
+	int geoid = collector->insert(prim_list[0]);
+	if (geoid == -1) {
+		return GT_PrimitiveHandle();
+	}
+
+	GU_ConstDetailHandle gdh = geometry->getGeometry(0);
+	GU_DetailHandleAutoReadLock  rlock(gdh);
+	const GU_Detail &gdp = *rlock;
+
+	GT_GEOOffsetList offsets;
+	offsets.reserve(gdp.getNumPrimitives());
+	for (GA_Iterator jt(gdp.getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
+		const GEO_Primitive *prim = gdp.getGEOPrimitive(*jt);
+
+		int primgeoid = -1;
+		prim->getIntrinsic(prim->findIntrinsic(theGeometryidToken), primgeoid);
+		if (primgeoid != geoid) {
+			continue;
+		}
+
+		offsets.append(prim->getMapOffset());
+	}
+
+	if (!offsets.entries()) {
+		return GT_PrimitiveHandle();
+	}
+
+	GT_AttributeListHandle       uniform;
+	GT_AttributeListHandle       detail;
+	// The attribute filter isn't used in this primitive, but it allows
+	// attributes to be excluded (i.e. spheres, might not want the "N" or the
+	// "P" attributes).
+	GT_GEOAttributeFilter        filter;
+	// Create primitive attributes.
+	//
+	// Each array item is filled with the attribute data for the corresponding
+	// face in the ga_faces array.
+	uniform = geometry->getPrimitiveAttributes(filter, &offsets);
+	// Create detail attributes.  These are common for all faces
+	detail = geometry->getDetailAttributes(filter);
+
+	auto primpacked = UTverify_cast< const GU_PrimPacked * >( gdp.getGEOPrimitive(offsets(0)) );
+	GT_PrimPackedDetail *gtprimproxy =  new GT_PrimPackedDetail(primpacked->getPackedDetail().castAwayConst(),
+																uniform,
+																detail);
+
+	gtprimproxy->transforms() = new GT_TransformArray();
+
+	gtprimproxy->transforms()->setEntries(offsets.entries());
+	for (exint i = 0; i < offsets.entries(); ++i)
+	{
+		auto primpacked = UTverify_cast< const GU_PrimPacked * >( gdp.getGEOPrimitive(offsets(i)) );
+
+		UT_Matrix4D m(1.);
+		primpacked->getFullTransform4(m);
+
+		GT_Transform * xform = new GT_Transform();
+		xform->alloc(1);
+		xform->setMatrix(m, 0);
+		gtprimproxy->transforms()->set(i, xform);
+	}
+
+	return GT_PrimitiveHandle(gtprimproxy);
+}
+
+
+GT_PrimitiveHandle GT_PrimVRayProxyCollect::endCollecting(const GT_GEODetailListHandle &geometry,
+													  GT_GEOPrimCollectData *data) const
+{
+	return GT_PrimitiveHandle();
 }
 
 

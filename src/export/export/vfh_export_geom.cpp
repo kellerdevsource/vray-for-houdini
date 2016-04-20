@@ -558,7 +558,7 @@ uint GeometryExporter::getPrimPackedID(const GU_PrimPacked &prim)
 		packedID = vrayproxyref->getOptions().hash();
 	}
 	else if (prim.getTypeId() == GU_PrimPacked::lookupTypeId("PackedGeometry")) {
-		int geoid = 0;
+		int geoid = -1;
 		prim.getIntrinsic(prim.findIntrinsic("geometryid"), geoid);
 		packedID = geoid;
 	}
