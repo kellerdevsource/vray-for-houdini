@@ -365,6 +365,10 @@ bool VRayProxyRef::updateFrom(const T &options)
 const char * VRayProxyRef::getLOD() const
 {
 	switch (m_options.getLOD()) {
+		case LOD_BBOX:
+		{
+			return "box";
+		}
 		case LOD_PREVIEW:
 		{
 			return "preview";
