@@ -30,6 +30,7 @@ VOP::VRayVOPContextOPFilter::VRayVOPContextOPFilter()
 {
 	m_allowedVOPs.insert("parameter");
 	m_allowedVOPs.insert("switch");
+	m_allowedVOPs.insert("null");
 }
 
 bool VOP::VRayVOPContextOPFilter::allowOperatorAsChild(OP_Operator *op)

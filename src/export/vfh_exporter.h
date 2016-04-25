@@ -200,9 +200,10 @@ public:
 	bool                           setAttrsFromUTOptions(Attrs::PluginDesc &pluginDesc, const UT_Options &options) const;
 	void                           setAttrValueFromOpNodePrm(Attrs::PluginDesc &plugin, const Parm::AttrDesc &parmDesc, OP_Node &opNode, const std::string &parmName) const;
 	void                           setAttrsFromOpNodePrms(Attrs::PluginDesc &plugin, OP_Node *opNode, const std::string &prefix="");
-	void                           setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDesc, OP_Node *opNode, ExportContext *parentContext=nullptr);
+	void                           setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDesc, VOP_Node *opNode, ExportContext *parentContext=nullptr);
 
-	VRay::Plugin                   exportConnectedVop(OP_Node *op_node, const UT_String &inputName, ExportContext *parentContext = nullptr);
+	VRay::Plugin                   exportConnectedVop(VOP_Node *vop_node, int inpidx, ExportContext *parentContext = nullptr);
+	VRay::Plugin                   exportConnectedVop(VOP_Node *vop_node, const UT_String &inputName, ExportContext *parentContext = nullptr);
 	void                           phxAddSimumation(VRay::Plugin sim);
 
 	void                           setAttrsFromSHOPOverrides(Attrs::PluginDesc &pluginDesc, VOP_Node &vopNode);

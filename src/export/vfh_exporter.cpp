@@ -250,7 +250,7 @@ void VRayExporter::setAttrValueFromOpNodePrm(Attrs::PluginDesc &pluginDesc, cons
 }
 
 
-void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDesc, OP_Node *opNode, ExportContext *parentContext)
+void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDesc, VOP_Node *opNode, ExportContext *parentContext)
 {
 	const Parm::VRayPluginInfo *pluginInfo = Parm::GetVRayPluginInfo( pluginDesc.pluginID );
 	if (NOT(pluginInfo)) {
@@ -605,18 +605,29 @@ const Parm::SocketDesc* VRayExporter::getConnectedOutputType(OP_Node *op_node, c
 }
 
 
-VRay::Plugin VRayExporter::exportConnectedVop(OP_Node *op_node, const UT_String &inputName, ExportContext *parentContext)
+VRay::Plugin VRayExporter::exportConnectedVop(VOP_Node *vop_node, int inpidx, ExportContext *parentContext)
 {
-	const unsigned input_idx = op_node->getInputFromName(inputName);
-	OP_Input *input = op_node->getInputReferenceConst(input_idx);
-	if (input) {
-		OP_Node *connNode = input->getNode();
-		if (connNode) {
-			return exportVop(connNode, parentContext);
-		}
+	if (NOT(vop_node)) {
+		return VRay::Plugin();
 	}
 
-	return VRay::Plugin();
+	VOP_Node *inpvop = vop_node->findSimpleInput(inpidx);
+	if (NOT(inpvop)) {
+		return VRay::Plugin();
+	}
+
+	return exportVop(inpvop, parentContext);
+}
+
+
+VRay::Plugin VRayExporter::exportConnectedVop(VOP_Node *vop_node, const UT_String &inputName, ExportContext *parentContext)
+{
+	if (NOT(vop_node)) {
+		return VRay::Plugin();
+	}
+
+	const unsigned inpidx = vop_node->getInputFromName(inputName);
+	return exportConnectedVop(vop_node, inpidx, parentContext);
 }
 
 
@@ -664,7 +675,6 @@ void VRayExporter::RtCallbackVop(OP_Node *caller, void *callee, OP_EventType typ
 VRay::Plugin VRayExporter::exportVop(OP_Node *op_node, ExportContext *parentContext)
 {
 	VOP_Node *vop_node = op_node->castToVOPNode();
-
 	const UT_String &opType = vop_node->getOperator()->getName();
 
 	Log::getLog().info("Exporting node \"%s\" [%s]...",
@@ -672,13 +682,12 @@ VRay::Plugin VRayExporter::exportVop(OP_Node *op_node, ExportContext *parentCont
 					   opType.buffer());
 
 	if (opType == "switch") {
-		const int &switcher = vop_node->evalInt("switcher", 0, 0.0);
-		if (switcher > 0) {
-			UT_String inputName;
-			inputName.sprintf("input%i", switcher);
-
-			return exportConnectedVop(vop_node, inputName, parentContext);
-		}
+		const fpreal t = m_context.getTime();
+		const int switcher = vop_node->evalInt("switcher", 0, t);
+		return exportConnectedVop(vop_node, switcher+1, parentContext);
+	}
+	else if (opType == "null") {
+		return exportConnectedVop(vop_node, 0, parentContext);
 	}
 	else if (opType.startsWith("VRayNode")) {
 		VOP::NodeBase *vrayNode = static_cast<VOP::NodeBase*>(vop_node);
