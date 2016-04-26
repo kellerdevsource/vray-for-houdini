@@ -162,6 +162,15 @@ void VRayExporter::fillCameraData(const OBJ_Node &camera, const OP_Node &rop, Vi
 
 void VRayExporter::fillSettingsMotionBlur(ViewParams &viewParams)
 {
+	const fpreal t = m_context.getTime();
+
+	int useCameraSettings = m_rop->evalInt("SettingsMotionBlur_camera_motion_blur", 0, t);
+	if (useCameraSettings) {
+		OBJ_Node *camera = VRayExporter::getCamera(m_rop);
+		const fpreal shutter = camera->evalFloat("shutter", 0, t);
+		viewParams.viewPlugins.settingsMotionBlur.addAttribute(Attrs::PluginAttr("duration", shutter));
+	}
+
 	setAttrsFromOpNodePrms(viewParams.viewPlugins.settingsMotionBlur, m_rop, "SettingsMotionBlur_");
 }
 
