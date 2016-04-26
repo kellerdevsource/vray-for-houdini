@@ -129,6 +129,10 @@ bool MeshExporter::asPluginDesc(Attrs::PluginDesc &pluginDesc)
 		pluginDesc.addAttribute(Attrs::PluginAttr("faceNormals", getFaceNormals()));
 	}
 
+	if (getNumVelocities() > 0) {
+		pluginDesc.addAttribute(Attrs::PluginAttr("velocities", getVelocities()));
+	}
+
 	if (getNumMapChannels() > 0) {
 		// TODO: use CharStringList for map_channel_names
 		VRay::VUtils::ValueRefList map_channel_names(map_channels_data.size());
@@ -178,6 +182,17 @@ VRay::VUtils::VectorRefList& MeshExporter::getNormals()
 	}
 
 	return normals;
+}
+
+
+VRay::VUtils::VectorRefList& MeshExporter::getVelocities()
+{
+	if (velocities.size() <= 0) {
+		getDataFromAttribute(m_gdp.findAttribute(GA_ATTRIB_POINT, GEO_STD_ATTRIB_VELOCITY), velocities);
+		UT_ASSERT( m_gdp.getNumPoints() == velocities.size() );
+	}
+
+	return velocities;
 }
 
 
@@ -584,8 +599,9 @@ int MeshExporter::getPointAttrs(MapChannels &mapChannels)
 		// "P" and "N" point attributes are handled separately as different plugin properties
 		// so skip them here
 		if (   float3Filter.match(attrIt.attrib())
-			&& attrName != "P"
-			&& attrName != "N" )
+			&& attrName != GEO_STD_ATTRIB_POSITION
+			&& attrName != GEO_STD_ATTRIB_NORMAL
+			&& attrName != GEO_STD_ATTRIB_VELOCITY )
 		{
 			if (NOT(mapChannels.count(attrName))) {
 				MapChannel &mapChannel = mapChannels[attrName];
@@ -622,8 +638,9 @@ int MeshExporter::getVertexAttrs(MapChannels &mapChannels)
 		// "P" and "N" point attributes are handled separately as different plugin properties
 		// so skip them here
 		if (   float3Filter.match(attrIt.attrib())
-			&& attrName != "P"
-			&& attrName != "N" )
+			&& attrName != GEO_STD_ATTRIB_POSITION
+			&& attrName != GEO_STD_ATTRIB_NORMAL
+			&& attrName != GEO_STD_ATTRIB_VELOCITY )
 		{
 			if (NOT(mapChannels.count(attrName))) {
 				MapChannel &map_channel = mapChannels[attrName];

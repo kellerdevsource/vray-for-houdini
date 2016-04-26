@@ -94,12 +94,14 @@ public:
 	bool                         hasPolyGeometry() const;
 	bool                         hasSubdivApplied() const { return m_hasSubdivApplied; }
 	int                          getNumVertices() { return getVertices().size(); }
+	int                          getNumVelocities() { return getVelocities().size(); }
 	int                          getNumNormals() { return getNormals().size(); }
 	int                          getNumFaces()  { if (numFaces <= 0 ) numFaces = countFaces(); return numFaces; }
 	int                          getNumMtlIDs() { if (numMtlIDs <= 0 ) getFaceMtlIDs(); return numMtlIDs; }
 	int                          getNumMapChannels() { return getMapChannels().size(); }
 	VRay::VUtils::VectorRefList& getVertices();
 	VRay::VUtils::VectorRefList& getNormals();
+	VRay::VUtils::VectorRefList& getVelocities();
 	VRay::VUtils::IntRefList&    getFaces();
 	VRay::VUtils::IntRefList&    getFaceNormals() { return getFaces(); }
 	VRay::VUtils::IntRefList&    getEdgeVisibility();
@@ -146,6 +148,7 @@ private:
 	int               numFaces;
 	int               numMtlIDs;
 	VRay::VUtils::VectorRefList vertices;
+	VRay::VUtils::VectorRefList velocities;
 	VRay::VUtils::VectorRefList normals;
 	VRay::VUtils::IntRefList    faces;
 	VRay::VUtils::IntRefList    edge_visibility;
