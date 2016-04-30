@@ -4,6 +4,8 @@
 #
 # ACCESSIBLE SOURCE CODE WITHOUT DISTRIBUTION OF MODIFICATION LICENSE
 #
+# Author: Jefferson D. Lim (galagast)
+#
 # Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 #
 
