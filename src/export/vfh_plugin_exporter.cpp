@@ -279,7 +279,7 @@ VRay::Plugin VRayPluginRenderer::exportPlugin(const Attrs::PluginDesc &pluginDes
 		VRay::Error err = m_vray->getLastError();
 		if (err != VRay::SUCCESS) {
 			Log::getLog().error("Error creating plugin: %s",
-								err.toString().c_str());
+								err.toString());
 		}
 	}
 	else {
@@ -443,7 +443,7 @@ void VRayPluginRenderer::removePlugin(const std::string &pluginName)
 			VRay::Error err = m_vray->getLastError();
 			if (err != VRay::SUCCESS) {
 				Log::getLog().error("Error removing plugin: %s",
-									err.toString().c_str());
+									err.toString());
 			}
 		}
 	}
@@ -463,7 +463,8 @@ int VRayPluginRenderer::exportScene(const std::string &filepath)
 
 		VRay::Error err = m_vray->getLastError();
 		if (err != VRay::SUCCESS) {
-			Log::getLog().error("Error exporting scene: %s", err.toString().c_str());
+			Log::getLog().error("Error exporting scene: %s",
+								err.toString());
 		}
 	}
 
