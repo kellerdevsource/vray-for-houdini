@@ -257,6 +257,26 @@ OP::VRayNode::PluginResult LightNodeBase< VRayPluginID::LightMesh >::asPluginDes
 }
 
 
+template<>
+OP::VRayNode::PluginResult LightNodeBase< VRayPluginID::SunLight >::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
+{
+	pluginDesc.pluginID   = pluginID.c_str();
+	pluginDesc.pluginName = VRayExporter::getPluginName(this);
+
+	pluginDesc.addAttribute(Attrs::PluginAttr("up_vector", VRay::Vector(0.f,1.f,0.f)));
+
+	UT_String targetpath;
+	evalString(targetpath, "lookatpath", 0, exporter.getContext().getTime());
+	OBJ_Node *targetNode = OPgetDirector()->findOBJNode(targetpath);
+	if (targetNode) {
+		VRay::Transform tm = exporter.getObjTransform(targetNode, exporter.getContext());
+		pluginDesc.addAttribute(Attrs::PluginAttr("target_transform", tm));
+	}
+
+	return OP::VRayNode::PluginResultContinue;
+}
+
+
 // explicitly instantiate op node classes for light plugins
 template class LightNodeBase< VRayPluginID::SunLight >;
 template class LightNodeBase< VRayPluginID::LightDirect >;

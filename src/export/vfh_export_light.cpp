@@ -73,8 +73,8 @@ VRay::Plugin VRayExporter::exportLight(OBJ_Node *obj_node)
 			setAttrsFromOpNodePrms(pluginDesc, obj_light);
 		}
 
-		bool isDomeLight = vrayNode->getVRayPluginID() == OBJ::getVRayPluginIDName(OBJ::VRayPluginID::LightDome);
-		VRay::Transform tm = VRayExporter::getObjTransform(obj_node, m_context, isDomeLight);
+		bool fliptm = vrayNode->getVRayPluginID() == OBJ::getVRayPluginIDName(OBJ::VRayPluginID::LightDome);
+		VRay::Transform tm = VRayExporter::getObjTransform(obj_node, m_context, fliptm);
 		pluginDesc.addAttribute(Attrs::PluginAttr("transform", tm));
 
 	}
