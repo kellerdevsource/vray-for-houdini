@@ -743,6 +743,15 @@ VRay::Plugin VRayExporter::exportVop(OP_Node *op_node, ExportContext *parentCont
 				}
 			}
 
+			if (pluginDesc.pluginID == "UVWGenEnvironment") {
+				VRay::Transform envMatrix;
+				envMatrix.matrix.setCol(0, VRay::Vector(0.f,1.f,0.f));
+				envMatrix.matrix.setCol(1, VRay::Vector(0.f,0.f,1.f));
+				envMatrix.matrix.setCol(2, VRay::Vector(1.f,0.f,0.f));
+				envMatrix.offset.makeZero();
+				pluginDesc.addAttribute(Attrs::PluginAttr("uvw_matrix", envMatrix));
+			}
+
 			return exportPlugin(pluginDesc);
 		}
 	}
