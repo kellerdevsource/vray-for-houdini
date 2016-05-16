@@ -31,7 +31,9 @@ VOP::VRayVOPContextOPFilter::VRayVOPContextOPFilter()
 	m_allowedVOPs.insert("parameter");
 	m_allowedVOPs.insert("switch");
 	m_allowedVOPs.insert("null");
+	m_allowedVOPs.insert("makexform");
 }
+
 
 bool VOP::VRayVOPContextOPFilter::allowOperatorAsChild(OP_Operator *op)
 {

@@ -325,6 +325,9 @@ void VRayPluginRenderer::exportPluginProperties(VRay::Plugin &plugin, const Attr
 		else if (p.paramType == PluginAttr::AttrTypeTransform) {
 			plugin.setValue(p.paramName, p.paramValue.valTransform);
 		}
+		else if (p.paramType == PluginAttr::AttrTypeMatrix) {
+			plugin.setValue(p.paramName, p.paramValue.valTransform.matrix);
+		}
 		else if (p.paramType == PluginAttr::AttrTypeString) {
 			plugin.setValue(p.paramName, p.paramValue.valString);
 #if CGR_DEBUG_APPSDK_VALUES

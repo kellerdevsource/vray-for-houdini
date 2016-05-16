@@ -205,9 +205,14 @@ static void makeSpaceSeparatedTitleCase(std::string &attrName)
 
 static bool AttrNeedWidget(const AttrDesc &attrDesc)
 {
-	if (attrDesc.value.type < ParmType::ePlugin) {
+
+	if (   attrDesc.value.type < ParmType::ePlugin
+		&& attrDesc.value.type != ParmType::eMatrix
+		&& attrDesc.value.type != ParmType::eTransform)
+	{
 		return true;
 	}
+
 	return false;
 }
 
@@ -242,6 +247,12 @@ static PRM_Template AttrDescAsPrmTemplate(const VRayPluginInfo &pluginInfo, cons
 			.setName(attrName, attrDesc.label)
 			.setVectorSize(4)
 			.setDefault(attrDesc.value.getDefColor());
+	}
+	else if (attrDesc.value.type == ParmType::eVector) {
+		tmpl.setType(PRM_XYZ_J)
+			.setName(attrName, attrDesc.label)
+			.setVectorSize(3)
+			.setDefault(attrDesc.value.getDefVector());
 	}
 	else if (attrDesc.value.type == ParmType::eTextureInt) {
 		switch (pluginInfo.pluginType) {
@@ -715,6 +726,36 @@ VRayPluginInfo* Parm::generatePluginInfo(const std::string &pluginID)
 				//  [ ] Set proper default
 				//  [ ] Check for subtype (filepath, dirpath or name)
 				attrDesc.value.defString = "";
+			}
+			else if (attrType == "VECTOR") {
+				attrDesc.value.type = ParmType::eVector;
+
+				int c = 0;
+				for (const auto &_v : v.second.get_child("default")) {
+					attrDesc.value.defColor[c++] = _v.second.get<float>("");
+				}
+
+				socketType = VOP_TYPE_VECTOR;
+			}
+			else if (attrType == "MATRIX") {
+				attrDesc.value.type = ParmType::eMatrix;
+
+				int c = 0;
+				for (const auto &_v : v.second.get_child("default")) {
+					attrDesc.value.defMatrix[c++] = _v.second.get<float>("");
+				}
+
+				socketType = VOP_TYPE_MATRIX3;
+			}
+			else if (attrType == "TRANSFORM") {
+				attrDesc.value.type = ParmType::eTransform;
+
+				int c = 0;
+				for (const auto &_v : v.second.get_child("default")) {
+					attrDesc.value.defMatrix[c++] = _v.second.get<float>("");
+				}
+
+				socketType = VOP_TYPE_MATRIX4;
 			}
 			else if (attrType == "BRDF") {
 				attrDesc.value.type = ParmType::ePlugin;

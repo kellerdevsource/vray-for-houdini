@@ -43,6 +43,9 @@ enum ParmType {
 	eColor,
 	eAColor,
 	eString,
+	eVector,
+	eMatrix,
+	eTransform,
 	eTextureColor,
 	eTextureFloat,
 	eTextureInt,
@@ -156,6 +159,7 @@ struct ParmDefValue {
 #ifndef _WIN32
 		,defColor{0.0f,0.0f,0.0f}
 		,defAColor{0.0f,0.0f,0.0f,1.0f}
+		,defMatrix{1.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,0.0f}
 #endif
 	{}
 
@@ -198,6 +202,18 @@ struct ParmDefValue {
 		return prm_def;
 	}
 
+	PRM_Default* getDefVector() const {
+		PRM_Default *prm_def = new PRM_Default[4];
+
+		for (int i = 0; i < 3; ++i) {
+			prm_def[i].setFloat(defColor[i]);
+		}
+		prm_def[3].setFloat(0.0f);
+
+		PrmDefArrPtrList.push_back(prm_def);
+		return prm_def;
+	}
+
 	const char     *typeStr() const;
 
 	ParmType        type;
@@ -211,6 +227,7 @@ struct ParmDefValue {
 	std::string     defString;
 	int             defEnum;
 	EnumItems       defEnumItems;
+	float           defMatrix[16];
 
 	ParmRampDesc    defRamp;
 	ParmCurveDesc   defCurve;

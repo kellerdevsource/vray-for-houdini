@@ -29,6 +29,7 @@ struct PluginAttr {
 		AttrTypeColor,
 		AttrTypeAColor,
 		AttrTypeTransform,
+		AttrTypeMatrix,
 		AttrTypeString,
 		AttrTypePlugin,
 		AttrTypeListInt,
@@ -67,6 +68,12 @@ struct PluginAttr {
 		paramName = attrName;
 		paramType = PluginAttr::AttrTypeString;
 		paramValue.valString = attrValue;
+	}
+
+	PluginAttr(const std::string &attrName, const VRay::Matrix &attrValue) {
+		paramName = attrName;
+		paramType = PluginAttr::AttrTypeMatrix;
+		paramValue.valTransform.matrix = attrValue;
 	}
 
 	PluginAttr(const std::string &attrName, const VRay::Transform &attrValue) {
@@ -213,6 +220,7 @@ struct PluginAttr {
 			case PluginAttr::AttrTypeColor: return "Color";
 			case PluginAttr::AttrTypeAColor: return "AColor";
 			case PluginAttr::AttrTypeTransform: return "Transform";
+			case PluginAttr::AttrTypeMatrix: return "Matrix";
 			case PluginAttr::AttrTypeString: return "String";
 			case PluginAttr::AttrTypePlugin: return "Plugin";
 			case PluginAttr::AttrTypeListInt: return "ListInt";

@@ -20,6 +20,7 @@
 #include "sop/sop_vrayproxy.h"
 #include "sop/sop_vrayscene.h"
 
+#include <OP/OP_Options.h>
 #include <OP/OP_Node.h>
 #include <OP/OP_Bundle.h>
 #include <ROP/ROP_Node.h>
@@ -229,6 +230,15 @@ void VRayExporter::setAttrValueFromOpNodePrm(Attrs::PluginDesc &pluginDesc, cons
 				}
 			}
 		}
+		else if (attrDesc.value.type == Parm::eVector) {
+			const PRM_Parm *parm = Parm::getParm(opNode, parmName);
+			if (parm && parm->getType().isFloatType()) {
+				attr.paramType = Attrs::PluginAttr::AttrTypeVector;
+				attr.paramValue.valVector[0] = (float)opNode.evalFloat(parmName.c_str(), 0, t);
+				attr.paramValue.valVector[1] = (float)opNode.evalFloat(parmName.c_str(), 1, t);
+				attr.paramValue.valVector[2] = (float)opNode.evalFloat(parmName.c_str(), 2, t);
+			}
+		}
 		else if (attrDesc.value.type == Parm::eString) {
 			UT_String buf;
 			opNode.evalString(buf, parmName.c_str(), 0, t);
@@ -250,12 +260,35 @@ void VRayExporter::setAttrValueFromOpNodePrm(Attrs::PluginDesc &pluginDesc, cons
 }
 
 
-void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDesc, VOP_Node *opNode, ExportContext *parentContext)
+VRay::Transform VRayExporter::exportTransformVop(VOP_Node &vop_node, ExportContext *parentContext)
+{
+	const fpreal t = getContext().getTime();
+
+	OP_Options options;
+	for (int i = 0; i < vop_node.getParmList()->getEntries(); ++i) {
+		const PRM_Parm &prm = vop_node.getParm(i);
+		options.setOptionFromTemplate(&vop_node, prm, *prm.getTemplatePtr(), t);
+	}
+
+	UT_DMatrix4 m4;
+	OP_Node::buildXform(options.getOptionI("trs"),
+						options.getOptionI("xyz"),
+						options.getOptionV3("trans").x(), options.getOptionV3("trans").y(), options.getOptionV3("trans").z(),
+						options.getOptionV3("rot").x(), options.getOptionV3("rot").y(), options.getOptionV3("rot").z(),
+						options.getOptionV3("scale").x(), options.getOptionV3("scale").y(), options.getOptionV3("scale").z(),
+						options.getOptionV3("pivot").x(), options.getOptionV3("pivot").y(), options.getOptionV3("pivot").z(),
+						m4);
+
+	return Matrix4ToTransform(m4);
+}
+
+
+void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDesc, VOP_Node *vopNode, ExportContext *parentContext)
 {
 	const Parm::VRayPluginInfo *pluginInfo = Parm::GetVRayPluginInfo( pluginDesc.pluginID );
 	if (NOT(pluginInfo)) {
 		Log::getLog().error("Node \"%s\": Plugin \"%s\" description is not found!",
-							opNode->getName().buffer(), pluginDesc.pluginID.c_str());
+							vopNode->getName().buffer(), pluginDesc.pluginID.c_str());
 		return;
 	}
 
@@ -273,21 +306,43 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 			continue;
 		}
 
-		VRay::Plugin plugin_value = exportConnectedVop(opNode, attrName.c_str(), parentContext);
-		if (   NOT(plugin_value)
-			&& NOT(attrDesc.linked_only)
-			&& pluginInfo->pluginType == Parm::PluginTypeTexture
-			&& attrName == "uvwgen")
-		{
-			Attrs::PluginDesc uvwGen(VRayExporter::getPluginName(opNode, "Uvw"), "UVWGenObject");
-			plugin_value = exportPlugin(uvwGen);
+		VRay::Plugin plugin_value = exportConnectedVop(vopNode, attrName.c_str(), parentContext);
+		if (NOT(plugin_value)) {
+
+			if (  NOT(attrDesc.linked_only)
+				&& pluginInfo->pluginType == Parm::PluginTypeTexture
+				&& attrName == "uvwgen" )
+			{
+				Attrs::PluginDesc uvwGen(VRayExporter::getPluginName(vopNode, "Uvw"), "UVWGenObject");
+				plugin_value = exportPlugin(uvwGen);
+			}
+			else {
+				const unsigned inpidx = vopNode->getInputFromName(attrName.c_str());
+				VOP_Node *inpvop = vopNode->findSimpleInput(inpidx);
+				if (inpvop) {
+					if (inpvop->getOperator()->getName() == "makexform") {
+						switch (inSockInfo.type) {
+							case Parm::eMatrix:
+							{
+								pluginDesc.addAttribute(Attrs::PluginAttr(attrName, exportTransformVop(*inpvop, parentContext).matrix));
+								break;
+							}
+							case Parm::eTransform:
+							{
+								pluginDesc.addAttribute(Attrs::PluginAttr(attrName, exportTransformVop(*inpvop, parentContext)));
+								break;
+							}
+						}
+					}
+				}
+			}
 		}
 
 		if (plugin_value) {
 			Log::getLog().info("  Setting plugin value: %s = %s",
 							   attrName.c_str(), plugin_value.getName());
 
-			const Parm::SocketDesc *fromSocketInfo = getConnectedOutputType(opNode, attrName.c_str());
+			const Parm::SocketDesc *fromSocketInfo = getConnectedOutputType(vopNode, attrName.c_str());
 
 			if (fromSocketInfo &&
 				fromSocketInfo->type >= Parm::ParmType::eOutputColor &&
@@ -743,7 +798,9 @@ VRay::Plugin VRayExporter::exportVop(OP_Node *op_node, ExportContext *parentCont
 				}
 			}
 
-			if (pluginDesc.pluginID == "UVWGenEnvironment") {
+			if (   pluginDesc.pluginID == "UVWGenEnvironment"
+				&& NOT(pluginDesc.contains("uvw_matrix")))
+			{
 				VRay::Transform envMatrix;
 				envMatrix.matrix.setCol(0, VRay::Vector(0.f,1.f,0.f));
 				envMatrix.matrix.setCol(1, VRay::Vector(0.f,0.f,1.f));
