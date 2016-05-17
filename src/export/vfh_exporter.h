@@ -168,7 +168,7 @@ public:
 	void                           setRenderSize(int w, int h);
 	void                           setSettingsRtEngine();
 
-	OP_Context                    &getContext()  { return m_context;   }
+	OP_Context                    &getContext() { return m_context; }
 	VRayPluginRenderer            &getRenderer() { return m_renderer; }
 	OP_Node                       &getRop() { return *m_rop; }
 	ROP_RENDER_CODE                getError() const { return m_error; }
@@ -180,7 +180,8 @@ public:
 	int                            isStereoView() const;
 	int                            isPhysicalView(const OBJ_Node &camera) const;
 	int                            isNodeAnimated(OP_Node *op_node);
-	int                            hasMotionBlur(OP_Node &rop, OBJ_Node &camera);
+	int                            hasVelocityOn(OP_Node &rop) const;
+	int                            hasMotionBlur(OP_Node &rop, OBJ_Node &camera) const;
 
 	static OP_Input               *getConnectedInput(OP_Node *op_node, const std::string &inputName);
 	static OP_Node                *getConnectedNode(OP_Node *op_node, const std::string &inputName);
@@ -227,6 +228,7 @@ private:
 	int                            m_isGPU;
 	int                            m_isAnimation;
 	int                            m_isMotionBlur;
+	int                            m_isVelocityOn;
 	fpreal                         m_timeStart;
 	fpreal                         m_timeEnd;
 	FloatSet                       m_exportedFrames;

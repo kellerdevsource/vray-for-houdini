@@ -1747,10 +1747,11 @@ void VRayExporter::initExporter(int hasUI, int nframes, fpreal tstart, fpreal te
 		}
 
 		m_isMotionBlur = hasMotionBlur(*m_rop, *camera);
+		m_isVelocityOn = hasVelocityOn(*m_rop);
 
 		// NOTE: Force animated values for motion blur
 		if (!isAnimation()) {
-			m_renderer.setAnimation(m_isMotionBlur);
+			m_renderer.setAnimation(m_isMotionBlur || m_isVelocityOn);
 		}
 
 		m_error = ROP_CONTINUE_RENDER;
@@ -1758,7 +1759,39 @@ void VRayExporter::initExporter(int hasUI, int nframes, fpreal tstart, fpreal te
 }
 
 
-int VRayExporter::hasMotionBlur(OP_Node &rop, OBJ_Node &camera)
+int VRayExporter::hasVelocityOn(OP_Node &rop) const
+{
+	const fpreal t = m_context.getTime();
+
+	UT_String rcNetworkPath;
+	rop.evalString(rcNetworkPath, Parm::parm_render_net_render_channels.getToken(), 0, t);
+	OP_Network *rcNetwork = dynamic_cast< OP_Network * >(OPgetDirector()->findNode(rcNetworkPath));
+	if (NOT(rcNetwork)) {
+		return false;
+	}
+
+	UT_ValArray< OP_Node * > rcOutputList;
+	if (NOT(rcNetwork->getOpsByName("VRayNodeRenderChannelsContainer", rcOutputList))) {
+		return false;
+	}
+
+	UT_ValArray< OP_Node * > velVOPList;
+	if (NOT(rcNetwork->getOpsByName("VRayNodeRenderChannelVelocity", velVOPList))) {
+		return false;
+	}
+
+	OP_Node *rcOutput = rcOutputList(0);
+	for (OP_Node *velVOP : velVOPList) {
+		if (rcOutput->isInputAncestor(velVOP)) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+
+int VRayExporter::hasMotionBlur(OP_Node &rop, OBJ_Node &camera) const
 {
 	int hasMB = false;
 	if (isPhysicalView(camera)) {
@@ -1794,7 +1827,9 @@ void VRayExporter::exportFrame(fpreal time)
 	Log::getLog().debug("VRayExporter::exportFrame(%.3f)",
 						m_context.getFloatFrame());
 
-	if (!m_isMotionBlur) {
+	if (   !m_isMotionBlur
+		&& !m_isVelocityOn)
+	{
 		clearKeyFrames(m_context.getFloatFrame());
 		exportScene();
 	}
