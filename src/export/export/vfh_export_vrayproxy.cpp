@@ -8,7 +8,7 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
-#include "vfh_vrayproxy_exporter.h"
+#include "vfh_export_vrayproxy.h"
 #include "vfh_export_mesh.h"
 
 #include <OBJ/OBJ_Node.h>

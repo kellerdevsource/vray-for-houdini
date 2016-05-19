@@ -8,8 +8,8 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
-#ifndef VRAY_FOR_HOUDINI_VRAYPROXY_EXPORTER_H
-#define VRAY_FOR_HOUDINI_VRAYPROXY_EXPORTER_H
+#ifndef VRAY_FOR_HOUDINI_EXPORT_VRAYPROXY_H
+#define VRAY_FOR_HOUDINI_EXPORT_VRAYPROXY_H
 
 #include "vfh_exporter.h"
 #include <SOP/SOP_Node.h>
@@ -173,4 +173,4 @@ private:
 
 }
 
-#endif // VRAY_FOR_HOUDINI_VRAYPROXY_EXPORTER_H
+#endif // VRAY_FOR_HOUDINI_EXPORT_VRAYPROXY_H

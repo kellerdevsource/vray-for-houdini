@@ -14,6 +14,7 @@
 #include "utils/vfh_error.h"
 
 #include "vfh_rop.h"
+#include "rop/rop_vrayproxyrop.h"
 #include "obj/obj_node_def.h"
 #include "sop/sop_node_def.h"
 #include "vop/vop_context.h"
@@ -78,6 +79,7 @@ void newDriverOperator(OP_OperatorTable *table)
 	errChaser.enable(true);
 
 	VRayRendererNode::register_operator(table);
+	VRayProxyROP::register_ropoperator(table),
 
 	VOP::VRayVOPContext::register_operator_vrayrccontext(table);
 	VOP::VRayVOPContext::register_operator_vrayenvcontext(table);
@@ -102,17 +104,7 @@ void newSopOperator(OP_OperatorTable *table)
 #endif
 	VFH_SOP_ADD_OPERATOR_CUSTOM_ID_AUTO(table, "GEOMETRY", VRayProxy, "GeomMeshFile");
 
-	OP_Operator *op = new OP_Operator(
-				"vrayproxyrop",
-				"V-Ray Proxy ROP",
-				SOP::VRayProxyROP::creator,
-				SOP::VRayProxyROP::getPrmTemplate(),
-				1,
-				1
-				);
-
-	op->setIconName("ROP_vray");
-	table->addOperator(op);
+	VRayProxyROP::register_sopoperator(table);
 }
 
 
