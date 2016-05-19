@@ -583,25 +583,21 @@ Parm::PRMFactory& Parm::PRMFactory::setRange(const PRM_Range* r)
 }
 
 
-Parm::PRMFactory& Parm::PRMFactory::setSpareData(const char *items[], int nItems)
+Parm::PRMFactory& Parm::PRMFactory::setSpareData(const PRM_SpareData* d)
 {
-	if (nItems <= 0) {
-		return *this;
-	}
-
-	PRM_SpareData* spareData = createPRMSpareData();
-	for (int i = 0; i < nItems; i += 2) {
-		spareData->addTokenValue(items[i],items[i+1]);
-	}
-
-	m_prm->spareData = spareData;
+	m_prm->spareData = d;
 	return *this;
 }
 
 
-Parm::PRMFactory& Parm::PRMFactory::setSpareData(const PRM_SpareData* d)
+Parm::PRMFactory& Parm::PRMFactory::addSpareData(const char *token, const char *value)
 {
-	m_prm->spareData = d;
+	if (NOT(m_prm->spareData)) {
+		m_prm->spareData = createPRMSpareData();
+	}
+
+	PRM_SpareData *spareData = const_cast< PRM_SpareData * >(m_prm->spareData);
+	spareData->addTokenValue(token, value);
 	return *this;
 }
 
@@ -625,6 +621,7 @@ Parm::PRMFactory& Parm::PRMFactory::addConditional(const char *conditional, PRM_
 	if (NOT(m_prm->conditional)) {
 		m_prm->conditional = new PRM_ConditionalGroup();
 	}
+
 	m_prm->conditional->addConditional(conditional, type);
 	return *this;
 }
