@@ -72,6 +72,24 @@ GU_ConstDetailHandle VRayForHoudini::GetVRayProxyDetail(const VRayProxyParms &op
 }
 
 
+bool VRayForHoudini::ClearVRayProxyCache(const UT_String &filepath)
+{
+	const std::string sfilepath = filepath.toStdString();
+
+	UT_AutoLock lock(theLock);
+
+	VRayProxyCacheMan &theCacheMan = GetVRayProxyCacheManager();
+	if (NOT(theCacheMan.contains(sfilepath))) {
+		return false;
+	}
+
+	VRayProxyCache &fileCache = theCacheMan[sfilepath];
+	fileCache.clearCache();
+	theCacheMan.erase(sfilepath);
+	return true;
+}
+
+
 bool VRayForHoudini::GetVRayProxyBounds(const VRayProxyParms &options, UT_BoundingBox &box)
 {
 	UT_StringHolder utfilepath = options.getFilepath();
