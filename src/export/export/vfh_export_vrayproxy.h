@@ -21,76 +21,124 @@ namespace VRayForHoudini {
 struct VRayProxyExportOptions
 {
 	VRayProxyExportOptions() :
-		m_previewType(VUtils::SIMPLIFY_COMBINED),
-		m_maxPreviewFaces(100),
-		m_maxPreviewStrands(100),
-		m_maxFacesPerVoxel(INT_MAX),
-		m_exportColors(false),
+		m_filepath(UT_String::ALWAYS_DEEP),
+		m_exportAsSingle(true),
+		m_animation(false),
+		m_animStart(0),
+		m_animEnd(0),
+		m_animtime(0),
+		m_lastAsPreview(false),
+		m_applyTransform(false),
 		m_exportVelocity(false),
 		m_velocityStart(0.f),
-		m_velocityEnd(0.f),
-		m_exportPCL(false),
-		m_pointSize(0.f),
-		m_applyTransform(false),
-		m_previewLast(false)
+		m_velocityEnd(0.05f),
+		m_simplificationType(VUtils::SIMPLIFY_COMBINED),
+		m_maxPreviewFaces(100),
+		m_maxPreviewStrands(100),
+		m_maxFacesPerVoxel(0),
+		m_exportPCLs(false),
+		m_pointSize(0.5f)
+	{ }
+	~VRayProxyExportOptions()
 	{ }
 
+	inline bool              appendToFile() const { return (m_animation && m_animtime > 0); }
+	VRayProxyExportOptions & extendFilepath(const SOP_Node &sop);
+
 ///	filepath to the .vrmesh file
-	VUtils::CharString m_filename;
+/// cmd arg: -n "path/to/filename.vrmesh" (mandatory)
+	UT_String m_filepath;
 
-/// (SimplificationType enum) specifies how to do the simplification
-/// default value: SIMPLIFY_COMBINED
-	VUtils::SimplificationType m_previewType;
+///	(bool) export all geometry in single .vrmesh file
+/// 0 = export each object in separate file, 1 = export all objects in single file
+/// default value: true
+/// cmd arg: -m 0/1 (optional)
+	int m_exportAsSingle;
 
-/// (int) max number of faces for preview geometry voxel
-/// default value: 100
-	int m_maxPreviewFaces;
-
-/// (int) max number of strands for preview geometry voxel
-/// default value: 100
-	int m_maxPreviewStrands;
-
-/// (int) max number of faces per voxel
-/// default value: INT_MAX
-	int m_maxFacesPerVoxel;
-
-/// (bool) if true, export vertex color sets
+/// (bool) if true - export frame range
+/// if false - only current frame will be exported
 /// default value: false
-	int m_exportColors;
+/// cmd arg: -a animStart animEnd (optional)
+	int m_animation;
+
+/// (int) start frame of the animation
+/// default value: 0
+/// cmd arg: -a animStart animEnd (mandatory, if animation is true)
+	int m_animStart;
+
+/// (int) end frame of the animation
+/// default value: 0
+/// cmd arg: -a animStart animEnd (mandatory, if animation is true)
+	int m_animEnd;
+
+/// (float) current time at which geometry is being exported
+/// if 0, it means this will be the first frame saved in file
+/// if > 0, it means geometry data will be appended to file
+/// it is always 0, if exporting each frame in different file
+/// default value: 0
+	fpreal m_animtime;
+
+/// (bool) if true, use last selected object as preview geometry
+/// this option is always false if exporting single object per file
+/// default value: false
+/// cmd arg: -l (optional)
+	int m_lastAsPreview;
+
+/// (bool) if true, export geometry in world space
+/// default value: false
+/// cmd arg: -t (optional)
+	int m_applyTransform;
 
 /// (bool) if true, export vertex velocity
 /// this option is always false if exportAnimation is false
-/// default value: false
 /// vertex velocity is calulated as: (vert_pos(velocityEndTime) - vert_pos(velocityStartTime)) / (velocityEndTime - velocityStartTime)
+/// default value: false
+/// cmd arg: -v velocityStart velocityEnd (optional)
 	int m_exportVelocity;
 
 /// (float) start time for vertex position sample
 /// velocityStart should be in range [0,1)
-	float m_velocityStart;
+/// default value: 0.f
+/// cmd arg: -v velocityStart velocityEnd (mandatory, if exportVelocity is true)
+	fpreal m_velocityStart;
 
 /// (float) end time for vertex position sample
 /// velocityEnd should be in range (0,1]
-	float m_velocityEnd;
+/// default value: 0.05f
+/// cmd arg: -v velocityStart velocityEnd (mandatory, if exportVelocity is true)
+	fpreal m_velocityEnd;
+
+/// (SimplificationType enum) specifies how to do the simplification
+/// default value: SIMPLIFY_COMBINED
+/// cmd arg: -T previewType (optional)
+	VUtils::SimplificationType m_simplificationType;
+
+/// (int) max number of faces for preview geometry voxel
+/// default value: 100
+/// cmd arg: -F maxPreviewFaces (optional)
+	int m_maxPreviewFaces;
+
+/// (int) max number of strands for preview geometry voxel
+/// default value: 100
+/// cmd arg: -H maxPreviewStrands (optional)
+	int m_maxPreviewStrands;
+
+/// (int) max number of faces per voxel
+/// if 0, assume 1 voxel per mesh
+/// default value: 0
+/// cmd arg: -x maxFacesPerVoxel (optional)
+	int m_maxFacesPerVoxel;
 
 /// (bool) if true, point cloud information will be computed and stored with each voxel in the file
 /// default value: false
-	int m_exportPCL;
+/// cmd arg: -P pointSize (optional)
+	int m_exportPCLs;
 
 /// (float) specifies the desired density for the points in the point cloud -
 /// average area covered by one point
-	float m_pointSize;
-
-/// (bool) if true, export geometry in world space(optional)
-/// this option is always true when exporting multiple objects to a single file
-/// default value: false
-/// cmd arg: -t
-	int m_applyTransform;
-
-/// (bool) if true, use last selected object as preview geometry(optional)
-/// this option is always false if exporting single object per file
-/// default value: false
-/// cmd arg: -l
-	int m_previewLast;
+/// default value: 2.f
+/// cmd arg: -P pointSize (optional)
+	fpreal m_pointSize;
 };
 
 
@@ -100,7 +148,7 @@ public:
 	VRayProxyExporter(SOP_Node * const *nodes, int nodeCnt);
 	~VRayProxyExporter();
 
-	void                setParams(const VRayProxyExportOptions &params) { m_params = params; }
+	void                setParams(const VRayProxyExportOptions &params) { m_options = params; }
 	VUtils::ErrorCode   setContext(const OP_Context &context);
 	void                clearContextData();
 	VUtils::ErrorCode   doExport();
@@ -159,7 +207,7 @@ private:
 	int getPreviewStartIdx() const;
 
 private:
-	VRayProxyExportOptions m_params;
+	VRayProxyExportOptions m_options;
 	VRayExporter         m_exporter;
 
 	std::vector<VUtils::MeshVoxel>   m_voxels;

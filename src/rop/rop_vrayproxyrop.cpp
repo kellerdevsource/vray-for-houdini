@@ -22,6 +22,8 @@
 #include <OP/OP_Options.h>
 #include <PRM/PRM_Include.h>
 #include <CH/CH_LocalVariable.h>
+#include <FS/FS_Info.h>
+#include <FS/FS_FileSystem.h>
 #include <UT/UT_Assert.h>
 
 
@@ -39,8 +41,17 @@ VRayProxyROP::~VRayProxyROP()
 
 int VRayProxyROP::startRender(int nframes, fpreal tstart, fpreal tend)
 {
-	m_tend = tend;
+	OP_Context context(tstart);
+
+	m_sopList.clear();
+	if (getSOPList(context, m_sopList) == 0) {
+		addMessage(ROP_NO_OUTPUT, "No geometry found");
+		return ROP_ABORT_RENDER;
+	}
+
 	m_nframes = nframes;
+	m_tstart = tstart;
+	m_tend = tend;
 	if (error() < UT_ERROR_ABORT) {
 		executePreRenderScript(tstart);
 	}
@@ -51,62 +62,72 @@ int VRayProxyROP::startRender(int nframes, fpreal tstart, fpreal tend)
 
 ROP_RENDER_CODE VRayProxyROP::renderFrame(fpreal time, UT_Interrupt *boss)
 {
-	OP_Context context(time);
-
-	UT_String filename;
-	evalString(filename, "filepath", 0, time);
-	if (NOT(filename.isstring())) {
-		addError(ROP_MESSAGE, "Invalid file");
-		return ROP_ABORT_RENDER;
-	}
-
-	// We must lock our inputs before we try to access their geometry.
-	// OP_AutoLockInputs will automatically unlock our inputs when we return.
-	OP_AutoLockInputs inputs(this);
-	if (inputs.lock(context) >= UT_ERROR_ABORT) {
-		return ROP_ABORT_RENDER;
-	}
-
-	OP_Node *inpNode = getInput(0);
-	if (NOT(inpNode)) {
-		addError(ROP_MESSAGE, "Invalid input");
-		return ROP_ABORT_RENDER;
-	}
-
-	SOP_Node *sopNode = inpNode->castToSOPNode();
-	if (NOT(sopNode)) {
-		addError(ROP_MESSAGE, "Invalid input");
-		return ROP_ABORT_RENDER;
-	}
-
-	VRayProxyExportOptions params;
-	params.m_filename          = filename.buffer();
-	params.m_previewType       = static_cast<VUtils::SimplificationType>(evalInt("simplificationtype", 0, time));
-	params.m_maxPreviewFaces   = std::max(evalInt("max_previewfaces", 0, time), 0);
-	params.m_maxPreviewStrands = std::max(evalInt("max_previewstrands", 0, time), 0);
-	params.m_maxFacesPerVoxel  = std::max(evalInt("max_facespervoxel", 0, time), 0);
-	params.m_exportVelocity    = (evalInt("exp_velocity", 0, time) != 0);
-	params.m_velocityStart     = evalFloat("velocity", 0, time);
-	params.m_velocityEnd       = evalFloat("velocity", 1, time);
-	params.m_exportPCL         = (evalInt("exp_pcl", 0, time) != 0);
-	params.m_pointSize         = evalFloat("pointsize", 0, time);
-
-	VRayProxyExporter exporter(&sopNode, 1);
-	exporter.setParams(params);
-	VUtils::ErrorCode err = exporter.setContext(context);
-	if (err.error()) {
-		addError(ROP_MESSAGE, err.getErrorString().ptr());
+	VRayProxyExportOptions options;
+	if (getExportOptions(time, options) != ROP_ERR_NO_ERR) {
+		addError(ROP_BAD_COMMAND, "Invalid parameter");
 		return ROP_ABORT_RENDER;
 	}
 
 	// Execute the pre-render script.
-	executePreFrameScript(time);
+	if (error() < UT_ERROR_ABORT) {
+		executePreFrameScript(time);
+	}
 
-	// Do actual export
-	err = exporter.doExport();
-	if (err.error()) {
-		addError(ROP_MESSAGE, err.getErrorString().ptr());
+	if (error() >= UT_ERROR_ABORT) {
 		return ROP_ABORT_RENDER;
+	}
+
+	UT_String dirpath;
+	UT_String filename;
+	UT_String filepath(options.m_filepath, true);
+	filepath.splitPath(dirpath, filename);
+
+	// create parent dirs if necessary
+	FS_Info fsInfo(dirpath);
+	if (NOT(fsInfo.exists())) {
+		FS_FileSystem fsys;
+		int mkpath = evalInt("mkpath", 0, time);
+		if (   NOT(mkpath)
+			|| NOT(fsys.createDir(dirpath)))
+		{
+			addError(ROP_CREATE_DIRECTORY_FAIL);
+		}
+	}
+
+	if (error() >= UT_ERROR_ABORT) {
+		return ROP_ABORT_RENDER;
+	}
+
+	OP_Context context(time);
+	int nodeCnt = ((options.m_exportAsSingle)? m_sopList.size() : 1);
+	for (int i = 0; i < m_sopList.size(); i += nodeCnt) {
+		// adjust filepath if exportAsSingle is false
+		options.m_filepath = filepath;
+		options.extendFilepath(*m_sopList(i));
+
+		FS_Info fsInfo(options.m_filepath);
+		if (   fsInfo.fileExists()
+			&& NOT(options.appendToFile())
+			&& NOT(evalInt("overwrite", 0, time)) )
+		{
+			addError(ROP_FILE_EXISTS);
+			continue;
+		}
+
+		VRayProxyExporter exporter(m_sopList.getRawArray() + i, nodeCnt);
+		exporter.setParams(options);
+
+		VUtils::ErrorCode err = exporter.setContext(context);
+		if (err.error()) {
+			addError(ROP_MESSAGE, err.getErrorString().ptr());
+			continue;
+		}
+
+		// Do actual export
+		err = exporter.doExport();
+		if (err.error()) {
+			addError(ROP_MESSAGE, err.getErrorString().ptr());
+		}
 	}
 
 	// Execute the post-render script.
@@ -114,7 +135,61 @@ ROP_RENDER_CODE VRayProxyROP::renderFrame(fpreal time, UT_Interrupt *boss)
 		executePostFrameScript(time);
 	}
 
-	return ROP_CONTINUE_RENDER;
+	return (error() >= UT_ERROR_ABORT)? ROP_ABORT_RENDER : ROP_CONTINUE_RENDER;
+}
+
+
+int VRayProxyROP::getSOPList(OP_Context &context, OP_SOPList &sopList)
+{
+	int nSOPs = 0;
+	// We must lock our inputs before we try to access their geometry.
+	// OP_AutoLockInputs will automatically unlock our inputs when we return.
+	OP_AutoLockInputs inputs(this);
+	if (inputs.lock(context) < UT_ERROR_ABORT) {
+		OP_Node *inpNode = getInput(0);
+		if (inpNode) {
+			SOP_Node *sopNode = inpNode->castToSOPNode();
+			if (sopNode) {
+				sopList.append(sopNode);
+				++nSOPs;
+			}
+		}
+	}
+
+	if (NOT(nSOPs)) {
+		// TODO: filter sopn nodes from params
+	}
+
+	return nSOPs;
+}
+
+
+VRayProxyROP::ROPError VRayProxyROP::getExportOptions(fpreal time, VRayProxyExportOptions &options) const
+{
+	UT_String filepath;
+	evalStringRaw(filepath, "filepath", 0, time);
+	if (NOT(filepath.isstring())) {
+		return ROP_ERR_INVALID_FILE;
+	}
+
+	evalString(options.m_filepath, "filepath", 0, time);
+
+	options.m_exportAsSingle     = (evalInt("exp_separately", 0, time) == 0);
+	options.m_animation          = (m_nframes > 1) && NOT(filepath.contains("$F"));
+	options.m_animtime           = ((options.m_animation)? (time - m_tstart) : 0);
+	options.m_lastAsPreview      = evalInt("lastaspreview", 0, time);
+	options.m_applyTransform     = evalInt("xformtype", 0, time);
+	options.m_exportVelocity     = evalInt("exp_velocity", 0, time);
+	options.m_velocityStart      = evalFloat("velocity", 0, time);
+	options.m_velocityEnd        = evalFloat("velocity", 1, time);
+	options.m_simplificationType = static_cast<VUtils::SimplificationType>(evalInt("simplificationtype", 0, time));
+	options.m_maxPreviewFaces    = std::max(evalInt("max_previewfaces", 0, time), 0);
+	options.m_maxPreviewStrands  = std::max(evalInt("max_previewstrands", 0, time), 0);
+	options.m_maxFacesPerVoxel   = (evalInt("voxelpermesh", 0, time))? 0 : std::max(evalInt("max_facespervoxel", 0, time), 0);
+	options.m_exportPCLs         = evalInt("exp_pcls", 0, time);
+	options.m_pointSize          = evalFloat("pointsize", 0, time);
+
+	return ROP_ERR_NO_ERR;
 }
 
 
@@ -193,7 +268,7 @@ PRM_Template *VRayProxyROP::getMyPrmTemplate()
 									.setDefault(PRMzeroDefaults)
 									.addConditional("{ use_soppath == 1 }", PRM_CONDTYPE_DISABLE)
 					 );
-	myPrmList.addPrm(Parm::PRMFactory(PRM_TOGGLE_E, "last_as_preview", "Use Last As Preview")
+	myPrmList.addPrm(Parm::PRMFactory(PRM_TOGGLE_E, "lastaspreview", "Use Last As Preview")
 									.setDefault(PRMzeroDefaults)
 									.addConditional("{ use_soppath == 1 }", PRM_CONDTYPE_DISABLE)
 					 );
@@ -233,12 +308,12 @@ PRM_Template *VRayProxyROP::getMyPrmTemplate()
 									.addConditional("{ voxelpermesh == 1 }", PRM_CONDTYPE_DISABLE)
 					 );
 
-	myPrmList.addPrm(Parm::PRMFactory(PRM_TOGGLE_E, "exp_pcl", "Export Point Clouds")
+	myPrmList.addPrm(Parm::PRMFactory(PRM_TOGGLE_E, "exp_pcls", "Export Point Clouds")
 									.setDefault(PRMzeroDefaults)
 					 );
 	myPrmList.addPrm(Parm::PRMFactory(PRM_FLT_E, "pointsize", "Lowest level point size")
-									.setDefault(2.f)
-									.addConditional("{ exp_pcl == 0 }", PRM_CONDTYPE_DISABLE)
+									.setDefault(0.5f)
+									.addConditional("{ exp_pcls == 0 }", PRM_CONDTYPE_DISABLE)
 					 );
 
 	myPrmList.addPrm(Parm::PRMFactory(PRM_SEPARATOR, "_sep4"));

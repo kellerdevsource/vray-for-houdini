@@ -15,10 +15,10 @@
 #include <ROP/ROP_Node.h>
 
 
+namespace VRayForHoudini {
+
 class VRayProxyExportOptions;
 
-
-namespace VRayForHoudini {
 
 class VRayProxyROP:
 		public ROP_Node
@@ -32,9 +32,6 @@ public:
 	static void                register_sopoperator(OP_OperatorTable *table);
 	static OP_Node *           creator(OP_Network *parent, const char *name, OP_Operator *op);
 
-public:
-//	virtual bool              hasImageOutput() VRAY_OVERRIDE { return false; }
-
 protected:
 	VRayProxyROP(OP_Network *parent, const char *name, OP_Operator *op);
 	virtual ~VRayProxyROP();
@@ -44,14 +41,21 @@ protected:
 	virtual ROP_RENDER_CODE endRender() VRAY_OVERRIDE;
 
 private:
-	typedef UT_ValArray<OP_Node *> OP_SOPList;
+	enum ROPError {
+		ROP_ERR_NO_ERR = 0,
+		ROP_ERR_INVALID_PARM,
+		ROP_ERR_INVALID_FILE,
+	};
+	typedef UT_ValArray<SOP_Node *> OP_SOPList;
 
-	int getSOPList(OP_SOPList &sopList) const;
-	int getExportOptions(VRayProxyExportOptions &options) const;
+	int getSOPList(OP_Context &context, OP_SOPList &sopList);
+	ROPError getExportOptions(fpreal time, VRayProxyExportOptions &options) const;
 
 private:
-	fpreal m_tend;
-	int    m_nframes;
+	int         m_nframes;
+	fpreal      m_tstart;
+	fpreal      m_tend;
+	OP_SOPList  m_sopList;
 };
 
 } // namespace VRayForHoudini

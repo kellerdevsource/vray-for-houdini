@@ -27,6 +27,26 @@ enum DataError {
 };
 
 
+VRayProxyExportOptions & VRayProxyExportOptions::extendFilepath(const SOP_Node &sop)
+{
+	UT_ASSERT( m_filepath.isstring() );
+
+	if (NOT(m_filepath.matchFileExtension(".vrmesh"))) {
+		m_filepath += ".vrmesh";
+	}
+
+	if (NOT(m_exportAsSingle)) {
+		UT_String soppathSuffix;
+		sop.getFullPath(soppathSuffix);
+		soppathSuffix.forceAlphaNumeric();
+		soppathSuffix += ".vrmesh";
+		m_filepath.replaceSuffix(".vrmesh", soppathSuffix);
+	}
+
+	return *this;
+}
+
+
 int VRayProxyExporter::GeometryDescription::hasValidData() const
 {
 	return (   m_description.contains( getVertsAttrName() )
@@ -125,8 +145,14 @@ void VRayProxyExporter::clearContextData()
 
 VUtils::ErrorCode VRayProxyExporter::doExport()
 {
-	VUtils::SubdivisionParams subdivParams( m_params.m_maxFacesPerVoxel );
-	return VUtils::subdivideMeshToFile(this, m_params.m_filename.ptr(), subdivParams, NULL, false, m_params.m_exportPCL, m_params.m_pointSize);
+	VUtils::SubdivisionParams subdivParams( m_options.m_maxFacesPerVoxel );
+	return VUtils::subdivideMeshToFile(this,
+									   m_options.m_filepath,
+									   subdivParams,
+									   NULL,
+									   m_options.appendToFile(),
+									   m_options.m_exportPCLs,
+									   m_options.m_pointSize);
 }
 
 
@@ -209,8 +235,8 @@ VUtils::ErrorCode VRayProxyExporter::cacheDescriptionForContext(const OP_Context
 
 	OP_Context cntx = context;
 	// advance current time with velocityStart and get mesh description for that time
-	if (m_params.m_exportVelocity) {
-		cntx.setFrame(context.getFloatFrame() + m_params.m_velocityStart);
+	if (m_options.m_exportVelocity) {
+		cntx.setFrame(context.getFloatFrame() + m_options.m_velocityStart);
 	}
 
 	OP_Network *parentNet = geomDescr.m_node.getParent();
@@ -233,7 +259,7 @@ VUtils::ErrorCode VRayProxyExporter::cacheDescriptionForContext(const OP_Context
 	}
 
 	// transform normals
-	if (m_params.m_applyTransform) {
+	if (m_options.m_applyTransform) {
 		if (geomDescr.m_description.contains("normals")) {
 			VRay::VUtils::VectorRefList &normals = geomDescr.getAttr("normals").paramValue.valRawListVector;
 			// calc nm(normal matrix) = transpose(inverse(matrix))
@@ -254,16 +280,16 @@ VUtils::ErrorCode VRayProxyExporter::cacheDescriptionForContext(const OP_Context
 		geomDescr.m_bbox += VUtils::Vector(verts[i].x, verts[i].y, verts[i].z);
 	}
 
-	if (m_params.m_exportVelocity) {
+	if (m_options.m_exportVelocity) {
 		// add velocities to description
 		VRay::VUtils::VectorRefList velocities(verts.size());
 		for (int i = 0; i < velocities.size(); ++i) {
 			velocities[i].set(0.f,0.f,0.f);
 		}
 
-		const float velocityInterval = m_params.m_velocityEnd - m_params.m_velocityStart;
+		const float velocityInterval = m_options.m_velocityEnd - m_options.m_velocityStart;
 		if (velocityInterval > 1e-6f) {
-			cntx.setFrame(context.getFloatFrame() + m_params.m_velocityEnd);
+			cntx.setFrame(context.getFloatFrame() + m_options.m_velocityEnd);
 
 			GeometryDescription nextDescr(geomDescr.m_node);
 			VUtils::ErrorCode err_code = getDescriptionForContext(cntx, nextDescr);
@@ -343,7 +369,7 @@ VUtils::ErrorCode VRayProxyExporter::getDescriptionForContext(OP_Context &contex
 		return res;
 	}
 
-	if (m_params.m_applyTransform) {
+	if (m_options.m_applyTransform) {
 		VRay::VUtils::VectorRefList &verts = geomDescr.getVertAttr().paramValue.valRawListVector;
 		getTransformForContext(context, geomDescr);
 
@@ -653,7 +679,7 @@ void VRayProxyExporter::createHairPreviewGeometry(VUtils::ObjectInfoChannelData 
 	// build hair preview geometry by skipping strands
 	int numPreviewVerts = 0;
 	int numPreviewStrands = 0;
-	const int maxPreviewStrands = std::min(m_params.m_maxPreviewStrands, nTotalStrands);
+	const int maxPreviewStrands = std::min(m_options.m_maxPreviewStrands, nTotalStrands);
 	if (maxPreviewStrands > 0 && nTotalStrands > 0) {
 		m_previewHairVerts = new VUtils::VertGeomData[ maxPreviewStrands * maxVertsPerStrand ];
 		m_previewStrands = new int[ maxPreviewStrands ];
@@ -715,7 +741,7 @@ void VRayProxyExporter::createMeshPreviewGeometry(VUtils::ObjectInfoChannelData 
 	int numPreviewVerts = 0;
 	int numPreviewFaces = 0;
 
-	if (m_params.m_previewType == VUtils::SIMPLIFY_FACE_SAMPLING) {
+	if (m_options.m_simplificationType == VUtils::SIMPLIFY_FACE_SAMPLING) {
 		simplifyFaceSampling(numPreviewVerts, numPreviewFaces, objInfo);
 	} else {
 		simplifyMesh(numPreviewVerts, numPreviewFaces, objInfo);
@@ -748,7 +774,7 @@ void VRayProxyExporter::simplifyFaceSampling(int &numPreviewVerts, int &numPrevi
 		nTotalFaces += faces.count() / 3;
 	}
 
-	const int maxPreviewFaces = std::min(m_params.m_maxPreviewFaces, nTotalFaces);
+	const int maxPreviewFaces = std::min(m_options.m_maxPreviewFaces, nTotalFaces);
 	if (maxPreviewFaces > 0 && nTotalFaces > 0) {
 		m_previewVerts = new VUtils::VertGeomData[ maxPreviewFaces * 3 ];
 		m_previewFaces = new VUtils::FaceTopoData[ maxPreviewFaces ];
@@ -836,9 +862,9 @@ void VRayProxyExporter::simplifyMesh(int &numPreviewVerts, int &numPreviewFaces,
 		}
 	}
 
-	const int maxPreviewFaces = VUtils::Min(m_params.m_maxPreviewFaces, nTotalFaces);
+	const int maxPreviewFaces = VUtils::Min(m_options.m_maxPreviewFaces, nTotalFaces);
 	if (maxPreviewFaces > 0) {
-		VUtils::simplifyMesh(mesh, m_params.m_previewType, maxPreviewFaces);
+		VUtils::simplifyMesh(mesh, m_options.m_simplificationType, maxPreviewFaces);
 		mesh.exportMesh(m_previewVerts, m_previewFaces, numPreviewVerts, numPreviewFaces);
 	}
 }
@@ -866,7 +892,7 @@ void VRayProxyExporter::addObjectInfoForType(uint32 type, VUtils::ObjectInfoChan
 
 int VRayProxyExporter::getPreviewStartIdx() const
 {
-	if (m_params.m_previewLast) {
+	if (m_options.m_lastAsPreview) {
 		return std::max(static_cast<int>(m_geomDescrList.size() - 1), 0);
 	}
 	return 0;
