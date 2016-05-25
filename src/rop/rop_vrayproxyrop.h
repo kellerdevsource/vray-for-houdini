@@ -46,16 +46,15 @@ private:
 		ROP_ERR_INVALID_PARM,
 		ROP_ERR_INVALID_FILE,
 	};
-	typedef UT_ValArray<SOP_Node *> OP_SOPList;
 
-	int getSOPList(OP_Context &context, OP_SOPList &sopList);
+	int getSOPList(fpreal time, UT_ValArray<SOP_Node *> &sopList);
 	ROPError getExportOptions(fpreal time, VRayProxyExportOptions &options) const;
 
 private:
 	int         m_nframes;
 	fpreal      m_tstart;
 	fpreal      m_tend;
-	OP_SOPList  m_sopList;
+	std::shared_ptr< VRayProxyExportOptions > m_options;
 };
 
 } // namespace VRayForHoudini

@@ -19,6 +19,8 @@
 #include <OP/OP_Director.h>
 #include <OP/OP_OperatorTable.h>
 #include <OP/OP_AutoLockInputs.h>
+#include <OP/OP_Bundle.h>
+#include <OP/OP_BundleList.h>
 #include <OP/OP_Options.h>
 #include <PRM/PRM_Include.h>
 #include <CH/CH_LocalVariable.h>
@@ -31,6 +33,7 @@ using namespace VRayForHoudini;
 
 
 VRayProxyROP::VRayProxyROP(OP_Network *parent, const char *name, OP_Operator *op):
+	m_options(new VRayProxyExportOptions()),
 	ROP_Node(parent, name, op)
 { }
 
@@ -41,11 +44,9 @@ VRayProxyROP::~VRayProxyROP()
 
 int VRayProxyROP::startRender(int nframes, fpreal tstart, fpreal tend)
 {
-	OP_Context context(tstart);
-
-	m_sopList.clear();
-	if (getSOPList(context, m_sopList) == 0) {
-		addMessage(ROP_NO_OUTPUT, "No geometry found");
+	m_options->m_sopList.clear();
+	if (getSOPList(tstart, m_options->m_sopList) == 0) {
+		addError(ROP_NO_OUTPUT, "No geometry found");
 		return ROP_ABORT_RENDER;
 	}
 
@@ -62,8 +63,8 @@ int VRayProxyROP::startRender(int nframes, fpreal tstart, fpreal tend)
 
 ROP_RENDER_CODE VRayProxyROP::renderFrame(fpreal time, UT_Interrupt *boss)
 {
-	VRayProxyExportOptions options;
-	if (getExportOptions(time, options) != ROP_ERR_NO_ERR) {
+//	VRayProxyExportOptions options;
+	if (getExportOptions(time, *m_options) != ROP_ERR_NO_ERR) {
 		addError(ROP_BAD_COMMAND, "Invalid parameter");
 		return ROP_ABORT_RENDER;
 	}
@@ -79,7 +80,7 @@ ROP_RENDER_CODE VRayProxyROP::renderFrame(fpreal time, UT_Interrupt *boss)
 
 	UT_String dirpath;
 	UT_String filename;
-	UT_String filepath(options.m_filepath, true);
+	UT_String filepath(m_options->m_filepath, true);
 	filepath.splitPath(dirpath, filename);
 
 	// create parent dirs if necessary
@@ -99,34 +100,34 @@ ROP_RENDER_CODE VRayProxyROP::renderFrame(fpreal time, UT_Interrupt *boss)
 	}
 
 	OP_Context context(time);
-	int nodeCnt = ((options.m_exportAsSingle)? m_sopList.size() : 1);
-	for (int i = 0; i < m_sopList.size(); i += nodeCnt) {
+	int nodeCnt = ((m_options->m_exportAsSingle)? m_options->m_sopList.size() : 1);
+	for (int i = 0; i < m_options->m_sopList.size(); i += nodeCnt) {
 		// adjust filepath if exportAsSingle is false
-		options.m_filepath = filepath;
-		options.extendFilepath(*m_sopList(i));
+		m_options->m_filepath = filepath;
+		m_options->extendFilepath(*(m_options->m_sopList(i)));
 
-		FS_Info fsInfo(options.m_filepath);
+		FS_Info fsInfo(m_options->m_filepath);
 		if (   fsInfo.fileExists()
-			&& NOT(options.appendToFile())
+			&& NOT(m_options->appendToFile())
 			&& NOT(evalInt("overwrite", 0, time)) )
 		{
-			addError(ROP_FILE_EXISTS);
+			addWarning(ROP_FILE_EXISTS, "File already exists. Skipping");
 			continue;
 		}
 
-		VRayProxyExporter exporter(m_sopList.getRawArray() + i, nodeCnt);
-		exporter.setParams(options);
+		VRayProxyExporter exporter(m_options->m_sopList.getRawArray() + i, nodeCnt);
+		exporter.setOptions(*m_options);
 
 		VUtils::ErrorCode err = exporter.setContext(context);
 		if (err.error()) {
-			addError(ROP_MESSAGE, err.getErrorString().ptr());
+			addWarning(ROP_MESSAGE, err.getErrorString().ptr());
 			continue;
 		}
 
 		// Do actual export
 		err = exporter.doExport();
 		if (err.error()) {
-			addError(ROP_MESSAGE, err.getErrorString().ptr());
+			addWarning(ROP_MESSAGE, err.getErrorString().ptr());
 		}
 	}
 
@@ -139,28 +140,98 @@ ROP_RENDER_CODE VRayProxyROP::renderFrame(fpreal time, UT_Interrupt *boss)
 }
 
 
-int VRayProxyROP::getSOPList(OP_Context &context, OP_SOPList &sopList)
+ROP_RENDER_CODE VRayProxyROP::endRender()
 {
-	int nSOPs = 0;
+	if (error() < UT_ERROR_ABORT) {
+		executePostRenderScript(m_tend);
+	}
+
+	return ROP_CONTINUE_RENDER;
+}
+
+
+int VRayProxyROP::getSOPList(fpreal time, UT_ValArray<SOP_Node *> &sopList)
+{
+	int nSOPs = sopList.size();
+	OP_Context context(time);
+
 	// We must lock our inputs before we try to access their geometry.
 	// OP_AutoLockInputs will automatically unlock our inputs when we return.
-	OP_AutoLockInputs inputs(this);
-	if (inputs.lock(context) < UT_ERROR_ABORT) {
+	OP_AutoLockInputs inplock(this);
+	if (inplock.lock(context) < UT_ERROR_ABORT) {
 		OP_Node *inpNode = getInput(0);
 		if (inpNode) {
 			SOP_Node *sopNode = inpNode->castToSOPNode();
 			if (sopNode) {
 				sopList.append(sopNode);
-				++nSOPs;
 			}
 		}
 	}
 
-	if (NOT(nSOPs)) {
-		// TODO: filter sopn nodes from params
+	// if no sops from input filter sop nodes from params
+	if (nSOPs <= sopList.size()) {
+		if (evalInt("use_soppath", 0, time)) {
+			UT_String soppath;
+			evalString(soppath, "soppath", 0, time);
+			SOP_Node *sopNode = OPgetDirector()->findSOPNode(soppath);
+			if (sopNode) {
+				sopList.append(sopNode);
+			}
+		}
+		else {
+			// get a manager that contains objects
+			UT_String root;
+			evalString(root, "root", 0, time);
+			OP_Network *rootnet = OPgetDirector()->findOBJNode(root);
+			rootnet = (rootnet)? rootnet : OPgetDirector()->getManager("obj");
+
+			UT_ASSERT( rootnet );
+
+			// create internal bundle that will contain all nodes matching nodeMask
+			UT_String nodeMask;
+			evalString(nodeMask, "objects", 0, time);
+
+			UT_String bundleName;
+			OP_Bundle *bundle = OPgetDirector()->getBundles()->getPattern(bundleName,
+																		  rootnet,
+																		  rootnet,
+																		  nodeMask,
+																		  PRM_SpareData::objGeometryPath.getOpFilter());
+			// get the node list for processing
+			OP_NodeList nodeList;
+			bundle->getMembers(nodeList);
+			// release the internal bundle created by getPattern()
+			OPgetDirector()->getBundles()->deReferenceBundle(bundleName);
+
+			for (OP_Node *opnode : nodeList) {
+				UT_String fullpath;
+
+				OBJ_Node *objNode = opnode->castToOBJNode();
+				if (NOT(objNode)) {
+					continue;
+				}
+
+				objNode->getFullPath(fullpath);
+
+				SOP_Node *sopNode = objNode->getRenderSopPtr();
+				if (NOT(sopNode)) {
+					continue;
+				}
+
+				if (   NOT(evalInt("save_hidden", 0, time))
+					&& (NOT(objNode->getVisible()) || objNode->getTemplate()))
+				{
+					continue;
+				}
+
+				sopNode->getFullPath(fullpath);
+
+				sopList.append(sopNode);
+			}
+		}
 	}
 
-	return nSOPs;
+	return sopList.size() - nSOPs;
 }
 
 
@@ -190,16 +261,6 @@ VRayProxyROP::ROPError VRayProxyROP::getExportOptions(fpreal time, VRayProxyExpo
 	options.m_pointSize          = evalFloat("pointsize", 0, time);
 
 	return ROP_ERR_NO_ERR;
-}
-
-
-ROP_RENDER_CODE VRayProxyROP::endRender()
-{
-	if (error() < UT_ERROR_ABORT) {
-		executePostRenderScript(m_tend);
-	}
-
-	return ROP_CONTINUE_RENDER;
 }
 
 

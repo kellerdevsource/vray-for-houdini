@@ -139,6 +139,8 @@ struct VRayProxyExportOptions
 /// default value: 2.f
 /// cmd arg: -P pointSize (optional)
 	fpreal m_pointSize;
+
+	UT_ValArray<SOP_Node *> m_sopList;
 };
 
 
@@ -148,7 +150,7 @@ public:
 	VRayProxyExporter(SOP_Node * const *nodes, int nodeCnt);
 	~VRayProxyExporter();
 
-	void                setParams(const VRayProxyExportOptions &params) { m_options = params; }
+	void                setOptions(const VRayProxyExportOptions &options) { m_options = options; }
 	VUtils::ErrorCode   setContext(const OP_Context &context);
 	void                clearContextData();
 	VUtils::ErrorCode   doExport();
