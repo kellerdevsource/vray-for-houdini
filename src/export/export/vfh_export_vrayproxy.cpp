@@ -150,7 +150,7 @@ VUtils::ErrorCode VRayProxyExporter::doExport()
 									   m_options.m_filepath,
 									   subdivParams,
 									   NULL,
-									   m_options.appendToFile(),
+									   m_options.isSequentialFrame(),
 									   m_options.m_exportPCLs,
 									   m_options.m_pointSize);
 }

@@ -42,7 +42,7 @@ struct VRayProxyExportOptions
 	~VRayProxyExportOptions()
 	{ }
 
-	inline bool              appendToFile() const { return (m_animation && m_animtime > 0); }
+	inline bool              isSequentialFrame() const { return (m_animation && m_animtime > 0); }
 	VRayProxyExportOptions & extendFilepath(const SOP_Node &sop);
 
 ///	filepath to the .vrmesh file
@@ -139,8 +139,6 @@ struct VRayProxyExportOptions
 /// default value: 2.f
 /// cmd arg: -P pointSize (optional)
 	fpreal m_pointSize;
-
-	UT_ValArray<SOP_Node *> m_sopList;
 };
 
 

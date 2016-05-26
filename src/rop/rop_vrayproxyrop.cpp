@@ -33,7 +33,6 @@ using namespace VRayForHoudini;
 
 
 VRayProxyROP::VRayProxyROP(OP_Network *parent, const char *name, OP_Operator *op):
-	m_options(new VRayProxyExportOptions()),
 	ROP_Node(parent, name, op)
 { }
 
@@ -44,8 +43,8 @@ VRayProxyROP::~VRayProxyROP()
 
 int VRayProxyROP::startRender(int nframes, fpreal tstart, fpreal tend)
 {
-	m_options->m_sopList.clear();
-	if (getSOPList(tstart, m_options->m_sopList) == 0) {
+	m_sopList.clear();
+	if (getSOPList(tstart, m_sopList) <= 0) {
 		addError(ROP_NO_OUTPUT, "No geometry found");
 		return ROP_ABORT_RENDER;
 	}
@@ -63,8 +62,8 @@ int VRayProxyROP::startRender(int nframes, fpreal tstart, fpreal tend)
 
 ROP_RENDER_CODE VRayProxyROP::renderFrame(fpreal time, UT_Interrupt *boss)
 {
-//	VRayProxyExportOptions options;
-	if (getExportOptions(time, *m_options) != ROP_ERR_NO_ERR) {
+	VRayProxyExportOptions options;
+	if (getExportOptions(time, options) != ROP_ERR_NO_ERR) {
 		addError(ROP_BAD_COMMAND, "Invalid parameter");
 		return ROP_ABORT_RENDER;
 	}
@@ -80,7 +79,7 @@ ROP_RENDER_CODE VRayProxyROP::renderFrame(fpreal time, UT_Interrupt *boss)
 
 	UT_String dirpath;
 	UT_String filename;
-	UT_String filepath(m_options->m_filepath, true);
+	UT_String filepath(options.m_filepath, true);
 	filepath.splitPath(dirpath, filename);
 
 	// create parent dirs if necessary
@@ -100,23 +99,23 @@ ROP_RENDER_CODE VRayProxyROP::renderFrame(fpreal time, UT_Interrupt *boss)
 	}
 
 	OP_Context context(time);
-	int nodeCnt = ((m_options->m_exportAsSingle)? m_options->m_sopList.size() : 1);
-	for (int i = 0; i < m_options->m_sopList.size(); i += nodeCnt) {
+	int nodeCnt = ((options.m_exportAsSingle)? m_sopList.size() : 1);
+	for (int i = 0; i < m_sopList.size(); i += nodeCnt) {
 		// adjust filepath if exportAsSingle is false
-		m_options->m_filepath = filepath;
-		m_options->extendFilepath(*(m_options->m_sopList(i)));
+		options.m_filepath = filepath;
+		options.extendFilepath(*m_sopList(i));
 
-		FS_Info fsInfo(m_options->m_filepath);
+		FS_Info fsInfo(options.m_filepath);
 		if (   fsInfo.fileExists()
-			&& NOT(m_options->appendToFile())
+			&& NOT(options.isSequentialFrame())
 			&& NOT(evalInt("overwrite", 0, time)) )
 		{
 			addWarning(ROP_FILE_EXISTS, "File already exists. Skipping");
 			continue;
 		}
 
-		VRayProxyExporter exporter(m_options->m_sopList.getRawArray() + i, nodeCnt);
-		exporter.setOptions(*m_options);
+		VRayProxyExporter exporter(m_sopList.getRawArray() + i, nodeCnt);
+		exporter.setOptions(options);
 
 		VUtils::ErrorCode err = exporter.setContext(context);
 		if (err.error()) {

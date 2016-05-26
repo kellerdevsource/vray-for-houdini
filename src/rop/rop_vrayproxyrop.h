@@ -54,7 +54,7 @@ private:
 	int         m_nframes;
 	fpreal      m_tstart;
 	fpreal      m_tend;
-	std::shared_ptr< VRayProxyExportOptions > m_options;
+	UT_ValArray<SOP_Node *> m_sopList;
 };
 
 } // namespace VRayForHoudini
