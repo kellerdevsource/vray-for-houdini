@@ -8,14 +8,20 @@
 # Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 #
 
+string(TOLOWER "${CMAKE_HOST_SYSTEM_NAME}" _HOST_SYSTEM_NAME)
+
 set(_maya_versons "2017;2016;2015;2014")
 foreach(_maya_version ${_maya_versons})
-	if(WIN32)
-		set(_vray_for_maya_root "C:/Program Files/Chaos Group/V-Ray/Maya ${_maya_version} for x64")
-	elseif(APPLE)
-		set(_vray_for_maya_root "/Applications/ChaosGroup/V-Ray/Maya${_maya_version}")
+	if(SDK_PATH)
+		set(_vray_for_maya_root "${SDK_PATH}/${_HOST_SYSTEM_NAME}/vraysdk/vraysdk${_maya_version}")
 	else()
-		set(_vray_for_maya_root "/usr/ChaosGroup/V-Ray/Maya${_maya_version}-x64")
+		if(WIN32)
+			set(_vray_for_maya_root "C:/Program Files/Chaos Group/V-Ray/Maya ${_maya_version} for x64")
+		elseif(APPLE)
+			set(_vray_for_maya_root "/Applications/ChaosGroup/V-Ray/Maya${_maya_version}")
+		else()
+			set(_vray_for_maya_root "/usr/ChaosGroup/V-Ray/Maya${_maya_version}-x64")
+		endif()
 	endif()
 
 	if(EXISTS ${_vray_for_maya_root})
@@ -82,7 +88,7 @@ macro(use_vray_sdk)
 	if(NOT EXISTS ${VRAYSDK_INCPATH})
 		message(FATAL_ERROR "V-Ray SDK libraries / headers are not found!\n"
 							"V-Ray SDK from V-Ray For Maya installation is utilized by default.\n"
-							"Install V-Ray For Maya or point CGR_VRAYSDK_INCPATH and CGR_VRAYSDK_LIBPATH variables to the SDK location.")
+							"Install V-Ray For Maya or point SDK_PATH or CGR_VRAYSDK_INCPATH and CGR_VRAYSDK_LIBPATH variables to the SDK location.")
 	endif()
 
 	include_directories(${VRAYSDK_INCPATH})

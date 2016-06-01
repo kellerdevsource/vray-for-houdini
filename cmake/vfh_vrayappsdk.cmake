@@ -12,7 +12,12 @@ string(TOLOWER "${CMAKE_HOST_SYSTEM_NAME}" _HOST_SYSTEM_NAME)
 
 set(APPSDK_VERSION "447" CACHE STRING "V-Ray AppSDK version")
 set(APPSDK_PATH "$ENV{HOME}/src/appsdk_releases" CACHE PATH "V-Ray AppSDK location")
-set(APPSDK_ROOT "${APPSDK_PATH}/${APPSDK_VERSION}/${_HOST_SYSTEM_NAME}" CACHE PATH "V-Ray AppSDK root" FORCE)
+
+if(SDK_PATH)
+	set(APPSDK_ROOT "${SDK_PATH}/${_HOST_SYSTEM_NAME}/appsdk/appsdk${APPSDK_VERSION}" CACHE PATH "V-Ray AppSDK root" FORCE)
+else()
+	set(APPSDK_ROOT "${APPSDK_PATH}/${APPSDK_VERSION}/${_HOST_SYSTEM_NAME}" CACHE PATH "V-Ray AppSDK root" FORCE)
+endif()
 
 
 macro(use_vray_appsdk)
