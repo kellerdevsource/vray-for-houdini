@@ -97,8 +97,17 @@ def upload(filepath):
         subprocess.call(cmd)
 
 
-# Setup Visual Studio 2012 variables for command line usage
+# Setup Visual Studio variables for command line usage
 #
+def get_utils_paths():
+    return [
+        "C:/Program Files (x86)/CMake/bin",
+        "C:/Program Files/SlikSvn/bin",
+        "C:/Program Files/Git/bin",
+        "C:/Program Files (x86)/WinSCP",
+    ]
+
+
 def setup_msvc_2012():
     cgrSdkPath = os.environ['CGR_SDK']
 
@@ -117,15 +126,50 @@ def setup_msvc_2012():
             "{CGR_SDK}/msvs2012/lib/amd64",
         ],
 
-        'PATH' : os.environ['PATH'].split(';') + [
-            "C:/Program Files (x86)/CMake/bin",
-            "C:/Program Files/SlikSvn/bin",
-            "C:/Program Files/Git/bin",
-            "C:/Program Files (x86)/WinSCP",
-            "{CGR_SDK}/msvs2012/bin/amd64",
-            "{CGR_SDK}/msvs2012/bin",
-            "{CGR_SDK}/msvs2012/PlatformSDK/bin/x64",
+        'PATH' : os.environ['PATH'].split(';') + 
+            get_utils_paths() +
+            [
+                "{CGR_SDK}/msvs2012/bin/amd64",
+                "{CGR_SDK}/msvs2012/bin",
+                "{CGR_SDK}/msvs2012/PlatformSDK/bin/x64",
+            ]
+        ,
+    }
+
+    for var in env:
+        os.environ[var] = ";".join(env[var]).format(CGR_SDK=cgrSdkPath)
+
+
+def setup_msvc_2015():
+    cgrSdkPath = os.environ['CGR_SDK']
+
+    env = {
+        '__MS_VC_INSTALL_PATH' : "{CGR_SDK}/msvs2015",
+
+        'INCLUDE' : [
+            "{CGR_SDK}/msvs2015/PlatformSDK/Include/shared",
+            "{CGR_SDK}/msvs2015/PlatformSDK/Include/um",
+            "{CGR_SDK}/msvs2015/PlatformSDK/Include/winrt",
+            "{CGR_SDK}/msvs2015/PlatformSDK/Include/ucrt",
+            "{CGR_SDK}/msvs2015/include",
+            "{CGR_SDK}/msvs2015/atlmfc/include",
         ],
+
+        'LIB' : [
+            "{CGR_SDK}/msvs2015/PlatformSDK/Lib/winv6.3/um/x64",
+            "{CGR_SDK}/msvs2015/PlatformSDK/Lib/ucrt/x64",
+            "{CGR_SDK}/msvs2015/atlmfc/lib/amd64",
+            "{CGR_SDK}/msvs2015/lib/amd64",
+        ],
+
+        'PATH' : os.environ['PATH'].split(';') +
+            get_utils_paths() +
+            [
+                "{CGR_SDK}/msvs2015/bin/amd64",
+                "{CGR_SDK}/msvs2015/bin",
+                "{CGR_SDK}/msvs2015/PlatformSDK/bin/x64",
+            ]
+        ,
     }
 
     for var in env:
@@ -176,7 +220,11 @@ def main(args):
     cmake.append('-DSDK_PATH=%s'              % toCmakePath(SdkPath))
 
     if sys.platform == 'win32':
-        setup_msvc_2012()
+        houdiniMajorVer = float(os.environ['CGR_HOUDINI_VERSION'])
+        if houdiniMajorVer >= 15.5:
+            setup_msvc_2015()
+        else:
+            setup_msvc_2012()
 
     cmake.append('-DCGR_SRC_HASH=%s' % srcHash)
     cmake.append('-DUSE_LAUNCHER=OFF')
