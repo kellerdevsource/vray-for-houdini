@@ -13,9 +13,15 @@ include(FindGit)
 
 macro(link_with_boost _name)
 	if(WIN32)
-		set(BOOST_LIBS
-			boost_system-vc110-mt-1_55
-		)
+		if(${HOUDINI_VERSION} VERSION_LESS "15.5")
+			set(BOOST_LIBS
+				boost_system-vc110-mt-1_55
+			)
+		else()
+			set(BOOST_LIBS
+				boost_system-vc140-mt-1_55
+			)
+		endif()
 	else()
 		set(BOOST_LIBS
 			boost_system
