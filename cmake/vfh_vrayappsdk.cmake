@@ -32,7 +32,6 @@ macro(use_vray_appsdk)
 	include_directories(${APPSDK_ROOT}/cpp/include)
 	link_directories(${APPSDK_ROOT}/bin)
 	link_directories(${APPSDK_ROOT}/lib)
-	link_directories(${APPSDK_PATH}/devel)
 endmacro()
 
 
