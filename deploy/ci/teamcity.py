@@ -159,6 +159,7 @@ def main(args):
         BUILD_NUMBER=os.environ['BUILD_NUMBER'],
         DEBUG="-dbg" if _cgr_build_type == "Debug" else "",
     ))
+    SdkPath = os.environ.get('CGR_SDKPATH', "")
 
     cmake = ["cmake"]
     cmake.append('-GNinja')
@@ -172,7 +173,7 @@ def main(args):
     cmake.append('-DHOUDINI_VERSION_BUILD=%s' % os.environ['CGR_HOUDINI_VERSION_BUILD'])
     cmake.append('-DAPPSDK_VERSION=%s'        % os.environ['CGR_APPSDK_VERSION'])
     cmake.append('-DAPPSDK_QT=%s'             % os.environ.get('CGR_APPSDK_QT', 'OFF'))
-    cmake.append('-DSDK_PATH=%s'              % os.environ.get('CGR_SDKPATH', ""))
+    cmake.append('-DSDK_PATH=%s'              % toCmakePath(SdkPath))
 
     if sys.platform == 'win32':
         setup_msvc_2012()
