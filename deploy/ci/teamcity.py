@@ -144,8 +144,6 @@ def setup_msvc_2015():
     cgrSdkPath = os.environ['CGR_SDK']
 
     env = {
-        '__MS_VC_INSTALL_PATH' : "{CGR_SDK}/msvs2015",
-
         'INCLUDE' : [
             "{CGR_SDK}/msvs2015/PlatformSDK/Include/shared",
             "{CGR_SDK}/msvs2015/PlatformSDK/Include/um",
@@ -172,6 +170,7 @@ def setup_msvc_2015():
         ,
     }
 
+    os.environ['__MS_VC_INSTALL_PATH'] = "{CGR_SDK}/msvs2015"
     for var in env:
         os.environ[var] = ";".join(env[var]).format(CGR_SDK=cgrSdkPath)
 
