@@ -28,7 +28,7 @@ else()
 	# Force color compiler output
 	if(CMAKE_GENERATOR STREQUAL "Ninja")
 		if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-				set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fcolor-diagnostics")
+			set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fcolor-diagnostics")
 		elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 5.0.0)
 			set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fdiagnostics-color=always")
 		endif()
