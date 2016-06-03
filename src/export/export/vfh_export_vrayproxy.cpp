@@ -9,9 +9,12 @@
 //
 
 #include "vfh_export_vrayproxy.h"
+#include "vfh_exporter.h"
 #include "vfh_export_mesh.h"
 
 #include <OBJ/OBJ_Node.h>
+#include <FS/FS_Info.h>
+#include <FS/FS_FileSystem.h>
 #include <UT/UT_Assert.h>
 
 #include <uni.h>
@@ -23,16 +26,34 @@ using namespace VRayForHoudini;
 
 enum DataError {
 	DE_INCORRECT_GEOM = 1,
-	DE_NO_RENDERABLE_GEOM = 2
+	DE_NO_RENDERABLE_GEOM,
+	DE_EXISTING_FILE
 };
 
 
-VRayProxyExportOptions & VRayProxyExportOptions::extendFilepath(const SOP_Node &sop)
+VRayExporter& getVRayExporter()
+{
+	static VRayExporter exporter(nullptr);
+	return exporter;
+}
+
+
+bool VRayProxyExportOptions::isAppendMode() const
+{
+	return (   m_exportAsAnimation
+			&& m_animFrames > 1
+			&& m_context.getTime() > m_animStart);
+}
+
+
+UT_String VRayProxyExportOptions::getFilepath(const SOP_Node &sop) const
 {
 	UT_ASSERT( m_filepath.isstring() );
 
-	if (NOT(m_filepath.matchFileExtension(".vrmesh"))) {
-		m_filepath += ".vrmesh";
+	UT_String filepath = m_filepath;
+
+	if (NOT(filepath.matchFileExtension(".vrmesh"))) {
+		filepath += ".vrmesh";
 	}
 
 	if (NOT(m_exportAsSingle)) {
@@ -40,10 +61,10 @@ VRayProxyExportOptions & VRayProxyExportOptions::extendFilepath(const SOP_Node &
 		sop.getFullPath(soppathSuffix);
 		soppathSuffix.forceAlphaNumeric();
 		soppathSuffix += ".vrmesh";
-		m_filepath.replaceSuffix(".vrmesh", soppathSuffix);
+		filepath.replaceSuffix(".vrmesh", soppathSuffix);
 	}
 
-	return *this;
+	return filepath;
 }
 
 
@@ -57,7 +78,7 @@ int VRayProxyExporter::GeometryDescription::hasValidData() const
 Attrs::PluginAttr &VRayProxyExporter::GeometryDescription::getAttr(const tchar *attrName)
 {
 	Attrs::PluginAttr *attr = m_description.get(attrName);
-	vassert( attr );
+	UT_ASSERT( attr );
 	return *attr;
 }
 
@@ -73,11 +94,11 @@ void VRayProxyExporter::GeometryDescription::clearData()
 }
 
 
-VRayProxyExporter::VRayProxyExporter(SOP_Node * const *nodes, int nodeCnt):
-	m_exporter(nullptr),
+VRayProxyExporter::VRayProxyExporter(const VRayProxyExportOptions &options, SOP_Node * const *nodes, int nodeCnt):
+	m_options(options),
 	m_previewVerts(nullptr),
 	m_previewFaces(nullptr),
-	m_previewHairVerts(nullptr),
+	m_previewStrandVerts(nullptr),
 	m_previewStrands(nullptr)
 {
 	UT_ASSERT( nodeCnt > 0 );
@@ -91,33 +112,35 @@ VRayProxyExporter::VRayProxyExporter(SOP_Node * const *nodes, int nodeCnt):
 		}
 	}
 
+	UT_ASSERT(m_geomDescrList.size() > 0);
+
 	m_voxels.resize(m_geomDescrList.size() + 1);
 }
 
 
 VRayProxyExporter::~VRayProxyExporter()
 {
-	clearContextData();
+	cleanup();
 }
 
 
-VUtils::ErrorCode VRayProxyExporter::setContext(const OP_Context &context)
+VUtils::ErrorCode VRayProxyExporter::init()
 {
 	VUtils::ErrorCode res;
 
-	clearContextData();
+	cleanup();
 
 	for (auto &geomDescr : m_geomDescrList){
-		res = cacheDescriptionForContext(context, geomDescr);
+		res = cacheDescriptionForContext(m_options.m_context, geomDescr);
 	}
 
 	return res;
 }
 
 
-void VRayProxyExporter::clearContextData()
+void VRayProxyExporter::cleanup()
 {
-	for (auto &voxel : m_voxels) {
+	for (VUtils::MeshVoxel &voxel : m_voxels) {
 		voxel.freeMem();
 	}
 
@@ -133,8 +156,8 @@ void VRayProxyExporter::clearContextData()
 		FreePtrArr(m_previewFaces);
 	}
 
-	if (m_previewHairVerts) {
-		FreePtrArr(m_previewHairVerts);
+	if (m_previewStrandVerts) {
+		FreePtrArr(m_previewStrandVerts);
 	}
 
 	if (m_previewStrands) {
@@ -143,14 +166,29 @@ void VRayProxyExporter::clearContextData()
 }
 
 
-VUtils::ErrorCode VRayProxyExporter::doExport()
+VUtils::ErrorCode VRayProxyExporter::doExportFrame()
 {
+	VUtils::ErrorCode err;
+
+	UT_String filepath = m_options.getFilepath(m_geomDescrList[0].m_node);
+	bool isAppendMode = m_options.isAppendMode();
+
+	FS_Info fsInfo(filepath);
+	if (   fsInfo.fileExists()
+		&& NOT(isAppendMode)
+		&& NOT(m_options.m_overwrite)
+		)
+	{
+		err.setError(__FUNCTION__, DE_EXISTING_FILE, "File already exists: %s", filepath.buffer());
+		return err;
+	}
+
 	VUtils::SubdivisionParams subdivParams( m_options.m_maxFacesPerVoxel );
 	return VUtils::subdivideMeshToFile(this,
-									   m_options.m_filepath,
+									   filepath,
 									   subdivParams,
 									   NULL,
-									   m_options.isSequentialFrame(),
+									   isAppendMode,
 									   m_options.m_exportPCLs,
 									   m_options.m_pointSize);
 }
@@ -215,14 +253,13 @@ VUtils::MeshVoxel* VRayProxyExporter::getVoxel(int i, uint64 *memUsage)
 
 void VRayProxyExporter::releaseVoxel(VUtils::MeshVoxel *voxel, uint64 *memUsage)
 {
-	Log::getLog().info("Release voxel");
-
 	if (voxel) {
 		if (memUsage) {
 			*memUsage = voxel->getMemUsage();
 		}
 
 		voxel->freeMem();
+		Log::getLog().info("Voxel released");
 	}
 }
 
@@ -356,11 +393,12 @@ VUtils::ErrorCode VRayProxyExporter::getDescriptionForContext(OP_Context &contex
 
 	geomDescr.m_isHair = (ref_guardhair.isValid() && ref_hairid .isValid());
 
+	VRayExporter &exporter = getVRayExporter();
 	if (geomDescr.m_isHair) {
-		m_exporter.exportGeomMayaHairGeom(&geomDescr.m_node, gdp, geomDescr.m_description);
+		exporter.exportGeomMayaHairGeom(&geomDescr.m_node, gdp, geomDescr.m_description);
 	}
 	else {
-		MeshExporter meshExporter(*gdp, m_exporter);
+		MeshExporter meshExporter(*gdp, exporter);
 		meshExporter.asPluginDesc(geomDescr.m_description);
 	}
 
@@ -613,7 +651,7 @@ void VRayProxyExporter::buildPreviewVoxel(VUtils::MeshVoxel &voxel)
 
 		VUtils::MeshChannel &verts_ch = voxel.channels[ ch_idx++ ];
 		verts_ch.init( sizeof(VUtils::VertGeomData), hairObjInfo.getTotalPreviewVertices(), HAIR_VERT_CHANNEL, HAIR_NUM_VERT_CHANNEL, MF_VERT_CHANNEL, false);
-		verts_ch.data = m_previewHairVerts;
+		verts_ch.data = m_previewStrandVerts;
 
 		// strand channel
 		Log::getLog().info("buildPreviewVoxel populate HAIR_NUM_VERT_CHANNEL");
@@ -681,7 +719,7 @@ void VRayProxyExporter::createHairPreviewGeometry(VUtils::ObjectInfoChannelData 
 	int numPreviewStrands = 0;
 	const int maxPreviewStrands = std::min(m_options.m_maxPreviewStrands, nTotalStrands);
 	if (maxPreviewStrands > 0 && nTotalStrands > 0) {
-		m_previewHairVerts = new VUtils::VertGeomData[ maxPreviewStrands * maxVertsPerStrand ];
+		m_previewStrandVerts = new VUtils::VertGeomData[ maxPreviewStrands * maxVertsPerStrand ];
 		m_previewStrands = new int[ maxPreviewStrands ];
 
 		const float nStrands = static_cast<float>(maxPreviewStrands) / nTotalStrands;
@@ -710,7 +748,7 @@ void VRayProxyExporter::createHairPreviewGeometry(VUtils::ObjectInfoChannelData 
 					m_previewStrands[ numPreviewStrands++ ] = strands[i];
 					for(int k = 0; k < strands[i]; ++k) {
 						VRay::Vector &v = vertices[voffset + k];
-						m_previewHairVerts[ numPreviewVerts++ ].set(v.x, v.y, v.z);
+						m_previewStrandVerts[ numPreviewVerts++ ].set(v.x, v.y, v.z);
 					}
 
 					if (numPreviewStrands >= maxPreviewStrands) {

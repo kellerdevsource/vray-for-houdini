@@ -11,8 +11,11 @@
 #ifndef VRAY_FOR_HOUDINI_EXPORT_VRAYPROXY_H
 #define VRAY_FOR_HOUDINI_EXPORT_VRAYPROXY_H
 
-#include "vfh_exporter.h"
+#include "vfh_plugin_attrs.h"
+
 #include <SOP/SOP_Node.h>
+
+#include <mesh_file.h>
 #include <simplifier.h>
 
 
@@ -22,11 +25,13 @@ struct VRayProxyExportOptions
 {
 	VRayProxyExportOptions() :
 		m_filepath(UT_String::ALWAYS_DEEP),
+		m_mkpath(true),
+		m_overwrite(false),
 		m_exportAsSingle(true),
-		m_animation(false),
+		m_exportAsAnimation(true),
 		m_animStart(0),
 		m_animEnd(0),
-		m_animtime(0),
+		m_animFrames(0),
 		m_lastAsPreview(false),
 		m_applyTransform(false),
 		m_exportVelocity(false),
@@ -39,46 +44,59 @@ struct VRayProxyExportOptions
 		m_exportPCLs(false),
 		m_pointSize(0.5f)
 	{ }
+
 	~VRayProxyExportOptions()
 	{ }
 
-	inline bool              isSequentialFrame() const { return (m_animation && m_animtime > 0); }
-	VRayProxyExportOptions & extendFilepath(const SOP_Node &sop);
+	inline UT_String getFilepath(const SOP_Node &sop) const;
+	inline bool      isAppendMode() const;
 
 ///	filepath to the .vrmesh file
 /// cmd arg: -n "path/to/filename.vrmesh" (mandatory)
 	UT_String m_filepath;
 
-///	(bool) export all geometry in single .vrmesh file
-/// 0 = export each object in separate file, 1 = export all objects in single file
+/// (bool) if true, non-existing dirs in the filepath will be created
 /// default value: true
-/// cmd arg: -m 0/1 (optional)
+/// cmd arg: -r (optional)
+	int m_mkpath;
+
+/// (bool) if true, existing file(s) will be overwritten
+/// default value: false
+/// cmd arg: -f (optional)
+	int m_overwrite;
+
+///	(bool) if true, export all geometry in a single .vrmesh file,
+/// otherwise export each object in separate file
+/// default value: true
+/// cmd arg: -m (optional, if given m_exportAsSingle will be set to false)
 	int m_exportAsSingle;
 
-/// (bool) if true - export frame range
-/// if false - only current frame will be exported
-/// default value: false
+/// (bool) if true, export animation range in a single .vrmesh file
+/// otherwise only current frame will be exported
+/// default value: true
 /// cmd arg: -a animStart animEnd (optional)
-	int m_animation;
+	int m_exportAsAnimation;
 
-/// (int) start frame of the animation
+/// (fpreal) start time of the animation
 /// default value: 0
-/// cmd arg: -a animStart animEnd (mandatory, if animation is true)
-	int m_animStart;
+/// cmd arg: -a animStart animEnd (mandatory, if m_exportAsAnimation is true)
+	fpreal m_animStart;
 
-/// (int) end frame of the animation
+/// (fpreal) end time of the animation
 /// default value: 0
-/// cmd arg: -a animStart animEnd (mandatory, if animation is true)
-	int m_animEnd;
+/// cmd arg: -a animStart animEnd (mandatory, if m_exportAsAnimation is true)
+	fpreal m_animEnd;
 
-/// (float) current time at which geometry is being exported
-/// if 0, it means this will be the first frame saved in file
-/// if > 0, it means geometry data will be appended to file
-/// it is always 0, if exporting each frame in different file
+/// (int) number of frames to be exported
+/// this is calculated based on m_animStart m_animEnd values
 /// default value: 0
-	fpreal m_animtime;
+	int m_animFrames;
 
-/// (bool) if true, use last selected object as preview geometry
+/// (OP_Context) current time at which to export geometry geometry
+/// default value: 0
+	OP_Context m_context;
+
+/// (bool) if true, use last object in list as preview geometry
 /// this option is always false if exporting single object per file
 /// default value: false
 /// cmd arg: -l (optional)
@@ -126,7 +144,7 @@ struct VRayProxyExportOptions
 /// (int) max number of faces per voxel
 /// if 0, assume 1 voxel per mesh
 /// default value: 0
-/// cmd arg: -x maxFacesPerVoxel (optional)
+/// cmd arg: -X maxFacesPerVoxel (optional)
 	int m_maxFacesPerVoxel;
 
 /// (bool) if true, point cloud information will be computed and stored with each voxel in the file
@@ -145,13 +163,12 @@ struct VRayProxyExportOptions
 class VRayProxyExporter : public VUtils::MeshInterface
 {
 public:
-	VRayProxyExporter(SOP_Node * const *nodes, int nodeCnt);
+	VRayProxyExporter(const VRayProxyExportOptions &options, SOP_Node * const *nodes, int nodeCnt);
 	~VRayProxyExporter();
 
-	void                setOptions(const VRayProxyExportOptions &options) { m_options = options; }
-	VUtils::ErrorCode   setContext(const OP_Context &context);
-	void                clearContextData();
-	VUtils::ErrorCode   doExport();
+	VUtils::ErrorCode   init();
+	void                cleanup();
+	VUtils::ErrorCode   doExportFrame();
 
 	int                 getNumVoxels(void) VRAY_OVERRIDE { return m_voxels.size(); }
 	uint32              getVoxelFlags(int i) VRAY_OVERRIDE;
@@ -190,7 +207,7 @@ private:
 
 	VUtils::ErrorCode cacheDescriptionForContext(const OP_Context &context, GeometryDescription &geomDescr);
 	VUtils::ErrorCode getDescriptionForContext(OP_Context &context, GeometryDescription &geomDescr);
-	void getTransformForContext(OP_Context &context, GeometryDescription &geomDescr) const;
+	void              getTransformForContext(OP_Context &context, GeometryDescription &geomDescr) const;
 
 	void buildMeshVoxel(VUtils::MeshVoxel &voxel, GeometryDescription &meshDescr);
 	void buildHairVoxel(VUtils::MeshVoxel &voxel, GeometryDescription &hairDescr);
@@ -204,18 +221,17 @@ private:
 	void createHairPreviewGeometry(VUtils::ObjectInfoChannelData &objInfo);
 	void addObjectInfoForType(uint32 type, VUtils::ObjectInfoChannelData &objInfo);
 
-	int getPreviewStartIdx() const;
+	int  getPreviewStartIdx() const;
 
 private:
-	VRayProxyExportOptions m_options;
-	VRayExporter         m_exporter;
+	const VRayProxyExportOptions &m_options;
 
 	std::vector<VUtils::MeshVoxel>   m_voxels;
 	std::vector<GeometryDescription> m_geomDescrList;
 
 	VUtils::VertGeomData *m_previewVerts;
 	VUtils::FaceTopoData *m_previewFaces;
-	VUtils::VertGeomData *m_previewHairVerts;
+	VUtils::VertGeomData *m_previewStrandVerts;
 	int                  *m_previewStrands;
 };
 

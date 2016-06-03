@@ -12,6 +12,8 @@
 #define VRAY_FOR_HOUDINI_ROP_NODE_VRAYPROXYROP_H
 
 #include "vfh_vray.h"
+#include "vfh_export_vrayproxy.h"
+
 #include <ROP/ROP_Node.h>
 
 
@@ -41,19 +43,11 @@ protected:
 	virtual ROP_RENDER_CODE endRender() VRAY_OVERRIDE;
 
 private:
-	enum ROPError {
-		ROP_ERR_NO_ERR = 0,
-		ROP_ERR_INVALID_PARM,
-		ROP_ERR_INVALID_FILE,
-	};
-
-	int getSOPList(fpreal time, UT_ValArray<SOP_Node *> &sopList);
-	ROPError getExportOptions(fpreal time, VRayProxyExportOptions &options) const;
+	int      getSOPList(fpreal time, UT_ValArray<SOP_Node *> &sopList);
+	int      getExportOptions(fpreal time, VRayProxyExportOptions &options) const;
 
 private:
-	int         m_nframes;
-	fpreal      m_tstart;
-	fpreal      m_tend;
+	VRayProxyExportOptions  m_options;
 	UT_ValArray<SOP_Node *> m_sopList;
 };
 

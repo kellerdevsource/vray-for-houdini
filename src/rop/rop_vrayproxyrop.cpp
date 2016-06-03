@@ -15,6 +15,7 @@
 
 #include <ROP/ROP_Error.h>
 #include <ROP/ROP_Templates.h>
+#include <OBJ/OBJ_Node.h>
 #include <SOP/SOP_Node.h>
 #include <OP/OP_Director.h>
 #include <OP/OP_OperatorTable.h>
@@ -23,6 +24,7 @@
 #include <OP/OP_BundleList.h>
 #include <OP/OP_Options.h>
 #include <PRM/PRM_Include.h>
+#include <PRM/PRM_SpareData.h>
 #include <CH/CH_LocalVariable.h>
 #include <FS/FS_Info.h>
 #include <FS/FS_FileSystem.h>
@@ -43,15 +45,47 @@ VRayProxyROP::~VRayProxyROP()
 
 int VRayProxyROP::startRender(int nframes, fpreal tstart, fpreal tend)
 {
-	m_sopList.clear();
-	if (getSOPList(tstart, m_sopList) <= 0) {
-		addError(ROP_NO_OUTPUT, "No geometry found");
+	UT_String filepath;
+	evalStringRaw(filepath, "filepath", 0, tstart);
+	if (NOT(filepath.isstring())) {
+		addError(ROP_MISSING_FILE, "Invalid file specified");
 		return ROP_ABORT_RENDER;
 	}
 
-	m_nframes = nframes;
-	m_tstart = tstart;
-	m_tend = tend;
+	m_sopList.clear();
+	if (getSOPList(tstart, m_sopList) <= 0) {
+		addError(ROP_NO_OUTPUT, "No geometry found for export");
+		return ROP_ABORT_RENDER;
+	}
+
+	m_options.m_mkpath = evalInt("mkpath", 0, tstart);
+
+	UT_String dirpath;
+	UT_String filename;
+	evalString(filepath, "filepath", 0, tstart);
+	filepath.splitPath(dirpath, filename);
+
+	// create parent dirs if necessary
+	FS_Info fsInfo(dirpath);
+	if (NOT(fsInfo.exists())) {
+		FS_FileSystem fsys;
+		if (   NOT(m_options.m_mkpath)
+			|| NOT(fsys.createDir(dirpath)))
+		{
+			addError(ROP_CREATE_DIRECTORY_FAIL, "Failed to create parent directory");
+			return ROP_ABORT_RENDER;
+		}
+	}
+
+	m_options.m_overwrite          = evalInt("overwrite", 0, tstart);
+	m_options.m_exportAsSingle     = (evalInt("exp_separately", 0, tstart) == 0);
+	m_options.m_lastAsPreview      = evalInt("lastaspreview", 0, tstart);
+	m_options.m_animStart          = tstart;
+	m_options.m_animEnd            = tend;
+	m_options.m_animFrames         = nframes;
+	m_options.m_exportAsAnimation  = ( m_options.m_animFrames > 1)
+									&& NOT(filepath.contains("$F") );
+
 	if (error() < UT_ERROR_ABORT) {
 		executePreRenderScript(tstart);
 	}
@@ -62,71 +96,29 @@ int VRayProxyROP::startRender(int nframes, fpreal tstart, fpreal tend)
 
 ROP_RENDER_CODE VRayProxyROP::renderFrame(fpreal time, UT_Interrupt *boss)
 {
-	VRayProxyExportOptions options;
-	if (getExportOptions(time, options) != ROP_ERR_NO_ERR) {
-		addError(ROP_BAD_COMMAND, "Invalid parameter");
+	if (NOT(getExportOptions(time, m_options))) {
+		addError(ROP_BAD_COMMAND, "Invalid parameters");
 		return ROP_ABORT_RENDER;
 	}
 
 	// Execute the pre-render script.
+	executePreFrameScript(time);
+
 	if (error() < UT_ERROR_ABORT) {
-		executePreFrameScript(time);
-	}
+		int nodeCnt = ((m_options.m_exportAsSingle)? m_sopList.size() : 1);
+		for (int i = 0; i < m_sopList.size(); i += nodeCnt) {
+			VRayProxyExporter exporter(m_options, m_sopList.getRawArray() + i, nodeCnt);
+			VUtils::ErrorCode err = exporter.init();
+			if (err.error()) {
+				addError(ROP_MESSAGE, err.getErrorString().ptr());
+				continue;
+			}
 
-	if (error() >= UT_ERROR_ABORT) {
-		return ROP_ABORT_RENDER;
-	}
-
-	UT_String dirpath;
-	UT_String filename;
-	UT_String filepath(options.m_filepath, true);
-	filepath.splitPath(dirpath, filename);
-
-	// create parent dirs if necessary
-	FS_Info fsInfo(dirpath);
-	if (NOT(fsInfo.exists())) {
-		FS_FileSystem fsys;
-		int mkpath = evalInt("mkpath", 0, time);
-		if (   NOT(mkpath)
-			|| NOT(fsys.createDir(dirpath)))
-		{
-			addError(ROP_CREATE_DIRECTORY_FAIL);
-		}
-	}
-
-	if (error() >= UT_ERROR_ABORT) {
-		return ROP_ABORT_RENDER;
-	}
-
-	OP_Context context(time);
-	int nodeCnt = ((options.m_exportAsSingle)? m_sopList.size() : 1);
-	for (int i = 0; i < m_sopList.size(); i += nodeCnt) {
-		// adjust filepath if exportAsSingle is false
-		options.m_filepath = filepath;
-		options.extendFilepath(*m_sopList(i));
-
-		FS_Info fsInfo(options.m_filepath);
-		if (   fsInfo.fileExists()
-			&& NOT(options.isSequentialFrame())
-			&& NOT(evalInt("overwrite", 0, time)) )
-		{
-			addWarning(ROP_FILE_EXISTS, "File already exists. Skipping");
-			continue;
-		}
-
-		VRayProxyExporter exporter(m_sopList.getRawArray() + i, nodeCnt);
-		exporter.setOptions(options);
-
-		VUtils::ErrorCode err = exporter.setContext(context);
-		if (err.error()) {
-			addWarning(ROP_MESSAGE, err.getErrorString().ptr());
-			continue;
-		}
-
-		// Do actual export
-		err = exporter.doExport();
-		if (err.error()) {
-			addWarning(ROP_MESSAGE, err.getErrorString().ptr());
+			// Do actual export
+			err = exporter.doExportFrame();
+			if (err.error()) {
+				addError(ROP_MESSAGE, err.getErrorString().ptr());
+			}
 		}
 	}
 
@@ -142,7 +134,7 @@ ROP_RENDER_CODE VRayProxyROP::renderFrame(fpreal time, UT_Interrupt *boss)
 ROP_RENDER_CODE VRayProxyROP::endRender()
 {
 	if (error() < UT_ERROR_ABORT) {
-		executePostRenderScript(m_tend);
+		executePostRenderScript(m_options.m_animEnd);
 	}
 
 	return ROP_CONTINUE_RENDER;
@@ -234,20 +226,12 @@ int VRayProxyROP::getSOPList(fpreal time, UT_ValArray<SOP_Node *> &sopList)
 }
 
 
-VRayProxyROP::ROPError VRayProxyROP::getExportOptions(fpreal time, VRayProxyExportOptions &options) const
+int VRayProxyROP::getExportOptions(fpreal time, VRayProxyExportOptions &options) const
 {
-	UT_String filepath;
-	evalStringRaw(filepath, "filepath", 0, time);
-	if (NOT(filepath.isstring())) {
-		return ROP_ERR_INVALID_FILE;
-	}
+	options.m_context.setTime(time);
 
 	evalString(options.m_filepath, "filepath", 0, time);
 
-	options.m_exportAsSingle     = (evalInt("exp_separately", 0, time) == 0);
-	options.m_animation          = (m_nframes > 1) && NOT(filepath.contains("$F"));
-	options.m_animtime           = ((options.m_animation)? (time - m_tstart) : 0);
-	options.m_lastAsPreview      = evalInt("lastaspreview", 0, time);
 	options.m_applyTransform     = evalInt("xformtype", 0, time);
 	options.m_exportVelocity     = evalInt("exp_velocity", 0, time);
 	options.m_velocityStart      = evalFloat("velocity", 0, time);
@@ -259,7 +243,7 @@ VRayProxyROP::ROPError VRayProxyROP::getExportOptions(fpreal time, VRayProxyExpo
 	options.m_exportPCLs         = evalInt("exp_pcls", 0, time);
 	options.m_pointSize          = evalFloat("pointsize", 0, time);
 
-	return ROP_ERR_NO_ERR;
+	return true;
 }
 
 
