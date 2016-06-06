@@ -12,6 +12,7 @@
 #include "vfh_exporter.h"
 #include "vfh_export_mesh.h"
 
+#include <ROP/ROP_Error.h>
 #include <OBJ/OBJ_Node.h>
 #include <FS/FS_Info.h>
 #include <FS/FS_FileSystem.h>
@@ -22,13 +23,6 @@
 
 
 using namespace VRayForHoudini;
-
-
-enum DataError {
-	DE_INCORRECT_GEOM = 1,
-	DE_NO_RENDERABLE_GEOM,
-	DE_EXISTING_FILE
-};
 
 
 VRayExporter& getVRayExporter()
@@ -91,6 +85,71 @@ void VRayProxyExporter::GeometryDescription::clearData()
 	m_transform.matrix.makeIdentity();
 	m_transform.offset.makeZero();
 	m_bbox.init();
+}
+
+
+VUtils::ErrorCode VRayProxyExporter::doExport(VRayProxyExportOptions &options, UT_ValArray<SOP_Node *> sopList)
+{
+	VUtils::ErrorCode err;
+
+	if (sopList.size() <= 0) {
+		err.setError(__FUNCTION__,
+					 ROP_BAD_CONTEXT,
+					 "No geometry found for export");
+		return err;
+	}
+
+	if (NOT(options.m_filepath.isstring())) {
+		err.setError(__FUNCTION__,
+					 ROP_MISSING_FILE,
+					 "Invalid file specified");
+		return err;
+	}
+
+	UT_String dirpath;
+	UT_String filename;
+	options.m_filepath.splitPath(dirpath, filename);
+
+	// create parent dirs if necessary
+	FS_Info fsInfo(dirpath);
+	if (NOT(fsInfo.exists())) {
+		FS_FileSystem fsys;
+		if (   NOT(options.m_mkpath)
+			|| NOT(fsys.createDir(dirpath)))
+		{
+			err.setError(__FUNCTION__,
+						 ROP_CREATE_DIRECTORY_FAIL,
+						 "Failed to create parent directory");
+			return err;
+		}
+	}
+
+	int nodeCnt = ((options.m_exportAsSingle)? sopList.size() : 1);
+	for (int f = 0; f < options.m_animFrames; ++f) {
+		if (err.error()) {
+			break;
+		}
+
+		options.m_context.setTime(options.m_animStart);
+		options.m_context.setFrame(options.m_context.getFrame() + f);
+		for (int i = 0; i < sopList.size(); i += nodeCnt) {
+			VRayProxyExporter exporter(options, sopList.getRawArray() + i, nodeCnt);
+			VUtils::ErrorCode ferr = exporter.init();
+			// TODO: collect errors, not just last one
+			if (ferr.error()) {
+				err = ferr;
+				continue;
+			}
+
+			// Do actual export
+			ferr = exporter.doExportFrame();
+			if (ferr.error()) {
+				err = ferr;
+			}
+		}
+	}
+
+	return err;
 }
 
 
@@ -179,11 +238,15 @@ VUtils::ErrorCode VRayProxyExporter::doExportFrame()
 		&& NOT(m_options.m_overwrite)
 		)
 	{
-		err.setError(__FUNCTION__, DE_EXISTING_FILE, "File already exists: %s", filepath.buffer());
+		err.setError(__FUNCTION__,
+					 ROP_FILE_EXISTS,
+					 "File already exists: %s", filepath.buffer());
 		return err;
 	}
 
-	VUtils::SubdivisionParams subdivParams( m_options.m_maxFacesPerVoxel );
+	VUtils::SubdivisionParams subdivParams;
+	subdivParams.facesPerVoxel = (m_options.m_maxFacesPerVoxel > 0)? m_options.m_maxFacesPerVoxel : INT_MAX;
+
 	return VUtils::subdivideMeshToFile(this,
 									   filepath,
 									   subdivParams,
@@ -278,7 +341,9 @@ VUtils::ErrorCode VRayProxyExporter::cacheDescriptionForContext(const OP_Context
 
 	OP_Network *parentNet = geomDescr.m_node.getParent();
 	if (NOT(parentNet)) {
-		res.setError(__FUNCTION__, DE_NO_RENDERABLE_GEOM, "No renderable geometry found for context #%0.3f!", context.getFloatFrame());
+		res.setError(__FUNCTION__,
+					 ROP_BAD_CONTEXT,
+					 "No renderable geometry found for context #%0.3f!", context.getFloatFrame());
 		return res;
 	}
 
@@ -286,7 +351,9 @@ VUtils::ErrorCode VRayProxyExporter::cacheDescriptionForContext(const OP_Context
 	if (   NOT(parentOBJ)
 		|| NOT(parentOBJ->isObjectRenderable(cntx.getFloatFrame())) ) {
 
-		res.setError(__FUNCTION__, DE_NO_RENDERABLE_GEOM, "No renderable geometry found for context #%0.3f!", context.getFloatFrame());
+		res.setError(__FUNCTION__,
+					 ROP_BAD_CONTEXT,
+					 "No renderable geometry found for context #%0.3f!", context.getFloatFrame());
 		return res;
 	}
 
@@ -384,7 +451,9 @@ VUtils::ErrorCode VRayProxyExporter::getDescriptionForContext(OP_Context &contex
 
 	// NOTE: Could happen, for example, with file node when file is missing
 	if (NOT(gdp)) {
-		res.setError(__FUNCTION__, DE_INCORRECT_GEOM, "Incorrect geometry detail for context #%0.3f!", context.getFloatFrame());
+		res.setError(__FUNCTION__,
+					 ROP_COOK_ERROR,
+					 "Incorrect geometry detail for context #%0.3f!", context.getFloatFrame());
 		return res;
 	}
 
@@ -403,7 +472,9 @@ VUtils::ErrorCode VRayProxyExporter::getDescriptionForContext(OP_Context &contex
 	}
 
 	if (NOT(geomDescr.hasValidData())) {
-		res.setError(__FUNCTION__, DE_INCORRECT_GEOM, "No geometry found for context #%0.3f!", context.getFloatFrame());
+		res.setError(__FUNCTION__,
+					 ROP_COOK_ERROR,
+					 "No geometry found for context #%0.3f!", context.getFloatFrame());
 		return res;
 	}
 

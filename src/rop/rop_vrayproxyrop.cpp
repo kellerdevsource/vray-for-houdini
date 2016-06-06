@@ -188,12 +188,14 @@ int VRayProxyROP::getSOPList(fpreal time, UT_ValArray<SOP_Node *> &sopList)
 																		  rootnet,
 																		  nodeMask,
 																		  PRM_SpareData::objGeometryPath.getOpFilter());
+
 			// get the node list for processing
 			OP_NodeList nodeList;
 			bundle->getMembers(nodeList);
 			// release the internal bundle created by getPattern()
 			OPgetDirector()->getBundles()->deReferenceBundle(bundleName);
 
+			int ignoreHidden = NOT(evalInt("save_hidden", 0, time));
 			for (OP_Node *opnode : nodeList) {
 				UT_String fullpath;
 
@@ -209,10 +211,12 @@ int VRayProxyROP::getSOPList(fpreal time, UT_ValArray<SOP_Node *> &sopList)
 					continue;
 				}
 
-				if (   NOT(evalInt("save_hidden", 0, time))
-					&& (NOT(objNode->getVisible()) || objNode->getTemplate()))
+				if (   sopNode->getTemplate()
+					|| NOT(sopNode->getVisible()) )
 				{
-					continue;
+					if (ignoreHidden) {
+						continue;
+					}
 				}
 
 				sopNode->getFullPath(fullpath);

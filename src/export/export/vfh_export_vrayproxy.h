@@ -28,7 +28,7 @@ struct VRayProxyExportOptions
 		m_mkpath(true),
 		m_overwrite(false),
 		m_exportAsSingle(true),
-		m_exportAsAnimation(true),
+		m_exportAsAnimation(false),
 		m_animStart(0),
 		m_animEnd(0),
 		m_animFrames(0),
@@ -57,7 +57,7 @@ struct VRayProxyExportOptions
 
 /// (bool) if true, non-existing dirs in the filepath will be created
 /// default value: true
-/// cmd arg: -r (optional)
+/// cmd arg: -c (optional)
 	int m_mkpath;
 
 /// (bool) if true, existing file(s) will be overwritten
@@ -162,6 +162,9 @@ struct VRayProxyExportOptions
 
 class VRayProxyExporter : public VUtils::MeshInterface
 {
+public:
+	static VUtils::ErrorCode doExport(VRayProxyExportOptions &options, UT_ValArray<SOP_Node *> sopList);
+
 public:
 	VRayProxyExporter(const VRayProxyExportOptions &options, SOP_Node * const *nodes, int nodeCnt);
 	~VRayProxyExporter();
