@@ -10,6 +10,9 @@
 
 #include "vfh_hou_utils.h"
 
+#include <HOM/HOM_Module.h>
+#include <HOM/HOM_EnumModules.h>
+
 
 int VRayForHoudini::HOU::isApprentice()
 {
@@ -21,3 +24,10 @@ int VRayForHoudini::HOU::isIndie()
 {
 	return (HOM().licenseCategory() == HOM_licenseCategoryType::Indie);
 }
+
+
+int VRayForHoudini::HOU::isUIAvailable()
+{
+	return (HOM().isUIAvailable());
+}
+

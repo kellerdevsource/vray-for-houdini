@@ -11,14 +11,12 @@
 #ifndef VRAY_FOR_HOUDINI_HOU_UTILS_H
 #define VRAY_FOR_HOUDINI_HOU_UTILS_H
 
-#include <HOM/HOM_Module.h>
-#include <HOM/HOM_EnumModules.h>
-
 namespace VRayForHoudini {
 namespace HOU {
 
 int isIndie();
 int isApprentice();
+int isUIAvailable();
 
 } // namespace HOU
 } // namespace VRayForHoudini
