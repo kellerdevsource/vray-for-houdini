@@ -212,6 +212,25 @@ static PRM_Template* getTemplates()
 
 		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_HEADING, 1, &parm_render_sep_export));
 		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_FILE_E, PRM_TYPE_DYNAMIC_PATH, 1, &parm_render_export_path, &parm_render_export_path_def));
+		RenderSettingsPrmTemplate.push_back(
+				Parm::PRMFactory(PRM_TOGGLE_E, "exp_separatefiles", "Export Each Frame In Separate File")
+				.setDefault( PRMzeroDefaults )
+				.addConditional("{ render_export_mode == \"Render\" }", PRM_CONDTYPE_DISABLE)
+				.getPRMTemplate()
+				);
+		RenderSettingsPrmTemplate.push_back(
+				Parm::PRMFactory(PRM_TOGGLE_E, "exp_hexdata", "Export Data In Hex Format")
+				.setDefault( PRMoneDefaults )
+				.addConditional("{ render_export_mode == \"Render\" }", PRM_CONDTYPE_DISABLE)
+				.getPRMTemplate()
+				);
+		RenderSettingsPrmTemplate.push_back(
+				Parm::PRMFactory(PRM_TOGGLE_E, "exp_compressed", "Export Compressed")
+				.setDefault( PRMoneDefaults )
+				.addConditional("{ render_export_mode == \"Render\" }", PRM_CONDTYPE_DISABLE)
+				.getPRMTemplate()
+				);
+
 
 		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_HEADING, 1, &parm_render_sep_networks));
 		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_STRING_E, PRM_TYPE_DYNAMIC_PATH, 1, &Parm::parm_render_net_render_channels, &Parm::PRMemptyStringDefault));

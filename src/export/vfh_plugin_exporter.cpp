@@ -452,7 +452,7 @@ void VRayPluginRenderer::removePlugin(const std::string &pluginName)
 	}
 }
 
-int VRayPluginRenderer::exportScene(const std::string &filepath)
+int VRayPluginRenderer::exportScene(const std::string &filepath, VRay::VRayExportSettings *settings)
 {
 	int res = 0;
 
@@ -462,7 +462,7 @@ int VRayPluginRenderer::exportScene(const std::string &filepath)
 	else if (m_vray) {
 		Log::getLog().info("Starting export to \"%s\"...", filepath.c_str());
 
-		res = m_vray->exportScene(filepath.c_str());
+		res = m_vray->exportScene(filepath.c_str(), settings);
 
 		VRay::Error err = m_vray->getLastError();
 		if (err != VRay::SUCCESS) {

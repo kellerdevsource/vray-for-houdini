@@ -145,7 +145,7 @@ public:
 
 	VRay::Plugin                   exportPlugin(const Attrs::PluginDesc &pluginDesc);
 	void                           exportPluginProperties(VRay::Plugin &plugin, const Attrs::PluginDesc &pluginDesc);
-	int                            exportVrscene(const std::string &filepath);
+	int                            exportVrscene(const std::string &filepath, VRay::VRayExportSettings *settings);
 
 	void                           removePlugin(OBJ_Node *node);
 	void                           removePlugin(const std::string &pluginName);
