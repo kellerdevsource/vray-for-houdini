@@ -18,14 +18,17 @@ export HFS="/opt/hfs${HOUDINI_VER_FULL}"
 export HOUDINI_USER_DIR=${HOME}/houdini${HOUDINI_VER_MAJOR}
 
 # V-Ray Application SDK variables
-export VRAY_SDK="${LAUNCHER_LOCATION}/appsdk"
-export VRAY_PATH="${VRAY_SDK}/bin"
+export VRAY_SDK=${LAUNCHER_LOCATION}/appsdk
+export VRAY_PATH=${VRAY_SDK}/bin
 
 # Set VFB on top
 export VRAY_VFB_ALWAYS_ON_TOP=1
 
 # V-Ray JSON plugin descriptions
 export VRAY_PLUGIN_DESC_PATH="${LAUNCHER_LOCATION}/plugins_desc"
+
+# Phoenix Loaders
+export VRAY_FOR_HOUDINI_AURA_LOADERS=${VRAY_SDK}/bin/plugins
 
 # Add libs to path
 export PATH=${HFS}/bin:${VRAY_PATH}:${PATH}

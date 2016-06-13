@@ -15,6 +15,7 @@
 #include "vfh_prm_json.h"
 
 #include <aurinterface.h>
+#include <aurloader.h>
 
 #include <GU/GU_PrimVolume.h>
 #include <GEO/GEO_Primitive.h>
@@ -80,7 +81,7 @@ SOP::FluidFrame* SOP::FluidCache::getData(const char *filePath, const int fluidR
 		fluidFrame = &m_frames[filePath];
 	}
 	else {
-		IAur *pAuraInterface = IAur::New(filePath);
+		IAur *pAuraInterface = newIAur(filePath);
 		if (pAuraInterface) {
 			if (pAuraInterface->ChannelPresent(PHX_SM)) {
 				int gridDimensions[3];
@@ -147,7 +148,7 @@ SOP::FluidFrame* SOP::FluidCache::getData(const char *filePath, const int fluidR
 				}
 			}
 
-			IAur::Delete(pAuraInterface);
+			deleteIAur(pAuraInterface);
 		}
 	}
 

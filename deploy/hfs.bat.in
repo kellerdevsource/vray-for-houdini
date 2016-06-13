@@ -3,6 +3,11 @@
 
 @echo off
 
+:: Houdini User Home
+if NOT DEFINED HOME set HOME=%USERPROFILE%\Documents
+
+set HOUDINI_USER_DIR=%HOME%\houdini%HOUDINI_VER_MAJOR%
+
 :: Use OpenVDB < 3
 ::
 set HOUDINI13_VOLUME_COMPATIBILITY=1
@@ -25,14 +30,13 @@ set VRAY_VFB_ALWAYS_ON_TOP=1
 :: V-Ray JSON plugin descriptions
 set VRAY_PLUGIN_DESC_PATH=%LAUNCHER_LOCATION%\plugins_desc
 
+:: Phoenix Loaders
+set VRAY_FOR_HOUDINI_AURA_LOADERS=%VRAY_SDK%\bin\plugins
+
 :: Report loading errors
 set HOUDINI_DSO_ERROR=1
 
 :: Install Files
-if NOT DEFINED HOME set HOME=%USERPROFILE%\Documents
-
-set HOUDINI_USER_DIR=%HOME%\houdini%HOUDINI_VER_MAJOR%
-
 xcopy /s /y "%LAUNCHER_LOCATION%\dso\vray_for_houdini.dll" "%HOUDINI_USER_DIR%\dso\"
 xcopy /s /y "%LAUNCHER_LOCATION%\deploy\ROP_vray.svg" "%HOUDINI_USER_DIR%\config\Icons\"
 xcopy /s /y "%LAUNCHER_LOCATION%\deploy\vfh*.shelf" "%HOUDINI_USER_DIR%\toolbar\"

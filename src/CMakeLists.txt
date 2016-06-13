@@ -64,7 +64,10 @@ link_with_vray_appsdk(${PROJECT_NAME})
 link_with_boost(${PROJECT_NAME})
 
 if (Phoenix_FOUND)
-	target_link_libraries(${PROJECT_NAME} aurloader)
+	target_link_libraries(${PROJECT_NAME}
+		aurloader_s
+		aurloader
+	)
 endif()
 
 set(CGR_SRC_HASH "" CACHE STRING "Sources hash (for Teamcity)")

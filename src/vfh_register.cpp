@@ -38,7 +38,7 @@
 #include <UT/UT_IOTable.h>
 
 #ifdef CGR_HAS_AUR
-#  include <aurinterface.h>
+#  include <aurloader.h>
 #endif
 
 
@@ -91,6 +91,16 @@ void newDriverOperator(OP_OperatorTable *table)
 void newSopOperator(OP_OperatorTable *table)
 {
 #ifdef CGR_HAS_AUR
+	const char *vfhPhoenixLoaderDir = getenv("VRAY_FOR_HOUDINI_AURA_LOADERS");
+	if (vfhPhoenixLoaderDir && *vfhPhoenixLoaderDir) {
+		Log::getLog().info("Loading Phoenix cache loader plugins from \"%s\"...",
+						   vfhPhoenixLoaderDir);
+		if (!initalizeAuraLoader(vfhPhoenixLoaderDir, "vray", 2)) {
+			Log::getLog().error("Failed to load Phoenix cache loader plugins from \"%s\"!",
+								vfhPhoenixLoaderDir);
+		}
+	}
+
 	VFH_SOP_ADD_OPERATOR_INPUTS(table, "GEOMETRY", PhxShaderCache, SOP::PhxShaderCache::GetPrmTemplate(), 0, 1);
 #endif
 
