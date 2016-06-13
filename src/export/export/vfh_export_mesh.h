@@ -81,6 +81,13 @@ typedef std::unordered_map<std::string, MapChannel> MapChannels;
 class MeshExporter
 {
 public:
+	enum NormalsType {
+		normalsNone = 0,
+		normalsFromPoint,
+		normalsFromVertex,
+	};
+
+public:
 	static bool isPrimPoly(const GA_Primitive &prim);
 	static bool getDataFromAttribute(const GA_Attribute *attr, VRay::VUtils::VectorRefList &data);
 
@@ -103,7 +110,7 @@ public:
 	VRay::VUtils::VectorRefList& getNormals();
 	VRay::VUtils::VectorRefList& getVelocities();
 	VRay::VUtils::IntRefList&    getFaces();
-	VRay::VUtils::IntRefList&    getFaceNormals() { return getFaces(); }
+	VRay::VUtils::IntRefList     getFaceNormals();
 	VRay::VUtils::IntRefList&    getEdgeVisibility();
 	VRay::VUtils::IntRefList&    getFaceMtlIDs();
 	MapChannels&                 getMapChannels();
@@ -154,6 +161,9 @@ private:
 	VRay::VUtils::IntRefList    edge_visibility;
 	VRay::VUtils::IntRefList    face_mtlIDs;
 	MapChannels                 map_channels_data;
+
+	NormalsType                 m_normalsType;
+	VRay::VUtils::IntRefList    m_faceNormals;
 };
 
 
