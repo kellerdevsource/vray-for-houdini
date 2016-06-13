@@ -61,7 +61,7 @@ void SOP::VRayProxy::addPrmTemplate(Parm::PRMTmplList &prmTemplate)
 }
 
 
-int SOP::VRayProxy::cbClearCache(void *data, int /*index*/, float t, const PRM_Template */*tplate*/)
+int SOP::VRayProxy::cbClearCache(void *data, int /*index*/, float t, const PRM_Template* /*tplate*/)
 {
 	OP_Node *node = reinterpret_cast<OP_Node *>(data);
 	UT_String filepath;
