@@ -12,6 +12,7 @@ export HOUDINI_VER_FULL=${HOUDINI_VER_MAJOR}.@HOUDINI_VERSION_BUILD@
 #
 LAUNCHER_FILEPATH=`readlink -f $0`
 export LAUNCHER_LOCATION=`dirname ${LAUNCHER_FILEPATH}`
+export HOUDINI_USER_DIR=${HOME}/houdini${HOUDINI_VER_MAJOR}
 
 # V-Ray Application SDK variables
 export VRAY_SDK="${LAUNCHER_LOCATION}/appsdk"
@@ -39,11 +40,9 @@ export JAVA_HOME=/Library/Java/Home
 
 # Add libs to path
 export PATH=${HB}:${HSB}:${VRAY_PATH}:${PATH}
-export DYLD_LIBRARY_PATH=${VRAY_SDK}/bin:${DYLD_LIBRARY_PATH}
+export DYLD_LIBRARY_PATH=${VRAY_SDK}/bin:${HOUDINI_USER_DIR}/vfh/lib:${DYLD_LIBRARY_PATH}
 
 # Install Files
-export HOUDINI_USER_DIR=${HOME}/houdini${HOUDINI_VER_MAJOR}
-
 mkdir -p "${HOUDINI_USER_DIR}/dso"
 mkdir -p "${HOUDINI_USER_DIR}/toolbar"
 mkdir -p "${HOUDINI_USER_DIR}/config/Icons"

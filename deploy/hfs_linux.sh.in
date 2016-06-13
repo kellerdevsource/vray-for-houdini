@@ -15,6 +15,8 @@ export LAUNCHER_LOCATION=`dirname ${LAUNCHER_FILEPATH}`
 
 export HFS="/opt/hfs${HOUDINI_VER_FULL}"
 
+export HOUDINI_USER_DIR=${HOME}/houdini${HOUDINI_VER_MAJOR}
+
 # V-Ray Application SDK variables
 export VRAY_SDK="${LAUNCHER_LOCATION}/appsdk"
 export VRAY_PATH="${VRAY_SDK}/bin"
@@ -27,14 +29,12 @@ export VRAY_PLUGIN_DESC_PATH="${LAUNCHER_LOCATION}/plugins_desc"
 
 # Add libs to path
 export PATH=${HFS}/bin:${VRAY_PATH}:${PATH}
-export LD_LIBRARY_PATH=${VRAY_SDK}/bin:${LD_LIBRARY_PATH}
+export LD_LIBRARY_PATH=${VRAY_SDK}/bin:${HOUDINI_USER_DIR}/vfh/lib:${LD_LIBRARY_PATH}
 
 # Report loading errors
 export HOUDINI_DSO_ERROR=1
 
 # Install Files
-export HOUDINI_USER_DIR=${HOME}/houdini${HOUDINI_VER_MAJOR}
-
 mkdir -p "${HOUDINI_USER_DIR}/dso"
 mkdir -p "${HOUDINI_USER_DIR}/toolbar"
 mkdir -p "${HOUDINI_USER_DIR}/config/Icons"
