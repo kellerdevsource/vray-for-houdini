@@ -153,6 +153,8 @@ public:
 
 	PRMFactory& setParmGroup(int);
 
+	PRMFactory& setInvisible(bool v);
+
 	PRMFactory& addConditional(const char *conditional, PRM_ConditionalType type = PRM_CONDTYPE_DISABLE);
 
 	PRMFactory& setHelpText(const char*);

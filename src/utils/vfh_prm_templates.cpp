@@ -340,7 +340,8 @@ struct Parm::PRMFactory::PImplPRM
 		callbackFunc(0),
 		spareData(nullptr),
 		conditional(nullptr),
-		helpText(nullptr)
+		helpText(nullptr),
+		invisible(false)
 	{ }
 
 
@@ -359,7 +360,8 @@ struct Parm::PRMFactory::PImplPRM
 		callbackFunc(0),
 		spareData(nullptr),
 		conditional(nullptr),
-		helpText(nullptr)
+		helpText(nullptr),
+		invisible(false)
 	{
 		setName(token, label);
 	}
@@ -389,6 +391,7 @@ struct Parm::PRMFactory::PImplPRM
 	const PRM_SpareData*       spareData;
 	PRM_ConditionalGroup*      conditional;
 	const char*                helpText;
+	bool                       invisible;
 };
 
 
@@ -619,6 +622,12 @@ Parm::PRMFactory& Parm::PRMFactory::setParmGroup(int n)
 	return *this;
 }
 
+Parm::PRMFactory& Parm::PRMFactory::setInvisible(bool v)
+{
+	m_prm->invisible = v;
+	return *this;
+}
+
 
 Parm::PRMFactory& Parm::PRMFactory::addConditional(const char *conditional, PRM_ConditionalType type)
 {
@@ -639,8 +648,10 @@ Parm::PRMFactory& Parm::PRMFactory::setHelpText(const char* t)
 
 PRM_Template Parm::PRMFactory::getPRMTemplate() const
 {
+	PRM_Template tmpl;
+
 	if (m_prm->multiType != PRM_MULTITYPE_NONE) {
-		return PRM_Template(
+		tmpl.initMulti(
 			m_prm->multiType,
 			const_cast<PRM_Template*>(m_prm->multiparms),
 			m_prm->exportLevel,
@@ -648,13 +659,14 @@ PRM_Template Parm::PRMFactory::getPRMTemplate() const
 			const_cast<PRM_Name*>(m_prm->name),
 			const_cast<PRM_Default*>(m_prm->defaults),
 			const_cast<PRM_Range*>(m_prm->range),
+			m_prm->callbackFunc,
 			const_cast<PRM_SpareData*>(m_prm->spareData),
 			m_prm->helpText,
-			m_prm->conditional,
-			m_prm->callbackFunc);
+			m_prm->conditional
+			);
 	}
 	else {
-		return PRM_Template(
+		tmpl.initialize(
 			m_prm->type,
 			m_prm->typeExtended,
 			m_prm->exportLevel,
@@ -670,5 +682,7 @@ PRM_Template Parm::PRMFactory::getPRMTemplate() const
 			m_prm->conditional);
 	}
 
-	return PRM_Template();
+	tmpl.setInvisible(m_prm->invisible);
+
+	return tmpl;
 }

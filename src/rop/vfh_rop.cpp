@@ -216,6 +216,7 @@ static PRM_Template* getTemplates()
 				Parm::PRMFactory(PRM_TOGGLE_E, "exp_separatefiles", "Export Each Frame In Separate File")
 				.setDefault( PRMzeroDefaults )
 				.addConditional("{ render_export_mode == \"Render\" }", PRM_CONDTYPE_DISABLE)
+				.setInvisible(true)
 				.getPRMTemplate()
 				);
 		RenderSettingsPrmTemplate.push_back(
