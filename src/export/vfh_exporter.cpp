@@ -1355,7 +1355,7 @@ void VRayExporter::RtCallbackObjManager(OP_Node *caller, void *callee, OP_EventT
 
 void VRayExporter::exportScene()
 {
-	setFrame(m_context.getFloatFrame());
+	setCurrentTime(m_context.getTime());
 
 	Log::getLog().debug("VRayExporter::exportScene(%.3f)",
 						m_context.getFloatFrame());
@@ -1415,7 +1415,7 @@ void VRayExporter::fillMotionBlurParams(MotionBlurParams &mbParams)
 	OBJ_Node *camera = getCamera(m_rop);
 	if (camera && isPhysicalView(*camera)) {
 		const int cameraType = Parm::getParmInt(*camera, "CameraPhysical_type");
-		const float frameDuration = OPgetDirector()->getChannelManager()->getSecsPerSample();
+		const fpreal frameDuration = OPgetDirector()->getChannelManager()->getSecsPerSample();
 
 		switch (cameraType) {
 			// Still camera
@@ -1476,9 +1476,9 @@ void VRayExporter::removePlugin(const Attrs::PluginDesc &pluginDesc)
 }
 
 
-void VRayExporter::setFrame(float frame)
+void VRayExporter::setCurrentTime(fpreal time)
 {
-	m_renderer.setFrame(frame);
+	m_renderer.setCurrentTime(time);
 }
 
 
@@ -1612,26 +1612,29 @@ int VRayExporter::isStereoView() const
 
 int VRayExporter::renderFrame(int locked)
 {
-	setFrame(m_context.getFloatFrame());
+	const fpreal t = getContext().getTime();
+	setCurrentTime(t);
 
 	Log::getLog().debug("VRayExporter::renderFrame(%.3f)", m_context.getFloatFrame());
 
 	if (m_workMode == ExpWorkMode::ExpRender || m_workMode == ExpWorkMode::ExpExportRender) {
 		m_renderer.startRender(locked);
 	}
-	if (m_workMode == ExpWorkMode::ExpExport || m_workMode == ExpWorkMode::ExpExportRender) {
-		if (m_exportFilepath.empty()) {
-			Log::getLog().error("Export mode is selected, but no filepath specified!");
-		}
-		else {
-			const fpreal t = getContext().getTime();
 
+	if (m_workMode == ExpWorkMode::ExpExport || m_workMode == ExpWorkMode::ExpExportRender) {
+		UT_String exportFilepath;
+		m_rop->evalString(exportFilepath, "render_export_filepath", 0, t);
+
+		if (exportFilepath.isstring()) {
 			VRay::VRayExportSettings expSettings;
 			expSettings.framesInSeparateFiles = m_rop->evalInt("exp_separatefiles", 0, t);
 			expSettings.useHexFormat = m_rop->evalInt("exp_hexdata", 0, t);
 			expSettings.compressed = m_rop->evalInt("exp_compressed", 0, t);
 
-			exportVrscene(m_exportFilepath, &expSettings);
+			exportVrscene(exportFilepath.toStdString(), &expSettings);
+		}
+		else {
+			Log::getLog().error("Export mode is selected, but no filepath specified!");
 		}
 	}
 
@@ -1667,12 +1670,6 @@ void VRayExporter::setAnimation(bool on)
 
 	m_isAnimation = on;
 	m_renderer.setAnimation(on);
-}
-
-
-void VRayExporter::setExportFilepath(const std::string &path)
-{
-	m_exportFilepath = path;
 }
 
 
@@ -1812,13 +1809,13 @@ int VRayExporter::hasMotionBlur(OP_Node &rop, OBJ_Node &camera) const
 }
 
 
-void MotionBlurParams::calcParams(float frameCurrent)
+void MotionBlurParams::calcParams(fpreal currFrame)
 {
-	mb_start = frameCurrent - (mb_duration * (0.5 - mb_interval_center));
+	mb_start = currFrame - (mb_duration * (0.5 - mb_interval_center));
 	mb_end   = mb_start + mb_duration;
 	mb_frame_inc = mb_duration / (mb_geom_samples + 1);
 
-	Log::getLog().info("  MB frame: %.3f", frameCurrent);
+	Log::getLog().info("  MB time: %.3f", currFrame);
 	Log::getLog().info("  MB duration: %.3f", mb_duration);
 	Log::getLog().info("  MB interval center: %.3f", mb_interval_center);
 	Log::getLog().info("  MB geom samples: %i", mb_geom_samples);

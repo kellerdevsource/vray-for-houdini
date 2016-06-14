@@ -143,7 +143,7 @@ public:
 	void                          commit();
 
 	void                          setAnimation(bool on);
-	void                          setFrame(fpreal frame);
+	void                          setCurrentTime(fpreal time);
 	void                          setCamera(VRay::Plugin camera);
 	void                          setRendererMode(int mode);
 	void                          setAutoCommit(const bool enable);

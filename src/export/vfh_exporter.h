@@ -70,19 +70,21 @@ typedef std::vector<OpInterestItem> CbItems;
 struct MotionBlurParams {
 	MotionBlurParams()
 		: mb_geom_samples(1)
-		, mb_duration(0.0f)
-		, mb_interval_center(0.0f)
+		, mb_duration(0.)
+		, mb_interval_center(0.)
 	{}
 
-	void   calcParams(float frameCurrent);
+	void   calcParams(fpreal currFrame);
 
 	int    mb_geom_samples;
-	float  mb_duration;
-	float  mb_interval_center;
+	/// (fpreal) motion blur duration in frames
+	fpreal mb_duration;
+	/// (fpreal) motion blur interval center in frames
+	fpreal mb_interval_center;
 
-	float  mb_start;
-	float  mb_end;
-	float  mb_frame_inc;
+	fpreal mb_start;
+	fpreal mb_end;
+	fpreal mb_frame_inc;
 };
 
 
@@ -157,14 +159,13 @@ public:
 	void                           clearKeyFrames(float toTime);
 
 	void                           setAnimation(bool on);
-	void                           setFrame(float frame);
+	void                           setCurrentTime(fpreal time);
 	void                           setIPR(int isIPR);
 	void                           setDRSettings();
 	void                           setRendererMode(int mode);
 	void                           setWorkMode(ExpWorkMode mode);
 	void                           setContext(const OP_Context &ctx);
 	void                           setAbort();
-	void                           setExportFilepath(const std::string &path);
 	void                           setRenderSize(int w, int h);
 	void                           setSettingsRtEngine();
 
@@ -220,7 +221,6 @@ private:
 	ViewParams                     m_viewParams;
 	int                            m_frames;
 	ROP_RENDER_CODE                m_error;
-	std::string                    m_exportFilepath;
 	ExpWorkMode                    m_workMode;
 	CbItems                        m_opRegCallbacks;
 	VRay::ValueList                m_phxSimulations;

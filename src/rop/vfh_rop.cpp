@@ -337,14 +337,6 @@ static VRayExporter::ExpWorkMode getExporterWorkMode(OP_Node &rop)
 }
 
 
-static std::string getExportFilepath(OP_Node &rop)
-{
-	UT_String exportFilepath;
-	rop.evalString(exportFilepath, parm_render_export_path.getToken(), 0, 0.0);
-	return exportFilepath.toStdString();
-}
-
-
 static int isBackground()
 {
 	return NOT(HOU::isUIAvailable());
@@ -479,7 +471,6 @@ int VRayRendererNode::initSession(int interactive, int nframes, fpreal tstart, f
 
 			m_exporter.setDRSettings();
 			m_exporter.setRendererMode(rendererMode);
-			m_exporter.setExportFilepath(getExportFilepath(*this));
 
 			m_exporter.exportSettings();
 

@@ -533,10 +533,10 @@ void VRayForHoudini::VRayPluginRenderer::setAnimation(bool on)
 }
 
 
-void VRayForHoudini::VRayPluginRenderer::setFrame(fpreal frame)
+void VRayForHoudini::VRayPluginRenderer::setCurrentTime(fpreal time)
 {
 	if (m_vray) {
-		m_vray->setCurrentTime(frame);
+		m_vray->setCurrentTime(time);
 	}
 }
 
