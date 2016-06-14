@@ -547,7 +547,7 @@ VRayExporter::~VRayExporter()
 
 void VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 {
-	const fpreal t = m_context.getTime();
+	const fpreal t = getContext().getTime();
 	OBJ_Node *camera = VRayExporter::getCamera(m_rop);
 
 	fpreal pixelAspect = camera->evalFloat("aspect", 0, t);
@@ -561,6 +561,18 @@ void VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 	}
 
 	pluginDesc.addAttribute(Attrs::PluginAttr("img_pixelAspect", pixelAspect));
+
+	// Houdini's time unit is fixed to second
+	// so here we are exporting animation related properties in seconds
+	// TODO: need to fix this in future
+	// SettingsOutput::frame_start should be set to ctx.getFrame() i.e. start frame of the animation range
+	// however there seems to be a bug in AppSDK and internally time is not caculated correctly
+	// when using VRayRenderer::setCurrentTime() (Ticket in Jira: V-Ray | AppSDKASDK-242)
+	pluginDesc.addAttribute(Attrs::PluginAttr("anim_start", m_timeStart));
+	pluginDesc.addAttribute(Attrs::PluginAttr("frame_start", 0));
+	pluginDesc.addAttribute(Attrs::PluginAttr("anim_end", m_timeEnd));
+	pluginDesc.addAttribute(Attrs::PluginAttr("frames_per_second",
+											  OPgetDirector()->getChannelManager()->getSamplesPerSec()));
 }
 
 
@@ -584,7 +596,12 @@ void VRayExporter::exportSettings()
 	}
 
 	Attrs::PluginDesc pluginDesc("settingsUnitsInfo", "SettingsUnitsInfo");
+	// Houdini's time unit is fixed to second
+	// so SettingsUnitsInfo::seconds_scale shhould always be 1
 	pluginDesc.addAttribute(Attrs::PluginAttr("scene_upDir", VRay::Vector(0.0f, 1.0f, 0.0f)));
+	pluginDesc.addAttribute(Attrs::PluginAttr("meters_scale",
+											  OPgetDirector()->getChannelManager()->getUnitLength()));
+
 	exportPlugin(pluginDesc);
 }
 
@@ -1612,8 +1629,7 @@ int VRayExporter::isStereoView() const
 
 int VRayExporter::renderFrame(int locked)
 {
-	const fpreal t = getContext().getTime();
-	setCurrentTime(t);
+	setCurrentTime(getContext().getTime());
 
 	Log::getLog().debug("VRayExporter::renderFrame(%.3f)", m_context.getFloatFrame());
 
@@ -1622,6 +1638,8 @@ int VRayExporter::renderFrame(int locked)
 	}
 
 	if (m_workMode == ExpWorkMode::ExpExport || m_workMode == ExpWorkMode::ExpExportRender) {
+		const fpreal t = getContext().getTime();
+
 		UT_String exportFilepath;
 		m_rop->evalString(exportFilepath, "render_export_filepath", 0, t);
 
