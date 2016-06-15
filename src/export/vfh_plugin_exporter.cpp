@@ -25,7 +25,54 @@ using namespace VRayForHoudini;
 using namespace VRayForHoudini::Attrs;
 
 
-AppSdkInit VRayPluginRenderer::vrayInit;
+struct AppSdkInit
+{
+public:
+	static AppSdkInit& getInstance()
+	{
+		static AppSdkInit instance;
+		return instance;
+	}
+
+	operator bool () const
+	{
+		return !!(m_vrayInit);
+	}
+
+private:
+	// don't allow public construct/destruct
+	AppSdkInit():
+		m_vrayInit(nullptr)
+	{
+		Log::getLog().debug("AppSdkInit()");
+
+		try {
+#ifdef __APPLE__
+			m_vrayInit = new VRay::VRayInit(false);
+#else
+			m_vrayInit = new VRay::VRayInit(HOU::isUIAvailable());
+#endif
+		}
+		catch (VRay::VRayException &e) {
+			Log::getLog().error("Error initializing V-Ray library! Error: \"%s\"",
+								e.what());
+			m_vrayInit = nullptr;
+		}
+	}
+
+	~AppSdkInit()
+	{
+		Log::getLog().debug("~AppSdkInit()");
+		FreePtr(m_vrayInit);
+	}
+
+	// disable copy & assignment
+	AppSdkInit(AppSdkInit const&);
+	AppSdkInit& operator=(AppSdkInit const&);
+
+private:
+	VRay::VRayInit *m_vrayInit;
+};
 
 
 static void OnDumpMessage(VRay::VRayRenderer &renderer, const char *msg, int level, void *userData)
@@ -142,6 +189,12 @@ static void OnBucketReady(VRay::VRayRenderer &renderer, int x, int y, const char
 }
 
 
+bool VRayPluginRenderer::initialize()
+{
+	return AppSdkInit::getInstance();
+}
+
+
 VRayPluginRenderer::VRayPluginRenderer()
 	: m_vray(nullptr)
 {
@@ -175,7 +228,7 @@ int VRayPluginRenderer::initRenderer(int hasUI, int reInit)
 		QApplication::setPalette(mainWindow->palette());
 	}
 
-	if (VRayPluginRenderer::vrayInit) {
+	if (initialize()) {
 		vfbParent(nullptr);
 
 		if (reInit) {
@@ -189,10 +242,11 @@ int VRayPluginRenderer::initRenderer(int hasUI, int reInit)
 		if (!m_vray) {
 			try {
 				VRay::RendererOptions options;
-				options.keepRTRunning = true;
+				options.enableFrameBuffer = hasUI;
 				options.showFrameBuffer = hasUI;
 				options.useDefaultVfbTheme = false;
 				options.vfbDrawStyle = VRay::RendererOptions::ThemeStyleMaya;
+				options.keepRTRunning = true;
 
 				m_vray = new VRay::VRayRenderer(options);
 

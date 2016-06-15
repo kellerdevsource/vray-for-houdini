@@ -90,44 +90,10 @@ struct CbCollection {
 };
 
 
-struct AppSdkInit {
-	AppSdkInit()
-		: m_vrayInit(nullptr)
-	{
-		Log::getLog().debug("AppSdkInit()");
-
-		try {
-#ifdef __APPLE__
-			m_vrayInit = new VRay::VRayInit(false);
-#else
-			m_vrayInit = new VRay::VRayInit(true);
-#endif
-		}
-		catch (VRay::VRayException &e) {
-			Log::getLog().error("Error initializing V-Ray library! Error: \"%s\"",
-								e.what());
-			m_vrayInit = nullptr;
-		}
-	}
-
-	~AppSdkInit() {
-		Log::getLog().debug("~AppSdkInit()");
-		FreePtr(m_vrayInit);
-	}
-
-	operator bool () const {
-		return !!(m_vrayInit);
-	}
-
-private:
-	VRay::VRayInit *m_vrayInit;
-
-	VfhDisableCopy(AppSdkInit)
-};
-
-
-class VRayPluginRenderer {
-	static AppSdkInit             vrayInit;
+class VRayPluginRenderer
+{
+public:
+	static bool initialize();
 
 public:
 	VRayPluginRenderer();

@@ -77,6 +77,8 @@ void newDriverOperator(OP_OperatorTable *table)
 	Error::ErrorChaser &errChaser = Error::getErrorChaser();
 	errChaser.enable(true);
 
+	VRayPluginRenderer::initialize();
+
 	VRayRendererNode::register_operator(table);
 
 	VOP::VRayVOPContext::register_operator_vrayrccontext(table);
