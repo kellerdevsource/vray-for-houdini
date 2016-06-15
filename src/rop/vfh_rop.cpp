@@ -467,11 +467,11 @@ int VRayRendererNode::initSession(int interactive, int nframes, fpreal tstart, f
 		m_exporter.setIPR(isRT);
 
 		if (m_exporter.initRenderer(!isBackground(), reCreate)) {
+			m_exporter.setRendererMode(rendererMode);
+			m_exporter.setDRSettings();
+
 			m_exporter.setWorkMode(getExporterWorkMode(*this));
 			m_exporter.initExporter(getFrameBufferType(*this), nframes, tstart, tend);
-
-			m_exporter.setDRSettings();
-			m_exporter.setRendererMode(rendererMode);
 
 			m_exporter.exportSettings();
 
