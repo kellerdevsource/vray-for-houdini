@@ -36,7 +36,7 @@ public:
 
 	operator bool () const
 	{
-		return !!(m_vrayInit);
+		return (m_vrayInit != nullptr);
 	}
 
 private:
@@ -56,7 +56,7 @@ private:
 		catch (VRay::VRayException &e) {
 			Log::getLog().error("Error initializing V-Ray library! Error: \"%s\"",
 								e.what());
-			m_vrayInit = nullptr;
+			FreePtr(m_vrayInit);
 		}
 	}
 

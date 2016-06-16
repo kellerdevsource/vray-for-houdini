@@ -178,6 +178,7 @@ public:
 	int                            isIPR() const { return m_isIPR; }
 	int                            isAborted() const { return m_isAborted; }
 	int                            isAnimation() const { return m_isAnimation; }
+	int                            isBackgroundRendering() const;
 	int                            isStereoView() const;
 	int                            isPhysicalView(const OBJ_Node &camera) const;
 	int                            isNodeAnimated(OP_Node *op_node);

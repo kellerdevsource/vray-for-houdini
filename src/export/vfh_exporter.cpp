@@ -13,6 +13,7 @@
 #include "vfh_prm_globals.h"
 #include "vfh_prm_templates.h"
 #include "vfh_tex_utils.h"
+#include "vfh_hou_utils.h"
 
 #include "obj/obj_node_base.h"
 #include "vop/vop_node_base.h"
@@ -1633,10 +1634,6 @@ int VRayExporter::renderFrame(int locked)
 
 	Log::getLog().debug("VRayExporter::renderFrame(%.3f)", m_context.getFloatFrame());
 
-	if (m_workMode == ExpWorkMode::ExpRender || m_workMode == ExpWorkMode::ExpExportRender) {
-		m_renderer.startRender(locked);
-	}
-
 	if (m_workMode == ExpWorkMode::ExpExport || m_workMode == ExpWorkMode::ExpExportRender) {
 		const fpreal t = getContext().getTime();
 
@@ -1654,6 +1651,10 @@ int VRayExporter::renderFrame(int locked)
 		else {
 			Log::getLog().error("Export mode is selected, but no filepath specified!");
 		}
+	}
+
+	if (m_workMode == ExpWorkMode::ExpRender || m_workMode == ExpWorkMode::ExpExportRender) {
+		m_renderer.startRender(locked);
 	}
 
 	return 0;
@@ -1827,6 +1828,12 @@ int VRayExporter::hasMotionBlur(OP_Node &rop, OBJ_Node &camera) const
 }
 
 
+int VRayExporter::isBackgroundRendering() const
+{
+	return HOU::isUIAvailable() && NOT(isAnimation());
+}
+
+
 void MotionBlurParams::calcParams(fpreal currFrame)
 {
 	mb_start = currFrame - (mb_duration * (0.5 - mb_interval_center));
@@ -1894,7 +1901,7 @@ void VRayExporter::exportFrame(fpreal time)
 		m_error = ROP_ABORT_RENDER;
 	}
 	else {
-		renderFrame(isAnimation());
+		renderFrame(NOT(isBackgroundRendering()));
 	}
 }
 
