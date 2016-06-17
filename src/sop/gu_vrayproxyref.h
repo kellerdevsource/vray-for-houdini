@@ -43,7 +43,7 @@ public:
 	virtual void              clearData() VRAY_OVERRIDE;
 
 	virtual bool   load(const UT_Options &options, const GA_LoadMap &) VRAY_OVERRIDE
-	{ updateFrom(options); return true; }
+	{ return updateFrom(options); }
 	virtual void   update(const UT_Options &options) VRAY_OVERRIDE
 	{ updateFrom(options); }
 	virtual bool   save(UT_Options &options, const GA_SaveMap &map) const VRAY_OVERRIDE;
@@ -75,18 +75,41 @@ public:
 
 	inline const UT_Options &            getOptions() const { return m_options.getOptions(); }
 	inline exint                         getGeometryid() const;
+
 	inline const char *                  getFilepath() const { return m_options.getFilepath(); }
-	inline const char *                  getLOD() const;
+	inline void                          setFilepath(const char *filepath);
+
+	inline exint                         getLOD() const { return m_options.getLOD(); }
+	inline void                          setLOD(exint lod);
+	inline const char *                  getLODName() const;
+
 	inline fpreal64                      getFloatFrame() const { return m_options.getFloatFrame(); }
+	inline void                          setFloatFrame(fpreal64 frame);
+
 	inline exint                         getAnimType() const { return m_options.getAnimType(); }
+	inline void                          setAnimType(exint animType);
 	inline const char *                  getAnimTypeName() const;
+
 	inline fpreal64                      getAnimOffset() const { return m_options.getAnimOffset(); }
+	inline void                          setAnimOffset(fpreal64 offset);
+
 	inline fpreal64                      getAnimSpeed() const { return m_options.getAnimSpeed(); }
+	inline void                          setAnimSpeed(fpreal64 speed);
+
 	inline bool                          getAnimOverride() const { return m_options.getAnimOverride(); }
+	inline void                          setAnimOverride(bool override);
+
 	inline exint                         getAnimStart() const { return m_options.getAnimStart(); }
+	inline void                          setAnimStart(exint start);
+
 	inline exint                         getAnimLength() const { return m_options.getAnimLength(); }
+	inline void                          setAnimLength(exint length);
+
 	inline fpreal64                      getScale() const { return m_options.getScale(); }
+	inline void                          setScale(fpreal64 scale);
+
 	inline exint                         getFlipAxis() const { return m_options.getFlipAxis(); }
+	inline void                          setFlipAxis(exint flip);
 	/// @}
 
 private:
@@ -98,6 +121,7 @@ private:
 private:
 	GU_ConstDetailHandle   m_detail;
 	VRayProxyParms         m_options;
+	int                    m_dirty;
 };
 
 

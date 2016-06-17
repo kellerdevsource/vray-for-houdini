@@ -125,7 +125,9 @@ public:
 	bool            operator ==(const VRayProxyParms &other) const
 	{ return (m_options == other.m_options); }
 
-	inline const UT_Options & getOptions() const { return m_options; }
+	inline const UT_Options&  getOptions() const { return m_options; }
+	inline UT_Options&        getOptions() { return m_options; }
+
 	inline UT_StringHolder    getFilepath() const { return getFilepath(m_options); }
 	inline exint              getLOD() const { return getLOD(m_options); }
 	inline fpreal64           getFloatFrame() const { return getFloatFrame(m_options); }
