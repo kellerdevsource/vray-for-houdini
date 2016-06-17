@@ -1828,12 +1828,6 @@ int VRayExporter::hasMotionBlur(OP_Node &rop, OBJ_Node &camera) const
 }
 
 
-int VRayExporter::isBackgroundRendering() const
-{
-	return HOU::isUIAvailable() && NOT(isAnimation());
-}
-
-
 void MotionBlurParams::calcParams(fpreal currFrame)
 {
 	mb_start = currFrame - (mb_duration * (0.5 - mb_interval_center));
@@ -1901,7 +1895,8 @@ void VRayExporter::exportFrame(fpreal time)
 		m_error = ROP_ABORT_RENDER;
 	}
 	else {
-		renderFrame(NOT(isBackgroundRendering()));
+		bool lock = (!HOU::isUIAvailable() || isAnimation());
+		renderFrame(lock);
 	}
 }
 
