@@ -34,10 +34,127 @@ using namespace VRayForHoudini;
 
 static const UT_StringRef theGeometryidToken   = "geometryid";
 static const UT_StringRef theAnimTypeNameToken = "animtypename";
+static const UT_StringRef theLODNameToken      = "lodname";
 
-/// Hook to handle tesselation of vrayproxy primitives
+
+GA_PrimitiveTypeId VRayProxyRef::theTypeId(-1);
+
+
+class VRayProxyFactory:
+		public GU_PackedFactory
+{
+public:
+	static VRayProxyFactory &getInstance()
+	{
+		static VRayProxyFactory theFactory;
+		return  theFactory;
+	}
+
+	virtual GU_PackedImpl* create() const VRAY_OVERRIDE
+	{
+		return new VRayProxyRef();
+	}
+
+private:
+	VRayProxyFactory();
+	virtual ~VRayProxyFactory()
+	{ }
+
+	VRayProxyFactory(const VRayProxyFactory &other);
+	VRayProxyFactory& operator =(const VRayProxyFactory &other);
+
+};
+
+
+VRayProxyFactory::VRayProxyFactory():
+	GU_PackedFactory("VRayProxyRef", "VRayProxyRef")
+{
+	registerIntrinsic(
+				theGeometryidToken,
+				IntGetterCast(&VRayProxyRef::getGeometryid)
+				);
+
+	registerIntrinsic(
+				VRayProxyParms::theFileToken,
+				StringGetterCast(&VRayProxyRef::getFilepath),
+				StringSetterCast(&VRayProxyRef::setFilepath)
+				);
+
+	registerIntrinsic(
+				VRayProxyParms::theLODToken,
+				IntGetterCast(&VRayProxyRef::getLOD),
+				IntSetterCast(&VRayProxyRef::setLOD)
+				);
+
+	registerIntrinsic(
+				theLODNameToken,
+				StringGetterCast(&VRayProxyRef::getLODName)
+				);
+
+	registerIntrinsic(
+				VRayProxyParms::theFrameToken,
+				FloatGetterCast(&VRayProxyRef::getFloatFrame),
+				FloatSetterCast(&VRayProxyRef::setFloatFrame)
+				);
+
+	registerIntrinsic(
+				VRayProxyParms::theAnimTypeToken,
+				IntGetterCast(&VRayProxyRef::getAnimType),
+				IntSetterCast(&VRayProxyRef::setAnimType)
+				);
+
+	registerIntrinsic(
+				theAnimTypeNameToken,
+				StringGetterCast(&VRayProxyRef::getAnimTypeName)
+				);
+
+	registerIntrinsic(
+				VRayProxyParms::theAnimOffsetToken,
+				FloatGetterCast(&VRayProxyRef::getAnimOffset),
+				FloatSetterCast(&VRayProxyRef::setAnimOffset)
+				);
+
+	registerIntrinsic(
+				VRayProxyParms::theAnimSpeedToken,
+				FloatGetterCast(&VRayProxyRef::getAnimSpeed),
+				FloatSetterCast(&VRayProxyRef::setAnimSpeed)
+				);
+
+	registerIntrinsic(
+				VRayProxyParms::theAnimOverrideToken,
+				BoolGetterCast(&VRayProxyRef::getAnimOverride),
+				BoolSetterCast(&VRayProxyRef::setAnimOverride)
+				);
+
+	registerIntrinsic(
+				VRayProxyParms::theAnimStartToken,
+				IntGetterCast(&VRayProxyRef::getAnimStart),
+				IntSetterCast(&VRayProxyRef::setAnimStart)
+				);
+
+	registerIntrinsic(
+				VRayProxyParms::theAnimLengthToken,
+				IntGetterCast(&VRayProxyRef::getAnimLength),
+				IntSetterCast(&VRayProxyRef::setAnimLength)
+				);
+
+	registerIntrinsic(
+				VRayProxyParms::theScaleToken,
+				FloatGetterCast(&VRayProxyRef::getScale),
+				FloatSetterCast(&VRayProxyRef::setScale)
+				);
+
+	registerIntrinsic(
+				VRayProxyParms::theFlipAxisToken,
+				IntGetterCast(&VRayProxyRef::getFlipAxis),
+				IntSetterCast(&VRayProxyRef::setFlipAxis)
+				);
+}
+
+
+/// Hook to handle tesselation of proxy primitives
 ///
-/// When rendering proxy primitives, we collect all proxy
+/// When rendering proxy primitives, we collect all
 /// primitives using same detail together based on detail id
 /// For each different detail id a separate GT primitive is generated
 class GT_PrimVRayProxyCollect : public GT_GEOPrimCollect
@@ -79,114 +196,23 @@ private:
 };
 
 
-class GT_GEOPrimCollectGeoIDData : public GT_GEOPrimCollectData
-{
-public:
-	GT_GEOPrimCollectGeoIDData()
-	{ }
-	virtual ~GT_GEOPrimCollectGeoIDData()
-	{ }
-
-	bool hasPrim(const GA_Primitive *prim) const
-	{
-		int geoid = -1;
-		prim->getIntrinsic(prim->findIntrinsic(theGeometryidToken), geoid);
-		return m_geoidset.count(geoid);
-	}
-
-	int insert(const GA_Primitive *prim)
-	{
-		int geoid = -1;
-		prim->getIntrinsic(prim->findIntrinsic(theGeometryidToken), geoid);
-		if (geoid == -1) {
-			return geoid;
-		}
-
-		bool isInserted = m_geoidset.insert(geoid).second;
-		return ((isInserted)? geoid : -1);
-	}
-
-private:
-	std::unordered_set< int > m_geoidset;
-};
-
-
-class VRayProxyFactory:
-		public GU_PackedFactory
-{
-public:
-	VRayProxyFactory();
-	virtual ~VRayProxyFactory()
-	{ }
-
-	virtual GU_PackedImpl* create() const VRAY_OVERRIDE
-	{ return new VRayProxyRef(); }
-};
-
-
-VRayProxyFactory::VRayProxyFactory():
-	GU_PackedFactory("VRayProxyRef", "VRayProxyRef")
-{
-	registerIntrinsic( theGeometryidToken,
-			IntGetterCast(&VRayProxyRef::getGeometryid) );
-
-	registerIntrinsic( VRayProxyParms::theFileToken,
-			StringGetterCast(&VRayProxyRef::getFilepath) );
-
-	registerIntrinsic( VRayProxyParms::theLODToken,
-			StringGetterCast(&VRayProxyRef::getLOD) );
-
-	registerIntrinsic( VRayProxyParms::theAnimTypeToken,
-			IntGetterCast(&VRayProxyRef::getAnimType) );
-
-	registerIntrinsic( theAnimTypeNameToken,
-			StringGetterCast(&VRayProxyRef::getAnimTypeName) );
-
-	registerIntrinsic( VRayProxyParms::theAnimOffsetToken,
-			FloatGetterCast(&VRayProxyRef::getAnimOffset) );
-
-	registerIntrinsic( VRayProxyParms::theAnimSpeedToken,
-			FloatGetterCast(&VRayProxyRef::getAnimSpeed) );
-
-	registerIntrinsic( VRayProxyParms::theAnimOverrideToken,
-			BoolGetterCast(&VRayProxyRef::getAnimOverride) );
-
-	registerIntrinsic( VRayProxyParms::theAnimStartToken,
-			IntGetterCast(&VRayProxyRef::getAnimStart) );
-
-	registerIntrinsic( VRayProxyParms::theAnimLengthToken,
-			IntGetterCast(&VRayProxyRef::getAnimLength) );
-
-	registerIntrinsic( VRayProxyParms::theScaleToken,
-			FloatGetterCast(&VRayProxyRef::getScale) );
-
-	registerIntrinsic( VRayProxyParms::theFlipAxisToken,
-			IntGetterCast(&VRayProxyRef::getFlipAxis) );
-}
-
-
-static VRayProxyFactory *theFactory = nullptr;
-
-
-GA_PrimitiveTypeId VRayProxyRef::theTypeId(-1);
-
-
 void VRayProxyRef::install(GA_PrimitiveFactory *gafactory)
 {
-	UT_ASSERT( NOT(theFactory) );
-	if (theFactory) {
+	VRayProxyFactory &theFactory = VRayProxyFactory::getInstance();
+	if (theFactory.isRegistered()) {
+		Log::getLog().error("Multiple attempts to install packed primitive %s from %s",
+					theFactory.name(), UT_DSO::getRunningFile());
 		return;
 	}
 
-	theFactory = new VRayProxyFactory();
-	GU_PrimPacked::registerPacked(gafactory, theFactory);
-	if (NOT(theFactory->isRegistered())) {
+	GU_PrimPacked::registerPacked(gafactory, &theFactory);
+	if (NOT(theFactory.isRegistered())) {
 		Log::getLog().error("Unable to register packed primitive %s from %s",
-					theFactory->name(), UT_DSO::getRunningFile());
+					theFactory.name(), UT_DSO::getRunningFile());
 		return;
 	}
 
-	theTypeId = theFactory->typeDef().getId();
+	theTypeId = theFactory.typeDef().getId();
 	// Register the GT tesselation too (now we know what type id we have)
 	GT_PrimVRayProxyCollect::registerPrimitive(theTypeId);
 }
@@ -194,15 +220,18 @@ void VRayProxyRef::install(GA_PrimitiveFactory *gafactory)
 
 VRayProxyRef::VRayProxyRef():
 	GU_PackedImpl(),
-	m_detail()
+	m_detail(),
+	m_dirty(false)
 { }
 
 
 VRayProxyRef::VRayProxyRef(const VRayProxyRef &src):
 	GU_PackedImpl(src),
-	m_detail(src.m_detail),
-	m_options(src.m_options)
-{ }
+	m_detail(),
+	m_dirty(false)
+{
+	updateFrom(src.m_options);
+}
 
 
 VRayProxyRef::~VRayProxyRef()
@@ -213,7 +242,7 @@ VRayProxyRef::~VRayProxyRef()
 
 GU_PackedFactory* VRayProxyRef::getFactory() const
 {
-	return theFactory;
+	return &VRayProxyFactory::getInstance();
 }
 
 
@@ -304,6 +333,20 @@ bool VRayProxyRef::unpack(GU_Detail &destgdp) const
 
 GU_ConstDetailHandle VRayProxyRef::getPackedDetail(GU_PackedContext *context) const
 {
+	if (m_dirty) {
+		// Create geometry on demand. If the user only requests the
+		// bounding box (i.e. the viewport LOD is set to "box"), then we never
+		// have to actually create the proxy's geometry.
+		VRayProxyRef *me = const_cast< VRayProxyRef * >(this);
+		GU_ConstDetailHandle dtl = GetVRayProxyDetail(m_options);
+		if (dtl != getDetail()) {
+			me->setDetail(dtl);
+			getPrim()->getParent()->getPrimitiveList().bumpDataId();
+		}
+
+		me->m_dirty = false;
+	}
+
 	return getDetail();
 }
 
@@ -342,27 +385,106 @@ void VRayProxyRef::countMemory(UT_MemoryCounter &counter, bool inclusive) const
 template <typename T>
 bool VRayProxyRef::updateFrom(const T &options)
 {
-	bool res = false;
 	if (m_options == options) {
-		return res;
+		return false;
 	}
 
 	m_options = options;
-	GU_ConstDetailHandle dtl = GetVRayProxyDetail(m_options);
-	if (dtl != getDetail()) {
-		setDetail(dtl);
-		getPrim()->getParent()->getPrimitiveList().bumpDataId();
-		res = true;
+	m_dirty = true;
+	// Notify base primitive that topology has changed
+	topologyDirty();
 
-		// Notify base primitive that topology has changed
-		topologyDirty();
-	}
-
-	return res;
+	return true;
 }
 
 
-const char * VRayProxyRef::getLOD() const
+void VRayProxyRef::setFilepath(const char *filepath)
+{
+	m_options.getOptions().setOptionS(VRayProxyParms::theFileToken, filepath);
+	m_dirty = true;
+	topologyDirty();
+}
+
+
+void VRayProxyRef::setLOD(exint lod)
+{
+	m_options.getOptions().setOptionI(VRayProxyParms::theLODToken, lod);
+	m_dirty = true;
+	topologyDirty();
+}
+
+
+void VRayProxyRef::setFloatFrame(fpreal64 frame)
+{
+	m_options.getOptions().setOptionF(VRayProxyParms::theFrameToken, frame);
+	m_dirty = true;
+	topologyDirty();
+}
+
+
+void VRayProxyRef::setAnimType(exint animType)
+{
+	m_options.getOptions().setOptionI(VRayProxyParms::theAnimTypeToken, animType);
+	m_dirty = true;
+	topologyDirty();
+}
+
+
+void VRayProxyRef::setAnimOffset(fpreal64 offset)
+{
+	m_options.getOptions().setOptionF(VRayProxyParms::theAnimOffsetToken, offset);
+	m_dirty = true;
+	topologyDirty();
+}
+
+
+void VRayProxyRef::setAnimSpeed(fpreal64 speed)
+{
+	m_options.getOptions().setOptionF(VRayProxyParms::theAnimSpeedToken, speed);
+	m_dirty = true;
+	topologyDirty();
+}
+
+
+void VRayProxyRef::setAnimOverride(bool override)
+{
+	m_options.getOptions().setOptionB(VRayProxyParms::theAnimOverrideToken, override);
+	m_dirty = true;
+	topologyDirty();
+}
+
+
+void VRayProxyRef::setAnimStart(exint start)
+{
+	m_options.getOptions().setOptionI(VRayProxyParms::theAnimStartToken, start);
+	m_dirty = true;
+	topologyDirty();
+}
+
+
+void VRayProxyRef::setAnimLength(exint length)
+{
+	m_options.getOptions().setOptionI(VRayProxyParms::theAnimLengthToken, length);
+	m_dirty = true;
+	topologyDirty();
+}
+
+
+void VRayProxyRef::setScale(fpreal64 scale)
+{
+	m_options.getOptions().setOptionF(VRayProxyParms::theScaleToken, scale);
+	transformDirty();
+}
+
+
+void VRayProxyRef::setFlipAxis(exint flip)
+{
+	m_options.getOptions().setOptionI(VRayProxyParms::theFlipAxisToken, flip);
+	transformDirty();
+}
+
+
+const char * VRayProxyRef::getLODName() const
 {
 	switch (m_options.getLOD()) {
 		case LOD_BBOX:
@@ -410,9 +532,44 @@ const char * VRayProxyRef::getAnimTypeName() const
 
 exint VRayProxyRef::getGeometryid() const
 {
-	GU_DetailHandleAutoReadLock gdl(m_detail);
+	GU_DetailHandleAutoReadLock gdl(getPackedDetail());
 	return (gdl.isValid())? gdl.getGdp()->getUniqueId() : -1;
 }
+
+
+//////////
+/// \brief The GT_GEOPrimCollectGeoIDData class
+///
+class GT_GEOPrimCollectGeoIDData : public GT_GEOPrimCollectData
+{
+public:
+	GT_GEOPrimCollectGeoIDData()
+	{ }
+	virtual ~GT_GEOPrimCollectGeoIDData()
+	{ }
+
+	bool hasPrim(const GA_Primitive *prim) const
+	{
+		int geoid = -1;
+		prim->getIntrinsic(prim->findIntrinsic(theGeometryidToken), geoid);
+		return m_geoidset.count(geoid);
+	}
+
+	int insert(const GA_Primitive *prim)
+	{
+		int geoid = -1;
+		prim->getIntrinsic(prim->findIntrinsic(theGeometryidToken), geoid);
+		if (geoid == -1) {
+			return geoid;
+		}
+
+		bool isInserted = m_geoidset.insert(geoid).second;
+		return ((isInserted)? geoid : -1);
+	}
+
+private:
+	std::unordered_set< int > m_geoidset;
+};
 
 
 void GT_PrimVRayProxyCollect::registerPrimitive(const GA_PrimitiveTypeId &id)
