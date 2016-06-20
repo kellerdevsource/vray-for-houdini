@@ -194,6 +194,115 @@ static PRM_Template* getCameraOverridesTemplate()
 	return camOverrides.getPRMTemplate();
 }
 
+static Parm::PRMTmplList& createObjectsTab(Parm::PRMTmplList& RenderSettingsPrmTemplate)
+{
+	// Objects Tab
+	int prmIdx = RenderSettingsPrmTemplate.size();
+
+	RenderSettingsPrmTemplate.push_back(
+			Parm::PRMFactory(PRM_STRING_E, "vobject", "Candidate Objects")
+			.setTypeExtended(PRM_TYPE_DYNAMIC_PATH_LIST)
+			.setDefault( "*" )
+			.addSpareData("opfilter", "!!OBJ/GEOMETRY!!")
+			.addSpareData("oprelative", "/obj")
+			.getPRMTemplate()
+			);
+	RenderSettingsPrmTemplate.push_back(
+			Parm::PRMFactory(PRM_STRING_E, "forceobject", "Force Objects")
+			.setTypeExtended(PRM_TYPE_DYNAMIC_PATH_LIST)
+			.setDefault(PRMzeroDefaults)
+			.addSpareData("opfilter", "!!OBJ/GEOMETRY!!")
+			.addSpareData("oprelative", "/obj")
+			.getPRMTemplate()
+			);
+	RenderSettingsPrmTemplate.push_back(
+			Parm::PRMFactory(PRM_STRING_E, "matte_objects", "Forced Matte")
+			.setTypeExtended(PRM_TYPE_DYNAMIC_PATH_LIST)
+			.setDefault(PRMzeroDefaults)
+			.addSpareData("opfilter", "!!OBJ/GEOMETRY!!")
+			.addSpareData("oprelative", "/obj")
+			.getPRMTemplate()
+			);
+	RenderSettingsPrmTemplate.push_back(
+			Parm::PRMFactory(PRM_STRING_E, "phantom_objects", "Forced Phantom")
+			.setTypeExtended(PRM_TYPE_DYNAMIC_PATH_LIST)
+			.setDefault(PRMzeroDefaults)
+			.addSpareData("opfilter", "!!OBJ/GEOMETRY!!")
+			.addSpareData("oprelative", "/obj")
+			.getPRMTemplate()
+			);
+	RenderSettingsPrmTemplate.push_back(
+			Parm::PRMFactory(PRM_STRING_E, "excludeobject", "Exclude Objects")
+			.setTypeExtended(PRM_TYPE_DYNAMIC_PATH_LIST)
+			.setDefault(PRMzeroDefaults)
+			.addSpareData("opfilter", "!!OBJ/GEOMETRY!!")
+			.addSpareData("oprelative", "/obj")
+			.getPRMTemplate()
+			);
+
+	RenderSettingsPrmTemplate.push_back(
+			Parm::PRMFactory(PRM_SEPARATOR, "obj_light_sep")
+			.getPRMTemplate()
+			);
+
+	RenderSettingsPrmTemplate.push_back(
+			Parm::PRMFactory(PRM_STRING_E, "sololight", "Solo Light")
+			.setTypeExtended(PRM_TYPE_DYNAMIC_PATH_LIST)
+			.setDefault(PRMzeroDefaults)
+			.addSpareData("opfilter", "!!OBJ/LIGHT!!")
+			.addSpareData("oprelative", "/obj")
+			.getPRMTemplate()
+			);
+	RenderSettingsPrmTemplate.push_back(
+			Parm::PRMFactory(PRM_STRING_E, "alights", "Candidate Lights")
+			.setTypeExtended(PRM_TYPE_DYNAMIC_PATH_LIST)
+			.setDefault( "*" )
+			.addSpareData("opfilter", "!!OBJ/LIGHT!!")
+			.addSpareData("oprelative", "/obj")
+			.getPRMTemplate()
+			);
+	RenderSettingsPrmTemplate.push_back(
+			Parm::PRMFactory(PRM_STRING_E, "forcelights", "Force Lights")
+			.setTypeExtended(PRM_TYPE_DYNAMIC_PATH_LIST)
+			.setDefault(PRMzeroDefaults)
+			.addSpareData("opfilter", "!!OBJ/LIGHT!!")
+			.addSpareData("oprelative", "/obj")
+			.getPRMTemplate()
+			);
+	RenderSettingsPrmTemplate.push_back(
+			Parm::PRMFactory(PRM_STRING_E, "excludelights", "Exclude Lights")
+			.setTypeExtended(PRM_TYPE_DYNAMIC_PATH_LIST)
+			.setDefault(PRMzeroDefaults)
+			.addSpareData("opfilter", "!!OBJ/LIGHT!!")
+			.addSpareData("oprelative", "/obj")
+			.getPRMTemplate()
+			);
+	RenderSettingsPrmTemplate.push_back(
+			Parm::PRMFactory(PRM_TOGGLE_E, "soho_autoheadlight", "Headlight Creation")
+			.setTypeExtended(PRM_TYPE_DYNAMIC_PATH_LIST)
+			.setDefault(PRMoneDefaults)
+			.getPRMTemplate()
+			);
+
+	RenderSettingsPrmTemplate.push_back(
+			Parm::PRMFactory(PRM_SEPARATOR, "light_fog_sep")
+			.getPRMTemplate()
+			);
+
+	RenderSettingsPrmTemplate.push_back(
+			Parm::PRMFactory(PRM_STRING_E, "vfog", "Visible Fog")
+			.setTypeExtended(PRM_TYPE_DYNAMIC_PATH_LIST)
+			.setDefault( "*" )
+			.addSpareData("opfilter", "!!OBJ/FOG!!")
+			.addSpareData("oprelative", "/obj")
+			.getPRMTemplate()
+			);
+
+	RenderSettingsSwitcherTabs.push_back(PRM_Default(RenderSettingsPrmTemplate.size() - prmIdx, "Objects"));
+
+	return RenderSettingsPrmTemplate;
+}
+
 
 static PRM_Template* getTemplates()
 {
@@ -254,6 +363,8 @@ static PRM_Template* getTemplates()
 		RenderSettingsPrmTemplate.push_back(theRopTemplates[ROP_LPOSTRENDER_TPLATE]);
 
 		RenderSettingsSwitcherTabs.push_back(PRM_Default(RenderSettingsPrmTemplate.size(), "Globals"));
+
+		createObjectsTab(RenderSettingsPrmTemplate);
 
 		// Renderer settings
 		//

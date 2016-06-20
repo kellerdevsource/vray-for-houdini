@@ -143,7 +143,7 @@ public:
 	/// @brief Specify (@e key, @e value) pairs of spare data for this parameter.
 	/// @param items a list of key, value, key, value,... string pairs
 	/// @param nItems size of the array
-	PRMFactory& setSpareData(const char *items[], int nItems);
+	PRMFactory& addSpareData(const char *token, const char* value);
 	PRMFactory& setSpareData(const PRM_SpareData*);
 
 	/// @brief Specify the list of parameters for each instance of a multiparm.
