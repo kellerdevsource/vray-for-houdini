@@ -16,7 +16,7 @@
 #include <OP/OP_OperatorTable.h>
 #include <OP/OP_Network.h>
 #include <SHOP/SHOP_Node.h>
-#include <VOP/VOP_CodeGenerator.h>
+#include <VOPNET/VOPNET_Node.h>
 
 #include <unordered_set>
 
@@ -70,7 +70,7 @@ protected:
 
 
 class VRayVOPContext:
-		public OP_Network
+		public VOPNET_Node
 {
 public:
 	static void                register_operator_vrayenvcontext(OP_OperatorTable *table);
@@ -79,21 +79,7 @@ public:
 	static OP_Node            *creator(OP_Network *parent, const char *name, OP_Operator *entry) { return new VRayVOPContext(parent, name, entry); }
 
 public:
-	virtual const char        *getChildType() const VRAY_OVERRIDE;
-	virtual OP_OpTypeId        getChildTypeID() const VRAY_OVERRIDE;
 	virtual OP_OperatorFilter *getOperatorFilter() VRAY_OVERRIDE { return &m_opFilter; }
-
-	virtual int                isNetwork() const VRAY_OVERRIDE { return true; }
-	virtual OP_OpTypeId        getOpTypeID() const VRAY_OVERRIDE;
-	virtual const char        *getOpType() const VRAY_OVERRIDE;
-	virtual OP_DataType        getCookedDataType() const VRAY_OVERRIDE;
-	virtual void               deleteCookedData() VRAY_OVERRIDE {}
-	virtual int                saveCookedData(std::ostream &os, OP_Context &, int binary=0) VRAY_OVERRIDE;
-	virtual int                saveCookedData(const char *filename, OP_Context &) VRAY_OVERRIDE;
-	virtual OP_ERROR           cookMe(OP_Context &context) VRAY_OVERRIDE;
-	virtual OP_ERROR           bypassMe(OP_Context &context, int &copied_input) VRAY_OVERRIDE;
-	virtual const char        *getFileExtension(int binary) const VRAY_OVERRIDE;
-
 	virtual VOP_CodeGenerator *getVopCodeGenerator() VRAY_OVERRIDE { return &m_codeGen; }
 	virtual bool               evalVariableValue(UT_String &value, int index, int thread) VRAY_OVERRIDE;
 	virtual bool               hasVexShaderParameter(const char *parm_name) VRAY_OVERRIDE;
