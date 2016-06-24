@@ -35,6 +35,10 @@ public:
 	GeometryExporter(OBJ_Geometry &node, VRayExporter &pluginExporter);
 	~GeometryExporter() { }
 
+	int                 isNodeVisible() const;
+	int                 isNodeMatte() const;
+	int                 isNodePhantom() const;
+
 	GeometryExporter&    setExportGeometry(bool val) { m_exportGeometry = val; return *this; }
 	bool                 hasSubdivApplied() const;
 	void                 cleanup();

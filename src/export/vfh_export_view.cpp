@@ -11,6 +11,7 @@
 #include "vfh_exporter.h"
 #include "vfh_prm_templates.h"
 #include "vfh_hou_utils.h"
+#include "vfh_rop.h"
 
 #include <boost/algorithm/string.hpp>
 

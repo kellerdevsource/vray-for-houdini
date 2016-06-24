@@ -23,7 +23,6 @@
 
 #include "vfh_export_context.h"
 
-
 #include <OP/OP_Node.h>
 #include <OBJ/OBJ_Node.h>
 #include <ROP/ROP_Node.h>
@@ -33,6 +32,7 @@
 
 namespace VRayForHoudini {
 
+class VRayRendererNode;
 
 enum VRayLightType {
 	VRayLightOmni      = 0,
@@ -98,7 +98,7 @@ public:
 		ExpExport,
 	};
 
-	VRayExporter(OP_Node *rop);
+	VRayExporter(VRayRendererNode *rop);
 	~VRayExporter();
 
 public:
@@ -171,7 +171,7 @@ public:
 
 	OP_Context                    &getContext() { return m_context; }
 	VRayPluginRenderer            &getRenderer() { return m_renderer; }
-	OP_Node                       &getRop() { return *m_rop; }
+	VRayRendererNode              &getRop() { return *m_rop; }
 	ROP_RENDER_CODE                getError() const { return m_error; }
 
 	int                            isGPU() const { return m_isGPU; }
@@ -181,6 +181,7 @@ public:
 	int                            isStereoView() const;
 	int                            isPhysicalView(const OBJ_Node &camera) const;
 	int                            isNodeAnimated(OP_Node *op_node);
+
 	int                            hasVelocityOn(OP_Node &rop) const;
 	int                            hasMotionBlur(OP_Node &rop, OBJ_Node &camera) const;
 
@@ -212,7 +213,7 @@ public:
 	void                           setAttrsFromSHOPOverrides(Attrs::PluginDesc &pluginDesc, VOP_Node &vopNode);
 
 private:
-	OP_Node                       *m_rop;
+	VRayRendererNode              *m_rop;
 	UI::VFB                        m_vfb;
 	VRayPluginRenderer             m_renderer;
 	OP_Context                     m_context;

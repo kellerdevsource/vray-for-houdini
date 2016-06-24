@@ -18,13 +18,16 @@
 #include "vfh_hou_utils.h"
 
 #include <ROP/ROP_Templates.h>
+#include <ROP/ROP_Error.h>
+#include <OBJ/OBJ_Geometry.h>
+#include <OBJ/OBJ_Light.h>
 #include <UT/UT_Interrupt.h>
 
 
 using namespace VRayForHoudini;
 
 
-static const tchar apprenticeLimitMsg[] = "Third-party render engines are not allowed in Houdini Apprentice!";
+static const UT_StringRef apprenticeLimitMsg = "Third-party render engines are not allowed in Houdini Apprentice!";
 
 static PRM_Name     parm_render_scripts("parm_render_scripts", "Scripts");
 
@@ -482,6 +485,7 @@ VRayRendererNode::~VRayRendererNode()
 #if 0
 	m_exporter.delOpCallback(this, VRayRendererNode::RtCallbackRop);
 #endif
+
 }
 
 
@@ -553,6 +557,7 @@ int VRayRendererNode::initSession(int interactive, int nframes, fpreal tstart, f
 	}
 	else {
 		// Store end time for endRender() executePostRenderScript()
+		m_tstart = tstart;
 		m_tend = tend;
 
 		executePreRenderScript(tstart);
@@ -604,17 +609,16 @@ void VRayRendererNode::startIPR()
 
 int VRayRendererNode::startRender(int nframes, fpreal tstart, fpreal tend)
 {
-	int err = ROP_ABORT_RENDER;
-
 	if (HOU::isApprentice()) {
 		Log::getLog().error(apprenticeLimitMsg);
-	}
-	else {
-		Log::getLog().debug("VRayRendererNode::startRender(%i, %.3f, %.3f)", nframes, tstart, tend);
 
-		err = initSession(false, nframes, tstart, tend);
+		addError(ROP_NONCOMMERCIAL_ERROR, apprenticeLimitMsg);
+		return ROP_ABORT_RENDER;
 	}
 
+	Log::getLog().debug("VRayRendererNode::startRender(%i, %.3f, %.3f)", nframes, tstart, tend);
+
+	int err = initSession(false, nframes, tstart, tend);
 	return err;
 }
 
@@ -642,6 +646,236 @@ ROP_RENDER_CODE VRayRendererNode::endRender()
 	executePostRenderScript(m_tend);
 
 	return ROP_CONTINUE_RENDER;
+}
+
+
+#include <OP/OP_Director.h>
+#include <OP/OP_BundleList.h>
+#include <OP/OP_Bundle.h>
+
+OP_Bundle* getOpBundleFromNodePrm(OP_Node *node, const char *pn, fpreal time)
+{
+	if (!node){
+		return nullptr;
+	}
+
+	if (!UTisstring(pn)) {
+		return nullptr;
+	}
+
+	UT_String mask;
+	PRM_Parm *prm = nullptr;
+	node->evalParameterOrProperty(pn, 0, time, mask, &prm);
+
+	OP_Network *opcreator = nullptr;
+	const char *opfilter = nullptr;
+	if (   prm
+		&& prm->getSparePtr())
+	{
+		opcreator = UTverify_cast< OP_Network * >(OPgetDirector()->findNode(prm->getSparePtr()->getOpRelative()));
+		opfilter = prm->getSparePtr()->getOpFilter();
+	}
+
+	if (!opcreator) {
+		opcreator = node->getCreator();
+	}
+
+	return node->getParmBundle(pn, 0, mask, opcreator, opfilter);
+}
+
+
+OP_Bundle* VRayRendererNode::getActiveLightsBundle()
+{
+	// if "sololight" parm is set ignore others
+	OP_Bundle *sbundle = getOpBundleFromNodePrm(this, "sololight", m_tstart);
+	if (sbundle && sbundle->entries() > 0) {
+		return sbundle;
+	}
+
+	UT_String bundleName;
+	bundleName.itoa(this->getUniqueId());
+	bundleName.prepend("V-RayROPLights_");
+
+	OP_BundleList *blist = OPgetDirector()->getBundles();
+	OP_Bundle *bundle = blist->getBundle(bundleName);
+	if (!bundle) {
+		bundle = blist->createBundle(bundleName, true);
+	}
+
+	if (!bundle) {
+		return bundle;
+	}
+
+	bundle->clear();
+
+	OP_Bundle *fbundle = getOpBundleFromNodePrm(this, "forcelights", m_tstart);
+	if (fbundle) {
+		OP_NodeList list;
+		fbundle->getMembers(list);
+		blist->bundleAddOps(bundle, list);
+	}
+
+	OP_Bundle *abundle = getOpBundleFromNodePrm(this, "alights", m_tstart);
+	if (abundle) {
+		OP_NodeList list;
+		abundle->getMembers(list);
+		for (exint i = 0; i < list.size(); ++i) {
+			OP_Node *light = list(i);
+			UT_String name = light->getFullPath();
+
+			fpreal dimmer = 0.0;
+			light->evalParameterOrProperty("dimmer", 0, m_tstart, dimmer);
+			if (dimmer > 0) {
+				blist->bundleAddOp(bundle, light);
+			}
+		}
+	}
+
+	OP_Bundle *exbundle = getOpBundleFromNodePrm(this, "excludelights", m_tstart);
+	if (exbundle) {
+		OP_NodeList list;
+		exbundle->getMembers(list);
+		for (exint i = 0; i < list.size(); ++i) {
+			OP_Node *light = list(i);
+			UT_String name = light->getFullPath();
+
+			blist->bundleRemoveOp(bundle, light);
+		}
+	}
+
+	return bundle;
+}
+
+
+OP_Bundle* VRayRendererNode::getForcedLightsBundle()
+{
+	// if "sololight" parm is set ignore others
+	OP_Bundle *sbundle = getOpBundleFromNodePrm(this, "sololight", m_tstart);
+	if (sbundle && sbundle->entries() > 0) {
+		return sbundle;
+	}
+
+	OP_Bundle *fbundle = getOpBundleFromNodePrm(this, "forcelights", m_tstart);
+	return fbundle;
+}
+
+
+OP_Bundle* VRayRendererNode::getActiveGeometryBundle()
+{
+	UT_String bundleName;
+	bundleName.itoa(this->getUniqueId());
+	bundleName.prepend("V-RayROPGeo_");
+
+	OP_BundleList *blist = OPgetDirector()->getBundles();
+	OP_Bundle *bundle = blist->getBundle(bundleName);
+	if (!bundle) {
+		bundle = blist->createBundle(bundleName, true);
+	}
+
+	if (!bundle) {
+		return bundle;
+	}
+
+	bundle->clear();
+
+	OP_Bundle *fbundle = getForcedGeometryBundle();
+	if (   fbundle
+		&& fbundle->entries() > 0)
+	{
+		OP_NodeList list;
+		fbundle->getMembers(list);
+		blist->bundleAddOps(bundle, list);
+	}
+
+	OP_Bundle *vbundle = getOpBundleFromNodePrm(this, "vobject", m_tstart);
+	if (vbundle) {
+		OP_NodeList list;
+		vbundle->getMembers(list);
+
+		for (exint i = 0; i < list.size(); ++i) {
+			OP_Node *node = list(i);
+			UT_String name = node->getFullPath();
+
+			if (node->getVisible()) {
+				blist->bundleAddOp(bundle, node);
+			}
+		}
+	}
+
+	OP_Bundle *exbundle = getOpBundleFromNodePrm(this, "excludeobject", m_tstart);
+	if (exbundle) {
+		OP_NodeList list;
+		exbundle->getMembers(list);
+		for (exint i = 0; i < list.size(); ++i) {
+			OP_Node *node = list(i);
+			UT_String name = node->getFullPath();
+
+			blist->bundleRemoveOp(bundle, node);
+		}
+	}
+
+	return bundle;
+}
+
+
+OP_Bundle* VRayRendererNode::getForcedGeometryBundle()
+{
+	UT_String bundleName;
+	bundleName.itoa(this->getUniqueId());
+	bundleName.prepend("V-RayROPForcedGeo_");
+
+	OP_BundleList *blist = OPgetDirector()->getBundles();
+	OP_Bundle *bundle = blist->getBundle(bundleName);
+	if (!bundle) {
+		bundle = blist->createBundle(bundleName, true);
+	}
+
+	if (!bundle) {
+		return bundle;
+	}
+
+	OP_Bundle *fbundle = getOpBundleFromNodePrm(this, "forceobject", m_tstart);
+	if (   fbundle
+		&& fbundle->entries() > 0)
+	{
+		OP_NodeList list;
+		fbundle->getMembers(list);
+		blist->bundleAddOps(bundle, list);
+	}
+
+	fbundle = getMatteGeometryBundle();
+	if (   fbundle
+		&& fbundle->entries() > 0)
+	{
+		OP_NodeList list;
+		fbundle->getMembers(list);
+		blist->bundleAddOps(bundle, list);
+	}
+
+	fbundle = getPhantomGeometryBundle();
+	if (   fbundle
+		&& fbundle->entries() > 0)
+	{
+		OP_NodeList list;
+		fbundle->getMembers(list);
+		blist->bundleAddOps(bundle, list);
+	}
+
+	return bundle;
+}
+
+
+OP_Bundle* VRayRendererNode::getMatteGeometryBundle()
+{
+	OP_Bundle *bundle = getOpBundleFromNodePrm(this, "matte_objects", m_tstart);
+	return bundle;
+}
+
+
+OP_Bundle* VRayRendererNode::getPhantomGeometryBundle()
+{
+	OP_Bundle *bundle = getOpBundleFromNodePrm(this, "phantom_objects", m_tstart);
+	return bundle;
 }
 
 

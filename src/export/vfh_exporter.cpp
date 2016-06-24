@@ -20,6 +20,7 @@
 #include "vop/material/vop_mtl_def.h"
 #include "sop/sop_vrayproxy.h"
 #include "sop/sop_vrayscene.h"
+#include "rop/vfh_rop.h"
 
 #include <OP/OP_Options.h>
 #include <OP/OP_Node.h>
@@ -528,7 +529,7 @@ bool VRayExporter::setAttrsFromUTOptions(Attrs::PluginDesc &pluginDesc, const UT
 }
 
 
-VRayExporter::VRayExporter(OP_Node *rop)
+VRayExporter::VRayExporter(VRayRendererNode *rop)
 	: m_rop(rop)
 	, m_isIPR(false)
 	, m_isAnimation(false)
@@ -1380,12 +1381,53 @@ void VRayExporter::exportScene()
 
 	exportView();
 
-	OP_Network *obj_manager = OPgetDirector()->getManager("obj");
 
 	// NOTE: Do not go recursively here, process childs manually
-	obj_manager->traverseChildren(VRayExporter::TraverseOBJs, this, false);
+//	OP_Network *obj_manager = OPgetDirector()->getManager("obj");
+//	obj_manager->traverseChildren(VRayExporter::TraverseOBJs, this, false);
+//	addOpCallback(obj_manager, VRayExporter::RtCallbackObjManager);
 
-	addOpCallback(obj_manager, VRayExporter::RtCallbackObjManager);
+	// export geometry nodes
+	OP_Bundle *activeGeo = m_rop->getActiveGeometryBundle();
+	if (activeGeo) {
+		for (int i = 0; i < activeGeo->entries(); ++i) {
+			OP_Node *node = activeGeo->getNode(i);
+			if (!node) {
+				continue;
+			}
+
+			OBJ_Node *objNode = node->castToOBJNode();
+			if (!objNode) {
+				continue;
+			}
+
+			exportObject(objNode);
+		}
+	}
+
+	// export light nodes
+	OP_Bundle *activeLight = m_rop->getActiveLightsBundle();
+	if (activeLight) {
+		for (int i = 0; i < activeLight->entries(); ++i) {
+			OP_Node *node = activeLight->getNode(i);
+			if (!node) {
+				continue;
+			}
+
+			OBJ_Node *objNode = node->castToOBJNode();
+			if (!objNode) {
+				continue;
+			}
+
+			OBJ_Light *light = objNode->castToOBJLight();
+			if (!light) {
+				continue;
+			}
+
+			exportLight(light);
+		}
+	}
+
 
 	UT_String env_network_path;
 	m_rop->evalString(env_network_path, Parm::parm_render_net_environment.getToken(), 0, 0.0f);
@@ -1691,7 +1733,6 @@ void VRayExporter::setAnimation(bool on)
 	m_renderer.setAnimation(on);
 }
 
-
 int VRayExporter::initRenderer(int hasUI, int reInit)
 {
 	return m_renderer.initRenderer(hasUI, reInit);
@@ -1703,83 +1744,82 @@ void VRayExporter::initExporter(int hasUI, int nframes, fpreal tstart, fpreal te
 	OBJ_Node *camera = VRayExporter::getCamera(m_rop);
 	if (!camera) {
 		Log::getLog().error("Camera is not set!");
-
 		m_error = ROP_ABORT_RENDER;
+		return;
 	}
-	else {
-		m_viewParams = ViewParams();
-		m_exportedFrames.clear();
-		m_phxSimulations.clear();
-		m_frames    = nframes;
-		m_timeStart = tstart;
-		m_timeEnd   = tend;
-		m_isAborted = false;
 
-		setAnimation(nframes > 1);
+	m_viewParams = ViewParams();
+	m_exportedFrames.clear();
+	m_phxSimulations.clear();
+	m_frames    = nframes;
+	m_timeStart = tstart;
+	m_timeEnd   = tend;
+	m_isAborted = false;
 
-		getRenderer().resetCallbacks();
-		resetOpCallbacks();
+	setAnimation(nframes > 1);
+
+	getRenderer().resetCallbacks();
+	resetOpCallbacks();
 
 #if 0
-		if (!hasOpInterest(this, VRayRendererNode::RtCallbackRop)) {
-			addOpInterest(this, VRayRendererNode::RtCallbackRop);
-		}
+	if (!hasOpInterest(this, VRayRendererNode::RtCallbackRop)) {
+		addOpInterest(this, VRayRendererNode::RtCallbackRop);
+	}
 #endif
 
-		if (hasUI >= 0) {
+	if (hasUI >= 0) {
 #ifdef __APPLE__
-			// Forse Qt FB
-			const int hasUI = 1;
-			getRenderer().showVFB(false);
+		// Forse Qt FB
+		const int hasUI = 1;
+		getRenderer().showVFB(false);
 #else
 #endif
-			if (hasUI == 0) {
+		if (hasUI == 0) {
 #ifndef __APPLE__
-				m_vfb.free();
-				getRenderer().showVFB(m_workMode != ExpExport);
+			m_vfb.free();
+			getRenderer().showVFB(m_workMode != ExpExport);
 #endif
+		}
+		else if (hasUI == 1) {
+			if (m_workMode != ExpExport) {
+				m_vfb.init();
+				m_vfb.show();
+				m_vfb.set_abort_callback(UI::AbortCb(boost::bind(&VRayPluginRenderer::stopRender, &getRenderer())));
+
+				getRenderer().addCbOnDumpMessage(CbOnDumpMessage(boost::bind(&UI::VFB::on_dump_message, &m_vfb, _1, _2, _3)));
+				getRenderer().addCbOnProgress(CbOnProgress(boost::bind(&UI::VFB::on_progress, &m_vfb, _1, _2, _3, _4)));
+
+				getRenderer().addCbOnImageReady(CbOnImageReady(boost::bind(&UI::VFB::on_image_ready, &m_vfb, _1)));
+
+				getRenderer().addCbOnBucketInit(CbOnBucketInit(boost::bind(&UI::VFB::on_bucket_init, &m_vfb, _1, _2, _3, _4, _5, _6)));
+				getRenderer().addCbOnBucketFailed(CbOnBucketFailed(boost::bind(&UI::VFB::on_bucket_failed, &m_vfb, _1, _2, _3, _4, _5, _6)));
+				getRenderer().addCbOnBucketReady(CbOnBucketReady(boost::bind(&UI::VFB::on_bucket_ready, &m_vfb, _1, _2, _3, _4, _5)));
+
+				getRenderer().addCbOnRTImageUpdated(CbOnRTImageUpdated(boost::bind(&UI::VFB::on_rt_image_updated, &m_vfb, _1, _2)));
 			}
-			else if (hasUI == 1) {
-				if (m_workMode != ExpExport) {
-					m_vfb.init();
-					m_vfb.show();
-					m_vfb.set_abort_callback(UI::AbortCb(boost::bind(&VRayPluginRenderer::stopRender, &getRenderer())));
-
-					getRenderer().addCbOnDumpMessage(CbOnDumpMessage(boost::bind(&UI::VFB::on_dump_message, &m_vfb, _1, _2, _3)));
-					getRenderer().addCbOnProgress(CbOnProgress(boost::bind(&UI::VFB::on_progress, &m_vfb, _1, _2, _3, _4)));
-
-					getRenderer().addCbOnImageReady(CbOnImageReady(boost::bind(&UI::VFB::on_image_ready, &m_vfb, _1)));
-
-					getRenderer().addCbOnBucketInit(CbOnBucketInit(boost::bind(&UI::VFB::on_bucket_init, &m_vfb, _1, _2, _3, _4, _5, _6)));
-					getRenderer().addCbOnBucketFailed(CbOnBucketFailed(boost::bind(&UI::VFB::on_bucket_failed, &m_vfb, _1, _2, _3, _4, _5, _6)));
-					getRenderer().addCbOnBucketReady(CbOnBucketReady(boost::bind(&UI::VFB::on_bucket_ready, &m_vfb, _1, _2, _3, _4, _5)));
-
-					getRenderer().addCbOnRTImageUpdated(CbOnRTImageUpdated(boost::bind(&UI::VFB::on_rt_image_updated, &m_vfb, _1, _2)));
-				}
-			}
 		}
-
-		m_renderer.addCbOnProgress(CbOnProgress(boost::bind(&VRayExporter::onProgress, this, _1, _2, _3, _4)));
-		m_renderer.addCbOnDumpMessage(CbOnDumpMessage(boost::bind(&VRayExporter::onDumpMessage, this, _1, _2, _3)));
-
-		if (isAnimation()) {
-			m_renderer.addCbOnImageReady(CbOnImageReady(boost::bind(&VRayExporter::onAbort, this, _1)));
-		}
-		else if (isIPR()) {
-			m_renderer.addCbOnImageReady(CbVoid(boost::bind(&VRayExporter::resetOpCallbacks, this)));
-			m_renderer.addCbOnRendererClose(CbVoid(boost::bind(&VRayExporter::resetOpCallbacks, this)));
-		}
-
-		m_isMotionBlur = hasMotionBlur(*m_rop, *camera);
-		m_isVelocityOn = hasVelocityOn(*m_rop);
-
-		// NOTE: Force animated values for motion blur
-		if (!isAnimation()) {
-			m_renderer.setAnimation(m_isMotionBlur || m_isVelocityOn);
-		}
-
-		m_error = ROP_CONTINUE_RENDER;
 	}
+
+	m_renderer.addCbOnProgress(CbOnProgress(boost::bind(&VRayExporter::onProgress, this, _1, _2, _3, _4)));
+	m_renderer.addCbOnDumpMessage(CbOnDumpMessage(boost::bind(&VRayExporter::onDumpMessage, this, _1, _2, _3)));
+
+	if (isAnimation()) {
+		m_renderer.addCbOnImageReady(CbOnImageReady(boost::bind(&VRayExporter::onAbort, this, _1)));
+	}
+	else if (isIPR()) {
+		m_renderer.addCbOnImageReady(CbVoid(boost::bind(&VRayExporter::resetOpCallbacks, this)));
+		m_renderer.addCbOnRendererClose(CbVoid(boost::bind(&VRayExporter::resetOpCallbacks, this)));
+	}
+
+	m_isMotionBlur = hasMotionBlur(*m_rop, *camera);
+	m_isVelocityOn = hasVelocityOn(*m_rop);
+
+	// NOTE: Force animated values for motion blur
+	if (!isAnimation()) {
+		m_renderer.setAnimation(m_isMotionBlur || m_isVelocityOn);
+	}
+
+	m_error = ROP_CONTINUE_RENDER;
 }
 
 

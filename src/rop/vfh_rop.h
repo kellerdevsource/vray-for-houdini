@@ -31,6 +31,13 @@ public:
 
 	virtual bool                 updateParmsFlags() VRAY_OVERRIDE;
 
+	OP_Bundle*   getActiveLightsBundle();
+	OP_Bundle*   getForcedLightsBundle();
+	OP_Bundle*   getActiveGeometryBundle();
+	OP_Bundle*   getForcedGeometryBundle();
+	OP_Bundle*   getMatteGeometryBundle();
+	OP_Bundle*   getPhantomGeometryBundle();
+
 protected:
 	VRayRendererNode(OP_Network *net, const char *name, OP_Operator *entry);
 	virtual                     ~VRayRendererNode();
@@ -44,6 +51,7 @@ protected:
 
 private:
 	VRayExporter                 m_exporter;
+	fpreal                       m_tstart;
 	fpreal                       m_tend;
 
 public:

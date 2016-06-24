@@ -11,11 +11,12 @@
 #include "vfh_export_geom.h"
 #include "vfh_export_mesh.h"
 #include "gu_vrayproxyref.h"
+#include "rop/vfh_rop.h"
 #include "sop/sop_node_base.h"
 #include "vop/vop_node_base.h"
 
 #include <GU/GU_Detail.h>
-
+#include <OP/OP_Bundle.h>
 
 using namespace VRayForHoudini;
 
@@ -77,6 +78,43 @@ bool GeometryExporter::hasSubdivApplied() const
 
 	return res;
 }
+
+
+int GeometryExporter::isNodeVisible() const
+{
+	VRayRendererNode &rop = m_pluginExporter.getRop();
+	OP_Bundle *bundle = rop.getForcedGeometryBundle();
+	if (!bundle) {
+		return m_objNode.getVisible();
+	}
+
+	return bundle->contains(&m_objNode, false) || m_objNode.getVisible();
+}
+
+
+int GeometryExporter::isNodeMatte() const
+{
+	VRayRendererNode &rop = m_pluginExporter.getRop();
+	OP_Bundle *bundle = rop.getMatteGeometryBundle();
+	if (!bundle) {
+		return false;
+	}
+
+	return bundle->contains(&m_objNode, false);
+}
+
+
+int GeometryExporter::isNodePhantom() const
+{
+	VRayRendererNode &rop = m_pluginExporter.getRop();
+	OP_Bundle *bundle = rop.getPhantomGeometryBundle();
+	if (!bundle) {
+		return false;
+	}
+
+	return bundle->contains(&m_objNode, false);
+}
+
 
 
 int GeometryExporter::getNumPluginDesc() const
@@ -164,13 +202,7 @@ int GeometryExporter::exportNodes()
 			attr->paramValue.valTransform = tm * attr->paramValue.valTransform;
 		}
 
-		attr = nodeDesc.get("visible");
-		if (NOT(attr)) {
-			nodeDesc.addAttribute(Attrs::PluginAttr("visible", m_objNode.getVisible()));
-		}
-		else {
-			attr->paramValue.valInt = m_objNode.getVisible();
-		}
+		nodeDesc.addAttribute(Attrs::PluginAttr("visible", isNodeVisible()));
 
 		attr = nodeDesc.get("geometry");
 		if (attr) {
@@ -204,6 +236,8 @@ int GeometryExporter::exportNodes()
 
 VRay::Plugin GeometryExporter::exportMaterial()
 {
+	VRay::Plugin mtl;
+
 	VRay::ValueList mtls_list;
 	VRay::IntList   ids_list;
 	mtls_list.reserve(m_shopList.size() + 1);
@@ -245,7 +279,36 @@ VRay::Plugin GeometryExporter::exportMaterial()
 
 	mtlDesc.addAttribute(Attrs::PluginAttr("mtlid_gen_float", myMtlID, "scalar"));
 
-	VRay::Plugin mtl = m_pluginExporter.exportPlugin(mtlDesc);
+	mtl = m_pluginExporter.exportPlugin(mtlDesc);
+
+
+	if (isNodeMatte()) {
+		Attrs::PluginDesc mtlDesc;
+		mtlDesc.pluginID = "MtlWrapper";
+		mtlDesc.pluginName = VRayExporter::getPluginName(&m_objNode, "MtlWrapper");
+
+		mtlDesc.addAttribute(Attrs::PluginAttr("base_material", mtl));
+		mtlDesc.addAttribute(Attrs::PluginAttr("matte_surface", 1));
+		mtlDesc.addAttribute(Attrs::PluginAttr("alpha_contribution", -1));
+		mtlDesc.addAttribute(Attrs::PluginAttr("affect_alpha", 1));
+		mtlDesc.addAttribute(Attrs::PluginAttr("reflection_amount", 0));
+		mtlDesc.addAttribute(Attrs::PluginAttr("refraction_amount", 0));
+
+		mtl = m_pluginExporter.exportPlugin(mtlDesc);
+	}
+
+	if (isNodePhantom()) {
+		Attrs::PluginDesc mtlDesc;
+		mtlDesc.pluginID = "MtlRenderStats";
+		mtlDesc.pluginName = VRayExporter::getPluginName(&m_objNode, "MtlRenderStats");
+
+		mtlDesc.addAttribute(Attrs::PluginAttr("base_mtl", mtl));
+		mtlDesc.addAttribute(Attrs::PluginAttr("camera_visibility", 0));
+
+		mtl = m_pluginExporter.exportPlugin(mtlDesc);
+	}
+
+
 	return mtl;
 }
 
