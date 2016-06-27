@@ -47,17 +47,21 @@ protected:
 	virtual ROP_RENDER_CODE      endRender() VRAY_OVERRIDE;
 
 	int                          initSession(int interactive, int nframes, fpreal tstart, fpreal tend);
-	void                         startIPR();
+	void                         startIPR(fpreal time);
 
 private:
 	VRayExporter                 m_exporter;
 	fpreal                       m_tstart;
 	fpreal                       m_tend;
+	UT_String                    m_activeLightsBundleName;
+	UT_String                    m_activeGeoBundleName;
+	UT_String                    m_forcedGeoBundleName;
+
 
 public:
 	static void                  register_operator(OP_OperatorTable *table);
 	static void                  RtCallbackRop(OP_Node *caller, void *callee, OP_EventType type, void *data);
-	static int                   RtStartSession(void *data, int index, float t, const PRM_Template *tplate);
+	static int                   RtStartSession(void *data, int index, fpreal t, const PRM_Template *tplate);
 };
 
 } // namespace VRayForHoudini

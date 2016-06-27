@@ -21,6 +21,9 @@
 #include <ROP/ROP_Error.h>
 #include <OBJ/OBJ_Geometry.h>
 #include <OBJ/OBJ_Light.h>
+#include <OP/OP_Director.h>
+#include <OP/OP_BundleList.h>
+#include <OP/OP_Bundle.h>
 #include <UT/UT_Interrupt.h>
 
 
@@ -475,17 +478,21 @@ VRayRendererNode::VRayRendererNode(OP_Network *net, const char *name, OP_Operato
 	, m_exporter(this)
 {
 	Log::getLog().debug("VRayRendererNode()");
+
+	m_activeLightsBundleName.itoa(getUniqueId());
+	m_activeLightsBundleName.prepend("V-RayROPLights_");
+
+	m_activeGeoBundleName.itoa(getUniqueId());
+	m_activeGeoBundleName.prepend("V-RayROPGeo_");
+
+	m_forcedGeoBundleName.itoa(getUniqueId());
+	m_forcedGeoBundleName.prepend("V-RayROPForcedGeo_");
 }
 
 
 VRayRendererNode::~VRayRendererNode()
 {
 	Log::getLog().debug("~VRayRendererNode()");
-
-#if 0
-	m_exporter.delOpCallback(this, VRayRendererNode::RtCallbackRop);
-#endif
-
 }
 
 
@@ -523,7 +530,7 @@ bool VRayRendererNode::updateParmsFlags()
 
 void VRayRendererNode::RtCallbackRop(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
-	VRayRendererNode *rop = (VRayRendererNode*)callee;
+	VRayRendererNode *rop = reinterpret_cast< VRayRendererNode * >(callee);
 
 	Log::getLog().debug("RtCallbackRop: %s from \"%s\"", OPeventToString(type), caller->getName().buffer());
 
@@ -533,15 +540,18 @@ void VRayRendererNode::RtCallbackRop(OP_Node *caller, void *callee, OP_EventType
 }
 
 
-int VRayRendererNode::RtStartSession(void *data, int /*index*/, float /*t*/, const PRM_Template* /*tplate*/)
+int VRayRendererNode::RtStartSession(void *data, int /*index*/, fpreal t, const PRM_Template* /*tplate*/)
 {
+	VRayRendererNode &rop = *reinterpret_cast< VRayRendererNode* >(data);
+
 	if (HOU::isApprentice()) {
 		Log::getLog().error(apprenticeLimitMsg);
+		rop.addError(ROP_NONCOMMERCIAL_ERROR, apprenticeLimitMsg);
 	}
 	else {
-		VRayRendererNode &rop = *reinterpret_cast<VRayRendererNode*>(data);
-		rop.startIPR();
+		rop.startIPR(t);
 	}
+
 	return 1;
 }
 
@@ -599,10 +609,10 @@ int VRayRendererNode::initSession(int interactive, int nframes, fpreal tstart, f
 }
 
 
-void VRayRendererNode::startIPR()
+void VRayRendererNode::startIPR(fpreal time)
 {
-	if (initSession(true, 1, 0, 0)) {
-		m_exporter.exportFrame(OPgetDirector()->getChannelManager()->getEvaluateTime(SYSgetSTID()));
+	if (initSession(true, 1, time, time)) {
+		m_exporter.exportFrame(time);
 	}
 }
 
@@ -649,10 +659,6 @@ ROP_RENDER_CODE VRayRendererNode::endRender()
 }
 
 
-#include <OP/OP_Director.h>
-#include <OP/OP_BundleList.h>
-#include <OP/OP_Bundle.h>
-
 OP_Bundle* getOpBundleFromNodePrm(OP_Node *node, const char *pn, fpreal time)
 {
 	if (!node){
@@ -692,14 +698,10 @@ OP_Bundle* VRayRendererNode::getActiveLightsBundle()
 		return sbundle;
 	}
 
-	UT_String bundleName;
-	bundleName.itoa(this->getUniqueId());
-	bundleName.prepend("V-RayROPLights_");
-
 	OP_BundleList *blist = OPgetDirector()->getBundles();
-	OP_Bundle *bundle = blist->getBundle(bundleName);
+	OP_Bundle *bundle = blist->getBundle(m_activeLightsBundleName);
 	if (!bundle) {
-		bundle = blist->createBundle(bundleName, true);
+		bundle = blist->createBundle(m_activeLightsBundleName, true);
 	}
 
 	if (!bundle) {
@@ -762,14 +764,10 @@ OP_Bundle* VRayRendererNode::getForcedLightsBundle()
 
 OP_Bundle* VRayRendererNode::getActiveGeometryBundle()
 {
-	UT_String bundleName;
-	bundleName.itoa(this->getUniqueId());
-	bundleName.prepend("V-RayROPGeo_");
-
 	OP_BundleList *blist = OPgetDirector()->getBundles();
-	OP_Bundle *bundle = blist->getBundle(bundleName);
+	OP_Bundle *bundle = blist->getBundle(m_activeGeoBundleName);
 	if (!bundle) {
-		bundle = blist->createBundle(bundleName, true);
+		bundle = blist->createBundle(m_activeGeoBundleName, true);
 	}
 
 	if (!bundle) {
@@ -820,14 +818,10 @@ OP_Bundle* VRayRendererNode::getActiveGeometryBundle()
 
 OP_Bundle* VRayRendererNode::getForcedGeometryBundle()
 {
-	UT_String bundleName;
-	bundleName.itoa(this->getUniqueId());
-	bundleName.prepend("V-RayROPForcedGeo_");
-
 	OP_BundleList *blist = OPgetDirector()->getBundles();
-	OP_Bundle *bundle = blist->getBundle(bundleName);
+	OP_Bundle *bundle = blist->getBundle(m_forcedGeoBundleName);
 	if (!bundle) {
-		bundle = blist->createBundle(bundleName, true);
+		bundle = blist->createBundle(m_forcedGeoBundleName, true);
 	}
 
 	if (!bundle) {
