@@ -108,6 +108,7 @@ macro(link_with_vray_sdk _name)
 		bmputils_s
 		meshes_s
 		meshinfosubdivider_s
+		rayserver_s
 		osdCPU_s
 		openexr_s
 		pimglib_s
