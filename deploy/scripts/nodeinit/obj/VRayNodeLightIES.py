@@ -12,6 +12,9 @@ import hou
 # The node is passed in kwargs['node']
 node = kwargs['node']
 
+node_parm = node.parm("dimmer")
+node_parm.setExpression("ch(\"./enabled\")")
+
 boxnode = node.createNode("box")
 
 circlenode = node.createNode("circle")

@@ -12,6 +12,9 @@ import hou
 # The node is passed in kwargs['node']
 node = kwargs['node']
 
+node_parm = node.parm("dimmer")
+node_parm.setExpression("if(ch(\"./enabled\"), ch(\"./intensity\"), 0)")
+
 linenode = node.createNode("line")
 node_parm = linenode.parm("diry")
 node_parm.set(0)
