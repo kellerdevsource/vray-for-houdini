@@ -19,7 +19,7 @@ else()
 	set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG")
 
 	if (APPLE)
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libstdc++")
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
 		add_definitions(-DBOOST_NO_CXX11_RVALUE_REFERENCES)
 	endif()
 
@@ -27,7 +27,8 @@ else()
 
 	# Force color compiler output
 	if(CMAKE_GENERATOR STREQUAL "Ninja")
-		if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+		if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR
+			CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
 			set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fcolor-diagnostics")
 		elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 5.0.0)
 			set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fdiagnostics-color=always")
