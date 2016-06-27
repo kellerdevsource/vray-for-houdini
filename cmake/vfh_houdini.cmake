@@ -183,6 +183,7 @@ else()
 			z
 			dl
 			tbb
+			tbbmalloc
 			pthread
 			QtCore
 			QtGui
