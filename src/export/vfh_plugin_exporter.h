@@ -115,7 +115,7 @@ public:
 	void                          setAutoCommit(const bool enable);
 	void                          setImageSize(const int w, const int h);
 
-	void                          showVFB(const bool show=true);
+	void                          showVFB(bool show=true);
 	void                          clearFrames(float toTime);
 
 	int                           startRender(int locked=false);

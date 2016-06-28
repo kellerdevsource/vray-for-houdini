@@ -181,6 +181,7 @@ public:
 	int                            isStereoView() const;
 	int                            isPhysicalView(const OBJ_Node &camera) const;
 	int                            isNodeAnimated(OP_Node *op_node);
+	int                            isLightEnabled(OP_Node *op_node);
 
 	int                            hasVelocityOn(OP_Node &rop) const;
 	int                            hasMotionBlur(OP_Node &rop, OBJ_Node &camera) const;

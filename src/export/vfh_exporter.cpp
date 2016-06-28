@@ -1351,23 +1351,25 @@ bool VRayExporter::TraverseOBJs(OP_Node &op_node, void *data)
 
 void VRayExporter::RtCallbackObjManager(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
-	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
-
 	Log::getLog().info("RtCallbackObjManager: %s from \"%s\"",
 					   OPeventToString(type), caller->getName().buffer());
 
-	if (type == OP_GROUPLIST_CHANGED ||
-		type == OP_CHILD_REORDERED || /* undo */
-		type == OP_CHILD_DELETED)
-	{
-		OP_Network *obj_manager = OPgetDirector()->getManager("obj");
-		obj_manager->traverseChildren(VRayExporter::TraverseOBJs, &exporter, false);
-	}
-	else if (type == OP_CHILD_CREATED) {
-		VRayExporter::TraverseOBJ(reinterpret_cast<OBJ_Node*>(data), &exporter);
-	}
-	else if (type == OP_NODE_PREDELETE) {
-		exporter.delOpCallback(reinterpret_cast<OBJ_Node*>(data), VRayExporter::RtCallbackObjManager);
+	VRayExporter &exporter = *reinterpret_cast< VRayExporter* >(callee);
+
+	switch (type) {
+		case OP_CHILD_CREATED:
+		case OP_CHILD_DELETED:
+		case OP_CHILD_REORDERED: /* undo */
+		case OP_GROUPLIST_CHANGED:
+		{
+			exporter.getRop().startIPR(exporter.getContext().getTime());
+			break;
+		}
+		case OP_NODE_PREDELETE:
+		{
+			exporter.delOpCallbacks(caller);
+			break;
+		}
 	}
 }
 
@@ -1381,11 +1383,9 @@ void VRayExporter::exportScene()
 
 	exportView();
 
-
-	// NOTE: Do not go recursively here, process childs manually
-//	OP_Network *obj_manager = OPgetDirector()->getManager("obj");
-//	obj_manager->traverseChildren(VRayExporter::TraverseOBJs, this, false);
-//	addOpCallback(obj_manager, VRayExporter::RtCallbackObjManager);
+	// add RT update callbacks to detect scene export changes
+	addOpCallback(m_rop, VRayRendererNode::RtCallbackRop);
+	addOpCallback(OPgetDirector()->getManager("obj"), VRayExporter::RtCallbackObjManager);
 
 	// export geometry nodes
 	OP_Bundle *activeGeo = m_rop->getActiveGeometryBundle();
@@ -1735,6 +1735,7 @@ void VRayExporter::setAnimation(bool on)
 
 int VRayExporter::initRenderer(int hasUI, int reInit)
 {
+	m_renderer.stopRender();
 	return m_renderer.initRenderer(hasUI, reInit);
 }
 
@@ -1760,12 +1761,6 @@ void VRayExporter::initExporter(int hasUI, int nframes, fpreal tstart, fpreal te
 
 	getRenderer().resetCallbacks();
 	resetOpCallbacks();
-
-#if 0
-	if (!hasOpInterest(this, VRayRendererNode::RtCallbackRop)) {
-		addOpInterest(this, VRayRendererNode::RtCallbackRop);
-	}
-#endif
 
 	if (hasUI >= 0) {
 #ifdef __APPLE__

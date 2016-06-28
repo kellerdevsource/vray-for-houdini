@@ -30,7 +30,9 @@
 using namespace VRayForHoudini;
 
 
+static const UT_StringRef RT_UPDATE_SPARE_TAG = "rt_update";
 static const UT_StringRef apprenticeLimitMsg = "Third-party render engines are not allowed in Houdini Apprentice!";
+
 
 static PRM_Name     parm_render_scripts("parm_render_scripts", "Scripts");
 
@@ -211,6 +213,7 @@ static Parm::PRMTmplList& createObjectsTab(Parm::PRMTmplList& RenderSettingsPrmT
 			.setDefault( "*" )
 			.addSpareData("opfilter", "!!OBJ/GEOMETRY!!")
 			.addSpareData("oprelative", "/obj")
+			.addSpareData(RT_UPDATE_SPARE_TAG, RT_UPDATE_SPARE_TAG)
 			.getPRMTemplate()
 			);
 	RenderSettingsPrmTemplate.push_back(
@@ -219,6 +222,7 @@ static Parm::PRMTmplList& createObjectsTab(Parm::PRMTmplList& RenderSettingsPrmT
 			.setDefault(PRMzeroDefaults)
 			.addSpareData("opfilter", "!!OBJ/GEOMETRY!!")
 			.addSpareData("oprelative", "/obj")
+			.addSpareData(RT_UPDATE_SPARE_TAG, RT_UPDATE_SPARE_TAG)
 			.getPRMTemplate()
 			);
 	RenderSettingsPrmTemplate.push_back(
@@ -227,6 +231,7 @@ static Parm::PRMTmplList& createObjectsTab(Parm::PRMTmplList& RenderSettingsPrmT
 			.setDefault(PRMzeroDefaults)
 			.addSpareData("opfilter", "!!OBJ/GEOMETRY!!")
 			.addSpareData("oprelative", "/obj")
+			.addSpareData(RT_UPDATE_SPARE_TAG, RT_UPDATE_SPARE_TAG)
 			.getPRMTemplate()
 			);
 	RenderSettingsPrmTemplate.push_back(
@@ -235,6 +240,7 @@ static Parm::PRMTmplList& createObjectsTab(Parm::PRMTmplList& RenderSettingsPrmT
 			.setDefault(PRMzeroDefaults)
 			.addSpareData("opfilter", "!!OBJ/GEOMETRY!!")
 			.addSpareData("oprelative", "/obj")
+			.addSpareData(RT_UPDATE_SPARE_TAG, RT_UPDATE_SPARE_TAG)
 			.getPRMTemplate()
 			);
 	RenderSettingsPrmTemplate.push_back(
@@ -243,6 +249,7 @@ static Parm::PRMTmplList& createObjectsTab(Parm::PRMTmplList& RenderSettingsPrmT
 			.setDefault(PRMzeroDefaults)
 			.addSpareData("opfilter", "!!OBJ/GEOMETRY!!")
 			.addSpareData("oprelative", "/obj")
+			.addSpareData(RT_UPDATE_SPARE_TAG, RT_UPDATE_SPARE_TAG)
 			.getPRMTemplate()
 			);
 
@@ -257,6 +264,7 @@ static Parm::PRMTmplList& createObjectsTab(Parm::PRMTmplList& RenderSettingsPrmT
 			.setDefault(PRMzeroDefaults)
 			.addSpareData("opfilter", "!!OBJ/LIGHT!!")
 			.addSpareData("oprelative", "/obj")
+			.addSpareData(RT_UPDATE_SPARE_TAG, RT_UPDATE_SPARE_TAG)
 			.getPRMTemplate()
 			);
 	RenderSettingsPrmTemplate.push_back(
@@ -265,6 +273,7 @@ static Parm::PRMTmplList& createObjectsTab(Parm::PRMTmplList& RenderSettingsPrmT
 			.setDefault( "*" )
 			.addSpareData("opfilter", "!!OBJ/LIGHT!!")
 			.addSpareData("oprelative", "/obj")
+			.addSpareData(RT_UPDATE_SPARE_TAG, RT_UPDATE_SPARE_TAG)
 			.getPRMTemplate()
 			);
 	RenderSettingsPrmTemplate.push_back(
@@ -273,6 +282,7 @@ static Parm::PRMTmplList& createObjectsTab(Parm::PRMTmplList& RenderSettingsPrmT
 			.setDefault(PRMzeroDefaults)
 			.addSpareData("opfilter", "!!OBJ/LIGHT!!")
 			.addSpareData("oprelative", "/obj")
+			.addSpareData(RT_UPDATE_SPARE_TAG, RT_UPDATE_SPARE_TAG)
 			.getPRMTemplate()
 			);
 	RenderSettingsPrmTemplate.push_back(
@@ -281,12 +291,14 @@ static Parm::PRMTmplList& createObjectsTab(Parm::PRMTmplList& RenderSettingsPrmT
 			.setDefault(PRMzeroDefaults)
 			.addSpareData("opfilter", "!!OBJ/LIGHT!!")
 			.addSpareData("oprelative", "/obj")
+			.addSpareData(RT_UPDATE_SPARE_TAG, RT_UPDATE_SPARE_TAG)
 			.getPRMTemplate()
 			);
 	RenderSettingsPrmTemplate.push_back(
 			Parm::PRMFactory(PRM_TOGGLE_E, "soho_autoheadlight", "Headlight Creation")
 			.setTypeExtended(PRM_TYPE_DYNAMIC_PATH_LIST)
 			.setDefault(PRMoneDefaults)
+			.addSpareData(RT_UPDATE_SPARE_TAG, RT_UPDATE_SPARE_TAG)
 			.getPRMTemplate()
 			);
 
@@ -301,6 +313,7 @@ static Parm::PRMTmplList& createObjectsTab(Parm::PRMTmplList& RenderSettingsPrmT
 			.setDefault( "*" )
 			.addSpareData("opfilter", "!!OBJ/FOG!!")
 			.addSpareData("oprelative", "/obj")
+			.addSpareData(RT_UPDATE_SPARE_TAG, RT_UPDATE_SPARE_TAG)
 			.getPRMTemplate()
 			);
 
@@ -415,12 +428,22 @@ static PRM_Template* getTemplates()
 
 OP_TemplatePair* VRayRendererNode::getTemplatePair()
 {
-	static OP_TemplatePair *ropPair = 0;
+	static OP_TemplatePair *ropPair = nullptr;
 	if (!ropPair) {
 		OP_TemplatePair *base = new OP_TemplatePair(getCameraOverridesTemplate(), new OP_TemplatePair(getTemplates()));
 		ropPair = new OP_TemplatePair(ROP_Node::getROPbaseTemplate(), base);
 	}
 	return ropPair;
+}
+
+
+OP_VariablePair* VRayRendererNode::getVariablePair()
+{
+	static OP_VariablePair *pair = nullptr;
+	if (!pair) {
+		pair = new OP_VariablePair(ROP_Node::myVariableList);
+	}
+	return pair;
 }
 
 
@@ -530,12 +553,28 @@ bool VRayRendererNode::updateParmsFlags()
 
 void VRayRendererNode::RtCallbackRop(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
-	VRayRendererNode *rop = reinterpret_cast< VRayRendererNode * >(callee);
-
 	Log::getLog().debug("RtCallbackRop: %s from \"%s\"", OPeventToString(type), caller->getName().buffer());
 
-	if (type == OP_NODE_PREDELETE) {
-		caller->removeOpInterest(rop, VRayRendererNode::RtCallbackRop);
+	VRayExporter &exporter = *reinterpret_cast< VRayExporter* >(callee);
+	VRayRendererNode &rop = *UTverify_cast< VRayRendererNode* >(caller);
+
+	switch (type) {
+		case OP_PARM_CHANGED:
+		{
+			long prmIdx = reinterpret_cast< long >(data);
+			PRM_Parm &prm = caller->getParm(prmIdx);
+			if (   prm.getSparePtr()
+				&& prm.getSparePtr()->getValue(RT_UPDATE_SPARE_TAG))
+			{
+				rop.startIPR(exporter.getContext().getTime());
+			}
+			break;
+		}
+		case OP_NODE_PREDELETE:
+		{
+			exporter.delOpCallbacks(caller);
+			break;
+		}
 	}
 }
 
@@ -543,15 +582,7 @@ void VRayRendererNode::RtCallbackRop(OP_Node *caller, void *callee, OP_EventType
 int VRayRendererNode::RtStartSession(void *data, int /*index*/, fpreal t, const PRM_Template* /*tplate*/)
 {
 	VRayRendererNode &rop = *reinterpret_cast< VRayRendererNode* >(data);
-
-	if (HOU::isApprentice()) {
-		Log::getLog().error(apprenticeLimitMsg);
-		rop.addError(ROP_NONCOMMERCIAL_ERROR, apprenticeLimitMsg);
-	}
-	else {
-		rop.startIPR(t);
-	}
-
+	rop.startIPR(t);
 	return 1;
 }
 
@@ -611,6 +642,12 @@ int VRayRendererNode::initSession(int interactive, int nframes, fpreal tstart, f
 
 void VRayRendererNode::startIPR(fpreal time)
 {
+	if (HOU::isApprentice()) {
+		Log::getLog().error(apprenticeLimitMsg);
+		addError(ROP_NONCOMMERCIAL_ERROR, apprenticeLimitMsg);
+		return;
+	}
+
 	if (initSession(true, 1, time, time)) {
 		m_exporter.exportFrame(time);
 	}
@@ -621,7 +658,6 @@ int VRayRendererNode::startRender(int nframes, fpreal tstart, fpreal tend)
 {
 	if (HOU::isApprentice()) {
 		Log::getLog().error(apprenticeLimitMsg);
-
 		addError(ROP_NONCOMMERCIAL_ERROR, apprenticeLimitMsg);
 		return ROP_ABORT_RENDER;
 	}
@@ -659,7 +695,7 @@ ROP_RENDER_CODE VRayRendererNode::endRender()
 }
 
 
-OP_Bundle* getOpBundleFromNodePrm(OP_Node *node, const char *pn, fpreal time)
+OP_Bundle* getBundleFromOpNodePrm(OP_Node *node, const char *pn, fpreal time)
 {
 	if (!node){
 		return nullptr;
@@ -686,14 +722,26 @@ OP_Bundle* getOpBundleFromNodePrm(OP_Node *node, const char *pn, fpreal time)
 		opcreator = node->getCreator();
 	}
 
-	return node->getParmBundle(pn, 0, mask, opcreator, opfilter);
+	UT_String bundleName;
+	bundleName.itoa(node->getUniqueId());
+	bundleName.prepend(pn);
+	OP_Bundle *bundle = OPgetDirector()->getBundles()->getPattern(bundleName,
+																  opcreator,
+																  opcreator,
+																  mask,
+																  opfilter,
+																  0,
+																  false,
+																  0);
+
+	return bundle;
 }
 
 
 OP_Bundle* VRayRendererNode::getActiveLightsBundle()
 {
 	// if "sololight" parm is set ignore others
-	OP_Bundle *sbundle = getOpBundleFromNodePrm(this, "sololight", m_tstart);
+	OP_Bundle *sbundle = getBundleFromOpNodePrm(this, "sololight", m_tstart);
 	if (sbundle && sbundle->entries() > 0) {
 		return sbundle;
 	}
@@ -710,14 +758,14 @@ OP_Bundle* VRayRendererNode::getActiveLightsBundle()
 
 	bundle->clear();
 
-	OP_Bundle *fbundle = getOpBundleFromNodePrm(this, "forcelights", m_tstart);
+	OP_Bundle *fbundle = getBundleFromOpNodePrm(this, "forcelights", m_tstart);
 	if (fbundle) {
 		OP_NodeList list;
 		fbundle->getMembers(list);
-		blist->bundleAddOps(bundle, list);
+		bundle->addOpList(list);
 	}
 
-	OP_Bundle *abundle = getOpBundleFromNodePrm(this, "alights", m_tstart);
+	OP_Bundle *abundle = getBundleFromOpNodePrm(this, "alights", m_tstart);
 	if (abundle) {
 		OP_NodeList list;
 		abundle->getMembers(list);
@@ -728,12 +776,12 @@ OP_Bundle* VRayRendererNode::getActiveLightsBundle()
 			fpreal dimmer = 0.0;
 			light->evalParameterOrProperty("dimmer", 0, m_tstart, dimmer);
 			if (dimmer > 0) {
-				blist->bundleAddOp(bundle, light);
+				bundle->addOp(light);
 			}
 		}
 	}
 
-	OP_Bundle *exbundle = getOpBundleFromNodePrm(this, "excludelights", m_tstart);
+	OP_Bundle *exbundle = getBundleFromOpNodePrm(this, "excludelights", m_tstart);
 	if (exbundle) {
 		OP_NodeList list;
 		exbundle->getMembers(list);
@@ -741,7 +789,7 @@ OP_Bundle* VRayRendererNode::getActiveLightsBundle()
 			OP_Node *light = list(i);
 			UT_String name = light->getFullPath();
 
-			blist->bundleRemoveOp(bundle, light);
+			bundle->removeOp(light);
 		}
 	}
 
@@ -752,12 +800,12 @@ OP_Bundle* VRayRendererNode::getActiveLightsBundle()
 OP_Bundle* VRayRendererNode::getForcedLightsBundle()
 {
 	// if "sololight" parm is set ignore others
-	OP_Bundle *sbundle = getOpBundleFromNodePrm(this, "sololight", m_tstart);
+	OP_Bundle *sbundle = getBundleFromOpNodePrm(this, "sololight", m_tstart);
 	if (sbundle && sbundle->entries() > 0) {
 		return sbundle;
 	}
 
-	OP_Bundle *fbundle = getOpBundleFromNodePrm(this, "forcelights", m_tstart);
+	OP_Bundle *fbundle = getBundleFromOpNodePrm(this, "forcelights", m_tstart);
 	return fbundle;
 }
 
@@ -782,10 +830,10 @@ OP_Bundle* VRayRendererNode::getActiveGeometryBundle()
 	{
 		OP_NodeList list;
 		fbundle->getMembers(list);
-		blist->bundleAddOps(bundle, list);
+		bundle->addOpList(list);
 	}
 
-	OP_Bundle *vbundle = getOpBundleFromNodePrm(this, "vobject", m_tstart);
+	OP_Bundle *vbundle = getBundleFromOpNodePrm(this, "vobject", m_tstart);
 	if (vbundle) {
 		OP_NodeList list;
 		vbundle->getMembers(list);
@@ -795,12 +843,12 @@ OP_Bundle* VRayRendererNode::getActiveGeometryBundle()
 			UT_String name = node->getFullPath();
 
 			if (node->getVisible()) {
-				blist->bundleAddOp(bundle, node);
+				bundle->addOp(node);
 			}
 		}
 	}
 
-	OP_Bundle *exbundle = getOpBundleFromNodePrm(this, "excludeobject", m_tstart);
+	OP_Bundle *exbundle = getBundleFromOpNodePrm(this, "excludeobject", m_tstart);
 	if (exbundle) {
 		OP_NodeList list;
 		exbundle->getMembers(list);
@@ -808,7 +856,7 @@ OP_Bundle* VRayRendererNode::getActiveGeometryBundle()
 			OP_Node *node = list(i);
 			UT_String name = node->getFullPath();
 
-			blist->bundleRemoveOp(bundle, node);
+			bundle->removeOp(node);
 		}
 	}
 
@@ -828,13 +876,15 @@ OP_Bundle* VRayRendererNode::getForcedGeometryBundle()
 		return bundle;
 	}
 
-	OP_Bundle *fbundle = getOpBundleFromNodePrm(this, "forceobject", m_tstart);
+	bundle->clear();
+
+	OP_Bundle *fbundle = getBundleFromOpNodePrm(this, "forceobject", m_tstart);
 	if (   fbundle
 		&& fbundle->entries() > 0)
 	{
 		OP_NodeList list;
 		fbundle->getMembers(list);
-		blist->bundleAddOps(bundle, list);
+		bundle->addOpList(list);
 	}
 
 	fbundle = getMatteGeometryBundle();
@@ -843,7 +893,7 @@ OP_Bundle* VRayRendererNode::getForcedGeometryBundle()
 	{
 		OP_NodeList list;
 		fbundle->getMembers(list);
-		blist->bundleAddOps(bundle, list);
+		bundle->addOpList(list);
 	}
 
 	fbundle = getPhantomGeometryBundle();
@@ -852,7 +902,7 @@ OP_Bundle* VRayRendererNode::getForcedGeometryBundle()
 	{
 		OP_NodeList list;
 		fbundle->getMembers(list);
-		blist->bundleAddOps(bundle, list);
+		bundle->addOpList(list);
 	}
 
 	return bundle;
@@ -861,14 +911,14 @@ OP_Bundle* VRayRendererNode::getForcedGeometryBundle()
 
 OP_Bundle* VRayRendererNode::getMatteGeometryBundle()
 {
-	OP_Bundle *bundle = getOpBundleFromNodePrm(this, "matte_objects", m_tstart);
+	OP_Bundle *bundle = getBundleFromOpNodePrm(this, "matte_objects", m_tstart);
 	return bundle;
 }
 
 
 OP_Bundle* VRayRendererNode::getPhantomGeometryBundle()
 {
-	OP_Bundle *bundle = getOpBundleFromNodePrm(this, "phantom_objects", m_tstart);
+	OP_Bundle *bundle = getBundleFromOpNodePrm(this, "phantom_objects", m_tstart);
 	return bundle;
 }
 
@@ -880,7 +930,9 @@ void VRayRendererNode::register_operator(OP_OperatorTable *table)
 									   /* How to create one */ VRayRendererNode::myConstructor,
 									   /* Parm definitions  */ VRayRendererNode::getTemplatePair(),
 									   /* Min # of inputs   */ 0,
-									   /* Max # of inputs   */ 0);
+									   /* Max # of inputs   */ 0,
+									   /* Var definitions   */ VRayRendererNode::getVariablePair(),
+									   /* OP flags          */ OP_FLAG_GENERATOR);
 
 	// Set icon
 	rop->setIconName("ROP_vray");

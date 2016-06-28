@@ -27,16 +27,18 @@ class VRayRendererNode:
 {
 public:
 	static OP_TemplatePair      *getTemplatePair();
+	static OP_VariablePair      *getVariablePair();
 	static OP_Node              *myConstructor(OP_Network *net, const char*name, OP_Operator *op) { return new VRayRendererNode(net, name, op); }
 
 	virtual bool                 updateParmsFlags() VRAY_OVERRIDE;
+	OP_Bundle*                   getActiveLightsBundle();
+	OP_Bundle*                   getForcedLightsBundle();
+	OP_Bundle*                   getActiveGeometryBundle();
+	OP_Bundle*                   getForcedGeometryBundle();
+	OP_Bundle*                   getMatteGeometryBundle();
+	OP_Bundle*                   getPhantomGeometryBundle();
 
-	OP_Bundle*   getActiveLightsBundle();
-	OP_Bundle*   getForcedLightsBundle();
-	OP_Bundle*   getActiveGeometryBundle();
-	OP_Bundle*   getForcedGeometryBundle();
-	OP_Bundle*   getMatteGeometryBundle();
-	OP_Bundle*   getPhantomGeometryBundle();
+	void                         startIPR(fpreal time);
 
 protected:
 	VRayRendererNode(OP_Network *net, const char *name, OP_Operator *entry);
@@ -47,7 +49,6 @@ protected:
 	virtual ROP_RENDER_CODE      endRender() VRAY_OVERRIDE;
 
 	int                          initSession(int interactive, int nframes, fpreal tstart, fpreal tend);
-	void                         startIPR(fpreal time);
 
 private:
 	VRayExporter                 m_exporter;

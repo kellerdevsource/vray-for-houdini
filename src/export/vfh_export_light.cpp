@@ -8,9 +8,12 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
-#include "obj/obj_node_base.h"
 #include "vfh_exporter.h"
 #include "vfh_prm_templates.h"
+#include "obj/obj_node_base.h"
+#include "rop/vfh_rop.h"
+
+#include <OP/OP_Bundle.h>
 
 
 using namespace VRayForHoudini;
@@ -46,6 +49,19 @@ void VRayExporter::RtCallbackLight(OP_Node *caller, void *callee, OP_EventType t
 }
 
 
+int VRayExporter::isLightEnabled(OP_Node *op_node)
+{
+	const fpreal t = m_context.getTime();
+
+	fpreal dimmer = 0;
+	op_node->evalParameterOrProperty("dimmer", 0, t, dimmer);
+
+	OP_Bundle *bundle = m_rop->getForcedLightsBundle();
+	return (   (bundle && bundle->contains(op_node, false))
+			|| (dimmer > 0));
+}
+
+
 VRay::Plugin VRayExporter::exportLight(OBJ_Node *obj_node)
 {
 	const fpreal t = m_context.getTime();
@@ -59,6 +75,8 @@ VRay::Plugin VRayExporter::exportLight(OBJ_Node *obj_node)
 
 	OP::VRayNode *vrayNode = dynamic_cast<OP::VRayNode*>(obj_light);
 	if (vrayNode) {
+		pluginDesc.addAttribute(Attrs::PluginAttr("enabled", isLightEnabled(obj_node) ));
+
 		ExportContext expContext(CT_OBJ, *this, *obj_node);
 		OP::VRayNode::PluginResult res = vrayNode->asPluginDesc(pluginDesc, *this, &expContext);
 

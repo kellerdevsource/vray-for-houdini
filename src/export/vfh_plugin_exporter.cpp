@@ -48,21 +48,33 @@ private:
 
 		try {
 #ifdef __APPLE__
-			m_vrayInit = new VRay::VRayInit(false);
+			bool VFBEnabled = false;
 #else
-			m_vrayInit = new VRay::VRayInit(HOU::isUIAvailable());
+			bool VFBEnabled = HOU::isUIAvailable();
 #endif
+			m_vrayInit = new VRay::VRayInit(VFBEnabled);
+
+			VRay::RendererOptions options;
+			options.enableFrameBuffer = VFBEnabled;
+			options.showFrameBuffer = false;
+			m_dummyRenderer = new VRay::VRayRenderer(options);
 		}
 		catch (VRay::VRayException &e) {
 			Log::getLog().error("Error initializing V-Ray library! Error: \"%s\"",
 								e.what());
-			FreePtr(m_vrayInit);
+			cleanup();
 		}
 	}
 
 	~AppSdkInit()
 	{
 		Log::getLog().debug("~AppSdkInit()");
+		cleanup();
+	}
+
+	void cleanup()
+	{
+		FreePtr(m_dummyRenderer);
 		FreePtr(m_vrayInit);
 	}
 
@@ -71,7 +83,12 @@ private:
 	AppSdkInit& operator=(AppSdkInit const&);
 
 private:
-	VRay::VRayInit *m_vrayInit;
+	// needed to initialize renderer context
+	VRay::VRayInit       *m_vrayInit;
+	// dummy renderer keeps references to plugin shared libs
+	// when resetting/removing/destroying true renderers
+	// dummy renderer instance prevents unloading plugin shared libs
+	VRay::VRayRenderer   *m_dummyRenderer;
 };
 
 
@@ -229,7 +246,6 @@ int VRayPluginRenderer::initRenderer(int hasUI, int reInit)
 	}
 
 	if (initialize()) {
-		vfbParent(nullptr);
 
 		if (reInit) {
 			resetCallbacks();
@@ -288,28 +304,33 @@ void VRayPluginRenderer::setImageSize(const int w, const int h)
 }
 
 
-void VRayPluginRenderer::showVFB(const bool show)
+void VRayPluginRenderer::showVFB(bool show)
 {
-	if (m_vray) {
-		QWidget *mainWindow = RE_QtWindow::mainQtWindow();
-		if (mainWindow) {
-			QWidget *vfb = reinterpret_cast<QWidget*>(m_vray->vfb.getWindowHandle());
-			if (vfb) {
-				vfbParent(mainWindow);
+	if (!m_vray) {
+		return;
+	}
+	if (show == m_vray->vfb.isShown()) {
+		return;
+	}
 
-				// This will make window float over the parent
-				Qt::WindowFlags windowFlags = 0;
+	QWidget *mainWindow = RE_QtWindow::mainQtWindow();
+	if (mainWindow) {
+		QWidget *vfb = reinterpret_cast<QWidget*>(m_vray->vfb.getWindowHandle());
+		if (vfb) {
+			vfbParent(mainWindow);
+
+			// This will make window float over the parent
+			Qt::WindowFlags windowFlags = 0;
 #ifdef _WIN32
-				windowFlags |= Qt::Window;
+			windowFlags |= Qt::Window;
 #else
-				windowFlags |= Qt::Dialog;
+			windowFlags |= Qt::Dialog;
 #endif
-				windowFlags |= (Qt::WindowTitleHint|Qt::WindowMinMaxButtonsHint|Qt::WindowCloseButtonHint);
+			windowFlags |= (Qt::WindowTitleHint|Qt::WindowMinMaxButtonsHint|Qt::WindowCloseButtonHint);
 
-				vfb->setWindowFlags(windowFlags);
-			}
-			m_vray->vfb.show(show, true);
+			vfb->setWindowFlags(windowFlags);
 		}
+		m_vray->vfb.show(show, show);
 	}
 }
 
