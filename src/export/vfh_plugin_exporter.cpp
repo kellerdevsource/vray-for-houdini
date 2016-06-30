@@ -247,12 +247,12 @@ int VRayPluginRenderer::initRenderer(int hasUI, int reInit)
 	}
 
 	if (initialize()) {
-
 		if (reInit) {
 			resetCallbacks();
 			freeMem();
 		}
 		else if (m_vray) {
+			m_vray->stop();
 			m_vray->reset();
 		}
 
@@ -597,6 +597,18 @@ void VRayPluginRenderer::stopRender()
 
 void VRayPluginRenderer::resetCallbacks()
 {
+	if (m_vray) {
+		m_vray->setOnImageReady(NULL);
+		m_vray->setOnDumpMessage(NULL);
+		m_vray->setOnProgress(NULL);
+		m_vray->setOnRendererClose(NULL);
+		m_vray->setOnImageReady(NULL);
+		m_vray->setOnRTImageUpdated(NULL);
+		m_vray->setOnBucketInit(NULL);
+		m_vray->setOnBucketFailed(NULL);
+		m_vray->setOnBucketReady(NULL);
+	}
+
 	m_callbacks.clear();
 }
 
