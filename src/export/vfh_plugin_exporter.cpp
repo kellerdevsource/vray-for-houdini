@@ -55,7 +55,7 @@ private:
 			m_vrayInit = new VRay::VRayInit(VFBEnabled);
 
 			VRay::RendererOptions options;
-			options.enableFrameBuffer = VFBEnabled;
+			options.enableFrameBuffer = false;
 			options.showFrameBuffer = false;
 			m_dummyRenderer = new VRay::VRayRenderer(options);
 		}
@@ -260,7 +260,7 @@ int VRayPluginRenderer::initRenderer(int hasUI, int reInit)
 			try {
 				VRay::RendererOptions options;
 				options.enableFrameBuffer = hasUI;
-				options.showFrameBuffer = hasUI;
+				options.showFrameBuffer = false;
 				options.useDefaultVfbTheme = false;
 				options.vfbDrawStyle = VRay::RendererOptions::ThemeStyleMaya;
 				options.keepRTRunning = true;
@@ -282,7 +282,7 @@ int VRayPluginRenderer::initRenderer(int hasUI, int reInit)
 			catch (VRay::VRayException &e) {
 				Log::getLog().error("Error initializing V-Ray! Error: \"%s\"",
 									e.what());
-				m_vray = nullptr;
+				freeMem();
 			}
 		}
 	}
