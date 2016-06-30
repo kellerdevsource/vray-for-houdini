@@ -8,6 +8,17 @@
 # Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 #
 
+function(vfh_osx_flags _project_name)
+	if(APPLE)
+		# This sets search paths for modules like libvray.dylib
+		# (no need for install_name_tool tweaks)
+		set_target_properties(${_project_name}
+			PROPERTIES
+				INSTALL_RPATH "@loader_path;@executable_path")
+	endif()
+endfunction()
+
+
 if(WIN32)
 	# Houdini specific
 	set(CMAKE_CXX_FLAGS "/wd4355 /w14996 /wd4800 /wd4244 /wd4305 /wd4251 /wd4275 /wd4396 /wd4018 /wd4267 /wd4146 /EHsc /GT /bigobj")

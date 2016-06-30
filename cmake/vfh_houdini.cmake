@@ -243,5 +243,5 @@ macro(houdini_plugin name sources)
 	add_library(${libraryName} SHARED ${sources})
 	set_target_properties(${libraryName} PROPERTIES PREFIX "")
 	target_link_libraries(${libraryName} ${HOUDINI_LINK_FLAGS})
+	vfh_osx_flags(${libraryName})
 endmacro()
-
