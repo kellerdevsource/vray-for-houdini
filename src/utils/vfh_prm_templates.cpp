@@ -586,18 +586,19 @@ Parm::PRMFactory& Parm::PRMFactory::setRange(const PRM_Range* r)
 }
 
 
-Parm::PRMFactory& Parm::PRMFactory::setSpareData(const char *items[], int nItems)
+Parm::PRMFactory& Parm::PRMFactory::addSpareData(const char *token, const char *value)
 {
-	if (nItems <= 0) {
-		return *this;
+	PRM_SpareData *spareData = nullptr;
+	if (NOT(m_prm->spareData)) {
+		spareData = createPRMSpareData();
+	}
+	else {
+		spareData = const_cast< PRM_SpareData * >(m_prm->spareData);
 	}
 
-	PRM_SpareData* spareData = createPRMSpareData();
-	for (int i = 0; i < nItems; i += 2) {
-		spareData->addTokenValue(items[i],items[i+1]);
-	}
-
+	spareData->addTokenValue(token, value);
 	m_prm->spareData = spareData;
+
 	return *this;
 }
 

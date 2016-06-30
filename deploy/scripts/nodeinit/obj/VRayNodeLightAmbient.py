@@ -14,12 +14,3 @@ node = kwargs['node']
 
 node_parm = node.parm("dimmer")
 node_parm.setExpression("if(ch(\"./enabled\"), ch(\"./intensity\"), 0)")
-
-cnode = node.createNode("file")
-node_parm = cnode.parm("file")
-node_parm.set("pointlight.bgeo")
-
-cnode.setRenderFlag(True)
-cnode.setDisplayFlag(True)
-
-node.layoutChildren()

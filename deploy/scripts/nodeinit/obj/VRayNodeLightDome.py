@@ -12,6 +12,9 @@ import hou
 # The node is passed in kwargs['node']
 node = kwargs['node']
 
+node_parm = node.parm("dimmer")
+node_parm.setExpression("if(ch(\"./enabled\"), ch(\"./intensity\"), 0)")
+
 cnode = node.createNode("file")
 node_parm = cnode.parm("file")
 node_parm.set("vfhlightdome.bgeo")
