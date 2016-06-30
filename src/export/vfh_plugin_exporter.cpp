@@ -243,6 +243,7 @@ int VRayPluginRenderer::initRenderer(int hasUI, int reInit)
 	if (mainWindow) {
 		// Must be called before VRay::VRayRenderer(options)
 		QApplication::setPalette(mainWindow->palette());
+		QApplication::setFont(mainWindow->font());
 	}
 
 	if (initialize()) {
