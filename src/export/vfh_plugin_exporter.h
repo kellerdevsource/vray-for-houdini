@@ -102,6 +102,8 @@ public:
 	int                           initRenderer(int hasUI, int reInit);
 	void                          freeMem();
 
+	VRay::Plugin                  getPlugin(const char *pluginName);
+
 	VRay::Plugin                  exportPlugin(const Attrs::PluginDesc &pluginDesc);
 	void                          exportPluginProperties(VRay::Plugin &plugin, const Attrs::PluginDesc &pluginDesc);
 	void                          removePlugin(const Attrs::PluginDesc &pluginDesc);

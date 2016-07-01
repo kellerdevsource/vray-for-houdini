@@ -41,6 +41,7 @@ void VRayExporter::RtCallbackLight(OP_Node *caller, void *callee, OP_EventType t
 		}
 		case OP_NODE_PREDELETE: {
 			exporter.removePlugin(obj_node);
+			exporter.delOpCallbacks(obj_node);
 			break;
 		}
 		default:
@@ -51,7 +52,7 @@ void VRayExporter::RtCallbackLight(OP_Node *caller, void *callee, OP_EventType t
 
 int VRayExporter::isLightEnabled(OP_Node *op_node)
 {
-	const fpreal t = m_context.getTime();
+	const fpreal t = getContext().getTime();
 
 	fpreal dimmer = 0;
 	op_node->evalParameterOrProperty("dimmer", 0, t, dimmer);
@@ -62,9 +63,45 @@ int VRayExporter::isLightEnabled(OP_Node *op_node)
 }
 
 
+VRay::Plugin VRayExporter::exportDefaultHeadlight(bool update)
+{
+	static const UT_StringRef theHeadlightNameToken = "DefaultHeadlight";
+
+	int headlight = 0;
+	m_rop->evalParameterOrProperty("soho_autoheadlight",
+								   0,
+								   getContext().getTime(),
+								   headlight
+								   );
+	if (!headlight) {
+		return VRay::Plugin();
+	}
+
+	// create direcional light from camera
+	OBJ_Node *cam = getCamera(m_rop);
+	if (!cam) {
+		return VRay::Plugin();
+	}
+
+	if (update) {
+		VRay::Plugin light = m_renderer.getPlugin(theHeadlightNameToken);
+		if (!light) {
+			return VRay::Plugin();
+		}
+	}
+
+	Attrs::PluginDesc pluginDesc(theHeadlightNameToken.buffer(), "LightDirect");
+	pluginDesc.addAttribute(Attrs::PluginAttr("transform",
+											  VRayExporter::getObjTransform(cam, getContext())
+											  )
+							);
+	return exportPlugin(pluginDesc);
+}
+
+
 VRay::Plugin VRayExporter::exportLight(OBJ_Node *obj_node)
 {
-	const fpreal t = m_context.getTime();
+	const fpreal t = getContext().getTime();
 
 	addOpCallback(obj_node, VRayExporter::RtCallbackLight);
 
@@ -145,4 +182,37 @@ VRay::Plugin VRayExporter::exportLight(OBJ_Node *obj_node)
 	}
 
 	return exportPlugin(pluginDesc);
+}
+
+
+void VRayExporter::exportLights()
+{
+	const fpreal t = getContext().getTime();
+
+	OP_Bundle *activeLights = m_rop->getActiveLightsBundle();
+	if (   !activeLights
+		||  activeLights->entries() <= 0 )
+	{
+		exportDefaultHeadlight();
+		return;
+	}
+
+	for (int i = 0; i < activeLights->entries(); ++i) {
+		OP_Node *node = activeLights->getNode(i);
+		if (!node) {
+			continue;
+		}
+
+		OBJ_Node *objNode = node->castToOBJNode();
+		if (!objNode) {
+			continue;
+		}
+
+		OBJ_Light *light = objNode->castToOBJLight();
+		if (!light) {
+			continue;
+		}
+
+		exportLight(light);
+	}
 }

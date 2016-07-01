@@ -336,6 +336,16 @@ void VRayPluginRenderer::showVFB(bool show)
 }
 
 
+VRay::Plugin VRayPluginRenderer::getPlugin(const char *pluginName)
+{
+	if (!m_vray) {
+		return VRay::Plugin();
+	}
+
+	return m_vray->getPlugin(pluginName);
+}
+
+
 VRay::Plugin VRayPluginRenderer::exportPlugin(const Attrs::PluginDesc &pluginDesc)
 {
 #define CGR_DEBUG_APPSDK_VALUES  0
