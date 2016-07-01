@@ -1406,28 +1406,7 @@ void VRayExporter::exportScene()
 	}
 
 	// export light nodes
-	OP_Bundle *activeLight = m_rop->getActiveLightsBundle();
-	if (activeLight) {
-		for (int i = 0; i < activeLight->entries(); ++i) {
-			OP_Node *node = activeLight->getNode(i);
-			if (!node) {
-				continue;
-			}
-
-			OBJ_Node *objNode = node->castToOBJNode();
-			if (!objNode) {
-				continue;
-			}
-
-			OBJ_Light *light = objNode->castToOBJLight();
-			if (!light) {
-				continue;
-			}
-
-			exportLight(light);
-		}
-	}
-
+	exportLights();
 
 	UT_String env_network_path;
 	m_rop->evalString(env_network_path, Parm::parm_render_net_environment.getToken(), 0, 0.0f);

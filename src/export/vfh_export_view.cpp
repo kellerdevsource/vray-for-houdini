@@ -57,6 +57,7 @@ void VRayExporter::RtCallbackView(OP_Node *caller, void *callee, OP_EventType ty
 			}
 
 			if (procceedEvent) {
+				exporter.exportDefaultHeadlight(true);
 				exporter.exportView();
 			}
 

@@ -119,6 +119,7 @@ public:
 	int                            exportView();
 	void                           exportScene();
 	void                           exportSettings();
+	void                           exportLights();
 	void                           exportRenderChannels(OP_Node *op_node);
 	void                           exportEnvironment(OP_Node *op_node);
 	void                           exportEffects(OP_Node *op_net);
@@ -138,6 +139,7 @@ public:
 	VRay::Plugin                   exportVop(OP_Node *op_node, ExportContext *parentContext = nullptr);
 	VRay::Transform                exportTransformVop(VOP_Node &vop_node, ExportContext *parentContext = nullptr);
 	VRay::Plugin                   exportMaterial(SHOP_Node &shop_node);
+	VRay::Plugin                   exportDefaultHeadlight(bool update = false);
 	VRay::Plugin                   exportDefaultMaterial();
 
 
