@@ -212,18 +212,19 @@ Parm::PRMList& Parm::PRMList::addFolder(const std::string& label)
 Parm::PRMList& Parm::PRMList::addFromFile(const std::string &path)
 {
 	// need to keep the page as myTemplate will have references to it
-	m_scriptPages.emplace_back();
-	auto & currentPage = *m_scriptPages.end();
+	m_scriptPages.push_back(new PRM_ScriptPage);
+	auto & currentPage = *m_scriptPages.back();
 
 	DS_Stream stream(path.c_str());
 	currentPage.parse(stream, true, 0, false);
 
 	int size = currentPage.computeTemplateSize();
+	// start from the last valid
+	int idx = m_prmVec.size() - 1;
 
 	// resize to accomodate space for new params
 	m_prmVec.resize(m_prmVec.size() + size);
 
-	int idx = m_prmVec.size();
 	PRM_ScriptImports *imports = 0;
 	currentPage.fillTemplate(m_prmVec.data(), idx, imports);
 

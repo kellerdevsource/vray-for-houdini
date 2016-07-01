@@ -13,6 +13,7 @@
 
 
 #include <PRM/PRM_Include.h>
+#include <PRM/PRM_ScriptPage.h>
 
 #include <string>
 #include <vector>
@@ -66,7 +67,7 @@ private:
 
 	typedef std::list<SwitcherInfo> SwitcherList;
 	typedef std::vector<SwitcherInfo*> SwitcherStack;
-	typedef std::vector<PRM_ScriptPage> ScriptPageList;
+	typedef std::vector<PRM_ScriptPage*> ScriptPageList;
 
 	SwitcherInfo* getCurrentSwitcher();
 	void          incCurrentFolderPrmCnt();
@@ -76,7 +77,7 @@ private:
 	SwitcherList   m_switcherList;
 	SwitcherStack  m_switcherStack;
 	// will hold script pages, so params have valid references at all times
-	ScriptPageList m_scriptPages
+	ScriptPageList m_scriptPages;
 };
 
 
