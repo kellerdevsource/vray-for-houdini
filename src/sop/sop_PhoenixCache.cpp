@@ -40,7 +40,7 @@ PRM_Template* SOP::PhxShaderCache::GetPrmTemplate()
 			throw std::runtime_error("VRAY_UI_DS_PATH environment variable is not found!");
 		}
 
-		paramList.addFromFile(std::string(jsonDescsFilepath) + "/VolumeGrid.ds");
+		paramList.addFromFile(std::string(jsonDescsFilepath) + "/CustomPhxShaderCache.ds");
 		AttrItems = paramList.getPRMTemplate();
 	}
 
