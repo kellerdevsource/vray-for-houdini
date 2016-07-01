@@ -22,9 +22,6 @@ namespace VOP {
 
 ENV_DEF(EnvironmentFog)
 ENV_DEF(EnvFogMeshGizmo)
-ENV_DEF(PhxShaderCache)
-ENV_DEF(PhxShaderSim)
-ENV_DEF(PhxShaderSimVol)
 ENV_DEF(VolumeVRayToon)
 
 } // namespace VOP
