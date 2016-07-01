@@ -2,7 +2,7 @@
     name	selectedparms
 
     group {
-	name	"folder1"
+	name	"folder2"
 	label	"CacheExport"
 
 	parm {
@@ -14,7 +14,7 @@
 	    export	none
 	}
 	parm {
-	    name	"inCacheRange"
+	    name	"icr"
 	    label	"Cache_Range"
 	    type	string
 	    default	{ "" }
@@ -22,7 +22,7 @@
 	    export	none
 	}
 	parm {
-	    name	"inSize"
+	    name	"isz"
 	    label	"Container Dimensions"
 	    type	string
 	    default	{ "" }
@@ -41,81 +41,80 @@
 	    parmtag	{ "script_callback_language" "python" }
 	}
 	parm {
-	    name	"inMode"
+	    name	"inm"
 	    label	"Animation Control"
 	    type	ordinal
 	    default	{ "0" }
 	    menu	{
-		"inIndex"	"Index"
-		"inLoop"	"Loop"
-		"inReadOffset"	"Read Offset"
-		"inPlayAt"	"Play At"
-		"inMaxLength"	"Max Length"
-		"inPlaySpeed"	"Play Speed"
+		"0"	"Manual"
+		"1"	"Frame Index"
+		"2"	"Loop"
 	    }
 	    range	{ 0 1 }
 	    export	none
 	}
 	parm {
-	    name	"inIndex"
+	    name	"t2f"
 	    label	"Frame Index"
 	    type	float
-	    default	{ "0" }
-	    range	{ 0 10 }
+	    default	{ "1" }
+	    range	{ 0! 1e+006! }
 	    export	none
 	}
 	parm {
-	    name	"inLoop"
+	    name	"il"
 	    label	"Loop Overlap"
 	    type	integer
 	    default	{ "0" }
-	    range	{ 0 10 }
+	    range	{ 0! 1e+006! }
 	    export	none
 	}
 	parm {
-	    name	"inReadOffset"
+	    name	"iro"
 	    label	"Cache Start"
 	    type	integer
-	    default	{ "0" }
-	    range	{ 0 10 }
+	    default	{ "1" }
+	    range	{ 0! 1e+006! }
 	    export	none
 	}
 	parm {
-	    name	"inPlayAt"
+	    name	"ipa"
 	    label	"Play Start"
 	    type	integer
 	    default	{ "0" }
-	    range	{ 0 10 }
+	    range	{ 0! 1e+006! }
 	    export	none
 	}
 	parm {
-	    name	"inMaxLength"
+	    name	"iml"
 	    label	"Play Length"
 	    type	integer
 	    default	{ "0" }
-	    range	{ 0 10 }
+	    range	{ 0! 1e+006! }
 	    export	none
 	}
 	parm {
-	    name	"inPlaySpeed"
+	    name	"play_speed"
 	    label	"Play Speed"
 	    type	float
-	    default	{ "0" }
-	    range	{ 0 10 }
+	    default	{ "1" }
+	    range	{ -10! 10! }
 	    export	none
 	}
 	parm {
-	    name	"inBlendMethod"
-	    label	"TODO Frame Blending"
+	    name	"ibm"
+	    label	"Frame Blending"
 	    type	ordinal
 	    default	{ "0" }
 	    menu	{
+		"0"	"Interpolation"
+		"1"	"Velocity"
 	    }
 	    range	{ 0 1 }
 	    export	none
 	}
 	parm {
-	    name	"inLoadNearest"
+	    name	"iln"
 	    label	"Load Nearest Possible"
 	    type	toggle
 	    default	{ "1" }
@@ -123,30 +122,21 @@
 	    export	none
 	}
 	parm {
-	    name	"inFlipYZ"
+	    name	"ifyz"
 	    label	"Flip Up axis"
 	    type	toggle
 	    default	{ "1" }
 	    range	{ 0 1 }
 	    export	none
 	}
-	parm {
-	    name	"parm"
-	    label	"Label"
-	    type	intvector2
-	    size	2
-	    default	{ "0" "0" }
-	    range	{ -1 1 }
-	    export	none
-	}
     }
 
     group {
-	name	"folder1_1"
+	name	"folder3"
 	label	"Channel Mapping"
 
 	parm {
-	    name	"parm19"
+	    name	"channel_smoke"
 	    label	"Smoke"
 	    type	ordinal
 	    default	{ "0" }
@@ -156,7 +146,7 @@
 	    export	none
 	}
 	parm {
-	    name	"parm30"
+	    name	"channel_temp"
 	    label	"Temperature"
 	    type	ordinal
 	    default	{ "0" }
@@ -166,7 +156,7 @@
 	    export	none
 	}
 	parm {
-	    name	"parm31"
+	    name	"channel_fuel"
 	    label	"Fuel"
 	    type	ordinal
 	    default	{ "0" }
@@ -176,7 +166,7 @@
 	    export	none
 	}
 	parm {
-	    name	"parm32"
+	    name	"channel_vel_x"
 	    label	"Velocity.x"
 	    type	ordinal
 	    default	{ "0" }
@@ -186,7 +176,7 @@
 	    export	none
 	}
 	parm {
-	    name	"parm33"
+	    name	"channel_vel_y"
 	    label	"Velocity.y"
 	    type	ordinal
 	    default	{ "0" }
@@ -196,7 +186,7 @@
 	    export	none
 	}
 	parm {
-	    name	"parm34"
+	    name	"channel_vel_z"
 	    label	"Velocity.z"
 	    type	ordinal
 	    default	{ "0" }
@@ -206,7 +196,7 @@
 	    export	none
 	}
 	parm {
-	    name	"parm47"
+	    name	"channel_red"
 	    label	"Red"
 	    type	ordinal
 	    default	{ "0" }
@@ -216,7 +206,7 @@
 	    export	none
 	}
 	parm {
-	    name	"parm54"
+	    name	"channel_green"
 	    label	"Green"
 	    type	ordinal
 	    default	{ "0" }
@@ -226,7 +216,7 @@
 	    export	none
 	}
 	parm {
-	    name	"parm55"
+	    name	"channel_blue"
 	    label	"Blue"
 	    type	ordinal
 	    default	{ "0" }
@@ -234,11 +224,12 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "script_callback" "1" }
 	}
     }
 
     group {
-	name	"folder1_2"
+	name	"folder4"
 	label	"Rendering"
 
 	parm {
@@ -454,7 +445,7 @@
     }
 
     group {
-	name	"folder1_3"
+	name	"folder5"
 	label	"Fire"
 
 	parm {
@@ -509,42 +500,32 @@
 	    range	{ 0! 100! }
 	    export	none
 	}
-    }
-
-    group {
-	name	"folder1_4"
-	label	"Fire Luminance"
-
 	parm {
-	    name	"erl"
+	    name	"fire_luminance"
 	    label	"Fire Luminance"
 	    type	ramp_flt
 	    default	{ "2" }
 	    range	{ 1! 10 }
 	    export	none
-	    parmtag	{ "rampkeys_var" "Selected Posiotion" }
-	    parmtag	{ "rampvalues_var" "Selected Values" }
+	    parmtag	{ "rampbasis_var" "elum_interpolations" }
+	    parmtag	{ "rampkeys_var" "elum_positions" }
+	    parmtag	{ "rampvalues_var" "elum_values" }
 	}
-    }
-
-    group {
-	name	"folder1_5"
-	label	"Fire Color"
-
 	parm {
-	    name	"erc"
+	    name	"fire_color"
 	    label	"Fire Color"
 	    type	ramp_rgb
 	    default	{ "2" }
 	    range	{ 1! 10 }
 	    export	none
-	    parmtag	{ "rampkeys_var" "Selected Posiotion" }
-	    parmtag	{ "rampvalues_var" "Selected Values" }
+	    parmtag	{ "rampbasis_var" "ecolor_interpolations" }
+	    parmtag	{ "rampkeys_var" "ecolor_positions" }
+	    parmtag	{ "rampvalues_var" "ecolor_colors" }
 	}
     }
 
     group {
-	name	"folder1_6"
+	name	"folder6"
 	label	"Lights"
 
 	parm {
@@ -624,7 +605,7 @@
     }
 
     group {
-	name	"folder1_7"
+	name	"folder7"
 	label	"Smoke Color"
 
 	parm {
@@ -742,26 +723,21 @@
 	    range	{ 0! 100! }
 	    export	none
 	}
-    }
-
-    group {
-	name	"folder1_8"
-	label	"Color Gradient"
-
 	parm {
-	    name	"parm61"
+	    name	"smoke_gradient"
 	    label	"Color Gradient"
 	    type	ramp_rgb
 	    default	{ "2" }
 	    range	{ 1! 10 }
 	    export	none
-	    parmtag	{ "rampkeys_var" "Selected Position" }
-	    parmtag	{ "rampvalues_var" "Selected Color" }
+	    parmtag	{ "rampbasis_var" "dcolor_interpolations" }
+	    parmtag	{ "rampkeys_var" "dcolor_positions" }
+	    parmtag	{ "rampvalues_var" "dcolor_colors" }
 	}
     }
 
     group {
-	name	"folder1_9"
+	name	"folder8"
 	label	"Smoke Opacity"
 
 	parm {
@@ -805,21 +781,16 @@
 	    range	{ 0 10 }
 	    export	none
 	}
-    }
-
-    group {
-	name	"folder1_10"
-	label	"Opacity Curve"
-
 	parm {
-	    name	"parm53"
-	    label	"Label"
+	    name	"smoke_opacity"
+	    label	"Opacity"
 	    type	ramp_flt
 	    default	{ "2" }
 	    range	{ 1! 10 }
 	    export	none
-	    parmtag	{ "rampkeys_var" "Selected Position" }
-	    parmtag	{ "rampvalues_var" "Selected Values" }
+	    parmtag	{ "rampbasis_var" "transp_interpolations" }
+	    parmtag	{ "rampkeys_var" "transp_positions" }
+	    parmtag	{ "rampvalues_var" "transp_values" }
 	}
     }
 
