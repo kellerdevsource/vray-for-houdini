@@ -49,6 +49,7 @@ public:
 	PRMList& switcherBegin(const char *token, const char *label = nullptr);
 	PRMList& switcherEnd();
 	PRMList& addFolder(const std::string &label);
+	PRMList& addFromFile(const std::string &path);
 
 private:
 	typedef std::vector<PRM_Template> PRMTemplVec;
@@ -65,14 +66,17 @@ private:
 
 	typedef std::list<SwitcherInfo> SwitcherList;
 	typedef std::vector<SwitcherInfo*> SwitcherStack;
+	typedef std::vector<PRM_ScriptPage> ScriptPageList;
 
 	SwitcherInfo* getCurrentSwitcher();
 	void          incCurrentFolderPrmCnt();
 
 private:
-	PRMTemplVec   m_prmVec;
-	SwitcherList  m_switcherList;
-	SwitcherStack m_switcherStack;
+	PRMTemplVec    m_prmVec;
+	SwitcherList   m_switcherList;
+	SwitcherStack  m_switcherStack;
+	// will hold script pages, so params have valid references at all times
+	ScriptPageList m_scriptPages
 };
 
 

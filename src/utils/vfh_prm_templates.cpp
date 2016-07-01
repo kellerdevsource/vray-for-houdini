@@ -13,6 +13,11 @@
 #include "vfh_prm_def.h"
 
 #include <OP/OP_Node.h>
+#include <PRM/DS_CommandList.h>
+#include <PRM/DS_Command.h>
+#include <PRM/PRM_Template.h>
+#include <PRM/PRM_ScriptPage.h>
+#include <PRM/DS_Stream.h>
 
 
 using namespace VRayForHoudini;
@@ -199,6 +204,30 @@ Parm::PRMList& Parm::PRMList::addFolder(const std::string& label)
 	else {
 		info->m_folders.emplace_back(/*numParms=*/0, ::strdup(label.c_str()));
 	}
+
+	return *this;
+}
+
+
+Parm::PRMList& Parm::PRMList::addFromFile(const std::string &path)
+{
+	// need to keep the page as myTemplate will have references to it
+	m_scriptPages.emplace_back();
+	auto & currentPage = *m_scriptPages.end();
+
+	DS_Stream stream(path.c_str());
+	currentPage.parse(stream, true, 0, false);
+
+	int size = currentPage.computeTemplateSize();
+
+	// resize to accomodate space for new params
+	m_prmVec.resize(m_prmVec.size() + size);
+
+	int idx = m_prmVec.size();
+	PRM_ScriptImports *imports = 0;
+	currentPage.fillTemplate(m_prmVec.data(), idx, imports);
+
+	assert(idx == m_prmVec.size() - 1 && "Read unexpected number of params from file");
 
 	return *this;
 }
