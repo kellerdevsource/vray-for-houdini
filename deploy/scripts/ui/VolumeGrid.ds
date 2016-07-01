@@ -1,0 +1,827 @@
+{
+    name	selectedparms
+
+    group {
+	name	"folder1"
+	label	"CacheExport"
+
+	parm {
+	    name	"inFile"
+	    label	"Input Cache File"
+	    type	file
+	    default	{ "" }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"inCacheRange"
+	    label	"Cache_Range"
+	    type	string
+	    default	{ "" }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"inSize"
+	    label	"Container Dimensions"
+	    type	string
+	    default	{ "" }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"parm18"
+	    label	"Cache Output"
+	    type	string
+	    size	16
+	    default	{ "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "editor" "1" }
+	    parmtag	{ "script_callback_language" "python" }
+	}
+	parm {
+	    name	"inMode"
+	    label	"Animation Control"
+	    type	ordinal
+	    default	{ "0" }
+	    menu	{
+		"inIndex"	"Index"
+		"inLoop"	"Loop"
+		"inReadOffset"	"Read Offset"
+		"inPlayAt"	"Play At"
+		"inMaxLength"	"Max Length"
+		"inPlaySpeed"	"Play Speed"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"inIndex"
+	    label	"Frame Index"
+	    type	float
+	    default	{ "0" }
+	    range	{ 0 10 }
+	    export	none
+	}
+	parm {
+	    name	"inLoop"
+	    label	"Loop Overlap"
+	    type	integer
+	    default	{ "0" }
+	    range	{ 0 10 }
+	    export	none
+	}
+	parm {
+	    name	"inReadOffset"
+	    label	"Cache Start"
+	    type	integer
+	    default	{ "0" }
+	    range	{ 0 10 }
+	    export	none
+	}
+	parm {
+	    name	"inPlayAt"
+	    label	"Play Start"
+	    type	integer
+	    default	{ "0" }
+	    range	{ 0 10 }
+	    export	none
+	}
+	parm {
+	    name	"inMaxLength"
+	    label	"Play Length"
+	    type	integer
+	    default	{ "0" }
+	    range	{ 0 10 }
+	    export	none
+	}
+	parm {
+	    name	"inPlaySpeed"
+	    label	"Play Speed"
+	    type	float
+	    default	{ "0" }
+	    range	{ 0 10 }
+	    export	none
+	}
+	parm {
+	    name	"inBlendMethod"
+	    label	"TODO Frame Blending"
+	    type	ordinal
+	    default	{ "0" }
+	    menu	{
+	    }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"inLoadNearest"
+	    label	"Load Nearest Possible"
+	    type	toggle
+	    default	{ "1" }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"inFlipYZ"
+	    label	"Flip Up axis"
+	    type	toggle
+	    default	{ "1" }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"parm"
+	    label	"Label"
+	    type	intvector2
+	    size	2
+	    default	{ "0" "0" }
+	    range	{ -1 1 }
+	    export	none
+	}
+    }
+
+    group {
+	name	"folder1_1"
+	label	"Channel Mapping"
+
+	parm {
+	    name	"parm19"
+	    label	"Smoke"
+	    type	ordinal
+	    default	{ "0" }
+	    menu	{
+	    }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"parm30"
+	    label	"Temperature"
+	    type	ordinal
+	    default	{ "0" }
+	    menu	{
+	    }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"parm31"
+	    label	"Fuel"
+	    type	ordinal
+	    default	{ "0" }
+	    menu	{
+	    }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"parm32"
+	    label	"Velocity.x"
+	    type	ordinal
+	    default	{ "0" }
+	    menu	{
+	    }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"parm33"
+	    label	"Velocity.y"
+	    type	ordinal
+	    default	{ "0" }
+	    menu	{
+	    }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"parm34"
+	    label	"Velocity.z"
+	    type	ordinal
+	    default	{ "0" }
+	    menu	{
+	    }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"parm47"
+	    label	"Red"
+	    type	ordinal
+	    default	{ "0" }
+	    menu	{
+	    }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"parm54"
+	    label	"Green"
+	    type	ordinal
+	    default	{ "0" }
+	    menu	{
+	    }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"parm55"
+	    label	"Blue"
+	    type	ordinal
+	    default	{ "0" }
+	    menu	{
+	    }
+	    range	{ 0 1 }
+	    export	none
+	}
+    }
+
+    group {
+	name	"folder1_2"
+	label	"Rendering"
+
+	parm {
+	    name	"render"
+	    label	"Enable Rendering"
+	    type	toggle
+	    default	{ "1" }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"renderMode"
+	    label	"Render Mode"
+	    type	ordinal
+	    default	{ "0" }
+	    menu	{
+		"0"	"Volumetric"
+		"1"	"Volumetric Geometry"
+		"2"	"Volumetric Heat Haze"
+		"3"	"Isosurface"
+		"4"	"Mesh"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"pmprimary"
+	    label	"Probabilistic Rendering"
+	    type	ordinal
+	    default	{ "1" }
+	    menu	{
+		"0"	"Disable"
+		"1"	"RT Only"
+		"2"	"Always"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"rendstep"
+	    label	"Step (%)"
+	    type	integer
+	    default	{ "80" }
+	    range	{ 1! 10000! }
+	    export	none
+	    parmtag	{ "autoscope" "0000000000000000" }
+	}
+	parm {
+	    name	"rendshadstep"
+	    label	"Shadow Step (%)"
+	    type	integer
+	    default	{ "200" }
+	    range	{ 1! 10000! }
+	    export	none
+	}
+	parm {
+	    name	"softb"
+	    label	"Fade Out"
+	    type	float
+	    default	{ "0" }
+	    range	{ 0! 100000! }
+	    export	none
+	}
+	parm {
+	    name	"rvmult"
+	    label	"Motion Blur Multiplier"
+	    type	float
+	    default	{ "1" }
+	    range	{ 0! 1000! }
+	    export	none
+	}
+	parm {
+	    name	"vtex"
+	    label	"Velocity Texture"
+	    type	uv
+	    size	2
+	    default	{ "0" "0" }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"sampler"
+	    label	"Sampler Type"
+	    type	ordinal
+	    default	{ "1" }
+	    menu	{
+		"0"	"Trunk"
+		"1"	"Linear"
+		"2"	"Spherical"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"rcm"
+	    label	"Coordinate Method"
+	    type	ordinal
+	    default	{ "0" }
+	    menu	{
+		"0"	"Fixed"
+		"1"	"Grid"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"sarg"
+	    label	"Surface Channel"
+	    type	ordinal
+	    default	{ "1" }
+	    menu	{
+		"0"	"Texture"
+		"1"	"Temperature"
+		"2"	"Smoke"
+		"3"	"Speed"
+		"4"	"Fuel"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"stex"
+	    label	"Surface Texture"
+	    type	uv
+	    size	2
+	    default	{ "0" "0" }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"surflevel"
+	    label	"Surface Level"
+	    type	float
+	    default	{ "0.01" }
+	    range	{ -100000! 100000! }
+	    export	none
+	}
+	parm {
+	    name	"solidbelow"
+	    label	"Invert Volume"
+	    type	toggle
+	    default	{ "0" }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"meshType"
+	    label	"Mesh Type"
+	    type	ordinal
+	    default	{ "0" }
+	    menu	{
+		"0"	"Static Mesh"
+		"1"	"Dynamic Mesh"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"smoothmesh"
+	    label	"Mesh Smoothing"
+	    type	integer
+	    default	{ "5" }
+	    range	{ 0! 1000! }
+	    export	none
+	}
+	parm {
+	    name	"hhfactor"
+	    label	"Heat Size"
+	    type	float
+	    default	{ "1" }
+	    range	{ -1000! 1000! }
+	    export	none
+	}
+	parm {
+	    name	"displ"
+	    label	"Enable Displacement"
+	    type	toggle
+	    default	{ "1" }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"displ2d"
+	    label	"Type"
+	    type	ordinal
+	    default	{ "1" }
+	    disablewhen	"{ displ == 0 }"
+	    menu	{
+		"0"	"Gradient Driven"
+		"1"	"Surface Driven"
+		"2"	"Vector"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"displmul"
+	    label	"Displacement Amount"
+	    type	float
+	    default	{ "1" }
+	    range	{ 0! 1000! }
+	    export	none
+	}
+	parm {
+	    name	"displ2"
+	    label	"Texture"
+	    type	uv
+	    size	2
+	    default	{ "0" "0" }
+	    range	{ 0 1 }
+	    export	none
+	}
+    }
+
+    group {
+	name	"folder1_3"
+	label	"Fire"
+
+	parm {
+	    name	"earg"
+	    label	"Base On"
+	    type	ordinal
+	    default	{ "1" }
+	    menu	{
+		"0"	"Disabled"
+		"1"	"Temperature"
+		"2"	"Smoke"
+		"3"	"Speed"
+		"4"	"Fuel"
+		"5"	"Texture"
+		"6"	"RGB"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"ret"
+	    label	"Texture"
+	    type	uv
+	    size	2
+	    default	{ "0" "0" }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"rem"
+	    label	"Modulate by Texture"
+	    type	toggle
+	    default	{ "1" }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"no_alpha_e"
+	    label	"Opacity Mode"
+	    type	ordinal
+	    default	{ "0" }
+	    menu	{
+	    }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"etmult"
+	    label	"Opacity Multiplier"
+	    type	float
+	    default	{ "1" }
+	    range	{ 0! 100! }
+	    export	none
+	}
+    }
+
+    group {
+	name	"folder1_4"
+	label	"Fire Luminance"
+
+	parm {
+	    name	"erl"
+	    label	"Fire Luminance"
+	    type	ramp_flt
+	    default	{ "2" }
+	    range	{ 1! 10 }
+	    export	none
+	    parmtag	{ "rampkeys_var" "Selected Posiotion" }
+	    parmtag	{ "rampvalues_var" "Selected Values" }
+	}
+    }
+
+    group {
+	name	"folder1_5"
+	label	"Fire Color"
+
+	parm {
+	    name	"erc"
+	    label	"Fire Color"
+	    type	ramp_rgb
+	    default	{ "2" }
+	    range	{ 1! 10 }
+	    export	none
+	    parmtag	{ "rampkeys_var" "Selected Posiotion" }
+	    parmtag	{ "rampvalues_var" "Selected Values" }
+	}
+    }
+
+    group {
+	name	"folder1_6"
+	label	"Lights"
+
+	parm {
+	    name	"el"
+	    label	"Enable Lighting"
+	    type	toggle
+	    default	{ "1" }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"elc"
+	    label	"lightsCount"
+	    type	integer
+	    default	{ "0" }
+	    range	{ 0 10 }
+	    export	none
+	}
+	parm {
+	    name	"lightsmult"
+	    label	"Light Power on Scene"
+	    type	float
+	    default	{ "0" }
+	    range	{ 0 10 }
+	    export	none
+	}
+	parm {
+	    name	"lightsmultself"
+	    label	"Light Power on Self"
+	    type	float
+	    default	{ "0" }
+	    range	{ 0 10 }
+	    export	none
+	}
+	parm {
+	    name	"selfshadow"
+	    label	"Self-Shadowing"
+	    type	ordinal
+	    default	{ "2" }
+	    menu	{
+		"0"	"None"
+		"1"	"Ray-traced"
+		"2"	"Grid-based"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"elg"
+	    label	"Light Grid Resolution (%)"
+	    type	float
+	    default	{ "0" }
+	    range	{ 0 10 }
+	    export	none
+	}
+	parm {
+	    name	"al_decay"
+	    label	"Decay Type"
+	    type	ordinal
+	    default	{ "2" }
+	    menu	{
+		"0"	"None"
+		"1"	"Inverse"
+		"2"	"Inverse Square"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"elsd"
+	    label	"Subdivs"
+	    type	integer
+	    default	{ "8" }
+	    range	{ 0 512! }
+	    export	none
+	}
+    }
+
+    group {
+	name	"folder1_7"
+	label	"Smoke Color"
+
+	parm {
+	    name	"darg"
+	    label	"Diffuse Input"
+	    type	ordinal
+	    default	{ "1" }
+	    menu	{
+		"0"	"Disabled"
+		"1"	"Temperature"
+		"2"	"Smoke"
+		"3"	"Speed"
+		"4"	"Fuel"
+		"5"	"Texture"
+		"6"	"SimpleColor"
+		"7"	"RGB"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"dtex"
+	    label	"Texture"
+	    type	uv
+	    size	2
+	    default	{ "0" "0" }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"mod_d"
+	    label	"Modulate by Texture"
+	    type	toggle
+	    default	{ "1" }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"simple_color"
+	    label	"Constant Color"
+	    type	color
+	    size	3
+	    default	{ "1" "1" "1" }
+	    disablewhen	"{ darg != 6 }"
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"lightcache"
+	    label	"Light Cache"
+	    type	toggle
+	    default	{ "1" }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"lightcachesr"
+	    label	"Light Cache Speedup"
+	    type	float
+	    default	{ "0" }
+	    range	{ 0 10 }
+	    export	none
+	}
+	parm {
+	    name	"noscatter"
+	    label	"Scattering"
+	    type	ordinal
+	    default	{ "2" }
+	    menu	{
+		"0"	"Realistic (GI Only)"
+		"1"	"Disabled"
+		"2"	"Analytic"
+		"3"	"Analytic+Shadows"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"dsd"
+	    label	"Scatter Depth"
+	    type	integer
+	    default	{ "10" }
+	    range	{ 0! 65535! }
+	    export	none
+	}
+	parm {
+	    name	"difmul"
+	    label	"Diffuse Multiplier"
+	    type	float
+	    default	{ "1" }
+	    range	{ 0! 4! }
+	    export	none
+	}
+	parm {
+	    name	"transfown"
+	    label	"Own Light Scatter Mult"
+	    type	float
+	    default	{ "1" }
+	    range	{ 0! 10! }
+	    export	none
+	}
+	parm {
+	    name	"transfext"
+	    label	"External Scatter Mult"
+	    type	float
+	    default	{ "1" }
+	    range	{ 0! 10! }
+	    export	none
+	}
+	parm {
+	    name	"shad_strength"
+	    label	"Shadow Strength"
+	    type	float
+	    default	{ "1" }
+	    range	{ 0! 100! }
+	    export	none
+	}
+    }
+
+    group {
+	name	"folder1_8"
+	label	"Color Gradient"
+
+	parm {
+	    name	"parm61"
+	    label	"Color Gradient"
+	    type	ramp_rgb
+	    default	{ "2" }
+	    range	{ 1! 10 }
+	    export	none
+	    parmtag	{ "rampkeys_var" "Selected Position" }
+	    parmtag	{ "rampvalues_var" "Selected Color" }
+	}
+    }
+
+    group {
+	name	"folder1_9"
+	label	"Smoke Opacity"
+
+	parm {
+	    name	"targ"
+	    label	"Opacity Input"
+	    type	ordinal
+	    default	{ "0" }
+	    menu	{
+		"0"	"Simple Smoke"
+		"1"	"Temperature"
+		"2"	"Smoke"
+		"3"	"Speed"
+		"10"	"Fuel"
+		"4"	"Texture"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"rtt"
+	    label	"Texture"
+	    type	uv
+	    size	2
+	    default	{ "0" "0" }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"rtm"
+	    label	"Modulate by Texture"
+	    type	toggle
+	    default	{ "1" }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"smoketransp"
+	    label	"Simple Smoke Factor"
+	    type	float
+	    default	{ "0" }
+	    range	{ 0 10 }
+	    export	none
+	}
+    }
+
+    group {
+	name	"folder1_10"
+	label	"Opacity Curve"
+
+	parm {
+	    name	"parm53"
+	    label	"Label"
+	    type	ramp_flt
+	    default	{ "2" }
+	    range	{ 1! 10 }
+	    export	none
+	    parmtag	{ "rampkeys_var" "Selected Position" }
+	    parmtag	{ "rampvalues_var" "Selected Values" }
+	}
+    }
+
+
+}
