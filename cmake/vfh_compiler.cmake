@@ -8,6 +8,11 @@
 # Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 #
 
+if(APPLE)
+	set(CMAKE_OSX_DEPLOYMENT_TARGET 10.9)
+endif()
+
+
 function(vfh_osx_flags _project_name)
 	if(APPLE)
 		# This sets search paths for modules like libvray.dylib
