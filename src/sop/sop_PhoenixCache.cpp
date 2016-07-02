@@ -26,35 +26,25 @@
 
 using namespace VRayForHoudini;
 
-
-static PRM_Name           AttrTabsSwitcher("PhxShaderCache");
-static Parm::PRMDefList   AttrTabsSwitcherTitles;
-static Parm::PRMTmplList  AttrItems;
-
-static Parm::TabItemDesc PhxShaderCacheTabItemsDesc[] = {
-	{ "Cache",      "PhxShaderCache" },
-	{ "Simulation", "PhxShaderSim"   },
-};
-
-
 SOP::FluidCache  SOP::PhxShaderCache::FluidFiles;
+static PRM_Template * AttrItems = nullptr;
 
 
 PRM_Template* SOP::PhxShaderCache::GetPrmTemplate()
 {
-	if (!AttrItems.size()) {
-		Parm::addTabsItems(PhxShaderCacheTabItemsDesc, CountOf(PhxShaderCacheTabItemsDesc), AttrTabsSwitcherTitles, AttrItems);
+	if (!AttrItems) {
+		static Parm::PRMList paramList;
+		const char *jsonDescsFilepath = getenv("VRAY_UI_DS_PATH");
+		if (NOT(jsonDescsFilepath)) {
+			Log::getLog().error("VRAY_UI_DS_PATH environment variable is not found!");
+			throw std::runtime_error("VRAY_UI_DS_PATH environment variable is not found!");
+		}
 
-		AttrItems.push_back(PRM_Template()); // List terminator
-
-		AttrItems.insert(AttrItems.begin(),
-						 PRM_Template(PRM_SWITCHER,
-									  AttrTabsSwitcherTitles.size(),
-									  &AttrTabsSwitcher,
-									  &AttrTabsSwitcherTitles[0]));
+		paramList.addFromFile(std::string(jsonDescsFilepath) + "/CustomPhxShaderCache.ds");
+		AttrItems = paramList.getPRMTemplate();
 	}
 
-	return &AttrItems[0];
+	return AttrItems;
 }
 
 

@@ -146,9 +146,6 @@ void newVopOperator(OP_OperatorTable *table)
 
 	VFH_VOP_ADD_OPERATOR(table, "EFFECT", EnvironmentFog);
 	VFH_VOP_ADD_OPERATOR(table, "EFFECT", EnvFogMeshGizmo);
-	VFH_VOP_ADD_OPERATOR(table, "EFFECT", PhxShaderCache);
-	VFH_VOP_ADD_OPERATOR(table, "EFFECT", PhxShaderSim);
-	VFH_VOP_ADD_OPERATOR(table, "EFFECT", PhxShaderSimVol);
 	VFH_VOP_ADD_OPERATOR(table, "EFFECT", VolumeVRayToon);
 
 	VFH_VOP_ADD_OPERATOR_OUTPUT_CUSTOM_ID(table, "RENDERCHANNEL", RenderChannelsContainer,
