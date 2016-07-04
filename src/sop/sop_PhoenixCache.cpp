@@ -414,7 +414,7 @@ OP::VRayNode::PluginResult SOP::PhxShaderCache::asPluginDesc(Attrs::PluginDesc &
 	if (NOT(phxShaderCache)) {
 		Attrs::PluginDesc phxShaderCacheDesc(VRayExporter::getPluginName(this, "Cache"), "PhxShaderCache");
 		phxShaderCacheDesc.addAttribute(Attrs::PluginAttr("cache_path", path.buffer()));
-		exporter.setAttrsFromOpNodePrms(phxShaderCacheDesc, this, "PhxShaderCache_");
+		exporter.setAttrsFromOpNodePrms(phxShaderCacheDesc, this, "");
 
 		phxShaderCache = exporter.exportPlugin(phxShaderCacheDesc);
 	}
@@ -447,8 +447,27 @@ OP::VRayNode::PluginResult SOP::PhxShaderCache::asPluginDesc(Attrs::PluginDesc &
 
 	phxShaderSimDesc.addAttribute(Attrs::PluginAttr("node_transform", nodeTm));
 
-	exporter.setAttrsFromOpNodePrms(phxShaderSimDesc, this, "PhxShaderSim_");
+	// renderMode
+	const PRM_Parm *renderMode = Parm::getParm(*this, "renderMode");
+	if (renderMode && renderMode->getType().isOrdinalType()) {
+		enum RenderType {
+			Volumetric  = 0,
+			Volumetric_Geometry  = 1,
+			Volumetric_Heat_Haze  = 2,
+			Isosurface  = 3,
+			Mesh  = 4,
+		};
+		int32 val;
+		renderMode->getValue(parentContext->getExporter()->getContext().getTime(), val, 0, parentContext->getExporter()->getContext().getThread());
+		RenderType type = static_cast<RenderType>(val);
 
+		phxShaderSimDesc.addAttribute(Attrs::PluginAttr("mesher", type == Volumetric_Geometry || type == Volumetric_Heat_Haze || type == Isosurface));
+		phxShaderSimDesc.addAttribute(Attrs::PluginAttr("geommode", type == Mesh));
+	}
+
+	// TODO: usrchmap, ramps
+
+	exporter.setAttrsFromOpNodePrms(phxShaderSimDesc, this, "");
 	VRay::Plugin phxShaderSim = exporter.exportPlugin(phxShaderSimDesc);
 	if (phxShaderSim) {
 		exporter.phxAddSimumation(phxShaderSim);
