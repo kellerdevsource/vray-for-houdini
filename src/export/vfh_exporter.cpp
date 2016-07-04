@@ -380,6 +380,15 @@ void VRayExporter::setAttrsFromOpNodePrms(Attrs::PluginDesc &pluginDesc, OP_Node
 											  : boost::str(Parm::FmtPrefixManual % prefix % attrDesc.attr);
 
 				const PRM_Parm *parm = Parm::getParm(*opNode, parmName);
+
+				// check for properties that are marked for custom handling on hou side
+				if (parm) {
+					auto spareData = parm->getSparePtr();
+					if (spareData && spareData->getValue("vray_custom_handling")) {
+						continue;
+					}
+				}
+
 				bool isTextureAttr = (   attrDesc.value.type == Parm::eTextureInt
 									|| attrDesc.value.type == Parm::eTextureFloat
 									|| attrDesc.value.type == Parm::eTextureColor);
