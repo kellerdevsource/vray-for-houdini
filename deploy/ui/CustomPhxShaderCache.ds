@@ -648,7 +648,7 @@
 	    label	"Constant Color"
 	    type	color
 	    size	3
-	    default	{ "1" "1" "1" }
+	    default	{ "0.2" "0.2" "0.2" }
 	    disablewhen	"{ darg != 6 }"
 	    range	{ 0 1 }
 	    export	none
@@ -665,7 +665,7 @@
 	    name	"lightcachesr"
 	    label	"Light Cache Speedup"
 	    type	float
-	    default	{ "0" }
+	    default	{ "0.9" }
 	    range	{ 0 10 }
 	    export	none
 	}
@@ -677,8 +677,8 @@
 	    menu	{
 		"0"	"Realistic (GI Only)"
 		"1"	"Disabled"
-		"2"	"Analytic"
-		"3"	"Analytic+Shadows"
+		"2"	"Approximate"
+		"3"	"Approximate+Shadows"
 	    }
 	    range	{ 0 1 }
 	    export	none
