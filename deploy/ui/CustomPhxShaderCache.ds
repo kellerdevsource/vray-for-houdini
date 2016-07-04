@@ -6,28 +6,33 @@
 	label	"CacheExport"
 
 	parm {
-	    name	"inFile"
+	    name	"PhxShaderCache_cache_path"
 	    label	"Input Cache File"
 	    type	file
 	    default	{ "" }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_custom_handling" " " }
 	}
 	parm {
 	    name	"icr"
-	    label	"Cache_Range"
+	    label	"Cache Range"
 	    type	string
+	    invisible
 	    default	{ "" }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_custom_handling" " " }
 	}
 	parm {
 	    name	"isz"
 	    label	"Container Dimensions"
 	    type	string
+	    invisible
 	    default	{ "" }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_custom_handling" " " }
 	}
 	parm {
 	    name	"parm18"
@@ -39,9 +44,10 @@
 	    export	none
 	    parmtag	{ "editor" "1" }
 	    parmtag	{ "script_callback_language" "python" }
+	    parmtag	{ "vray_custom_handling" " " }
 	}
 	parm {
-	    name	"inm"
+	    name	"anim_mode"
 	    label	"Animation Control"
 	    type	ordinal
 	    default	{ "0" }
@@ -62,7 +68,7 @@
 	    export	none
 	}
 	parm {
-	    name	"il"
+	    name	"loop_overlap"
 	    label	"Loop Overlap"
 	    type	integer
 	    default	{ "0" }
@@ -70,7 +76,17 @@
 	    export	none
 	}
 	parm {
-	    name	"iro"
+	    name	"usrchmap"
+	    label	"Channel mapping string"
+	    type	string
+	    invisible
+	    default	{ "" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_custom_handling" " " }
+	}
+	parm {
+	    name	"read_offset"
 	    label	"Cache Start"
 	    type	integer
 	    default	{ "1" }
@@ -78,7 +94,7 @@
 	    export	none
 	}
 	parm {
-	    name	"ipa"
+	    name	"play_at"
 	    label	"Play Start"
 	    type	integer
 	    default	{ "0" }
@@ -86,7 +102,7 @@
 	    export	none
 	}
 	parm {
-	    name	"iml"
+	    name	"max_length"
 	    label	"Play Length"
 	    type	integer
 	    default	{ "0" }
@@ -102,7 +118,7 @@
 	    export	none
 	}
 	parm {
-	    name	"ibm"
+	    name	"blend_method"
 	    label	"Frame Blending"
 	    type	ordinal
 	    default	{ "0" }
@@ -114,7 +130,7 @@
 	    export	none
 	}
 	parm {
-	    name	"iln"
+	    name	"load_nearest"
 	    label	"Load Nearest Possible"
 	    type	toggle
 	    default	{ "1" }
@@ -122,7 +138,7 @@
 	    export	none
 	}
 	parm {
-	    name	"ifyz"
+	    name	"flip_yz"
 	    label	"Flip Up axis"
 	    type	toggle
 	    default	{ "1" }
@@ -144,6 +160,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_custom_handling" " " }
 	}
 	parm {
 	    name	"channel_temp"
@@ -154,6 +171,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_custom_handling" " " }
 	}
 	parm {
 	    name	"channel_fuel"
@@ -164,6 +182,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_custom_handling" " " }
 	}
 	parm {
 	    name	"channel_vel_x"
@@ -174,6 +193,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_custom_handling" " " }
 	}
 	parm {
 	    name	"channel_vel_y"
@@ -184,6 +204,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_custom_handling" " " }
 	}
 	parm {
 	    name	"channel_vel_z"
@@ -194,6 +215,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_custom_handling" " " }
 	}
 	parm {
 	    name	"channel_red"
@@ -204,6 +226,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_custom_handling" " " }
 	}
 	parm {
 	    name	"channel_green"
@@ -214,6 +237,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_custom_handling" " " }
 	}
 	parm {
 	    name	"channel_blue"
@@ -224,7 +248,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
-	    parmtag	{ "script_callback" "1" }
+	    parmtag	{ "vray_custom_handling" " " }
 	}
     }
 
@@ -254,6 +278,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_custom_handling" " " }
 	}
 	parm {
 	    name	"pmprimary"
@@ -324,7 +349,7 @@
 	    export	none
 	}
 	parm {
-	    name	"rcm"
+	    name	"coord_method"
 	    label	"Coordinate Method"
 	    type	ordinal
 	    default	{ "0" }
@@ -376,7 +401,7 @@
 	    export	none
 	}
 	parm {
-	    name	"meshType"
+	    name	"dynamic_geometry"
 	    label	"Mesh Type"
 	    type	ordinal
 	    default	{ "0" }
@@ -466,7 +491,7 @@
 	    export	none
 	}
 	parm {
-	    name	"ret"
+	    name	"etex"
 	    label	"Texture"
 	    type	uv
 	    size	2
@@ -475,7 +500,7 @@
 	    export	none
 	}
 	parm {
-	    name	"rem"
+	    name	"mod_e"
 	    label	"Modulate by Texture"
 	    type	toggle
 	    default	{ "1" }
@@ -483,7 +508,7 @@
 	    export	none
 	}
 	parm {
-	    name	"no_alpha_e"
+	    name	"fire_opacity_mode"
 	    label	"Opacity Mode"
 	    type	ordinal
 	    default	{ "0" }
@@ -501,7 +526,7 @@
 	    export	none
 	}
 	parm {
-	    name	"fire_luminance"
+	    name	"elum"
 	    label	"Fire Luminance"
 	    type	ramp_flt
 	    default	{ "2" }
@@ -512,7 +537,7 @@
 	    parmtag	{ "rampvalues_var" "elum_values" }
 	}
 	parm {
-	    name	"fire_color"
+	    name	"ecolor"
 	    label	"Fire Color"
 	    type	ramp_rgb
 	    default	{ "2" }
@@ -529,7 +554,7 @@
 	label	"Lights"
 
 	parm {
-	    name	"el"
+	    name	"al_enable"
 	    label	"Enable Lighting"
 	    type	toggle
 	    default	{ "1" }
@@ -537,12 +562,13 @@
 	    export	none
 	}
 	parm {
-	    name	"elc"
+	    name	"lights"
 	    label	"lightsCount"
 	    type	integer
 	    default	{ "0" }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "vray_custom_handling" " " }
 	}
 	parm {
 	    name	"lightsmult"
@@ -574,7 +600,7 @@
 	    export	none
 	}
 	parm {
-	    name	"elg"
+	    name	"gridreduct"
 	    label	"Light Grid Resolution (%)"
 	    type	float
 	    default	{ "0" }
@@ -595,7 +621,7 @@
 	    export	none
 	}
 	parm {
-	    name	"elsd"
+	    name	"al_subdivs"
 	    label	"Subdivs"
 	    type	integer
 	    default	{ "8" }
@@ -684,7 +710,7 @@
 	    export	none
 	}
 	parm {
-	    name	"dsd"
+	    name	"bounces"
 	    label	"Scatter Depth"
 	    type	integer
 	    default	{ "10" }
@@ -724,7 +750,7 @@
 	    export	none
 	}
 	parm {
-	    name	"smoke_gradient"
+	    name	"dcolor"
 	    label	"Color Gradient"
 	    type	ramp_rgb
 	    default	{ "2" }
@@ -757,7 +783,7 @@
 	    export	none
 	}
 	parm {
-	    name	"rtt"
+	    name	"ttex"
 	    label	"Texture"
 	    type	uv
 	    size	2
@@ -766,7 +792,7 @@
 	    export	none
 	}
 	parm {
-	    name	"rtm"
+	    name	"mod_t"
 	    label	"Modulate by Texture"
 	    type	toggle
 	    default	{ "1" }
@@ -782,7 +808,7 @@
 	    export	none
 	}
 	parm {
-	    name	"smoke_opacity"
+	    name	"transp"
 	    label	"Opacity"
 	    type	ramp_flt
 	    default	{ "2" }
