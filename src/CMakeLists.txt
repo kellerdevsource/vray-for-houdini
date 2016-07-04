@@ -251,6 +251,10 @@ if(INSTALL_RELEASE)
 					PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 		endif()
 
+		# Add custom ui files
+		install(DIRECTORY    ${CMAKE_SOURCE_DIR}/deploy/ui/
+				DESTINATION  ${INSTALL_RELEASE_PATH}/deploy/ui/)
+
 		# Clone JSON plugin descriptions
 		set(VFH_CLONE_PLUGINS_DESC ${CMAKE_BINARY_DIR}/vfh_clone_plugins_desc.cmake)
 		configure_file(${CMAKE_SOURCE_DIR}/cmake/vfh_clone_plugins_desc.cmake.in ${VFH_CLONE_PLUGINS_DESC})
