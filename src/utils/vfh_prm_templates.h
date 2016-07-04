@@ -37,6 +37,7 @@ class PRMList
 {
 public:
 	PRMList();
+	~PRMList();
 
 	void                clear();
 	bool                empty() const { return (m_prmVec.size() < 2); }
@@ -77,6 +78,7 @@ private:
 	SwitcherList   m_switcherList;
 	SwitcherStack  m_switcherStack;
 	// will hold script pages, so params have valid references at all times
+	// container will free the pages on destruction
 	ScriptPageList m_scriptPages;
 };
 

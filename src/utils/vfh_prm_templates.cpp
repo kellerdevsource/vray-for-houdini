@@ -130,6 +130,15 @@ Parm::PRMList::PRMList():
 }
 
 
+Parm::PRMList::~PRMList()
+{
+	for (auto & page : m_scriptPages) {
+		delete page;
+	}
+	m_scriptPages.clear();
+}
+
+
 void Parm::PRMList::clear()
 {
 	m_switcherList.clear();
