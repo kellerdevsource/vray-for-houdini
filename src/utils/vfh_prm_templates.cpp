@@ -228,7 +228,7 @@ Parm::PRMList& Parm::PRMList::addFromFile(const std::string &path)
 	PRM_ScriptImports *imports = 0;
 	currentPage.fillTemplate(m_prmVec.data(), idx, imports);
 
-	assert(idx == m_prmVec.size() - 1 && "Read unexpected number of params from file");
+	UT_ASSERT_MSG(idx == m_prmVec.size() - 1, "Read unexpected number of params from file");
 
 	return *this;
 }
