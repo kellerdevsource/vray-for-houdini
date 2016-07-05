@@ -13,6 +13,11 @@
 #include "vfh_prm_def.h"
 
 #include <OP/OP_Node.h>
+#include <PRM/DS_CommandList.h>
+#include <PRM/DS_Command.h>
+#include <PRM/PRM_Template.h>
+#include <PRM/PRM_ScriptPage.h>
+#include <PRM/DS_Stream.h>
 
 
 using namespace VRayForHoudini;
@@ -204,6 +209,31 @@ Parm::PRMList& Parm::PRMList::addFolder(const std::string& label)
 }
 
 
+Parm::PRMList& Parm::PRMList::addFromFile(const std::string &path)
+{
+	// need to keep the page as myTemplate will have references to it
+	m_scriptPages.push_back(new PRM_ScriptPage);
+	auto & currentPage = *m_scriptPages.back();
+
+	DS_Stream stream(path.c_str());
+	currentPage.parse(stream, true, 0, false);
+
+	int size = currentPage.computeTemplateSize();
+	// start from the last valid
+	int idx = m_prmVec.size() - 1;
+
+	// resize to accomodate space for new params
+	m_prmVec.resize(m_prmVec.size() + size);
+
+	PRM_ScriptImports *imports = 0;
+	currentPage.fillTemplate(m_prmVec.data(), idx, imports);
+
+	assert(idx == m_prmVec.size() - 1 && "Read unexpected number of params from file");
+
+	return *this;
+}
+
+
 Parm::PRMList::SwitcherInfo* Parm::PRMList::getCurrentSwitcher()
 {
 	SwitcherInfo *info = nullptr;
@@ -340,7 +370,8 @@ struct Parm::PRMFactory::PImplPRM
 		callbackFunc(0),
 		spareData(nullptr),
 		conditional(nullptr),
-		helpText(nullptr)
+		helpText(nullptr),
+		invisible(false)
 	{ }
 
 
@@ -359,7 +390,8 @@ struct Parm::PRMFactory::PImplPRM
 		callbackFunc(0),
 		spareData(nullptr),
 		conditional(nullptr),
-		helpText(nullptr)
+		helpText(nullptr),
+		invisible(false)
 	{
 		setName(token, label);
 	}
@@ -389,6 +421,7 @@ struct Parm::PRMFactory::PImplPRM
 	const PRM_SpareData*       spareData;
 	PRM_ConditionalGroup*      conditional;
 	const char*                helpText;
+	bool                       invisible;
 };
 
 
@@ -583,21 +616,26 @@ Parm::PRMFactory& Parm::PRMFactory::setRange(const PRM_Range* r)
 }
 
 
-Parm::PRMFactory& Parm::PRMFactory::setSpareData(const PRM_SpareData* d)
+Parm::PRMFactory& Parm::PRMFactory::addSpareData(const char *token, const char *value)
 {
-	m_prm->spareData = d;
+	PRM_SpareData *spareData = nullptr;
+	if (NOT(m_prm->spareData)) {
+		spareData = createPRMSpareData();
+	}
+	else {
+		spareData = const_cast< PRM_SpareData * >(m_prm->spareData);
+	}
+
+	spareData->addTokenValue(token, value);
+	m_prm->spareData = spareData;
+
 	return *this;
 }
 
 
-Parm::PRMFactory& Parm::PRMFactory::addSpareData(const char *token, const char *value)
+Parm::PRMFactory& Parm::PRMFactory::setSpareData(const PRM_SpareData* d)
 {
-	if (NOT(m_prm->spareData)) {
-		m_prm->spareData = createPRMSpareData();
-	}
-
-	PRM_SpareData *spareData = const_cast< PRM_SpareData * >(m_prm->spareData);
-	spareData->addTokenValue(token, value);
+	m_prm->spareData = d;
 	return *this;
 }
 
@@ -615,13 +653,18 @@ Parm::PRMFactory& Parm::PRMFactory::setParmGroup(int n)
 	return *this;
 }
 
+Parm::PRMFactory& Parm::PRMFactory::setInvisible(bool v)
+{
+	m_prm->invisible = v;
+	return *this;
+}
+
 
 Parm::PRMFactory& Parm::PRMFactory::addConditional(const char *conditional, PRM_ConditionalType type)
 {
 	if (NOT(m_prm->conditional)) {
 		m_prm->conditional = new PRM_ConditionalGroup();
 	}
-
 	m_prm->conditional->addConditional(conditional, type);
 	return *this;
 }
@@ -636,8 +679,10 @@ Parm::PRMFactory& Parm::PRMFactory::setHelpText(const char* t)
 
 PRM_Template Parm::PRMFactory::getPRMTemplate() const
 {
+	PRM_Template tmpl;
+
 	if (m_prm->multiType != PRM_MULTITYPE_NONE) {
-		return PRM_Template(
+		tmpl.initMulti(
 			m_prm->multiType,
 			const_cast<PRM_Template*>(m_prm->multiparms),
 			m_prm->exportLevel,
@@ -645,13 +690,14 @@ PRM_Template Parm::PRMFactory::getPRMTemplate() const
 			const_cast<PRM_Name*>(m_prm->name),
 			const_cast<PRM_Default*>(m_prm->defaults),
 			const_cast<PRM_Range*>(m_prm->range),
+			m_prm->callbackFunc,
 			const_cast<PRM_SpareData*>(m_prm->spareData),
 			m_prm->helpText,
-			m_prm->conditional,
-			m_prm->callbackFunc);
+			m_prm->conditional
+			);
 	}
 	else {
-		return PRM_Template(
+		tmpl.initialize(
 			m_prm->type,
 			m_prm->typeExtended,
 			m_prm->exportLevel,
@@ -667,5 +713,7 @@ PRM_Template Parm::PRMFactory::getPRMTemplate() const
 			m_prm->conditional);
 	}
 
-	return PRM_Template();
+	tmpl.setInvisible(m_prm->invisible);
+
+	return tmpl;
 }

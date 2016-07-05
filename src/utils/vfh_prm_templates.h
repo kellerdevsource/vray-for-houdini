@@ -13,6 +13,7 @@
 
 
 #include <PRM/PRM_Include.h>
+#include <PRM/PRM_ScriptPage.h>
 
 #include <string>
 #include <vector>
@@ -49,6 +50,7 @@ public:
 	PRMList& switcherBegin(const char *token, const char *label = nullptr);
 	PRMList& switcherEnd();
 	PRMList& addFolder(const std::string &label);
+	PRMList& addFromFile(const std::string &path);
 
 private:
 	typedef std::vector<PRM_Template> PRMTemplVec;
@@ -65,14 +67,17 @@ private:
 
 	typedef std::list<SwitcherInfo> SwitcherList;
 	typedef std::vector<SwitcherInfo*> SwitcherStack;
+	typedef std::vector<PRM_ScriptPage*> ScriptPageList;
 
 	SwitcherInfo* getCurrentSwitcher();
 	void          incCurrentFolderPrmCnt();
 
 private:
-	PRMTemplVec   m_prmVec;
-	SwitcherList  m_switcherList;
-	SwitcherStack m_switcherStack;
+	PRMTemplVec    m_prmVec;
+	SwitcherList   m_switcherList;
+	SwitcherStack  m_switcherStack;
+	// will hold script pages, so params have valid references at all times
+	ScriptPageList m_scriptPages;
 };
 
 
@@ -141,9 +146,9 @@ public:
 	PRMFactory& setRange(const PRM_Range*);
 
 	/// @brief Specify (@e key, @e value) pairs of spare data for this parameter.
-	/// @param token
-	/// @param value
-	PRMFactory& addSpareData(const char *token, const char *value);
+	/// @param items a list of key, value, key, value,... string pairs
+	/// @param nItems size of the array
+	PRMFactory& addSpareData(const char *token, const char* value);
 	PRMFactory& setSpareData(const PRM_SpareData*);
 
 	/// @brief Specify the list of parameters for each instance of a multiparm.
@@ -152,6 +157,8 @@ public:
 	PRMFactory& setMultiparms(const PRMList&);
 
 	PRMFactory& setParmGroup(int);
+
+	PRMFactory& setInvisible(bool v);
 
 	PRMFactory& addConditional(const char *conditional, PRM_ConditionalType type = PRM_CONDTYPE_DISABLE);
 
