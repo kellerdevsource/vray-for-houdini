@@ -503,7 +503,7 @@ void VRayProxyExporter::buildMeshVoxel(VUtils::MeshVoxel &voxel, GeometryDescrip
 	int nUVChannels = meshDescr.m_description.contains("map_channels");
 
 	if (nUVChannels) {
-		VRay::ValueList &map_channels = meshDescr.getAttr("map_channels").paramValue.valListValue;
+		VRay::VUtils::ValueRefList &map_channels = meshDescr.getAttr("map_channels").paramValue.valRawListValue;
 		nUVChannels = map_channels.size();
 	}
 
@@ -561,40 +561,39 @@ void VRayProxyExporter::buildMeshVoxel(VUtils::MeshVoxel &voxel, GeometryDescrip
 		VRay::VUtils::VectorRefList &normals = meshDescr.getAttr("normals").paramValue.valRawListVector;
 
 		VUtils::MeshChannel &normal_ch = voxel.channels[ ch_idx++ ];
-		normal_ch.init(sizeof(VUtils::VertGeomData), normals.count(), VERT_NORMAL_CHANNEL, VERT_NORMAL_TOPO_CHANNEL, MF_VERT_CHANNEL, false);
+		normal_ch.init(sizeof(VUtils::VertGeomData), normals.size(), VERT_NORMAL_CHANNEL, VERT_NORMAL_TOPO_CHANNEL, MF_VERT_CHANNEL, false);
 		normal_ch.data = normals.get();
 
 		VRay::VUtils::IntRefList &facenormals = meshDescr.getAttr("faceNormals").paramValue.valRawListInt;
 
 		VUtils::MeshChannel &facenormal_ch = voxel.channels[ ch_idx++ ];
-		facenormal_ch.init(sizeof(VUtils::FaceTopoData), facenormals.count() / 3, VERT_NORMAL_TOPO_CHANNEL, 0, MF_TOPO_CHANNEL, false);
+		facenormal_ch.init(sizeof(VUtils::FaceTopoData), facenormals.size() / 3, VERT_NORMAL_TOPO_CHANNEL, 0, MF_TOPO_CHANNEL, false);
 		facenormal_ch.data = facenormals.get();
 	}
 
 	// init uv channels
 	if (nUVChannels) {
-		VRay::ValueList &mapChannels = meshDescr.getAttr("map_channels").paramValue.valListValue;
+		VRay::VUtils::ValueRefList &mapChannels = meshDescr.getAttr("map_channels").paramValue.valRawListValue;
 
 		for (int i = 0; i < nUVChannels; ++i) {
-			VRay::ValueList &mapChannel = mapChannels[i].as<VRay::ValueList>();
+			VRay::VUtils::ValueRefList mapChannel = mapChannels[i].getList();
 
-			int uvchannel_idx = mapChannel[0].as<int>();
-			VRay::VectorList &uv_verts = mapChannel[1].as<VRay::VectorList>();
-			VRay::IntList &uv_faces = mapChannel[2].as<VRay::IntList>();
+			int uvchannel_idx = static_cast< int >(mapChannel[0].getDouble());
+			VRay::VUtils::VectorRefList uv_verts = mapChannel[1].getListVector();
+			VRay::VUtils::IntRefList uv_faces = mapChannel[2].getListInt();
 
 			Log::getLog().info("buildGeomVoxel populate VERT_TEX_CHANNEL %d", uvchannel_idx);
 
 			VUtils::MeshChannel &uvverts_ch = voxel.channels[ ch_idx++ ];
 			uvverts_ch.init(sizeof(VUtils::VertGeomData), uv_verts.size(),  VERT_TEX_CHANNEL0 + uvchannel_idx, VERT_TEX_TOPO_CHANNEL0 + uvchannel_idx, MF_VERT_CHANNEL, false);
-			uvverts_ch.data = uv_verts.data();
+			uvverts_ch.data = uv_verts.get();
 
 			VUtils::MeshChannel &uvface_ch = voxel.channels[ ch_idx++ ];
 			uvface_ch.init(sizeof(VUtils::FaceTopoData), uv_faces.size() / 3, VERT_TEX_TOPO_CHANNEL0 + uvchannel_idx, 0, MF_TOPO_CHANNEL, false);
-			uvface_ch.data = uv_faces.data();
+			uvface_ch.data = uv_faces.get();
 		}
 	}
 
-	// TODO: need to check how to add color sets in houdini, mark and export them in separate channel
 	UT_ASSERT( voxel.numChannels == ch_idx );
 }
 
@@ -662,8 +661,8 @@ void VRayProxyExporter::buildPreviewVoxel(VUtils::MeshVoxel &voxel)
 	VUtils::DefaultMeshSetsData setsInfo;
 	int nTotalUVChannels = 0;
 	for (auto &meshDescr : m_geomDescrList) {
-		if ( meshDescr.m_description.contains("map_channel_names") ) {
-			const VRay::ValueList &mapChannelNames = meshDescr.getAttr("map_channel_names").paramValue.valListValue;
+		if ( meshDescr.m_description.contains("map_channels_names") ) {
+			const VRay::VUtils::ValueRefList &mapChannelNames = meshDescr.getAttr("map_channels_names").paramValue.valRawListValue;
 			nTotalUVChannels += mapChannelNames.size();
 		}
 	}
@@ -672,12 +671,12 @@ void VRayProxyExporter::buildPreviewVoxel(VUtils::MeshVoxel &voxel)
 
 	int offset = 0;
 	for (auto &meshDescr : m_geomDescrList) {
-		if (meshDescr.m_description.contains("map_channel_names")) {
-			VRay::ValueList &mapChannelNames = meshDescr.getAttr("map_channel_names").paramValue.valListValue;
+		if (meshDescr.m_description.contains("map_channels_names")) {
+			VRay::VUtils::ValueRefList &mapChannelNames = meshDescr.getAttr("map_channels_names").paramValue.valRawListValue;
 
-			for (auto &value : mapChannelNames) {
-				std::string &channelName = value.as<std::string>();
-				setsInfo.setSetName(VUtils::MeshSetsData::meshSetType_uvSet, offset++, channelName.c_str());
+			for (int i = 0; i < mapChannelNames.size(); ++i) {
+				VRay::VUtils::CharString channelName = mapChannelNames[i].getString();
+				setsInfo.setSetName(VUtils::MeshSetsData::meshSetType_uvSet, offset++, channelName.ptr());
 			}
 		}
 	}
