@@ -160,7 +160,7 @@ int VRayProxyROP::getSOPList(fpreal time, UT_ValArray<SOP_Node *> &sopList)
 	}
 
 	// if no sops from input filter sop nodes from params
-	if (nSOPs <= sopList.size()) {
+	if (nSOPs >= sopList.size()) {
 		if (evalInt("use_soppath", 0, time)) {
 			UT_String soppath;
 			evalString(soppath, "soppath", 0, time);
