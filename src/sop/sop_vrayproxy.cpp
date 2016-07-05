@@ -70,11 +70,7 @@ int SOP::VRayProxy::cbClearCache(void *data, int /*index*/, float t, const PRM_T
 		node->evalString(filepath, "file", 0, t);
 	}
 
-	VRayProxyCacheMan &theCacheMan = GetVRayProxyCacheManager();
-	if (theCacheMan.contains(filepath.buffer())) {
-		VRayProxyCache &fileCache = theCacheMan[filepath.buffer()];
-		fileCache.clearCache();
-	}
+	ClearVRayProxyCache(filepath);
 
 	return 0;
 }

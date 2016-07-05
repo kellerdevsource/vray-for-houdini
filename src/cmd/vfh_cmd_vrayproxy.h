@@ -11,6 +11,7 @@
 #ifndef VRAY_FOR_HOUDINI_CMD_VRAYPROXY_H
 #define VRAY_FOR_HOUDINI_CMD_VRAYPROXY_H
 
+
 #include <CMD/CMD_Args.h>
 
 #include "vfh_vray.h" // For proper "systemstuff.h" inclusion
@@ -18,7 +19,7 @@
 namespace VRayForHoudini {
 namespace CMD {
 
-const tchar* const vrayproxy_format = "m:d:n:tfla::v::P:F:H:T:cix:AN:b";
+const tchar* const vrayproxyFormat = "n:cfmia::ltv::T:F:H:X:P:";
 /*
  * vrayproxy
 

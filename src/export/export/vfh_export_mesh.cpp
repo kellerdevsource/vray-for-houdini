@@ -124,7 +124,10 @@ bool MeshExporter::asPluginDesc(Attrs::PluginDesc &pluginDesc)
 	pluginDesc.addAttribute(Attrs::PluginAttr("vertices", getVertices()));
 	pluginDesc.addAttribute(Attrs::PluginAttr("faces", getFaces()));
 	pluginDesc.addAttribute(Attrs::PluginAttr("edge_visibility", getEdgeVisibility()));
-	pluginDesc.addAttribute(Attrs::PluginAttr("face_mtlIDs", getFaceMtlIDs()));
+
+	if (getNumMtlIDs() > 0) {
+		pluginDesc.addAttribute(Attrs::PluginAttr("face_mtlIDs", getFaceMtlIDs()));
+	}
 
 	if (getNumNormals() > 0) {
 		pluginDesc.addAttribute(Attrs::PluginAttr("normals", getNormals()));
