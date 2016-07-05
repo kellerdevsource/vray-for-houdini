@@ -92,17 +92,17 @@ VUtils::ErrorCode VRayProxyExporter::doExport(VRayProxyExportOptions &options, U
 {
 	VUtils::ErrorCode err;
 
-	if (sopList.size() <= 0) {
-		err.setError(__FUNCTION__,
-					 ROP_BAD_CONTEXT,
-					 "No geometry found for export");
-		return err;
-	}
-
 	if (NOT(options.m_filepath.isstring())) {
 		err.setError(__FUNCTION__,
 					 ROP_MISSING_FILE,
-					 "Invalid file specified");
+					 "Invalid file specified.");
+		return err;
+	}
+
+	if (sopList.size() <= 0) {
+		err.setError(__FUNCTION__,
+					 ROP_BAD_CONTEXT,
+					 "No geometry valid found.");
 		return err;
 	}
 
@@ -119,7 +119,7 @@ VUtils::ErrorCode VRayProxyExporter::doExport(VRayProxyExportOptions &options, U
 		{
 			err.setError(__FUNCTION__,
 						 ROP_CREATE_DIRECTORY_FAIL,
-						 "Failed to create parent directory");
+						 "Failed to create parent directory.");
 			return err;
 		}
 	}
@@ -988,8 +988,9 @@ void VRayProxyExporter::addObjectInfoForType(uint32 type, VUtils::ObjectInfoChan
 			continue;
 		}
 
-		UT_String fullName;
 		GeometryDescription &meshDescr =  m_geomDescrList[j];
+
+		UT_String fullName;
 		meshDescr.m_node.getFullPath(fullName);
 
 		VUtils::ObjectInfo info(meshDescr.m_node.getUniqueId(), fullName);

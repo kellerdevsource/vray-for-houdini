@@ -22,20 +22,16 @@
 using namespace VRayForHoudini;
 
 
-enum ArgError {
-	AE_ARG_NOT_FOUND = 1
+enum CMDError {
+	CMD_ARG_OK = 0,
+	CMD_ARG_NOT_FOUND = 1
 };
 
 
-VUtils::ErrorCode parseExportOptions(const CMD_Args &args, VRayProxyExportOptions &options)
+CMDError parseExportOptions(const CMD_Args &args, VRayProxyExportOptions &options)
 {
-	VUtils::ErrorCode err;
-
 	if ( NOT(args.found('n'))) {
-		err.setError(__FUNCTION__,
-					 AE_ARG_NOT_FOUND,
-					 "Invalid Usage\n");
-		return err;
+		return CMD_ARG_NOT_FOUND;
 	}
 
 	options.m_filepath = args.argp('n', 0);
@@ -123,7 +119,7 @@ VUtils::ErrorCode parseExportOptions(const CMD_Args &args, VRayProxyExportOption
 		options.m_pointSize = args.fargp('P', 0);
 	}
 
-	return err;
+	return CMD_ARG_OK;
 }
 
 
@@ -153,19 +149,17 @@ int getSOPList(CMD_Args &args, UT_ValArray< SOP_Node * > &sopList)
 																  PRM_SpareData::objGeometryPath.getOpFilter());
 
 	// get the node list for processing
-	OP_NodeList nodeList;
-	bundle->getMembers(nodeList);
-	// release the internal bundle created by getPattern()
-	OPgetDirector()->getBundles()->deReferenceBundle(bundleName);
+	for (int i = 0; i < bundle->entries(); ++i) {
+		OP_Node *opnode = bundle->getNode(i);
 
-	for (OP_Node *opnode : nodeList) {
-		UT_String fullpath;
+		UT_ASSERT( opnode );
 
 		OBJ_Node *objNode = opnode->castToOBJNode();
 		if (NOT(objNode)) {
 			continue;
 		}
 
+		UT_String fullpath;
 		objNode->getFullPath(fullpath);
 		SOP_Node *sopNode = objNode->getRenderSopPtr();
 		if (NOT(sopNode)) {
@@ -184,6 +178,9 @@ int getSOPList(CMD_Args &args, UT_ValArray< SOP_Node * > &sopList)
 		sopList.append(sopNode);
 	}
 
+	// release the internal bundle created by getPattern()
+	OPgetDirector()->getBundles()->deReferenceBundle(bundleName);
+
 	return sopList.size() - nSOPs;
 }
 
@@ -191,21 +188,20 @@ int getSOPList(CMD_Args &args, UT_ValArray< SOP_Node * > &sopList)
 void CMD::vrayproxy(CMD_Args &args)
 {
 	VRayProxyExportOptions options;
-	VUtils::ErrorCode err = parseExportOptions(args, options);
-	if ( err.error() ) {
-		args.err() << err.getErrorString().ptr() << std::endl;
+	if ( parseExportOptions(args, options) != CMD_ARG_OK ) {
+		args.err() << "ERROR Invalid usage: No filepath specified." << std::endl;
 		args.showUsage();
 		return;
 	}
 
 	UT_ValArray< SOP_Node * > sopList;
 	if ( getSOPList(args, sopList) <= 0 ) {
-		args.err() << "No geometry specified" << std::endl;
+		args.err() << "ERROR Invalid usage: No valid geometry specified." << std::endl;
 		args.showUsage();
 		return;
 	}
 
-	err = VRayProxyExporter::doExport(options, sopList);
+	VUtils::ErrorCode err = VRayProxyExporter::doExport(options, sopList);
 	if (err.error()) {
 		args.err() << err.getErrorString().ptr() << "\n";
 	}
