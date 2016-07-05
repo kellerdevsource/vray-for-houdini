@@ -480,40 +480,26 @@ OP::VRayNode::PluginResult SOP::PhxShaderCache::asPluginDesc(Attrs::PluginDesc &
 	exporter.setAttrsFromOpNodePrms(phxShaderSimDesc, this, "");
 	VRay::Plugin phxShaderSim = exporter.exportPlugin(phxShaderSimDesc);
 	if (phxShaderSim) {
-		exporter.phxAddSimumation(phxShaderSim);
-
-		const char *wrapperType = nullptr;
-		switch (rendMode) {
-		case Volumetric:
-			wrapperType = "PhxShaderSimVol";
-			break;
-		case Mesh:
-			wrapperType = "PhxShaderSimMesh";
-			break;
-		case Volumetric_Geometry:
-		case Volumetric_Heat_Haze:
-		case Isosurface:
-		default:
-			wrapperType = "PhxShaderSimGeom";
-			break;
-		}
-
-		Attrs::PluginDesc phxWrapper(VRayExporter::getPluginName(this, "", "Wrapper"), wrapperType);
 		if (rendMode == Volumetric) {
-			VRay::ValueList simList;
-			simList.emplace_back(phxShaderSim);
-			phxWrapper.add(Attrs::PluginAttr("phoenix_sim", simList));
+			// merge all volumetrics
+			exporter.phxAddSimumation(phxShaderSim);
 		} else {
-			phxWrapper.add(Attrs::PluginAttr("phoenix_sim", phxShaderSim));
-		}
-		VRay::Plugin phxWrapperPlugin = exporter.exportPlugin(phxWrapper);
+			const bool isMesh = rendMode == Mesh;
 
-		if (rendMode == Volumetric_Geometry || rendMode == Volumetric_Heat_Haze || rendMode == Isosurface) {
-			// make static mesh that wraps the geom plugin
-			Attrs::PluginDesc meshWrapper(VRayExporter::getPluginName(this, "", "Geom"), "GeomStaticMesh");
-			meshWrapper.add(Attrs::PluginAttr("static_mesh", phxWrapperPlugin));
-			meshWrapper.add(Attrs::PluginAttr("dynamic_geometry", dynamic_geometry));
+			const char *wrapperType = isMesh ? "PhxShaderSimMesh" : "PhxShaderSimGeom";
+			Attrs::PluginDesc phxWrapper(VRayExporter::getPluginName(this, "", "Wrapper"), wrapperType);
+			phxWrapper.add(Attrs::PluginAttr("phoenix_sim", phxShaderSim));
+			VRay::Plugin phxWrapperPlugin = exporter.exportPlugin(phxWrapper);
+
+			if (!isMesh) {
+				// make static mesh that wraps the geom plugin
+				Attrs::PluginDesc meshWrapper(VRayExporter::getPluginName(this, "", "Geom"), "GeomStaticMesh");
+				meshWrapper.add(Attrs::PluginAttr("static_mesh", phxWrapperPlugin));
+				meshWrapper.add(Attrs::PluginAttr("dynamic_geometry", dynamic_geometry));
+			}
 		}
+
+
 
 	}
 
