@@ -447,30 +447,74 @@ OP::VRayNode::PluginResult SOP::PhxShaderCache::asPluginDesc(Attrs::PluginDesc &
 
 	phxShaderSimDesc.addAttribute(Attrs::PluginAttr("node_transform", nodeTm));
 
+	enum RenderType {
+		Volumetric  = 0,
+		Volumetric_Geometry  = 1,
+		Volumetric_Heat_Haze  = 2,
+		Isosurface  = 3,
+		Mesh  = 4,
+	} rendMode;
+
+	const auto evalTime = parentContext->getExporter()->getContext().getTime();
+	const auto evalThread = parentContext->getExporter()->getContext().getThread();
+
+	auto getParamIntValue = [&evalTime, &evalThread](const PRM_Parm * param) -> int32 {
+		int32 val = 0;
+		if (param) {
+			param->getValue(evalTime, val, 0, evalThread);
+		}
+		return val;
+	};
+
 	// renderMode
 	const PRM_Parm *renderMode = Parm::getParm(*this, "renderMode");
-	if (renderMode && renderMode->getType().isOrdinalType()) {
-		enum RenderType {
-			Volumetric  = 0,
-			Volumetric_Geometry  = 1,
-			Volumetric_Heat_Haze  = 2,
-			Isosurface  = 3,
-			Mesh  = 4,
-		};
-		int32 val;
-		renderMode->getValue(parentContext->getExporter()->getContext().getTime(), val, 0, parentContext->getExporter()->getContext().getThread());
-		RenderType type = static_cast<RenderType>(val);
+	rendMode = static_cast<RenderType>(getParamIntValue(renderMode));
+	phxShaderSimDesc.addAttribute(Attrs::PluginAttr("mesher", rendMode == Volumetric_Geometry || rendMode == Volumetric_Heat_Haze || rendMode == Isosurface));
+	phxShaderSimDesc.addAttribute(Attrs::PluginAttr("geommode", rendMode == Mesh));
 
-		phxShaderSimDesc.addAttribute(Attrs::PluginAttr("mesher", type == Volumetric_Geometry || type == Volumetric_Heat_Haze || type == Isosurface));
-		phxShaderSimDesc.addAttribute(Attrs::PluginAttr("geommode", type == Mesh));
-	}
+	const PRM_Parm *dynGeom = Parm::getParm(*this, "dynamic_geometry");
+	const bool dynamic_geometry = getParamIntValue(dynGeom) == 1;
 
-	// TODO: usrchmap, ramps
+	// TODO: usrchmap for != aur
 
 	exporter.setAttrsFromOpNodePrms(phxShaderSimDesc, this, "");
 	VRay::Plugin phxShaderSim = exporter.exportPlugin(phxShaderSimDesc);
 	if (phxShaderSim) {
 		exporter.phxAddSimumation(phxShaderSim);
+
+		const char *wrapperType = nullptr;
+		switch (rendMode) {
+		case Volumetric:
+			wrapperType = "PhxShaderSimVol";
+			break;
+		case Mesh:
+			wrapperType = "PhxShaderSimMesh";
+			break;
+		case Volumetric_Geometry:
+		case Volumetric_Heat_Haze:
+		case Isosurface:
+		default:
+			wrapperType = "PhxShaderSimGeom";
+			break;
+		}
+
+		Attrs::PluginDesc phxWrapper(VRayExporter::getPluginName(this, "", "Wrapper"), wrapperType);
+		if (rendMode == Volumetric) {
+			VRay::ValueList simList;
+			simList.emplace_back(phxShaderSim);
+			phxWrapper.add(Attrs::PluginAttr("phoenix_sim", simList));
+		} else {
+			phxWrapper.add(Attrs::PluginAttr("phoenix_sim", phxShaderSim));
+		}
+		VRay::Plugin phxWrapperPlugin = exporter.exportPlugin(phxWrapper);
+
+		if (rendMode == Volumetric_Geometry || rendMode == Volumetric_Heat_Haze || rendMode == Isosurface) {
+			// make static mesh that wraps the geom plugin
+			Attrs::PluginDesc meshWrapper(VRayExporter::getPluginName(this, "", "Geom"), "GeomStaticMesh");
+			meshWrapper.add(Attrs::PluginAttr("static_mesh", phxWrapperPlugin));
+			meshWrapper.add(Attrs::PluginAttr("dynamic_geometry", dynamic_geometry));
+		}
+
 	}
 
 	// Plugin must be created here and do nothing after
