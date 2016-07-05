@@ -97,7 +97,7 @@
 	    name	"play_at"
 	    label	"Play Start"
 	    type	integer
-	    default	{ "0" }
+	    default	{ "1" }
 	    range	{ 0! 1e+006! }
 	    export	none
 	}
@@ -133,7 +133,7 @@
 	    name	"load_nearest"
 	    label	"Load Nearest Possible"
 	    type	toggle
-	    default	{ "1" }
+	    default	{ "0" }
 	    range	{ 0 1 }
 	    export	none
 	}
@@ -141,7 +141,7 @@
 	    name	"flip_yz"
 	    label	"Flip Up axis"
 	    type	toggle
-	    default	{ "1" }
+	    default	{ "0" }
 	    range	{ 0 1 }
 	    export	none
 	}
@@ -672,7 +672,7 @@
 	    type	color
 	    size	3
 	    default	{ "0.2" "0.2" "0.2" }
-	    disablewhen	"{ darg != 6 }"
+	    disablewhen	"{ darg != 5 }"
 	    range	{ 0 1 }
 	    export	none
 	}
@@ -712,6 +712,7 @@
 	    label	"Scatter Depth"
 	    type	integer
 	    default	{ "10" }
+	    disablewhen "{ noscatter != 0 }"
 	    range	{ 0! 65535! }
 	    export	none
 	}
