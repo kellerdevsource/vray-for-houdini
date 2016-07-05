@@ -411,6 +411,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_custom_handling" " " }
 	}
 	parm {
 	    name	"smoothmesh"
@@ -429,10 +430,10 @@
 	    export	none
 	}
 	parm {
-	    name	"displ"
+	    name	"displacement"
 	    label	"Enable Displacement"
 	    type	toggle
-	    default	{ "1" }
+	    default	{ "0" }
 	    range	{ 0 1 }
 	    export	none
 	}
@@ -440,8 +441,8 @@
 	    name	"displ2d"
 	    label	"Type"
 	    type	ordinal
-	    default	{ "1" }
-	    disablewhen	"{ displ == 0 }"
+	    default	{ "1." }
+	    disablewhen	"{ displacement == 0 }"
 	    menu	{
 		"0"	"Gradient Driven"
 		"1"	"Surface Driven"
@@ -455,6 +456,7 @@
 	    label	"Displacement Amount"
 	    type	float
 	    default	{ "1" }
+	    disablewhen	"{ displacement == 0 }"
 	    range	{ 0! 1000! }
 	    export	none
 	}
@@ -464,6 +466,7 @@
 	    type	uv
 	    size	2
 	    default	{ "0" "0" }
+	    disablewhen	"{ displacement == 0 }"
 	    range	{ 0 1 }
 	    export	none
 	}
@@ -513,6 +516,9 @@
 	    type	ordinal
 	    default	{ "0" }
 	    menu	{
+	    "0"	"Use Smoke Opacity"
+		"1"	"Fully Visible"
+		"2"	"Use Own Opacity"
 	    }
 	    range	{ 0 1 }
 	    export	none
@@ -526,7 +532,7 @@
 	    export	none
 	}
 	parm {
-	    name	"elum"
+	    name	"elum_curve"
 	    label	"Fire Luminance"
 	    type	ramp_flt
 	    default	{ "2" }
@@ -537,7 +543,7 @@
 	    parmtag	{ "rampvalues_var" "elum_values" }
 	}
 	parm {
-	    name	"ecolor"
+	    name	"ecolor_ramp"
 	    label	"Fire Color"
 	    type	ramp_rgb
 	    default	{ "2" }
@@ -562,28 +568,19 @@
 	    export	none
 	}
 	parm {
-	    name	"lights"
-	    label	"lightsCount"
-	    type	integer
-	    default	{ "0" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_custom_handling" " " }
-	}
-	parm {
 	    name	"lightsmult"
 	    label	"Light Power on Scene"
 	    type	float
-	    default	{ "0" }
-	    range	{ 0 10 }
+	    default	{ "1" }
+	    range	{ 0! 1000! }
 	    export	none
 	}
 	parm {
 	    name	"lightsmultself"
 	    label	"Light Power on Self"
 	    type	float
-	    default	{ "0" }
-	    range	{ 0 10 }
+	    default	{ "1" }
+	    range	{ 0! 1000! }
 	    export	none
 	}
 	parm {
@@ -603,8 +600,8 @@
 	    name	"gridreduct"
 	    label	"Light Grid Resolution (%)"
 	    type	float
-	    default	{ "0" }
-	    range	{ 0 10 }
+	    default	{ "5" }
+	    range	{ 0! 100! }
 	    export	none
 	}
 	parm {
@@ -644,10 +641,10 @@
 		"1"	"Temperature"
 		"2"	"Smoke"
 		"3"	"Speed"
-		"4"	"Fuel"
-		"5"	"Texture"
-		"6"	"SimpleColor"
-		"7"	"RGB"
+		"10"	"Fuel"
+		"4"	"Texture"
+		"5"	"SimpleColor"
+		"6"	"RGB"
 	    }
 	    range	{ 0 1 }
 	    export	none
@@ -692,7 +689,8 @@
 	    label	"Light Cache Speedup"
 	    type	float
 	    default	{ "0.9" }
-	    range	{ 0 10 }
+	    disablewhen	"{ lightcache != 1 }"
+	    range	{ 0! 0.999! }
 	    export	none
 	}
 	parm {
@@ -750,7 +748,7 @@
 	    export	none
 	}
 	parm {
-	    name	"dcolor"
+	    name	"dcolor_ramp"
 	    label	"Color Gradient"
 	    type	ramp_rgb
 	    default	{ "2" }
@@ -804,11 +802,11 @@
 	    label	"Simple Smoke Factor"
 	    type	float
 	    default	{ "0" }
-	    range	{ 0 10 }
+	    range	{ 0! 1! }
 	    export	none
 	}
 	parm {
-	    name	"transp"
+	    name	"transp_curve"
 	    label	"Opacity"
 	    type	ramp_flt
 	    default	{ "2" }
