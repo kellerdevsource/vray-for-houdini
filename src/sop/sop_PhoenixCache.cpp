@@ -42,6 +42,48 @@ PRM_Template* SOP::PhxShaderCache::GetPrmTemplate()
 
 		paramList.addFromFile(std::string(jsonDescsFilepath) + "/CustomPhxShaderCache.ds");
 		AttrItems = paramList.getPRMTemplate();
+
+		using namespace Parm;
+		using namespace std;
+
+		static vector<PRMList> items;
+
+		// resize according to our needs, because reallocation would mean invalidating pointers for already created templates
+		int rampCount = 0;
+		for (int c = 0; c < paramList.size(); ++c) {
+			auto iter = &AttrItems[c];
+			if(!iter->isRampType()  && !iter->isRampTypeColor()) {
+				continue;
+			}
+			++rampCount;
+		}
+		items.resize(rampCount);
+
+		const char * interpList[] = { "0", "None", "1", "Linear", "2", "Smooth", "3", "Spline", "4", "Bezier", "5", "Logarithmic + Bezier"};
+		const int interpCount = sizeof(interpList) / sizeof(interpList[0]);
+
+		int rampIdx = 0;
+		for (int c = 0; c < paramList.size(); ++c) {
+			auto iter = &AttrItems[c];
+			if(!iter->isRampType()  && !iter->isRampTypeColor()) {
+				continue;
+			}
+
+			auto &rampItems = items[rampIdx];
+			auto mt = iter->getMultiParmTemplate();
+
+			rampItems.addPrm(PRMFactory(mt->getType(), mt->getToken(), mt->getLabel()).setDefault(mt->getDefault(0))); // add pos
+			mt++;
+			rampItems.addPrm(PRMFactory(mt->getType(), mt->getToken(), mt->getLabel()).setDefault(mt->getDefault(0))); // add vals
+			mt++;
+			rampItems.addPrm(PRMFactory(mt->getType(), mt->getToken(), mt->getLabel()).setChoiceListItems(PRM_CHOICELIST_SINGLE, interpList, interpCount)); // create interpolations
+
+			iter->setMultiParmTemplate(rampItems.getPRMTemplate());
+			mt = iter->getMultiParmTemplate();
+
+			++rampIdx;
+		}
+
 	}
 
 	return AttrItems;
