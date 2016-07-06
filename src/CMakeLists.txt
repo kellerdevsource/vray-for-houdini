@@ -193,6 +193,9 @@ if(INSTALL_RELEASE)
 		install(DIRECTORY   ${CMAKE_SOURCE_DIR}/deploy/scripts/nodeinit/
 				DESTINATION ${INSTALL_RELEASE_PATH}/deploy/scripts/)
 
+		install(DIRECTORY   ${CMAKE_SOURCE_DIR}/deploy/scripts/ui/
+				DESTINATION ${INSTALL_RELEASE_PATH}/ui/)
+
 		# Generate & copy startup file
 		if(WIN32)
 			configure_file(${CMAKE_SOURCE_DIR}/deploy/hfs.bat.in
