@@ -29,12 +29,6 @@ using namespace VRayForHoudini;
 SOP::FluidCache  SOP::PhxShaderCache::FluidFiles;
 static PRM_Template * AttrItems = nullptr;
 
-#include <thread>
-#include <chrono>
-
-using namespace std;
-using namespace chrono;
-
 PRM_Template* SOP::PhxShaderCache::GetPrmTemplate()
 {
 	if (!AttrItems) {
