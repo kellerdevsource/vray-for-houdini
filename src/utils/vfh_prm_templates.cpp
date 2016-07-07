@@ -132,10 +132,7 @@ Parm::PRMList::PRMList():
 
 Parm::PRMList::~PRMList()
 {
-	for (auto & page : m_scriptPages) {
-		delete page;
-	}
-	m_scriptPages.clear();
+	clear();
 }
 
 
@@ -146,6 +143,11 @@ void Parm::PRMList::clear()
 	m_prmVec.clear();
 	// NOTE: extra item is list terminator
 	m_prmVec.emplace_back();
+
+	for (auto & page : m_scriptPages) {
+		delete page;
+	}
+	m_scriptPages.clear();
 }
 
 
