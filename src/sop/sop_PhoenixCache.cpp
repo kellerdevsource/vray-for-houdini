@@ -29,18 +29,24 @@ using namespace VRayForHoudini;
 SOP::FluidCache  SOP::PhxShaderCache::FluidFiles;
 static PRM_Template * AttrItems = nullptr;
 
+#include <thread>
+#include <chrono>
+
+using namespace std;
+using namespace chrono;
 
 PRM_Template* SOP::PhxShaderCache::GetPrmTemplate()
 {
 	if (!AttrItems) {
 		static Parm::PRMList paramList;
-		const char *jsonDescsFilepath = getenv("VRAY_UI_DS_PATH");
-		if (NOT(jsonDescsFilepath)) {
-			Log::getLog().error("VRAY_UI_DS_PATH environment variable is not found!");
-			throw std::runtime_error("VRAY_UI_DS_PATH environment variable is not found!");
+
+		paramList.addFromFile(Parm::PRMList::expandUiPath("/CustomPhxShaderCache.ds"));
+
+		// we failed to load UI
+		if (paramList.size() == 0) {
+			return nullptr;
 		}
 
-		paramList.addFromFile(std::string(jsonDescsFilepath) + "/CustomPhxShaderCache.ds");
 		AttrItems = paramList.getPRMTemplate();
 
 		using namespace Parm;

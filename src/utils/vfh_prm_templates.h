@@ -53,6 +53,9 @@ public:
 	PRMList& addFolder(const std::string &label);
 	PRMList& addFromFile(const std::string &path);
 
+	// does not validate anything, just prepends the passed path with the UI root
+	static std::string expandUiPath(const std::string &relPath);
+
 private:
 	typedef std::vector<PRM_Template> PRMTemplVec;
 

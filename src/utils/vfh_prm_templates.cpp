@@ -11,6 +11,7 @@
 #include "vfh_prm_templates.h"
 #include "vfh_defines.h"
 #include "vfh_prm_def.h"
+#include "vfh_log.h"
 
 #include <OP/OP_Node.h>
 #include <PRM/DS_CommandList.h>
@@ -120,6 +121,16 @@ int VRayForHoudini::Parm::getParmEnumExt(const OP_Node &node, const VRayForHoudi
 }
 
 
+std::string Parm::PRMList::expandUiPath(const std::string &relPath) {
+	const char *uiDsPath = getenv("VRAY_UI_DS_PATH");
+	if (NOT(uiDsPath)) {
+		Log::getLog().error("VRAY_UI_DS_PATH environment variable is not found!");
+		return "";
+	}
+	return std::string(uiDsPath) + relPath;
+}
+
+
 /////////                         VfhPRMList definition
 ///
 ///
@@ -222,14 +233,20 @@ Parm::PRMList& Parm::PRMList::addFolder(const std::string& label)
 
 Parm::PRMList& Parm::PRMList::addFromFile(const std::string &path)
 {
+	if (path.empty()) {
+		return *this;
+	}
 	// need to keep the page as myTemplate will have references to it
-	m_scriptPages.push_back(new PRM_ScriptPage);
-	auto & currentPage = *m_scriptPages.back();
+	auto currentPage = new PRM_ScriptPage;
 
 	DS_Stream stream(path.c_str());
-	currentPage.parse(stream, true, 0, false);
+	currentPage->parse(stream, true, 0, false);
 
-	int size = currentPage.computeTemplateSize();
+	int size = currentPage->computeTemplateSize();
+	if (!size) {
+		delete currentPage;
+	}
+
 	// start from the last valid
 	int idx = m_prmVec.size() - 1;
 
@@ -237,7 +254,7 @@ Parm::PRMList& Parm::PRMList::addFromFile(const std::string &path)
 	m_prmVec.resize(m_prmVec.size() + size);
 
 	PRM_ScriptImports *imports = 0;
-	currentPage.fillTemplate(m_prmVec.data(), idx, imports);
+	currentPage->fillTemplate(m_prmVec.data(), idx, imports);
 
 	UT_ASSERT_MSG(idx == m_prmVec.size() - 1, "Read unexpected number of params from file");
 
