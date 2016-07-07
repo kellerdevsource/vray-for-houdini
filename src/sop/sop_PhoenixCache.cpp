@@ -519,6 +519,12 @@ OP::VRayNode::PluginResult SOP::PhxShaderCache::asPluginDesc(Attrs::PluginDesc &
 	rendMode = static_cast<RenderType>(getParamIntValue(renderMode));
 	phxShaderSimDesc.addAttribute(Attrs::PluginAttr("mesher", rendMode == Volumetric_Geometry || rendMode == Volumetric_Heat_Haze || rendMode == Isosurface));
 	phxShaderSimDesc.addAttribute(Attrs::PluginAttr("geommode", rendMode == Mesh));
+	phxShaderSimDesc.addAttribute(Attrs::PluginAttr("rendsolid", rendMode == Isosurface));
+	phxShaderSimDesc.addAttribute(Attrs::PluginAttr("heathaze", rendMode == Volumetric_Heat_Haze));
+
+	const auto primVal = getParamIntValue(Parm::getParm(*this, "pmprimary"));
+	const bool enableProb = (exporter.isIPR() && primVal) || primVal == 2;
+	phxShaderSimDesc.addAttribute(Attrs::PluginAttr("pmprimary", enableProb));
 
 	const PRM_Parm *dynGeom = Parm::getParm(*this, "dynamic_geometry");
 	const bool dynamic_geometry = getParamIntValue(dynGeom) == 1;

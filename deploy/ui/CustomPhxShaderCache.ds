@@ -15,6 +15,15 @@
 	    parmtag	{ "vray_custom_handling" " " }
 	}
 	parm {
+	    name	"cache_load"
+	    label	"Do load cache"
+	    type	integer
+	    invisible
+	    default	{ "1" }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
 	    name	"icr"
 	    label	"Cache Range"
 	    type	string
@@ -265,6 +274,15 @@
 	    export	none
 	}
 	parm {
+	    name	"jitter"
+	    label	"Enable Jittering"
+	    type	toggle
+	    invisible
+	    default	{ "1" }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
 	    name	"renderMode"
 	    label	"Render Mode"
 	    type	ordinal
@@ -284,7 +302,7 @@
 	    name	"pmprimary"
 	    label	"Probabilistic Rendering"
 	    type	ordinal
-	    default	{ "1" }
+	    default	{ "0" }
 	    menu	{
 		"0"	"Disable"
 		"1"	"RT Only"
@@ -292,6 +310,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_custom_handling" " " }
 	}
 	parm {
 	    name	"rendstep"
@@ -319,7 +338,7 @@
 	    export	none
 	}
 	parm {
-	    name	"rvmult"
+	    name	"velocity_mult"
 	    label	"Motion Blur Multiplier"
 	    type	float
 	    default	{ "1" }
@@ -422,6 +441,15 @@
 	    export	none
 	}
 	parm {
+	    name	"normalized_positions"
+	    label	"normalized_positions"
+	    type	toggle
+	    invisible
+	    default	{ "1" }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
 	    name	"hhfactor"
 	    label	"Heat Size"
 	    type	float
@@ -506,7 +534,7 @@
 	    name	"mod_e"
 	    label	"Modulate by Texture"
 	    type	toggle
-	    default	{ "1" }
+	    default	{ "0" }
 	    range	{ 0 1 }
 	    export	none
 	}
@@ -529,6 +557,38 @@
 	    type	float
 	    default	{ "1" }
 	    range	{ 0! 100! }
+	    export	none
+	}
+	parm {
+	    name	"sepparm2"
+	    label	"Separator"
+	    type	separator
+	    default	{ "" }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"ecolor_offset"
+	    label	"Input Offset"
+	    type	float
+	    default	{ "1" }
+	    range	{ 0! 100000! }
+	    export	none
+	}
+	parm {
+	    name	"ecolor_scale"
+	    label	"Input Scale"
+	    type	float
+	    default	{ "0" }
+	    range	{ 0! 100000! }
+	    export	none
+	}
+	parm {
+	    name	"emult"
+	    label	"Luminance Scale"
+	    type	float
+	    default	{ "300000" }
+	    range	{ 0! 1e+012! }
 	    export	none
 	}
 	parm {
@@ -568,6 +628,15 @@
 	    export	none
 	}
 	parm {
+	    name	"lights"
+	    label	"Lights count"
+	    type	integer
+	    invisible
+	    default	{ "200" }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
 	    name	"lightsmult"
 	    label	"Light Power on Scene"
 	    type	float
@@ -602,6 +671,28 @@
 	    type	float
 	    default	{ "5" }
 	    range	{ 0! 100! }
+	    export	none
+	}
+	parm {
+	    name	"al_sampling"
+	    label	"Lights Sampling"
+	    type	ordinal
+	    invisible
+	    default	{ "1" }
+	    menu	{
+		"0"	"Simple"
+		"1"	"DMC"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"al_placing"
+	    label	"Lights Placing"
+	    type	integer
+	    invisible
+	    default	{ "2" }
+	    range	{ 0 1 }
 	    export	none
 	}
 	parm {
@@ -662,7 +753,7 @@
 	    name	"mod_d"
 	    label	"Modulate by Texture"
 	    type	toggle
-	    default	{ "1" }
+	    default	{ "0" }
 	    range	{ 0 1 }
 	    export	none
 	}
@@ -749,6 +840,30 @@
 	    export	none
 	}
 	parm {
+	    name	"sepparm"
+	    label	"Separator"
+	    type	separator
+	    default	{ "" }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"dcolor_offset"
+	    label	"Input Offset"
+	    type	float
+	    default	{ "0" }
+	    range	{ 0! 100000! }
+	    export	none
+	}
+	parm {
+	    name	"dcolor_scale"
+	    label	"Input Scale"
+	    type	float
+	    default	{ "1" }
+	    range	{ 0! 100000! }
+	    export	none
+	}
+	parm {
 	    name	"dcolor_ramp"
 	    label	"Color Gradient"
 	    type	ramp_rgb
@@ -794,7 +909,7 @@
 	    name	"mod_t"
 	    label	"Modulate by Texture"
 	    type	toggle
-	    default	{ "1" }
+	    default	{ "0" }
 	    range	{ 0 1 }
 	    export	none
 	}
@@ -804,6 +919,65 @@
 	    type	float
 	    default	{ "0" }
 	    range	{ 0! 1! }
+	    export	none
+	}
+	parm {
+	    name	"stoptransp"
+	    label	"Simple Smoke Stop Transparancy"
+	    type	float
+	    invisible
+	    default	{ "0.999" }
+	    range	{ 0! 1! }
+	    export	none
+	}
+	parm {
+	    name	"skiptransp"
+	    label	"Simple Smoke Start Transparancy"
+	    type	float
+	    invisible
+	    default	{ "0.001" }
+	    range	{ 0! 1! }
+	    export	none
+	}
+	parm {
+	    name	"transpmode"
+	    label	"transpmode"
+	    type	integer
+	    invisible
+	    default	{ "1" }
+	    range	{ 0! 1! }
+	    export	none
+	}
+	parm {
+	    name	"sepparm1"
+	    label	"Separator"
+	    type	separator
+	    default	{ "" }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"transp_offset"
+	    label	"Input Offset"
+	    type	float
+	    default	{ "0" }
+	    range	{ 0! 100000! }
+	    export	none
+	}
+	parm {
+	    name	"transp_scale"
+	    label	"Input Scale"
+	    type	float
+	    default	{ "1" }
+	    range	{ 0! 100000! }
+	    export	none
+	}
+	parm {
+	    name	"tmult"
+	    label	"Opacity Scale"
+	    type	float
+	    default	{ "1" }
+	    range	{ 0! 1e+012! }
 	    export	none
 	}
 	parm {
