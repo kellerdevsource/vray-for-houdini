@@ -32,7 +32,7 @@ set VRAY_VFB_ALWAYS_ON_TOP=1
 set VRAY_PLUGIN_DESC_PATH=%LAUNCHER_LOCATION%\plugins_desc
 
 :: Custom UI scripts
-set VRAY_UI_DS_PATH=%LAUNCHER_LOCATION%\deploy\scripts\ui
+set VRAY_UI_DS_PATH=%LAUNCHER_LOCATION%\deploy\ui
 
 :: Phoenix Loaders
 set VRAY_FOR_HOUDINI_AURA_LOADERS=%VRAY_SDK%\bin\plugins
