@@ -20,12 +20,12 @@ namespace Texture {
 void exportRampAttribute(VRayExporter &exporter, Attrs::PluginDesc &pluginDesc, OP_Node *op_node,
 						 const std::string &rampAttrName,
 						 const std::string &colAttrName, const std::string &posAttrName, const std::string &typesAttrName="",
-						 const bool asColor=false);
+						 const bool asColor=false, const bool remapInterp=false);
 
 void getCurveData(VRayExporter &exporter, OP_Node *node,
 				  const std::string &curveAttrName,
 				  VRay::IntList &interpolations, VRay::FloatList &positions, VRay::FloatList *values=nullptr,
-				  const bool needHandles=false);
+				  const bool needHandles=false, const bool remapInterp=false);
 
 } // namespace Texture
 } // namespace VRayForHoudini

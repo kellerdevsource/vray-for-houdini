@@ -39,57 +39,8 @@ PRM_Template* SOP::PhxShaderCache::GetPrmTemplate()
 {
 	if (!AttrItems) {
 		static Parm::PRMList paramList;
-
 		paramList.addFromFile(Parm::PRMList::expandUiPath("/CustomPhxShaderCache.ds"));
-
-		// we failed to load UI
-		if (paramList.size() == 0) {
-			return nullptr;
-		}
-
 		AttrItems = paramList.getPRMTemplate();
-
-		using namespace Parm;
-		using namespace std;
-
-		static vector<PRMList> items;
-
-		// resize according to our needs, because reallocation would mean invalidating pointers for already created templates
-		int rampCount = 0;
-		for (int c = 0; c < paramList.size(); ++c) {
-			auto iter = &AttrItems[c];
-			if(!iter->isRampType()  && !iter->isRampTypeColor()) {
-				continue;
-			}
-			++rampCount;
-		}
-		items.resize(rampCount);
-
-		const char * interpList[] = { "0", "None", "1", "Linear", "2", "Smooth", "3", "Spline", "4", "Bezier", "5", "Logarithmic + Bezier"};
-		const int interpCount = sizeof(interpList) / sizeof(interpList[0]);
-
-		int rampIdx = 0;
-		for (int c = 0; c < paramList.size(); ++c) {
-			auto iter = &AttrItems[c];
-			if(!iter->isRampType()  && !iter->isRampTypeColor()) {
-				continue;
-			}
-
-			auto &rampItems = items[rampIdx];
-			auto mt = iter->getMultiParmTemplate();
-
-			rampItems.addPrm(PRMFactory(mt->getType(), mt->getToken(), mt->getLabel()).setDefault(mt->getDefault(0))); // add pos
-			mt++;
-			rampItems.addPrm(PRMFactory(mt->getType(), mt->getToken(), mt->getLabel()).setDefault(mt->getDefault(0))); // add vals
-			mt++;
-			rampItems.addPrm(PRMFactory(mt->getType(), mt->getToken(), mt->getLabel()).setChoiceListItems(PRM_CHOICELIST_SINGLE, interpList, interpCount)); // create interpolations
-
-			iter->setMultiParmTemplate(rampItems.getPRMTemplate());
-			mt = iter->getMultiParmTemplate();
-
-			++rampIdx;
-		}
-
 	}
 
 	return AttrItems;
@@ -531,7 +482,7 @@ OP::VRayNode::PluginResult SOP::PhxShaderCache::asPluginDesc(Attrs::PluginDesc &
 
 	// TODO: usrchmap for != aur
 
-	exporter.setAttrsFromOpNodePrms(phxShaderSimDesc, this, "");
+	exporter.setAttrsFromOpNodePrms(phxShaderSimDesc, this, "", true);
 	VRay::Plugin phxShaderSim = exporter.exportPlugin(phxShaderSimDesc);
 	if (phxShaderSim) {
 		if (rendMode == Volumetric) {
@@ -552,9 +503,6 @@ OP::VRayNode::PluginResult SOP::PhxShaderCache::asPluginDesc(Attrs::PluginDesc &
 				meshWrapper.add(Attrs::PluginAttr("dynamic_geometry", dynamic_geometry));
 			}
 		}
-
-
-
 	}
 
 	// Plugin must be created here and do nothing after

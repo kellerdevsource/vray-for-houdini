@@ -33,7 +33,7 @@ struct MyPoint {
 
 void VRayForHoudini::Texture::exportRampAttribute(VRayExporter &exporter, Attrs::PluginDesc &pluginDesc, OP_Node *op_node,
 												  const std::string &rampAttrName,
-												  const std::string &colAttrName, const std::string &posAttrName, const std::string &typesAttrName, const bool asColor)
+												  const std::string &colAttrName, const std::string &posAttrName, const std::string &typesAttrName, const bool asColor, const bool remapInterp)
 {
 	const fpreal &t = exporter.getContext().getTime();
 
@@ -64,7 +64,7 @@ void VRayForHoudini::Texture::exportRampAttribute(VRayExporter &exporter, Attrs:
 		const float colG = (float)op_node->evalFloatInst(prmColName.c_str(), &i, 1, t);
 		const float colB = (float)op_node->evalFloatInst(prmColName.c_str(), &i, 2, t);
 
-		const int interp = op_node->evalIntInst(prmInterpName.c_str(), &i, 0, t);
+		int interp = op_node->evalIntInst(prmInterpName.c_str(), &i, 0, t);
 #if CGR_DEBUG_RAMPS
 		Log::getLog().info(" %.3f: Color(%.3f,%.3f,%.3f) [%i]",
 				   pos, colR, colG, colB, interp);
@@ -86,18 +86,18 @@ void VRayForHoudini::Texture::exportRampAttribute(VRayExporter &exporter, Attrs:
 			if (colPlugin) {
 				colorPlugins.push_back(VRay::Value(colPlugin));
 				positions.push_back(pos);
-				if (needTypes) {
-					// TODO: Remap interp value to V-Ray's enum
-#if 0
-					switch(ramp.interpolation()) {
-						case BL::ColorRamp::interpolation_CONSTANT: interp = 0; break;
-						case BL::ColorRamp::interpolation_LINEAR:   interp = 1; break;
-						case BL::ColorRamp::interpolation_EASE:     interp = 2; break;
-						case BL::ColorRamp::interpolation_CARDINAL: interp = 3; break;
-						case BL::ColorRamp::interpolation_B_SPLINE: interp = 4; break;
-						default:                                    interp = 1;
+				if (needTypes && remapInterp) {
+					// 0: none, 1: linear, 2: smooth, 3: spline, 4: bezier, 5: logarithmic+bezier
+					switch(interp) {
+						case 0: interp = 0; break; // Constant -> None
+						case 1: interp = 1; break; // Linear
+						case 2: interp = 2; break; // Catmull-Rom
+						case 3: interp = 2; break; // Monotone Cubic -> Smooth
+						case 4: interp = 4; break; // Bezier
+						case 5: interp = 3; break; // B-Spline -> Spline
+						case 6: interp = 5; break; // Hermite -> Logarithmic + Bezier
+						default: interp = 1;
 					}
-#endif
 					types.push_back(interp);
 				}
 			}
@@ -120,7 +120,7 @@ void VRayForHoudini::Texture::exportRampAttribute(VRayExporter &exporter, Attrs:
 void VRayForHoudini::Texture::getCurveData(VRayExporter &exporter, OP_Node *op_node,
 										   const std::string &curveAttrName,
 										   VRay::IntList &interpolations, VRay::FloatList &positions, VRay::FloatList *values,
-										   const bool needHandles)
+										   const bool needHandles, const bool remapInterp)
 {
 	const fpreal &t = exporter.getContext().getTime();
 
@@ -138,7 +138,7 @@ void VRayForHoudini::Texture::getCurveData(VRayExporter &exporter, OP_Node *op_n
 	for(int i = 1; i <= numPoints; ++i, ++p) {
 		const float pos    = (float)op_node->evalFloatInst(prmPosName.c_str(),    &i, 0, t);
 		const float val    = (float)op_node->evalFloatInst(prmValName.c_str(),    &i, 0, t);
-		const float interp = (float)op_node->evalFloatInst(prmInterpName.c_str(), &i, 0, t);
+		int interp =                op_node->evalIntInst(prmInterpName.c_str(), &i, 0, t);
 
 		if (NOT(needHandles)) {
 			positions.push_back(pos);
@@ -149,7 +149,20 @@ void VRayForHoudini::Texture::getCurveData(VRayExporter &exporter, OP_Node *op_n
 			point[p].y = val;
 		}
 
-		// TODO: Remap "interp" to V-Ray enum
+		if (remapInterp) {
+			// 0: none, 1: linear, 2: smooth, 3: spline, 4: bezier, 5: logarithmic+bezier
+			switch(interp) {
+				case 0: interp = 0; break; // Constant -> None
+				case 1: interp = 1; break; // Linear
+				case 2: interp = 2; break; // Catmull-Rom
+				case 3: interp = 2; break; // Monotone Cubic -> Smooth
+				case 4: interp = 4; break; // Bezier
+				case 5: interp = 3; break; // B-Spline -> Spline
+				case 6: interp = 5; break; // Hermite -> Logarithmic + Bezier
+				default: interp = 1;
+			}
+		}
+
 		interpolations.push_back(interp);
 	}
 
