@@ -86,17 +86,9 @@ void VRayForHoudini::Texture::exportRampAttribute(VRayExporter &exporter, Attrs:
 			if (colPlugin) {
 				colorPlugins.push_back(VRay::Value(colPlugin));
 				positions.push_back(pos);
-				if (needTypes && remapInterp) {
-					// 0: none, 1: linear, 2: smooth, 3: spline, 4: bezier, 5: logarithmic+bezier
-					switch(interp) {
-						case 0: interp = 0; break; // Constant -> None
-						case 1: interp = 1; break; // Linear
-						case 2: interp = 2; break; // Catmull-Rom
-						case 3: interp = 2; break; // Monotone Cubic -> Smooth
-						case 4: interp = 4; break; // Bezier
-						case 5: interp = 3; break; // B-Spline -> Spline
-						case 6: interp = 5; break; // Hermite -> Logarithmic + Bezier
-						default: interp = 1;
+				if (needTypes) {
+					if (remapInterp) {
+						interp = static_cast<int>(mapToVray(static_cast<HOU_InterpolationType>(interp)));
 					}
 					types.push_back(interp);
 				}
@@ -150,17 +142,7 @@ void VRayForHoudini::Texture::getCurveData(VRayExporter &exporter, OP_Node *op_n
 		}
 
 		if (remapInterp) {
-			// 0: none, 1: linear, 2: smooth, 3: spline, 4: bezier, 5: logarithmic+bezier
-			switch(interp) {
-				case 0: interp = 0; break; // Constant -> None
-				case 1: interp = 1; break; // Linear
-				case 2: interp = 2; break; // Catmull-Rom
-				case 3: interp = 2; break; // Monotone Cubic -> Smooth
-				case 4: interp = 4; break; // Bezier
-				case 5: interp = 3; break; // B-Spline -> Spline
-				case 6: interp = 5; break; // Hermite -> Logarithmic + Bezier
-				default: interp = 1;
-			}
+			interp = static_cast<int>(mapToVray(static_cast<HOU_InterpolationType>(interp)));
 		}
 
 		interpolations.push_back(interp);
