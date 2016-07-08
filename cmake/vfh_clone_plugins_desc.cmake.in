@@ -12,14 +12,14 @@ include(FindGit)
 
 execute_process(
 	COMMAND
-		${GIT_EXECUTABLE} clone https://github.com/bdancer/plugins_desc.git
+		"${GIT_EXECUTABLE}" clone https://github.com/bdancer/plugins_desc.git
 	WORKING_DIRECTORY
 		${INSTALL_RELEASE_PATH}
 )
 
 execute_process(
 	COMMAND
-		${GIT_EXECUTABLE} pull --rebase origin master
+		"${GIT_EXECUTABLE}" pull --rebase origin master
 	WORKING_DIRECTORY
 		${INSTALL_RELEASE_PATH}/plugins_desc
 )
