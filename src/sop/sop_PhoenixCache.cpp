@@ -20,9 +20,15 @@
 #include <GU/GU_PrimVolume.h>
 #include <GEO/GEO_Primitive.h>
 
+#include <vector>
+#include <string>
+
+using std::vector;
+using std::string;
 
 #define GetCellIndex(x, y, z, res) (x + y * res[0] + z * res[1] * res[0])
 
+const int MAX_CHAN_MAP_LEN = 2048;
 
 using namespace VRayForHoudini;
 
@@ -138,6 +144,15 @@ SOP::FluidFrame* SOP::FluidCache::getData(const char *filePath, const int fluidR
 	return fluidFrame;
 }
 
+string getDefaultMapping(const char *cachePath) {
+	char buff[MAX_CHAN_MAP_LEN];
+	if (1 == aurGenerateDefaultChannelMappings(buff, MAX_CHAN_MAP_LEN, cachePath)) {
+		return string(buff);
+	} else {
+		return "";
+	}
+}
+
 
 OP_ERROR SOP::PhxShaderCache::cookMySop(OP_Context &context)
 {
@@ -167,6 +182,37 @@ OP_ERROR SOP::PhxShaderCache::cookMySop(OP_Context &context)
 	evalString(path, "PhxShaderCache_cache_path", 0, t);
 	if (path.equal("")) {
 		return error();
+	}
+
+	m_ChannelNames.clear();
+	m_ChannelNamesSerialized = "";
+
+	int chanIndex = 0, isChannelVector3D;
+	char chanName[MAX_CHAN_MAP_LEN];
+	const char *cachePath = path.buffer();
+	while(1 == aurGet3rdPartyChannelName(chanName, MAX_CHAN_MAP_LEN, &isChannelVector3D, cachePath, chanIndex++)) {
+		const auto name = string(chanName);
+		m_ChannelNames.push_back(name);
+		m_ChannelNamesSerialized += ";" + name;
+	}
+
+	// update dropdown values
+	const int dropDownCount = 9;
+	const char *dropDowns[dropDownCount] = {"channel_smoke", "channel_temp", "channel_fuel", "channel_vel_x", "channel_vel_y", "channel_vel_z", "channel_red", "channel_green", "channel_blue"};
+
+	for (int c = 0; c < dropDownCount; ++c) {
+		const PRM_Parm * parameter = Parm::getParm(*this, dropDowns[c]);
+		if (!parameter) {
+			Log::getLog().error("Channel selector %s missing from UI", dropDowns[c]);
+			continue;
+		}
+
+		PRM_SpareData * spareData = const_cast<PRM_SpareData*>(parameter->getSparePtr());
+		if (spareData) {
+			spareData->addTokenValue("vray_phx_channels", m_ChannelNamesSerialized.c_str());
+		} else {
+			Log::getLog().error("Channel selector %s missing spare data ptr", dropDowns[c]);
+		}
 	}
 
 	const SOP::FluidFrame *frameData = SOP::PhxShaderCache::FluidFiles.getData(path.buffer());
@@ -407,8 +453,11 @@ OP::VRayNode::PluginResult SOP::PhxShaderCache::asPluginDesc(Attrs::PluginDesc &
 	if (NOT(phxShaderCache)) {
 		Attrs::PluginDesc phxShaderCacheDesc(VRayExporter::getPluginName(this, "Cache"), "PhxShaderCache");
 		phxShaderCacheDesc.addAttribute(Attrs::PluginAttr("cache_path", path.buffer()));
-		exporter.setAttrsFromOpNodePrms(phxShaderCacheDesc, this, "");
 
+		// TODO: usrchmap for != aur
+		phxShaderCacheDesc.addAttribute(Attrs::PluginAttr("usrchmap", getDefaultMapping(path.buffer()).c_str()));
+
+		exporter.setAttrsFromOpNodePrms(phxShaderCacheDesc, this, "");
 		phxShaderCache = exporter.exportPlugin(phxShaderCacheDesc);
 	}
 
@@ -473,8 +522,6 @@ OP::VRayNode::PluginResult SOP::PhxShaderCache::asPluginDesc(Attrs::PluginDesc &
 
 	const PRM_Parm *dynGeom = Parm::getParm(*this, "dynamic_geometry");
 	const bool dynamic_geometry = getParamIntValue(dynGeom) == 1;
-
-	// TODO: usrchmap for != aur
 
 	exporter.setAttrsFromOpNodePrms(phxShaderSimDesc, this, "", true);
 	VRay::Plugin phxShaderSim = exporter.exportPlugin(phxShaderSimDesc);

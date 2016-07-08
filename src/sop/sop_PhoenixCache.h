@@ -13,7 +13,8 @@
 #define VRAY_FOR_HOUDINI_SOP_NODE_PHOENIX_CACHE_H
 
 #include "sop_node_base.h"
-
+#include <string>
+#include <vector>
 
 namespace VRayForHoudini {
 namespace SOP {
@@ -71,7 +72,13 @@ protected:
 
 private:
 	static FluidCache         FluidFiles;
+	std::vector<std::string>  m_ChannelNames;
 
+	// ui dropdowns will point to this
+	// causing reallocations here will invalidate pointer in UI and cause crashes
+	// every time this is changed remove all references from UI
+	// will be colon separated list to be parsed on ui load
+	std::string               m_ChannelNamesSerialized;
 };
 
 } // namespace SOP
