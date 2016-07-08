@@ -245,7 +245,9 @@ Parm::PRMList& Parm::PRMList::addFromFile(const std::string &path)
 	int size = currentPage->computeTemplateSize();
 	if (!size) {
 		delete currentPage;
+		return *this;
 	}
+	m_scriptPages.push_back(currentPage);
 
 	// start from the last valid
 	int idx = m_prmVec.size() - 1;
