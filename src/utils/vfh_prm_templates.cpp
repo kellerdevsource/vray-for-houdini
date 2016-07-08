@@ -127,7 +127,7 @@ std::string Parm::PRMList::expandUiPath(const std::string &relPath) {
 		Log::getLog().error("VRAY_UI_DS_PATH environment variable is not found!");
 		return "";
 	}
-	return std::string(uiDsPath) + relPath;
+	return std::string(uiDsPath) + "/" + relPath;
 }
 
 
