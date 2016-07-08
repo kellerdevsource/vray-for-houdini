@@ -14,11 +14,15 @@ set(_phoenix_for_maya_roots "")
 
 if(WIN32)
 	set(CGR_PHOENIX_SHARED aurloader.dll)
+	set(CGR_PHOENIX_SHARED_F3D field3dio_phx.dll)
+	set(CGR_PHOENIX_SHARED_VDB openvdbio_phx.dll)
 else()
 	set(CGR_PHOENIX_SHARED libaurloader.so)
+	set(CGR_PHOENIX_SHARED_F3D field3dio_phx.so)
+	set(CGR_PHOENIX_SHARED_VDB openvdbio_phx.so)
 endif()
 
-set(_maya_versons "2017;2016;2015;2014")
+set(_maya_versons "2016_22501;2017;2016;2015;2014")
 foreach(_maya_version ${_maya_versons})
 	if(SDK_PATH)
 		set(_phoenix_for_maya_root "${SDK_PATH}/${_HOST_SYSTEM_NAME}/phxsdk/phxsdk${_maya_version}")
@@ -43,9 +47,12 @@ find_path(Phoenix_INCLUDES include/aurinterface.h
 	${_phoenix_for_maya_roots} NO_DEFAULT_PATH
 )
 
-find_path(Phoenix_LIBRARIES lib/${CGR_PHOENIX_SHARED}
-	${_phoenix_for_maya_roots} NO_DEFAULT_PATH
+find_path(Phoenix_LIBRARIES
+		  NAMES lib/${CGR_PHOENIX_SHARED} lib/${CGR_PHOENIX_SHARED_VDB} lib/${CGR_PHOENIX_SHARED_F3D}
+		  PATHS ${_phoenix_for_maya_roots}
+		  NO_DEFAULT_PATH
 )
+
 
 if(Phoenix_INCLUDES AND Phoenix_LIBRARIES)
 	set(Phoenix_INCLUDES  ${Phoenix_INCLUDES}/include)

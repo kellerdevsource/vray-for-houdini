@@ -111,6 +111,8 @@ if(INSTALL_LOCAL)
 
 	if (Phoenix_FOUND)
 		install(FILES       ${Phoenix_LIBRARIES}/${CGR_PHOENIX_SHARED}
+							${Phoenix_LIBRARIES}/${CGR_PHOENIX_SHARED_VDB}
+							${Phoenix_LIBRARIES}/${CGR_PHOENIX_SHARED_F3D}
 				DESTINATION ${HOUDINI_HOME_PATH}/vfh/lib
 				PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 	endif()
@@ -158,6 +160,10 @@ if(USE_LAUNCHER)
 				DESTINATION "$ENV{HOME}/bin"
 				PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 	endif()
+
+	# Add custom ui files
+	install(DIRECTORY    ${CMAKE_SOURCE_DIR}/deploy/ui
+			DESTINATION  ${CMAKE_BINARY_DIR}/deploy/ui)
 endif()
 
 
@@ -176,6 +182,12 @@ if(INSTALL_RELEASE)
 	else()
 		# Set install path
 		set(INSTALL_RELEASE_PATH ${INSTALL_RELEASE_ROOT}/${INSTALL_RELEASE_SUBDIR})
+
+		# Add custom ui files
+		file(GLOB DS_UI_FILES     "${CMAKE_SOURCE_DIR}/deploy/ui/*.*")
+		file(INSTALL               ${DS_UI_FILES}
+			DESTINATION            ${INSTALL_RELEASE_PATH}/deploy/ui
+			USE_SOURCE_PERMISSIONS)
 
 		# Copy plugin
 		cgr_install_runtime(${PROJECT_NAME} ${INSTALL_RELEASE_PATH}/dso)
@@ -247,13 +259,11 @@ if(INSTALL_RELEASE)
 		# Copy Phoenix cache file loader library
 		if (Phoenix_FOUND)
 			install(FILES       ${Phoenix_LIBRARIES}/${CGR_PHOENIX_SHARED}
+								${Phoenix_LIBRARIES}/${CGR_PHOENIX_SHARED_VDB}
+								${Phoenix_LIBRARIES}/${CGR_PHOENIX_SHARED_F3D}
 					DESTINATION ${INSTALL_RELEASE_PATH}/deploy/lib
 					PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 		endif()
-
-		# Add custom ui files
-		install(DIRECTORY    ${CMAKE_SOURCE_DIR}/deploy/ui/
-				DESTINATION  ${INSTALL_RELEASE_PATH}/deploy/ui/)
 
 		# Clone JSON plugin descriptions
 		set(VFH_CLONE_PLUGINS_DESC ${CMAKE_BINARY_DIR}/vfh_clone_plugins_desc.cmake)
