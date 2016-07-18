@@ -162,6 +162,26 @@ void Parm::PRMList::clear()
 }
 
 
+PRM_Template* Parm::PRMList::getPRMTemplate(bool setRecook) const
+{
+	const int count = m_prmVec.size();
+
+	PRM_Template * tpl = new PRM_Template[count];
+
+	for (int c = 0; c < count; ++c) {
+		tpl[c] = m_prmVec[c];
+	}
+
+	if (setRecook) {
+		for (int c = 0; c < count; ++c) {
+			tpl[c].setNoCook(false);
+		}
+	}
+
+	return tpl;
+}
+
+
 Parm::PRMList& Parm::PRMList::addPrm(const PRM_Template& p)
 {
 	m_prmVec.back() = p;

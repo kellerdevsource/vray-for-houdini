@@ -43,8 +43,10 @@ public:
 	bool                empty() const { return (m_prmVec.size() < 2); }
 	size_t              size() const { return (m_prmVec.size() - 1); }
 	void                reserve(size_t n) { return m_prmVec.reserve(n + 1); }
-	PRM_Template*       getPRMTemplate() { return (m_prmVec.size())? m_prmVec.data() : nullptr; }
-	const PRM_Template* getPRMTemplate() const { return (m_prmVec.size())? m_prmVec.data() : nullptr; }
+
+	// will copy internal template to heap and return the pointer
+	// this should not be called excessivily as these pointers are not freed
+	PRM_Template*       getPRMTemplate(bool setRecook = true) const;
 
 	PRMList& addPrm(const PRM_Template &p);
 	PRMList& addPrm(const PRMFactory &p);
