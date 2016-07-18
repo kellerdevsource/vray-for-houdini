@@ -93,6 +93,7 @@
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "vray_custom_handling" " " }
+	    parmtag	{ "vray_phx_channels" "" }
 	}
 	parm {
 	    name	"read_offset"
@@ -165,8 +166,22 @@
 	    label	"Smoke"
 	    type	ordinal
 	    default	{ "0" }
-	    menu	{
-	    }
+		menu	{
+		    [ "node = hou.node('.')" ]
+		    [ "parm = node.parm('usrchmap')" ]
+		    [ "tpl = parm.parmTemplate()" ]
+		    [ "tags = tpl.tags()" ]
+		    [ "if not tags.has_key('vray_phx_channels'):" ]
+		    [ "    return []" ]
+		    [ "" ]
+		    [ "options = tags['vray_phx_channels'].split(';')" ]
+		    [ "menuItems = ['0', 'None']" ]
+		    [ "for opt in options:" ]
+		    [ "    menuItems.extend([opt, opt])" ]
+		    [ "return menuItems" ]
+		    [ "" ]
+		    language	python
+		}
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "vray_custom_handling" " " }
@@ -176,8 +191,22 @@
 	    label	"Temperature"
 	    type	ordinal
 	    default	{ "0" }
-	    menu	{
-	    }
+		menu	{
+		    [ "node = hou.node('.')" ]
+		    [ "parm = node.parm('usrchmap')" ]
+		    [ "tpl = parm.parmTemplate()" ]
+		    [ "tags = tpl.tags()" ]
+		    [ "if not tags.has_key('vray_phx_channels'):" ]
+		    [ "    return []" ]
+		    [ "" ]
+		    [ "options = tags['vray_phx_channels'].split(';')" ]
+		    [ "menuItems = ['0', 'None']" ]
+		    [ "for opt in options:" ]
+		    [ "    menuItems.extend([opt, opt])" ]
+		    [ "return menuItems" ]
+		    [ "" ]
+		    language	python
+		}
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "vray_custom_handling" " " }
@@ -187,8 +216,22 @@
 	    label	"Fuel"
 	    type	ordinal
 	    default	{ "0" }
-	    menu	{
-	    }
+		menu	{
+		    [ "node = hou.node('.')" ]
+		    [ "parm = node.parm('usrchmap')" ]
+		    [ "tpl = parm.parmTemplate()" ]
+		    [ "tags = tpl.tags()" ]
+		    [ "if not tags.has_key('vray_phx_channels'):" ]
+		    [ "    return []" ]
+		    [ "" ]
+		    [ "options = tags['vray_phx_channels'].split(';')" ]
+		    [ "menuItems = ['0', 'None']" ]
+		    [ "for opt in options:" ]
+		    [ "    menuItems.extend([opt, opt])" ]
+		    [ "return menuItems" ]
+		    [ "" ]
+		    language	python
+		}
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "vray_custom_handling" " " }
@@ -198,8 +241,22 @@
 	    label	"Velocity.x"
 	    type	ordinal
 	    default	{ "0" }
-	    menu	{
-	    }
+		menu	{
+		    [ "node = hou.node('.')" ]
+		    [ "parm = node.parm('usrchmap')" ]
+		    [ "tpl = parm.parmTemplate()" ]
+		    [ "tags = tpl.tags()" ]
+		    [ "if not tags.has_key('vray_phx_channels'):" ]
+		    [ "    return []" ]
+		    [ "" ]
+		    [ "options = tags['vray_phx_channels'].split(';')" ]
+		    [ "menuItems = ['0', 'None']" ]
+		    [ "for opt in options:" ]
+		    [ "    menuItems.extend([opt, opt])" ]
+		    [ "return menuItems" ]
+		    [ "" ]
+		    language	python
+		}
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "vray_custom_handling" " " }
@@ -209,8 +266,22 @@
 	    label	"Velocity.y"
 	    type	ordinal
 	    default	{ "0" }
-	    menu	{
-	    }
+		menu	{
+		    [ "node = hou.node('.')" ]
+		    [ "parm = node.parm('usrchmap')" ]
+		    [ "tpl = parm.parmTemplate()" ]
+		    [ "tags = tpl.tags()" ]
+		    [ "if not tags.has_key('vray_phx_channels'):" ]
+		    [ "    return []" ]
+		    [ "" ]
+		    [ "options = tags['vray_phx_channels'].split(';')" ]
+		    [ "menuItems = ['0', 'None']" ]
+		    [ "for opt in options:" ]
+		    [ "    menuItems.extend([opt, opt])" ]
+		    [ "return menuItems" ]
+		    [ "" ]
+		    language	python
+		}
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "vray_custom_handling" " " }
@@ -220,8 +291,22 @@
 	    label	"Velocity.z"
 	    type	ordinal
 	    default	{ "0" }
-	    menu	{
-	    }
+		menu	{
+		    [ "node = hou.node('.')" ]
+		    [ "parm = node.parm('usrchmap')" ]
+		    [ "tpl = parm.parmTemplate()" ]
+		    [ "tags = tpl.tags()" ]
+		    [ "if not tags.has_key('vray_phx_channels'):" ]
+		    [ "    return []" ]
+		    [ "" ]
+		    [ "options = tags['vray_phx_channels'].split(';')" ]
+		    [ "menuItems = ['0', 'None']" ]
+		    [ "for opt in options:" ]
+		    [ "    menuItems.extend([opt, opt])" ]
+		    [ "return menuItems" ]
+		    [ "" ]
+		    language	python
+		}
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "vray_custom_handling" " " }
@@ -231,8 +316,22 @@
 	    label	"Red"
 	    type	ordinal
 	    default	{ "0" }
-	    menu	{
-	    }
+		menu	{
+		    [ "node = hou.node('.')" ]
+		    [ "parm = node.parm('usrchmap')" ]
+		    [ "tpl = parm.parmTemplate()" ]
+		    [ "tags = tpl.tags()" ]
+		    [ "if not tags.has_key('vray_phx_channels'):" ]
+		    [ "    return []" ]
+		    [ "" ]
+		    [ "options = tags['vray_phx_channels'].split(';')" ]
+		    [ "menuItems = ['0', 'None']" ]
+		    [ "for opt in options:" ]
+		    [ "    menuItems.extend([opt, opt])" ]
+		    [ "return menuItems" ]
+		    [ "" ]
+		    language	python
+		}
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "vray_custom_handling" " " }
@@ -242,8 +341,22 @@
 	    label	"Green"
 	    type	ordinal
 	    default	{ "0" }
-	    menu	{
-	    }
+		menu	{
+		    [ "node = hou.node('.')" ]
+		    [ "parm = node.parm('usrchmap')" ]
+		    [ "tpl = parm.parmTemplate()" ]
+		    [ "tags = tpl.tags()" ]
+		    [ "if not tags.has_key('vray_phx_channels'):" ]
+		    [ "    return []" ]
+		    [ "" ]
+		    [ "options = tags['vray_phx_channels'].split(';')" ]
+		    [ "menuItems = ['0', 'None']" ]
+		    [ "for opt in options:" ]
+		    [ "    menuItems.extend([opt, opt])" ]
+		    [ "return menuItems" ]
+		    [ "" ]
+		    language	python
+		}
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "vray_custom_handling" " " }
@@ -253,8 +366,22 @@
 	    label	"Blue"
 	    type	ordinal
 	    default	{ "0" }
-	    menu	{
-	    }
+		menu	{
+		    [ "node = hou.node('.')" ]
+		    [ "parm = node.parm('usrchmap')" ]
+		    [ "tpl = parm.parmTemplate()" ]
+		    [ "tags = tpl.tags()" ]
+		    [ "if not tags.has_key('vray_phx_channels'):" ]
+		    [ "    return []" ]
+		    [ "" ]
+		    [ "options = tags['vray_phx_channels'].split(';')" ]
+		    [ "menuItems = ['0', 'None']" ]
+		    [ "for opt in options:" ]
+		    [ "    menuItems.extend([opt, opt])" ]
+		    [ "return menuItems" ]
+		    [ "" ]
+		    language	python
+		}
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "vray_custom_handling" " " }

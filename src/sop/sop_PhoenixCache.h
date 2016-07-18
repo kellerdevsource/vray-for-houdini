@@ -72,13 +72,6 @@ protected:
 
 private:
 	static FluidCache         FluidFiles;
-	std::vector<std::string>  m_ChannelNames;
-
-	// ui dropdowns will point to this
-	// causing reallocations here will invalidate pointer in UI and cause crashes
-	// every time this is changed remove all references from UI
-	// will be colon separated list to be parsed on ui load
-	std::string               m_ChannelNamesSerialized;
 };
 
 } // namespace SOP

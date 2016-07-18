@@ -184,34 +184,25 @@ OP_ERROR SOP::PhxShaderCache::cookMySop(OP_Context &context)
 		return error();
 	}
 
-	m_ChannelNames.clear();
-	m_ChannelNamesSerialized = "";
-
+	std::string channelNames;
 	int chanIndex = 0, isChannelVector3D;
 	char chanName[MAX_CHAN_MAP_LEN];
 	const char *cachePath = path.buffer();
 	while(1 == aurGet3rdPartyChannelName(chanName, MAX_CHAN_MAP_LEN, &isChannelVector3D, cachePath, chanIndex++)) {
-		const auto name = string(chanName);
-		m_ChannelNames.push_back(name);
-		m_ChannelNamesSerialized += ";" + name;
+		channelNames += string(chanName) + ";";
 	}
+	// remove trailing ;
+	channelNames.pop_back();
 
-	// update dropdown values
-	const int dropDownCount = 9;
-	const char *dropDowns[dropDownCount] = {"channel_smoke", "channel_temp", "channel_fuel", "channel_vel_x", "channel_vel_y", "channel_vel_z", "channel_red", "channel_green", "channel_blue"};
-
-	for (int c = 0; c < dropDownCount; ++c) {
-		const PRM_Parm * parameter = Parm::getParm(*this, dropDowns[c]);
-		if (!parameter) {
-			Log::getLog().error("Channel selector %s missing from UI", dropDowns[c]);
-			continue;
-		}
-
+	const PRM_Parm * parameter = Parm::getParm(*this, "usrchmap");
+	if (!parameter) {
+		Log::getLog().error("Channel selector usrchmap missing from UI");
+	} else {
 		PRM_SpareData * spareData = const_cast<PRM_SpareData*>(parameter->getSparePtr());
 		if (spareData) {
-			spareData->addTokenValue("vray_phx_channels", m_ChannelNamesSerialized.c_str());
+			spareData->addTokenValue("vray_phx_channels", channelNames.c_str());
 		} else {
-			Log::getLog().error("Channel selector %s missing spare data ptr", dropDowns[c]);
+			Log::getLog().error("Channel selector usrchmap missing spare data ptr");
 		}
 	}
 
@@ -448,14 +439,60 @@ OP::VRayNode::PluginResult SOP::PhxShaderCache::asPluginDesc(Attrs::PluginDesc &
 		return OP::VRayNode::PluginResultError;
 	}
 
+	const auto evalTime = parentContext->getExporter()->getContext().getTime();
+	const auto evalThread = parentContext->getExporter()->getContext().getThread();
+	auto getParamIntValue = [&evalTime, &evalThread](const PRM_Parm * param) -> int32 {
+		int32 val = 0;
+		if (param) {
+			param->getValue(evalTime, val, 0, evalThread);
+		}
+		return val;
+	};
+
+
 	// Export simulation
 	//
 	if (NOT(phxShaderCache)) {
 		Attrs::PluginDesc phxShaderCacheDesc(VRayExporter::getPluginName(this, "Cache"), "PhxShaderCache");
 		phxShaderCacheDesc.addAttribute(Attrs::PluginAttr("cache_path", path.buffer()));
 
-		// TODO: usrchmap for != aur
-		phxShaderCacheDesc.addAttribute(Attrs::PluginAttr("usrchmap", getDefaultMapping(path.buffer()).c_str()));
+		// channel mappings
+		if (!path.endsWith(".aur")) {
+			const int chCount = 9;
+			static const char *chNames[chCount] = {"channel_smoke", "channel_temp", "channel_fuel", "channel_vel_x", "channel_vel_y", "channel_vel_z", "channel_red", "channel_green", "channel_blue"};
+			static const int   chIDs[chCount] = {2, 1, 10, 4, 5, 6, 7, 8, 9};
+
+			// will hold names se we can use pointers to them
+			std::vector<std::string> names;
+			std::vector<int> ids;
+			for (int c = 0; c < chCount; ++c) {
+				const PRM_Parm * parameter = Parm::getParm(*this, chNames[c]);
+				if (!parameter) {
+					Log::getLog().error("Channel selector usrchmap missing from UI");
+					continue;
+				}
+
+				UT_String value;
+				this->evalString(value, parameter->getToken(), 0, 0.0f);
+				if (value != "0") {
+					names.push_back(value.toStdString());
+					ids.push_back(chIDs[c]);
+				}
+			}
+
+			const char * inputNames[chCount] = {0};
+			for (int c = 0; c < names.size(); ++c) {
+				inputNames[c] = names[c].c_str();
+			}
+
+
+			char usrchmap[MAX_CHAN_MAP_LEN] = {0,};
+			if (1 == aurComposeChannelMappingsString(usrchmap, MAX_CHAN_MAP_LEN, ids.data(), const_cast<char * const *>(inputNames), names.size())) {
+				phxShaderCacheDesc.addAttribute(Attrs::PluginAttr("usrchmap", usrchmap));
+			}
+
+		}
+		// phxShaderCacheDesc.addAttribute(Attrs::PluginAttr("usrchmap", getDefaultMapping(path.buffer()).c_str()));
 
 		exporter.setAttrsFromOpNodePrms(phxShaderCacheDesc, this, "");
 		phxShaderCache = exporter.exportPlugin(phxShaderCacheDesc);
@@ -496,17 +533,6 @@ OP::VRayNode::PluginResult SOP::PhxShaderCache::asPluginDesc(Attrs::PluginDesc &
 		Isosurface  = 3,
 		Mesh  = 4,
 	} rendMode;
-
-	const auto evalTime = parentContext->getExporter()->getContext().getTime();
-	const auto evalThread = parentContext->getExporter()->getContext().getThread();
-
-	auto getParamIntValue = [&evalTime, &evalThread](const PRM_Parm * param) -> int32 {
-		int32 val = 0;
-		if (param) {
-			param->getValue(evalTime, val, 0, evalThread);
-		}
-		return val;
-	};
 
 	// renderMode
 	const PRM_Parm *renderMode = Parm::getParm(*this, "renderMode");
