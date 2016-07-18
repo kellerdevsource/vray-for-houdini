@@ -189,16 +189,13 @@ OP_ERROR SOP::PhxShaderCache::cookMySop(OP_Context &context)
 	char chanName[MAX_CHAN_MAP_LEN];
 	const char *cachePath = path.buffer();
 	while(1 == aurGet3rdPartyChannelName(chanName, MAX_CHAN_MAP_LEN, &isChannelVector3D, cachePath, chanIndex++)) {
-		m_serializedChannels += string(chanName) + ";" + string(chanName) + ";";
+		m_serializedChannels.append(chanName);
 	}
 	
-	if (m_serializedChannels.empty()) {
+	if (!m_serializedChannels.size()) {
 		Log::getLog().error("Did not load any channel names from file %s", cachePath);
 	} else {
-		// remove trailing ;
-		m_serializedChannels.pop_back();
-
-		if (!this->gdp->setDetailAttributeS("vray_phx_channels", m_serializedChannels.c_str())) {
+		if (!this->gdp->setDetailAttributeS("vray_phx_channels", m_serializedChannels)) {
 			Log::getLog().error("Failed to set channel names to geom detail");
 		}
 	}
