@@ -184,27 +184,25 @@ OP_ERROR SOP::PhxShaderCache::cookMySop(OP_Context &context)
 		return error();
 	}
 
-	std::string channelNames;
+	m_serializedChannels.clear();
 	int chanIndex = 0, isChannelVector3D;
 	char chanName[MAX_CHAN_MAP_LEN];
 	const char *cachePath = path.buffer();
 	while(1 == aurGet3rdPartyChannelName(chanName, MAX_CHAN_MAP_LEN, &isChannelVector3D, cachePath, chanIndex++)) {
-		channelNames += string(chanName) + ";";
+		m_serializedChannels += string(chanName) + ";" + string(chanName) + ";";
 	}
-	// remove trailing ;
-	channelNames.pop_back();
-
-	const PRM_Parm * parameter = Parm::getParm(*this, "usrchmap");
-	if (!parameter) {
-		Log::getLog().error("Channel selector usrchmap missing from UI");
+	
+	if (m_serializedChannels.empty()) {
+		Log::getLog().error("Did not load any channel names from file %s", cachePath);
 	} else {
-		PRM_SpareData * spareData = const_cast<PRM_SpareData*>(parameter->getSparePtr());
-		if (spareData) {
-			spareData->addTokenValue("vray_phx_channels", channelNames.c_str());
-		} else {
-			Log::getLog().error("Channel selector usrchmap missing spare data ptr");
+		// remove trailing ;
+		m_serializedChannels.pop_back();
+
+		if (!this->gdp->setDetailAttributeS("vray_phx_channels", m_serializedChannels.c_str())) {
+			Log::getLog().error("Failed to set channel names to geom detail");
 		}
 	}
+
 
 	const SOP::FluidFrame *frameData = SOP::PhxShaderCache::FluidFiles.getData(path.buffer());
 	if (frameData) {
@@ -455,7 +453,6 @@ OP::VRayNode::PluginResult SOP::PhxShaderCache::asPluginDesc(Attrs::PluginDesc &
 	if (NOT(phxShaderCache)) {
 		Attrs::PluginDesc phxShaderCacheDesc(VRayExporter::getPluginName(this, "Cache"), "PhxShaderCache");
 		phxShaderCacheDesc.addAttribute(Attrs::PluginAttr("cache_path", path.buffer()));
-
 		// channel mappings
 		if (!path.endsWith(".aur")) {
 			const int chCount = 9;

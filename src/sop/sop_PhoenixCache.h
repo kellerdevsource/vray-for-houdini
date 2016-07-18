@@ -72,6 +72,8 @@ protected:
 
 private:
 	static FluidCache         FluidFiles;
+
+	std::string               m_serializedChannels;
 };
 
 } // namespace SOP

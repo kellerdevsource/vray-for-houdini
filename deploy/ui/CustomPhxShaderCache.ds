@@ -85,17 +85,6 @@
 	    export	none
 	}
 	parm {
-	    name	"usrchmap"
-	    label	"Channel mapping string"
-	    type	string
-	    invisible
-	    default	{ "" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_custom_handling" " " }
-	    parmtag	{ "vray_phx_channels" "" }
-	}
-	parm {
 	    name	"read_offset"
 	    label	"Cache Start"
 	    type	integer
@@ -167,19 +156,11 @@
 	    type	ordinal
 	    default	{ "0" }
 		menu	{
-		    [ "node = hou.node('.')" ]
-		    [ "parm = node.parm('usrchmap')" ]
-		    [ "tpl = parm.parmTemplate()" ]
-		    [ "tags = tpl.tags()" ]
-		    [ "if not tags.has_key('vray_phx_channels'):" ]
-		    [ "    return []" ]
-		    [ "" ]
-		    [ "options = tags['vray_phx_channels'].split(';')" ]
 		    [ "menuItems = ['0', 'None']" ]
-		    [ "for opt in options:" ]
-		    [ "    menuItems.extend([opt, opt])" ]
+		    [ "geom = hou.node('.').geometry()" ]
+		    [ "if geom.findGlobalAttrib('vray_phx_channels'):" ]
+		    [ "    menuItems.extend(geom.attribValue('vray_phx_channels').split(';'))" ]
 		    [ "return menuItems" ]
-		    [ "" ]
 		    language	python
 		}
 	    range	{ 0 1 }
@@ -192,19 +173,11 @@
 	    type	ordinal
 	    default	{ "0" }
 		menu	{
-		    [ "node = hou.node('.')" ]
-		    [ "parm = node.parm('usrchmap')" ]
-		    [ "tpl = parm.parmTemplate()" ]
-		    [ "tags = tpl.tags()" ]
-		    [ "if not tags.has_key('vray_phx_channels'):" ]
-		    [ "    return []" ]
-		    [ "" ]
-		    [ "options = tags['vray_phx_channels'].split(';')" ]
 		    [ "menuItems = ['0', 'None']" ]
-		    [ "for opt in options:" ]
-		    [ "    menuItems.extend([opt, opt])" ]
+		    [ "geom = hou.node('.').geometry()" ]
+		    [ "if geom.findGlobalAttrib('vray_phx_channels'):" ]
+		    [ "    menuItems.extend(geom.attribValue('vray_phx_channels').split(';'))" ]
 		    [ "return menuItems" ]
-		    [ "" ]
 		    language	python
 		}
 	    range	{ 0 1 }
@@ -217,19 +190,11 @@
 	    type	ordinal
 	    default	{ "0" }
 		menu	{
-		    [ "node = hou.node('.')" ]
-		    [ "parm = node.parm('usrchmap')" ]
-		    [ "tpl = parm.parmTemplate()" ]
-		    [ "tags = tpl.tags()" ]
-		    [ "if not tags.has_key('vray_phx_channels'):" ]
-		    [ "    return []" ]
-		    [ "" ]
-		    [ "options = tags['vray_phx_channels'].split(';')" ]
 		    [ "menuItems = ['0', 'None']" ]
-		    [ "for opt in options:" ]
-		    [ "    menuItems.extend([opt, opt])" ]
+		    [ "geom = hou.node('.').geometry()" ]
+		    [ "if geom.findGlobalAttrib('vray_phx_channels'):" ]
+		    [ "    menuItems.extend(geom.attribValue('vray_phx_channels').split(';'))" ]
 		    [ "return menuItems" ]
-		    [ "" ]
 		    language	python
 		}
 	    range	{ 0 1 }
@@ -242,19 +207,11 @@
 	    type	ordinal
 	    default	{ "0" }
 		menu	{
-		    [ "node = hou.node('.')" ]
-		    [ "parm = node.parm('usrchmap')" ]
-		    [ "tpl = parm.parmTemplate()" ]
-		    [ "tags = tpl.tags()" ]
-		    [ "if not tags.has_key('vray_phx_channels'):" ]
-		    [ "    return []" ]
-		    [ "" ]
-		    [ "options = tags['vray_phx_channels'].split(';')" ]
 		    [ "menuItems = ['0', 'None']" ]
-		    [ "for opt in options:" ]
-		    [ "    menuItems.extend([opt, opt])" ]
+		    [ "geom = hou.node('.').geometry()" ]
+		    [ "if geom.findGlobalAttrib('vray_phx_channels'):" ]
+		    [ "    menuItems.extend(geom.attribValue('vray_phx_channels').split(';'))" ]
 		    [ "return menuItems" ]
-		    [ "" ]
 		    language	python
 		}
 	    range	{ 0 1 }
@@ -267,19 +224,11 @@
 	    type	ordinal
 	    default	{ "0" }
 		menu	{
-		    [ "node = hou.node('.')" ]
-		    [ "parm = node.parm('usrchmap')" ]
-		    [ "tpl = parm.parmTemplate()" ]
-		    [ "tags = tpl.tags()" ]
-		    [ "if not tags.has_key('vray_phx_channels'):" ]
-		    [ "    return []" ]
-		    [ "" ]
-		    [ "options = tags['vray_phx_channels'].split(';')" ]
 		    [ "menuItems = ['0', 'None']" ]
-		    [ "for opt in options:" ]
-		    [ "    menuItems.extend([opt, opt])" ]
+		    [ "geom = hou.node('.').geometry()" ]
+		    [ "if geom.findGlobalAttrib('vray_phx_channels'):" ]
+		    [ "    menuItems.extend(geom.attribValue('vray_phx_channels').split(';'))" ]
 		    [ "return menuItems" ]
-		    [ "" ]
 		    language	python
 		}
 	    range	{ 0 1 }
@@ -292,19 +241,11 @@
 	    type	ordinal
 	    default	{ "0" }
 		menu	{
-		    [ "node = hou.node('.')" ]
-		    [ "parm = node.parm('usrchmap')" ]
-		    [ "tpl = parm.parmTemplate()" ]
-		    [ "tags = tpl.tags()" ]
-		    [ "if not tags.has_key('vray_phx_channels'):" ]
-		    [ "    return []" ]
-		    [ "" ]
-		    [ "options = tags['vray_phx_channels'].split(';')" ]
 		    [ "menuItems = ['0', 'None']" ]
-		    [ "for opt in options:" ]
-		    [ "    menuItems.extend([opt, opt])" ]
+		    [ "geom = hou.node('.').geometry()" ]
+		    [ "if geom.findGlobalAttrib('vray_phx_channels'):" ]
+		    [ "    menuItems.extend(geom.attribValue('vray_phx_channels').split(';'))" ]
 		    [ "return menuItems" ]
-		    [ "" ]
 		    language	python
 		}
 	    range	{ 0 1 }
@@ -317,19 +258,11 @@
 	    type	ordinal
 	    default	{ "0" }
 		menu	{
-		    [ "node = hou.node('.')" ]
-		    [ "parm = node.parm('usrchmap')" ]
-		    [ "tpl = parm.parmTemplate()" ]
-		    [ "tags = tpl.tags()" ]
-		    [ "if not tags.has_key('vray_phx_channels'):" ]
-		    [ "    return []" ]
-		    [ "" ]
-		    [ "options = tags['vray_phx_channels'].split(';')" ]
 		    [ "menuItems = ['0', 'None']" ]
-		    [ "for opt in options:" ]
-		    [ "    menuItems.extend([opt, opt])" ]
+		    [ "geom = hou.node('.').geometry()" ]
+		    [ "if geom.findGlobalAttrib('vray_phx_channels'):" ]
+		    [ "    menuItems.extend(geom.attribValue('vray_phx_channels').split(';'))" ]
 		    [ "return menuItems" ]
-		    [ "" ]
 		    language	python
 		}
 	    range	{ 0 1 }
@@ -342,19 +275,11 @@
 	    type	ordinal
 	    default	{ "0" }
 		menu	{
-		    [ "node = hou.node('.')" ]
-		    [ "parm = node.parm('usrchmap')" ]
-		    [ "tpl = parm.parmTemplate()" ]
-		    [ "tags = tpl.tags()" ]
-		    [ "if not tags.has_key('vray_phx_channels'):" ]
-		    [ "    return []" ]
-		    [ "" ]
-		    [ "options = tags['vray_phx_channels'].split(';')" ]
 		    [ "menuItems = ['0', 'None']" ]
-		    [ "for opt in options:" ]
-		    [ "    menuItems.extend([opt, opt])" ]
+		    [ "geom = hou.node('.').geometry()" ]
+		    [ "if geom.findGlobalAttrib('vray_phx_channels'):" ]
+		    [ "    menuItems.extend(geom.attribValue('vray_phx_channels').split(';'))" ]
 		    [ "return menuItems" ]
-		    [ "" ]
 		    language	python
 		}
 	    range	{ 0 1 }
@@ -367,19 +292,11 @@
 	    type	ordinal
 	    default	{ "0" }
 		menu	{
-		    [ "node = hou.node('.')" ]
-		    [ "parm = node.parm('usrchmap')" ]
-		    [ "tpl = parm.parmTemplate()" ]
-		    [ "tags = tpl.tags()" ]
-		    [ "if not tags.has_key('vray_phx_channels'):" ]
-		    [ "    return []" ]
-		    [ "" ]
-		    [ "options = tags['vray_phx_channels'].split(';')" ]
 		    [ "menuItems = ['0', 'None']" ]
-		    [ "for opt in options:" ]
-		    [ "    menuItems.extend([opt, opt])" ]
+		    [ "geom = hou.node('.').geometry()" ]
+		    [ "if geom.findGlobalAttrib('vray_phx_channels'):" ]
+		    [ "    menuItems.extend(geom.attribValue('vray_phx_channels').split(';'))" ]
 		    [ "return menuItems" ]
-		    [ "" ]
 		    language	python
 		}
 	    range	{ 0 1 }
