@@ -158,10 +158,13 @@
 		menu	{
 		    [ "menuItems = ['0', 'None']" ]
 		    [ "geom = hou.node('.').geometry()" ]
-		    [ "if geom.findGlobalAttrib('vray_phx_channels'):" ]
+		    [ "if geom and geom.findGlobalAttrib('vray_phx_channels'):" ]
 		    [ "    channels = geom.attribValue('vray_phx_channels')" ]
-		    [ "    # duplicate all channels so we have (key, val) pairs" ]
-		    [ "    menuItems.extend([channels[c//2] for c in range(len(channels) * 2)])" ]
+		    [ "    if type(channels) == tuple:" ]
+		    [ "        # duplicate all channels so we have (key, val) pairs" ]
+		    [ "        menuItems.extend([channels[c//2] for c in range(len(channels) * 2)])" ]
+		    [ "    else:" ]
+		    [ "        menuItems.extend([channels, channels])" ]
 		    [ "return menuItems" ]
 		    language	python
 		}
@@ -177,10 +180,13 @@
 		menu	{
 		    [ "menuItems = ['0', 'None']" ]
 		    [ "geom = hou.node('.').geometry()" ]
-		    [ "if geom.findGlobalAttrib('vray_phx_channels'):" ]
+		    [ "if geom and geom.findGlobalAttrib('vray_phx_channels'):" ]
 		    [ "    channels = geom.attribValue('vray_phx_channels')" ]
-		    [ "    # duplicate all channels so we have (key, val) pairs" ]
-		    [ "    menuItems.extend([channels[c//2] for c in range(len(channels) * 2)])" ]
+		    [ "    if type(channels) == tuple:" ]
+		    [ "        # duplicate all channels so we have (key, val) pairs" ]
+		    [ "        menuItems.extend([channels[c//2] for c in range(len(channels) * 2)])" ]
+		    [ "    else:" ]
+		    [ "        menuItems.extend([channels, channels])" ]
 		    [ "return menuItems" ]
 		    language	python
 		}
@@ -196,10 +202,13 @@
 		menu	{
 		    [ "menuItems = ['0', 'None']" ]
 		    [ "geom = hou.node('.').geometry()" ]
-		    [ "if geom.findGlobalAttrib('vray_phx_channels'):" ]
+		    [ "if geom and geom.findGlobalAttrib('vray_phx_channels'):" ]
 		    [ "    channels = geom.attribValue('vray_phx_channels')" ]
-		    [ "    # duplicate all channels so we have (key, val) pairs" ]
-		    [ "    menuItems.extend([channels[c//2] for c in range(len(channels) * 2)])" ]
+		    [ "    if type(channels) == tuple:" ]
+		    [ "        # duplicate all channels so we have (key, val) pairs" ]
+		    [ "        menuItems.extend([channels[c//2] for c in range(len(channels) * 2)])" ]
+		    [ "    else:" ]
+		    [ "        menuItems.extend([channels, channels])" ]
 		    [ "return menuItems" ]
 		    language	python
 		}
@@ -215,10 +224,13 @@
 		menu	{
 		    [ "menuItems = ['0', 'None']" ]
 		    [ "geom = hou.node('.').geometry()" ]
-		    [ "if geom.findGlobalAttrib('vray_phx_channels'):" ]
+		    [ "if geom and geom.findGlobalAttrib('vray_phx_channels'):" ]
 		    [ "    channels = geom.attribValue('vray_phx_channels')" ]
-		    [ "    # duplicate all channels so we have (key, val) pairs" ]
-		    [ "    menuItems.extend([channels[c//2] for c in range(len(channels) * 2)])" ]
+		    [ "    if type(channels) == tuple:" ]
+		    [ "        # duplicate all channels so we have (key, val) pairs" ]
+		    [ "        menuItems.extend([channels[c//2] for c in range(len(channels) * 2)])" ]
+		    [ "    else:" ]
+		    [ "        menuItems.extend([channels, channels])" ]
 		    [ "return menuItems" ]
 		    language	python
 		}
@@ -234,10 +246,13 @@
 		menu	{
 		    [ "menuItems = ['0', 'None']" ]
 		    [ "geom = hou.node('.').geometry()" ]
-		    [ "if geom.findGlobalAttrib('vray_phx_channels'):" ]
+		    [ "if geom and geom.findGlobalAttrib('vray_phx_channels'):" ]
 		    [ "    channels = geom.attribValue('vray_phx_channels')" ]
-		    [ "    # duplicate all channels so we have (key, val) pairs" ]
-		    [ "    menuItems.extend([channels[c//2] for c in range(len(channels) * 2)])" ]
+		    [ "    if type(channels) == tuple:" ]
+		    [ "        # duplicate all channels so we have (key, val) pairs" ]
+		    [ "        menuItems.extend([channels[c//2] for c in range(len(channels) * 2)])" ]
+		    [ "    else:" ]
+		    [ "        menuItems.extend([channels, channels])" ]
 		    [ "return menuItems" ]
 		    language	python
 		}
@@ -253,10 +268,13 @@
 		menu	{
 		    [ "menuItems = ['0', 'None']" ]
 		    [ "geom = hou.node('.').geometry()" ]
-		    [ "if geom.findGlobalAttrib('vray_phx_channels'):" ]
+		    [ "if geom and geom.findGlobalAttrib('vray_phx_channels'):" ]
 		    [ "    channels = geom.attribValue('vray_phx_channels')" ]
-		    [ "    # duplicate all channels so we have (key, val) pairs" ]
-		    [ "    menuItems.extend([channels[c//2] for c in range(len(channels) * 2)])" ]
+		    [ "    if type(channels) == tuple:" ]
+		    [ "        # duplicate all channels so we have (key, val) pairs" ]
+		    [ "        menuItems.extend([channels[c//2] for c in range(len(channels) * 2)])" ]
+		    [ "    else:" ]
+		    [ "        menuItems.extend([channels, channels])" ]
 		    [ "return menuItems" ]
 		    language	python
 		}
@@ -272,10 +290,13 @@
 		menu	{
 		    [ "menuItems = ['0', 'None']" ]
 		    [ "geom = hou.node('.').geometry()" ]
-		    [ "if geom.findGlobalAttrib('vray_phx_channels'):" ]
+		    [ "if geom and geom.findGlobalAttrib('vray_phx_channels'):" ]
 		    [ "    channels = geom.attribValue('vray_phx_channels')" ]
-		    [ "    # duplicate all channels so we have (key, val) pairs" ]
-		    [ "    menuItems.extend([channels[c//2] for c in range(len(channels) * 2)])" ]
+		    [ "    if type(channels) == tuple:" ]
+		    [ "        # duplicate all channels so we have (key, val) pairs" ]
+		    [ "        menuItems.extend([channels[c//2] for c in range(len(channels) * 2)])" ]
+		    [ "    else:" ]
+		    [ "        menuItems.extend([channels, channels])" ]
 		    [ "return menuItems" ]
 		    language	python
 		}
@@ -291,10 +312,13 @@
 		menu	{
 		    [ "menuItems = ['0', 'None']" ]
 		    [ "geom = hou.node('.').geometry()" ]
-		    [ "if geom.findGlobalAttrib('vray_phx_channels'):" ]
+		    [ "if geom and geom.findGlobalAttrib('vray_phx_channels'):" ]
 		    [ "    channels = geom.attribValue('vray_phx_channels')" ]
-		    [ "    # duplicate all channels so we have (key, val) pairs" ]
-		    [ "    menuItems.extend([channels[c//2] for c in range(len(channels) * 2)])" ]
+		    [ "    if type(channels) == tuple:" ]
+		    [ "        # duplicate all channels so we have (key, val) pairs" ]
+		    [ "        menuItems.extend([channels[c//2] for c in range(len(channels) * 2)])" ]
+		    [ "    else:" ]
+		    [ "        menuItems.extend([channels, channels])" ]
 		    [ "return menuItems" ]
 		    language	python
 		}
@@ -310,10 +334,13 @@
 		menu	{
 		    [ "menuItems = ['0', 'None']" ]
 		    [ "geom = hou.node('.').geometry()" ]
-		    [ "if geom.findGlobalAttrib('vray_phx_channels'):" ]
+		    [ "if geom and geom.findGlobalAttrib('vray_phx_channels'):" ]
 		    [ "    channels = geom.attribValue('vray_phx_channels')" ]
-		    [ "    # duplicate all channels so we have (key, val) pairs" ]
-		    [ "    menuItems.extend([channels[c//2] for c in range(len(channels) * 2)])" ]
+		    [ "    if type(channels) == tuple:" ]
+		    [ "        # duplicate all channels so we have (key, val) pairs" ]
+		    [ "        menuItems.extend([channels[c//2] for c in range(len(channels) * 2)])" ]
+		    [ "    else:" ]
+		    [ "        menuItems.extend([channels, channels])" ]
 		    [ "return menuItems" ]
 		    language	python
 		}
@@ -633,7 +660,7 @@
 	    name	"ecolor_offset"
 	    label	"Input Offset"
 	    type	float
-	    default	{ "1" }
+	    default	{ "0" }
 	    range	{ 0! 100000! }
 	    export	none
 	}
@@ -641,7 +668,7 @@
 	    name	"ecolor_scale"
 	    label	"Input Scale"
 	    type	float
-	    default	{ "0" }
+	    default	{ "1" }
 	    range	{ 0! 100000! }
 	    export	none
 	}
