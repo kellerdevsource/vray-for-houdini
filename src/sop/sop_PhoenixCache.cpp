@@ -436,8 +436,8 @@ OP::VRayNode::PluginResult SOP::PhxShaderCache::asPluginDesc(Attrs::PluginDesc &
 		return OP::VRayNode::PluginResultError;
 	}
 
-	const auto evalTime = parentContext->getExporter()->getContext().getTime();
-	const auto evalThread = parentContext->getExporter()->getContext().getThread();
+	const auto evalTime = exporter.getContext().getTime();
+	const auto evalThread = exporter.getContext().getThread();
 	auto getParamIntValue = [&evalTime, &evalThread](const PRM_Parm * param) -> int32 {
 		int32 val = 0;
 		if (param) {
@@ -458,21 +458,20 @@ OP::VRayNode::PluginResult SOP::PhxShaderCache::asPluginDesc(Attrs::PluginDesc &
 			static const char *chNames[chCount] = {"channel_smoke", "channel_temp", "channel_fuel", "channel_vel_x", "channel_vel_y", "channel_vel_z", "channel_red", "channel_green", "channel_blue"};
 			static const int   chIDs[chCount] = {2, 1, 10, 4, 5, 6, 7, 8, 9};
 
-			// will hold names se we can use pointers to them
-			std::vector<std::string> names;
+			// will hold names so we can use pointers to them
+			std::vector<UT_String> names;
 			std::vector<int> ids;
 			for (int c = 0; c < chCount; ++c) {
 				const PRM_Parm * parameter = Parm::getParm(*this, chNames[c]);
 				if (!parameter) {
-					Log::getLog().error("Channel selector usrchmap missing from UI");
-					continue;
-				}
-
-				UT_String value;
-				this->evalString(value, parameter->getToken(), 0, 0.0f);
-				if (value != "0") {
-					names.push_back(value.toStdString());
-					ids.push_back(chIDs[c]);
+					Log::getLog().error("Channel selector %s missing from UI", chNames[c]);
+				} else {
+					UT_String value(UT_String::ALWAYS_DEEP);
+					this->evalString(value, parameter->getToken(), 0, 0.0f);
+					if (value != "0") {
+						names.push_back(value);
+						ids.push_back(chIDs[c]);
+					}
 				}
 			}
 
@@ -481,14 +480,11 @@ OP::VRayNode::PluginResult SOP::PhxShaderCache::asPluginDesc(Attrs::PluginDesc &
 				inputNames[c] = names[c].c_str();
 			}
 
-
 			char usrchmap[MAX_CHAN_MAP_LEN] = {0,};
 			if (1 == aurComposeChannelMappingsString(usrchmap, MAX_CHAN_MAP_LEN, ids.data(), const_cast<char * const *>(inputNames), names.size())) {
 				phxShaderCacheDesc.addAttribute(Attrs::PluginAttr("usrchmap", usrchmap));
 			}
-
 		}
-		// phxShaderCacheDesc.addAttribute(Attrs::PluginAttr("usrchmap", getDefaultMapping(path.buffer()).c_str()));
 
 		exporter.setAttrsFromOpNodePrms(phxShaderCacheDesc, this, "");
 		phxShaderCache = exporter.exportPlugin(phxShaderCacheDesc);
@@ -533,8 +529,8 @@ OP::VRayNode::PluginResult SOP::PhxShaderCache::asPluginDesc(Attrs::PluginDesc &
 	// renderMode
 	const PRM_Parm *renderMode = Parm::getParm(*this, "renderMode");
 	rendMode = static_cast<RenderType>(getParamIntValue(renderMode));
-	phxShaderSimDesc.addAttribute(Attrs::PluginAttr("mesher", rendMode == Volumetric_Geometry || rendMode == Volumetric_Heat_Haze || rendMode == Isosurface));
-	phxShaderSimDesc.addAttribute(Attrs::PluginAttr("geommode", rendMode == Mesh));
+	phxShaderSimDesc.addAttribute(Attrs::PluginAttr("geommode", rendMode == Volumetric_Geometry || rendMode == Volumetric_Heat_Haze || rendMode == Isosurface));
+	phxShaderSimDesc.addAttribute(Attrs::PluginAttr("mesher", rendMode == Mesh));
 	phxShaderSimDesc.addAttribute(Attrs::PluginAttr("rendsolid", rendMode == Isosurface));
 	phxShaderSimDesc.addAttribute(Attrs::PluginAttr("heathaze", rendMode == Volumetric_Heat_Haze));
 
