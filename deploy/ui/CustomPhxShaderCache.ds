@@ -158,7 +158,7 @@
 	    default	{ "0" }
 		menu	{
 		    [ "menuItems = ['0', 'None']" ]
-		    [ "geom = hou.node('.').geometry()" ]
+		    [ "geom = kwargs['node'].geometry()" ]
 		    [ "if geom and geom.findGlobalAttrib('vray_phx_channels'):" ]
 		    [ "    channels = geom.attribValue('vray_phx_channels')" ]
 		    [ "    if type(channels) is tuple:" ]
@@ -180,7 +180,7 @@
 	    default	{ "0" }
 		menu	{
 		    [ "menuItems = ['0', 'None']" ]
-		    [ "geom = hou.node('.').geometry()" ]
+		    [ "geom = kwargs['node'].geometry()" ]
 		    [ "if geom and geom.findGlobalAttrib('vray_phx_channels'):" ]
 		    [ "    channels = geom.attribValue('vray_phx_channels')" ]
 		    [ "    if type(channels) is tuple:" ]
@@ -202,7 +202,7 @@
 	    default	{ "0" }
 		menu	{
 		    [ "menuItems = ['0', 'None']" ]
-		    [ "geom = hou.node('.').geometry()" ]
+		    [ "geom = kwargs['node'].geometry()" ]
 		    [ "if geom and geom.findGlobalAttrib('vray_phx_channels'):" ]
 		    [ "    channels = geom.attribValue('vray_phx_channels')" ]
 		    [ "    if type(channels) is tuple:" ]
@@ -224,7 +224,7 @@
 	    default	{ "0" }
 		menu	{
 		    [ "menuItems = ['0', 'None']" ]
-		    [ "geom = hou.node('.').geometry()" ]
+		    [ "geom = kwargs['node'].geometry()" ]
 		    [ "if geom and geom.findGlobalAttrib('vray_phx_channels'):" ]
 		    [ "    channels = geom.attribValue('vray_phx_channels')" ]
 		    [ "    if type(channels) is tuple:" ]
@@ -246,7 +246,7 @@
 	    default	{ "0" }
 		menu	{
 		    [ "menuItems = ['0', 'None']" ]
-		    [ "geom = hou.node('.').geometry()" ]
+		    [ "geom = kwargs['node'].geometry()" ]
 		    [ "if geom and geom.findGlobalAttrib('vray_phx_channels'):" ]
 		    [ "    channels = geom.attribValue('vray_phx_channels')" ]
 		    [ "    if type(channels) is tuple:" ]
@@ -268,7 +268,7 @@
 	    default	{ "0" }
 		menu	{
 		    [ "menuItems = ['0', 'None']" ]
-		    [ "geom = hou.node('.').geometry()" ]
+		    [ "geom = kwargs['node'].geometry()" ]
 		    [ "if geom and geom.findGlobalAttrib('vray_phx_channels'):" ]
 		    [ "    channels = geom.attribValue('vray_phx_channels')" ]
 		    [ "    if type(channels) is tuple:" ]
@@ -290,7 +290,7 @@
 	    default	{ "0" }
 		menu	{
 		    [ "menuItems = ['0', 'None']" ]
-		    [ "geom = hou.node('.').geometry()" ]
+		    [ "geom = kwargs['node'].geometry()" ]
 		    [ "if geom and geom.findGlobalAttrib('vray_phx_channels'):" ]
 		    [ "    channels = geom.attribValue('vray_phx_channels')" ]
 		    [ "    if type(channels) is tuple:" ]
@@ -312,7 +312,7 @@
 	    default	{ "0" }
 		menu	{
 		    [ "menuItems = ['0', 'None']" ]
-		    [ "geom = hou.node('.').geometry()" ]
+		    [ "geom = kwargs['node'].geometry()" ]
 		    [ "if geom and geom.findGlobalAttrib('vray_phx_channels'):" ]
 		    [ "    channels = geom.attribValue('vray_phx_channels')" ]
 		    [ "    if type(channels) is tuple:" ]
@@ -334,7 +334,7 @@
 	    default	{ "0" }
 		menu	{
 		    [ "menuItems = ['0', 'None']" ]
-		    [ "geom = hou.node('.').geometry()" ]
+		    [ "geom = kwargs['node'].geometry()" ]
 		    [ "if geom and geom.findGlobalAttrib('vray_phx_channels'):" ]
 		    [ "    channels = geom.attribValue('vray_phx_channels')" ]
 		    [ "    if type(channels) is tuple:" ]
