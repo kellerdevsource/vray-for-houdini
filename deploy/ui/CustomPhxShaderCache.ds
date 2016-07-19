@@ -47,6 +47,7 @@
 	    name	"parm18"
 	    label	"Cache Output"
 	    type	string
+	    invisible
 	    size	16
 	    default	{ "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" }
 	    range	{ 0 1 }
