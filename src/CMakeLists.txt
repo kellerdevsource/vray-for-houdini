@@ -109,6 +109,13 @@ if(INSTALL_LOCAL)
 	install(DIRECTORY   ${CMAKE_SOURCE_DIR}/deploy/scripts/nodeinit/
 			DESTINATION ${HOUDINI_HOME_PATH}/scripts)
 
+	# Install custom UI scripts
+	install(DIRECTORY    ${CMAKE_SOURCE_DIR}/deploy/presets/
+			DESTINATION  ${HOUDINI_HOME_PATH}/presets)
+
+	install(DIRECTORY    ${CMAKE_SOURCE_DIR}/deploy/ui/
+			DESTINATION  ${CMAKE_BINARY_DIR}/deploy/ui)
+
 	if (Phoenix_FOUND)
 		install(FILES       ${Phoenix_LIBRARIES}/${CGR_PHOENIX_SHARED}
 							${Phoenix_LIBRARIES}/${CGR_PHOENIX_SHARED_VDB}
@@ -162,8 +169,11 @@ if(USE_LAUNCHER)
 	endif()
 
 	# Add custom ui files
-	install(DIRECTORY    ${CMAKE_SOURCE_DIR}/deploy/ui
+	install(DIRECTORY    ${CMAKE_SOURCE_DIR}/deploy/ui/
 			DESTINATION  ${CMAKE_BINARY_DIR}/deploy/ui)
+
+	install(DIRECTORY    ${CMAKE_SOURCE_DIR}/deploy/presets/
+			DESTINATION  ${HOUDINI_HOME_PATH}/presets)
 endif()
 
 
@@ -187,6 +197,11 @@ if(INSTALL_RELEASE)
 		file(GLOB DS_UI_FILES     "${CMAKE_SOURCE_DIR}/deploy/ui/*.*")
 		file(INSTALL               ${DS_UI_FILES}
 			DESTINATION            ${INSTALL_RELEASE_PATH}/deploy/ui
+			USE_SOURCE_PERMISSIONS)
+
+		file(GLOB IDX_UI_FILES    "${CMAKE_SOURCE_DIR}/deploy/presets/*.*")
+		file(INSTALL               ${IDX_UI_FILES}
+			DESTINATION            ${INSTALL_RELEASE_PATH}/deploy/presets
 			USE_SOURCE_PERMISSIONS)
 
 		# Copy plugin
