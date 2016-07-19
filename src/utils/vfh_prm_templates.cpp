@@ -154,10 +154,6 @@ void Parm::PRMList::clear()
 	m_prmVec.clear();
 	// NOTE: extra item is list terminator
 	m_prmVec.emplace_back();
-
-	for (auto & page : m_scriptPages) {
-		delete page;
-	}
 	m_scriptPages.clear();
 }
 
@@ -257,14 +253,13 @@ Parm::PRMList& Parm::PRMList::addFromFile(const std::string &path)
 		return *this;
 	}
 	// need to keep the page as myTemplate will have references to it
-	auto currentPage = new PRM_ScriptPage;
+	auto currentPage = std::make_shared<PRM_ScriptPage>();
 
 	DS_Stream stream(path.c_str());
 	currentPage->parse(stream, true, 0, false);
 
 	int size = currentPage->computeTemplateSize();
 	if (!size) {
-		delete currentPage;
 		return *this;
 	}
 	m_scriptPages.push_back(currentPage);

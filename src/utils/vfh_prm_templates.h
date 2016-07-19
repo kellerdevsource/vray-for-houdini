@@ -73,7 +73,7 @@ private:
 
 	typedef std::list<SwitcherInfo> SwitcherList;
 	typedef std::vector<SwitcherInfo*> SwitcherStack;
-	typedef std::vector<PRM_ScriptPage*> ScriptPageList;
+	typedef std::vector<std::shared_ptr<PRM_ScriptPage>> ScriptPageList;
 
 	SwitcherInfo* getCurrentSwitcher();
 	void          incCurrentFolderPrmCnt();
