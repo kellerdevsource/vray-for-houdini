@@ -221,7 +221,7 @@ OP_ERROR SOP::PhxShaderCache::cookMySop(OP_Context &context)
 
 		VUtils::Transform c2n(frameData->c2n);
 
-		const bool flipAxis = evalInt("PhxShaderCache_flip_yz", 0, 0.0f);
+		const bool flipAxis = evalInt("flip_yz", 0, 0.0f);
 		if (flipAxis) {
 			VUtils::swap(c2n.m[1], c2n.m[2]);
 			c2n.m[2] = -c2n.m[2];
