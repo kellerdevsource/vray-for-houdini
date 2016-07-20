@@ -185,23 +185,24 @@ OP_ERROR SOP::PhxShaderCache::cookMySop(OP_Context &context)
 	}
 
 	m_serializedChannels.clear();
-	int chanIndex = 0, isChannelVector3D;
-	char chanName[MAX_CHAN_MAP_LEN];
-	const char *cachePath = path.buffer();
-	while(1 == aurGet3rdPartyChannelName(chanName, MAX_CHAN_MAP_LEN, &isChannelVector3D, cachePath, chanIndex++)) {
-		m_serializedChannels.append(chanName);
-	}
+
+	if (!path.endsWith(".aur")) {
+		int chanIndex = 0, isChannelVector3D;
+		char chanName[MAX_CHAN_MAP_LEN];
+		const char *cachePath = path.buffer();
+		while(1 == aurGet3rdPartyChannelName(chanName, MAX_CHAN_MAP_LEN, &isChannelVector3D, cachePath, chanIndex++)) {
+			m_serializedChannels.append(chanName);
+		}
 	
-	if (!m_serializedChannels.size()) {
-		Log::getLog().error("Did not load any channel names from file %s", cachePath);
-		// TODO: trigger UI error
-		return error();
-	} else {
-		if (!this->gdp->setDetailAttributeS("vray_phx_channels", m_serializedChannels)) {
-			Log::getLog().error("Failed to set channel names to geom detail");
+		if (!m_serializedChannels.size()) {
+			addError(SOP_MESSAGE, (std::string("Did not load any channel names from file ") + cachePath).c_str());
+			return error();
+		} else {
+			if (!this->gdp->setDetailAttributeS("vray_phx_channels", m_serializedChannels)) {
+				Log::getLog().error("Failed to set channel names to geom detail");
+			}
 		}
 	}
-
 
 	const SOP::FluidFrame *frameData = SOP::PhxShaderCache::FluidFiles.getData(path.buffer());
 	if (frameData) {
