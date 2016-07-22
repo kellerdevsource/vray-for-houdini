@@ -437,17 +437,6 @@ OP::VRayNode::PluginResult SOP::PhxShaderCache::asPluginDesc(Attrs::PluginDesc &
 		return OP::VRayNode::PluginResultError;
 	}
 
-	const auto evalTime = exporter.getContext().getTime();
-	const auto evalThread = exporter.getContext().getThread();
-	auto getParamIntValue = [&evalTime, &evalThread](const PRM_Parm * param) -> int32 {
-		int32 val = 0;
-		if (param) {
-			param->getValue(evalTime, val, 0, evalThread);
-		}
-		return val;
-	};
-
-
 	// Export simulation
 	//
 	if (NOT(phxShaderCache)) {
@@ -489,80 +478,6 @@ OP::VRayNode::PluginResult SOP::PhxShaderCache::asPluginDesc(Attrs::PluginDesc &
 
 		exporter.setAttrsFromOpNodePrms(phxShaderCacheDesc, this, "");
 		phxShaderCache = exporter.exportPlugin(phxShaderCacheDesc);
-	}
-
-	Attrs::PluginDesc phxShaderSimDesc(VRayExporter::getPluginName(this, "Sim"), "PhxShaderSim");
-	if (phxShaderCache) {
-		phxShaderSimDesc.addAttribute(Attrs::PluginAttr("cache", phxShaderCache));
-	}
-	if (customFluidData.size()) {
-		if (customFluidData.count("heat")) {
-			phxShaderSimDesc.addAttribute(Attrs::PluginAttr("darg", 4));
-			phxShaderSimDesc.addAttribute(Attrs::PluginAttr("dtex", customFluidData["heat"]));
-		}
-		if (customFluidData.count("density")) {
-			phxShaderSimDesc.addAttribute(Attrs::PluginAttr("targ", 4));
-			phxShaderSimDesc.addAttribute(Attrs::PluginAttr("ttex", customFluidData["density"]));
-		}
-		if (customFluidData.count("temperature")) {
-			phxShaderSimDesc.addAttribute(Attrs::PluginAttr("earg", 4));
-			phxShaderSimDesc.addAttribute(Attrs::PluginAttr("etex", customFluidData["temperature"]));
-		}
-		if (customFluidData.count("velocity")) {
-			phxShaderSimDesc.addAttribute(Attrs::PluginAttr("varg", 2));
-			phxShaderSimDesc.addAttribute(Attrs::PluginAttr("vtex", customFluidData["velocity"]));
-		}
-	}
-
-	nodeTm.offset = nodeTm.matrix * phxTm.offset + nodeTm.offset;
-	nodeTm.matrix = nodeTm.matrix * phxTm.matrix;
-
-	phxShaderSimDesc.addAttribute(Attrs::PluginAttr("node_transform", nodeTm));
-
-	enum RenderType {
-		Volumetric  = 0,
-		Volumetric_Geometry  = 1,
-		Volumetric_Heat_Haze  = 2,
-		Isosurface  = 3,
-		Mesh  = 4,
-	} rendMode;
-
-	// renderMode
-	const PRM_Parm *renderMode = Parm::getParm(*this, "renderMode");
-	rendMode = static_cast<RenderType>(getParamIntValue(renderMode));
-	phxShaderSimDesc.addAttribute(Attrs::PluginAttr("geommode", rendMode == Volumetric_Geometry || rendMode == Volumetric_Heat_Haze || rendMode == Isosurface));
-	phxShaderSimDesc.addAttribute(Attrs::PluginAttr("mesher", rendMode == Mesh));
-	phxShaderSimDesc.addAttribute(Attrs::PluginAttr("rendsolid", rendMode == Isosurface));
-	phxShaderSimDesc.addAttribute(Attrs::PluginAttr("heathaze", rendMode == Volumetric_Heat_Haze));
-
-	const auto primVal = getParamIntValue(Parm::getParm(*this, "pmprimary"));
-	const bool enableProb = (exporter.isIPR() && primVal) || primVal == 2;
-	phxShaderSimDesc.addAttribute(Attrs::PluginAttr("pmprimary", enableProb));
-
-	const PRM_Parm *dynGeom = Parm::getParm(*this, "dynamic_geometry");
-	const bool dynamic_geometry = getParamIntValue(dynGeom) == 1;
-
-	exporter.setAttrsFromOpNodePrms(phxShaderSimDesc, this, "", true);
-	VRay::Plugin phxShaderSim = exporter.exportPlugin(phxShaderSimDesc);
-	if (phxShaderSim) {
-		if (rendMode == Volumetric) {
-			// merge all volumetrics
-			exporter.phxAddSimumation(phxShaderSim);
-		} else {
-			const bool isMesh = rendMode == Mesh;
-
-			const char *wrapperType = isMesh ? "PhxShaderSimMesh" : "PhxShaderSimGeom";
-			Attrs::PluginDesc phxWrapper(VRayExporter::getPluginName(this, "", "Wrapper"), wrapperType);
-			phxWrapper.add(Attrs::PluginAttr("phoenix_sim", phxShaderSim));
-			VRay::Plugin phxWrapperPlugin = exporter.exportPlugin(phxWrapper);
-
-			if (!isMesh) {
-				// make static mesh that wraps the geom plugin
-				Attrs::PluginDesc meshWrapper(VRayExporter::getPluginName(this, "", "Geom"), "GeomStaticMesh");
-				meshWrapper.add(Attrs::PluginAttr("static_mesh", phxWrapperPlugin));
-				meshWrapper.add(Attrs::PluginAttr("dynamic_geometry", dynamic_geometry));
-			}
-		}
 	}
 
 	// Plugin must be created here and do nothing after
