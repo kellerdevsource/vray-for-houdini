@@ -1641,7 +1641,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodePhxShaderCache', nodename="phoenixcach
 </tool>
 
 
-<tool name="vop_VRayNodePhxShaderSim" label="Phoenix Data" icon="ROP_vray">
+<tool name="vop_VRayNodePhxShaderSim" label="Phoenix Shader Sim" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -1654,7 +1654,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodePhxShaderCache', nodename="phoenixcach
 <![CDATA[
 
 import voptoolutils;
-voptoolutils.genericTool(kwargs, 'VRayNodePhxShaderSim', nodename="phoenixdata")
+voptoolutils.genericTool(kwargs, 'VRayNodePhxShaderSim', nodename="phxshadersim")
 
 ]]>
     </script>
