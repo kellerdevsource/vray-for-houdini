@@ -17,6 +17,7 @@
 #include "obj/obj_node_def.h"
 #include "sop/sop_node_def.h"
 #include "vop/vop_context.h"
+#include "vop/material/vop_PhoenixSim.h"
 #include "vop/brdf/vop_brdf_def.h"
 #include "vop/brdf/vop_brdfvraymtl.h"
 #include "vop/brdf/vop_brdfdiffuse.h"
@@ -32,6 +33,7 @@
 
 // For newShopOperator()
 #include <SHOP/SHOP_Node.h>
+#include <SHOP/SHOP_Operator.h>
 
 #include <UT/UT_DSOVersion.h>
 #include <UT/UT_Exit.h>
@@ -92,6 +94,7 @@ void newDriverOperator(OP_OperatorTable *table)
 
 void newSopOperator(OP_OperatorTable *table)
 {
+	using namespace SOP;
 #ifdef CGR_HAS_AUR
 	const char *vfhPhoenixLoaderDir = getenv("VRAY_FOR_HOUDINI_AURA_LOADERS");
 	if (vfhPhoenixLoaderDir && *vfhPhoenixLoaderDir) {
@@ -103,7 +106,7 @@ void newSopOperator(OP_OperatorTable *table)
 		}
 	}
 
-	VFH_SOP_ADD_OPERATOR_INPUTS(table, "GEOMETRY", PhxShaderCache, SOP::PhxShaderCache::GetPrmTemplate(), 0, 1);
+	VFH_SOP_ADD_OPERATOR_INPUTS(table, "GEOMETRY", PhxShaderCache, PhxShaderCache::GetPrmTemplate(), 0, 1);
 #endif
 
 	VFH_SOP_ADD_OPERATOR_AUTO(table, "GEOMETRY", GeomPlane);
@@ -118,6 +121,7 @@ void newSopOperator(OP_OperatorTable *table)
 
 void newObjectOperator(OP_OperatorTable *table)
 {
+	using namespace OBJ;
 	VFH_OBJ_ADD_OPERATOR_AUTO(table, OBJ::VRayPluginType::Light, SunLight);
 	VFH_OBJ_ADD_OPERATOR_AUTO(table, OBJ::VRayPluginType::Light, LightDirect);
 	VFH_OBJ_ADD_OPERATOR_AUTO(table, OBJ::VRayPluginType::Light, LightAmbient);
@@ -134,12 +138,14 @@ void newObjectOperator(OP_OperatorTable *table)
 
 void newShopOperator(OP_OperatorTable *table)
 {
+	using namespace VOP;
 	VOP::VRayMaterialBuilder::register_shop_operator(table);
 }
 
 
 void newVopOperator(OP_OperatorTable *table)
 {
+	using namespace VOP;
 	VOP::MaterialOutput::register_operator(table);
 
 	VFH_VOP_ADD_OPERATOR(table, "SETTINGS", SettingsEnvironment);
@@ -190,6 +196,8 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFSkinComplex);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFVRayMtl);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFWard);
+
+	VFH_VOP_ADD_OPERATOR_CUSTOM(table, "MATERIAL", PhxShaderSim, PhxShaderSim::GetPrmTemplate());
 
 	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", Mtl2Sided);
 	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", MtlBump);

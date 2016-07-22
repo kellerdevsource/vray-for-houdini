@@ -555,6 +555,9 @@ VRayPluginInfo* Parm::generatePluginInfo(const std::string &pluginID)
 				if (pluginID == "PhxShaderCache") {
 					pluginInfo->outputs.push_back(SocketDesc(PRM_Name("Cache", "Cache"), VOP_TYPE_VOID));
 				}
+				else if (pluginID == "PhxShaderSim") {
+					pluginInfo->outputs.push_back(SocketDesc(PRM_Name("PhxShaderSim", "PhxShaderSim"), VOP_ATMOSPHERE_SHADER));
+				}
 				else {
 					pluginInfo->outputs.push_back(SocketDesc(PRM_Name("Effect", "Effect"), VOP_TYPE_VOID));
 				}

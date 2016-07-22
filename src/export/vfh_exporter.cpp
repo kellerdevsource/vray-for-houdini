@@ -18,6 +18,7 @@
 #include "obj/obj_node_base.h"
 #include "vop/vop_node_base.h"
 #include "vop/material/vop_mtl_def.h"
+#include "vop/material/vop_PhoenixSim.h"
 #include "sop/sop_vrayproxy.h"
 #include "sop/sop_vrayscene.h"
 #include "rop/vfh_rop.h"
@@ -818,6 +819,45 @@ VRay::Plugin VRayExporter::exportVop(OP_Node *op_node, ExportContext *parentCont
 				}
 			}
 
+			VRay::Plugin overwriteSim;
+			// if we do export sim, store the topmost wrapper in overwriteSim
+			if (pluginDesc.pluginID == "PhxShaderSim") {
+				const auto rendModeAttr = pluginDesc.get("_vray_render_mode");
+				UT_ASSERT_MSG(rendModeAttr, "Trying to export PhxShaderSim without setting it's _vray_render_mode.");
+				overwriteSim = exportPlugin(pluginDesc);
+				if (rendModeAttr && overwriteSim) {
+					typedef VOP::PhxShaderSim::RenderMode RMode;
+
+					const auto rendMode = static_cast<RMode>(rendModeAttr->paramValue.valInt);
+					if (rendMode == RMode::Volumetric) {
+						// merge all volumetrics
+						phxAddSimumation(overwriteSim);
+					} else {
+						const bool isMesh = rendMode == RMode::Mesh;
+
+						const char *wrapperType = isMesh ? "PhxShaderSimMesh" : "PhxShaderSimGeom";
+						Attrs::PluginDesc phxWrapper(VRayExporter::getPluginName(op_node, "", "Wrapper"), wrapperType);
+						phxWrapper.add(Attrs::PluginAttr("phoenix_sim", overwriteSim));
+						VRay::Plugin phxWrapperPlugin = exportPlugin(phxWrapper);
+						overwriteSim = phxWrapperPlugin;
+
+						if (!isMesh) {
+							// make static mesh that wraps the geom plugin
+							Attrs::PluginDesc meshWrapper(VRayExporter::getPluginName(op_node, "", "Geom"), "GeomStaticMesh");
+							meshWrapper.add(Attrs::PluginAttr("static_mesh", phxWrapperPlugin));
+
+							const auto dynGeomAttr = pluginDesc.get("_vray_dynamic_geometry");
+							UT_ASSERT_MSG(dynGeomAttr, "Exporting PhxShaderSim inside PhxShaderSimGeom with missing _vray_dynamic_geometry");
+							const bool dynamic_geometry = dynGeomAttr ? dynGeomAttr->paramValue.valInt : false;
+
+							meshWrapper.add(Attrs::PluginAttr("dynamic_geometry", dynamic_geometry));
+							overwriteSim = exportPlugin(meshWrapper);
+						}
+					}
+				}
+			}
+
+			// TODO: this is not needed?
 			if (pluginDesc.pluginID == "PhxShaderSimVol") {
 				// "phoenix_sim" attribute is a List()
 				//
@@ -839,7 +879,8 @@ VRay::Plugin VRayExporter::exportVop(OP_Node *op_node, ExportContext *parentCont
 				pluginDesc.addAttribute(Attrs::PluginAttr("uvw_matrix", envMatrix));
 			}
 
-			return exportPlugin(pluginDesc);
+			// check if we already exported sim 
+			return overwriteSim ? overwriteSim : exportPlugin(pluginDesc);
 		}
 	}
 	else {

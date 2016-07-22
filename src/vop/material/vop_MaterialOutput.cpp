@@ -31,8 +31,8 @@ void VOP::MaterialOutput::register_operator(OP_OperatorTable *table)
 									   "V-Ray Material Output",
 									   VOP::MaterialOutput::creator,
 									   templates,
-									   2,
-									   2,
+									   3,
+									   3,
 									   "VRay",
 									   0,
 									   OP_FLAG_UNORDERED,
@@ -84,6 +84,9 @@ void VOP::MaterialOutput::getInputNameSubclass(UT_String &in, int idx) const
 		case VOP_GEOMETRY_SHADER:
 			in = "Geometry";
 			break;
+		case VOP_ATMOSPHERE_SHADER:
+			in = "PhxShaderSim";
+			break;
 		default:
 			const std::string &label = boost::str(FmtShader % (idx + 1));
 			in = label.c_str();
@@ -132,4 +135,5 @@ void VOP::MaterialOutput::getAllowedInputTypeInfosSubclass(unsigned idx, VOP_Vop
 	type_infos.append(VOP_TypeInfo(VOP_TYPE_BSDF));
 	type_infos.append(VOP_TypeInfo(VOP_SURFACE_SHADER));
 	type_infos.append(VOP_TypeInfo(VOP_GEOMETRY_SHADER));
+	type_infos.append(VOP_TypeInfo(VOP_ATMOSPHERE_SHADER));
 }
