@@ -23,6 +23,55 @@ using namespace VRayForHoudini;
 
 const char *const VFH_ATTR_MATERIAL_ID = "switchmtl";
 
+PrimitiveExporterPtr makeExporter(GU_PrimPacked &prim)
+{
+	if (prim.getTypeId() == VRayProxyRef::typeId()) {
+		return PrimitiveExporterPtr(new ProxyExporter(prim));
+	}
+
+	//if (prim.getTypeId() == GU_PrimPacked::lookupTypeId("AlembicRef")) {
+	//	
+	//}
+	//else if (prim.getTypeId() == GU_PrimPacked::lookupTypeId("PackedDisk")) {
+	//	nPlugins = exportPackedDisk(sop, prim, pluginList);
+	//}
+	//else if (prim.getTypeId() == GU_PrimPacked::lookupTypeId("VRayProxyRef")) {
+	//	nPlugins = exportVRayProxyRef(sop, prim, pluginList);
+	//}
+	//else if (prim.getTypeId() == GU_PrimPacked::lookupTypeId("PackedGeometry")) {
+	//	nPlugins = exportPackedGeometry(sop, prim, pluginList);
+	//}
+}
+
+bool ProxyExporter::exportPrims(SOP_Node &sop, PluginDescList &plugins, VRayExporter &exporter)
+{
+	plugins.push_back(Attrs::PluginDesc("", "Node"));
+	Attrs::PluginDesc &nodeDesc = plugins.back();
+
+	// transform
+	UT_Matrix4 xform;
+	m_Primitive.getIntrinsic(m_Primitive.findIntrinsic("packedlocaltransform"), xform);
+	xform.invert();
+
+	VRay::Transform tm = VRayExporter::Matrix4ToTransform(UT_Matrix4D(xform));
+	nodeDesc.addAttribute(Attrs::PluginAttr("transform", tm));
+
+	// geometry
+	UT_String primname;
+	m_Primitive.getIntrinsic(m_Primitive.findIntrinsic("packedprimitivename"), primname);
+
+	Attrs::PluginDesc pluginDesc;
+	pluginDesc.pluginID = "GeomMeshFile";
+	pluginDesc.pluginName = VRayExporter::getPluginName(&sop, primname.toStdString());
+
+	auto vrayproxyref = UTverify_cast< const VRayProxyRef * >(m_Primitive.implementation());
+	exporter.setAttrsFromUTOptions(pluginDesc, vrayproxyref->getOptions());
+
+	VRay::Plugin geom = exporter.exportPlugin(pluginDesc);
+	nodeDesc.addAttribute(Attrs::PluginAttr("geometry", geom));
+
+	return true;
+}
 
 GeometryExporter::GeometryExporter(OBJ_Geometry &node, VRayExporter &pluginExporter):
 	m_objNode(node),
@@ -160,6 +209,10 @@ int GeometryExporter::exportNodes()
 
 	m_myDetailID = gdl.handle().hash();
 	const GU_Detail &gdp = *gdl.getGdp();
+
+	if (renderSOP->getOperator()->getName().startsWith("VrayNodePhxShaderCache")) {
+		return 0;
+	}
 
 	if (renderSOP->getOperator()->getName().startsWith("VRayNode")) {
 		exportVRaySOP(*renderSOP, m_detailToPluginDesc[m_myDetailID]);
