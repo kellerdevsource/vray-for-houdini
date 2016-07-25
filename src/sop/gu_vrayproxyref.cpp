@@ -9,6 +9,7 @@
 //
 
 #include "gu_vrayproxyref.h"
+#include "gu_volumegridref.h"
 #include "vfh_log.h"
 
 #include <GT/GT_GEOPrimCollect.h>
@@ -702,4 +703,5 @@ GT_PrimitiveHandle GT_PrimVRayProxyCollect::getGTPrimPoints(const GU_PrimPacked 
 void newGeometryPrim(GA_PrimitiveFactory *gafactory)
 {
 	VRayProxyRef::install(gafactory);
+	VRayVolumeGridRef::install(gafactory);
 }
