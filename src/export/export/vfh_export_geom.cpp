@@ -40,14 +40,6 @@ bool VolumeExporter::exportPrims(SOP_Node &sop, PluginDescList &plugins, VRayExp
 	plugins.push_back(Attrs::PluginDesc(VRayExporter::getPluginName(&sop, "Cache"), "PhxShaderCache"));
 	Attrs::PluginDesc &nodeDesc = plugins.back();
 
-	// transform
-	UT_Matrix4 xform;
-	m_Primitive.getIntrinsic(m_Primitive.findIntrinsic("packedlocaltransform"), xform);
-	xform.invert();
-
-	VRay::Transform tm = VRayExporter::Matrix4ToTransform(UT_Matrix4D(xform));
-	nodeDesc.addAttribute(Attrs::PluginAttr("transform", tm));
-
 	auto packedPrim = UTverify_cast<const GU_PrimPacked *>(&m_Primitive);
 	auto vrayproxyref = UTverify_cast< const VRayVolumeGridRef * >(packedPrim->implementation());
 	exporter.setAttrsFromUTOptions(nodeDesc, vrayproxyref->getOptions());
