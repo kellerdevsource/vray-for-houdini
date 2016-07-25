@@ -36,7 +36,7 @@ public:
 	virtual bool    exportPrims(SOP_Node &sop, PluginDescList &plugins, VRayExporter &exporter) = 0;
 
 	/// exports all shops for the supported primitives
-	virtual bool    exportShops(SOP_Node &sop, PluginDescList &plugins, VRayExporter &exporter) = 0;
+	virtual bool    exportShops(SHOP_Node &shop, VRayExporter &exporter) = 0;
 protected:
 	const GA_Primitive &m_Primitive;
 };
@@ -50,7 +50,7 @@ public:
 	ProxyExporter(const GA_Primitive &prim): PrimitiveExporter(prim) {};
 
 	bool            exportPrims(SOP_Node &sop, PluginDescList &plugins, VRayExporter &exporter) VRAY_OVERRIDE;
-	bool            exportShops(SOP_Node &sop, PluginDescList &plugins, VRayExporter &exporter) VRAY_OVERRIDE { return true; };
+	bool            exportShops(SHOP_Node &shop, VRayExporter &exporter) VRAY_OVERRIDE { return true; };
 };
 
 class VolumeExporter: public PrimitiveExporter {
@@ -58,7 +58,7 @@ public:
 	VolumeExporter(const GA_Primitive &prim): PrimitiveExporter(prim) {};
 
 	bool            exportPrims(SOP_Node &sop, PluginDescList &plugins, VRayExporter &exporter) VRAY_OVERRIDE;
-	bool            exportShops(SOP_Node &sop, PluginDescList &plugins, VRayExporter &exporter) VRAY_OVERRIDE { return true; };
+	bool            exportShops(SHOP_Node &shop, VRayExporter &exporter) VRAY_OVERRIDE;
 };
 
 

@@ -15,6 +15,7 @@
 #include "rop/vfh_rop.h"
 #include "sop/sop_node_base.h"
 #include "vop/vop_node_base.h"
+#include "vop/material/vop_MaterialOutput.h"
 
 #include <GU/GU_Detail.h>
 #include <OP/OP_Bundle.h>
@@ -44,6 +45,33 @@ bool VolumeExporter::exportPrims(SOP_Node &sop, PluginDescList &plugins, VRayExp
 	auto vrayproxyref = UTverify_cast< const VRayVolumeGridRef * >(packedPrim->implementation());
 	exporter.setAttrsFromUTOptions(nodeDesc, vrayproxyref->getOptions());
 
+	return true;
+}
+
+bool VolumeExporter::exportShops(SHOP_Node &shop, VRayExporter &exporter)
+{
+	VRay::Plugin material;
+	UT_ValArray<OP_Node *> mtlOutList;
+	if (shop.getOpsByName("vray_material_output", mtlOutList)) {
+		// there is at least 1 "vray_material_output" node so take the first one
+		VOP::MaterialOutput *mtlOut = static_cast< VOP::MaterialOutput * >( mtlOutList(0) );
+
+		if (mtlOut->error() < UT_ERROR_ABORT ) {
+			Log::getLog().info("Exporting material output \"%s\"...",
+							   mtlOut->getName().buffer());
+
+			const int simIdx = mtlOut->getInputFromName("PhxShaderSim");
+			if (auto simNode = mtlOut->getInput(simIdx)) {
+				if(VOP_Node * simVop = simNode->castToVOPNode()) {
+					UT_ASSERT_MSG(mtlOut->getInputType(simIdx) == VOP_ATMOSPHERE_SHADER, "PhxShaderSim's socket is not of type VOP_ATMOSPHERE_SHADER");
+					Log::getLog().msg("Exporting PhxShaderSim for node \"%s\", input %d!", mtlOut->getName().buffer(), simIdx);
+					material = exporter.exportVop(simVop);
+				} else {
+					UT_ASSERT_MSG(false, "PhxShaderSim cannot be casted to VOP node!");
+				}
+			}
+		}
+	}
 	return true;
 }
 
@@ -236,6 +264,11 @@ int GeometryExporter::exportNodes()
 
 	UT_String userAttrs;
 	getSHOPOverridesAsUserAttributes(userAttrs);
+
+	SHOP_Node *shopNode = m_pluginExporter.getObjMaterial(&m_objNode, m_context.getTime());
+	for (auto & exp : m_primExporters) {
+		exp->exportShops(*shopNode, m_pluginExporter);
+	}
 
 	VRay::Plugin mtl;
 	if (m_exportGeometry) {
