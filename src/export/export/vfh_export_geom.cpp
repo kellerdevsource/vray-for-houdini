@@ -11,6 +11,7 @@
 #include "vfh_export_geom.h"
 #include "vfh_export_mesh.h"
 #include "gu_vrayproxyref.h"
+#include "gu_volumegridref.h"
 #include "rop/vfh_rop.h"
 #include "sop/sop_node_base.h"
 #include "vop/vop_node_base.h"
@@ -23,24 +24,35 @@ using namespace VRayForHoudini;
 
 const char *const VFH_ATTR_MATERIAL_ID = "switchmtl";
 
-PrimitiveExporterPtr makeExporter(GU_PrimPacked &prim)
+PrimitiveExporterPtr VRayForHoudini::makePrimExporter(const GA_Primitive &prim)
 {
 	if (prim.getTypeId() == VRayProxyRef::typeId()) {
 		return PrimitiveExporterPtr(new ProxyExporter(prim));
+	} else if (prim.getTypeId() == VRayVolumeGridRef::typeId()) {
+		return PrimitiveExporterPtr(new VolumeExporter(prim));
 	}
 
-	//if (prim.getTypeId() == GU_PrimPacked::lookupTypeId("AlembicRef")) {
-	//	
-	//}
-	//else if (prim.getTypeId() == GU_PrimPacked::lookupTypeId("PackedDisk")) {
-	//	nPlugins = exportPackedDisk(sop, prim, pluginList);
-	//}
-	//else if (prim.getTypeId() == GU_PrimPacked::lookupTypeId("VRayProxyRef")) {
-	//	nPlugins = exportVRayProxyRef(sop, prim, pluginList);
-	//}
-	//else if (prim.getTypeId() == GU_PrimPacked::lookupTypeId("PackedGeometry")) {
-	//	nPlugins = exportPackedGeometry(sop, prim, pluginList);
-	//}
+	return nullptr;
+}
+
+bool VolumeExporter::exportPrims(SOP_Node &sop, PluginDescList &plugins, VRayExporter &exporter)
+{
+	plugins.push_back(Attrs::PluginDesc(VRayExporter::getPluginName(&sop, "Cache"), "PhxShaderCache"));
+	Attrs::PluginDesc &nodeDesc = plugins.back();
+
+	// transform
+	UT_Matrix4 xform;
+	m_Primitive.getIntrinsic(m_Primitive.findIntrinsic("packedlocaltransform"), xform);
+	xform.invert();
+
+	VRay::Transform tm = VRayExporter::Matrix4ToTransform(UT_Matrix4D(xform));
+	nodeDesc.addAttribute(Attrs::PluginAttr("transform", tm));
+
+	auto packedPrim = UTverify_cast<const GU_PrimPacked *>(&m_Primitive);
+	auto vrayproxyref = UTverify_cast< const VRayVolumeGridRef * >(packedPrim->implementation());
+	exporter.setAttrsFromUTOptions(nodeDesc, vrayproxyref->getOptions());
+
+	return true;
 }
 
 bool ProxyExporter::exportPrims(SOP_Node &sop, PluginDescList &plugins, VRayExporter &exporter)
@@ -64,7 +76,8 @@ bool ProxyExporter::exportPrims(SOP_Node &sop, PluginDescList &plugins, VRayExpo
 	pluginDesc.pluginID = "GeomMeshFile";
 	pluginDesc.pluginName = VRayExporter::getPluginName(&sop, primname.toStdString());
 
-	auto vrayproxyref = UTverify_cast< const VRayProxyRef * >(m_Primitive.implementation());
+	auto packedPrim = UTverify_cast<const GU_PrimPacked *>(&m_Primitive);
+	auto vrayproxyref = UTverify_cast< const VRayProxyRef * >(packedPrim->implementation());
 	exporter.setAttrsFromUTOptions(pluginDesc, vrayproxyref->getOptions());
 
 	VRay::Plugin geom = exporter.exportPlugin(pluginDesc);
@@ -210,11 +223,9 @@ int GeometryExporter::exportNodes()
 	m_myDetailID = gdl.handle().hash();
 	const GU_Detail &gdp = *gdl.getGdp();
 
-	if (renderSOP->getOperator()->getName().startsWith("VrayNodePhxShaderCache")) {
-		return 0;
-	}
+	const bool isVolume = renderSOP->getOperator()->getName().startsWith("VRayNodePhxShaderCache");
 
-	if (renderSOP->getOperator()->getName().startsWith("VRayNode")) {
+	if (!isVolume && renderSOP->getOperator()->getName().startsWith("VRayNode")) {
 		exportVRaySOP(*renderSOP, m_detailToPluginDesc[m_myDetailID]);
 	}
 	else {
@@ -243,6 +254,9 @@ int GeometryExporter::exportNodes()
 	PluginDescList &pluginList = m_detailToPluginDesc.at(m_myDetailID);
 	for (Attrs::PluginDesc &nodeDesc : pluginList) {
 //		TODO: need to fill in node with appropriate names
+		if (nodeDesc.pluginName != "") {
+			continue;
+		}
 		nodeDesc.pluginName = VRayExporter::getPluginName(&m_objNode, boost::str(Parm::FmtPrefixManual % "Node" % std::to_string(i++)));
 
 		Attrs::PluginAttr *attr = nullptr;
@@ -478,6 +492,17 @@ int GeometryExporter::exportDetail(SOP_Node &sop, GU_DetailHandleAutoReadLock &g
 	int nPlugins = 0;
 
 	const GU_Detail &gdp = *gdl.getGdp();
+	auto & primList = gdp.getPrimitiveList();
+	const int primCount = primList.offsetSize();
+
+	// check all primities if we can make PrimExporter for it and export it
+	for (int c = 0; c < primCount; ++c) {
+		auto exp = makePrimExporter(*primList.get(c));
+		if (exp) {
+			exp->exportPrims(sop, pluginList, m_pluginExporter);
+			m_primExporters.push_back(exp);
+		}
+	}
 
 	// packed prims
 	if (GU_PrimPacked::hasPackedPrimitives(gdp)) {

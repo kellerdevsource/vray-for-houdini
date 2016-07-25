@@ -18,6 +18,7 @@
 #include <aurloader.h>
 
 #include <GU/GU_PrimVolume.h>
+#include <GU/GU_PrimPacked.h>
 #include <GEO/GEO_Primitive.h>
 
 #include <vector>
@@ -204,34 +205,110 @@ OP_ERROR SOP::PhxShaderCache::cookMySop(OP_Context &context)
 		}
 	}
 
-	const SOP::FluidFrame *frameData = SOP::PhxShaderCache::FluidFiles.getData(path.buffer());
-	if (frameData) {
-		GU_PrimVolume *volumeGdp = (GU_PrimVolume *)GU_PrimVolume::build(gdp);
+	// TODO: move to VRayVolumeGridRef
+	//const SOP::FluidFrame *frameData = SOP::PhxShaderCache::FluidFiles.getData(path.buffer());
+	//if (frameData) {
+	//	GU_PrimVolume *volumeGdp = (GU_PrimVolume *)GU_PrimVolume::build(gdp);
 
-		UT_VoxelArrayWriteHandleF voxelHandle = volumeGdp->getVoxelWriteHandle();
+	//	UT_VoxelArrayWriteHandleF voxelHandle = volumeGdp->getVoxelWriteHandle();
 
-		voxelHandle->size(frameData->size[0], frameData->size[1], frameData->size[2]);
+	//	voxelHandle->size(frameData->size[0], frameData->size[1], frameData->size[2]);
 
-		for (int i = 0; i < frameData->size[0]; ++i) {
-			for (int j = 0; j < frameData->size[1]; ++j) {
-				for (int k = 0; k < frameData->size[2]; ++k) {
-					voxelHandle->setValue(i, j, k, frameData->data[GetCellIndex(i, j, k, frameData->size)]);
+	//	for (int i = 0; i < frameData->size[0]; ++i) {
+	//		for (int j = 0; j < frameData->size[1]; ++j) {
+	//			for (int k = 0; k < frameData->size[2]; ++k) {
+	//				voxelHandle->setValue(i, j, k, frameData->data[GetCellIndex(i, j, k, frameData->size)]);
+	//			}
+	//		}
+	//	}
+
+	//	VUtils::Transform c2n(frameData->c2n);
+
+	//	const bool flipAxis = evalInt("flip_yz", 0, 0.0f);
+	//	if (flipAxis) {
+	//		VUtils::swap(c2n.m[1], c2n.m[2]);
+	//		c2n.m[2] = -c2n.m[2];
+	//	}
+	//	c2n.makeInverse();
+
+	//	UT_Matrix4 m4;
+	//	VRayExporter::TransformToMatrix4(c2n, m4);
+	//	volumeGdp->setTransform4(m4);
+	//}
+
+	// Create a packed primitive
+	GU_PrimPacked *pack = GU_PrimPacked::build(*gdp, "VRayVolumeGridRef");
+	if (NOT(pack)) {
+		addWarning(SOP_MESSAGE, "Can't create packed primitive VRayVolumeGridRef");
+	}
+	else {
+		// Set the location of the packed primitive's point.
+		UT_Vector3 pivot(0, 0, 0);
+		pack->setPivot(pivot);
+		gdp->setPos3(pack->getPointOffset(0), pivot);
+
+		UT_String path;
+		// NOTE: Path could be time dependent!
+		evalString(path, "PhxShaderCache_cache_path", 0, t);
+
+		// channel mappings
+		UT_String chanMap;
+		if (!path.endsWith(".aur")) {
+			const int chCount = 9;
+			static const char *chNames[chCount] = {"channel_smoke", "channel_temp", "channel_fuel", "channel_vel_x", "channel_vel_y", "channel_vel_z", "channel_red", "channel_green", "channel_blue"};
+			static const int   chIDs[chCount] = {2, 1, 10, 4, 5, 6, 7, 8, 9};
+
+			// will hold names so we can use pointers to them
+			std::vector<UT_String> names;
+			std::vector<int> ids;
+			for (int c = 0; c < chCount; ++c) {
+				const PRM_Parm * parameter = Parm::getParm(*this, chNames[c]);
+				if (!parameter) {
+					Log::getLog().error("Channel selector %s missing from UI", chNames[c]);
+				} else {
+					UT_String value(UT_String::ALWAYS_DEEP);
+					this->evalString(value, parameter->getToken(), 0, 0.0f);
+					if (value != "0") {
+						names.push_back(value);
+						ids.push_back(chIDs[c]);
+					}
 				}
+			}
+
+			const char * inputNames[chCount] = {0};
+			for (int c = 0; c < names.size(); ++c) {
+				inputNames[c] = names[c].c_str();
+			}
+
+			char usrchmap[MAX_CHAN_MAP_LEN] = {0,};
+			if (1 == aurComposeChannelMappingsString(usrchmap, MAX_CHAN_MAP_LEN, ids.data(), const_cast<char * const *>(inputNames), names.size())) {
+				chanMap = usrchmap;
+			}
+
+			// user made no mappings - get default
+			if (chanMap.equal("")) {
+				chanMap = getDefaultMapping(path.buffer());
 			}
 		}
 
-		VUtils::Transform c2n(frameData->c2n);
+		// Set the options on the primitive
+		UT_Options options;
+		options.setOptionS("cache_path", path)
+				.setOptionS("usrchmap", chanMap)
+				.setOptionI("anim_mode", evalInt("anim_mode", 0, t))
+				.setOptionF("t2f", evalFloat("t2f", 0, t))
+				.setOptionI("loop_overlap", evalInt("loop_overlap", 0, t))
+				.setOptionI("read_offset", evalInt("read_offset", 0, t))
+				.setOptionI("play_at", evalInt("play_at", 0, t))
+				.setOptionI("max_length", evalInt("max_length", 0, t))
+				.setOptionF("play_speed", evalFloat("play_speed", 0, t))
+				.setOptionI("blend_method", evalInt("blend_method", 0, t))
+				.setOptionI("load_nearest", evalInt("load_nearest", 0, t))
+				.setOptionI("flip_yz", evalInt("flip_yz", 0, t))
+				;
 
-		const bool flipAxis = evalInt("flip_yz", 0, 0.0f);
-		if (flipAxis) {
-			VUtils::swap(c2n.m[1], c2n.m[2]);
-			c2n.m[2] = -c2n.m[2];
-		}
-		c2n.makeInverse();
-
-		UT_Matrix4 m4;
-		VRayExporter::TransformToMatrix4(c2n, m4);
-		volumeGdp->setTransform4(m4);
+		pack->implementation()->update(options);
+		pack->setPathAttribute(getFullPath());
 	}
 
 #if UT_MAJOR_VERSION_INT < 14
@@ -435,49 +512,6 @@ OP::VRayNode::PluginResult SOP::PhxShaderCache::asPluginDesc(Attrs::PluginDesc &
 		Log::getLog().error("%s: \"Cache Path\" is not set!",
 							getName().buffer());
 		return OP::VRayNode::PluginResultError;
-	}
-
-	// Export simulation
-	//
-	if (NOT(phxShaderCache)) {
-		Attrs::PluginDesc phxShaderCacheDesc(VRayExporter::getPluginName(this, "Cache"), "PhxShaderCache");
-		phxShaderCacheDesc.addAttribute(Attrs::PluginAttr("cache_path", path.buffer()));
-		// channel mappings
-		if (!path.endsWith(".aur")) {
-			const int chCount = 9;
-			static const char *chNames[chCount] = {"channel_smoke", "channel_temp", "channel_fuel", "channel_vel_x", "channel_vel_y", "channel_vel_z", "channel_red", "channel_green", "channel_blue"};
-			static const int   chIDs[chCount] = {2, 1, 10, 4, 5, 6, 7, 8, 9};
-
-			// will hold names so we can use pointers to them
-			std::vector<UT_String> names;
-			std::vector<int> ids;
-			for (int c = 0; c < chCount; ++c) {
-				const PRM_Parm * parameter = Parm::getParm(*this, chNames[c]);
-				if (!parameter) {
-					Log::getLog().error("Channel selector %s missing from UI", chNames[c]);
-				} else {
-					UT_String value(UT_String::ALWAYS_DEEP);
-					this->evalString(value, parameter->getToken(), 0, 0.0f);
-					if (value != "0") {
-						names.push_back(value);
-						ids.push_back(chIDs[c]);
-					}
-				}
-			}
-
-			const char * inputNames[chCount] = {0};
-			for (int c = 0; c < names.size(); ++c) {
-				inputNames[c] = names[c].c_str();
-			}
-
-			char usrchmap[MAX_CHAN_MAP_LEN] = {0,};
-			if (1 == aurComposeChannelMappingsString(usrchmap, MAX_CHAN_MAP_LEN, ids.data(), const_cast<char * const *>(inputNames), names.size())) {
-				phxShaderCacheDesc.addAttribute(Attrs::PluginAttr("usrchmap", usrchmap));
-			}
-		}
-
-		exporter.setAttrsFromOpNodePrms(phxShaderCacheDesc, this, "");
-		phxShaderCache = exporter.exportPlugin(phxShaderCacheDesc);
 	}
 
 	// Plugin must be created here and do nothing after

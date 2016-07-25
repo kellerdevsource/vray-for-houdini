@@ -30,7 +30,7 @@ typedef std::unordered_map< uint, PluginDescList > DetailToPluginDesc;
 
 class PrimitiveExporter {
 public:
-	PrimitiveExporter(GU_PrimPacked &prim): m_Primitive(prim) {}
+	PrimitiveExporter(const GA_Primitive &prim): m_Primitive(prim) {}
 
 	/// exports all primitives that we know
 	virtual bool    exportPrims(SOP_Node &sop, PluginDescList &plugins, VRayExporter &exporter) = 0;
@@ -38,19 +38,27 @@ public:
 	/// exports all shops for the supported primitives
 	virtual bool    exportShops(SOP_Node &sop, PluginDescList &plugins, VRayExporter &exporter) = 0;
 protected:
-	GU_PrimPacked   &m_Primitive;
+	const GA_Primitive &m_Primitive;
 };
 
-typedef std::unique_ptr<PrimitiveExporter> PrimitiveExporterPtr;
+typedef std::shared_ptr<PrimitiveExporter> PrimitiveExporterPtr;
 
-PrimitiveExporterPtr makeExporter(GU_PrimPacked &prim);
+PrimitiveExporterPtr makePrimExporter(const GA_Primitive &prim);
 
 class ProxyExporter: public PrimitiveExporter {
 public:
-	ProxyExporter(GU_PrimPacked &prim): PrimitiveExporter(prim) {};
+	ProxyExporter(const GA_Primitive &prim): PrimitiveExporter(prim) {};
 
 	bool            exportPrims(SOP_Node &sop, PluginDescList &plugins, VRayExporter &exporter) VRAY_OVERRIDE;
-	bool            exportShops(SOP_Node &sop, PluginDescList &plugins, VRayExporter &exporter) VRAY_OVERRIDE {};
+	bool            exportShops(SOP_Node &sop, PluginDescList &plugins, VRayExporter &exporter) VRAY_OVERRIDE { return true; };
+};
+
+class VolumeExporter: public PrimitiveExporter {
+public:
+	VolumeExporter(const GA_Primitive &prim): PrimitiveExporter(prim) {};
+
+	bool            exportPrims(SOP_Node &sop, PluginDescList &plugins, VRayExporter &exporter) VRAY_OVERRIDE;
+	bool            exportShops(SOP_Node &sop, PluginDescList &plugins, VRayExporter &exporter) VRAY_OVERRIDE { return true; };
 };
 
 
@@ -95,7 +103,7 @@ private:
 	OP_Context   &m_context;
 	VRayExporter &m_pluginExporter;
 
-	PrimitiveExporterPtr m_primitiveExporter;
+	std::vector<PrimitiveExporterPtr> m_primExporters;
 	bool                 m_exportGeometry;
 	uint                 m_myDetailID;
 	DetailToPluginDesc   m_detailToPluginDesc;

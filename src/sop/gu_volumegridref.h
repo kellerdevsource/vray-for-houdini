@@ -71,6 +71,8 @@ public:
 	/// Member data accessors for intrinsics
 	const GU_ConstDetailHandle &  getDetail() const { return m_detail; }
 	VRayVolumeGridRef&                 setDetail(const GU_ConstDetailHandle &h) { m_detail = h; return *this; }
+
+	inline const UT_Options &          getOptions() const { return m_options; }
 	/// @}
 
 private:
