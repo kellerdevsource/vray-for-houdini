@@ -30,35 +30,25 @@ typedef std::unordered_map< uint, PluginDescList > DetailToPluginDesc;
 
 class PrimitiveExporter {
 public:
-	PrimitiveExporter(const GA_Primitive &prim): m_Primitive(prim) {}
+	PrimitiveExporter(OBJ_Node &obj, OP_Context &ctx, VRayExporter &exp): m_object(obj), m_context(ctx), m_exporter(exp) {}
 
-	/// exports all primitives that we know
-	virtual bool    exportPrims(SOP_Node &sop, PluginDescList &plugins, VRayExporter &exporter) = 0;
-
-	/// exports all shops for the supported primitives
-	virtual bool    exportShops(SHOP_Node &shop, VRayExporter &exporter) = 0;
+	virtual void exportPrimitives(const GU_Detail &detail, PluginDescList &plugins) = 0;
 protected:
-	const GA_Primitive &m_Primitive;
+	OBJ_Node     &m_object;
+	OP_Context   &m_context;
+	VRayExporter &m_exporter;
 };
 
 typedef std::shared_ptr<PrimitiveExporter> PrimitiveExporterPtr;
 
-PrimitiveExporterPtr makePrimExporter(const GA_Primitive &prim);
-
-class ProxyExporter: public PrimitiveExporter {
-public:
-	ProxyExporter(const GA_Primitive &prim): PrimitiveExporter(prim) {};
-
-	bool            exportPrims(SOP_Node &sop, PluginDescList &plugins, VRayExporter &exporter) VRAY_OVERRIDE;
-	bool            exportShops(SHOP_Node &shop, VRayExporter &exporter) VRAY_OVERRIDE { return true; };
-};
-
 class VolumeExporter: public PrimitiveExporter {
 public:
-	VolumeExporter(const GA_Primitive &prim): PrimitiveExporter(prim) {};
+	VolumeExporter(OBJ_Node &obj, OP_Context &ctx, VRayExporter &exp): PrimitiveExporter(obj, ctx, exp) {};
 
-	bool            exportPrims(SOP_Node &sop, PluginDescList &plugins, VRayExporter &exporter) VRAY_OVERRIDE;
-	bool            exportShops(SHOP_Node &shop, VRayExporter &exporter) VRAY_OVERRIDE;
+	virtual void exportPrimitives(const GU_Detail &detail, PluginDescList &plugins) VRAY_OVERRIDE;
+private:
+	void exportCache(const GA_Primitive &prim);
+	void exportSim(const GA_Primitive &prim, const VRay::Transform &tm, VRay::Plugin &cache);
 };
 
 
