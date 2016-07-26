@@ -104,7 +104,6 @@ void VolumeExporter::exportSim(const GA_Primitive &prim, const VRay::Transform &
 
 					// handle VOP overrides if any
 					m_exporter.setAttrsFromSHOPOverrides(pluginDesc, *simVop);
-					m_exporter.setAttrsFromOpNodePrms(pluginDesc, simVop);
 
 					pluginDesc.add(Attrs::PluginAttr("node_transform", tm));
 					pluginDesc.add(Attrs::PluginAttr("cache", cache));
