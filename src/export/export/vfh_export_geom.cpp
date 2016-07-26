@@ -124,14 +124,14 @@ void VolumeExporter::exportSim(const GA_Primitive &prim, const VRay::Transform &
 							const bool isMesh = rendMode == RMode::Mesh;
 
 							const char *wrapperType = isMesh ? "PhxShaderSimMesh" : "PhxShaderSimGeom";
-							Attrs::PluginDesc phxWrapper(VRayExporter::getPluginName(simVop, "", "Wrapper"), wrapperType);
+							const char *wrapperPrefix = isMesh ? "Mesh" : "Geom";
+							Attrs::PluginDesc phxWrapper(VRayExporter::getPluginName(simVop, wrapperPrefix, cache.getName()), wrapperType);
 							phxWrapper.add(Attrs::PluginAttr("phoenix_sim", overwriteSim));
 							VRay::Plugin phxWrapperPlugin = m_exporter.exportPlugin(phxWrapper);
-							 phxWrapperPlugin;
 
 							if (!isMesh) {
 								// make static mesh that wraps the geom plugin
-								Attrs::PluginDesc meshWrapper(VRayExporter::getPluginName(simVop, "", "Geom"), "GeomStaticMesh");
+								Attrs::PluginDesc meshWrapper(VRayExporter::getPluginName(simVop, "Mesh", cache.getName()), "GeomStaticMesh");
 								meshWrapper.add(Attrs::PluginAttr("static_mesh", phxWrapperPlugin));
 
 								const auto dynGeomAttr = pluginDesc.get("_vray_dynamic_geometry");
@@ -139,8 +139,16 @@ void VolumeExporter::exportSim(const GA_Primitive &prim, const VRay::Transform &
 								const bool dynamic_geometry = dynGeomAttr ? dynGeomAttr->paramValue.valInt : false;
 
 								meshWrapper.add(Attrs::PluginAttr("dynamic_geometry", dynamic_geometry));
-								m_exporter.exportPlugin(meshWrapper);
+								phxWrapperPlugin = m_exporter.exportPlugin(meshWrapper);
 							}
+
+							// Should wrap in node?
+							//Attrs::PluginDesc node(VRayExporter::getPluginName(simVop, "Node", cache.getName()), "Node");
+							//node.add(Attrs::PluginAttr("geometry", phxWrapperPlugin));
+							//node.add(Attrs::PluginAttr("visible", true));
+							//node.add(Attrs::PluginAttr("transform", VRay::Transform(1)));
+							//node.add(Attrs::PluginAttr("material", m_exporter.exportDefaultMaterial()));
+							//m_exporter.exportPlugin(node);
 						}
 					}
 				} else {
