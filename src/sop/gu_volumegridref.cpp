@@ -61,7 +61,12 @@ private:
 VRayVolumeGridFactory::VRayVolumeGridFactory():
 	GU_PackedFactory("VRayVolumeGridRef", "VRayVolumeGridRef")
 {
-
+	registerTupleIntrinsic(
+			"phx_channel_map",
+			IntGetterCast(&VRayVolumeGridRef::getPhxChannelMapSize),
+			StringArrayGetterCast(&VRayVolumeGridRef::getPhxChannelMap),
+			StringArraySetterCast(&VRayVolumeGridRef::setPhxChannelMap)
+			);
 }
 
 void VRayVolumeGridRef::install(GA_PrimitiveFactory *gafactory)
@@ -237,14 +242,8 @@ void VRayVolumeGridRef::countMemory(UT_MemoryCounter &counter, bool inclusive) c
 template <typename T>
 bool VRayVolumeGridRef::updateFrom(const T &options)
 {
-	if (m_options == options) {
-		return false;
-	}
-
-	m_options = options;
-	m_dirty = true;
-	// Notify base primitive that topology has changed
+	m_options.merge(options);
 	topologyDirty();
-
+	attributeDirty();
 	return true;
 }

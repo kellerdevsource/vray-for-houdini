@@ -13,6 +13,7 @@
 #include "sop_PhoenixCache.h"
 #include "vfh_prm_templates.h"
 #include "vfh_prm_json.h"
+#include "gu_volumegridref.h"
 
 #include <aurinterface.h>
 #include <aurloader.h>
@@ -184,27 +185,6 @@ OP_ERROR SOP::PhxShaderCache::cookMySop(OP_Context &context)
 	if (path.equal("")) {
 		return error();
 	}
-
-	m_serializedChannels.clear();
-
-	if (!path.endsWith(".aur")) {
-		int chanIndex = 0, isChannelVector3D;
-		char chanName[MAX_CHAN_MAP_LEN];
-		const char *cachePath = path.buffer();
-		while(1 == aurGet3rdPartyChannelName(chanName, MAX_CHAN_MAP_LEN, &isChannelVector3D, cachePath, chanIndex++)) {
-			m_serializedChannels.append(chanName);
-		}
-	
-		if (!m_serializedChannels.size()) {
-			addError(SOP_MESSAGE, (std::string("Did not load any channel names from file ") + cachePath).c_str());
-			return error();
-		} else {
-			if (!this->gdp->setDetailAttributeS("vray_phx_channels", m_serializedChannels)) {
-				Log::getLog().error("Failed to set channel names to geom detail");
-			}
-		}
-	}
-
 	// TODO: move to VRayVolumeGridRef
 	//const SOP::FluidFrame *frameData = SOP::PhxShaderCache::FluidFiles.getData(path.buffer());
 	//if (frameData) {
@@ -238,78 +218,92 @@ OP_ERROR SOP::PhxShaderCache::cookMySop(OP_Context &context)
 
 	// Create a packed primitive
 	GU_PrimPacked *pack = GU_PrimPacked::build(*gdp, "VRayVolumeGridRef");
+	auto gridRefPtr = UTverify_cast<VRayVolumeGridRef*>(pack->implementation());
 	if (NOT(pack)) {
 		addWarning(SOP_MESSAGE, "Can't create packed primitive VRayVolumeGridRef");
+		return error();
 	}
-	else {
-		// Set the location of the packed primitive's point.
-		UT_Vector3 pivot(0, 0, 0);
-		pack->setPivot(pivot);
-		gdp->setPos3(pack->getPointOffset(0), pivot);
 
-		UT_String path;
-		// NOTE: Path could be time dependent!
-		evalString(path, "PhxShaderCache_cache_path", 0, t);
 
-		// channel mappings
-		UT_String chanMap;
-		if (!path.endsWith(".aur")) {
-			const int chCount = 9;
-			static const char *chNames[chCount] = {"channel_smoke", "channel_temp", "channel_fuel", "channel_vel_x", "channel_vel_y", "channel_vel_z", "channel_red", "channel_green", "channel_blue"};
-			static const int   chIDs[chCount] = {2, 1, 10, 4, 5, 6, 7, 8, 9};
+	// Set the location of the packed primitive's point.
+	UT_Vector3 pivot(0, 0, 0);
+	pack->setPivot(pivot);
+	gdp->setPos3(pack->getPointOffset(0), pivot);
 
-			// will hold names so we can use pointers to them
-			std::vector<UT_String> names;
-			std::vector<int> ids;
-			for (int c = 0; c < chCount; ++c) {
-				const PRM_Parm * parameter = Parm::getParm(*this, chNames[c]);
-				if (!parameter) {
-					Log::getLog().error("Channel selector %s missing from UI", chNames[c]);
-				} else {
-					UT_String value(UT_String::ALWAYS_DEEP);
-					this->evalString(value, parameter->getToken(), 0, 0.0f);
-					if (value != "0") {
-						names.push_back(value);
-						ids.push_back(chIDs[c]);
-					}
-				}
+	m_serializedChannels.clear();
+
+	// channel mappings
+	UT_String chanMap;
+	if (!path.endsWith(".aur")) {
+		// set available channels on primitive
+		int chanIndex = 0, isChannelVector3D;
+		char chanName[MAX_CHAN_MAP_LEN];
+		const char *cachePath = path.buffer();
+		while(1 == aurGet3rdPartyChannelName(chanName, MAX_CHAN_MAP_LEN, &isChannelVector3D, cachePath, chanIndex++)) {
+			m_serializedChannels.append(chanName);
+		}
+
+		if (!m_serializedChannels.size()) {
+			addError(SOP_MESSAGE, (std::string("Did not load any channel names from file ") + cachePath).c_str());
+			return error();
+		} else {
+			gridRefPtr->setPhxChannelMap(m_serializedChannels);
+		}
+
+		const int chCount = 9;
+		static const char *chNames[chCount] = {"channel_smoke", "channel_temp", "channel_fuel", "channel_vel_x", "channel_vel_y", "channel_vel_z", "channel_red", "channel_green", "channel_blue"};
+		static const int   chIDs[chCount] = {2, 1, 10, 4, 5, 6, 7, 8, 9};
+
+		// will hold names so we can use pointers to them
+		std::vector<UT_String> names;
+		std::vector<int> ids;
+		for (int c = 0; c < chCount; ++c) {
+			UT_String value(UT_String::ALWAYS_DEEP);
+			//evalStringRaw(value, chNames[c], 0, t);
+			auto res = evalInt(chNames[c], 0, t) - 1;
+			if (res >= 0 && res < m_serializedChannels.size()) {
+				value = m_serializedChannels(c);
 			}
-
-			const char * inputNames[chCount] = {0};
-			for (int c = 0; c < names.size(); ++c) {
-				inputNames[c] = names[c].c_str();
-			}
-
-			char usrchmap[MAX_CHAN_MAP_LEN] = {0,};
-			if (1 == aurComposeChannelMappingsString(usrchmap, MAX_CHAN_MAP_LEN, ids.data(), const_cast<char * const *>(inputNames), names.size())) {
-				chanMap = usrchmap;
-			}
-
-			// user made no mappings - get default
-			if (chanMap.equal("")) {
-				chanMap = getDefaultMapping(path.buffer());
+			if (value != "" && value != "0") {
+				names.push_back(value);
+				ids.push_back(chIDs[c]);
 			}
 		}
 
-		// Set the options on the primitive
-		UT_Options options;
-		options.setOptionS("cache_path", path)
-				.setOptionS("usrchmap", chanMap)
-				.setOptionI("anim_mode", evalInt("anim_mode", 0, t))
-				.setOptionF("t2f", evalFloat("t2f", 0, t))
-				.setOptionI("loop_overlap", evalInt("loop_overlap", 0, t))
-				.setOptionI("read_offset", evalInt("read_offset", 0, t))
-				.setOptionI("play_at", evalInt("play_at", 0, t))
-				.setOptionI("max_length", evalInt("max_length", 0, t))
-				.setOptionF("play_speed", evalFloat("play_speed", 0, t))
-				.setOptionI("blend_method", evalInt("blend_method", 0, t))
-				.setOptionI("load_nearest", evalInt("load_nearest", 0, t))
-				.setOptionI("flip_yz", evalInt("flip_yz", 0, t))
-				;
+		const char * inputNames[chCount] = {0};
+		for (int c = 0; c < names.size(); ++c) {
+			inputNames[c] = names[c].c_str();
+		}
 
-		pack->implementation()->update(options);
-		pack->setPathAttribute(getFullPath());
+		char usrchmap[MAX_CHAN_MAP_LEN] = {0,};
+		if (1 == aurComposeChannelMappingsString(usrchmap, MAX_CHAN_MAP_LEN, ids.data(), const_cast<char * const *>(inputNames), names.size())) {
+			chanMap = usrchmap;
+		}
+
+		// user made no mappings - get default
+		if (chanMap.equal("")) {
+			chanMap = getDefaultMapping(path.buffer());
+		}
 	}
+
+	// Set the options on the primitive
+	UT_Options options;
+	options.setOptionS("cache_path", path)
+			.setOptionS("usrchmap", chanMap)
+			.setOptionI("anim_mode", evalInt("anim_mode", 0, t))
+			.setOptionF("t2f", evalFloat("t2f", 0, t))
+			.setOptionI("loop_overlap", evalInt("loop_overlap", 0, t))
+			.setOptionI("read_offset", evalInt("read_offset", 0, t))
+			.setOptionI("play_at", evalInt("play_at", 0, t))
+			.setOptionI("max_length", evalInt("max_length", 0, t))
+			.setOptionF("play_speed", evalFloat("play_speed", 0, t))
+			.setOptionI("blend_method", evalInt("blend_method", 0, t))
+			.setOptionI("load_nearest", evalInt("load_nearest", 0, t))
+			.setOptionI("flip_yz", evalInt("flip_yz", 0, t))
+			;
+
+	pack->implementation()->update(options);
+	pack->setPathAttribute(getFullPath());
 
 #if UT_MAJOR_VERSION_INT < 14
 	gdp->notifyCache(GU_CACHE_ALL);

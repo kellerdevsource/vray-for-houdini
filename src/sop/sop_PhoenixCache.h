@@ -60,7 +60,7 @@ public:
 	static PRM_Template      *GetPrmTemplate();
 
 public:
-	PhxShaderCache(OP_Network *parent, const char *name, OP_Operator *entry):NodeBase(parent, name, entry) {}
+	PhxShaderCache(OP_Network *parent, const char *name, OP_Operator *entry): NodeBase(parent, name, entry) {}
 	virtual                  ~PhxShaderCache() {}
 
 	virtual OP_NodeFlags     &flags() VRAY_OVERRIDE;
@@ -72,7 +72,6 @@ protected:
 
 private:
 	static FluidCache         FluidFiles;
-
 	UT_StringArray            m_serializedChannels;
 };
 

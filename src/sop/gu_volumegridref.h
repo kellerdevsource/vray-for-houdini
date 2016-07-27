@@ -70,9 +70,14 @@ public:
 	/// @{
 	/// Member data accessors for intrinsics
 	const GU_ConstDetailHandle &  getDetail() const { return m_detail; }
-	VRayVolumeGridRef&                 setDetail(const GU_ConstDetailHandle &h) { m_detail = h; return *this; }
+	VRayVolumeGridRef&            setDetail(const GU_ConstDetailHandle &h) { m_detail = h; return *this; }
 
-	inline const UT_Options &          getOptions() const { return m_options; }
+	inline const UT_Options &     getOptions() const { return m_options; }
+
+
+	exint                         getPhxChannelMapSize() const { return m_options.hasOption("phx_channel_map") ? m_options.getOptionSArray("phx_channel_map").size() : 0; }
+	void                          getPhxChannelMap(UT_StringArray &map) const { map = m_options.hasOption("phx_channel_map") ? m_options.getOptionSArray("phx_channel_map") : map; }
+	void                          setPhxChannelMap(const UT_StringArray &map) { m_options.setOptionSArray("phx_channel_map", map); }
 	/// @}
 
 private:
