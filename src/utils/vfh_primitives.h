@@ -53,7 +53,7 @@
 		const char * _name = VFH_STRINGIZE(VFH_CURRENT_NAME(state));\
 		return m_options.hasOption(_name) ? _get_opt<VFH_CURRENT_TYPE(state)>(_name) : VFH_CURRENT_DEFAULT(state);\
 	} \
-	void VFH_TOKENIZE2(set_, VFH_CURRENT_NAME(state))(VFH_CURRENT_TYPE(state) val) {\
+	void VFH_TOKENIZE2(set_, VFH_CURRENT_NAME(state))(const VFH_CURRENT_TYPE(state) & val) {\
 		_set_opt<VFH_CURRENT_TYPE(state)>(VFH_STRINGIZE(VFH_CURRENT_NAME(state)), val);\
 	}
 
