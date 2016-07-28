@@ -45,8 +45,6 @@
 // extracts current param default
 #define VFH_CURRENT_DEFAULT(state) BOOST_PP_TUPLE_ELEM(3, 2, VFH_CURRENT_PARAM(state))
 
-
-
 // generates two methods for the successor of GU_PackedImpl from param of the form (type, name, default)
 // void set_$name(const $type & val) { ... }
 // $type get_$name() const { ... } // returns the default if $name is not previously set
@@ -132,16 +130,17 @@ protected:\
 	}\
 };\
 
-#define VFH_MAKE_ACCESSORS(params, params_count) BOOST_PP_FOR((0, params, params_count, __dummy__),  VFH_PRED, VFH_OP, VFH_ACCESSORS)
+#define VFH_MAKE_ACCESSORS(params, params_count) BOOST_PP_FOR((0, params, params_count),  VFH_PRED, VFH_OP, VFH_ACCESSORS)
 
-// how to use:
-// define paramters in this form ( (type1, name1, default1), (tpye2, name2, default2)...)
-// define parameters_count to be the number of parameters you defined
+// How to use:
+// Define paramters tupe: #define params ( (type1, name1, default1), (tpye2, name2, default2)...)
+// Currently supported types are (exint, fpreal, const char *)
+// Define parameters count: #define params_count 2
 
-// Make class C inherit VRayPackedImplBase and call VFH_MAKE_ACCESSORS(paramters, parameters_count) inside public part
+// Make class C inherit VRayPackedImplBase and call VFH_MAKE_ACCESSORS(params, params_count) inside public part
 // this will generate getters (returining default if not previously set) and setters for all params
 
-// Call VFH_DEFINE_FACTORY_BASE(base_name, C, parameters, parameters_count) and inherit class base_name
+// Call VFH_DEFINE_FACTORY_BASE(base_name, C, params, params_count) and inherit class base_name
 // the base class will register all parameters with the appropriate getters and setters from C
 
 
