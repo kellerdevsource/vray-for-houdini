@@ -31,9 +31,10 @@ using namespace VRayForHoudini;
 
 GA_PrimitiveTypeId VRayVolumeGridRef::theTypeId(-1);
 
+VFH_DEFINE_FACTORY_BASE(VRayVolumeGridFactoryBase, VRayVolumeGridRef, VFH_VOLUME_GRID_PARAMS, VFH_VOLUME_GRID_PARAMS_COUNT)
 
 class VRayVolumeGridFactory:
-		public GU_PackedFactory
+		public VRayVolumeGridFactoryBase
 {
 public:
 	static VRayVolumeGridFactory &getInstance()
@@ -57,9 +58,8 @@ private:
 
 };
 
-
 VRayVolumeGridFactory::VRayVolumeGridFactory():
-	GU_PackedFactory("VRayVolumeGridRef", "VRayVolumeGridRef")
+	VRayVolumeGridFactoryBase("VRayVolumeGridRef", "VRayVolumeGridRef")
 {
 	registerTupleIntrinsic(
 			"phx_channel_map",
@@ -90,14 +90,14 @@ void VRayVolumeGridRef::install(GA_PrimitiveFactory *gafactory)
 
 
 VRayVolumeGridRef::VRayVolumeGridRef():
-	GU_PackedImpl(),
+	VRayPackedImplBase(),
 	m_detail(),
 	m_dirty(false)
 { }
 
 
 VRayVolumeGridRef::VRayVolumeGridRef(const VRayVolumeGridRef &src):
-	GU_PackedImpl(src),
+	VRayPackedImplBase(src),
 	m_detail(),
 	m_dirty(false)
 {

@@ -12,16 +12,35 @@
 #define VRAY_FOR_HOUDINI_VOLUME_GRID_H
 
 #include "vfh_vray.h"
-#include <GU/GU_PackedImpl.h>
+#include "vfh_primitives.h"
 
+#include <GU/GU_PackedImpl.h>
 
 namespace VRayForHoudini {
 
+#define VFH_VOLUME_GRID_PARAMS (\
+	(exint,  cache_load,   1),\
+	(exint,  anim_mode,    0),\
+	(fpreal, t2f,          1),\
+	(exint,  loop_overlap, 0),\
+	(exint,  read_offset,  1),\
+	(exint,  play_at,      1),\
+	(exint,  max_length,   0),\
+	(fpreal, play_speed,   1),\
+	(exint,  blend_method, 0),\
+	(exint,  load_nearest, 0),\
+	(exint,  flip_yz,      0) \
+	)
+
+#define VFH_VOLUME_GRID_PARAMS_COUNT 11
+
 
 class VRayVolumeGridRef:
-		public GU_PackedImpl
+		public VRayPackedImplBase
 {
 public:
+	VFH_MAKE_ACCESSORS(VFH_VOLUME_GRID_PARAMS, VFH_VOLUME_GRID_PARAMS_COUNT)
+
 	/// Get the type ID for the VRayProxy primitive type.
 	static GA_PrimitiveTypeId typeId() { return theTypeId; }
 	static void install(GA_PrimitiveFactory *gafactory);
@@ -88,7 +107,6 @@ private:
 
 private:
 	GU_ConstDetailHandle   m_detail;
-	UT_Options             m_options;
 	int                    m_dirty;
 };
 
