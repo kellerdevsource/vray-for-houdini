@@ -37,13 +37,16 @@ class PRMList
 {
 public:
 	PRMList();
+	~PRMList();
 
 	void                clear();
 	bool                empty() const { return (m_prmVec.size() < 2); }
 	size_t              size() const { return (m_prmVec.size() - 1); }
 	void                reserve(size_t n) { return m_prmVec.reserve(n + 1); }
-	PRM_Template*       getPRMTemplate() { return (m_prmVec.size())? m_prmVec.data() : nullptr; }
-	const PRM_Template* getPRMTemplate() const { return (m_prmVec.size())? m_prmVec.data() : nullptr; }
+
+	// will copy internal template to heap and return the pointer
+	// this should not be called excessivily as these pointers are not freed
+	PRM_Template*       getPRMTemplate(bool setRecook = true) const;
 
 	PRMList& addPrm(const PRM_Template &p);
 	PRMList& addPrm(const PRMFactory &p);
@@ -51,6 +54,9 @@ public:
 	PRMList& switcherEnd();
 	PRMList& addFolder(const std::string &label);
 	PRMList& addFromFile(const std::string &path);
+
+	// does not validate anything, just prepends the passed path with the UI root
+	static std::string expandUiPath(const std::string &relPath);
 
 private:
 	typedef std::vector<PRM_Template> PRMTemplVec;
@@ -67,7 +73,7 @@ private:
 
 	typedef std::list<SwitcherInfo> SwitcherList;
 	typedef std::vector<SwitcherInfo*> SwitcherStack;
-	typedef std::vector<PRM_ScriptPage*> ScriptPageList;
+	typedef std::vector<std::shared_ptr<PRM_ScriptPage> > ScriptPageList;
 
 	SwitcherInfo* getCurrentSwitcher();
 	void          incCurrentFolderPrmCnt();
@@ -77,6 +83,7 @@ private:
 	SwitcherList   m_switcherList;
 	SwitcherStack  m_switcherStack;
 	// will hold script pages, so params have valid references at all times
+	// container will free the pages on destruction
 	ScriptPageList m_scriptPages;
 };
 

@@ -362,7 +362,7 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 }
 
 
-void VRayExporter::setAttrsFromOpNodePrms(Attrs::PluginDesc &pluginDesc, OP_Node *opNode, const std::string &prefix)
+void VRayExporter::setAttrsFromOpNodePrms(Attrs::PluginDesc &pluginDesc, OP_Node *opNode, const std::string &prefix, bool remapInterp)
 {
 	const Parm::VRayPluginInfo *pluginInfo = Parm::GetVRayPluginInfo(pluginDesc.pluginID);
 	if (NOT(pluginInfo)) {
@@ -380,6 +380,15 @@ void VRayExporter::setAttrsFromOpNodePrms(Attrs::PluginDesc &pluginDesc, OP_Node
 											  : boost::str(Parm::FmtPrefixManual % prefix % attrDesc.attr);
 
 				const PRM_Parm *parm = Parm::getParm(*opNode, parmName);
+
+				// check for properties that are marked for custom handling on hou side
+				if (parm) {
+					auto spareData = parm->getSparePtr();
+					if (spareData && spareData->getValue("vray_custom_handling")) {
+						continue;
+					}
+				}
+
 				bool isTextureAttr = (   attrDesc.value.type == Parm::eTextureInt
 									|| attrDesc.value.type == Parm::eTextureFloat
 									|| attrDesc.value.type == Parm::eTextureColor);
@@ -413,7 +422,8 @@ void VRayExporter::setAttrsFromOpNodePrms(Attrs::PluginDesc &pluginDesc, OP_Node
 													 /* V-Ray attr: colors */ attrDesc.value.defRamp.colors,
 													 /* V-Ray attr: pos    */ attrDesc.value.defRamp.positions,
 													 /* V-Ray attr: interp */ attrDesc.value.defRamp.interpolations,
-													 /* As color list not plugin */ asColorList);
+													 /* As color list not plugin */ asColorList,
+													 /* Remap to vray interpolations*/ remapInterp);
 
 						pluginDesc.addAttribute(Attrs::PluginAttr(attrName, Attrs::PluginAttr::AttrTypeIgnore));
 					}
@@ -431,7 +441,8 @@ void VRayExporter::setAttrsFromOpNodePrms(Attrs::PluginDesc &pluginDesc, OP_Node
 											  /* V-Ray attr: interp */ interpolations,
 											  /* V-Ray attr: x      */ positions,
 											  /* V-Ray attr: y      */ valuesPtr,
-											  /* Don't need handles */ false);
+											  /* Don't need handles */ false,
+											  /* Remap to vray interpolations*/ remapInterp);
 
 						pluginDesc.addAttribute(Attrs::PluginAttr(attrDesc.value.defCurve.interpolations, interpolations));
 						pluginDesc.addAttribute(Attrs::PluginAttr(attrDesc.value.defCurve.positions,      positions));

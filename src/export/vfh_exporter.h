@@ -206,7 +206,7 @@ public:
 
 	bool                           setAttrsFromUTOptions(Attrs::PluginDesc &pluginDesc, const UT_Options &options) const;
 	void                           setAttrValueFromOpNodePrm(Attrs::PluginDesc &plugin, const Parm::AttrDesc &parmDesc, OP_Node &opNode, const std::string &parmName) const;
-	void                           setAttrsFromOpNodePrms(Attrs::PluginDesc &plugin, OP_Node *opNode, const std::string &prefix="");
+	void                           setAttrsFromOpNodePrms(Attrs::PluginDesc &plugin, OP_Node *opNode, const std::string &prefix="", bool remapInterp=false);
 	void                           setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDesc, VOP_Node *vopNode, ExportContext *parentContext=nullptr);
 
 	VRay::Plugin                   exportConnectedVop(VOP_Node *vop_node, int inpidx, ExportContext *parentContext = nullptr);
