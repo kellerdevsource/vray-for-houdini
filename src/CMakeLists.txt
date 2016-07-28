@@ -113,9 +113,6 @@ if(INSTALL_LOCAL)
 	install(DIRECTORY    ${CMAKE_SOURCE_DIR}/deploy/presets/
 			DESTINATION  ${HOUDINI_HOME_PATH}/presets)
 
-	install(DIRECTORY    ${CMAKE_SOURCE_DIR}/deploy/ui/
-			DESTINATION  ${CMAKE_BINARY_DIR}/deploy/ui)
-
 	if (Phoenix_FOUND)
 		install(FILES       ${Phoenix_LIBRARIES}/${CGR_PHOENIX_SHARED}
 							${Phoenix_LIBRARIES}/${CGR_PHOENIX_SHARED_VDB}
@@ -167,13 +164,6 @@ if(USE_LAUNCHER)
 				DESTINATION "$ENV{HOME}/bin"
 				PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 	endif()
-
-	# Add custom ui files
-	install(DIRECTORY    ${CMAKE_SOURCE_DIR}/deploy/ui/
-			DESTINATION  ${CMAKE_BINARY_DIR}/deploy/ui)
-
-	install(DIRECTORY    ${CMAKE_SOURCE_DIR}/deploy/presets/
-			DESTINATION  ${HOUDINI_HOME_PATH}/presets)
 endif()
 
 
@@ -196,7 +186,7 @@ if(INSTALL_RELEASE)
 		# Add custom ui files
 		file(GLOB DS_UI_FILES     "${CMAKE_SOURCE_DIR}/deploy/ui/*.*")
 		file(INSTALL               ${DS_UI_FILES}
-			DESTINATION            ${INSTALL_RELEASE_PATH}/deploy/ui
+			DESTINATION            ${INSTALL_RELEASE_PATH}/ui
 			USE_SOURCE_PERMISSIONS)
 
 		file(GLOB IDX_UI_FILES    "${CMAKE_SOURCE_DIR}/deploy/presets/*.*")
