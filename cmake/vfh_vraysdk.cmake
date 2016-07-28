@@ -10,7 +10,7 @@
 
 string(TOLOWER "${CMAKE_HOST_SYSTEM_NAME}" _HOST_SYSTEM_NAME)
 
-set(_maya_versons "2017;2016;2015;2014")
+set(_maya_versons "2017;2016_22501;2016;2015;2014")
 foreach(_maya_version ${_maya_versons})
 	if(SDK_PATH)
 		set(_vray_for_maya_root "${SDK_PATH}/${_HOST_SYSTEM_NAME}/vraysdk/vraysdk${_maya_version}")
