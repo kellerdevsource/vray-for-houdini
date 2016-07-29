@@ -46,13 +46,16 @@ public:
 
 	// will copy internal template to heap and return the pointer
 	// this should not be called excessivily as these pointers are not freed
-	PRM_Template*       getPRMTemplate(bool setRecook = true) const;
+	std::shared_ptr< PRM_Template > getPRMTemplate(bool setRecook = true) const;
 
 	PRMList& addPrm(const PRM_Template &p);
 	PRMList& addPrm(const PRMFactory &p);
 	PRMList& switcherBegin(const char *token, const char *label = nullptr);
 	PRMList& switcherEnd();
 	PRMList& addFolder(const std::string &label);
+	// NOTE: when loading parameters from file you MUST keep
+	// the PRMList instance alive as it holds internal references to
+	// PRM_ScriptPages used by the loaded PRM_Templates
 	PRMList& addFromFile(const std::string &path);
 
 	// does not validate anything, just prepends the passed path with the UI root
@@ -161,7 +164,7 @@ public:
 	/// @brief Specify the list of parameters for each instance of a multiparm.
 	/// @note This setting is ignored for non-multiparm parameters.
 	/// @note Parameter name tokens should include a '#' character.
-	PRMFactory& setMultiparms(const PRMList&);
+	PRMFactory& setMultiparms(const PRM_Template *);
 
 	PRMFactory& setParmGroup(int);
 

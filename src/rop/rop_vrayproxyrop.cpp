@@ -254,8 +254,9 @@ int VRayProxyROP::getExportOptions(fpreal time, VRayProxyExportOptions &options)
 PRM_Template *VRayProxyROP::getMyPrmTemplate()
 {
 	static Parm::PRMList myPrmList;
-	if (NOT(myPrmList.empty())) {
-		return myPrmList.getPRMTemplate();
+	static std::shared_ptr< PRM_Template > myParms;
+	if (myParms) {
+		return myParms.get();
 	}
 
 	const char *simplificationTypeItems[] = {
@@ -379,7 +380,9 @@ PRM_Template *VRayProxyROP::getMyPrmTemplate()
 	myPrmList.addPrm( theRopTemplates[ROP_POSTRENDER_TPLATE] );
 	myPrmList.addPrm( theRopTemplates[ROP_LPOSTRENDER_TPLATE] );
 
-	return myPrmList.getPRMTemplate();
+	myParms = myPrmList.getPRMTemplate();
+
+	return myParms.get();
 }
 
 

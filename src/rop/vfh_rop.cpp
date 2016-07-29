@@ -165,8 +165,9 @@ static const int res_override_items[] = {
 
 static PRM_Template* getCameraOverridesTemplate()
 {
-	static Parm::PRMList camOverrides;
-	if (NOT(camOverrides.size())) {
+	static std::shared_ptr< PRM_Template > myParms;
+	if (!myParms) {
+		static Parm::PRMList camOverrides;
 		camOverrides.addPrm(
 					Parm::PRMFactory(PRM_STRING_E, "render_camera", "Camera")
 							.setTypeExtended(PRM_TYPE_DYNAMIC_PATH)
@@ -197,10 +198,12 @@ static PRM_Template* getCameraOverridesTemplate()
 							.addConditional("{ override_camerares == 0 }", PRM_CONDTYPE_HIDE)
 							.addConditional("{ override_camerares == 0 } { res_fraction != \"specific\" }", PRM_CONDTYPE_DISABLE)
 					);
+		myParms = camOverrides.getPRMTemplate();
 	}
 
-	return camOverrides.getPRMTemplate();
+	return myParms.get();
 }
+
 
 static Parm::PRMTmplList& createObjectsTab(Parm::PRMTmplList& RenderSettingsPrmTemplate)
 {

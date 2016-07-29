@@ -158,19 +158,19 @@ void Parm::PRMList::clear()
 }
 
 
-PRM_Template* Parm::PRMList::getPRMTemplate(bool setRecook) const
+std::shared_ptr< PRM_Template > Parm::PRMList::getPRMTemplate(bool setRecook) const
 {
 	const int count = m_prmVec.size();
 
-	PRM_Template * tpl = new PRM_Template[count];
+	std::shared_ptr< PRM_Template > tpl( new PRM_Template[count], std::default_delete< PRM_Template[] >() );
 
 	for (int c = 0; c < count; ++c) {
-		tpl[c] = m_prmVec[c];
+		tpl.get()[c] = m_prmVec[c];
 	}
 
 	if (setRecook) {
 		for (int c = 0; c < count; ++c) {
-			tpl[c].setNoCook(false);
+			tpl.get()[c].setNoCook(false);
 		}
 	}
 
@@ -685,9 +685,9 @@ Parm::PRMFactory& Parm::PRMFactory::setSpareData(const PRM_SpareData* d)
 }
 
 
-Parm::PRMFactory& Parm::PRMFactory::setMultiparms(const PRMList& p)
+Parm::PRMFactory& Parm::PRMFactory::setMultiparms(const PRM_Template *p)
 {
-	m_prm->multiparms = p.getPRMTemplate();
+	m_prm->multiparms = p;
 	return *this;
 }
 
