@@ -1,0 +1,52 @@
+{
+    name	parameters
+    group {
+	name	"SettingsDR"
+	label	"Settings DR"
+
+	parm {
+	    name	"plugindata"
+	    label	"Settings DR"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"SettingsDR"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsDR" }
+	    parmtag	{ "vray_type" "SETTINGS" }
+	}
+	multiparm {
+	    name	"host_list"
+	    label	"Host list"
+	    default	0
+	    parmtag	{ "vray_plugin" "SettingsDR" }
+	    parmtag	{ "vray_pluginattr" "host_list" }
+	    parmtag	{ "vray_type" "List<String>" }
+
+	    parm {
+		name	"host_list#"
+		label	"Host list"
+		type	string
+		default	{ "" }
+		help	"Strings that represent either an ip address or a hostname for machines to be used as DR Nodes"
+		range	{ 0 1 }
+		export	none
+	    }
+	}
+
+	parm {
+	    name	"on"
+	    label	"On"
+	    type	toggle
+	    default	{ "0" }
+	    help	"Whether DR should be utilized for this render"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsDR" }
+	    parmtag	{ "vray_pluginattr" "on" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+    }
+
+}

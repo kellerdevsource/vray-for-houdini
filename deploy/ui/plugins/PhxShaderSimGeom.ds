@@ -1,0 +1,70 @@
+{
+    name	parameters
+    group {
+	name	"PhxShaderSimGeom"
+	label	"Phx Shader Sim Geom"
+
+	parm {
+	    name	"plugindata"
+	    label	"Phx Shader Sim Geom"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"PhxShaderSimGeom"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "PhxShaderSimGeom" }
+	    parmtag	{ "vray_type" "GEOMETRY" }
+	}
+	parm {
+	    name	"phoenix_sim"
+	    label	"Phoenix sim"
+	    type	oppath
+	    default	{ "" }
+	    help	"A plugin that supports PhoenixSimInterface and can be used to load a phoenix frame"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "oprelative" "." }
+	    parmtag	{ "vray_plugin" "PhxShaderSimGeom" }
+	    parmtag	{ "vray_pluginattr" "phoenix_sim" }
+	    parmtag	{ "vray_type" "Object" }
+	}
+	parm {
+	    name	"gpu_di_mode"
+	    label	"Gpu di mode"
+	    type	integer
+	    default	{ "2" }
+	    help	"Mode for DI computations on the GPU"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "PhxShaderSimGeom" }
+	    parmtag	{ "vray_pluginattr" "gpu_di_mode" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"gpu_gi_mode"
+	    label	"Gpu gi mode"
+	    type	integer
+	    default	{ "2" }
+	    help	"Mode for GI computations on the GPU"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "PhxShaderSimGeom" }
+	    parmtag	{ "vray_pluginattr" "gpu_gi_mode" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"gpu_samples_count"
+	    label	"Gpu samples count"
+	    type	integer
+	    default	{ "1" }
+	    help	"Samples count for cache computation on the GPU"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "PhxShaderSimGeom" }
+	    parmtag	{ "vray_pluginattr" "gpu_samples_count" }
+	    parmtag	{ "vray_type" "int" }
+	}
+    }
+
+}

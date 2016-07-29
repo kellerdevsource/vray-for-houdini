@@ -1,0 +1,21 @@
+{
+    name	parameters
+    group {
+	name	"TrimmingRegionsComplex"
+	label	"Trimming Regions Complex"
+
+	parm {
+	    name	"plugindata"
+	    label	"Trimming Regions Complex"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"TrimmingRegionsComplex"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TrimmingRegionsComplex" }
+	    parmtag	{ "vray_type" "MISC" }
+	}
+    }
+
+}

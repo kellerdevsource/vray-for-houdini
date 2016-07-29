@@ -1,0 +1,236 @@
+{
+    name	parameters
+    group {
+	name	"TexMix"
+	label	"Mix"
+
+	parm {
+	    name	"plugindata"
+	    label	"Mix"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_category" "utility" }
+	    parmtag	{ "vray_plugin" "TexMix" }
+	    parmtag	{ "vray_type" "TEXTURE" }
+	}
+	group {
+	    name	"folder"
+	    label	"Common"
+
+	    parm {
+		name	"compatibility_with"
+		label	"Compatibility with"
+		type	ordinal
+		default	{ "0" }
+		help	"This is used to differentiate between textures exported from different applications"
+		menu	{
+		    "0"	"Max"
+		    "1"	"Maya"
+		}
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "TexMix" }
+		parmtag	{ "vray_pluginattr" "compatibility_with" }
+		parmtag	{ "vray_type" "int" }
+	    }
+	    parm {
+		name	"alpha_from_intensity"
+		label	"Alpha from intensity"
+		type	ordinal
+		default	{ "0" }
+		help	"If 2 - the alpha is forced to 1.0f; 1 - the resulting alpha is the color intensity (if compatibility_with is 0) or the color luminance (if compatibility_with is 1); 0 - the alpha is taken from the bitmap alpha"
+		menu	{
+		    "0"	"Bitmap alpha"
+		    "1"	"Color intensity/luminance"
+		    "2"	"Force opaque"
+		}
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "TexMix" }
+		parmtag	{ "vray_pluginattr" "alpha_from_intensity" }
+		parmtag	{ "vray_type" "int" }
+	    }
+	    parm {
+		name	"invert"
+		label	"Invert"
+		type	toggle
+		default	{ "0" }
+		help	"If true, the resulting texture color will be inverted"
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "TexMix" }
+		parmtag	{ "vray_pluginattr" "invert" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	    parm {
+		name	"invert_alpha"
+		label	"Invert alpha"
+		type	toggle
+		default	{ "1" }
+		help	"If true and invert is on, the resulting texture alpha will be inverted too. If false, just the color will be inverted"
+		disablewhen	"{ invert != 1 }"
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "TexMix" }
+		parmtag	{ "vray_pluginattr" "invert_alpha" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	    parm {
+		name	"color_mult"
+		label	"Color mult"
+		type	color4
+		size	4
+		default	{ "1" "1" "1" "1" }
+		help	"A multiplier for the texture color"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "TexMix" }
+		parmtag	{ "vray_pluginattr" "color_mult" }
+		parmtag	{ "vray_type" "Texture" }
+	    }
+	    parm {
+		name	"color_offset"
+		label	"Color offset"
+		type	color4
+		size	4
+		default	{ "0" "0" "0" "1" }
+		help	"An additional offset for the texture color"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "TexMix" }
+		parmtag	{ "vray_pluginattr" "color_offset" }
+		parmtag	{ "vray_type" "Texture" }
+	    }
+	    parm {
+		name	"alpha_mult"
+		label	"Alpha mult"
+		type	float
+		default	{ "1" }
+		help	"A multiplier for the texture alpha"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "TexMix" }
+		parmtag	{ "vray_pluginattr" "alpha_mult" }
+		parmtag	{ "vray_type" "TextureFloat" }
+	    }
+	    parm {
+		name	"alpha_offset"
+		label	"Alpha offset"
+		type	float
+		default	{ "0" }
+		help	"An additional offset for the texture alpha"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "TexMix" }
+		parmtag	{ "vray_pluginattr" "alpha_offset" }
+		parmtag	{ "vray_type" "TextureFloat" }
+	    }
+	    parm {
+		name	"nouvw_color"
+		label	"No UVs Color"
+		type	color4
+		size	4
+		default	{ "0.5" "0.5" "0.5" "1" }
+		help	"The color when there are no valid uvw coordinates"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "TexMix" }
+		parmtag	{ "vray_pluginattr" "nouvw_color" }
+		parmtag	{ "vray_type" "Texture" }
+	    }
+	    parm {
+		name	"color1"
+		label	"Source A"
+		type	color4
+		size	4
+		default	{ "1" "1" "1" "1" }
+		help	"First color"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "TexMix" }
+		parmtag	{ "vray_pluginattr" "color1" }
+		parmtag	{ "vray_type" "Texture" }
+	    }
+	    parm {
+		name	"color2"
+		label	"Source B"
+		type	color4
+		size	4
+		default	{ "0" "0" "0" "1" }
+		help	"Second color"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "TexMix" }
+		parmtag	{ "vray_pluginattr" "color2" }
+		parmtag	{ "vray_type" "Texture" }
+	    }
+	    parm {
+		name	"mix_map"
+		label	"Mix map"
+		type	color4
+		size	4
+		default	{ "0.5" "0.5" "0.5" "1" }
+		help	"Mix amount texture"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "TexMix" }
+		parmtag	{ "vray_pluginattr" "mix_map" }
+		parmtag	{ "vray_type" "Texture" }
+	    }
+	    parm {
+		name	"mix_amount"
+		label	"Mix amount"
+		type	float
+		default	{ "0.5" }
+		help	"Mix amount"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "TexMix" }
+		parmtag	{ "vray_pluginattr" "mix_amount" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"transition_upper"
+		label	"Transition upper"
+		type	float
+		default	{ "0.7" }
+		help	"Transition zone - upper"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "TexMix" }
+		parmtag	{ "vray_pluginattr" "transition_upper" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"transition_lower"
+		label	"Transition lower"
+		type	float
+		default	{ "0.3" }
+		help	"Transition zone - lower"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "TexMix" }
+		parmtag	{ "vray_pluginattr" "transition_lower" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"use_curve"
+		label	"Use curve"
+		type	integer
+		default	{ "0" }
+		help	"If true the blend curve is used"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_custom_handling" "1" }
+		parmtag	{ "vray_plugin" "TexMix" }
+		parmtag	{ "vray_pluginattr" "use_curve" }
+		parmtag	{ "vray_type" "int" }
+	    }
+	}
+
+    }
+
+}

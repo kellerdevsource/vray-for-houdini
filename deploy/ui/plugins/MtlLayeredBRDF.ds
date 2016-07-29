@@ -1,0 +1,45 @@
+{
+    name	parameters
+    group {
+	name	"MtlLayeredBRDF"
+	label	"Mtl Layered BRDF"
+
+	parm {
+	    name	"plugindata"
+	    label	"Mtl Layered BRDF"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"MtlLayeredBRDF"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "MtlLayeredBRDF" }
+	    parmtag	{ "vray_type" "MATERIAL" }
+	}
+	parm {
+	    name	"brdfs"
+	    label	"Brdfs"
+	    type	oplist
+	    default	{ "" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "oprelative" "." }
+	    parmtag	{ "vray_plugin" "MtlLayeredBRDF" }
+	    parmtag	{ "vray_pluginattr" "brdfs" }
+	    parmtag	{ "vray_type" "List<Object>" }
+	}
+	parm {
+	    name	"double_sided"
+	    label	"Double sided"
+	    type	toggle
+	    default	{ "1" }
+	    help	"1 to make the material double-sided"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "MtlLayeredBRDF" }
+	    parmtag	{ "vray_pluginattr" "double_sided" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+    }
+
+}

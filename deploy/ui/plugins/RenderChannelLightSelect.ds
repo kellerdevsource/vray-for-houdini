@@ -1,0 +1,67 @@
+{
+    name	parameters
+    group {
+	name	"RenderChannelLightSelect"
+	label	"Light Select"
+
+	parm {
+	    name	"plugindata"
+	    label	"Light Select"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "RenderChannelLightSelect" }
+	    parmtag	{ "vray_type" "RENDERCHANNEL" }
+	}
+	parm {
+	    name	"name"
+	    label	"Name"
+	    type	string
+	    default	{ "Light Select" }
+	    help	"Channel name"
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"color_mapping"
+	    label	"Color mapping"
+	    type	toggle
+	    default	{ "0" }
+	    help	"Color Mapping"
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"consider_for_aa"
+	    label	"Consider For AA"
+	    type	toggle
+	    default	{ "0" }
+	    help	"Consider this render element for antialiasing (may slow down rendering)"
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"filtering"
+	    label	"Filtering"
+	    type	toggle
+	    default	{ "0" }
+	    help	"Filtering"
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"lights"
+	    label	"Lights"
+	    type	oppath
+	    default	{ "" }
+	    help	"Light list to appear in this channel"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "oprelative" "." }
+	    parmtag	{ "vray_custom_handling" "1" }
+	}
+    }
+
+}

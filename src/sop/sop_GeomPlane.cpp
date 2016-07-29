@@ -28,9 +28,9 @@ void SOP::GeomPlane::setPluginType()
 }
 
 
-void SOP::GeomPlane::addPrmTemplate(Parm::PRMTmplList &prmTemplate)
+void SOP::GeomPlane::addPrmTemplate(Parm::PRMList &prmTemplate)
 {
-	prmTemplate.push_back(PRM_Template(PRM_FLT, 1, &prm_size_name, PRMoneDefaults));
+	prmTemplate.addPrm(PRM_Template(PRM_FLT, 1, &prm_size_name, PRMoneDefaults));
 }
 
 

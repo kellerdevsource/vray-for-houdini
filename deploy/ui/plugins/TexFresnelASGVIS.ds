@@ -1,0 +1,205 @@
+{
+    name	parameters
+    group {
+	name	"TexFresnelASGVIS"
+	label	"Fresnel ASGVIS"
+
+	parm {
+	    name	"plugindata"
+	    label	"Fresnel ASGVIS"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"TexFresnelASGVIS"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexFresnelASGVIS" }
+	    parmtag	{ "vray_type" "TEXTURE" }
+	}
+	parm {
+	    name	"fresnel_ior"
+	    label	"Fresnel ior"
+	    type	float
+	    default	{ "1.55" }
+	    help	"Fresnel ior"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexFresnelASGVIS" }
+	    parmtag	{ "vray_pluginattr" "fresnel_ior" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"fresnel_ior_tex"
+	    label	"Fresnel ior tex"
+	    type	float
+	    default	{ "0" }
+	    help	"Fresnel ior texture"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexFresnelASGVIS" }
+	    parmtag	{ "vray_pluginattr" "fresnel_ior_tex" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"fresnel_ior_tex_mult"
+	    label	"Fresnel ior tex mult"
+	    type	float
+	    default	{ "1" }
+	    help	"Fresnel ior texture mult"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexFresnelASGVIS" }
+	    parmtag	{ "vray_pluginattr" "fresnel_ior_tex_mult" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"refract_ior"
+	    label	"Refract ior"
+	    type	float
+	    default	{ "1.55" }
+	    help	"Refraction ior of the underlying surface; this is ignored if the surface has a volume shader (the volume IOR is used)"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexFresnelASGVIS" }
+	    parmtag	{ "vray_pluginattr" "refract_ior" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"refract_ior_tex"
+	    label	"Refract ior tex"
+	    type	float
+	    default	{ "0" }
+	    help	"Refraction ior texture for the underlying surface; this is ignored if the surface has a volume shader (the volume IOR is used)"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexFresnelASGVIS" }
+	    parmtag	{ "vray_pluginattr" "refract_ior_tex" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"refract_ior_tex_mult"
+	    label	"Refract ior tex mult"
+	    type	float
+	    default	{ "1" }
+	    help	"Refract ior texture mult"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexFresnelASGVIS" }
+	    parmtag	{ "vray_pluginattr" "refract_ior_tex_mult" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"white_color"
+	    label	"White color"
+	    type	color4
+	    size	4
+	    default	{ "1" "1" "1" "1" }
+	    help	"Refraction color"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexFresnelASGVIS" }
+	    parmtag	{ "vray_pluginattr" "white_color" }
+	    parmtag	{ "vray_type" "AColor" }
+	}
+	parm {
+	    name	"white_color_tex"
+	    label	"White color tex"
+	    type	color4
+	    size	4
+	    default	{ "0" "0" "0" "0" }
+	    help	"Refraction color texture"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexFresnelASGVIS" }
+	    parmtag	{ "vray_pluginattr" "white_color_tex" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+	parm {
+	    name	"white_color_tex_mult"
+	    label	"White color tex mult"
+	    type	float
+	    default	{ "1" }
+	    help	"Refraction color texture mult"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexFresnelASGVIS" }
+	    parmtag	{ "vray_pluginattr" "white_color_tex_mult" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"black_color"
+	    label	"Black color"
+	    type	color4
+	    size	4
+	    default	{ "0" "0" "0" "1" }
+	    help	"Reflection color"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexFresnelASGVIS" }
+	    parmtag	{ "vray_pluginattr" "black_color" }
+	    parmtag	{ "vray_type" "AColor" }
+	}
+	parm {
+	    name	"black_color_tex"
+	    label	"Black color tex"
+	    type	color4
+	    size	4
+	    default	{ "0" "0" "0" "0" }
+	    help	"Reflection color texture"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexFresnelASGVIS" }
+	    parmtag	{ "vray_pluginattr" "black_color_tex" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+	parm {
+	    name	"black_color_tex_mult"
+	    label	"Black color tex mult"
+	    type	float
+	    default	{ "1" }
+	    help	"Reflection color texture mult"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexFresnelASGVIS" }
+	    parmtag	{ "vray_pluginattr" "black_color_tex_mult" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"use_multiplier_as_exponent"
+	    label	"Use multiplier as exponent"
+	    type	toggle
+	    default	{ "0" }
+	    help	"In some cases we wanted to use the multiplier as an exponent ( final_color = pow( color, tex_mult ) ) - in other cases we just want a scalar multiplier ( final_color = color * tex_mult )"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexFresnelASGVIS" }
+	    parmtag	{ "vray_pluginattr" "use_multiplier_as_exponent" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"old_way"
+	    label	"Old way"
+	    type	toggle
+	    default	{ "0" }
+	    help	"Process the fresnel texture in the old way"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexFresnelASGVIS" }
+	    parmtag	{ "vray_pluginattr" "old_way" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"invert"
+	    label	"Invert"
+	    type	toggle
+	    default	{ "0" }
+	    help	"If true, the resulting texture color will be inverted"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexFresnelASGVIS" }
+	    parmtag	{ "vray_pluginattr" "invert" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+    }
+
+}

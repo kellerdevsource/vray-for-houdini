@@ -1,0 +1,168 @@
+{
+    name	parameters
+    group {
+	name	"SettingsCaustics"
+	label	"Caustics"
+
+	parm {
+	    name	"plugindata"
+	    label	"Caustics"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsCaustics" }
+	    parmtag	{ "vray_type" "SETTINGS" }
+	}
+	parm {
+	    name	"on"
+	    label	"Enable caustics"
+	    type	toggle
+	    default	{ "0" }
+	    help	"Enable caustics computation"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsCaustics" }
+	    parmtag	{ "vray_pluginattr" "on" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"max_photons"
+	    label	"Max photons"
+	    type	integer
+	    default	{ "30" }
+	    help	"Max. number of photons to look for; if 0, all photons within the search distance will be considered."
+	    disablewhen	"{ mode != 0 } { on != 1 }"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsCaustics" }
+	    parmtag	{ "vray_pluginattr" "max_photons" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"search_distance"
+	    label	"Search distance"
+	    type	float
+	    default	{ "1e+18" }
+	    help	"Search distance for caustic photons."
+	    disablewhen	"{ mode != 0 } { on != 1 }"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsCaustics" }
+	    parmtag	{ "vray_pluginattr" "search_distance" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"max_density"
+	    label	"Max density"
+	    type	float
+	    default	{ "0" }
+	    disablewhen	"{ mode != 0 } { on != 1 }"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsCaustics" }
+	    parmtag	{ "vray_pluginattr" "max_density" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"multiplier"
+	    label	"Multiplier"
+	    type	float
+	    default	{ "1" }
+	    disablewhen	"{ mode != 0 } { on != 1 }"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsCaustics" }
+	    parmtag	{ "vray_pluginattr" "multiplier" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"mode"
+	    label	"Mode"
+	    type	ordinal
+	    default	{ "0" }
+	    disablewhen	"{ on != 1 }"
+	    menu	{
+		"0"	"New map"
+		"1"	"From file"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsCaustics" }
+	    parmtag	{ "vray_pluginattr" "mode" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"file"
+	    label	"File"
+	    type	file
+	    default	{ "//lightmaps/caustics.vrmap" }
+	    help	"File to take caustics map from when 'Mode' is 'From File'"
+	    disablewhen	"{ mode != 1 } { on != 1 } { mode != 1 }"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_file_extensions" "vrpmap" }
+	    parmtag	{ "vray_file_names" "V-Ray Photon map" }
+	    parmtag	{ "vray_plugin" "SettingsCaustics" }
+	    parmtag	{ "vray_pluginattr" "file" }
+	    parmtag	{ "vray_type" "String" }
+	}
+	parm {
+	    name	"dont_delete"
+	    label	"Don't delete"
+	    type	toggle
+	    default	{ "1" }
+	    help	"Don't delete at render end"
+	    disablewhen	"{ on != 1 }"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsCaustics" }
+	    parmtag	{ "vray_pluginattr" "dont_delete" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"auto_save"
+	    label	"Auto save"
+	    type	toggle
+	    default	{ "0" }
+	    help	"True to save the caustics photon map automatically at the end of the rendering"
+	    disablewhen	"{ on != 1 } { mode == 1 }"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsCaustics" }
+	    parmtag	{ "vray_pluginattr" "auto_save" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"auto_save_file"
+	    label	"Auto save file"
+	    type	file
+	    default	{ "//lightmaps/caustics.vrmap" }
+	    help	"Auto save filepath"
+	    disablewhen	"{ auto_save != 1 } { on != 1 } { mode == 1 } { auto_save != 1 }"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_file_extensions" "vrpmap" }
+	    parmtag	{ "vray_file_names" "V-Ray Photon map" }
+	    parmtag	{ "vray_file_op" "save" }
+	    parmtag	{ "vray_plugin" "SettingsCaustics" }
+	    parmtag	{ "vray_pluginattr" "auto_save_file" }
+	    parmtag	{ "vray_type" "String" }
+	}
+	parm {
+	    name	"show_calc_phase"
+	    label	"Show calculation phase"
+	    type	toggle
+	    default	{ "0" }
+	    help	"True to show the calculation of the caustics map"
+	    disablewhen	"{ mode != 0 } { on != 1 }"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsCaustics" }
+	    parmtag	{ "vray_pluginattr" "show_calc_phase" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+    }
+
+}

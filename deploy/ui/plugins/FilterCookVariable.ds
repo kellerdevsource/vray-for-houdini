@@ -1,0 +1,32 @@
+{
+    name	parameters
+    group {
+	name	"FilterCookVariable"
+	label	"Cook Variable"
+
+	parm {
+	    name	"plugindata"
+	    label	"Cook Variable"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "FilterCookVariable" }
+	    parmtag	{ "vray_type" "SETTINGS" }
+	}
+	parm {
+	    name	"size"
+	    label	"Size"
+	    type	float
+	    default	{ "3" }
+	    help	"Filter width"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "FilterCookVariable" }
+	    parmtag	{ "vray_pluginattr" "size" }
+	    parmtag	{ "vray_type" "float" }
+	}
+    }
+
+}

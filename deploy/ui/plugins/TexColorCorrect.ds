@@ -1,0 +1,237 @@
+{
+    name	parameters
+    group {
+	name	"TexColorCorrect"
+	label	"Color Correct"
+
+	parm {
+	    name	"plugindata"
+	    label	"Color Correct"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"TexColorCorrect"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_category" "utility" }
+	    parmtag	{ "vray_plugin" "TexColorCorrect" }
+	    parmtag	{ "vray_type" "TEXTURE" }
+	}
+	parm {
+	    name	"in_color"
+	    label	"In color"
+	    type	color4
+	    size	4
+	    default	{ "0" "0" "0" "1" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexColorCorrect" }
+	    parmtag	{ "vray_pluginattr" "in_color" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+	parm {
+	    name	"in_alpha"
+	    label	"In alpha"
+	    type	float
+	    default	{ "1" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexColorCorrect" }
+	    parmtag	{ "vray_pluginattr" "in_alpha" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"unpremultiply_input"
+	    label	"Unpremultiply input"
+	    type	float
+	    default	{ "0" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexColorCorrect" }
+	    parmtag	{ "vray_pluginattr" "unpremultiply_input" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"premultiply_result"
+	    label	"Premultiply result"
+	    type	float
+	    default	{ "0" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexColorCorrect" }
+	    parmtag	{ "vray_pluginattr" "premultiply_result" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"hue_shift"
+	    label	"Hue shift"
+	    type	float
+	    default	{ "0" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexColorCorrect" }
+	    parmtag	{ "vray_pluginattr" "hue_shift" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"sat_gain"
+	    label	"Sat gain"
+	    type	float
+	    default	{ "0" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexColorCorrect" }
+	    parmtag	{ "vray_pluginattr" "sat_gain" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"val_gain"
+	    label	"Val gain"
+	    type	float
+	    default	{ "0" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexColorCorrect" }
+	    parmtag	{ "vray_pluginattr" "val_gain" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"col_gain"
+	    label	"Col gain"
+	    type	color4
+	    size	4
+	    default	{ "0" "0" "0" "1" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexColorCorrect" }
+	    parmtag	{ "vray_pluginattr" "col_gain" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+	parm {
+	    name	"col_offset"
+	    label	"Col offset"
+	    type	color4
+	    size	4
+	    default	{ "0" "0" "0" "1" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexColorCorrect" }
+	    parmtag	{ "vray_pluginattr" "col_offset" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+	parm {
+	    name	"col_gamma"
+	    label	"Col gamma"
+	    type	color4
+	    size	4
+	    default	{ "0" "0" "0" "1" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexColorCorrect" }
+	    parmtag	{ "vray_pluginattr" "col_gamma" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+	parm {
+	    name	"col_clamp"
+	    label	"Col clamp"
+	    type	float
+	    default	{ "0" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexColorCorrect" }
+	    parmtag	{ "vray_pluginattr" "col_clamp" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"col_clamp_min"
+	    label	"Col clamp min"
+	    type	color4
+	    size	4
+	    default	{ "0" "0" "0" "1" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexColorCorrect" }
+	    parmtag	{ "vray_pluginattr" "col_clamp_min" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+	parm {
+	    name	"col_clamp_max"
+	    label	"Col clamp max"
+	    type	color4
+	    size	4
+	    default	{ "0" "0" "0" "1" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexColorCorrect" }
+	    parmtag	{ "vray_pluginattr" "col_clamp_max" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+	parm {
+	    name	"alpha_gain"
+	    label	"Alpha gain"
+	    type	float
+	    default	{ "0" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexColorCorrect" }
+	    parmtag	{ "vray_pluginattr" "alpha_gain" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"alpha_offset"
+	    label	"Alpha offset"
+	    type	float
+	    default	{ "0" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexColorCorrect" }
+	    parmtag	{ "vray_pluginattr" "alpha_offset" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"alpha_gamma"
+	    label	"Alpha gamma"
+	    type	float
+	    default	{ "0" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexColorCorrect" }
+	    parmtag	{ "vray_pluginattr" "alpha_gamma" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"alpha_clamp"
+	    label	"Alpha clamp"
+	    type	float
+	    default	{ "0" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexColorCorrect" }
+	    parmtag	{ "vray_pluginattr" "alpha_clamp" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"alpha_clamp_min"
+	    label	"Alpha clamp min"
+	    type	float
+	    default	{ "0" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexColorCorrect" }
+	    parmtag	{ "vray_pluginattr" "alpha_clamp_min" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"alpha_clamp_max"
+	    label	"Alpha clamp max"
+	    type	float
+	    default	{ "0" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexColorCorrect" }
+	    parmtag	{ "vray_pluginattr" "alpha_clamp_max" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+    }
+
+}

@@ -1,0 +1,21 @@
+{
+    name	parameters
+    group {
+	name	"TexMayaHairColor"
+	label	"Maya Hair Color"
+
+	parm {
+	    name	"plugindata"
+	    label	"Maya Hair Color"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"TexMayaHairColor"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexMayaHairColor" }
+	    parmtag	{ "vray_type" "TEXTURE" }
+	}
+    }
+
+}

@@ -1,0 +1,58 @@
+{
+    name	parameters
+    group {
+	name	"TexRemapFloat"
+	label	"Remap Float"
+
+	parm {
+	    name	"plugindata"
+	    label	"Remap Float"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"Remap float value"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_category" "utility" }
+	    parmtag	{ "vray_plugin" "TexRemapFloat" }
+	    parmtag	{ "vray_type" "TEXTURE" }
+	}
+	parm {
+	    name	"value"
+	    label	"Value"
+	    type	float
+	    default	{ "0" }
+	    help	"Value to remap"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexRemapFloat" }
+	    parmtag	{ "vray_pluginattr" "value" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"low"
+	    label	"Low"
+	    type	float
+	    default	{ "0" }
+	    help	"Low boundary"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexRemapFloat" }
+	    parmtag	{ "vray_pluginattr" "low" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"high"
+	    label	"High"
+	    type	float
+	    default	{ "1" }
+	    help	"High boundary"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexRemapFloat" }
+	    parmtag	{ "vray_pluginattr" "high" }
+	    parmtag	{ "vray_type" "float" }
+	}
+    }
+
+}

@@ -1,0 +1,46 @@
+{
+    name	parameters
+    group {
+	name	"TexModoInvert"
+	label	"Modo Invert"
+
+	parm {
+	    name	"plugindata"
+	    label	"Modo Invert"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"TexModoInvert"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexModoInvert" }
+	    parmtag	{ "vray_type" "TEXTURE" }
+	}
+	parm {
+	    name	"texture"
+	    label	"Texture"
+	    type	color4
+	    size	4
+	    default	{ "0" "0" "0" "0" }
+	    help	"The texture to be inverted"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexModoInvert" }
+	    parmtag	{ "vray_pluginattr" "texture" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+	parm {
+	    name	"invert"
+	    label	"Invert"
+	    type	toggle
+	    default	{ "0" }
+	    help	"Parameter that enables the inverting to be animated"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexModoInvert" }
+	    parmtag	{ "vray_pluginattr" "invert" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+    }
+
+}

@@ -1,0 +1,21 @@
+{
+    name	parameters
+    group {
+	name	"TexFloatPerVertexHairSampler"
+	label	"Float Per Vertex Hair Sampler"
+
+	parm {
+	    name	"plugindata"
+	    label	"Float Per Vertex Hair Sampler"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"TexFloatPerVertexHairSampler"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexFloatPerVertexHairSampler" }
+	    parmtag	{ "vray_type" "TEXTURE" }
+	}
+    }
+
+}

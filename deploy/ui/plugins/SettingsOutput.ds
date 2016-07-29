@@ -1,0 +1,517 @@
+{
+    name	parameters
+    group {
+	name	"SettingsOutput"
+	label	"Output"
+
+	parm {
+	    name	"plugindata"
+	    label	"Output"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsOutput" }
+	    parmtag	{ "vray_type" "SETTINGS" }
+	}
+	parm {
+	    name	"img_width"
+	    label	"Image width"
+	    type	integer
+	    default	{ "640" }
+	    help	"Output image width"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsOutput" }
+	    parmtag	{ "vray_pluginattr" "img_width" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"img_height"
+	    label	"Image height"
+	    type	integer
+	    default	{ "480" }
+	    help	"Output image height"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsOutput" }
+	    parmtag	{ "vray_pluginattr" "img_height" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"img_pixelAspect"
+	    label	"Pixel aspect"
+	    type	float
+	    default	{ "1" }
+	    help	"Output image pixel aspect"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsOutput" }
+	    parmtag	{ "vray_pluginattr" "img_pixelAspect" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"img_file"
+	    label	"File name"
+	    type	string
+	    default	{ "$F_$C" }
+	    help	"Render file name (Variables: $C - camera name; $S - scene name; $F - blendfile name)"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsOutput" }
+	    parmtag	{ "vray_pluginattr" "img_file" }
+	    parmtag	{ "vray_type" "String" }
+	}
+	parm {
+	    name	"img_dir"
+	    label	"Dir name"
+	    type	file
+	    default	{ "//render/$F/" }
+	    help	"Render file directory (Variables: $C - camera name; $S - scene name; $F - blendfile name)"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsOutput" }
+	    parmtag	{ "vray_pluginattr" "img_dir" }
+	    parmtag	{ "vray_type" "String" }
+	}
+	parm {
+	    name	"img_file_needFrameNumber"
+	    label	"Img file needframenumber"
+	    type	toggle
+	    default	{ "0" }
+	    help	"Add frame number to the image file name"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsOutput" }
+	    parmtag	{ "vray_pluginattr" "img_file_needFrameNumber" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"img_separateAlpha"
+	    label	"Img separatealpha"
+	    type	toggle
+	    default	{ "0" }
+	    help	"Write the alpha channel to a separate file"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsOutput" }
+	    parmtag	{ "vray_pluginattr" "img_separateAlpha" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"img_noAlpha"
+	    label	"Img noalpha"
+	    type	toggle
+	    default	{ "0" }
+	    help	"Don't write the alpha channel to the final image"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsOutput" }
+	    parmtag	{ "vray_pluginattr" "img_noAlpha" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"img_dontSaveRgbChannel"
+	    label	"Img dontsavergbchannel"
+	    type	toggle
+	    default	{ "0" }
+	    help	"If true, the RGB channel will not be saved to disk"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsOutput" }
+	    parmtag	{ "vray_pluginattr" "img_dontSaveRgbChannel" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"img_deepFile"
+	    label	"Img deepfile"
+	    type	toggle
+	    default	{ "0" }
+	    help	"If true, V-Ray will will generate deep image file (valid for vrst and exr)"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsOutput" }
+	    parmtag	{ "vray_pluginattr" "img_deepFile" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"img_rawFile"
+	    label	"Img rawfile"
+	    type	toggle
+	    default	{ "0" }
+	    help	"If true, V-Ray will render to a tiled file format (.vrimg or .exr). This is automatically turned on for file formats that only support tiled writing (like .vrimg)"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsOutput" }
+	    parmtag	{ "vray_pluginattr" "img_rawFile" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"img_rawFileVFB"
+	    label	"Img rawfilevfb"
+	    type	integer
+	    default	{ "1" }
+	    help	"If writing to a tiled file format, specifies whether a memory VFB window should be displayed (0 - no memory VFB, 1 - full memory VFB, 2 - preview)"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsOutput" }
+	    parmtag	{ "vray_pluginattr" "img_rawFileVFB" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"anim_start"
+	    label	"Start animation"
+	    type	float
+	    default	{ "0" }
+	    help	"Start of animation range in time units"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsOutput" }
+	    parmtag	{ "vray_pluginattr" "anim_start" }
+	    parmtag	{ "vray_type" "double" }
+	}
+	parm {
+	    name	"anim_end"
+	    label	"End animation"
+	    type	float
+	    default	{ "1" }
+	    help	"End of animation range in time units"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsOutput" }
+	    parmtag	{ "vray_pluginattr" "anim_end" }
+	    parmtag	{ "vray_type" "double" }
+	}
+	parm {
+	    name	"anim_frame_padding"
+	    label	"Frame Padding"
+	    type	integer
+	    default	{ "4" }
+	    help	"Animation Frame Name Padding"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsOutput" }
+	    parmtag	{ "vray_pluginattr" "anim_frame_padding" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"anim_renumber_on"
+	    label	"Anim renumber on"
+	    type	toggle
+	    default	{ "0" }
+	    help	"If true, frame renumbering is used"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsOutput" }
+	    parmtag	{ "vray_pluginattr" "anim_renumber_on" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"anim_renumber_start"
+	    label	"Renumber start number"
+	    type	float
+	    default	{ "0" }
+	    help	"Start number for renumber frames"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsOutput" }
+	    parmtag	{ "vray_pluginattr" "anim_renumber_start" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"anim_renumber_step"
+	    label	"Renumber frames step"
+	    type	float
+	    default	{ "1" }
+	    help	"Renumber frames step"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsOutput" }
+	    parmtag	{ "vray_pluginattr" "anim_renumber_step" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"anim_ren_frame_start"
+	    label	"First frame of animation range"
+	    type	float
+	    default	{ "0" }
+	    help	"First frame of animation range"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsOutput" }
+	    parmtag	{ "vray_pluginattr" "anim_ren_frame_start" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"frame_start"
+	    label	"Frame start"
+	    type	integer
+	    default	{ "0" }
+	    help	"The frame number at the start of the animation range"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsOutput" }
+	    parmtag	{ "vray_pluginattr" "frame_start" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"frames_per_second"
+	    label	"Frames per unit time"
+	    type	float
+	    default	{ "1" }
+	    help	"Number of frames per unit time"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsOutput" }
+	    parmtag	{ "vray_pluginattr" "frames_per_second" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"rgn_left"
+	    label	"Image output region left coord"
+	    type	float
+	    default	{ "0" }
+	    help	"Image output region left coord"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsOutput" }
+	    parmtag	{ "vray_pluginattr" "rgn_left" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"rgn_width"
+	    label	"Image output region width"
+	    type	float
+	    default	{ "640" }
+	    help	"Image output region width"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsOutput" }
+	    parmtag	{ "vray_pluginattr" "rgn_width" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"rgn_top"
+	    label	"Image output region top coord"
+	    type	float
+	    default	{ "0" }
+	    help	"Image output region top coord"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsOutput" }
+	    parmtag	{ "vray_pluginattr" "rgn_top" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"rgn_height"
+	    label	"Image output region height"
+	    type	float
+	    default	{ "480" }
+	    help	"Image output region height"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsOutput" }
+	    parmtag	{ "vray_pluginattr" "rgn_height" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"bmp_width"
+	    label	"Bitmap width"
+	    type	integer
+	    default	{ "640" }
+	    help	"Output bitmap width"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsOutput" }
+	    parmtag	{ "vray_pluginattr" "bmp_width" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"bmp_height"
+	    label	"Bitmap height"
+	    type	integer
+	    default	{ "480" }
+	    help	"Output bitmap height"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsOutput" }
+	    parmtag	{ "vray_pluginattr" "bmp_height" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"r_left"
+	    label	"Bitmap output region left coord"
+	    type	integer
+	    default	{ "0" }
+	    help	"Bitmap output region left coord"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsOutput" }
+	    parmtag	{ "vray_pluginattr" "r_left" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"r_width"
+	    label	"Bitmap output region width"
+	    type	integer
+	    default	{ "640" }
+	    help	"Bitmap output region width"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsOutput" }
+	    parmtag	{ "vray_pluginattr" "r_width" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"r_top"
+	    label	"Bitmap output region top coord"
+	    type	integer
+	    default	{ "0" }
+	    help	"Bitmap output region top coord"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsOutput" }
+	    parmtag	{ "vray_pluginattr" "r_top" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"r_height"
+	    label	"Bitmap output region height"
+	    type	integer
+	    default	{ "480" }
+	    help	"Bitmap output region height"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsOutput" }
+	    parmtag	{ "vray_pluginattr" "r_height" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"frame_stamp_enabled"
+	    label	"Frame stamp enabled"
+	    type	toggle
+	    default	{ "0" }
+	    help	"true to enable the VFB frame stamp"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsOutput" }
+	    parmtag	{ "vray_pluginattr" "frame_stamp_enabled" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"frame_stamp_text"
+	    label	"Frame stamp text"
+	    type	string
+	    default	{ "V-Ray %vraycore | %rendertime" }
+	    help	"Frame stamp text"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsOutput" }
+	    parmtag	{ "vray_pluginattr" "frame_stamp_text" }
+	    parmtag	{ "vray_type" "String" }
+	}
+	parm {
+	    name	"relements_separateFolders"
+	    label	"Relements separatefolders"
+	    type	toggle
+	    default	{ "0" }
+	    help	"Save render channels in separate folders"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsOutput" }
+	    parmtag	{ "vray_pluginattr" "relements_separateFolders" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"relements_separate_rgba"
+	    label	"Relements separate rgba"
+	    type	toggle
+	    default	{ "0" }
+	    help	"true to save the main RGBA elment in a separate folder too, if relements_separateFolders is specified"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsOutput" }
+	    parmtag	{ "vray_pluginattr" "relements_separate_rgba" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"relements_divider"
+	    label	"Relements divider"
+	    type	string
+	    default	{ "" }
+	    help	"Render elements name separator"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsOutput" }
+	    parmtag	{ "vray_pluginattr" "relements_divider" }
+	    parmtag	{ "vray_type" "String" }
+	}
+	parm {
+	    name	"film_offset_x"
+	    label	"Film offset x"
+	    type	float
+	    default	{ "0" }
+	    help	"Horizontal film offset"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsOutput" }
+	    parmtag	{ "vray_pluginattr" "film_offset_x" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"film_offset_y"
+	    label	"Film offset y"
+	    type	float
+	    default	{ "0" }
+	    help	"Vertical film offset"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsOutput" }
+	    parmtag	{ "vray_pluginattr" "film_offset_y" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"img_format"
+	    label	"Image Format"
+	    type	ordinal
+	    default	{ "1" }
+	    help	"Output image format"
+	    menu	{
+		"0"	"PNG"
+		"1"	"JPEG"
+		"2"	"TIFF"
+		"3"	"TGA"
+		"4"	"SGI"
+		"5"	"OpenEXR"
+		"6"	"VRayImage"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_custom_handling" "1" }
+	}
+	parm {
+	    name	"img_saveVelocityZeroBase"
+	    label	"Img savevelocityzerobase"
+	    type	toggle
+	    default	{ "0" }
+	    help	"If true, Velocity channel will be saved zero base instead of the default 0.5 based"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsOutput" }
+	    parmtag	{ "vray_pluginattr" "img_saveVelocityZeroBase" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"relements_separateFiles"
+	    label	"Separate Files"
+	    type	toggle
+	    default	{ "1" }
+	    help	"Save render channels in separate files"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_custom_handling" "1" }
+	}
+    }
+
+}

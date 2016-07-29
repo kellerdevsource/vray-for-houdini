@@ -1,0 +1,66 @@
+{
+    name	parameters
+    group {
+	name	"SceneModifierTest"
+	label	"Scene Modifier Test"
+
+	parm {
+	    name	"plugindata"
+	    label	"Scene Modifier Test"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"SceneModifierTest"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SceneModifierTest" }
+	    parmtag	{ "vray_type" "MISC" }
+	}
+	parm {
+	    name	"particle_scene"
+	    label	"Particle scene"
+	    type	file
+	    default	{ "" }
+	    help	"The particle .vrscene"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_file_extensions" "vrscene" }
+	    parmtag	{ "vray_file_names" "V-Ray scene" }
+	    parmtag	{ "vray_file_op" "load" }
+	    parmtag	{ "vray_plugin" "SceneModifierTest" }
+	    parmtag	{ "vray_pluginattr" "particle_scene" }
+	    parmtag	{ "vray_type" "String" }
+	}
+	parm {
+	    name	"proxy_scene"
+	    label	"Proxy scene"
+	    type	file
+	    default	{ "" }
+	    help	"The proxy .vrscene"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_file_extensions" "vrscene" }
+	    parmtag	{ "vray_file_names" "V-Ray scene" }
+	    parmtag	{ "vray_file_op" "load" }
+	    parmtag	{ "vray_plugin" "SceneModifierTest" }
+	    parmtag	{ "vray_pluginattr" "proxy_scene" }
+	    parmtag	{ "vray_type" "String" }
+	}
+	parm {
+	    name	"material_scene"
+	    label	"Material scene"
+	    type	file
+	    default	{ "" }
+	    help	"The material .vrscene"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_file_extensions" "vrscene" }
+	    parmtag	{ "vray_file_names" "V-Ray scene" }
+	    parmtag	{ "vray_file_op" "load" }
+	    parmtag	{ "vray_plugin" "SceneModifierTest" }
+	    parmtag	{ "vray_pluginattr" "material_scene" }
+	    parmtag	{ "vray_type" "String" }
+	}
+    }
+
+}

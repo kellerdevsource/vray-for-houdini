@@ -1,0 +1,119 @@
+{
+    name	parameters
+    group {
+	name	"TexModoBlendLayersScalar"
+	label	"Modo Blend Layers Scalar"
+
+	parm {
+	    name	"plugindata"
+	    label	"Modo Blend Layers Scalar"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"TexModoBlendLayersScalar"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexModoBlendLayersScalar" }
+	    parmtag	{ "vray_type" "TEXTURE" }
+	}
+	parm {
+	    name	"opacity"
+	    label	"Opacity"
+	    type	float
+	    default	{ "1" }
+	    help	"The opacity for the foreground layer"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexModoBlendLayersScalar" }
+	    parmtag	{ "vray_pluginattr" "opacity" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"mask"
+	    label	"Mask"
+	    type	float
+	    default	{ "1" }
+	    help	"Opacity mask for the foreground layer. This is multiplied by the opacity parameter but can be a texture"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexModoBlendLayersScalar" }
+	    parmtag	{ "vray_pluginattr" "mask" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"blend_mode"
+	    label	"Blend mode"
+	    type	ordinal
+	    default	{ "0" }
+	    help	"0:Normal, 1:Average, 2:Add, 3:Subtract, 4:Darken, 5:Multiply, 6:Color burn, 7:Linear burn, 8:Lighten, 9:Screen, 10:Color Dodge, 11:Linear Dodge, 12:Spotlite, 13:Spotlite blend, 14:Overlay, 15:Softlight, 16:Hardlight, 17:Pinlight, 18:Hardmix, 19:Difference, 20:Exclusion, 21:Hue, 22:Saturation, 23:Color, 24:Value"
+	    menu	{
+		"0"	"Normal"
+		"1"	"Average"
+		"2"	"Add"
+		"3"	"Subtract"
+		"4"	"Darken"
+		"5"	"Multiply"
+		"6"	"Color burn"
+		"7"	"Linear burn"
+		"8"	"Lighten"
+		"9"	"Screen"
+		"10"	"Color Dodge"
+		"11"	"Linear Dodge"
+		"12"	"Spotlite"
+		"13"	"Spotlite blend"
+		"14"	"Overlay"
+		"15"	"Softlight"
+		"16"	"Hardlight"
+		"17"	"Pinlight"
+		"18"	"Hardmix"
+		"19"	"Difference"
+		"20"	"Exclusion"
+		"21"	"Hue"
+		"22"	"Saturation"
+		"23"	"Color"
+		"24"	"Value"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexModoBlendLayersScalar" }
+	    parmtag	{ "vray_pluginattr" "blend_mode" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"background"
+	    label	"Background"
+	    type	float
+	    default	{ "0" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexModoBlendLayersScalar" }
+	    parmtag	{ "vray_pluginattr" "background" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"foreground"
+	    label	"Foreground"
+	    type	float
+	    default	{ "0" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexModoBlendLayersScalar" }
+	    parmtag	{ "vray_pluginattr" "foreground" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"foreground_color"
+	    label	"Foreground color"
+	    type	color4
+	    size	4
+	    default	{ "1" "1" "1" "1" }
+	    help	"If this parameter is not NULL it will be used instead of the 'foreground' parameter.The luminance of the returned color will be used, together with the alpha as a mask"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexModoBlendLayersScalar" }
+	    parmtag	{ "vray_pluginattr" "foreground_color" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+    }
+
+}

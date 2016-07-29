@@ -1,0 +1,69 @@
+{
+    name	parameters
+    group {
+	name	"TexXSIWeightmapLookup"
+	label	"XSI Weightmap Lookup"
+
+	parm {
+	    name	"plugindata"
+	    label	"XSI Weightmap Lookup"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"TexXSIWeightmapLookup"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexXSIWeightmapLookup" }
+	    parmtag	{ "vray_type" "TEXTURE" }
+	}
+	parm {
+	    name	"channel"
+	    label	"Channel"
+	    type	integer
+	    default	{ "0" }
+	    help	"The channel number * 3 + a number indicating which of the x,y or z values are used"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexXSIWeightmapLookup" }
+	    parmtag	{ "vray_pluginattr" "channel" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"factor"
+	    label	"Factor"
+	    type	float
+	    default	{ "1" }
+	    help	"Weight multiplication factor"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexXSIWeightmapLookup" }
+	    parmtag	{ "vray_pluginattr" "factor" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"weight_min"
+	    label	"Weight min"
+	    type	float
+	    default	{ "0" }
+	    help	"Minimum weight (w/o factor)"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexXSIWeightmapLookup" }
+	    parmtag	{ "vray_pluginattr" "weight_min" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"weight_max"
+	    label	"Weight max"
+	    type	float
+	    default	{ "1" }
+	    help	"Minimum weight (w/o factor)"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexXSIWeightmapLookup" }
+	    parmtag	{ "vray_pluginattr" "weight_max" }
+	    parmtag	{ "vray_type" "float" }
+	}
+    }
+
+}

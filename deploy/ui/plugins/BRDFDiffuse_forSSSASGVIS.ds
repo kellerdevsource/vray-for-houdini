@@ -1,0 +1,126 @@
+{
+    name	parameters
+    group {
+	name	"BRDFDiffuse_forSSSASGVIS"
+	label	"Diffuse for SSSASGVIS"
+
+	parm {
+	    name	"plugindata"
+	    label	"Diffuse for SSSASGVIS"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"BRDFDiffuse_forSSSASGVIS"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFDiffuse_forSSSASGVIS" }
+	    parmtag	{ "vray_type" "BRDF" }
+	}
+	parm {
+	    name	"color"
+	    label	"Color"
+	    type	color
+	    size	3
+	    default	{ "1" "1" "1" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFDiffuse_forSSSASGVIS" }
+	    parmtag	{ "vray_pluginattr" "color" }
+	    parmtag	{ "vray_type" "Color" }
+	}
+	parm {
+	    name	"color_tex"
+	    label	"Color tex"
+	    type	color4
+	    size	4
+	    default	{ "0" "0" "0" "0" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFDiffuse_forSSSASGVIS" }
+	    parmtag	{ "vray_pluginattr" "color_tex" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+	parm {
+	    name	"color_tex_mult"
+	    label	"Color tex mult"
+	    type	float
+	    default	{ "1" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFDiffuse_forSSSASGVIS" }
+	    parmtag	{ "vray_pluginattr" "color_tex_mult" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"transparency"
+	    label	"Transparency"
+	    type	color
+	    size	3
+	    default	{ "0" "0" "0" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFDiffuse_forSSSASGVIS" }
+	    parmtag	{ "vray_pluginattr" "transparency" }
+	    parmtag	{ "vray_type" "Color" }
+	}
+	parm {
+	    name	"transparency_tex"
+	    label	"Transparency tex"
+	    type	color4
+	    size	4
+	    default	{ "0" "0" "0" "0" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFDiffuse_forSSSASGVIS" }
+	    parmtag	{ "vray_pluginattr" "transparency_tex" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+	parm {
+	    name	"transparency_tex_mult"
+	    label	"Transparency tex mult"
+	    type	float
+	    default	{ "1" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFDiffuse_forSSSASGVIS" }
+	    parmtag	{ "vray_pluginattr" "transparency_tex_mult" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"back_color"
+	    label	"Back color"
+	    type	color4
+	    size	4
+	    default	{ "1" "1" "1" "1" }
+	    help	"Color on the back sides of the material"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFDiffuse_forSSSASGVIS" }
+	    parmtag	{ "vray_pluginattr" "back_color" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+	parm {
+	    name	"roughness"
+	    label	"Roughness"
+	    type	float
+	    default	{ "0" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFDiffuse_forSSSASGVIS" }
+	    parmtag	{ "vray_pluginattr" "roughness" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"use_irradiance_map"
+	    label	"Use irradiance map"
+	    type	toggle
+	    default	{ "1" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFDiffuse_forSSSASGVIS" }
+	    parmtag	{ "vray_pluginattr" "use_irradiance_map" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+    }
+
+}

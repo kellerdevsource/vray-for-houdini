@@ -1,0 +1,86 @@
+{
+    name	parameters
+    group {
+	name	"TexRaySwitch"
+	label	"Ray Switch"
+
+	parm {
+	    name	"plugindata"
+	    label	"Ray Switch"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"TexRaySwitch"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexRaySwitch" }
+	    parmtag	{ "vray_type" "TEXTURE" }
+	}
+	parm {
+	    name	"default_texture"
+	    label	"Default tex"
+	    type	color4
+	    size	4
+	    default	{ "0" "0" "0" "1" }
+	    help	"This texture is used if texture is not set for specific ray type or if the ray type is unknown"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexRaySwitch" }
+	    parmtag	{ "vray_pluginattr" "default_texture" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+	parm {
+	    name	"shadow_ray_texture"
+	    label	"Shadow rays tex"
+	    type	color4
+	    size	4
+	    default	{ "0" "0" "0" "0" }
+	    help	"This texture is used for shadow rays"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexRaySwitch" }
+	    parmtag	{ "vray_pluginattr" "shadow_ray_texture" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+	parm {
+	    name	"gi_ray_texture"
+	    label	"GI rays tex"
+	    type	color4
+	    size	4
+	    default	{ "0" "0" "0" "0" }
+	    help	"This texture is used for GI rays"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexRaySwitch" }
+	    parmtag	{ "vray_pluginattr" "gi_ray_texture" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+	parm {
+	    name	"reflect_ray_texture"
+	    label	"Reflection rays tex"
+	    type	color4
+	    size	4
+	    default	{ "0" "0" "0" "0" }
+	    help	"This texture is used for reflection rays"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexRaySwitch" }
+	    parmtag	{ "vray_pluginattr" "reflect_ray_texture" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+	parm {
+	    name	"refract_ray_texture"
+	    label	"Refraction rays tex"
+	    type	color4
+	    size	4
+	    default	{ "0" "0" "0" "0" }
+	    help	"This texture is used for refraction rays"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexRaySwitch" }
+	    parmtag	{ "vray_pluginattr" "refract_ray_texture" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+    }
+
+}

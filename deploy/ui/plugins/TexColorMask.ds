@@ -1,0 +1,90 @@
+{
+    name	parameters
+    group {
+	name	"TexColorMask"
+	label	"Color Mask"
+
+	parm {
+	    name	"plugindata"
+	    label	"Color Mask"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"TexColorMask"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_category" "utility" }
+	    parmtag	{ "vray_plugin" "TexColorMask" }
+	    parmtag	{ "vray_type" "TEXTURE" }
+	}
+	parm {
+	    name	"in_color"
+	    label	"In color"
+	    type	color4
+	    size	4
+	    default	{ "1" "1" "1" "1" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexColorMask" }
+	    parmtag	{ "vray_pluginattr" "in_color" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+	parm {
+	    name	"in_alpha"
+	    label	"In alpha"
+	    type	float
+	    default	{ "1" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexColorMask" }
+	    parmtag	{ "vray_pluginattr" "in_alpha" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"preserve_color"
+	    label	"Preserve color"
+	    type	float
+	    default	{ "0" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexColorMask" }
+	    parmtag	{ "vray_pluginattr" "preserve_color" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"mask"
+	    label	"Mask"
+	    type	color4
+	    size	4
+	    default	{ "1" "1" "1" "1" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexColorMask" }
+	    parmtag	{ "vray_pluginattr" "mask" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+	parm {
+	    name	"mask_alpha"
+	    label	"Mask alpha"
+	    type	float
+	    default	{ "1" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexColorMask" }
+	    parmtag	{ "vray_pluginattr" "mask_alpha" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"mask_alpha_is_luminance"
+	    label	"Mask alpha is luminance"
+	    type	float
+	    default	{ "0" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexColorMask" }
+	    parmtag	{ "vray_pluginattr" "mask_alpha_is_luminance" }
+	    parmtag	{ "vray_type" "float" }
+	}
+    }
+
+}

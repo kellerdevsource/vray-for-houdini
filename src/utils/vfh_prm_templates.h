@@ -58,6 +58,9 @@ public:
 	// PRM_ScriptPages used by the loaded PRM_Templates
 	PRMList& addFromFile(const std::string &path);
 
+	// TODO: need to hide this
+	std::vector< PRM_Template > & getPRMVec() { return m_prmVec; }
+
 	// does not validate anything, just prepends the passed path with the UI root
 	static std::string expandUiPath(const std::string &relPath);
 

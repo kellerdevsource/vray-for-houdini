@@ -1,0 +1,52 @@
+{
+    name	parameters
+    group {
+	name	"MtlVRmat"
+	label	"VRmat"
+
+	parm {
+	    name	"plugindata"
+	    label	"VRmat"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"VRmat material"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "MtlVRmat" }
+	    parmtag	{ "vray_type" "MATERIAL" }
+	}
+	group {
+	    name	"folder"
+	    label	"Parameters"
+
+	    parm {
+		name	"filename"
+		label	"Material file"
+		type	file
+		default	{ "" }
+		help	"Filepath"
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_file_extensions" "vrmat;vismat;vrscene" }
+		parmtag	{ "vray_plugin" "MtlVRmat" }
+		parmtag	{ "vray_pluginattr" "filename" }
+		parmtag	{ "vray_type" "String" }
+	    }
+	    parm {
+		name	"mtlname"
+		label	"Material name"
+		type	string
+		default	{ "" }
+		help	"Material name"
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "MtlVRmat" }
+		parmtag	{ "vray_pluginattr" "mtlname" }
+		parmtag	{ "vray_type" "String" }
+	    }
+	}
+
+    }
+
+}

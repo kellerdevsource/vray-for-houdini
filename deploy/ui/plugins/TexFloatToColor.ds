@@ -1,0 +1,33 @@
+{
+    name	parameters
+    group {
+	name	"TexFloatToColor"
+	label	"Float To Color"
+
+	parm {
+	    name	"plugindata"
+	    label	"Float To Color"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_category" "utility" }
+	    parmtag	{ "vray_plugin" "TexFloatToColor" }
+	    parmtag	{ "vray_type" "TEXTURE" }
+	}
+	parm {
+	    name	"input"
+	    label	"Input"
+	    type	float
+	    default	{ "0" }
+	    help	"The float value"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexFloatToColor" }
+	    parmtag	{ "vray_pluginattr" "input" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+    }
+
+}

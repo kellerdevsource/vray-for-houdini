@@ -1,0 +1,952 @@
+{
+    name	parameters
+    group {
+	name	"TexBerconNoise"
+	label	"Bercon Noise"
+
+	parm {
+	    name	"plugindata"
+	    label	"Bercon Noise"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"TexBerconNoise"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexBerconNoise" }
+	    parmtag	{ "vray_type" "TEXTURE" }
+	}
+	group {
+	    name	"folder"
+	    label	"Common"
+
+	    parm {
+		name	"compatibility_with"
+		label	"Compatibility with"
+		type	ordinal
+		default	{ "0" }
+		help	"This is used to differentiate between textures exported from different applications"
+		menu	{
+		    "0"	"Max"
+		    "1"	"Maya"
+		}
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "compatibility_with" }
+		parmtag	{ "vray_type" "int" }
+	    }
+	    parm {
+		name	"alpha_from_intensity"
+		label	"Alpha from intensity"
+		type	ordinal
+		default	{ "0" }
+		help	"If 2 - the alpha is forced to 1.0f; 1 - the resulting alpha is the color intensity (if compatibility_with is 0) or the color luminance (if compatibility_with is 1); 0 - the alpha is taken from the bitmap alpha"
+		menu	{
+		    "0"	"Bitmap alpha"
+		    "1"	"Color intensity/luminance"
+		    "2"	"Force opaque"
+		}
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "alpha_from_intensity" }
+		parmtag	{ "vray_type" "int" }
+	    }
+	    parm {
+		name	"invert"
+		label	"Invert"
+		type	toggle
+		default	{ "0" }
+		help	"If true, the resulting texture color will be inverted"
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "invert" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	    parm {
+		name	"invert_alpha"
+		label	"Invert alpha"
+		type	toggle
+		default	{ "1" }
+		help	"If true and invert is on, the resulting texture alpha will be inverted too. If false, just the color will be inverted"
+		disablewhen	"{ invert != 1 }"
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "invert_alpha" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	    parm {
+		name	"color_mult"
+		label	"Color mult"
+		type	color4
+		size	4
+		default	{ "1" "1" "1" "1" }
+		help	"A multiplier for the texture color"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "color_mult" }
+		parmtag	{ "vray_type" "Texture" }
+	    }
+	    parm {
+		name	"color_offset"
+		label	"Color offset"
+		type	color4
+		size	4
+		default	{ "0" "0" "0" "0" }
+		help	"An additional offset for the texture color"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "color_offset" }
+		parmtag	{ "vray_type" "Texture" }
+	    }
+	    parm {
+		name	"alpha_mult"
+		label	"Alpha mult"
+		type	float
+		default	{ "1" }
+		help	"A multiplier for the texture alpha"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "alpha_mult" }
+		parmtag	{ "vray_type" "TextureFloat" }
+	    }
+	    parm {
+		name	"alpha_offset"
+		label	"Alpha offset"
+		type	float
+		default	{ "0" }
+		help	"An additional offset for the texture alpha"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "alpha_offset" }
+		parmtag	{ "vray_type" "TextureFloat" }
+	    }
+	    parm {
+		name	"nouvw_color"
+		label	"No UVs Color"
+		type	color4
+		size	4
+		default	{ "0.5" "0.5" "0.5" "1" }
+		help	"The color when there are no valid uvw coordinates"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "nouvw_color" }
+		parmtag	{ "vray_type" "Texture" }
+	    }
+	}
+
+	group {
+	    name	"folder2"
+	    label	"Mapped"
+
+	    parm {
+		name	"uvwgen"
+		label	"Uvwgen"
+		type	oppath
+		default	{ "" }
+		help	"The uvw generator for the texture"
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "oprelative" "." }
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "uvwgen" }
+		parmtag	{ "vray_type" "Object" }
+	    }
+	    parm {
+		name	"placement_type"
+		label	"Placement type"
+		type	ordinal
+		default	{ "0" }
+		help	"The way the valid portion of the texture is applied: 0 - the whole texture is valid, 1 - crop, 2 -place"
+		menu	{
+		    "0"	"Whole texture is valid"
+		    "1"	"Crop"
+		    "2"	"Place"
+		}
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "placement_type" }
+		parmtag	{ "vray_type" "int" }
+	    }
+	    parm {
+		name	"u"
+		label	"U"
+		type	float
+		default	{ "0" }
+		help	"U coordinate of the valid texture sector"
+		disablewhen	"{ placement_type != 1 placement_type != 2 }"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "u" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"v"
+		label	"V"
+		type	float
+		default	{ "0" }
+		help	"V coordinate of the valid texture sector"
+		disablewhen	"{ placement_type != 1 placement_type != 2 }"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "v" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"w"
+		label	"W"
+		type	float
+		default	{ "1" }
+		help	"Width of the valid texture sector"
+		disablewhen	"{ placement_type != 1 placement_type != 2 }"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "w" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"h"
+		label	"H"
+		type	float
+		default	{ "1" }
+		help	"Height of the valid texture sector"
+		disablewhen	"{ placement_type != 1 placement_type != 2 }"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "h" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"jitter"
+		label	"Jitter"
+		type	float
+		default	{ "0" }
+		help	"Amount of random placement variation"
+		disablewhen	"{ placement_type != 2 }"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "jitter" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"tile_u"
+		label	"Tile u"
+		type	toggle
+		default	{ "0" }
+		help	"If true there is horizontal tiling"
+		disablewhen	"{ placement_type != 2 }"
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "tile_u" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	    parm {
+		name	"tile_v"
+		label	"Tile v"
+		type	toggle
+		default	{ "0" }
+		help	"If true there is vertical tiling"
+		disablewhen	"{ placement_type != 2 }"
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "tile_v" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	    parm {
+		name	"uv_noise_on"
+		label	"UV noise on"
+		type	toggle
+		default	{ "0" }
+		help	"If true the noise is enabled"
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "uv_noise_on" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	    parm {
+		name	"uv_noise_animate"
+		label	"Animate UV noise"
+		type	toggle
+		default	{ "0" }
+		help	"If true the noise is animated. Use \"UV noise phase\" to animate the noise"
+		disablewhen	"{ uv_noise_on != 1 }"
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "uv_noise_animate" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	    parm {
+		name	"uv_noise_amount"
+		label	"UV noise amount"
+		type	float
+		default	{ "1" }
+		help	"UV noise amount"
+		disablewhen	"{ uv_noise_on != 1 }"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "uv_noise_amount" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"uv_noise_levels"
+		label	"UV noise levels"
+		type	float
+		default	{ "1" }
+		help	"UV noise iterations"
+		disablewhen	"{ uv_noise_on != 1 }"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "uv_noise_levels" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"uv_noise_size"
+		label	"UV noise size"
+		type	float
+		default	{ "1" }
+		help	"UV noise size"
+		disablewhen	"{ uv_noise_on != 1 }"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "uv_noise_size" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"un_noise_phase"
+		label	"UV noise phase"
+		type	float
+		default	{ "0" }
+		help	"UV noise phase"
+		disablewhen	"{ uv_noise_on != 1 } { uv_noise_animate != 1 }"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "un_noise_phase" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"noise_color1"
+		label	"Color 1"
+		type	color
+		size	3
+		default	{ "0" "0" "0" }
+		help	"noise color 1"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "noise_color1" }
+		parmtag	{ "vray_type" "Color" }
+	    }
+	    parm {
+		name	"noise_color2"
+		label	"Color 2"
+		type	color
+		size	3
+		default	{ "0" "0" "0" }
+		help	"noise color 2"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "noise_color2" }
+		parmtag	{ "vray_type" "Color" }
+	    }
+	    parm {
+		name	"noise_map1"
+		label	"Color 1 (map)"
+		type	color4
+		size	4
+		default	{ "0" "0" "0" "0" }
+		help	"noise map 1"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "noise_map1" }
+		parmtag	{ "vray_type" "Texture" }
+	    }
+	    parm {
+		name	"noise_map2"
+		label	"Color 2 (map)"
+		type	color4
+		size	4
+		default	{ "0" "0" "0" "0" }
+		help	"noise map 2"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "noise_map2" }
+		parmtag	{ "vray_type" "Texture" }
+	    }
+	}
+
+	group {
+	    name	"folder3"
+	    label	"General"
+
+	    parm {
+		name	"noise_size"
+		label	"Size"
+		type	float
+		default	{ "25" }
+		help	"noise size"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "noise_size" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"low_tresh"
+		label	"Low"
+		type	float
+		default	{ "0" }
+		help	"default = 0.0f"
+		range	{ 0 1000 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "low_tresh" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"high_tresh"
+		label	"High"
+		type	float
+		default	{ "1" }
+		help	"default = 1.0f"
+		range	{ 0 1000 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "high_tresh" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	}
+
+	group {
+	    name	"folder4"
+	    label	"Noise Function"
+
+	    parm {
+		name	"uvw_dist"
+		label	"UVW"
+		type	ordinal
+		default	{ "0" }
+		help	"UVW distance"
+		menu	{
+		    "0"	"Normal"
+		    "1"	"Radial"
+		    "2"	"Spherical"
+		}
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "uvw_dist" }
+		parmtag	{ "vray_type" "int" }
+	    }
+	    parm {
+		name	"noise_function"
+		label	"Noise Type"
+		type	ordinal
+		default	{ "0" }
+		help	"noise function"
+		menu	{
+		    "0"	"Perlin 2D"
+		    "1"	"Perlin 3D"
+		    "2"	"Perlin 4D"
+		    "3"	"Simplex 2D"
+		    "4"	"Simplex 3D"
+		    "5"	"Simplex 4D"
+		    "6"	"Worley (Voronoi)"
+		}
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "noise_function" }
+		parmtag	{ "vray_type" "int" }
+	    }
+	    parm {
+		name	"noise_phase"
+		label	"Phase"
+		type	float
+		default	{ "0" }
+		help	"noise phase"
+		disablewhen	"{ noise_function != 2 noise_function != 5 }"
+		range	{ 1000 1000 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "noise_phase" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"worley_spread"
+		label	"Spread"
+		type	float
+		default	{ "3" }
+		help	"worley spread"
+		disablewhen	"{ noise_function != 6 }"
+		range	{ 0 1000 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "worley_spread" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"worley_F1"
+		label	"F1"
+		type	float
+		default	{ "1" }
+		help	"worley F1"
+		disablewhen	"{ noise_function != 6 }"
+		range	{ 1000 1000 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "worley_F1" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"worley_F2"
+		label	"F2"
+		type	float
+		default	{ "0" }
+		help	"worley F2"
+		disablewhen	"{ noise_function != 6 }"
+		range	{ 1000 1000 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "worley_F2" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"worley_F3"
+		label	"F3"
+		type	float
+		default	{ "0" }
+		help	"worley F3"
+		disablewhen	"{ noise_function != 6 }"
+		range	{ 1000 1000 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "worley_F3" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"worley_F4"
+		label	"F4"
+		type	float
+		default	{ "0" }
+		help	"worley F4"
+		disablewhen	"{ noise_function != 6 }"
+		range	{ 1000 1000 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "worley_F4" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"worley_distance"
+		label	"Distance"
+		type	ordinal
+		default	{ "0" }
+		help	"worley distance"
+		disablewhen	"{ noise_function != 6 }"
+		menu	{
+		    "0"	"Linear"
+		    "1"	"Square"
+		    "2"	"Manhattan"
+		    "3"	"Chebychev"
+		    "4"	"Minkovsky 0.5"
+		    "5"	"Minkovsky 4"
+		}
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "worley_distance" }
+		parmtag	{ "vray_type" "int" }
+	    }
+	}
+
+	group {
+	    name	"folder5"
+	    label	"Noise Fractal"
+
+	    parm {
+		name	"fractal_type"
+		label	"Fractal"
+		type	ordinal
+		default	{ "0" }
+		help	"fractal type"
+		menu	{
+		    "0"	"None"
+		    "1"	"Fractal"
+		    "2"	"Turbulence"
+		    "3"	"fBm"
+		    "4"	"fBm Turbulence"
+		    "5"	"Hetero Terrain"
+		    "6"	"Hybrid Multi Fractal"
+		    "7"	"Ridged Multi Fractal"
+		}
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "fractal_type" }
+		parmtag	{ "vray_type" "int" }
+	    }
+	    parm {
+		name	"fractal_levels"
+		label	"Levels"
+		type	float
+		default	{ "3" }
+		help	"fractal levels"
+		disablewhen	"{ fractal_type == 0 }"
+		range	{ 1 20 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "fractal_levels" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"fractal_offset"
+		label	"Offset"
+		type	float
+		default	{ "0" }
+		help	"fractal offset"
+		disablewhen	"{ fractal_type != 5 fractal_type != 6 fractal_type != 7 }"
+		range	{ 0 100 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "fractal_offset" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"fractal_gain"
+		label	"Gain"
+		type	float
+		default	{ "5" }
+		help	"fractal gain"
+		disablewhen	"{ fractal_type != 6 fractal_type != 7 }"
+		range	{ 0 100 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "fractal_gain" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"fractal_lacunarity"
+		label	"Lacunarity"
+		type	float
+		default	{ "0" }
+		help	"fractal lacunarity"
+		disablewhen	"{ fractal_type <= =3 }"
+		range	{ 0 100 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "fractal_lacunarity" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"fractal_H"
+		label	"Exponent"
+		type	float
+		default	{ "0" }
+		help	"fractal H"
+		disablewhen	"{ fractal_type <= =3 }"
+		range	{ 0 100 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "fractal_H" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	}
+
+	group {
+	    name	"folder6"
+	    label	"Distortion"
+
+	    parm {
+		name	"use_dist"
+		label	"Use distortion"
+		type	toggle
+		default	{ "0" }
+		help	"use distortion"
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "use_dist" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	    parm {
+		name	"dist_str"
+		label	"Distortion Strength"
+		type	float
+		default	{ "0.1" }
+		help	"distortion strength"
+		disablewhen	"{ use_dist != 1 }"
+		range	{ 0 1000 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "dist_str" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"dist_map"
+		label	"Distortion (map)"
+		type	color4
+		size	4
+		default	{ "0" "0" "0" "0" }
+		help	"distortion map - works similarly to a bump map, solid colors have no effect"
+		disablewhen	"{ use_dist != 1 }"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "dist_map" }
+		parmtag	{ "vray_type" "Texture" }
+	    }
+	    parm {
+		name	"dist_map2"
+		label	"Distortion Strength (map)"
+		type	color4
+		size	4
+		default	{ "0" "0" "0" "0" }
+		help	"texture for distortion strength"
+		disablewhen	"{ use_dist != 1 }"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "dist_map2" }
+		parmtag	{ "vray_type" "Texture" }
+	    }
+	}
+
+	group {
+	    name	"folder7"
+	    label	"Map parameters"
+
+	    parm {
+		name	"tex_size"
+		label	"Size (map)"
+		type	color4
+		size	4
+		default	{ "0" "0" "0" "0" }
+		help	"texture for the size"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "tex_size" }
+		parmtag	{ "vray_type" "Texture" }
+	    }
+	    parm {
+		name	"tex_low"
+		label	"Threshold low (map)"
+		type	color4
+		size	4
+		default	{ "0" "0" "0" "0" }
+		help	"texture for low threshold"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "tex_low" }
+		parmtag	{ "vray_type" "Texture" }
+	    }
+	    parm {
+		name	"tex_high"
+		label	"Threshold high (map)"
+		type	color4
+		size	4
+		default	{ "0" "0" "0" "0" }
+		help	"texture for high threshold"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "tex_high" }
+		parmtag	{ "vray_type" "Texture" }
+	    }
+	    parm {
+		name	"tex_phase"
+		label	"Phase (map)"
+		type	color4
+		size	4
+		default	{ "0" "0" "0" "0" }
+		help	"texture for phase"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "tex_phase" }
+		parmtag	{ "vray_type" "Texture" }
+	    }
+	    parm {
+		name	"tex_spread"
+		label	"Spread (map)"
+		type	color4
+		size	4
+		default	{ "0" "0" "0" "0" }
+		help	"texture for spread"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "tex_spread" }
+		parmtag	{ "vray_type" "Texture" }
+	    }
+	    parm {
+		name	"tex_F1"
+		label	"F1 (map)"
+		type	color4
+		size	4
+		default	{ "0" "0" "0" "0" }
+		help	"texture for F1"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "tex_F1" }
+		parmtag	{ "vray_type" "Texture" }
+	    }
+	    parm {
+		name	"tex_F2"
+		label	"F2 (map)"
+		type	color4
+		size	4
+		default	{ "0" "0" "0" "0" }
+		help	"texture for F2"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "tex_F2" }
+		parmtag	{ "vray_type" "Texture" }
+	    }
+	    parm {
+		name	"tex_F3"
+		label	"F3 (map)"
+		type	color4
+		size	4
+		default	{ "0" "0" "0" "0" }
+		help	"texture for F3"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "tex_F3" }
+		parmtag	{ "vray_type" "Texture" }
+	    }
+	    parm {
+		name	"tex_F4"
+		label	"F4 (map)"
+		type	color4
+		size	4
+		default	{ "0" "0" "0" "0" }
+		help	"texture for F4"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "tex_F4" }
+		parmtag	{ "vray_type" "Texture" }
+	    }
+	    parm {
+		name	"tex_levels"
+		label	"Levels (map)"
+		type	color4
+		size	4
+		default	{ "0" "0" "0" "0" }
+		help	"texture for fractal levels"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "tex_levels" }
+		parmtag	{ "vray_type" "Texture" }
+	    }
+	    parm {
+		name	"tex_offset"
+		label	"Offset (map)"
+		type	color4
+		size	4
+		default	{ "0" "0" "0" "0" }
+		help	"texture for fractal offset"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "tex_offset" }
+		parmtag	{ "vray_type" "Texture" }
+	    }
+	    parm {
+		name	"tex_gain"
+		label	"Gain (map)"
+		type	color4
+		size	4
+		default	{ "0" "0" "0" "0" }
+		help	"texture for fractal gain"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "tex_gain" }
+		parmtag	{ "vray_type" "Texture" }
+	    }
+	    parm {
+		name	"tex_lacunarity"
+		label	"Lacunarity (map)"
+		type	color4
+		size	4
+		default	{ "0" "0" "0" "0" }
+		help	"texture for fractal lacunarity"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "tex_lacunarity" }
+		parmtag	{ "vray_type" "Texture" }
+	    }
+	    parm {
+		name	"tex_exponent"
+		label	"Exponent (map)"
+		type	color4
+		size	4
+		default	{ "0" "0" "0" "0" }
+		help	"texture for exponent"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "tex_exponent" }
+		parmtag	{ "vray_type" "Texture" }
+	    }
+	    parm {
+		name	"use_curve_input"
+		label	"Use curve input"
+		type	toggle
+		default	{ "0" }
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "use_curve_input" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	    parm {
+		name	"curve_input"
+		label	"Curve input"
+		type	float
+		default	{ "0.5" }
+		help	"If curve is used the output value will be taken from this texture"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "TexBerconNoise" }
+		parmtag	{ "vray_pluginattr" "curve_input" }
+		parmtag	{ "vray_type" "TextureFloat" }
+	    }
+	}
+
+    }
+
+}

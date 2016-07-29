@@ -1,0 +1,76 @@
+{
+    name	parameters
+    group {
+	name	"MayaMtlMatte"
+	label	"Maya Mtl Matte"
+
+	parm {
+	    name	"plugindata"
+	    label	"Maya Mtl Matte"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"MayaMtlMatte"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "MayaMtlMatte" }
+	    parmtag	{ "vray_type" "MATERIAL" }
+	}
+	parm {
+	    name	"mode"
+	    label	"Mode"
+	    type	ordinal
+	    default	{ "2" }
+	    help	"The matte mode (0 - black hole; 1 - solid matte; 2 - opacity gain; 3 - solid alpha)"
+	    menu	{
+		"0"	"Black hole"
+		"1"	"Solid matte"
+		"2"	"Opacity gain"
+		"3"	"Solid alpha"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "MayaMtlMatte" }
+	    parmtag	{ "vray_pluginattr" "mode" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"base_mtl"
+	    label	"Base mtl"
+	    type	oppath
+	    default	{ "" }
+	    help	"Base material"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "oprelative" "." }
+	    parmtag	{ "vray_plugin" "MayaMtlMatte" }
+	    parmtag	{ "vray_pluginattr" "base_mtl" }
+	    parmtag	{ "vray_type" "Object" }
+	}
+	parm {
+	    name	"matte_opacity"
+	    label	"Matte opacity"
+	    type	float
+	    default	{ "0" }
+	    help	"Matte opacity (0 is transparent; 1 is opaque or normal)"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "MayaMtlMatte" }
+	    parmtag	{ "vray_pluginattr" "matte_opacity" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"alpha_transparency"
+	    label	"Alpha transparency"
+	    type	float
+	    default	{ "0" }
+	    help	"Alpha transparency (used only in mode 3)"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "MayaMtlMatte" }
+	    parmtag	{ "vray_pluginattr" "alpha_transparency" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+    }
+
+}

@@ -1,0 +1,57 @@
+{
+    name	parameters
+    group {
+	name	"MtlMaterialID"
+	label	"Material ID"
+
+	parm {
+	    name	"plugindata"
+	    label	"Material ID"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "MtlMaterialID" }
+	    parmtag	{ "vray_type" "MATERIAL" }
+	}
+	parm {
+	    name	"base_mtl"
+	    label	"Base mtl"
+	    type	oppath
+	    default	{ "" }
+	    help	"The base material"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "oprelative" "." }
+	    parmtag	{ "vray_plugin" "MtlMaterialID" }
+	    parmtag	{ "vray_pluginattr" "base_mtl" }
+	    parmtag	{ "vray_type" "Object" }
+	}
+	parm {
+	    name	"material_id_color"
+	    label	"Material id color"
+	    type	color4
+	    size	4
+	    default	{ "0" "0" "0" "1" }
+	    help	"The material id color"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "MtlMaterialID" }
+	    parmtag	{ "vray_pluginattr" "material_id_color" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+	parm {
+	    name	"material_id_number"
+	    label	"ID"
+	    type	integer
+	    default	{ "0" }
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "MtlMaterialID" }
+	    parmtag	{ "vray_pluginattr" "material_id_number" }
+	    parmtag	{ "vray_type" "int" }
+	}
+    }
+
+}

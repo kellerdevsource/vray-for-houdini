@@ -12,6 +12,7 @@
 #define VRAY_FOR_HOUDINI_VOP_NODE_MTLMULTI_H
 
 #include "vop_node_base.h"
+#include "vfh_prm_templates.h"
 
 
 namespace VRayForHoudini {
@@ -22,7 +23,7 @@ class MtlMulti:
 		public VOP::NodeBase
 {
 public:
-	static void           addPrmTemplate(Parm::PRMTmplList &prmTemplate);
+	static void           addPrmTemplate(Parm::PRMList &prmTemplate);
 
 public:
 	MtlMulti(OP_Network *parent, const char *name, OP_Operator *entry):NodeBase(parent, name, entry) {}

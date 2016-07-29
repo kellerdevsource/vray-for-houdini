@@ -1,0 +1,298 @@
+{
+    name	parameters
+    group {
+	name	"GeomStaticMesh"
+	label	"Mesh"
+
+	parm {
+	    name	"plugindata"
+	    label	"Mesh"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"Mesh settings"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "GeomStaticMesh" }
+	    parmtag	{ "vray_type" "GEOMETRY" }
+	}
+	parm {
+	    name	"weld_threshold"
+	    label	"Weld threshold"
+	    type	float
+	    default	{ "-1" }
+	    help	"If this parameter is present, the vertices of the mesh which are within the given threshold of one another will be welded. If absent or negative, no welding is performed"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "GeomStaticMesh" }
+	    parmtag	{ "vray_pluginattr" "weld_threshold" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"primary_visibility"
+	    label	"Primary visibility"
+	    type	toggle
+	    default	{ "1" }
+	    help	"If off shading an intersection with this mesh will not generate a gbuffer"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "GeomStaticMesh" }
+	    parmtag	{ "vray_pluginattr" "primary_visibility" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"dynamic_geometry"
+	    label	"Dynamic geometry"
+	    type	toggle
+	    default	{ "0" }
+	    help	"When this flag is true V-Ray will use dynamic geometry for this mesh(instead of copying the mesh many times in the BSP tree, only the bounding box will be present many times and ray intersections will occur in a separate object space BSP tree)"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "GeomStaticMesh" }
+	    parmtag	{ "vray_pluginattr" "dynamic_geometry" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"environment_geometry"
+	    label	"Environment geometry"
+	    type	toggle
+	    default	{ "0" }
+	    help	"When this flag is true V-Ray will use this geometry as part of the background(for example, this will be included in matte objects"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "GeomStaticMesh" }
+	    parmtag	{ "vray_pluginattr" "environment_geometry" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"smooth_uv_borders"
+	    label	"Smooth uv borders"
+	    type	toggle
+	    default	{ "1" }
+	    help	"true to smooth UVs at mesh borders when rendering this mesh as a subdivision surface"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "GeomStaticMesh" }
+	    parmtag	{ "vray_pluginattr" "smooth_uv_borders" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"smooth_uv"
+	    label	"Smooth UVs"
+	    type	toggle
+	    default	{ "1" }
+	    help	"true to smooth UVs when rendering this mesh as a subdivision surface"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "GeomStaticMesh" }
+	    parmtag	{ "vray_pluginattr" "smooth_uv" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"osd_subdiv_level"
+	    label	"Subdivision level"
+	    type	integer
+	    default	{ "0" }
+	    help	"Level of OpenSubdiv subdivision"
+	    disablewhen	"{ osd_subdiv_enable != 1 }"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "GeomStaticMesh" }
+	    parmtag	{ "vray_pluginattr" "osd_subdiv_level" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"osd_subdiv_type"
+	    label	"Type"
+	    type	ordinal
+	    default	{ "0" }
+	    help	"Type of OpenSubdiv subdivision"
+	    disablewhen	"{ osd_subdiv_level <= 0 } { osd_subdiv_enable != 1 }"
+	    menu	{
+		"0"	"Catmull-Clark"
+		"1"	"Loop"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "GeomStaticMesh" }
+	    parmtag	{ "vray_pluginattr" "osd_subdiv_type" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"osd_preserve_map_borders"
+	    label	"Preserve map borders"
+	    type	ordinal
+	    default	{ "1" }
+	    help	"Different modes for subdividing the uv boundaries with OpenSubdiv"
+	    disablewhen	"{ osd_subdiv_level <= 0 } { osd_subdiv_uvs != 1 } { osd_subdiv_enable != 1 }"
+	    menu	{
+		"0"	"None"
+		"1"	"Internal"
+		"2"	"All"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "GeomStaticMesh" }
+	    parmtag	{ "vray_pluginattr" "osd_preserve_map_borders" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"osd_preserve_geometry_borders"
+	    label	"Preserve geometry borders"
+	    type	toggle
+	    default	{ "0" }
+	    help	"Keep the geometry boundaries in place while subdividing the mesh with OpenSubdiv"
+	    disablewhen	"{ osd_subdiv_level <= 0 } { osd_subdiv_enable != 1 }"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "GeomStaticMesh" }
+	    parmtag	{ "vray_pluginattr" "osd_preserve_geometry_borders" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"osd_subdiv_uvs"
+	    label	"Subdivide UVs"
+	    type	toggle
+	    default	{ "1" }
+	    help	"Smooth UVs when applying subdivision with OpenSubdiv"
+	    disablewhen	"{ osd_subdiv_level <= 0 } { osd_subdiv_enable != 1 }"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "GeomStaticMesh" }
+	    parmtag	{ "vray_pluginattr" "osd_subdiv_uvs" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	multiparm {
+	    name	"map_channels_names"
+	    label	"Map channels names"
+	    default	0
+	    parmtag	{ "vray_plugin" "GeomStaticMesh" }
+	    parmtag	{ "vray_pluginattr" "map_channels_names" }
+	    parmtag	{ "vray_type" "List<String>" }
+
+	    parm {
+		name	"map_channels_names#"
+		label	"Map channels names"
+		type	string
+		default	{ "" }
+		help	"A list containing the names of the mapping channels"
+		range	{ 0 1 }
+		export	none
+	    }
+	}
+
+	parm {
+	    name	"reference_mesh"
+	    label	"Reference mesh"
+	    type	oppath
+	    default	{ "" }
+	    help	"The reference mesh which is used to calculate the uvw coordinates when a 3d placement is used"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "oprelative" "." }
+	    parmtag	{ "vray_plugin" "GeomStaticMesh" }
+	    parmtag	{ "vray_pluginattr" "reference_mesh" }
+	    parmtag	{ "vray_type" "Object" }
+	}
+	groupsimple {
+	    name	"reference_transform"
+	    label	"Reference transform"
+	    grouptag	{ "vray_plugin" "GeomStaticMesh" }
+	    grouptag	{ "vray_pluginattr" "reference_transform" }
+	    grouptag	{ "vray_type" "Transform" }
+
+	    parm {
+		name	"reference_transform_xOrd"
+		label	"Transform Order"
+		type	ordinal
+		default	{ "0" }
+		menu	{
+		    "srt"	"Scale Rotate Translate"
+		    "str"	"Scale Translate Rotate"
+		    "rst"	"Rotate Scale Translate"
+		    "rts"	"Rotate Translate Scale"
+		    "tsr"	"Translate Scale Rotate"
+		    "trs"	"Translate Rotate Scale"
+		}
+		range	{ 0 1 }
+		export	none
+	    }
+	    parm {
+		name	"reference_transform_rOrd"
+		label	"Rotation Order"
+		type	ordinal
+		default	{ "0" }
+		menu	{
+		    "xyz"	"Rx Ry Rz"
+		    "xzy"	"Rx Rz Ry"
+		    "yxz"	"Ry Rx Rz"
+		    "yzx"	"Ry Rz Rx"
+		    "zxy"	"Rz Rx Ry"
+		    "zyx"	"Rz Ry Rx"
+		}
+		range	{ 0 1 }
+		export	none
+	    }
+	    parm {
+		name	"reference_transform_trans"
+		label	"Translate"
+		type	float
+		size	3
+		default	{ "0" "0" "0" }
+		help	"The transform of the reference mesh"
+		range	{ 0 10 }
+		export	none
+	    }
+	    parm {
+		name	"reference_transform_rot"
+		label	"Rotate"
+		type	angle
+		size	3
+		default	{ "0" "0" "0" }
+		help	"The transform of the reference mesh"
+		range	{ 0 10 }
+		export	none
+	    }
+	    parm {
+		name	"reference_transform_scale"
+		label	"Scale"
+		type	float
+		size	3
+		default	{ "1" "1" "1" }
+		help	"The transform of the reference mesh"
+		range	{ 0 10 }
+		export	none
+	    }
+	    parm {
+		name	"reference_transform_pivot"
+		label	"Pivot"
+		type	float
+		size	3
+		default	{ "0" "0" "0" }
+		help	"The transform of the reference mesh"
+		range	{ 0 10 }
+		export	none
+	    }
+	}
+
+	group {
+	    name	"folder"
+	    label	"OpenSubdiv (static subdivision)"
+
+	    parm {
+		name	"osd_subdiv_enable"
+		label	"Enable OpenSubdiv"
+		type	toggle
+		default	{ "1" }
+		help	"True to enable OpenSubdiv subdivision"
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "GeomStaticMesh" }
+		parmtag	{ "vray_pluginattr" "osd_subdiv_enable" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	}
+
+    }
+
+}

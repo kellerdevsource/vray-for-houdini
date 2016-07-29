@@ -1,0 +1,712 @@
+{
+    name	parameters
+    group {
+	name	"ColorCorrect"
+	label	"Color Correct"
+
+	parm {
+	    name	"plugindata"
+	    label	"Color Correct"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"Color correct"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_category" "utility" }
+	    parmtag	{ "vray_plugin" "ColorCorrect" }
+	    parmtag	{ "vray_type" "TEXTURE" }
+	}
+	parm {
+	    name	"source_color"
+	    label	"Source color"
+	    type	color4
+	    size	4
+	    default	{ "0" "0" "0" "0" }
+	    help	"Source color"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "ColorCorrect" }
+	    parmtag	{ "vray_pluginattr" "source_color" }
+	    parmtag	{ "vray_type" "AColor" }
+	}
+	parm {
+	    name	"texture_map"
+	    label	"Texture map"
+	    type	color4
+	    size	4
+	    default	{ "0" "0" "0" "1" }
+	    help	"The texture being color corrected"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "ColorCorrect" }
+	    parmtag	{ "vray_pluginattr" "texture_map" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+	group {
+	    name	"folder"
+	    label	"RGB Pre-process"
+
+	    parm {
+		name	"preprocess"
+		label	"Pre-process On"
+		type	toggle
+		default	{ "0" }
+		help	"true to enable preprocessing"
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "ColorCorrect" }
+		parmtag	{ "vray_pluginattr" "preprocess" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	    parm {
+		name	"pre_brightness"
+		label	"Pre brightness"
+		type	float
+		default	{ "0" }
+		help	"Added to the texture brightness"
+		disablewhen	"{ preprocess != 1 }"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "ColorCorrect" }
+		parmtag	{ "vray_pluginattr" "pre_brightness" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"pre_contrast"
+		label	"Pre contrast"
+		type	float
+		default	{ "1" }
+		help	"Contrast"
+		disablewhen	"{ preprocess != 1 }"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "ColorCorrect" }
+		parmtag	{ "vray_pluginattr" "pre_contrast" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"pre_gamma"
+		label	"Pre gamma"
+		type	float
+		default	{ "1" }
+		help	"Gamma"
+		disablewhen	"{ preprocess != 1 }"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "ColorCorrect" }
+		parmtag	{ "vray_pluginattr" "pre_gamma" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"pre_mono"
+		label	"Pre mono"
+		type	toggle
+		default	{ "0" }
+		help	"true to convert to grayscale"
+		disablewhen	"{ preprocess != 1 }"
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "ColorCorrect" }
+		parmtag	{ "vray_pluginattr" "pre_mono" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	    parm {
+		name	"pre_invert"
+		label	"Pre invert"
+		type	toggle
+		default	{ "0" }
+		help	"true to invert the input color"
+		disablewhen	"{ preprocess != 1 }"
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "ColorCorrect" }
+		parmtag	{ "vray_pluginattr" "pre_invert" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	    parm {
+		name	"pre_unmult_alpha"
+		label	"Pre unmult alpha"
+		type	toggle
+		default	{ "0" }
+		help	"true to unmultiply alpha"
+		disablewhen	"{ preprocess != 1 }"
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "ColorCorrect" }
+		parmtag	{ "vray_pluginattr" "pre_unmult_alpha" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	    parm {
+		name	"pre_clamp"
+		label	"Pre clamp"
+		type	toggle
+		default	{ "0" }
+		help	"true to clamp the input color"
+		disablewhen	"{ preprocess != 1 }"
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "ColorCorrect" }
+		parmtag	{ "vray_pluginattr" "pre_clamp" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	    parm {
+		name	"pre_clamp_min"
+		label	"Pre clamp min"
+		type	float
+		default	{ "0" }
+		help	"low clamp value"
+		disablewhen	"{ preprocess != 1 } { pre_clamp != 1 }"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "ColorCorrect" }
+		parmtag	{ "vray_pluginattr" "pre_clamp_min" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"pre_clamp_max"
+		label	"Pre clamp max"
+		type	float
+		default	{ "1" }
+		help	"high clamp value"
+		disablewhen	"{ preprocess != 1 } { pre_clamp != 1 }"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "ColorCorrect" }
+		parmtag	{ "vray_pluginattr" "pre_clamp_max" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"pre_clamp_normalize"
+		label	"Pre clamp normalize"
+		type	toggle
+		default	{ "0" }
+		help	"true to normalize the clamped input to 0.0-1.0"
+		disablewhen	"{ preprocess != 1 } { pre_clamp != 1 }"
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "ColorCorrect" }
+		parmtag	{ "vray_pluginattr" "pre_clamp_normalize" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	}
+
+	group {
+	    name	"folder2"
+	    label	"HSL"
+
+	    parm {
+		name	"hsl_on"
+		label	"HSL On"
+		type	toggle
+		default	{ "0" }
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "ColorCorrect" }
+		parmtag	{ "vray_pluginattr" "hsl_on" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	    parm {
+		name	"hsl_hue_offset"
+		label	"Hsl hue offset"
+		type	float
+		default	{ "0" }
+		disablewhen	"{ hsl_on != 1 }"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "ColorCorrect" }
+		parmtag	{ "vray_pluginattr" "hsl_hue_offset" }
+		parmtag	{ "vray_type" "TextureFloat" }
+	    }
+	    parm {
+		name	"hsl_hue_gain"
+		label	"Hsl hue gain"
+		type	float
+		default	{ "0" }
+		disablewhen	"{ hsl_on != 1 }"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "ColorCorrect" }
+		parmtag	{ "vray_pluginattr" "hsl_hue_gain" }
+		parmtag	{ "vray_type" "TextureFloat" }
+	    }
+	    parm {
+		name	"hsl_saturation_offset"
+		label	"Hsl saturation offset"
+		type	float
+		default	{ "0" }
+		disablewhen	"{ hsl_on != 1 }"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "ColorCorrect" }
+		parmtag	{ "vray_pluginattr" "hsl_saturation_offset" }
+		parmtag	{ "vray_type" "TextureFloat" }
+	    }
+	    parm {
+		name	"hsl_saturation_gain"
+		label	"Hsl saturation gain"
+		type	float
+		default	{ "1" }
+		disablewhen	"{ hsl_on != 1 }"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "ColorCorrect" }
+		parmtag	{ "vray_pluginattr" "hsl_saturation_gain" }
+		parmtag	{ "vray_type" "TextureFloat" }
+	    }
+	    parm {
+		name	"hsl_lightness_offset"
+		label	"Hsl lightness offset"
+		type	float
+		default	{ "0" }
+		disablewhen	"{ hsl_on != 1 }"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "ColorCorrect" }
+		parmtag	{ "vray_pluginattr" "hsl_lightness_offset" }
+		parmtag	{ "vray_type" "TextureFloat" }
+	    }
+	    parm {
+		name	"hsl_lightness_gain"
+		label	"Hsl lightness gain"
+		type	float
+		default	{ "1" }
+		disablewhen	"{ hsl_on != 1 }"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "ColorCorrect" }
+		parmtag	{ "vray_pluginattr" "hsl_lightness_gain" }
+		parmtag	{ "vray_type" "TextureFloat" }
+	    }
+	}
+
+	group {
+	    name	"folder3"
+	    label	"HSV"
+
+	    parm {
+		name	"hsv_on"
+		label	"HSV On"
+		type	toggle
+		default	{ "0" }
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "ColorCorrect" }
+		parmtag	{ "vray_pluginattr" "hsv_on" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	    parm {
+		name	"hsv_hue_offset"
+		label	"Hsv hue offset"
+		type	float
+		default	{ "0" }
+		disablewhen	"{ hsv_on != 1 }"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "ColorCorrect" }
+		parmtag	{ "vray_pluginattr" "hsv_hue_offset" }
+		parmtag	{ "vray_type" "TextureFloat" }
+	    }
+	    parm {
+		name	"hsv_hue_gain"
+		label	"Hsv hue gain"
+		type	float
+		default	{ "0" }
+		disablewhen	"{ hsv_on != 1 }"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "ColorCorrect" }
+		parmtag	{ "vray_pluginattr" "hsv_hue_gain" }
+		parmtag	{ "vray_type" "TextureFloat" }
+	    }
+	    parm {
+		name	"hsv_saturation_offset"
+		label	"Hsv saturation offset"
+		type	float
+		default	{ "0" }
+		disablewhen	"{ hsv_on != 1 }"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "ColorCorrect" }
+		parmtag	{ "vray_pluginattr" "hsv_saturation_offset" }
+		parmtag	{ "vray_type" "TextureFloat" }
+	    }
+	    parm {
+		name	"hsv_saturation_gain"
+		label	"Hsv saturation gain"
+		type	float
+		default	{ "1" }
+		disablewhen	"{ hsv_on != 1 }"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "ColorCorrect" }
+		parmtag	{ "vray_pluginattr" "hsv_saturation_gain" }
+		parmtag	{ "vray_type" "TextureFloat" }
+	    }
+	    parm {
+		name	"hsv_value_offset"
+		label	"Hsv value offset"
+		type	float
+		default	{ "0" }
+		disablewhen	"{ hsv_on != 1 }"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "ColorCorrect" }
+		parmtag	{ "vray_pluginattr" "hsv_value_offset" }
+		parmtag	{ "vray_type" "TextureFloat" }
+	    }
+	    parm {
+		name	"hsv_value_gain"
+		label	"Hsv value gain"
+		type	float
+		default	{ "1" }
+		disablewhen	"{ hsv_on != 1 }"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "ColorCorrect" }
+		parmtag	{ "vray_pluginattr" "hsv_value_gain" }
+		parmtag	{ "vray_type" "TextureFloat" }
+	    }
+	}
+
+	group {
+	    name	"folder4"
+	    label	"RGBA Channel Mapping"
+
+	    parm {
+		name	"rgba_on"
+		label	"RGBA Channel Mapping On"
+		type	toggle
+		default	{ "0" }
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "ColorCorrect" }
+		parmtag	{ "vray_pluginattr" "rgba_on" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	    parm {
+		name	"red_channel"
+		label	"Red channel"
+		type	ordinal
+		default	{ "0" }
+		help	"Red channel"
+		disablewhen	"{ rgba_on != 1 }"
+		menu	{
+		    "0"	"Red"
+		    "1"	"Green"
+		    "2"	"Blue"
+		    "3"	"Alpha"
+		    "4"	"Intensity"
+		    "5"	"In Red"
+		    "6"	"In Green"
+		    "7"	"In Blue"
+		    "8"	"In Alpha"
+		    "9"	"In Intensity"
+		    "10"	"HSL hue"
+		    "11"	"HSL saturation"
+		    "12"	"HSL lightness"
+		    "13"	"HSV hue"
+		    "14"	"HSV saturation"
+		    "15"	"HSV value"
+		}
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "ColorCorrect" }
+		parmtag	{ "vray_pluginattr" "red_channel" }
+		parmtag	{ "vray_type" "int" }
+	    }
+	    parm {
+		name	"red_offset"
+		label	"Red offset"
+		type	float
+		default	{ "0" }
+		disablewhen	"{ rgba_on != 1 }"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "ColorCorrect" }
+		parmtag	{ "vray_pluginattr" "red_offset" }
+		parmtag	{ "vray_type" "TextureFloat" }
+	    }
+	    parm {
+		name	"red_gain"
+		label	"Red gain"
+		type	float
+		default	{ "1" }
+		disablewhen	"{ rgba_on != 1 }"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "ColorCorrect" }
+		parmtag	{ "vray_pluginattr" "red_gain" }
+		parmtag	{ "vray_type" "TextureFloat" }
+	    }
+	    parm {
+		name	"green_channel"
+		label	"Green channel"
+		type	ordinal
+		default	{ "0" }
+		help	"Green channel"
+		disablewhen	"{ rgba_on != 1 }"
+		menu	{
+		    "0"	"Red"
+		    "1"	"Green"
+		    "2"	"Blue"
+		    "3"	"Alpha"
+		    "4"	"Intensity"
+		    "5"	"In Red"
+		    "6"	"In Green"
+		    "7"	"In Blue"
+		    "8"	"In Alpha"
+		    "9"	"In Intensity"
+		    "10"	"HSL hue"
+		    "11"	"HSL saturation"
+		    "12"	"HSL lightness"
+		    "13"	"HSV hue"
+		    "14"	"HSV saturation"
+		    "15"	"HSV value"
+		}
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "ColorCorrect" }
+		parmtag	{ "vray_pluginattr" "green_channel" }
+		parmtag	{ "vray_type" "int" }
+	    }
+	    parm {
+		name	"green_offset"
+		label	"Green offset"
+		type	float
+		default	{ "0" }
+		disablewhen	"{ rgba_on != 1 }"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "ColorCorrect" }
+		parmtag	{ "vray_pluginattr" "green_offset" }
+		parmtag	{ "vray_type" "TextureFloat" }
+	    }
+	    parm {
+		name	"green_gain"
+		label	"Green gain"
+		type	float
+		default	{ "1" }
+		disablewhen	"{ rgba_on != 1 }"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "ColorCorrect" }
+		parmtag	{ "vray_pluginattr" "green_gain" }
+		parmtag	{ "vray_type" "TextureFloat" }
+	    }
+	    parm {
+		name	"blue_channel"
+		label	"Blue channel"
+		type	ordinal
+		default	{ "0" }
+		help	"Blue channel"
+		disablewhen	"{ rgba_on != 1 }"
+		menu	{
+		    "0"	"Red"
+		    "1"	"Green"
+		    "2"	"Blue"
+		    "3"	"Alpha"
+		    "4"	"Intensity"
+		    "5"	"In Red"
+		    "6"	"In Green"
+		    "7"	"In Blue"
+		    "8"	"In Alpha"
+		    "9"	"In Intensity"
+		    "10"	"HSL hue"
+		    "11"	"HSL saturation"
+		    "12"	"HSL lightness"
+		    "13"	"HSV hue"
+		    "14"	"HSV saturation"
+		    "15"	"HSV value"
+		}
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "ColorCorrect" }
+		parmtag	{ "vray_pluginattr" "blue_channel" }
+		parmtag	{ "vray_type" "int" }
+	    }
+	    parm {
+		name	"blue_offset"
+		label	"Blue offset"
+		type	float
+		default	{ "0" }
+		disablewhen	"{ rgba_on != 1 }"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "ColorCorrect" }
+		parmtag	{ "vray_pluginattr" "blue_offset" }
+		parmtag	{ "vray_type" "TextureFloat" }
+	    }
+	    parm {
+		name	"blue_gain"
+		label	"Blue gain"
+		type	float
+		default	{ "1" }
+		disablewhen	"{ rgba_on != 1 }"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "ColorCorrect" }
+		parmtag	{ "vray_pluginattr" "blue_gain" }
+		parmtag	{ "vray_type" "TextureFloat" }
+	    }
+	    parm {
+		name	"alpha_channel"
+		label	"Alpha channel"
+		type	ordinal
+		default	{ "0" }
+		help	"Alpha channel"
+		disablewhen	"{ rgba_on != 1 }"
+		menu	{
+		    "0"	"Red"
+		    "1"	"Green"
+		    "2"	"Blue"
+		    "3"	"Alpha"
+		    "4"	"Intensity"
+		    "5"	"In Red"
+		    "6"	"In Green"
+		    "7"	"In Blue"
+		    "8"	"In Alpha"
+		    "9"	"In Intensity"
+		    "10"	"HSL hue"
+		    "11"	"HSL saturation"
+		    "12"	"HSL lightness"
+		    "13"	"HSV hue"
+		    "14"	"HSV saturation"
+		    "15"	"HSV value"
+		}
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "ColorCorrect" }
+		parmtag	{ "vray_pluginattr" "alpha_channel" }
+		parmtag	{ "vray_type" "int" }
+	    }
+	    parm {
+		name	"alpha_offset"
+		label	"Alpha offset"
+		type	float
+		default	{ "0" }
+		disablewhen	"{ rgba_on != 1 }"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "ColorCorrect" }
+		parmtag	{ "vray_pluginattr" "alpha_offset" }
+		parmtag	{ "vray_type" "TextureFloat" }
+	    }
+	    parm {
+		name	"alpha_gain"
+		label	"Alpha gain"
+		type	float
+		default	{ "1" }
+		disablewhen	"{ rgba_on != 1 }"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "ColorCorrect" }
+		parmtag	{ "vray_pluginattr" "alpha_gain" }
+		parmtag	{ "vray_type" "TextureFloat" }
+	    }
+	    parm {
+		name	"premultiply_new_alpha"
+		label	"Premultiply new alpha"
+		type	toggle
+		default	{ "0" }
+		disablewhen	"{ rgba_on != 1 }"
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "ColorCorrect" }
+		parmtag	{ "vray_pluginattr" "premultiply_new_alpha" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	}
+
+	group {
+	    name	"folder5"
+	    label	"RGB Post-process"
+
+	    parm {
+		name	"postprocess"
+		label	"Post-process On"
+		type	toggle
+		default	{ "0" }
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "ColorCorrect" }
+		parmtag	{ "vray_pluginattr" "postprocess" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	    parm {
+		name	"post_mono"
+		label	"Post mono"
+		type	toggle
+		default	{ "0" }
+		disablewhen	"{ postprocess != 1 }"
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "ColorCorrect" }
+		parmtag	{ "vray_pluginattr" "post_mono" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	    parm {
+		name	"post_invert"
+		label	"Post invert"
+		type	toggle
+		default	{ "0" }
+		disablewhen	"{ postprocess != 1 }"
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "ColorCorrect" }
+		parmtag	{ "vray_pluginattr" "post_invert" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	    parm {
+		name	"post_clamp"
+		label	"Post clamp"
+		type	toggle
+		default	{ "0" }
+		disablewhen	"{ postprocess != 1 }"
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "ColorCorrect" }
+		parmtag	{ "vray_pluginattr" "post_clamp" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	    parm {
+		name	"post_clamp_min"
+		label	"Post clamp min"
+		type	float
+		default	{ "0" }
+		disablewhen	"{ postprocess != 1 } { post_clamp != 1 }"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "ColorCorrect" }
+		parmtag	{ "vray_pluginattr" "post_clamp_min" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"post_clamp_max"
+		label	"Post clamp max"
+		type	float
+		default	{ "1" }
+		disablewhen	"{ postprocess != 1 } { post_clamp != 1 }"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "ColorCorrect" }
+		parmtag	{ "vray_pluginattr" "post_clamp_max" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"post_clamp_normalize"
+		label	"Post clamp normalize"
+		type	toggle
+		default	{ "0" }
+		disablewhen	"{ postprocess != 1 } { post_clamp != 1 }"
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "ColorCorrect" }
+		parmtag	{ "vray_pluginattr" "post_clamp_normalize" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	}
+
+    }
+
+}

@@ -1,0 +1,43 @@
+{
+    name	parameters
+    group {
+	name	"TexMayaConversion"
+	label	"Maya Conversion"
+
+	parm {
+	    name	"plugindata"
+	    label	"Maya Conversion"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"TexMayaConversion"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexMayaConversion" }
+	    parmtag	{ "vray_type" "TEXTURE" }
+	}
+	parm {
+	    name	"input"
+	    label	"Input"
+	    type	float
+	    default	{ "0" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexMayaConversion" }
+	    parmtag	{ "vray_pluginattr" "input" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"conversion_factor"
+	    label	"Conversion factor"
+	    type	float
+	    default	{ "1" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexMayaConversion" }
+	    parmtag	{ "vray_pluginattr" "conversion_factor" }
+	    parmtag	{ "vray_type" "float" }
+	}
+    }
+
+}

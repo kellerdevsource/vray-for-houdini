@@ -1,0 +1,305 @@
+{
+    name	parameters
+    group {
+	name	"GeomStaticSmoothedMesh"
+	label	"Subdivision"
+
+	parm {
+	    name	"plugindata"
+	    label	"Subdivision"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"Subdivision surface settings"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "GeomStaticSmoothedMesh" }
+	    parmtag	{ "vray_type" "GEOMETRY" }
+	}
+	parm {
+	    name	"mesh"
+	    label	"Mesh"
+	    type	oppath
+	    default	{ "" }
+	    help	"The triangle mesh that will be displaced"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "oprelative" "." }
+	    parmtag	{ "vray_plugin" "GeomStaticSmoothedMesh" }
+	    parmtag	{ "vray_pluginattr" "mesh" }
+	    parmtag	{ "vray_type" "Object" }
+	}
+	parm {
+	    name	"displacement_tex_color"
+	    label	"Color"
+	    type	color4
+	    size	4
+	    default	{ "0" "0" "0" "1" }
+	    help	"The displacement texture"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "GeomStaticSmoothedMesh" }
+	    parmtag	{ "vray_pluginattr" "displacement_tex_color" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+	parm {
+	    name	"displacement_tex_float"
+	    label	"Float"
+	    type	float
+	    default	{ "1" }
+	    help	"The displacement texture"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "GeomStaticSmoothedMesh" }
+	    parmtag	{ "vray_pluginattr" "displacement_tex_float" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"displacement_amount"
+	    label	"Amount"
+	    type	float
+	    default	{ "0.25" }
+	    help	"Determines the displacement amount for white areas in the displacement map; if use_globals is true this is multiplied by the global displacement amount option"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "GeomStaticSmoothedMesh" }
+	    parmtag	{ "vray_pluginattr" "displacement_amount" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"displacement_shift"
+	    label	"Shift"
+	    type	float
+	    default	{ "0" }
+	    help	"This constant value is added to the displacement map"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "GeomStaticSmoothedMesh" }
+	    parmtag	{ "vray_pluginattr" "displacement_shift" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"keep_continuity"
+	    label	"Keep continuity"
+	    type	toggle
+	    default	{ "0" }
+	    help	"If true, the plugin will attempt to keep the continuity of the displaced surface"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "GeomStaticSmoothedMesh" }
+	    parmtag	{ "vray_pluginattr" "keep_continuity" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"water_level"
+	    label	"Water level"
+	    type	float
+	    default	{ "-1e+30" }
+	    help	"Geometry below this displacement level will be clipped away"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "GeomStaticSmoothedMesh" }
+	    parmtag	{ "vray_pluginattr" "water_level" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"map_channel"
+	    label	"Map channel"
+	    type	integer
+	    default	{ "0" }
+	    help	"The mapping channel to use for vector displacement"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "GeomStaticSmoothedMesh" }
+	    parmtag	{ "vray_pluginattr" "map_channel" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"image_width"
+	    label	"Image width"
+	    type	integer
+	    default	{ "0" }
+	    help	"This parameter overrides the imgWidth paramter from VRayFrameData during the calculation of the subdivision depth"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "GeomStaticSmoothedMesh" }
+	    parmtag	{ "vray_pluginattr" "image_width" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"cache_normals"
+	    label	"Cache normals"
+	    type	toggle
+	    default	{ "0" }
+	    help	"If this option is equal to 1 then the normals of the generated triangles are cached. It has effect only if the surface is displaced"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "GeomStaticSmoothedMesh" }
+	    parmtag	{ "vray_pluginattr" "cache_normals" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"use_globals"
+	    label	"Use global settings"
+	    type	toggle
+	    default	{ "1" }
+	    help	"If true, the global displacement quality settings will be used"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "GeomStaticSmoothedMesh" }
+	    parmtag	{ "vray_pluginattr" "use_globals" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"static_subdiv"
+	    label	"Static subdivision"
+	    type	toggle
+	    default	{ "0" }
+	    help	"True if the resulting triangles of the subdivision algorithm will be inserted into the rayserver as static geometry"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "GeomStaticSmoothedMesh" }
+	    parmtag	{ "vray_pluginattr" "static_subdiv" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"view_dep"
+	    label	"View dependent"
+	    type	toggle
+	    default	{ "1" }
+	    help	"If use_globals is false, this determines if view-dependent tesselation is used"
+	    disablewhen	"{ use_globals != 0 } { use_globals != 0 }"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "GeomStaticSmoothedMesh" }
+	    parmtag	{ "vray_pluginattr" "view_dep" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"edge_length"
+	    label	"Edge length"
+	    type	float
+	    default	{ "4" }
+	    help	"If use_globals is false, this determines the approximate edge length for the sub-triangles"
+	    disablewhen	"{ use_globals != 0 } { use_globals != 0 }"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "GeomStaticSmoothedMesh" }
+	    parmtag	{ "vray_pluginattr" "edge_length" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"max_subdivs"
+	    label	"Max subdivisions"
+	    type	integer
+	    default	{ "256" }
+	    help	"If use_globals is false, this determines the maximum subdivisions for a triangle of the original mesh"
+	    disablewhen	"{ use_globals != 0 } { use_globals != 0 }"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "GeomStaticSmoothedMesh" }
+	    parmtag	{ "vray_pluginattr" "max_subdivs" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"use_bounds"
+	    label	"Use bounds"
+	    type	toggle
+	    default	{ "0" }
+	    help	"If true, the min/max values for the displacement texture are specified by the min_bound and max_bound parameters; if false, these are calculated automatically"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "GeomStaticSmoothedMesh" }
+	    parmtag	{ "vray_pluginattr" "use_bounds" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"min_bound"
+	    label	"Min bound"
+	    type	color
+	    size	3
+	    default	{ "0" "0" "0" }
+	    help	"The lowest value for the displacement texture"
+	    disablewhen	"{ use_bounds != 1 }"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "GeomStaticSmoothedMesh" }
+	    parmtag	{ "vray_pluginattr" "min_bound" }
+	    parmtag	{ "vray_type" "Color" }
+	}
+	parm {
+	    name	"max_bound"
+	    label	"Max bound"
+	    type	color
+	    size	3
+	    default	{ "1" "1" "1" }
+	    help	"The biggest value for the displacement texture"
+	    disablewhen	"{ use_bounds != 1 }"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "GeomStaticSmoothedMesh" }
+	    parmtag	{ "vray_pluginattr" "max_bound" }
+	    parmtag	{ "vray_type" "Color" }
+	}
+	parm {
+	    name	"preserve_map_borders"
+	    label	"Preserve map borders"
+	    type	ordinal
+	    default	{ "0" }
+	    help	"The valid values"
+	    menu	{
+		"0"	"None"
+		"1"	"Internal"
+		"2"	"All"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "GeomStaticSmoothedMesh" }
+	    parmtag	{ "vray_pluginattr" "preserve_map_borders" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"classic_catmark"
+	    label	"Classic Catmull-Clark"
+	    type	toggle
+	    default	{ "0" }
+	    help	"If equal to 1 then the classical Catmull-Clark masks will be used for meshes which contain only quadrangles"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "GeomStaticSmoothedMesh" }
+	    parmtag	{ "vray_pluginattr" "classic_catmark" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"vector_displacement"
+	    label	"Mode"
+	    type	ordinal
+	    default	{ "0" }
+	    help	"Mode"
+	    menu	{
+		"0"	"Normal"
+		"1"	"Vector"
+		"2"	"Absolute Tangent"
+		"3"	"Vector (Object Space)"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "GeomStaticSmoothedMesh" }
+	    parmtag	{ "vray_pluginattr" "vector_displacement" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"object_space_displacement"
+	    label	"Object space displacement"
+	    type	toggle
+	    default	{ "0" }
+	    help	"If true, the parent transformation will affect the amount of displacement. Used only when doing 3D displacement"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "GeomStaticSmoothedMesh" }
+	    parmtag	{ "vray_pluginattr" "object_space_displacement" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+    }
+
+}

@@ -1,0 +1,34 @@
+{
+    name	parameters
+    group {
+	name	"TexXSIMulti"
+	label	"XSI Multi"
+
+	parm {
+	    name	"plugindata"
+	    label	"XSI Multi"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"TexXSIMulti"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexXSIMulti" }
+	    parmtag	{ "vray_type" "TEXTURE" }
+	}
+	parm {
+	    name	"textures"
+	    label	"Textures"
+	    type	oplist
+	    default	{ "" }
+	    help	"A list of float textures"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "oprelative" "." }
+	    parmtag	{ "vray_plugin" "TexXSIMulti" }
+	    parmtag	{ "vray_pluginattr" "textures" }
+	    parmtag	{ "vray_type" "List<Object>" }
+	}
+    }
+
+}

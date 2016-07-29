@@ -1,0 +1,67 @@
+{
+    name	parameters
+    group {
+	name	"TexICC"
+	label	"ICC"
+
+	parm {
+	    name	"plugindata"
+	    label	"ICC"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"TexICC"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexICC" }
+	    parmtag	{ "vray_type" "TEXTURE" }
+	}
+	parm {
+	    name	"basemap"
+	    label	"Basemap"
+	    type	color4
+	    size	4
+	    default	{ "0" "0" "0" "0" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexICC" }
+	    parmtag	{ "vray_pluginattr" "basemap" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+	parm {
+	    name	"file"
+	    label	"File"
+	    type	file
+	    default	{ "" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_file_extensions" "icc" }
+	    parmtag	{ "vray_plugin" "TexICC" }
+	    parmtag	{ "vray_pluginattr" "file" }
+	    parmtag	{ "vray_type" "String" }
+	}
+	parm {
+	    name	"render_intent"
+	    label	"Render intent"
+	    type	integer
+	    default	{ "0" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexICC" }
+	    parmtag	{ "vray_pluginattr" "render_intent" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"blackpoint"
+	    label	"Blackpoint"
+	    type	toggle
+	    default	{ "0" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexICC" }
+	    parmtag	{ "vray_pluginattr" "blackpoint" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+    }
+
+}

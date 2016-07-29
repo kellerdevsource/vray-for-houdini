@@ -1,0 +1,98 @@
+{
+    name	parameters
+    group {
+	name	"TexSurfIncidence"
+	label	"Surf Incidence"
+
+	parm {
+	    name	"plugindata"
+	    label	"Surf Incidence"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"TexSurfIncidence"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexSurfIncidence" }
+	    parmtag	{ "vray_type" "TEXTURE" }
+	}
+	parm {
+	    name	"inc_mode"
+	    label	"Inc mode"
+	    type	integer
+	    default	{ "0" }
+	    help	"Incidence mode"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexSurfIncidence" }
+	    parmtag	{ "vray_pluginattr" "inc_mode" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"bias"
+	    label	"Bias"
+	    type	float
+	    default	{ "100" }
+	    help	"Controls the contrast between dark and light areas of shading"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexSurfIncidence" }
+	    parmtag	{ "vray_pluginattr" "bias" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"gain"
+	    label	"Gain"
+	    type	float
+	    default	{ "100" }
+	    help	"Controls the brightness of the effect"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexSurfIncidence" }
+	    parmtag	{ "vray_pluginattr" "gain" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"custom_vector"
+	    label	"Custom vector"
+	    type	direction
+	    size	3
+	    default	{ "0" "0" "0" }
+	    help	"custom vector"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexSurfIncidence" }
+	    parmtag	{ "vray_pluginattr" "custom_vector" }
+	    parmtag	{ "vray_type" "Vector" }
+	}
+	parm {
+	    name	"invert"
+	    label	"Invert"
+	    type	integer
+	    default	{ "0" }
+	    help	"Invert if enabled"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexSurfIncidence" }
+	    parmtag	{ "vray_pluginattr" "invert" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"range"
+	    label	"Range"
+	    type	ordinal
+	    default	{ "0" }
+	    help	"Range (0 - 0 to 90 degrees, 1 - 0 to 180 degrees)"
+	    menu	{
+		"0"	"0 to 90 degrees"
+		"1"	"0 to 180 degrees"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexSurfIncidence" }
+	    parmtag	{ "vray_pluginattr" "range" }
+	    parmtag	{ "vray_type" "int" }
+	}
+    }
+
+}

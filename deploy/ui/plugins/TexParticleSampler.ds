@@ -1,0 +1,33 @@
+{
+    name	parameters
+    group {
+	name	"TexParticleSampler"
+	label	"Particle Sampler"
+
+	parm {
+	    name	"plugindata"
+	    label	"Particle Sampler"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"TexParticleSampler"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexParticleSampler" }
+	    parmtag	{ "vray_type" "MISC" }
+	}
+	parm {
+	    name	"def_color_tex"
+	    label	"Def color tex"
+	    type	color4
+	    size	4
+	    default	{ "0" "0" "0" "0" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexParticleSampler" }
+	    parmtag	{ "vray_pluginattr" "def_color_tex" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+    }
+
+}

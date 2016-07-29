@@ -1,0 +1,47 @@
+{
+    name	parameters
+    group {
+	name	"TexColorAverage"
+	label	"Color Average"
+
+	parm {
+	    name	"plugindata"
+	    label	"Color Average"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"TexColorAverage"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_category" "utility" }
+	    parmtag	{ "vray_plugin" "TexColorAverage" }
+	    parmtag	{ "vray_type" "TEXTURE" }
+	}
+	parm {
+	    name	"input"
+	    label	"Input"
+	    type	color4
+	    size	4
+	    default	{ "0" "0" "0" "1" }
+	    help	"Input texture used to compute an intensity level"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexColorAverage" }
+	    parmtag	{ "vray_pluginattr" "input" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+	parm {
+	    name	"factor"
+	    label	"Factor"
+	    type	float
+	    default	{ "1" }
+	    help	"The intensity of the output"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexColorAverage" }
+	    parmtag	{ "vray_pluginattr" "factor" }
+	    parmtag	{ "vray_type" "float" }
+	}
+    }
+
+}

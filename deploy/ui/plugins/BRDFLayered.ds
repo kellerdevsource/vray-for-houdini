@@ -1,0 +1,111 @@
+{
+    name	parameters
+    group {
+	name	"BRDFLayered"
+	label	"Layered"
+
+	parm {
+	    name	"plugindata"
+	    label	"Layered"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"Layered shader"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFLayered" }
+	    parmtag	{ "vray_type" "BRDF" }
+	}
+	parm {
+	    name	"brdfs"
+	    label	"Brdfs"
+	    type	oplist
+	    default	{ "" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "oprelative" "." }
+	    parmtag	{ "vray_plugin" "BRDFLayered" }
+	    parmtag	{ "vray_pluginattr" "brdfs" }
+	    parmtag	{ "vray_type" "List<Object>" }
+	}
+	parm {
+	    name	"weights"
+	    label	"Weights"
+	    type	oplist
+	    default	{ "" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "oprelative" "." }
+	    parmtag	{ "vray_plugin" "BRDFLayered" }
+	    parmtag	{ "vray_pluginattr" "weights" }
+	    parmtag	{ "vray_type" "List<Object>" }
+	}
+	parm {
+	    name	"transparency_tex"
+	    label	"Transparency"
+	    type	color4
+	    size	4
+	    default	{ "0" "0" "0" "1" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFLayered" }
+	    parmtag	{ "vray_pluginattr" "transparency_tex" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+	parm {
+	    name	"transparency_tex_mult"
+	    label	"Transparency tex mult"
+	    type	float
+	    default	{ "1" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFLayered" }
+	    parmtag	{ "vray_pluginattr" "transparency_tex_mult" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"additive_mode"
+	    label	"Additive mode"
+	    type	ordinal
+	    default	{ "0" }
+	    help	"Weight for the material layers. 0 = Default, 1 = Additive. 2 and 3 used by RT GPU only (2 = MDL normalize, 3 = MDL clamp max)"
+	    menu	{
+		"0"	"Default"
+		"1"	"Additive"
+		"2"	"MDL Normalize"
+		"3"	"MDL Clamp Max"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFLayered" }
+	    parmtag	{ "vray_pluginattr" "additive_mode" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"transparency"
+	    label	"Transparency"
+	    type	color
+	    size	3
+	    default	{ "0" "0" "0" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFLayered" }
+	    parmtag	{ "vray_pluginattr" "transparency" }
+	    parmtag	{ "vray_type" "Color" }
+	}
+	parm {
+	    name	"channels"
+	    label	"Channels"
+	    type	oplist
+	    default	{ "" }
+	    help	"Render channels the result of this BRDF will be written to"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "oprelative" "." }
+	    parmtag	{ "vray_plugin" "BRDFLayered" }
+	    parmtag	{ "vray_pluginattr" "channels" }
+	    parmtag	{ "vray_type" "List<Object>" }
+	}
+    }
+
+}

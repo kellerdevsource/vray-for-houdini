@@ -1,0 +1,372 @@
+{
+    name	parameters
+    group {
+	name	"TexRemap"
+	label	"Remap"
+
+	parm {
+	    name	"plugindata"
+	    label	"Remap"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"Remap values"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_category" "utility" }
+	    parmtag	{ "vray_plugin" "TexRemap" }
+	    parmtag	{ "vray_type" "TEXTURE" }
+	}
+	parm {
+	    name	"input_value"
+	    label	"Input value"
+	    type	float
+	    default	{ "1" }
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexRemap" }
+	    parmtag	{ "vray_pluginattr" "input_value" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"input_color"
+	    label	"Input color"
+	    type	color4
+	    size	4
+	    default	{ "0" "0" "0" "1" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexRemap" }
+	    parmtag	{ "vray_pluginattr" "input_color" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+	parm {
+	    name	"type"
+	    label	"Type"
+	    type	ordinal
+	    default	{ "0" }
+	    help	"type of conversion: 0:RemapValue, 1:RemapColor, 2:RemapHSV"
+	    menu	{
+		"0"	"RemapValue"
+		"1"	"RemapColor"
+		"2"	"RemapHSV"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexRemap" }
+	    parmtag	{ "vray_pluginattr" "type" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"input_bias"
+	    label	"Input bias"
+	    type	float
+	    default	{ "0" }
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexRemap" }
+	    parmtag	{ "vray_pluginattr" "input_bias" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"input_min"
+	    label	"Input min"
+	    type	float
+	    default	{ "0" }
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexRemap" }
+	    parmtag	{ "vray_pluginattr" "input_min" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"input_max"
+	    label	"Input max"
+	    type	float
+	    default	{ "1" }
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexRemap" }
+	    parmtag	{ "vray_pluginattr" "input_max" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"output_min"
+	    label	"Output min"
+	    type	float
+	    default	{ "0" }
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexRemap" }
+	    parmtag	{ "vray_pluginattr" "output_min" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"output_max"
+	    label	"Output max"
+	    type	float
+	    default	{ "1" }
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexRemap" }
+	    parmtag	{ "vray_pluginattr" "output_max" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"float_values"
+	    label	"Float values"
+	    type	float
+	    default	{ "1" }
+	    help	"the given float values"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexRemap" }
+	    parmtag	{ "vray_pluginattr" "float_values" }
+	    parmtag	{ "vray_type" "List<TextureFloat>" }
+	}
+	parm {
+	    name	"float_types"
+	    label	"Float types"
+	    type	integer
+	    default	{ "1" }
+	    help	"interpolation types for the floats"
+	    menu	{
+		"0"	"None"
+		"1"	"Linear"
+		"2"	"Smooth"
+		"3"	"Spline"
+	    }
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexRemap" }
+	    parmtag	{ "vray_pluginattr" "float_types" }
+	    parmtag	{ "vray_type" "List<Integer>" }
+	}
+	parm {
+	    name	"red_values"
+	    label	"Red values"
+	    type	float
+	    default	{ "0" }
+	    help	"the given values for the red channel"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexRemap" }
+	    parmtag	{ "vray_pluginattr" "red_values" }
+	    parmtag	{ "vray_type" "List<TextureFloat>" }
+	}
+	parm {
+	    name	"red_types"
+	    label	"Red types"
+	    type	integer
+	    default	{ "0" }
+	    help	"interpolation types for the red channel"
+	    menu	{
+		"0"	"None"
+		"1"	"Linear"
+		"2"	"Smooth"
+		"3"	"Spline"
+	    }
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexRemap" }
+	    parmtag	{ "vray_pluginattr" "red_types" }
+	    parmtag	{ "vray_type" "List<Integer>" }
+	}
+	parm {
+	    name	"green_values"
+	    label	"Green values"
+	    type	float
+	    default	{ "0" }
+	    help	"the given values for the green channel"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexRemap" }
+	    parmtag	{ "vray_pluginattr" "green_values" }
+	    parmtag	{ "vray_type" "List<TextureFloat>" }
+	}
+	parm {
+	    name	"green_types"
+	    label	"Green types"
+	    type	integer
+	    default	{ "0" }
+	    help	"interpolation types for the green channel"
+	    menu	{
+		"0"	"None"
+		"1"	"Linear"
+		"2"	"Smooth"
+		"3"	"Spline"
+	    }
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexRemap" }
+	    parmtag	{ "vray_pluginattr" "green_types" }
+	    parmtag	{ "vray_type" "List<Integer>" }
+	}
+	parm {
+	    name	"blue_values"
+	    label	"Blue values"
+	    type	float
+	    default	{ "0" }
+	    help	"the given values for the blue channel"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexRemap" }
+	    parmtag	{ "vray_pluginattr" "blue_values" }
+	    parmtag	{ "vray_type" "List<TextureFloat>" }
+	}
+	parm {
+	    name	"blue_types"
+	    label	"Blue types"
+	    type	integer
+	    default	{ "0" }
+	    help	"interpolation types for the blue channel"
+	    menu	{
+		"0"	"None"
+		"1"	"Linear"
+		"2"	"Smooth"
+		"3"	"Spline"
+	    }
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexRemap" }
+	    parmtag	{ "vray_pluginattr" "blue_types" }
+	    parmtag	{ "vray_type" "List<Integer>" }
+	}
+	parm {
+	    name	"hue_values"
+	    label	"Hue values"
+	    type	float
+	    default	{ "0" }
+	    help	"the given values for the hue channel"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexRemap" }
+	    parmtag	{ "vray_pluginattr" "hue_values" }
+	    parmtag	{ "vray_type" "List<TextureFloat>" }
+	}
+	parm {
+	    name	"hue_types"
+	    label	"Hue types"
+	    type	integer
+	    default	{ "0" }
+	    help	"interpolation types for the hue channel"
+	    menu	{
+		"0"	"None"
+		"1"	"Linear"
+		"2"	"Smooth"
+		"3"	"Spline"
+	    }
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexRemap" }
+	    parmtag	{ "vray_pluginattr" "hue_types" }
+	    parmtag	{ "vray_type" "List<Integer>" }
+	}
+	parm {
+	    name	"saturation_values"
+	    label	"Saturation values"
+	    type	float
+	    default	{ "0" }
+	    help	"the given values for the saturation channel"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexRemap" }
+	    parmtag	{ "vray_pluginattr" "saturation_values" }
+	    parmtag	{ "vray_type" "List<TextureFloat>" }
+	}
+	parm {
+	    name	"saturation_types"
+	    label	"Saturation types"
+	    type	integer
+	    default	{ "0" }
+	    help	"interpolation types for the saturation channel"
+	    menu	{
+		"0"	"None"
+		"1"	"Linear"
+		"2"	"Smooth"
+		"3"	"Spline"
+	    }
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexRemap" }
+	    parmtag	{ "vray_pluginattr" "saturation_types" }
+	    parmtag	{ "vray_type" "List<Integer>" }
+	}
+	parm {
+	    name	"value_values"
+	    label	"Value values"
+	    type	float
+	    default	{ "0" }
+	    help	"the given values for the value channel"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexRemap" }
+	    parmtag	{ "vray_pluginattr" "value_values" }
+	    parmtag	{ "vray_type" "List<TextureFloat>" }
+	}
+	parm {
+	    name	"value_types"
+	    label	"Value types"
+	    type	integer
+	    default	{ "0" }
+	    help	"interpolation types for the value channel"
+	    menu	{
+		"0"	"None"
+		"1"	"Linear"
+		"2"	"Smooth"
+		"3"	"Spline"
+	    }
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexRemap" }
+	    parmtag	{ "vray_pluginattr" "value_types" }
+	    parmtag	{ "vray_type" "List<Integer>" }
+	}
+	parm {
+	    name	"alpha_from_intensity"
+	    label	"Alpha from intensity"
+	    type	toggle
+	    default	{ "0" }
+	    help	"If true, the resulting alpha is the color intensity; otherwise the alpha is taken from the colors"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexRemap" }
+	    parmtag	{ "vray_pluginattr" "alpha_from_intensity" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"input_bias_tex"
+	    label	"Input bias tex"
+	    type	float
+	    default	{ "0" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexRemap" }
+	    parmtag	{ "vray_pluginattr" "input_bias_tex" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"input_min_tex"
+	    label	"Input min tex"
+	    type	float
+	    default	{ "0" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexRemap" }
+	    parmtag	{ "vray_pluginattr" "input_min_tex" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"input_max_tex"
+	    label	"Input max tex"
+	    type	float
+	    default	{ "1" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexRemap" }
+	    parmtag	{ "vray_pluginattr" "input_max_tex" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+    }
+
+}

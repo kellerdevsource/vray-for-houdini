@@ -1,0 +1,280 @@
+{
+    name	parameters
+    group {
+	name	"BRDFFlakes"
+	label	"Flakes"
+
+	parm {
+	    name	"plugindata"
+	    label	"Flakes"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFFlakes" }
+	    parmtag	{ "vray_type" "BRDF" }
+	}
+	group {
+	    name	"folder"
+	    label	"Flakes parameters"
+
+	    parm {
+		name	"flake_color"
+		label	"Color"
+		type	color4
+		size	4
+		default	{ "0.3" "0.4" "0.8" "1" }
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFFlakes" }
+		parmtag	{ "vray_pluginattr" "flake_color" }
+		parmtag	{ "vray_type" "Texture" }
+	    }
+	    parm {
+		name	"flake_glossiness"
+		label	"Glossiness"
+		type	float
+		default	{ "0.8" }
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFFlakes" }
+		parmtag	{ "vray_pluginattr" "flake_glossiness" }
+		parmtag	{ "vray_type" "TextureFloat" }
+	    }
+	    parm {
+		name	"flake_orientation"
+		label	"Orientation"
+		type	float
+		default	{ "0.3" }
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFFlakes" }
+		parmtag	{ "vray_pluginattr" "flake_orientation" }
+		parmtag	{ "vray_type" "TextureFloat" }
+	    }
+	    parm {
+		name	"flake_density"
+		label	"Density"
+		type	float
+		default	{ "0.5" }
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFFlakes" }
+		parmtag	{ "vray_pluginattr" "flake_density" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"flake_scale"
+		label	"Scale"
+		type	float
+		default	{ "0.01" }
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFFlakes" }
+		parmtag	{ "vray_pluginattr" "flake_scale" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"flake_size"
+		label	"Size"
+		type	float
+		default	{ "0.5" }
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFFlakes" }
+		parmtag	{ "vray_pluginattr" "flake_size" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"flake_map_size"
+		label	"Map Size"
+		type	integer
+		default	{ "1024" }
+		help	"The size of the internal flakes map"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFFlakes" }
+		parmtag	{ "vray_pluginattr" "flake_map_size" }
+		parmtag	{ "vray_type" "int" }
+	    }
+	    parm {
+		name	"flake_filtering_mode"
+		label	"Filtering Mode"
+		type	ordinal
+		default	{ "1" }
+		help	"Flake filtering mode"
+		menu	{
+		    "0"	"Simple"
+		    "1"	"Directional"
+		}
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFFlakes" }
+		parmtag	{ "vray_pluginattr" "flake_filtering_mode" }
+		parmtag	{ "vray_type" "int" }
+	    }
+	    parm {
+		name	"flake_seed"
+		label	"Seed"
+		type	integer
+		default	{ "1" }
+		help	"The random seed for the flakes"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFFlakes" }
+		parmtag	{ "vray_pluginattr" "flake_seed" }
+		parmtag	{ "vray_type" "int" }
+	    }
+	    parm {
+		name	"flake_uvwgen"
+		label	"Uvwgen"
+		type	oppath
+		default	{ "" }
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "oprelative" "." }
+		parmtag	{ "vray_plugin" "BRDFFlakes" }
+		parmtag	{ "vray_pluginattr" "flake_uvwgen" }
+		parmtag	{ "vray_type" "Object" }
+	    }
+	}
+
+	group {
+	    name	"folder2"
+	    label	"Options"
+
+	    parm {
+		name	"traceReflections"
+		label	"Trace reflections"
+		type	toggle
+		default	{ "1" }
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFFlakes" }
+		parmtag	{ "vray_pluginattr" "traceReflections" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	    parm {
+		name	"doubleSided"
+		label	"Double sided"
+		type	integer
+		default	{ "1" }
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFFlakes" }
+		parmtag	{ "vray_pluginattr" "doubleSided" }
+		parmtag	{ "vray_type" "int" }
+	    }
+	    parm {
+		name	"subdivs"
+		label	"Subdivs"
+		type	integer
+		default	{ "8" }
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFFlakes" }
+		parmtag	{ "vray_pluginattr" "subdivs" }
+		parmtag	{ "vray_type" "int" }
+	    }
+	    parm {
+		name	"cutoff_threshold"
+		label	"Cutoff threshold"
+		type	float
+		default	{ "0.001" }
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFFlakes" }
+		parmtag	{ "vray_pluginattr" "cutoff_threshold" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"mapping_type"
+		label	"Mapping type"
+		type	ordinal
+		default	{ "0" }
+		help	"The mapping method for the flakes"
+		menu	{
+		    "0"	"Mapping channel"
+		    "1"	"Triplanar"
+		}
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFFlakes" }
+		parmtag	{ "vray_pluginattr" "mapping_type" }
+		parmtag	{ "vray_type" "int" }
+	    }
+	    parm {
+		name	"mapping_channel"
+		label	"Mapping channel"
+		type	integer
+		default	{ "0" }
+		help	"The mapping channel when the mapping_type is 0"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFFlakes" }
+		parmtag	{ "vray_pluginattr" "mapping_channel" }
+		parmtag	{ "vray_type" "int" }
+	    }
+	    parm {
+		name	"environment_override"
+		label	"Environment override"
+		type	color4
+		size	4
+		default	{ "0" "0" "0" "1" }
+		help	"Environment override texture"
+		disablewhen	"{ use_environment_override != 1 }"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFFlakes" }
+		parmtag	{ "vray_pluginattr" "environment_override" }
+		parmtag	{ "vray_type" "Texture" }
+	    }
+	    parm {
+		name	"environment_priority"
+		label	"Environment priority"
+		type	integer
+		default	{ "0" }
+		help	"Environment override priority (used when several materials override it along a ray path)"
+		disablewhen	"{ use_environment_override != 1 }"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFFlakes" }
+		parmtag	{ "vray_pluginattr" "environment_priority" }
+		parmtag	{ "vray_type" "int" }
+	    }
+	    parm {
+		name	"trace_depth"
+		label	"Trace depth"
+		type	integer
+		default	{ "-1" }
+		help	"The maximum reflection depth (-1 is controlled by the global options)"
+		range	{ 1 1000 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFFlakes" }
+		parmtag	{ "vray_pluginattr" "trace_depth" }
+		parmtag	{ "vray_type" "int" }
+	    }
+	}
+
+	group {
+	    name	"folder3"
+	    label	"Environment override"
+
+	    parm {
+		name	"use_environment_override"
+		label	"Use environment override"
+		type	toggle
+		default	{ "1" }
+		help	"True to use the 'environment override' texture"
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFFlakes" }
+		parmtag	{ "vray_pluginattr" "use_environment_override" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	}
+
+    }
+
+}

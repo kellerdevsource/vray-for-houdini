@@ -1,0 +1,34 @@
+{
+    name	parameters
+    group {
+	name	"TexUVWGenToTexture"
+	label	"UVW Gen To Texture"
+
+	parm {
+	    name	"plugindata"
+	    label	"UVW Gen To Texture"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"TexUVWGenToTexture"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_category" "utility" }
+	    parmtag	{ "vray_plugin" "TexUVWGenToTexture" }
+	    parmtag	{ "vray_type" "TEXTURE" }
+	}
+	parm {
+	    name	"input"
+	    label	"Input"
+	    type	oppath
+	    default	{ "" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "oprelative" "." }
+	    parmtag	{ "vray_plugin" "TexUVWGenToTexture" }
+	    parmtag	{ "vray_pluginattr" "input" }
+	    parmtag	{ "vray_type" "Object" }
+	}
+    }
+
+}

@@ -1,0 +1,46 @@
+{
+    name	parameters
+    group {
+	name	"PhxShaderTexAlpha"
+	label	"Phx Shader Tex Alpha"
+
+	parm {
+	    name	"plugindata"
+	    label	"Phx Shader Tex Alpha"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"PhxShaderTexAlpha"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_category" "phoenix" }
+	    parmtag	{ "vray_plugin" "PhxShaderTexAlpha" }
+	    parmtag	{ "vray_type" "TEXTURE" }
+	}
+	parm {
+	    name	"ttex"
+	    label	"Ttex"
+	    type	float
+	    default	{ "0" }
+	    help	"the input float texture"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "PhxShaderTexAlpha" }
+	    parmtag	{ "vray_pluginattr" "ttex" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"transparency"
+	    label	"Transparency"
+	    type	color4
+	    size	4
+	    default	{ "0.5" "0.5" "0.5" "1" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "PhxShaderTexAlpha" }
+	    parmtag	{ "vray_pluginattr" "transparency" }
+	    parmtag	{ "vray_type" "AColor" }
+	}
+    }
+
+}

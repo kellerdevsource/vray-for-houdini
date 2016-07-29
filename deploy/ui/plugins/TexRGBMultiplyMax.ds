@@ -1,0 +1,65 @@
+{
+    name	parameters
+    group {
+	name	"TexRGBMultiplyMax"
+	label	"RGB Multiply Max"
+
+	parm {
+	    name	"plugindata"
+	    label	"RGB Multiply Max"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"TexRGBMultiplyMax"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_category" "utility" }
+	    parmtag	{ "vray_plugin" "TexRGBMultiplyMax" }
+	    parmtag	{ "vray_type" "TEXTURE" }
+	}
+	parm {
+	    name	"color_a"
+	    label	"Color a"
+	    type	color4
+	    size	4
+	    default	{ "1" "1" "1" "1" }
+	    help	"The first texture"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexRGBMultiplyMax" }
+	    parmtag	{ "vray_pluginattr" "color_a" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+	parm {
+	    name	"color_b"
+	    label	"Color b"
+	    type	color4
+	    size	4
+	    default	{ "1" "1" "1" "1" }
+	    help	"The second texture"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexRGBMultiplyMax" }
+	    parmtag	{ "vray_pluginattr" "color_b" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+	parm {
+	    name	"alpha_mode"
+	    label	"Alpha mode"
+	    type	ordinal
+	    default	{ "2" }
+	    help	"Alpha mode (0 - from color_a, 1 - from color_b, 2 - multiply"
+	    menu	{
+		"0"	"From color_a"
+		"1"	"From color_b"
+		"2"	"Multiply"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexRGBMultiplyMax" }
+	    parmtag	{ "vray_pluginattr" "alpha_mode" }
+	    parmtag	{ "vray_type" "int" }
+	}
+    }
+
+}

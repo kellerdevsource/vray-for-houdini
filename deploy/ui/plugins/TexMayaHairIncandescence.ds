@@ -1,0 +1,21 @@
+{
+    name	parameters
+    group {
+	name	"TexMayaHairIncandescence"
+	label	"Maya Hair Incandescence"
+
+	parm {
+	    name	"plugindata"
+	    label	"Maya Hair Incandescence"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"TexMayaHairIncandescence"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexMayaHairIncandescence" }
+	    parmtag	{ "vray_type" "TEXTURE" }
+	}
+    }
+
+}

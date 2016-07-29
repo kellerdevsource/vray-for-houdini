@@ -1,0 +1,52 @@
+{
+    name	parameters
+    group {
+	name	"TexUVW"
+	label	"UVW"
+
+	parm {
+	    name	"plugindata"
+	    label	"UVW"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"TexUVW"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexUVW" }
+	    parmtag	{ "vray_type" "TEXTURE" }
+	}
+	parm {
+	    name	"uvwgen"
+	    label	"Uvwgen"
+	    type	oppath
+	    default	{ "" }
+	    help	"The uvw space that will be displayed as RGB"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "oprelative" "." }
+	    parmtag	{ "vray_plugin" "TexUVW" }
+	    parmtag	{ "vray_pluginattr" "uvwgen" }
+	    parmtag	{ "vray_type" "Object" }
+	}
+	parm {
+	    name	"component"
+	    label	"Component"
+	    type	ordinal
+	    default	{ "0" }
+	    help	"Specifies which component to show"
+	    menu	{
+		"0"	"All"
+		"1"	"U"
+		"2"	"V"
+		"3"	"W"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexUVW" }
+	    parmtag	{ "vray_pluginattr" "component" }
+	    parmtag	{ "vray_type" "int" }
+	}
+    }
+
+}

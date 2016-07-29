@@ -1,0 +1,57 @@
+{
+    name	parameters
+    group {
+	name	"TexMotionOcclusion"
+	label	"Motion Occlusion"
+
+	parm {
+	    name	"plugindata"
+	    label	"Motion Occlusion"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"TexMotionOcclusion"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexMotionOcclusion" }
+	    parmtag	{ "vray_type" "TEXTURE" }
+	}
+	parm {
+	    name	"type"
+	    label	"Type"
+	    type	integer
+	    default	{ "0" }
+	    help	"Determines what to output as default texture: 0 - backward occlusion, 1 - forward occlusion"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexMotionOcclusion" }
+	    parmtag	{ "vray_pluginattr" "type" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"near_threshold"
+	    label	"Near threshold"
+	    type	float
+	    default	{ "1" }
+	    help	"Occlusion hits closer than this distance will be ignored for backward and forward motion occlusion"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexMotionOcclusion" }
+	    parmtag	{ "vray_pluginattr" "near_threshold" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"far_threshold"
+	    label	"Far threshold"
+	    type	float
+	    default	{ "2" }
+	    help	"Occlusion hits farther than this distance will be fully considered for backward and forward motion occlusion"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexMotionOcclusion" }
+	    parmtag	{ "vray_pluginattr" "far_threshold" }
+	    parmtag	{ "vray_type" "float" }
+	}
+    }
+
+}

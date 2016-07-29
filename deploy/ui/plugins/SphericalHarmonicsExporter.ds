@@ -1,0 +1,246 @@
+{
+    name	parameters
+    group {
+	name	"SphericalHarmonicsExporter"
+	label	"Spherical Harmonics Exporter"
+
+	parm {
+	    name	"plugindata"
+	    label	"Spherical Harmonics Exporter"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"Spherical harmonics exporter settings"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SphericalHarmonicsExporter" }
+	    parmtag	{ "vray_type" "SETTINGS" }
+	}
+	parm {
+	    name	"anim_on"
+	    label	"Anim on"
+	    type	toggle
+	    default	{ "0" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SphericalHarmonicsExporter" }
+	    parmtag	{ "vray_pluginattr" "anim_on" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"mode"
+	    label	"Mode"
+	    type	ordinal
+	    default	{ "0" }
+	    menu	{
+		"0"	"Occlusion (Selected)"
+		"1"	"Occlusion"
+		"2"	"Interreflection (Selected)"
+		"3"	"Interreflection"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SphericalHarmonicsExporter" }
+	    parmtag	{ "vray_pluginattr" "mode" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"bands"
+	    label	"Bands"
+	    type	integer
+	    default	{ "4" }
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SphericalHarmonicsExporter" }
+	    parmtag	{ "vray_pluginattr" "bands" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"subdivs"
+	    label	"Subdivs"
+	    type	integer
+	    default	{ "50" }
+	    help	"Controls the number of samples taken in order to create the spherical harmonics. Higher values produce better results but take longer to render"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SphericalHarmonicsExporter" }
+	    parmtag	{ "vray_pluginattr" "subdivs" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"bounces"
+	    label	"Bounces"
+	    type	integer
+	    default	{ "1" }
+	    help	"This option is only available when one of the interreflection methods is selected. It controls the number of secondary bounces that are going to be traced"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SphericalHarmonicsExporter" }
+	    parmtag	{ "vray_pluginattr" "bounces" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"ray_bias"
+	    label	"Ray bias"
+	    type	float
+	    default	{ "0.001" }
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SphericalHarmonicsExporter" }
+	    parmtag	{ "vray_pluginattr" "ray_bias" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"file_name"
+	    label	"File name"
+	    type	file
+	    default	{ "//lightmaps/spherical_harmonics.vrsh" }
+	    help	"This is the name of the *.vrsh file which contains the precomputed SH for this scene"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_file_extensions" "vrsh;xml" }
+	    parmtag	{ "vray_plugin" "SphericalHarmonicsExporter" }
+	    parmtag	{ "vray_pluginattr" "file_name" }
+	    parmtag	{ "vray_type" "String" }
+	}
+	parm {
+	    name	"file_format"
+	    label	"File format"
+	    type	ordinal
+	    default	{ "1" }
+	    help	"This is the output file format. It could be *.xml for general purposes, V-Ray internal format *.vrsh designed to be used in \"Spherical Harmoics\" GI engine or both of them"
+	    menu	{
+		"xml"	"*.xml"
+		"vrsh"	"*.vrsh"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SphericalHarmonicsExporter" }
+	    parmtag	{ "vray_pluginattr" "file_format" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"per_normal"
+	    label	"Per normal"
+	    type	ordinal
+	    default	{ "0" }
+	    help	"Spherical harmonics can be created either for each vertex of the geometry or for each normal, this option allows you to choose between those two modes. For round objects it is better to use per Vertex mode while for objects with large flat surfaces the per Normal mode is better and faster"
+	    menu	{
+		"0"	"Per normal"
+		"1"	"Per vertex"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SphericalHarmonicsExporter" }
+	    parmtag	{ "vray_pluginattr" "per_normal" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"hit_recording"
+	    label	"Hit recording"
+	    type	toggle
+	    default	{ "0" }
+	    help	"Enabling it speeds up the calculations by storing a lot of information in the RAM"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SphericalHarmonicsExporter" }
+	    parmtag	{ "vray_pluginattr" "hit_recording" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"max_mem_usage"
+	    label	"Max mem usage"
+	    type	integer
+	    default	{ "2000" }
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SphericalHarmonicsExporter" }
+	    parmtag	{ "vray_pluginattr" "max_mem_usage" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"object_space"
+	    label	"Object space"
+	    type	ordinal
+	    default	{ "0" }
+	    menu	{
+		"0"	"World Space"
+		"1"	"Object Space"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SphericalHarmonicsExporter" }
+	    parmtag	{ "vray_pluginattr" "object_space" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"adaptive_on"
+	    label	"Adaptive on"
+	    type	toggle
+	    default	{ "0" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SphericalHarmonicsExporter" }
+	    parmtag	{ "vray_pluginattr" "adaptive_on" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"adaptive_thresh"
+	    label	"Adaptive thresh"
+	    type	float
+	    default	{ "0.1" }
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SphericalHarmonicsExporter" }
+	    parmtag	{ "vray_pluginattr" "adaptive_thresh" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"adaptive_depth"
+	    label	"Adaptive depth"
+	    type	integer
+	    default	{ "3" }
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SphericalHarmonicsExporter" }
+	    parmtag	{ "vray_pluginattr" "adaptive_depth" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"adaptive_edge"
+	    label	"Adaptive edge"
+	    type	float
+	    default	{ "0.1" }
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SphericalHarmonicsExporter" }
+	    parmtag	{ "vray_pluginattr" "adaptive_edge" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"save_obj"
+	    label	"Save obj"
+	    type	toggle
+	    default	{ "0" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SphericalHarmonicsExporter" }
+	    parmtag	{ "vray_pluginattr" "save_obj" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"node"
+	    label	"Node"
+	    type	oppath
+	    default	{ "" }
+	    help	"Node of the mesh"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "oprelative" "." }
+	    parmtag	{ "vray_plugin" "SphericalHarmonicsExporter" }
+	    parmtag	{ "vray_pluginattr" "node" }
+	    parmtag	{ "vray_type" "Object" }
+	}
+    }
+
+}

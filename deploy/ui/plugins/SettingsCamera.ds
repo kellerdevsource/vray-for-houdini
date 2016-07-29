@@ -1,0 +1,146 @@
+{
+    name	parameters
+    group {
+	name	"SettingsCamera"
+	label	"Camera"
+
+	parm {
+	    name	"plugindata"
+	    label	"Camera"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsCamera" }
+	    parmtag	{ "vray_type" "CAMERA" }
+	}
+	parm {
+	    name	"type"
+	    label	"Camera type"
+	    type	ordinal
+	    default	{ "0" }
+	    help	"Camera type"
+	    menu	{
+		"0"	"Standard"
+		"1"	"Spherical"
+		"2"	"Cylindrical (point)"
+		"3"	"Cylindrical (ortho)"
+		"4"	"Box"
+		"5"	"Fish eye"
+		"6"	"Warped spherical"
+		"7"	"Orthogonal"
+		"8"	"Pinhole"
+		"9"	"Spherical panorama"
+		"10"	"Cube 6x1"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsCamera" }
+	    parmtag	{ "vray_pluginattr" "type" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"height"
+	    label	"Height"
+	    type	float
+	    default	{ "400" }
+	    help	"Height of the cylindrical (ortho) camera"
+	    disablewhen	"{ type != 3 }"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsCamera" }
+	    parmtag	{ "vray_pluginattr" "height" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"dist"
+	    label	"Distance"
+	    type	float
+	    default	{ "2" }
+	    help	"Applies only to fish-eye camera. Controls distance to the sphere center"
+	    disablewhen	"{ type != 5 } { auto_fit != 0 }"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsCamera" }
+	    parmtag	{ "vray_pluginattr" "dist" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"fov"
+	    label	"FOV"
+	    type	float
+	    default	{ "45" }
+	    help	"Field of view; if negative, the field of view will not be modified"
+	    range	{ 45 180 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsCamera" }
+	    parmtag	{ "vray_pluginattr" "fov" }
+	    parmtag	{ "vray_type" "float" }
+	    parmtag	{ "vray_units" "radians" }
+	}
+	parm {
+	    name	"auto_fit"
+	    label	"Auto-fit"
+	    type	toggle
+	    default	{ "1" }
+	    help	"The auto-fit option of the fish-eye camera"
+	    disablewhen	"{ type != 5 }"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsCamera" }
+	    parmtag	{ "vray_pluginattr" "auto_fit" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"curve"
+	    label	"Curve"
+	    type	float
+	    default	{ "1" }
+	    help	"Controls the way the rendered images is warped. Applies only to fish-eye camera"
+	    disablewhen	"{ type != 5 }"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsCamera" }
+	    parmtag	{ "vray_pluginattr" "curve" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"dont_affect_settings"
+	    label	"Don't affect settings"
+	    type	toggle
+	    default	{ "0" }
+	    help	"This is here so we can suppress a SettingsCamera node from affecting the main VRayRenderer sequence and frame data"
+	    hidewhen	"{ dont_affect_settings != 2 }"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsCamera" }
+	    parmtag	{ "vray_pluginattr" "dont_affect_settings" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"image_planes"
+	    label	"Image planes"
+	    type	oppath
+	    default	{ "" }
+	    help	"Used only to force a re-export of the image plane geometry in RT rendering"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "oprelative" "." }
+	    parmtag	{ "vray_plugin" "SettingsCamera" }
+	    parmtag	{ "vray_pluginattr" "image_planes" }
+	    parmtag	{ "vray_type" "Object" }
+	}
+	parm {
+	    name	"override_fov"
+	    label	"Override fov"
+	    type	toggle
+	    default	{ "0" }
+	    help	"Override FOV"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_custom_handling" "1" }
+	}
+    }
+
+}

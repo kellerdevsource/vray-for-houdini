@@ -1,0 +1,177 @@
+{
+    name	parameters
+    group {
+	name	"MtlBump"
+	label	"Bump"
+
+	parm {
+	    name	"plugindata"
+	    label	"Bump"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "MtlBump" }
+	    parmtag	{ "vray_type" "MATERIAL" }
+	}
+	parm {
+	    name	"base_mtl"
+	    label	"Base mtl"
+	    type	oppath
+	    default	{ "" }
+	    help	"Base material"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "oprelative" "." }
+	    parmtag	{ "vray_plugin" "MtlBump" }
+	    parmtag	{ "vray_pluginattr" "base_mtl" }
+	    parmtag	{ "vray_type" "Object" }
+	}
+	parm {
+	    name	"bump_tex_color"
+	    label	"Bump tex color"
+	    type	color4
+	    size	4
+	    default	{ "0" "0" "0" "1" }
+	    help	"Bump texture"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "MtlBump" }
+	    parmtag	{ "vray_pluginattr" "bump_tex_color" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+	parm {
+	    name	"bump_tex_float"
+	    label	"Bump tex float"
+	    type	float
+	    default	{ "1" }
+	    help	"Bump texture"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "MtlBump" }
+	    parmtag	{ "vray_pluginattr" "bump_tex_float" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"bump_tex_mult"
+	    label	"Bump tex mult"
+	    type	float
+	    default	{ "1" }
+	    help	"Bump amount"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "MtlBump" }
+	    parmtag	{ "vray_pluginattr" "bump_tex_mult" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"bump_tex_mult_tex"
+	    label	"Bump tex mult tex"
+	    type	float
+	    default	{ "1" }
+	    help	"Bump amount texture"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "MtlBump" }
+	    parmtag	{ "vray_pluginattr" "bump_tex_mult_tex" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"bump_shadows"
+	    label	"Bump shadows"
+	    type	toggle
+	    default	{ "0" }
+	    help	"true to offset the surface shading point, in addition to the normal"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "MtlBump" }
+	    parmtag	{ "vray_pluginattr" "bump_shadows" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"bump_delta_scale"
+	    label	"Bump delta scale"
+	    type	float
+	    default	{ "1" }
+	    help	"Scale for sampling the bitmap when map_type is 0. Normally this is tied to the ray differentials, but can be changed if necessary"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "MtlBump" }
+	    parmtag	{ "vray_pluginattr" "bump_delta_scale" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"maya_compatible"
+	    label	"Maya compatible"
+	    type	toggle
+	    default	{ "0" }
+	    help	"When this is true the BRDFBump will try to match the Maya bump/normal mapping"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "MtlBump" }
+	    parmtag	{ "vray_pluginattr" "maya_compatible" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"map_type"
+	    label	"Type"
+	    type	ordinal
+	    default	{ "0" }
+	    help	"The type of the map"
+	    menu	{
+		"0"	"Regular texture output"
+		"1"	"Normal map in tangent space"
+		"2"	"Normal map in object space"
+		"3"	"Normal map in camera space"
+		"4"	"Normal map in world space"
+		"5"	"From texture bump output"
+		"6"	"Explicit normal"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "MtlBump" }
+	    parmtag	{ "vray_pluginattr" "map_type" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"normal_uvwgen"
+	    label	"Normal uvwgen"
+	    type	oppath
+	    default	{ "" }
+	    help	"The uvw generator for the normal map texture when \"Type\" is \"Normal (Tangent)\""
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "oprelative" "." }
+	    parmtag	{ "vray_plugin" "MtlBump" }
+	    parmtag	{ "vray_pluginattr" "normal_uvwgen" }
+	    parmtag	{ "vray_type" "Object" }
+	}
+	parm {
+	    name	"compute_bump_for_shadows"
+	    label	"Compute bump for shadows"
+	    type	toggle
+	    default	{ "1" }
+	    help	"true to compute bump mapping for shadow rays in case the material is transparent; false to skip the bump map for shadow rays (faster rendering)"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "MtlBump" }
+	    parmtag	{ "vray_pluginattr" "compute_bump_for_shadows" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"bump_tex"
+	    label	"Bump tex"
+	    type	oppath
+	    default	{ "" }
+	    help	"Bump texture; this is deprecated, use bump_tex_color or bump_tex_float instead"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "oprelative" "." }
+	    parmtag	{ "vray_plugin" "MtlBump" }
+	    parmtag	{ "vray_pluginattr" "bump_tex" }
+	    parmtag	{ "vray_type" "Object" }
+	}
+    }
+
+}

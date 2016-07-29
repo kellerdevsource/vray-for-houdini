@@ -35,9 +35,9 @@ void VOP::MtlMulti::setPluginType()
 }
 
 
-void VOP::MtlMulti::addPrmTemplate(Parm::PRMTmplList &prmTemplate)
+void VOP::MtlMulti::addPrmTemplate(Parm::PRMList &prmTemplate)
 {
-	prmTemplate.push_back(PRM_Template(PRM_INT, 1, &rpm_name_mtl_count, PRMoneDefaults, /*choicelist*/ nullptr, &rpm_range_mtl_count));
+	prmTemplate.addPrm(PRM_Template(PRM_INT, 1, &rpm_name_mtl_count, PRMoneDefaults, /*choicelist*/ nullptr, &rpm_range_mtl_count));
 }
 
 

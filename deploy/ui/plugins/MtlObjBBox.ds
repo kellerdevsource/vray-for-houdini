@@ -1,0 +1,59 @@
+{
+    name	parameters
+    group {
+	name	"MtlObjBBox"
+	label	"Object Bounding"
+
+	parm {
+	    name	"plugindata"
+	    label	"Object Bounding"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "MtlObjBBox" }
+	    parmtag	{ "vray_type" "MATERIAL" }
+	}
+	parm {
+	    name	"base_mtl"
+	    label	"Base mtl"
+	    type	oppath
+	    default	{ "" }
+	    help	"Base material"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "oprelative" "." }
+	    parmtag	{ "vray_plugin" "MtlObjBBox" }
+	    parmtag	{ "vray_pluginattr" "base_mtl" }
+	    parmtag	{ "vray_type" "Object" }
+	}
+	parm {
+	    name	"bbox_min"
+	    label	"Bbox min"
+	    type	direction
+	    size	3
+	    default	{ "0" "0" "0" }
+	    help	"Min. coordinates for object bounding box"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "MtlObjBBox" }
+	    parmtag	{ "vray_pluginattr" "bbox_min" }
+	    parmtag	{ "vray_type" "Vector" }
+	}
+	parm {
+	    name	"bbox_max"
+	    label	"Bbox max"
+	    type	direction
+	    size	3
+	    default	{ "0" "0" "0" }
+	    help	"Max. coordinates for object bounding box"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "MtlObjBBox" }
+	    parmtag	{ "vray_pluginattr" "bbox_max" }
+	    parmtag	{ "vray_type" "Vector" }
+	}
+    }
+
+}

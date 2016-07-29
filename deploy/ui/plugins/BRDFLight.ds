@@ -1,0 +1,125 @@
+{
+    name	parameters
+    group {
+	name	"BRDFLight"
+	label	"Light"
+
+	parm {
+	    name	"plugindata"
+	    label	"Light"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFLight" }
+	    parmtag	{ "vray_type" "BRDF" }
+	}
+	group {
+	    name	"folder"
+	    label	"V-Ray Light Mtl"
+
+	    parm {
+		name	"color"
+		label	"Light color"
+		type	color4
+		size	4
+		default	{ "1" "1" "1" "1" }
+		help	"The self-illumination color"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFLight" }
+		parmtag	{ "vray_pluginattr" "color" }
+		parmtag	{ "vray_type" "Texture" }
+	    }
+	    parm {
+		name	"colorMultiplier"
+		label	"Color multiplier"
+		type	float
+		default	{ "1" }
+		help	"Color Multiplier"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFLight" }
+		parmtag	{ "vray_pluginattr" "colorMultiplier" }
+		parmtag	{ "vray_type" "TextureFloat" }
+	    }
+	    parm {
+		name	"transparency"
+		label	"Transparency"
+		type	color4
+		size	4
+		default	{ "0" "0" "0" "1" }
+		help	"Transparency of the BRDF"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFLight" }
+		parmtag	{ "vray_pluginattr" "transparency" }
+		parmtag	{ "vray_type" "Texture" }
+	    }
+	    parm {
+		name	"doubleSided"
+		label	"Double sided"
+		type	toggle
+		default	{ "0" }
+		help	"If false, the light color is black for back-facing surfaces"
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFLight" }
+		parmtag	{ "vray_pluginattr" "doubleSided" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	    parm {
+		name	"emitOnBackSide"
+		label	"Emit on back side"
+		type	toggle
+		default	{ "1" }
+		help	"Emit on back side"
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFLight" }
+		parmtag	{ "vray_pluginattr" "emitOnBackSide" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	    parm {
+		name	"channels"
+		label	"Channels"
+		type	oplist
+		default	{ "" }
+		help	"Render channels the result of this BRDF will be written to"
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "oprelative" "." }
+		parmtag	{ "vray_plugin" "BRDFLight" }
+		parmtag	{ "vray_pluginattr" "channels" }
+		parmtag	{ "vray_type" "List<Object>" }
+	    }
+	    parm {
+		name	"compensateExposure"
+		label	"Compensate exposure"
+		type	toggle
+		default	{ "0" }
+		help	"Compensate camera exposure"
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFLight" }
+		parmtag	{ "vray_pluginattr" "compensateExposure" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	    parm {
+		name	"multiplyByOpacity"
+		label	"Multiply by opacity"
+		type	toggle
+		default	{ "0" }
+		help	"When enabled the color of the light brdf is multiplied by the brdf's opacity (inverse of the brdf's transparency)"
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFLight" }
+		parmtag	{ "vray_pluginattr" "multiplyByOpacity" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	}
+
+    }
+
+}

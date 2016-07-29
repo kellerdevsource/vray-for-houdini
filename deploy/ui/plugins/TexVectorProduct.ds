@@ -1,0 +1,154 @@
+{
+    name	parameters
+    group {
+	name	"TexVectorProduct"
+	label	"Vector Product"
+
+	parm {
+	    name	"plugindata"
+	    label	"Vector Product"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"Vector product"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_category" "utility" }
+	    parmtag	{ "vray_plugin" "TexVectorProduct" }
+	    parmtag	{ "vray_type" "TEXTURE" }
+	}
+	parm {
+	    name	"operation"
+	    label	"Operation"
+	    type	ordinal
+	    default	{ "1" }
+	    help	"Operation"
+	    menu	{
+		"0"	"No operation"
+		"1"	"Dot Product"
+		"2"	"Cross Product"
+		"3"	"Vector Matrix Product"
+		"4"	"Point Matrix Product"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexVectorProduct" }
+	    parmtag	{ "vray_pluginattr" "operation" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"input1"
+	    label	"Input1"
+	    type	color4
+	    size	4
+	    default	{ "0" "0" "0" "1" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexVectorProduct" }
+	    parmtag	{ "vray_pluginattr" "input1" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+	parm {
+	    name	"input2"
+	    label	"Input2"
+	    type	color4
+	    size	4
+	    default	{ "0" "0" "0" "1" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexVectorProduct" }
+	    parmtag	{ "vray_pluginattr" "input2" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+	groupsimple {
+	    name	"transform"
+	    label	"Transform"
+	    grouptag	{ "vray_plugin" "TexVectorProduct" }
+	    grouptag	{ "vray_pluginattr" "transform" }
+	    grouptag	{ "vray_type" "TextureTransform" }
+
+	    parm {
+		name	"transform_xOrd"
+		label	"Transform Order"
+		type	ordinal
+		default	{ "0" }
+		menu	{
+		    "srt"	"Scale Rotate Translate"
+		    "str"	"Scale Translate Rotate"
+		    "rst"	"Rotate Scale Translate"
+		    "rts"	"Rotate Translate Scale"
+		    "tsr"	"Translate Scale Rotate"
+		    "trs"	"Translate Rotate Scale"
+		}
+		range	{ 0 1 }
+		export	none
+	    }
+	    parm {
+		name	"transform_rOrd"
+		label	"Rotation Order"
+		type	ordinal
+		default	{ "0" }
+		menu	{
+		    "xyz"	"Rx Ry Rz"
+		    "xzy"	"Rx Rz Ry"
+		    "yxz"	"Ry Rx Rz"
+		    "yzx"	"Ry Rz Rx"
+		    "zxy"	"Rz Rx Ry"
+		    "zyx"	"Rz Ry Rx"
+		}
+		range	{ 0 1 }
+		export	none
+	    }
+	    parm {
+		name	"transform_trans"
+		label	"Translate"
+		type	float
+		size	3
+		default	{ "0" "0" "0" }
+		range	{ 0 10 }
+		export	none
+	    }
+	    parm {
+		name	"transform_rot"
+		label	"Rotate"
+		type	angle
+		size	3
+		default	{ "0" "0" "0" }
+		range	{ 0 10 }
+		export	none
+	    }
+	    parm {
+		name	"transform_scale"
+		label	"Scale"
+		type	float
+		size	3
+		default	{ "1" "1" "1" }
+		range	{ 0 10 }
+		export	none
+	    }
+	    parm {
+		name	"transform_pivot"
+		label	"Pivot"
+		type	float
+		size	3
+		default	{ "0" "0" "0" }
+		range	{ 0 10 }
+		export	none
+	    }
+	}
+
+	parm {
+	    name	"normalize"
+	    label	"Normalize"
+	    type	toggle
+	    default	{ "0" }
+	    help	"When this is true the output vector will be normalized (in case of dot product, the input vectors are normalized before the operation)"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexVectorProduct" }
+	    parmtag	{ "vray_pluginattr" "normalize" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+    }
+
+}

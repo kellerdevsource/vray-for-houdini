@@ -1,0 +1,394 @@
+{
+    name	parameters
+    group {
+	name	"RenderView"
+	label	"Render view"
+
+	parm {
+	    name	"plugindata"
+	    label	"Render view"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"Render view settings"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "RenderView" }
+	    parmtag	{ "vray_type" "CAMERA" }
+	}
+	groupsimple {
+	    name	"transform"
+	    label	"Transform"
+	    grouptag	{ "vray_plugin" "RenderView" }
+	    grouptag	{ "vray_pluginattr" "transform" }
+	    grouptag	{ "vray_type" "Transform" }
+
+	    parm {
+		name	"transform_xOrd"
+		label	"Transform Order"
+		type	ordinal
+		default	{ "0" }
+		menu	{
+		    "srt"	"Scale Rotate Translate"
+		    "str"	"Scale Translate Rotate"
+		    "rst"	"Rotate Scale Translate"
+		    "rts"	"Rotate Translate Scale"
+		    "tsr"	"Translate Scale Rotate"
+		    "trs"	"Translate Rotate Scale"
+		}
+		range	{ 0 1 }
+		export	none
+	    }
+	    parm {
+		name	"transform_rOrd"
+		label	"Rotation Order"
+		type	ordinal
+		default	{ "0" }
+		menu	{
+		    "xyz"	"Rx Ry Rz"
+		    "xzy"	"Rx Rz Ry"
+		    "yxz"	"Ry Rx Rz"
+		    "yzx"	"Ry Rz Rx"
+		    "zxy"	"Rz Rx Ry"
+		    "zyx"	"Rz Ry Rx"
+		}
+		range	{ 0 1 }
+		export	none
+	    }
+	    parm {
+		name	"transform_trans"
+		label	"Translate"
+		type	float
+		size	3
+		default	{ "0" "0" "0" }
+		range	{ 0 10 }
+		export	none
+	    }
+	    parm {
+		name	"transform_rot"
+		label	"Rotate"
+		type	angle
+		size	3
+		default	{ "0" "0" "0" }
+		range	{ 0 10 }
+		export	none
+	    }
+	    parm {
+		name	"transform_scale"
+		label	"Scale"
+		type	float
+		size	3
+		default	{ "1" "1" "1" }
+		range	{ 0 10 }
+		export	none
+	    }
+	    parm {
+		name	"transform_pivot"
+		label	"Pivot"
+		type	float
+		size	3
+		default	{ "0" "0" "0" }
+		range	{ 0 10 }
+		export	none
+	    }
+	}
+
+	parm {
+	    name	"fov"
+	    label	"Fov"
+	    type	float
+	    default	{ "0.785398" }
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "RenderView" }
+	    parmtag	{ "vray_pluginattr" "fov" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"focalDistance"
+	    label	"Focaldistance"
+	    type	float
+	    default	{ "1" }
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "RenderView" }
+	    parmtag	{ "vray_pluginattr" "focalDistance" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"aperture"
+	    label	"Aperture"
+	    type	float
+	    default	{ "0.1" }
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "RenderView" }
+	    parmtag	{ "vray_pluginattr" "aperture" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"lens_rotation"
+	    label	"Lens rotation"
+	    type	float
+	    default	{ "0" }
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "RenderView" }
+	    parmtag	{ "vray_pluginattr" "lens_rotation" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"frame_samples"
+	    label	"Frame samples"
+	    type	integer
+	    default	{ "2" }
+	    help	"Number of samples per frame for the transformation"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "RenderView" }
+	    parmtag	{ "vray_pluginattr" "frame_samples" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"clipping"
+	    label	"Clipping"
+	    type	toggle
+	    default	{ "1" }
+	    help	"true to enable clipping planes"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "RenderView" }
+	    parmtag	{ "vray_pluginattr" "clipping" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"clipping_near"
+	    label	"Clipping near"
+	    type	float
+	    default	{ "0" }
+	    help	"The near clipping plane"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "RenderView" }
+	    parmtag	{ "vray_pluginattr" "clipping_near" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"clipping_far"
+	    label	"Clipping far"
+	    type	float
+	    default	{ "1e+18" }
+	    help	"The far clipping plane"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "RenderView" }
+	    parmtag	{ "vray_pluginattr" "clipping_far" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"zoom"
+	    label	"Zoom"
+	    type	float
+	    default	{ "1" }
+	    help	"Zoom factor"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "RenderView" }
+	    parmtag	{ "vray_pluginattr" "zoom" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"orthographic"
+	    label	"Orthographic"
+	    type	toggle
+	    default	{ "0" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "RenderView" }
+	    parmtag	{ "vray_pluginattr" "orthographic" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"orthographicWidth"
+	    label	"Orthographicwidth"
+	    type	float
+	    default	{ "1" }
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "RenderView" }
+	    parmtag	{ "vray_pluginattr" "orthographicWidth" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"dont_affect_settings"
+	    label	"Dont affect settings"
+	    type	toggle
+	    default	{ "0" }
+	    help	"This is here so we can suppress a RenderView node from affecting the main VRayRenderer sequence and frame data"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "RenderView" }
+	    parmtag	{ "vray_pluginattr" "dont_affect_settings" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"use_scene_offset"
+	    label	"Use scene offset"
+	    type	toggle
+	    default	{ "1" }
+	    help	"If true, the scene will be internally translated relative to the render view"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "RenderView" }
+	    parmtag	{ "vray_pluginattr" "use_scene_offset" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"mayaFocalLength"
+	    label	"Mayafocallength"
+	    type	float
+	    default	{ "1" }
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "RenderView" }
+	    parmtag	{ "vray_pluginattr" "mayaFocalLength" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"mayaApperture"
+	    label	"Mayaapperture"
+	    type	float
+	    default	{ "1" }
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "RenderView" }
+	    parmtag	{ "vray_pluginattr" "mayaApperture" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"clip_near"
+	    label	"Clip near"
+	    type	toggle
+	    default	{ "0" }
+	    help	"Clip near"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_custom_handling" "1" }
+	}
+	parm {
+	    name	"clip_far"
+	    label	"Clip far"
+	    type	toggle
+	    default	{ "0" }
+	    help	"Clip far"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_custom_handling" "1" }
+	}
+	parm {
+	    name	"stereo_on"
+	    label	"Stereo on"
+	    type	ordinal
+	    default	{ "0" }
+	    help	"Enable stereo rendering and select output layout"
+	    menu	{
+		"0"	"disbled"
+		"1"	"enabled, side-by-side"
+		"2"	"enabled, top-bottom"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "RenderView" }
+	    parmtag	{ "vray_pluginattr" "stereo_on" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"stereo_eye_distance"
+	    label	"Stereo eye distance"
+	    type	float
+	    default	{ "1" }
+	    help	"The distance between the two stereo views"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "RenderView" }
+	    parmtag	{ "vray_pluginattr" "stereo_eye_distance" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"stereo_interocular_method"
+	    label	"Stereo interocular method"
+	    type	ordinal
+	    default	{ "0" }
+	    help	"Specifies the camera position relative to the left and right views: 0 - center, 1 - keep left view, 2 - keep right view"
+	    menu	{
+		"0"	"Center"
+		"1"	"Keep Left"
+		"2"	"Keep Right"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "RenderView" }
+	    parmtag	{ "vray_pluginattr" "stereo_interocular_method" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"stereo_specify_focus"
+	    label	"Stereo specify focus"
+	    type	toggle
+	    default	{ "0" }
+	    help	"true to specify a separate distance for the stereo focus"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "RenderView" }
+	    parmtag	{ "vray_pluginattr" "stereo_specify_focus" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"stereo_focus_distance"
+	    label	"Stereo focus distance"
+	    type	float
+	    default	{ "1" }
+	    help	"The focus distance if specify_focus is enabled"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "RenderView" }
+	    parmtag	{ "vray_pluginattr" "stereo_focus_distance" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"stereo_view"
+	    label	"Stereo view"
+	    type	ordinal
+	    default	{ "0" }
+	    help	"Specifies which view to render"
+	    menu	{
+		"0"	"Both"
+		"1"	"Left"
+		"2"	"Right"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "RenderView" }
+	    parmtag	{ "vray_pluginattr" "stereo_view" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"stereo_focus_method"
+	    label	"Stereo focus method"
+	    type	ordinal
+	    default	{ "0" }
+	    help	"Specifies which view to render"
+	    menu	{
+		"0"	"Parallel"
+		"1"	"Rotation"
+		"2"	"Shear"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "RenderView" }
+	    parmtag	{ "vray_pluginattr" "stereo_focus_method" }
+	    parmtag	{ "vray_type" "int" }
+	}
+    }
+
+}

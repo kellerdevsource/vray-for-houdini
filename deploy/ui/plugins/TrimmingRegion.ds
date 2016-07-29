@@ -1,0 +1,47 @@
+{
+    name	parameters
+    group {
+	name	"TrimmingRegion"
+	label	"Trimming Region"
+
+	parm {
+	    name	"plugindata"
+	    label	"Trimming Region"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"TrimmingRegion"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TrimmingRegion" }
+	    parmtag	{ "vray_type" "MISC" }
+	}
+	parm {
+	    name	"innerCurves"
+	    label	"Innercurves"
+	    type	oplist
+	    default	{ "" }
+	    help	"List of NURBSCurve objects - the inner curves for the trimming region"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "oprelative" "." }
+	    parmtag	{ "vray_plugin" "TrimmingRegion" }
+	    parmtag	{ "vray_pluginattr" "innerCurves" }
+	    parmtag	{ "vray_type" "List<Object>" }
+	}
+	parm {
+	    name	"outerCurve"
+	    label	"Outercurve"
+	    type	oppath
+	    default	{ "" }
+	    help	"A NURBSCurve object - the outer curve for the trimming region"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "oprelative" "." }
+	    parmtag	{ "vray_plugin" "TrimmingRegion" }
+	    parmtag	{ "vray_pluginattr" "outerCurve" }
+	    parmtag	{ "vray_type" "Object" }
+	}
+    }
+
+}

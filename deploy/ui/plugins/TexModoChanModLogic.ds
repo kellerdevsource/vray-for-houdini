@@ -1,0 +1,120 @@
+{
+    name	parameters
+    group {
+	name	"TexModoChanModLogic"
+	label	"Modo Chan Mod Logic"
+
+	parm {
+	    name	"plugindata"
+	    label	"Modo Chan Mod Logic"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"TexModoChanModLogic"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexModoChanModLogic" }
+	    parmtag	{ "vray_type" "TEXTURE" }
+	}
+	parm {
+	    name	"op"
+	    label	"Op"
+	    type	ordinal
+	    default	{ "0" }
+	    menu	{
+		"0"	"Equal"
+		"1"	"Not equal"
+		"2"	"Greater than"
+		"3"	"Less than"
+		"4"	"Greater than or equal"
+		"5"	"Less than or equal"
+		"6"	"And"
+		"7"	"Or"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexModoChanModLogic" }
+	    parmtag	{ "vray_pluginattr" "op" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"option_true"
+	    label	"Option true"
+	    type	ordinal
+	    default	{ "0" }
+	    help	"Determines what value to return when the result of the operation is 'true'"
+	    menu	{
+		"0"	"input1"
+		"1"	"intpu2"
+		"2"	"value_true"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexModoChanModLogic" }
+	    parmtag	{ "vray_pluginattr" "option_true" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"option_false"
+	    label	"Option false"
+	    type	ordinal
+	    default	{ "0" }
+	    help	"Determines what value to return when the result of the operation is 'false'"
+	    menu	{
+		"0"	"input1"
+		"1"	"intpu2"
+		"2"	"value_false"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexModoChanModLogic" }
+	    parmtag	{ "vray_pluginattr" "option_false" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"input1"
+	    label	"Input1"
+	    type	float
+	    default	{ "0" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexModoChanModLogic" }
+	    parmtag	{ "vray_pluginattr" "input1" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"input2"
+	    label	"Input2"
+	    type	float
+	    default	{ "0" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexModoChanModLogic" }
+	    parmtag	{ "vray_pluginattr" "input2" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"value_true"
+	    label	"Value true"
+	    type	float
+	    default	{ "0" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexModoChanModLogic" }
+	    parmtag	{ "vray_pluginattr" "value_true" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"value_false"
+	    label	"Value false"
+	    type	float
+	    default	{ "0" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexModoChanModLogic" }
+	    parmtag	{ "vray_pluginattr" "value_false" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+    }
+
+}

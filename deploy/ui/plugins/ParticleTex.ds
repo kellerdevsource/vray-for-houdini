@@ -1,0 +1,621 @@
+{
+    name	parameters
+    group {
+	name	"ParticleTex"
+	label	"Particle Tex"
+
+	parm {
+	    name	"plugindata"
+	    label	"Particle Tex"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"ParticleTex"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_category" "utility" }
+	    parmtag	{ "vray_plugin" "ParticleTex" }
+	    parmtag	{ "vray_type" "TEXTURE" }
+	}
+	group {
+	    name	"folder"
+	    label	"Common"
+
+	    parm {
+		name	"compatibility_with"
+		label	"Compatibility with"
+		type	ordinal
+		default	{ "1" }
+		help	"This is used to differentiate between textures exported from different applications"
+		menu	{
+		    "0"	"Max"
+		    "1"	"Maya"
+		}
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "ParticleTex" }
+		parmtag	{ "vray_pluginattr" "compatibility_with" }
+		parmtag	{ "vray_type" "int" }
+	    }
+	    parm {
+		name	"alpha_from_intensity"
+		label	"Alpha from intensity"
+		type	ordinal
+		default	{ "1" }
+		help	"If 2 - the alpha is forced to 1.0f; 1 - the resulting alpha is the color intensity (if compatibility_with is 0) or the color luminance (if compatibility_with is 1); 0 - the alpha is taken from the bitmap alpha"
+		menu	{
+		    "0"	"Bitmap alpha"
+		    "1"	"Color intensity/luminance"
+		    "2"	"Force opaque"
+		}
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "ParticleTex" }
+		parmtag	{ "vray_pluginattr" "alpha_from_intensity" }
+		parmtag	{ "vray_type" "int" }
+	    }
+	    parm {
+		name	"invert"
+		label	"Invert"
+		type	toggle
+		default	{ "0" }
+		help	"If true, the resulting texture color will be inverted"
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "ParticleTex" }
+		parmtag	{ "vray_pluginattr" "invert" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	    parm {
+		name	"invert_alpha"
+		label	"Invert alpha"
+		type	toggle
+		default	{ "1" }
+		help	"If true and invert is on, the resulting texture alpha will be inverted too. If false, just the color will be inverted"
+		disablewhen	"{ invert != 1 }"
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "ParticleTex" }
+		parmtag	{ "vray_pluginattr" "invert_alpha" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	    parm {
+		name	"color_mult"
+		label	"Color mult"
+		type	color4
+		size	4
+		default	{ "1" "1" "1" "1" }
+		help	"A multiplier for the texture color"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "ParticleTex" }
+		parmtag	{ "vray_pluginattr" "color_mult" }
+		parmtag	{ "vray_type" "Texture" }
+	    }
+	    parm {
+		name	"color_offset"
+		label	"Color offset"
+		type	color4
+		size	4
+		default	{ "0" "0" "0" "0" }
+		help	"An additional offset for the texture color"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "ParticleTex" }
+		parmtag	{ "vray_pluginattr" "color_offset" }
+		parmtag	{ "vray_type" "Texture" }
+	    }
+	    parm {
+		name	"alpha_mult"
+		label	"Alpha mult"
+		type	float
+		default	{ "1" }
+		help	"A multiplier for the texture alpha"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "ParticleTex" }
+		parmtag	{ "vray_pluginattr" "alpha_mult" }
+		parmtag	{ "vray_type" "TextureFloat" }
+	    }
+	    parm {
+		name	"alpha_offset"
+		label	"Alpha offset"
+		type	float
+		default	{ "0" }
+		help	"An additional offset for the texture alpha"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "ParticleTex" }
+		parmtag	{ "vray_pluginattr" "alpha_offset" }
+		parmtag	{ "vray_type" "TextureFloat" }
+	    }
+	    parm {
+		name	"nouvw_color"
+		label	"No UVs Color"
+		type	color4
+		size	4
+		default	{ "0.5" "0.5" "0.5" "1" }
+		help	"The color when there are no valid uvw coordinates"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "ParticleTex" }
+		parmtag	{ "vray_pluginattr" "nouvw_color" }
+		parmtag	{ "vray_type" "Texture" }
+	    }
+	}
+
+	group {
+	    name	"folder2"
+	    label	"Mapped"
+
+	    parm {
+		name	"uvwgen"
+		label	"Uvwgen"
+		type	oppath
+		default	{ "" }
+		help	"The uvw generator for the texture"
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "oprelative" "." }
+		parmtag	{ "vray_plugin" "ParticleTex" }
+		parmtag	{ "vray_pluginattr" "uvwgen" }
+		parmtag	{ "vray_type" "Object" }
+	    }
+	    parm {
+		name	"use_3d_mapping"
+		label	"Use 3d mapping"
+		type	toggle
+		default	{ "0" }
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "ParticleTex" }
+		parmtag	{ "vray_pluginattr" "use_3d_mapping" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	    parm {
+		name	"placement_type"
+		label	"Placement type"
+		type	ordinal
+		default	{ "1" }
+		help	"The way the valid portion of the texture is applied: 0 - the whole texture is valid, 1 - crop, 2 -place"
+		menu	{
+		    "0"	"Whole texture is valid"
+		    "1"	"Crop"
+		    "2"	"Place"
+		}
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "ParticleTex" }
+		parmtag	{ "vray_pluginattr" "placement_type" }
+		parmtag	{ "vray_type" "int" }
+	    }
+	    parm {
+		name	"u"
+		label	"U"
+		type	float
+		default	{ "0" }
+		help	"U coordinate of the valid texture sector"
+		disablewhen	"{ placement_type != 1 placement_type != 2 }"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "ParticleTex" }
+		parmtag	{ "vray_pluginattr" "u" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"v"
+		label	"V"
+		type	float
+		default	{ "0" }
+		help	"V coordinate of the valid texture sector"
+		disablewhen	"{ placement_type != 1 placement_type != 2 }"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "ParticleTex" }
+		parmtag	{ "vray_pluginattr" "v" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"w"
+		label	"W"
+		type	float
+		default	{ "1" }
+		help	"Width of the valid texture sector"
+		disablewhen	"{ placement_type != 1 placement_type != 2 }"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "ParticleTex" }
+		parmtag	{ "vray_pluginattr" "w" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"h"
+		label	"H"
+		type	float
+		default	{ "1" }
+		help	"Height of the valid texture sector"
+		disablewhen	"{ placement_type != 1 placement_type != 2 }"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "ParticleTex" }
+		parmtag	{ "vray_pluginattr" "h" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"jitter"
+		label	"Jitter"
+		type	float
+		default	{ "0" }
+		help	"Amount of random placement variation"
+		disablewhen	"{ placement_type != 2 }"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "ParticleTex" }
+		parmtag	{ "vray_pluginattr" "jitter" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"tile_u"
+		label	"Tile u"
+		type	toggle
+		default	{ "0" }
+		help	"If true there is horizontal tiling"
+		disablewhen	"{ placement_type != 2 }"
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "ParticleTex" }
+		parmtag	{ "vray_pluginattr" "tile_u" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	    parm {
+		name	"tile_v"
+		label	"Tile v"
+		type	toggle
+		default	{ "0" }
+		help	"If true there is vertical tiling"
+		disablewhen	"{ placement_type != 2 }"
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "ParticleTex" }
+		parmtag	{ "vray_pluginattr" "tile_v" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	    parm {
+		name	"uv_noise_on"
+		label	"UV noise on"
+		type	toggle
+		default	{ "0" }
+		help	"If true the noise is enabled"
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "ParticleTex" }
+		parmtag	{ "vray_pluginattr" "uv_noise_on" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	    parm {
+		name	"uv_noise_animate"
+		label	"Animate UV noise"
+		type	toggle
+		default	{ "0" }
+		help	"If true the noise is animated. Use \"UV noise phase\" to animate the noise"
+		disablewhen	"{ uv_noise_on != 1 }"
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "ParticleTex" }
+		parmtag	{ "vray_pluginattr" "uv_noise_animate" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	    parm {
+		name	"uv_noise_amount"
+		label	"UV noise amount"
+		type	float
+		default	{ "1" }
+		help	"UV noise amount"
+		disablewhen	"{ uv_noise_on != 1 }"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "ParticleTex" }
+		parmtag	{ "vray_pluginattr" "uv_noise_amount" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"uv_noise_levels"
+		label	"UV noise levels"
+		type	float
+		default	{ "1" }
+		help	"UV noise iterations"
+		disablewhen	"{ uv_noise_on != 1 }"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "ParticleTex" }
+		parmtag	{ "vray_pluginattr" "uv_noise_levels" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"uv_noise_size"
+		label	"UV noise size"
+		type	float
+		default	{ "1" }
+		help	"UV noise size"
+		disablewhen	"{ uv_noise_on != 1 }"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "ParticleTex" }
+		parmtag	{ "vray_pluginattr" "uv_noise_size" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"un_noise_phase"
+		label	"UV noise phase"
+		type	float
+		default	{ "0" }
+		help	"UV noise phase"
+		disablewhen	"{ uv_noise_on != 1 } { uv_noise_animate != 1 }"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "ParticleTex" }
+		parmtag	{ "vray_pluginattr" "un_noise_phase" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"blend_alpha"
+		label	"Blend alpha"
+		type	toggle
+		default	{ "0" }
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "ParticleTex" }
+		parmtag	{ "vray_pluginattr" "blend_alpha" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	    parm {
+		name	"blend_method"
+		label	"Blend method"
+		type	ordinal
+		default	{ "1" }
+		help	"0: Equal; 1: Proportional; 2: Biggest"
+		menu	{
+		    "0"	"Equal"
+		    "1"	"Proportional"
+		    "2"	"Biggest"
+		}
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "ParticleTex" }
+		parmtag	{ "vray_pluginattr" "blend_method" }
+		parmtag	{ "vray_type" "int" }
+	    }
+	    parm {
+		name	"color_mode"
+		label	"Color mode"
+		type	integer
+		default	{ "1" }
+		help	"0: not per particle; 1: pp color; 2: pp emission 1; 3: pp user color 1"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "ParticleTex" }
+		parmtag	{ "vray_pluginattr" "color_mode" }
+		parmtag	{ "vray_type" "int" }
+	    }
+	    parm {
+		name	"map"
+		label	"Map"
+		type	color4
+		size	4
+		default	{ "1" "1" "1" "1" }
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "ParticleTex" }
+		parmtag	{ "vray_pluginattr" "map" }
+		parmtag	{ "vray_type" "Texture" }
+	    }
+	    parm {
+		name	"radius_mode"
+		label	"Radius mode"
+		type	integer
+		default	{ "1" }
+		help	"0: not per particle; 1: pp radius; 2: pp user scalar 1"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "ParticleTex" }
+		parmtag	{ "vray_pluginattr" "radius_mode" }
+		parmtag	{ "vray_type" "int" }
+	    }
+	    parm {
+		name	"radius"
+		label	"Radius"
+		type	float
+		default	{ "1" }
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "ParticleTex" }
+		parmtag	{ "vray_pluginattr" "radius" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"amplitude"
+		label	"Amplitude"
+		type	float
+		default	{ "1" }
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "ParticleTex" }
+		parmtag	{ "vray_pluginattr" "amplitude" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"shift_mode"
+		label	"Shift mode"
+		type	toggle
+		default	{ "0" }
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "ParticleTex" }
+		parmtag	{ "vray_pluginattr" "shift_mode" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	    parm {
+		name	"shift"
+		label	"Shift"
+		type	float
+		default	{ "1" }
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "ParticleTex" }
+		parmtag	{ "vray_pluginattr" "shift" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"radius_scale"
+		label	"Radius scale"
+		type	toggle
+		default	{ "1" }
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "ParticleTex" }
+		parmtag	{ "vray_pluginattr" "radius_scale" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	    parm {
+		name	"pa_color"
+		label	"Pa color"
+		type	toggle
+		default	{ "0" }
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "ParticleTex" }
+		parmtag	{ "vray_pluginattr" "pa_color" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	    parm {
+		name	"pa_radius"
+		label	"Pa radius"
+		type	toggle
+		default	{ "0" }
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "ParticleTex" }
+		parmtag	{ "vray_pluginattr" "pa_radius" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	    parm {
+		name	"pa_amplitude"
+		label	"Pa amplitude"
+		type	toggle
+		default	{ "0" }
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "ParticleTex" }
+		parmtag	{ "vray_pluginattr" "pa_amplitude" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	    parm {
+		name	"pa_shift"
+		label	"Pa shift"
+		type	toggle
+		default	{ "0" }
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "ParticleTex" }
+		parmtag	{ "vray_pluginattr" "pa_shift" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	    parm {
+		name	"particle_systems"
+		label	"Particle systems"
+		type	oplist
+		default	{ "" }
+		help	"List of particle systems to get the particle data from"
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "oprelative" "." }
+		parmtag	{ "vray_plugin" "ParticleTex" }
+		parmtag	{ "vray_pluginattr" "particle_systems" }
+		parmtag	{ "vray_type" "List<Object>" }
+	    }
+	    groupsimple {
+		name	"source_transform"
+		label	"Source transform"
+		grouptag	{ "vray_plugin" "ParticleTex" }
+		grouptag	{ "vray_pluginattr" "source_transform" }
+		grouptag	{ "vray_type" "Transform" }
+
+		parm {
+		    name	"source_transform_xOrd"
+		    label	"Transform Order"
+		    type	ordinal
+		    default	{ "0" }
+		    menu	{
+			"srt"	"Scale Rotate Translate"
+			"str"	"Scale Translate Rotate"
+			"rst"	"Rotate Scale Translate"
+			"rts"	"Rotate Translate Scale"
+			"tsr"	"Translate Scale Rotate"
+			"trs"	"Translate Rotate Scale"
+		    }
+		    range	{ 0 1 }
+		    export	none
+		}
+		parm {
+		    name	"source_transform_rOrd"
+		    label	"Rotation Order"
+		    type	ordinal
+		    default	{ "0" }
+		    menu	{
+			"xyz"	"Rx Ry Rz"
+			"xzy"	"Rx Rz Ry"
+			"yxz"	"Ry Rx Rz"
+			"yzx"	"Ry Rz Rx"
+			"zxy"	"Rz Rx Ry"
+			"zyx"	"Rz Ry Rx"
+		    }
+		    range	{ 0 1 }
+		    export	none
+		}
+		parm {
+		    name	"source_transform_trans"
+		    label	"Translate"
+		    type	float
+		    size	3
+		    default	{ "0" "0" "0" }
+		    help	"world to 'object' transformation of the source"
+		    range	{ 0 10 }
+		    export	none
+		}
+		parm {
+		    name	"source_transform_rot"
+		    label	"Rotate"
+		    type	angle
+		    size	3
+		    default	{ "0" "0" "0" }
+		    help	"world to 'object' transformation of the source"
+		    range	{ 0 10 }
+		    export	none
+		}
+		parm {
+		    name	"source_transform_scale"
+		    label	"Scale"
+		    type	float
+		    size	3
+		    default	{ "1" "1" "1" }
+		    help	"world to 'object' transformation of the source"
+		    range	{ 0 10 }
+		    export	none
+		}
+		parm {
+		    name	"source_transform_pivot"
+		    label	"Pivot"
+		    type	float
+		    size	3
+		    default	{ "0" "0" "0" }
+		    help	"world to 'object' transformation of the source"
+		    range	{ 0 10 }
+		    export	none
+		}
+	    }
+
+	}
+
+    }
+
+}

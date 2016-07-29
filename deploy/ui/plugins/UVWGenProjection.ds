@@ -1,0 +1,427 @@
+{
+    name	parameters
+    group {
+	name	"UVWGenProjection"
+	label	"Projection"
+
+	parm {
+	    name	"plugindata"
+	    label	"Projection"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"Projection mapping"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "UVWGenProjection" }
+	    parmtag	{ "vray_type" "UVWGEN" }
+	}
+	groupsimple {
+	    name	"uvw_transform"
+	    label	"Uvw transform"
+	    grouptag	{ "vray_plugin" "UVWGenProjection" }
+	    grouptag	{ "vray_pluginattr" "uvw_transform" }
+	    grouptag	{ "vray_type" "Transform" }
+
+	    parm {
+		name	"uvw_transform_xOrd"
+		label	"Transform Order"
+		type	ordinal
+		default	{ "0" }
+		menu	{
+		    "srt"	"Scale Rotate Translate"
+		    "str"	"Scale Translate Rotate"
+		    "rst"	"Rotate Scale Translate"
+		    "rts"	"Rotate Translate Scale"
+		    "tsr"	"Translate Scale Rotate"
+		    "trs"	"Translate Rotate Scale"
+		}
+		range	{ 0 1 }
+		export	none
+	    }
+	    parm {
+		name	"uvw_transform_rOrd"
+		label	"Rotation Order"
+		type	ordinal
+		default	{ "0" }
+		menu	{
+		    "xyz"	"Rx Ry Rz"
+		    "xzy"	"Rx Rz Ry"
+		    "yxz"	"Ry Rx Rz"
+		    "yzx"	"Ry Rz Rx"
+		    "zxy"	"Rz Rx Ry"
+		    "zyx"	"Rz Ry Rx"
+		}
+		range	{ 0 1 }
+		export	none
+	    }
+	    parm {
+		name	"uvw_transform_trans"
+		label	"Translate"
+		type	float
+		size	3
+		default	{ "0" "0" "0" }
+		range	{ 0 10 }
+		export	none
+	    }
+	    parm {
+		name	"uvw_transform_rot"
+		label	"Rotate"
+		type	angle
+		size	3
+		default	{ "0" "0" "0" }
+		range	{ 0 10 }
+		export	none
+	    }
+	    parm {
+		name	"uvw_transform_scale"
+		label	"Scale"
+		type	float
+		size	3
+		default	{ "1" "1" "1" }
+		range	{ 0 10 }
+		export	none
+	    }
+	    parm {
+		name	"uvw_transform_pivot"
+		label	"Pivot"
+		type	float
+		size	3
+		default	{ "0" "0" "0" }
+		range	{ 0 10 }
+		export	none
+	    }
+	}
+
+	groupsimple {
+	    name	"uvw_transform_tex"
+	    label	"Uvw transform tex"
+	    grouptag	{ "vray_plugin" "UVWGenProjection" }
+	    grouptag	{ "vray_pluginattr" "uvw_transform_tex" }
+	    grouptag	{ "vray_type" "TextureTransform" }
+
+	    parm {
+		name	"uvw_transform_tex_xOrd"
+		label	"Transform Order"
+		type	ordinal
+		default	{ "0" }
+		menu	{
+		    "srt"	"Scale Rotate Translate"
+		    "str"	"Scale Translate Rotate"
+		    "rst"	"Rotate Scale Translate"
+		    "rts"	"Rotate Translate Scale"
+		    "tsr"	"Translate Scale Rotate"
+		    "trs"	"Translate Rotate Scale"
+		}
+		range	{ 0 1 }
+		export	none
+	    }
+	    parm {
+		name	"uvw_transform_tex_rOrd"
+		label	"Rotation Order"
+		type	ordinal
+		default	{ "0" }
+		menu	{
+		    "xyz"	"Rx Ry Rz"
+		    "xzy"	"Rx Rz Ry"
+		    "yxz"	"Ry Rx Rz"
+		    "yzx"	"Ry Rz Rx"
+		    "zxy"	"Rz Rx Ry"
+		    "zyx"	"Rz Ry Rx"
+		}
+		range	{ 0 1 }
+		export	none
+	    }
+	    parm {
+		name	"uvw_transform_tex_trans"
+		label	"Translate"
+		type	float
+		size	3
+		default	{ "0" "0" "0" }
+		range	{ 0 10 }
+		export	none
+	    }
+	    parm {
+		name	"uvw_transform_tex_rot"
+		label	"Rotate"
+		type	angle
+		size	3
+		default	{ "0" "0" "0" }
+		range	{ 0 10 }
+		export	none
+	    }
+	    parm {
+		name	"uvw_transform_tex_scale"
+		label	"Scale"
+		type	float
+		size	3
+		default	{ "1" "1" "1" }
+		range	{ 0 10 }
+		export	none
+	    }
+	    parm {
+		name	"uvw_transform_tex_pivot"
+		label	"Pivot"
+		type	float
+		size	3
+		default	{ "0" "0" "0" }
+		range	{ 0 10 }
+		export	none
+	    }
+	}
+
+	groupsimple {
+	    name	"tex_transform"
+	    label	"Tex transform"
+	    grouptag	{ "vray_plugin" "UVWGenProjection" }
+	    grouptag	{ "vray_pluginattr" "tex_transform" }
+	    grouptag	{ "vray_type" "Transform" }
+
+	    parm {
+		name	"tex_transform_xOrd"
+		label	"Transform Order"
+		type	ordinal
+		default	{ "0" }
+		menu	{
+		    "srt"	"Scale Rotate Translate"
+		    "str"	"Scale Translate Rotate"
+		    "rst"	"Rotate Scale Translate"
+		    "rts"	"Rotate Translate Scale"
+		    "tsr"	"Translate Scale Rotate"
+		    "trs"	"Translate Rotate Scale"
+		}
+		range	{ 0 1 }
+		export	none
+	    }
+	    parm {
+		name	"tex_transform_rOrd"
+		label	"Rotation Order"
+		type	ordinal
+		default	{ "0" }
+		menu	{
+		    "xyz"	"Rx Ry Rz"
+		    "xzy"	"Rx Rz Ry"
+		    "yxz"	"Ry Rx Rz"
+		    "yzx"	"Ry Rz Rx"
+		    "zxy"	"Rz Rx Ry"
+		    "zyx"	"Rz Ry Rx"
+		}
+		range	{ 0 1 }
+		export	none
+	    }
+	    parm {
+		name	"tex_transform_trans"
+		label	"Translate"
+		type	float
+		size	3
+		default	{ "0" "0" "0" }
+		range	{ 0 10 }
+		export	none
+	    }
+	    parm {
+		name	"tex_transform_rot"
+		label	"Rotate"
+		type	angle
+		size	3
+		default	{ "0" "0" "0" }
+		range	{ 0 10 }
+		export	none
+	    }
+	    parm {
+		name	"tex_transform_scale"
+		label	"Scale"
+		type	float
+		size	3
+		default	{ "1" "1" "1" }
+		range	{ 0 10 }
+		export	none
+	    }
+	    parm {
+		name	"tex_transform_pivot"
+		label	"Pivot"
+		type	float
+		size	3
+		default	{ "0" "0" "0" }
+		range	{ 0 10 }
+		export	none
+	    }
+	}
+
+	parm {
+	    name	"camera_settings"
+	    label	"Camera settings"
+	    type	oppath
+	    default	{ "" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "oprelative" "." }
+	    parmtag	{ "vray_plugin" "UVWGenProjection" }
+	    parmtag	{ "vray_pluginattr" "camera_settings" }
+	    parmtag	{ "vray_type" "Object" }
+	}
+	parm {
+	    name	"camera_view"
+	    label	"Camera view"
+	    type	oppath
+	    default	{ "" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "oprelative" "." }
+	    parmtag	{ "vray_plugin" "UVWGenProjection" }
+	    parmtag	{ "vray_pluginattr" "camera_view" }
+	    parmtag	{ "vray_type" "Object" }
+	}
+	parm {
+	    name	"bitmap"
+	    label	"Bitmap"
+	    type	oppath
+	    default	{ "" }
+	    help	"If we are projecting a bitmap, this is the bitmap's buffer, we need it to implement vertical/horizontal fit"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "oprelative" "." }
+	    parmtag	{ "vray_plugin" "UVWGenProjection" }
+	    parmtag	{ "vray_pluginattr" "bitmap" }
+	    parmtag	{ "vray_type" "Object" }
+	}
+	parm {
+	    name	"type"
+	    label	"Type"
+	    type	ordinal
+	    default	{ "1" }
+	    help	"Mapping type"
+	    menu	{
+		"0"	"Node"
+		"1"	"Planar"
+		"2"	"Spherical"
+		"3"	"Cylindrical"
+		"4"	"Ball"
+		"5"	"Cubic"
+		"6"	"Triplanar"
+		"8"	"Perspective"
+		"9"	"Modo cubic"
+		"10"	"Modo box"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "UVWGenProjection" }
+	    parmtag	{ "vray_pluginattr" "type" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"fitfill"
+	    label	"Fit Fill"
+	    type	ordinal
+	    default	{ "0" }
+	    help	"Fit fill"
+	    menu	{
+		"0"	"Fit fill"
+		"1"	"Horizontal"
+		"2"	"Vertical"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "UVWGenProjection" }
+	    parmtag	{ "vray_pluginattr" "fitfill" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"fittype"
+	    label	"Fit Type"
+	    type	ordinal
+	    default	{ "0" }
+	    help	"Fit type"
+	    menu	{
+		"0"	"None"
+		"1"	"Match camera file gate"
+		"2"	"Match camera resolution"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "UVWGenProjection" }
+	    parmtag	{ "vray_pluginattr" "fittype" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"u_angle"
+	    label	"U angle"
+	    type	float
+	    default	{ "3.14159" }
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "UVWGenProjection" }
+	    parmtag	{ "vray_pluginattr" "u_angle" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"v_angle"
+	    label	"V angle"
+	    type	float
+	    default	{ "1.5708" }
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "UVWGenProjection" }
+	    parmtag	{ "vray_pluginattr" "v_angle" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"film_gate_w"
+	    label	"Film gate w"
+	    type	float
+	    default	{ "1" }
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "UVWGenProjection" }
+	    parmtag	{ "vray_pluginattr" "film_gate_w" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"film_gate_h"
+	    label	"Film gate h"
+	    type	float
+	    default	{ "1" }
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "UVWGenProjection" }
+	    parmtag	{ "vray_pluginattr" "film_gate_h" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"hide_backface"
+	    label	"Hide backface"
+	    type	toggle
+	    default	{ "0" }
+	    help	"Determine whether to project on back faces of polygons when in perspective mode"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "UVWGenProjection" }
+	    parmtag	{ "vray_pluginattr" "hide_backface" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"hide_occluded"
+	    label	"Hide occluded"
+	    type	toggle
+	    default	{ "0" }
+	    help	"Determine whether to project on occluded points when in perspective mode"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "UVWGenProjection" }
+	    parmtag	{ "vray_pluginattr" "hide_occluded" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"object_space"
+	    label	"Object space"
+	    type	toggle
+	    default	{ "1" }
+	    help	"If true the projection will be applied in the object space of the currently shaded geometry"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "UVWGenProjection" }
+	    parmtag	{ "vray_pluginattr" "object_space" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+    }
+
+}

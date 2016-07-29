@@ -1,0 +1,32 @@
+{
+    name	parameters
+    group {
+	name	"SettingsCurrentFrame"
+	label	"Current Frame"
+
+	parm {
+	    name	"plugindata"
+	    label	"Current Frame"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsCurrentFrame" }
+	    parmtag	{ "vray_type" "SETTINGS" }
+	}
+	parm {
+	    name	"current_frame"
+	    label	"Current frame"
+	    type	integer
+	    default	{ "0" }
+	    help	"current frame"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsCurrentFrame" }
+	    parmtag	{ "vray_pluginattr" "current_frame" }
+	    parmtag	{ "vray_type" "int" }
+	}
+    }
+
+}

@@ -1,0 +1,43 @@
+{
+    name	parameters
+    group {
+	name	"TexModoReflectionRoughness"
+	label	"Modo Reflection Roughness"
+
+	parm {
+	    name	"plugindata"
+	    label	"Modo Reflection Roughness"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"TexModoReflectionRoughness"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexModoReflectionRoughness" }
+	    parmtag	{ "vray_type" "TEXTURE" }
+	}
+	parm {
+	    name	"blurry_reflections"
+	    label	"Blurry reflections"
+	    type	toggle
+	    default	{ "0" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexModoReflectionRoughness" }
+	    parmtag	{ "vray_pluginattr" "blurry_reflections" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"modo_reflection_roughness"
+	    label	"Modo reflection roughness"
+	    type	float
+	    default	{ "0" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexModoReflectionRoughness" }
+	    parmtag	{ "vray_pluginattr" "modo_reflection_roughness" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+    }
+
+}

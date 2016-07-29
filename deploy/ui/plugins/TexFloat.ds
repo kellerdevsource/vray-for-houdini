@@ -1,0 +1,33 @@
+{
+    name	parameters
+    group {
+	name	"TexFloat"
+	label	"Float"
+
+	parm {
+	    name	"plugindata"
+	    label	"Float"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"TexFloat"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexFloat" }
+	    parmtag	{ "vray_type" "TEXTURE" }
+	}
+	parm {
+	    name	"input"
+	    label	"Input"
+	    type	float
+	    default	{ "0" }
+	    help	"input"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexFloat" }
+	    parmtag	{ "vray_pluginattr" "input" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+    }
+
+}

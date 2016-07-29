@@ -1,0 +1,488 @@
+{
+    name	parameters
+    group {
+	name	"BRDFHOPS"
+	label	"HOPS"
+
+	parm {
+	    name	"plugindata"
+	    label	"HOPS"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFHOPS" }
+	    parmtag	{ "vray_type" "BRDF" }
+	}
+	parm {
+	    name	"transparency"
+	    label	"Transparency"
+	    type	color
+	    size	3
+	    default	{ "0" "0" "0" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFHOPS" }
+	    parmtag	{ "vray_pluginattr" "transparency" }
+	    parmtag	{ "vray_type" "Color" }
+	}
+	parm {
+	    name	"transparency_tex"
+	    label	"Transparency tex"
+	    type	color4
+	    size	4
+	    default	{ "0" "0" "0" "1" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFHOPS" }
+	    parmtag	{ "vray_pluginattr" "transparency_tex" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+	parm {
+	    name	"transparency_tex_mult"
+	    label	"Transparency tex mult"
+	    type	float
+	    default	{ "1" }
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFHOPS" }
+	    parmtag	{ "vray_pluginattr" "transparency_tex_mult" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"cutoff"
+	    label	"Cutoff"
+	    type	float
+	    default	{ "0.01" }
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFHOPS" }
+	    parmtag	{ "vray_pluginattr" "cutoff" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"back_side"
+	    label	"Back side"
+	    type	toggle
+	    default	{ "0" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFHOPS" }
+	    parmtag	{ "vray_pluginattr" "back_side" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"trace_reflections"
+	    label	"Trace reflections"
+	    type	toggle
+	    default	{ "1" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFHOPS" }
+	    parmtag	{ "vray_pluginattr" "trace_reflections" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"trace_depth"
+	    label	"Trace depth"
+	    type	integer
+	    default	{ "-1" }
+	    help	"The maximum reflection depth (-1 is controlled by the global options)"
+	    disablewhen	"{ trace_reflections != 1 }"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFHOPS" }
+	    parmtag	{ "vray_pluginattr" "trace_depth" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"affect_alpha"
+	    label	"Affect alpha"
+	    type	ordinal
+	    default	{ "0" }
+	    help	"Specifies how render channels are propagated through the BRDF"
+	    menu	{
+		"0"	"Color Only"
+		"1"	"Color+Alpha"
+		"2"	"All Channels"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFHOPS" }
+	    parmtag	{ "vray_pluginattr" "affect_alpha" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"reflect_exit_color"
+	    label	"Reflect exit color"
+	    type	color4
+	    size	4
+	    default	{ "0" "0" "0" "1" }
+	    help	"The color to use when the maximum depth is reached"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFHOPS" }
+	    parmtag	{ "vray_pluginattr" "reflect_exit_color" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+	parm {
+	    name	"reflect_dim_distance"
+	    label	"Reflect dim distance"
+	    type	float
+	    default	{ "1e+18" }
+	    help	"How much to dim reflection as length of rays increases"
+	    disablewhen	"{ trace_reflections != 1 } { reflect_dim_distance_on != 1 }"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFHOPS" }
+	    parmtag	{ "vray_pluginattr" "reflect_dim_distance" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"reflect_dim_distance_on"
+	    label	"Reflect dim distance on"
+	    type	toggle
+	    default	{ "0" }
+	    help	"True to enable dim distance"
+	    disablewhen	"{ trace_reflections != 1 }"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFHOPS" }
+	    parmtag	{ "vray_pluginattr" "reflect_dim_distance_on" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"reflect_dim_distance_falloff"
+	    label	"Reflect dim distance falloff"
+	    type	float
+	    default	{ "0" }
+	    help	"Fall off for the dim distance"
+	    disablewhen	"{ trace_reflections != 1 } { reflect_dim_distance_on != 1 }"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFHOPS" }
+	    parmtag	{ "vray_pluginattr" "reflect_dim_distance_falloff" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"glossyAsGI"
+	    label	"Glossy As GI"
+	    type	ordinal
+	    default	{ "1" }
+	    help	"Determines if the glossy rays are treated by V-Ray as GI rays"
+	    menu	{
+		"0"	"Never"
+		"1"	"GI"
+		"2"	"Always"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFHOPS" }
+	    parmtag	{ "vray_pluginattr" "glossyAsGI" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"subdivs"
+	    label	"Subdivs"
+	    type	integer
+	    default	{ "8" }
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFHOPS" }
+	    parmtag	{ "vray_pluginattr" "subdivs" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"csv_path"
+	    label	"Csv path"
+	    type	file
+	    default	{ "" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_file_extensions" "csv" }
+	    parmtag	{ "vray_plugin" "BRDFHOPS" }
+	    parmtag	{ "vray_pluginattr" "csv_path" }
+	    parmtag	{ "vray_type" "String" }
+	}
+	parm {
+	    name	"csv_color_filter"
+	    label	"Csv color filter"
+	    type	color
+	    size	3
+	    default	{ "1" "1" "1" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFHOPS" }
+	    parmtag	{ "vray_pluginattr" "csv_color_filter" }
+	    parmtag	{ "vray_type" "Color" }
+	}
+	parm {
+	    name	"flakes_csv_path"
+	    label	"Flakes csv path"
+	    type	file
+	    default	{ "" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_file_extensions" "flakecsv" }
+	    parmtag	{ "vray_plugin" "BRDFHOPS" }
+	    parmtag	{ "vray_pluginattr" "flakes_csv_path" }
+	    parmtag	{ "vray_type" "String" }
+	}
+	parm {
+	    name	"coat_color"
+	    label	"Coat color"
+	    type	color4
+	    size	4
+	    default	{ "1" "1" "1" "1" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFHOPS" }
+	    parmtag	{ "vray_pluginattr" "coat_color" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+	parm {
+	    name	"coat_strength"
+	    label	"Coat strength"
+	    type	float
+	    default	{ "0.05" }
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFHOPS" }
+	    parmtag	{ "vray_pluginattr" "coat_strength" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"coat_glossiness"
+	    label	"Coat glossiness"
+	    type	float
+	    default	{ "1" }
+	    help	"The glossiness of the coat layer"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFHOPS" }
+	    parmtag	{ "vray_pluginattr" "coat_glossiness" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"coat_bump_float"
+	    label	"Coat bump float"
+	    type	float
+	    default	{ "1" }
+	    help	"Bump texture for the coat layer"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFHOPS" }
+	    parmtag	{ "vray_pluginattr" "coat_bump_float" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"coat_bump_color"
+	    label	"Coat bump color"
+	    type	color4
+	    size	4
+	    default	{ "0" "0" "0" "1" }
+	    help	"Bump texture for the coat layer (color version)"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFHOPS" }
+	    parmtag	{ "vray_pluginattr" "coat_bump_color" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+	parm {
+	    name	"coat_bump_amount"
+	    label	"Coat bump amount"
+	    type	float
+	    default	{ "1" }
+	    help	"Bump amount for the coat layer"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFHOPS" }
+	    parmtag	{ "vray_pluginattr" "coat_bump_amount" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"coat_bump_type"
+	    label	"Coat bump type"
+	    type	ordinal
+	    default	{ "0" }
+	    help	"The type of bump mapping"
+	    disablewhen	"{ enabled_layers_base != 1 }"
+	    menu	{
+		"0"	"Bump"
+		"1"	"Normal (Tangent)"
+		"2"	"Normal (Object)"
+		"3"	"Normal (Camera)"
+		"4"	"Normal (World)"
+		"5"	"From Bump Output"
+		"6"	"Explicit Normal"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFHOPS" }
+	    parmtag	{ "vray_pluginattr" "coat_bump_type" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"coat_traceReflections"
+	    label	"Coat tracereflections"
+	    type	toggle
+	    default	{ "0" }
+	    help	"Toggle reflections for coat layer"
+	    disablewhen	"{ enabled_layers_base != 1 }"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFHOPS" }
+	    parmtag	{ "vray_pluginattr" "coat_traceReflections" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"coat_subdivs"
+	    label	"Coat subdivs"
+	    type	integer
+	    default	{ "8" }
+	    disablewhen	"{ enabled_layers_base != 1 }"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFHOPS" }
+	    parmtag	{ "vray_pluginattr" "coat_subdivs" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"flake_scale"
+	    label	"Flake scale"
+	    type	float
+	    default	{ "0.005" }
+	    help	"Flake scale - aparent flakes size in the real world"
+	    disablewhen	"{ enabled_layers_flakes != 1 }"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFHOPS" }
+	    parmtag	{ "vray_pluginattr" "flake_scale" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"flake_size"
+	    label	"Flake size"
+	    type	float
+	    default	{ "0.125" }
+	    help	"Flake size multiplier (larger values = more flake overlap)"
+	    disablewhen	"{ enabled_layers_flakes != 1 }"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFHOPS" }
+	    parmtag	{ "vray_pluginattr" "flake_size" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"flake_traceReflections"
+	    label	"Flake tracereflections"
+	    type	toggle
+	    default	{ "0" }
+	    help	"Toggle reflections for flake layer"
+	    disablewhen	"{ enabled_layers_flakes != 1 }"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFHOPS" }
+	    parmtag	{ "vray_pluginattr" "flake_traceReflections" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"doubleSided"
+	    label	"Doublesided"
+	    type	integer
+	    default	{ "1" }
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFHOPS" }
+	    parmtag	{ "vray_pluginattr" "doubleSided" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"flake_glossiness"
+	    label	"Flake glossiness"
+	    type	float
+	    default	{ "0.8" }
+	    help	"Flake glossiness (only if reflections are enabled)"
+	    disablewhen	"{ enabled_layers_flakes != 1 }"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFHOPS" }
+	    parmtag	{ "vray_pluginattr" "flake_glossiness" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"environment_override"
+	    label	"Environment override"
+	    type	color4
+	    size	4
+	    default	{ "0" "0" "0" "1" }
+	    help	"Environment override texture"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFHOPS" }
+	    parmtag	{ "vray_pluginattr" "environment_override" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+	parm {
+	    name	"environment_priority"
+	    label	"Environment priority"
+	    type	integer
+	    default	{ "0" }
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFHOPS" }
+	    parmtag	{ "vray_pluginattr" "environment_priority" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"enabled_layers"
+	    label	"Enabled layers"
+	    type	integer
+	    default	{ "0" }
+	    help	"Enabled layers OR mask (1 - base, 2 - flakes, 4 - coat)"
+	    menu	{
+		"0"	"Base"
+		"1"	"Flakes"
+		"4"	"Coat"
+	    }
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_custom_handling" "1" }
+	    parmtag	{ "vray_plugin" "BRDFHOPS" }
+	    parmtag	{ "vray_pluginattr" "enabled_layers" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"enabled_layers_base"
+	    label	"Base"
+	    type	toggle
+	    default	{ "1" }
+	    help	"Enabled Base layer"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_custom_handling" "1" }
+	}
+	parm {
+	    name	"enabled_layers_flakes"
+	    label	"Flakes"
+	    type	toggle
+	    default	{ "1" }
+	    help	"Enabled Flakes layer"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_custom_handling" "1" }
+	}
+	parm {
+	    name	"enabled_layers_coat"
+	    label	"Coat"
+	    type	toggle
+	    default	{ "1" }
+	    help	"Enabled Coat layer"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_custom_handling" "1" }
+	}
+    }
+
+}

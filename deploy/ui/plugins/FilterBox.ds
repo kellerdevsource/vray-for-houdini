@@ -1,0 +1,32 @@
+{
+    name	parameters
+    group {
+	name	"FilterBox"
+	label	"Box"
+
+	parm {
+	    name	"plugindata"
+	    label	"Box"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "FilterBox" }
+	    parmtag	{ "vray_type" "SETTINGS" }
+	}
+	parm {
+	    name	"size"
+	    label	"Size"
+	    type	float
+	    default	{ "1.5" }
+	    help	"Filter width"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "FilterBox" }
+	    parmtag	{ "vray_pluginattr" "size" }
+	    parmtag	{ "vray_type" "float" }
+	}
+    }
+
+}

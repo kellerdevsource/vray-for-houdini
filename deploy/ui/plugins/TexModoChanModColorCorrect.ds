@@ -1,0 +1,107 @@
+{
+    name	parameters
+    group {
+	name	"TexModoChanModColorCorrect"
+	label	"Modo Chan Mod Color Correct"
+
+	parm {
+	    name	"plugindata"
+	    label	"Modo Chan Mod Color Correct"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"TexModoChanModColorCorrect"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexModoChanModColorCorrect" }
+	    parmtag	{ "vray_type" "TEXTURE" }
+	}
+	parm {
+	    name	"input_color"
+	    label	"Input color"
+	    type	color4
+	    size	4
+	    default	{ "0.5" "0.5" "0.5" "1" }
+	    help	"The input color"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexModoChanModColorCorrect" }
+	    parmtag	{ "vray_pluginattr" "input_color" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+	parm {
+	    name	"invert"
+	    label	"Invert"
+	    type	toggle
+	    default	{ "0" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexModoChanModColorCorrect" }
+	    parmtag	{ "vray_pluginattr" "invert" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"hue"
+	    label	"Hue"
+	    type	float
+	    default	{ "0" }
+	    help	"The hue adjustment. This is in degrees"
+	    range	{ 180 180 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexModoChanModColorCorrect" }
+	    parmtag	{ "vray_pluginattr" "hue" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"saturation"
+	    label	"Saturation"
+	    type	float
+	    default	{ "0" }
+	    help	"The saturation adjustment"
+	    range	{ 1 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexModoChanModColorCorrect" }
+	    parmtag	{ "vray_pluginattr" "saturation" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"value"
+	    label	"Value"
+	    type	float
+	    default	{ "0" }
+	    help	"The value adjustment"
+	    range	{ 1 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexModoChanModColorCorrect" }
+	    parmtag	{ "vray_pluginattr" "value" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"color_balance"
+	    label	"Color balance"
+	    type	color4
+	    size	4
+	    default	{ "0" "0" "0" "1" }
+	    help	"The color balance adjustment"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexModoChanModColorCorrect" }
+	    parmtag	{ "vray_pluginattr" "color_balance" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+	parm {
+	    name	"curve"
+	    label	"Curve"
+	    type	oppath
+	    default	{ "" }
+	    help	"The curve adjustment - must support the EXT_REMAP_FLOAT_TO_FLOAT interface"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "oprelative" "." }
+	    parmtag	{ "vray_plugin" "TexModoChanModColorCorrect" }
+	    parmtag	{ "vray_pluginattr" "curve" }
+	    parmtag	{ "vray_type" "Object" }
+	}
+    }
+
+}

@@ -1,0 +1,171 @@
+{
+    name	parameters
+    group {
+	name	"TexMayaFluid"
+	label	"Phoenix Fluid"
+
+	parm {
+	    name	"plugindata"
+	    label	"Phoenix Fluid"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"Fluid data texture for Phoenix shader"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexMayaFluid" }
+	    parmtag	{ "vray_type" "TEXTURE" }
+	}
+	parm {
+	    name	"size_x"
+	    label	"Size x"
+	    type	integer
+	    default	{ "1" }
+	    help	"The number of voxels in the x dimension"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexMayaFluid" }
+	    parmtag	{ "vray_pluginattr" "size_x" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"size_y"
+	    label	"Size y"
+	    type	integer
+	    default	{ "1" }
+	    help	"The number of voxels in the y dimension"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexMayaFluid" }
+	    parmtag	{ "vray_pluginattr" "size_y" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"size_z"
+	    label	"Size z"
+	    type	integer
+	    default	{ "1" }
+	    help	"The number of voxels in the z dimension"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexMayaFluid" }
+	    parmtag	{ "vray_pluginattr" "size_z" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"interpolation_type"
+	    label	"Interpolation type"
+	    type	integer
+	    default	{ "0" }
+	    help	"0 : linear(8 samples, faster, but voxel borders may be visible),1 : quadratic(27 samples, slower, but voxel borders are much less likely to be visible"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexMayaFluid" }
+	    parmtag	{ "vray_pluginattr" "interpolation_type" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"velocity"
+	    label	"Velocity"
+	    type	oppath
+	    default	{ "" }
+	    help	"Velocity texture for the first frame. Used to calculate the motion blur. "
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "oprelative" "." }
+	    parmtag	{ "vray_plugin" "TexMayaFluid" }
+	    parmtag	{ "vray_pluginattr" "velocity" }
+	    parmtag	{ "vray_type" "Object" }
+	}
+	parm {
+	    name	"dynamic_offset_x"
+	    label	"Dynamic offset x"
+	    type	float
+	    default	{ "0" }
+	    help	"The x dynamic offset of the fluid container"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexMayaFluid" }
+	    parmtag	{ "vray_pluginattr" "dynamic_offset_x" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"dynamic_offset_y"
+	    label	"Dynamic offset y"
+	    type	float
+	    default	{ "0" }
+	    help	"The y dynamic offset of the fluid container"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexMayaFluid" }
+	    parmtag	{ "vray_pluginattr" "dynamic_offset_y" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"dynamic_offset_z"
+	    label	"Dynamic offset z"
+	    type	float
+	    default	{ "0" }
+	    help	"The z dynamic offset of the fluid container"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexMayaFluid" }
+	    parmtag	{ "vray_pluginattr" "dynamic_offset_z" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"mb_type"
+	    label	"Mb type"
+	    type	ordinal
+	    default	{ "0" }
+	    help	"Motion blur type, 0-Disabled, 1-Blend, 2-Velocity, 3-Velocity+Blend"
+	    menu	{
+		"0"	"Disabled"
+		"1"	"Blend"
+		"2"	"Velocity"
+		"3"	"Velocity+Blend"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexMayaFluid" }
+	    parmtag	{ "vray_pluginattr" "mb_type" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"frame_duration"
+	    label	"Frame duration"
+	    type	float
+	    default	{ "0.0416667" }
+	    help	"The frame duration in sec"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexMayaFluid" }
+	    parmtag	{ "vray_pluginattr" "frame_duration" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"cache_frame"
+	    label	"Cache frame"
+	    type	float
+	    default	{ "0" }
+	    help	"Converts the current frame number to cache frame number"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexMayaFluid" }
+	    parmtag	{ "vray_pluginattr" "cache_frame" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"domain"
+	    label	"Domain"
+	    type	oppath
+	    default	{ "" }
+	    help	"Simulation domain"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "oprelative" "." }
+	    parmtag	{ "vray_custom_handling" "1" }
+	}
+    }
+
+}

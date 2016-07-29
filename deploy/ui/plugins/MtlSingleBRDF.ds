@@ -1,0 +1,76 @@
+{
+    name	parameters
+    group {
+	name	"MtlSingleBRDF"
+	label	"Single"
+
+	parm {
+	    name	"plugindata"
+	    label	"Single"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"MtlSingleBRDF settings"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "MtlSingleBRDF" }
+	    parmtag	{ "vray_type" "MATERIAL" }
+	}
+	parm {
+	    name	"filter"
+	    label	"Filter"
+	    type	color
+	    size	3
+	    default	{ "1" "1" "1" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "MtlSingleBRDF" }
+	    parmtag	{ "vray_pluginattr" "filter" }
+	    parmtag	{ "vray_type" "Color" }
+	}
+	parm {
+	    name	"brdf"
+	    label	"BRDF"
+	    type	oppath
+	    default	{ "" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "oprelative" "." }
+	    parmtag	{ "vray_plugin" "MtlSingleBRDF" }
+	    parmtag	{ "vray_pluginattr" "brdf" }
+	    parmtag	{ "vray_type" "Object" }
+	}
+	parm {
+	    name	"double_sided"
+	    label	"Double sided"
+	    type	ordinal
+	    default	{ "1" }
+	    help	"0 - single sided, 1 - to make the material double-sided, 2 - make back faces pointing at camera transparent for camera rays, 3 - make back faces transparent for all ray types except shadow rays, 4 - same as 3 but back faces are also visible to rays that have been refracted(and are not GI or reflection rays"
+	    menu	{
+		"0"	"Single-sided"
+		"1"	"Double-sided"
+		"2"	"Transparent For Camera Rays"
+		"3"	"Transparent Except For Shadow Rays"
+		"4"	"Transparent Except For Shadow/Refracted Rays"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "MtlSingleBRDF" }
+	    parmtag	{ "vray_pluginattr" "double_sided" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"allow_negative_colors"
+	    label	"Allow negative colors"
+	    type	toggle
+	    default	{ "0" }
+	    help	"true to allow negative color components; otherwise they will be clamped to 0"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "MtlSingleBRDF" }
+	    parmtag	{ "vray_pluginattr" "allow_negative_colors" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+    }
+
+}

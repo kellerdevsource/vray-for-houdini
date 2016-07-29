@@ -1,0 +1,32 @@
+{
+    name	parameters
+    group {
+	name	"TexModoDiffuseRoughness"
+	label	"Modo Diffuse Roughness"
+
+	parm {
+	    name	"plugindata"
+	    label	"Modo Diffuse Roughness"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"TexModoDiffuseRoughness"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexModoDiffuseRoughness" }
+	    parmtag	{ "vray_type" "TEXTURE" }
+	}
+	parm {
+	    name	"modo_diffuse_roughness"
+	    label	"Modo diffuse roughness"
+	    type	float
+	    default	{ "0" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexModoDiffuseRoughness" }
+	    parmtag	{ "vray_pluginattr" "modo_diffuse_roughness" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+    }
+
+}

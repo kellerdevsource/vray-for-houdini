@@ -1,0 +1,33 @@
+{
+    name	parameters
+    group {
+	name	"PhxShaderSimVol"
+	label	"Phoenix Shader"
+
+	parm {
+	    name	"plugindata"
+	    label	"Phoenix Shader"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "PhxShaderSimVol" }
+	    parmtag	{ "vray_type" "EFFECT" }
+	}
+	parm {
+	    name	"phoenix_sim"
+	    label	"Phoenix Data"
+	    type	oplist
+	    default	{ "" }
+	    help	"Plugins that supports PhoenixSimInterface and can be used to load a phoenix frame"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "oprelative" "." }
+	    parmtag	{ "vray_plugin" "PhxShaderSimVol" }
+	    parmtag	{ "vray_pluginattr" "phoenix_sim" }
+	    parmtag	{ "vray_type" "List<Object>" }
+	}
+    }
+
+}

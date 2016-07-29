@@ -1,0 +1,33 @@
+{
+    name	parameters
+    group {
+	name	"TexLuminance"
+	label	"Luminance"
+
+	parm {
+	    name	"plugindata"
+	    label	"Luminance"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"TexLuminance"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexLuminance" }
+	    parmtag	{ "vray_type" "TEXTURE" }
+	}
+	parm {
+	    name	"input"
+	    label	"Input"
+	    type	color4
+	    size	4
+	    default	{ "0" "0" "0" "0" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexLuminance" }
+	    parmtag	{ "vray_pluginattr" "input" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+    }
+
+}

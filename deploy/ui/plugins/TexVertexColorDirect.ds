@@ -1,0 +1,45 @@
+{
+    name	parameters
+    group {
+	name	"TexVertexColorDirect"
+	label	"Vertex Color Direct"
+
+	parm {
+	    name	"plugindata"
+	    label	"Vertex Color Direct"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"TexVertexColorDirect"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_category" "utility" }
+	    parmtag	{ "vray_plugin" "TexVertexColorDirect" }
+	    parmtag	{ "vray_type" "TEXTURE" }
+	}
+	parm {
+	    name	"color_set_name"
+	    label	"Color set name"
+	    type	string
+	    default	{ "" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexVertexColorDirect" }
+	    parmtag	{ "vray_pluginattr" "color_set_name" }
+	    parmtag	{ "vray_type" "String" }
+	}
+	parm {
+	    name	"default_color"
+	    label	"Default color"
+	    type	color4
+	    size	4
+	    default	{ "0" "0" "0" "1" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexVertexColorDirect" }
+	    parmtag	{ "vray_pluginattr" "default_color" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+    }
+
+}

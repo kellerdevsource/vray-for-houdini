@@ -1,0 +1,69 @@
+{
+    name	parameters
+    group {
+	name	"SettingsUnitsInfo"
+	label	"SettingsUnitsInfo"
+
+	parm {
+	    name	"plugindata"
+	    label	"SettingsUnitsInfo"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsUnitsInfo" }
+	    parmtag	{ "vray_type" "SETTINGS" }
+	}
+	parm {
+	    name	"meters_scale"
+	    label	"Meters scale"
+	    type	float
+	    default	{ "1" }
+	    help	"The number by which a 3d distance must be multiplied to covert it into meters"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsUnitsInfo" }
+	    parmtag	{ "vray_pluginattr" "meters_scale" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"photometric_scale"
+	    label	"Photometric scale"
+	    type	float
+	    default	{ "0.001" }
+	    help	"The number by which the power of photometric lights should be scaled when rendering"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsUnitsInfo" }
+	    parmtag	{ "vray_pluginattr" "photometric_scale" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"scene_upDir"
+	    label	"Scene updir"
+	    type	direction
+	    size	3
+	    default	{ "0" "0" "1" }
+	    help	"The 'up' direction for the scene"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsUnitsInfo" }
+	    parmtag	{ "vray_pluginattr" "scene_upDir" }
+	    parmtag	{ "vray_type" "Vector" }
+	}
+	parm {
+	    name	"seconds_scale"
+	    label	"Seconds scale"
+	    type	float
+	    default	{ "1" }
+	    help	"The number by which a scene time unit must be multiplied to convert it to seconds"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsUnitsInfo" }
+	    parmtag	{ "vray_pluginattr" "seconds_scale" }
+	    parmtag	{ "vray_type" "float" }
+	}
+    }
+
+}

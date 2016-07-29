@@ -1,0 +1,86 @@
+{
+    name	parameters
+    group {
+	name	"RenderChannelVelocity"
+	label	"Velocity"
+
+	parm {
+	    name	"plugindata"
+	    label	"Velocity"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "RenderChannelVelocity" }
+	    parmtag	{ "vray_type" "RENDERCHANNEL" }
+	}
+	parm {
+	    name	"name"
+	    label	"Name"
+	    type	string
+	    default	{ "Velocity" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "RenderChannelVelocity" }
+	    parmtag	{ "vray_pluginattr" "name" }
+	    parmtag	{ "vray_type" "String" }
+	}
+	parm {
+	    name	"clamp_velocity"
+	    label	"Clamp velocity"
+	    type	toggle
+	    default	{ "1" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "RenderChannelVelocity" }
+	    parmtag	{ "vray_pluginattr" "clamp_velocity" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"max_velocity"
+	    label	"Max velocity"
+	    type	float
+	    default	{ "1" }
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "RenderChannelVelocity" }
+	    parmtag	{ "vray_pluginattr" "max_velocity" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"max_velocity_last_frame"
+	    label	"Max velocity last frame"
+	    type	float
+	    default	{ "0" }
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "RenderChannelVelocity" }
+	    parmtag	{ "vray_pluginattr" "max_velocity_last_frame" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"ignore_z"
+	    label	"Ignore z"
+	    type	toggle
+	    default	{ "1" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "RenderChannelVelocity" }
+	    parmtag	{ "vray_pluginattr" "ignore_z" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"filtering"
+	    label	"Filtering"
+	    type	toggle
+	    default	{ "1" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "RenderChannelVelocity" }
+	    parmtag	{ "vray_pluginattr" "filtering" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+    }
+
+}

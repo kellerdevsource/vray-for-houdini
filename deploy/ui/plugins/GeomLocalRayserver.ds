@@ -1,0 +1,34 @@
+{
+    name	parameters
+    group {
+	name	"GeomLocalRayserver"
+	label	"Local Rayserver"
+
+	parm {
+	    name	"plugindata"
+	    label	"Local Rayserver"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"GeomLocalRayserver"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "GeomLocalRayserver" }
+	    parmtag	{ "vray_type" "GEOMETRY" }
+	}
+	parm {
+	    name	"source_geometry"
+	    label	"Source geometry"
+	    type	oppath
+	    default	{ "" }
+	    help	"The source geometry"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "oprelative" "." }
+	    parmtag	{ "vray_plugin" "GeomLocalRayserver" }
+	    parmtag	{ "vray_pluginattr" "source_geometry" }
+	    parmtag	{ "vray_type" "Object" }
+	}
+    }
+
+}

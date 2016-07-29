@@ -1,0 +1,93 @@
+{
+    name	parameters
+    group {
+	name	"TexMultiFloat"
+	label	"Multi Float"
+
+	parm {
+	    name	"plugindata"
+	    label	"Multi Float"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"TexMultiFloat"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexMultiFloat" }
+	    parmtag	{ "vray_type" "TEXTURE" }
+	}
+	parm {
+	    name	"textures_list"
+	    label	"Textures list"
+	    type	oplist
+	    default	{ "" }
+	    help	"A list of the sub-float-textures"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "oprelative" "." }
+	    parmtag	{ "vray_plugin" "TexMultiFloat" }
+	    parmtag	{ "vray_pluginattr" "textures_list" }
+	    parmtag	{ "vray_type" "List<Object>" }
+	}
+	parm {
+	    name	"mode"
+	    label	"Mode"
+	    type	ordinal
+	    default	{ "0" }
+	    help	"The mode for the texture (0 - use face material ID, 1 - use object ID, 2 - random by node handle, 3 - random by render id, 4 - random by node name, 6 - random by instance ID, 30 - the ID is taken from the ID generator texture(id_gen_tex))"
+	    menu	{
+		"0"	"Face material ID"
+		"1"	"Object ID"
+		"2"	"Random by node handle"
+		"3"	"Random by render ID"
+		"4"	"Random by node name"
+		"6"	"Random by instance ID"
+		"30"	"Use ID Generator texture"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexMultiFloat" }
+	    parmtag	{ "vray_pluginattr" "mode" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"default_texture"
+	    label	"Default texture"
+	    type	float
+	    default	{ "0" }
+	    help	"The default float texture color"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexMultiFloat" }
+	    parmtag	{ "vray_pluginattr" "default_texture" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"id_gen_tex"
+	    label	"ID Generator texture"
+	    type	float
+	    default	{ "0" }
+	    help	"Used when mode is \"Use ID Generator texture\"(30)"
+	    disablewhen	"{ mode != 30 }"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexMultiFloat" }
+	    parmtag	{ "vray_pluginattr" "id_gen_tex" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"interpolate"
+	    label	"Interpolate"
+	    type	toggle
+	    default	{ "0" }
+	    help	"Used when mode is \"Use ID Generator texture\"(30)"
+	    disablewhen	"{ mode != 30 }"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexMultiFloat" }
+	    parmtag	{ "vray_pluginattr" "interpolate" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+    }
+
+}

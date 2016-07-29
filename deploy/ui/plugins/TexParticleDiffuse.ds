@@ -1,0 +1,21 @@
+{
+    name	parameters
+    group {
+	name	"TexParticleDiffuse"
+	label	"Particle Diffuse"
+
+	parm {
+	    name	"plugindata"
+	    label	"Particle Diffuse"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"TexParticleDiffuse"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexParticleDiffuse" }
+	    parmtag	{ "vray_type" "TEXTURE" }
+	}
+    }
+
+}

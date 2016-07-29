@@ -1,0 +1,93 @@
+{
+    name	parameters
+    group {
+	name	"TexCondition"
+	label	"Condition (From Texture)"
+
+	parm {
+	    name	"plugindata"
+	    label	"Condition (From Texture)"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"TexCondition"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_category" "utility" }
+	    parmtag	{ "vray_plugin" "TexCondition" }
+	    parmtag	{ "vray_type" "TEXTURE" }
+	}
+	parm {
+	    name	"operation"
+	    label	"Operation"
+	    type	integer
+	    default	{ "0" }
+	    help	"The condition check"
+	    menu	{
+		"0"	"Equal"
+		"1"	"Not equal"
+		"2"	"Greater than"
+		"3"	"Greater or equal"
+		"4"	"Less than"
+		"5"	"Less or equal"
+	    }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_linked_only" "1" }
+	    parmtag	{ "vray_plugin" "TexCondition" }
+	    parmtag	{ "vray_pluginattr" "operation" }
+	    parmtag	{ "vray_type" "TextureInt" }
+	}
+	parm {
+	    name	"op_a"
+	    label	"Op a"
+	    type	float
+	    default	{ "0" }
+	    help	"The first number to compare"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexCondition" }
+	    parmtag	{ "vray_pluginattr" "op_a" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"op_b"
+	    label	"Op b"
+	    type	float
+	    default	{ "0" }
+	    help	"The second number to compare"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexCondition" }
+	    parmtag	{ "vray_pluginattr" "op_b" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"result_true"
+	    label	"Result true"
+	    type	color4
+	    size	4
+	    default	{ "0" "0" "0" "0" }
+	    help	"The color to return if the condition is true"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexCondition" }
+	    parmtag	{ "vray_pluginattr" "result_true" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+	parm {
+	    name	"result_false"
+	    label	"Result false"
+	    type	color4
+	    size	4
+	    default	{ "0" "0" "0" "0" }
+	    help	"The color to return if the condition is false"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexCondition" }
+	    parmtag	{ "vray_pluginattr" "result_false" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+    }
+
+}

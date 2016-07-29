@@ -1,0 +1,32 @@
+{
+    name	parameters
+    group {
+	name	"TexModoSpecularRoughness"
+	label	"Modo Specular Roughness"
+
+	parm {
+	    name	"plugindata"
+	    label	"Modo Specular Roughness"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"TexModoSpecularRoughness"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexModoSpecularRoughness" }
+	    parmtag	{ "vray_type" "TEXTURE" }
+	}
+	parm {
+	    name	"modo_specular_roughness"
+	    label	"Modo specular roughness"
+	    type	float
+	    default	{ "0" }
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexModoSpecularRoughness" }
+	    parmtag	{ "vray_pluginattr" "modo_specular_roughness" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+    }
+
+}

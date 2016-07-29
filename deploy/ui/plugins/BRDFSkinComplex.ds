@@ -1,0 +1,593 @@
+{
+    name	parameters
+    group {
+	name	"BRDFSkinComplex"
+	label	"Skin"
+
+	parm {
+	    name	"plugindata"
+	    label	"Skin"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"Skin shader"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "BRDFSkinComplex" }
+	    parmtag	{ "vray_type" "BRDF" }
+	}
+	group {
+	    name	"folder"
+	    label	"General parameters"
+
+	    parm {
+		name	"scale"
+		label	"Scale"
+		type	float
+		default	{ "1" }
+		help	"Values below 1.0 will make the object look as if it is bigger. Values above 1.0 will make it look as if it is smaller"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFSkinComplex" }
+		parmtag	{ "vray_pluginattr" "scale" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"max_sss_amount"
+		label	"Max SSS amount"
+		type	float
+		default	{ "1" }
+		help	"The maximum summed weight of the SSS components"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFSkinComplex" }
+		parmtag	{ "vray_pluginattr" "max_sss_amount" }
+		parmtag	{ "vray_type" "TextureFloat" }
+	    }
+	    parm {
+		name	"max_reflection_amount"
+		label	"Max refl amount"
+		type	float
+		default	{ "1" }
+		help	"The maximum summed weight of the reflection components"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFSkinComplex" }
+		parmtag	{ "vray_pluginattr" "max_reflection_amount" }
+		parmtag	{ "vray_type" "TextureFloat" }
+	    }
+	    parm {
+		name	"opacity"
+		label	"Opacity"
+		type	color4
+		size	4
+		default	{ "1" "1" "1" "1" }
+		help	"Opacity"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFSkinComplex" }
+		parmtag	{ "vray_pluginattr" "opacity" }
+		parmtag	{ "vray_type" "Texture" }
+	    }
+	    parm {
+		name	"diffuse_color"
+		label	"Diffuse color"
+		type	color4
+		size	4
+		default	{ "0.5" "0.5" "0.5" "1" }
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFSkinComplex" }
+		parmtag	{ "vray_pluginattr" "diffuse_color" }
+		parmtag	{ "vray_type" "Texture" }
+	    }
+	    parm {
+		name	"diffuse_amount"
+		label	"Diffuse amount"
+		type	float
+		default	{ "0" }
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFSkinComplex" }
+		parmtag	{ "vray_pluginattr" "diffuse_amount" }
+		parmtag	{ "vray_type" "TextureFloat" }
+	    }
+	    parm {
+		name	"shallow_color"
+		label	"Shallow color"
+		type	color4
+		size	4
+		default	{ "0.776471" "0.603922" "0.545098" "1" }
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFSkinComplex" }
+		parmtag	{ "vray_pluginattr" "shallow_color" }
+		parmtag	{ "vray_type" "Texture" }
+	    }
+	    parm {
+		name	"shallow_amount"
+		label	"Shallow amount"
+		type	float
+		default	{ "1" }
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFSkinComplex" }
+		parmtag	{ "vray_pluginattr" "shallow_amount" }
+		parmtag	{ "vray_type" "TextureFloat" }
+	    }
+	    parm {
+		name	"shallow_radius"
+		label	"Shallow Radius (in cm)"
+		type	float
+		default	{ "0.1" }
+		help	"The radius for shallow scattering, in cm"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFSkinComplex" }
+		parmtag	{ "vray_pluginattr" "shallow_radius" }
+		parmtag	{ "vray_type" "TextureFloat" }
+	    }
+	    parm {
+		name	"medium_color"
+		label	"Medium color"
+		type	color4
+		size	4
+		default	{ "0.682353" "0.407843" "0.133333" "1" }
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFSkinComplex" }
+		parmtag	{ "vray_pluginattr" "medium_color" }
+		parmtag	{ "vray_type" "Texture" }
+	    }
+	    parm {
+		name	"medium_amount"
+		label	"Medium amount"
+		type	float
+		default	{ "1" }
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFSkinComplex" }
+		parmtag	{ "vray_pluginattr" "medium_amount" }
+		parmtag	{ "vray_type" "TextureFloat" }
+	    }
+	    parm {
+		name	"medium_radius"
+		label	"Medium Radius (in cm)"
+		type	float
+		default	{ "0.5" }
+		help	"The radius for medium scattering, in cm"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFSkinComplex" }
+		parmtag	{ "vray_pluginattr" "medium_radius" }
+		parmtag	{ "vray_type" "TextureFloat" }
+	    }
+	    parm {
+		name	"deep_color"
+		label	"Deep color"
+		type	color4
+		size	4
+		default	{ "0.929412" "0.0784314" "0.0392157" "1" }
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFSkinComplex" }
+		parmtag	{ "vray_pluginattr" "deep_color" }
+		parmtag	{ "vray_type" "Texture" }
+	    }
+	    parm {
+		name	"deep_amount"
+		label	"Deep amount"
+		type	float
+		default	{ "1" }
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFSkinComplex" }
+		parmtag	{ "vray_pluginattr" "deep_amount" }
+		parmtag	{ "vray_type" "TextureFloat" }
+	    }
+	    parm {
+		name	"deep_radius"
+		label	"Deep Radius (in cm)"
+		type	float
+		default	{ "2" }
+		help	"The radius for deep scattering, in cm"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFSkinComplex" }
+		parmtag	{ "vray_pluginattr" "deep_radius" }
+		parmtag	{ "vray_type" "TextureFloat" }
+	    }
+	}
+
+	group {
+	    name	"folder2"
+	    label	"Primary reflection"
+
+	    parm {
+		name	"primary_reflecton_color"
+		label	"Prim. refl. color"
+		type	color4
+		size	4
+		default	{ "1" "1" "1" "1" }
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFSkinComplex" }
+		parmtag	{ "vray_pluginattr" "primary_reflecton_color" }
+		parmtag	{ "vray_type" "Texture" }
+	    }
+	    parm {
+		name	"primary_reflection_amount"
+		label	"Prim. refl. amount"
+		type	float
+		default	{ "1" }
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFSkinComplex" }
+		parmtag	{ "vray_pluginattr" "primary_reflection_amount" }
+		parmtag	{ "vray_type" "TextureFloat" }
+	    }
+	    parm {
+		name	"primary_reflection_glossiness"
+		label	"Prim. refl. glossiness"
+		type	float
+		default	{ "0.6" }
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFSkinComplex" }
+		parmtag	{ "vray_pluginattr" "primary_reflection_glossiness" }
+		parmtag	{ "vray_type" "TextureFloat" }
+	    }
+	    parm {
+		name	"primary_reflection_subdivs"
+		label	"Prim. refl. subdivs"
+		type	integer
+		default	{ "8" }
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFSkinComplex" }
+		parmtag	{ "vray_pluginattr" "primary_reflection_subdivs" }
+		parmtag	{ "vray_type" "int" }
+	    }
+	    parm {
+		name	"primary_reflection_fresnel"
+		label	"Prim. refl. fresnel"
+		type	toggle
+		default	{ "1" }
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFSkinComplex" }
+		parmtag	{ "vray_pluginattr" "primary_reflection_fresnel" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	    parm {
+		name	"primary_reflection_fresnel_ior"
+		label	"Prim. refl. fresnel IOR"
+		type	float
+		default	{ "1.33" }
+		disablewhen	"{ primary_reflection_fresnel != 1 } { primary_reflection_fresnel != 1 }"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFSkinComplex" }
+		parmtag	{ "vray_pluginattr" "primary_reflection_fresnel_ior" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	}
+
+	group {
+	    name	"folder3"
+	    label	"Secondary reflection"
+
+	    parm {
+		name	"secondary_reflecton_color"
+		label	"Sec. refl. color"
+		type	color4
+		size	4
+		default	{ "1" "1" "1" "1" }
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFSkinComplex" }
+		parmtag	{ "vray_pluginattr" "secondary_reflecton_color" }
+		parmtag	{ "vray_type" "Texture" }
+	    }
+	    parm {
+		name	"secondary_reflection_amount"
+		label	"Sec. refl. amount"
+		type	float
+		default	{ "0" }
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFSkinComplex" }
+		parmtag	{ "vray_pluginattr" "secondary_reflection_amount" }
+		parmtag	{ "vray_type" "TextureFloat" }
+	    }
+	    parm {
+		name	"secondary_reflection_glossiness"
+		label	"Sec. refl. glossiness"
+		type	float
+		default	{ "0.6" }
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFSkinComplex" }
+		parmtag	{ "vray_pluginattr" "secondary_reflection_glossiness" }
+		parmtag	{ "vray_type" "TextureFloat" }
+	    }
+	    parm {
+		name	"secondary_reflection_subdivs"
+		label	"Sec. refl. subdivs"
+		type	integer
+		default	{ "8" }
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFSkinComplex" }
+		parmtag	{ "vray_pluginattr" "secondary_reflection_subdivs" }
+		parmtag	{ "vray_type" "int" }
+	    }
+	    parm {
+		name	"secondary_reflection_fresnel"
+		label	"Sec. refl. fresnel"
+		type	toggle
+		default	{ "1" }
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFSkinComplex" }
+		parmtag	{ "vray_pluginattr" "secondary_reflection_fresnel" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	    parm {
+		name	"secondary_reflection_fresnel_ior"
+		label	"Sec. refl. fresnel IOR"
+		type	float
+		default	{ "1.33" }
+		disablewhen	"{ secondary_reflection_fresnel != 1 } { secondary_reflection_fresnel != 1 }"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFSkinComplex" }
+		parmtag	{ "vray_pluginattr" "secondary_reflection_fresnel_ior" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	}
+
+	group {
+	    name	"folder4"
+	    label	"Multiple scattering options"
+
+	    parm {
+		name	"multiple_scattering"
+		label	"Multiple scattering"
+		type	ordinal
+		default	{ "2" }
+		help	"The algorithm used to compute multiple scattering"
+		menu	{
+		    "0"	"Prepass-based illumination map"
+		    "1"	"Object-based illumination map"
+		    "2"	"Raytraced"
+		    "3"	"None"
+		}
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFSkinComplex" }
+		parmtag	{ "vray_pluginattr" "multiple_scattering" }
+		parmtag	{ "vray_type" "int" }
+	    }
+	    parm {
+		name	"scatter_gi"
+		label	"Scatter GI"
+		type	toggle
+		default	{ "0" }
+		help	"true to enable scattering of GI rays"
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFSkinComplex" }
+		parmtag	{ "vray_pluginattr" "scatter_gi" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	    parm {
+		name	"raytraced_scatter_textures"
+		label	"Raytraced scatter textures"
+		type	toggle
+		default	{ "0" }
+		help	"true to scatter SSS textures when using raytraced scattering"
+		disablewhen	"{ multiple_scattering != 2 }"
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFSkinComplex" }
+		parmtag	{ "vray_pluginattr" "raytraced_scatter_textures" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	    parm {
+		name	"raytraced_subdivs"
+		label	"Raytraced subdivs"
+		type	integer
+		default	{ "8" }
+		disablewhen	"{ scatter_gi != 1 } { multiple_scattering != 2 }"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFSkinComplex" }
+		parmtag	{ "vray_pluginattr" "raytraced_subdivs" }
+		parmtag	{ "vray_type" "int" }
+	    }
+	    parm {
+		name	"prepass_rate"
+		label	"Prepass rate"
+		type	integer
+		default	{ "-1" }
+		help	"Sampling density for the illumination map"
+		disablewhen	"{ scatter_gi != 1 } { multiple_scattering != 0 }"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFSkinComplex" }
+		parmtag	{ "vray_pluginattr" "prepass_rate" }
+		parmtag	{ "vray_type" "int" }
+	    }
+	    parm {
+		name	"prepass_id"
+		label	"Prepass id"
+		type	integer
+		default	{ "0" }
+		help	"0 to calculate a separate illuminataion map for this shader; otherwise all shaders with the same prepass ID will share the same illumination map"
+		disablewhen	"{ scatter_gi != 1 } { multiple_scattering != 0 }"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFSkinComplex" }
+		parmtag	{ "vray_pluginattr" "prepass_id" }
+		parmtag	{ "vray_type" "int" }
+	    }
+	    parm {
+		name	"prepass_interpolation_accuracy"
+		label	"Prepass interpolation accuracy"
+		type	float
+		default	{ "1" }
+		help	"Interpolation accuracy for the illumination map; normally 1.0 is fine"
+		disablewhen	"{ scatter_gi != 1 } { multiple_scattering >= 2 }"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFSkinComplex" }
+		parmtag	{ "vray_pluginattr" "prepass_interpolation_accuracy" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"geom_samples_per_unit_area"
+		label	"Samples per unit area"
+		type	float
+		default	{ "16" }
+		disablewhen	"{ geom_auto_density != 0 } { geom_auto_density != 0 } { multiple_scattering != 1 }"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFSkinComplex" }
+		parmtag	{ "vray_pluginattr" "geom_samples_per_unit_area" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"geom_auto_density"
+		label	"Auto density"
+		type	toggle
+		default	{ "0" }
+		disablewhen	"{ multiple_scattering != 1 }"
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFSkinComplex" }
+		parmtag	{ "vray_pluginattr" "geom_auto_density" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	    parm {
+		name	"geom_surface_offset"
+		label	"Surface offset"
+		type	float
+		default	{ "0.001" }
+		help	"An offset along the geometric surface normal at which to perform shading in order to avoid surface acne"
+		disablewhen	"{ geom_auto_density != 0 } { multiple_scattering != 1 }"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFSkinComplex" }
+		parmtag	{ "vray_pluginattr" "geom_surface_offset" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"geom_preview_samples"
+		label	"Preview samples"
+		type	toggle
+		default	{ "0" }
+		disablewhen	"{ multiple_scattering != 1 }"
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFSkinComplex" }
+		parmtag	{ "vray_pluginattr" "geom_preview_samples" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	    parm {
+		name	"geom_max_distance"
+		label	"Max distance"
+		type	float
+		default	{ "0.1" }
+		disablewhen	"{ geom_preview_samples != 1 } { multiple_scattering != 1 } { geom_preview_samples != 1 }"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFSkinComplex" }
+		parmtag	{ "vray_pluginattr" "geom_max_distance" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"geom_background_color"
+		label	"Background color"
+		type	color
+		size	3
+		default	{ "0" "0" "0" }
+		disablewhen	"{ multiple_scattering != 1 } { geom_preview_samples != 1 }"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFSkinComplex" }
+		parmtag	{ "vray_pluginattr" "geom_background_color" }
+		parmtag	{ "vray_type" "Color" }
+	    }
+	    parm {
+		name	"geom_samples_color"
+		label	"Samples color"
+		type	color
+		size	3
+		default	{ "1" "1" "1" }
+		disablewhen	"{ multiple_scattering != 1 } { geom_preview_samples != 1 }"
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFSkinComplex" }
+		parmtag	{ "vray_pluginattr" "geom_samples_color" }
+		parmtag	{ "vray_type" "Color" }
+	    }
+	}
+
+	group {
+	    name	"folder5"
+	    label	"Options"
+
+	    parm {
+		name	"option_reflections_trace"
+		label	"Trace reflections"
+		type	toggle
+		default	{ "1" }
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFSkinComplex" }
+		parmtag	{ "vray_pluginattr" "option_reflections_trace" }
+		parmtag	{ "vray_type" "boolean" }
+	    }
+	    parm {
+		name	"option_reflections_maxDepth"
+		label	"Reflection max depth"
+		type	integer
+		default	{ "5" }
+		disablewhen	"{ option_reflections_trace != 1 }"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFSkinComplex" }
+		parmtag	{ "vray_pluginattr" "option_reflections_maxDepth" }
+		parmtag	{ "vray_type" "int" }
+	    }
+	    parm {
+		name	"option_reflections_cutoff"
+		label	"Reflection cutoff"
+		type	float
+		default	{ "0.001" }
+		disablewhen	"{ option_reflections_trace != 1 }"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "vray_plugin" "BRDFSkinComplex" }
+		parmtag	{ "vray_pluginattr" "option_reflections_cutoff" }
+		parmtag	{ "vray_type" "float" }
+	    }
+	    parm {
+		name	"channels"
+		label	"Channels"
+		type	oplist
+		default	{ "" }
+		help	"Render channels the result of this BRDF will be written to"
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "oprelative" "." }
+		parmtag	{ "vray_plugin" "BRDFSkinComplex" }
+		parmtag	{ "vray_pluginattr" "channels" }
+		parmtag	{ "vray_type" "List<Object>" }
+	    }
+	}
+
+    }
+
+}

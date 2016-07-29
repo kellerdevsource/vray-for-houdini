@@ -1,0 +1,79 @@
+{
+    name	parameters
+    group {
+	name	"OutputDeepWriter"
+	label	"Output Deep Writer"
+
+	parm {
+	    name	"plugindata"
+	    label	"Output Deep Writer"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"OutputDeepWriter"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "OutputDeepWriter" }
+	    parmtag	{ "vray_type" "SETTINGS" }
+	}
+	parm {
+	    name	"file"
+	    label	"File"
+	    type	file
+	    default	{ "" }
+	    help	"The name of the file in which the shade map information is stored"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_file_extensions" "vrst" }
+	    parmtag	{ "vray_plugin" "OutputDeepWriter" }
+	    parmtag	{ "vray_pluginattr" "file" }
+	    parmtag	{ "vray_type" "String" }
+	}
+	parm {
+	    name	"float_colors_mode"
+	    label	"Float colors mode"
+	    type	toggle
+	    default	{ "0" }
+	    help	"Store 32 bit (single precision) color channels in the shade map. When off 16 bit (half precision) values are stored"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "OutputDeepWriter" }
+	    parmtag	{ "vray_pluginattr" "float_colors_mode" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"vrst_compression"
+	    label	"Vrst compression"
+	    type	ordinal
+	    default	{ "1" }
+	    help	"Compression type for the .vrst files (0 - no compression, 1 - ZLIB compression)"
+	    menu	{
+		"0"	"None"
+		"1"	"ZLIB"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "OutputDeepWriter" }
+	    parmtag	{ "vray_pluginattr" "vrst_compression" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"exr_compression"
+	    label	"Exr compression"
+	    type	ordinal
+	    default	{ "2" }
+	    help	"Compression type for the .exr files (0 - no compression, 1 - RLE compression, 2 - ZIPS compression)"
+	    menu	{
+		"0"	"None"
+		"1"	"RLE"
+		"2"	"ZIPS"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "OutputDeepWriter" }
+	    parmtag	{ "vray_pluginattr" "exr_compression" }
+	    parmtag	{ "vray_type" "int" }
+	}
+    }
+
+}

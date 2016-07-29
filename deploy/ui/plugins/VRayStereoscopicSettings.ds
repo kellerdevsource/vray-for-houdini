@@ -1,0 +1,340 @@
+{
+    name	parameters
+    group {
+	name	"VRayStereoscopicSettings"
+	label	"VRayStereoscopicSettings"
+
+	parm {
+	    name	"plugindata"
+	    label	"VRayStereoscopicSettings"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
+	    parmtag	{ "vray_type" "SETTINGS" }
+	}
+	parm {
+	    name	"eye_distance"
+	    label	"Eye distance"
+	    type	float
+	    default	{ "0.065" }
+	    help	"The eye distance for which the stereoscopic image will be rendered"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
+	    parmtag	{ "vray_pluginattr" "eye_distance" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"specify_focus"
+	    label	"Specify focus"
+	    type	toggle
+	    default	{ "0" }
+	    help	"If on then the focus is determined by focus_method and focus_distance. Otherwise it is determined from the camera target distance"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
+	    parmtag	{ "vray_pluginattr" "specify_focus" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"focus_distance"
+	    label	"Focus distance"
+	    type	float
+	    default	{ "200" }
+	    help	"The focus distance when specify_focus is enabled"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
+	    parmtag	{ "vray_pluginattr" "focus_distance" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"focus_method"
+	    label	"Focus method"
+	    type	ordinal
+	    default	{ "0" }
+	    help	"Specifies the focus method for the two views"
+	    menu	{
+		"0"	"None/parallel"
+		"1"	"Rotation"
+		"2"	"Shear"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
+	    parmtag	{ "vray_pluginattr" "focus_method" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"interocular_method"
+	    label	"Interocular method"
+	    type	ordinal
+	    default	{ "0" }
+	    help	"Specifies how the two virtual cameras will be placed in relation to the real camera in the scene"
+	    menu	{
+		"0"	"Symmetric/shift both"
+		"1"	"Shift left"
+		"2"	"Shift right"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
+	    parmtag	{ "vray_pluginattr" "interocular_method" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"view"
+	    label	"View"
+	    type	ordinal
+	    default	{ "0" }
+	    help	"Specifies which of the stereoscopic views will be rendered"
+	    menu	{
+		"0"	"Both"
+		"1"	"Left"
+		"2"	"Right"
+		"3"	"Center"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
+	    parmtag	{ "vray_pluginattr" "view" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"adjust_resolution"
+	    label	"Adjust resolution"
+	    type	toggle
+	    default	{ "0" }
+	    help	"When on this option will automatically adjust the resolution for the final image rendered"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
+	    parmtag	{ "vray_pluginattr" "adjust_resolution" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"sm_mode"
+	    label	"Sm mode"
+	    type	ordinal
+	    default	{ "0" }
+	    help	"Allows us to specify the mode of operation for the shade map"
+	    menu	{
+		"0"	"Disabled"
+		"1"	"Render shade map"
+		"2"	"Use shade map"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
+	    parmtag	{ "vray_pluginattr" "sm_mode" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"reuse_threshold"
+	    label	"Reuse threshold"
+	    type	float
+	    default	{ "1" }
+	    help	"Lower values will make V-Ray use less of the shade map and more real shading"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
+	    parmtag	{ "vray_pluginattr" "reuse_threshold" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"shademap_file"
+	    label	"Shademap file"
+	    type	file
+	    default	{ "" }
+	    help	"The name of the file in which the shade map information is stored"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_file_extensions" "vrst" }
+	    parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
+	    parmtag	{ "vray_pluginattr" "shademap_file" }
+	    parmtag	{ "vray_type" "String" }
+	}
+	parm {
+	    name	"float_colors_mode"
+	    label	"Float colors mode"
+	    type	toggle
+	    default	{ "0" }
+	    help	"Store 32 bit (single precision) color channels in the shade map. When off 16 bit (half precision) values are stored"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
+	    parmtag	{ "vray_pluginattr" "float_colors_mode" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"vrst_compression"
+	    label	"Vrst compression"
+	    type	ordinal
+	    default	{ "1" }
+	    help	"Compression type for the .vrst files"
+	    menu	{
+		"0"	"None"
+		"1"	"ZLIB"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
+	    parmtag	{ "vray_pluginattr" "vrst_compression" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"exr_compression"
+	    label	"Exr compression"
+	    type	ordinal
+	    default	{ "2" }
+	    help	"Compression type for the .exr files"
+	    menu	{
+		"0"	"None"
+		"1"	"RLE"
+		"2"	"ZIPS"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
+	    parmtag	{ "vray_pluginattr" "exr_compression" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"exclude_list"
+	    label	"Exclude list"
+	    type	oplist
+	    default	{ "" }
+	    help	"A list of plugins for which the shade map won't be used"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "oprelative" "." }
+	    parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
+	    parmtag	{ "vray_pluginattr" "exclude_list" }
+	    parmtag	{ "vray_type" "List<Object>" }
+	}
+	parm {
+	    name	"left_camera"
+	    label	"Left camera"
+	    type	oppath
+	    default	{ "" }
+	    help	"A camera plugin for the left eye; if not specified, the left camera is computed based on the scene camera"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "oprelative" "." }
+	    parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
+	    parmtag	{ "vray_pluginattr" "left_camera" }
+	    parmtag	{ "vray_type" "Object" }
+	}
+	parm {
+	    name	"right_camera"
+	    label	"Right camera"
+	    type	oppath
+	    default	{ "" }
+	    help	"A camera plugin for the right eye; if not specified, the right camera is computed based on the scene camera"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "oprelative" "." }
+	    parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
+	    parmtag	{ "vray_pluginattr" "right_camera" }
+	    parmtag	{ "vray_type" "Object" }
+	}
+	parm {
+	    name	"use"
+	    label	"Use"
+	    type	toggle
+	    default	{ "0" }
+	    help	"Use Stereoscopic"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_custom_handling" "1" }
+	}
+	parm {
+	    name	"top_merge_angle"
+	    label	"Top merge angle"
+	    type	float
+	    default	{ "1.0472" }
+	    help	"Panoramic pole merging: from what angle near the top does the stereo effect start to fade when rendering with a spherical panorama camera"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
+	    parmtag	{ "vray_pluginattr" "top_merge_angle" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"bottom_merge_angle"
+	    label	"Bottom merge angle"
+	    type	float
+	    default	{ "1.0472" }
+	    help	"Panoramic pole merging: from what angle near the bottom does the stereo effect start to fade when rendering with a spherical panorama camera"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
+	    parmtag	{ "vray_pluginattr" "bottom_merge_angle" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"exclude_list_inclusive"
+	    label	"Exclude list inclusive"
+	    type	toggle
+	    default	{ "0" }
+	    help	"When on the exclude_list is considered as an \"Include list\" and when off the the Result Affect is considered as \"Exclude list\""
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
+	    parmtag	{ "vray_pluginattr" "exclude_list_inclusive" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"film_offset_x_left"
+	    label	"Film offset x left"
+	    type	float
+	    default	{ "0" }
+	    help	"Horizontal film offset for the left camera"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
+	    parmtag	{ "vray_pluginattr" "film_offset_x_left" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"film_offset_x_right"
+	    label	"Film offset x right"
+	    type	float
+	    default	{ "0" }
+	    help	"Horizontal film offset for the right camera"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
+	    parmtag	{ "vray_pluginattr" "film_offset_x_right" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"film_offset_y_left"
+	    label	"Film offset y left"
+	    type	float
+	    default	{ "0" }
+	    help	"Vertical film offset for the left camera"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
+	    parmtag	{ "vray_pluginattr" "film_offset_y_left" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"film_offset_y_right"
+	    label	"Film offset y right"
+	    type	float
+	    default	{ "0" }
+	    help	"Vertical film offset for the right camera"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
+	    parmtag	{ "vray_pluginattr" "film_offset_y_right" }
+	    parmtag	{ "vray_type" "float" }
+	}
+    }
+
+}

@@ -1,0 +1,34 @@
+{
+    name	parameters
+    group {
+	name	"TexIntToFloat"
+	label	"Int To Float"
+
+	parm {
+	    name	"plugindata"
+	    label	"Int To Float"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"TexIntToFloat"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_category" "utility" }
+	    parmtag	{ "vray_plugin" "TexIntToFloat" }
+	    parmtag	{ "vray_type" "TEXTURE" }
+	}
+	parm {
+	    name	"input"
+	    label	"Input"
+	    type	integer
+	    default	{ "0" }
+	    help	"The integer value"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexIntToFloat" }
+	    parmtag	{ "vray_pluginattr" "input" }
+	    parmtag	{ "vray_type" "TextureInt" }
+	}
+    }
+
+}

@@ -1,0 +1,179 @@
+{
+    name	parameters
+    group {
+	name	"MtlMayaRamp"
+	label	"Mtl Maya Ramp"
+
+	parm {
+	    name	"plugindata"
+	    label	"Mtl Maya Ramp"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    help	"MtlMayaRamp"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "MtlMayaRamp" }
+	    parmtag	{ "vray_type" "MATERIAL" }
+	}
+	parm {
+	    name	"color_input"
+	    label	"Color input"
+	    type	integer
+	    default	{ "0" }
+	    help	"0: light angle, 1: facing angle, 2: brightness, 3: normalized brightness"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "MtlMayaRamp" }
+	    parmtag	{ "vray_pluginattr" "color_input" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"ambient_tex"
+	    label	"Ambient tex"
+	    type	color4
+	    size	4
+	    default	{ "0" "0" "0" "0" }
+	    help	"ambient texture"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "MtlMayaRamp" }
+	    parmtag	{ "vray_pluginattr" "ambient_tex" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+	parm {
+	    name	"eccentricity_tex"
+	    label	"Eccentricity tex"
+	    type	float
+	    default	{ "0" }
+	    help	"eccentricity float texture"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "MtlMayaRamp" }
+	    parmtag	{ "vray_pluginattr" "eccentricity_tex" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"specularity_tex"
+	    label	"Specularity tex"
+	    type	float
+	    default	{ "0" }
+	    help	"specularity float texture"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "MtlMayaRamp" }
+	    parmtag	{ "vray_pluginattr" "specularity_tex" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"diffuse_tex"
+	    label	"Diffuse tex"
+	    type	float
+	    default	{ "0" }
+	    help	"diffuse float texture"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "MtlMayaRamp" }
+	    parmtag	{ "vray_pluginattr" "diffuse_tex" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"fscatter_tex"
+	    label	"Fscatter tex"
+	    type	float
+	    default	{ "0" }
+	    help	"forward scatter float texture"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "MtlMayaRamp" }
+	    parmtag	{ "vray_pluginattr" "fscatter_tex" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"reflection_limit"
+	    label	"Reflection limit"
+	    type	integer
+	    default	{ "0" }
+	    help	"reflection limit"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "MtlMayaRamp" }
+	    parmtag	{ "vray_pluginattr" "reflection_limit" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"refractions"
+	    label	"Refractions"
+	    type	toggle
+	    default	{ "0" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "MtlMayaRamp" }
+	    parmtag	{ "vray_pluginattr" "refractions" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"ior"
+	    label	"Ior"
+	    type	float
+	    default	{ "1.55" }
+	    help	"IOR for the material; this is ignored if the surface has a volume shader (the volume IOR is used)"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "MtlMayaRamp" }
+	    parmtag	{ "vray_pluginattr" "ior" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"refraction_limit"
+	    label	"Refraction limit"
+	    type	integer
+	    default	{ "-1" }
+	    help	"The maximum refraction bounces"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "MtlMayaRamp" }
+	    parmtag	{ "vray_pluginattr" "refraction_limit" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"volume"
+	    label	"Volume"
+	    type	oppath
+	    default	{ "" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "oprelative" "." }
+	    parmtag	{ "vray_plugin" "MtlMayaRamp" }
+	    parmtag	{ "vray_pluginattr" "volume" }
+	    parmtag	{ "vray_type" "Object" }
+	}
+	parm {
+	    name	"bump_brdf"
+	    label	"Bump brdf"
+	    type	oppath
+	    default	{ "" }
+	    help	"bump BRDF used internally for bump mapping"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "oprelative" "." }
+	    parmtag	{ "vray_plugin" "MtlMayaRamp" }
+	    parmtag	{ "vray_pluginattr" "bump_brdf" }
+	    parmtag	{ "vray_type" "Object" }
+	}
+	parm {
+	    name	"channels"
+	    label	"Channels"
+	    type	oplist
+	    default	{ "" }
+	    help	"Render channels the result will be written to"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "oprelative" "." }
+	    parmtag	{ "vray_plugin" "MtlMayaRamp" }
+	    parmtag	{ "vray_pluginattr" "channels" }
+	    parmtag	{ "vray_type" "List<Object>" }
+	}
+    }
+
+}

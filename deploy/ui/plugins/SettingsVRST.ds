@@ -1,0 +1,52 @@
+{
+    name	parameters
+    group {
+	name	"SettingsVRST"
+	label	"SettingsVRST"
+
+	parm {
+	    name	"plugindata"
+	    label	"SettingsVRST"
+	    type	data
+	    invisible
+	    default	{ "0" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsVRST" }
+	    parmtag	{ "vray_type" "SETTINGS" }
+	}
+	parm {
+	    name	"compression"
+	    label	"Compression"
+	    type	ordinal
+	    default	{ "1" }
+	    help	"Compression for VRST/VRSM output"
+	    menu	{
+		"0"	"Default"
+		"1"	"ZIP"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsVRST" }
+	    parmtag	{ "vray_pluginattr" "compression" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"bits_per_channel"
+	    label	"Bits per channel"
+	    type	ordinal
+	    default	{ "0" }
+	    help	"Bits per channel"
+	    menu	{
+		"16"	"16"
+		"32"	"32"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "SettingsVRST" }
+	    parmtag	{ "vray_pluginattr" "bits_per_channel" }
+	    parmtag	{ "vray_type" "int" }
+	}
+    }
+
+}
