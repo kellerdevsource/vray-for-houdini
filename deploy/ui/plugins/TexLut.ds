@@ -35,7 +35,7 @@
 	    default	{ "" }
 	    range	{ 0 1 }
 	    export	none
-	    parmtag	{ "vray_file_extensions" "cube" }
+	    parmtag	{ "filechooser_pattern" "*.cube" }
 	    parmtag	{ "vray_plugin" "TexLut" }
 	    parmtag	{ "vray_pluginattr" "file" }
 	    parmtag	{ "vray_type" "String" }

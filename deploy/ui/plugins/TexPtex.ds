@@ -23,7 +23,7 @@
 	    help	"The Ptex texture file"
 	    range	{ 0 1 }
 	    export	none
-	    parmtag	{ "vray_file_extensions" "ptx" }
+	    parmtag	{ "filechooser_pattern" "*.ptx" }
 	    parmtag	{ "vray_plugin" "TexPtex" }
 	    parmtag	{ "vray_pluginattr" "ptex_file" }
 	    parmtag	{ "vray_type" "String" }

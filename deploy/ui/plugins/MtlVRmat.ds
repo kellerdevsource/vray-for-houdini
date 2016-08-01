@@ -28,7 +28,7 @@
 		help	"Filepath"
 		range	{ 0 1 }
 		export	none
-		parmtag	{ "vray_file_extensions" "vrmat;vismat;vrscene" }
+		parmtag	{ "filechooser_pattern" "*.vrmat,*.vismat,*.vrscene" }
 		parmtag	{ "vray_plugin" "MtlVRmat" }
 		parmtag	{ "vray_pluginattr" "filename" }
 		parmtag	{ "vray_type" "String" }

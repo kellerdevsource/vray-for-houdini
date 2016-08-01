@@ -98,7 +98,7 @@
 	    help	"This is the name of the *.vrsh file which contains the precomputed SH for this scene"
 	    range	{ 0 1 }
 	    export	none
-	    parmtag	{ "vray_file_extensions" "vrsh;xml" }
+	    parmtag	{ "filechooser_pattern" "*.vrsh,*.xml" }
 	    parmtag	{ "vray_plugin" "SphericalHarmonicsExporter" }
 	    parmtag	{ "vray_pluginattr" "file_name" }
 	    parmtag	{ "vray_type" "String" }

@@ -56,7 +56,7 @@
 	    help	"OCIO configuration file (*.ocio)"
 	    range	{ 0 1 }
 	    export	none
-	    parmtag	{ "vray_file_extensions" "ocio" }
+	    parmtag	{ "filechooser_pattern" "*.ocio" }
 	    parmtag	{ "vray_plugin" "TexOCIO" }
 	    parmtag	{ "vray_pluginattr" "config_file" }
 	    parmtag	{ "vray_type" "String" }
@@ -202,7 +202,7 @@
 	    help	"CDLTransform: file (.cc or .ccc)"
 	    range	{ 0 1 }
 	    export	none
-	    parmtag	{ "vray_file_extensions" "cc;ccc" }
+	    parmtag	{ "filechooser_pattern" "*.cc,*.ccc" }
 	    parmtag	{ "vray_plugin" "TexOCIO" }
 	    parmtag	{ "vray_pluginattr" "cdl_file" }
 	    parmtag	{ "vray_type" "String" }
@@ -227,7 +227,7 @@
 	    help	"FileTransform: color correction file"
 	    range	{ 0 1 }
 	    export	none
-	    parmtag	{ "vray_file_extensions" "3dl;ccc;cc;csp;lut;itx;cube;mga;spi1d;spi3d;spimtx;cub;vf" }
+	    parmtag	{ "filechooser_pattern" "*.3dl,*.ccc,*.cc,*.csp,*.lut,*.itx,*.cube,*.mga,*.spi1d,*.spi3d,*.spimtx,*.cub,*.vf" }
 	    parmtag	{ "vray_plugin" "TexOCIO" }
 	    parmtag	{ "vray_pluginattr" "filetr_file" }
 	    parmtag	{ "vray_type" "String" }

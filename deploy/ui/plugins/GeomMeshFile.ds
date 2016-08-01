@@ -23,9 +23,9 @@
 	    default	{ "" }
 	    range	{ 0 1 }
 	    export	none
-	    parmtag	{ "vray_file_extensions" "vrmesh;abc" }
-	    parmtag	{ "vray_file_names" "V-Ray Mesh;Alembic" }
-	    parmtag	{ "vray_file_op" "load" }
+	    parmtag	{ "filechooser_mode" "read" }
+	    parmtag	{ "filechooser_pattern" "*.vrmesh,*.abc" }
+	    parmtag	{ "vray_file_names" "V-Ray Mesh,Alembic" }
 	    parmtag	{ "vray_plugin" "GeomMeshFile" }
 	    parmtag	{ "vray_pluginattr" "file" }
 	    parmtag	{ "vray_type" "String" }

@@ -24,7 +24,7 @@
 	    help	"The path to OpenVDB file"
 	    range	{ 0 1 }
 	    export	none
-	    parmtag	{ "vray_file_extensions" "vdb" }
+	    parmtag	{ "filechooser_pattern" "*.vdb" }
 	    parmtag	{ "vray_plugin" "GeomBifrost" }
 	    parmtag	{ "vray_pluginattr" "file" }
 	    parmtag	{ "vray_type" "String" }

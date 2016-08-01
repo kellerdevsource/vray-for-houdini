@@ -404,7 +404,7 @@
 	    disablewhen	"{ distortion_type != 2 }"
 	    range	{ 0 1 }
 	    export	none
-	    parmtag	{ "vray_file_extensions" "vrlens" }
+	    parmtag	{ "filechooser_pattern" "*.vrlens" }
 	    parmtag	{ "vray_plugin" "CameraPhysical" }
 	    parmtag	{ "vray_pluginattr" "lens_file" }
 	    parmtag	{ "vray_type" "String" }

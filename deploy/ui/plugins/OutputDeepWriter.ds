@@ -24,7 +24,7 @@
 	    help	"The name of the file in which the shade map information is stored"
 	    range	{ 0 1 }
 	    export	none
-	    parmtag	{ "vray_file_extensions" "vrst" }
+	    parmtag	{ "filechooser_pattern" "*.vrst" }
 	    parmtag	{ "vray_plugin" "OutputDeepWriter" }
 	    parmtag	{ "vray_pluginattr" "file" }
 	    parmtag	{ "vray_type" "String" }

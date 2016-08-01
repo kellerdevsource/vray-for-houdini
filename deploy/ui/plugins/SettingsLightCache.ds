@@ -195,7 +195,7 @@
 	    disablewhen	"{ SettingsGI_on != 1 } { mode != 2 }"
 	    range	{ 0 1 }
 	    export	none
-	    parmtag	{ "vray_file_extensions" "vrlmap" }
+	    parmtag	{ "filechooser_pattern" "*.vrlmap" }
 	    parmtag	{ "vray_file_names" "V-Ray Light Cache map" }
 	    parmtag	{ "vray_plugin" "SettingsLightCache" }
 	    parmtag	{ "vray_pluginattr" "file" }
@@ -236,9 +236,9 @@
 	    disablewhen	"{ SettingsGI_on != 1 } { mode == 2 } { auto_save != 1 }"
 	    range	{ 0 1 }
 	    export	none
-	    parmtag	{ "vray_file_extensions" "vrlmap" }
+	    parmtag	{ "filechooser_mode" "write" }
+	    parmtag	{ "filechooser_pattern" "*.vrlmap" }
 	    parmtag	{ "vray_file_names" "V-Ray Light Cache map" }
-	    parmtag	{ "vray_file_op" "save" }
 	    parmtag	{ "vray_plugin" "SettingsLightCache" }
 	    parmtag	{ "vray_pluginattr" "auto_save_file" }
 	    parmtag	{ "vray_type" "String" }

@@ -242,7 +242,7 @@
 	    help	"The file name; can contain <UDIM> or <UVTILE> tags for Mari or Mudbox tiles respectively,or $nU and $nV for explicit tiles; lower-case tags consider the tiles as starting from 0 whereas upper-case tags start from 1"
 	    range	{ 0 1 }
 	    export	none
-	    parmtag	{ "vray_file_extensions" "exr;png;bmp;tga;hdr;jpg;jpeg;pic;tif;tiff;psd;vrimg;sgi;rgb;rgba" }
+	    parmtag	{ "filechooser_pattern" "*.exr,*.png,*.bmp,*.tga,*.hdr,*.jpg,*.jpeg,*.pic,*.tif,*.tiff,*.psd,*.vrimg,*.sgi,*.rgb,*.rgba" }
 	    parmtag	{ "vray_plugin" "BitmapBuffer" }
 	    parmtag	{ "vray_pluginattr" "file" }
 	    parmtag	{ "vray_type" "String" }

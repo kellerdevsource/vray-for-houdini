@@ -269,7 +269,7 @@
 	    disablewhen	"{ mode != 2 mode != 7 }"
 	    range	{ 0 1 }
 	    export	none
-	    parmtag	{ "vray_file_extensions" "vrmap" }
+	    parmtag	{ "filechooser_pattern" "*.vrmap" }
 	    parmtag	{ "vray_file_names" "V-Ray Irradiance map" }
 	    parmtag	{ "vray_plugin" "SettingsIrradianceMap" }
 	    parmtag	{ "vray_pluginattr" "file" }
@@ -370,9 +370,9 @@
 	    disablewhen	"{ mode == 2 } { mode == 5 } { mode == 7 } { auto_save != 1 }"
 	    range	{ 0 1 }
 	    export	none
-	    parmtag	{ "vray_file_extensions" "vrmap" }
+	    parmtag	{ "filechooser_mode" "write" }
+	    parmtag	{ "filechooser_pattern" "*.vrmap" }
 	    parmtag	{ "vray_file_names" "V-Ray Irradiance map" }
-	    parmtag	{ "vray_file_op" "save" }
 	    parmtag	{ "vray_plugin" "SettingsIrradianceMap" }
 	    parmtag	{ "vray_pluginattr" "auto_save_file" }
 	    parmtag	{ "vray_type" "String" }

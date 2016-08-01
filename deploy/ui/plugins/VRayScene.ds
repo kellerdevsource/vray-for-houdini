@@ -24,7 +24,7 @@
 	    help	"Path to a *.vrscene file"
 	    range	{ 0 1 }
 	    export	none
-	    parmtag	{ "vray_file_extensions" "vrscene" }
+	    parmtag	{ "filechooser_pattern" "*.vrscene" }
 	    parmtag	{ "vray_file_names" "V-Ray Scene, fileAssetOp=load, displayName=File Path" }
 	    parmtag	{ "vray_plugin" "VRayScene" }
 	    parmtag	{ "vray_pluginattr" "filepath" }

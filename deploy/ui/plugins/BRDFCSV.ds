@@ -200,7 +200,7 @@
 	    default	{ "" }
 	    range	{ 0 1 }
 	    export	none
-	    parmtag	{ "vray_file_extensions" "csv" }
+	    parmtag	{ "filechooser_pattern" "*.csv" }
 	    parmtag	{ "vray_plugin" "BRDFCSV" }
 	    parmtag	{ "vray_pluginattr" "csv_path" }
 	    parmtag	{ "vray_type" "String" }
