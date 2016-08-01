@@ -80,6 +80,7 @@ protected:
 	template <> void _set_opt<exint>          (const char * name, const exint  & val)          { m_options.setOptionI(name, val); }
 	template <> void _set_opt<fpreal>         (const char * name, const fpreal & val)          { m_options.setOptionF(name, val); }
 	template <> void _set_opt<UT_StringHolder>(const char * name, const UT_StringHolder & val) { m_options.setOptionS(name, val); }
+	template <> void _set_opt<const char *>   (const char * name, const char * const & val)    { m_options.setOptionS(name, val); }
 
 	// setters
 	template <typename T> T _get_opt(const char * name) const { static_assert(false, "UNIMPLEMENTED _get_opt in VRayPackedImplBase"); }
@@ -87,6 +88,7 @@ protected:
 	template <> exint           _get_opt<exint>          (const char * name) const { return m_options.getOptionI(name); }
 	template <> fpreal          _get_opt<fpreal>         (const char * name) const { return m_options.getOptionF(name); }
 	template <> UT_StringHolder _get_opt<UT_StringHolder>(const char * name) const { return m_options.getOptionS(name); }
+	template <> const char *    _get_opt<const char *>   (const char * name) const { return m_options.getOptionS(name).buffer(); }
 };
 
 #define VFH_MAKE_REGISTERS(params, params_count, class_name) BOOST_PP_FOR((0, params, params_count, class_name), VFH_PRED, VFH_OP, VFH_REGISTERS)
