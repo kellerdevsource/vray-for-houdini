@@ -915,9 +915,6 @@ PRMTmplList* Parm::generatePrmTemplate(const std::string &pluginID, const std::s
 //			else if (pluginID == "GeomMeshFile") {
 //				SOP::VRayProxy::addPrmTemplate(*prmTmplList);
 //			}
-//			else if (pluginID == "CustomTextureOutput") {
-//				VOP::TextureOutput::addPrmTemplate(*prmTmplList);
-//			}
 
 			for (const auto &aIt : pluginInfo->attributes) {
 				const AttrDesc &attrDesc = aIt.second;
@@ -945,9 +942,6 @@ PRM_Template * Parm::getPrmTemplate(const std::string &pluginID)
 		return pluginParms.get();
 	}
 
-	static boost::format dspath("plugins/%s.ds");
-	std::string dsfullpath = PRMList::expandUiPath( boost::str(dspath % pluginID) );
-
 	typedef std::unordered_map< std::string, std::shared_ptr< PRMList > > PRMListMap;
 	static PRMListMap prmListMap;
 
@@ -957,8 +951,6 @@ PRM_Template * Parm::getPrmTemplate(const std::string &pluginID)
 	}
 
 	if (prmList) {
-		prmList->addFromFile(dsfullpath);
-
 		if (pluginID == "BRDFLayered") {
 			VOP::BRDFLayered::addPrmTemplate(*prmList);
 		}
@@ -974,9 +966,11 @@ PRM_Template * Parm::getPrmTemplate(const std::string &pluginID)
 		else if (pluginID == "GeomMeshFile") {
 			SOP::VRayProxy::addPrmTemplate(*prmList);
 		}
-		else if (pluginID == "CustomTextureOutput") {
-			VOP::TextureOutput::addPrmTemplate(*prmList);
-		}
+
+		static boost::format dspath("plugins/%s.ds");
+		std::string dsfullpath = PRMList::expandUiPath( boost::str(dspath % pluginID) );
+
+		prmList->addFromFile(dsfullpath);
 
 		pluginParms = prmList->getPRMTemplate();
 		prmMap[pluginID] = pluginParms;
