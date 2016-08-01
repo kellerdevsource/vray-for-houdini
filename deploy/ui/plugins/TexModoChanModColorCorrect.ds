@@ -46,7 +46,7 @@
 	    type	float
 	    default	{ "0" }
 	    help	"The hue adjustment. This is in degrees"
-	    range	{ 180 180 }
+	    range	{ -180 180 }
 	    export	none
 	    parmtag	{ "vray_plugin" "TexModoChanModColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "hue" }
@@ -58,7 +58,7 @@
 	    type	float
 	    default	{ "0" }
 	    help	"The saturation adjustment"
-	    range	{ 1 1 }
+	    range	{ -1 1 }
 	    export	none
 	    parmtag	{ "vray_plugin" "TexModoChanModColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "saturation" }
@@ -70,7 +70,7 @@
 	    type	float
 	    default	{ "0" }
 	    help	"The value adjustment"
-	    range	{ 1 1 }
+	    range	{ -1 1 }
 	    export	none
 	    parmtag	{ "vray_plugin" "TexModoChanModColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "value" }

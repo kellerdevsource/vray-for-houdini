@@ -503,7 +503,7 @@
 		default	{ "0" }
 		help	"Spots u offset"
 		disablewhen	"{ spots_on != 1 }"
-		range	{ 100 100 }
+		range	{ -100 100 }
 		export	none
 		parmtag	{ "vray_plugin" "TexSoftbox" }
 		parmtag	{ "vray_pluginattr" "u_offset" }
@@ -542,7 +542,7 @@
 		default	{ "0" }
 		help	"Spots v offset"
 		disablewhen	"{ spots_on != 1 }"
-		range	{ 100 100 }
+		range	{ -100 100 }
 		export	none
 		parmtag	{ "vray_plugin" "TexSoftbox" }
 		parmtag	{ "vray_pluginattr" "v_offset" }
@@ -832,7 +832,7 @@
 		default	{ "0" }
 		help	"Frame noise phase"
 		disablewhen	"{ frame_on != 1 }"
-		range	{ 1000 1000 }
+		range	{ -1000 1000 }
 		export	none
 		parmtag	{ "vray_plugin" "TexSoftbox" }
 		parmtag	{ "vray_pluginattr" "noise_phase" }

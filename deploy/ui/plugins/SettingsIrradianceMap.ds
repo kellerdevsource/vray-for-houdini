@@ -21,7 +21,7 @@
 	    type	integer
 	    default	{ "-3" }
 	    help	"This value determines the resolution for the first GI pass"
-	    range	{ 100 100 }
+	    range	{ -100 100 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsIrradianceMap" }
 	    parmtag	{ "vray_pluginattr" "min_rate" }
@@ -33,7 +33,7 @@
 	    type	integer
 	    default	{ "0" }
 	    help	"This value determines the resolution of the last GI pass"
-	    range	{ 100 100 }
+	    range	{ -100 100 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsIrradianceMap" }
 	    parmtag	{ "vray_pluginattr" "max_rate" }

@@ -490,7 +490,7 @@
 		default	{ "0" }
 		help	"noise phase"
 		disablewhen	"{ noise_function != 2 noise_function != 5 }"
-		range	{ 1000 1000 }
+		range	{ -1000 1000 }
 		export	none
 		parmtag	{ "vray_plugin" "TexBerconNoise" }
 		parmtag	{ "vray_pluginattr" "noise_phase" }
@@ -516,7 +516,7 @@
 		default	{ "1" }
 		help	"worley F1"
 		disablewhen	"{ noise_function != 6 }"
-		range	{ 1000 1000 }
+		range	{ -1000 1000 }
 		export	none
 		parmtag	{ "vray_plugin" "TexBerconNoise" }
 		parmtag	{ "vray_pluginattr" "worley_F1" }
@@ -529,7 +529,7 @@
 		default	{ "0" }
 		help	"worley F2"
 		disablewhen	"{ noise_function != 6 }"
-		range	{ 1000 1000 }
+		range	{ -1000 1000 }
 		export	none
 		parmtag	{ "vray_plugin" "TexBerconNoise" }
 		parmtag	{ "vray_pluginattr" "worley_F2" }
@@ -542,7 +542,7 @@
 		default	{ "0" }
 		help	"worley F3"
 		disablewhen	"{ noise_function != 6 }"
-		range	{ 1000 1000 }
+		range	{ -1000 1000 }
 		export	none
 		parmtag	{ "vray_plugin" "TexBerconNoise" }
 		parmtag	{ "vray_pluginattr" "worley_F3" }
@@ -555,7 +555,7 @@
 		default	{ "0" }
 		help	"worley F4"
 		disablewhen	"{ noise_function != 6 }"
-		range	{ 1000 1000 }
+		range	{ -1000 1000 }
 		export	none
 		parmtag	{ "vray_plugin" "TexBerconNoise" }
 		parmtag	{ "vray_pluginattr" "worley_F4" }

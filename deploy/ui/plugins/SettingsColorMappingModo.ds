@@ -55,7 +55,7 @@
 	    type	float
 	    default	{ "1" }
 	    help	"Multiplier for dark colors"
-	    range	{ 1000 1000 }
+	    range	{ -1000 1000 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsColorMappingModo" }
 	    parmtag	{ "vray_pluginattr" "dark_mult" }
@@ -67,7 +67,7 @@
 	    type	float
 	    default	{ "1" }
 	    help	"Multiplier for bright colors"
-	    range	{ 1000 1000 }
+	    range	{ -1000 1000 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsColorMappingModo" }
 	    parmtag	{ "vray_pluginattr" "bright_mult" }
@@ -171,7 +171,7 @@
 	    default	{ "1" }
 	    help	"Multiplier for the \"Gamma correction\", \"Intensity gamma\" and \"Reinhard\" modes"
 	    disablewhen	"{ type != 4 type != 5 type != 6 }"
-	    range	{ 1000 1000 }
+	    range	{ -1000 1000 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsColorMappingModo" }
 	    parmtag	{ "vray_pluginattr" "multiplier" }
@@ -197,7 +197,7 @@
 	    default	{ "1" }
 	    help	"Burn value for the Reinhard color mapping"
 	    disablewhen	"{ type != 6 }"
-	    range	{ 1000 1000 }
+	    range	{ -1000 1000 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsColorMappingModo" }
 	    parmtag	{ "vray_pluginattr" "reinhard_burn_value" }

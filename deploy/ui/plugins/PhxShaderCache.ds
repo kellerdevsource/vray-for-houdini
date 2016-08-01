@@ -154,7 +154,7 @@
 		default	{ "0" }
 		help	"Cache Start"
 		disablewhen	"{ anim_mode == 1 }"
-		range	{ 10000 10000 }
+		range	{ -10000 10000 }
 		export	none
 		parmtag	{ "vray_plugin" "PhxShaderCache" }
 		parmtag	{ "vray_pluginattr" "read_offset" }
@@ -167,7 +167,7 @@
 		default	{ "0" }
 		help	"Play Start"
 		disablewhen	"{ anim_mode == 1 }"
-		range	{ 10000 10000 }
+		range	{ -10000 10000 }
 		export	none
 		parmtag	{ "vray_plugin" "PhxShaderCache" }
 		parmtag	{ "vray_pluginattr" "play_at" }
@@ -180,7 +180,7 @@
 		default	{ "0" }
 		help	"Play Length"
 		disablewhen	"{ anim_mode == 1 }"
-		range	{ 10000 10000 }
+		range	{ -10000 10000 }
 		export	none
 		parmtag	{ "vray_plugin" "PhxShaderCache" }
 		parmtag	{ "vray_pluginattr" "max_length" }
@@ -193,7 +193,7 @@
 		default	{ "1" }
 		help	"Play Speed"
 		disablewhen	"{ anim_mode == 1 }"
-		range	{ 10 10 }
+		range	{ -10 10 }
 		export	none
 		parmtag	{ "vray_plugin" "PhxShaderCache" }
 		parmtag	{ "vray_pluginattr" "play_speed" }

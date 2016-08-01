@@ -51,7 +51,7 @@
 		type	float
 		default	{ "0" }
 		help	"Parameter used to determine the phase function of the brdf"
-		range	{ 1 1 }
+		range	{ -1 1 }
 		export	none
 		parmtag	{ "vray_plugin" "BSDFPointParticle" }
 		parmtag	{ "vray_pluginattr" "phase_function" }
