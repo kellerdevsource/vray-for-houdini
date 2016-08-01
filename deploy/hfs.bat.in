@@ -35,7 +35,7 @@ set VRAY_PLUGIN_DESC_PATH=%LAUNCHER_LOCATION%\plugins_desc
 set VRAY_UI_DS_PATH=%LAUNCHER_LOCATION%\deploy\ui
 
 :: Phoenix Loaders
-set VRAY_FOR_HOUDINI_AURA_LOADERS=%VRAY_SDK%\bin\plugins
+set VRAY_FOR_HOUDINI_AURA_LOADERS=%HOUDINI_USER_DIR%\vfh\lib
 
 :: Report loading errors
 set HOUDINI_DSO_ERROR=1

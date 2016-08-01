@@ -100,7 +100,7 @@ void newSopOperator(OP_OperatorTable *table)
 	if (vfhPhoenixLoaderDir && *vfhPhoenixLoaderDir) {
 		Log::getLog().info("Loading Phoenix cache loader plugins from \"%s\"...",
 						   vfhPhoenixLoaderDir);
-		if (!initalizeAuraLoader(vfhPhoenixLoaderDir, "vray", 2)) {
+		if (!initalizeAuraLoader(vfhPhoenixLoaderDir, "phx", 2)) {
 			Log::getLog().error("Failed to load Phoenix cache loader plugins from \"%s\"!",
 								vfhPhoenixLoaderDir);
 		}

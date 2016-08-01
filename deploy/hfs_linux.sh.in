@@ -31,7 +31,7 @@ export VRAY_PLUGIN_DESC_PATH="${LAUNCHER_LOCATION}/plugins_desc"
 export VRAY_UI_DS_PATH="${LAUNCHER_LOCATION}/deploy/ui"
 
 # Phoenix Loaders
-export VRAY_FOR_HOUDINI_AURA_LOADERS=${VRAY_SDK}/bin/plugins
+export VRAY_FOR_HOUDINI_AURA_LOADERS=${HOUDINI_USER_DIR}/vfh/lib
 
 # Add libs to path
 export PATH=${HFS}/bin:${VRAY_PATH}:${PATH}
