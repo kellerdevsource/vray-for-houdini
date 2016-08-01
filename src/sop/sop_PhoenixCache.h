@@ -19,7 +19,6 @@
 namespace VRayForHoudini {
 namespace SOP {
 
-
 struct FluidFrame
 {
 	FluidFrame():

@@ -161,7 +161,7 @@ OP_ERROR SOP::PhxShaderCache::cookMySop(OP_Context &context)
 	Log::getLog().info("%s cookMySop(%.3f)",
 					   getName().buffer(), context.getTime());
 
-	gdp->clearAndDestroy();
+	gdp->stashAll();
 
 	const float t = context.getTime();
 
@@ -262,11 +262,11 @@ OP_ERROR SOP::PhxShaderCache::cookMySop(OP_Context &context)
 			//evalStringRaw(value, chNames[c], 0, t);
 			auto res = evalInt(chNames[c], 0, t) - 1;
 			if (res >= 0 && res < m_serializedChannels.size()) {
-				value = m_serializedChannels(c);
-			}
-			if (value != "" && value != "0") {
-				names.push_back(value);
-				ids.push_back(chIDs[c]);
+				value = m_serializedChannels(res);
+				if (value != "" && value != "0") {
+					names.push_back(value);
+					ids.push_back(chIDs[c]);
+				}
 			}
 		}
 
@@ -304,6 +304,8 @@ OP_ERROR SOP::PhxShaderCache::cookMySop(OP_Context &context)
 
 	pack->implementation()->update(options);
 	pack->setPathAttribute(getFullPath());
+
+	gdp->destroyStashed();
 
 #if UT_MAJOR_VERSION_INT < 14
 	gdp->notifyCache(GU_CACHE_ALL);
