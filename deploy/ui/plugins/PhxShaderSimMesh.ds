@@ -18,7 +18,7 @@
 	}
 	parm {
 	    name	"phoenix_sim"
-	    label	"Phoenix sim"
+	    label	"Phoenix Sim"
 	    type	oppath
 	    default	{ "" }
 	    help	"A plugin that supports PhoenixSimInterface and can be used to load a phoenix frame"
@@ -31,7 +31,7 @@
 	}
 	parm {
 	    name	"static_mesh"
-	    label	"Static mesh"
+	    label	"Static Mesh"
 	    type	oppath
 	    default	{ "" }
 	    help	"The geometry used by the mesher"

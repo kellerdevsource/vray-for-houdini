@@ -17,7 +17,7 @@
 	}
 	parm {
 	    name	"prepass_rate"
-	    label	"Prepass rate"
+	    label	"Prepass Rate"
 	    type	integer
 	    default	{ "-1" }
 	    help	"Sampling density for the illumination map"
@@ -29,7 +29,7 @@
 	}
 	parm {
 	    name	"interpolation_accuracy"
-	    label	"Interpolation accuracy"
+	    label	"Interpolation Accuracy"
 	    type	float
 	    default	{ "1" }
 	    help	"Interpolation accuracy for the illumination map; normally 1.0 is fine"
@@ -64,7 +64,7 @@
 	}
 	parm {
 	    name	"diffuse_reflectance"
-	    label	"Diffuse reflectance"
+	    label	"Diffuse Reflectance"
 	    type	color4
 	    size	4
 	    default	{ "0.81" "0.81" "0.69" "1" }
@@ -76,7 +76,7 @@
 	}
 	parm {
 	    name	"scatter_radius"
-	    label	"Scatter radius"
+	    label	"Scatter Radius"
 	    type	color4
 	    size	4
 	    default	{ "0.92" "0.52" "0.175" "1" }
@@ -89,7 +89,7 @@
 	}
 	parm {
 	    name	"scatter_radius_mult"
-	    label	"Scatter radius mult"
+	    label	"Scatter Radius Mult"
 	    type	float
 	    default	{ "2" }
 	    help	"The scatter radius will be multiplied by this number"
@@ -112,7 +112,7 @@
 	}
 	parm {
 	    name	"phase_function"
-	    label	"Phase function"
+	    label	"Phase Function"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 64 }
@@ -123,7 +123,7 @@
 	}
 	parm {
 	    name	"single_scatter"
-	    label	"Single scatter"
+	    label	"Single Scatter"
 	    type	toggle
 	    default	{ "1" }
 	    range	{ 0 1 }
@@ -134,7 +134,7 @@
 	}
 	parm {
 	    name	"front_scatter"
-	    label	"Front scatter"
+	    label	"Front Scatter"
 	    type	toggle
 	    default	{ "1" }
 	    range	{ 0 1 }
@@ -145,7 +145,7 @@
 	}
 	parm {
 	    name	"back_scatter"
-	    label	"Back scatter"
+	    label	"Back Scatter"
 	    type	toggle
 	    default	{ "1" }
 	    range	{ 0 1 }
@@ -156,7 +156,7 @@
 	}
 	parm {
 	    name	"scatter_gi"
-	    label	"Scatter gi"
+	    label	"Scatter Gi"
 	    type	toggle
 	    default	{ "0" }
 	    range	{ 0 1 }
@@ -167,7 +167,7 @@
 	}
 	parm {
 	    name	"prepass_lod_threshold"
-	    label	"Prepass lod threshold"
+	    label	"Prepass Lod Threshold"
 	    type	float
 	    default	{ "4" }
 	    range	{ 0 64 }
@@ -178,7 +178,7 @@
 	}
 	parm {
 	    name	"prepass_blur"
-	    label	"Prepass blur"
+	    label	"Prepass Blur"
 	    type	float
 	    default	{ "1.2" }
 	    range	{ 0 64 }
@@ -189,7 +189,7 @@
 	}
 	parm {
 	    name	"prepass_id"
-	    label	"Prepass id"
+	    label	"Prepass Id"
 	    type	integer
 	    default	{ "0" }
 	    help	"0 to calculate a separate illuminataion map for this shader; otherwise all shaders with the same prepass ID will share the same illumination map"
@@ -201,7 +201,7 @@
 	}
 	parm {
 	    name	"linear_workflow"
-	    label	"Linear workflow"
+	    label	"Linear Workflow"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Set to true to apply the inverse of gamma correction"
@@ -213,7 +213,7 @@
 	}
 	parm {
 	    name	"geometry_based_sampling"
-	    label	"Geometry based sampling"
+	    label	"Geometry Based Sampling"
 	    type	toggle
 	    default	{ "0" }
 	    range	{ 0 1 }
@@ -224,7 +224,7 @@
 	}
 	parm {
 	    name	"samples_per_unit_area"
-	    label	"Samples per unit area"
+	    label	"Samples Per Unit Area"
 	    type	float
 	    default	{ "16" }
 	    range	{ 0 64 }
@@ -235,7 +235,7 @@
 	}
 	parm {
 	    name	"surface_offset"
-	    label	"Surface offset"
+	    label	"Surface Offset"
 	    type	float
 	    default	{ "0.001" }
 	    help	"An offset along the geometric surface normal at which to perform shading in order to avoid surface acne"
@@ -247,7 +247,7 @@
 	}
 	parm {
 	    name	"preview_samples"
-	    label	"Preview samples"
+	    label	"Preview Samples"
 	    type	integer
 	    default	{ "0" }
 	    range	{ 0 64 }
@@ -258,7 +258,7 @@
 	}
 	parm {
 	    name	"max_distance"
-	    label	"Max distance"
+	    label	"Max Distance"
 	    type	float
 	    default	{ "0.1" }
 	    range	{ 0 64 }
@@ -269,7 +269,7 @@
 	}
 	parm {
 	    name	"background_color"
-	    label	"Background color"
+	    label	"Background Color"
 	    type	color
 	    size	3
 	    default	{ "0" "0" "0" }
@@ -281,7 +281,7 @@
 	}
 	parm {
 	    name	"samples_color"
-	    label	"Samples color"
+	    label	"Samples Color"
 	    type	color
 	    size	3
 	    default	{ "1" "1" "1" }
@@ -293,7 +293,7 @@
 	}
 	parm {
 	    name	"color_mode"
-	    label	"Color mode"
+	    label	"Color Mode"
 	    type	integer
 	    default	{ "0" }
 	    help	"Determines the meaning of the two colors: 0 - diffuse surface reflectance and scatter radius; 1 - scatter coefficient and fog color"

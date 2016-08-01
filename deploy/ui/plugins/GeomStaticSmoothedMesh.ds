@@ -80,7 +80,7 @@
 	}
 	parm {
 	    name	"keep_continuity"
-	    label	"Keep continuity"
+	    label	"Keep Continuity"
 	    type	toggle
 	    default	{ "0" }
 	    help	"If true, the plugin will attempt to keep the continuity of the displaced surface"
@@ -92,7 +92,7 @@
 	}
 	parm {
 	    name	"water_level"
-	    label	"Water level"
+	    label	"Water Level"
 	    type	float
 	    default	{ "-1e+30" }
 	    help	"Geometry below this displacement level will be clipped away"
@@ -104,7 +104,7 @@
 	}
 	parm {
 	    name	"map_channel"
-	    label	"Map channel"
+	    label	"Map Channel"
 	    type	integer
 	    default	{ "0" }
 	    help	"The mapping channel to use for vector displacement"
@@ -116,7 +116,7 @@
 	}
 	parm {
 	    name	"image_width"
-	    label	"Image width"
+	    label	"Image Width"
 	    type	integer
 	    default	{ "0" }
 	    help	"This parameter overrides the imgWidth paramter from VRayFrameData during the calculation of the subdivision depth"
@@ -128,7 +128,7 @@
 	}
 	parm {
 	    name	"cache_normals"
-	    label	"Cache normals"
+	    label	"Cache Normals"
 	    type	toggle
 	    default	{ "0" }
 	    help	"If this option is equal to 1 then the normals of the generated triangles are cached. It has effect only if the surface is displaced"
@@ -140,7 +140,7 @@
 	}
 	parm {
 	    name	"use_globals"
-	    label	"Use global settings"
+	    label	"Use Global Settings"
 	    type	toggle
 	    default	{ "1" }
 	    help	"If true, the global displacement quality settings will be used"
@@ -152,7 +152,7 @@
 	}
 	parm {
 	    name	"static_subdiv"
-	    label	"Static subdivision"
+	    label	"Static Subdivision"
 	    type	toggle
 	    default	{ "0" }
 	    help	"True if the resulting triangles of the subdivision algorithm will be inserted into the rayserver as static geometry"
@@ -164,7 +164,7 @@
 	}
 	parm {
 	    name	"view_dep"
-	    label	"View dependent"
+	    label	"View Dependent"
 	    type	toggle
 	    default	{ "1" }
 	    help	"If use_globals is false, this determines if view-dependent tesselation is used"
@@ -177,7 +177,7 @@
 	}
 	parm {
 	    name	"edge_length"
-	    label	"Edge length"
+	    label	"Edge Length"
 	    type	float
 	    default	{ "4" }
 	    help	"If use_globals is false, this determines the approximate edge length for the sub-triangles"
@@ -190,7 +190,7 @@
 	}
 	parm {
 	    name	"max_subdivs"
-	    label	"Max subdivisions"
+	    label	"Max Subdivisions"
 	    type	integer
 	    default	{ "256" }
 	    help	"If use_globals is false, this determines the maximum subdivisions for a triangle of the original mesh"
@@ -203,7 +203,7 @@
 	}
 	parm {
 	    name	"use_bounds"
-	    label	"Use bounds"
+	    label	"Use Bounds"
 	    type	toggle
 	    default	{ "0" }
 	    help	"If true, the min/max values for the displacement texture are specified by the min_bound and max_bound parameters; if false, these are calculated automatically"
@@ -215,7 +215,7 @@
 	}
 	parm {
 	    name	"min_bound"
-	    label	"Min bound"
+	    label	"Min Bound"
 	    type	color
 	    size	3
 	    default	{ "0" "0" "0" }
@@ -229,7 +229,7 @@
 	}
 	parm {
 	    name	"max_bound"
-	    label	"Max bound"
+	    label	"Max Bound"
 	    type	color
 	    size	3
 	    default	{ "1" "1" "1" }
@@ -243,7 +243,7 @@
 	}
 	parm {
 	    name	"preserve_map_borders"
-	    label	"Preserve map borders"
+	    label	"Preserve Map Borders"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"The valid values"
@@ -260,7 +260,7 @@
 	}
 	parm {
 	    name	"classic_catmark"
-	    label	"Classic Catmull-Clark"
+	    label	"Classic Catmull-clark"
 	    type	toggle
 	    default	{ "0" }
 	    help	"If equal to 1 then the classical Catmull-Clark masks will be used for meshes which contain only quadrangles"
@@ -290,7 +290,7 @@
 	}
 	parm {
 	    name	"object_space_displacement"
-	    label	"Object space displacement"
+	    label	"Object Space Displacement"
 	    type	toggle
 	    default	{ "0" }
 	    help	"If true, the parent transformation will affect the amount of displacement. Used only when doing 3D displacement"

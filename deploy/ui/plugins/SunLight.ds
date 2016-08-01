@@ -94,7 +94,7 @@
 
 	groupsimple {
 	    name	"target_transform"
-	    label	"Target transform"
+	    label	"Target Transform"
 	    grouptag	{ "vray_plugin" "SunLight" }
 	    grouptag	{ "vray_pluginattr" "target_transform" }
 	    grouptag	{ "vray_type" "Transform" }
@@ -195,7 +195,7 @@
 	}
 	parm {
 	    name	"water_vapour"
-	    label	"Water vapour"
+	    label	"Water Vapour"
 	    type	float
 	    default	{ "2" }
 	    range	{ 0 64 }
@@ -206,7 +206,7 @@
 	}
 	parm {
 	    name	"intensity_multiplier"
-	    label	"Intensity multiplier"
+	    label	"Intensity Multiplier"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 64 }
@@ -217,7 +217,7 @@
 	}
 	parm {
 	    name	"size_multiplier"
-	    label	"Size multiplier"
+	    label	"Size Multiplier"
 	    type	float
 	    default	{ "1" }
 	    help	"Controls the visible size of the sun. Affects the appearance of the sun disc as seen by the camera and reflections, as well as the blurriness of the sun shadows"
@@ -229,7 +229,7 @@
 	}
 	parm {
 	    name	"filter_color"
-	    label	"Filter color"
+	    label	"Filter Color"
 	    type	color
 	    size	3
 	    default	{ "1" "1" "1" }
@@ -242,7 +242,7 @@
 	}
 	parm {
 	    name	"up_vector"
-	    label	"Up vector"
+	    label	"Up Vector"
 	    type	direction
 	    size	3
 	    default	{ "0" "0" "1" }
@@ -266,7 +266,7 @@
 	}
 	parm {
 	    name	"horiz_illum"
-	    label	"Horiz illum"
+	    label	"Horiz Illum"
 	    type	float
 	    default	{ "25000" }
 	    help	"Specifies the intensity (in lx) of the illumination on horizontal surfaces coming from the sky"
@@ -279,7 +279,7 @@
 	}
 	parm {
 	    name	"sky_model"
-	    label	"Sky model"
+	    label	"Sky Model"
 	    type	ordinal
 	    default	{ "3" }
 	    help	"Selects the procedural model used to simulate the TexSky texture"
@@ -309,7 +309,7 @@
 	}
 	parm {
 	    name	"atmos_shadows"
-	    label	"Atmos shadows"
+	    label	"Atmos Shadows"
 	    type	toggle
 	    default	{ "1" }
 	    help	"true if the light casts shadows from atmosperics and false otherwise"
@@ -333,7 +333,7 @@
 	}
 	parm {
 	    name	"shadow_subdivs"
-	    label	"Shadow subdivs"
+	    label	"Shadow Subdivs"
 	    type	integer
 	    default	{ "8" }
 	    range	{ 0 64 }
@@ -344,7 +344,7 @@
 	}
 	parm {
 	    name	"shadow_color_tex"
-	    label	"Shadow color tex"
+	    label	"Shadow Color Tex"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "1" }
@@ -358,7 +358,7 @@
 	}
 	parm {
 	    name	"photon_radius"
-	    label	"Photon radius"
+	    label	"Photon Radius"
 	    type	float
 	    default	{ "50" }
 	    range	{ 0 64 }
@@ -449,7 +449,7 @@
 	}
 	parm {
 	    name	"diffuse_contribution"
-	    label	"Diffuse contribution"
+	    label	"Diffuse Contribution"
 	    type	float
 	    default	{ "1" }
 	    help	"Diffuse contribution for the light"
@@ -461,7 +461,7 @@
 	}
 	parm {
 	    name	"specular_contribution"
-	    label	"Specular contribution"
+	    label	"Specular Contribution"
 	    type	float
 	    default	{ "1" }
 	    help	"Specular contribution for the light"
@@ -486,7 +486,7 @@
 	}
 	parm {
 	    name	"channels_raw"
-	    label	"Channels raw"
+	    label	"Channels Raw"
 	    type	oplist
 	    default	{ "" }
 	    help	"Render channels the raw diffuse result of this light will be written to"
@@ -499,7 +499,7 @@
 	}
 	parm {
 	    name	"channels_diffuse"
-	    label	"Channels diffuse"
+	    label	"Channels Diffuse"
 	    type	oplist
 	    default	{ "" }
 	    help	"Render channels the diffuse result of this light will be written to"
@@ -512,7 +512,7 @@
 	}
 	parm {
 	    name	"channels_specular"
-	    label	"Channels specular"
+	    label	"Channels Specular"
 	    type	oplist
 	    default	{ "" }
 	    help	"Render channels the specular result of this light will be written to"
@@ -525,7 +525,7 @@
 	}
 	parm {
 	    name	"ground_albedo"
-	    label	"Ground albedo"
+	    label	"Ground Albedo"
 	    type	color
 	    size	3
 	    default	{ "0.2" "0.2" "0.2" }
@@ -538,7 +538,7 @@
 	}
 	parm {
 	    name	"color_mode"
-	    label	"Color mode"
+	    label	"Color Mode"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"This option affects the way the color in the Filter color parameter affects the color of the sun"
@@ -555,7 +555,7 @@
 	}
 	parm {
 	    name	"shadow_color"
-	    label	"Shadow color"
+	    label	"Shadow Color"
 	    type	color
 	    size	3
 	    default	{ "0" "0" "0" }
@@ -568,7 +568,7 @@
 	}
 	parm {
 	    name	"bumped_below_surface_check"
-	    label	"Bumped below surface check"
+	    label	"Bumped Below Surface Check"
 	    type	toggle
 	    default	{ "0" }
 	    help	"true if the bumped normal should be used to check if the light dir is below the surface"

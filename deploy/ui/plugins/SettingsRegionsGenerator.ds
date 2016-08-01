@@ -42,7 +42,7 @@
 	}
 	parm {
 	    name	"xymeans"
-	    label	"Size in pixels or number of regions"
+	    label	"Size In Pixels Or Number Of Regions"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"Size in pixels or number of regions"
@@ -102,7 +102,7 @@
 	}
 	parm {
 	    name	"lock_size"
-	    label	"Lock size"
+	    label	"Lock Size"
 	    type	toggle
 	    default	{ "1" }
 	    help	"Lock bucket size (X = Y)"

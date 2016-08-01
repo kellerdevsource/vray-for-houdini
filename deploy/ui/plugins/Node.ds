@@ -166,7 +166,7 @@
 	}
 	parm {
 	    name	"user_attributes"
-	    label	"User attributes"
+	    label	"User Attributes"
 	    type	string
 	    default	{ "" }
 	    help	"A list of user defined attributes"
@@ -190,7 +190,7 @@
 	}
 	parm {
 	    name	"primary_visibility"
-	    label	"Primary visibility"
+	    label	"Primary Visibility"
 	    type	toggle
 	    default	{ "1" }
 	    help	"If off shading an intersection with this mesh will not generate a gbuffer."
@@ -202,7 +202,7 @@
 	}
 	parm {
 	    name	"time_for_geometry"
-	    label	"Time for geometry"
+	    label	"Time For Geometry"
 	    type	float
 	    default	{ "0" }
 	    help	"If this is used (controlled by 'use_time_for_geometry') it will be given as the time for which the instance should be created and the geometry should be compiled for geometry that supports the StaticGeomSourceForTimeInterface interface. Note that this time will not be used for the transform of the node - the current frame time will be used for that"
@@ -214,7 +214,7 @@
 	}
 	parm {
 	    name	"use_time_for_geometry"
-	    label	"Use time for geometry"
+	    label	"Use Time For Geometry"
 	    type	toggle
 	    default	{ "0" }
 	    help	"If true the 'time_for_geometry' parameter will be used"

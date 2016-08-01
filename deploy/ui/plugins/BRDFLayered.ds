@@ -54,7 +54,7 @@
 	}
 	parm {
 	    name	"transparency_tex_mult"
-	    label	"Transparency tex mult"
+	    label	"Transparency Tex Mult"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 10 }
@@ -65,7 +65,7 @@
 	}
 	parm {
 	    name	"additive_mode"
-	    label	"Additive mode"
+	    label	"Additive Mode"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"Weight for the material layers. 0 = Default, 1 = Additive. 2 and 3 used by RT GPU only (2 = MDL normalize, 3 = MDL clamp max)"

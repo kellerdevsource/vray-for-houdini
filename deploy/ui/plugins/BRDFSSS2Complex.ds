@@ -17,7 +17,7 @@
 	}
 	parm {
 	    name	"prepass_rate"
-	    label	"Prepass rate"
+	    label	"Prepass Rate"
 	    type	integer
 	    default	{ "-1" }
 	    help	"Sampling density for the illumination map"
@@ -30,7 +30,7 @@
 	}
 	parm {
 	    name	"interpolation_accuracy"
-	    label	"Interpolation accuracy"
+	    label	"Interpolation Accuracy"
 	    type	float
 	    default	{ "1" }
 	    help	"Interpolation accuracy for the illumination map; normally 1.0 is fine"
@@ -59,7 +59,7 @@
 	    }
 	    parm {
 		name	"ior"
-		label	"Index of refraction"
+		label	"Index Of Refraction"
 		type	float
 		default	{ "1.5" }
 		range	{ 0 64 }
@@ -76,7 +76,7 @@
 
 	    parm {
 		name	"overall_color"
-		label	"Overall color"
+		label	"Overall Color"
 		type	color4
 		size	4
 		default	{ "1" "1" "1" "1" }
@@ -88,7 +88,7 @@
 	    }
 	    parm {
 		name	"diffuse_color"
-		label	"Diffuse color"
+		label	"Diffuse Color"
 		type	color4
 		size	4
 		default	{ "0.5" "0.5" "0.5" "1" }
@@ -100,7 +100,7 @@
 	    }
 	    parm {
 		name	"diffuse_amount"
-		label	"Diffuse amount"
+		label	"Diffuse Amount"
 		type	float
 		default	{ "0" }
 		range	{ 0 64 }
@@ -111,7 +111,7 @@
 	    }
 	    parm {
 		name	"sub_surface_color"
-		label	"Sub surface color"
+		label	"Sub Surface Color"
 		type	color4
 		size	4
 		default	{ "0.5" "0.5" "0.5" "1" }
@@ -136,7 +136,7 @@
 	    }
 	    parm {
 		name	"scatter_radius_mult"
-		label	"Scatter Radius (in cm)"
+		label	"Scatter Radius (in Cm)"
 		type	float
 		default	{ "2" }
 		help	"The scatter radius will be multiplied by this number"
@@ -148,7 +148,7 @@
 	    }
 	    parm {
 		name	"phase_function"
-		label	"Phase function"
+		label	"Phase Function"
 		type	float
 		default	{ "0" }
 		range	{ 0 64 }
@@ -165,7 +165,7 @@
 
 	    parm {
 		name	"specular_color"
-		label	"Specular color"
+		label	"Specular Color"
 		type	color4
 		size	4
 		default	{ "1" "1" "1" "1" }
@@ -177,7 +177,7 @@
 	    }
 	    parm {
 		name	"specular_amount"
-		label	"Specular amount"
+		label	"Specular Amount"
 		type	float
 		default	{ "1" }
 		range	{ 0 64 }
@@ -188,7 +188,7 @@
 	    }
 	    parm {
 		name	"specular_glossiness"
-		label	"Specular glossiness"
+		label	"Specular Glossiness"
 		type	float
 		default	{ "0.6" }
 		range	{ 0 64 }
@@ -199,7 +199,7 @@
 	    }
 	    parm {
 		name	"specular_subdivs"
-		label	"Specular subdivs"
+		label	"Specular Subdivs"
 		type	integer
 		default	{ "8" }
 		range	{ 0 64 }
@@ -210,7 +210,7 @@
 	    }
 	    parm {
 		name	"cutoff_threshold"
-		label	"Cutoff threshold"
+		label	"Cutoff Threshold"
 		type	float
 		default	{ "0.01" }
 		range	{ 0 64 }
@@ -221,7 +221,7 @@
 	    }
 	    parm {
 		name	"trace_reflections"
-		label	"Trace reflections"
+		label	"Trace Reflections"
 		type	toggle
 		default	{ "0" }
 		range	{ 0 1 }
@@ -232,7 +232,7 @@
 	    }
 	    parm {
 		name	"reflection_depth"
-		label	"Reflection depth"
+		label	"Reflection Depth"
 		type	integer
 		default	{ "5" }
 		range	{ 0 64 }
@@ -249,7 +249,7 @@
 
 	    parm {
 		name	"single_scatter"
-		label	"Single scatter"
+		label	"Single Scatter"
 		type	ordinal
 		default	{ "1" }
 		help	"0 - None; 1 - Simple; 2 - Raytraced(solid); 3 - Raytraced(refractive)"
@@ -267,7 +267,7 @@
 	    }
 	    parm {
 		name	"subdivs"
-		label	"Single scatter subdivs"
+		label	"Single Scatter Subdivs"
 		type	integer
 		default	{ "8" }
 		help	"Single scatter subdivisions"
@@ -279,7 +279,7 @@
 	    }
 	    parm {
 		name	"refraction_depth"
-		label	"Refraction depth"
+		label	"Refraction Depth"
 		type	integer
 		default	{ "5" }
 		range	{ 0 64 }
@@ -290,7 +290,7 @@
 	    }
 	    parm {
 		name	"front_scatter"
-		label	"Front lighting"
+		label	"Front Lighting"
 		type	toggle
 		default	{ "1" }
 		disablewhen	"{ geometry_based_sampling != 0 }"
@@ -302,7 +302,7 @@
 	    }
 	    parm {
 		name	"back_scatter"
-		label	"Back lighting"
+		label	"Back Lighting"
 		type	toggle
 		default	{ "1" }
 		disablewhen	"{ geometry_based_sampling != 0 }"
@@ -314,7 +314,7 @@
 	    }
 	    parm {
 		name	"scatter_gi"
-		label	"Scatter GI"
+		label	"Scatter Gi"
 		type	toggle
 		default	{ "0" }
 		range	{ 0 1 }
@@ -325,7 +325,7 @@
 	    }
 	    parm {
 		name	"prepass_blur"
-		label	"Prepass blur"
+		label	"Prepass Blur"
 		type	float
 		default	{ "1.2" }
 		disablewhen	"{ geometry_based_sampling >= 2 }"
@@ -337,7 +337,7 @@
 	    }
 	    parm {
 		name	"prepass_id"
-		label	"Prepass id"
+		label	"Prepass Id"
 		type	integer
 		default	{ "0" }
 		help	"0 to calculate a separate illuminataion map for this shader; otherwise all shaders with the same prepass ID will share the same illumination map"
@@ -363,7 +363,7 @@
 	    }
 	    parm {
 		name	"linear_workflow"
-		label	"Linear workflow"
+		label	"Linear Workflow"
 		type	toggle
 		default	{ "0" }
 		help	"Set to true to apply the inverse of gamma correction"
@@ -375,7 +375,7 @@
 	    }
 	    parm {
 		name	"prepass_mode"
-		label	"Prepass mode"
+		label	"Prepass Mode"
 		type	ordinal
 		default	{ "0" }
 		help	"Prepass mode"
@@ -416,7 +416,7 @@
 
 	    parm {
 		name	"geometry_based_sampling"
-		label	"Multiple scattering"
+		label	"Multiple Scattering"
 		type	ordinal
 		default	{ "2" }
 		help	"0 - Prepass-based illumination map; 1 - Object-based illumination map; 2 - Raytraced; 3 - None (diffuse approx.);"
@@ -434,7 +434,7 @@
 	    }
 	    parm {
 		name	"samples_per_unit_area"
-		label	"Samples per unit area"
+		label	"Samples Per Unit Area"
 		type	float
 		default	{ "16" }
 		disablewhen	"{ geometry_based_sampling != 1 } { auto_density != 0 } { geometry_based_sampling != 1 }"
@@ -446,7 +446,7 @@
 	    }
 	    parm {
 		name	"auto_density"
-		label	"Auto density"
+		label	"Auto Density"
 		type	toggle
 		default	{ "0" }
 		help	"If this parameter is true then 'Samples per unit area' will be computed automatically."
@@ -459,7 +459,7 @@
 	    }
 	    parm {
 		name	"surface_offset"
-		label	"Surface offset"
+		label	"Surface Offset"
 		type	float
 		default	{ "0.001" }
 		help	"An offset along the geometric surface normal at which to perform shading in order to avoid surface acne"
@@ -472,7 +472,7 @@
 	    }
 	    parm {
 		name	"preview_samples"
-		label	"Preview samples"
+		label	"Preview Samples"
 		type	toggle
 		default	{ "0" }
 		disablewhen	"{ geometry_based_sampling != 1 }"
@@ -484,7 +484,7 @@
 	    }
 	    parm {
 		name	"max_distance"
-		label	"Max distance"
+		label	"Max Distance"
 		type	float
 		default	{ "0.1" }
 		disablewhen	"{ preview_samples != 1 } { geometry_based_sampling != 1 } { preview_samples != 1 }"
@@ -496,7 +496,7 @@
 	    }
 	    parm {
 		name	"background_color"
-		label	"Background color"
+		label	"Background Color"
 		type	color
 		size	3
 		default	{ "0" "0" "0" }
@@ -509,7 +509,7 @@
 	    }
 	    parm {
 		name	"samples_color"
-		label	"Samples color"
+		label	"Samples Color"
 		type	color
 		size	3
 		default	{ "1" "1" "1" }
@@ -534,7 +534,7 @@
 	    }
 	    parm {
 		name	"color_mode"
-		label	"Color mode"
+		label	"Color Mode"
 		type	ordinal
 		default	{ "0" }
 		help	"Determines the meaning of the two colors: 0 - diffuse surface reflectance and scatter radius; 1 - scatter coefficient and fog color"

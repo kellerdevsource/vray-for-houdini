@@ -29,7 +29,7 @@
 	}
 	parm {
 	    name	"edgeLength"
-	    label	"Edge length"
+	    label	"Edge Length"
 	    type	float
 	    default	{ "4" }
 	    help	"Max. height"
@@ -41,7 +41,7 @@
 	}
 	parm {
 	    name	"viewDependent"
-	    label	"View dependent"
+	    label	"View Dependent"
 	    type	toggle
 	    default	{ "1" }
 	    help	"Determines if view-dependent tesselation is used"
@@ -53,7 +53,7 @@
 	}
 	parm {
 	    name	"maxSubdivs"
-	    label	"Max subdivs"
+	    label	"Max Subdivs"
 	    type	integer
 	    default	{ "256" }
 	    help	"Determines the maximum subdivisions for a triangle of the original mesh"
@@ -65,7 +65,7 @@
 	}
 	parm {
 	    name	"tightBounds"
-	    label	"Tight bounds"
+	    label	"Tight Bounds"
 	    type	toggle
 	    default	{ "1" }
 	    help	"When this is on, initialization will be slower, but tighter bounds will be computed for the displaced triangles making rendering faster"

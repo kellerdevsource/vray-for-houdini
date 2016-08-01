@@ -31,7 +31,7 @@
 	}
 	parm {
 	    name	"render_grid"
-	    label	"Render grid"
+	    label	"Render Grid"
 	    type	string
 	    default	{ "" }
 	    help	"The name of the OpenVDB grid to render"
@@ -43,7 +43,7 @@
 	}
 	parm {
 	    name	"velocity_grid"
-	    label	"Velocity grid"
+	    label	"Velocity Grid"
 	    type	string
 	    default	{ "" }
 	    help	"The name of the OpenVDB velocity grid to used for motion blur"
@@ -55,7 +55,7 @@
 	}
 	parm {
 	    name	"delay_load"
-	    label	"Delay load"
+	    label	"Delay Load"
 	    type	toggle
 	    default	{ "1" }
 	    help	"If true, delay load the OpenVDB voxels until requested"
@@ -101,7 +101,7 @@
 	    }
 	    parm {
 		name	"use_3d_mapping"
-		label	"Use 3d mapping"
+		label	"Use 3d Mapping"
 		type	toggle
 		default	{ "0" }
 		help	"whther to ignore the uvw generator and use world mapping"
@@ -113,7 +113,7 @@
 	    }
 	    parm {
 		name	"float_mult"
-		label	"Float mult"
+		label	"Float Mult"
 		type	float
 		default	{ "1" }
 		help	"Texture multiplier for float data"
@@ -125,7 +125,7 @@
 	    }
 	    parm {
 		name	"vector_mult"
-		label	"Vector mult"
+		label	"Vector Mult"
 		type	color4
 		size	4
 		default	{ "1" "1" "1" "1" }

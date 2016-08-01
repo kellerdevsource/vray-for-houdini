@@ -17,7 +17,7 @@
 	}
 	parm {
 	    name	"bits_per_channel"
-	    label	"Bits per channel"
+	    label	"Bits Per Channel"
 	    type	ordinal
 	    default	{ "1" }
 	    help	"Bits per channel (8 or 16)"

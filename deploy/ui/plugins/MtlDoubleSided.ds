@@ -17,7 +17,7 @@
 	}
 	parm {
 	    name	"base_mtl"
-	    label	"Base mtl"
+	    label	"Base Mtl"
 	    type	oppath
 	    default	{ "" }
 	    help	"Base material"

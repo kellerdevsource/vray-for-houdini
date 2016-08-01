@@ -42,7 +42,7 @@
 	}
 	parm {
 	    name	"render_intent"
-	    label	"Render intent"
+	    label	"Render Intent"
 	    type	integer
 	    default	{ "0" }
 	    range	{ 0 10 }

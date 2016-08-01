@@ -18,7 +18,7 @@
 	}
 	parm {
 	    name	"sphere_size"
-	    label	"Sphere size"
+	    label	"Sphere Size"
 	    type	float
 	    default	{ "3" }
 	    help	"Sphere size"
@@ -30,7 +30,7 @@
 	}
 	parm {
 	    name	"sphere_segments"
-	    label	"Sphere segments"
+	    label	"Sphere Segments"
 	    type	integer
 	    default	{ "10" }
 	    help	"Sphere segments"
@@ -42,7 +42,7 @@
 	}
 	parm {
 	    name	"num_spheres"
-	    label	"Num spheres"
+	    label	"Num Spheres"
 	    type	integer
 	    default	{ "100" }
 	    help	"Number of spheres"
@@ -54,7 +54,7 @@
 	}
 	parm {
 	    name	"bbox_size"
-	    label	"Bbox size"
+	    label	"Bbox Size"
 	    type	float
 	    default	{ "30" }
 	    help	"Box size to fill with spheres"
@@ -66,7 +66,7 @@
 	}
 	parm {
 	    name	"use_displacement"
-	    label	"Use displacement"
+	    label	"Use Displacement"
 	    type	toggle
 	    default	{ "0" }
 	    help	"true to enable noise displacement texture"

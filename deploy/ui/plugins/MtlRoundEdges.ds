@@ -17,7 +17,7 @@
 	}
 	parm {
 	    name	"base_mtl"
-	    label	"Base mtl"
+	    label	"Base Mtl"
 	    type	oppath
 	    default	{ "" }
 	    help	"Base material"
@@ -42,7 +42,7 @@
 	}
 	parm {
 	    name	"base_mtl1"
-	    label	"Base mtl"
+	    label	"Base Mtl"
 	    type	oppath
 	    default	{ "" }
 	    help	"Base material"
@@ -55,7 +55,7 @@
 	}
 	parm {
 	    name	"radius_mode"
-	    label	"Radius mode"
+	    label	"Radius Mode"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"0 - the radius parameter is in object space, 1 - the radius parameter is in world space"
@@ -83,7 +83,7 @@
 	}
 	parm {
 	    name	"raytraced_consider_same_object_only"
-	    label	"Consider same object only"
+	    label	"Consider Same Object Only"
 	    type	toggle
 	    default	{ "1" }
 	    help	"true to consider only corners on the same object, and false to consider other intersecting objects"

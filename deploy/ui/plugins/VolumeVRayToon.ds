@@ -66,7 +66,7 @@
 	}
 	parm {
 	    name	"widthType"
-	    label	"Width units"
+	    label	"Width Units"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"0:Pixels; 1:World"
@@ -118,7 +118,7 @@
 	}
 	parm {
 	    name	"traceBias"
-	    label	"Trace bias"
+	    label	"Trace Bias"
 	    type	float
 	    default	{ "0.2" }
 	    help	"This parameter depends on the scale of your scene."
@@ -130,7 +130,7 @@
 	}
 	parm {
 	    name	"doSecondaryRays"
-	    label	"Visible in Reflection/Refraction"
+	    label	"Visible In Reflection/refraction"
 	    type	toggle
 	    default	{ "0" }
 	    help	"true : show toon lines in reflections"

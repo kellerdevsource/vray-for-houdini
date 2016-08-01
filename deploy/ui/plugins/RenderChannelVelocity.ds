@@ -28,7 +28,7 @@
 	}
 	parm {
 	    name	"clamp_velocity"
-	    label	"Clamp velocity"
+	    label	"Clamp Velocity"
 	    type	toggle
 	    default	{ "1" }
 	    range	{ 0 1 }
@@ -39,7 +39,7 @@
 	}
 	parm {
 	    name	"max_velocity"
-	    label	"Max velocity"
+	    label	"Max Velocity"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 64 }
@@ -50,7 +50,7 @@
 	}
 	parm {
 	    name	"max_velocity_last_frame"
-	    label	"Max velocity last frame"
+	    label	"Max Velocity Last Frame"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 64 }
@@ -61,7 +61,7 @@
 	}
 	parm {
 	    name	"ignore_z"
-	    label	"Ignore z"
+	    label	"Ignore Z"
 	    type	toggle
 	    default	{ "1" }
 	    range	{ 0 1 }

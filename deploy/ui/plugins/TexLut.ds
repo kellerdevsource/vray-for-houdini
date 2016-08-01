@@ -42,7 +42,7 @@
 	}
 	parm {
 	    name	"use_logspace"
-	    label	"Use logspace"
+	    label	"Use Logspace"
 	    type	integer
 	    default	{ "1" }
 	    range	{ 0 10 }

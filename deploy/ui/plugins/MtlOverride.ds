@@ -35,7 +35,7 @@
 	    }
 	    parm {
 		name	"gi_mtl"
-		label	"GI Material"
+		label	"Gi Material"
 		type	oppath
 		default	{ "" }
 		help	"The gi material"
@@ -105,7 +105,7 @@
 	    }
 	    parm {
 		name	"environment_priority"
-		label	"Environment priority"
+		label	"Environment Priority"
 		type	integer
 		default	{ "0" }
 		help	"Environment override priority (used when several materials override it along a ray path)"

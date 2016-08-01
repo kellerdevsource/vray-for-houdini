@@ -41,7 +41,7 @@
 	}
 	parm {
 	    name	"shading_needs_ids"
-	    label	"Shading needs ids"
+	    label	"Shading Needs Ids"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Set to true if the particle shade data sent to the instanced geometry needs to include the particle ID"
@@ -53,7 +53,7 @@
 	}
 	parm {
 	    name	"use_time_instancing"
-	    label	"Use time instancing"
+	    label	"Use Time Instancing"
 	    type	toggle
 	    default	{ "1" }
 	    help	"If this is set to 'false' the 'instances' parameter has the same format as in the Instancer plug-in"
@@ -65,7 +65,7 @@
 	}
 	parm {
 	    name	"use_additional_params"
-	    label	"Use additional params"
+	    label	"Use Additional Params"
 	    type	toggle
 	    default	{ "0" }
 	    help	"If this is set to 'true' the lists in the 'instances' parameter have additional parameters before the nodes - an int with flags indicating what parameters follow and after that the parameters that follow. Their types depend on the flags in the int and are in a strictly defined order. New flags may be added and additional parameters for them can be added at the end of the chain. The flags are defined in HierarchicalParameterizedNodeParameters in an enum"

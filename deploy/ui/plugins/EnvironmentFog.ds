@@ -171,7 +171,7 @@
 	    }
 	    parm {
 		name	"opacity_mode"
-		label	"Opacity mode"
+		label	"Opacity Mode"
 		type	toggle
 		default	{ "0" }
 		help	"Treat density as opacity"
@@ -183,7 +183,7 @@
 	    }
 	    parm {
 		name	"use_height"
-		label	"Use height"
+		label	"Use Height"
 		type	toggle
 		default	{ "0" }
 		help	"Whether or not the height should be taken into account"
@@ -220,7 +220,7 @@
 	    }
 	    parm {
 		name	"yup"
-		label	"Y is up"
+		label	"Y Is Up"
 		type	toggle
 		default	{ "0" }
 		help	"if true, y is the up axis, not z"
@@ -239,7 +239,7 @@
 
 	    parm {
 		name	"solid_mode"
-		label	"Solid mode"
+		label	"Solid Mode"
 		type	toggle
 		default	{ "0" }
 		help	"If true, this will cause to disable randomization when sampling and take 1 sample at 0.5 density"
@@ -251,7 +251,7 @@
 	    }
 	    parm {
 		name	"solid_threshold"
-		label	"Solid threshold"
+		label	"Solid Threshold"
 		type	float
 		default	{ "0.5" }
 		help	"Solid mode transparency threshold"
@@ -276,7 +276,7 @@
 	    }
 	    parm {
 		name	"shadow_opacity"
-		label	"Shadow opacity"
+		label	"Shadow Opacity"
 		type	float
 		default	{ "1" }
 		help	"volume opacity scale for shadow rays"
@@ -306,7 +306,7 @@
 
 	    parm {
 		name	"fade_out_mode"
-		label	"Fade out mode"
+		label	"Fade Out Mode"
 		type	ordinal
 		default	{ "0" }
 		help	"Fade out mode"
@@ -322,7 +322,7 @@
 	    }
 	    parm {
 		name	"fade_out_radius"
-		label	"Fade out radius"
+		label	"Fade Out Radius"
 		type	float
 		default	{ "0" }
 		help	"fade out effect for the edges"
@@ -334,7 +334,7 @@
 	    }
 	    parm {
 		name	"per_object_fade_out_radius"
-		label	"Per object fade out radius"
+		label	"Per Object Fade Out Radius"
 		type	toggle
 		default	{ "0" }
 		help	"fade out effect for the edges per object"
@@ -352,7 +352,7 @@
 
 	    parm {
 		name	"scatter_gi"
-		label	"Scatter GI"
+		label	"Scatter Gi"
 		type	toggle
 		default	{ "0" }
 		help	"Scatter global illumination"
@@ -364,7 +364,7 @@
 	    }
 	    parm {
 		name	"scatter_bounces"
-		label	"Scatter bounces"
+		label	"Scatter Bounces"
 		type	integer
 		default	{ "8" }
 		help	"Number of GI bounces calculated inside the fog"
@@ -383,7 +383,7 @@
 
 	    parm {
 		name	"simplify_gi"
-		label	"Simplify Textures for GI"
+		label	"Simplify Textures For Gi"
 		type	toggle
 		default	{ "0" }
 		help	"Simplify global illumination"
@@ -395,7 +395,7 @@
 	    }
 	    parm {
 		name	"step_size"
-		label	"Step size"
+		label	"Step Size"
 		type	float
 		default	{ "1" }
 		help	"Size of one step through the volume"
@@ -407,7 +407,7 @@
 	    }
 	    parm {
 		name	"max_steps"
-		label	"Max steps"
+		label	"Max Steps"
 		type	integer
 		default	{ "1000" }
 		help	"Maximum number of steps through the volume"
@@ -431,7 +431,7 @@
 	    }
 	    parm {
 		name	"cutoff_threshold"
-		label	"Cutoff threshold"
+		label	"Cutoff Threshold"
 		type	float
 		default	{ "0.001" }
 		help	"Controls when the raymarcher will stop traversing the volume"
@@ -449,7 +449,7 @@
 
 	    parm {
 		name	"light_mode"
-		label	"Light mode"
+		label	"Light Mode"
 		type	ordinal
 		default	{ "1" }
 		help	"Light mode"
@@ -481,7 +481,7 @@
 	    }
 	    parm {
 		name	"use_shade_instance"
-		label	"Use shade instance"
+		label	"Use Shade Instance"
 		type	toggle
 		default	{ "0" }
 		help	"True if the shade instance should be used when sampling textures"
@@ -499,7 +499,7 @@
 
 	    parm {
 		name	"affect_background"
-		label	"Affect background"
+		label	"Affect Background"
 		type	toggle
 		default	{ "1" }
 		help	"Affect background"
@@ -511,7 +511,7 @@
 	    }
 	    parm {
 		name	"affect_reflections"
-		label	"Affect reflections"
+		label	"Affect Reflections"
 		type	toggle
 		default	{ "1" }
 		help	"true if the fog is visible to reflection rays"
@@ -523,7 +523,7 @@
 	    }
 	    parm {
 		name	"affect_refractions"
-		label	"Affect refractions"
+		label	"Affect Refractions"
 		type	toggle
 		default	{ "1" }
 		help	"true if the fog is visible to refraction rays"
@@ -535,7 +535,7 @@
 	    }
 	    parm {
 		name	"affect_shadows"
-		label	"Affect shadows"
+		label	"Affect Shadows"
 		type	toggle
 		default	{ "1" }
 		help	"true if the fog affects shadow rays"
@@ -547,7 +547,7 @@
 	    }
 	    parm {
 		name	"affect_gi"
-		label	"Affect GI"
+		label	"Affect Gi"
 		type	toggle
 		default	{ "1" }
 		help	"true if the fog affects GI rays"
@@ -559,7 +559,7 @@
 	    }
 	    parm {
 		name	"affect_camera"
-		label	"Affect camera"
+		label	"Affect Camera"
 		type	toggle
 		default	{ "1" }
 		help	"true if the fog affects primary camera rays"
@@ -571,7 +571,7 @@
 	    }
 	    parm {
 		name	"deep_output"
-		label	"Deep output"
+		label	"Deep Output"
 		type	toggle
 		default	{ "0" }
 		help	"Toggle the deep image output. Note that enabling this option will force ray marching even for simple volumetrics, which can cause slower rendering"
@@ -583,7 +583,7 @@
 	    }
 	    parm {
 		name	"ior"
-		label	"IOR"
+		label	"Ior"
 		type	float
 		default	{ "1" }
 		help	"Index of refraction for the volume, which describes the way light bends when crossing the material surface. A value of 1.0 means the light will not change direction"
@@ -595,7 +595,7 @@
 	    }
 	    parm {
 		name	"use_shade_data"
-		label	"Use shade data"
+		label	"Use Shade Data"
 		type	toggle
 		default	{ "1" }
 		help	"True if the shade data should be used when sampling textures. The light mode will be ignored if this is true and the shader is not global!"

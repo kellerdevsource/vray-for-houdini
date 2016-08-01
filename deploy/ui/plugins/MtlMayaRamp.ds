@@ -18,7 +18,7 @@
 	}
 	parm {
 	    name	"color_input"
-	    label	"Color input"
+	    label	"Color Input"
 	    type	integer
 	    default	{ "0" }
 	    help	"0: light angle, 1: facing angle, 2: brightness, 3: normalized brightness"
@@ -30,7 +30,7 @@
 	}
 	parm {
 	    name	"ambient_tex"
-	    label	"Ambient tex"
+	    label	"Ambient Tex"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "0" }
@@ -43,7 +43,7 @@
 	}
 	parm {
 	    name	"eccentricity_tex"
-	    label	"Eccentricity tex"
+	    label	"Eccentricity Tex"
 	    type	float
 	    default	{ "0" }
 	    help	"eccentricity float texture"
@@ -55,7 +55,7 @@
 	}
 	parm {
 	    name	"specularity_tex"
-	    label	"Specularity tex"
+	    label	"Specularity Tex"
 	    type	float
 	    default	{ "0" }
 	    help	"specularity float texture"
@@ -67,7 +67,7 @@
 	}
 	parm {
 	    name	"diffuse_tex"
-	    label	"Diffuse tex"
+	    label	"Diffuse Tex"
 	    type	float
 	    default	{ "0" }
 	    help	"diffuse float texture"
@@ -79,7 +79,7 @@
 	}
 	parm {
 	    name	"fscatter_tex"
-	    label	"Fscatter tex"
+	    label	"Fscatter Tex"
 	    type	float
 	    default	{ "0" }
 	    help	"forward scatter float texture"
@@ -91,7 +91,7 @@
 	}
 	parm {
 	    name	"reflection_limit"
-	    label	"Reflection limit"
+	    label	"Reflection Limit"
 	    type	integer
 	    default	{ "0" }
 	    help	"reflection limit"
@@ -126,7 +126,7 @@
 	}
 	parm {
 	    name	"refraction_limit"
-	    label	"Refraction limit"
+	    label	"Refraction Limit"
 	    type	integer
 	    default	{ "-1" }
 	    help	"The maximum refraction bounces"
@@ -150,7 +150,7 @@
 	}
 	parm {
 	    name	"bump_brdf"
-	    label	"Bump brdf"
+	    label	"Bump Brdf"
 	    type	oppath
 	    default	{ "" }
 	    help	"bump BRDF used internally for bump mapping"

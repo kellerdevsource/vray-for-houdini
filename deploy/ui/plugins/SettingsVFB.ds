@@ -17,7 +17,7 @@
 	}
 	parm {
 	    name	"bloom_on"
-	    label	"Bloom on"
+	    label	"Bloom On"
 	    type	toggle
 	    default	{ "0" }
 	    range	{ 0 1 }
@@ -28,7 +28,7 @@
 	}
 	parm {
 	    name	"bloom_fill_edges"
-	    label	"Bloom fill edges"
+	    label	"Bloom Fill Edges"
 	    type	toggle
 	    default	{ "1" }
 	    range	{ 0 1 }
@@ -39,7 +39,7 @@
 	}
 	parm {
 	    name	"bloom_weight"
-	    label	"Bloom weight"
+	    label	"Bloom Weight"
 	    type	float
 	    default	{ "20" }
 	    range	{ 0 64 }
@@ -50,7 +50,7 @@
 	}
 	parm {
 	    name	"bloom_size"
-	    label	"Bloom size"
+	    label	"Bloom Size"
 	    type	float
 	    default	{ "20" }
 	    range	{ 0 64 }
@@ -61,7 +61,7 @@
 	}
 	parm {
 	    name	"bloom_shape"
-	    label	"Bloom shape"
+	    label	"Bloom Shape"
 	    type	float
 	    default	{ "4" }
 	    range	{ 0 64 }
@@ -72,7 +72,7 @@
 	}
 	parm {
 	    name	"bloom_mode"
-	    label	"Bloom mode"
+	    label	"Bloom Mode"
 	    type	integer
 	    default	{ "0" }
 	    help	"0-image 1-image and buffer  2-buffer"
@@ -84,7 +84,7 @@
 	}
 	parm {
 	    name	"bloom_mask_intensity_on"
-	    label	"Bloom mask intensity on"
+	    label	"Bloom Mask Intensity On"
 	    type	toggle
 	    default	{ "0" }
 	    range	{ 0 1 }
@@ -95,7 +95,7 @@
 	}
 	parm {
 	    name	"bloom_mask_intensity"
-	    label	"Bloom mask intensity"
+	    label	"Bloom Mask Intensity"
 	    type	float
 	    default	{ "3" }
 	    range	{ 0 64 }
@@ -106,7 +106,7 @@
 	}
 	parm {
 	    name	"bloom_mask_objid_on"
-	    label	"Bloom mask objid on"
+	    label	"Bloom Mask Objid On"
 	    type	toggle
 	    default	{ "0" }
 	    range	{ 0 1 }
@@ -117,7 +117,7 @@
 	}
 	parm {
 	    name	"bloom_mask_objid"
-	    label	"Bloom mask objid"
+	    label	"Bloom Mask Objid"
 	    type	integer
 	    default	{ "0" }
 	    range	{ 0 64 }
@@ -128,7 +128,7 @@
 	}
 	parm {
 	    name	"bloom_mask_mtlid_on"
-	    label	"Bloom mask mtlid on"
+	    label	"Bloom Mask Mtlid On"
 	    type	toggle
 	    default	{ "0" }
 	    range	{ 0 1 }
@@ -139,7 +139,7 @@
 	}
 	parm {
 	    name	"bloom_mask_mtlid"
-	    label	"Bloom mask mtlid"
+	    label	"Bloom Mask Mtlid"
 	    type	integer
 	    default	{ "0" }
 	    range	{ 0 64 }
@@ -150,7 +150,7 @@
 	}
 	parm {
 	    name	"glare_on"
-	    label	"Glare on"
+	    label	"Glare On"
 	    type	toggle
 	    default	{ "0" }
 	    range	{ 0 1 }
@@ -161,7 +161,7 @@
 	}
 	parm {
 	    name	"glare_fill_edges"
-	    label	"Glare fill edges"
+	    label	"Glare Fill Edges"
 	    type	toggle
 	    default	{ "1" }
 	    range	{ 0 1 }
@@ -172,7 +172,7 @@
 	}
 	parm {
 	    name	"glare_weight"
-	    label	"Glare weight"
+	    label	"Glare Weight"
 	    type	float
 	    default	{ "50" }
 	    range	{ 0 64 }
@@ -183,7 +183,7 @@
 	}
 	parm {
 	    name	"glare_size"
-	    label	"Glare size"
+	    label	"Glare Size"
 	    type	float
 	    default	{ "20" }
 	    range	{ 0 64 }
@@ -194,7 +194,7 @@
 	}
 	parm {
 	    name	"glare_type"
-	    label	"Glare type"
+	    label	"Glare Type"
 	    type	integer
 	    default	{ "0" }
 	    help	"0- from image  1 - from render camera  2 - from camera params"
@@ -206,7 +206,7 @@
 	}
 	parm {
 	    name	"glare_mode"
-	    label	"Glare mode"
+	    label	"Glare Mode"
 	    type	integer
 	    default	{ "0" }
 	    help	"0-image 1-image and buffer  2-buffer"
@@ -218,7 +218,7 @@
 	}
 	parm {
 	    name	"glare_image_path"
-	    label	"Glare image path"
+	    label	"Glare Image Path"
 	    type	string
 	    default	{ "" }
 	    range	{ 0 1 }
@@ -229,7 +229,7 @@
 	}
 	parm {
 	    name	"glare_obstacle_image_path"
-	    label	"Glare obstacle image path"
+	    label	"Glare Obstacle Image Path"
 	    type	string
 	    default	{ "" }
 	    range	{ 0 1 }
@@ -240,7 +240,7 @@
 	}
 	parm {
 	    name	"glare_diffraction_on"
-	    label	"Glare diffraction on"
+	    label	"Glare Diffraction On"
 	    type	toggle
 	    default	{ "0" }
 	    range	{ 0 1 }
@@ -251,7 +251,7 @@
 	}
 	parm {
 	    name	"glare_use_obstacle_image"
-	    label	"Glare use obstacle image"
+	    label	"Glare Use Obstacle Image"
 	    type	toggle
 	    default	{ "0" }
 	    range	{ 0 1 }
@@ -262,7 +262,7 @@
 	}
 	parm {
 	    name	"glare_cam_blades_on"
-	    label	"Glare cam blades on"
+	    label	"Glare Cam Blades On"
 	    type	toggle
 	    default	{ "1" }
 	    range	{ 0 1 }
@@ -273,7 +273,7 @@
 	}
 	parm {
 	    name	"glare_cam_num_blades"
-	    label	"Glare cam num blades"
+	    label	"Glare Cam Num Blades"
 	    type	integer
 	    default	{ "6" }
 	    range	{ 0 64 }
@@ -284,7 +284,7 @@
 	}
 	parm {
 	    name	"glare_cam_rotation"
-	    label	"Glare cam rotation"
+	    label	"Glare Cam Rotation"
 	    type	float
 	    default	{ "0" }
 	    help	"Rotation in degrees from 0.0 - 360.0"
@@ -296,7 +296,7 @@
 	}
 	parm {
 	    name	"glare_cam_fnumber"
-	    label	"Glare cam fnumber"
+	    label	"Glare Cam Fnumber"
 	    type	float
 	    default	{ "8" }
 	    range	{ 0 64 }
@@ -307,7 +307,7 @@
 	}
 	parm {
 	    name	"glare_mask_intensity_on"
-	    label	"Glare mask intensity on"
+	    label	"Glare Mask Intensity On"
 	    type	toggle
 	    default	{ "0" }
 	    range	{ 0 1 }
@@ -318,7 +318,7 @@
 	}
 	parm {
 	    name	"glare_mask_intensity"
-	    label	"Glare mask intensity"
+	    label	"Glare Mask Intensity"
 	    type	float
 	    default	{ "3" }
 	    range	{ 0 64 }
@@ -329,7 +329,7 @@
 	}
 	parm {
 	    name	"glare_mask_objid_on"
-	    label	"Glare mask objid on"
+	    label	"Glare Mask Objid On"
 	    type	toggle
 	    default	{ "0" }
 	    range	{ 0 1 }
@@ -340,7 +340,7 @@
 	}
 	parm {
 	    name	"glare_mask_objid"
-	    label	"Glare mask objid"
+	    label	"Glare Mask Objid"
 	    type	integer
 	    default	{ "0" }
 	    range	{ 0 64 }
@@ -351,7 +351,7 @@
 	}
 	parm {
 	    name	"glare_mask_mtlid_on"
-	    label	"Glare mask mtlid on"
+	    label	"Glare Mask Mtlid On"
 	    type	toggle
 	    default	{ "0" }
 	    range	{ 0 1 }
@@ -362,7 +362,7 @@
 	}
 	parm {
 	    name	"glare_mask_mtlid"
-	    label	"Glare mask mtlid"
+	    label	"Glare Mask Mtlid"
 	    type	integer
 	    default	{ "0" }
 	    range	{ 0 64 }

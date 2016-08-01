@@ -28,7 +28,7 @@
 	}
 	parm {
 	    name	"solids_enabled"
-	    label	"Use solids"
+	    label	"Use Solids"
 	    type	integer
 	    default	{ "1" }
 	    disablewhen	"{ on == 0 }"
@@ -45,7 +45,7 @@
 	}
 	parm {
 	    name	"build_quality"
-	    label	"Tree quality"
+	    label	"Tree Quality"
 	    type	integer
 	    default	{ "0" }
 	    disablewhen	"{ on == 0 }"

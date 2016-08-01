@@ -41,7 +41,7 @@
 	}
 	parm {
 	    name	"particle_source"
-	    label	"Particle source"
+	    label	"Particle Source"
 	    type	oplist
 	    default	{ "" }
 	    help	"A list of particles source"
@@ -476,7 +476,7 @@
 	}
 	groupsimple {
 	    name	"gizmo_transform"
-	    label	"Gizmo transform"
+	    label	"Gizmo Transform"
 	    grouptag	{ "vray_plugin" "PhxShaderFoam" }
 	    grouptag	{ "vray_pluginattr" "gizmo_transform" }
 	    grouptag	{ "vray_type" "Transform" }
@@ -569,7 +569,7 @@
 	}
 	parm {
 	    name	"liquid_sim"
-	    label	"Liquid sim"
+	    label	"Liquid Sim"
 	    type	oppath
 	    default	{ "" }
 	    help	"liquid phoenix simulator used to determine above/under water flag"
@@ -607,7 +607,7 @@
 	}
 	groupsimple {
 	    name	"glass_transform"
-	    label	"Glass transform"
+	    label	"Glass Transform"
 	    grouptag	{ "vray_plugin" "PhxShaderFoam" }
 	    grouptag	{ "vray_pluginattr" "glass_transform" }
 	    grouptag	{ "vray_type" "Transform" }
@@ -737,7 +737,7 @@
 	}
 	parm {
 	    name	"generate_gi"
-	    label	"Generate gi"
+	    label	"Generate Gi"
 	    type	integer
 	    default	{ "1" }
 	    range	{ 0 10 }
@@ -748,7 +748,7 @@
 	}
 	parm {
 	    name	"receive_gi"
-	    label	"Receive gi"
+	    label	"Receive Gi"
 	    type	integer
 	    default	{ "1" }
 	    range	{ 0 10 }
@@ -759,7 +759,7 @@
 	}
 	parm {
 	    name	"gen_gi_mult"
-	    label	"Gen gi mult"
+	    label	"Gen Gi Mult"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 10 }
@@ -770,7 +770,7 @@
 	}
 	parm {
 	    name	"rec_gi_mult"
-	    label	"Rec gi mult"
+	    label	"Rec Gi Mult"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 10 }
@@ -781,7 +781,7 @@
 	}
 	parm {
 	    name	"generate_caust"
-	    label	"Generate caust"
+	    label	"Generate Caust"
 	    type	integer
 	    default	{ "1" }
 	    range	{ 0 10 }
@@ -792,7 +792,7 @@
 	}
 	parm {
 	    name	"receive_caust"
-	    label	"Receive caust"
+	    label	"Receive Caust"
 	    type	integer
 	    default	{ "1" }
 	    range	{ 0 10 }
@@ -803,7 +803,7 @@
 	}
 	parm {
 	    name	"caust_mult"
-	    label	"Caust mult"
+	    label	"Caust Mult"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 10 }
@@ -814,7 +814,7 @@
 	}
 	parm {
 	    name	"camera_visibility"
-	    label	"Camera visibility"
+	    label	"Camera Visibility"
 	    type	toggle
 	    default	{ "1" }
 	    range	{ 0 1 }
@@ -825,7 +825,7 @@
 	}
 	parm {
 	    name	"reflections_visibility"
-	    label	"Reflections visibility"
+	    label	"Reflections Visibility"
 	    type	toggle
 	    default	{ "1" }
 	    range	{ 0 1 }
@@ -836,7 +836,7 @@
 	}
 	parm {
 	    name	"refractions_visibility"
-	    label	"Refractions visibility"
+	    label	"Refractions Visibility"
 	    type	toggle
 	    default	{ "1" }
 	    range	{ 0 1 }
@@ -847,7 +847,7 @@
 	}
 	parm {
 	    name	"gi_visibility"
-	    label	"Gi visibility"
+	    label	"Gi Visibility"
 	    type	toggle
 	    default	{ "1" }
 	    range	{ 0 1 }
@@ -858,7 +858,7 @@
 	}
 	parm {
 	    name	"shadows_visibility"
-	    label	"Shadows visibility"
+	    label	"Shadows Visibility"
 	    type	toggle
 	    default	{ "1" }
 	    range	{ 0 1 }
@@ -881,7 +881,7 @@
 	}
 	parm {
 	    name	"material_id"
-	    label	"Material id"
+	    label	"Material Id"
 	    type	color
 	    size	3
 	    default	{ "0" "0" "0" }
@@ -906,7 +906,7 @@
 	}
 	parm {
 	    name	"part_age"
-	    label	"Part age"
+	    label	"Part Age"
 	    type	integer
 	    default	{ "0" }
 	    help	"if true, write to the particle age render element"

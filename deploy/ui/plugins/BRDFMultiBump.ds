@@ -18,7 +18,7 @@
 	}
 	parm {
 	    name	"base_brdf"
-	    label	"Base brdf"
+	    label	"Base Brdf"
 	    type	oppath
 	    default	{ "" }
 	    help	"Base BRDF"
@@ -31,7 +31,7 @@
 	}
 	parm {
 	    name	"bump_tex_0"
-	    label	"Bump tex 0"
+	    label	"Bump Tex 0"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "0" }
@@ -44,7 +44,7 @@
 	}
 	parm {
 	    name	"bump_mult_0"
-	    label	"Bump mult 0"
+	    label	"Bump Mult 0"
 	    type	float
 	    default	{ "0" }
 	    help	"Bump multipler 0"
@@ -56,7 +56,7 @@
 	}
 	parm {
 	    name	"map_type_0"
-	    label	"Map type 0"
+	    label	"Map Type 0"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"A list with the type of the maps (0 - from regular texture output, 1 - normal map in tangent space, 2 - normal map in object space, 3 - normal map in camera space, 4 - normal map in world space, 5 - from texture bump output, 6 - explicit normal)"
@@ -77,7 +77,7 @@
 	}
 	parm {
 	    name	"bump_tex_1"
-	    label	"Bump tex 1"
+	    label	"Bump Tex 1"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "0" }
@@ -90,7 +90,7 @@
 	}
 	parm {
 	    name	"bump_mult_1"
-	    label	"Bump mult 1"
+	    label	"Bump Mult 1"
 	    type	float
 	    default	{ "0" }
 	    help	"Bump multipler 0"
@@ -102,7 +102,7 @@
 	}
 	parm {
 	    name	"map_type_1"
-	    label	"Map type 1"
+	    label	"Map Type 1"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"A list with the type of the maps (0 - from regular texture output, 1 - normal map in tangent space, 2 - normal map in object space, 3 - normal map in camera space, 4 - normal map in world space, 5 - from texture bump output, 6 - explicit normal)"
@@ -123,7 +123,7 @@
 	}
 	parm {
 	    name	"bump_tex_2"
-	    label	"Bump tex 2"
+	    label	"Bump Tex 2"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "0" }
@@ -136,7 +136,7 @@
 	}
 	parm {
 	    name	"bump_mult_2"
-	    label	"Bump mult 2"
+	    label	"Bump Mult 2"
 	    type	float
 	    default	{ "0" }
 	    help	"Bump multipler 0"
@@ -148,7 +148,7 @@
 	}
 	parm {
 	    name	"map_type_2"
-	    label	"Map type 2"
+	    label	"Map Type 2"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"A list with the type of the maps (0 - from regular texture output, 1 - normal map in tangent space, 2 - normal map in object space, 3 - normal map in camera space, 4 - normal map in world space, 5 - from texture bump output, 6 - explicit normal)"
@@ -169,7 +169,7 @@
 	}
 	parm {
 	    name	"bump_tex_3"
-	    label	"Bump tex 3"
+	    label	"Bump Tex 3"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "0" }
@@ -182,7 +182,7 @@
 	}
 	parm {
 	    name	"bump_mult_3"
-	    label	"Bump mult 3"
+	    label	"Bump Mult 3"
 	    type	float
 	    default	{ "0" }
 	    help	"Bump multipler 0"
@@ -194,7 +194,7 @@
 	}
 	parm {
 	    name	"map_type_3"
-	    label	"Map type 3"
+	    label	"Map Type 3"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"A list with the type of the maps (0 - from regular texture output, 1 - normal map in tangent space, 2 - normal map in object space, 3 - normal map in camera space, 4 - normal map in world space, 5 - from texture bump output, 6 - explicit normal)"
@@ -215,7 +215,7 @@
 	}
 	parm {
 	    name	"normal_uvwgen"
-	    label	"Normal uvwgen"
+	    label	"Normal Uvwgen"
 	    type	oppath
 	    default	{ "" }
 	    help	"The uvw generator for the normal map texture when map_type is 1"

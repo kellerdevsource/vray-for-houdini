@@ -19,7 +19,7 @@
 	}
 	parm {
 	    name	"source_color"
-	    label	"Source color"
+	    label	"Source Color"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "0" }
@@ -32,7 +32,7 @@
 	}
 	parm {
 	    name	"texture_map"
-	    label	"Texture map"
+	    label	"Texture Map"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "1" }
@@ -61,7 +61,7 @@
 	    }
 	    parm {
 		name	"pre_brightness"
-		label	"Pre brightness"
+		label	"Pre Brightness"
 		type	float
 		default	{ "0" }
 		help	"Added to the texture brightness"
@@ -74,7 +74,7 @@
 	    }
 	    parm {
 		name	"pre_contrast"
-		label	"Pre contrast"
+		label	"Pre Contrast"
 		type	float
 		default	{ "1" }
 		help	"Contrast"
@@ -87,7 +87,7 @@
 	    }
 	    parm {
 		name	"pre_gamma"
-		label	"Pre gamma"
+		label	"Pre Gamma"
 		type	float
 		default	{ "1" }
 		help	"Gamma"
@@ -100,7 +100,7 @@
 	    }
 	    parm {
 		name	"pre_mono"
-		label	"Pre mono"
+		label	"Pre Mono"
 		type	toggle
 		default	{ "0" }
 		help	"true to convert to grayscale"
@@ -113,7 +113,7 @@
 	    }
 	    parm {
 		name	"pre_invert"
-		label	"Pre invert"
+		label	"Pre Invert"
 		type	toggle
 		default	{ "0" }
 		help	"true to invert the input color"
@@ -126,7 +126,7 @@
 	    }
 	    parm {
 		name	"pre_unmult_alpha"
-		label	"Pre unmult alpha"
+		label	"Pre Unmult Alpha"
 		type	toggle
 		default	{ "0" }
 		help	"true to unmultiply alpha"
@@ -139,7 +139,7 @@
 	    }
 	    parm {
 		name	"pre_clamp"
-		label	"Pre clamp"
+		label	"Pre Clamp"
 		type	toggle
 		default	{ "0" }
 		help	"true to clamp the input color"
@@ -152,7 +152,7 @@
 	    }
 	    parm {
 		name	"pre_clamp_min"
-		label	"Pre clamp min"
+		label	"Pre Clamp Min"
 		type	float
 		default	{ "0" }
 		help	"low clamp value"
@@ -165,7 +165,7 @@
 	    }
 	    parm {
 		name	"pre_clamp_max"
-		label	"Pre clamp max"
+		label	"Pre Clamp Max"
 		type	float
 		default	{ "1" }
 		help	"high clamp value"
@@ -178,7 +178,7 @@
 	    }
 	    parm {
 		name	"pre_clamp_normalize"
-		label	"Pre clamp normalize"
+		label	"Pre Clamp Normalize"
 		type	toggle
 		default	{ "0" }
 		help	"true to normalize the clamped input to 0.0-1.0"
@@ -197,7 +197,7 @@
 
 	    parm {
 		name	"hsl_on"
-		label	"HSL On"
+		label	"Hsl On"
 		type	toggle
 		default	{ "0" }
 		range	{ 0 1 }
@@ -208,7 +208,7 @@
 	    }
 	    parm {
 		name	"hsl_hue_offset"
-		label	"Hsl hue offset"
+		label	"Hsl Hue Offset"
 		type	float
 		default	{ "0" }
 		disablewhen	"{ hsl_on != 1 }"
@@ -220,7 +220,7 @@
 	    }
 	    parm {
 		name	"hsl_hue_gain"
-		label	"Hsl hue gain"
+		label	"Hsl Hue Gain"
 		type	float
 		default	{ "0" }
 		disablewhen	"{ hsl_on != 1 }"
@@ -232,7 +232,7 @@
 	    }
 	    parm {
 		name	"hsl_saturation_offset"
-		label	"Hsl saturation offset"
+		label	"Hsl Saturation Offset"
 		type	float
 		default	{ "0" }
 		disablewhen	"{ hsl_on != 1 }"
@@ -244,7 +244,7 @@
 	    }
 	    parm {
 		name	"hsl_saturation_gain"
-		label	"Hsl saturation gain"
+		label	"Hsl Saturation Gain"
 		type	float
 		default	{ "1" }
 		disablewhen	"{ hsl_on != 1 }"
@@ -256,7 +256,7 @@
 	    }
 	    parm {
 		name	"hsl_lightness_offset"
-		label	"Hsl lightness offset"
+		label	"Hsl Lightness Offset"
 		type	float
 		default	{ "0" }
 		disablewhen	"{ hsl_on != 1 }"
@@ -268,7 +268,7 @@
 	    }
 	    parm {
 		name	"hsl_lightness_gain"
-		label	"Hsl lightness gain"
+		label	"Hsl Lightness Gain"
 		type	float
 		default	{ "1" }
 		disablewhen	"{ hsl_on != 1 }"
@@ -286,7 +286,7 @@
 
 	    parm {
 		name	"hsv_on"
-		label	"HSV On"
+		label	"Hsv On"
 		type	toggle
 		default	{ "0" }
 		range	{ 0 1 }
@@ -297,7 +297,7 @@
 	    }
 	    parm {
 		name	"hsv_hue_offset"
-		label	"Hsv hue offset"
+		label	"Hsv Hue Offset"
 		type	float
 		default	{ "0" }
 		disablewhen	"{ hsv_on != 1 }"
@@ -309,7 +309,7 @@
 	    }
 	    parm {
 		name	"hsv_hue_gain"
-		label	"Hsv hue gain"
+		label	"Hsv Hue Gain"
 		type	float
 		default	{ "0" }
 		disablewhen	"{ hsv_on != 1 }"
@@ -321,7 +321,7 @@
 	    }
 	    parm {
 		name	"hsv_saturation_offset"
-		label	"Hsv saturation offset"
+		label	"Hsv Saturation Offset"
 		type	float
 		default	{ "0" }
 		disablewhen	"{ hsv_on != 1 }"
@@ -333,7 +333,7 @@
 	    }
 	    parm {
 		name	"hsv_saturation_gain"
-		label	"Hsv saturation gain"
+		label	"Hsv Saturation Gain"
 		type	float
 		default	{ "1" }
 		disablewhen	"{ hsv_on != 1 }"
@@ -345,7 +345,7 @@
 	    }
 	    parm {
 		name	"hsv_value_offset"
-		label	"Hsv value offset"
+		label	"Hsv Value Offset"
 		type	float
 		default	{ "0" }
 		disablewhen	"{ hsv_on != 1 }"
@@ -357,7 +357,7 @@
 	    }
 	    parm {
 		name	"hsv_value_gain"
-		label	"Hsv value gain"
+		label	"Hsv Value Gain"
 		type	float
 		default	{ "1" }
 		disablewhen	"{ hsv_on != 1 }"
@@ -375,7 +375,7 @@
 
 	    parm {
 		name	"rgba_on"
-		label	"RGBA Channel Mapping On"
+		label	"Rgba Channel Mapping On"
 		type	toggle
 		default	{ "0" }
 		range	{ 0 1 }
@@ -386,7 +386,7 @@
 	    }
 	    parm {
 		name	"red_channel"
-		label	"Red channel"
+		label	"Red Channel"
 		type	ordinal
 		default	{ "0" }
 		help	"Red channel"
@@ -417,7 +417,7 @@
 	    }
 	    parm {
 		name	"red_offset"
-		label	"Red offset"
+		label	"Red Offset"
 		type	float
 		default	{ "0" }
 		disablewhen	"{ rgba_on != 1 }"
@@ -429,7 +429,7 @@
 	    }
 	    parm {
 		name	"red_gain"
-		label	"Red gain"
+		label	"Red Gain"
 		type	float
 		default	{ "1" }
 		disablewhen	"{ rgba_on != 1 }"
@@ -441,7 +441,7 @@
 	    }
 	    parm {
 		name	"green_channel"
-		label	"Green channel"
+		label	"Green Channel"
 		type	ordinal
 		default	{ "0" }
 		help	"Green channel"
@@ -472,7 +472,7 @@
 	    }
 	    parm {
 		name	"green_offset"
-		label	"Green offset"
+		label	"Green Offset"
 		type	float
 		default	{ "0" }
 		disablewhen	"{ rgba_on != 1 }"
@@ -484,7 +484,7 @@
 	    }
 	    parm {
 		name	"green_gain"
-		label	"Green gain"
+		label	"Green Gain"
 		type	float
 		default	{ "1" }
 		disablewhen	"{ rgba_on != 1 }"
@@ -496,7 +496,7 @@
 	    }
 	    parm {
 		name	"blue_channel"
-		label	"Blue channel"
+		label	"Blue Channel"
 		type	ordinal
 		default	{ "0" }
 		help	"Blue channel"
@@ -527,7 +527,7 @@
 	    }
 	    parm {
 		name	"blue_offset"
-		label	"Blue offset"
+		label	"Blue Offset"
 		type	float
 		default	{ "0" }
 		disablewhen	"{ rgba_on != 1 }"
@@ -539,7 +539,7 @@
 	    }
 	    parm {
 		name	"blue_gain"
-		label	"Blue gain"
+		label	"Blue Gain"
 		type	float
 		default	{ "1" }
 		disablewhen	"{ rgba_on != 1 }"
@@ -551,7 +551,7 @@
 	    }
 	    parm {
 		name	"alpha_channel"
-		label	"Alpha channel"
+		label	"Alpha Channel"
 		type	ordinal
 		default	{ "0" }
 		help	"Alpha channel"
@@ -582,7 +582,7 @@
 	    }
 	    parm {
 		name	"alpha_offset"
-		label	"Alpha offset"
+		label	"Alpha Offset"
 		type	float
 		default	{ "0" }
 		disablewhen	"{ rgba_on != 1 }"
@@ -594,7 +594,7 @@
 	    }
 	    parm {
 		name	"alpha_gain"
-		label	"Alpha gain"
+		label	"Alpha Gain"
 		type	float
 		default	{ "1" }
 		disablewhen	"{ rgba_on != 1 }"
@@ -606,7 +606,7 @@
 	    }
 	    parm {
 		name	"premultiply_new_alpha"
-		label	"Premultiply new alpha"
+		label	"Premultiply New Alpha"
 		type	toggle
 		default	{ "0" }
 		disablewhen	"{ rgba_on != 1 }"
@@ -635,7 +635,7 @@
 	    }
 	    parm {
 		name	"post_mono"
-		label	"Post mono"
+		label	"Post Mono"
 		type	toggle
 		default	{ "0" }
 		disablewhen	"{ postprocess != 1 }"
@@ -647,7 +647,7 @@
 	    }
 	    parm {
 		name	"post_invert"
-		label	"Post invert"
+		label	"Post Invert"
 		type	toggle
 		default	{ "0" }
 		disablewhen	"{ postprocess != 1 }"
@@ -659,7 +659,7 @@
 	    }
 	    parm {
 		name	"post_clamp"
-		label	"Post clamp"
+		label	"Post Clamp"
 		type	toggle
 		default	{ "0" }
 		disablewhen	"{ postprocess != 1 }"
@@ -671,7 +671,7 @@
 	    }
 	    parm {
 		name	"post_clamp_min"
-		label	"Post clamp min"
+		label	"Post Clamp Min"
 		type	float
 		default	{ "0" }
 		disablewhen	"{ postprocess != 1 } { post_clamp != 1 }"
@@ -683,7 +683,7 @@
 	    }
 	    parm {
 		name	"post_clamp_max"
-		label	"Post clamp max"
+		label	"Post Clamp Max"
 		type	float
 		default	{ "1" }
 		disablewhen	"{ postprocess != 1 } { post_clamp != 1 }"
@@ -695,7 +695,7 @@
 	    }
 	    parm {
 		name	"post_clamp_normalize"
-		label	"Post clamp normalize"
+		label	"Post Clamp Normalize"
 		type	toggle
 		default	{ "0" }
 		disablewhen	"{ postprocess != 1 } { post_clamp != 1 }"

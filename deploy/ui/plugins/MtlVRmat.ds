@@ -22,7 +22,7 @@
 
 	    parm {
 		name	"filename"
-		label	"Material file"
+		label	"Material File"
 		type	file
 		default	{ "" }
 		help	"Filepath"
@@ -35,7 +35,7 @@
 	    }
 	    parm {
 		name	"mtlname"
-		label	"Material name"
+		label	"Material Name"
 		type	string
 		default	{ "" }
 		help	"Material name"

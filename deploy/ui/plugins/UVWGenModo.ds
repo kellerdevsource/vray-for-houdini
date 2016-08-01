@@ -18,7 +18,7 @@
 	}
 	parm {
 	    name	"uv_set_name"
-	    label	"Uv set name"
+	    label	"Uv Set Name"
 	    type	string
 	    default	{ "" }
 	    help	"The name of the uv channel that should be used"
@@ -43,7 +43,7 @@
 	}
 	parm {
 	    name	"uvwgen_has_local_tm"
-	    label	"Uvwgen has local tm"
+	    label	"Uvwgen Has Local Tm"
 	    type	toggle
 	    default	{ "1" }
 	    help	"When set to false uvwgen->getLocalUVWTransform must not be used, instead uvwgen->getUVW must be used"
@@ -55,7 +55,7 @@
 	}
 	parm {
 	    name	"tile_mode_u"
-	    label	"Tile mode u"
+	    label	"Tile Mode U"
 	    type	ordinal
 	    default	{ "1" }
 	    help	"Horizontal tiling mode"
@@ -73,7 +73,7 @@
 	}
 	parm {
 	    name	"tile_mode_v"
-	    label	"Tile mode v"
+	    label	"Tile Mode V"
 	    type	ordinal
 	    default	{ "1" }
 	    help	"Vertical tiling mode"
@@ -91,7 +91,7 @@
 	}
 	parm {
 	    name	"repeat_u"
-	    label	"Repeat u"
+	    label	"Repeat U"
 	    type	float
 	    default	{ "1" }
 	    help	"How many times to repeat the UV space horizontally"
@@ -103,7 +103,7 @@
 	}
 	parm {
 	    name	"repeat_v"
-	    label	"Repeat v"
+	    label	"Repeat V"
 	    type	float
 	    default	{ "1" }
 	    help	"How many times to repeat the UV space vertically"
@@ -127,7 +127,7 @@
 	}
 	parm {
 	    name	"texture_offset_tex"
-	    label	"Texture offset tex"
+	    label	"Texture Offset Tex"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "0" }
@@ -140,7 +140,7 @@
 	}
 	parm {
 	    name	"texture_offset_amplitude"
-	    label	"Texture offset amplitude"
+	    label	"Texture Offset Amplitude"
 	    type	float
 	    default	{ "1" }
 	    help	"Multiplier for the values in the 'texture_offset' texture"
@@ -152,7 +152,7 @@
 	}
 	groupsimple {
 	    name	"uv_matrix"
-	    label	"Uv matrix"
+	    label	"Uv Matrix"
 	    grouptag	{ "vray_plugin" "UVWGenModo" }
 	    grouptag	{ "vray_pluginattr" "uv_matrix" }
 	    grouptag	{ "vray_type" "Matrix" }
@@ -235,7 +235,7 @@
 
 	parm {
 	    name	"cylindrical_base_uvwgen"
-	    label	"Cylindrical base uvwgen"
+	    label	"Cylindrical Base Uvwgen"
 	    type	toggle
 	    default	{ "0" }
 	    help	"The cylindrical projection applies the repeat_u/repeat_v options a little differently"
@@ -247,7 +247,7 @@
 	}
 	parm {
 	    name	"legacy_uv_rotation"
-	    label	"Legacy uv rotation"
+	    label	"Legacy Uv Rotation"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Changes the pivot used to apply the repeat_u/repeat_v and uv_matrix transformations. Only used when uvwgen is NULL  i.e. the UV coordinates come from an UV map and not from a projection"

@@ -18,7 +18,7 @@
 	}
 	parm {
 	    name	"weld_threshold"
-	    label	"Weld threshold"
+	    label	"Weld Threshold"
 	    type	float
 	    default	{ "-1" }
 	    help	"If this parameter is present, the vertices of the mesh which are within the given threshold of one another will be welded. If absent or negative, no welding is performed"
@@ -30,7 +30,7 @@
 	}
 	parm {
 	    name	"primary_visibility"
-	    label	"Primary visibility"
+	    label	"Primary Visibility"
 	    type	toggle
 	    default	{ "1" }
 	    help	"If off shading an intersection with this mesh will not generate a gbuffer"
@@ -42,7 +42,7 @@
 	}
 	parm {
 	    name	"dynamic_geometry"
-	    label	"Dynamic geometry"
+	    label	"Dynamic Geometry"
 	    type	toggle
 	    default	{ "0" }
 	    help	"When this flag is true V-Ray will use dynamic geometry for this mesh(instead of copying the mesh many times in the BSP tree, only the bounding box will be present many times and ray intersections will occur in a separate object space BSP tree)"
@@ -54,7 +54,7 @@
 	}
 	parm {
 	    name	"environment_geometry"
-	    label	"Environment geometry"
+	    label	"Environment Geometry"
 	    type	toggle
 	    default	{ "0" }
 	    help	"When this flag is true V-Ray will use this geometry as part of the background(for example, this will be included in matte objects"
@@ -66,7 +66,7 @@
 	}
 	parm {
 	    name	"smooth_uv_borders"
-	    label	"Smooth uv borders"
+	    label	"Smooth Uv Borders"
 	    type	toggle
 	    default	{ "1" }
 	    help	"true to smooth UVs at mesh borders when rendering this mesh as a subdivision surface"
@@ -78,7 +78,7 @@
 	}
 	parm {
 	    name	"smooth_uv"
-	    label	"Smooth UVs"
+	    label	"Smooth Uvs"
 	    type	toggle
 	    default	{ "1" }
 	    help	"true to smooth UVs when rendering this mesh as a subdivision surface"
@@ -90,7 +90,7 @@
 	}
 	parm {
 	    name	"osd_subdiv_level"
-	    label	"Subdivision level"
+	    label	"Subdivision Level"
 	    type	integer
 	    default	{ "0" }
 	    help	"Level of OpenSubdiv subdivision"
@@ -120,7 +120,7 @@
 	}
 	parm {
 	    name	"osd_preserve_map_borders"
-	    label	"Preserve map borders"
+	    label	"Preserve Map Borders"
 	    type	ordinal
 	    default	{ "1" }
 	    help	"Different modes for subdividing the uv boundaries with OpenSubdiv"
@@ -138,7 +138,7 @@
 	}
 	parm {
 	    name	"osd_preserve_geometry_borders"
-	    label	"Preserve geometry borders"
+	    label	"Preserve Geometry Borders"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Keep the geometry boundaries in place while subdividing the mesh with OpenSubdiv"
@@ -151,7 +151,7 @@
 	}
 	parm {
 	    name	"osd_subdiv_uvs"
-	    label	"Subdivide UVs"
+	    label	"Subdivide Uvs"
 	    type	toggle
 	    default	{ "1" }
 	    help	"Smooth UVs when applying subdivision with OpenSubdiv"
@@ -164,7 +164,7 @@
 	}
 	multiparm {
 	    name	"map_channels_names"
-	    label	"Map channels names"
+	    label	"Map Channels Names"
 	    default	0
 	    parmtag	{ "vray_plugin" "GeomStaticMesh" }
 	    parmtag	{ "vray_pluginattr" "map_channels_names" }
@@ -172,7 +172,7 @@
 
 	    parm {
 		name	"map_channels_names#"
-		label	"Map channels names"
+		label	"Map Channels Names"
 		type	string
 		default	{ "" }
 		help	"A list containing the names of the mapping channels"
@@ -183,7 +183,7 @@
 
 	parm {
 	    name	"reference_mesh"
-	    label	"Reference mesh"
+	    label	"Reference Mesh"
 	    type	oppath
 	    default	{ "" }
 	    help	"The reference mesh which is used to calculate the uvw coordinates when a 3d placement is used"
@@ -196,7 +196,7 @@
 	}
 	groupsimple {
 	    name	"reference_transform"
-	    label	"Reference transform"
+	    label	"Reference Transform"
 	    grouptag	{ "vray_plugin" "GeomStaticMesh" }
 	    grouptag	{ "vray_pluginattr" "reference_transform" }
 	    grouptag	{ "vray_type" "Transform" }
@@ -281,7 +281,7 @@
 
 	    parm {
 		name	"osd_subdiv_enable"
-		label	"Enable OpenSubdiv"
+		label	"Enable Opensubdiv"
 		type	toggle
 		default	{ "1" }
 		help	"True to enable OpenSubdiv subdivision"

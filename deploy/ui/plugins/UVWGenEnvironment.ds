@@ -17,7 +17,7 @@
 	}
 	groupsimple {
 	    name	"uvw_matrix"
-	    label	"Uvw matrix"
+	    label	"Uvw Matrix"
 	    grouptag	{ "vray_plugin" "UVWGenEnvironment" }
 	    grouptag	{ "vray_pluginattr" "uvw_matrix" }
 	    grouptag	{ "vray_type" "Matrix" }
@@ -100,7 +100,7 @@
 
 	groupsimple {
 	    name	"uvw_transform"
-	    label	"Uvw transform"
+	    label	"Uvw Transform"
 	    grouptag	{ "vray_plugin" "UVWGenEnvironment" }
 	    grouptag	{ "vray_pluginattr" "uvw_transform" }
 	    grouptag	{ "vray_type" "Transform" }
@@ -181,7 +181,7 @@
 
 	parm {
 	    name	"mapping_type"
-	    label	"Mapping type"
+	    label	"Mapping Type"
 	    type	ordinal
 	    default	{ "2" }
 	    help	"Mapping type"
@@ -204,7 +204,7 @@
 	}
 	parm {
 	    name	"wrap_u"
-	    label	"Wrap u"
+	    label	"Wrap U"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"Wrap U"
@@ -221,7 +221,7 @@
 	}
 	parm {
 	    name	"wrap_v"
-	    label	"Wrap v"
+	    label	"Wrap V"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"Wrap V"
@@ -238,7 +238,7 @@
 	}
 	parm {
 	    name	"wrap_w"
-	    label	"Wrap w"
+	    label	"Wrap W"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"Wrap W"
@@ -255,7 +255,7 @@
 	}
 	parm {
 	    name	"crop_u"
-	    label	"Crop u"
+	    label	"Crop U"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Crop in the u-direction"
@@ -267,7 +267,7 @@
 	}
 	parm {
 	    name	"crop_v"
-	    label	"Crop v"
+	    label	"Crop V"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Crop in the v-direction"
@@ -279,7 +279,7 @@
 	}
 	parm {
 	    name	"crop_w"
-	    label	"Crop w"
+	    label	"Crop W"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Crop in the w-direction"
@@ -291,7 +291,7 @@
 	}
 	parm {
 	    name	"duvw_scale"
-	    label	"Duvw scale"
+	    label	"Duvw Scale"
 	    type	float
 	    default	{ "1" }
 	    help	"Additional scale factor for the texture derivatives"
@@ -303,7 +303,7 @@
 	}
 	parm {
 	    name	"ground_on"
-	    label	"Ground on"
+	    label	"Ground On"
 	    type	integer
 	    default	{ "0" }
 	    range	{ 0 64 }
@@ -314,7 +314,7 @@
 	}
 	parm {
 	    name	"ground_radius"
-	    label	"Ground radius"
+	    label	"Ground Radius"
 	    type	float
 	    default	{ "1000" }
 	    range	{ 0 64 }
@@ -325,7 +325,7 @@
 	}
 	parm {
 	    name	"ground_position"
-	    label	"Ground position"
+	    label	"Ground Position"
 	    type	direction
 	    size	3
 	    default	{ "0" "0" "0" }

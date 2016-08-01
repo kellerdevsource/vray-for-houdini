@@ -18,7 +18,7 @@
 	}
 	parm {
 	    name	"color_a"
-	    label	"Color a"
+	    label	"Color A"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "1" }
@@ -30,7 +30,7 @@
 	}
 	parm {
 	    name	"color_b"
-	    label	"Color b"
+	    label	"Color B"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "1" }
@@ -42,7 +42,7 @@
 	}
 	parm {
 	    name	"blend_amount"
-	    label	"Blend amount"
+	    label	"Blend Amount"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 64 }

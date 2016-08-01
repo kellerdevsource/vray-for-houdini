@@ -29,7 +29,7 @@
 	}
 	parm {
 	    name	"affect_light"
-	    label	"Affect light"
+	    label	"Affect Light"
 	    type	toggle
 	    default	{ "1" }
 	    help	"If enabled, the clipper will affect area light sources as well"
@@ -41,7 +41,7 @@
 	}
 	parm {
 	    name	"only_camera_rays"
-	    label	"Only camera rays"
+	    label	"Only Camera Rays"
 	    type	toggle
 	    default	{ "0" }
 	    help	"If enabled, the clipper will affect objects as they are directly seen by the camera, but they will appear unchanged to reflection/refraction/GI rays"
@@ -77,7 +77,7 @@
 	}
 	parm {
 	    name	"set_material_id"
-	    label	"Set material id"
+	    label	"Set Material Id"
 	    type	toggle
 	    default	{ "0" }
 	    range	{ 0 1 }
@@ -88,7 +88,7 @@
 	}
 	parm {
 	    name	"material_id"
-	    label	"Material id"
+	    label	"Material Id"
 	    type	integer
 	    default	{ "0" }
 	    range	{ 0 10 }
@@ -112,7 +112,7 @@
 	}
 	parm {
 	    name	"exclusion_mode"
-	    label	"As Exclusive list"
+	    label	"As Exclusive List"
 	    type	ordinal
 	    default	{ "1" }
 	    help	"Exclusion Mode"
@@ -217,7 +217,7 @@
 	}
 	parm {
 	    name	"object_id"
-	    label	"Object id"
+	    label	"Object Id"
 	    type	integer
 	    default	{ "0" }
 	    range	{ 0 10 }
@@ -228,7 +228,7 @@
 	}
 	parm {
 	    name	"clip_mesh"
-	    label	"Clip mesh"
+	    label	"Clip Mesh"
 	    type	oppath
 	    default	{ "" }
 	    help	"Mesh plugin to use as a clipping mesh instead of the simple plane"

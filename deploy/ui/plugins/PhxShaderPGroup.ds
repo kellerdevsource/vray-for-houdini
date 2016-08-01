@@ -18,7 +18,7 @@
 	}
 	parm {
 	    name	"phoenix_sim"
-	    label	"Phoenix sim"
+	    label	"Phoenix Sim"
 	    type	oppath
 	    default	{ "" }
 	    help	"The phoenix simulator that exports the particle group"
@@ -43,7 +43,7 @@
 	}
 	parm {
 	    name	"lifespan_mode"
-	    label	"Lifespan mode"
+	    label	"Lifespan Mode"
 	    type	integer
 	    default	{ "0" }
 	    help	"lifespan mode: 0-default, 1-constant, 2-random"
@@ -55,7 +55,7 @@
 	}
 	parm {
 	    name	"lifespan_seed"
-	    label	"Lifespan seed"
+	    label	"Lifespan Seed"
 	    type	integer
 	    default	{ "0" }
 	    help	"lifespan randomization seed"
@@ -79,7 +79,7 @@
 	}
 	parm {
 	    name	"lifespan_random"
-	    label	"Lifespan random"
+	    label	"Lifespan Random"
 	    type	float
 	    default	{ "0" }
 	    help	"lifespan randomization"

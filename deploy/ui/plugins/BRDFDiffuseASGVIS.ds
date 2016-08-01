@@ -30,7 +30,7 @@
 	}
 	parm {
 	    name	"color_tex"
-	    label	"Color tex"
+	    label	"Color Tex"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "0" }
@@ -42,7 +42,7 @@
 	}
 	parm {
 	    name	"color_tex_mult"
-	    label	"Color tex mult"
+	    label	"Color Tex Mult"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 10 }
@@ -65,7 +65,7 @@
 	}
 	parm {
 	    name	"transparency_tex"
-	    label	"Transparency tex"
+	    label	"Transparency Tex"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "0" }
@@ -77,7 +77,7 @@
 	}
 	parm {
 	    name	"transparency_tex_mult"
-	    label	"Transparency tex mult"
+	    label	"Transparency Tex Mult"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 10 }
@@ -99,7 +99,7 @@
 	}
 	parm {
 	    name	"use_irradiance_map"
-	    label	"Use irradiance map"
+	    label	"Use Irradiance Map"
 	    type	toggle
 	    default	{ "1" }
 	    range	{ 0 1 }
@@ -110,7 +110,7 @@
 	}
 	parm {
 	    name	"use_color_tex_alpha_as_transparency"
-	    label	"Use color tex alpha as transparency"
+	    label	"Use Color Tex Alpha As Transparency"
 	    type	toggle
 	    default	{ "0" }
 	    range	{ 0 1 }

@@ -18,7 +18,7 @@
 	}
 	parm {
 	    name	"maxLevels"
-	    label	"Max tree depth"
+	    label	"Max Tree Depth"
 	    type	integer
 	    default	{ "60" }
 	    help	"Max. tree depth"
@@ -30,7 +30,7 @@
 	}
 	parm {
 	    name	"minLeafSize"
-	    label	"Min leaf size"
+	    label	"Min Leaf Size"
 	    type	float
 	    default	{ "0" }
 	    help	"Min. voxel size"
@@ -42,7 +42,7 @@
 	}
 	parm {
 	    name	"faceLevelCoef"
-	    label	"Face/level coeff"
+	    label	"Face/level Coeff"
 	    type	float
 	    default	{ "2" }
 	    help	"Balance coefficient between depth and faces per voxel"
@@ -54,7 +54,7 @@
 	}
 	parm {
 	    name	"dynMemLimit"
-	    label	"Dyn. memory limit(MBs)"
+	    label	"Dyn. Memory Limit(mbs)"
 	    type	integer
 	    default	{ "4000" }
 	    help	"Limit for dynamic geometry, in megabytes"
@@ -78,7 +78,7 @@
 	}
 	parm {
 	    name	"embreeUseMB"
-	    label	"Use Embree for Motion Blur"
+	    label	"Use Embree For Motion Blur"
 	    type	toggle
 	    default	{ "1" }
 	    help	"Enable/disable using the embree ray caster for motion blur"
@@ -91,7 +91,7 @@
 	}
 	parm {
 	    name	"embreeHair"
-	    label	"Use Embree for hair"
+	    label	"Use Embree For Hair"
 	    type	toggle
 	    default	{ "1" }
 	    help	"Use the Embree ray caster for hair"
@@ -130,7 +130,7 @@
 	}
 	parm {
 	    name	"optLevel"
-	    label	"Tree build quality"
+	    label	"Tree Build Quality"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"Optimization level (must be 0)"

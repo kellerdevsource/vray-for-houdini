@@ -43,7 +43,7 @@
 	}
 	groupsimple {
 	    name	"default_texture"
-	    label	"Default texture"
+	    label	"Default Texture"
 	    grouptag	{ "vray_plugin" "TexSwitchMatrix" }
 	    grouptag	{ "vray_pluginattr" "default_texture" }
 	    grouptag	{ "vray_type" "TextureMatrix" }

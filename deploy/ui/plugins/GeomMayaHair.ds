@@ -30,7 +30,7 @@
 	}
 	parm {
 	    name	"geom_splines"
-	    label	"Geom splines"
+	    label	"Geom Splines"
 	    type	toggle
 	    default	{ "0" }
 	    help	"If true, hair strands geometry will be represented as splines, instead of line segments"
@@ -42,7 +42,7 @@
 	}
 	parm {
 	    name	"use_global_hair_tree"
-	    label	"Use global hair tree"
+	    label	"Use Global Hair Tree"
 	    type	toggle
 	    default	{ "1" }
 	    help	"If true, the hair will be added to the global static hair tree"
@@ -54,7 +54,7 @@
 	}
 	parm {
 	    name	"geom_tesselation_mult"
-	    label	"Geom tesselation mult"
+	    label	"Geom Tesselation Mult"
 	    type	float
 	    default	{ "1" }
 	    help	"Manual control over the number of subdivisions when intersecting the spline based hairs"
@@ -66,7 +66,7 @@
 	}
 	parm {
 	    name	"xgen_generated"
-	    label	"Xgen generated"
+	    label	"Xgen Generated"
 	    type	toggle
 	    default	{ "0" }
 	    help	"If true, the hair is xgen generated"
@@ -78,7 +78,7 @@
 	}
 	parm {
 	    name	"widths_in_pixels"
-	    label	"Widths in pixels"
+	    label	"Widths In Pixels"
 	    type	toggle
 	    default	{ "0" }
 	    help	"If true, the widths parameter is in pixels, otherwise it is in world units"
@@ -90,7 +90,7 @@
 	}
 	parm {
 	    name	"generate_w_coord"
-	    label	"Generate w coord"
+	    label	"Generate W Coord"
 	    type	toggle
 	    default	{ "0" }
 	    help	"If true, V-Ray will generate a W mapping coordinate that represents the position of the shaded point along the hair strands"

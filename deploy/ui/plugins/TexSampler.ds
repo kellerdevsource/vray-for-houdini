@@ -17,7 +17,7 @@
 	}
 	parm {
 	    name	"uv_set_name"
-	    label	"Uv set name"
+	    label	"Uv Set Name"
 	    type	string
 	    default	{ "" }
 	    help	"The name of the uv channel that should be used"
@@ -29,7 +29,7 @@
 	}
 	parm {
 	    name	"uv_index"
-	    label	"Uv index"
+	    label	"Uv Index"
 	    type	integer
 	    default	{ "-1" }
 	    help	"The index of the uv channel that should be used in case there is no uv set name"

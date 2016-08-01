@@ -30,7 +30,7 @@
 	}
 	parm {
 	    name	"diffuse_tex"
-	    label	"Diffuse tex"
+	    label	"Diffuse Tex"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "0" }
@@ -42,7 +42,7 @@
 	}
 	parm {
 	    name	"diffuse_tex_mult"
-	    label	"Diffuse tex mult"
+	    label	"Diffuse Tex Mult"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 10 }
@@ -77,7 +77,7 @@
 	}
 	parm {
 	    name	"render_channel_color"
-	    label	"Render channel color"
+	    label	"Render Channel Color"
 	    type	oppath
 	    default	{ "" }
 	    range	{ 0 1 }
@@ -89,7 +89,7 @@
 	}
 	parm {
 	    name	"render_channel_alpha"
-	    label	"Render channel alpha"
+	    label	"Render Channel Alpha"
 	    type	oppath
 	    default	{ "" }
 	    range	{ 0 1 }

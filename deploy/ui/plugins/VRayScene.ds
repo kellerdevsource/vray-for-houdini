@@ -126,7 +126,7 @@
 
 	parm {
 	    name	"use_transform"
-	    label	"Use transform"
+	    label	"Use Transform"
 	    type	toggle
 	    default	{ "1" }
 	    help	"Use additional transform"
@@ -138,7 +138,7 @@
 	}
 	parm {
 	    name	"add_nodes"
-	    label	"Add nodes"
+	    label	"Add Nodes"
 	    type	toggle
 	    default	{ "1" }
 	    help	"Add nodes from the included files"
@@ -150,7 +150,7 @@
 	}
 	parm {
 	    name	"add_lights"
-	    label	"Add lights"
+	    label	"Add Lights"
 	    type	toggle
 	    default	{ "1" }
 	    help	"Add lights from the included files"
@@ -162,7 +162,7 @@
 	}
 	parm {
 	    name	"anim_speed"
-	    label	"Anim speed"
+	    label	"Anim Speed"
 	    type	float
 	    default	{ "1" }
 	    help	"Animation playback speed"
@@ -192,7 +192,7 @@
 	}
 	parm {
 	    name	"anim_offset"
-	    label	"Anim offset"
+	    label	"Anim Offset"
 	    type	float
 	    default	{ "0" }
 	    help	"Animation initial frame offset"
@@ -204,7 +204,7 @@
 	}
 	parm {
 	    name	"anim_start"
-	    label	"Anim start"
+	    label	"Anim Start"
 	    type	integer
 	    default	{ "0" }
 	    help	"Specifies the first frame of the animation sequence"
@@ -216,7 +216,7 @@
 	}
 	parm {
 	    name	"anim_length"
-	    label	"Anim length"
+	    label	"Anim Length"
 	    type	integer
 	    default	{ "0" }
 	    help	"Specifies the length of the animation sequence"
@@ -228,7 +228,7 @@
 	}
 	parm {
 	    name	"material_override"
-	    label	"Material override"
+	    label	"Material Override"
 	    type	oppath
 	    default	{ "" }
 	    help	"Override material"
@@ -241,7 +241,7 @@
 	}
 	multiparm {
 	    name	"hidden_objects"
-	    label	"Hidden objects"
+	    label	"Hidden Objects"
 	    default	0
 	    parmtag	{ "vray_plugin" "VRayScene" }
 	    parmtag	{ "vray_pluginattr" "hidden_objects" }
@@ -249,7 +249,7 @@
 
 	    parm {
 		name	"hidden_objects#"
-		label	"Hidden objects"
+		label	"Hidden Objects"
 		type	string
 		default	{ "" }
 		help	"Plugin names list to hide"
@@ -260,7 +260,7 @@
 
 	parm {
 	    name	"flip_axis"
-	    label	"Flip axis"
+	    label	"Flip Axis"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Flip axis"

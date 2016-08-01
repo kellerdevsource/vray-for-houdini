@@ -86,7 +86,7 @@
 	}
 	parm {
 	    name	"bias_x"
-	    label	"Bias x"
+	    label	"Bias X"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 64 }
@@ -97,7 +97,7 @@
 	}
 	parm {
 	    name	"bias_y"
-	    label	"Bias y"
+	    label	"Bias Y"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 64 }
@@ -108,7 +108,7 @@
 	}
 	parm {
 	    name	"bias_z"
-	    label	"Bias z"
+	    label	"Bias Z"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 64 }
@@ -119,7 +119,7 @@
 	}
 	parm {
 	    name	"ignore_for_gi"
-	    label	"Ignore for gi"
+	    label	"Ignore For Gi"
 	    type	toggle
 	    default	{ "1" }
 	    range	{ 0 1 }
@@ -130,7 +130,7 @@
 	}
 	parm {
 	    name	"consider_same_object_only"
-	    label	"Consider same object only"
+	    label	"Consider Same Object Only"
 	    type	toggle
 	    default	{ "0" }
 	    range	{ 0 1 }
@@ -141,7 +141,7 @@
 	}
 	parm {
 	    name	"invert_normal"
-	    label	"Invert normal"
+	    label	"Invert Normal"
 	    type	toggle
 	    default	{ "0" }
 	    range	{ 0 1 }
@@ -152,7 +152,7 @@
 	}
 	parm {
 	    name	"double_sided"
-	    label	"Double sided"
+	    label	"Double Sided"
 	    type	toggle
 	    default	{ "0" }
 	    help	"if true, the occlusion on both sides of the surface will be calculated"
@@ -164,7 +164,7 @@
 	}
 	parm {
 	    name	"work_with_transparency"
-	    label	"Work with transparency"
+	    label	"Work With Transparency"
 	    type	toggle
 	    default	{ "0" }
 	    range	{ 0 1 }
@@ -175,7 +175,7 @@
 	}
 	parm {
 	    name	"ignore_self_occlusion"
-	    label	"Ignore self occlusion"
+	    label	"Ignore Self Occlusion"
 	    type	toggle
 	    default	{ "0" }
 	    range	{ 0 1 }
@@ -199,7 +199,7 @@
 	}
 	parm {
 	    name	"render_nodes_inclusive"
-	    label	"As Inclusive list"
+	    label	"As Inclusive List"
 	    type	toggle
 	    default	{ "0" }
 	    help	"if true the render_nodes list is inclusive"
@@ -224,7 +224,7 @@
 	}
 	parm {
 	    name	"affect_result_nodes_inclusive"
-	    label	"As Inclusive list"
+	    label	"As Inclusive List"
 	    type	toggle
 	    default	{ "0" }
 	    help	"if true the affect_result_nodes list is inclusive"
@@ -254,7 +254,7 @@
 	}
 	parm {
 	    name	"environment_occlusion"
-	    label	"Environment occlusion"
+	    label	"Environment Occlusion"
 	    type	toggle
 	    default	{ "0" }
 	    help	"true to compute the environment for unoccluded samples"
@@ -266,7 +266,7 @@
 	}
 	parm {
 	    name	"affect_reflection_elements"
-	    label	"Affect reflection elements"
+	    label	"Affect Reflection Elements"
 	    type	toggle
 	    default	{ "0" }
 	    help	"true to add the occlusion to relection render elements when mode>0"
@@ -292,7 +292,7 @@
 	}
 	parm {
 	    name	"use_texture_for_excluded"
-	    label	"Use texture for excluded"
+	    label	"Use Texture For Excluded"
 	    type	toggle
 	    default	{ "1" }
 	    help	"True to return the unoccluded color texture, if the object is excluded. Otherwise return (0,0,0,0)"

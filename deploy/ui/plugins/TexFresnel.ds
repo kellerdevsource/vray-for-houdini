@@ -17,7 +17,7 @@
 	}
 	parm {
 	    name	"fresnel_ior"
-	    label	"Fresnel ior"
+	    label	"Fresnel Ior"
 	    type	float
 	    default	{ "1.55" }
 	    help	"Fresnel ior"
@@ -29,7 +29,7 @@
 	}
 	parm {
 	    name	"refract_ior"
-	    label	"Refract ior"
+	    label	"Refract Ior"
 	    type	float
 	    default	{ "1.55" }
 	    help	"Refraction ior of the underlying surface; this is ignored if the surface has a volume shader (the volume IOR is used)"
@@ -67,7 +67,7 @@
 	}
 	parm {
 	    name	"fresnel_ior_tex"
-	    label	"Fresnel ior tex"
+	    label	"Fresnel Ior Tex"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 64 }
@@ -78,7 +78,7 @@
 	}
 	parm {
 	    name	"refract_ior_tex"
-	    label	"Refract ior tex"
+	    label	"Refract Ior Tex"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 64 }

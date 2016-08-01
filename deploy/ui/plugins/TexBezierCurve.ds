@@ -18,7 +18,7 @@
 	}
 	parm {
 	    name	"input_float"
-	    label	"Input float"
+	    label	"Input Float"
 	    type	float
 	    default	{ "0" }
 	    help	"The input texture"
@@ -47,7 +47,7 @@
 	}
 	parm {
 	    name	"num_bezier_points"
-	    label	"Num bezier points"
+	    label	"Num Bezier Points"
 	    type	integer
 	    default	{ "256" }
 	    help	"The number of precisely calculated points from bezier curves: default 256"
@@ -59,7 +59,7 @@
 	}
 	parm {
 	    name	"use_end_tangents"
-	    label	"Use end tangents"
+	    label	"Use End Tangents"
 	    type	toggle
 	    default	{ "1" }
 	    help	"true to extrapolate beyound the control points"

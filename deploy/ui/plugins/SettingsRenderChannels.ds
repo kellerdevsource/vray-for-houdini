@@ -17,7 +17,7 @@
 	}
 	parm {
 	    name	"unfiltered_fragment_method"
-	    label	"Unfiltered fragment method"
+	    label	"Unfiltered Fragment Method"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"Determines which fragment to use for unfiltered render elements"
@@ -33,7 +33,7 @@
 	}
 	parm {
 	    name	"deep_merge_mode"
-	    label	"Deep merge mode"
+	    label	"Deep Merge Mode"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"Determines how to blend fragments within a pixel"
@@ -50,7 +50,7 @@
 	}
 	parm {
 	    name	"deep_merge_coeff"
-	    label	"Deep merge z-depth threshold"
+	    label	"Deep Merge Z-depth Threshold"
 	    type	float
 	    default	{ "1" }
 	    help	"Determines the z-depth blending sensitivity when deep_merge_mode is '1'"

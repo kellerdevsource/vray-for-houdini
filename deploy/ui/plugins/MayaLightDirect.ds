@@ -30,7 +30,7 @@
 	}
 	parm {
 	    name	"color_tex"
-	    label	"Color tex"
+	    label	"Color Tex"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "1" }
@@ -56,7 +56,7 @@
 	}
 	parm {
 	    name	"intensity_tex"
-	    label	"Intensity tex"
+	    label	"Intensity Tex"
 	    type	float
 	    default	{ "1" }
 	    help	"A float texture that if present will override the intensity parameter"
@@ -219,7 +219,7 @@
 	}
 	parm {
 	    name	"shadowRadius_tex"
-	    label	"Shadowradius tex"
+	    label	"Shadowradius Tex"
 	    type	float
 	    default	{ "1" }
 	    help	"A float texture that if present will override the shadows radius parameter"
@@ -267,7 +267,7 @@
 	}
 	parm {
 	    name	"shadowColor_tex"
-	    label	"Shadowcolor tex"
+	    label	"Shadowcolor Tex"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "1" }
@@ -329,7 +329,7 @@
 	}
 	parm {
 	    name	"diffuse_contribution"
-	    label	"Diffuse contribution"
+	    label	"Diffuse Contribution"
 	    type	float
 	    default	{ "1" }
 	    help	"Diffuse contribution for the light"
@@ -341,7 +341,7 @@
 	}
 	parm {
 	    name	"specular_contribution"
-	    label	"Specular contribution"
+	    label	"Specular Contribution"
 	    type	float
 	    default	{ "1" }
 	    help	"Specular contribution for the light"
@@ -366,7 +366,7 @@
 	}
 	parm {
 	    name	"channels_raw"
-	    label	"Channels raw"
+	    label	"Channels Raw"
 	    type	oplist
 	    default	{ "" }
 	    help	"Render channels the raw diffuse result of this light will be written to"
@@ -379,7 +379,7 @@
 	}
 	parm {
 	    name	"channels_diffuse"
-	    label	"Channels diffuse"
+	    label	"Channels Diffuse"
 	    type	oplist
 	    default	{ "" }
 	    help	"Render channels the diffuse result of this light will be written to"
@@ -392,7 +392,7 @@
 	}
 	parm {
 	    name	"channels_specular"
-	    label	"Channels specular"
+	    label	"Channels Specular"
 	    type	oplist
 	    default	{ "" }
 	    help	"Render channels the specular result of this light will be written to"

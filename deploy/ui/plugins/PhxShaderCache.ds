@@ -37,7 +37,7 @@
 	    }
 	    parm {
 		name	"grid_size_x"
-		label	"Grid size x"
+		label	"Grid Size X"
 		type	float
 		default	{ "1" }
 		help	"Number of cells in x dimension if no cache file is specified; internally truncated to the nearest integer"
@@ -49,7 +49,7 @@
 	    }
 	    parm {
 		name	"grid_size_y"
-		label	"Grid size y"
+		label	"Grid Size Y"
 		type	float
 		default	{ "1" }
 		help	"Number of cells in y dimension if no cache file is specified; internally truncated to the nearest integer"
@@ -61,7 +61,7 @@
 	    }
 	    parm {
 		name	"grid_size_z"
-		label	"Grid size z"
+		label	"Grid Size Z"
 		type	float
 		default	{ "1" }
 		help	"Number of cells in z dimension if no cache file is specified; internally truncated to the nearest integer"
@@ -73,7 +73,7 @@
 	    }
 	    parm {
 		name	"cell_size"
-		label	"Cell size"
+		label	"Cell Size"
 		type	float
 		default	{ "1" }
 		help	"Size of a single grid cell"
@@ -85,7 +85,7 @@
 	    }
 	    parm {
 		name	"velocities_from_uvw"
-		label	"Velocities from uvw"
+		label	"Velocities From Uvw"
 		type	toggle
 		default	{ "0" }
 		help	"Create velocity channel from uvw movement"
@@ -226,7 +226,7 @@
 	    }
 	    parm {
 		name	"flip_yz"
-		label	"Flip Up axis"
+		label	"Flip Up Axis"
 		type	toggle
 		default	{ "0" }
 		help	"If true, the yz axis of the cache will be flipped"
@@ -238,7 +238,7 @@
 	    }
 	    parm {
 		name	"load_flags"
-		label	"Load flags"
+		label	"Load Flags"
 		type	integer
 		default	{ "0" }
 		help	"used in RT to determine the frame loading flags"
@@ -250,7 +250,7 @@
 	    }
 	    parm {
 		name	"smooth_mask"
-		label	"Smooth mask"
+		label	"Smooth Mask"
 		type	integer
 		default	{ "0" }
 		range	{ 0 10 }
@@ -261,7 +261,7 @@
 	    }
 	    parm {
 		name	"free_mem_detect"
-		label	"Free mem detect"
+		label	"Free Mem Detect"
 		type	integer
 		default	{ "0" }
 		help	"internally used"
@@ -273,7 +273,7 @@
 	    }
 	    parm {
 		name	"cache_load"
-		label	"Cache load"
+		label	"Cache Load"
 		type	toggle
 		default	{ "1" }
 		help	"Whether to actually load the cache or use it just to figure out the grid and cell size"
@@ -285,7 +285,7 @@
 	    }
 	    parm {
 		name	"load_nearest"
-		label	"Load Nearest if Missing"
+		label	"Load Nearest If Missing"
 		type	toggle
 		default	{ "0" }
 		help	"If there is no cache file with the desired frame number, the nearest cache is found and loaded"

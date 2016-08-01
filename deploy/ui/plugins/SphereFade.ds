@@ -31,7 +31,7 @@
 	}
 	parm {
 	    name	"empty_color"
-	    label	"Empty color"
+	    label	"Empty Color"
 	    type	color
 	    size	3
 	    default	{ "0.5" "0.5" "0.5" }
@@ -43,7 +43,7 @@
 	}
 	parm {
 	    name	"affect_alpha"
-	    label	"Affect alpha"
+	    label	"Affect Alpha"
 	    type	toggle
 	    default	{ "0" }
 	    range	{ 0 1 }

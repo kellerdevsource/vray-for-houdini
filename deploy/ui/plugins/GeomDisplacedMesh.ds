@@ -83,7 +83,7 @@
 	}
 	parm {
 	    name	"use_globals"
-	    label	"Use global settings"
+	    label	"Use Global Settings"
 	    type	toggle
 	    default	{ "1" }
 	    help	"If true, the global displacement quality settings will be used"
@@ -95,7 +95,7 @@
 	}
 	parm {
 	    name	"view_dep"
-	    label	"View dependent"
+	    label	"View Dependent"
 	    type	toggle
 	    default	{ "1" }
 	    help	"If use_globals is false, this determines if view-dependent tesselation is used"
@@ -108,7 +108,7 @@
 	}
 	parm {
 	    name	"edge_length"
-	    label	"Edge length"
+	    label	"Edge Length"
 	    type	float
 	    default	{ "4" }
 	    help	"If use_globals is false, this determines the approximate edge length for the sub-triangles"
@@ -121,7 +121,7 @@
 	}
 	parm {
 	    name	"max_subdivs"
-	    label	"Max subdivisions"
+	    label	"Max Subdivisions"
 	    type	integer
 	    default	{ "256" }
 	    help	"If use_globals is false, this determines the maximum subdivisions for a triangle of the original mesh"
@@ -134,7 +134,7 @@
 	}
 	parm {
 	    name	"keep_continuity"
-	    label	"Keep continuity"
+	    label	"Keep Continuity"
 	    type	toggle
 	    default	{ "0" }
 	    help	"If true, the plugin will attempt to keep the continuity of the displaced surface"
@@ -146,7 +146,7 @@
 	}
 	parm {
 	    name	"water_level"
-	    label	"Water level"
+	    label	"Water Level"
 	    type	float
 	    default	{ "-1e+30" }
 	    help	"Geometry below this displacement level will be clipped away"
@@ -158,7 +158,7 @@
 	}
 	parm {
 	    name	"map_channel"
-	    label	"Map channel"
+	    label	"Map Channel"
 	    type	integer
 	    default	{ "0" }
 	    help	"The mapping channel to use for vector and 2d displacement"
@@ -170,7 +170,7 @@
 	}
 	parm {
 	    name	"static_displacement"
-	    label	"Static displacement"
+	    label	"Static Displacement"
 	    type	toggle
 	    default	{ "0" }
 	    help	"If true, the resulting triangles of the displacement algorithm will be inserted into the rayserver as static geometry"
@@ -182,7 +182,7 @@
 	}
 	parm {
 	    name	"image_width"
-	    label	"Image width"
+	    label	"Image Width"
 	    type	integer
 	    default	{ "0" }
 	    help	"This parameter overrides the imgWidth paramter from VRayFrameData during the calculation of the subdivision depth"
@@ -194,7 +194,7 @@
 	}
 	parm {
 	    name	"cache_normals"
-	    label	"Cache normals"
+	    label	"Cache Normals"
 	    type	toggle
 	    default	{ "0" }
 	    help	"If this option is equal to 1 then the normals of the generated triangles are cached"
@@ -206,7 +206,7 @@
 	}
 	parm {
 	    name	"use_bounds"
-	    label	"Use bounds"
+	    label	"Use Bounds"
 	    type	toggle
 	    default	{ "0" }
 	    help	"If true, the min/max values for the displacement texture are specified by the min_bound and max_bound parameters; if false, these are calculated automatically"
@@ -218,7 +218,7 @@
 	}
 	parm {
 	    name	"min_bound"
-	    label	"Min bound"
+	    label	"Min Bound"
 	    type	color
 	    size	3
 	    default	{ "0" "0" "0" }
@@ -232,7 +232,7 @@
 	}
 	parm {
 	    name	"max_bound"
-	    label	"Max bound"
+	    label	"Max Bound"
 	    type	color
 	    size	3
 	    default	{ "1" "1" "1" }
@@ -272,7 +272,7 @@
 	}
 	parm {
 	    name	"tight_bounds"
-	    label	"Tight bounds"
+	    label	"Tight Bounds"
 	    type	toggle
 	    default	{ "1" }
 	    help	"When this is on, initialization will be slower, but tighter bounds will be computed for the displaced triangles making rendering faster"
@@ -285,7 +285,7 @@
 	}
 	parm {
 	    name	"filter_texture"
-	    label	"Filter texture"
+	    label	"Filter Texture"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Filter the texture for 2d displacement"
@@ -298,7 +298,7 @@
 	}
 	parm {
 	    name	"filter_blur"
-	    label	"Filter blur"
+	    label	"Filter Blur"
 	    type	float
 	    default	{ "0.001" }
 	    help	"The amount of UV space to average for filtering purposes. A value of 1.0 will average thw whole texture"
@@ -328,7 +328,7 @@
 	}
 	parm {
 	    name	"vector_displacement"
-	    label	"Vector displacement"
+	    label	"Vector Displacement"
 	    type	integer
 	    default	{ "0" }
 	    help	"When this is 1, the red, green and blue channels of displacement_tex_color will be used to perform vector displacement with base 0.5; if this is 2, then the map matches the Mudbox displacement maps"
@@ -340,7 +340,7 @@
 	}
 	parm {
 	    name	"object_space_displacement"
-	    label	"Object space displacement"
+	    label	"Object Space Displacement"
 	    type	toggle
 	    default	{ "0" }
 	    help	"If true, the parent transformation will affect the amount of displacement. Used only when doing 3D displacement"
@@ -352,7 +352,7 @@
 	}
 	parm {
 	    name	"displace_2d"
-	    label	"2D Displacement"
+	    label	"2d Displacement"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Use to enable 2d displacement. Overrides the vector_displacement flag"
@@ -364,7 +364,7 @@
 	}
 	parm {
 	    name	"displace_2d_multi_tile"
-	    label	"Displace 2d multi tile"
+	    label	"Displace 2d Multi Tile"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Enable or disable support for tiled textures (UDIM/UVTILE) when generating 2d displacement"

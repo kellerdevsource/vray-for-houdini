@@ -17,7 +17,7 @@
 	}
 	parm {
 	    name	"uvw_channel"
-	    label	"Uvw channel"
+	    label	"Uvw Channel"
 	    type	integer
 	    default	{ "0" }
 	    help	"Optional channel index, if uv_set_name is not found"
@@ -64,7 +64,7 @@
 	}
 	parm {
 	    name	"translate_frame_u_tex"
-	    label	"Translate frame u tex"
+	    label	"Translate Frame U Tex"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 64 }
@@ -75,7 +75,7 @@
 	}
 	parm {
 	    name	"translate_frame_v_tex"
-	    label	"Translate frame v tex"
+	    label	"Translate Frame V Tex"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 64 }
@@ -86,7 +86,7 @@
 	}
 	parm {
 	    name	"rotate_frame_tex"
-	    label	"Rotate frame tex"
+	    label	"Rotate Frame Tex"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 64 }
@@ -98,7 +98,7 @@
 	}
 	parm {
 	    name	"mirror_u"
-	    label	"Mirror u"
+	    label	"Mirror U"
 	    type	toggle
 	    default	{ "0" }
 	    range	{ 0 1 }
@@ -109,7 +109,7 @@
 	}
 	parm {
 	    name	"mirror_v"
-	    label	"Mirror v"
+	    label	"Mirror V"
 	    type	toggle
 	    default	{ "0" }
 	    range	{ 0 1 }
@@ -120,7 +120,7 @@
 	}
 	parm {
 	    name	"wrap_u"
-	    label	"Wrap u"
+	    label	"Wrap U"
 	    type	toggle
 	    default	{ "1" }
 	    range	{ 0 1 }
@@ -131,7 +131,7 @@
 	}
 	parm {
 	    name	"wrap_v"
-	    label	"Wrap v"
+	    label	"Wrap V"
 	    type	toggle
 	    default	{ "1" }
 	    range	{ 0 1 }
@@ -197,7 +197,7 @@
 	}
 	parm {
 	    name	"rotate_uv_tex"
-	    label	"Rotate UV"
+	    label	"Rotate Uv"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 64 }
@@ -242,7 +242,7 @@
 	}
 	parm {
 	    name	"uv_set_name"
-	    label	"Uv set name"
+	    label	"Uv Set Name"
 	    type	string
 	    default	{ "" }
 	    help	"The name of the uv channel that should be used"
@@ -254,7 +254,7 @@
 	}
 	parm {
 	    name	"uvw_channel_tex"
-	    label	"Uvw channel tex"
+	    label	"Uvw Channel Tex"
 	    type	integer
 	    default	{ "0" }
 	    help	"Used when more than one mesh has UV linking specified for this 2d placement. If present will override uvw_channel"
@@ -266,7 +266,7 @@
 	}
 	parm {
 	    name	"coverage_u"
-	    label	"Coverage u"
+	    label	"Coverage U"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 10 }
@@ -277,7 +277,7 @@
 	}
 	parm {
 	    name	"coverage_v"
-	    label	"Coverage v"
+	    label	"Coverage V"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 10 }
@@ -288,7 +288,7 @@
 	}
 	parm {
 	    name	"translate_frame_u"
-	    label	"Translate frame u"
+	    label	"Translate Frame U"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 10 }
@@ -299,7 +299,7 @@
 	}
 	parm {
 	    name	"translate_frame_v"
-	    label	"Translate frame v"
+	    label	"Translate Frame V"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 10 }
@@ -310,7 +310,7 @@
 	}
 	parm {
 	    name	"rotate_frame"
-	    label	"Rotate frame"
+	    label	"Rotate Frame"
 	    type	angle
 	    default	{ "0" }
 	    range	{ 0 10 }
@@ -322,7 +322,7 @@
 	}
 	parm {
 	    name	"repeat_u"
-	    label	"Repeat u"
+	    label	"Repeat U"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 10 }
@@ -333,7 +333,7 @@
 	}
 	parm {
 	    name	"repeat_v"
-	    label	"Repeat v"
+	    label	"Repeat V"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 10 }
@@ -344,7 +344,7 @@
 	}
 	parm {
 	    name	"offset_u"
-	    label	"Offset u"
+	    label	"Offset U"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 10 }
@@ -355,7 +355,7 @@
 	}
 	parm {
 	    name	"offset_v"
-	    label	"Offset v"
+	    label	"Offset V"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 10 }
@@ -366,7 +366,7 @@
 	}
 	parm {
 	    name	"rotate_uv"
-	    label	"Rotate uv"
+	    label	"Rotate Uv"
 	    type	angle
 	    default	{ "0" }
 	    range	{ 0 10 }
@@ -378,7 +378,7 @@
 	}
 	parm {
 	    name	"noise_u"
-	    label	"Noise u"
+	    label	"Noise U"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 10 }
@@ -389,7 +389,7 @@
 	}
 	parm {
 	    name	"noise_v"
-	    label	"Noise v"
+	    label	"Noise V"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 10 }

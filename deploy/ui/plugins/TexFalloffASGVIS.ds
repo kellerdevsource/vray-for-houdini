@@ -22,7 +22,7 @@
 
 	    parm {
 		name	"compatibility_with"
-		label	"Compatibility with"
+		label	"Compatibility With"
 		type	ordinal
 		default	{ "0" }
 		help	"This is used to differentiate between textures exported from different applications"
@@ -38,7 +38,7 @@
 	    }
 	    parm {
 		name	"alpha_from_intensity"
-		label	"Alpha from intensity"
+		label	"Alpha From Intensity"
 		type	ordinal
 		default	{ "0" }
 		help	"If 2 - the alpha is forced to 1.0f; 1 - the resulting alpha is the color intensity (if compatibility_with is 0) or the color luminance (if compatibility_with is 1); 0 - the alpha is taken from the bitmap alpha"
@@ -67,7 +67,7 @@
 	    }
 	    parm {
 		name	"invert_alpha"
-		label	"Invert alpha"
+		label	"Invert Alpha"
 		type	toggle
 		default	{ "1" }
 		help	"If true and invert is on, the resulting texture alpha will be inverted too. If false, just the color will be inverted"
@@ -80,7 +80,7 @@
 	    }
 	    parm {
 		name	"color_mult"
-		label	"Color mult"
+		label	"Color Mult"
 		type	color4
 		size	4
 		default	{ "1" "1" "1" "1" }
@@ -93,7 +93,7 @@
 	    }
 	    parm {
 		name	"color_offset"
-		label	"Color offset"
+		label	"Color Offset"
 		type	color4
 		size	4
 		default	{ "0" "0" "0" "0" }
@@ -106,7 +106,7 @@
 	    }
 	    parm {
 		name	"alpha_mult"
-		label	"Alpha mult"
+		label	"Alpha Mult"
 		type	float
 		default	{ "1" }
 		help	"A multiplier for the texture alpha"
@@ -118,7 +118,7 @@
 	    }
 	    parm {
 		name	"alpha_offset"
-		label	"Alpha offset"
+		label	"Alpha Offset"
 		type	float
 		default	{ "0" }
 		help	"An additional offset for the texture alpha"
@@ -130,7 +130,7 @@
 	    }
 	    parm {
 		name	"nouvw_color"
-		label	"No UVs Color"
+		label	"No Uvs Color"
 		type	color4
 		size	4
 		default	{ "0.5" "0.5" "0.5" "1" }
@@ -181,7 +181,7 @@
 	    }
 	    parm {
 		name	"direction_type"
-		label	"Direction type"
+		label	"Direction Type"
 		type	integer
 		default	{ "0" }
 		help	"Direction type (0 - viewZ, 1 - viewX, 2 - viewY, 3 - explicit, 4 - localX, 5 - localY, 6 - localZ, 7 - worldX, 8 - worldY, 9 - worldZ)"
@@ -193,7 +193,7 @@
 	    }
 	    parm {
 		name	"fresnel_ior"
-		label	"Fresnel ior"
+		label	"Fresnel Ior"
 		type	float
 		default	{ "1.6" }
 		help	"IOR for the Fresnel falloff type"
@@ -205,7 +205,7 @@
 	    }
 	    parm {
 		name	"dist_extrapolate"
-		label	"Dist extrapolate"
+		label	"Dist Extrapolate"
 		type	toggle
 		default	{ "0" }
 		help	"Extrapolate for the distance blend falloff type"
@@ -217,7 +217,7 @@
 	    }
 	    parm {
 		name	"dist_near"
-		label	"Dist near"
+		label	"Dist Near"
 		type	float
 		default	{ "0" }
 		help	"Near distance for the distance blend falloff type"
@@ -229,7 +229,7 @@
 	    }
 	    parm {
 		name	"dist_far"
-		label	"Dist far"
+		label	"Dist Far"
 		type	float
 		default	{ "100" }
 		help	"Far distance for the distance blend falloff type"
@@ -241,7 +241,7 @@
 	    }
 	    parm {
 		name	"explicit_dir"
-		label	"Explicit dir"
+		label	"Explicit Dir"
 		type	direction
 		size	3
 		default	{ "0" "0" "1" }
@@ -254,7 +254,7 @@
 	    }
 	    parm {
 		name	"use_blend_input"
-		label	"Use blend input"
+		label	"Use Blend Input"
 		type	toggle
 		default	{ "0" }
 		range	{ 0 1 }
@@ -265,7 +265,7 @@
 	    }
 	    parm {
 		name	"blend_input"
-		label	"Blend input"
+		label	"Blend Input"
 		type	float
 		default	{ "0.5" }
 		help	"If specified and use_blend_input is true, the final blending amount will be taken from this texture"
@@ -277,7 +277,7 @@
 	    }
 	    parm {
 		name	"angle_start"
-		label	"Angle start"
+		label	"Angle Start"
 		type	float
 		default	{ "30" }
 		help	"Start angle, in degrees, for blend"
@@ -289,7 +289,7 @@
 	    }
 	    parm {
 		name	"angle_stop"
-		label	"Angle stop"
+		label	"Angle Stop"
 		type	float
 		default	{ "75" }
 		help	"Stop angle, in degrees, for blend"

@@ -43,7 +43,7 @@
 	}
 	parm {
 	    name	"reset_u"
-	    label	"Reset u"
+	    label	"Reset U"
 	    type	toggle
 	    default	{ "0" }
 	    range	{ 0 1 }
@@ -54,7 +54,7 @@
 	}
 	parm {
 	    name	"reset_v"
-	    label	"Reset v"
+	    label	"Reset V"
 	    type	toggle
 	    default	{ "0" }
 	    range	{ 0 1 }

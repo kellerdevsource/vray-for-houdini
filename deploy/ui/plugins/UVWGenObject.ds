@@ -17,7 +17,7 @@
 	}
 	groupsimple {
 	    name	"uvw_transform"
-	    label	"Uvw transform"
+	    label	"Uvw Transform"
 	    grouptag	{ "vray_plugin" "UVWGenObject" }
 	    grouptag	{ "vray_pluginattr" "uvw_transform" }
 	    grouptag	{ "vray_type" "Transform" }
@@ -94,7 +94,7 @@
 
 	parm {
 	    name	"duvw_scale"
-	    label	"Duvw scale"
+	    label	"Duvw Scale"
 	    type	float
 	    default	{ "1" }
 	    help	"Additional scale factor for the texture derivatives"

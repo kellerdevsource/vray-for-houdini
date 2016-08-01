@@ -41,7 +41,7 @@
 	}
 	parm {
 	    name	"color_tex_mult"
-	    label	"Color tex mult"
+	    label	"Color Tex Mult"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 64 }
@@ -76,7 +76,7 @@
 	}
 	parm {
 	    name	"transparency_tex_mult"
-	    label	"Transparency tex mult"
+	    label	"Transparency Tex Mult"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 64 }
@@ -109,7 +109,7 @@
 	}
 	parm {
 	    name	"back_side"
-	    label	"Back side"
+	    label	"Back Side"
 	    type	toggle
 	    default	{ "0" }
 	    range	{ 0 1 }
@@ -120,7 +120,7 @@
 	}
 	parm {
 	    name	"brdf_bitmap"
-	    label	"Brdf bitmap"
+	    label	"Brdf Bitmap"
 	    type	oppath
 	    default	{ "" }
 	    range	{ 0 1 }
@@ -132,7 +132,7 @@
 	}
 	parm {
 	    name	"brdf_nsamples_d_theta"
-	    label	"Brdf nsamples d theta"
+	    label	"Brdf Nsamples D Theta"
 	    type	integer
 	    default	{ "0" }
 	    help	"Number of d_theta samples"
@@ -144,7 +144,7 @@
 	}
 	parm {
 	    name	"brdf_nsamples_d_phi"
-	    label	"Brdf nsamples d phi"
+	    label	"Brdf Nsamples D Phi"
 	    type	integer
 	    default	{ "1" }
 	    help	"Number of d_phi samples (1 means isotropic BRDF)"

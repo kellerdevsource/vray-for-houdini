@@ -38,7 +38,7 @@
 	}
 	parm {
 	    name	"affect_background"
-	    label	"Affect background"
+	    label	"Affect Background"
 	    type	toggle
 	    default	{ "1" }
 	    help	"Affect colors belonging to the background"
@@ -50,7 +50,7 @@
 	}
 	parm {
 	    name	"dark_mult"
-	    label	"Dark multiplier"
+	    label	"Dark Multiplier"
 	    type	float
 	    default	{ "1" }
 	    help	"Multiplier for dark colors"
@@ -62,7 +62,7 @@
 	}
 	parm {
 	    name	"bright_mult"
-	    label	"Bright multiplier"
+	    label	"Bright Multiplier"
 	    type	float
 	    default	{ "1" }
 	    help	"Multiplier for bright colors"
@@ -86,7 +86,7 @@
 	}
 	parm {
 	    name	"subpixel_mapping"
-	    label	"Subpixel mapping"
+	    label	"Subpixel Mapping"
 	    type	toggle
 	    default	{ "0" }
 	    help	"This option controls whether color mapping will be applied to the final image pixels, or to the individual sub-pixel samples"
@@ -98,7 +98,7 @@
 	}
 	parm {
 	    name	"clamp_output"
-	    label	"Clamp output"
+	    label	"Clamp Output"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Clamp colors"
@@ -110,7 +110,7 @@
 	}
 	parm {
 	    name	"clamp_level"
-	    label	"Clamp level"
+	    label	"Clamp Level"
 	    type	float
 	    default	{ "1" }
 	    help	"The level at which colors will be clamped"
@@ -140,7 +140,7 @@
 	}
 	parm {
 	    name	"linearWorkflow"
-	    label	"Linear workflow"
+	    label	"Linear Workflow"
 	    type	toggle
 	    default	{ "0" }
 	    help	"When this option is checked V-Ray will automatically apply the inverse of the Gamma correction that you have set in the Gamma field to all materials in scene"
@@ -152,7 +152,7 @@
 	}
 	parm {
 	    name	"exposure"
-	    label	"Image exposure"
+	    label	"Image Exposure"
 	    type	color
 	    size	3
 	    default	{ "1" "1" "1" }

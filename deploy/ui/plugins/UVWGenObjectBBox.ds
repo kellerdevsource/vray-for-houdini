@@ -17,7 +17,7 @@
 	}
 	groupsimple {
 	    name	"uvw_transform"
-	    label	"Uvw transform"
+	    label	"Uvw Transform"
 	    grouptag	{ "vray_plugin" "UVWGenObjectBBox" }
 	    grouptag	{ "vray_pluginattr" "uvw_transform" }
 	    grouptag	{ "vray_type" "Transform" }
@@ -98,7 +98,7 @@
 
 	groupsimple {
 	    name	"uvw_transform_tex"
-	    label	"Uvw transform tex"
+	    label	"Uvw Transform Tex"
 	    grouptag	{ "vray_plugin" "UVWGenObjectBBox" }
 	    grouptag	{ "vray_pluginattr" "uvw_transform_tex" }
 	    grouptag	{ "vray_type" "TextureTransform" }
@@ -175,7 +175,7 @@
 
 	groupsimple {
 	    name	"tex_transform"
-	    label	"Tex transform"
+	    label	"Tex Transform"
 	    grouptag	{ "vray_plugin" "UVWGenObjectBBox" }
 	    grouptag	{ "vray_pluginattr" "tex_transform" }
 	    grouptag	{ "vray_type" "Transform" }
@@ -268,7 +268,7 @@
 	}
 	parm {
 	    name	"wrap_u"
-	    label	"Wrap u"
+	    label	"Wrap U"
 	    type	integer
 	    default	{ "0" }
 	    help	"0 - no wrapping, 1 - wrap, 2 - mirror tile"
@@ -280,7 +280,7 @@
 	}
 	parm {
 	    name	"wrap_v"
-	    label	"Wrap v"
+	    label	"Wrap V"
 	    type	integer
 	    default	{ "0" }
 	    help	"0 - no wrapping, 1 - wrap, 2 - mirror tile"
@@ -292,7 +292,7 @@
 	}
 	parm {
 	    name	"wrap_w"
-	    label	"Wrap w"
+	    label	"Wrap W"
 	    type	integer
 	    default	{ "0" }
 	    help	"0 - no wrapping, 1 - wrap, 2 - mirror tile"
@@ -304,7 +304,7 @@
 	}
 	parm {
 	    name	"crop_u"
-	    label	"Crop u"
+	    label	"Crop U"
 	    type	integer
 	    default	{ "0" }
 	    help	"1 to crop in the u-direction"
@@ -316,7 +316,7 @@
 	}
 	parm {
 	    name	"crop_v"
-	    label	"Crop v"
+	    label	"Crop V"
 	    type	integer
 	    default	{ "0" }
 	    help	"1 to crop in the v-direction"
@@ -328,7 +328,7 @@
 	}
 	parm {
 	    name	"crop_w"
-	    label	"Crop w"
+	    label	"Crop W"
 	    type	integer
 	    default	{ "0" }
 	    help	"1 to crop in the w-direction"
@@ -353,7 +353,7 @@
 	}
 	parm {
 	    name	"wrap_mode"
-	    label	"Wrap mode"
+	    label	"Wrap Mode"
 	    type	integer
 	    default	{ "0" }
 	    help	"Wrap mode (0 - wrap on 0.5 boundary; 1 - wrap on integer boundary"
@@ -369,7 +369,7 @@
 	}
 	parm {
 	    name	"duvw_scale"
-	    label	"Duvw scale"
+	    label	"Duvw Scale"
 	    type	float
 	    default	{ "1" }
 	    help	"Additional scale factor for the texture derivatives"

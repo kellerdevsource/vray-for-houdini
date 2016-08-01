@@ -18,7 +18,7 @@
 	}
 	multiparm {
 	    name	"channel_names"
-	    label	"Channel names"
+	    label	"Channel Names"
 	    default	0
 	    parmtag	{ "vray_plugin" "SettingsVFBChannels" }
 	    parmtag	{ "vray_pluginattr" "channel_names" }
@@ -26,7 +26,7 @@
 
 	    parm {
 		name	"channel_names#"
-		label	"Channel names"
+		label	"Channel Names"
 		type	string
 		default	{ "" }
 		help	"A list of strings that represent render channel names. There are too many to list here - see pixelbuffer.h for the list of RegionChannelAlias items that are available for the vfb"
@@ -37,7 +37,7 @@
 
 	parm {
 	    name	"zdepth_black"
-	    label	"Zdepth black"
+	    label	"Zdepth Black"
 	    type	float
 	    default	{ "0.001" }
 	    help	"Where the black color starts in zdepth"
@@ -49,7 +49,7 @@
 	}
 	parm {
 	    name	"zdepth_white"
-	    label	"Zdepth white"
+	    label	"Zdepth White"
 	    type	float
 	    default	{ "1500" }
 	    help	"Where the white color starts in zdepth"
@@ -61,7 +61,7 @@
 	}
 	parm {
 	    name	"zdepth_clamp"
-	    label	"Zdepth clamp"
+	    label	"Zdepth Clamp"
 	    type	toggle
 	    default	{ "0" }
 	    help	"whether we should clamp between near and far or allow outliers"

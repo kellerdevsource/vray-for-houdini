@@ -21,7 +21,7 @@
 
 	    parm {
 		name	"color"
-		label	"Light color"
+		label	"Light Color"
 		type	color4
 		size	4
 		default	{ "1" "1" "1" "1" }
@@ -34,7 +34,7 @@
 	    }
 	    parm {
 		name	"colorMultiplier"
-		label	"Color multiplier"
+		label	"Color Multiplier"
 		type	float
 		default	{ "1" }
 		help	"Color Multiplier"
@@ -59,7 +59,7 @@
 	    }
 	    parm {
 		name	"doubleSided"
-		label	"Double sided"
+		label	"Double Sided"
 		type	toggle
 		default	{ "0" }
 		help	"If false, the light color is black for back-facing surfaces"
@@ -71,7 +71,7 @@
 	    }
 	    parm {
 		name	"emitOnBackSide"
-		label	"Emit on back side"
+		label	"Emit On Back Side"
 		type	toggle
 		default	{ "1" }
 		help	"Emit on back side"
@@ -96,7 +96,7 @@
 	    }
 	    parm {
 		name	"compensateExposure"
-		label	"Compensate exposure"
+		label	"Compensate Exposure"
 		type	toggle
 		default	{ "0" }
 		help	"Compensate camera exposure"
@@ -108,7 +108,7 @@
 	    }
 	    parm {
 		name	"multiplyByOpacity"
-		label	"Multiply by opacity"
+		label	"Multiply By Opacity"
 		type	toggle
 		default	{ "0" }
 		help	"When enabled the color of the light brdf is multiplied by the brdf's opacity (inverse of the brdf's transparency)"

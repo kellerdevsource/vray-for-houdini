@@ -29,7 +29,7 @@
 	}
 	parm {
 	    name	"layer_mask"
-	    label	"Layer mask"
+	    label	"Layer Mask"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 10 }

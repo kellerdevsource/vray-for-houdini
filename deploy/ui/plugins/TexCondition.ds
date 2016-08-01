@@ -40,7 +40,7 @@
 	}
 	parm {
 	    name	"op_a"
-	    label	"Op a"
+	    label	"Op A"
 	    type	float
 	    default	{ "0" }
 	    help	"The first number to compare"
@@ -52,7 +52,7 @@
 	}
 	parm {
 	    name	"op_b"
-	    label	"Op b"
+	    label	"Op B"
 	    type	float
 	    default	{ "0" }
 	    help	"The second number to compare"
@@ -64,7 +64,7 @@
 	}
 	parm {
 	    name	"result_true"
-	    label	"Result true"
+	    label	"Result True"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "0" }
@@ -77,7 +77,7 @@
 	}
 	parm {
 	    name	"result_false"
-	    label	"Result false"
+	    label	"Result False"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "0" }

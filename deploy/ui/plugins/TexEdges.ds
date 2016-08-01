@@ -17,7 +17,7 @@
 	}
 	parm {
 	    name	"edges_tex"
-	    label	"Edges color"
+	    label	"Edges Color"
 	    type	color4
 	    size	4
 	    default	{ "1" "1" "1" "1" }
@@ -29,7 +29,7 @@
 	}
 	parm {
 	    name	"bg_tex"
-	    label	"Background color"
+	    label	"Background Color"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "1" }
@@ -41,7 +41,7 @@
 	}
 	parm {
 	    name	"width_type"
-	    label	"Width type"
+	    label	"Width Type"
 	    type	ordinal
 	    default	{ "1" }
 	    help	"Width Type"
@@ -57,7 +57,7 @@
 	}
 	parm {
 	    name	"pixel_width"
-	    label	"Pixel width"
+	    label	"Pixel Width"
 	    type	float
 	    default	{ "1" }
 	    disablewhen	"{ width_type != 1 }"
@@ -69,7 +69,7 @@
 	}
 	parm {
 	    name	"show_hidden_edges"
-	    label	"Show hidden edges"
+	    label	"Show Hidden Edges"
 	    type	toggle
 	    default	{ "0" }
 	    range	{ 0 1 }
@@ -80,7 +80,7 @@
 	}
 	parm {
 	    name	"show_subtriangles"
-	    label	"Show sub-triangles"
+	    label	"Show Sub-triangles"
 	    type	toggle
 	    default	{ "0" }
 	    range	{ 0 1 }
@@ -91,7 +91,7 @@
 	}
 	parm {
 	    name	"world_width"
-	    label	"World width"
+	    label	"World Width"
 	    type	float
 	    default	{ "1" }
 	    disablewhen	"{ width_type != 0 }"
@@ -115,7 +115,7 @@
 	}
 	parm {
 	    name	"raytraced_consider_same_object_only"
-	    label	"Consider same object only"
+	    label	"Consider Same Object Only"
 	    type	toggle
 	    default	{ "1" }
 	    help	"true to consider only corners on the same object, and false to consider other intersecting objects"
@@ -128,7 +128,7 @@
 	}
 	parm {
 	    name	"show_subtriangles1"
-	    label	"Show sub-triangles"
+	    label	"Show Sub-triangles"
 	    type	toggle
 	    default	{ "0" }
 	    range	{ 0 1 }
@@ -151,7 +151,7 @@
 	}
 	parm {
 	    name	"raytraced_consider_same_object_only1"
-	    label	"Consider same object only"
+	    label	"Consider Same Object Only"
 	    type	toggle
 	    default	{ "1" }
 	    help	"true to consider only corners on the same object, and false to consider other intersecting objects"

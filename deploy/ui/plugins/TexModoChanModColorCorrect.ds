@@ -18,7 +18,7 @@
 	}
 	parm {
 	    name	"input_color"
-	    label	"Input color"
+	    label	"Input Color"
 	    type	color4
 	    size	4
 	    default	{ "0.5" "0.5" "0.5" "1" }
@@ -78,7 +78,7 @@
 	}
 	parm {
 	    name	"color_balance"
-	    label	"Color balance"
+	    label	"Color Balance"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "1" }

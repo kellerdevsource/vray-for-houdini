@@ -19,7 +19,7 @@
 	}
 	parm {
 	    name	"color_a"
-	    label	"Color a"
+	    label	"Color A"
 	    type	color4
 	    size	4
 	    default	{ "1" "1" "1" "1" }
@@ -32,7 +32,7 @@
 	}
 	parm {
 	    name	"color_b"
-	    label	"Color b"
+	    label	"Color B"
 	    type	color4
 	    size	4
 	    default	{ "1" "1" "1" "1" }
@@ -45,7 +45,7 @@
 	}
 	parm {
 	    name	"alpha_mode"
-	    label	"Alpha mode"
+	    label	"Alpha Mode"
 	    type	ordinal
 	    default	{ "2" }
 	    help	"Alpha mode (0 - from color_a, 1 - from color_b, 2 - multiply"

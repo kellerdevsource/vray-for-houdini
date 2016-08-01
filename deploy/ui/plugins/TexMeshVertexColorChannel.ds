@@ -28,7 +28,7 @@
 	}
 	parm {
 	    name	"channel_name"
-	    label	"Channel name"
+	    label	"Channel Name"
 	    type	string
 	    default	{ "" }
 	    help	"Name of the channel to use"
@@ -40,7 +40,7 @@
 	}
 	parm {
 	    name	"default_color"
-	    label	"Default color"
+	    label	"Default Color"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "1" }
@@ -52,7 +52,7 @@
 	}
 	parm {
 	    name	"data_select"
-	    label	"Data select"
+	    label	"Data Select"
 	    type	ordinal
 	    default	{ "1" }
 	    help	"Use UV"

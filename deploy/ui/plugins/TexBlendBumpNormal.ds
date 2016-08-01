@@ -19,7 +19,7 @@
 	}
 	parm {
 	    name	"normalMap1"
-	    label	"Normal map 1"
+	    label	"Normal Map 1"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "0" }
@@ -32,7 +32,7 @@
 	}
 	parm {
 	    name	"normalMapWeight1"
-	    label	"Normal map 1 weight"
+	    label	"Normal Map 1 Weight"
 	    type	float
 	    default	{ "1" }
 	    help	"Weight of first tangent space normal map"
@@ -44,7 +44,7 @@
 	}
 	parm {
 	    name	"normalMap2"
-	    label	"Normal map 2"
+	    label	"Normal Map 2"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "0" }
@@ -57,7 +57,7 @@
 	}
 	parm {
 	    name	"normalMapWeight2"
-	    label	"Normal map 2 weight"
+	    label	"Normal Map 2 Weight"
 	    type	float
 	    default	{ "1" }
 	    help	"Weight of second tangent space normal map"
@@ -69,7 +69,7 @@
 	}
 	parm {
 	    name	"bumpMap1"
-	    label	"Bump map 1"
+	    label	"Bump Map 1"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "0" }
@@ -82,7 +82,7 @@
 	}
 	parm {
 	    name	"bumpMapWeight1"
-	    label	"Bump map 1 weight"
+	    label	"Bump Map 1 Weight"
 	    type	float
 	    default	{ "1" }
 	    help	"Weight of first bump map"
@@ -94,7 +94,7 @@
 	}
 	parm {
 	    name	"bumpMap2"
-	    label	"Bump map 2"
+	    label	"Bump Map 2"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "0" }
@@ -107,7 +107,7 @@
 	}
 	parm {
 	    name	"bumpMapWeight2"
-	    label	"Bump map 2 weight"
+	    label	"Bump Map 2 Weight"
 	    type	float
 	    default	{ "1" }
 	    help	"Weight of second bump map"

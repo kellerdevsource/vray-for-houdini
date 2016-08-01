@@ -35,7 +35,7 @@
 	}
 	parm {
 	    name	"min_shade_rate"
-	    label	"Min shading rate"
+	    label	"Min Shading Rate"
 	    type	integer
 	    default	{ "6" }
 	    help	"Control the number of rays shot for AA versus rays for other effects like glossy reflections, GI, area shadows etc. Higher values mean that less time will be spent on AA, and more effort will be put in the sampling of shading effects"
@@ -61,7 +61,7 @@
 	}
 	parm {
 	    name	"dmc_minSubdivs"
-	    label	"Min subdivs"
+	    label	"Min Subdivs"
 	    type	integer
 	    default	{ "1" }
 	    help	"Min. subdivs value for the adaptive DMC image sampler"
@@ -75,7 +75,7 @@
 	}
 	parm {
 	    name	"dmc_maxSubdivs"
-	    label	"Max subdivs"
+	    label	"Max Subdivs"
 	    type	integer
 	    default	{ "4" }
 	    help	"Max. subdivs value for the adaptive DMC image sampler"
@@ -103,7 +103,7 @@
 	}
 	parm {
 	    name	"subdivision_minRate"
-	    label	"Min rate"
+	    label	"Min Rate"
 	    type	integer
 	    default	{ "-1" }
 	    help	"Determines the minimum sampling rate for the adaptive subdivision sampler. A value of 0 means that samples will be one pixel apart. Positive values will put samples inside the pixels, while negative values will space the samples over several pixels."
@@ -117,7 +117,7 @@
 	}
 	parm {
 	    name	"subdivision_maxRate"
-	    label	"Max rate"
+	    label	"Max Rate"
 	    type	integer
 	    default	{ "2" }
 	    help	"Determines the maximum sampling rate for the adaptive subdivision sampler. A value of 0 means that samples will be one pixel apart. Positive values will put samples inside the pixels, while negative values will space the samples over several pixels."
@@ -184,7 +184,7 @@
 	}
 	parm {
 	    name	"subdivision_normals_threshold"
-	    label	"Normals threshold"
+	    label	"Normals Threshold"
 	    type	float
 	    default	{ "0.1" }
 	    disablewhen	"{ type != 2 }"
@@ -197,7 +197,7 @@
 	}
 	parm {
 	    name	"progressive_minSubdivs"
-	    label	"Min subdivs"
+	    label	"Min Subdivs"
 	    type	integer
 	    default	{ "1" }
 	    help	"Min. subdivs value for the progressive image sampler"
@@ -211,7 +211,7 @@
 	}
 	parm {
 	    name	"progressive_maxSubdivs"
-	    label	"Max subdivs"
+	    label	"Max Subdivs"
 	    type	integer
 	    default	{ "100" }
 	    help	"Max. subdivs value for the progressive image sampler"
@@ -225,7 +225,7 @@
 	}
 	parm {
 	    name	"progressive_threshold"
-	    label	"Noise threshold"
+	    label	"Noise Threshold"
 	    type	float
 	    default	{ "0.01" }
 	    help	"Noise threshold for the progressive image sampler"
@@ -239,7 +239,7 @@
 	}
 	parm {
 	    name	"progressive_maxTime"
-	    label	"Max. render time in min"
+	    label	"Max. Render Time In Min"
 	    type	float
 	    default	{ "0" }
 	    help	"Max. render time for the progressive image sampler"
@@ -253,7 +253,7 @@
 	}
 	parm {
 	    name	"progressive_bundleSize"
-	    label	"Ray bundle size"
+	    label	"Ray Bundle Size"
 	    type	integer
 	    default	{ "128" }
 	    help	"Bundle size for the progressive image sampler"
@@ -267,7 +267,7 @@
 	}
 	parm {
 	    name	"progressive_showMask"
-	    label	"Show AA mask"
+	    label	"Show Aa Mask"
 	    type	toggle
 	    default	{ "0" }
 	    help	"If true, the AA mask will be rendered"
@@ -281,7 +281,7 @@
 	}
 	parm {
 	    name	"use_dmc_treshhold"
-	    label	"Use DMC sampler threshold"
+	    label	"Use Dmc Sampler Threshold"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Use threshold specified in the \"DMC sampler\""
@@ -292,7 +292,7 @@
 	}
 	parm {
 	    name	"filter_type"
-	    label	"Filter type"
+	    label	"Filter Type"
 	    type	ordinal
 	    default	{ "6" }
 	    help	"Antialiasing filter type"
@@ -329,7 +329,7 @@
 	}
 	parm {
 	    name	"render_mask_object_ids"
-	    label	"Object IDs"
+	    label	"Object Ids"
 	    type	string
 	    default	{ "" }
 	    help	"List of object ids, which will be used for render mask"
@@ -366,7 +366,7 @@
 	}
 	parm {
 	    name	"dmc_adaptive_method"
-	    label	"Adaptive method"
+	    label	"Adaptive Method"
 	    type	ordinal
 	    default	{ "1" }
 	    help	"Switches between legacy and new adaptive sampling"
@@ -383,7 +383,7 @@
 	}
 	parm {
 	    name	"progressive_progNoiseThreshold"
-	    label	"Progressive noise threshold"
+	    label	"Progressive Noise Threshold"
 	    type	integer
 	    default	{ "30" }
 	    help	"Progressive noise threshold active pixels percent at which the threshold is reduced"
@@ -396,7 +396,7 @@
 	}
 	parm {
 	    name	"render_mask_texture"
-	    label	"Render mask texture"
+	    label	"Render Mask Texture"
 	    type	float
 	    default	{ "0" }
 	    help	"Texture used for render mask when render_mask_mode=Texture.This accepts float textures, where a value of <=1e-6, means that V-Ray won't render in this pixel"

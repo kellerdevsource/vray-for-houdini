@@ -18,7 +18,7 @@
 	}
 	parm {
 	    name	"def_color_tex"
-	    label	"Def color tex"
+	    label	"Def Color Tex"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "0" }

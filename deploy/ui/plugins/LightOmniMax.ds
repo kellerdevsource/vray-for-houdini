@@ -119,7 +119,7 @@
 	}
 	parm {
 	    name	"color_tex"
-	    label	"Color tex"
+	    label	"Color Tex"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "1" }
@@ -158,7 +158,7 @@
 	}
 	parm {
 	    name	"shadowColor_tex"
-	    label	"Shadowcolor tex"
+	    label	"Shadowcolor Tex"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "1" }
@@ -172,7 +172,7 @@
 	}
 	parm {
 	    name	"shadowBias"
-	    label	"Shadow bias"
+	    label	"Shadow Bias"
 	    type	float
 	    default	{ "0" }
 	    help	"Shadow offset from the surface. Helps to prevent polygonal shadow artifacts on low-poly surfaces"
@@ -184,7 +184,7 @@
 	}
 	parm {
 	    name	"photonSubdivs"
-	    label	"Photon subdivs"
+	    label	"Photon Subdivs"
 	    type	integer
 	    default	{ "500" }
 	    help	"Determines the number of photons emitted by this light when calculating the Global Photon Map. 1000 subdivs equal 1 million photons."
@@ -196,7 +196,7 @@
 	}
 	parm {
 	    name	"causticSubdivs"
-	    label	"Caustics subdivs"
+	    label	"Caustics Subdivs"
 	    type	integer
 	    default	{ "1000" }
 	    help	"Determines the number of photons emitted by this light when calculating the Caustics Photon Map. 1000 subdivs equal 1 million photons."
@@ -208,7 +208,7 @@
 	}
 	parm {
 	    name	"diffuseMult"
-	    label	"Diffuse multiplier"
+	    label	"Diffuse Multiplier"
 	    type	float
 	    default	{ "1" }
 	    help	"Multiplier for the diffuse photons"
@@ -220,7 +220,7 @@
 	}
 	parm {
 	    name	"causticMult"
-	    label	"Caustics multiplier"
+	    label	"Caustics Multiplier"
 	    type	float
 	    default	{ "1" }
 	    help	"Multiplier for the caustic photons"
@@ -232,7 +232,7 @@
 	}
 	parm {
 	    name	"cutoffThreshold"
-	    label	"Cut-off threshold"
+	    label	"Cut-off Threshold"
 	    type	float
 	    default	{ "0.001" }
 	    help	"Light cut-off threshold (speed optimization). If the light intensity for a point is below this threshold, the light will not be computed"
@@ -244,7 +244,7 @@
 	}
 	parm {
 	    name	"affectDiffuse"
-	    label	"Affect diffuse"
+	    label	"Affect Diffuse"
 	    type	toggle
 	    default	{ "1" }
 	    help	"true if the light produces diffuse lighting and false otherwise"
@@ -256,7 +256,7 @@
 	}
 	parm {
 	    name	"affectSpecular"
-	    label	"Affect specular"
+	    label	"Affect Specular"
 	    type	toggle
 	    default	{ "1" }
 	    help	"true if the light produces specular hilights and false otherwise"
@@ -268,7 +268,7 @@
 	}
 	parm {
 	    name	"bumped_below_surface_check"
-	    label	"Bumped normal check"
+	    label	"Bumped Normal Check"
 	    type	toggle
 	    default	{ "0" }
 	    help	"true if the bumped normal should be used to check if the light dir is below the surface"
@@ -292,7 +292,7 @@
 	}
 	parm {
 	    name	"diffuse_contribution"
-	    label	"Diffuse contribution"
+	    label	"Diffuse Contribution"
 	    type	float
 	    default	{ "1" }
 	    help	"Diffuse contribution for the light"
@@ -304,7 +304,7 @@
 	}
 	parm {
 	    name	"specular_contribution"
-	    label	"Specular contribution"
+	    label	"Specular Contribution"
 	    type	float
 	    default	{ "1" }
 	    help	"Specular contribution for the light"
@@ -329,7 +329,7 @@
 	}
 	parm {
 	    name	"channels_raw"
-	    label	"Channels raw"
+	    label	"Channels Raw"
 	    type	oplist
 	    default	{ "" }
 	    help	"Render channels the raw diffuse result of this light will be written to"
@@ -342,7 +342,7 @@
 	}
 	parm {
 	    name	"channels_diffuse"
-	    label	"Channels diffuse"
+	    label	"Channels Diffuse"
 	    type	oplist
 	    default	{ "" }
 	    help	"Render channels the diffuse result of this light will be written to"
@@ -355,7 +355,7 @@
 	}
 	parm {
 	    name	"channels_specular"
-	    label	"Channels specular"
+	    label	"Channels Specular"
 	    type	oplist
 	    default	{ "" }
 	    help	"Render channels the specular result of this light will be written to"
@@ -368,7 +368,7 @@
 	}
 	parm {
 	    name	"use_global_light_level"
-	    label	"Use global light level"
+	    label	"Use Global Light Level"
 	    type	toggle
 	    default	{ "1" }
 	    help	"true if the light should use the global light level setting"
@@ -411,7 +411,7 @@
 	}
 	parm {
 	    name	"intensity_tex"
-	    label	"Intensity tex"
+	    label	"Intensity Tex"
 	    type	float
 	    default	{ "1" }
 	    help	"A float texture that if present will override the intensity parameter"
@@ -436,7 +436,7 @@
 	}
 	parm {
 	    name	"shadowRadius_tex"
-	    label	"Shadowradius tex"
+	    label	"Shadowradius Tex"
 	    type	float
 	    default	{ "1" }
 	    help	"A float texture that if present will override the shadows radius parameter"
@@ -472,7 +472,7 @@
 	}
 	parm {
 	    name	"storeWithIrradianceMap"
-	    label	"Store with irradiance map"
+	    label	"Store With Irradiance Map"
 	    type	toggle
 	    default	{ "0" }
 	    help	"When this option is on and GI calculation is set to Irradiance map V-Ray will calculate the effects of this light and store them in the irradiance map. The result is that the irradiance map is computed more slowly but the rendering takes less time. You can also save the irradiance map and reuse it later."
@@ -484,7 +484,7 @@
 	}
 	parm {
 	    name	"projector_map"
-	    label	"Projector map"
+	    label	"Projector Map"
 	    type	color4
 	    size	4
 	    default	{ "1" "1" "1" "1" }
@@ -497,7 +497,7 @@
 	}
 	parm {
 	    name	"decay_type"
-	    label	"Decay type"
+	    label	"Decay Type"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"Decay type"
@@ -514,7 +514,7 @@
 	}
 	parm {
 	    name	"decay_start"
-	    label	"Decay start"
+	    label	"Decay Start"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 64 }
@@ -525,7 +525,7 @@
 	}
 	parm {
 	    name	"near_attenuation"
-	    label	"Near attenuation"
+	    label	"Near Attenuation"
 	    type	toggle
 	    default	{ "0" }
 	    help	"true to use near attenuation"
@@ -537,7 +537,7 @@
 	}
 	parm {
 	    name	"near_attenuation_start"
-	    label	"Near attenuation start"
+	    label	"Near Attenuation Start"
 	    type	float
 	    default	{ "0" }
 	    help	"Near attenuation start"
@@ -549,7 +549,7 @@
 	}
 	parm {
 	    name	"near_attenuation_end"
-	    label	"Near attenuation end"
+	    label	"Near Attenuation End"
 	    type	float
 	    default	{ "0" }
 	    help	"Near attenuation end"
@@ -561,7 +561,7 @@
 	}
 	parm {
 	    name	"far_attenuation"
-	    label	"Far attenuation"
+	    label	"Far Attenuation"
 	    type	toggle
 	    default	{ "0" }
 	    help	"true to use far attenuation"
@@ -573,7 +573,7 @@
 	}
 	parm {
 	    name	"far_attenuation_start"
-	    label	"Far attenuation start"
+	    label	"Far Attenuation Start"
 	    type	float
 	    default	{ "0" }
 	    help	"far attenuation start"
@@ -585,7 +585,7 @@
 	}
 	parm {
 	    name	"far_attenuation_end"
-	    label	"Far attenuation end"
+	    label	"Far Attenuation End"
 	    type	float
 	    default	{ "0" }
 	    help	"far attenuation end"

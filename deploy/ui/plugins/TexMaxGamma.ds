@@ -44,7 +44,7 @@
 	}
 	parm {
 	    name	"color_space"
-	    label	"Color space"
+	    label	"Color Space"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"The color space"

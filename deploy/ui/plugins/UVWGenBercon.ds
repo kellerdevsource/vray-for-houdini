@@ -17,7 +17,7 @@
 	}
 	parm {
 	    name	"offset_x"
-	    label	"Offset x"
+	    label	"Offset X"
 	    type	float
 	    default	{ "0" }
 	    help	"the X offset"
@@ -29,7 +29,7 @@
 	}
 	parm {
 	    name	"offset_y"
-	    label	"Offset y"
+	    label	"Offset Y"
 	    type	float
 	    default	{ "0" }
 	    help	"the Y offset"
@@ -41,7 +41,7 @@
 	}
 	parm {
 	    name	"offset_z"
-	    label	"Offset z"
+	    label	"Offset Z"
 	    type	float
 	    default	{ "0" }
 	    help	"the Z offset"
@@ -53,7 +53,7 @@
 	}
 	parm {
 	    name	"size_x"
-	    label	"Size x"
+	    label	"Size X"
 	    type	float
 	    default	{ "1" }
 	    help	"X size"
@@ -65,7 +65,7 @@
 	}
 	parm {
 	    name	"size_y"
-	    label	"Size y"
+	    label	"Size Y"
 	    type	float
 	    default	{ "1" }
 	    help	"Y size"
@@ -77,7 +77,7 @@
 	}
 	parm {
 	    name	"size_z"
-	    label	"Size z"
+	    label	"Size Z"
 	    type	float
 	    default	{ "1" }
 	    help	"Z size"
@@ -89,7 +89,7 @@
 	}
 	parm {
 	    name	"angle_x"
-	    label	"Angle x"
+	    label	"Angle X"
 	    type	float
 	    default	{ "0" }
 	    help	"X angle"
@@ -101,7 +101,7 @@
 	}
 	parm {
 	    name	"angle_y"
-	    label	"Angle y"
+	    label	"Angle Y"
 	    type	float
 	    default	{ "0" }
 	    help	"Y angle"
@@ -113,7 +113,7 @@
 	}
 	parm {
 	    name	"angle_z"
-	    label	"Angle z"
+	    label	"Angle Z"
 	    type	float
 	    default	{ "0" }
 	    help	"Z angle"
@@ -125,7 +125,7 @@
 	}
 	parm {
 	    name	"tile_x"
-	    label	"Tile x"
+	    label	"Tile X"
 	    type	integer
 	    default	{ "1" }
 	    help	"X tiles"
@@ -137,7 +137,7 @@
 	}
 	parm {
 	    name	"tile_y"
-	    label	"Tile y"
+	    label	"Tile Y"
 	    type	integer
 	    default	{ "1" }
 	    help	"Y tiles"
@@ -149,7 +149,7 @@
 	}
 	parm {
 	    name	"tile_z"
-	    label	"Tile z"
+	    label	"Tile Z"
 	    type	integer
 	    default	{ "1" }
 	    help	"Z tiles"
@@ -161,7 +161,7 @@
 	}
 	parm {
 	    name	"offset_x2"
-	    label	"Offset x2"
+	    label	"Offset X2"
 	    type	float
 	    default	{ "0" }
 	    help	"second X offset"
@@ -173,7 +173,7 @@
 	}
 	parm {
 	    name	"offset_y2"
-	    label	"Offset y2"
+	    label	"Offset Y2"
 	    type	float
 	    default	{ "0" }
 	    help	"second Y offset"
@@ -185,7 +185,7 @@
 	}
 	parm {
 	    name	"offset_z2"
-	    label	"Offset z2"
+	    label	"Offset Z2"
 	    type	float
 	    default	{ "0" }
 	    help	"second Z offset"
@@ -197,7 +197,7 @@
 	}
 	parm {
 	    name	"size_x2"
-	    label	"Size x2"
+	    label	"Size X2"
 	    type	float
 	    default	{ "0" }
 	    help	"second X size"
@@ -209,7 +209,7 @@
 	}
 	parm {
 	    name	"size_y2"
-	    label	"Size y2"
+	    label	"Size Y2"
 	    type	float
 	    default	{ "0" }
 	    help	"second Y size"
@@ -221,7 +221,7 @@
 	}
 	parm {
 	    name	"size_z2"
-	    label	"Size z2"
+	    label	"Size Z2"
 	    type	float
 	    default	{ "0" }
 	    help	"second Z size"
@@ -233,7 +233,7 @@
 	}
 	parm {
 	    name	"angle_x2"
-	    label	"Angle x2"
+	    label	"Angle X2"
 	    type	float
 	    default	{ "0" }
 	    help	"second X angle"
@@ -245,7 +245,7 @@
 	}
 	parm {
 	    name	"angle_y2"
-	    label	"Angle y2"
+	    label	"Angle Y2"
 	    type	float
 	    default	{ "0" }
 	    help	"second Y angle"
@@ -257,7 +257,7 @@
 	}
 	parm {
 	    name	"angle_z2"
-	    label	"Angle z2"
+	    label	"Angle Z2"
 	    type	float
 	    default	{ "0" }
 	    help	"second Z angle"
@@ -269,7 +269,7 @@
 	}
 	parm {
 	    name	"xyz_lock"
-	    label	"Xyz lock"
+	    label	"Xyz Lock"
 	    type	integer
 	    default	{ "0" }
 	    help	"XYZ Lock"
@@ -293,7 +293,7 @@
 	}
 	parm {
 	    name	"rand_mat"
-	    label	"Rand mat"
+	    label	"Rand Mat"
 	    type	integer
 	    default	{ "0" }
 	    help	"Random by material"
@@ -305,7 +305,7 @@
 	}
 	parm {
 	    name	"rand_obj"
-	    label	"Rand obj"
+	    label	"Rand Obj"
 	    type	integer
 	    default	{ "0" }
 	    help	"Random by object"
@@ -317,7 +317,7 @@
 	}
 	parm {
 	    name	"rand_par"
-	    label	"Rand par"
+	    label	"Rand Par"
 	    type	integer
 	    default	{ "0" }
 	    help	"Random by particle"

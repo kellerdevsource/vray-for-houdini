@@ -37,7 +37,7 @@
 	}
 	parm {
 	    name	"zenith_color"
-	    label	"Zenith color"
+	    label	"Zenith Color"
 	    type	color
 	    size	3
 	    default	{ "0.9" "0.9" "0.9" }
@@ -49,7 +49,7 @@
 	}
 	parm {
 	    name	"sky_color"
-	    label	"Sky color"
+	    label	"Sky Color"
 	    type	color
 	    size	3
 	    default	{ "0.34" "0.34" "0.34" }
@@ -61,7 +61,7 @@
 	}
 	parm {
 	    name	"ground_color"
-	    label	"Ground color"
+	    label	"Ground Color"
 	    type	color
 	    size	3
 	    default	{ "0.34" "0.34" "0.34" }
@@ -73,7 +73,7 @@
 	}
 	parm {
 	    name	"nadir_color"
-	    label	"Nadir color"
+	    label	"Nadir Color"
 	    type	color
 	    size	3
 	    default	{ "0.03" "0.03" "0.03" }
@@ -85,7 +85,7 @@
 	}
 	parm {
 	    name	"sky_exponent"
-	    label	"Sky exponent"
+	    label	"Sky Exponent"
 	    type	float
 	    default	{ "4" }
 	    range	{ 0 10 }
@@ -96,7 +96,7 @@
 	}
 	parm {
 	    name	"ground_exponent"
-	    label	"Ground exponent"
+	    label	"Ground Exponent"
 	    type	float
 	    default	{ "4" }
 	    range	{ 0 10 }
@@ -107,7 +107,7 @@
 	}
 	parm {
 	    name	"sky_tex"
-	    label	"Sky tex"
+	    label	"Sky Tex"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "0" }
@@ -120,7 +120,7 @@
 	}
 	parm {
 	    name	"sky_clamp_brightness"
-	    label	"Sky clamp brightness"
+	    label	"Sky Clamp Brightness"
 	    type	toggle
 	    default	{ "0" }
 	    help	"True to clamp the physical sky brightness"

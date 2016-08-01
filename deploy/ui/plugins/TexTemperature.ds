@@ -59,7 +59,7 @@
 	}
 	parm {
 	    name	"rgb_multiplier"
-	    label	"Rgb multiplier"
+	    label	"Rgb Multiplier"
 	    type	float
 	    default	{ "1" }
 	    help	"Color multiplier"
@@ -83,7 +83,7 @@
 	}
 	parm {
 	    name	"gamma_correction"
-	    label	"Gamma correction"
+	    label	"Gamma Correction"
 	    type	float
 	    default	{ "1" }
 	    help	"Gamma correction value"

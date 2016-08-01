@@ -17,7 +17,7 @@
 	}
 	groupsimple {
 	    name	"uvw_matrix"
-	    label	"Uvw matrix"
+	    label	"Uvw Matrix"
 	    grouptag	{ "vray_plugin" "xsiUVWGenEnvironment" }
 	    grouptag	{ "vray_pluginattr" "uvw_matrix" }
 	    grouptag	{ "vray_type" "Matrix" }
@@ -100,7 +100,7 @@
 
 	groupsimple {
 	    name	"uvw_transform"
-	    label	"Uvw transform"
+	    label	"Uvw Transform"
 	    grouptag	{ "vray_plugin" "xsiUVWGenEnvironment" }
 	    grouptag	{ "vray_pluginattr" "uvw_transform" }
 	    grouptag	{ "vray_type" "Transform" }
@@ -181,7 +181,7 @@
 
 	parm {
 	    name	"mapping_type"
-	    label	"Mapping type"
+	    label	"Mapping Type"
 	    type	integer
 	    default	{ "1" }
 	    help	"spherical(0), cylindrical(1), cubic strip(2), cubic cross sideways(3), cubic cross(4)"

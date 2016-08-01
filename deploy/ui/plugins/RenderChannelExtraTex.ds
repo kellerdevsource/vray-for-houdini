@@ -28,7 +28,7 @@
 	}
 	parm {
 	    name	"consider_for_aa"
-	    label	"Consider For AA"
+	    label	"Consider For Aa"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Consider this render element for antialiasing (may slow down rendering)"
@@ -40,7 +40,7 @@
 	}
 	parm {
 	    name	"affect_matte_objects"
-	    label	"Affect matte objects"
+	    label	"Affect Matte Objects"
 	    type	toggle
 	    default	{ "1" }
 	    help	"Affect Matte Objects"
@@ -76,7 +76,7 @@
 	}
 	parm {
 	    name	"exclude_list"
-	    label	"Exclude list"
+	    label	"Exclude List"
 	    type	oplist
 	    default	{ "" }
 	    range	{ 0 1 }
@@ -88,7 +88,7 @@
 	}
 	parm {
 	    name	"exclude_list_as_inclusive_set"
-	    label	"Exclude list as inclusive set"
+	    label	"Exclude List As Inclusive Set"
 	    type	toggle
 	    default	{ "0" }
 	    help	"true : apply extra texture only to objects in excludeList; false : apply extra texture to all objects out of excludeList"

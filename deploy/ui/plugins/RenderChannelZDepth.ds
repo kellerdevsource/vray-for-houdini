@@ -29,7 +29,7 @@
 	}
 	parm {
 	    name	"depth_from_camera"
-	    label	"Depth from camera"
+	    label	"Depth From Camera"
 	    type	toggle
 	    default	{ "0" }
 	    help	"From camera"
@@ -41,7 +41,7 @@
 	}
 	parm {
 	    name	"depth_clamp"
-	    label	"Depth clamp"
+	    label	"Depth Clamp"
 	    type	toggle
 	    default	{ "1" }
 	    help	"Clamp"
@@ -65,7 +65,7 @@
 	}
 	parm {
 	    name	"depth_black"
-	    label	"Depth black"
+	    label	"Depth Black"
 	    type	float
 	    default	{ "0" }
 	    help	"Black distance"
@@ -77,7 +77,7 @@
 	}
 	parm {
 	    name	"depth_white"
-	    label	"Depth white"
+	    label	"Depth White"
 	    type	float
 	    default	{ "1000" }
 	    help	"White distance"

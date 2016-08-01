@@ -22,7 +22,7 @@
 
 	    parm {
 		name	"compatibility_with"
-		label	"Compatibility with"
+		label	"Compatibility With"
 		type	ordinal
 		default	{ "0" }
 		help	"This is used to differentiate between textures exported from different applications"
@@ -38,7 +38,7 @@
 	    }
 	    parm {
 		name	"alpha_from_intensity"
-		label	"Alpha from intensity"
+		label	"Alpha From Intensity"
 		type	ordinal
 		default	{ "0" }
 		help	"If 2 - the alpha is forced to 1.0f; 1 - the resulting alpha is the color intensity (if compatibility_with is 0) or the color luminance (if compatibility_with is 1); 0 - the alpha is taken from the bitmap alpha"
@@ -67,7 +67,7 @@
 	    }
 	    parm {
 		name	"invert_alpha"
-		label	"Invert alpha"
+		label	"Invert Alpha"
 		type	toggle
 		default	{ "1" }
 		help	"If true and invert is on, the resulting texture alpha will be inverted too. If false, just the color will be inverted"
@@ -80,7 +80,7 @@
 	    }
 	    parm {
 		name	"color_mult"
-		label	"Color mult"
+		label	"Color Mult"
 		type	color4
 		size	4
 		default	{ "1" "1" "1" "1" }
@@ -93,7 +93,7 @@
 	    }
 	    parm {
 		name	"color_offset"
-		label	"Color offset"
+		label	"Color Offset"
 		type	color4
 		size	4
 		default	{ "0" "0" "0" "1" }
@@ -106,7 +106,7 @@
 	    }
 	    parm {
 		name	"alpha_mult"
-		label	"Alpha mult"
+		label	"Alpha Mult"
 		type	float
 		default	{ "1" }
 		help	"A multiplier for the texture alpha"
@@ -118,7 +118,7 @@
 	    }
 	    parm {
 		name	"alpha_offset"
-		label	"Alpha offset"
+		label	"Alpha Offset"
 		type	float
 		default	{ "0" }
 		help	"An additional offset for the texture alpha"
@@ -130,7 +130,7 @@
 	    }
 	    parm {
 		name	"nouvw_color"
-		label	"No UVs Color"
+		label	"No Uvs Color"
 		type	color4
 		size	4
 		default	{ "0.5" "0.5" "0.5" "1" }

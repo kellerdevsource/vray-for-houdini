@@ -22,7 +22,7 @@
 
 	    parm {
 		name	"enable_flakes"
-		label	"Enable flakes"
+		label	"Enable Flakes"
 		type	toggle
 		default	{ "1" }
 		help	"Turn on the stochastic flakes. If this option is off, the underlying smooth distribution is used"
@@ -34,7 +34,7 @@
 	    }
 	    parm {
 		name	"num_flakes"
-		label	"Number of Flakes"
+		label	"Number Of Flakes"
 		type	integer
 		default	{ "1e+07" }
 		help	"Number of flakes per unit area in the texture space"
@@ -46,7 +46,7 @@
 	    }
 	    parm {
 		name	"hilight_glossiness"
-		label	"Hilight glossiness"
+		label	"Hilight Glossiness"
 		type	float
 		default	{ "0.9" }
 		range	{ 0 1 }
@@ -57,7 +57,7 @@
 	    }
 	    parm {
 		name	"blur_angle"
-		label	"Blur angle"
+		label	"Blur Angle"
 		type	float
 		default	{ "3" }
 		help	"The angle of the cone, in which flakes transfer light. The more narrow the angle the sharper the flakes"
@@ -81,7 +81,7 @@
 	    }
 	    parm {
 		name	"reflect_filter"
-		label	"Reflect filter"
+		label	"Reflect Filter"
 		type	color4
 		size	4
 		default	{ "0" "0" "0" "0" }
@@ -94,7 +94,7 @@
 	    }
 	    parm {
 		name	"mapping_type"
-		label	"Mapping type"
+		label	"Mapping Type"
 		type	ordinal
 		default	{ "1" }
 		help	"The mapping method for the flakes (0 - explicit mapping channel, 1 - triplanar projection in object space)"
@@ -111,7 +111,7 @@
 	    }
 	    parm {
 		name	"map_channel"
-		label	"Map channel"
+		label	"Map Channel"
 		type	integer
 		default	{ "0" }
 		help	"The mapping channel when the mapping_type is 0"
@@ -124,7 +124,7 @@
 	    }
 	    parm {
 		name	"flake_scale"
-		label	"Flake scale"
+		label	"Flake Scale"
 		type	float
 		default	{ "1" }
 		help	"Locally scale the flakes pattern"
@@ -137,7 +137,7 @@
 	    }
 	    parm {
 		name	"brdf_type"
-		label	"BRDF Type"
+		label	"Brdf Type"
 		type	ordinal
 		default	{ "1" }
 		help	"BRDF type (0 - Beckmann, 1 - GGX)"
@@ -159,7 +159,7 @@
 
 	    parm {
 		name	"random_hue"
-		label	"Random hue"
+		label	"Random Hue"
 		type	toggle
 		default	{ "0" }
 		help	"Generate per flake color with random hue value"
@@ -168,7 +168,7 @@
 	    }
 	    parm {
 		name	"random_saturation"
-		label	"Random saturation"
+		label	"Random Saturation"
 		type	toggle
 		default	{ "0" }
 		help	"Generate random saturation for each flake color"
@@ -190,7 +190,7 @@
 	    }
 	    parm {
 		name	"random_lightness"
-		label	"Random lightness"
+		label	"Random Lightness"
 		type	toggle
 		default	{ "0" }
 		help	"Generate random lightness for each flake color"
@@ -218,7 +218,7 @@
 
 	    parm {
 		name	"tex_subdivs"
-		label	"Tex subdivs"
+		label	"Tex Subdivs"
 		type	integer
 		default	{ "12" }
 		help	"The subdivisions of a unit square in texture space. Increase only if you observe square-like artefacts in zoomed regions"
@@ -231,7 +231,7 @@
 	    }
 	    parm {
 		name	"blend_min"
-		label	"Blend min"
+		label	"Blend Min"
 		type	float
 		default	{ "500" }
 		help	"Number of flakes per pixel, below which the smooth distribution is not computed and blended"
@@ -244,7 +244,7 @@
 	    }
 	    parm {
 		name	"blend_max"
-		label	"Blend max"
+		label	"Blend Max"
 		type	float
 		default	{ "700" }
 		help	"Number of flakes per pixel, above which only the smooth distribution is computed"

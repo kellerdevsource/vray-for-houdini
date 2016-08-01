@@ -19,7 +19,7 @@
 	}
 	parm {
 	    name	"in_color"
-	    label	"In color"
+	    label	"In Color"
 	    type	color4
 	    size	4
 	    default	{ "1" "1" "1" "1" }
@@ -31,7 +31,7 @@
 	}
 	parm {
 	    name	"in_alpha"
-	    label	"In alpha"
+	    label	"In Alpha"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 10 }
@@ -42,7 +42,7 @@
 	}
 	parm {
 	    name	"preserve_color"
-	    label	"Preserve color"
+	    label	"Preserve Color"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 10 }
@@ -65,7 +65,7 @@
 	}
 	parm {
 	    name	"mask_alpha"
-	    label	"Mask alpha"
+	    label	"Mask Alpha"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 10 }
@@ -76,7 +76,7 @@
 	}
 	parm {
 	    name	"mask_alpha_is_luminance"
-	    label	"Mask alpha is luminance"
+	    label	"Mask Alpha Is Luminance"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 10 }

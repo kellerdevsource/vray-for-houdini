@@ -19,7 +19,7 @@
 	}
 	parm {
 	    name	"source_color"
-	    label	"Source color"
+	    label	"Source Color"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "0" }
@@ -32,7 +32,7 @@
 	}
 	parm {
 	    name	"texture_map"
-	    label	"Texture map"
+	    label	"Texture Map"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "1" }
@@ -45,7 +45,7 @@
 	}
 	parm {
 	    name	"rewire_red"
-	    label	"Rewire red"
+	    label	"Rewire Red"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"0-red, 1-green, 2-blue, 3-alpha, 4-redinv, 5-greeninv, 6-blueinv, 7-alphainv, 8-monochrome, 9-One, 10-Zero"
@@ -70,7 +70,7 @@
 	}
 	parm {
 	    name	"rewire_green"
-	    label	"Rewire green"
+	    label	"Rewire Green"
 	    type	ordinal
 	    default	{ "1" }
 	    help	"0-red, 1-green, 2-blue, 3-alpha, 4-redinv, 5-greeninv, 6-blueinv, 7-alphainv, 8-monochrome, 9-One, 10-Zero"
@@ -95,7 +95,7 @@
 	}
 	parm {
 	    name	"rewire_blue"
-	    label	"Rewire blue"
+	    label	"Rewire Blue"
 	    type	ordinal
 	    default	{ "2" }
 	    help	"0-red, 1-green, 2-blue, 3-alpha, 4-redinv, 5-greeninv, 6-blueinv, 7-alphainv, 8-monochrome, 9-One, 10-Zero"
@@ -120,7 +120,7 @@
 	}
 	parm {
 	    name	"rewire_alpha"
-	    label	"Rewire alpha"
+	    label	"Rewire Alpha"
 	    type	ordinal
 	    default	{ "3" }
 	    help	"0-red, 1-green, 2-blue, 3-alpha, 4-redinv, 5-greeninv, 6-blueinv, 7-alphainv, 8-monochrome, 9-One, 10-Zero"
@@ -145,7 +145,7 @@
 	}
 	parm {
 	    name	"hue_shift"
-	    label	"Hue shift"
+	    label	"Hue Shift"
 	    type	float
 	    default	{ "0" }
 	    help	"added to the color hue"
@@ -169,7 +169,7 @@
 	}
 	parm {
 	    name	"hue_tint"
-	    label	"Hue tint"
+	    label	"Hue Tint"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "0" }
@@ -182,7 +182,7 @@
 	}
 	parm {
 	    name	"tint_strength"
-	    label	"Tint strength"
+	    label	"Tint Strength"
 	    type	float
 	    default	{ "0" }
 	    help	"default = 0"
@@ -218,7 +218,7 @@
 	}
 	parm {
 	    name	"lightness_mode"
-	    label	"Lightness mode"
+	    label	"Lightness Mode"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"Lightness mode"
@@ -234,7 +234,7 @@
 	}
 	parm {
 	    name	"adv_brightness"
-	    label	"Adv brightness"
+	    label	"Adv Brightness"
 	    type	float
 	    default	{ "1" }
 	    help	"Color multiplier"
@@ -246,7 +246,7 @@
 	}
 	parm {
 	    name	"adv_contrast"
-	    label	"Adv contrast"
+	    label	"Adv Contrast"
 	    type	float
 	    default	{ "1" }
 	    help	"Color contrast"
@@ -258,7 +258,7 @@
 	}
 	parm {
 	    name	"adv_base"
-	    label	"Adv base"
+	    label	"Adv Base"
 	    type	float
 	    default	{ "1" }
 	    help	"Contrast base"
@@ -270,7 +270,7 @@
 	}
 	parm {
 	    name	"adv_offset"
-	    label	"Adv offset"
+	    label	"Adv Offset"
 	    type	float
 	    default	{ "0" }
 	    help	"Color offset"
@@ -282,7 +282,7 @@
 	}
 	parm {
 	    name	"adv_use_red"
-	    label	"Adv use red"
+	    label	"Adv Use Red"
 	    type	toggle
 	    default	{ "0" }
 	    help	"true to use the red component ov the adv_rgb_* parameters"
@@ -294,7 +294,7 @@
 	}
 	parm {
 	    name	"adv_use_green"
-	    label	"Adv use green"
+	    label	"Adv Use Green"
 	    type	toggle
 	    default	{ "0" }
 	    help	"true to use the green component ov the adv_rgb_* parameters"
@@ -306,7 +306,7 @@
 	}
 	parm {
 	    name	"adv_use_blue"
-	    label	"Adv use blue"
+	    label	"Adv Use Blue"
 	    type	toggle
 	    default	{ "0" }
 	    help	"true to use the blue component ov the adv_rgb_* parameters"
@@ -318,7 +318,7 @@
 	}
 	parm {
 	    name	"adv_rgb_brightness"
-	    label	"Adv rgb brightness"
+	    label	"Adv Rgb Brightness"
 	    type	color
 	    size	3
 	    default	{ "1" "1" "1" }
@@ -331,7 +331,7 @@
 	}
 	parm {
 	    name	"adv_rgb_contrast"
-	    label	"Adv rgb contrast"
+	    label	"Adv Rgb Contrast"
 	    type	color
 	    size	3
 	    default	{ "1" "1" "1" }
@@ -344,7 +344,7 @@
 	}
 	parm {
 	    name	"adv_rgb_base"
-	    label	"Adv rgb base"
+	    label	"Adv Rgb Base"
 	    type	color
 	    size	3
 	    default	{ "1" "1" "1" }
@@ -357,7 +357,7 @@
 	}
 	parm {
 	    name	"adv_rgb_offset"
-	    label	"Adv rgb offset"
+	    label	"Adv Rgb Offset"
 	    type	color
 	    size	3
 	    default	{ "0" "0" "0" }

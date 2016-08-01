@@ -31,7 +31,7 @@
 	}
 	parm {
 	    name	"length_base"
-	    label	"Length base"
+	    label	"Length Base"
 	    type	float
 	    default	{ "100" }
 	    help	"The base hair length"
@@ -43,7 +43,7 @@
 	}
 	parm {
 	    name	"thickness_base"
-	    label	"Thickness base"
+	    label	"Thickness Base"
 	    type	float
 	    default	{ "0.01" }
 	    help	"The base hair thickness"
@@ -55,7 +55,7 @@
 	}
 	parm {
 	    name	"gravity_base"
-	    label	"Gravity base"
+	    label	"Gravity Base"
 	    type	float
 	    default	{ "10" }
 	    help	"The base gravity"
@@ -67,7 +67,7 @@
 	}
 	parm {
 	    name	"gravity_vector"
-	    label	"Gravity vector"
+	    label	"Gravity Vector"
 	    type	direction
 	    size	3
 	    default	{ "0" "1" "0" }
@@ -80,7 +80,7 @@
 	}
 	parm {
 	    name	"dir_var"
-	    label	"Dir var"
+	    label	"Dir Var"
 	    type	float
 	    default	{ "0" }
 	    help	"The direction variation"
@@ -92,7 +92,7 @@
 	}
 	parm {
 	    name	"length_var"
-	    label	"Length var"
+	    label	"Length Var"
 	    type	float
 	    default	{ "0" }
 	    help	"The hair length variation"
@@ -104,7 +104,7 @@
 	}
 	parm {
 	    name	"thickness_var"
-	    label	"Thickness var"
+	    label	"Thickness Var"
 	    type	float
 	    default	{ "0" }
 	    help	"The hair thickness variation"
@@ -116,7 +116,7 @@
 	}
 	parm {
 	    name	"gravity_var"
-	    label	"Gravity var"
+	    label	"Gravity Var"
 	    type	float
 	    default	{ "0" }
 	    help	"The gravity variation"
@@ -128,7 +128,7 @@
 	}
 	parm {
 	    name	"curl_radius_var"
-	    label	"Curl radius var"
+	    label	"Curl Radius Var"
 	    type	float
 	    default	{ "0" }
 	    help	"The curl radius variation"
@@ -164,7 +164,7 @@
 	}
 	parm {
 	    name	"curl_enabled"
-	    label	"Curl enabled"
+	    label	"Curl Enabled"
 	    type	toggle
 	    default	{ "0" }
 	    help	"True if curl should be applied to the hair"
@@ -176,7 +176,7 @@
 	}
 	parm {
 	    name	"curl_angle"
-	    label	"Curl angle"
+	    label	"Curl Angle"
 	    type	float
 	    default	{ "0" }
 	    help	"The angle of the curl applied at yeach knot"
@@ -188,7 +188,7 @@
 	}
 	parm {
 	    name	"curl_radius"
-	    label	"Curl radius"
+	    label	"Curl Radius"
 	    type	float
 	    default	{ "0" }
 	    help	"The radius of the curls"
@@ -200,7 +200,7 @@
 	}
 	parm {
 	    name	"hair_sides"
-	    label	"Hair sides"
+	    label	"Hair Sides"
 	    type	integer
 	    default	{ "3" }
 	    help	"Number of segments along the circumference of a single hair"
@@ -212,7 +212,7 @@
 	}
 	parm {
 	    name	"hair_knots"
-	    label	"Hair knots"
+	    label	"Hair Knots"
 	    type	integer
 	    default	{ "8" }
 	    help	"Number of segments along the length of a single hair"
@@ -224,7 +224,7 @@
 	}
 	parm {
 	    name	"lod_enabled"
-	    label	"Lod enabled"
+	    label	"Lod Enabled"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Level of detail toggle. Enables detail decrease along distance form the camera"
@@ -236,7 +236,7 @@
 	}
 	parm {
 	    name	"lod_startDistance"
-	    label	"Lod startdistance"
+	    label	"Lod Startdistance"
 	    type	float
 	    default	{ "1000" }
 	    help	"Level of detail starting distance. The distance from wich the effect is applied"
@@ -248,7 +248,7 @@
 	}
 	parm {
 	    name	"lod_rate"
-	    label	"Lod rate"
+	    label	"Lod Rate"
 	    type	float
 	    default	{ "1000" }
 	    help	"Level of detail rate. Rate of decrease. The distance to reach half the hairs count with twice the thickness"
@@ -260,7 +260,7 @@
 	}
 	parm {
 	    name	"fixed_areas"
-	    label	"Fixed areas"
+	    label	"Fixed Areas"
 	    type	integer
 	    default	{ "0" }
 	    help	"True if areaList should be used to determine the number of hairs when distribution is 'per area'"
@@ -312,7 +312,7 @@
 	}
 	parm {
 	    name	"flat_normals"
-	    label	"Flat normals"
+	    label	"Flat Normals"
 	    type	integer
 	    default	{ "0" }
 	    range	{ 0 10 }
@@ -323,7 +323,7 @@
 	}
 	parm {
 	    name	"override_mtlID_on"
-	    label	"Override mtlid on"
+	    label	"Override Mtlid On"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Material ID will be overriden"
@@ -335,7 +335,7 @@
 	}
 	parm {
 	    name	"override_mtlID"
-	    label	"Override mtlid"
+	    label	"Override Mtlid"
 	    type	integer
 	    default	{ "0" }
 	    help	"The override material ID"
@@ -347,7 +347,7 @@
 	}
 	parm {
 	    name	"ignore_base_mesh_displacement"
-	    label	"Ignore base mesh displacement"
+	    label	"Ignore Base Mesh Displacement"
 	    type	toggle
 	    default	{ "0" }
 	    help	"If false, fur will be displaced via using the parent mesh displacement map"
@@ -401,7 +401,7 @@
 	}
 	parm {
 	    name	"generate_w_coord"
-	    label	"Generate w coord"
+	    label	"Generate W Coord"
 	    type	toggle
 	    default	{ "1" }
 	    help	"If true, V-Ray will generate a W mapping coordinate that represents the position of the shaded point along the hair strands"
@@ -413,7 +413,7 @@
 	}
 	parm {
 	    name	"map_channel"
-	    label	"Map channel"
+	    label	"Map Channel"
 	    type	integer
 	    default	{ "0" }
 	    help	"Map channel to derive the uv space from"
@@ -425,7 +425,7 @@
 	}
 	parm {
 	    name	"bend_direction_tex"
-	    label	"Bend direction tex"
+	    label	"Bend Direction Tex"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "0" }
@@ -438,7 +438,7 @@
 	}
 	parm {
 	    name	"initial_direction_tex"
-	    label	"Initial direction tex"
+	    label	"Initial Direction Tex"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "0" }
@@ -451,7 +451,7 @@
 	}
 	parm {
 	    name	"length_tex"
-	    label	"Length tex"
+	    label	"Length Tex"
 	    type	float
 	    default	{ "0" }
 	    help	"A texture for the length"
@@ -463,7 +463,7 @@
 	}
 	parm {
 	    name	"thickness_tex"
-	    label	"Thickness tex"
+	    label	"Thickness Tex"
 	    type	float
 	    default	{ "0" }
 	    help	"A texture for the thickness"
@@ -475,7 +475,7 @@
 	}
 	parm {
 	    name	"gravity_tex"
-	    label	"Gravity tex"
+	    label	"Gravity Tex"
 	    type	float
 	    default	{ "0" }
 	    help	"A texture for the gravity"
@@ -487,7 +487,7 @@
 	}
 	parm {
 	    name	"bend_tex"
-	    label	"Bend tex"
+	    label	"Bend Tex"
 	    type	float
 	    default	{ "0" }
 	    help	"A texture for the bend"
@@ -499,7 +499,7 @@
 	}
 	parm {
 	    name	"density_tex"
-	    label	"Density tex"
+	    label	"Density Tex"
 	    type	float
 	    default	{ "0" }
 	    help	"A texture for the density"
@@ -511,7 +511,7 @@
 	}
 	parm {
 	    name	"curl_tex"
-	    label	"Curl tex"
+	    label	"Curl Tex"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "0" }

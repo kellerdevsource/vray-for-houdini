@@ -102,7 +102,7 @@
 	}
 	parm {
 	    name	"rot_before_trans"
-	    label	"Rot before trans"
+	    label	"Rot Before Trans"
 	    type	toggle
 	    default	{ "1" }
 	    help	"If true, the rotation will be applied before the translation"

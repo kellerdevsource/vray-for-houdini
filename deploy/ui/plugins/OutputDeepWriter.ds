@@ -31,7 +31,7 @@
 	}
 	parm {
 	    name	"float_colors_mode"
-	    label	"Float colors mode"
+	    label	"Float Colors Mode"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Store 32 bit (single precision) color channels in the shade map. When off 16 bit (half precision) values are stored"
@@ -43,7 +43,7 @@
 	}
 	parm {
 	    name	"vrst_compression"
-	    label	"Vrst compression"
+	    label	"Vrst Compression"
 	    type	ordinal
 	    default	{ "1" }
 	    help	"Compression type for the .vrst files (0 - no compression, 1 - ZLIB compression)"
@@ -59,7 +59,7 @@
 	}
 	parm {
 	    name	"exr_compression"
-	    label	"Exr compression"
+	    label	"Exr Compression"
 	    type	ordinal
 	    default	{ "2" }
 	    help	"Compression type for the .exr files (0 - no compression, 1 - RLE compression, 2 - ZIPS compression)"

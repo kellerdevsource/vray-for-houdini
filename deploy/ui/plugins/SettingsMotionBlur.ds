@@ -17,7 +17,7 @@
 	}
 	parm {
 	    name	"on"
-	    label	"Enable motion blur"
+	    label	"Enable Motion Blur"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Use motion blur"
@@ -29,7 +29,7 @@
 	}
 	parm {
 	    name	"geom_samples"
-	    label	"Geometry samples"
+	    label	"Geometry Samples"
 	    type	integer
 	    default	{ "2" }
 	    help	"This determines the number of geometry segments used to approximate motion blur"
@@ -41,7 +41,7 @@
 	}
 	parm {
 	    name	"low_samples"
-	    label	"Prepass samples"
+	    label	"Prepass Samples"
 	    type	integer
 	    default	{ "1" }
 	    help	"This controls how many samples in time will be computed during irradiance map calculations"
@@ -105,7 +105,7 @@
 	}
 	parm {
 	    name	"interval_center"
-	    label	"Interval center"
+	    label	"Interval Center"
 	    type	float
 	    default	{ "0.5" }
 	    help	"Specifies the middle of the motion blur interval with respect to the frame"
@@ -118,7 +118,7 @@
 	}
 	parm {
 	    name	"camera_motion_blur"
-	    label	"Camera motion blur"
+	    label	"Camera Motion Blur"
 	    type	toggle
 	    default	{ "1" }
 	    help	"Use camera motion blur"
@@ -131,7 +131,7 @@
 	}
 	parm {
 	    name	"sampling_type"
-	    label	"Sampling type"
+	    label	"Sampling Type"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"Type of sampling: 0 - normal, 1 - sample only shutter open, 2 - sample only shutter middle"

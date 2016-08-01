@@ -43,7 +43,7 @@
 	}
 	parm {
 	    name	"texture_multiplier"
-	    label	"Texture multiplier"
+	    label	"Texture Multiplier"
 	    type	float
 	    default	{ "1" }
 	    help	"The texture multiplier (blends between the value and the texture)"
@@ -55,7 +55,7 @@
 	}
 	parm {
 	    name	"texture_clamp"
-	    label	"Texture clamp"
+	    label	"Texture Clamp"
 	    type	toggle
 	    default	{ "0" }
 	    help	"true if the texture should be clamped to 1 from above (it is always clamped to 0 from below)"
@@ -67,7 +67,7 @@
 	}
 	parm {
 	    name	"result_multiplier"
-	    label	"Result multiplier"
+	    label	"Result Multiplier"
 	    type	float
 	    default	{ "1" }
 	    help	"A multiplier for the resulit (after inversion, if result_invert is true)"

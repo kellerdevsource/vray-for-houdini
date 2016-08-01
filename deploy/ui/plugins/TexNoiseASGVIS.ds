@@ -42,7 +42,7 @@
 	}
 	parm {
 	    name	"amplitude_ratio"
-	    label	"Amplitude ratio"
+	    label	"Amplitude Ratio"
 	    type	float
 	    default	{ "1" }
 	    help	"amplitude(i+1) = amplitude(i) * amplitude_ratio"
@@ -54,7 +54,7 @@
 	}
 	parm {
 	    name	"frequency_ratio"
-	    label	"Frequency ratio"
+	    label	"Frequency Ratio"
 	    type	float
 	    default	{ "2" }
 	    help	"frequency(i+1) = frequency(i) * frequency_ratio"
@@ -137,7 +137,7 @@
 	}
 	parm {
 	    name	"mix_ratio"
-	    label	"Mix ratio"
+	    label	"Mix Ratio"
 	    type	float
 	    default	{ "0.5" }
 	    help	"0: color1 only, 1: color2 only, 0.5(def.): 50%-50%"
@@ -185,7 +185,7 @@
 	}
 	parm {
 	    name	"color1_tex"
-	    label	"Color1 tex"
+	    label	"Color1 Tex"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "0" }
@@ -197,7 +197,7 @@
 	}
 	parm {
 	    name	"color2_tex"
-	    label	"Color2 tex"
+	    label	"Color2 Tex"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "0" }
@@ -209,7 +209,7 @@
 	}
 	parm {
 	    name	"color1_tex_mult"
-	    label	"Color1 tex mult"
+	    label	"Color1 Tex Mult"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 10 }
@@ -220,7 +220,7 @@
 	}
 	parm {
 	    name	"color2_tex_mult"
-	    label	"Color2 tex mult"
+	    label	"Color2 Tex Mult"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 10 }
@@ -231,7 +231,7 @@
 	}
 	parm {
 	    name	"use_3d_mapping"
-	    label	"Use 3d mapping"
+	    label	"Use 3d Mapping"
 	    type	toggle
 	    default	{ "1" }
 	    range	{ 0 1 }

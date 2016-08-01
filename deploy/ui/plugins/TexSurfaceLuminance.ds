@@ -18,7 +18,7 @@
 	}
 	parm {
 	    name	"luminance_mode"
-	    label	"Luminance mode"
+	    label	"Luminance Mode"
 	    type	ordinal
 	    default	{ "1" }
 	    help	"0: no luminance, 1: direct light, 2: diffuse light, 3: direct+diffuse light"
@@ -48,7 +48,7 @@
 	}
 	parm {
 	    name	"contribute_to_gi"
-	    label	"Contribute to gi"
+	    label	"Contribute To Gi"
 	    type	toggle
 	    default	{ "0" }
 	    help	"If true, the direct light will contribute to the GI calculations. This have visual effect only if the texture is used for diffuse calculation"

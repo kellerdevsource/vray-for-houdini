@@ -94,7 +94,7 @@
 
 	groupsimple {
 	    name	"target_transform"
-	    label	"Target transform"
+	    label	"Target Transform"
 	    grouptag	{ "vray_plugin" "TexSky" }
 	    grouptag	{ "vray_pluginattr" "target_transform" }
 	    grouptag	{ "vray_type" "Transform" }
@@ -195,7 +195,7 @@
 	}
 	parm {
 	    name	"water_vapour"
-	    label	"Water vapour"
+	    label	"Water Vapour"
 	    type	float
 	    default	{ "2" }
 	    range	{ 0 64 }
@@ -206,7 +206,7 @@
 	}
 	parm {
 	    name	"intensity_multiplier"
-	    label	"Intensity multiplier"
+	    label	"Intensity Multiplier"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 64 }
@@ -217,7 +217,7 @@
 	}
 	parm {
 	    name	"size_multiplier"
-	    label	"Size multiplier"
+	    label	"Size Multiplier"
 	    type	float
 	    default	{ "1" }
 	    help	"Controls the visible size of the sun. Affects the appearance of the sun disc as seen by the camera and reflections, as well as the blurriness of the sun shadows"
@@ -229,7 +229,7 @@
 	}
 	parm {
 	    name	"filter_color"
-	    label	"Filter color"
+	    label	"Filter Color"
 	    type	color
 	    size	3
 	    default	{ "1" "1" "1" }
@@ -254,7 +254,7 @@
 	}
 	parm {
 	    name	"horiz_illum"
-	    label	"Horiz illum"
+	    label	"Horiz Illum"
 	    type	float
 	    default	{ "25000" }
 	    help	"Specifies the intensity (in Lx) of the illumination on horizontal surfaces coming from the sky"
@@ -267,7 +267,7 @@
 	}
 	parm {
 	    name	"sky_model"
-	    label	"Sky model"
+	    label	"Sky Model"
 	    type	ordinal
 	    default	{ "3" }
 	    help	"Selects the procedural model used to simulate the TexSky texture"
@@ -285,7 +285,7 @@
 	}
 	parm {
 	    name	"sun_dir_only"
-	    label	"Sun dir only"
+	    label	"Sun Dir Only"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Use only direction of the specified sun (don't inherit all other parameters)"
@@ -321,7 +321,7 @@
 	}
 	parm {
 	    name	"ground_albedo"
-	    label	"Ground albedo"
+	    label	"Ground Albedo"
 	    type	color
 	    size	3
 	    default	{ "0.2" "0.2" "0.2" }
@@ -334,7 +334,7 @@
 	}
 	parm {
 	    name	"color_mode"
-	    label	"Color mode"
+	    label	"Color Mode"
 	    type	integer
 	    default	{ "0" }
 	    help	"This option affects the way the color in the Filter color parameter affects the color of the sun"
@@ -346,7 +346,7 @@
 	}
 	parm {
 	    name	"up_vector"
-	    label	"Up vector"
+	    label	"Up Vector"
 	    type	direction
 	    size	3
 	    default	{ "0" "0" "1" }

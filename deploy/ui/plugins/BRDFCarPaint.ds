@@ -22,7 +22,7 @@
 
 	    parm {
 		name	"base_color"
-		label	"Base color"
+		label	"Base Color"
 		type	color4
 		size	4
 		default	{ "0.3" "0.4" "0.5" "1" }
@@ -34,7 +34,7 @@
 	    }
 	    parm {
 		name	"base_reflection"
-		label	"Base reflection"
+		label	"Base Reflection"
 		type	float
 		default	{ "0.5" }
 		range	{ 0 64 }
@@ -45,7 +45,7 @@
 	    }
 	    parm {
 		name	"base_glossiness"
-		label	"Base glossiness"
+		label	"Base Glossiness"
 		type	float
 		default	{ "0.6" }
 		range	{ 0 64 }
@@ -56,7 +56,7 @@
 	    }
 	    parm {
 		name	"base_bump_float"
-		label	"Base bump float"
+		label	"Base Bump Float"
 		type	float
 		default	{ "0" }
 		help	"Bump texture for the base layer"
@@ -68,7 +68,7 @@
 	    }
 	    parm {
 		name	"base_bump_color"
-		label	"Base bump color"
+		label	"Base Bump Color"
 		type	color4
 		size	4
 		default	{ "0" "0" "0" "1" }
@@ -81,7 +81,7 @@
 	    }
 	    parm {
 		name	"base_bump_amount"
-		label	"Base bump amount"
+		label	"Base Bump Amount"
 		type	float
 		default	{ "0" }
 		help	"Bump amount for the base layer"
@@ -93,7 +93,7 @@
 	    }
 	    parm {
 		name	"base_bump_type"
-		label	"Base bump type"
+		label	"Base Bump Type"
 		type	ordinal
 		default	{ "0" }
 		help	"The type of bump mapping (see BRDFBump for more details)"
@@ -114,7 +114,7 @@
 	    }
 	    parm {
 		name	"base_traceReflections"
-		label	"Base trace reflections"
+		label	"Base Trace Reflections"
 		type	toggle
 		default	{ "1" }
 		help	"Toggle reflections for base layer"
@@ -132,7 +132,7 @@
 
 	    parm {
 		name	"flake_color"
-		label	"Flake color"
+		label	"Flake Color"
 		type	color4
 		size	4
 		default	{ "0.3" "0.4" "0.8" "1" }
@@ -144,7 +144,7 @@
 	    }
 	    parm {
 		name	"flake_glossiness"
-		label	"Flake glossiness"
+		label	"Flake Glossiness"
 		type	float
 		default	{ "0.8" }
 		range	{ 0 64 }
@@ -155,7 +155,7 @@
 	    }
 	    parm {
 		name	"flake_orientation"
-		label	"Flake orientation"
+		label	"Flake Orientation"
 		type	float
 		default	{ "0.3" }
 		range	{ 0 64 }
@@ -166,7 +166,7 @@
 	    }
 	    parm {
 		name	"flake_density"
-		label	"Flake density"
+		label	"Flake Density"
 		type	float
 		default	{ "0.5" }
 		range	{ 0 64 }
@@ -177,7 +177,7 @@
 	    }
 	    parm {
 		name	"flake_scale"
-		label	"Flake scale"
+		label	"Flake Scale"
 		type	float
 		default	{ "0.01" }
 		range	{ 0 64 }
@@ -188,7 +188,7 @@
 	    }
 	    parm {
 		name	"flake_size"
-		label	"Flake size"
+		label	"Flake Size"
 		type	float
 		default	{ "0.5" }
 		range	{ 0 64 }
@@ -199,7 +199,7 @@
 	    }
 	    parm {
 		name	"flake_map_size"
-		label	"Flake map size"
+		label	"Flake Map Size"
 		type	integer
 		default	{ "1024" }
 		help	"The size of the internal flakes map"
@@ -211,7 +211,7 @@
 	    }
 	    parm {
 		name	"flake_filtering_mode"
-		label	"Flake filtering mode"
+		label	"Flake Filtering Mode"
 		type	ordinal
 		default	{ "1" }
 		help	"Flake filtering mode"
@@ -227,7 +227,7 @@
 	    }
 	    parm {
 		name	"flake_seed"
-		label	"Flake seed"
+		label	"Flake Seed"
 		type	integer
 		default	{ "1" }
 		help	"The random seed for the flakes"
@@ -239,7 +239,7 @@
 	    }
 	    parm {
 		name	"flake_uvwgen"
-		label	"Flake uvwgen"
+		label	"Flake Uvwgen"
 		type	oppath
 		default	{ "" }
 		range	{ 0 1 }
@@ -251,7 +251,7 @@
 	    }
 	    parm {
 		name	"flake_traceReflections"
-		label	"Flake trace reflections"
+		label	"Flake Trace Reflections"
 		type	toggle
 		default	{ "1" }
 		help	"Toggle reflections for flake layer"
@@ -269,7 +269,7 @@
 
 	    parm {
 		name	"coat_color"
-		label	"Coat color"
+		label	"Coat Color"
 		type	color4
 		size	4
 		default	{ "1" "1" "1" "1" }
@@ -281,7 +281,7 @@
 	    }
 	    parm {
 		name	"coat_strength"
-		label	"Coat strength"
+		label	"Coat Strength"
 		type	float
 		default	{ "0.05" }
 		range	{ 0 64 }
@@ -292,7 +292,7 @@
 	    }
 	    parm {
 		name	"coat_glossiness"
-		label	"Coat glossiness"
+		label	"Coat Glossiness"
 		type	float
 		default	{ "1" }
 		help	"The glossiness of the coat layer"
@@ -304,7 +304,7 @@
 	    }
 	    parm {
 		name	"coat_bump_float"
-		label	"Coat bump float"
+		label	"Coat Bump Float"
 		type	float
 		default	{ "0" }
 		help	"Bump texture for the coat layer"
@@ -316,7 +316,7 @@
 	    }
 	    parm {
 		name	"coat_bump_color"
-		label	"Coat bump color"
+		label	"Coat Bump Color"
 		type	color4
 		size	4
 		default	{ "0" "0" "0" "1" }
@@ -329,7 +329,7 @@
 	    }
 	    parm {
 		name	"coat_bump_amount"
-		label	"Coat bump amount"
+		label	"Coat Bump Amount"
 		type	float
 		default	{ "0" }
 		help	"Bump amount for the coat layer"
@@ -341,7 +341,7 @@
 	    }
 	    parm {
 		name	"coat_bump_type"
-		label	"Coat bump type"
+		label	"Coat Bump Type"
 		type	ordinal
 		default	{ "0" }
 		help	"The type of bump mapping"
@@ -362,7 +362,7 @@
 	    }
 	    parm {
 		name	"coat_traceReflections"
-		label	"Coat trace reflections"
+		label	"Coat Trace Reflections"
 		type	toggle
 		default	{ "1" }
 		help	"Toggle reflections for coat layer"
@@ -380,7 +380,7 @@
 
 	    parm {
 		name	"traceReflections"
-		label	"Trace reflections"
+		label	"Trace Reflections"
 		type	toggle
 		default	{ "1" }
 		range	{ 0 1 }
@@ -391,7 +391,7 @@
 	    }
 	    parm {
 		name	"doubleSided"
-		label	"Double sided"
+		label	"Double Sided"
 		type	toggle
 		default	{ "1" }
 		range	{ 0 1 }
@@ -413,7 +413,7 @@
 	    }
 	    parm {
 		name	"cutoff_threshold"
-		label	"Cutoff threshold"
+		label	"Cutoff Threshold"
 		type	float
 		default	{ "0.001" }
 		range	{ 0 64 }
@@ -424,7 +424,7 @@
 	    }
 	    parm {
 		name	"mapping_type"
-		label	"Mapping type"
+		label	"Mapping Type"
 		type	ordinal
 		default	{ "0" }
 		help	"The mapping method for the flakes"
@@ -440,7 +440,7 @@
 	    }
 	    parm {
 		name	"mapping_channel"
-		label	"Mapping channel"
+		label	"Mapping Channel"
 		type	integer
 		default	{ "0" }
 		help	"The mapping channel"
@@ -452,7 +452,7 @@
 	    }
 	    parm {
 		name	"environment_override"
-		label	"Environment override"
+		label	"Environment Override"
 		type	color4
 		size	4
 		default	{ "1" "1" "1" "1" }
@@ -466,7 +466,7 @@
 	    }
 	    parm {
 		name	"environment_priority"
-		label	"Environment priority"
+		label	"Environment Priority"
 		type	integer
 		default	{ "0" }
 		help	"Environment override priority (used when several materials override it along a ray path)"
@@ -479,7 +479,7 @@
 	    }
 	    parm {
 		name	"trace_depth"
-		label	"Trace depth"
+		label	"Trace Depth"
 		type	integer
 		default	{ "-1" }
 		help	"The maximum reflection depth (-1 is controlled by the global options)"
@@ -497,7 +497,7 @@
 
 	    parm {
 		name	"use_environment_override"
-		label	"Use environment override"
+		label	"Use Environment Override"
 		type	toggle
 		default	{ "1" }
 		help	"True to use the 'environment override' texture"

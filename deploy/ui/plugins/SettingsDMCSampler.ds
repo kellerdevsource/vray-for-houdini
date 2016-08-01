@@ -17,7 +17,7 @@
 	}
 	parm {
 	    name	"time_dependent"
-	    label	"Animated noise pattern"
+	    label	"Animated Noise Pattern"
 	    type	toggle
 	    default	{ "0" }
 	    help	"This make the samping pattern change with time"
@@ -29,7 +29,7 @@
 	}
 	parm {
 	    name	"adaptive_amount"
-	    label	"Adaptive amount"
+	    label	"Adaptive Amount"
 	    type	float
 	    default	{ "0.85" }
 	    help	"A value of 1.0 means full adaptation; a value of 0.0 means no adaptation"
@@ -41,7 +41,7 @@
 	}
 	parm {
 	    name	"adaptive_threshold"
-	    label	"Adaptive threshold"
+	    label	"Adaptive Threshold"
 	    type	float
 	    default	{ "0.01" }
 	    help	"Controls V-Ray's judgement of when a blurry value is \"good enough\" to be used"
@@ -53,7 +53,7 @@
 	}
 	parm {
 	    name	"adaptive_min_samples"
-	    label	"Adaptive min samples"
+	    label	"Adaptive Min Samples"
 	    type	integer
 	    default	{ "16" }
 	    help	"The minimum number of samples that must be made before the early termination algorithm is used"
@@ -65,7 +65,7 @@
 	}
 	parm {
 	    name	"subdivs_mult"
-	    label	"Subdivs multiplier"
+	    label	"Subdivs Multiplier"
 	    type	float
 	    default	{ "1" }
 	    help	"This will multiply all subdivs values everywhere during rendering"
@@ -78,7 +78,7 @@
 	}
 	parm {
 	    name	"div_shade_subdivs"
-	    label	"Divide shading subdivs"
+	    label	"Divide Shading Subdivs"
 	    type	toggle
 	    default	{ "1" }
 	    help	"Allow VRay to divide the number of samples for lights, materials etc by the number of AA samples in order to achieve roughly the same quality and number of rays when changing AA settings"
@@ -90,7 +90,7 @@
 	}
 	parm {
 	    name	"random_seed"
-	    label	"Random seed"
+	    label	"Random Seed"
 	    type	integer
 	    default	{ "0" }
 	    help	"If non-zero, a random seed for the DMC sampler"
@@ -102,7 +102,7 @@
 	}
 	parm {
 	    name	"use_local_subdivs"
-	    label	"Use local subdivs"
+	    label	"Use Local Subdivs"
 	    type	toggle
 	    default	{ "0" }
 	    help	"If shading subdivs in materials/lights/GI should be used, and false to determine subdivs automatically"

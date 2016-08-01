@@ -17,7 +17,7 @@
 	}
 	parm {
 	    name	"on"
-	    label	"Enable depth-of-field"
+	    label	"Enable Depth-of-field"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Use depth of field"
@@ -42,7 +42,7 @@
 	}
 	parm {
 	    name	"center_bias"
-	    label	"Center bias"
+	    label	"Center Bias"
 	    type	float
 	    default	{ "0" }
 	    help	"This determines the uniformity of the DOF effect"
@@ -65,7 +65,7 @@
 	}
 	parm {
 	    name	"focal_dist"
-	    label	"Focus distance"
+	    label	"Focus Distance"
 	    type	float
 	    default	{ "200" }
 	    help	"Determines the distance from the camera at which objects will be in perfect focus"
@@ -91,7 +91,7 @@
 	}
 	parm {
 	    name	"sides_num"
-	    label	"Number of sides"
+	    label	"Number Of Sides"
 	    type	integer
 	    default	{ "5" }
 	    help	"Number of sides"

@@ -29,7 +29,7 @@
 	}
 	parm {
 	    name	"color_tex"
-	    label	"Color tex"
+	    label	"Color Tex"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "1" }
@@ -41,7 +41,7 @@
 	}
 	parm {
 	    name	"color_tex_mult"
-	    label	"Color tex mult"
+	    label	"Color Tex Mult"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 64 }
@@ -64,7 +64,7 @@
 	}
 	parm {
 	    name	"transparency_tex"
-	    label	"Transparency tex"
+	    label	"Transparency Tex"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "1" }
@@ -76,7 +76,7 @@
 	}
 	parm {
 	    name	"transparency_tex_mult"
-	    label	"Transparency tex mult"
+	    label	"Transparency Tex Mult"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 64 }
@@ -99,7 +99,7 @@
 	}
 	parm {
 	    name	"ior_tex"
-	    label	"Ior tex"
+	    label	"Ior Tex"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 64 }
@@ -121,7 +121,7 @@
 	}
 	parm {
 	    name	"affect_shadows"
-	    label	"Affect shadows"
+	    label	"Affect Shadows"
 	    type	toggle
 	    default	{ "0" }
 	    range	{ 0 1 }
@@ -132,7 +132,7 @@
 	}
 	parm {
 	    name	"affect_alpha"
-	    label	"Affect alpha"
+	    label	"Affect Alpha"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"Determines how refractions affect the alpha channel"
@@ -149,7 +149,7 @@
 	}
 	parm {
 	    name	"trace_refractions"
-	    label	"Trace refractions"
+	    label	"Trace Refractions"
 	    type	toggle
 	    default	{ "1" }
 	    range	{ 0 1 }
@@ -160,7 +160,7 @@
 	}
 	parm {
 	    name	"trace_depth"
-	    label	"Trace depth"
+	    label	"Trace Depth"
 	    type	integer
 	    default	{ "-1" }
 	    help	"The maximum refraction bounces (-1 is controlled by the global options)"
@@ -172,7 +172,7 @@
 	}
 	parm {
 	    name	"exit_color_on"
-	    label	"Exit color on"
+	    label	"Exit Color On"
 	    type	toggle
 	    default	{ "0" }
 	    range	{ 0 1 }
@@ -183,7 +183,7 @@
 	}
 	parm {
 	    name	"reflect_exit_color"
-	    label	"Reflect exit color"
+	    label	"Reflect Exit Color"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "1" }
@@ -197,7 +197,7 @@
 	}
 	parm {
 	    name	"refract_exit_color"
-	    label	"Refract exit color"
+	    label	"Refract Exit Color"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "1" }

@@ -18,7 +18,7 @@
 	}
 	parm {
 	    name	"texture_mode"
-	    label	"Texture mode"
+	    label	"Texture Mode"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"Specifies whether to use the same texture on all axes, or separate textures for each axis"
@@ -34,7 +34,7 @@
 	}
 	parm {
 	    name	"texture_x"
-	    label	"Texture x"
+	    label	"Texture X"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "0" }
@@ -48,7 +48,7 @@
 	}
 	parm {
 	    name	"texture_y"
-	    label	"Texture y"
+	    label	"Texture Y"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "0" }
@@ -63,7 +63,7 @@
 	}
 	parm {
 	    name	"texture_z"
-	    label	"Texture z"
+	    label	"Texture Z"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "0" }
@@ -102,7 +102,7 @@
 	}
 	parm {
 	    name	"frame_offset"
-	    label	"Frame offset"
+	    label	"Frame Offset"
 	    type	direction
 	    size	3
 	    default	{ "0" "0" "0" }
@@ -115,7 +115,7 @@
 	}
 	parm {
 	    name	"texture_rotation"
-	    label	"Texture rotation"
+	    label	"Texture Rotation"
 	    type	angle
 	    size	3
 	    default	{ "0" "0" "0" }
@@ -129,7 +129,7 @@
 	}
 	parm {
 	    name	"random_texture_offset"
-	    label	"Random texture offset"
+	    label	"Random Texture Offset"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Randomize the texture offset in texture space"
@@ -141,7 +141,7 @@
 	}
 	parm {
 	    name	"random_texture_rotation"
-	    label	"Random texture rotation"
+	    label	"Random Texture Rotation"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Randomize the texture rotation from one object to another, in texture space. The \"texture rotation\" parameter, if non-zero, is used as increments for the rotation"
@@ -153,7 +153,7 @@
 	}
 	parm {
 	    name	"random_axis"
-	    label	"Random axis"
+	    label	"Random Axis"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Randomly permute the axes"
@@ -165,7 +165,7 @@
 	}
 	parm {
 	    name	"random_frame_rotation"
-	    label	"Random frame rotation"
+	    label	"Random Frame Rotation"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Random frame rotation (in object or reference space)"
@@ -177,7 +177,7 @@
 	}
 	parm {
 	    name	"random_mode"
-	    label	"Random mode"
+	    label	"Random Mode"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"Specifies what to use to randomize the offset/rotation"
@@ -194,7 +194,7 @@
 	}
 	parm {
 	    name	"ref_space"
-	    label	"Reference space"
+	    label	"Reference Space"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"The space that the projection takes place in, either local object space, or some other object in the scene. If the space is set to reference object(Node), but no object is specified, world space is used"
@@ -210,7 +210,7 @@
 	}
 	groupsimple {
 	    name	"node_ref_transform"
-	    label	"Node ref transform"
+	    label	"Node Ref Transform"
 	    grouptag	{ "vray_plugin" "TexTriPlanar" }
 	    grouptag	{ "vray_pluginattr" "node_ref_transform" }
 	    grouptag	{ "vray_type" "Transform" }

@@ -18,7 +18,7 @@
 	}
 	parm {
 	    name	"cpu_bundle_size"
-	    label	"CPU Ray bundle size"
+	    label	"Cpu Ray Bundle Size"
 	    type	integer
 	    default	{ "128" }
 	    help	"Number of samples to transfer over the network for RT-CPU"
@@ -30,7 +30,7 @@
 	}
 	parm {
 	    name	"cpu_samples_per_pixel"
-	    label	"CPU Rays per pixel"
+	    label	"Cpu Rays Per Pixel"
 	    type	integer
 	    default	{ "4" }
 	    help	"Number of samples per pixel for RT-CPU"
@@ -42,7 +42,7 @@
 	}
 	parm {
 	    name	"gpu_bundle_size"
-	    label	"GPU Ray bundle size"
+	    label	"Gpu Ray Bundle Size"
 	    type	integer
 	    default	{ "128" }
 	    help	"Number of samples to transfer over the network for RT-GPU"
@@ -54,7 +54,7 @@
 	}
 	parm {
 	    name	"gpu_samples_per_pixel"
-	    label	"GPU Rays per pixel"
+	    label	"Gpu Rays Per Pixel"
 	    type	integer
 	    default	{ "1" }
 	    help	"Number of samples per pixel for RT-GPU"
@@ -66,7 +66,7 @@
 	}
 	parm {
 	    name	"trace_depth"
-	    label	"Trace depth"
+	    label	"Trace Depth"
 	    type	integer
 	    default	{ "5" }
 	    help	"Maximum trace depth for reflections/refractions etc"
@@ -78,7 +78,7 @@
 	}
 	parm {
 	    name	"gi_depth"
-	    label	"GI depth"
+	    label	"Gi Depth"
 	    type	integer
 	    default	{ "3" }
 	    help	"Maximum trace depth for GI"
@@ -90,7 +90,7 @@
 	}
 	parm {
 	    name	"coherent_tracing"
-	    label	"Coherent tracing"
+	    label	"Coherent Tracing"
 	    type	toggle
 	    default	{ "0" }
 	    help	"true to enable coherent tracing of gi/reflections/refractions etc"
@@ -102,7 +102,7 @@
 	}
 	parm {
 	    name	"stereo_mode"
-	    label	"Enable stereo"
+	    label	"Enable Stereo"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Enable side-by-side stereo rendering"
@@ -114,7 +114,7 @@
 	}
 	parm {
 	    name	"stereo_eye_distance"
-	    label	"Stereo eye distance"
+	    label	"Stereo Eye Distance"
 	    type	float
 	    default	{ "0.065" }
 	    help	"Distance between the two cameras for stereo mode"
@@ -127,7 +127,7 @@
 	}
 	parm {
 	    name	"stereo_focus"
-	    label	"Stereo focus mode"
+	    label	"Stereo Focus Mode"
 	    type	ordinal
 	    default	{ "2" }
 	    help	"Focus mode"
@@ -145,7 +145,7 @@
 	}
 	parm {
 	    name	"opencl_texsize"
-	    label	"GPU Texture Size"
+	    label	"Gpu Texture Size"
 	    type	integer
 	    default	{ "512" }
 	    help	"OpenCL Single Kernel maximum texture size - bigger textures are scaled to fit this size"
@@ -157,7 +157,7 @@
 	}
 	parm {
 	    name	"opencl_resizeTextures"
-	    label	"GPU Resize textures"
+	    label	"Gpu Resize Textures"
 	    type	ordinal
 	    default	{ "1" }
 	    help	"Textures transfer mode for the GPU"
@@ -174,7 +174,7 @@
 	}
 	parm {
 	    name	"opencl_textureFormat"
-	    label	"GPU Texture Format"
+	    label	"Gpu Texture Format"
 	    type	ordinal
 	    default	{ "1" }
 	    help	"Format for the textures on the GPU"
@@ -191,7 +191,7 @@
 	}
 	parm {
 	    name	"progressive_samples_per_pixel"
-	    label	"Progressive rays per pixel"
+	    label	"Progressive Rays Per Pixel"
 	    type	integer
 	    default	{ "1" }
 	    help	"Progressive increase for samples_per_pixel (from 1 to real value). Use this for faster feadback"
@@ -215,7 +215,7 @@
 	}
 	parm {
 	    name	"disable_render_elements"
-	    label	"Disable render elements"
+	    label	"Disable Render Elements"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Produce only RGBA"
@@ -227,7 +227,7 @@
 	}
 	parm {
 	    name	"max_render_time"
-	    label	"Max. render time (min)"
+	    label	"Max. Render Time (min)"
 	    type	float
 	    default	{ "0" }
 	    help	"Max render time (0 = inf)"
@@ -239,7 +239,7 @@
 	}
 	parm {
 	    name	"max_sample_level"
-	    label	"Max. paths per pixel"
+	    label	"Max. Paths Per Pixel"
 	    type	integer
 	    default	{ "0" }
 	    help	"Max sample level (0 = inf)"
@@ -251,7 +251,7 @@
 	}
 	parm {
 	    name	"noise_threshold"
-	    label	"Max. noise"
+	    label	"Max. Noise"
 	    type	float
 	    default	{ "0.001" }
 	    help	"Noise threshold for the image sampler (0 = inf)"
@@ -263,7 +263,7 @@
 	}
 	parm {
 	    name	"enable_mask"
-	    label	"Show AA mask"
+	    label	"Show Aa Mask"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Show AA mask"
@@ -275,7 +275,7 @@
 	}
 	parm {
 	    name	"max_draw_interval"
-	    label	"Max draw interval"
+	    label	"Max Draw Interval"
 	    type	integer
 	    default	{ "0" }
 	    help	"Max time, in milliseconds, between (partial) image updates (0=disable partial image updates)"
@@ -287,7 +287,7 @@
 	}
 	parm {
 	    name	"min_draw_interval"
-	    label	"Min draw interval"
+	    label	"Min Draw Interval"
 	    type	integer
 	    default	{ "0" }
 	    help	"Min time, in milliseconds, between image updates (0=show all frames)"

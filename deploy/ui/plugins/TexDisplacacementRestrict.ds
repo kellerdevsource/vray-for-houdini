@@ -18,7 +18,7 @@
 	}
 	parm {
 	    name	"input_tex"
-	    label	"Input tex"
+	    label	"Input Tex"
 	    type	float
 	    default	{ "0" }
 	    help	"Input Float Texture"
@@ -30,7 +30,7 @@
 	}
 	parm {
 	    name	"max_displacement"
-	    label	"Max displacement"
+	    label	"Max Displacement"
 	    type	float
 	    default	{ "-1" }
 	    help	"Specifies the maximum displacement value.  If an input value is higher than the Max Displacement value, it will be clipped"

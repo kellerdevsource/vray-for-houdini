@@ -41,7 +41,7 @@
 	}
 	parm {
 	    name	"color_tex_mult"
-	    label	"Color tex mult"
+	    label	"Color Tex Mult"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 64 }
@@ -76,7 +76,7 @@
 	}
 	parm {
 	    name	"translucency_tex_mult"
-	    label	"Translucency tex mult"
+	    label	"Translucency Tex Mult"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 64 }
@@ -98,7 +98,7 @@
 	}
 	parm {
 	    name	"glossiness_tex"
-	    label	"Glossiness tex"
+	    label	"Glossiness Tex"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 64 }
@@ -109,7 +109,7 @@
 	}
 	parm {
 	    name	"glossiness_tex_mult"
-	    label	"Glossiness tex mult"
+	    label	"Glossiness Tex Mult"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 64 }
@@ -142,7 +142,7 @@
 	}
 	parm {
 	    name	"scatter_coeff"
-	    label	"Scatter coeff"
+	    label	"Scatter Coeff"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 64 }
@@ -153,7 +153,7 @@
 	}
 	parm {
 	    name	"scatter_direction"
-	    label	"Scatter direction"
+	    label	"Scatter Direction"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 64 }

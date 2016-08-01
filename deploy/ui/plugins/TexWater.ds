@@ -29,7 +29,7 @@
 	}
 	parm {
 	    name	"height_mult"
-	    label	"Height mult"
+	    label	"Height Mult"
 	    type	float
 	    default	{ "1" }
 	    help	"multiplier for the height of the water"
@@ -41,7 +41,7 @@
 	}
 	parm {
 	    name	"wind_direction"
-	    label	"Wind direction"
+	    label	"Wind Direction"
 	    type	float
 	    default	{ "0" }
 	    help	"direction of the wind"
@@ -53,7 +53,7 @@
 	}
 	parm {
 	    name	"wind_magnitude"
-	    label	"Wind magnitude"
+	    label	"Wind Magnitude"
 	    type	float
 	    default	{ "0" }
 	    help	"magnitude of the wind"
@@ -65,7 +65,7 @@
 	}
 	parm {
 	    name	"wind_direction_mult"
-	    label	"Wind direction mult"
+	    label	"Wind Direction Mult"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 64 }
@@ -76,7 +76,7 @@
 	}
 	parm {
 	    name	"choppy_mult"
-	    label	"Choppy mult"
+	    label	"Choppy Mult"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 64 }
@@ -87,7 +87,7 @@
 	}
 	parm {
 	    name	"movement_rate"
-	    label	"Movement rate"
+	    label	"Movement Rate"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 64 }
@@ -131,7 +131,7 @@
 	}
 	parm {
 	    name	"patch_size"
-	    label	"Patch size"
+	    label	"Patch Size"
 	    type	float
 	    default	{ "128" }
 	    help	"Size of the patch -> real resolution is 2^res"
@@ -143,7 +143,7 @@
 	}
 	parm {
 	    name	"use_3d_mapping"
-	    label	"Use 3d mapping"
+	    label	"Use 3d Mapping"
 	    type	toggle
 	    default	{ "1" }
 	    range	{ 0 1 }

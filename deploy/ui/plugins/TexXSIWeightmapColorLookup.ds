@@ -42,7 +42,7 @@
 	}
 	parm {
 	    name	"weight_min"
-	    label	"Weight min"
+	    label	"Weight Min"
 	    type	float
 	    default	{ "0" }
 	    help	"Minimum weight (w/o factor)"
@@ -54,7 +54,7 @@
 	}
 	parm {
 	    name	"weight_max"
-	    label	"Weight max"
+	    label	"Weight Max"
 	    type	float
 	    default	{ "1" }
 	    help	"Minimum weight (w/o factor)"

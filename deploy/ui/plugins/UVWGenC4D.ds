@@ -17,7 +17,7 @@
 	}
 	parm {
 	    name	"uvw_channel"
-	    label	"Uvw channel"
+	    label	"Uvw Channel"
 	    type	integer
 	    default	{ "1" }
 	    range	{ 0 64 }
@@ -25,7 +25,7 @@
 	}
 	parm {
 	    name	"len_x"
-	    label	"Len x"
+	    label	"Len X"
 	    type	float
 	    default	{ "1" }
 	    help	"X length of the texture"
@@ -34,7 +34,7 @@
 	}
 	parm {
 	    name	"len_y"
-	    label	"Len y"
+	    label	"Len Y"
 	    type	float
 	    default	{ "1" }
 	    help	"Y length of the texture"
@@ -43,7 +43,7 @@
 	}
 	parm {
 	    name	"proj_type"
-	    label	"Proj type"
+	    label	"Proj Type"
 	    type	integer
 	    default	{ "0" }
 	    range	{ 0 64 }
@@ -51,7 +51,7 @@
 	}
 	groupsimple {
 	    name	"tex_transform"
-	    label	"Tex transform"
+	    label	"Tex Transform"
 
 	    parm {
 		name	"tex_transform_xOrd"
@@ -169,7 +169,7 @@
 	}
 	parm {
 	    name	"pixel_aspect"
-	    label	"Pixel aspect"
+	    label	"Pixel Aspect"
 	    type	float
 	    default	{ "1" }
 	    help	"Pixel Aspect"
@@ -178,7 +178,7 @@
 	}
 	parm {
 	    name	"film_aspect"
-	    label	"Film aspect"
+	    label	"Film Aspect"
 	    type	float
 	    default	{ "1" }
 	    help	"Film Aspect"

@@ -31,7 +31,7 @@
 	}
 	parm {
 	    name	"invert_alpha"
-	    label	"Invert alpha"
+	    label	"Invert Alpha"
 	    type	toggle
 	    default	{ "0" }
 	    range	{ 0 1 }

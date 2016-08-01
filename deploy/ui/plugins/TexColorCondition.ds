@@ -19,7 +19,7 @@
 	}
 	parm {
 	    name	"color_a"
-	    label	"Color a"
+	    label	"Color A"
 	    type	color4
 	    size	4
 	    default	{ "1" "1" "1" "1" }
@@ -31,7 +31,7 @@
 	}
 	parm {
 	    name	"alpha_a"
-	    label	"Alpha a"
+	    label	"Alpha A"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 10 }
@@ -42,7 +42,7 @@
 	}
 	parm {
 	    name	"color_b"
-	    label	"Color b"
+	    label	"Color B"
 	    type	color4
 	    size	4
 	    default	{ "1" "1" "1" "1" }
@@ -54,7 +54,7 @@
 	}
 	parm {
 	    name	"alpha_b"
-	    label	"Alpha b"
+	    label	"Alpha B"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 10 }

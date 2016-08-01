@@ -30,7 +30,7 @@
 	}
 	parm {
 	    name	"color_tex"
-	    label	"Color tex"
+	    label	"Color Tex"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "1" }
@@ -42,7 +42,7 @@
 	}
 	parm {
 	    name	"color_tex_mult"
-	    label	"Color tex mult"
+	    label	"Color Tex Mult"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 64 }
@@ -65,7 +65,7 @@
 	}
 	parm {
 	    name	"transparency_tex"
-	    label	"Transparency tex"
+	    label	"Transparency Tex"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "1" }
@@ -77,7 +77,7 @@
 	}
 	parm {
 	    name	"transparency_tex_mult"
-	    label	"Transparency tex mult"
+	    label	"Transparency Tex Mult"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 64 }
@@ -99,7 +99,7 @@
 	}
 	parm {
 	    name	"back_side"
-	    label	"Back side"
+	    label	"Back Side"
 	    type	toggle
 	    default	{ "0" }
 	    range	{ 0 1 }
@@ -110,7 +110,7 @@
 	}
 	parm {
 	    name	"trace_reflections"
-	    label	"Trace reflections"
+	    label	"Trace Reflections"
 	    type	toggle
 	    default	{ "1" }
 	    range	{ 0 1 }
@@ -121,7 +121,7 @@
 	}
 	parm {
 	    name	"trace_depth"
-	    label	"Trace depth"
+	    label	"Trace Depth"
 	    type	integer
 	    default	{ "-1" }
 	    help	"The maximum reflection depth (-1 is controlled by the global options)"
@@ -134,7 +134,7 @@
 	}
 	parm {
 	    name	"affect_alpha"
-	    label	"Affect alpha"
+	    label	"Affect Alpha"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"Specifies how render channels are propagated through the BRDF"
@@ -151,7 +151,7 @@
 	}
 	parm {
 	    name	"reflect_exit_color"
-	    label	"Reflect exit color"
+	    label	"Reflect Exit Color"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "0" }
@@ -164,7 +164,7 @@
 	}
 	parm {
 	    name	"reflect_dim_distance"
-	    label	"Reflect dim distance"
+	    label	"Reflect Dim Distance"
 	    type	float
 	    default	{ "1e+18" }
 	    help	"How much to dim reflection as length of rays increases"
@@ -177,7 +177,7 @@
 	}
 	parm {
 	    name	"reflect_dim_distance_on"
-	    label	"Reflect dim distance on"
+	    label	"Reflect Dim Distance On"
 	    type	toggle
 	    default	{ "0" }
 	    help	"True to enable dim distance"
@@ -190,7 +190,7 @@
 	}
 	parm {
 	    name	"reflect_dim_distance_falloff"
-	    label	"Reflect dim distance falloff"
+	    label	"Reflect Dim Distance Falloff"
 	    type	float
 	    default	{ "0" }
 	    help	"Fall off for the dim distance"
@@ -214,7 +214,7 @@
 	}
 	parm {
 	    name	"hilightGlossiness_tex"
-	    label	"Hilightglossiness tex"
+	    label	"Hilightglossiness Tex"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 64 }
@@ -225,7 +225,7 @@
 	}
 	parm {
 	    name	"hilightGlossiness_tex_mult"
-	    label	"Hilightglossiness tex mult"
+	    label	"Hilightglossiness Tex Mult"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 64 }
@@ -247,7 +247,7 @@
 	}
 	parm {
 	    name	"reflectionGlossiness_tex"
-	    label	"Reflectionglossiness tex"
+	    label	"Reflectionglossiness Tex"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 64 }
@@ -258,7 +258,7 @@
 	}
 	parm {
 	    name	"reflectionGlossiness_tex_mult"
-	    label	"Reflectionglossiness tex mult"
+	    label	"Reflectionglossiness Tex Mult"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 64 }
@@ -280,7 +280,7 @@
 	}
 	parm {
 	    name	"glossyAsGI"
-	    label	"Glossy As GI"
+	    label	"Glossy As Gi"
 	    type	ordinal
 	    default	{ "1" }
 	    help	"Determines if the glossy rays are treated by V-Ray as GI rays"
@@ -297,7 +297,7 @@
 	}
 	parm {
 	    name	"soften_edge"
-	    label	"Soften edge"
+	    label	"Soften Edge"
 	    type	float
 	    default	{ "0" }
 	    help	"Soften edge of the BRDF at light/shadow transition"
@@ -309,7 +309,7 @@
 	}
 	parm {
 	    name	"interpolation_on"
-	    label	"Interpolation on"
+	    label	"Interpolation On"
 	    type	toggle
 	    default	{ "0" }
 	    range	{ 0 1 }
@@ -320,7 +320,7 @@
 	}
 	parm {
 	    name	"imap_min_rate"
-	    label	"Imap min rate"
+	    label	"Imap Min Rate"
 	    type	integer
 	    default	{ "-1" }
 	    disablewhen	"{ interpolation_on != 1 }"
@@ -332,7 +332,7 @@
 	}
 	parm {
 	    name	"imap_max_rate"
-	    label	"Imap max rate"
+	    label	"Imap Max Rate"
 	    type	integer
 	    default	{ "1" }
 	    disablewhen	"{ interpolation_on != 1 }"
@@ -344,7 +344,7 @@
 	}
 	parm {
 	    name	"imap_color_thresh"
-	    label	"Imap color thresh"
+	    label	"Imap Color Thresh"
 	    type	float
 	    default	{ "0.25" }
 	    disablewhen	"{ interpolation_on != 1 }"
@@ -356,7 +356,7 @@
 	}
 	parm {
 	    name	"imap_norm_thresh"
-	    label	"Imap norm thresh"
+	    label	"Imap Norm Thresh"
 	    type	float
 	    default	{ "0.4" }
 	    disablewhen	"{ interpolation_on != 1 }"
@@ -368,7 +368,7 @@
 	}
 	parm {
 	    name	"imap_samples"
-	    label	"Imap samples"
+	    label	"Imap Samples"
 	    type	integer
 	    default	{ "20" }
 	    disablewhen	"{ interpolation_on != 1 }"
@@ -392,7 +392,7 @@
 	}
 	parm {
 	    name	"anisotropy_uvwgen"
-	    label	"Anisotropy uvwgen"
+	    label	"Anisotropy Uvwgen"
 	    type	oppath
 	    default	{ "" }
 	    range	{ 0 1 }
@@ -404,7 +404,7 @@
 	}
 	parm {
 	    name	"anisotropy_rotation"
-	    label	"Anisotropy rotation"
+	    label	"Anisotropy Rotation"
 	    type	float
 	    default	{ "1" }
 	    help	"Anisotropy rotation in the range [0, 1]"
@@ -416,7 +416,7 @@
 	}
 	parm {
 	    name	"fix_dark_edges"
-	    label	"Fix dark edges"
+	    label	"Fix Dark Edges"
 	    type	toggle
 	    default	{ "1" }
 	    help	"true to fix dark edges with glossy reflections; only set this to false for compatibility with older versions"

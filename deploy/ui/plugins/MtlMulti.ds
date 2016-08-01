@@ -17,7 +17,7 @@
 	}
 	parm {
 	    name	"mtlid_gen"
-	    label	"Mtlid gen"
+	    label	"Mtlid Gen"
 	    type	integer
 	    default	{ "1" }
 	    help	"An integer texture that generates material ids; if not present, neither mtlid_gen_float is present then surface material id will be used"
@@ -29,7 +29,7 @@
 	}
 	parm {
 	    name	"mtlid_gen_float"
-	    label	"Mtlid gen float"
+	    label	"Mtlid Gen Float"
 	    type	float
 	    default	{ "1" }
 	    help	"A float texture that generates material ids; if not present, neither mtlid_gen is present then surface material id will be used"
@@ -41,7 +41,7 @@
 	}
 	parm {
 	    name	"wrap_id"
-	    label	"Wrap id"
+	    label	"Wrap Id"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Wrap the material ID's to the largest specified ID for the material"
@@ -66,7 +66,7 @@
 	}
 	parm {
 	    name	"mtls_list"
-	    label	"Mtls list"
+	    label	"Mtls List"
 	    type	oplist
 	    default	{ "" }
 	    help	"A list of the materials"

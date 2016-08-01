@@ -18,7 +18,7 @@
 	}
 	parm {
 	    name	"bake_node"
-	    label	"Bake node"
+	    label	"Bake Node"
 	    type	oppath
 	    default	{ "" }
 	    help	"The node to bake"
@@ -31,7 +31,7 @@
 	}
 	parm {
 	    name	"target_nodes"
-	    label	"Target nodes"
+	    label	"Target Nodes"
 	    type	oplist
 	    default	{ "" }
 	    help	"The target objects for projection baking"
@@ -44,7 +44,7 @@
 	}
 	parm {
 	    name	"bake_uvwgen"
-	    label	"Bake uvwgen"
+	    label	"Bake Uvwgen"
 	    type	oppath
 	    default	{ "" }
 	    help	"The uvw generator"
@@ -69,7 +69,7 @@
 	}
 	parm {
 	    name	"flip_derivs"
-	    label	"Flip derivs"
+	    label	"Flip Derivs"
 	    type	toggle
 	    default	{ "0" }
 	    help	"true to flip the texture direction derivatives (reverses bump mapping)"
@@ -81,7 +81,7 @@
 	}
 	parm {
 	    name	"u_min"
-	    label	"U min"
+	    label	"U Min"
 	    type	float
 	    default	{ "0" }
 	    help	"The minimum u value to bake"
@@ -93,7 +93,7 @@
 	}
 	parm {
 	    name	"v_min"
-	    label	"V min"
+	    label	"V Min"
 	    type	float
 	    default	{ "0" }
 	    help	"The minimum v value to bake"
@@ -105,7 +105,7 @@
 	}
 	parm {
 	    name	"u_max"
-	    label	"U max"
+	    label	"U Max"
 	    type	float
 	    default	{ "1" }
 	    help	"The maximum u value to bake"
@@ -117,7 +117,7 @@
 	}
 	parm {
 	    name	"v_max"
-	    label	"V max"
+	    label	"V Max"
 	    type	float
 	    default	{ "1" }
 	    help	"The maximum v value to bake"
@@ -217,7 +217,7 @@
 	}
 	parm {
 	    name	"projection_baking"
-	    label	"Projection baking"
+	    label	"Projection Baking"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"Projection baking"
@@ -268,7 +268,7 @@
 	}
 	parm {
 	    name	"max_depth"
-	    label	"Max depth"
+	    label	"Max Depth"
 	    type	float
 	    default	{ "0" }
 	    help	"Geometry that is intersected further than this value along the ray will be ignored. If the value is zero then no geometry will be ignored"
@@ -280,7 +280,7 @@
 	}
 	parm {
 	    name	"ray_offset"
-	    label	"Ray offset"
+	    label	"Ray Offset"
 	    type	float
 	    default	{ "0" }
 	    help	"The ray's beginning will be offseted this much along the normal"
@@ -302,7 +302,7 @@
 	}
 	parm {
 	    name	"uv_channel"
-	    label	"Uv channel"
+	    label	"Uv Channel"
 	    type	integer
 	    default	{ "0" }
 	    help	"UV channel to use"
@@ -312,7 +312,7 @@
 	}
 	parm {
 	    name	"bake_material"
-	    label	"Bake material"
+	    label	"Bake Material"
 	    type	string
 	    default	{ "" }
 	    help	"Material for \"Bake By Material\""
@@ -322,7 +322,7 @@
 	}
 	parm {
 	    name	"square_resolution"
-	    label	"Square resolution"
+	    label	"Square Resolution"
 	    type	toggle
 	    default	{ "1" }
 	    help	"Set square resolution"

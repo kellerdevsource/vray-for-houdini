@@ -22,7 +22,7 @@
 
 	    parm {
 		name	"compatibility_with"
-		label	"Compatibility with"
+		label	"Compatibility With"
 		type	ordinal
 		default	{ "0" }
 		help	"This is used to differentiate between textures exported from different applications"
@@ -38,7 +38,7 @@
 	    }
 	    parm {
 		name	"alpha_from_intensity"
-		label	"Alpha from intensity"
+		label	"Alpha From Intensity"
 		type	ordinal
 		default	{ "0" }
 		help	"If 2 - the alpha is forced to 1.0f; 1 - the resulting alpha is the color intensity (if compatibility_with is 0) or the color luminance (if compatibility_with is 1); 0 - the alpha is taken from the bitmap alpha"
@@ -67,7 +67,7 @@
 	    }
 	    parm {
 		name	"invert_alpha"
-		label	"Invert alpha"
+		label	"Invert Alpha"
 		type	toggle
 		default	{ "1" }
 		help	"If true and invert is on, the resulting texture alpha will be inverted too. If false, just the color will be inverted"
@@ -80,7 +80,7 @@
 	    }
 	    parm {
 		name	"color_mult"
-		label	"Color mult"
+		label	"Color Mult"
 		type	color4
 		size	4
 		default	{ "1" "1" "1" "1" }
@@ -93,7 +93,7 @@
 	    }
 	    parm {
 		name	"color_offset"
-		label	"Color offset"
+		label	"Color Offset"
 		type	color4
 		size	4
 		default	{ "0" "0" "0" "1" }
@@ -106,7 +106,7 @@
 	    }
 	    parm {
 		name	"alpha_mult"
-		label	"Alpha mult"
+		label	"Alpha Mult"
 		type	float
 		default	{ "1" }
 		help	"A multiplier for the texture alpha"
@@ -118,7 +118,7 @@
 	    }
 	    parm {
 		name	"alpha_offset"
-		label	"Alpha offset"
+		label	"Alpha Offset"
 		type	float
 		default	{ "0" }
 		help	"An additional offset for the texture alpha"
@@ -130,7 +130,7 @@
 	    }
 	    parm {
 		name	"nouvw_color"
-		label	"No UVs Color"
+		label	"No Uvs Color"
 		type	color4
 		size	4
 		default	{ "0.5" "0.5" "0.5" "1" }
@@ -162,7 +162,7 @@
 	    }
 	    parm {
 		name	"placement_type"
-		label	"Placement type"
+		label	"Placement Type"
 		type	ordinal
 		default	{ "0" }
 		help	"The way the valid portion of the texture is applied"
@@ -244,7 +244,7 @@
 	    }
 	    parm {
 		name	"tile_u"
-		label	"Tile u"
+		label	"Tile U"
 		type	toggle
 		default	{ "1" }
 		help	"If true there is horizontal tiling"
@@ -257,7 +257,7 @@
 	    }
 	    parm {
 		name	"tile_v"
-		label	"Tile v"
+		label	"Tile V"
 		type	toggle
 		default	{ "1" }
 		help	"If true there is vertical tiling"
@@ -270,7 +270,7 @@
 	    }
 	    parm {
 		name	"uv_noise_on"
-		label	"UV noise on"
+		label	"Uv Noise On"
 		type	toggle
 		default	{ "0" }
 		help	"If true the noise is enabled"
@@ -282,7 +282,7 @@
 	    }
 	    parm {
 		name	"uv_noise_animate"
-		label	"Animate UV noise"
+		label	"Animate Uv Noise"
 		type	toggle
 		default	{ "1" }
 		help	"If true the noise is animated"
@@ -295,7 +295,7 @@
 	    }
 	    parm {
 		name	"uv_noise_amount"
-		label	"UV noise amount"
+		label	"Uv Noise Amount"
 		type	float
 		default	{ "1" }
 		help	"UV noise amount"
@@ -308,7 +308,7 @@
 	    }
 	    parm {
 		name	"uv_noise_levels"
-		label	"UV noise levels"
+		label	"Uv Noise Levels"
 		type	float
 		default	{ "1" }
 		help	"UV noise iterations"
@@ -321,7 +321,7 @@
 	    }
 	    parm {
 		name	"uv_noise_size"
-		label	"UV noise size"
+		label	"Uv Noise Size"
 		type	float
 		default	{ "1" }
 		help	"UV noise size"
@@ -334,7 +334,7 @@
 	    }
 	    parm {
 		name	"un_noise_phase"
-		label	"UV noise phase"
+		label	"Uv Noise Phase"
 		type	float
 		default	{ "0" }
 		help	"UV noise phase"
@@ -498,7 +498,7 @@
 	    }
 	    parm {
 		name	"u_offset"
-		label	"U offset"
+		label	"U Offset"
 		type	float
 		default	{ "0" }
 		help	"Spots u offset"
@@ -511,7 +511,7 @@
 	    }
 	    parm {
 		name	"u_tiling"
-		label	"U tiling"
+		label	"U Tiling"
 		type	float
 		default	{ "1" }
 		help	"Spots u tiling"
@@ -524,7 +524,7 @@
 	    }
 	    parm {
 		name	"u_tiling_on"
-		label	"U tiling on"
+		label	"U Tiling On"
 		type	toggle
 		default	{ "0" }
 		help	"Turn on spots u tiling"
@@ -537,7 +537,7 @@
 	    }
 	    parm {
 		name	"v_offset"
-		label	"V offset"
+		label	"V Offset"
 		type	float
 		default	{ "0" }
 		help	"Spots v offset"
@@ -550,7 +550,7 @@
 	    }
 	    parm {
 		name	"v_tiling"
-		label	"V tiling"
+		label	"V Tiling"
 		type	float
 		default	{ "1" }
 		help	"Spots v tiling"
@@ -563,7 +563,7 @@
 	    }
 	    parm {
 		name	"v_tiling_on"
-		label	"V tiling on"
+		label	"V Tiling On"
 		type	toggle
 		default	{ "0" }
 		help	"Turn on v tiling"
@@ -866,7 +866,7 @@
 	    }
 	    parm {
 		name	"ramp_grad_vert"
-		label	"Ramp grad vert"
+		label	"Ramp Grad Vert"
 		type	ramp_rgb
 		default	{ "2" }
 		help	"Vertical gradient"
@@ -879,7 +879,7 @@
 	    }
 	    parm {
 		name	"ramp_grad_horiz"
-		label	"Ramp grad horiz"
+		label	"Ramp Grad Horiz"
 		type	ramp_rgb
 		default	{ "2" }
 		help	"Horizontal gradient"

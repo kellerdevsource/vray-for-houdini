@@ -46,7 +46,7 @@
 	}
 	parm {
 	    name	"gi_min_distance"
-	    label	"Gi min distance"
+	    label	"Gi Min Distance"
 	    type	float
 	    default	{ "0" }
 	    help	"minimal distance for gi rays"
@@ -71,7 +71,7 @@
 	}
 	parm {
 	    name	"compensate_exposure"
-	    label	"Compensate exposure"
+	    label	"Compensate Exposure"
 	    type	toggle
 	    default	{ "1" }
 	    help	"true to compensate for camera exposure"

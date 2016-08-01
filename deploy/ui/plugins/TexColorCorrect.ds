@@ -19,7 +19,7 @@
 	}
 	parm {
 	    name	"in_color"
-	    label	"In color"
+	    label	"In Color"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "1" }
@@ -31,7 +31,7 @@
 	}
 	parm {
 	    name	"in_alpha"
-	    label	"In alpha"
+	    label	"In Alpha"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 10 }
@@ -42,7 +42,7 @@
 	}
 	parm {
 	    name	"unpremultiply_input"
-	    label	"Unpremultiply input"
+	    label	"Unpremultiply Input"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 10 }
@@ -53,7 +53,7 @@
 	}
 	parm {
 	    name	"premultiply_result"
-	    label	"Premultiply result"
+	    label	"Premultiply Result"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 10 }
@@ -64,7 +64,7 @@
 	}
 	parm {
 	    name	"hue_shift"
-	    label	"Hue shift"
+	    label	"Hue Shift"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 10 }
@@ -75,7 +75,7 @@
 	}
 	parm {
 	    name	"sat_gain"
-	    label	"Sat gain"
+	    label	"Sat Gain"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 10 }
@@ -86,7 +86,7 @@
 	}
 	parm {
 	    name	"val_gain"
-	    label	"Val gain"
+	    label	"Val Gain"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 10 }
@@ -97,7 +97,7 @@
 	}
 	parm {
 	    name	"col_gain"
-	    label	"Col gain"
+	    label	"Col Gain"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "1" }
@@ -109,7 +109,7 @@
 	}
 	parm {
 	    name	"col_offset"
-	    label	"Col offset"
+	    label	"Col Offset"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "1" }
@@ -121,7 +121,7 @@
 	}
 	parm {
 	    name	"col_gamma"
-	    label	"Col gamma"
+	    label	"Col Gamma"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "1" }
@@ -133,7 +133,7 @@
 	}
 	parm {
 	    name	"col_clamp"
-	    label	"Col clamp"
+	    label	"Col Clamp"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 10 }
@@ -144,7 +144,7 @@
 	}
 	parm {
 	    name	"col_clamp_min"
-	    label	"Col clamp min"
+	    label	"Col Clamp Min"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "1" }
@@ -156,7 +156,7 @@
 	}
 	parm {
 	    name	"col_clamp_max"
-	    label	"Col clamp max"
+	    label	"Col Clamp Max"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "1" }
@@ -168,7 +168,7 @@
 	}
 	parm {
 	    name	"alpha_gain"
-	    label	"Alpha gain"
+	    label	"Alpha Gain"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 10 }
@@ -179,7 +179,7 @@
 	}
 	parm {
 	    name	"alpha_offset"
-	    label	"Alpha offset"
+	    label	"Alpha Offset"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 10 }
@@ -190,7 +190,7 @@
 	}
 	parm {
 	    name	"alpha_gamma"
-	    label	"Alpha gamma"
+	    label	"Alpha Gamma"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 10 }
@@ -201,7 +201,7 @@
 	}
 	parm {
 	    name	"alpha_clamp"
-	    label	"Alpha clamp"
+	    label	"Alpha Clamp"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 10 }
@@ -212,7 +212,7 @@
 	}
 	parm {
 	    name	"alpha_clamp_min"
-	    label	"Alpha clamp min"
+	    label	"Alpha Clamp Min"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 10 }
@@ -223,7 +223,7 @@
 	}
 	parm {
 	    name	"alpha_clamp_max"
-	    label	"Alpha clamp max"
+	    label	"Alpha Clamp Max"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 10 }

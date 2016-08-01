@@ -29,7 +29,7 @@
 	}
 	parm {
 	    name	"color_set_name"
-	    label	"Color set name"
+	    label	"Color Set Name"
 	    type	string
 	    default	{ "(null)" }
 	    range	{ 0 1 }
@@ -40,7 +40,7 @@
 	}
 	parm {
 	    name	"bake_rgb_color"
-	    label	"Bake rgb color"
+	    label	"Bake Rgb Color"
 	    type	integer
 	    default	{ "1" }
 	    range	{ 0 64 }
@@ -51,7 +51,7 @@
 	}
 	parm {
 	    name	"bake_alpha"
-	    label	"Bake alpha"
+	    label	"Bake Alpha"
 	    type	integer
 	    default	{ "1" }
 	    range	{ 0 64 }

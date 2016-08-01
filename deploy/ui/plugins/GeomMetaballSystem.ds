@@ -291,7 +291,7 @@
 	}
 	parm {
 	    name	"primary_visibility"
-	    label	"Primary visibility"
+	    label	"Primary Visibility"
 	    type	toggle
 	    default	{ "1" }
 	    help	"If off shading an intersection with this geometry will not generate a gbuffer"

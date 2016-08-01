@@ -35,7 +35,7 @@
 	}
 	parm {
 	    name	"transparency_tex_mult"
-	    label	"Transparency tex mult"
+	    label	"Transparency Tex Mult"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 64 }
@@ -51,7 +51,7 @@
 	}
 	parm {
 	    name	"back_side"
-	    label	"Back side"
+	    label	"Back Side"
 	    type	toggle
 	    default	{ "0" }
 	    range	{ 0 1 }
@@ -59,7 +59,7 @@
 	}
 	parm {
 	    name	"trace_reflections"
-	    label	"Trace reflections"
+	    label	"Trace Reflections"
 	    type	toggle
 	    default	{ "1" }
 	    range	{ 0 1 }
@@ -67,7 +67,7 @@
 	}
 	parm {
 	    name	"trace_depth"
-	    label	"Trace depth"
+	    label	"Trace Depth"
 	    type	integer
 	    default	{ "-1" }
 	    help	"The maximum reflection depth (-1 is controlled by the global options)"
@@ -77,7 +77,7 @@
 	}
 	parm {
 	    name	"affect_alpha"
-	    label	"Affect alpha"
+	    label	"Affect Alpha"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"Specifies how render channels are propagated through the BRDF"
@@ -91,7 +91,7 @@
 	}
 	parm {
 	    name	"reflect_exit_color"
-	    label	"Reflect exit color"
+	    label	"Reflect Exit Color"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "1" }
@@ -101,7 +101,7 @@
 	}
 	parm {
 	    name	"reflect_dim_distance"
-	    label	"Reflect dim distance"
+	    label	"Reflect Dim Distance"
 	    type	float
 	    default	{ "1e+18" }
 	    help	"How much to dim reflection as length of rays increases"
@@ -111,7 +111,7 @@
 	}
 	parm {
 	    name	"reflect_dim_distance_on"
-	    label	"Reflect dim distance on"
+	    label	"Reflect Dim Distance On"
 	    type	toggle
 	    default	{ "0" }
 	    help	"True to enable dim distance"
@@ -121,7 +121,7 @@
 	}
 	parm {
 	    name	"reflect_dim_distance_falloff"
-	    label	"Reflect dim distance falloff"
+	    label	"Reflect Dim Distance Falloff"
 	    type	float
 	    default	{ "0" }
 	    help	"Fall off for the dim distance"
@@ -131,7 +131,7 @@
 	}
 	parm {
 	    name	"glossyAsGI"
-	    label	"Glossy As GI"
+	    label	"Glossy As Gi"
 	    type	ordinal
 	    default	{ "1" }
 	    help	"Determines if the glossy rays are treated by V-Ray as GI rays"
@@ -153,7 +153,7 @@
 	}
 	parm {
 	    name	"mtsc_file_path"
-	    label	"Mtsc file path"
+	    label	"Mtsc File Path"
 	    type	file
 	    default	{ "" }
 	    range	{ 0 1 }
@@ -161,7 +161,7 @@
 	}
 	parm {
 	    name	"material_color_filter"
-	    label	"Material color filter"
+	    label	"Material Color Filter"
 	    type	color
 	    size	3
 	    default	{ "1" "1" "1" }
@@ -170,7 +170,7 @@
 	}
 	parm {
 	    name	"tiling_factor"
-	    label	"Tiling factor"
+	    label	"Tiling Factor"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 64 }
@@ -181,7 +181,7 @@
 	}
 	parm {
 	    name	"gamma_correction"
-	    label	"Gamma correction"
+	    label	"Gamma Correction"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 64 }
@@ -197,7 +197,7 @@
 	}
 	parm {
 	    name	"exposure_correction"
-	    label	"Exposure correction"
+	    label	"Exposure Correction"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 64 }
@@ -205,7 +205,7 @@
 	}
 	parm {
 	    name	"map_channel"
-	    label	"Map channel"
+	    label	"Map Channel"
 	    type	integer
 	    default	{ "0" }
 	    range	{ 0 64 }
@@ -213,7 +213,7 @@
 	}
 	parm {
 	    name	"disable_wmap"
-	    label	"Disable wmap"
+	    label	"Disable Wmap"
 	    type	toggle
 	    default	{ "0" }
 	    range	{ 0 1 }
@@ -221,7 +221,7 @@
 	}
 	parm {
 	    name	"coarse_indirect"
-	    label	"Coarse indirect"
+	    label	"Coarse Indirect"
 	    type	toggle
 	    default	{ "1" }
 	    range	{ 0 1 }
@@ -229,7 +229,7 @@
 	}
 	parm {
 	    name	"mult_depth"
-	    label	"Mult depth"
+	    label	"Mult Depth"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 64 }
@@ -237,7 +237,7 @@
 	}
 	parm {
 	    name	"mult_gi"
-	    label	"Mult gi"
+	    label	"Mult Gi"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 64 }
@@ -245,7 +245,7 @@
 	}
 	parm {
 	    name	"mult_direct"
-	    label	"Mult direct"
+	    label	"Mult Direct"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 64 }
@@ -253,7 +253,7 @@
 	}
 	parm {
 	    name	"mult_reflections"
-	    label	"Mult reflections"
+	    label	"Mult Reflections"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 64 }
@@ -285,7 +285,7 @@
 	}
 	parm {
 	    name	"param_block"
-	    label	"Param block"
+	    label	"Param Block"
 	    type	integer
 	    default	{ "0" }
 	    help	"All parameters serialized to a binary param block"

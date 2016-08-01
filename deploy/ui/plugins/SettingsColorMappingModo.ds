@@ -39,7 +39,7 @@
 	}
 	parm {
 	    name	"affect_background"
-	    label	"Affect background"
+	    label	"Affect Background"
 	    type	toggle
 	    default	{ "1" }
 	    help	"True if color mapping should affect the background"
@@ -51,7 +51,7 @@
 	}
 	parm {
 	    name	"dark_mult"
-	    label	"Dark multiplier"
+	    label	"Dark Multiplier"
 	    type	float
 	    default	{ "1" }
 	    help	"Multiplier for dark colors"
@@ -63,7 +63,7 @@
 	}
 	parm {
 	    name	"bright_mult"
-	    label	"Bright multiplier"
+	    label	"Bright Multiplier"
 	    type	float
 	    default	{ "1" }
 	    help	"Multiplier for bright colors"
@@ -87,7 +87,7 @@
 	}
 	parm {
 	    name	"subpixel_mapping"
-	    label	"Subpixel mapping"
+	    label	"Subpixel Mapping"
 	    type	toggle
 	    default	{ "0" }
 	    help	"True if the color mapping should be applied on a subpixel level"
@@ -99,7 +99,7 @@
 	}
 	parm {
 	    name	"clamp_output"
-	    label	"Clamp output"
+	    label	"Clamp Output"
 	    type	toggle
 	    default	{ "0" }
 	    help	"True if colors should be clamped after color mapping"
@@ -111,7 +111,7 @@
 	}
 	parm {
 	    name	"clamp_level"
-	    label	"Clamp level"
+	    label	"Clamp Level"
 	    type	float
 	    default	{ "1" }
 	    help	"The level at which colors will be clamped if clamping is on"
@@ -141,7 +141,7 @@
 	}
 	parm {
 	    name	"linearWorkflow"
-	    label	"Linear workflow"
+	    label	"Linear Workflow"
 	    type	toggle
 	    default	{ "0" }
 	    help	"True to enforce linear workflow"
@@ -153,7 +153,7 @@
 	}
 	parm {
 	    name	"exposure"
-	    label	"Image exposure"
+	    label	"Image Exposure"
 	    type	color
 	    size	3
 	    default	{ "1" "1" "1" }
@@ -179,7 +179,7 @@
 	}
 	parm {
 	    name	"inverse_gamma"
-	    label	"Inverse gamma"
+	    label	"Inverse Gamma"
 	    type	float
 	    default	{ "1" }
 	    help	"Inverse gamma for the the \"Gamma correction\" and \"Intensity gamma\" modes"
@@ -192,7 +192,7 @@
 	}
 	parm {
 	    name	"reinhard_burn_value"
-	    label	"Burn value"
+	    label	"Burn Value"
 	    type	float
 	    default	{ "1" }
 	    help	"Burn value for the Reinhard color mapping"

@@ -18,7 +18,7 @@
 	}
 	parm {
 	    name	"inc_mode"
-	    label	"Inc mode"
+	    label	"Inc Mode"
 	    type	integer
 	    default	{ "0" }
 	    help	"Incidence mode"
@@ -54,7 +54,7 @@
 	}
 	parm {
 	    name	"custom_vector"
-	    label	"Custom vector"
+	    label	"Custom Vector"
 	    type	direction
 	    size	3
 	    default	{ "0" "0" "0" }

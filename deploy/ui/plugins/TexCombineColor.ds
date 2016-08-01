@@ -44,7 +44,7 @@
 	}
 	parm {
 	    name	"texture_multiplier"
-	    label	"Texture multiplier"
+	    label	"Texture Multiplier"
 	    type	float
 	    default	{ "1" }
 	    help	"The texture multiplier (blends between the value and the texture)"
@@ -56,7 +56,7 @@
 	}
 	parm {
 	    name	"result_invert"
-	    label	"Result invert"
+	    label	"Result Invert"
 	    type	toggle
 	    default	{ "0" }
 	    help	"true to invert the result"
@@ -68,7 +68,7 @@
 	}
 	parm {
 	    name	"result_multiplier"
-	    label	"Result multiplier"
+	    label	"Result Multiplier"
 	    type	float
 	    default	{ "1" }
 	    help	"A multiplier for the resulit (after inversion, if result_invert is true)"

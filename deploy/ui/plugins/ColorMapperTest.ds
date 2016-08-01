@@ -42,7 +42,7 @@
 	}
 	parm {
 	    name	"clamp_level"
-	    label	"Clamp level"
+	    label	"Clamp Level"
 	    type	float
 	    default	{ "20" }
 	    help	"The clamp level"

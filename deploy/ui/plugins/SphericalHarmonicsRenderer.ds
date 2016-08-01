@@ -18,7 +18,7 @@
 	}
 	parm {
 	    name	"file_name"
-	    label	"File name"
+	    label	"File Name"
 	    type	file
 	    default	{ "//lightmaps/spherical_harmonics.vrsh" }
 	    help	"This is the name of the *.vrsh file which contains the precomputed SH for this scene"
@@ -31,7 +31,7 @@
 	}
 	parm {
 	    name	"use_single_vrsh"
-	    label	"Use single vrsh"
+	    label	"Use Single Vrsh"
 	    type	toggle
 	    default	{ "1" }
 	    range	{ 0 1 }
@@ -42,7 +42,7 @@
 	}
 	parm {
 	    name	"precalc_light_per_frame"
-	    label	"Precalc light per frame"
+	    label	"Precalc Light Per Frame"
 	    type	toggle
 	    default	{ "1" }
 	    help	"Reasonable when rendering animations. Depending on this option V-Ray calculates the lighting either once at the beginning of the rendering or precalculates it before every frame"
@@ -54,7 +54,7 @@
 	}
 	parm {
 	    name	"sample_environment"
-	    label	"Sample environment"
+	    label	"Sample Environment"
 	    type	toggle
 	    default	{ "1" }
 	    help	"Turns on the environment sampling to add environment light contribution"
@@ -66,7 +66,7 @@
 	}
 	parm {
 	    name	"is_hemispherical"
-	    label	"Upper hemisphere only"
+	    label	"Upper Hemisphere Only"
 	    type	toggle
 	    default	{ "1" }
 	    help	"Depending on this option V-Ray samples either the whole sphere or only the upper hemisphere of the environment"
@@ -90,7 +90,7 @@
 	}
 	parm {
 	    name	"apply_filtering"
-	    label	"Apply filtering"
+	    label	"Apply Filtering"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Turns on the filtering of the spherical harmonics. This is useful to reduce the ringing artifacts (known as Gibbs phenomena in signal processing) by suppressing the high frequencies. This produces blurred SH which result in a smoother image"
@@ -102,7 +102,7 @@
 	}
 	parm {
 	    name	"filter_strength"
-	    label	"Filter strength"
+	    label	"Filter Strength"
 	    type	float
 	    default	{ "0.5" }
 	    help	"The strength of high frequencies' suppression. Values near 0.0 slightly change the image while values near 1.0 smooth it a lot"

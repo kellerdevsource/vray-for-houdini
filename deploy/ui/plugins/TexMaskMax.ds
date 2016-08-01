@@ -43,7 +43,7 @@
 	}
 	parm {
 	    name	"invert_mask"
-	    label	"Invert mask"
+	    label	"Invert Mask"
 	    type	toggle
 	    default	{ "0" }
 	    help	"true to invert the mask"

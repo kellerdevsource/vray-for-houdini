@@ -18,7 +18,7 @@
 	}
 	parm {
 	    name	"base_tex"
-	    label	"Base tex"
+	    label	"Base Tex"
 	    type	float
 	    default	{ "1" }
 	    help	"The base texture"
@@ -30,7 +30,7 @@
 	}
 	parm {
 	    name	"stencil_tex"
-	    label	"Stencil tex"
+	    label	"Stencil Tex"
 	    type	float
 	    default	{ "1" }
 	    help	"The stencil texture. Where stencil_tex is < 0.5 the result color is taken from base_tex, where stencil_tex is >= 0.5 the result is taken from stenciled_value"
@@ -42,7 +42,7 @@
 	}
 	parm {
 	    name	"stenciled_value"
-	    label	"Stenciled value"
+	    label	"Stenciled Value"
 	    type	float
 	    default	{ "0" }
 	    help	"The result where stencil_tex is >= 0.5 "

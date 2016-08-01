@@ -18,7 +18,7 @@
 	}
 	parm {
 	    name	"size_x"
-	    label	"Size x"
+	    label	"Size X"
 	    type	float
 	    default	{ "1" }
 	    help	"The size in the X direction"
@@ -30,7 +30,7 @@
 	}
 	parm {
 	    name	"size_y"
-	    label	"Size y"
+	    label	"Size Y"
 	    type	float
 	    default	{ "1" }
 	    help	"The size in the X direction"
@@ -42,7 +42,7 @@
 	}
 	parm {
 	    name	"size_z"
-	    label	"Size z"
+	    label	"Size Z"
 	    type	float
 	    default	{ "1" }
 	    help	"The size in the X direction"
@@ -54,7 +54,7 @@
 	}
 	parm {
 	    name	"is_volumetric"
-	    label	"Is volumetric"
+	    label	"Is Volumetric"
 	    type	toggle
 	    default	{ "0" }
 	    help	"true to handle the case when the camera is inside the box"

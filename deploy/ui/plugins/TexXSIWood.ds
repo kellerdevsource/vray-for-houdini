@@ -22,7 +22,7 @@
 
 	    parm {
 		name	"compatibility_with"
-		label	"Compatibility with"
+		label	"Compatibility With"
 		type	ordinal
 		default	{ "0" }
 		help	"This is used to differentiate between textures exported from different applications"
@@ -38,7 +38,7 @@
 	    }
 	    parm {
 		name	"alpha_from_intensity"
-		label	"Alpha from intensity"
+		label	"Alpha From Intensity"
 		type	ordinal
 		default	{ "0" }
 		help	"If 2 - the alpha is forced to 1.0f; 1 - the resulting alpha is the color intensity (if compatibility_with is 0) or the color luminance (if compatibility_with is 1); 0 - the alpha is taken from the bitmap alpha"
@@ -67,7 +67,7 @@
 	    }
 	    parm {
 		name	"invert_alpha"
-		label	"Invert alpha"
+		label	"Invert Alpha"
 		type	toggle
 		default	{ "1" }
 		help	"If true and invert is on, the resulting texture alpha will be inverted too. If false, just the color will be inverted"
@@ -80,7 +80,7 @@
 	    }
 	    parm {
 		name	"color_mult"
-		label	"Color mult"
+		label	"Color Mult"
 		type	color4
 		size	4
 		default	{ "1" "1" "1" "1" }
@@ -93,7 +93,7 @@
 	    }
 	    parm {
 		name	"color_offset"
-		label	"Color offset"
+		label	"Color Offset"
 		type	color4
 		size	4
 		default	{ "0" "0" "0" "0" }
@@ -106,7 +106,7 @@
 	    }
 	    parm {
 		name	"alpha_mult"
-		label	"Alpha mult"
+		label	"Alpha Mult"
 		type	float
 		default	{ "1" }
 		help	"A multiplier for the texture alpha"
@@ -118,7 +118,7 @@
 	    }
 	    parm {
 		name	"alpha_offset"
-		label	"Alpha offset"
+		label	"Alpha Offset"
 		type	float
 		default	{ "0" }
 		help	"An additional offset for the texture alpha"
@@ -130,7 +130,7 @@
 	    }
 	    parm {
 		name	"nouvw_color"
-		label	"No UVs Color"
+		label	"No Uvs Color"
 		type	color4
 		size	4
 		default	{ "0.5" "0.5" "0.5" "1" }
@@ -162,7 +162,7 @@
 	    }
 	    parm {
 		name	"placement_type"
-		label	"Placement type"
+		label	"Placement Type"
 		type	ordinal
 		default	{ "0" }
 		help	"The way the valid portion of the texture is applied: 0 - the whole texture is valid, 1 - crop, 2 -place"
@@ -244,7 +244,7 @@
 	    }
 	    parm {
 		name	"tile_u"
-		label	"Tile u"
+		label	"Tile U"
 		type	toggle
 		default	{ "0" }
 		help	"If true there is horizontal tiling"
@@ -257,7 +257,7 @@
 	    }
 	    parm {
 		name	"tile_v"
-		label	"Tile v"
+		label	"Tile V"
 		type	toggle
 		default	{ "0" }
 		help	"If true there is vertical tiling"
@@ -270,7 +270,7 @@
 	    }
 	    parm {
 		name	"uv_noise_on"
-		label	"UV noise on"
+		label	"Uv Noise On"
 		type	toggle
 		default	{ "0" }
 		help	"If true the noise is enabled"
@@ -282,7 +282,7 @@
 	    }
 	    parm {
 		name	"uv_noise_animate"
-		label	"Animate UV noise"
+		label	"Animate Uv Noise"
 		type	toggle
 		default	{ "0" }
 		help	"If true the noise is animated. Use \"UV noise phase\" to animate the noise"
@@ -295,7 +295,7 @@
 	    }
 	    parm {
 		name	"uv_noise_amount"
-		label	"UV noise amount"
+		label	"Uv Noise Amount"
 		type	float
 		default	{ "1" }
 		help	"UV noise amount"
@@ -308,7 +308,7 @@
 	    }
 	    parm {
 		name	"uv_noise_levels"
-		label	"UV noise levels"
+		label	"Uv Noise Levels"
 		type	float
 		default	{ "1" }
 		help	"UV noise iterations"
@@ -321,7 +321,7 @@
 	    }
 	    parm {
 		name	"uv_noise_size"
-		label	"UV noise size"
+		label	"Uv Noise Size"
 		type	float
 		default	{ "1" }
 		help	"UV noise size"
@@ -334,7 +334,7 @@
 	    }
 	    parm {
 		name	"un_noise_phase"
-		label	"UV noise phase"
+		label	"Uv Noise Phase"
 		type	float
 		default	{ "0" }
 		help	"UV noise phase"
@@ -347,7 +347,7 @@
 	    }
 	    parm {
 		name	"filler_color_tex"
-		label	"Filler color tex"
+		label	"Filler Color Tex"
 		type	color4
 		size	4
 		default	{ "0" "0" "0" "0" }
@@ -359,7 +359,7 @@
 	    }
 	    parm {
 		name	"vein_color_tex"
-		label	"Vein color tex"
+		label	"Vein Color Tex"
 		type	color4
 		size	4
 		default	{ "0" "0" "0" "0" }
@@ -371,7 +371,7 @@
 	    }
 	    parm {
 		name	"vein_spread"
-		label	"Vein spread"
+		label	"Vein Spread"
 		type	float
 		default	{ "0.25" }
 		range	{ 0 10 }
@@ -382,7 +382,7 @@
 	    }
 	    parm {
 		name	"grain_color_tex"
-		label	"Grain color tex"
+		label	"Grain Color Tex"
 		type	color4
 		size	4
 		default	{ "0" "0" "0" "0" }
@@ -394,7 +394,7 @@
 	    }
 	    parm {
 		name	"grain_bias"
-		label	"Grain bias"
+		label	"Grain Bias"
 		type	float
 		default	{ "0.5" }
 		range	{ 0 10 }
@@ -405,7 +405,7 @@
 	    }
 	    parm {
 		name	"grain_size"
-		label	"Grain size"
+		label	"Grain Size"
 		type	float
 		default	{ "0.5" }
 		range	{ 0 10 }
@@ -416,7 +416,7 @@
 	    }
 	    parm {
 		name	"grain_density"
-		label	"Grain density"
+		label	"Grain Density"
 		type	float
 		default	{ "0.5" }
 		range	{ 0 10 }
@@ -427,7 +427,7 @@
 	    }
 	    parm {
 		name	"wobbly_struct"
-		label	"Wobbly struct"
+		label	"Wobbly Struct"
 		type	toggle
 		default	{ "1" }
 		range	{ 0 1 }
@@ -449,7 +449,7 @@
 	    }
 	    parm {
 		name	"layer_size"
-		label	"Layer size"
+		label	"Layer Size"
 		type	float
 		default	{ "0.05" }
 		range	{ 0 10 }
@@ -471,7 +471,7 @@
 	    }
 	    parm {
 		name	"center_u"
-		label	"Center u"
+		label	"Center U"
 		type	float
 		default	{ "0.5" }
 		range	{ 0 10 }
@@ -482,7 +482,7 @@
 	    }
 	    parm {
 		name	"center_v"
-		label	"Center v"
+		label	"Center V"
 		type	float
 		default	{ "-0.5" }
 		range	{ 0 10 }
@@ -515,7 +515,7 @@
 	    }
 	    parm {
 		name	"u_amp"
-		label	"U amp"
+		label	"U Amp"
 		type	float
 		default	{ "0" }
 		range	{ 0 10 }
@@ -526,7 +526,7 @@
 	    }
 	    parm {
 		name	"v_amp"
-		label	"V amp"
+		label	"V Amp"
 		type	float
 		default	{ "0" }
 		range	{ 0 10 }

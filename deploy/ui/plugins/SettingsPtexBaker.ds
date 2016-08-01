@@ -30,7 +30,7 @@
 	}
 	parm {
 	    name	"texture_name"
-	    label	"Texture name"
+	    label	"Texture Name"
 	    type	string
 	    default	{ "" }
 	    help	"The base name for the Ptex files"
@@ -42,7 +42,7 @@
 	}
 	parm {
 	    name	"res_u"
-	    label	"Res u"
+	    label	"Res U"
 	    type	integer
 	    default	{ "8" }
 	    help	"The resolution in the U direction in texture space is 2 ^ res_u"
@@ -54,7 +54,7 @@
 	}
 	parm {
 	    name	"res_v"
-	    label	"Res v"
+	    label	"Res V"
 	    type	integer
 	    default	{ "8" }
 	    help	"The resolution in the V direction in texture space is 2 ^ res_v"
@@ -66,7 +66,7 @@
 	}
 	parm {
 	    name	"force_quads"
-	    label	"Force quads"
+	    label	"Force Quads"
 	    type	integer
 	    default	{ "1" }
 	    help	"If true the textures will be quadrangular even if the mesh is purely triangular"
@@ -78,7 +78,7 @@
 	}
 	parm {
 	    name	"data_format"
-	    label	"Data format"
+	    label	"Data Format"
 	    type	integer
 	    default	{ "3" }
 	    help	"Type of texel data: 0 - 8 bit int, 1 - 16 bit int, 2 - 16 bit float, 3 - 32 bit float"
@@ -96,7 +96,7 @@
 	}
 	parm {
 	    name	"write_faces_degrees"
-	    label	"Write faces degrees"
+	    label	"Write Faces Degrees"
 	    type	integer
 	    default	{ "0" }
 	    help	"If true then meta data containing the degree of each mesh polygon will be included in the Ptex files"
@@ -108,7 +108,7 @@
 	}
 	parm {
 	    name	"write_faces_vertices"
-	    label	"Write faces vertices"
+	    label	"Write Faces Vertices"
 	    type	integer
 	    default	{ "0" }
 	    help	"If true then meta data containing the vertices of each mesh polygon will be included in the Ptex files"
@@ -120,7 +120,7 @@
 	}
 	parm {
 	    name	"write_vertex_positions"
-	    label	"Write vertex positions"
+	    label	"Write Vertex Positions"
 	    type	integer
 	    default	{ "0" }
 	    help	"If true then meta data containing the positions of all vertices will be included in the Ptex files"
@@ -132,7 +132,7 @@
 	}
 	parm {
 	    name	"generate_mipmaps"
-	    label	"Generate mipmaps"
+	    label	"Generate Mipmaps"
 	    type	integer
 	    default	{ "1" }
 	    help	"True to generate mipmaps and false otherwise"
@@ -144,7 +144,7 @@
 	}
 	parm {
 	    name	"border_mode_u"
-	    label	"Border mode u"
+	    label	"Border Mode U"
 	    type	integer
 	    default	{ "0" }
 	    help	"Type of border mode in U direction: 0 - clamp, 1 - black, 2 - periodic"
@@ -161,7 +161,7 @@
 	}
 	parm {
 	    name	"border_mode_v"
-	    label	"Border mode v"
+	    label	"Border Mode V"
 	    type	integer
 	    default	{ "0" }
 	    help	"Type of border mode in V direction: 0 - clamp, 1 - black, 2 - periodic"
@@ -178,7 +178,7 @@
 	}
 	parm {
 	    name	"samplers_per_texel"
-	    label	"Samplers per texel"
+	    label	"Samplers Per Texel"
 	    type	integer
 	    default	{ "1" }
 	    help	"The number of samples shaded for each texel will be the square of this number"
@@ -190,7 +190,7 @@
 	}
 	parm {
 	    name	"multichannel_file"
-	    label	"Multichannel file"
+	    label	"Multichannel File"
 	    type	integer
 	    default	{ "1" }
 	    help	"If this is true then all render elements will be baked into one Ptex file"
@@ -202,7 +202,7 @@
 	}
 	parm {
 	    name	"surface_offset"
-	    label	"Surface offset"
+	    label	"Surface Offset"
 	    type	float
 	    default	{ "0.001" }
 	    help	"An offset along the geometric surface normal at which to perform shading in order to avoid surface acne"
@@ -214,7 +214,7 @@
 	}
 	parm {
 	    name	"world_space_res"
-	    label	"World space res"
+	    label	"World Space Res"
 	    type	integer
 	    default	{ "1" }
 	    help	"If true then the resolution for each texture will be calculated adaptively, based on the size of the corresponding geometry"
@@ -226,7 +226,7 @@
 	}
 	parm {
 	    name	"length_u"
-	    label	"Length u"
+	    label	"Length U"
 	    type	float
 	    default	{ "10" }
 	    range	{ 0 64 }
@@ -237,7 +237,7 @@
 	}
 	parm {
 	    name	"length_v"
-	    label	"Length v"
+	    label	"Length V"
 	    type	float
 	    default	{ "10" }
 	    range	{ 0 64 }
@@ -248,7 +248,7 @@
 	}
 	parm {
 	    name	"resolution_multiplier"
-	    label	"Resolution multiplier"
+	    label	"Resolution Multiplier"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 64 }
@@ -259,7 +259,7 @@
 	}
 	parm {
 	    name	"projection_baking"
-	    label	"Projection baking"
+	    label	"Projection Baking"
 	    type	integer
 	    default	{ "0" }
 	    help	"0 - normal baking, 1 - projection baking"
@@ -306,7 +306,7 @@
 	}
 	parm {
 	    name	"ray_offset"
-	    label	"Ray offset"
+	    label	"Ray Offset"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 64 }
@@ -317,7 +317,7 @@
 	}
 	parm {
 	    name	"max_depth"
-	    label	"Max depth"
+	    label	"Max Depth"
 	    type	float
 	    default	{ "0" }
 	    help	"Geometry that is intersected further than this value along the ray will be ignored. If the value is zero then no geometry will be ignored"
@@ -329,7 +329,7 @@
 	}
 	parm {
 	    name	"visibility_test_rays"
-	    label	"Visibility test rays"
+	    label	"Visibility Test Rays"
 	    type	integer
 	    default	{ "32" }
 	    help	"Number of rays shoot to test if sample is actually visible or not. Speeds up shading in the case when parts of the model are occluded. Set to 0 to disable"
@@ -341,7 +341,7 @@
 	}
 	parm {
 	    name	"visibility_test_ray_max_length_factor"
-	    label	"Visibility test ray max length factor"
+	    label	"Visibility Test Ray Max Length Factor"
 	    type	float
 	    default	{ "16" }
 	    help	"Maximum length of visibility test ray. It is adjusted by the sample size. If the ray travels at least this length before hitting another object, the sample is considered visible and is shaded, otherwise it's filled with black when baking to Ptex or entirely ommitted when baking to vrmesh point cloud"

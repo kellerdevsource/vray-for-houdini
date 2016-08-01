@@ -47,7 +47,7 @@
 	}
 	parm {
 	    name	"separate_window"
-	    label	"Separate window"
+	    label	"Separate Window"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Use a separate window for the Realtime Engine"

@@ -30,7 +30,7 @@
 	}
 	parm {
 	    name	"sample_size"
-	    label	"Sample size"
+	    label	"Sample Size"
 	    type	float
 	    default	{ "0.03" }
 	    help	"This determines the spacing of the samples in the light cache"
@@ -43,7 +43,7 @@
 	}
 	parm {
 	    name	"filter_type"
-	    label	"Filter type"
+	    label	"Filter Type"
 	    type	ordinal
 	    default	{ "1" }
 	    help	"The filter determines how irradiance is interpolated from the samples in the light cache"
@@ -61,7 +61,7 @@
 	}
 	parm {
 	    name	"filter_samples"
-	    label	"Filter samples"
+	    label	"Filter Samples"
 	    type	integer
 	    default	{ "5" }
 	    help	"How many of the nearest samples to look up from the light cache"
@@ -74,7 +74,7 @@
 	}
 	parm {
 	    name	"filter_size"
-	    label	"Filter size"
+	    label	"Filter Size"
 	    type	float
 	    default	{ "0.06" }
 	    help	"The size of the filter"
@@ -100,7 +100,7 @@
 	}
 	parm {
 	    name	"prefilter_samples"
-	    label	"Prefilter samples"
+	    label	"Prefilter Samples"
 	    type	integer
 	    default	{ "10" }
 	    help	"Number of prefilter samples"
@@ -126,7 +126,7 @@
 	}
 	parm {
 	    name	"show_calc_phase"
-	    label	"Show calc. phase"
+	    label	"Show Calc. Phase"
 	    type	toggle
 	    default	{ "1" }
 	    help	"Turning this option on will show the paths that are traced"
@@ -139,7 +139,7 @@
 	}
 	parm {
 	    name	"store_direct_light"
-	    label	"Store direct light"
+	    label	"Store Direct Light"
 	    type	toggle
 	    default	{ "1" }
 	    help	"With this option, the light cache will also store and interpolate direct light"
@@ -152,7 +152,7 @@
 	}
 	parm {
 	    name	"world_scale"
-	    label	"World scale"
+	    label	"World Scale"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"This parameter determines the units of the \"Sample size\" and the \"Filter size\""
@@ -203,7 +203,7 @@
 	}
 	parm {
 	    name	"dont_delete"
-	    label	"Don't delete"
+	    label	"Don't Delete"
 	    type	toggle
 	    default	{ "1" }
 	    help	"True if the light cache should not be deleted at the end of the rendering."
@@ -216,7 +216,7 @@
 	}
 	parm {
 	    name	"auto_save"
-	    label	"Auto save"
+	    label	"Auto Save"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Auto save Light Cache"
@@ -229,7 +229,7 @@
 	}
 	parm {
 	    name	"auto_save_file"
-	    label	"Auto save file"
+	    label	"Auto Save File"
 	    type	file
 	    default	{ "//lightmaps/light_cache.vrmap" }
 	    help	"Light cache auto save file name"
@@ -245,7 +245,7 @@
 	}
 	parm {
 	    name	"num_passes"
-	    label	"Number of passes"
+	    label	"Number Of Passes"
 	    type	integer
 	    default	{ "4" }
 	    help	"The light cache is computed in several passes, which are then combined into the final light cache"
@@ -258,7 +258,7 @@
 	}
 	parm {
 	    name	"use_for_glossy_rays"
-	    label	"Use for glossy rays"
+	    label	"Use For Glossy Rays"
 	    type	toggle
 	    default	{ "0" }
 	    help	"If this option is on, the light cache will be used to compute lighting for glossy rays as well, in addition to normal GI rays"
@@ -271,7 +271,7 @@
 	}
 	parm {
 	    name	"adaptive_sampling"
-	    label	"Adaptive sampling"
+	    label	"Adaptive Sampling"
 	    type	toggle
 	    default	{ "0" }
 	    help	"When this option is on, V-Ray will store additional information about the incoming light for each light cache sample, and try to put more samples into the directions from which more light coming"
@@ -284,7 +284,7 @@
 	}
 	parm {
 	    name	"multiple_views"
-	    label	"Use camera path"
+	    label	"Use Camera Path"
 	    type	toggle
 	    default	{ "0" }
 	    help	"When this option is on, V-Ray will calculate the light cache samples for the entire camera path, instead of just the current view, in the same way as this is done for the Fly-through mode"
@@ -297,7 +297,7 @@
 	}
 	parm {
 	    name	"retrace_enabled"
-	    label	"Use retrace threshold"
+	    label	"Use Retrace Threshold"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Enable retrace of light cache"
@@ -310,7 +310,7 @@
 	}
 	parm {
 	    name	"retrace_threshold"
-	    label	"Retrace threshold"
+	    label	"Retrace Threshold"
 	    type	float
 	    default	{ "1" }
 	    help	"Retrace treshold, relative to the light cache sample size"
@@ -344,7 +344,7 @@
 	}
 	parm {
 	    name	"retrace_leak_prevention"
-	    label	"Leak prevention"
+	    label	"Leak Prevention"
 	    type	float
 	    default	{ "0" }
 	    help	"Enables additional checks to mimize light leaks; 0.0 means no checks"

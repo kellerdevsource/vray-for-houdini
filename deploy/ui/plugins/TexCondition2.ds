@@ -39,7 +39,7 @@
 	}
 	parm {
 	    name	"first_term"
-	    label	"First term"
+	    label	"First Term"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 10 }
@@ -50,7 +50,7 @@
 	}
 	parm {
 	    name	"second_term"
-	    label	"Second term"
+	    label	"Second Term"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 10 }
@@ -61,7 +61,7 @@
 	}
 	parm {
 	    name	"color_if_true"
-	    label	"Color if true"
+	    label	"Color If True"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "1" }
@@ -73,7 +73,7 @@
 	}
 	parm {
 	    name	"color_if_false"
-	    label	"Color if false"
+	    label	"Color If False"
 	    type	color4
 	    size	4
 	    default	{ "1" "1" "1" "1" }

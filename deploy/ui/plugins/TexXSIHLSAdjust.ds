@@ -22,7 +22,7 @@
 
 	    parm {
 		name	"compatibility_with"
-		label	"Compatibility with"
+		label	"Compatibility With"
 		type	ordinal
 		default	{ "0" }
 		help	"This is used to differentiate between textures exported from different applications"
@@ -38,7 +38,7 @@
 	    }
 	    parm {
 		name	"alpha_from_intensity"
-		label	"Alpha from intensity"
+		label	"Alpha From Intensity"
 		type	ordinal
 		default	{ "0" }
 		help	"If 2 - the alpha is forced to 1.0f; 1 - the resulting alpha is the color intensity (if compatibility_with is 0) or the color luminance (if compatibility_with is 1); 0 - the alpha is taken from the bitmap alpha"
@@ -67,7 +67,7 @@
 	    }
 	    parm {
 		name	"invert_alpha"
-		label	"Invert alpha"
+		label	"Invert Alpha"
 		type	toggle
 		default	{ "1" }
 		help	"If true and invert is on, the resulting texture alpha will be inverted too. If false, just the color will be inverted"
@@ -80,7 +80,7 @@
 	    }
 	    parm {
 		name	"color_mult"
-		label	"Color mult"
+		label	"Color Mult"
 		type	color4
 		size	4
 		default	{ "1" "1" "1" "1" }
@@ -93,7 +93,7 @@
 	    }
 	    parm {
 		name	"color_offset"
-		label	"Color offset"
+		label	"Color Offset"
 		type	color4
 		size	4
 		default	{ "0" "0" "0" "0" }
@@ -106,7 +106,7 @@
 	    }
 	    parm {
 		name	"alpha_mult"
-		label	"Alpha mult"
+		label	"Alpha Mult"
 		type	float
 		default	{ "1" }
 		help	"A multiplier for the texture alpha"
@@ -118,7 +118,7 @@
 	    }
 	    parm {
 		name	"alpha_offset"
-		label	"Alpha offset"
+		label	"Alpha Offset"
 		type	float
 		default	{ "0" }
 		help	"An additional offset for the texture alpha"
@@ -130,7 +130,7 @@
 	    }
 	    parm {
 		name	"nouvw_color"
-		label	"No UVs Color"
+		label	"No Uvs Color"
 		type	color4
 		size	4
 		default	{ "0.5" "0.5" "0.5" "1" }
@@ -143,7 +143,7 @@
 	    }
 	    parm {
 		name	"xsi_color"
-		label	"Xsi color"
+		label	"Xsi Color"
 		type	color4
 		size	4
 		default	{ "0" "0" "0" "0" }
@@ -156,7 +156,7 @@
 	    }
 	    parm {
 		name	"master_h"
-		label	"Master h"
+		label	"Master H"
 		type	float
 		default	{ "0" }
 		help	"master hue"
@@ -168,7 +168,7 @@
 	    }
 	    parm {
 		name	"master_l"
-		label	"Master l"
+		label	"Master L"
 		type	float
 		default	{ "0" }
 		help	"master lightness"
@@ -180,7 +180,7 @@
 	    }
 	    parm {
 		name	"master_s"
-		label	"Master s"
+		label	"Master S"
 		type	float
 		default	{ "0" }
 		help	"master saturation"
@@ -192,7 +192,7 @@
 	    }
 	    parm {
 		name	"red_h"
-		label	"Red h"
+		label	"Red H"
 		type	float
 		default	{ "0" }
 		help	"red hue"
@@ -204,7 +204,7 @@
 	    }
 	    parm {
 		name	"red_l"
-		label	"Red l"
+		label	"Red L"
 		type	float
 		default	{ "0" }
 		help	"red lightness"
@@ -216,7 +216,7 @@
 	    }
 	    parm {
 		name	"red_s"
-		label	"Red s"
+		label	"Red S"
 		type	float
 		default	{ "0" }
 		help	"red saturation"
@@ -228,7 +228,7 @@
 	    }
 	    parm {
 		name	"green_h"
-		label	"Green h"
+		label	"Green H"
 		type	float
 		default	{ "0" }
 		help	"green hue"
@@ -240,7 +240,7 @@
 	    }
 	    parm {
 		name	"green_l"
-		label	"Green l"
+		label	"Green L"
 		type	float
 		default	{ "0" }
 		help	"green lightness"
@@ -252,7 +252,7 @@
 	    }
 	    parm {
 		name	"green_s"
-		label	"Green s"
+		label	"Green S"
 		type	float
 		default	{ "0" }
 		help	"green saturation"
@@ -264,7 +264,7 @@
 	    }
 	    parm {
 		name	"blue_h"
-		label	"Blue h"
+		label	"Blue H"
 		type	float
 		default	{ "0" }
 		help	"blue hue"
@@ -276,7 +276,7 @@
 	    }
 	    parm {
 		name	"blue_l"
-		label	"Blue l"
+		label	"Blue L"
 		type	float
 		default	{ "0" }
 		help	"blue lightness"
@@ -288,7 +288,7 @@
 	    }
 	    parm {
 		name	"blue_s"
-		label	"Blue s"
+		label	"Blue S"
 		type	float
 		default	{ "0" }
 		help	"blue saturation"
@@ -300,7 +300,7 @@
 	    }
 	    parm {
 		name	"cyan_h"
-		label	"Cyan h"
+		label	"Cyan H"
 		type	float
 		default	{ "0" }
 		help	"cyan hue"
@@ -312,7 +312,7 @@
 	    }
 	    parm {
 		name	"cyan_l"
-		label	"Cyan l"
+		label	"Cyan L"
 		type	float
 		default	{ "0" }
 		help	"cyan lightness"
@@ -324,7 +324,7 @@
 	    }
 	    parm {
 		name	"cyan_s"
-		label	"Cyan s"
+		label	"Cyan S"
 		type	float
 		default	{ "0" }
 		help	"cyan saturation"
@@ -336,7 +336,7 @@
 	    }
 	    parm {
 		name	"yellow_h"
-		label	"Yellow h"
+		label	"Yellow H"
 		type	float
 		default	{ "0" }
 		help	"yellow hue"
@@ -348,7 +348,7 @@
 	    }
 	    parm {
 		name	"yellow_l"
-		label	"Yellow l"
+		label	"Yellow L"
 		type	float
 		default	{ "0" }
 		help	"yellow lightness"
@@ -360,7 +360,7 @@
 	    }
 	    parm {
 		name	"yellow_s"
-		label	"Yellow s"
+		label	"Yellow S"
 		type	float
 		default	{ "0" }
 		help	"yellow saturation"
@@ -372,7 +372,7 @@
 	    }
 	    parm {
 		name	"magenta_h"
-		label	"Magenta h"
+		label	"Magenta H"
 		type	float
 		default	{ "0" }
 		help	"yellow hue"
@@ -384,7 +384,7 @@
 	    }
 	    parm {
 		name	"magenta_l"
-		label	"Magenta l"
+		label	"Magenta L"
 		type	float
 		default	{ "0" }
 		help	"yellow lightness"
@@ -396,7 +396,7 @@
 	    }
 	    parm {
 		name	"magenta_s"
-		label	"Magenta s"
+		label	"Magenta S"
 		type	float
 		default	{ "0" }
 		help	"yellow saturation"

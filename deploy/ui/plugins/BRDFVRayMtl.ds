@@ -34,7 +34,7 @@
 	    }
 	    parm {
 		name	"diffuse"
-		label	"Diffuse color"
+		label	"Diffuse Color"
 		type	color4
 		size	4
 		default	{ "0.5" "0.5" "0.5" "1" }
@@ -47,7 +47,7 @@
 	    }
 	    parm {
 		name	"roughness"
-		label	"Diffuse roughness"
+		label	"Diffuse Roughness"
 		type	float
 		default	{ "0" }
 		help	"The roughness of the diffuse part of the material"
@@ -59,7 +59,7 @@
 	    }
 	    parm {
 		name	"self_illumination"
-		label	"Self-Illumination color"
+		label	"Self-illumination Color"
 		type	color4
 		size	4
 		default	{ "0" "0" "0" "1" }
@@ -72,7 +72,7 @@
 	    }
 	    parm {
 		name	"self_illumination_gi"
-		label	"Self-Illumination affects GI"
+		label	"Self-illumination Affects Gi"
 		type	toggle
 		default	{ "1" }
 		help	"true if the self-illumination should affect GI"
@@ -90,7 +90,7 @@
 
 	    parm {
 		name	"brdf_type"
-		label	"BRDF Type"
+		label	"Brdf Type"
 		type	ordinal
 		default	{ "1" }
 		help	"The BRDF type"
@@ -108,7 +108,7 @@
 	    }
 	    parm {
 		name	"reflect"
-		label	"Reflection color"
+		label	"Reflection Color"
 		type	color4
 		size	4
 		default	{ "0" "0" "0" "1" }
@@ -121,7 +121,7 @@
 	    }
 	    parm {
 		name	"reflect_glossiness"
-		label	"Reflection glossiness"
+		label	"Reflection Glossiness"
 		type	float
 		default	{ "1" }
 		help	"The glossiness of the reflections"
@@ -133,7 +133,7 @@
 	    }
 	    parm {
 		name	"hilight_glossiness"
-		label	"Hilight glossiness"
+		label	"Hilight Glossiness"
 		type	float
 		default	{ "1" }
 		help	"The glossiness of the hilights"
@@ -146,7 +146,7 @@
 	    }
 	    parm {
 		name	"hilight_glossiness_lock"
-		label	"Lock hilight glossiness"
+		label	"Lock Hilight Glossiness"
 		type	toggle
 		default	{ "1" }
 		help	"true to use the reflection glossiness also for hilights (hilight_glossiness is ignored)"
@@ -158,7 +158,7 @@
 	    }
 	    parm {
 		name	"fresnel"
-		label	"Fresnel reflections"
+		label	"Fresnel Reflections"
 		type	toggle
 		default	{ "1" }
 		help	"true to enable fresnel reflections"
@@ -170,7 +170,7 @@
 	    }
 	    parm {
 		name	"fresnel_ior"
-		label	"Fresnel IOR"
+		label	"Fresnel Ior"
 		type	float
 		default	{ "1.6" }
 		help	"The ior for calculating the Fresnel term"
@@ -183,7 +183,7 @@
 	    }
 	    parm {
 		name	"fresnel_ior_lock"
-		label	"Lock fresnel IOR"
+		label	"Lock Fresnel Ior"
 		type	toggle
 		default	{ "1" }
 		help	"true to use the refraction ior also for the Fresnel term (fresnel_ior is ignored)"
@@ -208,7 +208,7 @@
 	    }
 	    parm {
 		name	"reflect_trace"
-		label	"Trace reflections"
+		label	"Trace Reflections"
 		type	toggle
 		default	{ "1" }
 		help	"true to trace reflections and false to only do hilights"
@@ -220,7 +220,7 @@
 	    }
 	    parm {
 		name	"reflect_depth"
-		label	"Max depth"
+		label	"Max Depth"
 		type	integer
 		default	{ "5" }
 		help	"The maximum depth for reflections"
@@ -232,7 +232,7 @@
 	    }
 	    parm {
 		name	"reflect_exit_color"
-		label	"Exit color"
+		label	"Exit Color"
 		type	color
 		size	3
 		default	{ "0" "0" "0" }
@@ -257,7 +257,7 @@
 	    }
 	    parm {
 		name	"reflect_dim_distance"
-		label	"Dim distance"
+		label	"Dim Distance"
 		type	float
 		default	{ "1e+18" }
 		help	"How much to dim reflection as length of rays increases"
@@ -270,7 +270,7 @@
 	    }
 	    parm {
 		name	"reflect_dim_distance_on"
-		label	"Enable dim distance"
+		label	"Enable Dim Distance"
 		type	toggle
 		default	{ "0" }
 		help	"True to enable dim distance"
@@ -282,7 +282,7 @@
 	    }
 	    parm {
 		name	"reflect_dim_distance_falloff"
-		label	"Dim fall-off"
+		label	"Dim Fall-off"
 		type	float
 		default	{ "0" }
 		help	"Fall off for the dim distance"
@@ -324,7 +324,7 @@
 	    }
 	    parm {
 		name	"anisotropy_rotation"
-		label	"Anisotropy rotation"
+		label	"Anisotropy Rotation"
 		type	float
 		default	{ "0" }
 		help	"The rotation of the anisotropy axes, from 0.0 to 1.0"
@@ -336,7 +336,7 @@
 	    }
 	    parm {
 		name	"anisotropy_derivation"
-		label	"UV Vectors Derivation"
+		label	"Uv Vectors Derivation"
 		type	ordinal
 		default	{ "0" }
 		help	"What method to use for deriving anisotropy axes"
@@ -370,7 +370,7 @@
 	    }
 	    parm {
 		name	"anisotropy_uvwgen"
-		label	"Anisotropy uvwgen"
+		label	"Anisotropy Uvwgen"
 		type	oppath
 		default	{ "" }
 		help	"The uvw generator to use for anisotropy when anisotropy_derivation is 1"
@@ -389,7 +389,7 @@
 
 	    parm {
 		name	"refract"
-		label	"Refraction color"
+		label	"Refraction Color"
 		type	color4
 		size	4
 		default	{ "0" "0" "0" "1" }
@@ -402,7 +402,7 @@
 	    }
 	    parm {
 		name	"refract_ior"
-		label	"Refraction IOR"
+		label	"Refraction Ior"
 		type	float
 		default	{ "1.6" }
 		help	"The IOR for refractions"
@@ -414,7 +414,7 @@
 	    }
 	    parm {
 		name	"refract_glossiness"
-		label	"Refraction glossiness"
+		label	"Refraction Glossiness"
 		type	float
 		default	{ "1" }
 		help	"Glossiness for refractions"
@@ -438,7 +438,7 @@
 	    }
 	    parm {
 		name	"refract_trace"
-		label	"Trace refractions"
+		label	"Trace Refractions"
 		type	toggle
 		default	{ "1" }
 		help	"1 to trace refractions; 0 to disable them"
@@ -450,7 +450,7 @@
 	    }
 	    parm {
 		name	"refract_depth"
-		label	"Max depth"
+		label	"Max Depth"
 		type	integer
 		default	{ "5" }
 		help	"The maximum depth for refractions"
@@ -462,7 +462,7 @@
 	    }
 	    parm {
 		name	"refract_exit_color"
-		label	"Exit color"
+		label	"Exit Color"
 		type	color
 		size	3
 		default	{ "0" "0" "0" }
@@ -476,7 +476,7 @@
 	    }
 	    parm {
 		name	"refract_exit_color_on"
-		label	"Use exit color"
+		label	"Use Exit Color"
 		type	toggle
 		default	{ "0" }
 		help	"If false, when the maximum refraction depth is reached, the material is assumed transparent, instead of terminating the ray"
@@ -488,7 +488,7 @@
 	    }
 	    parm {
 		name	"refract_affect_alpha"
-		label	"Affect alpha"
+		label	"Affect Alpha"
 		type	ordinal
 		default	{ "0" }
 		help	"Determines how refractions affect the alpha channel"
@@ -505,7 +505,7 @@
 	    }
 	    parm {
 		name	"refract_affect_shadows"
-		label	"Affect shadows"
+		label	"Affect Shadows"
 		type	toggle
 		default	{ "1" }
 		help	"true to enable the refraction to affect the shadows cast by the material (as transparent shadows)"
@@ -517,7 +517,7 @@
 	    }
 	    parm {
 		name	"dispersion_on"
-		label	"Enable dispersion"
+		label	"Enable Dispersion"
 		type	toggle
 		default	{ "0" }
 		help	"true to enable dispersion"
@@ -548,7 +548,7 @@
 
 	    parm {
 		name	"fog_color"
-		label	"Fog color"
+		label	"Fog Color"
 		type	color
 		size	3
 		default	{ "1" "1" "1" }
@@ -561,7 +561,7 @@
 	    }
 	    parm {
 		name	"fog_color_tex"
-		label	"Fog color"
+		label	"Fog Color"
 		type	color4
 		size	4
 		default	{ "1" "1" "1" "1" }
@@ -574,7 +574,7 @@
 	    }
 	    parm {
 		name	"fog_mult"
-		label	"Fog multiplier"
+		label	"Fog Multiplier"
 		type	float
 		default	{ "1" }
 		help	"Multiplier for the absorption"
@@ -586,7 +586,7 @@
 	    }
 	    parm {
 		name	"fog_bias"
-		label	"Fog bias"
+		label	"Fog Bias"
 		type	float
 		default	{ "0" }
 		help	"Bias for the absorption"
@@ -598,7 +598,7 @@
 	    }
 	    parm {
 		name	"fog_unit_scale_on"
-		label	"Fog multiplier in centimeters^-1"
+		label	"Fog Multiplier In Centimeters^-1"
 		type	toggle
 		default	{ "1" }
 		help	"Enable unit scale multiplication, when calculating absorption"
@@ -616,7 +616,7 @@
 
 	    parm {
 		name	"translucency"
-		label	"Translucency type"
+		label	"Translucency Type"
 		type	ordinal
 		default	{ "0" }
 		help	"Translucency mode"
@@ -634,7 +634,7 @@
 	    }
 	    parm {
 		name	"translucency_color"
-		label	"Translucency color"
+		label	"Translucency Color"
 		type	color4
 		size	4
 		default	{ "1" "1" "1" "1" }
@@ -648,7 +648,7 @@
 	    }
 	    parm {
 		name	"translucency_light_mult"
-		label	"Light multiplier"
+		label	"Light Multiplier"
 		type	float
 		default	{ "1" }
 		help	"A multiplier for the calculated lighting for the translucency effect"
@@ -661,7 +661,7 @@
 	    }
 	    parm {
 		name	"translucency_scatter_dir"
-		label	"Scatter direction"
+		label	"Scatter Direction"
 		type	float
 		default	{ "0.5" }
 		help	"Scatter direction (0.0f is backward, 1.0f is forward)"
@@ -674,7 +674,7 @@
 	    }
 	    parm {
 		name	"translucency_scatter_coeff"
-		label	"Scatter coeff"
+		label	"Scatter Coeff"
 		type	float
 		default	{ "0" }
 		help	"Scattering cone (0.0f - no scattering, 1.0f - full scattering"
@@ -687,7 +687,7 @@
 	    }
 	    parm {
 		name	"translucency_thickness"
-		label	"Maximum thickness"
+		label	"Maximum Thickness"
 		type	float
 		default	{ "1e+18" }
 		help	"Maximum distance to trace inside the object"
@@ -718,7 +718,7 @@
 	    }
 	    parm {
 		name	"option_reflect_on_back"
-		label	"Reflect on back side"
+		label	"Reflect On Back Side"
 		type	toggle
 		default	{ "0" }
 		help	"true to compute reflections for back sides of objects"
@@ -730,7 +730,7 @@
 	    }
 	    parm {
 		name	"option_glossy_rays_as_gi"
-		label	"Glossy rays as GI"
+		label	"Glossy Rays As Gi"
 		type	ordinal
 		default	{ "1" }
 		help	"Specifies when to treat GI rays as glossy rays"
@@ -759,7 +759,7 @@
 	    }
 	    parm {
 		name	"option_use_irradiance_map"
-		label	"Use irradiance map"
+		label	"Use Irradiance Map"
 		type	toggle
 		default	{ "1" }
 		help	"false to perform local brute-force GI calculatons and true to use the current GI engine"
@@ -771,7 +771,7 @@
 	    }
 	    parm {
 		name	"option_energy_mode"
-		label	"Energy preservation"
+		label	"Energy Preservation"
 		type	ordinal
 		default	{ "0" }
 		help	"Energy preservation mode for reflections and refractions"
@@ -787,7 +787,7 @@
 	    }
 	    parm {
 		name	"option_fix_dark_edges"
-		label	"Fix dark edges"
+		label	"Fix Dark Edges"
 		type	toggle
 		default	{ "1" }
 		help	"true to fix dark edges for glossy reflections with low samples; only set this to false for compatibility with older versions"
@@ -799,7 +799,7 @@
 	    }
 	    parm {
 		name	"environment_override"
-		label	"Environment override"
+		label	"Environment Override"
 		type	color4
 		size	4
 		default	{ "1" "1" "1" "1" }
@@ -814,7 +814,7 @@
 	    }
 	    parm {
 		name	"environment_priority"
-		label	"Environment priority"
+		label	"Environment Priority"
 		type	integer
 		default	{ "0" }
 		help	"Environment override priority (used when several materials override it along a ray path)"
@@ -833,7 +833,7 @@
 
 	    parm {
 		name	"refl_interpolation_on"
-		label	"Use reflection interpolation"
+		label	"Use Reflection Interpolation"
 		type	toggle
 		default	{ "0" }
 		range	{ 0 1 }
@@ -844,7 +844,7 @@
 	    }
 	    parm {
 		name	"refl_imap_min_rate"
-		label	"Min rate"
+		label	"Min Rate"
 		type	integer
 		default	{ "-1" }
 		disablewhen	"{ refl_interpolation_on != 1 } { refl_interpolation_on != 1 }"
@@ -856,7 +856,7 @@
 	    }
 	    parm {
 		name	"refl_imap_max_rate"
-		label	"Max rate"
+		label	"Max Rate"
 		type	integer
 		default	{ "1" }
 		disablewhen	"{ refl_interpolation_on != 1 } { refl_interpolation_on != 1 }"
@@ -868,7 +868,7 @@
 	    }
 	    parm {
 		name	"refl_imap_color_thresh"
-		label	"Color threshold"
+		label	"Color Threshold"
 		type	float
 		default	{ "0.25" }
 		disablewhen	"{ refl_interpolation_on != 1 } { refl_interpolation_on != 1 }"
@@ -880,7 +880,7 @@
 	    }
 	    parm {
 		name	"refl_imap_norm_thresh"
-		label	"Normal threshold"
+		label	"Normal Threshold"
 		type	float
 		default	{ "0.4" }
 		disablewhen	"{ refl_interpolation_on != 1 } { refl_interpolation_on != 1 }"
@@ -892,7 +892,7 @@
 	    }
 	    parm {
 		name	"refl_imap_samples"
-		label	"Interpolation samples"
+		label	"Interpolation Samples"
 		type	integer
 		default	{ "20" }
 		disablewhen	"{ refl_interpolation_on != 1 } { refl_interpolation_on != 1 }"
@@ -910,7 +910,7 @@
 
 	    parm {
 		name	"refr_interpolation_on"
-		label	"Use refraction interpolation"
+		label	"Use Refraction Interpolation"
 		type	toggle
 		default	{ "0" }
 		range	{ 0 1 }
@@ -921,7 +921,7 @@
 	    }
 	    parm {
 		name	"refr_imap_min_rate"
-		label	"Min rate"
+		label	"Min Rate"
 		type	integer
 		default	{ "-1" }
 		disablewhen	"{ refr_interpolation_on != 1 } { refr_interpolation_on != 1 }"
@@ -933,7 +933,7 @@
 	    }
 	    parm {
 		name	"refr_imap_max_rate"
-		label	"Max rate"
+		label	"Max Rate"
 		type	integer
 		default	{ "1" }
 		disablewhen	"{ refr_interpolation_on != 1 } { refr_interpolation_on != 1 }"
@@ -945,7 +945,7 @@
 	    }
 	    parm {
 		name	"refr_imap_color_thresh"
-		label	"Color threshold"
+		label	"Color Threshold"
 		type	float
 		default	{ "0.25" }
 		disablewhen	"{ refr_interpolation_on != 1 } { refr_interpolation_on != 1 }"
@@ -957,7 +957,7 @@
 	    }
 	    parm {
 		name	"gtr_gamma"
-		label	"GGX tail falloff"
+		label	"Ggx Tail Falloff"
 		type	float
 		default	{ "2" }
 		help	"How much to increase/decrease the tail of the glossy highlight when using GGX reflection model"
@@ -971,7 +971,7 @@
 	    }
 	    parm {
 		name	"refr_imap_norm_thresh"
-		label	"Normal threshold"
+		label	"Normal Threshold"
 		type	float
 		default	{ "0.4" }
 		disablewhen	"{ refr_interpolation_on != 1 } { refr_interpolation_on != 1 }"
@@ -983,7 +983,7 @@
 	    }
 	    parm {
 		name	"refr_imap_samples"
-		label	"Interpolation samples"
+		label	"Interpolation Samples"
 		type	integer
 		default	{ "20" }
 		disablewhen	"{ refr_interpolation_on != 1 } { refr_interpolation_on != 1 }"
@@ -995,7 +995,7 @@
 	    }
 	    parm {
 		name	"gtr_oldGamma"
-		label	"Gtr oldgamma"
+		label	"Gtr Oldgamma"
 		type	toggle
 		default	{ "0" }
 		help	"true to use the old (and incorrect) shadow masking function when gtr_gamma is different from 2.0"
@@ -1013,7 +1013,7 @@
 
 	    parm {
 		name	"use_environment_override"
-		label	"Use environment override"
+		label	"Use Environment Override"
 		type	toggle
 		default	{ "1" }
 		help	"True to use the 'environment override' texture"

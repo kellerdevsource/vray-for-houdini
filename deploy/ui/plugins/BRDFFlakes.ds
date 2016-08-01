@@ -146,7 +146,7 @@
 
 	    parm {
 		name	"traceReflections"
-		label	"Trace reflections"
+		label	"Trace Reflections"
 		type	toggle
 		default	{ "1" }
 		range	{ 0 1 }
@@ -157,7 +157,7 @@
 	    }
 	    parm {
 		name	"doubleSided"
-		label	"Double sided"
+		label	"Double Sided"
 		type	integer
 		default	{ "1" }
 		range	{ 0 64 }
@@ -179,7 +179,7 @@
 	    }
 	    parm {
 		name	"cutoff_threshold"
-		label	"Cutoff threshold"
+		label	"Cutoff Threshold"
 		type	float
 		default	{ "0.001" }
 		range	{ 0 64 }
@@ -190,7 +190,7 @@
 	    }
 	    parm {
 		name	"mapping_type"
-		label	"Mapping type"
+		label	"Mapping Type"
 		type	ordinal
 		default	{ "0" }
 		help	"The mapping method for the flakes"
@@ -206,7 +206,7 @@
 	    }
 	    parm {
 		name	"mapping_channel"
-		label	"Mapping channel"
+		label	"Mapping Channel"
 		type	integer
 		default	{ "0" }
 		help	"The mapping channel when the mapping_type is 0"
@@ -218,7 +218,7 @@
 	    }
 	    parm {
 		name	"environment_override"
-		label	"Environment override"
+		label	"Environment Override"
 		type	color4
 		size	4
 		default	{ "0" "0" "0" "1" }
@@ -232,7 +232,7 @@
 	    }
 	    parm {
 		name	"environment_priority"
-		label	"Environment priority"
+		label	"Environment Priority"
 		type	integer
 		default	{ "0" }
 		help	"Environment override priority (used when several materials override it along a ray path)"
@@ -245,7 +245,7 @@
 	    }
 	    parm {
 		name	"trace_depth"
-		label	"Trace depth"
+		label	"Trace Depth"
 		type	integer
 		default	{ "-1" }
 		help	"The maximum reflection depth (-1 is controlled by the global options)"
@@ -263,7 +263,7 @@
 
 	    parm {
 		name	"use_environment_override"
-		label	"Use environment override"
+		label	"Use Environment Override"
 		type	toggle
 		default	{ "1" }
 		help	"True to use the 'environment override' texture"

@@ -44,7 +44,7 @@
 	}
 	parm {
 	    name	"edge_fade_out"
-	    label	"Edge fade out"
+	    label	"Edge Fade Out"
 	    type	float
 	    default	{ "0" }
 	    help	"Since the cube drop-off shape is computed a little differently, we need this here for this particular case"

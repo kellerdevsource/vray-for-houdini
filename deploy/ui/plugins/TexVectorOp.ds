@@ -19,7 +19,7 @@
 	}
 	parm {
 	    name	"vector_a"
-	    label	"Vector a"
+	    label	"Vector A"
 	    type	direction
 	    size	3
 	    default	{ "1" "1" "1" }
@@ -32,7 +32,7 @@
 	}
 	parm {
 	    name	"vector_b"
-	    label	"Vector b"
+	    label	"Vector B"
 	    type	direction
 	    size	3
 	    default	{ "1" "1" "1" }
@@ -45,7 +45,7 @@
 	}
 	parm {
 	    name	"mult_a"
-	    label	"Mult a"
+	    label	"Mult A"
 	    type	float
 	    default	{ "1" }
 	    help	"Multiplier for the first vector"
@@ -57,7 +57,7 @@
 	}
 	parm {
 	    name	"mult_b"
-	    label	"Mult b"
+	    label	"Mult B"
 	    type	float
 	    default	{ "1" }
 	    help	"Multiplier for the second vector"

@@ -40,7 +40,7 @@
 	}
 	parm {
 	    name	"use_mtl_id"
-	    label	"Use mtl id"
+	    label	"Use Mtl Id"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Use the material IDs instead of the object IDs"
@@ -52,7 +52,7 @@
 	}
 	parm {
 	    name	"affect_matte_objects"
-	    label	"Affect matte objects"
+	    label	"Affect Matte Objects"
 	    type	toggle
 	    default	{ "1" }
 	    help	"Affect Matte Objects"
@@ -64,7 +64,7 @@
 	}
 	parm {
 	    name	"consider_for_aa"
-	    label	"Consider For AA"
+	    label	"Consider For Aa"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Consider this render element for antialiasing (may slow down rendering)"
@@ -76,7 +76,7 @@
 	}
 	parm {
 	    name	"invert_selection"
-	    label	"Invert selection"
+	    label	"Invert Selection"
 	    type	toggle
 	    default	{ "0" }
 	    help	"true to use object/material IDs different from the specified by id"

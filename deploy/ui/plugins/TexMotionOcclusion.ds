@@ -30,7 +30,7 @@
 	}
 	parm {
 	    name	"near_threshold"
-	    label	"Near threshold"
+	    label	"Near Threshold"
 	    type	float
 	    default	{ "1" }
 	    help	"Occlusion hits closer than this distance will be ignored for backward and forward motion occlusion"
@@ -42,7 +42,7 @@
 	}
 	parm {
 	    name	"far_threshold"
-	    label	"Far threshold"
+	    label	"Far Threshold"
 	    type	float
 	    default	{ "2" }
 	    help	"Occlusion hits farther than this distance will be fully considered for backward and forward motion occlusion"

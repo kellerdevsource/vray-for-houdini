@@ -128,7 +128,7 @@
 	}
 	parm {
 	    name	"lens_rotation"
-	    label	"Lens rotation"
+	    label	"Lens Rotation"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 64 }
@@ -139,7 +139,7 @@
 	}
 	parm {
 	    name	"frame_samples"
-	    label	"Frame samples"
+	    label	"Frame Samples"
 	    type	integer
 	    default	{ "2" }
 	    help	"Number of samples per frame for the transformation"
@@ -163,7 +163,7 @@
 	}
 	parm {
 	    name	"clipping_near"
-	    label	"Clipping near"
+	    label	"Clipping Near"
 	    type	float
 	    default	{ "0" }
 	    help	"The near clipping plane"
@@ -175,7 +175,7 @@
 	}
 	parm {
 	    name	"clipping_far"
-	    label	"Clipping far"
+	    label	"Clipping Far"
 	    type	float
 	    default	{ "1e+18" }
 	    help	"The far clipping plane"
@@ -221,7 +221,7 @@
 	}
 	parm {
 	    name	"dont_affect_settings"
-	    label	"Dont affect settings"
+	    label	"Dont Affect Settings"
 	    type	toggle
 	    default	{ "0" }
 	    help	"This is here so we can suppress a RenderView node from affecting the main VRayRenderer sequence and frame data"
@@ -233,7 +233,7 @@
 	}
 	parm {
 	    name	"use_scene_offset"
-	    label	"Use scene offset"
+	    label	"Use Scene Offset"
 	    type	toggle
 	    default	{ "1" }
 	    help	"If true, the scene will be internally translated relative to the render view"
@@ -267,7 +267,7 @@
 	}
 	parm {
 	    name	"clip_near"
-	    label	"Clip near"
+	    label	"Clip Near"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Clip near"
@@ -277,7 +277,7 @@
 	}
 	parm {
 	    name	"clip_far"
-	    label	"Clip far"
+	    label	"Clip Far"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Clip far"
@@ -287,7 +287,7 @@
 	}
 	parm {
 	    name	"stereo_on"
-	    label	"Stereo on"
+	    label	"Stereo On"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"Enable stereo rendering and select output layout"
@@ -304,7 +304,7 @@
 	}
 	parm {
 	    name	"stereo_eye_distance"
-	    label	"Stereo eye distance"
+	    label	"Stereo Eye Distance"
 	    type	float
 	    default	{ "1" }
 	    help	"The distance between the two stereo views"
@@ -316,7 +316,7 @@
 	}
 	parm {
 	    name	"stereo_interocular_method"
-	    label	"Stereo interocular method"
+	    label	"Stereo Interocular Method"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"Specifies the camera position relative to the left and right views: 0 - center, 1 - keep left view, 2 - keep right view"
@@ -333,7 +333,7 @@
 	}
 	parm {
 	    name	"stereo_specify_focus"
-	    label	"Stereo specify focus"
+	    label	"Stereo Specify Focus"
 	    type	toggle
 	    default	{ "0" }
 	    help	"true to specify a separate distance for the stereo focus"
@@ -345,7 +345,7 @@
 	}
 	parm {
 	    name	"stereo_focus_distance"
-	    label	"Stereo focus distance"
+	    label	"Stereo Focus Distance"
 	    type	float
 	    default	{ "1" }
 	    help	"The focus distance if specify_focus is enabled"
@@ -357,7 +357,7 @@
 	}
 	parm {
 	    name	"stereo_view"
-	    label	"Stereo view"
+	    label	"Stereo View"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"Specifies which view to render"
@@ -374,7 +374,7 @@
 	}
 	parm {
 	    name	"stereo_focus_method"
-	    label	"Stereo focus method"
+	    label	"Stereo Focus Method"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"Specifies which view to render"

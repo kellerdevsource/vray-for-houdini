@@ -18,7 +18,7 @@
 	}
 	parm {
 	    name	"default_value"
-	    label	"Default value"
+	    label	"Default Value"
 	    type	float
 	    default	{ "1" }
 	    help	"Default value if the attribute is not found"
@@ -27,7 +27,7 @@
 	}
 	parm {
 	    name	"user_attribute"
-	    label	"User attribute"
+	    label	"User Attribute"
 	    type	string
 	    default	{ "" }
 	    help	"User attribute name of type float or color"
@@ -39,7 +39,7 @@
 	}
 	parm {
 	    name	"default_color"
-	    label	"Default color"
+	    label	"Default Color"
 	    type	color4
 	    size	4
 	    default	{ "0.5" "0.5" "0.5" "1" }

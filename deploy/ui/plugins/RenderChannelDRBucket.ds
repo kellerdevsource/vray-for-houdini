@@ -28,7 +28,7 @@
 	}
 	parm {
 	    name	"text_alignment"
-	    label	"Text alignment"
+	    label	"Text Alignment"
 	    type	ordinal
 	    default	{ "1" }
 	    menu	{

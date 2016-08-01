@@ -18,7 +18,7 @@
 	}
 	parm {
 	    name	"base_volume"
-	    label	"Base volume"
+	    label	"Base Volume"
 	    type	oppath
 	    default	{ "" }
 	    range	{ 0 1 }

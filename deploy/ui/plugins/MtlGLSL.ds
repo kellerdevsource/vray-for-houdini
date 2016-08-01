@@ -17,7 +17,7 @@
 	}
 	parm {
 	    name	"shader_file"
-	    label	"Shader file"
+	    label	"Shader File"
 	    type	file
 	    default	{ "" }
 	    range	{ 0 1 }
@@ -29,7 +29,7 @@
 	}
 	parm {
 	    name	"shader_node"
-	    label	"Shader node"
+	    label	"Shader Node"
 	    type	string
 	    default	{ "" }
 	    help	"Name of the target graph node if XMSL file is specified"
@@ -53,7 +53,7 @@
 	}
 	parm {
 	    name	"uvw_generators"
-	    label	"Uvw generators"
+	    label	"Uvw Generators"
 	    type	oplist
 	    default	{ "" }
 	    range	{ 0 1 }
@@ -77,7 +77,7 @@
 	}
 	parm {
 	    name	"transparency_tex"
-	    label	"Transparency tex"
+	    label	"Transparency Tex"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "1" }
@@ -89,7 +89,7 @@
 	}
 	parm {
 	    name	"transparency_tex_mult"
-	    label	"Transparency tex mult"
+	    label	"Transparency Tex Mult"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 64 }
@@ -100,7 +100,7 @@
 	}
 	parm {
 	    name	"use_shader_alpha"
-	    label	"Use shader alpha"
+	    label	"Use Shader Alpha"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Switch for using either the transparency parameteres or the shader alpha result"
@@ -112,7 +112,7 @@
 	}
 	parm {
 	    name	"max_ray_depth"
-	    label	"Max ray depth"
+	    label	"Max Ray Depth"
 	    type	integer
 	    default	{ "-1" }
 	    range	{ 0 64 }
@@ -123,7 +123,7 @@
 	}
 	parm {
 	    name	"clamp_result"
-	    label	"Clamp result"
+	    label	"Clamp Result"
 	    type	toggle
 	    default	{ "1" }
 	    help	"Flag that shows whether to clamp final result or not"
@@ -135,7 +135,7 @@
 	}
 	parm {
 	    name	"clamp_value"
-	    label	"Clamp value"
+	    label	"Clamp Value"
 	    type	float
 	    default	{ "1" }
 	    help	"The upper clamp limit for the result color should the clamp_result flag is true"

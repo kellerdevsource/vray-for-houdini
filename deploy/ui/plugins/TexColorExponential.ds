@@ -63,7 +63,7 @@
 	}
 	parm {
 	    name	"use_alpha"
-	    label	"Use alpha"
+	    label	"Use Alpha"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Apply operation to alpha channel"

@@ -18,7 +18,7 @@
 	}
 	parm {
 	    name	"textures_list"
-	    label	"Textures list"
+	    label	"Textures List"
 	    type	oplist
 	    default	{ "" }
 	    help	"A list of the sub-textures"
@@ -52,7 +52,7 @@
 	}
 	parm {
 	    name	"default_texture"
-	    label	"Default texture"
+	    label	"Default Texture"
 	    type	color4
 	    size	4
 	    default	{ "0.5" "0.5" "0.5" "1" }
@@ -65,7 +65,7 @@
 	}
 	parm {
 	    name	"id_gen_tex"
-	    label	"ID Generator texture"
+	    label	"Id Generator Texture"
 	    type	float
 	    default	{ "0" }
 	    help	"Used when mode is \"Use ID Generator texture\"(30)"

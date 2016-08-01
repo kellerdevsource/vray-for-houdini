@@ -30,7 +30,7 @@
 	}
 	parm {
 	    name	"brdf"
-	    label	"BRDF"
+	    label	"Brdf"
 	    type	oppath
 	    default	{ "" }
 	    range	{ 0 1 }
@@ -42,7 +42,7 @@
 	}
 	parm {
 	    name	"double_sided"
-	    label	"Double sided"
+	    label	"Double Sided"
 	    type	ordinal
 	    default	{ "1" }
 	    help	"0 - single sided, 1 - to make the material double-sided, 2 - make back faces pointing at camera transparent for camera rays, 3 - make back faces transparent for all ray types except shadow rays, 4 - same as 3 but back faces are also visible to rays that have been refracted(and are not GI or reflection rays"
@@ -61,7 +61,7 @@
 	}
 	parm {
 	    name	"allow_negative_colors"
-	    label	"Allow negative colors"
+	    label	"Allow Negative Colors"
 	    type	toggle
 	    default	{ "0" }
 	    help	"true to allow negative color components; otherwise they will be clamped to 0"

@@ -17,7 +17,7 @@
 	}
 	parm {
 	    name	"on"
-	    label	"Enable caustics"
+	    label	"Enable Caustics"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Enable caustics computation"
@@ -29,7 +29,7 @@
 	}
 	parm {
 	    name	"max_photons"
-	    label	"Max photons"
+	    label	"Max Photons"
 	    type	integer
 	    default	{ "30" }
 	    help	"Max. number of photons to look for; if 0, all photons within the search distance will be considered."
@@ -42,7 +42,7 @@
 	}
 	parm {
 	    name	"search_distance"
-	    label	"Search distance"
+	    label	"Search Distance"
 	    type	float
 	    default	{ "1e+18" }
 	    help	"Search distance for caustic photons."
@@ -55,7 +55,7 @@
 	}
 	parm {
 	    name	"max_density"
-	    label	"Max density"
+	    label	"Max Density"
 	    type	float
 	    default	{ "0" }
 	    disablewhen	"{ mode != 0 } { on != 1 }"
@@ -110,7 +110,7 @@
 	}
 	parm {
 	    name	"dont_delete"
-	    label	"Don't delete"
+	    label	"Don't Delete"
 	    type	toggle
 	    default	{ "1" }
 	    help	"Don't delete at render end"
@@ -123,7 +123,7 @@
 	}
 	parm {
 	    name	"auto_save"
-	    label	"Auto save"
+	    label	"Auto Save"
 	    type	toggle
 	    default	{ "0" }
 	    help	"True to save the caustics photon map automatically at the end of the rendering"
@@ -136,7 +136,7 @@
 	}
 	parm {
 	    name	"auto_save_file"
-	    label	"Auto save file"
+	    label	"Auto Save File"
 	    type	file
 	    default	{ "//lightmaps/caustics.vrmap" }
 	    help	"Auto save filepath"
@@ -152,7 +152,7 @@
 	}
 	parm {
 	    name	"show_calc_phase"
-	    label	"Show calculation phase"
+	    label	"Show Calculation Phase"
 	    type	toggle
 	    default	{ "0" }
 	    help	"True to show the calculation of the caustics map"

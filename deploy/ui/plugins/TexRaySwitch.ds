@@ -18,7 +18,7 @@
 	}
 	parm {
 	    name	"default_texture"
-	    label	"Default tex"
+	    label	"Default Tex"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "1" }
@@ -31,7 +31,7 @@
 	}
 	parm {
 	    name	"shadow_ray_texture"
-	    label	"Shadow rays tex"
+	    label	"Shadow Rays Tex"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "0" }
@@ -44,7 +44,7 @@
 	}
 	parm {
 	    name	"gi_ray_texture"
-	    label	"GI rays tex"
+	    label	"Gi Rays Tex"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "0" }
@@ -57,7 +57,7 @@
 	}
 	parm {
 	    name	"reflect_ray_texture"
-	    label	"Reflection rays tex"
+	    label	"Reflection Rays Tex"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "0" }
@@ -70,7 +70,7 @@
 	}
 	parm {
 	    name	"refract_ray_texture"
-	    label	"Refraction rays tex"
+	    label	"Refraction Rays Tex"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "0" }

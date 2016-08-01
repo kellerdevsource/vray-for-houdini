@@ -21,7 +21,7 @@
 
 	    parm {
 		name	"specular_color_tex"
-		label	"Specular color"
+		label	"Specular Color"
 		type	color4
 		size	4
 		default	{ "0" "0" "0" "1" }
@@ -33,7 +33,7 @@
 	    }
 	    parm {
 		name	"specular_power"
-		label	"Specular power"
+		label	"Specular Power"
 		type	float
 		default	{ "1" }
 		range	{ 0 64 }
@@ -44,7 +44,7 @@
 	    }
 	    parm {
 		name	"diffuse_color_tex"
-		label	"Diffuse color"
+		label	"Diffuse Color"
 		type	color4
 		size	4
 		default	{ "0" "0" "0" "1" }

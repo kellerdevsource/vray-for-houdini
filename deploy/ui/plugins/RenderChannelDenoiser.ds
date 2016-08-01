@@ -117,7 +117,7 @@
 	}
 	parm {
 	    name	"use_gpu"
-	    label	"Use GPU"
+	    label	"Use Gpu"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Enable usage of GPU version if OpenCL support is found"
@@ -129,7 +129,7 @@
 	}
 	parm {
 	    name	"progressive_update"
-	    label	"Progressive update"
+	    label	"Progressive Update"
 	    type	integer
 	    default	{ "0" }
 	    help	"Frequency of update during progressive rendering (0 - never; 100 - update as often as possible)"

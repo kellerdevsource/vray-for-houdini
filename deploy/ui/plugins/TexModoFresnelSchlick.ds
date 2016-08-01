@@ -18,7 +18,7 @@
 	}
 	parm {
 	    name	"reflectivity_at_normal"
-	    label	"Reflectivity at normal"
+	    label	"Reflectivity At Normal"
 	    type	float
 	    default	{ "1" }
 	    help	"Amount of reflection when the viewing and normal vectors are the same"
@@ -31,7 +31,7 @@
 	}
 	parm {
 	    name	"fresnel_power"
-	    label	"Fresnel power"
+	    label	"Fresnel Power"
 	    type	float
 	    default	{ "1" }
 	    help	"How much the Schlick fresnel approximation affects the result. At 0.0, reflectivity_at_normal will be returned for all viewing directions"
@@ -43,7 +43,7 @@
 	}
 	parm {
 	    name	"use_ior"
-	    label	"Use ior"
+	    label	"Use Ior"
 	    type	toggle
 	    default	{ "0" }
 	    help	"If true, the ior paameter will be used to determine the reflectivity when the viewing and normal vectors are the same. In this case the reflectivity_at_normal parameter is ignored"

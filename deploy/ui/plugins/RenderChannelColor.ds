@@ -30,7 +30,7 @@
 	}
 	parm {
 	    name	"color_mapping"
-	    label	"Color mapping"
+	    label	"Color Mapping"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Color Mapping"
@@ -42,7 +42,7 @@
 	}
 	parm {
 	    name	"consider_for_aa"
-	    label	"Consider For AA"
+	    label	"Consider For Aa"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Consider this render element for antialiasing (may slow down rendering)"
@@ -122,7 +122,7 @@
 	}
 	parm {
 	    name	"derive_raw_channels"
-	    label	"Derive raw channels"
+	    label	"Derive Raw Channels"
 	    type	toggle
 	    default	{ "1" }
 	    help	"true if raw channels should be derived from the respective color and filter channel"
@@ -134,7 +134,7 @@
 	}
 	parm {
 	    name	"vfb_color_corrections"
-	    label	"Vfb color corrections"
+	    label	"Vfb Color Corrections"
 	    type	toggle
 	    default	{ "1" }
 	    help	"False to disable ALL VFB color corrections(sRGB, curves, white balance, etc...) when saving the channel data to a file or showing it on a display. True to apply VFB color corrections when saving the channel data to a file or showing it on a display. If true some color corrections might still be disabled, based on the type of file being saved"

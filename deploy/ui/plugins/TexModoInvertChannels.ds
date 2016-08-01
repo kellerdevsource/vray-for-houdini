@@ -30,7 +30,7 @@
 	}
 	parm {
 	    name	"invert_red"
-	    label	"Invert red"
+	    label	"Invert Red"
 	    type	toggle
 	    default	{ "0" }
 	    range	{ 0 1 }
@@ -41,7 +41,7 @@
 	}
 	parm {
 	    name	"invert_green"
-	    label	"Invert green"
+	    label	"Invert Green"
 	    type	toggle
 	    default	{ "0" }
 	    range	{ 0 1 }
@@ -52,7 +52,7 @@
 	}
 	parm {
 	    name	"invert_blue"
-	    label	"Invert blue"
+	    label	"Invert Blue"
 	    type	toggle
 	    default	{ "0" }
 	    range	{ 0 1 }

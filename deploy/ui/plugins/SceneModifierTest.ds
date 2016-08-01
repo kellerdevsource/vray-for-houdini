@@ -18,7 +18,7 @@
 	}
 	parm {
 	    name	"particle_scene"
-	    label	"Particle scene"
+	    label	"Particle Scene"
 	    type	file
 	    default	{ "" }
 	    help	"The particle .vrscene"
@@ -33,7 +33,7 @@
 	}
 	parm {
 	    name	"proxy_scene"
-	    label	"Proxy scene"
+	    label	"Proxy Scene"
 	    type	file
 	    default	{ "" }
 	    help	"The proxy .vrscene"
@@ -48,7 +48,7 @@
 	}
 	parm {
 	    name	"material_scene"
-	    label	"Material scene"
+	    label	"Material Scene"
 	    type	file
 	    default	{ "" }
 	    help	"The material .vrscene"

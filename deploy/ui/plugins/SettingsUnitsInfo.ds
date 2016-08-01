@@ -17,7 +17,7 @@
 	}
 	parm {
 	    name	"meters_scale"
-	    label	"Meters scale"
+	    label	"Meters Scale"
 	    type	float
 	    default	{ "1" }
 	    help	"The number by which a 3d distance must be multiplied to covert it into meters"
@@ -29,7 +29,7 @@
 	}
 	parm {
 	    name	"photometric_scale"
-	    label	"Photometric scale"
+	    label	"Photometric Scale"
 	    type	float
 	    default	{ "0.001" }
 	    help	"The number by which the power of photometric lights should be scaled when rendering"
@@ -41,7 +41,7 @@
 	}
 	parm {
 	    name	"scene_upDir"
-	    label	"Scene updir"
+	    label	"Scene Updir"
 	    type	direction
 	    size	3
 	    default	{ "0" "0" "1" }
@@ -54,7 +54,7 @@
 	}
 	parm {
 	    name	"seconds_scale"
-	    label	"Seconds scale"
+	    label	"Seconds Scale"
 	    type	float
 	    default	{ "1" }
 	    help	"The number by which a scene time unit must be multiplied to convert it to seconds"

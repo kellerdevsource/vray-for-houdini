@@ -22,7 +22,7 @@
 
 	    parm {
 		name	"compatibility_with"
-		label	"Compatibility with"
+		label	"Compatibility With"
 		type	ordinal
 		default	{ "0" }
 		help	"This is used to differentiate between textures exported from different applications"
@@ -38,7 +38,7 @@
 	    }
 	    parm {
 		name	"alpha_from_intensity"
-		label	"Alpha from intensity"
+		label	"Alpha From Intensity"
 		type	ordinal
 		default	{ "0" }
 		help	"If 2 - the alpha is forced to 1.0f; 1 - the resulting alpha is the color intensity (if compatibility_with is 0) or the color luminance (if compatibility_with is 1); 0 - the alpha is taken from the bitmap alpha"
@@ -67,7 +67,7 @@
 	    }
 	    parm {
 		name	"invert_alpha"
-		label	"Invert alpha"
+		label	"Invert Alpha"
 		type	toggle
 		default	{ "1" }
 		help	"If true and invert is on, the resulting texture alpha will be inverted too. If false, just the color will be inverted"
@@ -80,7 +80,7 @@
 	    }
 	    parm {
 		name	"color_mult"
-		label	"Color mult"
+		label	"Color Mult"
 		type	color4
 		size	4
 		default	{ "1" "1" "1" "1" }
@@ -93,7 +93,7 @@
 	    }
 	    parm {
 		name	"color_offset"
-		label	"Color offset"
+		label	"Color Offset"
 		type	color4
 		size	4
 		default	{ "0" "0" "0" "1" }
@@ -106,7 +106,7 @@
 	    }
 	    parm {
 		name	"alpha_mult"
-		label	"Alpha mult"
+		label	"Alpha Mult"
 		type	float
 		default	{ "1" }
 		help	"A multiplier for the texture alpha"
@@ -118,7 +118,7 @@
 	    }
 	    parm {
 		name	"alpha_offset"
-		label	"Alpha offset"
+		label	"Alpha Offset"
 		type	float
 		default	{ "0" }
 		help	"An additional offset for the texture alpha"
@@ -130,7 +130,7 @@
 	    }
 	    parm {
 		name	"nouvw_color"
-		label	"No UVs Color"
+		label	"No Uvs Color"
 		type	color4
 		size	4
 		default	{ "0.5" "0.5" "0.5" "1" }
@@ -168,7 +168,7 @@
 	    }
 	    parm {
 		name	"key_masking"
-		label	"Key masking"
+		label	"Key Masking"
 		type	toggle
 		default	{ "0" }
 		help	"If true, selects the areas in the texture similar to or equal to the Color Key and masks them out"
@@ -180,7 +180,7 @@
 	    }
 	    parm {
 		name	"positive_key"
-		label	"Positive key"
+		label	"Positive Key"
 		type	toggle
 		default	{ "0" }
 		help	"If true, inverts the Chroma Key mask(only the colors specified in the Color Key and HSV Range are displayed)"
@@ -192,7 +192,7 @@
 	    }
 	    parm {
 		name	"color_key"
-		label	"Color key"
+		label	"Color Key"
 		type	color4
 		size	4
 		default	{ "0" "0" "0" "1" }
@@ -205,7 +205,7 @@
 	    }
 	    parm {
 		name	"hue_range"
-		label	"Hue range"
+		label	"Hue Range"
 		type	float
 		default	{ "1" }
 		help	"The range of hues centered on the Color Key color which are also masked"
@@ -217,7 +217,7 @@
 	    }
 	    parm {
 		name	"sat_range"
-		label	"Sat range"
+		label	"Sat Range"
 		type	float
 		default	{ "1" }
 		help	"The range of saturations centered on the Color Key color which are also masked"
@@ -229,7 +229,7 @@
 	    }
 	    parm {
 		name	"val_range"
-		label	"Val range"
+		label	"Val Range"
 		type	float
 		default	{ "1" }
 		help	"The range of values centered on the Color Key color which are also masked"
@@ -241,7 +241,7 @@
 	    }
 	    parm {
 		name	"default_color"
-		label	"Default color"
+		label	"Default Color"
 		type	color4
 		size	4
 		default	{ "0" "0" "0" "1" }
@@ -254,7 +254,7 @@
 	    }
 	    parm {
 		name	"edge_blend"
-		label	"Edge blend"
+		label	"Edge Blend"
 		type	float
 		default	{ "0" }
 		help	"Controls the sharpness of the texture edges"

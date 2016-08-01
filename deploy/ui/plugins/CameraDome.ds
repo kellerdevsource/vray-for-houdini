@@ -18,7 +18,7 @@
 	}
 	parm {
 	    name	"flip_x"
-	    label	"Flip x"
+	    label	"Flip X"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Flip in the horizontal image direction"
@@ -30,7 +30,7 @@
 	}
 	parm {
 	    name	"flip_y"
-	    label	"Flip y"
+	    label	"Flip Y"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Flip in the vertical image direction"

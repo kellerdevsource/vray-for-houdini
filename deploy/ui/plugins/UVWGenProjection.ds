@@ -18,7 +18,7 @@
 	}
 	groupsimple {
 	    name	"uvw_transform"
-	    label	"Uvw transform"
+	    label	"Uvw Transform"
 	    grouptag	{ "vray_plugin" "UVWGenProjection" }
 	    grouptag	{ "vray_pluginattr" "uvw_transform" }
 	    grouptag	{ "vray_type" "Transform" }
@@ -95,7 +95,7 @@
 
 	groupsimple {
 	    name	"uvw_transform_tex"
-	    label	"Uvw transform tex"
+	    label	"Uvw Transform Tex"
 	    grouptag	{ "vray_plugin" "UVWGenProjection" }
 	    grouptag	{ "vray_pluginattr" "uvw_transform_tex" }
 	    grouptag	{ "vray_type" "TextureTransform" }
@@ -172,7 +172,7 @@
 
 	groupsimple {
 	    name	"tex_transform"
-	    label	"Tex transform"
+	    label	"Tex Transform"
 	    grouptag	{ "vray_plugin" "UVWGenProjection" }
 	    grouptag	{ "vray_pluginattr" "tex_transform" }
 	    grouptag	{ "vray_type" "Transform" }
@@ -249,7 +249,7 @@
 
 	parm {
 	    name	"camera_settings"
-	    label	"Camera settings"
+	    label	"Camera Settings"
 	    type	oppath
 	    default	{ "" }
 	    range	{ 0 1 }
@@ -261,7 +261,7 @@
 	}
 	parm {
 	    name	"camera_view"
-	    label	"Camera view"
+	    label	"Camera View"
 	    type	oppath
 	    default	{ "" }
 	    range	{ 0 1 }
@@ -344,7 +344,7 @@
 	}
 	parm {
 	    name	"u_angle"
-	    label	"U angle"
+	    label	"U Angle"
 	    type	float
 	    default	{ "3.14159" }
 	    range	{ 0 64 }
@@ -355,7 +355,7 @@
 	}
 	parm {
 	    name	"v_angle"
-	    label	"V angle"
+	    label	"V Angle"
 	    type	float
 	    default	{ "1.5708" }
 	    range	{ 0 64 }
@@ -366,7 +366,7 @@
 	}
 	parm {
 	    name	"film_gate_w"
-	    label	"Film gate w"
+	    label	"Film Gate W"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 64 }
@@ -377,7 +377,7 @@
 	}
 	parm {
 	    name	"film_gate_h"
-	    label	"Film gate h"
+	    label	"Film Gate H"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 64 }
@@ -388,7 +388,7 @@
 	}
 	parm {
 	    name	"hide_backface"
-	    label	"Hide backface"
+	    label	"Hide Backface"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Determine whether to project on back faces of polygons when in perspective mode"
@@ -400,7 +400,7 @@
 	}
 	parm {
 	    name	"hide_occluded"
-	    label	"Hide occluded"
+	    label	"Hide Occluded"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Determine whether to project on occluded points when in perspective mode"
@@ -412,7 +412,7 @@
 	}
 	parm {
 	    name	"object_space"
-	    label	"Object space"
+	    label	"Object Space"
 	    type	toggle
 	    default	{ "1" }
 	    help	"If true the projection will be applied in the object space of the currently shaded geometry"

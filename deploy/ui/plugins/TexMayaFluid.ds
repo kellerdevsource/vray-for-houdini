@@ -18,7 +18,7 @@
 	}
 	parm {
 	    name	"size_x"
-	    label	"Size x"
+	    label	"Size X"
 	    type	integer
 	    default	{ "1" }
 	    help	"The number of voxels in the x dimension"
@@ -30,7 +30,7 @@
 	}
 	parm {
 	    name	"size_y"
-	    label	"Size y"
+	    label	"Size Y"
 	    type	integer
 	    default	{ "1" }
 	    help	"The number of voxels in the y dimension"
@@ -42,7 +42,7 @@
 	}
 	parm {
 	    name	"size_z"
-	    label	"Size z"
+	    label	"Size Z"
 	    type	integer
 	    default	{ "1" }
 	    help	"The number of voxels in the z dimension"
@@ -54,7 +54,7 @@
 	}
 	parm {
 	    name	"interpolation_type"
-	    label	"Interpolation type"
+	    label	"Interpolation Type"
 	    type	integer
 	    default	{ "0" }
 	    help	"0 : linear(8 samples, faster, but voxel borders may be visible),1 : quadratic(27 samples, slower, but voxel borders are much less likely to be visible"
@@ -79,7 +79,7 @@
 	}
 	parm {
 	    name	"dynamic_offset_x"
-	    label	"Dynamic offset x"
+	    label	"Dynamic Offset X"
 	    type	float
 	    default	{ "0" }
 	    help	"The x dynamic offset of the fluid container"
@@ -91,7 +91,7 @@
 	}
 	parm {
 	    name	"dynamic_offset_y"
-	    label	"Dynamic offset y"
+	    label	"Dynamic Offset Y"
 	    type	float
 	    default	{ "0" }
 	    help	"The y dynamic offset of the fluid container"
@@ -103,7 +103,7 @@
 	}
 	parm {
 	    name	"dynamic_offset_z"
-	    label	"Dynamic offset z"
+	    label	"Dynamic Offset Z"
 	    type	float
 	    default	{ "0" }
 	    help	"The z dynamic offset of the fluid container"
@@ -115,7 +115,7 @@
 	}
 	parm {
 	    name	"mb_type"
-	    label	"Mb type"
+	    label	"Mb Type"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"Motion blur type, 0-Disabled, 1-Blend, 2-Velocity, 3-Velocity+Blend"
@@ -133,7 +133,7 @@
 	}
 	parm {
 	    name	"frame_duration"
-	    label	"Frame duration"
+	    label	"Frame Duration"
 	    type	float
 	    default	{ "0.0416667" }
 	    help	"The frame duration in sec"
@@ -145,7 +145,7 @@
 	}
 	parm {
 	    name	"cache_frame"
-	    label	"Cache frame"
+	    label	"Cache Frame"
 	    type	float
 	    default	{ "0" }
 	    help	"Converts the current frame number to cache frame number"

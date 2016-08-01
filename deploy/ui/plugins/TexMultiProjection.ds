@@ -18,7 +18,7 @@
 	}
 	parm {
 	    name	"zdepth_offset"
-	    label	"Zdepth offset"
+	    label	"Zdepth Offset"
 	    type	float
 	    default	{ "0.01" }
 	    help	"An offset for the zdepth value to avoid numeric errors"

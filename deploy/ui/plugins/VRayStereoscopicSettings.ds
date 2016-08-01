@@ -17,7 +17,7 @@
 	}
 	parm {
 	    name	"eye_distance"
-	    label	"Eye distance"
+	    label	"Eye Distance"
 	    type	float
 	    default	{ "0.065" }
 	    help	"The eye distance for which the stereoscopic image will be rendered"
@@ -29,7 +29,7 @@
 	}
 	parm {
 	    name	"specify_focus"
-	    label	"Specify focus"
+	    label	"Specify Focus"
 	    type	toggle
 	    default	{ "0" }
 	    help	"If on then the focus is determined by focus_method and focus_distance. Otherwise it is determined from the camera target distance"
@@ -41,7 +41,7 @@
 	}
 	parm {
 	    name	"focus_distance"
-	    label	"Focus distance"
+	    label	"Focus Distance"
 	    type	float
 	    default	{ "200" }
 	    help	"The focus distance when specify_focus is enabled"
@@ -53,7 +53,7 @@
 	}
 	parm {
 	    name	"focus_method"
-	    label	"Focus method"
+	    label	"Focus Method"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"Specifies the focus method for the two views"
@@ -70,7 +70,7 @@
 	}
 	parm {
 	    name	"interocular_method"
-	    label	"Interocular method"
+	    label	"Interocular Method"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"Specifies how the two virtual cameras will be placed in relation to the real camera in the scene"
@@ -105,7 +105,7 @@
 	}
 	parm {
 	    name	"adjust_resolution"
-	    label	"Adjust resolution"
+	    label	"Adjust Resolution"
 	    type	toggle
 	    default	{ "0" }
 	    help	"When on this option will automatically adjust the resolution for the final image rendered"
@@ -117,7 +117,7 @@
 	}
 	parm {
 	    name	"sm_mode"
-	    label	"Sm mode"
+	    label	"Sm Mode"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"Allows us to specify the mode of operation for the shade map"
@@ -134,7 +134,7 @@
 	}
 	parm {
 	    name	"reuse_threshold"
-	    label	"Reuse threshold"
+	    label	"Reuse Threshold"
 	    type	float
 	    default	{ "1" }
 	    help	"Lower values will make V-Ray use less of the shade map and more real shading"
@@ -146,7 +146,7 @@
 	}
 	parm {
 	    name	"shademap_file"
-	    label	"Shademap file"
+	    label	"Shademap File"
 	    type	file
 	    default	{ "" }
 	    help	"The name of the file in which the shade map information is stored"
@@ -159,7 +159,7 @@
 	}
 	parm {
 	    name	"float_colors_mode"
-	    label	"Float colors mode"
+	    label	"Float Colors Mode"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Store 32 bit (single precision) color channels in the shade map. When off 16 bit (half precision) values are stored"
@@ -171,7 +171,7 @@
 	}
 	parm {
 	    name	"vrst_compression"
-	    label	"Vrst compression"
+	    label	"Vrst Compression"
 	    type	ordinal
 	    default	{ "1" }
 	    help	"Compression type for the .vrst files"
@@ -187,7 +187,7 @@
 	}
 	parm {
 	    name	"exr_compression"
-	    label	"Exr compression"
+	    label	"Exr Compression"
 	    type	ordinal
 	    default	{ "2" }
 	    help	"Compression type for the .exr files"
@@ -204,7 +204,7 @@
 	}
 	parm {
 	    name	"exclude_list"
-	    label	"Exclude list"
+	    label	"Exclude List"
 	    type	oplist
 	    default	{ "" }
 	    help	"A list of plugins for which the shade map won't be used"
@@ -217,7 +217,7 @@
 	}
 	parm {
 	    name	"left_camera"
-	    label	"Left camera"
+	    label	"Left Camera"
 	    type	oppath
 	    default	{ "" }
 	    help	"A camera plugin for the left eye; if not specified, the left camera is computed based on the scene camera"
@@ -230,7 +230,7 @@
 	}
 	parm {
 	    name	"right_camera"
-	    label	"Right camera"
+	    label	"Right Camera"
 	    type	oppath
 	    default	{ "" }
 	    help	"A camera plugin for the right eye; if not specified, the right camera is computed based on the scene camera"
@@ -253,7 +253,7 @@
 	}
 	parm {
 	    name	"top_merge_angle"
-	    label	"Top merge angle"
+	    label	"Top Merge Angle"
 	    type	float
 	    default	{ "1.0472" }
 	    help	"Panoramic pole merging: from what angle near the top does the stereo effect start to fade when rendering with a spherical panorama camera"
@@ -265,7 +265,7 @@
 	}
 	parm {
 	    name	"bottom_merge_angle"
-	    label	"Bottom merge angle"
+	    label	"Bottom Merge Angle"
 	    type	float
 	    default	{ "1.0472" }
 	    help	"Panoramic pole merging: from what angle near the bottom does the stereo effect start to fade when rendering with a spherical panorama camera"
@@ -277,7 +277,7 @@
 	}
 	parm {
 	    name	"exclude_list_inclusive"
-	    label	"Exclude list inclusive"
+	    label	"Exclude List Inclusive"
 	    type	toggle
 	    default	{ "0" }
 	    help	"When on the exclude_list is considered as an \"Include list\" and when off the the Result Affect is considered as \"Exclude list\""
@@ -289,7 +289,7 @@
 	}
 	parm {
 	    name	"film_offset_x_left"
-	    label	"Film offset x left"
+	    label	"Film Offset X Left"
 	    type	float
 	    default	{ "0" }
 	    help	"Horizontal film offset for the left camera"
@@ -301,7 +301,7 @@
 	}
 	parm {
 	    name	"film_offset_x_right"
-	    label	"Film offset x right"
+	    label	"Film Offset X Right"
 	    type	float
 	    default	{ "0" }
 	    help	"Horizontal film offset for the right camera"
@@ -313,7 +313,7 @@
 	}
 	parm {
 	    name	"film_offset_y_left"
-	    label	"Film offset y left"
+	    label	"Film Offset Y Left"
 	    type	float
 	    default	{ "0" }
 	    help	"Vertical film offset for the left camera"
@@ -325,7 +325,7 @@
 	}
 	parm {
 	    name	"film_offset_y_right"
-	    label	"Film offset y right"
+	    label	"Film Offset Y Right"
 	    type	float
 	    default	{ "0" }
 	    help	"Vertical film offset for the right camera"

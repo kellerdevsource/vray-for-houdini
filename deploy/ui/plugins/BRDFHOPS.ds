@@ -29,7 +29,7 @@
 	}
 	parm {
 	    name	"transparency_tex"
-	    label	"Transparency tex"
+	    label	"Transparency Tex"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "1" }
@@ -41,7 +41,7 @@
 	}
 	parm {
 	    name	"transparency_tex_mult"
-	    label	"Transparency tex mult"
+	    label	"Transparency Tex Mult"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 64 }
@@ -63,7 +63,7 @@
 	}
 	parm {
 	    name	"back_side"
-	    label	"Back side"
+	    label	"Back Side"
 	    type	toggle
 	    default	{ "0" }
 	    range	{ 0 1 }
@@ -74,7 +74,7 @@
 	}
 	parm {
 	    name	"trace_reflections"
-	    label	"Trace reflections"
+	    label	"Trace Reflections"
 	    type	toggle
 	    default	{ "1" }
 	    range	{ 0 1 }
@@ -85,7 +85,7 @@
 	}
 	parm {
 	    name	"trace_depth"
-	    label	"Trace depth"
+	    label	"Trace Depth"
 	    type	integer
 	    default	{ "-1" }
 	    help	"The maximum reflection depth (-1 is controlled by the global options)"
@@ -98,7 +98,7 @@
 	}
 	parm {
 	    name	"affect_alpha"
-	    label	"Affect alpha"
+	    label	"Affect Alpha"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"Specifies how render channels are propagated through the BRDF"
@@ -115,7 +115,7 @@
 	}
 	parm {
 	    name	"reflect_exit_color"
-	    label	"Reflect exit color"
+	    label	"Reflect Exit Color"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "1" }
@@ -128,7 +128,7 @@
 	}
 	parm {
 	    name	"reflect_dim_distance"
-	    label	"Reflect dim distance"
+	    label	"Reflect Dim Distance"
 	    type	float
 	    default	{ "1e+18" }
 	    help	"How much to dim reflection as length of rays increases"
@@ -141,7 +141,7 @@
 	}
 	parm {
 	    name	"reflect_dim_distance_on"
-	    label	"Reflect dim distance on"
+	    label	"Reflect Dim Distance On"
 	    type	toggle
 	    default	{ "0" }
 	    help	"True to enable dim distance"
@@ -154,7 +154,7 @@
 	}
 	parm {
 	    name	"reflect_dim_distance_falloff"
-	    label	"Reflect dim distance falloff"
+	    label	"Reflect Dim Distance Falloff"
 	    type	float
 	    default	{ "0" }
 	    help	"Fall off for the dim distance"
@@ -167,7 +167,7 @@
 	}
 	parm {
 	    name	"glossyAsGI"
-	    label	"Glossy As GI"
+	    label	"Glossy As Gi"
 	    type	ordinal
 	    default	{ "1" }
 	    help	"Determines if the glossy rays are treated by V-Ray as GI rays"
@@ -195,7 +195,7 @@
 	}
 	parm {
 	    name	"csv_path"
-	    label	"Csv path"
+	    label	"Csv Path"
 	    type	file
 	    default	{ "" }
 	    range	{ 0 1 }
@@ -207,7 +207,7 @@
 	}
 	parm {
 	    name	"csv_color_filter"
-	    label	"Csv color filter"
+	    label	"Csv Color Filter"
 	    type	color
 	    size	3
 	    default	{ "1" "1" "1" }
@@ -219,7 +219,7 @@
 	}
 	parm {
 	    name	"flakes_csv_path"
-	    label	"Flakes csv path"
+	    label	"Flakes Csv Path"
 	    type	file
 	    default	{ "" }
 	    range	{ 0 1 }
@@ -231,7 +231,7 @@
 	}
 	parm {
 	    name	"coat_color"
-	    label	"Coat color"
+	    label	"Coat Color"
 	    type	color4
 	    size	4
 	    default	{ "1" "1" "1" "1" }
@@ -243,7 +243,7 @@
 	}
 	parm {
 	    name	"coat_strength"
-	    label	"Coat strength"
+	    label	"Coat Strength"
 	    type	float
 	    default	{ "0.05" }
 	    range	{ 0 64 }
@@ -254,7 +254,7 @@
 	}
 	parm {
 	    name	"coat_glossiness"
-	    label	"Coat glossiness"
+	    label	"Coat Glossiness"
 	    type	float
 	    default	{ "1" }
 	    help	"The glossiness of the coat layer"
@@ -266,7 +266,7 @@
 	}
 	parm {
 	    name	"coat_bump_float"
-	    label	"Coat bump float"
+	    label	"Coat Bump Float"
 	    type	float
 	    default	{ "1" }
 	    help	"Bump texture for the coat layer"
@@ -278,7 +278,7 @@
 	}
 	parm {
 	    name	"coat_bump_color"
-	    label	"Coat bump color"
+	    label	"Coat Bump Color"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "1" }
@@ -291,7 +291,7 @@
 	}
 	parm {
 	    name	"coat_bump_amount"
-	    label	"Coat bump amount"
+	    label	"Coat Bump Amount"
 	    type	float
 	    default	{ "1" }
 	    help	"Bump amount for the coat layer"
@@ -303,7 +303,7 @@
 	}
 	parm {
 	    name	"coat_bump_type"
-	    label	"Coat bump type"
+	    label	"Coat Bump Type"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"The type of bump mapping"
@@ -325,7 +325,7 @@
 	}
 	parm {
 	    name	"coat_traceReflections"
-	    label	"Coat tracereflections"
+	    label	"Coat Tracereflections"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Toggle reflections for coat layer"
@@ -338,7 +338,7 @@
 	}
 	parm {
 	    name	"coat_subdivs"
-	    label	"Coat subdivs"
+	    label	"Coat Subdivs"
 	    type	integer
 	    default	{ "8" }
 	    disablewhen	"{ enabled_layers_base != 1 }"
@@ -350,7 +350,7 @@
 	}
 	parm {
 	    name	"flake_scale"
-	    label	"Flake scale"
+	    label	"Flake Scale"
 	    type	float
 	    default	{ "0.005" }
 	    help	"Flake scale - aparent flakes size in the real world"
@@ -363,7 +363,7 @@
 	}
 	parm {
 	    name	"flake_size"
-	    label	"Flake size"
+	    label	"Flake Size"
 	    type	float
 	    default	{ "0.125" }
 	    help	"Flake size multiplier (larger values = more flake overlap)"
@@ -376,7 +376,7 @@
 	}
 	parm {
 	    name	"flake_traceReflections"
-	    label	"Flake tracereflections"
+	    label	"Flake Tracereflections"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Toggle reflections for flake layer"
@@ -400,7 +400,7 @@
 	}
 	parm {
 	    name	"flake_glossiness"
-	    label	"Flake glossiness"
+	    label	"Flake Glossiness"
 	    type	float
 	    default	{ "0.8" }
 	    help	"Flake glossiness (only if reflections are enabled)"
@@ -413,7 +413,7 @@
 	}
 	parm {
 	    name	"environment_override"
-	    label	"Environment override"
+	    label	"Environment Override"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "1" }
@@ -426,7 +426,7 @@
 	}
 	parm {
 	    name	"environment_priority"
-	    label	"Environment priority"
+	    label	"Environment Priority"
 	    type	integer
 	    default	{ "0" }
 	    range	{ 0 64 }
@@ -437,7 +437,7 @@
 	}
 	parm {
 	    name	"enabled_layers"
-	    label	"Enabled layers"
+	    label	"Enabled Layers"
 	    type	integer
 	    default	{ "0" }
 	    help	"Enabled layers OR mask (1 - base, 2 - flakes, 4 - coat)"

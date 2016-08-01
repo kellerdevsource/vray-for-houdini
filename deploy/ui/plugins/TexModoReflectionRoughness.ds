@@ -18,7 +18,7 @@
 	}
 	parm {
 	    name	"blurry_reflections"
-	    label	"Blurry reflections"
+	    label	"Blurry Reflections"
 	    type	toggle
 	    default	{ "0" }
 	    range	{ 0 1 }
@@ -29,7 +29,7 @@
 	}
 	parm {
 	    name	"modo_reflection_roughness"
-	    label	"Modo reflection roughness"
+	    label	"Modo Reflection Roughness"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 10 }

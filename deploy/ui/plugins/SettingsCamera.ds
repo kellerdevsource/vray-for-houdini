@@ -17,7 +17,7 @@
 	}
 	parm {
 	    name	"type"
-	    label	"Camera type"
+	    label	"Camera Type"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"Camera type"
@@ -68,7 +68,7 @@
 	}
 	parm {
 	    name	"fov"
-	    label	"FOV"
+	    label	"Fov"
 	    type	float
 	    default	{ "45" }
 	    help	"Field of view; if negative, the field of view will not be modified"
@@ -107,7 +107,7 @@
 	}
 	parm {
 	    name	"dont_affect_settings"
-	    label	"Don't affect settings"
+	    label	"Don't Affect Settings"
 	    type	toggle
 	    default	{ "0" }
 	    help	"This is here so we can suppress a SettingsCamera node from affecting the main VRayRenderer sequence and frame data"
@@ -120,7 +120,7 @@
 	}
 	parm {
 	    name	"image_planes"
-	    label	"Image planes"
+	    label	"Image Planes"
 	    type	oppath
 	    default	{ "" }
 	    help	"Used only to force a re-export of the image plane geometry in RT rendering"
@@ -133,7 +133,7 @@
 	}
 	parm {
 	    name	"override_fov"
-	    label	"Override fov"
+	    label	"Override Fov"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Override FOV"

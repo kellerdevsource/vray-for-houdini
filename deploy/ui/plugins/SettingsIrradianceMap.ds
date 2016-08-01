@@ -17,7 +17,7 @@
 	}
 	parm {
 	    name	"min_rate"
-	    label	"Min rate"
+	    label	"Min Rate"
 	    type	integer
 	    default	{ "-3" }
 	    help	"This value determines the resolution for the first GI pass"
@@ -29,7 +29,7 @@
 	}
 	parm {
 	    name	"max_rate"
-	    label	"Max rate"
+	    label	"Max Rate"
 	    type	integer
 	    default	{ "0" }
 	    help	"This value determines the resolution of the last GI pass"
@@ -53,7 +53,7 @@
 	}
 	parm {
 	    name	"interp_samples"
-	    label	"Interp. samples"
+	    label	"Interp. Samples"
 	    type	integer
 	    default	{ "20" }
 	    help	"The number of GI samples that will be used to interpolate the indirect illumination at a given point"
@@ -65,7 +65,7 @@
 	}
 	parm {
 	    name	"calc_interp_samples"
-	    label	"Calc. interp. samples"
+	    label	"Calc. Interp. Samples"
 	    type	integer
 	    default	{ "15" }
 	    help	"The number of already computed samples that will be used to guide the sampling algorithm"
@@ -77,7 +77,7 @@
 	}
 	parm {
 	    name	"interp_frames"
-	    label	"Interp. frames"
+	    label	"Interp. Frames"
 	    type	integer
 	    default	{ "2" }
 	    help	"The number of frames that will be used to interpolate GI when the \"Mode\" is set to \"Animation (rendering)\""
@@ -89,7 +89,7 @@
 	}
 	parm {
 	    name	"color_threshold"
-	    label	"Color threshold"
+	    label	"Color Threshold"
 	    type	float
 	    default	{ "0.3" }
 	    help	"This parameter controls how sensitive the irradiance map algorithm is to changes in indirect lighting"
@@ -101,7 +101,7 @@
 	}
 	parm {
 	    name	"normal_threshold"
-	    label	"Normal threshold"
+	    label	"Normal Threshold"
 	    type	float
 	    default	{ "0.1" }
 	    help	"This parameter controls how sensitive the irradiance map is to changes in surface normals and small surface details"
@@ -113,7 +113,7 @@
 	}
 	parm {
 	    name	"distance_threshold"
-	    label	"Distance threshold"
+	    label	"Distance Threshold"
 	    type	float
 	    default	{ "0.1" }
 	    help	"This parameter controls how sensitive the irradiance map is to distance between surfaces"
@@ -125,7 +125,7 @@
 	}
 	parm {
 	    name	"detail_enhancement"
-	    label	"Detail enhancement"
+	    label	"Detail Enhancement"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Detail enhancement is a method for bringing additional detail to the irradiance map in the case where there are small details in the image"
@@ -137,7 +137,7 @@
 	}
 	parm {
 	    name	"detail_radius"
-	    label	"Detail radius [px]"
+	    label	"Detail Radius [px]"
 	    type	float
 	    default	{ "0.2" }
 	    help	"This determines the radius for the detail enhancement effect"
@@ -150,7 +150,7 @@
 	}
 	parm {
 	    name	"detail_subdivs_mult"
-	    label	"Detail subdivs mult"
+	    label	"Detail Subdivs Mult"
 	    type	float
 	    default	{ "0.3" }
 	    help	"The number of samples taken for the high-precision sampling as a percentage of the irradiance map Hemispheric subdivs"
@@ -163,7 +163,7 @@
 	}
 	parm {
 	    name	"detail_scale"
-	    label	"Detail scale"
+	    label	"Detail Scale"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"Detail enhancement scale"
@@ -180,7 +180,7 @@
 	}
 	parm {
 	    name	"randomize_samples"
-	    label	"Randomize samples"
+	    label	"Randomize Samples"
 	    type	toggle
 	    default	{ "1" }
 	    help	"When it is checked, the image samples will be randomly jittered"
@@ -192,7 +192,7 @@
 	}
 	parm {
 	    name	"interpolation_mode"
-	    label	"Interpolation mode"
+	    label	"Interpolation Mode"
 	    type	ordinal
 	    default	{ "1" }
 	    help	"Method for interpolating the GI value from the samples in the irradiance map"
@@ -210,7 +210,7 @@
 	}
 	parm {
 	    name	"lookup_mode"
-	    label	"Lookup mode"
+	    label	"Lookup Mode"
 	    type	ordinal
 	    default	{ "3" }
 	    help	"Method of choosing suitable points from the irradiance map to be used as basis for the interpolation"
@@ -250,7 +250,7 @@
 	}
 	parm {
 	    name	"dont_delete"
-	    label	"Don't delete"
+	    label	"Don't Delete"
 	    type	toggle
 	    default	{ "1" }
 	    help	"If true, the map will not be deleted from memory at the end of the rendering"
@@ -277,7 +277,7 @@
 	}
 	parm {
 	    name	"show_samples"
-	    label	"Show samples"
+	    label	"Show Samples"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Show Irradiance Map samples"
@@ -289,7 +289,7 @@
 	}
 	parm {
 	    name	"show_calc_phase"
-	    label	"Show calc phase"
+	    label	"Show Calc Phase"
 	    type	toggle
 	    default	{ "1" }
 	    help	"Show Irradiance Map calculation process"
@@ -301,7 +301,7 @@
 	}
 	parm {
 	    name	"show_direct_light"
-	    label	"Show direct light"
+	    label	"Show Direct Light"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Show direct light when showing calculation process"
@@ -314,7 +314,7 @@
 	}
 	parm {
 	    name	"multiple_views"
-	    label	"Use camera path"
+	    label	"Use Camera Path"
 	    type	toggle
 	    default	{ "0" }
 	    help	"When this option is on, V-Ray will calculate the irradiance map samples for the entire camera path, instead of just the current view"
@@ -338,7 +338,7 @@
 	}
 	parm {
 	    name	"check_sample_visibility"
-	    label	"Check sample visibility"
+	    label	"Check Sample Visibility"
 	    type	toggle
 	    default	{ "0" }
 	    help	"This will cause V-Ray to use only those samples from the irradiance map, which are directly visible from the interpolated point"
@@ -350,7 +350,7 @@
 	}
 	parm {
 	    name	"auto_save"
-	    label	"Auto save"
+	    label	"Auto Save"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Automatically save the irradiance map to the specified file at the end of the rendering"
@@ -363,7 +363,7 @@
 	}
 	parm {
 	    name	"auto_save_file"
-	    label	"Auto save file"
+	    label	"Auto Save File"
 	    type	file
 	    default	{ "//lightmaps/irradiance_map.vrmap" }
 	    help	"Irradiance map auto save file"

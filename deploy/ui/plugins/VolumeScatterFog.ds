@@ -44,7 +44,7 @@
 	}
 	parm {
 	    name	"color_tex"
-	    label	"Color tex"
+	    label	"Color Tex"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "0" }
@@ -57,7 +57,7 @@
 	}
 	parm {
 	    name	"color_mult"
-	    label	"Color mult"
+	    label	"Color Mult"
 	    type	float
 	    default	{ "0.1" }
 	    help	"Fog color multiplier"
@@ -93,7 +93,7 @@
 	}
 	parm {
 	    name	"closed_volume"
-	    label	"Closed volume"
+	    label	"Closed Volume"
 	    type	toggle
 	    default	{ "0" }
 	    help	"If true, the fog will shade only closed volumes"
@@ -129,7 +129,7 @@
 	}
 	parm {
 	    name	"light_mult"
-	    label	"Light mult"
+	    label	"Light Mult"
 	    type	float
 	    default	{ "1" }
 	    help	"Multiplier for the sss effect"
@@ -141,7 +141,7 @@
 	}
 	parm {
 	    name	"scatter_coeff"
-	    label	"Scatter coeff"
+	    label	"Scatter Coeff"
 	    type	float
 	    default	{ "0" }
 	    help	"Scatter coefficient (0.0 is full scattering; 1.0 is purely directional)"
@@ -153,7 +153,7 @@
 	}
 	parm {
 	    name	"scatter_direction"
-	    label	"Scatter direction"
+	    label	"Scatter Direction"
 	    type	float
 	    default	{ "1" }
 	    help	"Scatter direction (0.0 is forward away from the viewer; 1.0 is backward towards the viewer)"
@@ -165,7 +165,7 @@
 	}
 	parm {
 	    name	"scatter_levels"
-	    label	"Scatter levels"
+	    label	"Scatter Levels"
 	    type	integer
 	    default	{ "1" }
 	    help	"Maximum number of scattering bounces"
@@ -177,7 +177,7 @@
 	}
 	parm {
 	    name	"environment_fog"
-	    label	"Environment fog"
+	    label	"Environment Fog"
 	    type	toggle
 	    default	{ "0" }
 	    help	"true if this is environment fog and false if it is inside an object"

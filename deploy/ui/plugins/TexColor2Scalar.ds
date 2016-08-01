@@ -19,7 +19,7 @@
 	}
 	parm {
 	    name	"clr_txt"
-	    label	"Clr txt"
+	    label	"Clr Txt"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "0" }
@@ -44,7 +44,7 @@
 	}
 	parm {
 	    name	"use_alpha"
-	    label	"Use alpha"
+	    label	"Use Alpha"
 	    type	integer
 	    default	{ "0" }
 	    help	"add alpha in the average calculation"

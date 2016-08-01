@@ -17,7 +17,7 @@
 	}
 	groupsimple {
 	    name	"uvw_transform"
-	    label	"Uvw transform"
+	    label	"Uvw Transform"
 	    grouptag	{ "vray_plugin" "xsiUVWGenChannel" }
 	    grouptag	{ "vray_pluginattr" "uvw_transform" }
 	    grouptag	{ "vray_type" "Transform" }
@@ -98,7 +98,7 @@
 
 	groupsimple {
 	    name	"uvw_transform_tex"
-	    label	"Uvw transform tex"
+	    label	"Uvw Transform Tex"
 	    grouptag	{ "vray_plugin" "xsiUVWGenChannel" }
 	    grouptag	{ "vray_pluginattr" "uvw_transform_tex" }
 	    grouptag	{ "vray_type" "TextureTransform" }
@@ -175,7 +175,7 @@
 
 	groupsimple {
 	    name	"tex_transform"
-	    label	"Tex transform"
+	    label	"Tex Transform"
 	    grouptag	{ "vray_plugin" "xsiUVWGenChannel" }
 	    grouptag	{ "vray_pluginattr" "tex_transform" }
 	    grouptag	{ "vray_type" "Transform" }
@@ -268,7 +268,7 @@
 	}
 	parm {
 	    name	"wrap_u"
-	    label	"Wrap u"
+	    label	"Wrap U"
 	    type	integer
 	    default	{ "0" }
 	    help	"0 - no wrapping, 1 - wrap, 2 - mirror tile"
@@ -280,7 +280,7 @@
 	}
 	parm {
 	    name	"wrap_v"
-	    label	"Wrap v"
+	    label	"Wrap V"
 	    type	integer
 	    default	{ "0" }
 	    help	"0 - no wrapping, 1 - wrap, 2 - mirror tile"
@@ -292,7 +292,7 @@
 	}
 	parm {
 	    name	"wrap_w"
-	    label	"Wrap w"
+	    label	"Wrap W"
 	    type	integer
 	    default	{ "0" }
 	    help	"0 - no wrapping, 1 - wrap, 2 - mirror tile"
@@ -304,7 +304,7 @@
 	}
 	parm {
 	    name	"crop_u"
-	    label	"Crop u"
+	    label	"Crop U"
 	    type	integer
 	    default	{ "0" }
 	    help	"1 to crop in the u-direction"
@@ -316,7 +316,7 @@
 	}
 	parm {
 	    name	"crop_v"
-	    label	"Crop v"
+	    label	"Crop V"
 	    type	integer
 	    default	{ "0" }
 	    help	"1 to crop in the v-direction"
@@ -328,7 +328,7 @@
 	}
 	parm {
 	    name	"crop_w"
-	    label	"Crop w"
+	    label	"Crop W"
 	    type	integer
 	    default	{ "0" }
 	    help	"1 to crop in the w-direction"
@@ -353,7 +353,7 @@
 	}
 	parm {
 	    name	"wrap_mode"
-	    label	"Wrap mode"
+	    label	"Wrap Mode"
 	    type	integer
 	    default	{ "0" }
 	    help	"Wrap mode (0 - wrap on 0.5 boundary; 1 - wrap on integer boundary"
@@ -369,7 +369,7 @@
 	}
 	parm {
 	    name	"duvw_scale"
-	    label	"Duvw scale"
+	    label	"Duvw Scale"
 	    type	float
 	    default	{ "1" }
 	    help	"Additional scale factor for the texture derivatives"
@@ -381,7 +381,7 @@
 	}
 	parm {
 	    name	"uvw_channel"
-	    label	"Uvw channel"
+	    label	"Uvw Channel"
 	    type	integer
 	    default	{ "1" }
 	    range	{ 0 64 }
@@ -392,7 +392,7 @@
 	}
 	parm {
 	    name	"channel_type"
-	    label	"Channel type"
+	    label	"Channel Type"
 	    type	integer
 	    default	{ "0" }
 	    help	"Type of the channel used. 0 - uvw, 1 - vertex colors"
@@ -417,7 +417,7 @@
 	}
 	parm {
 	    name	"u_alternate"
-	    label	"U alternate"
+	    label	"U Alternate"
 	    type	integer
 	    default	{ "0" }
 	    help	"alternate image in u direction"
@@ -429,7 +429,7 @@
 	}
 	parm {
 	    name	"v_alternate"
-	    label	"V alternate"
+	    label	"V Alternate"
 	    type	integer
 	    default	{ "0" }
 	    help	"alternate image in v direction"
@@ -441,7 +441,7 @@
 	}
 	parm {
 	    name	"x_remapMin"
-	    label	"X remapmin"
+	    label	"X Remapmin"
 	    type	float
 	    default	{ "0" }
 	    help	"min remap in x direction"
@@ -453,7 +453,7 @@
 	}
 	parm {
 	    name	"y_remapMin"
-	    label	"Y remapmin"
+	    label	"Y Remapmin"
 	    type	float
 	    default	{ "0" }
 	    help	"min remap in y direction"
@@ -465,7 +465,7 @@
 	}
 	parm {
 	    name	"z_remapMin"
-	    label	"Z remapmin"
+	    label	"Z Remapmin"
 	    type	float
 	    default	{ "0" }
 	    help	"min remap in z direction"
@@ -477,7 +477,7 @@
 	}
 	parm {
 	    name	"x_remapMax"
-	    label	"X remapmax"
+	    label	"X Remapmax"
 	    type	float
 	    default	{ "1" }
 	    help	"max remap in x direction"
@@ -489,7 +489,7 @@
 	}
 	parm {
 	    name	"y_remapMax"
-	    label	"Y remapmax"
+	    label	"Y Remapmax"
 	    type	float
 	    default	{ "1" }
 	    help	"max remap in y direction"
@@ -501,7 +501,7 @@
 	}
 	parm {
 	    name	"z_remapMax"
-	    label	"Z remapmax"
+	    label	"Z Remapmax"
 	    type	float
 	    default	{ "1" }
 	    help	"max remap in z direction"

@@ -18,7 +18,7 @@
 	}
 	parm {
 	    name	"modo_diffuse_roughness"
-	    label	"Modo diffuse roughness"
+	    label	"Modo Diffuse Roughness"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 10 }

@@ -30,7 +30,7 @@
 	}
 	parm {
 	    name	"color_tex"
-	    label	"Color tex"
+	    label	"Color Tex"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "0" }
@@ -42,7 +42,7 @@
 	}
 	parm {
 	    name	"color_tex_mult"
-	    label	"Color tex mult"
+	    label	"Color Tex Mult"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 10 }
@@ -65,7 +65,7 @@
 	}
 	parm {
 	    name	"transparency_tex"
-	    label	"Transparency tex"
+	    label	"Transparency Tex"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "0" }
@@ -77,7 +77,7 @@
 	}
 	parm {
 	    name	"transparency_tex_mult"
-	    label	"Transparency tex mult"
+	    label	"Transparency Tex Mult"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 10 }
@@ -100,7 +100,7 @@
 	}
 	parm {
 	    name	"ior_tex"
-	    label	"Ior tex"
+	    label	"Ior Tex"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 10 }
@@ -111,7 +111,7 @@
 	}
 	parm {
 	    name	"ior_tex_mult"
-	    label	"Ior tex mult"
+	    label	"Ior Tex Mult"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 10 }
@@ -133,7 +133,7 @@
 	}
 	parm {
 	    name	"affect_shadows"
-	    label	"Affect shadows"
+	    label	"Affect Shadows"
 	    type	toggle
 	    default	{ "0" }
 	    range	{ 0 1 }
@@ -144,7 +144,7 @@
 	}
 	parm {
 	    name	"affect_alpha"
-	    label	"Affect alpha"
+	    label	"Affect Alpha"
 	    type	toggle
 	    default	{ "0" }
 	    range	{ 0 1 }
@@ -155,7 +155,7 @@
 	}
 	parm {
 	    name	"trace_refractions"
-	    label	"Trace refractions"
+	    label	"Trace Refractions"
 	    type	toggle
 	    default	{ "1" }
 	    range	{ 0 1 }
@@ -166,7 +166,7 @@
 	}
 	parm {
 	    name	"trace_depth"
-	    label	"Trace depth"
+	    label	"Trace Depth"
 	    type	integer
 	    default	{ "-1" }
 	    help	"The maximum refraction bounces (-1 is controlled by the global options)"
@@ -178,7 +178,7 @@
 	}
 	parm {
 	    name	"exit_color_on"
-	    label	"Exit color on"
+	    label	"Exit Color On"
 	    type	toggle
 	    default	{ "0" }
 	    range	{ 0 1 }
@@ -189,7 +189,7 @@
 	}
 	parm {
 	    name	"reflect_exit_color"
-	    label	"Reflect exit color"
+	    label	"Reflect Exit Color"
 	    type	color
 	    size	3
 	    default	{ "0" "0" "0" }
@@ -202,7 +202,7 @@
 	}
 	parm {
 	    name	"refract_exit_color"
-	    label	"Refract exit color"
+	    label	"Refract Exit Color"
 	    type	color
 	    size	3
 	    default	{ "0" "0" "0" }
@@ -215,7 +215,7 @@
 	}
 	parm {
 	    name	"fog_color"
-	    label	"Fog color"
+	    label	"Fog Color"
 	    type	color
 	    size	3
 	    default	{ "1" "1" "1" }
@@ -228,7 +228,7 @@
 	}
 	parm {
 	    name	"fog_color_mult"
-	    label	"Fog color mult"
+	    label	"Fog Color Mult"
 	    type	float
 	    default	{ "1" }
 	    help	"A multiplier for the fog plugin"
@@ -240,7 +240,7 @@
 	}
 	parm {
 	    name	"fog_emission"
-	    label	"Fog emission"
+	    label	"Fog Emission"
 	    type	color
 	    size	3
 	    default	{ "0" "0" "0" }
@@ -253,7 +253,7 @@
 	}
 	parm {
 	    name	"fog_bias"
-	    label	"Fog bias"
+	    label	"Fog Bias"
 	    type	float
 	    default	{ "0" }
 	    help	"Bias for the fogging distance"
@@ -276,7 +276,7 @@
 	}
 	parm {
 	    name	"glossiness_tex"
-	    label	"Glossiness tex"
+	    label	"Glossiness Tex"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 10 }
@@ -287,7 +287,7 @@
 	}
 	parm {
 	    name	"glossiness_tex_mult"
-	    label	"Glossiness tex mult"
+	    label	"Glossiness Tex Mult"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 10 }
@@ -309,7 +309,7 @@
 	}
 	parm {
 	    name	"dispersion_on"
-	    label	"Dispersion on"
+	    label	"Dispersion On"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Whether to enable dispersion"
@@ -333,7 +333,7 @@
 	}
 	parm {
 	    name	"interpolation_on"
-	    label	"Interpolation on"
+	    label	"Interpolation On"
 	    type	integer
 	    default	{ "0" }
 	    range	{ 0 10 }
@@ -344,7 +344,7 @@
 	}
 	parm {
 	    name	"imap_min_rate"
-	    label	"Imap min rate"
+	    label	"Imap Min Rate"
 	    type	integer
 	    default	{ "-1" }
 	    range	{ 0 10 }
@@ -355,7 +355,7 @@
 	}
 	parm {
 	    name	"imap_max_rate"
-	    label	"Imap max rate"
+	    label	"Imap Max Rate"
 	    type	integer
 	    default	{ "1" }
 	    range	{ 0 10 }
@@ -366,7 +366,7 @@
 	}
 	parm {
 	    name	"imap_color_thresh"
-	    label	"Imap color thresh"
+	    label	"Imap Color Thresh"
 	    type	float
 	    default	{ "0.25" }
 	    range	{ 0 10 }
@@ -377,7 +377,7 @@
 	}
 	parm {
 	    name	"imap_norm_thresh"
-	    label	"Imap norm thresh"
+	    label	"Imap Norm Thresh"
 	    type	float
 	    default	{ "0.4" }
 	    range	{ 0 10 }
@@ -388,7 +388,7 @@
 	}
 	parm {
 	    name	"imap_samples"
-	    label	"Imap samples"
+	    label	"Imap Samples"
 	    type	integer
 	    default	{ "20" }
 	    range	{ 0 10 }
@@ -399,7 +399,7 @@
 	}
 	parm {
 	    name	"translucency_on"
-	    label	"Translucency on"
+	    label	"Translucency On"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Whether or not transluceny should be turned on"
@@ -423,7 +423,7 @@
 	}
 	parm {
 	    name	"translucency_tex"
-	    label	"Translucency tex"
+	    label	"Translucency Tex"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "0" }
@@ -435,7 +435,7 @@
 	}
 	parm {
 	    name	"translucency_tex_mult"
-	    label	"Translucency tex mult"
+	    label	"Translucency Tex Mult"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 10 }
@@ -457,7 +457,7 @@
 	}
 	parm {
 	    name	"scatter_coeff"
-	    label	"Scatter coeff"
+	    label	"Scatter Coeff"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 10 }
@@ -468,7 +468,7 @@
 	}
 	parm {
 	    name	"scatter_direction"
-	    label	"Scatter direction"
+	    label	"Scatter Direction"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 10 }

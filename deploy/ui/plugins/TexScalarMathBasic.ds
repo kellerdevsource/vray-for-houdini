@@ -54,7 +54,7 @@
 	}
 	parm {
 	    name	"max_displacement"
-	    label	"Max displacement"
+	    label	"Max Displacement"
 	    type	float
 	    default	{ "-1" }
 	    help	"Specifies the maximum displacement value.  If the displacement value is higher than the Max Displacement value, displacement will be clipped"

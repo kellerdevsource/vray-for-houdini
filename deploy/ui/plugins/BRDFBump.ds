@@ -17,7 +17,7 @@
 	}
 	parm {
 	    name	"base_brdf"
-	    label	"Base brdf"
+	    label	"Base Brdf"
 	    type	oppath
 	    default	{ "" }
 	    help	"Base BRDF"
@@ -79,7 +79,7 @@
 	}
 	parm {
 	    name	"bump_shadows"
-	    label	"Bump shadows"
+	    label	"Bump Shadows"
 	    type	toggle
 	    default	{ "0" }
 	    help	"true to offset the surface shading point, in addition to the normal"
@@ -112,7 +112,7 @@
 	}
 	parm {
 	    name	"normal_uvwgen"
-	    label	"Normal uvwgen"
+	    label	"Normal Uvwgen"
 	    type	oppath
 	    default	{ "" }
 	    help	"The uvw generator for the normal map texture when \"Type\" is \"Normal (Tangent)\""
@@ -125,7 +125,7 @@
 	}
 	parm {
 	    name	"maya_compatible"
-	    label	"Maya compatible"
+	    label	"Maya Compatible"
 	    type	toggle
 	    default	{ "0" }
 	    help	"When this is true the BRDFBump will try to match the Maya bump/normal mapping"
@@ -137,7 +137,7 @@
 	}
 	parm {
 	    name	"compute_bump_for_shadows"
-	    label	"Compute bump for shadows"
+	    label	"Compute Bump For Shadows"
 	    type	toggle
 	    default	{ "1" }
 	    help	"true to compute bump mapping for shadow rays in case the material is transparent; false to skip the bump map for shadow rays (faster rendering)"
@@ -149,7 +149,7 @@
 	}
 	parm {
 	    name	"bump_delta_scale"
-	    label	"Bump delta scale"
+	    label	"Bump Delta Scale"
 	    type	float
 	    default	{ "1" }
 	    help	"Scale for sampling the bitmap when map_type is 0. Normally this is tied to the ray differentials, but can be changed if necessary"
@@ -161,7 +161,7 @@
 	}
 	parm {
 	    name	"bump_tex"
-	    label	"Bump tex"
+	    label	"Bump Tex"
 	    type	oppath
 	    default	{ "" }
 	    help	"Bump texture; this is deprecated, use bump_tex_color or bump_tex_float"
@@ -174,7 +174,7 @@
 	}
 	parm {
 	    name	"normal_map_mult"
-	    label	"Normal map mult"
+	    label	"Normal Map Mult"
 	    type	float
 	    default	{ "1" }
 	    help	"Multiplier applied to the normal map"
@@ -186,7 +186,7 @@
 	}
 	parm {
 	    name	"additional_bump"
-	    label	"Additional bump"
+	    label	"Additional Bump"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "0" }
@@ -199,7 +199,7 @@
 	}
 	parm {
 	    name	"bump_map_mult"
-	    label	"Bump map mult"
+	    label	"Bump Map Mult"
 	    type	float
 	    default	{ "1" }
 	    help	"Multiplier applied to the bump map"

@@ -21,7 +21,7 @@
 
 	    parm {
 		name	"overall_color"
-		label	"Overall color"
+		label	"Overall Color"
 		type	color4
 		size	4
 		default	{ "0.9" "0.9" "0.9" "1" }
@@ -53,7 +53,7 @@
 
 	    parm {
 		name	"diffuse_color"
-		label	"Diffuse color"
+		label	"Diffuse Color"
 		type	color4
 		size	4
 		default	{ "0" "0" "0" "1" }
@@ -66,7 +66,7 @@
 	    }
 	    parm {
 		name	"diffuse_amount"
-		label	"Diffuse amount"
+		label	"Diffuse Amount"
 		type	float
 		default	{ "1" }
 		help	"Multiplier for the diffuse color"
@@ -84,7 +84,7 @@
 
 	    parm {
 		name	"primary_specular"
-		label	"Prim. specular"
+		label	"Prim. Specular"
 		type	color4
 		size	4
 		default	{ "0.2" "0.2" "0.2" "1" }
@@ -97,7 +97,7 @@
 	    }
 	    parm {
 		name	"primary_specular_amount"
-		label	"Prim. specular amount"
+		label	"Prim. Specular Amount"
 		type	float
 		default	{ "1" }
 		help	"Multiplier for the primary specular color"
@@ -109,7 +109,7 @@
 	    }
 	    parm {
 		name	"primary_glossiness"
-		label	"Prim. glossiness"
+		label	"Prim. Glossiness"
 		type	float
 		default	{ "0.8" }
 		help	"Primary glossiness"
@@ -121,7 +121,7 @@
 	    }
 	    parm {
 		name	"secondary_specular"
-		label	"Sec. specular"
+		label	"Sec. Specular"
 		type	color4
 		size	4
 		default	{ "0.2" "0.2" "0.2" "1" }
@@ -135,7 +135,7 @@
 	    }
 	    parm {
 		name	"secondary_specular_amount"
-		label	"Sec. specular amount"
+		label	"Sec. Specular Amount"
 		type	float
 		default	{ "1" }
 		help	"Multiplier for the secondary specular color"
@@ -148,7 +148,7 @@
 	    }
 	    parm {
 		name	"secondary_glossiness"
-		label	"Sec. glossiness"
+		label	"Sec. Glossiness"
 		type	float
 		default	{ "0.5" }
 		help	"Secondary glossiness"
@@ -166,7 +166,7 @@
 
 	    parm {
 		name	"secondary_lock_to_transmission"
-		label	"Sec. lock to transmission"
+		label	"Sec. Lock To Transmission"
 		type	toggle
 		default	{ "1" }
 		help	"true to derive the secondary specular color from the transmission color"
@@ -197,7 +197,7 @@
 	    }
 	    parm {
 		name	"transmission_amount"
-		label	"Transmission amount"
+		label	"Transmission Amount"
 		type	float
 		default	{ "1" }
 		help	"Multiplier for the transmission color"
@@ -209,7 +209,7 @@
 	    }
 	    parm {
 		name	"transmission_glossiness_length"
-		label	"Trans. gloss. length"
+		label	"Trans. Gloss. Length"
 		type	float
 		default	{ "0.8" }
 		help	"Transmission glossiness along strand length"
@@ -221,7 +221,7 @@
 	    }
 	    parm {
 		name	"transmission_glossiness_width"
-		label	"Trans. gloss. width"
+		label	"Trans. Gloss. Width"
 		type	float
 		default	{ "0.8" }
 		help	"Transmission glossiness across strand width"
@@ -239,7 +239,7 @@
 
 	    parm {
 		name	"opaque_for_shadows"
-		label	"Opaque for shadows"
+		label	"Opaque For Shadows"
 		type	toggle
 		default	{ "0" }
 		help	"true to always compute the material as opaque for shadow rays"
@@ -251,7 +251,7 @@
 	    }
 	    parm {
 		name	"opaque_for_gi"
-		label	"Opaque for GI"
+		label	"Opaque For Gi"
 		type	toggle
 		default	{ "0" }
 		help	"true to always compute the material as opaque for GI rays"
@@ -263,7 +263,7 @@
 	    }
 	    parm {
 		name	"simplify_for_gi"
-		label	"Simplify for GI"
+		label	"Simplify For Gi"
 		type	toggle
 		default	{ "1" }
 		help	"true to use a simpler and less precise representation of the BRDF for GI rays"
@@ -275,7 +275,7 @@
 	    }
 	    parm {
 		name	"use_cached_gi"
-		label	"Use cached GI"
+		label	"Use Cached Gi"
 		type	toggle
 		default	{ "1" }
 		help	"true to use the light cache/irradiance map; false to always use brute force GI for the hair"
@@ -293,7 +293,7 @@
 
 	    parm {
 		name	"light_multiplier"
-		label	"Light multiplier"
+		label	"Light Multiplier"
 		type	float
 		default	{ "1" }
 		help	"A multiplier for the direct lighting of the hair; could be useful to brighten up the result when not using GI"

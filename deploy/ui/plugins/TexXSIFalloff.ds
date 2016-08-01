@@ -18,7 +18,7 @@
 	}
 	parm {
 	    name	"curve_falloff"
-	    label	"Curve falloff"
+	    label	"Curve Falloff"
 	    type	float
 	    default	{ "1" }
 	    help	"Curve falloff"
@@ -30,7 +30,7 @@
 	}
 	parm {
 	    name	"facing_refl"
-	    label	"Facing refl"
+	    label	"Facing Refl"
 	    type	float
 	    default	{ "1" }
 	    help	"Facing reflectivity"
@@ -42,7 +42,7 @@
 	}
 	parm {
 	    name	"perp_refl"
-	    label	"Perp refl"
+	    label	"Perp Refl"
 	    type	float
 	    default	{ "1" }
 	    help	"Perpendicular reflectivity"
@@ -54,7 +54,7 @@
 	}
 	parm {
 	    name	"white_color"
-	    label	"White color"
+	    label	"White Color"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "0" }
@@ -67,7 +67,7 @@
 	}
 	parm {
 	    name	"black_color"
-	    label	"Black color"
+	    label	"Black Color"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "0" }

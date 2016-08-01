@@ -17,7 +17,7 @@
 	}
 	parm {
 	    name	"base_mtl"
-	    label	"Base mtl"
+	    label	"Base Mtl"
 	    type	oppath
 	    default	{ "" }
 	    help	"The base material"
@@ -30,7 +30,7 @@
 	}
 	parm {
 	    name	"material_id_color"
-	    label	"Material id color"
+	    label	"Material Id Color"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "1" }
@@ -43,7 +43,7 @@
 	}
 	parm {
 	    name	"material_id_number"
-	    label	"ID"
+	    label	"Id"
 	    type	integer
 	    default	{ "0" }
 	    range	{ 0 64 }

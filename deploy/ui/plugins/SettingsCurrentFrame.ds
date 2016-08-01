@@ -17,7 +17,7 @@
 	}
 	parm {
 	    name	"current_frame"
-	    label	"Current frame"
+	    label	"Current Frame"
 	    type	integer
 	    default	{ "0" }
 	    help	"current frame"

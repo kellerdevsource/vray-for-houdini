@@ -19,7 +19,7 @@
 	}
 	parm {
 	    name	"color_a"
-	    label	"Color a"
+	    label	"Color A"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "1" }
@@ -32,7 +32,7 @@
 	}
 	parm {
 	    name	"color_b"
-	    label	"Color b"
+	    label	"Color B"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "1" }
@@ -45,7 +45,7 @@
 	}
 	parm {
 	    name	"mult_a"
-	    label	"Mult a"
+	    label	"Mult A"
 	    type	float
 	    default	{ "1" }
 	    help	"Multiplier for the first color"
@@ -57,7 +57,7 @@
 	}
 	parm {
 	    name	"mult_b"
-	    label	"Mult b"
+	    label	"Mult B"
 	    type	float
 	    default	{ "1" }
 	    help	"Multiplier for the second color"
@@ -69,7 +69,7 @@
 	}
 	parm {
 	    name	"result_alpha"
-	    label	"Result alpha"
+	    label	"Result Alpha"
 	    type	float
 	    default	{ "1" }
 	    help	"The alpha for the result; if not specified, the resulting alpha taken from the first color)"

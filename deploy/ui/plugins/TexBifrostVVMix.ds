@@ -18,7 +18,7 @@
 	}
 	parm {
 	    name	"velocity_mult"
-	    label	"Velocity mult"
+	    label	"Velocity Mult"
 	    type	float
 	    default	{ "1" }
 	    help	"The velocity texture multiplier"
@@ -30,7 +30,7 @@
 	}
 	parm {
 	    name	"vorticity_mult"
-	    label	"Vorticity mult"
+	    label	"Vorticity Mult"
 	    type	float
 	    default	{ "1" }
 	    help	"The vorticity texture multiplier"
@@ -42,7 +42,7 @@
 	}
 	parm {
 	    name	"velocity_tex"
-	    label	"Velocity tex"
+	    label	"Velocity Tex"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "0" }
@@ -55,7 +55,7 @@
 	}
 	parm {
 	    name	"vorticity_tex"
-	    label	"Vorticity tex"
+	    label	"Vorticity Tex"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "0" }

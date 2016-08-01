@@ -18,7 +18,7 @@
 	}
 	parm {
 	    name	"file"
-	    label	"File name"
+	    label	"File Name"
 	    type	file
 	    default	{ "" }
 	    range	{ 0 1 }
@@ -32,7 +32,7 @@
 	}
 	parm {
 	    name	"anim_type"
-	    label	"Playback type"
+	    label	"Playback Type"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"Animated proxy playback type"
@@ -50,7 +50,7 @@
 	}
 	parm {
 	    name	"anim_override"
-	    label	"Sequence override"
+	    label	"Sequence Override"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Controls if anim_start and anim_length are taken in consideration. Useful only, when the file name contains frame filter"
@@ -62,7 +62,7 @@
 	}
 	parm {
 	    name	"anim_speed"
-	    label	"Playback speed"
+	    label	"Playback Speed"
 	    type	float
 	    default	{ "1" }
 	    help	"Animated proxy playback speed"
@@ -75,7 +75,7 @@
 	}
 	parm {
 	    name	"anim_offset"
-	    label	"Start offset"
+	    label	"Start Offset"
 	    type	float
 	    default	{ "0" }
 	    help	"Animated proxy initial frame offset"
@@ -88,7 +88,7 @@
 	}
 	parm {
 	    name	"anim_start"
-	    label	"Sequence start"
+	    label	"Sequence Start"
 	    type	integer
 	    default	{ "0" }
 	    help	"Specifies the first frame of the animation sequence"
@@ -101,7 +101,7 @@
 	}
 	parm {
 	    name	"anim_length"
-	    label	"Sequence length"
+	    label	"Sequence Length"
 	    type	integer
 	    default	{ "0" }
 	    help	"Specifies the length of the animation sequence"
@@ -114,7 +114,7 @@
 	}
 	parm {
 	    name	"primary_visibility"
-	    label	"Primary visibility"
+	    label	"Primary Visibility"
 	    type	toggle
 	    default	{ "1" }
 	    range	{ 0 1 }
@@ -137,7 +137,7 @@
 	}
 	parm {
 	    name	"flip_axis"
-	    label	"Flip axis"
+	    label	"Flip Axis"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Transform the proxy from Y-up to Z-up (and vice versa) coordinate system"
@@ -149,7 +149,7 @@
 	}
 	parm {
 	    name	"smooth_uv_borders"
-	    label	"Smooth uv borders"
+	    label	"Smooth Uv Borders"
 	    type	toggle
 	    default	{ "1" }
 	    help	"true to smooth UVs at mesh borders when rendering this mesh as a subdivision surface"
@@ -161,7 +161,7 @@
 	}
 	parm {
 	    name	"smooth_uv"
-	    label	"Smooth uv"
+	    label	"Smooth Uv"
 	    type	toggle
 	    default	{ "1" }
 	    help	"true to smooth UVs when rendering this mesh as a subdivision surface"
@@ -173,7 +173,7 @@
 	}
 	parm {
 	    name	"compute_normals"
-	    label	"Compute normals"
+	    label	"Compute Normals"
 	    type	toggle
 	    default	{ "1" }
 	    help	"true to calculate smooth normals"
@@ -185,7 +185,7 @@
 	}
 	parm {
 	    name	"smooth_angle"
-	    label	"Smooth angle"
+	    label	"Smooth Angle"
 	    type	float
 	    default	{ "30" }
 	    help	"smooth angle in degrees"
@@ -198,7 +198,7 @@
 	}
 	parm {
 	    name	"compute_bbox"
-	    label	"Recompute bounding box"
+	    label	"Recompute Bounding Box"
 	    type	toggle
 	    default	{ "0" }
 	    help	"true to compute the bounding box, false to read it from the file"
@@ -210,7 +210,7 @@
 	}
 	parm {
 	    name	"num_preview_faces"
-	    label	"Preview faces"
+	    label	"Preview Faces"
 	    type	integer
 	    default	{ "10000" }
 	    help	"number of faces in preview"
@@ -222,7 +222,7 @@
 	}
 	parm {
 	    name	"use_face_sets"
-	    label	"Use face sets"
+	    label	"Use Face Sets"
 	    type	toggle
 	    default	{ "1" }
 	    help	"turn on/off face sets"
@@ -234,7 +234,7 @@
 	}
 	parm {
 	    name	"use_full_names"
-	    label	"Use full names"
+	    label	"Use Full Names"
 	    type	toggle
 	    default	{ "0" }
 	    help	"read the full path instead of only the name"
@@ -246,7 +246,7 @@
 	}
 	parm {
 	    name	"object_path"
-	    label	"Starting object path"
+	    label	"Starting Object Path"
 	    type	string
 	    default	{ "" }
 	    help	"Starting object path in Alembic hierarchy"
@@ -258,7 +258,7 @@
 	}
 	parm {
 	    name	"hair_width_multiplier"
-	    label	"Hair width multiplier"
+	    label	"Hair Width Multiplier"
 	    type	float
 	    default	{ "1" }
 	    help	"Hair width multiplier"
@@ -270,7 +270,7 @@
 	}
 	parm {
 	    name	"visibility_lists_type"
-	    label	"Visibility lists type"
+	    label	"Visibility Lists Type"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"Specifies the type of both names and ids lists"
@@ -286,7 +286,7 @@
 	}
 	multiparm {
 	    name	"visibility_list_names"
-	    label	"Visibility list names"
+	    label	"Visibility List Names"
 	    default	0
 	    parmtag	{ "vray_plugin" "GeomMeshFile" }
 	    parmtag	{ "vray_pluginattr" "visibility_list_names" }
@@ -294,7 +294,7 @@
 
 	    parm {
 		name	"visibility_list_names#"
-		label	"Visibility list names"
+		label	"Visibility List Names"
 		type	string
 		default	{ "" }
 		help	"Visibility list of mesh names. Either include or exclude"
@@ -305,7 +305,7 @@
 
 	parm {
 	    name	"hair_visibility_lists_type"
-	    label	"Hair visibility lists type"
+	    label	"Hair Visibility Lists Type"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"Specifies the type of both names and ids lists"
@@ -321,7 +321,7 @@
 	}
 	multiparm {
 	    name	"hair_visibility_list_names"
-	    label	"Hair visibility list names"
+	    label	"Hair Visibility List Names"
 	    default	0
 	    parmtag	{ "vray_plugin" "GeomMeshFile" }
 	    parmtag	{ "vray_pluginattr" "hair_visibility_list_names" }
@@ -329,7 +329,7 @@
 
 	    parm {
 		name	"hair_visibility_list_names#"
-		label	"Hair visibility list names"
+		label	"Hair Visibility List Names"
 		type	string
 		default	{ "" }
 		help	"Visibility list of hair names. Either include or exclude"
@@ -340,7 +340,7 @@
 
 	parm {
 	    name	"flip_normals"
-	    label	"Flip normals"
+	    label	"Flip Normals"
 	    type	toggle
 	    default	{ "0" }
 	    help	"True to flip the vertex normals"
@@ -352,7 +352,7 @@
 	}
 	parm {
 	    name	"particle_width_multiplier"
-	    label	"Particle width multiplier"
+	    label	"Particle Width Multiplier"
 	    type	float
 	    default	{ "1" }
 	    help	"Particle width multiplier"
@@ -364,7 +364,7 @@
 	}
 	parm {
 	    name	"velocity_multiplier"
-	    label	"Velocity multiplier"
+	    label	"Velocity Multiplier"
 	    type	float
 	    default	{ "1" }
 	    help	"Alembic velocity multiplier"
@@ -376,7 +376,7 @@
 	}
 	parm {
 	    name	"particle_visibility_lists_type"
-	    label	"Particle visibility lists type"
+	    label	"Particle Visibility Lists Type"
 	    type	ordinal
 	    default	{ "1" }
 	    help	"Specifies the type of both names and ids lists. 0 - exclude; 1 - include"
@@ -392,7 +392,7 @@
 	}
 	multiparm {
 	    name	"particle_visibility_list_names"
-	    label	"Particle visibility list names"
+	    label	"Particle Visibility List Names"
 	    default	0
 	    parmtag	{ "vray_plugin" "GeomMeshFile" }
 	    parmtag	{ "vray_pluginattr" "particle_visibility_list_names" }
@@ -400,7 +400,7 @@
 
 	    parm {
 		name	"particle_visibility_list_names#"
-		label	"Particle visibility list names"
+		label	"Particle Visibility List Names"
 		type	string
 		default	{ "" }
 		help	"Visibility list of particle system names. Either include or exclude"
@@ -411,7 +411,7 @@
 
 	parm {
 	    name	"sort_voxels"
-	    label	"Sort voxels"
+	    label	"Sort Voxels"
 	    type	integer
 	    default	{ "0" }
 	    help	"Sort Alembic voxels after reading by their names. 0 - skip sorting; 1 - sort"
@@ -423,7 +423,7 @@
 	}
 	parm {
 	    name	"first_map_channel"
-	    label	"First map channel"
+	    label	"First Map Channel"
 	    type	integer
 	    default	{ "-1" }
 	    help	"Specifies how to remap the mapping channels: -1 - no remapping; 0 - channel 0, 1 - channel 1"
@@ -435,7 +435,7 @@
 	}
 	parm {
 	    name	"particle_render_mode"
-	    label	"Particle render mode"
+	    label	"Particle Render Mode"
 	    type	ordinal
 	    default	{ "1" }
 	    help	"Set to 0 to render particles as spheres. Set it to 1 to render them as points"
@@ -451,7 +451,7 @@
 	}
 	parm {
 	    name	"use_alembic_offset"
-	    label	"Use alembic offset"
+	    label	"Use Alembic Offset"
 	    type	toggle
 	    default	{ "0" }
 	    help	"True to use alembic animation frame offset"
@@ -463,7 +463,7 @@
 	}
 	parm {
 	    name	"velocity_color_set"
-	    label	"Velocity color set"
+	    label	"Velocity Color Set"
 	    type	string
 	    default	{ "" }
 	    help	"Optional name for the color set where the velocity is written"
@@ -487,7 +487,7 @@
 	}
 	parm {
 	    name	"subdiv_all_meshes"
-	    label	"Subdivide all meshes"
+	    label	"Subdivide All Meshes"
 	    type	toggle
 	    default	{ "0" }
 	    help	"True to subdivide alembic PolyMesh and SubD objects; false to subdivide only SubD objects"
@@ -499,7 +499,7 @@
 	}
 	parm {
 	    name	"subdiv_type"
-	    label	"Subdiv type"
+	    label	"Subdiv Type"
 	    type	integer
 	    default	{ "0" }
 	    help	"0 for Catmull-Clark subdivision and 1 for Loop subdivision"
@@ -511,7 +511,7 @@
 	}
 	parm {
 	    name	"subdiv_level"
-	    label	"Subdivision level"
+	    label	"Subdivision Level"
 	    type	integer
 	    default	{ "1" }
 	    help	"The subdivision level"
@@ -523,7 +523,7 @@
 	}
 	parm {
 	    name	"subdiv_uvs"
-	    label	"Subdivide UVs"
+	    label	"Subdivide Uvs"
 	    type	toggle
 	    default	{ "1" }
 	    help	"Subdivide or skip mapping channels"
@@ -535,7 +535,7 @@
 	}
 	parm {
 	    name	"subdiv_preserve_geom_borders"
-	    label	"Preserve geometry borders"
+	    label	"Preserve Geometry Borders"
 	    type	toggle
 	    default	{ "0" }
 	    help	"If true, the borders won't be subdivided"
@@ -547,7 +547,7 @@
 	}
 	parm {
 	    name	"subdiv_preserve_map_borders"
-	    label	"Preserve map borders"
+	    label	"Preserve Map Borders"
 	    type	ordinal
 	    default	{ "1" }
 	    help	"Determines the smoothing mode of the mapping channels' borders. 0-None, 1-Internal and 2-All"
@@ -564,7 +564,7 @@
 	}
 	parm {
 	    name	"use_point_cloud"
-	    label	"Use point cloud"
+	    label	"Use Point Cloud"
 	    type	toggle
 	    default	{ "0" }
 	    help	"If true, use the point cloud inside the vrmesh if available"
@@ -576,7 +576,7 @@
 	}
 	parm {
 	    name	"point_cloud_mult"
-	    label	"Point cloud mult"
+	    label	"Point Cloud Mult"
 	    type	float
 	    default	{ "1" }
 	    help	"A LOD multiplier. A value smaller than 1.0 means that the level will be of greater detail than required by distance to the object"

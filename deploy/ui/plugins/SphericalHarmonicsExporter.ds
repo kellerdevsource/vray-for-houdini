@@ -18,7 +18,7 @@
 	}
 	parm {
 	    name	"anim_on"
-	    label	"Anim on"
+	    label	"Anim On"
 	    type	toggle
 	    default	{ "0" }
 	    range	{ 0 1 }
@@ -81,7 +81,7 @@
 	}
 	parm {
 	    name	"ray_bias"
-	    label	"Ray bias"
+	    label	"Ray Bias"
 	    type	float
 	    default	{ "0.001" }
 	    range	{ 0 64 }
@@ -92,7 +92,7 @@
 	}
 	parm {
 	    name	"file_name"
-	    label	"File name"
+	    label	"File Name"
 	    type	file
 	    default	{ "//lightmaps/spherical_harmonics.vrsh" }
 	    help	"This is the name of the *.vrsh file which contains the precomputed SH for this scene"
@@ -105,7 +105,7 @@
 	}
 	parm {
 	    name	"file_format"
-	    label	"File format"
+	    label	"File Format"
 	    type	ordinal
 	    default	{ "1" }
 	    help	"This is the output file format. It could be *.xml for general purposes, V-Ray internal format *.vrsh designed to be used in \"Spherical Harmoics\" GI engine or both of them"
@@ -121,7 +121,7 @@
 	}
 	parm {
 	    name	"per_normal"
-	    label	"Per normal"
+	    label	"Per Normal"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"Spherical harmonics can be created either for each vertex of the geometry or for each normal, this option allows you to choose between those two modes. For round objects it is better to use per Vertex mode while for objects with large flat surfaces the per Normal mode is better and faster"
@@ -137,7 +137,7 @@
 	}
 	parm {
 	    name	"hit_recording"
-	    label	"Hit recording"
+	    label	"Hit Recording"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Enabling it speeds up the calculations by storing a lot of information in the RAM"
@@ -149,7 +149,7 @@
 	}
 	parm {
 	    name	"max_mem_usage"
-	    label	"Max mem usage"
+	    label	"Max Mem Usage"
 	    type	integer
 	    default	{ "2000" }
 	    range	{ 0 64 }
@@ -160,7 +160,7 @@
 	}
 	parm {
 	    name	"object_space"
-	    label	"Object space"
+	    label	"Object Space"
 	    type	ordinal
 	    default	{ "0" }
 	    menu	{
@@ -175,7 +175,7 @@
 	}
 	parm {
 	    name	"adaptive_on"
-	    label	"Adaptive on"
+	    label	"Adaptive On"
 	    type	toggle
 	    default	{ "0" }
 	    range	{ 0 1 }
@@ -186,7 +186,7 @@
 	}
 	parm {
 	    name	"adaptive_thresh"
-	    label	"Adaptive thresh"
+	    label	"Adaptive Thresh"
 	    type	float
 	    default	{ "0.1" }
 	    range	{ 0 64 }
@@ -197,7 +197,7 @@
 	}
 	parm {
 	    name	"adaptive_depth"
-	    label	"Adaptive depth"
+	    label	"Adaptive Depth"
 	    type	integer
 	    default	{ "3" }
 	    range	{ 0 64 }
@@ -208,7 +208,7 @@
 	}
 	parm {
 	    name	"adaptive_edge"
-	    label	"Adaptive edge"
+	    label	"Adaptive Edge"
 	    type	float
 	    default	{ "0.1" }
 	    range	{ 0 64 }
@@ -219,7 +219,7 @@
 	}
 	parm {
 	    name	"save_obj"
-	    label	"Save obj"
+	    label	"Save Obj"
 	    type	toggle
 	    default	{ "0" }
 	    range	{ 0 1 }

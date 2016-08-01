@@ -30,7 +30,7 @@
 	}
 	parm {
 	    name	"oldrange_min"
-	    label	"Oldrange min"
+	    label	"Oldrange Min"
 	    type	float
 	    default	{ "0" }
 	    help	"start of the current range of values"
@@ -42,7 +42,7 @@
 	}
 	parm {
 	    name	"oldrange_max"
-	    label	"Oldrange max"
+	    label	"Oldrange Max"
 	    type	float
 	    default	{ "0" }
 	    help	"end of the current range of values"
@@ -54,7 +54,7 @@
 	}
 	parm {
 	    name	"newrange_min"
-	    label	"Newrange min"
+	    label	"Newrange Min"
 	    type	float
 	    default	{ "0" }
 	    help	"start of the new range of values"
@@ -66,7 +66,7 @@
 	}
 	parm {
 	    name	"newrange_max"
-	    label	"Newrange max"
+	    label	"Newrange Max"
 	    type	float
 	    default	{ "0" }
 	    help	"end of the new range of values"

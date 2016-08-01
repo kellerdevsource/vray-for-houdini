@@ -178,7 +178,7 @@
 	}
 	parm {
 	    name	"primary_visibility"
-	    label	"Primary visibility"
+	    label	"Primary Visibility"
 	    type	toggle
 	    default	{ "1" }
 	    range	{ 0 1 }
@@ -189,7 +189,7 @@
 	}
 	parm {
 	    name	"reference_nurbs"
-	    label	"Reference nurbs"
+	    label	"Reference Nurbs"
 	    type	oppath
 	    default	{ "" }
 	    help	"The reference nurbs object which is used to calculate the uvw coordinates when a 3d placement is used"
@@ -202,7 +202,7 @@
 	}
 	groupsimple {
 	    name	"reference_transform"
-	    label	"Reference transform"
+	    label	"Reference Transform"
 	    grouptag	{ "vray_plugin" "GeomStaticNURBS" }
 	    grouptag	{ "vray_pluginattr" "reference_transform" }
 	    grouptag	{ "vray_type" "Transform" }

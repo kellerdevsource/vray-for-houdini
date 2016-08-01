@@ -31,7 +31,7 @@
 	}
 	parm {
 	    name	"render_type"
-	    label	"Render type"
+	    label	"Render Type"
 	    type	integer
 	    default	{ "7" }
 	    help	"3 - multipoints; 4 - multistreak; 6 - points; 7 - Spheres; 8 - Sprites; 9 - Streak.Everything else gives a warning and renders as spheres"
@@ -55,7 +55,7 @@
 	}
 	parm {
 	    name	"sprite_size_x"
-	    label	"Sprite size x"
+	    label	"Sprite Size X"
 	    type	float
 	    default	{ "1" }
 	    help	"The width of sprite particles in world units"
@@ -67,7 +67,7 @@
 	}
 	parm {
 	    name	"sprite_size_y"
-	    label	"Sprite size y"
+	    label	"Sprite Size Y"
 	    type	float
 	    default	{ "1" }
 	    help	"The height of sprite particles in world units"
@@ -79,7 +79,7 @@
 	}
 	parm {
 	    name	"sprite_twist"
-	    label	"Sprite twist"
+	    label	"Sprite Twist"
 	    type	float
 	    default	{ "0" }
 	    help	"The twist of sprite particles in degrees"
@@ -91,7 +91,7 @@
 	}
 	parm {
 	    name	"sprite_orientation"
-	    label	"Sprite orientation"
+	    label	"Sprite Orientation"
 	    type	integer
 	    default	{ "0" }
 	    help	"0 - orient sprites towards the camera center, 1 - orient sprites parallel to the camera plane"
@@ -103,7 +103,7 @@
 	}
 	parm {
 	    name	"point_size"
-	    label	"Point size"
+	    label	"Point Size"
 	    type	float
 	    default	{ "1" }
 	    help	"The size of point and multipoint particles, in pixels"
@@ -115,7 +115,7 @@
 	}
 	parm {
 	    name	"point_radii"
-	    label	"Point radii"
+	    label	"Point Radii"
 	    type	toggle
 	    default	{ "0" }
 	    help	"If true, the point size will be taken form radii parameter"
@@ -127,7 +127,7 @@
 	}
 	parm {
 	    name	"point_world_size"
-	    label	"Point world size"
+	    label	"Point World Size"
 	    type	toggle
 	    default	{ "0" }
 	    help	"If true, the point size is in world space, not screen space"
@@ -139,7 +139,7 @@
 	}
 	parm {
 	    name	"multi_count"
-	    label	"Multi count"
+	    label	"Multi Count"
 	    type	integer
 	    default	{ "1" }
 	    help	"The number of particles generated for each input particle, when the render type is multipoints or multistreaks"
@@ -151,7 +151,7 @@
 	}
 	parm {
 	    name	"multi_radius"
-	    label	"Multi radius"
+	    label	"Multi Radius"
 	    type	float
 	    default	{ "0" }
 	    help	"The maximum distance between the original and a generated particle when the render type is multipoints or multistreaks"
@@ -163,7 +163,7 @@
 	}
 	parm {
 	    name	"line_width"
-	    label	"Line width"
+	    label	"Line Width"
 	    type	float
 	    default	{ "1" }
 	    help	"The width of streak particles, in pixels"
@@ -175,7 +175,7 @@
 	}
 	parm {
 	    name	"tail_length"
-	    label	"Tail length"
+	    label	"Tail Length"
 	    type	float
 	    default	{ "1" }
 	    help	"The length of streak particles, in world units, the actual length depends on the particle velocity as well"
@@ -187,7 +187,7 @@
 	}
 	parm {
 	    name	"primary_visibility"
-	    label	"Primary visibility"
+	    label	"Primary Visibility"
 	    type	toggle
 	    default	{ "1" }
 	    help	"If off, shading an intersection with this mesh will not generate a gbuffer"
@@ -199,7 +199,7 @@
 	}
 	parm {
 	    name	"data_source"
-	    label	"Data source"
+	    label	"Data Source"
 	    type	oppath
 	    default	{ "" }
 	    help	"External data source to be used instead of positions, velocities, ids and radii"

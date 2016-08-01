@@ -33,7 +33,7 @@
 	}
 	parm {
 	    name	"bits_per_channel"
-	    label	"Bits per channel"
+	    label	"Bits Per Channel"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"Bits per channel"

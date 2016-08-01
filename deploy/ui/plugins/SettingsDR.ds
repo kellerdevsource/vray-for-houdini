@@ -18,7 +18,7 @@
 	}
 	multiparm {
 	    name	"host_list"
-	    label	"Host list"
+	    label	"Host List"
 	    default	0
 	    parmtag	{ "vray_plugin" "SettingsDR" }
 	    parmtag	{ "vray_pluginattr" "host_list" }
@@ -26,7 +26,7 @@
 
 	    parm {
 		name	"host_list#"
-		label	"Host list"
+		label	"Host List"
 		type	string
 		default	{ "" }
 		help	"Strings that represent either an ip address or a hostname for machines to be used as DR Nodes"

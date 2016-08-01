@@ -119,7 +119,7 @@
 	}
 	parm {
 	    name	"color_tex"
-	    label	"Color tex"
+	    label	"Color Tex"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "1" }
@@ -158,7 +158,7 @@
 	}
 	parm {
 	    name	"shadowColor_tex"
-	    label	"Shadowcolor tex"
+	    label	"Shadowcolor Tex"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "1" }
@@ -172,7 +172,7 @@
 	}
 	parm {
 	    name	"shadowBias"
-	    label	"Shadow bias"
+	    label	"Shadow Bias"
 	    type	float
 	    default	{ "0" }
 	    help	"Shadow offset from the surface. Helps to prevent polygonal shadow artifacts on low-poly surfaces"
@@ -184,7 +184,7 @@
 	}
 	parm {
 	    name	"photonSubdivs"
-	    label	"Photon subdivs"
+	    label	"Photon Subdivs"
 	    type	integer
 	    default	{ "500" }
 	    help	"Determines the number of photons emitted by this light when calculating the Global Photon Map. 1000 subdivs equal 1 million photons."
@@ -196,7 +196,7 @@
 	}
 	parm {
 	    name	"causticSubdivs"
-	    label	"Caustics subdivs"
+	    label	"Caustics Subdivs"
 	    type	integer
 	    default	{ "1000" }
 	    help	"Determines the number of photons emitted by this light when calculating the Caustics Photon Map. 1000 subdivs equal 1 million photons."
@@ -208,7 +208,7 @@
 	}
 	parm {
 	    name	"diffuseMult"
-	    label	"Diffuse multiplier"
+	    label	"Diffuse Multiplier"
 	    type	float
 	    default	{ "1" }
 	    help	"Multiplier for the diffuse photons"
@@ -220,7 +220,7 @@
 	}
 	parm {
 	    name	"causticMult"
-	    label	"Caustics multiplier"
+	    label	"Caustics Multiplier"
 	    type	float
 	    default	{ "1" }
 	    help	"Multiplier for the caustic photons"
@@ -232,7 +232,7 @@
 	}
 	parm {
 	    name	"cutoffThreshold"
-	    label	"Cut-off threshold"
+	    label	"Cut-off Threshold"
 	    type	float
 	    default	{ "0.001" }
 	    help	"Light cut-off threshold (speed optimization). If the light intensity for a point is below this threshold, the light will not be computed"
@@ -244,7 +244,7 @@
 	}
 	parm {
 	    name	"affectDiffuse"
-	    label	"Affect diffuse"
+	    label	"Affect Diffuse"
 	    type	toggle
 	    default	{ "1" }
 	    help	"true if the light produces diffuse lighting and false otherwise"
@@ -256,7 +256,7 @@
 	}
 	parm {
 	    name	"affectSpecular"
-	    label	"Affect specular"
+	    label	"Affect Specular"
 	    type	toggle
 	    default	{ "1" }
 	    help	"true if the light produces specular hilights and false otherwise"
@@ -268,7 +268,7 @@
 	}
 	parm {
 	    name	"bumped_below_surface_check"
-	    label	"Bumped normal check"
+	    label	"Bumped Normal Check"
 	    type	toggle
 	    default	{ "0" }
 	    help	"true if the bumped normal should be used to check if the light dir is below the surface"
@@ -292,7 +292,7 @@
 	}
 	parm {
 	    name	"diffuse_contribution"
-	    label	"Diffuse contribution"
+	    label	"Diffuse Contribution"
 	    type	float
 	    default	{ "1" }
 	    help	"Diffuse contribution for the light"
@@ -304,7 +304,7 @@
 	}
 	parm {
 	    name	"specular_contribution"
-	    label	"Specular contribution"
+	    label	"Specular Contribution"
 	    type	float
 	    default	{ "1" }
 	    help	"Specular contribution for the light"
@@ -329,7 +329,7 @@
 	}
 	parm {
 	    name	"channels_raw"
-	    label	"Channels raw"
+	    label	"Channels Raw"
 	    type	oplist
 	    default	{ "" }
 	    help	"Render channels the raw diffuse result of this light will be written to"
@@ -342,7 +342,7 @@
 	}
 	parm {
 	    name	"channels_diffuse"
-	    label	"Channels diffuse"
+	    label	"Channels Diffuse"
 	    type	oplist
 	    default	{ "" }
 	    help	"Render channels the diffuse result of this light will be written to"
@@ -355,7 +355,7 @@
 	}
 	parm {
 	    name	"channels_specular"
-	    label	"Channels specular"
+	    label	"Channels Specular"
 	    type	oplist
 	    default	{ "" }
 	    help	"Render channels the specular result of this light will be written to"
@@ -368,7 +368,7 @@
 	}
 	parm {
 	    name	"use_global_light_level"
-	    label	"Use global light level"
+	    label	"Use Global Light Level"
 	    type	toggle
 	    default	{ "1" }
 	    help	"true if the light should use the global light level setting"
@@ -391,7 +391,7 @@
 	}
 	parm {
 	    name	"storeWithIrradianceMap"
-	    label	"Store with irradiance map"
+	    label	"Store With Irradiance Map"
 	    type	toggle
 	    default	{ "0" }
 	    help	"When this option is on and GI calculation is set to Irradiance map V-Ray will calculate the effects of this light and store them in the irradiance map. The result is that the irradiance map is computed more slowly but the rendering takes less time. You can also save the irradiance map and reuse it later."
@@ -403,7 +403,7 @@
 	}
 	parm {
 	    name	"ies_file"
-	    label	"Ies file"
+	    label	"Ies File"
 	    type	file
 	    default	{ "" }
 	    help	"IES file with luminaire description"
@@ -416,7 +416,7 @@
 	}
 	parm {
 	    name	"filter_color"
-	    label	"Filter color"
+	    label	"Filter Color"
 	    type	color
 	    size	3
 	    default	{ "1" "1" "1" }
@@ -428,7 +428,7 @@
 	}
 	parm {
 	    name	"soft_shadows"
-	    label	"Soft shadows"
+	    label	"Soft Shadows"
 	    type	toggle
 	    default	{ "0" }
 	    help	"true to use the shape of the light as described in the IES profile"
@@ -440,7 +440,7 @@
 	}
 	parm {
 	    name	"area_speculars"
-	    label	"Area speculars"
+	    label	"Area Speculars"
 	    type	toggle
 	    default	{ "1" }
 	    help	"true to cause specular highlights produced by the light to match the light shape; false to always produce speculars as a point light"
@@ -464,7 +464,7 @@
 	}
 	parm {
 	    name	"ies_light_shape"
-	    label	"Ies light shape"
+	    label	"Ies Light Shape"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"IES light shape"
@@ -480,7 +480,7 @@
 	}
 	parm {
 	    name	"ies_light_width"
-	    label	"Ies light width"
+	    label	"Ies Light Width"
 	    type	float
 	    default	{ "0" }
 	    help	"Light shape width (in metres)"
@@ -492,7 +492,7 @@
 	}
 	parm {
 	    name	"ies_light_length"
-	    label	"Ies light length"
+	    label	"Ies Light Length"
 	    type	float
 	    default	{ "0" }
 	    help	"Light shape length (in metres)"
@@ -504,7 +504,7 @@
 	}
 	parm {
 	    name	"ies_light_height"
-	    label	"Ies light height"
+	    label	"Ies Light Height"
 	    type	float
 	    default	{ "0" }
 	    help	"Light shape height (in metres)"
@@ -516,7 +516,7 @@
 	}
 	parm {
 	    name	"ies_light_diameter"
-	    label	"Ies light diameter"
+	    label	"Ies Light Diameter"
 	    type	float
 	    default	{ "0" }
 	    help	"Light shape diameter (in metres)"
@@ -528,7 +528,7 @@
 	}
 	parm {
 	    name	"rescale_max_intensty"
-	    label	"Rescale max intensty"
+	    label	"Rescale Max Intensty"
 	    type	toggle
 	    default	{ "0" }
 	    help	"If this is true, the intensity values of the IES file will be scaled, so the new maximum value is new_max_intensity"
@@ -540,7 +540,7 @@
 	}
 	parm {
 	    name	"new_max_intensity"
-	    label	"New max intensity"
+	    label	"New Max Intensity"
 	    type	float
 	    default	{ "1" }
 	    help	"The new maximum intensity after rescaling the intensities in the IES file, when rescale_max_intensty is true. This value is in cd(candelas)"

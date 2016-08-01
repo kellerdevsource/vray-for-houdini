@@ -19,7 +19,7 @@
 	}
 	parm {
 	    name	"input_value"
-	    label	"Input value"
+	    label	"Input Value"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 64 }
@@ -30,7 +30,7 @@
 	}
 	parm {
 	    name	"input_color"
-	    label	"Input color"
+	    label	"Input Color"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "1" }
@@ -59,7 +59,7 @@
 	}
 	parm {
 	    name	"input_bias"
-	    label	"Input bias"
+	    label	"Input Bias"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 64 }
@@ -70,7 +70,7 @@
 	}
 	parm {
 	    name	"input_min"
-	    label	"Input min"
+	    label	"Input Min"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 64 }
@@ -81,7 +81,7 @@
 	}
 	parm {
 	    name	"input_max"
-	    label	"Input max"
+	    label	"Input Max"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 64 }
@@ -92,7 +92,7 @@
 	}
 	parm {
 	    name	"output_min"
-	    label	"Output min"
+	    label	"Output Min"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 64 }
@@ -103,7 +103,7 @@
 	}
 	parm {
 	    name	"output_max"
-	    label	"Output max"
+	    label	"Output Max"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 64 }
@@ -114,7 +114,7 @@
 	}
 	parm {
 	    name	"float_values"
-	    label	"Float values"
+	    label	"Float Values"
 	    type	float
 	    default	{ "1" }
 	    help	"the given float values"
@@ -126,7 +126,7 @@
 	}
 	parm {
 	    name	"float_types"
-	    label	"Float types"
+	    label	"Float Types"
 	    type	integer
 	    default	{ "1" }
 	    help	"interpolation types for the floats"
@@ -144,7 +144,7 @@
 	}
 	parm {
 	    name	"red_values"
-	    label	"Red values"
+	    label	"Red Values"
 	    type	float
 	    default	{ "0" }
 	    help	"the given values for the red channel"
@@ -156,7 +156,7 @@
 	}
 	parm {
 	    name	"red_types"
-	    label	"Red types"
+	    label	"Red Types"
 	    type	integer
 	    default	{ "0" }
 	    help	"interpolation types for the red channel"
@@ -174,7 +174,7 @@
 	}
 	parm {
 	    name	"green_values"
-	    label	"Green values"
+	    label	"Green Values"
 	    type	float
 	    default	{ "0" }
 	    help	"the given values for the green channel"
@@ -186,7 +186,7 @@
 	}
 	parm {
 	    name	"green_types"
-	    label	"Green types"
+	    label	"Green Types"
 	    type	integer
 	    default	{ "0" }
 	    help	"interpolation types for the green channel"
@@ -204,7 +204,7 @@
 	}
 	parm {
 	    name	"blue_values"
-	    label	"Blue values"
+	    label	"Blue Values"
 	    type	float
 	    default	{ "0" }
 	    help	"the given values for the blue channel"
@@ -216,7 +216,7 @@
 	}
 	parm {
 	    name	"blue_types"
-	    label	"Blue types"
+	    label	"Blue Types"
 	    type	integer
 	    default	{ "0" }
 	    help	"interpolation types for the blue channel"
@@ -234,7 +234,7 @@
 	}
 	parm {
 	    name	"hue_values"
-	    label	"Hue values"
+	    label	"Hue Values"
 	    type	float
 	    default	{ "0" }
 	    help	"the given values for the hue channel"
@@ -246,7 +246,7 @@
 	}
 	parm {
 	    name	"hue_types"
-	    label	"Hue types"
+	    label	"Hue Types"
 	    type	integer
 	    default	{ "0" }
 	    help	"interpolation types for the hue channel"
@@ -264,7 +264,7 @@
 	}
 	parm {
 	    name	"saturation_values"
-	    label	"Saturation values"
+	    label	"Saturation Values"
 	    type	float
 	    default	{ "0" }
 	    help	"the given values for the saturation channel"
@@ -276,7 +276,7 @@
 	}
 	parm {
 	    name	"saturation_types"
-	    label	"Saturation types"
+	    label	"Saturation Types"
 	    type	integer
 	    default	{ "0" }
 	    help	"interpolation types for the saturation channel"
@@ -294,7 +294,7 @@
 	}
 	parm {
 	    name	"value_values"
-	    label	"Value values"
+	    label	"Value Values"
 	    type	float
 	    default	{ "0" }
 	    help	"the given values for the value channel"
@@ -306,7 +306,7 @@
 	}
 	parm {
 	    name	"value_types"
-	    label	"Value types"
+	    label	"Value Types"
 	    type	integer
 	    default	{ "0" }
 	    help	"interpolation types for the value channel"
@@ -324,7 +324,7 @@
 	}
 	parm {
 	    name	"alpha_from_intensity"
-	    label	"Alpha from intensity"
+	    label	"Alpha From Intensity"
 	    type	toggle
 	    default	{ "0" }
 	    help	"If true, the resulting alpha is the color intensity; otherwise the alpha is taken from the colors"
@@ -336,7 +336,7 @@
 	}
 	parm {
 	    name	"input_bias_tex"
-	    label	"Input bias tex"
+	    label	"Input Bias Tex"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 10 }
@@ -347,7 +347,7 @@
 	}
 	parm {
 	    name	"input_min_tex"
-	    label	"Input min tex"
+	    label	"Input Min Tex"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 10 }
@@ -358,7 +358,7 @@
 	}
 	parm {
 	    name	"input_max_tex"
-	    label	"Input max tex"
+	    label	"Input Max Tex"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0 10 }

@@ -17,7 +17,7 @@
 	}
 	parm {
 	    name	"img_width"
-	    label	"Image width"
+	    label	"Image Width"
 	    type	integer
 	    default	{ "640" }
 	    help	"Output image width"
@@ -29,7 +29,7 @@
 	}
 	parm {
 	    name	"img_height"
-	    label	"Image height"
+	    label	"Image Height"
 	    type	integer
 	    default	{ "480" }
 	    help	"Output image height"
@@ -41,7 +41,7 @@
 	}
 	parm {
 	    name	"img_pixelAspect"
-	    label	"Pixel aspect"
+	    label	"Pixel Aspect"
 	    type	float
 	    default	{ "1" }
 	    help	"Output image pixel aspect"
@@ -53,7 +53,7 @@
 	}
 	parm {
 	    name	"img_file"
-	    label	"File name"
+	    label	"File Name"
 	    type	string
 	    default	{ "$F_$C" }
 	    help	"Render file name (Variables: $C - camera name; $S - scene name; $F - blendfile name)"
@@ -65,7 +65,7 @@
 	}
 	parm {
 	    name	"img_dir"
-	    label	"Dir name"
+	    label	"Dir Name"
 	    type	file
 	    default	{ "//render/$F/" }
 	    help	"Render file directory (Variables: $C - camera name; $S - scene name; $F - blendfile name)"
@@ -77,7 +77,7 @@
 	}
 	parm {
 	    name	"img_file_needFrameNumber"
-	    label	"Img file needframenumber"
+	    label	"Img File Needframenumber"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Add frame number to the image file name"
@@ -89,7 +89,7 @@
 	}
 	parm {
 	    name	"img_separateAlpha"
-	    label	"Img separatealpha"
+	    label	"Img Separatealpha"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Write the alpha channel to a separate file"
@@ -101,7 +101,7 @@
 	}
 	parm {
 	    name	"img_noAlpha"
-	    label	"Img noalpha"
+	    label	"Img Noalpha"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Don't write the alpha channel to the final image"
@@ -113,7 +113,7 @@
 	}
 	parm {
 	    name	"img_dontSaveRgbChannel"
-	    label	"Img dontsavergbchannel"
+	    label	"Img Dontsavergbchannel"
 	    type	toggle
 	    default	{ "0" }
 	    help	"If true, the RGB channel will not be saved to disk"
@@ -125,7 +125,7 @@
 	}
 	parm {
 	    name	"img_deepFile"
-	    label	"Img deepfile"
+	    label	"Img Deepfile"
 	    type	toggle
 	    default	{ "0" }
 	    help	"If true, V-Ray will will generate deep image file (valid for vrst and exr)"
@@ -137,7 +137,7 @@
 	}
 	parm {
 	    name	"img_rawFile"
-	    label	"Img rawfile"
+	    label	"Img Rawfile"
 	    type	toggle
 	    default	{ "0" }
 	    help	"If true, V-Ray will render to a tiled file format (.vrimg or .exr). This is automatically turned on for file formats that only support tiled writing (like .vrimg)"
@@ -149,7 +149,7 @@
 	}
 	parm {
 	    name	"img_rawFileVFB"
-	    label	"Img rawfilevfb"
+	    label	"Img Rawfilevfb"
 	    type	integer
 	    default	{ "1" }
 	    help	"If writing to a tiled file format, specifies whether a memory VFB window should be displayed (0 - no memory VFB, 1 - full memory VFB, 2 - preview)"
@@ -161,7 +161,7 @@
 	}
 	parm {
 	    name	"anim_start"
-	    label	"Start animation"
+	    label	"Start Animation"
 	    type	float
 	    default	{ "0" }
 	    help	"Start of animation range in time units"
@@ -173,7 +173,7 @@
 	}
 	parm {
 	    name	"anim_end"
-	    label	"End animation"
+	    label	"End Animation"
 	    type	float
 	    default	{ "1" }
 	    help	"End of animation range in time units"
@@ -197,7 +197,7 @@
 	}
 	parm {
 	    name	"anim_renumber_on"
-	    label	"Anim renumber on"
+	    label	"Anim Renumber On"
 	    type	toggle
 	    default	{ "0" }
 	    help	"If true, frame renumbering is used"
@@ -209,7 +209,7 @@
 	}
 	parm {
 	    name	"anim_renumber_start"
-	    label	"Renumber start number"
+	    label	"Renumber Start Number"
 	    type	float
 	    default	{ "0" }
 	    help	"Start number for renumber frames"
@@ -221,7 +221,7 @@
 	}
 	parm {
 	    name	"anim_renumber_step"
-	    label	"Renumber frames step"
+	    label	"Renumber Frames Step"
 	    type	float
 	    default	{ "1" }
 	    help	"Renumber frames step"
@@ -233,7 +233,7 @@
 	}
 	parm {
 	    name	"anim_ren_frame_start"
-	    label	"First frame of animation range"
+	    label	"First Frame Of Animation Range"
 	    type	float
 	    default	{ "0" }
 	    help	"First frame of animation range"
@@ -245,7 +245,7 @@
 	}
 	parm {
 	    name	"frame_start"
-	    label	"Frame start"
+	    label	"Frame Start"
 	    type	integer
 	    default	{ "0" }
 	    help	"The frame number at the start of the animation range"
@@ -257,7 +257,7 @@
 	}
 	parm {
 	    name	"frames_per_second"
-	    label	"Frames per unit time"
+	    label	"Frames Per Unit Time"
 	    type	float
 	    default	{ "1" }
 	    help	"Number of frames per unit time"
@@ -269,7 +269,7 @@
 	}
 	parm {
 	    name	"rgn_left"
-	    label	"Image output region left coord"
+	    label	"Image Output Region Left Coord"
 	    type	float
 	    default	{ "0" }
 	    help	"Image output region left coord"
@@ -281,7 +281,7 @@
 	}
 	parm {
 	    name	"rgn_width"
-	    label	"Image output region width"
+	    label	"Image Output Region Width"
 	    type	float
 	    default	{ "640" }
 	    help	"Image output region width"
@@ -293,7 +293,7 @@
 	}
 	parm {
 	    name	"rgn_top"
-	    label	"Image output region top coord"
+	    label	"Image Output Region Top Coord"
 	    type	float
 	    default	{ "0" }
 	    help	"Image output region top coord"
@@ -305,7 +305,7 @@
 	}
 	parm {
 	    name	"rgn_height"
-	    label	"Image output region height"
+	    label	"Image Output Region Height"
 	    type	float
 	    default	{ "480" }
 	    help	"Image output region height"
@@ -317,7 +317,7 @@
 	}
 	parm {
 	    name	"bmp_width"
-	    label	"Bitmap width"
+	    label	"Bitmap Width"
 	    type	integer
 	    default	{ "640" }
 	    help	"Output bitmap width"
@@ -329,7 +329,7 @@
 	}
 	parm {
 	    name	"bmp_height"
-	    label	"Bitmap height"
+	    label	"Bitmap Height"
 	    type	integer
 	    default	{ "480" }
 	    help	"Output bitmap height"
@@ -341,7 +341,7 @@
 	}
 	parm {
 	    name	"r_left"
-	    label	"Bitmap output region left coord"
+	    label	"Bitmap Output Region Left Coord"
 	    type	integer
 	    default	{ "0" }
 	    help	"Bitmap output region left coord"
@@ -353,7 +353,7 @@
 	}
 	parm {
 	    name	"r_width"
-	    label	"Bitmap output region width"
+	    label	"Bitmap Output Region Width"
 	    type	integer
 	    default	{ "640" }
 	    help	"Bitmap output region width"
@@ -365,7 +365,7 @@
 	}
 	parm {
 	    name	"r_top"
-	    label	"Bitmap output region top coord"
+	    label	"Bitmap Output Region Top Coord"
 	    type	integer
 	    default	{ "0" }
 	    help	"Bitmap output region top coord"
@@ -377,7 +377,7 @@
 	}
 	parm {
 	    name	"r_height"
-	    label	"Bitmap output region height"
+	    label	"Bitmap Output Region Height"
 	    type	integer
 	    default	{ "480" }
 	    help	"Bitmap output region height"
@@ -389,7 +389,7 @@
 	}
 	parm {
 	    name	"frame_stamp_enabled"
-	    label	"Frame stamp enabled"
+	    label	"Frame Stamp Enabled"
 	    type	toggle
 	    default	{ "0" }
 	    help	"true to enable the VFB frame stamp"
@@ -401,7 +401,7 @@
 	}
 	parm {
 	    name	"frame_stamp_text"
-	    label	"Frame stamp text"
+	    label	"Frame Stamp Text"
 	    type	string
 	    default	{ "V-Ray %vraycore | %rendertime" }
 	    help	"Frame stamp text"
@@ -413,7 +413,7 @@
 	}
 	parm {
 	    name	"relements_separateFolders"
-	    label	"Relements separatefolders"
+	    label	"Relements Separatefolders"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Save render channels in separate folders"
@@ -425,7 +425,7 @@
 	}
 	parm {
 	    name	"relements_separate_rgba"
-	    label	"Relements separate rgba"
+	    label	"Relements Separate Rgba"
 	    type	toggle
 	    default	{ "0" }
 	    help	"true to save the main RGBA elment in a separate folder too, if relements_separateFolders is specified"
@@ -437,7 +437,7 @@
 	}
 	parm {
 	    name	"relements_divider"
-	    label	"Relements divider"
+	    label	"Relements Divider"
 	    type	string
 	    default	{ "" }
 	    help	"Render elements name separator"
@@ -449,7 +449,7 @@
 	}
 	parm {
 	    name	"film_offset_x"
-	    label	"Film offset x"
+	    label	"Film Offset X"
 	    type	float
 	    default	{ "0" }
 	    help	"Horizontal film offset"
@@ -461,7 +461,7 @@
 	}
 	parm {
 	    name	"film_offset_y"
-	    label	"Film offset y"
+	    label	"Film Offset Y"
 	    type	float
 	    default	{ "0" }
 	    help	"Vertical film offset"
@@ -492,7 +492,7 @@
 	}
 	parm {
 	    name	"img_saveVelocityZeroBase"
-	    label	"Img savevelocityzerobase"
+	    label	"Img Savevelocityzerobase"
 	    type	toggle
 	    default	{ "0" }
 	    help	"If true, Velocity channel will be saved zero base instead of the default 0.5 based"

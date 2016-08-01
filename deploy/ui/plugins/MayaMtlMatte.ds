@@ -36,7 +36,7 @@
 	}
 	parm {
 	    name	"base_mtl"
-	    label	"Base mtl"
+	    label	"Base Mtl"
 	    type	oppath
 	    default	{ "" }
 	    help	"Base material"
@@ -49,7 +49,7 @@
 	}
 	parm {
 	    name	"matte_opacity"
-	    label	"Matte opacity"
+	    label	"Matte Opacity"
 	    type	float
 	    default	{ "0" }
 	    help	"Matte opacity (0 is transparent; 1 is opaque or normal)"
@@ -61,7 +61,7 @@
 	}
 	parm {
 	    name	"alpha_transparency"
-	    label	"Alpha transparency"
+	    label	"Alpha Transparency"
 	    type	float
 	    default	{ "0" }
 	    help	"Alpha transparency (used only in mode 3)"

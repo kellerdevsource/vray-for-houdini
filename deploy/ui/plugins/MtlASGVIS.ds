@@ -30,7 +30,7 @@
 	}
 	parm {
 	    name	"double_sided"
-	    label	"Double sided"
+	    label	"Double Sided"
 	    type	toggle
 	    default	{ "1" }
 	    help	"1 to make the material double-sided"
@@ -42,7 +42,7 @@
 	}
 	parm {
 	    name	"disable_volume_fog"
-	    label	"Disable volume fog"
+	    label	"Disable Volume Fog"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Set this flag to disable any volumetric effects that sub-brdfs might need"
@@ -54,7 +54,7 @@
 	}
 	parm {
 	    name	"bump_on"
-	    label	"Bump on"
+	    label	"Bump On"
 	    type	toggle
 	    default	{ "0" }
 	    help	"true if we want to turn on bump mapping"
@@ -66,7 +66,7 @@
 	}
 	parm {
 	    name	"bump_tex"
-	    label	"Bump tex"
+	    label	"Bump Tex"
 	    type	oppath
 	    default	{ "" }
 	    help	"Bump texture, can be float or color"
@@ -79,7 +79,7 @@
 	}
 	parm {
 	    name	"bump_tex_mult"
-	    label	"Bump tex mult"
+	    label	"Bump Tex Mult"
 	    type	float
 	    default	{ "1" }
 	    help	"Bump amount"
@@ -91,7 +91,7 @@
 	}
 	parm {
 	    name	"bump_shadows"
-	    label	"Bump shadows"
+	    label	"Bump Shadows"
 	    type	toggle
 	    default	{ "0" }
 	    help	"true to offset the surface shading point, in addition to the normal"
@@ -103,7 +103,7 @@
 	}
 	parm {
 	    name	"bump_tex_mult_tex"
-	    label	"Bump tex mult tex"
+	    label	"Bump Tex Mult Tex"
 	    type	float
 	    default	{ "0" }
 	    help	"Bump amount texture"
@@ -115,7 +115,7 @@
 	}
 	parm {
 	    name	"bump_delta_scale"
-	    label	"Bump delta scale"
+	    label	"Bump Delta Scale"
 	    type	float
 	    default	{ "1" }
 	    help	"Scale for sampling the bitmap when map_type is 0. Normally this is tied to the ray differentials, but can be changed if necessary"
@@ -127,7 +127,7 @@
 	}
 	parm {
 	    name	"map_type"
-	    label	"Map type"
+	    label	"Map Type"
 	    type	integer
 	    default	{ "0" }
 	    help	"The type of the map (0 - from regular texture output, 1 - normal map in tangent space, 2 - normal map in object space, 3 - normal map in camera space, 4 - normal map in world space, 5 - from texture bump output, 6 - explicit normal)"
@@ -139,7 +139,7 @@
 	}
 	parm {
 	    name	"normal_uvwgen"
-	    label	"Normal uvwgen"
+	    label	"Normal Uvwgen"
 	    type	oppath
 	    default	{ "" }
 	    help	"The uvw generator for the normal map texture when map_type is 1"
@@ -152,7 +152,7 @@
 	}
 	parm {
 	    name	"compute_bump_for_shadows"
-	    label	"Compute bump for shadows"
+	    label	"Compute Bump For Shadows"
 	    type	toggle
 	    default	{ "1" }
 	    help	"true to compute bump mapping for shadow rays in case the material is transparent; false to skip the bump map for shadow rays (faster rendering)"
@@ -164,7 +164,7 @@
 	}
 	parm {
 	    name	"alpha_tex"
-	    label	"Alpha tex"
+	    label	"Alpha Tex"
 	    type	color4
 	    size	4
 	    default	{ "0" "0" "0" "0" }
@@ -177,7 +177,7 @@
 	}
 	parm {
 	    name	"alpha_tex_mult"
-	    label	"Alpha tex mult"
+	    label	"Alpha Tex Mult"
 	    type	float
 	    default	{ "1" }
 	    help	"multiplier to be applied to alpha texture, if present"
@@ -201,7 +201,7 @@
 	}
 	parm {
 	    name	"displace_on"
-	    label	"Displace on"
+	    label	"Displace On"
 	    type	toggle
 	    default	{ "0" }
 	    help	"true if we want displacement turned on"
@@ -213,7 +213,7 @@
 	}
 	parm {
 	    name	"displace_tex"
-	    label	"Displace tex"
+	    label	"Displace Tex"
 	    type	oppath
 	    default	{ "" }
 	    help	"displacement texture, can be float or color"
@@ -226,7 +226,7 @@
 	}
 	parm {
 	    name	"displace_tex_mult"
-	    label	"Displace tex mult"
+	    label	"Displace Tex Mult"
 	    type	float
 	    default	{ "1" }
 	    help	"displacement multiplier ( displace amount )"
@@ -238,7 +238,7 @@
 	}
 	parm {
 	    name	"displace_shift"
-	    label	"Displace shift"
+	    label	"Displace Shift"
 	    type	float
 	    default	{ "0" }
 	    help	"a constant value added to the displacement"
@@ -250,7 +250,7 @@
 	}
 	parm {
 	    name	"displace_water_level"
-	    label	"Displace water level"
+	    label	"Displace Water Level"
 	    type	float
 	    default	{ "1e+30" }
 	    help	"A cutoff point for displacement - can be used for a clipping effect"
@@ -262,7 +262,7 @@
 	}
 	parm {
 	    name	"displace_view_dependent"
-	    label	"Displace view dependent"
+	    label	"Displace View Dependent"
 	    type	toggle
 	    default	{ "1" }
 	    help	"Whether or not to use view-dependant tesselation"
@@ -274,7 +274,7 @@
 	}
 	parm {
 	    name	"displace_use_globals"
-	    label	"Displace use globals"
+	    label	"Displace Use Globals"
 	    type	toggle
 	    default	{ "1" }
 	    help	"Whether to use the global settings for our displacement"
@@ -286,7 +286,7 @@
 	}
 	parm {
 	    name	"displace_max_subdivs"
-	    label	"Displace max subdivs"
+	    label	"Displace Max Subdivs"
 	    type	integer
 	    default	{ "256" }
 	    help	"The maximum number of subdivisions to use"
@@ -298,7 +298,7 @@
 	}
 	parm {
 	    name	"displace_edge_length"
-	    label	"Displace edge length"
+	    label	"Displace Edge Length"
 	    type	float
 	    default	{ "4" }
 	    help	"The approximate edge length"
@@ -310,7 +310,7 @@
 	}
 	parm {
 	    name	"displace_continuity"
-	    label	"Displace continuity"
+	    label	"Displace Continuity"
 	    type	toggle
 	    default	{ "1" }
 	    help	"enable continuity feature of displacement"
@@ -322,7 +322,7 @@
 	}
 	parm {
 	    name	"override_gi"
-	    label	"Override gi"
+	    label	"Override Gi"
 	    type	toggle
 	    default	{ "0" }
 	    help	"whether the global gi environment should be overridden"
@@ -334,7 +334,7 @@
 	}
 	parm {
 	    name	"gi_color"
-	    label	"Gi color"
+	    label	"Gi Color"
 	    type	color
 	    size	3
 	    default	{ "0" "0" "0" }
@@ -347,7 +347,7 @@
 	}
 	parm {
 	    name	"gi_tex"
-	    label	"Gi tex"
+	    label	"Gi Tex"
 	    type	oppath
 	    default	{ "" }
 	    help	"the texture to use for the gi environment"
@@ -360,7 +360,7 @@
 	}
 	parm {
 	    name	"gi_tex_mult"
-	    label	"Gi tex mult"
+	    label	"Gi Tex Mult"
 	    type	float
 	    default	{ "1" }
 	    help	"the multiplier for the gi environment texture"
@@ -372,7 +372,7 @@
 	}
 	parm {
 	    name	"override_bg"
-	    label	"Override bg"
+	    label	"Override Bg"
 	    type	toggle
 	    default	{ "0" }
 	    help	"whether the global bg environment should be overridden"
@@ -384,7 +384,7 @@
 	}
 	parm {
 	    name	"bg_color"
-	    label	"Bg color"
+	    label	"Bg Color"
 	    type	color
 	    size	3
 	    default	{ "0" "0" "0" }
@@ -397,7 +397,7 @@
 	}
 	parm {
 	    name	"bg_tex"
-	    label	"Bg tex"
+	    label	"Bg Tex"
 	    type	oppath
 	    default	{ "" }
 	    help	"the texture to use for the bg environment"
@@ -410,7 +410,7 @@
 	}
 	parm {
 	    name	"bg_tex_mult"
-	    label	"Bg tex mult"
+	    label	"Bg Tex Mult"
 	    type	float
 	    default	{ "1" }
 	    help	"the multiplier for the bg environment texture"
@@ -422,7 +422,7 @@
 	}
 	parm {
 	    name	"override_reflect"
-	    label	"Override reflect"
+	    label	"Override Reflect"
 	    type	toggle
 	    default	{ "0" }
 	    help	"whether the global reflection environment should be overridden"
@@ -434,7 +434,7 @@
 	}
 	parm {
 	    name	"reflect_color"
-	    label	"Reflect color"
+	    label	"Reflect Color"
 	    type	color
 	    size	3
 	    default	{ "0" "0" "0" }
@@ -447,7 +447,7 @@
 	}
 	parm {
 	    name	"reflect_tex"
-	    label	"Reflect tex"
+	    label	"Reflect Tex"
 	    type	oppath
 	    default	{ "" }
 	    help	"the reflection environment"
@@ -460,7 +460,7 @@
 	}
 	parm {
 	    name	"reflect_tex_mult"
-	    label	"Reflect tex mult"
+	    label	"Reflect Tex Mult"
 	    type	float
 	    default	{ "1" }
 	    help	"the reflection environment texture multiplier"
@@ -472,7 +472,7 @@
 	}
 	parm {
 	    name	"override_refract"
-	    label	"Override refract"
+	    label	"Override Refract"
 	    type	toggle
 	    default	{ "0" }
 	    help	"whether the global refraction environment should be overridden"
@@ -484,7 +484,7 @@
 	}
 	parm {
 	    name	"refract_color"
-	    label	"Refract color"
+	    label	"Refract Color"
 	    type	color
 	    size	3
 	    default	{ "0" "0" "0" }
@@ -497,7 +497,7 @@
 	}
 	parm {
 	    name	"refract_tex"
-	    label	"Refract tex"
+	    label	"Refract Tex"
 	    type	oppath
 	    default	{ "" }
 	    help	"the refraction environment"
@@ -510,7 +510,7 @@
 	}
 	parm {
 	    name	"refract_tex_mult"
-	    label	"Refract tex mult"
+	    label	"Refract Tex Mult"
 	    type	float
 	    default	{ "1" }
 	    help	"the refraction environment texture multiplier"
@@ -522,7 +522,7 @@
 	}
 	parm {
 	    name	"ignore_objects"
-	    label	"Ignore objects"
+	    label	"Ignore Objects"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Whether we should ignore all objects in the scene when tracing ourself"
@@ -534,7 +534,7 @@
 	}
 	parm {
 	    name	"short_circuit"
-	    label	"Short circuit"
+	    label	"Short Circuit"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Whether we should do the cheating version of object exclusion-  may cause artifacts"
@@ -546,7 +546,7 @@
 	}
 	parm {
 	    name	"material_id_color"
-	    label	"Material id color"
+	    label	"Material Id Color"
 	    type	color
 	    size	3
 	    default	{ "0" "0" "0" }
@@ -559,7 +559,7 @@
 	}
 	parm {
 	    name	"cast_shadow"
-	    label	"Cast shadow"
+	    label	"Cast Shadow"
 	    type	toggle
 	    default	{ "1" }
 	    help	"Whether or not we want objects with this material to cast a shadow"
@@ -571,7 +571,7 @@
 	}
 	parm {
 	    name	"only_visible_in_secondary"
-	    label	"Only visible in secondary"
+	    label	"Only Visible In Secondary"
 	    type	toggle
 	    default	{ "0" }
 	    help	"Whether or not this object should only be visible in reflects/refractions"

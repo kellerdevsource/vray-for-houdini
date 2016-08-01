@@ -30,7 +30,7 @@
 	}
 	parm {
 	    name	"double_sided"
-	    label	"Double sided"
+	    label	"Double Sided"
 	    type	toggle
 	    default	{ "1" }
 	    help	"1 to make the material double-sided"

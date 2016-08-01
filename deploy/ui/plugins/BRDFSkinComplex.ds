@@ -34,7 +34,7 @@
 	    }
 	    parm {
 		name	"max_sss_amount"
-		label	"Max SSS amount"
+		label	"Max Sss Amount"
 		type	float
 		default	{ "1" }
 		help	"The maximum summed weight of the SSS components"
@@ -46,7 +46,7 @@
 	    }
 	    parm {
 		name	"max_reflection_amount"
-		label	"Max refl amount"
+		label	"Max Refl Amount"
 		type	float
 		default	{ "1" }
 		help	"The maximum summed weight of the reflection components"
@@ -71,7 +71,7 @@
 	    }
 	    parm {
 		name	"diffuse_color"
-		label	"Diffuse color"
+		label	"Diffuse Color"
 		type	color4
 		size	4
 		default	{ "0.5" "0.5" "0.5" "1" }
@@ -83,7 +83,7 @@
 	    }
 	    parm {
 		name	"diffuse_amount"
-		label	"Diffuse amount"
+		label	"Diffuse Amount"
 		type	float
 		default	{ "0" }
 		range	{ 0 64 }
@@ -94,7 +94,7 @@
 	    }
 	    parm {
 		name	"shallow_color"
-		label	"Shallow color"
+		label	"Shallow Color"
 		type	color4
 		size	4
 		default	{ "0.776471" "0.603922" "0.545098" "1" }
@@ -106,7 +106,7 @@
 	    }
 	    parm {
 		name	"shallow_amount"
-		label	"Shallow amount"
+		label	"Shallow Amount"
 		type	float
 		default	{ "1" }
 		range	{ 0 64 }
@@ -117,7 +117,7 @@
 	    }
 	    parm {
 		name	"shallow_radius"
-		label	"Shallow Radius (in cm)"
+		label	"Shallow Radius (in Cm)"
 		type	float
 		default	{ "0.1" }
 		help	"The radius for shallow scattering, in cm"
@@ -129,7 +129,7 @@
 	    }
 	    parm {
 		name	"medium_color"
-		label	"Medium color"
+		label	"Medium Color"
 		type	color4
 		size	4
 		default	{ "0.682353" "0.407843" "0.133333" "1" }
@@ -141,7 +141,7 @@
 	    }
 	    parm {
 		name	"medium_amount"
-		label	"Medium amount"
+		label	"Medium Amount"
 		type	float
 		default	{ "1" }
 		range	{ 0 64 }
@@ -152,7 +152,7 @@
 	    }
 	    parm {
 		name	"medium_radius"
-		label	"Medium Radius (in cm)"
+		label	"Medium Radius (in Cm)"
 		type	float
 		default	{ "0.5" }
 		help	"The radius for medium scattering, in cm"
@@ -164,7 +164,7 @@
 	    }
 	    parm {
 		name	"deep_color"
-		label	"Deep color"
+		label	"Deep Color"
 		type	color4
 		size	4
 		default	{ "0.929412" "0.0784314" "0.0392157" "1" }
@@ -176,7 +176,7 @@
 	    }
 	    parm {
 		name	"deep_amount"
-		label	"Deep amount"
+		label	"Deep Amount"
 		type	float
 		default	{ "1" }
 		range	{ 0 64 }
@@ -187,7 +187,7 @@
 	    }
 	    parm {
 		name	"deep_radius"
-		label	"Deep Radius (in cm)"
+		label	"Deep Radius (in Cm)"
 		type	float
 		default	{ "2" }
 		help	"The radius for deep scattering, in cm"
@@ -205,7 +205,7 @@
 
 	    parm {
 		name	"primary_reflecton_color"
-		label	"Prim. refl. color"
+		label	"Prim. Refl. Color"
 		type	color4
 		size	4
 		default	{ "1" "1" "1" "1" }
@@ -217,7 +217,7 @@
 	    }
 	    parm {
 		name	"primary_reflection_amount"
-		label	"Prim. refl. amount"
+		label	"Prim. Refl. Amount"
 		type	float
 		default	{ "1" }
 		range	{ 0 64 }
@@ -228,7 +228,7 @@
 	    }
 	    parm {
 		name	"primary_reflection_glossiness"
-		label	"Prim. refl. glossiness"
+		label	"Prim. Refl. Glossiness"
 		type	float
 		default	{ "0.6" }
 		range	{ 0 64 }
@@ -239,7 +239,7 @@
 	    }
 	    parm {
 		name	"primary_reflection_subdivs"
-		label	"Prim. refl. subdivs"
+		label	"Prim. Refl. Subdivs"
 		type	integer
 		default	{ "8" }
 		range	{ 0 64 }
@@ -250,7 +250,7 @@
 	    }
 	    parm {
 		name	"primary_reflection_fresnel"
-		label	"Prim. refl. fresnel"
+		label	"Prim. Refl. Fresnel"
 		type	toggle
 		default	{ "1" }
 		range	{ 0 1 }
@@ -261,7 +261,7 @@
 	    }
 	    parm {
 		name	"primary_reflection_fresnel_ior"
-		label	"Prim. refl. fresnel IOR"
+		label	"Prim. Refl. Fresnel Ior"
 		type	float
 		default	{ "1.33" }
 		disablewhen	"{ primary_reflection_fresnel != 1 } { primary_reflection_fresnel != 1 }"
@@ -279,7 +279,7 @@
 
 	    parm {
 		name	"secondary_reflecton_color"
-		label	"Sec. refl. color"
+		label	"Sec. Refl. Color"
 		type	color4
 		size	4
 		default	{ "1" "1" "1" "1" }
@@ -291,7 +291,7 @@
 	    }
 	    parm {
 		name	"secondary_reflection_amount"
-		label	"Sec. refl. amount"
+		label	"Sec. Refl. Amount"
 		type	float
 		default	{ "0" }
 		range	{ 0 64 }
@@ -302,7 +302,7 @@
 	    }
 	    parm {
 		name	"secondary_reflection_glossiness"
-		label	"Sec. refl. glossiness"
+		label	"Sec. Refl. Glossiness"
 		type	float
 		default	{ "0.6" }
 		range	{ 0 64 }
@@ -313,7 +313,7 @@
 	    }
 	    parm {
 		name	"secondary_reflection_subdivs"
-		label	"Sec. refl. subdivs"
+		label	"Sec. Refl. Subdivs"
 		type	integer
 		default	{ "8" }
 		range	{ 0 64 }
@@ -324,7 +324,7 @@
 	    }
 	    parm {
 		name	"secondary_reflection_fresnel"
-		label	"Sec. refl. fresnel"
+		label	"Sec. Refl. Fresnel"
 		type	toggle
 		default	{ "1" }
 		range	{ 0 1 }
@@ -335,7 +335,7 @@
 	    }
 	    parm {
 		name	"secondary_reflection_fresnel_ior"
-		label	"Sec. refl. fresnel IOR"
+		label	"Sec. Refl. Fresnel Ior"
 		type	float
 		default	{ "1.33" }
 		disablewhen	"{ secondary_reflection_fresnel != 1 } { secondary_reflection_fresnel != 1 }"
@@ -353,7 +353,7 @@
 
 	    parm {
 		name	"multiple_scattering"
-		label	"Multiple scattering"
+		label	"Multiple Scattering"
 		type	ordinal
 		default	{ "2" }
 		help	"The algorithm used to compute multiple scattering"
@@ -371,7 +371,7 @@
 	    }
 	    parm {
 		name	"scatter_gi"
-		label	"Scatter GI"
+		label	"Scatter Gi"
 		type	toggle
 		default	{ "0" }
 		help	"true to enable scattering of GI rays"
@@ -383,7 +383,7 @@
 	    }
 	    parm {
 		name	"raytraced_scatter_textures"
-		label	"Raytraced scatter textures"
+		label	"Raytraced Scatter Textures"
 		type	toggle
 		default	{ "0" }
 		help	"true to scatter SSS textures when using raytraced scattering"
@@ -396,7 +396,7 @@
 	    }
 	    parm {
 		name	"raytraced_subdivs"
-		label	"Raytraced subdivs"
+		label	"Raytraced Subdivs"
 		type	integer
 		default	{ "8" }
 		disablewhen	"{ scatter_gi != 1 } { multiple_scattering != 2 }"
@@ -408,7 +408,7 @@
 	    }
 	    parm {
 		name	"prepass_rate"
-		label	"Prepass rate"
+		label	"Prepass Rate"
 		type	integer
 		default	{ "-1" }
 		help	"Sampling density for the illumination map"
@@ -421,7 +421,7 @@
 	    }
 	    parm {
 		name	"prepass_id"
-		label	"Prepass id"
+		label	"Prepass Id"
 		type	integer
 		default	{ "0" }
 		help	"0 to calculate a separate illuminataion map for this shader; otherwise all shaders with the same prepass ID will share the same illumination map"
@@ -434,7 +434,7 @@
 	    }
 	    parm {
 		name	"prepass_interpolation_accuracy"
-		label	"Prepass interpolation accuracy"
+		label	"Prepass Interpolation Accuracy"
 		type	float
 		default	{ "1" }
 		help	"Interpolation accuracy for the illumination map; normally 1.0 is fine"
@@ -447,7 +447,7 @@
 	    }
 	    parm {
 		name	"geom_samples_per_unit_area"
-		label	"Samples per unit area"
+		label	"Samples Per Unit Area"
 		type	float
 		default	{ "16" }
 		disablewhen	"{ geom_auto_density != 0 } { geom_auto_density != 0 } { multiple_scattering != 1 }"
@@ -459,7 +459,7 @@
 	    }
 	    parm {
 		name	"geom_auto_density"
-		label	"Auto density"
+		label	"Auto Density"
 		type	toggle
 		default	{ "0" }
 		disablewhen	"{ multiple_scattering != 1 }"
@@ -471,7 +471,7 @@
 	    }
 	    parm {
 		name	"geom_surface_offset"
-		label	"Surface offset"
+		label	"Surface Offset"
 		type	float
 		default	{ "0.001" }
 		help	"An offset along the geometric surface normal at which to perform shading in order to avoid surface acne"
@@ -484,7 +484,7 @@
 	    }
 	    parm {
 		name	"geom_preview_samples"
-		label	"Preview samples"
+		label	"Preview Samples"
 		type	toggle
 		default	{ "0" }
 		disablewhen	"{ multiple_scattering != 1 }"
@@ -496,7 +496,7 @@
 	    }
 	    parm {
 		name	"geom_max_distance"
-		label	"Max distance"
+		label	"Max Distance"
 		type	float
 		default	{ "0.1" }
 		disablewhen	"{ geom_preview_samples != 1 } { multiple_scattering != 1 } { geom_preview_samples != 1 }"
@@ -508,7 +508,7 @@
 	    }
 	    parm {
 		name	"geom_background_color"
-		label	"Background color"
+		label	"Background Color"
 		type	color
 		size	3
 		default	{ "0" "0" "0" }
@@ -521,7 +521,7 @@
 	    }
 	    parm {
 		name	"geom_samples_color"
-		label	"Samples color"
+		label	"Samples Color"
 		type	color
 		size	3
 		default	{ "1" "1" "1" }
@@ -540,7 +540,7 @@
 
 	    parm {
 		name	"option_reflections_trace"
-		label	"Trace reflections"
+		label	"Trace Reflections"
 		type	toggle
 		default	{ "1" }
 		range	{ 0 1 }
@@ -551,7 +551,7 @@
 	    }
 	    parm {
 		name	"option_reflections_maxDepth"
-		label	"Reflection max depth"
+		label	"Reflection Max Depth"
 		type	integer
 		default	{ "5" }
 		disablewhen	"{ option_reflections_trace != 1 }"
@@ -563,7 +563,7 @@
 	    }
 	    parm {
 		name	"option_reflections_cutoff"
-		label	"Reflection cutoff"
+		label	"Reflection Cutoff"
 		type	float
 		default	{ "0.001" }
 		disablewhen	"{ option_reflections_trace != 1 }"

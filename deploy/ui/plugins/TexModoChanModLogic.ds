@@ -39,7 +39,7 @@
 	}
 	parm {
 	    name	"option_true"
-	    label	"Option true"
+	    label	"Option True"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"Determines what value to return when the result of the operation is 'true'"
@@ -56,7 +56,7 @@
 	}
 	parm {
 	    name	"option_false"
-	    label	"Option false"
+	    label	"Option False"
 	    type	ordinal
 	    default	{ "0" }
 	    help	"Determines what value to return when the result of the operation is 'false'"
@@ -95,7 +95,7 @@
 	}
 	parm {
 	    name	"value_true"
-	    label	"Value true"
+	    label	"Value True"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 10 }
@@ -106,7 +106,7 @@
 	}
 	parm {
 	    name	"value_false"
-	    label	"Value false"
+	    label	"Value False"
 	    type	float
 	    default	{ "0" }
 	    range	{ 0 10 }

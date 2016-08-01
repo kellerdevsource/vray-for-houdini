@@ -17,7 +17,7 @@
 	}
 	parm {
 	    name	"base_mtl"
-	    label	"Base mtl"
+	    label	"Base Mtl"
 	    type	oppath
 	    default	{ "" }
 	    help	"Base material"
@@ -30,7 +30,7 @@
 	}
 	parm {
 	    name	"bbox_min"
-	    label	"Bbox min"
+	    label	"Bbox Min"
 	    type	direction
 	    size	3
 	    default	{ "0" "0" "0" }
@@ -43,7 +43,7 @@
 	}
 	parm {
 	    name	"bbox_max"
-	    label	"Bbox max"
+	    label	"Bbox Max"
 	    type	direction
 	    size	3
 	    default	{ "0" "0" "0" }

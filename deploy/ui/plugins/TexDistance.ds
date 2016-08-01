@@ -21,7 +21,7 @@
 
 	    parm {
 		name	"compatibility_with"
-		label	"Compatibility with"
+		label	"Compatibility With"
 		type	ordinal
 		default	{ "0" }
 		help	"This is used to differentiate between textures exported from different applications"
@@ -37,7 +37,7 @@
 	    }
 	    parm {
 		name	"alpha_from_intensity"
-		label	"Alpha from intensity"
+		label	"Alpha From Intensity"
 		type	ordinal
 		default	{ "0" }
 		help	"If 2 - the alpha is forced to 1.0f; 1 - the resulting alpha is the color intensity (if compatibility_with is 0) or the color luminance (if compatibility_with is 1); 0 - the alpha is taken from the bitmap alpha"
@@ -66,7 +66,7 @@
 	    }
 	    parm {
 		name	"invert_alpha"
-		label	"Invert alpha"
+		label	"Invert Alpha"
 		type	toggle
 		default	{ "1" }
 		help	"If true and invert is on, the resulting texture alpha will be inverted too. If false, just the color will be inverted"
@@ -79,7 +79,7 @@
 	    }
 	    parm {
 		name	"color_mult"
-		label	"Color mult"
+		label	"Color Mult"
 		type	color4
 		size	4
 		default	{ "1" "1" "1" "1" }
@@ -92,7 +92,7 @@
 	    }
 	    parm {
 		name	"color_offset"
-		label	"Color offset"
+		label	"Color Offset"
 		type	color4
 		size	4
 		default	{ "0" "0" "0" "1" }
@@ -105,7 +105,7 @@
 	    }
 	    parm {
 		name	"alpha_mult"
-		label	"Alpha mult"
+		label	"Alpha Mult"
 		type	float
 		default	{ "1" }
 		help	"A multiplier for the texture alpha"
@@ -117,7 +117,7 @@
 	    }
 	    parm {
 		name	"alpha_offset"
-		label	"Alpha offset"
+		label	"Alpha Offset"
 		type	float
 		default	{ "0" }
 		help	"An additional offset for the texture alpha"
@@ -129,7 +129,7 @@
 	    }
 	    parm {
 		name	"nouvw_color"
-		label	"No UVs Color"
+		label	"No Uvs Color"
 		type	color4
 		size	4
 		default	{ "0.5" "0.5" "0.5" "1" }
@@ -154,7 +154,7 @@
 	    }
 	    parm {
 		name	"far_tex"
-		label	"Far color"
+		label	"Far Color"
 		type	color4
 		size	4
 		default	{ "1" "1" "1" "1" }
@@ -168,7 +168,7 @@
 	    }
 	    parm {
 		name	"nouvw_color1"
-		label	"No UVs Color"
+		label	"No Uvs Color"
 		type	color4
 		size	4
 		default	{ "0.5" "0.5" "0.5" "1" }
@@ -193,7 +193,7 @@
 	    }
 	    parm {
 		name	"far_tex1"
-		label	"Far color"
+		label	"Far Color"
 		type	color4
 		size	4
 		default	{ "1" "1" "1" "1" }
@@ -207,7 +207,7 @@
 	    }
 	    parm {
 		name	"near_tex"
-		label	"Near color"
+		label	"Near Color"
 		type	color4
 		size	4
 		default	{ "0" "0" "0" "1" }
@@ -221,7 +221,7 @@
 	    }
 	    parm {
 		name	"inside_separate"
-		label	"Inside separate"
+		label	"Inside Separate"
 		type	toggle
 		default	{ "1" }
 		help	"When this option is enabled, the near color value will be overridden by the inside color value for points that are inside the specified geometry."
@@ -233,7 +233,7 @@
 	    }
 	    parm {
 		name	"inside_solid"
-		label	"Inside solid"
+		label	"Inside Solid"
 		type	toggle
 		default	{ "0" }
 		help	"When this option is enabled, all the points inside the specified geometry are given the inside color value and no blending is performed."
@@ -246,7 +246,7 @@
 	    }
 	    parm {
 		name	"inside_tex"
-		label	"Inside color"
+		label	"Inside Color"
 		type	color4
 		size	4
 		default	{ "0" "0" "0" "1" }
@@ -260,7 +260,7 @@
 	    }
 	    parm {
 		name	"outside_separate"
-		label	"Outside separate"
+		label	"Outside Separate"
 		type	toggle
 		default	{ "0" }
 		help	"When this option is enabled, the near color value will be overridden by the outside color value for points that are outside the specified geometry."
@@ -272,7 +272,7 @@
 	    }
 	    parm {
 		name	"outside_solid"
-		label	"Outside solid"
+		label	"Outside Solid"
 		type	toggle
 		default	{ "0" }
 		help	"When this option is enabled, all the points outside the specified geometry are given the outside color value and no blending is performed."
@@ -285,7 +285,7 @@
 	    }
 	    parm {
 		name	"outside_tex"
-		label	"Outside color"
+		label	"Outside Color"
 		type	color4
 		size	4
 		default	{ "0" "0" "0" "1" }

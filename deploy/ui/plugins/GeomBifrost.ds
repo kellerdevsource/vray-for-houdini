@@ -31,7 +31,7 @@
 	}
 	parm {
 	    name	"render_grid"
-	    label	"Render grid"
+	    label	"Render Grid"
 	    type	string
 	    default	{ "" }
 	    help	"The name of the OpenVDB grid to render"
@@ -43,7 +43,7 @@
 	}
 	parm {
 	    name	"velocity_grid"
-	    label	"Velocity grid"
+	    label	"Velocity Grid"
 	    type	string
 	    default	{ "" }
 	    help	"The name of the OpenVDB velocity grid to used for motion blur"
@@ -55,7 +55,7 @@
 	}
 	parm {
 	    name	"delay_load"
-	    label	"Delay load"
+	    label	"Delay Load"
 	    type	toggle
 	    default	{ "1" }
 	    help	"If true, delay load the OpenVDB voxels until requested"
@@ -84,7 +84,7 @@
 	}
 	parm {
 	    name	"primary_visibility"
-	    label	"Primary visibility"
+	    label	"Primary Visibility"
 	    type	toggle
 	    default	{ "1" }
 	    help	"If off, shading an intersection with this mesh will not generate a gbuffer"
