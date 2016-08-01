@@ -19,9 +19,16 @@
 
 #include <GU/GU_PackedFactory.h>
 #include <GU/GU_PrimPacked.h>
+#include <GU/GU_PrimPoly.h>
 #include <GU/GU_PackedContext.h>
 #include <UT/UT_MemoryCounter.h>
+#include <GU/GU_PrimVolume.h>
+#include <GU/GU_PrimPacked.h>
+#include <GEO/GEO_Primitive.h>
 #include <FS/UT_DSO.h>
+
+#include <aurinterface.h>
+#include <aurloader.h>
 
 #include <OpenEXR/ImathLimits.h>
 #include <OpenEXR/ImathMath.h>
@@ -135,28 +142,84 @@ bool VRayVolumeGridRef::save(UT_Options &options, const GA_SaveMap &map) const
 
 bool VRayVolumeGridRef::getLocalTransform(UT_Matrix4D &m) const
 {
-	if (m_options.getOptionI("flip_yz")) {
-		m.identity();
-		VUtils::swap(m(1,0), m(2,0));
-		VUtils::swap(m(1,1), m(2,1));
-		VUtils::swap(m(1,2), m(2,2));
-		m(2,0) = -m(2,0);
-		m(2,1) = -m(2,1);
-		m(2,2) = -m(2,2);
-		return true;
-	} else {
-		return false;
+	m = toWorldTm(getCache());
+	return true;
+}
+
+VRayVolumeGridRef::CachePtr VRayVolumeGridRef::getCache() const
+{
+	auto path = this->get_cache_path();
+	auto map = this->get_usrchmap();
+	if (!map || !path || !*path) {
+		return nullptr;
 	}
+
+	return CachePtr(
+		*map ? newIAurWithChannelsMapping(path, map) : newIAur(path),
+		[](IAur *ptr) {
+			deleteIAur(ptr);
+		}
+	);
+}
+
+
+UT_Matrix4F VRayVolumeGridRef::toWorldTm(std::shared_ptr<IAur> cache) const
+{
+	if (!cache) {
+		return UT_Matrix4F(1.f);
+	}
+
+	float flTransform[12];
+	cache->GetObject2GridTransform(flTransform);
+
+	// houdini translations is in last row instead of last col
+	UT_Matrix4F m4(
+		flTransform[0], flTransform[1],  flTransform[2],  0.f,
+		flTransform[3], flTransform[4],  flTransform[5],  0.f,
+		flTransform[6], flTransform[7],  flTransform[8],  0.f,
+		flTransform[9], flTransform[10], flTransform[11], 1.0
+	);
+
+	if (this->get_flip_yz()) {
+		for (int c = 0; c < 4; ++c) {
+			auto old = m4(1, c);
+			m4(1, c) = -m4(2, c);
+			m4(2, c) = old;
+		}
+	}
+
+	m4.invert();
+
+	return m4;
 }
 
 
 bool VRayVolumeGridRef::getBounds(UT_BoundingBox &box) const
 {
-	// TODO
-	// If computing the bounding box is expensive, you may want to cache the
-	// box by calling setBoxCache(box)
-	// SYSconst_cast(this)->setBoxCache(box);
-	return false;
+	auto cache = getCache();
+	if (!cache) {
+		return false;
+	}
+
+	auto tm = toWorldTm(cache);
+
+	int gridDimensions[3] = {1, 1, 1};
+	cache->GetDim(gridDimensions);
+
+	UT_Vector4 min(0.f, 0.f, 0.f), max(1.f, 1.f, 1.f);
+
+	// make the box be with grid dimentions
+	max(0) *= gridDimensions[0];
+	max(1) *= gridDimensions[1];
+	max(2) *= gridDimensions[2];
+
+	min.rowVecMult(tm);
+	max.rowVecMult(tm);
+
+	box.initBounds(min, max);
+	SYSconst_cast(this)->setBoxCache(box);
+
+	return true;
 }
 
 
@@ -197,12 +260,74 @@ bool VRayVolumeGridRef::unpack(GU_Detail &destgdp) const
 
 GU_ConstDetailHandle VRayVolumeGridRef::getPackedDetail(GU_PackedContext *context) const
 {
-	if (m_dirty) {
-		// Create geometry on demand. If the user only requests the
-		// bounding box (i.e. the viewport LOD is set to "box"), then we never
-		// have to actually create the proxy's geometry.
-		// TODO
+	if (!m_dirty) {
+		return getDetail();
 	}
+
+	auto cache = getCache();
+	if (!cache) {
+		return getDetail();
+	}
+
+	int gridDimensions[3];
+	cache->GetDim(gridDimensions);
+	auto tm = toWorldTm(cache);
+
+	// houdini simulations are 2x2x2 box from (-1,-1,-1) to (1,1,1)
+	// this will transform houdini box to grid dimentions
+	UT_Matrix4F hou2phx(1.f);
+
+	for(int c = 0; c < 3; ++c) {
+		hou2phx(3, c) = gridDimensions[c] * 0.5f;
+		hou2phx(c, c) = gridDimensions[c] * 0.5f;
+	}
+
+	auto gridTm = hou2phx * tm;
+
+	GU_Detail *gdp = new GU_Detail();
+	auto GetCellIndex = [&gridDimensions](int x, int y, int z) {
+		return x + y * gridDimensions[0] + z * gridDimensions[1] * gridDimensions[0];
+	};
+
+	const char *chNames[10] = { "Temperature", "Smoke", "Spped", "Velocity X", "Velocity Y", "Velocity Z", "Color R", "Color G", "Color B", "Fuel"};
+	GEO_VolumeVis chVis[10] = {GEO_VOLUMEVIS_SMOKE, GEO_VOLUMEVIS_SMOKE, };
+
+	for (auto chan = GridChannels::ChT; chan <= GridChannels::ChFl; ++reinterpret_cast<int&>(chan)) {
+		if (!cache->ChannelPresent(chan)) {
+			continue;
+		}
+		GU_PrimVolume *volumeGdp = (GU_PrimVolume *)GU_PrimVolume::build(gdp);
+		auto q = volumeGdp->getVisIso();
+		auto r = volumeGdp->getVisDensity();
+
+		if (chan == GridChannels::ChSm) {
+			volumeGdp->setVisualization(GEO_VOLUMEVIS_SMOKE, 1, 1);
+		} else {
+			volumeGdp->setVisualization(GEO_VOLUMEVIS_INVISIBLE, 1, 1);
+		}
+
+		UT_VoxelArrayWriteHandleF voxelHandle = volumeGdp->getVoxelWriteHandle();
+
+		voxelHandle->size(gridDimensions[0], gridDimensions[1], gridDimensions[2]);
+		const float *grid = cache->ExpandChannel(chan);
+
+		for (int i = 0; i < gridDimensions[0]; ++i) {
+			for (int j = 0; j < gridDimensions[1]; ++j) {
+				for (int k = 0; k < gridDimensions[2]; ++k) {
+					voxelHandle->setValue(i, j, k, grid[GetCellIndex(i, j, k)]);
+				}
+			}
+		}
+
+		volumeGdp->setTransform4(gridTm);
+	}
+
+	auto self = SYSconst_cast(this);
+	self->m_handle.clear();
+	self->m_handle.allocateAndSet(gdp, true);
+	self->m_detail = self->m_handle;
+
+	self->m_dirty = false;
 
 	return getDetail();
 }
@@ -238,12 +363,24 @@ void VRayVolumeGridRef::countMemory(UT_MemoryCounter &counter, bool inclusive) c
 #endif
 }
 
-
-template <typename T>
-bool VRayVolumeGridRef::updateFrom(const T &options)
+bool VRayVolumeGridRef::updateFrom(const UT_Options &options)
 {
+	// difference in cache or mapping raises dirty flag
+	m_dirty = options.hasOption("cache_path") && options.getOptionS("cache_path") != this->get_cache_path() ||
+			  options.hasOption("usrchmap")   && options.getOptionS("usrchmap")   != this->get_usrchmap()   ||
+			  options.hasOption("flip_yz")    && options.getOptionI("flip_yz")    != this->get_flip_yz();
+
+	const bool attrDirty = m_dirty || options.hash() != m_options.hash();
+
 	m_options.merge(options);
-	topologyDirty();
-	attributeDirty();
+
+	if (m_dirty) {
+		transformDirty();
+	}
+
+	if (attrDirty) {
+		attributeDirty();
+	}
+
 	return true;
 }

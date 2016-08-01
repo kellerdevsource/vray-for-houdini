@@ -14,6 +14,9 @@
 #include "vfh_vray.h"
 #include "vfh_primitives.h"
 
+#include <aurinterface.h>
+#include <aurloader.h>
+
 #include <GU/GU_PackedImpl.h>
 
 namespace VRayForHoudini {
@@ -29,16 +32,20 @@ namespace VRayForHoudini {
 	(fpreal, play_speed,   1),\
 	(exint,  blend_method, 0),\
 	(exint,  load_nearest, 0),\
-	(exint,  flip_yz,      0) \
+	(exint,  flip_yz,      0),\
+	(const char *, cache_path,  ""),\
+	(const char *, usrchmap,  "")\
 	)
 
-#define VFH_VOLUME_GRID_PARAMS_COUNT 11
+#define VFH_VOLUME_GRID_PARAMS_COUNT 13
 
 
 class VRayVolumeGridRef:
 		public VRayPackedImplBase
 {
 public:
+	typedef std::shared_ptr<IAur> CachePtr;
+
 	VFH_MAKE_ACCESSORS(VFH_VOLUME_GRID_PARAMS, VFH_VOLUME_GRID_PARAMS_COUNT)
 
 	/// Get the type ID for the VRayProxy primitive type.
@@ -86,6 +93,9 @@ public:
 	virtual void                   countMemory(UT_MemoryCounter &counter, bool inclusive) const VRAY_OVERRIDE;
 	/// @}
 
+	CachePtr                       getCache() const;
+	UT_Matrix4F                    toWorldTm(CachePtr cache) const;
+
 	/// @{
 	/// Member data accessors for intrinsics
 	const GU_ConstDetailHandle &  getDetail() const { return m_detail; }
@@ -101,13 +111,15 @@ public:
 
 private:
 	/// updateFrom() will update from UT_Options only
-	template <typename T>
-	bool   updateFrom(const T &options);
+	bool   updateFrom(const UT_Options &options);
 	void   clearDetail() { m_detail = GU_ConstDetailHandle(); }
 
 private:
 	GU_ConstDetailHandle   m_detail;
-	int                    m_dirty;
+	GU_DetailHandle        m_handle;
+
+	UT_BoundingBox         m_bBox;
+	bool                   m_dirty;
 };
 
 
