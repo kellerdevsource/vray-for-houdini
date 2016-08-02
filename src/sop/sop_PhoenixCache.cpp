@@ -196,15 +196,6 @@ OP_ERROR SOP::PhxShaderCache::cookMySop(OP_Context &context)
 	pack->implementation()->update(options);
 	pack->setPathAttribute(getFullPath());
 
-	// channel mappings
-	m_serializedChannels = gridRefPtr->getCacheChannels();
-	if (!m_serializedChannels.size()) {
-		addError(SOP_MESSAGE, (std::string("Did not load any channel names from file ") + options.getOptionS("cache_path").toStdString()).c_str());
-		return error();
-	} else {
-		gridRefPtr->setPhxChannelMap(m_serializedChannels);
-	}
-
 	gdp->destroyStashed();
 
 #if UT_MAJOR_VERSION_INT < 14

@@ -155,12 +155,8 @@ VRayVolumeGridRef::CachePtr VRayVolumeGridRef::getCache() const
 		return nullptr;
 	}
 
-	return CachePtr(
-		*map ? newIAurWithChannelsMapping(path, map) : newIAur(path),
-		[](IAur *ptr) {
-			deleteIAur(ptr);
-		}
-	);
+	auto ptr = *map ? newIAurWithChannelsMapping(path, map) : newIAur(path);
+	return CachePtr(ptr,[](IAur *ptr) {	deleteIAur(ptr); });
 }
 
 
@@ -361,18 +357,21 @@ std::string getDefaultMapping(const char *cachePath) {
 }
 
 UT_StringArray VRayVolumeGridRef::getCacheChannels() const {
+	UT_StringArray channels;
 	if (!m_channelDirty) {
-		return m_cacheChannels;
+		getPhxChannelMap(channels);
+		return channels;
 	}
-	SYSconst_cast(this)->m_cacheChannels.clear();
+
 	int chanIndex = 0, isChannelVector3D;
 	char chanName[MAX_CHAN_MAP_LEN];
 	while(1 == aurGet3rdPartyChannelName(chanName, MAX_CHAN_MAP_LEN, &isChannelVector3D, this->get_cache_path(), chanIndex++)) {
-		SYSconst_cast(this)->m_cacheChannels.append(chanName);
+		channels.append(chanName);
 	}
 
 	SYSconst_cast(this)->m_channelDirty = false;
-	return m_cacheChannels;
+	SYSconst_cast(this)->setPhxChannelMap(channels);
+	return channels;
 }
 
 void VRayVolumeGridRef::buildMapping() {
@@ -382,6 +381,7 @@ void VRayVolumeGridRef::buildMapping() {
 
 	if (UT_String(path).endsWith(".aur")) {
 		chanMap = "";
+		this->setPhxChannelMap(UT_StringArray());
 	} else {
 		auto channels = getCacheChannels();
 		const int chCount = 9;
@@ -419,7 +419,7 @@ void VRayVolumeGridRef::buildMapping() {
 		}
 	}
 
-	if(m_dirty = chanMap != this->get_usrchmap()) {
+	if(m_dirty = m_dirty || chanMap != this->get_usrchmap()) {
 		this->set_usrchmap(chanMap);
 	}
 }

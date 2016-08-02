@@ -122,7 +122,6 @@ private:
 	GU_ConstDetailHandle   m_detail;
 	GU_DetailHandle        m_handle;
 
-	UT_StringArray         m_cacheChannels;
 	bool                   m_channelDirty;
 
 	UT_BoundingBox         m_bBox;
