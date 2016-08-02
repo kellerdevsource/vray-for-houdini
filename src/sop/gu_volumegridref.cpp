@@ -191,7 +191,19 @@ UT_Matrix4F VRayVolumeGridRef::toWorldTm(std::shared_ptr<IAur> cache) const
 
 	m4.invert();
 
-	return m4;
+	int gridDimensions[3];
+	cache->GetDim(gridDimensions);
+
+	// houdini simulations are 2x2x2 box from (-1,-1,-1) to (1,1,1)
+	// this will transform houdini box to grid dimentions
+	UT_Matrix4F hou2phx(1.f);
+
+	for(int c = 0; c < 3; ++c) {
+		hou2phx(3, c) = gridDimensions[c] * 0.5f;
+		hou2phx(c, c) = gridDimensions[c] * 0.5f;
+	}
+
+	return hou2phx * m4;
 }
 
 
@@ -202,16 +214,7 @@ bool VRayVolumeGridRef::getBounds(UT_BoundingBox &box) const
 		return false;
 	}
 
-	auto tm = toWorldTm(cache);
-
-	int gridDimensions[4] = {1, 1, 1, 1};
-	cache->GetDim(gridDimensions);
-
-	UT_Vector4 min(0.f, 0.f, 0.f), max(gridDimensions);
-
-	min.rowVecMult(tm);
-	max.rowVecMult(tm);
-
+	UT_Vector4F min(-1, -1, -1), max(1, 1, 1);
 	box.initBounds(min, max);
 	SYSconst_cast(this)->setBoxCache(box);
 
@@ -269,17 +272,6 @@ GU_ConstDetailHandle VRayVolumeGridRef::getPackedDetail(GU_PackedContext *contex
 	cache->GetDim(gridDimensions);
 	auto tm = toWorldTm(cache);
 
-	// houdini simulations are 2x2x2 box from (-1,-1,-1) to (1,1,1)
-	// this will transform houdini box to grid dimentions
-	UT_Matrix4F hou2phx(1.f);
-
-	for(int c = 0; c < 3; ++c) {
-		hou2phx(3, c) = gridDimensions[c] * 0.5f;
-		hou2phx(c, c) = gridDimensions[c] * 0.5f;
-	}
-
-	auto gridTm = hou2phx * tm;
-
 	GU_Detail *gdp = new GU_Detail();
 	auto GetCellIndex = [&gridDimensions](int x, int y, int z) {
 		return x + y * gridDimensions[0] + z * gridDimensions[1] * gridDimensions[0];
@@ -315,7 +307,7 @@ GU_ConstDetailHandle VRayVolumeGridRef::getPackedDetail(GU_PackedContext *contex
 			}
 		}
 
-		volumeGdp->setTransform4(gridTm);
+		volumeGdp->setTransform4(tm);
 	}
 
 	auto self = SYSconst_cast(this);
