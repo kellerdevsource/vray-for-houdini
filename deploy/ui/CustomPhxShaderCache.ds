@@ -2,7 +2,7 @@
     name	selectedparms
 
 	parm {
-	    name	"PhxShaderCache_cache_path"
+	    name	"cache_path"
 	    label	"Input Cache File"
 	    type	file
 	    default	{ "" }

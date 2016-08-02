@@ -18,6 +18,8 @@
 #include "vop/material/vop_MaterialOutput.h"
 #include "vop/material/vop_PhoenixSim.h"
 
+#include <GEO/GEO_Primitive.h>
+#include <GU/GU_PrimVolume.h>
 #include <GU/GU_Detail.h>
 #include <OP/OP_Bundle.h>
 #include <GA/GA_Types.h>

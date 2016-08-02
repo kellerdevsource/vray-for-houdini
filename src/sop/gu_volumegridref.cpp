@@ -37,6 +37,7 @@
 using namespace VRayForHoudini;
 
 GA_PrimitiveTypeId VRayVolumeGridRef::theTypeId(-1);
+const int MAX_CHAN_MAP_LEN = 2048;
 
 VFH_DEFINE_FACTORY_BASE(VRayVolumeGridFactoryBase, VRayVolumeGridRef, VFH_VOLUME_GRID_PARAMS, VFH_VOLUME_GRID_PARAMS_COUNT)
 
@@ -203,15 +204,10 @@ bool VRayVolumeGridRef::getBounds(UT_BoundingBox &box) const
 
 	auto tm = toWorldTm(cache);
 
-	int gridDimensions[3] = {1, 1, 1};
+	int gridDimensions[4] = {1, 1, 1, 1};
 	cache->GetDim(gridDimensions);
 
-	UT_Vector4 min(0.f, 0.f, 0.f), max(1.f, 1.f, 1.f);
-
-	// make the box be with grid dimentions
-	max(0) *= gridDimensions[0];
-	max(1) *= gridDimensions[1];
-	max(2) *= gridDimensions[2];
+	UT_Vector4 min(0.f, 0.f, 0.f), max(gridDimensions);
 
 	min.rowVecMult(tm);
 	max.rowVecMult(tm);
@@ -290,21 +286,21 @@ GU_ConstDetailHandle VRayVolumeGridRef::getPackedDetail(GU_PackedContext *contex
 	};
 
 	const char *chNames[10] = { "Temperature", "Smoke", "Spped", "Velocity X", "Velocity Y", "Velocity Z", "Color R", "Color G", "Color B", "Fuel"};
-	GEO_VolumeVis chVis[10] = {GEO_VOLUMEVIS_SMOKE, GEO_VOLUMEVIS_SMOKE, };
 
 	for (auto chan = GridChannels::ChT; chan <= GridChannels::ChFl; ++reinterpret_cast<int&>(chan)) {
 		if (!cache->ChannelPresent(chan)) {
 			continue;
 		}
 		GU_PrimVolume *volumeGdp = (GU_PrimVolume *)GU_PrimVolume::build(gdp);
-		auto q = volumeGdp->getVisIso();
-		auto r = volumeGdp->getVisDensity();
 
-		if (chan == GridChannels::ChSm) {
-			volumeGdp->setVisualization(GEO_VOLUMEVIS_SMOKE, 1, 1);
-		} else {
-			volumeGdp->setVisualization(GEO_VOLUMEVIS_INVISIBLE, 1, 1);
+		auto visType = GEO_VOLUMEVIS_INVISIBLE;
+		switch (chan)
+		{
+		case GridChannels::ChT: visType = GEO_VOLUMEVIS_RAINBOW; break;
+		case GridChannels::ChSm: visType = GEO_VOLUMEVIS_SMOKE; break;
 		}
+
+		volumeGdp->setVisualization(visType, volumeGdp->getVisIso(), volumeGdp->getVisDensity());
 
 		UT_VoxelArrayWriteHandleF voxelHandle = volumeGdp->getVoxelWriteHandle();
 
@@ -363,22 +359,96 @@ void VRayVolumeGridRef::countMemory(UT_MemoryCounter &counter, bool inclusive) c
 #endif
 }
 
+std::string getDefaultMapping(const char *cachePath) {
+	char buff[MAX_CHAN_MAP_LEN];
+	if (1 == aurGenerateDefaultChannelMappings(buff, MAX_CHAN_MAP_LEN, cachePath)) {
+		return std::string(buff);
+	} else {
+		return "";
+	}
+}
+
+UT_StringArray VRayVolumeGridRef::getCacheChannels() const {
+	if (!m_channelDirty) {
+		return m_cacheChannels;
+	}
+	SYSconst_cast(this)->m_cacheChannels.clear();
+	int chanIndex = 0, isChannelVector3D;
+	char chanName[MAX_CHAN_MAP_LEN];
+	while(1 == aurGet3rdPartyChannelName(chanName, MAX_CHAN_MAP_LEN, &isChannelVector3D, this->get_cache_path(), chanIndex++)) {
+		SYSconst_cast(this)->m_cacheChannels.append(chanName);
+	}
+
+	SYSconst_cast(this)->m_channelDirty = false;
+	return m_cacheChannels;
+}
+
+void VRayVolumeGridRef::buildMapping() {
+	auto path = this->get_cache_path();
+
+	UT_String chanMap;
+
+	if (UT_String(path).endsWith(".aur")) {
+		chanMap = "";
+	} else {
+		auto channels = getCacheChannels();
+		const int chCount = 9;
+		static const char *chNames[chCount] = {"channel_smoke", "channel_temp", "channel_fuel", "channel_vel_x", "channel_vel_y", "channel_vel_z", "channel_red", "channel_green", "channel_blue"};
+		static const int   chIDs[chCount] = {2, 1, 10, 4, 5, 6, 7, 8, 9};
+
+		// will hold names so we can use pointers to them
+		std::vector<UT_String> names;
+		std::vector<int> ids;
+		for (int c = 0; c < chCount; ++c) {
+			UT_String value(UT_String::ALWAYS_DEEP);
+			auto res = m_options.hasOption(chNames[c]) ? m_options.getOptionI(chNames[c]) - 1 : -1;
+			if (res >= 0 && res < channels.size()) {
+				value = channels(res);
+				if (value != "" && value != "0") {
+					names.push_back(value);
+					ids.push_back(chIDs[c]);
+				}
+			}
+		}
+
+		const char * inputNames[chCount] = {0};
+		for (int c = 0; c < names.size(); ++c) {
+			inputNames[c] = names[c].c_str();
+		}
+
+		char usrchmap[MAX_CHAN_MAP_LEN] = {0,};
+		if (1 == aurComposeChannelMappingsString(usrchmap, MAX_CHAN_MAP_LEN, ids.data(), const_cast<char * const *>(inputNames), names.size())) {
+			chanMap = usrchmap;
+		}
+
+		// user made no mappings - get default
+		if (chanMap.equal("")) {
+			chanMap = getDefaultMapping(path);
+		}
+	}
+
+	if(m_dirty = chanMap != this->get_usrchmap()) {
+		this->set_usrchmap(chanMap);
+	}
+}
+
 bool VRayVolumeGridRef::updateFrom(const UT_Options &options)
 {
 	// difference in cache or mapping raises dirty flag
-	m_dirty = options.hasOption("cache_path") && options.getOptionS("cache_path") != this->get_cache_path() ||
-			  options.hasOption("usrchmap")   && options.getOptionS("usrchmap")   != this->get_usrchmap()   ||
-			  options.hasOption("flip_yz")    && options.getOptionI("flip_yz")    != this->get_flip_yz();
+	const bool pathChange = options.hasOption("cache_path") && options.getOptionS("cache_path") != this->get_cache_path();
+	m_channelDirty = m_channelDirty || pathChange;
 
-	const bool attrDirty = m_dirty || options.hash() != m_options.hash();
+	m_dirty = pathChange || m_dirty || options.hasOption("flip_yz") && options.getOptionI("flip_yz") != this->get_flip_yz();
 
+	const bool diffHash = options.hash() != m_options.hash();
 	m_options.merge(options);
+	buildMapping();
 
 	if (m_dirty) {
 		transformDirty();
 	}
 
-	if (attrDirty) {
+	if (diffHash) {
 		attributeDirty();
 	}
 

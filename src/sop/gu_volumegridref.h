@@ -96,6 +96,8 @@ public:
 	CachePtr                       getCache() const;
 	UT_Matrix4F                    toWorldTm(CachePtr cache) const;
 
+	UT_StringArray                 getCacheChannels() const;
+
 	/// @{
 	/// Member data accessors for intrinsics
 	const GU_ConstDetailHandle &  getDetail() const { return m_detail; }
@@ -114,9 +116,14 @@ private:
 	bool   updateFrom(const UT_Options &options);
 	void   clearDetail() { m_detail = GU_ConstDetailHandle(); }
 
+	// builds channel mapping, call after update to cache or ui mappings
+	void                          buildMapping();
 private:
 	GU_ConstDetailHandle   m_detail;
 	GU_DetailHandle        m_handle;
+
+	UT_StringArray         m_cacheChannels;
+	bool                   m_channelDirty;
 
 	UT_BoundingBox         m_bBox;
 	bool                   m_dirty;
