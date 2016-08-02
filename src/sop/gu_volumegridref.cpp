@@ -33,6 +33,8 @@
 #include <OpenEXR/ImathLimits.h>
 #include <OpenEXR/ImathMath.h>
 
+#include <chrono>
+
 
 using namespace VRayForHoudini;
 
@@ -101,7 +103,11 @@ VRayVolumeGridRef::VRayVolumeGridRef():
 	VRayPackedImplBase(),
 	m_detail(),
 	m_dirty(false)
-{ }
+{
+	GU_Detail *gdp = new GU_Detail;
+	m_handle.allocateAndSet(gdp, true);
+	m_detail = m_handle;
+}
 
 
 VRayVolumeGridRef::VRayVolumeGridRef(const VRayVolumeGridRef &src):
@@ -109,7 +115,9 @@ VRayVolumeGridRef::VRayVolumeGridRef(const VRayVolumeGridRef &src):
 	m_detail(),
 	m_dirty(false)
 {
-	updateFrom(src.m_options);
+	m_handle = src.m_handle.duplicateGeometry();
+	m_detail = m_handle;
+	m_options = src.m_options;
 }
 
 
@@ -252,65 +260,70 @@ bool VRayVolumeGridRef::unpack(GU_Detail &destgdp) const
 	return unpackToDetail(destgdp, gdl.getGdp());
 }
 
-
 GU_ConstDetailHandle VRayVolumeGridRef::getPackedDetail(GU_PackedContext *context) const
 {
 	if (!m_dirty) {
 		return getDetail();
 	}
 
+	using namespace std;
+	using namespace chrono;
+
+	auto tStart = high_resolution_clock::now();
+
 	auto cache = getCache();
 	if (!cache) {
 		return getDetail();
 	}
 
+	auto tEndCache = high_resolution_clock::now();
+	Log::getLog().info("Loading cache took %dms", (int)duration_cast<milliseconds>(tEndCache - tStart).count());
+
 	int gridDimensions[3];
 	cache->GetDim(gridDimensions);
 	auto tm = toWorldTm(cache);
 
-	GU_Detail *gdp = new GU_Detail();
-	auto GetCellIndex = [&gridDimensions](int x, int y, int z) {
-		return x + y * gridDimensions[0] + z * gridDimensions[1] * gridDimensions[0];
-	};
+
+	GU_Detail *gdp = SYSconst_cast(this)->m_handle.writeLock();
+	gdp->stashAll();
 
 	const char *chNames[10] = { "Temperature", "Smoke", "Spped", "Velocity X", "Velocity Y", "Velocity Z", "Color R", "Color G", "Color B", "Fuel"};
-
-	for (auto chan = GridChannels::ChT; chan <= GridChannels::ChFl; ++reinterpret_cast<int&>(chan)) {
+	auto tBeginLoop = high_resolution_clock::now();
+	int c = 0;
+	for (auto chan = GridChannels::ChT; chan <= GridChannels::ChFl; ++reinterpret_cast<int&>(chan), ++c) {
 		if (!cache->ChannelPresent(chan)) {
 			continue;
 		}
 		GU_PrimVolume *volumeGdp = (GU_PrimVolume *)GU_PrimVolume::build(gdp);
 
-		auto visType = GEO_VOLUMEVIS_INVISIBLE;
-		switch (chan)
-		{
-		case GridChannels::ChT: visType = GEO_VOLUMEVIS_RAINBOW; break;
-		case GridChannels::ChSm: visType = GEO_VOLUMEVIS_SMOKE; break;
-		}
-
+		auto visType = chan == GridChannels::ChSm ? GEO_VOLUMEVIS_SMOKE : GEO_VOLUMEVIS_INVISIBLE;
 		volumeGdp->setVisualization(visType, volumeGdp->getVisIso(), volumeGdp->getVisDensity());
 
 		UT_VoxelArrayWriteHandleF voxelHandle = volumeGdp->getVoxelWriteHandle();
-
 		voxelHandle->size(gridDimensions[0], gridDimensions[1], gridDimensions[2]);
-		const float *grid = cache->ExpandChannel(chan);
 
-		for (int i = 0; i < gridDimensions[0]; ++i) {
-			for (int j = 0; j < gridDimensions[1]; ++j) {
-				for (int k = 0; k < gridDimensions[2]; ++k) {
-					voxelHandle->setValue(i, j, k, grid[GetCellIndex(i, j, k)]);
-				}
-			}
-		}
+		auto tStartExpand = high_resolution_clock::now();
+		const float *grid = cache->ExpandChannel(chan);
+		auto tEndExpand = high_resolution_clock::now();
+
+		int expandTime = duration_cast<milliseconds>(tEndExpand - tStartExpand).count();
+
+		auto tStartExtract = high_resolution_clock::now();
+		voxelHandle->extractFromFlattened(grid, gridDimensions[0], gridDimensions[1] * gridDimensions[0]);
+		auto tEndExtract = high_resolution_clock::now();
+
+		int extractTime = duration_cast<milliseconds>(tEndExtract - tStartExtract).count();
+
+		Log::getLog().info("Expanding channel '%s' took %dms, extracting took %dms", chNames[c], expandTime, extractTime);
 
 		volumeGdp->setTransform4(tm);
 	}
+	gdp->destroyStashed();
+	auto tEndLoop = high_resolution_clock::now();
+
+	Log::getLog().info("Generating packed prim %dms", (int)duration_cast<milliseconds>(tEndLoop - tBeginLoop).count());
 
 	auto self = SYSconst_cast(this);
-	self->m_handle.clear();
-	self->m_handle.allocateAndSet(gdp, true);
-	self->m_detail = self->m_handle;
-
 	self->m_dirty = false;
 
 	return getDetail();

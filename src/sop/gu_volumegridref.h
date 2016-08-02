@@ -122,10 +122,9 @@ private:
 	GU_ConstDetailHandle   m_detail;
 	GU_DetailHandle        m_handle;
 
-	bool                   m_channelDirty;
-
 	UT_BoundingBox         m_bBox;
 	bool                   m_dirty;
+	bool                   m_channelDirty;
 };
 
 
