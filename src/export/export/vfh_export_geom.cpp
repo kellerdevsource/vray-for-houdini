@@ -143,13 +143,12 @@ void VolumeExporter::exportSim(const GA_Primitive &prim, const VRay::Transform &
 								phxWrapperPlugin = m_exporter.exportPlugin(meshWrapper);
 							}
 
-							// Should wrap in node?
-							//Attrs::PluginDesc node(VRayExporter::getPluginName(simVop, "Node", cache.getName()), "Node");
-							//node.add(Attrs::PluginAttr("geometry", phxWrapperPlugin));
-							//node.add(Attrs::PluginAttr("visible", true));
-							//node.add(Attrs::PluginAttr("transform", VRay::Transform(1)));
-							//node.add(Attrs::PluginAttr("material", m_exporter.exportDefaultMaterial()));
-							//m_exporter.exportPlugin(node);
+							Attrs::PluginDesc node(VRayExporter::getPluginName(simVop, "Node", cache.getName()), "Node");
+							node.add(Attrs::PluginAttr("geometry", phxWrapperPlugin));
+							node.add(Attrs::PluginAttr("visible", true));
+							node.add(Attrs::PluginAttr("transform", VRay::Transform(1)));
+							node.add(Attrs::PluginAttr("material", m_exporter.exportDefaultMaterial()));
+							m_exporter.exportPlugin(node);
 						}
 					}
 				} else {
