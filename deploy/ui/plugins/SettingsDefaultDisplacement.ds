@@ -2,10 +2,10 @@
     name	parameters
     group {
 	name	"SettingsDefaultDisplacement"
-	label	"Default Displacement"
+	label	"Displacement"
 
 	parm {
-	    name	"plugindata"
+	    name	"SettingsDefaultDisplacement_plugindata"
 	    label	"Default Displacement"
 	    type	data
 	    invisible
@@ -16,7 +16,7 @@
 	    parmtag	{ "vray_type" "SETTINGS" }
 	}
 	parm {
-	    name	"override_on"
+	    name	"SettingsDefaultDisplacement_override_on"
 	    label	"Override Max"
 	    type	toggle
 	    default	{ "0" }
@@ -28,7 +28,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"edgeLength"
+	    name	"SettingsDefaultDisplacement_edgeLength"
 	    label	"Edge Length"
 	    type	float
 	    default	{ "4" }
@@ -40,7 +40,7 @@
 	    parmtag	{ "vray_type" "float" }
 	}
 	parm {
-	    name	"viewDependent"
+	    name	"SettingsDefaultDisplacement_viewDependent"
 	    label	"View Dependent"
 	    type	toggle
 	    default	{ "1" }
@@ -52,7 +52,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"maxSubdivs"
+	    name	"SettingsDefaultDisplacement_maxSubdivs"
 	    label	"Max Subdivs"
 	    type	integer
 	    default	{ "256" }
@@ -64,7 +64,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"tightBounds"
+	    name	"SettingsDefaultDisplacement_tightBounds"
 	    label	"Tight Bounds"
 	    type	toggle
 	    default	{ "1" }
@@ -76,7 +76,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"amount"
+	    name	"SettingsDefaultDisplacement_amount"
 	    label	"Amount"
 	    type	float
 	    default	{ "1" }
@@ -88,7 +88,7 @@
 	    parmtag	{ "vray_type" "float" }
 	}
 	parm {
-	    name	"relative"
+	    name	"SettingsDefaultDisplacement_relative"
 	    label	"Relative"
 	    type	toggle
 	    default	{ "0" }

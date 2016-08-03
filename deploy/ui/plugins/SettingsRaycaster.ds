@@ -5,7 +5,7 @@
 	label	"Raycaster"
 
 	parm {
-	    name	"plugindata"
+	    name	"SettingsRaycaster_plugindata"
 	    label	"Raycaster"
 	    type	data
 	    invisible
@@ -17,7 +17,7 @@
 	    parmtag	{ "vray_type" "SETTINGS" }
 	}
 	parm {
-	    name	"maxLevels"
+	    name	"SettingsRaycaster_maxLevels"
 	    label	"Max Tree Depth"
 	    type	integer
 	    default	{ "60" }
@@ -29,7 +29,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"minLeafSize"
+	    name	"SettingsRaycaster_minLeafSize"
 	    label	"Min Leaf Size"
 	    type	float
 	    default	{ "0" }
@@ -41,7 +41,7 @@
 	    parmtag	{ "vray_type" "float" }
 	}
 	parm {
-	    name	"faceLevelCoef"
+	    name	"SettingsRaycaster_faceLevelCoef"
 	    label	"Face/level Coeff"
 	    type	float
 	    default	{ "2" }
@@ -53,7 +53,7 @@
 	    parmtag	{ "vray_type" "float" }
 	}
 	parm {
-	    name	"dynMemLimit"
+	    name	"SettingsRaycaster_dynMemLimit"
 	    label	"Dyn. Memory Limit(mbs)"
 	    type	integer
 	    default	{ "4000" }
@@ -65,7 +65,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"embreeUse"
+	    name	"SettingsRaycaster_embreeUse"
 	    label	"Use Embree"
 	    type	toggle
 	    default	{ "0" }
@@ -77,7 +77,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"embreeUseMB"
+	    name	"SettingsRaycaster_embreeUseMB"
 	    label	"Use Embree For Motion Blur"
 	    type	toggle
 	    default	{ "1" }
@@ -90,7 +90,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"embreeHair"
+	    name	"SettingsRaycaster_embreeHair"
 	    label	"Use Embree For Hair"
 	    type	toggle
 	    default	{ "1" }
@@ -103,7 +103,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"embreeLowMemory"
+	    name	"SettingsRaycaster_embreeLowMemory"
 	    label	"Conserve Memory"
 	    type	toggle
 	    default	{ "1" }
@@ -116,7 +116,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"embreeRayPackets"
+	    name	"SettingsRaycaster_embreeRayPackets"
 	    label	"Use Ray Packets"
 	    type	toggle
 	    default	{ "1" }
@@ -129,7 +129,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"optLevel"
+	    name	"SettingsRaycaster_optLevel"
 	    label	"Tree Build Quality"
 	    type	ordinal
 	    default	{ "0" }

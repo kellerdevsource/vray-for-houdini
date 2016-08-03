@@ -5,7 +5,7 @@
 	label	"Output"
 
 	parm {
-	    name	"plugindata"
+	    name	"SettingsOutput_plugindata"
 	    label	"Output"
 	    type	data
 	    invisible
@@ -16,7 +16,7 @@
 	    parmtag	{ "vray_type" "SETTINGS" }
 	}
 	parm {
-	    name	"img_width"
+	    name	"SettingsOutput_img_width"
 	    label	"Image Width"
 	    type	integer
 	    default	{ "640" }
@@ -28,7 +28,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"img_height"
+	    name	"SettingsOutput_img_height"
 	    label	"Image Height"
 	    type	integer
 	    default	{ "480" }
@@ -40,7 +40,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"img_pixelAspect"
+	    name	"SettingsOutput_img_pixelAspect"
 	    label	"Pixel Aspect"
 	    type	float
 	    default	{ "1" }
@@ -52,7 +52,7 @@
 	    parmtag	{ "vray_type" "float" }
 	}
 	parm {
-	    name	"img_file"
+	    name	"SettingsOutput_img_file"
 	    label	"File Name"
 	    type	string
 	    default	{ "$F_$C" }
@@ -64,7 +64,7 @@
 	    parmtag	{ "vray_type" "String" }
 	}
 	parm {
-	    name	"img_dir"
+	    name	"SettingsOutput_img_dir"
 	    label	"Dir Name"
 	    type	file
 	    default	{ "//render/$F/" }
@@ -76,7 +76,7 @@
 	    parmtag	{ "vray_type" "String" }
 	}
 	parm {
-	    name	"img_file_needFrameNumber"
+	    name	"SettingsOutput_img_file_needFrameNumber"
 	    label	"Img File Needframenumber"
 	    type	toggle
 	    default	{ "0" }
@@ -88,7 +88,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"img_separateAlpha"
+	    name	"SettingsOutput_img_separateAlpha"
 	    label	"Img Separatealpha"
 	    type	toggle
 	    default	{ "0" }
@@ -100,7 +100,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"img_noAlpha"
+	    name	"SettingsOutput_img_noAlpha"
 	    label	"Img Noalpha"
 	    type	toggle
 	    default	{ "0" }
@@ -112,7 +112,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"img_dontSaveRgbChannel"
+	    name	"SettingsOutput_img_dontSaveRgbChannel"
 	    label	"Img Dontsavergbchannel"
 	    type	toggle
 	    default	{ "0" }
@@ -124,7 +124,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"img_deepFile"
+	    name	"SettingsOutput_img_deepFile"
 	    label	"Img Deepfile"
 	    type	toggle
 	    default	{ "0" }
@@ -136,7 +136,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"img_rawFile"
+	    name	"SettingsOutput_img_rawFile"
 	    label	"Img Rawfile"
 	    type	toggle
 	    default	{ "0" }
@@ -148,7 +148,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"img_rawFileVFB"
+	    name	"SettingsOutput_img_rawFileVFB"
 	    label	"Img Rawfilevfb"
 	    type	integer
 	    default	{ "1" }
@@ -160,7 +160,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"anim_start"
+	    name	"SettingsOutput_anim_start"
 	    label	"Start Animation"
 	    type	float
 	    default	{ "0" }
@@ -172,7 +172,7 @@
 	    parmtag	{ "vray_type" "double" }
 	}
 	parm {
-	    name	"anim_end"
+	    name	"SettingsOutput_anim_end"
 	    label	"End Animation"
 	    type	float
 	    default	{ "1" }
@@ -184,7 +184,7 @@
 	    parmtag	{ "vray_type" "double" }
 	}
 	parm {
-	    name	"anim_frame_padding"
+	    name	"SettingsOutput_anim_frame_padding"
 	    label	"Frame Padding"
 	    type	integer
 	    default	{ "4" }
@@ -196,7 +196,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"anim_renumber_on"
+	    name	"SettingsOutput_anim_renumber_on"
 	    label	"Anim Renumber On"
 	    type	toggle
 	    default	{ "0" }
@@ -208,7 +208,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"anim_renumber_start"
+	    name	"SettingsOutput_anim_renumber_start"
 	    label	"Renumber Start Number"
 	    type	float
 	    default	{ "0" }
@@ -220,7 +220,7 @@
 	    parmtag	{ "vray_type" "float" }
 	}
 	parm {
-	    name	"anim_renumber_step"
+	    name	"SettingsOutput_anim_renumber_step"
 	    label	"Renumber Frames Step"
 	    type	float
 	    default	{ "1" }
@@ -232,7 +232,7 @@
 	    parmtag	{ "vray_type" "float" }
 	}
 	parm {
-	    name	"anim_ren_frame_start"
+	    name	"SettingsOutput_anim_ren_frame_start"
 	    label	"First Frame Of Animation Range"
 	    type	float
 	    default	{ "0" }
@@ -244,7 +244,7 @@
 	    parmtag	{ "vray_type" "float" }
 	}
 	parm {
-	    name	"frame_start"
+	    name	"SettingsOutput_frame_start"
 	    label	"Frame Start"
 	    type	integer
 	    default	{ "0" }
@@ -256,7 +256,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"frames_per_second"
+	    name	"SettingsOutput_frames_per_second"
 	    label	"Frames Per Unit Time"
 	    type	float
 	    default	{ "1" }
@@ -268,7 +268,7 @@
 	    parmtag	{ "vray_type" "float" }
 	}
 	parm {
-	    name	"rgn_left"
+	    name	"SettingsOutput_rgn_left"
 	    label	"Image Output Region Left Coord"
 	    type	float
 	    default	{ "0" }
@@ -280,7 +280,7 @@
 	    parmtag	{ "vray_type" "float" }
 	}
 	parm {
-	    name	"rgn_width"
+	    name	"SettingsOutput_rgn_width"
 	    label	"Image Output Region Width"
 	    type	float
 	    default	{ "640" }
@@ -292,7 +292,7 @@
 	    parmtag	{ "vray_type" "float" }
 	}
 	parm {
-	    name	"rgn_top"
+	    name	"SettingsOutput_rgn_top"
 	    label	"Image Output Region Top Coord"
 	    type	float
 	    default	{ "0" }
@@ -304,7 +304,7 @@
 	    parmtag	{ "vray_type" "float" }
 	}
 	parm {
-	    name	"rgn_height"
+	    name	"SettingsOutput_rgn_height"
 	    label	"Image Output Region Height"
 	    type	float
 	    default	{ "480" }
@@ -316,7 +316,7 @@
 	    parmtag	{ "vray_type" "float" }
 	}
 	parm {
-	    name	"bmp_width"
+	    name	"SettingsOutput_bmp_width"
 	    label	"Bitmap Width"
 	    type	integer
 	    default	{ "640" }
@@ -328,7 +328,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"bmp_height"
+	    name	"SettingsOutput_bmp_height"
 	    label	"Bitmap Height"
 	    type	integer
 	    default	{ "480" }
@@ -340,7 +340,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"r_left"
+	    name	"SettingsOutput_r_left"
 	    label	"Bitmap Output Region Left Coord"
 	    type	integer
 	    default	{ "0" }
@@ -352,7 +352,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"r_width"
+	    name	"SettingsOutput_r_width"
 	    label	"Bitmap Output Region Width"
 	    type	integer
 	    default	{ "640" }
@@ -364,7 +364,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"r_top"
+	    name	"SettingsOutput_r_top"
 	    label	"Bitmap Output Region Top Coord"
 	    type	integer
 	    default	{ "0" }
@@ -376,7 +376,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"r_height"
+	    name	"SettingsOutput_r_height"
 	    label	"Bitmap Output Region Height"
 	    type	integer
 	    default	{ "480" }
@@ -388,7 +388,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"frame_stamp_enabled"
+	    name	"SettingsOutput_frame_stamp_enabled"
 	    label	"Frame Stamp Enabled"
 	    type	toggle
 	    default	{ "0" }
@@ -400,7 +400,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"frame_stamp_text"
+	    name	"SettingsOutput_frame_stamp_text"
 	    label	"Frame Stamp Text"
 	    type	string
 	    default	{ "V-Ray %vraycore | %rendertime" }
@@ -412,7 +412,7 @@
 	    parmtag	{ "vray_type" "String" }
 	}
 	parm {
-	    name	"relements_separateFolders"
+	    name	"SettingsOutput_relements_separateFolders"
 	    label	"Relements Separatefolders"
 	    type	toggle
 	    default	{ "0" }
@@ -424,7 +424,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"relements_separate_rgba"
+	    name	"SettingsOutput_relements_separate_rgba"
 	    label	"Relements Separate Rgba"
 	    type	toggle
 	    default	{ "0" }
@@ -436,7 +436,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"relements_divider"
+	    name	"SettingsOutput_relements_divider"
 	    label	"Relements Divider"
 	    type	string
 	    default	{ "" }
@@ -448,7 +448,7 @@
 	    parmtag	{ "vray_type" "String" }
 	}
 	parm {
-	    name	"film_offset_x"
+	    name	"SettingsOutput_film_offset_x"
 	    label	"Film Offset X"
 	    type	float
 	    default	{ "0" }
@@ -460,7 +460,7 @@
 	    parmtag	{ "vray_type" "float" }
 	}
 	parm {
-	    name	"film_offset_y"
+	    name	"SettingsOutput_film_offset_y"
 	    label	"Film Offset Y"
 	    type	float
 	    default	{ "0" }
@@ -472,7 +472,7 @@
 	    parmtag	{ "vray_type" "float" }
 	}
 	parm {
-	    name	"img_format"
+	    name	"SettingsOutput_img_format"
 	    label	"Image Format"
 	    type	ordinal
 	    default	{ "1" }
@@ -491,7 +491,7 @@
 	    parmtag	{ "vray_custom_handling" "1" }
 	}
 	parm {
-	    name	"img_saveVelocityZeroBase"
+	    name	"SettingsOutput_img_saveVelocityZeroBase"
 	    label	"Img Savevelocityzerobase"
 	    type	toggle
 	    default	{ "0" }
@@ -503,7 +503,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"relements_separateFiles"
+	    name	"SettingsOutput_relements_separateFiles"
 	    label	"Separate Files"
 	    type	toggle
 	    default	{ "1" }

@@ -5,7 +5,7 @@
 	label	"Motion Blur"
 
 	parm {
-	    name	"plugindata"
+	    name	"SettingsMotionBlur_plugindata"
 	    label	"Motion Blur"
 	    type	data
 	    invisible
@@ -16,7 +16,7 @@
 	    parmtag	{ "vray_type" "CAMERA" }
 	}
 	parm {
-	    name	"on"
+	    name	"SettingsMotionBlur_on"
 	    label	"Enable Motion Blur"
 	    type	toggle
 	    default	{ "0" }
@@ -28,7 +28,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"geom_samples"
+	    name	"SettingsMotionBlur_geom_samples"
 	    label	"Geometry Samples"
 	    type	integer
 	    default	{ "2" }
@@ -40,7 +40,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"low_samples"
+	    name	"SettingsMotionBlur_low_samples"
 	    label	"Prepass Samples"
 	    type	integer
 	    default	{ "1" }
@@ -52,7 +52,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"duration"
+	    name	"SettingsMotionBlur_duration"
 	    label	"Duration (frames)"
 	    type	float
 	    default	{ "1" }
@@ -65,7 +65,7 @@
 	    parmtag	{ "vray_type" "float" }
 	}
 	parm {
-	    name	"subdivs"
+	    name	"SettingsMotionBlur_subdivs"
 	    label	"Subdivs"
 	    type	integer
 	    default	{ "6" }
@@ -78,7 +78,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"bias"
+	    name	"SettingsMotionBlur_bias"
 	    label	"Bias"
 	    type	float
 	    default	{ "0" }
@@ -91,7 +91,7 @@
 	    parmtag	{ "vray_type" "float" }
 	}
 	parm {
-	    name	"shutter_efficiency"
+	    name	"SettingsMotionBlur_shutter_efficiency"
 	    label	"Shutter Efficiency"
 	    type	float
 	    default	{ "1" }
@@ -104,7 +104,7 @@
 	    parmtag	{ "vray_type" "float" }
 	}
 	parm {
-	    name	"interval_center"
+	    name	"SettingsMotionBlur_interval_center"
 	    label	"Interval Center"
 	    type	float
 	    default	{ "0.5" }
@@ -117,7 +117,7 @@
 	    parmtag	{ "vray_type" "float" }
 	}
 	parm {
-	    name	"camera_motion_blur"
+	    name	"SettingsMotionBlur_camera_motion_blur"
 	    label	"Camera Motion Blur"
 	    type	toggle
 	    default	{ "1" }
@@ -130,7 +130,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"sampling_type"
+	    name	"SettingsMotionBlur_sampling_type"
 	    label	"Sampling Type"
 	    type	ordinal
 	    default	{ "0" }

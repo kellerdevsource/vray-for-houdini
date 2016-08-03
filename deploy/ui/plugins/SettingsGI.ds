@@ -2,10 +2,10 @@
     name	parameters
     group {
 	name	"SettingsGI"
-	label	"Global Illumination"
+	label	"GI"
 
 	parm {
-	    name	"plugindata"
+	    name	"SettingsGI_plugindata"
 	    label	"Global Illumination"
 	    type	data
 	    invisible
@@ -17,7 +17,7 @@
 	    parmtag	{ "vray_type" "SETTINGS" }
 	}
 	parm {
-	    name	"on"
+	    name	"SettingsGI_on"
 	    label	"On"
 	    type	toggle
 	    default	{ "0" }
@@ -29,7 +29,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"refract_caustics"
+	    name	"SettingsGI_refract_caustics"
 	    label	"Refractive Caustics"
 	    type	toggle
 	    default	{ "1" }
@@ -42,7 +42,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"reflect_caustics"
+	    name	"SettingsGI_reflect_caustics"
 	    label	"Reflective Caustics"
 	    type	toggle
 	    default	{ "0" }
@@ -55,7 +55,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"saturation"
+	    name	"SettingsGI_saturation"
 	    label	"Saturation"
 	    type	float
 	    default	{ "1" }
@@ -68,7 +68,7 @@
 	    parmtag	{ "vray_type" "float" }
 	}
 	parm {
-	    name	"contrast"
+	    name	"SettingsGI_contrast"
 	    label	"Contrast"
 	    type	float
 	    default	{ "1" }
@@ -81,7 +81,7 @@
 	    parmtag	{ "vray_type" "float" }
 	}
 	parm {
-	    name	"contrast_base"
+	    name	"SettingsGI_contrast_base"
 	    label	"Contrast Base"
 	    type	float
 	    default	{ "0.5" }
@@ -93,7 +93,7 @@
 	    parmtag	{ "vray_type" "float" }
 	}
 	parm {
-	    name	"primary_engine"
+	    name	"SettingsGI_primary_engine"
 	    label	"Primary Engine"
 	    type	ordinal
 	    default	{ "0" }
@@ -112,7 +112,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"primary_multiplier"
+	    name	"SettingsGI_primary_multiplier"
 	    label	"Primary Multiplier"
 	    type	float
 	    default	{ "1" }
@@ -126,7 +126,7 @@
 	    parmtag	{ "vray_type" "float" }
 	}
 	parm {
-	    name	"secondary_engine"
+	    name	"SettingsGI_secondary_engine"
 	    label	"Secondary Engine"
 	    type	ordinal
 	    default	{ "2" }
@@ -145,7 +145,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"secondary_multiplier"
+	    name	"SettingsGI_secondary_multiplier"
 	    label	"Secondary Multiplier"
 	    type	float
 	    default	{ "1" }
@@ -159,7 +159,7 @@
 	    parmtag	{ "vray_type" "float" }
 	}
 	parm {
-	    name	"ray_distance_on"
+	    name	"SettingsGI_ray_distance_on"
 	    label	"Ray Distance On"
 	    type	toggle
 	    default	{ "0" }
@@ -172,7 +172,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"ray_distance"
+	    name	"SettingsGI_ray_distance"
 	    label	"Ray Distance"
 	    type	float
 	    default	{ "100000" }
@@ -186,7 +186,7 @@
 	    parmtag	{ "vray_type" "float" }
 	}
 	parm {
-	    name	"ao_on"
+	    name	"SettingsGI_ao_on"
 	    label	"Ambient Occlusion On"
 	    type	toggle
 	    default	{ "0" }
@@ -199,7 +199,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"ao_amount"
+	    name	"SettingsGI_ao_amount"
 	    label	"Ao Multiplier"
 	    type	float
 	    default	{ "0.8" }
@@ -212,7 +212,7 @@
 	    parmtag	{ "vray_type" "float" }
 	}
 	parm {
-	    name	"ao_radius"
+	    name	"SettingsGI_ao_radius"
 	    label	"Ao Radius"
 	    type	float
 	    default	{ "10" }
@@ -226,7 +226,7 @@
 	    parmtag	{ "vray_type" "float" }
 	}
 	parm {
-	    name	"ao_subdivs"
+	    name	"SettingsGI_ao_subdivs"
 	    label	"Ao Subdivs"
 	    type	integer
 	    default	{ "8" }

@@ -5,7 +5,7 @@
 	label	"Brute Force"
 
 	parm {
-	    name	"plugindata"
+	    name	"SettingsDMCGI_plugindata"
 	    label	"Brute Force"
 	    type	data
 	    invisible
@@ -16,7 +16,7 @@
 	    parmtag	{ "vray_type" "SETTINGS" }
 	}
 	parm {
-	    name	"subdivs"
+	    name	"SettingsDMCGI_subdivs"
 	    label	"Subdivs"
 	    type	integer
 	    default	{ "8" }
@@ -28,7 +28,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"depth"
+	    name	"SettingsDMCGI_depth"
 	    label	"Depth"
 	    type	integer
 	    default	{ "3" }

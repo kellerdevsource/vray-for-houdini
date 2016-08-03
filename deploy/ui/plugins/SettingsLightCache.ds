@@ -2,10 +2,10 @@
     name	parameters
     group {
 	name	"SettingsLightCache"
-	label	"SettingsLightCache"
+	label	"Light Cache"
 
 	parm {
-	    name	"plugindata"
+	    name	"SettingsLightCache_plugindata"
 	    label	"SettingsLightCache"
 	    type	data
 	    invisible
@@ -16,7 +16,7 @@
 	    parmtag	{ "vray_type" "SETTINGS" }
 	}
 	parm {
-	    name	"subdivs"
+	    name	"SettingsLightCache_subdivs"
 	    label	"Subdivs"
 	    type	integer
 	    default	{ "1000" }
@@ -29,7 +29,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"sample_size"
+	    name	"SettingsLightCache_sample_size"
 	    label	"Sample Size"
 	    type	float
 	    default	{ "0.03" }
@@ -42,7 +42,7 @@
 	    parmtag	{ "vray_type" "float" }
 	}
 	parm {
-	    name	"filter_type"
+	    name	"SettingsLightCache_filter_type"
 	    label	"Filter Type"
 	    type	ordinal
 	    default	{ "1" }
@@ -60,7 +60,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"filter_samples"
+	    name	"SettingsLightCache_filter_samples"
 	    label	"Filter Samples"
 	    type	integer
 	    default	{ "5" }
@@ -73,7 +73,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"filter_size"
+	    name	"SettingsLightCache_filter_size"
 	    label	"Filter Size"
 	    type	float
 	    default	{ "0.06" }
@@ -86,7 +86,7 @@
 	    parmtag	{ "vray_type" "float" }
 	}
 	parm {
-	    name	"prefilter"
+	    name	"SettingsLightCache_prefilter"
 	    label	"Prefilter"
 	    type	toggle
 	    default	{ "0" }
@@ -99,7 +99,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"prefilter_samples"
+	    name	"SettingsLightCache_prefilter_samples"
 	    label	"Prefilter Samples"
 	    type	integer
 	    default	{ "10" }
@@ -112,7 +112,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"depth"
+	    name	"SettingsLightCache_depth"
 	    label	"Depth"
 	    type	integer
 	    default	{ "100" }
@@ -125,7 +125,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"show_calc_phase"
+	    name	"SettingsLightCache_show_calc_phase"
 	    label	"Show Calc. Phase"
 	    type	toggle
 	    default	{ "1" }
@@ -138,7 +138,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"store_direct_light"
+	    name	"SettingsLightCache_store_direct_light"
 	    label	"Store Direct Light"
 	    type	toggle
 	    default	{ "1" }
@@ -151,7 +151,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"world_scale"
+	    name	"SettingsLightCache_world_scale"
 	    label	"World Scale"
 	    type	ordinal
 	    default	{ "0" }
@@ -168,7 +168,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"mode"
+	    name	"SettingsLightCache_mode"
 	    label	"Mode"
 	    type	ordinal
 	    default	{ "0" }
@@ -187,7 +187,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"file"
+	    name	"SettingsLightCache_file"
 	    label	"File"
 	    type	file
 	    default	{ "//lightmaps/light_cache.vrmap" }
@@ -202,7 +202,7 @@
 	    parmtag	{ "vray_type" "String" }
 	}
 	parm {
-	    name	"dont_delete"
+	    name	"SettingsLightCache_dont_delete"
 	    label	"Don't Delete"
 	    type	toggle
 	    default	{ "1" }
@@ -215,7 +215,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"auto_save"
+	    name	"SettingsLightCache_auto_save"
 	    label	"Auto Save"
 	    type	toggle
 	    default	{ "0" }
@@ -228,7 +228,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"auto_save_file"
+	    name	"SettingsLightCache_auto_save_file"
 	    label	"Auto Save File"
 	    type	file
 	    default	{ "//lightmaps/light_cache.vrmap" }
@@ -244,7 +244,7 @@
 	    parmtag	{ "vray_type" "String" }
 	}
 	parm {
-	    name	"num_passes"
+	    name	"SettingsLightCache_num_passes"
 	    label	"Number Of Passes"
 	    type	integer
 	    default	{ "4" }
@@ -257,7 +257,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"use_for_glossy_rays"
+	    name	"SettingsLightCache_use_for_glossy_rays"
 	    label	"Use For Glossy Rays"
 	    type	toggle
 	    default	{ "0" }
@@ -270,7 +270,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"adaptive_sampling"
+	    name	"SettingsLightCache_adaptive_sampling"
 	    label	"Adaptive Sampling"
 	    type	toggle
 	    default	{ "0" }
@@ -283,7 +283,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"multiple_views"
+	    name	"SettingsLightCache_multiple_views"
 	    label	"Use Camera Path"
 	    type	toggle
 	    default	{ "0" }
@@ -296,7 +296,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"retrace_enabled"
+	    name	"SettingsLightCache_retrace_enabled"
 	    label	"Use Retrace Threshold"
 	    type	toggle
 	    default	{ "0" }
@@ -309,7 +309,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"retrace_threshold"
+	    name	"SettingsLightCache_retrace_threshold"
 	    label	"Retrace Threshold"
 	    type	float
 	    default	{ "1" }
@@ -322,7 +322,7 @@
 	    parmtag	{ "vray_type" "float" }
 	}
 	parm {
-	    name	"num_passes_auto"
+	    name	"SettingsLightCache_num_passes_auto"
 	    label	"Auto Num. Passes"
 	    type	toggle
 	    default	{ "1" }
@@ -333,7 +333,7 @@
 	    parmtag	{ "vray_custom_handling" "1" }
 	}
 	parm {
-	    name	"filter"
+	    name	"SettingsLightCache_filter"
 	    label	"Filter"
 	    type	toggle
 	    default	{ "1" }
@@ -343,7 +343,7 @@
 	    parmtag	{ "vray_custom_handling" "1" }
 	}
 	parm {
-	    name	"retrace_leak_prevention"
+	    name	"SettingsLightCache_retrace_leak_prevention"
 	    label	"Leak Prevention"
 	    type	float
 	    default	{ "0" }

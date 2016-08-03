@@ -2,10 +2,10 @@
     name	parameters
     group {
 	name	"SettingsRTEngine"
-	label	"Realtime Engine Settings"
+	label	"RT"
 
 	parm {
-	    name	"plugindata"
+	    name	"SettingsRTEngine_plugindata"
 	    label	"Realtime Engine Settings"
 	    type	data
 	    invisible
@@ -17,7 +17,7 @@
 	    parmtag	{ "vray_type" "SETTINGS" }
 	}
 	parm {
-	    name	"cpu_bundle_size"
+	    name	"SettingsRTEngine_cpu_bundle_size"
 	    label	"Cpu Ray Bundle Size"
 	    type	integer
 	    default	{ "128" }
@@ -29,7 +29,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"cpu_samples_per_pixel"
+	    name	"SettingsRTEngine_cpu_samples_per_pixel"
 	    label	"Cpu Rays Per Pixel"
 	    type	integer
 	    default	{ "4" }
@@ -41,7 +41,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"gpu_bundle_size"
+	    name	"SettingsRTEngine_gpu_bundle_size"
 	    label	"Gpu Ray Bundle Size"
 	    type	integer
 	    default	{ "128" }
@@ -53,7 +53,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"gpu_samples_per_pixel"
+	    name	"SettingsRTEngine_gpu_samples_per_pixel"
 	    label	"Gpu Rays Per Pixel"
 	    type	integer
 	    default	{ "1" }
@@ -65,7 +65,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"trace_depth"
+	    name	"SettingsRTEngine_trace_depth"
 	    label	"Trace Depth"
 	    type	integer
 	    default	{ "5" }
@@ -77,7 +77,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"gi_depth"
+	    name	"SettingsRTEngine_gi_depth"
 	    label	"Gi Depth"
 	    type	integer
 	    default	{ "3" }
@@ -89,7 +89,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"coherent_tracing"
+	    name	"SettingsRTEngine_coherent_tracing"
 	    label	"Coherent Tracing"
 	    type	toggle
 	    default	{ "0" }
@@ -101,7 +101,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"stereo_mode"
+	    name	"SettingsRTEngine_stereo_mode"
 	    label	"Enable Stereo"
 	    type	toggle
 	    default	{ "0" }
@@ -113,7 +113,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"stereo_eye_distance"
+	    name	"SettingsRTEngine_stereo_eye_distance"
 	    label	"Stereo Eye Distance"
 	    type	float
 	    default	{ "0.065" }
@@ -126,7 +126,7 @@
 	    parmtag	{ "vray_type" "float" }
 	}
 	parm {
-	    name	"stereo_focus"
+	    name	"SettingsRTEngine_stereo_focus"
 	    label	"Stereo Focus Mode"
 	    type	ordinal
 	    default	{ "2" }
@@ -144,7 +144,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"opencl_texsize"
+	    name	"SettingsRTEngine_opencl_texsize"
 	    label	"Gpu Texture Size"
 	    type	integer
 	    default	{ "512" }
@@ -156,7 +156,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"opencl_resizeTextures"
+	    name	"SettingsRTEngine_opencl_resizeTextures"
 	    label	"Gpu Resize Textures"
 	    type	ordinal
 	    default	{ "1" }
@@ -173,7 +173,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"opencl_textureFormat"
+	    name	"SettingsRTEngine_opencl_textureFormat"
 	    label	"Gpu Texture Format"
 	    type	ordinal
 	    default	{ "1" }
@@ -190,7 +190,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"progressive_samples_per_pixel"
+	    name	"SettingsRTEngine_progressive_samples_per_pixel"
 	    label	"Progressive Rays Per Pixel"
 	    type	integer
 	    default	{ "1" }
@@ -202,7 +202,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"undersampling"
+	    name	"SettingsRTEngine_undersampling"
 	    label	"Undersampling"
 	    type	integer
 	    default	{ "4" }
@@ -214,7 +214,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"disable_render_elements"
+	    name	"SettingsRTEngine_disable_render_elements"
 	    label	"Disable Render Elements"
 	    type	toggle
 	    default	{ "0" }
@@ -226,7 +226,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"max_render_time"
+	    name	"SettingsRTEngine_max_render_time"
 	    label	"Max. Render Time (min)"
 	    type	float
 	    default	{ "0" }
@@ -238,7 +238,7 @@
 	    parmtag	{ "vray_type" "float" }
 	}
 	parm {
-	    name	"max_sample_level"
+	    name	"SettingsRTEngine_max_sample_level"
 	    label	"Max. Paths Per Pixel"
 	    type	integer
 	    default	{ "0" }
@@ -250,7 +250,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"noise_threshold"
+	    name	"SettingsRTEngine_noise_threshold"
 	    label	"Max. Noise"
 	    type	float
 	    default	{ "0.001" }
@@ -262,7 +262,7 @@
 	    parmtag	{ "vray_type" "float" }
 	}
 	parm {
-	    name	"enable_mask"
+	    name	"SettingsRTEngine_enable_mask"
 	    label	"Show Aa Mask"
 	    type	toggle
 	    default	{ "0" }
@@ -274,7 +274,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"max_draw_interval"
+	    name	"SettingsRTEngine_max_draw_interval"
 	    label	"Max Draw Interval"
 	    type	integer
 	    default	{ "0" }
@@ -286,7 +286,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"min_draw_interval"
+	    name	"SettingsRTEngine_min_draw_interval"
 	    label	"Min Draw Interval"
 	    type	integer
 	    default	{ "0" }

@@ -2,10 +2,10 @@
     name	parameters
     group {
 	name	"SettingsRegionsGenerator"
-	label	"Regions Generator"
+	label	"Regions"
 
 	parm {
-	    name	"plugindata"
+	    name	"SettingsRegionsGenerator_plugindata"
 	    label	"Regions Generator"
 	    type	data
 	    invisible
@@ -17,7 +17,7 @@
 	    parmtag	{ "vray_type" "SETTINGS" }
 	}
 	parm {
-	    name	"xc"
+	    name	"SettingsRegionsGenerator_xc"
 	    label	"W"
 	    type	integer
 	    default	{ "48" }
@@ -29,7 +29,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"yc"
+	    name	"SettingsRegionsGenerator_yc"
 	    label	"H"
 	    type	integer
 	    default	{ "48" }
@@ -41,7 +41,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"xymeans"
+	    name	"SettingsRegionsGenerator_xymeans"
 	    label	"Size In Pixels Or Number Of Regions"
 	    type	ordinal
 	    default	{ "0" }
@@ -57,7 +57,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"seqtype"
+	    name	"SettingsRegionsGenerator_seqtype"
 	    label	"Seqtype"
 	    type	ordinal
 	    default	{ "4" }
@@ -78,7 +78,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"reverse"
+	    name	"SettingsRegionsGenerator_reverse"
 	    label	"Reverse"
 	    type	toggle
 	    default	{ "0" }
@@ -90,7 +90,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"dynbuckets"
+	    name	"SettingsRegionsGenerator_dynbuckets"
 	    label	"Dynbuckets"
 	    type	toggle
 	    default	{ "1" }
@@ -101,7 +101,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"lock_size"
+	    name	"SettingsRegionsGenerator_lock_size"
 	    label	"Lock Size"
 	    type	toggle
 	    default	{ "1" }

@@ -5,7 +5,7 @@
 	label	"Camera"
 
 	parm {
-	    name	"plugindata"
+	    name	"SettingsCamera_plugindata"
 	    label	"Camera"
 	    type	data
 	    invisible
@@ -16,7 +16,7 @@
 	    parmtag	{ "vray_type" "CAMERA" }
 	}
 	parm {
-	    name	"type"
+	    name	"SettingsCamera_type"
 	    label	"Camera Type"
 	    type	ordinal
 	    default	{ "0" }
@@ -41,7 +41,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"height"
+	    name	"SettingsCamera_height"
 	    label	"Height"
 	    type	float
 	    default	{ "400" }
@@ -54,7 +54,7 @@
 	    parmtag	{ "vray_type" "float" }
 	}
 	parm {
-	    name	"dist"
+	    name	"SettingsCamera_dist"
 	    label	"Distance"
 	    type	float
 	    default	{ "2" }
@@ -67,7 +67,7 @@
 	    parmtag	{ "vray_type" "float" }
 	}
 	parm {
-	    name	"fov"
+	    name	"SettingsCamera_fov"
 	    label	"Fov"
 	    type	float
 	    default	{ "45" }
@@ -80,7 +80,7 @@
 	    parmtag	{ "vray_units" "radians" }
 	}
 	parm {
-	    name	"auto_fit"
+	    name	"SettingsCamera_auto_fit"
 	    label	"Auto-fit"
 	    type	toggle
 	    default	{ "1" }
@@ -93,7 +93,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"curve"
+	    name	"SettingsCamera_curve"
 	    label	"Curve"
 	    type	float
 	    default	{ "1" }
@@ -106,7 +106,7 @@
 	    parmtag	{ "vray_type" "float" }
 	}
 	parm {
-	    name	"dont_affect_settings"
+	    name	"SettingsCamera_dont_affect_settings"
 	    label	"Don't Affect Settings"
 	    type	toggle
 	    default	{ "0" }
@@ -119,7 +119,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"image_planes"
+	    name	"SettingsCamera_image_planes"
 	    label	"Image Planes"
 	    type	oppath
 	    default	{ "" }
@@ -132,7 +132,7 @@
 	    parmtag	{ "vray_type" "Object" }
 	}
 	parm {
-	    name	"override_fov"
+	    name	"SettingsCamera_override_fov"
 	    label	"Override Fov"
 	    type	toggle
 	    default	{ "0" }

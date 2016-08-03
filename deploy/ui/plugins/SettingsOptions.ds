@@ -5,7 +5,7 @@
 	label	"Options"
 
 	parm {
-	    name	"plugindata"
+	    name	"SettingsOptions_plugindata"
 	    label	"Options"
 	    type	data
 	    invisible
@@ -16,7 +16,7 @@
 	    parmtag	{ "vray_type" "SETTINGS" }
 	}
 	parm {
-	    name	"geom_displacement"
+	    name	"SettingsOptions_geom_displacement"
 	    label	"Enable Displacement"
 	    type	toggle
 	    default	{ "1" }
@@ -28,7 +28,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"geom_doHidden"
+	    name	"SettingsOptions_geom_doHidden"
 	    label	"Render Hidden Geometry"
 	    type	toggle
 	    default	{ "0" }
@@ -40,7 +40,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"light_doLights"
+	    name	"SettingsOptions_light_doLights"
 	    label	"Use Lights"
 	    type	toggle
 	    default	{ "1" }
@@ -52,7 +52,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"light_doDefaultLights"
+	    name	"SettingsOptions_light_doDefaultLights"
 	    label	"Use Default Lights"
 	    type	toggle
 	    default	{ "1" }
@@ -64,7 +64,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"light_doHiddenLights"
+	    name	"SettingsOptions_light_doHiddenLights"
 	    label	"Use Hidden Lights"
 	    type	toggle
 	    default	{ "0" }
@@ -76,7 +76,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"light_doShadows"
+	    name	"SettingsOptions_light_doShadows"
 	    label	"Shadows"
 	    type	toggle
 	    default	{ "1" }
@@ -88,7 +88,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"light_onlyGI"
+	    name	"SettingsOptions_light_onlyGI"
 	    label	"Show Gi Only"
 	    type	toggle
 	    default	{ "0" }
@@ -100,7 +100,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"light_disableSelfIllumination"
+	    name	"SettingsOptions_light_disableSelfIllumination"
 	    label	"Disable Self-illumination"
 	    type	toggle
 	    default	{ "0" }
@@ -112,7 +112,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"gi_dontRenderImage"
+	    name	"SettingsOptions_gi_dontRenderImage"
 	    label	"Don't Render Final Image"
 	    type	toggle
 	    default	{ "0" }
@@ -124,7 +124,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"mtl_reflectionRefraction"
+	    name	"SettingsOptions_mtl_reflectionRefraction"
 	    label	"Reflection / Refraction"
 	    type	toggle
 	    default	{ "1" }
@@ -136,7 +136,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"mtl_limitDepth"
+	    name	"SettingsOptions_mtl_limitDepth"
 	    label	"Use Global Max Depth"
 	    type	toggle
 	    default	{ "0" }
@@ -148,7 +148,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"mtl_maxDepth"
+	    name	"SettingsOptions_mtl_maxDepth"
 	    label	"Global Max Depth"
 	    type	integer
 	    default	{ "5" }
@@ -161,7 +161,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"mtl_doMaps"
+	    name	"SettingsOptions_mtl_doMaps"
 	    label	"Maps"
 	    type	toggle
 	    default	{ "1" }
@@ -173,7 +173,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"mtl_filterMaps"
+	    name	"SettingsOptions_mtl_filterMaps"
 	    label	"Filter Maps"
 	    type	toggle
 	    default	{ "1" }
@@ -186,7 +186,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"mtl_filterMapsForSecondaryRays"
+	    name	"SettingsOptions_mtl_filterMapsForSecondaryRays"
 	    label	"Filter Maps For Glossy/gi Rays"
 	    type	toggle
 	    default	{ "1" }
@@ -199,7 +199,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"mtl_transpMaxLevels"
+	    name	"SettingsOptions_mtl_transpMaxLevels"
 	    label	"Max. Transparency Levels"
 	    type	integer
 	    default	{ "50" }
@@ -211,7 +211,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"mtl_transpCutoff"
+	    name	"SettingsOptions_mtl_transpCutoff"
 	    label	"Transparency Cutoff"
 	    type	float
 	    default	{ "0.001" }
@@ -223,7 +223,7 @@
 	    parmtag	{ "vray_type" "float" }
 	}
 	parm {
-	    name	"mtl_override_on"
+	    name	"SettingsOptions_mtl_override_on"
 	    label	"Override Material"
 	    type	toggle
 	    default	{ "0" }
@@ -235,7 +235,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"mtl_glossy"
+	    name	"SettingsOptions_mtl_glossy"
 	    label	"Glossy Effects"
 	    type	toggle
 	    default	{ "1" }
@@ -247,7 +247,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"mtl_uninvertedNormalBump"
+	    name	"SettingsOptions_mtl_uninvertedNormalBump"
 	    label	"Uninverted Normal Bump"
 	    type	toggle
 	    default	{ "0" }
@@ -259,7 +259,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"geom_backfaceCull"
+	    name	"SettingsOptions_geom_backfaceCull"
 	    label	"Force Back Face Culling"
 	    type	toggle
 	    default	{ "0" }
@@ -271,7 +271,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"ray_bias"
+	    name	"SettingsOptions_ray_bias"
 	    label	"Secondary Ray Bias"
 	    type	float
 	    default	{ "0" }
@@ -283,7 +283,7 @@
 	    parmtag	{ "vray_type" "float" }
 	}
 	parm {
-	    name	"misc_lowThreadPriority"
+	    name	"SettingsOptions_misc_lowThreadPriority"
 	    label	"Low Thread Priority"
 	    type	toggle
 	    default	{ "0" }
@@ -295,7 +295,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"gi_texFilteringMultiplier"
+	    name	"SettingsOptions_gi_texFilteringMultiplier"
 	    label	"Gi Texture Filtering Multiplier"
 	    type	float
 	    default	{ "1" }
@@ -308,7 +308,7 @@
 	    parmtag	{ "vray_type" "float" }
 	}
 	parm {
-	    name	"misc_abortOnMissingAsset"
+	    name	"SettingsOptions_misc_abortOnMissingAsset"
 	    label	"Abort Rendering On Missing Asset"
 	    type	toggle
 	    default	{ "0" }
@@ -319,7 +319,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"misc_transferAssets"
+	    name	"SettingsOptions_misc_transferAssets"
 	    label	"Transfer Missing Assets On Dr"
 	    type	toggle
 	    default	{ "0" }
@@ -331,7 +331,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"misc_useCachedAssets"
+	    name	"SettingsOptions_misc_useCachedAssets"
 	    label	"Use Cached Assets On Dr"
 	    type	toggle
 	    default	{ "1" }
@@ -343,7 +343,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"dr_assetsCacheLimitType"
+	    name	"SettingsOptions_dr_assetsCacheLimitType"
 	    label	"Cache Limit Type"
 	    type	ordinal
 	    default	{ "0" }
@@ -360,7 +360,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"dr_assetsCacheLimitValue"
+	    name	"SettingsOptions_dr_assetsCacheLimitValue"
 	    label	"Cache Limit Value"
 	    type	float
 	    default	{ "0" }
@@ -372,7 +372,7 @@
 	    parmtag	{ "vray_type" "float" }
 	}
 	parm {
-	    name	"dr_overwriteLocalCacheSettings"
+	    name	"SettingsOptions_dr_overwriteLocalCacheSettings"
 	    label	"Overwrite Local Cache Settings"
 	    type	toggle
 	    default	{ "0" }
@@ -384,7 +384,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"ray_max_intensity_on"
+	    name	"SettingsOptions_ray_max_intensity_on"
 	    label	"Clamp Max Ray Intensity"
 	    type	toggle
 	    default	{ "0" }
@@ -396,7 +396,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"ray_max_intensity"
+	    name	"SettingsOptions_ray_max_intensity"
 	    label	"Max Ray Intensity"
 	    type	float
 	    default	{ "20" }
@@ -409,7 +409,7 @@
 	    parmtag	{ "vray_type" "float" }
 	}
 	parm {
-	    name	"mtl_override"
+	    name	"SettingsOptions_mtl_override"
 	    label	"Mtl Override"
 	    type	string
 	    default	{ "" }
@@ -419,7 +419,7 @@
 	    parmtag	{ "vray_custom_handling" "1" }
 	}
 	parm {
-	    name	"mtl_SSSEnabled"
+	    name	"SettingsOptions_mtl_SSSEnabled"
 	    label	"Sss Enabled"
 	    type	toggle
 	    default	{ "1" }
@@ -430,7 +430,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"probabilistic_lights_on"
+	    name	"SettingsOptions_probabilistic_lights_on"
 	    label	"Enable Probabilistic Lights"
 	    type	toggle
 	    default	{ "0" }
@@ -442,7 +442,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"num_probabilistic_lights"
+	    name	"SettingsOptions_num_probabilistic_lights"
 	    label	"Number Of Probabilistic Lights"
 	    type	integer
 	    default	{ "8" }
@@ -455,7 +455,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"probabilistic_vol_on"
+	    name	"SettingsOptions_probabilistic_vol_on"
 	    label	"Enable Probabilistic Volumetrics"
 	    type	toggle
 	    default	{ "0" }
@@ -467,7 +467,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"probabilistic_vol_samples"
+	    name	"SettingsOptions_probabilistic_vol_samples"
 	    label	"Number Of Direct Samples"
 	    type	integer
 	    default	{ "5" }
@@ -480,7 +480,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"probabilistic_vol_gi_samples"
+	    name	"SettingsOptions_probabilistic_vol_gi_samples"
 	    label	"Number Of Gi Samples"
 	    type	integer
 	    default	{ "5" }

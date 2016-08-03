@@ -2,10 +2,10 @@
     name	parameters
     group {
 	name	"SettingsIrradianceMap"
-	label	"SettingsIrradianceMap"
+	label	"Irradiance Map"
 
 	parm {
-	    name	"plugindata"
+	    name	"SettingsIrradianceMap_plugindata"
 	    label	"SettingsIrradianceMap"
 	    type	data
 	    invisible
@@ -16,7 +16,7 @@
 	    parmtag	{ "vray_type" "SETTINGS" }
 	}
 	parm {
-	    name	"min_rate"
+	    name	"SettingsIrradianceMap_min_rate"
 	    label	"Min Rate"
 	    type	integer
 	    default	{ "-3" }
@@ -28,7 +28,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"max_rate"
+	    name	"SettingsIrradianceMap_max_rate"
 	    label	"Max Rate"
 	    type	integer
 	    default	{ "0" }
@@ -40,7 +40,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"subdivs"
+	    name	"SettingsIrradianceMap_subdivs"
 	    label	"Subdivs"
 	    type	integer
 	    default	{ "80" }
@@ -52,7 +52,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"interp_samples"
+	    name	"SettingsIrradianceMap_interp_samples"
 	    label	"Interp. Samples"
 	    type	integer
 	    default	{ "20" }
@@ -64,7 +64,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"calc_interp_samples"
+	    name	"SettingsIrradianceMap_calc_interp_samples"
 	    label	"Calc. Interp. Samples"
 	    type	integer
 	    default	{ "15" }
@@ -76,7 +76,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"interp_frames"
+	    name	"SettingsIrradianceMap_interp_frames"
 	    label	"Interp. Frames"
 	    type	integer
 	    default	{ "2" }
@@ -88,7 +88,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"color_threshold"
+	    name	"SettingsIrradianceMap_color_threshold"
 	    label	"Color Threshold"
 	    type	float
 	    default	{ "0.3" }
@@ -100,7 +100,7 @@
 	    parmtag	{ "vray_type" "float" }
 	}
 	parm {
-	    name	"normal_threshold"
+	    name	"SettingsIrradianceMap_normal_threshold"
 	    label	"Normal Threshold"
 	    type	float
 	    default	{ "0.1" }
@@ -112,7 +112,7 @@
 	    parmtag	{ "vray_type" "float" }
 	}
 	parm {
-	    name	"distance_threshold"
+	    name	"SettingsIrradianceMap_distance_threshold"
 	    label	"Distance Threshold"
 	    type	float
 	    default	{ "0.1" }
@@ -124,7 +124,7 @@
 	    parmtag	{ "vray_type" "float" }
 	}
 	parm {
-	    name	"detail_enhancement"
+	    name	"SettingsIrradianceMap_detail_enhancement"
 	    label	"Detail Enhancement"
 	    type	toggle
 	    default	{ "0" }
@@ -136,7 +136,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"detail_radius"
+	    name	"SettingsIrradianceMap_detail_radius"
 	    label	"Detail Radius [px]"
 	    type	float
 	    default	{ "0.2" }
@@ -149,7 +149,7 @@
 	    parmtag	{ "vray_type" "float" }
 	}
 	parm {
-	    name	"detail_subdivs_mult"
+	    name	"SettingsIrradianceMap_detail_subdivs_mult"
 	    label	"Detail Subdivs Mult"
 	    type	float
 	    default	{ "0.3" }
@@ -162,7 +162,7 @@
 	    parmtag	{ "vray_type" "float" }
 	}
 	parm {
-	    name	"detail_scale"
+	    name	"SettingsIrradianceMap_detail_scale"
 	    label	"Detail Scale"
 	    type	ordinal
 	    default	{ "0" }
@@ -179,7 +179,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"randomize_samples"
+	    name	"SettingsIrradianceMap_randomize_samples"
 	    label	"Randomize Samples"
 	    type	toggle
 	    default	{ "1" }
@@ -191,7 +191,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"interpolation_mode"
+	    name	"SettingsIrradianceMap_interpolation_mode"
 	    label	"Interpolation Mode"
 	    type	ordinal
 	    default	{ "1" }
@@ -209,7 +209,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"lookup_mode"
+	    name	"SettingsIrradianceMap_lookup_mode"
 	    label	"Lookup Mode"
 	    type	ordinal
 	    default	{ "3" }
@@ -227,7 +227,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"mode"
+	    name	"SettingsIrradianceMap_mode"
 	    label	"Mode"
 	    type	ordinal
 	    default	{ "0" }
@@ -249,7 +249,7 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"dont_delete"
+	    name	"SettingsIrradianceMap_dont_delete"
 	    label	"Don't Delete"
 	    type	toggle
 	    default	{ "1" }
@@ -261,7 +261,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"file"
+	    name	"SettingsIrradianceMap_file"
 	    label	"File"
 	    type	file
 	    default	{ "//lightmaps/irradiance_map.vrmap" }
@@ -276,7 +276,7 @@
 	    parmtag	{ "vray_type" "String" }
 	}
 	parm {
-	    name	"show_samples"
+	    name	"SettingsIrradianceMap_show_samples"
 	    label	"Show Samples"
 	    type	toggle
 	    default	{ "0" }
@@ -288,7 +288,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"show_calc_phase"
+	    name	"SettingsIrradianceMap_show_calc_phase"
 	    label	"Show Calc Phase"
 	    type	toggle
 	    default	{ "1" }
@@ -300,7 +300,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"show_direct_light"
+	    name	"SettingsIrradianceMap_show_direct_light"
 	    label	"Show Direct Light"
 	    type	toggle
 	    default	{ "0" }
@@ -313,7 +313,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"multiple_views"
+	    name	"SettingsIrradianceMap_multiple_views"
 	    label	"Use Camera Path"
 	    type	toggle
 	    default	{ "0" }
@@ -325,7 +325,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"multipass"
+	    name	"SettingsIrradianceMap_multipass"
 	    label	"Multipass"
 	    type	toggle
 	    default	{ "1" }
@@ -337,7 +337,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"check_sample_visibility"
+	    name	"SettingsIrradianceMap_check_sample_visibility"
 	    label	"Check Sample Visibility"
 	    type	toggle
 	    default	{ "0" }
@@ -349,7 +349,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"auto_save"
+	    name	"SettingsIrradianceMap_auto_save"
 	    label	"Auto Save"
 	    type	toggle
 	    default	{ "0" }
@@ -362,7 +362,7 @@
 	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"auto_save_file"
+	    name	"SettingsIrradianceMap_auto_save_file"
 	    label	"Auto Save File"
 	    type	file
 	    default	{ "//lightmaps/irradiance_map.vrmap" }
