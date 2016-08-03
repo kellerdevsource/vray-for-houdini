@@ -1,33 +1,27 @@
 {
     name	parameters
-    group {
-	name	"TexScalarCurve"
+    parm {
+	name	"plugindata"
 	label	"Scalar Curve"
-
-	parm {
-	    name	"plugindata"
-	    label	"Scalar Curve"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    help	"TexScalarCurve"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexScalarCurve" }
-	    parmtag	{ "vray_type" "TEXTURE" }
-	}
-	parm {
-	    name	"input"
-	    label	"Input"
-	    type	float
-	    default	{ "0" }
-	    help	"The value from this texture is controlled by the profile curve"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexScalarCurve" }
-	    parmtag	{ "vray_pluginattr" "input" }
-	    parmtag	{ "vray_type" "TextureFloat" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	help	"TexScalarCurve"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexScalarCurve" }
+	parmtag	{ "vray_type" "TEXTURE" }
     }
-
+    parm {
+	name	"input"
+	label	"Input"
+	type	float
+	default	{ "0" }
+	help	"The value from this texture is controlled by the profile curve"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexScalarCurve" }
+	parmtag	{ "vray_pluginattr" "input" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
 }

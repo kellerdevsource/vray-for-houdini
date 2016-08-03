@@ -1,69 +1,63 @@
 {
     name	parameters
-    group {
-	name	"GeomBox"
+    parm {
+	name	"plugindata"
 	label	"Box"
-
-	parm {
-	    name	"plugindata"
-	    label	"Box"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    help	"GeomBox"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomBox" }
-	    parmtag	{ "vray_type" "GEOMETRY" }
-	}
-	parm {
-	    name	"size_x"
-	    label	"Size X"
-	    type	float
-	    default	{ "1" }
-	    help	"The size in the X direction"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomBox" }
-	    parmtag	{ "vray_pluginattr" "size_x" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"size_y"
-	    label	"Size Y"
-	    type	float
-	    default	{ "1" }
-	    help	"The size in the X direction"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomBox" }
-	    parmtag	{ "vray_pluginattr" "size_y" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"size_z"
-	    label	"Size Z"
-	    type	float
-	    default	{ "1" }
-	    help	"The size in the X direction"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomBox" }
-	    parmtag	{ "vray_pluginattr" "size_z" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"is_volumetric"
-	    label	"Is Volumetric"
-	    type	toggle
-	    default	{ "0" }
-	    help	"true to handle the case when the camera is inside the box"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomBox" }
-	    parmtag	{ "vray_pluginattr" "is_volumetric" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	help	"GeomBox"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomBox" }
+	parmtag	{ "vray_type" "GEOMETRY" }
     }
-
+    parm {
+	name	"size_x"
+	label	"Size X"
+	type	float
+	default	{ "1" }
+	help	"The size in the X direction"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomBox" }
+	parmtag	{ "vray_pluginattr" "size_x" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"size_y"
+	label	"Size Y"
+	type	float
+	default	{ "1" }
+	help	"The size in the X direction"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomBox" }
+	parmtag	{ "vray_pluginattr" "size_y" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"size_z"
+	label	"Size Z"
+	type	float
+	default	{ "1" }
+	help	"The size in the X direction"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomBox" }
+	parmtag	{ "vray_pluginattr" "size_z" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"is_volumetric"
+	label	"Is Volumetric"
+	type	toggle
+	default	{ "0" }
+	help	"true to handle the case when the camera is inside the box"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomBox" }
+	parmtag	{ "vray_pluginattr" "is_volumetric" }
+	parmtag	{ "vray_type" "boolean" }
+    }
 }

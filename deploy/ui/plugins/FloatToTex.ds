@@ -1,34 +1,28 @@
 {
     name	parameters
-    group {
-	name	"FloatToTex"
+    parm {
+	name	"plugindata"
 	label	"FloatToTex"
-
-	parm {
-	    name	"plugindata"
-	    label	"FloatToTex"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    help	"Float to texture"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_category" "utility" }
-	    parmtag	{ "vray_plugin" "FloatToTex" }
-	    parmtag	{ "vray_type" "TEXTURE" }
-	}
-	parm {
-	    name	"input"
-	    label	"Input"
-	    type	float
-	    default	{ "1" }
-	    help	"Input float"
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "vray_plugin" "FloatToTex" }
-	    parmtag	{ "vray_pluginattr" "input" }
-	    parmtag	{ "vray_type" "TextureFloat" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	help	"Float to texture"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_category" "utility" }
+	parmtag	{ "vray_plugin" "FloatToTex" }
+	parmtag	{ "vray_type" "TEXTURE" }
     }
-
+    parm {
+	name	"input"
+	label	"Input"
+	type	float
+	default	{ "1" }
+	help	"Input float"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "vray_plugin" "FloatToTex" }
+	parmtag	{ "vray_pluginattr" "input" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
 }

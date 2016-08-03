@@ -1,53 +1,47 @@
 {
     name	parameters
-    group {
-	name	"RenderChannelGlossiness"
+    parm {
+	name	"plugindata"
 	label	"Glossiness"
-
-	parm {
-	    name	"plugindata"
-	    label	"Glossiness"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "RenderChannelGlossiness" }
-	    parmtag	{ "vray_type" "RENDERCHANNEL" }
-	}
-	parm {
-	    name	"name"
-	    label	"Name"
-	    type	string
-	    default	{ "Glossiness" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "RenderChannelGlossiness" }
-	    parmtag	{ "vray_pluginattr" "name" }
-	    parmtag	{ "vray_type" "String" }
-	}
-	parm {
-	    name	"alias"
-	    label	"Alias"
-	    type	integer
-	    default	{ "1000" }
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "vray_plugin" "RenderChannelGlossiness" }
-	    parmtag	{ "vray_pluginattr" "alias" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"filtering"
-	    label	"Filtering"
-	    type	toggle
-	    default	{ "1" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "RenderChannelGlossiness" }
-	    parmtag	{ "vray_pluginattr" "filtering" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "RenderChannelGlossiness" }
+	parmtag	{ "vray_type" "RENDERCHANNEL" }
     }
-
+    parm {
+	name	"name"
+	label	"Name"
+	type	string
+	default	{ "Glossiness" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "RenderChannelGlossiness" }
+	parmtag	{ "vray_pluginattr" "name" }
+	parmtag	{ "vray_type" "String" }
+    }
+    parm {
+	name	"alias"
+	label	"Alias"
+	type	integer
+	default	{ "1000" }
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "vray_plugin" "RenderChannelGlossiness" }
+	parmtag	{ "vray_pluginattr" "alias" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"filtering"
+	label	"Filtering"
+	type	toggle
+	default	{ "1" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "RenderChannelGlossiness" }
+	parmtag	{ "vray_pluginattr" "filtering" }
+	parmtag	{ "vray_type" "boolean" }
+    }
 }

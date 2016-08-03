@@ -1,32 +1,26 @@
 {
     name	parameters
-    group {
-	name	"SettingsTGA"
+    parm {
+	name	"plugindata"
 	label	"SettingsTGA"
-
-	parm {
-	    name	"plugindata"
-	    label	"SettingsTGA"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "SettingsTGA" }
-	    parmtag	{ "vray_type" "SETTINGS" }
-	}
-	parm {
-	    name	"compression"
-	    label	"Compression"
-	    type	integer
-	    default	{ "2" }
-	    help	"Compression type for TGA output"
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "vray_plugin" "SettingsTGA" }
-	    parmtag	{ "vray_pluginattr" "compression" }
-	    parmtag	{ "vray_type" "int" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "SettingsTGA" }
+	parmtag	{ "vray_type" "SETTINGS" }
     }
-
+    parm {
+	name	"compression"
+	label	"Compression"
+	type	integer
+	default	{ "2" }
+	help	"Compression type for TGA output"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "vray_plugin" "SettingsTGA" }
+	parmtag	{ "vray_pluginattr" "compression" }
+	parmtag	{ "vray_type" "int" }
+    }
 }

@@ -1,32 +1,26 @@
 {
     name	parameters
-    group {
-	name	"SettingsJPEG"
+    parm {
+	name	"plugindata"
 	label	"SettingsJPEG"
-
-	parm {
-	    name	"plugindata"
-	    label	"SettingsJPEG"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "SettingsJPEG" }
-	    parmtag	{ "vray_type" "SETTINGS" }
-	}
-	parm {
-	    name	"quality"
-	    label	"Quality"
-	    type	integer
-	    default	{ "85" }
-	    help	"JPEG quality (1-100)"
-	    range	{ 1 100 }
-	    export	none
-	    parmtag	{ "vray_plugin" "SettingsJPEG" }
-	    parmtag	{ "vray_pluginattr" "quality" }
-	    parmtag	{ "vray_type" "int" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "SettingsJPEG" }
+	parmtag	{ "vray_type" "SETTINGS" }
     }
-
+    parm {
+	name	"quality"
+	label	"Quality"
+	type	integer
+	default	{ "85" }
+	help	"JPEG quality (1-100)"
+	range	{ 1 100 }
+	export	none
+	parmtag	{ "vray_plugin" "SettingsJPEG" }
+	parmtag	{ "vray_pluginattr" "quality" }
+	parmtag	{ "vray_type" "int" }
+    }
 }

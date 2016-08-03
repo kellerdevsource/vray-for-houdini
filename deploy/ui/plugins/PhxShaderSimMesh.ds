@@ -1,47 +1,41 @@
 {
     name	parameters
-    group {
-	name	"PhxShaderSimMesh"
+    parm {
+	name	"plugindata"
 	label	"Phx Shader Sim Mesh"
-
-	parm {
-	    name	"plugindata"
-	    label	"Phx Shader Sim Mesh"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    help	"PhxShaderSimMesh"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "PhxShaderSimMesh" }
-	    parmtag	{ "vray_type" "GEOMETRY" }
-	}
-	parm {
-	    name	"phoenix_sim"
-	    label	"Phoenix Sim"
-	    type	oppath
-	    default	{ "" }
-	    help	"A plugin that supports PhoenixSimInterface and can be used to load a phoenix frame"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "PhxShaderSimMesh" }
-	    parmtag	{ "vray_pluginattr" "phoenix_sim" }
-	    parmtag	{ "vray_type" "Object" }
-	}
-	parm {
-	    name	"static_mesh"
-	    label	"Static Mesh"
-	    type	oppath
-	    default	{ "" }
-	    help	"The geometry used by the mesher"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "PhxShaderSimMesh" }
-	    parmtag	{ "vray_pluginattr" "static_mesh" }
-	    parmtag	{ "vray_type" "Object" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	help	"PhxShaderSimMesh"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "PhxShaderSimMesh" }
+	parmtag	{ "vray_type" "GEOMETRY" }
     }
-
+    parm {
+	name	"phoenix_sim"
+	label	"Phoenix Sim"
+	type	oppath
+	default	{ "" }
+	help	"A plugin that supports PhoenixSimInterface and can be used to load a phoenix frame"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "oprelative" "." }
+	parmtag	{ "vray_plugin" "PhxShaderSimMesh" }
+	parmtag	{ "vray_pluginattr" "phoenix_sim" }
+	parmtag	{ "vray_type" "Object" }
+    }
+    parm {
+	name	"static_mesh"
+	label	"Static Mesh"
+	type	oppath
+	default	{ "" }
+	help	"The geometry used by the mesher"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "oprelative" "." }
+	parmtag	{ "vray_plugin" "PhxShaderSimMesh" }
+	parmtag	{ "vray_pluginattr" "static_mesh" }
+	parmtag	{ "vray_type" "Object" }
+    }
 }

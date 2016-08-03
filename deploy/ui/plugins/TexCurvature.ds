@@ -1,80 +1,74 @@
 {
     name	parameters
-    group {
-	name	"TexCurvature"
+    parm {
+	name	"plugindata"
 	label	"Curvature"
-
-	parm {
-	    name	"plugindata"
-	    label	"Curvature"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexCurvature" }
-	    parmtag	{ "vray_type" "TEXTURE" }
-	}
-	parm {
-	    name	"subdivs"
-	    label	"Subdivs"
-	    type	integer
-	    default	{ "8" }
-	    help	"Number of samples to take when sampling normals around intersection (subdivs*subdivs)"
-	    range	{ 1 128 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexCurvature" }
-	    parmtag	{ "vray_pluginattr" "subdivs" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"sample_spread"
-	    label	"Radius"
-	    type	float
-	    default	{ "0.1" }
-	    help	"Sampling radius"
-	    range	{ 0 1000 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexCurvature" }
-	    parmtag	{ "vray_pluginattr" "sample_spread" }
-	    parmtag	{ "vray_type" "TextureFloat" }
-	}
-	parm {
-	    name	"out_color_min"
-	    label	"Min"
-	    type	float
-	    default	{ "0" }
-	    help	"Output color min value"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexCurvature" }
-	    parmtag	{ "vray_pluginattr" "out_color_min" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"out_color_max"
-	    label	"Max"
-	    type	float
-	    default	{ "1" }
-	    help	"Output color max value"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexCurvature" }
-	    parmtag	{ "vray_pluginattr" "out_color_max" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"scale"
-	    label	"Scale"
-	    type	float
-	    default	{ "1" }
-	    help	"The scale relative to which the curvature is computed"
-	    range	{ 1e-06 1e+06 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexCurvature" }
-	    parmtag	{ "vray_pluginattr" "scale" }
-	    parmtag	{ "vray_type" "float" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexCurvature" }
+	parmtag	{ "vray_type" "TEXTURE" }
     }
-
+    parm {
+	name	"subdivs"
+	label	"Subdivs"
+	type	integer
+	default	{ "8" }
+	help	"Number of samples to take when sampling normals around intersection (subdivs*subdivs)"
+	range	{ 1 128 }
+	export	none
+	parmtag	{ "vray_plugin" "TexCurvature" }
+	parmtag	{ "vray_pluginattr" "subdivs" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"sample_spread"
+	label	"Radius"
+	type	float
+	default	{ "0.1" }
+	help	"Sampling radius"
+	range	{ 0 1000 }
+	export	none
+	parmtag	{ "vray_plugin" "TexCurvature" }
+	parmtag	{ "vray_pluginattr" "sample_spread" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"out_color_min"
+	label	"Min"
+	type	float
+	default	{ "0" }
+	help	"Output color min value"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexCurvature" }
+	parmtag	{ "vray_pluginattr" "out_color_min" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"out_color_max"
+	label	"Max"
+	type	float
+	default	{ "1" }
+	help	"Output color max value"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexCurvature" }
+	parmtag	{ "vray_pluginattr" "out_color_max" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"scale"
+	label	"Scale"
+	type	float
+	default	{ "1" }
+	help	"The scale relative to which the curvature is computed"
+	range	{ 1e-06 1e+06 }
+	export	none
+	parmtag	{ "vray_plugin" "TexCurvature" }
+	parmtag	{ "vray_pluginattr" "scale" }
+	parmtag	{ "vray_type" "float" }
+    }
 }

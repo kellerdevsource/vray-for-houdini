@@ -1,150 +1,144 @@
 {
     name	parameters
-    group {
-	name	"MtlGLSL"
+    parm {
+	name	"plugindata"
 	label	"GLSL"
-
-	parm {
-	    name	"plugindata"
-	    label	"GLSL"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlGLSL" }
-	    parmtag	{ "vray_type" "MATERIAL" }
-	}
-	parm {
-	    name	"shader_file"
-	    label	"Shader File"
-	    type	file
-	    default	{ "" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "filechooser_pattern" "*.glsl" }
-	    parmtag	{ "vray_plugin" "MtlGLSL" }
-	    parmtag	{ "vray_pluginattr" "shader_file" }
-	    parmtag	{ "vray_type" "String" }
-	}
-	parm {
-	    name	"shader_node"
-	    label	"Shader Node"
-	    type	string
-	    default	{ "" }
-	    help	"Name of the target graph node if XMSL file is specified"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlGLSL" }
-	    parmtag	{ "vray_pluginattr" "shader_node" }
-	    parmtag	{ "vray_type" "String" }
-	}
-	parm {
-	    name	"textures"
-	    label	"Textures"
-	    type	oplist
-	    default	{ "" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "MtlGLSL" }
-	    parmtag	{ "vray_pluginattr" "textures" }
-	    parmtag	{ "vray_type" "List<Object>" }
-	}
-	parm {
-	    name	"uvw_generators"
-	    label	"Uvw Generators"
-	    type	oplist
-	    default	{ "" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "MtlGLSL" }
-	    parmtag	{ "vray_pluginattr" "uvw_generators" }
-	    parmtag	{ "vray_type" "List<Object>" }
-	}
-	parm {
-	    name	"transparency"
-	    label	"Transparency"
-	    type	color
-	    size	3
-	    default	{ "0" "0" "0" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlGLSL" }
-	    parmtag	{ "vray_pluginattr" "transparency" }
-	    parmtag	{ "vray_type" "Color" }
-	}
-	parm {
-	    name	"transparency_tex"
-	    label	"Transparency Tex"
-	    type	color4
-	    size	4
-	    default	{ "0" "0" "0" "1" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlGLSL" }
-	    parmtag	{ "vray_pluginattr" "transparency_tex" }
-	    parmtag	{ "vray_type" "Texture" }
-	}
-	parm {
-	    name	"transparency_tex_mult"
-	    label	"Transparency Tex Mult"
-	    type	float
-	    default	{ "0" }
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlGLSL" }
-	    parmtag	{ "vray_pluginattr" "transparency_tex_mult" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"use_shader_alpha"
-	    label	"Use Shader Alpha"
-	    type	toggle
-	    default	{ "0" }
-	    help	"Switch for using either the transparency parameteres or the shader alpha result"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlGLSL" }
-	    parmtag	{ "vray_pluginattr" "use_shader_alpha" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"max_ray_depth"
-	    label	"Max Ray Depth"
-	    type	integer
-	    default	{ "-1" }
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlGLSL" }
-	    parmtag	{ "vray_pluginattr" "max_ray_depth" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"clamp_result"
-	    label	"Clamp Result"
-	    type	toggle
-	    default	{ "1" }
-	    help	"Flag that shows whether to clamp final result or not"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlGLSL" }
-	    parmtag	{ "vray_pluginattr" "clamp_result" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"clamp_value"
-	    label	"Clamp Value"
-	    type	float
-	    default	{ "1" }
-	    help	"The upper clamp limit for the result color should the clamp_result flag is true"
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlGLSL" }
-	    parmtag	{ "vray_pluginattr" "clamp_value" }
-	    parmtag	{ "vray_type" "float" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlGLSL" }
+	parmtag	{ "vray_type" "MATERIAL" }
     }
-
+    parm {
+	name	"shader_file"
+	label	"Shader File"
+	type	file
+	default	{ "" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "filechooser_pattern" "*.glsl" }
+	parmtag	{ "vray_plugin" "MtlGLSL" }
+	parmtag	{ "vray_pluginattr" "shader_file" }
+	parmtag	{ "vray_type" "String" }
+    }
+    parm {
+	name	"shader_node"
+	label	"Shader Node"
+	type	string
+	default	{ "" }
+	help	"Name of the target graph node if XMSL file is specified"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlGLSL" }
+	parmtag	{ "vray_pluginattr" "shader_node" }
+	parmtag	{ "vray_type" "String" }
+    }
+    parm {
+	name	"textures"
+	label	"Textures"
+	type	oplist
+	default	{ "" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "oprelative" "." }
+	parmtag	{ "vray_plugin" "MtlGLSL" }
+	parmtag	{ "vray_pluginattr" "textures" }
+	parmtag	{ "vray_type" "List<Object>" }
+    }
+    parm {
+	name	"uvw_generators"
+	label	"Uvw Generators"
+	type	oplist
+	default	{ "" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "oprelative" "." }
+	parmtag	{ "vray_plugin" "MtlGLSL" }
+	parmtag	{ "vray_pluginattr" "uvw_generators" }
+	parmtag	{ "vray_type" "List<Object>" }
+    }
+    parm {
+	name	"transparency"
+	label	"Transparency"
+	type	color
+	size	3
+	default	{ "0" "0" "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlGLSL" }
+	parmtag	{ "vray_pluginattr" "transparency" }
+	parmtag	{ "vray_type" "Color" }
+    }
+    parm {
+	name	"transparency_tex"
+	label	"Transparency Tex"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "1" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlGLSL" }
+	parmtag	{ "vray_pluginattr" "transparency_tex" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"transparency_tex_mult"
+	label	"Transparency Tex Mult"
+	type	float
+	default	{ "0" }
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlGLSL" }
+	parmtag	{ "vray_pluginattr" "transparency_tex_mult" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"use_shader_alpha"
+	label	"Use Shader Alpha"
+	type	toggle
+	default	{ "0" }
+	help	"Switch for using either the transparency parameteres or the shader alpha result"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlGLSL" }
+	parmtag	{ "vray_pluginattr" "use_shader_alpha" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"max_ray_depth"
+	label	"Max Ray Depth"
+	type	integer
+	default	{ "-1" }
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlGLSL" }
+	parmtag	{ "vray_pluginattr" "max_ray_depth" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"clamp_result"
+	label	"Clamp Result"
+	type	toggle
+	default	{ "1" }
+	help	"Flag that shows whether to clamp final result or not"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlGLSL" }
+	parmtag	{ "vray_pluginattr" "clamp_result" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"clamp_value"
+	label	"Clamp Value"
+	type	float
+	default	{ "1" }
+	help	"The upper clamp limit for the result color should the clamp_result flag is true"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlGLSL" }
+	parmtag	{ "vray_pluginattr" "clamp_value" }
+	parmtag	{ "vray_type" "float" }
+    }
 }

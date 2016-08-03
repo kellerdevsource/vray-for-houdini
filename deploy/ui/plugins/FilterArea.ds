@@ -1,32 +1,26 @@
 {
     name	parameters
-    group {
-	name	"FilterArea"
+    parm {
+	name	"plugindata"
 	label	"Area"
-
-	parm {
-	    name	"plugindata"
-	    label	"Area"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "FilterArea" }
-	    parmtag	{ "vray_type" "SETTINGS" }
-	}
-	parm {
-	    name	"size"
-	    label	"Size"
-	    type	float
-	    default	{ "1.5" }
-	    help	"Filter width"
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "vray_plugin" "FilterArea" }
-	    parmtag	{ "vray_pluginattr" "size" }
-	    parmtag	{ "vray_type" "float" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "FilterArea" }
+	parmtag	{ "vray_type" "SETTINGS" }
     }
-
+    parm {
+	name	"size"
+	label	"Size"
+	type	float
+	default	{ "1.5" }
+	help	"Filter width"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "vray_plugin" "FilterArea" }
+	parmtag	{ "vray_pluginattr" "size" }
+	parmtag	{ "vray_type" "float" }
+    }
 }

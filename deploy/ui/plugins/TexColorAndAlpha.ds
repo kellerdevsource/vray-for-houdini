@@ -1,45 +1,39 @@
 {
     name	parameters
-    group {
-	name	"TexColorAndAlpha"
+    parm {
+	name	"plugindata"
 	label	"Color And Alpha"
-
-	parm {
-	    name	"plugindata"
-	    label	"Color And Alpha"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    help	"TexColorAndAlpha"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_category" "utility" }
-	    parmtag	{ "vray_plugin" "TexColorAndAlpha" }
-	    parmtag	{ "vray_type" "TEXTURE" }
-	}
-	parm {
-	    name	"color_input"
-	    label	"Color Input"
-	    type	color4
-	    size	4
-	    default	{ "0" "0" "0" "0" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexColorAndAlpha" }
-	    parmtag	{ "vray_pluginattr" "color_input" }
-	    parmtag	{ "vray_type" "Texture" }
-	}
-	parm {
-	    name	"alpha_input"
-	    label	"Alpha Input"
-	    type	float
-	    default	{ "0" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexColorAndAlpha" }
-	    parmtag	{ "vray_pluginattr" "alpha_input" }
-	    parmtag	{ "vray_type" "TextureFloat" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	help	"TexColorAndAlpha"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_category" "utility" }
+	parmtag	{ "vray_plugin" "TexColorAndAlpha" }
+	parmtag	{ "vray_type" "TEXTURE" }
     }
-
+    parm {
+	name	"color_input"
+	label	"Color Input"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexColorAndAlpha" }
+	parmtag	{ "vray_pluginattr" "color_input" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"alpha_input"
+	label	"Alpha Input"
+	type	float
+	default	{ "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexColorAndAlpha" }
+	parmtag	{ "vray_pluginattr" "alpha_input" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
 }

@@ -1,32 +1,26 @@
 {
     name	parameters
-    group {
-	name	"TexModoRefractionRoughness"
+    parm {
+	name	"plugindata"
 	label	"Modo Refraction Roughness"
-
-	parm {
-	    name	"plugindata"
-	    label	"Modo Refraction Roughness"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    help	"TexModoRefractionRoughness"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexModoRefractionRoughness" }
-	    parmtag	{ "vray_type" "TEXTURE" }
-	}
-	parm {
-	    name	"modo_refraction_roughness"
-	    label	"Modo Refraction Roughness"
-	    type	float
-	    default	{ "0" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexModoRefractionRoughness" }
-	    parmtag	{ "vray_pluginattr" "modo_refraction_roughness" }
-	    parmtag	{ "vray_type" "TextureFloat" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	help	"TexModoRefractionRoughness"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexModoRefractionRoughness" }
+	parmtag	{ "vray_type" "TEXTURE" }
     }
-
+    parm {
+	name	"modo_refraction_roughness"
+	label	"Modo Refraction Roughness"
+	type	float
+	default	{ "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexModoRefractionRoughness" }
+	parmtag	{ "vray_pluginattr" "modo_refraction_roughness" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
 }

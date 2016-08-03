@@ -1,59 +1,53 @@
 {
     name	parameters
-    group {
-	name	"TexColorCurve"
+    parm {
+	name	"plugindata"
 	label	"Color Curve"
-
-	parm {
-	    name	"plugindata"
-	    label	"Color Curve"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    help	"TexColorCurve"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_category" "utility" }
-	    parmtag	{ "vray_plugin" "TexColorCurve" }
-	    parmtag	{ "vray_type" "TEXTURE" }
-	}
-	parm {
-	    name	"input"
-	    label	"Input"
-	    type	color4
-	    size	4
-	    default	{ "0" "0" "0" "0" }
-	    help	"The value from this texture is controlled by the profile curve"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexColorCurve" }
-	    parmtag	{ "vray_pluginattr" "input" }
-	    parmtag	{ "vray_type" "Texture" }
-	}
-	parm {
-	    name	"inputScalar"
-	    label	"Inputscalar"
-	    type	float
-	    default	{ "0" }
-	    help	"If present input is ignored, and this is used instead"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexColorCurve" }
-	    parmtag	{ "vray_pluginattr" "inputScalar" }
-	    parmtag	{ "vray_type" "TextureFloat" }
-	}
-	parm {
-	    name	"use_alpha"
-	    label	"Use Alpha"
-	    type	toggle
-	    default	{ "0" }
-	    help	"Get alpha from curve"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexColorCurve" }
-	    parmtag	{ "vray_pluginattr" "use_alpha" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	help	"TexColorCurve"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_category" "utility" }
+	parmtag	{ "vray_plugin" "TexColorCurve" }
+	parmtag	{ "vray_type" "TEXTURE" }
     }
-
+    parm {
+	name	"input"
+	label	"Input"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "0" }
+	help	"The value from this texture is controlled by the profile curve"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexColorCurve" }
+	parmtag	{ "vray_pluginattr" "input" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"inputScalar"
+	label	"Inputscalar"
+	type	float
+	default	{ "0" }
+	help	"If present input is ignored, and this is used instead"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexColorCurve" }
+	parmtag	{ "vray_pluginattr" "inputScalar" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"use_alpha"
+	label	"Use Alpha"
+	type	toggle
+	default	{ "0" }
+	help	"Get alpha from curve"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexColorCurve" }
+	parmtag	{ "vray_pluginattr" "use_alpha" }
+	parmtag	{ "vray_type" "boolean" }
+    }
 }

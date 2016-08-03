@@ -1,65 +1,59 @@
 {
     name	parameters
-    group {
-	name	"SettingsLightTree"
+    parm {
+	name	"plugindata"
 	label	"Light Tree"
-
-	parm {
-	    name	"plugindata"
-	    label	"Light Tree"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "SettingsLightTree" }
-	    parmtag	{ "vray_type" "SETTINGS" }
-	}
-	parm {
-	    name	"on"
-	    label	"On"
-	    type	toggle
-	    default	{ "0" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "SettingsLightTree" }
-	    parmtag	{ "vray_pluginattr" "on" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"solids_enabled"
-	    label	"Use Solids"
-	    type	integer
-	    default	{ "1" }
-	    disablewhen	"{ on == 0 }"
-	    menu	{
-		"0"	"Disabled"
-		"1"	"Auto"
-		"2"	"Enabled"
-	    }
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "vray_plugin" "SettingsLightTree" }
-	    parmtag	{ "vray_pluginattr" "solids_enabled" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"build_quality"
-	    label	"Tree Quality"
-	    type	integer
-	    default	{ "0" }
-	    disablewhen	"{ on == 0 }"
-	    menu	{
-		"0"	"Auto"
-		"1"	"Optimal"
-		"2"	"Fast"
-	    }
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "vray_plugin" "SettingsLightTree" }
-	    parmtag	{ "vray_pluginattr" "build_quality" }
-	    parmtag	{ "vray_type" "int" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "SettingsLightTree" }
+	parmtag	{ "vray_type" "SETTINGS" }
     }
-
+    parm {
+	name	"on"
+	label	"On"
+	type	toggle
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "SettingsLightTree" }
+	parmtag	{ "vray_pluginattr" "on" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"solids_enabled"
+	label	"Use Solids"
+	type	integer
+	default	{ "1" }
+	disablewhen	"{ on == 0 }"
+	menu	{
+	    "0"	"Disabled"
+	    "1"	"Auto"
+	    "2"	"Enabled"
+	}
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "vray_plugin" "SettingsLightTree" }
+	parmtag	{ "vray_pluginattr" "solids_enabled" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"build_quality"
+	label	"Tree Quality"
+	type	integer
+	default	{ "0" }
+	disablewhen	"{ on == 0 }"
+	menu	{
+	    "0"	"Auto"
+	    "1"	"Optimal"
+	    "2"	"Fast"
+	}
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "vray_plugin" "SettingsLightTree" }
+	parmtag	{ "vray_pluginattr" "build_quality" }
+	parmtag	{ "vray_type" "int" }
+    }
 }

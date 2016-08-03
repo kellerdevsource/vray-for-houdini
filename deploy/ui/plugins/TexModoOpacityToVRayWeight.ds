@@ -1,43 +1,37 @@
 {
     name	parameters
-    group {
-	name	"TexModoOpacityToVRayWeight"
+    parm {
+	name	"plugindata"
 	label	"Modo Opacity To V Ray Weight"
-
-	parm {
-	    name	"plugindata"
-	    label	"Modo Opacity To V Ray Weight"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    help	"TexModoOpacityToVRayWeight"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexModoOpacityToVRayWeight" }
-	    parmtag	{ "vray_type" "TEXTURE" }
-	}
-	parm {
-	    name	"opacity"
-	    label	"Opacity"
-	    type	float
-	    default	{ "1" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexModoOpacityToVRayWeight" }
-	    parmtag	{ "vray_pluginattr" "opacity" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"layer_mask"
-	    label	"Layer Mask"
-	    type	float
-	    default	{ "0" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexModoOpacityToVRayWeight" }
-	    parmtag	{ "vray_pluginattr" "layer_mask" }
-	    parmtag	{ "vray_type" "TextureFloat" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	help	"TexModoOpacityToVRayWeight"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexModoOpacityToVRayWeight" }
+	parmtag	{ "vray_type" "TEXTURE" }
     }
-
+    parm {
+	name	"opacity"
+	label	"Opacity"
+	type	float
+	default	{ "1" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexModoOpacityToVRayWeight" }
+	parmtag	{ "vray_pluginattr" "opacity" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"layer_mask"
+	label	"Layer Mask"
+	type	float
+	default	{ "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexModoOpacityToVRayWeight" }
+	parmtag	{ "vray_pluginattr" "layer_mask" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
 }

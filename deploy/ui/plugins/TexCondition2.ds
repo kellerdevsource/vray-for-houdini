@@ -1,88 +1,82 @@
 {
     name	parameters
-    group {
-	name	"TexCondition2"
+    parm {
+	name	"plugindata"
 	label	"Condition"
-
-	parm {
-	    name	"plugindata"
-	    label	"Condition"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    help	"TexCondition2"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_category" "utility" }
-	    parmtag	{ "vray_plugin" "TexCondition2" }
-	    parmtag	{ "vray_type" "TEXTURE" }
-	}
-	parm {
-	    name	"operation"
-	    label	"Operation"
-	    type	ordinal
-	    default	{ "0" }
-	    help	"The condition check"
-	    menu	{
-		"0"	"Equal"
-		"1"	"Not equal"
-		"2"	"Greater than"
-		"3"	"Greater or equal"
-		"4"	"Less than"
-		"5"	"Less or equal"
-	    }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexCondition2" }
-	    parmtag	{ "vray_pluginattr" "operation" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"first_term"
-	    label	"First Term"
-	    type	float
-	    default	{ "0" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexCondition2" }
-	    parmtag	{ "vray_pluginattr" "first_term" }
-	    parmtag	{ "vray_type" "TextureFloat" }
-	}
-	parm {
-	    name	"second_term"
-	    label	"Second Term"
-	    type	float
-	    default	{ "0" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexCondition2" }
-	    parmtag	{ "vray_pluginattr" "second_term" }
-	    parmtag	{ "vray_type" "TextureFloat" }
-	}
-	parm {
-	    name	"color_if_true"
-	    label	"Color If True"
-	    type	color4
-	    size	4
-	    default	{ "0" "0" "0" "1" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexCondition2" }
-	    parmtag	{ "vray_pluginattr" "color_if_true" }
-	    parmtag	{ "vray_type" "Texture" }
-	}
-	parm {
-	    name	"color_if_false"
-	    label	"Color If False"
-	    type	color4
-	    size	4
-	    default	{ "1" "1" "1" "1" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexCondition2" }
-	    parmtag	{ "vray_pluginattr" "color_if_false" }
-	    parmtag	{ "vray_type" "Texture" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	help	"TexCondition2"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_category" "utility" }
+	parmtag	{ "vray_plugin" "TexCondition2" }
+	parmtag	{ "vray_type" "TEXTURE" }
     }
-
+    parm {
+	name	"operation"
+	label	"Operation"
+	type	ordinal
+	default	{ "0" }
+	help	"The condition check"
+	menu	{
+	    "0"	"Equal"
+	    "1"	"Not equal"
+	    "2"	"Greater than"
+	    "3"	"Greater or equal"
+	    "4"	"Less than"
+	    "5"	"Less or equal"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexCondition2" }
+	parmtag	{ "vray_pluginattr" "operation" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"first_term"
+	label	"First Term"
+	type	float
+	default	{ "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexCondition2" }
+	parmtag	{ "vray_pluginattr" "first_term" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"second_term"
+	label	"Second Term"
+	type	float
+	default	{ "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexCondition2" }
+	parmtag	{ "vray_pluginattr" "second_term" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"color_if_true"
+	label	"Color If True"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "1" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexCondition2" }
+	parmtag	{ "vray_pluginattr" "color_if_true" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"color_if_false"
+	label	"Color If False"
+	type	color4
+	size	4
+	default	{ "1" "1" "1" "1" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexCondition2" }
+	parmtag	{ "vray_pluginattr" "color_if_false" }
+	parmtag	{ "vray_type" "Texture" }
+    }
 }

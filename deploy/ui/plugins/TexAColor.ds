@@ -1,47 +1,41 @@
 {
     name	parameters
-    group {
-	name	"TexAColor"
+    parm {
+	name	"plugindata"
 	label	"Color"
-
-	parm {
-	    name	"plugindata"
-	    label	"Color"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    help	"Just a color"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexAColor" }
-	    parmtag	{ "vray_type" "TEXTURE" }
-	}
-	parm {
-	    name	"texture"
-	    label	"Color"
-	    type	color4
-	    size	4
-	    default	{ "1" "1" "1" "1" }
-	    help	"Color"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexAColor" }
-	    parmtag	{ "vray_pluginattr" "texture" }
-	    parmtag	{ "vray_type" "Texture" }
-	}
-	parm {
-	    name	"uvwgen"
-	    label	"Mapping"
-	    type	oppath
-	    default	{ "" }
-	    help	"Mapping generator"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "TexAColor" }
-	    parmtag	{ "vray_pluginattr" "uvwgen" }
-	    parmtag	{ "vray_type" "Object" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	help	"Just a color"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexAColor" }
+	parmtag	{ "vray_type" "TEXTURE" }
     }
-
+    parm {
+	name	"texture"
+	label	"Color"
+	type	color4
+	size	4
+	default	{ "1" "1" "1" "1" }
+	help	"Color"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexAColor" }
+	parmtag	{ "vray_pluginattr" "texture" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"uvwgen"
+	label	"Mapping"
+	type	oppath
+	default	{ "" }
+	help	"Mapping generator"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "oprelative" "." }
+	parmtag	{ "vray_plugin" "TexAColor" }
+	parmtag	{ "vray_pluginattr" "uvwgen" }
+	parmtag	{ "vray_type" "Object" }
+    }
 }

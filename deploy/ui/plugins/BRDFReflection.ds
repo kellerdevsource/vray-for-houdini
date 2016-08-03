@@ -1,509 +1,503 @@
 {
     name	parameters
-    group {
-	name	"BRDFReflection"
+    parm {
+	name	"plugindata"
 	label	"Reflection"
-
-	parm {
-	    name	"plugindata"
-	    label	"Reflection"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    help	"BRDFReflection"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "BRDFReflection" }
-	    parmtag	{ "vray_type" "BRDF" }
-	}
-	parm {
-	    name	"color"
-	    label	"Color"
-	    type	color
-	    size	3
-	    default	{ "1" "1" "1" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "BRDFReflection" }
-	    parmtag	{ "vray_pluginattr" "color" }
-	    parmtag	{ "vray_type" "Color" }
-	}
-	parm {
-	    name	"color_tex"
-	    label	"Color Tex"
-	    type	color4
-	    size	4
-	    default	{ "0" "0" "0" "0" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "BRDFReflection" }
-	    parmtag	{ "vray_pluginattr" "color_tex" }
-	    parmtag	{ "vray_type" "Texture" }
-	}
-	parm {
-	    name	"color_tex_mult"
-	    label	"Color Tex Mult"
-	    type	float
-	    default	{ "1" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "BRDFReflection" }
-	    parmtag	{ "vray_pluginattr" "color_tex_mult" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"transparency"
-	    label	"Transparency"
-	    type	color
-	    size	3
-	    default	{ "0" "0" "0" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "BRDFReflection" }
-	    parmtag	{ "vray_pluginattr" "transparency" }
-	    parmtag	{ "vray_type" "Color" }
-	}
-	parm {
-	    name	"transparency_tex"
-	    label	"Transparency Tex"
-	    type	color4
-	    size	4
-	    default	{ "0" "0" "0" "0" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "BRDFReflection" }
-	    parmtag	{ "vray_pluginattr" "transparency_tex" }
-	    parmtag	{ "vray_type" "Texture" }
-	}
-	parm {
-	    name	"transparency_tex_mult"
-	    label	"Transparency Tex Mult"
-	    type	float
-	    default	{ "1" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "BRDFReflection" }
-	    parmtag	{ "vray_pluginattr" "transparency_tex_mult" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"cutoff"
-	    label	"Cutoff"
-	    type	float
-	    default	{ "0.01" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "BRDFReflection" }
-	    parmtag	{ "vray_pluginattr" "cutoff" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"back_side"
-	    label	"Back Side"
-	    type	toggle
-	    default	{ "0" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "BRDFReflection" }
-	    parmtag	{ "vray_pluginattr" "back_side" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"trace_reflections"
-	    label	"Trace Reflections"
-	    type	toggle
-	    default	{ "1" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "BRDFReflection" }
-	    parmtag	{ "vray_pluginattr" "trace_reflections" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"trace_depth"
-	    label	"Trace Depth"
-	    type	integer
-	    default	{ "-1" }
-	    help	"The maximum reflection depth (-1 is controlled by the global options)"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "BRDFReflection" }
-	    parmtag	{ "vray_pluginattr" "trace_depth" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"affect_alpha"
-	    label	"Affect Alpha"
-	    type	integer
-	    default	{ "0" }
-	    help	"Specifies how render channels are propagated through the BRDF (0 - only the color channel; 1 - color and alpha; 2 - all channels"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "BRDFReflection" }
-	    parmtag	{ "vray_pluginattr" "affect_alpha" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"reflect_exit_color"
-	    label	"Reflect Exit Color"
-	    type	color4
-	    size	4
-	    default	{ "0" "0" "0" "0" }
-	    help	"The color to use when the maximum depth is reached"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "BRDFReflection" }
-	    parmtag	{ "vray_pluginattr" "reflect_exit_color" }
-	    parmtag	{ "vray_type" "Texture" }
-	}
-	parm {
-	    name	"reflect_dim_distance"
-	    label	"Reflect Dim Distance"
-	    type	float
-	    default	{ "1e+18" }
-	    help	"How much to dim reflection as length of rays increases"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "BRDFReflection" }
-	    parmtag	{ "vray_pluginattr" "reflect_dim_distance" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"reflect_dim_distance_on"
-	    label	"Reflect Dim Distance On"
-	    type	toggle
-	    default	{ "0" }
-	    help	"True to enable dim distance"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "BRDFReflection" }
-	    parmtag	{ "vray_pluginattr" "reflect_dim_distance_on" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"reflect_dim_distance_falloff"
-	    label	"Reflect Dim Distance Falloff"
-	    type	float
-	    default	{ "0" }
-	    help	"Fall off for the dim distance"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "BRDFReflection" }
-	    parmtag	{ "vray_pluginattr" "reflect_dim_distance_falloff" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"hilightGlossiness"
-	    label	"Hilightglossiness"
-	    type	float
-	    default	{ "0.8" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "BRDFReflection" }
-	    parmtag	{ "vray_pluginattr" "hilightGlossiness" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"hilightGlossiness_tex"
-	    label	"Hilightglossiness Tex"
-	    type	float
-	    default	{ "0" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "BRDFReflection" }
-	    parmtag	{ "vray_pluginattr" "hilightGlossiness_tex" }
-	    parmtag	{ "vray_type" "TextureFloat" }
-	}
-	parm {
-	    name	"hilightGlossiness_tex_mult"
-	    label	"Hilightglossiness Tex Mult"
-	    type	float
-	    default	{ "1" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "BRDFReflection" }
-	    parmtag	{ "vray_pluginattr" "hilightGlossiness_tex_mult" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"reflectionGlossiness"
-	    label	"Reflectionglossiness"
-	    type	float
-	    default	{ "0.8" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "BRDFReflection" }
-	    parmtag	{ "vray_pluginattr" "reflectionGlossiness" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"reflectionGlossiness_tex"
-	    label	"Reflectionglossiness Tex"
-	    type	float
-	    default	{ "0" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "BRDFReflection" }
-	    parmtag	{ "vray_pluginattr" "reflectionGlossiness_tex" }
-	    parmtag	{ "vray_type" "TextureFloat" }
-	}
-	parm {
-	    name	"reflectionGlossiness_tex_mult"
-	    label	"Reflectionglossiness Tex Mult"
-	    type	float
-	    default	{ "1" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "BRDFReflection" }
-	    parmtag	{ "vray_pluginattr" "reflectionGlossiness_tex_mult" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"subdivs"
-	    label	"Subdivs"
-	    type	integer
-	    default	{ "8" }
-	    range	{ 1 1000 }
-	    export	none
-	    parmtag	{ "vray_plugin" "BRDFReflection" }
-	    parmtag	{ "vray_pluginattr" "subdivs" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"glossyAsGI"
-	    label	"Glossyasgi"
-	    type	integer
-	    default	{ "1" }
-	    help	"Determines if the glossy rays are treated by V-Ray as GI rays: 0 - never; 1 - only for rays that are already marked as GI rays; 2 - always"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "BRDFReflection" }
-	    parmtag	{ "vray_pluginattr" "glossyAsGI" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"soften_edge"
-	    label	"Soften Edge"
-	    type	float
-	    default	{ "0" }
-	    help	"Soften edge of the BRDF at light/shadow transition"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "BRDFReflection" }
-	    parmtag	{ "vray_pluginattr" "soften_edge" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"interpolation_on"
-	    label	"Interpolation On"
-	    type	integer
-	    default	{ "0" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "BRDFReflection" }
-	    parmtag	{ "vray_pluginattr" "interpolation_on" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"imap_min_rate"
-	    label	"Imap Min Rate"
-	    type	integer
-	    default	{ "-1" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "BRDFReflection" }
-	    parmtag	{ "vray_pluginattr" "imap_min_rate" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"imap_max_rate"
-	    label	"Imap Max Rate"
-	    type	integer
-	    default	{ "1" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "BRDFReflection" }
-	    parmtag	{ "vray_pluginattr" "imap_max_rate" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"imap_color_thresh"
-	    label	"Imap Color Thresh"
-	    type	float
-	    default	{ "0.25" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "BRDFReflection" }
-	    parmtag	{ "vray_pluginattr" "imap_color_thresh" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"imap_norm_thresh"
-	    label	"Imap Norm Thresh"
-	    type	float
-	    default	{ "0.4" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "BRDFReflection" }
-	    parmtag	{ "vray_pluginattr" "imap_norm_thresh" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"imap_samples"
-	    label	"Imap Samples"
-	    type	integer
-	    default	{ "20" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "BRDFReflection" }
-	    parmtag	{ "vray_pluginattr" "imap_samples" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"shaderType"
-	    label	"Shadertype"
-	    type	integer
-	    default	{ "0" }
-	    help	"0-Blinn, 1-Phong, 2-Ward"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "BRDFReflection" }
-	    parmtag	{ "vray_pluginattr" "shaderType" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"anisotropy"
-	    label	"Anisotropy"
-	    type	float
-	    default	{ "0" }
-	    help	"reflection anisotropy in the range (-1, 1)"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "BRDFReflection" }
-	    parmtag	{ "vray_pluginattr" "anisotropy" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"anisotropy_tex"
-	    label	"Anisotropy Tex"
-	    type	float
-	    default	{ "0" }
-	    help	"Texture for reflection anisotropy in the range (-1, 1)"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "BRDFReflection" }
-	    parmtag	{ "vray_pluginattr" "anisotropy_tex" }
-	    parmtag	{ "vray_type" "TextureFloat" }
-	}
-	parm {
-	    name	"anisotropy_tex_mult"
-	    label	"Anisotropy Tex Mult"
-	    type	float
-	    default	{ "1" }
-	    help	"Multiplier for anisotropy texture"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "BRDFReflection" }
-	    parmtag	{ "vray_pluginattr" "anisotropy_tex_mult" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"anisotropy_rotation"
-	    label	"Anisotropy Rotation"
-	    type	float
-	    default	{ "0" }
-	    help	"anisotropy rotation in the range [0, 1]"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "BRDFReflection" }
-	    parmtag	{ "vray_pluginattr" "anisotropy_rotation" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"anisotropy_rotation_tex"
-	    label	"Anisotropy Rotation Tex"
-	    type	float
-	    default	{ "0" }
-	    help	"Texture for anisotropy rotation in the range [0, 1]"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "BRDFReflection" }
-	    parmtag	{ "vray_pluginattr" "anisotropy_rotation_tex" }
-	    parmtag	{ "vray_type" "TextureFloat" }
-	}
-	parm {
-	    name	"anisotropy_rotation_tex_mult"
-	    label	"Anisotropy Rotation Tex Mult"
-	    type	float
-	    default	{ "1" }
-	    help	"Multiplier for anisotropy rotation texture"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "BRDFReflection" }
-	    parmtag	{ "vray_pluginattr" "anisotropy_rotation_tex_mult" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"anisotropy_local_axis"
-	    label	"Anisotropy Local Axis"
-	    type	integer
-	    default	{ "2" }
-	    help	"Which axis to use for anistropy 0=x 1=y 2=z"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "BRDFReflection" }
-	    parmtag	{ "vray_pluginattr" "anisotropy_local_axis" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"anisotropy_map_channel"
-	    label	"Anisotropy Map Channel"
-	    type	integer
-	    default	{ "1" }
-	    help	"What uvw map channel to use for anistropy"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "BRDFReflection" }
-	    parmtag	{ "vray_pluginattr" "anisotropy_map_channel" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"anisotropy_use_map_channel"
-	    label	"Anisotropy Use Map Channel"
-	    type	toggle
-	    default	{ "1" }
-	    help	"Whether to use a map channel instead of a local axis"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "BRDFReflection" }
-	    parmtag	{ "vray_pluginattr" "anisotropy_use_map_channel" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"anisotropy_uvwgen"
-	    label	"Anisotropy Uvwgen"
-	    type	oppath
-	    default	{ "" }
-	    help	"If this is provided we will use it, otherwise we will make our own based on the local-axis/ map channel settings"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "BRDFReflection" }
-	    parmtag	{ "vray_pluginattr" "anisotropy_uvwgen" }
-	    parmtag	{ "vray_type" "Object" }
-	}
-	parm {
-	    name	"fix_dark_edges"
-	    label	"Fix Dark Edges"
-	    type	toggle
-	    default	{ "1" }
-	    help	"true to fix dark edges with glossy reflections; only set this to false for compatibility with older versions"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "BRDFReflection" }
-	    parmtag	{ "vray_pluginattr" "fix_dark_edges" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	help	"BRDFReflection"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "BRDFReflection" }
+	parmtag	{ "vray_type" "BRDF" }
     }
-
+    parm {
+	name	"color"
+	label	"Color"
+	type	color
+	size	3
+	default	{ "1" "1" "1" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "BRDFReflection" }
+	parmtag	{ "vray_pluginattr" "color" }
+	parmtag	{ "vray_type" "Color" }
+    }
+    parm {
+	name	"color_tex"
+	label	"Color Tex"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "BRDFReflection" }
+	parmtag	{ "vray_pluginattr" "color_tex" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"color_tex_mult"
+	label	"Color Tex Mult"
+	type	float
+	default	{ "1" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "BRDFReflection" }
+	parmtag	{ "vray_pluginattr" "color_tex_mult" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"transparency"
+	label	"Transparency"
+	type	color
+	size	3
+	default	{ "0" "0" "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "BRDFReflection" }
+	parmtag	{ "vray_pluginattr" "transparency" }
+	parmtag	{ "vray_type" "Color" }
+    }
+    parm {
+	name	"transparency_tex"
+	label	"Transparency Tex"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "BRDFReflection" }
+	parmtag	{ "vray_pluginattr" "transparency_tex" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"transparency_tex_mult"
+	label	"Transparency Tex Mult"
+	type	float
+	default	{ "1" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "BRDFReflection" }
+	parmtag	{ "vray_pluginattr" "transparency_tex_mult" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"cutoff"
+	label	"Cutoff"
+	type	float
+	default	{ "0.01" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "BRDFReflection" }
+	parmtag	{ "vray_pluginattr" "cutoff" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"back_side"
+	label	"Back Side"
+	type	toggle
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "BRDFReflection" }
+	parmtag	{ "vray_pluginattr" "back_side" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"trace_reflections"
+	label	"Trace Reflections"
+	type	toggle
+	default	{ "1" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "BRDFReflection" }
+	parmtag	{ "vray_pluginattr" "trace_reflections" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"trace_depth"
+	label	"Trace Depth"
+	type	integer
+	default	{ "-1" }
+	help	"The maximum reflection depth (-1 is controlled by the global options)"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "BRDFReflection" }
+	parmtag	{ "vray_pluginattr" "trace_depth" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"affect_alpha"
+	label	"Affect Alpha"
+	type	integer
+	default	{ "0" }
+	help	"Specifies how render channels are propagated through the BRDF (0 - only the color channel; 1 - color and alpha; 2 - all channels"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "BRDFReflection" }
+	parmtag	{ "vray_pluginattr" "affect_alpha" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"reflect_exit_color"
+	label	"Reflect Exit Color"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "0" }
+	help	"The color to use when the maximum depth is reached"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "BRDFReflection" }
+	parmtag	{ "vray_pluginattr" "reflect_exit_color" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"reflect_dim_distance"
+	label	"Reflect Dim Distance"
+	type	float
+	default	{ "1e+18" }
+	help	"How much to dim reflection as length of rays increases"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "BRDFReflection" }
+	parmtag	{ "vray_pluginattr" "reflect_dim_distance" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"reflect_dim_distance_on"
+	label	"Reflect Dim Distance On"
+	type	toggle
+	default	{ "0" }
+	help	"True to enable dim distance"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "BRDFReflection" }
+	parmtag	{ "vray_pluginattr" "reflect_dim_distance_on" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"reflect_dim_distance_falloff"
+	label	"Reflect Dim Distance Falloff"
+	type	float
+	default	{ "0" }
+	help	"Fall off for the dim distance"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "BRDFReflection" }
+	parmtag	{ "vray_pluginattr" "reflect_dim_distance_falloff" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"hilightGlossiness"
+	label	"Hilightglossiness"
+	type	float
+	default	{ "0.8" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "BRDFReflection" }
+	parmtag	{ "vray_pluginattr" "hilightGlossiness" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"hilightGlossiness_tex"
+	label	"Hilightglossiness Tex"
+	type	float
+	default	{ "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "BRDFReflection" }
+	parmtag	{ "vray_pluginattr" "hilightGlossiness_tex" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"hilightGlossiness_tex_mult"
+	label	"Hilightglossiness Tex Mult"
+	type	float
+	default	{ "1" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "BRDFReflection" }
+	parmtag	{ "vray_pluginattr" "hilightGlossiness_tex_mult" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"reflectionGlossiness"
+	label	"Reflectionglossiness"
+	type	float
+	default	{ "0.8" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "BRDFReflection" }
+	parmtag	{ "vray_pluginattr" "reflectionGlossiness" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"reflectionGlossiness_tex"
+	label	"Reflectionglossiness Tex"
+	type	float
+	default	{ "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "BRDFReflection" }
+	parmtag	{ "vray_pluginattr" "reflectionGlossiness_tex" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"reflectionGlossiness_tex_mult"
+	label	"Reflectionglossiness Tex Mult"
+	type	float
+	default	{ "1" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "BRDFReflection" }
+	parmtag	{ "vray_pluginattr" "reflectionGlossiness_tex_mult" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"subdivs"
+	label	"Subdivs"
+	type	integer
+	default	{ "8" }
+	range	{ 1 1000 }
+	export	none
+	parmtag	{ "vray_plugin" "BRDFReflection" }
+	parmtag	{ "vray_pluginattr" "subdivs" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"glossyAsGI"
+	label	"Glossyasgi"
+	type	integer
+	default	{ "1" }
+	help	"Determines if the glossy rays are treated by V-Ray as GI rays: 0 - never; 1 - only for rays that are already marked as GI rays; 2 - always"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "BRDFReflection" }
+	parmtag	{ "vray_pluginattr" "glossyAsGI" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"soften_edge"
+	label	"Soften Edge"
+	type	float
+	default	{ "0" }
+	help	"Soften edge of the BRDF at light/shadow transition"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "BRDFReflection" }
+	parmtag	{ "vray_pluginattr" "soften_edge" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"interpolation_on"
+	label	"Interpolation On"
+	type	integer
+	default	{ "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "BRDFReflection" }
+	parmtag	{ "vray_pluginattr" "interpolation_on" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"imap_min_rate"
+	label	"Imap Min Rate"
+	type	integer
+	default	{ "-1" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "BRDFReflection" }
+	parmtag	{ "vray_pluginattr" "imap_min_rate" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"imap_max_rate"
+	label	"Imap Max Rate"
+	type	integer
+	default	{ "1" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "BRDFReflection" }
+	parmtag	{ "vray_pluginattr" "imap_max_rate" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"imap_color_thresh"
+	label	"Imap Color Thresh"
+	type	float
+	default	{ "0.25" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "BRDFReflection" }
+	parmtag	{ "vray_pluginattr" "imap_color_thresh" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"imap_norm_thresh"
+	label	"Imap Norm Thresh"
+	type	float
+	default	{ "0.4" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "BRDFReflection" }
+	parmtag	{ "vray_pluginattr" "imap_norm_thresh" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"imap_samples"
+	label	"Imap Samples"
+	type	integer
+	default	{ "20" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "BRDFReflection" }
+	parmtag	{ "vray_pluginattr" "imap_samples" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"shaderType"
+	label	"Shadertype"
+	type	integer
+	default	{ "0" }
+	help	"0-Blinn, 1-Phong, 2-Ward"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "BRDFReflection" }
+	parmtag	{ "vray_pluginattr" "shaderType" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"anisotropy"
+	label	"Anisotropy"
+	type	float
+	default	{ "0" }
+	help	"reflection anisotropy in the range (-1, 1)"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "BRDFReflection" }
+	parmtag	{ "vray_pluginattr" "anisotropy" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"anisotropy_tex"
+	label	"Anisotropy Tex"
+	type	float
+	default	{ "0" }
+	help	"Texture for reflection anisotropy in the range (-1, 1)"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "BRDFReflection" }
+	parmtag	{ "vray_pluginattr" "anisotropy_tex" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"anisotropy_tex_mult"
+	label	"Anisotropy Tex Mult"
+	type	float
+	default	{ "1" }
+	help	"Multiplier for anisotropy texture"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "BRDFReflection" }
+	parmtag	{ "vray_pluginattr" "anisotropy_tex_mult" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"anisotropy_rotation"
+	label	"Anisotropy Rotation"
+	type	float
+	default	{ "0" }
+	help	"anisotropy rotation in the range [0, 1]"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "BRDFReflection" }
+	parmtag	{ "vray_pluginattr" "anisotropy_rotation" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"anisotropy_rotation_tex"
+	label	"Anisotropy Rotation Tex"
+	type	float
+	default	{ "0" }
+	help	"Texture for anisotropy rotation in the range [0, 1]"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "BRDFReflection" }
+	parmtag	{ "vray_pluginattr" "anisotropy_rotation_tex" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"anisotropy_rotation_tex_mult"
+	label	"Anisotropy Rotation Tex Mult"
+	type	float
+	default	{ "1" }
+	help	"Multiplier for anisotropy rotation texture"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "BRDFReflection" }
+	parmtag	{ "vray_pluginattr" "anisotropy_rotation_tex_mult" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"anisotropy_local_axis"
+	label	"Anisotropy Local Axis"
+	type	integer
+	default	{ "2" }
+	help	"Which axis to use for anistropy 0=x 1=y 2=z"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "BRDFReflection" }
+	parmtag	{ "vray_pluginattr" "anisotropy_local_axis" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"anisotropy_map_channel"
+	label	"Anisotropy Map Channel"
+	type	integer
+	default	{ "1" }
+	help	"What uvw map channel to use for anistropy"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "BRDFReflection" }
+	parmtag	{ "vray_pluginattr" "anisotropy_map_channel" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"anisotropy_use_map_channel"
+	label	"Anisotropy Use Map Channel"
+	type	toggle
+	default	{ "1" }
+	help	"Whether to use a map channel instead of a local axis"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "BRDFReflection" }
+	parmtag	{ "vray_pluginattr" "anisotropy_use_map_channel" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"anisotropy_uvwgen"
+	label	"Anisotropy Uvwgen"
+	type	oppath
+	default	{ "" }
+	help	"If this is provided we will use it, otherwise we will make our own based on the local-axis/ map channel settings"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "oprelative" "." }
+	parmtag	{ "vray_plugin" "BRDFReflection" }
+	parmtag	{ "vray_pluginattr" "anisotropy_uvwgen" }
+	parmtag	{ "vray_type" "Object" }
+    }
+    parm {
+	name	"fix_dark_edges"
+	label	"Fix Dark Edges"
+	type	toggle
+	default	{ "1" }
+	help	"true to fix dark edges with glossy reflections; only set this to false for compatibility with older versions"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "BRDFReflection" }
+	parmtag	{ "vray_pluginattr" "fix_dark_edges" }
+	parmtag	{ "vray_type" "boolean" }
+    }
 }

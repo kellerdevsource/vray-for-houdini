@@ -1,526 +1,520 @@
 {
     name	parameters
-    group {
-	name	"GeomHair"
+    parm {
+	name	"plugindata"
 	label	"Geom Hair"
-
-	parm {
-	    name	"plugindata"
-	    label	"Geom Hair"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    help	"GeomHair"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomHair" }
-	    parmtag	{ "vray_type" "GEOMETRY" }
-	}
-	parm {
-	    name	"mesh"
-	    label	"Mesh"
-	    type	oppath
-	    default	{ "" }
-	    help	"The triangle mesh that will have hairs generated on it"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "GeomHair" }
-	    parmtag	{ "vray_pluginattr" "mesh" }
-	    parmtag	{ "vray_type" "Object" }
-	}
-	parm {
-	    name	"length_base"
-	    label	"Length Base"
-	    type	float
-	    default	{ "100" }
-	    help	"The base hair length"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomHair" }
-	    parmtag	{ "vray_pluginattr" "length_base" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"thickness_base"
-	    label	"Thickness Base"
-	    type	float
-	    default	{ "0.01" }
-	    help	"The base hair thickness"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomHair" }
-	    parmtag	{ "vray_pluginattr" "thickness_base" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"gravity_base"
-	    label	"Gravity Base"
-	    type	float
-	    default	{ "10" }
-	    help	"The base gravity"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomHair" }
-	    parmtag	{ "vray_pluginattr" "gravity_base" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"gravity_vector"
-	    label	"Gravity Vector"
-	    type	direction
-	    size	3
-	    default	{ "0" "1" "0" }
-	    help	"The gravity force direction vector"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomHair" }
-	    parmtag	{ "vray_pluginattr" "gravity_vector" }
-	    parmtag	{ "vray_type" "Vector" }
-	}
-	parm {
-	    name	"dir_var"
-	    label	"Dir Var"
-	    type	float
-	    default	{ "0" }
-	    help	"The direction variation"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomHair" }
-	    parmtag	{ "vray_pluginattr" "dir_var" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"length_var"
-	    label	"Length Var"
-	    type	float
-	    default	{ "0" }
-	    help	"The hair length variation"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomHair" }
-	    parmtag	{ "vray_pluginattr" "length_var" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"thickness_var"
-	    label	"Thickness Var"
-	    type	float
-	    default	{ "0" }
-	    help	"The hair thickness variation"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomHair" }
-	    parmtag	{ "vray_pluginattr" "thickness_var" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"gravity_var"
-	    label	"Gravity Var"
-	    type	float
-	    default	{ "0" }
-	    help	"The gravity variation"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomHair" }
-	    parmtag	{ "vray_pluginattr" "gravity_var" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"curl_radius_var"
-	    label	"Curl Radius Var"
-	    type	float
-	    default	{ "0" }
-	    help	"The curl radius variation"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomHair" }
-	    parmtag	{ "vray_pluginattr" "curl_radius_var" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"bend"
-	    label	"Bend"
-	    type	float
-	    default	{ "0" }
-	    help	"The amount of hair bending"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomHair" }
-	    parmtag	{ "vray_pluginattr" "bend" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"taper"
-	    label	"Taper"
-	    type	float
-	    default	{ "0" }
-	    help	"The amount of taper applied to hairs"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomHair" }
-	    parmtag	{ "vray_pluginattr" "taper" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"curl_enabled"
-	    label	"Curl Enabled"
-	    type	toggle
-	    default	{ "0" }
-	    help	"True if curl should be applied to the hair"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomHair" }
-	    parmtag	{ "vray_pluginattr" "curl_enabled" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"curl_angle"
-	    label	"Curl Angle"
-	    type	float
-	    default	{ "0" }
-	    help	"The angle of the curl applied at yeach knot"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomHair" }
-	    parmtag	{ "vray_pluginattr" "curl_angle" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"curl_radius"
-	    label	"Curl Radius"
-	    type	float
-	    default	{ "0" }
-	    help	"The radius of the curls"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomHair" }
-	    parmtag	{ "vray_pluginattr" "curl_radius" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"hair_sides"
-	    label	"Hair Sides"
-	    type	integer
-	    default	{ "3" }
-	    help	"Number of segments along the circumference of a single hair"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomHair" }
-	    parmtag	{ "vray_pluginattr" "hair_sides" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"hair_knots"
-	    label	"Hair Knots"
-	    type	integer
-	    default	{ "8" }
-	    help	"Number of segments along the length of a single hair"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomHair" }
-	    parmtag	{ "vray_pluginattr" "hair_knots" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"lod_enabled"
-	    label	"Lod Enabled"
-	    type	toggle
-	    default	{ "0" }
-	    help	"Level of detail toggle. Enables detail decrease along distance form the camera"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomHair" }
-	    parmtag	{ "vray_pluginattr" "lod_enabled" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"lod_startDistance"
-	    label	"Lod Startdistance"
-	    type	float
-	    default	{ "1000" }
-	    help	"Level of detail starting distance. The distance from wich the effect is applied"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomHair" }
-	    parmtag	{ "vray_pluginattr" "lod_startDistance" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"lod_rate"
-	    label	"Lod Rate"
-	    type	float
-	    default	{ "1000" }
-	    help	"Level of detail rate. Rate of decrease. The distance to reach half the hairs count with twice the thickness"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomHair" }
-	    parmtag	{ "vray_pluginattr" "lod_rate" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"fixed_areas"
-	    label	"Fixed Areas"
-	    type	integer
-	    default	{ "0" }
-	    help	"True if areaList should be used to determine the number of hairs when distribution is 'per area'"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomHair" }
-	    parmtag	{ "vray_pluginattr" "fixed_areas" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"distribution"
-	    label	"Distribution"
-	    type	ordinal
-	    default	{ "0" }
-	    help	"0 : per face; 1 : per area"
-	    menu	{
-		"0"	"Per face"
-		"1"	"Per area"
-	    }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomHair" }
-	    parmtag	{ "vray_pluginattr" "distribution" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"perFace"
-	    label	"Perface"
-	    type	integer
-	    default	{ "10" }
-	    help	"Number of hairs per face if distribution==0"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomHair" }
-	    parmtag	{ "vray_pluginattr" "perFace" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"perArea"
-	    label	"Perarea"
-	    type	float
-	    default	{ "10" }
-	    help	"Number of hairs per unit area if distribution==1"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomHair" }
-	    parmtag	{ "vray_pluginattr" "perArea" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"flat_normals"
-	    label	"Flat Normals"
-	    type	integer
-	    default	{ "0" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomHair" }
-	    parmtag	{ "vray_pluginattr" "flat_normals" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"override_mtlID_on"
-	    label	"Override Mtlid On"
-	    type	toggle
-	    default	{ "0" }
-	    help	"Material ID will be overriden"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomHair" }
-	    parmtag	{ "vray_pluginattr" "override_mtlID_on" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"override_mtlID"
-	    label	"Override Mtlid"
-	    type	integer
-	    default	{ "0" }
-	    help	"The override material ID"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomHair" }
-	    parmtag	{ "vray_pluginattr" "override_mtlID" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"ignore_base_mesh_displacement"
-	    label	"Ignore Base Mesh Displacement"
-	    type	toggle
-	    default	{ "0" }
-	    help	"If false, fur will be displaced via using the parent mesh displacement map"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomHair" }
-	    parmtag	{ "vray_pluginattr" "ignore_base_mesh_displacement" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"placement"
-	    label	"Placement"
-	    type	ordinal
-	    default	{ "0" }
-	    help	"The type of placement of the fur on the mesh. The possible values are 0 : Entire Object, 1 : Selected Faces, 2 : Material ID"
-	    menu	{
-		"0"	"Entire Object"
-		"1"	"Selected Faces"
-		"2"	"Material ID"
-	    }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomHair" }
-	    parmtag	{ "vray_pluginattr" "placement" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"scale"
-	    label	"Scale"
-	    type	float
-	    default	{ "1" }
-	    help	"Fur scaling factor"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomHair" }
-	    parmtag	{ "vray_pluginattr" "scale" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"mtlID"
-	    label	"Mtlid"
-	    type	integer
-	    default	{ "0" }
-	    help	"Material ID of the faces of the mesh. This is only valid if the placement is by material ID"
-	    disablewhen	"{ placement != 2 }"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomHair" }
-	    parmtag	{ "vray_pluginattr" "mtlID" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"generate_w_coord"
-	    label	"Generate W Coord"
-	    type	toggle
-	    default	{ "1" }
-	    help	"If true, V-Ray will generate a W mapping coordinate that represents the position of the shaded point along the hair strands"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomHair" }
-	    parmtag	{ "vray_pluginattr" "generate_w_coord" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"map_channel"
-	    label	"Map Channel"
-	    type	integer
-	    default	{ "0" }
-	    help	"Map channel to derive the uv space from"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomHair" }
-	    parmtag	{ "vray_pluginattr" "map_channel" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"bend_direction_tex"
-	    label	"Bend Direction Tex"
-	    type	color4
-	    size	4
-	    default	{ "0" "0" "0" "0" }
-	    help	"A texture for the bend direction of hair strands"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomHair" }
-	    parmtag	{ "vray_pluginattr" "bend_direction_tex" }
-	    parmtag	{ "vray_type" "Texture" }
-	}
-	parm {
-	    name	"initial_direction_tex"
-	    label	"Initial Direction Tex"
-	    type	color4
-	    size	4
-	    default	{ "0" "0" "0" "0" }
-	    help	"A texture for the initial direction of hair strands"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomHair" }
-	    parmtag	{ "vray_pluginattr" "initial_direction_tex" }
-	    parmtag	{ "vray_type" "Texture" }
-	}
-	parm {
-	    name	"length_tex"
-	    label	"Length Tex"
-	    type	float
-	    default	{ "0" }
-	    help	"A texture for the length"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomHair" }
-	    parmtag	{ "vray_pluginattr" "length_tex" }
-	    parmtag	{ "vray_type" "TextureFloat" }
-	}
-	parm {
-	    name	"thickness_tex"
-	    label	"Thickness Tex"
-	    type	float
-	    default	{ "0" }
-	    help	"A texture for the thickness"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomHair" }
-	    parmtag	{ "vray_pluginattr" "thickness_tex" }
-	    parmtag	{ "vray_type" "TextureFloat" }
-	}
-	parm {
-	    name	"gravity_tex"
-	    label	"Gravity Tex"
-	    type	float
-	    default	{ "0" }
-	    help	"A texture for the gravity"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomHair" }
-	    parmtag	{ "vray_pluginattr" "gravity_tex" }
-	    parmtag	{ "vray_type" "TextureFloat" }
-	}
-	parm {
-	    name	"bend_tex"
-	    label	"Bend Tex"
-	    type	float
-	    default	{ "0" }
-	    help	"A texture for the bend"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomHair" }
-	    parmtag	{ "vray_pluginattr" "bend_tex" }
-	    parmtag	{ "vray_type" "TextureFloat" }
-	}
-	parm {
-	    name	"density_tex"
-	    label	"Density Tex"
-	    type	float
-	    default	{ "0" }
-	    help	"A texture for the density"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomHair" }
-	    parmtag	{ "vray_pluginattr" "density_tex" }
-	    parmtag	{ "vray_type" "TextureFloat" }
-	}
-	parm {
-	    name	"curl_tex"
-	    label	"Curl Tex"
-	    type	color4
-	    size	4
-	    default	{ "0" "0" "0" "0" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomHair" }
-	    parmtag	{ "vray_pluginattr" "curl_tex" }
-	    parmtag	{ "vray_type" "Texture" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	help	"GeomHair"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomHair" }
+	parmtag	{ "vray_type" "GEOMETRY" }
     }
-
+    parm {
+	name	"mesh"
+	label	"Mesh"
+	type	oppath
+	default	{ "" }
+	help	"The triangle mesh that will have hairs generated on it"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "oprelative" "." }
+	parmtag	{ "vray_plugin" "GeomHair" }
+	parmtag	{ "vray_pluginattr" "mesh" }
+	parmtag	{ "vray_type" "Object" }
+    }
+    parm {
+	name	"length_base"
+	label	"Length Base"
+	type	float
+	default	{ "100" }
+	help	"The base hair length"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomHair" }
+	parmtag	{ "vray_pluginattr" "length_base" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"thickness_base"
+	label	"Thickness Base"
+	type	float
+	default	{ "0.01" }
+	help	"The base hair thickness"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomHair" }
+	parmtag	{ "vray_pluginattr" "thickness_base" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"gravity_base"
+	label	"Gravity Base"
+	type	float
+	default	{ "10" }
+	help	"The base gravity"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomHair" }
+	parmtag	{ "vray_pluginattr" "gravity_base" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"gravity_vector"
+	label	"Gravity Vector"
+	type	direction
+	size	3
+	default	{ "0" "1" "0" }
+	help	"The gravity force direction vector"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomHair" }
+	parmtag	{ "vray_pluginattr" "gravity_vector" }
+	parmtag	{ "vray_type" "Vector" }
+    }
+    parm {
+	name	"dir_var"
+	label	"Dir Var"
+	type	float
+	default	{ "0" }
+	help	"The direction variation"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomHair" }
+	parmtag	{ "vray_pluginattr" "dir_var" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"length_var"
+	label	"Length Var"
+	type	float
+	default	{ "0" }
+	help	"The hair length variation"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomHair" }
+	parmtag	{ "vray_pluginattr" "length_var" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"thickness_var"
+	label	"Thickness Var"
+	type	float
+	default	{ "0" }
+	help	"The hair thickness variation"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomHair" }
+	parmtag	{ "vray_pluginattr" "thickness_var" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"gravity_var"
+	label	"Gravity Var"
+	type	float
+	default	{ "0" }
+	help	"The gravity variation"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomHair" }
+	parmtag	{ "vray_pluginattr" "gravity_var" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"curl_radius_var"
+	label	"Curl Radius Var"
+	type	float
+	default	{ "0" }
+	help	"The curl radius variation"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomHair" }
+	parmtag	{ "vray_pluginattr" "curl_radius_var" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"bend"
+	label	"Bend"
+	type	float
+	default	{ "0" }
+	help	"The amount of hair bending"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomHair" }
+	parmtag	{ "vray_pluginattr" "bend" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"taper"
+	label	"Taper"
+	type	float
+	default	{ "0" }
+	help	"The amount of taper applied to hairs"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomHair" }
+	parmtag	{ "vray_pluginattr" "taper" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"curl_enabled"
+	label	"Curl Enabled"
+	type	toggle
+	default	{ "0" }
+	help	"True if curl should be applied to the hair"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomHair" }
+	parmtag	{ "vray_pluginattr" "curl_enabled" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"curl_angle"
+	label	"Curl Angle"
+	type	float
+	default	{ "0" }
+	help	"The angle of the curl applied at yeach knot"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomHair" }
+	parmtag	{ "vray_pluginattr" "curl_angle" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"curl_radius"
+	label	"Curl Radius"
+	type	float
+	default	{ "0" }
+	help	"The radius of the curls"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomHair" }
+	parmtag	{ "vray_pluginattr" "curl_radius" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"hair_sides"
+	label	"Hair Sides"
+	type	integer
+	default	{ "3" }
+	help	"Number of segments along the circumference of a single hair"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomHair" }
+	parmtag	{ "vray_pluginattr" "hair_sides" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"hair_knots"
+	label	"Hair Knots"
+	type	integer
+	default	{ "8" }
+	help	"Number of segments along the length of a single hair"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomHair" }
+	parmtag	{ "vray_pluginattr" "hair_knots" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"lod_enabled"
+	label	"Lod Enabled"
+	type	toggle
+	default	{ "0" }
+	help	"Level of detail toggle. Enables detail decrease along distance form the camera"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomHair" }
+	parmtag	{ "vray_pluginattr" "lod_enabled" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"lod_startDistance"
+	label	"Lod Startdistance"
+	type	float
+	default	{ "1000" }
+	help	"Level of detail starting distance. The distance from wich the effect is applied"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomHair" }
+	parmtag	{ "vray_pluginattr" "lod_startDistance" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"lod_rate"
+	label	"Lod Rate"
+	type	float
+	default	{ "1000" }
+	help	"Level of detail rate. Rate of decrease. The distance to reach half the hairs count with twice the thickness"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomHair" }
+	parmtag	{ "vray_pluginattr" "lod_rate" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"fixed_areas"
+	label	"Fixed Areas"
+	type	integer
+	default	{ "0" }
+	help	"True if areaList should be used to determine the number of hairs when distribution is 'per area'"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomHair" }
+	parmtag	{ "vray_pluginattr" "fixed_areas" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"distribution"
+	label	"Distribution"
+	type	ordinal
+	default	{ "0" }
+	help	"0 : per face; 1 : per area"
+	menu	{
+	    "0"	"Per face"
+	    "1"	"Per area"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomHair" }
+	parmtag	{ "vray_pluginattr" "distribution" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"perFace"
+	label	"Perface"
+	type	integer
+	default	{ "10" }
+	help	"Number of hairs per face if distribution==0"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomHair" }
+	parmtag	{ "vray_pluginattr" "perFace" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"perArea"
+	label	"Perarea"
+	type	float
+	default	{ "10" }
+	help	"Number of hairs per unit area if distribution==1"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomHair" }
+	parmtag	{ "vray_pluginattr" "perArea" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"flat_normals"
+	label	"Flat Normals"
+	type	integer
+	default	{ "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomHair" }
+	parmtag	{ "vray_pluginattr" "flat_normals" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"override_mtlID_on"
+	label	"Override Mtlid On"
+	type	toggle
+	default	{ "0" }
+	help	"Material ID will be overriden"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomHair" }
+	parmtag	{ "vray_pluginattr" "override_mtlID_on" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"override_mtlID"
+	label	"Override Mtlid"
+	type	integer
+	default	{ "0" }
+	help	"The override material ID"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomHair" }
+	parmtag	{ "vray_pluginattr" "override_mtlID" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"ignore_base_mesh_displacement"
+	label	"Ignore Base Mesh Displacement"
+	type	toggle
+	default	{ "0" }
+	help	"If false, fur will be displaced via using the parent mesh displacement map"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomHair" }
+	parmtag	{ "vray_pluginattr" "ignore_base_mesh_displacement" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"placement"
+	label	"Placement"
+	type	ordinal
+	default	{ "0" }
+	help	"The type of placement of the fur on the mesh. The possible values are 0 : Entire Object, 1 : Selected Faces, 2 : Material ID"
+	menu	{
+	    "0"	"Entire Object"
+	    "1"	"Selected Faces"
+	    "2"	"Material ID"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomHair" }
+	parmtag	{ "vray_pluginattr" "placement" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"scale"
+	label	"Scale"
+	type	float
+	default	{ "1" }
+	help	"Fur scaling factor"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomHair" }
+	parmtag	{ "vray_pluginattr" "scale" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"mtlID"
+	label	"Mtlid"
+	type	integer
+	default	{ "0" }
+	help	"Material ID of the faces of the mesh. This is only valid if the placement is by material ID"
+	disablewhen	"{ placement != 2 }"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomHair" }
+	parmtag	{ "vray_pluginattr" "mtlID" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"generate_w_coord"
+	label	"Generate W Coord"
+	type	toggle
+	default	{ "1" }
+	help	"If true, V-Ray will generate a W mapping coordinate that represents the position of the shaded point along the hair strands"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomHair" }
+	parmtag	{ "vray_pluginattr" "generate_w_coord" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"map_channel"
+	label	"Map Channel"
+	type	integer
+	default	{ "0" }
+	help	"Map channel to derive the uv space from"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomHair" }
+	parmtag	{ "vray_pluginattr" "map_channel" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"bend_direction_tex"
+	label	"Bend Direction Tex"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "0" }
+	help	"A texture for the bend direction of hair strands"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomHair" }
+	parmtag	{ "vray_pluginattr" "bend_direction_tex" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"initial_direction_tex"
+	label	"Initial Direction Tex"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "0" }
+	help	"A texture for the initial direction of hair strands"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomHair" }
+	parmtag	{ "vray_pluginattr" "initial_direction_tex" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"length_tex"
+	label	"Length Tex"
+	type	float
+	default	{ "0" }
+	help	"A texture for the length"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomHair" }
+	parmtag	{ "vray_pluginattr" "length_tex" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"thickness_tex"
+	label	"Thickness Tex"
+	type	float
+	default	{ "0" }
+	help	"A texture for the thickness"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomHair" }
+	parmtag	{ "vray_pluginattr" "thickness_tex" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"gravity_tex"
+	label	"Gravity Tex"
+	type	float
+	default	{ "0" }
+	help	"A texture for the gravity"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomHair" }
+	parmtag	{ "vray_pluginattr" "gravity_tex" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"bend_tex"
+	label	"Bend Tex"
+	type	float
+	default	{ "0" }
+	help	"A texture for the bend"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomHair" }
+	parmtag	{ "vray_pluginattr" "bend_tex" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"density_tex"
+	label	"Density Tex"
+	type	float
+	default	{ "0" }
+	help	"A texture for the density"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomHair" }
+	parmtag	{ "vray_pluginattr" "density_tex" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"curl_tex"
+	label	"Curl Tex"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomHair" }
+	parmtag	{ "vray_pluginattr" "curl_tex" }
+	parmtag	{ "vray_type" "Texture" }
+    }
 }

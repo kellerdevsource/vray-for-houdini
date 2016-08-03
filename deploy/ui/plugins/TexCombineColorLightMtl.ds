@@ -1,60 +1,54 @@
 {
     name	parameters
-    group {
-	name	"TexCombineColorLightMtl"
+    parm {
+	name	"plugindata"
 	label	"Combine Color Light Mtl"
-
-	parm {
-	    name	"plugindata"
-	    label	"Combine Color Light Mtl"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    help	"TexCombineColorLightMtl"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_category" "utility" }
-	    parmtag	{ "vray_plugin" "TexCombineColorLightMtl" }
-	    parmtag	{ "vray_type" "TEXTURE" }
-	}
-	parm {
-	    name	"color"
-	    label	"Color"
-	    type	color
-	    size	3
-	    default	{ "0" "0" "0" }
-	    help	"The color value"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexCombineColorLightMtl" }
-	    parmtag	{ "vray_pluginattr" "color" }
-	    parmtag	{ "vray_type" "Color" }
-	}
-	parm {
-	    name	"texture"
-	    label	"Texture"
-	    type	color4
-	    size	4
-	    default	{ "1" "1" "1" "1" }
-	    help	"The texture"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexCombineColorLightMtl" }
-	    parmtag	{ "vray_pluginattr" "texture" }
-	    parmtag	{ "vray_type" "Texture" }
-	}
-	parm {
-	    name	"result_multiplier"
-	    label	"Result Multiplier"
-	    type	float
-	    default	{ "1" }
-	    help	"A multiplier for the final result"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexCombineColorLightMtl" }
-	    parmtag	{ "vray_pluginattr" "result_multiplier" }
-	    parmtag	{ "vray_type" "float" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	help	"TexCombineColorLightMtl"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_category" "utility" }
+	parmtag	{ "vray_plugin" "TexCombineColorLightMtl" }
+	parmtag	{ "vray_type" "TEXTURE" }
     }
-
+    parm {
+	name	"color"
+	label	"Color"
+	type	color
+	size	3
+	default	{ "0" "0" "0" }
+	help	"The color value"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexCombineColorLightMtl" }
+	parmtag	{ "vray_pluginattr" "color" }
+	parmtag	{ "vray_type" "Color" }
+    }
+    parm {
+	name	"texture"
+	label	"Texture"
+	type	color4
+	size	4
+	default	{ "1" "1" "1" "1" }
+	help	"The texture"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexCombineColorLightMtl" }
+	parmtag	{ "vray_pluginattr" "texture" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"result_multiplier"
+	label	"Result Multiplier"
+	type	float
+	default	{ "1" }
+	help	"A multiplier for the final result"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexCombineColorLightMtl" }
+	parmtag	{ "vray_pluginattr" "result_multiplier" }
+	parmtag	{ "vray_type" "float" }
+    }
 }

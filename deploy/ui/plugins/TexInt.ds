@@ -1,33 +1,27 @@
 {
     name	parameters
-    group {
-	name	"TexInt"
+    parm {
+	name	"plugindata"
 	label	"Int"
-
-	parm {
-	    name	"plugindata"
-	    label	"Int"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    help	"TexInt"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexInt" }
-	    parmtag	{ "vray_type" "TEXTURE" }
-	}
-	parm {
-	    name	"input"
-	    label	"Input"
-	    type	integer
-	    default	{ "0" }
-	    help	"input"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexInt" }
-	    parmtag	{ "vray_pluginattr" "input" }
-	    parmtag	{ "vray_type" "TextureInt" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	help	"TexInt"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexInt" }
+	parmtag	{ "vray_type" "TEXTURE" }
     }
-
+    parm {
+	name	"input"
+	label	"Input"
+	type	integer
+	default	{ "0" }
+	help	"input"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexInt" }
+	parmtag	{ "vray_pluginattr" "input" }
+	parmtag	{ "vray_type" "TextureInt" }
+    }
 }

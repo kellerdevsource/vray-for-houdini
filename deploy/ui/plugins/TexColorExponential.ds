@@ -1,78 +1,72 @@
 {
     name	parameters
-    group {
-	name	"TexColorExponential"
+    parm {
+	name	"plugindata"
 	label	"Color Exponential"
-
-	parm {
-	    name	"plugindata"
-	    label	"Color Exponential"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    help	"Color Exponential"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_category" "utility" }
-	    parmtag	{ "vray_plugin" "TexColorExponential" }
-	    parmtag	{ "vray_type" "TEXTURE" }
-	}
-	parm {
-	    name	"input"
-	    label	"Input"
-	    type	color4
-	    size	4
-	    default	{ "0" "0" "0" "1" }
-	    help	"The value used in the operation"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexColorExponential" }
-	    parmtag	{ "vray_pluginattr" "input" }
-	    parmtag	{ "vray_type" "Texture" }
-	}
-	parm {
-	    name	"factor"
-	    label	"Factor"
-	    type	color4
-	    size	4
-	    default	{ "0" "0" "0" "1" }
-	    help	"The factor to be used in the operation"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexColorExponential" }
-	    parmtag	{ "vray_pluginattr" "factor" }
-	    parmtag	{ "vray_type" "Texture" }
-	}
-	parm {
-	    name	"operation"
-	    label	"Operation"
-	    type	ordinal
-	    default	{ "0" }
-	    help	"The operation"
-	    menu	{
-		"0"	"Exponential"
-		"1"	"Logarithm"
-		"2"	"Bias"
-		"3"	"Gain"
-	    }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexColorExponential" }
-	    parmtag	{ "vray_pluginattr" "operation" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"use_alpha"
-	    label	"Use Alpha"
-	    type	toggle
-	    default	{ "0" }
-	    help	"Apply operation to alpha channel"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexColorExponential" }
-	    parmtag	{ "vray_pluginattr" "use_alpha" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	help	"Color Exponential"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_category" "utility" }
+	parmtag	{ "vray_plugin" "TexColorExponential" }
+	parmtag	{ "vray_type" "TEXTURE" }
     }
-
+    parm {
+	name	"input"
+	label	"Input"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "1" }
+	help	"The value used in the operation"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexColorExponential" }
+	parmtag	{ "vray_pluginattr" "input" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"factor"
+	label	"Factor"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "1" }
+	help	"The factor to be used in the operation"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexColorExponential" }
+	parmtag	{ "vray_pluginattr" "factor" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"operation"
+	label	"Operation"
+	type	ordinal
+	default	{ "0" }
+	help	"The operation"
+	menu	{
+	    "0"	"Exponential"
+	    "1"	"Logarithm"
+	    "2"	"Bias"
+	    "3"	"Gain"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexColorExponential" }
+	parmtag	{ "vray_pluginattr" "operation" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"use_alpha"
+	label	"Use Alpha"
+	type	toggle
+	default	{ "0" }
+	help	"Apply operation to alpha channel"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexColorExponential" }
+	parmtag	{ "vray_pluginattr" "use_alpha" }
+	parmtag	{ "vray_type" "boolean" }
+    }
 }

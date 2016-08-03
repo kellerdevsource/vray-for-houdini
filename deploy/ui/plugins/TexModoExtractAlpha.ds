@@ -1,33 +1,27 @@
 {
     name	parameters
-    group {
-	name	"TexModoExtractAlpha"
+    parm {
+	name	"plugindata"
 	label	"Modo Extract Alpha"
-
-	parm {
-	    name	"plugindata"
-	    label	"Modo Extract Alpha"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    help	"TexModoExtractAlpha"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexModoExtractAlpha" }
-	    parmtag	{ "vray_type" "TEXTURE" }
-	}
-	parm {
-	    name	"texture"
-	    label	"Texture"
-	    type	color4
-	    size	4
-	    default	{ "0" "0" "0" "1" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexModoExtractAlpha" }
-	    parmtag	{ "vray_pluginattr" "texture" }
-	    parmtag	{ "vray_type" "Texture" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	help	"TexModoExtractAlpha"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexModoExtractAlpha" }
+	parmtag	{ "vray_type" "TEXTURE" }
     }
-
+    parm {
+	name	"texture"
+	label	"Texture"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "1" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexModoExtractAlpha" }
+	parmtag	{ "vray_pluginattr" "texture" }
+	parmtag	{ "vray_type" "Texture" }
+    }
 }

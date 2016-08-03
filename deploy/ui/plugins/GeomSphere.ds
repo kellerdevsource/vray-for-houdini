@@ -1,45 +1,39 @@
 {
     name	parameters
-    group {
-	name	"GeomSphere"
+    parm {
+	name	"plugindata"
 	label	"Sphere"
-
-	parm {
-	    name	"plugindata"
-	    label	"Sphere"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    help	"GeomSphere"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomSphere" }
-	    parmtag	{ "vray_type" "GEOMETRY" }
-	}
-	parm {
-	    name	"radius"
-	    label	"Radius"
-	    type	float
-	    default	{ "1" }
-	    help	"Desired radius for the sphere"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomSphere" }
-	    parmtag	{ "vray_pluginattr" "radius" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"subdivs"
-	    label	"Subdivs"
-	    type	integer
-	    default	{ "8" }
-	    help	"Number of subdivisions when generating sphere triangle mesh"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomSphere" }
-	    parmtag	{ "vray_pluginattr" "subdivs" }
-	    parmtag	{ "vray_type" "int" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	help	"GeomSphere"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomSphere" }
+	parmtag	{ "vray_type" "GEOMETRY" }
     }
-
+    parm {
+	name	"radius"
+	label	"Radius"
+	type	float
+	default	{ "1" }
+	help	"Desired radius for the sphere"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomSphere" }
+	parmtag	{ "vray_pluginattr" "radius" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"subdivs"
+	label	"Subdivs"
+	type	integer
+	default	{ "8" }
+	help	"Number of subdivisions when generating sphere triangle mesh"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomSphere" }
+	parmtag	{ "vray_pluginattr" "subdivs" }
+	parmtag	{ "vray_type" "int" }
+    }
 }

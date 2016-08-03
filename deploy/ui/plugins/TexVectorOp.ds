@@ -1,72 +1,66 @@
 {
     name	parameters
-    group {
-	name	"TexVectorOp"
+    parm {
+	name	"plugindata"
 	label	"Vector Operations"
-
-	parm {
-	    name	"plugindata"
-	    label	"Vector Operations"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    help	"Vector operations"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_category" "utility" }
-	    parmtag	{ "vray_plugin" "TexVectorOp" }
-	    parmtag	{ "vray_type" "TEXTURE" }
-	}
-	parm {
-	    name	"vector_a"
-	    label	"Vector A"
-	    type	direction
-	    size	3
-	    default	{ "1" "1" "1" }
-	    help	"The first vector"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexVectorOp" }
-	    parmtag	{ "vray_pluginattr" "vector_a" }
-	    parmtag	{ "vray_type" "TextureVector" }
-	}
-	parm {
-	    name	"vector_b"
-	    label	"Vector B"
-	    type	direction
-	    size	3
-	    default	{ "1" "1" "1" }
-	    help	"The first vector"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexVectorOp" }
-	    parmtag	{ "vray_pluginattr" "vector_b" }
-	    parmtag	{ "vray_type" "TextureVector" }
-	}
-	parm {
-	    name	"mult_a"
-	    label	"Mult A"
-	    type	float
-	    default	{ "1" }
-	    help	"Multiplier for the first vector"
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexVectorOp" }
-	    parmtag	{ "vray_pluginattr" "mult_a" }
-	    parmtag	{ "vray_type" "TextureFloat" }
-	}
-	parm {
-	    name	"mult_b"
-	    label	"Mult B"
-	    type	float
-	    default	{ "1" }
-	    help	"Multiplier for the second vector"
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexVectorOp" }
-	    parmtag	{ "vray_pluginattr" "mult_b" }
-	    parmtag	{ "vray_type" "TextureFloat" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	help	"Vector operations"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_category" "utility" }
+	parmtag	{ "vray_plugin" "TexVectorOp" }
+	parmtag	{ "vray_type" "TEXTURE" }
     }
-
+    parm {
+	name	"vector_a"
+	label	"Vector A"
+	type	direction
+	size	3
+	default	{ "1" "1" "1" }
+	help	"The first vector"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexVectorOp" }
+	parmtag	{ "vray_pluginattr" "vector_a" }
+	parmtag	{ "vray_type" "TextureVector" }
+    }
+    parm {
+	name	"vector_b"
+	label	"Vector B"
+	type	direction
+	size	3
+	default	{ "1" "1" "1" }
+	help	"The first vector"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexVectorOp" }
+	parmtag	{ "vray_pluginattr" "vector_b" }
+	parmtag	{ "vray_type" "TextureVector" }
+    }
+    parm {
+	name	"mult_a"
+	label	"Mult A"
+	type	float
+	default	{ "1" }
+	help	"Multiplier for the first vector"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "vray_plugin" "TexVectorOp" }
+	parmtag	{ "vray_pluginattr" "mult_a" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"mult_b"
+	label	"Mult B"
+	type	float
+	default	{ "1" }
+	help	"Multiplier for the second vector"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "vray_plugin" "TexVectorOp" }
+	parmtag	{ "vray_pluginattr" "mult_b" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
 }

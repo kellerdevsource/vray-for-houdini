@@ -1,42 +1,36 @@
 {
     name	parameters
-    group {
-	name	"RenderChannelBumpNormals"
+    parm {
+	name	"plugindata"
 	label	"Bump Normals"
-
-	parm {
-	    name	"plugindata"
-	    label	"Bump Normals"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "RenderChannelBumpNormals" }
-	    parmtag	{ "vray_type" "RENDERCHANNEL" }
-	}
-	parm {
-	    name	"name"
-	    label	"Name"
-	    type	string
-	    default	{ "Bump Normals" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "RenderChannelBumpNormals" }
-	    parmtag	{ "vray_pluginattr" "name" }
-	    parmtag	{ "vray_type" "String" }
-	}
-	parm {
-	    name	"filtering"
-	    label	"Filtering"
-	    type	toggle
-	    default	{ "1" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "RenderChannelBumpNormals" }
-	    parmtag	{ "vray_pluginattr" "filtering" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "RenderChannelBumpNormals" }
+	parmtag	{ "vray_type" "RENDERCHANNEL" }
     }
-
+    parm {
+	name	"name"
+	label	"Name"
+	type	string
+	default	{ "Bump Normals" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "RenderChannelBumpNormals" }
+	parmtag	{ "vray_pluginattr" "name" }
+	parmtag	{ "vray_type" "String" }
+    }
+    parm {
+	name	"filtering"
+	label	"Filtering"
+	type	toggle
+	default	{ "1" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "RenderChannelBumpNormals" }
+	parmtag	{ "vray_pluginattr" "filtering" }
+	parmtag	{ "vray_type" "boolean" }
+    }
 }

@@ -1,47 +1,41 @@
 {
     name	parameters
-    group {
-	name	"MtlSelectRE"
+    parm {
+	name	"plugindata"
 	label	"Mtl Select RE"
-
-	parm {
-	    name	"plugindata"
-	    label	"Mtl Select RE"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    help	"MtlSelectRE"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlSelectRE" }
-	    parmtag	{ "vray_type" "MATERIAL" }
-	}
-	parm {
-	    name	"base_mtl"
-	    label	"Base Mtl"
-	    type	oppath
-	    default	{ "" }
-	    help	"The base material. The alpha result of this material will be written to all alpha channels specified in the 'alpha_elements' parameter"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "MtlSelectRE" }
-	    parmtag	{ "vray_pluginattr" "base_mtl" }
-	    parmtag	{ "vray_type" "Object" }
-	}
-	parm {
-	    name	"alpha_elements"
-	    label	"Alpha Elements"
-	    type	oplist
-	    default	{ "" }
-	    help	"A list of alpha render elements"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "MtlSelectRE" }
-	    parmtag	{ "vray_pluginattr" "alpha_elements" }
-	    parmtag	{ "vray_type" "List<Object>" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	help	"MtlSelectRE"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlSelectRE" }
+	parmtag	{ "vray_type" "MATERIAL" }
     }
-
+    parm {
+	name	"base_mtl"
+	label	"Base Mtl"
+	type	oppath
+	default	{ "" }
+	help	"The base material. The alpha result of this material will be written to all alpha channels specified in the 'alpha_elements' parameter"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "oprelative" "." }
+	parmtag	{ "vray_plugin" "MtlSelectRE" }
+	parmtag	{ "vray_pluginattr" "base_mtl" }
+	parmtag	{ "vray_type" "Object" }
+    }
+    parm {
+	name	"alpha_elements"
+	label	"Alpha Elements"
+	type	oplist
+	default	{ "" }
+	help	"A list of alpha render elements"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "oprelative" "." }
+	parmtag	{ "vray_plugin" "MtlSelectRE" }
+	parmtag	{ "vray_pluginattr" "alpha_elements" }
+	parmtag	{ "vray_type" "List<Object>" }
+    }
 }

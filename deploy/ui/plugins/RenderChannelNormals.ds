@@ -1,45 +1,39 @@
 {
     name	parameters
-    group {
-	name	"RenderChannelNormals"
+    parm {
+	name	"plugindata"
 	label	"Normals"
-
-	parm {
-	    name	"plugindata"
-	    label	"Normals"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    help	"Normals"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "RenderChannelNormals" }
-	    parmtag	{ "vray_type" "RENDERCHANNEL" }
-	}
-	parm {
-	    name	"name"
-	    label	"Name"
-	    type	string
-	    default	{ "Normals" }
-	    help	"Channel name"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "RenderChannelNormals" }
-	    parmtag	{ "vray_pluginattr" "name" }
-	    parmtag	{ "vray_type" "String" }
-	}
-	parm {
-	    name	"filtering"
-	    label	"Filtering"
-	    type	toggle
-	    default	{ "0" }
-	    help	"Filtering"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "RenderChannelNormals" }
-	    parmtag	{ "vray_pluginattr" "filtering" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	help	"Normals"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "RenderChannelNormals" }
+	parmtag	{ "vray_type" "RENDERCHANNEL" }
     }
-
+    parm {
+	name	"name"
+	label	"Name"
+	type	string
+	default	{ "Normals" }
+	help	"Channel name"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "RenderChannelNormals" }
+	parmtag	{ "vray_pluginattr" "name" }
+	parmtag	{ "vray_type" "String" }
+    }
+    parm {
+	name	"filtering"
+	label	"Filtering"
+	type	toggle
+	default	{ "0" }
+	help	"Filtering"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "RenderChannelNormals" }
+	parmtag	{ "vray_pluginattr" "filtering" }
+	parmtag	{ "vray_type" "boolean" }
+    }
 }

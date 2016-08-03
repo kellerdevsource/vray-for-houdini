@@ -1,44 +1,38 @@
 {
     name	parameters
-    group {
-	name	"TexSampler"
+    parm {
+	name	"plugindata"
 	label	"Sampler"
-
-	parm {
-	    name	"plugindata"
-	    label	"Sampler"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexSampler" }
-	    parmtag	{ "vray_type" "TEXTURE" }
-	}
-	parm {
-	    name	"uv_set_name"
-	    label	"Uv Set Name"
-	    type	string
-	    default	{ "" }
-	    help	"The name of the uv channel that should be used"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexSampler" }
-	    parmtag	{ "vray_pluginattr" "uv_set_name" }
-	    parmtag	{ "vray_type" "String" }
-	}
-	parm {
-	    name	"uv_index"
-	    label	"Uv Index"
-	    type	integer
-	    default	{ "-1" }
-	    help	"The index of the uv channel that should be used in case there is no uv set name"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexSampler" }
-	    parmtag	{ "vray_pluginattr" "uv_index" }
-	    parmtag	{ "vray_type" "int" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexSampler" }
+	parmtag	{ "vray_type" "TEXTURE" }
     }
-
+    parm {
+	name	"uv_set_name"
+	label	"Uv Set Name"
+	type	string
+	default	{ "" }
+	help	"The name of the uv channel that should be used"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexSampler" }
+	parmtag	{ "vray_pluginattr" "uv_set_name" }
+	parmtag	{ "vray_type" "String" }
+    }
+    parm {
+	name	"uv_index"
+	label	"Uv Index"
+	type	integer
+	default	{ "-1" }
+	help	"The index of the uv channel that should be used in case there is no uv set name"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexSampler" }
+	parmtag	{ "vray_pluginattr" "uv_index" }
+	parmtag	{ "vray_type" "int" }
+    }
 }

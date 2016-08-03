@@ -1,294 +1,288 @@
 {
     name	parameters
-    group {
-	name	"TexTriPlanar"
+    parm {
+	name	"plugindata"
 	label	"TriPlanar"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"TriPlanar mapped texture"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexTriPlanar" }
+	parmtag	{ "vray_type" "TEXTURE" }
+    }
+    parm {
+	name	"texture_mode"
+	label	"Texture Mode"
+	type	ordinal
+	default	{ "0" }
+	help	"Specifies whether to use the same texture on all axes, or separate textures for each axis"
+	menu	{
+	    "0"	"Same texture on all axes"
+	    "1"	"Different texture on each axis"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexTriPlanar" }
+	parmtag	{ "vray_pluginattr" "texture_mode" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"texture_x"
+	label	"Texture X"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "0" }
+	help	"The base texture, or the texture for the X axis if texture mode is set to different textures"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_linked_only" "1" }
+	parmtag	{ "vray_plugin" "TexTriPlanar" }
+	parmtag	{ "vray_pluginattr" "texture_x" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"texture_y"
+	label	"Texture Y"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "0" }
+	help	"The texture for the Y axis"
+	disablewhen	"{ texture_mode != 1 }"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_linked_only" "1" }
+	parmtag	{ "vray_plugin" "TexTriPlanar" }
+	parmtag	{ "vray_pluginattr" "texture_y" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"texture_z"
+	label	"Texture Z"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "0" }
+	help	"The texture for the Z axis"
+	disablewhen	"{ texture_mode != 1 }"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_linked_only" "1" }
+	parmtag	{ "vray_plugin" "TexTriPlanar" }
+	parmtag	{ "vray_pluginattr" "texture_z" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"scale"
+	label	"Scale"
+	type	float
+	default	{ "1" }
+	help	"Scale of the texture; larger values increase the number of texture repeats, lower values make the texture larger"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexTriPlanar" }
+	parmtag	{ "vray_pluginattr" "scale" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"blend"
+	label	"Blend"
+	type	float
+	default	{ "1" }
+	help	"Amount of blending at the plane seams"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexTriPlanar" }
+	parmtag	{ "vray_pluginattr" "blend" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"frame_offset"
+	label	"Frame Offset"
+	type	direction
+	size	3
+	default	{ "0" "0" "0" }
+	help	"Offset from the reference frame center (object or reference node)"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexTriPlanar" }
+	parmtag	{ "vray_pluginattr" "frame_offset" }
+	parmtag	{ "vray_type" "Vector" }
+    }
+    parm {
+	name	"texture_rotation"
+	label	"Texture Rotation"
+	type	angle
+	size	3
+	default	{ "0" "0" "0" }
+	help	"Texture rotations for the three axes, in degrees, in texture space"
+	range	{ 0 360 }
+	export	none
+	parmtag	{ "vray_plugin" "TexTriPlanar" }
+	parmtag	{ "vray_pluginattr" "texture_rotation" }
+	parmtag	{ "vray_type" "Vector" }
+	parmtag	{ "vray_units" "degrees" }
+    }
+    parm {
+	name	"random_texture_offset"
+	label	"Random Texture Offset"
+	type	toggle
+	default	{ "0" }
+	help	"Randomize the texture offset in texture space"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexTriPlanar" }
+	parmtag	{ "vray_pluginattr" "random_texture_offset" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"random_texture_rotation"
+	label	"Random Texture Rotation"
+	type	toggle
+	default	{ "0" }
+	help	"Randomize the texture rotation from one object to another, in texture space. The \"texture rotation\" parameter, if non-zero, is used as increments for the rotation"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexTriPlanar" }
+	parmtag	{ "vray_pluginattr" "random_texture_rotation" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"random_axis"
+	label	"Random Axis"
+	type	toggle
+	default	{ "0" }
+	help	"Randomly permute the axes"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexTriPlanar" }
+	parmtag	{ "vray_pluginattr" "random_axis" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"random_frame_rotation"
+	label	"Random Frame Rotation"
+	type	toggle
+	default	{ "0" }
+	help	"Random frame rotation (in object or reference space)"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexTriPlanar" }
+	parmtag	{ "vray_pluginattr" "random_frame_rotation" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"random_mode"
+	label	"Random Mode"
+	type	ordinal
+	default	{ "0" }
+	help	"Specifies what to use to randomize the offset/rotation"
+	disablewhen	"{ random_texture_offset != 1 random_texture_rotation != 1 random_axis != 1 random_frame_rotation != 1 }"
+	menu	{
+	    "0"	"By face material ID"
+	    "1"	"By object render ID"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexTriPlanar" }
+	parmtag	{ "vray_pluginattr" "random_mode" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"ref_space"
+	label	"Reference Space"
+	type	ordinal
+	default	{ "0" }
+	help	"The space that the projection takes place in, either local object space, or some other object in the scene. If the space is set to reference object(Node), but no object is specified, world space is used"
+	menu	{
+	    "0"	"Local object"
+	    "1"	"Reference to another object"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexTriPlanar" }
+	parmtag	{ "vray_pluginattr" "ref_space" }
+	parmtag	{ "vray_type" "int" }
+    }
+    groupsimple {
+	name	"node_ref_transform"
+	label	"Node Ref Transform"
+	grouptag	{ "vray_plugin" "TexTriPlanar" }
+	grouptag	{ "vray_pluginattr" "node_ref_transform" }
+	grouptag	{ "vray_type" "Transform" }
 
 	parm {
-	    name	"plugindata"
-	    label	"TriPlanar"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    help	"TriPlanar mapped texture"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexTriPlanar" }
-	    parmtag	{ "vray_type" "TEXTURE" }
-	}
-	parm {
-	    name	"texture_mode"
-	    label	"Texture Mode"
+	    name	"node_ref_transform_xOrd"
+	    label	"Transform Order"
 	    type	ordinal
 	    default	{ "0" }
-	    help	"Specifies whether to use the same texture on all axes, or separate textures for each axis"
 	    menu	{
-		"0"	"Same texture on all axes"
-		"1"	"Different texture on each axis"
+		"srt"	"Scale Rotate Translate"
+		"str"	"Scale Translate Rotate"
+		"rst"	"Rotate Scale Translate"
+		"rts"	"Rotate Translate Scale"
+		"tsr"	"Translate Scale Rotate"
+		"trs"	"Translate Rotate Scale"
 	    }
 	    range	{ 0 1 }
 	    export	none
-	    parmtag	{ "vray_plugin" "TexTriPlanar" }
-	    parmtag	{ "vray_pluginattr" "texture_mode" }
-	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"texture_x"
-	    label	"Texture X"
-	    type	color4
-	    size	4
-	    default	{ "0" "0" "0" "0" }
-	    help	"The base texture, or the texture for the X axis if texture mode is set to different textures"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_linked_only" "1" }
-	    parmtag	{ "vray_plugin" "TexTriPlanar" }
-	    parmtag	{ "vray_pluginattr" "texture_x" }
-	    parmtag	{ "vray_type" "Texture" }
-	}
-	parm {
-	    name	"texture_y"
-	    label	"Texture Y"
-	    type	color4
-	    size	4
-	    default	{ "0" "0" "0" "0" }
-	    help	"The texture for the Y axis"
-	    disablewhen	"{ texture_mode != 1 }"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_linked_only" "1" }
-	    parmtag	{ "vray_plugin" "TexTriPlanar" }
-	    parmtag	{ "vray_pluginattr" "texture_y" }
-	    parmtag	{ "vray_type" "Texture" }
-	}
-	parm {
-	    name	"texture_z"
-	    label	"Texture Z"
-	    type	color4
-	    size	4
-	    default	{ "0" "0" "0" "0" }
-	    help	"The texture for the Z axis"
-	    disablewhen	"{ texture_mode != 1 }"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_linked_only" "1" }
-	    parmtag	{ "vray_plugin" "TexTriPlanar" }
-	    parmtag	{ "vray_pluginattr" "texture_z" }
-	    parmtag	{ "vray_type" "Texture" }
-	}
-	parm {
-	    name	"scale"
-	    label	"Scale"
-	    type	float
-	    default	{ "1" }
-	    help	"Scale of the texture; larger values increase the number of texture repeats, lower values make the texture larger"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexTriPlanar" }
-	    parmtag	{ "vray_pluginattr" "scale" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"blend"
-	    label	"Blend"
-	    type	float
-	    default	{ "1" }
-	    help	"Amount of blending at the plane seams"
+	    name	"node_ref_transform_rOrd"
+	    label	"Rotation Order"
+	    type	ordinal
+	    default	{ "0" }
+	    menu	{
+		"xyz"	"Rx Ry Rz"
+		"xzy"	"Rx Rz Ry"
+		"yxz"	"Ry Rx Rz"
+		"yzx"	"Ry Rz Rx"
+		"zxy"	"Rz Rx Ry"
+		"zyx"	"Rz Ry Rx"
+	    }
 	    range	{ 0 1 }
 	    export	none
-	    parmtag	{ "vray_plugin" "TexTriPlanar" }
-	    parmtag	{ "vray_pluginattr" "blend" }
-	    parmtag	{ "vray_type" "float" }
 	}
 	parm {
-	    name	"frame_offset"
-	    label	"Frame Offset"
-	    type	direction
+	    name	"node_ref_transform_trans"
+	    label	"Translate"
+	    type	float
 	    size	3
 	    default	{ "0" "0" "0" }
-	    help	"Offset from the reference frame center (object or reference node)"
+	    help	"The reference object's world transform, when the reference space is set to reference object(Node). If this parameter is missing, world space is used"
 	    range	{ 0 10 }
 	    export	none
-	    parmtag	{ "vray_plugin" "TexTriPlanar" }
-	    parmtag	{ "vray_pluginattr" "frame_offset" }
-	    parmtag	{ "vray_type" "Vector" }
 	}
 	parm {
-	    name	"texture_rotation"
-	    label	"Texture Rotation"
+	    name	"node_ref_transform_rot"
+	    label	"Rotate"
 	    type	angle
 	    size	3
 	    default	{ "0" "0" "0" }
-	    help	"Texture rotations for the three axes, in degrees, in texture space"
-	    range	{ 0 360 }
+	    help	"The reference object's world transform, when the reference space is set to reference object(Node). If this parameter is missing, world space is used"
+	    range	{ 0 10 }
 	    export	none
-	    parmtag	{ "vray_plugin" "TexTriPlanar" }
-	    parmtag	{ "vray_pluginattr" "texture_rotation" }
-	    parmtag	{ "vray_type" "Vector" }
-	    parmtag	{ "vray_units" "degrees" }
 	}
 	parm {
-	    name	"random_texture_offset"
-	    label	"Random Texture Offset"
-	    type	toggle
-	    default	{ "0" }
-	    help	"Randomize the texture offset in texture space"
-	    range	{ 0 1 }
+	    name	"node_ref_transform_scale"
+	    label	"Scale"
+	    type	float
+	    size	3
+	    default	{ "1" "1" "1" }
+	    help	"The reference object's world transform, when the reference space is set to reference object(Node). If this parameter is missing, world space is used"
+	    range	{ 0 10 }
 	    export	none
-	    parmtag	{ "vray_plugin" "TexTriPlanar" }
-	    parmtag	{ "vray_pluginattr" "random_texture_offset" }
-	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"random_texture_rotation"
-	    label	"Random Texture Rotation"
-	    type	toggle
-	    default	{ "0" }
-	    help	"Randomize the texture rotation from one object to another, in texture space. The \"texture rotation\" parameter, if non-zero, is used as increments for the rotation"
-	    range	{ 0 1 }
+	    name	"node_ref_transform_pivot"
+	    label	"Pivot"
+	    type	float
+	    size	3
+	    default	{ "0" "0" "0" }
+	    help	"The reference object's world transform, when the reference space is set to reference object(Node). If this parameter is missing, world space is used"
+	    range	{ 0 10 }
 	    export	none
-	    parmtag	{ "vray_plugin" "TexTriPlanar" }
-	    parmtag	{ "vray_pluginattr" "random_texture_rotation" }
-	    parmtag	{ "vray_type" "boolean" }
 	}
-	parm {
-	    name	"random_axis"
-	    label	"Random Axis"
-	    type	toggle
-	    default	{ "0" }
-	    help	"Randomly permute the axes"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexTriPlanar" }
-	    parmtag	{ "vray_pluginattr" "random_axis" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"random_frame_rotation"
-	    label	"Random Frame Rotation"
-	    type	toggle
-	    default	{ "0" }
-	    help	"Random frame rotation (in object or reference space)"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexTriPlanar" }
-	    parmtag	{ "vray_pluginattr" "random_frame_rotation" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"random_mode"
-	    label	"Random Mode"
-	    type	ordinal
-	    default	{ "0" }
-	    help	"Specifies what to use to randomize the offset/rotation"
-	    disablewhen	"{ random_texture_offset != 1 random_texture_rotation != 1 random_axis != 1 random_frame_rotation != 1 }"
-	    menu	{
-		"0"	"By face material ID"
-		"1"	"By object render ID"
-	    }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexTriPlanar" }
-	    parmtag	{ "vray_pluginattr" "random_mode" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"ref_space"
-	    label	"Reference Space"
-	    type	ordinal
-	    default	{ "0" }
-	    help	"The space that the projection takes place in, either local object space, or some other object in the scene. If the space is set to reference object(Node), but no object is specified, world space is used"
-	    menu	{
-		"0"	"Local object"
-		"1"	"Reference to another object"
-	    }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexTriPlanar" }
-	    parmtag	{ "vray_pluginattr" "ref_space" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	groupsimple {
-	    name	"node_ref_transform"
-	    label	"Node Ref Transform"
-	    grouptag	{ "vray_plugin" "TexTriPlanar" }
-	    grouptag	{ "vray_pluginattr" "node_ref_transform" }
-	    grouptag	{ "vray_type" "Transform" }
-
-	    parm {
-		name	"node_ref_transform_xOrd"
-		label	"Transform Order"
-		type	ordinal
-		default	{ "0" }
-		menu	{
-		    "srt"	"Scale Rotate Translate"
-		    "str"	"Scale Translate Rotate"
-		    "rst"	"Rotate Scale Translate"
-		    "rts"	"Rotate Translate Scale"
-		    "tsr"	"Translate Scale Rotate"
-		    "trs"	"Translate Rotate Scale"
-		}
-		range	{ 0 1 }
-		export	none
-	    }
-	    parm {
-		name	"node_ref_transform_rOrd"
-		label	"Rotation Order"
-		type	ordinal
-		default	{ "0" }
-		menu	{
-		    "xyz"	"Rx Ry Rz"
-		    "xzy"	"Rx Rz Ry"
-		    "yxz"	"Ry Rx Rz"
-		    "yzx"	"Ry Rz Rx"
-		    "zxy"	"Rz Rx Ry"
-		    "zyx"	"Rz Ry Rx"
-		}
-		range	{ 0 1 }
-		export	none
-	    }
-	    parm {
-		name	"node_ref_transform_trans"
-		label	"Translate"
-		type	float
-		size	3
-		default	{ "0" "0" "0" }
-		help	"The reference object's world transform, when the reference space is set to reference object(Node). If this parameter is missing, world space is used"
-		range	{ 0 10 }
-		export	none
-	    }
-	    parm {
-		name	"node_ref_transform_rot"
-		label	"Rotate"
-		type	angle
-		size	3
-		default	{ "0" "0" "0" }
-		help	"The reference object's world transform, when the reference space is set to reference object(Node). If this parameter is missing, world space is used"
-		range	{ 0 10 }
-		export	none
-	    }
-	    parm {
-		name	"node_ref_transform_scale"
-		label	"Scale"
-		type	float
-		size	3
-		default	{ "1" "1" "1" }
-		help	"The reference object's world transform, when the reference space is set to reference object(Node). If this parameter is missing, world space is used"
-		range	{ 0 10 }
-		export	none
-	    }
-	    parm {
-		name	"node_ref_transform_pivot"
-		label	"Pivot"
-		type	float
-		size	3
-		default	{ "0" "0" "0" }
-		help	"The reference object's world transform, when the reference space is set to reference object(Node). If this parameter is missing, world space is used"
-		range	{ 0 10 }
-		export	none
-	    }
-	}
-
     }
 
 }

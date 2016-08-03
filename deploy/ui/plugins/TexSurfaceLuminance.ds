@@ -1,63 +1,57 @@
 {
     name	parameters
-    group {
-	name	"TexSurfaceLuminance"
+    parm {
+	name	"plugindata"
 	label	"Surface Luminance"
-
-	parm {
-	    name	"plugindata"
-	    label	"Surface Luminance"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    help	"TexSurfaceLuminance"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexSurfaceLuminance" }
-	    parmtag	{ "vray_type" "TEXTURE" }
-	}
-	parm {
-	    name	"luminance_mode"
-	    label	"Luminance Mode"
-	    type	ordinal
-	    default	{ "1" }
-	    help	"0: no luminance, 1: direct light, 2: diffuse light, 3: direct+diffuse light"
-	    menu	{
-		"0"	"No luminance"
-		"1"	"Direct light"
-		"2"	"Diffuse light"
-		"3"	"Direct+diffuse light"
-	    }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexSurfaceLuminance" }
-	    parmtag	{ "vray_pluginattr" "luminance_mode" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"samples"
-	    label	"Samples"
-	    type	integer
-	    default	{ "0" }
-	    help	"Samples for diffuse lighting"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexSurfaceLuminance" }
-	    parmtag	{ "vray_pluginattr" "samples" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"contribute_to_gi"
-	    label	"Contribute To Gi"
-	    type	toggle
-	    default	{ "0" }
-	    help	"If true, the direct light will contribute to the GI calculations. This have visual effect only if the texture is used for diffuse calculation"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexSurfaceLuminance" }
-	    parmtag	{ "vray_pluginattr" "contribute_to_gi" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	help	"TexSurfaceLuminance"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexSurfaceLuminance" }
+	parmtag	{ "vray_type" "TEXTURE" }
     }
-
+    parm {
+	name	"luminance_mode"
+	label	"Luminance Mode"
+	type	ordinal
+	default	{ "1" }
+	help	"0: no luminance, 1: direct light, 2: diffuse light, 3: direct+diffuse light"
+	menu	{
+	    "0"	"No luminance"
+	    "1"	"Direct light"
+	    "2"	"Diffuse light"
+	    "3"	"Direct+diffuse light"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexSurfaceLuminance" }
+	parmtag	{ "vray_pluginattr" "luminance_mode" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"samples"
+	label	"Samples"
+	type	integer
+	default	{ "0" }
+	help	"Samples for diffuse lighting"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexSurfaceLuminance" }
+	parmtag	{ "vray_pluginattr" "samples" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"contribute_to_gi"
+	label	"Contribute To Gi"
+	type	toggle
+	default	{ "0" }
+	help	"If true, the direct light will contribute to the GI calculations. This have visual effect only if the texture is used for diffuse calculation"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexSurfaceLuminance" }
+	parmtag	{ "vray_pluginattr" "contribute_to_gi" }
+	parmtag	{ "vray_type" "boolean" }
+    }
 }

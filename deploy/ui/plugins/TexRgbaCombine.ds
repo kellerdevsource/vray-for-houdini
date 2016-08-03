@@ -1,69 +1,63 @@
 {
     name	parameters
-    group {
-	name	"TexRgbaCombine"
+    parm {
+	name	"plugindata"
 	label	"RGBA Combine"
-
-	parm {
-	    name	"plugindata"
-	    label	"RGBA Combine"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    help	"Color combine"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexRgbaCombine" }
-	    parmtag	{ "vray_type" "TEXTURE" }
-	}
-	parm {
-	    name	"red"
-	    label	"Red"
-	    type	float
-	    default	{ "1" }
-	    help	"Red channel"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexRgbaCombine" }
-	    parmtag	{ "vray_pluginattr" "red" }
-	    parmtag	{ "vray_type" "TextureFloat" }
-	}
-	parm {
-	    name	"green"
-	    label	"Green"
-	    type	float
-	    default	{ "1" }
-	    help	"Green channel"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexRgbaCombine" }
-	    parmtag	{ "vray_pluginattr" "green" }
-	    parmtag	{ "vray_type" "TextureFloat" }
-	}
-	parm {
-	    name	"blue"
-	    label	"Blue"
-	    type	float
-	    default	{ "1" }
-	    help	"Blue channel"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexRgbaCombine" }
-	    parmtag	{ "vray_pluginattr" "blue" }
-	    parmtag	{ "vray_type" "TextureFloat" }
-	}
-	parm {
-	    name	"alpha"
-	    label	"Alpha"
-	    type	float
-	    default	{ "1" }
-	    help	"Alpha channel"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexRgbaCombine" }
-	    parmtag	{ "vray_pluginattr" "alpha" }
-	    parmtag	{ "vray_type" "TextureFloat" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	help	"Color combine"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexRgbaCombine" }
+	parmtag	{ "vray_type" "TEXTURE" }
     }
-
+    parm {
+	name	"red"
+	label	"Red"
+	type	float
+	default	{ "1" }
+	help	"Red channel"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexRgbaCombine" }
+	parmtag	{ "vray_pluginattr" "red" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"green"
+	label	"Green"
+	type	float
+	default	{ "1" }
+	help	"Green channel"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexRgbaCombine" }
+	parmtag	{ "vray_pluginattr" "green" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"blue"
+	label	"Blue"
+	type	float
+	default	{ "1" }
+	help	"Blue channel"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexRgbaCombine" }
+	parmtag	{ "vray_pluginattr" "blue" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"alpha"
+	label	"Alpha"
+	type	float
+	default	{ "1" }
+	help	"Alpha channel"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexRgbaCombine" }
+	parmtag	{ "vray_pluginattr" "alpha" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
 }

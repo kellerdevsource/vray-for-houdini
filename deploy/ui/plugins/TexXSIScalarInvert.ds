@@ -1,33 +1,27 @@
 {
     name	parameters
-    group {
-	name	"TexXSIScalarInvert"
+    parm {
+	name	"plugindata"
 	label	"XSI Scalar Invert"
-
-	parm {
-	    name	"plugindata"
-	    label	"XSI Scalar Invert"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    help	"TexXSIScalarInvert"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexXSIScalarInvert" }
-	    parmtag	{ "vray_type" "TEXTURE" }
-	}
-	parm {
-	    name	"input"
-	    label	"Input"
-	    type	float
-	    default	{ "0" }
-	    help	"Specifies the input value to be inverted"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexXSIScalarInvert" }
-	    parmtag	{ "vray_pluginattr" "input" }
-	    parmtag	{ "vray_type" "TextureFloat" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	help	"TexXSIScalarInvert"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexXSIScalarInvert" }
+	parmtag	{ "vray_type" "TEXTURE" }
     }
-
+    parm {
+	name	"input"
+	label	"Input"
+	type	float
+	default	{ "0" }
+	help	"Specifies the input value to be inverted"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexXSIScalarInvert" }
+	parmtag	{ "vray_pluginattr" "input" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
 }

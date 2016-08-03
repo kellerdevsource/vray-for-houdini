@@ -1,57 +1,51 @@
 {
     name	parameters
-    group {
-	name	"TexIDIntegerMap"
+    parm {
+	name	"plugindata"
 	label	"ID Integer Map"
-
-	parm {
-	    name	"plugindata"
-	    label	"ID Integer Map"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    help	"TexIDIntegerMap"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexIDIntegerMap" }
-	    parmtag	{ "vray_type" "TEXTURE" }
-	}
-	parm {
-	    name	"id_tex"
-	    label	"Id Tex"
-	    type	integer
-	    default	{ "0" }
-	    help	"This texture will suply the IDs"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexIDIntegerMap" }
-	    parmtag	{ "vray_pluginattr" "id_tex" }
-	    parmtag	{ "vray_type" "TextureInt" }
-	}
-	parm {
-	    name	"default"
-	    label	"Default"
-	    type	integer
-	    default	{ "0" }
-	    help	"Default value. Returned when no matching id is found"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexIDIntegerMap" }
-	    parmtag	{ "vray_pluginattr" "default" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"nsamples"
-	    label	"Nsamples"
-	    type	integer
-	    default	{ "0" }
-	    help	"The number of samples of the underlying geometry plugin. If not supplied, global nsamples will be used"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexIDIntegerMap" }
-	    parmtag	{ "vray_pluginattr" "nsamples" }
-	    parmtag	{ "vray_type" "int" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	help	"TexIDIntegerMap"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexIDIntegerMap" }
+	parmtag	{ "vray_type" "TEXTURE" }
     }
-
+    parm {
+	name	"id_tex"
+	label	"Id Tex"
+	type	integer
+	default	{ "0" }
+	help	"This texture will suply the IDs"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexIDIntegerMap" }
+	parmtag	{ "vray_pluginattr" "id_tex" }
+	parmtag	{ "vray_type" "TextureInt" }
+    }
+    parm {
+	name	"default"
+	label	"Default"
+	type	integer
+	default	{ "0" }
+	help	"Default value. Returned when no matching id is found"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexIDIntegerMap" }
+	parmtag	{ "vray_pluginattr" "default" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"nsamples"
+	label	"Nsamples"
+	type	integer
+	default	{ "0" }
+	help	"The number of samples of the underlying geometry plugin. If not supplied, global nsamples will be used"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexIDIntegerMap" }
+	parmtag	{ "vray_pluginattr" "nsamples" }
+	parmtag	{ "vray_type" "int" }
+    }
 }

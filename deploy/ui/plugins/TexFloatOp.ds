@@ -1,83 +1,77 @@
 {
     name	parameters
-    group {
-	name	"TexFloatOp"
+    parm {
+	name	"plugindata"
 	label	"Float Operations"
-
-	parm {
-	    name	"plugindata"
-	    label	"Float Operations"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    help	"Float operations"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_category" "utility" }
-	    parmtag	{ "vray_plugin" "TexFloatOp" }
-	    parmtag	{ "vray_type" "TEXTURE" }
-	}
-	parm {
-	    name	"float_a"
-	    label	"A"
-	    type	float
-	    default	{ "1" }
-	    help	"Float operand A"
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexFloatOp" }
-	    parmtag	{ "vray_pluginattr" "float_a" }
-	    parmtag	{ "vray_type" "TextureFloat" }
-	}
-	parm {
-	    name	"float_b"
-	    label	"B"
-	    type	float
-	    default	{ "1" }
-	    help	"Float operand B"
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexFloatOp" }
-	    parmtag	{ "vray_pluginattr" "float_b" }
-	    parmtag	{ "vray_type" "TextureFloat" }
-	}
-	parm {
-	    name	"mode"
-	    label	"Mode"
-	    type	ordinal
-	    default	{ "2" }
-	    help	"Determines what output to use when no output parameter is specified. Useful if the type of the operation needs to be animatable"
-	    menu	{
-		"0"	"Product"
-		"1"	"Ratio"
-		"2"	"Sum"
-		"3"	"Difference"
-		"4"	"Power"
-		"5"	"Sin"
-		"6"	"Cos"
-		"7"	"Min"
-		"8"	"Max"
-		"9"	"abs"
-		"10"	"ceil"
-		"11"	"exp"
-		"12"	"floor"
-		"13"	"log"
-		"14"	"log10"
-		"15"	"sqrt"
-		"16"	"fmod"
-		"17"	"average"
-		"18"	"tan"
-		"19"	"asin"
-		"20"	"acos"
-		"21"	"atan"
-		"22"	"atan2"
-	    }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexFloatOp" }
-	    parmtag	{ "vray_pluginattr" "mode" }
-	    parmtag	{ "vray_type" "int" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	help	"Float operations"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_category" "utility" }
+	parmtag	{ "vray_plugin" "TexFloatOp" }
+	parmtag	{ "vray_type" "TEXTURE" }
     }
-
+    parm {
+	name	"float_a"
+	label	"A"
+	type	float
+	default	{ "1" }
+	help	"Float operand A"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "vray_plugin" "TexFloatOp" }
+	parmtag	{ "vray_pluginattr" "float_a" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"float_b"
+	label	"B"
+	type	float
+	default	{ "1" }
+	help	"Float operand B"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "vray_plugin" "TexFloatOp" }
+	parmtag	{ "vray_pluginattr" "float_b" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"mode"
+	label	"Mode"
+	type	ordinal
+	default	{ "2" }
+	help	"Determines what output to use when no output parameter is specified. Useful if the type of the operation needs to be animatable"
+	menu	{
+	    "0"	"Product"
+	    "1"	"Ratio"
+	    "2"	"Sum"
+	    "3"	"Difference"
+	    "4"	"Power"
+	    "5"	"Sin"
+	    "6"	"Cos"
+	    "7"	"Min"
+	    "8"	"Max"
+	    "9"	"abs"
+	    "10"	"ceil"
+	    "11"	"exp"
+	    "12"	"floor"
+	    "13"	"log"
+	    "14"	"log10"
+	    "15"	"sqrt"
+	    "16"	"fmod"
+	    "17"	"average"
+	    "18"	"tan"
+	    "19"	"asin"
+	    "20"	"acos"
+	    "21"	"atan"
+	    "22"	"atan2"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexFloatOp" }
+	parmtag	{ "vray_pluginattr" "mode" }
+	parmtag	{ "vray_type" "int" }
+    }
 }

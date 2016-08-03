@@ -1,65 +1,59 @@
 {
     name	parameters
-    group {
-	name	"MayaMultiplyDivide"
+    parm {
+	name	"plugindata"
 	label	"Maya Multiply Divide"
-
-	parm {
-	    name	"plugindata"
-	    label	"Maya Multiply Divide"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    help	"MayaMultiplyDivide"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_category" "utility" }
-	    parmtag	{ "vray_plugin" "MayaMultiplyDivide" }
-	    parmtag	{ "vray_type" "TEXTURE" }
-	}
-	parm {
-	    name	"color1"
-	    label	"Color1"
-	    type	color4
-	    size	4
-	    default	{ "0" "0" "0" "0" }
-	    help	"First color"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MayaMultiplyDivide" }
-	    parmtag	{ "vray_pluginattr" "color1" }
-	    parmtag	{ "vray_type" "Texture" }
-	}
-	parm {
-	    name	"color2"
-	    label	"Color2"
-	    type	color4
-	    size	4
-	    default	{ "0" "0" "0" "0" }
-	    help	"Second color"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MayaMultiplyDivide" }
-	    parmtag	{ "vray_pluginattr" "color2" }
-	    parmtag	{ "vray_type" "Texture" }
-	}
-	parm {
-	    name	"operation"
-	    label	"Operation"
-	    type	ordinal
-	    default	{ "0" }
-	    help	"Operation (1 - multiply, 2 - divide, 3 - power)"
-	    menu	{
-		"1"	"Multiply"
-		"2"	"Divide"
-		"3"	"Power"
-	    }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MayaMultiplyDivide" }
-	    parmtag	{ "vray_pluginattr" "operation" }
-	    parmtag	{ "vray_type" "int" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	help	"MayaMultiplyDivide"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_category" "utility" }
+	parmtag	{ "vray_plugin" "MayaMultiplyDivide" }
+	parmtag	{ "vray_type" "TEXTURE" }
     }
-
+    parm {
+	name	"color1"
+	label	"Color1"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "0" }
+	help	"First color"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "MayaMultiplyDivide" }
+	parmtag	{ "vray_pluginattr" "color1" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"color2"
+	label	"Color2"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "0" }
+	help	"Second color"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "MayaMultiplyDivide" }
+	parmtag	{ "vray_pluginattr" "color2" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"operation"
+	label	"Operation"
+	type	ordinal
+	default	{ "0" }
+	help	"Operation (1 - multiply, 2 - divide, 3 - power)"
+	menu	{
+	    "1"	"Multiply"
+	    "2"	"Divide"
+	    "3"	"Power"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "MayaMultiplyDivide" }
+	parmtag	{ "vray_pluginattr" "operation" }
+	parmtag	{ "vray_type" "int" }
+    }
 }

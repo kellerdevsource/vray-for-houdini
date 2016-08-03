@@ -1,58 +1,52 @@
 {
     name	parameters
-    group {
-	name	"TexSwitch"
+    parm {
+	name	"plugindata"
 	label	"Switch"
-
-	parm {
-	    name	"plugindata"
-	    label	"Switch"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    help	"TexSwitch"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_category" "utility" }
-	    parmtag	{ "vray_plugin" "TexSwitch" }
-	    parmtag	{ "vray_type" "TEXTURE" }
-	}
-	parm {
-	    name	"nodes"
-	    label	"Nodes"
-	    type	oplist
-	    default	{ "" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "TexSwitch" }
-	    parmtag	{ "vray_pluginattr" "nodes" }
-	    parmtag	{ "vray_type" "List<Object>" }
-	}
-	parm {
-	    name	"textures"
-	    label	"Textures"
-	    type	oplist
-	    default	{ "" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "TexSwitch" }
-	    parmtag	{ "vray_pluginattr" "textures" }
-	    parmtag	{ "vray_type" "List<Object>" }
-	}
-	parm {
-	    name	"default_texture"
-	    label	"Default Texture"
-	    type	color4
-	    size	4
-	    default	{ "0" "0" "0" "0" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexSwitch" }
-	    parmtag	{ "vray_pluginattr" "default_texture" }
-	    parmtag	{ "vray_type" "Texture" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	help	"TexSwitch"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_category" "utility" }
+	parmtag	{ "vray_plugin" "TexSwitch" }
+	parmtag	{ "vray_type" "TEXTURE" }
     }
-
+    parm {
+	name	"nodes"
+	label	"Nodes"
+	type	oplist
+	default	{ "" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "oprelative" "." }
+	parmtag	{ "vray_plugin" "TexSwitch" }
+	parmtag	{ "vray_pluginattr" "nodes" }
+	parmtag	{ "vray_type" "List<Object>" }
+    }
+    parm {
+	name	"textures"
+	label	"Textures"
+	type	oplist
+	default	{ "" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "oprelative" "." }
+	parmtag	{ "vray_plugin" "TexSwitch" }
+	parmtag	{ "vray_pluginattr" "textures" }
+	parmtag	{ "vray_type" "List<Object>" }
+    }
+    parm {
+	name	"default_texture"
+	label	"Default Texture"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexSwitch" }
+	parmtag	{ "vray_pluginattr" "default_texture" }
+	parmtag	{ "vray_type" "Texture" }
+    }
 }

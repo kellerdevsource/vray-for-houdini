@@ -1,117 +1,111 @@
 {
     name	parameters
-    group {
-	name	"CameraFilmTransform"
+    parm {
+	name	"plugindata"
 	label	"Camera Film Transform"
-
-	parm {
-	    name	"plugindata"
-	    label	"Camera Film Transform"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    help	"CameraFilmTransform"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "CameraFilmTransform" }
-	    parmtag	{ "vray_type" "CAMERA" }
-	}
-	parm {
-	    name	"prescale"
-	    label	"Prescale"
-	    type	float
-	    default	{ "1" }
-	    help	"The prescale that will be applied to the camera"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "CameraFilmTransform" }
-	    parmtag	{ "vray_pluginattr" "prescale" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"postscale"
-	    label	"Postscale"
-	    type	float
-	    default	{ "1" }
-	    help	"The postScale that will be applied to the camera"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "CameraFilmTransform" }
-	    parmtag	{ "vray_pluginattr" "postscale" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"transx"
-	    label	"Transx"
-	    type	float
-	    default	{ "0" }
-	    help	"The normalized translation along x axis that will be applied to the camera"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "CameraFilmTransform" }
-	    parmtag	{ "vray_pluginattr" "transx" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"transy"
-	    label	"Transy"
-	    type	float
-	    default	{ "0" }
-	    help	"The normalized translation along y axis that will be applied to the camera"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "CameraFilmTransform" }
-	    parmtag	{ "vray_pluginattr" "transy" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"pivotx"
-	    label	"Pivotx"
-	    type	float
-	    default	{ "0" }
-	    help	"The rotation pivot y coordinate"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "CameraFilmTransform" }
-	    parmtag	{ "vray_pluginattr" "pivotx" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"pivoty"
-	    label	"Pivoty"
-	    type	float
-	    default	{ "0" }
-	    help	"The rotation pivot x coordinate"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "CameraFilmTransform" }
-	    parmtag	{ "vray_pluginattr" "pivoty" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"rotation"
-	    label	"Rotation"
-	    type	float
-	    default	{ "0" }
-	    help	"The rotation around the pivot that will be applied to the camera"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "CameraFilmTransform" }
-	    parmtag	{ "vray_pluginattr" "rotation" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"rot_before_trans"
-	    label	"Rot Before Trans"
-	    type	toggle
-	    default	{ "1" }
-	    help	"If true, the rotation will be applied before the translation"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "CameraFilmTransform" }
-	    parmtag	{ "vray_pluginattr" "rot_before_trans" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	help	"CameraFilmTransform"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "CameraFilmTransform" }
+	parmtag	{ "vray_type" "CAMERA" }
     }
-
+    parm {
+	name	"prescale"
+	label	"Prescale"
+	type	float
+	default	{ "1" }
+	help	"The prescale that will be applied to the camera"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "CameraFilmTransform" }
+	parmtag	{ "vray_pluginattr" "prescale" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"postscale"
+	label	"Postscale"
+	type	float
+	default	{ "1" }
+	help	"The postScale that will be applied to the camera"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "CameraFilmTransform" }
+	parmtag	{ "vray_pluginattr" "postscale" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"transx"
+	label	"Transx"
+	type	float
+	default	{ "0" }
+	help	"The normalized translation along x axis that will be applied to the camera"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "CameraFilmTransform" }
+	parmtag	{ "vray_pluginattr" "transx" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"transy"
+	label	"Transy"
+	type	float
+	default	{ "0" }
+	help	"The normalized translation along y axis that will be applied to the camera"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "CameraFilmTransform" }
+	parmtag	{ "vray_pluginattr" "transy" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"pivotx"
+	label	"Pivotx"
+	type	float
+	default	{ "0" }
+	help	"The rotation pivot y coordinate"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "CameraFilmTransform" }
+	parmtag	{ "vray_pluginattr" "pivotx" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"pivoty"
+	label	"Pivoty"
+	type	float
+	default	{ "0" }
+	help	"The rotation pivot x coordinate"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "CameraFilmTransform" }
+	parmtag	{ "vray_pluginattr" "pivoty" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"rotation"
+	label	"Rotation"
+	type	float
+	default	{ "0" }
+	help	"The rotation around the pivot that will be applied to the camera"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "CameraFilmTransform" }
+	parmtag	{ "vray_pluginattr" "rotation" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"rot_before_trans"
+	label	"Rot Before Trans"
+	type	toggle
+	default	{ "1" }
+	help	"If true, the rotation will be applied before the translation"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "CameraFilmTransform" }
+	parmtag	{ "vray_pluginattr" "rot_before_trans" }
+	parmtag	{ "vray_type" "boolean" }
+    }
 }

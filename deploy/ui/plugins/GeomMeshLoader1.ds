@@ -1,81 +1,75 @@
 {
     name	parameters
-    group {
-	name	"GeomMeshLoader1"
+    parm {
+	name	"plugindata"
 	label	"Geom Mesh Loader 1"
-
-	parm {
-	    name	"plugindata"
-	    label	"Geom Mesh Loader 1"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    help	"GeomMeshLoader1"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomMeshLoader1" }
-	    parmtag	{ "vray_type" "GEOMETRY" }
-	}
-	parm {
-	    name	"sphere_size"
-	    label	"Sphere Size"
-	    type	float
-	    default	{ "3" }
-	    help	"Sphere size"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomMeshLoader1" }
-	    parmtag	{ "vray_pluginattr" "sphere_size" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"sphere_segments"
-	    label	"Sphere Segments"
-	    type	integer
-	    default	{ "10" }
-	    help	"Sphere segments"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomMeshLoader1" }
-	    parmtag	{ "vray_pluginattr" "sphere_segments" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"num_spheres"
-	    label	"Num Spheres"
-	    type	integer
-	    default	{ "100" }
-	    help	"Number of spheres"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomMeshLoader1" }
-	    parmtag	{ "vray_pluginattr" "num_spheres" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"bbox_size"
-	    label	"Bbox Size"
-	    type	float
-	    default	{ "30" }
-	    help	"Box size to fill with spheres"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomMeshLoader1" }
-	    parmtag	{ "vray_pluginattr" "bbox_size" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"use_displacement"
-	    label	"Use Displacement"
-	    type	toggle
-	    default	{ "0" }
-	    help	"true to enable noise displacement texture"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomMeshLoader1" }
-	    parmtag	{ "vray_pluginattr" "use_displacement" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	help	"GeomMeshLoader1"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomMeshLoader1" }
+	parmtag	{ "vray_type" "GEOMETRY" }
     }
-
+    parm {
+	name	"sphere_size"
+	label	"Sphere Size"
+	type	float
+	default	{ "3" }
+	help	"Sphere size"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomMeshLoader1" }
+	parmtag	{ "vray_pluginattr" "sphere_size" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"sphere_segments"
+	label	"Sphere Segments"
+	type	integer
+	default	{ "10" }
+	help	"Sphere segments"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomMeshLoader1" }
+	parmtag	{ "vray_pluginattr" "sphere_segments" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"num_spheres"
+	label	"Num Spheres"
+	type	integer
+	default	{ "100" }
+	help	"Number of spheres"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomMeshLoader1" }
+	parmtag	{ "vray_pluginattr" "num_spheres" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"bbox_size"
+	label	"Bbox Size"
+	type	float
+	default	{ "30" }
+	help	"Box size to fill with spheres"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomMeshLoader1" }
+	parmtag	{ "vray_pluginattr" "bbox_size" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"use_displacement"
+	label	"Use Displacement"
+	type	toggle
+	default	{ "0" }
+	help	"true to enable noise displacement texture"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomMeshLoader1" }
+	parmtag	{ "vray_pluginattr" "use_displacement" }
+	parmtag	{ "vray_type" "boolean" }
+    }
 }

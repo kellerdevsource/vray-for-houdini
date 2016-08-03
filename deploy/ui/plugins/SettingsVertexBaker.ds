@@ -1,65 +1,59 @@
 {
     name	parameters
-    group {
-	name	"SettingsVertexBaker"
+    parm {
+	name	"plugindata"
 	label	"SettingsVertexBaker"
-
-	parm {
-	    name	"plugindata"
-	    label	"SettingsVertexBaker"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "SettingsVertexBaker" }
-	    parmtag	{ "vray_type" "SETTINGS" }
-	}
-	parm {
-	    name	"objects"
-	    label	"Objects"
-	    type	oplist
-	    default	{ "" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "SettingsVertexBaker" }
-	    parmtag	{ "vray_pluginattr" "objects" }
-	    parmtag	{ "vray_type" "List<Object>" }
-	}
-	parm {
-	    name	"color_set_name"
-	    label	"Color Set Name"
-	    type	string
-	    default	{ "(null)" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "SettingsVertexBaker" }
-	    parmtag	{ "vray_pluginattr" "color_set_name" }
-	    parmtag	{ "vray_type" "String" }
-	}
-	parm {
-	    name	"bake_rgb_color"
-	    label	"Bake Rgb Color"
-	    type	integer
-	    default	{ "1" }
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "vray_plugin" "SettingsVertexBaker" }
-	    parmtag	{ "vray_pluginattr" "bake_rgb_color" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"bake_alpha"
-	    label	"Bake Alpha"
-	    type	integer
-	    default	{ "1" }
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "vray_plugin" "SettingsVertexBaker" }
-	    parmtag	{ "vray_pluginattr" "bake_alpha" }
-	    parmtag	{ "vray_type" "int" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "SettingsVertexBaker" }
+	parmtag	{ "vray_type" "SETTINGS" }
     }
-
+    parm {
+	name	"objects"
+	label	"Objects"
+	type	oplist
+	default	{ "" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "oprelative" "." }
+	parmtag	{ "vray_plugin" "SettingsVertexBaker" }
+	parmtag	{ "vray_pluginattr" "objects" }
+	parmtag	{ "vray_type" "List<Object>" }
+    }
+    parm {
+	name	"color_set_name"
+	label	"Color Set Name"
+	type	string
+	default	{ "(null)" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "SettingsVertexBaker" }
+	parmtag	{ "vray_pluginattr" "color_set_name" }
+	parmtag	{ "vray_type" "String" }
+    }
+    parm {
+	name	"bake_rgb_color"
+	label	"Bake Rgb Color"
+	type	integer
+	default	{ "1" }
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "vray_plugin" "SettingsVertexBaker" }
+	parmtag	{ "vray_pluginattr" "bake_rgb_color" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"bake_alpha"
+	label	"Bake Alpha"
+	type	integer
+	default	{ "1" }
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "vray_plugin" "SettingsVertexBaker" }
+	parmtag	{ "vray_pluginattr" "bake_alpha" }
+	parmtag	{ "vray_type" "int" }
+    }
 }

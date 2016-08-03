@@ -1,32 +1,26 @@
 {
     name	parameters
-    group {
-	name	"CameraDefault"
+    parm {
+	name	"plugindata"
 	label	"Camera Default"
-
-	parm {
-	    name	"plugindata"
-	    label	"Camera Default"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    help	"CameraDefault"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "CameraDefault" }
-	    parmtag	{ "vray_type" "CAMERA" }
-	}
-	parm {
-	    name	"orthographic"
-	    label	"Orthographic"
-	    type	toggle
-	    default	{ "0" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "CameraDefault" }
-	    parmtag	{ "vray_pluginattr" "orthographic" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	help	"CameraDefault"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "CameraDefault" }
+	parmtag	{ "vray_type" "CAMERA" }
     }
-
+    parm {
+	name	"orthographic"
+	label	"Orthographic"
+	type	toggle
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "CameraDefault" }
+	parmtag	{ "vray_pluginattr" "orthographic" }
+	parmtag	{ "vray_type" "boolean" }
+    }
 }

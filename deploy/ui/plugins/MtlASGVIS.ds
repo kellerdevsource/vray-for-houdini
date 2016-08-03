@@ -1,586 +1,580 @@
 {
     name	parameters
-    group {
-	name	"MtlASGVIS"
+    parm {
+	name	"plugindata"
 	label	"Mtl ASGVIS"
-
-	parm {
-	    name	"plugindata"
-	    label	"Mtl ASGVIS"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    help	"MtlASGVIS"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlASGVIS" }
-	    parmtag	{ "vray_type" "MATERIAL" }
-	}
-	parm {
-	    name	"brdfs"
-	    label	"Brdfs"
-	    type	oplist
-	    default	{ "" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "MtlASGVIS" }
-	    parmtag	{ "vray_pluginattr" "brdfs" }
-	    parmtag	{ "vray_type" "List<Object>" }
-	}
-	parm {
-	    name	"double_sided"
-	    label	"Double Sided"
-	    type	toggle
-	    default	{ "1" }
-	    help	"1 to make the material double-sided"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlASGVIS" }
-	    parmtag	{ "vray_pluginattr" "double_sided" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"disable_volume_fog"
-	    label	"Disable Volume Fog"
-	    type	toggle
-	    default	{ "0" }
-	    help	"Set this flag to disable any volumetric effects that sub-brdfs might need"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlASGVIS" }
-	    parmtag	{ "vray_pluginattr" "disable_volume_fog" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"bump_on"
-	    label	"Bump On"
-	    type	toggle
-	    default	{ "0" }
-	    help	"true if we want to turn on bump mapping"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlASGVIS" }
-	    parmtag	{ "vray_pluginattr" "bump_on" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"bump_tex"
-	    label	"Bump Tex"
-	    type	oppath
-	    default	{ "" }
-	    help	"Bump texture, can be float or color"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "MtlASGVIS" }
-	    parmtag	{ "vray_pluginattr" "bump_tex" }
-	    parmtag	{ "vray_type" "Object" }
-	}
-	parm {
-	    name	"bump_tex_mult"
-	    label	"Bump Tex Mult"
-	    type	float
-	    default	{ "1" }
-	    help	"Bump amount"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlASGVIS" }
-	    parmtag	{ "vray_pluginattr" "bump_tex_mult" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"bump_shadows"
-	    label	"Bump Shadows"
-	    type	toggle
-	    default	{ "0" }
-	    help	"true to offset the surface shading point, in addition to the normal"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlASGVIS" }
-	    parmtag	{ "vray_pluginattr" "bump_shadows" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"bump_tex_mult_tex"
-	    label	"Bump Tex Mult Tex"
-	    type	float
-	    default	{ "0" }
-	    help	"Bump amount texture"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlASGVIS" }
-	    parmtag	{ "vray_pluginattr" "bump_tex_mult_tex" }
-	    parmtag	{ "vray_type" "TextureFloat" }
-	}
-	parm {
-	    name	"bump_delta_scale"
-	    label	"Bump Delta Scale"
-	    type	float
-	    default	{ "1" }
-	    help	"Scale for sampling the bitmap when map_type is 0. Normally this is tied to the ray differentials, but can be changed if necessary"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlASGVIS" }
-	    parmtag	{ "vray_pluginattr" "bump_delta_scale" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"map_type"
-	    label	"Map Type"
-	    type	integer
-	    default	{ "0" }
-	    help	"The type of the map (0 - from regular texture output, 1 - normal map in tangent space, 2 - normal map in object space, 3 - normal map in camera space, 4 - normal map in world space, 5 - from texture bump output, 6 - explicit normal)"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlASGVIS" }
-	    parmtag	{ "vray_pluginattr" "map_type" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"normal_uvwgen"
-	    label	"Normal Uvwgen"
-	    type	oppath
-	    default	{ "" }
-	    help	"The uvw generator for the normal map texture when map_type is 1"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "MtlASGVIS" }
-	    parmtag	{ "vray_pluginattr" "normal_uvwgen" }
-	    parmtag	{ "vray_type" "Object" }
-	}
-	parm {
-	    name	"compute_bump_for_shadows"
-	    label	"Compute Bump For Shadows"
-	    type	toggle
-	    default	{ "1" }
-	    help	"true to compute bump mapping for shadow rays in case the material is transparent; false to skip the bump map for shadow rays (faster rendering)"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlASGVIS" }
-	    parmtag	{ "vray_pluginattr" "compute_bump_for_shadows" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"alpha_tex"
-	    label	"Alpha Tex"
-	    type	color4
-	    size	4
-	    default	{ "0" "0" "0" "0" }
-	    help	"a float or color texture to be used to determine contribution multiplier"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlASGVIS" }
-	    parmtag	{ "vray_pluginattr" "alpha_tex" }
-	    parmtag	{ "vray_type" "Texture" }
-	}
-	parm {
-	    name	"alpha_tex_mult"
-	    label	"Alpha Tex Mult"
-	    type	float
-	    default	{ "1" }
-	    help	"multiplier to be applied to alpha texture, if present"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlASGVIS" }
-	    parmtag	{ "vray_pluginattr" "alpha_tex_mult" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"alpha"
-	    label	"Alpha"
-	    type	float
-	    default	{ "1" }
-	    help	"the alpha multiplier to be used if no texture is provided"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlASGVIS" }
-	    parmtag	{ "vray_pluginattr" "alpha" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"displace_on"
-	    label	"Displace On"
-	    type	toggle
-	    default	{ "0" }
-	    help	"true if we want displacement turned on"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlASGVIS" }
-	    parmtag	{ "vray_pluginattr" "displace_on" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"displace_tex"
-	    label	"Displace Tex"
-	    type	oppath
-	    default	{ "" }
-	    help	"displacement texture, can be float or color"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "MtlASGVIS" }
-	    parmtag	{ "vray_pluginattr" "displace_tex" }
-	    parmtag	{ "vray_type" "Object" }
-	}
-	parm {
-	    name	"displace_tex_mult"
-	    label	"Displace Tex Mult"
-	    type	float
-	    default	{ "1" }
-	    help	"displacement multiplier ( displace amount )"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlASGVIS" }
-	    parmtag	{ "vray_pluginattr" "displace_tex_mult" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"displace_shift"
-	    label	"Displace Shift"
-	    type	float
-	    default	{ "0" }
-	    help	"a constant value added to the displacement"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlASGVIS" }
-	    parmtag	{ "vray_pluginattr" "displace_shift" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"displace_water_level"
-	    label	"Displace Water Level"
-	    type	float
-	    default	{ "1e+30" }
-	    help	"A cutoff point for displacement - can be used for a clipping effect"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlASGVIS" }
-	    parmtag	{ "vray_pluginattr" "displace_water_level" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"displace_view_dependent"
-	    label	"Displace View Dependent"
-	    type	toggle
-	    default	{ "1" }
-	    help	"Whether or not to use view-dependant tesselation"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlASGVIS" }
-	    parmtag	{ "vray_pluginattr" "displace_view_dependent" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"displace_use_globals"
-	    label	"Displace Use Globals"
-	    type	toggle
-	    default	{ "1" }
-	    help	"Whether to use the global settings for our displacement"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlASGVIS" }
-	    parmtag	{ "vray_pluginattr" "displace_use_globals" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"displace_max_subdivs"
-	    label	"Displace Max Subdivs"
-	    type	integer
-	    default	{ "256" }
-	    help	"The maximum number of subdivisions to use"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlASGVIS" }
-	    parmtag	{ "vray_pluginattr" "displace_max_subdivs" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"displace_edge_length"
-	    label	"Displace Edge Length"
-	    type	float
-	    default	{ "4" }
-	    help	"The approximate edge length"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlASGVIS" }
-	    parmtag	{ "vray_pluginattr" "displace_edge_length" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"displace_continuity"
-	    label	"Displace Continuity"
-	    type	toggle
-	    default	{ "1" }
-	    help	"enable continuity feature of displacement"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlASGVIS" }
-	    parmtag	{ "vray_pluginattr" "displace_continuity" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"override_gi"
-	    label	"Override Gi"
-	    type	toggle
-	    default	{ "0" }
-	    help	"whether the global gi environment should be overridden"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlASGVIS" }
-	    parmtag	{ "vray_pluginattr" "override_gi" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"gi_color"
-	    label	"Gi Color"
-	    type	color
-	    size	3
-	    default	{ "0" "0" "0" }
-	    help	"the gi color"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlASGVIS" }
-	    parmtag	{ "vray_pluginattr" "gi_color" }
-	    parmtag	{ "vray_type" "Color" }
-	}
-	parm {
-	    name	"gi_tex"
-	    label	"Gi Tex"
-	    type	oppath
-	    default	{ "" }
-	    help	"the texture to use for the gi environment"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "MtlASGVIS" }
-	    parmtag	{ "vray_pluginattr" "gi_tex" }
-	    parmtag	{ "vray_type" "Object" }
-	}
-	parm {
-	    name	"gi_tex_mult"
-	    label	"Gi Tex Mult"
-	    type	float
-	    default	{ "1" }
-	    help	"the multiplier for the gi environment texture"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlASGVIS" }
-	    parmtag	{ "vray_pluginattr" "gi_tex_mult" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"override_bg"
-	    label	"Override Bg"
-	    type	toggle
-	    default	{ "0" }
-	    help	"whether the global bg environment should be overridden"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlASGVIS" }
-	    parmtag	{ "vray_pluginattr" "override_bg" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"bg_color"
-	    label	"Bg Color"
-	    type	color
-	    size	3
-	    default	{ "0" "0" "0" }
-	    help	"the bg color"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlASGVIS" }
-	    parmtag	{ "vray_pluginattr" "bg_color" }
-	    parmtag	{ "vray_type" "Color" }
-	}
-	parm {
-	    name	"bg_tex"
-	    label	"Bg Tex"
-	    type	oppath
-	    default	{ "" }
-	    help	"the texture to use for the bg environment"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "MtlASGVIS" }
-	    parmtag	{ "vray_pluginattr" "bg_tex" }
-	    parmtag	{ "vray_type" "Object" }
-	}
-	parm {
-	    name	"bg_tex_mult"
-	    label	"Bg Tex Mult"
-	    type	float
-	    default	{ "1" }
-	    help	"the multiplier for the bg environment texture"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlASGVIS" }
-	    parmtag	{ "vray_pluginattr" "bg_tex_mult" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"override_reflect"
-	    label	"Override Reflect"
-	    type	toggle
-	    default	{ "0" }
-	    help	"whether the global reflection environment should be overridden"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlASGVIS" }
-	    parmtag	{ "vray_pluginattr" "override_reflect" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"reflect_color"
-	    label	"Reflect Color"
-	    type	color
-	    size	3
-	    default	{ "0" "0" "0" }
-	    help	"reflect color"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlASGVIS" }
-	    parmtag	{ "vray_pluginattr" "reflect_color" }
-	    parmtag	{ "vray_type" "Color" }
-	}
-	parm {
-	    name	"reflect_tex"
-	    label	"Reflect Tex"
-	    type	oppath
-	    default	{ "" }
-	    help	"the reflection environment"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "MtlASGVIS" }
-	    parmtag	{ "vray_pluginattr" "reflect_tex" }
-	    parmtag	{ "vray_type" "Object" }
-	}
-	parm {
-	    name	"reflect_tex_mult"
-	    label	"Reflect Tex Mult"
-	    type	float
-	    default	{ "1" }
-	    help	"the reflection environment texture multiplier"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlASGVIS" }
-	    parmtag	{ "vray_pluginattr" "reflect_tex_mult" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"override_refract"
-	    label	"Override Refract"
-	    type	toggle
-	    default	{ "0" }
-	    help	"whether the global refraction environment should be overridden"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlASGVIS" }
-	    parmtag	{ "vray_pluginattr" "override_refract" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"refract_color"
-	    label	"Refract Color"
-	    type	color
-	    size	3
-	    default	{ "0" "0" "0" }
-	    help	"refract color"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlASGVIS" }
-	    parmtag	{ "vray_pluginattr" "refract_color" }
-	    parmtag	{ "vray_type" "Color" }
-	}
-	parm {
-	    name	"refract_tex"
-	    label	"Refract Tex"
-	    type	oppath
-	    default	{ "" }
-	    help	"the refraction environment"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "MtlASGVIS" }
-	    parmtag	{ "vray_pluginattr" "refract_tex" }
-	    parmtag	{ "vray_type" "Object" }
-	}
-	parm {
-	    name	"refract_tex_mult"
-	    label	"Refract Tex Mult"
-	    type	float
-	    default	{ "1" }
-	    help	"the refraction environment texture multiplier"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlASGVIS" }
-	    parmtag	{ "vray_pluginattr" "refract_tex_mult" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"ignore_objects"
-	    label	"Ignore Objects"
-	    type	toggle
-	    default	{ "0" }
-	    help	"Whether we should ignore all objects in the scene when tracing ourself"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlASGVIS" }
-	    parmtag	{ "vray_pluginattr" "ignore_objects" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"short_circuit"
-	    label	"Short Circuit"
-	    type	toggle
-	    default	{ "0" }
-	    help	"Whether we should do the cheating version of object exclusion-  may cause artifacts"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlASGVIS" }
-	    parmtag	{ "vray_pluginattr" "short_circuit" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"material_id_color"
-	    label	"Material Id Color"
-	    type	color
-	    size	3
-	    default	{ "0" "0" "0" }
-	    help	"This will be used to represent the material in the material id channel if specified"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlASGVIS" }
-	    parmtag	{ "vray_pluginattr" "material_id_color" }
-	    parmtag	{ "vray_type" "Color" }
-	}
-	parm {
-	    name	"cast_shadow"
-	    label	"Cast Shadow"
-	    type	toggle
-	    default	{ "1" }
-	    help	"Whether or not we want objects with this material to cast a shadow"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlASGVIS" }
-	    parmtag	{ "vray_pluginattr" "cast_shadow" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"only_visible_in_secondary"
-	    label	"Only Visible In Secondary"
-	    type	toggle
-	    default	{ "0" }
-	    help	"Whether or not this object should only be visible in reflects/refractions"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlASGVIS" }
-	    parmtag	{ "vray_pluginattr" "only_visible_in_secondary" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	help	"MtlASGVIS"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlASGVIS" }
+	parmtag	{ "vray_type" "MATERIAL" }
     }
-
+    parm {
+	name	"brdfs"
+	label	"Brdfs"
+	type	oplist
+	default	{ "" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "oprelative" "." }
+	parmtag	{ "vray_plugin" "MtlASGVIS" }
+	parmtag	{ "vray_pluginattr" "brdfs" }
+	parmtag	{ "vray_type" "List<Object>" }
+    }
+    parm {
+	name	"double_sided"
+	label	"Double Sided"
+	type	toggle
+	default	{ "1" }
+	help	"1 to make the material double-sided"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlASGVIS" }
+	parmtag	{ "vray_pluginattr" "double_sided" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"disable_volume_fog"
+	label	"Disable Volume Fog"
+	type	toggle
+	default	{ "0" }
+	help	"Set this flag to disable any volumetric effects that sub-brdfs might need"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlASGVIS" }
+	parmtag	{ "vray_pluginattr" "disable_volume_fog" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"bump_on"
+	label	"Bump On"
+	type	toggle
+	default	{ "0" }
+	help	"true if we want to turn on bump mapping"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlASGVIS" }
+	parmtag	{ "vray_pluginattr" "bump_on" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"bump_tex"
+	label	"Bump Tex"
+	type	oppath
+	default	{ "" }
+	help	"Bump texture, can be float or color"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "oprelative" "." }
+	parmtag	{ "vray_plugin" "MtlASGVIS" }
+	parmtag	{ "vray_pluginattr" "bump_tex" }
+	parmtag	{ "vray_type" "Object" }
+    }
+    parm {
+	name	"bump_tex_mult"
+	label	"Bump Tex Mult"
+	type	float
+	default	{ "1" }
+	help	"Bump amount"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlASGVIS" }
+	parmtag	{ "vray_pluginattr" "bump_tex_mult" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"bump_shadows"
+	label	"Bump Shadows"
+	type	toggle
+	default	{ "0" }
+	help	"true to offset the surface shading point, in addition to the normal"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlASGVIS" }
+	parmtag	{ "vray_pluginattr" "bump_shadows" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"bump_tex_mult_tex"
+	label	"Bump Tex Mult Tex"
+	type	float
+	default	{ "0" }
+	help	"Bump amount texture"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlASGVIS" }
+	parmtag	{ "vray_pluginattr" "bump_tex_mult_tex" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"bump_delta_scale"
+	label	"Bump Delta Scale"
+	type	float
+	default	{ "1" }
+	help	"Scale for sampling the bitmap when map_type is 0. Normally this is tied to the ray differentials, but can be changed if necessary"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlASGVIS" }
+	parmtag	{ "vray_pluginattr" "bump_delta_scale" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"map_type"
+	label	"Map Type"
+	type	integer
+	default	{ "0" }
+	help	"The type of the map (0 - from regular texture output, 1 - normal map in tangent space, 2 - normal map in object space, 3 - normal map in camera space, 4 - normal map in world space, 5 - from texture bump output, 6 - explicit normal)"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlASGVIS" }
+	parmtag	{ "vray_pluginattr" "map_type" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"normal_uvwgen"
+	label	"Normal Uvwgen"
+	type	oppath
+	default	{ "" }
+	help	"The uvw generator for the normal map texture when map_type is 1"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "oprelative" "." }
+	parmtag	{ "vray_plugin" "MtlASGVIS" }
+	parmtag	{ "vray_pluginattr" "normal_uvwgen" }
+	parmtag	{ "vray_type" "Object" }
+    }
+    parm {
+	name	"compute_bump_for_shadows"
+	label	"Compute Bump For Shadows"
+	type	toggle
+	default	{ "1" }
+	help	"true to compute bump mapping for shadow rays in case the material is transparent; false to skip the bump map for shadow rays (faster rendering)"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlASGVIS" }
+	parmtag	{ "vray_pluginattr" "compute_bump_for_shadows" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"alpha_tex"
+	label	"Alpha Tex"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "0" }
+	help	"a float or color texture to be used to determine contribution multiplier"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlASGVIS" }
+	parmtag	{ "vray_pluginattr" "alpha_tex" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"alpha_tex_mult"
+	label	"Alpha Tex Mult"
+	type	float
+	default	{ "1" }
+	help	"multiplier to be applied to alpha texture, if present"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlASGVIS" }
+	parmtag	{ "vray_pluginattr" "alpha_tex_mult" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"alpha"
+	label	"Alpha"
+	type	float
+	default	{ "1" }
+	help	"the alpha multiplier to be used if no texture is provided"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlASGVIS" }
+	parmtag	{ "vray_pluginattr" "alpha" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"displace_on"
+	label	"Displace On"
+	type	toggle
+	default	{ "0" }
+	help	"true if we want displacement turned on"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlASGVIS" }
+	parmtag	{ "vray_pluginattr" "displace_on" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"displace_tex"
+	label	"Displace Tex"
+	type	oppath
+	default	{ "" }
+	help	"displacement texture, can be float or color"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "oprelative" "." }
+	parmtag	{ "vray_plugin" "MtlASGVIS" }
+	parmtag	{ "vray_pluginattr" "displace_tex" }
+	parmtag	{ "vray_type" "Object" }
+    }
+    parm {
+	name	"displace_tex_mult"
+	label	"Displace Tex Mult"
+	type	float
+	default	{ "1" }
+	help	"displacement multiplier ( displace amount )"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlASGVIS" }
+	parmtag	{ "vray_pluginattr" "displace_tex_mult" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"displace_shift"
+	label	"Displace Shift"
+	type	float
+	default	{ "0" }
+	help	"a constant value added to the displacement"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlASGVIS" }
+	parmtag	{ "vray_pluginattr" "displace_shift" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"displace_water_level"
+	label	"Displace Water Level"
+	type	float
+	default	{ "1e+30" }
+	help	"A cutoff point for displacement - can be used for a clipping effect"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlASGVIS" }
+	parmtag	{ "vray_pluginattr" "displace_water_level" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"displace_view_dependent"
+	label	"Displace View Dependent"
+	type	toggle
+	default	{ "1" }
+	help	"Whether or not to use view-dependant tesselation"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlASGVIS" }
+	parmtag	{ "vray_pluginattr" "displace_view_dependent" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"displace_use_globals"
+	label	"Displace Use Globals"
+	type	toggle
+	default	{ "1" }
+	help	"Whether to use the global settings for our displacement"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlASGVIS" }
+	parmtag	{ "vray_pluginattr" "displace_use_globals" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"displace_max_subdivs"
+	label	"Displace Max Subdivs"
+	type	integer
+	default	{ "256" }
+	help	"The maximum number of subdivisions to use"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlASGVIS" }
+	parmtag	{ "vray_pluginattr" "displace_max_subdivs" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"displace_edge_length"
+	label	"Displace Edge Length"
+	type	float
+	default	{ "4" }
+	help	"The approximate edge length"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlASGVIS" }
+	parmtag	{ "vray_pluginattr" "displace_edge_length" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"displace_continuity"
+	label	"Displace Continuity"
+	type	toggle
+	default	{ "1" }
+	help	"enable continuity feature of displacement"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlASGVIS" }
+	parmtag	{ "vray_pluginattr" "displace_continuity" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"override_gi"
+	label	"Override Gi"
+	type	toggle
+	default	{ "0" }
+	help	"whether the global gi environment should be overridden"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlASGVIS" }
+	parmtag	{ "vray_pluginattr" "override_gi" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"gi_color"
+	label	"Gi Color"
+	type	color
+	size	3
+	default	{ "0" "0" "0" }
+	help	"the gi color"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlASGVIS" }
+	parmtag	{ "vray_pluginattr" "gi_color" }
+	parmtag	{ "vray_type" "Color" }
+    }
+    parm {
+	name	"gi_tex"
+	label	"Gi Tex"
+	type	oppath
+	default	{ "" }
+	help	"the texture to use for the gi environment"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "oprelative" "." }
+	parmtag	{ "vray_plugin" "MtlASGVIS" }
+	parmtag	{ "vray_pluginattr" "gi_tex" }
+	parmtag	{ "vray_type" "Object" }
+    }
+    parm {
+	name	"gi_tex_mult"
+	label	"Gi Tex Mult"
+	type	float
+	default	{ "1" }
+	help	"the multiplier for the gi environment texture"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlASGVIS" }
+	parmtag	{ "vray_pluginattr" "gi_tex_mult" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"override_bg"
+	label	"Override Bg"
+	type	toggle
+	default	{ "0" }
+	help	"whether the global bg environment should be overridden"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlASGVIS" }
+	parmtag	{ "vray_pluginattr" "override_bg" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"bg_color"
+	label	"Bg Color"
+	type	color
+	size	3
+	default	{ "0" "0" "0" }
+	help	"the bg color"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlASGVIS" }
+	parmtag	{ "vray_pluginattr" "bg_color" }
+	parmtag	{ "vray_type" "Color" }
+    }
+    parm {
+	name	"bg_tex"
+	label	"Bg Tex"
+	type	oppath
+	default	{ "" }
+	help	"the texture to use for the bg environment"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "oprelative" "." }
+	parmtag	{ "vray_plugin" "MtlASGVIS" }
+	parmtag	{ "vray_pluginattr" "bg_tex" }
+	parmtag	{ "vray_type" "Object" }
+    }
+    parm {
+	name	"bg_tex_mult"
+	label	"Bg Tex Mult"
+	type	float
+	default	{ "1" }
+	help	"the multiplier for the bg environment texture"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlASGVIS" }
+	parmtag	{ "vray_pluginattr" "bg_tex_mult" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"override_reflect"
+	label	"Override Reflect"
+	type	toggle
+	default	{ "0" }
+	help	"whether the global reflection environment should be overridden"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlASGVIS" }
+	parmtag	{ "vray_pluginattr" "override_reflect" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"reflect_color"
+	label	"Reflect Color"
+	type	color
+	size	3
+	default	{ "0" "0" "0" }
+	help	"reflect color"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlASGVIS" }
+	parmtag	{ "vray_pluginattr" "reflect_color" }
+	parmtag	{ "vray_type" "Color" }
+    }
+    parm {
+	name	"reflect_tex"
+	label	"Reflect Tex"
+	type	oppath
+	default	{ "" }
+	help	"the reflection environment"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "oprelative" "." }
+	parmtag	{ "vray_plugin" "MtlASGVIS" }
+	parmtag	{ "vray_pluginattr" "reflect_tex" }
+	parmtag	{ "vray_type" "Object" }
+    }
+    parm {
+	name	"reflect_tex_mult"
+	label	"Reflect Tex Mult"
+	type	float
+	default	{ "1" }
+	help	"the reflection environment texture multiplier"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlASGVIS" }
+	parmtag	{ "vray_pluginattr" "reflect_tex_mult" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"override_refract"
+	label	"Override Refract"
+	type	toggle
+	default	{ "0" }
+	help	"whether the global refraction environment should be overridden"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlASGVIS" }
+	parmtag	{ "vray_pluginattr" "override_refract" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"refract_color"
+	label	"Refract Color"
+	type	color
+	size	3
+	default	{ "0" "0" "0" }
+	help	"refract color"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlASGVIS" }
+	parmtag	{ "vray_pluginattr" "refract_color" }
+	parmtag	{ "vray_type" "Color" }
+    }
+    parm {
+	name	"refract_tex"
+	label	"Refract Tex"
+	type	oppath
+	default	{ "" }
+	help	"the refraction environment"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "oprelative" "." }
+	parmtag	{ "vray_plugin" "MtlASGVIS" }
+	parmtag	{ "vray_pluginattr" "refract_tex" }
+	parmtag	{ "vray_type" "Object" }
+    }
+    parm {
+	name	"refract_tex_mult"
+	label	"Refract Tex Mult"
+	type	float
+	default	{ "1" }
+	help	"the refraction environment texture multiplier"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlASGVIS" }
+	parmtag	{ "vray_pluginattr" "refract_tex_mult" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"ignore_objects"
+	label	"Ignore Objects"
+	type	toggle
+	default	{ "0" }
+	help	"Whether we should ignore all objects in the scene when tracing ourself"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlASGVIS" }
+	parmtag	{ "vray_pluginattr" "ignore_objects" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"short_circuit"
+	label	"Short Circuit"
+	type	toggle
+	default	{ "0" }
+	help	"Whether we should do the cheating version of object exclusion-  may cause artifacts"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlASGVIS" }
+	parmtag	{ "vray_pluginattr" "short_circuit" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"material_id_color"
+	label	"Material Id Color"
+	type	color
+	size	3
+	default	{ "0" "0" "0" }
+	help	"This will be used to represent the material in the material id channel if specified"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlASGVIS" }
+	parmtag	{ "vray_pluginattr" "material_id_color" }
+	parmtag	{ "vray_type" "Color" }
+    }
+    parm {
+	name	"cast_shadow"
+	label	"Cast Shadow"
+	type	toggle
+	default	{ "1" }
+	help	"Whether or not we want objects with this material to cast a shadow"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlASGVIS" }
+	parmtag	{ "vray_pluginattr" "cast_shadow" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"only_visible_in_secondary"
+	label	"Only Visible In Secondary"
+	type	toggle
+	default	{ "0" }
+	help	"Whether or not this object should only be visible in reflects/refractions"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlASGVIS" }
+	parmtag	{ "vray_pluginattr" "only_visible_in_secondary" }
+	parmtag	{ "vray_type" "boolean" }
+    }
 }

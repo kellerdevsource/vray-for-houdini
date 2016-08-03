@@ -1,74 +1,68 @@
 {
     name	parameters
-    group {
-	name	"TexVoxelData"
+    parm {
+	name	"plugindata"
 	label	"Voxel Data"
-
-	parm {
-	    name	"plugindata"
-	    label	"Voxel Data"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    help	"Voxel data texture"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexVoxelData" }
-	    parmtag	{ "vray_type" "TEXTURE" }
-	}
-	parm {
-	    name	"interpolation"
-	    label	"Interpolation"
-	    type	ordinal
-	    default	{ "0" }
-	    help	"Interpolation type"
-	    menu	{
-		"0"	"Linear"
-		"1"	"Quadratic"
-	    }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexVoxelData" }
-	    parmtag	{ "vray_pluginattr" "interpolation" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"domain"
-	    label	"Domain"
-	    type	oppath
-	    default	{ "" }
-	    help	"Simulation domain"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_custom_handling" "1" }
-	}
-	parm {
-	    name	"resolution"
-	    label	"Resolution"
-	    type	direction
-	    size	3
-	    default	{ "0" "0" "0" }
-	    help	"Resolution"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexVoxelData" }
-	    parmtag	{ "vray_pluginattr" "resolution" }
-	    parmtag	{ "vray_type" "Vector" }
-	}
-	parm {
-	    name	"uvwgen"
-	    label	"Uvwgen"
-	    type	oppath
-	    default	{ "" }
-	    help	"The UVW generator for the texture"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "TexVoxelData" }
-	    parmtag	{ "vray_pluginattr" "uvwgen" }
-	    parmtag	{ "vray_type" "Object" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	help	"Voxel data texture"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexVoxelData" }
+	parmtag	{ "vray_type" "TEXTURE" }
     }
-
+    parm {
+	name	"interpolation"
+	label	"Interpolation"
+	type	ordinal
+	default	{ "0" }
+	help	"Interpolation type"
+	menu	{
+	    "0"	"Linear"
+	    "1"	"Quadratic"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexVoxelData" }
+	parmtag	{ "vray_pluginattr" "interpolation" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"domain"
+	label	"Domain"
+	type	oppath
+	default	{ "" }
+	help	"Simulation domain"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "oprelative" "." }
+	parmtag	{ "vray_custom_handling" "1" }
+    }
+    parm {
+	name	"resolution"
+	label	"Resolution"
+	type	direction
+	size	3
+	default	{ "0" "0" "0" }
+	help	"Resolution"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexVoxelData" }
+	parmtag	{ "vray_pluginattr" "resolution" }
+	parmtag	{ "vray_type" "Vector" }
+    }
+    parm {
+	name	"uvwgen"
+	label	"Uvwgen"
+	type	oppath
+	default	{ "" }
+	help	"The UVW generator for the texture"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "oprelative" "." }
+	parmtag	{ "vray_plugin" "TexVoxelData" }
+	parmtag	{ "vray_pluginattr" "uvwgen" }
+	parmtag	{ "vray_type" "Object" }
+    }
 }

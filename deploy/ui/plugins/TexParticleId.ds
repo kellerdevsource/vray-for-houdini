@@ -1,21 +1,15 @@
 {
     name	parameters
-    group {
-	name	"TexParticleId"
+    parm {
+	name	"plugindata"
 	label	"Particle ID"
-
-	parm {
-	    name	"plugindata"
-	    label	"Particle ID"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    help	"Particle ID"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexParticleId" }
-	    parmtag	{ "vray_type" "TEXTURE" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	help	"Particle ID"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexParticleId" }
+	parmtag	{ "vray_type" "TEXTURE" }
     }
-
 }

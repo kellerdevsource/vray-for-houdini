@@ -1,139 +1,133 @@
 {
     name	parameters
-    group {
-	name	"SphereFadeGizmo"
+    parm {
+	name	"plugindata"
 	label	"Sphere Fade Gizmo"
+	type	data
+	invisible
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "SphereFadeGizmo" }
+	parmtag	{ "vray_type" "EFFECT" }
+    }
+    groupsimple {
+	name	"transform"
+	label	"Transform"
+	grouptag	{ "vray_plugin" "SphereFadeGizmo" }
+	grouptag	{ "vray_pluginattr" "transform" }
+	grouptag	{ "vray_type" "Transform" }
 
 	parm {
-	    name	"plugindata"
-	    label	"Sphere Fade Gizmo"
-	    type	data
-	    invisible
+	    name	"transform_xOrd"
+	    label	"Transform Order"
+	    type	ordinal
 	    default	{ "0" }
+	    menu	{
+		"srt"	"Scale Rotate Translate"
+		"str"	"Scale Translate Rotate"
+		"rst"	"Rotate Scale Translate"
+		"rts"	"Rotate Translate Scale"
+		"tsr"	"Translate Scale Rotate"
+		"trs"	"Translate Rotate Scale"
+	    }
 	    range	{ 0 1 }
 	    export	none
-	    parmtag	{ "vray_plugin" "SphereFadeGizmo" }
-	    parmtag	{ "vray_type" "EFFECT" }
 	}
-	groupsimple {
-	    name	"transform"
-	    label	"Transform"
-	    grouptag	{ "vray_plugin" "SphereFadeGizmo" }
-	    grouptag	{ "vray_pluginattr" "transform" }
-	    grouptag	{ "vray_type" "Transform" }
-
-	    parm {
-		name	"transform_xOrd"
-		label	"Transform Order"
-		type	ordinal
-		default	{ "0" }
-		menu	{
-		    "srt"	"Scale Rotate Translate"
-		    "str"	"Scale Translate Rotate"
-		    "rst"	"Rotate Scale Translate"
-		    "rts"	"Rotate Translate Scale"
-		    "tsr"	"Translate Scale Rotate"
-		    "trs"	"Translate Rotate Scale"
-		}
-		range	{ 0 1 }
-		export	none
-	    }
-	    parm {
-		name	"transform_rOrd"
-		label	"Rotation Order"
-		type	ordinal
-		default	{ "0" }
-		menu	{
-		    "xyz"	"Rx Ry Rz"
-		    "xzy"	"Rx Rz Ry"
-		    "yxz"	"Ry Rx Rz"
-		    "yzx"	"Ry Rz Rx"
-		    "zxy"	"Rz Rx Ry"
-		    "zyx"	"Rz Ry Rx"
-		}
-		range	{ 0 1 }
-		export	none
-	    }
-	    parm {
-		name	"transform_trans"
-		label	"Translate"
-		type	float
-		size	3
-		default	{ "0" "0" "0" }
-		range	{ 0 10 }
-		export	none
-	    }
-	    parm {
-		name	"transform_rot"
-		label	"Rotate"
-		type	angle
-		size	3
-		default	{ "0" "0" "0" }
-		range	{ 0 10 }
-		export	none
-	    }
-	    parm {
-		name	"transform_scale"
-		label	"Scale"
-		type	float
-		size	3
-		default	{ "1" "1" "1" }
-		range	{ 0 10 }
-		export	none
-	    }
-	    parm {
-		name	"transform_pivot"
-		label	"Pivot"
-		type	float
-		size	3
-		default	{ "0" "0" "0" }
-		range	{ 0 10 }
-		export	none
-	    }
-	}
-
 	parm {
-	    name	"radius"
-	    label	"Radius"
+	    name	"transform_rOrd"
+	    label	"Rotation Order"
+	    type	ordinal
+	    default	{ "0" }
+	    menu	{
+		"xyz"	"Rx Ry Rz"
+		"xzy"	"Rx Rz Ry"
+		"yxz"	"Ry Rx Rz"
+		"yzx"	"Ry Rz Rx"
+		"zxy"	"Rz Rx Ry"
+		"zyx"	"Rz Ry Rx"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"transform_trans"
+	    label	"Translate"
 	    type	float
-	    default	{ "1" }
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "vray_plugin" "SphereFadeGizmo" }
-	    parmtag	{ "vray_pluginattr" "radius" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"invert"
-	    label	"Invert"
-	    type	toggle
-	    default	{ "0" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "SphereFadeGizmo" }
-	    parmtag	{ "vray_pluginattr" "invert" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"shape"
-	    label	"Shape"
-	    type	integer
-	    default	{ "0" }
+	    size	3
+	    default	{ "0" "0" "0" }
 	    range	{ 0 10 }
 	    export	none
-	    parmtag	{ "vray_plugin" "SphereFadeGizmo" }
-	    parmtag	{ "vray_pluginattr" "shape" }
-	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"object"
-	    label	"Object"
-	    type	string
-	    default	{ "" }
-	    range	{ 0 1 }
+	    name	"transform_rot"
+	    label	"Rotate"
+	    type	angle
+	    size	3
+	    default	{ "0" "0" "0" }
+	    range	{ 0 10 }
 	    export	none
-	    parmtag	{ "vray_custom_handling" "1" }
+	}
+	parm {
+	    name	"transform_scale"
+	    label	"Scale"
+	    type	float
+	    size	3
+	    default	{ "1" "1" "1" }
+	    range	{ 0 10 }
+	    export	none
+	}
+	parm {
+	    name	"transform_pivot"
+	    label	"Pivot"
+	    type	float
+	    size	3
+	    default	{ "0" "0" "0" }
+	    range	{ 0 10 }
+	    export	none
 	}
     }
 
+    parm {
+	name	"radius"
+	label	"Radius"
+	type	float
+	default	{ "1" }
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "vray_plugin" "SphereFadeGizmo" }
+	parmtag	{ "vray_pluginattr" "radius" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"invert"
+	label	"Invert"
+	type	toggle
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "SphereFadeGizmo" }
+	parmtag	{ "vray_pluginattr" "invert" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"shape"
+	label	"Shape"
+	type	integer
+	default	{ "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "SphereFadeGizmo" }
+	parmtag	{ "vray_pluginattr" "shape" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"object"
+	label	"Object"
+	type	string
+	default	{ "" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_custom_handling" "1" }
+    }
 }

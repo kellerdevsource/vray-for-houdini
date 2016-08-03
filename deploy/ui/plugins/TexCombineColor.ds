@@ -1,83 +1,77 @@
 {
     name	parameters
-    group {
-	name	"TexCombineColor"
+    parm {
+	name	"plugindata"
 	label	"Combine Color"
-
-	parm {
-	    name	"plugindata"
-	    label	"Combine Color"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_category" "utility" }
-	    parmtag	{ "vray_plugin" "TexCombineColor" }
-	    parmtag	{ "vray_type" "TEXTURE" }
-	}
-	parm {
-	    name	"color"
-	    label	"Color"
-	    type	color
-	    size	3
-	    default	{ "0" "0" "0" }
-	    help	"The color value"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexCombineColor" }
-	    parmtag	{ "vray_pluginattr" "color" }
-	    parmtag	{ "vray_type" "Color" }
-	}
-	parm {
-	    name	"texture"
-	    label	"Texture"
-	    type	color4
-	    size	4
-	    default	{ "0" "0" "0" "1" }
-	    help	"The texture"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexCombineColor" }
-	    parmtag	{ "vray_pluginattr" "texture" }
-	    parmtag	{ "vray_type" "Texture" }
-	}
-	parm {
-	    name	"texture_multiplier"
-	    label	"Texture Multiplier"
-	    type	float
-	    default	{ "1" }
-	    help	"The texture multiplier (blends between the value and the texture)"
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexCombineColor" }
-	    parmtag	{ "vray_pluginattr" "texture_multiplier" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"result_invert"
-	    label	"Result Invert"
-	    type	toggle
-	    default	{ "0" }
-	    help	"true to invert the result"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexCombineColor" }
-	    parmtag	{ "vray_pluginattr" "result_invert" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"result_multiplier"
-	    label	"Result Multiplier"
-	    type	float
-	    default	{ "1" }
-	    help	"A multiplier for the resulit (after inversion, if result_invert is true)"
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexCombineColor" }
-	    parmtag	{ "vray_pluginattr" "result_multiplier" }
-	    parmtag	{ "vray_type" "float" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_category" "utility" }
+	parmtag	{ "vray_plugin" "TexCombineColor" }
+	parmtag	{ "vray_type" "TEXTURE" }
     }
-
+    parm {
+	name	"color"
+	label	"Color"
+	type	color
+	size	3
+	default	{ "0" "0" "0" }
+	help	"The color value"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexCombineColor" }
+	parmtag	{ "vray_pluginattr" "color" }
+	parmtag	{ "vray_type" "Color" }
+    }
+    parm {
+	name	"texture"
+	label	"Texture"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "1" }
+	help	"The texture"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexCombineColor" }
+	parmtag	{ "vray_pluginattr" "texture" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"texture_multiplier"
+	label	"Texture Multiplier"
+	type	float
+	default	{ "1" }
+	help	"The texture multiplier (blends between the value and the texture)"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "vray_plugin" "TexCombineColor" }
+	parmtag	{ "vray_pluginattr" "texture_multiplier" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"result_invert"
+	label	"Result Invert"
+	type	toggle
+	default	{ "0" }
+	help	"true to invert the result"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexCombineColor" }
+	parmtag	{ "vray_pluginattr" "result_invert" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"result_multiplier"
+	label	"Result Multiplier"
+	type	float
+	default	{ "1" }
+	help	"A multiplier for the resulit (after inversion, if result_invert is true)"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "vray_plugin" "TexCombineColor" }
+	parmtag	{ "vray_pluginattr" "result_multiplier" }
+	parmtag	{ "vray_type" "float" }
+    }
 }

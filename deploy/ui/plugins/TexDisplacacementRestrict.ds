@@ -1,45 +1,39 @@
 {
     name	parameters
-    group {
-	name	"TexDisplacacementRestrict"
+    parm {
+	name	"plugindata"
 	label	"Displacacement Restrict"
-
-	parm {
-	    name	"plugindata"
-	    label	"Displacacement Restrict"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    help	"TexDisplacacementRestrict"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexDisplacacementRestrict" }
-	    parmtag	{ "vray_type" "TEXTURE" }
-	}
-	parm {
-	    name	"input_tex"
-	    label	"Input Tex"
-	    type	float
-	    default	{ "0" }
-	    help	"Input Float Texture"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexDisplacacementRestrict" }
-	    parmtag	{ "vray_pluginattr" "input_tex" }
-	    parmtag	{ "vray_type" "TextureFloat" }
-	}
-	parm {
-	    name	"max_displacement"
-	    label	"Max Displacement"
-	    type	float
-	    default	{ "-1" }
-	    help	"Specifies the maximum displacement value.  If an input value is higher than the Max Displacement value, it will be clipped"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexDisplacacementRestrict" }
-	    parmtag	{ "vray_pluginattr" "max_displacement" }
-	    parmtag	{ "vray_type" "float" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	help	"TexDisplacacementRestrict"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexDisplacacementRestrict" }
+	parmtag	{ "vray_type" "TEXTURE" }
     }
-
+    parm {
+	name	"input_tex"
+	label	"Input Tex"
+	type	float
+	default	{ "0" }
+	help	"Input Float Texture"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexDisplacacementRestrict" }
+	parmtag	{ "vray_pluginattr" "input_tex" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"max_displacement"
+	label	"Max Displacement"
+	type	float
+	default	{ "-1" }
+	help	"Specifies the maximum displacement value.  If an input value is higher than the Max Displacement value, it will be clipped"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexDisplacacementRestrict" }
+	parmtag	{ "vray_pluginattr" "max_displacement" }
+	parmtag	{ "vray_type" "float" }
+    }
 }

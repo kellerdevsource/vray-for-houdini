@@ -1,59 +1,53 @@
 {
     name	parameters
-    group {
-	name	"MtlSkp2Sided"
+    parm {
+	name	"plugindata"
 	label	"Mtl Skp 2 Sided"
-
-	parm {
-	    name	"plugindata"
-	    label	"Mtl Skp 2 Sided"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    help	"MtlSkp2Sided"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlSkp2Sided" }
-	    parmtag	{ "vray_type" "MATERIAL" }
-	}
-	parm {
-	    name	"front"
-	    label	"Front"
-	    type	oppath
-	    default	{ "" }
-	    help	"the material for the surface on the same side as the normal"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "MtlSkp2Sided" }
-	    parmtag	{ "vray_pluginattr" "front" }
-	    parmtag	{ "vray_type" "Object" }
-	}
-	parm {
-	    name	"back"
-	    label	"Back"
-	    type	oppath
-	    default	{ "" }
-	    help	"the material for the side that is opposite the surface normal"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "MtlSkp2Sided" }
-	    parmtag	{ "vray_pluginattr" "back" }
-	    parmtag	{ "vray_type" "Object" }
-	}
-	parm {
-	    name	"force_1sided"
-	    label	"Force 1sided"
-	    type	toggle
-	    default	{ "0" }
-	    help	"1 to make the sub-materials one-sided"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "MtlSkp2Sided" }
-	    parmtag	{ "vray_pluginattr" "force_1sided" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	help	"MtlSkp2Sided"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlSkp2Sided" }
+	parmtag	{ "vray_type" "MATERIAL" }
     }
-
+    parm {
+	name	"front"
+	label	"Front"
+	type	oppath
+	default	{ "" }
+	help	"the material for the surface on the same side as the normal"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "oprelative" "." }
+	parmtag	{ "vray_plugin" "MtlSkp2Sided" }
+	parmtag	{ "vray_pluginattr" "front" }
+	parmtag	{ "vray_type" "Object" }
+    }
+    parm {
+	name	"back"
+	label	"Back"
+	type	oppath
+	default	{ "" }
+	help	"the material for the side that is opposite the surface normal"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "oprelative" "." }
+	parmtag	{ "vray_plugin" "MtlSkp2Sided" }
+	parmtag	{ "vray_pluginattr" "back" }
+	parmtag	{ "vray_type" "Object" }
+    }
+    parm {
+	name	"force_1sided"
+	label	"Force 1sided"
+	type	toggle
+	default	{ "0" }
+	help	"1 to make the sub-materials one-sided"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlSkp2Sided" }
+	parmtag	{ "vray_pluginattr" "force_1sided" }
+	parmtag	{ "vray_type" "boolean" }
+    }
 }

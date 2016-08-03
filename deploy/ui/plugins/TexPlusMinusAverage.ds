@@ -1,76 +1,70 @@
 {
     name	parameters
-    group {
-	name	"TexPlusMinusAverage"
+    parm {
+	name	"plugindata"
 	label	"Plus Minus Average"
-
-	parm {
-	    name	"plugindata"
-	    label	"Plus Minus Average"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    help	"TexPlusMinusAverage"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_category" "utility" }
-	    parmtag	{ "vray_plugin" "TexPlusMinusAverage" }
-	    parmtag	{ "vray_type" "TEXTURE" }
-	}
-	parm {
-	    name	"operation"
-	    label	"Operation"
-	    type	ordinal
-	    default	{ "1" }
-	    help	"0 - No operation; 1 - Sum; 2 - Subtract from first; 3 - Average"
-	    menu	{
-		"0"	"No operation"
-		"1"	"Sum"
-		"2"	"Subtract from first"
-		"3"	"Average"
-	    }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexPlusMinusAverage" }
-	    parmtag	{ "vray_pluginattr" "operation" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"input1D"
-	    label	"Input1d"
-	    type	oplist
-	    default	{ "" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "TexPlusMinusAverage" }
-	    parmtag	{ "vray_pluginattr" "input1D" }
-	    parmtag	{ "vray_type" "List<Object>" }
-	}
-	parm {
-	    name	"input2D"
-	    label	"Input2d"
-	    type	oplist
-	    default	{ "" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "TexPlusMinusAverage" }
-	    parmtag	{ "vray_pluginattr" "input2D" }
-	    parmtag	{ "vray_type" "List<Object>" }
-	}
-	parm {
-	    name	"input3D"
-	    label	"Input3d"
-	    type	oplist
-	    default	{ "" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "TexPlusMinusAverage" }
-	    parmtag	{ "vray_pluginattr" "input3D" }
-	    parmtag	{ "vray_type" "List<Object>" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	help	"TexPlusMinusAverage"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_category" "utility" }
+	parmtag	{ "vray_plugin" "TexPlusMinusAverage" }
+	parmtag	{ "vray_type" "TEXTURE" }
     }
-
+    parm {
+	name	"operation"
+	label	"Operation"
+	type	ordinal
+	default	{ "1" }
+	help	"0 - No operation; 1 - Sum; 2 - Subtract from first; 3 - Average"
+	menu	{
+	    "0"	"No operation"
+	    "1"	"Sum"
+	    "2"	"Subtract from first"
+	    "3"	"Average"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexPlusMinusAverage" }
+	parmtag	{ "vray_pluginattr" "operation" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"input1D"
+	label	"Input1d"
+	type	oplist
+	default	{ "" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "oprelative" "." }
+	parmtag	{ "vray_plugin" "TexPlusMinusAverage" }
+	parmtag	{ "vray_pluginattr" "input1D" }
+	parmtag	{ "vray_type" "List<Object>" }
+    }
+    parm {
+	name	"input2D"
+	label	"Input2d"
+	type	oplist
+	default	{ "" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "oprelative" "." }
+	parmtag	{ "vray_plugin" "TexPlusMinusAverage" }
+	parmtag	{ "vray_pluginattr" "input2D" }
+	parmtag	{ "vray_type" "List<Object>" }
+    }
+    parm {
+	name	"input3D"
+	label	"Input3d"
+	type	oplist
+	default	{ "" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "oprelative" "." }
+	parmtag	{ "vray_plugin" "TexPlusMinusAverage" }
+	parmtag	{ "vray_pluginattr" "input3D" }
+	parmtag	{ "vray_type" "List<Object>" }
+    }
 }

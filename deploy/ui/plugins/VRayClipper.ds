@@ -1,260 +1,254 @@
 {
     name	parameters
-    group {
-	name	"VRayClipper"
+    parm {
+	name	"plugindata"
 	label	"V Ray Clipper"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"VRayClipper"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "VRayClipper" }
+	parmtag	{ "vray_type" "OBJECT" }
+    }
+    parm {
+	name	"enabled"
+	label	"Enabled"
+	type	toggle
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "VRayClipper" }
+	parmtag	{ "vray_pluginattr" "enabled" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"affect_light"
+	label	"Affect Light"
+	type	toggle
+	default	{ "1" }
+	help	"If enabled, the clipper will affect area light sources as well"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "VRayClipper" }
+	parmtag	{ "vray_pluginattr" "affect_light" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"only_camera_rays"
+	label	"Only Camera Rays"
+	type	toggle
+	default	{ "0" }
+	help	"If enabled, the clipper will affect objects as they are directly seen by the camera, but they will appear unchanged to reflection/refraction/GI rays"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "VRayClipper" }
+	parmtag	{ "vray_pluginattr" "only_camera_rays" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"clip_lights"
+	label	"Clip Lights Geometry"
+	type	toggle
+	default	{ "1" }
+	help	"Enables or disables the clipping of lights geometry (for example a mesh light)"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "VRayClipper" }
+	parmtag	{ "vray_pluginattr" "clip_lights" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"use_obj_mtl"
+	label	"Use Object Material"
+	type	toggle
+	default	{ "0" }
+	help	"When enabled, the clipper will use the material of each clipped object to fill in the resulting holes. When this is off, the material applied to the clipper object itself will be used"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "VRayClipper" }
+	parmtag	{ "vray_pluginattr" "use_obj_mtl" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"set_material_id"
+	label	"Set Material Id"
+	type	toggle
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "VRayClipper" }
+	parmtag	{ "vray_pluginattr" "set_material_id" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"material_id"
+	label	"Material Id"
+	type	integer
+	default	{ "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "VRayClipper" }
+	parmtag	{ "vray_pluginattr" "material_id" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"exclusion_nodes"
+	label	"Exclude"
+	type	oplist
+	default	{ "" }
+	help	"List of node plugins to consider for inclusion/exclusion"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "oprelative" "." }
+	parmtag	{ "vray_plugin" "VRayClipper" }
+	parmtag	{ "vray_pluginattr" "exclusion_nodes" }
+	parmtag	{ "vray_type" "List<Object>" }
+    }
+    parm {
+	name	"exclusion_mode"
+	label	"As Exclusive List"
+	type	ordinal
+	default	{ "1" }
+	help	"Exclusion Mode"
+	menu	{
+	    "0"	"Include"
+	    "1"	"Exclude"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "VRayClipper" }
+	parmtag	{ "vray_pluginattr" "exclusion_mode" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    groupsimple {
+	name	"transform"
+	label	"Transform"
+	grouptag	{ "vray_plugin" "VRayClipper" }
+	grouptag	{ "vray_pluginattr" "transform" }
+	grouptag	{ "vray_type" "Transform" }
 
 	parm {
-	    name	"plugindata"
-	    label	"V Ray Clipper"
-	    type	data
-	    invisible
+	    name	"transform_xOrd"
+	    label	"Transform Order"
+	    type	ordinal
 	    default	{ "0" }
-	    help	"VRayClipper"
+	    menu	{
+		"srt"	"Scale Rotate Translate"
+		"str"	"Scale Translate Rotate"
+		"rst"	"Rotate Scale Translate"
+		"rts"	"Rotate Translate Scale"
+		"tsr"	"Translate Scale Rotate"
+		"trs"	"Translate Rotate Scale"
+	    }
 	    range	{ 0 1 }
 	    export	none
-	    parmtag	{ "vray_plugin" "VRayClipper" }
-	    parmtag	{ "vray_type" "OBJECT" }
 	}
 	parm {
-	    name	"enabled"
-	    label	"Enabled"
-	    type	toggle
+	    name	"transform_rOrd"
+	    label	"Rotation Order"
+	    type	ordinal
 	    default	{ "0" }
+	    menu	{
+		"xyz"	"Rx Ry Rz"
+		"xzy"	"Rx Rz Ry"
+		"yxz"	"Ry Rx Rz"
+		"yzx"	"Ry Rz Rx"
+		"zxy"	"Rz Rx Ry"
+		"zyx"	"Rz Ry Rx"
+	    }
 	    range	{ 0 1 }
 	    export	none
-	    parmtag	{ "vray_plugin" "VRayClipper" }
-	    parmtag	{ "vray_pluginattr" "enabled" }
-	    parmtag	{ "vray_type" "boolean" }
 	}
 	parm {
-	    name	"affect_light"
-	    label	"Affect Light"
-	    type	toggle
-	    default	{ "1" }
-	    help	"If enabled, the clipper will affect area light sources as well"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "VRayClipper" }
-	    parmtag	{ "vray_pluginattr" "affect_light" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"only_camera_rays"
-	    label	"Only Camera Rays"
-	    type	toggle
-	    default	{ "0" }
-	    help	"If enabled, the clipper will affect objects as they are directly seen by the camera, but they will appear unchanged to reflection/refraction/GI rays"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "VRayClipper" }
-	    parmtag	{ "vray_pluginattr" "only_camera_rays" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"clip_lights"
-	    label	"Clip Lights Geometry"
-	    type	toggle
-	    default	{ "1" }
-	    help	"Enables or disables the clipping of lights geometry (for example a mesh light)"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "VRayClipper" }
-	    parmtag	{ "vray_pluginattr" "clip_lights" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"use_obj_mtl"
-	    label	"Use Object Material"
-	    type	toggle
-	    default	{ "0" }
-	    help	"When enabled, the clipper will use the material of each clipped object to fill in the resulting holes. When this is off, the material applied to the clipper object itself will be used"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "VRayClipper" }
-	    parmtag	{ "vray_pluginattr" "use_obj_mtl" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"set_material_id"
-	    label	"Set Material Id"
-	    type	toggle
-	    default	{ "0" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "VRayClipper" }
-	    parmtag	{ "vray_pluginattr" "set_material_id" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"material_id"
-	    label	"Material Id"
-	    type	integer
-	    default	{ "0" }
+	    name	"transform_trans"
+	    label	"Translate"
+	    type	float
+	    size	3
+	    default	{ "0" "0" "0" }
 	    range	{ 0 10 }
 	    export	none
-	    parmtag	{ "vray_plugin" "VRayClipper" }
-	    parmtag	{ "vray_pluginattr" "material_id" }
-	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"exclusion_nodes"
-	    label	"Exclude"
-	    type	oplist
-	    default	{ "" }
-	    help	"List of node plugins to consider for inclusion/exclusion"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "VRayClipper" }
-	    parmtag	{ "vray_pluginattr" "exclusion_nodes" }
-	    parmtag	{ "vray_type" "List<Object>" }
-	}
-	parm {
-	    name	"exclusion_mode"
-	    label	"As Exclusive List"
-	    type	ordinal
-	    default	{ "1" }
-	    help	"Exclusion Mode"
-	    menu	{
-		"0"	"Include"
-		"1"	"Exclude"
-	    }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "VRayClipper" }
-	    parmtag	{ "vray_pluginattr" "exclusion_mode" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	groupsimple {
-	    name	"transform"
-	    label	"Transform"
-	    grouptag	{ "vray_plugin" "VRayClipper" }
-	    grouptag	{ "vray_pluginattr" "transform" }
-	    grouptag	{ "vray_type" "Transform" }
-
-	    parm {
-		name	"transform_xOrd"
-		label	"Transform Order"
-		type	ordinal
-		default	{ "0" }
-		menu	{
-		    "srt"	"Scale Rotate Translate"
-		    "str"	"Scale Translate Rotate"
-		    "rst"	"Rotate Scale Translate"
-		    "rts"	"Rotate Translate Scale"
-		    "tsr"	"Translate Scale Rotate"
-		    "trs"	"Translate Rotate Scale"
-		}
-		range	{ 0 1 }
-		export	none
-	    }
-	    parm {
-		name	"transform_rOrd"
-		label	"Rotation Order"
-		type	ordinal
-		default	{ "0" }
-		menu	{
-		    "xyz"	"Rx Ry Rz"
-		    "xzy"	"Rx Rz Ry"
-		    "yxz"	"Ry Rx Rz"
-		    "yzx"	"Ry Rz Rx"
-		    "zxy"	"Rz Rx Ry"
-		    "zyx"	"Rz Ry Rx"
-		}
-		range	{ 0 1 }
-		export	none
-	    }
-	    parm {
-		name	"transform_trans"
-		label	"Translate"
-		type	float
-		size	3
-		default	{ "0" "0" "0" }
-		range	{ 0 10 }
-		export	none
-	    }
-	    parm {
-		name	"transform_rot"
-		label	"Rotate"
-		type	angle
-		size	3
-		default	{ "0" "0" "0" }
-		range	{ 0 10 }
-		export	none
-	    }
-	    parm {
-		name	"transform_scale"
-		label	"Scale"
-		type	float
-		size	3
-		default	{ "1" "1" "1" }
-		range	{ 0 10 }
-		export	none
-	    }
-	    parm {
-		name	"transform_pivot"
-		label	"Pivot"
-		type	float
-		size	3
-		default	{ "0" "0" "0" }
-		range	{ 0 10 }
-		export	none
-	    }
-	}
-
-	parm {
-	    name	"material"
-	    label	"Material"
-	    type	oppath
-	    default	{ "" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "VRayClipper" }
-	    parmtag	{ "vray_pluginattr" "material" }
-	    parmtag	{ "vray_type" "Object" }
-	}
-	parm {
-	    name	"object_id"
-	    label	"Object Id"
-	    type	integer
-	    default	{ "0" }
+	    name	"transform_rot"
+	    label	"Rotate"
+	    type	angle
+	    size	3
+	    default	{ "0" "0" "0" }
 	    range	{ 0 10 }
 	    export	none
-	    parmtag	{ "vray_plugin" "VRayClipper" }
-	    parmtag	{ "vray_pluginattr" "object_id" }
-	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"clip_mesh"
-	    label	"Clip Mesh"
-	    type	oppath
-	    default	{ "" }
-	    help	"Mesh plugin to use as a clipping mesh instead of the simple plane"
-	    range	{ 0 1 }
+	    name	"transform_scale"
+	    label	"Scale"
+	    type	float
+	    size	3
+	    default	{ "1" "1" "1" }
+	    range	{ 0 10 }
 	    export	none
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "VRayClipper" }
-	    parmtag	{ "vray_pluginattr" "clip_mesh" }
-	    parmtag	{ "vray_type" "Object" }
 	}
 	parm {
-	    name	"invert_inside"
-	    label	"Operation"
-	    type	ordinal
-	    default	{ "1" }
-	    help	"Specifies the boolean operation to perform"
-	    menu	{
-		"0"	"Intersection"
-		"1"	"Substraction"
-	    }
-	    range	{ 0 1 }
+	    name	"transform_pivot"
+	    label	"Pivot"
+	    type	float
+	    size	3
+	    default	{ "0" "0" "0" }
+	    range	{ 0 10 }
 	    export	none
-	    parmtag	{ "vray_plugin" "VRayClipper" }
-	    parmtag	{ "vray_pluginattr" "invert_inside" }
-	    parmtag	{ "vray_type" "int" }
 	}
     }
 
+    parm {
+	name	"material"
+	label	"Material"
+	type	oppath
+	default	{ "" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "oprelative" "." }
+	parmtag	{ "vray_plugin" "VRayClipper" }
+	parmtag	{ "vray_pluginattr" "material" }
+	parmtag	{ "vray_type" "Object" }
+    }
+    parm {
+	name	"object_id"
+	label	"Object Id"
+	type	integer
+	default	{ "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "VRayClipper" }
+	parmtag	{ "vray_pluginattr" "object_id" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"clip_mesh"
+	label	"Clip Mesh"
+	type	oppath
+	default	{ "" }
+	help	"Mesh plugin to use as a clipping mesh instead of the simple plane"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "oprelative" "." }
+	parmtag	{ "vray_plugin" "VRayClipper" }
+	parmtag	{ "vray_pluginattr" "clip_mesh" }
+	parmtag	{ "vray_type" "Object" }
+    }
+    parm {
+	name	"invert_inside"
+	label	"Operation"
+	type	ordinal
+	default	{ "1" }
+	help	"Specifies the boolean operation to perform"
+	menu	{
+	    "0"	"Intersection"
+	    "1"	"Substraction"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "VRayClipper" }
+	parmtag	{ "vray_pluginattr" "invert_inside" }
+	parmtag	{ "vray_type" "int" }
+    }
 }

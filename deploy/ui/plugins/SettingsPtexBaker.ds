@@ -1,356 +1,350 @@
 {
     name	parameters
-    group {
-	name	"SettingsPtexBaker"
+    parm {
+	name	"plugindata"
 	label	"Ptex Baker"
-
-	parm {
-	    name	"plugindata"
-	    label	"Ptex Baker"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "SettingsPtexBaker" }
-	    parmtag	{ "vray_type" "SETTINGS" }
-	}
-	parm {
-	    name	"objects"
-	    label	"Objects"
-	    type	oplist
-	    default	{ "" }
-	    help	"A list of SceneNodes that will be baked"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "SettingsPtexBaker" }
-	    parmtag	{ "vray_pluginattr" "objects" }
-	    parmtag	{ "vray_type" "List<Object>" }
-	}
-	parm {
-	    name	"texture_name"
-	    label	"Texture Name"
-	    type	string
-	    default	{ "" }
-	    help	"The base name for the Ptex files"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "SettingsPtexBaker" }
-	    parmtag	{ "vray_pluginattr" "texture_name" }
-	    parmtag	{ "vray_type" "String" }
-	}
-	parm {
-	    name	"res_u"
-	    label	"Res U"
-	    type	integer
-	    default	{ "8" }
-	    help	"The resolution in the U direction in texture space is 2 ^ res_u"
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "vray_plugin" "SettingsPtexBaker" }
-	    parmtag	{ "vray_pluginattr" "res_u" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"res_v"
-	    label	"Res V"
-	    type	integer
-	    default	{ "8" }
-	    help	"The resolution in the V direction in texture space is 2 ^ res_v"
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "vray_plugin" "SettingsPtexBaker" }
-	    parmtag	{ "vray_pluginattr" "res_v" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"force_quads"
-	    label	"Force Quads"
-	    type	integer
-	    default	{ "1" }
-	    help	"If true the textures will be quadrangular even if the mesh is purely triangular"
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "vray_plugin" "SettingsPtexBaker" }
-	    parmtag	{ "vray_pluginattr" "force_quads" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"data_format"
-	    label	"Data Format"
-	    type	integer
-	    default	{ "3" }
-	    help	"Type of texel data: 0 - 8 bit int, 1 - 16 bit int, 2 - 16 bit float, 3 - 32 bit float"
-	    menu	{
-		"0"	"8 bit int"
-		"1"	"16 bit int"
-		"2"	"16 bit float"
-		"3"	"32 bit float"
-	    }
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "vray_plugin" "SettingsPtexBaker" }
-	    parmtag	{ "vray_pluginattr" "data_format" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"write_faces_degrees"
-	    label	"Write Faces Degrees"
-	    type	integer
-	    default	{ "0" }
-	    help	"If true then meta data containing the degree of each mesh polygon will be included in the Ptex files"
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "vray_plugin" "SettingsPtexBaker" }
-	    parmtag	{ "vray_pluginattr" "write_faces_degrees" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"write_faces_vertices"
-	    label	"Write Faces Vertices"
-	    type	integer
-	    default	{ "0" }
-	    help	"If true then meta data containing the vertices of each mesh polygon will be included in the Ptex files"
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "vray_plugin" "SettingsPtexBaker" }
-	    parmtag	{ "vray_pluginattr" "write_faces_vertices" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"write_vertex_positions"
-	    label	"Write Vertex Positions"
-	    type	integer
-	    default	{ "0" }
-	    help	"If true then meta data containing the positions of all vertices will be included in the Ptex files"
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "vray_plugin" "SettingsPtexBaker" }
-	    parmtag	{ "vray_pluginattr" "write_vertex_positions" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"generate_mipmaps"
-	    label	"Generate Mipmaps"
-	    type	integer
-	    default	{ "1" }
-	    help	"True to generate mipmaps and false otherwise"
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "vray_plugin" "SettingsPtexBaker" }
-	    parmtag	{ "vray_pluginattr" "generate_mipmaps" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"border_mode_u"
-	    label	"Border Mode U"
-	    type	integer
-	    default	{ "0" }
-	    help	"Type of border mode in U direction: 0 - clamp, 1 - black, 2 - periodic"
-	    menu	{
-		"0"	"Clamp"
-		"1"	"Black"
-		"2"	"Periodic"
-	    }
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "vray_plugin" "SettingsPtexBaker" }
-	    parmtag	{ "vray_pluginattr" "border_mode_u" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"border_mode_v"
-	    label	"Border Mode V"
-	    type	integer
-	    default	{ "0" }
-	    help	"Type of border mode in V direction: 0 - clamp, 1 - black, 2 - periodic"
-	    menu	{
-		"0"	"Clamp"
-		"1"	"Black"
-		"2"	"Periodic"
-	    }
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "vray_plugin" "SettingsPtexBaker" }
-	    parmtag	{ "vray_pluginattr" "border_mode_v" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"samplers_per_texel"
-	    label	"Samplers Per Texel"
-	    type	integer
-	    default	{ "1" }
-	    help	"The number of samples shaded for each texel will be the square of this number"
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "vray_plugin" "SettingsPtexBaker" }
-	    parmtag	{ "vray_pluginattr" "samplers_per_texel" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"multichannel_file"
-	    label	"Multichannel File"
-	    type	integer
-	    default	{ "1" }
-	    help	"If this is true then all render elements will be baked into one Ptex file"
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "vray_plugin" "SettingsPtexBaker" }
-	    parmtag	{ "vray_pluginattr" "multichannel_file" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"surface_offset"
-	    label	"Surface Offset"
-	    type	float
-	    default	{ "0.001" }
-	    help	"An offset along the geometric surface normal at which to perform shading in order to avoid surface acne"
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "vray_plugin" "SettingsPtexBaker" }
-	    parmtag	{ "vray_pluginattr" "surface_offset" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"world_space_res"
-	    label	"World Space Res"
-	    type	integer
-	    default	{ "1" }
-	    help	"If true then the resolution for each texture will be calculated adaptively, based on the size of the corresponding geometry"
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "vray_plugin" "SettingsPtexBaker" }
-	    parmtag	{ "vray_pluginattr" "world_space_res" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"length_u"
-	    label	"Length U"
-	    type	float
-	    default	{ "10" }
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "vray_plugin" "SettingsPtexBaker" }
-	    parmtag	{ "vray_pluginattr" "length_u" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"length_v"
-	    label	"Length V"
-	    type	float
-	    default	{ "10" }
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "vray_plugin" "SettingsPtexBaker" }
-	    parmtag	{ "vray_pluginattr" "length_v" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"resolution_multiplier"
-	    label	"Resolution Multiplier"
-	    type	float
-	    default	{ "1" }
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "vray_plugin" "SettingsPtexBaker" }
-	    parmtag	{ "vray_pluginattr" "resolution_multiplier" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"projection_baking"
-	    label	"Projection Baking"
-	    type	integer
-	    default	{ "0" }
-	    help	"0 - normal baking, 1 - projection baking"
-	    menu	{
-		"0"	"Nnormal"
-		"1"	"Projection"
-	    }
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "vray_plugin" "SettingsPtexBaker" }
-	    parmtag	{ "vray_pluginattr" "projection_baking" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"mode"
-	    label	"Mode"
-	    type	integer
-	    default	{ "0" }
-	    help	"0 - outside, 1 - inside, 2 - outside first, the inside, 3 - inside first, the outside, 4 - closest"
-	    menu	{
-		"0"	"Outside"
-		"1"	"inside"
-		"2"	"Outside first, the inside"
-		"3"	"Inside first, the outside"
-		"4"	"Closest"
-	    }
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "vray_plugin" "SettingsPtexBaker" }
-	    parmtag	{ "vray_pluginattr" "mode" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"normal"
-	    label	"Normal"
-	    type	integer
-	    default	{ "0" }
-	    help	"0 - Smooth normal, 1 - Geometry normal"
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "vray_plugin" "SettingsPtexBaker" }
-	    parmtag	{ "vray_pluginattr" "normal" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"ray_offset"
-	    label	"Ray Offset"
-	    type	float
-	    default	{ "0" }
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "vray_plugin" "SettingsPtexBaker" }
-	    parmtag	{ "vray_pluginattr" "ray_offset" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"max_depth"
-	    label	"Max Depth"
-	    type	float
-	    default	{ "0" }
-	    help	"Geometry that is intersected further than this value along the ray will be ignored. If the value is zero then no geometry will be ignored"
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "vray_plugin" "SettingsPtexBaker" }
-	    parmtag	{ "vray_pluginattr" "max_depth" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"visibility_test_rays"
-	    label	"Visibility Test Rays"
-	    type	integer
-	    default	{ "32" }
-	    help	"Number of rays shoot to test if sample is actually visible or not. Speeds up shading in the case when parts of the model are occluded. Set to 0 to disable"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "SettingsPtexBaker" }
-	    parmtag	{ "vray_pluginattr" "visibility_test_rays" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"visibility_test_ray_max_length_factor"
-	    label	"Visibility Test Ray Max Length Factor"
-	    type	float
-	    default	{ "16" }
-	    help	"Maximum length of visibility test ray. It is adjusted by the sample size. If the ray travels at least this length before hitting another object, the sample is considered visible and is shaded, otherwise it's filled with black when baking to Ptex or entirely ommitted when baking to vrmesh point cloud"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "SettingsPtexBaker" }
-	    parmtag	{ "vray_pluginattr" "visibility_test_ray_max_length_factor" }
-	    parmtag	{ "vray_type" "float" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
+	parmtag	{ "vray_type" "SETTINGS" }
     }
-
+    parm {
+	name	"objects"
+	label	"Objects"
+	type	oplist
+	default	{ "" }
+	help	"A list of SceneNodes that will be baked"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "oprelative" "." }
+	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
+	parmtag	{ "vray_pluginattr" "objects" }
+	parmtag	{ "vray_type" "List<Object>" }
+    }
+    parm {
+	name	"texture_name"
+	label	"Texture Name"
+	type	string
+	default	{ "" }
+	help	"The base name for the Ptex files"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
+	parmtag	{ "vray_pluginattr" "texture_name" }
+	parmtag	{ "vray_type" "String" }
+    }
+    parm {
+	name	"res_u"
+	label	"Res U"
+	type	integer
+	default	{ "8" }
+	help	"The resolution in the U direction in texture space is 2 ^ res_u"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
+	parmtag	{ "vray_pluginattr" "res_u" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"res_v"
+	label	"Res V"
+	type	integer
+	default	{ "8" }
+	help	"The resolution in the V direction in texture space is 2 ^ res_v"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
+	parmtag	{ "vray_pluginattr" "res_v" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"force_quads"
+	label	"Force Quads"
+	type	integer
+	default	{ "1" }
+	help	"If true the textures will be quadrangular even if the mesh is purely triangular"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
+	parmtag	{ "vray_pluginattr" "force_quads" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"data_format"
+	label	"Data Format"
+	type	integer
+	default	{ "3" }
+	help	"Type of texel data: 0 - 8 bit int, 1 - 16 bit int, 2 - 16 bit float, 3 - 32 bit float"
+	menu	{
+	    "0"	"8 bit int"
+	    "1"	"16 bit int"
+	    "2"	"16 bit float"
+	    "3"	"32 bit float"
+	}
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
+	parmtag	{ "vray_pluginattr" "data_format" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"write_faces_degrees"
+	label	"Write Faces Degrees"
+	type	integer
+	default	{ "0" }
+	help	"If true then meta data containing the degree of each mesh polygon will be included in the Ptex files"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
+	parmtag	{ "vray_pluginattr" "write_faces_degrees" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"write_faces_vertices"
+	label	"Write Faces Vertices"
+	type	integer
+	default	{ "0" }
+	help	"If true then meta data containing the vertices of each mesh polygon will be included in the Ptex files"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
+	parmtag	{ "vray_pluginattr" "write_faces_vertices" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"write_vertex_positions"
+	label	"Write Vertex Positions"
+	type	integer
+	default	{ "0" }
+	help	"If true then meta data containing the positions of all vertices will be included in the Ptex files"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
+	parmtag	{ "vray_pluginattr" "write_vertex_positions" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"generate_mipmaps"
+	label	"Generate Mipmaps"
+	type	integer
+	default	{ "1" }
+	help	"True to generate mipmaps and false otherwise"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
+	parmtag	{ "vray_pluginattr" "generate_mipmaps" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"border_mode_u"
+	label	"Border Mode U"
+	type	integer
+	default	{ "0" }
+	help	"Type of border mode in U direction: 0 - clamp, 1 - black, 2 - periodic"
+	menu	{
+	    "0"	"Clamp"
+	    "1"	"Black"
+	    "2"	"Periodic"
+	}
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
+	parmtag	{ "vray_pluginattr" "border_mode_u" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"border_mode_v"
+	label	"Border Mode V"
+	type	integer
+	default	{ "0" }
+	help	"Type of border mode in V direction: 0 - clamp, 1 - black, 2 - periodic"
+	menu	{
+	    "0"	"Clamp"
+	    "1"	"Black"
+	    "2"	"Periodic"
+	}
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
+	parmtag	{ "vray_pluginattr" "border_mode_v" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"samplers_per_texel"
+	label	"Samplers Per Texel"
+	type	integer
+	default	{ "1" }
+	help	"The number of samples shaded for each texel will be the square of this number"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
+	parmtag	{ "vray_pluginattr" "samplers_per_texel" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"multichannel_file"
+	label	"Multichannel File"
+	type	integer
+	default	{ "1" }
+	help	"If this is true then all render elements will be baked into one Ptex file"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
+	parmtag	{ "vray_pluginattr" "multichannel_file" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"surface_offset"
+	label	"Surface Offset"
+	type	float
+	default	{ "0.001" }
+	help	"An offset along the geometric surface normal at which to perform shading in order to avoid surface acne"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
+	parmtag	{ "vray_pluginattr" "surface_offset" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"world_space_res"
+	label	"World Space Res"
+	type	integer
+	default	{ "1" }
+	help	"If true then the resolution for each texture will be calculated adaptively, based on the size of the corresponding geometry"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
+	parmtag	{ "vray_pluginattr" "world_space_res" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"length_u"
+	label	"Length U"
+	type	float
+	default	{ "10" }
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
+	parmtag	{ "vray_pluginattr" "length_u" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"length_v"
+	label	"Length V"
+	type	float
+	default	{ "10" }
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
+	parmtag	{ "vray_pluginattr" "length_v" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"resolution_multiplier"
+	label	"Resolution Multiplier"
+	type	float
+	default	{ "1" }
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
+	parmtag	{ "vray_pluginattr" "resolution_multiplier" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"projection_baking"
+	label	"Projection Baking"
+	type	integer
+	default	{ "0" }
+	help	"0 - normal baking, 1 - projection baking"
+	menu	{
+	    "0"	"Nnormal"
+	    "1"	"Projection"
+	}
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
+	parmtag	{ "vray_pluginattr" "projection_baking" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"mode"
+	label	"Mode"
+	type	integer
+	default	{ "0" }
+	help	"0 - outside, 1 - inside, 2 - outside first, the inside, 3 - inside first, the outside, 4 - closest"
+	menu	{
+	    "0"	"Outside"
+	    "1"	"inside"
+	    "2"	"Outside first, the inside"
+	    "3"	"Inside first, the outside"
+	    "4"	"Closest"
+	}
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
+	parmtag	{ "vray_pluginattr" "mode" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"normal"
+	label	"Normal"
+	type	integer
+	default	{ "0" }
+	help	"0 - Smooth normal, 1 - Geometry normal"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
+	parmtag	{ "vray_pluginattr" "normal" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"ray_offset"
+	label	"Ray Offset"
+	type	float
+	default	{ "0" }
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
+	parmtag	{ "vray_pluginattr" "ray_offset" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"max_depth"
+	label	"Max Depth"
+	type	float
+	default	{ "0" }
+	help	"Geometry that is intersected further than this value along the ray will be ignored. If the value is zero then no geometry will be ignored"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
+	parmtag	{ "vray_pluginattr" "max_depth" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"visibility_test_rays"
+	label	"Visibility Test Rays"
+	type	integer
+	default	{ "32" }
+	help	"Number of rays shoot to test if sample is actually visible or not. Speeds up shading in the case when parts of the model are occluded. Set to 0 to disable"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
+	parmtag	{ "vray_pluginattr" "visibility_test_rays" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"visibility_test_ray_max_length_factor"
+	label	"Visibility Test Ray Max Length Factor"
+	type	float
+	default	{ "16" }
+	help	"Maximum length of visibility test ray. It is adjusted by the sample size. If the ray travels at least this length before hitting another object, the sample is considered visible and is shaded, otherwise it's filled with black when baking to Ptex or entirely ommitted when baking to vrmesh point cloud"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
+	parmtag	{ "vray_pluginattr" "visibility_test_ray_max_length_factor" }
+	parmtag	{ "vray_type" "float" }
+    }
 }

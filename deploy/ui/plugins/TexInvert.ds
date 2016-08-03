@@ -1,45 +1,39 @@
 {
     name	parameters
-    group {
-	name	"TexInvert"
+    parm {
+	name	"plugindata"
 	label	"Invert"
-
-	parm {
-	    name	"plugindata"
-	    label	"Invert"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_category" "utility" }
-	    parmtag	{ "vray_plugin" "TexInvert" }
-	    parmtag	{ "vray_type" "TEXTURE" }
-	}
-	parm {
-	    name	"texture"
-	    label	"Texture"
-	    type	color4
-	    size	4
-	    default	{ "0" "0" "0" "1" }
-	    help	"The texture to be inverted"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexInvert" }
-	    parmtag	{ "vray_pluginattr" "texture" }
-	    parmtag	{ "vray_type" "Texture" }
-	}
-	parm {
-	    name	"invert_alpha"
-	    label	"Invert Alpha"
-	    type	toggle
-	    default	{ "0" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexInvert" }
-	    parmtag	{ "vray_pluginattr" "invert_alpha" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_category" "utility" }
+	parmtag	{ "vray_plugin" "TexInvert" }
+	parmtag	{ "vray_type" "TEXTURE" }
     }
-
+    parm {
+	name	"texture"
+	label	"Texture"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "1" }
+	help	"The texture to be inverted"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexInvert" }
+	parmtag	{ "vray_pluginattr" "texture" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"invert_alpha"
+	label	"Invert Alpha"
+	type	toggle
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexInvert" }
+	parmtag	{ "vray_pluginattr" "invert_alpha" }
+	parmtag	{ "vray_type" "boolean" }
+    }
 }

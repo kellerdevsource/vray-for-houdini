@@ -1,21 +1,15 @@
 {
     name	parameters
-    group {
-	name	"TexModoRayType"
+    parm {
+	name	"plugindata"
 	label	"Modo Ray Type"
-
-	parm {
-	    name	"plugindata"
-	    label	"Modo Ray Type"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    help	"TexModoRayType"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexModoRayType" }
-	    parmtag	{ "vray_type" "TEXTURE" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	help	"TexModoRayType"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexModoRayType" }
+	parmtag	{ "vray_type" "TEXTURE" }
     }
-
 }

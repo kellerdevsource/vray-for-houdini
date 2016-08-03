@@ -1,71 +1,65 @@
 {
     name	parameters
-    group {
-	name	"TexBifrostVVMix"
+    parm {
+	name	"plugindata"
 	label	"Bifrost VV Mix"
-
-	parm {
-	    name	"plugindata"
-	    label	"Bifrost VV Mix"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    help	"TexBifrostVVMix"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexBifrostVVMix" }
-	    parmtag	{ "vray_type" "TEXTURE" }
-	}
-	parm {
-	    name	"velocity_mult"
-	    label	"Velocity Mult"
-	    type	float
-	    default	{ "1" }
-	    help	"The velocity texture multiplier"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexBifrostVVMix" }
-	    parmtag	{ "vray_pluginattr" "velocity_mult" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"vorticity_mult"
-	    label	"Vorticity Mult"
-	    type	float
-	    default	{ "1" }
-	    help	"The vorticity texture multiplier"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexBifrostVVMix" }
-	    parmtag	{ "vray_pluginattr" "vorticity_mult" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"velocity_tex"
-	    label	"Velocity Tex"
-	    type	color4
-	    size	4
-	    default	{ "0" "0" "0" "0" }
-	    help	"The vorticity texture. This must be connected to the bifrostVelocity color set of the mesh"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexBifrostVVMix" }
-	    parmtag	{ "vray_pluginattr" "velocity_tex" }
-	    parmtag	{ "vray_type" "Texture" }
-	}
-	parm {
-	    name	"vorticity_tex"
-	    label	"Vorticity Tex"
-	    type	color4
-	    size	4
-	    default	{ "0" "0" "0" "0" }
-	    help	"The vorticity texture. This must be connected to the bifrostVorticity color set of the mesh"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexBifrostVVMix" }
-	    parmtag	{ "vray_pluginattr" "vorticity_tex" }
-	    parmtag	{ "vray_type" "Texture" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	help	"TexBifrostVVMix"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexBifrostVVMix" }
+	parmtag	{ "vray_type" "TEXTURE" }
     }
-
+    parm {
+	name	"velocity_mult"
+	label	"Velocity Mult"
+	type	float
+	default	{ "1" }
+	help	"The velocity texture multiplier"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexBifrostVVMix" }
+	parmtag	{ "vray_pluginattr" "velocity_mult" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"vorticity_mult"
+	label	"Vorticity Mult"
+	type	float
+	default	{ "1" }
+	help	"The vorticity texture multiplier"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexBifrostVVMix" }
+	parmtag	{ "vray_pluginattr" "vorticity_mult" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"velocity_tex"
+	label	"Velocity Tex"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "0" }
+	help	"The vorticity texture. This must be connected to the bifrostVelocity color set of the mesh"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexBifrostVVMix" }
+	parmtag	{ "vray_pluginattr" "velocity_tex" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"vorticity_tex"
+	label	"Vorticity Tex"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "0" }
+	help	"The vorticity texture. This must be connected to the bifrostVorticity color set of the mesh"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexBifrostVVMix" }
+	parmtag	{ "vray_pluginattr" "vorticity_tex" }
+	parmtag	{ "vray_type" "Texture" }
+    }
 }

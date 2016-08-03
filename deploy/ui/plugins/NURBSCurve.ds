@@ -1,33 +1,27 @@
 {
     name	parameters
-    group {
-	name	"NURBSCurve"
+    parm {
+	name	"plugindata"
 	label	"NURBS Curve"
-
-	parm {
-	    name	"plugindata"
-	    label	"NURBS Curve"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    help	"NURBSCurve"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "NURBSCurve" }
-	    parmtag	{ "vray_type" "MISC" }
-	}
-	parm {
-	    name	"degree"
-	    label	"Degree"
-	    type	integer
-	    default	{ "3" }
-	    help	"Degree of the curve"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "NURBSCurve" }
-	    parmtag	{ "vray_pluginattr" "degree" }
-	    parmtag	{ "vray_type" "int" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	help	"NURBSCurve"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "NURBSCurve" }
+	parmtag	{ "vray_type" "MISC" }
     }
-
+    parm {
+	name	"degree"
+	label	"Degree"
+	type	integer
+	default	{ "3" }
+	help	"Degree of the curve"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "NURBSCurve" }
+	parmtag	{ "vray_pluginattr" "degree" }
+	parmtag	{ "vray_type" "int" }
+    }
 }

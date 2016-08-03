@@ -1,393 +1,387 @@
 {
     name	parameters
-    group {
-	name	"EffectLens"
+    parm {
+	name	"plugindata"
 	label	"Effect Lens"
-
-	parm {
-	    name	"plugindata"
-	    label	"Effect Lens"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    help	"EffectLens"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "EffectLens" }
-	    parmtag	{ "vray_type" "SETTINGS" }
-	}
-	parm {
-	    name	"bloomWeight"
-	    label	"Bloomweight"
-	    type	float
-	    default	{ "20" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "EffectLens" }
-	    parmtag	{ "vray_pluginattr" "bloomWeight" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"bloomSize"
-	    label	"Bloomsize"
-	    type	float
-	    default	{ "20" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "EffectLens" }
-	    parmtag	{ "vray_pluginattr" "bloomSize" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"bloomShape"
-	    label	"Bloomshape"
-	    type	float
-	    default	{ "4" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "EffectLens" }
-	    parmtag	{ "vray_pluginattr" "bloomShape" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"bloomFillEdges"
-	    label	"Bloomfilledges"
-	    type	toggle
-	    default	{ "1" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "EffectLens" }
-	    parmtag	{ "vray_pluginattr" "bloomFillEdges" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"bloomBuffer"
-	    label	"Bloombuffer"
-	    type	ordinal
-	    default	{ "0" }
-	    help	"0-image 1-image and buffer  2-buffer"
-	    menu	{
-		"0"	"Image"
-		"1"	"Image and buffer"
-		"2"	"Buffer"
-	    }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "EffectLens" }
-	    parmtag	{ "vray_pluginattr" "bloomBuffer" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"bloomOn"
-	    label	"Bloomon"
-	    type	toggle
-	    default	{ "0" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "EffectLens" }
-	    parmtag	{ "vray_pluginattr" "bloomOn" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"bloomMaskIntensityOn"
-	    label	"Bloommaskintensityon"
-	    type	toggle
-	    default	{ "0" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "EffectLens" }
-	    parmtag	{ "vray_pluginattr" "bloomMaskIntensityOn" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"bloomMaskIntensity"
-	    label	"Bloommaskintensity"
-	    type	float
-	    default	{ "3" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "EffectLens" }
-	    parmtag	{ "vray_pluginattr" "bloomMaskIntensity" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"bloomMaskObjIDOn"
-	    label	"Bloommaskobjidon"
-	    type	toggle
-	    default	{ "0" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "EffectLens" }
-	    parmtag	{ "vray_pluginattr" "bloomMaskObjIDOn" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"bloomMaskObjID"
-	    label	"Bloommaskobjid"
-	    type	integer
-	    default	{ "0" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "EffectLens" }
-	    parmtag	{ "vray_pluginattr" "bloomMaskObjID" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"bloomMaskMtlIDOn"
-	    label	"Bloommaskmtlidon"
-	    type	toggle
-	    default	{ "0" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "EffectLens" }
-	    parmtag	{ "vray_pluginattr" "bloomMaskMtlIDOn" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"bloomMaskMtlID"
-	    label	"Bloommaskmtlid"
-	    type	integer
-	    default	{ "0" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "EffectLens" }
-	    parmtag	{ "vray_pluginattr" "bloomMaskMtlID" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"glareWeight"
-	    label	"Glareweight"
-	    type	float
-	    default	{ "50" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "EffectLens" }
-	    parmtag	{ "vray_pluginattr" "glareWeight" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"glareSize"
-	    label	"Glaresize"
-	    type	float
-	    default	{ "20" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "EffectLens" }
-	    parmtag	{ "vray_pluginattr" "glareSize" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"glareOn"
-	    label	"Glareon"
-	    type	toggle
-	    default	{ "0" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "EffectLens" }
-	    parmtag	{ "vray_pluginattr" "glareOn" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"glareBitmap"
-	    label	"Glarebitmap"
-	    type	oppath
-	    default	{ "" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "EffectLens" }
-	    parmtag	{ "vray_pluginattr" "glareBitmap" }
-	    parmtag	{ "vray_type" "Object" }
-	}
-	parm {
-	    name	"glareObstacleImage"
-	    label	"Glareobstacleimage"
-	    type	oppath
-	    default	{ "" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "EffectLens" }
-	    parmtag	{ "vray_pluginattr" "glareObstacleImage" }
-	    parmtag	{ "vray_type" "Object" }
-	}
-	parm {
-	    name	"glareType"
-	    label	"Glaretype"
-	    type	ordinal
-	    default	{ "0" }
-	    help	"0- from image  1 - from Lens Effect settings"
-	    menu	{
-		"0"	"Image"
-		"1"	"Lens Effect settings"
-	    }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "EffectLens" }
-	    parmtag	{ "vray_pluginattr" "glareType" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"glareDiffractionOn"
-	    label	"Glarediffractionon"
-	    type	toggle
-	    default	{ "0" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "EffectLens" }
-	    parmtag	{ "vray_pluginattr" "glareDiffractionOn" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"glareUseObstacleImage"
-	    label	"Glareuseobstacleimage"
-	    type	toggle
-	    default	{ "0" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "EffectLens" }
-	    parmtag	{ "vray_pluginattr" "glareUseObstacleImage" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"glareFillEdges"
-	    label	"Glarefilledges"
-	    type	toggle
-	    default	{ "1" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "EffectLens" }
-	    parmtag	{ "vray_pluginattr" "glareFillEdges" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"glareCamSidesOn"
-	    label	"Glarecamsideson"
-	    type	toggle
-	    default	{ "1" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "EffectLens" }
-	    parmtag	{ "vray_pluginattr" "glareCamSidesOn" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"glareNumSides"
-	    label	"Glarenumsides"
-	    type	integer
-	    default	{ "6" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "EffectLens" }
-	    parmtag	{ "vray_pluginattr" "glareNumSides" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"glareCamRotation"
-	    label	"Glarecamrotation"
-	    type	float
-	    default	{ "0" }
-	    help	"Rotation in degrees from 0.0 - 360.0"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "EffectLens" }
-	    parmtag	{ "vray_pluginattr" "glareCamRotation" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"glareFNumber"
-	    label	"Glarefnumber"
-	    type	float
-	    default	{ "8" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "EffectLens" }
-	    parmtag	{ "vray_pluginattr" "glareFNumber" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"glareBuffer"
-	    label	"Glarebuffer"
-	    type	ordinal
-	    default	{ "0" }
-	    help	"0-image 1-image and buffer  2-buffer"
-	    menu	{
-		"0"	"Image"
-		"1"	"Image and buffer"
-		"2"	"Buffer"
-	    }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "EffectLens" }
-	    parmtag	{ "vray_pluginattr" "glareBuffer" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"glareMaskIntensityOn"
-	    label	"Glaremaskintensityon"
-	    type	toggle
-	    default	{ "0" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "EffectLens" }
-	    parmtag	{ "vray_pluginattr" "glareMaskIntensityOn" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"glareMaskIntensity"
-	    label	"Glaremaskintensity"
-	    type	float
-	    default	{ "3" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "EffectLens" }
-	    parmtag	{ "vray_pluginattr" "glareMaskIntensity" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"glareMaskObjIDOn"
-	    label	"Glaremaskobjidon"
-	    type	toggle
-	    default	{ "0" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "EffectLens" }
-	    parmtag	{ "vray_pluginattr" "glareMaskObjIDOn" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"glareMaskObjID"
-	    label	"Glaremaskobjid"
-	    type	integer
-	    default	{ "0" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "EffectLens" }
-	    parmtag	{ "vray_pluginattr" "glareMaskObjID" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"glareMaskMtlIDOn"
-	    label	"Glaremaskmtlidon"
-	    type	toggle
-	    default	{ "0" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "EffectLens" }
-	    parmtag	{ "vray_pluginattr" "glareMaskMtlIDOn" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"glareMaskMtlID"
-	    label	"Glaremaskmtlid"
-	    type	integer
-	    default	{ "0" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "EffectLens" }
-	    parmtag	{ "vray_pluginattr" "glareMaskMtlID" }
-	    parmtag	{ "vray_type" "int" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	help	"EffectLens"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "EffectLens" }
+	parmtag	{ "vray_type" "SETTINGS" }
     }
-
+    parm {
+	name	"bloomWeight"
+	label	"Bloomweight"
+	type	float
+	default	{ "20" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "EffectLens" }
+	parmtag	{ "vray_pluginattr" "bloomWeight" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"bloomSize"
+	label	"Bloomsize"
+	type	float
+	default	{ "20" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "EffectLens" }
+	parmtag	{ "vray_pluginattr" "bloomSize" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"bloomShape"
+	label	"Bloomshape"
+	type	float
+	default	{ "4" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "EffectLens" }
+	parmtag	{ "vray_pluginattr" "bloomShape" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"bloomFillEdges"
+	label	"Bloomfilledges"
+	type	toggle
+	default	{ "1" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "EffectLens" }
+	parmtag	{ "vray_pluginattr" "bloomFillEdges" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"bloomBuffer"
+	label	"Bloombuffer"
+	type	ordinal
+	default	{ "0" }
+	help	"0-image 1-image and buffer  2-buffer"
+	menu	{
+	    "0"	"Image"
+	    "1"	"Image and buffer"
+	    "2"	"Buffer"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "EffectLens" }
+	parmtag	{ "vray_pluginattr" "bloomBuffer" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"bloomOn"
+	label	"Bloomon"
+	type	toggle
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "EffectLens" }
+	parmtag	{ "vray_pluginattr" "bloomOn" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"bloomMaskIntensityOn"
+	label	"Bloommaskintensityon"
+	type	toggle
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "EffectLens" }
+	parmtag	{ "vray_pluginattr" "bloomMaskIntensityOn" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"bloomMaskIntensity"
+	label	"Bloommaskintensity"
+	type	float
+	default	{ "3" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "EffectLens" }
+	parmtag	{ "vray_pluginattr" "bloomMaskIntensity" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"bloomMaskObjIDOn"
+	label	"Bloommaskobjidon"
+	type	toggle
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "EffectLens" }
+	parmtag	{ "vray_pluginattr" "bloomMaskObjIDOn" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"bloomMaskObjID"
+	label	"Bloommaskobjid"
+	type	integer
+	default	{ "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "EffectLens" }
+	parmtag	{ "vray_pluginattr" "bloomMaskObjID" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"bloomMaskMtlIDOn"
+	label	"Bloommaskmtlidon"
+	type	toggle
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "EffectLens" }
+	parmtag	{ "vray_pluginattr" "bloomMaskMtlIDOn" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"bloomMaskMtlID"
+	label	"Bloommaskmtlid"
+	type	integer
+	default	{ "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "EffectLens" }
+	parmtag	{ "vray_pluginattr" "bloomMaskMtlID" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"glareWeight"
+	label	"Glareweight"
+	type	float
+	default	{ "50" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "EffectLens" }
+	parmtag	{ "vray_pluginattr" "glareWeight" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"glareSize"
+	label	"Glaresize"
+	type	float
+	default	{ "20" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "EffectLens" }
+	parmtag	{ "vray_pluginattr" "glareSize" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"glareOn"
+	label	"Glareon"
+	type	toggle
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "EffectLens" }
+	parmtag	{ "vray_pluginattr" "glareOn" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"glareBitmap"
+	label	"Glarebitmap"
+	type	oppath
+	default	{ "" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "oprelative" "." }
+	parmtag	{ "vray_plugin" "EffectLens" }
+	parmtag	{ "vray_pluginattr" "glareBitmap" }
+	parmtag	{ "vray_type" "Object" }
+    }
+    parm {
+	name	"glareObstacleImage"
+	label	"Glareobstacleimage"
+	type	oppath
+	default	{ "" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "oprelative" "." }
+	parmtag	{ "vray_plugin" "EffectLens" }
+	parmtag	{ "vray_pluginattr" "glareObstacleImage" }
+	parmtag	{ "vray_type" "Object" }
+    }
+    parm {
+	name	"glareType"
+	label	"Glaretype"
+	type	ordinal
+	default	{ "0" }
+	help	"0- from image  1 - from Lens Effect settings"
+	menu	{
+	    "0"	"Image"
+	    "1"	"Lens Effect settings"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "EffectLens" }
+	parmtag	{ "vray_pluginattr" "glareType" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"glareDiffractionOn"
+	label	"Glarediffractionon"
+	type	toggle
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "EffectLens" }
+	parmtag	{ "vray_pluginattr" "glareDiffractionOn" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"glareUseObstacleImage"
+	label	"Glareuseobstacleimage"
+	type	toggle
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "EffectLens" }
+	parmtag	{ "vray_pluginattr" "glareUseObstacleImage" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"glareFillEdges"
+	label	"Glarefilledges"
+	type	toggle
+	default	{ "1" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "EffectLens" }
+	parmtag	{ "vray_pluginattr" "glareFillEdges" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"glareCamSidesOn"
+	label	"Glarecamsideson"
+	type	toggle
+	default	{ "1" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "EffectLens" }
+	parmtag	{ "vray_pluginattr" "glareCamSidesOn" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"glareNumSides"
+	label	"Glarenumsides"
+	type	integer
+	default	{ "6" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "EffectLens" }
+	parmtag	{ "vray_pluginattr" "glareNumSides" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"glareCamRotation"
+	label	"Glarecamrotation"
+	type	float
+	default	{ "0" }
+	help	"Rotation in degrees from 0.0 - 360.0"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "EffectLens" }
+	parmtag	{ "vray_pluginattr" "glareCamRotation" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"glareFNumber"
+	label	"Glarefnumber"
+	type	float
+	default	{ "8" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "EffectLens" }
+	parmtag	{ "vray_pluginattr" "glareFNumber" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"glareBuffer"
+	label	"Glarebuffer"
+	type	ordinal
+	default	{ "0" }
+	help	"0-image 1-image and buffer  2-buffer"
+	menu	{
+	    "0"	"Image"
+	    "1"	"Image and buffer"
+	    "2"	"Buffer"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "EffectLens" }
+	parmtag	{ "vray_pluginattr" "glareBuffer" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"glareMaskIntensityOn"
+	label	"Glaremaskintensityon"
+	type	toggle
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "EffectLens" }
+	parmtag	{ "vray_pluginattr" "glareMaskIntensityOn" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"glareMaskIntensity"
+	label	"Glaremaskintensity"
+	type	float
+	default	{ "3" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "EffectLens" }
+	parmtag	{ "vray_pluginattr" "glareMaskIntensity" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"glareMaskObjIDOn"
+	label	"Glaremaskobjidon"
+	type	toggle
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "EffectLens" }
+	parmtag	{ "vray_pluginattr" "glareMaskObjIDOn" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"glareMaskObjID"
+	label	"Glaremaskobjid"
+	type	integer
+	default	{ "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "EffectLens" }
+	parmtag	{ "vray_pluginattr" "glareMaskObjID" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"glareMaskMtlIDOn"
+	label	"Glaremaskmtlidon"
+	type	toggle
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "EffectLens" }
+	parmtag	{ "vray_pluginattr" "glareMaskMtlIDOn" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"glareMaskMtlID"
+	label	"Glaremaskmtlid"
+	type	integer
+	default	{ "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "EffectLens" }
+	parmtag	{ "vray_pluginattr" "glareMaskMtlID" }
+	parmtag	{ "vray_type" "int" }
+    }
 }

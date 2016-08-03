@@ -1,56 +1,50 @@
 {
     name	parameters
-    group {
-	name	"UVWGenSwitch"
+    parm {
+	name	"plugindata"
 	label	"Switch"
-
-	parm {
-	    name	"plugindata"
-	    label	"Switch"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "UVWGenSwitch" }
-	    parmtag	{ "vray_type" "UVWGEN" }
-	}
-	parm {
-	    name	"nodes"
-	    label	"Nodes"
-	    type	oplist
-	    default	{ "" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "UVWGenSwitch" }
-	    parmtag	{ "vray_pluginattr" "nodes" }
-	    parmtag	{ "vray_type" "List<Object>" }
-	}
-	parm {
-	    name	"uvwgens"
-	    label	"Uvwgens"
-	    type	oplist
-	    default	{ "" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "UVWGenSwitch" }
-	    parmtag	{ "vray_pluginattr" "uvwgens" }
-	    parmtag	{ "vray_type" "List<Object>" }
-	}
-	parm {
-	    name	"default"
-	    label	"Default"
-	    type	oppath
-	    default	{ "" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "UVWGenSwitch" }
-	    parmtag	{ "vray_pluginattr" "default" }
-	    parmtag	{ "vray_type" "Object" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "UVWGenSwitch" }
+	parmtag	{ "vray_type" "UVWGEN" }
     }
-
+    parm {
+	name	"nodes"
+	label	"Nodes"
+	type	oplist
+	default	{ "" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "oprelative" "." }
+	parmtag	{ "vray_plugin" "UVWGenSwitch" }
+	parmtag	{ "vray_pluginattr" "nodes" }
+	parmtag	{ "vray_type" "List<Object>" }
+    }
+    parm {
+	name	"uvwgens"
+	label	"Uvwgens"
+	type	oplist
+	default	{ "" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "oprelative" "." }
+	parmtag	{ "vray_plugin" "UVWGenSwitch" }
+	parmtag	{ "vray_pluginattr" "uvwgens" }
+	parmtag	{ "vray_type" "List<Object>" }
+    }
+    parm {
+	name	"default"
+	label	"Default"
+	type	oppath
+	default	{ "" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "oprelative" "." }
+	parmtag	{ "vray_plugin" "UVWGenSwitch" }
+	parmtag	{ "vray_pluginattr" "default" }
+	parmtag	{ "vray_type" "Object" }
+    }
 }

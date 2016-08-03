@@ -1,76 +1,70 @@
 {
     name	parameters
-    group {
-	name	"SettingsVFBChannels"
+    parm {
+	name	"plugindata"
 	label	"Settings VFB Channels"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"SettingsVFBChannels"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "SettingsVFBChannels" }
+	parmtag	{ "vray_type" "RENDERCHANNEL" }
+    }
+    multiparm {
+	name	"channel_names"
+	label	"Channel Names"
+	default	0
+	parmtag	{ "vray_plugin" "SettingsVFBChannels" }
+	parmtag	{ "vray_pluginattr" "channel_names" }
+	parmtag	{ "vray_type" "List<String>" }
 
 	parm {
-	    name	"plugindata"
-	    label	"Settings VFB Channels"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    help	"SettingsVFBChannels"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "SettingsVFBChannels" }
-	    parmtag	{ "vray_type" "RENDERCHANNEL" }
-	}
-	multiparm {
-	    name	"channel_names"
+	    name	"channel_names#"
 	    label	"Channel Names"
-	    default	0
-	    parmtag	{ "vray_plugin" "SettingsVFBChannels" }
-	    parmtag	{ "vray_pluginattr" "channel_names" }
-	    parmtag	{ "vray_type" "List<String>" }
-
-	    parm {
-		name	"channel_names#"
-		label	"Channel Names"
-		type	string
-		default	{ "" }
-		help	"A list of strings that represent render channel names. There are too many to list here - see pixelbuffer.h for the list of RegionChannelAlias items that are available for the vfb"
-		range	{ 0 1 }
-		export	none
-	    }
-	}
-
-	parm {
-	    name	"zdepth_black"
-	    label	"Zdepth Black"
-	    type	float
-	    default	{ "0.001" }
-	    help	"Where the black color starts in zdepth"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "SettingsVFBChannels" }
-	    parmtag	{ "vray_pluginattr" "zdepth_black" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"zdepth_white"
-	    label	"Zdepth White"
-	    type	float
-	    default	{ "1500" }
-	    help	"Where the white color starts in zdepth"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "SettingsVFBChannels" }
-	    parmtag	{ "vray_pluginattr" "zdepth_white" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"zdepth_clamp"
-	    label	"Zdepth Clamp"
-	    type	toggle
-	    default	{ "0" }
-	    help	"whether we should clamp between near and far or allow outliers"
+	    type	string
+	    default	{ "" }
+	    help	"A list of strings that represent render channel names. There are too many to list here - see pixelbuffer.h for the list of RegionChannelAlias items that are available for the vfb"
 	    range	{ 0 1 }
 	    export	none
-	    parmtag	{ "vray_plugin" "SettingsVFBChannels" }
-	    parmtag	{ "vray_pluginattr" "zdepth_clamp" }
-	    parmtag	{ "vray_type" "boolean" }
 	}
     }
 
+    parm {
+	name	"zdepth_black"
+	label	"Zdepth Black"
+	type	float
+	default	{ "0.001" }
+	help	"Where the black color starts in zdepth"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "SettingsVFBChannels" }
+	parmtag	{ "vray_pluginattr" "zdepth_black" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"zdepth_white"
+	label	"Zdepth White"
+	type	float
+	default	{ "1500" }
+	help	"Where the white color starts in zdepth"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "SettingsVFBChannels" }
+	parmtag	{ "vray_pluginattr" "zdepth_white" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"zdepth_clamp"
+	label	"Zdepth Clamp"
+	type	toggle
+	default	{ "0" }
+	help	"whether we should clamp between near and far or allow outliers"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "SettingsVFBChannels" }
+	parmtag	{ "vray_pluginattr" "zdepth_clamp" }
+	parmtag	{ "vray_type" "boolean" }
+    }
 }

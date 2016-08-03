@@ -1,133 +1,127 @@
 {
     name	parameters
-    group {
-	name	"MtlOverride"
+    parm {
+	name	"plugindata"
 	label	"Override"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"MtlOverride settings"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlOverride" }
+	parmtag	{ "vray_type" "MATERIAL" }
+    }
+    group {
+	name	"folder"
+	label	"Material override"
 
 	parm {
-	    name	"plugindata"
-	    label	"Override"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    help	"MtlOverride settings"
+	    name	"base_mtl"
+	    label	"Base Material"
+	    type	oppath
+	    default	{ "" }
+	    help	"The normal material (visible to the camera)"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "oprelative" "." }
 	    parmtag	{ "vray_plugin" "MtlOverride" }
-	    parmtag	{ "vray_type" "MATERIAL" }
+	    parmtag	{ "vray_pluginattr" "base_mtl" }
+	    parmtag	{ "vray_type" "Object" }
 	}
-	group {
-	    name	"folder"
-	    label	"Material override"
-
-	    parm {
-		name	"base_mtl"
-		label	"Base Material"
-		type	oppath
-		default	{ "" }
-		help	"The normal material (visible to the camera)"
-		range	{ 0 1 }
-		export	none
-		parmtag	{ "oprelative" "." }
-		parmtag	{ "vray_plugin" "MtlOverride" }
-		parmtag	{ "vray_pluginattr" "base_mtl" }
-		parmtag	{ "vray_type" "Object" }
-	    }
-	    parm {
-		name	"gi_mtl"
-		label	"Gi Material"
-		type	oppath
-		default	{ "" }
-		help	"The gi material"
-		disablewhen	"{ enable_gi_mtl != 1 }"
-		range	{ 0 1 }
-		export	none
-		parmtag	{ "oprelative" "." }
-		parmtag	{ "vray_plugin" "MtlOverride" }
-		parmtag	{ "vray_pluginattr" "gi_mtl" }
-		parmtag	{ "vray_type" "Object" }
-	    }
-	    parm {
-		name	"reflect_mtl"
-		label	"Reflection Material"
-		type	oppath
-		default	{ "" }
-		help	"The reflection material"
-		disablewhen	"{ enable_reflect_mtl != 1 }"
-		range	{ 0 1 }
-		export	none
-		parmtag	{ "oprelative" "." }
-		parmtag	{ "vray_plugin" "MtlOverride" }
-		parmtag	{ "vray_pluginattr" "reflect_mtl" }
-		parmtag	{ "vray_type" "Object" }
-	    }
-	    parm {
-		name	"refract_mtl"
-		label	"Refraction Material"
-		type	oppath
-		default	{ "" }
-		help	"The refraction material"
-		disablewhen	"{ enable_refract_mtl != 1 }"
-		range	{ 0 1 }
-		export	none
-		parmtag	{ "oprelative" "." }
-		parmtag	{ "vray_plugin" "MtlOverride" }
-		parmtag	{ "vray_pluginattr" "refract_mtl" }
-		parmtag	{ "vray_type" "Object" }
-	    }
-	    parm {
-		name	"shadow_mtl"
-		label	"Shadow Material"
-		type	oppath
-		default	{ "" }
-		help	"The shadow material"
-		disablewhen	"{ enable_shadow_mtl != 1 }"
-		range	{ 0 1 }
-		export	none
-		parmtag	{ "oprelative" "." }
-		parmtag	{ "vray_plugin" "MtlOverride" }
-		parmtag	{ "vray_pluginattr" "shadow_mtl" }
-		parmtag	{ "vray_type" "Object" }
-	    }
-	    parm {
-		name	"environment_override"
-		label	"Environment"
-		type	color4
-		size	4
-		default	{ "1" "1" "1" "1" }
-		help	"Environment override texture"
-		disablewhen	"{ use_environment_override != 1 }"
-		range	{ 0 10 }
-		export	none
-		parmtag	{ "vray_plugin" "MtlOverride" }
-		parmtag	{ "vray_pluginattr" "environment_override" }
-		parmtag	{ "vray_type" "Texture" }
-	    }
-	    parm {
-		name	"environment_priority"
-		label	"Environment Priority"
-		type	integer
-		default	{ "0" }
-		help	"Environment override priority (used when several materials override it along a ray path)"
-		disablewhen	"{ use_environment_override != 1 }"
-		range	{ 0 64 }
-		export	none
-		parmtag	{ "vray_plugin" "MtlOverride" }
-		parmtag	{ "vray_pluginattr" "environment_priority" }
-		parmtag	{ "vray_type" "int" }
-	    }
-	    parm {
-		name	"use"
-		label	"Use"
-		type	toggle
-		default	{ "0" }
-		help	"Use Override material"
-		range	{ 0 1 }
-		export	none
-		parmtag	{ "vray_custom_handling" "1" }
-	    }
+	parm {
+	    name	"gi_mtl"
+	    label	"Gi Material"
+	    type	oppath
+	    default	{ "" }
+	    help	"The gi material"
+	    disablewhen	"{ enable_gi_mtl != 1 }"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "oprelative" "." }
+	    parmtag	{ "vray_plugin" "MtlOverride" }
+	    parmtag	{ "vray_pluginattr" "gi_mtl" }
+	    parmtag	{ "vray_type" "Object" }
 	}
-
+	parm {
+	    name	"reflect_mtl"
+	    label	"Reflection Material"
+	    type	oppath
+	    default	{ "" }
+	    help	"The reflection material"
+	    disablewhen	"{ enable_reflect_mtl != 1 }"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "oprelative" "." }
+	    parmtag	{ "vray_plugin" "MtlOverride" }
+	    parmtag	{ "vray_pluginattr" "reflect_mtl" }
+	    parmtag	{ "vray_type" "Object" }
+	}
+	parm {
+	    name	"refract_mtl"
+	    label	"Refraction Material"
+	    type	oppath
+	    default	{ "" }
+	    help	"The refraction material"
+	    disablewhen	"{ enable_refract_mtl != 1 }"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "oprelative" "." }
+	    parmtag	{ "vray_plugin" "MtlOverride" }
+	    parmtag	{ "vray_pluginattr" "refract_mtl" }
+	    parmtag	{ "vray_type" "Object" }
+	}
+	parm {
+	    name	"shadow_mtl"
+	    label	"Shadow Material"
+	    type	oppath
+	    default	{ "" }
+	    help	"The shadow material"
+	    disablewhen	"{ enable_shadow_mtl != 1 }"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "oprelative" "." }
+	    parmtag	{ "vray_plugin" "MtlOverride" }
+	    parmtag	{ "vray_pluginattr" "shadow_mtl" }
+	    parmtag	{ "vray_type" "Object" }
+	}
+	parm {
+	    name	"environment_override"
+	    label	"Environment"
+	    type	color4
+	    size	4
+	    default	{ "1" "1" "1" "1" }
+	    help	"Environment override texture"
+	    disablewhen	"{ use_environment_override != 1 }"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "MtlOverride" }
+	    parmtag	{ "vray_pluginattr" "environment_override" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+	parm {
+	    name	"environment_priority"
+	    label	"Environment Priority"
+	    type	integer
+	    default	{ "0" }
+	    help	"Environment override priority (used when several materials override it along a ray path)"
+	    disablewhen	"{ use_environment_override != 1 }"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "MtlOverride" }
+	    parmtag	{ "vray_pluginattr" "environment_priority" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"use"
+	    label	"Use"
+	    type	toggle
+	    default	{ "0" }
+	    help	"Use Override material"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_custom_handling" "1" }
+	}
     }
 
 }

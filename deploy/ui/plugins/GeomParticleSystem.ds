@@ -1,215 +1,209 @@
 {
     name	parameters
-    group {
-	name	"GeomParticleSystem"
+    parm {
+	name	"plugindata"
 	label	"Geom Particle System"
-
-	parm {
-	    name	"plugindata"
-	    label	"Geom Particle System"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    help	"GeomParticleSystem"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomParticleSystem" }
-	    parmtag	{ "vray_type" "GEOMETRY" }
-	}
-	parm {
-	    name	"mesh"
-	    label	"Mesh"
-	    type	oppath
-	    default	{ "" }
-	    help	"The triangle mesh that will be instanced.This is used only for some of the particle render types"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "GeomParticleSystem" }
-	    parmtag	{ "vray_pluginattr" "mesh" }
-	    parmtag	{ "vray_type" "Object" }
-	}
-	parm {
-	    name	"render_type"
-	    label	"Render Type"
-	    type	integer
-	    default	{ "7" }
-	    help	"3 - multipoints; 4 - multistreak; 6 - points; 7 - Spheres; 8 - Sprites; 9 - Streak.Everything else gives a warning and renders as spheres"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomParticleSystem" }
-	    parmtag	{ "vray_pluginattr" "render_type" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"radius"
-	    label	"Radius"
-	    type	float
-	    default	{ "1" }
-	    help	"The constant particle radius when radii is empty"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomParticleSystem" }
-	    parmtag	{ "vray_pluginattr" "radius" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"sprite_size_x"
-	    label	"Sprite Size X"
-	    type	float
-	    default	{ "1" }
-	    help	"The width of sprite particles in world units"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomParticleSystem" }
-	    parmtag	{ "vray_pluginattr" "sprite_size_x" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"sprite_size_y"
-	    label	"Sprite Size Y"
-	    type	float
-	    default	{ "1" }
-	    help	"The height of sprite particles in world units"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomParticleSystem" }
-	    parmtag	{ "vray_pluginattr" "sprite_size_y" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"sprite_twist"
-	    label	"Sprite Twist"
-	    type	float
-	    default	{ "0" }
-	    help	"The twist of sprite particles in degrees"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomParticleSystem" }
-	    parmtag	{ "vray_pluginattr" "sprite_twist" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"sprite_orientation"
-	    label	"Sprite Orientation"
-	    type	integer
-	    default	{ "0" }
-	    help	"0 - orient sprites towards the camera center, 1 - orient sprites parallel to the camera plane"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomParticleSystem" }
-	    parmtag	{ "vray_pluginattr" "sprite_orientation" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"point_size"
-	    label	"Point Size"
-	    type	float
-	    default	{ "1" }
-	    help	"The size of point and multipoint particles, in pixels"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomParticleSystem" }
-	    parmtag	{ "vray_pluginattr" "point_size" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"point_radii"
-	    label	"Point Radii"
-	    type	toggle
-	    default	{ "0" }
-	    help	"If true, the point size will be taken form radii parameter"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomParticleSystem" }
-	    parmtag	{ "vray_pluginattr" "point_radii" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"point_world_size"
-	    label	"Point World Size"
-	    type	toggle
-	    default	{ "0" }
-	    help	"If true, the point size is in world space, not screen space"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomParticleSystem" }
-	    parmtag	{ "vray_pluginattr" "point_world_size" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"multi_count"
-	    label	"Multi Count"
-	    type	integer
-	    default	{ "1" }
-	    help	"The number of particles generated for each input particle, when the render type is multipoints or multistreaks"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomParticleSystem" }
-	    parmtag	{ "vray_pluginattr" "multi_count" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"multi_radius"
-	    label	"Multi Radius"
-	    type	float
-	    default	{ "0" }
-	    help	"The maximum distance between the original and a generated particle when the render type is multipoints or multistreaks"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomParticleSystem" }
-	    parmtag	{ "vray_pluginattr" "multi_radius" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"line_width"
-	    label	"Line Width"
-	    type	float
-	    default	{ "1" }
-	    help	"The width of streak particles, in pixels"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomParticleSystem" }
-	    parmtag	{ "vray_pluginattr" "line_width" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"tail_length"
-	    label	"Tail Length"
-	    type	float
-	    default	{ "1" }
-	    help	"The length of streak particles, in world units, the actual length depends on the particle velocity as well"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomParticleSystem" }
-	    parmtag	{ "vray_pluginattr" "tail_length" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"primary_visibility"
-	    label	"Primary Visibility"
-	    type	toggle
-	    default	{ "1" }
-	    help	"If off, shading an intersection with this mesh will not generate a gbuffer"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "GeomParticleSystem" }
-	    parmtag	{ "vray_pluginattr" "primary_visibility" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"data_source"
-	    label	"Data Source"
-	    type	oppath
-	    default	{ "" }
-	    help	"External data source to be used instead of positions, velocities, ids and radii"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "GeomParticleSystem" }
-	    parmtag	{ "vray_pluginattr" "data_source" }
-	    parmtag	{ "vray_type" "Object" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	help	"GeomParticleSystem"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomParticleSystem" }
+	parmtag	{ "vray_type" "GEOMETRY" }
     }
-
+    parm {
+	name	"mesh"
+	label	"Mesh"
+	type	oppath
+	default	{ "" }
+	help	"The triangle mesh that will be instanced.This is used only for some of the particle render types"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "oprelative" "." }
+	parmtag	{ "vray_plugin" "GeomParticleSystem" }
+	parmtag	{ "vray_pluginattr" "mesh" }
+	parmtag	{ "vray_type" "Object" }
+    }
+    parm {
+	name	"render_type"
+	label	"Render Type"
+	type	integer
+	default	{ "7" }
+	help	"3 - multipoints; 4 - multistreak; 6 - points; 7 - Spheres; 8 - Sprites; 9 - Streak.Everything else gives a warning and renders as spheres"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomParticleSystem" }
+	parmtag	{ "vray_pluginattr" "render_type" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"radius"
+	label	"Radius"
+	type	float
+	default	{ "1" }
+	help	"The constant particle radius when radii is empty"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomParticleSystem" }
+	parmtag	{ "vray_pluginattr" "radius" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"sprite_size_x"
+	label	"Sprite Size X"
+	type	float
+	default	{ "1" }
+	help	"The width of sprite particles in world units"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomParticleSystem" }
+	parmtag	{ "vray_pluginattr" "sprite_size_x" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"sprite_size_y"
+	label	"Sprite Size Y"
+	type	float
+	default	{ "1" }
+	help	"The height of sprite particles in world units"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomParticleSystem" }
+	parmtag	{ "vray_pluginattr" "sprite_size_y" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"sprite_twist"
+	label	"Sprite Twist"
+	type	float
+	default	{ "0" }
+	help	"The twist of sprite particles in degrees"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomParticleSystem" }
+	parmtag	{ "vray_pluginattr" "sprite_twist" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"sprite_orientation"
+	label	"Sprite Orientation"
+	type	integer
+	default	{ "0" }
+	help	"0 - orient sprites towards the camera center, 1 - orient sprites parallel to the camera plane"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomParticleSystem" }
+	parmtag	{ "vray_pluginattr" "sprite_orientation" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"point_size"
+	label	"Point Size"
+	type	float
+	default	{ "1" }
+	help	"The size of point and multipoint particles, in pixels"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomParticleSystem" }
+	parmtag	{ "vray_pluginattr" "point_size" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"point_radii"
+	label	"Point Radii"
+	type	toggle
+	default	{ "0" }
+	help	"If true, the point size will be taken form radii parameter"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomParticleSystem" }
+	parmtag	{ "vray_pluginattr" "point_radii" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"point_world_size"
+	label	"Point World Size"
+	type	toggle
+	default	{ "0" }
+	help	"If true, the point size is in world space, not screen space"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomParticleSystem" }
+	parmtag	{ "vray_pluginattr" "point_world_size" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"multi_count"
+	label	"Multi Count"
+	type	integer
+	default	{ "1" }
+	help	"The number of particles generated for each input particle, when the render type is multipoints or multistreaks"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomParticleSystem" }
+	parmtag	{ "vray_pluginattr" "multi_count" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"multi_radius"
+	label	"Multi Radius"
+	type	float
+	default	{ "0" }
+	help	"The maximum distance between the original and a generated particle when the render type is multipoints or multistreaks"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomParticleSystem" }
+	parmtag	{ "vray_pluginattr" "multi_radius" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"line_width"
+	label	"Line Width"
+	type	float
+	default	{ "1" }
+	help	"The width of streak particles, in pixels"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomParticleSystem" }
+	parmtag	{ "vray_pluginattr" "line_width" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"tail_length"
+	label	"Tail Length"
+	type	float
+	default	{ "1" }
+	help	"The length of streak particles, in world units, the actual length depends on the particle velocity as well"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomParticleSystem" }
+	parmtag	{ "vray_pluginattr" "tail_length" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"primary_visibility"
+	label	"Primary Visibility"
+	type	toggle
+	default	{ "1" }
+	help	"If off, shading an intersection with this mesh will not generate a gbuffer"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomParticleSystem" }
+	parmtag	{ "vray_pluginattr" "primary_visibility" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"data_source"
+	label	"Data Source"
+	type	oppath
+	default	{ "" }
+	help	"External data source to be used instead of positions, velocities, ids and radii"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "oprelative" "." }
+	parmtag	{ "vray_plugin" "GeomParticleSystem" }
+	parmtag	{ "vray_pluginattr" "data_source" }
+	parmtag	{ "vray_type" "Object" }
+    }
 }

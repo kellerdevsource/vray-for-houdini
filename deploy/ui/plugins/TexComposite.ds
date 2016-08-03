@@ -1,90 +1,84 @@
 {
     name	parameters
-    group {
-	name	"TexComposite"
+    parm {
+	name	"plugindata"
 	label	"Composite"
-
-	parm {
-	    name	"plugindata"
-	    label	"Composite"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    help	"TexComposite"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_category" "utility" }
-	    parmtag	{ "vray_plugin" "TexComposite" }
-	    parmtag	{ "vray_type" "TEXTURE" }
-	}
-	parm {
-	    name	"color_a"
-	    label	"Color A"
-	    type	color4
-	    size	4
-	    default	{ "1" "1" "1" "1" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexComposite" }
-	    parmtag	{ "vray_pluginattr" "color_a" }
-	    parmtag	{ "vray_type" "Texture" }
-	}
-	parm {
-	    name	"alpha_a"
-	    label	"Alpha A"
-	    type	float
-	    default	{ "1" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexComposite" }
-	    parmtag	{ "vray_pluginattr" "alpha_a" }
-	    parmtag	{ "vray_type" "TextureFloat" }
-	}
-	parm {
-	    name	"color_b"
-	    label	"Color B"
-	    type	color4
-	    size	4
-	    default	{ "1" "1" "1" "1" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexComposite" }
-	    parmtag	{ "vray_pluginattr" "color_b" }
-	    parmtag	{ "vray_type" "Texture" }
-	}
-	parm {
-	    name	"alpha_b"
-	    label	"Alpha B"
-	    type	float
-	    default	{ "1" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexComposite" }
-	    parmtag	{ "vray_pluginattr" "alpha_b" }
-	    parmtag	{ "vray_type" "TextureFloat" }
-	}
-	parm {
-	    name	"operation"
-	    label	"Operation"
-	    type	integer
-	    default	{ "0" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexComposite" }
-	    parmtag	{ "vray_pluginattr" "operation" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"factor"
-	    label	"Factor"
-	    type	float
-	    default	{ "0" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexComposite" }
-	    parmtag	{ "vray_pluginattr" "factor" }
-	    parmtag	{ "vray_type" "TextureFloat" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	help	"TexComposite"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_category" "utility" }
+	parmtag	{ "vray_plugin" "TexComposite" }
+	parmtag	{ "vray_type" "TEXTURE" }
     }
-
+    parm {
+	name	"color_a"
+	label	"Color A"
+	type	color4
+	size	4
+	default	{ "1" "1" "1" "1" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexComposite" }
+	parmtag	{ "vray_pluginattr" "color_a" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"alpha_a"
+	label	"Alpha A"
+	type	float
+	default	{ "1" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexComposite" }
+	parmtag	{ "vray_pluginattr" "alpha_a" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"color_b"
+	label	"Color B"
+	type	color4
+	size	4
+	default	{ "1" "1" "1" "1" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexComposite" }
+	parmtag	{ "vray_pluginattr" "color_b" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"alpha_b"
+	label	"Alpha B"
+	type	float
+	default	{ "1" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexComposite" }
+	parmtag	{ "vray_pluginattr" "alpha_b" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"operation"
+	label	"Operation"
+	type	integer
+	default	{ "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexComposite" }
+	parmtag	{ "vray_pluginattr" "operation" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"factor"
+	label	"Factor"
+	type	float
+	default	{ "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexComposite" }
+	parmtag	{ "vray_pluginattr" "factor" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
 }

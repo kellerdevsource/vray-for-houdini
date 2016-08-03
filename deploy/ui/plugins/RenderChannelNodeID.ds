@@ -1,33 +1,27 @@
 {
     name	parameters
-    group {
-	name	"RenderChannelNodeID"
+    parm {
+	name	"plugindata"
 	label	"Node ID"
-
-	parm {
-	    name	"plugindata"
-	    label	"Node ID"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    help	"The object's \"Pass Index\" contributes the pixel value"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "RenderChannelNodeID" }
-	    parmtag	{ "vray_type" "RENDERCHANNEL" }
-	}
-	parm {
-	    name	"name"
-	    label	"Name"
-	    type	string
-	    default	{ "Node ID" }
-	    help	"Channel name"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "RenderChannelNodeID" }
-	    parmtag	{ "vray_pluginattr" "name" }
-	    parmtag	{ "vray_type" "String" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	help	"The object's \"Pass Index\" contributes the pixel value"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "RenderChannelNodeID" }
+	parmtag	{ "vray_type" "RENDERCHANNEL" }
     }
-
+    parm {
+	name	"name"
+	label	"Name"
+	type	string
+	default	{ "Node ID" }
+	help	"Channel name"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "RenderChannelNodeID" }
+	parmtag	{ "vray_pluginattr" "name" }
+	parmtag	{ "vray_type" "String" }
+    }
 }

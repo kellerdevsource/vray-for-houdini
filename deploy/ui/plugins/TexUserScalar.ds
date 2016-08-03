@@ -1,45 +1,39 @@
 {
     name	parameters
-    group {
-	name	"TexUserScalar"
+    parm {
+	name	"plugindata"
 	label	"User Scalar"
-
-	parm {
-	    name	"plugindata"
-	    label	"User Scalar"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    help	"User scalar"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexUserScalar" }
-	    parmtag	{ "vray_type" "TEXTURE" }
-	}
-	parm {
-	    name	"default_value"
-	    label	"Default Value"
-	    type	float
-	    default	{ "1" }
-	    help	"Default value if the attribute is not found"
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexUserScalar" }
-	    parmtag	{ "vray_pluginattr" "default_value" }
-	    parmtag	{ "vray_type" "TextureFloat" }
-	}
-	parm {
-	    name	"user_attribute"
-	    label	"User Attribute"
-	    type	string
-	    default	{ "" }
-	    help	"User attribute name of type float or color"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexUserScalar" }
-	    parmtag	{ "vray_pluginattr" "user_attribute" }
-	    parmtag	{ "vray_type" "String" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	help	"User scalar"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexUserScalar" }
+	parmtag	{ "vray_type" "TEXTURE" }
     }
-
+    parm {
+	name	"default_value"
+	label	"Default Value"
+	type	float
+	default	{ "1" }
+	help	"Default value if the attribute is not found"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "vray_plugin" "TexUserScalar" }
+	parmtag	{ "vray_pluginattr" "default_value" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"user_attribute"
+	label	"User Attribute"
+	type	string
+	default	{ "" }
+	help	"User attribute name of type float or color"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexUserScalar" }
+	parmtag	{ "vray_pluginattr" "user_attribute" }
+	parmtag	{ "vray_type" "String" }
+    }
 }

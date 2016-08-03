@@ -1,316 +1,310 @@
 {
     name	parameters
-    group {
-	name	"TexFalloff"
+    parm {
+	name	"plugindata"
 	label	"Falloff"
+	type	data
+	invisible
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexFalloff" }
+	parmtag	{ "vray_type" "TEXTURE" }
+    }
+    group {
+	name	"folder"
+	label	"Common"
 
 	parm {
-	    name	"plugindata"
-	    label	"Falloff"
-	    type	data
-	    invisible
+	    name	"compatibility_with"
+	    label	"Compatibility With"
+	    type	ordinal
+	    default	{ "0" }
+	    help	"This is used to differentiate between textures exported from different applications"
+	    menu	{
+		"0"	"Max"
+		"1"	"Maya"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexFalloff" }
+	    parmtag	{ "vray_pluginattr" "compatibility_with" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"alpha_from_intensity"
+	    label	"Alpha From Intensity"
+	    type	ordinal
+	    default	{ "0" }
+	    help	"If 2 - the alpha is forced to 1.0f; 1 - the resulting alpha is the color intensity (if compatibility_with is 0) or the color luminance (if compatibility_with is 1); 0 - the alpha is taken from the bitmap alpha"
+	    menu	{
+		"0"	"Bitmap alpha"
+		"1"	"Color intensity/luminance"
+		"2"	"Force opaque"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexFalloff" }
+	    parmtag	{ "vray_pluginattr" "alpha_from_intensity" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"invert"
+	    label	"Invert"
+	    type	toggle
+	    default	{ "0" }
+	    help	"If true, the resulting texture color will be inverted"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexFalloff" }
+	    parmtag	{ "vray_pluginattr" "invert" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"invert_alpha"
+	    label	"Invert Alpha"
+	    type	toggle
+	    default	{ "1" }
+	    help	"If true and invert is on, the resulting texture alpha will be inverted too. If false, just the color will be inverted"
+	    disablewhen	"{ invert != 1 }"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexFalloff" }
+	    parmtag	{ "vray_pluginattr" "invert_alpha" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"color_mult"
+	    label	"Color Mult"
+	    type	color4
+	    size	4
+	    default	{ "1" "1" "1" "1" }
+	    help	"A multiplier for the texture color"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexFalloff" }
+	    parmtag	{ "vray_pluginattr" "color_mult" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+	parm {
+	    name	"color_offset"
+	    label	"Color Offset"
+	    type	color4
+	    size	4
+	    default	{ "0" "0" "0" "1" }
+	    help	"An additional offset for the texture color"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexFalloff" }
+	    parmtag	{ "vray_pluginattr" "color_offset" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+	parm {
+	    name	"alpha_mult"
+	    label	"Alpha Mult"
+	    type	float
+	    default	{ "1" }
+	    help	"A multiplier for the texture alpha"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexFalloff" }
+	    parmtag	{ "vray_pluginattr" "alpha_mult" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"alpha_offset"
+	    label	"Alpha Offset"
+	    type	float
+	    default	{ "0" }
+	    help	"An additional offset for the texture alpha"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexFalloff" }
+	    parmtag	{ "vray_pluginattr" "alpha_offset" }
+	    parmtag	{ "vray_type" "TextureFloat" }
+	}
+	parm {
+	    name	"nouvw_color"
+	    label	"No Uvs Color"
+	    type	color4
+	    size	4
+	    default	{ "0.5" "0.5" "0.5" "1" }
+	    help	"The color when there are no valid uvw coordinates"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexFalloff" }
+	    parmtag	{ "vray_pluginattr" "nouvw_color" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+	parm {
+	    name	"color1"
+	    label	"Color1"
+	    type	color4
+	    size	4
+	    default	{ "1" "1" "1" "1" }
+	    help	"First color"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexFalloff" }
+	    parmtag	{ "vray_pluginattr" "color1" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+	parm {
+	    name	"color2"
+	    label	"Color2"
+	    type	color4
+	    size	4
+	    default	{ "0" "0" "0" "1" }
+	    help	"Second color"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexFalloff" }
+	    parmtag	{ "vray_pluginattr" "color2" }
+	    parmtag	{ "vray_type" "Texture" }
+	}
+	parm {
+	    name	"type"
+	    label	"Type"
+	    type	ordinal
+	    default	{ "0" }
+	    help	"Type"
+	    menu	{
+		"0"	"Towards / away"
+		"1"	"Perpendicular / parallel"
+		"2"	"Fresnel"
+		"3"	"Shadow / light"
+		"4"	"Distance blend"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexFalloff" }
+	    parmtag	{ "vray_pluginattr" "type" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"direction_type"
+	    label	"Direction Type"
+	    type	ordinal
+	    default	{ "0" }
+	    help	"Direction type"
+	    disablewhen	"{ type != 0 type != 1 type != 2 }"
+	    menu	{
+		"0"	"View Z"
+		"1"	"View X"
+		"2"	"View Y"
+		"3"	"Explicit"
+		"4"	"Local X"
+		"5"	"Local Y"
+		"6"	"Local Z"
+		"7"	"World X"
+		"8"	"World Y"
+		"9"	"World Z"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexFalloff" }
+	    parmtag	{ "vray_pluginattr" "direction_type" }
+	    parmtag	{ "vray_type" "int" }
+	}
+	parm {
+	    name	"fresnel_ior"
+	    label	"Fresnel Ior"
+	    type	float
+	    default	{ "1.6" }
+	    help	"IOR for the Fresnel falloff type"
+	    disablewhen	"{ type != 2 }"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexFalloff" }
+	    parmtag	{ "vray_pluginattr" "fresnel_ior" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"dist_extrapolate"
+	    label	"Distance Extrapolate"
+	    type	toggle
+	    default	{ "0" }
+	    help	"Extrapolate for the distance blend falloff type"
+	    disablewhen	"{ type != 4 }"
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexFalloff" }
+	    parmtag	{ "vray_pluginattr" "dist_extrapolate" }
+	    parmtag	{ "vray_type" "boolean" }
+	}
+	parm {
+	    name	"dist_near"
+	    label	"Distance Near"
+	    type	float
+	    default	{ "0" }
+	    help	"Near distance for the distance blend falloff type"
+	    disablewhen	"{ type != 4 }"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexFalloff" }
+	    parmtag	{ "vray_pluginattr" "dist_near" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"dist_far"
+	    label	"Distance Far"
+	    type	float
+	    default	{ "100" }
+	    help	"Far distance for the distance blend falloff type"
+	    disablewhen	"{ type != 4 }"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexFalloff" }
+	    parmtag	{ "vray_pluginattr" "dist_far" }
+	    parmtag	{ "vray_type" "float" }
+	}
+	parm {
+	    name	"explicit_dir"
+	    label	"Explicit Direction"
+	    type	direction
+	    size	3
+	    default	{ "0" "0" "1" }
+	    help	"Direction for the explicit direction type"
+	    disablewhen	"{ type == 3 } { type == 4 } { direction_type != 3 }"
+	    range	{ 0 10 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexFalloff" }
+	    parmtag	{ "vray_pluginattr" "explicit_dir" }
+	    parmtag	{ "vray_type" "Vector" }
+	}
+	parm {
+	    name	"use_blend_input"
+	    label	"Use Blend Input"
+	    type	toggle
 	    default	{ "0" }
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "vray_plugin" "TexFalloff" }
-	    parmtag	{ "vray_type" "TEXTURE" }
+	    parmtag	{ "vray_pluginattr" "use_blend_input" }
+	    parmtag	{ "vray_type" "boolean" }
 	}
-	group {
-	    name	"folder"
-	    label	"Common"
-
-	    parm {
-		name	"compatibility_with"
-		label	"Compatibility With"
-		type	ordinal
-		default	{ "0" }
-		help	"This is used to differentiate between textures exported from different applications"
-		menu	{
-		    "0"	"Max"
-		    "1"	"Maya"
-		}
-		range	{ 0 1 }
-		export	none
-		parmtag	{ "vray_plugin" "TexFalloff" }
-		parmtag	{ "vray_pluginattr" "compatibility_with" }
-		parmtag	{ "vray_type" "int" }
-	    }
-	    parm {
-		name	"alpha_from_intensity"
-		label	"Alpha From Intensity"
-		type	ordinal
-		default	{ "0" }
-		help	"If 2 - the alpha is forced to 1.0f; 1 - the resulting alpha is the color intensity (if compatibility_with is 0) or the color luminance (if compatibility_with is 1); 0 - the alpha is taken from the bitmap alpha"
-		menu	{
-		    "0"	"Bitmap alpha"
-		    "1"	"Color intensity/luminance"
-		    "2"	"Force opaque"
-		}
-		range	{ 0 1 }
-		export	none
-		parmtag	{ "vray_plugin" "TexFalloff" }
-		parmtag	{ "vray_pluginattr" "alpha_from_intensity" }
-		parmtag	{ "vray_type" "int" }
-	    }
-	    parm {
-		name	"invert"
-		label	"Invert"
-		type	toggle
-		default	{ "0" }
-		help	"If true, the resulting texture color will be inverted"
-		range	{ 0 1 }
-		export	none
-		parmtag	{ "vray_plugin" "TexFalloff" }
-		parmtag	{ "vray_pluginattr" "invert" }
-		parmtag	{ "vray_type" "boolean" }
-	    }
-	    parm {
-		name	"invert_alpha"
-		label	"Invert Alpha"
-		type	toggle
-		default	{ "1" }
-		help	"If true and invert is on, the resulting texture alpha will be inverted too. If false, just the color will be inverted"
-		disablewhen	"{ invert != 1 }"
-		range	{ 0 1 }
-		export	none
-		parmtag	{ "vray_plugin" "TexFalloff" }
-		parmtag	{ "vray_pluginattr" "invert_alpha" }
-		parmtag	{ "vray_type" "boolean" }
-	    }
-	    parm {
-		name	"color_mult"
-		label	"Color Mult"
-		type	color4
-		size	4
-		default	{ "1" "1" "1" "1" }
-		help	"A multiplier for the texture color"
-		range	{ 0 10 }
-		export	none
-		parmtag	{ "vray_plugin" "TexFalloff" }
-		parmtag	{ "vray_pluginattr" "color_mult" }
-		parmtag	{ "vray_type" "Texture" }
-	    }
-	    parm {
-		name	"color_offset"
-		label	"Color Offset"
-		type	color4
-		size	4
-		default	{ "0" "0" "0" "1" }
-		help	"An additional offset for the texture color"
-		range	{ 0 10 }
-		export	none
-		parmtag	{ "vray_plugin" "TexFalloff" }
-		parmtag	{ "vray_pluginattr" "color_offset" }
-		parmtag	{ "vray_type" "Texture" }
-	    }
-	    parm {
-		name	"alpha_mult"
-		label	"Alpha Mult"
-		type	float
-		default	{ "1" }
-		help	"A multiplier for the texture alpha"
-		range	{ 0 64 }
-		export	none
-		parmtag	{ "vray_plugin" "TexFalloff" }
-		parmtag	{ "vray_pluginattr" "alpha_mult" }
-		parmtag	{ "vray_type" "TextureFloat" }
-	    }
-	    parm {
-		name	"alpha_offset"
-		label	"Alpha Offset"
-		type	float
-		default	{ "0" }
-		help	"An additional offset for the texture alpha"
-		range	{ 0 64 }
-		export	none
-		parmtag	{ "vray_plugin" "TexFalloff" }
-		parmtag	{ "vray_pluginattr" "alpha_offset" }
-		parmtag	{ "vray_type" "TextureFloat" }
-	    }
-	    parm {
-		name	"nouvw_color"
-		label	"No Uvs Color"
-		type	color4
-		size	4
-		default	{ "0.5" "0.5" "0.5" "1" }
-		help	"The color when there are no valid uvw coordinates"
-		range	{ 0 10 }
-		export	none
-		parmtag	{ "vray_plugin" "TexFalloff" }
-		parmtag	{ "vray_pluginattr" "nouvw_color" }
-		parmtag	{ "vray_type" "Texture" }
-	    }
-	    parm {
-		name	"color1"
-		label	"Color1"
-		type	color4
-		size	4
-		default	{ "1" "1" "1" "1" }
-		help	"First color"
-		range	{ 0 10 }
-		export	none
-		parmtag	{ "vray_plugin" "TexFalloff" }
-		parmtag	{ "vray_pluginattr" "color1" }
-		parmtag	{ "vray_type" "Texture" }
-	    }
-	    parm {
-		name	"color2"
-		label	"Color2"
-		type	color4
-		size	4
-		default	{ "0" "0" "0" "1" }
-		help	"Second color"
-		range	{ 0 10 }
-		export	none
-		parmtag	{ "vray_plugin" "TexFalloff" }
-		parmtag	{ "vray_pluginattr" "color2" }
-		parmtag	{ "vray_type" "Texture" }
-	    }
-	    parm {
-		name	"type"
-		label	"Type"
-		type	ordinal
-		default	{ "0" }
-		help	"Type"
-		menu	{
-		    "0"	"Towards / away"
-		    "1"	"Perpendicular / parallel"
-		    "2"	"Fresnel"
-		    "3"	"Shadow / light"
-		    "4"	"Distance blend"
-		}
-		range	{ 0 1 }
-		export	none
-		parmtag	{ "vray_plugin" "TexFalloff" }
-		parmtag	{ "vray_pluginattr" "type" }
-		parmtag	{ "vray_type" "int" }
-	    }
-	    parm {
-		name	"direction_type"
-		label	"Direction Type"
-		type	ordinal
-		default	{ "0" }
-		help	"Direction type"
-		disablewhen	"{ type != 0 type != 1 type != 2 }"
-		menu	{
-		    "0"	"View Z"
-		    "1"	"View X"
-		    "2"	"View Y"
-		    "3"	"Explicit"
-		    "4"	"Local X"
-		    "5"	"Local Y"
-		    "6"	"Local Z"
-		    "7"	"World X"
-		    "8"	"World Y"
-		    "9"	"World Z"
-		}
-		range	{ 0 1 }
-		export	none
-		parmtag	{ "vray_plugin" "TexFalloff" }
-		parmtag	{ "vray_pluginattr" "direction_type" }
-		parmtag	{ "vray_type" "int" }
-	    }
-	    parm {
-		name	"fresnel_ior"
-		label	"Fresnel Ior"
-		type	float
-		default	{ "1.6" }
-		help	"IOR for the Fresnel falloff type"
-		disablewhen	"{ type != 2 }"
-		range	{ 0 64 }
-		export	none
-		parmtag	{ "vray_plugin" "TexFalloff" }
-		parmtag	{ "vray_pluginattr" "fresnel_ior" }
-		parmtag	{ "vray_type" "float" }
-	    }
-	    parm {
-		name	"dist_extrapolate"
-		label	"Distance Extrapolate"
-		type	toggle
-		default	{ "0" }
-		help	"Extrapolate for the distance blend falloff type"
-		disablewhen	"{ type != 4 }"
-		range	{ 0 1 }
-		export	none
-		parmtag	{ "vray_plugin" "TexFalloff" }
-		parmtag	{ "vray_pluginattr" "dist_extrapolate" }
-		parmtag	{ "vray_type" "boolean" }
-	    }
-	    parm {
-		name	"dist_near"
-		label	"Distance Near"
-		type	float
-		default	{ "0" }
-		help	"Near distance for the distance blend falloff type"
-		disablewhen	"{ type != 4 }"
-		range	{ 0 64 }
-		export	none
-		parmtag	{ "vray_plugin" "TexFalloff" }
-		parmtag	{ "vray_pluginattr" "dist_near" }
-		parmtag	{ "vray_type" "float" }
-	    }
-	    parm {
-		name	"dist_far"
-		label	"Distance Far"
-		type	float
-		default	{ "100" }
-		help	"Far distance for the distance blend falloff type"
-		disablewhen	"{ type != 4 }"
-		range	{ 0 64 }
-		export	none
-		parmtag	{ "vray_plugin" "TexFalloff" }
-		parmtag	{ "vray_pluginattr" "dist_far" }
-		parmtag	{ "vray_type" "float" }
-	    }
-	    parm {
-		name	"explicit_dir"
-		label	"Explicit Direction"
-		type	direction
-		size	3
-		default	{ "0" "0" "1" }
-		help	"Direction for the explicit direction type"
-		disablewhen	"{ type == 3 } { type == 4 } { direction_type != 3 }"
-		range	{ 0 10 }
-		export	none
-		parmtag	{ "vray_plugin" "TexFalloff" }
-		parmtag	{ "vray_pluginattr" "explicit_dir" }
-		parmtag	{ "vray_type" "Vector" }
-	    }
-	    parm {
-		name	"use_blend_input"
-		label	"Use Blend Input"
-		type	toggle
-		default	{ "0" }
-		range	{ 0 1 }
-		export	none
-		parmtag	{ "vray_plugin" "TexFalloff" }
-		parmtag	{ "vray_pluginattr" "use_blend_input" }
-		parmtag	{ "vray_type" "boolean" }
-	    }
-	    parm {
-		name	"blend_input"
-		label	"Blend Input"
-		type	float
-		default	{ "0.5" }
-		help	"If specified and 'Use Blend Input' is true, the final blending amount will be taken from this texture"
-		disablewhen	"{ use_blend_input != 1 }"
-		range	{ 0 64 }
-		export	none
-		parmtag	{ "vray_plugin" "TexFalloff" }
-		parmtag	{ "vray_pluginattr" "blend_input" }
-		parmtag	{ "vray_type" "TextureFloat" }
-	    }
-	    parm {
-		name	"use_blend_curve"
-		label	"Use Blend Curve"
-		type	toggle
-		default	{ "0" }
-		range	{ 0 1 }
-		export	none
-		parmtag	{ "vray_custom_handling" "1" }
-	    }
+	parm {
+	    name	"blend_input"
+	    label	"Blend Input"
+	    type	float
+	    default	{ "0.5" }
+	    help	"If specified and 'Use Blend Input' is true, the final blending amount will be taken from this texture"
+	    disablewhen	"{ use_blend_input != 1 }"
+	    range	{ 0 64 }
+	    export	none
+	    parmtag	{ "vray_plugin" "TexFalloff" }
+	    parmtag	{ "vray_pluginattr" "blend_input" }
+	    parmtag	{ "vray_type" "TextureFloat" }
 	}
-
+	parm {
+	    name	"use_blend_curve"
+	    label	"Use Blend Curve"
+	    type	toggle
+	    default	{ "0" }
+	    range	{ 0 1 }
+	    export	none
+	    parmtag	{ "vray_custom_handling" "1" }
+	}
     }
 
 }

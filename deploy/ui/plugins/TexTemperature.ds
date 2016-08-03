@@ -1,98 +1,92 @@
 {
     name	parameters
-    group {
-	name	"TexTemperature"
+    parm {
+	name	"plugindata"
 	label	"Temperature"
-
-	parm {
-	    name	"plugindata"
-	    label	"Temperature"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    help	"Temperature"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexTemperature" }
-	    parmtag	{ "vray_type" "TEXTURE" }
-	}
-	parm {
-	    name	"color_mode"
-	    label	"Mode"
-	    type	ordinal
-	    default	{ "1" }
-	    help	"Choose color or temperature mode"
-	    menu	{
-		"0"	"Color"
-		"1"	"Temperature"
-	    }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexTemperature" }
-	    parmtag	{ "vray_pluginattr" "color_mode" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"temperature"
-	    label	"Temperature"
-	    type	float
-	    default	{ "6500" }
-	    help	"Material temperature in kelvins"
-	    range	{ 0 100000 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexTemperature" }
-	    parmtag	{ "vray_pluginattr" "temperature" }
-	    parmtag	{ "vray_type" "TextureFloat" }
-	}
-	parm {
-	    name	"color"
-	    label	"Color"
-	    type	color
-	    size	3
-	    default	{ "0.5" "0.5" "0.5" }
-	    help	"Texture color"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexTemperature" }
-	    parmtag	{ "vray_pluginattr" "color" }
-	    parmtag	{ "vray_type" "Color" }
-	}
-	parm {
-	    name	"rgb_multiplier"
-	    label	"Rgb Multiplier"
-	    type	float
-	    default	{ "1" }
-	    help	"Color multiplier"
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexTemperature" }
-	    parmtag	{ "vray_pluginattr" "rgb_multiplier" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"alpha"
-	    label	"Alpha"
-	    type	float
-	    default	{ "1" }
-	    help	"Alpha color channel"
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexTemperature" }
-	    parmtag	{ "vray_pluginattr" "alpha" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"gamma_correction"
-	    label	"Gamma Correction"
-	    type	float
-	    default	{ "1" }
-	    help	"Gamma correction value"
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "vray_plugin" "TexTemperature" }
-	    parmtag	{ "vray_pluginattr" "gamma_correction" }
-	    parmtag	{ "vray_type" "float" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	help	"Temperature"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexTemperature" }
+	parmtag	{ "vray_type" "TEXTURE" }
     }
-
+    parm {
+	name	"color_mode"
+	label	"Mode"
+	type	ordinal
+	default	{ "1" }
+	help	"Choose color or temperature mode"
+	menu	{
+	    "0"	"Color"
+	    "1"	"Temperature"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexTemperature" }
+	parmtag	{ "vray_pluginattr" "color_mode" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"temperature"
+	label	"Temperature"
+	type	float
+	default	{ "6500" }
+	help	"Material temperature in kelvins"
+	range	{ 0 100000 }
+	export	none
+	parmtag	{ "vray_plugin" "TexTemperature" }
+	parmtag	{ "vray_pluginattr" "temperature" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"color"
+	label	"Color"
+	type	color
+	size	3
+	default	{ "0.5" "0.5" "0.5" }
+	help	"Texture color"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "vray_plugin" "TexTemperature" }
+	parmtag	{ "vray_pluginattr" "color" }
+	parmtag	{ "vray_type" "Color" }
+    }
+    parm {
+	name	"rgb_multiplier"
+	label	"Rgb Multiplier"
+	type	float
+	default	{ "1" }
+	help	"Color multiplier"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "vray_plugin" "TexTemperature" }
+	parmtag	{ "vray_pluginattr" "rgb_multiplier" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"alpha"
+	label	"Alpha"
+	type	float
+	default	{ "1" }
+	help	"Alpha color channel"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "vray_plugin" "TexTemperature" }
+	parmtag	{ "vray_pluginattr" "alpha" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"gamma_correction"
+	label	"Gamma Correction"
+	type	float
+	default	{ "1" }
+	help	"Gamma correction value"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "vray_plugin" "TexTemperature" }
+	parmtag	{ "vray_pluginattr" "gamma_correction" }
+	parmtag	{ "vray_type" "float" }
+    }
 }

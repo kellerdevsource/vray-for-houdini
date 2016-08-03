@@ -1,32 +1,26 @@
 {
     name	parameters
-    group {
-	name	"FilterGaussian"
+    parm {
+	name	"plugindata"
 	label	"Gaussian"
-
-	parm {
-	    name	"plugindata"
-	    label	"Gaussian"
-	    type	data
-	    invisible
-	    default	{ "0" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_plugin" "FilterGaussian" }
-	    parmtag	{ "vray_type" "SETTINGS" }
-	}
-	parm {
-	    name	"size"
-	    label	"Size"
-	    type	float
-	    default	{ "3" }
-	    help	"Filter width"
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "vray_plugin" "FilterGaussian" }
-	    parmtag	{ "vray_pluginattr" "size" }
-	    parmtag	{ "vray_type" "float" }
-	}
+	type	data
+	invisible
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "FilterGaussian" }
+	parmtag	{ "vray_type" "SETTINGS" }
     }
-
+    parm {
+	name	"size"
+	label	"Size"
+	type	float
+	default	{ "3" }
+	help	"Filter width"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "vray_plugin" "FilterGaussian" }
+	parmtag	{ "vray_pluginattr" "size" }
+	parmtag	{ "vray_type" "float" }
+    }
 }
