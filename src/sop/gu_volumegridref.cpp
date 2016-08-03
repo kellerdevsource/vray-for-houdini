@@ -35,6 +35,53 @@
 
 #include <chrono>
 
+namespace {
+struct ChannelInfo {
+	const char * propName;
+	const char * displayName;
+	GridChannels::Enum type;
+
+	operator int() const {
+		return static_cast<int>(type);
+	}
+};
+
+const int CHANNEL_COUNT = 9;
+const ChannelInfo chInfo[CHANNEL_COUNT + 1] = {
+	{ "channel_smoke", "Smoke",       GridChannels::ChSm       },
+	{ "channel_temp",  "Temperature", GridChannels::ChT        },
+	{ "channel_fuel",  "Fuel",        GridChannels::ChFl       },
+	{ "channel_vel_x", "Velocity X",  GridChannels::ChVx       },
+	{ "channel_vel_y", "Velocity Y",  GridChannels::ChVy       },
+	{ "channel_vel_z", "Velocity Z",  GridChannels::ChVz       },
+	{ "channel_red",   "Color R",     GridChannels::ChU        },
+	{ "channel_green", "Color G",     GridChannels::ChV        },
+	{ "channel_blue",  "Color B",     GridChannels::ChW        },
+	{ "INVALID",       "INVALID",     GridChannels::ChReserved },
+};
+
+const ChannelInfo & fromType(int type) {
+	for (int c = 0; c < CHANNEL_COUNT; ++c) {
+		if (static_cast<int>(chInfo[c]) == type) {
+			return chInfo[c];
+		}
+	}
+	return chInfo[CHANNEL_COUNT];
+}
+
+const ChannelInfo & fromPropName(const char * name) {
+	for (int c = 0; c < CHANNEL_COUNT; ++c) {
+		if (!strcmp(name, chInfo[c].propName)) {
+			return chInfo[c];
+		}
+	}
+	return chInfo[CHANNEL_COUNT - 1];
+}
+
+}
+
+
+
 
 using namespace VRayForHoudini;
 
@@ -287,23 +334,23 @@ GU_ConstDetailHandle VRayVolumeGridRef::getPackedDetail(GU_PackedContext *contex
 	GU_Detail *gdp = SYSconst_cast(this)->m_handle.writeLock();
 	gdp->stashAll();
 
-	const char *chNames[10] = { "Temperature", "Smoke", "Spped", "Velocity X", "Velocity Y", "Velocity Z", "Color R", "Color G", "Color B", "Fuel"};
 	auto tBeginLoop = high_resolution_clock::now();
-	int c = 0;
-	for (auto chan = GridChannels::ChT; chan <= GridChannels::ChFl; ++reinterpret_cast<int&>(chan), ++c) {
-		if (!cache->ChannelPresent(chan)) {
+	for (int c = 0; c < CHANNEL_COUNT; ++c) {
+		const auto & chan = chInfo[c];
+
+		if (!cache->ChannelPresent(chan.type)) {
 			continue;
 		}
 		GU_PrimVolume *volumeGdp = (GU_PrimVolume *)GU_PrimVolume::build(gdp);
 
-		auto visType = chan == GridChannels::ChSm ? GEO_VOLUMEVIS_SMOKE : GEO_VOLUMEVIS_INVISIBLE;
+		auto visType = chan.type == GridChannels::ChSm ? GEO_VOLUMEVIS_SMOKE : GEO_VOLUMEVIS_INVISIBLE;
 		volumeGdp->setVisualization(visType, volumeGdp->getVisIso(), volumeGdp->getVisDensity());
 
 		UT_VoxelArrayWriteHandleF voxelHandle = volumeGdp->getVoxelWriteHandle();
 		voxelHandle->size(gridDimensions[0], gridDimensions[1], gridDimensions[2]);
 
 		auto tStartExpand = high_resolution_clock::now();
-		const float *grid = cache->ExpandChannel(chan);
+		const float *grid = cache->ExpandChannel(chan.type);
 		auto tEndExpand = high_resolution_clock::now();
 
 		int expandTime = duration_cast<milliseconds>(tEndExpand - tStartExpand).count();
@@ -314,7 +361,7 @@ GU_ConstDetailHandle VRayVolumeGridRef::getPackedDetail(GU_PackedContext *contex
 
 		int extractTime = duration_cast<milliseconds>(tEndExtract - tStartExtract).count();
 
-		Log::getLog().info("Expanding channel '%s' took %dms, extracting took %dms", chNames[c], expandTime, extractTime);
+		Log::getLog().info("Expanding channel '%s' took %dms, extracting took %dms", chan.displayName, expandTime, extractTime);
 
 		volumeGdp->setTransform4(tm);
 	}
@@ -397,26 +444,25 @@ void VRayVolumeGridRef::buildMapping() {
 		this->setPhxChannelMap(UT_StringArray());
 	} else {
 		auto channels = getCacheChannels();
-		const int chCount = 9;
-		static const char *chNames[chCount] = {"channel_smoke", "channel_temp", "channel_fuel", "channel_vel_x", "channel_vel_y", "channel_vel_z", "channel_red", "channel_green", "channel_blue"};
-		static const int   chIDs[chCount] = {2, 1, 10, 4, 5, 6, 7, 8, 9};
 
 		// will hold names so we can use pointers to them
 		std::vector<UT_String> names;
 		std::vector<int> ids;
-		for (int c = 0; c < chCount; ++c) {
+		for (int c = 0; c < CHANNEL_COUNT; ++c) {
+			const auto & chan = chInfo[c];
+
 			UT_String value(UT_String::ALWAYS_DEEP);
-			auto res = m_options.hasOption(chNames[c]) ? m_options.getOptionI(chNames[c]) - 1 : -1;
+			auto res = m_options.hasOption(chan.propName) ? m_options.getOptionI(chan.propName) - 1 : -1;
 			if (res >= 0 && res < channels.size()) {
 				value = channels(res);
 				if (value != "" && value != "0") {
 					names.push_back(value);
-					ids.push_back(chIDs[c]);
+					ids.push_back(static_cast<int>(chan));
 				}
 			}
 		}
 
-		const char * inputNames[chCount] = {0};
+		const char * inputNames[CHANNEL_COUNT] = {0};
 		for (int c = 0; c < names.size(); ++c) {
 			inputNames[c] = names[c].c_str();
 		}
