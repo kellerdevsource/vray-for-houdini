@@ -6,7 +6,7 @@
 
 	parm {
 	    name	"SettingsLightCache_plugindata"
-	    label	"SettingsLightCache"
+	    label	"Light Cache"
 	    type	data
 	    invisible
 	    default	{ "0" }
@@ -47,7 +47,7 @@
 	    type	ordinal
 	    default	{ "1" }
 	    help	"The filter determines how irradiance is interpolated from the samples in the light cache"
-	    disablewhen	"{ SettingsGI_on != 1 } { mode == 3 }"
+	    disablewhen	"{ SettingsGI_on != 1 } { SettingsLightCache_mode == 3 }"
 	    menu	{
 		"0"	"None"
 		"1"	"Nearest"
@@ -65,7 +65,7 @@
 	    type	integer
 	    default	{ "5" }
 	    help	"How many of the nearest samples to look up from the light cache"
-	    disablewhen	"{ SettingsGI_on != 1 } { filter_type != 1 } { mode == 3 }"
+	    disablewhen	"{ SettingsGI_on != 1 } { SettingsLightCache_filter_type != 1 } { SettingsLightCache_mode == 3 }"
 	    range	{ 0 64 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsLightCache" }
@@ -78,7 +78,7 @@
 	    type	float
 	    default	{ "0.06" }
 	    help	"The size of the filter"
-	    disablewhen	"{ SettingsGI_on != 1 } { filter_type != 2 } { mode == 3 }"
+	    disablewhen	"{ SettingsGI_on != 1 } { SettingsLightCache_filter_type != 2 } { SettingsLightCache_mode == 3 }"
 	    range	{ 0 64 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsLightCache" }
@@ -91,7 +91,7 @@
 	    type	toggle
 	    default	{ "0" }
 	    help	"Filter light cache sampler before rendering"
-	    disablewhen	"{ SettingsGI_on != 1 } { mode == 3 }"
+	    disablewhen	"{ SettingsGI_on != 1 } { SettingsLightCache_mode == 3 }"
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsLightCache" }
@@ -104,7 +104,7 @@
 	    type	integer
 	    default	{ "10" }
 	    help	"Number of prefilter samples"
-	    disablewhen	"{ SettingsGI_on != 1 } { prefilter == 0 } { mode == 3 }"
+	    disablewhen	"{ SettingsGI_on != 1 } { SettingsLightCache_prefilter == 0 } { SettingsLightCache_mode == 3 }"
 	    range	{ 0 64 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsLightCache" }
@@ -130,7 +130,7 @@
 	    type	toggle
 	    default	{ "1" }
 	    help	"Turning this option on will show the paths that are traced"
-	    disablewhen	"{ SettingsGI_on != 1 } { mode == 3 }"
+	    disablewhen	"{ SettingsGI_on != 1 } { SettingsLightCache_mode == 3 }"
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsLightCache" }
@@ -192,7 +192,7 @@
 	    type	file
 	    default	{ "//lightmaps/light_cache.vrmap" }
 	    help	"Light cache file"
-	    disablewhen	"{ SettingsGI_on != 1 } { mode != 2 }"
+	    disablewhen	"{ SettingsGI_on != 1 } { SettingsLightCache_mode != 2 }"
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "filechooser_pattern" "*.vrlmap" }
@@ -220,7 +220,7 @@
 	    type	toggle
 	    default	{ "0" }
 	    help	"Auto save Light Cache"
-	    disablewhen	"{ SettingsGI_on != 1 } { mode == 2 }"
+	    disablewhen	"{ SettingsGI_on != 1 } { SettingsLightCache_mode == 2 }"
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsLightCache" }
@@ -233,7 +233,7 @@
 	    type	file
 	    default	{ "//lightmaps/light_cache.vrmap" }
 	    help	"Light cache auto save file name"
-	    disablewhen	"{ SettingsGI_on != 1 } { mode == 2 } { auto_save != 1 }"
+	    disablewhen	"{ SettingsGI_on != 1 } { SettingsLightCache_mode == 2 } { SettingsLightCache_auto_save != 1 }"
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "filechooser_mode" "write" }
@@ -314,7 +314,7 @@
 	    type	float
 	    default	{ "1" }
 	    help	"Retrace treshold, relative to the light cache sample size"
-	    disablewhen	"{ SettingsGI_on != 1 } { retrace_enabled == 0 }"
+	    disablewhen	"{ SettingsGI_on != 1 } { SettingsLightCache_retrace_enabled == 0 }"
 	    range	{ 0 64 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsLightCache" }
@@ -348,7 +348,7 @@
 	    type	float
 	    default	{ "0" }
 	    help	"Enables additional checks to mimize light leaks; 0.0 means no checks"
-	    disablewhen	"{ retrace_enabled == 0 }"
+	    disablewhen	"{ SettingsLightCache_retrace_enabled == 0 }"
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsLightCache" }

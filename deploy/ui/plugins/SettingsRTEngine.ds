@@ -6,7 +6,7 @@
 
 	parm {
 	    name	"SettingsRTEngine_plugindata"
-	    label	"Realtime Engine Settings"
+	    label	"RT"
 	    type	data
 	    invisible
 	    default	{ "0" }
@@ -118,7 +118,7 @@
 	    type	float
 	    default	{ "0.065" }
 	    help	"Distance between the two cameras for stereo mode"
-	    disablewhen	"{ stereo_mode != 1 }"
+	    disablewhen	"{ SettingsRTEngine_stereo_mode != 1 }"
 	    range	{ 0 64 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsRTEngine" }
@@ -131,7 +131,7 @@
 	    type	ordinal
 	    default	{ "2" }
 	    help	"Focus mode"
-	    disablewhen	"{ stereo_mode != 1 }"
+	    disablewhen	"{ SettingsRTEngine_stereo_mode != 1 }"
 	    menu	{
 		"0"	"None"
 		"1"	"Rotation"

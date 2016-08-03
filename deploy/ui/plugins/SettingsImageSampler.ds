@@ -6,7 +6,7 @@
 
 	parm {
 	    name	"SettingsImageSampler_plugindata"
-	    label	"Image Sampler"
+	    label	"AA"
 	    type	data
 	    invisible
 	    default	{ "0" }
@@ -51,8 +51,8 @@
 	    type	integer
 	    default	{ "1" }
 	    help	"Subdivs value for the fixed sampler"
-	    disablewhen	"{ type != 0 }"
-	    hidewhen	"{ type != 0 }"
+	    disablewhen	"{ SettingsImageSampler_type != 0 }"
+	    hidewhen	"{ SettingsImageSampler_type != 0 }"
 	    range	{ 0 64 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsImageSampler" }
@@ -65,8 +65,8 @@
 	    type	integer
 	    default	{ "1" }
 	    help	"Min. subdivs value for the adaptive DMC image sampler"
-	    disablewhen	"{ type != 1 }"
-	    hidewhen	"{ type != 1 }"
+	    disablewhen	"{ SettingsImageSampler_type != 1 }"
+	    hidewhen	"{ SettingsImageSampler_type != 1 }"
 	    range	{ 0 64 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsImageSampler" }
@@ -79,8 +79,8 @@
 	    type	integer
 	    default	{ "4" }
 	    help	"Max. subdivs value for the adaptive DMC image sampler"
-	    disablewhen	"{ type != 1 }"
-	    hidewhen	"{ type != 1 }"
+	    disablewhen	"{ SettingsImageSampler_type != 1 }"
+	    hidewhen	"{ SettingsImageSampler_type != 1 }"
 	    range	{ 0 64 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsImageSampler" }
@@ -93,8 +93,8 @@
 	    type	float
 	    default	{ "0.01" }
 	    help	"Color threshold for the adaptive DMC image sampler"
-	    disablewhen	"{ use_dmc_treshhold != 0 } { type != 1 }"
-	    hidewhen	"{ type != 1 }"
+	    disablewhen	"{ SettingsImageSampler_use_dmc_treshhold != 0 } { SettingsImageSampler_type != 1 }"
+	    hidewhen	"{ SettingsImageSampler_type != 1 }"
 	    range	{ 0.005 0.1 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsImageSampler" }
@@ -107,8 +107,8 @@
 	    type	integer
 	    default	{ "-1" }
 	    help	"Determines the minimum sampling rate for the adaptive subdivision sampler. A value of 0 means that samples will be one pixel apart. Positive values will put samples inside the pixels, while negative values will space the samples over several pixels."
-	    disablewhen	"{ type != 2 }"
-	    hidewhen	"{ type != 2 }"
+	    disablewhen	"{ SettingsImageSampler_type != 2 }"
+	    hidewhen	"{ SettingsImageSampler_type != 2 }"
 	    range	{ 0 64 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsImageSampler" }
@@ -121,8 +121,8 @@
 	    type	integer
 	    default	{ "2" }
 	    help	"Determines the maximum sampling rate for the adaptive subdivision sampler. A value of 0 means that samples will be one pixel apart. Positive values will put samples inside the pixels, while negative values will space the samples over several pixels."
-	    disablewhen	"{ type != 2 }"
-	    hidewhen	"{ type != 2 }"
+	    disablewhen	"{ SettingsImageSampler_type != 2 }"
+	    hidewhen	"{ SettingsImageSampler_type != 2 }"
 	    range	{ 0 64 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsImageSampler" }
@@ -135,8 +135,8 @@
 	    type	toggle
 	    default	{ "1" }
 	    help	"If this is true, samples will be displaced randomly, for better AA of nearly horizontal or vertical edges."
-	    disablewhen	"{ type != 2 }"
-	    hidewhen	"{ type != 2 }"
+	    disablewhen	"{ SettingsImageSampler_type != 2 }"
+	    hidewhen	"{ SettingsImageSampler_type != 2 }"
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsImageSampler" }
@@ -148,8 +148,8 @@
 	    label	"Threshold"
 	    type	float
 	    default	{ "0.15" }
-	    disablewhen	"{ type != 2 }"
-	    hidewhen	"{ type != 2 }"
+	    disablewhen	"{ SettingsImageSampler_type != 2 }"
+	    hidewhen	"{ SettingsImageSampler_type != 2 }"
 	    range	{ 0 64 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsImageSampler" }
@@ -161,8 +161,8 @@
 	    label	"Edges"
 	    type	toggle
 	    default	{ "0" }
-	    disablewhen	"{ type != 2 }"
-	    hidewhen	"{ type != 2 }"
+	    disablewhen	"{ SettingsImageSampler_type != 2 }"
+	    hidewhen	"{ SettingsImageSampler_type != 2 }"
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsImageSampler" }
@@ -174,8 +174,8 @@
 	    label	"Normals"
 	    type	toggle
 	    default	{ "0" }
-	    disablewhen	"{ type != 2 }"
-	    hidewhen	"{ type != 2 }"
+	    disablewhen	"{ SettingsImageSampler_type != 2 }"
+	    hidewhen	"{ SettingsImageSampler_type != 2 }"
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsImageSampler" }
@@ -187,8 +187,8 @@
 	    label	"Normals Threshold"
 	    type	float
 	    default	{ "0.1" }
-	    disablewhen	"{ type != 2 }"
-	    hidewhen	"{ type != 2 }"
+	    disablewhen	"{ SettingsImageSampler_type != 2 }"
+	    hidewhen	"{ SettingsImageSampler_type != 2 }"
 	    range	{ 0 64 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsImageSampler" }
@@ -201,8 +201,8 @@
 	    type	integer
 	    default	{ "1" }
 	    help	"Min. subdivs value for the progressive image sampler"
-	    disablewhen	"{ type != 3 }"
-	    hidewhen	"{ type != 3 }"
+	    disablewhen	"{ SettingsImageSampler_type != 3 }"
+	    hidewhen	"{ SettingsImageSampler_type != 3 }"
 	    range	{ 0 64 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsImageSampler" }
@@ -215,8 +215,8 @@
 	    type	integer
 	    default	{ "100" }
 	    help	"Max. subdivs value for the progressive image sampler"
-	    disablewhen	"{ type != 3 }"
-	    hidewhen	"{ type != 3 }"
+	    disablewhen	"{ SettingsImageSampler_type != 3 }"
+	    hidewhen	"{ SettingsImageSampler_type != 3 }"
 	    range	{ 0 64 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsImageSampler" }
@@ -229,8 +229,8 @@
 	    type	float
 	    default	{ "0.01" }
 	    help	"Noise threshold for the progressive image sampler"
-	    disablewhen	"{ type != 3 }"
-	    hidewhen	"{ type != 3 }"
+	    disablewhen	"{ SettingsImageSampler_type != 3 }"
+	    hidewhen	"{ SettingsImageSampler_type != 3 }"
 	    range	{ 0 64 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsImageSampler" }
@@ -243,8 +243,8 @@
 	    type	float
 	    default	{ "0" }
 	    help	"Max. render time for the progressive image sampler"
-	    disablewhen	"{ type != 3 }"
-	    hidewhen	"{ type != 3 }"
+	    disablewhen	"{ SettingsImageSampler_type != 3 }"
+	    hidewhen	"{ SettingsImageSampler_type != 3 }"
 	    range	{ 0 64 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsImageSampler" }
@@ -257,8 +257,8 @@
 	    type	integer
 	    default	{ "128" }
 	    help	"Bundle size for the progressive image sampler"
-	    disablewhen	"{ type != 3 }"
-	    hidewhen	"{ type != 3 }"
+	    disablewhen	"{ SettingsImageSampler_type != 3 }"
+	    hidewhen	"{ SettingsImageSampler_type != 3 }"
 	    range	{ 32 128 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsImageSampler" }
@@ -271,8 +271,8 @@
 	    type	toggle
 	    default	{ "0" }
 	    help	"If true, the AA mask will be rendered"
-	    disablewhen	"{ type != 3 }"
-	    hidewhen	"{ type != 3 }"
+	    disablewhen	"{ SettingsImageSampler_type != 3 }"
+	    hidewhen	"{ SettingsImageSampler_type != 3 }"
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsImageSampler" }
@@ -285,7 +285,7 @@
 	    type	toggle
 	    default	{ "0" }
 	    help	"Use threshold specified in the \"DMC sampler\""
-	    hidewhen	"{ type != 1 }"
+	    hidewhen	"{ SettingsImageSampler_type != 1 }"
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "vray_custom_handling" "1" }
@@ -370,7 +370,7 @@
 	    type	ordinal
 	    default	{ "1" }
 	    help	"Switches between legacy and new adaptive sampling"
-	    disablewhen	"{ type != 1 }"
+	    disablewhen	"{ SettingsImageSampler_type != 1 }"
 	    menu	{
 		"0"	"Legacy"
 		"1"	"Default"
@@ -387,7 +387,7 @@
 	    type	integer
 	    default	{ "30" }
 	    help	"Progressive noise threshold active pixels percent at which the threshold is reduced"
-	    disablewhen	"{ type != 3 }"
+	    disablewhen	"{ SettingsImageSampler_type != 3 }"
 	    range	{ 0 100 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsImageSampler" }

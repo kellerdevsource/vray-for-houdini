@@ -6,7 +6,7 @@
 
 	parm {
 	    name	"SettingsIrradianceMap_plugindata"
-	    label	"SettingsIrradianceMap"
+	    label	"Irradiance Map"
 	    type	data
 	    invisible
 	    default	{ "0" }
@@ -141,7 +141,7 @@
 	    type	float
 	    default	{ "0.2" }
 	    help	"This determines the radius for the detail enhancement effect"
-	    disablewhen	"{ detail_enhancement != 1 }"
+	    disablewhen	"{ SettingsIrradianceMap_detail_enhancement != 1 }"
 	    range	{ 0.05 1 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsIrradianceMap" }
@@ -154,7 +154,7 @@
 	    type	float
 	    default	{ "0.3" }
 	    help	"The number of samples taken for the high-precision sampling as a percentage of the irradiance map Hemispheric subdivs"
-	    disablewhen	"{ detail_enhancement != 1 }"
+	    disablewhen	"{ SettingsIrradianceMap_detail_enhancement != 1 }"
 	    range	{ 0.1 1 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsIrradianceMap" }
@@ -167,7 +167,7 @@
 	    type	ordinal
 	    default	{ "0" }
 	    help	"Detail enhancement scale"
-	    disablewhen	"{ detail_enhancement != 1 }"
+	    disablewhen	"{ SettingsIrradianceMap_detail_enhancement != 1 }"
 	    menu	{
 		"0"	"Screen"
 		"1"	"World"
@@ -266,7 +266,7 @@
 	    type	file
 	    default	{ "//lightmaps/irradiance_map.vrmap" }
 	    help	"Irradiance map file name"
-	    disablewhen	"{ mode != 2 mode != 7 }"
+	    disablewhen	"{ SettingsIrradianceMap_mode != 2 SettingsIrradianceMap_mode != 7 }"
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "filechooser_pattern" "*.vrmap" }
@@ -305,7 +305,7 @@
 	    type	toggle
 	    default	{ "0" }
 	    help	"Show direct light when showing calculation process"
-	    disablewhen	"{ show_calc_phase != 1 }"
+	    disablewhen	"{ SettingsIrradianceMap_show_calc_phase != 1 }"
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsIrradianceMap" }
@@ -354,7 +354,7 @@
 	    type	toggle
 	    default	{ "0" }
 	    help	"Automatically save the irradiance map to the specified file at the end of the rendering"
-	    disablewhen	"{ mode == 2 } { mode == 5 } { mode == 7 }"
+	    disablewhen	"{ SettingsIrradianceMap_mode == 2 } { SettingsIrradianceMap_mode == 5 } { SettingsIrradianceMap_mode == 7 }"
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsIrradianceMap" }
@@ -367,7 +367,7 @@
 	    type	file
 	    default	{ "//lightmaps/irradiance_map.vrmap" }
 	    help	"Irradiance map auto save file"
-	    disablewhen	"{ mode == 2 } { mode == 5 } { mode == 7 } { auto_save != 1 }"
+	    disablewhen	"{ SettingsIrradianceMap_mode == 2 } { SettingsIrradianceMap_mode == 5 } { SettingsIrradianceMap_mode == 7 } { SettingsIrradianceMap_auto_save != 1 }"
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "filechooser_mode" "write" }

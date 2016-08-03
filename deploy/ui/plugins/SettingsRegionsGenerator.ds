@@ -6,7 +6,7 @@
 
 	parm {
 	    name	"SettingsRegionsGenerator_plugindata"
-	    label	"Regions Generator"
+	    label	"Regions"
 	    type	data
 	    invisible
 	    default	{ "0" }

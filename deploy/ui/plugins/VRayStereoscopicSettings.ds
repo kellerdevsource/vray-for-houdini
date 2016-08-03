@@ -6,7 +6,7 @@
 
 	parm {
 	    name	"VRayStereoscopicSettings_plugindata"
-	    label	"VRayStereoscopicSettings"
+	    label	"Stereo"
 	    type	data
 	    invisible
 	    default	{ "0" }

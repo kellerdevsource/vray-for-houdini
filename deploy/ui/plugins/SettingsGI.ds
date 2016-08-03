@@ -6,7 +6,7 @@
 
 	parm {
 	    name	"SettingsGI_plugindata"
-	    label	"Global Illumination"
+	    label	"GI"
 	    type	data
 	    invisible
 	    default	{ "0" }
@@ -34,7 +34,7 @@
 	    type	toggle
 	    default	{ "1" }
 	    help	"This allows indirect lighting to pass through transparent objects (glass etc)"
-	    disablewhen	"{ on != 1 } { on == 0 }"
+	    disablewhen	"{ SettingsGI_on != 1 } { SettingsGI_on == 0 }"
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsGI" }
@@ -47,7 +47,7 @@
 	    type	toggle
 	    default	{ "0" }
 	    help	"This allows indirect light to be reflected from specular objects (mirrors etc)"
-	    disablewhen	"{ on != 1 }"
+	    disablewhen	"{ SettingsGI_on != 1 }"
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsGI" }
@@ -60,7 +60,7 @@
 	    type	float
 	    default	{ "1" }
 	    help	"Controls the saturation of the GI"
-	    disablewhen	"{ on != 1 } { on == 0 }"
+	    disablewhen	"{ SettingsGI_on != 1 } { SettingsGI_on == 0 }"
 	    range	{ 0 64 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsGI" }
@@ -73,7 +73,7 @@
 	    type	float
 	    default	{ "1" }
 	    help	"This parameter determines the base for the contrast boost"
-	    disablewhen	"{ on != 1 } { on == 0 }"
+	    disablewhen	"{ SettingsGI_on != 1 } { SettingsGI_on == 0 }"
 	    range	{ 0 64 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsGI" }
@@ -85,7 +85,7 @@
 	    label	"Contrast Base"
 	    type	float
 	    default	{ "0.5" }
-	    disablewhen	"{ on != 1 } { on == 0 }"
+	    disablewhen	"{ SettingsGI_on != 1 } { SettingsGI_on == 0 }"
 	    range	{ 0 64 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsGI" }
@@ -98,7 +98,7 @@
 	    type	ordinal
 	    default	{ "0" }
 	    help	"Primary diffuse bounces engines"
-	    disablewhen	"{ on != 1 } { on == 0 }"
+	    disablewhen	"{ SettingsGI_on != 1 } { SettingsGI_on == 0 }"
 	    menu	{
 		"0"	"Irradiance Map"
 		"1"	"Photon Map"
@@ -117,7 +117,7 @@
 	    type	float
 	    default	{ "1" }
 	    help	"This value determines how much primary diffuse bounces contribute to the final image illumination"
-	    disablewhen	"{ on != 1 } { on == 0 }"
+	    disablewhen	"{ SettingsGI_on != 1 } { SettingsGI_on == 0 }"
 	    range	{ 0 1e+06 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsGI" }
@@ -131,7 +131,7 @@
 	    type	ordinal
 	    default	{ "2" }
 	    help	"Secondary diffuse bounces engines"
-	    disablewhen	"{ on != 1 } { on == 0 }"
+	    disablewhen	"{ SettingsGI_on != 1 } { SettingsGI_on == 0 }"
 	    menu	{
 		"0"	"None"
 		"1"	"Photon Map"
@@ -150,7 +150,7 @@
 	    type	float
 	    default	{ "1" }
 	    help	"This determines the effect of secondary diffuse bounces on the scene illumination"
-	    disablewhen	"{ on != 1 } { on == 0 } { secondary_engine == 0 }"
+	    disablewhen	"{ SettingsGI_on != 1 } { SettingsGI_on == 0 } { SettingsGI_secondary_engine == 0 }"
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsGI" }
@@ -164,7 +164,7 @@
 	    type	toggle
 	    default	{ "0" }
 	    help	"Limit ray distance"
-	    disablewhen	"{ on != 1 } { on == 0 }"
+	    disablewhen	"{ SettingsGI_on != 1 } { SettingsGI_on == 0 }"
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsGI" }
@@ -177,7 +177,7 @@
 	    type	float
 	    default	{ "100000" }
 	    help	"Maximum ray distance"
-	    disablewhen	"{ on != 1 } { on == 0 } { ray_distance_on == 0 }"
+	    disablewhen	"{ SettingsGI_on != 1 } { SettingsGI_on == 0 } { SettingsGI_ray_distance_on == 0 }"
 	    range	{ 0 64 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsGI" }
@@ -191,7 +191,7 @@
 	    type	toggle
 	    default	{ "0" }
 	    help	"Use ambient occlusion"
-	    disablewhen	"{ on != 1 } { on == 0 }"
+	    disablewhen	"{ SettingsGI_on != 1 } { SettingsGI_on == 0 }"
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsGI" }
@@ -204,7 +204,7 @@
 	    type	float
 	    default	{ "0.8" }
 	    help	"Ambient occlusion amount"
-	    disablewhen	"{ on != 1 } { ao_on != 1 } { on == 0 } { ao_on == 0 }"
+	    disablewhen	"{ SettingsGI_on != 1 } { SettingsGI_ao_on != 1 } { SettingsGI_on == 0 } { SettingsGI_ao_on == 0 }"
 	    range	{ 0 64 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsGI" }
@@ -217,7 +217,7 @@
 	    type	float
 	    default	{ "10" }
 	    help	"Ambient occlusion radius"
-	    disablewhen	"{ on != 1 } { ao_on != 1 } { on == 0 } { ao_on == 0 }"
+	    disablewhen	"{ SettingsGI_on != 1 } { SettingsGI_ao_on != 1 } { SettingsGI_on == 0 } { SettingsGI_ao_on == 0 }"
 	    range	{ 0 64 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsGI" }
@@ -231,7 +231,7 @@
 	    type	integer
 	    default	{ "8" }
 	    help	"Ambient occlusion subdivs"
-	    disablewhen	"{ on != 1 } { ao_on != 1 } { on == 0 } { ao_on == 0 }"
+	    disablewhen	"{ SettingsGI_on != 1 } { SettingsGI_ao_on != 1 } { SettingsGI_on == 0 } { SettingsGI_ao_on == 0 }"
 	    range	{ 0 64 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsGI" }

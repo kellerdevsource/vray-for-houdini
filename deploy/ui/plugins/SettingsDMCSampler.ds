@@ -6,7 +6,7 @@
 
 	parm {
 	    name	"SettingsDMCSampler_plugindata"
-	    label	"DMC Sampler"
+	    label	"DMC"
 	    type	data
 	    invisible
 	    default	{ "0" }
@@ -69,7 +69,7 @@
 	    type	float
 	    default	{ "1" }
 	    help	"This will multiply all subdivs values everywhere during rendering"
-	    disablewhen	"{ use_local_subdivs != 1 }"
+	    disablewhen	"{ SettingsDMCSampler_use_local_subdivs != 1 }"
 	    range	{ 0 64 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsDMCSampler" }

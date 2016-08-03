@@ -33,7 +33,7 @@
 	    type	integer
 	    default	{ "30" }
 	    help	"Max. number of photons to look for; if 0, all photons within the search distance will be considered."
-	    disablewhen	"{ mode != 0 } { on != 1 }"
+	    disablewhen	"{ SettingsCaustics_mode != 0 } { SettingsCaustics_on != 1 }"
 	    range	{ 0 64 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsCaustics" }
@@ -46,7 +46,7 @@
 	    type	float
 	    default	{ "1e+18" }
 	    help	"Search distance for caustic photons."
-	    disablewhen	"{ mode != 0 } { on != 1 }"
+	    disablewhen	"{ SettingsCaustics_mode != 0 } { SettingsCaustics_on != 1 }"
 	    range	{ 0 64 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsCaustics" }
@@ -58,7 +58,7 @@
 	    label	"Max Density"
 	    type	float
 	    default	{ "0" }
-	    disablewhen	"{ mode != 0 } { on != 1 }"
+	    disablewhen	"{ SettingsCaustics_mode != 0 } { SettingsCaustics_on != 1 }"
 	    range	{ 0 64 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsCaustics" }
@@ -70,7 +70,7 @@
 	    label	"Multiplier"
 	    type	float
 	    default	{ "1" }
-	    disablewhen	"{ mode != 0 } { on != 1 }"
+	    disablewhen	"{ SettingsCaustics_mode != 0 } { SettingsCaustics_on != 1 }"
 	    range	{ 0 64 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsCaustics" }
@@ -82,7 +82,7 @@
 	    label	"Mode"
 	    type	ordinal
 	    default	{ "0" }
-	    disablewhen	"{ on != 1 }"
+	    disablewhen	"{ SettingsCaustics_on != 1 }"
 	    menu	{
 		"0"	"New map"
 		"1"	"From file"
@@ -99,7 +99,7 @@
 	    type	file
 	    default	{ "//lightmaps/caustics.vrmap" }
 	    help	"File to take caustics map from when 'Mode' is 'From File'"
-	    disablewhen	"{ mode != 1 } { on != 1 } { mode != 1 }"
+	    disablewhen	"{ SettingsCaustics_mode != 1 } { SettingsCaustics_on != 1 } { SettingsCaustics_mode != 1 }"
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "filechooser_pattern" "*.vrpmap" }
@@ -114,7 +114,7 @@
 	    type	toggle
 	    default	{ "1" }
 	    help	"Don't delete at render end"
-	    disablewhen	"{ on != 1 }"
+	    disablewhen	"{ SettingsCaustics_on != 1 }"
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsCaustics" }
@@ -127,7 +127,7 @@
 	    type	toggle
 	    default	{ "0" }
 	    help	"True to save the caustics photon map automatically at the end of the rendering"
-	    disablewhen	"{ on != 1 } { mode == 1 }"
+	    disablewhen	"{ SettingsCaustics_on != 1 } { SettingsCaustics_mode == 1 }"
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsCaustics" }
@@ -140,7 +140,7 @@
 	    type	file
 	    default	{ "//lightmaps/caustics.vrmap" }
 	    help	"Auto save filepath"
-	    disablewhen	"{ auto_save != 1 } { on != 1 } { mode == 1 } { auto_save != 1 }"
+	    disablewhen	"{ SettingsCaustics_auto_save != 1 } { SettingsCaustics_on != 1 } { SettingsCaustics_mode == 1 } { SettingsCaustics_auto_save != 1 }"
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "filechooser_mode" "write" }
@@ -156,7 +156,7 @@
 	    type	toggle
 	    default	{ "0" }
 	    help	"True to show the calculation of the caustics map"
-	    disablewhen	"{ mode != 0 } { on != 1 }"
+	    disablewhen	"{ SettingsCaustics_mode != 0 } { SettingsCaustics_on != 1 }"
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsCaustics" }

@@ -46,7 +46,7 @@
 	    type	float
 	    default	{ "400" }
 	    help	"Height of the cylindrical (ortho) camera"
-	    disablewhen	"{ type != 3 }"
+	    disablewhen	"{ SettingsCamera_type != 3 }"
 	    range	{ 0 64 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsCamera" }
@@ -59,7 +59,7 @@
 	    type	float
 	    default	{ "2" }
 	    help	"Applies only to fish-eye camera. Controls distance to the sphere center"
-	    disablewhen	"{ type != 5 } { auto_fit != 0 }"
+	    disablewhen	"{ SettingsCamera_type != 5 } { SettingsCamera_auto_fit != 0 }"
 	    range	{ 0 64 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsCamera" }
@@ -85,7 +85,7 @@
 	    type	toggle
 	    default	{ "1" }
 	    help	"The auto-fit option of the fish-eye camera"
-	    disablewhen	"{ type != 5 }"
+	    disablewhen	"{ SettingsCamera_type != 5 }"
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsCamera" }
@@ -98,7 +98,7 @@
 	    type	float
 	    default	{ "1" }
 	    help	"Controls the way the rendered images is warped. Applies only to fish-eye camera"
-	    disablewhen	"{ type != 5 }"
+	    disablewhen	"{ SettingsCamera_type != 5 }"
 	    range	{ 0 64 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsCamera" }
@@ -111,7 +111,7 @@
 	    type	toggle
 	    default	{ "0" }
 	    help	"This is here so we can suppress a SettingsCamera node from affecting the main VRayRenderer sequence and frame data"
-	    hidewhen	"{ dont_affect_settings != 2 }"
+	    hidewhen	"{ SettingsCamera_dont_affect_settings != 2 }"
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsCamera" }

@@ -6,7 +6,7 @@
 
 	parm {
 	    name	"SettingsDefaultDisplacement_plugindata"
-	    label	"Default Displacement"
+	    label	"Displacement"
 	    type	data
 	    invisible
 	    default	{ "0" }

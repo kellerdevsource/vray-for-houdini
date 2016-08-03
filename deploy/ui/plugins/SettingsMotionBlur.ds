@@ -57,7 +57,7 @@
 	    type	float
 	    default	{ "1" }
 	    help	"Specifies the duration, in frames, during which the camera shutter is open"
-	    disablewhen	"{ on == 0 }"
+	    disablewhen	"{ SettingsMotionBlur_on == 0 }"
 	    range	{ 0 64 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsMotionBlur" }
@@ -70,7 +70,7 @@
 	    type	integer
 	    default	{ "6" }
 	    help	"Determines the quality of the motion blur"
-	    disablewhen	"{ on == 0 }"
+	    disablewhen	"{ SettingsMotionBlur_on == 0 }"
 	    range	{ 0 64 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsMotionBlur" }
@@ -83,7 +83,7 @@
 	    type	float
 	    default	{ "0" }
 	    help	"This controls the bias of the motion blur effect"
-	    disablewhen	"{ on == 0 }"
+	    disablewhen	"{ SettingsMotionBlur_on == 0 }"
 	    range	{ 0 64 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsMotionBlur" }
@@ -96,7 +96,7 @@
 	    type	float
 	    default	{ "1" }
 	    help	"Shutter efficiency"
-	    disablewhen	"{ on == 0 }"
+	    disablewhen	"{ SettingsMotionBlur_on == 0 }"
 	    range	{ 0 64 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsMotionBlur" }
@@ -109,7 +109,7 @@
 	    type	float
 	    default	{ "0.5" }
 	    help	"Specifies the middle of the motion blur interval with respect to the frame"
-	    disablewhen	"{ on == 0 }"
+	    disablewhen	"{ SettingsMotionBlur_on == 0 }"
 	    range	{ 0 64 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsMotionBlur" }
@@ -122,7 +122,7 @@
 	    type	toggle
 	    default	{ "1" }
 	    help	"Use camera motion blur"
-	    disablewhen	"{ on == 0 }"
+	    disablewhen	"{ SettingsMotionBlur_on == 0 }"
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsMotionBlur" }
@@ -135,7 +135,7 @@
 	    type	ordinal
 	    default	{ "0" }
 	    help	"Type of sampling: 0 - normal, 1 - sample only shutter open, 2 - sample only shutter middle"
-	    disablewhen	"{ on == 0 }"
+	    disablewhen	"{ SettingsMotionBlur_on == 0 }"
 	    menu	{
 		"0"	"Normal"
 		"1"	"Sample only shutter open"

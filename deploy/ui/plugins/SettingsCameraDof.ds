@@ -6,7 +6,7 @@
 
 	parm {
 	    name	"SettingsCameraDof_plugindata"
-	    label	"SettingsCameraDof"
+	    label	"Depth Of Field"
 	    type	data
 	    invisible
 	    default	{ "0" }
@@ -33,7 +33,7 @@
 	    type	float
 	    default	{ "5" }
 	    help	"The size of the virtual camera aperture, in world units"
-	    disablewhen	"{ on == 0 }"
+	    disablewhen	"{ SettingsCameraDof_on == 0 }"
 	    range	{ 0 64 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsCameraDof" }
@@ -46,7 +46,7 @@
 	    type	float
 	    default	{ "0" }
 	    help	"This determines the uniformity of the DOF effect"
-	    disablewhen	"{ on == 0 }"
+	    disablewhen	"{ SettingsCameraDof_on == 0 }"
 	    range	{ 0 64 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsCameraDof" }
@@ -69,7 +69,7 @@
 	    type	float
 	    default	{ "200" }
 	    help	"Determines the distance from the camera at which objects will be in perfect focus"
-	    disablewhen	"{ on == 0 }"
+	    disablewhen	"{ SettingsCameraDof_on == 0 }"
 	    range	{ 0 64 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsCameraDof" }
@@ -82,7 +82,7 @@
 	    type	toggle
 	    default	{ "0" }
 	    help	"This option allows you to simulate the polygonal shape of the aperture of real-world cameras"
-	    disablewhen	"{ on == 0 }"
+	    disablewhen	"{ SettingsCameraDof_on == 0 }"
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsCameraDof" }
@@ -95,7 +95,7 @@
 	    type	integer
 	    default	{ "5" }
 	    help	"Number of sides"
-	    disablewhen	"{ on == 0 } { sides_on == 0 }"
+	    disablewhen	"{ SettingsCameraDof_on == 0 } { SettingsCameraDof_sides_on == 0 }"
 	    range	{ 0 64 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsCameraDof" }
@@ -108,7 +108,7 @@
 	    type	float
 	    default	{ "0" }
 	    help	"Specifies the orientation of the aperture shape"
-	    disablewhen	"{ on == 0 } { sides_on == 0 }"
+	    disablewhen	"{ SettingsCameraDof_on == 0 } { SettingsCameraDof_sides_on == 0 }"
 	    range	{ 0 64 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsCameraDof" }
@@ -121,7 +121,7 @@
 	    type	float
 	    default	{ "0" }
 	    help	"This allows the stretching of the bokeh effect horizontally or vertically"
-	    disablewhen	"{ on == 0 }"
+	    disablewhen	"{ SettingsCameraDof_on == 0 }"
 	    range	{ 0 64 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsCameraDof" }
@@ -134,7 +134,7 @@
 	    type	integer
 	    default	{ "8" }
 	    help	"Controls the quality of the DOF effect"
-	    disablewhen	"{ on == 0 }"
+	    disablewhen	"{ SettingsCameraDof_on == 0 }"
 	    range	{ 0 64 }
 	    export	none
 	    parmtag	{ "vray_plugin" "SettingsCameraDof" }
