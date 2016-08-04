@@ -14,11 +14,12 @@
 #include "vfh_log.h"
 
 #include <OP/OP_Node.h>
-#include <PRM/DS_CommandList.h>
-#include <PRM/DS_Command.h>
+#include <OP/OP_SpareParms.h>
 #include <PRM/PRM_Template.h>
 #include <PRM/PRM_ScriptPage.h>
+#include <PRM/PRM_ScriptParm.h>
 #include <PRM/DS_Stream.h>
+#include <UT/UT_IStream.h>
 
 
 using namespace VRayForHoudini;
@@ -121,13 +122,33 @@ int VRayForHoudini::Parm::getParmEnumExt(const OP_Node &node, const VRayForHoudi
 }
 
 
-std::string Parm::PRMList::expandUiPath(const std::string &relPath) {
+std::string Parm::PRMList::expandUiPath(const std::string &relPath)
+{
 	const char *uiDsPath = getenv("VRAY_UI_DS_PATH");
 	if (NOT(uiDsPath)) {
 		Log::getLog().error("VRAY_UI_DS_PATH environment variable is not found!");
 		return "";
 	}
 	return std::string(uiDsPath) + "/" + relPath;
+}
+
+
+PRM_Template* Parm::PRMList::loadFromFile(const char *filepath, bool recook)
+{
+	OP_Operator op( "dummy", "dummy",
+				nullptr, static_cast<PRM_Template *>(nullptr), 0 );
+	UT_IFStream is(filepath);
+	// NOTE: opprms is internally cached and reference-counted,
+	// so we should not need to hold on to it explicitly after retrieving the parm templates
+	OP_SpareParms *opprms = op.loadSpareParms(is);
+	PRM_Template *tmpl = opprms->getSpareTemplates();
+
+	int i = 0;
+	while (tmpl && (tmpl[i].getType() != PRM_LIST_TERMINATOR)) {
+		tmpl[i++].setNoCook(!recook);
+	}
+
+	return tmpl;
 }
 
 
@@ -154,7 +175,7 @@ void Parm::PRMList::clear()
 	m_prmVec.clear();
 	// NOTE: extra item is list terminator
 	m_prmVec.emplace_back();
-	m_scriptPages.clear();
+	m_scriptGroups.clear();
 }
 
 
@@ -182,7 +203,7 @@ Parm::PRMList& Parm::PRMList::addPrm(const PRM_Template& p)
 {
 	m_prmVec.back() = p;
 	m_prmVec.emplace_back();
-	incCurrentFolderPrmCnt();
+	incCurrentFolderPrmCnt(1);
 	return *this;
 }
 
@@ -191,7 +212,7 @@ Parm::PRMList& Parm::PRMList::addPrm(const PRMFactory& p)
 {
 	m_prmVec.back() = p.getPRMTemplate();
 	m_prmVec.emplace_back();
-	incCurrentFolderPrmCnt();
+	incCurrentFolderPrmCnt(1);
 	return *this;
 }
 
@@ -219,8 +240,6 @@ Parm::PRMList& Parm::PRMList::switcherEnd()
 			throw std::runtime_error("added switcher with no folders");
 		}
 		else {
-			// NOTE: extra item is list terminator
-			info->m_folders.emplace_back();
 			// set correct folder count and folder info on
 			// the current switcher parameter (i.e the one created with last beginSwitcher())
 			PRM_Template& switcherParm = m_prmVec[info->m_parmIdx];
@@ -233,36 +252,50 @@ Parm::PRMList& Parm::PRMList::switcherEnd()
 }
 
 
-Parm::PRMList& Parm::PRMList::addFolder(const std::string& label)
+Parm::PRMList& Parm::PRMList::addFolder(const char *label)
 {
 	SwitcherInfo *info = getCurrentSwitcher();
 	if (NOT(info)) {
 		throw std::runtime_error("folder added to nonexistent switcher");
 	}
 	else {
-		info->m_folders.emplace_back(/*numParms=*/0, ::strdup(label.c_str()));
+		info->m_folders.emplace_back(/*numParms=*/0, ::strdup(label));
 	}
 
 	return *this;
 }
 
 
-Parm::PRMList& Parm::PRMList::addFromFile(const std::string &path)
+Parm::PRMList& Parm::PRMList::addFromFile(const char *filepath)
 {
-	if (path.empty()) {
+	if (!UTisstring(filepath)) {
 		return *this;
 	}
-	// need to keep the page as myTemplate will have references to it
-	auto currentPage = std::make_shared<PRM_ScriptPage>();
 
-	DS_Stream stream(path.c_str());
-	currentPage->parse(stream, true, 0, false);
+	DS_Stream stream(filepath);
 
-	int size = currentPage->computeTemplateSize();
+	// need to keep all the pages as myTemplate will have references to it
+	std::shared_ptr< PRM_ScriptGroup > group = std::make_shared< PRM_ScriptGroup >(nullptr);
+
+	int res = -1;
+	while ((res = stream.getOpenBrace()) > 0) {
+		PRM_ScriptPage *currentPage = new PRM_ScriptPage();
+		res = currentPage->parse(stream, false, nullptr, false);
+		if (res > 0) {
+			group->addPage(currentPage);
+		}
+		else {
+			delete currentPage;
+		}
+	}
+
+	int size = group->computeTemplateSize();
 	if (!size) {
 		return *this;
 	}
-	m_scriptPages.push_back(currentPage);
+
+	// save group of pages
+	m_scriptGroups.push_back(group);
 
 	// start from the last valid
 	int idx = m_prmVec.size() - 1;
@@ -271,9 +304,12 @@ Parm::PRMList& Parm::PRMList::addFromFile(const std::string &path)
 	m_prmVec.resize(m_prmVec.size() + size);
 
 	PRM_ScriptImports *imports = 0;
-	currentPage->fillTemplate(m_prmVec.data(), idx, imports);
+	group->fillTemplate(m_prmVec.data(), idx, imports, 0);
 
 	UT_ASSERT_MSG(idx == m_prmVec.size() - 1, "Read unexpected number of params from file");
+
+	// add params to currently active folder, if any
+	incCurrentFolderPrmCnt(size);
 
 	return *this;
 }
@@ -289,10 +325,10 @@ Parm::PRMList::SwitcherInfo* Parm::PRMList::getCurrentSwitcher()
 }
 
 
-void Parm::PRMList::incCurrentFolderPrmCnt()
+void Parm::PRMList::incCurrentFolderPrmCnt(int cnt)
 {
 	SwitcherInfo *info = getCurrentSwitcher();
-	if (NOT(info)) {
+	if (!info) {
 		return;
 	}
 
@@ -302,7 +338,7 @@ void Parm::PRMList::incCurrentFolderPrmCnt()
 		// If a parameter is added to this ParmList while a switcher with at least
 		// one folder is active, increment the folder's parameter count.
 		PRM_Default& def = info->m_folders.back();
-		def.setOrdinal(def.getOrdinal() + 1);
+		def.setOrdinal(def.getOrdinal() + cnt);
 	}
 
 }

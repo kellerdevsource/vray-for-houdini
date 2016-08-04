@@ -14,7 +14,6 @@
 #include "vfh_prm_def.h"
 
 #include <PRM/PRM_Include.h>
-#include <PRM/PRM_ScriptPage.h>
 
 #include <string>
 #include <vector>
@@ -23,6 +22,7 @@
 
 
 class OP_Node;
+class PRM_ScriptGroup;
 
 
 namespace VRayForHoudini {
@@ -50,19 +50,23 @@ public:
 
 	PRMList& addPrm(const PRM_Template &p);
 	PRMList& addPrm(const PRMFactory &p);
+	// NOTE: you must call addFolder() whenever you open a switcher with switcherBegin()
+	// adding parameter to an open switcher with no folders in it will result in runtime error
 	PRMList& switcherBegin(const char *token, const char *label = nullptr);
+	// NOTE: you must call switcherEnd() to correctly terminate the switcher parameters scope
+	// otherwise switcher folders will not appear as expected in the UI
 	PRMList& switcherEnd();
-	PRMList& addFolder(const std::string &label);
+	// NOTE: you must call addFolder() whenever you open a switcher with switcherBegin()
+	// adding parameter to an open switcher with no folders in it will result in runtime error
+	PRMList& addFolder(const char *label);
 	// NOTE: when loading parameters from file you MUST keep
 	// the PRMList instance alive as it holds internal references to
 	// PRM_ScriptPages used by the loaded PRM_Templates
-	PRMList& addFromFile(const std::string &path);
-
-	// TODO: need to hide this
-	std::vector< PRM_Template > & getPRMVec() { return m_prmVec; }
+	PRMList& addFromFile(const char *filepath);
 
 	// does not validate anything, just prepends the passed path with the UI root
 	static std::string expandUiPath(const std::string &relPath);
+	static PRM_Template* loadFromFile(const char *filepath, bool recook = true);
 
 private:
 	typedef std::vector<PRM_Template> PRMTemplVec;
@@ -79,10 +83,10 @@ private:
 
 	typedef std::list<SwitcherInfo> SwitcherList;
 	typedef std::vector<SwitcherInfo*> SwitcherStack;
-	typedef std::vector<std::shared_ptr<PRM_ScriptPage> > ScriptPageList;
+	typedef std::list< std::shared_ptr<PRM_ScriptGroup> > ScriptGroupList;
 
 	SwitcherInfo* getCurrentSwitcher();
-	void          incCurrentFolderPrmCnt();
+	void          incCurrentFolderPrmCnt(int cnt);
 
 private:
 	PRMTemplVec    m_prmVec;
@@ -90,7 +94,7 @@ private:
 	SwitcherStack  m_switcherStack;
 	// will hold script pages, so params have valid references at all times
 	// container will free the pages on destruction
-	ScriptPageList m_scriptPages;
+	ScriptGroupList m_scriptGroups;
 };
 
 

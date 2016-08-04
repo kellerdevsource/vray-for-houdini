@@ -970,7 +970,7 @@ PRM_Template * Parm::getPrmTemplate(const std::string &pluginID)
 		static boost::format dspath("plugins/%s.ds");
 		std::string dsfullpath = PRMList::expandUiPath( boost::str(dspath % pluginID) );
 
-		prmList->addFromFile(dsfullpath);
+		prmList->addFromFile(dsfullpath.c_str());
 
 		pluginParms = prmList->getPRMTemplate();
 		prmMap[pluginID] = pluginParms;

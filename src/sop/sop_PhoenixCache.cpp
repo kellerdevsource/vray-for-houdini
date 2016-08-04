@@ -33,18 +33,16 @@ const int MAX_CHAN_MAP_LEN = 2048;
 using namespace VRayForHoudini;
 
 SOP::FluidCache  SOP::PhxShaderCache::FluidFiles;
-static std::shared_ptr< PRM_Template > AttrItems;
+static PRM_Template *AttrItems;
 
 
 PRM_Template* SOP::PhxShaderCache::GetPrmTemplate()
 {
 	if (!AttrItems) {
-		static Parm::PRMList paramList;
-		paramList.addFromFile(Parm::PRMList::expandUiPath("CustomPhxShaderCache.ds"));
-		AttrItems = paramList.getPRMTemplate();
+		AttrItems = Parm::PRMList::loadFromFile(Parm::PRMList::expandUiPath("CustomPhxShaderCache.ds").c_str());
 	}
 
-	return AttrItems.get();
+	return AttrItems;
 }
 
 
