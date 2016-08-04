@@ -46,11 +46,20 @@ public:
 	VolumeExporter(OBJ_Node &obj, OP_Context &ctx, VRayExporter &exp): PrimitiveExporter(obj, ctx, exp) {};
 
 	virtual void exportPrimitives(const GU_Detail &detail, PluginDescList &plugins) VRAY_OVERRIDE;
-private:
+protected:
 	void exportCache(const GA_Primitive &prim);
-	void exportSim(const GA_Primitive &prim, const VRay::Transform &tm, VRay::Plugin &cache);
+	void exportSim(SHOP_Node *shop, const Attrs::PluginAttrs &overrideAttrs, const std::string &cacheName);
 };
 
+// this will export houdini volumes
+class HoudiniVolumeExporter: public VolumeExporter {
+public:
+	HoudiniVolumeExporter(OBJ_Node &obj, OP_Context &ctx, VRayExporter &exp): VolumeExporter(obj, ctx, exp) {};
+
+	virtual void exportPrimitives(const GU_Detail &detail, PluginDescList &plugins) VRAY_OVERRIDE;
+private:
+
+};
 
 
 
