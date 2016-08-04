@@ -19,6 +19,7 @@
 	help	"The eye distance for which the stereoscopic image will be rendered"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
 	parmtag	{ "vray_pluginattr" "eye_distance" }
 	parmtag	{ "vray_type" "float" }
@@ -31,6 +32,7 @@
 	help	"If on then the focus is determined by focus_method and focus_distance. Otherwise it is determined from the camera target distance"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
 	parmtag	{ "vray_pluginattr" "specify_focus" }
 	parmtag	{ "vray_type" "boolean" }
@@ -43,6 +45,7 @@
 	help	"The focus distance when specify_focus is enabled"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
 	parmtag	{ "vray_pluginattr" "focus_distance" }
 	parmtag	{ "vray_type" "float" }
@@ -60,6 +63,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
 	parmtag	{ "vray_pluginattr" "focus_method" }
@@ -78,6 +82,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
 	parmtag	{ "vray_pluginattr" "interocular_method" }
@@ -96,6 +101,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
 	parmtag	{ "vray_pluginattr" "view" }
@@ -109,6 +115,7 @@
 	help	"When on this option will automatically adjust the resolution for the final image rendered"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
 	parmtag	{ "vray_pluginattr" "adjust_resolution" }
 	parmtag	{ "vray_type" "boolean" }
@@ -126,6 +133,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
 	parmtag	{ "vray_pluginattr" "sm_mode" }
@@ -139,6 +147,7 @@
 	help	"Lower values will make V-Ray use less of the shade map and more real shading"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
 	parmtag	{ "vray_pluginattr" "reuse_threshold" }
 	parmtag	{ "vray_type" "float" }
@@ -151,6 +160,7 @@
 	help	"The name of the file in which the shade map information is stored"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "filechooser_pattern" "*.vrst" }
 	parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
 	parmtag	{ "vray_pluginattr" "shademap_file" }
@@ -164,6 +174,7 @@
 	help	"Store 32 bit (single precision) color channels in the shade map. When off 16 bit (half precision) values are stored"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
 	parmtag	{ "vray_pluginattr" "float_colors_mode" }
 	parmtag	{ "vray_type" "boolean" }
@@ -180,6 +191,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
 	parmtag	{ "vray_pluginattr" "vrst_compression" }
@@ -198,6 +210,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
 	parmtag	{ "vray_pluginattr" "exr_compression" }
@@ -211,6 +224,7 @@
 	help	"A list of plugins for which the shade map won't be used"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
 	parmtag	{ "vray_pluginattr" "exclude_list" }
@@ -224,6 +238,7 @@
 	help	"A camera plugin for the left eye; if not specified, the left camera is computed based on the scene camera"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
 	parmtag	{ "vray_pluginattr" "left_camera" }
@@ -237,6 +252,7 @@
 	help	"A camera plugin for the right eye; if not specified, the right camera is computed based on the scene camera"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
 	parmtag	{ "vray_pluginattr" "right_camera" }
@@ -250,6 +266,7 @@
 	help	"Use Stereoscopic"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_custom_handling" "1" }
     }
     parm {
@@ -260,6 +277,7 @@
 	help	"Panoramic pole merging: from what angle near the top does the stereo effect start to fade when rendering with a spherical panorama camera"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
 	parmtag	{ "vray_pluginattr" "top_merge_angle" }
 	parmtag	{ "vray_type" "float" }
@@ -272,6 +290,7 @@
 	help	"Panoramic pole merging: from what angle near the bottom does the stereo effect start to fade when rendering with a spherical panorama camera"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
 	parmtag	{ "vray_pluginattr" "bottom_merge_angle" }
 	parmtag	{ "vray_type" "float" }
@@ -284,6 +303,7 @@
 	help	"When on the exclude_list is considered as an \"Include list\" and when off the the Result Affect is considered as \"Exclude list\""
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
 	parmtag	{ "vray_pluginattr" "exclude_list_inclusive" }
 	parmtag	{ "vray_type" "boolean" }
@@ -296,6 +316,7 @@
 	help	"Horizontal film offset for the left camera"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
 	parmtag	{ "vray_pluginattr" "film_offset_x_left" }
 	parmtag	{ "vray_type" "float" }
@@ -308,6 +329,7 @@
 	help	"Horizontal film offset for the right camera"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
 	parmtag	{ "vray_pluginattr" "film_offset_x_right" }
 	parmtag	{ "vray_type" "float" }
@@ -320,6 +342,7 @@
 	help	"Vertical film offset for the left camera"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
 	parmtag	{ "vray_pluginattr" "film_offset_y_left" }
 	parmtag	{ "vray_type" "float" }
@@ -332,6 +355,7 @@
 	help	"Vertical film offset for the right camera"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
 	parmtag	{ "vray_pluginattr" "film_offset_y_right" }
 	parmtag	{ "vray_type" "float" }

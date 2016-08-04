@@ -14,6 +14,7 @@
     groupsimple {
 	name	"transform"
 	label	"Transform"
+	grouptag	{ "cook_dependent" "1" }
 	grouptag	{ "vray_plugin" "TexSky" }
 	grouptag	{ "vray_pluginattr" "transform" }
 	grouptag	{ "vray_type" "Transform" }
@@ -91,6 +92,7 @@
     groupsimple {
 	name	"target_transform"
 	label	"Target Transform"
+	grouptag	{ "cook_dependent" "1" }
 	grouptag	{ "vray_plugin" "TexSky" }
 	grouptag	{ "vray_pluginattr" "target_transform" }
 	grouptag	{ "vray_type" "Transform" }
@@ -173,6 +175,7 @@
 	help	"Determines the amount of dust in the air and affects the color of the sun and sky. Smaller values produce a clear/blue sky, larger values yellow and orange"
 	range	{ 2 20 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexSky" }
 	parmtag	{ "vray_pluginattr" "turbidity" }
 	parmtag	{ "vray_type" "float" }
@@ -185,6 +188,7 @@
 	help	"Affects the color of the sun light (between 0.0 and 1.0). Smaller values make the sunlight more yellow, larger values make it blue"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexSky" }
 	parmtag	{ "vray_pluginattr" "ozone" }
 	parmtag	{ "vray_type" "float" }
@@ -196,6 +200,7 @@
 	default	{ "2" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexSky" }
 	parmtag	{ "vray_pluginattr" "water_vapour" }
 	parmtag	{ "vray_type" "float" }
@@ -207,6 +212,7 @@
 	default	{ "1" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexSky" }
 	parmtag	{ "vray_pluginattr" "intensity_multiplier" }
 	parmtag	{ "vray_type" "float" }
@@ -219,6 +225,7 @@
 	help	"Controls the visible size of the sun. Affects the appearance of the sun disc as seen by the camera and reflections, as well as the blurriness of the sun shadows"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexSky" }
 	parmtag	{ "vray_pluginattr" "size_multiplier" }
 	parmtag	{ "vray_type" "float" }
@@ -232,6 +239,7 @@
 	help	"Sunlight color. Used to add user control to light color definition"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexSky" }
 	parmtag	{ "vray_pluginattr" "filter_color" }
 	parmtag	{ "vray_type" "Color" }
@@ -244,6 +252,7 @@
 	help	"When on, this option makes the sun invisible, both to the camera and to reflections"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexSky" }
 	parmtag	{ "vray_pluginattr" "invisible" }
 	parmtag	{ "vray_type" "boolean" }
@@ -257,6 +266,7 @@
 	disablewhen	"{ sky_model != =1 sky_model != =2 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexSky" }
 	parmtag	{ "vray_pluginattr" "horiz_illum" }
 	parmtag	{ "vray_type" "float" }
@@ -275,6 +285,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "TexSky" }
 	parmtag	{ "vray_pluginattr" "sky_model" }
@@ -288,6 +299,7 @@
 	help	"Use only direction of the specified sun (don't inherit all other parameters)"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexSky" }
 	parmtag	{ "vray_pluginattr" "sun_dir_only" }
 	parmtag	{ "vray_type" "int" }
@@ -300,6 +312,7 @@
 	help	"Attach Sun automatically and take settings from it"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_custom_handling" "1" }
     }
     parm {
@@ -310,6 +323,7 @@
 	help	"If specified, all parameters are taken from the sun; otherwise, the sky parameters are used"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_custom_handling" "1" }
 	parmtag	{ "vray_plugin" "TexSky" }
@@ -325,6 +339,7 @@
 	help	"Reflective property of the \"ground\". Affects sky-dome brightness and color"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexSky" }
 	parmtag	{ "vray_pluginattr" "ground_albedo" }
 	parmtag	{ "vray_type" "Color" }
@@ -337,6 +352,7 @@
 	help	"This option affects the way the color in the Filter color parameter affects the color of the sun"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexSky" }
 	parmtag	{ "vray_pluginattr" "color_mode" }
 	parmtag	{ "vray_type" "int" }
@@ -349,6 +365,7 @@
 	default	{ "0" "0" "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexSky" }
 	parmtag	{ "vray_pluginattr" "up_vector" }
 	parmtag	{ "vray_type" "Vector" }

@@ -20,6 +20,7 @@
 	help	"A list of the sub-float-textures"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "TexMultiFloat" }
 	parmtag	{ "vray_pluginattr" "textures_list" }
@@ -42,6 +43,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3,4,6,30" }
 	parmtag	{ "vray_plugin" "TexMultiFloat" }
 	parmtag	{ "vray_pluginattr" "mode" }
@@ -55,6 +57,7 @@
 	help	"The default float texture color"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexMultiFloat" }
 	parmtag	{ "vray_pluginattr" "default_texture" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -68,6 +71,7 @@
 	disablewhen	"{ mode != 30 }"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexMultiFloat" }
 	parmtag	{ "vray_pluginattr" "id_gen_tex" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -81,6 +85,7 @@
 	disablewhen	"{ mode != 30 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexMultiFloat" }
 	parmtag	{ "vray_pluginattr" "interpolate" }
 	parmtag	{ "vray_type" "boolean" }

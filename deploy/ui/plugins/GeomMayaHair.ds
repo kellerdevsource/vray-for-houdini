@@ -20,6 +20,7 @@
 	help	"The Maya hair shader does not allow for different transparency on each hair vertex. Instead it uses a single opacity parameter for all of them"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMayaHair" }
 	parmtag	{ "vray_pluginattr" "opacity" }
 	parmtag	{ "vray_type" "float" }
@@ -32,6 +33,7 @@
 	help	"If true, hair strands geometry will be represented as splines, instead of line segments"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMayaHair" }
 	parmtag	{ "vray_pluginattr" "geom_splines" }
 	parmtag	{ "vray_type" "boolean" }
@@ -44,6 +46,7 @@
 	help	"If true, the hair will be added to the global static hair tree"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMayaHair" }
 	parmtag	{ "vray_pluginattr" "use_global_hair_tree" }
 	parmtag	{ "vray_type" "boolean" }
@@ -56,6 +59,7 @@
 	help	"Manual control over the number of subdivisions when intersecting the spline based hairs"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMayaHair" }
 	parmtag	{ "vray_pluginattr" "geom_tesselation_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -68,6 +72,7 @@
 	help	"If true, the hair is xgen generated"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMayaHair" }
 	parmtag	{ "vray_pluginattr" "xgen_generated" }
 	parmtag	{ "vray_type" "boolean" }
@@ -80,6 +85,7 @@
 	help	"If true, the widths parameter is in pixels, otherwise it is in world units"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMayaHair" }
 	parmtag	{ "vray_pluginattr" "widths_in_pixels" }
 	parmtag	{ "vray_type" "boolean" }
@@ -92,6 +98,7 @@
 	help	"If true, V-Ray will generate a W mapping coordinate that represents the position of the shaded point along the hair strands"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMayaHair" }
 	parmtag	{ "vray_pluginattr" "generate_w_coord" }
 	parmtag	{ "vray_type" "boolean" }

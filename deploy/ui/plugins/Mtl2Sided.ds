@@ -24,6 +24,7 @@
 	    help	"The material for the surface on the same side as the normal"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "oprelative" "." }
 	    parmtag	{ "vray_plugin" "Mtl2Sided" }
 	    parmtag	{ "vray_pluginattr" "front" }
@@ -37,6 +38,7 @@
 	    help	"The material for the side that is opposite the surface normal"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "oprelative" "." }
 	    parmtag	{ "vray_plugin" "Mtl2Sided" }
 	    parmtag	{ "vray_pluginattr" "back" }
@@ -51,6 +53,7 @@
 	    help	"Translucency texture"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "Mtl2Sided" }
 	    parmtag	{ "vray_pluginattr" "translucency_tex" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -63,6 +66,7 @@
 	    help	"True to make the sub-materials one-sided"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "Mtl2Sided" }
 	    parmtag	{ "vray_pluginattr" "force_1sided" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -75,6 +79,7 @@
 	    help	"Use Two Sided material"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_custom_handling" "1" }
 	}
 	parm {
@@ -86,6 +91,7 @@
 	    help	"Translucency between front and back"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "Mtl2Sided" }
 	    parmtag	{ "vray_pluginattr" "translucency" }
 	    parmtag	{ "vray_type" "Color" }
@@ -98,6 +104,7 @@
 	    help	"Multiplier for the translucency texture"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "Mtl2Sided" }
 	    parmtag	{ "vray_pluginattr" "translucency_tex_mult" }
 	    parmtag	{ "vray_type" "float" }
@@ -110,6 +117,7 @@
 	    help	"True to multiply the back side color by the cached diffuse color of the front BRDF"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "Mtl2Sided" }
 	    parmtag	{ "vray_pluginattr" "mult_by_front_diffuse" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -122,6 +130,7 @@
 	    help	"Render channels the result of this BRDF will be written to"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "oprelative" "." }
 	    parmtag	{ "vray_plugin" "Mtl2Sided" }
 	    parmtag	{ "vray_pluginattr" "channels" }

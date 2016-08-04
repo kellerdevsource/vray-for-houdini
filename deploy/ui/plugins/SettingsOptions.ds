@@ -19,6 +19,7 @@
 	help	"Render displacement"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOptions" }
 	parmtag	{ "vray_pluginattr" "geom_displacement" }
 	parmtag	{ "vray_type" "boolean" }
@@ -31,6 +32,7 @@
 	help	"Render hidden geometry"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOptions" }
 	parmtag	{ "vray_pluginattr" "geom_doHidden" }
 	parmtag	{ "vray_type" "boolean" }
@@ -43,6 +45,7 @@
 	help	"Use lights"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOptions" }
 	parmtag	{ "vray_pluginattr" "light_doLights" }
 	parmtag	{ "vray_type" "boolean" }
@@ -55,6 +58,7 @@
 	help	"Use default lights (when no lights are presented in a scene)"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOptions" }
 	parmtag	{ "vray_pluginattr" "light_doDefaultLights" }
 	parmtag	{ "vray_type" "boolean" }
@@ -67,6 +71,7 @@
 	help	"Render hidden lights"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOptions" }
 	parmtag	{ "vray_pluginattr" "light_doHiddenLights" }
 	parmtag	{ "vray_type" "boolean" }
@@ -79,6 +84,7 @@
 	help	"Render shadows"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOptions" }
 	parmtag	{ "vray_pluginattr" "light_doShadows" }
 	parmtag	{ "vray_type" "boolean" }
@@ -91,6 +97,7 @@
 	help	"Use only GI from lights"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOptions" }
 	parmtag	{ "vray_pluginattr" "light_onlyGI" }
 	parmtag	{ "vray_type" "boolean" }
@@ -103,6 +110,7 @@
 	help	"self-Illumination"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOptions" }
 	parmtag	{ "vray_pluginattr" "light_disableSelfIllumination" }
 	parmtag	{ "vray_type" "boolean" }
@@ -115,6 +123,7 @@
 	help	"Don't render final image"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOptions" }
 	parmtag	{ "vray_pluginattr" "gi_dontRenderImage" }
 	parmtag	{ "vray_type" "boolean" }
@@ -127,6 +136,7 @@
 	help	"Render reflections / refractions"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOptions" }
 	parmtag	{ "vray_pluginattr" "mtl_reflectionRefraction" }
 	parmtag	{ "vray_type" "boolean" }
@@ -139,6 +149,7 @@
 	help	"Limit max depth"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOptions" }
 	parmtag	{ "vray_pluginattr" "mtl_limitDepth" }
 	parmtag	{ "vray_type" "boolean" }
@@ -152,6 +163,7 @@
 	disablewhen	"{ SettingsOptions_mtl_limitDepth == 0 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOptions" }
 	parmtag	{ "vray_pluginattr" "mtl_maxDepth" }
 	parmtag	{ "vray_type" "int" }
@@ -164,6 +176,7 @@
 	help	"Render textures"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOptions" }
 	parmtag	{ "vray_pluginattr" "mtl_doMaps" }
 	parmtag	{ "vray_type" "boolean" }
@@ -177,6 +190,7 @@
 	disablewhen	"{ SettingsOptions_mtl_doMaps != 1 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOptions" }
 	parmtag	{ "vray_pluginattr" "mtl_filterMaps" }
 	parmtag	{ "vray_type" "boolean" }
@@ -190,6 +204,7 @@
 	disablewhen	"{ SettingsOptions_mtl_doMaps != 1 } { SettingsOptions_mtl_filterMaps != 1 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOptions" }
 	parmtag	{ "vray_pluginattr" "mtl_filterMapsForSecondaryRays" }
 	parmtag	{ "vray_type" "boolean" }
@@ -202,6 +217,7 @@
 	help	"Max. transparency levels"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOptions" }
 	parmtag	{ "vray_pluginattr" "mtl_transpMaxLevels" }
 	parmtag	{ "vray_type" "int" }
@@ -214,6 +230,7 @@
 	help	"Transparency cutoff"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOptions" }
 	parmtag	{ "vray_pluginattr" "mtl_transpCutoff" }
 	parmtag	{ "vray_type" "float" }
@@ -226,6 +243,7 @@
 	help	"Override material"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOptions" }
 	parmtag	{ "vray_pluginattr" "mtl_override_on" }
 	parmtag	{ "vray_type" "boolean" }
@@ -238,6 +256,7 @@
 	help	"Render glossy"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOptions" }
 	parmtag	{ "vray_pluginattr" "mtl_glossy" }
 	parmtag	{ "vray_type" "boolean" }
@@ -250,6 +269,7 @@
 	help	"If true the normal bump in tangent space will not be inverted on flipped UVs"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOptions" }
 	parmtag	{ "vray_pluginattr" "mtl_uninvertedNormalBump" }
 	parmtag	{ "vray_type" "boolean" }
@@ -262,6 +282,7 @@
 	help	"If true, back faces will be invisible to camera and shadow rays"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOptions" }
 	parmtag	{ "vray_pluginattr" "geom_backfaceCull" }
 	parmtag	{ "vray_type" "boolean" }
@@ -274,6 +295,7 @@
 	help	"Secondary ray bias"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOptions" }
 	parmtag	{ "vray_pluginattr" "ray_bias" }
 	parmtag	{ "vray_type" "float" }
@@ -286,6 +308,7 @@
 	help	"Low thread priority"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOptions" }
 	parmtag	{ "vray_pluginattr" "misc_lowThreadPriority" }
 	parmtag	{ "vray_type" "boolean" }
@@ -299,6 +322,7 @@
 	disablewhen	"{ SettingsOptions_mtl_doMaps != 1 } { SettingsOptions_mtl_filterMaps != 1 } { SettingsOptions_mtl_filterMapsForSecondaryRays != 1 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOptions" }
 	parmtag	{ "vray_pluginattr" "gi_texFilteringMultiplier" }
 	parmtag	{ "vray_type" "float" }
@@ -310,6 +334,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOptions" }
 	parmtag	{ "vray_pluginattr" "misc_abortOnMissingAsset" }
 	parmtag	{ "vray_type" "boolean" }
@@ -322,6 +347,7 @@
 	help	"Transfer missing assets on DR"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOptions" }
 	parmtag	{ "vray_pluginattr" "misc_transferAssets" }
 	parmtag	{ "vray_type" "boolean" }
@@ -334,6 +360,7 @@
 	help	"Use cached assets on DR"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOptions" }
 	parmtag	{ "vray_pluginattr" "misc_useCachedAssets" }
 	parmtag	{ "vray_type" "boolean" }
@@ -351,6 +378,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "SettingsOptions" }
 	parmtag	{ "vray_pluginattr" "dr_assetsCacheLimitType" }
@@ -364,6 +392,7 @@
 	help	"Value of the assets cache limit"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOptions" }
 	parmtag	{ "vray_pluginattr" "dr_assetsCacheLimitValue" }
 	parmtag	{ "vray_type" "float" }
@@ -376,6 +405,7 @@
 	help	"If is true the client's cache settings will overwrite server settings"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOptions" }
 	parmtag	{ "vray_pluginattr" "dr_overwriteLocalCacheSettings" }
 	parmtag	{ "vray_type" "boolean" }
@@ -388,6 +418,7 @@
 	help	"Enable clamping of secondary rays"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOptions" }
 	parmtag	{ "vray_pluginattr" "ray_max_intensity_on" }
 	parmtag	{ "vray_type" "boolean" }
@@ -401,6 +432,7 @@
 	disablewhen	"{ SettingsOptions_ray_max_intensity_on == 0 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOptions" }
 	parmtag	{ "vray_pluginattr" "ray_max_intensity" }
 	parmtag	{ "vray_type" "float" }
@@ -413,6 +445,7 @@
 	help	"Override material"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_custom_handling" "1" }
     }
     parm {
@@ -422,6 +455,7 @@
 	default	{ "1" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOptions" }
 	parmtag	{ "vray_pluginattr" "mtl_SSSEnabled" }
 	parmtag	{ "vray_type" "boolean" }
@@ -434,6 +468,7 @@
 	help	"Enable probabilistic lights"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOptions" }
 	parmtag	{ "vray_pluginattr" "probabilistic_lights_on" }
 	parmtag	{ "vray_type" "boolean" }
@@ -447,6 +482,7 @@
 	disablewhen	"{ SettingsOptions_probabilistic_lights_on == 0 }"
 	range	{ 1 1e+06 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOptions" }
 	parmtag	{ "vray_pluginattr" "num_probabilistic_lights" }
 	parmtag	{ "vray_type" "int" }
@@ -459,6 +495,7 @@
 	help	"Enable probabilistic volumetric sampling"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOptions" }
 	parmtag	{ "vray_pluginattr" "probabilistic_vol_on" }
 	parmtag	{ "vray_type" "boolean" }
@@ -472,6 +509,7 @@
 	disablewhen	"{ SettingsOptions_probabilistic_vol_on == 0 }"
 	range	{ 1 1e+06 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOptions" }
 	parmtag	{ "vray_pluginattr" "probabilistic_vol_samples" }
 	parmtag	{ "vray_type" "int" }
@@ -485,6 +523,7 @@
 	disablewhen	"{ SettingsOptions_probabilistic_vol_on == 0 }"
 	range	{ 1 1e+06 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOptions" }
 	parmtag	{ "vray_pluginattr" "probabilistic_vol_gi_samples" }
 	parmtag	{ "vray_type" "int" }

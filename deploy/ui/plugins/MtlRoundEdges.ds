@@ -19,6 +19,7 @@
 	help	"Base material"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "MtlRoundEdges" }
 	parmtag	{ "vray_pluginattr" "base_mtl" }
@@ -32,6 +33,7 @@
 	help	"Rounding radius"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlRoundEdges" }
 	parmtag	{ "vray_pluginattr" "radius" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -44,6 +46,7 @@
 	help	"Base material"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "MtlRoundEdges" }
 	parmtag	{ "vray_pluginattr" "base_mtl" }
@@ -61,6 +64,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "MtlRoundEdges" }
 	parmtag	{ "vray_pluginattr" "radius_mode" }
@@ -74,6 +78,7 @@
 	help	"Use raytracing to compute the rounded corners and false to use static mesh analysis"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlRoundEdges" }
 	parmtag	{ "vray_pluginattr" "raytraced" }
 	parmtag	{ "vray_type" "boolean" }
@@ -87,6 +92,7 @@
 	disablewhen	"{ raytraced != 1 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlRoundEdges" }
 	parmtag	{ "vray_pluginattr" "raytraced_consider_same_object_only" }
 	parmtag	{ "vray_type" "boolean" }
@@ -105,6 +111,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "MtlRoundEdges" }
 	parmtag	{ "vray_pluginattr" "raytraced_mode" }

@@ -20,6 +20,7 @@
 	help	"The uvw space that will be displayed as RGB"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "TexUVW" }
 	parmtag	{ "vray_pluginattr" "uvwgen" }
@@ -39,6 +40,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "TexUVW" }
 	parmtag	{ "vray_pluginattr" "component" }

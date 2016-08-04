@@ -20,6 +20,7 @@
 	help	"Max. tree depth"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRaycaster" }
 	parmtag	{ "vray_pluginattr" "maxLevels" }
 	parmtag	{ "vray_type" "int" }
@@ -32,6 +33,7 @@
 	help	"Min. voxel size"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRaycaster" }
 	parmtag	{ "vray_pluginattr" "minLeafSize" }
 	parmtag	{ "vray_type" "float" }
@@ -44,6 +46,7 @@
 	help	"Balance coefficient between depth and faces per voxel"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRaycaster" }
 	parmtag	{ "vray_pluginattr" "faceLevelCoef" }
 	parmtag	{ "vray_type" "float" }
@@ -56,6 +59,7 @@
 	help	"Limit for dynamic geometry, in megabytes"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRaycaster" }
 	parmtag	{ "vray_pluginattr" "dynMemLimit" }
 	parmtag	{ "vray_type" "int" }
@@ -68,6 +72,7 @@
 	help	"Enable/Disable using the embree ray caster"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRaycaster" }
 	parmtag	{ "vray_pluginattr" "embreeUse" }
 	parmtag	{ "vray_type" "boolean" }
@@ -81,6 +86,7 @@
 	disablewhen	"{ SettingsRaycaster_embreeUse != 1 } { SettingsRaycaster_embreeUse == 0 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRaycaster" }
 	parmtag	{ "vray_pluginattr" "embreeUseMB" }
 	parmtag	{ "vray_type" "boolean" }
@@ -94,6 +100,7 @@
 	disablewhen	"{ SettingsRaycaster_embreeUse != 1 } { SettingsRaycaster_embreeUse == 0 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRaycaster" }
 	parmtag	{ "vray_pluginattr" "embreeHair" }
 	parmtag	{ "vray_type" "boolean" }
@@ -107,6 +114,7 @@
 	disablewhen	"{ SettingsRaycaster_embreeUse != 1 } { SettingsRaycaster_embreeUse == 0 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRaycaster" }
 	parmtag	{ "vray_pluginattr" "embreeLowMemory" }
 	parmtag	{ "vray_type" "boolean" }
@@ -120,6 +128,7 @@
 	disablewhen	"{ SettingsRaycaster_embreeUse != 1 } { SettingsRaycaster_embreeUse == 0 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRaycaster" }
 	parmtag	{ "vray_pluginattr" "embreeRayPackets" }
 	parmtag	{ "vray_type" "boolean" }
@@ -137,6 +146,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,2,4" }
 	parmtag	{ "vray_plugin" "SettingsRaycaster" }
 	parmtag	{ "vray_pluginattr" "optLevel" }

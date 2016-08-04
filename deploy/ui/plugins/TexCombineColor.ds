@@ -21,6 +21,7 @@
 	help	"The color value"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexCombineColor" }
 	parmtag	{ "vray_pluginattr" "color" }
 	parmtag	{ "vray_type" "Color" }
@@ -34,6 +35,7 @@
 	help	"The texture"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexCombineColor" }
 	parmtag	{ "vray_pluginattr" "texture" }
 	parmtag	{ "vray_type" "Texture" }
@@ -46,6 +48,7 @@
 	help	"The texture multiplier (blends between the value and the texture)"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexCombineColor" }
 	parmtag	{ "vray_pluginattr" "texture_multiplier" }
 	parmtag	{ "vray_type" "float" }
@@ -58,6 +61,7 @@
 	help	"true to invert the result"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexCombineColor" }
 	parmtag	{ "vray_pluginattr" "result_invert" }
 	parmtag	{ "vray_type" "boolean" }
@@ -70,6 +74,7 @@
 	help	"A multiplier for the resulit (after inversion, if result_invert is true)"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexCombineColor" }
 	parmtag	{ "vray_pluginattr" "result_multiplier" }
 	parmtag	{ "vray_type" "float" }

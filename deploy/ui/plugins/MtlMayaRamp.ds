@@ -20,6 +20,7 @@
 	help	"0: light angle, 1: facing angle, 2: brightness, 3: normalized brightness"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlMayaRamp" }
 	parmtag	{ "vray_pluginattr" "color_input" }
 	parmtag	{ "vray_type" "int" }
@@ -33,6 +34,7 @@
 	help	"ambient texture"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlMayaRamp" }
 	parmtag	{ "vray_pluginattr" "ambient_tex" }
 	parmtag	{ "vray_type" "Texture" }
@@ -45,6 +47,7 @@
 	help	"eccentricity float texture"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlMayaRamp" }
 	parmtag	{ "vray_pluginattr" "eccentricity_tex" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -57,6 +60,7 @@
 	help	"specularity float texture"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlMayaRamp" }
 	parmtag	{ "vray_pluginattr" "specularity_tex" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -69,6 +73,7 @@
 	help	"diffuse float texture"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlMayaRamp" }
 	parmtag	{ "vray_pluginattr" "diffuse_tex" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -81,6 +86,7 @@
 	help	"forward scatter float texture"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlMayaRamp" }
 	parmtag	{ "vray_pluginattr" "fscatter_tex" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -93,6 +99,7 @@
 	help	"reflection limit"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlMayaRamp" }
 	parmtag	{ "vray_pluginattr" "reflection_limit" }
 	parmtag	{ "vray_type" "int" }
@@ -104,6 +111,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlMayaRamp" }
 	parmtag	{ "vray_pluginattr" "refractions" }
 	parmtag	{ "vray_type" "boolean" }
@@ -116,6 +124,7 @@
 	help	"IOR for the material; this is ignored if the surface has a volume shader (the volume IOR is used)"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlMayaRamp" }
 	parmtag	{ "vray_pluginattr" "ior" }
 	parmtag	{ "vray_type" "float" }
@@ -128,6 +137,7 @@
 	help	"The maximum refraction bounces"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlMayaRamp" }
 	parmtag	{ "vray_pluginattr" "refraction_limit" }
 	parmtag	{ "vray_type" "int" }
@@ -139,6 +149,7 @@
 	default	{ "" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "MtlMayaRamp" }
 	parmtag	{ "vray_pluginattr" "volume" }
@@ -152,6 +163,7 @@
 	help	"bump BRDF used internally for bump mapping"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "MtlMayaRamp" }
 	parmtag	{ "vray_pluginattr" "bump_brdf" }
@@ -165,6 +177,7 @@
 	help	"Render channels the result will be written to"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "MtlMayaRamp" }
 	parmtag	{ "vray_pluginattr" "channels" }

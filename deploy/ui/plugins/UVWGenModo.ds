@@ -20,6 +20,7 @@
 	help	"The name of the uv channel that should be used"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "UVWGenModo" }
 	parmtag	{ "vray_pluginattr" "uv_set_name" }
 	parmtag	{ "vray_type" "String" }
@@ -32,6 +33,7 @@
 	help	"Optional UVWGen from which the initial uvw coordinates will be taken, instead of using 'uv_set_name'"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "UVWGenModo" }
 	parmtag	{ "vray_pluginattr" "uvwgen" }
@@ -45,6 +47,7 @@
 	help	"When set to false uvwgen->getLocalUVWTransform must not be used, instead uvwgen->getUVW must be used"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "UVWGenModo" }
 	parmtag	{ "vray_pluginattr" "uvwgen_has_local_tm" }
 	parmtag	{ "vray_type" "boolean" }
@@ -63,6 +66,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "UVWGenModo" }
 	parmtag	{ "vray_pluginattr" "tile_mode_u" }
@@ -82,6 +86,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "UVWGenModo" }
 	parmtag	{ "vray_pluginattr" "tile_mode_v" }
@@ -95,6 +100,7 @@
 	help	"How many times to repeat the UV space horizontally"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "UVWGenModo" }
 	parmtag	{ "vray_pluginattr" "repeat_u" }
 	parmtag	{ "vray_type" "float" }
@@ -107,6 +113,7 @@
 	help	"How many times to repeat the UV space vertically"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "UVWGenModo" }
 	parmtag	{ "vray_pluginattr" "repeat_v" }
 	parmtag	{ "vray_type" "float" }
@@ -119,6 +126,7 @@
 	help	"Rotation of the UV space in radians"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "UVWGenModo" }
 	parmtag	{ "vray_pluginattr" "rotation" }
 	parmtag	{ "vray_type" "float" }
@@ -132,6 +140,7 @@
 	help	"The color value of this texture is added to the generated UVW coordinates"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "UVWGenModo" }
 	parmtag	{ "vray_pluginattr" "texture_offset_tex" }
 	parmtag	{ "vray_type" "Texture" }
@@ -144,6 +153,7 @@
 	help	"Multiplier for the values in the 'texture_offset' texture"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "UVWGenModo" }
 	parmtag	{ "vray_pluginattr" "texture_offset_amplitude" }
 	parmtag	{ "vray_type" "float" }
@@ -151,6 +161,7 @@
     groupsimple {
 	name	"uv_matrix"
 	label	"Uv Matrix"
+	grouptag	{ "cook_dependent" "1" }
 	grouptag	{ "vray_plugin" "UVWGenModo" }
 	grouptag	{ "vray_pluginattr" "uv_matrix" }
 	grouptag	{ "vray_type" "Matrix" }
@@ -239,6 +250,7 @@
 	help	"The cylindrical projection applies the repeat_u/repeat_v options a little differently"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "UVWGenModo" }
 	parmtag	{ "vray_pluginattr" "cylindrical_base_uvwgen" }
 	parmtag	{ "vray_type" "boolean" }
@@ -251,6 +263,7 @@
 	help	"Changes the pivot used to apply the repeat_u/repeat_v and uv_matrix transformations. Only used when uvwgen is NULL  i.e. the UV coordinates come from an UV map and not from a projection"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "UVWGenModo" }
 	parmtag	{ "vray_pluginattr" "legacy_uv_rotation" }
 	parmtag	{ "vray_type" "boolean" }

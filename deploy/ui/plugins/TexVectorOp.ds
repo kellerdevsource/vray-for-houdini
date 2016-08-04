@@ -22,6 +22,7 @@
 	help	"The first vector"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexVectorOp" }
 	parmtag	{ "vray_pluginattr" "vector_a" }
 	parmtag	{ "vray_type" "TextureVector" }
@@ -35,6 +36,7 @@
 	help	"The first vector"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexVectorOp" }
 	parmtag	{ "vray_pluginattr" "vector_b" }
 	parmtag	{ "vray_type" "TextureVector" }
@@ -47,6 +49,7 @@
 	help	"Multiplier for the first vector"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexVectorOp" }
 	parmtag	{ "vray_pluginattr" "mult_a" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -59,6 +62,7 @@
 	help	"Multiplier for the second vector"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexVectorOp" }
 	parmtag	{ "vray_pluginattr" "mult_b" }
 	parmtag	{ "vray_type" "TextureFloat" }

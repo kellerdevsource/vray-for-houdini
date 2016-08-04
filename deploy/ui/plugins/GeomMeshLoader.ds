@@ -20,6 +20,7 @@
 	help	"Sphere size"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMeshLoader" }
 	parmtag	{ "vray_pluginattr" "sphere_size" }
 	parmtag	{ "vray_type" "float" }
@@ -32,6 +33,7 @@
 	help	"Sphere segments"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMeshLoader" }
 	parmtag	{ "vray_pluginattr" "sphere_segments" }
 	parmtag	{ "vray_type" "int" }
@@ -44,6 +46,7 @@
 	help	"Number of spheres"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMeshLoader" }
 	parmtag	{ "vray_pluginattr" "num_spheres" }
 	parmtag	{ "vray_type" "int" }
@@ -56,6 +59,7 @@
 	help	"Box size to fill with spheres"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMeshLoader" }
 	parmtag	{ "vray_pluginattr" "bbox_size" }
 	parmtag	{ "vray_type" "float" }

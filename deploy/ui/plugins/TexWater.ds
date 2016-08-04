@@ -18,6 +18,7 @@
 	default	{ "" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "TexWater" }
 	parmtag	{ "vray_pluginattr" "uvwgen" }
@@ -31,6 +32,7 @@
 	help	"multiplier for the height of the water"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexWater" }
 	parmtag	{ "vray_pluginattr" "height_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -43,6 +45,7 @@
 	help	"direction of the wind"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexWater" }
 	parmtag	{ "vray_pluginattr" "wind_direction" }
 	parmtag	{ "vray_type" "float" }
@@ -55,6 +58,7 @@
 	help	"magnitude of the wind"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexWater" }
 	parmtag	{ "vray_pluginattr" "wind_magnitude" }
 	parmtag	{ "vray_type" "float" }
@@ -66,6 +70,7 @@
 	default	{ "0" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexWater" }
 	parmtag	{ "vray_pluginattr" "wind_direction_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -77,6 +82,7 @@
 	default	{ "0" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexWater" }
 	parmtag	{ "vray_pluginattr" "choppy_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -88,6 +94,7 @@
 	default	{ "1" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexWater" }
 	parmtag	{ "vray_pluginattr" "movement_rate" }
 	parmtag	{ "vray_type" "float" }
@@ -100,6 +107,7 @@
 	help	"Used to produce different waters"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexWater" }
 	parmtag	{ "vray_pluginattr" "seed" }
 	parmtag	{ "vray_type" "int" }
@@ -121,6 +129,7 @@
 	}
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6" }
 	parmtag	{ "vray_plugin" "TexWater" }
 	parmtag	{ "vray_pluginattr" "resolution" }
@@ -134,6 +143,7 @@
 	help	"Size of the patch -> real resolution is 2^res"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexWater" }
 	parmtag	{ "vray_pluginattr" "patch_size" }
 	parmtag	{ "vray_type" "float" }
@@ -145,6 +155,7 @@
 	default	{ "1" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexWater" }
 	parmtag	{ "vray_pluginattr" "use_3d_mapping" }
 	parmtag	{ "vray_type" "boolean" }

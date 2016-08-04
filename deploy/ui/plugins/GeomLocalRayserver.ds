@@ -20,6 +20,7 @@
 	help	"The source geometry"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "GeomLocalRayserver" }
 	parmtag	{ "vray_pluginattr" "source_geometry" }

@@ -19,6 +19,7 @@
 	default	{ "" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "MtlLayeredBRDF" }
 	parmtag	{ "vray_pluginattr" "brdfs" }
@@ -32,6 +33,7 @@
 	help	"1 to make the material double-sided"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlLayeredBRDF" }
 	parmtag	{ "vray_pluginattr" "double_sided" }
 	parmtag	{ "vray_type" "boolean" }

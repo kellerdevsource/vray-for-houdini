@@ -20,6 +20,7 @@
 	help	"The particle .vrscene"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "filechooser_mode" "read" }
 	parmtag	{ "filechooser_pattern" "*.vrscene" }
 	parmtag	{ "vray_file_names" "V-Ray scene" }
@@ -35,6 +36,7 @@
 	help	"The proxy .vrscene"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "filechooser_mode" "read" }
 	parmtag	{ "filechooser_pattern" "*.vrscene" }
 	parmtag	{ "vray_file_names" "V-Ray scene" }
@@ -50,6 +52,7 @@
 	help	"The material .vrscene"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "filechooser_mode" "read" }
 	parmtag	{ "filechooser_pattern" "*.vrscene" }
 	parmtag	{ "vray_file_names" "V-Ray scene" }

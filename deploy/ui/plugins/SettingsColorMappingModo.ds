@@ -29,6 +29,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6" }
 	parmtag	{ "vray_plugin" "SettingsColorMappingModo" }
 	parmtag	{ "vray_pluginattr" "type" }
@@ -42,6 +43,7 @@
 	help	"True if color mapping should affect the background"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsColorMappingModo" }
 	parmtag	{ "vray_pluginattr" "affect_background" }
 	parmtag	{ "vray_type" "boolean" }
@@ -54,6 +56,7 @@
 	help	"Multiplier for dark colors"
 	range	{ -1000 1000 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsColorMappingModo" }
 	parmtag	{ "vray_pluginattr" "dark_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -66,6 +69,7 @@
 	help	"Multiplier for bright colors"
 	range	{ -1000 1000 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsColorMappingModo" }
 	parmtag	{ "vray_pluginattr" "bright_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -78,6 +82,7 @@
 	help	"Additional gamma correction"
 	range	{ 0.05 20 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsColorMappingModo" }
 	parmtag	{ "vray_pluginattr" "gamma" }
 	parmtag	{ "vray_type" "float" }
@@ -90,6 +95,7 @@
 	help	"True if the color mapping should be applied on a subpixel level"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsColorMappingModo" }
 	parmtag	{ "vray_pluginattr" "subpixel_mapping" }
 	parmtag	{ "vray_type" "boolean" }
@@ -102,6 +108,7 @@
 	help	"True if colors should be clamped after color mapping"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsColorMappingModo" }
 	parmtag	{ "vray_pluginattr" "clamp_output" }
 	parmtag	{ "vray_type" "boolean" }
@@ -115,6 +122,7 @@
 	disablewhen	"{ clamp_output == 0 }"
 	range	{ 0 100 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsColorMappingModo" }
 	parmtag	{ "vray_pluginattr" "clamp_level" }
 	parmtag	{ "vray_type" "float" }
@@ -132,6 +140,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "SettingsColorMappingModo" }
 	parmtag	{ "vray_pluginattr" "adaptation_only" }
@@ -145,6 +154,7 @@
 	help	"True to enforce linear workflow"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsColorMappingModo" }
 	parmtag	{ "vray_pluginattr" "linearWorkflow" }
 	parmtag	{ "vray_type" "boolean" }
@@ -158,6 +168,7 @@
 	help	"Additional image exposure"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsColorMappingModo" }
 	parmtag	{ "vray_pluginattr" "exposure" }
 	parmtag	{ "vray_type" "Color" }
@@ -171,6 +182,7 @@
 	disablewhen	"{ type != 4 type != 5 type != 6 }"
 	range	{ -1000 1000 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsColorMappingModo" }
 	parmtag	{ "vray_pluginattr" "multiplier" }
 	parmtag	{ "vray_type" "float" }
@@ -184,6 +196,7 @@
 	disablewhen	"{ type != 4 type != 5 }"
 	range	{ 0.05 20 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsColorMappingModo" }
 	parmtag	{ "vray_pluginattr" "inverse_gamma" }
 	parmtag	{ "vray_type" "float" }
@@ -197,6 +210,7 @@
 	disablewhen	"{ type != 6 }"
 	range	{ -1000 1000 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsColorMappingModo" }
 	parmtag	{ "vray_pluginattr" "reinhard_burn_value" }
 	parmtag	{ "vray_type" "float" }

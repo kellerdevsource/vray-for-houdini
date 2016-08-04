@@ -19,6 +19,7 @@
 	default	{ "1" "1" "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFSSS" }
 	parmtag	{ "vray_pluginattr" "color" }
 	parmtag	{ "vray_type" "Color" }
@@ -31,6 +32,7 @@
 	default	{ "0" "0" "0" "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFSSS" }
 	parmtag	{ "vray_pluginattr" "color_tex" }
 	parmtag	{ "vray_type" "Texture" }
@@ -42,6 +44,7 @@
 	default	{ "1" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFSSS" }
 	parmtag	{ "vray_pluginattr" "color_tex_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -54,6 +57,7 @@
 	default	{ "1" "1" "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFSSS" }
 	parmtag	{ "vray_pluginattr" "translucency" }
 	parmtag	{ "vray_type" "Color" }
@@ -66,6 +70,7 @@
 	default	{ "0" "0" "0" "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFSSS" }
 	parmtag	{ "vray_pluginattr" "translucency_tex" }
 	parmtag	{ "vray_type" "Texture" }
@@ -77,6 +82,7 @@
 	default	{ "1" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFSSS" }
 	parmtag	{ "vray_pluginattr" "translucency_tex_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -88,6 +94,7 @@
 	default	{ "0" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFSSS" }
 	parmtag	{ "vray_pluginattr" "glossiness" }
 	parmtag	{ "vray_type" "float" }
@@ -99,6 +106,7 @@
 	default	{ "1" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFSSS" }
 	parmtag	{ "vray_pluginattr" "glossiness_tex" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -110,6 +118,7 @@
 	default	{ "1" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFSSS" }
 	parmtag	{ "vray_pluginattr" "glossiness_tex_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -121,6 +130,7 @@
 	default	{ "8" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFSSS" }
 	parmtag	{ "vray_pluginattr" "subdivs" }
 	parmtag	{ "vray_type" "int" }
@@ -132,6 +142,7 @@
 	default	{ "1e+18" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFSSS" }
 	parmtag	{ "vray_pluginattr" "thickness" }
 	parmtag	{ "vray_type" "float" }
@@ -143,6 +154,7 @@
 	default	{ "0" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFSSS" }
 	parmtag	{ "vray_pluginattr" "scatter_coeff" }
 	parmtag	{ "vray_type" "float" }
@@ -154,6 +166,7 @@
 	default	{ "1" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFSSS" }
 	parmtag	{ "vray_pluginattr" "scatter_direction" }
 	parmtag	{ "vray_type" "float" }

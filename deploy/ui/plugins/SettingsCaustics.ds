@@ -19,6 +19,7 @@
 	help	"Enable caustics computation"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsCaustics" }
 	parmtag	{ "vray_pluginattr" "on" }
 	parmtag	{ "vray_type" "boolean" }
@@ -32,6 +33,7 @@
 	disablewhen	"{ SettingsCaustics_mode != 0 } { SettingsCaustics_on != 1 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsCaustics" }
 	parmtag	{ "vray_pluginattr" "max_photons" }
 	parmtag	{ "vray_type" "int" }
@@ -45,6 +47,7 @@
 	disablewhen	"{ SettingsCaustics_mode != 0 } { SettingsCaustics_on != 1 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsCaustics" }
 	parmtag	{ "vray_pluginattr" "search_distance" }
 	parmtag	{ "vray_type" "float" }
@@ -57,6 +60,7 @@
 	disablewhen	"{ SettingsCaustics_mode != 0 } { SettingsCaustics_on != 1 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsCaustics" }
 	parmtag	{ "vray_pluginattr" "max_density" }
 	parmtag	{ "vray_type" "float" }
@@ -69,6 +73,7 @@
 	disablewhen	"{ SettingsCaustics_mode != 0 } { SettingsCaustics_on != 1 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsCaustics" }
 	parmtag	{ "vray_pluginattr" "multiplier" }
 	parmtag	{ "vray_type" "float" }
@@ -85,6 +90,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "SettingsCaustics" }
 	parmtag	{ "vray_pluginattr" "mode" }
@@ -99,6 +105,7 @@
 	disablewhen	"{ SettingsCaustics_mode != 1 } { SettingsCaustics_on != 1 } { SettingsCaustics_mode != 1 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "filechooser_pattern" "*.vrpmap" }
 	parmtag	{ "vray_file_names" "V-Ray Photon map" }
 	parmtag	{ "vray_plugin" "SettingsCaustics" }
@@ -114,6 +121,7 @@
 	disablewhen	"{ SettingsCaustics_on != 1 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsCaustics" }
 	parmtag	{ "vray_pluginattr" "dont_delete" }
 	parmtag	{ "vray_type" "boolean" }
@@ -127,6 +135,7 @@
 	disablewhen	"{ SettingsCaustics_on != 1 } { SettingsCaustics_mode == 1 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsCaustics" }
 	parmtag	{ "vray_pluginattr" "auto_save" }
 	parmtag	{ "vray_type" "boolean" }
@@ -140,6 +149,7 @@
 	disablewhen	"{ SettingsCaustics_auto_save != 1 } { SettingsCaustics_on != 1 } { SettingsCaustics_mode == 1 } { SettingsCaustics_auto_save != 1 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "filechooser_mode" "write" }
 	parmtag	{ "filechooser_pattern" "*.vrpmap" }
 	parmtag	{ "vray_file_names" "V-Ray Photon map" }
@@ -156,6 +166,7 @@
 	disablewhen	"{ SettingsCaustics_mode != 0 } { SettingsCaustics_on != 1 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsCaustics" }
 	parmtag	{ "vray_pluginattr" "show_calc_phase" }
 	parmtag	{ "vray_type" "boolean" }

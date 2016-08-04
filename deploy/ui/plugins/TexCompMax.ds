@@ -28,6 +28,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1" }
 	    parmtag	{ "vray_plugin" "TexCompMax" }
 	    parmtag	{ "vray_pluginattr" "compatibility_with" }
@@ -46,6 +47,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1,2" }
 	    parmtag	{ "vray_plugin" "TexCompMax" }
 	    parmtag	{ "vray_pluginattr" "alpha_from_intensity" }
@@ -59,6 +61,7 @@
 	    help	"If true, the resulting texture color will be inverted"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexCompMax" }
 	    parmtag	{ "vray_pluginattr" "invert" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -72,6 +75,7 @@
 	    disablewhen	"{ invert != 1 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexCompMax" }
 	    parmtag	{ "vray_pluginattr" "invert_alpha" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -85,6 +89,7 @@
 	    help	"A multiplier for the texture color"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexCompMax" }
 	    parmtag	{ "vray_pluginattr" "color_mult" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -98,6 +103,7 @@
 	    help	"An additional offset for the texture color"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexCompMax" }
 	    parmtag	{ "vray_pluginattr" "color_offset" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -110,6 +116,7 @@
 	    help	"A multiplier for the texture alpha"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexCompMax" }
 	    parmtag	{ "vray_pluginattr" "alpha_mult" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -122,6 +129,7 @@
 	    help	"An additional offset for the texture alpha"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexCompMax" }
 	    parmtag	{ "vray_pluginattr" "alpha_offset" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -135,6 +143,7 @@
 	    help	"The color when there are no valid uvw coordinates"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexCompMax" }
 	    parmtag	{ "vray_pluginattr" "nouvw_color" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -148,6 +157,7 @@
 	    help	"Left hand side texture"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexCompMax" }
 	    parmtag	{ "vray_pluginattr" "sourceA" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -161,6 +171,7 @@
 	    help	"Right hand side texture"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexCompMax" }
 	    parmtag	{ "vray_pluginattr" "sourceB" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -182,6 +193,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6" }
 	    parmtag	{ "vray_plugin" "TexCompMax" }
 	    parmtag	{ "vray_pluginattr" "operator" }

@@ -20,6 +20,7 @@
 	default	{ "" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "TexSwitchTransform" }
 	parmtag	{ "vray_pluginattr" "nodes" }
@@ -32,6 +33,7 @@
 	default	{ "" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "TexSwitchTransform" }
 	parmtag	{ "vray_pluginattr" "textures" }
@@ -40,6 +42,7 @@
     groupsimple {
 	name	"default_texture"
 	label	"Default Texture"
+	grouptag	{ "cook_dependent" "1" }
 	grouptag	{ "vray_plugin" "TexSwitchTransform" }
 	grouptag	{ "vray_pluginattr" "default_texture" }
 	grouptag	{ "vray_type" "TextureTransform" }

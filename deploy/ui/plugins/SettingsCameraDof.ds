@@ -19,6 +19,7 @@
 	help	"Use depth of field"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsCameraDof" }
 	parmtag	{ "vray_pluginattr" "on" }
 	parmtag	{ "vray_type" "boolean" }
@@ -32,6 +33,7 @@
 	disablewhen	"{ SettingsCameraDof_on == 0 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsCameraDof" }
 	parmtag	{ "vray_pluginattr" "aperture" }
 	parmtag	{ "vray_type" "float" }
@@ -45,6 +47,7 @@
 	disablewhen	"{ SettingsCameraDof_on == 0 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsCameraDof" }
 	parmtag	{ "vray_pluginattr" "center_bias" }
 	parmtag	{ "vray_type" "float" }
@@ -57,6 +60,7 @@
 	help	"Get Focus Distance From Camera"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_custom_handling" "1" }
     }
     parm {
@@ -68,6 +72,7 @@
 	disablewhen	"{ SettingsCameraDof_on == 0 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsCameraDof" }
 	parmtag	{ "vray_pluginattr" "focal_dist" }
 	parmtag	{ "vray_type" "float" }
@@ -81,6 +86,7 @@
 	disablewhen	"{ SettingsCameraDof_on == 0 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsCameraDof" }
 	parmtag	{ "vray_pluginattr" "sides_on" }
 	parmtag	{ "vray_type" "boolean" }
@@ -94,6 +100,7 @@
 	disablewhen	"{ SettingsCameraDof_on == 0 } { SettingsCameraDof_sides_on == 0 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsCameraDof" }
 	parmtag	{ "vray_pluginattr" "sides_num" }
 	parmtag	{ "vray_type" "int" }
@@ -107,6 +114,7 @@
 	disablewhen	"{ SettingsCameraDof_on == 0 } { SettingsCameraDof_sides_on == 0 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsCameraDof" }
 	parmtag	{ "vray_pluginattr" "rotation" }
 	parmtag	{ "vray_type" "float" }
@@ -120,6 +128,7 @@
 	disablewhen	"{ SettingsCameraDof_on == 0 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsCameraDof" }
 	parmtag	{ "vray_pluginattr" "anisotropy" }
 	parmtag	{ "vray_type" "float" }
@@ -133,6 +142,7 @@
 	disablewhen	"{ SettingsCameraDof_on == 0 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsCameraDof" }
 	parmtag	{ "vray_pluginattr" "subdivs" }
 	parmtag	{ "vray_type" "int" }

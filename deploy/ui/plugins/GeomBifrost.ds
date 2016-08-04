@@ -20,6 +20,7 @@
 	help	"The path to OpenVDB file"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "filechooser_pattern" "*.vdb" }
 	parmtag	{ "vray_plugin" "GeomBifrost" }
 	parmtag	{ "vray_pluginattr" "file" }
@@ -33,6 +34,7 @@
 	help	"The name of the OpenVDB grid to render"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomBifrost" }
 	parmtag	{ "vray_pluginattr" "render_grid" }
 	parmtag	{ "vray_type" "String" }
@@ -45,6 +47,7 @@
 	help	"The name of the OpenVDB velocity grid to used for motion blur"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomBifrost" }
 	parmtag	{ "vray_pluginattr" "velocity_grid" }
 	parmtag	{ "vray_type" "String" }
@@ -57,6 +60,7 @@
 	help	"If true, delay load the OpenVDB voxels until requested"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomBifrost" }
 	parmtag	{ "vray_pluginattr" "delay_load" }
 	parmtag	{ "vray_type" "boolean" }
@@ -74,6 +78,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "GeomBifrost" }
 	parmtag	{ "vray_pluginattr" "interpolation" }
@@ -87,6 +92,7 @@
 	help	"If off, shading an intersection with this mesh will not generate a gbuffer"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomBifrost" }
 	parmtag	{ "vray_pluginattr" "primary_visibility" }
 	parmtag	{ "vray_type" "boolean" }

@@ -14,6 +14,7 @@
     groupsimple {
 	name	"transform"
 	label	"Transform"
+	grouptag	{ "cook_dependent" "1" }
 	grouptag	{ "vray_plugin" "SunLight" }
 	grouptag	{ "vray_pluginattr" "transform" }
 	grouptag	{ "vray_type" "Transform" }
@@ -91,6 +92,7 @@
     groupsimple {
 	name	"target_transform"
 	label	"Target Transform"
+	grouptag	{ "cook_dependent" "1" }
 	grouptag	{ "vray_plugin" "SunLight" }
 	grouptag	{ "vray_pluginattr" "target_transform" }
 	grouptag	{ "vray_type" "Transform" }
@@ -173,6 +175,7 @@
 	help	"Determines the amount of dust in the air and affects the color of the sun and sky. Smaller values produce a clear/blue sky, larger values yellow and orange"
 	range	{ 2 20 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SunLight" }
 	parmtag	{ "vray_pluginattr" "turbidity" }
 	parmtag	{ "vray_type" "float" }
@@ -185,6 +188,7 @@
 	help	"Affects the color of the sun light (between 0.0 and 1.0). Smaller values make the sunlight more yellow, larger values make it blue"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SunLight" }
 	parmtag	{ "vray_pluginattr" "ozone" }
 	parmtag	{ "vray_type" "float" }
@@ -196,6 +200,7 @@
 	default	{ "2" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SunLight" }
 	parmtag	{ "vray_pluginattr" "water_vapour" }
 	parmtag	{ "vray_type" "float" }
@@ -207,6 +212,7 @@
 	default	{ "1" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SunLight" }
 	parmtag	{ "vray_pluginattr" "intensity_multiplier" }
 	parmtag	{ "vray_type" "float" }
@@ -219,6 +225,7 @@
 	help	"Controls the visible size of the sun. Affects the appearance of the sun disc as seen by the camera and reflections, as well as the blurriness of the sun shadows"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SunLight" }
 	parmtag	{ "vray_pluginattr" "size_multiplier" }
 	parmtag	{ "vray_type" "float" }
@@ -232,6 +239,7 @@
 	help	"Sunlight color. Used to add user control to light color definition"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SunLight" }
 	parmtag	{ "vray_pluginattr" "filter_color" }
 	parmtag	{ "vray_type" "Color" }
@@ -244,6 +252,7 @@
 	default	{ "0" "0" "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SunLight" }
 	parmtag	{ "vray_pluginattr" "up_vector" }
 	parmtag	{ "vray_type" "Vector" }
@@ -256,6 +265,7 @@
 	help	"When on, this option makes the sun invisible, both to the camera and to reflections"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SunLight" }
 	parmtag	{ "vray_pluginattr" "invisible" }
 	parmtag	{ "vray_type" "boolean" }
@@ -269,6 +279,7 @@
 	disablewhen	"{ sky_model != =1 sky_model != =2 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SunLight" }
 	parmtag	{ "vray_pluginattr" "horiz_illum" }
 	parmtag	{ "vray_type" "float" }
@@ -287,6 +298,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "SunLight" }
 	parmtag	{ "vray_pluginattr" "sky_model" }
@@ -300,6 +312,7 @@
 	help	"true if the light casts shadows and false otherwise"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SunLight" }
 	parmtag	{ "vray_pluginattr" "shadows" }
 	parmtag	{ "vray_type" "boolean" }
@@ -312,6 +325,7 @@
 	help	"true if the light casts shadows from atmosperics and false otherwise"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SunLight" }
 	parmtag	{ "vray_pluginattr" "atmos_shadows" }
 	parmtag	{ "vray_type" "boolean" }
@@ -324,6 +338,7 @@
 	help	"Shadow offset from the surface. Helps to prevent polygonal shadow artifacts on low-poly surfaces"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SunLight" }
 	parmtag	{ "vray_pluginattr" "shadowBias" }
 	parmtag	{ "vray_type" "float" }
@@ -335,6 +350,7 @@
 	default	{ "8" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SunLight" }
 	parmtag	{ "vray_pluginattr" "shadow_subdivs" }
 	parmtag	{ "vray_type" "int" }
@@ -348,6 +364,7 @@
 	help	"A color texture that if present will override the shadowColor parameter"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_linked_only" "1" }
 	parmtag	{ "vray_plugin" "SunLight" }
 	parmtag	{ "vray_pluginattr" "shadow_color_tex" }
@@ -360,6 +377,7 @@
 	default	{ "50" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SunLight" }
 	parmtag	{ "vray_pluginattr" "photon_radius" }
 	parmtag	{ "vray_type" "float" }
@@ -371,6 +389,7 @@
 	default	{ "500" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SunLight" }
 	parmtag	{ "vray_pluginattr" "photonSubdivs" }
 	parmtag	{ "vray_type" "int" }
@@ -382,6 +401,7 @@
 	default	{ "1000" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SunLight" }
 	parmtag	{ "vray_pluginattr" "causticSubdivs" }
 	parmtag	{ "vray_type" "int" }
@@ -393,6 +413,7 @@
 	default	{ "1" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SunLight" }
 	parmtag	{ "vray_pluginattr" "diffuseMult" }
 	parmtag	{ "vray_type" "float" }
@@ -404,6 +425,7 @@
 	default	{ "1" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SunLight" }
 	parmtag	{ "vray_pluginattr" "causticMult" }
 	parmtag	{ "vray_type" "float" }
@@ -416,6 +438,7 @@
 	help	"true if the light is casting light (turned on) and false otherwise; it only makes sense to use this parameter if it is animated, or if another object depends on this node but it must not be rendered"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SunLight" }
 	parmtag	{ "vray_pluginattr" "enabled" }
 	parmtag	{ "vray_type" "boolean" }
@@ -428,6 +451,7 @@
 	help	"true if the light produces diffuse lighting and false otherwise"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SunLight" }
 	parmtag	{ "vray_pluginattr" "affectDiffuse" }
 	parmtag	{ "vray_type" "boolean" }
@@ -440,6 +464,7 @@
 	help	"true if the light produces specular hilights and false otherwise"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SunLight" }
 	parmtag	{ "vray_pluginattr" "affectSpecular" }
 	parmtag	{ "vray_type" "boolean" }
@@ -452,6 +477,7 @@
 	help	"Diffuse contribution for the light"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SunLight" }
 	parmtag	{ "vray_pluginattr" "diffuse_contribution" }
 	parmtag	{ "vray_type" "float" }
@@ -464,6 +490,7 @@
 	help	"Specular contribution for the light"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SunLight" }
 	parmtag	{ "vray_pluginattr" "specular_contribution" }
 	parmtag	{ "vray_type" "float" }
@@ -476,6 +503,7 @@
 	help	"Render channels the result of this light will be written to"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "SunLight" }
 	parmtag	{ "vray_pluginattr" "channels" }
@@ -489,6 +517,7 @@
 	help	"Render channels the raw diffuse result of this light will be written to"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "SunLight" }
 	parmtag	{ "vray_pluginattr" "channels_raw" }
@@ -502,6 +531,7 @@
 	help	"Render channels the diffuse result of this light will be written to"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "SunLight" }
 	parmtag	{ "vray_pluginattr" "channels_diffuse" }
@@ -515,6 +545,7 @@
 	help	"Render channels the specular result of this light will be written to"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "SunLight" }
 	parmtag	{ "vray_pluginattr" "channels_specular" }
@@ -529,6 +560,7 @@
 	help	"Reflective property of the \"ground\". Affects sky-dome brightness and color"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SunLight" }
 	parmtag	{ "vray_pluginattr" "ground_albedo" }
 	parmtag	{ "vray_type" "Color" }
@@ -546,6 +578,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "SunLight" }
 	parmtag	{ "vray_pluginattr" "color_mode" }
@@ -560,6 +593,7 @@
 	help	"The shadow color. Anything but black is not physically accurate"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SunLight" }
 	parmtag	{ "vray_pluginattr" "shadow_color" }
 	parmtag	{ "vray_type" "Color" }
@@ -572,6 +606,7 @@
 	help	"true if the bumped normal should be used to check if the light dir is below the surface"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SunLight" }
 	parmtag	{ "vray_pluginattr" "bumped_below_surface_check" }
 	parmtag	{ "vray_type" "boolean" }

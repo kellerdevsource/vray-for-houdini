@@ -18,6 +18,7 @@
 	default	{ "Bump Normals" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderChannelBumpNormals" }
 	parmtag	{ "vray_pluginattr" "name" }
 	parmtag	{ "vray_type" "String" }
@@ -29,6 +30,7 @@
 	default	{ "1" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderChannelBumpNormals" }
 	parmtag	{ "vray_pluginattr" "filtering" }
 	parmtag	{ "vray_type" "boolean" }

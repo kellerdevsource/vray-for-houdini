@@ -20,6 +20,7 @@
 	help	"An offset for the zdepth value to avoid numeric errors"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexMultiProjection" }
 	parmtag	{ "vray_pluginattr" "zdepth_offset" }
 	parmtag	{ "vray_type" "float" }

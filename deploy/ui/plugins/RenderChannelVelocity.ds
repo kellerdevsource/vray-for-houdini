@@ -18,6 +18,7 @@
 	default	{ "Velocity" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderChannelVelocity" }
 	parmtag	{ "vray_pluginattr" "name" }
 	parmtag	{ "vray_type" "String" }
@@ -29,6 +30,7 @@
 	default	{ "1" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderChannelVelocity" }
 	parmtag	{ "vray_pluginattr" "clamp_velocity" }
 	parmtag	{ "vray_type" "boolean" }
@@ -40,6 +42,7 @@
 	default	{ "1" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderChannelVelocity" }
 	parmtag	{ "vray_pluginattr" "max_velocity" }
 	parmtag	{ "vray_type" "float" }
@@ -51,6 +54,7 @@
 	default	{ "0" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderChannelVelocity" }
 	parmtag	{ "vray_pluginattr" "max_velocity_last_frame" }
 	parmtag	{ "vray_type" "float" }
@@ -62,6 +66,7 @@
 	default	{ "1" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderChannelVelocity" }
 	parmtag	{ "vray_pluginattr" "ignore_z" }
 	parmtag	{ "vray_type" "boolean" }
@@ -73,6 +78,7 @@
 	default	{ "1" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderChannelVelocity" }
 	parmtag	{ "vray_pluginattr" "filtering" }
 	parmtag	{ "vray_type" "boolean" }

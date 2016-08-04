@@ -19,6 +19,7 @@
 	default	{ "0" "0" "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFHOPS" }
 	parmtag	{ "vray_pluginattr" "transparency" }
 	parmtag	{ "vray_type" "Color" }
@@ -31,6 +32,7 @@
 	default	{ "0" "0" "0" "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFHOPS" }
 	parmtag	{ "vray_pluginattr" "transparency_tex" }
 	parmtag	{ "vray_type" "Texture" }
@@ -42,6 +44,7 @@
 	default	{ "1" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFHOPS" }
 	parmtag	{ "vray_pluginattr" "transparency_tex_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -53,6 +56,7 @@
 	default	{ "0.01" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFHOPS" }
 	parmtag	{ "vray_pluginattr" "cutoff" }
 	parmtag	{ "vray_type" "float" }
@@ -64,6 +68,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFHOPS" }
 	parmtag	{ "vray_pluginattr" "back_side" }
 	parmtag	{ "vray_type" "boolean" }
@@ -75,6 +80,7 @@
 	default	{ "1" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFHOPS" }
 	parmtag	{ "vray_pluginattr" "trace_reflections" }
 	parmtag	{ "vray_type" "boolean" }
@@ -88,6 +94,7 @@
 	disablewhen	"{ trace_reflections != 1 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFHOPS" }
 	parmtag	{ "vray_pluginattr" "trace_depth" }
 	parmtag	{ "vray_type" "int" }
@@ -105,6 +112,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "BRDFHOPS" }
 	parmtag	{ "vray_pluginattr" "affect_alpha" }
@@ -119,6 +127,7 @@
 	help	"The color to use when the maximum depth is reached"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFHOPS" }
 	parmtag	{ "vray_pluginattr" "reflect_exit_color" }
 	parmtag	{ "vray_type" "Texture" }
@@ -132,6 +141,7 @@
 	disablewhen	"{ trace_reflections != 1 } { reflect_dim_distance_on != 1 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFHOPS" }
 	parmtag	{ "vray_pluginattr" "reflect_dim_distance" }
 	parmtag	{ "vray_type" "float" }
@@ -145,6 +155,7 @@
 	disablewhen	"{ trace_reflections != 1 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFHOPS" }
 	parmtag	{ "vray_pluginattr" "reflect_dim_distance_on" }
 	parmtag	{ "vray_type" "boolean" }
@@ -158,6 +169,7 @@
 	disablewhen	"{ trace_reflections != 1 } { reflect_dim_distance_on != 1 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFHOPS" }
 	parmtag	{ "vray_pluginattr" "reflect_dim_distance_falloff" }
 	parmtag	{ "vray_type" "float" }
@@ -175,6 +187,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "BRDFHOPS" }
 	parmtag	{ "vray_pluginattr" "glossyAsGI" }
@@ -187,6 +200,7 @@
 	default	{ "8" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFHOPS" }
 	parmtag	{ "vray_pluginattr" "subdivs" }
 	parmtag	{ "vray_type" "int" }
@@ -198,6 +212,7 @@
 	default	{ "" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "filechooser_pattern" "*.csv" }
 	parmtag	{ "vray_plugin" "BRDFHOPS" }
 	parmtag	{ "vray_pluginattr" "csv_path" }
@@ -211,6 +226,7 @@
 	default	{ "1" "1" "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFHOPS" }
 	parmtag	{ "vray_pluginattr" "csv_color_filter" }
 	parmtag	{ "vray_type" "Color" }
@@ -222,6 +238,7 @@
 	default	{ "" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "filechooser_pattern" "*.flakecsv" }
 	parmtag	{ "vray_plugin" "BRDFHOPS" }
 	parmtag	{ "vray_pluginattr" "flakes_csv_path" }
@@ -235,6 +252,7 @@
 	default	{ "1" "1" "1" "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFHOPS" }
 	parmtag	{ "vray_pluginattr" "coat_color" }
 	parmtag	{ "vray_type" "Texture" }
@@ -246,6 +264,7 @@
 	default	{ "0.05" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFHOPS" }
 	parmtag	{ "vray_pluginattr" "coat_strength" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -258,6 +277,7 @@
 	help	"The glossiness of the coat layer"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFHOPS" }
 	parmtag	{ "vray_pluginattr" "coat_glossiness" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -270,6 +290,7 @@
 	help	"Bump texture for the coat layer"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFHOPS" }
 	parmtag	{ "vray_pluginattr" "coat_bump_float" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -283,6 +304,7 @@
 	help	"Bump texture for the coat layer (color version)"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFHOPS" }
 	parmtag	{ "vray_pluginattr" "coat_bump_color" }
 	parmtag	{ "vray_type" "Texture" }
@@ -295,6 +317,7 @@
 	help	"Bump amount for the coat layer"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFHOPS" }
 	parmtag	{ "vray_pluginattr" "coat_bump_amount" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -317,6 +340,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6" }
 	parmtag	{ "vray_plugin" "BRDFHOPS" }
 	parmtag	{ "vray_pluginattr" "coat_bump_type" }
@@ -331,6 +355,7 @@
 	disablewhen	"{ enabled_layers_base != 1 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFHOPS" }
 	parmtag	{ "vray_pluginattr" "coat_traceReflections" }
 	parmtag	{ "vray_type" "int" }
@@ -343,6 +368,7 @@
 	disablewhen	"{ enabled_layers_base != 1 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFHOPS" }
 	parmtag	{ "vray_pluginattr" "coat_subdivs" }
 	parmtag	{ "vray_type" "int" }
@@ -356,6 +382,7 @@
 	disablewhen	"{ enabled_layers_flakes != 1 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFHOPS" }
 	parmtag	{ "vray_pluginattr" "flake_scale" }
 	parmtag	{ "vray_type" "float" }
@@ -369,6 +396,7 @@
 	disablewhen	"{ enabled_layers_flakes != 1 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFHOPS" }
 	parmtag	{ "vray_pluginattr" "flake_size" }
 	parmtag	{ "vray_type" "float" }
@@ -382,6 +410,7 @@
 	disablewhen	"{ enabled_layers_flakes != 1 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFHOPS" }
 	parmtag	{ "vray_pluginattr" "flake_traceReflections" }
 	parmtag	{ "vray_type" "int" }
@@ -393,6 +422,7 @@
 	default	{ "1" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFHOPS" }
 	parmtag	{ "vray_pluginattr" "doubleSided" }
 	parmtag	{ "vray_type" "int" }
@@ -406,6 +436,7 @@
 	disablewhen	"{ enabled_layers_flakes != 1 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFHOPS" }
 	parmtag	{ "vray_pluginattr" "flake_glossiness" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -419,6 +450,7 @@
 	help	"Environment override texture"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFHOPS" }
 	parmtag	{ "vray_pluginattr" "environment_override" }
 	parmtag	{ "vray_type" "Texture" }
@@ -430,6 +462,7 @@
 	default	{ "0" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFHOPS" }
 	parmtag	{ "vray_pluginattr" "environment_priority" }
 	parmtag	{ "vray_type" "int" }
@@ -447,6 +480,7 @@
 	}
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_custom_handling" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,4" }
 	parmtag	{ "vray_plugin" "BRDFHOPS" }
@@ -461,6 +495,7 @@
 	help	"Enabled Base layer"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_custom_handling" "1" }
     }
     parm {
@@ -471,6 +506,7 @@
 	help	"Enabled Flakes layer"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_custom_handling" "1" }
     }
     parm {
@@ -481,6 +517,7 @@
 	help	"Enabled Coat layer"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_custom_handling" "1" }
     }
 }

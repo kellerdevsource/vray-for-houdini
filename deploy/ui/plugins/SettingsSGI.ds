@@ -23,6 +23,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "8,16" }
 	parmtag	{ "vray_plugin" "SettingsSGI" }
 	parmtag	{ "vray_pluginattr" "bits_per_channel" }

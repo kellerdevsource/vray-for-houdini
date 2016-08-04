@@ -20,6 +20,7 @@
 	help	"Channel name"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderChannelColor" }
 	parmtag	{ "vray_pluginattr" "name" }
 	parmtag	{ "vray_type" "String" }
@@ -32,6 +33,7 @@
 	help	"Color Mapping"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderChannelColor" }
 	parmtag	{ "vray_pluginattr" "color_mapping" }
 	parmtag	{ "vray_type" "boolean" }
@@ -44,6 +46,7 @@
 	help	"Consider this render element for antialiasing (may slow down rendering)"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderChannelColor" }
 	parmtag	{ "vray_pluginattr" "consider_for_aa" }
 	parmtag	{ "vray_type" "boolean" }
@@ -56,6 +59,7 @@
 	help	"Filtering"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderChannelColor" }
 	parmtag	{ "vray_pluginattr" "filtering" }
 	parmtag	{ "vray_type" "boolean" }
@@ -112,6 +116,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142" }
 	parmtag	{ "vray_plugin" "RenderChannelColor" }
 	parmtag	{ "vray_pluginattr" "alias" }
@@ -125,6 +130,7 @@
 	help	"true if raw channels should be derived from the respective color and filter channel"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderChannelColor" }
 	parmtag	{ "vray_pluginattr" "derive_raw_channels" }
 	parmtag	{ "vray_type" "boolean" }
@@ -137,6 +143,7 @@
 	help	"False to disable ALL VFB color corrections(sRGB, curves, white balance, etc...) when saving the channel data to a file or showing it on a display. True to apply VFB color corrections when saving the channel data to a file or showing it on a display. If true some color corrections might still be disabled, based on the type of file being saved"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderChannelColor" }
 	parmtag	{ "vray_pluginattr" "vfb_color_corrections" }
 	parmtag	{ "vray_type" "boolean" }

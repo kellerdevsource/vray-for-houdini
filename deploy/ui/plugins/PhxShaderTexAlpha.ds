@@ -21,6 +21,7 @@
 	help	"the input float texture"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "PhxShaderTexAlpha" }
 	parmtag	{ "vray_pluginattr" "ttex" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -33,6 +34,7 @@
 	default	{ "0.5" "0.5" "0.5" "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "PhxShaderTexAlpha" }
 	parmtag	{ "vray_pluginattr" "transparency" }
 	parmtag	{ "vray_type" "AColor" }

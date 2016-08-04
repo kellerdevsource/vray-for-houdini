@@ -15,6 +15,7 @@
     groupsimple {
 	name	"locatorTransform"
 	label	"Locatortransform"
+	grouptag	{ "cook_dependent" "1" }
 	grouptag	{ "vray_plugin" "TexModoSampler" }
 	grouptag	{ "vray_pluginattr" "locatorTransform" }
 	grouptag	{ "vray_type" "Transform" }
@@ -100,6 +101,7 @@
 	default	{ "" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "TexModoSampler" }
 	parmtag	{ "vray_pluginattr" "uvwgen" }

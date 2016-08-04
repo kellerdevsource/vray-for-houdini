@@ -25,6 +25,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "CameraPhysical" }
 	parmtag	{ "vray_pluginattr" "type" }
@@ -38,6 +39,7 @@
 	help	"Specifies the horizontal size of the film gate in milimeters"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "CameraPhysical" }
 	parmtag	{ "vray_pluginattr" "film_width" }
 	parmtag	{ "vray_type" "float" }
@@ -50,6 +52,7 @@
 	help	"Specifies the equivalen focal length of the camera lens"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "CameraPhysical" }
 	parmtag	{ "vray_pluginattr" "focal_length" }
 	parmtag	{ "vray_type" "float" }
@@ -62,6 +65,7 @@
 	help	"Zoom factor"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "CameraPhysical" }
 	parmtag	{ "vray_pluginattr" "zoom_factor" }
 	parmtag	{ "vray_type" "float" }
@@ -75,6 +79,7 @@
 	disablewhen	"{ distortion_type != 0 distortion_type != 1 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "CameraPhysical" }
 	parmtag	{ "vray_pluginattr" "distortion" }
 	parmtag	{ "vray_type" "float" }
@@ -92,6 +97,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "CameraPhysical" }
 	parmtag	{ "vray_pluginattr" "distortion_type" }
@@ -105,6 +111,7 @@
 	help	"Determines the width of the camera aperture and, indirectly, exposure"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "CameraPhysical" }
 	parmtag	{ "vray_pluginattr" "f_number" }
 	parmtag	{ "vray_type" "float" }
@@ -117,6 +124,7 @@
 	help	"Shift lenses for 2-point perspective"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "CameraPhysical" }
 	parmtag	{ "vray_pluginattr" "lens_shift" }
 	parmtag	{ "vray_type" "float" }
@@ -130,6 +138,7 @@
 	disablewhen	"{ type != 0 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "CameraPhysical" }
 	parmtag	{ "vray_pluginattr" "shutter_speed" }
 	parmtag	{ "vray_type" "float" }
@@ -143,6 +152,7 @@
 	disablewhen	"{ type != 1 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "CameraPhysical" }
 	parmtag	{ "vray_pluginattr" "shutter_angle" }
 	parmtag	{ "vray_type" "float" }
@@ -156,6 +166,7 @@
 	disablewhen	"{ type != 1 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "CameraPhysical" }
 	parmtag	{ "vray_pluginattr" "shutter_offset" }
 	parmtag	{ "vray_type" "float" }
@@ -169,6 +180,7 @@
 	disablewhen	"{ type != 2 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "CameraPhysical" }
 	parmtag	{ "vray_pluginattr" "latency" }
 	parmtag	{ "vray_type" "float" }
@@ -181,6 +193,7 @@
 	help	"The film power (i.e. sensitivity)"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "CameraPhysical" }
 	parmtag	{ "vray_pluginattr" "ISO" }
 	parmtag	{ "vray_type" "float" }
@@ -192,6 +205,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "CameraPhysical" }
 	parmtag	{ "vray_pluginattr" "specify_focus" }
 	parmtag	{ "vray_type" "boolean" }
@@ -205,6 +219,7 @@
 	disablewhen	"{ specify_focus != 1 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "CameraPhysical" }
 	parmtag	{ "vray_pluginattr" "focus_distance" }
 	parmtag	{ "vray_type" "float" }
@@ -217,6 +232,7 @@
 	help	"1-specify a target distance; 0-target distance not specified"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "CameraPhysical" }
 	parmtag	{ "vray_pluginattr" "targeted" }
 	parmtag	{ "vray_type" "boolean" }
@@ -230,6 +246,7 @@
 	disablewhen	"{ specify_focus != 0 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "CameraPhysical" }
 	parmtag	{ "vray_pluginattr" "target_distance" }
 	parmtag	{ "vray_type" "float" }
@@ -242,6 +259,7 @@
 	help	"Display threshold for depth-of-field"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "CameraPhysical" }
 	parmtag	{ "vray_pluginattr" "dof_display_threshold" }
 	parmtag	{ "vray_type" "float" }
@@ -254,6 +272,7 @@
 	help	"When this option is on, the F-Number, Shutter Speed and ISO settings will affect the image brightness"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "CameraPhysical" }
 	parmtag	{ "vray_pluginattr" "exposure" }
 	parmtag	{ "vray_type" "boolean" }
@@ -267,6 +286,7 @@
 	help	"White balance"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "CameraPhysical" }
 	parmtag	{ "vray_pluginattr" "white_balance" }
 	parmtag	{ "vray_type" "Color" }
@@ -279,6 +299,7 @@
 	help	"Strength of vignetting effect"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "CameraPhysical" }
 	parmtag	{ "vray_pluginattr" "vignetting" }
 	parmtag	{ "vray_type" "float" }
@@ -291,6 +312,7 @@
 	help	"Enable Bokeh effects"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "CameraPhysical" }
 	parmtag	{ "vray_pluginattr" "blades_enable" }
 	parmtag	{ "vray_type" "boolean" }
@@ -304,6 +326,7 @@
 	disablewhen	"{ blades_enable != 1 }"
 	range	{ 2 20 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "CameraPhysical" }
 	parmtag	{ "vray_pluginattr" "blades_num" }
 	parmtag	{ "vray_type" "int" }
@@ -316,6 +339,7 @@
 	help	"Defines the rotation of the blades (in radians)"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "CameraPhysical" }
 	parmtag	{ "vray_pluginattr" "blades_rotation" }
 	parmtag	{ "vray_type" "float" }
@@ -328,6 +352,7 @@
 	help	"Defines a bias shape for the bokeh effects"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "CameraPhysical" }
 	parmtag	{ "vray_pluginattr" "center_bias" }
 	parmtag	{ "vray_type" "float" }
@@ -340,6 +365,7 @@
 	help	"Allows stretching of the bokeh effect horizontally or vertically to simulate anamorphic lenses"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "CameraPhysical" }
 	parmtag	{ "vray_pluginattr" "anisotropy" }
 	parmtag	{ "vray_type" "float" }
@@ -352,6 +378,7 @@
 	help	"Turns on depth of field sampling"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "CameraPhysical" }
 	parmtag	{ "vray_pluginattr" "use_dof" }
 	parmtag	{ "vray_type" "boolean" }
@@ -364,6 +391,7 @@
 	help	"Turns on motion blur sampling"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "CameraPhysical" }
 	parmtag	{ "vray_pluginattr" "use_moblur" }
 	parmtag	{ "vray_type" "boolean" }
@@ -376,6 +404,7 @@
 	help	"The number of samples for calculating depth of field and/or motion blur"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "CameraPhysical" }
 	parmtag	{ "vray_pluginattr" "subdivs" }
 	parmtag	{ "vray_type" "int" }
@@ -388,6 +417,7 @@
 	help	"This is here so we can suppress a PhysicalCamera node from affecting the main VRayRenderer sequence and frame data"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "CameraPhysical" }
 	parmtag	{ "vray_pluginattr" "dont_affect_settings" }
 	parmtag	{ "vray_type" "boolean" }
@@ -401,6 +431,7 @@
 	disablewhen	"{ distortion_type != 2 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "filechooser_pattern" "*.vrlens" }
 	parmtag	{ "vray_plugin" "CameraPhysical" }
 	parmtag	{ "vray_pluginattr" "lens_file" }
@@ -414,6 +445,7 @@
 	help	"Use field of view instead of use the focal length, film width, scale etc"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "CameraPhysical" }
 	parmtag	{ "vray_pluginattr" "specify_fov" }
 	parmtag	{ "vray_type" "boolean" }
@@ -426,6 +458,7 @@
 	help	"the horizontal lens shift"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "CameraPhysical" }
 	parmtag	{ "vray_pluginattr" "horizontal_shift" }
 	parmtag	{ "vray_type" "float" }
@@ -438,6 +471,7 @@
 	help	"The horizontal offset"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "CameraPhysical" }
 	parmtag	{ "vray_pluginattr" "horizontal_offset" }
 	parmtag	{ "vray_type" "float" }
@@ -450,6 +484,7 @@
 	help	"The vertical offset"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "CameraPhysical" }
 	parmtag	{ "vray_pluginattr" "vertical_offset" }
 	parmtag	{ "vray_type" "float" }
@@ -463,6 +498,7 @@
 	disablewhen	"{ distortion_type != 3 }"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "CameraPhysical" }
 	parmtag	{ "vray_pluginattr" "distortion_tex" }
 	parmtag	{ "vray_type" "Texture" }
@@ -475,6 +511,7 @@
 	help	"1- enable the use of bitmap aperture; 0- disable bitmap aperture"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "CameraPhysical" }
 	parmtag	{ "vray_pluginattr" "bmpaperture_enable" }
 	parmtag	{ "vray_type" "boolean" }
@@ -488,6 +525,7 @@
 	disablewhen	"{ bmpaperture_enable != 1 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "CameraPhysical" }
 	parmtag	{ "vray_pluginattr" "bmpaperture_resolution" }
 	parmtag	{ "vray_type" "int" }
@@ -501,6 +539,7 @@
 	disablewhen	"{ bmpaperture_enable != 1 }"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "CameraPhysical" }
 	parmtag	{ "vray_pluginattr" "bmpaperture_tex" }
 	parmtag	{ "vray_type" "Texture" }
@@ -513,6 +552,7 @@
 	help	"Optical vignetting (\"Cat's Eye Bokeh\") amount"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "CameraPhysical" }
 	parmtag	{ "vray_pluginattr" "optical_vignetting" }
 	parmtag	{ "vray_type" "float" }
@@ -525,6 +565,7 @@
 	help	"Calculate lens shift automatically"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_custom_handling" "1" }
     }
     parm {
@@ -535,6 +576,7 @@
 	help	"Use Physical Camera"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_custom_handling" "1" }
     }
     parm {
@@ -546,6 +588,7 @@
 	disablewhen	"{ specify_fov != 1 }"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "CameraPhysical" }
 	parmtag	{ "vray_pluginattr" "fov" }
 	parmtag	{ "vray_type" "float" }
@@ -559,6 +602,7 @@
 	disablewhen	"{ bmpaperture_enable != 1 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "CameraPhysical" }
 	parmtag	{ "vray_pluginattr" "bmpaperture_affects_exposure" }
 	parmtag	{ "vray_type" "boolean" }

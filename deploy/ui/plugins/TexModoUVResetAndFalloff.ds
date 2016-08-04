@@ -20,6 +20,7 @@
 	default	{ "0" "0" "0" "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexModoUVResetAndFalloff" }
 	parmtag	{ "vray_pluginattr" "texture" }
 	parmtag	{ "vray_type" "Texture" }
@@ -32,6 +33,7 @@
 	help	"This must be the same uvw generator used by 'texture'"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "TexModoUVResetAndFalloff" }
 	parmtag	{ "vray_pluginattr" "uvwgen" }
@@ -44,6 +46,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexModoUVResetAndFalloff" }
 	parmtag	{ "vray_pluginattr" "reset_u" }
 	parmtag	{ "vray_type" "boolean" }
@@ -55,6 +58,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexModoUVResetAndFalloff" }
 	parmtag	{ "vray_pluginattr" "reset_v" }
 	parmtag	{ "vray_type" "boolean" }

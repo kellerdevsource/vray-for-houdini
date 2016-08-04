@@ -21,6 +21,7 @@
 	default	{ "0" "0" "0" "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexColorAndAlpha" }
 	parmtag	{ "vray_pluginattr" "color_input" }
 	parmtag	{ "vray_type" "Texture" }
@@ -32,6 +33,7 @@
 	default	{ "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexColorAndAlpha" }
 	parmtag	{ "vray_pluginattr" "alpha_input" }
 	parmtag	{ "vray_type" "TextureFloat" }

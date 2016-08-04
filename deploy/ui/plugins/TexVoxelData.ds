@@ -24,6 +24,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "TexVoxelData" }
 	parmtag	{ "vray_pluginattr" "interpolation" }
@@ -37,6 +38,7 @@
 	help	"Simulation domain"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_custom_handling" "1" }
     }
@@ -49,6 +51,7 @@
 	help	"Resolution"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexVoxelData" }
 	parmtag	{ "vray_pluginattr" "resolution" }
 	parmtag	{ "vray_type" "Vector" }
@@ -61,6 +64,7 @@
 	help	"The UVW generator for the texture"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "TexVoxelData" }
 	parmtag	{ "vray_pluginattr" "uvwgen" }

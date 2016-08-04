@@ -19,6 +19,7 @@
 	help	"true if the light is enabled"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "LightAmbientMax" }
 	parmtag	{ "vray_pluginattr" "enabled" }
 	parmtag	{ "vray_type" "boolean" }
@@ -36,6 +37,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "LightAmbientMax" }
 	parmtag	{ "vray_pluginattr" "mode" }
@@ -49,6 +51,7 @@
 	help	"minimal distance for gi rays"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "LightAmbientMax" }
 	parmtag	{ "vray_pluginattr" "gi_min_distance" }
 	parmtag	{ "vray_type" "float" }
@@ -62,6 +65,7 @@
 	help	"The ambient color"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "LightAmbientMax" }
 	parmtag	{ "vray_pluginattr" "color" }
 	parmtag	{ "vray_type" "Texture" }
@@ -74,6 +78,7 @@
 	help	"true to compensate for camera exposure"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "LightAmbientMax" }
 	parmtag	{ "vray_pluginattr" "compensate_exposure" }
 	parmtag	{ "vray_type" "boolean" }

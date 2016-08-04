@@ -22,6 +22,7 @@
 	help	"The value from this texture is controlled by the profile curve"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexColorCurve" }
 	parmtag	{ "vray_pluginattr" "input" }
 	parmtag	{ "vray_type" "Texture" }
@@ -34,6 +35,7 @@
 	help	"If present input is ignored, and this is used instead"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexColorCurve" }
 	parmtag	{ "vray_pluginattr" "inputScalar" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -46,6 +48,7 @@
 	help	"Get alpha from curve"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexColorCurve" }
 	parmtag	{ "vray_pluginattr" "use_alpha" }
 	parmtag	{ "vray_type" "boolean" }

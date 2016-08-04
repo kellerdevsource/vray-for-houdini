@@ -24,6 +24,7 @@
 	    help	"Turn on the stochastic flakes. If this option is off, the underlying smooth distribution is used"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFStochasticFlakes" }
 	    parmtag	{ "vray_pluginattr" "enable_flakes" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -36,6 +37,7 @@
 	    help	"Number of flakes per unit area in the texture space"
 	    range	{ 1 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFStochasticFlakes" }
 	    parmtag	{ "vray_pluginattr" "num_flakes" }
 	    parmtag	{ "vray_type" "int" }
@@ -47,6 +49,7 @@
 	    default	{ "0.9" }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFStochasticFlakes" }
 	    parmtag	{ "vray_pluginattr" "hilight_glossiness" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -60,6 +63,7 @@
 	    disablewhen	"{ enable_flakes != 1 }"
 	    range	{ 0 20 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFStochasticFlakes" }
 	    parmtag	{ "vray_pluginattr" "blur_angle" }
 	    parmtag	{ "vray_type" "float" }
@@ -71,6 +75,7 @@
 	    default	{ "8" }
 	    range	{ 1 1000 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFStochasticFlakes" }
 	    parmtag	{ "vray_pluginattr" "subdivs" }
 	    parmtag	{ "vray_type" "int" }
@@ -84,6 +89,7 @@
 	    help	"Flakes reflection filter color"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFStochasticFlakes" }
 	    parmtag	{ "vray_pluginattr" "reflect_filter" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -101,6 +107,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1" }
 	    parmtag	{ "vray_plugin" "BRDFStochasticFlakes" }
 	    parmtag	{ "vray_pluginattr" "mapping_type" }
@@ -115,6 +122,7 @@
 	    disablewhen	"{ enable_flakes != 1 } { mapping_type != 0 }"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFStochasticFlakes" }
 	    parmtag	{ "vray_pluginattr" "map_channel" }
 	    parmtag	{ "vray_type" "int" }
@@ -128,6 +136,7 @@
 	    disablewhen	"{ enable_flakes != 1 }"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFStochasticFlakes" }
 	    parmtag	{ "vray_pluginattr" "flake_scale" }
 	    parmtag	{ "vray_type" "float" }
@@ -144,6 +153,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1" }
 	    parmtag	{ "vray_plugin" "BRDFStochasticFlakes" }
 	    parmtag	{ "vray_pluginattr" "brdf_type" }
@@ -163,6 +173,7 @@
 	    help	"Generate per flake color with random hue value"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	}
 	parm {
 	    name	"random_saturation"
@@ -172,6 +183,7 @@
 	    help	"Generate random saturation for each flake color"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	}
 	parm {
 	    name	"saturation"
@@ -182,6 +194,7 @@
 	    disablewhen	"{ enable_flakes != 1 } { colored_flakes_option != 1 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFStochasticFlakes" }
 	    parmtag	{ "vray_pluginattr" "saturation" }
 	    parmtag	{ "vray_type" "float" }
@@ -194,6 +207,7 @@
 	    help	"Generate random lightness for each flake color"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	}
 	parm {
 	    name	"lightness"
@@ -204,6 +218,7 @@
 	    disablewhen	"{ enable_flakes != 1 } { colored_flakes_option != 1 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFStochasticFlakes" }
 	    parmtag	{ "vray_pluginattr" "lightness" }
 	    parmtag	{ "vray_type" "float" }
@@ -223,6 +238,7 @@
 	    disablewhen	"{ enable_flakes != 1 }"
 	    range	{ 10 24 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFStochasticFlakes" }
 	    parmtag	{ "vray_pluginattr" "tex_subdivs" }
 	    parmtag	{ "vray_type" "int" }
@@ -236,6 +252,7 @@
 	    disablewhen	"{ enable_flakes != 1 }"
 	    range	{ 0 10000 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFStochasticFlakes" }
 	    parmtag	{ "vray_pluginattr" "blend_min" }
 	    parmtag	{ "vray_type" "float" }
@@ -249,6 +266,7 @@
 	    disablewhen	"{ enable_flakes != 1 }"
 	    range	{ 0 10000 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFStochasticFlakes" }
 	    parmtag	{ "vray_pluginattr" "blend_max" }
 	    parmtag	{ "vray_type" "float" }

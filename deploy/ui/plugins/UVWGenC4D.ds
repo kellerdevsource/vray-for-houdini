@@ -18,6 +18,7 @@
 	default	{ "1" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
     }
     parm {
 	name	"len_x"
@@ -27,6 +28,7 @@
 	help	"X length of the texture"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
     }
     parm {
 	name	"len_y"
@@ -36,6 +38,7 @@
 	help	"Y length of the texture"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
     }
     parm {
 	name	"proj_type"
@@ -44,10 +47,12 @@
 	default	{ "0" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
     }
     groupsimple {
 	name	"tex_transform"
 	label	"Tex Transform"
+	grouptag	{ "cook_dependent" "1" }
 
 	parm {
 	    name	"tex_transform_xOrd"
@@ -127,6 +132,7 @@
 	help	"X offset of the texture"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
     }
     parm {
 	name	"oy"
@@ -136,6 +142,7 @@
 	help	"Y offset of the texture"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
     }
     parm {
 	name	"texflag"
@@ -144,6 +151,7 @@
 	default	{ "1" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
     }
     parm {
 	name	"repetitionx"
@@ -153,6 +161,7 @@
 	help	"Repetition x"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
     }
     parm {
 	name	"repetitiony"
@@ -162,6 +171,7 @@
 	help	"Repetition y"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
     }
     parm {
 	name	"pixel_aspect"
@@ -171,6 +181,7 @@
 	help	"Pixel Aspect"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
     }
     parm {
 	name	"film_aspect"
@@ -180,5 +191,6 @@
 	help	"Film Aspect"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
     }
 }

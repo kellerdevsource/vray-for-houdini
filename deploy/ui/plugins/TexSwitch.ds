@@ -20,6 +20,7 @@
 	default	{ "" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "TexSwitch" }
 	parmtag	{ "vray_pluginattr" "nodes" }
@@ -32,6 +33,7 @@
 	default	{ "" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "TexSwitch" }
 	parmtag	{ "vray_pluginattr" "textures" }
@@ -45,6 +47,7 @@
 	default	{ "0" "0" "0" "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexSwitch" }
 	parmtag	{ "vray_pluginattr" "default_texture" }
 	parmtag	{ "vray_type" "Texture" }

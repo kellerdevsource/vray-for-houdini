@@ -26,6 +26,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "-1,0,1,2" }
 	parmtag	{ "vray_plugin" "BitmapBuffer" }
 	parmtag	{ "vray_pluginattr" "filter_type" }
@@ -39,6 +40,7 @@
 	disablewhen	"{ filter_type == 0 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BitmapBuffer" }
 	parmtag	{ "vray_pluginattr" "filter_blur" }
 	parmtag	{ "vray_type" "float" }
@@ -56,6 +58,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "BitmapBuffer" }
 	parmtag	{ "vray_pluginattr" "color_space" }
@@ -69,6 +72,7 @@
 	disablewhen	"{ color_space != 1 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BitmapBuffer" }
 	parmtag	{ "vray_pluginattr" "gamma" }
 	parmtag	{ "vray_type" "float" }
@@ -80,6 +84,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BitmapBuffer" }
 	parmtag	{ "vray_pluginattr" "maya_compatible" }
 	parmtag	{ "vray_type" "boolean" }
@@ -92,6 +97,7 @@
 	help	"if false negative colors will be clamped"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BitmapBuffer" }
 	parmtag	{ "vray_pluginattr" "allow_negative_colors" }
 	parmtag	{ "vray_type" "boolean" }
@@ -109,6 +115,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "BitmapBuffer" }
 	parmtag	{ "vray_pluginattr" "interpolation" }
@@ -122,6 +129,7 @@
 	help	"if set to false, the file would not be loaded"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BitmapBuffer" }
 	parmtag	{ "vray_pluginattr" "load_file" }
 	parmtag	{ "vray_type" "boolean" }
@@ -133,6 +141,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BitmapBuffer" }
 	parmtag	{ "vray_pluginattr" "frame_sequence" }
 	parmtag	{ "vray_type" "boolean" }
@@ -144,6 +153,7 @@
 	default	{ "0" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BitmapBuffer" }
 	parmtag	{ "vray_pluginattr" "frame_number" }
 	parmtag	{ "vray_type" "int" }
@@ -155,6 +165,7 @@
 	default	{ "0" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BitmapBuffer" }
 	parmtag	{ "vray_pluginattr" "frame_offset" }
 	parmtag	{ "vray_type" "int" }
@@ -167,6 +178,7 @@
 	help	"true to use the data window information in e.g. OpenEXR files; otherwise false"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BitmapBuffer" }
 	parmtag	{ "vray_pluginattr" "use_data_window" }
 	parmtag	{ "vray_type" "boolean" }
@@ -178,6 +190,7 @@
 	default	{ "" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BitmapBuffer" }
 	parmtag	{ "vray_pluginattr" "psd_group_name" }
 	parmtag	{ "vray_type" "List<Integer>" }
@@ -189,6 +202,7 @@
 	default	{ "" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BitmapBuffer" }
 	parmtag	{ "vray_pluginattr" "psd_alpha_name" }
 	parmtag	{ "vray_type" "List<Integer>" }
@@ -200,6 +214,7 @@
 	default	{ "0" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BitmapBuffer" }
 	parmtag	{ "vray_pluginattr" "ifl_start_frame" }
 	parmtag	{ "vray_type" "int" }
@@ -211,6 +226,7 @@
 	default	{ "1" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BitmapBuffer" }
 	parmtag	{ "vray_pluginattr" "ifl_playback_rate" }
 	parmtag	{ "vray_type" "float" }
@@ -228,6 +244,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "BitmapBuffer" }
 	parmtag	{ "vray_pluginattr" "ifl_end_condition" }
@@ -241,6 +258,7 @@
 	help	"The file name; can contain <UDIM> or <UVTILE> tags for Mari or Mudbox tiles respectively,or $nU and $nV for explicit tiles; lower-case tags consider the tiles as starting from 0 whereas upper-case tags start from 1"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "filechooser_pattern" "*.exr,*.png,*.bmp,*.tga,*.hdr,*.jpg,*.jpeg,*.pic,*.tif,*.tiff,*.psd,*.vrimg,*.sgi,*.rgb,*.rgba" }
 	parmtag	{ "vray_plugin" "BitmapBuffer" }
 	parmtag	{ "vray_pluginattr" "file" }

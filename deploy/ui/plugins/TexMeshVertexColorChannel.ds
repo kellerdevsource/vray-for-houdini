@@ -18,6 +18,7 @@
 	default	{ "0" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexMeshVertexColorChannel" }
 	parmtag	{ "vray_pluginattr" "channelIndex" }
 	parmtag	{ "vray_type" "int" }
@@ -30,6 +31,7 @@
 	help	"Name of the channel to use"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexMeshVertexColorChannel" }
 	parmtag	{ "vray_pluginattr" "channel_name" }
 	parmtag	{ "vray_type" "String" }
@@ -42,6 +44,7 @@
 	default	{ "0" "0" "0" "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexMeshVertexColorChannel" }
 	parmtag	{ "vray_pluginattr" "default_color" }
 	parmtag	{ "vray_type" "Texture" }
@@ -58,6 +61,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_custom_handling" "1" }
 	parmtag	{ "vray_enumkeys" "0,1" }
     }

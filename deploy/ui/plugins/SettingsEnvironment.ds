@@ -20,6 +20,7 @@
 	help	"Environment color"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsEnvironment" }
 	parmtag	{ "vray_pluginattr" "bg_color" }
 	parmtag	{ "vray_type" "Color" }
@@ -33,6 +34,7 @@
 	help	"Environment map"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsEnvironment" }
 	parmtag	{ "vray_pluginattr" "bg_tex" }
 	parmtag	{ "vray_type" "Texture" }
@@ -45,6 +47,7 @@
 	help	"Environment map multiplier"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsEnvironment" }
 	parmtag	{ "vray_pluginattr" "bg_tex_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -58,6 +61,7 @@
 	help	"GI (skylight) color"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsEnvironment" }
 	parmtag	{ "vray_pluginattr" "gi_color" }
 	parmtag	{ "vray_type" "Color" }
@@ -71,6 +75,7 @@
 	help	"GI (skylight) map"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsEnvironment" }
 	parmtag	{ "vray_pluginattr" "gi_tex" }
 	parmtag	{ "vray_type" "Texture" }
@@ -83,6 +88,7 @@
 	help	"GI (skylight) map multiplier"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsEnvironment" }
 	parmtag	{ "vray_pluginattr" "gi_tex_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -96,6 +102,7 @@
 	help	"Reflection color"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsEnvironment" }
 	parmtag	{ "vray_pluginattr" "reflect_color" }
 	parmtag	{ "vray_type" "Color" }
@@ -109,6 +116,7 @@
 	help	"Reflection map"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsEnvironment" }
 	parmtag	{ "vray_pluginattr" "reflect_tex" }
 	parmtag	{ "vray_type" "Texture" }
@@ -121,6 +129,7 @@
 	help	"Reflection map multiplier"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsEnvironment" }
 	parmtag	{ "vray_pluginattr" "reflect_tex_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -134,6 +143,7 @@
 	help	"Refraction color"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsEnvironment" }
 	parmtag	{ "vray_pluginattr" "refract_color" }
 	parmtag	{ "vray_type" "Color" }
@@ -147,6 +157,7 @@
 	help	"Refraction map"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsEnvironment" }
 	parmtag	{ "vray_pluginattr" "refract_tex" }
 	parmtag	{ "vray_type" "Texture" }
@@ -159,6 +170,7 @@
 	help	"Refraction map multiplier"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsEnvironment" }
 	parmtag	{ "vray_pluginattr" "refract_tex_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -172,6 +184,7 @@
 	help	"Secondary matte color"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsEnvironment" }
 	parmtag	{ "vray_pluginattr" "secondary_matte_color" }
 	parmtag	{ "vray_type" "Color" }
@@ -185,6 +198,7 @@
 	help	"Secondary matte texture"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsEnvironment" }
 	parmtag	{ "vray_pluginattr" "secondary_matte_tex" }
 	parmtag	{ "vray_type" "Texture" }
@@ -197,6 +211,7 @@
 	help	"Secondary matte texture map multiplier"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsEnvironment" }
 	parmtag	{ "vray_pluginattr" "secondary_matte_tex_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -209,6 +224,7 @@
 	help	"A list of environment volumes for the scene"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "SettingsEnvironment" }
 	parmtag	{ "vray_pluginattr" "environment_volume" }
@@ -222,6 +238,7 @@
 	help	"Used for implementing image planes"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsEnvironment" }
 	parmtag	{ "vray_pluginattr" "num_environment_objects" }
 	parmtag	{ "vray_type" "int" }
@@ -235,6 +252,7 @@
 	help	"A global light level multiplier for all lights"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsEnvironment" }
 	parmtag	{ "vray_pluginattr" "global_light_level" }
 	parmtag	{ "vray_type" "Color" }
@@ -247,6 +265,7 @@
 	help	"Whether to set the background color/map"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsEnvironment" }
 	parmtag	{ "vray_pluginattr" "use_bg" }
 	parmtag	{ "vray_type" "boolean" }
@@ -259,6 +278,7 @@
 	help	"Whether to set the GI color/map"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsEnvironment" }
 	parmtag	{ "vray_pluginattr" "use_gi" }
 	parmtag	{ "vray_type" "boolean" }
@@ -271,6 +291,7 @@
 	help	"Whether to set the reflect color/map"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsEnvironment" }
 	parmtag	{ "vray_pluginattr" "use_reflect" }
 	parmtag	{ "vray_type" "boolean" }
@@ -283,6 +304,7 @@
 	help	"Whether to set the refract color/map"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsEnvironment" }
 	parmtag	{ "vray_pluginattr" "use_refract" }
 	parmtag	{ "vray_type" "boolean" }
@@ -295,6 +317,7 @@
 	help	"Whether to use the secondary matte color/map"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsEnvironment" }
 	parmtag	{ "vray_pluginattr" "use_secondary_matte" }
 	parmtag	{ "vray_type" "boolean" }

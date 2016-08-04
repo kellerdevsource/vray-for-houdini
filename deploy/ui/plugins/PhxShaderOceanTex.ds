@@ -29,6 +29,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1" }
 	    parmtag	{ "vray_plugin" "PhxShaderOceanTex" }
 	    parmtag	{ "vray_pluginattr" "compatibility_with" }
@@ -47,6 +48,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1,2" }
 	    parmtag	{ "vray_plugin" "PhxShaderOceanTex" }
 	    parmtag	{ "vray_pluginattr" "alpha_from_intensity" }
@@ -60,6 +62,7 @@
 	    help	"If true, the resulting texture color will be inverted"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderOceanTex" }
 	    parmtag	{ "vray_pluginattr" "invert" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -73,6 +76,7 @@
 	    disablewhen	"{ invert != 1 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderOceanTex" }
 	    parmtag	{ "vray_pluginattr" "invert_alpha" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -86,6 +90,7 @@
 	    help	"A multiplier for the texture color"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderOceanTex" }
 	    parmtag	{ "vray_pluginattr" "color_mult" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -99,6 +104,7 @@
 	    help	"An additional offset for the texture color"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderOceanTex" }
 	    parmtag	{ "vray_pluginattr" "color_offset" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -111,6 +117,7 @@
 	    help	"A multiplier for the texture alpha"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderOceanTex" }
 	    parmtag	{ "vray_pluginattr" "alpha_mult" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -123,6 +130,7 @@
 	    help	"An additional offset for the texture alpha"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderOceanTex" }
 	    parmtag	{ "vray_pluginattr" "alpha_offset" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -136,6 +144,7 @@
 	    help	"The color when there are no valid uvw coordinates"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderOceanTex" }
 	    parmtag	{ "vray_pluginattr" "nouvw_color" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -154,6 +163,7 @@
 	    help	"The uvw generator for the texture"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "oprelative" "." }
 	    parmtag	{ "vray_plugin" "PhxShaderOceanTex" }
 	    parmtag	{ "vray_pluginattr" "uvwgen" }
@@ -166,6 +176,7 @@
 	    default	{ "0" }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderOceanTex" }
 	    parmtag	{ "vray_pluginattr" "use_3d_mapping" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -183,6 +194,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1,2" }
 	    parmtag	{ "vray_plugin" "PhxShaderOceanTex" }
 	    parmtag	{ "vray_pluginattr" "placement_type" }
@@ -197,6 +209,7 @@
 	    disablewhen	"{ placement_type != 1 placement_type != 2 }"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderOceanTex" }
 	    parmtag	{ "vray_pluginattr" "u" }
 	    parmtag	{ "vray_type" "float" }
@@ -210,6 +223,7 @@
 	    disablewhen	"{ placement_type != 1 placement_type != 2 }"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderOceanTex" }
 	    parmtag	{ "vray_pluginattr" "v" }
 	    parmtag	{ "vray_type" "float" }
@@ -223,6 +237,7 @@
 	    disablewhen	"{ placement_type != 1 placement_type != 2 }"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderOceanTex" }
 	    parmtag	{ "vray_pluginattr" "w" }
 	    parmtag	{ "vray_type" "float" }
@@ -236,6 +251,7 @@
 	    disablewhen	"{ placement_type != 1 placement_type != 2 }"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderOceanTex" }
 	    parmtag	{ "vray_pluginattr" "h" }
 	    parmtag	{ "vray_type" "float" }
@@ -249,6 +265,7 @@
 	    disablewhen	"{ placement_type != 2 }"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderOceanTex" }
 	    parmtag	{ "vray_pluginattr" "jitter" }
 	    parmtag	{ "vray_type" "float" }
@@ -262,6 +279,7 @@
 	    disablewhen	"{ placement_type != 2 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderOceanTex" }
 	    parmtag	{ "vray_pluginattr" "tile_u" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -275,6 +293,7 @@
 	    disablewhen	"{ placement_type != 2 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderOceanTex" }
 	    parmtag	{ "vray_pluginattr" "tile_v" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -287,6 +306,7 @@
 	    help	"If true the noise is enabled"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderOceanTex" }
 	    parmtag	{ "vray_pluginattr" "uv_noise_on" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -300,6 +320,7 @@
 	    disablewhen	"{ uv_noise_on != 1 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderOceanTex" }
 	    parmtag	{ "vray_pluginattr" "uv_noise_animate" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -313,6 +334,7 @@
 	    disablewhen	"{ uv_noise_on != 1 }"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderOceanTex" }
 	    parmtag	{ "vray_pluginattr" "uv_noise_amount" }
 	    parmtag	{ "vray_type" "float" }
@@ -326,6 +348,7 @@
 	    disablewhen	"{ uv_noise_on != 1 }"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderOceanTex" }
 	    parmtag	{ "vray_pluginattr" "uv_noise_levels" }
 	    parmtag	{ "vray_type" "float" }
@@ -339,6 +362,7 @@
 	    disablewhen	"{ uv_noise_on != 1 }"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderOceanTex" }
 	    parmtag	{ "vray_pluginattr" "uv_noise_size" }
 	    parmtag	{ "vray_type" "float" }
@@ -352,6 +376,7 @@
 	    disablewhen	"{ uv_noise_on != 1 } { uv_noise_animate != 1 }"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderOceanTex" }
 	    parmtag	{ "vray_pluginattr" "un_noise_phase" }
 	    parmtag	{ "vray_type" "float" }
@@ -363,6 +388,7 @@
 	    default	{ "1" }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderOceanTex" }
 	    parmtag	{ "vray_pluginattr" "vector" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -374,6 +400,7 @@
 	    default	{ "1" }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderOceanTex" }
 	    parmtag	{ "vray_pluginattr" "usewind" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -385,6 +412,7 @@
 	    default	{ "3" }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderOceanTex" }
 	    parmtag	{ "vray_pluginattr" "wind" }
 	    parmtag	{ "vray_type" "float" }
@@ -396,6 +424,7 @@
 	    default	{ "10" }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderOceanTex" }
 	    parmtag	{ "vray_pluginattr" "lod" }
 	    parmtag	{ "vray_type" "int" }
@@ -407,6 +436,7 @@
 	    default	{ "0.9" }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderOceanTex" }
 	    parmtag	{ "vray_pluginattr" "sharpness" }
 	    parmtag	{ "vray_type" "float" }
@@ -418,6 +448,7 @@
 	    default	{ "1" }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderOceanTex" }
 	    parmtag	{ "vray_pluginattr" "velmult" }
 	    parmtag	{ "vray_type" "float" }
@@ -429,6 +460,7 @@
 	    default	{ "1" }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderOceanTex" }
 	    parmtag	{ "vray_pluginattr" "velcoh" }
 	    parmtag	{ "vray_type" "float" }
@@ -440,6 +472,7 @@
 	    default	{ "1" }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderOceanTex" }
 	    parmtag	{ "vray_pluginattr" "rgbmult" }
 	    parmtag	{ "vray_type" "float" }
@@ -451,6 +484,7 @@
 	    default	{ "0" }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderOceanTex" }
 	    parmtag	{ "vray_pluginattr" "rgboffset" }
 	    parmtag	{ "vray_type" "float" }
@@ -462,6 +496,7 @@
 	    default	{ "1" }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderOceanTex" }
 	    parmtag	{ "vray_pluginattr" "meter_scale" }
 	    parmtag	{ "vray_type" "float" }
@@ -473,6 +508,7 @@
 	    default	{ "1" }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderOceanTex" }
 	    parmtag	{ "vray_pluginattr" "up_vector" }
 	    parmtag	{ "vray_type" "int" }
@@ -484,6 +520,7 @@
 	    default	{ "1.23457e+08" }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderOceanTex" }
 	    parmtag	{ "vray_pluginattr" "seed" }
 	    parmtag	{ "vray_type" "int" }
@@ -495,6 +532,7 @@
 	    default	{ "0.5" }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderOceanTex" }
 	    parmtag	{ "vray_pluginattr" "bell" }
 	    parmtag	{ "vray_type" "float" }

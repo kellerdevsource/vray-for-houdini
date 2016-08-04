@@ -20,6 +20,7 @@
 	default	{ "1" "1" "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFRefraction" }
 	parmtag	{ "vray_pluginattr" "color" }
 	parmtag	{ "vray_type" "Color" }
@@ -32,6 +33,7 @@
 	default	{ "0" "0" "0" "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFRefraction" }
 	parmtag	{ "vray_pluginattr" "color_tex" }
 	parmtag	{ "vray_type" "Texture" }
@@ -43,6 +45,7 @@
 	default	{ "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFRefraction" }
 	parmtag	{ "vray_pluginattr" "color_tex_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -55,6 +58,7 @@
 	default	{ "0" "0" "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFRefraction" }
 	parmtag	{ "vray_pluginattr" "transparency" }
 	parmtag	{ "vray_type" "Color" }
@@ -67,6 +71,7 @@
 	default	{ "0" "0" "0" "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFRefraction" }
 	parmtag	{ "vray_pluginattr" "transparency_tex" }
 	parmtag	{ "vray_type" "Texture" }
@@ -78,6 +83,7 @@
 	default	{ "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFRefraction" }
 	parmtag	{ "vray_pluginattr" "transparency_tex_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -90,6 +96,7 @@
 	help	"IOR for the glass; this is ignored if the surface has a volume shader (the volume IOR is used)"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFRefraction" }
 	parmtag	{ "vray_pluginattr" "ior" }
 	parmtag	{ "vray_type" "float" }
@@ -101,6 +108,7 @@
 	default	{ "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFRefraction" }
 	parmtag	{ "vray_pluginattr" "ior_tex" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -112,6 +120,7 @@
 	default	{ "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFRefraction" }
 	parmtag	{ "vray_pluginattr" "ior_tex_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -123,6 +132,7 @@
 	default	{ "0.01" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFRefraction" }
 	parmtag	{ "vray_pluginattr" "cutoff" }
 	parmtag	{ "vray_type" "float" }
@@ -134,6 +144,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFRefraction" }
 	parmtag	{ "vray_pluginattr" "affect_shadows" }
 	parmtag	{ "vray_type" "boolean" }
@@ -145,6 +156,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFRefraction" }
 	parmtag	{ "vray_pluginattr" "affect_alpha" }
 	parmtag	{ "vray_type" "boolean" }
@@ -156,6 +168,7 @@
 	default	{ "1" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFRefraction" }
 	parmtag	{ "vray_pluginattr" "trace_refractions" }
 	parmtag	{ "vray_type" "boolean" }
@@ -168,6 +181,7 @@
 	help	"The maximum refraction bounces (-1 is controlled by the global options)"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFRefraction" }
 	parmtag	{ "vray_pluginattr" "trace_depth" }
 	parmtag	{ "vray_type" "int" }
@@ -179,6 +193,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFRefraction" }
 	parmtag	{ "vray_pluginattr" "exit_color_on" }
 	parmtag	{ "vray_type" "boolean" }
@@ -192,6 +207,7 @@
 	help	"The color to use when the maximum depth is reached"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFRefraction" }
 	parmtag	{ "vray_pluginattr" "reflect_exit_color" }
 	parmtag	{ "vray_type" "Color" }
@@ -205,6 +221,7 @@
 	help	"The color to use when maximum depth is reached when exit_color_on is true"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFRefraction" }
 	parmtag	{ "vray_pluginattr" "refract_exit_color" }
 	parmtag	{ "vray_type" "Color" }
@@ -218,6 +235,7 @@
 	help	"A fog color"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFRefraction" }
 	parmtag	{ "vray_pluginattr" "fog_color" }
 	parmtag	{ "vray_type" "Color" }
@@ -230,6 +248,7 @@
 	help	"A multiplier for the fog plugin"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFRefraction" }
 	parmtag	{ "vray_pluginattr" "fog_color_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -243,6 +262,7 @@
 	help	"Fog emission color"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFRefraction" }
 	parmtag	{ "vray_pluginattr" "fog_emission" }
 	parmtag	{ "vray_type" "Color" }
@@ -255,6 +275,7 @@
 	help	"Bias for the fogging distance"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFRefraction" }
 	parmtag	{ "vray_pluginattr" "fog_bias" }
 	parmtag	{ "vray_type" "float" }
@@ -266,6 +287,7 @@
 	default	{ "0.8" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFRefraction" }
 	parmtag	{ "vray_pluginattr" "glossiness" }
 	parmtag	{ "vray_type" "float" }
@@ -277,6 +299,7 @@
 	default	{ "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFRefraction" }
 	parmtag	{ "vray_pluginattr" "glossiness_tex" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -288,6 +311,7 @@
 	default	{ "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFRefraction" }
 	parmtag	{ "vray_pluginattr" "glossiness_tex_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -299,6 +323,7 @@
 	default	{ "8" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFRefraction" }
 	parmtag	{ "vray_pluginattr" "subdivs" }
 	parmtag	{ "vray_type" "int" }
@@ -311,6 +336,7 @@
 	help	"Whether to enable dispersion"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFRefraction" }
 	parmtag	{ "vray_pluginattr" "dispersion_on" }
 	parmtag	{ "vray_type" "boolean" }
@@ -323,6 +349,7 @@
 	help	"The dispersion amount"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFRefraction" }
 	parmtag	{ "vray_pluginattr" "dispersion" }
 	parmtag	{ "vray_type" "float" }
@@ -334,6 +361,7 @@
 	default	{ "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFRefraction" }
 	parmtag	{ "vray_pluginattr" "interpolation_on" }
 	parmtag	{ "vray_type" "int" }
@@ -345,6 +373,7 @@
 	default	{ "-1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFRefraction" }
 	parmtag	{ "vray_pluginattr" "imap_min_rate" }
 	parmtag	{ "vray_type" "int" }
@@ -356,6 +385,7 @@
 	default	{ "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFRefraction" }
 	parmtag	{ "vray_pluginattr" "imap_max_rate" }
 	parmtag	{ "vray_type" "int" }
@@ -367,6 +397,7 @@
 	default	{ "0.25" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFRefraction" }
 	parmtag	{ "vray_pluginattr" "imap_color_thresh" }
 	parmtag	{ "vray_type" "float" }
@@ -378,6 +409,7 @@
 	default	{ "0.4" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFRefraction" }
 	parmtag	{ "vray_pluginattr" "imap_norm_thresh" }
 	parmtag	{ "vray_type" "float" }
@@ -389,6 +421,7 @@
 	default	{ "20" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFRefraction" }
 	parmtag	{ "vray_pluginattr" "imap_samples" }
 	parmtag	{ "vray_type" "int" }
@@ -401,6 +434,7 @@
 	help	"Whether or not transluceny should be turned on"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFRefraction" }
 	parmtag	{ "vray_pluginattr" "translucency_on" }
 	parmtag	{ "vray_type" "boolean" }
@@ -413,6 +447,7 @@
 	default	{ "1" "1" "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFRefraction" }
 	parmtag	{ "vray_pluginattr" "translucency" }
 	parmtag	{ "vray_type" "Color" }
@@ -425,6 +460,7 @@
 	default	{ "0" "0" "0" "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFRefraction" }
 	parmtag	{ "vray_pluginattr" "translucency_tex" }
 	parmtag	{ "vray_type" "Texture" }
@@ -436,6 +472,7 @@
 	default	{ "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFRefraction" }
 	parmtag	{ "vray_pluginattr" "translucency_tex_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -447,6 +484,7 @@
 	default	{ "1e+18" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFRefraction" }
 	parmtag	{ "vray_pluginattr" "thickness" }
 	parmtag	{ "vray_type" "float" }
@@ -458,6 +496,7 @@
 	default	{ "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFRefraction" }
 	parmtag	{ "vray_pluginattr" "scatter_coeff" }
 	parmtag	{ "vray_type" "float" }
@@ -469,6 +508,7 @@
 	default	{ "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFRefraction" }
 	parmtag	{ "vray_pluginattr" "scatter_direction" }
 	parmtag	{ "vray_type" "float" }

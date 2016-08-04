@@ -19,6 +19,7 @@
 	default	{ "MultiMatte" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderChannelMultiMatte" }
 	parmtag	{ "vray_pluginattr" "name" }
 	parmtag	{ "vray_type" "String" }
@@ -31,6 +32,7 @@
 	help	"The object ID that will be written as the red channel (0 to disable the red channel)"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderChannelMultiMatte" }
 	parmtag	{ "vray_pluginattr" "red_id" }
 	parmtag	{ "vray_type" "int" }
@@ -43,6 +45,7 @@
 	help	"The object ID that will be written as the green channel (0 to disable the green channel)"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderChannelMultiMatte" }
 	parmtag	{ "vray_pluginattr" "green_id" }
 	parmtag	{ "vray_type" "int" }
@@ -55,6 +58,7 @@
 	help	"The object ID that will be written as the blue channel (0 to disable the blue channel)"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderChannelMultiMatte" }
 	parmtag	{ "vray_pluginattr" "blue_id" }
 	parmtag	{ "vray_type" "int" }
@@ -67,6 +71,7 @@
 	help	"Use the material IDs instead of the object IDs"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderChannelMultiMatte" }
 	parmtag	{ "vray_pluginattr" "use_mtl_id" }
 	parmtag	{ "vray_type" "boolean" }
@@ -79,6 +84,7 @@
 	help	"Don't affect Matte Objects"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderChannelMultiMatte" }
 	parmtag	{ "vray_pluginattr" "affect_matte_objects" }
 	parmtag	{ "vray_type" "boolean" }
@@ -91,6 +97,7 @@
 	help	"Consider this render element for antialiasing (may slow down rendering)"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderChannelMultiMatte" }
 	parmtag	{ "vray_pluginattr" "consider_for_aa" }
 	parmtag	{ "vray_type" "boolean" }

@@ -19,6 +19,7 @@
 	default	{ "" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "filechooser_mode" "read" }
 	parmtag	{ "filechooser_pattern" "*.vrmesh,*.abc" }
 	parmtag	{ "vray_file_names" "V-Ray Mesh,Alembic" }
@@ -40,6 +41,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "GeomMeshFile" }
 	parmtag	{ "vray_pluginattr" "anim_type" }
@@ -53,6 +55,7 @@
 	help	"Controls if anim_start and anim_length are taken in consideration. Useful only, when the file name contains frame filter"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMeshFile" }
 	parmtag	{ "vray_pluginattr" "anim_override" }
 	parmtag	{ "vray_type" "boolean" }
@@ -66,6 +69,7 @@
 	disablewhen	"{ anim_override != 1 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMeshFile" }
 	parmtag	{ "vray_pluginattr" "anim_speed" }
 	parmtag	{ "vray_type" "float" }
@@ -79,6 +83,7 @@
 	disablewhen	"{ anim_override != 1 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMeshFile" }
 	parmtag	{ "vray_pluginattr" "anim_offset" }
 	parmtag	{ "vray_type" "float" }
@@ -92,6 +97,7 @@
 	disablewhen	"{ anim_override != 1 } { anim_override == 0 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMeshFile" }
 	parmtag	{ "vray_pluginattr" "anim_start" }
 	parmtag	{ "vray_type" "int" }
@@ -105,6 +111,7 @@
 	disablewhen	"{ anim_override != 1 } { anim_override == 0 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMeshFile" }
 	parmtag	{ "vray_pluginattr" "anim_length" }
 	parmtag	{ "vray_type" "int" }
@@ -116,6 +123,7 @@
 	default	{ "1" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMeshFile" }
 	parmtag	{ "vray_pluginattr" "primary_visibility" }
 	parmtag	{ "vray_type" "boolean" }
@@ -128,6 +136,7 @@
 	help	"Size scaling factor"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMeshFile" }
 	parmtag	{ "vray_pluginattr" "scale" }
 	parmtag	{ "vray_type" "float" }
@@ -140,6 +149,7 @@
 	help	"Transform the proxy from Y-up to Z-up (and vice versa) coordinate system"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMeshFile" }
 	parmtag	{ "vray_pluginattr" "flip_axis" }
 	parmtag	{ "vray_type" "int" }
@@ -152,6 +162,7 @@
 	help	"true to smooth UVs at mesh borders when rendering this mesh as a subdivision surface"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMeshFile" }
 	parmtag	{ "vray_pluginattr" "smooth_uv_borders" }
 	parmtag	{ "vray_type" "boolean" }
@@ -164,6 +175,7 @@
 	help	"true to smooth UVs when rendering this mesh as a subdivision surface"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMeshFile" }
 	parmtag	{ "vray_pluginattr" "smooth_uv" }
 	parmtag	{ "vray_type" "boolean" }
@@ -176,6 +188,7 @@
 	help	"true to calculate smooth normals"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMeshFile" }
 	parmtag	{ "vray_pluginattr" "compute_normals" }
 	parmtag	{ "vray_type" "boolean" }
@@ -189,6 +202,7 @@
 	disablewhen	"{ compute_normals != 1 } { compute_normals == 0 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMeshFile" }
 	parmtag	{ "vray_pluginattr" "smooth_angle" }
 	parmtag	{ "vray_type" "float" }
@@ -201,6 +215,7 @@
 	help	"true to compute the bounding box, false to read it from the file"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMeshFile" }
 	parmtag	{ "vray_pluginattr" "compute_bbox" }
 	parmtag	{ "vray_type" "boolean" }
@@ -213,6 +228,7 @@
 	help	"number of faces in preview"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMeshFile" }
 	parmtag	{ "vray_pluginattr" "num_preview_faces" }
 	parmtag	{ "vray_type" "int" }
@@ -225,6 +241,7 @@
 	help	"turn on/off face sets"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMeshFile" }
 	parmtag	{ "vray_pluginattr" "use_face_sets" }
 	parmtag	{ "vray_type" "boolean" }
@@ -237,6 +254,7 @@
 	help	"read the full path instead of only the name"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMeshFile" }
 	parmtag	{ "vray_pluginattr" "use_full_names" }
 	parmtag	{ "vray_type" "boolean" }
@@ -249,6 +267,7 @@
 	help	"Starting object path in Alembic hierarchy"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMeshFile" }
 	parmtag	{ "vray_pluginattr" "object_path" }
 	parmtag	{ "vray_type" "String" }
@@ -261,6 +280,7 @@
 	help	"Hair width multiplier"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMeshFile" }
 	parmtag	{ "vray_pluginattr" "hair_width_multiplier" }
 	parmtag	{ "vray_type" "float" }
@@ -277,6 +297,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "GeomMeshFile" }
 	parmtag	{ "vray_pluginattr" "visibility_lists_type" }
@@ -286,6 +307,7 @@
 	name	"visibility_list_names"
 	label	"Visibility List Names"
 	default	0
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMeshFile" }
 	parmtag	{ "vray_pluginattr" "visibility_list_names" }
 	parmtag	{ "vray_type" "List<String>" }
@@ -313,6 +335,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "GeomMeshFile" }
 	parmtag	{ "vray_pluginattr" "hair_visibility_lists_type" }
@@ -322,6 +345,7 @@
 	name	"hair_visibility_list_names"
 	label	"Hair Visibility List Names"
 	default	0
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMeshFile" }
 	parmtag	{ "vray_pluginattr" "hair_visibility_list_names" }
 	parmtag	{ "vray_type" "List<String>" }
@@ -345,6 +369,7 @@
 	help	"True to flip the vertex normals"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMeshFile" }
 	parmtag	{ "vray_pluginattr" "flip_normals" }
 	parmtag	{ "vray_type" "boolean" }
@@ -357,6 +382,7 @@
 	help	"Particle width multiplier"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMeshFile" }
 	parmtag	{ "vray_pluginattr" "particle_width_multiplier" }
 	parmtag	{ "vray_type" "float" }
@@ -369,6 +395,7 @@
 	help	"Alembic velocity multiplier"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMeshFile" }
 	parmtag	{ "vray_pluginattr" "velocity_multiplier" }
 	parmtag	{ "vray_type" "float" }
@@ -385,6 +412,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "GeomMeshFile" }
 	parmtag	{ "vray_pluginattr" "particle_visibility_lists_type" }
@@ -394,6 +422,7 @@
 	name	"particle_visibility_list_names"
 	label	"Particle Visibility List Names"
 	default	0
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMeshFile" }
 	parmtag	{ "vray_pluginattr" "particle_visibility_list_names" }
 	parmtag	{ "vray_type" "List<String>" }
@@ -417,6 +446,7 @@
 	help	"Sort Alembic voxels after reading by their names. 0 - skip sorting; 1 - sort"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMeshFile" }
 	parmtag	{ "vray_pluginattr" "sort_voxels" }
 	parmtag	{ "vray_type" "int" }
@@ -429,6 +459,7 @@
 	help	"Specifies how to remap the mapping channels: -1 - no remapping; 0 - channel 0, 1 - channel 1"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMeshFile" }
 	parmtag	{ "vray_pluginattr" "first_map_channel" }
 	parmtag	{ "vray_type" "int" }
@@ -445,6 +476,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "GeomMeshFile" }
 	parmtag	{ "vray_pluginattr" "particle_render_mode" }
@@ -458,6 +490,7 @@
 	help	"True to use alembic animation frame offset"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMeshFile" }
 	parmtag	{ "vray_pluginattr" "use_alembic_offset" }
 	parmtag	{ "vray_type" "boolean" }
@@ -470,6 +503,7 @@
 	help	"Optional name for the color set where the velocity is written"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMeshFile" }
 	parmtag	{ "vray_pluginattr" "velocity_color_set" }
 	parmtag	{ "vray_type" "String" }
@@ -482,6 +516,7 @@
 	help	"Turns on/off the instancing of alembic duplicated objects"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMeshFile" }
 	parmtag	{ "vray_pluginattr" "instancing" }
 	parmtag	{ "vray_type" "boolean" }
@@ -494,6 +529,7 @@
 	help	"True to subdivide alembic PolyMesh and SubD objects; false to subdivide only SubD objects"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMeshFile" }
 	parmtag	{ "vray_pluginattr" "subdiv_all_meshes" }
 	parmtag	{ "vray_type" "boolean" }
@@ -506,6 +542,7 @@
 	help	"0 for Catmull-Clark subdivision and 1 for Loop subdivision"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMeshFile" }
 	parmtag	{ "vray_pluginattr" "subdiv_type" }
 	parmtag	{ "vray_type" "int" }
@@ -518,6 +555,7 @@
 	help	"The subdivision level"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMeshFile" }
 	parmtag	{ "vray_pluginattr" "subdiv_level" }
 	parmtag	{ "vray_type" "int" }
@@ -530,6 +568,7 @@
 	help	"Subdivide or skip mapping channels"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMeshFile" }
 	parmtag	{ "vray_pluginattr" "subdiv_uvs" }
 	parmtag	{ "vray_type" "boolean" }
@@ -542,6 +581,7 @@
 	help	"If true, the borders won't be subdivided"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMeshFile" }
 	parmtag	{ "vray_pluginattr" "subdiv_preserve_geom_borders" }
 	parmtag	{ "vray_type" "boolean" }
@@ -559,6 +599,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "GeomMeshFile" }
 	parmtag	{ "vray_pluginattr" "subdiv_preserve_map_borders" }
@@ -572,6 +613,7 @@
 	help	"If true, use the point cloud inside the vrmesh if available"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMeshFile" }
 	parmtag	{ "vray_pluginattr" "use_point_cloud" }
 	parmtag	{ "vray_type" "boolean" }
@@ -584,6 +626,7 @@
 	help	"A LOD multiplier. A value smaller than 1.0 means that the level will be of greater detail than required by distance to the object"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMeshFile" }
 	parmtag	{ "vray_pluginattr" "point_cloud_mult" }
 	parmtag	{ "vray_type" "float" }

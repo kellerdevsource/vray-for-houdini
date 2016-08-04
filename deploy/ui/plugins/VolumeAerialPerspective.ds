@@ -20,6 +20,7 @@
 	help	"If specified, all parameters are taken from the sun; otherwise, the sky parameters are used"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "VolumeAerialPerspective" }
 	parmtag	{ "vray_pluginattr" "sun" }
@@ -33,6 +34,7 @@
 	help	"If 0, disable the rendering"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VolumeAerialPerspective" }
 	parmtag	{ "vray_pluginattr" "enabled" }
 	parmtag	{ "vray_type" "int" }
@@ -45,6 +47,7 @@
 	help	"View distance inside the fog (until it becomes less than 10% see through)"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VolumeAerialPerspective" }
 	parmtag	{ "vray_pluginattr" "distance" }
 	parmtag	{ "vray_type" "float" }
@@ -57,6 +60,7 @@
 	help	"Height of the atmospheric layer"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VolumeAerialPerspective" }
 	parmtag	{ "vray_pluginattr" "atm_height" }
 	parmtag	{ "vray_type" "float" }
@@ -69,6 +73,7 @@
 	help	"Multiplyer for the \"inscattered light\" component of the aerial persective"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VolumeAerialPerspective" }
 	parmtag	{ "vray_pluginattr" "inscat_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -81,6 +86,7 @@
 	help	"Specify whether aerial perspective is applied to environment rays"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VolumeAerialPerspective" }
 	parmtag	{ "vray_pluginattr" "affect_env" }
 	parmtag	{ "vray_type" "int" }

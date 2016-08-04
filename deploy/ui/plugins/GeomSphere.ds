@@ -20,6 +20,7 @@
 	help	"Desired radius for the sphere"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomSphere" }
 	parmtag	{ "vray_pluginattr" "radius" }
 	parmtag	{ "vray_type" "float" }
@@ -32,6 +33,7 @@
 	help	"Number of subdivisions when generating sphere triangle mesh"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomSphere" }
 	parmtag	{ "vray_pluginattr" "subdivs" }
 	parmtag	{ "vray_type" "int" }

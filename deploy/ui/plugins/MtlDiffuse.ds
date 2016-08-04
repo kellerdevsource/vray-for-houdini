@@ -20,6 +20,7 @@
 	default	{ "0.5" "0.5" "0.5" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlDiffuse" }
 	parmtag	{ "vray_pluginattr" "diffuse" }
 	parmtag	{ "vray_type" "Color" }
@@ -32,6 +33,7 @@
 	default	{ "0" "0" "0" "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlDiffuse" }
 	parmtag	{ "vray_pluginattr" "diffuse_tex" }
 	parmtag	{ "vray_type" "Texture" }
@@ -43,6 +45,7 @@
 	default	{ "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlDiffuse" }
 	parmtag	{ "vray_pluginattr" "diffuse_tex_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -55,6 +58,7 @@
 	default	{ "0" "0" "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlDiffuse" }
 	parmtag	{ "vray_pluginattr" "reflection" }
 	parmtag	{ "vray_type" "Color" }
@@ -67,6 +71,7 @@
 	default	{ "0" "0" "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlDiffuse" }
 	parmtag	{ "vray_pluginattr" "transparency" }
 	parmtag	{ "vray_type" "Color" }
@@ -78,6 +83,7 @@
 	default	{ "" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "MtlDiffuse" }
 	parmtag	{ "vray_pluginattr" "render_channel_color" }
@@ -90,6 +96,7 @@
 	default	{ "" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "MtlDiffuse" }
 	parmtag	{ "vray_pluginattr" "render_channel_alpha" }

@@ -15,6 +15,7 @@
     groupsimple {
 	name	"transform"
 	label	"Transform"
+	grouptag	{ "cook_dependent" "1" }
 	grouptag	{ "vray_plugin" "ASGVISNode" }
 	grouptag	{ "vray_pluginattr" "transform" }
 	grouptag	{ "vray_type" "Transform" }
@@ -96,6 +97,7 @@
 	default	{ "" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "ASGVISNode" }
 	parmtag	{ "vray_pluginattr" "geometry" }
@@ -108,6 +110,7 @@
 	default	{ "" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "ASGVISNode" }
 	parmtag	{ "vray_pluginattr" "material" }
@@ -120,6 +123,7 @@
 	default	{ "" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "ASGVISNode" }
 	parmtag	{ "vray_pluginattr" "volume" }
@@ -133,6 +137,7 @@
 	help	"Number of transform samples"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "ASGVISNode" }
 	parmtag	{ "vray_pluginattr" "nsamples" }
 	parmtag	{ "vray_type" "int" }
@@ -144,6 +149,7 @@
 	default	{ "" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "ASGVISNode" }
 	parmtag	{ "vray_pluginattr" "lights" }
@@ -157,6 +163,7 @@
 	help	"true if the object is renderable (visible) and false otherwise; it only makes sense to use this parameter if it is animated, or if another object depends on this node but it must not be rendered"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "ASGVISNode" }
 	parmtag	{ "vray_pluginattr" "visible" }
 	parmtag	{ "vray_type" "boolean" }
@@ -169,6 +176,7 @@
 	help	"This can be used to give instances of nodes an identifier - if -1 is provided then a unique runtime render id will be calculated"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "ASGVISNode" }
 	parmtag	{ "vray_pluginattr" "objectID" }
 	parmtag	{ "vray_type" "int" }

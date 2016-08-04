@@ -19,6 +19,7 @@
 	default	{ "1" "1" "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFMirror" }
 	parmtag	{ "vray_pluginattr" "color" }
 	parmtag	{ "vray_type" "Color" }
@@ -31,6 +32,7 @@
 	default	{ "0" "0" "0" "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFMirror" }
 	parmtag	{ "vray_pluginattr" "color_tex" }
 	parmtag	{ "vray_type" "Texture" }
@@ -42,6 +44,7 @@
 	default	{ "1" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFMirror" }
 	parmtag	{ "vray_pluginattr" "color_tex_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -54,6 +57,7 @@
 	default	{ "0" "0" "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFMirror" }
 	parmtag	{ "vray_pluginattr" "transparency" }
 	parmtag	{ "vray_type" "Color" }
@@ -66,6 +70,7 @@
 	default	{ "0" "0" "0" "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFMirror" }
 	parmtag	{ "vray_pluginattr" "transparency_tex" }
 	parmtag	{ "vray_type" "Texture" }
@@ -77,6 +82,7 @@
 	default	{ "1" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFMirror" }
 	parmtag	{ "vray_pluginattr" "transparency_tex_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -88,6 +94,7 @@
 	default	{ "0.01" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFMirror" }
 	parmtag	{ "vray_pluginattr" "cutoff" }
 	parmtag	{ "vray_type" "float" }
@@ -99,6 +106,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFMirror" }
 	parmtag	{ "vray_pluginattr" "back_side" }
 	parmtag	{ "vray_type" "boolean" }
@@ -110,6 +118,7 @@
 	default	{ "1" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFMirror" }
 	parmtag	{ "vray_pluginattr" "trace_reflections" }
 	parmtag	{ "vray_type" "boolean" }
@@ -123,6 +132,7 @@
 	disablewhen	"{ trace_reflections != 1 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFMirror" }
 	parmtag	{ "vray_pluginattr" "trace_depth" }
 	parmtag	{ "vray_type" "int" }
@@ -140,6 +150,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "BRDFMirror" }
 	parmtag	{ "vray_pluginattr" "affect_alpha" }
@@ -154,6 +165,7 @@
 	help	"The color to use when the maximum depth is reached"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFMirror" }
 	parmtag	{ "vray_pluginattr" "reflect_exit_color" }
 	parmtag	{ "vray_type" "Texture" }
@@ -167,6 +179,7 @@
 	disablewhen	"{ trace_reflections != 1 } { reflect_dim_distance_on != 1 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFMirror" }
 	parmtag	{ "vray_pluginattr" "reflect_dim_distance" }
 	parmtag	{ "vray_type" "float" }
@@ -180,6 +193,7 @@
 	disablewhen	"{ trace_reflections != 1 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFMirror" }
 	parmtag	{ "vray_pluginattr" "reflect_dim_distance_on" }
 	parmtag	{ "vray_type" "boolean" }
@@ -193,6 +207,7 @@
 	disablewhen	"{ trace_reflections != 1 } { reflect_dim_distance_on != 1 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFMirror" }
 	parmtag	{ "vray_pluginattr" "reflect_dim_distance_falloff" }
 	parmtag	{ "vray_type" "float" }

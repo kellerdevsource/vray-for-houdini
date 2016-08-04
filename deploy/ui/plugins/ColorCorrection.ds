@@ -22,6 +22,7 @@
 	help	"Source color"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "ColorCorrection" }
 	parmtag	{ "vray_pluginattr" "source_color" }
 	parmtag	{ "vray_type" "AColor" }
@@ -35,6 +36,7 @@
 	help	"The texture being color corrected"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "ColorCorrection" }
 	parmtag	{ "vray_pluginattr" "texture_map" }
 	parmtag	{ "vray_type" "Texture" }
@@ -60,6 +62,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7,8,9,10" }
 	parmtag	{ "vray_plugin" "ColorCorrection" }
 	parmtag	{ "vray_pluginattr" "rewire_red" }
@@ -86,6 +89,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7,8,9,10" }
 	parmtag	{ "vray_plugin" "ColorCorrection" }
 	parmtag	{ "vray_pluginattr" "rewire_green" }
@@ -112,6 +116,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7,8,9,10" }
 	parmtag	{ "vray_plugin" "ColorCorrection" }
 	parmtag	{ "vray_pluginattr" "rewire_blue" }
@@ -138,6 +143,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7,8,9,10" }
 	parmtag	{ "vray_plugin" "ColorCorrection" }
 	parmtag	{ "vray_pluginattr" "rewire_alpha" }
@@ -151,6 +157,7 @@
 	help	"added to the color hue"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "ColorCorrection" }
 	parmtag	{ "vray_pluginattr" "hue_shift" }
 	parmtag	{ "vray_type" "float" }
@@ -163,6 +170,7 @@
 	help	"added to the color saturation"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "ColorCorrection" }
 	parmtag	{ "vray_pluginattr" "saturation" }
 	parmtag	{ "vray_type" "float" }
@@ -176,6 +184,7 @@
 	help	"Hue tint"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "ColorCorrection" }
 	parmtag	{ "vray_pluginattr" "hue_tint" }
 	parmtag	{ "vray_type" "AColor" }
@@ -188,6 +197,7 @@
 	help	"default = 0"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "ColorCorrection" }
 	parmtag	{ "vray_pluginattr" "tint_strength" }
 	parmtag	{ "vray_type" "float" }
@@ -200,6 +210,7 @@
 	help	"default = 0.0 - value is added to the texture brightness"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "ColorCorrection" }
 	parmtag	{ "vray_pluginattr" "brightness" }
 	parmtag	{ "vray_type" "float" }
@@ -212,6 +223,7 @@
 	help	"default = 1.0f"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "ColorCorrection" }
 	parmtag	{ "vray_pluginattr" "contrast" }
 	parmtag	{ "vray_type" "float" }
@@ -228,6 +240,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "ColorCorrection" }
 	parmtag	{ "vray_pluginattr" "lightness_mode" }
@@ -241,6 +254,7 @@
 	help	"Color multiplier"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "ColorCorrection" }
 	parmtag	{ "vray_pluginattr" "adv_brightness" }
 	parmtag	{ "vray_type" "float" }
@@ -253,6 +267,7 @@
 	help	"Color contrast"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "ColorCorrection" }
 	parmtag	{ "vray_pluginattr" "adv_contrast" }
 	parmtag	{ "vray_type" "float" }
@@ -265,6 +280,7 @@
 	help	"Contrast base"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "ColorCorrection" }
 	parmtag	{ "vray_pluginattr" "adv_base" }
 	parmtag	{ "vray_type" "float" }
@@ -277,6 +293,7 @@
 	help	"Color offset"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "ColorCorrection" }
 	parmtag	{ "vray_pluginattr" "adv_offset" }
 	parmtag	{ "vray_type" "float" }
@@ -289,6 +306,7 @@
 	help	"true to use the red component ov the adv_rgb_* parameters"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "ColorCorrection" }
 	parmtag	{ "vray_pluginattr" "adv_use_red" }
 	parmtag	{ "vray_type" "boolean" }
@@ -301,6 +319,7 @@
 	help	"true to use the green component ov the adv_rgb_* parameters"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "ColorCorrection" }
 	parmtag	{ "vray_pluginattr" "adv_use_green" }
 	parmtag	{ "vray_type" "boolean" }
@@ -313,6 +332,7 @@
 	help	"true to use the blue component ov the adv_rgb_* parameters"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "ColorCorrection" }
 	parmtag	{ "vray_pluginattr" "adv_use_blue" }
 	parmtag	{ "vray_type" "boolean" }
@@ -326,6 +346,7 @@
 	help	"Color multiplier rgb"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "ColorCorrection" }
 	parmtag	{ "vray_pluginattr" "adv_rgb_brightness" }
 	parmtag	{ "vray_type" "Color" }
@@ -339,6 +360,7 @@
 	help	"Color contrast rgb"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "ColorCorrection" }
 	parmtag	{ "vray_pluginattr" "adv_rgb_contrast" }
 	parmtag	{ "vray_type" "Color" }
@@ -352,6 +374,7 @@
 	help	"Contrast base rgb"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "ColorCorrection" }
 	parmtag	{ "vray_pluginattr" "adv_rgb_base" }
 	parmtag	{ "vray_type" "Color" }
@@ -365,6 +388,7 @@
 	help	"Color offset rgb"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "ColorCorrection" }
 	parmtag	{ "vray_pluginattr" "adv_rgb_offset" }
 	parmtag	{ "vray_type" "Color" }

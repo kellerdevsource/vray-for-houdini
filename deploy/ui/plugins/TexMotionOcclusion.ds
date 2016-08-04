@@ -20,6 +20,7 @@
 	help	"Determines what to output as default texture: 0 - backward occlusion, 1 - forward occlusion"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexMotionOcclusion" }
 	parmtag	{ "vray_pluginattr" "type" }
 	parmtag	{ "vray_type" "int" }
@@ -32,6 +33,7 @@
 	help	"Occlusion hits closer than this distance will be ignored for backward and forward motion occlusion"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexMotionOcclusion" }
 	parmtag	{ "vray_pluginattr" "near_threshold" }
 	parmtag	{ "vray_type" "float" }
@@ -44,6 +46,7 @@
 	help	"Occlusion hits farther than this distance will be fully considered for backward and forward motion occlusion"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexMotionOcclusion" }
 	parmtag	{ "vray_pluginattr" "far_threshold" }
 	parmtag	{ "vray_type" "float" }

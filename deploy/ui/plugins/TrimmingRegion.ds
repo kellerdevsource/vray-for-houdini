@@ -20,6 +20,7 @@
 	help	"List of NURBSCurve objects - the inner curves for the trimming region"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "TrimmingRegion" }
 	parmtag	{ "vray_pluginattr" "innerCurves" }
@@ -33,6 +34,7 @@
 	help	"A NURBSCurve object - the outer curve for the trimming region"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "TrimmingRegion" }
 	parmtag	{ "vray_pluginattr" "outerCurve" }

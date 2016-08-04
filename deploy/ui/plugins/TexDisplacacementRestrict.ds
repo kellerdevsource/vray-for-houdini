@@ -20,6 +20,7 @@
 	help	"Input Float Texture"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexDisplacacementRestrict" }
 	parmtag	{ "vray_pluginattr" "input_tex" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -32,6 +33,7 @@
 	help	"Specifies the maximum displacement value.  If an input value is higher than the Max Displacement value, it will be clipped"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexDisplacacementRestrict" }
 	parmtag	{ "vray_pluginattr" "max_displacement" }
 	parmtag	{ "vray_type" "float" }

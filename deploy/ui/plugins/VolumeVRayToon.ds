@@ -20,6 +20,7 @@
 	help	"The color texture of the cartoon line."
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VolumeVRayToon" }
 	parmtag	{ "vray_pluginattr" "lineColor_tex" }
 	parmtag	{ "vray_type" "Texture" }
@@ -32,6 +33,7 @@
 	help	"Cartoon line width texture."
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VolumeVRayToon" }
 	parmtag	{ "vray_pluginattr" "lineWidth_tex" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -44,6 +46,7 @@
 	help	"Opacity texture of the cartoon line."
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VolumeVRayToon" }
 	parmtag	{ "vray_pluginattr" "opacity_tex" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -56,6 +59,7 @@
 	help	"This works like a bump map - a simple constant value won't do, you need to connect a texture."
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VolumeVRayToon" }
 	parmtag	{ "vray_pluginattr" "distortion_tex" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -72,6 +76,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "VolumeVRayToon" }
 	parmtag	{ "vray_pluginattr" "widthType" }
@@ -85,6 +90,7 @@
 	help	"true : show outlines and not interior edges, false : show all edges"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VolumeVRayToon" }
 	parmtag	{ "vray_pluginattr" "hideInnerEdges" }
 	parmtag	{ "vray_type" "boolean" }
@@ -97,6 +103,7 @@
 	help	"This determines when lines will be created for parts of the same object with varying surface normals (for example, at the inside edges of a box). A value of 0.0 means that only 90 degrees or larger angles will generate internal lines. Higher values mean that more smooth normals can also generate an edge. Don't set this value to pure 1.0 as this will fill curved objects completely."
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VolumeVRayToon" }
 	parmtag	{ "vray_pluginattr" "normalThreshold" }
 	parmtag	{ "vray_type" "float" }
@@ -109,6 +116,7 @@
 	help	"This determines when outlines will be created for overlapping parts of one and the same object."
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VolumeVRayToon" }
 	parmtag	{ "vray_pluginattr" "overlapThreshold" }
 	parmtag	{ "vray_type" "float" }
@@ -121,6 +129,7 @@
 	help	"This parameter depends on the scale of your scene."
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VolumeVRayToon" }
 	parmtag	{ "vray_pluginattr" "traceBias" }
 	parmtag	{ "vray_type" "float" }
@@ -133,6 +142,7 @@
 	help	"true : show toon lines in reflections"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VolumeVRayToon" }
 	parmtag	{ "vray_pluginattr" "doSecondaryRays" }
 	parmtag	{ "vray_type" "boolean" }
@@ -149,6 +159,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "VolumeVRayToon" }
 	parmtag	{ "vray_pluginattr" "excludeType" }
@@ -162,6 +173,7 @@
 	help	"Compensate VRay physical camera exposure"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VolumeVRayToon" }
 	parmtag	{ "vray_pluginattr" "compensateExposure" }
 	parmtag	{ "vray_type" "boolean" }
@@ -174,6 +186,7 @@
 	help	"Specifies which objects will be affected by the VRayToon atmospheric."
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_custom_handling" "1" }
 	parmtag	{ "vray_plugin" "VolumeVRayToon" }
@@ -193,6 +206,7 @@
 	    help	"The color of the cartoon line"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "VolumeVRayToon" }
 	    parmtag	{ "vray_pluginattr" "lineColor" }
 	    parmtag	{ "vray_type" "Color" }
@@ -205,6 +219,7 @@
 	    help	"Cartoon line width"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "VolumeVRayToon" }
 	    parmtag	{ "vray_pluginattr" "lineWidth" }
 	    parmtag	{ "vray_type" "float" }
@@ -217,6 +232,7 @@
 	    help	"Opacity of the cartoon line"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "VolumeVRayToon" }
 	    parmtag	{ "vray_pluginattr" "opacity" }
 	    parmtag	{ "vray_type" "float" }

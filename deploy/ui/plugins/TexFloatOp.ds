@@ -21,6 +21,7 @@
 	help	"Float operand A"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexFloatOp" }
 	parmtag	{ "vray_pluginattr" "float_a" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -33,6 +34,7 @@
 	help	"Float operand B"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexFloatOp" }
 	parmtag	{ "vray_pluginattr" "float_b" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -70,6 +72,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22" }
 	parmtag	{ "vray_plugin" "TexFloatOp" }
 	parmtag	{ "vray_pluginattr" "mode" }

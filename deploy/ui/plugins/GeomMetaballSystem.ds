@@ -24,6 +24,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
 	parmtag	{ "vray_pluginattr" "useParticleSize" }
@@ -37,6 +38,7 @@
 	help	"Size of partiles when useParticleSize is false"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
 	parmtag	{ "vray_pluginattr" "particleRadius" }
 	parmtag	{ "vray_type" "float" }
@@ -49,6 +51,7 @@
 	help	"Field threshold value"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
 	parmtag	{ "vray_pluginattr" "threshold" }
 	parmtag	{ "vray_type" "float" }
@@ -61,6 +64,7 @@
 	help	"Ray marching step length"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
 	parmtag	{ "vray_pluginattr" "stepLength" }
 	parmtag	{ "vray_type" "float" }
@@ -73,6 +77,7 @@
 	help	"Number of samples for motion blur. 0 - Use global settings"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
 	parmtag	{ "vray_pluginattr" "mbSamples" }
 	parmtag	{ "vray_type" "int" }
@@ -95,6 +100,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7" }
 	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
 	parmtag	{ "vray_pluginattr" "distanceFunction" }
@@ -108,6 +114,7 @@
 	help	"If true - smoothing of the field bump will be performed"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
 	parmtag	{ "vray_pluginattr" "smoothingBumps" }
 	parmtag	{ "vray_type" "int" }
@@ -120,6 +127,7 @@
 	help	"Radius of the smoothing filter"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
 	parmtag	{ "vray_pluginattr" "smoothRadius" }
 	parmtag	{ "vray_type" "float" }
@@ -132,6 +140,7 @@
 	help	"Correction coefficient for surface expansion: from 0.0 to 1.0"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
 	parmtag	{ "vray_pluginattr" "smoothExpansion" }
 	parmtag	{ "vray_type" "float" }
@@ -144,6 +153,7 @@
 	help	"List with positive particle systems"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
 	parmtag	{ "vray_pluginattr" "positiveParticles" }
@@ -157,6 +167,7 @@
 	help	"List with negative particle systems"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
 	parmtag	{ "vray_pluginattr" "negativeParticles" }
@@ -170,6 +181,7 @@
 	help	"If true - texture will be applied on field"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
 	parmtag	{ "vray_pluginattr" "useTexture" }
 	parmtag	{ "vray_type" "int" }
@@ -183,6 +195,7 @@
 	help	"Field texture"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
 	parmtag	{ "vray_pluginattr" "fieldTexture" }
 	parmtag	{ "vray_type" "Texture" }
@@ -199,6 +212,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
 	parmtag	{ "vray_pluginattr" "textureFunction" }
@@ -212,6 +226,7 @@
 	help	"Multiplier of the texture"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
 	parmtag	{ "vray_pluginattr" "textureMultiplier" }
 	parmtag	{ "vray_type" "float" }
@@ -224,6 +239,7 @@
 	help	"If true - the field will be clamped before texturing"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
 	parmtag	{ "vray_pluginattr" "clampField" }
 	parmtag	{ "vray_type" "int" }
@@ -236,6 +252,7 @@
 	help	"Field clamping level"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
 	parmtag	{ "vray_pluginattr" "clampThreshold" }
 	parmtag	{ "vray_type" "float" }
@@ -248,6 +265,7 @@
 	help	"If true - voxel cache will be used for intersection speed-up"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
 	parmtag	{ "vray_pluginattr" "useCache" }
 	parmtag	{ "vray_type" "int" }
@@ -260,6 +278,7 @@
 	help	"If true - voxel cache will be build recursively"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
 	parmtag	{ "vray_pluginattr" "cacheRecursiveBuild" }
 	parmtag	{ "vray_type" "int" }
@@ -272,6 +291,7 @@
 	help	"Cache size: from 1 to 5"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
 	parmtag	{ "vray_pluginattr" "cacheSize" }
 	parmtag	{ "vray_type" "int" }
@@ -284,6 +304,7 @@
 	help	"Cache consolidation block size: from 1 to 8"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
 	parmtag	{ "vray_pluginattr" "cacheBlockSize" }
 	parmtag	{ "vray_type" "int" }
@@ -296,6 +317,7 @@
 	help	"If off shading an intersection with this geometry will not generate a gbuffer"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
 	parmtag	{ "vray_pluginattr" "primary_visibility" }
 	parmtag	{ "vray_type" "boolean" }

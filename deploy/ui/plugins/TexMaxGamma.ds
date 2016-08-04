@@ -22,6 +22,7 @@
 	help	"The input texture"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexMaxGamma" }
 	parmtag	{ "vray_pluginattr" "input" }
 	parmtag	{ "vray_type" "Texture" }
@@ -34,6 +35,7 @@
 	help	"The texture multiplier"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexMaxGamma" }
 	parmtag	{ "vray_pluginattr" "multiplier" }
 	parmtag	{ "vray_type" "float" }
@@ -51,6 +53,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "TexMaxGamma" }
 	parmtag	{ "vray_pluginattr" "color_space" }
@@ -64,6 +67,7 @@
 	help	"The gamma value of the texture"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexMaxGamma" }
 	parmtag	{ "vray_pluginattr" "gamma" }
 	parmtag	{ "vray_type" "float" }

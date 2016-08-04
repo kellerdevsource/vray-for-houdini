@@ -25,6 +25,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "SettingsImageSampler" }
 	parmtag	{ "vray_pluginattr" "type" }
@@ -38,6 +39,7 @@
 	help	"Control the number of rays shot for AA versus rays for other effects like glossy reflections, GI, area shadows etc. Higher values mean that less time will be spent on AA, and more effort will be put in the sampling of shading effects"
 	range	{ 2 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsImageSampler" }
 	parmtag	{ "vray_pluginattr" "min_shade_rate" }
 	parmtag	{ "vray_type" "int" }
@@ -52,6 +54,7 @@
 	hidewhen	"{ SettingsImageSampler_type != 0 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsImageSampler" }
 	parmtag	{ "vray_pluginattr" "fixed_subdivs" }
 	parmtag	{ "vray_type" "int" }
@@ -66,6 +69,7 @@
 	hidewhen	"{ SettingsImageSampler_type != 1 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsImageSampler" }
 	parmtag	{ "vray_pluginattr" "dmc_minSubdivs" }
 	parmtag	{ "vray_type" "int" }
@@ -80,6 +84,7 @@
 	hidewhen	"{ SettingsImageSampler_type != 1 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsImageSampler" }
 	parmtag	{ "vray_pluginattr" "dmc_maxSubdivs" }
 	parmtag	{ "vray_type" "int" }
@@ -94,6 +99,7 @@
 	hidewhen	"{ SettingsImageSampler_type != 1 }"
 	range	{ 0.005 0.1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsImageSampler" }
 	parmtag	{ "vray_pluginattr" "dmc_threshold" }
 	parmtag	{ "vray_type" "float" }
@@ -108,6 +114,7 @@
 	hidewhen	"{ SettingsImageSampler_type != 2 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsImageSampler" }
 	parmtag	{ "vray_pluginattr" "subdivision_minRate" }
 	parmtag	{ "vray_type" "int" }
@@ -122,6 +129,7 @@
 	hidewhen	"{ SettingsImageSampler_type != 2 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsImageSampler" }
 	parmtag	{ "vray_pluginattr" "subdivision_maxRate" }
 	parmtag	{ "vray_type" "int" }
@@ -136,6 +144,7 @@
 	hidewhen	"{ SettingsImageSampler_type != 2 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsImageSampler" }
 	parmtag	{ "vray_pluginattr" "subdivision_jitter" }
 	parmtag	{ "vray_type" "boolean" }
@@ -149,6 +158,7 @@
 	hidewhen	"{ SettingsImageSampler_type != 2 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsImageSampler" }
 	parmtag	{ "vray_pluginattr" "subdivision_threshold" }
 	parmtag	{ "vray_type" "float" }
@@ -162,6 +172,7 @@
 	hidewhen	"{ SettingsImageSampler_type != 2 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsImageSampler" }
 	parmtag	{ "vray_pluginattr" "subdivision_edges" }
 	parmtag	{ "vray_type" "boolean" }
@@ -175,6 +186,7 @@
 	hidewhen	"{ SettingsImageSampler_type != 2 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsImageSampler" }
 	parmtag	{ "vray_pluginattr" "subdivision_normals" }
 	parmtag	{ "vray_type" "boolean" }
@@ -188,6 +200,7 @@
 	hidewhen	"{ SettingsImageSampler_type != 2 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsImageSampler" }
 	parmtag	{ "vray_pluginattr" "subdivision_normals_threshold" }
 	parmtag	{ "vray_type" "float" }
@@ -202,6 +215,7 @@
 	hidewhen	"{ SettingsImageSampler_type != 3 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsImageSampler" }
 	parmtag	{ "vray_pluginattr" "progressive_minSubdivs" }
 	parmtag	{ "vray_type" "int" }
@@ -216,6 +230,7 @@
 	hidewhen	"{ SettingsImageSampler_type != 3 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsImageSampler" }
 	parmtag	{ "vray_pluginattr" "progressive_maxSubdivs" }
 	parmtag	{ "vray_type" "int" }
@@ -230,6 +245,7 @@
 	hidewhen	"{ SettingsImageSampler_type != 3 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsImageSampler" }
 	parmtag	{ "vray_pluginattr" "progressive_threshold" }
 	parmtag	{ "vray_type" "float" }
@@ -244,6 +260,7 @@
 	hidewhen	"{ SettingsImageSampler_type != 3 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsImageSampler" }
 	parmtag	{ "vray_pluginattr" "progressive_maxTime" }
 	parmtag	{ "vray_type" "float" }
@@ -258,6 +275,7 @@
 	hidewhen	"{ SettingsImageSampler_type != 3 }"
 	range	{ 32 128 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsImageSampler" }
 	parmtag	{ "vray_pluginattr" "progressive_bundleSize" }
 	parmtag	{ "vray_type" "int" }
@@ -272,6 +290,7 @@
 	hidewhen	"{ SettingsImageSampler_type != 3 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsImageSampler" }
 	parmtag	{ "vray_pluginattr" "progressive_showMask" }
 	parmtag	{ "vray_type" "boolean" }
@@ -285,6 +304,7 @@
 	hidewhen	"{ SettingsImageSampler_type != 1 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_custom_handling" "1" }
     }
     parm {
@@ -307,6 +327,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_custom_handling" "1" }
 	parmtag	{ "vray_enumkeys" "NONE,FilterArea,FilterBox,FilterCatmullRom,FilterCookVariable,FilterGaussian,FilterLanczos,FilterMitNet,FilterSinc,FilterTriangle" }
     }
@@ -323,6 +344,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,2,3" }
 	parmtag	{ "vray_plugin" "SettingsImageSampler" }
 	parmtag	{ "vray_pluginattr" "render_mask_mode" }
@@ -336,6 +358,7 @@
 	help	"List of object ids, which will be used for render mask"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_custom_handling" "1" }
 	parmtag	{ "vray_plugin" "SettingsImageSampler" }
 	parmtag	{ "vray_pluginattr" "render_mask_object_ids" }
@@ -349,6 +372,7 @@
 	help	"List of objects, which will be used for render mask"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_custom_handling" "1" }
 	parmtag	{ "vray_plugin" "SettingsImageSampler" }
@@ -363,6 +387,7 @@
 	help	"Use selected object as render mask"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_custom_handling" "1" }
     }
     parm {
@@ -378,6 +403,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "SettingsImageSampler" }
 	parmtag	{ "vray_pluginattr" "dmc_adaptive_method" }
@@ -392,6 +418,7 @@
 	disablewhen	"{ SettingsImageSampler_type != 3 }"
 	range	{ 0 100 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsImageSampler" }
 	parmtag	{ "vray_pluginattr" "progressive_progNoiseThreshold" }
 	parmtag	{ "vray_type" "int" }
@@ -404,6 +431,7 @@
 	help	"Texture used for render mask when render_mask_mode=Texture.This accepts float textures, where a value of <=1e-6, means that V-Ray won't render in this pixel"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsImageSampler" }
 	parmtag	{ "vray_pluginattr" "render_mask_texture" }
 	parmtag	{ "vray_type" "TextureFloat" }

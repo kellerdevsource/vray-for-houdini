@@ -15,6 +15,7 @@
     groupsimple {
 	name	"uvw_transform"
 	label	"Uvw Transform"
+	grouptag	{ "cook_dependent" "1" }
 	grouptag	{ "vray_plugin" "UVWGenProjection" }
 	grouptag	{ "vray_pluginattr" "uvw_transform" }
 	grouptag	{ "vray_type" "Transform" }
@@ -92,6 +93,7 @@
     groupsimple {
 	name	"uvw_transform_tex"
 	label	"Uvw Transform Tex"
+	grouptag	{ "cook_dependent" "1" }
 	grouptag	{ "vray_plugin" "UVWGenProjection" }
 	grouptag	{ "vray_pluginattr" "uvw_transform_tex" }
 	grouptag	{ "vray_type" "TextureTransform" }
@@ -169,6 +171,7 @@
     groupsimple {
 	name	"tex_transform"
 	label	"Tex Transform"
+	grouptag	{ "cook_dependent" "1" }
 	grouptag	{ "vray_plugin" "UVWGenProjection" }
 	grouptag	{ "vray_pluginattr" "tex_transform" }
 	grouptag	{ "vray_type" "Transform" }
@@ -250,6 +253,7 @@
 	default	{ "" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "UVWGenProjection" }
 	parmtag	{ "vray_pluginattr" "camera_settings" }
@@ -262,6 +266,7 @@
 	default	{ "" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "UVWGenProjection" }
 	parmtag	{ "vray_pluginattr" "camera_view" }
@@ -275,6 +280,7 @@
 	help	"If we are projecting a bitmap, this is the bitmap's buffer, we need it to implement vertical/horizontal fit"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "UVWGenProjection" }
 	parmtag	{ "vray_pluginattr" "bitmap" }
@@ -298,6 +304,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,8" }
 	parmtag	{ "vray_plugin" "UVWGenProjection" }
 	parmtag	{ "vray_pluginattr" "type" }
@@ -316,6 +323,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "UVWGenProjection" }
 	parmtag	{ "vray_pluginattr" "fitfill" }
@@ -334,6 +342,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "UVWGenProjection" }
 	parmtag	{ "vray_pluginattr" "fittype" }
@@ -346,6 +355,7 @@
 	default	{ "3.14159" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "UVWGenProjection" }
 	parmtag	{ "vray_pluginattr" "u_angle" }
 	parmtag	{ "vray_type" "float" }
@@ -357,6 +367,7 @@
 	default	{ "1.5708" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "UVWGenProjection" }
 	parmtag	{ "vray_pluginattr" "v_angle" }
 	parmtag	{ "vray_type" "float" }
@@ -368,6 +379,7 @@
 	default	{ "1" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "UVWGenProjection" }
 	parmtag	{ "vray_pluginattr" "film_gate_w" }
 	parmtag	{ "vray_type" "float" }
@@ -379,6 +391,7 @@
 	default	{ "1" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "UVWGenProjection" }
 	parmtag	{ "vray_pluginattr" "film_gate_h" }
 	parmtag	{ "vray_type" "float" }
@@ -391,6 +404,7 @@
 	help	"Determine whether to project on back faces of polygons when in perspective mode"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "UVWGenProjection" }
 	parmtag	{ "vray_pluginattr" "hide_backface" }
 	parmtag	{ "vray_type" "boolean" }
@@ -403,6 +417,7 @@
 	help	"Determine whether to project on occluded points when in perspective mode"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "UVWGenProjection" }
 	parmtag	{ "vray_pluginattr" "hide_occluded" }
 	parmtag	{ "vray_type" "boolean" }
@@ -415,6 +430,7 @@
 	help	"If true the projection will be applied in the object space of the currently shaded geometry"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "UVWGenProjection" }
 	parmtag	{ "vray_pluginattr" "object_space" }
 	parmtag	{ "vray_type" "boolean" }

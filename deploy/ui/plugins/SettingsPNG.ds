@@ -19,6 +19,7 @@
 	help	"Compression for PNG output (0-9)"
 	range	{ 0 9 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsPNG" }
 	parmtag	{ "vray_pluginattr" "compression" }
 	parmtag	{ "vray_type" "int" }
@@ -35,6 +36,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "8,16" }
 	parmtag	{ "vray_plugin" "SettingsPNG" }
 	parmtag	{ "vray_pluginattr" "bits_per_channel" }

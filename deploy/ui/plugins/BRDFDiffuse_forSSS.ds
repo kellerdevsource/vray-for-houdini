@@ -19,6 +19,7 @@
 	default	{ "1" "1" "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFDiffuse_forSSS" }
 	parmtag	{ "vray_pluginattr" "color" }
 	parmtag	{ "vray_type" "Color" }
@@ -31,6 +32,7 @@
 	default	{ "0" "0" "0" "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFDiffuse_forSSS" }
 	parmtag	{ "vray_pluginattr" "color_tex" }
 	parmtag	{ "vray_type" "Texture" }
@@ -42,6 +44,7 @@
 	default	{ "1" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFDiffuse_forSSS" }
 	parmtag	{ "vray_pluginattr" "color_tex_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -54,6 +57,7 @@
 	default	{ "0" "0" "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFDiffuse_forSSS" }
 	parmtag	{ "vray_pluginattr" "transparency" }
 	parmtag	{ "vray_type" "Color" }
@@ -66,6 +70,7 @@
 	default	{ "0" "0" "0" "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFDiffuse_forSSS" }
 	parmtag	{ "vray_pluginattr" "transparency_tex" }
 	parmtag	{ "vray_type" "Texture" }
@@ -77,6 +82,7 @@
 	default	{ "1" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFDiffuse_forSSS" }
 	parmtag	{ "vray_pluginattr" "transparency_tex_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -90,6 +96,7 @@
 	help	"Color on the back sides of the material"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFDiffuse_forSSS" }
 	parmtag	{ "vray_pluginattr" "back_color" }
 	parmtag	{ "vray_type" "Texture" }
@@ -101,6 +108,7 @@
 	default	{ "1" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFDiffuse_forSSS" }
 	parmtag	{ "vray_pluginattr" "roughness" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -112,6 +120,7 @@
 	default	{ "1" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFDiffuse_forSSS" }
 	parmtag	{ "vray_pluginattr" "use_irradiance_map" }
 	parmtag	{ "vray_type" "boolean" }

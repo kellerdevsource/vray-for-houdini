@@ -22,6 +22,7 @@
 	help	"The texture"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexRGBTintMax" }
 	parmtag	{ "vray_pluginattr" "texture" }
 	parmtag	{ "vray_type" "Texture" }
@@ -35,6 +36,7 @@
 	help	"The red color"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexRGBTintMax" }
 	parmtag	{ "vray_pluginattr" "red" }
 	parmtag	{ "vray_type" "Color" }
@@ -48,6 +50,7 @@
 	help	"The green color"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexRGBTintMax" }
 	parmtag	{ "vray_pluginattr" "green" }
 	parmtag	{ "vray_type" "Color" }
@@ -61,6 +64,7 @@
 	help	"The blue color"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexRGBTintMax" }
 	parmtag	{ "vray_pluginattr" "blue" }
 	parmtag	{ "vray_type" "Color" }

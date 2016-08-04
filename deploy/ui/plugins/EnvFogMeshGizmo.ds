@@ -15,6 +15,7 @@
     groupsimple {
 	name	"transform"
 	label	"Transform"
+	grouptag	{ "cook_dependent" "1" }
 	grouptag	{ "vray_custom_handling" "1" }
 	grouptag	{ "vray_plugin" "EnvFogMeshGizmo" }
 	grouptag	{ "vray_pluginattr" "transform" }
@@ -97,6 +98,7 @@
 	default	{ "" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_custom_handling" "1" }
 	parmtag	{ "vray_plugin" "EnvFogMeshGizmo" }
@@ -110,6 +112,7 @@
 	default	{ "" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_custom_handling" "1" }
 	parmtag	{ "vray_plugin" "EnvFogMeshGizmo" }
@@ -124,6 +127,7 @@
 	help	"fade out effect for the edges"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "EnvFogMeshGizmo" }
 	parmtag	{ "vray_pluginattr" "fade_out_radius" }
 	parmtag	{ "vray_type" "float" }

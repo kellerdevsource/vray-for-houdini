@@ -28,6 +28,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3,4" }
 	parmtag	{ "vray_plugin" "TexVectorProduct" }
 	parmtag	{ "vray_pluginattr" "operation" }
@@ -41,6 +42,7 @@
 	default	{ "0" "0" "0" "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexVectorProduct" }
 	parmtag	{ "vray_pluginattr" "input1" }
 	parmtag	{ "vray_type" "Texture" }
@@ -53,6 +55,7 @@
 	default	{ "0" "0" "0" "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexVectorProduct" }
 	parmtag	{ "vray_pluginattr" "input2" }
 	parmtag	{ "vray_type" "Texture" }
@@ -60,6 +63,7 @@
     groupsimple {
 	name	"transform"
 	label	"Transform"
+	grouptag	{ "cook_dependent" "1" }
 	grouptag	{ "vray_plugin" "TexVectorProduct" }
 	grouptag	{ "vray_pluginattr" "transform" }
 	grouptag	{ "vray_type" "TextureTransform" }
@@ -142,6 +146,7 @@
 	help	"When this is true the output vector will be normalized (in case of dot product, the input vectors are normalized before the operation)"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexVectorProduct" }
 	parmtag	{ "vray_pluginattr" "normalize" }
 	parmtag	{ "vray_type" "boolean" }

@@ -28,6 +28,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5" }
 	parmtag	{ "vray_plugin" "TexMaxHairInfo" }
 	parmtag	{ "vray_pluginattr" "output" }
@@ -41,6 +42,7 @@
 	help	"Seed offset"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexMaxHairInfo" }
 	parmtag	{ "vray_pluginattr" "seed_offset" }
 	parmtag	{ "vray_type" "int" }
@@ -54,6 +56,7 @@
 	help	"Color A"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexMaxHairInfo" }
 	parmtag	{ "vray_pluginattr" "color_a" }
 	parmtag	{ "vray_type" "Texture" }
@@ -67,6 +70,7 @@
 	help	"Color B"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexMaxHairInfo" }
 	parmtag	{ "vray_pluginattr" "color_b" }
 	parmtag	{ "vray_type" "Texture" }
@@ -79,6 +83,7 @@
 	help	"Bias"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexMaxHairInfo" }
 	parmtag	{ "vray_pluginattr" "bias" }
 	parmtag	{ "vray_type" "TextureFloat" }

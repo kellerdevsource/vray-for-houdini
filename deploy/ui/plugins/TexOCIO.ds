@@ -20,6 +20,7 @@
 	default	{ "0" "0" "0" "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexOCIO" }
 	parmtag	{ "vray_pluginattr" "basemap" }
 	parmtag	{ "vray_type" "Texture" }
@@ -40,6 +41,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5" }
 	parmtag	{ "vray_plugin" "TexOCIO" }
 	parmtag	{ "vray_pluginattr" "mode" }
@@ -53,6 +55,7 @@
 	help	"OCIO configuration file (*.ocio)"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "filechooser_pattern" "*.ocio" }
 	parmtag	{ "vray_plugin" "TexOCIO" }
 	parmtag	{ "vray_pluginattr" "config_file" }
@@ -66,6 +69,7 @@
 	help	"stored OCIO environment config for slave renders (*.ocio)"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexOCIO" }
 	parmtag	{ "vray_pluginattr" "ocio_stored_env" }
 	parmtag	{ "vray_type" "String" }
@@ -84,6 +88,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "TexOCIO" }
 	parmtag	{ "vray_pluginattr" "config_src" }
@@ -97,6 +102,7 @@
 	help	"ColorSpace: input colorspace/role"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexOCIO" }
 	parmtag	{ "vray_pluginattr" "colorspace_in" }
 	parmtag	{ "vray_type" "String" }
@@ -109,6 +115,7 @@
 	help	"ColorSpace: output colorspace/role"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexOCIO" }
 	parmtag	{ "vray_pluginattr" "colorspace_out" }
 	parmtag	{ "vray_type" "String" }
@@ -122,6 +129,7 @@
 	help	"CDLTransform: slope"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexOCIO" }
 	parmtag	{ "vray_pluginattr" "cdl_slope" }
 	parmtag	{ "vray_type" "Color" }
@@ -135,6 +143,7 @@
 	help	"CDLTransform: offset"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexOCIO" }
 	parmtag	{ "vray_pluginattr" "cdl_offset" }
 	parmtag	{ "vray_type" "Color" }
@@ -148,6 +157,7 @@
 	help	"CDLTransform: power"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexOCIO" }
 	parmtag	{ "vray_pluginattr" "cdl_power" }
 	parmtag	{ "vray_type" "Color" }
@@ -160,6 +170,7 @@
 	help	"CDLTransform: saturation"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexOCIO" }
 	parmtag	{ "vray_pluginattr" "cdl_saturation" }
 	parmtag	{ "vray_type" "float" }
@@ -176,6 +187,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "TexOCIO" }
 	parmtag	{ "vray_pluginattr" "cdl_direction" }
@@ -189,6 +201,7 @@
 	help	"CDLTransform: true - get slope, offset, power and saturation from the specified file"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexOCIO" }
 	parmtag	{ "vray_pluginattr" "cdl_use_file" }
 	parmtag	{ "vray_type" "boolean" }
@@ -201,6 +214,7 @@
 	help	"CDLTransform: file (.cc or .ccc)"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "filechooser_pattern" "*.cc,*.ccc" }
 	parmtag	{ "vray_plugin" "TexOCIO" }
 	parmtag	{ "vray_pluginattr" "cdl_file" }
@@ -214,6 +228,7 @@
 	help	"CDLTransform: cccid (if needed)"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexOCIO" }
 	parmtag	{ "vray_pluginattr" "cdl_cccid" }
 	parmtag	{ "vray_type" "String" }
@@ -226,6 +241,7 @@
 	help	"FileTransform: color correction file"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "filechooser_pattern" "*.3dl,*.ccc,*.cc,*.csp,*.lut,*.itx,*.cube,*.mga,*.spi1d,*.spi3d,*.spimtx,*.cub,*.vf" }
 	parmtag	{ "vray_plugin" "TexOCIO" }
 	parmtag	{ "vray_pluginattr" "filetr_file" }
@@ -239,6 +255,7 @@
 	help	"FileTransform: cccid (if needed)"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexOCIO" }
 	parmtag	{ "vray_pluginattr" "filetr_cccid" }
 	parmtag	{ "vray_type" "String" }
@@ -255,6 +272,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "TexOCIO" }
 	parmtag	{ "vray_pluginattr" "filetr_direction" }
@@ -274,6 +292,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "TexOCIO" }
 	parmtag	{ "vray_pluginattr" "filetr_interpolation" }
@@ -291,6 +310,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "TexOCIO" }
 	parmtag	{ "vray_pluginattr" "logconvert_operation" }
@@ -304,6 +324,7 @@
 	help	"Display: input colorspace/role"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexOCIO" }
 	parmtag	{ "vray_pluginattr" "disp_input_colorspace" }
 	parmtag	{ "vray_type" "String" }
@@ -316,6 +337,7 @@
 	help	"Display: device"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexOCIO" }
 	parmtag	{ "vray_pluginattr" "disp_display_device" }
 	parmtag	{ "vray_type" "String" }
@@ -328,6 +350,7 @@
 	help	"Display: view transform"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexOCIO" }
 	parmtag	{ "vray_pluginattr" "disp_view_transform" }
 	parmtag	{ "vray_type" "String" }
@@ -340,6 +363,7 @@
 	help	"Look: input colorspace/role"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexOCIO" }
 	parmtag	{ "vray_pluginattr" "look_input_colorspace" }
 	parmtag	{ "vray_type" "String" }
@@ -352,6 +376,7 @@
 	help	"Look: looks"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexOCIO" }
 	parmtag	{ "vray_pluginattr" "look_looks" }
 	parmtag	{ "vray_type" "String" }
@@ -364,6 +389,7 @@
 	help	"Look: output colorspace/role"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexOCIO" }
 	parmtag	{ "vray_pluginattr" "look_output_colorspace" }
 	parmtag	{ "vray_type" "String" }
@@ -380,6 +406,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "TexOCIO" }
 	parmtag	{ "vray_pluginattr" "look_direction" }
@@ -393,6 +420,7 @@
 	help	"Look: ignore errors"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexOCIO" }
 	parmtag	{ "vray_pluginattr" "look_ignore_errors" }
 	parmtag	{ "vray_type" "int" }
@@ -401,6 +429,7 @@
 	name	"context_keys"
 	label	"Context Keys"
 	default	0
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexOCIO" }
 	parmtag	{ "vray_pluginattr" "context_keys" }
 	parmtag	{ "vray_type" "List<String>" }
@@ -420,6 +449,7 @@
 	name	"context_values"
 	label	"Context Values"
 	default	0
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexOCIO" }
 	parmtag	{ "vray_pluginattr" "context_values" }
 	parmtag	{ "vray_type" "List<String>" }
@@ -447,6 +477,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "TexOCIO" }
 	parmtag	{ "vray_pluginattr" "inout_type" }

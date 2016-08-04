@@ -21,6 +21,7 @@
 	help	"Operation: Add(), Subtract(), Multiply(), Divide(), Minimum(), Maximum()"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexColorMathBasic" }
 	parmtag	{ "vray_pluginattr" "op" }
 	parmtag	{ "vray_type" "int" }
@@ -33,6 +34,7 @@
 	help	"Use alpha in the calculations"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexColorMathBasic" }
 	parmtag	{ "vray_pluginattr" "alpha" }
 	parmtag	{ "vray_type" "boolean" }
@@ -46,6 +48,7 @@
 	help	"The first color input"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexColorMathBasic" }
 	parmtag	{ "vray_pluginattr" "input1" }
 	parmtag	{ "vray_type" "Texture" }
@@ -59,6 +62,7 @@
 	help	"The second color input"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexColorMathBasic" }
 	parmtag	{ "vray_pluginattr" "input2" }
 	parmtag	{ "vray_type" "Texture" }

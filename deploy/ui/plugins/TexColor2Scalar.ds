@@ -22,6 +22,7 @@
 	help	"Color texture, which intensity will be used"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexColor2Scalar" }
 	parmtag	{ "vray_pluginattr" "clr_txt" }
 	parmtag	{ "vray_type" "Texture" }
@@ -34,6 +35,7 @@
 	help	"intensity multiplier"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexColor2Scalar" }
 	parmtag	{ "vray_pluginattr" "mult" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -46,6 +48,7 @@
 	help	"add alpha in the average calculation"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexColor2Scalar" }
 	parmtag	{ "vray_pluginattr" "use_alpha" }
 	parmtag	{ "vray_type" "int" }

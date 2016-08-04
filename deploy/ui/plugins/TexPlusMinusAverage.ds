@@ -27,6 +27,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "TexPlusMinusAverage" }
 	parmtag	{ "vray_pluginattr" "operation" }
@@ -39,6 +40,7 @@
 	default	{ "" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "TexPlusMinusAverage" }
 	parmtag	{ "vray_pluginattr" "input1D" }
@@ -51,6 +53,7 @@
 	default	{ "" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "TexPlusMinusAverage" }
 	parmtag	{ "vray_pluginattr" "input2D" }
@@ -63,6 +66,7 @@
 	default	{ "" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "TexPlusMinusAverage" }
 	parmtag	{ "vray_pluginattr" "input3D" }

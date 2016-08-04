@@ -19,6 +19,7 @@
 	default	{ "1" "1" "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFGlassGlossy" }
 	parmtag	{ "vray_pluginattr" "color" }
 	parmtag	{ "vray_type" "Color" }
@@ -31,6 +32,7 @@
 	default	{ "0" "0" "0" "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFGlassGlossy" }
 	parmtag	{ "vray_pluginattr" "color_tex" }
 	parmtag	{ "vray_type" "Texture" }
@@ -42,6 +44,7 @@
 	default	{ "1" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFGlassGlossy" }
 	parmtag	{ "vray_pluginattr" "color_tex_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -54,6 +57,7 @@
 	default	{ "0" "0" "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFGlassGlossy" }
 	parmtag	{ "vray_pluginattr" "transparency" }
 	parmtag	{ "vray_type" "Color" }
@@ -66,6 +70,7 @@
 	default	{ "0" "0" "0" "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFGlassGlossy" }
 	parmtag	{ "vray_pluginattr" "transparency_tex" }
 	parmtag	{ "vray_type" "Texture" }
@@ -77,6 +82,7 @@
 	default	{ "1" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFGlassGlossy" }
 	parmtag	{ "vray_pluginattr" "transparency_tex_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -89,6 +95,7 @@
 	help	"IOR for the glass; this is ignored if the surface has a volume shader (the volume IOR is used)"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFGlassGlossy" }
 	parmtag	{ "vray_pluginattr" "ior" }
 	parmtag	{ "vray_type" "float" }
@@ -100,6 +107,7 @@
 	default	{ "0.01" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFGlassGlossy" }
 	parmtag	{ "vray_pluginattr" "cutoff" }
 	parmtag	{ "vray_type" "float" }
@@ -111,6 +119,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFGlassGlossy" }
 	parmtag	{ "vray_pluginattr" "affect_shadows" }
 	parmtag	{ "vray_type" "boolean" }
@@ -128,6 +137,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "BRDFGlassGlossy" }
 	parmtag	{ "vray_pluginattr" "affect_alpha" }
@@ -140,6 +150,7 @@
 	default	{ "1" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFGlassGlossy" }
 	parmtag	{ "vray_pluginattr" "trace_refractions" }
 	parmtag	{ "vray_type" "boolean" }
@@ -152,6 +163,7 @@
 	help	"The maximum refraction bounces (-1 is controlled by the global options)"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFGlassGlossy" }
 	parmtag	{ "vray_pluginattr" "trace_depth" }
 	parmtag	{ "vray_type" "int" }
@@ -163,6 +175,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFGlassGlossy" }
 	parmtag	{ "vray_pluginattr" "exit_color_on" }
 	parmtag	{ "vray_type" "boolean" }
@@ -177,6 +190,7 @@
 	disablewhen	"{ exit_color_on != 1 }"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFGlassGlossy" }
 	parmtag	{ "vray_pluginattr" "reflect_exit_color" }
 	parmtag	{ "vray_type" "Texture" }
@@ -191,6 +205,7 @@
 	disablewhen	"{ exit_color_on != 1 }"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFGlassGlossy" }
 	parmtag	{ "vray_pluginattr" "refract_exit_color" }
 	parmtag	{ "vray_type" "Texture" }
@@ -202,6 +217,7 @@
 	default	{ "" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "BRDFGlassGlossy" }
 	parmtag	{ "vray_pluginattr" "volume" }
@@ -214,6 +230,7 @@
 	default	{ "1" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFGlassGlossy" }
 	parmtag	{ "vray_pluginattr" "ior_tex" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -225,6 +242,7 @@
 	default	{ "0.8" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFGlassGlossy" }
 	parmtag	{ "vray_pluginattr" "glossiness" }
 	parmtag	{ "vray_type" "float" }
@@ -236,6 +254,7 @@
 	default	{ "1" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFGlassGlossy" }
 	parmtag	{ "vray_pluginattr" "glossiness_tex" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -247,6 +266,7 @@
 	default	{ "1" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFGlassGlossy" }
 	parmtag	{ "vray_pluginattr" "glossiness_tex_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -258,6 +278,7 @@
 	default	{ "8" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFGlassGlossy" }
 	parmtag	{ "vray_pluginattr" "subdivs" }
 	parmtag	{ "vray_type" "int" }
@@ -269,6 +290,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFGlassGlossy" }
 	parmtag	{ "vray_pluginattr" "dispersion_on" }
 	parmtag	{ "vray_type" "int" }
@@ -281,6 +303,7 @@
 	disablewhen	"{ dispersion_on != 1 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFGlassGlossy" }
 	parmtag	{ "vray_pluginattr" "dispersion" }
 	parmtag	{ "vray_type" "float" }
@@ -292,6 +315,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFGlassGlossy" }
 	parmtag	{ "vray_pluginattr" "interpolation_on" }
 	parmtag	{ "vray_type" "int" }
@@ -304,6 +328,7 @@
 	disablewhen	"{ interpolation_on != 1 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFGlassGlossy" }
 	parmtag	{ "vray_pluginattr" "imap_min_rate" }
 	parmtag	{ "vray_type" "int" }
@@ -316,6 +341,7 @@
 	disablewhen	"{ interpolation_on != 1 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFGlassGlossy" }
 	parmtag	{ "vray_pluginattr" "imap_max_rate" }
 	parmtag	{ "vray_type" "int" }
@@ -328,6 +354,7 @@
 	disablewhen	"{ interpolation_on != 1 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFGlassGlossy" }
 	parmtag	{ "vray_pluginattr" "imap_color_thresh" }
 	parmtag	{ "vray_type" "float" }
@@ -340,6 +367,7 @@
 	disablewhen	"{ interpolation_on != 1 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFGlassGlossy" }
 	parmtag	{ "vray_pluginattr" "imap_norm_thresh" }
 	parmtag	{ "vray_type" "float" }
@@ -352,6 +380,7 @@
 	disablewhen	"{ interpolation_on != 1 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFGlassGlossy" }
 	parmtag	{ "vray_pluginattr" "imap_samples" }
 	parmtag	{ "vray_type" "int" }

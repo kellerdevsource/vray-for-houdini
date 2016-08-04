@@ -19,6 +19,7 @@
 	help	"Base BRDF"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "BRDFBump" }
 	parmtag	{ "vray_pluginattr" "base_brdf" }
@@ -32,6 +33,7 @@
 	help	"Bump texture"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFBump" }
 	parmtag	{ "vray_pluginattr" "bump_tex_float" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -45,6 +47,7 @@
 	help	"Bump texture"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFBump" }
 	parmtag	{ "vray_pluginattr" "bump_tex_color" }
 	parmtag	{ "vray_type" "Texture" }
@@ -57,6 +60,7 @@
 	help	"Bump amount"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFBump" }
 	parmtag	{ "vray_pluginattr" "bump_tex_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -69,6 +73,7 @@
 	help	"Bump amount texture"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFBump" }
 	parmtag	{ "vray_pluginattr" "bump_tex_mult_tex" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -81,6 +86,7 @@
 	help	"true to offset the surface shading point, in addition to the normal"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFBump" }
 	parmtag	{ "vray_pluginattr" "bump_shadows" }
 	parmtag	{ "vray_type" "boolean" }
@@ -102,6 +108,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6" }
 	parmtag	{ "vray_plugin" "BRDFBump" }
 	parmtag	{ "vray_pluginattr" "map_type" }
@@ -115,6 +122,7 @@
 	help	"The uvw generator for the normal map texture when \"Type\" is \"Normal (Tangent)\""
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "BRDFBump" }
 	parmtag	{ "vray_pluginattr" "normal_uvwgen" }
@@ -128,6 +136,7 @@
 	help	"When this is true the BRDFBump will try to match the Maya bump/normal mapping"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFBump" }
 	parmtag	{ "vray_pluginattr" "maya_compatible" }
 	parmtag	{ "vray_type" "boolean" }
@@ -140,6 +149,7 @@
 	help	"true to compute bump mapping for shadow rays in case the material is transparent; false to skip the bump map for shadow rays (faster rendering)"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFBump" }
 	parmtag	{ "vray_pluginattr" "compute_bump_for_shadows" }
 	parmtag	{ "vray_type" "boolean" }
@@ -152,6 +162,7 @@
 	help	"Scale for sampling the bitmap when map_type is 0. Normally this is tied to the ray differentials, but can be changed if necessary"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFBump" }
 	parmtag	{ "vray_pluginattr" "bump_delta_scale" }
 	parmtag	{ "vray_type" "float" }
@@ -164,6 +175,7 @@
 	help	"Bump texture; this is deprecated, use bump_tex_color or bump_tex_float"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "BRDFBump" }
 	parmtag	{ "vray_pluginattr" "bump_tex" }
@@ -177,6 +189,7 @@
 	help	"Multiplier applied to the normal map"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFBump" }
 	parmtag	{ "vray_pluginattr" "normal_map_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -190,6 +203,7 @@
 	help	"Texture for additional bump effect"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFBump" }
 	parmtag	{ "vray_pluginattr" "additional_bump" }
 	parmtag	{ "vray_type" "Texture" }
@@ -202,6 +216,7 @@
 	help	"Multiplier applied to the bump map"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFBump" }
 	parmtag	{ "vray_pluginattr" "bump_map_mult" }
 	parmtag	{ "vray_type" "float" }

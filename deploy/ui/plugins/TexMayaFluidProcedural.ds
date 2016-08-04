@@ -34,6 +34,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7,8,9,10,11" }
 	parmtag	{ "vray_plugin" "TexMayaFluidProcedural" }
 	parmtag	{ "vray_pluginattr" "type" }
@@ -47,6 +48,7 @@
 	help	"Since the cube drop-off shape is computed a little differently, we need this here for this particular case"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexMayaFluidProcedural" }
 	parmtag	{ "vray_pluginattr" "edge_fade_out" }
 	parmtag	{ "vray_type" "float" }

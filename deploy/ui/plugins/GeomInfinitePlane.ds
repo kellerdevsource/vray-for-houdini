@@ -21,6 +21,7 @@
 	help	"origin for plane"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomInfinitePlane" }
 	parmtag	{ "vray_pluginattr" "origin" }
 	parmtag	{ "vray_type" "Vector" }
@@ -34,6 +35,7 @@
 	help	"normal for plane"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomInfinitePlane" }
 	parmtag	{ "vray_pluginattr" "normal" }
 	parmtag	{ "vray_type" "Vector" }

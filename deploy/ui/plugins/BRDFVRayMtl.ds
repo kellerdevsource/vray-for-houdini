@@ -24,6 +24,7 @@
 	    help	"The opacity of the material"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "opacity" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -37,6 +38,7 @@
 	    help	"The diffuse color of the material"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "diffuse" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -49,6 +51,7 @@
 	    help	"The roughness of the diffuse part of the material"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "roughness" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -62,6 +65,7 @@
 	    help	"The self-illumination color of the material"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "self_illumination" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -74,6 +78,7 @@
 	    help	"true if the self-illumination should affect GI"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "self_illumination_gi" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -98,6 +103,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1,2,4" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "brdf_type" }
@@ -112,6 +118,7 @@
 	    help	"The reflection color of the material"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "reflect" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -124,6 +131,7 @@
 	    help	"The glossiness of the reflections"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "reflect_glossiness" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -137,6 +145,7 @@
 	    disablewhen	"{ hilight_glossiness_lock != 0 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "hilight_glossiness" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -149,6 +158,7 @@
 	    help	"true to use the reflection glossiness also for hilights (hilight_glossiness is ignored)"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "hilight_glossiness_lock" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -161,6 +171,7 @@
 	    help	"true to enable fresnel reflections"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "fresnel" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -174,6 +185,7 @@
 	    disablewhen	"{ fresnel != 1 } { fresnel_ior_lock != 0 }"
 	    range	{ 0 5 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "fresnel_ior" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -187,6 +199,7 @@
 	    disablewhen	"{ fresnel != 1 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "fresnel_ior_lock" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -199,6 +212,7 @@
 	    help	"Subdivs for glossy reflectons"
 	    range	{ 0 20 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "reflect_subdivs" }
 	    parmtag	{ "vray_type" "int" }
@@ -211,6 +225,7 @@
 	    help	"true to trace reflections and false to only do hilights"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "reflect_trace" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -223,6 +238,7 @@
 	    help	"The maximum depth for reflections"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "reflect_depth" }
 	    parmtag	{ "vray_type" "int" }
@@ -236,6 +252,7 @@
 	    help	"The color to use when the maximum depth is reached"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "reflect_exit_color" }
 	    parmtag	{ "vray_type" "Color" }
@@ -248,6 +265,7 @@
 	    help	"How much to soften hilights and reflections at grazing light angles"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "hilight_soften" }
 	    parmtag	{ "vray_type" "float" }
@@ -261,6 +279,7 @@
 	    disablewhen	"{ reflect_dim_distance_on != 1 } { reflect_dim_distance_on != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "reflect_dim_distance" }
 	    parmtag	{ "vray_type" "float" }
@@ -273,6 +292,7 @@
 	    help	"True to enable dim distance"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "reflect_dim_distance_on" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -286,6 +306,7 @@
 	    disablewhen	"{ reflect_dim_distance_on != 1 } { reflect_dim_distance_on != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "reflect_dim_distance_falloff" }
 	    parmtag	{ "vray_type" "float" }
@@ -303,6 +324,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1,2" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "reflect_affect_alpha" }
@@ -316,6 +338,7 @@
 	    help	"The anisotropy for glossy reflections, from -1 to 1 (0.0 is isotropic reflections)"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "anisotropy" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -328,6 +351,7 @@
 	    help	"The rotation of the anisotropy axes, from 0.0 to 1.0"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "anisotropy_rotation" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -344,6 +368,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "anisotropy_derivation" }
@@ -363,6 +388,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1,2" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "anisotropy_axis" }
@@ -376,6 +402,7 @@
 	    help	"The uvw generator to use for anisotropy when anisotropy_derivation is 1"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "oprelative" "." }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "anisotropy_uvwgen" }
@@ -396,6 +423,7 @@
 	    help	"The refraction color of the material"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "refract" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -408,6 +436,7 @@
 	    help	"The IOR for refractions"
 	    range	{ 0 5 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "refract_ior" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -420,6 +449,7 @@
 	    help	"Glossiness for refractions"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "refract_glossiness" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -432,6 +462,7 @@
 	    help	"Subdivs for glossy refractions"
 	    range	{ 0 20 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "refract_subdivs" }
 	    parmtag	{ "vray_type" "int" }
@@ -444,6 +475,7 @@
 	    help	"1 to trace refractions; 0 to disable them"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "refract_trace" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -456,6 +488,7 @@
 	    help	"The maximum depth for refractions"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "refract_depth" }
 	    parmtag	{ "vray_type" "int" }
@@ -470,6 +503,7 @@
 	    disablewhen	"{ refract_exit_color_on != 1 }"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "refract_exit_color" }
 	    parmtag	{ "vray_type" "Color" }
@@ -482,6 +516,7 @@
 	    help	"If false, when the maximum refraction depth is reached, the material is assumed transparent, instead of terminating the ray"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "refract_exit_color_on" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -499,6 +534,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1,2" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "refract_affect_alpha" }
@@ -512,6 +548,7 @@
 	    help	"true to enable the refraction to affect the shadows cast by the material (as transparent shadows)"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "refract_affect_shadows" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -524,6 +561,7 @@
 	    help	"true to enable dispersion"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "dispersion_on" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -537,6 +575,7 @@
 	    disablewhen	"{ dispersion_on != 1 } { dispersion_on != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "dispersion" }
 	    parmtag	{ "vray_type" "float" }
@@ -556,6 +595,7 @@
 	    help	"The absorption (fog) color"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "fog_color" }
 	    parmtag	{ "vray_type" "Color" }
@@ -569,6 +609,7 @@
 	    help	"The absorption (fog) color texture"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "fog_color_tex" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -581,6 +622,7 @@
 	    help	"Multiplier for the absorption"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "fog_mult" }
 	    parmtag	{ "vray_type" "float" }
@@ -593,6 +635,7 @@
 	    help	"Bias for the absorption"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "fog_bias" }
 	    parmtag	{ "vray_type" "float" }
@@ -605,6 +648,7 @@
 	    help	"Enable unit scale multiplication, when calculating absorption"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "fog_unit_scale_on" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -629,6 +673,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "translucency" }
@@ -644,6 +689,7 @@
 	    disablewhen	"{ translucency == 0 }"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "translucency_color" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -657,6 +703,7 @@
 	    disablewhen	"{ translucency == 0 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "translucency_light_mult" }
 	    parmtag	{ "vray_type" "float" }
@@ -670,6 +717,7 @@
 	    disablewhen	"{ translucency == 0 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "translucency_scatter_dir" }
 	    parmtag	{ "vray_type" "float" }
@@ -683,6 +731,7 @@
 	    disablewhen	"{ translucency == 0 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "translucency_scatter_coeff" }
 	    parmtag	{ "vray_type" "float" }
@@ -696,6 +745,7 @@
 	    disablewhen	"{ translucency == 0 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "translucency_thickness" }
 	    parmtag	{ "vray_type" "float" }
@@ -714,6 +764,7 @@
 	    help	"true if the material is double-sided"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "option_double_sided" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -726,6 +777,7 @@
 	    help	"true to compute reflections for back sides of objects"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "option_reflect_on_back" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -743,6 +795,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1,2" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "option_glossy_rays_as_gi" }
@@ -756,6 +809,7 @@
 	    help	"Specifies a cutoff threshold for tracing reflections/refractions"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "option_cutoff" }
 	    parmtag	{ "vray_type" "float" }
@@ -768,6 +822,7 @@
 	    help	"false to perform local brute-force GI calculatons and true to use the current GI engine"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "option_use_irradiance_map" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -784,6 +839,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "1,0" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "option_energy_mode" }
@@ -797,6 +853,7 @@
 	    help	"true to fix dark edges for glossy reflections with low samples; only set this to false for compatibility with older versions"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "option_fix_dark_edges" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -811,6 +868,7 @@
 	    disablewhen	"{ use_environment_override != 1 }"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_linked_only" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "environment_override" }
@@ -825,6 +883,7 @@
 	    disablewhen	"{ use_environment_override != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "environment_priority" }
 	    parmtag	{ "vray_type" "int" }
@@ -842,6 +901,7 @@
 	    default	{ "0" }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "refl_interpolation_on" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -854,6 +914,7 @@
 	    disablewhen	"{ refl_interpolation_on != 1 } { refl_interpolation_on != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "refl_imap_min_rate" }
 	    parmtag	{ "vray_type" "int" }
@@ -866,6 +927,7 @@
 	    disablewhen	"{ refl_interpolation_on != 1 } { refl_interpolation_on != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "refl_imap_max_rate" }
 	    parmtag	{ "vray_type" "int" }
@@ -878,6 +940,7 @@
 	    disablewhen	"{ refl_interpolation_on != 1 } { refl_interpolation_on != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "refl_imap_color_thresh" }
 	    parmtag	{ "vray_type" "float" }
@@ -890,6 +953,7 @@
 	    disablewhen	"{ refl_interpolation_on != 1 } { refl_interpolation_on != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "refl_imap_norm_thresh" }
 	    parmtag	{ "vray_type" "float" }
@@ -902,6 +966,7 @@
 	    disablewhen	"{ refl_interpolation_on != 1 } { refl_interpolation_on != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "refl_imap_samples" }
 	    parmtag	{ "vray_type" "int" }
@@ -919,6 +984,7 @@
 	    default	{ "0" }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "refr_interpolation_on" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -931,6 +997,7 @@
 	    disablewhen	"{ refr_interpolation_on != 1 } { refr_interpolation_on != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "refr_imap_min_rate" }
 	    parmtag	{ "vray_type" "int" }
@@ -943,6 +1010,7 @@
 	    disablewhen	"{ refr_interpolation_on != 1 } { refr_interpolation_on != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "refr_imap_max_rate" }
 	    parmtag	{ "vray_type" "int" }
@@ -955,6 +1023,7 @@
 	    disablewhen	"{ refr_interpolation_on != 1 } { refr_interpolation_on != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "refr_imap_color_thresh" }
 	    parmtag	{ "vray_type" "float" }
@@ -969,6 +1038,7 @@
 	    hidewhen	"{ brdf_type != 4 }"
 	    range	{ 2 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "gtr_gamma" }
 	    parmtag	{ "vray_type" "float" }
@@ -981,6 +1051,7 @@
 	    disablewhen	"{ refr_interpolation_on != 1 } { refr_interpolation_on != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "refr_imap_norm_thresh" }
 	    parmtag	{ "vray_type" "float" }
@@ -993,6 +1064,7 @@
 	    disablewhen	"{ refr_interpolation_on != 1 } { refr_interpolation_on != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "refr_imap_samples" }
 	    parmtag	{ "vray_type" "int" }
@@ -1005,6 +1077,7 @@
 	    help	"true to use the old (and incorrect) shadow masking function when gtr_gamma is different from 2.0"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "gtr_oldGamma" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -1023,6 +1096,7 @@
 	    help	"True to use the 'environment override' texture"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "use_environment_override" }
 	    parmtag	{ "vray_type" "boolean" }

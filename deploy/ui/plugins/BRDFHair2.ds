@@ -23,6 +23,7 @@
 	    default	{ "0" "0" "0" "1" }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFHair2" }
 	    parmtag	{ "vray_pluginattr" "diffuse_color_tex" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -35,6 +36,7 @@
 	    help	"Index of refraction for the hair"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFHair2" }
 	    parmtag	{ "vray_pluginattr" "refraction_index" }
 	    parmtag	{ "vray_type" "float" }
@@ -48,6 +50,7 @@
 	    help	"Absorption coeficient, controls the color of the hair"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFHair2" }
 	    parmtag	{ "vray_pluginattr" "absorption" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -60,6 +63,7 @@
 	    help	"Longitudinal shift for the R lobe"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFHair2" }
 	    parmtag	{ "vray_pluginattr" "r_long_shift" }
 	    parmtag	{ "vray_type" "float" }
@@ -72,6 +76,7 @@
 	    help	"Longitudinal shift for the TT lobe"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFHair2" }
 	    parmtag	{ "vray_pluginattr" "tt_long_shift" }
 	    parmtag	{ "vray_type" "float" }
@@ -84,6 +89,7 @@
 	    help	"Longitudinal shift for the TRT lobe"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFHair2" }
 	    parmtag	{ "vray_pluginattr" "trt_long_shift" }
 	    parmtag	{ "vray_type" "float" }
@@ -96,6 +102,7 @@
 	    help	"Longitudinal width (stddev.) for the R lobe"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFHair2" }
 	    parmtag	{ "vray_pluginattr" "r_long_width" }
 	    parmtag	{ "vray_type" "float" }
@@ -108,6 +115,7 @@
 	    help	"Longitudinal width (stddev.) for the TT lobe"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFHair2" }
 	    parmtag	{ "vray_pluginattr" "tt_long_width" }
 	    parmtag	{ "vray_type" "float" }
@@ -120,6 +128,7 @@
 	    help	"Longitudinal width (stddev.) for the TRT lobe"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFHair2" }
 	    parmtag	{ "vray_pluginattr" "trt_long_width" }
 	    parmtag	{ "vray_type" "float" }
@@ -132,6 +141,7 @@
 	    help	"Glint scale factor 0.5 to 5.0"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFHair2" }
 	    parmtag	{ "vray_pluginattr" "glint_scale" }
 	    parmtag	{ "vray_type" "float" }
@@ -144,6 +154,7 @@
 	    help	"Azimuthal width of the caustic from 10 to 25 degrees"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFHair2" }
 	    parmtag	{ "vray_pluginattr" "azimuthal_width" }
 	    parmtag	{ "vray_type" "float" }
@@ -156,6 +167,7 @@
 	    help	"Fade range for caustic merge (0.2 to 0.4)"
 	    range	{ 0.2 0.4 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFHair2" }
 	    parmtag	{ "vray_pluginattr" "fade_range" }
 	    parmtag	{ "vray_type" "float" }
@@ -168,6 +180,7 @@
 	    help	"Caustic intensity limit"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFHair2" }
 	    parmtag	{ "vray_pluginattr" "caustic_limit" }
 	    parmtag	{ "vray_type" "float" }
@@ -180,6 +193,7 @@
 	    help	"Multiplier for the R lobe"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFHair2" }
 	    parmtag	{ "vray_pluginattr" "r_mult" }
 	    parmtag	{ "vray_type" "float" }
@@ -192,6 +206,7 @@
 	    help	"Multiplier for the TT lobe"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFHair2" }
 	    parmtag	{ "vray_pluginattr" "tt_mult" }
 	    parmtag	{ "vray_type" "float" }
@@ -204,6 +219,7 @@
 	    help	"Multiplier for the TRT lobe"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFHair2" }
 	    parmtag	{ "vray_pluginattr" "trt_mult" }
 	    parmtag	{ "vray_type" "float" }
@@ -216,6 +232,7 @@
 	    help	"Multiplier for the Diffuse component"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFHair2" }
 	    parmtag	{ "vray_pluginattr" "diffuse_mult" }
 	    parmtag	{ "vray_type" "float" }

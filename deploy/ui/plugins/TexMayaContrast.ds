@@ -19,6 +19,7 @@
 	default	{ "0" "0" "0" "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexMayaContrast" }
 	parmtag	{ "vray_pluginattr" "value" }
 	parmtag	{ "vray_type" "Texture" }
@@ -31,6 +32,7 @@
 	default	{ "2" "2" "2" "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexMayaContrast" }
 	parmtag	{ "vray_pluginattr" "contrast" }
 	parmtag	{ "vray_type" "Texture" }
@@ -43,6 +45,7 @@
 	default	{ "0.5" "0.5" "0.5" "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexMayaContrast" }
 	parmtag	{ "vray_pluginattr" "bias" }
 	parmtag	{ "vray_type" "Texture" }

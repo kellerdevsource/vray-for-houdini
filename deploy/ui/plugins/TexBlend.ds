@@ -20,6 +20,7 @@
 	default	{ "0" "0" "0" "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexBlend" }
 	parmtag	{ "vray_pluginattr" "color_a" }
 	parmtag	{ "vray_type" "Texture" }
@@ -32,6 +33,7 @@
 	default	{ "0" "0" "0" "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexBlend" }
 	parmtag	{ "vray_pluginattr" "color_b" }
 	parmtag	{ "vray_type" "Texture" }
@@ -43,6 +45,7 @@
 	default	{ "1" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexBlend" }
 	parmtag	{ "vray_pluginattr" "blend_amount" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -55,6 +58,7 @@
 	help	"If true, color_b will be composited over color_a with the given weight, taking its alpha into account"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexBlend" }
 	parmtag	{ "vray_pluginattr" "composite" }
 	parmtag	{ "vray_type" "boolean" }

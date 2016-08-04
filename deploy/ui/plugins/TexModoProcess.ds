@@ -20,6 +20,7 @@
 	default	{ "0" "0" "0" "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexModoProcess" }
 	parmtag	{ "vray_pluginattr" "base_texture" }
 	parmtag	{ "vray_type" "Texture" }
@@ -31,6 +32,7 @@
 	default	{ "0.5" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexModoProcess" }
 	parmtag	{ "vray_pluginattr" "bias" }
 	parmtag	{ "vray_type" "float" }
@@ -42,6 +44,7 @@
 	default	{ "0.5" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexModoProcess" }
 	parmtag	{ "vray_pluginattr" "gain" }
 	parmtag	{ "vray_type" "float" }
@@ -53,6 +56,7 @@
 	default	{ "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexModoProcess" }
 	parmtag	{ "vray_pluginattr" "hue" }
 	parmtag	{ "vray_type" "float" }
@@ -64,6 +68,7 @@
 	default	{ "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexModoProcess" }
 	parmtag	{ "vray_pluginattr" "hueShift" }
 	parmtag	{ "vray_type" "float" }
@@ -75,6 +80,7 @@
 	default	{ "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexModoProcess" }
 	parmtag	{ "vray_pluginattr" "sat" }
 	parmtag	{ "vray_type" "float" }
@@ -86,6 +92,7 @@
 	default	{ "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexModoProcess" }
 	parmtag	{ "vray_pluginattr" "val" }
 	parmtag	{ "vray_type" "float" }

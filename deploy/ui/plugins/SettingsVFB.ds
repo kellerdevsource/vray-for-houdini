@@ -18,6 +18,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsVFB" }
 	parmtag	{ "vray_pluginattr" "bloom_on" }
 	parmtag	{ "vray_type" "boolean" }
@@ -29,6 +30,7 @@
 	default	{ "1" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsVFB" }
 	parmtag	{ "vray_pluginattr" "bloom_fill_edges" }
 	parmtag	{ "vray_type" "boolean" }
@@ -40,6 +42,7 @@
 	default	{ "20" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsVFB" }
 	parmtag	{ "vray_pluginattr" "bloom_weight" }
 	parmtag	{ "vray_type" "float" }
@@ -51,6 +54,7 @@
 	default	{ "20" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsVFB" }
 	parmtag	{ "vray_pluginattr" "bloom_size" }
 	parmtag	{ "vray_type" "float" }
@@ -62,6 +66,7 @@
 	default	{ "4" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsVFB" }
 	parmtag	{ "vray_pluginattr" "bloom_shape" }
 	parmtag	{ "vray_type" "float" }
@@ -74,6 +79,7 @@
 	help	"0-image 1-image and buffer  2-buffer"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsVFB" }
 	parmtag	{ "vray_pluginattr" "bloom_mode" }
 	parmtag	{ "vray_type" "int" }
@@ -85,6 +91,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsVFB" }
 	parmtag	{ "vray_pluginattr" "bloom_mask_intensity_on" }
 	parmtag	{ "vray_type" "boolean" }
@@ -96,6 +103,7 @@
 	default	{ "3" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsVFB" }
 	parmtag	{ "vray_pluginattr" "bloom_mask_intensity" }
 	parmtag	{ "vray_type" "float" }
@@ -107,6 +115,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsVFB" }
 	parmtag	{ "vray_pluginattr" "bloom_mask_objid_on" }
 	parmtag	{ "vray_type" "boolean" }
@@ -118,6 +127,7 @@
 	default	{ "0" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsVFB" }
 	parmtag	{ "vray_pluginattr" "bloom_mask_objid" }
 	parmtag	{ "vray_type" "int" }
@@ -129,6 +139,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsVFB" }
 	parmtag	{ "vray_pluginattr" "bloom_mask_mtlid_on" }
 	parmtag	{ "vray_type" "boolean" }
@@ -140,6 +151,7 @@
 	default	{ "0" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsVFB" }
 	parmtag	{ "vray_pluginattr" "bloom_mask_mtlid" }
 	parmtag	{ "vray_type" "int" }
@@ -151,6 +163,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsVFB" }
 	parmtag	{ "vray_pluginattr" "glare_on" }
 	parmtag	{ "vray_type" "boolean" }
@@ -162,6 +175,7 @@
 	default	{ "1" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsVFB" }
 	parmtag	{ "vray_pluginattr" "glare_fill_edges" }
 	parmtag	{ "vray_type" "boolean" }
@@ -173,6 +187,7 @@
 	default	{ "50" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsVFB" }
 	parmtag	{ "vray_pluginattr" "glare_weight" }
 	parmtag	{ "vray_type" "float" }
@@ -184,6 +199,7 @@
 	default	{ "20" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsVFB" }
 	parmtag	{ "vray_pluginattr" "glare_size" }
 	parmtag	{ "vray_type" "float" }
@@ -196,6 +212,7 @@
 	help	"0- from image  1 - from render camera  2 - from camera params"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsVFB" }
 	parmtag	{ "vray_pluginattr" "glare_type" }
 	parmtag	{ "vray_type" "int" }
@@ -208,6 +225,7 @@
 	help	"0-image 1-image and buffer  2-buffer"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsVFB" }
 	parmtag	{ "vray_pluginattr" "glare_mode" }
 	parmtag	{ "vray_type" "int" }
@@ -219,6 +237,7 @@
 	default	{ "" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsVFB" }
 	parmtag	{ "vray_pluginattr" "glare_image_path" }
 	parmtag	{ "vray_type" "String" }
@@ -230,6 +249,7 @@
 	default	{ "" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsVFB" }
 	parmtag	{ "vray_pluginattr" "glare_obstacle_image_path" }
 	parmtag	{ "vray_type" "String" }
@@ -241,6 +261,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsVFB" }
 	parmtag	{ "vray_pluginattr" "glare_diffraction_on" }
 	parmtag	{ "vray_type" "boolean" }
@@ -252,6 +273,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsVFB" }
 	parmtag	{ "vray_pluginattr" "glare_use_obstacle_image" }
 	parmtag	{ "vray_type" "boolean" }
@@ -263,6 +285,7 @@
 	default	{ "1" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsVFB" }
 	parmtag	{ "vray_pluginattr" "glare_cam_blades_on" }
 	parmtag	{ "vray_type" "boolean" }
@@ -274,6 +297,7 @@
 	default	{ "6" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsVFB" }
 	parmtag	{ "vray_pluginattr" "glare_cam_num_blades" }
 	parmtag	{ "vray_type" "int" }
@@ -286,6 +310,7 @@
 	help	"Rotation in degrees from 0.0 - 360.0"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsVFB" }
 	parmtag	{ "vray_pluginattr" "glare_cam_rotation" }
 	parmtag	{ "vray_type" "float" }
@@ -297,6 +322,7 @@
 	default	{ "8" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsVFB" }
 	parmtag	{ "vray_pluginattr" "glare_cam_fnumber" }
 	parmtag	{ "vray_type" "float" }
@@ -308,6 +334,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsVFB" }
 	parmtag	{ "vray_pluginattr" "glare_mask_intensity_on" }
 	parmtag	{ "vray_type" "boolean" }
@@ -319,6 +346,7 @@
 	default	{ "3" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsVFB" }
 	parmtag	{ "vray_pluginattr" "glare_mask_intensity" }
 	parmtag	{ "vray_type" "float" }
@@ -330,6 +358,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsVFB" }
 	parmtag	{ "vray_pluginattr" "glare_mask_objid_on" }
 	parmtag	{ "vray_type" "boolean" }
@@ -341,6 +370,7 @@
 	default	{ "0" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsVFB" }
 	parmtag	{ "vray_pluginattr" "glare_mask_objid" }
 	parmtag	{ "vray_type" "int" }
@@ -352,6 +382,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsVFB" }
 	parmtag	{ "vray_pluginattr" "glare_mask_mtlid_on" }
 	parmtag	{ "vray_type" "boolean" }
@@ -363,6 +394,7 @@
 	default	{ "0" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsVFB" }
 	parmtag	{ "vray_pluginattr" "glare_mask_mtlid" }
 	parmtag	{ "vray_type" "int" }
@@ -374,6 +406,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsVFB" }
 	parmtag	{ "vray_pluginattr" "interactive" }
 	parmtag	{ "vray_type" "boolean" }
@@ -385,6 +418,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_custom_handling" "1" }
     }
 }

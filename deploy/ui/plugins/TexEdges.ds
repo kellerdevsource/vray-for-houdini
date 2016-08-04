@@ -19,6 +19,7 @@
 	default	{ "1" "1" "1" "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexEdges" }
 	parmtag	{ "vray_pluginattr" "edges_tex" }
 	parmtag	{ "vray_type" "Texture" }
@@ -31,6 +32,7 @@
 	default	{ "0" "0" "0" "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexEdges" }
 	parmtag	{ "vray_pluginattr" "bg_tex" }
 	parmtag	{ "vray_type" "Texture" }
@@ -47,6 +49,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "TexEdges" }
 	parmtag	{ "vray_pluginattr" "width_type" }
@@ -60,6 +63,7 @@
 	disablewhen	"{ width_type != 1 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexEdges" }
 	parmtag	{ "vray_pluginattr" "pixel_width" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -71,6 +75,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexEdges" }
 	parmtag	{ "vray_pluginattr" "show_hidden_edges" }
 	parmtag	{ "vray_type" "boolean" }
@@ -82,6 +87,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexEdges" }
 	parmtag	{ "vray_pluginattr" "show_subtriangles" }
 	parmtag	{ "vray_type" "boolean" }
@@ -94,6 +100,7 @@
 	disablewhen	"{ width_type != 0 }"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexEdges" }
 	parmtag	{ "vray_pluginattr" "world_width" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -106,6 +113,7 @@
 	help	"true to use raytracing to compute the rounded corners and false to use static mesh analysis"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexEdges" }
 	parmtag	{ "vray_pluginattr" "raytraced" }
 	parmtag	{ "vray_type" "boolean" }
@@ -119,6 +127,7 @@
 	disablewhen	"{ raytraced != 1 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexEdges" }
 	parmtag	{ "vray_pluginattr" "raytraced_consider_same_object_only" }
 	parmtag	{ "vray_type" "boolean" }
@@ -130,6 +139,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexEdges" }
 	parmtag	{ "vray_pluginattr" "show_subtriangles" }
 	parmtag	{ "vray_type" "boolean" }
@@ -142,6 +152,7 @@
 	help	"true to use raytracing to compute the rounded corners and false to use static mesh analysis"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexEdges" }
 	parmtag	{ "vray_pluginattr" "raytraced" }
 	parmtag	{ "vray_type" "boolean" }
@@ -155,6 +166,7 @@
 	disablewhen	"{ raytraced != 1 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexEdges" }
 	parmtag	{ "vray_pluginattr" "raytraced_consider_same_object_only" }
 	parmtag	{ "vray_type" "boolean" }
@@ -173,6 +185,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "TexEdges" }
 	parmtag	{ "vray_pluginattr" "raytraced_mode" }

@@ -18,6 +18,7 @@
 	default	{ "ExtraTex" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderChannelExtraTex" }
 	parmtag	{ "vray_pluginattr" "name" }
 	parmtag	{ "vray_type" "String" }
@@ -30,6 +31,7 @@
 	help	"Consider this render element for antialiasing (may slow down rendering)"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderChannelExtraTex" }
 	parmtag	{ "vray_pluginattr" "consider_for_aa" }
 	parmtag	{ "vray_type" "boolean" }
@@ -42,6 +44,7 @@
 	help	"Affect Matte Objects"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderChannelExtraTex" }
 	parmtag	{ "vray_pluginattr" "affect_matte_objects" }
 	parmtag	{ "vray_type" "boolean" }
@@ -54,6 +57,7 @@
 	default	{ "0" "0" "0" "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderChannelExtraTex" }
 	parmtag	{ "vray_pluginattr" "texmap" }
 	parmtag	{ "vray_type" "Texture" }
@@ -66,6 +70,7 @@
 	help	"Filtering"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderChannelExtraTex" }
 	parmtag	{ "vray_pluginattr" "filtering" }
 	parmtag	{ "vray_type" "boolean" }
@@ -77,6 +82,7 @@
 	default	{ "" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "RenderChannelExtraTex" }
 	parmtag	{ "vray_pluginattr" "exclude_list" }
@@ -90,6 +96,7 @@
 	help	"true : apply extra texture only to objects in excludeList; false : apply extra texture to all objects out of excludeList"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderChannelExtraTex" }
 	parmtag	{ "vray_pluginattr" "exclude_list_as_inclusive_set" }
 	parmtag	{ "vray_type" "boolean" }

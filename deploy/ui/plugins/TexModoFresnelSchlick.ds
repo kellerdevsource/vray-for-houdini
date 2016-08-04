@@ -21,6 +21,7 @@
 	disablewhen	"{ use_ior != 0 }"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexModoFresnelSchlick" }
 	parmtag	{ "vray_pluginattr" "reflectivity_at_normal" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -33,6 +34,7 @@
 	help	"How much the Schlick fresnel approximation affects the result. At 0.0, reflectivity_at_normal will be returned for all viewing directions"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexModoFresnelSchlick" }
 	parmtag	{ "vray_pluginattr" "fresnel_power" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -45,6 +47,7 @@
 	help	"If true, the ior paameter will be used to determine the reflectivity when the viewing and normal vectors are the same. In this case the reflectivity_at_normal parameter is ignored"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexModoFresnelSchlick" }
 	parmtag	{ "vray_pluginattr" "use_ior" }
 	parmtag	{ "vray_type" "boolean" }
@@ -58,6 +61,7 @@
 	disablewhen	"{ use_ior != 1 }"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexModoFresnelSchlick" }
 	parmtag	{ "vray_pluginattr" "ior" }
 	parmtag	{ "vray_type" "float" }

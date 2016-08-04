@@ -20,6 +20,7 @@
 	default	{ "0" "0" "0" "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexModoExtractColor" }
 	parmtag	{ "vray_pluginattr" "texture" }
 	parmtag	{ "vray_type" "Texture" }

@@ -20,6 +20,7 @@
 	help	"A list of the sub-textures"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "TexMultiX" }
 	parmtag	{ "vray_pluginattr" "textures_list" }
@@ -33,6 +34,7 @@
 	help	"Type of randomization"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexMultiX" }
 	parmtag	{ "vray_pluginattr" "rnd_by" }
 	parmtag	{ "vray_type" "int" }
@@ -45,6 +47,7 @@
 	help	"Seed for the randomization"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexMultiX" }
 	parmtag	{ "vray_pluginattr" "rnd_seed" }
 	parmtag	{ "vray_type" "int" }
@@ -57,6 +60,7 @@
 	help	"Whether to use textures list or the flat color"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexMultiX" }
 	parmtag	{ "vray_pluginattr" "use_color" }
 	parmtag	{ "vray_type" "int" }
@@ -69,6 +73,7 @@
 	help	"Inverse of gamma, applied in all points"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexMultiX" }
 	parmtag	{ "vray_pluginattr" "all_gamma" }
 	parmtag	{ "vray_type" "float" }
@@ -81,6 +86,7 @@
 	help	"Hue applied in all points"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexMultiX" }
 	parmtag	{ "vray_pluginattr" "all_hue" }
 	parmtag	{ "vray_type" "float" }
@@ -93,6 +99,7 @@
 	help	"Saturation applied in all points"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexMultiX" }
 	parmtag	{ "vray_pluginattr" "all_sat" }
 	parmtag	{ "vray_type" "float" }
@@ -105,6 +112,7 @@
 	help	"Inverse of gamma, applied randomly"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexMultiX" }
 	parmtag	{ "vray_pluginattr" "rnd_gamma" }
 	parmtag	{ "vray_type" "float" }
@@ -117,6 +125,7 @@
 	help	"Hue, applied randomly"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexMultiX" }
 	parmtag	{ "vray_pluginattr" "rnd_hue" }
 	parmtag	{ "vray_type" "float" }
@@ -129,6 +138,7 @@
 	help	"Saturation, applied randomly"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexMultiX" }
 	parmtag	{ "vray_pluginattr" "rnd_sat" }
 	parmtag	{ "vray_type" "float" }
@@ -141,6 +151,7 @@
 	help	"Inverse of gamma, applied randomly"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexMultiX" }
 	parmtag	{ "vray_pluginattr" "occ_gamma" }
 	parmtag	{ "vray_type" "float" }
@@ -153,6 +164,7 @@
 	help	"Hue, applied randomly"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexMultiX" }
 	parmtag	{ "vray_pluginattr" "occ_hue" }
 	parmtag	{ "vray_type" "float" }
@@ -165,6 +177,7 @@
 	help	"Saturation, applied randomly"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexMultiX" }
 	parmtag	{ "vray_pluginattr" "occ_sat" }
 	parmtag	{ "vray_type" "float" }
@@ -178,6 +191,7 @@
 	help	"Color used for variations instead of textures"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexMultiX" }
 	parmtag	{ "vray_pluginattr" "def_color" }
 	parmtag	{ "vray_type" "Color" }

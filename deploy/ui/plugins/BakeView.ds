@@ -20,6 +20,7 @@
 	help	"The node to bake"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "BakeView" }
 	parmtag	{ "vray_pluginattr" "bake_node" }
@@ -33,6 +34,7 @@
 	help	"The target objects for projection baking"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "BakeView" }
 	parmtag	{ "vray_pluginattr" "target_nodes" }
@@ -46,6 +48,7 @@
 	help	"The uvw generator"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "BakeView" }
 	parmtag	{ "vray_pluginattr" "bake_uvwgen" }
@@ -59,6 +62,7 @@
 	help	"Number of pixels to expand around geometry"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BakeView" }
 	parmtag	{ "vray_pluginattr" "dilation" }
 	parmtag	{ "vray_type" "float" }
@@ -71,6 +75,7 @@
 	help	"true to flip the texture direction derivatives (reverses bump mapping)"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BakeView" }
 	parmtag	{ "vray_pluginattr" "flip_derivs" }
 	parmtag	{ "vray_type" "boolean" }
@@ -83,6 +88,7 @@
 	help	"The minimum u value to bake"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BakeView" }
 	parmtag	{ "vray_pluginattr" "u_min" }
 	parmtag	{ "vray_type" "float" }
@@ -95,6 +101,7 @@
 	help	"The minimum v value to bake"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BakeView" }
 	parmtag	{ "vray_pluginattr" "v_min" }
 	parmtag	{ "vray_type" "float" }
@@ -107,6 +114,7 @@
 	help	"The maximum u value to bake"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BakeView" }
 	parmtag	{ "vray_pluginattr" "u_max" }
 	parmtag	{ "vray_type" "float" }
@@ -119,6 +127,7 @@
 	help	"The maximum v value to bake"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BakeView" }
 	parmtag	{ "vray_pluginattr" "v_max" }
 	parmtag	{ "vray_type" "float" }
@@ -126,6 +135,7 @@
     groupsimple {
 	name	"transform"
 	label	"Transform"
+	grouptag	{ "cook_dependent" "1" }
 	grouptag	{ "vray_plugin" "BakeView" }
 	grouptag	{ "vray_pluginattr" "transform" }
 	grouptag	{ "vray_type" "Transform" }
@@ -207,6 +217,7 @@
 	default	{ "0.785398" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BakeView" }
 	parmtag	{ "vray_pluginattr" "fov" }
 	parmtag	{ "vray_type" "float" }
@@ -223,6 +234,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "BakeView" }
 	parmtag	{ "vray_pluginattr" "projection_baking" }
@@ -243,6 +255,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3,4" }
 	parmtag	{ "vray_plugin" "BakeView" }
 	parmtag	{ "vray_pluginattr" "mode" }
@@ -260,6 +273,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "BakeView" }
 	parmtag	{ "vray_pluginattr" "normal" }
@@ -273,6 +287,7 @@
 	help	"Geometry that is intersected further than this value along the ray will be ignored. If the value is zero then no geometry will be ignored"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BakeView" }
 	parmtag	{ "vray_pluginattr" "max_depth" }
 	parmtag	{ "vray_type" "float" }
@@ -285,6 +300,7 @@
 	help	"The ray's beginning will be offseted this much along the normal"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BakeView" }
 	parmtag	{ "vray_pluginattr" "ray_offset" }
 	parmtag	{ "vray_type" "float" }
@@ -297,6 +313,7 @@
 	help	"Use texture baking"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_custom_handling" "1" }
     }
     parm {
@@ -307,6 +324,7 @@
 	help	"UV channel to use"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_custom_handling" "1" }
     }
     parm {
@@ -317,6 +335,7 @@
 	help	"Material for \"Bake By Material\""
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_custom_handling" "1" }
     }
     parm {
@@ -327,6 +346,7 @@
 	help	"Set square resolution"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_custom_handling" "1" }
     }
 }

@@ -24,6 +24,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "TexTriPlanar" }
 	parmtag	{ "vray_pluginattr" "texture_mode" }
@@ -38,6 +39,7 @@
 	help	"The base texture, or the texture for the X axis if texture mode is set to different textures"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_linked_only" "1" }
 	parmtag	{ "vray_plugin" "TexTriPlanar" }
 	parmtag	{ "vray_pluginattr" "texture_x" }
@@ -53,6 +55,7 @@
 	disablewhen	"{ texture_mode != 1 }"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_linked_only" "1" }
 	parmtag	{ "vray_plugin" "TexTriPlanar" }
 	parmtag	{ "vray_pluginattr" "texture_y" }
@@ -68,6 +71,7 @@
 	disablewhen	"{ texture_mode != 1 }"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_linked_only" "1" }
 	parmtag	{ "vray_plugin" "TexTriPlanar" }
 	parmtag	{ "vray_pluginattr" "texture_z" }
@@ -81,6 +85,7 @@
 	help	"Scale of the texture; larger values increase the number of texture repeats, lower values make the texture larger"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexTriPlanar" }
 	parmtag	{ "vray_pluginattr" "scale" }
 	parmtag	{ "vray_type" "float" }
@@ -93,6 +98,7 @@
 	help	"Amount of blending at the plane seams"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexTriPlanar" }
 	parmtag	{ "vray_pluginattr" "blend" }
 	parmtag	{ "vray_type" "float" }
@@ -106,6 +112,7 @@
 	help	"Offset from the reference frame center (object or reference node)"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexTriPlanar" }
 	parmtag	{ "vray_pluginattr" "frame_offset" }
 	parmtag	{ "vray_type" "Vector" }
@@ -119,6 +126,7 @@
 	help	"Texture rotations for the three axes, in degrees, in texture space"
 	range	{ 0 360 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexTriPlanar" }
 	parmtag	{ "vray_pluginattr" "texture_rotation" }
 	parmtag	{ "vray_type" "Vector" }
@@ -132,6 +140,7 @@
 	help	"Randomize the texture offset in texture space"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexTriPlanar" }
 	parmtag	{ "vray_pluginattr" "random_texture_offset" }
 	parmtag	{ "vray_type" "boolean" }
@@ -144,6 +153,7 @@
 	help	"Randomize the texture rotation from one object to another, in texture space. The \"texture rotation\" parameter, if non-zero, is used as increments for the rotation"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexTriPlanar" }
 	parmtag	{ "vray_pluginattr" "random_texture_rotation" }
 	parmtag	{ "vray_type" "boolean" }
@@ -156,6 +166,7 @@
 	help	"Randomly permute the axes"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexTriPlanar" }
 	parmtag	{ "vray_pluginattr" "random_axis" }
 	parmtag	{ "vray_type" "boolean" }
@@ -168,6 +179,7 @@
 	help	"Random frame rotation (in object or reference space)"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexTriPlanar" }
 	parmtag	{ "vray_pluginattr" "random_frame_rotation" }
 	parmtag	{ "vray_type" "boolean" }
@@ -185,6 +197,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "TexTriPlanar" }
 	parmtag	{ "vray_pluginattr" "random_mode" }
@@ -202,6 +215,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "TexTriPlanar" }
 	parmtag	{ "vray_pluginattr" "ref_space" }
@@ -210,6 +224,7 @@
     groupsimple {
 	name	"node_ref_transform"
 	label	"Node Ref Transform"
+	grouptag	{ "cook_dependent" "1" }
 	grouptag	{ "vray_plugin" "TexTriPlanar" }
 	grouptag	{ "vray_pluginattr" "node_ref_transform" }
 	grouptag	{ "vray_type" "Transform" }

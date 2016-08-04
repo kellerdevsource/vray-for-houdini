@@ -20,6 +20,7 @@
 	help	"Fresnel ior"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexFresnelASGVIS" }
 	parmtag	{ "vray_pluginattr" "fresnel_ior" }
 	parmtag	{ "vray_type" "float" }
@@ -32,6 +33,7 @@
 	help	"Fresnel ior texture"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexFresnelASGVIS" }
 	parmtag	{ "vray_pluginattr" "fresnel_ior_tex" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -44,6 +46,7 @@
 	help	"Fresnel ior texture mult"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexFresnelASGVIS" }
 	parmtag	{ "vray_pluginattr" "fresnel_ior_tex_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -56,6 +59,7 @@
 	help	"Refraction ior of the underlying surface; this is ignored if the surface has a volume shader (the volume IOR is used)"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexFresnelASGVIS" }
 	parmtag	{ "vray_pluginattr" "refract_ior" }
 	parmtag	{ "vray_type" "float" }
@@ -68,6 +72,7 @@
 	help	"Refraction ior texture for the underlying surface; this is ignored if the surface has a volume shader (the volume IOR is used)"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexFresnelASGVIS" }
 	parmtag	{ "vray_pluginattr" "refract_ior_tex" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -80,6 +85,7 @@
 	help	"Refract ior texture mult"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexFresnelASGVIS" }
 	parmtag	{ "vray_pluginattr" "refract_ior_tex_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -93,6 +99,7 @@
 	help	"Refraction color"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexFresnelASGVIS" }
 	parmtag	{ "vray_pluginattr" "white_color" }
 	parmtag	{ "vray_type" "AColor" }
@@ -106,6 +113,7 @@
 	help	"Refraction color texture"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexFresnelASGVIS" }
 	parmtag	{ "vray_pluginattr" "white_color_tex" }
 	parmtag	{ "vray_type" "Texture" }
@@ -118,6 +126,7 @@
 	help	"Refraction color texture mult"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexFresnelASGVIS" }
 	parmtag	{ "vray_pluginattr" "white_color_tex_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -131,6 +140,7 @@
 	help	"Reflection color"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexFresnelASGVIS" }
 	parmtag	{ "vray_pluginattr" "black_color" }
 	parmtag	{ "vray_type" "AColor" }
@@ -144,6 +154,7 @@
 	help	"Reflection color texture"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexFresnelASGVIS" }
 	parmtag	{ "vray_pluginattr" "black_color_tex" }
 	parmtag	{ "vray_type" "Texture" }
@@ -156,6 +167,7 @@
 	help	"Reflection color texture mult"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexFresnelASGVIS" }
 	parmtag	{ "vray_pluginattr" "black_color_tex_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -168,6 +180,7 @@
 	help	"In some cases we wanted to use the multiplier as an exponent ( final_color = pow( color, tex_mult ) ) - in other cases we just want a scalar multiplier ( final_color = color * tex_mult )"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexFresnelASGVIS" }
 	parmtag	{ "vray_pluginattr" "use_multiplier_as_exponent" }
 	parmtag	{ "vray_type" "boolean" }
@@ -180,6 +193,7 @@
 	help	"Process the fresnel texture in the old way"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexFresnelASGVIS" }
 	parmtag	{ "vray_pluginattr" "old_way" }
 	parmtag	{ "vray_type" "boolean" }
@@ -192,6 +206,7 @@
 	help	"If true, the resulting texture color will be inverted"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexFresnelASGVIS" }
 	parmtag	{ "vray_pluginattr" "invert" }
 	parmtag	{ "vray_type" "boolean" }

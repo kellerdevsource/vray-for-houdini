@@ -24,6 +24,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "TexTemperature" }
 	parmtag	{ "vray_pluginattr" "color_mode" }
@@ -37,6 +38,7 @@
 	help	"Material temperature in kelvins"
 	range	{ 0 100000 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexTemperature" }
 	parmtag	{ "vray_pluginattr" "temperature" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -50,6 +52,7 @@
 	help	"Texture color"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexTemperature" }
 	parmtag	{ "vray_pluginattr" "color" }
 	parmtag	{ "vray_type" "Color" }
@@ -62,6 +65,7 @@
 	help	"Color multiplier"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexTemperature" }
 	parmtag	{ "vray_pluginattr" "rgb_multiplier" }
 	parmtag	{ "vray_type" "float" }
@@ -74,6 +78,7 @@
 	help	"Alpha color channel"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexTemperature" }
 	parmtag	{ "vray_pluginattr" "alpha" }
 	parmtag	{ "vray_type" "float" }
@@ -86,6 +91,7 @@
 	help	"Gamma correction value"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexTemperature" }
 	parmtag	{ "vray_pluginattr" "gamma_correction" }
 	parmtag	{ "vray_type" "float" }

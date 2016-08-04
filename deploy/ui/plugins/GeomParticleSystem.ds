@@ -20,6 +20,7 @@
 	help	"The triangle mesh that will be instanced.This is used only for some of the particle render types"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "GeomParticleSystem" }
 	parmtag	{ "vray_pluginattr" "mesh" }
@@ -33,6 +34,7 @@
 	help	"3 - multipoints; 4 - multistreak; 6 - points; 7 - Spheres; 8 - Sprites; 9 - Streak.Everything else gives a warning and renders as spheres"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomParticleSystem" }
 	parmtag	{ "vray_pluginattr" "render_type" }
 	parmtag	{ "vray_type" "int" }
@@ -45,6 +47,7 @@
 	help	"The constant particle radius when radii is empty"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomParticleSystem" }
 	parmtag	{ "vray_pluginattr" "radius" }
 	parmtag	{ "vray_type" "float" }
@@ -57,6 +60,7 @@
 	help	"The width of sprite particles in world units"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomParticleSystem" }
 	parmtag	{ "vray_pluginattr" "sprite_size_x" }
 	parmtag	{ "vray_type" "float" }
@@ -69,6 +73,7 @@
 	help	"The height of sprite particles in world units"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomParticleSystem" }
 	parmtag	{ "vray_pluginattr" "sprite_size_y" }
 	parmtag	{ "vray_type" "float" }
@@ -81,6 +86,7 @@
 	help	"The twist of sprite particles in degrees"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomParticleSystem" }
 	parmtag	{ "vray_pluginattr" "sprite_twist" }
 	parmtag	{ "vray_type" "float" }
@@ -93,6 +99,7 @@
 	help	"0 - orient sprites towards the camera center, 1 - orient sprites parallel to the camera plane"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomParticleSystem" }
 	parmtag	{ "vray_pluginattr" "sprite_orientation" }
 	parmtag	{ "vray_type" "int" }
@@ -105,6 +112,7 @@
 	help	"The size of point and multipoint particles, in pixels"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomParticleSystem" }
 	parmtag	{ "vray_pluginattr" "point_size" }
 	parmtag	{ "vray_type" "float" }
@@ -117,6 +125,7 @@
 	help	"If true, the point size will be taken form radii parameter"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomParticleSystem" }
 	parmtag	{ "vray_pluginattr" "point_radii" }
 	parmtag	{ "vray_type" "boolean" }
@@ -129,6 +138,7 @@
 	help	"If true, the point size is in world space, not screen space"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomParticleSystem" }
 	parmtag	{ "vray_pluginattr" "point_world_size" }
 	parmtag	{ "vray_type" "boolean" }
@@ -141,6 +151,7 @@
 	help	"The number of particles generated for each input particle, when the render type is multipoints or multistreaks"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomParticleSystem" }
 	parmtag	{ "vray_pluginattr" "multi_count" }
 	parmtag	{ "vray_type" "int" }
@@ -153,6 +164,7 @@
 	help	"The maximum distance between the original and a generated particle when the render type is multipoints or multistreaks"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomParticleSystem" }
 	parmtag	{ "vray_pluginattr" "multi_radius" }
 	parmtag	{ "vray_type" "float" }
@@ -165,6 +177,7 @@
 	help	"The width of streak particles, in pixels"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomParticleSystem" }
 	parmtag	{ "vray_pluginattr" "line_width" }
 	parmtag	{ "vray_type" "float" }
@@ -177,6 +190,7 @@
 	help	"The length of streak particles, in world units, the actual length depends on the particle velocity as well"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomParticleSystem" }
 	parmtag	{ "vray_pluginattr" "tail_length" }
 	parmtag	{ "vray_type" "float" }
@@ -189,6 +203,7 @@
 	help	"If off, shading an intersection with this mesh will not generate a gbuffer"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomParticleSystem" }
 	parmtag	{ "vray_pluginattr" "primary_visibility" }
 	parmtag	{ "vray_type" "boolean" }
@@ -201,6 +216,7 @@
 	help	"External data source to be used instead of positions, velocities, ids and radii"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "GeomParticleSystem" }
 	parmtag	{ "vray_pluginattr" "data_source" }

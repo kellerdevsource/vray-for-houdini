@@ -26,6 +26,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "TexSurfaceLuminance" }
 	parmtag	{ "vray_pluginattr" "luminance_mode" }
@@ -39,6 +40,7 @@
 	help	"Samples for diffuse lighting"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexSurfaceLuminance" }
 	parmtag	{ "vray_pluginattr" "samples" }
 	parmtag	{ "vray_type" "int" }
@@ -51,6 +53,7 @@
 	help	"If true, the direct light will contribute to the GI calculations. This have visual effect only if the texture is used for diffuse calculation"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexSurfaceLuminance" }
 	parmtag	{ "vray_pluginattr" "contribute_to_gi" }
 	parmtag	{ "vray_type" "boolean" }

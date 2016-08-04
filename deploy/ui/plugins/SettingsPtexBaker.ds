@@ -19,6 +19,7 @@
 	help	"A list of SceneNodes that will be baked"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
 	parmtag	{ "vray_pluginattr" "objects" }
@@ -32,6 +33,7 @@
 	help	"The base name for the Ptex files"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
 	parmtag	{ "vray_pluginattr" "texture_name" }
 	parmtag	{ "vray_type" "String" }
@@ -44,6 +46,7 @@
 	help	"The resolution in the U direction in texture space is 2 ^ res_u"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
 	parmtag	{ "vray_pluginattr" "res_u" }
 	parmtag	{ "vray_type" "int" }
@@ -56,6 +59,7 @@
 	help	"The resolution in the V direction in texture space is 2 ^ res_v"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
 	parmtag	{ "vray_pluginattr" "res_v" }
 	parmtag	{ "vray_type" "int" }
@@ -68,6 +72,7 @@
 	help	"If true the textures will be quadrangular even if the mesh is purely triangular"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
 	parmtag	{ "vray_pluginattr" "force_quads" }
 	parmtag	{ "vray_type" "int" }
@@ -86,6 +91,7 @@
 	}
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
 	parmtag	{ "vray_pluginattr" "data_format" }
@@ -99,6 +105,7 @@
 	help	"If true then meta data containing the degree of each mesh polygon will be included in the Ptex files"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
 	parmtag	{ "vray_pluginattr" "write_faces_degrees" }
 	parmtag	{ "vray_type" "int" }
@@ -111,6 +118,7 @@
 	help	"If true then meta data containing the vertices of each mesh polygon will be included in the Ptex files"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
 	parmtag	{ "vray_pluginattr" "write_faces_vertices" }
 	parmtag	{ "vray_type" "int" }
@@ -123,6 +131,7 @@
 	help	"If true then meta data containing the positions of all vertices will be included in the Ptex files"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
 	parmtag	{ "vray_pluginattr" "write_vertex_positions" }
 	parmtag	{ "vray_type" "int" }
@@ -135,6 +144,7 @@
 	help	"True to generate mipmaps and false otherwise"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
 	parmtag	{ "vray_pluginattr" "generate_mipmaps" }
 	parmtag	{ "vray_type" "int" }
@@ -152,6 +162,7 @@
 	}
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
 	parmtag	{ "vray_pluginattr" "border_mode_u" }
@@ -170,6 +181,7 @@
 	}
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
 	parmtag	{ "vray_pluginattr" "border_mode_v" }
@@ -183,6 +195,7 @@
 	help	"The number of samples shaded for each texel will be the square of this number"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
 	parmtag	{ "vray_pluginattr" "samplers_per_texel" }
 	parmtag	{ "vray_type" "int" }
@@ -195,6 +208,7 @@
 	help	"If this is true then all render elements will be baked into one Ptex file"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
 	parmtag	{ "vray_pluginattr" "multichannel_file" }
 	parmtag	{ "vray_type" "int" }
@@ -207,6 +221,7 @@
 	help	"An offset along the geometric surface normal at which to perform shading in order to avoid surface acne"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
 	parmtag	{ "vray_pluginattr" "surface_offset" }
 	parmtag	{ "vray_type" "float" }
@@ -219,6 +234,7 @@
 	help	"If true then the resolution for each texture will be calculated adaptively, based on the size of the corresponding geometry"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
 	parmtag	{ "vray_pluginattr" "world_space_res" }
 	parmtag	{ "vray_type" "int" }
@@ -230,6 +246,7 @@
 	default	{ "10" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
 	parmtag	{ "vray_pluginattr" "length_u" }
 	parmtag	{ "vray_type" "float" }
@@ -241,6 +258,7 @@
 	default	{ "10" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
 	parmtag	{ "vray_pluginattr" "length_v" }
 	parmtag	{ "vray_type" "float" }
@@ -252,6 +270,7 @@
 	default	{ "1" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
 	parmtag	{ "vray_pluginattr" "resolution_multiplier" }
 	parmtag	{ "vray_type" "float" }
@@ -268,6 +287,7 @@
 	}
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
 	parmtag	{ "vray_pluginattr" "projection_baking" }
@@ -288,6 +308,7 @@
 	}
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3,4" }
 	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
 	parmtag	{ "vray_pluginattr" "mode" }
@@ -301,6 +322,7 @@
 	help	"0 - Smooth normal, 1 - Geometry normal"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
 	parmtag	{ "vray_pluginattr" "normal" }
 	parmtag	{ "vray_type" "int" }
@@ -312,6 +334,7 @@
 	default	{ "0" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
 	parmtag	{ "vray_pluginattr" "ray_offset" }
 	parmtag	{ "vray_type" "float" }
@@ -324,6 +347,7 @@
 	help	"Geometry that is intersected further than this value along the ray will be ignored. If the value is zero then no geometry will be ignored"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
 	parmtag	{ "vray_pluginattr" "max_depth" }
 	parmtag	{ "vray_type" "float" }
@@ -336,6 +360,7 @@
 	help	"Number of rays shoot to test if sample is actually visible or not. Speeds up shading in the case when parts of the model are occluded. Set to 0 to disable"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
 	parmtag	{ "vray_pluginattr" "visibility_test_rays" }
 	parmtag	{ "vray_type" "int" }
@@ -348,6 +373,7 @@
 	help	"Maximum length of visibility test ray. It is adjusted by the sample size. If the ray travels at least this length before hitting another object, the sample is considered visible and is shaded, otherwise it's filled with black when baking to Ptex or entirely ommitted when baking to vrmesh point cloud"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
 	parmtag	{ "vray_pluginattr" "visibility_test_ray_max_length_factor" }
 	parmtag	{ "vray_type" "float" }

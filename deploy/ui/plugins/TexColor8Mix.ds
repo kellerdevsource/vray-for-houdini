@@ -29,6 +29,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "compatibility_with" }
@@ -47,6 +48,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1,2" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "alpha_from_intensity" }
@@ -60,6 +62,7 @@
 	    help	"If true, the resulting texture color will be inverted"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "invert" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -73,6 +76,7 @@
 	    disablewhen	"{ invert != 1 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "invert_alpha" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -86,6 +90,7 @@
 	    help	"A multiplier for the texture color"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "color_mult" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -99,6 +104,7 @@
 	    help	"An additional offset for the texture color"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "color_offset" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -111,6 +117,7 @@
 	    help	"A multiplier for the texture alpha"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "alpha_mult" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -123,6 +130,7 @@
 	    help	"An additional offset for the texture alpha"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "alpha_offset" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -136,6 +144,7 @@
 	    help	"The color when there are no valid uvw coordinates"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "nouvw_color" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -149,6 +158,7 @@
 	    help	"Defines the base (ambient) color to use while mixing"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "base_color" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -162,6 +172,7 @@
 	    help	"Defines the compositing color. When using a texture, this parameter is used to define the image"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "color1" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -189,6 +200,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7,8,9,10,11,12" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "mode1" }
@@ -203,6 +215,7 @@
 	    help	"Defines the mix layer's intensity in relation to the base color"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "weight1" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -215,6 +228,7 @@
 	    help	"Multiply weight by Alpha"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "alpha1" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -227,6 +241,7 @@
 	    help	"Computes this color, weight, and mixing mode"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "inuse1" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -239,6 +254,7 @@
 	    default	{ "0" "0" "0" "0" }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "color2" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -266,6 +282,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7,8,9,10,11,12" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "mode2" }
@@ -279,6 +296,7 @@
 	    default	{ "0" "0" "0" "0" }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "weight2" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -290,6 +308,7 @@
 	    default	{ "0" }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "alpha2" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -301,6 +320,7 @@
 	    default	{ "0" }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "inuse2" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -313,6 +333,7 @@
 	    default	{ "0" "0" "0" "0" }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "color3" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -340,6 +361,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7,8,9,10,11,12" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "mode3" }
@@ -353,6 +375,7 @@
 	    default	{ "0" "0" "0" "0" }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "weight3" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -364,6 +387,7 @@
 	    default	{ "0" }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "alpha3" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -375,6 +399,7 @@
 	    default	{ "0" }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "inuse3" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -387,6 +412,7 @@
 	    default	{ "0" "0" "0" "0" }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "color4" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -414,6 +440,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7,8,9,10,11,12" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "mode4" }
@@ -427,6 +454,7 @@
 	    default	{ "0" "0" "0" "0" }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "weight4" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -438,6 +466,7 @@
 	    default	{ "0" }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "alpha4" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -449,6 +478,7 @@
 	    default	{ "0" }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "inuse4" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -461,6 +491,7 @@
 	    default	{ "0" "0" "0" "0" }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "color5" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -488,6 +519,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7,8,9,10,11,12" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "mode5" }
@@ -501,6 +533,7 @@
 	    default	{ "0" "0" "0" "0" }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "weight5" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -512,6 +545,7 @@
 	    default	{ "0" }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "alpha5" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -523,6 +557,7 @@
 	    default	{ "0" }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "inuse5" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -535,6 +570,7 @@
 	    default	{ "0" "0" "0" "0" }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "color6" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -562,6 +598,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7,8,9,10,11,12" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "mode6" }
@@ -575,6 +612,7 @@
 	    default	{ "0" "0" "0" "0" }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "weight6" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -586,6 +624,7 @@
 	    default	{ "0" }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "alpha6" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -597,6 +636,7 @@
 	    default	{ "0" }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "inuse6" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -609,6 +649,7 @@
 	    default	{ "0" "0" "0" "0" }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "color7" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -636,6 +677,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7,8,9,10,11,12" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "mode7" }
@@ -649,6 +691,7 @@
 	    default	{ "0" "0" "0" "0" }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "weight7" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -660,6 +703,7 @@
 	    default	{ "0" }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "alpha7" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -671,6 +715,7 @@
 	    default	{ "0" }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "inuse7" }
 	    parmtag	{ "vray_type" "boolean" }

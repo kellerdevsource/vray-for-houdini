@@ -21,6 +21,7 @@
 	help	"First color"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "Float3ToAColor" }
 	parmtag	{ "vray_pluginattr" "float1" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -33,6 +34,7 @@
 	help	"Second color"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "Float3ToAColor" }
 	parmtag	{ "vray_pluginattr" "float2" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -45,6 +47,7 @@
 	help	"Third color"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "Float3ToAColor" }
 	parmtag	{ "vray_pluginattr" "float3" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -57,6 +60,7 @@
 	help	"Alpha"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "Float3ToAColor" }
 	parmtag	{ "vray_pluginattr" "alpha" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -68,6 +72,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "Float3ToAColor" }
 	parmtag	{ "vray_pluginattr" "invert" }
 	parmtag	{ "vray_type" "boolean" }

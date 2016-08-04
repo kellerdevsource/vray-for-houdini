@@ -20,6 +20,7 @@
 	help	"Enable Global Illumination"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsGI" }
 	parmtag	{ "vray_pluginattr" "on" }
 	parmtag	{ "vray_type" "boolean" }
@@ -33,6 +34,7 @@
 	disablewhen	"{ SettingsGI_on != 1 } { SettingsGI_on == 0 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsGI" }
 	parmtag	{ "vray_pluginattr" "refract_caustics" }
 	parmtag	{ "vray_type" "boolean" }
@@ -46,6 +48,7 @@
 	disablewhen	"{ SettingsGI_on != 1 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsGI" }
 	parmtag	{ "vray_pluginattr" "reflect_caustics" }
 	parmtag	{ "vray_type" "boolean" }
@@ -59,6 +62,7 @@
 	disablewhen	"{ SettingsGI_on != 1 } { SettingsGI_on == 0 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsGI" }
 	parmtag	{ "vray_pluginattr" "saturation" }
 	parmtag	{ "vray_type" "float" }
@@ -72,6 +76,7 @@
 	disablewhen	"{ SettingsGI_on != 1 } { SettingsGI_on == 0 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsGI" }
 	parmtag	{ "vray_pluginattr" "contrast" }
 	parmtag	{ "vray_type" "float" }
@@ -84,6 +89,7 @@
 	disablewhen	"{ SettingsGI_on != 1 } { SettingsGI_on == 0 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsGI" }
 	parmtag	{ "vray_pluginattr" "contrast_base" }
 	parmtag	{ "vray_type" "float" }
@@ -103,6 +109,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,2,3,4" }
 	parmtag	{ "vray_plugin" "SettingsGI" }
 	parmtag	{ "vray_pluginattr" "primary_engine" }
@@ -117,6 +124,7 @@
 	disablewhen	"{ SettingsGI_on != 1 } { SettingsGI_on == 0 }"
 	range	{ 0 1e+06 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsGI" }
 	parmtag	{ "vray_pluginattr" "primary_multiplier" }
 	parmtag	{ "vray_spin_step" "0.05" }
@@ -136,6 +144,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,2,3" }
 	parmtag	{ "vray_plugin" "SettingsGI" }
 	parmtag	{ "vray_pluginattr" "secondary_engine" }
@@ -150,6 +159,7 @@
 	disablewhen	"{ SettingsGI_on != 1 } { SettingsGI_on == 0 } { SettingsGI_secondary_engine == 0 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsGI" }
 	parmtag	{ "vray_pluginattr" "secondary_multiplier" }
 	parmtag	{ "vray_spin_step" "0.05" }
@@ -164,6 +174,7 @@
 	disablewhen	"{ SettingsGI_on != 1 } { SettingsGI_on == 0 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsGI" }
 	parmtag	{ "vray_pluginattr" "ray_distance_on" }
 	parmtag	{ "vray_type" "boolean" }
@@ -177,6 +188,7 @@
 	disablewhen	"{ SettingsGI_on != 1 } { SettingsGI_on == 0 } { SettingsGI_ray_distance_on == 0 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsGI" }
 	parmtag	{ "vray_pluginattr" "ray_distance" }
 	parmtag	{ "vray_spin_step" "1.0" }
@@ -191,6 +203,7 @@
 	disablewhen	"{ SettingsGI_on != 1 } { SettingsGI_on == 0 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsGI" }
 	parmtag	{ "vray_pluginattr" "ao_on" }
 	parmtag	{ "vray_type" "boolean" }
@@ -204,6 +217,7 @@
 	disablewhen	"{ SettingsGI_on != 1 } { SettingsGI_ao_on != 1 } { SettingsGI_on == 0 } { SettingsGI_ao_on == 0 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsGI" }
 	parmtag	{ "vray_pluginattr" "ao_amount" }
 	parmtag	{ "vray_type" "float" }
@@ -217,6 +231,7 @@
 	disablewhen	"{ SettingsGI_on != 1 } { SettingsGI_ao_on != 1 } { SettingsGI_on == 0 } { SettingsGI_ao_on == 0 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsGI" }
 	parmtag	{ "vray_pluginattr" "ao_radius" }
 	parmtag	{ "vray_spin_step" "0.1" }
@@ -231,6 +246,7 @@
 	disablewhen	"{ SettingsGI_on != 1 } { SettingsGI_ao_on != 1 } { SettingsGI_on == 0 } { SettingsGI_ao_on == 0 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsGI" }
 	parmtag	{ "vray_pluginattr" "ao_subdivs" }
 	parmtag	{ "vray_type" "int" }

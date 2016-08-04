@@ -26,6 +26,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "MayaMtlMatte" }
 	parmtag	{ "vray_pluginattr" "mode" }
@@ -39,6 +40,7 @@
 	help	"Base material"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "MayaMtlMatte" }
 	parmtag	{ "vray_pluginattr" "base_mtl" }
@@ -52,6 +54,7 @@
 	help	"Matte opacity (0 is transparent; 1 is opaque or normal)"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MayaMtlMatte" }
 	parmtag	{ "vray_pluginattr" "matte_opacity" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -64,6 +67,7 @@
 	help	"Alpha transparency (used only in mode 3)"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MayaMtlMatte" }
 	parmtag	{ "vray_pluginattr" "alpha_transparency" }
 	parmtag	{ "vray_type" "TextureFloat" }

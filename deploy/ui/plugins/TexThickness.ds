@@ -20,6 +20,7 @@
 	help	"The object thickness is multiplied by this value to get the texture color"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexThickness" }
 	parmtag	{ "vray_pluginattr" "thickness_mult" }
 	parmtag	{ "vray_type" "float" }

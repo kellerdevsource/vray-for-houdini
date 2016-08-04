@@ -19,6 +19,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SphericalHarmonicsExporter" }
 	parmtag	{ "vray_pluginattr" "anim_on" }
 	parmtag	{ "vray_type" "boolean" }
@@ -36,6 +37,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "SphericalHarmonicsExporter" }
 	parmtag	{ "vray_pluginattr" "mode" }
@@ -48,6 +50,7 @@
 	default	{ "4" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SphericalHarmonicsExporter" }
 	parmtag	{ "vray_pluginattr" "bands" }
 	parmtag	{ "vray_type" "int" }
@@ -60,6 +63,7 @@
 	help	"Controls the number of samples taken in order to create the spherical harmonics. Higher values produce better results but take longer to render"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SphericalHarmonicsExporter" }
 	parmtag	{ "vray_pluginattr" "subdivs" }
 	parmtag	{ "vray_type" "int" }
@@ -72,6 +76,7 @@
 	help	"This option is only available when one of the interreflection methods is selected. It controls the number of secondary bounces that are going to be traced"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SphericalHarmonicsExporter" }
 	parmtag	{ "vray_pluginattr" "bounces" }
 	parmtag	{ "vray_type" "int" }
@@ -83,6 +88,7 @@
 	default	{ "0.001" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SphericalHarmonicsExporter" }
 	parmtag	{ "vray_pluginattr" "ray_bias" }
 	parmtag	{ "vray_type" "float" }
@@ -95,6 +101,7 @@
 	help	"This is the name of the *.vrsh file which contains the precomputed SH for this scene"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "filechooser_pattern" "*.vrsh,*.xml" }
 	parmtag	{ "vray_plugin" "SphericalHarmonicsExporter" }
 	parmtag	{ "vray_pluginattr" "file_name" }
@@ -112,6 +119,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "xml,vrsh" }
 	parmtag	{ "vray_plugin" "SphericalHarmonicsExporter" }
 	parmtag	{ "vray_pluginattr" "file_format" }
@@ -129,6 +137,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "SphericalHarmonicsExporter" }
 	parmtag	{ "vray_pluginattr" "per_normal" }
@@ -142,6 +151,7 @@
 	help	"Enabling it speeds up the calculations by storing a lot of information in the RAM"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SphericalHarmonicsExporter" }
 	parmtag	{ "vray_pluginattr" "hit_recording" }
 	parmtag	{ "vray_type" "boolean" }
@@ -153,6 +163,7 @@
 	default	{ "2000" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SphericalHarmonicsExporter" }
 	parmtag	{ "vray_pluginattr" "max_mem_usage" }
 	parmtag	{ "vray_type" "int" }
@@ -168,6 +179,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "SphericalHarmonicsExporter" }
 	parmtag	{ "vray_pluginattr" "object_space" }
@@ -180,6 +192,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SphericalHarmonicsExporter" }
 	parmtag	{ "vray_pluginattr" "adaptive_on" }
 	parmtag	{ "vray_type" "boolean" }
@@ -191,6 +204,7 @@
 	default	{ "0.1" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SphericalHarmonicsExporter" }
 	parmtag	{ "vray_pluginattr" "adaptive_thresh" }
 	parmtag	{ "vray_type" "float" }
@@ -202,6 +216,7 @@
 	default	{ "3" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SphericalHarmonicsExporter" }
 	parmtag	{ "vray_pluginattr" "adaptive_depth" }
 	parmtag	{ "vray_type" "int" }
@@ -213,6 +228,7 @@
 	default	{ "0.1" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SphericalHarmonicsExporter" }
 	parmtag	{ "vray_pluginattr" "adaptive_edge" }
 	parmtag	{ "vray_type" "float" }
@@ -224,6 +240,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SphericalHarmonicsExporter" }
 	parmtag	{ "vray_pluginattr" "save_obj" }
 	parmtag	{ "vray_type" "boolean" }
@@ -236,6 +253,7 @@
 	help	"Node of the mesh"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "SphericalHarmonicsExporter" }
 	parmtag	{ "vray_pluginattr" "node" }

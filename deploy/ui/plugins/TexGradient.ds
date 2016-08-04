@@ -20,6 +20,7 @@
 	help	"A multiplier for the texture color"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexGradient" }
 	parmtag	{ "vray_pluginattr" "color_mult" }
 	parmtag	{ "vray_type" "Texture" }
@@ -33,6 +34,7 @@
 	help	"An additional offset for the texture color"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexGradient" }
 	parmtag	{ "vray_pluginattr" "color_offset" }
 	parmtag	{ "vray_type" "Texture" }
@@ -45,6 +47,7 @@
 	help	"A multiplier for the texture alpha"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexGradient" }
 	parmtag	{ "vray_pluginattr" "alpha_mult" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -57,6 +60,7 @@
 	help	"An additional offset for the texture alpha"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexGradient" }
 	parmtag	{ "vray_pluginattr" "alpha_offset" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -70,6 +74,7 @@
 	help	"The color when there are no valid uvw coordinates"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexGradient" }
 	parmtag	{ "vray_pluginattr" "nouvw_color" }
 	parmtag	{ "vray_type" "Texture" }
@@ -86,6 +91,7 @@
 	    help	"The uvw generator for the texture"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "oprelative" "." }
 	    parmtag	{ "vray_plugin" "TexGradient" }
 	    parmtag	{ "vray_pluginattr" "uvwgen" }
@@ -109,6 +115,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1" }
 	    parmtag	{ "vray_plugin" "TexGradient" }
 	    parmtag	{ "vray_pluginattr" "compatibility_with" }
@@ -127,6 +134,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1,2" }
 	    parmtag	{ "vray_plugin" "TexGradient" }
 	    parmtag	{ "vray_pluginattr" "alpha_from_intensity" }
@@ -140,6 +148,7 @@
 	    help	"If true, the resulting texture color will be inverted"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexGradient" }
 	    parmtag	{ "vray_pluginattr" "invert" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -153,6 +162,7 @@
 	    disablewhen	"{ invert != 1 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexGradient" }
 	    parmtag	{ "vray_pluginattr" "invert_alpha" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -170,6 +180,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1,2" }
 	    parmtag	{ "vray_plugin" "TexGradient" }
 	    parmtag	{ "vray_pluginattr" "placement_type" }
@@ -184,6 +195,7 @@
 	    disablewhen	"{ placement_type != 1 placement_type != 2 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexGradient" }
 	    parmtag	{ "vray_pluginattr" "u" }
 	    parmtag	{ "vray_type" "float" }
@@ -197,6 +209,7 @@
 	    disablewhen	"{ placement_type != 1 placement_type != 2 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexGradient" }
 	    parmtag	{ "vray_pluginattr" "v" }
 	    parmtag	{ "vray_type" "float" }
@@ -210,6 +223,7 @@
 	    disablewhen	"{ placement_type != 1 placement_type != 2 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexGradient" }
 	    parmtag	{ "vray_pluginattr" "w" }
 	    parmtag	{ "vray_type" "float" }
@@ -223,6 +237,7 @@
 	    disablewhen	"{ placement_type != 1 placement_type != 2 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexGradient" }
 	    parmtag	{ "vray_pluginattr" "h" }
 	    parmtag	{ "vray_type" "float" }
@@ -236,6 +251,7 @@
 	    disablewhen	"{ placement_type != 2 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexGradient" }
 	    parmtag	{ "vray_pluginattr" "jitter" }
 	    parmtag	{ "vray_type" "float" }
@@ -249,6 +265,7 @@
 	    disablewhen	"{ placement_type != 2 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexGradient" }
 	    parmtag	{ "vray_pluginattr" "tile_u" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -262,6 +279,7 @@
 	    disablewhen	"{ placement_type != 2 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexGradient" }
 	    parmtag	{ "vray_pluginattr" "tile_v" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -274,6 +292,7 @@
 	    help	"If true the noise is enabled"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexGradient" }
 	    parmtag	{ "vray_pluginattr" "uv_noise_on" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -287,6 +306,7 @@
 	    disablewhen	"{ uv_noise_on != 1 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexGradient" }
 	    parmtag	{ "vray_pluginattr" "uv_noise_animate" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -300,6 +320,7 @@
 	    disablewhen	"{ uv_noise_on != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexGradient" }
 	    parmtag	{ "vray_pluginattr" "uv_noise_amount" }
 	    parmtag	{ "vray_type" "float" }
@@ -313,6 +334,7 @@
 	    disablewhen	"{ uv_noise_on != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexGradient" }
 	    parmtag	{ "vray_pluginattr" "uv_noise_levels" }
 	    parmtag	{ "vray_type" "float" }
@@ -326,6 +348,7 @@
 	    disablewhen	"{ uv_noise_on != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexGradient" }
 	    parmtag	{ "vray_pluginattr" "uv_noise_size" }
 	    parmtag	{ "vray_type" "float" }
@@ -339,6 +362,7 @@
 	    disablewhen	"{ uv_noise_on != 1 } { uv_noise_animate != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexGradient" }
 	    parmtag	{ "vray_pluginattr" "un_noise_phase" }
 	    parmtag	{ "vray_type" "float" }
@@ -352,6 +376,7 @@
 	    help	"First color"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexGradient" }
 	    parmtag	{ "vray_pluginattr" "color1" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -365,6 +390,7 @@
 	    help	"Middle color"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexGradient" }
 	    parmtag	{ "vray_pluginattr" "color2" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -378,6 +404,7 @@
 	    help	"End color"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexGradient" }
 	    parmtag	{ "vray_pluginattr" "color3" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -390,6 +417,7 @@
 	    help	"Middle color position"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexGradient" }
 	    parmtag	{ "vray_pluginattr" "middle" }
 	    parmtag	{ "vray_type" "float" }
@@ -406,6 +434,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1" }
 	    parmtag	{ "vray_plugin" "TexGradient" }
 	    parmtag	{ "vray_pluginattr" "type" }
@@ -424,6 +453,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1,2" }
 	    parmtag	{ "vray_plugin" "TexGradient" }
 	    parmtag	{ "vray_pluginattr" "noise_type" }
@@ -437,6 +467,7 @@
 	    help	"Noise amount"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexGradient" }
 	    parmtag	{ "vray_pluginattr" "noise_amount" }
 	    parmtag	{ "vray_type" "float" }
@@ -449,6 +480,7 @@
 	    help	"Noise size"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexGradient" }
 	    parmtag	{ "vray_pluginattr" "noise_size" }
 	    parmtag	{ "vray_type" "float" }
@@ -461,6 +493,7 @@
 	    help	"Noise iterations"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexGradient" }
 	    parmtag	{ "vray_pluginattr" "noise_iterations" }
 	    parmtag	{ "vray_type" "float" }
@@ -473,6 +506,7 @@
 	    help	"Noise phase"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexGradient" }
 	    parmtag	{ "vray_pluginattr" "noise_phase" }
 	    parmtag	{ "vray_type" "float" }
@@ -485,6 +519,7 @@
 	    help	"Noise low threshold"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexGradient" }
 	    parmtag	{ "vray_pluginattr" "noise_low" }
 	    parmtag	{ "vray_type" "float" }
@@ -497,6 +532,7 @@
 	    help	"Noise high threshold"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexGradient" }
 	    parmtag	{ "vray_pluginattr" "noise_high" }
 	    parmtag	{ "vray_type" "float" }
@@ -509,6 +545,7 @@
 	    help	"Threshold smoothing"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexGradient" }
 	    parmtag	{ "vray_pluginattr" "noise_smooth" }
 	    parmtag	{ "vray_type" "float" }
@@ -521,6 +558,7 @@
 	    help	"This affects bump mapping, following a peculiarity in the 3ds Max implementation"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexGradient" }
 	    parmtag	{ "vray_pluginattr" "has_textures" }
 	    parmtag	{ "vray_type" "boolean" }

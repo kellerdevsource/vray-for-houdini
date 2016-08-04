@@ -18,6 +18,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsLightTree" }
 	parmtag	{ "vray_pluginattr" "on" }
 	parmtag	{ "vray_type" "boolean" }
@@ -35,6 +36,7 @@
 	}
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "SettingsLightTree" }
 	parmtag	{ "vray_pluginattr" "solids_enabled" }
@@ -53,6 +55,7 @@
 	}
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "SettingsLightTree" }
 	parmtag	{ "vray_pluginattr" "build_quality" }

@@ -19,6 +19,7 @@
 	help	"the U input"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "UVWGenExplicit" }
 	parmtag	{ "vray_pluginattr" "u" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -31,6 +32,7 @@
 	help	"the V input"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "UVWGenExplicit" }
 	parmtag	{ "vray_pluginattr" "v" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -43,6 +45,7 @@
 	help	"the W input"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "UVWGenExplicit" }
 	parmtag	{ "vray_pluginattr" "w" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -55,6 +58,7 @@
 	default	{ "0" "0" "0" "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_linked_only" "1" }
 	parmtag	{ "vray_plugin" "UVWGenExplicit" }
 	parmtag	{ "vray_pluginattr" "uvw" }

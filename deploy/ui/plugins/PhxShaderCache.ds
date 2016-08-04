@@ -24,6 +24,7 @@
 	    help	"simulator output cache path"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "filechooser_mode" "read" }
 	    parmtag	{ "filechooser_pattern" "*.vdb,*.f3d,*.aur" }
 	    parmtag	{ "vray_file_names" "OpenVDB,Field3D,Phoenix FD" }
@@ -39,6 +40,7 @@
 	    help	"Number of cells in x dimension if no cache file is specified; internally truncated to the nearest integer"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderCache" }
 	    parmtag	{ "vray_pluginattr" "grid_size_x" }
 	    parmtag	{ "vray_type" "float" }
@@ -51,6 +53,7 @@
 	    help	"Number of cells in y dimension if no cache file is specified; internally truncated to the nearest integer"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderCache" }
 	    parmtag	{ "vray_pluginattr" "grid_size_y" }
 	    parmtag	{ "vray_type" "float" }
@@ -63,6 +66,7 @@
 	    help	"Number of cells in z dimension if no cache file is specified; internally truncated to the nearest integer"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderCache" }
 	    parmtag	{ "vray_pluginattr" "grid_size_z" }
 	    parmtag	{ "vray_type" "float" }
@@ -75,6 +79,7 @@
 	    help	"Size of a single grid cell"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderCache" }
 	    parmtag	{ "vray_pluginattr" "cell_size" }
 	    parmtag	{ "vray_type" "float" }
@@ -87,6 +92,7 @@
 	    help	"Create velocity channel from uvw movement"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderCache" }
 	    parmtag	{ "vray_pluginattr" "velocities_from_uvw" }
 	    parmtag	{ "vray_type" "List<Boolean>" }
@@ -110,6 +116,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1,2" }
 	    parmtag	{ "vray_plugin" "PhxShaderCache" }
 	    parmtag	{ "vray_pluginattr" "anim_mode" }
@@ -124,6 +131,7 @@
 	    disablewhen	"{ anim_mode != 2 }"
 	    range	{ 0 100 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderCache" }
 	    parmtag	{ "vray_pluginattr" "loop_overlap" }
 	    parmtag	{ "vray_type" "int" }
@@ -140,6 +148,7 @@
 	    }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1" }
 	    parmtag	{ "vray_plugin" "PhxShaderCache" }
 	    parmtag	{ "vray_pluginattr" "blend_method" }
@@ -154,6 +163,7 @@
 	    disablewhen	"{ anim_mode == 1 }"
 	    range	{ -10000 10000 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderCache" }
 	    parmtag	{ "vray_pluginattr" "read_offset" }
 	    parmtag	{ "vray_type" "int" }
@@ -167,6 +177,7 @@
 	    disablewhen	"{ anim_mode == 1 }"
 	    range	{ -10000 10000 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderCache" }
 	    parmtag	{ "vray_pluginattr" "play_at" }
 	    parmtag	{ "vray_type" "int" }
@@ -180,6 +191,7 @@
 	    disablewhen	"{ anim_mode == 1 }"
 	    range	{ -10000 10000 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderCache" }
 	    parmtag	{ "vray_pluginattr" "max_length" }
 	    parmtag	{ "vray_type" "int" }
@@ -193,6 +205,7 @@
 	    disablewhen	"{ anim_mode == 1 }"
 	    range	{ -10 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderCache" }
 	    parmtag	{ "vray_pluginattr" "play_speed" }
 	    parmtag	{ "vray_type" "float" }
@@ -206,6 +219,7 @@
 	    disablewhen	"{ anim_mode != 1 }"
 	    range	{ 0 1000 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderCache" }
 	    parmtag	{ "vray_pluginattr" "t2f" }
 	    parmtag	{ "vray_type" "float" }
@@ -218,6 +232,7 @@
 	    help	"ticks per frame"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderCache" }
 	    parmtag	{ "vray_pluginattr" "TPF" }
 	    parmtag	{ "vray_type" "int" }
@@ -230,6 +245,7 @@
 	    help	"If true, the yz axis of the cache will be flipped"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderCache" }
 	    parmtag	{ "vray_pluginattr" "flip_yz" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -242,6 +258,7 @@
 	    help	"used in RT to determine the frame loading flags"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderCache" }
 	    parmtag	{ "vray_pluginattr" "load_flags" }
 	    parmtag	{ "vray_type" "int" }
@@ -253,6 +270,7 @@
 	    default	{ "0" }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderCache" }
 	    parmtag	{ "vray_pluginattr" "smooth_mask" }
 	    parmtag	{ "vray_type" "int" }
@@ -265,6 +283,7 @@
 	    help	"internally used"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderCache" }
 	    parmtag	{ "vray_pluginattr" "free_mem_detect" }
 	    parmtag	{ "vray_type" "int" }
@@ -277,6 +296,7 @@
 	    help	"Whether to actually load the cache or use it just to figure out the grid and cell size"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderCache" }
 	    parmtag	{ "vray_pluginattr" "cache_load" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -289,6 +309,7 @@
 	    help	"If there is no cache file with the desired frame number, the nearest cache is found and loaded"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderCache" }
 	    parmtag	{ "vray_pluginattr" "load_nearest" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -301,6 +322,7 @@
 	    help	"3rd party caches channels mappings"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "PhxShaderCache" }
 	    parmtag	{ "vray_pluginattr" "usrchmap" }
 	    parmtag	{ "vray_type" "String" }

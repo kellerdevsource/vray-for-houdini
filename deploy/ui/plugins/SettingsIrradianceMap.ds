@@ -19,6 +19,7 @@
 	help	"This value determines the resolution for the first GI pass"
 	range	{ -100 100 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsIrradianceMap" }
 	parmtag	{ "vray_pluginattr" "min_rate" }
 	parmtag	{ "vray_type" "int" }
@@ -31,6 +32,7 @@
 	help	"This value determines the resolution of the last GI pass"
 	range	{ -100 100 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsIrradianceMap" }
 	parmtag	{ "vray_pluginattr" "max_rate" }
 	parmtag	{ "vray_type" "int" }
@@ -43,6 +45,7 @@
 	help	"This controls the quality of individual GI samples"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsIrradianceMap" }
 	parmtag	{ "vray_pluginattr" "subdivs" }
 	parmtag	{ "vray_type" "int" }
@@ -55,6 +58,7 @@
 	help	"The number of GI samples that will be used to interpolate the indirect illumination at a given point"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsIrradianceMap" }
 	parmtag	{ "vray_pluginattr" "interp_samples" }
 	parmtag	{ "vray_type" "int" }
@@ -67,6 +71,7 @@
 	help	"The number of already computed samples that will be used to guide the sampling algorithm"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsIrradianceMap" }
 	parmtag	{ "vray_pluginattr" "calc_interp_samples" }
 	parmtag	{ "vray_type" "int" }
@@ -79,6 +84,7 @@
 	help	"The number of frames that will be used to interpolate GI when the \"Mode\" is set to \"Animation (rendering)\""
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsIrradianceMap" }
 	parmtag	{ "vray_pluginattr" "interp_frames" }
 	parmtag	{ "vray_type" "int" }
@@ -91,6 +97,7 @@
 	help	"This parameter controls how sensitive the irradiance map algorithm is to changes in indirect lighting"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsIrradianceMap" }
 	parmtag	{ "vray_pluginattr" "color_threshold" }
 	parmtag	{ "vray_type" "float" }
@@ -103,6 +110,7 @@
 	help	"This parameter controls how sensitive the irradiance map is to changes in surface normals and small surface details"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsIrradianceMap" }
 	parmtag	{ "vray_pluginattr" "normal_threshold" }
 	parmtag	{ "vray_type" "float" }
@@ -115,6 +123,7 @@
 	help	"This parameter controls how sensitive the irradiance map is to distance between surfaces"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsIrradianceMap" }
 	parmtag	{ "vray_pluginattr" "distance_threshold" }
 	parmtag	{ "vray_type" "float" }
@@ -127,6 +136,7 @@
 	help	"Detail enhancement is a method for bringing additional detail to the irradiance map in the case where there are small details in the image"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsIrradianceMap" }
 	parmtag	{ "vray_pluginattr" "detail_enhancement" }
 	parmtag	{ "vray_type" "boolean" }
@@ -140,6 +150,7 @@
 	disablewhen	"{ SettingsIrradianceMap_detail_enhancement != 1 }"
 	range	{ 0.05 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsIrradianceMap" }
 	parmtag	{ "vray_pluginattr" "detail_radius" }
 	parmtag	{ "vray_type" "float" }
@@ -153,6 +164,7 @@
 	disablewhen	"{ SettingsIrradianceMap_detail_enhancement != 1 }"
 	range	{ 0.1 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsIrradianceMap" }
 	parmtag	{ "vray_pluginattr" "detail_subdivs_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -170,6 +182,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "SettingsIrradianceMap" }
 	parmtag	{ "vray_pluginattr" "detail_scale" }
@@ -183,6 +196,7 @@
 	help	"When it is checked, the image samples will be randomly jittered"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsIrradianceMap" }
 	parmtag	{ "vray_pluginattr" "randomize_samples" }
 	parmtag	{ "vray_type" "boolean" }
@@ -201,6 +215,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "3,2,1,0" }
 	parmtag	{ "vray_plugin" "SettingsIrradianceMap" }
 	parmtag	{ "vray_pluginattr" "interpolation_mode" }
@@ -220,6 +235,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "SettingsIrradianceMap" }
 	parmtag	{ "vray_pluginattr" "lookup_mode" }
@@ -243,6 +259,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7" }
 	parmtag	{ "vray_plugin" "SettingsIrradianceMap" }
 	parmtag	{ "vray_pluginattr" "mode" }
@@ -256,6 +273,7 @@
 	help	"If true, the map will not be deleted from memory at the end of the rendering"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsIrradianceMap" }
 	parmtag	{ "vray_pluginattr" "dont_delete" }
 	parmtag	{ "vray_type" "boolean" }
@@ -269,6 +287,7 @@
 	disablewhen	"{ SettingsIrradianceMap_mode != 2 SettingsIrradianceMap_mode != 7 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "filechooser_pattern" "*.vrmap" }
 	parmtag	{ "vray_file_names" "V-Ray Irradiance map" }
 	parmtag	{ "vray_plugin" "SettingsIrradianceMap" }
@@ -283,6 +302,7 @@
 	help	"Show Irradiance Map samples"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsIrradianceMap" }
 	parmtag	{ "vray_pluginattr" "show_samples" }
 	parmtag	{ "vray_type" "boolean" }
@@ -295,6 +315,7 @@
 	help	"Show Irradiance Map calculation process"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsIrradianceMap" }
 	parmtag	{ "vray_pluginattr" "show_calc_phase" }
 	parmtag	{ "vray_type" "boolean" }
@@ -308,6 +329,7 @@
 	disablewhen	"{ SettingsIrradianceMap_show_calc_phase != 1 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsIrradianceMap" }
 	parmtag	{ "vray_pluginattr" "show_direct_light" }
 	parmtag	{ "vray_type" "boolean" }
@@ -320,6 +342,7 @@
 	help	"When this option is on, V-Ray will calculate the irradiance map samples for the entire camera path, instead of just the current view"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsIrradianceMap" }
 	parmtag	{ "vray_pluginattr" "multiple_views" }
 	parmtag	{ "vray_type" "boolean" }
@@ -332,6 +355,7 @@
 	help	"When checked, this will cause V-Ray to use all irradiance map samples computed so far"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsIrradianceMap" }
 	parmtag	{ "vray_pluginattr" "multipass" }
 	parmtag	{ "vray_type" "boolean" }
@@ -344,6 +368,7 @@
 	help	"This will cause V-Ray to use only those samples from the irradiance map, which are directly visible from the interpolated point"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsIrradianceMap" }
 	parmtag	{ "vray_pluginattr" "check_sample_visibility" }
 	parmtag	{ "vray_type" "boolean" }
@@ -357,6 +382,7 @@
 	disablewhen	"{ SettingsIrradianceMap_mode == 2 } { SettingsIrradianceMap_mode == 5 } { SettingsIrradianceMap_mode == 7 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsIrradianceMap" }
 	parmtag	{ "vray_pluginattr" "auto_save" }
 	parmtag	{ "vray_type" "boolean" }
@@ -370,6 +396,7 @@
 	disablewhen	"{ SettingsIrradianceMap_mode == 2 } { SettingsIrradianceMap_mode == 5 } { SettingsIrradianceMap_mode == 7 } { SettingsIrradianceMap_auto_save != 1 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "filechooser_mode" "write" }
 	parmtag	{ "filechooser_pattern" "*.vrmap" }
 	parmtag	{ "vray_file_names" "V-Ray Irradiance map" }

@@ -15,6 +15,7 @@
     groupsimple {
 	name	"transform"
 	label	"Transform"
+	grouptag	{ "cook_dependent" "1" }
 	grouptag	{ "vray_plugin" "RenderView" }
 	grouptag	{ "vray_pluginattr" "transform" }
 	grouptag	{ "vray_type" "Transform" }
@@ -96,6 +97,7 @@
 	default	{ "0.785398" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderView" }
 	parmtag	{ "vray_pluginattr" "fov" }
 	parmtag	{ "vray_type" "float" }
@@ -107,6 +109,7 @@
 	default	{ "1" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderView" }
 	parmtag	{ "vray_pluginattr" "focalDistance" }
 	parmtag	{ "vray_type" "float" }
@@ -118,6 +121,7 @@
 	default	{ "0.1" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderView" }
 	parmtag	{ "vray_pluginattr" "aperture" }
 	parmtag	{ "vray_type" "float" }
@@ -129,6 +133,7 @@
 	default	{ "0" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderView" }
 	parmtag	{ "vray_pluginattr" "lens_rotation" }
 	parmtag	{ "vray_type" "float" }
@@ -141,6 +146,7 @@
 	help	"Number of samples per frame for the transformation"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderView" }
 	parmtag	{ "vray_pluginattr" "frame_samples" }
 	parmtag	{ "vray_type" "int" }
@@ -153,6 +159,7 @@
 	help	"true to enable clipping planes"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderView" }
 	parmtag	{ "vray_pluginattr" "clipping" }
 	parmtag	{ "vray_type" "boolean" }
@@ -165,6 +172,7 @@
 	help	"The near clipping plane"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderView" }
 	parmtag	{ "vray_pluginattr" "clipping_near" }
 	parmtag	{ "vray_type" "float" }
@@ -177,6 +185,7 @@
 	help	"The far clipping plane"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderView" }
 	parmtag	{ "vray_pluginattr" "clipping_far" }
 	parmtag	{ "vray_type" "float" }
@@ -189,6 +198,7 @@
 	help	"Zoom factor"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderView" }
 	parmtag	{ "vray_pluginattr" "zoom" }
 	parmtag	{ "vray_type" "float" }
@@ -200,6 +210,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderView" }
 	parmtag	{ "vray_pluginattr" "orthographic" }
 	parmtag	{ "vray_type" "boolean" }
@@ -211,6 +222,7 @@
 	default	{ "1" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderView" }
 	parmtag	{ "vray_pluginattr" "orthographicWidth" }
 	parmtag	{ "vray_type" "float" }
@@ -223,6 +235,7 @@
 	help	"This is here so we can suppress a RenderView node from affecting the main VRayRenderer sequence and frame data"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderView" }
 	parmtag	{ "vray_pluginattr" "dont_affect_settings" }
 	parmtag	{ "vray_type" "boolean" }
@@ -235,6 +248,7 @@
 	help	"If true, the scene will be internally translated relative to the render view"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderView" }
 	parmtag	{ "vray_pluginattr" "use_scene_offset" }
 	parmtag	{ "vray_type" "boolean" }
@@ -246,6 +260,7 @@
 	default	{ "1" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderView" }
 	parmtag	{ "vray_pluginattr" "mayaFocalLength" }
 	parmtag	{ "vray_type" "float" }
@@ -257,6 +272,7 @@
 	default	{ "1" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderView" }
 	parmtag	{ "vray_pluginattr" "mayaApperture" }
 	parmtag	{ "vray_type" "float" }
@@ -269,6 +285,7 @@
 	help	"Clip near"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_custom_handling" "1" }
     }
     parm {
@@ -279,6 +296,7 @@
 	help	"Clip far"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_custom_handling" "1" }
     }
     parm {
@@ -294,6 +312,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "RenderView" }
 	parmtag	{ "vray_pluginattr" "stereo_on" }
@@ -307,6 +326,7 @@
 	help	"The distance between the two stereo views"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderView" }
 	parmtag	{ "vray_pluginattr" "stereo_eye_distance" }
 	parmtag	{ "vray_type" "float" }
@@ -324,6 +344,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "RenderView" }
 	parmtag	{ "vray_pluginattr" "stereo_interocular_method" }
@@ -337,6 +358,7 @@
 	help	"true to specify a separate distance for the stereo focus"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderView" }
 	parmtag	{ "vray_pluginattr" "stereo_specify_focus" }
 	parmtag	{ "vray_type" "boolean" }
@@ -349,6 +371,7 @@
 	help	"The focus distance if specify_focus is enabled"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderView" }
 	parmtag	{ "vray_pluginattr" "stereo_focus_distance" }
 	parmtag	{ "vray_type" "float" }
@@ -366,6 +389,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "RenderView" }
 	parmtag	{ "vray_pluginattr" "stereo_view" }
@@ -384,6 +408,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "RenderView" }
 	parmtag	{ "vray_pluginattr" "stereo_focus_method" }

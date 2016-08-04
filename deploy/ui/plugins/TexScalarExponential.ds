@@ -20,6 +20,7 @@
 	help	"The value used in the operation"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexScalarExponential" }
 	parmtag	{ "vray_pluginattr" "input" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -32,6 +33,7 @@
 	help	"The factor to be used in the operation"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexScalarExponential" }
 	parmtag	{ "vray_pluginattr" "factor" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -50,6 +52,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "TexScalarExponential" }
 	parmtag	{ "vray_pluginattr" "operation" }

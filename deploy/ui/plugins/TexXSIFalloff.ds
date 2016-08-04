@@ -20,6 +20,7 @@
 	help	"Curve falloff"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexXSIFalloff" }
 	parmtag	{ "vray_pluginattr" "curve_falloff" }
 	parmtag	{ "vray_type" "float" }
@@ -32,6 +33,7 @@
 	help	"Facing reflectivity"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexXSIFalloff" }
 	parmtag	{ "vray_pluginattr" "facing_refl" }
 	parmtag	{ "vray_type" "float" }
@@ -44,6 +46,7 @@
 	help	"Perpendicular reflectivity"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexXSIFalloff" }
 	parmtag	{ "vray_pluginattr" "perp_refl" }
 	parmtag	{ "vray_type" "float" }
@@ -57,6 +60,7 @@
 	help	"Refraction (front) color"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexXSIFalloff" }
 	parmtag	{ "vray_pluginattr" "white_color" }
 	parmtag	{ "vray_type" "Texture" }
@@ -70,6 +74,7 @@
 	help	"Reflection (side) color"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexXSIFalloff" }
 	parmtag	{ "vray_pluginattr" "black_color" }
 	parmtag	{ "vray_type" "Texture" }

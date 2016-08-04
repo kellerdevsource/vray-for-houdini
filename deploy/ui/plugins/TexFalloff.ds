@@ -27,6 +27,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1" }
 	    parmtag	{ "vray_plugin" "TexFalloff" }
 	    parmtag	{ "vray_pluginattr" "compatibility_with" }
@@ -45,6 +46,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1,2" }
 	    parmtag	{ "vray_plugin" "TexFalloff" }
 	    parmtag	{ "vray_pluginattr" "alpha_from_intensity" }
@@ -58,6 +60,7 @@
 	    help	"If true, the resulting texture color will be inverted"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexFalloff" }
 	    parmtag	{ "vray_pluginattr" "invert" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -71,6 +74,7 @@
 	    disablewhen	"{ invert != 1 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexFalloff" }
 	    parmtag	{ "vray_pluginattr" "invert_alpha" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -84,6 +88,7 @@
 	    help	"A multiplier for the texture color"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexFalloff" }
 	    parmtag	{ "vray_pluginattr" "color_mult" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -97,6 +102,7 @@
 	    help	"An additional offset for the texture color"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexFalloff" }
 	    parmtag	{ "vray_pluginattr" "color_offset" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -109,6 +115,7 @@
 	    help	"A multiplier for the texture alpha"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexFalloff" }
 	    parmtag	{ "vray_pluginattr" "alpha_mult" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -121,6 +128,7 @@
 	    help	"An additional offset for the texture alpha"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexFalloff" }
 	    parmtag	{ "vray_pluginattr" "alpha_offset" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -134,6 +142,7 @@
 	    help	"The color when there are no valid uvw coordinates"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexFalloff" }
 	    parmtag	{ "vray_pluginattr" "nouvw_color" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -147,6 +156,7 @@
 	    help	"First color"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexFalloff" }
 	    parmtag	{ "vray_pluginattr" "color1" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -160,6 +170,7 @@
 	    help	"Second color"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexFalloff" }
 	    parmtag	{ "vray_pluginattr" "color2" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -179,6 +190,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1,2,3,4" }
 	    parmtag	{ "vray_plugin" "TexFalloff" }
 	    parmtag	{ "vray_pluginattr" "type" }
@@ -205,6 +217,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7,8,9" }
 	    parmtag	{ "vray_plugin" "TexFalloff" }
 	    parmtag	{ "vray_pluginattr" "direction_type" }
@@ -219,6 +232,7 @@
 	    disablewhen	"{ type != 2 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexFalloff" }
 	    parmtag	{ "vray_pluginattr" "fresnel_ior" }
 	    parmtag	{ "vray_type" "float" }
@@ -232,6 +246,7 @@
 	    disablewhen	"{ type != 4 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexFalloff" }
 	    parmtag	{ "vray_pluginattr" "dist_extrapolate" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -245,6 +260,7 @@
 	    disablewhen	"{ type != 4 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexFalloff" }
 	    parmtag	{ "vray_pluginattr" "dist_near" }
 	    parmtag	{ "vray_type" "float" }
@@ -258,6 +274,7 @@
 	    disablewhen	"{ type != 4 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexFalloff" }
 	    parmtag	{ "vray_pluginattr" "dist_far" }
 	    parmtag	{ "vray_type" "float" }
@@ -272,6 +289,7 @@
 	    disablewhen	"{ type == 3 } { type == 4 } { direction_type != 3 }"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexFalloff" }
 	    parmtag	{ "vray_pluginattr" "explicit_dir" }
 	    parmtag	{ "vray_type" "Vector" }
@@ -283,6 +301,7 @@
 	    default	{ "0" }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexFalloff" }
 	    parmtag	{ "vray_pluginattr" "use_blend_input" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -296,6 +315,7 @@
 	    disablewhen	"{ use_blend_input != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexFalloff" }
 	    parmtag	{ "vray_pluginattr" "blend_input" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -307,6 +327,7 @@
 	    default	{ "0" }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_custom_handling" "1" }
 	}
     }

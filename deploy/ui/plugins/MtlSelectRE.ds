@@ -20,6 +20,7 @@
 	help	"The base material. The alpha result of this material will be written to all alpha channels specified in the 'alpha_elements' parameter"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "MtlSelectRE" }
 	parmtag	{ "vray_pluginattr" "base_mtl" }
@@ -33,6 +34,7 @@
 	help	"A list of alpha render elements"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "MtlSelectRE" }
 	parmtag	{ "vray_pluginattr" "alpha_elements" }

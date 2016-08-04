@@ -19,6 +19,7 @@
 	help	"Use motion blur"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsMotionBlur" }
 	parmtag	{ "vray_pluginattr" "on" }
 	parmtag	{ "vray_type" "boolean" }
@@ -31,6 +32,7 @@
 	help	"This determines the number of geometry segments used to approximate motion blur"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsMotionBlur" }
 	parmtag	{ "vray_pluginattr" "geom_samples" }
 	parmtag	{ "vray_type" "int" }
@@ -43,6 +45,7 @@
 	help	"This controls how many samples in time will be computed during irradiance map calculations"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsMotionBlur" }
 	parmtag	{ "vray_pluginattr" "low_samples" }
 	parmtag	{ "vray_type" "int" }
@@ -56,6 +59,7 @@
 	disablewhen	"{ SettingsMotionBlur_on == 0 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsMotionBlur" }
 	parmtag	{ "vray_pluginattr" "duration" }
 	parmtag	{ "vray_type" "float" }
@@ -69,6 +73,7 @@
 	disablewhen	"{ SettingsMotionBlur_on == 0 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsMotionBlur" }
 	parmtag	{ "vray_pluginattr" "subdivs" }
 	parmtag	{ "vray_type" "int" }
@@ -82,6 +87,7 @@
 	disablewhen	"{ SettingsMotionBlur_on == 0 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsMotionBlur" }
 	parmtag	{ "vray_pluginattr" "bias" }
 	parmtag	{ "vray_type" "float" }
@@ -95,6 +101,7 @@
 	disablewhen	"{ SettingsMotionBlur_on == 0 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsMotionBlur" }
 	parmtag	{ "vray_pluginattr" "shutter_efficiency" }
 	parmtag	{ "vray_type" "float" }
@@ -108,6 +115,7 @@
 	disablewhen	"{ SettingsMotionBlur_on == 0 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsMotionBlur" }
 	parmtag	{ "vray_pluginattr" "interval_center" }
 	parmtag	{ "vray_type" "float" }
@@ -121,6 +129,7 @@
 	disablewhen	"{ SettingsMotionBlur_on == 0 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsMotionBlur" }
 	parmtag	{ "vray_pluginattr" "camera_motion_blur" }
 	parmtag	{ "vray_type" "boolean" }
@@ -139,6 +148,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "SettingsMotionBlur" }
 	parmtag	{ "vray_pluginattr" "sampling_type" }

@@ -21,6 +21,7 @@
 	help	"The texture to be inverted"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexInvert" }
 	parmtag	{ "vray_pluginattr" "texture" }
 	parmtag	{ "vray_type" "Texture" }
@@ -32,6 +33,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexInvert" }
 	parmtag	{ "vray_pluginattr" "invert_alpha" }
 	parmtag	{ "vray_type" "boolean" }

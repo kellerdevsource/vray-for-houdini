@@ -23,6 +23,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "SettingsRenderChannels" }
 	parmtag	{ "vray_pluginattr" "unfiltered_fragment_method" }
@@ -40,6 +41,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "SettingsRenderChannels" }
 	parmtag	{ "vray_pluginattr" "deep_merge_mode" }
@@ -54,6 +56,7 @@
 	disablewhen	"{ deep_merge_mode != 1 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRenderChannels" }
 	parmtag	{ "vray_pluginattr" "deep_merge_coeff" }
 	parmtag	{ "vray_type" "float" }

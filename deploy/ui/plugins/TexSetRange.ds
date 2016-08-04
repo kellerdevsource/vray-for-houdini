@@ -21,6 +21,7 @@
 	default	{ "0" "0" "0" "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexSetRange" }
 	parmtag	{ "vray_pluginattr" "value" }
 	parmtag	{ "vray_type" "Texture" }
@@ -33,6 +34,7 @@
 	default	{ "0" "0" "0" "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexSetRange" }
 	parmtag	{ "vray_pluginattr" "oldMin" }
 	parmtag	{ "vray_type" "Texture" }
@@ -45,6 +47,7 @@
 	default	{ "0" "0" "0" "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexSetRange" }
 	parmtag	{ "vray_pluginattr" "oldMax" }
 	parmtag	{ "vray_type" "Texture" }
@@ -57,6 +60,7 @@
 	default	{ "0" "0" "0" "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexSetRange" }
 	parmtag	{ "vray_pluginattr" "newMin" }
 	parmtag	{ "vray_type" "Texture" }
@@ -69,6 +73,7 @@
 	default	{ "0" "0" "0" "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexSetRange" }
 	parmtag	{ "vray_pluginattr" "newMax" }
 	parmtag	{ "vray_type" "Texture" }

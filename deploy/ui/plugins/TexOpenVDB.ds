@@ -20,6 +20,7 @@
 	help	"The path to OpenVDB file"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "filechooser_pattern" "*.vdb" }
 	parmtag	{ "vray_plugin" "TexOpenVDB" }
 	parmtag	{ "vray_pluginattr" "file" }
@@ -33,6 +34,7 @@
 	help	"The name of the OpenVDB grid to render"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexOpenVDB" }
 	parmtag	{ "vray_pluginattr" "render_grid" }
 	parmtag	{ "vray_type" "String" }
@@ -45,6 +47,7 @@
 	help	"The name of the OpenVDB velocity grid to used for motion blur"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexOpenVDB" }
 	parmtag	{ "vray_pluginattr" "velocity_grid" }
 	parmtag	{ "vray_type" "String" }
@@ -57,6 +60,7 @@
 	help	"If true, delay load the OpenVDB voxels until requested"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexOpenVDB" }
 	parmtag	{ "vray_pluginattr" "delay_load" }
 	parmtag	{ "vray_type" "boolean" }
@@ -74,6 +78,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "TexOpenVDB" }
 	parmtag	{ "vray_pluginattr" "interpolation" }
@@ -91,6 +96,7 @@
 	    help	"The uvw generator for the texture"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "oprelative" "." }
 	    parmtag	{ "vray_plugin" "TexOpenVDB" }
 	    parmtag	{ "vray_pluginattr" "uvwgen" }
@@ -104,6 +110,7 @@
 	    help	"whther to ignore the uvw generator and use world mapping"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexOpenVDB" }
 	    parmtag	{ "vray_pluginattr" "use_3d_mapping" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -116,6 +123,7 @@
 	    help	"Texture multiplier for float data"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexOpenVDB" }
 	    parmtag	{ "vray_pluginattr" "float_mult" }
 	    parmtag	{ "vray_type" "float" }
@@ -129,6 +137,7 @@
 	    help	"Texture multiplier for vector data"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexOpenVDB" }
 	    parmtag	{ "vray_pluginattr" "vector_mult" }
 	    parmtag	{ "vray_type" "AColor" }

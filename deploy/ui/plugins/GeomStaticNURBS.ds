@@ -20,6 +20,7 @@
 	help	"List of TrimmingRegion objects. The orientation is used to determine whether the trim will generate geometry inside of it or outside of it"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "GeomStaticNURBS" }
 	parmtag	{ "vray_pluginattr" "trims" }
@@ -33,6 +34,7 @@
 	help	"List of NURBSCurve objects - the trimming curves"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "GeomStaticNURBS" }
 	parmtag	{ "vray_pluginattr" "listTrimCurves" }
@@ -46,6 +48,7 @@
 	help	"A single plug-in containing all the trim information"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "GeomStaticNURBS" }
 	parmtag	{ "vray_pluginattr" "trimsComplex" }
@@ -58,6 +61,7 @@
 	default	{ "5" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomStaticNURBS" }
 	parmtag	{ "vray_pluginattr" "maxSubdivDepth" }
 	parmtag	{ "vray_type" "int" }
@@ -69,6 +73,7 @@
 	default	{ "0.01" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomStaticNURBS" }
 	parmtag	{ "vray_pluginattr" "flatnessCoef" }
 	parmtag	{ "vray_type" "float" }
@@ -80,6 +85,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomStaticNURBS" }
 	parmtag	{ "vray_pluginattr" "regularSubdiv" }
 	parmtag	{ "vray_type" "boolean" }
@@ -91,6 +97,7 @@
 	default	{ "20" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomStaticNURBS" }
 	parmtag	{ "vray_pluginattr" "regularUSteps" }
 	parmtag	{ "vray_type" "int" }
@@ -102,6 +109,7 @@
 	default	{ "20" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomStaticNURBS" }
 	parmtag	{ "vray_pluginattr" "regularVSteps" }
 	parmtag	{ "vray_type" "int" }
@@ -113,6 +121,7 @@
 	default	{ "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomStaticNURBS" }
 	parmtag	{ "vray_pluginattr" "uDirectionType" }
 	parmtag	{ "vray_type" "int" }
@@ -124,6 +133,7 @@
 	default	{ "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomStaticNURBS" }
 	parmtag	{ "vray_pluginattr" "vDirectionType" }
 	parmtag	{ "vray_type" "int" }
@@ -135,6 +145,7 @@
 	default	{ "3" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomStaticNURBS" }
 	parmtag	{ "vray_pluginattr" "uDegree" }
 	parmtag	{ "vray_type" "int" }
@@ -146,6 +157,7 @@
 	default	{ "3" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomStaticNURBS" }
 	parmtag	{ "vray_pluginattr" "vDegree" }
 	parmtag	{ "vray_type" "int" }
@@ -157,6 +169,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomStaticNURBS" }
 	parmtag	{ "vray_pluginattr" "flipNormals" }
 	parmtag	{ "vray_type" "boolean" }
@@ -168,6 +181,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomStaticNURBS" }
 	parmtag	{ "vray_pluginattr" "generateStatic" }
 	parmtag	{ "vray_type" "boolean" }
@@ -179,6 +193,7 @@
 	default	{ "1" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomStaticNURBS" }
 	parmtag	{ "vray_pluginattr" "primary_visibility" }
 	parmtag	{ "vray_type" "boolean" }
@@ -191,6 +206,7 @@
 	help	"The reference nurbs object which is used to calculate the uvw coordinates when a 3d placement is used"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "GeomStaticNURBS" }
 	parmtag	{ "vray_pluginattr" "reference_nurbs" }
@@ -199,6 +215,7 @@
     groupsimple {
 	name	"reference_transform"
 	label	"Reference Transform"
+	grouptag	{ "cook_dependent" "1" }
 	grouptag	{ "vray_plugin" "GeomStaticNURBS" }
 	grouptag	{ "vray_pluginattr" "reference_transform" }
 	grouptag	{ "vray_type" "Transform" }

@@ -20,6 +20,7 @@
 	help	"The channel number * 3 + a number indicating which of the x,y or z values are used"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexXSIWeightmapLookup" }
 	parmtag	{ "vray_pluginattr" "channel" }
 	parmtag	{ "vray_type" "int" }
@@ -32,6 +33,7 @@
 	help	"Weight multiplication factor"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexXSIWeightmapLookup" }
 	parmtag	{ "vray_pluginattr" "factor" }
 	parmtag	{ "vray_type" "float" }
@@ -44,6 +46,7 @@
 	help	"Minimum weight (w/o factor)"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexXSIWeightmapLookup" }
 	parmtag	{ "vray_pluginattr" "weight_min" }
 	parmtag	{ "vray_type" "float" }
@@ -56,6 +59,7 @@
 	help	"Minimum weight (w/o factor)"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexXSIWeightmapLookup" }
 	parmtag	{ "vray_pluginattr" "weight_max" }
 	parmtag	{ "vray_type" "float" }

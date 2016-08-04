@@ -19,6 +19,7 @@
 	help	"Fresnel ior"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexFresnel" }
 	parmtag	{ "vray_pluginattr" "fresnel_ior" }
 	parmtag	{ "vray_type" "float" }
@@ -31,6 +32,7 @@
 	help	"Refraction ior of the underlying surface; this is ignored if the surface has a volume shader (the volume IOR is used)"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexFresnel" }
 	parmtag	{ "vray_pluginattr" "refract_ior" }
 	parmtag	{ "vray_type" "float" }
@@ -44,6 +46,7 @@
 	help	"Refraction (front) color"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexFresnel" }
 	parmtag	{ "vray_pluginattr" "white_color" }
 	parmtag	{ "vray_type" "Texture" }
@@ -57,6 +60,7 @@
 	help	"Reflection (side) color"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexFresnel" }
 	parmtag	{ "vray_pluginattr" "black_color" }
 	parmtag	{ "vray_type" "Texture" }
@@ -68,6 +72,7 @@
 	default	{ "1" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexFresnel" }
 	parmtag	{ "vray_pluginattr" "fresnel_ior_tex" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -79,6 +84,7 @@
 	default	{ "1" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexFresnel" }
 	parmtag	{ "vray_pluginattr" "refract_ior_tex" }
 	parmtag	{ "vray_type" "TextureFloat" }

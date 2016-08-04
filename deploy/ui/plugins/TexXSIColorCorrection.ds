@@ -28,6 +28,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1" }
 	    parmtag	{ "vray_plugin" "TexXSIColorCorrection" }
 	    parmtag	{ "vray_pluginattr" "compatibility_with" }
@@ -46,6 +47,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1,2" }
 	    parmtag	{ "vray_plugin" "TexXSIColorCorrection" }
 	    parmtag	{ "vray_pluginattr" "alpha_from_intensity" }
@@ -59,6 +61,7 @@
 	    help	"If true, the resulting texture color will be inverted"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexXSIColorCorrection" }
 	    parmtag	{ "vray_pluginattr" "invert" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -72,6 +75,7 @@
 	    disablewhen	"{ invert != 1 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexXSIColorCorrection" }
 	    parmtag	{ "vray_pluginattr" "invert_alpha" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -85,6 +89,7 @@
 	    help	"A multiplier for the texture color"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexXSIColorCorrection" }
 	    parmtag	{ "vray_pluginattr" "color_mult" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -98,6 +103,7 @@
 	    help	"An additional offset for the texture color"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexXSIColorCorrection" }
 	    parmtag	{ "vray_pluginattr" "color_offset" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -110,6 +116,7 @@
 	    help	"A multiplier for the texture alpha"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexXSIColorCorrection" }
 	    parmtag	{ "vray_pluginattr" "alpha_mult" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -122,6 +129,7 @@
 	    help	"An additional offset for the texture alpha"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexXSIColorCorrection" }
 	    parmtag	{ "vray_pluginattr" "alpha_offset" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -135,6 +143,7 @@
 	    help	"The color when there are no valid uvw coordinates"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexXSIColorCorrection" }
 	    parmtag	{ "vray_pluginattr" "nouvw_color" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -148,6 +157,7 @@
 	    help	"Input texture"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexXSIColorCorrection" }
 	    parmtag	{ "vray_pluginattr" "xsi_color" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -160,6 +170,7 @@
 	    help	"Used to compensate for non-linearity in displays. Often used as a general brightness control"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexXSIColorCorrection" }
 	    parmtag	{ "vray_pluginattr" "gamma" }
 	    parmtag	{ "vray_type" "float" }
@@ -172,6 +183,7 @@
 	    help	"Increases and decreases the contrast levels between light and dark colors. 0.5 = no change in contrast"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexXSIColorCorrection" }
 	    parmtag	{ "vray_pluginattr" "contrast" }
 	    parmtag	{ "vray_type" "float" }
@@ -184,6 +196,7 @@
 	    help	"Controls a 360 degrees hue shift through the HLS color space spectrum without modifying the intensity or saturation of the color"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexXSIColorCorrection" }
 	    parmtag	{ "vray_pluginattr" "hue" }
 	    parmtag	{ "vray_type" "float" }
@@ -196,6 +209,7 @@
 	    help	"Adjusts the saturation, or amount of <pigment> in a color. A value of 1 results in no white and all color; a value of 0 results in no color, just white light"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexXSIColorCorrection" }
 	    parmtag	{ "vray_pluginattr" "saturation" }
 	    parmtag	{ "vray_type" "float" }
@@ -208,6 +222,7 @@
 	    help	"Adjusts the level or luminance of a color. Similar to intensity or brightness"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexXSIColorCorrection" }
 	    parmtag	{ "vray_pluginattr" "level" }
 	    parmtag	{ "vray_type" "float" }

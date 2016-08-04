@@ -21,6 +21,7 @@
 	help	"Fog emission color"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VolumeScatterFog" }
 	parmtag	{ "vray_pluginattr" "emission" }
 	parmtag	{ "vray_type" "Color" }
@@ -34,6 +35,7 @@
 	help	"Fog color"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VolumeScatterFog" }
 	parmtag	{ "vray_pluginattr" "color" }
 	parmtag	{ "vray_type" "Color" }
@@ -47,6 +49,7 @@
 	help	"Fog color texture map"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VolumeScatterFog" }
 	parmtag	{ "vray_pluginattr" "color_tex" }
 	parmtag	{ "vray_type" "Texture" }
@@ -59,6 +62,7 @@
 	help	"Fog color multiplier"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VolumeScatterFog" }
 	parmtag	{ "vray_pluginattr" "color_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -71,6 +75,7 @@
 	help	"The IOR for the volume"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VolumeScatterFog" }
 	parmtag	{ "vray_pluginattr" "ior" }
 	parmtag	{ "vray_type" "float" }
@@ -83,6 +88,7 @@
 	help	"Bias for the fogging distance"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VolumeScatterFog" }
 	parmtag	{ "vray_pluginattr" "bias" }
 	parmtag	{ "vray_type" "float" }
@@ -95,6 +101,7 @@
 	help	"If true, the fog will shade only closed volumes"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VolumeScatterFog" }
 	parmtag	{ "vray_pluginattr" "closed_volume" }
 	parmtag	{ "vray_type" "boolean" }
@@ -107,6 +114,7 @@
 	help	"Subdivs for the scattering samples"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VolumeScatterFog" }
 	parmtag	{ "vray_pluginattr" "subdivs" }
 	parmtag	{ "vray_type" "int" }
@@ -119,6 +127,7 @@
 	help	"Maximum distance to trace into the objects"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VolumeScatterFog" }
 	parmtag	{ "vray_pluginattr" "thickness" }
 	parmtag	{ "vray_type" "float" }
@@ -131,6 +140,7 @@
 	help	"Multiplier for the sss effect"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VolumeScatterFog" }
 	parmtag	{ "vray_pluginattr" "light_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -143,6 +153,7 @@
 	help	"Scatter coefficient (0.0 is full scattering; 1.0 is purely directional)"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VolumeScatterFog" }
 	parmtag	{ "vray_pluginattr" "scatter_coeff" }
 	parmtag	{ "vray_type" "float" }
@@ -155,6 +166,7 @@
 	help	"Scatter direction (0.0 is forward away from the viewer; 1.0 is backward towards the viewer)"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VolumeScatterFog" }
 	parmtag	{ "vray_pluginattr" "scatter_direction" }
 	parmtag	{ "vray_type" "float" }
@@ -167,6 +179,7 @@
 	help	"Maximum number of scattering bounces"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VolumeScatterFog" }
 	parmtag	{ "vray_pluginattr" "scatter_levels" }
 	parmtag	{ "vray_type" "int" }
@@ -179,6 +192,7 @@
 	help	"true if this is environment fog and false if it is inside an object"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VolumeScatterFog" }
 	parmtag	{ "vray_pluginattr" "environment_fog" }
 	parmtag	{ "vray_type" "boolean" }

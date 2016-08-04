@@ -19,6 +19,7 @@
 	help	"Output image width"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOutput" }
 	parmtag	{ "vray_pluginattr" "img_width" }
 	parmtag	{ "vray_type" "int" }
@@ -31,6 +32,7 @@
 	help	"Output image height"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOutput" }
 	parmtag	{ "vray_pluginattr" "img_height" }
 	parmtag	{ "vray_type" "int" }
@@ -43,6 +45,7 @@
 	help	"Output image pixel aspect"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOutput" }
 	parmtag	{ "vray_pluginattr" "img_pixelAspect" }
 	parmtag	{ "vray_type" "float" }
@@ -55,6 +58,7 @@
 	help	"Render file name (Variables: $C - camera name; $S - scene name; $F - blendfile name)"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOutput" }
 	parmtag	{ "vray_pluginattr" "img_file" }
 	parmtag	{ "vray_type" "String" }
@@ -67,6 +71,7 @@
 	help	"Render file directory (Variables: $C - camera name; $S - scene name; $F - blendfile name)"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOutput" }
 	parmtag	{ "vray_pluginattr" "img_dir" }
 	parmtag	{ "vray_type" "String" }
@@ -79,6 +84,7 @@
 	help	"Add frame number to the image file name"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOutput" }
 	parmtag	{ "vray_pluginattr" "img_file_needFrameNumber" }
 	parmtag	{ "vray_type" "boolean" }
@@ -91,6 +97,7 @@
 	help	"Write the alpha channel to a separate file"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOutput" }
 	parmtag	{ "vray_pluginattr" "img_separateAlpha" }
 	parmtag	{ "vray_type" "boolean" }
@@ -103,6 +110,7 @@
 	help	"Don't write the alpha channel to the final image"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOutput" }
 	parmtag	{ "vray_pluginattr" "img_noAlpha" }
 	parmtag	{ "vray_type" "boolean" }
@@ -115,6 +123,7 @@
 	help	"If true, the RGB channel will not be saved to disk"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOutput" }
 	parmtag	{ "vray_pluginattr" "img_dontSaveRgbChannel" }
 	parmtag	{ "vray_type" "boolean" }
@@ -127,6 +136,7 @@
 	help	"If true, V-Ray will will generate deep image file (valid for vrst and exr)"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOutput" }
 	parmtag	{ "vray_pluginattr" "img_deepFile" }
 	parmtag	{ "vray_type" "boolean" }
@@ -139,6 +149,7 @@
 	help	"If true, V-Ray will render to a tiled file format (.vrimg or .exr). This is automatically turned on for file formats that only support tiled writing (like .vrimg)"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOutput" }
 	parmtag	{ "vray_pluginattr" "img_rawFile" }
 	parmtag	{ "vray_type" "boolean" }
@@ -151,6 +162,7 @@
 	help	"If writing to a tiled file format, specifies whether a memory VFB window should be displayed (0 - no memory VFB, 1 - full memory VFB, 2 - preview)"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOutput" }
 	parmtag	{ "vray_pluginattr" "img_rawFileVFB" }
 	parmtag	{ "vray_type" "int" }
@@ -163,6 +175,7 @@
 	help	"Start of animation range in time units"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOutput" }
 	parmtag	{ "vray_pluginattr" "anim_start" }
 	parmtag	{ "vray_type" "double" }
@@ -175,6 +188,7 @@
 	help	"End of animation range in time units"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOutput" }
 	parmtag	{ "vray_pluginattr" "anim_end" }
 	parmtag	{ "vray_type" "double" }
@@ -187,6 +201,7 @@
 	help	"Animation Frame Name Padding"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOutput" }
 	parmtag	{ "vray_pluginattr" "anim_frame_padding" }
 	parmtag	{ "vray_type" "int" }
@@ -199,6 +214,7 @@
 	help	"If true, frame renumbering is used"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOutput" }
 	parmtag	{ "vray_pluginattr" "anim_renumber_on" }
 	parmtag	{ "vray_type" "boolean" }
@@ -211,6 +227,7 @@
 	help	"Start number for renumber frames"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOutput" }
 	parmtag	{ "vray_pluginattr" "anim_renumber_start" }
 	parmtag	{ "vray_type" "float" }
@@ -223,6 +240,7 @@
 	help	"Renumber frames step"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOutput" }
 	parmtag	{ "vray_pluginattr" "anim_renumber_step" }
 	parmtag	{ "vray_type" "float" }
@@ -235,6 +253,7 @@
 	help	"First frame of animation range"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOutput" }
 	parmtag	{ "vray_pluginattr" "anim_ren_frame_start" }
 	parmtag	{ "vray_type" "float" }
@@ -247,6 +266,7 @@
 	help	"The frame number at the start of the animation range"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOutput" }
 	parmtag	{ "vray_pluginattr" "frame_start" }
 	parmtag	{ "vray_type" "int" }
@@ -259,6 +279,7 @@
 	help	"Number of frames per unit time"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOutput" }
 	parmtag	{ "vray_pluginattr" "frames_per_second" }
 	parmtag	{ "vray_type" "float" }
@@ -271,6 +292,7 @@
 	help	"Image output region left coord"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOutput" }
 	parmtag	{ "vray_pluginattr" "rgn_left" }
 	parmtag	{ "vray_type" "float" }
@@ -283,6 +305,7 @@
 	help	"Image output region width"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOutput" }
 	parmtag	{ "vray_pluginattr" "rgn_width" }
 	parmtag	{ "vray_type" "float" }
@@ -295,6 +318,7 @@
 	help	"Image output region top coord"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOutput" }
 	parmtag	{ "vray_pluginattr" "rgn_top" }
 	parmtag	{ "vray_type" "float" }
@@ -307,6 +331,7 @@
 	help	"Image output region height"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOutput" }
 	parmtag	{ "vray_pluginattr" "rgn_height" }
 	parmtag	{ "vray_type" "float" }
@@ -319,6 +344,7 @@
 	help	"Output bitmap width"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOutput" }
 	parmtag	{ "vray_pluginattr" "bmp_width" }
 	parmtag	{ "vray_type" "int" }
@@ -331,6 +357,7 @@
 	help	"Output bitmap height"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOutput" }
 	parmtag	{ "vray_pluginattr" "bmp_height" }
 	parmtag	{ "vray_type" "int" }
@@ -343,6 +370,7 @@
 	help	"Bitmap output region left coord"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOutput" }
 	parmtag	{ "vray_pluginattr" "r_left" }
 	parmtag	{ "vray_type" "int" }
@@ -355,6 +383,7 @@
 	help	"Bitmap output region width"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOutput" }
 	parmtag	{ "vray_pluginattr" "r_width" }
 	parmtag	{ "vray_type" "int" }
@@ -367,6 +396,7 @@
 	help	"Bitmap output region top coord"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOutput" }
 	parmtag	{ "vray_pluginattr" "r_top" }
 	parmtag	{ "vray_type" "int" }
@@ -379,6 +409,7 @@
 	help	"Bitmap output region height"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOutput" }
 	parmtag	{ "vray_pluginattr" "r_height" }
 	parmtag	{ "vray_type" "int" }
@@ -391,6 +422,7 @@
 	help	"true to enable the VFB frame stamp"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOutput" }
 	parmtag	{ "vray_pluginattr" "frame_stamp_enabled" }
 	parmtag	{ "vray_type" "boolean" }
@@ -403,6 +435,7 @@
 	help	"Frame stamp text"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOutput" }
 	parmtag	{ "vray_pluginattr" "frame_stamp_text" }
 	parmtag	{ "vray_type" "String" }
@@ -415,6 +448,7 @@
 	help	"Save render channels in separate folders"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOutput" }
 	parmtag	{ "vray_pluginattr" "relements_separateFolders" }
 	parmtag	{ "vray_type" "boolean" }
@@ -427,6 +461,7 @@
 	help	"true to save the main RGBA elment in a separate folder too, if relements_separateFolders is specified"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOutput" }
 	parmtag	{ "vray_pluginattr" "relements_separate_rgba" }
 	parmtag	{ "vray_type" "boolean" }
@@ -439,6 +474,7 @@
 	help	"Render elements name separator"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOutput" }
 	parmtag	{ "vray_pluginattr" "relements_divider" }
 	parmtag	{ "vray_type" "String" }
@@ -451,6 +487,7 @@
 	help	"Horizontal film offset"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOutput" }
 	parmtag	{ "vray_pluginattr" "film_offset_x" }
 	parmtag	{ "vray_type" "float" }
@@ -463,6 +500,7 @@
 	help	"Vertical film offset"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOutput" }
 	parmtag	{ "vray_pluginattr" "film_offset_y" }
 	parmtag	{ "vray_type" "float" }
@@ -484,6 +522,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_custom_handling" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6" }
     }
@@ -495,6 +534,7 @@
 	help	"If true, Velocity channel will be saved zero base instead of the default 0.5 based"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsOutput" }
 	parmtag	{ "vray_pluginattr" "img_saveVelocityZeroBase" }
 	parmtag	{ "vray_type" "boolean" }
@@ -507,6 +547,7 @@
 	help	"Save render channels in separate files"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_custom_handling" "1" }
     }
 }

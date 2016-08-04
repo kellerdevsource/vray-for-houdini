@@ -20,6 +20,7 @@
 	help	"The base texture"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexModoStencil" }
 	parmtag	{ "vray_pluginattr" "base_tex" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -32,6 +33,7 @@
 	help	"The stencil texture. Where stencil_tex is < 0.5 the result color is taken from base_tex, where stencil_tex is >= 0.5 the result is taken from stenciled_value"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexModoStencil" }
 	parmtag	{ "vray_pluginattr" "stencil_tex" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -44,6 +46,7 @@
 	help	"The result where stencil_tex is >= 0.5 "
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexModoStencil" }
 	parmtag	{ "vray_pluginattr" "stenciled_value" }
 	parmtag	{ "vray_type" "float" }

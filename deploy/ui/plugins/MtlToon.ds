@@ -20,6 +20,7 @@
 	help	"The material that should have toon lines added to it"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "MtlToon" }
 	parmtag	{ "vray_pluginattr" "base_mtl" }
@@ -32,6 +33,7 @@
 	default	{ "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlToon" }
 	parmtag	{ "vray_pluginattr" "lineWidth" }
 	parmtag	{ "vray_type" "float" }
@@ -43,6 +45,7 @@
 	default	{ "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlToon" }
 	parmtag	{ "vray_pluginattr" "lineWidthTex" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -54,6 +57,7 @@
 	default	{ "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlToon" }
 	parmtag	{ "vray_pluginattr" "lineWidthTexMult" }
 	parmtag	{ "vray_type" "float" }
@@ -65,6 +69,7 @@
 	default	{ "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlToon" }
 	parmtag	{ "vray_pluginattr" "opacity" }
 	parmtag	{ "vray_type" "float" }
@@ -76,6 +81,7 @@
 	default	{ "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlToon" }
 	parmtag	{ "vray_pluginattr" "opacityTex" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -87,6 +93,7 @@
 	default	{ "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlToon" }
 	parmtag	{ "vray_pluginattr" "opacityTexMult" }
 	parmtag	{ "vray_type" "float" }
@@ -98,6 +105,7 @@
 	default	{ "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlToon" }
 	parmtag	{ "vray_pluginattr" "distort" }
 	parmtag	{ "vray_type" "float" }
@@ -109,6 +117,7 @@
 	default	{ "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlToon" }
 	parmtag	{ "vray_pluginattr" "distortTex" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -120,6 +129,7 @@
 	default	{ "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlToon" }
 	parmtag	{ "vray_pluginattr" "distortTexMult" }
 	parmtag	{ "vray_type" "float" }
@@ -132,6 +142,7 @@
 	default	{ "0" "0" "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlToon" }
 	parmtag	{ "vray_pluginattr" "lineColor" }
 	parmtag	{ "vray_type" "Color" }
@@ -144,6 +155,7 @@
 	default	{ "0" "0" "0" "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlToon" }
 	parmtag	{ "vray_pluginattr" "lineColorTex" }
 	parmtag	{ "vray_type" "Texture" }
@@ -155,6 +167,7 @@
 	default	{ "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlToon" }
 	parmtag	{ "vray_pluginattr" "lineColorTexMult" }
 	parmtag	{ "vray_type" "float" }
@@ -166,6 +179,7 @@
 	default	{ "0.01" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlToon" }
 	parmtag	{ "vray_pluginattr" "zThreshold" }
 	parmtag	{ "vray_type" "float" }
@@ -177,6 +191,7 @@
 	default	{ "0.01" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlToon" }
 	parmtag	{ "vray_pluginattr" "traceBias" }
 	parmtag	{ "vray_type" "float" }
@@ -188,6 +203,7 @@
 	default	{ "0.01" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlToon" }
 	parmtag	{ "vray_pluginattr" "normalThreshold" }
 	parmtag	{ "vray_type" "float" }
@@ -199,6 +215,7 @@
 	default	{ "1" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlToon" }
 	parmtag	{ "vray_pluginattr" "doSecondary" }
 	parmtag	{ "vray_type" "boolean" }
@@ -210,6 +227,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlToon" }
 	parmtag	{ "vray_pluginattr" "divideByDist" }
 	parmtag	{ "vray_type" "boolean" }
@@ -221,6 +239,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlToon" }
 	parmtag	{ "vray_pluginattr" "doSilhouetteMult" }
 	parmtag	{ "vray_type" "boolean" }
@@ -232,6 +251,7 @@
 	default	{ "1.5" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlToon" }
 	parmtag	{ "vray_pluginattr" "silhouetteMult" }
 	parmtag	{ "vray_type" "float" }
@@ -244,6 +264,7 @@
 	help	"Compensate for V-Ray physical camera exposure"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlToon" }
 	parmtag	{ "vray_pluginattr" "compensateExposure" }
 	parmtag	{ "vray_type" "boolean" }

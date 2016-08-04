@@ -20,6 +20,7 @@
 	default	{ "0" "0" "0" "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexDistanceBetween" }
 	parmtag	{ "vray_pluginattr" "point1" }
 	parmtag	{ "vray_type" "Texture" }
@@ -32,6 +33,7 @@
 	default	{ "0" "0" "0" "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexDistanceBetween" }
 	parmtag	{ "vray_pluginattr" "point2" }
 	parmtag	{ "vray_type" "Texture" }
@@ -39,6 +41,7 @@
     groupsimple {
 	name	"transform1"
 	label	"Transform1"
+	grouptag	{ "cook_dependent" "1" }
 	grouptag	{ "vray_plugin" "TexDistanceBetween" }
 	grouptag	{ "vray_pluginattr" "transform1" }
 	grouptag	{ "vray_type" "TextureTransform" }
@@ -116,6 +119,7 @@
     groupsimple {
 	name	"transform2"
 	label	"Transform2"
+	grouptag	{ "cook_dependent" "1" }
 	grouptag	{ "vray_plugin" "TexDistanceBetween" }
 	grouptag	{ "vray_pluginattr" "transform2" }
 	grouptag	{ "vray_type" "TextureTransform" }

@@ -22,6 +22,7 @@
 	help	"The color value"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexCombineColorLightMtl" }
 	parmtag	{ "vray_pluginattr" "color" }
 	parmtag	{ "vray_type" "Color" }
@@ -35,6 +36,7 @@
 	help	"The texture"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexCombineColorLightMtl" }
 	parmtag	{ "vray_pluginattr" "texture" }
 	parmtag	{ "vray_type" "Texture" }
@@ -47,6 +49,7 @@
 	help	"A multiplier for the final result"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexCombineColorLightMtl" }
 	parmtag	{ "vray_pluginattr" "result_multiplier" }
 	parmtag	{ "vray_type" "float" }

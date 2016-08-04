@@ -19,6 +19,7 @@
 	help	"Base material"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "MtlObjBBox" }
 	parmtag	{ "vray_pluginattr" "base_mtl" }
@@ -33,6 +34,7 @@
 	help	"Min. coordinates for object bounding box"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlObjBBox" }
 	parmtag	{ "vray_pluginattr" "bbox_min" }
 	parmtag	{ "vray_type" "Vector" }
@@ -46,6 +48,7 @@
 	help	"Max. coordinates for object bounding box"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlObjBBox" }
 	parmtag	{ "vray_pluginattr" "bbox_max" }
 	parmtag	{ "vray_type" "Vector" }

@@ -28,6 +28,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6" }
 	parmtag	{ "vray_plugin" "SettingsColorMapping" }
 	parmtag	{ "vray_pluginattr" "type" }
@@ -41,6 +42,7 @@
 	help	"Affect colors belonging to the background"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsColorMapping" }
 	parmtag	{ "vray_pluginattr" "affect_background" }
 	parmtag	{ "vray_type" "boolean" }
@@ -53,6 +55,7 @@
 	help	"Multiplier for dark colors"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsColorMapping" }
 	parmtag	{ "vray_pluginattr" "dark_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -65,6 +68,7 @@
 	help	"Multiplier for bright colors"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsColorMapping" }
 	parmtag	{ "vray_pluginattr" "bright_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -77,6 +81,7 @@
 	help	"Gamma correction for the output image regardless of the color mapping mode"
 	range	{ 0.454 2.2 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsColorMapping" }
 	parmtag	{ "vray_pluginattr" "gamma" }
 	parmtag	{ "vray_type" "float" }
@@ -89,6 +94,7 @@
 	help	"This option controls whether color mapping will be applied to the final image pixels, or to the individual sub-pixel samples"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsColorMapping" }
 	parmtag	{ "vray_pluginattr" "subpixel_mapping" }
 	parmtag	{ "vray_type" "boolean" }
@@ -101,6 +107,7 @@
 	help	"Clamp colors"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsColorMapping" }
 	parmtag	{ "vray_pluginattr" "clamp_output" }
 	parmtag	{ "vray_type" "boolean" }
@@ -114,6 +121,7 @@
 	disablewhen	"{ SettingsColorMapping_clamp_output == 0 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsColorMapping" }
 	parmtag	{ "vray_pluginattr" "clamp_level" }
 	parmtag	{ "vray_type" "float" }
@@ -131,6 +139,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "SettingsColorMapping" }
 	parmtag	{ "vray_pluginattr" "adaptation_only" }
@@ -144,6 +153,7 @@
 	help	"When this option is checked V-Ray will automatically apply the inverse of the Gamma correction that you have set in the Gamma field to all materials in scene"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsColorMapping" }
 	parmtag	{ "vray_pluginattr" "linearWorkflow" }
 	parmtag	{ "vray_type" "boolean" }
@@ -157,6 +167,7 @@
 	help	"Additional image exposure"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsColorMapping" }
 	parmtag	{ "vray_pluginattr" "exposure" }
 	parmtag	{ "vray_type" "Color" }

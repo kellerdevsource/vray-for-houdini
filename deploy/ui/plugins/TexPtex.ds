@@ -19,6 +19,7 @@
 	help	"The Ptex texture file"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "filechooser_pattern" "*.ptx" }
 	parmtag	{ "vray_plugin" "TexPtex" }
 	parmtag	{ "vray_pluginattr" "ptex_file" }
@@ -31,6 +32,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexPtex" }
 	parmtag	{ "vray_pluginattr" "use_image_sequence" }
 	parmtag	{ "vray_type" "boolean" }
@@ -43,6 +45,7 @@
 	disablewhen	"{ use_image_sequence != 1 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexPtex" }
 	parmtag	{ "vray_pluginattr" "image_number" }
 	parmtag	{ "vray_type" "int" }
@@ -55,6 +58,7 @@
 	disablewhen	"{ use_image_sequence != 1 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexPtex" }
 	parmtag	{ "vray_pluginattr" "image_offset" }
 	parmtag	{ "vray_type" "int" }
@@ -66,6 +70,7 @@
 	default	{ "0" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexPtex" }
 	parmtag	{ "vray_pluginattr" "ifl_start_frame" }
 	parmtag	{ "vray_type" "int" }
@@ -77,6 +82,7 @@
 	default	{ "1" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexPtex" }
 	parmtag	{ "vray_pluginattr" "ifl_playback_rate" }
 	parmtag	{ "vray_type" "float" }
@@ -94,6 +100,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "TexPtex" }
 	parmtag	{ "vray_pluginattr" "ifl_end_condition" }
@@ -117,6 +124,7 @@
 	}
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7" }
 	parmtag	{ "vray_plugin" "TexPtex" }
 	parmtag	{ "vray_pluginattr" "filter_type" }
@@ -131,6 +139,7 @@
 	disablewhen	"{ filter_type == 0 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexPtex" }
 	parmtag	{ "vray_pluginattr" "width" }
 	parmtag	{ "vray_type" "float" }
@@ -144,6 +153,7 @@
 	disablewhen	"{ filter_type == 0 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexPtex" }
 	parmtag	{ "vray_pluginattr" "blur" }
 	parmtag	{ "vray_type" "float" }
@@ -157,6 +167,7 @@
 	disablewhen	"{ filter_type != =4 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexPtex" }
 	parmtag	{ "vray_pluginattr" "sharpness" }
 	parmtag	{ "vray_type" "float" }
@@ -170,6 +181,7 @@
 	disablewhen	"{ filter_type == 0 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexPtex" }
 	parmtag	{ "vray_pluginattr" "lerp" }
 	parmtag	{ "vray_type" "boolean" }
@@ -182,6 +194,7 @@
 	help	"Reverses the order of vertices"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexPtex" }
 	parmtag	{ "vray_pluginattr" "reverse_vertices" }
 	parmtag	{ "vray_type" "boolean" }
@@ -194,6 +207,7 @@
 	help	"The size of the texture cache(in MB)"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexPtex" }
 	parmtag	{ "vray_pluginattr" "cache_size" }
 	parmtag	{ "vray_type" "int" }
@@ -207,6 +221,7 @@
 	disablewhen	"{ auto_color != 0 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexPtex" }
 	parmtag	{ "vray_pluginattr" "r_channel" }
 	parmtag	{ "vray_type" "int" }
@@ -220,6 +235,7 @@
 	disablewhen	"{ auto_color != 0 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexPtex" }
 	parmtag	{ "vray_pluginattr" "g_channel" }
 	parmtag	{ "vray_type" "int" }
@@ -233,6 +249,7 @@
 	disablewhen	"{ auto_color != 0 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexPtex" }
 	parmtag	{ "vray_pluginattr" "b_channel" }
 	parmtag	{ "vray_type" "int" }
@@ -246,6 +263,7 @@
 	disablewhen	"{ auto_alpha != 0 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexPtex" }
 	parmtag	{ "vray_pluginattr" "a_channel" }
 	parmtag	{ "vray_type" "int" }
@@ -258,6 +276,7 @@
 	help	"Use automatic color channel selection"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexPtex" }
 	parmtag	{ "vray_pluginattr" "auto_color" }
 	parmtag	{ "vray_type" "boolean" }
@@ -270,6 +289,7 @@
 	help	"Use automatic alpha channel selection"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexPtex" }
 	parmtag	{ "vray_pluginattr" "auto_alpha" }
 	parmtag	{ "vray_type" "boolean" }
@@ -287,6 +307,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "-1,0,1" }
 	parmtag	{ "vray_plugin" "TexPtex" }
 	parmtag	{ "vray_pluginattr" "alpha_type" }
@@ -305,6 +326,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "TexPtex" }
 	parmtag	{ "vray_pluginattr" "color_space" }
@@ -318,6 +340,7 @@
 	disablewhen	"{ color_space != 1 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexPtex" }
 	parmtag	{ "vray_pluginattr" "gamma" }
 	parmtag	{ "vray_type" "float" }
@@ -331,6 +354,7 @@
 	help	"A multiplier for the texture color"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexPtex" }
 	parmtag	{ "vray_pluginattr" "color_gain" }
 	parmtag	{ "vray_type" "Texture" }
@@ -344,6 +368,7 @@
 	help	"An additional offset for the texture color"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexPtex" }
 	parmtag	{ "vray_pluginattr" "color_offset" }
 	parmtag	{ "vray_type" "Texture" }
@@ -357,6 +382,7 @@
 	disablewhen	"{ filter_type == 0 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexPtex" }
 	parmtag	{ "vray_pluginattr" "anisotropic_filtering" }
 	parmtag	{ "vray_type" "boolean" }

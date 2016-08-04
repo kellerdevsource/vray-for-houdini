@@ -22,6 +22,7 @@
 	help	"The first color"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexAColorOp" }
 	parmtag	{ "vray_pluginattr" "color_a" }
 	parmtag	{ "vray_type" "Texture" }
@@ -35,6 +36,7 @@
 	help	"The second color"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexAColorOp" }
 	parmtag	{ "vray_pluginattr" "color_b" }
 	parmtag	{ "vray_type" "Texture" }
@@ -47,6 +49,7 @@
 	help	"Multiplier for the first color"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexAColorOp" }
 	parmtag	{ "vray_pluginattr" "mult_a" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -59,6 +62,7 @@
 	help	"Multiplier for the second color"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexAColorOp" }
 	parmtag	{ "vray_pluginattr" "mult_b" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -71,6 +75,7 @@
 	help	"The alpha for the result; if not specified, the resulting alpha taken from the first color)"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexAColorOp" }
 	parmtag	{ "vray_pluginattr" "result_alpha" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -95,6 +100,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7,8,9" }
 	parmtag	{ "vray_plugin" "TexAColorOp" }
 	parmtag	{ "vray_pluginattr" "mode" }

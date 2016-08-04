@@ -29,6 +29,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1" }
 	    parmtag	{ "vray_plugin" "TexColorSwitch" }
 	    parmtag	{ "vray_pluginattr" "compatibility_with" }
@@ -47,6 +48,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1,2" }
 	    parmtag	{ "vray_plugin" "TexColorSwitch" }
 	    parmtag	{ "vray_pluginattr" "alpha_from_intensity" }
@@ -60,6 +62,7 @@
 	    help	"If true, the resulting texture color will be inverted"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColorSwitch" }
 	    parmtag	{ "vray_pluginattr" "invert" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -73,6 +76,7 @@
 	    disablewhen	"{ invert != 1 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColorSwitch" }
 	    parmtag	{ "vray_pluginattr" "invert_alpha" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -86,6 +90,7 @@
 	    help	"A multiplier for the texture color"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColorSwitch" }
 	    parmtag	{ "vray_pluginattr" "color_mult" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -99,6 +104,7 @@
 	    help	"An additional offset for the texture color"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColorSwitch" }
 	    parmtag	{ "vray_pluginattr" "color_offset" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -111,6 +117,7 @@
 	    help	"A multiplier for the texture alpha"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColorSwitch" }
 	    parmtag	{ "vray_pluginattr" "alpha_mult" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -123,6 +130,7 @@
 	    help	"An additional offset for the texture alpha"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColorSwitch" }
 	    parmtag	{ "vray_pluginattr" "alpha_offset" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -136,6 +144,7 @@
 	    help	"The color when there are no valid uvw coordinates"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColorSwitch" }
 	    parmtag	{ "vray_pluginattr" "nouvw_color" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -149,6 +158,7 @@
 	    help	"Default color to be used when the Switch value does not match the Value of any of the Cases"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColorSwitch" }
 	    parmtag	{ "vray_pluginattr" "default_color" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -161,6 +171,7 @@
 	    help	"Accepts a varying set of integer values that control which Case's Input gets evaluated"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColorSwitch" }
 	    parmtag	{ "vray_pluginattr" "switch_value" }
 	    parmtag	{ "vray_type" "TextureInt" }
@@ -173,6 +184,7 @@
 	    default	{ "0" "0" "0" "0" }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColorSwitch" }
 	    parmtag	{ "vray_pluginattr" "color0" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -184,6 +196,7 @@
 	    default	{ "0" }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColorSwitch" }
 	    parmtag	{ "vray_pluginattr" "value0" }
 	    parmtag	{ "vray_type" "int" }
@@ -196,6 +209,7 @@
 	    default	{ "0" "0" "0" "0" }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColorSwitch" }
 	    parmtag	{ "vray_pluginattr" "color1" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -207,6 +221,7 @@
 	    default	{ "1" }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColorSwitch" }
 	    parmtag	{ "vray_pluginattr" "value1" }
 	    parmtag	{ "vray_type" "int" }
@@ -219,6 +234,7 @@
 	    default	{ "0" "0" "0" "0" }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColorSwitch" }
 	    parmtag	{ "vray_pluginattr" "color2" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -230,6 +246,7 @@
 	    default	{ "2" }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColorSwitch" }
 	    parmtag	{ "vray_pluginattr" "value2" }
 	    parmtag	{ "vray_type" "int" }
@@ -242,6 +259,7 @@
 	    default	{ "0" "0" "0" "0" }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColorSwitch" }
 	    parmtag	{ "vray_pluginattr" "color3" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -253,6 +271,7 @@
 	    default	{ "3" }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColorSwitch" }
 	    parmtag	{ "vray_pluginattr" "value3" }
 	    parmtag	{ "vray_type" "int" }
@@ -265,6 +284,7 @@
 	    default	{ "0" "0" "0" "0" }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColorSwitch" }
 	    parmtag	{ "vray_pluginattr" "color4" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -276,6 +296,7 @@
 	    default	{ "4" }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColorSwitch" }
 	    parmtag	{ "vray_pluginattr" "value4" }
 	    parmtag	{ "vray_type" "int" }
@@ -288,6 +309,7 @@
 	    default	{ "0" "0" "0" "0" }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColorSwitch" }
 	    parmtag	{ "vray_pluginattr" "color5" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -299,6 +321,7 @@
 	    default	{ "5" }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColorSwitch" }
 	    parmtag	{ "vray_pluginattr" "value5" }
 	    parmtag	{ "vray_type" "int" }
@@ -311,6 +334,7 @@
 	    default	{ "0" "0" "0" "0" }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColorSwitch" }
 	    parmtag	{ "vray_pluginattr" "color6" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -322,6 +346,7 @@
 	    default	{ "6" }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColorSwitch" }
 	    parmtag	{ "vray_pluginattr" "value6" }
 	    parmtag	{ "vray_type" "int" }
@@ -334,6 +359,7 @@
 	    default	{ "0" "0" "0" "0" }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColorSwitch" }
 	    parmtag	{ "vray_pluginattr" "color7" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -345,6 +371,7 @@
 	    default	{ "7" }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexColorSwitch" }
 	    parmtag	{ "vray_pluginattr" "value7" }
 	    parmtag	{ "vray_type" "int" }

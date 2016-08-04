@@ -20,6 +20,7 @@
 	help	"Red channel"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexRgbaCombine" }
 	parmtag	{ "vray_pluginattr" "red" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -32,6 +33,7 @@
 	help	"Green channel"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexRgbaCombine" }
 	parmtag	{ "vray_pluginattr" "green" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -44,6 +46,7 @@
 	help	"Blue channel"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexRgbaCombine" }
 	parmtag	{ "vray_pluginattr" "blue" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -56,6 +59,7 @@
 	help	"Alpha channel"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexRgbaCombine" }
 	parmtag	{ "vray_pluginattr" "alpha" }
 	parmtag	{ "vray_type" "TextureFloat" }

@@ -29,6 +29,7 @@
 	}
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5" }
 	parmtag	{ "vray_linked_only" "1" }
 	parmtag	{ "vray_plugin" "TexCondition" }
@@ -43,6 +44,7 @@
 	help	"The first number to compare"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexCondition" }
 	parmtag	{ "vray_pluginattr" "op_a" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -55,6 +57,7 @@
 	help	"The second number to compare"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexCondition" }
 	parmtag	{ "vray_pluginattr" "op_b" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -68,6 +71,7 @@
 	help	"The color to return if the condition is true"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexCondition" }
 	parmtag	{ "vray_pluginattr" "result_true" }
 	parmtag	{ "vray_type" "Texture" }
@@ -81,6 +85,7 @@
 	help	"The color to return if the condition is false"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexCondition" }
 	parmtag	{ "vray_pluginattr" "result_false" }
 	parmtag	{ "vray_type" "Texture" }

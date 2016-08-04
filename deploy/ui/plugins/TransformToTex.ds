@@ -16,6 +16,7 @@
     groupsimple {
 	name	"input"
 	label	"Input"
+	grouptag	{ "cook_dependent" "1" }
 	grouptag	{ "vray_plugin" "TransformToTex" }
 	grouptag	{ "vray_pluginattr" "input" }
 	grouptag	{ "vray_type" "TextureTransform" }

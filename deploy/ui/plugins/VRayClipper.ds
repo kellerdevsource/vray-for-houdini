@@ -19,6 +19,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VRayClipper" }
 	parmtag	{ "vray_pluginattr" "enabled" }
 	parmtag	{ "vray_type" "boolean" }
@@ -31,6 +32,7 @@
 	help	"If enabled, the clipper will affect area light sources as well"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VRayClipper" }
 	parmtag	{ "vray_pluginattr" "affect_light" }
 	parmtag	{ "vray_type" "boolean" }
@@ -43,6 +45,7 @@
 	help	"If enabled, the clipper will affect objects as they are directly seen by the camera, but they will appear unchanged to reflection/refraction/GI rays"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VRayClipper" }
 	parmtag	{ "vray_pluginattr" "only_camera_rays" }
 	parmtag	{ "vray_type" "boolean" }
@@ -55,6 +58,7 @@
 	help	"Enables or disables the clipping of lights geometry (for example a mesh light)"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VRayClipper" }
 	parmtag	{ "vray_pluginattr" "clip_lights" }
 	parmtag	{ "vray_type" "boolean" }
@@ -67,6 +71,7 @@
 	help	"When enabled, the clipper will use the material of each clipped object to fill in the resulting holes. When this is off, the material applied to the clipper object itself will be used"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VRayClipper" }
 	parmtag	{ "vray_pluginattr" "use_obj_mtl" }
 	parmtag	{ "vray_type" "boolean" }
@@ -78,6 +83,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VRayClipper" }
 	parmtag	{ "vray_pluginattr" "set_material_id" }
 	parmtag	{ "vray_type" "boolean" }
@@ -89,6 +95,7 @@
 	default	{ "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VRayClipper" }
 	parmtag	{ "vray_pluginattr" "material_id" }
 	parmtag	{ "vray_type" "int" }
@@ -101,6 +108,7 @@
 	help	"List of node plugins to consider for inclusion/exclusion"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "VRayClipper" }
 	parmtag	{ "vray_pluginattr" "exclusion_nodes" }
@@ -118,6 +126,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "VRayClipper" }
 	parmtag	{ "vray_pluginattr" "exclusion_mode" }
@@ -126,6 +135,7 @@
     groupsimple {
 	name	"transform"
 	label	"Transform"
+	grouptag	{ "cook_dependent" "1" }
 	grouptag	{ "vray_plugin" "VRayClipper" }
 	grouptag	{ "vray_pluginattr" "transform" }
 	grouptag	{ "vray_type" "Transform" }
@@ -207,6 +217,7 @@
 	default	{ "" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "VRayClipper" }
 	parmtag	{ "vray_pluginattr" "material" }
@@ -219,6 +230,7 @@
 	default	{ "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VRayClipper" }
 	parmtag	{ "vray_pluginattr" "object_id" }
 	parmtag	{ "vray_type" "int" }
@@ -231,6 +243,7 @@
 	help	"Mesh plugin to use as a clipping mesh instead of the simple plane"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "VRayClipper" }
 	parmtag	{ "vray_pluginattr" "clip_mesh" }
@@ -248,6 +261,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "VRayClipper" }
 	parmtag	{ "vray_pluginattr" "invert_inside" }

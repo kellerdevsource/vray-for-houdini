@@ -20,6 +20,7 @@
 	help	"The velocity texture multiplier"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexBifrostVVMix" }
 	parmtag	{ "vray_pluginattr" "velocity_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -32,6 +33,7 @@
 	help	"The vorticity texture multiplier"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexBifrostVVMix" }
 	parmtag	{ "vray_pluginattr" "vorticity_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -45,6 +47,7 @@
 	help	"The vorticity texture. This must be connected to the bifrostVelocity color set of the mesh"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexBifrostVVMix" }
 	parmtag	{ "vray_pluginattr" "velocity_tex" }
 	parmtag	{ "vray_type" "Texture" }
@@ -58,6 +61,7 @@
 	help	"The vorticity texture. This must be connected to the bifrostVorticity color set of the mesh"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexBifrostVVMix" }
 	parmtag	{ "vray_pluginattr" "vorticity_tex" }
 	parmtag	{ "vray_type" "Texture" }

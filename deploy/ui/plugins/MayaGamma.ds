@@ -22,6 +22,7 @@
 	help	"The input color"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MayaGamma" }
 	parmtag	{ "vray_pluginattr" "input" }
 	parmtag	{ "vray_type" "Texture" }

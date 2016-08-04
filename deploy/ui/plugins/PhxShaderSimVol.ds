@@ -19,6 +19,7 @@
 	help	"Plugins that supports PhoenixSimInterface and can be used to load a phoenix frame"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "PhxShaderSimVol" }
 	parmtag	{ "vray_pluginattr" "phoenix_sim" }

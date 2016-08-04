@@ -20,6 +20,7 @@
 	default	{ "1" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexRemap" }
 	parmtag	{ "vray_pluginattr" "input_value" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -32,6 +33,7 @@
 	default	{ "0" "0" "0" "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexRemap" }
 	parmtag	{ "vray_pluginattr" "input_color" }
 	parmtag	{ "vray_type" "Texture" }
@@ -49,6 +51,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "TexRemap" }
 	parmtag	{ "vray_pluginattr" "type" }
@@ -61,6 +64,7 @@
 	default	{ "0" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexRemap" }
 	parmtag	{ "vray_pluginattr" "input_bias" }
 	parmtag	{ "vray_type" "float" }
@@ -72,6 +76,7 @@
 	default	{ "0" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexRemap" }
 	parmtag	{ "vray_pluginattr" "input_min" }
 	parmtag	{ "vray_type" "float" }
@@ -83,6 +88,7 @@
 	default	{ "1" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexRemap" }
 	parmtag	{ "vray_pluginattr" "input_max" }
 	parmtag	{ "vray_type" "float" }
@@ -94,6 +100,7 @@
 	default	{ "0" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexRemap" }
 	parmtag	{ "vray_pluginattr" "output_min" }
 	parmtag	{ "vray_type" "float" }
@@ -105,6 +112,7 @@
 	default	{ "1" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexRemap" }
 	parmtag	{ "vray_pluginattr" "output_max" }
 	parmtag	{ "vray_type" "float" }
@@ -117,6 +125,7 @@
 	help	"the given float values"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexRemap" }
 	parmtag	{ "vray_pluginattr" "float_values" }
 	parmtag	{ "vray_type" "List<TextureFloat>" }
@@ -135,6 +144,7 @@
 	}
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "TexRemap" }
 	parmtag	{ "vray_pluginattr" "float_types" }
@@ -148,6 +158,7 @@
 	help	"the given values for the red channel"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexRemap" }
 	parmtag	{ "vray_pluginattr" "red_values" }
 	parmtag	{ "vray_type" "List<TextureFloat>" }
@@ -166,6 +177,7 @@
 	}
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "TexRemap" }
 	parmtag	{ "vray_pluginattr" "red_types" }
@@ -179,6 +191,7 @@
 	help	"the given values for the green channel"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexRemap" }
 	parmtag	{ "vray_pluginattr" "green_values" }
 	parmtag	{ "vray_type" "List<TextureFloat>" }
@@ -197,6 +210,7 @@
 	}
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "TexRemap" }
 	parmtag	{ "vray_pluginattr" "green_types" }
@@ -210,6 +224,7 @@
 	help	"the given values for the blue channel"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexRemap" }
 	parmtag	{ "vray_pluginattr" "blue_values" }
 	parmtag	{ "vray_type" "List<TextureFloat>" }
@@ -228,6 +243,7 @@
 	}
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "TexRemap" }
 	parmtag	{ "vray_pluginattr" "blue_types" }
@@ -241,6 +257,7 @@
 	help	"the given values for the hue channel"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexRemap" }
 	parmtag	{ "vray_pluginattr" "hue_values" }
 	parmtag	{ "vray_type" "List<TextureFloat>" }
@@ -259,6 +276,7 @@
 	}
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "TexRemap" }
 	parmtag	{ "vray_pluginattr" "hue_types" }
@@ -272,6 +290,7 @@
 	help	"the given values for the saturation channel"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexRemap" }
 	parmtag	{ "vray_pluginattr" "saturation_values" }
 	parmtag	{ "vray_type" "List<TextureFloat>" }
@@ -290,6 +309,7 @@
 	}
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "TexRemap" }
 	parmtag	{ "vray_pluginattr" "saturation_types" }
@@ -303,6 +323,7 @@
 	help	"the given values for the value channel"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexRemap" }
 	parmtag	{ "vray_pluginattr" "value_values" }
 	parmtag	{ "vray_type" "List<TextureFloat>" }
@@ -321,6 +342,7 @@
 	}
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "TexRemap" }
 	parmtag	{ "vray_pluginattr" "value_types" }
@@ -334,6 +356,7 @@
 	help	"If true, the resulting alpha is the color intensity; otherwise the alpha is taken from the colors"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexRemap" }
 	parmtag	{ "vray_pluginattr" "alpha_from_intensity" }
 	parmtag	{ "vray_type" "boolean" }
@@ -345,6 +368,7 @@
 	default	{ "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexRemap" }
 	parmtag	{ "vray_pluginattr" "input_bias_tex" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -356,6 +380,7 @@
 	default	{ "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexRemap" }
 	parmtag	{ "vray_pluginattr" "input_min_tex" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -367,6 +392,7 @@
 	default	{ "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexRemap" }
 	parmtag	{ "vray_pluginattr" "input_max_tex" }
 	parmtag	{ "vray_type" "TextureFloat" }

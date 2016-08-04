@@ -19,6 +19,7 @@
 	help	"The number by which a 3d distance must be multiplied to covert it into meters"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsUnitsInfo" }
 	parmtag	{ "vray_pluginattr" "meters_scale" }
 	parmtag	{ "vray_type" "float" }
@@ -31,6 +32,7 @@
 	help	"The number by which the power of photometric lights should be scaled when rendering"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsUnitsInfo" }
 	parmtag	{ "vray_pluginattr" "photometric_scale" }
 	parmtag	{ "vray_type" "float" }
@@ -44,6 +46,7 @@
 	help	"The 'up' direction for the scene"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsUnitsInfo" }
 	parmtag	{ "vray_pluginattr" "scene_upDir" }
 	parmtag	{ "vray_type" "Vector" }
@@ -56,6 +59,7 @@
 	help	"The number by which a scene time unit must be multiplied to convert it to seconds"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsUnitsInfo" }
 	parmtag	{ "vray_pluginattr" "seconds_scale" }
 	parmtag	{ "vray_type" "float" }

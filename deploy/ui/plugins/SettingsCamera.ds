@@ -32,6 +32,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7,8,9,10" }
 	parmtag	{ "vray_plugin" "SettingsCamera" }
 	parmtag	{ "vray_pluginattr" "type" }
@@ -46,6 +47,7 @@
 	disablewhen	"{ SettingsCamera_type != 3 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsCamera" }
 	parmtag	{ "vray_pluginattr" "height" }
 	parmtag	{ "vray_type" "float" }
@@ -59,6 +61,7 @@
 	disablewhen	"{ SettingsCamera_type != 5 } { SettingsCamera_auto_fit != 0 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsCamera" }
 	parmtag	{ "vray_pluginattr" "dist" }
 	parmtag	{ "vray_type" "float" }
@@ -71,6 +74,7 @@
 	help	"Field of view; if negative, the field of view will not be modified"
 	range	{ 45 180 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsCamera" }
 	parmtag	{ "vray_pluginattr" "fov" }
 	parmtag	{ "vray_type" "float" }
@@ -85,6 +89,7 @@
 	disablewhen	"{ SettingsCamera_type != 5 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsCamera" }
 	parmtag	{ "vray_pluginattr" "auto_fit" }
 	parmtag	{ "vray_type" "boolean" }
@@ -98,6 +103,7 @@
 	disablewhen	"{ SettingsCamera_type != 5 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsCamera" }
 	parmtag	{ "vray_pluginattr" "curve" }
 	parmtag	{ "vray_type" "float" }
@@ -111,6 +117,7 @@
 	hidewhen	"{ SettingsCamera_dont_affect_settings != 2 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsCamera" }
 	parmtag	{ "vray_pluginattr" "dont_affect_settings" }
 	parmtag	{ "vray_type" "boolean" }
@@ -123,6 +130,7 @@
 	help	"Used only to force a re-export of the image plane geometry in RT rendering"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "SettingsCamera" }
 	parmtag	{ "vray_pluginattr" "image_planes" }
@@ -136,6 +144,7 @@
 	help	"Override FOV"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_custom_handling" "1" }
     }
 }

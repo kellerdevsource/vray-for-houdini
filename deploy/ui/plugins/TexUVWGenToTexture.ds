@@ -20,6 +20,7 @@
 	default	{ "" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "TexUVWGenToTexture" }
 	parmtag	{ "vray_pluginattr" "input" }

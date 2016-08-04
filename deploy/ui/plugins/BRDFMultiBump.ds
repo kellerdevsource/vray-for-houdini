@@ -20,6 +20,7 @@
 	help	"Base BRDF"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "BRDFMultiBump" }
 	parmtag	{ "vray_pluginattr" "base_brdf" }
@@ -34,6 +35,7 @@
 	help	"Bump texture"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFMultiBump" }
 	parmtag	{ "vray_pluginattr" "bump_tex_0" }
 	parmtag	{ "vray_type" "Texture" }
@@ -46,6 +48,7 @@
 	help	"Bump multipler 0"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFMultiBump" }
 	parmtag	{ "vray_pluginattr" "bump_mult_0" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -67,6 +70,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6" }
 	parmtag	{ "vray_plugin" "BRDFMultiBump" }
 	parmtag	{ "vray_pluginattr" "map_type_0" }
@@ -81,6 +85,7 @@
 	help	"Bump texture"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFMultiBump" }
 	parmtag	{ "vray_pluginattr" "bump_tex_1" }
 	parmtag	{ "vray_type" "Texture" }
@@ -93,6 +98,7 @@
 	help	"Bump multipler 0"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFMultiBump" }
 	parmtag	{ "vray_pluginattr" "bump_mult_1" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -114,6 +120,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6" }
 	parmtag	{ "vray_plugin" "BRDFMultiBump" }
 	parmtag	{ "vray_pluginattr" "map_type_1" }
@@ -128,6 +135,7 @@
 	help	"Bump texture"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFMultiBump" }
 	parmtag	{ "vray_pluginattr" "bump_tex_2" }
 	parmtag	{ "vray_type" "Texture" }
@@ -140,6 +148,7 @@
 	help	"Bump multipler 0"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFMultiBump" }
 	parmtag	{ "vray_pluginattr" "bump_mult_2" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -161,6 +170,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6" }
 	parmtag	{ "vray_plugin" "BRDFMultiBump" }
 	parmtag	{ "vray_pluginattr" "map_type_2" }
@@ -175,6 +185,7 @@
 	help	"Bump texture"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFMultiBump" }
 	parmtag	{ "vray_pluginattr" "bump_tex_3" }
 	parmtag	{ "vray_type" "Texture" }
@@ -187,6 +198,7 @@
 	help	"Bump multipler 0"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFMultiBump" }
 	parmtag	{ "vray_pluginattr" "bump_mult_3" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -208,6 +220,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6" }
 	parmtag	{ "vray_plugin" "BRDFMultiBump" }
 	parmtag	{ "vray_pluginattr" "map_type_3" }
@@ -221,6 +234,7 @@
 	help	"The uvw generator for the normal map texture when map_type is 1"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "BRDFMultiBump" }
 	parmtag	{ "vray_pluginattr" "normal_uvwgen" }

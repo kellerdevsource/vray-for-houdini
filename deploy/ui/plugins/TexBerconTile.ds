@@ -28,6 +28,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "compatibility_with" }
@@ -46,6 +47,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1,2" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "alpha_from_intensity" }
@@ -59,6 +61,7 @@
 	    help	"If true, the resulting texture color will be inverted"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "invert" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -72,6 +75,7 @@
 	    disablewhen	"{ invert != 1 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "invert_alpha" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -85,6 +89,7 @@
 	    help	"A multiplier for the texture color"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "color_mult" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -98,6 +103,7 @@
 	    help	"An additional offset for the texture color"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "color_offset" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -110,6 +116,7 @@
 	    help	"A multiplier for the texture alpha"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "alpha_mult" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -122,6 +129,7 @@
 	    help	"An additional offset for the texture alpha"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "alpha_offset" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -135,6 +143,7 @@
 	    help	"The color when there are no valid uvw coordinates"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "nouvw_color" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -153,6 +162,7 @@
 	    help	"The uvw generator for the texture"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "oprelative" "." }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "uvwgen" }
@@ -171,6 +181,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1,2" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "placement_type" }
@@ -185,6 +196,7 @@
 	    disablewhen	"{ placement_type != 1 placement_type != 2 }"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "u" }
 	    parmtag	{ "vray_type" "float" }
@@ -198,6 +210,7 @@
 	    disablewhen	"{ placement_type != 1 placement_type != 2 }"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "v" }
 	    parmtag	{ "vray_type" "float" }
@@ -211,6 +224,7 @@
 	    disablewhen	"{ placement_type != 1 placement_type != 2 }"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "w" }
 	    parmtag	{ "vray_type" "float" }
@@ -224,6 +238,7 @@
 	    disablewhen	"{ placement_type != 1 placement_type != 2 }"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "h" }
 	    parmtag	{ "vray_type" "float" }
@@ -237,6 +252,7 @@
 	    disablewhen	"{ placement_type != 2 }"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "jitter" }
 	    parmtag	{ "vray_type" "float" }
@@ -250,6 +266,7 @@
 	    disablewhen	"{ placement_type != 2 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "tile_u" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -263,6 +280,7 @@
 	    disablewhen	"{ placement_type != 2 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "tile_v" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -275,6 +293,7 @@
 	    help	"If true the noise is enabled"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "uv_noise_on" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -288,6 +307,7 @@
 	    disablewhen	"{ uv_noise_on != 1 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "uv_noise_animate" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -301,6 +321,7 @@
 	    disablewhen	"{ uv_noise_on != 1 }"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "uv_noise_amount" }
 	    parmtag	{ "vray_type" "float" }
@@ -314,6 +335,7 @@
 	    disablewhen	"{ uv_noise_on != 1 }"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "uv_noise_levels" }
 	    parmtag	{ "vray_type" "float" }
@@ -327,6 +349,7 @@
 	    disablewhen	"{ uv_noise_on != 1 }"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "uv_noise_size" }
 	    parmtag	{ "vray_type" "float" }
@@ -340,6 +363,7 @@
 	    disablewhen	"{ uv_noise_on != 1 } { uv_noise_animate != 1 }"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "un_noise_phase" }
 	    parmtag	{ "vray_type" "float" }
@@ -353,6 +377,7 @@
 	    help	"noise color 1"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "noise_color1" }
 	    parmtag	{ "vray_type" "Color" }
@@ -366,6 +391,7 @@
 	    help	"noise color 2"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "noise_color2" }
 	    parmtag	{ "vray_type" "Color" }
@@ -380,6 +406,7 @@
 	    disablewhen	"{ lock_edge != 0 }"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "noise_color3" }
 	    parmtag	{ "vray_type" "Color" }
@@ -393,6 +420,7 @@
 	    help	"noise map 1"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "noise_map1" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -406,6 +434,7 @@
 	    help	"noise map 2"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "noise_map2" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -418,6 +447,7 @@
 	    help	"lock edge"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "lock_edge" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -432,6 +462,7 @@
 	    disablewhen	"{ lock_edge != 0 }"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "noise_map3" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -450,6 +481,7 @@
 	    help	"tile size"
 	    range	{ 0 1e+06 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "tile_size" }
 	    parmtag	{ "vray_type" "float" }
@@ -476,6 +508,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7,8,9,10,11" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "tile_style" }
@@ -489,6 +522,7 @@
 	    help	"tile width"
 	    range	{ 0 1e+06 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "tile_width" }
 	    parmtag	{ "vray_type" "float" }
@@ -502,6 +536,7 @@
 	    disablewhen	"{ tile_style == 1 }"
 	    range	{ 0 1e+06 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "tile_height" }
 	    parmtag	{ "vray_type" "float" }
@@ -514,6 +549,7 @@
 	    help	"edge width"
 	    range	{ 0 1e+06 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "edge_width" }
 	    parmtag	{ "vray_type" "float" }
@@ -526,6 +562,7 @@
 	    help	"edge height"
 	    range	{ 0 1e+06 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "edge_height" }
 	    parmtag	{ "vray_type" "float" }
@@ -539,6 +576,7 @@
 	    disablewhen	"{ tile_style == 1 }"
 	    range	{ 0 100 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "tile_width2" }
 	    parmtag	{ "vray_type" "float" }
@@ -552,6 +590,7 @@
 	    disablewhen	"{ tile_style == 1 }"
 	    range	{ 0 100 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "tile_height2" }
 	    parmtag	{ "vray_type" "float" }
@@ -564,6 +603,7 @@
 	    help	"edge width 2"
 	    range	{ 0 100 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "edge_width2" }
 	    parmtag	{ "vray_type" "float" }
@@ -576,6 +616,7 @@
 	    help	"edge height 2"
 	    range	{ 0 100 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "edge_height2" }
 	    parmtag	{ "vray_type" "float" }
@@ -594,6 +635,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "soften" }
@@ -608,6 +650,7 @@
 	    disablewhen	"{ soften == 0 }"
 	    range	{ 0 1e+06 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "soften_rad" }
 	    parmtag	{ "vray_type" "float" }
@@ -620,6 +663,7 @@
 	    help	"round"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "round" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -633,6 +677,7 @@
 	    disablewhen	"{ round != 1 }"
 	    range	{ 0 1e+06 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "round_rad" }
 	    parmtag	{ "vray_type" "float" }
@@ -651,6 +696,7 @@
 	    help	"map uv"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "map_uv" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -664,6 +710,7 @@
 	    disablewhen	"{ map_uv != 1 }"
 	    range	{ 1 99 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "uv_channel" }
 	    parmtag	{ "vray_type" "int" }
@@ -685,6 +732,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1,2,3,4,5" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "auto" }
@@ -699,6 +747,7 @@
 	    disablewhen	"{ map_uv != 1 }"
 	    range	{ 0 1e+06 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "rand_X" }
 	    parmtag	{ "vray_type" "float" }
@@ -712,6 +761,7 @@
 	    disablewhen	"{ map_uv != 1 }"
 	    range	{ 0 1e+06 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "rand_Y" }
 	    parmtag	{ "vray_type" "float" }
@@ -725,6 +775,7 @@
 	    disablewhen	"{ map_uv != 1 }"
 	    range	{ 0 1e+06 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "rand_SX" }
 	    parmtag	{ "vray_type" "float" }
@@ -738,6 +789,7 @@
 	    disablewhen	"{ map_uv != 1 } { lock != 0 }"
 	    range	{ 0 1e+06 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "rand_SY" }
 	    parmtag	{ "vray_type" "float" }
@@ -751,6 +803,7 @@
 	    disablewhen	"{ map_uv != 1 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "lock" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -770,6 +823,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "rot_uv" }
@@ -784,6 +838,7 @@
 	    disablewhen	"{ map_uv != 1 } { rot_uv != 3 }"
 	    range	{ 0 180 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "rand_rot" }
 	    parmtag	{ "vray_type" "float" }
@@ -797,6 +852,7 @@
 	    disablewhen	"{ map_uv != 1 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "flip_X" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -810,6 +866,7 @@
 	    disablewhen	"{ map_uv != 1 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "flip_Y" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -822,6 +879,7 @@
 	    help	"center"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "center" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -835,6 +893,7 @@
 	    disablewhen	"{ center != 1 }"
 	    range	{ 1 99 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "center_channel" }
 	    parmtag	{ "vray_type" "int" }
@@ -847,6 +906,7 @@
 	    help	"random Z"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "rand_Z" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -865,6 +925,7 @@
 	    help	"offset, height, width1, width2, ... / offset, height, width1 ... Negative offset will be multiplied by row number try: -.25,1,1"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "pattern" }
 	    parmtag	{ "vray_type" "String" }
@@ -883,6 +944,7 @@
 	    help	"use distortion"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "use_dist" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -896,6 +958,7 @@
 	    disablewhen	"{ use_dist != 1 }"
 	    range	{ 0 1000 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "dist_str" }
 	    parmtag	{ "vray_type" "float" }
@@ -910,6 +973,7 @@
 	    disablewhen	"{ use_dist != 1 }"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "dist_map" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -924,6 +988,7 @@
 	    disablewhen	"{ use_dist != 1 }"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "dist_map2" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -943,6 +1008,7 @@
 	    help	"texture for soften radius"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "tex_soften_rad" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -956,6 +1022,7 @@
 	    help	"texture for round radius"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "tex_round_rad" }
 	    parmtag	{ "vray_type" "Texture" }

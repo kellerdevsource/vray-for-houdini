@@ -20,6 +20,7 @@
 	help	"Operation: Add(), Subtract(), Multiply(), Divide(), Minimum(), Maximum()"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexScalarMathBasic" }
 	parmtag	{ "vray_pluginattr" "op" }
 	parmtag	{ "vray_type" "int" }
@@ -32,6 +33,7 @@
 	help	"The first scalar input"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexScalarMathBasic" }
 	parmtag	{ "vray_pluginattr" "input1" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -44,6 +46,7 @@
 	help	"The second scalar input"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexScalarMathBasic" }
 	parmtag	{ "vray_pluginattr" "input2" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -56,6 +59,7 @@
 	help	"Specifies the maximum displacement value.  If the displacement value is higher than the Max Displacement value, displacement will be clipped"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexScalarMathBasic" }
 	parmtag	{ "vray_pluginattr" "max_displacement" }
 	parmtag	{ "vray_type" "float" }

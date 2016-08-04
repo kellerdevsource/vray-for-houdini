@@ -19,6 +19,7 @@
 	default	{ "ColorChannel" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderChannelColorModo" }
 	parmtag	{ "vray_pluginattr" "name" }
 	parmtag	{ "vray_type" "String" }
@@ -30,6 +31,7 @@
 	default	{ "1000" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderChannelColorModo" }
 	parmtag	{ "vray_pluginattr" "alias" }
 	parmtag	{ "vray_type" "int" }
@@ -42,6 +44,7 @@
 	help	"true to apply color mapping to the channel; false otherwise"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderChannelColorModo" }
 	parmtag	{ "vray_pluginattr" "color_mapping" }
 	parmtag	{ "vray_type" "boolean" }
@@ -53,6 +56,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderChannelColorModo" }
 	parmtag	{ "vray_pluginattr" "consider_for_aa" }
 	parmtag	{ "vray_type" "boolean" }
@@ -64,6 +68,7 @@
 	default	{ "1" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderChannelColorModo" }
 	parmtag	{ "vray_pluginattr" "filtering" }
 	parmtag	{ "vray_type" "boolean" }
@@ -76,6 +81,7 @@
 	help	"true if raw channels should be derived from the respective color and filter channel"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderChannelColorModo" }
 	parmtag	{ "vray_pluginattr" "derive_raw_channels" }
 	parmtag	{ "vray_type" "boolean" }
@@ -88,6 +94,7 @@
 	help	"False to disable ALL VFB color corrections(sRGB, curves, white balance, etc...) when saving the channel data to a file or showing it on a display. True to apply VFB color corrections when saving the channel data to a file or showing it on a display. If true some color corrections might still be disabled, based on the type of file being saved"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderChannelColorModo" }
 	parmtag	{ "vray_pluginattr" "vfb_color_corrections" }
 	parmtag	{ "vray_type" "boolean" }
@@ -100,6 +107,7 @@
 	help	"USE WITH CAUTION - setting this to true can increase render times significantly ! Used only when consider_for_aa is true"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderChannelColorModo" }
 	parmtag	{ "vray_pluginattr" "aa_override_foreground_intensity" }
 	parmtag	{ "vray_type" "boolean" }
@@ -112,6 +120,7 @@
 	help	"This should be setup by the exporter. It should have a unique value for each render element that has it enabled. And the minimum difference between these values should be big enough to achieve good AA on black/white edges"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderChannelColorModo" }
 	parmtag	{ "vray_pluginattr" "aa_foreground_intensity" }
 	parmtag	{ "vray_type" "float" }

@@ -19,6 +19,7 @@
 	help	"Channel name"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderChannelZDepth" }
 	parmtag	{ "vray_pluginattr" "name" }
 	parmtag	{ "vray_type" "String" }
@@ -31,6 +32,7 @@
 	help	"From camera"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderChannelZDepth" }
 	parmtag	{ "vray_pluginattr" "depth_from_camera" }
 	parmtag	{ "vray_type" "boolean" }
@@ -43,6 +45,7 @@
 	help	"Clamp"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderChannelZDepth" }
 	parmtag	{ "vray_pluginattr" "depth_clamp" }
 	parmtag	{ "vray_type" "boolean" }
@@ -55,6 +58,7 @@
 	help	"Filtering"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderChannelZDepth" }
 	parmtag	{ "vray_pluginattr" "filtering" }
 	parmtag	{ "vray_type" "boolean" }
@@ -67,6 +71,7 @@
 	help	"Black distance"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderChannelZDepth" }
 	parmtag	{ "vray_pluginattr" "depth_black" }
 	parmtag	{ "vray_type" "float" }
@@ -79,6 +84,7 @@
 	help	"White distance"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RenderChannelZDepth" }
 	parmtag	{ "vray_pluginattr" "depth_white" }
 	parmtag	{ "vray_type" "float" }

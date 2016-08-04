@@ -20,6 +20,7 @@
 	help	"the first material to be blended"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "MtlAngleBlend" }
 	parmtag	{ "vray_pluginattr" "mtl_one" }
@@ -33,6 +34,7 @@
 	help	"the second material to be blended"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "MtlAngleBlend" }
 	parmtag	{ "vray_pluginattr" "mtl_two" }
@@ -46,6 +48,7 @@
 	help	"angle where blending begins ( degrees ) - anything before this will be material one only"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlAngleBlend" }
 	parmtag	{ "vray_pluginattr" "start_angle" }
 	parmtag	{ "vray_type" "float" }
@@ -58,6 +61,7 @@
 	help	"angle where blending ends ( degrees ) - anything after this will be material two only"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlAngleBlend" }
 	parmtag	{ "vray_pluginattr" "stop_angle" }
 	parmtag	{ "vray_type" "float" }
@@ -70,6 +74,7 @@
 	help	"The function to use to blend the materials. 0:Linear 1:Normal Distribution 2:Sigmoid 3:Gompertz 4:Cube Root 5:Cubic 6: Cubic Polynomial"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlAngleBlend" }
 	parmtag	{ "vray_pluginattr" "blend_function" }
 	parmtag	{ "vray_type" "int" }
@@ -82,6 +87,7 @@
 	help	"If this is true we will flip the view direction prior to doing calculations on it"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlAngleBlend" }
 	parmtag	{ "vray_pluginattr" "flip_view_dir" }
 	parmtag	{ "vray_type" "boolean" }

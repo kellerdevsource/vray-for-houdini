@@ -22,6 +22,7 @@
 	help	"Source color"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "ColorCorrect" }
 	parmtag	{ "vray_pluginattr" "source_color" }
 	parmtag	{ "vray_type" "AColor" }
@@ -35,6 +36,7 @@
 	help	"The texture being color corrected"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "ColorCorrect" }
 	parmtag	{ "vray_pluginattr" "texture_map" }
 	parmtag	{ "vray_type" "Texture" }
@@ -51,6 +53,7 @@
 	    help	"true to enable preprocessing"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "ColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "preprocess" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -64,6 +67,7 @@
 	    disablewhen	"{ preprocess != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "ColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "pre_brightness" }
 	    parmtag	{ "vray_type" "float" }
@@ -77,6 +81,7 @@
 	    disablewhen	"{ preprocess != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "ColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "pre_contrast" }
 	    parmtag	{ "vray_type" "float" }
@@ -90,6 +95,7 @@
 	    disablewhen	"{ preprocess != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "ColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "pre_gamma" }
 	    parmtag	{ "vray_type" "float" }
@@ -103,6 +109,7 @@
 	    disablewhen	"{ preprocess != 1 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "ColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "pre_mono" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -116,6 +123,7 @@
 	    disablewhen	"{ preprocess != 1 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "ColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "pre_invert" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -129,6 +137,7 @@
 	    disablewhen	"{ preprocess != 1 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "ColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "pre_unmult_alpha" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -142,6 +151,7 @@
 	    disablewhen	"{ preprocess != 1 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "ColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "pre_clamp" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -155,6 +165,7 @@
 	    disablewhen	"{ preprocess != 1 } { pre_clamp != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "ColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "pre_clamp_min" }
 	    parmtag	{ "vray_type" "float" }
@@ -168,6 +179,7 @@
 	    disablewhen	"{ preprocess != 1 } { pre_clamp != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "ColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "pre_clamp_max" }
 	    parmtag	{ "vray_type" "float" }
@@ -181,6 +193,7 @@
 	    disablewhen	"{ preprocess != 1 } { pre_clamp != 1 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "ColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "pre_clamp_normalize" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -198,6 +211,7 @@
 	    default	{ "0" }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "ColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "hsl_on" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -210,6 +224,7 @@
 	    disablewhen	"{ hsl_on != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "ColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "hsl_hue_offset" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -222,6 +237,7 @@
 	    disablewhen	"{ hsl_on != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "ColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "hsl_hue_gain" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -234,6 +250,7 @@
 	    disablewhen	"{ hsl_on != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "ColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "hsl_saturation_offset" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -246,6 +263,7 @@
 	    disablewhen	"{ hsl_on != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "ColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "hsl_saturation_gain" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -258,6 +276,7 @@
 	    disablewhen	"{ hsl_on != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "ColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "hsl_lightness_offset" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -270,6 +289,7 @@
 	    disablewhen	"{ hsl_on != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "ColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "hsl_lightness_gain" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -287,6 +307,7 @@
 	    default	{ "0" }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "ColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "hsv_on" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -299,6 +320,7 @@
 	    disablewhen	"{ hsv_on != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "ColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "hsv_hue_offset" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -311,6 +333,7 @@
 	    disablewhen	"{ hsv_on != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "ColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "hsv_hue_gain" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -323,6 +346,7 @@
 	    disablewhen	"{ hsv_on != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "ColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "hsv_saturation_offset" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -335,6 +359,7 @@
 	    disablewhen	"{ hsv_on != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "ColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "hsv_saturation_gain" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -347,6 +372,7 @@
 	    disablewhen	"{ hsv_on != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "ColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "hsv_value_offset" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -359,6 +385,7 @@
 	    disablewhen	"{ hsv_on != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "ColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "hsv_value_gain" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -376,6 +403,7 @@
 	    default	{ "0" }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "ColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "rgba_on" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -407,6 +435,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15" }
 	    parmtag	{ "vray_plugin" "ColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "red_channel" }
@@ -420,6 +449,7 @@
 	    disablewhen	"{ rgba_on != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "ColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "red_offset" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -432,6 +462,7 @@
 	    disablewhen	"{ rgba_on != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "ColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "red_gain" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -463,6 +494,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15" }
 	    parmtag	{ "vray_plugin" "ColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "green_channel" }
@@ -476,6 +508,7 @@
 	    disablewhen	"{ rgba_on != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "ColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "green_offset" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -488,6 +521,7 @@
 	    disablewhen	"{ rgba_on != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "ColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "green_gain" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -519,6 +553,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15" }
 	    parmtag	{ "vray_plugin" "ColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "blue_channel" }
@@ -532,6 +567,7 @@
 	    disablewhen	"{ rgba_on != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "ColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "blue_offset" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -544,6 +580,7 @@
 	    disablewhen	"{ rgba_on != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "ColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "blue_gain" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -575,6 +612,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15" }
 	    parmtag	{ "vray_plugin" "ColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "alpha_channel" }
@@ -588,6 +626,7 @@
 	    disablewhen	"{ rgba_on != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "ColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "alpha_offset" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -600,6 +639,7 @@
 	    disablewhen	"{ rgba_on != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "ColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "alpha_gain" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -612,6 +652,7 @@
 	    disablewhen	"{ rgba_on != 1 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "ColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "premultiply_new_alpha" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -629,6 +670,7 @@
 	    default	{ "0" }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "ColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "postprocess" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -641,6 +683,7 @@
 	    disablewhen	"{ postprocess != 1 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "ColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "post_mono" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -653,6 +696,7 @@
 	    disablewhen	"{ postprocess != 1 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "ColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "post_invert" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -665,6 +709,7 @@
 	    disablewhen	"{ postprocess != 1 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "ColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "post_clamp" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -677,6 +722,7 @@
 	    disablewhen	"{ postprocess != 1 } { post_clamp != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "ColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "post_clamp_min" }
 	    parmtag	{ "vray_type" "float" }
@@ -689,6 +735,7 @@
 	    disablewhen	"{ postprocess != 1 } { post_clamp != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "ColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "post_clamp_max" }
 	    parmtag	{ "vray_type" "float" }
@@ -701,6 +748,7 @@
 	    disablewhen	"{ postprocess != 1 } { post_clamp != 1 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "ColorCorrect" }
 	    parmtag	{ "vray_pluginattr" "post_clamp_normalize" }
 	    parmtag	{ "vray_type" "boolean" }

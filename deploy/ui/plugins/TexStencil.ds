@@ -28,6 +28,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1" }
 	    parmtag	{ "vray_plugin" "TexStencil" }
 	    parmtag	{ "vray_pluginattr" "compatibility_with" }
@@ -46,6 +47,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1,2" }
 	    parmtag	{ "vray_plugin" "TexStencil" }
 	    parmtag	{ "vray_pluginattr" "alpha_from_intensity" }
@@ -59,6 +61,7 @@
 	    help	"If true, the resulting texture color will be inverted"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexStencil" }
 	    parmtag	{ "vray_pluginattr" "invert" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -72,6 +75,7 @@
 	    disablewhen	"{ invert != 1 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexStencil" }
 	    parmtag	{ "vray_pluginattr" "invert_alpha" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -85,6 +89,7 @@
 	    help	"A multiplier for the texture color"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexStencil" }
 	    parmtag	{ "vray_pluginattr" "color_mult" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -98,6 +103,7 @@
 	    help	"An additional offset for the texture color"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexStencil" }
 	    parmtag	{ "vray_pluginattr" "color_offset" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -110,6 +116,7 @@
 	    help	"A multiplier for the texture alpha"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexStencil" }
 	    parmtag	{ "vray_pluginattr" "alpha_mult" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -122,6 +129,7 @@
 	    help	"An additional offset for the texture alpha"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexStencil" }
 	    parmtag	{ "vray_pluginattr" "alpha_offset" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -135,6 +143,7 @@
 	    help	"The color when there are no valid uvw coordinates"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexStencil" }
 	    parmtag	{ "vray_pluginattr" "nouvw_color" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -148,6 +157,7 @@
 	    help	"The texture that is used as a stencil"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexStencil" }
 	    parmtag	{ "vray_pluginattr" "image" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -160,6 +170,7 @@
 	    help	"Represents the Stencil's transparency"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexStencil" }
 	    parmtag	{ "vray_pluginattr" "mask" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -172,6 +183,7 @@
 	    help	"If true, selects the areas in the texture similar to or equal to the Color Key and masks them out"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexStencil" }
 	    parmtag	{ "vray_pluginattr" "key_masking" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -184,6 +196,7 @@
 	    help	"If true, inverts the Chroma Key mask(only the colors specified in the Color Key and HSV Range are displayed)"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexStencil" }
 	    parmtag	{ "vray_pluginattr" "positive_key" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -197,6 +210,7 @@
 	    help	"The color to be masked in the texture"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexStencil" }
 	    parmtag	{ "vray_pluginattr" "color_key" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -209,6 +223,7 @@
 	    help	"The range of hues centered on the Color Key color which are also masked"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexStencil" }
 	    parmtag	{ "vray_pluginattr" "hue_range" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -221,6 +236,7 @@
 	    help	"The range of saturations centered on the Color Key color which are also masked"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexStencil" }
 	    parmtag	{ "vray_pluginattr" "sat_range" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -233,6 +249,7 @@
 	    help	"The range of values centered on the Color Key color which are also masked"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexStencil" }
 	    parmtag	{ "vray_pluginattr" "val_range" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -246,6 +263,7 @@
 	    help	"Represents the texture that is underneath"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexStencil" }
 	    parmtag	{ "vray_pluginattr" "default_color" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -258,6 +276,7 @@
 	    help	"Controls the sharpness of the texture edges"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexStencil" }
 	    parmtag	{ "vray_pluginattr" "edge_blend" }
 	    parmtag	{ "vray_type" "float" }
@@ -270,6 +289,7 @@
 	    help	"UVWGen from which the uvw coordinates will be taken"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "oprelative" "." }
 	    parmtag	{ "vray_plugin" "TexStencil" }
 	    parmtag	{ "vray_pluginattr" "uvwgen" }

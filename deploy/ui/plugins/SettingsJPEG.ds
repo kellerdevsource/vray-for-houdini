@@ -19,6 +19,7 @@
 	help	"JPEG quality (1-100)"
 	range	{ 1 100 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsJPEG" }
 	parmtag	{ "vray_pluginattr" "quality" }
 	parmtag	{ "vray_type" "int" }

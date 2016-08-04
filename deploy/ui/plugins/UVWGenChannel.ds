@@ -14,6 +14,7 @@
     groupsimple {
 	name	"uvw_transform"
 	label	"Uvw Transform"
+	grouptag	{ "cook_dependent" "1" }
 	grouptag	{ "vray_plugin" "UVWGenChannel" }
 	grouptag	{ "vray_pluginattr" "uvw_transform" }
 	grouptag	{ "vray_type" "Transform" }
@@ -95,6 +96,7 @@
     groupsimple {
 	name	"uvw_transform_tex"
 	label	"Uvw Transform Tex"
+	grouptag	{ "cook_dependent" "1" }
 	grouptag	{ "vray_plugin" "UVWGenChannel" }
 	grouptag	{ "vray_pluginattr" "uvw_transform_tex" }
 	grouptag	{ "vray_type" "TextureTransform" }
@@ -172,6 +174,7 @@
     groupsimple {
 	name	"tex_transform"
 	label	"Tex Transform"
+	grouptag	{ "cook_dependent" "1" }
 	grouptag	{ "vray_plugin" "UVWGenChannel" }
 	grouptag	{ "vray_pluginattr" "tex_transform" }
 	grouptag	{ "vray_type" "Transform" }
@@ -258,6 +261,7 @@
 	help	"Number of uvw transform samples"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "UVWGenChannel" }
 	parmtag	{ "vray_pluginattr" "nsamples" }
 	parmtag	{ "vray_type" "int" }
@@ -270,6 +274,7 @@
 	help	"0 - no wrapping, 1 - wrap, 2 - mirror tile"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "UVWGenChannel" }
 	parmtag	{ "vray_pluginattr" "wrap_u" }
 	parmtag	{ "vray_type" "int" }
@@ -282,6 +287,7 @@
 	help	"0 - no wrapping, 1 - wrap, 2 - mirror tile"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "UVWGenChannel" }
 	parmtag	{ "vray_pluginattr" "wrap_v" }
 	parmtag	{ "vray_type" "int" }
@@ -294,6 +300,7 @@
 	help	"0 - no wrapping, 1 - wrap, 2 - mirror tile"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "UVWGenChannel" }
 	parmtag	{ "vray_pluginattr" "wrap_w" }
 	parmtag	{ "vray_type" "int" }
@@ -306,6 +313,7 @@
 	help	"1 to crop in the u-direction"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "UVWGenChannel" }
 	parmtag	{ "vray_pluginattr" "crop_u" }
 	parmtag	{ "vray_type" "int" }
@@ -318,6 +326,7 @@
 	help	"1 to crop in the v-direction"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "UVWGenChannel" }
 	parmtag	{ "vray_pluginattr" "crop_v" }
 	parmtag	{ "vray_type" "int" }
@@ -330,6 +339,7 @@
 	help	"1 to crop in the w-direction"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "UVWGenChannel" }
 	parmtag	{ "vray_pluginattr" "crop_w" }
 	parmtag	{ "vray_type" "int" }
@@ -343,6 +353,7 @@
 	help	"Coverage"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "UVWGenChannel" }
 	parmtag	{ "vray_pluginattr" "coverage" }
 	parmtag	{ "vray_type" "Vector" }
@@ -359,6 +370,7 @@
 	}
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "UVWGenChannel" }
 	parmtag	{ "vray_pluginattr" "wrap_mode" }
@@ -372,6 +384,7 @@
 	help	"Additional scale factor for the texture derivatives"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "UVWGenChannel" }
 	parmtag	{ "vray_pluginattr" "duvw_scale" }
 	parmtag	{ "vray_type" "float" }
@@ -383,6 +396,7 @@
 	default	{ "0" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "UVWGenChannel" }
 	parmtag	{ "vray_pluginattr" "uvw_channel" }
 	parmtag	{ "vray_type" "int" }
@@ -395,6 +409,7 @@
 	help	"Optional UVWGen from which the initial uvw coordinates will be taken, instead of the surface point"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "UVWGenChannel" }
 	parmtag	{ "vray_pluginattr" "uvwgen" }
@@ -408,6 +423,7 @@
 	help	"If this is true then we will use uvw_channel for front-side and uvw_channel + 1 for back-side contexts. This is primarily for V-Ray for SketchUp"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "UVWGenChannel" }
 	parmtag	{ "vray_pluginattr" "use_double_sided_mode" }
 	parmtag	{ "vray_type" "boolean" }

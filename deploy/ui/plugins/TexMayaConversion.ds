@@ -19,6 +19,7 @@
 	default	{ "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexMayaConversion" }
 	parmtag	{ "vray_pluginattr" "input" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -30,6 +31,7 @@
 	default	{ "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexMayaConversion" }
 	parmtag	{ "vray_pluginattr" "conversion_factor" }
 	parmtag	{ "vray_type" "float" }

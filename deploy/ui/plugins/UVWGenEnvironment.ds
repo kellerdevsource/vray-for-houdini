@@ -14,6 +14,7 @@
     groupsimple {
 	name	"uvw_matrix"
 	label	"Uvw Matrix"
+	grouptag	{ "cook_dependent" "1" }
 	grouptag	{ "vray_plugin" "UVWGenEnvironment" }
 	grouptag	{ "vray_pluginattr" "uvw_matrix" }
 	grouptag	{ "vray_type" "Matrix" }
@@ -97,6 +98,7 @@
     groupsimple {
 	name	"uvw_transform"
 	label	"Uvw Transform"
+	grouptag	{ "cook_dependent" "1" }
 	grouptag	{ "vray_plugin" "UVWGenEnvironment" }
 	grouptag	{ "vray_pluginattr" "uvw_transform" }
 	grouptag	{ "vray_type" "Transform" }
@@ -194,6 +196,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "angular,cubic,spherical,mirror_ball,screen,max_spherical,spherical_vray,max_cylindrical,max_shrink_wrap" }
 	parmtag	{ "vray_plugin" "UVWGenEnvironment" }
 	parmtag	{ "vray_pluginattr" "mapping_type" }
@@ -212,6 +215,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "UVWGenEnvironment" }
 	parmtag	{ "vray_pluginattr" "wrap_u" }
@@ -230,6 +234,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "UVWGenEnvironment" }
 	parmtag	{ "vray_pluginattr" "wrap_v" }
@@ -248,6 +253,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "UVWGenEnvironment" }
 	parmtag	{ "vray_pluginattr" "wrap_w" }
@@ -261,6 +267,7 @@
 	help	"Crop in the u-direction"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "UVWGenEnvironment" }
 	parmtag	{ "vray_pluginattr" "crop_u" }
 	parmtag	{ "vray_type" "int" }
@@ -273,6 +280,7 @@
 	help	"Crop in the v-direction"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "UVWGenEnvironment" }
 	parmtag	{ "vray_pluginattr" "crop_v" }
 	parmtag	{ "vray_type" "int" }
@@ -285,6 +293,7 @@
 	help	"Crop in the w-direction"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "UVWGenEnvironment" }
 	parmtag	{ "vray_pluginattr" "crop_w" }
 	parmtag	{ "vray_type" "int" }
@@ -297,6 +306,7 @@
 	help	"Additional scale factor for the texture derivatives"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "UVWGenEnvironment" }
 	parmtag	{ "vray_pluginattr" "duvw_scale" }
 	parmtag	{ "vray_type" "float" }
@@ -308,6 +318,7 @@
 	default	{ "0" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "UVWGenEnvironment" }
 	parmtag	{ "vray_pluginattr" "ground_on" }
 	parmtag	{ "vray_type" "int" }
@@ -319,6 +330,7 @@
 	default	{ "1000" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "UVWGenEnvironment" }
 	parmtag	{ "vray_pluginattr" "ground_radius" }
 	parmtag	{ "vray_type" "float" }
@@ -331,6 +343,7 @@
 	default	{ "0" "0" "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "UVWGenEnvironment" }
 	parmtag	{ "vray_pluginattr" "ground_position" }
 	parmtag	{ "vray_type" "Vector" }

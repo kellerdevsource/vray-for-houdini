@@ -23,6 +23,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "SettingsVRST" }
 	parmtag	{ "vray_pluginattr" "compression" }
@@ -40,6 +41,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "16,32" }
 	parmtag	{ "vray_plugin" "SettingsVRST" }
 	parmtag	{ "vray_pluginattr" "bits_per_channel" }

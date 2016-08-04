@@ -19,6 +19,7 @@
 	help	"Number of samples to take when sampling normals around intersection (subdivs*subdivs)"
 	range	{ 1 128 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexCurvature" }
 	parmtag	{ "vray_pluginattr" "subdivs" }
 	parmtag	{ "vray_type" "int" }
@@ -31,6 +32,7 @@
 	help	"Sampling radius"
 	range	{ 0 1000 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexCurvature" }
 	parmtag	{ "vray_pluginattr" "sample_spread" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -43,6 +45,7 @@
 	help	"Output color min value"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexCurvature" }
 	parmtag	{ "vray_pluginattr" "out_color_min" }
 	parmtag	{ "vray_type" "float" }
@@ -55,6 +58,7 @@
 	help	"Output color max value"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexCurvature" }
 	parmtag	{ "vray_pluginattr" "out_color_max" }
 	parmtag	{ "vray_type" "float" }
@@ -67,6 +71,7 @@
 	help	"The scale relative to which the curvature is computed"
 	range	{ 1e-06 1e+06 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexCurvature" }
 	parmtag	{ "vray_pluginattr" "scale" }
 	parmtag	{ "vray_type" "float" }

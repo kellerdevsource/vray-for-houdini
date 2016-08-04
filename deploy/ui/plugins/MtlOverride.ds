@@ -24,6 +24,7 @@
 	    help	"The normal material (visible to the camera)"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "oprelative" "." }
 	    parmtag	{ "vray_plugin" "MtlOverride" }
 	    parmtag	{ "vray_pluginattr" "base_mtl" }
@@ -38,6 +39,7 @@
 	    disablewhen	"{ enable_gi_mtl != 1 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "oprelative" "." }
 	    parmtag	{ "vray_plugin" "MtlOverride" }
 	    parmtag	{ "vray_pluginattr" "gi_mtl" }
@@ -52,6 +54,7 @@
 	    disablewhen	"{ enable_reflect_mtl != 1 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "oprelative" "." }
 	    parmtag	{ "vray_plugin" "MtlOverride" }
 	    parmtag	{ "vray_pluginattr" "reflect_mtl" }
@@ -66,6 +69,7 @@
 	    disablewhen	"{ enable_refract_mtl != 1 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "oprelative" "." }
 	    parmtag	{ "vray_plugin" "MtlOverride" }
 	    parmtag	{ "vray_pluginattr" "refract_mtl" }
@@ -80,6 +84,7 @@
 	    disablewhen	"{ enable_shadow_mtl != 1 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "oprelative" "." }
 	    parmtag	{ "vray_plugin" "MtlOverride" }
 	    parmtag	{ "vray_pluginattr" "shadow_mtl" }
@@ -95,6 +100,7 @@
 	    disablewhen	"{ use_environment_override != 1 }"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "MtlOverride" }
 	    parmtag	{ "vray_pluginattr" "environment_override" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -108,6 +114,7 @@
 	    disablewhen	"{ use_environment_override != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "MtlOverride" }
 	    parmtag	{ "vray_pluginattr" "environment_priority" }
 	    parmtag	{ "vray_type" "int" }
@@ -120,6 +127,7 @@
 	    help	"Use Override material"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_custom_handling" "1" }
 	}
     }

@@ -20,6 +20,7 @@
 	help	"Path to a *.vrscene file"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "filechooser_pattern" "*.vrscene" }
 	parmtag	{ "vray_file_names" "V-Ray Scene, fileAssetOp=load, displayName=File Path" }
 	parmtag	{ "vray_plugin" "VRayScene" }
@@ -38,11 +39,13 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1" }
     }
     groupsimple {
 	name	"transform"
 	label	"Transform"
+	grouptag	{ "cook_dependent" "1" }
 	grouptag	{ "vray_plugin" "VRayScene" }
 	grouptag	{ "vray_pluginattr" "transform" }
 	grouptag	{ "vray_type" "Transform" }
@@ -129,6 +132,7 @@
 	help	"Use additional transform"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VRayScene" }
 	parmtag	{ "vray_pluginattr" "use_transform" }
 	parmtag	{ "vray_type" "boolean" }
@@ -141,6 +145,7 @@
 	help	"Add nodes from the included files"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VRayScene" }
 	parmtag	{ "vray_pluginattr" "add_nodes" }
 	parmtag	{ "vray_type" "boolean" }
@@ -153,6 +158,7 @@
 	help	"Add lights from the included files"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VRayScene" }
 	parmtag	{ "vray_pluginattr" "add_lights" }
 	parmtag	{ "vray_type" "boolean" }
@@ -165,6 +171,7 @@
 	help	"Animation playback speed"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VRayScene" }
 	parmtag	{ "vray_pluginattr" "anim_speed" }
 	parmtag	{ "vray_type" "float" }
@@ -183,6 +190,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "VRayScene" }
 	parmtag	{ "vray_pluginattr" "anim_type" }
@@ -196,6 +204,7 @@
 	help	"Animation initial frame offset"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VRayScene" }
 	parmtag	{ "vray_pluginattr" "anim_offset" }
 	parmtag	{ "vray_type" "float" }
@@ -208,6 +217,7 @@
 	help	"Specifies the first frame of the animation sequence"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VRayScene" }
 	parmtag	{ "vray_pluginattr" "anim_start" }
 	parmtag	{ "vray_type" "int" }
@@ -220,6 +230,7 @@
 	help	"Specifies the length of the animation sequence"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VRayScene" }
 	parmtag	{ "vray_pluginattr" "anim_length" }
 	parmtag	{ "vray_type" "int" }
@@ -232,6 +243,7 @@
 	help	"Override material"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "VRayScene" }
 	parmtag	{ "vray_pluginattr" "material_override" }
@@ -241,6 +253,7 @@
 	name	"hidden_objects"
 	label	"Hidden Objects"
 	default	0
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VRayScene" }
 	parmtag	{ "vray_pluginattr" "hidden_objects" }
 	parmtag	{ "vray_type" "List<String>" }
@@ -264,5 +277,6 @@
 	help	"Flip axis"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
     }
 }

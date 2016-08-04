@@ -22,6 +22,7 @@
 	help	"First color"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MayaMultiplyDivide" }
 	parmtag	{ "vray_pluginattr" "color1" }
 	parmtag	{ "vray_type" "Texture" }
@@ -35,6 +36,7 @@
 	help	"Second color"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MayaMultiplyDivide" }
 	parmtag	{ "vray_pluginattr" "color2" }
 	parmtag	{ "vray_type" "Texture" }
@@ -52,6 +54,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "1,2,3" }
 	parmtag	{ "vray_plugin" "MayaMultiplyDivide" }
 	parmtag	{ "vray_pluginattr" "operation" }

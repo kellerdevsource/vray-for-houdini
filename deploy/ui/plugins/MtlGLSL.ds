@@ -18,6 +18,7 @@
 	default	{ "" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "filechooser_pattern" "*.glsl" }
 	parmtag	{ "vray_plugin" "MtlGLSL" }
 	parmtag	{ "vray_pluginattr" "shader_file" }
@@ -31,6 +32,7 @@
 	help	"Name of the target graph node if XMSL file is specified"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlGLSL" }
 	parmtag	{ "vray_pluginattr" "shader_node" }
 	parmtag	{ "vray_type" "String" }
@@ -42,6 +44,7 @@
 	default	{ "" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "MtlGLSL" }
 	parmtag	{ "vray_pluginattr" "textures" }
@@ -54,6 +57,7 @@
 	default	{ "" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "MtlGLSL" }
 	parmtag	{ "vray_pluginattr" "uvw_generators" }
@@ -67,6 +71,7 @@
 	default	{ "0" "0" "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlGLSL" }
 	parmtag	{ "vray_pluginattr" "transparency" }
 	parmtag	{ "vray_type" "Color" }
@@ -79,6 +84,7 @@
 	default	{ "0" "0" "0" "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlGLSL" }
 	parmtag	{ "vray_pluginattr" "transparency_tex" }
 	parmtag	{ "vray_type" "Texture" }
@@ -90,6 +96,7 @@
 	default	{ "0" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlGLSL" }
 	parmtag	{ "vray_pluginattr" "transparency_tex_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -102,6 +109,7 @@
 	help	"Switch for using either the transparency parameteres or the shader alpha result"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlGLSL" }
 	parmtag	{ "vray_pluginattr" "use_shader_alpha" }
 	parmtag	{ "vray_type" "boolean" }
@@ -113,6 +121,7 @@
 	default	{ "-1" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlGLSL" }
 	parmtag	{ "vray_pluginattr" "max_ray_depth" }
 	parmtag	{ "vray_type" "int" }
@@ -125,6 +134,7 @@
 	help	"Flag that shows whether to clamp final result or not"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlGLSL" }
 	parmtag	{ "vray_pluginattr" "clamp_result" }
 	parmtag	{ "vray_type" "boolean" }
@@ -137,6 +147,7 @@
 	help	"The upper clamp limit for the result color should the clamp_result flag is true"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlGLSL" }
 	parmtag	{ "vray_pluginattr" "clamp_value" }
 	parmtag	{ "vray_type" "float" }

@@ -20,6 +20,7 @@
 	help	"The phoenix simulator that exports the particle group"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "PhxShaderPGroup" }
 	parmtag	{ "vray_pluginattr" "phoenix_sim" }
@@ -33,6 +34,7 @@
 	help	"the name of the particle group that will be used as a source"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "PhxShaderPGroup" }
 	parmtag	{ "vray_pluginattr" "pgroup" }
 	parmtag	{ "vray_type" "String" }
@@ -45,6 +47,7 @@
 	help	"lifespan mode: 0-default, 1-constant, 2-random"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "PhxShaderPGroup" }
 	parmtag	{ "vray_pluginattr" "lifespan_mode" }
 	parmtag	{ "vray_type" "int" }
@@ -57,6 +60,7 @@
 	help	"lifespan randomization seed"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "PhxShaderPGroup" }
 	parmtag	{ "vray_pluginattr" "lifespan_seed" }
 	parmtag	{ "vray_type" "int" }
@@ -69,6 +73,7 @@
 	help	"lifespan base"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "PhxShaderPGroup" }
 	parmtag	{ "vray_pluginattr" "lifespan" }
 	parmtag	{ "vray_type" "float" }
@@ -81,6 +86,7 @@
 	help	"lifespan randomization"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "PhxShaderPGroup" }
 	parmtag	{ "vray_pluginattr" "lifespan_random" }
 	parmtag	{ "vray_type" "float" }

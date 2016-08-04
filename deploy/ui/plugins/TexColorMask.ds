@@ -21,6 +21,7 @@
 	default	{ "1" "1" "1" "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexColorMask" }
 	parmtag	{ "vray_pluginattr" "in_color" }
 	parmtag	{ "vray_type" "Texture" }
@@ -32,6 +33,7 @@
 	default	{ "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexColorMask" }
 	parmtag	{ "vray_pluginattr" "in_alpha" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -43,6 +45,7 @@
 	default	{ "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexColorMask" }
 	parmtag	{ "vray_pluginattr" "preserve_color" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -55,6 +58,7 @@
 	default	{ "1" "1" "1" "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexColorMask" }
 	parmtag	{ "vray_pluginattr" "mask" }
 	parmtag	{ "vray_type" "Texture" }
@@ -66,6 +70,7 @@
 	default	{ "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexColorMask" }
 	parmtag	{ "vray_pluginattr" "mask_alpha" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -77,6 +82,7 @@
 	default	{ "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexColorMask" }
 	parmtag	{ "vray_pluginattr" "mask_alpha_is_luminance" }
 	parmtag	{ "vray_type" "float" }

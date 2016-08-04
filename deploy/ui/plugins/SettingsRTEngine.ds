@@ -20,6 +20,7 @@
 	help	"Number of samples to transfer over the network for RT-CPU"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
 	parmtag	{ "vray_pluginattr" "cpu_bundle_size" }
 	parmtag	{ "vray_type" "int" }
@@ -32,6 +33,7 @@
 	help	"Number of samples per pixel for RT-CPU"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
 	parmtag	{ "vray_pluginattr" "cpu_samples_per_pixel" }
 	parmtag	{ "vray_type" "int" }
@@ -44,6 +46,7 @@
 	help	"Number of samples to transfer over the network for RT-GPU"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
 	parmtag	{ "vray_pluginattr" "gpu_bundle_size" }
 	parmtag	{ "vray_type" "int" }
@@ -56,6 +59,7 @@
 	help	"Number of samples per pixel for RT-GPU"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
 	parmtag	{ "vray_pluginattr" "gpu_samples_per_pixel" }
 	parmtag	{ "vray_type" "int" }
@@ -68,6 +72,7 @@
 	help	"Maximum trace depth for reflections/refractions etc"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
 	parmtag	{ "vray_pluginattr" "trace_depth" }
 	parmtag	{ "vray_type" "int" }
@@ -80,6 +85,7 @@
 	help	"Maximum trace depth for GI"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
 	parmtag	{ "vray_pluginattr" "gi_depth" }
 	parmtag	{ "vray_type" "int" }
@@ -92,6 +98,7 @@
 	help	"true to enable coherent tracing of gi/reflections/refractions etc"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
 	parmtag	{ "vray_pluginattr" "coherent_tracing" }
 	parmtag	{ "vray_type" "boolean" }
@@ -104,6 +111,7 @@
 	help	"Enable side-by-side stereo rendering"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
 	parmtag	{ "vray_pluginattr" "stereo_mode" }
 	parmtag	{ "vray_type" "boolean" }
@@ -117,6 +125,7 @@
 	disablewhen	"{ SettingsRTEngine_stereo_mode != 1 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
 	parmtag	{ "vray_pluginattr" "stereo_eye_distance" }
 	parmtag	{ "vray_type" "float" }
@@ -135,6 +144,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
 	parmtag	{ "vray_pluginattr" "stereo_focus" }
@@ -148,6 +158,7 @@
 	help	"OpenCL Single Kernel maximum texture size - bigger textures are scaled to fit this size"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
 	parmtag	{ "vray_pluginattr" "opencl_texsize" }
 	parmtag	{ "vray_type" "int" }
@@ -165,6 +176,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
 	parmtag	{ "vray_pluginattr" "opencl_resizeTextures" }
@@ -182,6 +194,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
 	parmtag	{ "vray_pluginattr" "opencl_textureFormat" }
@@ -195,6 +208,7 @@
 	help	"Progressive increase for samples_per_pixel (from 1 to real value). Use this for faster feadback"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
 	parmtag	{ "vray_pluginattr" "progressive_samples_per_pixel" }
 	parmtag	{ "vray_type" "boolean" }
@@ -207,6 +221,7 @@
 	help	"Non-zero to use undersampling, 0 otherwise. The value specifies the blur resolution. Value of n means 1/(2^n) initial resolution in each dimension."
 	range	{ 0 5 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
 	parmtag	{ "vray_pluginattr" "undersampling" }
 	parmtag	{ "vray_type" "int" }
@@ -219,6 +234,7 @@
 	help	"Produce only RGBA"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
 	parmtag	{ "vray_pluginattr" "disable_render_elements" }
 	parmtag	{ "vray_type" "boolean" }
@@ -231,6 +247,7 @@
 	help	"Max render time (0 = inf)"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
 	parmtag	{ "vray_pluginattr" "max_render_time" }
 	parmtag	{ "vray_type" "float" }
@@ -243,6 +260,7 @@
 	help	"Max sample level (0 = inf)"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
 	parmtag	{ "vray_pluginattr" "max_sample_level" }
 	parmtag	{ "vray_type" "int" }
@@ -255,6 +273,7 @@
 	help	"Noise threshold for the image sampler (0 = inf)"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
 	parmtag	{ "vray_pluginattr" "noise_threshold" }
 	parmtag	{ "vray_type" "float" }
@@ -267,6 +286,7 @@
 	help	"Show AA mask"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
 	parmtag	{ "vray_pluginattr" "enable_mask" }
 	parmtag	{ "vray_type" "boolean" }
@@ -279,6 +299,7 @@
 	help	"Max time, in milliseconds, between (partial) image updates (0=disable partial image updates)"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
 	parmtag	{ "vray_pluginattr" "max_draw_interval" }
 	parmtag	{ "vray_type" "int" }
@@ -291,6 +312,7 @@
 	help	"Min time, in milliseconds, between image updates (0=show all frames)"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
 	parmtag	{ "vray_pluginattr" "min_draw_interval" }
 	parmtag	{ "vray_type" "int" }

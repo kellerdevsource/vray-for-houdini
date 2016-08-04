@@ -20,6 +20,7 @@
 	default	{ "1" "1" "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlSingleBRDF" }
 	parmtag	{ "vray_pluginattr" "filter" }
 	parmtag	{ "vray_type" "Color" }
@@ -31,6 +32,7 @@
 	default	{ "" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "MtlSingleBRDF" }
 	parmtag	{ "vray_pluginattr" "brdf" }
@@ -51,6 +53,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3,4" }
 	parmtag	{ "vray_plugin" "MtlSingleBRDF" }
 	parmtag	{ "vray_pluginattr" "double_sided" }
@@ -64,6 +67,7 @@
 	help	"true to allow negative color components; otherwise they will be clamped to 0"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlSingleBRDF" }
 	parmtag	{ "vray_pluginattr" "allow_negative_colors" }
 	parmtag	{ "vray_type" "boolean" }

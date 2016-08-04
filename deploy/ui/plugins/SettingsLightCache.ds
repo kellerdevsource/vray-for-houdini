@@ -20,6 +20,7 @@
 	disablewhen	"{ SettingsGI_on != 1 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsLightCache" }
 	parmtag	{ "vray_pluginattr" "subdivs" }
 	parmtag	{ "vray_type" "int" }
@@ -33,6 +34,7 @@
 	disablewhen	"{ SettingsGI_on != 1 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsLightCache" }
 	parmtag	{ "vray_pluginattr" "sample_size" }
 	parmtag	{ "vray_type" "float" }
@@ -51,6 +53,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "SettingsLightCache" }
 	parmtag	{ "vray_pluginattr" "filter_type" }
@@ -65,6 +68,7 @@
 	disablewhen	"{ SettingsGI_on != 1 } { SettingsLightCache_filter_type != 1 } { SettingsLightCache_mode == 3 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsLightCache" }
 	parmtag	{ "vray_pluginattr" "filter_samples" }
 	parmtag	{ "vray_type" "int" }
@@ -78,6 +82,7 @@
 	disablewhen	"{ SettingsGI_on != 1 } { SettingsLightCache_filter_type != 2 } { SettingsLightCache_mode == 3 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsLightCache" }
 	parmtag	{ "vray_pluginattr" "filter_size" }
 	parmtag	{ "vray_type" "float" }
@@ -91,6 +96,7 @@
 	disablewhen	"{ SettingsGI_on != 1 } { SettingsLightCache_mode == 3 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsLightCache" }
 	parmtag	{ "vray_pluginattr" "prefilter" }
 	parmtag	{ "vray_type" "boolean" }
@@ -104,6 +110,7 @@
 	disablewhen	"{ SettingsGI_on != 1 } { SettingsLightCache_prefilter == 0 } { SettingsLightCache_mode == 3 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsLightCache" }
 	parmtag	{ "vray_pluginattr" "prefilter_samples" }
 	parmtag	{ "vray_type" "int" }
@@ -117,6 +124,7 @@
 	disablewhen	"{ SettingsGI_on != 1 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsLightCache" }
 	parmtag	{ "vray_pluginattr" "depth" }
 	parmtag	{ "vray_type" "int" }
@@ -130,6 +138,7 @@
 	disablewhen	"{ SettingsGI_on != 1 } { SettingsLightCache_mode == 3 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsLightCache" }
 	parmtag	{ "vray_pluginattr" "show_calc_phase" }
 	parmtag	{ "vray_type" "boolean" }
@@ -143,6 +152,7 @@
 	disablewhen	"{ SettingsGI_on != 1 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsLightCache" }
 	parmtag	{ "vray_pluginattr" "store_direct_light" }
 	parmtag	{ "vray_type" "boolean" }
@@ -160,6 +170,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "SettingsLightCache" }
 	parmtag	{ "vray_pluginattr" "world_scale" }
@@ -180,6 +191,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "SettingsLightCache" }
 	parmtag	{ "vray_pluginattr" "mode" }
@@ -194,6 +206,7 @@
 	disablewhen	"{ SettingsGI_on != 1 } { SettingsLightCache_mode != 2 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "filechooser_pattern" "*.vrlmap" }
 	parmtag	{ "vray_file_names" "V-Ray Light Cache map" }
 	parmtag	{ "vray_plugin" "SettingsLightCache" }
@@ -209,6 +222,7 @@
 	disablewhen	"{ SettingsGI_on != 1 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsLightCache" }
 	parmtag	{ "vray_pluginattr" "dont_delete" }
 	parmtag	{ "vray_type" "boolean" }
@@ -222,6 +236,7 @@
 	disablewhen	"{ SettingsGI_on != 1 } { SettingsLightCache_mode == 2 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsLightCache" }
 	parmtag	{ "vray_pluginattr" "auto_save" }
 	parmtag	{ "vray_type" "boolean" }
@@ -235,6 +250,7 @@
 	disablewhen	"{ SettingsGI_on != 1 } { SettingsLightCache_mode == 2 } { SettingsLightCache_auto_save != 1 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "filechooser_mode" "write" }
 	parmtag	{ "filechooser_pattern" "*.vrlmap" }
 	parmtag	{ "vray_file_names" "V-Ray Light Cache map" }
@@ -251,6 +267,7 @@
 	disablewhen	"{ SettingsGI_on != 1 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsLightCache" }
 	parmtag	{ "vray_pluginattr" "num_passes" }
 	parmtag	{ "vray_type" "int" }
@@ -264,6 +281,7 @@
 	disablewhen	"{ SettingsGI_on != 1 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsLightCache" }
 	parmtag	{ "vray_pluginattr" "use_for_glossy_rays" }
 	parmtag	{ "vray_type" "boolean" }
@@ -277,6 +295,7 @@
 	disablewhen	"{ SettingsGI_on != 1 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsLightCache" }
 	parmtag	{ "vray_pluginattr" "adaptive_sampling" }
 	parmtag	{ "vray_type" "boolean" }
@@ -290,6 +309,7 @@
 	disablewhen	"{ SettingsGI_on != 1 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsLightCache" }
 	parmtag	{ "vray_pluginattr" "multiple_views" }
 	parmtag	{ "vray_type" "boolean" }
@@ -303,6 +323,7 @@
 	disablewhen	"{ SettingsGI_on != 1 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsLightCache" }
 	parmtag	{ "vray_pluginattr" "retrace_enabled" }
 	parmtag	{ "vray_type" "boolean" }
@@ -316,6 +337,7 @@
 	disablewhen	"{ SettingsGI_on != 1 } { SettingsLightCache_retrace_enabled == 0 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsLightCache" }
 	parmtag	{ "vray_pluginattr" "retrace_threshold" }
 	parmtag	{ "vray_type" "float" }
@@ -329,6 +351,7 @@
 	disablewhen	"{ SettingsGI_on != 1 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_custom_handling" "1" }
     }
     parm {
@@ -339,6 +362,7 @@
 	disablewhen	"{ SettingsGI_on != 1 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_custom_handling" "1" }
     }
     parm {
@@ -350,6 +374,7 @@
 	disablewhen	"{ SettingsLightCache_retrace_enabled == 0 }"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsLightCache" }
 	parmtag	{ "vray_pluginattr" "retrace_leak_prevention" }
 	parmtag	{ "vray_type" "float" }

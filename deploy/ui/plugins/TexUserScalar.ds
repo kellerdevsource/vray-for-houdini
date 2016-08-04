@@ -20,6 +20,7 @@
 	help	"Default value if the attribute is not found"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexUserScalar" }
 	parmtag	{ "vray_pluginattr" "default_value" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -32,6 +33,7 @@
 	help	"User attribute name of type float or color"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexUserScalar" }
 	parmtag	{ "vray_pluginattr" "user_attribute" }
 	parmtag	{ "vray_type" "String" }

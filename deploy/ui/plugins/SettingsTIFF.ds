@@ -24,6 +24,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "8,16,32" }
 	parmtag	{ "vray_plugin" "SettingsTIFF" }
 	parmtag	{ "vray_pluginattr" "bits_per_channel" }
@@ -37,6 +38,7 @@
 	help	"If true, the TIFF color channels will be written interleaved (RGBRGB instead of RRGGBB)"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsTIFF" }
 	parmtag	{ "vray_pluginattr" "interleaved" }
 	parmtag	{ "vray_type" "boolean" }

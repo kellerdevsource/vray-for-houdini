@@ -20,6 +20,7 @@
 	help	"The name of the file in which the shade map information is stored"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "filechooser_pattern" "*.vrst" }
 	parmtag	{ "vray_plugin" "OutputDeepWriter" }
 	parmtag	{ "vray_pluginattr" "file" }
@@ -33,6 +34,7 @@
 	help	"Store 32 bit (single precision) color channels in the shade map. When off 16 bit (half precision) values are stored"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "OutputDeepWriter" }
 	parmtag	{ "vray_pluginattr" "float_colors_mode" }
 	parmtag	{ "vray_type" "boolean" }
@@ -49,6 +51,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "OutputDeepWriter" }
 	parmtag	{ "vray_pluginattr" "vrst_compression" }
@@ -67,6 +70,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "OutputDeepWriter" }
 	parmtag	{ "vray_pluginattr" "exr_compression" }

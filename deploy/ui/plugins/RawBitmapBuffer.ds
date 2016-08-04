@@ -26,6 +26,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "-1,0,1,2" }
 	parmtag	{ "vray_plugin" "RawBitmapBuffer" }
 	parmtag	{ "vray_pluginattr" "filter_type" }
@@ -38,6 +39,7 @@
 	default	{ "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RawBitmapBuffer" }
 	parmtag	{ "vray_pluginattr" "filter_blur" }
 	parmtag	{ "vray_type" "float" }
@@ -55,6 +57,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "RawBitmapBuffer" }
 	parmtag	{ "vray_pluginattr" "color_space" }
@@ -67,6 +70,7 @@
 	default	{ "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RawBitmapBuffer" }
 	parmtag	{ "vray_pluginattr" "gamma" }
 	parmtag	{ "vray_type" "float" }
@@ -78,6 +82,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RawBitmapBuffer" }
 	parmtag	{ "vray_pluginattr" "maya_compatible" }
 	parmtag	{ "vray_type" "boolean" }
@@ -90,6 +95,7 @@
 	help	"if false negative colors will be clamped"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RawBitmapBuffer" }
 	parmtag	{ "vray_pluginattr" "allow_negative_colors" }
 	parmtag	{ "vray_type" "boolean" }
@@ -107,6 +113,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "RawBitmapBuffer" }
 	parmtag	{ "vray_pluginattr" "interpolation" }
@@ -127,6 +134,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3,4" }
 	parmtag	{ "vray_plugin" "RawBitmapBuffer" }
 	parmtag	{ "vray_pluginattr" "pixels_type" }
@@ -140,6 +148,7 @@
 	help	"The width of the raw bitmap"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RawBitmapBuffer" }
 	parmtag	{ "vray_pluginattr" "width" }
 	parmtag	{ "vray_type" "int" }
@@ -152,6 +161,7 @@
 	help	"The height of the raw bitmap"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "RawBitmapBuffer" }
 	parmtag	{ "vray_pluginattr" "height" }
 	parmtag	{ "vray_type" "int" }

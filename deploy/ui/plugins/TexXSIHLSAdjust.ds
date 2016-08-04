@@ -28,6 +28,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1" }
 	    parmtag	{ "vray_plugin" "TexXSIHLSAdjust" }
 	    parmtag	{ "vray_pluginattr" "compatibility_with" }
@@ -46,6 +47,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1,2" }
 	    parmtag	{ "vray_plugin" "TexXSIHLSAdjust" }
 	    parmtag	{ "vray_pluginattr" "alpha_from_intensity" }
@@ -59,6 +61,7 @@
 	    help	"If true, the resulting texture color will be inverted"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexXSIHLSAdjust" }
 	    parmtag	{ "vray_pluginattr" "invert" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -72,6 +75,7 @@
 	    disablewhen	"{ invert != 1 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexXSIHLSAdjust" }
 	    parmtag	{ "vray_pluginattr" "invert_alpha" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -85,6 +89,7 @@
 	    help	"A multiplier for the texture color"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexXSIHLSAdjust" }
 	    parmtag	{ "vray_pluginattr" "color_mult" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -98,6 +103,7 @@
 	    help	"An additional offset for the texture color"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexXSIHLSAdjust" }
 	    parmtag	{ "vray_pluginattr" "color_offset" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -110,6 +116,7 @@
 	    help	"A multiplier for the texture alpha"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexXSIHLSAdjust" }
 	    parmtag	{ "vray_pluginattr" "alpha_mult" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -122,6 +129,7 @@
 	    help	"An additional offset for the texture alpha"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexXSIHLSAdjust" }
 	    parmtag	{ "vray_pluginattr" "alpha_offset" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -135,6 +143,7 @@
 	    help	"The color when there are no valid uvw coordinates"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexXSIHLSAdjust" }
 	    parmtag	{ "vray_pluginattr" "nouvw_color" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -148,6 +157,7 @@
 	    help	"Input texture"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexXSIHLSAdjust" }
 	    parmtag	{ "vray_pluginattr" "xsi_color" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -160,6 +170,7 @@
 	    help	"master hue"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexXSIHLSAdjust" }
 	    parmtag	{ "vray_pluginattr" "master_h" }
 	    parmtag	{ "vray_type" "float" }
@@ -172,6 +183,7 @@
 	    help	"master lightness"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexXSIHLSAdjust" }
 	    parmtag	{ "vray_pluginattr" "master_l" }
 	    parmtag	{ "vray_type" "float" }
@@ -184,6 +196,7 @@
 	    help	"master saturation"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexXSIHLSAdjust" }
 	    parmtag	{ "vray_pluginattr" "master_s" }
 	    parmtag	{ "vray_type" "float" }
@@ -196,6 +209,7 @@
 	    help	"red hue"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexXSIHLSAdjust" }
 	    parmtag	{ "vray_pluginattr" "red_h" }
 	    parmtag	{ "vray_type" "float" }
@@ -208,6 +222,7 @@
 	    help	"red lightness"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexXSIHLSAdjust" }
 	    parmtag	{ "vray_pluginattr" "red_l" }
 	    parmtag	{ "vray_type" "float" }
@@ -220,6 +235,7 @@
 	    help	"red saturation"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexXSIHLSAdjust" }
 	    parmtag	{ "vray_pluginattr" "red_s" }
 	    parmtag	{ "vray_type" "float" }
@@ -232,6 +248,7 @@
 	    help	"green hue"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexXSIHLSAdjust" }
 	    parmtag	{ "vray_pluginattr" "green_h" }
 	    parmtag	{ "vray_type" "float" }
@@ -244,6 +261,7 @@
 	    help	"green lightness"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexXSIHLSAdjust" }
 	    parmtag	{ "vray_pluginattr" "green_l" }
 	    parmtag	{ "vray_type" "float" }
@@ -256,6 +274,7 @@
 	    help	"green saturation"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexXSIHLSAdjust" }
 	    parmtag	{ "vray_pluginattr" "green_s" }
 	    parmtag	{ "vray_type" "float" }
@@ -268,6 +287,7 @@
 	    help	"blue hue"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexXSIHLSAdjust" }
 	    parmtag	{ "vray_pluginattr" "blue_h" }
 	    parmtag	{ "vray_type" "float" }
@@ -280,6 +300,7 @@
 	    help	"blue lightness"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexXSIHLSAdjust" }
 	    parmtag	{ "vray_pluginattr" "blue_l" }
 	    parmtag	{ "vray_type" "float" }
@@ -292,6 +313,7 @@
 	    help	"blue saturation"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexXSIHLSAdjust" }
 	    parmtag	{ "vray_pluginattr" "blue_s" }
 	    parmtag	{ "vray_type" "float" }
@@ -304,6 +326,7 @@
 	    help	"cyan hue"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexXSIHLSAdjust" }
 	    parmtag	{ "vray_pluginattr" "cyan_h" }
 	    parmtag	{ "vray_type" "float" }
@@ -316,6 +339,7 @@
 	    help	"cyan lightness"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexXSIHLSAdjust" }
 	    parmtag	{ "vray_pluginattr" "cyan_l" }
 	    parmtag	{ "vray_type" "float" }
@@ -328,6 +352,7 @@
 	    help	"cyan saturation"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexXSIHLSAdjust" }
 	    parmtag	{ "vray_pluginattr" "cyan_s" }
 	    parmtag	{ "vray_type" "float" }
@@ -340,6 +365,7 @@
 	    help	"yellow hue"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexXSIHLSAdjust" }
 	    parmtag	{ "vray_pluginattr" "yellow_h" }
 	    parmtag	{ "vray_type" "float" }
@@ -352,6 +378,7 @@
 	    help	"yellow lightness"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexXSIHLSAdjust" }
 	    parmtag	{ "vray_pluginattr" "yellow_l" }
 	    parmtag	{ "vray_type" "float" }
@@ -364,6 +391,7 @@
 	    help	"yellow saturation"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexXSIHLSAdjust" }
 	    parmtag	{ "vray_pluginattr" "yellow_s" }
 	    parmtag	{ "vray_type" "float" }
@@ -376,6 +404,7 @@
 	    help	"yellow hue"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexXSIHLSAdjust" }
 	    parmtag	{ "vray_pluginattr" "magenta_h" }
 	    parmtag	{ "vray_type" "float" }
@@ -388,6 +417,7 @@
 	    help	"yellow lightness"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexXSIHLSAdjust" }
 	    parmtag	{ "vray_pluginattr" "magenta_l" }
 	    parmtag	{ "vray_type" "float" }
@@ -400,6 +430,7 @@
 	    help	"yellow saturation"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexXSIHLSAdjust" }
 	    parmtag	{ "vray_pluginattr" "magenta_s" }
 	    parmtag	{ "vray_type" "float" }

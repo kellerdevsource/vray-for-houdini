@@ -20,6 +20,7 @@
 	disablewhen	"{ geometry_based_sampling != 0 } { geometry_based_sampling != 0 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 	parmtag	{ "vray_pluginattr" "prepass_rate" }
 	parmtag	{ "vray_type" "int" }
@@ -33,6 +34,7 @@
 	disablewhen	"{ geometry_based_sampling >= 2 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 	parmtag	{ "vray_pluginattr" "interpolation_accuracy" }
 	parmtag	{ "vray_type" "float" }
@@ -49,6 +51,7 @@
 	    help	"Values below 1.0 will make the object look as if it is bigger. Values above 1.0 will make it look as if it is smaller"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 	    parmtag	{ "vray_pluginattr" "scale" }
 	    parmtag	{ "vray_type" "float" }
@@ -60,6 +63,7 @@
 	    default	{ "1.5" }
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 	    parmtag	{ "vray_pluginattr" "ior" }
 	    parmtag	{ "vray_type" "float" }
@@ -78,6 +82,7 @@
 	    default	{ "1" "1" "1" "1" }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 	    parmtag	{ "vray_pluginattr" "overall_color" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -90,6 +95,7 @@
 	    default	{ "0.5" "0.5" "0.5" "1" }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 	    parmtag	{ "vray_pluginattr" "diffuse_color" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -101,6 +107,7 @@
 	    default	{ "0" }
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 	    parmtag	{ "vray_pluginattr" "diffuse_amount" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -113,6 +120,7 @@
 	    default	{ "0.5" "0.5" "0.5" "1" }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 	    parmtag	{ "vray_pluginattr" "sub_surface_color" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -126,6 +134,7 @@
 	    help	"This is measured in centimeters"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 	    parmtag	{ "vray_pluginattr" "scatter_radius" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -138,6 +147,7 @@
 	    help	"The scatter radius will be multiplied by this number"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 	    parmtag	{ "vray_pluginattr" "scatter_radius_mult" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -149,6 +159,7 @@
 	    default	{ "0" }
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 	    parmtag	{ "vray_pluginattr" "phase_function" }
 	    parmtag	{ "vray_type" "float" }
@@ -167,6 +178,7 @@
 	    default	{ "1" "1" "1" "1" }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 	    parmtag	{ "vray_pluginattr" "specular_color" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -178,6 +190,7 @@
 	    default	{ "1" }
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 	    parmtag	{ "vray_pluginattr" "specular_amount" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -189,6 +202,7 @@
 	    default	{ "0.6" }
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 	    parmtag	{ "vray_pluginattr" "specular_glossiness" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -200,6 +214,7 @@
 	    default	{ "8" }
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 	    parmtag	{ "vray_pluginattr" "specular_subdivs" }
 	    parmtag	{ "vray_type" "int" }
@@ -211,6 +226,7 @@
 	    default	{ "0.01" }
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 	    parmtag	{ "vray_pluginattr" "cutoff_threshold" }
 	    parmtag	{ "vray_type" "float" }
@@ -222,6 +238,7 @@
 	    default	{ "0" }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 	    parmtag	{ "vray_pluginattr" "trace_reflections" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -233,6 +250,7 @@
 	    default	{ "5" }
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 	    parmtag	{ "vray_pluginattr" "reflection_depth" }
 	    parmtag	{ "vray_type" "int" }
@@ -257,6 +275,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	    parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 	    parmtag	{ "vray_pluginattr" "single_scatter" }
@@ -270,6 +289,7 @@
 	    help	"Single scatter subdivisions"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 	    parmtag	{ "vray_pluginattr" "subdivs" }
 	    parmtag	{ "vray_type" "int" }
@@ -281,6 +301,7 @@
 	    default	{ "5" }
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 	    parmtag	{ "vray_pluginattr" "refraction_depth" }
 	    parmtag	{ "vray_type" "int" }
@@ -293,6 +314,7 @@
 	    disablewhen	"{ geometry_based_sampling != 0 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 	    parmtag	{ "vray_pluginattr" "front_scatter" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -305,6 +327,7 @@
 	    disablewhen	"{ geometry_based_sampling != 0 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 	    parmtag	{ "vray_pluginattr" "back_scatter" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -316,6 +339,7 @@
 	    default	{ "0" }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 	    parmtag	{ "vray_pluginattr" "scatter_gi" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -328,6 +352,7 @@
 	    disablewhen	"{ geometry_based_sampling >= 2 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 	    parmtag	{ "vray_pluginattr" "prepass_blur" }
 	    parmtag	{ "vray_type" "float" }
@@ -341,6 +366,7 @@
 	    disablewhen	"{ geometry_based_sampling != 0 } { geometry_based_sampling != 0 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 	    parmtag	{ "vray_pluginattr" "prepass_id" }
 	    parmtag	{ "vray_type" "int" }
@@ -353,6 +379,7 @@
 	    help	"Render channels the result of this BRDF will be written to"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "oprelative" "." }
 	    parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 	    parmtag	{ "vray_pluginattr" "channels" }
@@ -366,6 +393,7 @@
 	    help	"Set to true to apply the inverse of gamma correction"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 	    parmtag	{ "vray_pluginattr" "linear_workflow" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -386,6 +414,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1,2,3,4" }
 	    parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 	    parmtag	{ "vray_pluginattr" "prepass_mode" }
@@ -400,6 +429,7 @@
 	    disablewhen	"{ geometry_based_sampling >= 2 } { geometry_based_sampling != 0 } { prepass_mode <= 0 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "filechooser_pattern" "*.vrsssmap" }
 	    parmtag	{ "vray_file_names" "VRayFastSSS2 illumination map" }
 	    parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
@@ -426,6 +456,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	    parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 	    parmtag	{ "vray_pluginattr" "geometry_based_sampling" }
@@ -439,6 +470,7 @@
 	    disablewhen	"{ geometry_based_sampling != 1 } { auto_density != 0 } { geometry_based_sampling != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 	    parmtag	{ "vray_pluginattr" "samples_per_unit_area" }
 	    parmtag	{ "vray_type" "float" }
@@ -452,6 +484,7 @@
 	    disablewhen	"{ geometry_based_sampling != 1 } { geometry_based_sampling != 1 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 	    parmtag	{ "vray_pluginattr" "auto_density" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -465,6 +498,7 @@
 	    disablewhen	"{ geometry_based_sampling != 1 } { geometry_based_sampling != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 	    parmtag	{ "vray_pluginattr" "surface_offset" }
 	    parmtag	{ "vray_type" "float" }
@@ -477,6 +511,7 @@
 	    disablewhen	"{ geometry_based_sampling != 1 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 	    parmtag	{ "vray_pluginattr" "preview_samples" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -489,6 +524,7 @@
 	    disablewhen	"{ preview_samples != 1 } { geometry_based_sampling != 1 } { preview_samples != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 	    parmtag	{ "vray_pluginattr" "max_distance" }
 	    parmtag	{ "vray_type" "float" }
@@ -502,6 +538,7 @@
 	    disablewhen	"{ preview_samples != 1 } { geometry_based_sampling != 1 } { preview_samples != 1 }"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 	    parmtag	{ "vray_pluginattr" "background_color" }
 	    parmtag	{ "vray_type" "Color" }
@@ -515,6 +552,7 @@
 	    disablewhen	"{ preview_samples != 1 } { geometry_based_sampling != 1 } { preview_samples != 1 }"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 	    parmtag	{ "vray_pluginattr" "samples_color" }
 	    parmtag	{ "vray_type" "Color" }
@@ -527,6 +565,7 @@
 	    help	"Opacity texture"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 	    parmtag	{ "vray_pluginattr" "opacity" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -543,6 +582,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1" }
 	    parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 	    parmtag	{ "vray_pluginattr" "color_mode" }

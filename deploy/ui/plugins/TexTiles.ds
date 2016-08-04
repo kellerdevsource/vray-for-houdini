@@ -20,6 +20,7 @@
 	help	"A multiplier for the texture color"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexTiles" }
 	parmtag	{ "vray_pluginattr" "color_mult" }
 	parmtag	{ "vray_type" "Texture" }
@@ -33,6 +34,7 @@
 	help	"An additional offset for the texture color"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexTiles" }
 	parmtag	{ "vray_pluginattr" "color_offset" }
 	parmtag	{ "vray_type" "Texture" }
@@ -45,6 +47,7 @@
 	help	"A multiplier for the texture alpha"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexTiles" }
 	parmtag	{ "vray_pluginattr" "alpha_mult" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -57,6 +60,7 @@
 	help	"An additional offset for the texture alpha"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexTiles" }
 	parmtag	{ "vray_pluginattr" "alpha_offset" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -70,6 +74,7 @@
 	help	"The color when there are no valid uvw coordinates"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexTiles" }
 	parmtag	{ "vray_pluginattr" "nouvw_color" }
 	parmtag	{ "vray_type" "Texture" }
@@ -86,6 +91,7 @@
 	    help	"The uvw generator for the texture"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "oprelative" "." }
 	    parmtag	{ "vray_plugin" "TexTiles" }
 	    parmtag	{ "vray_pluginattr" "uvwgen" }
@@ -109,6 +115,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1" }
 	    parmtag	{ "vray_plugin" "TexTiles" }
 	    parmtag	{ "vray_pluginattr" "compatibility_with" }
@@ -127,6 +134,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1,2" }
 	    parmtag	{ "vray_plugin" "TexTiles" }
 	    parmtag	{ "vray_pluginattr" "alpha_from_intensity" }
@@ -140,6 +148,7 @@
 	    help	"If true, the resulting texture color will be inverted"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexTiles" }
 	    parmtag	{ "vray_pluginattr" "invert" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -153,6 +162,7 @@
 	    disablewhen	"{ invert != 1 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexTiles" }
 	    parmtag	{ "vray_pluginattr" "invert_alpha" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -170,6 +180,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1,2" }
 	    parmtag	{ "vray_plugin" "TexTiles" }
 	    parmtag	{ "vray_pluginattr" "placement_type" }
@@ -184,6 +195,7 @@
 	    disablewhen	"{ placement_type != 1 placement_type != 2 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexTiles" }
 	    parmtag	{ "vray_pluginattr" "u" }
 	    parmtag	{ "vray_type" "float" }
@@ -197,6 +209,7 @@
 	    disablewhen	"{ placement_type != 1 placement_type != 2 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexTiles" }
 	    parmtag	{ "vray_pluginattr" "v" }
 	    parmtag	{ "vray_type" "float" }
@@ -210,6 +223,7 @@
 	    disablewhen	"{ placement_type != 1 placement_type != 2 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexTiles" }
 	    parmtag	{ "vray_pluginattr" "w" }
 	    parmtag	{ "vray_type" "float" }
@@ -223,6 +237,7 @@
 	    disablewhen	"{ placement_type != 1 placement_type != 2 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexTiles" }
 	    parmtag	{ "vray_pluginattr" "h" }
 	    parmtag	{ "vray_type" "float" }
@@ -236,6 +251,7 @@
 	    disablewhen	"{ placement_type != 2 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexTiles" }
 	    parmtag	{ "vray_pluginattr" "jitter" }
 	    parmtag	{ "vray_type" "float" }
@@ -249,6 +265,7 @@
 	    disablewhen	"{ placement_type != 2 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexTiles" }
 	    parmtag	{ "vray_pluginattr" "tile_u" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -262,6 +279,7 @@
 	    disablewhen	"{ placement_type != 2 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexTiles" }
 	    parmtag	{ "vray_pluginattr" "tile_v" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -274,6 +292,7 @@
 	    help	"If true the noise is enabled"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexTiles" }
 	    parmtag	{ "vray_pluginattr" "uv_noise_on" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -287,6 +306,7 @@
 	    disablewhen	"{ uv_noise_on != 1 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexTiles" }
 	    parmtag	{ "vray_pluginattr" "uv_noise_animate" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -300,6 +320,7 @@
 	    disablewhen	"{ uv_noise_on != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexTiles" }
 	    parmtag	{ "vray_pluginattr" "uv_noise_amount" }
 	    parmtag	{ "vray_type" "float" }
@@ -313,6 +334,7 @@
 	    disablewhen	"{ uv_noise_on != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexTiles" }
 	    parmtag	{ "vray_pluginattr" "uv_noise_levels" }
 	    parmtag	{ "vray_type" "float" }
@@ -326,6 +348,7 @@
 	    disablewhen	"{ uv_noise_on != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexTiles" }
 	    parmtag	{ "vray_pluginattr" "uv_noise_size" }
 	    parmtag	{ "vray_type" "float" }
@@ -339,6 +362,7 @@
 	    disablewhen	"{ uv_noise_on != 1 } { uv_noise_animate != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexTiles" }
 	    parmtag	{ "vray_pluginattr" "un_noise_phase" }
 	    parmtag	{ "vray_type" "float" }
@@ -352,6 +376,7 @@
 	    help	"Mortar color"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexTiles" }
 	    parmtag	{ "vray_pluginattr" "color_mortar" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -365,6 +390,7 @@
 	    help	"Tiles color"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexTiles" }
 	    parmtag	{ "vray_pluginattr" "color_tiles" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -377,6 +403,7 @@
 	    help	"Tiles horizontal count"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexTiles" }
 	    parmtag	{ "vray_pluginattr" "horizontal_count" }
 	    parmtag	{ "vray_type" "float" }
@@ -389,6 +416,7 @@
 	    help	"Tiles vertical count"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexTiles" }
 	    parmtag	{ "vray_pluginattr" "vertical_count" }
 	    parmtag	{ "vray_type" "float" }
@@ -401,6 +429,7 @@
 	    help	"Color variance"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexTiles" }
 	    parmtag	{ "vray_pluginattr" "color_variance" }
 	    parmtag	{ "vray_type" "float" }
@@ -413,6 +442,7 @@
 	    help	"Horizontal gap between tiles"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexTiles" }
 	    parmtag	{ "vray_pluginattr" "horizontal_gap" }
 	    parmtag	{ "vray_type" "float" }
@@ -425,6 +455,7 @@
 	    help	"Vertical gap between tiles"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexTiles" }
 	    parmtag	{ "vray_pluginattr" "vertical_gap" }
 	    parmtag	{ "vray_type" "float" }
@@ -447,6 +478,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7" }
 	    parmtag	{ "vray_plugin" "TexTiles" }
 	    parmtag	{ "vray_pluginattr" "pattern_type" }
@@ -461,6 +493,7 @@
 	    disablewhen	"{ pattern_type != 0 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexTiles" }
 	    parmtag	{ "vray_pluginattr" "line_shift" }
 	    parmtag	{ "vray_type" "float" }
@@ -474,6 +507,7 @@
 	    disablewhen	"{ pattern_type != 0 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexTiles" }
 	    parmtag	{ "vray_pluginattr" "random_shift" }
 	    parmtag	{ "vray_type" "float" }
@@ -486,6 +520,7 @@
 	    help	"Edge roughness"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexTiles" }
 	    parmtag	{ "vray_pluginattr" "edge_roughness" }
 	    parmtag	{ "vray_type" "float" }
@@ -498,6 +533,7 @@
 	    help	"Holes"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexTiles" }
 	    parmtag	{ "vray_pluginattr" "holes" }
 	    parmtag	{ "vray_type" "int" }
@@ -510,6 +546,7 @@
 	    help	"Random seed"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexTiles" }
 	    parmtag	{ "vray_pluginattr" "random_seed" }
 	    parmtag	{ "vray_type" "int" }
@@ -522,6 +559,7 @@
 	    help	"Fade variance"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexTiles" }
 	    parmtag	{ "vray_pluginattr" "fade_variance" }
 	    parmtag	{ "vray_type" "float" }
@@ -535,6 +573,7 @@
 	    disablewhen	"{ pattern_type != 0 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexTiles" }
 	    parmtag	{ "vray_pluginattr" "row_modify" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -548,6 +587,7 @@
 	    disablewhen	"{ pattern_type != 0 }"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexTiles" }
 	    parmtag	{ "vray_pluginattr" "column_modify" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -561,6 +601,7 @@
 	    disablewhen	"{ pattern_type != 0 } { row_modify != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexTiles" }
 	    parmtag	{ "vray_pluginattr" "per_row" }
 	    parmtag	{ "vray_type" "int" }
@@ -574,6 +615,7 @@
 	    disablewhen	"{ pattern_type != 0 } { row_modify != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexTiles" }
 	    parmtag	{ "vray_pluginattr" "row_change" }
 	    parmtag	{ "vray_type" "float" }
@@ -587,6 +629,7 @@
 	    disablewhen	"{ pattern_type != 0 } { column_modify != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexTiles" }
 	    parmtag	{ "vray_pluginattr" "per_column" }
 	    parmtag	{ "vray_type" "int" }
@@ -600,6 +643,7 @@
 	    disablewhen	"{ pattern_type != 0 } { column_modify != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "TexTiles" }
 	    parmtag	{ "vray_pluginattr" "column_change" }
 	    parmtag	{ "vray_type" "float" }

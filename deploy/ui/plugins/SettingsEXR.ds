@@ -28,6 +28,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6" }
 	parmtag	{ "vray_plugin" "SettingsEXR" }
 	parmtag	{ "vray_pluginattr" "compression" }
@@ -45,6 +46,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "16,32" }
 	parmtag	{ "vray_plugin" "SettingsEXR" }
 	parmtag	{ "vray_pluginattr" "bits_per_channel" }
@@ -58,6 +60,7 @@
 	help	"Extra attributes to write in the header"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsEXR" }
 	parmtag	{ "vray_pluginattr" "extra_attributes" }
 	parmtag	{ "vray_type" "String" }
@@ -70,6 +73,7 @@
 	help	"true to enable auto data window based on the alpha channel when writing scanline-based multichannel OpenEXR files"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsEXR" }
 	parmtag	{ "vray_pluginattr" "auto_data_window" }
 	parmtag	{ "vray_type" "boolean" }
@@ -82,6 +86,7 @@
 	help	"true to write integer elemnt ids when using Image Format exr"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsEXR" }
 	parmtag	{ "vray_pluginattr" "write_integer_ids" }
 	parmtag	{ "vray_type" "boolean" }
@@ -94,6 +99,7 @@
 	help	"true to create multi-part exr file"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsEXR" }
 	parmtag	{ "vray_pluginattr" "multipart" }
 	parmtag	{ "vray_type" "boolean" }
@@ -111,6 +117,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "SettingsEXR" }
 	parmtag	{ "vray_pluginattr" "deep_alpha_colors" }

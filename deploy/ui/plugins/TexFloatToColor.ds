@@ -20,6 +20,7 @@
 	help	"The float value"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexFloatToColor" }
 	parmtag	{ "vray_pluginattr" "input" }
 	parmtag	{ "vray_type" "TextureFloat" }

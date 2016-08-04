@@ -20,6 +20,7 @@
 	help	"The input texture"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexBezierCurve" }
 	parmtag	{ "vray_pluginattr" "input_float" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -37,6 +38,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "TexBezierCurve" }
 	parmtag	{ "vray_pluginattr" "types" }
@@ -50,6 +52,7 @@
 	help	"The number of precisely calculated points from bezier curves: default 256"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexBezierCurve" }
 	parmtag	{ "vray_pluginattr" "num_bezier_points" }
 	parmtag	{ "vray_type" "int" }
@@ -62,6 +65,7 @@
 	help	"true to extrapolate beyound the control points"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexBezierCurve" }
 	parmtag	{ "vray_pluginattr" "use_end_tangents" }
 	parmtag	{ "vray_type" "boolean" }

@@ -19,6 +19,7 @@
 	help	"true if the light is casting light (turned on) and false otherwise; it only makes sense to use this parameter if it is animated, or if another object depends on this node but it must not be rendered"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "LightRectangle" }
 	parmtag	{ "vray_pluginattr" "enabled" }
 	parmtag	{ "vray_type" "boolean" }
@@ -26,6 +27,7 @@
     groupsimple {
 	name	"transform"
 	label	"Transform"
+	grouptag	{ "cook_dependent" "1" }
 	grouptag	{ "vray_plugin" "LightRectangle" }
 	grouptag	{ "vray_pluginattr" "transform" }
 	grouptag	{ "vray_type" "Transform" }
@@ -109,6 +111,7 @@
 	help	"Color of the light"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "LightRectangle" }
 	parmtag	{ "vray_pluginattr" "color" }
 	parmtag	{ "vray_type" "Color" }
@@ -122,6 +125,7 @@
 	help	"A color texture that if present will override the color parameter"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_linked_only" "1" }
 	parmtag	{ "vray_plugin" "LightRectangle" }
 	parmtag	{ "vray_pluginattr" "color_tex" }
@@ -135,6 +139,7 @@
 	help	"true if the light casts shadows and false otherwise"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "LightRectangle" }
 	parmtag	{ "vray_pluginattr" "shadows" }
 	parmtag	{ "vray_type" "boolean" }
@@ -148,6 +153,7 @@
 	help	"The shadow color. Anything but black is not physically accurate"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "LightRectangle" }
 	parmtag	{ "vray_pluginattr" "shadowColor" }
 	parmtag	{ "vray_type" "Color" }
@@ -161,6 +167,7 @@
 	help	"A color texture that if present will override the shadowColor parameter"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_linked_only" "1" }
 	parmtag	{ "vray_plugin" "LightRectangle" }
 	parmtag	{ "vray_pluginattr" "shadowColor_tex" }
@@ -174,6 +181,7 @@
 	help	"Shadow offset from the surface. Helps to prevent polygonal shadow artifacts on low-poly surfaces"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "LightRectangle" }
 	parmtag	{ "vray_pluginattr" "shadowBias" }
 	parmtag	{ "vray_type" "float" }
@@ -186,6 +194,7 @@
 	help	"Determines the number of photons emitted by this light when calculating the Global Photon Map. 1000 subdivs equal 1 million photons."
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "LightRectangle" }
 	parmtag	{ "vray_pluginattr" "photonSubdivs" }
 	parmtag	{ "vray_type" "int" }
@@ -198,6 +207,7 @@
 	help	"Determines the number of photons emitted by this light when calculating the Caustics Photon Map. 1000 subdivs equal 1 million photons."
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "LightRectangle" }
 	parmtag	{ "vray_pluginattr" "causticSubdivs" }
 	parmtag	{ "vray_type" "int" }
@@ -210,6 +220,7 @@
 	help	"Multiplier for the diffuse photons"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "LightRectangle" }
 	parmtag	{ "vray_pluginattr" "diffuseMult" }
 	parmtag	{ "vray_type" "float" }
@@ -222,6 +233,7 @@
 	help	"Multiplier for the caustic photons"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "LightRectangle" }
 	parmtag	{ "vray_pluginattr" "causticMult" }
 	parmtag	{ "vray_type" "float" }
@@ -234,6 +246,7 @@
 	help	"Light cut-off threshold (speed optimization). If the light intensity for a point is below this threshold, the light will not be computed"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "LightRectangle" }
 	parmtag	{ "vray_pluginattr" "cutoffThreshold" }
 	parmtag	{ "vray_type" "float" }
@@ -246,6 +259,7 @@
 	help	"true if the light produces diffuse lighting and false otherwise"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "LightRectangle" }
 	parmtag	{ "vray_pluginattr" "affectDiffuse" }
 	parmtag	{ "vray_type" "boolean" }
@@ -258,6 +272,7 @@
 	help	"true if the light produces specular hilights and false otherwise"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "LightRectangle" }
 	parmtag	{ "vray_pluginattr" "affectSpecular" }
 	parmtag	{ "vray_type" "boolean" }
@@ -270,6 +285,7 @@
 	help	"true if the bumped normal should be used to check if the light dir is below the surface"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "LightRectangle" }
 	parmtag	{ "vray_pluginattr" "bumped_below_surface_check" }
 	parmtag	{ "vray_type" "boolean" }
@@ -282,6 +298,7 @@
 	help	"Number of parameter samples for motion blur"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "LightRectangle" }
 	parmtag	{ "vray_pluginattr" "nsamples" }
 	parmtag	{ "vray_type" "int" }
@@ -294,6 +311,7 @@
 	help	"Diffuse contribution for the light"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "LightRectangle" }
 	parmtag	{ "vray_pluginattr" "diffuse_contribution" }
 	parmtag	{ "vray_type" "float" }
@@ -306,6 +324,7 @@
 	help	"Specular contribution for the light"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "LightRectangle" }
 	parmtag	{ "vray_pluginattr" "specular_contribution" }
 	parmtag	{ "vray_type" "float" }
@@ -318,6 +337,7 @@
 	help	"Render channels the result of this light will be written to"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "LightRectangle" }
 	parmtag	{ "vray_pluginattr" "channels" }
@@ -331,6 +351,7 @@
 	help	"Render channels the raw diffuse result of this light will be written to"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "LightRectangle" }
 	parmtag	{ "vray_pluginattr" "channels_raw" }
@@ -344,6 +365,7 @@
 	help	"Render channels the diffuse result of this light will be written to"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "LightRectangle" }
 	parmtag	{ "vray_pluginattr" "channels_diffuse" }
@@ -357,6 +379,7 @@
 	help	"Render channels the specular result of this light will be written to"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "LightRectangle" }
 	parmtag	{ "vray_pluginattr" "channels_specular" }
@@ -370,6 +393,7 @@
 	help	"true if the light should use the global light level setting"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "LightRectangle" }
 	parmtag	{ "vray_pluginattr" "use_global_light_level" }
 	parmtag	{ "vray_type" "boolean" }
@@ -389,6 +413,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2,3,4" }
 	parmtag	{ "vray_plugin" "LightRectangle" }
 	parmtag	{ "vray_pluginattr" "units" }
@@ -402,6 +427,7 @@
 	help	"Light intensity"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "LightRectangle" }
 	parmtag	{ "vray_pluginattr" "intensity" }
 	parmtag	{ "vray_type" "float" }
@@ -414,6 +440,7 @@
 	help	"A float texture that if present will override the intensity parameter"
 	range	{ 0 1024 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_linked_only" "1" }
 	parmtag	{ "vray_plugin" "LightRectangle" }
 	parmtag	{ "vray_pluginattr" "intensity_tex" }
@@ -426,6 +453,7 @@
 	default	{ "8" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "LightRectangle" }
 	parmtag	{ "vray_pluginattr" "subdivs" }
 	parmtag	{ "vray_type" "int" }
@@ -438,6 +466,7 @@
 	help	"When this option is on and GI calculation is set to Irradiance map V-Ray will calculate the effects of this light and store them in the irradiance map. The result is that the irradiance map is computed more slowly but the rendering takes less time. You can also save the irradiance map and reuse it later."
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "LightRectangle" }
 	parmtag	{ "vray_pluginattr" "storeWithIrradianceMap" }
 	parmtag	{ "vray_type" "boolean" }
@@ -450,6 +479,7 @@
 	help	"True if the light is NOT directly visible from the camera and false otherwise."
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "LightRectangle" }
 	parmtag	{ "vray_pluginattr" "invisible" }
 	parmtag	{ "vray_type" "boolean" }
@@ -462,6 +492,7 @@
 	help	"true if the light appears in reflections and false otherwise"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "LightRectangle" }
 	parmtag	{ "vray_pluginattr" "affectReflections" }
 	parmtag	{ "vray_type" "boolean" }
@@ -473,6 +504,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "LightRectangle" }
 	parmtag	{ "vray_pluginattr" "noDecay" }
 	parmtag	{ "vray_type" "boolean" }
@@ -484,6 +516,7 @@
 	default	{ "0" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "LightRectangle" }
 	parmtag	{ "vray_pluginattr" "doubleSided" }
 	parmtag	{ "vray_type" "boolean" }
@@ -501,6 +534,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "LightRectangle" }
 	parmtag	{ "vray_pluginattr" "lightPortal" }
@@ -513,6 +547,7 @@
 	default	{ "0" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "LightRectangle" }
 	parmtag	{ "vray_pluginattr" "objectID" }
 	parmtag	{ "vray_type" "int" }
@@ -525,6 +560,7 @@
 	help	"The u dimension of the light (actually half-width)"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "LightRectangle" }
 	parmtag	{ "vray_pluginattr" "u_size" }
 	parmtag	{ "vray_type" "float" }
@@ -537,6 +573,7 @@
 	help	"The v dimension of the light (actually half-height)"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "LightRectangle" }
 	parmtag	{ "vray_pluginattr" "v_size" }
 	parmtag	{ "vray_type" "float" }
@@ -549,6 +586,7 @@
 	help	"Narrow the spread of the lighting and make the light directional"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "LightRectangle" }
 	parmtag	{ "vray_pluginattr" "directional" }
 	parmtag	{ "vray_type" "float" }
@@ -560,6 +598,7 @@
 	default	{ "1" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "LightRectangle" }
 	parmtag	{ "vray_pluginattr" "ignoreLightNormals" }
 	parmtag	{ "vray_type" "boolean" }
@@ -573,6 +612,7 @@
 	help	"The light texture"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_linked_only" "1" }
 	parmtag	{ "vray_plugin" "LightRectangle" }
 	parmtag	{ "vray_pluginattr" "rect_tex" }
@@ -586,6 +626,7 @@
 	help	"true if the texture should be used"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "LightRectangle" }
 	parmtag	{ "vray_pluginattr" "use_rect_tex" }
 	parmtag	{ "vray_type" "boolean" }
@@ -598,6 +639,7 @@
 	help	"The texture presampling resolution"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "LightRectangle" }
 	parmtag	{ "vray_pluginattr" "tex_resolution" }
 	parmtag	{ "vray_type" "int" }
@@ -611,6 +653,7 @@
 	disablewhen	"{ use_rect_tex != 1 }"
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "LightRectangle" }
 	parmtag	{ "vray_pluginattr" "tex_adaptive" }
 	parmtag	{ "vray_type" "float" }
@@ -623,6 +666,7 @@
 	help	"This parameter is for debugging only. It should always be set to true in user scenes. When set to false, rendering quality is not optimal"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "LightRectangle" }
 	parmtag	{ "vray_pluginattr" "useMIS" }
 	parmtag	{ "vray_type" "boolean" }
@@ -635,6 +679,7 @@
 	help	"The light is disc shaped"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "LightRectangle" }
 	parmtag	{ "vray_pluginattr" "is_disc" }
 	parmtag	{ "vray_type" "boolean" }

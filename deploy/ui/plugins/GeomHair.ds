@@ -20,6 +20,7 @@
 	help	"The triangle mesh that will have hairs generated on it"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "GeomHair" }
 	parmtag	{ "vray_pluginattr" "mesh" }
@@ -33,6 +34,7 @@
 	help	"The base hair length"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomHair" }
 	parmtag	{ "vray_pluginattr" "length_base" }
 	parmtag	{ "vray_type" "float" }
@@ -45,6 +47,7 @@
 	help	"The base hair thickness"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomHair" }
 	parmtag	{ "vray_pluginattr" "thickness_base" }
 	parmtag	{ "vray_type" "float" }
@@ -57,6 +60,7 @@
 	help	"The base gravity"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomHair" }
 	parmtag	{ "vray_pluginattr" "gravity_base" }
 	parmtag	{ "vray_type" "float" }
@@ -70,6 +74,7 @@
 	help	"The gravity force direction vector"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomHair" }
 	parmtag	{ "vray_pluginattr" "gravity_vector" }
 	parmtag	{ "vray_type" "Vector" }
@@ -82,6 +87,7 @@
 	help	"The direction variation"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomHair" }
 	parmtag	{ "vray_pluginattr" "dir_var" }
 	parmtag	{ "vray_type" "float" }
@@ -94,6 +100,7 @@
 	help	"The hair length variation"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomHair" }
 	parmtag	{ "vray_pluginattr" "length_var" }
 	parmtag	{ "vray_type" "float" }
@@ -106,6 +113,7 @@
 	help	"The hair thickness variation"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomHair" }
 	parmtag	{ "vray_pluginattr" "thickness_var" }
 	parmtag	{ "vray_type" "float" }
@@ -118,6 +126,7 @@
 	help	"The gravity variation"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomHair" }
 	parmtag	{ "vray_pluginattr" "gravity_var" }
 	parmtag	{ "vray_type" "float" }
@@ -130,6 +139,7 @@
 	help	"The curl radius variation"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomHair" }
 	parmtag	{ "vray_pluginattr" "curl_radius_var" }
 	parmtag	{ "vray_type" "float" }
@@ -142,6 +152,7 @@
 	help	"The amount of hair bending"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomHair" }
 	parmtag	{ "vray_pluginattr" "bend" }
 	parmtag	{ "vray_type" "float" }
@@ -154,6 +165,7 @@
 	help	"The amount of taper applied to hairs"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomHair" }
 	parmtag	{ "vray_pluginattr" "taper" }
 	parmtag	{ "vray_type" "float" }
@@ -166,6 +178,7 @@
 	help	"True if curl should be applied to the hair"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomHair" }
 	parmtag	{ "vray_pluginattr" "curl_enabled" }
 	parmtag	{ "vray_type" "boolean" }
@@ -178,6 +191,7 @@
 	help	"The angle of the curl applied at yeach knot"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomHair" }
 	parmtag	{ "vray_pluginattr" "curl_angle" }
 	parmtag	{ "vray_type" "float" }
@@ -190,6 +204,7 @@
 	help	"The radius of the curls"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomHair" }
 	parmtag	{ "vray_pluginattr" "curl_radius" }
 	parmtag	{ "vray_type" "float" }
@@ -202,6 +217,7 @@
 	help	"Number of segments along the circumference of a single hair"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomHair" }
 	parmtag	{ "vray_pluginattr" "hair_sides" }
 	parmtag	{ "vray_type" "int" }
@@ -214,6 +230,7 @@
 	help	"Number of segments along the length of a single hair"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomHair" }
 	parmtag	{ "vray_pluginattr" "hair_knots" }
 	parmtag	{ "vray_type" "int" }
@@ -226,6 +243,7 @@
 	help	"Level of detail toggle. Enables detail decrease along distance form the camera"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomHair" }
 	parmtag	{ "vray_pluginattr" "lod_enabled" }
 	parmtag	{ "vray_type" "boolean" }
@@ -238,6 +256,7 @@
 	help	"Level of detail starting distance. The distance from wich the effect is applied"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomHair" }
 	parmtag	{ "vray_pluginattr" "lod_startDistance" }
 	parmtag	{ "vray_type" "float" }
@@ -250,6 +269,7 @@
 	help	"Level of detail rate. Rate of decrease. The distance to reach half the hairs count with twice the thickness"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomHair" }
 	parmtag	{ "vray_pluginattr" "lod_rate" }
 	parmtag	{ "vray_type" "float" }
@@ -262,6 +282,7 @@
 	help	"True if areaList should be used to determine the number of hairs when distribution is 'per area'"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomHair" }
 	parmtag	{ "vray_pluginattr" "fixed_areas" }
 	parmtag	{ "vray_type" "int" }
@@ -278,6 +299,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "GeomHair" }
 	parmtag	{ "vray_pluginattr" "distribution" }
@@ -291,6 +313,7 @@
 	help	"Number of hairs per face if distribution==0"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomHair" }
 	parmtag	{ "vray_pluginattr" "perFace" }
 	parmtag	{ "vray_type" "int" }
@@ -303,6 +326,7 @@
 	help	"Number of hairs per unit area if distribution==1"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomHair" }
 	parmtag	{ "vray_pluginattr" "perArea" }
 	parmtag	{ "vray_type" "float" }
@@ -314,6 +338,7 @@
 	default	{ "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomHair" }
 	parmtag	{ "vray_pluginattr" "flat_normals" }
 	parmtag	{ "vray_type" "int" }
@@ -326,6 +351,7 @@
 	help	"Material ID will be overriden"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomHair" }
 	parmtag	{ "vray_pluginattr" "override_mtlID_on" }
 	parmtag	{ "vray_type" "boolean" }
@@ -338,6 +364,7 @@
 	help	"The override material ID"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomHair" }
 	parmtag	{ "vray_pluginattr" "override_mtlID" }
 	parmtag	{ "vray_type" "int" }
@@ -350,6 +377,7 @@
 	help	"If false, fur will be displaced via using the parent mesh displacement map"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomHair" }
 	parmtag	{ "vray_pluginattr" "ignore_base_mesh_displacement" }
 	parmtag	{ "vray_type" "boolean" }
@@ -367,6 +395,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "GeomHair" }
 	parmtag	{ "vray_pluginattr" "placement" }
@@ -380,6 +409,7 @@
 	help	"Fur scaling factor"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomHair" }
 	parmtag	{ "vray_pluginattr" "scale" }
 	parmtag	{ "vray_type" "float" }
@@ -393,6 +423,7 @@
 	disablewhen	"{ placement != 2 }"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomHair" }
 	parmtag	{ "vray_pluginattr" "mtlID" }
 	parmtag	{ "vray_type" "int" }
@@ -405,6 +436,7 @@
 	help	"If true, V-Ray will generate a W mapping coordinate that represents the position of the shaded point along the hair strands"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomHair" }
 	parmtag	{ "vray_pluginattr" "generate_w_coord" }
 	parmtag	{ "vray_type" "boolean" }
@@ -417,6 +449,7 @@
 	help	"Map channel to derive the uv space from"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomHair" }
 	parmtag	{ "vray_pluginattr" "map_channel" }
 	parmtag	{ "vray_type" "int" }
@@ -430,6 +463,7 @@
 	help	"A texture for the bend direction of hair strands"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomHair" }
 	parmtag	{ "vray_pluginattr" "bend_direction_tex" }
 	parmtag	{ "vray_type" "Texture" }
@@ -443,6 +477,7 @@
 	help	"A texture for the initial direction of hair strands"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomHair" }
 	parmtag	{ "vray_pluginattr" "initial_direction_tex" }
 	parmtag	{ "vray_type" "Texture" }
@@ -455,6 +490,7 @@
 	help	"A texture for the length"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomHair" }
 	parmtag	{ "vray_pluginattr" "length_tex" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -467,6 +503,7 @@
 	help	"A texture for the thickness"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomHair" }
 	parmtag	{ "vray_pluginattr" "thickness_tex" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -479,6 +516,7 @@
 	help	"A texture for the gravity"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomHair" }
 	parmtag	{ "vray_pluginattr" "gravity_tex" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -491,6 +529,7 @@
 	help	"A texture for the bend"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomHair" }
 	parmtag	{ "vray_pluginattr" "bend_tex" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -503,6 +542,7 @@
 	help	"A texture for the density"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomHair" }
 	parmtag	{ "vray_pluginattr" "density_tex" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -515,6 +555,7 @@
 	default	{ "0" "0" "0" "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomHair" }
 	parmtag	{ "vray_pluginattr" "curl_tex" }
 	parmtag	{ "vray_type" "Texture" }

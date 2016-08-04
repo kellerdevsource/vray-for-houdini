@@ -20,6 +20,7 @@
 	help	"scalar value to be remapped"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexInterpLinear" }
 	parmtag	{ "vray_pluginattr" "input" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -32,6 +33,7 @@
 	help	"start of the current range of values"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexInterpLinear" }
 	parmtag	{ "vray_pluginattr" "oldrange_min" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -44,6 +46,7 @@
 	help	"end of the current range of values"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexInterpLinear" }
 	parmtag	{ "vray_pluginattr" "oldrange_max" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -56,6 +59,7 @@
 	help	"start of the new range of values"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexInterpLinear" }
 	parmtag	{ "vray_pluginattr" "newrange_min" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -68,6 +72,7 @@
 	help	"end of the new range of values"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexInterpLinear" }
 	parmtag	{ "vray_pluginattr" "newrange_max" }
 	parmtag	{ "vray_type" "TextureFloat" }

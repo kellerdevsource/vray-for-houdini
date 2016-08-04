@@ -19,6 +19,7 @@
 	help	"Channel name"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
     }
     parm {
 	name	"color_mapping"
@@ -28,6 +29,7 @@
 	help	"Color Mapping"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
     }
     parm {
 	name	"consider_for_aa"
@@ -37,6 +39,7 @@
 	help	"Consider this render element for antialiasing (may slow down rendering)"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
     }
     parm {
 	name	"filtering"
@@ -46,6 +49,7 @@
 	help	"Filtering"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
     }
     parm {
 	name	"lights"
@@ -55,6 +59,7 @@
 	help	"Light list to appear in this channel"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_custom_handling" "1" }
     }

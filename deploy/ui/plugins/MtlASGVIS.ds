@@ -19,6 +19,7 @@
 	default	{ "" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "brdfs" }
@@ -32,6 +33,7 @@
 	help	"1 to make the material double-sided"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "double_sided" }
 	parmtag	{ "vray_type" "boolean" }
@@ -44,6 +46,7 @@
 	help	"Set this flag to disable any volumetric effects that sub-brdfs might need"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "disable_volume_fog" }
 	parmtag	{ "vray_type" "boolean" }
@@ -56,6 +59,7 @@
 	help	"true if we want to turn on bump mapping"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "bump_on" }
 	parmtag	{ "vray_type" "boolean" }
@@ -68,6 +72,7 @@
 	help	"Bump texture, can be float or color"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "bump_tex" }
@@ -81,6 +86,7 @@
 	help	"Bump amount"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "bump_tex_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -93,6 +99,7 @@
 	help	"true to offset the surface shading point, in addition to the normal"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "bump_shadows" }
 	parmtag	{ "vray_type" "boolean" }
@@ -105,6 +112,7 @@
 	help	"Bump amount texture"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "bump_tex_mult_tex" }
 	parmtag	{ "vray_type" "TextureFloat" }
@@ -117,6 +125,7 @@
 	help	"Scale for sampling the bitmap when map_type is 0. Normally this is tied to the ray differentials, but can be changed if necessary"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "bump_delta_scale" }
 	parmtag	{ "vray_type" "float" }
@@ -129,6 +138,7 @@
 	help	"The type of the map (0 - from regular texture output, 1 - normal map in tangent space, 2 - normal map in object space, 3 - normal map in camera space, 4 - normal map in world space, 5 - from texture bump output, 6 - explicit normal)"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "map_type" }
 	parmtag	{ "vray_type" "int" }
@@ -141,6 +151,7 @@
 	help	"The uvw generator for the normal map texture when map_type is 1"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "normal_uvwgen" }
@@ -154,6 +165,7 @@
 	help	"true to compute bump mapping for shadow rays in case the material is transparent; false to skip the bump map for shadow rays (faster rendering)"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "compute_bump_for_shadows" }
 	parmtag	{ "vray_type" "boolean" }
@@ -167,6 +179,7 @@
 	help	"a float or color texture to be used to determine contribution multiplier"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "alpha_tex" }
 	parmtag	{ "vray_type" "Texture" }
@@ -179,6 +192,7 @@
 	help	"multiplier to be applied to alpha texture, if present"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "alpha_tex_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -191,6 +205,7 @@
 	help	"the alpha multiplier to be used if no texture is provided"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "alpha" }
 	parmtag	{ "vray_type" "float" }
@@ -203,6 +218,7 @@
 	help	"true if we want displacement turned on"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "displace_on" }
 	parmtag	{ "vray_type" "boolean" }
@@ -215,6 +231,7 @@
 	help	"displacement texture, can be float or color"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "displace_tex" }
@@ -228,6 +245,7 @@
 	help	"displacement multiplier ( displace amount )"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "displace_tex_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -240,6 +258,7 @@
 	help	"a constant value added to the displacement"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "displace_shift" }
 	parmtag	{ "vray_type" "float" }
@@ -252,6 +271,7 @@
 	help	"A cutoff point for displacement - can be used for a clipping effect"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "displace_water_level" }
 	parmtag	{ "vray_type" "float" }
@@ -264,6 +284,7 @@
 	help	"Whether or not to use view-dependant tesselation"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "displace_view_dependent" }
 	parmtag	{ "vray_type" "boolean" }
@@ -276,6 +297,7 @@
 	help	"Whether to use the global settings for our displacement"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "displace_use_globals" }
 	parmtag	{ "vray_type" "boolean" }
@@ -288,6 +310,7 @@
 	help	"The maximum number of subdivisions to use"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "displace_max_subdivs" }
 	parmtag	{ "vray_type" "int" }
@@ -300,6 +323,7 @@
 	help	"The approximate edge length"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "displace_edge_length" }
 	parmtag	{ "vray_type" "float" }
@@ -312,6 +336,7 @@
 	help	"enable continuity feature of displacement"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "displace_continuity" }
 	parmtag	{ "vray_type" "boolean" }
@@ -324,6 +349,7 @@
 	help	"whether the global gi environment should be overridden"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "override_gi" }
 	parmtag	{ "vray_type" "boolean" }
@@ -337,6 +363,7 @@
 	help	"the gi color"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "gi_color" }
 	parmtag	{ "vray_type" "Color" }
@@ -349,6 +376,7 @@
 	help	"the texture to use for the gi environment"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "gi_tex" }
@@ -362,6 +390,7 @@
 	help	"the multiplier for the gi environment texture"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "gi_tex_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -374,6 +403,7 @@
 	help	"whether the global bg environment should be overridden"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "override_bg" }
 	parmtag	{ "vray_type" "boolean" }
@@ -387,6 +417,7 @@
 	help	"the bg color"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "bg_color" }
 	parmtag	{ "vray_type" "Color" }
@@ -399,6 +430,7 @@
 	help	"the texture to use for the bg environment"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "bg_tex" }
@@ -412,6 +444,7 @@
 	help	"the multiplier for the bg environment texture"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "bg_tex_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -424,6 +457,7 @@
 	help	"whether the global reflection environment should be overridden"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "override_reflect" }
 	parmtag	{ "vray_type" "boolean" }
@@ -437,6 +471,7 @@
 	help	"reflect color"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "reflect_color" }
 	parmtag	{ "vray_type" "Color" }
@@ -449,6 +484,7 @@
 	help	"the reflection environment"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "reflect_tex" }
@@ -462,6 +498,7 @@
 	help	"the reflection environment texture multiplier"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "reflect_tex_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -474,6 +511,7 @@
 	help	"whether the global refraction environment should be overridden"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "override_refract" }
 	parmtag	{ "vray_type" "boolean" }
@@ -487,6 +525,7 @@
 	help	"refract color"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "refract_color" }
 	parmtag	{ "vray_type" "Color" }
@@ -499,6 +538,7 @@
 	help	"the refraction environment"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "refract_tex" }
@@ -512,6 +552,7 @@
 	help	"the refraction environment texture multiplier"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "refract_tex_mult" }
 	parmtag	{ "vray_type" "float" }
@@ -524,6 +565,7 @@
 	help	"Whether we should ignore all objects in the scene when tracing ourself"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "ignore_objects" }
 	parmtag	{ "vray_type" "boolean" }
@@ -536,6 +578,7 @@
 	help	"Whether we should do the cheating version of object exclusion-  may cause artifacts"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "short_circuit" }
 	parmtag	{ "vray_type" "boolean" }
@@ -549,6 +592,7 @@
 	help	"This will be used to represent the material in the material id channel if specified"
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "material_id_color" }
 	parmtag	{ "vray_type" "Color" }
@@ -561,6 +605,7 @@
 	help	"Whether or not we want objects with this material to cast a shadow"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "cast_shadow" }
 	parmtag	{ "vray_type" "boolean" }
@@ -573,6 +618,7 @@
 	help	"Whether or not this object should only be visible in reflects/refractions"
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "only_visible_in_secondary" }
 	parmtag	{ "vray_type" "boolean" }

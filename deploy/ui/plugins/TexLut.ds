@@ -20,6 +20,7 @@
 	default	{ "0" "0" "0" "0" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexLut" }
 	parmtag	{ "vray_pluginattr" "basemap" }
 	parmtag	{ "vray_type" "Texture" }
@@ -31,6 +32,7 @@
 	default	{ "" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "filechooser_pattern" "*.cube" }
 	parmtag	{ "vray_plugin" "TexLut" }
 	parmtag	{ "vray_pluginattr" "file" }
@@ -43,6 +45,7 @@
 	default	{ "1" }
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexLut" }
 	parmtag	{ "vray_pluginattr" "use_logspace" }
 	parmtag	{ "vray_type" "int" }

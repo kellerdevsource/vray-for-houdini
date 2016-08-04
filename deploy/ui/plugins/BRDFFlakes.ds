@@ -23,6 +23,7 @@
 	    default	{ "0.3" "0.4" "0.8" "1" }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFFlakes" }
 	    parmtag	{ "vray_pluginattr" "flake_color" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -34,6 +35,7 @@
 	    default	{ "0.8" }
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFFlakes" }
 	    parmtag	{ "vray_pluginattr" "flake_glossiness" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -45,6 +47,7 @@
 	    default	{ "0.3" }
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFFlakes" }
 	    parmtag	{ "vray_pluginattr" "flake_orientation" }
 	    parmtag	{ "vray_type" "TextureFloat" }
@@ -56,6 +59,7 @@
 	    default	{ "0.5" }
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFFlakes" }
 	    parmtag	{ "vray_pluginattr" "flake_density" }
 	    parmtag	{ "vray_type" "float" }
@@ -67,6 +71,7 @@
 	    default	{ "0.01" }
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFFlakes" }
 	    parmtag	{ "vray_pluginattr" "flake_scale" }
 	    parmtag	{ "vray_type" "float" }
@@ -78,6 +83,7 @@
 	    default	{ "0.5" }
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFFlakes" }
 	    parmtag	{ "vray_pluginattr" "flake_size" }
 	    parmtag	{ "vray_type" "float" }
@@ -90,6 +96,7 @@
 	    help	"The size of the internal flakes map"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFFlakes" }
 	    parmtag	{ "vray_pluginattr" "flake_map_size" }
 	    parmtag	{ "vray_type" "int" }
@@ -106,6 +113,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1" }
 	    parmtag	{ "vray_plugin" "BRDFFlakes" }
 	    parmtag	{ "vray_pluginattr" "flake_filtering_mode" }
@@ -119,6 +127,7 @@
 	    help	"The random seed for the flakes"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFFlakes" }
 	    parmtag	{ "vray_pluginattr" "flake_seed" }
 	    parmtag	{ "vray_type" "int" }
@@ -130,6 +139,7 @@
 	    default	{ "" }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "oprelative" "." }
 	    parmtag	{ "vray_plugin" "BRDFFlakes" }
 	    parmtag	{ "vray_pluginattr" "flake_uvwgen" }
@@ -148,6 +158,7 @@
 	    default	{ "1" }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFFlakes" }
 	    parmtag	{ "vray_pluginattr" "traceReflections" }
 	    parmtag	{ "vray_type" "boolean" }
@@ -159,6 +170,7 @@
 	    default	{ "1" }
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFFlakes" }
 	    parmtag	{ "vray_pluginattr" "doubleSided" }
 	    parmtag	{ "vray_type" "int" }
@@ -170,6 +182,7 @@
 	    default	{ "8" }
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFFlakes" }
 	    parmtag	{ "vray_pluginattr" "subdivs" }
 	    parmtag	{ "vray_type" "int" }
@@ -181,6 +194,7 @@
 	    default	{ "0.001" }
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFFlakes" }
 	    parmtag	{ "vray_pluginattr" "cutoff_threshold" }
 	    parmtag	{ "vray_type" "float" }
@@ -197,6 +211,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_enumkeys" "0,1" }
 	    parmtag	{ "vray_plugin" "BRDFFlakes" }
 	    parmtag	{ "vray_pluginattr" "mapping_type" }
@@ -210,6 +225,7 @@
 	    help	"The mapping channel when the mapping_type is 0"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFFlakes" }
 	    parmtag	{ "vray_pluginattr" "mapping_channel" }
 	    parmtag	{ "vray_type" "int" }
@@ -224,6 +240,7 @@
 	    disablewhen	"{ use_environment_override != 1 }"
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFFlakes" }
 	    parmtag	{ "vray_pluginattr" "environment_override" }
 	    parmtag	{ "vray_type" "Texture" }
@@ -237,6 +254,7 @@
 	    disablewhen	"{ use_environment_override != 1 }"
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFFlakes" }
 	    parmtag	{ "vray_pluginattr" "environment_priority" }
 	    parmtag	{ "vray_type" "int" }
@@ -249,6 +267,7 @@
 	    help	"The maximum reflection depth (-1 is controlled by the global options)"
 	    range	{ 1 1000 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFFlakes" }
 	    parmtag	{ "vray_pluginattr" "trace_depth" }
 	    parmtag	{ "vray_type" "int" }
@@ -267,6 +286,7 @@
 	    help	"True to use the 'environment override' texture"
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "cook_dependent" "1" }
 	    parmtag	{ "vray_plugin" "BRDFFlakes" }
 	    parmtag	{ "vray_pluginattr" "use_environment_override" }
 	    parmtag	{ "vray_type" "boolean" }

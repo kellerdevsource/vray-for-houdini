@@ -18,6 +18,7 @@
 	default	{ "" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_plugin" "SettingsVertexBaker" }
 	parmtag	{ "vray_pluginattr" "objects" }
@@ -30,6 +31,7 @@
 	default	{ "(null)" }
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsVertexBaker" }
 	parmtag	{ "vray_pluginattr" "color_set_name" }
 	parmtag	{ "vray_type" "String" }
@@ -41,6 +43,7 @@
 	default	{ "1" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsVertexBaker" }
 	parmtag	{ "vray_pluginattr" "bake_rgb_color" }
 	parmtag	{ "vray_type" "int" }
@@ -52,6 +55,7 @@
 	default	{ "1" }
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsVertexBaker" }
 	parmtag	{ "vray_pluginattr" "bake_alpha" }
 	parmtag	{ "vray_type" "int" }
