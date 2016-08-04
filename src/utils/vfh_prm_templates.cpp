@@ -133,7 +133,7 @@ std::string Parm::PRMList::expandUiPath(const std::string &relPath)
 }
 
 
-PRM_Template* Parm::PRMList::loadFromFile(const char *filepath, bool recook)
+PRM_Template* Parm::PRMList::loadFromFile(const char *filepath, bool setRecook)
 {
 	OP_Operator op( "dummy", "dummy",
 				nullptr, static_cast<PRM_Template *>(nullptr), 0 );
@@ -143,9 +143,11 @@ PRM_Template* Parm::PRMList::loadFromFile(const char *filepath, bool recook)
 	OP_SpareParms *opprms = op.loadSpareParms(is);
 	PRM_Template *tmpl = opprms->getSpareTemplates();
 
-	int i = 0;
-	while (tmpl && (tmpl[i].getType() != PRM_LIST_TERMINATOR)) {
-		tmpl[i++].setNoCook(!recook);
+	if (setRecook) {
+		int i = 0;
+		while (tmpl && (tmpl[i].getType() != PRM_LIST_TERMINATOR)) {
+			tmpl[i++].setNoCook(false);
+		}
 	}
 
 	return tmpl;

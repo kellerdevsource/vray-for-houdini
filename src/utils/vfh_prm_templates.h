@@ -66,7 +66,7 @@ public:
 
 	// does not validate anything, just prepends the passed path with the UI root
 	static std::string expandUiPath(const std::string &relPath);
-	static PRM_Template* loadFromFile(const char *filepath, bool recook = true);
+	static PRM_Template* loadFromFile(const char *filepath, bool setRecook = true);
 
 private:
 	typedef std::vector<PRM_Template> PRMTemplVec;
