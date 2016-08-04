@@ -250,13 +250,14 @@
 	    default	{ "1" }
 	    help	"0 - None; 1 - Simple; 2 - Raytraced(solid); 3 - Raytraced(refractive)"
 	    menu	{
-		"0"	"None"
-		"1"	"Simple"
-		"2"	"Raytraced(solid)"
-		"3"	"Raytraced(refractive)"
+		"None"	"None"
+		"Simple"	"Simple"
+		"Raytraced (Solid)"	"Raytraced (Solid)"
+		"Raytraced (Refractive)"	"Raytraced (Refractive)"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	    parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 	    parmtag	{ "vray_pluginattr" "single_scatter" }
 	    parmtag	{ "vray_type" "int" }
@@ -377,14 +378,15 @@
 	    help	"Prepass mode"
 	    disablewhen	"{ geometry_based_sampling >= 2 } { geometry_based_sampling != 0 }"
 	    menu	{
-		"0"	"New for each frame"
-		"1"	"Save map for each frame"
-		"2"	"Load saved map for each frame"
-		"3"	"Save map only for first frame"
-		"4"	"Load saved map for first frame"
+		"New"	"New"
+		"Save (Per-Frame)"	"Save (Per-Frame)"
+		"Load (Per-Frame)"	"Load (Per-Frame)"
+		"Save (First Frame)"	"Save (First Frame)"
+		"Load (First Frame)"	"Load (First Frame)"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2,3,4" }
 	    parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 	    parmtag	{ "vray_pluginattr" "prepass_mode" }
 	    parmtag	{ "vray_type" "int" }
@@ -417,13 +419,14 @@
 	    default	{ "2" }
 	    help	"0 - Prepass-based illumination map; 1 - Object-based illumination map; 2 - Raytraced; 3 - None (diffuse approx.);"
 	    menu	{
-		"0"	"Prepass-based illumination map"
-		"1"	"Object-based illumination map"
-		"2"	"Raytraced"
-		"3"	"None"
+		"Prepass-Based Illumination Map"	"Prepass-Based Illumination Map"
+		"Object-Based Illumination Map"	"Object-Based Illumination Map"
+		"Raytraced"	"Raytraced"
+		"None (Diffuse Approximation)"	"None (Diffuse Approximation)"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	    parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 	    parmtag	{ "vray_pluginattr" "geometry_based_sampling" }
 	    parmtag	{ "vray_type" "int" }
@@ -535,11 +538,12 @@
 	    default	{ "0" }
 	    help	"Determines the meaning of the two colors: 0 - diffuse surface reflectance and scatter radius; 1 - scatter coefficient and fog color"
 	    menu	{
-		"0"	"Diffuse surface reflectance and scatter radius"
-		"1"	"Scatter coefficient and fog color"
+		"Diffuse surface reflectance and scatter radius"	"Diffuse surface reflectance and scatter radius"
+		"Scatter coefficient and fog color"	"Scatter coefficient and fog color"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1" }
 	    parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 	    parmtag	{ "vray_pluginattr" "color_mode" }
 	    parmtag	{ "vray_type" "int" }

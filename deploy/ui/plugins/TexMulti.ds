@@ -32,16 +32,17 @@
 	default	{ "0" }
 	help	"The mode for the texture (0 - use face material ID, 1 - use object ID, 2 - random by node handle, 3 - random by render id, 4 - random by node name, 6 - random by instance ID, 30 - the ID is taken from the ID generator texture(id_gen_tex))"
 	menu	{
-	    "0"	"Face material ID"
-	    "1"	"Object ID"
-	    "2"	"Random by node handle"
-	    "3"	"Random by render ID"
-	    "4"	"Random by node name"
-	    "6"	"Random by instance ID"
-	    "30"	"Use ID Generator texture"
+	    "Face material ID"	"Face material ID"
+	    "Object ID"	"Object ID"
+	    "Random by node handle"	"Random by node handle"
+	    "Random by render ID"	"Random by render ID"
+	    "Random by node name"	"Random by node name"
+	    "Random by instance ID"	"Random by instance ID"
+	    " Use ID Generator texture"	" Use ID Generator texture"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3,4,6,30" }
 	parmtag	{ "vray_plugin" "TexMulti" }
 	parmtag	{ "vray_pluginattr" "mode" }
 	parmtag	{ "vray_type" "int" }

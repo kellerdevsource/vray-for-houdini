@@ -45,12 +45,13 @@
 	default	{ "0" }
 	help	"The color space"
 	menu	{
-	    "0"	"Linear"
-	    "1"	"Inverse gamma"
-	    "2"	"sRGB"
+	    "Linear"	"Linear"
+	    "Inverse gamma"	"Inverse gamma"
+	    "sRGB"	"sRGB"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "TexMaxGamma" }
 	parmtag	{ "vray_pluginattr" "color_space" }
 	parmtag	{ "vray_type" "int" }

@@ -237,13 +237,14 @@
 	default	{ "0" }
 	help	"Mode"
 	menu	{
-	    "0"	"Ambient occlusion"
-	    "1"	"Phong reflection occlusion"
-	    "2"	"Blinn reflection occlusion"
-	    "3"	"Ward reflection occlusion"
+	    "Ambient Occlusion"	"Ambient Occlusion"
+	    "Phong Reflection Occlusion"	"Phong Reflection Occlusion"
+	    "Blinn Reflection Occlusion"	"Blinn Reflection Occlusion"
+	    "Ward Reflection Occlusion"	"Ward Reflection Occlusion"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "TexDirt" }
 	parmtag	{ "vray_pluginattr" "mode" }
 	parmtag	{ "vray_type" "int" }

@@ -20,15 +20,16 @@
 	default	{ "0" }
 	help	"The condition check"
 	menu	{
-	    "0"	"Equal"
-	    "1"	"Not equal"
-	    "2"	"Greater than"
-	    "3"	"Greater or equal"
-	    "4"	"Less than"
-	    "5"	"Less or equal"
+	    "Equal"	"Equal"
+	    "Not equal"	"Not equal"
+	    "Greater than"	"Greater than"
+	    "Greater or equal"	"Greater or equal"
+	    "Less than"	"Less than"
+	    "Less or equal"	"Less or equal"
 	}
 	range	{ 0 10 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5" }
 	parmtag	{ "vray_linked_only" "1" }
 	parmtag	{ "vray_plugin" "TexCondition" }
 	parmtag	{ "vray_pluginattr" "operation" }

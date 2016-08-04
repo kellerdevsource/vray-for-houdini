@@ -165,11 +165,12 @@
 	help	"Detail enhancement scale"
 	disablewhen	"{ SettingsIrradianceMap_detail_enhancement != 1 }"
 	menu	{
-	    "0"	"Screen"
-	    "1"	"World"
+	    "Screen"	"Screen"
+	    "World"	"World"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "SettingsIrradianceMap" }
 	parmtag	{ "vray_pluginattr" "detail_scale" }
 	parmtag	{ "vray_type" "int" }
@@ -190,16 +191,17 @@
 	name	"SettingsIrradianceMap_interpolation_mode"
 	label	"Interpolation Mode"
 	type	ordinal
-	default	{ "1" }
+	default	{ "2" }
 	help	"Method for interpolating the GI value from the samples in the irradiance map"
 	menu	{
-	    "0"	"Weighted average"
-	    "1"	"Least-squares fit"
-	    "2"	"Local Delaunay triangulation"
-	    "3"	"Least-squares with Voronoi weights"
+	    "Least Squares With Voronoi Weights"	"Least Squares With Voronoi Weights"
+	    "Delone Triangulation"	"Delone Triangulation"
+	    "Least Squares Fit"	"Least Squares Fit"
+	    "Weighted Average"	"Weighted Average"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "3,2,1,0" }
 	parmtag	{ "vray_plugin" "SettingsIrradianceMap" }
 	parmtag	{ "vray_pluginattr" "interpolation_mode" }
 	parmtag	{ "vray_type" "int" }
@@ -211,13 +213,14 @@
 	default	{ "3" }
 	help	"Method of choosing suitable points from the irradiance map to be used as basis for the interpolation"
 	menu	{
-	    "0"	"Nearest (draft)"
-	    "1"	"Quad-balanced (good)"
-	    "2"	"Overlapping (very good/fast)"
-	    "3"	"Density-based (best)"
+	    "Quad-Balanced"	"Quad-Balanced"
+	    "Nearest"	"Nearest"
+	    "Overlapping"	"Overlapping"
+	    "Density-Based"	"Density-Based"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "SettingsIrradianceMap" }
 	parmtag	{ "vray_pluginattr" "lookup_mode" }
 	parmtag	{ "vray_type" "int" }
@@ -229,17 +232,18 @@
 	default	{ "0" }
 	help	"Irradiance map mode"
 	menu	{
-	    "0"	"Single frame"
-	    "1"	"Multiframe incremental"
-	    "2"	"From file"
-	    "3"	"Add to current map"
-	    "4"	"Incremental add to current map"
-	    "5"	"Bucket mode"
-	    "6"	"Animation (prepass)"
-	    "7"	"Animation (rendering)"
+	    "Single Frame"	"Single Frame"
+	    "Multiframe Incremental"	"Multiframe Incremental"
+	    "From File"	"From File"
+	    "Add To Current Map"	"Add To Current Map"
+	    "Incremental Add To Current Map"	"Incremental Add To Current Map"
+	    "Bucket Mode"	"Bucket Mode"
+	    "Animation (Prepass)"	"Animation (Prepass)"
+	    "Animation (Rendering)"	"Animation (Rendering)"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7" }
 	parmtag	{ "vray_plugin" "SettingsIrradianceMap" }
 	parmtag	{ "vray_pluginattr" "mode" }
 	parmtag	{ "vray_type" "int" }

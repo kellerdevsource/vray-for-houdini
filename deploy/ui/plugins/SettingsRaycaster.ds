@@ -131,12 +131,13 @@
 	default	{ "0" }
 	help	"Optimization level (must be 0)"
 	menu	{
-	    "0"	"Low"
-	    "2"	"Average"
-	    "4"	"High"
+	    "Low"	"Low"
+	    "Average"	"Average"
+	    "High"	"High"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,2,4" }
 	parmtag	{ "vray_plugin" "SettingsRaycaster" }
 	parmtag	{ "vray_pluginattr" "optLevel" }
 	parmtag	{ "vray_type" "int" }

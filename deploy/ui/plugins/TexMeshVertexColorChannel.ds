@@ -53,11 +53,12 @@
 	default	{ "1" }
 	help	"Use UV"
 	menu	{
-	    "0"	"UV"
-	    "1"	"Color"
+	    "UV"	"UV"
+	    "Color"	"Color"
 	}
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "vray_custom_handling" "1" }
+	parmtag	{ "vray_enumkeys" "0,1" }
     }
 }

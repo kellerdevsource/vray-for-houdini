@@ -32,13 +32,14 @@
 	default	{ "0" }
 	help	"Specifies which component to show"
 	menu	{
-	    "0"	"All"
-	    "1"	"U"
-	    "2"	"V"
-	    "3"	"W"
+	    "All"	"All"
+	    "U"	"U"
+	    "V"	"V"
+	    "W"	"W"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "TexUVW" }
 	parmtag	{ "vray_pluginattr" "component" }
 	parmtag	{ "vray_type" "int" }

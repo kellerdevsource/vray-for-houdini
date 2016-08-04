@@ -29,12 +29,13 @@
 	default	{ "1" }
 	disablewhen	"{ on == 0 }"
 	menu	{
-	    "0"	"Disabled"
-	    "1"	"Auto"
-	    "2"	"Enabled"
+	    "Disabled"	"Disabled"
+	    "Auto"	"Auto"
+	    "Enabled"	"Enabled"
 	}
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "SettingsLightTree" }
 	parmtag	{ "vray_pluginattr" "solids_enabled" }
 	parmtag	{ "vray_type" "int" }
@@ -46,12 +47,13 @@
 	default	{ "0" }
 	disablewhen	"{ on == 0 }"
 	menu	{
-	    "0"	"Auto"
-	    "1"	"Optimal"
-	    "2"	"Fast"
+	    "Auto"	"Auto"
+	    "Optimal"	"Optimal"
+	    "Fast"	"Fast"
 	}
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "SettingsLightTree" }
 	parmtag	{ "vray_pluginattr" "build_quality" }
 	parmtag	{ "vray_type" "int" }

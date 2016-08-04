@@ -19,14 +19,15 @@
 	default	{ "2" }
 	help	"0 : Constant, 1 : 2 Color Gradient, 2 : 4 Color Gradient, 3 : CIE Overcast Sky, 4 : Physically-based Daylight"
 	menu	{
-	    "0"	"Constant"
-	    "1"	"2 Color Gradient"
-	    "2"	"4 Color Gradient"
-	    "3"	"CIE Overcast Sky"
-	    "4"	"Physically-based Daylight"
+	    "Constant"	"Constant"
+	    "2 Color Gradient"	"2 Color Gradient"
+	    "4 Color Gradient"	"4 Color Gradient"
+	    "CIE Overcast Sky"	"CIE Overcast Sky"
+	    "Physically-based Daylight"	"Physically-based Daylight"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3,4" }
 	parmtag	{ "vray_plugin" "TexModoEnvironmentColor" }
 	parmtag	{ "vray_pluginattr" "type" }
 	parmtag	{ "vray_type" "int" }

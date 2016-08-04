@@ -381,14 +381,15 @@
 	default	{ "0" }
 	help	"Units for the intensity (0 - default, 1 - lumens, 2 - lm/m/m/sr, 3 - watts, 4 - w/m/m/sr)"
 	menu	{
-	    "0"	"Default"
-	    "1"	"Lumens"
-	    "2"	"lm/m/m/sr"
-	    "3"	"Watts"
-	    "4"	"w/m/m/sr"
+	    "Default"	"Default"
+	    "Lumens"	"Lumens"
+	    "Lm/m/m/sr"	"Lm/m/m/sr"
+	    "Watts"	"Watts"
+	    "W/m/m/sr"	"W/m/m/sr"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3,4" }
 	parmtag	{ "vray_plugin" "LightRectangle" }
 	parmtag	{ "vray_pluginattr" "units" }
 	parmtag	{ "vray_type" "int" }
@@ -494,12 +495,13 @@
 	default	{ "0" }
 	help	"Specifies if the light is a portal light"
 	menu	{
-	    "0"	"Normal light"
-	    "1"	"Portal Light"
-	    "2"	"Simple portal light"
+	    "Normal Light"	"Normal Light"
+	    "Portal"	"Portal"
+	    "Simple Portal"	"Simple Portal"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "LightRectangle" }
 	parmtag	{ "vray_pluginattr" "lightPortal" }
 	parmtag	{ "vray_type" "int" }

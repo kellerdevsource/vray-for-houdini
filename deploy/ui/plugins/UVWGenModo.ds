@@ -56,13 +56,14 @@
 	default	{ "1" }
 	help	"Horizontal tiling mode"
 	menu	{
-	    "0"	"Reset"
-	    "1"	"Repeat"
-	    "2"	"Mirror"
-	    "3"	"Edge"
+	    "Reset"	"Reset"
+	    "Repeat"	"Repeat"
+	    "Mirror"	"Mirror"
+	    "Edge"	"Edge"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "UVWGenModo" }
 	parmtag	{ "vray_pluginattr" "tile_mode_u" }
 	parmtag	{ "vray_type" "int" }
@@ -74,13 +75,14 @@
 	default	{ "1" }
 	help	"Vertical tiling mode"
 	menu	{
-	    "0"	"Reset"
-	    "1"	"Repeat"
-	    "2"	"Mirror"
-	    "3"	"Edge"
+	    "Reset"	"Reset"
+	    "Repeat"	"Repeat"
+	    "Mirror"	"Mirror"
+	    "Edge"	"Edge"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "UVWGenModo" }
 	parmtag	{ "vray_pluginattr" "tile_mode_v" }
 	parmtag	{ "vray_type" "int" }

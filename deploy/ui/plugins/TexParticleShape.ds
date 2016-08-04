@@ -23,11 +23,12 @@
 	    default	{ "0" }
 	    help	"This is used to differentiate between textures exported from different applications"
 	    menu	{
-		"0"	"Max"
-		"1"	"Maya"
+		"Max"	"Max"
+		"Maya"	"Maya"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1" }
 	    parmtag	{ "vray_plugin" "TexParticleShape" }
 	    parmtag	{ "vray_pluginattr" "compatibility_with" }
 	    parmtag	{ "vray_type" "int" }
@@ -39,12 +40,13 @@
 	    default	{ "0" }
 	    help	"If 2 - the alpha is forced to 1.0f; 1 - the resulting alpha is the color intensity (if compatibility_with is 0) or the color luminance (if compatibility_with is 1); 0 - the alpha is taken from the bitmap alpha"
 	    menu	{
-		"0"	"Bitmap alpha"
-		"1"	"Color intensity/luminance"
-		"2"	"Force opaque"
+		"Bitmap alpha"	"Bitmap alpha"
+		"Color intensity/luminance"	"Color intensity/luminance"
+		"Force opaque"	"Force opaque"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2" }
 	    parmtag	{ "vray_plugin" "TexParticleShape" }
 	    parmtag	{ "vray_pluginattr" "alpha_from_intensity" }
 	    parmtag	{ "vray_type" "int" }
@@ -163,12 +165,13 @@
 	    default	{ "0" }
 	    help	"The way the valid portion of the texture is applied: 0 - the whole texture is valid, 1 - crop, 2 -place"
 	    menu	{
-		"0"	"Whole texture is valid"
-		"1"	"Crop"
-		"2"	"Place"
+		"Whole texture is valid"	"Whole texture is valid"
+		"Crop"	"Crop"
+		"Place"	"Place"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2" }
 	    parmtag	{ "vray_plugin" "TexParticleShape" }
 	    parmtag	{ "vray_pluginattr" "placement_type" }
 	    parmtag	{ "vray_type" "int" }
@@ -361,16 +364,17 @@
 	    default	{ "0" }
 	    help	"Falloff Type - None(0), Linear(1), Square(2), Smooth(3), Cubic(4), Gaussian(5), User-defined(6)"
 	    menu	{
-		"0"	"None"
-		"1"	"Linear"
-		"2"	"Square"
-		"3"	"Smooth"
-		"4"	"Cubic"
-		"5"	"Gaussian"
-		"6"	"User-defined"
+		"None"	"None"
+		"Linear"	"Linear"
+		"Square"	"Square"
+		"Smooth"	"Smooth"
+		"Cubic"	"Cubic"
+		"Gaussian"	"Gaussian"
+		"User-defined"	"User-defined"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6" }
 	    parmtag	{ "vray_plugin" "TexParticleShape" }
 	    parmtag	{ "vray_pluginattr" "Falloff" }
 	    parmtag	{ "vray_type" "int" }
@@ -492,18 +496,19 @@
 	    default	{ "0" }
 	    help	"Shape - None(0), Step(1), Sine(2), Star3), Beam(4), Symmetry(5), Noise(6), Turbulence(7), Fractal(8)"
 	    menu	{
-		"0"	"None"
-		"1"	"Step"
-		"2"	"Sine"
-		"3"	"Star"
-		"4"	"Beam"
-		"5"	"Symmetry"
-		"6"	"Noise"
-		"7"	"Turbulence"
-		"8"	"Fractal"
+		"None"	"None"
+		"Step"	"Step"
+		"Sine"	"Sine"
+		"Star"	"Star"
+		"Beam"	"Beam"
+		"Symmetry"	"Symmetry"
+		"Noise"	"Noise"
+		"Turbulence"	"Turbulence"
+		"Fractal"	"Fractal"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7,8" }
 	    parmtag	{ "vray_plugin" "TexParticleShape" }
 	    parmtag	{ "vray_pluginattr" "Shape" }
 	    parmtag	{ "vray_type" "int" }

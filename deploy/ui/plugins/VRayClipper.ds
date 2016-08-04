@@ -113,11 +113,12 @@
 	default	{ "1" }
 	help	"Exclusion Mode"
 	menu	{
-	    "0"	"Include"
-	    "1"	"Exclude"
+	    "Include"	"Include"
+	    "Exclude"	"Exclude"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "VRayClipper" }
 	parmtag	{ "vray_pluginattr" "exclusion_mode" }
 	parmtag	{ "vray_type" "boolean" }
@@ -242,11 +243,12 @@
 	default	{ "1" }
 	help	"Specifies the boolean operation to perform"
 	menu	{
-	    "0"	"Intersection"
-	    "1"	"Substraction"
+	    "Intersection"	"Intersection"
+	    "Substraction"	"Substraction"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "VRayClipper" }
 	parmtag	{ "vray_pluginattr" "invert_inside" }
 	parmtag	{ "vray_type" "int" }

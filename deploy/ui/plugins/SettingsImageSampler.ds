@@ -18,13 +18,14 @@
 	default	{ "3" }
 	help	"The type of the image sampler"
 	menu	{
-	    "0"	"Fixed rate"
-	    "1"	"Adaptive"
-	    "2"	"Adaptive subdivision"
-	    "3"	"Progressive"
+	    "Fixed"	"Fixed"
+	    "Adaptive DMC"	"Adaptive DMC"
+	    "Adaptive Subdivision"	"Adaptive Subdivision"
+	    "Progressive"	"Progressive"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "SettingsImageSampler" }
 	parmtag	{ "vray_pluginattr" "type" }
 	parmtag	{ "vray_type" "int" }
@@ -293,20 +294,21 @@
 	default	{ "6" }
 	help	"Antialiasing filter type"
 	menu	{
-	    "NONE"	"None"
-	    "FilterArea"	"Area"
-	    "FilterBox"	"Box"
-	    "FilterCatmullRom"	"Catmull-Rom"
-	    "FilterCookVariable"	"Cook Variable"
-	    "FilterGaussian"	"Gaussian"
-	    "FilterLanczos"	"Lanczos"
-	    "FilterMitNet"	"Mitchell-Netravali"
-	    "FilterSinc"	"Sinc"
-	    "FilterTriangle"	"Triangle"
+	    "None"	"None"
+	    "Area"	"Area"
+	    "Box"	"Box"
+	    "Catmull-Rom"	"Catmull-Rom"
+	    "Cook Variable"	"Cook Variable"
+	    "Gaussian"	"Gaussian"
+	    "Lanczos"	"Lanczos"
+	    "Mitchell-Netravali"	"Mitchell-Netravali"
+	    "Sinc"	"Sinc"
+	    "Triangle"	"Triangle"
 	}
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "vray_custom_handling" "1" }
+	parmtag	{ "vray_enumkeys" "NONE,FilterArea,FilterBox,FilterCatmullRom,FilterCookVariable,FilterGaussian,FilterLanczos,FilterMitNet,FilterSinc,FilterTriangle" }
     }
     parm {
 	name	"SettingsImageSampler_render_mask_mode"
@@ -315,10 +317,13 @@
 	default	{ "0" }
 	help	"Sets the mode for the render mask"
 	menu	{
-	    "Disabled"	"0,Texture"
+	    "Disable"	"Disable"
+	    "Objects"	"Objects"
+	    "Object ID"	"Object ID"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,2,3" }
 	parmtag	{ "vray_plugin" "SettingsImageSampler" }
 	parmtag	{ "vray_pluginattr" "render_mask_mode" }
 	parmtag	{ "vray_type" "int" }
@@ -368,11 +373,12 @@
 	help	"Switches between legacy and new adaptive sampling"
 	disablewhen	"{ SettingsImageSampler_type != 1 }"
 	menu	{
-	    "0"	"Legacy"
-	    "1"	"Default"
+	    "Legacy"	"Legacy"
+	    "Default"	"Default"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "SettingsImageSampler" }
 	parmtag	{ "vray_pluginattr" "dmc_adaptive_method" }
 	parmtag	{ "vray_type" "int" }

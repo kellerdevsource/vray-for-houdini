@@ -57,16 +57,17 @@
 	default	{ "0" }
 	help	"A list with the type of the maps (0 - from regular texture output, 1 - normal map in tangent space, 2 - normal map in object space, 3 - normal map in camera space, 4 - normal map in world space, 5 - from texture bump output, 6 - explicit normal)"
 	menu	{
-	    "0"	"Bump Map"
-	    "1"	"Normal map in tangent space"
-	    "2"	"Normal map in object space"
-	    "3"	"Normal map in screen space"
-	    "4"	"Normal map in world space"
-	    "5"	"From texture bump output"
-	    "6"	"Explicit normal"
+	    "Bump Map"	"Bump Map"
+	    "Normal map in tangent space"	"Normal map in tangent space"
+	    "Normal map in object space"	"Normal map in object space"
+	    "Normal map in screen space"	"Normal map in screen space"
+	    "Normal map in world space"	"Normal map in world space"
+	    "From texture bump output"	"From texture bump output"
+	    "Explicit normal"	"Explicit normal"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6" }
 	parmtag	{ "vray_plugin" "BRDFMultiBump" }
 	parmtag	{ "vray_pluginattr" "map_type_0" }
 	parmtag	{ "vray_type" "int" }
@@ -103,16 +104,17 @@
 	default	{ "0" }
 	help	"A list with the type of the maps (0 - from regular texture output, 1 - normal map in tangent space, 2 - normal map in object space, 3 - normal map in camera space, 4 - normal map in world space, 5 - from texture bump output, 6 - explicit normal)"
 	menu	{
-	    "0"	"Bump Map"
-	    "1"	"Normal map in tangent space"
-	    "2"	"Normal map in object space"
-	    "3"	"Normal map in screen space"
-	    "4"	"Normal map in world space"
-	    "5"	"From texture bump output"
-	    "6"	"Explicit normal"
+	    "Bump Map"	"Bump Map"
+	    "Normal map in tangent space"	"Normal map in tangent space"
+	    "Normal map in object space"	"Normal map in object space"
+	    "Normal map in screen space"	"Normal map in screen space"
+	    "Normal map in world space"	"Normal map in world space"
+	    "From texture bump output"	"From texture bump output"
+	    "Explicit normal"	"Explicit normal"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6" }
 	parmtag	{ "vray_plugin" "BRDFMultiBump" }
 	parmtag	{ "vray_pluginattr" "map_type_1" }
 	parmtag	{ "vray_type" "int" }
@@ -149,16 +151,17 @@
 	default	{ "0" }
 	help	"A list with the type of the maps (0 - from regular texture output, 1 - normal map in tangent space, 2 - normal map in object space, 3 - normal map in camera space, 4 - normal map in world space, 5 - from texture bump output, 6 - explicit normal)"
 	menu	{
-	    "0"	"Bump Map"
-	    "1"	"Normal map in tangent space"
-	    "2"	"Normal map in object space"
-	    "3"	"Normal map in screen space"
-	    "4"	"Normal map in world space"
-	    "5"	"From texture bump output"
-	    "6"	"Explicit normal"
+	    "Bump Map"	"Bump Map"
+	    "Normal map in tangent space"	"Normal map in tangent space"
+	    "Normal map in object space"	"Normal map in object space"
+	    "Normal map in screen space"	"Normal map in screen space"
+	    "Normal map in world space"	"Normal map in world space"
+	    "From texture bump output"	"From texture bump output"
+	    "Explicit normal"	"Explicit normal"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6" }
 	parmtag	{ "vray_plugin" "BRDFMultiBump" }
 	parmtag	{ "vray_pluginattr" "map_type_2" }
 	parmtag	{ "vray_type" "int" }
@@ -195,16 +198,17 @@
 	default	{ "0" }
 	help	"A list with the type of the maps (0 - from regular texture output, 1 - normal map in tangent space, 2 - normal map in object space, 3 - normal map in camera space, 4 - normal map in world space, 5 - from texture bump output, 6 - explicit normal)"
 	menu	{
-	    "0"	"Bump Map"
-	    "1"	"Normal map in tangent space"
-	    "2"	"Normal map in object space"
-	    "3"	"Normal map in screen space"
-	    "4"	"Normal map in world space"
-	    "5"	"From texture bump output"
-	    "6"	"Explicit normal"
+	    "Bump Map"	"Bump Map"
+	    "Normal map in tangent space"	"Normal map in tangent space"
+	    "Normal map in object space"	"Normal map in object space"
+	    "Normal map in screen space"	"Normal map in screen space"
+	    "Normal map in world space"	"Normal map in world space"
+	    "From texture bump output"	"From texture bump output"
+	    "Explicit normal"	"Explicit normal"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6" }
 	parmtag	{ "vray_plugin" "BRDFMultiBump" }
 	parmtag	{ "vray_pluginattr" "map_type_3" }
 	parmtag	{ "vray_type" "int" }

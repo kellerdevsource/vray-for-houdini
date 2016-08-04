@@ -28,12 +28,13 @@
 	type	ordinal
 	default	{ "1" }
 	menu	{
-	    "0"	"Left"
-	    "1"	"Center"
-	    "2"	"Right"
+	    "Left"	"Left"
+	    "Center"	"Center"
+	    "Right"	"Right"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "RenderChannelDRBucket" }
 	parmtag	{ "vray_pluginattr" "text_alignment" }
 	parmtag	{ "vray_type" "int" }

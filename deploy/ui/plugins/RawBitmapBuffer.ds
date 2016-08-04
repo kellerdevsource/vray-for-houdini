@@ -19,14 +19,14 @@
 	default	{ "1" }
 	help	"-1 - nearest; 0 - no filtering; 1 - mip-map filtering; 2 - summed area table filtering"
 	menu	{
-	    "-1"	"Nearest"
-	    "0"	"No filtering"
-	    "1"	"Mip-map filtering"
-	    "2"	"Summed are table filtering"
-	    "3"	"Elliptical filtering"
+	    "Nearest"	"Nearest"
+	    "No filtering"	"No filtering"
+	    "Mip-map filtering"	"Mip-map filtering"
+	    "Summed are table filtering"	"Summed are table filtering"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "-1,0,1,2" }
 	parmtag	{ "vray_plugin" "RawBitmapBuffer" }
 	parmtag	{ "vray_pluginattr" "filter_type" }
 	parmtag	{ "vray_type" "int" }
@@ -49,12 +49,13 @@
 	default	{ "0" }
 	help	"0 - linear, 1 - gamma corrected, 2 - sRGB"
 	menu	{
-	    "0"	"Linear"
-	    "1"	"Gamma corrected"
-	    "2"	"sRGB"
+	    "Linear"	"Linear"
+	    "Gamma corrected"	"Gamma corrected"
+	    "sRGB"	"sRGB"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "RawBitmapBuffer" }
 	parmtag	{ "vray_pluginattr" "color_space" }
 	parmtag	{ "vray_type" "int" }
@@ -100,12 +101,13 @@
 	default	{ "0" }
 	help	"Interpolation method for the mip-map filtering (0 - bilinear, 1 - bicubic, 2 - biquadratic)"
 	menu	{
-	    "0"	"Bilinear"
-	    "1"	"Bicubic"
-	    "2"	"Biquadratic"
+	    "Bilinear"	"Bilinear"
+	    "Bicubic"	"Bicubic"
+	    "Biquadratic"	"Biquadratic"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "RawBitmapBuffer" }
 	parmtag	{ "vray_pluginattr" "interpolation" }
 	parmtag	{ "vray_type" "int" }
@@ -117,22 +119,15 @@
 	default	{ "0" }
 	help	"0: 8-bit RGBA, 1: float RGBA, 2: 8-bit RGBE, 3: 16-bit RGBA, 4: float RGBA"
 	menu	{
-	    "0"	"8-bit RBGA"
-	    "1"	"Float RGBA"
-	    "2"	"8-bit RBGE"
-	    "3"	"16-bit RBGA"
-	    "4"	"8-bit RGB"
-	    "5"	"Half-Float RGBA"
-	    "6"	"Float Grayscale"
-	    "7"	"8-bit Grayscale"
-	    "8"	"Half-Float Grayscale"
-	    "9"	"Signed 8-bit Grayscale"
-	    "10"	"Signed 8-bit RGB"
-	    "11"	"Signed 8-bit RGBA"
-	    "12"	"Signed 16-bit RGBA"
+	    "8-bit RBGA"	"8-bit RBGA"
+	    "Float RGBA"	"Float RGBA"
+	    "8-bit RBGE"	"8-bit RBGE"
+	    "16-bit RBGA"	"16-bit RBGA"
+	    "Float RGBA"	"Float RGBA"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3,4" }
 	parmtag	{ "vray_plugin" "RawBitmapBuffer" }
 	parmtag	{ "vray_pluginattr" "pixels_type" }
 	parmtag	{ "vray_type" "int" }

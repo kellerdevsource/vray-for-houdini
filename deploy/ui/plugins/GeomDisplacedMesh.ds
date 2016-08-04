@@ -312,15 +312,16 @@
 	default	{ "0" }
 	help	"Displacement type"
 	menu	{
-	    "0"	"Normal"
-	    "1"	"2D"
-	    "2"	"Vector"
-	    "3"	"Vector (Absolute)"
-	    "4"	"Vector (Object)"
+	    "Normal"	"Normal"
+	    "2D"	"2D"
+	    "Vector"	"Vector"
+	    "Vector (Absolute)"	"Vector (Absolute)"
+	    "Vector (Object)"	"Vector (Object)"
 	}
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "vray_custom_handling" "1" }
+	parmtag	{ "vray_enumkeys" "0,1,2,3,4" }
     }
     parm {
 	name	"vector_displacement"

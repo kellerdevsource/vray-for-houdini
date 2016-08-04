@@ -218,11 +218,12 @@
 	default	{ "0" }
 	help	"Projection baking"
 	menu	{
-	    "0"	"Normal"
-	    "1"	"Projection"
+	    "Normal"	"Normal"
+	    "Projection"	"Projection"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "BakeView" }
 	parmtag	{ "vray_pluginattr" "projection_baking" }
 	parmtag	{ "vray_type" "int" }
@@ -234,14 +235,15 @@
 	default	{ "0" }
 	help	"Bake mode"
 	menu	{
-	    "0"	"Outside"
-	    "1"	"Inside"
-	    "2"	"Outside - Inside"
-	    "3"	"Inside - Outside"
-	    "4"	"Closest"
+	    "Outside"	"Outside"
+	    "Inside"	"Inside"
+	    "Outside - Inside"	"Outside - Inside"
+	    "Inside - Outside"	"Inside - Outside"
+	    "Closest"	"Closest"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3,4" }
 	parmtag	{ "vray_plugin" "BakeView" }
 	parmtag	{ "vray_pluginattr" "mode" }
 	parmtag	{ "vray_type" "int" }
@@ -253,11 +255,12 @@
 	default	{ "0" }
 	help	"Normal mode"
 	menu	{
-	    "0"	"Smooth"
-	    "1"	"Geometry"
+	    "Smooth"	"Smooth"
+	    "Geometry"	"Geometry"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "BakeView" }
 	parmtag	{ "vray_pluginattr" "normal" }
 	parmtag	{ "vray_type" "int" }

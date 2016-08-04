@@ -30,12 +30,13 @@
 	default	{ "0" }
 	help	"light mode"
 	menu	{
-	    "0"	"Color"
-	    "1"	"Direct"
-	    "2"	"Indirect"
+	    "Color"	"Color"
+	    "Direct"	"Direct"
+	    "Indirect"	"Indirect"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "LightAmbientMax" }
 	parmtag	{ "vray_pluginattr" "mode" }
 	parmtag	{ "vray_type" "int" }

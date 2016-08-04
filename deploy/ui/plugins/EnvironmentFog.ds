@@ -307,11 +307,12 @@
 	    default	{ "0" }
 	    help	"Fade out mode"
 	    menu	{
-		"0"	"Multiply by density"
-		"1"	"Add density to falloff"
+		"Multiply"	"Multiply"
+		"Substract"	"Substract"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1" }
 	    parmtag	{ "vray_plugin" "EnvironmentFog" }
 	    parmtag	{ "vray_pluginattr" "fade_out_mode" }
 	    parmtag	{ "vray_type" "int" }
@@ -450,14 +451,15 @@
 	    default	{ "1" }
 	    help	"Light mode"
 	    menu	{
-		"0"	"No lights"
-		"1"	"Use per-gizmo lights"
-		"2"	"Override per-gizmo lights"
-		"3"	"Intersect with per-gizmo lights"
-		"4"	"Add to per-gizmo lights"
+		"No Lights"	"No Lights"
+		"Per-Gizmo"	"Per-Gizmo"
+		"Override"	"Override"
+		"Intersect"	"Intersect"
+		"Add"	"Add"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2,3,4" }
 	    parmtag	{ "vray_plugin" "EnvironmentFog" }
 	    parmtag	{ "vray_pluginattr" "light_mode" }
 	    parmtag	{ "vray_type" "int" }

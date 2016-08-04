@@ -23,11 +23,12 @@
 	    default	{ "0" }
 	    help	"This is used to differentiate between textures exported from different applications"
 	    menu	{
-		"0"	"Max"
-		"1"	"Maya"
+		"Max"	"Max"
+		"Maya"	"Maya"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1" }
 	    parmtag	{ "vray_plugin" "TexNoiseMaya" }
 	    parmtag	{ "vray_pluginattr" "compatibility_with" }
 	    parmtag	{ "vray_type" "int" }
@@ -39,12 +40,13 @@
 	    default	{ "2" }
 	    help	"If 2 - the alpha is forced to 1.0f; 1 - the resulting alpha is the color intensity (if compatibility_with is 0) or the color luminance (if compatibility_with is 1); 0 - the alpha is taken from the bitmap alpha"
 	    menu	{
-		"0"	"Bitmap alpha"
-		"1"	"Color intensity/luminance"
-		"2"	"Force opaque"
+		"Bitmap alpha"	"Bitmap alpha"
+		"Color intensity/luminance"	"Color intensity/luminance"
+		"Force opaque"	"Force opaque"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2" }
 	    parmtag	{ "vray_plugin" "TexNoiseMaya" }
 	    parmtag	{ "vray_pluginattr" "alpha_from_intensity" }
 	    parmtag	{ "vray_type" "int" }
@@ -185,12 +187,13 @@
 	    default	{ "2" }
 	    help	"The way the valid portion of the texture is applied: 0 - the whole texture is valid, 1 - crop, 2 -place"
 	    menu	{
-		"0"	"Whole texture is valid"
-		"1"	"Crop"
-		"2"	"Place"
+		"Whole texture is valid"	"Whole texture is valid"
+		"Crop"	"Crop"
+		"Place"	"Place"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2" }
 	    parmtag	{ "vray_plugin" "TexNoiseMaya" }
 	    parmtag	{ "vray_pluginattr" "placement_type" }
 	    parmtag	{ "vray_type" "int" }
@@ -554,13 +557,14 @@
 	    default	{ "2" }
 	    help	" 0 - Perlin Noise; 1 - Billow; 2 - Wave; 3 - Wispy. Determines which noise to use during the fractal iteration"
 	    menu	{
-		"0"	"Perlin Noise"
-		"1"	"Billow"
-		"2"	"Wave"
-		"3"	"Wispy"
+		"Perlin Noise"	"Perlin Noise"
+		"Billow"	"Billow"
+		"Wave"	"Wave"
+		"Wispy"	"Wispy"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	    parmtag	{ "vray_plugin" "TexNoiseMaya" }
 	    parmtag	{ "vray_pluginattr" "noise_type" }
 	    parmtag	{ "vray_type" "int" }
@@ -620,13 +624,14 @@
 	    default	{ "2" }
 	    help	"0 - Linear; 1 - Smooth; 2 - Fast; 3 - Bubble Controls the way intensity falls off for individual blobs for the Billow noise type. Linear is a uniform falloff from the center to a value of zero at the edges of the blobs. Smooth is more natural looking, using a gaussian falloff. Fast focuses the intensity more towards the center of the blobs. Bubble uses a reverse falloff, fading to zero at the blob center"
 	    menu	{
-		"0"	"Linear"
-		"1"	"Smooth"
-		"2"	"Fast"
-		"3"	"Bubble"
+		"Linear"	"Linear"
+		"Smooth"	"Smooth"
+		"Fast"	"Fast"
+		"Bubble"	"Bubble"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	    parmtag	{ "vray_plugin" "TexNoiseMaya" }
 	    parmtag	{ "vray_pluginattr" "falloff" }
 	    parmtag	{ "vray_type" "int" }

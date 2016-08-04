@@ -19,14 +19,14 @@
 	default	{ "1" }
 	help	"Filtering"
 	menu	{
-	    "-1"	"Nearest"
-	    "0"	"No filtering"
-	    "1"	"Mip-map filtering"
-	    "2"	"Summed are table filtering"
-	    "3"	"Elliptical filtering"
+	    "Nearest"	"Nearest"
+	    "None"	"None"
+	    "Mip-Map"	"Mip-Map"
+	    "Area"	"Area"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "-1,0,1,2" }
 	parmtag	{ "vray_plugin" "BitmapBuffer" }
 	parmtag	{ "vray_pluginattr" "filter_type" }
 	parmtag	{ "vray_type" "int" }
@@ -50,12 +50,13 @@
 	default	{ "2" }
 	help	"Color space"
 	menu	{
-	    "0"	"Linear"
-	    "1"	"Gamma corrected"
-	    "2"	"sRGB"
+	    "Linear"	"Linear"
+	    "Gamma corrected"	"Gamma corrected"
+	    "sRGB"	"sRGB"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "BitmapBuffer" }
 	parmtag	{ "vray_pluginattr" "color_space" }
 	parmtag	{ "vray_type" "int" }
@@ -102,12 +103,13 @@
 	default	{ "0" }
 	help	"Interpolation method for the Mip-Map filtering"
 	menu	{
-	    "0"	"Bilinear"
-	    "1"	"Bicubic"
-	    "2"	"Biquadratic"
+	    "Bilinear"	"Bilinear"
+	    "Bicubic"	"Bicubic"
+	    "Quadratic"	"Quadratic"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "BitmapBuffer" }
 	parmtag	{ "vray_pluginattr" "interpolation" }
 	parmtag	{ "vray_type" "int" }
@@ -220,12 +222,13 @@
 	default	{ "0" }
 	help	"Image file list (IFL) end condition"
 	menu	{
-	    "0"	"Loop"
-	    "1"	"Ping Pong"
-	    "2"	"Hold"
+	    "Loop"	"Loop"
+	    "Ping Pong"	"Ping Pong"
+	    "Hold"	"Hold"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "BitmapBuffer" }
 	parmtag	{ "vray_pluginattr" "ifl_end_condition" }
 	parmtag	{ "vray_type" "int" }

@@ -31,15 +31,16 @@
 	default	{ "0" }
 	help	"Operation mode (0 - ColorSpace, 1 - CDL Transform, 2 - File Transform, 3 - LogConvert, 4 - Display, 5 - Look)"
 	menu	{
-	    "0"	"ColorSpace"
-	    "1"	"CDL Transform"
-	    "2"	"File Transform"
-	    "3"	"LogConvert"
-	    "4"	"Display"
-	    "5"	"Look"
+	    "ColorSpace"	"ColorSpace"
+	    "CDL Transform"	"CDL Transform"
+	    "File Transform"	"File Transform"
+	    "LogConvert"	"LogConvert"
+	    "Display"	"Display"
+	    "Look"	"Look"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5" }
 	parmtag	{ "vray_plugin" "TexOCIO" }
 	parmtag	{ "vray_pluginattr" "mode" }
 	parmtag	{ "vray_type" "int" }
@@ -76,13 +77,14 @@
 	default	{ "0" }
 	help	"Config source: 0 - auto (env, stored env for slaves, file, internal), 1 - environment, 2 - file, 3 - internal"
 	menu	{
-	    "0"	"Auto"
-	    "1"	"Environment"
-	    "2"	"File"
-	    "3"	"Internal"
+	    "Auto"	"Auto"
+	    "Environment"	"Environment"
+	    "File"	"File"
+	    "Internal"	"Internal"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "TexOCIO" }
 	parmtag	{ "vray_pluginattr" "config_src" }
 	parmtag	{ "vray_type" "int" }
@@ -169,11 +171,12 @@
 	default	{ "0" }
 	help	"CDLTransform: direction (0 - forward, 1 - inverse)"
 	menu	{
-	    "0"	"Forward"
-	    "1"	"Inverse"
+	    "Forward"	"Forward"
+	    "Inverse"	"Inverse"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "TexOCIO" }
 	parmtag	{ "vray_pluginattr" "cdl_direction" }
 	parmtag	{ "vray_type" "int" }
@@ -247,11 +250,12 @@
 	default	{ "0" }
 	help	"FileTransform: direction (0 - forward, 1 - inverse)"
 	menu	{
-	    "0"	"Forward"
-	    "1"	"Inverse"
+	    "Forward"	"Forward"
+	    "Inverse"	"Inverse"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "TexOCIO" }
 	parmtag	{ "vray_pluginattr" "filetr_direction" }
 	parmtag	{ "vray_type" "int" }
@@ -263,13 +267,14 @@
 	default	{ "0" }
 	help	"FileTransform: interpolation (0 - nearest, 1 - linear, 2 - tetrahedral, 3 - best)"
 	menu	{
-	    "0"	"Nearest"
-	    "1"	"Linear"
-	    "2"	"Tetrahedral"
-	    "3"	"Best"
+	    "Nearest"	"Nearest"
+	    "Linear"	"Linear"
+	    "Tetrahedral"	"Tetrahedral"
+	    "Best"	"Best"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "TexOCIO" }
 	parmtag	{ "vray_pluginattr" "filetr_interpolation" }
 	parmtag	{ "vray_type" "int" }
@@ -281,11 +286,12 @@
 	default	{ "0" }
 	help	"LogConvert: operation (0 - log to lin, 1 - lin to log)"
 	menu	{
-	    "0"	"Log to lin"
-	    "1"	"Lin to log"
+	    "Log to lin"	"Log to lin"
+	    "Lin to log"	"Lin to log"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "TexOCIO" }
 	parmtag	{ "vray_pluginattr" "logconvert_operation" }
 	parmtag	{ "vray_type" "int" }
@@ -369,11 +375,12 @@
 	default	{ "0" }
 	help	"Look: direction (0 - forward, 1 - inverse)"
 	menu	{
-	    "0"	"Forward"
-	    "1"	"Inverse"
+	    "Forward"	"Forward"
+	    "Inverse"	"Inverse"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "TexOCIO" }
 	parmtag	{ "vray_pluginattr" "look_direction" }
 	parmtag	{ "vray_type" "int" }
@@ -435,11 +442,12 @@
 	default	{ "0" }
 	help	"This parameter is currently ignored. Input/Output type: 0 - use colorspaces, 1 - use roles"
 	menu	{
-	    "0"	"Colorspaces"
-	    "1"	"Roles"
+	    "Colorspaces"	"Colorspaces"
+	    "Roles"	"Roles"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "TexOCIO" }
 	parmtag	{ "vray_pluginattr" "inout_type" }
 	parmtag	{ "vray_type" "int" }

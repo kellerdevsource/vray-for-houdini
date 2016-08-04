@@ -35,6 +35,7 @@
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "8,16" }
 	parmtag	{ "vray_plugin" "SettingsPNG" }
 	parmtag	{ "vray_pluginattr" "bits_per_channel" }
 	parmtag	{ "vray_type" "int" }

@@ -345,12 +345,13 @@
 	default	{ "0" }
 	help	"Type of the assets cache limit"
 	menu	{
-	    "0"	"none"
-	    "1"	"age (hours)"
-	    "2"	"size (GBs)"
+	    "None"	"None"
+	    "Age (Hours)"	"Age (Hours)"
+	    "Size (GB)"	"Size (GB)"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "SettingsOptions" }
 	parmtag	{ "vray_pluginattr" "dr_assetsCacheLimitType" }
 	parmtag	{ "vray_type" "int" }

@@ -182,18 +182,19 @@
 	default	{ "2" }
 	help	"Mapping type"
 	menu	{
-	    "angular"	"Angular"
-	    "cubic"	"Cubic"
-	    "spherical"	"Spherical"
-	    "mirror_ball"	"Mirror Ball"
-	    "screen"	"Screen"
-	    "max_spherical"	"Spherical (3ds max)"
-	    "spherical_vray"	"Spherical (V-Ray)"
-	    "max_cylindrical"	"Cylindrical (3ds max)"
-	    "max_shrink_wrap"	"Shrink Wrap (3ds max)"
+	    "Angular"	"Angular"
+	    "Cubic"	"Cubic"
+	    "Spherical"	"Spherical"
+	    "Mirror Ball"	"Mirror Ball"
+	    "Screen"	"Screen"
+	    "Spherical (3ds max)"	"Spherical (3ds max)"
+	    "Spherical (V-Ray)"	"Spherical (V-Ray)"
+	    "Cylindrical (3ds max)"	"Cylindrical (3ds max)"
+	    "Shrink Wrap (3ds max)"	"Shrink Wrap (3ds max)"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "angular,cubic,spherical,mirror_ball,screen,max_spherical,spherical_vray,max_cylindrical,max_shrink_wrap" }
 	parmtag	{ "vray_plugin" "UVWGenEnvironment" }
 	parmtag	{ "vray_pluginattr" "mapping_type" }
 	parmtag	{ "vray_type" "String" }
@@ -205,12 +206,13 @@
 	default	{ "0" }
 	help	"Wrap U"
 	menu	{
-	    "0"	"No wrapping"
-	    "1"	"Wrap"
-	    "2"	"Mirror tile"
+	    "No Wrapping"	"No Wrapping"
+	    "Wrap"	"Wrap"
+	    "Mirror Tile"	"Mirror Tile"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "UVWGenEnvironment" }
 	parmtag	{ "vray_pluginattr" "wrap_u" }
 	parmtag	{ "vray_type" "int" }
@@ -222,12 +224,13 @@
 	default	{ "0" }
 	help	"Wrap V"
 	menu	{
-	    "0"	"No wrapping"
-	    "1"	"Wrap"
-	    "2"	"Mirror tile"
+	    "No Wrapping"	"No Wrapping"
+	    "Wrap"	"Wrap"
+	    "Mirror Tile"	"Mirror Tile"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "UVWGenEnvironment" }
 	parmtag	{ "vray_pluginattr" "wrap_v" }
 	parmtag	{ "vray_type" "int" }
@@ -239,12 +242,13 @@
 	default	{ "0" }
 	help	"Wrap W"
 	menu	{
-	    "0"	"No wrapping"
-	    "1"	"Wrap"
-	    "2"	"Mirror tile"
+	    "No Wrapping"	"No Wrapping"
+	    "Wrap"	"Wrap"
+	    "Mirror Tile"	"Mirror Tile"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "UVWGenEnvironment" }
 	parmtag	{ "vray_pluginattr" "wrap_w" }
 	parmtag	{ "vray_type" "int" }

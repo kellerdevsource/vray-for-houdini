@@ -43,13 +43,14 @@
 	default	{ "0" }
 	help	"The operation: 0=Exponential, 1=Logarithm, 2=Bias, 3=Gain"
 	menu	{
-	    "0"	"Exponential"
-	    "1"	"Logarithm"
-	    "2"	"Bias"
-	    "3"	"Gain"
+	    "Exponential"	"Exponential"
+	    "Logarithm"	"Logarithm"
+	    "Bias"	"Bias"
+	    "Gain"	"Gain"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "TexScalarExponential" }
 	parmtag	{ "vray_pluginattr" "operation" }
 	parmtag	{ "vray_type" "int" }

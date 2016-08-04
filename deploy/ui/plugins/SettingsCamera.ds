@@ -18,20 +18,21 @@
 	default	{ "0" }
 	help	"Camera type"
 	menu	{
-	    "0"	"Standard"
-	    "1"	"Spherical"
-	    "2"	"Cylindrical (point)"
-	    "3"	"Cylindrical (ortho)"
-	    "4"	"Box"
-	    "5"	"Fish eye"
-	    "6"	"Warped spherical"
-	    "7"	"Orthogonal"
-	    "8"	"Pinhole"
-	    "9"	"Spherical panorama"
-	    "10"	"Cube 6x1"
+	    "Default"	"Default"
+	    "Spherifical"	"Spherifical"
+	    "Cylindrical (Point)"	"Cylindrical (Point)"
+	    "Cylindrical (Ortho)"	"Cylindrical (Ortho)"
+	    "Box"	"Box"
+	    "Fish-Eye"	"Fish-Eye"
+	    "Warped Spherical"	"Warped Spherical"
+	    "Orthogonal"	"Orthogonal"
+	    "Pinhole"	"Pinhole"
+	    "Spherical Panorama"	"Spherical Panorama"
+	    "Cube 6x1"	"Cube 6x1"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7,8,9,10" }
 	parmtag	{ "vray_plugin" "SettingsCamera" }
 	parmtag	{ "vray_pluginattr" "type" }
 	parmtag	{ "vray_type" "int" }

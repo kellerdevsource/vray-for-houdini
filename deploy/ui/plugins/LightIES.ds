@@ -465,11 +465,12 @@
 	default	{ "0" }
 	help	"IES light shape"
 	menu	{
-	    "-1"	"From File"
-	    "0"	"Custom"
+	    "From File"	"From File"
+	    "Custom"	"Custom"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "-1,0" }
 	parmtag	{ "vray_plugin" "LightIES" }
 	parmtag	{ "vray_pluginattr" "ies_light_shape" }
 	parmtag	{ "vray_type" "int" }

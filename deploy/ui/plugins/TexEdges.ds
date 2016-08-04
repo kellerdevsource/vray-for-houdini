@@ -42,11 +42,12 @@
 	default	{ "1" }
 	help	"Width Type"
 	menu	{
-	    "0"	"World units"
-	    "1"	"Pixels"
+	    "World"	"World"
+	    "Pixels"	"Pixels"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "TexEdges" }
 	parmtag	{ "vray_pluginattr" "width_type" }
 	parmtag	{ "vray_type" "int" }
@@ -166,12 +167,13 @@
 	help	"Which corners to smooth: 0 - both convex and concave; 1 - convex only; 2 - concave only"
 	disablewhen	"{ raytraced != 1 }"
 	menu	{
-	    "0"	"Convex and Concave"
-	    "1"	"Convex only"
-	    "2"	"Concave only"
+	    "Convex and Concave"	"Convex and Concave"
+	    "Convex only"	"Convex only"
+	    "Concave only"	"Concave only"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "TexEdges" }
 	parmtag	{ "vray_pluginattr" "raytraced_mode" }
 	parmtag	{ "vray_type" "int" }

@@ -24,11 +24,12 @@
 	    default	{ "0" }
 	    help	"This is used to differentiate between textures exported from different applications"
 	    menu	{
-		"0"	"Max"
-		"1"	"Maya"
+		"Max"	"Max"
+		"Maya"	"Maya"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "compatibility_with" }
 	    parmtag	{ "vray_type" "int" }
@@ -40,12 +41,13 @@
 	    default	{ "0" }
 	    help	"If 2 - the alpha is forced to 1.0f; 1 - the resulting alpha is the color intensity (if compatibility_with is 0) or the color luminance (if compatibility_with is 1); 0 - the alpha is taken from the bitmap alpha"
 	    menu	{
-		"0"	"Bitmap alpha"
-		"1"	"Color intensity/luminance"
-		"2"	"Force opaque"
+		"Bitmap alpha"	"Bitmap alpha"
+		"Color intensity/luminance"	"Color intensity/luminance"
+		"Force opaque"	"Force opaque"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "alpha_from_intensity" }
 	    parmtag	{ "vray_type" "int" }
@@ -171,22 +173,23 @@
 	    default	{ "0" }
 	    help	"Mix type: 0 (Mix), 1(RGB Intensity), 2(Hide/Reveal), 3(Add), 4(Add Compensate (Blend)), 5(Add Bound), 6(Lighter), 7(Darker), 8(Soft Light), 9(Hard Light), 10(Difference), 11(Hue Offset), 12(Screen)"
 	    menu	{
-		"0"	"Mix"
-		"1"	"RGB Intensity"
-		"2"	"Hide/Reveal"
-		"3"	"Add"
-		"4"	"Add Compensate (Blend)"
-		"5"	"Add Bound"
-		"6"	"Lighter"
-		"7"	"Darker"
-		"8"	"Soft Light"
-		"9"	"Hard Light"
-		"10"	"Difference"
-		"11"	"Hue Offset"
-		"12"	"Screen"
+		"Mix"	"Mix"
+		"RGB Intensity"	"RGB Intensity"
+		"Hide/Reveal"	"Hide/Reveal"
+		"Add"	"Add"
+		"Add Compensate (Blend)"	"Add Compensate (Blend)"
+		"Add Bound"	"Add Bound"
+		"Lighter"	"Lighter"
+		"Darker"	"Darker"
+		"Soft Light"	"Soft Light"
+		"Hard Light"	"Hard Light"
+		"Difference"	"Difference"
+		"Hue Offset"	"Hue Offset"
+		"Screen"	"Screen"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7,8,9,10,11,12" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "mode1" }
 	    parmtag	{ "vray_type" "int" }
@@ -247,22 +250,23 @@
 	    default	{ "0" }
 	    help	"Mix type: 0 (Mix), 1(RGB Intensity), 2(Hide/Reveal), 3(Add), 4(Add Compensate (Blend)), 5(Add Bound), 6(Lighter), 7(Darker), 8(Soft Light), 9(Hard Light), 10(Difference), 11(Hue Offset), 12(Screen)"
 	    menu	{
-		"0"	"Mix"
-		"1"	"RGB Intensity"
-		"2"	"Hide/Reveal"
-		"3"	"Add"
-		"4"	"Add Compensate (Blend)"
-		"5"	"Add Bound"
-		"6"	"Lighter"
-		"7"	"Darker"
-		"8"	"Soft Light"
-		"9"	"Hard Light"
-		"10"	"Difference"
-		"11"	"Hue Offset"
-		"12"	"Screen"
+		"Mix"	"Mix"
+		"RGB Intensity"	"RGB Intensity"
+		"Hide/Reveal"	"Hide/Reveal"
+		"Add"	"Add"
+		"Add Compensate (Blend)"	"Add Compensate (Blend)"
+		"Add Bound"	"Add Bound"
+		"Lighter"	"Lighter"
+		"Darker"	"Darker"
+		"Soft Light"	"Soft Light"
+		"Hard Light"	"Hard Light"
+		"Difference"	"Difference"
+		"Hue Offset"	"Hue Offset"
+		"Screen"	"Screen"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7,8,9,10,11,12" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "mode2" }
 	    parmtag	{ "vray_type" "int" }
@@ -320,22 +324,23 @@
 	    default	{ "0" }
 	    help	"Mix type: 0 (Mix), 1(RGB Intensity), 2(Hide/Reveal), 3(Add), 4(Add Compensate (Blend)), 5(Add Bound), 6(Lighter), 7(Darker), 8(Soft Light), 9(Hard Light), 10(Difference), 11(Hue Offset), 12(Screen)"
 	    menu	{
-		"0"	"Mix"
-		"1"	"RGB Intensity"
-		"2"	"Hide/Reveal"
-		"3"	"Add"
-		"4"	"Add Compensate (Blend)"
-		"5"	"Add Bound"
-		"6"	"Lighter"
-		"7"	"Darker"
-		"8"	"Soft Light"
-		"9"	"Hard Light"
-		"10"	"Difference"
-		"11"	"Hue Offset"
-		"12"	"Screen"
+		"Mix"	"Mix"
+		"RGB Intensity"	"RGB Intensity"
+		"Hide/Reveal"	"Hide/Reveal"
+		"Add"	"Add"
+		"Add Compensate (Blend)"	"Add Compensate (Blend)"
+		"Add Bound"	"Add Bound"
+		"Lighter"	"Lighter"
+		"Darker"	"Darker"
+		"Soft Light"	"Soft Light"
+		"Hard Light"	"Hard Light"
+		"Difference"	"Difference"
+		"Hue Offset"	"Hue Offset"
+		"Screen"	"Screen"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7,8,9,10,11,12" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "mode3" }
 	    parmtag	{ "vray_type" "int" }
@@ -393,22 +398,23 @@
 	    default	{ "0" }
 	    help	"Mix type: 0 (Mix), 1(RGB Intensity), 2(Hide/Reveal), 3(Add), 4(Add Compensate (Blend)), 5(Add Bound), 6(Lighter), 7(Darker), 8(Soft Light), 9(Hard Light), 10(Difference), 11(Hue Offset), 12(Screen)"
 	    menu	{
-		"0"	"Mix"
-		"1"	"RGB Intensity"
-		"2"	"Hide/Reveal"
-		"3"	"Add"
-		"4"	"Add Compensate (Blend)"
-		"5"	"Add Bound"
-		"6"	"Lighter"
-		"7"	"Darker"
-		"8"	"Soft Light"
-		"9"	"Hard Light"
-		"10"	"Difference"
-		"11"	"Hue Offset"
-		"12"	"Screen"
+		"Mix"	"Mix"
+		"RGB Intensity"	"RGB Intensity"
+		"Hide/Reveal"	"Hide/Reveal"
+		"Add"	"Add"
+		"Add Compensate (Blend)"	"Add Compensate (Blend)"
+		"Add Bound"	"Add Bound"
+		"Lighter"	"Lighter"
+		"Darker"	"Darker"
+		"Soft Light"	"Soft Light"
+		"Hard Light"	"Hard Light"
+		"Difference"	"Difference"
+		"Hue Offset"	"Hue Offset"
+		"Screen"	"Screen"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7,8,9,10,11,12" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "mode4" }
 	    parmtag	{ "vray_type" "int" }
@@ -466,22 +472,23 @@
 	    default	{ "0" }
 	    help	"Mix type: 0 (Mix), 1(RGB Intensity), 2(Hide/Reveal), 3(Add), 4(Add Compensate (Blend)), 5(Add Bound), 6(Lighter), 7(Darker), 8(Soft Light), 9(Hard Light), 10(Difference), 11(Hue Offset), 12(Screen)"
 	    menu	{
-		"0"	"Mix"
-		"1"	"RGB Intensity"
-		"2"	"Hide/Reveal"
-		"3"	"Add"
-		"4"	"Add Compensate (Blend)"
-		"5"	"Add Bound"
-		"6"	"Lighter"
-		"7"	"Darker"
-		"8"	"Soft Light"
-		"9"	"Hard Light"
-		"10"	"Difference"
-		"11"	"Hue Offset"
-		"12"	"Screen"
+		"Mix"	"Mix"
+		"RGB Intensity"	"RGB Intensity"
+		"Hide/Reveal"	"Hide/Reveal"
+		"Add"	"Add"
+		"Add Compensate (Blend)"	"Add Compensate (Blend)"
+		"Add Bound"	"Add Bound"
+		"Lighter"	"Lighter"
+		"Darker"	"Darker"
+		"Soft Light"	"Soft Light"
+		"Hard Light"	"Hard Light"
+		"Difference"	"Difference"
+		"Hue Offset"	"Hue Offset"
+		"Screen"	"Screen"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7,8,9,10,11,12" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "mode5" }
 	    parmtag	{ "vray_type" "int" }
@@ -539,22 +546,23 @@
 	    default	{ "0" }
 	    help	"Mix type: 0 (Mix), 1(RGB Intensity), 2(Hide/Reveal), 3(Add), 4(Add Compensate (Blend)), 5(Add Bound), 6(Lighter), 7(Darker), 8(Soft Light), 9(Hard Light), 10(Difference), 11(Hue Offset), 12(Screen)"
 	    menu	{
-		"0"	"Mix"
-		"1"	"RGB Intensity"
-		"2"	"Hide/Reveal"
-		"3"	"Add"
-		"4"	"Add Compensate (Blend)"
-		"5"	"Add Bound"
-		"6"	"Lighter"
-		"7"	"Darker"
-		"8"	"Soft Light"
-		"9"	"Hard Light"
-		"10"	"Difference"
-		"11"	"Hue Offset"
-		"12"	"Screen"
+		"Mix"	"Mix"
+		"RGB Intensity"	"RGB Intensity"
+		"Hide/Reveal"	"Hide/Reveal"
+		"Add"	"Add"
+		"Add Compensate (Blend)"	"Add Compensate (Blend)"
+		"Add Bound"	"Add Bound"
+		"Lighter"	"Lighter"
+		"Darker"	"Darker"
+		"Soft Light"	"Soft Light"
+		"Hard Light"	"Hard Light"
+		"Difference"	"Difference"
+		"Hue Offset"	"Hue Offset"
+		"Screen"	"Screen"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7,8,9,10,11,12" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "mode6" }
 	    parmtag	{ "vray_type" "int" }
@@ -612,22 +620,23 @@
 	    default	{ "0" }
 	    help	"Mix type: 0 (Mix), 1(RGB Intensity), 2(Hide/Reveal), 3(Add), 4(Add Compensate (Blend)), 5(Add Bound), 6(Lighter), 7(Darker), 8(Soft Light), 9(Hard Light), 10(Difference), 11(Hue Offset), 12(Screen)"
 	    menu	{
-		"0"	"Mix"
-		"1"	"RGB Intensity"
-		"2"	"Hide/Reveal"
-		"3"	"Add"
-		"4"	"Add Compensate (Blend)"
-		"5"	"Add Bound"
-		"6"	"Lighter"
-		"7"	"Darker"
-		"8"	"Soft Light"
-		"9"	"Hard Light"
-		"10"	"Difference"
-		"11"	"Hue Offset"
-		"12"	"Screen"
+		"Mix"	"Mix"
+		"RGB Intensity"	"RGB Intensity"
+		"Hide/Reveal"	"Hide/Reveal"
+		"Add"	"Add"
+		"Add Compensate (Blend)"	"Add Compensate (Blend)"
+		"Add Bound"	"Add Bound"
+		"Lighter"	"Lighter"
+		"Darker"	"Darker"
+		"Soft Light"	"Soft Light"
+		"Hard Light"	"Hard Light"
+		"Difference"	"Difference"
+		"Hue Offset"	"Hue Offset"
+		"Screen"	"Screen"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7,8,9,10,11,12" }
 	    parmtag	{ "vray_plugin" "TexColor8Mix" }
 	    parmtag	{ "vray_pluginattr" "mode7" }
 	    parmtag	{ "vray_type" "int" }

@@ -111,16 +111,17 @@
 	default	{ "4" }
 	help	"Resolution -> real resolution is 2^res"
 	menu	{
-	    "0"	"32"
-	    "1"	"64"
-	    "2"	"128"
-	    "3"	"256"
-	    "4"	"512"
-	    "5"	"1024"
-	    "6"	"2048"
+	    "32"	"32"
+	    "64"	"64"
+	    "128"	"128"
+	    "256"	"256"
+	    "512"	"512"
+	    "1024"	"1024"
+	    "2048"	"2048"
 	}
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6" }
 	parmtag	{ "vray_plugin" "TexWater" }
 	parmtag	{ "vray_pluginattr" "resolution" }
 	parmtag	{ "vray_type" "int" }

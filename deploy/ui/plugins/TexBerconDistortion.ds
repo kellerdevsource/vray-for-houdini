@@ -23,11 +23,12 @@
 	    default	{ "0" }
 	    help	"This is used to differentiate between textures exported from different applications"
 	    menu	{
-		"0"	"Max"
-		"1"	"Maya"
+		"Max"	"Max"
+		"Maya"	"Maya"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1" }
 	    parmtag	{ "vray_plugin" "TexBerconDistortion" }
 	    parmtag	{ "vray_pluginattr" "compatibility_with" }
 	    parmtag	{ "vray_type" "int" }
@@ -39,12 +40,13 @@
 	    default	{ "0" }
 	    help	"If 2 - the alpha is forced to 1.0f; 1 - the resulting alpha is the color intensity (if compatibility_with is 0) or the color luminance (if compatibility_with is 1); 0 - the alpha is taken from the bitmap alpha"
 	    menu	{
-		"0"	"Bitmap alpha"
-		"1"	"Color intensity/luminance"
-		"2"	"Force opaque"
+		"Bitmap alpha"	"Bitmap alpha"
+		"Color intensity/luminance"	"Color intensity/luminance"
+		"Force opaque"	"Force opaque"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2" }
 	    parmtag	{ "vray_plugin" "TexBerconDistortion" }
 	    parmtag	{ "vray_pluginattr" "alpha_from_intensity" }
 	    parmtag	{ "vray_type" "int" }
@@ -163,12 +165,13 @@
 	    default	{ "0" }
 	    help	"The way the valid portion of the texture is applied: 0 - the whole texture is valid, 1 - crop, 2 -place"
 	    menu	{
-		"0"	"Whole texture is valid"
-		"1"	"Crop"
-		"2"	"Place"
+		"Whole texture is valid"	"Whole texture is valid"
+		"Crop"	"Crop"
+		"Place"	"Place"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2" }
 	    parmtag	{ "vray_plugin" "TexBerconDistortion" }
 	    parmtag	{ "vray_pluginattr" "placement_type" }
 	    parmtag	{ "vray_type" "int" }

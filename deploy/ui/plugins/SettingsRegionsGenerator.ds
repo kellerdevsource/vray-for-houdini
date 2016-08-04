@@ -43,11 +43,12 @@
 	default	{ "0" }
 	help	"Size in pixels or number of regions"
 	menu	{
-	    "0"	"Size in pixels"
-	    "1"	"Number of regions"
+	    "Bucket W/H"	"Bucket W/H"
+	    "Region Count"	"Region Count"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "SettingsRegionsGenerator" }
 	parmtag	{ "vray_pluginattr" "xymeans" }
 	parmtag	{ "vray_type" "int" }
@@ -59,16 +60,16 @@
 	default	{ "4" }
 	help	"Determines the order in which the regions are rendered"
 	menu	{
-	    "0"	"Top-Bottom"
-	    "1"	"Left-Right"
-	    "2"	"Checker"
-	    "3"	"Spiral"
-	    "4"	"Triangulation"
-	    "5"	"Hilbert curve"
-	    "6"	"Random"
+	    "Top-Bottom"	"Top-Bottom"
+	    "Left-Right"	"Left-Right"
+	    "Checker"	"Checker"
+	    "Spiral"	"Spiral"
+	    "Triangulation"	"Triangulation"
+	    "Hilbert"	"Hilbert"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5" }
 	parmtag	{ "vray_plugin" "SettingsRegionsGenerator" }
 	parmtag	{ "vray_pluginattr" "seqtype" }
 	parmtag	{ "vray_type" "int" }

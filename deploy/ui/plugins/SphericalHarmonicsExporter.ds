@@ -29,13 +29,14 @@
 	type	ordinal
 	default	{ "0" }
 	menu	{
-	    "0"	"Occlusion (Selected)"
-	    "1"	"Occlusion"
-	    "2"	"Interreflection (Selected)"
-	    "3"	"Interreflection"
+	    "Occlusion (Selected)"	"Occlusion (Selected)"
+	    "Occlusion"	"Occlusion"
+	    "Interreflection (Selected)"	"Interreflection (Selected)"
+	    "Interreflection"	"Interreflection"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "SphericalHarmonicsExporter" }
 	parmtag	{ "vray_pluginattr" "mode" }
 	parmtag	{ "vray_type" "int" }
@@ -106,11 +107,12 @@
 	default	{ "1" }
 	help	"This is the output file format. It could be *.xml for general purposes, V-Ray internal format *.vrsh designed to be used in \"Spherical Harmoics\" GI engine or both of them"
 	menu	{
-	    "xml"	"*.xml"
-	    "vrsh"	"*.vrsh"
+	    "*.xml"	"*.xml"
+	    "*.vrsh"	"*.vrsh"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "xml,vrsh" }
 	parmtag	{ "vray_plugin" "SphericalHarmonicsExporter" }
 	parmtag	{ "vray_pluginattr" "file_format" }
 	parmtag	{ "vray_type" "int" }
@@ -122,11 +124,12 @@
 	default	{ "0" }
 	help	"Spherical harmonics can be created either for each vertex of the geometry or for each normal, this option allows you to choose between those two modes. For round objects it is better to use per Vertex mode while for objects with large flat surfaces the per Normal mode is better and faster"
 	menu	{
-	    "0"	"Per normal"
-	    "1"	"Per vertex"
+	    "Per normal"	"Per normal"
+	    "Per vertex"	"Per vertex"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "SphericalHarmonicsExporter" }
 	parmtag	{ "vray_pluginattr" "per_normal" }
 	parmtag	{ "vray_type" "boolean" }
@@ -160,11 +163,12 @@
 	type	ordinal
 	default	{ "0" }
 	menu	{
-	    "0"	"World Space"
-	    "1"	"Object Space"
+	    "World Space"	"World Space"
+	    "Object Space"	"Object Space"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "SphericalHarmonicsExporter" }
 	parmtag	{ "vray_pluginattr" "object_space" }
 	parmtag	{ "vray_type" "boolean" }

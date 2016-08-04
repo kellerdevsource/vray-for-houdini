@@ -354,13 +354,13 @@
 	    default	{ "2" }
 	    help	"The algorithm used to compute multiple scattering"
 	    menu	{
-		"0"	"Prepass-based illumination map"
-		"1"	"Object-based illumination map"
-		"2"	"Raytraced"
-		"3"	"None"
+		"Prepass - Based"	"Prepass - Based"
+		"Object Space"	"Object Space"
+		"Raytraced"	"Raytraced"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2" }
 	    parmtag	{ "vray_plugin" "BRDFSkinComplex" }
 	    parmtag	{ "vray_pluginattr" "multiple_scattering" }
 	    parmtag	{ "vray_type" "int" }

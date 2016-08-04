@@ -19,13 +19,14 @@
 	default	{ "1" }
 	help	"0: no luminance, 1: direct light, 2: diffuse light, 3: direct+diffuse light"
 	menu	{
-	    "0"	"No luminance"
-	    "1"	"Direct light"
-	    "2"	"Diffuse light"
-	    "3"	"Direct+diffuse light"
+	    "No luminance"	"No luminance"
+	    "Direct light"	"Direct light"
+	    "Diffuse light"	"Diffuse light"
+	    "Direct+diffuse light"	"Direct+diffuse light"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "TexSurfaceLuminance" }
 	parmtag	{ "vray_pluginattr" "luminance_mode" }
 	parmtag	{ "vray_type" "int" }

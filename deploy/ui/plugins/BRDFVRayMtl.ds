@@ -91,13 +91,14 @@
 	    default	{ "1" }
 	    help	"The BRDF type"
 	    menu	{
-		"0"	"Phong"
-		"1"	"Blinn"
-		"2"	"Ward"
-		"4"	"GGX"
+		"Phong"	"Phong"
+		"Blinn"	"Blinn"
+		"Ward"	"Ward"
+		"GGX"	"GGX"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2,4" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "brdf_type" }
 	    parmtag	{ "vray_type" "int" }
@@ -296,12 +297,13 @@
 	    default	{ "0" }
 	    help	"Determines how reflections affect the alpha channel"
 	    menu	{
-		"0"	"Color only"
-		"1"	"Color+alpha"
-		"2"	"All channels"
+		"Color Only"	"Color Only"
+		"Color+Alpha"	"Color+Alpha"
+		"All Channels"	"All Channels"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "reflect_affect_alpha" }
 	    parmtag	{ "vray_type" "int" }
@@ -337,11 +339,12 @@
 	    default	{ "0" }
 	    help	"What method to use for deriving anisotropy axes"
 	    menu	{
-		"0"	"Local object axis"
-		"1"	"Specified uvw generator"
+		"Local Axis"	"Local Axis"
+		"UVW Generator"	"UVW Generator"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "anisotropy_derivation" }
 	    parmtag	{ "vray_type" "int" }
@@ -354,12 +357,13 @@
 	    help	"Which local object axis to use when anisotropy_derivation is 0"
 	    disablewhen	"{ anisotropy_derivation != 0 }"
 	    menu	{
-		"0"	"X"
-		"1"	"Y"
-		"2"	"Z"
+		"X"	"X"
+		"Y"	"Y"
+		"Z"	"Z"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "anisotropy_axis" }
 	    parmtag	{ "vray_type" "int" }
@@ -489,12 +493,13 @@
 	    default	{ "0" }
 	    help	"Determines how refractions affect the alpha channel"
 	    menu	{
-		"0"	"Color only"
-		"1"	"Color+alpha"
-		"2"	"All channels"
+		"Color Only"	"Color Only"
+		"Color+Alpha"	"Color+Alpha"
+		"All Channels"	"All Channels"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "refract_affect_alpha" }
 	    parmtag	{ "vray_type" "int" }
@@ -617,13 +622,14 @@
 	    default	{ "0" }
 	    help	"Translucency mode"
 	    menu	{
-		"0"	"None"
-		"1"	"Hard (wax) model"
-		"2"	"Soft (water) model"
-		"3"	"Hybrid model"
+		"None"	"None"
+		"Hard (wax) model"	"Hard (wax) model"
+		"Soft (water) model"	"Soft (water) model"
+		"Hybrid model"	"Hybrid model"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "translucency" }
 	    parmtag	{ "vray_type" "int" }
@@ -731,12 +737,13 @@
 	    default	{ "1" }
 	    help	"Specifies when to treat GI rays as glossy rays"
 	    menu	{
-		"0"	"Never"
-		"1"	"GI rays only"
-		"2"	"Always"
+		"Never"	"Never"
+		"GI Rays"	"GI Rays"
+		"Always"	"Always"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "option_glossy_rays_as_gi" }
 	    parmtag	{ "vray_type" "int" }
@@ -769,14 +776,15 @@
 	    name	"option_energy_mode"
 	    label	"Energy Preservation"
 	    type	ordinal
-	    default	{ "0" }
+	    default	{ "1" }
 	    help	"Energy preservation mode for reflections and refractions"
 	    menu	{
-		"0"	"Color"
-		"1"	"Monochrome"
+		"Monochrome"	"Monochrome"
+		"Color"	"Color"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "1,0" }
 	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	    parmtag	{ "vray_pluginattr" "option_energy_mode" }
 	    parmtag	{ "vray_type" "int" }

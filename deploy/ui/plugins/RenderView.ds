@@ -288,12 +288,13 @@
 	default	{ "0" }
 	help	"Enable stereo rendering and select output layout"
 	menu	{
-	    "0"	"disbled"
-	    "1"	"enabled, side-by-side"
-	    "2"	"enabled, top-bottom"
+	    "Disabled"	"Disabled"
+	    "Enabled, Side-By-Side"	"Enabled, Side-By-Side"
+	    "Enabled, Top-Bottom"	"Enabled, Top-Bottom"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "RenderView" }
 	parmtag	{ "vray_pluginattr" "stereo_on" }
 	parmtag	{ "vray_type" "int" }
@@ -317,12 +318,13 @@
 	default	{ "0" }
 	help	"Specifies the camera position relative to the left and right views: 0 - center, 1 - keep left view, 2 - keep right view"
 	menu	{
-	    "0"	"Center"
-	    "1"	"Keep Left"
-	    "2"	"Keep Right"
+	    "Center"	"Center"
+	    "Keep Left"	"Keep Left"
+	    "Keep Right"	"Keep Right"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "RenderView" }
 	parmtag	{ "vray_pluginattr" "stereo_interocular_method" }
 	parmtag	{ "vray_type" "int" }
@@ -358,12 +360,13 @@
 	default	{ "0" }
 	help	"Specifies which view to render"
 	menu	{
-	    "0"	"Both"
-	    "1"	"Left"
-	    "2"	"Right"
+	    "Both"	"Both"
+	    "Left"	"Left"
+	    "Right"	"Right"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "RenderView" }
 	parmtag	{ "vray_pluginattr" "stereo_view" }
 	parmtag	{ "vray_type" "int" }
@@ -375,12 +378,13 @@
 	default	{ "0" }
 	help	"Specifies which view to render"
 	menu	{
-	    "0"	"Parallel"
-	    "1"	"Rotation"
-	    "2"	"Shear"
+	    "Parallel"	"Parallel"
+	    "Rotation"	"Rotation"
+	    "Shear"	"Shear"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "RenderView" }
 	parmtag	{ "vray_pluginattr" "stereo_focus_method" }
 	parmtag	{ "vray_type" "int" }

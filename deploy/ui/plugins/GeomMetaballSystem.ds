@@ -19,11 +19,12 @@
 	default	{ "0" }
 	help	"true : use particle size; false : use particleRadius for size"
 	menu	{
-	    "0"	"Use particle size"
-	    "1"	"Use particleRadius for size"
+	    "Use particle size"	"Use particle size"
+	    "Use particleRadius for size"	"Use particleRadius for size"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
 	parmtag	{ "vray_pluginattr" "useParticleSize" }
 	parmtag	{ "vray_type" "int" }
@@ -83,17 +84,18 @@
 	default	{ "0" }
 	help	"Distance function - 0: Power of two; 1: Power of three; 2: Power of four; 3: Power of five; 4: Hermit in power of two; 5: Hermit in power of three; 6: Hermit in power of five; 7: Wyvill;"
 	menu	{
-	    "0"	"Power of two"
-	    "1"	"Power of three"
-	    "2"	"Power of four"
-	    "3"	"Power of five"
-	    "4"	"Hermit in power of two"
-	    "5"	"Hermit in power of three"
-	    "6"	"Hermit in power of five"
-	    "7"	"Wyvill"
+	    "Power of two"	"Power of two"
+	    "Power of three"	"Power of three"
+	    "Power of four"	"Power of four"
+	    "Power of five"	"Power of five"
+	    "Hermit in power of two"	"Hermit in power of two"
+	    "Hermit in power of three"	"Hermit in power of three"
+	    "Hermit in power of five"	"Hermit in power of five"
+	    "Wyvill"	"Wyvill"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7" }
 	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
 	parmtag	{ "vray_pluginattr" "distanceFunction" }
 	parmtag	{ "vray_type" "int" }
@@ -192,11 +194,12 @@
 	default	{ "0" }
 	help	"0 - Multiplication; 1 - Addition;"
 	menu	{
-	    "0"	"Multiplication"
-	    "1"	"Addition"
+	    "Multiplication"	"Multiplication"
+	    "Addition"	"Addition"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
 	parmtag	{ "vray_pluginattr" "textureFunction" }
 	parmtag	{ "vray_type" "int" }

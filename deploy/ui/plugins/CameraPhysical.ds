@@ -19,12 +19,13 @@
 	default	{ "0" }
 	help	"Camera type"
 	menu	{
-	    "0"	"Still"
-	    "1"	"Movie"
-	    "2"	"Video"
+	    "Still"	"Still"
+	    "Cinematic"	"Cinematic"
+	    "Video"	"Video"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "CameraPhysical" }
 	parmtag	{ "vray_pluginattr" "type" }
 	parmtag	{ "vray_type" "int" }
@@ -85,13 +86,13 @@
 	default	{ "0" }
 	help	"Distortion type"
 	menu	{
-	    "0"	"Quadratic"
-	    "1"	"Cubic"
-	    "2"	"Lens file"
-	    "3"	"Texture"
+	    "Quadratic"	"Quadratic"
+	    "Cubic"	"Cubic"
+	    "Lens File"	"Lens File"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "CameraPhysical" }
 	parmtag	{ "vray_pluginattr" "distortion_type" }
 	parmtag	{ "vray_type" "int" }

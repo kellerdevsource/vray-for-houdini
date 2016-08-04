@@ -20,13 +20,14 @@
 	default	{ "1" }
 	help	"0 - No operation; 1 - Sum; 2 - Subtract from first; 3 - Average"
 	menu	{
-	    "0"	"No operation"
-	    "1"	"Sum"
-	    "2"	"Subtract from first"
-	    "3"	"Average"
+	    "No operation"	"No operation"
+	    "Sum"	"Sum"
+	    "Subtract from first"	"Subtract from first"
+	    "Average"	"Average"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "TexPlusMinusAverage" }
 	parmtag	{ "vray_pluginattr" "operation" }
 	parmtag	{ "vray_type" "int" }

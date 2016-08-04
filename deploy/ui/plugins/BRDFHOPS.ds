@@ -99,12 +99,13 @@
 	default	{ "0" }
 	help	"Specifies how render channels are propagated through the BRDF"
 	menu	{
-	    "0"	"Color Only"
-	    "1"	"Color+Alpha"
-	    "2"	"All Channels"
+	    "Color Only"	"Color Only"
+	    "Color+Alpha"	"Color+Alpha"
+	    "All Channels"	"All Channels"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "BRDFHOPS" }
 	parmtag	{ "vray_pluginattr" "affect_alpha" }
 	parmtag	{ "vray_type" "int" }
@@ -168,12 +169,13 @@
 	default	{ "1" }
 	help	"Determines if the glossy rays are treated by V-Ray as GI rays"
 	menu	{
-	    "0"	"Never"
-	    "1"	"GI"
-	    "2"	"Always"
+	    "Never"	"Never"
+	    "GI"	"GI"
+	    "Always"	"Always"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "BRDFHOPS" }
 	parmtag	{ "vray_pluginattr" "glossyAsGI" }
 	parmtag	{ "vray_type" "int" }
@@ -305,16 +307,17 @@
 	help	"The type of bump mapping"
 	disablewhen	"{ enabled_layers_base != 1 }"
 	menu	{
-	    "0"	"Bump"
-	    "1"	"Normal (Tangent)"
-	    "2"	"Normal (Object)"
-	    "3"	"Normal (Camera)"
-	    "4"	"Normal (World)"
-	    "5"	"From Bump Output"
-	    "6"	"Explicit Normal"
+	    "Bump"	"Bump"
+	    "Normal (Tangent)"	"Normal (Tangent)"
+	    "Normal (Object)"	"Normal (Object)"
+	    "Normal (Camera)"	"Normal (Camera)"
+	    "Normal (World)"	"Normal (World)"
+	    "From Bump Output"	"From Bump Output"
+	    "Explicit Normal"	"Explicit Normal"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6" }
 	parmtag	{ "vray_plugin" "BRDFHOPS" }
 	parmtag	{ "vray_pluginattr" "coat_bump_type" }
 	parmtag	{ "vray_type" "int" }
@@ -438,13 +441,14 @@
 	default	{ "0" }
 	help	"Enabled layers OR mask (1 - base, 2 - flakes, 4 - coat)"
 	menu	{
-	    "0"	"Base"
-	    "1"	"Flakes"
-	    "4"	"Coat"
+	    "Base"	"Base"
+	    "Flakes"	"Flakes"
+	    "Coat"	"Coat"
 	}
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "vray_custom_handling" "1" }
+	parmtag	{ "vray_enumkeys" "0,1,4" }
 	parmtag	{ "vray_plugin" "BRDFHOPS" }
 	parmtag	{ "vray_pluginattr" "enabled_layers" }
 	parmtag	{ "vray_type" "int" }

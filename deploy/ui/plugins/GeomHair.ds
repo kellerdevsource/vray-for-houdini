@@ -273,11 +273,12 @@
 	default	{ "0" }
 	help	"0 : per face; 1 : per area"
 	menu	{
-	    "0"	"Per face"
-	    "1"	"Per area"
+	    "Per face"	"Per face"
+	    "Per area"	"Per area"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "GeomHair" }
 	parmtag	{ "vray_pluginattr" "distribution" }
 	parmtag	{ "vray_type" "int" }
@@ -360,12 +361,13 @@
 	default	{ "0" }
 	help	"The type of placement of the fur on the mesh. The possible values are 0 : Entire Object, 1 : Selected Faces, 2 : Material ID"
 	menu	{
-	    "0"	"Entire Object"
-	    "1"	"Selected Faces"
-	    "2"	"Material ID"
+	    "Entire Object"	"Entire Object"
+	    "Selected Faces"	"Selected Faces"
+	    "Material ID"	"Material ID"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "GeomHair" }
 	parmtag	{ "vray_pluginattr" "placement" }
 	parmtag	{ "vray_type" "int" }

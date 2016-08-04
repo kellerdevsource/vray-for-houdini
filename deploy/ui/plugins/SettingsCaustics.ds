@@ -80,11 +80,12 @@
 	default	{ "0" }
 	disablewhen	"{ SettingsCaustics_on != 1 }"
 	menu	{
-	    "0"	"New map"
-	    "1"	"From file"
+	    "New"	"New"
+	    "From File"	"From File"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "SettingsCaustics" }
 	parmtag	{ "vray_pluginattr" "mode" }
 	parmtag	{ "vray_type" "int" }

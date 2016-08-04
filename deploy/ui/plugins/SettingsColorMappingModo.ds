@@ -19,16 +19,17 @@
 	default	{ "0" }
 	help	"Type of color mapping"
 	menu	{
-	    "0"	"Linear"
-	    "1"	"Exponential"
-	    "2"	"HSV exponential"
-	    "3"	"Intensity exponential"
-	    "4"	"Gamma correction"
-	    "5"	"Intensity gamma"
-	    "6"	"Reinhard"
+	    "Linear"	"Linear"
+	    "Exponential"	"Exponential"
+	    "HSV exponential"	"HSV exponential"
+	    "Intensity exponential"	"Intensity exponential"
+	    "Gamma correction"	"Gamma correction"
+	    "Intensity gamma"	"Intensity gamma"
+	    "Reinhard"	"Reinhard"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6" }
 	parmtag	{ "vray_plugin" "SettingsColorMappingModo" }
 	parmtag	{ "vray_pluginattr" "type" }
 	parmtag	{ "vray_type" "int" }
@@ -125,12 +126,13 @@
 	default	{ "0" }
 	help	"Specifies whether color mapping and gamma are applied to the image: 0 - both color mapping and gamma are applied; 1 - nothing is applied; 2 - only color mapping is applied"
 	menu	{
-	    "0"	"Color mapping and gamma"
-	    "1"	"None (don't apply anything)"
-	    "2"	"Color mapping only (no gamma)"
+	    "Color mapping and gamma"	"Color mapping and gamma"
+	    "None (don't apply anything)"	"None (don't apply anything)"
+	    "Color mapping only (no gamma)"	"Color mapping only (no gamma)"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "SettingsColorMappingModo" }
 	parmtag	{ "vray_pluginattr" "adaptation_only" }
 	parmtag	{ "vray_type" "int" }

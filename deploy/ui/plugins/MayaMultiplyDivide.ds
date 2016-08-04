@@ -46,12 +46,13 @@
 	default	{ "0" }
 	help	"Operation (1 - multiply, 2 - divide, 3 - power)"
 	menu	{
-	    "1"	"Multiply"
-	    "2"	"Divide"
-	    "3"	"Power"
+	    "Multiply"	"Multiply"
+	    "Divide"	"Divide"
+	    "Power"	"Power"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "1,2,3" }
 	parmtag	{ "vray_plugin" "MayaMultiplyDivide" }
 	parmtag	{ "vray_pluginattr" "operation" }
 	parmtag	{ "vray_type" "int" }

@@ -20,14 +20,15 @@
 	default	{ "1" }
 	help	"Operation"
 	menu	{
-	    "0"	"No operation"
-	    "1"	"Dot Product"
-	    "2"	"Cross Product"
-	    "3"	"Vector Matrix Product"
-	    "4"	"Point Matrix Product"
+	    "No operation"	"No operation"
+	    "Dot Product"	"Dot Product"
+	    "Cross Product"	"Cross Product"
+	    "Vector Matrix Product"	"Vector Matrix Product"
+	    "Point Matrix Product"	"Point Matrix Product"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3,4" }
 	parmtag	{ "vray_plugin" "TexVectorProduct" }
 	parmtag	{ "vray_pluginattr" "operation" }
 	parmtag	{ "vray_type" "int" }

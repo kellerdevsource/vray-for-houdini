@@ -129,12 +129,13 @@
 	help	"Focus mode"
 	disablewhen	"{ SettingsRTEngine_stereo_mode != 1 }"
 	menu	{
-	    "0"	"None"
-	    "1"	"Rotation"
-	    "2"	"Shear"
+	    "None"	"None"
+	    "Rotation"	"Rotation"
+	    "Shear"	"Shear"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
 	parmtag	{ "vray_pluginattr" "stereo_focus" }
 	parmtag	{ "vray_type" "int" }
@@ -158,12 +159,13 @@
 	default	{ "1" }
 	help	"Textures transfer mode for the GPU"
 	menu	{
-	    "0"	"Transfer \"as is\" (don't resize, don't use paging)"
-	    "1"	"Resize textures"
-	    "2"	"Use texture paging(out-of-core textures) CUDA only"
+	    "Transfer \"As Is\" (Don't Resize, Don't Use Paging)"	"Transfer \"As Is\" (Don't Resize, Don't Use Paging)"
+	    "Resize Textures"	"Resize Textures"
+	    "Use Texture Paging(Out-Of-Core Textures) CUDA Only"	"Use Texture Paging(Out-Of-Core Textures) CUDA Only"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
 	parmtag	{ "vray_pluginattr" "opencl_resizeTextures" }
 	parmtag	{ "vray_type" "int" }
@@ -175,12 +177,12 @@
 	default	{ "1" }
 	help	"Format for the textures on the GPU"
 	menu	{
-	    "0"	"32-bit float per channel"
-	    "1"	"16-bit half float per channel"
-	    "2"	"8-bit per channel"
+	    "32-Bit Float"	"32-Bit Float"
+	    "16-Bit Half Float"	"16-Bit Half Float"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
 	parmtag	{ "vray_pluginattr" "opencl_textureFormat" }
 	parmtag	{ "vray_type" "int" }

@@ -45,12 +45,13 @@
 	help	"The filter determines how irradiance is interpolated from the samples in the light cache"
 	disablewhen	"{ SettingsGI_on != 1 } { SettingsLightCache_mode == 3 }"
 	menu	{
-	    "0"	"None"
-	    "1"	"Nearest"
-	    "2"	"Fixed"
+	    "None"	"None"
+	    "Nearest"	"Nearest"
+	    "Fixed"	"Fixed"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "SettingsLightCache" }
 	parmtag	{ "vray_pluginattr" "filter_type" }
 	parmtag	{ "vray_type" "int" }
@@ -154,11 +155,12 @@
 	help	"This parameter determines the units of the \"Sample size\" and the \"Filter size\""
 	disablewhen	"{ SettingsGI_on != 1 }"
 	menu	{
-	    "0"	"Screen"
-	    "1"	"World"
+	    "Screen"	"Screen"
+	    "World"	"World"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "SettingsLightCache" }
 	parmtag	{ "vray_pluginattr" "world_scale" }
 	parmtag	{ "vray_type" "boolean" }
@@ -171,13 +173,14 @@
 	help	"Light cache mode"
 	disablewhen	"{ SettingsGI_on != 1 }"
 	menu	{
-	    "0"	"Single frame"
-	    "1"	"Fly-through"
-	    "2"	"From File"
-	    "3"	"Progressive path tracing"
+	    "Single Frame"	"Single Frame"
+	    "Fly-Through"	"Fly-Through"
+	    "From File"	"From File"
+	    "Progressive Path Tracing"	"Progressive Path Tracing"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "SettingsLightCache" }
 	parmtag	{ "vray_pluginattr" "mode" }
 	parmtag	{ "vray_type" "int" }

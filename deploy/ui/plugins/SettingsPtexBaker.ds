@@ -79,13 +79,14 @@
 	default	{ "3" }
 	help	"Type of texel data: 0 - 8 bit int, 1 - 16 bit int, 2 - 16 bit float, 3 - 32 bit float"
 	menu	{
-	    "0"	"8 bit int"
-	    "1"	"16 bit int"
-	    "2"	"16 bit float"
-	    "3"	"32 bit float"
+	    "8 bit int"	"8 bit int"
+	    "16 bit int"	"16 bit int"
+	    "16 bit float"	"16 bit float"
+	    "32 bit float"	"32 bit float"
 	}
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
 	parmtag	{ "vray_pluginattr" "data_format" }
 	parmtag	{ "vray_type" "int" }
@@ -145,12 +146,13 @@
 	default	{ "0" }
 	help	"Type of border mode in U direction: 0 - clamp, 1 - black, 2 - periodic"
 	menu	{
-	    "0"	"Clamp"
-	    "1"	"Black"
-	    "2"	"Periodic"
+	    "Clamp"	"Clamp"
+	    "Black"	"Black"
+	    "Periodic"	"Periodic"
 	}
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
 	parmtag	{ "vray_pluginattr" "border_mode_u" }
 	parmtag	{ "vray_type" "int" }
@@ -162,12 +164,13 @@
 	default	{ "0" }
 	help	"Type of border mode in V direction: 0 - clamp, 1 - black, 2 - periodic"
 	menu	{
-	    "0"	"Clamp"
-	    "1"	"Black"
-	    "2"	"Periodic"
+	    "Clamp"	"Clamp"
+	    "Black"	"Black"
+	    "Periodic"	"Periodic"
 	}
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
 	parmtag	{ "vray_pluginattr" "border_mode_v" }
 	parmtag	{ "vray_type" "int" }
@@ -260,11 +263,12 @@
 	default	{ "0" }
 	help	"0 - normal baking, 1 - projection baking"
 	menu	{
-	    "0"	"Nnormal"
-	    "1"	"Projection"
+	    "Nnormal"	"Nnormal"
+	    "Projection"	"Projection"
 	}
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
 	parmtag	{ "vray_pluginattr" "projection_baking" }
 	parmtag	{ "vray_type" "int" }
@@ -276,14 +280,15 @@
 	default	{ "0" }
 	help	"0 - outside, 1 - inside, 2 - outside first, the inside, 3 - inside first, the outside, 4 - closest"
 	menu	{
-	    "0"	"Outside"
-	    "1"	"inside"
-	    "2"	"Outside first, the inside"
-	    "3"	"Inside first, the outside"
-	    "4"	"Closest"
+	    "Outside"	"Outside"
+	    "inside"	"inside"
+	    "Outside first, the inside"	"Outside first, the inside"
+	    "Inside first, the outside"	"Inside first, the outside"
+	    "Closest"	"Closest"
 	}
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3,4" }
 	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
 	parmtag	{ "vray_pluginattr" "mode" }
 	parmtag	{ "vray_type" "int" }

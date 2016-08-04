@@ -104,12 +104,13 @@
 	    default	{ "0" }
 	    help	"Animation mode"
 	    menu	{
-		"0"	"Linear"
-		"1"	"Frame Index"
-		"2"	"Loop"
+		"Standard"	"Standard"
+		"Direct Frame Index"	"Direct Frame Index"
+		"Loop"	"Loop"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2" }
 	    parmtag	{ "vray_plugin" "PhxShaderCache" }
 	    parmtag	{ "vray_pluginattr" "anim_mode" }
 	    parmtag	{ "vray_type" "int" }
@@ -134,11 +135,12 @@
 	    default	{ "0" }
 	    help	"Frame Blending"
 	    menu	{
-		"0"	"Interpolation"
-		"1"	"Velocity"
+		"Interpolation"	"Interpolation"
+		"Velocity"	"Velocity"
 	    }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1" }
 	    parmtag	{ "vray_plugin" "PhxShaderCache" }
 	    parmtag	{ "vray_pluginattr" "blend_method" }
 	    parmtag	{ "vray_type" "int" }

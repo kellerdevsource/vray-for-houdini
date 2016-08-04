@@ -23,11 +23,12 @@
 	    default	{ "0" }
 	    help	"This is used to differentiate between textures exported from different applications"
 	    menu	{
-		"0"	"Max"
-		"1"	"Maya"
+		"Max"	"Max"
+		"Maya"	"Maya"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "compatibility_with" }
 	    parmtag	{ "vray_type" "int" }
@@ -39,12 +40,13 @@
 	    default	{ "2" }
 	    help	"If 2 - the alpha is forced to 1.0f; 1 - the resulting alpha is the color intensity (if compatibility_with is 0) or the color luminance (if compatibility_with is 1); 0 - the alpha is taken from the bitmap alpha"
 	    menu	{
-		"0"	"Bitmap alpha"
-		"1"	"Color intensity/luminance"
-		"2"	"Force opaque"
+		"Bitmap alpha"	"Bitmap alpha"
+		"Color intensity/luminance"	"Color intensity/luminance"
+		"Force opaque"	"Force opaque"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "alpha_from_intensity" }
 	    parmtag	{ "vray_type" "int" }
@@ -163,12 +165,13 @@
 	    default	{ "2" }
 	    help	"The way the valid portion of the texture is applied: 0 - the whole texture is valid, 1 - crop, 2 -place"
 	    menu	{
-		"0"	"Whole texture is valid"
-		"1"	"Crop"
-		"2"	"Place"
+		"Whole texture is valid"	"Whole texture is valid"
+		"Crop"	"Crop"
+		"Place"	"Place"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "placement_type" }
 	    parmtag	{ "vray_type" "int" }
@@ -458,21 +461,22 @@
 	    default	{ "2" }
 	    help	"tile style"
 	    menu	{
-		"0"	"Custom"
-		"1"	"Herringbone"
-		"2"	"Stack Bond"
-		"3"	"Stretcher Bond"
-		"4"	"Flemish Stretcher Bond"
-		"5"	"Common Bond"
-		"6"	"Flemish Bond"
-		"7"	"Monk Bond"
-		"8"	"Flemish Garden Wall Bond"
-		"9"	"English Bond"
-		"10"	"English Cross Bond"
-		"11"	"Double English Cross Bond"
+		"Custom"	"Custom"
+		"Herringbone"	"Herringbone"
+		"Stack Bond"	"Stack Bond"
+		"Stretcher Bond"	"Stretcher Bond"
+		"Flemish Stretcher Bond"	"Flemish Stretcher Bond"
+		"Common Bond"	"Common Bond"
+		"Flemish Bond"	"Flemish Bond"
+		"Monk Bond"	"Monk Bond"
+		"Flemish Garden Wall Bond"	"Flemish Garden Wall Bond"
+		"English Bond"	"English Bond"
+		"English Cross Bond"	"English Cross Bond"
+		"Double English Cross Bond"	"Double English Cross Bond"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7,8,9,10,11" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "tile_style" }
 	    parmtag	{ "vray_type" "int" }
@@ -583,13 +587,14 @@
 	    default	{ "2" }
 	    help	"tile soften"
 	    menu	{
-		"0"	"None"
-		"1"	"Linear"
-		"2"	"Round"
-		"3"	"Smooth"
+		"None"	"None"
+		"Linear"	"Linear"
+		"Round"	"Round"
+		"Smooth"	"Smooth"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "soften" }
 	    parmtag	{ "vray_type" "int" }
@@ -671,15 +676,16 @@
 	    help	"auto scaling"
 	    disablewhen	"{ map_uv != 1 }"
 	    menu	{
-		"0"	"No auto scale"
-		"1"	"UV"
-		"2"	"UV Fit"
-		"3"	"UV Fit Keep aspect"
-		"4"	"UV Normalized"
-		"5"	"UV Normalized Keep aspect"
+		"No auto scale"	"No auto scale"
+		"UV"	"UV"
+		"UV Fit"	"UV Fit"
+		"UV Fit Keep aspect"	"UV Fit Keep aspect"
+		"UV Normalized"	"UV Normalized"
+		"UV Normalized Keep aspect"	"UV Normalized Keep aspect"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2,3,4,5" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "auto" }
 	    parmtag	{ "vray_type" "int" }
@@ -757,13 +763,14 @@
 	    help	"rotate uv"
 	    disablewhen	"{ map_uv != 1 }"
 	    menu	{
-		"0"	"None"
-		"1"	"180 Degrees"
-		"2"	"90 Degrees"
-		"3"	"Random"
+		"None"	"None"
+		"180 Degrees"	"180 Degrees"
+		"90 Degrees"	"90 Degrees"
+		"Random"	"Random"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	    parmtag	{ "vray_plugin" "TexBerconTile" }
 	    parmtag	{ "vray_pluginattr" "rot_uv" }
 	    parmtag	{ "vray_type" "int" }

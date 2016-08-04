@@ -133,12 +133,13 @@
 	help	"Type of sampling: 0 - normal, 1 - sample only shutter open, 2 - sample only shutter middle"
 	disablewhen	"{ SettingsMotionBlur_on == 0 }"
 	menu	{
-	    "0"	"Normal"
-	    "1"	"Sample only shutter open"
-	    "2"	"Sample only shutter middle"
+	    "Normal"	"Normal"
+	    "Sample only shutter open"	"Sample only shutter open"
+	    "Sample only shutter middle"	"Sample only shutter middle"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "SettingsMotionBlur" }
 	parmtag	{ "vray_pluginattr" "sampling_type" }
 	parmtag	{ "vray_type" "int" }

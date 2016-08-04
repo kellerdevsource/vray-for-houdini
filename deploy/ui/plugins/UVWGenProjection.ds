@@ -287,19 +287,18 @@
 	default	{ "1" }
 	help	"Mapping type"
 	menu	{
-	    "0"	"Node"
-	    "1"	"Planar"
-	    "2"	"Spherical"
-	    "3"	"Cylindrical"
-	    "4"	"Ball"
-	    "5"	"Cubic"
-	    "6"	"Triplanar"
-	    "8"	"Perspective"
-	    "9"	"Modo cubic"
-	    "10"	"Modo box"
+	    "None"	"None"
+	    "Planar"	"Planar"
+	    "Spherical"	"Spherical"
+	    "Cylindrical"	"Cylindrical"
+	    "Ball"	"Ball"
+	    "Cubic"	"Cubic"
+	    "Triplanar"	"Triplanar"
+	    "Perspective"	"Perspective"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,8" }
 	parmtag	{ "vray_plugin" "UVWGenProjection" }
 	parmtag	{ "vray_pluginattr" "type" }
 	parmtag	{ "vray_type" "int" }
@@ -311,12 +310,13 @@
 	default	{ "0" }
 	help	"Fit fill"
 	menu	{
-	    "0"	"Fit fill"
-	    "1"	"Horizontal"
-	    "2"	"Vertical"
+	    "Fit Fill"	"Fit Fill"
+	    "Horizontal"	"Horizontal"
+	    "Vertical"	"Vertical"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "UVWGenProjection" }
 	parmtag	{ "vray_pluginattr" "fitfill" }
 	parmtag	{ "vray_type" "int" }
@@ -328,12 +328,13 @@
 	default	{ "0" }
 	help	"Fit type"
 	menu	{
-	    "0"	"None"
-	    "1"	"Match camera file gate"
-	    "2"	"Match camera resolution"
+	    "None"	"None"
+	    "Match camera film gate"	"Match camera film gate"
+	    "Match camera resolution"	"Match camera resolution"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "UVWGenProjection" }
 	parmtag	{ "vray_pluginattr" "fittype" }
 	parmtag	{ "vray_type" "int" }

@@ -204,11 +204,12 @@
 	default	{ "0" }
 	help	"The units for the shadow radius"
 	menu	{
-	    "0"	"Radians"
-	    "1"	"Degrees"
+	    "Radians"	"Radians"
+	    "Degrees"	"Degrees"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "MayaLightDirect" }
 	parmtag	{ "vray_pluginattr" "shadowRadiusMode" }
 	parmtag	{ "vray_type" "int" }

@@ -45,14 +45,15 @@
 	default	{ "0" }
 	help	"Which component of the color should be returned"
 	menu	{
-	    "0"	"red"
-	    "1"	"green"
-	    "2"	"blue"
-	    "3"	"alpha"
-	    "4"	"intensity"
+	    "Red"	"Red"
+	    "Green"	"Green"
+	    "Blue"	"Blue"
+	    "Alpha"	"Alpha"
+	    "Intensity"	"Intensity"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3,4" }
 	parmtag	{ "vray_plugin" "TexAColorChannel" }
 	parmtag	{ "vray_pluginattr" "mode" }
 	parmtag	{ "vray_type" "int" }

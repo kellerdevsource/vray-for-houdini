@@ -268,13 +268,14 @@
 	default	{ "3" }
 	help	"Selects the procedural model used to simulate the TexSky texture"
 	menu	{
-	    "0"	"Preetham et al"
-	    "1"	"CIE Clear"
-	    "2"	"CIE Overcast"
-	    "3"	"Hosek et al"
+	    "Preetham et al."	"Preetham et al."
+	    "CIE Clear"	"CIE Clear"
+	    "CIE Overcast"	"CIE Overcast"
+	    "Hosek et al."	"Hosek et al."
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "TexSky" }
 	parmtag	{ "vray_pluginattr" "sky_model" }
 	parmtag	{ "vray_type" "int" }

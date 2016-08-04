@@ -63,12 +63,13 @@
 	default	{ "0" }
 	help	"0-image 1-image and buffer  2-buffer"
 	menu	{
-	    "0"	"Image"
-	    "1"	"Image and buffer"
-	    "2"	"Buffer"
+	    "Image"	"Image"
+	    "Image and buffer"	"Image and buffer"
+	    "Buffer"	"Buffer"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "EffectLens" }
 	parmtag	{ "vray_pluginattr" "bloomBuffer" }
 	parmtag	{ "vray_type" "int" }
@@ -214,11 +215,12 @@
 	default	{ "0" }
 	help	"0- from image  1 - from Lens Effect settings"
 	menu	{
-	    "0"	"Image"
-	    "1"	"Lens Effect settings"
+	    "Image"	"Image"
+	    "Lens Effect settings"	"Lens Effect settings"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "EffectLens" }
 	parmtag	{ "vray_pluginattr" "glareType" }
 	parmtag	{ "vray_type" "int" }
@@ -308,12 +310,13 @@
 	default	{ "0" }
 	help	"0-image 1-image and buffer  2-buffer"
 	menu	{
-	    "0"	"Image"
-	    "1"	"Image and buffer"
-	    "2"	"Buffer"
+	    "Image"	"Image"
+	    "Image and buffer"	"Image and buffer"
+	    "Buffer"	"Buffer"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "EffectLens" }
 	parmtag	{ "vray_pluginattr" "glareBuffer" }
 	parmtag	{ "vray_type" "int" }

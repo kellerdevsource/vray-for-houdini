@@ -182,14 +182,15 @@
 	default	{ "1" }
 	help	"spherical(0), cylindrical(1), cubic strip(2), cubic cross sideways(3), cubic cross(4)"
 	menu	{
-	    "0"	"Spherical"
-	    "1"	"Cylindrical"
-	    "2"	"Cubic strip"
-	    "3"	"Cubic cross sideways"
-	    "4"	"Cubic cross"
+	    "Spherical"	"Spherical"
+	    "Cylindrical"	"Cylindrical"
+	    "Cubic strip"	"Cubic strip"
+	    "Cubic cross sideways"	"Cubic cross sideways"
+	    "Cubic cross"	"Cubic cross"
 	}
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3,4" }
 	parmtag	{ "vray_plugin" "xsiUVWGenEnvironment" }
 	parmtag	{ "vray_pluginattr" "mapping_type" }
 	parmtag	{ "vray_type" "int" }

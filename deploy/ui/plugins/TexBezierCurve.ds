@@ -31,12 +31,13 @@
 	default	{ "0" }
 	help	"The type of the control points: 0 - free, 1 - bezier, 2- bezier smooth"
 	menu	{
-	    "0"	"Free"
-	    "1"	"Bezier"
-	    "2"	"Bezier smooth"
+	    "Free"	"Free"
+	    "Bezier"	"Bezier"
+	    "Bezier smooth"	"Bezier smooth"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "TexBezierCurve" }
 	parmtag	{ "vray_pluginattr" "types" }
 	parmtag	{ "vray_type" "List<Integer>" }

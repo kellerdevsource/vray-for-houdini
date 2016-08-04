@@ -96,13 +96,14 @@
 	help	"Primary diffuse bounces engines"
 	disablewhen	"{ SettingsGI_on != 1 } { SettingsGI_on == 0 }"
 	menu	{
-	    "0"	"Irradiance Map"
-	    "1"	"Photon Map"
-	    "2"	"Brute force"
-	    "3"	"Light Cache"
+	    "Irradiance Map"	"Irradiance Map"
+	    "Brute Force"	"Brute Force"
+	    "Light Cache"	"Light Cache"
+	    "Spherical Harmonics"	"Spherical Harmonics"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,2,3,4" }
 	parmtag	{ "vray_plugin" "SettingsGI" }
 	parmtag	{ "vray_pluginattr" "primary_engine" }
 	parmtag	{ "vray_type" "int" }
@@ -125,17 +126,17 @@
 	name	"SettingsGI_secondary_engine"
 	label	"Secondary Engine"
 	type	ordinal
-	default	{ "2" }
+	default	{ "1" }
 	help	"Secondary diffuse bounces engines"
 	disablewhen	"{ SettingsGI_on != 1 } { SettingsGI_on == 0 }"
 	menu	{
-	    "0"	"None"
-	    "1"	"Photon Map"
-	    "2"	"Brute force"
-	    "3"	"Light Cache"
+	    "None"	"None"
+	    "Brute Force"	"Brute Force"
+	    "Light Cache"	"Light Cache"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,2,3" }
 	parmtag	{ "vray_plugin" "SettingsGI" }
 	parmtag	{ "vray_pluginattr" "secondary_engine" }
 	parmtag	{ "vray_type" "int" }

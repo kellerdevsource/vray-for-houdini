@@ -474,17 +474,18 @@
 	default	{ "1" }
 	help	"Output image format"
 	menu	{
-	    "0"	"PNG"
-	    "1"	"JPEG"
-	    "2"	"TIFF"
-	    "3"	"TGA"
-	    "4"	"SGI"
-	    "5"	"OpenEXR"
-	    "6"	"VRayImage"
+	    "PNG"	"PNG"
+	    "JPEG"	"JPEG"
+	    "TIFF"	"TIFF"
+	    "TGA"	"TGA"
+	    "SGI"	"SGI"
+	    "OpenEXR"	"OpenEXR"
+	    "VRayImage"	"VRayImage"
 	}
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "vray_custom_handling" "1" }
+	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6" }
     }
     parm {
 	name	"SettingsOutput_img_saveVelocityZeroBase"

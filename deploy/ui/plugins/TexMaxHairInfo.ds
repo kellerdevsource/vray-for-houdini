@@ -19,15 +19,16 @@
 	default	{ "0" }
 	help	"Specifies the way of blending between the two input color textures. The value means : 0 - position along strand, 1 - random by strand id,2 - Hair color, 3 - Hair opacity, 4 - Hair transparency, 5 - Hair incandescence"
 	menu	{
-	    "0"	"Position along strand"
-	    "1"	"Random by strand index"
-	    "2"	"Hair Color"
-	    "3"	"Hair opacity"
-	    "4"	"Hair transparency"
-	    "5"	"Hair incandescence"
+	    "Position along strand"	"Position along strand"
+	    "Random by strand index"	"Random by strand index"
+	    "Hair Color"	"Hair Color"
+	    "Hair opacity"	"Hair opacity"
+	    "Hair transparency"	"Hair transparency"
+	    "Hair incandescence"	"Hair incandescence"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5" }
 	parmtag	{ "vray_plugin" "TexMaxHairInfo" }
 	parmtag	{ "vray_pluginattr" "output" }
 	parmtag	{ "vray_type" "int" }

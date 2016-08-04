@@ -19,11 +19,12 @@
 	default	{ "1" }
 	help	"Choose color or temperature mode"
 	menu	{
-	    "0"	"Color"
-	    "1"	"Temperature"
+	    "Color"	"Color"
+	    "Temperature"	"Temperature"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "TexTemperature" }
 	parmtag	{ "vray_pluginattr" "color_mode" }
 	parmtag	{ "vray_type" "int" }

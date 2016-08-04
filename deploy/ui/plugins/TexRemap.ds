@@ -43,12 +43,13 @@
 	default	{ "0" }
 	help	"type of conversion: 0:RemapValue, 1:RemapColor, 2:RemapHSV"
 	menu	{
-	    "0"	"RemapValue"
-	    "1"	"RemapColor"
-	    "2"	"RemapHSV"
+	    "Value"	"Value"
+	    "Color"	"Color"
+	    "HSV"	"HSV"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "TexRemap" }
 	parmtag	{ "vray_pluginattr" "type" }
 	parmtag	{ "vray_type" "int" }
@@ -127,13 +128,14 @@
 	default	{ "1" }
 	help	"interpolation types for the floats"
 	menu	{
-	    "0"	"None"
-	    "1"	"Linear"
-	    "2"	"Smooth"
-	    "3"	"Spline"
+	    "None"	"None"
+	    "Linear"	"Linear"
+	    "Smooth"	"Smooth"
+	    "Spline"	"Spline"
 	}
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "TexRemap" }
 	parmtag	{ "vray_pluginattr" "float_types" }
 	parmtag	{ "vray_type" "List<Integer>" }
@@ -157,13 +159,14 @@
 	default	{ "0" }
 	help	"interpolation types for the red channel"
 	menu	{
-	    "0"	"None"
-	    "1"	"Linear"
-	    "2"	"Smooth"
-	    "3"	"Spline"
+	    "None"	"None"
+	    "Linear"	"Linear"
+	    "Smooth"	"Smooth"
+	    "Spline"	"Spline"
 	}
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "TexRemap" }
 	parmtag	{ "vray_pluginattr" "red_types" }
 	parmtag	{ "vray_type" "List<Integer>" }
@@ -187,13 +190,14 @@
 	default	{ "0" }
 	help	"interpolation types for the green channel"
 	menu	{
-	    "0"	"None"
-	    "1"	"Linear"
-	    "2"	"Smooth"
-	    "3"	"Spline"
+	    "None"	"None"
+	    "Linear"	"Linear"
+	    "Smooth"	"Smooth"
+	    "Spline"	"Spline"
 	}
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "TexRemap" }
 	parmtag	{ "vray_pluginattr" "green_types" }
 	parmtag	{ "vray_type" "List<Integer>" }
@@ -217,13 +221,14 @@
 	default	{ "0" }
 	help	"interpolation types for the blue channel"
 	menu	{
-	    "0"	"None"
-	    "1"	"Linear"
-	    "2"	"Smooth"
-	    "3"	"Spline"
+	    "None"	"None"
+	    "Linear"	"Linear"
+	    "Smooth"	"Smooth"
+	    "Spline"	"Spline"
 	}
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "TexRemap" }
 	parmtag	{ "vray_pluginattr" "blue_types" }
 	parmtag	{ "vray_type" "List<Integer>" }
@@ -247,13 +252,14 @@
 	default	{ "0" }
 	help	"interpolation types for the hue channel"
 	menu	{
-	    "0"	"None"
-	    "1"	"Linear"
-	    "2"	"Smooth"
-	    "3"	"Spline"
+	    "None"	"None"
+	    "Linear"	"Linear"
+	    "Smooth"	"Smooth"
+	    "Spline"	"Spline"
 	}
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "TexRemap" }
 	parmtag	{ "vray_pluginattr" "hue_types" }
 	parmtag	{ "vray_type" "List<Integer>" }
@@ -277,13 +283,14 @@
 	default	{ "0" }
 	help	"interpolation types for the saturation channel"
 	menu	{
-	    "0"	"None"
-	    "1"	"Linear"
-	    "2"	"Smooth"
-	    "3"	"Spline"
+	    "None"	"None"
+	    "Linear"	"Linear"
+	    "Smooth"	"Smooth"
+	    "Spline"	"Spline"
 	}
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "TexRemap" }
 	parmtag	{ "vray_pluginattr" "saturation_types" }
 	parmtag	{ "vray_type" "List<Integer>" }
@@ -307,13 +314,14 @@
 	default	{ "0" }
 	help	"interpolation types for the value channel"
 	menu	{
-	    "0"	"None"
-	    "1"	"Linear"
-	    "2"	"Smooth"
-	    "3"	"Spline"
+	    "None"	"None"
+	    "Linear"	"Linear"
+	    "Smooth"	"Smooth"
+	    "Spline"	"Spline"
 	}
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "TexRemap" }
 	parmtag	{ "vray_pluginattr" "value_types" }
 	parmtag	{ "vray_type" "List<Integer>" }

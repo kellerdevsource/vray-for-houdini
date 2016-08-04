@@ -122,12 +122,13 @@
 	default	{ "0" }
 	help	"Determines how refractions affect the alpha channel"
 	menu	{
-	    "0"	"Color only"
-	    "1"	"Color and alpha"
-	    "2"	"All channels"
+	    "Color Only"	"Color Only"
+	    "Color+Alpha"	"Color+Alpha"
+	    "All Channels"	"All Channels"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "BRDFGlassGlossy" }
 	parmtag	{ "vray_pluginattr" "affect_alpha" }
 	parmtag	{ "vray_type" "int" }

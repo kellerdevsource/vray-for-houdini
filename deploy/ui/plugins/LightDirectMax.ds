@@ -381,14 +381,15 @@
 	default	{ "0" }
 	help	"Units for the intensity (0 - default, 1 - lumens, 2 - lm/m/m/sr, 3 - watts, 4 - w/m/m/sr)"
 	menu	{
-	    "0"	"Default"
-	    "1"	"Lumens"
-	    "2"	"lm/m/m/sr"
-	    "3"	"Watts"
-	    "4"	"w/m/m/sr"
+	    "Default"	"Default"
+	    "Lumens"	"Lumens"
+	    "Lm/m/m/sr"	"Lm/m/m/sr"
+	    "Watts"	"Watts"
+	    "W/m/m/sr"	"W/m/m/sr"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3,4" }
 	parmtag	{ "vray_plugin" "LightDirectMax" }
 	parmtag	{ "vray_pluginattr" "units" }
 	parmtag	{ "vray_type" "int" }
@@ -497,12 +498,13 @@
 	default	{ "0" }
 	help	"Decay type"
 	menu	{
-	    "0"	"No decay"
-	    "1"	"Linear"
-	    "2"	"Square"
+	    "No Decay"	"No Decay"
+	    "Linear"	"Linear"
+	    "Square"	"Square"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "LightDirectMax" }
 	parmtag	{ "vray_pluginattr" "decay_type" }
 	parmtag	{ "vray_type" "int" }
@@ -597,11 +599,12 @@
 	default	{ "0" }
 	help	"Shape for soft shadows"
 	menu	{
-	    "0"	"Box"
-	    "1"	"Sphere"
+	    "Box"	"Box"
+	    "Sphere"	"Sphere"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "LightDirectMax" }
 	parmtag	{ "vray_pluginattr" "shadowShape" }
 	parmtag	{ "vray_type" "int" }
@@ -661,11 +664,12 @@
 	default	{ "0" }
 	help	"The shape of the beam"
 	menu	{
-	    "0"	"Circular"
-	    "1"	"Rectangular"
+	    "Circular"	"Circular"
+	    "Rectangular"	"Rectangular"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "LightDirectMax" }
 	parmtag	{ "vray_pluginattr" "shape_type" }
 	parmtag	{ "vray_type" "int" }

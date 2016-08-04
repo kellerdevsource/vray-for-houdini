@@ -56,11 +56,12 @@
 	default	{ "0" }
 	help	"0 - the radius parameter is in object space, 1 - the radius parameter is in world space"
 	menu	{
-	    "0"	"Object Space"
-	    "1"	"World Space"
+	    "Object Space"	"Object Space"
+	    "World Space"	"World Space"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "MtlRoundEdges" }
 	parmtag	{ "vray_pluginattr" "radius_mode" }
 	parmtag	{ "vray_type" "int" }
@@ -98,12 +99,13 @@
 	help	"Which corners to smooth: 0 - both convex and concave; 1 - convex only; 2 - concave only"
 	disablewhen	"{ raytraced != 1 }"
 	menu	{
-	    "0"	"Convex and Concave"
-	    "1"	"Convex only"
-	    "2"	"Concave only"
+	    "Convex and Concave"	"Convex and Concave"
+	    "Convex Only"	"Convex Only"
+	    "Concave Only"	"Concave Only"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "MtlRoundEdges" }
 	parmtag	{ "vray_pluginattr" "raytraced_mode" }
 	parmtag	{ "vray_type" "int" }

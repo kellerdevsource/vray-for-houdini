@@ -232,12 +232,13 @@
 	    help	"Set this to 1 to make the material act as matte for all secondary rays (reflections and refractions); if set to 2, the material will perform automatic projection mapping of the environment map on the matte geometry"
 	    disablewhen	"{ matte_surface != 1 }"
 	    menu	{
-		"0"	"Disable"
-		"1"	"Without Projection Mapping"
-		"2"	"With Projection Mapping"
+		"Disable"	"Disable"
+		"Without Projection Mapping"	"Without Projection Mapping"
+		"With Projection Mapping"	"With Projection Mapping"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2" }
 	    parmtag	{ "vray_plugin" "MtlWrapperMaya" }
 	    parmtag	{ "vray_pluginattr" "matte_for_secondary_rays" }
 	    parmtag	{ "vray_type" "int" }

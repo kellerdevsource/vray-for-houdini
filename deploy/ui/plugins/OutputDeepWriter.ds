@@ -44,11 +44,12 @@
 	default	{ "1" }
 	help	"Compression type for the .vrst files (0 - no compression, 1 - ZLIB compression)"
 	menu	{
-	    "0"	"None"
-	    "1"	"ZLIB"
+	    "None"	"None"
+	    "ZLIB"	"ZLIB"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "OutputDeepWriter" }
 	parmtag	{ "vray_pluginattr" "vrst_compression" }
 	parmtag	{ "vray_type" "int" }
@@ -60,12 +61,13 @@
 	default	{ "2" }
 	help	"Compression type for the .exr files (0 - no compression, 1 - RLE compression, 2 - ZIPS compression)"
 	menu	{
-	    "0"	"None"
-	    "1"	"RLE"
-	    "2"	"ZIPS"
+	    "None"	"None"
+	    "RLE"	"RLE"
+	    "ZIPS"	"ZIPS"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "OutputDeepWriter" }
 	parmtag	{ "vray_pluginattr" "exr_compression" }
 	parmtag	{ "vray_type" "int" }

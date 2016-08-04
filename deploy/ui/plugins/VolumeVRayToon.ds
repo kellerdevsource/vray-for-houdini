@@ -67,11 +67,12 @@
 	default	{ "0" }
 	help	"0:Pixels; 1:World"
 	menu	{
-	    "0"	"Pixels"
-	    "1"	"World"
+	    "Pixels"	"Pixels"
+	    "World"	"World"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "VolumeVRayToon" }
 	parmtag	{ "vray_pluginattr" "widthType" }
 	parmtag	{ "vray_type" "int" }
@@ -143,11 +144,12 @@
 	default	{ "0" }
 	help	"Exclude list behavior"
 	menu	{
-	    "0"	"Exclude"
-	    "1"	"Include"
+	    "Exclude"	"Exclude"
+	    "Include"	"Include"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "VolumeVRayToon" }
 	parmtag	{ "vray_pluginattr" "excludeType" }
 	parmtag	{ "vray_type" "boolean" }

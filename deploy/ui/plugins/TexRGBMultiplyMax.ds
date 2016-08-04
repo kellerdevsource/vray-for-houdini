@@ -46,12 +46,13 @@
 	default	{ "2" }
 	help	"Alpha mode (0 - from color_a, 1 - from color_b, 2 - multiply"
 	menu	{
-	    "0"	"From color_a"
-	    "1"	"From color_b"
-	    "2"	"Multiply"
+	    "From color_a"	"From color_a"
+	    "From color_b"	"From color_b"
+	    "Multiply"	"Multiply"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "TexRGBMultiplyMax" }
 	parmtag	{ "vray_pluginattr" "alpha_mode" }
 	parmtag	{ "vray_type" "int" }

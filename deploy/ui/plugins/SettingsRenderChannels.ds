@@ -18,11 +18,12 @@
 	default	{ "0" }
 	help	"Determines which fragment to use for unfiltered render elements"
 	menu	{
-	    "0"	"Best coverage"
-	    "1"	"Closest to camera"
+	    "Best Coverage"	"Best Coverage"
+	    "Closest To Camera"	"Closest To Camera"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "SettingsRenderChannels" }
 	parmtag	{ "vray_pluginattr" "unfiltered_fragment_method" }
 	parmtag	{ "vray_type" "int" }
@@ -34,12 +35,12 @@
 	default	{ "0" }
 	help	"Determines how to blend fragments within a pixel"
 	menu	{
-	    "0"	"By render ID"
-	    "1"	"By z-depth"
-	    "2"	"None"
+	    "By Render ID"	"By Render ID"
+	    "By Z-Depth"	"By Z-Depth"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "SettingsRenderChannels" }
 	parmtag	{ "vray_pluginattr" "deep_merge_mode" }
 	parmtag	{ "vray_type" "int" }

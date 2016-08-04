@@ -22,11 +22,12 @@
 	    default	{ "0" }
 	    help	"This is used to differentiate between textures exported from different applications"
 	    menu	{
-		"0"	"Max"
-		"1"	"Maya"
+		"3ds Max"	"3ds Max"
+		"Maya"	"Maya"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1" }
 	    parmtag	{ "vray_plugin" "TexFalloff" }
 	    parmtag	{ "vray_pluginattr" "compatibility_with" }
 	    parmtag	{ "vray_type" "int" }
@@ -38,12 +39,13 @@
 	    default	{ "0" }
 	    help	"If 2 - the alpha is forced to 1.0f; 1 - the resulting alpha is the color intensity (if compatibility_with is 0) or the color luminance (if compatibility_with is 1); 0 - the alpha is taken from the bitmap alpha"
 	    menu	{
-		"0"	"Bitmap alpha"
-		"1"	"Color intensity/luminance"
-		"2"	"Force opaque"
+		"Self"	"Self"
+		"Maya"	"Maya"
+		"Force 1.0"	"Force 1.0"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2" }
 	    parmtag	{ "vray_plugin" "TexFalloff" }
 	    parmtag	{ "vray_pluginattr" "alpha_from_intensity" }
 	    parmtag	{ "vray_type" "int" }
@@ -169,14 +171,15 @@
 	    default	{ "0" }
 	    help	"Type"
 	    menu	{
-		"0"	"Towards / away"
-		"1"	"Perpendicular / parallel"
-		"2"	"Fresnel"
-		"3"	"Shadow / light"
-		"4"	"Distance blend"
+		"Towards / Away"	"Towards / Away"
+		"Perpendicular / Parallel"	"Perpendicular / Parallel"
+		"Fresnel"	"Fresnel"
+		"Shadow / Light"	"Shadow / Light"
+		"Distance Blend"	"Distance Blend"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2,3,4" }
 	    parmtag	{ "vray_plugin" "TexFalloff" }
 	    parmtag	{ "vray_pluginattr" "type" }
 	    parmtag	{ "vray_type" "int" }
@@ -189,19 +192,20 @@
 	    help	"Direction type"
 	    disablewhen	"{ type != 0 type != 1 type != 2 }"
 	    menu	{
-		"0"	"View Z"
-		"1"	"View X"
-		"2"	"View Y"
-		"3"	"Explicit"
-		"4"	"Local X"
-		"5"	"Local Y"
-		"6"	"Local Z"
-		"7"	"World X"
-		"8"	"World Y"
-		"9"	"World Z"
+		"View Z"	"View Z"
+		"View X"	"View X"
+		"View Y"	"View Y"
+		"Explicit"	"Explicit"
+		"Local X"	"Local X"
+		"Local Y"	"Local Y"
+		"Local Z"	"Local Z"
+		"World X"	"World X"
+		"World Y"	"World Y"
+		"World Z"	"World Z"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7,8,9" }
 	    parmtag	{ "vray_plugin" "TexFalloff" }
 	    parmtag	{ "vray_pluginattr" "direction_type" }
 	    parmtag	{ "vray_type" "int" }

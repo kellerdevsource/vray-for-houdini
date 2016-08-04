@@ -41,12 +41,13 @@
 	default	{ "2" }
 	help	"Specifies what to do with the result"
 	menu	{
-	    "0"	"None"
-	    "1"	"Replace RGB"
-	    "2"	"Separate Channel"
+	    "None"	"None"
+	    "Replace RGB"	"Replace RGB"
+	    "Separate Channel"	"Separate Channel"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "RenderChannelDenoiser" }
 	parmtag	{ "vray_pluginattr" "mode" }
 	parmtag	{ "vray_type" "int" }
@@ -58,11 +59,12 @@
 	default	{ "0" }
 	help	"Denoise type"
 	menu	{
-	    "0"	"RGB Only"
-	    "1"	"All Channels"
+	    "RGB Only"	"RGB Only"
+	    "All Channels"	"All Channels"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "RenderChannelDenoiser" }
 	parmtag	{ "vray_pluginattr" "type" }
 	parmtag	{ "vray_type" "int" }
@@ -74,13 +76,14 @@
 	default	{ "1" }
 	help	"Specifies one a few predefined presets for the radius and the strength"
 	menu	{
-	    "0"	"Mild"
-	    "1"	"Default"
-	    "2"	"Strong"
-	    "3"	"Custom"
+	    "Mild"	"Mild"
+	    "Default"	"Default"
+	    "Strong"	"Strong"
+	    "Custom"	"Custom"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "RenderChannelDenoiser" }
 	parmtag	{ "vray_pluginattr" "preset" }
 	parmtag	{ "vray_type" "int" }

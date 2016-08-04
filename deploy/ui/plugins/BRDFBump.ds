@@ -92,16 +92,17 @@
 	default	{ "0" }
 	help	"The type of the map"
 	menu	{
-	    "0"	"Bump Map"
-	    "1"	"Normal map in tangent space"
-	    "2"	"Normal map in object space"
-	    "3"	"Normal map in screen space"
-	    "4"	"Normal map in world space"
-	    "5"	"From texture bump output"
-	    "6"	"Explicit normal"
+	    "Bump"	"Bump"
+	    "Normal (Tangent)"	"Normal (Tangent)"
+	    "Normal (Object)"	"Normal (Object)"
+	    "Normal (Camera)"	"Normal (Camera)"
+	    "Normal (World)"	"Normal (World)"
+	    "From Bump"	"From Bump"
+	    "Explicit Normal"	"Explicit Normal"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6" }
 	parmtag	{ "vray_plugin" "BRDFBump" }
 	parmtag	{ "vray_pluginattr" "map_type" }
 	parmtag	{ "vray_type" "int" }

@@ -88,12 +88,13 @@
 	default	{ "0" }
 	help	"Image file list (IFL) end condition"
 	menu	{
-	    "0"	"Loop"
-	    "1"	"Ping Pong"
-	    "2"	"Hold"
+	    "Loop"	"Loop"
+	    "Ping Pong"	"Ping Pong"
+	    "Hold"	"Hold"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "TexPtex" }
 	parmtag	{ "vray_pluginattr" "ifl_end_condition" }
 	parmtag	{ "vray_type" "int" }
@@ -105,17 +106,18 @@
 	default	{ "0" }
 	help	"Type of filter used for the texture"
 	menu	{
-	    "0"	"No filtering"
-	    "1"	"Bi-linear"
-	    "2"	"Box"
-	    "3"	"Gaussian"
-	    "4"	"Bicubic"
-	    "5"	"B-Splice"
-	    "6"	"Catmull-Rom"
-	    "7"	"Mitchell"
+	    "No filtering"	"No filtering"
+	    "Bi-linear"	"Bi-linear"
+	    "Box"	"Box"
+	    "Gaussian"	"Gaussian"
+	    "Bicubic"	"Bicubic"
+	    "B-Splice"	"B-Splice"
+	    "Catmull-Rom"	"Catmull-Rom"
+	    "Mitchell"	"Mitchell"
 	}
 	range	{ 0 64 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7" }
 	parmtag	{ "vray_plugin" "TexPtex" }
 	parmtag	{ "vray_pluginattr" "filter_type" }
 	parmtag	{ "vray_type" "int" }
@@ -279,12 +281,13 @@
 	default	{ "0" }
 	help	"Where to take the alpha from"
 	menu	{
-	    "0"	"Solid"
-	    "1"	"Alpha from texture"
-	    "2"	"Alpha from luminance"
+	    "-1"	"-1"
+	    "0"	"0"
+	    "1"	"1"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "-1,0,1" }
 	parmtag	{ "vray_plugin" "TexPtex" }
 	parmtag	{ "vray_pluginattr" "alpha_type" }
 	parmtag	{ "vray_type" "int" }
@@ -296,12 +299,13 @@
 	default	{ "1" }
 	help	"Color space"
 	menu	{
-	    "0"	"Linear"
-	    "1"	"Gamma corrected"
-	    "2"	"sRGB"
+	    "Linear"	"Linear"
+	    "Gamma Corrected"	"Gamma Corrected"
+	    "sRGB"	"sRGB"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "TexPtex" }
 	parmtag	{ "vray_pluginattr" "color_space" }
 	parmtag	{ "vray_type" "int" }

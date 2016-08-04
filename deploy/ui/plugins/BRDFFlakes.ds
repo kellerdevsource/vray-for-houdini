@@ -101,11 +101,12 @@
 	    default	{ "1" }
 	    help	"Flake filtering mode"
 	    menu	{
-		"0"	"Simple"
-		"1"	"Directional"
+		"Simple"	"Simple"
+		"Directional"	"Directional"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1" }
 	    parmtag	{ "vray_plugin" "BRDFFlakes" }
 	    parmtag	{ "vray_pluginattr" "flake_filtering_mode" }
 	    parmtag	{ "vray_type" "int" }
@@ -191,11 +192,12 @@
 	    default	{ "0" }
 	    help	"The mapping method for the flakes"
 	    menu	{
-		"0"	"Mapping channel"
-		"1"	"Triplanar"
+		"Explicit"	"Explicit"
+		"Triplanar"	"Triplanar"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1" }
 	    parmtag	{ "vray_plugin" "BRDFFlakes" }
 	    parmtag	{ "vray_pluginattr" "mapping_type" }
 	    parmtag	{ "vray_type" "int" }

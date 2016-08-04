@@ -18,16 +18,17 @@
 	default	{ "6" }
 	help	"Type of color mapping."
 	menu	{
-	    "0"	"Linear"
-	    "1"	"Exponential"
-	    "2"	"HSV exponential"
-	    "3"	"Intensity exponential"
-	    "4"	"Gamma correction"
-	    "5"	"Intensity gamma"
-	    "6"	"Reinhard"
+	    "Linear"	"Linear"
+	    "Exponential"	"Exponential"
+	    "HSV Exponential"	"HSV Exponential"
+	    "Intensity Exponential"	"Intensity Exponential"
+	    "Gamma Correction"	"Gamma Correction"
+	    "Intensity Gamma"	"Intensity Gamma"
+	    "Reinhard"	"Reinhard"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6" }
 	parmtag	{ "vray_plugin" "SettingsColorMapping" }
 	parmtag	{ "vray_pluginattr" "type" }
 	parmtag	{ "vray_type" "int" }
@@ -124,12 +125,13 @@
 	default	{ "0" }
 	help	"When this parameter is on, the color mapping will not be applied to the final image, however V-Ray will proceed with all its calculations as though color mapping is applied (e.g. the noise levels will be corrected accordingly)"
 	menu	{
-	    "0"	"Color mapping and gamma"
-	    "1"	"None (don't apply anything)"
-	    "2"	"Color mapping only (no gamma)"
+	    "Color Mapping & Gamma"	"Color Mapping & Gamma"
+	    "Don't Affect Colors"	"Don't Affect Colors"
+	    "Color Mapping Only"	"Color Mapping Only"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "SettingsColorMapping" }
 	parmtag	{ "vray_pluginattr" "adaptation_only" }
 	parmtag	{ "vray_type" "int" }

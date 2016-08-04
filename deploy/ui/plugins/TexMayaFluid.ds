@@ -116,13 +116,14 @@
 	default	{ "0" }
 	help	"Motion blur type, 0-Disabled, 1-Blend, 2-Velocity, 3-Velocity+Blend"
 	menu	{
-	    "0"	"Disabled"
-	    "1"	"Blend"
-	    "2"	"Velocity"
-	    "3"	"Velocity+Blend"
+	    "Disabled"	"Disabled"
+	    "Blend"	"Blend"
+	    "Velocity"	"Velocity"
+	    "Velocity+Blend"	"Velocity+Blend"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "TexMayaFluid" }
 	parmtag	{ "vray_pluginattr" "mb_type" }
 	parmtag	{ "vray_type" "int" }

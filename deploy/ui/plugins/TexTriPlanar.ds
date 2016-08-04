@@ -19,11 +19,12 @@
 	default	{ "0" }
 	help	"Specifies whether to use the same texture on all axes, or separate textures for each axis"
 	menu	{
-	    "0"	"Same texture on all axes"
-	    "1"	"Different texture on each axis"
+	    "Same Texture On All Axes"	"Same Texture On All Axes"
+	    "Different Texture On Each Axis"	"Different Texture On Each Axis"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "TexTriPlanar" }
 	parmtag	{ "vray_pluginattr" "texture_mode" }
 	parmtag	{ "vray_type" "int" }
@@ -179,11 +180,12 @@
 	help	"Specifies what to use to randomize the offset/rotation"
 	disablewhen	"{ random_texture_offset != 1 random_texture_rotation != 1 random_axis != 1 random_frame_rotation != 1 }"
 	menu	{
-	    "0"	"By face material ID"
-	    "1"	"By object render ID"
+	    "By Face Material ID"	"By Face Material ID"
+	    "By Object Render ID"	"By Object Render ID"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "TexTriPlanar" }
 	parmtag	{ "vray_pluginattr" "random_mode" }
 	parmtag	{ "vray_type" "int" }
@@ -195,11 +197,12 @@
 	default	{ "0" }
 	help	"The space that the projection takes place in, either local object space, or some other object in the scene. If the space is set to reference object(Node), but no object is specified, world space is used"
 	menu	{
-	    "0"	"Local object"
-	    "1"	"Reference to another object"
+	    "Local Object"	"Local Object"
+	    "Reference To Another Object"	"Reference To Another Object"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "TexTriPlanar" }
 	parmtag	{ "vray_pluginattr" "ref_space" }
 	parmtag	{ "vray_type" "int" }

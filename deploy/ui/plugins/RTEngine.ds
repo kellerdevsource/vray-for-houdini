@@ -31,12 +31,13 @@
 	default	{ "0" }
 	help	"Device type"
 	menu	{
-	    "0"	"CPU"
-	    "1"	"GPU (OpenCL)"
-	    "4"	"GPU (CUDA)"
+	    "CPU"	"CPU"
+	    "GPU (OpenCL)"	"GPU (OpenCL)"
+	    "GPU (CUDA)"	"GPU (CUDA)"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,4" }
 	parmtag	{ "vray_plugin" "RTEngine" }
 	parmtag	{ "vray_pluginattr" "use_opencl" }
 	parmtag	{ "vray_type" "boolean" }

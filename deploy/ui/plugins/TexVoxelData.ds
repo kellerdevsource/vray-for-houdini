@@ -19,11 +19,12 @@
 	default	{ "0" }
 	help	"Interpolation type"
 	menu	{
-	    "0"	"Linear"
-	    "1"	"Quadratic"
+	    "Linear"	"Linear"
+	    "Quadratic"	"Quadratic"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "TexVoxelData" }
 	parmtag	{ "vray_pluginattr" "interpolation" }
 	parmtag	{ "vray_type" "int" }

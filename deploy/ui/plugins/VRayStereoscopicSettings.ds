@@ -54,12 +54,13 @@
 	default	{ "0" }
 	help	"Specifies the focus method for the two views"
 	menu	{
-	    "0"	"None/parallel"
-	    "1"	"Rotation"
-	    "2"	"Shear"
+	    "None"	"None"
+	    "Rotation"	"Rotation"
+	    "Shear"	"Shear"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
 	parmtag	{ "vray_pluginattr" "focus_method" }
 	parmtag	{ "vray_type" "int" }
@@ -71,12 +72,13 @@
 	default	{ "0" }
 	help	"Specifies how the two virtual cameras will be placed in relation to the real camera in the scene"
 	menu	{
-	    "0"	"Symmetric/shift both"
-	    "1"	"Shift left"
-	    "2"	"Shift right"
+	    "Shift Both"	"Shift Both"
+	    "Shift Left"	"Shift Left"
+	    "Shift Right"	"Shift Right"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
 	parmtag	{ "vray_pluginattr" "interocular_method" }
 	parmtag	{ "vray_type" "int" }
@@ -88,13 +90,13 @@
 	default	{ "0" }
 	help	"Specifies which of the stereoscopic views will be rendered"
 	menu	{
-	    "0"	"Both"
-	    "1"	"Left"
-	    "2"	"Right"
-	    "3"	"Center"
+	    "Both"	"Both"
+	    "Left"	"Left"
+	    "Right"	"Right"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
 	parmtag	{ "vray_pluginattr" "view" }
 	parmtag	{ "vray_type" "int" }
@@ -118,12 +120,13 @@
 	default	{ "0" }
 	help	"Allows us to specify the mode of operation for the shade map"
 	menu	{
-	    "0"	"Disabled"
-	    "1"	"Render shade map"
-	    "2"	"Use shade map"
+	    "Disabled"	"Disabled"
+	    "Render shade map"	"Render shade map"
+	    "Use shade map"	"Use shade map"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
 	parmtag	{ "vray_pluginattr" "sm_mode" }
 	parmtag	{ "vray_type" "int" }
@@ -172,11 +175,12 @@
 	default	{ "1" }
 	help	"Compression type for the .vrst files"
 	menu	{
-	    "0"	"None"
-	    "1"	"ZLIB"
+	    "No Compression"	"No Compression"
+	    "ZLIB Compression"	"ZLIB Compression"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
 	parmtag	{ "vray_pluginattr" "vrst_compression" }
 	parmtag	{ "vray_type" "int" }
@@ -188,12 +192,13 @@
 	default	{ "2" }
 	help	"Compression type for the .exr files"
 	menu	{
-	    "0"	"None"
-	    "1"	"RLE"
-	    "2"	"ZIPS"
+	    "No Compression"	"No Compression"
+	    "RLE Compression"	"RLE Compression"
+	    "ZIPS Compression"	"ZIPS Compression"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
 	parmtag	{ "vray_pluginattr" "exr_compression" }
 	parmtag	{ "vray_type" "int" }

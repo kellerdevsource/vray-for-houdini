@@ -82,19 +82,20 @@
 	default	{ "0" }
 	help	"Which output should be considered for the 'Output'"
 	menu	{
-	    "0"	"result_a"
-	    "1"	"result_b"
-	    "2"	"product"
-	    "3"	"sum"
-	    "4"	"difference"
-	    "5"	"power"
-	    "6"	"division"
-	    "7"	"minimum"
-	    "8"	"maximum"
-	    "9"	"absolute difference"
+	    "Result A"	"Result A"
+	    "Result B"	"Result B"
+	    "Product"	"Product"
+	    "Sum"	"Sum"
+	    "Difference"	"Difference"
+	    "Power"	"Power"
+	    "Division"	"Division"
+	    "Minimum"	"Minimum"
+	    "Maximum"	"Maximum"
+	    "Absolute Difference"	"Absolute Difference"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7,8,9" }
 	parmtag	{ "vray_plugin" "TexAColorOp" }
 	parmtag	{ "vray_pluginattr" "mode" }
 	parmtag	{ "vray_type" "int" }

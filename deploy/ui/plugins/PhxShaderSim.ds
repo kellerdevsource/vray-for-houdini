@@ -198,14 +198,15 @@
 	    default	{ "1" }
 	    help	"0-texture; 1-T; 2-Sim; 3-V; 10-fuel"
 	    menu	{
-		"0"	"Texture"
-		"1"	"Temperature"
-		"2"	"Smoke"
-		"3"	"Speed"
-		"10"	"Fuel"
+		"Texture"	"Texture"
+		"T"	"T"
+		"Sim"	"Sim"
+		"V"	"V"
+		"Fuel"	"Fuel"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2,3,10" }
 	    parmtag	{ "vray_plugin" "PhxShaderSim" }
 	    parmtag	{ "vray_pluginattr" "sarg" }
 	    parmtag	{ "vray_type" "int" }
@@ -273,13 +274,14 @@
 	    default	{ "1" }
 	    disablewhen	"{ displacement != 1 }"
 	    menu	{
-		"0"	"Gradient Driven"
-		"1"	"Surface Driven"
-		"2"	"Vector"
-		"3"	"Advection"
+		"Gradient Driven"	"Gradient Driven"
+		"Surface Driven"	"Surface Driven"
+		"Vector"	"Vector"
+		"Advection"	"Advection"
 	    }
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	    parmtag	{ "vray_plugin" "PhxShaderSim" }
 	    parmtag	{ "vray_pluginattr" "displ2d" }
 	    parmtag	{ "vray_type" "int" }
@@ -489,12 +491,13 @@
 	    help	"Sampler"
 	    disablewhen	"{ render != 1 }"
 	    menu	{
-		"0"	"Box"
-		"1"	"Linear"
-		"2"	"Spherical"
+		"Trunc"	"Trunc"
+		"Linear"	"Linear"
+		"Spherical"	"Spherical"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2" }
 	    parmtag	{ "vray_plugin" "PhxShaderSim" }
 	    parmtag	{ "vray_pluginattr" "sampler" }
 	    parmtag	{ "vray_type" "int" }
@@ -552,13 +555,14 @@
 	    default	{ "2" }
 	    help	"No Scatter"
 	    menu	{
-		"0"	"Ray-Traced (GI Only)"
-		"1"	"Disabled"
-		"2"	"Analytic"
-		"3"	"Analytic+Shadows"
+		"Enabled"	"Enabled"
+		"Disabled"	"Disabled"
+		"Analytic"	"Analytic"
+		"Analytic + Shadows"	"Analytic + Shadows"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	    parmtag	{ "vray_plugin" "PhxShaderSim" }
 	    parmtag	{ "vray_pluginattr" "noscatter" }
 	    parmtag	{ "vray_type" "int" }
@@ -778,16 +782,16 @@
 	    default	{ "1" }
 	    help	"0-disabled; 1-T; 2-Sm; 3-V; 4-texture; 5-RGB; 10-fuel"
 	    menu	{
-		"0"	"Disabled"
-		"1"	"Temperature"
-		"2"	"Smoke"
-		"3"	"Speed"
-		"4"	"Texture"
-		"5"	"RGB"
-		"10"	"Fuel"
+		"Disabled"	"Disabled"
+		"T"	"T"
+		"Sim"	"Sim"
+		"V"	"V"
+		"Texture"	"Texture"
+		"Fuel"	"Fuel"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2,3,4,10" }
 	    parmtag	{ "vray_plugin" "PhxShaderSim" }
 	    parmtag	{ "vray_pluginattr" "earg" }
 	    parmtag	{ "vray_type" "int" }
@@ -874,17 +878,17 @@
 	    default	{ "5" }
 	    help	"0-disabled; 1-T; 2-Sm; 3-V; 4-texture; 5-simple color; 6-RGB; 10-fuel"
 	    menu	{
-		"0"	"Disabled"
-		"1"	"Temperature"
-		"2"	"Smoke"
-		"3"	"Speed"
-		"4"	"Texture"
-		"5"	"Simple Color"
-		"6"	"RGB"
-		"10"	"Fuel"
+		"Disabled"	"Disabled"
+		"T"	"T"
+		"Sim"	"Sim"
+		"V"	"V"
+		"Texture"	"Texture"
+		"Color"	"Color"
+		"Fuel"	"Fuel"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,10" }
 	    parmtag	{ "vray_plugin" "PhxShaderSim" }
 	    parmtag	{ "vray_pluginattr" "darg" }
 	    parmtag	{ "vray_type" "int" }
@@ -964,15 +968,16 @@
 	    default	{ "1" }
 	    help	"0-simple smoke; 1-T; 2-Sm; 3-V; 4-texture; 10-fuel"
 	    menu	{
-		"0"	"Simple Smoke"
-		"1"	"Temperature"
-		"2"	"Smoke"
-		"3"	"Speed"
-		"4"	"Texture"
-		"10"	"Fuel"
+		"Smoke"	"Smoke"
+		"T"	"T"
+		"Sim"	"Sim"
+		"V"	"V"
+		"Texture"	"Texture"
+		"Fuel"	"Fuel"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2,3,4,10" }
 	    parmtag	{ "vray_plugin" "PhxShaderSim" }
 	    parmtag	{ "vray_pluginattr" "targ" }
 	    parmtag	{ "vray_type" "int" }
@@ -1054,11 +1059,12 @@
 	    default	{ "0" }
 	    help	"Velocity"
 	    menu	{
-		"0"	"Normal Velocity"
-		"1"	"Texture"
+		"Normal Velocity"	"Normal Velocity"
+		"Texture"	"Texture"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1" }
 	    parmtag	{ "vray_plugin" "PhxShaderSim" }
 	    parmtag	{ "vray_pluginattr" "varg" }
 	    parmtag	{ "vray_type" "int" }
@@ -1257,12 +1263,13 @@
 	    help	"emissive lights placement type, 0-simple, 1-inside"
 	    disablewhen	"{ al_enable != 1 }"
 	    menu	{
-		"0"	"Simple"
-		"1"	"Inside"
-		"2"	"Reduced Grid"
+		"Simple"	"Simple"
+		"Inside"	"Inside"
+		"Reduced Grid"	"Reduced Grid"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2" }
 	    parmtag	{ "vray_plugin" "PhxShaderSim" }
 	    parmtag	{ "vray_pluginattr" "al_placing" }
 	    parmtag	{ "vray_type" "int" }
@@ -1275,11 +1282,12 @@
 	    help	"sampling type, 0-simple, 1-DMC"
 	    disablewhen	"{ al_enable != 1 }"
 	    menu	{
-		"0"	"Simple"
-		"1"	"DMC"
+		"Simple"	"Simple"
+		"DMC"	"DMC"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1" }
 	    parmtag	{ "vray_plugin" "PhxShaderSim" }
 	    parmtag	{ "vray_pluginattr" "al_sampling" }
 	    parmtag	{ "vray_type" "int" }
@@ -1331,12 +1339,13 @@
 	    help	"if 1, the emission lights will cast raytraced shadows to the volume. if 2, a grid map will be used to determine illumination"
 	    disablewhen	"{ al_enable != 1 }"
 	    menu	{
-		"0"	"None"
-		"1"	"Ray-traced"
-		"2"	"Grid-based"
+		"None"	"None"
+		"Ray-traced"	"Ray-traced"
+		"Grid-based"	"Grid-based"
 	    }
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2" }
 	    parmtag	{ "vray_plugin" "PhxShaderSim" }
 	    parmtag	{ "vray_pluginattr" "selfshadow" }
 	    parmtag	{ "vray_type" "int" }
@@ -1628,11 +1637,12 @@
 	    default	{ "0" }
 	    help	"if true, write to normals in volume mode"
 	    menu	{
-		"0"	"Disable"
-		"1"	"Separate channel"
+		"Disable"	"Disable"
+		"Separate channel"	"Separate channel"
 	    }
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1" }
 	    parmtag	{ "vray_plugin" "PhxShaderSim" }
 	    parmtag	{ "vray_pluginattr" "volnorm" }
 	    parmtag	{ "vray_type" "int" }
@@ -1644,12 +1654,13 @@
 	    default	{ "0" }
 	    help	"if true, write to the z-depth render element"
 	    menu	{
-		"0"	"Disable"
-		"1"	"Standard channel"
-		"2"	"Separate channel"
+		"Disable"	"Disable"
+		"Standard channel"	"Standard channel"
+		"Separate channel"	"Separate channel"
 	    }
 	    range	{ 0 64 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2" }
 	    parmtag	{ "vray_plugin" "PhxShaderSim" }
 	    parmtag	{ "vray_pluginattr" "volzdepth" }
 	    parmtag	{ "vray_type" "int" }
@@ -1789,11 +1800,12 @@
 	    default	{ "0" }
 	    help	"The texture coordinates generation method"
 	    menu	{
-		"0"	"Fixed"
-		"1"	"Grid"
+		"Fixed"	"Fixed"
+		"Grid"	"Grid"
 	    }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1" }
 	    parmtag	{ "vray_plugin" "PhxShaderSim" }
 	    parmtag	{ "vray_pluginattr" "coord_method" }
 	    parmtag	{ "vray_type" "int" }
@@ -1880,12 +1892,13 @@
 	    help	"if true, the emission will be multiplied by a constant alpha factor"
 	    disablewhen	"{ earg == 0 }"
 	    menu	{
-		"0"	"Use Diffuse Opacity"
-		"1"	"Fully Visible"
-		"2"	"Use Own Opacity"
+		"Use Diffuse Opacity"	"Use Diffuse Opacity"
+		"Fully Visible"	"Fully Visible"
+		"Use Own Opacity"	"Use Own Opacity"
 	    }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2" }
 	    parmtag	{ "vray_plugin" "PhxShaderSim" }
 	    parmtag	{ "vray_pluginattr" "fire_opacity_mode" }
 	    parmtag	{ "vray_type" "int" }
@@ -1947,12 +1960,13 @@
 	    help	"0-none, 1-inverse, 2-inverse square"
 	    disablewhen	"{ al_enable != 1 }"
 	    menu	{
-		"0"	"None"
-		"1"	"Inverse"
-		"2"	"Inverse Square"
+		"None"	"None"
+		"Inverse"	"Inverse"
+		"Inverse Square"	"Inverse Square"
 	    }
 	    range	{ 0 10 }
 	    export	none
+	    parmtag	{ "vray_enumkeys" "0,1,2" }
 	    parmtag	{ "vray_plugin" "PhxShaderSim" }
 	    parmtag	{ "vray_pluginattr" "al_decay" }
 	    parmtag	{ "vray_type" "int" }

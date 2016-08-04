@@ -244,12 +244,14 @@
 	default	{ "0" }
 	help	"The valid values"
 	menu	{
-	    "0"	"None"
-	    "1"	"Internal"
-	    "2"	"All"
+	    "Not Set"	"Not Set"
+	    "None"	"None"
+	    "Internal"	"Internal"
+	    "All"	"All"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "-1,0,1,2" }
 	parmtag	{ "vray_plugin" "GeomStaticSmoothedMesh" }
 	parmtag	{ "vray_pluginattr" "preserve_map_borders" }
 	parmtag	{ "vray_type" "int" }
@@ -273,13 +275,14 @@
 	default	{ "0" }
 	help	"Mode"
 	menu	{
-	    "0"	"Normal"
-	    "1"	"Vector"
-	    "2"	"Absolute Tangent"
-	    "3"	"Vector (Object Space)"
+	    "Normal"	"Normal"
+	    "Vector"	"Vector"
+	    "Absolute Tangent"	"Absolute Tangent"
+	    "Vector (Object Space)"	"Vector (Object Space)"
 	}
 	range	{ 0 1 }
 	export	none
+	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "GeomStaticSmoothedMesh" }
 	parmtag	{ "vray_pluginattr" "vector_displacement" }
 	parmtag	{ "vray_type" "int" }
