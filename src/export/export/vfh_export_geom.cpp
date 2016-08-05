@@ -29,7 +29,9 @@ using namespace VRayForHoudini;
 
 const char *const VFH_ATTR_MATERIAL_ID = "switchmtl";
 
+namespace {
 
+// wrapper over GEO_PrimVolume and GEO_PrimVDB providing common interface
 struct VolumeProxy {
 	VolumeProxy(const GEO_Primitive *prim): m_prim(prim), m_vol(nullptr), m_vdb(nullptr) {
 		if (prim->getTypeId() == GEO_PRIMVOLUME) {
@@ -126,6 +128,8 @@ struct VolumeProxy {
 	const GEO_PrimVolume *m_vol;
 	const GEO_Primitive  *m_prim;
 };
+}
+
 
 void HoudiniVolumeExporter::exportPrimitives(const GU_Detail &detail, PluginDescList &plugins)
 {
@@ -167,6 +171,7 @@ void HoudiniVolumeExporter::exportPrimitives(const GU_Detail &detail, PluginDesc
 				missmatchedSizes = true;
 			}
 			velVoxCount = std::max(voxCount, velVoxCount);
+			// set max res of the 3 components
 			for (int c = 0; c <3; ++c) {
 				velocityRes[c] =  std::max(velocityRes[c], chRes[c]);
 			}
@@ -233,8 +238,7 @@ void HoudiniVolumeExporter::exportPrimitives(const GU_Detail &detail, PluginDesc
 		}
 
 		VRay::VUtils::FloatRefList values(voxCount);
-		int times = 0;
-		volume.copyTo(values, [&times](float & c) -> float & { ++times; return c; });
+		volume.copyTo(values, [](float & c) -> float & { return c; });
 
 		const std::string primPluginNamePrefix = texType + "|";
 
