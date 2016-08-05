@@ -44,9 +44,17 @@ public:
 	size_t              size() const { return (m_prmVec.size() - 1); }
 	void                reserve(size_t n) { return m_prmVec.reserve(n + 1); }
 
-	// will copy internal template to heap and return the pointer
+	PRMList&            setCookDependent(bool recook);
+	// NOTE: use following 2 methods with causion
+	// be careful when accessing internal PRM_Template data and passing it around
+	// adding additional parameters to the PRMList after calling PRMList::getPRMTemplate() might cause
+	// m_prmVec to be resized and invalidate the returened pointers
+	PRM_Template*       getPRMTemplate() { return m_prmVec.data(); }
+	const PRM_Template* getPRMTemplate() const { return m_prmVec.data(); }
+	// NOTE: will copy internal template to heap and return the pointer
 	// this should not be called excessivily as these pointers are not freed
-	std::shared_ptr< PRM_Template > getPRMTemplate(bool setRecook = true) const;
+	std::shared_ptr<PRM_Template> getPRMTemplateCopy() const;
+
 
 	PRMList& addPrm(const PRM_Template &p);
 	PRMList& addPrm(const PRMFactory &p);
@@ -64,9 +72,11 @@ public:
 	// PRM_ScriptPages used by the loaded PRM_Templates
 	PRMList& addFromFile(const char *filepath);
 
+
 	// does not validate anything, just prepends the passed path with the UI root
 	static std::string expandUiPath(const std::string &relPath);
-	static PRM_Template* loadFromFile(const char *filepath, bool setRecook = true);
+	static PRM_Template* loadFromFile(const char *filepath, bool cookDependent = false);
+	static void          setCookDependent(PRM_Template* tmpl, bool recook);
 
 private:
 	typedef std::vector<PRM_Template> PRMTemplVec;

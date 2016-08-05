@@ -133,7 +133,7 @@ std::string Parm::PRMList::expandUiPath(const std::string &relPath)
 }
 
 
-PRM_Template* Parm::PRMList::loadFromFile(const char *filepath, bool setRecook)
+PRM_Template* Parm::PRMList::loadFromFile(const char *filepath, bool cookDependent)
 {
 	OP_Operator op( "dummy", "dummy",
 				nullptr, static_cast<PRM_Template *>(nullptr), 0 );
@@ -148,14 +148,24 @@ PRM_Template* Parm::PRMList::loadFromFile(const char *filepath, bool setRecook)
 	opprms->bumpRef(1);
 	PRM_Template *tmpl = opprms->getSpareTemplates();
 
-	if (setRecook) {
-		int i = 0;
-		while (tmpl && (tmpl[i].getType() != PRM_LIST_TERMINATOR)) {
-			tmpl[i++].setNoCook(false);
-		}
+	if (cookDependent) {
+		setCookDependent(tmpl, cookDependent);
 	}
 
 	return tmpl;
+}
+
+
+void Parm::PRMList::setCookDependent( PRM_Template* tmpl, bool recook)
+{
+	int i = 0;
+	while (tmpl && (tmpl[i].getType() != PRM_LIST_TERMINATOR)) {
+		if (tmpl[i].getType() == PRM_SWITCHER) {
+			continue;
+		}
+
+		tmpl[i++].setNoCook(!recook);
+	}
 }
 
 
@@ -186,20 +196,21 @@ void Parm::PRMList::clear()
 }
 
 
-std::shared_ptr< PRM_Template > Parm::PRMList::getPRMTemplate(bool setRecook) const
+Parm::PRMList& Parm::PRMList::setCookDependent(bool recook)
+{
+	setCookDependent(m_prmVec.data(), recook);
+	return *this;
+}
+
+
+std::shared_ptr<PRM_Template> Parm::PRMList::getPRMTemplateCopy() const
 {
 	const int count = m_prmVec.size();
 
-	std::shared_ptr< PRM_Template > tpl( new PRM_Template[count], std::default_delete< PRM_Template[] >() );
+	std::shared_ptr<PRM_Template> tpl( new PRM_Template[count], std::default_delete< PRM_Template[] >() );
 
 	for (int c = 0; c < count; ++c) {
 		tpl.get()[c] = m_prmVec[c];
-	}
-
-	if (setRecook) {
-		for (int c = 0; c < count; ++c) {
-			tpl.get()[c].setNoCook(false);
-		}
 	}
 
 	return tpl;

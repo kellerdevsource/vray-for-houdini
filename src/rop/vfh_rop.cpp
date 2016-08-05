@@ -126,9 +126,8 @@ static const int res_override_items[] = {
 
 static PRM_Template* getCameraOverridesTemplate()
 {
-	static std::shared_ptr< PRM_Template > myParms;
-	if (!myParms) {
-		static Parm::PRMList camOverrides;
+	static Parm::PRMList camOverrides;
+	if (camOverrides.empty()) {
 		camOverrides.addPrm(
 					Parm::PRMFactory(PRM_STRING_E, "render_camera", "Camera")
 							.setTypeExtended(PRM_TYPE_DYNAMIC_PATH)
@@ -159,10 +158,9 @@ static PRM_Template* getCameraOverridesTemplate()
 							.addConditional("{ override_camerares == 0 }", PRM_CONDTYPE_HIDE)
 							.addConditional("{ override_camerares == 0 } { res_fraction != \"specific\" }", PRM_CONDTYPE_DISABLE)
 					);
-		myParms = camOverrides.getPRMTemplate();
 	}
 
-	return myParms.get();
+	return camOverrides.getPRMTemplate();
 }
 
 
@@ -347,7 +345,6 @@ static void addParmDR(Parm::PRMList &myPrmList)
 
 static PRM_Template* getTemplates()
 {
-	static std::shared_ptr< PRM_Template > myPrms;
 	static Parm::PRMList myPrmList;
 	if (myPrmList.empty()) {
 		myPrmList.reserve(400);
@@ -470,11 +467,9 @@ static PRM_Template* getTemplates()
 		addParmDR(myPrmList);
 
 		myPrmList.switcherEnd();
-
-		myPrms = myPrmList.getPRMTemplate(true);
 	}
 
-	return myPrms.get();
+	return myPrmList.getPRMTemplate();
 }
 
 

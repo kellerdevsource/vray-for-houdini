@@ -931,50 +931,41 @@ PRMTmplList* Parm::generatePrmTemplate(const std::string &pluginID, const std::s
 }
 
 
-PRM_Template * Parm::getPrmTemplate(const std::string &pluginID)
+PRM_Template* Parm::getPrmTemplate(const std::string &pluginID)
 {
-	typedef std::unordered_map< std::string, std::shared_ptr< PRM_Template > > PRMMap;
-	static PRMMap prmMap;
-
-	std::shared_ptr< PRM_Template > pluginParms;
-	if (prmMap.count(pluginID) > 0){
-		pluginParms = prmMap[pluginID];
-		return pluginParms.get();
-	}
-
 	typedef std::unordered_map< std::string, std::shared_ptr< PRMList > > PRMListMap;
 	static PRMListMap prmListMap;
 
+	if (prmListMap.count(pluginID) == 0) {
+		std::shared_ptr< PRMList > &prmList = prmListMap[pluginID];
+		if (!prmList) {
+			prmList = std::make_shared< PRMList >();
+		}
+
+		if (prmList) {
+			if (pluginID == "BRDFLayered") {
+				VOP::BRDFLayered::addPrmTemplate(*prmList);
+			}
+			else if (pluginID == "TexLayered") {
+				VOP::TexLayered::addPrmTemplate(*prmList);
+			}
+			else if (pluginID == "MtlMulti") {
+				VOP::MtlMulti::addPrmTemplate(*prmList);
+			}
+			else if (pluginID == "GeomPlane") {
+				SOP::GeomPlane::addPrmTemplate(*prmList);
+			}
+			else if (pluginID == "GeomMeshFile") {
+				SOP::VRayProxy::addPrmTemplate(*prmList);
+			}
+
+			static boost::format dspath("plugins/%s.ds");
+			std::string dsfullpath = PRMList::expandUiPath( boost::str(dspath % pluginID) );
+
+			prmList->addFromFile(dsfullpath.c_str());
+		}
+	}
+
 	std::shared_ptr< PRMList > &prmList = prmListMap[pluginID];
-	if (!prmList) {
-		prmList = std::make_shared< PRMList >();
-	}
-
-	if (prmList) {
-		if (pluginID == "BRDFLayered") {
-			VOP::BRDFLayered::addPrmTemplate(*prmList);
-		}
-		else if (pluginID == "TexLayered") {
-			VOP::TexLayered::addPrmTemplate(*prmList);
-		}
-		else if (pluginID == "MtlMulti") {
-			VOP::MtlMulti::addPrmTemplate(*prmList);
-		}
-		else if (pluginID == "GeomPlane") {
-			SOP::GeomPlane::addPrmTemplate(*prmList);
-		}
-		else if (pluginID == "GeomMeshFile") {
-			SOP::VRayProxy::addPrmTemplate(*prmList);
-		}
-
-		static boost::format dspath("plugins/%s.ds");
-		std::string dsfullpath = PRMList::expandUiPath( boost::str(dspath % pluginID) );
-
-		prmList->addFromFile(dsfullpath.c_str());
-
-		pluginParms = prmList->getPRMTemplate();
-		prmMap[pluginID] = pluginParms;
-	}
-
-	return pluginParms.get();
+	return (prmList)? prmList->getPRMTemplate() : nullptr;
 }

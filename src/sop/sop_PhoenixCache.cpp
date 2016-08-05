@@ -39,7 +39,7 @@ static PRM_Template *AttrItems;
 PRM_Template* SOP::PhxShaderCache::GetPrmTemplate()
 {
 	if (!AttrItems) {
-		AttrItems = Parm::PRMList::loadFromFile(Parm::PRMList::expandUiPath("CustomPhxShaderCache.ds").c_str());
+		AttrItems = Parm::PRMList::loadFromFile(Parm::PRMList::expandUiPath("CustomPhxShaderCache.ds").c_str(), true);
 	}
 
 	return AttrItems;
