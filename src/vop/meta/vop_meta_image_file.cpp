@@ -9,43 +9,88 @@
 //
 
 #include "vop_meta_image_file.h"
-
 #include "vfh_prm_templates.h"
-#include "vfh_prm_json.h"
 #include "vfh_tex_utils.h"
 
 
 using namespace VRayForHoudini;
 
 
-static PRM_Name           AttrTabsSwitcher("MetaImageFile");
-static Parm::PRMDefList   AttrTabsSwitcherTitles;
-static Parm::PRMTmplList  AttrItems;
+static void renamePRMTemplate(PRM_Template *tmpl, const char *prefix)
+{
+	if (!UTisstring(prefix)){
+		return;
+	}
 
+	static boost::format prmname("%s_%s");
 
-static Parm::TabItemDesc MetaImageFileTabItemsDesc[] = {
-	{ "Bitmap",     "BitmapBuffer"             },
-	{ "Texture",    "TexBitmap"                },
-	{ "UV",         "UVWGenMayaPlace2dTexture" },
-	{ "Projection", "UVWGenProjection"         }
-};
+	int i = 0;
+	while (tmpl && (tmpl[i].getType() != PRM_LIST_TERMINATOR)) {
+		if (tmpl[i].getType() == PRM_SWITCHER) {
+			continue;
+		}
 
+		PRM_Name *name = tmpl[i].getNamePtr();
+		if (name) {
+			std::string prmtoken = boost::str(prmname % prefix % name->getToken()) ;
+			name->setToken(prmtoken.c_str());
+			name->harden();
+		}
+		++i;
+	}
+}
 
 PRM_Template* VOP::MetaImageFile::GetPrmTemplate()
 {
-	if (!AttrItems.size()) {
-		Parm::addTabsItems(MetaImageFileTabItemsDesc, CountOf(MetaImageFileTabItemsDesc), AttrTabsSwitcherTitles, AttrItems);
+	static Parm::PRMList myPrmList;
+	if (myPrmList.empty()) {
+		myPrmList.reserve(90);
 
-		AttrItems.push_back(PRM_Template()); // List terminator
+		static boost::format dspath("plugins/%s.ds");
+		std::string dsfullpath;
 
-		AttrItems.insert(AttrItems.begin(),
-						 PRM_Template(PRM_SWITCHER,
-									  AttrTabsSwitcherTitles.size(),
-									  &AttrTabsSwitcher,
-									  &AttrTabsSwitcherTitles[0]));
+		myPrmList.switcherBegin("MetaImageFile");
+
+		// Bitmap tab
+		myPrmList.addFolder("Bitmap");
+		dsfullpath = Parm::PRMList::expandUiPath( boost::str(dspath % "BitmapBuffer") );
+
+		int idx = myPrmList.size();
+		myPrmList.addFromFile(dsfullpath.c_str());
+		// hacky way to rename params on order to keep compatibility with old UI
+		renamePRMTemplate(myPrmList.getPRMTemplate() + idx, "BitmapBuffer");
+
+		// Texture tab
+		myPrmList.addFolder("Texture");
+		dsfullpath = Parm::PRMList::expandUiPath( boost::str(dspath % "TexBitmap") );
+
+		idx = myPrmList.size();
+		myPrmList.addFromFile(dsfullpath.c_str());
+		// hacky way to rename params on order to keep compatibility with old UI
+		renamePRMTemplate(myPrmList.getPRMTemplate() + idx, "TexBitmap");
+
+		// UV tab
+		myPrmList.addFolder("UV");
+		dsfullpath = Parm::PRMList::expandUiPath( boost::str(dspath % "UVWGenMayaPlace2dTexture") );
+
+		idx = myPrmList.size();
+		myPrmList.addFromFile(dsfullpath.c_str());
+		// hacky way to rename params on order to keep compatibility with old UI
+		renamePRMTemplate(myPrmList.getPRMTemplate() + idx, "UVWGenMayaPlace2dTexture");
+
+		// Projection tab
+		myPrmList.addFolder("Projection");
+		dsfullpath = Parm::PRMList::expandUiPath( boost::str(dspath % "UVWGenProjection") );
+
+		idx = myPrmList.size();
+		myPrmList.addFromFile(dsfullpath.c_str());
+		// hacky way to rename params on order to keep compatibility with old UI
+		renamePRMTemplate(myPrmList.getPRMTemplate() + idx, "UVWGenProjection");
+
+		myPrmList.switcherEnd();
 	}
 
-	return &AttrItems[0];
+	return myPrmList.getPRMTemplate();
 }
 
 

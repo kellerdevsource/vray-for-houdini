@@ -216,12 +216,12 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "GEOMETRY", GeomDisplacedMesh);
 	VFH_VOP_ADD_OPERATOR(table, "GEOMETRY", GeomStaticSmoothedMesh);
 
-	VFH_VOP_ADD_OPERATOR_CUSTOM(table, "TEXTURE", MetaImageFile, VOP::MetaImageFile::GetPrmTemplate());
 
 	// TODO: need to enable this at some point.
 	// TextureOutput is intended to serve same purposes as MaterialOutput for materials
 	// but used for textures in this case
 	// VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TextureOutput);
+	VFH_VOP_ADD_OPERATOR_CUSTOM(table, "TEXTURE", MetaImageFile, VOP::MetaImageFile::GetPrmTemplate());
 
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", BitmapBuffer);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", ColorTextureToMono);
