@@ -138,9 +138,14 @@ PRM_Template* Parm::PRMList::loadFromFile(const char *filepath, bool setRecook)
 	OP_Operator op( "dummy", "dummy",
 				nullptr, static_cast<PRM_Template *>(nullptr), 0 );
 	UT_IFStream is(filepath);
-	// NOTE: opprms is internally cached and reference-counted,
-	// so we should not need to hold on to it explicitly after retrieving the parm templates
 	OP_SpareParms *opprms = op.loadSpareParms(is);
+	if (!opprms) {
+		return nullptr;
+	}
+
+	// NOTE: opprms is internally cached and reference-counted,
+	// so bumping its ref count here will keep it alive after retrieving the parm templates
+	opprms->bumpRef(1);
 	PRM_Template *tmpl = opprms->getSpareTemplates();
 
 	if (setRecook) {
