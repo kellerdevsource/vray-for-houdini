@@ -20,14 +20,112 @@
 
 #include <GEO/GEO_Primitive.h>
 #include <GU/GU_PrimVolume.h>
+#include <GU/GU_PrimVDB.h>
 #include <GU/GU_Detail.h>
 #include <OP/OP_Bundle.h>
 #include <GA/GA_Types.h>
 
 using namespace VRayForHoudini;
 
-
 const char *const VFH_ATTR_MATERIAL_ID = "switchmtl";
+
+
+struct VolumeProxy {
+	VolumeProxy(const GEO_Primitive *prim): m_prim(prim), m_vol(nullptr), m_vdb(nullptr) {
+		if (prim->getTypeId() == GEO_PRIMVOLUME) {
+			m_vol = dynamic_cast<const GEO_PrimVolume *>(m_prim);
+		} else if (prim->getTypeId() == GEO_PRIMVDB) {
+			m_vdb = dynamic_cast<const GEO_PrimVDB *>(m_prim);
+		}
+	};
+
+	void getRes(int res[3]) const {
+		if (m_vol) {
+			m_vol->getRes(res[0], res[1], res[2]);
+		} else if (m_vdb) {
+			m_vdb->getRes(res[0], res[1], res[2]);
+		}
+	}
+
+	exint voxCount() const {
+		int res[3];
+		this->getRes(res);
+		return res[0] * res[1] * res[2];
+	}
+
+	template <typename T, typename F>
+	void copyTo(VRay::VUtils::PtrArray<T> & data, F acc) const {
+		int res[3];
+		getRes(res);
+
+		auto GetCellIndex = [&res](int x, int y, int z) {
+			return (x + y * res[0] + z * res[1] * res[0]);
+		};
+
+		if (m_vdb) {
+			auto fGrid = openvdb::gridConstPtrCast<openvdb::FloatGrid>(m_vdb->getGridPtr());
+			if (!fGrid) {
+				return;
+			}
+			auto readHandle = fGrid->getConstAccessor();
+			for (int x = 0; x < res[0]; ++x) {
+				for (int y = 0; y < res[1]; ++y) {
+					for (int z = 0; z < res[2]; ++z) {
+						const float &val = readHandle.getValue(openvdb::Coord(x, y, z));
+						const int   &idx = GetCellIndex(x, y, z);
+						acc(data[idx]) = val;
+					}
+				}
+			}
+		} else if (m_vol) {
+			UT_VoxelArrayReadHandleF vh = m_vol->getVoxelHandle();
+			for (int x = 0; x < res[0]; ++x) {
+				for (int y = 0; y < res[1]; ++y) {
+					for (int z = 0; z < res[2]; ++z) {
+						const float &val = vh->getValue(x, y, z);
+						const int   &idx = GetCellIndex(x, y, z);
+						acc(data[idx]) = val;
+					}
+				}
+			}
+		}
+	}
+
+	UT_Vector3 getBaryCenter() const {
+		if (m_vol) {
+			return m_vol->baryCenter();
+		} else if (m_vdb) {
+			return m_vdb->baryCenter();
+		}
+		return UT_Vector3();
+	}
+
+	UT_Matrix4D getTransform() const {
+		UT_Matrix4D res;
+		if (m_vol) {
+			m_vol->getTransform4(res);
+		} else if (m_vdb) {
+			m_vdb->getSpaceTransform().getTransform4(res);
+		}
+		return res;
+	}
+
+	bool isVDB() const {
+		return m_vdb;
+	}
+
+	bool isVOL() const {
+		return m_vol;
+	}
+
+	operator bool() const {
+		return m_prim && (m_vol || m_vdb);
+	}
+
+	const GEO_PrimVDB    *m_vdb;
+	const GEO_PrimVolume *m_vol;
+	const GEO_Primitive  *m_prim;
+};
 
 void HoudiniVolumeExporter::exportPrimitives(const GU_Detail &detail, PluginDescList &plugins)
 {
@@ -43,6 +141,11 @@ void HoudiniVolumeExporter::exportPrimitives(const GU_Detail &detail, PluginDesc
 	typedef std::map<std::string, VRay::Plugin> CustomFluidData;
 	CustomFluidData customFluidData;
 	int res[3] = {0, 0, 0};
+
+	// will hold resolution for velocity channels as it can be different
+	int velocityRes[3] = {0, 0, 0};
+
+
 	VRay::Transform nodeTm = VRayExporter::getObjTransform(&m_object, m_context);
 	VRay::Transform phxTm;
 
@@ -54,28 +157,28 @@ void HoudiniVolumeExporter::exportPrimitives(const GU_Detail &detail, PluginDesc
 	for (GA_Iterator offIt(detail.getPrimitiveRange()); !offIt.atEnd(); offIt.advance()) {
 		const GA_Offset off = *offIt;
 		const GEO_Primitive *prim = detail.getGEOPrimitive(off);
-		if (prim->getTypeId() == GEO_PRIMVOLUME) {
-			const std::string texType = hnd_name.get(off);
-			if (texType == "vel.x" || texType == "vel.y" || texType == "vel.z") {
-				const GEO_PrimVolume *vol = UTverify_cast<const GEO_PrimVolume*>(prim);
-				vol->getRes(res[0], res[1], res[2]);
-				const int voxCount = res[0] * res[1] * res[2];
-				if (velVoxCount != -1 && velVoxCount != voxCount) {
-					missmatchedSizes = true;
-				}
-				velVoxCount = std::max(voxCount, velVoxCount);
+		VolumeProxy vol(prim);
+		const std::string texType = hnd_name.get(off);
+		if (vol && (texType == "vel.x" || texType == "vel.y" || texType == "vel.z")) {
+			int chRes[3];
+			vol.getRes(res);
+			const int voxCount = res[0] * res[1] * res[2];
+			if (velVoxCount != -1 && velVoxCount != voxCount) {
+				missmatchedSizes = true;
+			}
+			velVoxCount = std::max(voxCount, velVoxCount);
+			for (int c = 0; c <3; ++c) {
+				velocityRes[c] =  std::max(velocityRes[c], chRes[c]);
 			}
 		}
 	}
 
-	vel = VRay::VUtils::ColorRefList(velVoxCount);
-	if (missmatchedSizes) {
-		memset(vel.get(), 0, vel.size() * sizeof(VRay::Color));
+	if (velVoxCount > 0) {
+		vel = VRay::VUtils::ColorRefList(velVoxCount);
+		if (missmatchedSizes) {
+			memset(vel.get(), 0, vel.size() * sizeof(VRay::Color));
+		}
 	}
-
-	auto GetCellIndex = [&res](int x, int y, int z) {
-		return (x + y * res[0] + z * res[1] * res[0]);
-	};
 
 	UT_Matrix4 channelTm;
 
@@ -84,23 +187,19 @@ void HoudiniVolumeExporter::exportPrimitives(const GU_Detail &detail, PluginDesc
 		const GA_Offset off = *offIt;
 		const GEO_Primitive *prim = detail.getGEOPrimitive(off);
 
-		if (prim->getTypeId() != GEO_PRIMVOLUME) {
-			continue;
-		}
-
-		const GEO_PrimVolume *vol = UTverify_cast<const GEO_PrimVolume*>(prim);
+		VolumeProxy volume(prim);
 		const std::string texType = hnd_name.get(off);
-		if (texType.empty()) {
-			// we dont know what the channel is - skip
+
+		// unknown primitive, or unknow volume type
+		if (!volume || texType.empty()) {
 			continue;
 		}
 
-		vol->getRes(res[0], res[1], res[2]);
+		volume.getRes(res);
 		const int voxCount = res[0] * res[1] * res[2];
 
-		UT_Matrix4D m4;
-		vol->getTransform4(m4);
-		UT_Vector3 center = vol->baryCenter();
+		UT_Matrix4D m4 = volume.getTransform();
+		UT_Vector3 center = volume.getBaryCenter();
 
 		// phxTm matrix to convert from voxel space to object local space
 		// Voxel space is defined to be the 2-radius cube from (-1,-1,-1) to (1,1,1) centered at (0,0,0)
@@ -121,38 +220,21 @@ void HoudiniVolumeExporter::exportPrimitives(const GU_Detail &detail, PluginDesc
 		Log::getLog().debug("Volume \"%s\": %i x %i x %i",
 							texType.c_str(), res[0], res[1], res[2]);
 
-		UT_VoxelArrayReadHandleF vh = vol->getVoxelHandle();
-
-		const bool isVelX = (texType == "vel.x");
-		const bool isVelY = (texType == "vel.y");
-		const bool isVelZ = (texType == "vel.z");
-
-		VRay::VUtils::FloatRefList values(voxCount);
-		for (int x = 0; x < res[0]; ++x) {
-			for (int y = 0; y < res[1]; ++y) {
-				for (int z = 0; z < res[2]; ++z) {
-					const float &val = vh->getValue(x, y, z);
-					const int   &idx = GetCellIndex(x, y, z);
-
-					if (isVelX) {
-						vel[idx].r = val;
-					}
-					else if (isVelY) {
-						vel[idx].g = val;
-					}
-					else if (isVelZ) {
-						vel[idx].b = val;
-					}
-					else {
-						values[idx] = val;
-					}
-				}
-			}
-		}
-
-		if (isVelX || isVelY || isVelZ) {
+		// extract data
+		if (texType == "vel.x") {
+			volume.copyTo(vel, std::bind(&VRay::Color::r, std::placeholders::_1));
+			continue;
+		} else if (texType == "vel.y") {
+			volume.copyTo(vel, std::bind(&VRay::Color::g, std::placeholders::_1));
+			continue;
+		} else if (texType == "vel.z") {
+			volume.copyTo(vel, std::bind(&VRay::Color::b, std::placeholders::_1));
 			continue;
 		}
+
+		VRay::VUtils::FloatRefList values(voxCount);
+		int times = 0;
+		volume.copyTo(values, [&times](float & c) -> float & { ++times; return c; });
 
 		const std::string primPluginNamePrefix = texType + "|";
 
@@ -181,9 +263,9 @@ void HoudiniVolumeExporter::exportPrimitives(const GU_Detail &detail, PluginDesc
 
 	if (vel.count()) {
 		Attrs::PluginDesc velTexDesc(VRayExporter::getPluginName(&m_object, "vel"), "TexMayaFluid");
-		velTexDesc.addAttribute(Attrs::PluginAttr("size_x", res[0]));
-		velTexDesc.addAttribute(Attrs::PluginAttr("size_y", res[1]));
-		velTexDesc.addAttribute(Attrs::PluginAttr("size_z", res[2]));
+		velTexDesc.addAttribute(Attrs::PluginAttr("size_x", velocityRes[0]));
+		velTexDesc.addAttribute(Attrs::PluginAttr("size_y", velocityRes[1]));
+		velTexDesc.addAttribute(Attrs::PluginAttr("size_z", velocityRes[2]));
 		velTexDesc.addAttribute(Attrs::PluginAttr("color_values", vel));
 
 		Attrs::PluginDesc velTexTmDesc(VRayExporter::getPluginName(&m_object, "Vel@Tm@"), "TexMayaFluidTransformed");
