@@ -317,6 +317,7 @@ Parm::PRMList& Parm::PRMList::addFromFile(const char *filepath)
 
 	// start from the last valid
 	int idx = m_prmVec.size() - 1;
+	const int startIdx = idx;
 
 	// resize to accomodate space for new params
 	m_prmVec.resize(m_prmVec.size() + size);
@@ -327,6 +328,7 @@ Parm::PRMList& Parm::PRMList::addFromFile(const char *filepath)
 	UT_ASSERT_MSG(idx == m_prmVec.size() - 1, "Read unexpected number of params from file");
 
 	// add params to currently active folder, if any
+	size = PRM_Template::countTemplates(m_prmVec.data() + startIdx, true);
 	incCurrentFolderPrmCnt(size);
 
 	return *this;
