@@ -73,11 +73,6 @@ public:
 	{ updateFrom(options); }
 	virtual bool   save(UT_Options &options, const GA_SaveMap &map) const VRAY_OVERRIDE;
 
-//	virtual bool   supportsJSONLoad() const VRAY_OVERRIDE
-//	{ return true; }
-//	virtual bool   loadFromJSON(const UT_JSONValueMap &options, const GA_LoadMap &) VRAY_OVERRIDE
-//	{ updateFrom(options); return true; }
-
 	virtual bool                   getLocalTransform(UT_Matrix4D &m) const VRAY_OVERRIDE;
 	virtual bool                   getBounds(UT_BoundingBox &box) const VRAY_OVERRIDE;
 	virtual bool                   getRenderingBounds(UT_BoundingBox &box) const VRAY_OVERRIDE;

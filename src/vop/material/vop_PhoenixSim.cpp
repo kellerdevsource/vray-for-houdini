@@ -36,36 +36,6 @@ void PhxShaderSim::setPluginType()
 OP::VRayNode::PluginResult PhxShaderSim::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
 {
 	const auto t = exporter.getContext().getTime();
-
-	// cache plugin
-	//if (phxShaderCache) {
-	//	phxShaderSimDesc.addAttribute(Attrs::PluginAttr("cache", phxShaderCache));
-	//}
-	// tex plugins
-	//if (customFluidData.size()) {
-	//	if (customFluidData.count("heat")) {
-	//		phxShaderSimDesc.addAttribute(Attrs::PluginAttr("darg", 4));
-	//		phxShaderSimDesc.addAttribute(Attrs::PluginAttr("dtex", customFluidData["heat"]));
-	//	}
-	//	if (customFluidData.count("density")) {
-	//		phxShaderSimDesc.addAttribute(Attrs::PluginAttr("targ", 4));
-	//		phxShaderSimDesc.addAttribute(Attrs::PluginAttr("ttex", customFluidData["density"]));
-	//	}
-	//	if (customFluidData.count("temperature")) {
-	//		phxShaderSimDesc.addAttribute(Attrs::PluginAttr("earg", 4));
-	//		phxShaderSimDesc.addAttribute(Attrs::PluginAttr("etex", customFluidData["temperature"]));
-	//	}
-	//	if (customFluidData.count("velocity")) {
-	//		phxShaderSimDesc.addAttribute(Attrs::PluginAttr("varg", 2));
-	//		phxShaderSimDesc.addAttribute(Attrs::PluginAttr("vtex", customFluidData["velocity"]));
-	//	}
-	//}
-
-	// node tm
-	//nodeTm.offset = nodeTm.matrix * phxTm.offset + nodeTm.offset;
-	//nodeTm.matrix = nodeTm.matrix * phxTm.matrix;
-	//phxShaderSimDesc.addAttribute(Attrs::PluginAttr("node_transform", nodeTm));
-
 	RenderMode rendMode;
 
 	// renderMode
