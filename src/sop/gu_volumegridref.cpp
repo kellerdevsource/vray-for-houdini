@@ -396,15 +396,11 @@ void VRayVolumeGridRef::countMemory(UT_MemoryCounter &counter, bool inclusive) c
 		counter.countUnshared(mem);
 	}
 
-	// The UT_MemoryCounter interface needs to be enhanced to efficiently count
-	// shared memory for details. Skip this for now.
-#if 0
-	if (detail().isValid())
+	if (getDetail().isValid())
 	{
-		GU_DetailHandleAutoReadLock gdh(detail());
+		GU_DetailHandleAutoReadLock gdh(getDetail());
 		gdh.getGdp()->countMemory(counter, true);
 	}
-#endif
 }
 
 std::string getDefaultMapping(const char *cachePath) {
