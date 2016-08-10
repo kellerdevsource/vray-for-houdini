@@ -31,8 +31,6 @@ extern boost::format FmtPrefix;
 extern boost::format FmtPrefixAuto;
 extern boost::format FmtPrefixManual;
 
-typedef std::vector<PRM_Template> PRMTmplList;
-typedef std::vector<PRM_Default>  PRMDefList;
 
 enum ParmType {
 	eInt = 0,

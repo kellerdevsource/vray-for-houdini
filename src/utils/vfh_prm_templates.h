@@ -41,10 +41,16 @@ public:
 
 	void                clear();
 	bool                empty() const { return (m_prmVec.size() < 2); }
-	size_t              size() const { return (m_prmVec.size() - 1); }
-	void                reserve(size_t n) { return m_prmVec.reserve(n + 1); }
+	int                 size() const { return std::max(static_cast<int>(m_prmVec.size())-1, 0); }
+	void                reserve(int n) { return m_prmVec.reserve(n + 1); }
 
 	PRMList&            setCookDependent(bool recook);
+
+	int                 findPRMTemplate(const char *token) const;
+	PRM_Template*       getPRMTemplate(int i)
+	{ return ((i < 0 || i >= size())? nullptr : (m_prmVec.data() + i)); }
+	const PRM_Template* getPRMTemplate(int i) const
+	{ return ((i < 0 || i >= size())? nullptr : (m_prmVec.data() + i)); }
 	// NOTE: use following 2 methods with causion
 	// be careful when accessing internal PRM_Template data and passing it around
 	// adding additional parameters to the PRMList after calling PRMList::getPRMTemplate() might cause
@@ -71,6 +77,7 @@ public:
 	// the PRMList instance alive as it holds internal references to
 	// PRM_ScriptPages used by the loaded PRM_Templates
 	PRMList& addFromFile(const char *filepath);
+	PRMList& addFromPRMTemplate(const PRM_Template *tmpl);
 
 
 	// does not validate anything, just prepends the passed path with the UI root

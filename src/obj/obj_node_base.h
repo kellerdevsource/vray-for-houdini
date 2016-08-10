@@ -13,11 +13,10 @@
 
 #include "op/op_node_base.h"
 
-#include <OBJ/OBJ_Node.h>
 #include <OBJ/OBJ_Light.h>
 #include <OBJ/OBJ_Geometry.h>
 
-#include "vfh_vray.h"
+#include "vfh_prm_templates.h"
 
 
 namespace VRayForHoudini {
@@ -51,6 +50,24 @@ const char *getVRayPluginTypeName(VRayPluginType pluginType);
 const char *getVRayPluginIDName(VRayPluginID pluginID);
 
 
+class VRayClipper:
+		public OP::VRayNode,
+		public OBJ_Geometry
+{
+public:
+	static PRM_Template*       GetPrmTemplate();
+
+public:
+	VRayClipper(OP_Network *parent, const char *name, OP_Operator *entry):OBJ_Geometry(parent, name, entry) { }
+	virtual                    ~VRayClipper() { }
+
+	virtual PluginResult        asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext=nullptr) VRAY_OVERRIDE;
+
+protected:
+	virtual void                setPluginType() VRAY_OVERRIDE;
+};
+
+
 template< VRayPluginID PluginID >
 class LightNodeBase:
 		public OP::VRayNode,
@@ -58,7 +75,7 @@ class LightNodeBase:
 {
 public:
 	static PRM_Template*       GetPrmTemplate();
-	static int                 GetMyPrmTemplate(Parm::PRMTmplList &prmList, Parm::PRMDefList &prmFolders);
+	static int                 GetMyPrmTemplate(Parm::PRMList &myPrmList);
 
 public:
 	LightNodeBase(OP_Network *parent, const char *name, OP_Operator *entry):OBJ_Light(parent, name, entry) { }
@@ -75,26 +92,7 @@ protected:
 };
 
 
-class VRayClipper:
-		public OBJ_Geometry,
-		public OP::VRayNode
-{
-public:
-	static PRM_Template*       GetPrmTemplate();
-
-public:
-	VRayClipper(OP_Network *parent, const char *name, OP_Operator *entry):OBJ_Geometry(parent, name, entry) { }
-	virtual                    ~VRayClipper() { }
-
-	virtual PluginResult        asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext=nullptr) VRAY_OVERRIDE;
-
-protected:
-	virtual void                setPluginType() VRAY_OVERRIDE;
-};
-
 } // namespace OBJ
 } // namespace VRayForHoudini
-
-
 
 #endif // VRAY_FOR_HOUDINI_SOP_NODE_BASE_H

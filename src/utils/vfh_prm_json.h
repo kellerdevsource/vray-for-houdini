@@ -12,16 +12,15 @@
 #define VRAY_FOR_HOUDINI_PRM_JSON_H
 
 #include "vfh_plugin_info.h"
-
-#include <PRM/PRM_Template.h>
+#include "vfh_prm_templates.h"
 
 namespace VRayForHoudini {
 namespace Parm {
 
 VRayPluginInfo *generatePluginInfo(const std::string &pluginID);
-PRMTmplList    *generatePrmTemplate(const std::string &pluginID, const std::string &prefix="");
 
-PRM_Template   *getPrmTemplate(const std::string &pluginID);
+std::shared_ptr< Parm::PRMList > generatePrmTemplate(const std::string &pluginID);
+PRM_Template*                    getPrmTemplate(const std::string &pluginID);
 
 } // namespace Parm
 } // namespace VRayForHoudini

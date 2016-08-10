@@ -13,7 +13,6 @@
 #include "vfh_prm_json.h"
 #include "vfh_prm_globals.h"
 #include "vfh_ui.h"
-#include "vfh_prm_templates.h"
 
 #include "vop/material/vop_MtlMulti.h"
 #include "vop/brdf/vop_BRDFLayered.h"
@@ -878,60 +877,44 @@ VRayPluginInfo* Parm::generatePluginInfo(const std::string &pluginID)
 }
 
 
-PRMTmplList* Parm::generatePrmTemplate(const std::string &pluginID, const std::string &prefix)
-{
-	typedef std::map<std::string, PRMTmplList> PrmTemplatesMap;
-	static PrmTemplatesMap PrmTemplates;
+//PRMTmplList* Parm::generatePrmTemplate(const std::string &pluginID, const std::string &prefix)
+//{
+//	typedef std::map<std::string, PRMTmplList> PrmTemplatesMap;
+//	static PrmTemplatesMap PrmTemplates;
 
-	PRMTmplList *prmTmplList = nullptr;
+//	PRMTmplList *prmTmplList = nullptr;
 
-	VRayPluginInfo *pluginInfo = Parm::GetVRayPluginInfo(pluginID);
-	if (!pluginInfo) {
-		pluginInfo = generatePluginInfo(pluginID);
-	}
-	if (pluginInfo) {
-		const std::string &tmplPluginID = prefix.empty()
-										  ? boost::str(Parm::FmtPrefixAuto % prefix % pluginID)
-										  : pluginID;
+//	VRayPluginInfo *pluginInfo = Parm::GetVRayPluginInfo(pluginID);
+//	if (!pluginInfo) {
+//		pluginInfo = generatePluginInfo(pluginID);
+//	}
+//	if (pluginInfo) {
+//		const std::string &tmplPluginID = prefix.empty()
+//										  ? boost::str(Parm::FmtPrefixAuto % prefix % pluginID)
+//										  : pluginID;
 
-		if (PrmTemplates.count(tmplPluginID)) {
-			prmTmplList = &PrmTemplates[tmplPluginID];
-		}
-		else {
-			prmTmplList = &PrmTemplates[tmplPluginID];
+//		if (PrmTemplates.count(tmplPluginID)) {
+//			prmTmplList = &PrmTemplates[tmplPluginID];
+//		}
+//		else {
+//			prmTmplList = &PrmTemplates[tmplPluginID];
 
-//			if (pluginID == "BRDFLayered") {
-//				VOP::BRDFLayered::addPrmTemplate(*prmTmplList);
-//			}
-//			else if (pluginID == "TexLayered") {
-//				VOP::TexLayered::addPrmTemplate(*prmTmplList);
-//			}
-//			else if (pluginID == "MtlMulti") {
-//				VOP::MtlMulti::addPrmTemplate(*prmTmplList);
-//			}
-//			else if (pluginID == "GeomPlane") {
-//				SOP::GeomPlane::addPrmTemplate(*prmTmplList);
-//			}
-//			else if (pluginID == "GeomMeshFile") {
-//				SOP::VRayProxy::addPrmTemplate(*prmTmplList);
+//			for (const auto &aIt : pluginInfo->attributes) {
+//				const AttrDesc &attrDesc = aIt.second;
+//				if (AttrNeedWidget(attrDesc)) {
+//					prmTmplList->push_back(AttrDescAsPrmTemplate(*pluginInfo, attrDesc, prefix));
+//				}
 //			}
 
-			for (const auto &aIt : pluginInfo->attributes) {
-				const AttrDesc &attrDesc = aIt.second;
-				if (AttrNeedWidget(attrDesc)) {
-					prmTmplList->push_back(AttrDescAsPrmTemplate(*pluginInfo, attrDesc, prefix));
-				}
-			}
+//			prmTmplList->push_back(PRM_Template()); // List terminator
+//		}
+//	}
 
-			prmTmplList->push_back(PRM_Template()); // List terminator
-		}
-	}
-
-	return prmTmplList;
-}
+//	return prmTmplList;
+//}
 
 
-PRM_Template* Parm::getPrmTemplate(const std::string &pluginID)
+std::shared_ptr< Parm::PRMList > Parm::generatePrmTemplate(const std::string &pluginID)
 {
 	typedef std::unordered_map< std::string, std::shared_ptr< PRMList > > PRMListMap;
 	static PRMListMap prmListMap;
@@ -966,6 +949,12 @@ PRM_Template* Parm::getPrmTemplate(const std::string &pluginID)
 		}
 	}
 
-	std::shared_ptr< PRMList > &prmList = prmListMap[pluginID];
+	return prmListMap.at(pluginID);
+}
+
+
+PRM_Template* Parm::getPrmTemplate(const std::string &pluginID)
+{
+	std::shared_ptr< Parm::PRMList > prmList = generatePrmTemplate(pluginID);
 	return (prmList)? prmList->getPRMTemplate() : nullptr;
 }

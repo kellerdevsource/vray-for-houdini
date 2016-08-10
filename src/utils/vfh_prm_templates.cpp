@@ -202,6 +202,12 @@ Parm::PRMList& Parm::PRMList::setCookDependent(bool recook)
 	return *this;
 }
 
+int Parm::PRMList::findPRMTemplate(const char *token) const
+{
+	const int idx = PRM_Template::getTemplateIndexByToken(m_prmVec.data(), token);
+	return (idx < 0 || idx > this->size())? -1 : idx;
+}
+
 
 std::shared_ptr<PRM_Template> Parm::PRMList::getPRMTemplateCopy() const
 {
@@ -238,7 +244,7 @@ Parm::PRMList& Parm::PRMList::addPrm(const PRMFactory& p)
 Parm::PRMList& Parm::PRMList::switcherBegin(const char *token, const char *label)
 {
 	// add new switcher info to our list with NO default folders
-	m_switcherList.emplace_back(m_prmVec.size() - 1);
+	m_switcherList.emplace_back(this->size());
 	// add the switcher parameter
 	addPrm(PRMFactory(PRM_SWITCHER, token, label));
 	// push our new switcher onto the stack
@@ -316,7 +322,7 @@ Parm::PRMList& Parm::PRMList::addFromFile(const char *filepath)
 	m_scriptGroups.push_back(group);
 
 	// start from the last valid
-	int idx = m_prmVec.size() - 1;
+	int idx = this->size();
 	const int startIdx = idx;
 
 	// resize to accomodate space for new params
@@ -325,11 +331,70 @@ Parm::PRMList& Parm::PRMList::addFromFile(const char *filepath)
 	PRM_ScriptImports *imports = 0;
 	group->fillTemplate(m_prmVec.data(), idx, imports, 0);
 
-	UT_ASSERT_MSG(idx == m_prmVec.size() - 1, "Read unexpected number of params from file");
+	UT_ASSERT_MSG(idx == this->size(), "Read unexpected number of params from file.");
 
 	// add params to currently active folder, if any
 	size = PRM_Template::countTemplates(m_prmVec.data() + startIdx, true);
 	incCurrentFolderPrmCnt(size);
+
+	return *this;
+}
+
+
+Parm::PRMList& Parm::PRMList::addFromPRMTemplate(const PRM_Template *tmpl)
+{
+	const int size = PRM_Template::countTemplates(tmpl);
+	// reserve space for new params
+	m_prmVec.reserve(m_prmVec.size() + size);
+
+	for (int i = 0; i < size; ++i) {
+		// handle top most switcher
+		if (tmpl[i].getType() == PRM_SWITCHER) {
+			if (getCurrentSwitcher() != nullptr) {
+				// close current switcher
+				switcherEnd();
+			}
+
+			// add entry for top most switcher in our switcher list
+			switcherBegin(tmpl[i].getToken(), tmpl[i].getLabel());
+			// init folders for top most switcher
+			SwitcherInfo *swinfo = getCurrentSwitcher();
+			swinfo->m_folders.reserve(tmpl[i].getVectorSize());
+			PRM_Default *prmdeflist = tmpl[i].getFactoryDefaults();
+			for (int j = 0; j < tmpl[i].getVectorSize(); ++j) {
+				PRM_Default &prmdef = prmdeflist[j];
+				swinfo->m_folders.emplace_back(prmdef.getOrdinal(), prmdef.getString());
+			}
+
+			PRM_Template& swprm = m_prmVec[swinfo->m_parmIdx];
+			swprm.assign(swprm, swinfo->m_folders.size(), &swinfo->m_folders.front());
+
+			// find end of switcher
+			const PRM_Template	*endtmpl = PRM_Template::getEndOfSwitcher(tmpl + i);
+			// move to next template in list i.e. first template in folder
+			for (; (tmpl+i+1) != endtmpl; ++i) {
+				const int idx = i+1;
+				if (tmpl[idx].getType() == PRM_SWITCHER) {
+					// add entry for the switcher in our switcher list
+					m_switcherList.emplace_back(this->size());
+					SwitcherInfo &swinfo = m_switcherList.back();
+					swinfo.m_folders.reserve(tmpl[idx].getVectorSize());
+
+					PRM_Default *prmdeflist = tmpl[idx].getFactoryDefaults();
+					for (int j = 0; j < tmpl[idx].getVectorSize(); ++j) {
+						PRM_Default &prmdef = prmdeflist[j];
+						swinfo.m_folders.emplace_back(prmdef.getOrdinal(), prmdef.getString());
+					}
+				}
+				// add the parameter
+				m_prmVec.back() = tmpl[idx];
+				m_prmVec.emplace_back();
+			}
+		}
+		else {
+			addPrm(tmpl[i]);
+		}
+	}
 
 	return *this;
 }
