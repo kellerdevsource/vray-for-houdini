@@ -31,18 +31,6 @@
 	parmtag	{ "vray_type" "int" }
     }
     parm {
-	name	"domain"
-	label	"Domain"
-	type	oppath
-	default	{ "" }
-	help	"Simulation domain"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_custom_handling" "1" }
-    }
-    parm {
 	name	"resolution"
 	label	"Resolution"
 	type	direction
@@ -55,19 +43,5 @@
 	parmtag	{ "vray_plugin" "TexVoxelData" }
 	parmtag	{ "vray_pluginattr" "resolution" }
 	parmtag	{ "vray_type" "Vector" }
-    }
-    parm {
-	name	"uvwgen"
-	label	"Uvwgen"
-	type	oppath
-	default	{ "" }
-	help	"The UVW generator for the texture"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "TexVoxelData" }
-	parmtag	{ "vray_pluginattr" "uvwgen" }
-	parmtag	{ "vray_type" "Object" }
     }
 }

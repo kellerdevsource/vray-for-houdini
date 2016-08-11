@@ -13,20 +13,6 @@
 	parmtag	{ "vray_type" "TEXTURE" }
     }
     parm {
-	name	"fluid_tex"
-	label	"Fluid Tex"
-	type	oppath
-	default	{ "" }
-	help	"The base texture. Should support the EXT_MAYA_FLUID_TEXTURE interface"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "TexMayaFluidTransformed" }
-	parmtag	{ "vray_pluginattr" "fluid_tex" }
-	parmtag	{ "vray_type" "Object" }
-    }
-    parm {
 	name	"fluid_value_scale"
 	label	"Fluid Value Scale"
 	type	float

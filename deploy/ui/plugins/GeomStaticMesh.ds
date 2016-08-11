@@ -191,20 +191,6 @@
 	}
     }
 
-    parm {
-	name	"reference_mesh"
-	label	"Reference Mesh"
-	type	oppath
-	default	{ "" }
-	help	"The reference mesh which is used to calculate the uvw coordinates when a 3d placement is used"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "GeomStaticMesh" }
-	parmtag	{ "vray_pluginattr" "reference_mesh" }
-	parmtag	{ "vray_type" "Object" }
-    }
     group {
 	name	"folder"
 	label	"OpenSubdiv (static subdivision)"

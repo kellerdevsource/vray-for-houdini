@@ -26,20 +26,6 @@
 	parmtag	{ "vray_type" "Texture" }
     }
     parm {
-	name	"uvwgen"
-	label	"Uvwgen"
-	type	oppath
-	default	{ "" }
-	help	"This must be the same uvw generator used by 'texture'"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "TexModoUVResetAndFalloff" }
-	parmtag	{ "vray_pluginattr" "uvwgen" }
-	parmtag	{ "vray_type" "Object" }
-    }
-    parm {
 	name	"reset_u"
 	label	"Reset U"
 	type	toggle

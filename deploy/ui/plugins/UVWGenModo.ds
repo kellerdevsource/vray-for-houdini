@@ -26,20 +26,6 @@
 	parmtag	{ "vray_type" "String" }
     }
     parm {
-	name	"uvwgen"
-	label	"Uvwgen"
-	type	oppath
-	default	{ "" }
-	help	"Optional UVWGen from which the initial uvw coordinates will be taken, instead of using 'uv_set_name'"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "UVWGenModo" }
-	parmtag	{ "vray_pluginattr" "uvwgen" }
-	parmtag	{ "vray_type" "Object" }
-    }
-    parm {
 	name	"uvwgen_has_local_tm"
 	label	"Uvwgen Has Local Tm"
 	type	toggle

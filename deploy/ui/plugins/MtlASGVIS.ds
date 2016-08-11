@@ -65,20 +65,6 @@
 	parmtag	{ "vray_type" "boolean" }
     }
     parm {
-	name	"bump_tex"
-	label	"Bump Tex"
-	type	oppath
-	default	{ "" }
-	help	"Bump texture, can be float or color"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "MtlASGVIS" }
-	parmtag	{ "vray_pluginattr" "bump_tex" }
-	parmtag	{ "vray_type" "Object" }
-    }
-    parm {
 	name	"bump_tex_mult"
 	label	"Bump Tex Mult"
 	type	float
@@ -142,20 +128,6 @@
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "map_type" }
 	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"normal_uvwgen"
-	label	"Normal Uvwgen"
-	type	oppath
-	default	{ "" }
-	help	"The uvw generator for the normal map texture when map_type is 1"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "MtlASGVIS" }
-	parmtag	{ "vray_pluginattr" "normal_uvwgen" }
-	parmtag	{ "vray_type" "Object" }
     }
     parm {
 	name	"compute_bump_for_shadows"
@@ -222,20 +194,6 @@
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "displace_on" }
 	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"displace_tex"
-	label	"Displace Tex"
-	type	oppath
-	default	{ "" }
-	help	"displacement texture, can be float or color"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "MtlASGVIS" }
-	parmtag	{ "vray_pluginattr" "displace_tex" }
-	parmtag	{ "vray_type" "Object" }
     }
     parm {
 	name	"displace_tex_mult"
@@ -369,20 +327,6 @@
 	parmtag	{ "vray_type" "Color" }
     }
     parm {
-	name	"gi_tex"
-	label	"Gi Tex"
-	type	oppath
-	default	{ "" }
-	help	"the texture to use for the gi environment"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "MtlASGVIS" }
-	parmtag	{ "vray_pluginattr" "gi_tex" }
-	parmtag	{ "vray_type" "Object" }
-    }
-    parm {
 	name	"gi_tex_mult"
 	label	"Gi Tex Mult"
 	type	float
@@ -421,20 +365,6 @@
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "bg_color" }
 	parmtag	{ "vray_type" "Color" }
-    }
-    parm {
-	name	"bg_tex"
-	label	"Bg Tex"
-	type	oppath
-	default	{ "" }
-	help	"the texture to use for the bg environment"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "MtlASGVIS" }
-	parmtag	{ "vray_pluginattr" "bg_tex" }
-	parmtag	{ "vray_type" "Object" }
     }
     parm {
 	name	"bg_tex_mult"
@@ -477,20 +407,6 @@
 	parmtag	{ "vray_type" "Color" }
     }
     parm {
-	name	"reflect_tex"
-	label	"Reflect Tex"
-	type	oppath
-	default	{ "" }
-	help	"the reflection environment"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "MtlASGVIS" }
-	parmtag	{ "vray_pluginattr" "reflect_tex" }
-	parmtag	{ "vray_type" "Object" }
-    }
-    parm {
 	name	"reflect_tex_mult"
 	label	"Reflect Tex Mult"
 	type	float
@@ -529,20 +445,6 @@
 	parmtag	{ "vray_plugin" "MtlASGVIS" }
 	parmtag	{ "vray_pluginattr" "refract_color" }
 	parmtag	{ "vray_type" "Color" }
-    }
-    parm {
-	name	"refract_tex"
-	label	"Refract Tex"
-	type	oppath
-	default	{ "" }
-	help	"the refraction environment"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "MtlASGVIS" }
-	parmtag	{ "vray_pluginattr" "refract_tex" }
-	parmtag	{ "vray_type" "Object" }
     }
     parm {
 	name	"refract_tex_mult"

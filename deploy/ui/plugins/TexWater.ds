@@ -12,19 +12,6 @@
 	parmtag	{ "vray_type" "TEXTURE" }
     }
     parm {
-	name	"uvwgen"
-	label	"Uvwgen"
-	type	oppath
-	default	{ "" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "TexWater" }
-	parmtag	{ "vray_pluginattr" "uvwgen" }
-	parmtag	{ "vray_type" "Object" }
-    }
-    parm {
 	name	"height_mult"
 	label	"Height Mult"
 	type	float

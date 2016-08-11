@@ -253,19 +253,6 @@
 	    parmtag	{ "vray_type" "int" }
 	}
 	parm {
-	    name	"flake_uvwgen"
-	    label	"Flake Uvwgen"
-	    type	oppath
-	    default	{ "" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "BRDFCarPaint" }
-	    parmtag	{ "vray_pluginattr" "flake_uvwgen" }
-	    parmtag	{ "vray_type" "Object" }
-	}
-	parm {
 	    name	"flake_traceReflections"
 	    label	"Flake Trace Reflections"
 	    type	toggle

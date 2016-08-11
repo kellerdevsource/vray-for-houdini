@@ -148,26 +148,6 @@
 	    parmtag	{ "vray_pluginattr" "nouvw_color" }
 	    parmtag	{ "vray_type" "Texture" }
 	}
-    }
-
-    group {
-	name	"folder2"
-	label	"Mapped"
-
-	parm {
-	    name	"uvwgen"
-	    label	"Uvwgen"
-	    type	oppath
-	    default	{ "" }
-	    help	"The uvw generator for the texture"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "TexBerconNoise" }
-	    parmtag	{ "vray_pluginattr" "uvwgen" }
-	    parmtag	{ "vray_type" "Object" }
-	}
 	parm {
 	    name	"placement_type"
 	    label	"Placement Type"
@@ -427,7 +407,7 @@
     }
 
     group {
-	name	"folder3"
+	name	"folder2"
 	label	"General"
 
 	parm {
@@ -472,7 +452,7 @@
     }
 
     group {
-	name	"folder4"
+	name	"folder3"
 	label	"Noise Function"
 
 	parm {
@@ -627,7 +607,7 @@
     }
 
     group {
-	name	"folder5"
+	name	"folder4"
 	label	"Noise Fractal"
 
 	parm {
@@ -727,7 +707,7 @@
     }
 
     group {
-	name	"folder6"
+	name	"folder5"
 	label	"Distortion"
 
 	parm {
@@ -790,7 +770,7 @@
     }
 
     group {
-	name	"folder7"
+	name	"folder6"
 	label	"Map parameters"
 
 	parm {

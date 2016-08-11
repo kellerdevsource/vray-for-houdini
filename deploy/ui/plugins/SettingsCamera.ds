@@ -123,20 +123,6 @@
 	parmtag	{ "vray_type" "boolean" }
     }
     parm {
-	name	"SettingsCamera_image_planes"
-	label	"Image Planes"
-	type	oppath
-	default	{ "" }
-	help	"Used only to force a re-export of the image plane geometry in RT rendering"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "SettingsCamera" }
-	parmtag	{ "vray_pluginattr" "image_planes" }
-	parmtag	{ "vray_type" "Object" }
-    }
-    parm {
 	name	"SettingsCamera_override_fov"
 	label	"Override Fov"
 	type	toggle

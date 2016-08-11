@@ -12,20 +12,6 @@
 	parmtag	{ "vray_type" "EFFECT" }
     }
     parm {
-	name	"cache"
-	label	"Domain"
-	type	oppath
-	default	{ "" }
-	help	"The phoenix cache that will be used with this simulator"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "PhxShaderSim" }
-	parmtag	{ "vray_pluginattr" "cache" }
-	parmtag	{ "vray_type" "Object" }
-    }
-    parm {
 	name	"play_speed"
 	label	"Play Speed"
 	type	float
@@ -1127,20 +1113,6 @@
 	    parmtag	{ "vray_plugin" "PhxShaderSim" }
 	    parmtag	{ "vray_pluginattr" "invgizmo" }
 	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"gizmo"
-	    label	"Gizmo"
-	    type	oppath
-	    default	{ "" }
-	    help	"geometry to define the rendering volume"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "PhxShaderSim" }
-	    parmtag	{ "vray_pluginattr" "gizmo" }
-	    parmtag	{ "vray_type" "Object" }
 	}
     }
 

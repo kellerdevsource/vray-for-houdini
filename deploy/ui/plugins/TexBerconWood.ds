@@ -81,26 +81,6 @@
     }
     group {
 	name	"folder"
-	label	"Mapped"
-
-	parm {
-	    name	"uvwgen"
-	    label	"Mapping"
-	    type	oppath
-	    default	{ "" }
-	    help	"The uvw generator for the texture"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "TexBerconWood" }
-	    parmtag	{ "vray_pluginattr" "uvwgen" }
-	    parmtag	{ "vray_type" "Object" }
-	}
-    }
-
-    group {
-	name	"folder2"
 	label	"Common"
 
 	parm {
@@ -472,7 +452,7 @@
     }
 
     group {
-	name	"folder3"
+	name	"folder2"
 	label	"Trunk wobble"
 
 	parm {
@@ -504,7 +484,7 @@
     }
 
     group {
-	name	"folder4"
+	name	"folder3"
 	label	"Radial noise"
 
 	parm {
@@ -549,7 +529,7 @@
     }
 
     group {
-	name	"folder5"
+	name	"folder4"
 	label	"Angular noise"
 
 	parm {
@@ -594,7 +574,7 @@
     }
 
     group {
-	name	"folder6"
+	name	"folder5"
 	label	"Grain"
 
 	parm {
@@ -665,7 +645,7 @@
     }
 
     group {
-	name	"folder7"
+	name	"folder6"
 	label	"General"
 
 	parm {
@@ -697,7 +677,7 @@
     }
 
     group {
-	name	"folder8"
+	name	"folder7"
 	label	"Super Sampling"
 
 	parm {
@@ -760,7 +740,7 @@
     }
 
     group {
-	name	"folder9"
+	name	"folder8"
 	label	"Distortion"
 
 	parm {
@@ -779,7 +759,7 @@
     }
 
     group {
-	name	"folder10"
+	name	"folder9"
 	label	"Map parameters"
 
 	parm {

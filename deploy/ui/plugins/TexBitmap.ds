@@ -81,26 +81,6 @@
     }
     group {
 	name	"folder"
-	label	"Mapped"
-
-	parm {
-	    name	"uvwgen"
-	    label	"Mapping"
-	    type	oppath
-	    default	{ "" }
-	    help	"The uvw generator for the texture"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "TexBitmap" }
-	    parmtag	{ "vray_pluginattr" "uvwgen" }
-	    parmtag	{ "vray_type" "Object" }
-	}
-    }
-
-    group {
-	name	"folder2"
 	label	"Common"
 
 	parm {
@@ -366,19 +346,6 @@
 	    parmtag	{ "vray_plugin" "TexBitmap" }
 	    parmtag	{ "vray_pluginattr" "un_noise_phase" }
 	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"bitmap"
-	    label	"Bitmap"
-	    type	oppath
-	    default	{ "" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "TexBitmap" }
-	    parmtag	{ "vray_pluginattr" "bitmap" }
-	    parmtag	{ "vray_type" "Object" }
 	}
 	parm {
 	    name	"tile"

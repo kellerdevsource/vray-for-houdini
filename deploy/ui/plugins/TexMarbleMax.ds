@@ -81,26 +81,6 @@
     }
     group {
 	name	"folder"
-	label	"Mapped"
-
-	parm {
-	    name	"uvwgen"
-	    label	"Mapping"
-	    type	oppath
-	    default	{ "" }
-	    help	"The uvw generator for the texture"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "TexMarbleMax" }
-	    parmtag	{ "vray_pluginattr" "uvwgen" }
-	    parmtag	{ "vray_type" "Object" }
-	}
-    }
-
-    group {
-	name	"folder2"
 	label	"Common"
 
 	parm {

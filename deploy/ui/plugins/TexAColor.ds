@@ -26,18 +26,4 @@
 	parmtag	{ "vray_pluginattr" "texture" }
 	parmtag	{ "vray_type" "Texture" }
     }
-    parm {
-	name	"uvwgen"
-	label	"Mapping"
-	type	oppath
-	default	{ "" }
-	help	"Mapping generator"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "TexAColor" }
-	parmtag	{ "vray_pluginattr" "uvwgen" }
-	parmtag	{ "vray_type" "Object" }
-    }
 }

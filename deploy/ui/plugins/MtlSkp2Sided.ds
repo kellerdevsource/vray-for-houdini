@@ -13,34 +13,6 @@
 	parmtag	{ "vray_type" "MATERIAL" }
     }
     parm {
-	name	"front"
-	label	"Front"
-	type	oppath
-	default	{ "" }
-	help	"the material for the surface on the same side as the normal"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "MtlSkp2Sided" }
-	parmtag	{ "vray_pluginattr" "front" }
-	parmtag	{ "vray_type" "Object" }
-    }
-    parm {
-	name	"back"
-	label	"Back"
-	type	oppath
-	default	{ "" }
-	help	"the material for the side that is opposite the surface normal"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "MtlSkp2Sided" }
-	parmtag	{ "vray_pluginattr" "back" }
-	parmtag	{ "vray_type" "Object" }
-    }
-    parm {
 	name	"force_1sided"
 	label	"Force 1sided"
 	type	toggle

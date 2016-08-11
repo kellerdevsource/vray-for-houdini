@@ -148,26 +148,6 @@
 	    parmtag	{ "vray_pluginattr" "nouvw_color" }
 	    parmtag	{ "vray_type" "Texture" }
 	}
-    }
-
-    group {
-	name	"folder2"
-	label	"Mapped"
-
-	parm {
-	    name	"uvwgen"
-	    label	"Uvwgen"
-	    type	oppath
-	    default	{ "" }
-	    help	"The uvw generator for the texture"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "TexBerconGrad" }
-	    parmtag	{ "vray_pluginattr" "uvwgen" }
-	    parmtag	{ "vray_type" "Object" }
-	}
 	parm {
 	    name	"placement_type"
 	    label	"Placement Type"

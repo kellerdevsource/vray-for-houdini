@@ -281,20 +281,6 @@
 	    parmtag	{ "vray_pluginattr" "edge_blend" }
 	    parmtag	{ "vray_type" "float" }
 	}
-	parm {
-	    name	"uvwgen"
-	    label	"Uvwgen"
-	    type	oppath
-	    default	{ "" }
-	    help	"UVWGen from which the uvw coordinates will be taken"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "TexStencil" }
-	    parmtag	{ "vray_pluginattr" "uvwgen" }
-	    parmtag	{ "vray_type" "Object" }
-	}
     }
 
 }

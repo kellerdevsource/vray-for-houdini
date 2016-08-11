@@ -124,19 +124,6 @@
 	parmtag	{ "vray_type" "boolean" }
     }
     parm {
-	name	"brdf_bitmap"
-	label	"Brdf Bitmap"
-	type	oppath
-	default	{ "" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "BRDFSampled" }
-	parmtag	{ "vray_pluginattr" "brdf_bitmap" }
-	parmtag	{ "vray_type" "Object" }
-    }
-    parm {
 	name	"brdf_nsamples_d_theta"
 	label	"Brdf Nsamples D Theta"
 	type	integer

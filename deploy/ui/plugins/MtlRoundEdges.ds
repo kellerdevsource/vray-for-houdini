@@ -12,20 +12,6 @@
 	parmtag	{ "vray_type" "MATERIAL" }
     }
     parm {
-	name	"base_mtl"
-	label	"Base Mtl"
-	type	oppath
-	default	{ "" }
-	help	"Base material"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "MtlRoundEdges" }
-	parmtag	{ "vray_pluginattr" "base_mtl" }
-	parmtag	{ "vray_type" "Object" }
-    }
-    parm {
 	name	"radius"
 	label	"Radius"
 	type	float
@@ -37,20 +23,6 @@
 	parmtag	{ "vray_plugin" "MtlRoundEdges" }
 	parmtag	{ "vray_pluginattr" "radius" }
 	parmtag	{ "vray_type" "TextureFloat" }
-    }
-    parm {
-	name	"base_mtl1"
-	label	"Base Mtl"
-	type	oppath
-	default	{ "" }
-	help	"Base material"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "MtlRoundEdges" }
-	parmtag	{ "vray_pluginattr" "base_mtl" }
-	parmtag	{ "vray_type" "Object" }
     }
     parm {
 	name	"radius_mode"

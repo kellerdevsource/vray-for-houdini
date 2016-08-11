@@ -12,45 +12,6 @@
 	parmtag	{ "vray_type" "NODE" }
     }
     parm {
-	name	"geometry"
-	label	"Geometry"
-	type	oppath
-	default	{ "" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "Node" }
-	parmtag	{ "vray_pluginattr" "geometry" }
-	parmtag	{ "vray_type" "Object" }
-    }
-    parm {
-	name	"material"
-	label	"Material"
-	type	oppath
-	default	{ "" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "Node" }
-	parmtag	{ "vray_pluginattr" "material" }
-	parmtag	{ "vray_type" "Object" }
-    }
-    parm {
-	name	"volume"
-	label	"Volume"
-	type	oppath
-	default	{ "" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "Node" }
-	parmtag	{ "vray_pluginattr" "volume" }
-	parmtag	{ "vray_type" "Object" }
-    }
-    parm {
 	name	"nsamples"
 	label	"Nsamples"
 	type	integer

@@ -91,18 +91,4 @@
 	parmtag	{ "vray_pluginattr" "color_balance" }
 	parmtag	{ "vray_type" "Texture" }
     }
-    parm {
-	name	"curve"
-	label	"Curve"
-	type	oppath
-	default	{ "" }
-	help	"The curve adjustment - must support the EXT_REMAP_FLOAT_TO_FLOAT interface"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "TexModoChanModColorCorrect" }
-	parmtag	{ "vray_pluginattr" "curve" }
-	parmtag	{ "vray_type" "Object" }
-    }
 }

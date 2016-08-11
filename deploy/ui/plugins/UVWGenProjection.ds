@@ -13,46 +13,6 @@
 	parmtag	{ "vray_type" "UVWGEN" }
     }
     parm {
-	name	"camera_settings"
-	label	"Camera Settings"
-	type	oppath
-	default	{ "" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "UVWGenProjection" }
-	parmtag	{ "vray_pluginattr" "camera_settings" }
-	parmtag	{ "vray_type" "Object" }
-    }
-    parm {
-	name	"camera_view"
-	label	"Camera View"
-	type	oppath
-	default	{ "" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "UVWGenProjection" }
-	parmtag	{ "vray_pluginattr" "camera_view" }
-	parmtag	{ "vray_type" "Object" }
-    }
-    parm {
-	name	"bitmap"
-	label	"Bitmap"
-	type	oppath
-	default	{ "" }
-	help	"If we are projecting a bitmap, this is the bitmap's buffer, we need it to implement vertical/horizontal fit"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "UVWGenProjection" }
-	parmtag	{ "vray_pluginattr" "bitmap" }
-	parmtag	{ "vray_type" "Object" }
-    }
-    parm {
 	name	"type"
 	label	"Type"
 	type	ordinal

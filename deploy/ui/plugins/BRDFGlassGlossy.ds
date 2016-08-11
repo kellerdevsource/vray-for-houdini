@@ -211,19 +211,6 @@
 	parmtag	{ "vray_type" "Texture" }
     }
     parm {
-	name	"volume"
-	label	"Volume"
-	type	oppath
-	default	{ "" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "BRDFGlassGlossy" }
-	parmtag	{ "vray_pluginattr" "volume" }
-	parmtag	{ "vray_type" "Object" }
-    }
-    parm {
 	name	"ior_tex"
 	label	"Ior Tex"
 	type	float

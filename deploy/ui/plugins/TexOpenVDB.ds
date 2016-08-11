@@ -84,64 +84,44 @@
 	parmtag	{ "vray_pluginattr" "interpolation" }
 	parmtag	{ "vray_type" "int" }
     }
-    group {
-	name	"folder"
-	label	"Mapped"
-
-	parm {
-	    name	"uvwgen"
-	    label	"Uvwgen"
-	    type	oppath
-	    default	{ "" }
-	    help	"The uvw generator for the texture"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "TexOpenVDB" }
-	    parmtag	{ "vray_pluginattr" "uvwgen" }
-	    parmtag	{ "vray_type" "Object" }
-	}
-	parm {
-	    name	"use_3d_mapping"
-	    label	"Use 3d Mapping"
-	    type	toggle
-	    default	{ "0" }
-	    help	"whther to ignore the uvw generator and use world mapping"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexOpenVDB" }
-	    parmtag	{ "vray_pluginattr" "use_3d_mapping" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"float_mult"
-	    label	"Float Mult"
-	    type	float
-	    default	{ "1" }
-	    help	"Texture multiplier for float data"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexOpenVDB" }
-	    parmtag	{ "vray_pluginattr" "float_mult" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"vector_mult"
-	    label	"Vector Mult"
-	    type	color4
-	    size	4
-	    default	{ "1" "1" "1" "1" }
-	    help	"Texture multiplier for vector data"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexOpenVDB" }
-	    parmtag	{ "vray_pluginattr" "vector_mult" }
-	    parmtag	{ "vray_type" "AColor" }
-	}
+    parm {
+	name	"use_3d_mapping"
+	label	"Use 3d Mapping"
+	type	toggle
+	default	{ "0" }
+	help	"whther to ignore the uvw generator and use world mapping"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexOpenVDB" }
+	parmtag	{ "vray_pluginattr" "use_3d_mapping" }
+	parmtag	{ "vray_type" "boolean" }
     }
-
+    parm {
+	name	"float_mult"
+	label	"Float Mult"
+	type	float
+	default	{ "1" }
+	help	"Texture multiplier for float data"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexOpenVDB" }
+	parmtag	{ "vray_pluginattr" "float_mult" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"vector_mult"
+	label	"Vector Mult"
+	type	color4
+	size	4
+	default	{ "1" "1" "1" "1" }
+	help	"Texture multiplier for vector data"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexOpenVDB" }
+	parmtag	{ "vray_pluginattr" "vector_mult" }
+	parmtag	{ "vray_type" "AColor" }
+    }
 }

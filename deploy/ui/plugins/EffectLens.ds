@@ -200,32 +200,6 @@
 	parmtag	{ "vray_type" "boolean" }
     }
     parm {
-	name	"glareBitmap"
-	label	"Glarebitmap"
-	type	oppath
-	default	{ "" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "EffectLens" }
-	parmtag	{ "vray_pluginattr" "glareBitmap" }
-	parmtag	{ "vray_type" "Object" }
-    }
-    parm {
-	name	"glareObstacleImage"
-	label	"Glareobstacleimage"
-	type	oppath
-	default	{ "" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "EffectLens" }
-	parmtag	{ "vray_pluginattr" "glareObstacleImage" }
-	parmtag	{ "vray_type" "Object" }
-    }
-    parm {
 	name	"glareType"
 	label	"Glaretype"
 	type	ordinal

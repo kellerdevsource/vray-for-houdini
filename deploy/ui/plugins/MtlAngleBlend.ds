@@ -13,34 +13,6 @@
 	parmtag	{ "vray_type" "MATERIAL" }
     }
     parm {
-	name	"mtl_one"
-	label	"Mtl One"
-	type	oppath
-	default	{ "" }
-	help	"the first material to be blended"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "MtlAngleBlend" }
-	parmtag	{ "vray_pluginattr" "mtl_one" }
-	parmtag	{ "vray_type" "Object" }
-    }
-    parm {
-	name	"mtl_two"
-	label	"Mtl Two"
-	type	oppath
-	default	{ "" }
-	help	"the second material to be blended"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "MtlAngleBlend" }
-	parmtag	{ "vray_pluginattr" "mtl_two" }
-	parmtag	{ "vray_type" "Object" }
-    }
-    parm {
 	name	"start_angle"
 	label	"Start Angle"
 	type	float

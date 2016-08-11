@@ -143,33 +143,6 @@
 	parmtag	{ "vray_type" "int" }
     }
     parm {
-	name	"volume"
-	label	"Volume"
-	type	oppath
-	default	{ "" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "MtlMayaRamp" }
-	parmtag	{ "vray_pluginattr" "volume" }
-	parmtag	{ "vray_type" "Object" }
-    }
-    parm {
-	name	"bump_brdf"
-	label	"Bump Brdf"
-	type	oppath
-	default	{ "" }
-	help	"bump BRDF used internally for bump mapping"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "MtlMayaRamp" }
-	parmtag	{ "vray_pluginattr" "bump_brdf" }
-	parmtag	{ "vray_type" "Object" }
-    }
-    parm {
 	name	"channels"
 	label	"Channels"
 	type	oplist

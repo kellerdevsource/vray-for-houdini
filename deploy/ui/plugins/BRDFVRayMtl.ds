@@ -394,20 +394,6 @@
 	    parmtag	{ "vray_pluginattr" "anisotropy_axis" }
 	    parmtag	{ "vray_type" "int" }
 	}
-	parm {
-	    name	"anisotropy_uvwgen"
-	    label	"Anisotropy Uvwgen"
-	    type	oppath
-	    default	{ "" }
-	    help	"The uvw generator to use for anisotropy when anisotropy_derivation is 1"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "BRDFVRayMtl" }
-	    parmtag	{ "vray_pluginattr" "anisotropy_uvwgen" }
-	    parmtag	{ "vray_type" "Object" }
-	}
     }
 
     group {

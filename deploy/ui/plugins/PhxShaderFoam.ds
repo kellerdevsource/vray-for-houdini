@@ -495,20 +495,6 @@
 	parmtag	{ "vray_type" "int" }
     }
     parm {
-	name	"gizmo"
-	label	"Gizmo"
-	type	oppath
-	default	{ "" }
-	help	"geometry to define the rendering volume"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "PhxShaderFoam" }
-	parmtag	{ "vray_pluginattr" "gizmo" }
-	parmtag	{ "vray_type" "Object" }
-    }
-    parm {
 	name	"useliquid"
 	label	"Useliquid"
 	type	integer
@@ -522,20 +508,6 @@
 	parmtag	{ "vray_type" "int" }
     }
     parm {
-	name	"liquid_sim"
-	label	"Liquid Sim"
-	type	oppath
-	default	{ "" }
-	help	"liquid phoenix simulator used to determine above/under water flag"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "PhxShaderFoam" }
-	parmtag	{ "vray_pluginattr" "liquid_sim" }
-	parmtag	{ "vray_type" "Object" }
-    }
-    parm {
 	name	"useglass"
 	label	"Useglass"
 	type	integer
@@ -547,20 +519,6 @@
 	parmtag	{ "vray_plugin" "PhxShaderFoam" }
 	parmtag	{ "vray_pluginattr" "useglass" }
 	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"glass"
-	label	"Glass"
-	type	oppath
-	default	{ "" }
-	help	"glass geometry"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "PhxShaderFoam" }
-	parmtag	{ "vray_pluginattr" "glass" }
-	parmtag	{ "vray_type" "Object" }
     }
     parm {
 	name	"lightlinks"

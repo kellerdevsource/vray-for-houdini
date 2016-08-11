@@ -160,21 +160,6 @@
 	parmtag	{ "vray_custom_handling" "1" }
     }
     parm {
-	name	"sun"
-	label	"Sun"
-	type	oppath
-	default	{ "" }
-	help	"If specified, all parameters are taken from the sun; otherwise, the sky parameters are used"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_custom_handling" "1" }
-	parmtag	{ "vray_plugin" "TexSky" }
-	parmtag	{ "vray_pluginattr" "sun" }
-	parmtag	{ "vray_type" "Object" }
-    }
-    parm {
 	name	"ground_albedo"
 	label	"Ground Albedo"
 	type	color

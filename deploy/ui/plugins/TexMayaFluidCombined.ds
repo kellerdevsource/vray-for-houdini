@@ -12,32 +12,4 @@
 	parmtag	{ "vray_plugin" "TexMayaFluidCombined" }
 	parmtag	{ "vray_type" "MISC" }
     }
-    parm {
-	name	"tex1"
-	label	"Tex1"
-	type	oppath
-	default	{ "" }
-	help	"The first texture. Should support the EXT_MAYA_FLUID_TEXTURE interface"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "TexMayaFluidCombined" }
-	parmtag	{ "vray_pluginattr" "tex1" }
-	parmtag	{ "vray_type" "Object" }
-    }
-    parm {
-	name	"tex2"
-	label	"Tex2"
-	type	oppath
-	default	{ "" }
-	help	"The second texture. Should support the EXT_MAYA_FLUID_TEXTURE interface"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "TexMayaFluidCombined" }
-	parmtag	{ "vray_pluginattr" "tex2" }
-	parmtag	{ "vray_type" "Object" }
-    }
 }

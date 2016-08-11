@@ -13,20 +13,6 @@
 	parmtag	{ "vray_type" "BRDF" }
     }
     parm {
-	name	"base_brdf"
-	label	"Base Brdf"
-	type	oppath
-	default	{ "" }
-	help	"Base BRDF"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "BRDFMultiBump" }
-	parmtag	{ "vray_pluginattr" "base_brdf" }
-	parmtag	{ "vray_type" "Object" }
-    }
-    parm {
 	name	"bump_tex_0"
 	label	"Bump Tex 0"
 	type	color4
@@ -225,19 +211,5 @@
 	parmtag	{ "vray_plugin" "BRDFMultiBump" }
 	parmtag	{ "vray_pluginattr" "map_type_3" }
 	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"normal_uvwgen"
-	label	"Normal Uvwgen"
-	type	oppath
-	default	{ "" }
-	help	"The uvw generator for the normal map texture when map_type is 1"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "BRDFMultiBump" }
-	parmtag	{ "vray_pluginattr" "normal_uvwgen" }
-	parmtag	{ "vray_type" "Object" }
     }
 }

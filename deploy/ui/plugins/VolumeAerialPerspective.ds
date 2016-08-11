@@ -13,20 +13,6 @@
 	parmtag	{ "vray_type" "EFFECT" }
     }
     parm {
-	name	"sun"
-	label	"Sun"
-	type	oppath
-	default	{ "" }
-	help	"If specified, all parameters are taken from the sun; otherwise, the sky parameters are used"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "VolumeAerialPerspective" }
-	parmtag	{ "vray_pluginattr" "sun" }
-	parmtag	{ "vray_type" "Object" }
-    }
-    parm {
 	name	"enabled"
 	label	"Enabled"
 	type	toggle

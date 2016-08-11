@@ -298,19 +298,6 @@
 	parmtag	{ "vray_type" "String" }
     }
     parm {
-	name	"uvwgen"
-	label	"Uvwgen"
-	type	oppath
-	default	{ "" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "BRDFScanned" }
-	parmtag	{ "vray_pluginattr" "uvwgen" }
-	parmtag	{ "vray_type" "Object" }
-    }
-    parm {
 	name	"param_block"
 	label	"Param Block"
 	type	integer

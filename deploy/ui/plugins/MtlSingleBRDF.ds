@@ -26,19 +26,6 @@
 	parmtag	{ "vray_type" "Color" }
     }
     parm {
-	name	"brdf"
-	label	"Brdf"
-	type	oppath
-	default	{ "" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "MtlSingleBRDF" }
-	parmtag	{ "vray_pluginattr" "brdf" }
-	parmtag	{ "vray_type" "Object" }
-    }
-    parm {
 	name	"double_sided"
 	label	"Double Sided"
 	type	ordinal

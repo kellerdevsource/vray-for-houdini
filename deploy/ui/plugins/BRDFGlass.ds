@@ -222,17 +222,4 @@
 	parmtag	{ "vray_pluginattr" "refract_exit_color" }
 	parmtag	{ "vray_type" "Texture" }
     }
-    parm {
-	name	"volume"
-	label	"Volume"
-	type	oppath
-	default	{ "" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "BRDFGlass" }
-	parmtag	{ "vray_pluginattr" "volume" }
-	parmtag	{ "vray_type" "Object" }
-    }
 }

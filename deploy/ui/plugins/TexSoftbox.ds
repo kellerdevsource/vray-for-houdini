@@ -148,26 +148,6 @@
 	    parmtag	{ "vray_pluginattr" "nouvw_color" }
 	    parmtag	{ "vray_type" "Texture" }
 	}
-    }
-
-    group {
-	name	"folder2"
-	label	"Mapped"
-
-	parm {
-	    name	"uvwgen"
-	    label	"Mapping"
-	    type	oppath
-	    default	{ "" }
-	    help	"The uvw generator for the texture"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "TexSoftbox" }
-	    parmtag	{ "vray_pluginattr" "uvwgen" }
-	    parmtag	{ "vray_type" "Object" }
-	}
 	parm {
 	    name	"placement_type"
 	    label	"Placement Type"
@@ -482,7 +462,7 @@
     }
 
     group {
-	name	"folder3"
+	name	"folder2"
 	label	"Hot Spot / Dark Spot"
 
 	parm {
@@ -703,7 +683,7 @@
     }
 
     group {
-	name	"folder4"
+	name	"folder3"
 	label	"Gradients"
 
 	parm {
@@ -988,66 +968,6 @@
 	    parmtag	{ "vray_plugin" "TexSoftbox" }
 	    parmtag	{ "vray_pluginattr" "frame_on" }
 	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"grad_vert"
-	    label	"V Vignette Gradient"
-	    type	oppath
-	    default	{ "" }
-	    help	"The V Vignette gradient"
-	    disablewhen	"{ grad_vert_on != 1 }"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "TexSoftbox" }
-	    parmtag	{ "vray_pluginattr" "grad_vert" }
-	    parmtag	{ "vray_type" "Object" }
-	}
-	parm {
-	    name	"grad_horiz"
-	    label	"U Vignette Gradient"
-	    type	oppath
-	    default	{ "" }
-	    help	"The U Vignette gradient"
-	    disablewhen	"{ grad_horiz_on != 1 }"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "TexSoftbox" }
-	    parmtag	{ "vray_pluginattr" "grad_horiz" }
-	    parmtag	{ "vray_type" "Object" }
-	}
-	parm {
-	    name	"grad_rad"
-	    label	"Radial Vignette Gradient"
-	    type	oppath
-	    default	{ "" }
-	    help	"The Radial Vignette gradient"
-	    disablewhen	"{ grad_rad_on != 1 }"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "TexSoftbox" }
-	    parmtag	{ "vray_pluginattr" "grad_rad" }
-	    parmtag	{ "vray_type" "Object" }
-	}
-	parm {
-	    name	"grad_frame"
-	    label	"Frame Vignette Gradient"
-	    type	oppath
-	    default	{ "" }
-	    help	"The Frame Vignette gradient"
-	    disablewhen	"{ frame_on != 1 }"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "TexSoftbox" }
-	    parmtag	{ "vray_pluginattr" "grad_frame" }
-	    parmtag	{ "vray_type" "Object" }
 	}
     }
 

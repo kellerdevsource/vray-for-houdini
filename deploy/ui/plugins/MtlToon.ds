@@ -13,20 +13,6 @@
 	parmtag	{ "vray_type" "MATERIAL" }
     }
     parm {
-	name	"base_mtl"
-	label	"Base Mtl"
-	type	oppath
-	default	{ "" }
-	help	"The material that should have toon lines added to it"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "MtlToon" }
-	parmtag	{ "vray_pluginattr" "base_mtl" }
-	parmtag	{ "vray_type" "Object" }
-    }
-    parm {
 	name	"lineWidth"
 	label	"Linewidth"
 	type	float

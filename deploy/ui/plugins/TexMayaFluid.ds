@@ -65,20 +65,6 @@
 	parmtag	{ "vray_type" "int" }
     }
     parm {
-	name	"velocity"
-	label	"Velocity"
-	type	oppath
-	default	{ "" }
-	help	"Velocity texture for the first frame. Used to calculate the motion blur. "
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "TexMayaFluid" }
-	parmtag	{ "vray_pluginattr" "velocity" }
-	parmtag	{ "vray_type" "Object" }
-    }
-    parm {
 	name	"dynamic_offset_x"
 	label	"Dynamic Offset X"
 	type	float
@@ -162,17 +148,5 @@
 	parmtag	{ "vray_plugin" "TexMayaFluid" }
 	parmtag	{ "vray_pluginattr" "cache_frame" }
 	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"domain"
-	label	"Domain"
-	type	oppath
-	default	{ "" }
-	help	"Simulation domain"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_custom_handling" "1" }
     }
 }

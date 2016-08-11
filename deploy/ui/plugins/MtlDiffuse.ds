@@ -76,30 +76,4 @@
 	parmtag	{ "vray_pluginattr" "transparency" }
 	parmtag	{ "vray_type" "Color" }
     }
-    parm {
-	name	"render_channel_color"
-	label	"Render Channel Color"
-	type	oppath
-	default	{ "" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "MtlDiffuse" }
-	parmtag	{ "vray_pluginattr" "render_channel_color" }
-	parmtag	{ "vray_type" "Object" }
-    }
-    parm {
-	name	"render_channel_alpha"
-	label	"Render Channel Alpha"
-	type	oppath
-	default	{ "" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "MtlDiffuse" }
-	parmtag	{ "vray_pluginattr" "render_channel_alpha" }
-	parmtag	{ "vray_type" "Object" }
-    }
 }

@@ -12,20 +12,6 @@
 	parmtag	{ "vray_type" "MATERIAL" }
     }
     parm {
-	name	"base_mtl"
-	label	"Base Mtl"
-	type	oppath
-	default	{ "" }
-	help	"Base material"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "MtlBump" }
-	parmtag	{ "vray_pluginattr" "base_mtl" }
-	parmtag	{ "vray_type" "Object" }
-    }
-    parm {
 	name	"bump_tex_color"
 	label	"Bump Tex Color"
 	type	color4
@@ -141,20 +127,6 @@
 	parmtag	{ "vray_type" "int" }
     }
     parm {
-	name	"normal_uvwgen"
-	label	"Normal Uvwgen"
-	type	oppath
-	default	{ "" }
-	help	"The uvw generator for the normal map texture when \"Type\" is \"Normal (Tangent)\""
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "MtlBump" }
-	parmtag	{ "vray_pluginattr" "normal_uvwgen" }
-	parmtag	{ "vray_type" "Object" }
-    }
-    parm {
 	name	"compute_bump_for_shadows"
 	label	"Compute Bump For Shadows"
 	type	toggle
@@ -166,19 +138,5 @@
 	parmtag	{ "vray_plugin" "MtlBump" }
 	parmtag	{ "vray_pluginattr" "compute_bump_for_shadows" }
 	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"bump_tex"
-	label	"Bump Tex"
-	type	oppath
-	default	{ "" }
-	help	"Bump texture; this is deprecated, use bump_tex_color or bump_tex_float instead"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "MtlBump" }
-	parmtag	{ "vray_pluginattr" "bump_tex" }
-	parmtag	{ "vray_type" "Object" }
     }
 }

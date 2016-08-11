@@ -12,20 +12,6 @@
 	parmtag	{ "vray_type" "BRDF" }
     }
     parm {
-	name	"base_brdf"
-	label	"Base Brdf"
-	type	oppath
-	default	{ "" }
-	help	"Base BRDF"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "BRDFBump" }
-	parmtag	{ "vray_pluginattr" "base_brdf" }
-	parmtag	{ "vray_type" "Object" }
-    }
-    parm {
 	name	"bump_tex_float"
 	label	"Bump Texture"
 	type	float
@@ -115,20 +101,6 @@
 	parmtag	{ "vray_type" "int" }
     }
     parm {
-	name	"normal_uvwgen"
-	label	"Normal Uvwgen"
-	type	oppath
-	default	{ "" }
-	help	"The uvw generator for the normal map texture when \"Type\" is \"Normal (Tangent)\""
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "BRDFBump" }
-	parmtag	{ "vray_pluginattr" "normal_uvwgen" }
-	parmtag	{ "vray_type" "Object" }
-    }
-    parm {
 	name	"maya_compatible"
 	label	"Maya Compatible"
 	type	toggle
@@ -166,20 +138,6 @@
 	parmtag	{ "vray_plugin" "BRDFBump" }
 	parmtag	{ "vray_pluginattr" "bump_delta_scale" }
 	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"bump_tex"
-	label	"Bump Tex"
-	type	oppath
-	default	{ "" }
-	help	"Bump texture; this is deprecated, use bump_tex_color or bump_tex_float"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "BRDFBump" }
-	parmtag	{ "vray_pluginattr" "bump_tex" }
-	parmtag	{ "vray_type" "Object" }
     }
     parm {
 	name	"normal_map_mult"

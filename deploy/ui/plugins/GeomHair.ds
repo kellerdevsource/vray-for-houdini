@@ -13,20 +13,6 @@
 	parmtag	{ "vray_type" "GEOMETRY" }
     }
     parm {
-	name	"mesh"
-	label	"Mesh"
-	type	oppath
-	default	{ "" }
-	help	"The triangle mesh that will have hairs generated on it"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "GeomHair" }
-	parmtag	{ "vray_pluginattr" "mesh" }
-	parmtag	{ "vray_type" "Object" }
-    }
-    parm {
 	name	"length_base"
 	label	"Length Base"
 	type	float

@@ -132,19 +132,6 @@
 	    parmtag	{ "vray_pluginattr" "flake_seed" }
 	    parmtag	{ "vray_type" "int" }
 	}
-	parm {
-	    name	"flake_uvwgen"
-	    label	"Uvwgen"
-	    type	oppath
-	    default	{ "" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "oprelative" "." }
-	    parmtag	{ "vray_plugin" "BRDFFlakes" }
-	    parmtag	{ "vray_pluginattr" "flake_uvwgen" }
-	    parmtag	{ "vray_type" "Object" }
-	}
     }
 
     group {

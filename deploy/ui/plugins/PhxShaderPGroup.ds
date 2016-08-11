@@ -13,20 +13,6 @@
 	parmtag	{ "vray_type" "MISC" }
     }
     parm {
-	name	"phoenix_sim"
-	label	"Phoenix Sim"
-	type	oppath
-	default	{ "" }
-	help	"The phoenix simulator that exports the particle group"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "PhxShaderPGroup" }
-	parmtag	{ "vray_pluginattr" "phoenix_sim" }
-	parmtag	{ "vray_type" "Object" }
-    }
-    parm {
 	name	"pgroup"
 	label	"Pgroup"
 	type	string

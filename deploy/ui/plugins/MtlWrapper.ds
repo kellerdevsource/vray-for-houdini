@@ -12,20 +12,6 @@
 	parmtag	{ "vray_type" "MATERIAL" }
     }
     parm {
-	name	"base_material"
-	label	"Base Material"
-	type	oppath
-	default	{ "" }
-	help	"The base material"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "MtlWrapper" }
-	parmtag	{ "vray_pluginattr" "base_material" }
-	parmtag	{ "vray_type" "Object" }
-    }
-    parm {
 	name	"generate_gi"
 	label	"Generated Gi Mult."
 	type	float

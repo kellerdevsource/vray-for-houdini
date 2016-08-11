@@ -12,17 +12,4 @@
 	parmtag	{ "vray_plugin" "TexModoSampler" }
 	parmtag	{ "vray_type" "MISC" }
     }
-    parm {
-	name	"uvwgen"
-	label	"Uvwgen"
-	type	oppath
-	default	{ "" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "TexModoSampler" }
-	parmtag	{ "vray_pluginattr" "uvwgen" }
-	parmtag	{ "vray_type" "Object" }
-    }
 }
