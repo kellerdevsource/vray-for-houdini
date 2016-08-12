@@ -213,10 +213,11 @@ def main(args):
         cmake.append('-DWITH_STATIC_LIBC=ON')
 
     cmake.append('-DCMAKE_BUILD_TYPE=%s' % _cgr_build_type)
+    cmake.append('-DSDK_PATH=%s'              % toCmakePath(SdkPath))
     cmake.append('-DHOUDINI_VERSION=%s'       % os.environ['CGR_HOUDINI_VERSION'])
     cmake.append('-DHOUDINI_VERSION_BUILD=%s' % os.environ['CGR_HOUDINI_VERSION_BUILD'])
     cmake.append('-DAPPSDK_VERSION=%s'        % os.environ['CGR_APPSDK_VERSION'])
-    cmake.append('-DSDK_PATH=%s'              % toCmakePath(SdkPath))
+    cmake.append('-DPHXSDK_VERSION=%s'        % os.environ['CGR_PHXSDK_VERSION'])
 
     if sys.platform == 'win32':
         houdiniMajorVer = float(os.environ['CGR_HOUDINI_VERSION'])
