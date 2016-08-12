@@ -210,8 +210,6 @@ def main(args):
     if sys.platform == 'linux':
         cmake.append('-DCMAKE_CXX_COMPILER=%s' % os.environ.get('CGR_CXX_COMPILER', "/usr/bin/g++4.8"))
         cmake.append('-DWITH_STATIC_LIBC=ON')
-    elif sys.platform == 'windows':
-        cmake.append('-DCMAKE_CXX_COMPILER=%s' % os.environ.get('CGR_CXX_COMPILER', "H:\src\kdrive2\msvs2015"))
 
     cmake.append('-DCMAKE_BUILD_TYPE=%s' % _cgr_build_type)
     cmake.append('-DHOUDINI_VERSION=%s'       % os.environ['CGR_HOUDINI_VERSION'])
@@ -223,8 +221,10 @@ def main(args):
         houdiniMajorVer = float(os.environ['CGR_HOUDINI_VERSION'])
         if houdiniMajorVer >= 15.5:
             setup_msvc_2015()
+            cmake.append('-DMSVC_VERSION=1900')
         else:
             setup_msvc_2012()
+            cmake.append('-DMSVC_VERSION=1800')
 
     cmake.append('-DCGR_SRC_HASH=%s' % srcHash)
     cmake.append('-DUSE_LAUNCHER=OFF')
