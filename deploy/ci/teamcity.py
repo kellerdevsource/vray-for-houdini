@@ -265,5 +265,6 @@ if __name__ == '__main__':
     parser.add_argument('--src_hash', default="unknown", help="Sources hash")
     parser.add_argument('--src_dir', default=False, help="Sources directory")
     parser.add_argument('--upload', action='store_true', default=False, help="Upload build")
+    parser.add_argument('--clean', action='store_true', default=False, help="Delete build directory")
 
     sys.exit(main(parser.parse_args()))
