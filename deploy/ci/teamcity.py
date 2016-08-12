@@ -11,6 +11,7 @@
 import argparse
 import datetime
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -220,11 +221,11 @@ def main(args):
     if sys.platform == 'win32':
         houdiniMajorVer = float(os.environ['CGR_HOUDINI_VERSION'])
         if houdiniMajorVer >= 15.5:
-            setup_msvc_2015()
             cmake.append('-DMSVC_VERSION=1900')
+            setup_msvc_2015()
         else:
-            setup_msvc_2012()
             cmake.append('-DMSVC_VERSION=1800')
+            setup_msvc_2012()
 
     cmake.append('-DCGR_SRC_HASH=%s' % srcHash)
     cmake.append('-DUSE_LAUNCHER=OFF')
@@ -238,6 +239,11 @@ def main(args):
 
     ninja = ["ninja"]
     ninja.append("install")
+
+    if args.clean:
+        buildPath = os.path.join(_cgr_release_root, "build")
+        if  os.path.exists(buildPath):
+            shutil.rmtree(buildPath,ignore_errors=True)
 
     err = call(cmake)
 
