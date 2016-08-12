@@ -10,7 +10,43 @@
 
 string(TOLOWER "${CMAKE_HOST_SYSTEM_NAME}" _HOST_SYSTEM_NAME)
 
-set(_phoenix_for_maya_roots "")
+set(PHXSDK_PATH "" CACHE PATH "V-Ray Phoenix SDK root location")
+set(PHXSDK_VERSION "" CACHE STRING "V-Ray Phoenix SDK version")
+
+if(PHXSDK_PATH)
+	set(_phx_root ${PHXSDK_PATH})
+else()
+	# no phxsdk root path is specified
+	if(NOT PHXSDK_VERSION)
+		message(FATAL_ERROR "V-Ray Phoenix SDK version NOT specified")
+	endif()
+
+	if(SDK_PATH)
+		# if vfh sdk path is given use it to deduce phxsdk root location based on version and cache
+		set(_phx_root "${SDK_PATH}/${_HOST_SYSTEM_NAME}/phxsdk/phxsdk${PHXSDK_VERSION}")
+	else()
+		# otherwise guess root location depanding on the host system and cache
+		if(WIN32)
+			# windows
+			set(_phx_root "C:/Program Files/Chaos Group/Phoenix FD/Maya ${PHXSDK_VERSION} for x64/SDK")
+		elseif(APPLE)
+			# mac os
+			set(_phx_root "")
+		else()
+			# linux
+			set(_phx_root "/usr/ChaosGroup/PhoenixFD/Maya${PHXSDK_VERSION}-x64/SDK")
+		endif()
+	endif()
+endif()
+
+# check if phoenix path exists
+if(NOT EXISTS ${_phx_root})
+	message(FATAL_ERROR "V-Ray Phoenix SDK path NOT found: (\"${_phx_root}\")")
+endif()
+
+
+message(STATUS "Phoenix SDK path = ${_phx_root}")
+message(STATUS "Phoenix SDK version = ${PHXSDK_VERSION}")
 
 if(WIN32)
 	set(CGR_PHOENIX_SHARED aurloader.dll)
@@ -22,40 +58,36 @@ else()
 	set(CGR_PHOENIX_SHARED_VDB libopenvdbio_phx.so)
 endif()
 
-set(_maya_versons "2016_22501;2017;2016;2015;2014")
-foreach(_maya_version ${_maya_versons})
-	if(SDK_PATH)
-		set(_phoenix_for_maya_root "${SDK_PATH}/${_HOST_SYSTEM_NAME}/phxsdk/phxsdk${_maya_version}")
-	else()
-		if(WIN32)
-			set(_phoenix_for_maya_root "C:/Program Files/Chaos Group/Phoenix FD/Maya ${_maya_version} for x64/SDK")
-		elseif(APPLE)
-			set(_phoenix_for_maya_root "")
-		else()
-			set(_phoenix_for_maya_root "/usr/ChaosGroup/PhoenixFD/Maya${_maya_version}-x64/SDK")
-		endif()
+
+set(Phoenix_FOUND TRUE)
+set(Phoenix_INCLUDES "${_phx_root}/include")
+set(Phoenix_LIBRARIES "${_phx_root}/lib")
+
+# check for headers
+foreach(loop_var IN ITEMS "aurinterface.h")
+
+	if(NOT EXISTS "${Phoenix_INCLUDES}/${loop_var}" )
+		message(STATUS "Invalid Phoenix SDK path - missing file ${Phoenix_INCLUDES}/${loop_var} ")
+		set(Phoenix_FOUND FALSE)
+		break()
 	endif()
 
-	if(EXISTS ${_phoenix_for_maya_root})
-		list(APPEND _phoenix_for_maya_roots
-			${_phoenix_for_maya_root}
-		)
+endforeach(loop_var)
+
+# check for libs
+foreach(loop_var IN ITEMS   "${CGR_PHOENIX_SHARED}"
+							"${CGR_PHOENIX_SHARED_F3D}"
+							"${CGR_PHOENIX_SHARED_VDB}")
+
+	if(NOT EXISTS "${Phoenix_LIBRARIES}/${loop_var}" )
+		message(STATUS "Invalid Phoenix SDK path - missing file ${Phoenix_LIBRARIES}/${loop_var} ")
+		set(Phoenix_FOUND FALSE)
+		break()
 	endif()
-endforeach()
 
-find_path(Phoenix_INCLUDES include/aurinterface.h
-	${_phoenix_for_maya_roots} NO_DEFAULT_PATH
-)
+endforeach(loop_var)
 
-find_path(Phoenix_LIBRARIES
-		  NAMES lib/${CGR_PHOENIX_SHARED} lib/${CGR_PHOENIX_SHARED_VDB} lib/${CGR_PHOENIX_SHARED_F3D}
-		  PATHS ${_phoenix_for_maya_roots}
-		  NO_DEFAULT_PATH
-)
-
-
-if(Phoenix_INCLUDES AND Phoenix_LIBRARIES)
-	set(Phoenix_INCLUDES  ${Phoenix_INCLUDES}/include)
-	set(Phoenix_LIBRARIES ${Phoenix_LIBRARIES}/lib)
-	set(Phoenix_FOUND TRUE)
+if(NOT Phoenix_FOUND)
+	set(Phoenix_INCLUDES Phoenix_INCLUDES-NOTFOUND)
+	set(Phoenix_LIBRARIES Phoenix_LIBRARIES-NOTFOUND)
 endif()
