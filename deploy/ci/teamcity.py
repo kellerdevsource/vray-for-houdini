@@ -241,7 +241,7 @@ def main(args):
     ninja.append("install")
 
     if args.clean:
-        buildPath = os.path.join(_cgr_release_root, "build")
+        buildPath = os.path.join(_cgr_config_root, "build")
         if  os.path.exists(buildPath):
             shutil.rmtree(buildPath,ignore_errors=True)
 
