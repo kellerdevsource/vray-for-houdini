@@ -218,6 +218,7 @@ def main(args):
     cmake.append('-DHOUDINI_VERSION_BUILD=%s' % os.environ['CGR_HOUDINI_VERSION_BUILD'])
     cmake.append('-DAPPSDK_VERSION=%s'        % os.environ['CGR_APPSDK_VERSION'])
     cmake.append('-DPHXSDK_VERSION=%s'        % os.environ['CGR_PHXSDK_VERSION'])
+    cmake.append('-DVRAYSDK_VERSION=%s'       % os.environ['CGR_VRAYSDK_VERSION'])
 
     if sys.platform == 'win32':
         houdiniMajorVer = float(os.environ['CGR_HOUDINI_VERSION'])
