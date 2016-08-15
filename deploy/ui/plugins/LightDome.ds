@@ -41,13 +41,13 @@
     parm {
 	name	"color_tex"
 	label	"Color Tex"
-	type	color4
-	size	4
-	default	{ "1" "1" "1" "1" }
+	type	oppath
+	default	{ "" }
 	help	"A color texture that if present will override the color parameter"
-	range	{ 0 10 }
+	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_linked_only" "1" }
 	parmtag	{ "vray_plugin" "LightDome" }
 	parmtag	{ "vray_pluginattr" "color_tex" }
@@ -83,13 +83,13 @@
     parm {
 	name	"shadowColor_tex"
 	label	"Shadowcolor Tex"
-	type	color4
-	size	4
-	default	{ "0" "0" "0" "1" }
+	type	oppath
+	default	{ "" }
 	help	"A color texture that if present will override the shadowColor parameter"
-	range	{ 0 10 }
+	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_linked_only" "1" }
 	parmtag	{ "vray_plugin" "LightDome" }
 	parmtag	{ "vray_pluginattr" "shadowColor_tex" }
@@ -357,12 +357,13 @@
     parm {
 	name	"intensity_tex"
 	label	"Intensity Tex"
-	type	float
-	default	{ "1" }
+	type	oppath
+	default	{ "" }
 	help	"A float texture that if present will override the intensity parameter"
-	range	{ 0 64 }
+	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_linked_only" "1" }
 	parmtag	{ "vray_plugin" "LightDome" }
 	parmtag	{ "vray_pluginattr" "intensity_tex" }
@@ -434,12 +435,12 @@
     parm {
 	name	"dome_tex"
 	label	"Dome Tex"
-	type	color4
-	size	4
-	default	{ "0" "0" "0" "1" }
-	range	{ 0 10 }
+	type	oppath
+	default	{ "" }
+	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "oprelative" "." }
 	parmtag	{ "vray_linked_only" "1" }
 	parmtag	{ "vray_plugin" "LightDome" }
 	parmtag	{ "vray_pluginattr" "dome_tex" }
