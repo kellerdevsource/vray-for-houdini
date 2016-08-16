@@ -8,8 +8,6 @@
 # Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 #
 
-set(CGR_PHOENIX_SDK_PATH "" CACHE STRING "Phoenix SDK root path")
-
 find_package(Phoenix)
 
 if(Phoenix_FOUND)

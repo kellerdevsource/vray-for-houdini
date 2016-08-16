@@ -11,6 +11,7 @@
 import argparse
 import datetime
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -25,6 +26,16 @@ _cgr_config_root = os.environ['CGR_CONFIG_ROOT']
 
 def toCmakePath(path):
     return os.path.normpath(path).replace("\\", "/")
+
+
+def cleanDir(dirpath):
+    if os.path.isdir(dirpath):
+        sys.stdout.write("-- Cleaning = %s\n" % (dirpath))
+        for root, dirs, files in os.walk(dirpath):
+            for f in files:
+                os.unlink(os.path.join(root, f))
+            for d in dirs:
+                shutil.rmtree(os.path.join(root, d))
 
 
 def call(args):
@@ -212,16 +223,20 @@ def main(args):
         cmake.append('-DWITH_STATIC_LIBC=ON')
 
     cmake.append('-DCMAKE_BUILD_TYPE=%s' % _cgr_build_type)
+    cmake.append('-DSDK_PATH=%s'              % toCmakePath(SdkPath))
     cmake.append('-DHOUDINI_VERSION=%s'       % os.environ['CGR_HOUDINI_VERSION'])
     cmake.append('-DHOUDINI_VERSION_BUILD=%s' % os.environ['CGR_HOUDINI_VERSION_BUILD'])
     cmake.append('-DAPPSDK_VERSION=%s'        % os.environ['CGR_APPSDK_VERSION'])
-    cmake.append('-DSDK_PATH=%s'              % toCmakePath(SdkPath))
+    cmake.append('-DPHXSDK_VERSION=%s'        % os.environ['CGR_PHXSDK_VERSION'])
+    cmake.append('-DVRAYSDK_VERSION=%s'       % os.environ['CGR_VRAYSDK_VERSION'])
 
     if sys.platform == 'win32':
         houdiniMajorVer = float(os.environ['CGR_HOUDINI_VERSION'])
         if houdiniMajorVer >= 15.5:
+            cmake.append('-DMSVC_VERSION=1900')
             setup_msvc_2015()
         else:
+            cmake.append('-DMSVC_VERSION=1800')
             setup_msvc_2012()
 
     cmake.append('-DCGR_SRC_HASH=%s' % srcHash)
@@ -236,6 +251,10 @@ def main(args):
 
     ninja = ["ninja"]
     ninja.append("install")
+
+    if args.clean:
+        # clean build dir
+        cleanDir(os.getcwd())
 
     err = call(cmake)
 
@@ -257,5 +276,6 @@ if __name__ == '__main__':
     parser.add_argument('--src_hash', default="unknown", help="Sources hash")
     parser.add_argument('--src_dir', default=False, help="Sources directory")
     parser.add_argument('--upload', action='store_true', default=False, help="Upload build")
+    parser.add_argument('--clean', action='store_true', default=False, help="Clean build directory")
 
     sys.exit(main(parser.parse_args()))
