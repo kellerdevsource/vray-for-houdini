@@ -28,6 +28,16 @@ def toCmakePath(path):
     return os.path.normpath(path).replace("\\", "/")
 
 
+def cleanDir(dirpath):
+    if os.path.isdir(dirpath):
+        sys.stdout.write("-- Cleaning = %s\n" % (dirpath))
+        for root, dirs, files in os.walk(dirpath):
+            for f in files:
+                os.unlink(os.path.join(root, f))
+            for d in dirs:
+                shutil.rmtree(os.path.join(root, d))
+
+
 def call(args):
     sys.stdout.write("-- Calling: %s\n" % " ".join(args))
     sys.stdout.flush()
@@ -243,9 +253,8 @@ def main(args):
     ninja.append("install")
 
     if args.clean:
-        buildPath = os.path.join(_cgr_config_root, "build")
-        if  os.path.exists(buildPath):
-            shutil.rmtree(buildPath,ignore_errors=True)
+        # clean build dir
+        cleanDir(os.getcwd())
 
     err = call(cmake)
 
@@ -267,6 +276,6 @@ if __name__ == '__main__':
     parser.add_argument('--src_hash', default="unknown", help="Sources hash")
     parser.add_argument('--src_dir', default=False, help="Sources directory")
     parser.add_argument('--upload', action='store_true', default=False, help="Upload build")
-    parser.add_argument('--clean', action='store_true', default=False, help="Delete build directory")
+    parser.add_argument('--clean', action='store_true', default=False, help="Clean build directory")
 
     sys.exit(main(parser.parse_args()))
