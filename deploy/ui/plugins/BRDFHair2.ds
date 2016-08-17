@@ -11,232 +11,226 @@
 	parmtag	{ "vray_plugin" "BRDFHair2" }
 	parmtag	{ "vray_type" "BRDF" }
     }
-    group {
-	name	"folder"
-	label	"V-Ray Hair 2"
-
-	parm {
-	    name	"diffuse_color_tex"
-	    label	"Diffuse Color"
-	    type	color4
-	    size	4
-	    default	{ "0" "0" "0" "1" }
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "BRDFHair2" }
-	    parmtag	{ "vray_pluginattr" "diffuse_color_tex" }
-	    parmtag	{ "vray_type" "Texture" }
-	}
-	parm {
-	    name	"refraction_index"
-	    label	"Refraction Index"
-	    type	float
-	    default	{ "1.55" }
-	    help	"Index of refraction for the hair"
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "BRDFHair2" }
-	    parmtag	{ "vray_pluginattr" "refraction_index" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"absorption"
-	    label	"Absorption"
-	    type	color4
-	    size	4
-	    default	{ "0.2" "0.2" "0.2" "1" }
-	    help	"Absorption coeficient, controls the color of the hair"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "BRDFHair2" }
-	    parmtag	{ "vray_pluginattr" "absorption" }
-	    parmtag	{ "vray_type" "Texture" }
-	}
-	parm {
-	    name	"r_long_shift"
-	    label	"Long. Shift: R Lobe"
-	    type	float
-	    default	{ "-10" }
-	    help	"Longitudinal shift for the R lobe"
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "BRDFHair2" }
-	    parmtag	{ "vray_pluginattr" "r_long_shift" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"tt_long_shift"
-	    label	"Long. Shift: Tt Lobe"
-	    type	float
-	    default	{ "5" }
-	    help	"Longitudinal shift for the TT lobe"
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "BRDFHair2" }
-	    parmtag	{ "vray_pluginattr" "tt_long_shift" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"trt_long_shift"
-	    label	"Long. Shift: Trt Lobe"
-	    type	float
-	    default	{ "15" }
-	    help	"Longitudinal shift for the TRT lobe"
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "BRDFHair2" }
-	    parmtag	{ "vray_pluginattr" "trt_long_shift" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"r_long_width"
-	    label	"Long. Width: R Lobe"
-	    type	float
-	    default	{ "5" }
-	    help	"Longitudinal width (stddev.) for the R lobe"
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "BRDFHair2" }
-	    parmtag	{ "vray_pluginattr" "r_long_width" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"tt_long_width"
-	    label	"Long. Width: Tt Lobe"
-	    type	float
-	    default	{ "2.5" }
-	    help	"Longitudinal width (stddev.) for the TT lobe"
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "BRDFHair2" }
-	    parmtag	{ "vray_pluginattr" "tt_long_width" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"trt_long_width"
-	    label	"Long. Width: Trt Lobe"
-	    type	float
-	    default	{ "10" }
-	    help	"Longitudinal width (stddev.) for the TRT lobe"
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "BRDFHair2" }
-	    parmtag	{ "vray_pluginattr" "trt_long_width" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"glint_scale"
-	    label	"Glint Scale"
-	    type	float
-	    default	{ "0.5" }
-	    help	"Glint scale factor 0.5 to 5.0"
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "BRDFHair2" }
-	    parmtag	{ "vray_pluginattr" "glint_scale" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"azimuthal_width"
-	    label	"Azimuthal Width"
-	    type	float
-	    default	{ "10" }
-	    help	"Azimuthal width of the caustic from 10 to 25 degrees"
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "BRDFHair2" }
-	    parmtag	{ "vray_pluginattr" "azimuthal_width" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"fade_range"
-	    label	"Fade Range"
-	    type	float
-	    default	{ "0.2" }
-	    help	"Fade range for caustic merge (0.2 to 0.4)"
-	    range	{ 0.2 0.4 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "BRDFHair2" }
-	    parmtag	{ "vray_pluginattr" "fade_range" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"caustic_limit"
-	    label	"Caustic Limit"
-	    type	float
-	    default	{ "0.5" }
-	    help	"Caustic intensity limit"
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "BRDFHair2" }
-	    parmtag	{ "vray_pluginattr" "caustic_limit" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"r_mult"
-	    label	"R Lobe Multiplier"
-	    type	float
-	    default	{ "1" }
-	    help	"Multiplier for the R lobe"
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "BRDFHair2" }
-	    parmtag	{ "vray_pluginattr" "r_mult" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"tt_mult"
-	    label	"Tt Lobe Multiplier"
-	    type	float
-	    default	{ "1" }
-	    help	"Multiplier for the TT lobe"
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "BRDFHair2" }
-	    parmtag	{ "vray_pluginattr" "tt_mult" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"trt_mult"
-	    label	"Trt Lobe Multiplier"
-	    type	float
-	    default	{ "1" }
-	    help	"Multiplier for the TRT lobe"
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "BRDFHair2" }
-	    parmtag	{ "vray_pluginattr" "trt_mult" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"diffuse_mult"
-	    label	"Diffuse Mult"
-	    type	float
-	    default	{ "1" }
-	    help	"Multiplier for the Diffuse component"
-	    range	{ 0 64 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "BRDFHair2" }
-	    parmtag	{ "vray_pluginattr" "diffuse_mult" }
-	    parmtag	{ "vray_type" "float" }
-	}
+    parm {
+	name	"diffuse_color_tex"
+	label	"Diffuse Color"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "1" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFHair2" }
+	parmtag	{ "vray_pluginattr" "diffuse_color_tex" }
+	parmtag	{ "vray_type" "Texture" }
     }
-
+    parm {
+	name	"refraction_index"
+	label	"Refraction Index"
+	type	float
+	default	{ "1.55" }
+	help	"Index of refraction for the hair"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFHair2" }
+	parmtag	{ "vray_pluginattr" "refraction_index" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"absorption"
+	label	"Absorption"
+	type	color4
+	size	4
+	default	{ "0.2" "0.2" "0.2" "1" }
+	help	"Absorption coeficient, controls the color of the hair"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFHair2" }
+	parmtag	{ "vray_pluginattr" "absorption" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"r_long_shift"
+	label	"Long. Shift: R Lobe"
+	type	float
+	default	{ "-10" }
+	help	"Longitudinal shift for the R lobe"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFHair2" }
+	parmtag	{ "vray_pluginattr" "r_long_shift" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"tt_long_shift"
+	label	"Long. Shift: Tt Lobe"
+	type	float
+	default	{ "5" }
+	help	"Longitudinal shift for the TT lobe"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFHair2" }
+	parmtag	{ "vray_pluginattr" "tt_long_shift" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"trt_long_shift"
+	label	"Long. Shift: Trt Lobe"
+	type	float
+	default	{ "15" }
+	help	"Longitudinal shift for the TRT lobe"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFHair2" }
+	parmtag	{ "vray_pluginattr" "trt_long_shift" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"r_long_width"
+	label	"Long. Width: R Lobe"
+	type	float
+	default	{ "5" }
+	help	"Longitudinal width (stddev.) for the R lobe"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFHair2" }
+	parmtag	{ "vray_pluginattr" "r_long_width" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"tt_long_width"
+	label	"Long. Width: Tt Lobe"
+	type	float
+	default	{ "2.5" }
+	help	"Longitudinal width (stddev.) for the TT lobe"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFHair2" }
+	parmtag	{ "vray_pluginattr" "tt_long_width" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"trt_long_width"
+	label	"Long. Width: Trt Lobe"
+	type	float
+	default	{ "10" }
+	help	"Longitudinal width (stddev.) for the TRT lobe"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFHair2" }
+	parmtag	{ "vray_pluginattr" "trt_long_width" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"glint_scale"
+	label	"Glint Scale"
+	type	float
+	default	{ "0.5" }
+	help	"Glint scale factor 0.5 to 5.0"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFHair2" }
+	parmtag	{ "vray_pluginattr" "glint_scale" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"azimuthal_width"
+	label	"Azimuthal Width"
+	type	float
+	default	{ "10" }
+	help	"Azimuthal width of the caustic from 10 to 25 degrees"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFHair2" }
+	parmtag	{ "vray_pluginattr" "azimuthal_width" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"fade_range"
+	label	"Fade Range"
+	type	float
+	default	{ "0.2" }
+	help	"Fade range for caustic merge (0.2 to 0.4)"
+	range	{ 0.2 0.4 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFHair2" }
+	parmtag	{ "vray_pluginattr" "fade_range" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"caustic_limit"
+	label	"Caustic Limit"
+	type	float
+	default	{ "0.5" }
+	help	"Caustic intensity limit"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFHair2" }
+	parmtag	{ "vray_pluginattr" "caustic_limit" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"r_mult"
+	label	"R Lobe Multiplier"
+	type	float
+	default	{ "1" }
+	help	"Multiplier for the R lobe"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFHair2" }
+	parmtag	{ "vray_pluginattr" "r_mult" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"tt_mult"
+	label	"Tt Lobe Multiplier"
+	type	float
+	default	{ "1" }
+	help	"Multiplier for the TT lobe"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFHair2" }
+	parmtag	{ "vray_pluginattr" "tt_mult" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"trt_mult"
+	label	"Trt Lobe Multiplier"
+	type	float
+	default	{ "1" }
+	help	"Multiplier for the TRT lobe"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFHair2" }
+	parmtag	{ "vray_pluginattr" "trt_mult" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"diffuse_mult"
+	label	"Diffuse Mult"
+	type	float
+	default	{ "1" }
+	help	"Multiplier for the Diffuse component"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFHair2" }
+	parmtag	{ "vray_pluginattr" "diffuse_mult" }
+	parmtag	{ "vray_type" "float" }
+    }
 }

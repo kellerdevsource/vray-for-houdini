@@ -191,23 +191,17 @@
 	}
     }
 
-    group {
-	name	"folder"
-	label	"OpenSubdiv (static subdivision)"
-
-	parm {
-	    name	"osd_subdiv_enable"
-	    label	"Enable Opensubdiv"
-	    type	toggle
-	    default	{ "1" }
-	    help	"True to enable OpenSubdiv subdivision"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "GeomStaticMesh" }
-	    parmtag	{ "vray_pluginattr" "osd_subdiv_enable" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
+    parm {
+	name	"osd_subdiv_enable"
+	label	"Enable Opensubdiv"
+	type	toggle
+	default	{ "1" }
+	help	"True to enable OpenSubdiv subdivision"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomStaticMesh" }
+	parmtag	{ "vray_pluginattr" "osd_subdiv_enable" }
+	parmtag	{ "vray_type" "boolean" }
     }
-
 }

@@ -12,1001 +12,965 @@
 	parmtag	{ "vray_plugin" "TexBerconTile" }
 	parmtag	{ "vray_type" "TEXTURE" }
     }
-    group {
-	name	"folder"
-	label	"Common"
-
-	parm {
-	    name	"compatibility_with"
-	    label	"Compatibility With"
-	    type	ordinal
-	    default	{ "0" }
-	    help	"This is used to differentiate between textures exported from different applications"
-	    menu	{
-		"Max"	"Max"
-		"Maya"	"Maya"
-	    }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_enumkeys" "0,1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "compatibility_with" }
-	    parmtag	{ "vray_type" "int" }
+    parm {
+	name	"compatibility_with"
+	label	"Compatibility With"
+	type	ordinal
+	default	{ "0" }
+	help	"This is used to differentiate between textures exported from different applications"
+	menu	{
+	    "Max"	"Max"
+	    "Maya"	"Maya"
 	}
-	parm {
-	    name	"alpha_from_intensity"
-	    label	"Alpha From Intensity"
-	    type	ordinal
-	    default	{ "2" }
-	    help	"If 2 - the alpha is forced to 1.0f; 1 - the resulting alpha is the color intensity (if compatibility_with is 0) or the color luminance (if compatibility_with is 1); 0 - the alpha is taken from the bitmap alpha"
-	    menu	{
-		"Bitmap alpha"	"Bitmap alpha"
-		"Color intensity/luminance"	"Color intensity/luminance"
-		"Force opaque"	"Force opaque"
-	    }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_enumkeys" "0,1,2" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "alpha_from_intensity" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"invert"
-	    label	"Invert"
-	    type	toggle
-	    default	{ "0" }
-	    help	"If true, the resulting texture color will be inverted"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "invert" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"invert_alpha"
-	    label	"Invert Alpha"
-	    type	toggle
-	    default	{ "1" }
-	    help	"If true and invert is on, the resulting texture alpha will be inverted too. If false, just the color will be inverted"
-	    disablewhen	"{ invert != 1 }"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "invert_alpha" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"color_mult"
-	    label	"Color Mult"
-	    type	color4
-	    size	4
-	    default	{ "1" "1" "1" "1" }
-	    help	"A multiplier for the texture color"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "color_mult" }
-	    parmtag	{ "vray_type" "Texture" }
-	}
-	parm {
-	    name	"color_offset"
-	    label	"Color Offset"
-	    type	color4
-	    size	4
-	    default	{ "0" "0" "0" "0" }
-	    help	"An additional offset for the texture color"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "color_offset" }
-	    parmtag	{ "vray_type" "Texture" }
-	}
-	parm {
-	    name	"alpha_mult"
-	    label	"Alpha Mult"
-	    type	float
-	    default	{ "1" }
-	    help	"A multiplier for the texture alpha"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "alpha_mult" }
-	    parmtag	{ "vray_type" "TextureFloat" }
-	}
-	parm {
-	    name	"alpha_offset"
-	    label	"Alpha Offset"
-	    type	float
-	    default	{ "0" }
-	    help	"An additional offset for the texture alpha"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "alpha_offset" }
-	    parmtag	{ "vray_type" "TextureFloat" }
-	}
-	parm {
-	    name	"nouvw_color"
-	    label	"No Uvs Color"
-	    type	color4
-	    size	4
-	    default	{ "0.5" "0.5" "0.5" "1" }
-	    help	"The color when there are no valid uvw coordinates"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "nouvw_color" }
-	    parmtag	{ "vray_type" "Texture" }
-	}
-	parm {
-	    name	"placement_type"
-	    label	"Placement Type"
-	    type	ordinal
-	    default	{ "2" }
-	    help	"The way the valid portion of the texture is applied: 0 - the whole texture is valid, 1 - crop, 2 -place"
-	    menu	{
-		"Whole texture is valid"	"Whole texture is valid"
-		"Crop"	"Crop"
-		"Place"	"Place"
-	    }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_enumkeys" "0,1,2" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "placement_type" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"u"
-	    label	"U"
-	    type	float
-	    default	{ "0" }
-	    help	"U coordinate of the valid texture sector"
-	    disablewhen	"{ placement_type != 1 placement_type != 2 }"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "u" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"v"
-	    label	"V"
-	    type	float
-	    default	{ "0" }
-	    help	"V coordinate of the valid texture sector"
-	    disablewhen	"{ placement_type != 1 placement_type != 2 }"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "v" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"w"
-	    label	"W"
-	    type	float
-	    default	{ "1" }
-	    help	"Width of the valid texture sector"
-	    disablewhen	"{ placement_type != 1 placement_type != 2 }"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "w" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"h"
-	    label	"H"
-	    type	float
-	    default	{ "1" }
-	    help	"Height of the valid texture sector"
-	    disablewhen	"{ placement_type != 1 placement_type != 2 }"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "h" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"jitter"
-	    label	"Jitter"
-	    type	float
-	    default	{ "0" }
-	    help	"Amount of random placement variation"
-	    disablewhen	"{ placement_type != 2 }"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "jitter" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"tile_u"
-	    label	"Tile U"
-	    type	toggle
-	    default	{ "0" }
-	    help	"If true there is horizontal tiling"
-	    disablewhen	"{ placement_type != 2 }"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "tile_u" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"tile_v"
-	    label	"Tile V"
-	    type	toggle
-	    default	{ "0" }
-	    help	"If true there is vertical tiling"
-	    disablewhen	"{ placement_type != 2 }"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "tile_v" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"uv_noise_on"
-	    label	"Uv Noise On"
-	    type	toggle
-	    default	{ "0" }
-	    help	"If true the noise is enabled"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "uv_noise_on" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"uv_noise_animate"
-	    label	"Animate Uv Noise"
-	    type	toggle
-	    default	{ "0" }
-	    help	"If true the noise is animated. Use \"UV noise phase\" to animate the noise"
-	    disablewhen	"{ uv_noise_on != 1 }"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "uv_noise_animate" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"uv_noise_amount"
-	    label	"Uv Noise Amount"
-	    type	float
-	    default	{ "1" }
-	    help	"UV noise amount"
-	    disablewhen	"{ uv_noise_on != 1 }"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "uv_noise_amount" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"uv_noise_levels"
-	    label	"Uv Noise Levels"
-	    type	float
-	    default	{ "1" }
-	    help	"UV noise iterations"
-	    disablewhen	"{ uv_noise_on != 1 }"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "uv_noise_levels" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"uv_noise_size"
-	    label	"Uv Noise Size"
-	    type	float
-	    default	{ "1" }
-	    help	"UV noise size"
-	    disablewhen	"{ uv_noise_on != 1 }"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "uv_noise_size" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"un_noise_phase"
-	    label	"Uv Noise Phase"
-	    type	float
-	    default	{ "0" }
-	    help	"UV noise phase"
-	    disablewhen	"{ uv_noise_on != 1 } { uv_noise_animate != 1 }"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "un_noise_phase" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"noise_color1"
-	    label	"Noise Color1"
-	    type	color
-	    size	3
-	    default	{ "0" "0" "0" }
-	    help	"noise color 1"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "noise_color1" }
-	    parmtag	{ "vray_type" "Color" }
-	}
-	parm {
-	    name	"noise_color2"
-	    label	"Noise Color2"
-	    type	color
-	    size	3
-	    default	{ "0" "0" "0" }
-	    help	"noise color 2"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "noise_color2" }
-	    parmtag	{ "vray_type" "Color" }
-	}
-	parm {
-	    name	"noise_color3"
-	    label	"Noise Color3"
-	    type	color
-	    size	3
-	    default	{ "0" "0" "0" }
-	    help	"noise color 3"
-	    disablewhen	"{ lock_edge != 0 }"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "noise_color3" }
-	    parmtag	{ "vray_type" "Color" }
-	}
-	parm {
-	    name	"noise_map1"
-	    label	"Color #1 (map)"
-	    type	color4
-	    size	4
-	    default	{ "0" "0" "0" "0" }
-	    help	"noise map 1"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "noise_map1" }
-	    parmtag	{ "vray_type" "Texture" }
-	}
-	parm {
-	    name	"noise_map2"
-	    label	"Edge Color (map)"
-	    type	color4
-	    size	4
-	    default	{ "0" "0" "0" "0" }
-	    help	"noise map 2"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "noise_map2" }
-	    parmtag	{ "vray_type" "Texture" }
-	}
-	parm {
-	    name	"lock_edge"
-	    label	"Color 2 Same As Edge Color"
-	    type	toggle
-	    default	{ "1" }
-	    help	"lock edge"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "lock_edge" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"noise_map3"
-	    label	"Color #2 (map)"
-	    type	color4
-	    size	4
-	    default	{ "0" "0" "0" "0" }
-	    help	"noise map 3"
-	    disablewhen	"{ lock_edge != 0 }"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "noise_map3" }
-	    parmtag	{ "vray_type" "Texture" }
-	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_enumkeys" "0,1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "compatibility_with" }
+	parmtag	{ "vray_type" "int" }
     }
-
-    group {
-	name	"folder2"
-	label	"Tiling"
-
-	parm {
-	    name	"tile_size"
-	    label	"Size"
-	    type	float
-	    default	{ "25" }
-	    help	"tile size"
-	    range	{ 0 1e+06 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "tile_size" }
-	    parmtag	{ "vray_type" "float" }
+    parm {
+	name	"alpha_from_intensity"
+	label	"Alpha From Intensity"
+	type	ordinal
+	default	{ "2" }
+	help	"If 2 - the alpha is forced to 1.0f; 1 - the resulting alpha is the color intensity (if compatibility_with is 0) or the color luminance (if compatibility_with is 1); 0 - the alpha is taken from the bitmap alpha"
+	menu	{
+	    "Bitmap alpha"	"Bitmap alpha"
+	    "Color intensity/luminance"	"Color intensity/luminance"
+	    "Force opaque"	"Force opaque"
 	}
-	parm {
-	    name	"tile_style"
-	    label	"Style"
-	    type	ordinal
-	    default	{ "2" }
-	    help	"tile style"
-	    menu	{
-		"Custom"	"Custom"
-		"Herringbone"	"Herringbone"
-		"Stack Bond"	"Stack Bond"
-		"Stretcher Bond"	"Stretcher Bond"
-		"Flemish Stretcher Bond"	"Flemish Stretcher Bond"
-		"Common Bond"	"Common Bond"
-		"Flemish Bond"	"Flemish Bond"
-		"Monk Bond"	"Monk Bond"
-		"Flemish Garden Wall Bond"	"Flemish Garden Wall Bond"
-		"English Bond"	"English Bond"
-		"English Cross Bond"	"English Cross Bond"
-		"Double English Cross Bond"	"Double English Cross Bond"
-	    }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7,8,9,10,11" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "tile_style" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"tile_width"
-	    label	"Tile Width"
-	    type	float
-	    default	{ "4" }
-	    help	"tile width"
-	    range	{ 0 1e+06 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "tile_width" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"tile_height"
-	    label	"Tile Height"
-	    type	float
-	    default	{ "2" }
-	    help	"tile height"
-	    disablewhen	"{ tile_style == 1 }"
-	    range	{ 0 1e+06 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "tile_height" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"edge_width"
-	    label	"Edge Width"
-	    type	float
-	    default	{ "0.1" }
-	    help	"edge width"
-	    range	{ 0 1e+06 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "edge_width" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"edge_height"
-	    label	"Edge Height"
-	    type	float
-	    default	{ "0.1" }
-	    help	"edge height"
-	    range	{ 0 1e+06 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "edge_height" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"tile_width2"
-	    label	"Tile Width Variation %"
-	    type	float
-	    default	{ "0" }
-	    help	"tile width 2"
-	    disablewhen	"{ tile_style == 1 }"
-	    range	{ 0 100 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "tile_width2" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"tile_height2"
-	    label	"Tile Height Variation %"
-	    type	float
-	    default	{ "0" }
-	    help	"tile height 2"
-	    disablewhen	"{ tile_style == 1 }"
-	    range	{ 0 100 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "tile_height2" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"edge_width2"
-	    label	"Edge Width Variation %"
-	    type	float
-	    default	{ "0" }
-	    help	"edge width 2"
-	    range	{ 0 100 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "edge_width2" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"edge_height2"
-	    label	"Edge Height Variation %"
-	    type	float
-	    default	{ "0" }
-	    help	"edge height 2"
-	    range	{ 0 100 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "edge_height2" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"soften"
-	    label	"Soften"
-	    type	ordinal
-	    default	{ "2" }
-	    help	"tile soften"
-	    menu	{
-		"None"	"None"
-		"Linear"	"Linear"
-		"Round"	"Round"
-		"Smooth"	"Smooth"
-	    }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_enumkeys" "0,1,2,3" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "soften" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"soften_rad"
-	    label	"Soften Radius"
-	    type	float
-	    default	{ "0.1" }
-	    help	"soften radius"
-	    disablewhen	"{ soften == 0 }"
-	    range	{ 0 1e+06 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "soften_rad" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"round"
-	    label	"Round Corners"
-	    type	toggle
-	    default	{ "1" }
-	    help	"round"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "round" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"round_rad"
-	    label	"Round Radius"
-	    type	float
-	    default	{ "0.3" }
-	    help	"round radius"
-	    disablewhen	"{ round != 1 }"
-	    range	{ 0 1e+06 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "round_rad" }
-	    parmtag	{ "vray_type" "float" }
-	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_enumkeys" "0,1,2" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "alpha_from_intensity" }
+	parmtag	{ "vray_type" "int" }
     }
-
-    group {
-	name	"folder3"
-	label	"Tile UV Mapping"
-
-	parm {
-	    name	"map_uv"
-	    label	"Enable Tile Mapping"
-	    type	toggle
-	    default	{ "1" }
-	    help	"map uv"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "map_uv" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"uv_channel"
-	    label	"Tile Uv Channel"
-	    type	integer
-	    default	{ "1" }
-	    help	"uv channel"
-	    disablewhen	"{ map_uv != 1 }"
-	    range	{ 1 99 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "uv_channel" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"auto"
-	    label	"Auto Scaling"
-	    type	ordinal
-	    default	{ "2" }
-	    help	"auto scaling"
-	    disablewhen	"{ map_uv != 1 }"
-	    menu	{
-		"No auto scale"	"No auto scale"
-		"UV"	"UV"
-		"UV Fit"	"UV Fit"
-		"UV Fit Keep aspect"	"UV Fit Keep aspect"
-		"UV Normalized"	"UV Normalized"
-		"UV Normalized Keep aspect"	"UV Normalized Keep aspect"
-	    }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_enumkeys" "0,1,2,3,4,5" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "auto" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"rand_X"
-	    label	"Random X Offset"
-	    type	float
-	    default	{ "0" }
-	    help	"random X"
-	    disablewhen	"{ map_uv != 1 }"
-	    range	{ 0 1e+06 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "rand_X" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"rand_Y"
-	    label	"Random Y Offset"
-	    type	float
-	    default	{ "0" }
-	    help	"random Y"
-	    disablewhen	"{ map_uv != 1 }"
-	    range	{ 0 1e+06 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "rand_Y" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"rand_SX"
-	    label	"Random X Scale"
-	    type	float
-	    default	{ "0" }
-	    help	"random SX"
-	    disablewhen	"{ map_uv != 1 }"
-	    range	{ 0 1e+06 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "rand_SX" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"rand_SY"
-	    label	"Random Y Scale"
-	    type	float
-	    default	{ "0" }
-	    help	"random SY"
-	    disablewhen	"{ map_uv != 1 } { lock != 0 }"
-	    range	{ 0 1e+06 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "rand_SY" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"lock"
-	    label	"Uniform Scale"
-	    type	toggle
-	    default	{ "1" }
-	    help	"lock"
-	    disablewhen	"{ map_uv != 1 }"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "lock" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"rot_uv"
-	    label	"Random Rotation"
-	    type	ordinal
-	    default	{ "2" }
-	    help	"rotate uv"
-	    disablewhen	"{ map_uv != 1 }"
-	    menu	{
-		"None"	"None"
-		"180 Degrees"	"180 Degrees"
-		"90 Degrees"	"90 Degrees"
-		"Random"	"Random"
-	    }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_enumkeys" "0,1,2,3" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "rot_uv" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"rand_rot"
-	    label	"Degrees"
-	    type	float
-	    default	{ "0" }
-	    help	"random rotation"
-	    disablewhen	"{ map_uv != 1 } { rot_uv != 3 }"
-	    range	{ 0 180 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "rand_rot" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"flip_X"
-	    label	"Random Flip X-axis"
-	    type	toggle
-	    default	{ "1" }
-	    help	"flip X"
-	    disablewhen	"{ map_uv != 1 }"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "flip_X" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"flip_Y"
-	    label	"Random Flip Y-axis"
-	    type	toggle
-	    default	{ "1" }
-	    help	"flip Y"
-	    disablewhen	"{ map_uv != 1 }"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "flip_Y" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"center"
-	    label	"Center Uv Mapping"
-	    type	toggle
-	    default	{ "1" }
-	    help	"center"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "center" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"center_channel"
-	    label	"Center Uv Channel"
-	    type	integer
-	    default	{ "1" }
-	    help	"center channel"
-	    disablewhen	"{ center != 1 }"
-	    range	{ 1 99 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "center_channel" }
-	    parmtag	{ "vray_type" "int" }
-	}
-	parm {
-	    name	"rand_Z"
-	    label	"Randomize Multitexture And Bercongradient"
-	    type	toggle
-	    default	{ "1" }
-	    help	"random Z"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "rand_Z" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
+    parm {
+	name	"invert"
+	label	"Invert"
+	type	toggle
+	default	{ "0" }
+	help	"If true, the resulting texture color will be inverted"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "invert" }
+	parmtag	{ "vray_type" "boolean" }
     }
-
-    group {
-	name	"folder4"
-	label	"Custom Bond"
-
-	parm {
-	    name	"pattern"
-	    label	"Pattern"
-	    type	string
-	    default	{ "0,1,1/.5,.5,1" }
-	    help	"offset, height, width1, width2, ... / offset, height, width1 ... Negative offset will be multiplied by row number try: -.25,1,1"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "pattern" }
-	    parmtag	{ "vray_type" "String" }
-	}
+    parm {
+	name	"invert_alpha"
+	label	"Invert Alpha"
+	type	toggle
+	default	{ "1" }
+	help	"If true and invert is on, the resulting texture alpha will be inverted too. If false, just the color will be inverted"
+	disablewhen	"{ invert != 1 }"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "invert_alpha" }
+	parmtag	{ "vray_type" "boolean" }
     }
-
-    group {
-	name	"folder5"
-	label	"Distortion"
-
-	parm {
-	    name	"use_dist"
-	    label	"Use Distortion"
-	    type	toggle
-	    default	{ "0" }
-	    help	"use distortion"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "use_dist" }
-	    parmtag	{ "vray_type" "boolean" }
-	}
-	parm {
-	    name	"dist_str"
-	    label	"Strength"
-	    type	float
-	    default	{ "0.1" }
-	    help	"distortion strength"
-	    disablewhen	"{ use_dist != 1 }"
-	    range	{ 0 1000 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "dist_str" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"dist_map"
-	    label	"Distortion (map)"
-	    type	color4
-	    size	4
-	    default	{ "0" "0" "0" "0" }
-	    help	"distortion map - works similarly to a bump map, solid colors have no effect"
-	    disablewhen	"{ use_dist != 1 }"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "dist_map" }
-	    parmtag	{ "vray_type" "Texture" }
-	}
-	parm {
-	    name	"dist_map2"
-	    label	"Distortion Strength (map)"
-	    type	color4
-	    size	4
-	    default	{ "0" "0" "0" "0" }
-	    help	"texture for distortion strength"
-	    disablewhen	"{ use_dist != 1 }"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "dist_map2" }
-	    parmtag	{ "vray_type" "Texture" }
-	}
+    parm {
+	name	"color_mult"
+	label	"Color Mult"
+	type	color4
+	size	4
+	default	{ "1" "1" "1" "1" }
+	help	"A multiplier for the texture color"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "color_mult" }
+	parmtag	{ "vray_type" "Texture" }
     }
-
-    group {
-	name	"folder6"
-	label	"Map parameters"
-
-	parm {
-	    name	"tex_soften_rad"
-	    label	"Soften Radius (map)"
-	    type	color4
-	    size	4
-	    default	{ "0" "0" "0" "0" }
-	    help	"texture for soften radius"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "tex_soften_rad" }
-	    parmtag	{ "vray_type" "Texture" }
-	}
-	parm {
-	    name	"tex_round_rad"
-	    label	"Round Radius (map)"
-	    type	color4
-	    size	4
-	    default	{ "0" "0" "0" "0" }
-	    help	"texture for round radius"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "TexBerconTile" }
-	    parmtag	{ "vray_pluginattr" "tex_round_rad" }
-	    parmtag	{ "vray_type" "Texture" }
-	}
+    parm {
+	name	"color_offset"
+	label	"Color Offset"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "0" }
+	help	"An additional offset for the texture color"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "color_offset" }
+	parmtag	{ "vray_type" "Texture" }
     }
-
+    parm {
+	name	"alpha_mult"
+	label	"Alpha Mult"
+	type	float
+	default	{ "1" }
+	help	"A multiplier for the texture alpha"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "alpha_mult" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"alpha_offset"
+	label	"Alpha Offset"
+	type	float
+	default	{ "0" }
+	help	"An additional offset for the texture alpha"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "alpha_offset" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"nouvw_color"
+	label	"No Uvs Color"
+	type	color4
+	size	4
+	default	{ "0.5" "0.5" "0.5" "1" }
+	help	"The color when there are no valid uvw coordinates"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "nouvw_color" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"placement_type"
+	label	"Placement Type"
+	type	ordinal
+	default	{ "2" }
+	help	"The way the valid portion of the texture is applied: 0 - the whole texture is valid, 1 - crop, 2 -place"
+	menu	{
+	    "Whole texture is valid"	"Whole texture is valid"
+	    "Crop"	"Crop"
+	    "Place"	"Place"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_enumkeys" "0,1,2" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "placement_type" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"u"
+	label	"U"
+	type	float
+	default	{ "0" }
+	help	"U coordinate of the valid texture sector"
+	disablewhen	"{ placement_type != 1 placement_type != 2 }"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "u" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"v"
+	label	"V"
+	type	float
+	default	{ "0" }
+	help	"V coordinate of the valid texture sector"
+	disablewhen	"{ placement_type != 1 placement_type != 2 }"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "v" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"w"
+	label	"W"
+	type	float
+	default	{ "1" }
+	help	"Width of the valid texture sector"
+	disablewhen	"{ placement_type != 1 placement_type != 2 }"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "w" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"h"
+	label	"H"
+	type	float
+	default	{ "1" }
+	help	"Height of the valid texture sector"
+	disablewhen	"{ placement_type != 1 placement_type != 2 }"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "h" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"jitter"
+	label	"Jitter"
+	type	float
+	default	{ "0" }
+	help	"Amount of random placement variation"
+	disablewhen	"{ placement_type != 2 }"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "jitter" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"tile_u"
+	label	"Tile U"
+	type	toggle
+	default	{ "0" }
+	help	"If true there is horizontal tiling"
+	disablewhen	"{ placement_type != 2 }"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "tile_u" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"tile_v"
+	label	"Tile V"
+	type	toggle
+	default	{ "0" }
+	help	"If true there is vertical tiling"
+	disablewhen	"{ placement_type != 2 }"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "tile_v" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"uv_noise_on"
+	label	"Uv Noise On"
+	type	toggle
+	default	{ "0" }
+	help	"If true the noise is enabled"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "uv_noise_on" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"uv_noise_animate"
+	label	"Animate Uv Noise"
+	type	toggle
+	default	{ "0" }
+	help	"If true the noise is animated. Use \"UV noise phase\" to animate the noise"
+	disablewhen	"{ uv_noise_on != 1 }"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "uv_noise_animate" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"uv_noise_amount"
+	label	"Uv Noise Amount"
+	type	float
+	default	{ "1" }
+	help	"UV noise amount"
+	disablewhen	"{ uv_noise_on != 1 }"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "uv_noise_amount" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"uv_noise_levels"
+	label	"Uv Noise Levels"
+	type	float
+	default	{ "1" }
+	help	"UV noise iterations"
+	disablewhen	"{ uv_noise_on != 1 }"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "uv_noise_levels" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"uv_noise_size"
+	label	"Uv Noise Size"
+	type	float
+	default	{ "1" }
+	help	"UV noise size"
+	disablewhen	"{ uv_noise_on != 1 }"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "uv_noise_size" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"un_noise_phase"
+	label	"Uv Noise Phase"
+	type	float
+	default	{ "0" }
+	help	"UV noise phase"
+	disablewhen	"{ uv_noise_on != 1 } { uv_noise_animate != 1 }"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "un_noise_phase" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"noise_color1"
+	label	"Noise Color1"
+	type	color
+	size	3
+	default	{ "0" "0" "0" }
+	help	"noise color 1"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "noise_color1" }
+	parmtag	{ "vray_type" "Color" }
+    }
+    parm {
+	name	"noise_color2"
+	label	"Noise Color2"
+	type	color
+	size	3
+	default	{ "0" "0" "0" }
+	help	"noise color 2"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "noise_color2" }
+	parmtag	{ "vray_type" "Color" }
+    }
+    parm {
+	name	"noise_color3"
+	label	"Noise Color3"
+	type	color
+	size	3
+	default	{ "0" "0" "0" }
+	help	"noise color 3"
+	disablewhen	"{ lock_edge != 0 }"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "noise_color3" }
+	parmtag	{ "vray_type" "Color" }
+    }
+    parm {
+	name	"noise_map1"
+	label	"Color #1 (map)"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "0" }
+	help	"noise map 1"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "noise_map1" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"noise_map2"
+	label	"Edge Color (map)"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "0" }
+	help	"noise map 2"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "noise_map2" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"lock_edge"
+	label	"Color 2 Same As Edge Color"
+	type	toggle
+	default	{ "1" }
+	help	"lock edge"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "lock_edge" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"noise_map3"
+	label	"Color #2 (map)"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "0" }
+	help	"noise map 3"
+	disablewhen	"{ lock_edge != 0 }"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "noise_map3" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"tile_size"
+	label	"Size"
+	type	float
+	default	{ "25" }
+	help	"tile size"
+	range	{ 0 1e+06 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "tile_size" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"tile_style"
+	label	"Style"
+	type	ordinal
+	default	{ "2" }
+	help	"tile style"
+	menu	{
+	    "Custom"	"Custom"
+	    "Herringbone"	"Herringbone"
+	    "Stack Bond"	"Stack Bond"
+	    "Stretcher Bond"	"Stretcher Bond"
+	    "Flemish Stretcher Bond"	"Flemish Stretcher Bond"
+	    "Common Bond"	"Common Bond"
+	    "Flemish Bond"	"Flemish Bond"
+	    "Monk Bond"	"Monk Bond"
+	    "Flemish Garden Wall Bond"	"Flemish Garden Wall Bond"
+	    "English Bond"	"English Bond"
+	    "English Cross Bond"	"English Cross Bond"
+	    "Double English Cross Bond"	"Double English Cross Bond"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7,8,9,10,11" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "tile_style" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"tile_width"
+	label	"Tile Width"
+	type	float
+	default	{ "4" }
+	help	"tile width"
+	range	{ 0 1e+06 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "tile_width" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"tile_height"
+	label	"Tile Height"
+	type	float
+	default	{ "2" }
+	help	"tile height"
+	disablewhen	"{ tile_style == 1 }"
+	range	{ 0 1e+06 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "tile_height" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"edge_width"
+	label	"Edge Width"
+	type	float
+	default	{ "0.1" }
+	help	"edge width"
+	range	{ 0 1e+06 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "edge_width" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"edge_height"
+	label	"Edge Height"
+	type	float
+	default	{ "0.1" }
+	help	"edge height"
+	range	{ 0 1e+06 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "edge_height" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"tile_width2"
+	label	"Tile Width Variation %"
+	type	float
+	default	{ "0" }
+	help	"tile width 2"
+	disablewhen	"{ tile_style == 1 }"
+	range	{ 0 100 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "tile_width2" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"tile_height2"
+	label	"Tile Height Variation %"
+	type	float
+	default	{ "0" }
+	help	"tile height 2"
+	disablewhen	"{ tile_style == 1 }"
+	range	{ 0 100 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "tile_height2" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"edge_width2"
+	label	"Edge Width Variation %"
+	type	float
+	default	{ "0" }
+	help	"edge width 2"
+	range	{ 0 100 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "edge_width2" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"edge_height2"
+	label	"Edge Height Variation %"
+	type	float
+	default	{ "0" }
+	help	"edge height 2"
+	range	{ 0 100 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "edge_height2" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"soften"
+	label	"Soften"
+	type	ordinal
+	default	{ "2" }
+	help	"tile soften"
+	menu	{
+	    "None"	"None"
+	    "Linear"	"Linear"
+	    "Round"	"Round"
+	    "Smooth"	"Smooth"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_enumkeys" "0,1,2,3" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "soften" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"soften_rad"
+	label	"Soften Radius"
+	type	float
+	default	{ "0.1" }
+	help	"soften radius"
+	disablewhen	"{ soften == 0 }"
+	range	{ 0 1e+06 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "soften_rad" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"round"
+	label	"Round Corners"
+	type	toggle
+	default	{ "1" }
+	help	"round"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "round" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"round_rad"
+	label	"Round Radius"
+	type	float
+	default	{ "0.3" }
+	help	"round radius"
+	disablewhen	"{ round != 1 }"
+	range	{ 0 1e+06 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "round_rad" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"map_uv"
+	label	"Enable Tile Mapping"
+	type	toggle
+	default	{ "1" }
+	help	"map uv"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "map_uv" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"uv_channel"
+	label	"Tile Uv Channel"
+	type	integer
+	default	{ "1" }
+	help	"uv channel"
+	disablewhen	"{ map_uv != 1 }"
+	range	{ 1 99 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "uv_channel" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"auto"
+	label	"Auto Scaling"
+	type	ordinal
+	default	{ "2" }
+	help	"auto scaling"
+	disablewhen	"{ map_uv != 1 }"
+	menu	{
+	    "No auto scale"	"No auto scale"
+	    "UV"	"UV"
+	    "UV Fit"	"UV Fit"
+	    "UV Fit Keep aspect"	"UV Fit Keep aspect"
+	    "UV Normalized"	"UV Normalized"
+	    "UV Normalized Keep aspect"	"UV Normalized Keep aspect"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "auto" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"rand_X"
+	label	"Random X Offset"
+	type	float
+	default	{ "0" }
+	help	"random X"
+	disablewhen	"{ map_uv != 1 }"
+	range	{ 0 1e+06 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "rand_X" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"rand_Y"
+	label	"Random Y Offset"
+	type	float
+	default	{ "0" }
+	help	"random Y"
+	disablewhen	"{ map_uv != 1 }"
+	range	{ 0 1e+06 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "rand_Y" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"rand_SX"
+	label	"Random X Scale"
+	type	float
+	default	{ "0" }
+	help	"random SX"
+	disablewhen	"{ map_uv != 1 }"
+	range	{ 0 1e+06 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "rand_SX" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"rand_SY"
+	label	"Random Y Scale"
+	type	float
+	default	{ "0" }
+	help	"random SY"
+	disablewhen	"{ map_uv != 1 } { lock != 0 }"
+	range	{ 0 1e+06 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "rand_SY" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"lock"
+	label	"Uniform Scale"
+	type	toggle
+	default	{ "1" }
+	help	"lock"
+	disablewhen	"{ map_uv != 1 }"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "lock" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"rot_uv"
+	label	"Random Rotation"
+	type	ordinal
+	default	{ "2" }
+	help	"rotate uv"
+	disablewhen	"{ map_uv != 1 }"
+	menu	{
+	    "None"	"None"
+	    "180 Degrees"	"180 Degrees"
+	    "90 Degrees"	"90 Degrees"
+	    "Random"	"Random"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_enumkeys" "0,1,2,3" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "rot_uv" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"rand_rot"
+	label	"Degrees"
+	type	float
+	default	{ "0" }
+	help	"random rotation"
+	disablewhen	"{ map_uv != 1 } { rot_uv != 3 }"
+	range	{ 0 180 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "rand_rot" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"flip_X"
+	label	"Random Flip X-axis"
+	type	toggle
+	default	{ "1" }
+	help	"flip X"
+	disablewhen	"{ map_uv != 1 }"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "flip_X" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"flip_Y"
+	label	"Random Flip Y-axis"
+	type	toggle
+	default	{ "1" }
+	help	"flip Y"
+	disablewhen	"{ map_uv != 1 }"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "flip_Y" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"center"
+	label	"Center Uv Mapping"
+	type	toggle
+	default	{ "1" }
+	help	"center"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "center" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"center_channel"
+	label	"Center Uv Channel"
+	type	integer
+	default	{ "1" }
+	help	"center channel"
+	disablewhen	"{ center != 1 }"
+	range	{ 1 99 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "center_channel" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"rand_Z"
+	label	"Randomize Multitexture And Bercongradient"
+	type	toggle
+	default	{ "1" }
+	help	"random Z"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "rand_Z" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"pattern"
+	label	"Pattern"
+	type	string
+	default	{ "0,1,1/.5,.5,1" }
+	help	"offset, height, width1, width2, ... / offset, height, width1 ... Negative offset will be multiplied by row number try: -.25,1,1"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "pattern" }
+	parmtag	{ "vray_type" "String" }
+    }
+    parm {
+	name	"use_dist"
+	label	"Use Distortion"
+	type	toggle
+	default	{ "0" }
+	help	"use distortion"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "use_dist" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"dist_str"
+	label	"Strength"
+	type	float
+	default	{ "0.1" }
+	help	"distortion strength"
+	disablewhen	"{ use_dist != 1 }"
+	range	{ 0 1000 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "dist_str" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"dist_map"
+	label	"Distortion (map)"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "0" }
+	help	"distortion map - works similarly to a bump map, solid colors have no effect"
+	disablewhen	"{ use_dist != 1 }"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "dist_map" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"dist_map2"
+	label	"Distortion Strength (map)"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "0" }
+	help	"texture for distortion strength"
+	disablewhen	"{ use_dist != 1 }"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "dist_map2" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"tex_soften_rad"
+	label	"Soften Radius (map)"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "0" }
+	help	"texture for soften radius"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "tex_soften_rad" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"tex_round_rad"
+	label	"Round Radius (map)"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "0" }
+	help	"texture for round radius"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexBerconTile" }
+	parmtag	{ "vray_pluginattr" "tex_round_rad" }
+	parmtag	{ "vray_type" "Texture" }
+    }
 }

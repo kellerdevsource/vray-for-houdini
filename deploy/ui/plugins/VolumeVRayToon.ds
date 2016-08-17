@@ -193,50 +193,44 @@
 	parmtag	{ "vray_pluginattr" "excludeList" }
 	parmtag	{ "vray_type" "List<Object>" }
     }
-    group {
-	name	"folder"
-	label	"V-Ray Toon"
-
-	parm {
-	    name	"lineColor"
-	    label	"Line Color"
-	    type	color
-	    size	3
-	    default	{ "0" "0" "0" }
-	    help	"The color of the cartoon line"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "VolumeVRayToon" }
-	    parmtag	{ "vray_pluginattr" "lineColor" }
-	    parmtag	{ "vray_type" "Color" }
-	}
-	parm {
-	    name	"lineWidth"
-	    label	"Line Width"
-	    type	float
-	    default	{ "1.5" }
-	    help	"Cartoon line width"
-	    range	{ 0 10 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "VolumeVRayToon" }
-	    parmtag	{ "vray_pluginattr" "lineWidth" }
-	    parmtag	{ "vray_type" "float" }
-	}
-	parm {
-	    name	"opacity"
-	    label	"Opacity"
-	    type	float
-	    default	{ "1" }
-	    help	"Opacity of the cartoon line"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_plugin" "VolumeVRayToon" }
-	    parmtag	{ "vray_pluginattr" "opacity" }
-	    parmtag	{ "vray_type" "float" }
-	}
+    parm {
+	name	"lineColor"
+	label	"Line Color"
+	type	color
+	size	3
+	default	{ "0" "0" "0" }
+	help	"The color of the cartoon line"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "VolumeVRayToon" }
+	parmtag	{ "vray_pluginattr" "lineColor" }
+	parmtag	{ "vray_type" "Color" }
     }
-
+    parm {
+	name	"lineWidth"
+	label	"Line Width"
+	type	float
+	default	{ "1.5" }
+	help	"Cartoon line width"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "VolumeVRayToon" }
+	parmtag	{ "vray_pluginattr" "lineWidth" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"opacity"
+	label	"Opacity"
+	type	float
+	default	{ "1" }
+	help	"Opacity of the cartoon line"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "VolumeVRayToon" }
+	parmtag	{ "vray_pluginattr" "opacity" }
+	parmtag	{ "vray_type" "float" }
+    }
 }
