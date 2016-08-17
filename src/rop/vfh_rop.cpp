@@ -14,7 +14,6 @@
 #include "vfh_prm_json.h"
 #include "vfh_prm_def.h"
 #include "vfh_prm_templates.h"
-#include "vfh_ui.h"
 #include "vfh_hou_utils.h"
 
 #include <ROP/ROP_Templates.h>

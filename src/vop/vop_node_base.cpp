@@ -29,14 +29,7 @@ bool VOP::NodeBase::hasPluginInfo() const
 
 bool VOP::NodeBase::updateParmsFlags()
 {
-	// Log::getLog().info("VOP::NodeBase::updateParmsFlags()\n");
-	// TODO: Hide / disable color attribute if texture is set
-	// NOTE: Input connections doesn't call this
-
 	bool changed = VOP_Node::updateParmsFlags();
-
-	UI::ActiveStateDeps::activateElements(pluginID, *this, changed);
-
 	return changed;
 }
 
