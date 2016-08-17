@@ -19,8 +19,8 @@ namespace Parm {
 
 VRayPluginInfo *generatePluginInfo(const std::string &pluginID);
 
-std::shared_ptr< Parm::PRMList > generatePrmTemplate(const std::string &pluginID);
-PRM_Template*                    getPrmTemplate(const std::string &pluginID);
+PRMList*        generatePrmTemplate(const std::string &pluginID);
+PRM_Template*   getPrmTemplate(const std::string &pluginID);
 
 } // namespace Parm
 } // namespace VRayForHoudini

@@ -587,47 +587,43 @@ VRayPluginInfo* Parm::generatePluginInfo(const std::string &pluginID)
 }
 
 
-std::shared_ptr< Parm::PRMList > Parm::generatePrmTemplate(const std::string &pluginID)
+Parm::PRMList* Parm::generatePrmTemplate(const std::string &pluginID)
 {
-	typedef std::unordered_map< std::string, std::shared_ptr< PRMList > > PRMListMap;
+	typedef std::unordered_map< std::string, PRMList > PRMListMap;
 	static PRMListMap prmListMap;
 
 	if (prmListMap.count(pluginID) == 0) {
-		std::shared_ptr< PRMList > &prmList = prmListMap[pluginID];
-		if (!prmList) {
-			prmList = std::make_shared< PRMList >();
+		PRMList &prmList = prmListMap[pluginID];
+
+		if (pluginID == "BRDFLayered") {
+			VOP::BRDFLayered::addPrmTemplate(prmList);
+		}
+		else if (pluginID == "TexLayered") {
+			VOP::TexLayered::addPrmTemplate(prmList);
+		}
+		else if (pluginID == "MtlMulti") {
+			VOP::MtlMulti::addPrmTemplate(prmList);
+		}
+		else if (pluginID == "GeomPlane") {
+			SOP::GeomPlane::addPrmTemplate(prmList);
+		}
+		else if (pluginID == "GeomMeshFile") {
+			SOP::VRayProxy::addPrmTemplate(prmList);
 		}
 
-		if (prmList) {
-			if (pluginID == "BRDFLayered") {
-				VOP::BRDFLayered::addPrmTemplate(*prmList);
-			}
-			else if (pluginID == "TexLayered") {
-				VOP::TexLayered::addPrmTemplate(*prmList);
-			}
-			else if (pluginID == "MtlMulti") {
-				VOP::MtlMulti::addPrmTemplate(*prmList);
-			}
-			else if (pluginID == "GeomPlane") {
-				SOP::GeomPlane::addPrmTemplate(*prmList);
-			}
-			else if (pluginID == "GeomMeshFile") {
-				SOP::VRayProxy::addPrmTemplate(*prmList);
-			}
+		static boost::format dspath("plugins/%s.ds");
+		std::string dsfullpath = PRMList::expandUiPath( boost::str(dspath % pluginID) );
 
-			static boost::format dspath("plugins/%s.ds");
-			std::string dsfullpath = PRMList::expandUiPath( boost::str(dspath % pluginID) );
-
-			prmList->addFromFile(dsfullpath.c_str());
-		}
+		prmList.addFromFile(dsfullpath.c_str());
 	}
 
-	return prmListMap.at(pluginID);
+	PRMList &prmList = prmListMap.at(pluginID);
+	return &prmList;
 }
 
 
 PRM_Template* Parm::getPrmTemplate(const std::string &pluginID)
 {
-	std::shared_ptr< Parm::PRMList > prmList = generatePrmTemplate(pluginID);
+	Parm::PRMList *prmList = generatePrmTemplate(pluginID);
 	return (prmList)? prmList->getPRMTemplate() : nullptr;
 }
