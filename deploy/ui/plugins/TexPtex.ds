@@ -136,7 +136,7 @@
 	type	float
 	default	{ "1" }
 	help	"width parameter used for filtering"
-	disablewhen	"{ filter_type == 0 }"
+	disablewhen	"{ filter_type == \"No filtering\" }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -150,7 +150,7 @@
 	type	float
 	default	{ "0" }
 	help	"blur parameter used for filtering"
-	disablewhen	"{ filter_type == 0 }"
+	disablewhen	"{ filter_type == \"No filtering\" }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -178,7 +178,7 @@
 	type	toggle
 	default	{ "0" }
 	help	"Interpolation between mipmap levels"
-	disablewhen	"{ filter_type == 0 }"
+	disablewhen	"{ filter_type == \"No filtering\" }"
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -337,7 +337,7 @@
 	label	"Gamma"
 	type	float
 	default	{ "1" }
-	disablewhen	"{ color_space != 1 }"
+	disablewhen	"{ color_space != \"Gamma Corrected\" }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -379,7 +379,7 @@
 	type	toggle
 	default	{ "1" }
 	help	"Allow anisotropic texture filtering"
-	disablewhen	"{ filter_type == 0 }"
+	disablewhen	"{ filter_type == \"No filtering\" }"
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }

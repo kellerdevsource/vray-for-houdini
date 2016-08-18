@@ -37,7 +37,7 @@
 	label	"Filter Blur"
 	type	float
 	default	{ "1" }
-	disablewhen	"{ filter_type == 0 }"
+	disablewhen	"{ filter_type == None }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -69,7 +69,7 @@
 	label	"Gamma"
 	type	float
 	default	{ "1" }
-	disablewhen	"{ color_space != 1 }"
+	disablewhen	"{ color_space != \"Gamma corrected\" }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }

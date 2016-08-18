@@ -128,7 +128,7 @@
 	size	4
 	default	{ "0" "0" "0" "0" }
 	help	"Surface Texture"
-	disablewhen	"{ sarg != 0 }"
+	disablewhen	"{ sarg != Texture }"
 	range	{ 0 10 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -400,7 +400,7 @@
 	label	"Diffuse Multiplier"
 	type	float
 	default	{ "1" }
-	disablewhen	"{ noscatter == 0 }"
+	disablewhen	"{ noscatter == Enabled }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -434,7 +434,7 @@
 	type	float
 	default	{ "0.5" }
 	help	"Simple Smoke Factor"
-	disablewhen	"{ targ != 0 }"
+	disablewhen	"{ targ != Smoke }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -591,7 +591,7 @@
 	type	integer
 	default	{ "10" }
 	help	"Max GI bounces"
-	disablewhen	"{ noscatter != 0 }"
+	disablewhen	"{ noscatter != Enabled }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -709,7 +709,7 @@
 	label	"Modulate With Texture"
 	type	toggle
 	default	{ "0" }
-	disablewhen	"{ earg == 0 } { earg == 4 }"
+	disablewhen	"{ earg == Disabled } { earg == Texture }"
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -757,7 +757,7 @@
 	label	"Input Offset"
 	type	float
 	default	{ "0" }
-	disablewhen	"{ earg == 0 } { earg == 4 } { earg == 5 }"
+	disablewhen	"{ earg == Disabled } { earg == Texture } { earg == 5 }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -770,7 +770,7 @@
 	label	"Input Scale"
 	type	float
 	default	{ "1" }
-	disablewhen	"{ earg == 0 } { earg == 4 } { earg == 5 }"
+	disablewhen	"{ earg == Disabled } { earg == Texture } { earg == 5 }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -784,7 +784,7 @@
 	type	float
 	default	{ "1" }
 	help	"multiplier for the emission color"
-	disablewhen	"{ earg == 0 } { earg == 5 }"
+	disablewhen	"{ earg == Disabled } { earg == 5 }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -806,7 +806,7 @@
 	label	"Modulate With Texture"
 	type	toggle
 	default	{ "0" }
-	disablewhen	"{ darg == 0 } { darg == 4 }"
+	disablewhen	"{ darg == Disabled } { darg == Texture }"
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -855,7 +855,7 @@
 	label	"Input Offset"
 	type	float
 	default	{ "0" }
-	disablewhen	"{ darg == 0 } { darg == 4 } { darg == 5 } { darg == 6 }"
+	disablewhen	"{ darg == Disabled } { darg == Texture } { darg == Color } { darg == 6 }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -868,7 +868,7 @@
 	label	"Input Scale"
 	type	float
 	default	{ "1" }
-	disablewhen	"{ darg == 0 } { darg == 4 } { darg == 5 } { darg == 6 }"
+	disablewhen	"{ darg == Disabled } { darg == Texture } { darg == Color } { darg == 6 }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -883,7 +883,7 @@
 	size	4
 	default	{ "0.2" "0.2" "0.2" "1" }
 	help	"Simple Color"
-	disablewhen	"{ darg != 5 }"
+	disablewhen	"{ darg != Color }"
 	range	{ 0 10 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -896,7 +896,7 @@
 	label	"Modulate With Texture"
 	type	toggle
 	default	{ "0" }
-	disablewhen	"{ targ == 4 }"
+	disablewhen	"{ targ == Texture }"
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -944,7 +944,7 @@
 	label	"Input Offset"
 	type	float
 	default	{ "0" }
-	disablewhen	"{ targ == 0 } { targ == 4 }"
+	disablewhen	"{ targ == Smoke } { targ == Texture }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -957,7 +957,7 @@
 	label	"Input Scale"
 	type	float
 	default	{ "1" }
-	disablewhen	"{ targ == 0 } { targ == 4 }"
+	disablewhen	"{ targ == Smoke } { targ == Texture }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -1646,7 +1646,7 @@
 	label	"Own Light Scatter Mult"
 	type	float
 	default	{ "1" }
-	disablewhen	"{ noscatter != 2 noscatter != 3 }"
+	disablewhen	"{ noscatter != Analytic noscatter != \"Analytic + Shadows\" }"
 	range	{ 0 10 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -1659,7 +1659,7 @@
 	label	"External Scatter Mult"
 	type	float
 	default	{ "1" }
-	disablewhen	"{ noscatter != 2 noscatter != 3 }"
+	disablewhen	"{ noscatter != Analytic noscatter != \"Analytic + Shadows\" }"
 	range	{ 0 10 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -1757,7 +1757,7 @@
 	type	float
 	default	{ "1" }
 	help	"multiplier for the emission alpha if fire_opacity_mode > 0 is true"
-	disablewhen	"{ earg == 0 } { earg == 5 } { fire_opacity_mode == 0 }"
+	disablewhen	"{ earg == Disabled } { earg == 5 } { fire_opacity_mode == \"Use Diffuse Opacity\" }"
 	range	{ 0 100 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -1784,7 +1784,7 @@
 	type	integer
 	default	{ "0" }
 	help	"if true, the emission will be multiplied by a constant alpha factor"
-	disablewhen	"{ earg == 0 }"
+	disablewhen	"{ earg == Disabled }"
 	menu	{
 	    "Use Diffuse Opacity"	"Use Diffuse Opacity"
 	    "Fully Visible"	"Fully Visible"
@@ -1830,7 +1830,7 @@
 	label	"Opacity Scale"
 	type	float
 	default	{ "1" }
-	disablewhen	"{ targ == 0 } { targ == 4 }"
+	disablewhen	"{ targ == Smoke } { targ == Texture }"
 	range	{ 0 10 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }

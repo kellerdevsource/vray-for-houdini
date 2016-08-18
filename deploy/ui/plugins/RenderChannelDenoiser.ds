@@ -99,7 +99,7 @@
 	type	float
 	default	{ "10" }
 	help	"Specifies pixel radius for denoising"
-	disablewhen	"{ preset != 3 }"
+	disablewhen	"{ preset != Custom }"
 	range	{ 0 10 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -113,7 +113,7 @@
 	type	float
 	default	{ "1" }
 	help	"Denoiser strength, a multiplier for the noise level render element from V-Ray"
-	disablewhen	"{ preset != 3 }"
+	disablewhen	"{ preset != Custom }"
 	range	{ 0 10 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }

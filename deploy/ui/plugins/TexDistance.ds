@@ -205,7 +205,6 @@
 	size	4
 	default	{ "1" "1" "1" "1" }
 	help	"The color returned by the texture for points that are at a distance greater than the radius parameter from the specified objects."
-	disablewhen	"{ inside_separate != 0 outside_separate != 0 inside_solid != 0 outside_solid != 0 }"
 	range	{ 0 10 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }

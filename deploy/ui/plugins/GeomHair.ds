@@ -406,7 +406,7 @@
 	type	integer
 	default	{ "0" }
 	help	"Material ID of the faces of the mesh. This is only valid if the placement is by material ID"
-	disablewhen	"{ placement != 2 }"
+	disablewhen	"{ placement != \"Material ID\" }"
 	range	{ 0 10 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }

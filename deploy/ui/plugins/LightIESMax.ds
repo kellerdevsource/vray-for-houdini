@@ -445,7 +445,7 @@
 	type	float
 	default	{ "0" }
 	help	"Light shape width (in metres)"
-	hidewhen	"{ ies_light_shape == -1 } { ies_light_shape == 0 } { ies_light_shape != 1 ies_light_shape != 6 ies_light_shape != 7 ies_light_shape != 8 ies_light_shape != 9 ies_light_shape != 10 }"
+	hidewhen	"{ ies_light_shape == \"From File\" } { ies_light_shape == Point } { ies_light_shape != Rectangular ies_light_shape != \"Horizontal Cylinder Oriented Along Lum. Width\" ies_light_shape != \"Ellipse Oriented Along Luminaire Length\" ies_light_shape != \"Ellipse Oriented Along Luminaire Width\" ies_light_shape != \"Ellipsoid Oriented Along Luminaire Length\" ies_light_shape != \"Ellipsoid Oriented Along Luminaire Width\" }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -459,7 +459,7 @@
 	type	float
 	default	{ "0" }
 	help	"Light shape length (in metres)"
-	hidewhen	"{ ies_light_shape == -1 } { ies_light_shape == 0 } { ies_light_shape != 1 ies_light_shape != 5 ies_light_shape != 7 ies_light_shape != 8 ies_light_shape != 9 ies_light_shape != 10 }"
+	hidewhen	"{ ies_light_shape == \"From File\" } { ies_light_shape == Point } { ies_light_shape != Rectangular ies_light_shape != \"Horizontal Cylinder Oriented Along Lum. Length\" ies_light_shape != \"Ellipse Oriented Along Luminaire Length\" ies_light_shape != \"Ellipse Oriented Along Luminaire Width\" ies_light_shape != \"Ellipsoid Oriented Along Luminaire Length\" ies_light_shape != \"Ellipsoid Oriented Along Luminaire Width\" }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -473,7 +473,7 @@
 	type	float
 	default	{ "0" }
 	help	"Light shape height (in metres)"
-	hidewhen	"{ ies_light_shape == -1 } { ies_light_shape == 0 } { ies_light_shape != 1 ies_light_shape != 6 ies_light_shape != 7 ies_light_shape != 8 ies_light_shape != 9 ies_light_shape != 10 }"
+	hidewhen	"{ ies_light_shape == \"From File\" } { ies_light_shape == Point } { ies_light_shape != Rectangular ies_light_shape != \"Horizontal Cylinder Oriented Along Lum. Width\" ies_light_shape != \"Ellipse Oriented Along Luminaire Length\" ies_light_shape != \"Ellipse Oriented Along Luminaire Width\" ies_light_shape != \"Ellipsoid Oriented Along Luminaire Length\" ies_light_shape != \"Ellipsoid Oriented Along Luminaire Width\" }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -487,7 +487,7 @@
 	type	float
 	default	{ "0" }
 	help	"Light shape diameter (in metres)"
-	hidewhen	"{ ies_light_shape == -1 } { ies_light_shape == 0 } { ies_light_shape != 2 ies_light_shape != 3 ies_light_shape != 4 ies_light_shape != 5 ies_light_shape != 6 }"
+	hidewhen	"{ ies_light_shape == \"From File\" } { ies_light_shape == Point } { ies_light_shape != Circular ies_light_shape != Sphere ies_light_shape != \"Vertical cylinder\" ies_light_shape != \"Horizontal Cylinder Oriented Along Lum. Length\" ies_light_shape != \"Horizontal Cylinder Oriented Along Lum. Width\" }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }

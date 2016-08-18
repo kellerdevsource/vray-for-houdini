@@ -52,7 +52,7 @@
 	size	4
 	default	{ "0" "0" "0" "0" }
 	help	"The texture for the Y axis"
-	disablewhen	"{ texture_mode != 1 }"
+	disablewhen	"{ texture_mode != \"Different Texture On Each Axis\" }"
 	range	{ 0 10 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -68,7 +68,7 @@
 	size	4
 	default	{ "0" "0" "0" "0" }
 	help	"The texture for the Z axis"
-	disablewhen	"{ texture_mode != 1 }"
+	disablewhen	"{ texture_mode != \"Different Texture On Each Axis\" }"
 	range	{ 0 10 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }

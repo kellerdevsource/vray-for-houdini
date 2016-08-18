@@ -76,7 +76,7 @@
 	type	float
 	default	{ "0" }
 	help	"Specifies the distortion coefficient for the camera lens"
-	disablewhen	"{ distortion_type != 0 distortion_type != 1 }"
+	disablewhen	"{ distortion_type != Quadratic distortion_type != Cubic }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -135,7 +135,7 @@
 	type	float
 	default	{ "300" }
 	help	"The shutter speed, in inverse seconds"
-	disablewhen	"{ type != 0 }"
+	disablewhen	"{ type != Still }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -149,7 +149,7 @@
 	type	float
 	default	{ "180" }
 	help	"Shutter angle (in degrees)"
-	disablewhen	"{ type != 1 }"
+	disablewhen	"{ type != Cinematic }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -163,7 +163,7 @@
 	type	float
 	default	{ "0" }
 	help	"Shutter offset (in degress)"
-	disablewhen	"{ type != 1 }"
+	disablewhen	"{ type != Cinematic }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -177,7 +177,7 @@
 	type	float
 	default	{ "0" }
 	help	"CCD matrix latency, in seconds"
-	disablewhen	"{ type != 2 }"
+	disablewhen	"{ type != Video }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -428,7 +428,7 @@
 	type	file
 	default	{ "" }
 	help	"LENS file with camera lens-type image distortion description"
-	disablewhen	"{ distortion_type != 2 }"
+	disablewhen	"{ distortion_type != \"Lens File\" }"
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }

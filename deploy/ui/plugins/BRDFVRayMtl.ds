@@ -266,7 +266,7 @@
 	type	float
 	default	{ "1e+18" }
 	help	"How much to dim reflection as length of rays increases"
-	disablewhen	"{ reflect_dim_distance_on != 1 } { reflect_dim_distance_on != 1 }"
+	disablewhen	"{ reflect_dim_distance_on != 1 }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -293,7 +293,7 @@
 	type	float
 	default	{ "0" }
 	help	"Fall off for the dim distance"
-	disablewhen	"{ reflect_dim_distance_on != 1 } { reflect_dim_distance_on != 1 }"
+	disablewhen	"{ reflect_dim_distance_on != 1 }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -370,7 +370,7 @@
 	type	ordinal
 	default	{ "2" }
 	help	"Which local object axis to use when anisotropy_derivation is 0"
-	disablewhen	"{ anisotropy_derivation != 0 }"
+	disablewhen	"{ anisotropy_derivation != \"Local Axis\" }"
 	menu	{
 	    "X"	"X"
 	    "Y"	"Y"
@@ -542,7 +542,7 @@
 	type	float
 	default	{ "50" }
 	help	"abbe value"
-	disablewhen	"{ dispersion_on != 1 } { dispersion_on != 1 }"
+	disablewhen	"{ dispersion_on != 1 }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -644,7 +644,7 @@
 	size	4
 	default	{ "1" "1" "1" "1" }
 	help	"Filter color for the translucency effect"
-	disablewhen	"{ translucency == 0 }"
+	disablewhen	"{ translucency == None }"
 	range	{ 0 10 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -658,7 +658,7 @@
 	type	float
 	default	{ "1" }
 	help	"A multiplier for the calculated lighting for the translucency effect"
-	disablewhen	"{ translucency == 0 }"
+	disablewhen	"{ translucency == None }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -672,7 +672,7 @@
 	type	float
 	default	{ "0.5" }
 	help	"Scatter direction (0.0f is backward, 1.0f is forward)"
-	disablewhen	"{ translucency == 0 }"
+	disablewhen	"{ translucency == None }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -686,7 +686,7 @@
 	type	float
 	default	{ "0" }
 	help	"Scattering cone (0.0f - no scattering, 1.0f - full scattering"
-	disablewhen	"{ translucency == 0 }"
+	disablewhen	"{ translucency == None }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -700,7 +700,7 @@
 	type	float
 	default	{ "1e+18" }
 	help	"Maximum distance to trace inside the object"
-	disablewhen	"{ translucency == 0 }"
+	disablewhen	"{ translucency == None }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -857,7 +857,7 @@
 	label	"Min Rate"
 	type	integer
 	default	{ "-1" }
-	disablewhen	"{ refl_interpolation_on != 1 } { refl_interpolation_on != 1 }"
+	disablewhen	"{ refl_interpolation_on != 1 }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -870,7 +870,7 @@
 	label	"Max Rate"
 	type	integer
 	default	{ "1" }
-	disablewhen	"{ refl_interpolation_on != 1 } { refl_interpolation_on != 1 }"
+	disablewhen	"{ refl_interpolation_on != 1 }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -883,7 +883,7 @@
 	label	"Color Threshold"
 	type	float
 	default	{ "0.25" }
-	disablewhen	"{ refl_interpolation_on != 1 } { refl_interpolation_on != 1 }"
+	disablewhen	"{ refl_interpolation_on != 1 }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -896,7 +896,7 @@
 	label	"Normal Threshold"
 	type	float
 	default	{ "0.4" }
-	disablewhen	"{ refl_interpolation_on != 1 } { refl_interpolation_on != 1 }"
+	disablewhen	"{ refl_interpolation_on != 1 }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -909,7 +909,7 @@
 	label	"Interpolation Samples"
 	type	integer
 	default	{ "20" }
-	disablewhen	"{ refl_interpolation_on != 1 } { refl_interpolation_on != 1 }"
+	disablewhen	"{ refl_interpolation_on != 1 }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -934,7 +934,7 @@
 	label	"Min Rate"
 	type	integer
 	default	{ "-1" }
-	disablewhen	"{ refr_interpolation_on != 1 } { refr_interpolation_on != 1 }"
+	disablewhen	"{ refr_interpolation_on != 1 }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -947,7 +947,7 @@
 	label	"Max Rate"
 	type	integer
 	default	{ "1" }
-	disablewhen	"{ refr_interpolation_on != 1 } { refr_interpolation_on != 1 }"
+	disablewhen	"{ refr_interpolation_on != 1 }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -960,7 +960,7 @@
 	label	"Color Threshold"
 	type	float
 	default	{ "0.25" }
-	disablewhen	"{ refr_interpolation_on != 1 } { refr_interpolation_on != 1 }"
+	disablewhen	"{ refr_interpolation_on != 1 }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -974,8 +974,8 @@
 	type	float
 	default	{ "2" }
 	help	"How much to increase/decrease the tail of the glossy highlight when using GGX reflection model"
-	disablewhen	"{ brdf_type != 4 }"
-	hidewhen	"{ brdf_type != 4 }"
+	disablewhen	"{ brdf_type != GGX }"
+	hidewhen	"{ brdf_type != GGX }"
 	range	{ 2 10 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -988,7 +988,7 @@
 	label	"Normal Threshold"
 	type	float
 	default	{ "0.4" }
-	disablewhen	"{ refr_interpolation_on != 1 } { refr_interpolation_on != 1 }"
+	disablewhen	"{ refr_interpolation_on != 1 }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -1001,7 +1001,7 @@
 	label	"Interpolation Samples"
 	type	integer
 	default	{ "20" }
-	disablewhen	"{ refr_interpolation_on != 1 } { refr_interpolation_on != 1 }"
+	disablewhen	"{ refr_interpolation_on != 1 }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }

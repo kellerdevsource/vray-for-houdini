@@ -169,7 +169,7 @@
 	type	float
 	default	{ "0" }
 	help	"U coordinate of the valid texture sector"
-	disablewhen	"{ placement_type != 1 placement_type != 2 }"
+	disablewhen	"{ placement_type != Crop placement_type != Place }"
 	range	{ 0 10 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -183,7 +183,7 @@
 	type	float
 	default	{ "0" }
 	help	"V coordinate of the valid texture sector"
-	disablewhen	"{ placement_type != 1 placement_type != 2 }"
+	disablewhen	"{ placement_type != Crop placement_type != Place }"
 	range	{ 0 10 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -197,7 +197,7 @@
 	type	float
 	default	{ "1" }
 	help	"Width of the valid texture sector"
-	disablewhen	"{ placement_type != 1 placement_type != 2 }"
+	disablewhen	"{ placement_type != Crop placement_type != Place }"
 	range	{ 0 10 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -211,7 +211,7 @@
 	type	float
 	default	{ "1" }
 	help	"Height of the valid texture sector"
-	disablewhen	"{ placement_type != 1 placement_type != 2 }"
+	disablewhen	"{ placement_type != Crop placement_type != Place }"
 	range	{ 0 10 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -225,7 +225,7 @@
 	type	float
 	default	{ "0" }
 	help	"Amount of random placement variation"
-	disablewhen	"{ placement_type != 2 }"
+	disablewhen	"{ placement_type != Place }"
 	range	{ 0 10 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -239,7 +239,7 @@
 	type	toggle
 	default	{ "0" }
 	help	"If true there is horizontal tiling"
-	disablewhen	"{ placement_type != 2 }"
+	disablewhen	"{ placement_type != Place }"
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -253,7 +253,7 @@
 	type	toggle
 	default	{ "0" }
 	help	"If true there is vertical tiling"
-	disablewhen	"{ placement_type != 2 }"
+	disablewhen	"{ placement_type != Place }"
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -487,7 +487,7 @@
 	type	float
 	default	{ "0" }
 	help	"noise phase"
-	disablewhen	"{ noise_function != 2 noise_function != 5 }"
+	disablewhen	"{ noise_function != \"Perlin 4D\" noise_function != \"Simplex 4D\" }"
 	range	{ -1000 1000 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -501,7 +501,7 @@
 	type	float
 	default	{ "3" }
 	help	"worley spread"
-	disablewhen	"{ noise_function != 6 }"
+	disablewhen	"{ noise_function != \"Worley (Voronoi)\" }"
 	range	{ 0 1000 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -515,7 +515,7 @@
 	type	float
 	default	{ "1" }
 	help	"worley F1"
-	disablewhen	"{ noise_function != 6 }"
+	disablewhen	"{ noise_function != \"Worley (Voronoi)\" }"
 	range	{ -1000 1000 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -529,7 +529,7 @@
 	type	float
 	default	{ "0" }
 	help	"worley F2"
-	disablewhen	"{ noise_function != 6 }"
+	disablewhen	"{ noise_function != \"Worley (Voronoi)\" }"
 	range	{ -1000 1000 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -543,7 +543,7 @@
 	type	float
 	default	{ "0" }
 	help	"worley F3"
-	disablewhen	"{ noise_function != 6 }"
+	disablewhen	"{ noise_function != \"Worley (Voronoi)\" }"
 	range	{ -1000 1000 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -557,7 +557,7 @@
 	type	float
 	default	{ "0" }
 	help	"worley F4"
-	disablewhen	"{ noise_function != 6 }"
+	disablewhen	"{ noise_function != \"Worley (Voronoi)\" }"
 	range	{ -1000 1000 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -571,7 +571,7 @@
 	type	ordinal
 	default	{ "0" }
 	help	"worley distance"
-	disablewhen	"{ noise_function != 6 }"
+	disablewhen	"{ noise_function != \"Worley (Voronoi)\" }"
 	menu	{
 	    "Linear"	"Linear"
 	    "Square"	"Square"
@@ -618,7 +618,7 @@
 	type	float
 	default	{ "3" }
 	help	"fractal levels"
-	disablewhen	"{ fractal_type == 0 }"
+	disablewhen	"{ fractal_type == None }"
 	range	{ 1 20 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -632,7 +632,7 @@
 	type	float
 	default	{ "0" }
 	help	"fractal offset"
-	disablewhen	"{ fractal_type != 5 fractal_type != 6 fractal_type != 7 }"
+	disablewhen	"{ fractal_type != \"Hetero Terrain\" fractal_type != \"Hybrid Multi Fractal\" fractal_type != \"Ridged Multi Fractal\" }"
 	range	{ 0 100 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -646,7 +646,7 @@
 	type	float
 	default	{ "5" }
 	help	"fractal gain"
-	disablewhen	"{ fractal_type != 6 fractal_type != 7 }"
+	disablewhen	"{ fractal_type != \"Hybrid Multi Fractal\" fractal_type != \"Ridged Multi Fractal\" }"
 	range	{ 0 100 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }

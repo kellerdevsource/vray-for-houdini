@@ -169,7 +169,7 @@
 	type	float
 	default	{ "0" }
 	help	"U coordinate of the valid texture sector"
-	disablewhen	"{ placement_type != 1 placement_type != 2 }"
+	disablewhen	"{ placement_type != Crop placement_type != Place }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -183,7 +183,7 @@
 	type	float
 	default	{ "0" }
 	help	"V coordinate of the valid texture sector"
-	disablewhen	"{ placement_type != 1 placement_type != 2 }"
+	disablewhen	"{ placement_type != Crop placement_type != Place }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -197,7 +197,7 @@
 	type	float
 	default	{ "1" }
 	help	"Width of the valid texture sector"
-	disablewhen	"{ placement_type != 1 placement_type != 2 }"
+	disablewhen	"{ placement_type != Crop placement_type != Place }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -211,7 +211,7 @@
 	type	float
 	default	{ "1" }
 	help	"Height of the valid texture sector"
-	disablewhen	"{ placement_type != 1 placement_type != 2 }"
+	disablewhen	"{ placement_type != Crop placement_type != Place }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -225,7 +225,7 @@
 	type	float
 	default	{ "0" }
 	help	"Amount of random placement variation"
-	disablewhen	"{ placement_type != 2 }"
+	disablewhen	"{ placement_type != Place }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -239,7 +239,7 @@
 	type	toggle
 	default	{ "1" }
 	help	"If true there is horizontal tiling"
-	disablewhen	"{ placement_type != 2 }"
+	disablewhen	"{ placement_type != Place }"
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -253,7 +253,7 @@
 	type	toggle
 	default	{ "1" }
 	help	"If true there is vertical tiling"
-	disablewhen	"{ placement_type != 2 }"
+	disablewhen	"{ placement_type != Place }"
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }

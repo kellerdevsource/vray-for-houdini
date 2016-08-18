@@ -60,7 +60,7 @@
 	label	"Pixel Width"
 	type	float
 	default	{ "1" }
-	disablewhen	"{ width_type != 1 }"
+	disablewhen	"{ width_type != Pixels }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -97,7 +97,7 @@
 	label	"World Width"
 	type	float
 	default	{ "1" }
-	disablewhen	"{ width_type != 0 }"
+	disablewhen	"{ width_type != World }"
 	range	{ 0 10 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -163,7 +163,6 @@
 	type	toggle
 	default	{ "1" }
 	help	"true to consider only corners on the same object, and false to consider other intersecting objects"
-	disablewhen	"{ raytraced != 1 }"
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }

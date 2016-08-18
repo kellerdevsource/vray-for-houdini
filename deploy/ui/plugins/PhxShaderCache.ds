@@ -118,7 +118,7 @@
 	type	integer
 	default	{ "0" }
 	help	"Number of overlapped frame in the looped animation mode"
-	disablewhen	"{ anim_mode != 2 }"
+	disablewhen	"{ anim_mode != Loop }"
 	range	{ 0 100 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -150,7 +150,7 @@
 	type	integer
 	default	{ "0" }
 	help	"Cache Start"
-	disablewhen	"{ anim_mode == 1 }"
+	disablewhen	"{ anim_mode == \"Direct Frame Index\" }"
 	range	{ -10000 10000 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -164,7 +164,7 @@
 	type	integer
 	default	{ "0" }
 	help	"Play Start"
-	disablewhen	"{ anim_mode == 1 }"
+	disablewhen	"{ anim_mode == \"Direct Frame Index\" }"
 	range	{ -10000 10000 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -178,7 +178,7 @@
 	type	integer
 	default	{ "0" }
 	help	"Play Length"
-	disablewhen	"{ anim_mode == 1 }"
+	disablewhen	"{ anim_mode == \"Direct Frame Index\" }"
 	range	{ -10000 10000 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -192,7 +192,7 @@
 	type	float
 	default	{ "1" }
 	help	"Play Speed"
-	disablewhen	"{ anim_mode == 1 }"
+	disablewhen	"{ anim_mode == \"Direct Frame Index\" }"
 	range	{ -10 10 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -206,7 +206,7 @@
 	type	float
 	default	{ "0" }
 	help	"Direct time to frame transformation"
-	disablewhen	"{ anim_mode != 1 }"
+	disablewhen	"{ anim_mode != \"Direct Frame Index\" }"
 	range	{ 0 1000 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }

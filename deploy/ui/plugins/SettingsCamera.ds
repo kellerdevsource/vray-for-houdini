@@ -44,7 +44,7 @@
 	type	float
 	default	{ "400" }
 	help	"Height of the cylindrical (ortho) camera"
-	disablewhen	"{ SettingsCamera_type != 3 }"
+	disablewhen	"{ SettingsCamera_type != \"Cylindrical (Ortho)\" }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -58,7 +58,7 @@
 	type	float
 	default	{ "2" }
 	help	"Applies only to fish-eye camera. Controls distance to the sphere center"
-	disablewhen	"{ SettingsCamera_type != 5 } { SettingsCamera_auto_fit != 0 }"
+	disablewhen	"{ SettingsCamera_type != Fish-Eye } { SettingsCamera_auto_fit != 0 }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -86,7 +86,7 @@
 	type	toggle
 	default	{ "1" }
 	help	"The auto-fit option of the fish-eye camera"
-	disablewhen	"{ SettingsCamera_type != 5 }"
+	disablewhen	"{ SettingsCamera_type != Fish-Eye }"
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -100,7 +100,7 @@
 	type	float
 	default	{ "1" }
 	help	"Controls the way the rendered images is warped. Applies only to fish-eye camera"
-	disablewhen	"{ SettingsCamera_type != 5 }"
+	disablewhen	"{ SettingsCamera_type != Fish-Eye }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }

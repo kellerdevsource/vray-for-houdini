@@ -288,7 +288,7 @@
 	type	toggle
 	default	{ "0" }
 	help	"true to add the occlusion to relection render elements when mode>0"
-	disablewhen	"{ mode <= 0 }"
+	disablewhen	"{ mode <= \"Ambient Occlusion\" }"
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -302,7 +302,7 @@
 	type	float
 	default	{ "1" }
 	help	"A texture for the glossiness when mode>0"
-	disablewhen	"{ mode <= 0 }"
+	disablewhen	"{ mode <= \"Ambient Occlusion\" }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }

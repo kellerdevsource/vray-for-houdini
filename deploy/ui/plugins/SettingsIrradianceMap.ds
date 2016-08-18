@@ -284,7 +284,7 @@
 	type	file
 	default	{ "//lightmaps/irradiance_map.vrmap" }
 	help	"Irradiance map file name"
-	disablewhen	"{ SettingsIrradianceMap_mode != 2 SettingsIrradianceMap_mode != 7 }"
+	disablewhen	"{ SettingsIrradianceMap_mode != \"From File\" SettingsIrradianceMap_mode != \"Animation (Rendering)\" }"
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -379,7 +379,7 @@
 	type	toggle
 	default	{ "0" }
 	help	"Automatically save the irradiance map to the specified file at the end of the rendering"
-	disablewhen	"{ SettingsIrradianceMap_mode == 2 } { SettingsIrradianceMap_mode == 5 } { SettingsIrradianceMap_mode == 7 }"
+	disablewhen	"{ SettingsIrradianceMap_mode == \"From File\" } { SettingsIrradianceMap_mode == \"Bucket Mode\" } { SettingsIrradianceMap_mode == \"Animation (Rendering)\" }"
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -393,7 +393,7 @@
 	type	file
 	default	{ "//lightmaps/irradiance_map.vrmap" }
 	help	"Irradiance map auto save file"
-	disablewhen	"{ SettingsIrradianceMap_mode == 2 } { SettingsIrradianceMap_mode == 5 } { SettingsIrradianceMap_mode == 7 } { SettingsIrradianceMap_auto_save != 1 }"
+	disablewhen	"{ SettingsIrradianceMap_mode == \"From File\" } { SettingsIrradianceMap_mode == \"Bucket Mode\" } { SettingsIrradianceMap_mode == \"Animation (Rendering)\" } { SettingsIrradianceMap_auto_save != 1 }"
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }

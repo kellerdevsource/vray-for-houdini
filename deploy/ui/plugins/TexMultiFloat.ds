@@ -68,7 +68,7 @@
 	type	float
 	default	{ "0" }
 	help	"Used when mode is \"Use ID Generator texture\"(30)"
-	disablewhen	"{ mode != 30 }"
+	disablewhen	"{ mode != \" Use ID Generator texture\" }"
 	range	{ 0 10 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -82,7 +82,7 @@
 	type	toggle
 	default	{ "0" }
 	help	"Used when mode is \"Use ID Generator texture\"(30)"
-	disablewhen	"{ mode != 30 }"
+	disablewhen	"{ mode != \" Use ID Generator texture\" }"
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }

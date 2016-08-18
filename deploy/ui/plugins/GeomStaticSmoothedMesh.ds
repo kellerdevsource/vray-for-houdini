@@ -162,7 +162,7 @@
 	type	toggle
 	default	{ "1" }
 	help	"If use_globals is false, this determines if view-dependent tesselation is used"
-	disablewhen	"{ use_globals != 0 } { use_globals != 0 }"
+	disablewhen	"{ use_globals != 0 }"
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -176,7 +176,7 @@
 	type	float
 	default	{ "4" }
 	help	"If use_globals is false, this determines the approximate edge length for the sub-triangles"
-	disablewhen	"{ use_globals != 0 } { use_globals != 0 }"
+	disablewhen	"{ use_globals != 0 }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -190,7 +190,7 @@
 	type	integer
 	default	{ "256" }
 	help	"If use_globals is false, this determines the maximum subdivisions for a triangle of the original mesh"
-	disablewhen	"{ use_globals != 0 } { use_globals != 0 }"
+	disablewhen	"{ use_globals != 0 }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }

@@ -45,7 +45,7 @@
 	type	ordinal
 	default	{ "1" }
 	help	"The filter determines how irradiance is interpolated from the samples in the light cache"
-	disablewhen	"{ SettingsGI_on != 1 } { SettingsLightCache_mode == 3 }"
+	disablewhen	"{ SettingsGI_on != 1 } { SettingsLightCache_mode == \"Progressive Path Tracing\" }"
 	menu	{
 	    "None"	"None"
 	    "Nearest"	"Nearest"
@@ -65,7 +65,7 @@
 	type	integer
 	default	{ "5" }
 	help	"How many of the nearest samples to look up from the light cache"
-	disablewhen	"{ SettingsGI_on != 1 } { SettingsLightCache_filter_type != 1 } { SettingsLightCache_mode == 3 }"
+	disablewhen	"{ SettingsGI_on != 1 } { SettingsLightCache_filter_type != Nearest } { SettingsLightCache_mode == \"Progressive Path Tracing\" }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -79,7 +79,7 @@
 	type	float
 	default	{ "0.06" }
 	help	"The size of the filter"
-	disablewhen	"{ SettingsGI_on != 1 } { SettingsLightCache_filter_type != 2 } { SettingsLightCache_mode == 3 }"
+	disablewhen	"{ SettingsGI_on != 1 } { SettingsLightCache_filter_type != Fixed } { SettingsLightCache_mode == \"Progressive Path Tracing\" }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -93,7 +93,7 @@
 	type	toggle
 	default	{ "0" }
 	help	"Filter light cache sampler before rendering"
-	disablewhen	"{ SettingsGI_on != 1 } { SettingsLightCache_mode == 3 }"
+	disablewhen	"{ SettingsGI_on != 1 } { SettingsLightCache_mode == \"Progressive Path Tracing\" }"
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -107,7 +107,7 @@
 	type	integer
 	default	{ "10" }
 	help	"Number of prefilter samples"
-	disablewhen	"{ SettingsGI_on != 1 } { SettingsLightCache_prefilter == 0 } { SettingsLightCache_mode == 3 }"
+	disablewhen	"{ SettingsGI_on != 1 } { SettingsLightCache_prefilter == 0 } { SettingsLightCache_mode == \"Progressive Path Tracing\" }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -135,7 +135,7 @@
 	type	toggle
 	default	{ "1" }
 	help	"Turning this option on will show the paths that are traced"
-	disablewhen	"{ SettingsGI_on != 1 } { SettingsLightCache_mode == 3 }"
+	disablewhen	"{ SettingsGI_on != 1 } { SettingsLightCache_mode == \"Progressive Path Tracing\" }"
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -203,7 +203,7 @@
 	type	file
 	default	{ "//lightmaps/light_cache.vrmap" }
 	help	"Light cache file"
-	disablewhen	"{ SettingsGI_on != 1 } { SettingsLightCache_mode != 2 }"
+	disablewhen	"{ SettingsGI_on != 1 } { SettingsLightCache_mode != \"From File\" }"
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -233,7 +233,7 @@
 	type	toggle
 	default	{ "0" }
 	help	"Auto save Light Cache"
-	disablewhen	"{ SettingsGI_on != 1 } { SettingsLightCache_mode == 2 }"
+	disablewhen	"{ SettingsGI_on != 1 } { SettingsLightCache_mode == \"From File\" }"
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -247,7 +247,7 @@
 	type	file
 	default	{ "//lightmaps/light_cache.vrmap" }
 	help	"Light cache auto save file name"
-	disablewhen	"{ SettingsGI_on != 1 } { SettingsLightCache_mode == 2 } { SettingsLightCache_auto_save != 1 }"
+	disablewhen	"{ SettingsGI_on != 1 } { SettingsLightCache_mode == \"From File\" } { SettingsLightCache_auto_save != 1 }"
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }

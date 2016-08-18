@@ -270,7 +270,7 @@
 	label	"Prim. Refl. Fresnel Ior"
 	type	float
 	default	{ "1.33" }
-	disablewhen	"{ primary_reflection_fresnel != 1 } { primary_reflection_fresnel != 1 }"
+	disablewhen	"{ primary_reflection_fresnel != 1 }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -344,7 +344,7 @@
 	label	"Sec. Refl. Fresnel Ior"
 	type	float
 	default	{ "1.33" }
-	disablewhen	"{ secondary_reflection_fresnel != 1 } { secondary_reflection_fresnel != 1 }"
+	disablewhen	"{ secondary_reflection_fresnel != 1 }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -390,7 +390,7 @@
 	type	toggle
 	default	{ "0" }
 	help	"true to scatter SSS textures when using raytraced scattering"
-	disablewhen	"{ multiple_scattering != 2 }"
+	disablewhen	"{ multiple_scattering != Raytraced }"
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -403,7 +403,7 @@
 	label	"Raytraced Subdivs"
 	type	integer
 	default	{ "8" }
-	disablewhen	"{ scatter_gi != 1 } { multiple_scattering != 2 }"
+	disablewhen	"{ scatter_gi != 1 } { multiple_scattering != Raytraced }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -417,7 +417,7 @@
 	type	integer
 	default	{ "-1" }
 	help	"Sampling density for the illumination map"
-	disablewhen	"{ scatter_gi != 1 } { multiple_scattering != 0 }"
+	disablewhen	"{ scatter_gi != 1 } { multiple_scattering != \"Prepass - Based\" }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -431,7 +431,7 @@
 	type	integer
 	default	{ "0" }
 	help	"0 to calculate a separate illuminataion map for this shader; otherwise all shaders with the same prepass ID will share the same illumination map"
-	disablewhen	"{ scatter_gi != 1 } { multiple_scattering != 0 }"
+	disablewhen	"{ scatter_gi != 1 } { multiple_scattering != \"Prepass - Based\" }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -445,7 +445,7 @@
 	type	float
 	default	{ "1" }
 	help	"Interpolation accuracy for the illumination map; normally 1.0 is fine"
-	disablewhen	"{ scatter_gi != 1 } { multiple_scattering >= 2 }"
+	disablewhen	"{ scatter_gi != 1 } { multiple_scattering >= Raytraced }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -458,7 +458,7 @@
 	label	"Samples Per Unit Area"
 	type	float
 	default	{ "16" }
-	disablewhen	"{ geom_auto_density != 0 } { geom_auto_density != 0 } { multiple_scattering != 1 }"
+	disablewhen	"{ geom_auto_density != 0 } { multiple_scattering != \"Object Space\" }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -471,7 +471,7 @@
 	label	"Auto Density"
 	type	toggle
 	default	{ "0" }
-	disablewhen	"{ multiple_scattering != 1 }"
+	disablewhen	"{ multiple_scattering != \"Object Space\" }"
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -485,7 +485,7 @@
 	type	float
 	default	{ "0.001" }
 	help	"An offset along the geometric surface normal at which to perform shading in order to avoid surface acne"
-	disablewhen	"{ geom_auto_density != 0 } { multiple_scattering != 1 }"
+	disablewhen	"{ geom_auto_density != 0 } { multiple_scattering != \"Object Space\" }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -498,7 +498,7 @@
 	label	"Preview Samples"
 	type	toggle
 	default	{ "0" }
-	disablewhen	"{ multiple_scattering != 1 }"
+	disablewhen	"{ multiple_scattering != \"Object Space\" }"
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -511,7 +511,7 @@
 	label	"Max Distance"
 	type	float
 	default	{ "0.1" }
-	disablewhen	"{ geom_preview_samples != 1 } { multiple_scattering != 1 } { geom_preview_samples != 1 }"
+	disablewhen	"{ geom_preview_samples != 1 } { multiple_scattering != \"Object Space\" }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -525,7 +525,7 @@
 	type	color
 	size	3
 	default	{ "0" "0" "0" }
-	disablewhen	"{ multiple_scattering != 1 } { geom_preview_samples != 1 }"
+	disablewhen	"{ multiple_scattering != \"Object Space\" } { geom_preview_samples != 1 }"
 	range	{ 0 10 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -539,7 +539,7 @@
 	type	color
 	size	3
 	default	{ "1" "1" "1" }
-	disablewhen	"{ multiple_scattering != 1 } { geom_preview_samples != 1 }"
+	disablewhen	"{ multiple_scattering != \"Object Space\" } { geom_preview_samples != 1 }"
 	range	{ 0 10 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }

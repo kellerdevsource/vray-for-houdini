@@ -53,7 +53,7 @@
 	type	float
 	default	{ "1" }
 	help	"Determines the z-depth blending sensitivity when deep_merge_mode is '1'"
-	disablewhen	"{ deep_merge_mode != 1 }"
+	disablewhen	"{ deep_merge_mode != \"By Z-Depth\" }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }

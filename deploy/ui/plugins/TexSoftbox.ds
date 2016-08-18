@@ -169,7 +169,7 @@
 	type	float
 	default	{ "0" }
 	help	"U coordinate of the valid texture sector"
-	disablewhen	"{ placement_type != 1 placement_type != 2 }"
+	disablewhen	"{ placement_type != Crop placement_type != Place }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -183,7 +183,7 @@
 	type	float
 	default	{ "0" }
 	help	"V coordinate of the valid texture sector"
-	disablewhen	"{ placement_type != 1 placement_type != 2 }"
+	disablewhen	"{ placement_type != Crop placement_type != Place }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -197,7 +197,7 @@
 	type	float
 	default	{ "1" }
 	help	"Width of the valid texture sector"
-	disablewhen	"{ placement_type != 1 placement_type != 2 }"
+	disablewhen	"{ placement_type != Crop placement_type != Place }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -211,7 +211,7 @@
 	type	float
 	default	{ "1" }
 	help	"Height of the valid texture sector"
-	disablewhen	"{ placement_type != 1 placement_type != 2 }"
+	disablewhen	"{ placement_type != Crop placement_type != Place }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -225,7 +225,7 @@
 	type	float
 	default	{ "0" }
 	help	"Amount of random placement variation"
-	disablewhen	"{ placement_type != 2 }"
+	disablewhen	"{ placement_type != Place }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -239,7 +239,7 @@
 	type	toggle
 	default	{ "1" }
 	help	"If true there is horizontal tiling"
-	disablewhen	"{ placement_type != 2 }"
+	disablewhen	"{ placement_type != Place }"
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -253,7 +253,7 @@
 	type	toggle
 	default	{ "1" }
 	help	"If true there is vertical tiling"
-	disablewhen	"{ placement_type != 2 }"
+	disablewhen	"{ placement_type != Place }"
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -394,7 +394,7 @@
 	size	3
 	default	{ "1" "1" "1" }
 	help	"Base tint color"
-	disablewhen	"{ base_tint_on != 1 } { base_tint_on != 1 }"
+	disablewhen	"{ base_tint_on != 1 }"
 	range	{ 0 10 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -408,7 +408,7 @@
 	type	float
 	default	{ "0.5" }
 	help	"Base tint strength"
-	disablewhen	"{ base_tint_on != 1 } { base_tint_on != 1 }"
+	disablewhen	"{ base_tint_on != 1 }"
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -474,7 +474,7 @@
 	type	float
 	default	{ "1" }
 	help	"Spots multiplier"
-	disablewhen	"{ spots_on != 1 } { spots_on != 1 }"
+	disablewhen	"{ spots_on != 1 }"
 	range	{ 0 10 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -488,7 +488,7 @@
 	type	ordinal
 	default	{ "0" }
 	help	"Spots mode"
-	disablewhen	"{ spots_on != 1 } { spots_on != 1 }"
+	disablewhen	"{ spots_on != 1 }"
 	menu	{
 	    "Hot Spot"	"Hot Spot"
 	    "Dark Spot"	"Dark Spot"
@@ -634,7 +634,7 @@
 	size	3
 	default	{ "1" "1" "1" }
 	help	"Spots tint color"
-	disablewhen	"{ spots_tint_on != 1 } { spots_on != 1 } { spots_tint_on != 1 }"
+	disablewhen	"{ spots_tint_on != 1 } { spots_on != 1 }"
 	range	{ 0 10 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -648,7 +648,7 @@
 	type	float
 	default	{ "0.5" }
 	help	"Spots tint strength"
-	disablewhen	"{ spots_tint_on != 1 } { spots_on != 1 } { spots_tint_on != 1 }"
+	disablewhen	"{ spots_tint_on != 1 } { spots_on != 1 }"
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }

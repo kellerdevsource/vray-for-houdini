@@ -156,7 +156,7 @@
 	type	float
 	default	{ "1" }
 	help	"This determines the effect of secondary diffuse bounces on the scene illumination"
-	disablewhen	"{ SettingsGI_on != 1 } { SettingsGI_on == 0 } { SettingsGI_secondary_engine == 0 }"
+	disablewhen	"{ SettingsGI_on != 1 } { SettingsGI_on == 0 } { SettingsGI_secondary_engine == None }"
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }

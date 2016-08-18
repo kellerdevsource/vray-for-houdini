@@ -168,7 +168,7 @@
 	type	float
 	default	{ "0" }
 	help	"U coordinate of the valid texture sector"
-	disablewhen	"{ placement_type != 1 placement_type != 2 }"
+	disablewhen	"{ placement_type != Crop placement_type != Place }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -182,7 +182,7 @@
 	type	float
 	default	{ "0" }
 	help	"V coordinate of the valid texture sector"
-	disablewhen	"{ placement_type != 1 placement_type != 2 }"
+	disablewhen	"{ placement_type != Crop placement_type != Place }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -196,7 +196,7 @@
 	type	float
 	default	{ "1" }
 	help	"Width of the valid texture sector"
-	disablewhen	"{ placement_type != 1 placement_type != 2 }"
+	disablewhen	"{ placement_type != Crop placement_type != Place }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -210,7 +210,7 @@
 	type	float
 	default	{ "1" }
 	help	"Height of the valid texture sector"
-	disablewhen	"{ placement_type != 1 placement_type != 2 }"
+	disablewhen	"{ placement_type != Crop placement_type != Place }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -224,7 +224,7 @@
 	type	float
 	default	{ "0" }
 	help	"Amount of random placement variation"
-	disablewhen	"{ placement_type != 2 }"
+	disablewhen	"{ placement_type != Place }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -238,7 +238,7 @@
 	type	toggle
 	default	{ "1" }
 	help	"If true there is horizontal tiling"
-	disablewhen	"{ placement_type != 2 }"
+	disablewhen	"{ placement_type != Place }"
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -252,7 +252,7 @@
 	type	toggle
 	default	{ "1" }
 	help	"If true there is vertical tiling"
-	disablewhen	"{ placement_type != 2 }"
+	disablewhen	"{ placement_type != Place }"
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -466,7 +466,7 @@
 	type	float
 	default	{ "0.5" }
 	help	"Line shift"
-	disablewhen	"{ pattern_type != 0 }"
+	disablewhen	"{ pattern_type != \"Custom Tiles\" }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -480,7 +480,7 @@
 	type	float
 	default	{ "0" }
 	help	"Random shift"
-	disablewhen	"{ pattern_type != 0 }"
+	disablewhen	"{ pattern_type != \"Custom Tiles\" }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -546,7 +546,7 @@
 	type	toggle
 	default	{ "0" }
 	help	"if true - custom row parameters"
-	disablewhen	"{ pattern_type != 0 }"
+	disablewhen	"{ pattern_type != \"Custom Tiles\" }"
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -560,7 +560,7 @@
 	type	toggle
 	default	{ "0" }
 	help	"if true - custom column parameters"
-	disablewhen	"{ pattern_type != 0 }"
+	disablewhen	"{ pattern_type != \"Custom Tiles\" }"
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -574,7 +574,7 @@
 	type	integer
 	default	{ "1" }
 	help	"every per_row row is modified by corresponding change value"
-	disablewhen	"{ pattern_type != 0 } { row_modify != 1 }"
+	disablewhen	"{ pattern_type != \"Custom Tiles\" } { row_modify != 1 }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -588,7 +588,7 @@
 	type	float
 	default	{ "1" }
 	help	"row change value modifying the number of tiles in affected rows"
-	disablewhen	"{ pattern_type != 0 } { row_modify != 1 }"
+	disablewhen	"{ pattern_type != \"Custom Tiles\" } { row_modify != 1 }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -602,7 +602,7 @@
 	type	integer
 	default	{ "1" }
 	help	"every per_column column is modified by corresponding change value"
-	disablewhen	"{ pattern_type != 0 } { column_modify != 1 }"
+	disablewhen	"{ pattern_type != \"Custom Tiles\" } { column_modify != 1 }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -616,7 +616,7 @@
 	type	float
 	default	{ "1" }
 	help	"column change value modifying the number of tiles in affected columns"
-	disablewhen	"{ pattern_type != 0 } { column_modify != 1 }"
+	disablewhen	"{ pattern_type != \"Custom Tiles\" } { column_modify != 1 }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }

@@ -115,7 +115,7 @@
 	type	integer
 	default	{ "0" }
 	help	"The mapping channel when the mapping_type is 0"
-	disablewhen	"{ enable_flakes != 1 } { mapping_type != 0 }"
+	disablewhen	"{ enable_flakes != 1 } { mapping_type != \"Mapping channel\" }"
 	range	{ 0 10 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }

@@ -179,7 +179,7 @@
 	type	float
 	default	{ "1" }
 	help	"Multiplier for the \"Gamma correction\", \"Intensity gamma\" and \"Reinhard\" modes"
-	disablewhen	"{ type != 4 type != 5 type != 6 }"
+	disablewhen	"{ type != \"Gamma correction\" type != \"Intensity gamma\" type != Reinhard }"
 	range	{ -1000 1000 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -193,7 +193,7 @@
 	type	float
 	default	{ "1" }
 	help	"Inverse gamma for the the \"Gamma correction\" and \"Intensity gamma\" modes"
-	disablewhen	"{ type != 4 type != 5 }"
+	disablewhen	"{ type != \"Gamma correction\" type != \"Intensity gamma\" }"
 	range	{ 0.05 20 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -207,7 +207,7 @@
 	type	float
 	default	{ "1" }
 	help	"Burn value for the Reinhard color mapping"
-	disablewhen	"{ type != 6 }"
+	disablewhen	"{ type != Reinhard }"
 	range	{ -1000 1000 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }

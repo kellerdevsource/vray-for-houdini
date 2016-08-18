@@ -205,7 +205,7 @@
 	type	float
 	default	{ "100" }
 	help	"Fog starting point along the Z-axis"
-	disablewhen	"{ use_height != 1 } { use_height != 1 }"
+	disablewhen	"{ use_height != 1 }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -369,7 +369,7 @@
 	type	integer
 	default	{ "8" }
 	help	"Number of GI bounces calculated inside the fog"
-	disablewhen	"{ scatter_gi != 1 } { scatter_gi != 1 }"
+	disablewhen	"{ scatter_gi != 1 }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }

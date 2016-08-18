@@ -17,7 +17,7 @@
 	type	integer
 	default	{ "-1" }
 	help	"Sampling density for the illumination map"
-	disablewhen	"{ geometry_based_sampling != 0 } { geometry_based_sampling != 0 }"
+	disablewhen	"{ geometry_based_sampling != \"Prepass-Based Illumination Map\" }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -31,7 +31,7 @@
 	type	float
 	default	{ "1" }
 	help	"Interpolation accuracy for the illumination map; normally 1.0 is fine"
-	disablewhen	"{ geometry_based_sampling >= 2 }"
+	disablewhen	"{ geometry_based_sampling >= Raytraced }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -289,7 +289,7 @@
 	label	"Front Lighting"
 	type	toggle
 	default	{ "1" }
-	disablewhen	"{ geometry_based_sampling != 0 }"
+	disablewhen	"{ geometry_based_sampling != \"Prepass-Based Illumination Map\" }"
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -302,7 +302,7 @@
 	label	"Back Lighting"
 	type	toggle
 	default	{ "1" }
-	disablewhen	"{ geometry_based_sampling != 0 }"
+	disablewhen	"{ geometry_based_sampling != \"Prepass-Based Illumination Map\" }"
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -327,7 +327,7 @@
 	label	"Prepass Blur"
 	type	float
 	default	{ "1.2" }
-	disablewhen	"{ geometry_based_sampling >= 2 }"
+	disablewhen	"{ geometry_based_sampling >= Raytraced }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -341,7 +341,7 @@
 	type	integer
 	default	{ "0" }
 	help	"0 to calculate a separate illuminataion map for this shader; otherwise all shaders with the same prepass ID will share the same illumination map"
-	disablewhen	"{ geometry_based_sampling != 0 } { geometry_based_sampling != 0 }"
+	disablewhen	"{ geometry_based_sampling != \"Prepass-Based Illumination Map\" }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -382,7 +382,7 @@
 	type	ordinal
 	default	{ "0" }
 	help	"Prepass mode"
-	disablewhen	"{ geometry_based_sampling >= 2 } { geometry_based_sampling != 0 }"
+	disablewhen	"{ geometry_based_sampling >= Raytraced } { geometry_based_sampling != \"Prepass-Based Illumination Map\" }"
 	menu	{
 	    "New"	"New"
 	    "Save (Per-Frame)"	"Save (Per-Frame)"
@@ -404,7 +404,7 @@
 	type	file
 	default	{ "" }
 	help	"File path template for saved irradiance map files, frame number is appended for modes \"Save / Load (Per-Frame)\""
-	disablewhen	"{ geometry_based_sampling >= 2 } { geometry_based_sampling != 0 } { prepass_mode <= 0 }"
+	disablewhen	"{ geometry_based_sampling >= Raytraced } { geometry_based_sampling != \"Prepass-Based Illumination Map\" } { prepass_mode <= New }"
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -439,7 +439,7 @@
 	label	"Samples Per Unit Area"
 	type	float
 	default	{ "16" }
-	disablewhen	"{ geometry_based_sampling != 1 } { auto_density != 0 } { geometry_based_sampling != 1 }"
+	disablewhen	"{ geometry_based_sampling != \"Object-Based Illumination Map\" } { auto_density != 0 }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -453,7 +453,7 @@
 	type	toggle
 	default	{ "0" }
 	help	"If this parameter is true then 'Samples per unit area' will be computed automatically."
-	disablewhen	"{ geometry_based_sampling != 1 } { geometry_based_sampling != 1 }"
+	disablewhen	"{ geometry_based_sampling != \"Object-Based Illumination Map\" }"
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -467,7 +467,7 @@
 	type	float
 	default	{ "0.001" }
 	help	"An offset along the geometric surface normal at which to perform shading in order to avoid surface acne"
-	disablewhen	"{ geometry_based_sampling != 1 } { geometry_based_sampling != 1 }"
+	disablewhen	"{ geometry_based_sampling != \"Object-Based Illumination Map\" }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -480,7 +480,7 @@
 	label	"Preview Samples"
 	type	toggle
 	default	{ "0" }
-	disablewhen	"{ geometry_based_sampling != 1 }"
+	disablewhen	"{ geometry_based_sampling != \"Object-Based Illumination Map\" }"
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -493,7 +493,7 @@
 	label	"Max Distance"
 	type	float
 	default	{ "0.1" }
-	disablewhen	"{ preview_samples != 1 } { geometry_based_sampling != 1 } { preview_samples != 1 }"
+	disablewhen	"{ preview_samples != 1 } { geometry_based_sampling != \"Object-Based Illumination Map\" }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -507,7 +507,7 @@
 	type	color
 	size	3
 	default	{ "0" "0" "0" }
-	disablewhen	"{ preview_samples != 1 } { geometry_based_sampling != 1 } { preview_samples != 1 }"
+	disablewhen	"{ preview_samples != 1 } { geometry_based_sampling != \"Object-Based Illumination Map\" }"
 	range	{ 0 10 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -521,7 +521,7 @@
 	type	color
 	size	3
 	default	{ "1" "1" "1" }
-	disablewhen	"{ preview_samples != 1 } { geometry_based_sampling != 1 } { preview_samples != 1 }"
+	disablewhen	"{ preview_samples != 1 } { geometry_based_sampling != \"Object-Based Illumination Map\" }"
 	range	{ 0 10 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }

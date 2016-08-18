@@ -168,7 +168,7 @@
 	type	float
 	default	{ "0" }
 	help	"U coordinate of the valid texture sector"
-	disablewhen	"{ placement_type != 1 placement_type != 2 }"
+	disablewhen	"{ placement_type != Crop placement_type != Place }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -182,7 +182,7 @@
 	type	float
 	default	{ "0" }
 	help	"V coordinate of the valid texture sector"
-	disablewhen	"{ placement_type != 1 placement_type != 2 }"
+	disablewhen	"{ placement_type != Crop placement_type != Place }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -196,7 +196,7 @@
 	type	float
 	default	{ "1" }
 	help	"Width of the valid texture sector"
-	disablewhen	"{ placement_type != 1 placement_type != 2 }"
+	disablewhen	"{ placement_type != Crop placement_type != Place }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -210,7 +210,7 @@
 	type	float
 	default	{ "1" }
 	help	"Height of the valid texture sector"
-	disablewhen	"{ placement_type != 1 placement_type != 2 }"
+	disablewhen	"{ placement_type != Crop placement_type != Place }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -224,7 +224,7 @@
 	type	float
 	default	{ "0" }
 	help	"Amount of random placement variation"
-	disablewhen	"{ placement_type != 2 }"
+	disablewhen	"{ placement_type != Place }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -238,7 +238,7 @@
 	type	toggle
 	default	{ "1" }
 	help	"If true there is horizontal tiling"
-	disablewhen	"{ placement_type != 2 }"
+	disablewhen	"{ placement_type != Place }"
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -252,7 +252,7 @@
 	type	toggle
 	default	{ "1" }
 	help	"If true there is vertical tiling"
-	disablewhen	"{ placement_type != 2 }"
+	disablewhen	"{ placement_type != Place }"
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -445,7 +445,7 @@
 	type	float
 	default	{ "0" }
 	help	"Low threshold (for the bg color)"
-	disablewhen	"{ type != 0 type != 1 }"
+	disablewhen	"{ type != Dots type != Chips }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -459,7 +459,7 @@
 	type	float
 	default	{ "0.5" }
 	help	"Middle threshold (for the edge color)"
-	disablewhen	"{ type != 0 type != 1 }"
+	disablewhen	"{ type != Dots type != Chips }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -473,7 +473,7 @@
 	type	float
 	default	{ "1" }
 	help	"High threshold (for the center color)"
-	disablewhen	"{ type != 0 type != 1 }"
+	disablewhen	"{ type != Dots type != Chips }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -486,7 +486,7 @@
 	label	"Fractal"
 	type	toggle
 	default	{ "0" }
-	disablewhen	"{ type != 0 type != 1 }"
+	disablewhen	"{ type != Dots type != Chips }"
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -500,7 +500,7 @@
 	type	float
 	default	{ "3" }
 	help	"The number of fractal iterations"
-	disablewhen	"{ type != 0 type != 1 } { type != 0 fractal != 1 }"
+	disablewhen	"{ type != Dots type != Chips } { type != Dots fractal != 1 }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -514,7 +514,7 @@
 	type	float
 	default	{ "0" }
 	help	"The fractal roughness (0.0f is very rough; 1.0 is smooth - i.e. no fractal)"
-	disablewhen	"{ type != 0 type != 1 } { type != 0 fractal != 1 }"
+	disablewhen	"{ type != Dots type != Chips } { type != Dots fractal != 1 }"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
