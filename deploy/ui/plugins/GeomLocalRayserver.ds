@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	GeomLocalRayserver
+    label	"Local Rayserver"
     parm {
 	name	"plugindata"
 	label	"Local Rayserver"

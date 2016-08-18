@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexModoExtractAlpha
+    label	"Modo Extract Alpha"
     parm {
 	name	"plugindata"
 	label	"Modo Extract Alpha"

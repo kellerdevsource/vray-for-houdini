@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexParticleDiffuse
+    label	"Particle Diffuse"
     parm {
 	name	"plugindata"
 	label	"Particle Diffuse"

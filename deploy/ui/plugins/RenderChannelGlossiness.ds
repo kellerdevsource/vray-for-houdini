@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	RenderChannelGlossiness
+    label	"Glossiness"
     parm {
 	name	"plugindata"
 	label	"Glossiness"

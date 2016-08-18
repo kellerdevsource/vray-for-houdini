@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexRamp
+    label	"Ramp"
     parm {
 	name	"plugindata"
 	label	"Ramp"

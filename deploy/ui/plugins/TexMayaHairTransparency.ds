@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexMayaHairTransparency
+    label	"Maya Hair Transparency"
     parm {
 	name	"plugindata"
 	label	"Maya Hair Transparency"

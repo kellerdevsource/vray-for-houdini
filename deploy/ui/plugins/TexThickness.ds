@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexThickness
+    label	"Thickness"
     parm {
 	name	"plugindata"
 	label	"Thickness"

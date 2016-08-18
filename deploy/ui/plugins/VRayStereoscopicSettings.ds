@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	VRayStereoscopicSettings
+    label	"Stereo"
     parm {
 	name	"VRayStereoscopicSettings_plugindata"
 	label	"Stereo"

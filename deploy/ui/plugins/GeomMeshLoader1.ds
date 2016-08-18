@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	GeomMeshLoader1
+    label	"Geom Mesh Loader 1"
     parm {
 	name	"plugindata"
 	label	"Geom Mesh Loader 1"

@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexModoInvert
+    label	"Modo Invert"
     parm {
 	name	"plugindata"
 	label	"Modo Invert"

@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexModoRayType
+    label	"Modo Ray Type"
     parm {
 	name	"plugindata"
 	label	"Modo Ray Type"

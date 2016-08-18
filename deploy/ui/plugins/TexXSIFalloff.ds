@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexXSIFalloff
+    label	"XSI Falloff"
     parm {
 	name	"plugindata"
 	label	"XSI Falloff"

@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexMotionOcclusion
+    label	"Motion Occlusion"
     parm {
 	name	"plugindata"
 	label	"Motion Occlusion"

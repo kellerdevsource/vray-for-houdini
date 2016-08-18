@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexScalarCurve
+    label	"Scalar Curve"
     parm {
 	name	"plugindata"
 	label	"Scalar Curve"

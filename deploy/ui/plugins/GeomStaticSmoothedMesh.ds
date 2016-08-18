@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	GeomStaticSmoothedMesh
+    label	"Subdivision"
     parm {
 	name	"plugindata"
 	label	"Subdivision"

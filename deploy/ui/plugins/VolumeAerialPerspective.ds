@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	VolumeAerialPerspective
+    label	"Aerial Perspective"
     parm {
 	name	"plugindata"
 	label	"Aerial Perspective"

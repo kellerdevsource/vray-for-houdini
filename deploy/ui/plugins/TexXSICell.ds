@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexXSICell
+    label	"XSI Cell"
     parm {
 	name	"plugindata"
 	label	"XSI Cell"

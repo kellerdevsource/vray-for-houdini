@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	MtlBump
+    label	"Bump"
     parm {
 	name	"plugindata"
 	label	"Bump"

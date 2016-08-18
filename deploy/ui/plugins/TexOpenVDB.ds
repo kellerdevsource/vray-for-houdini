@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexOpenVDB
+    label	"OpenVDB"
     parm {
 	name	"plugindata"
 	label	"OpenVDB"

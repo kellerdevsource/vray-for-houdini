@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TransformToTex
+    label	"Transform To Tex"
     parm {
 	name	"plugindata"
 	label	"Transform To Tex"

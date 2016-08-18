@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	UVWGenChannel
+    label	"Channel"
     parm {
 	name	"plugindata"
 	label	"Channel"

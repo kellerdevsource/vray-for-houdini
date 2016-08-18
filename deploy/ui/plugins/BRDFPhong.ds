@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	BRDFPhong
+    label	"Phong"
     parm {
 	name	"plugindata"
 	label	"Phong"

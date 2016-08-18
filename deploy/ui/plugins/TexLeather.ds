@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexLeather
+    label	"Leather"
     parm {
 	name	"plugindata"
 	label	"Leather"

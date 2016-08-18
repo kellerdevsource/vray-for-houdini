@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	SettingsCurrentFrame
+    label	"Current Frame"
     parm {
 	name	"plugindata"
 	label	"Current Frame"

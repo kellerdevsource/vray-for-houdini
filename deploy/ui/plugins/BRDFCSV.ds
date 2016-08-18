@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	BRDFCSV
+    label	"CSV"
     parm {
 	name	"plugindata"
 	label	"CSV"

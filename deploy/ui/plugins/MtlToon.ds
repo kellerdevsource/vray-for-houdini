@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	MtlToon
+    label	"Toon"
     parm {
 	name	"plugindata"
 	label	"Toon"

@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	Mtl2Sided
+    label	"Two Sided"
     parm {
 	name	"plugindata"
 	label	"Two Sided"

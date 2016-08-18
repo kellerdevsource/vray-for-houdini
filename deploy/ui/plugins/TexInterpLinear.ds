@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexInterpLinear
+    label	"Interp Linear"
     parm {
 	name	"plugindata"
 	label	"Interp Linear"

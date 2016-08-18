@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexFloatPerVertexHairSampler
+    label	"Float Per Vertex Hair Sampler"
     parm {
 	name	"plugindata"
 	label	"Float Per Vertex Hair Sampler"

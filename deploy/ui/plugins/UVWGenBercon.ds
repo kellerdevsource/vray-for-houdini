@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	UVWGenBercon
+    label	"Bercon"
     parm {
 	name	"plugindata"
 	label	"Bercon"

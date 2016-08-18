@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexFalloffASGVIS
+    label	"Falloff ASGVIS"
     parm {
 	name	"plugindata"
 	label	"Falloff ASGVIS"

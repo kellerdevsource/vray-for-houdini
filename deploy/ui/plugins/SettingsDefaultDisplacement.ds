@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	SettingsDefaultDisplacement
+    label	"Displacement"
     parm {
 	name	"SettingsDefaultDisplacement_plugindata"
 	label	"Displacement"

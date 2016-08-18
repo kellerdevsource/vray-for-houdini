@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexModoStencil
+    label	"Modo Stencil"
     parm {
 	name	"plugindata"
 	label	"Modo Stencil"

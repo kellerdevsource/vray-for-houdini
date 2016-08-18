@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexXSINormalMap
+    label	"XSI Normal Map"
     parm {
 	name	"plugindata"
 	label	"XSI Normal Map"

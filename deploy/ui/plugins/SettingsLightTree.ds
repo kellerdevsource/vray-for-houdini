@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	SettingsLightTree
+    label	"Light Tree"
     parm {
 	name	"plugindata"
 	label	"Light Tree"

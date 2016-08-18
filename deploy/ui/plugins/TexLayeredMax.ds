@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexLayeredMax
+    label	"Layered Max"
     parm {
 	name	"plugindata"
 	label	"Layered Max"

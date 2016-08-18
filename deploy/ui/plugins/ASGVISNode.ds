@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	ASGVISNode
+    label	"ASGVIS Node"
     parm {
 	name	"plugindata"
 	label	"ASGVIS Node"

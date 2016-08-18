@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexVoxelData
+    label	"Voxel Data"
     parm {
 	name	"plugindata"
 	label	"Voxel Data"

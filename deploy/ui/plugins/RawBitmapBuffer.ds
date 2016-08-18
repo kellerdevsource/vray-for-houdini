@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	RawBitmapBuffer
+    label	"Raw Bitmap Buffer"
     parm {
 	name	"plugindata"
 	label	"Raw Bitmap Buffer"

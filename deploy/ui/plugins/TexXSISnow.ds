@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexXSISnow
+    label	"XSI Snow"
     parm {
 	name	"plugindata"
 	label	"XSI Snow"

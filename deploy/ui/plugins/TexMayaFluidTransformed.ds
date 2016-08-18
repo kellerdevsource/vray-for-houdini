@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexMayaFluidTransformed
+    label	"Maya Fluid Transformed"
     parm {
 	name	"plugindata"
 	label	"Maya Fluid Transformed"

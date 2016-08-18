@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	SettingsCaustics
+    label	"Caustics"
     parm {
 	name	"SettingsCaustics_plugindata"
 	label	"Caustics"

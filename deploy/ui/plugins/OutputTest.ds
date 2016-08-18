@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	OutputTest
+    label	"Output Test"
     parm {
 	name	"plugindata"
 	label	"Output Test"

@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	UVWGenModo
+    label	"UVW Gen Modo"
     parm {
 	name	"plugindata"
 	label	"UVW Gen Modo"

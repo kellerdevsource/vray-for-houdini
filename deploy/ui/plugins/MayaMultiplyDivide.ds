@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	MayaMultiplyDivide
+    label	"Maya Multiply Divide"
     parm {
 	name	"plugindata"
 	label	"Maya Multiply Divide"

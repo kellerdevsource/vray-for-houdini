@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	NURBSCurve
+    label	"NURBS Curve"
     parm {
 	name	"plugindata"
 	label	"NURBS Curve"

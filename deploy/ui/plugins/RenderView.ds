@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	RenderView
+    label	"Render view"
     parm {
 	name	"plugindata"
 	label	"Render view"

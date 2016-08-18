@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexNormalMapFlip
+    label	"Normal Map Flip"
     parm {
 	name	"plugindata"
 	label	"Normal Map Flip"

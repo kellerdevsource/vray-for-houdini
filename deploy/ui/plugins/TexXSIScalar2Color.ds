@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexXSIScalar2Color
+    label	"XSI Scalar 2 Color"
     parm {
 	name	"plugindata"
 	label	"XSI Scalar 2 Color"

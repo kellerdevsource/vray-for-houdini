@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	LightOmniMax
+    label	"Omni (3ds max)"
     parm {
 	name	"plugindata"
 	label	"Omni (3ds max)"

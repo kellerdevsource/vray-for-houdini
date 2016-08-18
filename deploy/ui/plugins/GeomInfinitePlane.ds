@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	GeomInfinitePlane
+    label	"Geom Infinite Plane"
     parm {
 	name	"plugindata"
 	label	"Geom Infinite Plane"

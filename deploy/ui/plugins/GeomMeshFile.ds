@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	GeomMeshFile
+    label	"VRayProxy"
     parm {
 	name	"plugindata"
 	label	"VRayProxy"

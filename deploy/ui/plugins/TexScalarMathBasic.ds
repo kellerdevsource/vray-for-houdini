@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexScalarMathBasic
+    label	"Scalar Math Basic"
     parm {
 	name	"plugindata"
 	label	"Scalar Math Basic"

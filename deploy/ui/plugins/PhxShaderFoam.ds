@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	PhxShaderFoam
+    label	"Phx Shader Foam"
     parm {
 	name	"plugindata"
 	label	"Phx Shader Foam"

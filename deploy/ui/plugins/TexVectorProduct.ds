@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexVectorProduct
+    label	"Vector Product"
     parm {
 	name	"plugindata"
 	label	"Vector Product"

@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexTiles
+    label	"Tiles"
     parm {
 	name	"plugindata"
 	label	"Tiles"

@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	BRDFVRayMtl
+    label	"VRayMtl"
     parm {
 	name	"plugindata"
 	label	"VRayMtl"

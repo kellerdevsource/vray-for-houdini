@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	VRayScene
+    label	"VRayScene"
     parm {
 	name	"plugindata"
 	label	"VRayScene"

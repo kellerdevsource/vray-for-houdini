@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	EffectLens
+    label	"Effect Lens"
     parm {
 	name	"plugindata"
 	label	"Effect Lens"

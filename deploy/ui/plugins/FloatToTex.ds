@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	FloatToTex
+    label	"FloatToTex"
     parm {
 	name	"plugindata"
 	label	"FloatToTex"

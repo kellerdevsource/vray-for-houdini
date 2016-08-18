@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	SettingsDMCGI
+    label	"Brute Force"
     parm {
 	name	"SettingsDMCGI_plugindata"
 	label	"Brute Force"

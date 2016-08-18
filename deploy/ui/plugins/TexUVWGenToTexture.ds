@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexUVWGenToTexture
+    label	"UVW Gen To Texture"
     parm {
 	name	"plugindata"
 	label	"UVW Gen To Texture"

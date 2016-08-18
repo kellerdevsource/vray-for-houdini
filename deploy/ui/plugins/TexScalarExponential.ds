@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexScalarExponential
+    label	"Scalar Exponential"
     parm {
 	name	"plugindata"
 	label	"Scalar Exponential"

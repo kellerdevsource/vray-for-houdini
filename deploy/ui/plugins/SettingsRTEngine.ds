@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	SettingsRTEngine
+    label	"RT"
     parm {
 	name	"SettingsRTEngine_plugindata"
 	label	"RT"

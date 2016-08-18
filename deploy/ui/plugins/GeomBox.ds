@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	GeomBox
+    label	"Box"
     parm {
 	name	"plugindata"
 	label	"Box"

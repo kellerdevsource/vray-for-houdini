@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexModoOpacityToVRayWeight
+    label	"Modo Opacity To V Ray Weight"
     parm {
 	name	"plugindata"
 	label	"Modo Opacity To V Ray Weight"

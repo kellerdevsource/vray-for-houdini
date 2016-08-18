@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexSky
+    label	"Sky"
     parm {
 	name	"plugindata"
 	label	"Sky"

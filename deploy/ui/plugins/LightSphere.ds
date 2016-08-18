@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	LightSphere
+    label	"Sphere"
     parm {
 	name	"plugindata"
 	label	"Sphere"

@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexBifrostVVMix
+    label	"Bifrost VV Mix"
     parm {
 	name	"plugindata"
 	label	"Bifrost VV Mix"

@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	MtlSelectRE
+    label	"Mtl Select RE"
     parm {
 	name	"plugindata"
 	label	"Mtl Select RE"

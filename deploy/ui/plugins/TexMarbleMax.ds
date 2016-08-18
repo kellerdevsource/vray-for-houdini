@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexMarbleMax
+    label	"MarbleMax"
     parm {
 	name	"plugindata"
 	label	"MarbleMax"

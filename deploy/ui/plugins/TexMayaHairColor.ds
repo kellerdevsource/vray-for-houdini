@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexMayaHairColor
+    label	"Maya Hair Color"
     parm {
 	name	"plugindata"
 	label	"Maya Hair Color"

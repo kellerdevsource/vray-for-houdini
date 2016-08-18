@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	BRDFGGX
+    label	"GGX"
     parm {
 	name	"plugindata"
 	label	"GGX"

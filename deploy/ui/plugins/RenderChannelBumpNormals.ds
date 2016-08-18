@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	RenderChannelBumpNormals
+    label	"Bump Normals"
     parm {
 	name	"plugindata"
 	label	"Bump Normals"

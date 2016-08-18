@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	BRDFCookTorrance
+    label	"Cook Torrance"
     parm {
 	name	"plugindata"
 	label	"Cook Torrance"

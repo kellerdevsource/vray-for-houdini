@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	SphereFadeGizmo
+    label	"Sphere Fade Gizmo"
     parm {
 	name	"plugindata"
 	label	"Sphere Fade Gizmo"

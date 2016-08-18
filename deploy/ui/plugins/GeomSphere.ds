@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	GeomSphere
+    label	"Sphere"
     parm {
 	name	"plugindata"
 	label	"Sphere"

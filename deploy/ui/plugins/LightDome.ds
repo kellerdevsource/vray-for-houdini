@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	LightDome
+    label	"Dome"
     parm {
 	name	"plugindata"
 	label	"Dome"

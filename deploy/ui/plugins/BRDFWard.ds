@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	BRDFWard
+    label	"Ward"
     parm {
 	name	"plugindata"
 	label	"Ward"

@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexXSIVein
+    label	"XSI Vein"
     parm {
 	name	"plugindata"
 	label	"XSI Vein"

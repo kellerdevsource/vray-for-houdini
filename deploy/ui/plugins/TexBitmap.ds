@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexBitmap
+    label	"Image Texture"
     parm {
 	name	"plugindata"
 	label	"Image Texture"

@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexInvertFloat
+    label	"Invert Float"
     parm {
 	name	"plugindata"
 	label	"Invert Float"

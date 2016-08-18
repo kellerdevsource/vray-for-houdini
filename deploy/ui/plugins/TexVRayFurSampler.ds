@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexVRayFurSampler
+    label	"V Ray Fur Sampler"
     parm {
 	name	"plugindata"
 	label	"V Ray Fur Sampler"

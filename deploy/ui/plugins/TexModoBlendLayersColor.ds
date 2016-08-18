@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexModoBlendLayersColor
+    label	"Modo Blend Layers Color"
     parm {
 	name	"plugindata"
 	label	"Modo Blend Layers Color"

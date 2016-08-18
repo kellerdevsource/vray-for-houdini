@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	GeomMeshTest
+    label	"Geom Mesh Test"
     parm {
 	name	"plugindata"
 	label	"Geom Mesh Test"

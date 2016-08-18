@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	BRDFGlass
+    label	"Glass"
     parm {
 	name	"plugindata"
 	label	"Glass"

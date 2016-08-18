@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexBlendBumpNormal
+    label	"Blend Bump Normal"
     parm {
 	name	"plugindata"
 	label	"Blend Bump Normal"

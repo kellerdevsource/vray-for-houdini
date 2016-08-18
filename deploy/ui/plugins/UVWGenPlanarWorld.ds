@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	UVWGenPlanarWorld
+    label	"World"
     parm {
 	name	"plugindata"
 	label	"World"

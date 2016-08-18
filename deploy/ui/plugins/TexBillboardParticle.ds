@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexBillboardParticle
+    label	"Billboard Particle"
     parm {
 	name	"plugindata"
 	label	"Billboard Particle"

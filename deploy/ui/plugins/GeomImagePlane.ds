@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	GeomImagePlane
+    label	"Geom Image Plane"
     parm {
 	name	"plugindata"
 	label	"Geom Image Plane"

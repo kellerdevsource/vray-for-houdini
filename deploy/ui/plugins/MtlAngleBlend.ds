@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	MtlAngleBlend
+    label	"Angle Blend"
     parm {
 	name	"plugindata"
 	label	"Angle Blend"

@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexRGBTintMax
+    label	"RGB Tint Max"
     parm {
 	name	"plugindata"
 	label	"RGB Tint Max"

@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	LightRectangle
+    label	"Rectangle"
     parm {
 	name	"plugindata"
 	label	"Rectangle"

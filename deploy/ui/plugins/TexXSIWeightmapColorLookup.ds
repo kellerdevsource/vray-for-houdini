@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexXSIWeightmapColorLookup
+    label	"XSI Weightmap Color Lookup"
     parm {
 	name	"plugindata"
 	label	"XSI Weightmap Color Lookup"

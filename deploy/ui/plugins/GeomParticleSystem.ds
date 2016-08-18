@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	GeomParticleSystem
+    label	"Geom Particle System"
     parm {
 	name	"plugindata"
 	label	"Geom Particle System"

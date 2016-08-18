@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexOutput
+    label	"Output"
     parm {
 	name	"plugindata"
 	label	"Output"

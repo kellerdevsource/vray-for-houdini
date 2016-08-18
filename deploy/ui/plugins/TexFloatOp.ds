@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexFloatOp
+    label	"Float Operations"
     parm {
 	name	"plugindata"
 	label	"Float Operations"

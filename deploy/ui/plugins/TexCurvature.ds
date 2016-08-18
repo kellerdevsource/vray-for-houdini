@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexCurvature
+    label	"Curvature"
     parm {
 	name	"plugindata"
 	label	"Curvature"

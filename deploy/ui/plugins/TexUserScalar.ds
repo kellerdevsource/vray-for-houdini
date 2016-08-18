@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexUserScalar
+    label	"User Scalar"
     parm {
 	name	"plugindata"
 	label	"User Scalar"

@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexTemperatureToColor
+    label	"Temperature To Color"
     parm {
 	name	"plugindata"
 	label	"Temperature To Color"

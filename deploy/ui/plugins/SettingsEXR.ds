@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	SettingsEXR
+    label	"SettingsEXR"
     parm {
 	name	"plugindata"
 	label	"SettingsEXR"

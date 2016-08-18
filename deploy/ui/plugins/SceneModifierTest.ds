@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	SceneModifierTest
+    label	"Scene Modifier Test"
     parm {
 	name	"plugindata"
 	label	"Scene Modifier Test"

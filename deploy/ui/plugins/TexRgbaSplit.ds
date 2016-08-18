@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexRgbaSplit
+    label	"Rgba Split"
     parm {
 	name	"plugindata"
 	label	"Rgba Split"

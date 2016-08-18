@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	SettingsCameraDof
+    label	"Depth Of Field"
     parm {
 	name	"SettingsCameraDof_plugindata"
 	label	"Depth Of Field"

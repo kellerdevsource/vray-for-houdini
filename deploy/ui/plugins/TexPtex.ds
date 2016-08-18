@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexPtex
+    label	"Ptex"
     parm {
 	name	"plugindata"
 	label	"Ptex"

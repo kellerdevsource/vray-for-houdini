@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexNoiseMax
+    label	"Noise (3ds Max)"
     parm {
 	name	"plugindata"
 	label	"Noise (3ds Max)"

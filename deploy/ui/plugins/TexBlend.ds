@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexBlend
+    label	"Blend"
     parm {
 	name	"plugindata"
 	label	"Blend"

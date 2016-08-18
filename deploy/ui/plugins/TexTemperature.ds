@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexTemperature
+    label	"Temperature"
     parm {
 	name	"plugindata"
 	label	"Temperature"

@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexMayaConversion
+    label	"Maya Conversion"
     parm {
 	name	"plugindata"
 	label	"Maya Conversion"

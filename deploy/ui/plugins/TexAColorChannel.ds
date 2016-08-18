@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexAColorChannel
+    label	"Color Channel"
     parm {
 	name	"plugindata"
 	label	"Color Channel"

@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexModoChanModLogic
+    label	"Modo Chan Mod Logic"
     parm {
 	name	"plugindata"
 	label	"Modo Chan Mod Logic"

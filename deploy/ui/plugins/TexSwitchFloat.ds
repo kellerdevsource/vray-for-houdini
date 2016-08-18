@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexSwitchFloat
+    label	"Switch Float"
     parm {
 	name	"plugindata"
 	label	"Switch Float"

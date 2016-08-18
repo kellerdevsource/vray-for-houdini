@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexNoiseASGVIS
+    label	"Noise ASGVIS"
     parm {
 	name	"plugindata"
 	label	"Noise ASGVIS"

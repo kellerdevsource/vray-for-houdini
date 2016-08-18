@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexSoftbox
+    label	"Soft Box"
     parm {
 	name	"plugindata"
 	label	"Soft Box"

@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	Instancer2
+    label	"Instancer 2"
     parm {
 	name	"plugindata"
 	label	"Instancer 2"

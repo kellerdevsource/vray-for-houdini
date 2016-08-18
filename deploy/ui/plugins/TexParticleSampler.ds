@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexParticleSampler
+    label	"Particle Sampler"
     parm {
 	name	"plugindata"
 	label	"Particle Sampler"

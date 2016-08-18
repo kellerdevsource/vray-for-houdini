@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	GeomStaticNURBS
+    label	"Geom Static NURBS"
     parm {
 	name	"plugindata"
 	label	"Geom Static NURBS"

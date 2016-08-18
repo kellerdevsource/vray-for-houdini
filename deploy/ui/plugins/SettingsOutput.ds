@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	SettingsOutput
+    label	"Output"
     parm {
 	name	"SettingsOutput_plugindata"
 	label	"Output"

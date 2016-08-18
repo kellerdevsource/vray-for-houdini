@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexSwirl
+    label	"Swirl"
     parm {
 	name	"plugindata"
 	label	"Swirl"

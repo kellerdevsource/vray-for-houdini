@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexColorCurve
+    label	"Color Curve"
     parm {
 	name	"plugindata"
 	label	"Color Curve"

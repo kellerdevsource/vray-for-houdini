@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	EnvFogMeshGizmo
+    label	"Fog Gizmo"
     parm {
 	name	"plugindata"
 	label	"Fog Gizmo"

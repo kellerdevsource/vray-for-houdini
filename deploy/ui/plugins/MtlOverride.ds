@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	MtlOverride
+    label	"Override"
     parm {
 	name	"plugindata"
 	label	"Override"

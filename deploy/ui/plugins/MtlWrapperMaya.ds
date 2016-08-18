@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	MtlWrapperMaya
+    label	"Mtl Wrapper Maya"
     parm {
 	name	"plugindata"
 	label	"Mtl Wrapper Maya"

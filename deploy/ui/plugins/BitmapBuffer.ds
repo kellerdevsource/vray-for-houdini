@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	BitmapBuffer
+    label	"Image File"
     parm {
 	name	"plugindata"
 	label	"Image File"

@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	FilterSinc
+    label	"Sinc"
     parm {
 	name	"plugindata"
 	label	"Sinc"

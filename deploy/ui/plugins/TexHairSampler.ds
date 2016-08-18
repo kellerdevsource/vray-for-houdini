@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexHairSampler
+    label	"Hair Sampler"
     parm {
 	name	"plugindata"
 	label	"Hair Sampler"

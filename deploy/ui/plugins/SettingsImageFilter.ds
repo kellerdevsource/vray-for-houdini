@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	SettingsImageFilter
+    label	"Settings Image Filter"
     parm {
 	name	"plugindata"
 	label	"Settings Image Filter"

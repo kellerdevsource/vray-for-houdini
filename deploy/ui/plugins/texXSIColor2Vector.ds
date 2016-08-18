@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	texXSIColor2Vector
+    label	"XSI Color 2 Vector"
     parm {
 	name	"plugindata"
 	label	"XSI Color 2 Vector"

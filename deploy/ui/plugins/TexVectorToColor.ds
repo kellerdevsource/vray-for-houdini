@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexVectorToColor
+    label	"Vector To Color"
     parm {
 	name	"plugindata"
 	label	"Vector To Color"

@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexVector
+    label	"Vector To Texture"
     parm {
 	name	"plugindata"
 	label	"Vector To Texture"

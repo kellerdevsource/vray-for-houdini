@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	MayaGamma
+    label	"Gamma"
     parm {
 	name	"plugindata"
 	label	"Gamma"

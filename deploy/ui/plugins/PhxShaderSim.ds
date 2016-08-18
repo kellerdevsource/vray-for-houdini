@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	PhxShaderSim
+    label	"Phoenix Data"
     parm {
 	name	"plugindata"
 	label	"Phoenix Data"

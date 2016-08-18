@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	BRDFCarPaint
+    label	"Car Paint"
     parm {
 	name	"plugindata"
 	label	"Car Paint"

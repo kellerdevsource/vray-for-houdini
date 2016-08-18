@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexMaxHairInfo
+    label	"Max Hair Info"
     parm {
 	name	"plugindata"
 	label	"Max Hair Info"

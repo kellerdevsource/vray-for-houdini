@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	LightOmni
+    label	"Omni"
     parm {
 	name	"plugindata"
 	label	"Omni"

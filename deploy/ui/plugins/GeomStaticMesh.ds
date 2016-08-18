@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	GeomStaticMesh
+    label	"Mesh"
     parm {
 	name	"plugindata"
 	label	"Mesh"

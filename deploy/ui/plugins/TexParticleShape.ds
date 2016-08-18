@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexParticleShape
+    label	"Particle Shape"
     parm {
 	name	"plugindata"
 	label	"Particle Shape"

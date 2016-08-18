@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexModoFresnelSchlick
+    label	"Modo Fresnel Schlick"
     parm {
 	name	"plugindata"
 	label	"Modo Fresnel Schlick"

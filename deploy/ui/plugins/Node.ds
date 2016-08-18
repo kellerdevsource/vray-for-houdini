@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	Node
+    label	"Node"
     parm {
 	name	"plugindata"
 	label	"Node"

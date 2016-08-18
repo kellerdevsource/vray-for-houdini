@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexRaySwitch
+    label	"Ray Switch"
     parm {
 	name	"plugindata"
 	label	"Ray Switch"

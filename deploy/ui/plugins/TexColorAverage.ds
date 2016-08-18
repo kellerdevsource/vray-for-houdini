@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexColorAverage
+    label	"Color Average"
     parm {
 	name	"plugindata"
 	label	"Color Average"

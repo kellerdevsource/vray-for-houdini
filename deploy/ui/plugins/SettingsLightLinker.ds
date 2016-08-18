@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	SettingsLightLinker
+    label	"Settings Light Linker"
     parm {
 	name	"plugindata"
 	label	"Settings Light Linker"

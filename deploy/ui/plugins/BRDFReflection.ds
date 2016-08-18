@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	BRDFReflection
+    label	"Reflection"
     parm {
 	name	"plugindata"
 	label	"Reflection"

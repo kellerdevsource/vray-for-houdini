@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	PhxShaderSimMesh
+    label	"Phx Shader Sim Mesh"
     parm {
 	name	"plugindata"
 	label	"Phx Shader Sim Mesh"

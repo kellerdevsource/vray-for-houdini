@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexRemapFloat
+    label	"Remap Float"
     parm {
 	name	"plugindata"
 	label	"Remap Float"

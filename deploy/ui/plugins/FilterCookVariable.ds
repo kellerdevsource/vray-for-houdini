@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	FilterCookVariable
+    label	"Cook Variable"
     parm {
 	name	"plugindata"
 	label	"Cook Variable"

@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	MtlWrapper
+    label	"Wrapper"
     parm {
 	name	"plugindata"
 	label	"Wrapper"

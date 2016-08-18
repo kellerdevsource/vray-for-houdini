@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexSetRange
+    label	"Range"
     parm {
 	name	"plugindata"
 	label	"Range"

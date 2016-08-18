@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexFresnelASGVIS
+    label	"Fresnel ASGVIS"
     parm {
 	name	"plugindata"
 	label	"Fresnel ASGVIS"

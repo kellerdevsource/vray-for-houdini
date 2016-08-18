@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	GeomBifrost
+    label	"Bifrost"
     parm {
 	name	"plugindata"
 	label	"Bifrost"

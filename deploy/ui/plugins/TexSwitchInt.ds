@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexSwitchInt
+    label	"Switch Int"
     parm {
 	name	"plugindata"
 	label	"Switch Int"

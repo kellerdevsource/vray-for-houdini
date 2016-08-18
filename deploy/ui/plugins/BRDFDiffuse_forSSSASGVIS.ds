@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	BRDFDiffuse_forSSSASGVIS
+    label	"Diffuse for SSSASGVIS"
     parm {
 	name	"plugindata"
 	label	"Diffuse for SSSASGVIS"

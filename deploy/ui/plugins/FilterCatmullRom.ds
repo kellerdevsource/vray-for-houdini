@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	FilterCatmullRom
+    label	"Catmull-Rom"
     parm {
 	name	"plugindata"
 	label	"Catmull-Rom"

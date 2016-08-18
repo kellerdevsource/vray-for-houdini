@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	GeomMayaHair
+    label	"Hair"
     parm {
 	name	"plugindata"
 	label	"Hair"

@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	MtlVRmat
+    label	"VRmat"
     parm {
 	name	"plugindata"
 	label	"VRmat"

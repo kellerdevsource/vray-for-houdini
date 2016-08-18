@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexCustomBitmap
+    label	"Custom Bitmap"
     parm {
 	name	"plugindata"
 	label	"Custom Bitmap"

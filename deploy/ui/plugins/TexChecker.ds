@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexChecker
+    label	"Checker"
     parm {
 	name	"plugindata"
 	label	"Checker"

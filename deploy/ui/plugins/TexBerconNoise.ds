@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexBerconNoise
+    label	"Bercon Noise"
     parm {
 	name	"plugindata"
 	label	"Bercon Noise"

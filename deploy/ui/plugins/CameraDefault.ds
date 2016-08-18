@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	CameraDefault
+    label	"Camera Default"
     parm {
 	name	"plugindata"
 	label	"Camera Default"

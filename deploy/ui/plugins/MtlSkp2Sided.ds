@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	MtlSkp2Sided
+    label	"Mtl Skp 2 Sided"
     parm {
 	name	"plugindata"
 	label	"Mtl Skp 2 Sided"

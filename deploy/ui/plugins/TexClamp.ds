@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexClamp
+    label	"Clamp"
     parm {
 	name	"plugindata"
 	label	"Clamp"

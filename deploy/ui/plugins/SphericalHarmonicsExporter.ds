@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	SphericalHarmonicsExporter
+    label	"Spherical Harmonics Exporter"
     parm {
 	name	"plugindata"
 	label	"Spherical Harmonics Exporter"

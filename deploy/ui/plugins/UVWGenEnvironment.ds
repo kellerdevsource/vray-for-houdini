@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	UVWGenEnvironment
+    label	"Environment"
     parm {
 	name	"plugindata"
 	label	"Environment"

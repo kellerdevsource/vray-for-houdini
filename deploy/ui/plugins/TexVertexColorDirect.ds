@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexVertexColorDirect
+    label	"Vertex Color Direct"
     parm {
 	name	"plugindata"
 	label	"Vertex Color Direct"

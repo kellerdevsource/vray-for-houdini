@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexModoMaxColorComponent
+    label	"Modo Max Color Component"
     parm {
 	name	"plugindata"
 	label	"Modo Max Color Component"

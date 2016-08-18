@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	MtlObjBBox
+    label	"Object Bounding"
     parm {
 	name	"plugindata"
 	label	"Object Bounding"

@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	VolumeFog
+    label	"Volume Fog"
     parm {
 	name	"plugindata"
 	label	"Volume Fog"

@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexCombineFloat
+    label	"Combine Float"
     parm {
 	name	"plugindata"
 	label	"Combine Float"

@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexCondition2
+    label	"Condition"
     parm {
 	name	"plugindata"
 	label	"Condition"

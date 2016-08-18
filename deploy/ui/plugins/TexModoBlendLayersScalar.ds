@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexModoBlendLayersScalar
+    label	"Modo Blend Layers Scalar"
     parm {
 	name	"plugindata"
 	label	"Modo Blend Layers Scalar"

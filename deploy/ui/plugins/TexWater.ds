@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexWater
+    label	"Water"
     parm {
 	name	"plugindata"
 	label	"Water"

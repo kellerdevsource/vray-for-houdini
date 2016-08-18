@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexXSIColorCorrection
+    label	"XSI Color Correction"
     parm {
 	name	"plugindata"
 	label	"XSI Color Correction"

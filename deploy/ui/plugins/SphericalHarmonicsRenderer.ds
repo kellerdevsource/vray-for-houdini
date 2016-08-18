@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	SphericalHarmonicsRenderer
+    label	"Spherical Harmonics Renderer"
     parm {
 	name	"plugindata"
 	label	"Spherical Harmonics Renderer"

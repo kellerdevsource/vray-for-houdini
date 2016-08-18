@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexSmoke
+    label	"Smoke"
     parm {
 	name	"plugindata"
 	label	"Smoke"

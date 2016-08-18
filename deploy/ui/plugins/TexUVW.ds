@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexUVW
+    label	"UVW"
     parm {
 	name	"plugindata"
 	label	"UVW"

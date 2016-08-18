@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexRemap
+    label	"Remap"
     parm {
 	name	"plugindata"
 	label	"Remap"

@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	SettingsRaycaster
+    label	"Raycaster"
     parm {
 	name	"SettingsRaycaster_plugindata"
 	label	"Raycaster"

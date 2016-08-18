@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexNoise
+    label	"Noise"
     parm {
 	name	"plugindata"
 	label	"Noise"

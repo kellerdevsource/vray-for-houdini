@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexDisplacacementRestrict
+    label	"Displacacement Restrict"
     parm {
 	name	"plugindata"
 	label	"Displacacement Restrict"

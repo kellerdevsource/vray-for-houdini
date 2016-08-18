@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	SettingsPtexBaker
+    label	"Ptex Baker"
     parm {
 	name	"plugindata"
 	label	"Ptex Baker"

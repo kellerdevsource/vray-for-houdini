@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexXSIColorBalance
+    label	"XSI Color Balance"
     parm {
 	name	"plugindata"
 	label	"XSI Color Balance"

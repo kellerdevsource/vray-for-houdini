@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	OutputDeepWriter
+    label	"Output Deep Writer"
     parm {
 	name	"plugindata"
 	label	"Output Deep Writer"

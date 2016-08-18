@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	PhxShaderOceanTex
+    label	"Phx Shader Ocean Tex"
     parm {
 	name	"plugindata"
 	label	"Phx Shader Ocean Tex"

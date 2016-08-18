@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	MtlASGVIS
+    label	"Mtl ASGVIS"
     parm {
 	name	"plugindata"
 	label	"Mtl ASGVIS"

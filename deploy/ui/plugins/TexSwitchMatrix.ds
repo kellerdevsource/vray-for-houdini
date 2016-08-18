@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexSwitchMatrix
+    label	"Switch Matrix"
     parm {
 	name	"plugindata"
 	label	"Switch Matrix"

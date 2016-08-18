@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexModoExtractColor
+    label	"Modo Extract Color"
     parm {
 	name	"plugindata"
 	label	"Modo Extract Color"

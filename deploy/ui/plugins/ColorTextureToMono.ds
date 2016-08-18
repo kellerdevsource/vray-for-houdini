@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	ColorTextureToMono
+    label	"Color Texture To Mono"
     parm {
 	name	"plugindata"
 	label	"Color Texture To Mono"

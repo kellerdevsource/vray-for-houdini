@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexXSIFabric
+    label	"XSI Fabric"
     parm {
 	name	"plugindata"
 	label	"XSI Fabric"

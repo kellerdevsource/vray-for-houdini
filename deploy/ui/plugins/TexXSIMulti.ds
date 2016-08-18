@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexXSIMulti
+    label	"XSI Multi"
     parm {
 	name	"plugindata"
 	label	"XSI Multi"

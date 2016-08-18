@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexIDIntegerMap
+    label	"ID Integer Map"
     parm {
 	name	"plugindata"
 	label	"ID Integer Map"

@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	BRDFMultiBump
+    label	"Multi Bump"
     parm {
 	name	"plugindata"
 	label	"Multi Bump"

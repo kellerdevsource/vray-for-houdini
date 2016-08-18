@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexIntToFloat
+    label	"Int To Float"
     parm {
 	name	"plugindata"
 	label	"Int To Float"

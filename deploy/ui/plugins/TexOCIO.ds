@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexOCIO
+    label	"OCIO"
     parm {
 	name	"plugindata"
 	label	"OCIO"

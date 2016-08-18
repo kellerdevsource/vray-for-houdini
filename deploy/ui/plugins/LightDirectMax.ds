@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	LightDirectMax
+    label	"Direct (3ds max)"
     parm {
 	name	"plugindata"
 	label	"Direct (3ds max)"

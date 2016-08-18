@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	UVWGenC4D
+    label	"C4D"
     parm {
 	name	"plugindata"
 	label	"C4D"

@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	ColorMapperTest
+    label	"Color Mapper Test"
     parm {
 	name	"plugindata"
 	label	"Color Mapper Test"

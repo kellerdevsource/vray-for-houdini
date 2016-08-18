@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexCellular
+    label	"Cellular"
     parm {
 	name	"plugindata"
 	label	"Cellular"

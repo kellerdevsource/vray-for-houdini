@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexModoProcess
+    label	"Modo Process"
     parm {
 	name	"plugindata"
 	label	"Modo Process"

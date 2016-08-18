@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	SettingsImageSampler
+    label	"AA"
     parm {
 	name	"SettingsImageSampler_plugindata"
 	label	"AA"

@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	SettingsUnitsInfo
+    label	"SettingsUnitsInfo"
     parm {
 	name	"plugindata"
 	label	"SettingsUnitsInfo"

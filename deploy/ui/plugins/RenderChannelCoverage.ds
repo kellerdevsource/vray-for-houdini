@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	RenderChannelCoverage
+    label	"Coverage"
     parm {
 	name	"plugindata"
 	label	"Coverage"

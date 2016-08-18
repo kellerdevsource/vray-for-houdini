@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	SettingsCamera
+    label	"Camera"
     parm {
 	name	"SettingsCamera_plugindata"
 	label	"Camera"

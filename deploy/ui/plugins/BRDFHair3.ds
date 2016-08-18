@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	BRDFHair3
+    label	"Hair 3"
     parm {
 	name	"plugindata"
 	label	"Hair 3"

@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexComposite
+    label	"Composite"
     parm {
 	name	"plugindata"
 	label	"Composite"

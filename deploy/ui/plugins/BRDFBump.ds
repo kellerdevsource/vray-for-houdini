@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	BRDFBump
+    label	"Bump"
     parm {
 	name	"plugindata"
 	label	"Bump"

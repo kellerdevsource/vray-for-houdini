@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	SettingsDMCSampler
+    label	"DMC"
     parm {
 	name	"SettingsDMCSampler_plugindata"
 	label	"DMC"

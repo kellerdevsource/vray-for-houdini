@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexBezierCurve
+    label	"Bezier Curve"
     parm {
 	name	"plugindata"
 	label	"Bezier Curve"

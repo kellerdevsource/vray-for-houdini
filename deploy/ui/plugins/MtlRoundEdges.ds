@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	MtlRoundEdges
+    label	"Rounded Corners"
     parm {
 	name	"plugindata"
 	label	"Rounded Corners"

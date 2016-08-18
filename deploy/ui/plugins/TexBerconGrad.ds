@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexBerconGrad
+    label	"Bercon Grad"
     parm {
 	name	"plugindata"
 	label	"Bercon Grad"

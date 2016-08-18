@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	SettingsTGA
+    label	"SettingsTGA"
     parm {
 	name	"plugindata"
 	label	"SettingsTGA"

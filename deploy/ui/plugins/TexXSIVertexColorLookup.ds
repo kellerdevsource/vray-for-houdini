@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexXSIVertexColorLookup
+    label	"XSI Vertex Color Lookup"
     parm {
 	name	"plugindata"
 	label	"XSI Vertex Color Lookup"

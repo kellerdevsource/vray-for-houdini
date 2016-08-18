@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexModoEnvironmentColor
+    label	"Modo Environment Color"
     parm {
 	name	"plugindata"
 	label	"Modo Environment Color"

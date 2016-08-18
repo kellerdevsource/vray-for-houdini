@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexXSIRGBAKeyer
+    label	"XSIRGBA Keyer"
     parm {
 	name	"plugindata"
 	label	"XSIRGBA Keyer"

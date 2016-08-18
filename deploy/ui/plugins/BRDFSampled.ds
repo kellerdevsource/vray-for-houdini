@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	BRDFSampled
+    label	"Sampled"
     parm {
 	name	"plugindata"
 	label	"Sampled"

@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	MtlDiffuse
+    label	"Diffuse"
     parm {
 	name	"plugindata"
 	label	"Diffuse"

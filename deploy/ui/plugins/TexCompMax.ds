@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexCompMax
+    label	"Comp Max"
     parm {
 	name	"plugindata"
 	label	"Comp Max"

@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexLayered
+    label	"Layered"
     parm {
 	name	"plugindata"
 	label	"Layered"

@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexColorToFloat
+    label	"Color To Float"
     parm {
 	name	"plugindata"
 	label	"Color To Float"

@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexMeshVertexColorWithDefault
+    label	"Mesh Vertex Color With Default"
     parm {
 	name	"plugindata"
 	label	"Mesh Vertex Color With Default"

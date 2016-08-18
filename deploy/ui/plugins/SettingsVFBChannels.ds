@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	SettingsVFBChannels
+    label	"Settings VFB Channels"
     parm {
 	name	"plugindata"
 	label	"Settings VFB Channels"

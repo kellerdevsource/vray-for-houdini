@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexXSIWood
+    label	"XSI Wood"
     parm {
 	name	"plugindata"
 	label	"XSI Wood"

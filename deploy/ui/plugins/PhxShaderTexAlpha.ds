@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	PhxShaderTexAlpha
+    label	"Phx Shader Tex Alpha"
     parm {
 	name	"plugindata"
 	label	"Phx Shader Tex Alpha"

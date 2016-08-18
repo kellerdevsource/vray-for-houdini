@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexStucco
+    label	"Stucco"
     parm {
 	name	"plugindata"
 	label	"Stucco"

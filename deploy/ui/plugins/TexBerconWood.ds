@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexBerconWood
+    label	"Bercon Wood"
     parm {
 	name	"plugindata"
 	label	"Bercon Wood"

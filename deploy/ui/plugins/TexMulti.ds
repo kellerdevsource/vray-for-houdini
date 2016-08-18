@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexMulti
+    label	"Multi"
     parm {
 	name	"plugindata"
 	label	"Multi"

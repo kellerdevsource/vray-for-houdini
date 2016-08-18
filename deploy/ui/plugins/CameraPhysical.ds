@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	CameraPhysical
+    label	"Physical Camera"
     parm {
 	name	"plugindata"
 	label	"Physical Camera"

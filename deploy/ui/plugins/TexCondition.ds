@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexCondition
+    label	"Condition (From Texture)"
     parm {
 	name	"plugindata"
 	label	"Condition (From Texture)"

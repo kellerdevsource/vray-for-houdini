@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexColorLogic
+    label	"Color Logic"
     parm {
 	name	"plugindata"
 	label	"Color Logic"

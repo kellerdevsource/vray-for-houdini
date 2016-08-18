@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexXSIGradient
+    label	"XSI Gradient"
     parm {
 	name	"plugindata"
 	label	"XSI Gradient"

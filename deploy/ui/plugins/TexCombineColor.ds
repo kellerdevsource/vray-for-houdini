@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexCombineColor
+    label	"Combine Color"
     parm {
 	name	"plugindata"
 	label	"Combine Color"

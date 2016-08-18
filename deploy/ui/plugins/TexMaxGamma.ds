@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexMaxGamma
+    label	"Max Gamma"
     parm {
 	name	"plugindata"
 	label	"Max Gamma"

@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	MtlRenderStats
+    label	"Render Stats"
     parm {
 	name	"plugindata"
 	label	"Render Stats"

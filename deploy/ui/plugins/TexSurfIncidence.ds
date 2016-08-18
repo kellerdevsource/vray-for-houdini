@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexSurfIncidence
+    label	"Surf Incidence"
     parm {
 	name	"plugindata"
 	label	"Surf Incidence"

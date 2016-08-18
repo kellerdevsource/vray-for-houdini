@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexDistance
+    label	"Distance"
     parm {
 	name	"plugindata"
 	label	"Distance"

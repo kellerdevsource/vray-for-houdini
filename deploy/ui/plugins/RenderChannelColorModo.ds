@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	RenderChannelColorModo
+    label	"Render Channel Color Modo"
     parm {
 	name	"plugindata"
 	label	"Render Channel Color Modo"

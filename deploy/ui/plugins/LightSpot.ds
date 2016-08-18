@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	LightSpot
+    label	"Spot"
     parm {
 	name	"plugindata"
 	label	"Spot"

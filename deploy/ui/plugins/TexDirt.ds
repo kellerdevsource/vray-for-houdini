@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexDirt
+    label	"Dirt"
     parm {
 	name	"plugindata"
 	label	"Dirt"

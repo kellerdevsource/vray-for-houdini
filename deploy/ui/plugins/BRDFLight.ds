@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	BRDFLight
+    label	"Light"
     parm {
 	name	"plugindata"
 	label	"Light"

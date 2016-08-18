@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	volumeXSIMulti
+    label	"volume XSI Multi"
     parm {
 	name	"plugindata"
 	label	"volume XSI Multi"

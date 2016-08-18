@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexTriPlanar
+    label	"TriPlanar"
     parm {
 	name	"plugindata"
 	label	"TriPlanar"

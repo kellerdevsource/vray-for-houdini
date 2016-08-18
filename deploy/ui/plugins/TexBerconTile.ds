@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexBerconTile
+    label	"Bercon Tile"
     parm {
 	name	"plugindata"
 	label	"Bercon Tile"

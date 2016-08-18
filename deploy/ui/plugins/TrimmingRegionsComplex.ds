@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TrimmingRegionsComplex
+    label	"Trimming Regions Complex"
     parm {
 	name	"plugindata"
 	label	"Trimming Regions Complex"

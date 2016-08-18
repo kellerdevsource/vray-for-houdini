@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	SettingsColorMapping
+    label	"Color Mapping"
     parm {
 	name	"SettingsColorMapping_plugindata"
 	label	"Color Mapping"

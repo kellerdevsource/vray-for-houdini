@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	BSDFPointParticle
+    label	"Point Particle"
     parm {
 	name	"plugindata"
 	label	"Point Particle"

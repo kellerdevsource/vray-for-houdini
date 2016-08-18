@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	RenderChannelZDepth
+    label	"Z-Depth"
     parm {
 	name	"plugindata"
 	label	"Z-Depth"

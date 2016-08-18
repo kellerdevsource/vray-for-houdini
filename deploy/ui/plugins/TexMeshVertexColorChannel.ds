@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexMeshVertexColorChannel
+    label	"Mesh Map Channel"
     parm {
 	name	"plugindata"
 	label	"Mesh Map Channel"

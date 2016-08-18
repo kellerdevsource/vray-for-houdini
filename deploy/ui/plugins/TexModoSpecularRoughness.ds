@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexModoSpecularRoughness
+    label	"Modo Specular Roughness"
     parm {
 	name	"plugindata"
 	label	"Modo Specular Roughness"

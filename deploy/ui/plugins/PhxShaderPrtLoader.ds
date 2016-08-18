@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	PhxShaderPrtLoader
+    label	"Phx Shader Prt Loader"
     parm {
 	name	"plugindata"
 	label	"Phx Shader Prt Loader"

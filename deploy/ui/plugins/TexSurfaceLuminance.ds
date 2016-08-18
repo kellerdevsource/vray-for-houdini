@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexSurfaceLuminance
+    label	"Surface Luminance"
     parm {
 	name	"plugindata"
 	label	"Surface Luminance"

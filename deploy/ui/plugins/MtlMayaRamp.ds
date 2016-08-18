@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	MtlMayaRamp
+    label	"Mtl Maya Ramp"
     parm {
 	name	"plugindata"
 	label	"Mtl Maya Ramp"

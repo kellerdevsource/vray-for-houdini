@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexXSIRipple
+    label	"XSI Ripple"
     parm {
 	name	"plugindata"
 	label	"XSI Ripple"

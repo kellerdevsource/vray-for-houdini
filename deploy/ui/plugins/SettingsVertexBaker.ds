@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	SettingsVertexBaker
+    label	"SettingsVertexBaker"
     parm {
 	name	"plugindata"
 	label	"SettingsVertexBaker"

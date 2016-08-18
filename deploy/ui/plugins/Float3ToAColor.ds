@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	Float3ToAColor
+    label	"Float 3 To AColor"
     parm {
 	name	"plugindata"
 	label	"Float 3 To AColor"

@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	UVWGenExplicit
+    label	"Explicit"
     parm {
 	name	"plugindata"
 	label	"Explicit"

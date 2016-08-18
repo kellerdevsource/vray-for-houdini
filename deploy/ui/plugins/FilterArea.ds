@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	FilterArea
+    label	"Area"
     parm {
 	name	"plugindata"
 	label	"Area"

@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexLuminance
+    label	"Luminance"
     parm {
 	name	"plugindata"
 	label	"Luminance"

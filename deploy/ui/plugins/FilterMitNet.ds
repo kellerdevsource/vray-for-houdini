@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	FilterMitNet
+    label	"Mitchell-Netravali"
     parm {
 	name	"plugindata"
 	label	"Mitchell-Netravali"

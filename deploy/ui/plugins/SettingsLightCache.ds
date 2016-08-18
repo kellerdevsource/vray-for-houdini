@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	SettingsLightCache
+    label	"Light Cache"
     parm {
 	name	"SettingsLightCache_plugindata"
 	label	"Light Cache"

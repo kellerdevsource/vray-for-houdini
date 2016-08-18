@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexGradient
+    label	"Gradient"
     parm {
 	name	"plugindata"
 	label	"Gradient"

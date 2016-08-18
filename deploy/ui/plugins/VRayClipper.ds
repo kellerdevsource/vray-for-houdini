@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	VRayClipper
+    label	"V Ray Clipper"
     parm {
 	name	"plugindata"
 	label	"V Ray Clipper"

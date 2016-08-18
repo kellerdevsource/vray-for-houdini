@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexXSIFlagstone
+    label	"XSI Flagstone"
     parm {
 	name	"plugindata"
 	label	"XSI Flagstone"

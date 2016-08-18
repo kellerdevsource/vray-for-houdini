@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	FilterBox
+    label	"Box"
     parm {
 	name	"plugindata"
 	label	"Box"

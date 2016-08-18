@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	LightIESMax
+    label	"IES (3ds max)"
     parm {
 	name	"plugindata"
 	label	"IES (3ds max)"

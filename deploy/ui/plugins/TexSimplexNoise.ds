@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexSimplexNoise
+    label	"Noise (Simplex)"
     parm {
 	name	"plugindata"
 	label	"Noise (Simplex)"

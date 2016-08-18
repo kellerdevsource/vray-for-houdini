@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexICC
+    label	"ICC"
     parm {
 	name	"plugindata"
 	label	"ICC"

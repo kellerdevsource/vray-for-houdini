@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexModoChanModColorCorrect
+    label	"Modo Chan Mod Color Correct"
     parm {
 	name	"plugindata"
 	label	"Modo Chan Mod Color Correct"

@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	GeomDisplacedMesh
+    label	"Displacement"
     parm {
 	name	"plugindata"
 	label	"Displacement"

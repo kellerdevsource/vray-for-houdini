@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	LightMesh
+    label	"Mesh Light"
     parm {
 	name	"plugindata"
 	label	"Mesh Light"

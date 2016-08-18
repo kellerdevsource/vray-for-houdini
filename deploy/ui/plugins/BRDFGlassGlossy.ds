@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	BRDFGlassGlossy
+    label	"Glass Glossy"
     parm {
 	name	"plugindata"
 	label	"Glass Glossy"

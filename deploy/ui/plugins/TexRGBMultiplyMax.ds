@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexRGBMultiplyMax
+    label	"RGB Multiply Max"
     parm {
 	name	"plugindata"
 	label	"RGB Multiply Max"

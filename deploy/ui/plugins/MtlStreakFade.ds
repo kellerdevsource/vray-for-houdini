@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	MtlStreakFade
+    label	"Streak Fade"
     parm {
 	name	"plugindata"
 	label	"Streak Fade"

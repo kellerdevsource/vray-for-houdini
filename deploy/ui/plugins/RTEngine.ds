@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	RTEngine
+    label	"Realtime Engine"
     parm {
 	name	"plugindata"
 	label	"Realtime Engine"

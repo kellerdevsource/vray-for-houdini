@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexVectorOp
+    label	"Vector Operations"
     parm {
 	name	"plugindata"
 	label	"Vector Operations"

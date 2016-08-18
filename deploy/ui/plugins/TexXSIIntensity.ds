@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexXSIIntensity
+    label	"XSI Intensity"
     parm {
 	name	"plugindata"
 	label	"XSI Intensity"

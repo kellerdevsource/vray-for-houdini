@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	SettingsRenderChannels
+    label	"Render Channels"
     parm {
 	name	"plugindata"
 	label	"Render Channels"

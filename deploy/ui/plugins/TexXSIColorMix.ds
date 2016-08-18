@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexXSIColorMix
+    label	"XSI Color Mix"
     parm {
 	name	"plugindata"
 	label	"XSI Color Mix"

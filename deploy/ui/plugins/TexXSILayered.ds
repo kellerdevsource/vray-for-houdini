@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexXSILayered
+    label	"XSI Layered"
     parm {
 	name	"plugindata"
 	label	"XSI Layered"

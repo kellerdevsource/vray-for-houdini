@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	LightAmbient
+    label	"Ambient"
     parm {
 	name	"plugindata"
 	label	"Ambient"

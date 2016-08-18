@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	BRDFLayered
+    label	"Layered"
     parm {
 	name	"plugindata"
 	label	"Layered"

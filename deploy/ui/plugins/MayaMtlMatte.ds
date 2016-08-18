@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	MayaMtlMatte
+    label	"Maya Mtl Matte"
     parm {
 	name	"plugindata"
 	label	"Maya Mtl Matte"

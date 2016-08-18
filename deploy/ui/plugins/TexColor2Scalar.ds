@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexColor2Scalar
+    label	"Color 2 Scalar"
     parm {
 	name	"plugindata"
 	label	"Color 2 Scalar"

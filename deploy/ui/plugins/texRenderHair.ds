@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	texRenderHair
+    label	"Render Hair"
     parm {
 	name	"plugindata"
 	label	"Render Hair"

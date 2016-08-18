@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexXSIScalarInvert
+    label	"XSI Scalar Invert"
     parm {
 	name	"plugindata"
 	label	"XSI Scalar Invert"

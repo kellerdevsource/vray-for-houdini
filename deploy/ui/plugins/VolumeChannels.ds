@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	VolumeChannels
+    label	"Volume Channels"
     parm {
 	name	"plugindata"
 	label	"Volume Channels"

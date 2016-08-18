@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	LightSpotMax
+    label	"Spot (3ds max)"
     parm {
 	name	"plugindata"
 	label	"Spot (3ds max)"

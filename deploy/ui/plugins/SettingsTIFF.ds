@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	SettingsTIFF
+    label	"SettingsTIFF"
     parm {
 	name	"plugindata"
 	label	"SettingsTIFF"

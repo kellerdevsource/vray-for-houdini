@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	UVWGenObject
+    label	"Object"
     parm {
 	name	"plugindata"
 	label	"Object"

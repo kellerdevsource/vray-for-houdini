@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	SettingsOptions
+    label	"Options"
     parm {
 	name	"SettingsOptions_plugindata"
 	label	"Options"

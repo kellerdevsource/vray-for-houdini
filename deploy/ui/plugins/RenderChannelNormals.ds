@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	RenderChannelNormals
+    label	"Normals"
     parm {
 	name	"plugindata"
 	label	"Normals"

@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexGrid
+    label	"Grid"
     parm {
 	name	"plugindata"
 	label	"Grid"

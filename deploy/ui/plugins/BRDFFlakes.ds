@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	BRDFFlakes
+    label	"Flakes"
     parm {
 	name	"plugindata"
 	label	"Flakes"

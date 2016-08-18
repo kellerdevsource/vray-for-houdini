@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexRock
+    label	"Rock"
     parm {
 	name	"plugindata"
 	label	"Rock"

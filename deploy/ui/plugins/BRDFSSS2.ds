@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	BRDFSSS2
+    label	"SSS 2"
     parm {
 	name	"plugindata"
 	label	"SSS 2"

@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	MtlLayeredBRDF
+    label	"Mtl Layered BRDF"
     parm {
 	name	"plugindata"
 	label	"Mtl Layered BRDF"

@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexRGBToHSV
+    label	"RGB To HSV"
     parm {
 	name	"plugindata"
 	label	"RGB To HSV"

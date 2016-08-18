@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	SettingsMotionBlur
+    label	"Motion Blur"
     parm {
 	name	"SettingsMotionBlur_plugindata"
 	label	"Motion Blur"

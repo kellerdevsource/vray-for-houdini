@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	UVWGenSwitch
+    label	"Switch"
     parm {
 	name	"plugindata"
 	label	"Switch"

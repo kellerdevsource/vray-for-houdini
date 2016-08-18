@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexColorAndAlpha
+    label	"Color And Alpha"
     parm {
 	name	"plugindata"
 	label	"Color And Alpha"

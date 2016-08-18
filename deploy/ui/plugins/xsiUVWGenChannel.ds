@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	xsiUVWGenChannel
+    label	"Channel (XSI)"
     parm {
 	name	"plugindata"
 	label	"Channel (XSI)"

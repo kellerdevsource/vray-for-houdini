@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexAColorOp
+    label	"Color Operations"
     parm {
 	name	"plugindata"
 	label	"Color Operations"

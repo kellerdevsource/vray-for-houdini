@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexNoiseMaya
+    label	"Noise (Maya)"
     parm {
 	name	"plugindata"
 	label	"Noise (Maya)"

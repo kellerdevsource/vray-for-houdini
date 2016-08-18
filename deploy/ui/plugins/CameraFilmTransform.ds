@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	CameraFilmTransform
+    label	"Camera Film Transform"
     parm {
 	name	"plugindata"
 	label	"Camera Film Transform"

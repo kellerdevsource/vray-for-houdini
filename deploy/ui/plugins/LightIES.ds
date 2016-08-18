@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	LightIES
+    label	"IES"
     parm {
 	name	"plugindata"
 	label	"IES"

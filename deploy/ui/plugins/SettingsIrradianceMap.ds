@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	SettingsIrradianceMap
+    label	"Irradiance Map"
     parm {
 	name	"SettingsIrradianceMap_plugindata"
 	label	"Irradiance Map"

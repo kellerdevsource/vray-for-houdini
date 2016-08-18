@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	RenderChannelLightSelect
+    label	"Light Select"
     parm {
 	name	"plugindata"
 	label	"Light Select"

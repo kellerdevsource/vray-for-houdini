@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexMayaFluid
+    label	"Phoenix Fluid"
     parm {
 	name	"plugindata"
 	label	"Phoenix Fluid"

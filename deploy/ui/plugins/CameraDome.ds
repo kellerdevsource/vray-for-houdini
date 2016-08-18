@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	CameraDome
+    label	"Camera Dome"
     parm {
 	name	"plugindata"
 	label	"Camera Dome"

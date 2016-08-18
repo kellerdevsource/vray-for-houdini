@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	SettingsGI
+    label	"GI"
     parm {
 	name	"SettingsGI_plugindata"
 	label	"GI"

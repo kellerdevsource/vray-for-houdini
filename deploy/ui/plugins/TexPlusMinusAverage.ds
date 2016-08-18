@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexPlusMinusAverage
+    label	"Plus Minus Average"
     parm {
 	name	"plugindata"
 	label	"Plus Minus Average"

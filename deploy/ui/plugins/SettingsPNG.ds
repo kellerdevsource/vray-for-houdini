@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	SettingsPNG
+    label	"PNG"
     parm {
 	name	"plugindata"
 	label	"PNG"

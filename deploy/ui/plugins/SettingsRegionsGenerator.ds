@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	SettingsRegionsGenerator
+    label	"Regions"
     parm {
 	name	"SettingsRegionsGenerator_plugindata"
 	label	"Regions"

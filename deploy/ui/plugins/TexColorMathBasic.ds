@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexColorMathBasic
+    label	"Color Math Basic"
     parm {
 	name	"plugindata"
 	label	"Color Math Basic"

@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexMultiFloat
+    label	"Multi Float"
     parm {
 	name	"plugindata"
 	label	"Multi Float"

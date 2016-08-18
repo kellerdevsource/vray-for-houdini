@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexModoSampler
+    label	"Modo Sampler"
     parm {
 	name	"plugindata"
 	label	"Modo Sampler"

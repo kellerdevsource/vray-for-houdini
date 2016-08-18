@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	FilterGaussian
+    label	"Gaussian"
     parm {
 	name	"plugindata"
 	label	"Gaussian"

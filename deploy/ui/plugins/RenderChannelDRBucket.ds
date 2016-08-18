@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	RenderChannelDRBucket
+    label	"DR Bucket"
     parm {
 	name	"plugindata"
 	label	"DR Bucket"

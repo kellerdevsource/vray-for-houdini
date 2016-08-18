@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	LightDirect
+    label	"Direct"
     parm {
 	name	"plugindata"
 	label	"Direct"

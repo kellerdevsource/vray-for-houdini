@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	RenderChannelDenoiser
+    label	"Denoiser"
     parm {
 	name	"plugindata"
 	label	"Denoiser"

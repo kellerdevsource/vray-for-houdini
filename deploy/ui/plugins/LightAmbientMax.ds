@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	LightAmbientMax
+    label	"Ambient (3ds max)"
     parm {
 	name	"plugindata"
 	label	"Ambient (3ds max)"

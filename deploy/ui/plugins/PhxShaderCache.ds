@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	PhxShaderCache
+    label	"Phoenix Cache"
     parm {
 	name	"plugindata"
 	label	"Phoenix Cache"

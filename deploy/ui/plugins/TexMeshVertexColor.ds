@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexMeshVertexColor
+    label	"Mesh Vertex Color"
     parm {
 	name	"plugindata"
 	label	"Mesh Vertex Color"

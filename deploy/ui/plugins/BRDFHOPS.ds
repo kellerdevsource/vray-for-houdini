@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	BRDFHOPS
+    label	"HOPS"
     parm {
 	name	"plugindata"
 	label	"HOPS"

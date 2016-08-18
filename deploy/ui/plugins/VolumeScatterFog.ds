@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	VolumeScatterFog
+    label	"Volume Scatter Fog"
     parm {
 	name	"plugindata"
 	label	"Volume Scatter Fog"

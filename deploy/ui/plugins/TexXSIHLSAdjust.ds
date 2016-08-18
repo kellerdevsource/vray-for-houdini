@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexXSIHLSAdjust
+    label	"XSIHLS Adjust"
     parm {
 	name	"plugindata"
 	label	"XSIHLS Adjust"

@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	RenderChannelMultiMatte
+    label	"MultiMatte"
     parm {
 	name	"plugindata"
 	label	"MultiMatte"

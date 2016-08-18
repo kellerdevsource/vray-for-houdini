@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	TexModoUVResetAndFalloff
+    label	"Modo UV Reset And Falloff"
     parm {
 	name	"plugindata"
 	label	"Modo UV Reset And Falloff"

@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	BRDFStochasticFlakes
+    label	"Stochastic Flakes"
     parm {
 	name	"plugindata"
 	label	"Stochastic Flakes"

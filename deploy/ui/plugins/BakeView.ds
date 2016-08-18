@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	BakeView
+    label	"Bake"
     parm {
 	name	"plugindata"
 	label	"Bake"

@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	xsiUVWGenEnvironment
+    label	"Environment (XSI)"
     parm {
 	name	"plugindata"
 	label	"Environment (XSI)"

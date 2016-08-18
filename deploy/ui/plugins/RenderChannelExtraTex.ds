@@ -1,5 +1,6 @@
 {
-    name	parameters
+    name	RenderChannelExtraTex
+    label	"ExtraTex"
     parm {
 	name	"plugindata"
 	label	"ExtraTex"
