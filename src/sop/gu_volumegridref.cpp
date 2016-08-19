@@ -81,17 +81,15 @@ const ChannelInfo & fromPropName(const char * name) {
 }
 
 
-
-
 using namespace VRayForHoudini;
 
 GA_PrimitiveTypeId VRayVolumeGridRef::theTypeId(-1);
 const int MAX_CHAN_MAP_LEN = 2048;
 
-VFH_DEFINE_FACTORY_BASE(VRayVolumeGridFactoryBase, VRayVolumeGridRef, VFH_VOLUME_GRID_PARAMS, VFH_VOLUME_GRID_PARAMS_COUNT)
+//VFH_DEFINE_FACTORY_BASE(VRayVolumeGridFactoryBase, VRayVolumeGridRef, VFH_VOLUME_GRID_PARAMS, VFH_VOLUME_GRID_PARAMS_COUNT)
 
 class VRayVolumeGridFactory:
-		public VRayVolumeGridFactoryBase
+		public GU_PackedFactory
 {
 public:
 	static VRayVolumeGridFactory &getInstance()
@@ -116,8 +114,10 @@ private:
 };
 
 VRayVolumeGridFactory::VRayVolumeGridFactory():
-	VRayVolumeGridFactoryBase("VRayVolumeGridRef", "VRayVolumeGridRef")
+	GU_PackedFactory("VRayVolumeGridRef", "VRayVolumeGridRef")
 {
+	VFH_MAKE_REGISTERS(VFH_VOLUME_GRID_PARAMS, VFH_VOLUME_GRID_PARAMS_COUNT, VRayVolumeGridRef)
+
 	registerTupleIntrinsic(
 			"phx_channel_map",
 			IntGetterCast(&VRayVolumeGridRef::getPhxChannelMapSize),
@@ -147,7 +147,7 @@ void VRayVolumeGridRef::install(GA_PrimitiveFactory *gafactory)
 
 
 VRayVolumeGridRef::VRayVolumeGridRef():
-	VRayPackedImplBase(),
+	GU_PackedImpl(),
 	m_detail(),
 	m_dirty(false)
 {
@@ -158,7 +158,7 @@ VRayVolumeGridRef::VRayVolumeGridRef():
 
 
 VRayVolumeGridRef::VRayVolumeGridRef(const VRayVolumeGridRef &src):
-	VRayPackedImplBase(src),
+	GU_PackedImpl(src),
 	m_detail(),
 	m_dirty(false)
 {

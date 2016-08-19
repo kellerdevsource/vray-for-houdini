@@ -41,7 +41,7 @@ namespace VRayForHoudini {
 
 
 class VRayVolumeGridRef:
-		public VRayPackedImplBase
+		public GU_PackedImpl
 {
 public:
 	typedef std::shared_ptr<IAur> CachePtr;
@@ -116,6 +116,8 @@ private:
 private:
 	GU_ConstDetailHandle   m_detail;
 	GU_DetailHandle        m_handle;
+
+	UT_Options             m_options;
 
 	UT_BoundingBox         m_bBox;
 	bool                   m_dirty;
