@@ -29,6 +29,9 @@
 #include "vop/env/vop_env_def.h"
 #include "cmd/vfh_cmd_register.h"
 
+#include "gu_volumegridref.h"
+#include "gu_vrayproxyref.h"
+
 #include "io/io_vrmesh.h"
 
 // For newShopOperator()
@@ -38,6 +41,7 @@
 #include <UT/UT_DSOVersion.h>
 #include <UT/UT_Exit.h>
 #include <UT/UT_IOTable.h>
+#include <GU/GU_Detail.h>
 
 #ifdef CGR_HAS_AUR
 #  include <aurloader.h>
@@ -68,6 +72,12 @@ void unregister(void *)
 {
 	Error::ErrorChaser &errChaser = Error::getErrorChaser();
 	errChaser.enable(false);
+}
+
+void newGeometryPrim(GA_PrimitiveFactory *gafactory)
+{
+	VRayProxyRef::install(gafactory);
+	VRayVolumeGridRef::install(gafactory);
 }
 
 
