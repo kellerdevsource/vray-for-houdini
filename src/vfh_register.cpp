@@ -116,7 +116,7 @@ void newSopOperator(OP_OperatorTable *table)
 		}
 	}
 
-	VFH_SOP_ADD_OPERATOR_INPUTS(table, "GEOMETRY", PhxShaderCache, PhxShaderCache::GetPrmTemplate(), 0, 1);
+	VFH_SOP_ADD_OPERATOR(table, "GEOMETRY", PhxShaderCache, PhxShaderCache::GetPrmTemplate());
 #endif
 
 	VFH_SOP_ADD_OPERATOR_AUTO(table, "GEOMETRY", GeomPlane);
