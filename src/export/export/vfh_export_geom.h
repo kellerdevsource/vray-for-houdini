@@ -64,7 +64,6 @@ private:
 	OP_Context   &m_context;
 	VRayExporter &m_pluginExporter;
 
-	std::vector<PrimitiveExporterPtr> m_primExporters;
 	bool                 m_exportGeometry;
 	uint                 m_myDetailID;
 	DetailToPluginDesc   m_detailToPluginDesc;

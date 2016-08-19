@@ -436,8 +436,8 @@ int GeometryExporter::exportDetail(SOP_Node &sop, GU_DetailHandleAutoReadLock &g
 
 	const GU_Detail &gdp = *gdl.getGdp();
 
-	PrimitiveExporterPtr volExp(new VolumeExporter(m_objNode, m_context, m_pluginExporter));
-	volExp->exportPrimitives(gdp, pluginList);
+	VolumeExporter volExp(m_objNode, m_context, m_pluginExporter);
+	volExp.exportPrimitives(gdp, pluginList);
 
 	// packed prims
 	if (GU_PrimPacked::hasPackedPrimitives(gdp)) {
