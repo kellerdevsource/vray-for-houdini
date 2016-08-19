@@ -57,13 +57,7 @@ void VolumeExporter::exportCache(const GA_Primitive &prim)
 	auto vrayproxyref = UTverify_cast< const VRayVolumeGridRef * >(packedPrim->implementation());
 	m_exporter.setAttrsFromUTOptions(nodeDesc, vrayproxyref->getOptions());
 
-	UT_Matrix4 xform;
-	prim.getIntrinsic(prim.findIntrinsic("packedfulltransform"), xform);
-
-	auto primTm = VRayExporter::Matrix4ToTransform(UT_Matrix4D(xform));
-	auto objTm = VRayExporter::getObjTransform(&m_object, m_context);
-
-	exportSim(prim, primTm * objTm, m_exporter.exportPlugin(nodeDesc));
+	exportSim(prim, VRayExporter::getObjTransform(&m_object, m_context), m_exporter.exportPlugin(nodeDesc));
 }
 
 void VolumeExporter::exportSim(const GA_Primitive &prim, const VRay::Transform &tm, VRay::Plugin &cache)
