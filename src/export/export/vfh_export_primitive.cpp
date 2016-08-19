@@ -73,6 +73,11 @@ void VolumeExporter::exportSim(const GA_Primitive &prim, const VRay::Transform &
 		shop = m_exporter.getObjMaterial(&m_object, m_context.getTime());
 	}
 
+	if (!shop) {
+		Log::getLog().error("No simulation attached to \"%s\"", cache.getName());
+		return;
+	}
+
 	UT_ValArray<OP_Node *> mtlOutList;
 	if (shop->getOpsByName("vray_material_output", mtlOutList)) {
 		// there is at least 1 "vray_material_output" node so take the first one
