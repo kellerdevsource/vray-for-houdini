@@ -80,8 +80,10 @@ public:
 	PRMList& addFromPRMTemplate(const PRM_Template *tmpl);
 
 
-	// does not validate anything, just prepends the passed path with the UI root
-	static std::string expandUiPath(const std::string &relPath);
+	// prepends the passed path with the UI root determined by VRAY_UI_DS_PATH env var
+	// if resulting file path doesn't exist searches for the relPath inside UI root
+	// does minimal validation if UI root and file path exist
+	static std::string   expandUiPath(const std::string &relPath);
 	static PRM_Template* loadFromFile(const char *filepath, bool cookDependent = false);
 	static void          setCookDependent(PRM_Template* tmpl, bool recook);
 

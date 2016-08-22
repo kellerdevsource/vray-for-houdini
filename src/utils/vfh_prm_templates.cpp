@@ -21,6 +21,8 @@
 #include <PRM/DS_Stream.h>
 #include <UT/UT_IStream.h>
 
+#include <FS/FS_Info.h>
+
 
 using namespace VRayForHoudini;
 
@@ -124,12 +126,58 @@ int VRayForHoudini::Parm::getParmEnumExt(const OP_Node &node, const VRayForHoudi
 
 std::string Parm::PRMList::expandUiPath(const std::string &relPath)
 {
-	const char *uiDsPath = getenv("VRAY_UI_DS_PATH");
-	if (NOT(uiDsPath)) {
-		Log::getLog().error("VRAY_UI_DS_PATH environment variable is not found!");
+	static const char *uiroot = getenv("VRAY_UI_DS_PATH");
+	if (!UTisstring(uiroot)) {
+		Log::getLog().error("Invalid UI path. Please check if VRAY_UI_DS_PATH env var is pointing to the correct path.");
+	}
+
+	static FS_Info fsuiroot(uiroot);
+	if (   !fsuiroot.exists()
+		|| !fsuiroot.getIsDirectory() ) {
+		Log::getLog().error("Invalid UI path: %s. Please check if VRAY_UI_DS_PATH env var is pointing to the correct path.",
+							uiroot);
 		return "";
 	}
-	return std::string(uiDsPath) + "/" + relPath;
+
+	UT_String uipath = fsuiroot.path();
+	uipath += "/";
+	uipath += relPath;
+	FS_Info fsuipath(uipath);
+	if (fsuipath.fileExists()) {
+		return uipath.toStdString();
+	}
+
+	UT_StringArray files;
+	UT_StringArray dirs;
+	dirs.append(uiroot);
+
+	do {
+		uipath = dirs.last();
+		dirs.removeLast();
+
+		int idx = dirs.size();
+		FS_Info::getContentsFromDiskPath(uipath, files, &dirs);
+		for (int i = 0; i < files.size(); ++i) {
+			UT_String path = uipath;
+			path += "/";
+			path += files(i);
+			if (path.endsWith(relPath.c_str())) {
+				return path.toStdString();
+			}
+		}
+
+		for (int i = idx; i < dirs.size(); ++i) {
+			UT_String path = uipath;
+			path += "/";
+			path += dirs(i);
+			dirs(i) = path;
+		}
+
+	} while (dirs.size() > 0);
+
+	Log::getLog().error("Invalid UI path requested: %s.",
+						relPath.c_str());
+	return "";
 }
 
 
