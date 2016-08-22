@@ -726,19 +726,6 @@
 	parmtag	{ "vray_type" "boolean" }
     }
     parm {
-	name	"grad_rad_on"
-	label	"Radial Vignette On"
-	type	toggle
-	default	{ "0" }
-	help	"Turn on radial gradient"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexSoftbox" }
-	parmtag	{ "vray_pluginattr" "grad_rad_on" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
 	name	"grad_rad_flip"
 	label	"Radial Vignette Flip"
 	type	toggle
@@ -750,19 +737,6 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexSoftbox" }
 	parmtag	{ "vray_pluginattr" "grad_rad_flip" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"frame_on"
-	label	"Frame Vignette On"
-	type	toggle
-	default	{ "0" }
-	help	"Turn on frame"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexSoftbox" }
-	parmtag	{ "vray_pluginattr" "frame_on" }
 	parmtag	{ "vray_type" "boolean" }
     }
     parm {
@@ -921,7 +895,7 @@
 	parmtag	{ "rampvalues_var" "grad_horiz_col" }
     }
     parm {
-	name	"grad_rad_on1"
+	name	"grad_rad_on"
 	label	"Radial Vignette On"
 	type	ramp_rgb
 	default	{ "2" }
@@ -938,7 +912,7 @@
 	parmtag	{ "vray_type" "boolean" }
     }
     parm {
-	name	"frame_on1"
+	name	"frame_on"
 	label	"Frame Vignette On"
 	type	ramp_rgb
 	default	{ "2" }

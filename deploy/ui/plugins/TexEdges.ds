@@ -134,44 +134,6 @@
 	parmtag	{ "vray_type" "boolean" }
     }
     parm {
-	name	"show_subtriangles1"
-	label	"Show Sub-triangles"
-	type	toggle
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexEdges" }
-	parmtag	{ "vray_pluginattr" "show_subtriangles" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"raytraced1"
-	label	"Raytraced"
-	type	toggle
-	default	{ "1" }
-	help	"true to use raytracing to compute the rounded corners and false to use static mesh analysis"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexEdges" }
-	parmtag	{ "vray_pluginattr" "raytraced" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"raytraced_consider_same_object_only1"
-	label	"Consider Same Object Only"
-	type	toggle
-	default	{ "1" }
-	help	"true to consider only corners on the same object, and false to consider other intersecting objects"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexEdges" }
-	parmtag	{ "vray_pluginattr" "raytraced_consider_same_object_only" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
 	name	"raytraced_mode"
 	label	"Mode"
 	type	ordinal

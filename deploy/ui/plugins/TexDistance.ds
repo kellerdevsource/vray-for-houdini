@@ -131,6 +131,19 @@
 	parmtag	{ "vray_type" "TextureFloat" }
     }
     parm {
+	name	"distance"
+	label	"Distance"
+	type	float
+	default	{ "1" }
+	help	"Specifies a radius outside of which all points will be given the far color."
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexDistance" }
+	parmtag	{ "vray_pluginattr" "distance" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
 	name	"nouvw_color"
 	label	"No Uvs Color"
 	type	color4
@@ -145,19 +158,6 @@
 	parmtag	{ "vray_type" "Texture" }
     }
     parm {
-	name	"distance"
-	label	"Distance"
-	type	float
-	default	{ "1" }
-	help	"Specifies a radius outside of which all points will be given the far color."
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexDistance" }
-	parmtag	{ "vray_pluginattr" "distance" }
-	parmtag	{ "vray_type" "TextureFloat" }
-    }
-    parm {
 	name	"far_tex"
 	label	"Far Color"
 	type	color4
@@ -165,47 +165,6 @@
 	default	{ "1" "1" "1" "1" }
 	help	"The color returned by the texture for points that are at a distance greater than the radius parameter from the specified objects."
 	disablewhen	"{ inside_separate != 0 outside_separate != 0 inside_solid != 0 outside_solid != 0 }"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexDistance" }
-	parmtag	{ "vray_pluginattr" "far_tex" }
-	parmtag	{ "vray_type" "Texture" }
-    }
-    parm {
-	name	"nouvw_color1"
-	label	"No Uvs Color"
-	type	color4
-	size	4
-	default	{ "0.5" "0.5" "0.5" "1" }
-	help	"The color when there are no valid uvw coordinates"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexDistance" }
-	parmtag	{ "vray_pluginattr" "nouvw_color" }
-	parmtag	{ "vray_type" "Texture" }
-    }
-    parm {
-	name	"distance1"
-	label	"Distance"
-	type	float
-	default	{ "1" }
-	help	"Specifies a radius outside of which all points will be given the far color."
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexDistance" }
-	parmtag	{ "vray_pluginattr" "distance" }
-	parmtag	{ "vray_type" "TextureFloat" }
-    }
-    parm {
-	name	"far_tex1"
-	label	"Far Color"
-	type	color4
-	size	4
-	default	{ "1" "1" "1" "1" }
-	help	"The color returned by the texture for points that are at a distance greater than the radius parameter from the specified objects."
 	range	{ 0 10 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
