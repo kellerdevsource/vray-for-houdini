@@ -327,4 +327,19 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_custom_handling" "1" }
     }
+    parm {
+	name	"curve"
+	label	"Falloff Curve"
+	type	ramp_flt
+	default	{ "2" }
+	help	"Falloff Curve"
+	range	{ 1! 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "rampbasis_var" "interpolations" }
+	parmtag	{ "rampbasisdefault" "linear" }
+	parmtag	{ "rampkeys_var" "positions" }
+	parmtag	{ "rampshowcontrolsdefault" "1" }
+	parmtag	{ "rampvalues_var" "values" }
+    }
 }
