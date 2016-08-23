@@ -255,7 +255,7 @@ PRM_Template *VRayProxyROP::getMyPrmTemplate()
 {
 	static Parm::PRMList myPrmList;
 	if (!myPrmList.empty()) {
-		myPrmList.getPRMTemplate();
+		return myPrmList.getPRMTemplate();
 	}
 
 	const char *simplificationTypeItems[] = {
