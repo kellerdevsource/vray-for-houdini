@@ -625,5 +625,9 @@ Parm::PRMList* Parm::generatePrmTemplate(const std::string &pluginID)
 PRM_Template* Parm::getPrmTemplate(const std::string &pluginID)
 {
 	Parm::PRMList *prmList = generatePrmTemplate(pluginID);
+	if (!prmList) {
+		Log::getLog().warning("No parameter template generated for plugin %s.", pluginID.c_str());
+	}
+
 	return (prmList)? prmList->getPRMTemplate() : nullptr;
 }
