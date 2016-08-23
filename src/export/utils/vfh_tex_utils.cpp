@@ -65,6 +65,9 @@ void VRayForHoudini::Texture::exportRampAttribute(VRayExporter &exporter, Attrs:
 		const float colB = (float)op_node->evalFloatInst(prmColName.c_str(), &i, 2, t);
 
 		int interp = op_node->evalIntInst(prmInterpName.c_str(), &i, 0, t);
+		if (remapInterp) {
+			interp = static_cast<int>(mapToVray(static_cast<HOU_InterpolationType>(interp)));
+		}
 #if CGR_DEBUG_RAMPS
 		Log::getLog().info(" %.3f: Color(%.3f,%.3f,%.3f) [%i]",
 				   pos, colR, colG, colB, interp);
@@ -87,9 +90,6 @@ void VRayForHoudini::Texture::exportRampAttribute(VRayExporter &exporter, Attrs:
 				colorPlugins.push_back(VRay::Value(colPlugin));
 				positions.push_back(pos);
 				if (needTypes) {
-					if (remapInterp) {
-						interp = static_cast<int>(mapToVray(static_cast<HOU_InterpolationType>(interp)));
-					}
 					types.push_back(interp);
 				}
 			}

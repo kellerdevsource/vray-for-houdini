@@ -26,7 +26,7 @@ export VRAY_PLUGIN_DESC_PATH="${LAUNCHER_LOCATION}/plugins_desc"
 export VRAY_UI_DS_PATH="${LAUNCHER_LOCATION}/ui"
 
 # Phoenix Loaders
-export VRAY_FOR_HOUDINI_AURA_LOADERS=${VRAY_SDK}/bin/plugins
+export VRAY_FOR_HOUDINI_AURA_LOADERS=${HOUDINI_USER_DIR}/vfh/lib
 
 # Set VFB on top
 export VRAY_VFB_ALWAYS_ON_TOP=1

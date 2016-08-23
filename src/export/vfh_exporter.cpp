@@ -18,6 +18,7 @@
 #include "obj/obj_node_base.h"
 #include "vop/vop_node_base.h"
 #include "vop/material/vop_mtl_def.h"
+#include "vop/material/vop_PhoenixSim.h"
 #include "sop/sop_vrayproxy.h"
 #include "sop/sop_vrayscene.h"
 #include "rop/vfh_rop.h"
@@ -818,6 +819,7 @@ VRay::Plugin VRayExporter::exportVop(OP_Node *op_node, ExportContext *parentCont
 				}
 			}
 
+			// TODO: this is not needed?
 			if (pluginDesc.pluginID == "PhxShaderSimVol") {
 				// "phoenix_sim" attribute is a List()
 				//

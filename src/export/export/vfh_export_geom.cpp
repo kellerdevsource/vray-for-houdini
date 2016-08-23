@@ -11,18 +11,23 @@
 #include "vfh_export_geom.h"
 #include "vfh_export_mesh.h"
 #include "gu_vrayproxyref.h"
+#include "gu_volumegridref.h"
 #include "rop/vfh_rop.h"
 #include "sop/sop_node_base.h"
 #include "vop/vop_node_base.h"
+#include "vop/material/vop_MaterialOutput.h"
+#include "vop/material/vop_PhoenixSim.h"
 
+#include <GEO/GEO_Primitive.h>
+#include <GU/GU_PrimVolume.h>
 #include <GU/GU_Detail.h>
 #include <OP/OP_Bundle.h>
+#include <GA/GA_Types.h>
 
 using namespace VRayForHoudini;
 
 
 const char *const VFH_ATTR_MATERIAL_ID = "switchmtl";
-
 
 GeometryExporter::GeometryExporter(OBJ_Geometry &node, VRayExporter &pluginExporter):
 	m_objNode(node),
@@ -161,7 +166,9 @@ int GeometryExporter::exportNodes()
 	m_myDetailID = gdl.handle().hash();
 	const GU_Detail &gdp = *gdl.getGdp();
 
-	if (renderSOP->getOperator()->getName().startsWith("VRayNode")) {
+	const bool isVolume = renderSOP->getOperator()->getName().startsWith("VRayNodePhxShaderCache");
+
+	if (!isVolume && renderSOP->getOperator()->getName().startsWith("VRayNode")) {
 		exportVRaySOP(*renderSOP, m_detailToPluginDesc[m_myDetailID]);
 	}
 	else {
@@ -190,6 +197,9 @@ int GeometryExporter::exportNodes()
 	PluginDescList &pluginList = m_detailToPluginDesc.at(m_myDetailID);
 	for (Attrs::PluginDesc &nodeDesc : pluginList) {
 //		TODO: need to fill in node with appropriate names
+		if (nodeDesc.pluginName != "") {
+			continue;
+		}
 		nodeDesc.pluginName = VRayExporter::getPluginName(&m_objNode, boost::str(Parm::FmtPrefixManual % "Node" % std::to_string(i++)));
 
 		Attrs::PluginAttr *attr = nullptr;
@@ -425,6 +435,9 @@ int GeometryExporter::exportDetail(SOP_Node &sop, GU_DetailHandleAutoReadLock &g
 	int nPlugins = 0;
 
 	const GU_Detail &gdp = *gdl.getGdp();
+
+	VolumeExporter volExp(m_objNode, m_context, m_pluginExporter);
+	volExp.exportPrimitives(gdp, pluginList);
 
 	// packed prims
 	if (GU_PrimPacked::hasPackedPrimitives(gdp)) {

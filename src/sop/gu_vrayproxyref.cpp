@@ -9,6 +9,7 @@
 //
 
 #include "gu_vrayproxyref.h"
+#include "gu_volumegridref.h"
 #include "vfh_log.h"
 
 #include <GT/GT_GEOPrimCollect.h>
@@ -695,11 +696,4 @@ GT_PrimitiveHandle GT_PrimVRayProxyCollect::endCollecting(const GT_GEODetailList
 GT_PrimitiveHandle GT_PrimVRayProxyCollect::getGTPrimPoints(const GU_PrimPacked &prim) const
 {
 	return GT_GEODetail::makePointMesh(prim.getPackedDetail(), nullptr);
-}
-
-
-/// DSO registration callback
-void newGeometryPrim(GA_PrimitiveFactory *gafactory)
-{
-	VRayProxyRef::install(gafactory);
 }

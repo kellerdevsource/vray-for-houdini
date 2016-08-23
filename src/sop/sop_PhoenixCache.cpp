@@ -13,12 +13,18 @@
 #include "sop_PhoenixCache.h"
 #include "vfh_prm_templates.h"
 #include "vfh_prm_json.h"
+#include "gu_volumegridref.h"
 
 #include <aurinterface.h>
 #include <aurloader.h>
 
 #include <GU/GU_PrimVolume.h>
+#include <GU/GU_PrimPacked.h>
 #include <GEO/GEO_Primitive.h>
+
+#include <OP/OP_Options.h>
+#include <OP/OP_Node.h>
+#include <OP/OP_Bundle.h>
 
 #include <vector>
 #include <string>
@@ -144,95 +150,39 @@ SOP::FluidFrame* SOP::FluidCache::getData(const char *filePath, const int fluidR
 	return fluidFrame;
 }
 
-string getDefaultMapping(const char *cachePath) {
-	char buff[MAX_CHAN_MAP_LEN];
-	if (1 == aurGenerateDefaultChannelMappings(buff, MAX_CHAN_MAP_LEN, cachePath)) {
-		return string(buff);
-	} else {
-		return "";
-	}
-}
-
-
 OP_ERROR SOP::PhxShaderCache::cookMySop(OP_Context &context)
 {
 	Log::getLog().info("%s cookMySop(%.3f)",
 					   getName().buffer(), context.getTime());
 
-	gdp->clearAndDestroy();
+	gdp->stashAll();
 
 	const float t = context.getTime();
 
-	const int nInputs = nConnectedInputs();
-	if (nInputs) {
-		if (lockInputs(context) >= UT_ERROR_ABORT) {
-			return error();
-		}
-
-		for(int i = 0; i < nInputs; i++) {
-			gdp->copy(*inputGeo(i, context));
-			unlockInput(i);
-		}
-
+	// Create a packed primitive
+	GU_PrimPacked *pack = GU_PrimPacked::build(*gdp, "VRayVolumeGridRef");
+	auto gridRefPtr = UTverify_cast<VRayVolumeGridRef*>(pack->implementation());
+	if (NOT(pack)) {
+		addWarning(SOP_MESSAGE, "Can't create packed primitive VRayVolumeGridRef");
 		return error();
 	}
 
-	UT_String path;
-	// NOTE: Path could be time dependent!
-	evalString(path, "PhxShaderCache_cache_path", 0, t);
-	if (path.equal("")) {
-		return error();
+	// Set the location of the packed primitive's point.
+	UT_Vector3 pivot(0, 0, 0);
+	pack->setPivot(pivot);
+	gdp->setPos3(pack->getPointOffset(0), pivot);
+
+	// Set the options on the primitive
+	OP_Options options;
+	for (int i = 0; i < getParmList()->getEntries(); ++i) {
+		const PRM_Parm &prm = getParm(i);
+		options.setOptionFromTemplate(this, prm, *prm.getTemplatePtr(), t);
 	}
 
-	m_serializedChannels.clear();
+	pack->implementation()->update(options);
+	pack->setPathAttribute(getFullPath());
 
-	if (!path.endsWith(".aur")) {
-		int chanIndex = 0, isChannelVector3D;
-		char chanName[MAX_CHAN_MAP_LEN];
-		const char *cachePath = path.buffer();
-		while(1 == aurGet3rdPartyChannelName(chanName, MAX_CHAN_MAP_LEN, &isChannelVector3D, cachePath, chanIndex++)) {
-			m_serializedChannels.append(chanName);
-		}
-	
-		if (!m_serializedChannels.size()) {
-			addError(SOP_MESSAGE, (std::string("Did not load any channel names from file ") + cachePath).c_str());
-			return error();
-		} else {
-			if (!this->gdp->setDetailAttributeS("vray_phx_channels", m_serializedChannels)) {
-				Log::getLog().error("Failed to set channel names to geom detail");
-			}
-		}
-	}
-
-	const SOP::FluidFrame *frameData = SOP::PhxShaderCache::FluidFiles.getData(path.buffer());
-	if (frameData) {
-		GU_PrimVolume *volumeGdp = (GU_PrimVolume *)GU_PrimVolume::build(gdp);
-
-		UT_VoxelArrayWriteHandleF voxelHandle = volumeGdp->getVoxelWriteHandle();
-
-		voxelHandle->size(frameData->size[0], frameData->size[1], frameData->size[2]);
-
-		for (int i = 0; i < frameData->size[0]; ++i) {
-			for (int j = 0; j < frameData->size[1]; ++j) {
-				for (int k = 0; k < frameData->size[2]; ++k) {
-					voxelHandle->setValue(i, j, k, frameData->data[GetCellIndex(i, j, k, frameData->size)]);
-				}
-			}
-		}
-
-		VUtils::Transform c2n(frameData->c2n);
-
-		const bool flipAxis = evalInt("flip_yz", 0, 0.0f);
-		if (flipAxis) {
-			VUtils::swap(c2n.m[1], c2n.m[2]);
-			c2n.m[2] = -c2n.m[2];
-		}
-		c2n.makeInverse();
-
-		UT_Matrix4 m4;
-		VRayExporter::TransformToMatrix4(c2n, m4);
-		volumeGdp->setTransform4(m4);
-	}
+	gdp->destroyStashed();
 
 #if UT_MAJOR_VERSION_INT < 14
 	gdp->notifyCache(GU_CACHE_ALL);
@@ -435,134 +385,6 @@ OP::VRayNode::PluginResult SOP::PhxShaderCache::asPluginDesc(Attrs::PluginDesc &
 		Log::getLog().error("%s: \"Cache Path\" is not set!",
 							getName().buffer());
 		return OP::VRayNode::PluginResultError;
-	}
-
-	const auto evalTime = exporter.getContext().getTime();
-	const auto evalThread = exporter.getContext().getThread();
-	auto getParamIntValue = [&evalTime, &evalThread](const PRM_Parm * param) -> int32 {
-		int32 val = 0;
-		if (param) {
-			param->getValue(evalTime, val, 0, evalThread);
-		}
-		return val;
-	};
-
-
-	// Export simulation
-	//
-	if (NOT(phxShaderCache)) {
-		Attrs::PluginDesc phxShaderCacheDesc(VRayExporter::getPluginName(this, "Cache"), "PhxShaderCache");
-		phxShaderCacheDesc.addAttribute(Attrs::PluginAttr("cache_path", path.buffer()));
-		// channel mappings
-		if (!path.endsWith(".aur")) {
-			const int chCount = 9;
-			static const char *chNames[chCount] = {"channel_smoke", "channel_temp", "channel_fuel", "channel_vel_x", "channel_vel_y", "channel_vel_z", "channel_red", "channel_green", "channel_blue"};
-			static const int   chIDs[chCount] = {2, 1, 10, 4, 5, 6, 7, 8, 9};
-
-			// will hold names so we can use pointers to them
-			std::vector<UT_String> names;
-			std::vector<int> ids;
-			for (int c = 0; c < chCount; ++c) {
-				const PRM_Parm * parameter = Parm::getParm(*this, chNames[c]);
-				if (!parameter) {
-					Log::getLog().error("Channel selector %s missing from UI", chNames[c]);
-				} else {
-					UT_String value(UT_String::ALWAYS_DEEP);
-					this->evalString(value, parameter->getToken(), 0, 0.0f);
-					if (value != "0") {
-						names.push_back(value);
-						ids.push_back(chIDs[c]);
-					}
-				}
-			}
-
-			const char * inputNames[chCount] = {0};
-			for (int c = 0; c < names.size(); ++c) {
-				inputNames[c] = names[c].c_str();
-			}
-
-			char usrchmap[MAX_CHAN_MAP_LEN] = {0,};
-			if (1 == aurComposeChannelMappingsString(usrchmap, MAX_CHAN_MAP_LEN, ids.data(), const_cast<char * const *>(inputNames), names.size())) {
-				phxShaderCacheDesc.addAttribute(Attrs::PluginAttr("usrchmap", usrchmap));
-			}
-		}
-
-		exporter.setAttrsFromOpNodePrms(phxShaderCacheDesc, this, "");
-		phxShaderCache = exporter.exportPlugin(phxShaderCacheDesc);
-	}
-
-	Attrs::PluginDesc phxShaderSimDesc(VRayExporter::getPluginName(this, "Sim"), "PhxShaderSim");
-	if (phxShaderCache) {
-		phxShaderSimDesc.addAttribute(Attrs::PluginAttr("cache", phxShaderCache));
-	}
-	if (customFluidData.size()) {
-		if (customFluidData.count("heat")) {
-			phxShaderSimDesc.addAttribute(Attrs::PluginAttr("darg", 4));
-			phxShaderSimDesc.addAttribute(Attrs::PluginAttr("dtex", customFluidData["heat"]));
-		}
-		if (customFluidData.count("density")) {
-			phxShaderSimDesc.addAttribute(Attrs::PluginAttr("targ", 4));
-			phxShaderSimDesc.addAttribute(Attrs::PluginAttr("ttex", customFluidData["density"]));
-		}
-		if (customFluidData.count("temperature")) {
-			phxShaderSimDesc.addAttribute(Attrs::PluginAttr("earg", 4));
-			phxShaderSimDesc.addAttribute(Attrs::PluginAttr("etex", customFluidData["temperature"]));
-		}
-		if (customFluidData.count("velocity")) {
-			phxShaderSimDesc.addAttribute(Attrs::PluginAttr("varg", 2));
-			phxShaderSimDesc.addAttribute(Attrs::PluginAttr("vtex", customFluidData["velocity"]));
-		}
-	}
-
-	nodeTm.offset = nodeTm.matrix * phxTm.offset + nodeTm.offset;
-	nodeTm.matrix = nodeTm.matrix * phxTm.matrix;
-
-	phxShaderSimDesc.addAttribute(Attrs::PluginAttr("node_transform", nodeTm));
-
-	enum RenderType {
-		Volumetric  = 0,
-		Volumetric_Geometry  = 1,
-		Volumetric_Heat_Haze  = 2,
-		Isosurface  = 3,
-		Mesh  = 4,
-	} rendMode;
-
-	// renderMode
-	const PRM_Parm *renderMode = Parm::getParm(*this, "renderMode");
-	rendMode = static_cast<RenderType>(getParamIntValue(renderMode));
-	phxShaderSimDesc.addAttribute(Attrs::PluginAttr("geommode", rendMode == Volumetric_Geometry || rendMode == Volumetric_Heat_Haze || rendMode == Isosurface));
-	phxShaderSimDesc.addAttribute(Attrs::PluginAttr("mesher", rendMode == Mesh));
-	phxShaderSimDesc.addAttribute(Attrs::PluginAttr("rendsolid", rendMode == Isosurface));
-	phxShaderSimDesc.addAttribute(Attrs::PluginAttr("heathaze", rendMode == Volumetric_Heat_Haze));
-
-	const auto primVal = getParamIntValue(Parm::getParm(*this, "pmprimary"));
-	const bool enableProb = (exporter.isIPR() && primVal) || primVal == 2;
-	phxShaderSimDesc.addAttribute(Attrs::PluginAttr("pmprimary", enableProb));
-
-	const PRM_Parm *dynGeom = Parm::getParm(*this, "dynamic_geometry");
-	const bool dynamic_geometry = getParamIntValue(dynGeom) == 1;
-
-	exporter.setAttrsFromOpNodePrms(phxShaderSimDesc, this, "", true);
-	VRay::Plugin phxShaderSim = exporter.exportPlugin(phxShaderSimDesc);
-	if (phxShaderSim) {
-		if (rendMode == Volumetric) {
-			// merge all volumetrics
-			exporter.phxAddSimumation(phxShaderSim);
-		} else {
-			const bool isMesh = rendMode == Mesh;
-
-			const char *wrapperType = isMesh ? "PhxShaderSimMesh" : "PhxShaderSimGeom";
-			Attrs::PluginDesc phxWrapper(VRayExporter::getPluginName(this, "", "Wrapper"), wrapperType);
-			phxWrapper.add(Attrs::PluginAttr("phoenix_sim", phxShaderSim));
-			VRay::Plugin phxWrapperPlugin = exporter.exportPlugin(phxWrapper);
-
-			if (!isMesh) {
-				// make static mesh that wraps the geom plugin
-				Attrs::PluginDesc meshWrapper(VRayExporter::getPluginName(this, "", "Geom"), "GeomStaticMesh");
-				meshWrapper.add(Attrs::PluginAttr("static_mesh", phxWrapperPlugin));
-				meshWrapper.add(Attrs::PluginAttr("dynamic_geometry", dynamic_geometry));
-			}
-		}
 	}
 
 	// Plugin must be created here and do nothing after

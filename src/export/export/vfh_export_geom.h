@@ -14,6 +14,7 @@
 #include "vfh_vray.h"
 #include "vfh_exporter.h"
 #include "vfh_material_override.h"
+#include "vfh_export_primitive.h"
 
 #include <OBJ/OBJ_Geometry.h>
 #include <GU/GU_PrimPacked.h>
@@ -24,13 +25,8 @@
 
 namespace VRayForHoudini {
 
-
 class GeometryExporter
 {
-	typedef std::vector< VRay::Plugin > PluginList;
-	typedef std::list< Attrs::PluginDesc > PluginDescList;
-	typedef std::unordered_map< uint, PluginDescList > DetailToPluginDesc;
-
 public:
 	GeometryExporter(OBJ_Geometry &node, VRayExporter &pluginExporter);
 	~GeometryExporter() { }

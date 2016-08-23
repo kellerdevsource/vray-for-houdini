@@ -18,6 +18,7 @@
 #include "obj/obj_node_def.h"
 #include "sop/sop_node_def.h"
 #include "vop/vop_context.h"
+#include "vop/material/vop_PhoenixSim.h"
 #include "vop/brdf/vop_brdf_def.h"
 #include "vop/brdf/vop_brdfvraymtl.h"
 #include "vop/brdf/vop_brdfdiffuse.h"
@@ -29,14 +30,19 @@
 #include "vop/env/vop_env_def.h"
 #include "cmd/vfh_cmd_register.h"
 
+#include "gu_volumegridref.h"
+#include "gu_vrayproxyref.h"
+
 #include "io/io_vrmesh.h"
 
 // For newShopOperator()
 #include <SHOP/SHOP_Node.h>
+#include <SHOP/SHOP_Operator.h>
 
 #include <UT/UT_DSOVersion.h>
 #include <UT/UT_Exit.h>
 #include <UT/UT_IOTable.h>
+#include <GU/GU_Detail.h>
 
 #ifdef CGR_HAS_AUR
 #  include <aurloader.h>
@@ -69,6 +75,12 @@ void unregister(void *)
 	errChaser.enable(false);
 }
 
+void newGeometryPrim(GA_PrimitiveFactory *gafactory)
+{
+	VRayProxyRef::install(gafactory);
+	VRayVolumeGridRef::install(gafactory);
+}
+
 
 void newDriverOperator(OP_OperatorTable *table)
 {
@@ -94,18 +106,19 @@ void newDriverOperator(OP_OperatorTable *table)
 
 void newSopOperator(OP_OperatorTable *table)
 {
+	using namespace SOP;
 #ifdef CGR_HAS_AUR
 	const char *vfhPhoenixLoaderDir = getenv("VRAY_FOR_HOUDINI_AURA_LOADERS");
 	if (vfhPhoenixLoaderDir && *vfhPhoenixLoaderDir) {
 		Log::getLog().info("Loading Phoenix cache loader plugins from \"%s\"...",
 						   vfhPhoenixLoaderDir);
-		if (!initalizeAuraLoader(vfhPhoenixLoaderDir, "vray", 2)) {
+		if (!initalizeAuraLoader(vfhPhoenixLoaderDir, "phx", 2)) {
 			Log::getLog().error("Failed to load Phoenix cache loader plugins from \"%s\"!",
 								vfhPhoenixLoaderDir);
 		}
 	}
 
-	VFH_SOP_ADD_OPERATOR_INPUTS(table, "GEOMETRY", PhxShaderCache, SOP::PhxShaderCache::GetPrmTemplate(), 0, 1);
+	VFH_SOP_ADD_OPERATOR(table, "GEOMETRY", PhxShaderCache, PhxShaderCache::GetPrmTemplate());
 #endif
 
 	VFH_SOP_ADD_OPERATOR_AUTO(table, "GEOMETRY", GeomPlane);
@@ -122,6 +135,7 @@ void newSopOperator(OP_OperatorTable *table)
 
 void newObjectOperator(OP_OperatorTable *table)
 {
+	using namespace OBJ;
 	VFH_OBJ_ADD_OPERATOR_AUTO(table, OBJ::VRayPluginType::Light, SunLight);
 	VFH_OBJ_ADD_OPERATOR_AUTO(table, OBJ::VRayPluginType::Light, LightDirect);
 	VFH_OBJ_ADD_OPERATOR_AUTO(table, OBJ::VRayPluginType::Light, LightAmbient);
@@ -138,12 +152,14 @@ void newObjectOperator(OP_OperatorTable *table)
 
 void newShopOperator(OP_OperatorTable *table)
 {
+	using namespace VOP;
 	VOP::VRayMaterialBuilder::register_shop_operator(table);
 }
 
 
 void newVopOperator(OP_OperatorTable *table)
 {
+	using namespace VOP;
 	VOP::MaterialOutput::register_operator(table);
 
 	VFH_VOP_ADD_OPERATOR(table, "SETTINGS", SettingsEnvironment);
@@ -194,6 +210,8 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFSkinComplex);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFVRayMtl);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFWard);
+
+	VFH_VOP_ADD_OPERATOR_CUSTOM(table, "MATERIAL", PhxShaderSim, PhxShaderSim::GetPrmTemplate());
 
 	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", Mtl2Sided);
 	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", MtlBump);
