@@ -19,7 +19,7 @@
 
 namespace VRayForHoudini {
 // getters
-template <typename T> inline void UT_Options_setter(UT_Options & opt, const char * name, const T & val) { static_assert(false, "UNIMPLEMENTED UT_Options_setter in VRayPackedImplBase"); }
+template <typename T> inline void UT_Options_setter(UT_Options & opt, const char * name, const T & val);
 
 template <> inline void UT_Options_setter<exint>          (UT_Options & opt, const char * name, const exint  & val)          { opt.setOptionI(name, val); }
 template <> inline void UT_Options_setter<fpreal>         (UT_Options & opt, const char * name, const fpreal & val)          { opt.setOptionF(name, val); }
@@ -27,7 +27,7 @@ template <> inline void UT_Options_setter<UT_StringHolder>(UT_Options & opt, con
 template <> inline void UT_Options_setter<const char *>   (UT_Options & opt, const char * name, const char * const & val)    { opt.setOptionS(name, val); }
 
 // setters
-template <typename T> T UT_Options_getter(const UT_Options & opt, const char * name) { static_assert(false, "UNIMPLEMENTED UT_Options_getter in VRayPackedImplBase"); }
+template <typename T> T UT_Options_getter(const UT_Options & opt, const char * name);
 
 template <> inline exint           UT_Options_getter<exint>          (const UT_Options & opt, const char * name) { return opt.getOptionI(name); }
 template <> inline fpreal          UT_Options_getter<fpreal>         (const UT_Options & opt, const char * name) { return opt.getOptionF(name); }
@@ -35,12 +35,10 @@ template <> inline UT_StringHolder UT_Options_getter<UT_StringHolder>(const UT_O
 template <> inline const char *    UT_Options_getter<const char *>   (const UT_Options & opt, const char * name) { return opt.getOptionS(name).buffer(); }
 
 
-/* if we call an overload that is not implemeted this will get called and stop compilation */
+
 template <typename CLASS, typename T, typename Q>
-inline Q PackedImplSetterCast(GU_PackedFactory * self, void (CLASS::*method)(T)) {
-	static_assert(false, "VRAY UNIMPLEMENTED PackedImplSetterCast in VRayPackedFactoryBase");
-}
-/* setters */
+inline Q PackedImplSetterCast(GU_PackedFactory * self, void (CLASS::*method)(T));
+
 template <typename CLASS>
 inline GU_PackedImpl::IntSetter PackedImplSetterCast(GU_PackedFactory * self, void (CLASS::*method)(GA_Size)) {
 	return self->IntSetterCast(method);
@@ -57,9 +55,7 @@ inline GU_PackedImpl::StringSetter PackedImplSetterCast(GU_PackedFactory * self,
 }
 
 template <typename CLASS, typename T, typename Q>
-inline Q PackedImplGetterCast(GU_PackedFactory * self, void (CLASS::*method)(T)) {
-	static_assert(false, "VRAY UNIMPLEMENTED PackedImplGetterCast in VRayPackedFactoryBase");
-}
+inline Q PackedImplGetterCast(GU_PackedFactory * self, void (CLASS::*method)(T));
 
 template <typename CLASS>
 inline GU_PackedImpl::IntGetter PackedImplGetterCast(GU_PackedFactory * self, GA_Size (CLASS::*method)() const) {
