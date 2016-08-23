@@ -60,7 +60,7 @@ void VolumeExporter::exportCache(const GA_Primitive &prim)
 	exportSim(prim, VRayExporter::getObjTransform(&m_object, m_context), m_exporter.exportPlugin(nodeDesc));
 }
 
-void VolumeExporter::exportSim(const GA_Primitive &prim, const VRay::Transform &tm, VRay::Plugin &cache)
+void VolumeExporter::exportSim(const GA_Primitive &prim, const VRay::Transform &tm, const VRay::Plugin &cache)
 {
 	GA_ROHandleS mtlpath(prim.getDetail().findAttribute(GA_ATTRIB_PRIMITIVE, GEO_STD_ATTRIB_MATERIAL));
 	// TODO: add overrides

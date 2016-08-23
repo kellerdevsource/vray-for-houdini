@@ -42,7 +42,7 @@ public:
 	virtual void exportPrimitives(const GU_Detail &detail, PluginDescList &plugins) VRAY_OVERRIDE;
 private:
 	void exportCache(const GA_Primitive &prim);
-	void exportSim(const GA_Primitive &prim, const VRay::Transform &tm, VRay::Plugin &cache);
+	void exportSim(const GA_Primitive &prim, const VRay::Transform &tm, const VRay::Plugin &cache);
 };
 
 typedef std::shared_ptr<PrimitiveExporter> PrimitiveExporterPtr;
