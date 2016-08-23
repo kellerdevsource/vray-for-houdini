@@ -162,7 +162,7 @@ VRayVolumeGridRef::VRayVolumeGridRef(const VRayVolumeGridRef &src):
 	m_detail(),
 	m_dirty(false)
 {
-	m_handle = src.m_handle.duplicateGeometry();
+	m_handle = src.m_handle;
 	m_detail = m_handle;
 	m_options = src.m_options;
 }
