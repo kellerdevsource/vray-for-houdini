@@ -697,11 +697,3 @@ GT_PrimitiveHandle GT_PrimVRayProxyCollect::getGTPrimPoints(const GU_PrimPacked 
 {
 	return GT_GEODetail::makePointMesh(prim.getPackedDetail(), nullptr);
 }
-
-
-/// DSO registration callback
-void newGeometryPrim(GA_PrimitiveFactory *gafactory)
-{
-	VRayProxyRef::install(gafactory);
-	VRayVolumeGridRef::install(gafactory);
-}

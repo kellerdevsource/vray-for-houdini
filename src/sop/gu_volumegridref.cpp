@@ -81,17 +81,15 @@ const ChannelInfo & fromPropName(const char * name) {
 }
 
 
-
-
 using namespace VRayForHoudini;
 
 GA_PrimitiveTypeId VRayVolumeGridRef::theTypeId(-1);
 const int MAX_CHAN_MAP_LEN = 2048;
 
-VFH_DEFINE_FACTORY_BASE(VRayVolumeGridFactoryBase, VRayVolumeGridRef, VFH_VOLUME_GRID_PARAMS, VFH_VOLUME_GRID_PARAMS_COUNT)
+//VFH_DEFINE_FACTORY_BASE(VRayVolumeGridFactoryBase, VRayVolumeGridRef, VFH_VOLUME_GRID_PARAMS, VFH_VOLUME_GRID_PARAMS_COUNT)
 
 class VRayVolumeGridFactory:
-		public VRayVolumeGridFactoryBase
+		public GU_PackedFactory
 {
 public:
 	static VRayVolumeGridFactory &getInstance()
@@ -116,8 +114,10 @@ private:
 };
 
 VRayVolumeGridFactory::VRayVolumeGridFactory():
-	VRayVolumeGridFactoryBase("VRayVolumeGridRef", "VRayVolumeGridRef")
+	GU_PackedFactory("VRayVolumeGridRef", "VRayVolumeGridRef")
 {
+	VFH_MAKE_REGISTERS(VFH_VOLUME_GRID_PARAMS, VFH_VOLUME_GRID_PARAMS_COUNT, VRayVolumeGridRef)
+
 	registerTupleIntrinsic(
 			"phx_channel_map",
 			IntGetterCast(&VRayVolumeGridRef::getPhxChannelMapSize),
@@ -147,7 +147,7 @@ void VRayVolumeGridRef::install(GA_PrimitiveFactory *gafactory)
 
 
 VRayVolumeGridRef::VRayVolumeGridRef():
-	VRayPackedImplBase(),
+	GU_PackedImpl(),
 	m_detail(),
 	m_dirty(false)
 {
@@ -158,11 +158,11 @@ VRayVolumeGridRef::VRayVolumeGridRef():
 
 
 VRayVolumeGridRef::VRayVolumeGridRef(const VRayVolumeGridRef &src):
-	VRayPackedImplBase(src),
+	GU_PackedImpl(src),
 	m_detail(),
 	m_dirty(false)
 {
-	m_handle = src.m_handle.duplicateGeometry();
+	m_handle = src.m_handle;
 	m_detail = m_handle;
 	m_options = src.m_options;
 }
@@ -396,15 +396,11 @@ void VRayVolumeGridRef::countMemory(UT_MemoryCounter &counter, bool inclusive) c
 		counter.countUnshared(mem);
 	}
 
-	// The UT_MemoryCounter interface needs to be enhanced to efficiently count
-	// shared memory for details. Skip this for now.
-#if 0
-	if (detail().isValid())
+	if (getDetail().isValid())
 	{
-		GU_DetailHandleAutoReadLock gdh(detail());
+		GU_DetailHandleAutoReadLock gdh(getDetail());
 		gdh.getGdp()->countMemory(counter, true);
 	}
-#endif
 }
 
 std::string getDefaultMapping(const char *cachePath) {

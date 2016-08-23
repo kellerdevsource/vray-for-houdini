@@ -11,6 +11,7 @@
 #ifndef VRAY_FOR_HOUDINI_PRM_TEMPLATES_H
 #define VRAY_FOR_HOUDINI_PRM_TEMPLATES_H
 
+#include "vfh_prm_def.h"
 
 #include <PRM/PRM_Include.h>
 #include <PRM/PRM_ScriptPage.h>
@@ -28,7 +29,6 @@ namespace VRayForHoudini {
 namespace Parm {
 
 
-class AttrDesc;
 class PRMFactory;
 
 
@@ -73,7 +73,7 @@ private:
 
 	typedef std::list<SwitcherInfo> SwitcherList;
 	typedef std::vector<SwitcherInfo*> SwitcherStack;
-	typedef std::vector<std::shared_ptr<PRM_ScriptPage>> ScriptPageList;
+	typedef std::vector<std::shared_ptr<PRM_ScriptPage> > ScriptPageList;
 
 	SwitcherInfo* getCurrentSwitcher();
 	void          incCurrentFolderPrmCnt();

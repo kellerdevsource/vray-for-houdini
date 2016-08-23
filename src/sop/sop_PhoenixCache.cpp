@@ -159,20 +159,6 @@ OP_ERROR SOP::PhxShaderCache::cookMySop(OP_Context &context)
 
 	const float t = context.getTime();
 
-	const int nInputs = nConnectedInputs();
-	if (nInputs) {
-		if (lockInputs(context) >= UT_ERROR_ABORT) {
-			return error();
-		}
-
-		for(int i = 0; i < nInputs; i++) {
-			gdp->copy(*inputGeo(i, context));
-			unlockInput(i);
-		}
-
-		return error();
-	}
-
 	// Create a packed primitive
 	GU_PrimPacked *pack = GU_PrimPacked::build(*gdp, "VRayVolumeGridRef");
 	auto gridRefPtr = UTverify_cast<VRayVolumeGridRef*>(pack->implementation());

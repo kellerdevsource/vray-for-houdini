@@ -17,6 +17,64 @@
 
 #include <boost/preprocessor.hpp>
 
+namespace VRayForHoudini {
+// getters
+template <typename T> inline void UT_Options_setter(UT_Options & opt, const char * name, const T & val);
+
+template <> inline void UT_Options_setter<exint>          (UT_Options & opt, const char * name, const exint  & val)          { opt.setOptionI(name, val); }
+template <> inline void UT_Options_setter<fpreal>         (UT_Options & opt, const char * name, const fpreal & val)          { opt.setOptionF(name, val); }
+template <> inline void UT_Options_setter<UT_StringHolder>(UT_Options & opt, const char * name, const UT_StringHolder & val) { opt.setOptionS(name, val); }
+template <> inline void UT_Options_setter<const char *>   (UT_Options & opt, const char * name, const char * const & val)    { opt.setOptionS(name, val); }
+
+// setters
+template <typename T> T UT_Options_getter(const UT_Options & opt, const char * name);
+
+template <> inline exint           UT_Options_getter<exint>          (const UT_Options & opt, const char * name) { return opt.getOptionI(name); }
+template <> inline fpreal          UT_Options_getter<fpreal>         (const UT_Options & opt, const char * name) { return opt.getOptionF(name); }
+template <> inline UT_StringHolder UT_Options_getter<UT_StringHolder>(const UT_Options & opt, const char * name) { return opt.getOptionS(name); }
+template <> inline const char *    UT_Options_getter<const char *>   (const UT_Options & opt, const char * name) { return opt.getOptionS(name).buffer(); }
+
+
+
+template <typename CLASS, typename T, typename Q>
+inline Q PackedImplSetterCast(GU_PackedFactory * self, void (CLASS::*method)(T));
+
+template <typename CLASS>
+inline GU_PackedImpl::IntSetter PackedImplSetterCast(GU_PackedFactory * self, void (CLASS::*method)(GA_Size)) {
+	return self->IntSetterCast(method);
+}
+
+template <typename CLASS>
+inline GU_PackedImpl::FloatSetter PackedImplSetterCast(GU_PackedFactory * self, void (CLASS::*method)(fpreal)) {
+	return self->FloatSetterCast(method);
+}
+
+template <typename CLASS>
+inline GU_PackedImpl::StringSetter PackedImplSetterCast(GU_PackedFactory * self, void (CLASS::*method)(const char *)) {
+	return self->StringSetterCast(method);
+}
+
+template <typename CLASS, typename T, typename Q>
+inline Q PackedImplGetterCast(GU_PackedFactory * self, void (CLASS::*method)(T));
+
+template <typename CLASS>
+inline GU_PackedImpl::IntGetter PackedImplGetterCast(GU_PackedFactory * self, GA_Size (CLASS::*method)() const) {
+	return self->IntGetterCast(method);
+}
+
+template <typename CLASS>
+inline GU_PackedImpl::FloatGetter PackedImplGetterCast(GU_PackedFactory * self, fpreal (CLASS::*method)() const) {
+	return self->FloatGetterCast(method);
+}
+
+template <typename CLASS>
+inline GU_PackedImpl::StringGetter PackedImplGetterCast(GU_PackedFactory * self, const char * (CLASS::*method)() const) {
+	return self->StringGetterCast(method);
+}
+
+}
+
+
 #define VFH_STRINGIZE_HELPER(name) #name
 #define VFH_STRINGIZE(name) VFH_STRINGIZE_HELPER(name)
 #define VFH_TOKENIZE2_HELPER(a, b) a ## b
@@ -51,10 +109,10 @@
 #define VFH_ACCESSORS(r, state) \
 	VFH_CURRENT_TYPE(state) VFH_TOKENIZE2(get_, VFH_CURRENT_NAME(state))() const {\
 		const char * _name = VFH_STRINGIZE(VFH_CURRENT_NAME(state));\
-		return m_options.hasOption(_name) ? _get_opt<VFH_CURRENT_TYPE(state)>(_name) : VFH_CURRENT_DEFAULT(state);\
+		return m_options.hasOption(_name) ? VRayForHoudini::UT_Options_getter<VFH_CURRENT_TYPE(state)>(m_options, _name) : VFH_CURRENT_DEFAULT(state);\
 	} \
 	void VFH_TOKENIZE2(set_, VFH_CURRENT_NAME(state))(VFH_CURRENT_TYPE(state) val) {\
-		_set_opt<VFH_CURRENT_TYPE(state)>(VFH_STRINGIZE(VFH_CURRENT_NAME(state)), val);\
+		VRayForHoudini::UT_Options_setter<VFH_CURRENT_TYPE(state)>(m_options, VFH_STRINGIZE(VFH_CURRENT_NAME(state)), val);\
 	}
 
 // generates register call for the current paramter
@@ -62,76 +120,13 @@
 #define VFH_REGISTERS(r, state)\
 	registerIntrinsic(\
 			VFH_STRINGIZE(VFH_CURRENT_NAME(state)),\
-			_GetterCast(& VFH_PARAMS_CLASS(state) :: VFH_TOKENIZE2(get_, VFH_CURRENT_NAME(state))),\
-			_SetterCast(& VFH_PARAMS_CLASS(state) :: VFH_TOKENIZE2(set_, VFH_CURRENT_NAME(state))) \
+			PackedImplGetterCast<VFH_PARAMS_CLASS(state)>(this, & VFH_PARAMS_CLASS(state) :: VFH_TOKENIZE2(get_, VFH_CURRENT_NAME(state))),\
+			PackedImplSetterCast<VFH_PARAMS_CLASS(state)>(this, & VFH_PARAMS_CLASS(state) :: VFH_TOKENIZE2(set_, VFH_CURRENT_NAME(state))) \
 			);
 
-// defines member UT_Option m_options which is used to store all params, updating the value there will affect the intrinsics
-class VRayPackedImplBase: public GU_PackedImpl {
-protected:
-	VRayPackedImplBase(): GU_PackedImpl() {}
-	VRayPackedImplBase(const VRayPackedImplBase &src): GU_PackedImpl(src) {}
 
-	UT_Options m_options;
-protected:
-	// getters
-	template <typename T> void _set_opt(const char * name, const T & val) { static_assert(false, "UNIMPLEMENTED _set_opt in VRayPackedImplBase"); }
-
-	template <> void _set_opt<exint>          (const char * name, const exint  & val)          { m_options.setOptionI(name, val); }
-	template <> void _set_opt<fpreal>         (const char * name, const fpreal & val)          { m_options.setOptionF(name, val); }
-	template <> void _set_opt<UT_StringHolder>(const char * name, const UT_StringHolder & val) { m_options.setOptionS(name, val); }
-	template <> void _set_opt<const char *>   (const char * name, const char * const & val)    { m_options.setOptionS(name, val); }
-
-	// setters
-	template <typename T> T _get_opt(const char * name) const { static_assert(false, "UNIMPLEMENTED _get_opt in VRayPackedImplBase"); }
-
-	template <> exint           _get_opt<exint>          (const char * name) const { return m_options.getOptionI(name); }
-	template <> fpreal          _get_opt<fpreal>         (const char * name) const { return m_options.getOptionF(name); }
-	template <> UT_StringHolder _get_opt<UT_StringHolder>(const char * name) const { return m_options.getOptionS(name); }
-	template <> const char *    _get_opt<const char *>   (const char * name) const { return m_options.getOptionS(name).buffer(); }
-};
 
 #define VFH_MAKE_REGISTERS(params, params_count, class_name) BOOST_PP_FOR((0, params, params_count, class_name), VFH_PRED, VFH_OP, VFH_REGISTERS)
-
-#define VFH_DEFINE_FACTORY_BASE(factory_name, prim_name, params, params_count)\
-class factory_name: public GU_PackedFactory {\
-public:\
-	factory_name(const char *name, const char *label, const char *icon=NULL): GU_PackedFactory(name, label, icon) {\
-		VFH_MAKE_REGISTERS(params, params_count, prim_name)\
-	} \
-protected:\
-	/* if we call an overload that is not implemeted this will get called and print error */\
-	template <typename T, typename Q>\
-	Q _SetterCast(void (GU_PackedImpl::*method)(T)) {\
-		static_assert(false, "VRAY UNIMPLEMENTED _SetterCast in VRayPackedFactoryBase");\
-	}\
-	/* setters */\
-	GU_PackedImpl::IntSetter _SetterCast(void (prim_name::*method)(GA_Size)) {\
-		return IntSetterCast(method);\
-	}\
-	\
-	GU_PackedImpl::FloatSetter _SetterCast(void (prim_name::*method)(fpreal)) {\
-		return FloatSetterCast(method);\
-	}\
-	\
-	GU_PackedImpl::StringSetter _SetterCast(void (prim_name::*method)(const char *)) {\
-		return StringSetterCast(method);\
-	}\
-	\
-	/* getters */\
-	GU_PackedImpl::IntGetter _GetterCast(GA_Size (prim_name::*method)() const) {\
-		return IntGetterCast(method);\
-	}\
-	\
-	GU_PackedImpl::FloatGetter _GetterCast(fpreal (prim_name::*method)() const) {\
-		return FloatGetterCast(method);\
-	}\
-	\
-	GU_PackedImpl::StringGetter _GetterCast(const char * (prim_name::*method)() const) {\
-		return StringGetterCast(method);\
-	}\
-};\
-
 #define VFH_MAKE_ACCESSORS(params, params_count) BOOST_PP_FOR((0, params, params_count),  VFH_PRED, VFH_OP, VFH_ACCESSORS)
 
 // How to use:
@@ -139,11 +134,11 @@ protected:\
 // Currently supported types are (exint, fpreal, const char *)
 // Define parameters count: #define params_count 2
 
-// Make class C inherit VRayPackedImplBase and call VFH_MAKE_ACCESSORS(params, params_count) inside public part
+// Define your detail class C derived from GU_PackedImpl, declare UT_Options m_options, member and call VFH_MAKE_ACCESSORS(params, params_count) inside public part
 // this will generate getters (returining default if not previously set) and setters for all params
 
-// Call VFH_DEFINE_FACTORY_BASE(base_name, C, params, params_count) and inherit class base_name
-// the base class will register all parameters with the appropriate getters and setters from C
+// Define factory class derived from GU_PackedFactory, and call VFH_MAKE_REGISTERS(params, params_count, C) in factory's ctor
+// this will register all parameters with the appropriate getters and setters from C
 
 
 #endif // VRAY_FOR_HOUDINI_VRAY_PRIMITIVES_H

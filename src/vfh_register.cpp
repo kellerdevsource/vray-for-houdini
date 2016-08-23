@@ -14,6 +14,7 @@
 #include "utils/vfh_error.h"
 
 #include "vfh_rop.h"
+#include "rop/rop_vrayproxyrop.h"
 #include "obj/obj_node_def.h"
 #include "sop/sop_node_def.h"
 #include "vop/vop_context.h"
@@ -29,6 +30,9 @@
 #include "vop/env/vop_env_def.h"
 #include "cmd/vfh_cmd_register.h"
 
+#include "gu_volumegridref.h"
+#include "gu_vrayproxyref.h"
+
 #include "io/io_vrmesh.h"
 
 // For newShopOperator()
@@ -38,6 +42,7 @@
 #include <UT/UT_DSOVersion.h>
 #include <UT/UT_Exit.h>
 #include <UT/UT_IOTable.h>
+#include <GU/GU_Detail.h>
 
 #ifdef CGR_HAS_AUR
 #  include <aurloader.h>
@@ -70,6 +75,12 @@ void unregister(void *)
 	errChaser.enable(false);
 }
 
+void newGeometryPrim(GA_PrimitiveFactory *gafactory)
+{
+	VRayProxyRef::install(gafactory);
+	VRayVolumeGridRef::install(gafactory);
+}
+
 
 void newDriverOperator(OP_OperatorTable *table)
 {
@@ -82,6 +93,7 @@ void newDriverOperator(OP_OperatorTable *table)
 	VRayPluginRenderer::initialize();
 
 	VRayRendererNode::register_operator(table);
+	VRayProxyROP::register_ropoperator(table),
 
 	VOP::VRayVOPContext::register_operator_vrayrccontext(table);
 	VOP::VRayVOPContext::register_operator_vrayenvcontext(table);
@@ -106,7 +118,7 @@ void newSopOperator(OP_OperatorTable *table)
 		}
 	}
 
-	VFH_SOP_ADD_OPERATOR_INPUTS(table, "GEOMETRY", PhxShaderCache, PhxShaderCache::GetPrmTemplate(), 0, 1);
+	VFH_SOP_ADD_OPERATOR(table, "GEOMETRY", PhxShaderCache, PhxShaderCache::GetPrmTemplate());
 #endif
 
 	VFH_SOP_ADD_OPERATOR_AUTO(table, "GEOMETRY", GeomPlane);
@@ -116,6 +128,8 @@ void newSopOperator(OP_OperatorTable *table)
 	VFH_SOP_ADD_OPERATOR_AUTO(table,           "GEOMETRY", VRayScene);
 #endif
 	VFH_SOP_ADD_OPERATOR_CUSTOM_ID_AUTO(table, "GEOMETRY", VRayProxy, "GeomMeshFile");
+
+	VRayProxyROP::register_sopoperator(table);
 }
 
 

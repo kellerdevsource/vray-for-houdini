@@ -36,6 +36,7 @@ typedef Caches::LRUCache< std::string, VRayProxyCache > VRayProxyCacheMan;
 VRayProxyCacheMan&     GetVRayProxyCacheManager();
 GU_ConstDetailHandle   GetVRayProxyDetail(const VRayProxyParms &options);
 bool                   GetVRayProxyBounds(const VRayProxyParms &options, UT_BoundingBox &box);
+bool                   ClearVRayProxyCache(const UT_String &utfilepath);
 
 
 class VRayProxyParms

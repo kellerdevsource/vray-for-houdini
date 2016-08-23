@@ -31,8 +31,8 @@ set VRAY_VFB_ALWAYS_ON_TOP=1
 :: V-Ray JSON plugin descriptions
 set VRAY_PLUGIN_DESC_PATH=%LAUNCHER_LOCATION%\plugins_desc
 
-:: Custom UI scripts
-set VRAY_UI_DS_PATH=%LAUNCHER_LOCATION%\deploy\ui
+# V-Ray UI dialog scripts
+set VRAY_UI_DS_PATH=%LAUNCHER_LOCATION%\ui
 
 :: Phoenix Loaders
 set VRAY_FOR_HOUDINI_AURA_LOADERS=%HOUDINI_USER_DIR%\vfh\lib

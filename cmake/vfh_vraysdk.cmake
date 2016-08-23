@@ -8,73 +8,19 @@
 # Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 #
 
-string(TOLOWER "${CMAKE_HOST_SYSTEM_NAME}" _HOST_SYSTEM_NAME)
-
-set(_maya_versons "2017;2016;2015;2014")
-foreach(_maya_version ${_maya_versons})
-	if(SDK_PATH)
-		set(_vray_for_maya_root "${SDK_PATH}/${_HOST_SYSTEM_NAME}/vraysdk/vraysdk${_maya_version}")
-	else()
-		if(WIN32)
-			set(_vray_for_maya_root "C:/Program Files/Chaos Group/V-Ray/Maya ${_maya_version} for x64")
-		elseif(APPLE)
-			set(_vray_for_maya_root "/Applications/ChaosGroup/V-Ray/Maya${_maya_version}")
-		else()
-			set(_vray_for_maya_root "/usr/ChaosGroup/V-Ray/Maya${_maya_version}-x64")
-		endif()
-	endif()
-
-	if(EXISTS ${_vray_for_maya_root})
-		if(WIN32)
-			set(_vray_os_subdir       "x64")
-			set(_vray_compiler_subdir "vc101")
-			if (${_maya_version} GREATER 2014)
-				set(_vray_compiler_subdir "vc11")
-			endif()
-		elseif(APPLE)
-			if(${_maya_version} GREATER 2015)
-				set(_vray_os_subdir   "mavericks_x64")
-			else()
-				set(_vray_os_subdir   "mountain_lion_x64")
-			endif()
-			set(_vray_compiler_subdir "gcc-4.2")
-		else()
-			set(_vray_os_subdir       "linux_x64")
-			set(_vray_compiler_subdir "gcc-4.4")
-		endif()
-
-		set(vray_for_maya_incpaths
-			${_vray_for_maya_root}/include
-		)
-		set(vray_for_maya_libpaths
-			${_vray_for_maya_root}/lib/${_vray_os_subdir}
-			${_vray_for_maya_root}/lib/${_vray_os_subdir}/${_vray_compiler_subdir}
-		)
-		break()
-	endif()
-endforeach()
-
-set(CGR_VRAYSDK_INCPATH "" CACHE STRING "V-Ray SDK include path")
-set(CGR_VRAYSDK_LIBPATH "" CACHE STRING "V-Ray SDK library path")
-
-set(VRAYSDK_INCPATH "" CACHE INTERNAL "")
-set(VRAYSDK_LIBPATH "" CACHE INTERNAL "")
-
-if(NOT CGR_VRAYSDK_INCPATH STREQUAL "")
-	set(VRAYSDK_INCPATH ${CGR_VRAYSDK_INCPATH} CACHE PATH "" FORCE)
-else()
-	set(VRAYSDK_INCPATH ${vray_for_maya_incpaths} CACHE PATH "" FORCE)
-endif()
-
-if(NOT CGR_VRAYSDK_LIBPATH STREQUAL "")
-	set(VRAYSDK_LIBPATH ${CGR_VRAYSDK_LIBPATH} CACHE PATH "" FORCE)
-else()
-	set(VRAYSDK_LIBPATH ${vray_for_maya_libpaths} CACHE PATH "" FORCE)
-endif()
 
 macro(use_vray_sdk)
-	message(STATUS "Using V-Ray SDK include path: ${VRAYSDK_INCPATH}")
-	message(STATUS "Using V-Ray SDK library path: ${VRAYSDK_LIBPATH}")
+	find_package(VRaySDK)
+
+	if(NOT VRaySDK_FOUND)
+		message(FATAL_ERROR "V-Ray SDK NOT found!\n"
+							"V-Ray SDK from V-Ray For Maya installation is utilized by default.\n"
+							"You should either specify VRAYSDK_PATH or SDK_PATH and VRAYSDK_VERSION variables or install V-Ray For Maya."
+							)
+	endif()
+
+	message(STATUS "Using V-Ray SDK include path: ${VRaySDK_INCLUDES}")
+	message(STATUS "Using V-Ray SDK library path: ${VRaySDK_LIBRARIES}")
 
 	if(WIN32)
 		# Both V-Ray SDK and HDK defines some basic types,
@@ -85,17 +31,11 @@ macro(use_vray_sdk)
 		)
 	endif()
 
-	if(NOT EXISTS ${VRAYSDK_INCPATH})
-		message(FATAL_ERROR "V-Ray SDK libraries / headers are not found!\n"
-							"V-Ray SDK from V-Ray For Maya installation is utilized by default.\n"
-							"Install V-Ray For Maya or point SDK_PATH or CGR_VRAYSDK_INCPATH and CGR_VRAYSDK_LIBPATH variables to the SDK location.")
-	endif()
-
-	include_directories(${VRAYSDK_INCPATH})
-	link_directories(${VRAYSDK_LIBPATH})
+	include_directories(${VRaySDK_INCLUDES})
+	link_directories(${VRaySDK_LIBRARIES})
 
 	# Check if there is vrscene preview library
-	find_path(CGR_HAS_VRSCENE vrscene_preview.h PATHS ${VRAYSDK_INCPATH})
+	find_path(CGR_HAS_VRSCENE vrscene_preview.h PATHS ${VRaySDK_INCLUDES})
 	if (CGR_HAS_VRSCENE)
 		add_definitions(-DCGR_HAS_VRAYSCENE)
 	endif()

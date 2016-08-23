@@ -45,6 +45,21 @@ include_directories(utils)
 file(GLOB_RECURSE SOURCES "*.cpp")
 file(GLOB_RECURSE HEADERS "*.h" "*.hpp")
 
+if (WIN32)
+	macro(GroupSources curdir)
+		file(GLOB children RELATIVE ${PROJECT_SOURCE_DIR}/${curdir} ${PROJECT_SOURCE_DIR}/${curdir}/*)
+		foreach(child ${children})
+			if(IS_DIRECTORY ${PROJECT_SOURCE_DIR}/${curdir}/${child})
+				GroupSources(${curdir}/${child})
+			else()
+				string(REPLACE "/" "\\" groupname ${curdir})
+				source_group(${groupname} FILES ${PROJECT_SOURCE_DIR}/${curdir}/${child})
+			endif()
+		endforeach()
+	endmacro()
+	GroupSources(src)
+endif()
+
 # *.aur preview
 if (Phoenix_FOUND)
 	add_definitions(-DCGR_HAS_AUR)
@@ -114,9 +129,6 @@ if(INSTALL_LOCAL)
 	install(DIRECTORY    ${CMAKE_SOURCE_DIR}/deploy/presets/
 			DESTINATION  ${HOUDINI_HOME_PATH}/presets)
 
-	install(DIRECTORY    ${CMAKE_SOURCE_DIR}/deploy/ui/
-			DESTINATION  ${CMAKE_BINARY_DIR}/deploy/ui)
-
 	if (Phoenix_FOUND)
 		install(FILES       ${Phoenix_LIBRARIES}/${CGR_PHOENIX_SHARED}
 							${Phoenix_LIBRARIES}/${CGR_PHOENIX_SHARED_VDB}
@@ -168,13 +180,6 @@ if(USE_LAUNCHER)
 				DESTINATION "$ENV{HOME}/bin"
 				PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 	endif()
-
-	# Add custom ui files
-	install(DIRECTORY    ${CMAKE_SOURCE_DIR}/deploy/ui/
-			DESTINATION  ${CMAKE_BINARY_DIR}/deploy/ui)
-
-	install(DIRECTORY    ${CMAKE_SOURCE_DIR}/deploy/presets/
-			DESTINATION  ${HOUDINI_HOME_PATH}/presets)
 endif()
 
 
@@ -197,7 +202,7 @@ if(INSTALL_RELEASE)
 		# Add custom ui files
 		file(GLOB DS_UI_FILES     "${CMAKE_SOURCE_DIR}/deploy/ui/*.*")
 		file(INSTALL               ${DS_UI_FILES}
-			DESTINATION            ${INSTALL_RELEASE_PATH}/deploy/ui
+			DESTINATION            ${INSTALL_RELEASE_PATH}/ui
 			USE_SOURCE_PERMISSIONS)
 
 		file(GLOB IDX_UI_FILES    "${CMAKE_SOURCE_DIR}/deploy/presets/*.*")

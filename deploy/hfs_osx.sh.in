@@ -22,8 +22,8 @@ export VRAY_PATH=${VRAY_SDK}/bin
 # V-Ray JSON plugin descriptions
 export VRAY_PLUGIN_DESC_PATH="${LAUNCHER_LOCATION}/plugins_desc"
 
-# Custom UI scripts
-export VRAY_UI_DS_PATH="${LAUNCHER_LOCATION}/deploy/ui"
+# V-Ray UI dialog scripts
+export VRAY_UI_DS_PATH="${LAUNCHER_LOCATION}/ui"
 
 # Phoenix Loaders
 export VRAY_FOR_HOUDINI_AURA_LOADERS=${HOUDINI_USER_DIR}/vfh/lib
@@ -59,8 +59,7 @@ mkdir -p "${HOUDINI_USER_DIR}/vfh/lib"
 
 cp -R "${LAUNCHER_LOCATION}/dso/vray_for_houdini.so" "${HOUDINI_USER_DIR}/dso/"
 cp -R "${LAUNCHER_LOCATION}/deploy/ROP_vray.svg"     "${HOUDINI_USER_DIR}/config/Icons/"
-cp -R "${LAUNCHER_LOCATION}/deploy/scripts/python"   "${HOUDINI_USER_DIR}/scripts"
-cp -R "${LAUNCHER_LOCATION}/deploy/scripts/shop"     "${HOUDINI_USER_DIR}/scripts"
+cp -R "${LAUNCHER_LOCATION}/deploy/scripts/"*        "${HOUDINI_USER_DIR}/scripts"
 cp -R "${LAUNCHER_LOCATION}/deploy/presets"          "${HOUDINI_USER_DIR}/presets"
 
 # Copy shelves
