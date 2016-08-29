@@ -53,14 +53,14 @@ struct VolumeProxy {
 	}
 
 	exint voxCount() const {
-		int res[3];
+		int res[3] = {0, 0, 0};
 		this->getRes(res);
 		return res[0] * res[1] * res[2];
 	}
 
 	template <typename T, typename F>
 	void copyTo(VRay::VUtils::PtrArray<T> & data, F acc) const {
-		int res[3];
+		int res[3] = {0, 0, 0};
 		getRes(res);
 
 		auto GetCellIndex = [&res](int x, int y, int z) {
@@ -102,11 +102,11 @@ struct VolumeProxy {
 		} else if (m_vdb) {
 			return m_vdb->baryCenter();
 		}
-		return UT_Vector3();
+		return UT_Vector3(0, 0, 0);
 	}
 
 	UT_Matrix4D getTransform() const {
-		UT_Matrix4D res;
+		UT_Matrix4D res(1);
 		if (m_vol) {
 			m_vol->getTransform4(res);
 		} else if (m_vdb) {
