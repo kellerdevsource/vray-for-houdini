@@ -35,7 +35,9 @@ namespace {
 // wrapper over GEO_PrimVolume and GEO_PrimVDB providing common interface
 struct VolumeProxy {
 	VolumeProxy(const GEO_Primitive *prim): m_prim(prim), m_vol(nullptr), m_vdb(nullptr) {
-		if (prim->getTypeId() == GEO_PRIMVOLUME) {
+		if (!prim) {
+			return;
+		} else if (prim->getTypeId() == GEO_PRIMVOLUME) {
 			m_vol = dynamic_cast<const GEO_PrimVolume *>(m_prim);
 		} else if (prim->getTypeId() == GEO_PRIMVDB) {
 			m_vdb = dynamic_cast<const GEO_PrimVDB *>(m_prim);
@@ -219,9 +221,7 @@ void HoudiniVolumeExporter::exportPrimitives(const GU_Detail &detail, PluginDesc
 		// phxMatchTm matrix to convert from voxel space to world space
 		// Needed for TexMayaFluidTransformed
 		// Should match with transform for PhxShaderSim (?)
-		VRay::Transform phxMatchTm;
-		phxMatchTm.offset = nodeTm.matrix * phxTm.offset + nodeTm.offset;
-		phxMatchTm.matrix = nodeTm.matrix * phxTm.matrix;
+		VRay::Transform phxMatchTm = nodeTm * phxTm;
 
 		Log::getLog().debug("Volume \"%s\": %i x %i x %i",
 							texType.c_str(), res[0], res[1], res[2]);
@@ -289,19 +289,12 @@ void HoudiniVolumeExporter::exportPrimitives(const GU_Detail &detail, PluginDesc
 	phxShaderCacheDesc.addAttribute(Attrs::PluginAttr("grid_size_y", (float)res[1]));
 	phxShaderCacheDesc.addAttribute(Attrs::PluginAttr("grid_size_z", (float)res[2]));
 
-	// TODO: missing params are defaulted automatically?
-	//auto packedPrim = UTverify_cast<const GU_PrimPacked *>(&prim);
-	//auto vgridref = UTverify_cast< const VRayVolumeGridRef * >(packedPrim->implementation());
-	//m_exporter.setAttrsFromUTOptions(nodeDesc, vgridref->getOptions());
-	//m_exporter.setAttrsFromOpNodePrms(phxShaderCacheDesc, this, "PhxShaderCache_");
-
 	// Skip "cache_path" exporting
 	phxShaderCacheDesc.add(Attrs::PluginAttr("cache_path", Attrs::PluginAttr::AttrTypeIgnore));
 
 	VRay::Plugin phxShaderCache = m_exporter.exportPlugin(phxShaderCacheDesc);
 
-	nodeTm.offset = nodeTm.matrix * phxTm.offset + nodeTm.offset;
-	nodeTm.matrix = nodeTm.matrix * phxTm.matrix;
+	nodeTm = nodeTm * phxTm;
 	Attrs::PluginAttrs overrides;
 	overrides.push_back(Attrs::PluginAttr("node_transform", nodeTm));
 	overrides.push_back(Attrs::PluginAttr("cache", phxShaderCache));

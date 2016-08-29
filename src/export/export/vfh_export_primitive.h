@@ -29,6 +29,7 @@ public:
 	PrimitiveExporter(OBJ_Node &obj, OP_Context &ctx, VRayExporter &exp): m_object(obj), m_context(ctx), m_exporter(exp) {}
 
 	virtual void exportPrimitives(const GU_Detail &detail, PluginDescList &plugins) = 0;
+	virtual ~PrimitiveExporter() {}
 protected:
 	OBJ_Node     &m_object;
 	OP_Context   &m_context;
