@@ -360,28 +360,22 @@ static PRM_Template* getTemplates()
 
 		// Renderer settings
 		//
-		static boost::format dspath("plugins/%s.ds");
-		std::string dsfullpath;
 
 		// Camera tab
 		myPrmList.addFolder("Camera");
 		myPrmList.switcherBegin("VRayCameraSettings");
 
 		myPrmList.addFolder("Camera");
-		dsfullpath = Parm::PRMList::expandUiPath( boost::str(dspath % "SettingsCamera") );
-		myPrmList.addFromFile(dsfullpath.c_str());
+		myPrmList.addFromFile( Parm::PRMList::getUIPluginPath("SettingsCamera").c_str() );
 
 		myPrmList.addFolder("Depth Of Field");
-		dsfullpath = Parm::PRMList::expandUiPath( boost::str(dspath % "SettingsCameraDof") );
-		myPrmList.addFromFile(dsfullpath.c_str());
+		myPrmList.addFromFile( Parm::PRMList::getUIPluginPath("SettingsCameraDof").c_str() );
 
 		myPrmList.addFolder("Motion Blur");
-		dsfullpath = Parm::PRMList::expandUiPath( boost::str(dspath % "SettingsMotionBlur") );
-		myPrmList.addFromFile(dsfullpath.c_str());
+		myPrmList.addFromFile( Parm::PRMList::getUIPluginPath("SettingsMotionBlur").c_str() );
 
 		myPrmList.addFolder("Stereo");
-		dsfullpath= Parm::PRMList::expandUiPath( boost::str(dspath % "VRayStereoscopicSettings") );
-		myPrmList.addFromFile(dsfullpath.c_str());
+		myPrmList.addFromFile( Parm::PRMList::getUIPluginPath("VRayStereoscopicSettings").c_str() );
 
 		myPrmList.switcherEnd();
 
@@ -390,20 +384,16 @@ static PRM_Template* getTemplates()
 		myPrmList.switcherBegin("VRayGiSettings");
 
 		myPrmList.addFolder("GI");
-		dsfullpath = Parm::PRMList::expandUiPath( boost::str(dspath % "SettingsGI") );
-		myPrmList.addFromFile(dsfullpath.c_str());
+		myPrmList.addFromFile( Parm::PRMList::getUIPluginPath("SettingsGI").c_str() );
 
 		myPrmList.addFolder("Brute Force");
-		dsfullpath = Parm::PRMList::expandUiPath( boost::str(dspath % "SettingsDMCGI") );
-		myPrmList.addFromFile(dsfullpath.c_str());
+		myPrmList.addFromFile( Parm::PRMList::getUIPluginPath("SettingsDMCGI").c_str() );
 
 		myPrmList.addFolder("Irradiance Map");
-		dsfullpath = Parm::PRMList::expandUiPath( boost::str(dspath % "SettingsIrradianceMap") );
-		myPrmList.addFromFile(dsfullpath.c_str());
+		myPrmList.addFromFile( Parm::PRMList::getUIPluginPath("SettingsIrradianceMap").c_str() );
 
 		myPrmList.addFolder("Light Cache");
-		dsfullpath = Parm::PRMList::expandUiPath( boost::str(dspath % "SettingsLightCache") );
-		myPrmList.addFromFile(dsfullpath.c_str());
+		myPrmList.addFromFile( Parm::PRMList::getUIPluginPath("SettingsLightCache").c_str() );
 
 		myPrmList.switcherEnd();
 
@@ -412,54 +402,44 @@ static PRM_Template* getTemplates()
 		myPrmList.switcherBegin("VRaySamplersSettings");
 
 		myPrmList.addFolder("DMC");
-		dsfullpath = Parm::PRMList::expandUiPath( boost::str(dspath % "SettingsDMCSampler") );
-		myPrmList.addFromFile(dsfullpath.c_str());
+		myPrmList.addFromFile( Parm::PRMList::getUIPluginPath("SettingsDMCSampler").c_str() );
 
 		myPrmList.addFolder("AA");
-		dsfullpath = Parm::PRMList::expandUiPath( boost::str(dspath % "SettingsImageSampler") );
-		myPrmList.addFromFile(dsfullpath.c_str());
+		myPrmList.addFromFile( Parm::PRMList::getUIPluginPath("SettingsImageSampler").c_str() );
 
 		myPrmList.switcherEnd();
 
 		// Options tab
 		myPrmList.addFolder("Options");
-		dsfullpath = Parm::PRMList::expandUiPath( boost::str(dspath % "SettingsOptions") );
-		myPrmList.addFromFile(dsfullpath.c_str());
+		myPrmList.addFromFile( Parm::PRMList::getUIPluginPath("SettingsOptions").c_str() );
 
 		// Output tab
 		myPrmList.addFolder("Output");
-		dsfullpath = Parm::PRMList::expandUiPath( boost::str(dspath % "SettingsOutput") );
-		myPrmList.addFromFile(dsfullpath.c_str());
+		myPrmList.addFromFile( Parm::PRMList::getUIPluginPath("SettingsOutput").c_str() );
 
 		// Color Mapping tab
 		myPrmList.addFolder("Color Mapping");
-		dsfullpath = Parm::PRMList::expandUiPath( boost::str(dspath % "SettingsColorMapping") );
-		myPrmList.addFromFile(dsfullpath.c_str());
+		myPrmList.addFromFile( Parm::PRMList::getUIPluginPath("SettingsColorMapping").c_str() );
 
 		// Raycaster tab
 		myPrmList.addFolder("Raycaster");
-		dsfullpath = Parm::PRMList::expandUiPath( boost::str(dspath % "SettingsRaycaster") );
-		myPrmList.addFromFile(dsfullpath.c_str());
+		myPrmList.addFromFile( Parm::PRMList::getUIPluginPath("SettingsRaycaster").c_str() );
 
 		// Regions tab
 		myPrmList.addFolder("Regions");
-		dsfullpath = Parm::PRMList::expandUiPath( boost::str(dspath % "SettingsRegionsGenerator") );
-		myPrmList.addFromFile(dsfullpath.c_str());
+		myPrmList.addFromFile( Parm::PRMList::getUIPluginPath("SettingsRegionsGenerator").c_str() );
 
 		// RT tab
 		myPrmList.addFolder("RT");
-		dsfullpath = Parm::PRMList::expandUiPath( boost::str(dspath % "SettingsRTEngine") );
-		myPrmList.addFromFile(dsfullpath.c_str());
+		myPrmList.addFromFile( Parm::PRMList::getUIPluginPath("SettingsRTEngine").c_str() );
 
 		// Caustics tab
 		myPrmList.addFolder("Caustics");
-		dsfullpath = Parm::PRMList::expandUiPath( boost::str(dspath % "SettingsCaustics") );
-		myPrmList.addFromFile(dsfullpath.c_str());
+		myPrmList.addFromFile( Parm::PRMList::getUIPluginPath("SettingsCaustics").c_str() );
 
 		// Displacement tab
 		myPrmList.addFolder("Displacement");
-		dsfullpath = Parm::PRMList::expandUiPath( boost::str(dspath % "SettingsDefaultDisplacement") );
-		myPrmList.addFromFile(dsfullpath.c_str());
+		myPrmList.addFromFile( Parm::PRMList::getUIPluginPath("SettingsDefaultDisplacement").c_str() );
 
 		// DR Tab
 		myPrmList.addFolder("DR");

@@ -84,8 +84,10 @@ public:
 	// if resulting file path doesn't exist searches for the relPath inside UI root
 	// does minimal validation if UI root and file path exist
 	static std::string   expandUiPath(const std::string &relPath);
+	static std::string   getUIPluginPath(const char *pluginName);
 	static PRM_Template* loadFromFile(const char *filepath, bool cookDependent = false);
 	static void          setCookDependent(PRM_Template* tmpl, bool recook);
+	static void          renamePRMTemplate(PRM_Template *tmpl, const char *prefix);
 
 private:
 	typedef std::vector<PRM_Template> PRMTemplVec;

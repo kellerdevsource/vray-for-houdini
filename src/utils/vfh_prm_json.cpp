@@ -611,10 +611,7 @@ Parm::PRMList* Parm::generatePrmTemplate(const std::string &pluginID)
 			SOP::VRayProxy::addPrmTemplate(prmList);
 		}
 
-		static boost::format dspath("plugins/%s.ds");
-		std::string dsfullpath = PRMList::expandUiPath( boost::str(dspath % pluginID) );
-
-		prmList.addFromFile(dsfullpath.c_str());
+		prmList.addFromFile( PRMList::getUIPluginPath(pluginID.c_str()).c_str() );
 	}
 
 	PRMList &prmList = prmListMap.at(pluginID);

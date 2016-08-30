@@ -181,6 +181,17 @@ std::string Parm::PRMList::expandUiPath(const std::string &relPath)
 }
 
 
+std::string Parm::PRMList::getUIPluginPath(const char *pluginName)
+{
+	if (!UTisstring(pluginName)) {
+		return "";
+	}
+
+	static boost::format dspath("plugins/%s.ds");
+	return Parm::PRMList::expandUiPath( boost::str(dspath % pluginName) );
+}
+
+
 PRM_Template* Parm::PRMList::loadFromFile(const char *filepath, bool cookDependent)
 {
 	OP_Operator op( "dummy", "dummy",
@@ -204,15 +215,43 @@ PRM_Template* Parm::PRMList::loadFromFile(const char *filepath, bool cookDepende
 }
 
 
-void Parm::PRMList::setCookDependent( PRM_Template* tmpl, bool recook)
+void Parm::PRMList::setCookDependent(PRM_Template* tmpl, bool recook)
 {
-	int i = 0;
-	while (tmpl && (tmpl[i].getType() != PRM_LIST_TERMINATOR)) {
+	if (!tmpl) {
+		return;
+	}
+
+	for (int i = 0; tmpl[i].getType() != PRM_LIST_TERMINATOR; ++i) {
 		if (tmpl[i].getType() == PRM_SWITCHER) {
 			continue;
 		}
 
-		tmpl[i++].setNoCook(!recook);
+		tmpl[i].setNoCook(!recook);
+	}
+}
+
+
+void Parm::PRMList::renamePRMTemplate(PRM_Template *tmpl, const char *prefix)
+{
+	if (   !tmpl
+		|| !UTisstring(prefix))
+	{
+		return;
+	}
+
+	static boost::format prmname("%s_%s");
+
+	for (int i = 0; tmpl[i].getType() != PRM_LIST_TERMINATOR; ++i) {
+		if (tmpl[i].getType() == PRM_SWITCHER) {
+			continue;
+		}
+
+		PRM_Name *name = tmpl[i].getNamePtr();
+		if (name) {
+			const std::string prmtoken = boost::str(prmname % prefix % name->getToken()) ;
+			name->setToken(prmtoken.c_str());
+			name->harden();
+		}
 	}
 }
 
