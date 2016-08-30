@@ -20,14 +20,15 @@
 
 #include <GEO/GEO_Primitive.h>
 #include <GU/GU_PrimVolume.h>
+#include <GU/GU_PrimVDB.h>
 #include <GU/GU_Detail.h>
 #include <OP/OP_Bundle.h>
 #include <GA/GA_Types.h>
 
 using namespace VRayForHoudini;
 
-
 const char *const VFH_ATTR_MATERIAL_ID = "switchmtl";
+
 
 GeometryExporter::GeometryExporter(OBJ_Geometry &node, VRayExporter &pluginExporter):
 	m_objNode(node),
@@ -437,7 +438,9 @@ int GeometryExporter::exportDetail(SOP_Node &sop, GU_DetailHandleAutoReadLock &g
 	const GU_Detail &gdp = *gdl.getGdp();
 
 	VolumeExporter volExp(m_objNode, m_context, m_pluginExporter);
+	HoudiniVolumeExporter hVoldExp(m_objNode, m_context, m_pluginExporter);
 	volExp.exportPrimitives(gdp, pluginList);
+	hVoldExp.exportPrimitives(gdp, pluginList);
 
 	// packed prims
 	if (GU_PrimPacked::hasPackedPrimitives(gdp)) {

@@ -82,6 +82,7 @@ if (Phoenix_FOUND)
 	target_link_libraries(${PROJECT_NAME}
 		aurloader_s
 		aurloader
+		${HDK_LIB_GEO}
 	)
 endif()
 

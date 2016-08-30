@@ -36,6 +36,7 @@ void PhxShaderSim::setPluginType()
 OP::VRayNode::PluginResult PhxShaderSim::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
 {
 	const auto t = exporter.getContext().getTime();
+
 	RenderMode rendMode;
 
 	// renderMode
