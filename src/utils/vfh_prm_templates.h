@@ -77,7 +77,8 @@ public:
 	// the PRMList instance alive as it holds internal references to
 	// PRM_ScriptPages used by the loaded PRM_Templates
 	PRMList& addFromFile(const char *filepath);
-	PRMList& addFromPRMTemplate(const PRM_Template *tmpl);
+	// NOTE: tmpl should be list terminated array of parameters
+	PRMList& addFromPRMTemplate(const PRM_Template tmpl[]);
 
 
 	// prepends the passed path with the UI root determined by VRAY_UI_DS_PATH env var
@@ -86,8 +87,10 @@ public:
 	static std::string   expandUiPath(const std::string &relPath);
 	static std::string   getUIPluginPath(const char *pluginName);
 	static PRM_Template* loadFromFile(const char *filepath, bool cookDependent = false);
-	static void          setCookDependent(PRM_Template* tmpl, bool recook);
-	static void          renamePRMTemplate(PRM_Template *tmpl, const char *prefix);
+	// NOTE: tmpl should be list terminated array of parameters
+	static void          setCookDependent(PRM_Template tmpl[], bool recook);
+	// NOTE: tmpl should be list terminated array of parameters
+	static void          renamePRMTemplate(PRM_Template tmpl[], const char *prefix);
 
 private:
 	typedef std::vector<PRM_Template> PRMTemplVec;

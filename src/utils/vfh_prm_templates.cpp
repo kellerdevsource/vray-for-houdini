@@ -194,6 +194,10 @@ std::string Parm::PRMList::getUIPluginPath(const char *pluginName)
 
 PRM_Template* Parm::PRMList::loadFromFile(const char *filepath, bool cookDependent)
 {
+	if (!UTisstring(filepath)) {
+		return nullptr;
+	}
+
 	OP_Operator op( "dummy", "dummy",
 				nullptr, static_cast<PRM_Template *>(nullptr), 0 );
 	UT_IFStream is(filepath);
@@ -215,7 +219,7 @@ PRM_Template* Parm::PRMList::loadFromFile(const char *filepath, bool cookDepende
 }
 
 
-void Parm::PRMList::setCookDependent(PRM_Template* tmpl, bool recook)
+void Parm::PRMList::setCookDependent(PRM_Template tmpl[], bool recook)
 {
 	if (!tmpl) {
 		return;
@@ -231,7 +235,7 @@ void Parm::PRMList::setCookDependent(PRM_Template* tmpl, bool recook)
 }
 
 
-void Parm::PRMList::renamePRMTemplate(PRM_Template *tmpl, const char *prefix)
+void Parm::PRMList::renamePRMTemplate(PRM_Template tmpl[], const char *prefix)
 {
 	if (   !tmpl
 		|| !UTisstring(prefix))
@@ -429,8 +433,12 @@ Parm::PRMList& Parm::PRMList::addFromFile(const char *filepath)
 }
 
 
-Parm::PRMList& Parm::PRMList::addFromPRMTemplate(const PRM_Template *tmpl)
+Parm::PRMList& Parm::PRMList::addFromPRMTemplate(const PRM_Template tmpl[])
 {
+	if (!tmpl) {
+		return *this;
+	}
+
 	const int size = PRM_Template::countTemplates(tmpl);
 	// reserve space for new params
 	m_prmVec.reserve(m_prmVec.size() + size);
@@ -447,6 +455,8 @@ Parm::PRMList& Parm::PRMList::addFromPRMTemplate(const PRM_Template *tmpl)
 			switcherBegin(tmpl[i].getToken(), tmpl[i].getLabel());
 			// init folders for top most switcher
 			SwitcherInfo *swinfo = getCurrentSwitcher();
+			UT_ASSERT( swinfo );
+
 			swinfo->m_folders.reserve(tmpl[i].getVectorSize());
 			PRM_Default *prmdeflist = tmpl[i].getFactoryDefaults();
 			for (int j = 0; j < tmpl[i].getVectorSize(); ++j) {
