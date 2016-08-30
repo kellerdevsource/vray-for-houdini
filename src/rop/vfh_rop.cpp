@@ -319,18 +319,24 @@ static void addParmGlobals(Parm::PRMList &myPrmList)
 	// Standard ROP settings
 	//
 	myPrmList.addPrm(PRM_Template(PRM_HEADING, 1, &parm_render_scripts));
-	myPrmList.addPrm(theRopTemplates[ROP_TPRERENDER_TPLATE]);
-	myPrmList.addPrm(theRopTemplates[ROP_PRERENDER_TPLATE]);
-	myPrmList.addPrm(theRopTemplates[ROP_LPRERENDER_TPLATE]);
-	myPrmList.addPrm(theRopTemplates[ROP_TPREFRAME_TPLATE]);
-	myPrmList.addPrm(theRopTemplates[ROP_PREFRAME_TPLATE]);
-	myPrmList.addPrm(theRopTemplates[ROP_LPREFRAME_TPLATE]);
-	myPrmList.addPrm(theRopTemplates[ROP_TPOSTFRAME_TPLATE]);
-	myPrmList.addPrm(theRopTemplates[ROP_POSTFRAME_TPLATE]);
-	myPrmList.addPrm(theRopTemplates[ROP_LPOSTFRAME_TPLATE]);
-	myPrmList.addPrm(theRopTemplates[ROP_TPOSTRENDER_TPLATE]);
-	myPrmList.addPrm(theRopTemplates[ROP_POSTRENDER_TPLATE]);
-	myPrmList.addPrm(theRopTemplates[ROP_LPOSTRENDER_TPLATE]);
+
+	int tmpls[] = {
+		ROP_TPRERENDER_TPLATE,
+		ROP_PRERENDER_TPLATE,
+		ROP_LPRERENDER_TPLATE,
+		ROP_TPREFRAME_TPLATE,
+		ROP_PREFRAME_TPLATE,
+		ROP_LPREFRAME_TPLATE,
+		ROP_TPOSTFRAME_TPLATE,
+		ROP_POSTFRAME_TPLATE,
+		ROP_LPOSTFRAME_TPLATE,
+		ROP_TPOSTRENDER_TPLATE,
+		ROP_POSTRENDER_TPLATE,
+		ROP_LPOSTRENDER_TPLATE,
+	};
+	for( auto tmplidx : tmpls ) {
+		myPrmList.addPrm(theRopTemplates[ tmplidx ]);
+	}
 }
 
 
