@@ -7,6 +7,7 @@
 //
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
+#ifdef CGR_HAS_AUR
 
 #include "gu_volumegridref.h"
 #include "vfh_log.h"
@@ -501,3 +502,5 @@ bool VRayVolumeGridRef::updateFrom(const UT_Options &options)
 
 	return true;
 }
+
+#endif // CGR_HAS_AUR

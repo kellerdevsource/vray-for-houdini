@@ -212,17 +212,10 @@ endif()
 
 
 macro(use_houdini_sdk)
-	if(WIN32)
-		find_library(HDK_LIB_GEO
-			NAMES openvdb_sesi
-			PATHS ${HOUDINI_LIB_PATH}
-		)
-	else()
-		find_library(HDK_LIB_GEO
-			NAMES HoudiniGEO
-			PATHS ${HOUDINI_LIB_PATH}
-		)
-	endif()
+	find_library(HDK_LIB_GEO
+		NAMES openvdb_sesi HoudiniGEO
+		PATHS ${HOUDINI_LIB_PATH}
+	)
 
 	message(STATUS "Using Houdini ${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD}: ${HOUDINI_INSTALL_ROOT}")
 	message(STATUS "Using HDK include path: ${HOUDINI_INCLUDE_PATH}")
@@ -230,6 +223,17 @@ macro(use_houdini_sdk)
 
 	if(NOT HDK_LIB_GEO)
 		message(FATAL_ERROR "Houdini SDK is not found! Check HOUDINI_VERSION / HOUDINI_VERSION_BUILD variables!")
+	endif()
+
+	if(WIN32)
+		find_library(HDK_LIB_HALF
+			NAMES Half
+			PATHS ${HOUDINI_LIB_PATH}
+		)
+		if(NOT HDK_LIB_HALF)
+			message(FATAL_ERROR "Houdini SDK missing Half.lib - it is requiered on win32!")
+		endif()
+		list(APPEND HDK_LIB_GEO ${HDK_LIB_HALF})
 	endif()
 
 	add_definitions(${HOUDINI_DEFINES})

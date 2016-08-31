@@ -23,6 +23,7 @@
 #include "vop/material/vop_MaterialOutput.h"
 #include "vop/material/vop_PhoenixSim.h"
 
+// Undef foreach if >= 15.5
 #if UT_MAJOR_VERSION_INT >= 15 && UT_MINOR_VERSION_INT >= 5
 #ifdef foreach
 #undef foreach
@@ -33,6 +34,7 @@
 #include <GEO/GEO_Primitive.h>
 #include <GU/GU_PrimVolume.h>
 #include <GU/GU_Detail.h>
+#include <GA/GA_SaveMap.h>
 
 using namespace VRayForHoudini;
 
@@ -365,8 +367,9 @@ void VolumeExporter::exportCache(const GA_Primitive &prim)
 	Attrs::PluginDesc nodeDesc(name, "PhxShaderCache");
 
 	auto packedPrim = UTverify_cast<const GU_PrimPacked *>(&prim);
-	auto vgridref = UTverify_cast< const VRayVolumeGridRef * >(packedPrim->implementation());
-	m_exporter.setAttrsFromUTOptions(nodeDesc, vgridref->getOptions());
+	UT_Options opts;
+	packedPrim->saveOptions(opts, GA_SaveMap(prim.getDetail(), &opts));
+	m_exporter.setAttrsFromUTOptions(nodeDesc, opts);
 
 	UT_Matrix4 xform;
 	prim.getIntrinsic(prim.findIntrinsic("packedfulltransform"), xform);

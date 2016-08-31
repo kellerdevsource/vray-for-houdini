@@ -11,6 +11,7 @@
 #ifndef VRAY_FOR_HOUDINI_VOLUME_GRID_H
 #define VRAY_FOR_HOUDINI_VOLUME_GRID_H
 
+#ifdef CGR_HAS_AUR
 #include "vfh_vray.h"
 #include "vfh_primitives.h"
 
@@ -126,5 +127,13 @@ private:
 
 
 } // namespace VRayForHoudini
+
+#else
+#include <GU/GU_PackedImpl.h>
+// just define empty class
+namespace VRayForHoudini {
+	class VRayVolumeGridRef: public GU_PackedImpl {};
+}
+#endif // CGR_HAS_AUR
 
 #endif // VRAY_FOR_HOUDINI_VOLUME_GRID_H

@@ -78,7 +78,9 @@ void unregister(void *)
 void newGeometryPrim(GA_PrimitiveFactory *gafactory)
 {
 	VRayProxyRef::install(gafactory);
+#ifdef CGR_HAS_AUR
 	VRayVolumeGridRef::install(gafactory);
+#endif
 }
 
 
@@ -211,7 +213,9 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFVRayMtl);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFWard);
 
+#ifdef CGR_HAS_AUR
 	VFH_VOP_ADD_OPERATOR_CUSTOM(table, "MATERIAL", PhxShaderSim, PhxShaderSim::GetPrmTemplate());
+#endif
 
 	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", Mtl2Sided);
 	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", MtlBump);
