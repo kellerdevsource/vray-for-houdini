@@ -23,9 +23,15 @@
 #include "vop/material/vop_MaterialOutput.h"
 #include "vop/material/vop_PhoenixSim.h"
 
+#if UT_MAJOR_VERSION_INT >= 15 && UT_MINOR_VERSION_INT >= 5
+#ifdef foreach
+#undef foreach
+#endif
+#endif
+
+#include <GU/GU_PrimVDB.h>
 #include <GEO/GEO_Primitive.h>
 #include <GU/GU_PrimVolume.h>
-#include <GU/GU_PrimVDB.h>
 #include <GU/GU_Detail.h>
 
 using namespace VRayForHoudini;
