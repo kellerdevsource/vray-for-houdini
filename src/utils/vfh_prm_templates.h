@@ -195,7 +195,7 @@ public:
 	/// @brief Specify the list of parameters for each instance of a multiparm.
 	/// @note This setting is ignored for non-multiparm parameters.
 	/// @note Parameter name tokens should include a '#' character.
-	PRMFactory& setMultiparms(const PRM_Template *);
+	PRMFactory& setMultiparms(const PRM_Template tmpl[]);
 
 	PRMFactory& setParmGroup(int);
 

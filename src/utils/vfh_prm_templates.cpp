@@ -904,9 +904,9 @@ Parm::PRMFactory& Parm::PRMFactory::setSpareData(const PRM_SpareData* d)
 }
 
 
-Parm::PRMFactory& Parm::PRMFactory::setMultiparms(const PRM_Template *p)
+Parm::PRMFactory& Parm::PRMFactory::setMultiparms(const PRM_Template tmpl[])
 {
-	m_prm->multiparms = p;
+	m_prm->multiparms = tmpl;
 	return *this;
 }
 
