@@ -517,6 +517,7 @@ void Parm::PRMList::incCurrentFolderPrmCnt(int cnt)
 		// If a parameter is added to this ParmList while a switcher with at least
 		// one folder is active, increment the folder's parameter count.
 		PRM_Default& def = info->m_folders.back();
+		cnt = std::max(-def.getOrdinal(), cnt);
 		def.setOrdinal(def.getOrdinal() + cnt);
 	}
 
