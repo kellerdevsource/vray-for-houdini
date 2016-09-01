@@ -28,7 +28,7 @@ PRM_Template* VOP::MetaImageFile::GetPrmTemplate()
 		myPrmList.addFolder("Bitmap");
 
 		int idx = myPrmList.size();
-		myPrmList.addFromFile( Parm::PRMList::getUIPluginPath("BitmapBuffer").c_str() );
+		Parm::addPrmTemplateForPlugin( "BitmapBuffer", myPrmList);
 		// hacky way to rename params on order to keep compatibility with old UI
 		Parm::PRMList::renamePRMTemplate(myPrmList.getPRMTemplate() + idx, "BitmapBuffer");
 
@@ -36,7 +36,7 @@ PRM_Template* VOP::MetaImageFile::GetPrmTemplate()
 		myPrmList.addFolder("Texture");
 
 		idx = myPrmList.size();
-		myPrmList.addFromFile( Parm::PRMList::getUIPluginPath("TexBitmap").c_str() );
+		Parm::addPrmTemplateForPlugin( "TexBitmap", myPrmList);
 		// hacky way to rename params on order to keep compatibility with old UI
 		Parm::PRMList::renamePRMTemplate(myPrmList.getPRMTemplate() + idx, "TexBitmap");
 
@@ -44,7 +44,7 @@ PRM_Template* VOP::MetaImageFile::GetPrmTemplate()
 		myPrmList.addFolder("UV");
 
 		idx = myPrmList.size();
-		myPrmList.addFromFile( Parm::PRMList::getUIPluginPath("UVWGenMayaPlace2dTexture").c_str() );
+		Parm::addPrmTemplateForPlugin( "UVWGenMayaPlace2dTexture", myPrmList);
 		// hacky way to rename params on order to keep compatibility with old UI
 		Parm::PRMList::renamePRMTemplate(myPrmList.getPRMTemplate() + idx, "UVWGenMayaPlace2dTexture");
 
@@ -52,7 +52,7 @@ PRM_Template* VOP::MetaImageFile::GetPrmTemplate()
 		myPrmList.addFolder("Projection");
 
 		idx = myPrmList.size();
-		myPrmList.addFromFile( Parm::PRMList::getUIPluginPath("UVWGenProjection").c_str() );
+		Parm::addPrmTemplateForPlugin( "UVWGenProjection", myPrmList);
 		// hacky way to rename params on order to keep compatibility with old UI
 		Parm::PRMList::renamePRMTemplate(myPrmList.getPRMTemplate() + idx, "UVWGenProjection");
 

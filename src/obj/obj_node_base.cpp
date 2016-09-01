@@ -64,8 +64,7 @@ PRM_Template* OBJ::VRayClipper::GetPrmTemplate()
 
 		// add plugin params
 		myPrmList.addFolder("V-Ray Clipper");
-		const std::string dsfullpath = Parm::PRMList::getUIPluginPath( getVRayPluginIDName(VRayPluginID::VRayClipper) );
-		myPrmList.addFromFile(dsfullpath.c_str());
+		Parm::addPrmTemplateForPlugin( getVRayPluginIDName(VRayPluginID::VRayClipper), myPrmList);
 
 		myPrmList.switcherEnd();
 	}
@@ -145,8 +144,7 @@ template< VRayPluginID PluginID >
 int LightNodeBase< PluginID >::GetMyPrmTemplate(Parm::PRMList &myPrmList)
 {
 	int idx = myPrmList.size();
-	const std::string dsfullpath = Parm::PRMList::getUIPluginPath( getVRayPluginIDName(PluginID) );
-	myPrmList.addFromFile(dsfullpath.c_str());
+	Parm::addPrmTemplateForPlugin( getVRayPluginIDName(PluginID), myPrmList);
 
 	return myPrmList.size() - idx;
 }
@@ -191,8 +189,7 @@ int LightNodeBase< VRayPluginID::LightDome >::GetMyPrmTemplate(Parm::PRMList &my
 	}
 
 	int idx = myPrmList.size();
-	const std::string dsfullpath = Parm::PRMList::getUIPluginPath( getVRayPluginIDName(VRayPluginID::LightDome) ) ;
-	myPrmList.addFromFile(dsfullpath.c_str());
+	Parm::addPrmTemplateForPlugin( getVRayPluginIDName(VRayPluginID::LightDome), myPrmList);
 
 	return myPrmList.size() - idx;
 }

@@ -11,7 +11,6 @@
 #include "vfh_rop.h"
 #include "vfh_exporter.h"
 #include "vfh_prm_globals.h"
-#include "vfh_prm_json.h"
 #include "vfh_prm_def.h"
 #include "vfh_prm_templates.h"
 #include "vfh_hou_utils.h"
@@ -372,16 +371,16 @@ static PRM_Template* getTemplates()
 		myPrmList.switcherBegin("VRayCameraSettings");
 
 		myPrmList.addFolder("Camera");
-		myPrmList.addFromFile( Parm::PRMList::getUIPluginPath("SettingsCamera").c_str() );
+		Parm::addPrmTemplateForPlugin( "SettingsCamera", myPrmList);
 
 		myPrmList.addFolder("Depth Of Field");
-		myPrmList.addFromFile( Parm::PRMList::getUIPluginPath("SettingsCameraDof").c_str() );
+		Parm::addPrmTemplateForPlugin( "SettingsCameraDof", myPrmList);
 
 		myPrmList.addFolder("Motion Blur");
-		myPrmList.addFromFile( Parm::PRMList::getUIPluginPath("SettingsMotionBlur").c_str() );
+		Parm::addPrmTemplateForPlugin( "SettingsMotionBlur", myPrmList);
 
 		myPrmList.addFolder("Stereo");
-		myPrmList.addFromFile( Parm::PRMList::getUIPluginPath("VRayStereoscopicSettings").c_str() );
+		Parm::addPrmTemplateForPlugin( "VRayStereoscopicSettings", myPrmList);
 
 		myPrmList.switcherEnd();
 
@@ -390,16 +389,16 @@ static PRM_Template* getTemplates()
 		myPrmList.switcherBegin("VRayGiSettings");
 
 		myPrmList.addFolder("GI");
-		myPrmList.addFromFile( Parm::PRMList::getUIPluginPath("SettingsGI").c_str() );
+		Parm::addPrmTemplateForPlugin( "SettingsGI", myPrmList);
 
 		myPrmList.addFolder("Brute Force");
-		myPrmList.addFromFile( Parm::PRMList::getUIPluginPath("SettingsDMCGI").c_str() );
+		Parm::addPrmTemplateForPlugin( "SettingsDMCGI", myPrmList);
 
 		myPrmList.addFolder("Irradiance Map");
-		myPrmList.addFromFile( Parm::PRMList::getUIPluginPath("SettingsIrradianceMap").c_str() );
+		Parm::addPrmTemplateForPlugin( "SettingsIrradianceMap", myPrmList);
 
 		myPrmList.addFolder("Light Cache");
-		myPrmList.addFromFile( Parm::PRMList::getUIPluginPath("SettingsLightCache").c_str() );
+		Parm::addPrmTemplateForPlugin( "SettingsLightCache", myPrmList);
 
 		myPrmList.switcherEnd();
 
@@ -408,44 +407,44 @@ static PRM_Template* getTemplates()
 		myPrmList.switcherBegin("VRaySamplersSettings");
 
 		myPrmList.addFolder("DMC");
-		myPrmList.addFromFile( Parm::PRMList::getUIPluginPath("SettingsDMCSampler").c_str() );
+		Parm::addPrmTemplateForPlugin( "SettingsDMCSampler", myPrmList);
 
 		myPrmList.addFolder("AA");
-		myPrmList.addFromFile( Parm::PRMList::getUIPluginPath("SettingsImageSampler").c_str() );
+		Parm::addPrmTemplateForPlugin( "SettingsImageSampler", myPrmList);
 
 		myPrmList.switcherEnd();
 
 		// Options tab
 		myPrmList.addFolder("Options");
-		myPrmList.addFromFile( Parm::PRMList::getUIPluginPath("SettingsOptions").c_str() );
+		Parm::addPrmTemplateForPlugin( "SettingsOptions", myPrmList);
 
 		// Output tab
 		myPrmList.addFolder("Output");
-		myPrmList.addFromFile( Parm::PRMList::getUIPluginPath("SettingsOutput").c_str() );
+		Parm::addPrmTemplateForPlugin( "SettingsOutput", myPrmList);
 
 		// Color Mapping tab
 		myPrmList.addFolder("Color Mapping");
-		myPrmList.addFromFile( Parm::PRMList::getUIPluginPath("SettingsColorMapping").c_str() );
+		Parm::addPrmTemplateForPlugin( "SettingsColorMapping", myPrmList);
 
 		// Raycaster tab
 		myPrmList.addFolder("Raycaster");
-		myPrmList.addFromFile( Parm::PRMList::getUIPluginPath("SettingsRaycaster").c_str() );
+		Parm::addPrmTemplateForPlugin( "SettingsRaycaster", myPrmList);
 
 		// Regions tab
 		myPrmList.addFolder("Regions");
-		myPrmList.addFromFile( Parm::PRMList::getUIPluginPath("SettingsRegionsGenerator").c_str() );
+		Parm::addPrmTemplateForPlugin( "SettingsRegionsGenerator", myPrmList);
 
 		// RT tab
 		myPrmList.addFolder("RT");
-		myPrmList.addFromFile( Parm::PRMList::getUIPluginPath("SettingsRTEngine").c_str() );
+		Parm::addPrmTemplateForPlugin( "SettingsRTEngine", myPrmList);
 
 		// Caustics tab
 		myPrmList.addFolder("Caustics");
-		myPrmList.addFromFile( Parm::PRMList::getUIPluginPath("SettingsCaustics").c_str() );
+		Parm::addPrmTemplateForPlugin( "SettingsCaustics", myPrmList);
 
 		// Displacement tab
 		myPrmList.addFolder("Displacement");
-		myPrmList.addFromFile( Parm::PRMList::getUIPluginPath("SettingsDefaultDisplacement").c_str() );
+		Parm::addPrmTemplateForPlugin( "SettingsDefaultDisplacement", myPrmList);
 
 		// DR Tab
 		myPrmList.addFolder("DR");

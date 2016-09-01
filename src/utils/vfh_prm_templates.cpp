@@ -9,9 +9,12 @@
 //
 
 #include "vfh_prm_templates.h"
-#include "vfh_defines.h"
-#include "vfh_prm_def.h"
 #include "vfh_log.h"
+
+#include "vop/material/vop_MtlMulti.h"
+#include "vop/brdf/vop_BRDFLayered.h"
+#include "vop/texture/vop_TexLayered.h"
+#include "sop/sop_node_def.h"
 
 #include <OP/OP_Node.h>
 #include <OP/OP_SpareParms.h>
@@ -20,8 +23,9 @@
 #include <PRM/PRM_ScriptParm.h>
 #include <PRM/DS_Stream.h>
 #include <UT/UT_IStream.h>
-
 #include <FS/FS_Info.h>
+
+#include <unordered_map>
 
 
 using namespace VRayForHoudini;
@@ -124,7 +128,7 @@ int VRayForHoudini::Parm::getParmEnumExt(const OP_Node &node, const VRayForHoudi
 }
 
 
-std::string Parm::PRMList::expandUiPath(const std::string &relPath)
+std::string Parm::expandUiPath(const std::string &relPath)
 {
 	static const char *uiroot = getenv("VRAY_UI_DS_PATH");
 	if (!UTisstring(uiroot)) {
@@ -181,14 +185,63 @@ std::string Parm::PRMList::expandUiPath(const std::string &relPath)
 }
 
 
-std::string Parm::PRMList::getUIPluginPath(const char *pluginName)
+bool Parm::addPrmTemplateForPlugin(const std::string &pluginID, Parm::PRMList &prmList)
 {
-	if (!UTisstring(pluginName)) {
-		return "";
+	if (pluginID.empty()) {
+		return false;
 	}
 
 	static boost::format dspath("plugins/%s.ds");
-	return Parm::PRMList::expandUiPath( boost::str(dspath % pluginName) );
+	const std::string dsfullpath = Parm::expandUiPath( boost::str(dspath % pluginID) );
+	if (dsfullpath.empty()) {
+		return false;
+	}
+
+	prmList.addFromFile( dsfullpath.c_str() );
+	return true;
+}
+
+
+Parm::PRMList* Parm::generatePrmTemplate(const std::string &pluginID)
+{
+	typedef std::unordered_map< std::string, PRMList > PRMListMap;
+	static PRMListMap prmListMap;
+
+	if (prmListMap.count(pluginID) == 0) {
+		PRMList &prmList = prmListMap[pluginID];
+
+		if (pluginID == "BRDFLayered") {
+			VOP::BRDFLayered::addPrmTemplate(prmList);
+		}
+		else if (pluginID == "TexLayered") {
+			VOP::TexLayered::addPrmTemplate(prmList);
+		}
+		else if (pluginID == "MtlMulti") {
+			VOP::MtlMulti::addPrmTemplate(prmList);
+		}
+		else if (pluginID == "GeomPlane") {
+			SOP::GeomPlane::addPrmTemplate(prmList);
+		}
+		else if (pluginID == "GeomMeshFile") {
+			SOP::VRayProxy::addPrmTemplate(prmList);
+		}
+
+		addPrmTemplateForPlugin(pluginID, prmList);
+	}
+
+	PRMList &prmList = prmListMap.at(pluginID);
+	return &prmList;
+}
+
+
+PRM_Template* Parm::getPrmTemplate(const std::string &pluginID)
+{
+	Parm::PRMList *prmList = generatePrmTemplate(pluginID);
+	if (!prmList) {
+		Log::getLog().warning("No parameter template generated for plugin %s.", pluginID.c_str());
+	}
+
+	return (prmList)? prmList->getPRMTemplate() : nullptr;
 }
 
 

@@ -12,7 +12,6 @@
 
 #include "sop_PhoenixCache.h"
 #include "vfh_prm_templates.h"
-#include "vfh_prm_json.h"
 
 #include <aurinterface.h>
 #include <aurloader.h>
@@ -39,7 +38,7 @@ static PRM_Template *AttrItems = nullptr;
 PRM_Template* SOP::PhxShaderCache::GetPrmTemplate()
 {
 	if (!AttrItems) {
-		AttrItems = Parm::PRMList::loadFromFile(Parm::PRMList::expandUiPath("CustomPhxShaderCache.ds").c_str(), true);
+		AttrItems = Parm::PRMList::loadFromFile(Parm::expandUiPath("CustomPhxShaderCache.ds").c_str(), true);
 	}
 
 	return AttrItems;

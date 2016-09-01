@@ -12,13 +12,7 @@
 #include "vfh_prm_def.h"
 #include "vfh_prm_json.h"
 #include "vfh_prm_globals.h"
-
-#include "vop/material/vop_MtlMulti.h"
-#include "vop/brdf/vop_BRDFLayered.h"
-#include "vop/texture/vop_TexLayered.h"
-#include "vop/texture/vop_texture_output.h"
-#include "sop/sop_node_def.h"
-#include "obj/obj_node_def.h"
+#include "vfh_log.h"
 
 #include <QtCore/QDirIterator>
 
@@ -584,47 +578,4 @@ VRayPluginInfo* Parm::generatePluginInfo(const std::string &pluginID)
 	}
 
 	return pluginInfo;
-}
-
-
-Parm::PRMList* Parm::generatePrmTemplate(const std::string &pluginID)
-{
-	typedef std::unordered_map< std::string, PRMList > PRMListMap;
-	static PRMListMap prmListMap;
-
-	if (prmListMap.count(pluginID) == 0) {
-		PRMList &prmList = prmListMap[pluginID];
-
-		if (pluginID == "BRDFLayered") {
-			VOP::BRDFLayered::addPrmTemplate(prmList);
-		}
-		else if (pluginID == "TexLayered") {
-			VOP::TexLayered::addPrmTemplate(prmList);
-		}
-		else if (pluginID == "MtlMulti") {
-			VOP::MtlMulti::addPrmTemplate(prmList);
-		}
-		else if (pluginID == "GeomPlane") {
-			SOP::GeomPlane::addPrmTemplate(prmList);
-		}
-		else if (pluginID == "GeomMeshFile") {
-			SOP::VRayProxy::addPrmTemplate(prmList);
-		}
-
-		prmList.addFromFile( PRMList::getUIPluginPath(pluginID.c_str()).c_str() );
-	}
-
-	PRMList &prmList = prmListMap.at(pluginID);
-	return &prmList;
-}
-
-
-PRM_Template* Parm::getPrmTemplate(const std::string &pluginID)
-{
-	Parm::PRMList *prmList = generatePrmTemplate(pluginID);
-	if (!prmList) {
-		Log::getLog().warning("No parameter template generated for plugin %s.", pluginID.c_str());
-	}
-
-	return (prmList)? prmList->getPRMTemplate() : nullptr;
 }

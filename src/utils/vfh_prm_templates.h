@@ -30,6 +30,16 @@ namespace Parm {
 
 
 class PRMFactory;
+class PRMList;
+
+
+// prepends the passed path with the UI root determined by VRAY_UI_DS_PATH env var
+// if resulting file path doesn't exist searches for the relPath inside UI root
+// does minimal validation if UI root and file path exist
+std::string     expandUiPath(const std::string &relPath);
+bool            addPrmTemplateForPlugin(const std::string &pluginID, Parm::PRMList &prmList);
+PRMList*        generatePrmTemplate(const std::string &pluginID);
+PRM_Template*   getPrmTemplate(const std::string &pluginID);
 
 
 /// @brief PRM_Template list that is always terminated.
@@ -81,11 +91,6 @@ public:
 	PRMList& addFromPRMTemplate(const PRM_Template tmpl[]);
 
 
-	// prepends the passed path with the UI root determined by VRAY_UI_DS_PATH env var
-	// if resulting file path doesn't exist searches for the relPath inside UI root
-	// does minimal validation if UI root and file path exist
-	static std::string   expandUiPath(const std::string &relPath);
-	static std::string   getUIPluginPath(const char *pluginName);
 	static PRM_Template* loadFromFile(const char *filepath, bool cookDependent = false);
 	// NOTE: tmpl should be list terminated array of parameters
 	static void          setCookDependent(PRM_Template tmpl[], bool recook);
