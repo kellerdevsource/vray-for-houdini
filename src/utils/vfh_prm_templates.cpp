@@ -226,11 +226,9 @@ void Parm::PRMList::setCookDependent(PRM_Template tmpl[], bool recook)
 	}
 
 	for (int i = 0; tmpl[i].getType() != PRM_LIST_TERMINATOR; ++i) {
-		if (tmpl[i].getType() == PRM_SWITCHER) {
-			continue;
+		if (tmpl[i].getType() != PRM_SWITCHER) {
+			tmpl[i].setNoCook(!recook);
 		}
-
-		tmpl[i].setNoCook(!recook);
 	}
 }
 
@@ -246,15 +244,13 @@ void Parm::PRMList::renamePRMTemplate(PRM_Template tmpl[], const char *prefix)
 	static boost::format prmname("%s_%s");
 
 	for (int i = 0; tmpl[i].getType() != PRM_LIST_TERMINATOR; ++i) {
-		if (tmpl[i].getType() == PRM_SWITCHER) {
-			continue;
-		}
-
-		PRM_Name *name = tmpl[i].getNamePtr();
-		if (name) {
-			const std::string prmtoken = boost::str(prmname % prefix % name->getToken()) ;
-			name->setToken(prmtoken.c_str());
-			name->harden();
+		if (tmpl[i].getType() != PRM_SWITCHER) {
+			PRM_Name *name = tmpl[i].getNamePtr();
+			if (name) {
+				const std::string prmtoken = boost::str(prmname % prefix % name->getToken()) ;
+				name->setToken(prmtoken.c_str());
+				name->harden();
+			}
 		}
 	}
 }
