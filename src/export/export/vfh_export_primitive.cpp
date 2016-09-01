@@ -11,18 +11,10 @@
 #include "vfh_export_primitive.h"
 #include "gu_volumegridref.h"
 
-#include "vfh_vray.h"
-#include "vfh_exporter.h"
-#include "vfh_material_override.h"
-#include "vfh_export_primitive.h"
-
-#include "gu_volumegridref.h"
-#include "rop/vfh_rop.h"
-#include "sop/sop_node_base.h"
-#include "vop/vop_node_base.h"
 #include "vop/material/vop_MaterialOutput.h"
 #include "vop/material/vop_PhoenixSim.h"
 
+#include <UT/UT_Version.h>
 // Undef foreach if >= 15.5
 #if UT_MAJOR_VERSION_INT >= 15 && UT_MINOR_VERSION_INT >= 5
 #ifdef foreach
@@ -30,6 +22,8 @@
 #endif
 #endif
 
+#include <SOP/SOP_Node.h>
+#include <SHOP/SHOP_Node.h>
 #include <GU/GU_PrimVDB.h>
 #include <GEO/GEO_Primitive.h>
 #include <GU/GU_PrimVolume.h>

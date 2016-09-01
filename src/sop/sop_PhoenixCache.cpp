@@ -12,11 +12,7 @@
 
 #include "sop_PhoenixCache.h"
 #include "vfh_prm_templates.h"
-#include "vfh_prm_json.h"
 #include "gu_volumegridref.h"
-
-#include <aurinterface.h>
-#include <aurloader.h>
 
 #include <GU/GU_PrimVolume.h>
 #include <GU/GU_PrimPacked.h>

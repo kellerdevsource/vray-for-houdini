@@ -12,27 +12,18 @@
 #include "gu_volumegridref.h"
 #include "vfh_log.h"
 
-#include <GT/GT_GEOPrimCollect.h>
-#include <GT/GT_GEOAttributeFilter.h>
-#include <GT/GT_GEODetail.h>
-#include <GT/GT_GEOPrimPacked.h>
-#include <GT/GT_PrimInstance.h>
-
 #include <GU/GU_PackedFactory.h>
 #include <GU/GU_PrimPacked.h>
-#include <GU/GU_PrimPoly.h>
 #include <GU/GU_PackedContext.h>
 #include <UT/UT_MemoryCounter.h>
 #include <GU/GU_PrimVolume.h>
 #include <GU/GU_PrimPacked.h>
 #include <GEO/GEO_Primitive.h>
+
 #include <FS/UT_DSO.h>
 
 #include <aurinterface.h>
 #include <aurloader.h>
-
-#include <OpenEXR/ImathLimits.h>
-#include <OpenEXR/ImathMath.h>
 
 #include <chrono>
 

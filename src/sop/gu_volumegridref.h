@@ -16,7 +16,6 @@
 #include "vfh_primitives.h"
 
 #include <aurinterface.h>
-#include <aurloader.h>
 
 #include <GU/GU_PackedImpl.h>
 

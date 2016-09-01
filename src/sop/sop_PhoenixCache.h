@@ -13,8 +13,6 @@
 #define VRAY_FOR_HOUDINI_SOP_NODE_PHOENIX_CACHE_H
 
 #include "sop_node_base.h"
-#include <string>
-#include <vector>
 
 namespace VRayForHoudini {
 namespace SOP {
