@@ -11,6 +11,7 @@
 #include "vfh_export_primitive.h"
 #include "gu_volumegridref.h"
 
+#include "vop/vop_node_base.h"
 #include "vop/material/vop_MaterialOutput.h"
 #include "vop/material/vop_PhoenixSim.h"
 

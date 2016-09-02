@@ -78,11 +78,14 @@ link_with_vray(${PROJECT_NAME})
 link_with_vray_appsdk(${PROJECT_NAME})
 link_with_boost(${PROJECT_NAME})
 
+# always link to hdk lib geo to enable export for houdini volumes
+# we don't need phx to export them
+target_link_libraries(${PROJECT_NAME} ${HDK_LIB_GEO})
+
 if (Phoenix_FOUND)
 	target_link_libraries(${PROJECT_NAME}
 		aurloader_s
 		aurloader
-		${HDK_LIB_GEO}
 	)
 endif()
 

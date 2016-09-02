@@ -131,7 +131,10 @@ private:
 #include <GU/GU_PackedImpl.h>
 // just define empty class
 namespace VRayForHoudini {
-	class VRayVolumeGridRef: public GU_PackedImpl {};
+class VRayVolumeGridRef: public GU_PackedImpl {
+public:
+	static GA_PrimitiveTypeId typeId() { return GA_PrimitiveTypeId(); }
+};
 }
 #endif // CGR_HAS_AUR
 
