@@ -143,6 +143,8 @@ if(WIN32)
 	list(APPEND HOUDINI_LINK_FLAGS
 		QtCore4
 		QtGui4
+		openvdb_sesi
+		Half
 	)
 
 else()
