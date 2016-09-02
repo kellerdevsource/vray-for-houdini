@@ -15,16 +15,7 @@
 #include "vop/material/vop_MaterialOutput.h"
 #include "vop/material/vop_PhoenixSim.h"
 
-#include <UT/UT_Version.h>
-// Undef foreach if >= 15.5, it causes copilation error becuase of collision with QT
-#if UT_MAJOR_VERSION_INT >= 15 && UT_MINOR_VERSION_INT >= 5
-#ifdef foreach
-#undef foreach
-#endif
-#endif
 #include <GU/GU_PrimVDB.h>
-
-
 #include <SOP/SOP_Node.h>
 #include <SHOP/SHOP_Node.h>
 #include <GEO/GEO_Primitive.h>
