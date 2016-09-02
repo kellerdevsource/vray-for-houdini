@@ -62,6 +62,7 @@ endif()
 
 # *.aur preview
 if (Phoenix_FOUND)
+	# this will enable compilation for the code that integrates phx
 	add_definitions(-DCGR_HAS_AUR)
 	include_directories(${Phoenix_INCLUDES})
 	link_directories(${Phoenix_LIBRARIES})
