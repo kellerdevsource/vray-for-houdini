@@ -127,9 +127,9 @@ private:
 
 } // namespace VRayForHoudini
 
-#else
+#else // CGR_HAS_AUR
 #include <GU/GU_PackedImpl.h>
-// just define empty class
+// Define this empty class here so primitive exporters can be compiled without additional ifdefs there
 namespace VRayForHoudini {
 class VRayVolumeGridRef: public GU_PackedImpl {
 public:
