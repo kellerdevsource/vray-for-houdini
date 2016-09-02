@@ -38,7 +38,7 @@ namespace {
 // wrapper over GEO_PrimVolume and GEO_PrimVDB providing common interface
 // this wrapper *can* be INVALID - it can be initialized with unsuported primitive
 // the wrapper *must* be checkked before use with its bool operator
-// methods called on INVALID wrappe will return default (0/1) initialized data
+// methods called on INVALID wrapper will return default (0/1) initialized data
 struct VolumeProxy {
 	VolumeProxy(const GEO_Primitive *prim): m_prim(prim), m_vol(nullptr), m_vdb(nullptr) {
 		if (!prim) {
