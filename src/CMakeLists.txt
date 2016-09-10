@@ -65,6 +65,7 @@ if (Phoenix_FOUND)
 	add_definitions(-DCGR_HAS_AUR)
 	include_directories(${Phoenix_INCLUDES})
 	link_directories(${Phoenix_LIBRARIES})
+	link_directories("D:/dev/cgrepo/sdk/win/wxwidgets/lib/x64/vc11")
 endif()
 
 use_houdini_sdk()
@@ -78,11 +79,15 @@ link_with_vray(${PROJECT_NAME})
 link_with_vray_appsdk(${PROJECT_NAME})
 link_with_boost(${PROJECT_NAME})
 
+
 if (Phoenix_FOUND)
 	target_link_libraries(${PROJECT_NAME}
 		aurloader_s
 		aurloader
 		${HDK_LIB_GEO}
+		guiwin_wx_s
+		iutils_s
+		aurramps_s
 	)
 endif()
 

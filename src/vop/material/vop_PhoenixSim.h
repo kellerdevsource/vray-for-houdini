@@ -16,6 +16,10 @@
 #include <OP/OP_OperatorTable.h>
 #include "vop_node_base.h"
 
+#include "ramps.h"
+#include <vector>
+#include <unordered_map>
+
 namespace VRayForHoudini {
 namespace VOP {
 
@@ -32,15 +36,23 @@ public:
 		Mesh  = 4,
 	};
 
+	struct RampData {
+		std::vector<float>                          xS;
+		std::vector<float>                          yS;
+		std::vector<AurRamps::MultiCurvePointType>  interps;
+	};
+
 
 	static PRM_Template       *GetPrmTemplate();
 
-	                           PhxShaderSim(OP_Network *parent, const char *name, OP_Operator *entry): NodeBase(parent, name, entry) {}
+	                           PhxShaderSim(OP_Network *parent, const char *name, OP_Operator *entry);
 	virtual                   ~PhxShaderSim() {}
 
 	virtual PluginResult       asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext=nullptr) VRAY_OVERRIDE;
 
+	std::unordered_map<std::string, RampData> m_Ramps;
 protected:
+
 	virtual void               setPluginType() VRAY_OVERRIDE;
 };
 

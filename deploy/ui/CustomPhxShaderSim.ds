@@ -334,24 +334,20 @@
 	parm {
 	    name	"elum_curve"
 	    label	"Fire Luminance"
-	    type	ramp_flt
-	    default	{ "2" }
-	    range	{ 1! 10 }
+	    type	button
+	    default	{ "1" }
+	    range	{ 0 1 }
 	    export	none
-	    parmtag	{ "rampbasis_var" "elum_interpolations" }
-	    parmtag	{ "rampkeys_var" "elum_positions" }
-	    parmtag	{ "rampvalues_var" "elum_values" }
+	    parmtag	{ "vray_custom_handling" " " }
 	}
 	parm {
 	    name	"ecolor_ramp"
 	    label	"Fire Color"
-	    type	ramp_rgb
-	    default	{ "2" }
-	    range	{ 1! 10 }
+	    type	button
+	    default	{ "1" }
+	    range	{ 0 1 }
 	    export	none
-	    parmtag	{ "rampbasis_var" "ecolor_interpolations" }
-	    parmtag	{ "rampkeys_var" "ecolor_positions" }
-	    parmtag	{ "rampvalues_var" "ecolor_colors" }
+	    parmtag	{ "vray_custom_handling" " " }
 	}
     }
 
@@ -605,14 +601,12 @@
 	}
 	parm {
 	    name	"dcolor_ramp"
-	    label	"Color Gradient"
-	    type	ramp_rgb
-	    default	{ "2" }
-	    range	{ 1! 10 }
+	    label	"Color Grad"
+	    type	button
+	    default	{ "1" }
+	    range	{ 0 1 }
 	    export	none
-	    parmtag	{ "rampbasis_var" "dcolor_interpolations" }
-	    parmtag	{ "rampkeys_var" "dcolor_positions" }
-	    parmtag	{ "rampvalues_var" "dcolor_colors" }
+	    parmtag	{ "vray_custom_handling" " " }
 	}
     }
 
@@ -723,13 +717,11 @@
 	parm {
 	    name	"transp_curve"
 	    label	"Opacity"
-	    type	ramp_flt
-	    default	{ "2" }
-	    range	{ 1! 10 }
+	    type	button
+	    default	{ "1" }
+	    range	{ 0 1 }
 	    export	none
-	    parmtag	{ "rampbasis_var" "transp_interpolations" }
-	    parmtag	{ "rampkeys_var" "transp_positions" }
-	    parmtag	{ "rampvalues_var" "transp_values" }
+	    parmtag	{ "vray_custom_handling" " " }
 	}
     }
 }
