@@ -105,25 +105,12 @@ PRM_Template* PhxShaderSim::GetPrmTemplate()
 		paramList.addFromFile(Parm::PRMList::expandUiPath("CustomPhxShaderSim.ds"));
 		AttrItems = paramList.getPRMTemplate();
 
-		const int rampCount = 4;
-		const char *rampNames[rampCount] = {"elum_curve", "ecolor_ramp", "dcolor_ramp", "transp_curve"};
-
 		for (int c = 0; c < paramList.size(); ++c) {
 			auto & param = AttrItems[c];
-
-			bool isRamp = false;
-			for (int r = 0; r < rampCount; ++r) {
-				if (!strcmp(rampNames[r], param.getToken())) {
-					isRamp = true;
-					break;
-				}
+			const auto spareData = param.getSparePtr();
+			if (spareData && spareData->getValue("vray_ramp_type")) {
+				param.setCallback(rampButtonClickCB);
 			}
-
-			if (!isRamp) {
-				continue;
-			}
-
-			param.setCallback(rampButtonClickCB);
 		}
 	}
 
