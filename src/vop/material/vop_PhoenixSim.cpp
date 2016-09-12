@@ -20,70 +20,62 @@ using namespace VOP;
 
 static PRM_Template * AttrItems = nullptr;
 
-struct RampHandler: ChangeHandler {
-	RampHandler(PhxShaderSim::RampData & data): m_Data(data) {}
-
-	virtual void OnEditCurveDiagram(RampUi & curve, OnEditType editReason) {
-		if (editReason == OnEdit_ChangeBegin || editReason == OnEdit_ChangeInProgress) {
-			return;
-		}
-
-		const auto size = curve.pointCount(RampType_Curve);
-
-		m_Data.xS.resize(size);
-		m_Data.yS.reserve(size);
-		m_Data.interps.resize(size);
-
-		const auto newSize = curve.getCurvePoints(m_Data.xS.data(), m_Data.yS.data(), m_Data.interps.data(), size);
-
-		// if we got less points resize down
-		if (newSize != size) {
-			m_Data.xS.resize(newSize);
-			m_Data.yS.reserve(newSize);
-			m_Data.interps.resize(newSize);
-		}
+void PhxShaderSim::RampHandler::OnEditCurveDiagram(RampUi & curve, OnEditType editReason) {
+	if (editReason == OnEdit_ChangeBegin || editReason == OnEdit_ChangeInProgress) {
+		return;
 	}
 
-	virtual void OnEditColorGradient(RampUi & curve, OnEditType editReason) {
-		// NOTE: m_Data.yS is of color type so it's 3 floats per point!
+	const auto size = curve.pointCount(RampType_Curve);
 
-		if (editReason == OnEdit_ChangeBegin || editReason == OnEdit_ChangeInProgress) {
-			return;
-		}
+	m_Data.xS.resize(size);
+	m_Data.yS.reserve(size);
+	m_Data.interps.resize(size);
 
-		const auto size = curve.pointCount(RampType_Color);
+	const auto newSize = curve.getCurvePoints(m_Data.xS.data(), m_Data.yS.data(), m_Data.interps.data(), size);
 
-		m_Data.xS.resize(size);
-		m_Data.yS.reserve(size * 3);
+	// if we got less points resize down
+	if (newSize != size) {
+		m_Data.xS.resize(newSize);
+		m_Data.yS.reserve(newSize);
+		m_Data.interps.resize(newSize);
+	}
+}
 
-		const auto newSize = curve.getColorPoints(m_Data.xS.data(), m_Data.yS.data(), size);
+void PhxShaderSim::RampHandler::OnEditColorGradient(RampUi & curve, OnEditType editReason) {
+	// NOTE: m_Data.yS is of color type so it's 3 floats per point!
 
-		// if we got less points resize down
-		if (newSize != size) {
-			m_Data.xS.resize(newSize);
-			m_Data.yS.reserve(newSize * 3);
-		}
+	if (editReason == OnEdit_ChangeBegin || editReason == OnEdit_ChangeInProgress) {
+		return;
 	}
 
-	PhxShaderSim::RampData & m_Data;
-};
+	const auto size = curve.pointCount(RampType_Color);
 
+	m_Data.xS.resize(size);
+	m_Data.yS.reserve(size * 3);
+
+	const auto newSize = curve.getColorPoints(m_Data.xS.data(), m_Data.yS.data(), size);
+
+	// if we got less points resize down
+	if (newSize != size) {
+		m_Data.xS.resize(newSize);
+		m_Data.yS.reserve(newSize * 3);
+	}
+}
 
 int rampButtonClickCB(void *data, int index, fpreal64 time, const PRM_Template *tplate)
 {
 	using namespace std;
 	using namespace AurRamps;
 
-	unordered_map<string, RampType> rampType;
-	rampType["elum_curve"] = RampType_Curve;
-	rampType["ecolor_ramp"] = RampType_Color;
-	rampType["dcolor_ramp"] = RampType_Color;
-	rampType["transp_curve"] = RampType_Curve;
+	const string token = tplate->getToken();
 
 	auto simNode = reinterpret_cast<PhxShaderSim*>(data);
-	auto & rampData = simNode->m_Ramps[tplate->getToken()];
+	auto & rampData = simNode->m_Ramps[token];
 
-	const auto type = rampType[tplate->getToken()];
+	const auto spareData = tplate->getSparePtr();
+	const auto typeString = spareData ? spareData->getValue("vray_ramp_type") : "none";
+	const auto type = !strcmp(typeString ? typeString : "", "curve") ? RampType_Curve : RampType_Color;
+
 	auto ui = RampUi::createRamp(tplate->getLabel(), type, 200, 200, 300, 500, getWxWidgetsGUI(GetCurrentProcess()));
 
 	if (!rampData.xS.empty()) {
@@ -95,9 +87,12 @@ int rampButtonClickCB(void *data, int index, fpreal64 time, const PRM_Template *
 		}
 	}
 
-	auto handler = new RampHandler(rampData);
-	ui->setChangeHandler(handler);
+	auto handlerIter = simNode->m_RampHandlers.find(token);
+	if (handlerIter != simNode->m_RampHandlers.end()) {
+		delete handlerIter->second;
+	}
 
+	ui->setChangeHandler(simNode->m_RampHandlers[token] = new PhxShaderSim::RampHandler(rampData));
 	ui->show();
 
 	return 1;

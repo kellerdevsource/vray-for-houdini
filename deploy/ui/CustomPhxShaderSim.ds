@@ -339,6 +339,7 @@
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "vray_custom_handling" " " }
+	    parmtag	{ "vray_ramp_type" "curve" }
 	}
 	parm {
 	    name	"ecolor_ramp"
@@ -348,6 +349,7 @@
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "vray_custom_handling" " " }
+	    parmtag	{ "vray_ramp_type" "color" }
 	}
     }
 
@@ -607,6 +609,7 @@
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "vray_custom_handling" " " }
+	    parmtag	{ "vray_ramp_type" "color" }
 	}
     }
 
@@ -722,6 +725,7 @@
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "vray_custom_handling" " " }
+	    parmtag	{ "vray_ramp_type" "curve" }
 	}
     }
 }
