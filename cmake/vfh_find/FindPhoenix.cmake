@@ -76,7 +76,9 @@ else()
 	set(Phoenix_LIBRARIES "${_phx_root}/lib")
 
 	# check for headers
-	foreach(loop_var IN ITEMS "aurinterface.h")
+	foreach(loop_var IN ITEMS   "aurinterface.h"
+								"aurloader.h"
+								"aura_ver.h")
 
 		if(NOT EXISTS "${Phoenix_INCLUDES}/${loop_var}" )
 			message(STATUS "Invalid Phoenix SDK path - missing file ${Phoenix_INCLUDES}/${loop_var} ")

@@ -19,10 +19,6 @@
 #include <OBJ/OBJ_Geometry.h>
 #include <GU/GU_PrimPacked.h>
 
-#include <list>
-#include <unordered_map>
-
-
 namespace VRayForHoudini {
 
 

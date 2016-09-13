@@ -7,13 +7,11 @@
 //
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
-#ifdef CGR_HAS_AUR
+
 #ifndef VRAY_FOR_HOUDINI_VOP_PHOENIX_SIM_H
 #define VRAY_FOR_HOUDINI_VOP_PHOENIX_SIM_H
 
 #include <vfh_vray.h>
-#include <OP/OP_Operator.h>
-#include <OP/OP_OperatorTable.h>
 #include "vop_node_base.h"
 
 namespace VRayForHoudini {
@@ -49,4 +47,4 @@ protected:
 } // namespace VRayForHoudini
 
 #endif // VRAY_FOR_HOUDINI_VOP_PHOENIX_SIM_H
-#endif // CGR_HAS_AUR
+

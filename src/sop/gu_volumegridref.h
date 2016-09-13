@@ -16,7 +16,6 @@
 #include "vfh_primitives.h"
 
 #include <aurinterface.h>
-#include <aurloader.h>
 
 #include <GU/GU_PackedImpl.h>
 
@@ -128,11 +127,14 @@ private:
 
 } // namespace VRayForHoudini
 
-#else
+#else // CGR_HAS_AUR
 #include <GU/GU_PackedImpl.h>
-// just define empty class
+// Define this empty class here so primitive exporters can be compiled without additional ifdefs there
 namespace VRayForHoudini {
-	class VRayVolumeGridRef: public GU_PackedImpl {};
+class VRayVolumeGridRef: public GU_PackedImpl {
+public:
+	static GA_PrimitiveTypeId typeId() { return GA_PrimitiveTypeId(); }
+};
 }
 #endif // CGR_HAS_AUR
 

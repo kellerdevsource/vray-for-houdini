@@ -13,7 +13,6 @@
 
 #include "vfh_vray.h"
 #include "vfh_exporter.h"
-#include "vfh_material_override.h"
 
 #include <OBJ/OBJ_Geometry.h>
 #include <GU/GU_PrimPacked.h>
