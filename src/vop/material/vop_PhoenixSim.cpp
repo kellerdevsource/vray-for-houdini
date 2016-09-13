@@ -10,6 +10,7 @@
 #ifdef CGR_HAS_AUR
 #include <vop_PhoenixSim.h>
 #include <vfh_prm_templates.h>
+#include <vfh_tex_utils.h>
 
 #include <utility>
 
@@ -177,6 +178,44 @@ OP::VRayNode::PluginResult PhxShaderSim::asPluginDesc(Attrs::PluginDesc &pluginD
 	const auto primVal = evalInt("pmprimary", 0, t);
 	const bool enableProb = (exporter.isIPR() && primVal) || primVal == 2;
 	pluginDesc.addAttribute(Attrs::PluginAttr("pmprimary", enableProb));
+
+	const auto pluginInfo = Parm::GetVRayPluginInfo(pluginDesc.pluginID);
+	if (NOT(pluginInfo)) {
+		Log::getLog().error("Node \"%s\": Plugin \"%s\" description is not found!",
+							this->getName().buffer(), pluginDesc.pluginID.c_str());
+	} else {
+		for (auto & ramp : m_Ramps) {
+			const auto attrIter = pluginInfo->attributes.find(ramp.first);
+			if (attrIter == pluginInfo->attributes.end()) {
+				Log::getLog().error("Node \"%s\": Plugin \"%s\" missing description for \"%s\"",
+									this->getName().buffer(), pluginDesc.pluginID.c_str(), ramp.first.c_str());
+			}
+			const auto & attrDesc = attrIter->second;
+			const auto & data = ramp.second.m_Data;
+			const auto pointCount = data.xS.size();
+
+			if (ramp.second.m_Type == AurRamps::RampType_Color) {
+				VRay::ColorList colorList(pointCount);
+				for (int c = 0; c < pointCount; ++c) {
+					colorList[c] = VRay::Color(data.yS[c * 3 + 0], data.yS[c * 3 + 1], data.yS[c * 3 + 2]);
+				}
+
+				pluginDesc.add(Attrs::PluginAttr(attrDesc.value.defRamp.positions, data.xS));
+				pluginDesc.add(Attrs::PluginAttr(attrDesc.value.defRamp.colors, colorList));
+				// color interpolations are not supported - export linear
+				pluginDesc.add(Attrs::PluginAttr(attrDesc.value.defRamp.interpolations, VRay::IntList(pointCount, static_cast<int>(Texture::VRAY_InterpolationType::Linear))));
+			} else if (ramp.second.m_Type == AurRamps::RampType_Curve) {
+				pluginDesc.add(Attrs::PluginAttr(attrDesc.value.defRamp.colors, data.yS));
+				pluginDesc.add(Attrs::PluginAttr(attrDesc.value.defRamp.positions, data.xS));
+
+				VRay::IntList interpolations(pointCount);
+				// exporter expects ints instead of enums
+				memcpy(interpolations.data(), data.interps.data(), pointCount * sizeof(int));
+
+				pluginDesc.add(Attrs::PluginAttr(attrDesc.value.defRamp.interpolations, interpolations));
+			}
+		}
+	}
 
 	exporter.setAttrsFromOpNodePrms(pluginDesc, this, "", true);
 
