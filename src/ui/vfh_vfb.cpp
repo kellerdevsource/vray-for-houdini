@@ -81,7 +81,7 @@ void VfbWidget::paintEvent(QPaintEvent *e)
 
 			painter.setPen(line_pen);
 
-			Q_FOREACH (const VfbBucket &bucket, m_buckets) {
+			for (const auto &bucket: m_buckets) {
 				if (bucket.w && bucket.h) {
 					painter.fillRect(bucket.x, bucket.y, bucket.w, bucket.h, Qt::SolidPattern);
 
