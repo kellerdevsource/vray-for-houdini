@@ -30,7 +30,7 @@ void PhxShaderSim::RampHandler::OnEditCurveDiagram(RampUi & curve, OnEditType ed
 	const auto size = curve.pointCount(RampType_Curve);
 
 	m_Ctx->m_Data.xS.resize(size);
-	m_Ctx->m_Data.yS.reserve(size);
+	m_Ctx->m_Data.yS.resize(size);
 	m_Ctx->m_Data.interps.resize(size);
 
 	const auto newSize = curve.getCurvePoints(m_Ctx->m_Data.xS.data(), m_Ctx->m_Data.yS.data(), m_Ctx->m_Data.interps.data(), size);
@@ -38,7 +38,7 @@ void PhxShaderSim::RampHandler::OnEditCurveDiagram(RampUi & curve, OnEditType ed
 	// if we got less points resize down
 	if (newSize != size) {
 		m_Ctx->m_Data.xS.resize(newSize);
-		m_Ctx->m_Data.yS.reserve(newSize);
+		m_Ctx->m_Data.yS.resize(newSize);
 		m_Ctx->m_Data.interps.resize(newSize);
 	}
 }
@@ -54,14 +54,14 @@ void PhxShaderSim::RampHandler::OnEditColorGradient(RampUi & curve, OnEditType e
 	const auto size = curve.pointCount(RampType_Color);
 
 	m_Ctx->m_Data.xS.resize(size);
-	m_Ctx->m_Data.yS.reserve(size * 3);
+	m_Ctx->m_Data.yS.resize(size * 3);
 
 	const auto newSize = curve.getColorPoints(m_Ctx->m_Data.xS.data(), m_Ctx->m_Data.yS.data(), size);
 
 	// if we got less points resize down
 	if (newSize != size) {
 		m_Ctx->m_Data.xS.resize(newSize);
-		m_Ctx->m_Data.yS.reserve(newSize * 3);
+		m_Ctx->m_Data.yS.resize(newSize * 3);
 	}
 }
 
