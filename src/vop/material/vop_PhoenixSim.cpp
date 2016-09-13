@@ -205,14 +205,14 @@ OP::VRayNode::PluginResult PhxShaderSim::asPluginDesc(Attrs::PluginDesc &pluginD
 				// color interpolations are not supported - export linear
 				pluginDesc.add(Attrs::PluginAttr(attrDesc.value.defRamp.interpolations, VRay::IntList(pointCount, static_cast<int>(Texture::VRAY_InterpolationType::Linear))));
 			} else if (ramp.second.m_Type == AurRamps::RampType_Curve) {
-				pluginDesc.add(Attrs::PluginAttr(attrDesc.value.defRamp.colors, data.yS));
-				pluginDesc.add(Attrs::PluginAttr(attrDesc.value.defRamp.positions, data.xS));
+				pluginDesc.add(Attrs::PluginAttr(attrDesc.value.defCurve.values, data.yS));
+				pluginDesc.add(Attrs::PluginAttr(attrDesc.value.defCurve.positions, data.xS));
 
 				VRay::IntList interpolations(pointCount);
 				// exporter expects ints instead of enums
 				memcpy(interpolations.data(), data.interps.data(), pointCount * sizeof(int));
 
-				pluginDesc.add(Attrs::PluginAttr(attrDesc.value.defRamp.interpolations, interpolations));
+				pluginDesc.add(Attrs::PluginAttr(attrDesc.value.defCurve.interpolations, interpolations));
 			}
 		}
 	}
