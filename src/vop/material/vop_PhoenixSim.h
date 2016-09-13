@@ -42,12 +42,24 @@ public:
 		std::vector<AurRamps::MultiCurvePointType>  interps;
 	};
 
+	struct RampContext;
 	struct RampHandler: AurRamps::ChangeHandler {
-		RampHandler(RampData & data): m_Data(data) {}
+		RampHandler(RampContext * ctx = nullptr): m_Ctx(ctx) {}
 		virtual void OnEditCurveDiagram(AurRamps::RampUi & curve, OnEditType editReason);
 		virtual void OnEditColorGradient(AurRamps::RampUi & curve, OnEditType editReason);
-		RampData & m_Data;
+		virtual void OnWindowDie();
+		RampContext * m_Ctx;
 	};
+
+	struct RampContext {
+		RampData           m_Data;
+		RampHandler        m_Hander;
+		AurRamps::RampUi * m_Ui;
+		AurRamps::RampType m_Type;
+
+		RampContext(AurRamps::RampType type = AurRamps::RampType_None): m_Ui(nullptr), m_Type(type) {}
+	};
+
 
 	static PRM_Template       *GetPrmTemplate();
 
@@ -56,9 +68,7 @@ public:
 
 	virtual PluginResult       asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext=nullptr) VRAY_OVERRIDE;
 
-	std::unordered_map<std::string, RampData>     m_Ramps;
-	// this will hold handler instances for ramps
-	std::unordered_map<std::string, RampHandler*> m_RampHandlers;
+	std::unordered_map<std::string, RampContext> m_Ramps;
 protected:
 
 	virtual void               setPluginType() VRAY_OVERRIDE;
