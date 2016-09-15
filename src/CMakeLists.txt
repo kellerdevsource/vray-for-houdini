@@ -84,7 +84,7 @@ if (Phoenix_FOUND)
 	target_link_libraries(${PROJECT_NAME}
 		aurloader_s
 		aurloader
-		guiwin_wx_s
+		guiwin_qt_s
 		iutils_s
 		aurramps_s
 	)
