@@ -11,26 +11,13 @@
 #include "vfh_export_primitive.h"
 #include "gu_volumegridref.h"
 
-#include "vfh_vray.h"
-#include "vfh_exporter.h"
-#include "vfh_material_override.h"
-#include "vfh_export_primitive.h"
-
-#include "gu_volumegridref.h"
-#include "rop/vfh_rop.h"
-#include "sop/sop_node_base.h"
 #include "vop/vop_node_base.h"
 #include "vop/material/vop_MaterialOutput.h"
 #include "vop/material/vop_PhoenixSim.h"
 
-// Undef foreach if >= 15.5
-#if UT_MAJOR_VERSION_INT >= 15 && UT_MINOR_VERSION_INT >= 5
-#ifdef foreach
-#undef foreach
-#endif
-#endif
-
 #include <GU/GU_PrimVDB.h>
+#include <SOP/SOP_Node.h>
+#include <SHOP/SHOP_Node.h>
 #include <GEO/GEO_Primitive.h>
 #include <GU/GU_PrimVolume.h>
 #include <GU/GU_Detail.h>
@@ -43,7 +30,7 @@ namespace {
 // wrapper over GEO_PrimVolume and GEO_PrimVDB providing common interface
 // this wrapper *can* be INVALID - it can be initialized with unsuported primitive
 // the wrapper *must* be checkked before use with its bool operator
-// methods called on INVALID wrappe will return default (0/1) initialized data
+// methods called on INVALID wrapper will return default (0/1) initialized data
 struct VolumeProxy {
 	VolumeProxy(const GEO_Primitive *prim): m_prim(prim), m_vol(nullptr), m_vdb(nullptr) {
 		if (!prim) {

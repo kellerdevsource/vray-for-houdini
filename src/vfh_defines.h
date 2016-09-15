@@ -11,6 +11,11 @@
 #ifndef VRAY_FOR_HOUDINI_UTIL_DEFINES_H
 #define VRAY_FOR_HOUDINI_UTIL_DEFINES_H
 
+// QT defines macro "foreach" to be the same as QT_FOREACH which is highly likely to collide
+// openvdb/util/NodeMask has "foreach" method
+// define this macro to stop QT from defining it
+#define QT_NO_KEYWORDS
+
 #define STRINGIZE_NX(A) #A
 #define STRINGIZE(A) STRINGIZE_NX(A)
 #define NOT(x) !(x)
