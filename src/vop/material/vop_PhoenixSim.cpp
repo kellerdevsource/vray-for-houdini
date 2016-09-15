@@ -77,6 +77,11 @@ int rampButtonClickCB(void *data, int index, fpreal64 time, const PRM_Template *
 {
 	using namespace std;
 	using namespace AurRamps;
+#if _WIN32
+	static auto app = AurRamps::getQtGUI(GetCurrentProcess());
+#else
+	static auto app = AurRamps::getQtGUI(nullptr);
+#endif // WIN32
 
 	const string token = tplate->getToken();
 
@@ -89,7 +94,7 @@ int rampButtonClickCB(void *data, int index, fpreal64 time, const PRM_Template *
 		return 1;
 	}
 
-	ctx.m_Ui = RampUi::createRamp(tplate->getLabel(), ctx.m_Type, 200, 200, 300, 500, getWxWidgetsGUI(GetCurrentProcess()));
+	ctx.m_Ui = RampUi::createRamp(tplate->getLabel(), ctx.m_Type, 200, 200, 300, 500, app);
 
 	if (!ctx.m_Data.xS.empty()) {
 		if (ctx.m_Type == RampType_Curve) {
