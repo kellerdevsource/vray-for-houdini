@@ -65,7 +65,6 @@ if (Phoenix_FOUND)
 	add_definitions(-DCGR_HAS_AUR)
 	include_directories(${Phoenix_INCLUDES})
 	link_directories(${Phoenix_LIBRARIES})
-	link_directories("D:/dev/cgrepo/sdk/win/wxwidgets/lib/x64/vc11")
 endif()
 
 use_houdini_sdk()
