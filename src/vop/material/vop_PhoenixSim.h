@@ -41,17 +41,24 @@ public:
 	};
 
 	struct RampContext;
-	struct RampHandler: AurRamps::ChangeHandler {
+	struct RampHandler: public AurRamps::ChangeHandler, public AurRamps::ColorPickerHandler {
 		RampHandler(RampContext * ctx = nullptr): m_Ctx(ctx) {}
+
+		/// ChangeHandler overrides
 		virtual void OnEditCurveDiagram(AurRamps::RampUi & curve, OnEditType editReason);
 		virtual void OnEditColorGradient(AurRamps::RampUi & curve, OnEditType editReason);
 		virtual void OnWindowDie();
+
+		/// ColorPickerHandler overrides
+		virtual void Create(AurRamps::RampUi & curve, float prefered[3]);
+		virtual void Destroy() {}
+
 		RampContext * m_Ctx;
 	};
 
 	struct RampContext {
 		RampData           m_Data;
-		RampHandler        m_Hander;
+		RampHandler        m_Handler;
 		AurRamps::RampUi * m_Ui;
 		AurRamps::RampType m_Type;
 

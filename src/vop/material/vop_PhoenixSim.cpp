@@ -72,6 +72,13 @@ void PhxShaderSim::RampHandler::OnWindowDie()
 	}
 }
 
+void PhxShaderSim::RampHandler::Create(AurRamps::RampUi & curve, float prefered[3])
+{
+	float result[3];
+	bool canceled = curve.defaultColorPicker(prefered, result);
+	curve.setSelectedPointsColor(result, canceled);
+}
+
 
 int rampButtonClickCB(void *data, int index, fpreal64 time, const PRM_Template *tplate)
 {
@@ -105,8 +112,12 @@ int rampButtonClickCB(void *data, int index, fpreal64 time, const PRM_Template *
 		}
 	}
 
-	ctx.m_Hander = PhxShaderSim::RampHandler(&ctx);
-	ctx.m_Ui->setChangeHandler(&ctx.m_Hander);
+	ctx.m_Handler = PhxShaderSim::RampHandler(&ctx);
+	ctx.m_Ui->setChangeHandler(&ctx.m_Handler);
+	if (ctx.m_Type == RampType_Color) {
+		ctx.m_Ui->setColorPickerHandler(&ctx.m_Handler);
+	}
+
 	ctx.m_Ui->show();
 
 	return 1;
