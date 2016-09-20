@@ -27,6 +27,8 @@ using namespace VOP;
 using namespace std;
 
 static PRM_Template * AttrItems = nullptr;
+static const char * SAVE_SEPARATOR = "\n";
+static const char * SAVE_TOKEN = "phx_ramp_data";
 
 namespace {
 
@@ -173,45 +175,79 @@ PhxShaderSim::PhxShaderSim(OP_Network *parent, const char *name, OP_Operator *en
 }
 
 
+bool PhxShaderSim::savePresetContents(ostream &os)
+{
+	os << SAVE_TOKEN << SAVE_SEPARATOR;
+	return saveRamps(os);
+}
+
+
+bool PhxShaderSim::loadPresetContents(const char *tok, UT_IStream &is)
+{
+	if (!strcmp(tok, SAVE_TOKEN)) {
+		return loadRamps(is);
+	} else {
+		return OP_Node::loadPresetContents(tok, is);
+	}
+}
+
+
 OP_ERROR PhxShaderSim::saveIntrinsic(ostream &os, const OP_SaveFlags &sflags)
 {
-	const char * sep = "\n";
-	os << "phx_ramp_data" << sep;
-	os << static_cast<int>(m_Ramps.size()) << sep;
+	os << SAVE_TOKEN << SAVE_SEPARATOR;
+	saveRamps(os);
+
+    return OP_Node::saveIntrinsic(os, sflags);
+}
+
+
+bool PhxShaderSim::loadPacket(UT_IStream &is, const char *token, const char *path)
+{
+    if (OP_Node::loadPacket(is, token, path)) {
+		return true;
+	}
+
+	if (!strcmp(token, SAVE_TOKEN)) {
+		return loadRamps(is);
+	}
+
+	return false;
+}
+
+
+bool PhxShaderSim::saveRamps(std::ostream & os)
+{
+	os << static_cast<int>(m_Ramps.size()) << SAVE_SEPARATOR;
 
 	for (const auto & ramp : m_Ramps) {
 		const auto & data = ramp.second.m_Data;
 		const int count = data.xS.size();
 		const auto type = ramp.second.m_Type;
-		os << ramp.first << sep;
-		os << static_cast<int>(ramp.second.m_Type) << sep;
-		os << count << sep;
+		os << ramp.first << SAVE_SEPARATOR;
+		os << static_cast<int>(ramp.second.m_Type) << SAVE_SEPARATOR;
+		os << count << SAVE_SEPARATOR;
 
 		for (int c = 0; c < count; ++c) {
-			os << data.xS[c] << sep;
+			os << data.xS[c] << SAVE_SEPARATOR;
 		}
 
 		const int components = type == RampType_Curve ? 1 : 3;
 		for (int c = 0; c < count * components; ++c) {
-			os << data.yS[c] << sep;
+			os << data.yS[c] << SAVE_SEPARATOR;
 		}
 
 		if (type == RampType_Curve) {
 			for (int c = 0; c < count; ++c) {
-				os << static_cast<int>(data.interps[c]) << sep;
+				os << static_cast<int>(data.interps[c]) << SAVE_SEPARATOR;
 			}
 		}
 	}
 
-    return OP_Node::saveIntrinsic(os, sflags);
+	return os;
 }
 
-bool PhxShaderSim::loadPacket( UT_IStream &is, const char *token, const char *path )
+bool PhxShaderSim::loadRamps(UT_IStream & is)
 {
-    if (OP_Node::loadPacket( is, token, path)) {
-		return true;
-	}
-
 	bool success = true;
 	const char * exp = "", * expr = "";
 
@@ -223,40 +259,37 @@ bool PhxShaderSim::loadPacket( UT_IStream &is, const char *token, const char *pa
 		expr = #expression;\
 	}
 
+	readSome(int rampCount, 1, is.read(&rampCount));
+	for (int c = 0; c < rampCount && success; ++c) {
+		readSome(string rampName, 1, is.read(rampName));
+		readSome(int readType, 1, is.read(&readType));
+		const auto type = static_cast<RampType>(readType);
+		readSome(int pointCount, 1, is.read(&pointCount));
 
-	if (!strcmp(token, "phx_ramp_data")) {
-		readSome(int rampCount, 1, is.read(&rampCount));
-		for (int c = 0; c < rampCount && success; ++c) {
-			readSome(string rampName, 1, is.read(rampName));
-			readSome(int readType, 1, is.read(&readType));
-			const auto type = static_cast<RampType>(readType);
-			readSome(int pointCount, 1, is.read(&pointCount));
+		RampData data;
+		data.xS.resize(pointCount);
+		data.yS.resize(pointCount * (type == RampType_Curve ? 1 : 3));
+		data.interps.resize(pointCount);
 
-			RampData data;
-			data.xS.resize(pointCount);
-			data.yS.resize(pointCount * (type == RampType_Curve ? 1 : 3));
-			data.interps.resize(pointCount);
+		readSome(, data.xS.size(), is.read<fpreal32>(data.xS.data(), data.xS.size()));
+		readSome(, data.yS.size(), is.read<fpreal32>(data.yS.data(), data.yS.size()));
 
-			readSome(, data.xS.size(), is.read<fpreal32>(data.xS.data(), data.xS.size()));
-			readSome(, data.yS.size(), is.read<fpreal32>(data.yS.data(), data.yS.size()));
+		if (type == RampType_Curve) {
+			readSome(, data.interps.size(), is.read<int>(reinterpret_cast<int*>(data.interps.data()), data.interps.size()));
+		} else {
+			std::fill(data.interps.begin(), data.interps.end(), MCPT_Linear);
+		}
 
-			if (type == RampType_Curve) {
-				readSome(, data.interps.size(), is.read<int>(reinterpret_cast<int*>(data.interps.data()), data.interps.size()));
-			} else {
-				std::fill(data.interps.begin(), data.interps.end(), MCPT_Linear);
-			}
+		if (!success) {
+			break;
+		}
 
-			if (!success) {
-				break;
-			}
-
-			auto ramp = m_Ramps.find(rampName);
-			if (ramp != m_Ramps.end()) {
-				ramp->second.m_Data = data;
-				ramp->second.m_Type = type;
-			} else {
-				Log::getLog().error("Ramp name \"%s\" not expected - discarding data!");
-			}
+		auto ramp = m_Ramps.find(rampName);
+		if (ramp != m_Ramps.end()) {
+			ramp->second.m_Data = data;
+			ramp->second.m_Type = type;
+		} else {
+			Log::getLog().error("Ramp name \"%s\" not expected - discarding data!");
 		}
 	}
 #undef readSome

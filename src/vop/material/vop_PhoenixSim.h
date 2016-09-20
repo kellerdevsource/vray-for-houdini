@@ -74,10 +74,16 @@ public:
 	OP_ERROR                   saveIntrinsic(std::ostream &os, const OP_SaveFlags &sflags) VRAY_OVERRIDE;
 	bool                       loadPacket(UT_IStream &is, const char *token, const char *path) VRAY_OVERRIDE;
 
+	bool                       savePresetContents(std::ostream &os) VRAY_OVERRIDE;
+	bool                       loadPresetContents(const char *tok, UT_IStream &is) VRAY_OVERRIDE;
+
 	virtual PluginResult       asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext=nullptr) VRAY_OVERRIDE;
 
 	std::unordered_map<std::string, RampContext> m_Ramps;
 protected:
+
+	bool                       saveRamps(std::ostream & os);
+	bool                       loadRamps(UT_IStream & is);
 
 	virtual void               setPluginType() VRAY_OVERRIDE;
 };
