@@ -178,7 +178,7 @@ PhxShaderSim::PhxShaderSim(OP_Network *parent, const char *name, OP_Operator *en
 bool PhxShaderSim::savePresetContents(ostream &os)
 {
 	os << SAVE_TOKEN << SAVE_SEPARATOR;
-	return saveRamps(os);
+	return saveRamps(os) && OP_Node::savePresetContents(os);
 }
 
 
