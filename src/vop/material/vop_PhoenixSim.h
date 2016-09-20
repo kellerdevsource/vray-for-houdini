@@ -71,6 +71,9 @@ public:
 	                           PhxShaderSim(OP_Network *parent, const char *name, OP_Operator *entry);
 	virtual                   ~PhxShaderSim() {}
 
+	OP_ERROR                   saveIntrinsic(std::ostream &os, const OP_SaveFlags &sflags) VRAY_OVERRIDE;
+	bool                       loadPacket(UT_IStream &is, const char *token, const char *path) VRAY_OVERRIDE;
+
 	virtual PluginResult       asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext=nullptr) VRAY_OVERRIDE;
 
 	std::unordered_map<std::string, RampContext> m_Ramps;

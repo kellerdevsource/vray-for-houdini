@@ -603,7 +603,7 @@
 	}
 	parm {
 	    name	"dcolor_ramp"
-	    label	"Color Grad"
+	    label	"Color Gradient"
 	    type	button
 	    default	{ "1" }
 	    range	{ 0 1 }
