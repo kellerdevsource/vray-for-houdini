@@ -47,9 +47,21 @@ int rampButtonClickCB(void *data, int index, fpreal64 time, const PRM_Template *
 	auto simNode = reinterpret_cast<PhxShaderSim*>(data);
 	auto ctx = simNode->m_ramps[token];
 
-	// there is already a window
-	if (!ctx || ctx->m_ui) {
-		return 1;
+	// this should not happen - calling callback on uninited context
+	if (!ctx) {
+		Log::getLog().error("Missing context for \"%s\"!", token.c_str());
+		return 0;
+	}
+
+	if (ctx->m_freeUi) {
+		delete ctx->m_ui;
+		ctx->m_ui = nullptr;
+		ctx->m_freeUi = false;
+	}
+
+	if (ctx->m_freeUi) {
+		// we already have window opened - do nothing
+		return 0;
 	}
 
 	const int rampHeight  = 500;
@@ -133,8 +145,7 @@ void PhxShaderSim::RampHandler::OnEditColorGradient(RampUi & curve, OnEditType e
 void PhxShaderSim::RampHandler::OnWindowDie()
 {
 	if (m_ctx) {
-		// TODO: actually free these pointers, but not here
-		m_ctx->m_ui = nullptr;
+		m_ctx->m_freeUi = true;
 	}
 }
 

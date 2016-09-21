@@ -63,6 +63,7 @@ public:
 		RampContext(AurRamps::RampType type = AurRamps::RampType_None)
 			: m_ui(nullptr)
 			, m_uiType(type)
+			, m_freeUi(false)
 		{
 			m_data[0].m_type = AurRamps::RampType_Curve;
 			m_data[1].m_type = AurRamps::RampType_Color;
@@ -78,6 +79,8 @@ public:
 
 		RampHandler        m_handler;
 		AurRamps::RampUi * m_ui;
+		// flag to mark the @m_ui for deletion when OnWindowDie is called
+		bool               m_freeUi;
 		AurRamps::RampType m_uiType;
 	private:
 		RampData           m_data[2];
