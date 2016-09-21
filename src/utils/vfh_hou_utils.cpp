@@ -16,12 +16,14 @@
 
 int VRayForHoudini::HOU::isApprentice()
 {
+	return false;
 	return (HOM().licenseCategory() == HOM_licenseCategoryType::Apprentice);
 }
 
 
 int VRayForHoudini::HOU::isIndie()
 {
+	return false;
 	return (HOM().licenseCategory() == HOM_licenseCategoryType::Indie);
 }
 

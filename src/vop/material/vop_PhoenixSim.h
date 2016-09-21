@@ -34,15 +34,9 @@ public:
 		Mesh  = 4,
 	};
 
-	struct RampData {
-		std::vector<float>                          xS;
-		std::vector<float>                          yS;
-		std::vector<AurRamps::MultiCurvePointType>  interps;
-	};
-
 	struct RampContext;
 	struct RampHandler: public AurRamps::ChangeHandler, public AurRamps::ColorPickerHandler {
-		RampHandler(RampContext * ctx = nullptr): m_Ctx(ctx) {}
+		RampHandler(std::shared_ptr<RampContext> ctx = nullptr): m_ctx(ctx) {}
 
 		/// ChangeHandler overrides
 		virtual void OnEditCurveDiagram(AurRamps::RampUi & curve, OnEditType editReason);
@@ -53,16 +47,40 @@ public:
 		virtual void Create(AurRamps::RampUi & curve, float prefered[3]);
 		virtual void Destroy() {}
 
-		RampContext * m_Ctx;
+		std::shared_ptr<RampContext> m_ctx;
+	};
+
+	struct RampData {
+		std::vector<float>                          m_xS;
+		std::vector<float>                          m_yS;
+		std::vector<AurRamps::MultiCurvePointType>  m_interps;
+		AurRamps::RampType                          m_type;
+
+		RampData(): m_type(AurRamps::RampType_None) {};
 	};
 
 	struct RampContext {
-		RampData           m_Data;
-		RampHandler        m_Handler;
-		AurRamps::RampUi * m_Ui;
-		AurRamps::RampType m_Type;
+		RampContext(AurRamps::RampType type = AurRamps::RampType_None)
+			: m_ui(nullptr)
+			, m_uiType(type)
+		{
+			m_data[0].m_type = AurRamps::RampType_Curve;
+			m_data[1].m_type = AurRamps::RampType_Color;
+		}
 
-		RampContext(AurRamps::RampType type = AurRamps::RampType_None): m_Ui(nullptr), m_Type(type) {}
+		RampData & data(AurRamps::RampType type)
+		{
+			if (type & AurRamps::RampType_Color) {
+				return m_data[1];
+			}
+			return m_data[0];
+		}
+
+		RampHandler        m_handler;
+		AurRamps::RampUi * m_ui;
+		AurRamps::RampType m_uiType;
+	private:
+		RampData           m_data[2];
 	};
 
 
@@ -79,7 +97,10 @@ public:
 
 	virtual PluginResult       asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext=nullptr) VRAY_OVERRIDE;
 
-	std::unordered_map<std::string, RampContext> m_Ramps;
+	// this maps property name to ramp data, but since we can have a curve and color ramp in same window
+	// some properties might map to one context
+	std::unordered_map<std::string, std::shared_ptr<RampContext>> m_ramps;
+	std::unordered_map<std::string, AurRamps::RampType>           m_rampTypes;
 protected:
 
 	bool                       saveRamps(std::ostream & os);

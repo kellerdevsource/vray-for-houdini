@@ -45,32 +45,40 @@ int rampButtonClickCB(void *data, int index, fpreal64 time, const PRM_Template *
 	const string token = tplate->getToken();
 
 	auto simNode = reinterpret_cast<PhxShaderSim*>(data);
-	auto & ctx = simNode->m_Ramps[token];
+	auto ctx = simNode->m_ramps[token];
 
 	// there is already a window
-	if (ctx.m_Ui) {
-		ctx.m_Ui->show();
+	if (!ctx || ctx->m_ui) {
 		return 1;
 	}
 
-	ctx.m_Ui = RampUi::createRamp(tplate->getLabel(), ctx.m_Type, 200, 200, 300, 500, app);
+	const int rampHeight  = 500;
+	const int colorHeight = 300;
 
-	if (!ctx.m_Data.xS.empty()) {
-		if (ctx.m_Type == RampType_Curve) {
-			ctx.m_Ui->setCurvePoints(ctx.m_Data.xS.data(), ctx.m_Data.yS.data(), ctx.m_Data.interps.data(), ctx.m_Data.xS.size());
-		} else {
-			// NOTE: here rampData.yS is color type which is 3 floats per point so actual count is rampData.xS.size() !!
-			ctx.m_Ui->setColorPoints(ctx.m_Data.xS.data(), ctx.m_Data.yS.data(), ctx.m_Data.xS.size());
-		}
+	int height = 0;
+	if (ctx->m_uiType & RampType_Color) {
+		height += colorHeight;
+	}
+	if (ctx->m_uiType & RampType_Curve) {
+		height += rampHeight;
 	}
 
-	ctx.m_Handler = PhxShaderSim::RampHandler(&ctx);
-	ctx.m_Ui->setChangeHandler(&ctx.m_Handler);
-	if (ctx.m_Type == RampType_Color) {
-		ctx.m_Ui->setColorPickerHandler(&ctx.m_Handler);
+	ctx->m_ui = RampUi::createRamp(tplate->getLabel(), ctx->m_uiType, 200, 200, 300, height, app);
+
+	auto & curveData = ctx->data(RampType_Curve);
+	ctx->m_ui->setCurvePoints(curveData.m_xS.data(), curveData.m_yS.data(), curveData.m_interps.data(), curveData.m_xS.size());
+
+	auto & colorData = ctx->data(RampType_Color);
+	// NOTE: here rampData.yS is color type which is 3 floats per point so actual count is rampData.xS.size() !!
+	ctx->m_ui->setColorPoints(colorData.m_xS.data(), colorData.m_yS.data(), colorData.m_xS.size());
+
+	ctx->m_handler = PhxShaderSim::RampHandler(ctx);
+	ctx->m_ui->setChangeHandler(&ctx->m_handler);
+	if (ctx->m_uiType & RampType_Color) {
+		ctx->m_ui->setColorPickerHandler(&ctx->m_handler);
 	}
 
-	ctx.m_Ui->show();
+	ctx->m_ui->show();
 
 	return 1;
 }
@@ -79,52 +87,54 @@ int rampButtonClickCB(void *data, int index, fpreal64 time, const PRM_Template *
 
 void PhxShaderSim::RampHandler::OnEditCurveDiagram(RampUi & curve, OnEditType editReason)
 {
-	if (!m_Ctx || editReason == OnEdit_ChangeBegin || editReason == OnEdit_ChangeInProgress) {
+	if (!m_ctx || !(m_ctx->m_uiType & RampType_Curve) || editReason == OnEdit_ChangeBegin || editReason == OnEdit_ChangeInProgress) {
 		return;
 	}
 
+	auto & data = m_ctx->data(RampType_Curve);
 	const auto size = curve.pointCount(RampType_Curve);
 
-	m_Ctx->m_Data.xS.resize(size);
-	m_Ctx->m_Data.yS.resize(size);
-	m_Ctx->m_Data.interps.resize(size);
+	data.m_xS.resize(size);
+	data.m_yS.resize(size);
+	data.m_interps.resize(size);
 
-	const auto newSize = curve.getCurvePoints(m_Ctx->m_Data.xS.data(), m_Ctx->m_Data.yS.data(), m_Ctx->m_Data.interps.data(), size);
+	const auto newSize = curve.getCurvePoints(data.m_xS.data(), data.m_yS.data(), data.m_interps.data(), size);
 
 	// if we got less points resize down
 	if (newSize != size) {
-		m_Ctx->m_Data.xS.resize(newSize);
-		m_Ctx->m_Data.yS.resize(newSize);
-		m_Ctx->m_Data.interps.resize(newSize);
+		data.m_xS.resize(newSize);
+		data.m_yS.resize(newSize);
+		data.m_interps.resize(newSize);
 	}
 }
 
 void PhxShaderSim::RampHandler::OnEditColorGradient(RampUi & curve, OnEditType editReason)
 {
-	// NOTE: m_Data.yS is of color type so it's 3 floats per point!
-
-	if (!m_Ctx || editReason == OnEdit_ChangeBegin || editReason == OnEdit_ChangeInProgress) {
+	if (!m_ctx || !(m_ctx->m_uiType & RampType_Color) || editReason == OnEdit_ChangeBegin || editReason == OnEdit_ChangeInProgress) {
 		return;
 	}
 
+	auto & data = m_ctx->data(RampType_Color);
 	const auto size = curve.pointCount(RampType_Color);
 
-	m_Ctx->m_Data.xS.resize(size);
-	m_Ctx->m_Data.yS.resize(size * 3);
+	data.m_xS.resize(size);
+	// NOTE: m_Data.yS is of color type so it's 3 floats per point!
+	data.m_yS.resize(size * 3);
 
-	const auto newSize = curve.getColorPoints(m_Ctx->m_Data.xS.data(), m_Ctx->m_Data.yS.data(), size);
+	const auto newSize = curve.getColorPoints(data.m_xS.data(), data.m_yS.data(), size);
 
 	// if we got less points resize down
 	if (newSize != size) {
-		m_Ctx->m_Data.xS.resize(newSize);
-		m_Ctx->m_Data.yS.resize(newSize * 3);
+		data.m_xS.resize(newSize);
+		data.m_yS.resize(newSize * 3);
 	}
 }
 
 void PhxShaderSim::RampHandler::OnWindowDie()
 {
-	if (m_Ctx) {
-		m_Ctx->m_Ui = nullptr;
+	if (m_ctx) {
+		// TODO: actually free these pointers, but not here
+		m_ctx->m_ui = nullptr;
 	}
 }
 
@@ -165,10 +175,33 @@ PhxShaderSim::PhxShaderSim(OP_Network *parent, const char *name, OP_Operator *en
 		const auto spareData = parm.getSparePtr();
 		if (spareData) {
 			const auto typeString = spareData->getValue("vray_ramp_type");
+			const auto mergeRamp = spareData->getValue("vray_ramp_merge");
 			const auto token = parm.getToken();
 			if (token && typeString) {
-				const auto type = !strcmp(typeString ? typeString : "", "curve") ? RampType_Curve : RampType_Color;
-				m_Ramps[token] = RampContext(type);
+				std::shared_ptr<RampContext> ctx;
+
+				// try to find the ramp we should merge with
+				// if it is already created - use it's context
+				if (mergeRamp) {
+					auto mergeCtx = m_ramps.find(mergeRamp);
+					if (mergeCtx != m_ramps.end()) {
+						ctx = mergeCtx->second;
+						// attach ref with our token
+						m_ramps[token] = ctx;
+					}
+				}
+				if (!ctx) {
+					ctx.reset(new RampContext);
+					m_ramps[token] = ctx; 
+				}
+
+				if (!strcmp(typeString, "color")) {
+					ctx->m_uiType = static_cast<RampType>(ctx->m_uiType | RampType_Color);
+					m_rampTypes[token] = RampType_Color;
+				} else if (!strcmp(typeString, "curve")) {
+					ctx->m_uiType = static_cast<RampType>(ctx->m_uiType | RampType_Curve);
+					m_rampTypes[token] = RampType_Curve;
+				}
 			}
 		}
 	}
@@ -217,28 +250,32 @@ bool PhxShaderSim::loadPacket(UT_IStream &is, const char *token, const char *pat
 
 bool PhxShaderSim::saveRamps(std::ostream & os)
 {
-	os << static_cast<int>(m_Ramps.size()) << SAVE_SEPARATOR;
+	os << static_cast<int>(m_ramps.size()) << SAVE_SEPARATOR;
 
-	for (const auto & ramp : m_Ramps) {
-		const auto & data = ramp.second.m_Data;
-		const int count = data.xS.size();
-		const auto type = ramp.second.m_Type;
+	for (const auto & ramp : m_ramps) {
+		if (!ramp.second) {
+			continue;
+		}
+
+		const auto & data = ramp.second->data(m_rampTypes[ramp.first]);
+		const int count = data.m_xS.size();
+		const auto type = data.m_type;
 		os << ramp.first << SAVE_SEPARATOR;
-		os << static_cast<int>(ramp.second.m_Type) << SAVE_SEPARATOR;
+		os << static_cast<int>(type) << SAVE_SEPARATOR;
 		os << count << SAVE_SEPARATOR;
 
 		for (int c = 0; c < count; ++c) {
-			os << data.xS[c] << SAVE_SEPARATOR;
+			os << data.m_xS[c] << SAVE_SEPARATOR;
 		}
 
 		const int components = type == RampType_Curve ? 1 : 3;
 		for (int c = 0; c < count * components; ++c) {
-			os << data.yS[c] << SAVE_SEPARATOR;
+			os << data.m_yS[c] << SAVE_SEPARATOR;
 		}
 
 		if (type == RampType_Curve) {
 			for (int c = 0; c < count; ++c) {
-				os << static_cast<int>(data.interps[c]) << SAVE_SEPARATOR;
+				os << static_cast<int>(data.m_interps[c]) << SAVE_SEPARATOR;
 			}
 		}
 	}
@@ -267,28 +304,32 @@ bool PhxShaderSim::loadRamps(UT_IStream & is)
 		readSome(int pointCount, 1, is.read(&pointCount));
 
 		RampData data;
-		data.xS.resize(pointCount);
-		data.yS.resize(pointCount * (type == RampType_Curve ? 1 : 3));
-		data.interps.resize(pointCount);
+		data.m_type = type;
+		data.m_xS.resize(pointCount);
+		data.m_yS.resize(pointCount * (type == RampType_Curve ? 1 : 3));
+		data.m_interps.resize(pointCount);
 
-		readSome(, data.xS.size(), is.read<fpreal32>(data.xS.data(), data.xS.size()));
-		readSome(, data.yS.size(), is.read<fpreal32>(data.yS.data(), data.yS.size()));
+		readSome(, data.m_xS.size(), is.read<fpreal32>(data.m_xS.data(), data.m_xS.size()));
+		readSome(, data.m_yS.size(), is.read<fpreal32>(data.m_yS.data(), data.m_yS.size()));
 
 		if (type == RampType_Curve) {
-			readSome(, data.interps.size(), is.read<int>(reinterpret_cast<int*>(data.interps.data()), data.interps.size()));
+			readSome(, data.m_interps.size(), is.read<int>(reinterpret_cast<int*>(data.m_interps.data()), data.m_interps.size()));
 		} else {
-			std::fill(data.interps.begin(), data.interps.end(), MCPT_Linear);
+			std::fill(data.m_interps.begin(), data.m_interps.end(), MCPT_Linear);
 		}
 
 		if (!success) {
 			break;
 		}
 
-		auto ramp = m_Ramps.find(rampName);
-		if (ramp != m_Ramps.end()) {
-			ramp->second.m_Data = data;
-			ramp->second.m_Type = type;
-		} else {
+		auto ramp = m_ramps.find(rampName);
+		if (ramp != m_ramps.end() || !ramp->second) {
+			if (!(ramp->second->m_uiType & type)) {
+				Log::getLog().error("Ramp name \"%s\" has unexpected type - discarding data!");
+			} else {
+				ramp->second->data(type) = data;
+			}
+		} else {\
 			Log::getLog().error("Ramp name \"%s\" not expected - discarding data!");
 		}
 	}
@@ -343,7 +384,10 @@ OP::VRayNode::PluginResult PhxShaderSim::asPluginDesc(Attrs::PluginDesc &pluginD
 		Log::getLog().error("Node \"%s\": Plugin \"%s\" description is not found!",
 							this->getName().buffer(), pluginDesc.pluginID.c_str());
 	} else {
-		for (const auto & ramp : m_Ramps) {
+		for (const auto & ramp : m_ramps) {
+			if (!ramp.second) {
+				continue;
+			}
 			const auto & rampToken = ramp.first;
 
 			const auto attrIter = pluginInfo->attributes.find(rampToken);
@@ -352,26 +396,26 @@ OP::VRayNode::PluginResult PhxShaderSim::asPluginDesc(Attrs::PluginDesc &pluginD
 									this->getName().buffer(), pluginDesc.pluginID.c_str(), rampToken.c_str());
 			}
 			const auto & attrDesc = attrIter->second;
-			const auto & data = ramp.second.m_Data;
-			const auto pointCount = data.xS.size();
+			const auto & data = ramp.second->data(m_rampTypes[rampToken]);
+			const auto pointCount = data.m_xS.size();
 
-			if (ramp.second.m_Type == AurRamps::RampType_Color) {
+			if (data.m_type == AurRamps::RampType_Color) {
 				VRay::ColorList colorList(pointCount);
 				for (int c = 0; c < pointCount; ++c) {
-					colorList[c] = VRay::Color(data.yS[c * 3 + 0], data.yS[c * 3 + 1], data.yS[c * 3 + 2]);
+					colorList[c] = VRay::Color(data.m_yS[c * 3 + 0], data.m_yS[c * 3 + 1], data.m_yS[c * 3 + 2]);
 				}
 
-				pluginDesc.add(Attrs::PluginAttr(attrDesc.value.defRamp.positions, data.xS));
+				pluginDesc.add(Attrs::PluginAttr(attrDesc.value.defRamp.positions, data.m_xS));
 				pluginDesc.add(Attrs::PluginAttr(attrDesc.value.defRamp.colors, colorList));
 				// color interpolations are not supported - export linear
 				pluginDesc.add(Attrs::PluginAttr(attrDesc.value.defRamp.interpolations, VRay::IntList(pointCount, static_cast<int>(Texture::VRAY_InterpolationType::Linear))));
-			} else if (ramp.second.m_Type == AurRamps::RampType_Curve) {
-				pluginDesc.add(Attrs::PluginAttr(attrDesc.value.defCurve.values, data.yS));
-				pluginDesc.add(Attrs::PluginAttr(attrDesc.value.defCurve.positions, data.xS));
+			} else if (data.m_type == AurRamps::RampType_Curve) {
+				pluginDesc.add(Attrs::PluginAttr(attrDesc.value.defCurve.values, data.m_yS));
+				pluginDesc.add(Attrs::PluginAttr(attrDesc.value.defCurve.positions, data.m_xS));
 
 				VRay::IntList interpolations(pointCount);
 				// exporter expects ints instead of enums
-				memcpy(interpolations.data(), data.interps.data(), pointCount * sizeof(int));
+				memcpy(interpolations.data(), data.m_interps.data(), pointCount * sizeof(int));
 
 				pluginDesc.add(Attrs::PluginAttr(attrDesc.value.defCurve.interpolations, interpolations));
 			}

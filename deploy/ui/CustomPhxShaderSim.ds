@@ -340,6 +340,7 @@
 	    export	none
 	    parmtag	{ "vray_custom_handling" " " }
 	    parmtag	{ "vray_ramp_type" "curve" }
+	    parmtag	{ "vray_ramp_merge" "ecolor_ramp" }
 	}
 	parm {
 	    name	"ecolor_ramp"
@@ -350,6 +351,7 @@
 	    export	none
 	    parmtag	{ "vray_custom_handling" " " }
 	    parmtag	{ "vray_ramp_type" "color" }
+	    parmtag	{ "vray_ramp_merge" "elum_curve" }
 	}
     }
 
