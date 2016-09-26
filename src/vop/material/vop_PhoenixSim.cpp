@@ -54,8 +54,7 @@ int rampButtonClickCB(void *data, int index, fpreal64 time, const PRM_Template *
 	}
 
 	if (ctx->m_freeUi) {
-		delete ctx->m_ui;
-		ctx->m_ui = nullptr;
+		ctx->m_ui.reset(nullptr);
 		ctx->m_freeUi = false;
 	}
 
@@ -75,16 +74,20 @@ int rampButtonClickCB(void *data, int index, fpreal64 time, const PRM_Template *
 		height += rampHeight;
 	}
 
-	ctx->m_ui = RampUi::createRamp(tplate->getLabel(), ctx->m_uiType, 200, 200, 300, height, app);
+	ctx->m_ui.reset(RampUi::createRamp(tplate->getLabel(), ctx->m_uiType, 200, 200, 300, height, app));
 
-	auto & curveData = ctx->data(RampType_Curve);
-	ctx->m_ui->setCurvePoints(curveData.m_xS.data(), curveData.m_yS.data(), curveData.m_interps.data(), curveData.m_xS.size());
+	if (ctx->m_uiType & RampType_Curve) {
+		auto & curveData = ctx->data(RampType_Curve);
+		ctx->m_ui->setCurvePoints(curveData.m_xS.data(), curveData.m_yS.data(), curveData.m_interps.data(), curveData.m_xS.size());
+	}
 
-	auto & colorData = ctx->data(RampType_Color);
-	// NOTE: here rampData.yS is color type which is 3 floats per point so actual count is rampData.xS.size() !!
-	ctx->m_ui->setColorPoints(colorData.m_xS.data(), colorData.m_yS.data(), colorData.m_xS.size());
+	if (ctx->m_uiType & RampType_Color) {
+		auto & colorData = ctx->data(RampType_Color);
+		// NOTE: here rampData.yS is color type which is 3 floats per point so actual count is rampData.xS.size() !!
+		ctx->m_ui->setColorPoints(colorData.m_xS.data(), colorData.m_yS.data(), colorData.m_xS.size());
+	}
 
-	ctx->m_handler = PhxShaderSim::RampHandler(ctx);
+	ctx->m_handler = PhxShaderSim::RampHandler(&*ctx);
 	ctx->m_ui->setChangeHandler(&ctx->m_handler);
 	if (ctx->m_uiType & RampType_Color) {
 		ctx->m_ui->setColorPickerHandler(&ctx->m_handler);

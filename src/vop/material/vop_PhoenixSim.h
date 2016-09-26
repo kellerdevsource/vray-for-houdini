@@ -36,7 +36,7 @@ public:
 
 	struct RampContext;
 	struct RampHandler: public AurRamps::ChangeHandler, public AurRamps::ColorPickerHandler {
-		RampHandler(std::shared_ptr<RampContext> ctx = nullptr): m_ctx(ctx) {}
+		RampHandler(RampContext * ctx = nullptr): m_ctx(ctx) {}
 
 		/// ChangeHandler overrides
 		virtual void OnEditCurveDiagram(AurRamps::RampUi & curve, OnEditType editReason);
@@ -47,7 +47,7 @@ public:
 		virtual void Create(AurRamps::RampUi & curve, float prefered[3]);
 		virtual void Destroy() {}
 
-		std::shared_ptr<RampContext> m_ctx;
+		RampContext * m_ctx;
 	};
 
 	struct RampData {
@@ -77,13 +77,13 @@ public:
 			return m_data[0];
 		}
 
-		RampHandler        m_handler;
-		AurRamps::RampUi * m_ui;
+		RampHandler                       m_handler;
+		std::unique_ptr<AurRamps::RampUi> m_ui;
 		// flag to mark the @m_ui for deletion when OnWindowDie is called
-		bool               m_freeUi;
-		AurRamps::RampType m_uiType;
+		bool                              m_freeUi;
+		AurRamps::RampType                m_uiType;
 	private:
-		RampData           m_data[2];
+		RampData                          m_data[2];
 	};
 
 
