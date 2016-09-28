@@ -346,6 +346,7 @@
 	    name	"ecolor_ramp"
 	    label	"Fire Color"
 	    type	button
+	    invisible
 	    default	{ "1" }
 	    range	{ 0 1 }
 	    export	none

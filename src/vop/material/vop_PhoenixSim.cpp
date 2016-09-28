@@ -150,6 +150,8 @@ void PhxShaderSim::RampHandler::OnWindowDie()
 	if (m_ctx) {
 		m_ctx->m_freeUi = true;
 	}
+	// just in case
+	m_ctx = nullptr;
 }
 
 void PhxShaderSim::RampHandler::Create(AurRamps::RampUi & curve, float prefered[3])
