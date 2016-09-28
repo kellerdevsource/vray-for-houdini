@@ -60,21 +60,57 @@ public:
 	};
 
 	struct RampContext {
+		enum RampChannel {
+			CHANNEL_TEMPERATURE = 1,
+			CHANNEL_SMOKE       = 2,
+			CHANNEL_SPEED       = 3,
+			CHANNEL_FUEL        = 4,
+			CHANNEL_COUNT       = 4,
+		};
+
 		RampContext(AurRamps::RampType type = AurRamps::RampType_None)
 			: m_ui(nullptr)
 			, m_uiType(type)
 			, m_freeUi(false)
+			, m_activeChan(CHANNEL_SMOKE)
 		{
-			m_data[0].m_type = AurRamps::RampType_Curve;
-			m_data[1].m_type = AurRamps::RampType_Color;
+			for (int c = 0; c < CHANNEL_COUNT; ++c) {
+				m_data[c][0].m_type = AurRamps::RampType_Curve;
+				m_data[c][1].m_type = AurRamps::RampType_Color;
+			}
 		}
 
 		RampData & data(AurRamps::RampType type)
 		{
 			if (type & AurRamps::RampType_Color) {
-				return m_data[1];
+				return m_data[m_activeChan - 1][1];
 			}
-			return m_data[0];
+			return m_data[m_activeChan - 1][0];
+		}
+
+		void setActiveChannel(RampChannel ch) {
+			if (ch < CHANNEL_TEMPERATURE || ch > CHANNEL_FUEL) {
+				Log::getLog().error("Invalid active channel set %d", static_cast<int>(ch));
+				return;
+			}
+
+			const bool differ = ch != m_activeChan;
+			m_activeChan = ch;
+			// if we change active channel and there is open UI - we need to update UI's data
+			if (differ) {
+				if (m_ui && !m_freeUi) {
+					if (m_uiType & AurRamps::RampType_Curve) {
+						auto & curveData = data(AurRamps::RampType_Curve);
+						m_ui->setCurvePoints(curveData.m_xS.data(), curveData.m_yS.data(), curveData.m_interps.data(), curveData.m_xS.size());
+					}
+
+					if (m_uiType & AurRamps::RampType_Color) {
+						auto & colorData = data(AurRamps::RampType_Color);
+						// NOTE: here rampData.yS is color type which is 3 floats per point so actual count is rampData.xS.size() !!
+						m_ui->setColorPoints(colorData.m_xS.data(), colorData.m_yS.data(), colorData.m_xS.size());
+					}
+				}
+			}
 		}
 
 		RampHandler                       m_handler;
@@ -83,7 +119,9 @@ public:
 		bool                              m_freeUi;
 		AurRamps::RampType                m_uiType;
 	private:
-		RampData                          m_data[2];
+		typedef RampData RampPair[2];
+		RampChannel m_activeChan;
+		RampPair    m_data[4];
 	};
 
 
@@ -91,6 +129,8 @@ public:
 
 	                           PhxShaderSim(OP_Network *parent, const char *name, OP_Operator *entry);
 	virtual                   ~PhxShaderSim() {}
+
+	virtual void               finishedLoadingNetwork(bool is_child_call=false) VRAY_OVERRIDE;
 
 	OP_ERROR                   saveIntrinsic(std::ostream &os, const OP_SaveFlags &sflags) VRAY_OVERRIDE;
 	bool                       loadPacket(UT_IStream &is, const char *token, const char *path) VRAY_OVERRIDE;

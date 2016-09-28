@@ -260,6 +260,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_ramp_depend" "elum_curve" }
 	}
 	parm {
 	    name	"etex"
@@ -336,6 +337,7 @@
 	    label	"Fire Luminance"
 	    type	button
 	    default	{ "1" }
+	    disablewhen	"{ earg < 1 } { earg > 4 }"
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "vray_custom_handling" " " }
@@ -480,6 +482,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_ramp_depend" "dcolor_ramp" }
 	}
 	parm {
 	    name	"dtex"
@@ -609,6 +612,7 @@
 	    label	"Color Gradient"
 	    type	button
 	    default	{ "1" }
+	    disablewhen	"{ darg < 1 } { darg > 4 }"
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "vray_custom_handling" " " }
@@ -635,6 +639,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_ramp_depend" "transp_curve" }
 	}
 	parm {
 	    name	"ttex"
@@ -725,6 +730,7 @@
 	    label	"Opacity"
 	    type	button
 	    default	{ "1" }
+	    disablewhen	"{ targ < 1 } { targ > 4 }"
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "vray_custom_handling" " " }

@@ -32,6 +32,29 @@ static const char * SAVE_TOKEN = "phx_ramp_data";
 
 namespace {
 
+int rampDropDownDependCB(void * data, int index, fpreal64 time, const PRM_Template *tplate)
+{
+	auto simNode = reinterpret_cast<PhxShaderSim*>(data);
+	const string token = tplate->getSparePtr()->getValue("vray_ramp_depend");
+
+	auto ctx = simNode->m_ramps[token];
+
+	if (!ctx) {
+		Log::getLog().error("Missing context for \"%s\"!", token.c_str());
+		return 0;
+	}
+
+	if (index < PhxShaderSim::RampContext::CHANNEL_TEMPERATURE || index > PhxShaderSim::RampContext::CHANNEL_FUEL) {
+		if (ctx->m_ui && !ctx->m_freeUi) {
+			ctx->m_ui->close();
+		}
+	} else {
+		ctx->setActiveChannel(static_cast<PhxShaderSim::RampContext::RampChannel>(index));
+	}
+
+	return 1;
+}
+
 int rampButtonClickCB(void *data, int index, fpreal64 time, const PRM_Template *tplate)
 {
 	using namespace std;
@@ -63,8 +86,8 @@ int rampButtonClickCB(void *data, int index, fpreal64 time, const PRM_Template *
 		return 0;
 	}
 
-	const int rampHeight  = 500;
-	const int colorHeight = 300;
+	const int rampHeight  = 300;
+	const int colorHeight = 80;
 
 	int height = 0;
 	if (ctx->m_uiType & RampType_Color) {
@@ -105,6 +128,8 @@ void PhxShaderSim::RampHandler::OnEditCurveDiagram(RampUi & curve, OnEditType ed
 	if (!m_ctx || !(m_ctx->m_uiType & RampType_Curve) || editReason == OnEdit_ChangeBegin || editReason == OnEdit_ChangeInProgress) {
 		return;
 	}
+	// sanity check
+	UT_ASSERT(&curve == m_ctx->m_ui);
 
 	auto & data = m_ctx->data(RampType_Curve);
 	const auto size = curve.pointCount(RampType_Curve);
@@ -128,6 +153,8 @@ void PhxShaderSim::RampHandler::OnEditColorGradient(RampUi & curve, OnEditType e
 	if (!m_ctx || !(m_ctx->m_uiType & RampType_Color) || editReason == OnEdit_ChangeBegin || editReason == OnEdit_ChangeInProgress) {
 		return;
 	}
+	// sanity check
+	UT_ASSERT(&curve == m_ctx->m_ui);
 
 	auto & data = m_ctx->data(RampType_Color);
 	const auto size = curve.pointCount(RampType_Color);
@@ -172,8 +199,12 @@ PRM_Template* PhxShaderSim::GetPrmTemplate()
 		for (int c = 0; c < paramList.size(); ++c) {
 			auto & param = AttrItems[c];
 			const auto spareData = param.getSparePtr();
-			if (spareData && spareData->getValue("vray_ramp_type")) {
-				param.setCallback(rampButtonClickCB);
+			if (spareData) {
+				if (spareData->getValue("vray_ramp_type")) {
+					param.setCallback(rampButtonClickCB);
+				} else if (spareData->getValue("vray_ramp_depend")) {
+					param.setCallback(rampDropDownDependCB);
+				}
 			}
 		}
 	}
@@ -217,6 +248,32 @@ PhxShaderSim::PhxShaderSim(OP_Network *parent, const char *name, OP_Operator *en
 				} else if (!strcmp(typeString, "curve")) {
 					ctx->m_uiType = static_cast<RampType>(ctx->m_uiType | RampType_Curve);
 					m_rampTypes[token] = RampType_Curve;
+				}
+			}
+		}
+	}
+}
+
+
+void PhxShaderSim::finishedLoadingNetwork(bool is_child_call)
+{
+	const auto count = AttrItems ? PRM_Template::countTemplates(AttrItems) : 0;
+	for (int c = 0; c < count; ++c) {
+		auto & parm = AttrItems[c];
+		const auto spareData = parm.getSparePtr();
+		if (spareData) {
+			const char * rampToken = spareData->getValue("vray_ramp_depend");
+			if (rampToken) {
+				auto ramp = m_ramps.find(rampToken);
+				if (ramp != m_ramps.end()) {
+					if (!ramp->second) {
+						Log::getLog().error("Missing context for \"%s\"!", rampToken);
+					} else {
+						auto idx = evalInt(parm.getToken(), 0, 0);
+						if (idx >= RampContext::CHANNEL_TEMPERATURE && idx <= RampContext::CHANNEL_FUEL) {
+							ramp->second->setActiveChannel(static_cast<RampContext::RampChannel>(idx));
+						}
+					}
 				}
 			}
 		}
