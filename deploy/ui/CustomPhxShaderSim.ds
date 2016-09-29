@@ -129,7 +129,7 @@
 		"1"	"Temperature"
 		"2"	"Smoke"
 		"3"	"Speed"
-		"4"	"Fuel"
+		"10"	"Fuel"
 	    }
 	    range	{ 0 1 }
 	    export	none
@@ -254,7 +254,7 @@
 		"1"	"Temperature"
 		"2"	"Smoke"
 		"3"	"Speed"
-		"4"	"Fuel"
+		"10"	"Fuel"
 		"5"	"Texture"
 		"6"	"RGB"
 	    }
@@ -337,7 +337,7 @@
 	    label	"Fire Luminance"
 	    type	button
 	    default	{ "1" }
-	    disablewhen	"{ earg < 1 } { earg > 4 }"
+	    disablewhen	"{ earg != 1 earg != 2 earg != 3 earg != 10 }"
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "vray_custom_handling" " " }
@@ -612,7 +612,7 @@
 	    label	"Color Gradient"
 	    type	button
 	    default	{ "1" }
-	    disablewhen	"{ darg < 1 } { darg > 4 }"
+	    disablewhen	"{ darg != 1 darg != 2 darg != 3 darg != 10 }"
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "vray_custom_handling" " " }
@@ -663,6 +663,7 @@
 	    label	"Simple Smoke Factor"
 	    type	float
 	    default	{ "0" }
+	    disablewhen	"{ targ != 0 }"
 	    range	{ 0! 1! }
 	    export	none
 	}
@@ -730,7 +731,7 @@
 	    label	"Opacity"
 	    type	button
 	    default	{ "1" }
-	    disablewhen	"{ targ < 1 } { targ > 4 }"
+	    disablewhen	"{ targ != 1 targ != 2 targ != 3 targ != 10 }"
 	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "vray_custom_handling" " " }

@@ -44,6 +44,8 @@ int rampDropDownDependCB(void * data, int index, fpreal64 time, const PRM_Templa
 		return 0;
 	}
 
+	// all dropdowns have same first 5 options, and enum values are made to match index values
+	// so we can just use index as enum value
 	if (index < PhxShaderSim::RampContext::CHANNEL_TEMPERATURE || index > PhxShaderSim::RampContext::CHANNEL_FUEL) {
 		if (ctx->m_ui && !ctx->m_freeUi) {
 			ctx->m_ui->close();
@@ -252,10 +254,12 @@ PhxShaderSim::PhxShaderSim(OP_Network *parent, const char *name, OP_Operator *en
 			}
 		}
 	}
+
+	onLoadSetActiveChannels(false);
 }
 
 
-void PhxShaderSim::finishedLoadingNetwork(bool is_child_call)
+void PhxShaderSim::onLoadSetActiveChannels(bool fromUi)
 {
 	const auto count = AttrItems ? PRM_Template::countTemplates(AttrItems) : 0;
 	for (int c = 0; c < count; ++c) {
@@ -269,15 +273,30 @@ void PhxShaderSim::finishedLoadingNetwork(bool is_child_call)
 					if (!ramp->second) {
 						Log::getLog().error("Missing context for \"%s\"!", rampToken);
 					} else {
-						auto idx = evalInt(parm.getToken(), 0, 0);
-						if (idx >= RampContext::CHANNEL_TEMPERATURE && idx <= RampContext::CHANNEL_FUEL) {
-							ramp->second->setActiveChannel(static_cast<RampContext::RampChannel>(idx));
+						int idx = -1;
+						if (fromUi) {
+							idx = evalInt(parm.getToken(), 0, 0);
+						} else {
+							if (auto factDefaults = parm.getFactoryDefaults()) {
+								idx = factDefaults->getOrdinal();
+							}
 						}
+						if (idx < RampContext::CHANNEL_TEMPERATURE || idx > RampContext::CHANNEL_FUEL) {
+							idx = RampContext::CHANNEL_TEMPERATURE;
+						}
+
+						ramp->second->setActiveChannel(static_cast<RampContext::RampChannel>(idx));
 					}
 				}
 			}
 		}
 	}
+}
+
+
+void PhxShaderSim::finishedLoadingNetwork(bool is_child_call)
+{
+	onLoadSetActiveChannels(true);
 }
 
 
@@ -320,7 +339,10 @@ bool PhxShaderSim::loadPacket(UT_IStream &is, const char *token, const char *pat
 	return false;
 }
 
-
+/// save format:
+/// @rampCount SEP
+/// foreach ramp: @rampToken SEP @rampType SEP @rampActiveChannel SEP
+/// foreach channel: @rampPointCount SEP @rampKeys SEP @rampValues SEP @rampInterpolations SEP
 bool PhxShaderSim::saveRamps(std::ostream & os)
 {
 	os << static_cast<int>(m_ramps.size()) << SAVE_SEPARATOR;
@@ -330,25 +352,31 @@ bool PhxShaderSim::saveRamps(std::ostream & os)
 			continue;
 		}
 
-		const auto & data = ramp.second->data(m_rampTypes[ramp.first]);
-		const int count = data.m_xS.size();
-		const auto type = data.m_type;
-		os << ramp.first << SAVE_SEPARATOR;
-		os << static_cast<int>(type) << SAVE_SEPARATOR;
-		os << count << SAVE_SEPARATOR;
+		const auto type = m_rampTypes[ramp.first];
+		os << ramp.first << SAVE_SEPARATOR; // token
+		os << static_cast<int>(type) << SAVE_SEPARATOR; // type
 
-		for (int c = 0; c < count; ++c) {
-			os << data.m_xS[c] << SAVE_SEPARATOR;
-		}
+		os << static_cast<int>(ramp.second->getActiveChannel()) << SAVE_SEPARATOR; // active channel
 
-		const int components = type == RampType_Curve ? 1 : 3;
-		for (int c = 0; c < count * components; ++c) {
-			os << data.m_yS[c] << SAVE_SEPARATOR;
-		}
+		for (int c = 0; c < RampContext::CHANNEL_COUNT; ++c) {
+			const auto & data = ramp.second->m_data[c][RampContext::rampTypeToIdx(type)];
+			const int pointCount = data.m_xS.size();
 
-		if (type == RampType_Curve) {
-			for (int c = 0; c < count; ++c) {
-				os << static_cast<int>(data.m_interps[c]) << SAVE_SEPARATOR;
+			os << pointCount << SAVE_SEPARATOR; // point count
+
+			for (int c = 0; c < pointCount; ++c) {
+				os << data.m_xS[c] << SAVE_SEPARATOR; // keys
+			}
+
+			const int components = type == RampType_Curve ? 1 : 3;
+			for (int c = 0; c < pointCount * components; ++c) {
+				os << data.m_yS[c] << SAVE_SEPARATOR; // values
+			}
+
+			if (type == RampType_Curve) {
+				for (int c = 0; c < pointCount; ++c) {
+					os << static_cast<int>(data.m_interps[c]) << SAVE_SEPARATOR; // interpolations
+				}
 			}
 		}
 	}
@@ -356,54 +384,68 @@ bool PhxShaderSim::saveRamps(std::ostream & os)
 	return os;
 }
 
+
 bool PhxShaderSim::loadRamps(UT_IStream & is)
 {
 	bool success = true;
 	const char * exp = "", * expr = "";
 
-#define readSome(declare, expected, expression)\
-	declare;\
-	if ((expected) != (expression)) {\
-		success = false;\
-		exp = #expected;\
-		expr = #expression;\
+#define readSome(declare, expected, expression)                       \
+	declare;                                                          \
+	if ((expected) != (expression)) {                                 \
+		if (success) { /* save exp and expr only on the first error */\
+			exp = #expected;                                          \
+			expr = #expression;                                       \
+		}                                                             \
+		success = false;                                              \
 	}
 
 	readSome(int rampCount, 1, is.read(&rampCount));
 	for (int c = 0; c < rampCount && success; ++c) {
 		readSome(string rampName, 1, is.read(rampName));
-		readSome(int readType, 1, is.read(&readType));
-		const auto type = static_cast<RampType>(readType);
-		readSome(int pointCount, 1, is.read(&pointCount));
-
-		RampData data;
-		data.m_type = type;
-		data.m_xS.resize(pointCount);
-		data.m_yS.resize(pointCount * (type == RampType_Curve ? 1 : 3));
-		data.m_interps.resize(pointCount);
-
-		readSome(, data.m_xS.size(), is.read<fpreal32>(data.m_xS.data(), data.m_xS.size()));
-		readSome(, data.m_yS.size(), is.read<fpreal32>(data.m_yS.data(), data.m_yS.size()));
-
-		if (type == RampType_Curve) {
-			readSome(, data.m_interps.size(), is.read<int>(reinterpret_cast<int*>(data.m_interps.data()), data.m_interps.size()));
-		} else {
-			std::fill(data.m_interps.begin(), data.m_interps.end(), MCPT_Linear);
-		}
-
-		if (!success) {
-			break;
-		}
 
 		auto ramp = m_ramps.find(rampName);
-		if (ramp != m_ramps.end() || !ramp->second) {
-			if (!(ramp->second->m_uiType & type)) {
-				Log::getLog().error("Ramp name \"%s\" has unexpected type - discarding data!");
-			} else {
-				ramp->second->data(type) = data;
-			}
-		} else {\
+		// if we dont have the expected ramp in object we still have to read trogh the data so continue even if error
+		if (ramp == m_ramps.end() || !ramp->second) {
 			Log::getLog().error("Ramp name \"%s\" not expected - discarding data!");
+		}
+
+		readSome(RampType type, 1, is.read(reinterpret_cast<int*>(&type)));
+		readSome(RampContext::RampChannel activeChan, 1, is.read(reinterpret_cast<int*>(&activeChan)));
+		if (ramp != m_ramps.end() && ramp->second) {
+			ramp->second->setActiveChannel(activeChan);
+		}
+
+		for (int r = 0; r < RampContext::CHANNEL_COUNT; ++r) {
+			readSome(int pointCount, 1, is.read(&pointCount));
+
+			RampData data;
+			data.m_type = type;
+			data.m_xS.resize(pointCount);
+			data.m_yS.resize(pointCount * (type == RampType_Curve ? 1 : 3));
+			data.m_interps.resize(pointCount);
+
+			readSome(, data.m_xS.size(), is.read<fpreal32>(data.m_xS.data(), data.m_xS.size()));
+			readSome(, data.m_yS.size(), is.read<fpreal32>(data.m_yS.data(), data.m_yS.size()));
+
+			if (type == RampType_Curve) {
+				readSome(, data.m_interps.size(), is.read<int>(reinterpret_cast<int*>(data.m_interps.data()), data.m_interps.size()));
+			} else {
+				std::fill(data.m_interps.begin(), data.m_interps.end(), MCPT_Linear);
+			}
+
+			if (ramp != m_ramps.end() && ramp->second) {
+				if (!(ramp->second->m_uiType & type)) {
+					Log::getLog().error("Ramp name \"%s\" has unexpected type [%d]- discarding data!", rampName.c_str(), static_cast<int>(type));
+				} else {
+					ramp->second->m_data[r][RampContext::rampTypeToIdx(type)] = data;
+				}
+			}
+		}
+
+		// this is fail with reading from file - break
+		if (!success) {
+			break;
 		}
 	}
 #undef readSome

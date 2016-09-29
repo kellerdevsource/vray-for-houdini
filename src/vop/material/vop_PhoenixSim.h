@@ -60,7 +60,9 @@ public:
 	};
 
 	struct RampContext {
+		friend class PhxShaderSim;
 		enum RampChannel {
+			CHANNEL_INALID      = 0,
 			CHANNEL_TEMPERATURE = 1,
 			CHANNEL_SMOKE       = 2,
 			CHANNEL_SPEED       = 3,
@@ -75,18 +77,34 @@ public:
 			, m_activeChan(CHANNEL_SMOKE)
 		{
 			for (int c = 0; c < CHANNEL_COUNT; ++c) {
-				m_data[c][0].m_type = AurRamps::RampType_Curve;
-				m_data[c][1].m_type = AurRamps::RampType_Color;
+				for (int r = AurRamps::RampType_Curve; r <= AurRamps::RampType_Color; ++r) {
+					auto type = static_cast<AurRamps::RampType>(r);
+					m_data[c][rampTypeToIdx(type)].m_type = type;
+				}
 			}
 		}
 
-		RampData & data(AurRamps::RampType type)
-		{
-			if (type & AurRamps::RampType_Color) {
-				return m_data[m_activeChan - 1][1];
-			}
-			return m_data[m_activeChan - 1][0];
+		static int rampChanToIdx(RampChannel chan) {
+			UT_ASSERT_MSG(chan >= CHANNEL_TEMPERATURE && chan <= CHANNEL_FUEL, "Unexpected value for rampChanToIdx(type)");
+			return chan - 1;
 		}
+
+		static int rampTypeToIdx(AurRamps::RampType type) {
+			UT_ASSERT_MSG(type == AurRamps::RampType_Color || type == AurRamps::RampType_Curve, "Unexpected value for rampTypeToIdx(type)");
+			return type - 1;
+		}
+
+		RampData & data(AurRamps::RampType type, RampChannel chan = CHANNEL_INALID) {
+			if (chan == CHANNEL_INALID) {
+				chan = m_activeChan;
+			}
+			return m_data[rampChanToIdx(m_activeChan)][rampTypeToIdx(type)];
+		}
+
+		RampChannel getActiveChannel() const {
+			return m_activeChan;
+		}
+
 
 		void setActiveChannel(RampChannel ch) {
 			if (ch < CHANNEL_TEMPERATURE || ch > CHANNEL_FUEL) {
@@ -145,6 +163,8 @@ public:
 	std::unordered_map<std::string, std::shared_ptr<RampContext>> m_ramps;
 	std::unordered_map<std::string, AurRamps::RampType>           m_rampTypes;
 protected:
+
+	void                       onLoadSetActiveChannels(bool fromUi);
 
 	bool                       saveRamps(std::ostream & os);
 	bool                       loadRamps(UT_IStream & is);
