@@ -84,6 +84,10 @@ public:
 			}
 		}
 
+		static bool isValidChannel(RampChannel chan) {
+			return chan == CHANNEL_TEMPERATURE || chan == CHANNEL_SMOKE || chan == CHANNEL_SPEED || chan == CHANNEL_FUEL;
+		}
+
 		static int rampChanToIdx(RampChannel chan) {
 			UT_ASSERT_MSG(chan >= CHANNEL_TEMPERATURE && chan <= CHANNEL_FUEL, "Unexpected value for rampChanToIdx(type)");
 			return chan - 1;

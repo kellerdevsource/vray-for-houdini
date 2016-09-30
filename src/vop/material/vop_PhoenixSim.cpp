@@ -203,18 +203,19 @@ int rampDropDownDependCB(void * data, int index, fpreal64 time, const PRM_Templa
 	const string token = tplate->getSparePtr()->getValue("vray_ramp_depend");
 
 	auto ctx = simNode->m_ramps[token];
+	const auto chan = static_cast<PhxShaderSim::RampContext::RampChannel>(index);
 
 	if (!ctx) {
 		Log::getLog().error("Missing context for \"%s\"!", token.c_str());
 		return 0;
 	}
 
-	if (index < PhxShaderSim::RampContext::CHANNEL_TEMPERATURE || index > PhxShaderSim::RampContext::CHANNEL_FUEL) {
+	if (!PhxShaderSim::RampContext::isValidChannel(chan)) {
 		if (ctx->m_ui && !ctx->m_freeUi) {
 			ctx->m_ui->close();
 		}
 	} else {
-		ctx->setActiveChannel(static_cast<PhxShaderSim::RampContext::RampChannel>(index));
+		ctx->setActiveChannel(chan);
 	}
 
 	return 1;
@@ -445,7 +446,7 @@ void PhxShaderSim::onLoadSetActiveChannels(bool fromUi)
 								idx = factDefaults->getOrdinal();
 							}
 						}
-						if (idx < RampContext::CHANNEL_TEMPERATURE || idx > RampContext::CHANNEL_FUEL) {
+						if (!RampContext::isValidChannel(static_cast<RampContext::RampChannel>(idx))) {
 							idx = RampContext::CHANNEL_TEMPERATURE;
 						}
 
