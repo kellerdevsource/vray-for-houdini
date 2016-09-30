@@ -92,7 +92,7 @@ void setRampDefaults(PhxShaderSim & sim)
 		for (int r = 0; r < 2; ++r) {
 			const float T = MINT + (MAXT - MINT) * r / (2 - 1);
 			const float x = T * fireMul[c];
-			addCurvePoint(fireCurve, x, (T - MINT)/(MAXT - MINT), AurRamps::MCPT_Spline);
+			addCurvePoint(fireCurve, x, (T - MINT)/(MAXT - MINT), AurRamps::MCPT_Linear);
 			addColorPoint(fireColor, x, fireColors[r * 3 + 0], fireColors[r * 3 + 1], fireColors[r * 3 + 2], AurRamps::MCPT_Linear);
 		}
 
@@ -103,8 +103,8 @@ void setRampDefaults(PhxShaderSim & sim)
 		}
 
 		// smoke transp
-		addCurvePoint(smokeCurve, p0x[c], 0.f, AurRamps::MCPT_Spline);
-		addCurvePoint(smokeCurve, p1x[c], 1.f, AurRamps::MCPT_Spline);
+		addCurvePoint(smokeCurve, p0x[c], 0.f, AurRamps::MCPT_Linear);
+		addCurvePoint(smokeCurve, p1x[c], 1.f, AurRamps::MCPT_Linear);
 	}
 }
 
@@ -138,7 +138,7 @@ void initPreset(PhxShaderSim & sim, const char * presetName)
 		addCurvePoint(epowerCurve, 0.100, 1.000, AurRamps::MCPT_Linear);
 		addCurvePoint(epowerCurve, 0.200, 0.130, AurRamps::MCPT_Linear);
 		addCurvePoint(epowerCurve, 1.000, 0.100, AurRamps::MCPT_Linear);
-	} else if (!strcmp(presetName, "HoudiniAtmos")) {
+	} else if (!strcmp(presetName, "HoudiniVolume")) {
 		// channel is temp
 		// fire ramps
 
@@ -209,8 +209,6 @@ int rampDropDownDependCB(void * data, int index, fpreal64 time, const PRM_Templa
 		return 0;
 	}
 
-	// all dropdowns have same first 5 options, and enum values are made to match index values
-	// so we can just use index as enum value
 	if (index < PhxShaderSim::RampContext::CHANNEL_TEMPERATURE || index > PhxShaderSim::RampContext::CHANNEL_FUEL) {
 		if (ctx->m_ui && !ctx->m_freeUi) {
 			ctx->m_ui->close();

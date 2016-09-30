@@ -62,7 +62,7 @@ public:
 	struct RampContext {
 		friend class PhxShaderSim;
 		enum RampChannel {
-			CHANNEL_INALID      = 0,
+			CHANNEL_DISABLED    = 0,
 			CHANNEL_TEMPERATURE = 1,
 			CHANNEL_SMOKE       = 2,
 			CHANNEL_SPEED       = 3,
@@ -94,8 +94,8 @@ public:
 			return type - 1;
 		}
 
-		RampData & data(AurRamps::RampType type, RampChannel chan = CHANNEL_INALID) {
-			if (chan == CHANNEL_INALID) {
+		RampData & data(AurRamps::RampType type, RampChannel chan = CHANNEL_DISABLED) {
+			if (chan == CHANNEL_DISABLED) {
 				chan = m_activeChan;
 			}
 			return m_data[rampChanToIdx(chan)][rampTypeToIdx(type)];
