@@ -492,7 +492,7 @@ OP_ERROR PhxShaderSim::saveIntrinsic(ostream &os, const OP_SaveFlags &sflags)
 
 bool PhxShaderSim::loadPacket(UT_IStream &is, const char *token, const char *path)
 {
-    if (OP_Node::loadPacket(is, token, path)) {
+	if (OP_Node::loadPacket(is, token, path)) {
 		return true;
 	}
 
