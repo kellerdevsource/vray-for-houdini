@@ -194,6 +194,7 @@
 	    label	"Heat Size"
 	    type	float
 	    default	{ "1" }
+	    disablewhen	"{ renderMode != 2 }"
 	    range	{ -1000! 1000! }
 	    export	none
 	}
@@ -281,7 +282,7 @@
 	}
 	parm {
 	    name	"fire_opacity_mode"
-	    label	"Opacity Mode"
+	    label	"Fire Opacity Mode"
 	    type	ordinal
 	    default	{ "0" }
 	    menu	{
@@ -294,7 +295,7 @@
 	}
 	parm {
 	    name	"etmult"
-	    label	"Opacity Multiplier"
+	    label	"Fire Multiplier"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0! 100! }
@@ -477,7 +478,7 @@
 		"3"	"Speed"
 		"10"	"Fuel"
 		"4"	"Texture"
-		"5"	"SimpleColor"
+		"5"	"Constant Color"
 		"6"	"RGB"
 	    }
 	    range	{ 0 1 }

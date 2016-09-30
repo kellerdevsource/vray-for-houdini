@@ -81,8 +81,8 @@ void setRampDefaults(PhxShaderSim & sim)
 	// defaults
 	for (int c = 0; c < chanCount; ++c) {
 		const auto ch = static_cast<PhxShaderSim::RampContext::RampChannel>(c + 1);
-		auto & fireCurve = sim.m_ramps["ecolor_ramp"]->data(RampType_Color, ch);
-		auto & fireColor = sim.m_ramps["elum_curve"]->data(RampType_Curve, ch);
+		auto & fireColor = sim.m_ramps["ecolor_ramp"]->data(RampType_Color, ch);
+		auto & fireCurve = sim.m_ramps["elum_curve"]->data(RampType_Curve, ch);
 		auto & smokeCurve = sim.m_ramps["transp_curve"]->data(RampType_Curve, ch);
 		auto & smokeColor = sim.m_ramps["dcolor_ramp"]->data(RampType_Color, ch);
 
@@ -185,7 +185,7 @@ void initPreset(PhxShaderSim & sim, const char * presetName)
 		addCurvePoint(epowerCurve, 4.5, 1.000, AurRamps::MCPT_Spline);
 
 		// smoke opacity
-		auto & transpCurve = sim.m_ramps["transp_curve"]->data(RampType_Curve, PhxShaderSim::RampContext::RampChannel::CHANNEL_TEMPERATURE);
+		auto & transpCurve = sim.m_ramps["transp_curve"]->data(RampType_Curve, PhxShaderSim::RampContext::RampChannel::CHANNEL_SMOKE);
 		transpCurve.m_xS.clear();
 		transpCurve.m_yS.clear();
 		transpCurve.m_interps.clear();
