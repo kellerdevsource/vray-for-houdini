@@ -98,7 +98,7 @@ public:
 			if (chan == CHANNEL_INALID) {
 				chan = m_activeChan;
 			}
-			return m_data[rampChanToIdx(m_activeChan)][rampTypeToIdx(type)];
+			return m_data[rampChanToIdx(chan)][rampTypeToIdx(type)];
 		}
 
 		RampChannel getActiveChannel() const {

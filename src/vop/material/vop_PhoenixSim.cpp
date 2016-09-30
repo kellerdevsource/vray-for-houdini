@@ -32,6 +32,172 @@ static const char * SAVE_TOKEN = "phx_ramp_data";
 
 namespace {
 
+void addCurvePoint(PhxShaderSim::RampData & data, float x, float y, MultiCurvePointType pt)
+{
+	data.m_xS.push_back(x);
+	data.m_yS.push_back(y);
+	data.m_interps.push_back(pt);
+}
+
+void addColorPoint(PhxShaderSim::RampData & data, float x, float r, float g, float b, MultiCurvePointType pt)
+{
+	data.m_xS.push_back(x);
+
+	data.m_yS.push_back(r);
+	data.m_yS.push_back(g);
+	data.m_yS.push_back(b);
+
+	data.m_interps.push_back(pt);
+}
+
+void clearRampData(PhxShaderSim & sim)
+{
+	const int chanCount = PhxShaderSim::RampContext::RampChannel::CHANNEL_COUNT;
+	for (auto & ramp : sim.m_ramps) {
+		for (int c = 0; c < chanCount; c++) {
+			const auto type = sim.m_rampTypes[ramp.first];
+			auto & data = ramp.second->data(type, static_cast<PhxShaderSim::RampContext::RampChannel>(c + 1));
+			data.m_xS.clear();
+			data.m_yS.clear();
+			data.m_interps.clear();
+		}
+	}
+}
+
+void setRampDefaults(PhxShaderSim & sim)
+{
+	const int chanCount = PhxShaderSim::RampContext::RampChannel::CHANNEL_COUNT;
+	const float MINT = 800;
+	const float MAXT = 3000;
+	const float fireMul[chanCount] = { 1.0f, 1.0f / MAXT, 0.1f, 1.0f / MAXT };
+
+	const float smokeColorMul[chanCount] = { 4000, 1, 4000, 1 };
+	const float smokeColors[chanCount * 3] = { 0,0,1, 0,1,0, 1,1,0, 1,0,0 };
+
+	// smoke transp xS
+	const float p0x[chanCount] = { 300, 0,  90, 0};
+	const float p1x[chanCount] = {2000, 1, 600, 1};
+
+	// defaults
+	for (int c = 0; c < chanCount; ++c) {
+		const auto ch = static_cast<PhxShaderSim::RampContext::RampChannel>(c + 1);
+		auto & fireCurve = sim.m_ramps["ecolor_ramp"]->data(RampType_Color, ch);
+		auto & fireColor = sim.m_ramps["elum_curve"]->data(RampType_Curve, ch);
+		auto & smokeCurve = sim.m_ramps["transp_curve"]->data(RampType_Curve, ch);
+		auto & smokeColor = sim.m_ramps["dcolor_ramp"]->data(RampType_Color, ch);
+
+		// fire
+		const float fireColors[6] = { 1,0.094,0,  1,0.597,0.255 };
+
+		for (int r = 0; r < 2; ++r) {
+			const float T = MINT + (MAXT - MINT) * r / (2 - 1);
+			const float x = T * fireMul[c];
+			addCurvePoint(fireCurve, x, (T - MINT)/(MAXT - MINT), AurRamps::MCPT_Spline);
+			addColorPoint(fireColor, x, fireColors[r * 3 + 0], fireColors[r * 3 + 1], fireColors[r * 3 + 2], AurRamps::MCPT_Linear);
+		}
+
+		// smoke color
+		for (int r = 0; r < 4; ++r) {
+			const float x = smokeColorMul[c] * r / (4 - 1);
+			addColorPoint(smokeColor, x, smokeColors[r * 3 + 0], smokeColors[r * 3 + 1], smokeColors[r * 3 + 2], AurRamps::MCPT_Linear);
+		}
+
+		// smoke transp
+		addCurvePoint(smokeCurve, p0x[c], 0.f, AurRamps::MCPT_Spline);
+		addCurvePoint(smokeCurve, p1x[c], 1.f, AurRamps::MCPT_Spline);
+	}
+}
+
+// FumeFX
+// HoudiniAtmos
+// HoudiniLiquid
+// MayaFluids
+void initPreset(PhxShaderSim & sim, const char * presetName)
+{
+	const int chanCount = PhxShaderSim::RampContext::RampChannel::CHANNEL_COUNT;
+
+	clearRampData(sim);
+	setRampDefaults(sim);
+
+	// presets
+	if (!strcmp(presetName, "FumeFX")) {
+		// channel is fuel
+		// fire ramps
+		auto & ecolorRamp = sim.m_ramps["ecolor_ramp"]->data(RampType_Color, PhxShaderSim::RampContext::RampChannel::CHANNEL_FUEL);
+		ecolorRamp.m_xS.clear();
+		ecolorRamp.m_yS.clear();
+		ecolorRamp.m_interps.clear();
+
+		addColorPoint(ecolorRamp, 0.1f, 1.f, 0.33f, 0.f, AurRamps::MCPT_Spline);
+
+		auto & epowerCurve = sim.m_ramps["elum_curve"]->data(RampType_Curve, PhxShaderSim::RampContext::RampChannel::CHANNEL_FUEL); 
+		epowerCurve.m_xS.clear();
+		epowerCurve.m_yS.clear();
+		epowerCurve.m_interps.clear();
+
+		addCurvePoint(epowerCurve, 0.010, 0.000, AurRamps::MCPT_Linear);
+		addCurvePoint(epowerCurve, 0.100, 1.000, AurRamps::MCPT_Linear);
+		addCurvePoint(epowerCurve, 0.200, 0.130, AurRamps::MCPT_Linear);
+		addCurvePoint(epowerCurve, 1.000, 0.100, AurRamps::MCPT_Linear);
+	} else if (!strcmp(presetName, "HoudiniAtmos")) {
+		// channel is temp
+		// fire ramps
+
+		auto & ecolorRamp = sim.m_ramps["ecolor_ramp"]->data(RampType_Color, PhxShaderSim::RampContext::RampChannel::CHANNEL_TEMPERATURE);
+		ecolorRamp.m_xS.clear();
+		ecolorRamp.m_yS.clear();
+		ecolorRamp.m_interps.clear();
+
+		addColorPoint(ecolorRamp,  0.0f, 0.0, 0.00, 0.0, AurRamps::MCPT_Spline);
+		addColorPoint(ecolorRamp,  8.0f, 1.0, 0.65, 0.0, AurRamps::MCPT_Spline);
+		addColorPoint(ecolorRamp, 13.0f, 1.0, 0.88, 0.0, AurRamps::MCPT_Spline);
+		addColorPoint(ecolorRamp, 14.0f, 1.0, 1.00, 1.0, AurRamps::MCPT_Spline);
+
+		auto & epowerCurve = sim.m_ramps["elum_curve"]->data(RampType_Curve, PhxShaderSim::RampContext::RampChannel::CHANNEL_TEMPERATURE); 
+		epowerCurve.m_xS.clear();
+		epowerCurve.m_yS.clear();
+		epowerCurve.m_interps.clear();
+
+		addCurvePoint(epowerCurve,  0.01, 0.000, AurRamps::MCPT_Spline);
+		addCurvePoint(epowerCurve, 14.00, 1.000, AurRamps::MCPT_Spline);
+	} else if (!strcmp(presetName, "HoudiniLiquid")) {
+
+	} else if (!strcmp(presetName, "MayaFluids")) {
+		// channel is temp
+		// fire ramps
+
+		auto & ecolorRamp = sim.m_ramps["ecolor_ramp"]->data(RampType_Color, PhxShaderSim::RampContext::RampChannel::CHANNEL_TEMPERATURE);
+		ecolorRamp.m_xS.clear();
+		ecolorRamp.m_yS.clear();
+		ecolorRamp.m_interps.clear();
+
+		addColorPoint(ecolorRamp, 0.0f, 0.00, 0.00, 0.00, AurRamps::MCPT_Spline);
+		addColorPoint(ecolorRamp, 3.0f, 1.00, 0.25, 0.10, AurRamps::MCPT_Spline);
+		addColorPoint(ecolorRamp, 3.5f, 1.37, 1.00, 0.00, AurRamps::MCPT_Spline);
+		addColorPoint(ecolorRamp, 4.0f, 1.56, 1.56, 0.98, AurRamps::MCPT_Spline);
+
+		auto & epowerCurve = sim.m_ramps["elum_curve"]->data(RampType_Curve, PhxShaderSim::RampContext::RampChannel::CHANNEL_TEMPERATURE); 
+		epowerCurve.m_xS.clear();
+		epowerCurve.m_yS.clear();
+		epowerCurve.m_interps.clear();
+
+		addCurvePoint(epowerCurve, 0.2, 0.000, AurRamps::MCPT_Spline);
+		addCurvePoint(epowerCurve, 4.5, 1.000, AurRamps::MCPT_Spline);
+
+		// smoke opacity
+		auto & transpCurve = sim.m_ramps["transp_curve"]->data(RampType_Curve, PhxShaderSim::RampContext::RampChannel::CHANNEL_TEMPERATURE);
+		transpCurve.m_xS.clear();
+		transpCurve.m_yS.clear();
+		transpCurve.m_interps.clear();
+
+		addCurvePoint(transpCurve, 0.002, 0.00, AurRamps::MCPT_Spline);
+		addCurvePoint(transpCurve, 0.008, 0.40, AurRamps::MCPT_Spline);
+		addCurvePoint(transpCurve, 0.040, 0.70, AurRamps::MCPT_Spline);
+		addCurvePoint(transpCurve, 0.110, 0.83, AurRamps::MCPT_Spline);
+		addCurvePoint(transpCurve, 0.440, 0.95, AurRamps::MCPT_Spline);
+	}
+}
+
 int rampDropDownDependCB(void * data, int index, fpreal64 time, const PRM_Template *tplate)
 {
 	auto simNode = reinterpret_cast<PhxShaderSim*>(data);
@@ -256,6 +422,7 @@ PhxShaderSim::PhxShaderSim(OP_Network *parent, const char *name, OP_Operator *en
 	}
 
 	onLoadSetActiveChannels(false);
+	setRampDefaults(*this);
 }
 
 
@@ -431,7 +598,7 @@ bool PhxShaderSim::loadRamps(UT_IStream & is)
 			if (type == RampType_Curve) {
 				readSome(, data.m_interps.size(), is.read<int>(reinterpret_cast<int*>(data.m_interps.data()), data.m_interps.size()));
 			} else {
-				std::fill(data.m_interps.begin(), data.m_interps.end(), MCPT_Linear);
+				std::fill(data.m_interps.begin(), data.m_interps.end(), AurRamps::MCPT_Linear);
 			}
 
 			if (ramp != m_ramps.end() && ramp->second) {
