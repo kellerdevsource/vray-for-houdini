@@ -486,7 +486,7 @@ OP_ERROR PhxShaderSim::saveIntrinsic(ostream &os, const OP_SaveFlags &sflags)
 	os << SAVE_TOKEN << SAVE_SEPARATOR;
 	saveRamps(os);
 
-    return OP_Node::saveIntrinsic(os, sflags);
+	return OP_Node::saveIntrinsic(os, sflags);
 }
 
 
