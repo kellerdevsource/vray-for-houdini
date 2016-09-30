@@ -269,6 +269,7 @@
 	    type	uv
 	    size	2
 	    default	{ "0" "0" }
+	    disablewhen	"{ mod_e == 0 }"
 	    range	{ 0 1 }
 	    export	none
 	}
@@ -491,6 +492,7 @@
 	    type	uv
 	    size	2
 	    default	{ "0" "0" }
+	    disablewhen	"{ mod_d == 0 }"
 	    range	{ 0 1 }
 	    export	none
 	}
@@ -648,6 +650,7 @@
 	    type	uv
 	    size	2
 	    default	{ "0" "0" }
+	    disablewhen	"{ mod_t == 0 }"
 	    range	{ 0 1 }
 	    export	none
 	}
