@@ -1691,13 +1691,6 @@ int VRayExporter::renderFrame(int locked)
 		m_renderer.startRender(locked);
 	}
 
-
-	VRay::VRayExportSettings expSettings;
-	expSettings.framesInSeparateFiles = false;
-	expSettings.useHexFormat = false;
-	expSettings.compressed = false;
-	exportVrscene("D:/sc/hou.vrscene", &expSettings);
-
 	return 0;
 }
 
