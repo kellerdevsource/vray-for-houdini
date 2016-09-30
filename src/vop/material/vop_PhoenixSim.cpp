@@ -108,10 +108,9 @@ void setRampDefaults(PhxShaderSim & sim)
 	}
 }
 
-// FumeFX
-// HoudiniAtmos
-// HoudiniLiquid
-// MayaFluids
+// NOTE: this function is not currently used anywhere,
+// it provides the easiest way to set preset values to the ramps
+// maybe keep it here and use it when preset values change in future
 void initPreset(PhxShaderSim & sim, const char * presetName)
 {
 	const int chanCount = PhxShaderSim::RampContext::RampChannel::CHANNEL_COUNT;
