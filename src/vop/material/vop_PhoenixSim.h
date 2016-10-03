@@ -16,7 +16,7 @@
 
 #include "ramps.h"
 #include <vector>
-#include <unordered_map>
+#include <boost/unordered_map.hpp>
 
 namespace VRayForHoudini {
 namespace VOP {
@@ -210,9 +210,9 @@ public:
 
 	/// Maps property name to ramp data, but since we can have a curve and color ramp in same window
 	/// Some properties might map to one context
-	std::unordered_map<std::string, std::shared_ptr<RampContext>> m_ramps;
+	boost::unordered_map<std::string, std::shared_ptr<RampContext>> m_ramps;
 	/// Maps property name to ramp type, so we know what data to get from RampContext
-	std::unordered_map<std::string, AurRamps::RampType>           m_rampTypes;
+	boost::unordered_map<std::string, AurRamps::RampType>           m_rampTypes;
 protected:
 	/// Sets the current active channels for all ramps
 	/// @param fromUi - if true this takes the values from the current UI, otherwise uses the default from .ds file.
