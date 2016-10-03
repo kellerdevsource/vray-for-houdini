@@ -32,6 +32,11 @@ static const char * SAVE_TOKEN = "phx_ramp_data";
 
 namespace {
 
+/// Adds curve point to data
+/// @param data - RampData to add point to
+/// @param x - key value
+/// @param y - curve value
+/// @param pt - interpolation type
 void addCurvePoint(PhxShaderSim::RampData & data, float x, float y, MultiCurvePointType pt)
 {
 	data.m_xS.push_back(x);
@@ -39,6 +44,13 @@ void addCurvePoint(PhxShaderSim::RampData & data, float x, float y, MultiCurvePo
 	data.m_interps.push_back(pt);
 }
 
+/// Adds color point to data
+/// @param data - RampData to add point to
+/// @param x - key value
+/// @param r - color r value
+/// @param g - color g value
+/// @param b - color b value
+/// @param pt - interpolation type
 void addColorPoint(PhxShaderSim::RampData & data, float x, float r, float g, float b, MultiCurvePointType pt)
 {
 	data.m_xS.push_back(x);
@@ -50,6 +62,8 @@ void addColorPoint(PhxShaderSim::RampData & data, float x, float r, float g, flo
 	data.m_interps.push_back(pt);
 }
 
+/// Clears all ramp's point from PhxShaderSim
+/// @param sim - target to clear
 void clearRampData(PhxShaderSim & sim)
 {
 	const int chanCount = PhxShaderSim::RampContext::RampChannel::CHANNEL_COUNT;
@@ -64,6 +78,8 @@ void clearRampData(PhxShaderSim & sim)
 	}
 }
 
+/// Sets the *non* preset defaults for all ramps in sim
+/// @param sim - target to set defaults to
 void setRampDefaults(PhxShaderSim & sim)
 {
 	const int chanCount = PhxShaderSim::RampContext::RampChannel::CHANNEL_COUNT;
@@ -197,6 +213,12 @@ void initPreset(PhxShaderSim & sim, const char * presetName)
 	}
 }
 
+/// Used as callback for when channel dropdown is changed. It sets the actie channel for the appropriate ramp
+/// @param data - pointer to OP_Node that called the callback
+/// @param index - the index of the selected option [1, count)
+/// @param time - the time that the change was made
+/// @param tplate - the param template that this was triggered for
+/// @retval 1 if houdini should refresh the UI
 int rampDropDownDependCB(void * data, int index, fpreal64 time, const PRM_Template *tplate)
 {
 	auto simNode = reinterpret_cast<PhxShaderSim*>(data);
@@ -221,6 +243,12 @@ int rampDropDownDependCB(void * data, int index, fpreal64 time, const PRM_Templa
 	return 1;
 }
 
+/// Called when user clicks on button for ramp, this should open the UI if it is not yet open
+/// @param data - pointer to OP_Node that called the callback
+/// @param index - the index of the selected option [1, count)
+/// @param time - the time that the change was made
+/// @param tplate - the param template that this was triggered for
+/// @retval 1 if houdini should refresh the UI
 int rampButtonClickCB(void *data, int index, fpreal64 time, const PRM_Template *tplate)
 {
 	using namespace std;
