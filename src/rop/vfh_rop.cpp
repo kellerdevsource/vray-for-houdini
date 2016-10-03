@@ -129,7 +129,7 @@ static PRM_Name          parm_DR_enabled("dr_enabled", "Enabled");
 static PRM_Name          parm_DefaultDRHost_port("drhost_port", "Default Port");
 static PRM_Name          parm_DRHost_count("drhost_cnt", "Number of Hosts");
 static PRM_Range         parm_DRHost_countrange(PRM_RANGE_RESTRICTED, 1, PRM_RANGE_UI, 31);
-static PRM_Name          parm_DRHost_enabled("drhost#_enabled", "Enanbled");
+static PRM_Name          parm_DRHost_enabled("drhost#_enabled", "Enabled");
 static PRM_Name          parm_DRHost_address("drhost#_address", "Host Address");
 static PRM_Name          parm_DRHost_usedefaultport("drhost#_usedefaultport", "Use Default Port");
 static PRM_Name          parm_DRHost_port("drhost#_port", "Host Port");
