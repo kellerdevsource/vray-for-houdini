@@ -127,8 +127,14 @@ if __name__ == '__main__':
             sys.stdout.flush()
             os.makedirs(path)
 
-    os.chdir(args.perm_dir)
-    # get_repo(args.libs_repo, target_name='vray_for_houdini_sdk')
+    perm_dir = os.path.join(args.perm_dir, 'houdini-dependencies')
+    if not os.path.exists(perm_dir)
+        sys.stdout.write("Path %s == [%s] missing, trying to create." % (d, path))
+        sys.stdout.flush()
+        os.makedirs(path)
+
+    os.chdir(perm_dir)
+    get_repo(args.libs_repo, target_name='vray_for_houdini_sdk')
     os.chdir(args.build_dir)
 
     build_dir = args.build_dir
@@ -149,7 +155,7 @@ if __name__ == '__main__':
             'CGR_APPSDK_VERSION': '20160510',
             'CGR_BUILD_MODE': 'nightly',
             'CGR_BUILD_TYPE': 'Release',
-            'CGR_CONFIG_ROOT': args.perm_dir,
+            'CGR_CONFIG_ROOT': perm_dir,
             'CGR_HOUDINI_VERSION': '15.0',
             'CGR_HOUDINI_VERSION_BUILD': '459',
             'CGR_PHXSDK_VERSION': '2016_22501',
