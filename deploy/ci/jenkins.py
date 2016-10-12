@@ -162,7 +162,7 @@ if __name__ == '__main__':
             'CGR_RELEASE_ROOT': os.path.join(args.output_dir, 'release'),
             'CGR_SDK': os.path.join(os.environ['VRAY_CGREPO_PATH'], 'sdk', os_name),
             'CGR_VRAYSDK_VERSION': '2016',
-            'CGR_SDKPATH': os.path.join(args.perm_dir, 'vray_for_houdini_sdk'),
+            'CGR_SDKPATH': os.path.join(perm_dir, 'vray_for_houdini_sdk'),
         }
 
         def __getattr__(self, attr):
