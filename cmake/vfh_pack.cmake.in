@@ -35,7 +35,7 @@ else()
 			ARCHIVE_RESULT
 	)
 endif()
-if ("${ARCHIVE_RESULT}" EQUAL "0")
+if ("${ARCHIVE_RESULT}" EQUAL 0 OR "${ARCHIVE_RESULT}" STREQUAL  "")
 	message("${ARCHIVE_OUT}")
 else()
 	message(FATAL_ERROR "Packing failed:\n${ARCHIVE_OUT}")
