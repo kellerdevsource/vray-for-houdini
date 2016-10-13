@@ -126,10 +126,10 @@ if __name__ == '__main__':
         os.makedirs(args.output_dir)
 
     perm_dir = os.path.join(args.perm_dir, 'houdini-dependencies')
-    if not os.path.exists(perm_dir)
-        sys.stdout.write("Path perm_dir/houdini-dependencies == [%s] missing, trying to create." % path)
+    if not os.path.exists(perm_dir):
+        sys.stdout.write("Path perm_dir/houdini-dependencies == [%s] missing, trying to create." % perm_dir)
         sys.stdout.flush()
-        os.makedirs(path)
+        os.makedirs(perm_dir)
 
     os.chdir(perm_dir)
     get_repo(args.libs_repo, target_name='vray_for_houdini_sdk')
