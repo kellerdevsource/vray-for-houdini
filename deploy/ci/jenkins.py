@@ -140,6 +140,11 @@ if __name__ == '__main__':
 
     os_name = {'linux' : 'linux', 'osx' : 'mac', 'windows' : 'win'}[TC.getPlatformSuffix()]
 
+    ninja_path = os.path.join(os.environ['VRAY_CGREPO_PATH'], 'build_scripts', 'cmake', 'tools', 'bin')
+    sys.stdout.write('Ninja path [%s]\n' % ninja_path)
+    sys.stdout.flush()
+    os.environ['PATH'] = ninja_path + ';' + os.environ['PATH']
+
 
     class ArgsReplacement():
         args = {
