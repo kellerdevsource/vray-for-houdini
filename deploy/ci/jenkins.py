@@ -152,7 +152,7 @@ if __name__ == '__main__':
             'src_hash': source_hash,
             'src_dir': source_path,
             'upload': False,
-            'clean': True,
+            'clean': False,
             'BUILD_NUMBER': 1,
             'CGR_APPSDK_VERSION': '20160510',
             'CGR_BUILD_MODE': 'nightly',
