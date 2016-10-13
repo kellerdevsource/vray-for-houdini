@@ -258,7 +258,7 @@ def main(args):
     old_path = os.environ['PATH']
     if args.jenkins and getPlatformSuffix() == 'windows':
         # clear all possible conflicts from path
-        os.environ['PATH'] = ninja_path
+        os.environ['PATH'] = ninja_path + ";" + os.path.dirname(which('git'))
 
     if sys.platform == 'win32':
         houdiniMajorVer = float(args.CGR_HOUDINI_VERSION)
