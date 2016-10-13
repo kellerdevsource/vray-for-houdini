@@ -111,33 +111,30 @@ def get_git_head_hash(root):
 
 
 if __name__ == '__main__':
+    build_dir = os.getcwd()
     parser = argparse.ArgumentParser(usage="python3 teamcity.py [options]")
-    parser.add_argument('--build_dir', required=True, help="Root build directory")
     parser.add_argument('--perm_dir', required=True, help="Directory for permenents (libs)")
     parser.add_argument('--output_dir', required=True, help="Directory for output files")
     parser.add_argument('--libs_repo', required=True, help="Git repo for libs needed for build")
 
     args = parser.parse_args()
 
-    dirs = ["build_dir", "perm_dir", "output_dir"]
-    for d in dirs:
-        path = getattr(args, d)
-        if not os.path.exists(path):
-            sys.stdout.write("Path %s == [%s] missing, trying to create." % (d, path))
-            sys.stdout.flush()
-            os.makedirs(path)
+
+    if not os.path.exists(args.output_dir):
+        sys.stdout.write("Path output_dir == [%s] missing, trying to create." % args.output_dir)
+        sys.stdout.flush()
+        os.makedirs(args.output_dir)
 
     perm_dir = os.path.join(args.perm_dir, 'houdini-dependencies')
     if not os.path.exists(perm_dir)
-        sys.stdout.write("Path %s == [%s] missing, trying to create." % (d, path))
+        sys.stdout.write("Path perm_dir/houdini-dependencies == [%s] missing, trying to create." % path)
         sys.stdout.flush()
         os.makedirs(path)
 
     os.chdir(perm_dir)
     get_repo(args.libs_repo, target_name='vray_for_houdini_sdk')
-    os.chdir(args.build_dir)
+    os.chdir(build_dir)
 
-    build_dir = args.build_dir
     source_path = os.path.dirname(os.path.dirname(sys.path[0]))
     source_hash = get_git_head_hash(source_path)
 
