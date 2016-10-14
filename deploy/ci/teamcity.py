@@ -23,6 +23,8 @@ _cgr_build_type = None
 _cgr_release_root = None
 _cgr_config_root = None
 
+ENV_PATH_SEP = ';' if sys.platform == 'win32' else ':'
+
 
 def toCmakePath(path):
     return os.path.normpath(path).replace("\\", "/")
@@ -117,11 +119,11 @@ def set_utils_paths():
             "C:/Program Files/SlikSvn/bin",
             "C:/Program Files/Git/bin",
             "C:/Program Files (x86)/WinSCP",
-        ] + os.environ['PATH'].split(';')
+        ] + os.environ['PATH'].split(ENV_PATH_SEP)
     }
 
     for var in env:
-        os.environ[var] = ";".join(env[var])
+        os.environ[var] = ENV_PATH_SEP.join(env[var])
 
 
 def setup_msvc_2012(cgrSdkPath):
@@ -140,7 +142,7 @@ def setup_msvc_2012(cgrSdkPath):
             "{CGR_SDK}/msvs2012/lib/amd64",
         ],
 
-        'PATH' : os.environ['PATH'].split(';') + 
+        'PATH' : os.environ['PATH'].split(ENV_PATH_SEP) +
             [
                 "{CGR_SDK}/msvs2012/bin/amd64",
                 "{CGR_SDK}/msvs2012/bin",
@@ -150,7 +152,7 @@ def setup_msvc_2012(cgrSdkPath):
     }
 
     for var in env:
-        os.environ[var] = ";".join(env[var]).format(CGR_SDK=cgrSdkPath)
+        os.environ[var] = ENV_PATH_SEP.join(env[var]).format(CGR_SDK=cgrSdkPath)
 
 
 def setup_msvc_2015(cgrSdkPath):
@@ -171,7 +173,7 @@ def setup_msvc_2015(cgrSdkPath):
             "{CGR_SDK}/msvs2015/lib/amd64",
         ],
 
-        'PATH' : os.environ['PATH'].split(';') +
+        'PATH' : os.environ['PATH'].split(ENV_PATH_SEP) +
             [
                 "{CGR_SDK}/msvs2015/bin/amd64",
                 "{CGR_SDK}/msvs2015/bin",
@@ -182,7 +184,7 @@ def setup_msvc_2015(cgrSdkPath):
 
     os.environ['__MS_VC_INSTALL_PATH'] = "{CGR_SDK}/msvs2015"
     for var in env:
-        os.environ[var] = ";".join(env[var]).format(CGR_SDK=cgrSdkPath)
+        os.environ[var] = ENV_PATH_SEP.join(env[var]).format(CGR_SDK=cgrSdkPath)
 
 
 def getArchiveExt():
@@ -263,7 +265,7 @@ def main(args):
     old_path = os.environ['PATH']
     if args.jenkins and getPlatformSuffix() == 'windows':
         # clear all possible conflicts from path
-        os.environ['PATH'] = ';'.join([ninja_path, os.path.dirname(which('git')), os.path.dirname(which('7z'))])
+        os.environ['PATH'] = ENV_PATH_SEP.join([ninja_path, os.path.dirname(which('git')), os.path.dirname(which('7z'))])
 
     if sys.platform == 'win32':
         houdiniMajorVer = float(args.CGR_HOUDINI_VERSION)
@@ -302,7 +304,7 @@ def main(args):
         # clean build dir
         cleanDir(os.getcwd())
 
-    sys.stdout.write('PATH:\n\t%s\n' % '\n\t'.join(os.environ['PATH'].split(';')))
+    sys.stdout.write('PATH:\n\t%s\n' % '\n\t'.join(os.environ['PATH'].split(ENV_PATH_SEP)))
     sys.stdout.write('cmake args:\n%s\n' % '\n\t'.join(cmake))
     sys.stdout.flush()
 

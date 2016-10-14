@@ -150,7 +150,7 @@ if __name__ == '__main__':
         ninja_path = os.path.join(os.environ['CI_ROOT'], 'ninja', 'ninja')
     sys.stdout.write('Ninja path [%s]\n' % ninja_path)
     sys.stdout.flush()
-    os.environ['PATH'] = ninja_path + ';' + os.environ['PATH']
+    os.environ['PATH'] = ninja_path + TC.ENV_PATH_SEP + os.environ['PATH']
 
 
     class ArgsReplacement():
