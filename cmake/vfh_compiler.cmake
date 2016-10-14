@@ -32,7 +32,7 @@ if(WIN32)
 	set(CMAKE_CXX_FLAGS_DEBUG "/Od /MD /Zi /DNDEBUG")
 
 else()
-	set(CMAKE_CXX_FLAGS       "-std=c++11 -fno-asm")
+	set(CMAKE_CXX_FLAGS       "-std=c++11")
 	set(CMAKE_CXX_FLAGS_DEBUG "-g -DNDEBUG")
 	set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG")
 
