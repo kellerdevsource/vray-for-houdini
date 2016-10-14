@@ -29,6 +29,14 @@ ENV_PATH_SEP = ';' if sys.platform == 'win32' else ':'
 def toCmakePath(path):
     return os.path.normpath(path).replace("\\", "/")
 
+def getPlatformSuffix():
+    if sys.platform == 'win32':
+        return "windows"
+    elif sys.platform == 'linux':
+        return "linux"
+    return "osx"
+
+
 
 def cleanDir(dirpath):
     if os.path.isdir(dirpath):
@@ -113,6 +121,9 @@ def upload(filepath):
 # Setup Visual Studio variables for command line usage
 #
 def set_utils_paths():
+    if getPlatformSuffix() != 'windows':
+        return
+
     env = {
         'PATH': [
             "C:/Program Files (x86)/CMake/bin",
@@ -191,14 +202,6 @@ def getArchiveExt():
     if sys.platform == 'win32':
         return "zip"
     return "tar.bz2"
-
-
-def getPlatformSuffix():
-    if sys.platform == 'win32':
-        return "windows"
-    elif sys.platform == 'linux':
-        return "linux"
-    return "osx"
 
 
 def which(program, add_ext=False):
