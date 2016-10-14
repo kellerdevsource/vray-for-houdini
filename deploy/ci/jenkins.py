@@ -186,4 +186,4 @@ if __name__ == '__main__':
         args.CGR_CXX_COMPILER = 'g++482'
         args.CGR_C_COMPILER = 'gcc482'
 
-    TC.main()
+    TC.main(args)
