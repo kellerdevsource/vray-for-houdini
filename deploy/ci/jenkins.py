@@ -138,9 +138,13 @@ if __name__ == '__main__':
     source_path = os.path.dirname(os.path.dirname(sys.path[0]))
     source_hash = get_git_head_hash(source_path)
 
-    os_name = {'linux' : 'linux', 'osx' : 'mac', 'windows' : 'win'}[TC.getPlatformSuffix()]
+    os_name = {
+        'linux' : 'linux',
+        'osx' : 'mac',
+        'windows' : 'win'
+    }[TC.getPlatformSuffix()]
 
-    if TC.getPlatformSuffix() == win:
+    if TC.getPlatformSuffix() == 'windowns':
         ninja_path = os.path.join(os.environ['VRAY_CGREPO_PATH'], 'build_scripts', 'cmake', 'tools', 'bin')
     else:
         ninja_path = os.path.join(os.environ['CI_ROOT'], 'ninja', 'ninja')
