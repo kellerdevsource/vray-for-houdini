@@ -144,7 +144,7 @@ if __name__ == '__main__':
         'windows' : 'win'
     }[TC.getPlatformSuffix()]
 
-    if TC.getPlatformSuffix() == 'windowns':
+    if TC.getPlatformSuffix() == 'windows':
         ninja_path = os.path.join(os.environ['VRAY_CGREPO_PATH'], 'build_scripts', 'cmake', 'tools', 'bin')
     else:
         ninja_path = os.path.join(os.environ['CI_ROOT'], 'ninja', 'ninja')
