@@ -117,6 +117,15 @@ if __name__ == '__main__':
     parser.add_argument('--output_dir', required=True, help="Directory for output files")
     parser.add_argument('--libs_repo', required=True, help="Git repo for libs needed for build")
 
+    parser.add_argument('--build_type', required=True, help="Release or Debug", choices=['Debug', 'Release'])
+    parser.add_argument('--build_number', help="Current build number, defaults to 42", default='42')
+    parser.add_argument('--appsdk_version', help="Appsdk version", default='20160510')
+
+    parser.add_argument('--cgr_houdini_version', default='15.0', help="Houdini target version")
+    parser.add_argument('--cgr_houdini_version_build', default='459', help="Houdini target build version")
+    parser.add_argument('--cgr_phxsdk_version', default='2016_22501', help="Phoenix SDK version")
+    parser.add_argument('--cgr_vraysdk_version', default='2016', help="VRay SDK version")
+
     args = parser.parse_args()
 
 
@@ -160,17 +169,17 @@ if __name__ == '__main__':
             'src_dir': source_path,
             'upload': False,
             'clean': False,
-            'BUILD_NUMBER': 1,
-            'CGR_APPSDK_VERSION': '20160510',
+            'BUILD_NUMBER': args.build_number,
+            'CGR_APPSDK_VERSION': args.appsdk_version,
             'CGR_BUILD_MODE': 'nightly',
-            'CGR_BUILD_TYPE': 'Release',
+            'CGR_BUILD_TYPE': args.build_type,
             'CGR_CONFIG_ROOT': perm_dir,
-            'CGR_HOUDINI_VERSION': '15.0',
-            'CGR_HOUDINI_VERSION_BUILD': '459',
-            'CGR_PHXSDK_VERSION': '2016_22501',
+            'CGR_HOUDINI_VERSION': args.cgr_houdini_version,
+            'CGR_HOUDINI_VERSION_BUILD': args.cgr_houdini_version_build,
+            'CGR_PHXSDK_VERSION': args.cgr_phxsdk_version,
+            'CGR_VRAYSDK_VERSION': args.cgr_vraysdk_version,
             'CGR_RELEASE_ROOT': os.path.join(args.output_dir, 'release'),
             'CGR_SDK': os.path.join(os.environ['VRAY_CGREPO_PATH'], 'sdk', os_name),
-            'CGR_VRAYSDK_VERSION': '2016',
             'CGR_SDKPATH': os.path.join(perm_dir, 'vray_for_houdini_sdk'),
         }
 
