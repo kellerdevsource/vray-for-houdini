@@ -88,8 +88,9 @@ struct RampContext {
 		CHANNEL_SMOKE       = 2,
 		CHANNEL_SPEED       = 3,
 		CHANNEL_FUEL        = 4,
-		CHANNEL_COUNT       = 4, // actual count of channels - temp, smoke, speed and fuel
 	};
+
+	static const int CHANNEL_COUNT = 4; ///< actual count of channels - temp, smoke, speed and fuel
 
 	/// Constructs empty context with None type for ramps
 	/// @param type - the type of the data inside the context
@@ -289,7 +290,7 @@ void addColorPoint(RampData & data, float x, float r, float g, float b, MultiCur
 
 void PhxShaderSim::clearRampData()
 {
-	const int chanCount = RampContext::RampChannel::CHANNEL_COUNT;
+	const int chanCount = RampContext::CHANNEL_COUNT;
 	for (auto & ramp : m_ramps) {
 		for (int c = 0; c < chanCount; c++) {
 			const auto type = m_rampTypes[ramp.first];
@@ -304,7 +305,7 @@ void PhxShaderSim::clearRampData()
 
 void PhxShaderSim::setRampDefaults()
 {
-	const int chanCount = RampContext::RampChannel::CHANNEL_COUNT;
+	const int chanCount = RampContext::CHANNEL_COUNT;
 	const float MINT = 800;
 	const float MAXT = 3000;
 	const float fireMul[chanCount] = { 1.0f, 1.0f / MAXT, 0.1f, 1.0f / MAXT };
@@ -349,7 +350,7 @@ void PhxShaderSim::setRampDefaults()
 
 void PhxShaderSim::initPreset(const char * presetName)
 {
-	const int chanCount = RampContext::RampChannel::CHANNEL_COUNT;
+	const int chanCount = RampContext::CHANNEL_COUNT;
 
 	clearRampData();
 	setRampDefaults();
