@@ -88,7 +88,7 @@ struct RampContext {
 		CHANNEL_SMOKE       = 2,
 		CHANNEL_SPEED       = 3,
 		CHANNEL_FUEL        = 4,
-		CHANNEL_COUNT       = 4,
+		CHANNEL_COUNT       = 4, // actual count of channels - temp, smoke, speed and fuel
 	};
 
 	/// Constructs empty context with None type for ramps
