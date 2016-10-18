@@ -55,12 +55,34 @@ public:
 
 	virtual PluginResult       asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext=nullptr) VRAY_OVERRIDE;
 
-	/// Maps property name to ramp data, but since we can have a curve and color ramp in same window
-	/// Some properties might map to one context
-	boost::unordered_map<std::string, std::shared_ptr<RampContext>> m_ramps;
-	/// Maps property name to ramp type, so we know what data to get from RampContext
-	boost::unordered_map<std::string, AurRamps::RampType>           m_rampTypes;
 protected:
+	/// Clears all ramp's points
+	void                       clearRampData();
+
+	/// Sets the *non* preset defaults for all ramps in sim
+	void                       setRampDefaults();
+
+	// NOTE: this function is not currently used anywhere,
+	// it provides the easiest way to set preset values to the ramps
+	// maybe keep it here and use it when preset values change in future
+	void                       initPreset(const char * presetName);
+
+	/// Used as callback for when channel dropdown is changed. It sets the actie channel for the appropriate ramp
+	/// @param data - pointer to OP_Node that called the callback
+	/// @param index - the index of the selected option [1, count)
+	/// @param time - the time that the change was made
+	/// @param tplate - the param template that this was triggered for
+	/// @retval 1 if houdini should refresh the UI
+	static int                 rampDropDownDependCB(void * data, int index, fpreal64 time, const PRM_Template *tplate);
+
+	/// Called when user clicks on button for ramp, this should open the UI if it is not yet open
+	/// @param data - pointer to OP_Node that called the callback
+	/// @param index - the index of the selected option [1, count)
+	/// @param time - the time that the change was made
+	/// @param tplate - the param template that this was triggered for
+	/// @retval 1 if houdini should refresh the UI
+	static int                 rampButtonClickCB(void *data, int index, fpreal64 time, const PRM_Template *tplate);
+
 	/// Sets the current active channels for all ramps
 	/// @param fromUi - if true this takes the values from the current UI, otherwise uses the default from .ds file.
 	///                 This is true when the scene is loaded from file and we need to parse the loaded channels
@@ -71,6 +93,12 @@ protected:
 	bool                       saveRamps(std::ostream & os);
 	/// Reads ramp data from UT_IStream
 	bool                       loadRamps(UT_IStream & is);
+
+	/// Maps property name to ramp data, but since we can have a curve and color ramp in same window
+	/// Some properties might map to one context
+	boost::unordered_map<std::string, std::shared_ptr<RampContext>> m_ramps;
+	/// Maps property name to ramp type, so we know what data to get from RampContext
+	boost::unordered_map<std::string, AurRamps::RampType>           m_rampTypes;
 
 	virtual void               setPluginType() VRAY_OVERRIDE;
 };

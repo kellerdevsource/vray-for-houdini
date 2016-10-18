@@ -284,15 +284,15 @@ void addColorPoint(RampData & data, float x, float r, float g, float b, MultiCur
 
 	data.m_interps.push_back(pt);
 }
+} // namespace
 
-/// Clears all ramp's point from PhxShaderSim
-/// @param sim - target to clear
-void clearRampData(PhxShaderSim & sim)
+
+void PhxShaderSim::clearRampData()
 {
 	const int chanCount = RampContext::RampChannel::CHANNEL_COUNT;
-	for (auto & ramp : sim.m_ramps) {
+	for (auto & ramp : m_ramps) {
 		for (int c = 0; c < chanCount; c++) {
-			const auto type = sim.m_rampTypes[ramp.first];
+			const auto type = m_rampTypes[ramp.first];
 			auto & data = ramp.second->data(type, static_cast<RampContext::RampChannel>(c + 1));
 			data.m_xS.clear();
 			data.m_yS.clear();
@@ -301,9 +301,8 @@ void clearRampData(PhxShaderSim & sim)
 	}
 }
 
-/// Sets the *non* preset defaults for all ramps in sim
-/// @param sim - target to set defaults to
-void setRampDefaults(PhxShaderSim & sim)
+
+void PhxShaderSim::setRampDefaults()
 {
 	const int chanCount = RampContext::RampChannel::CHANNEL_COUNT;
 	const float MINT = 800;
@@ -320,10 +319,10 @@ void setRampDefaults(PhxShaderSim & sim)
 	// defaults
 	for (int c = 0; c < chanCount; ++c) {
 		const auto ch = static_cast<RampContext::RampChannel>(c + 1);
-		auto & fireColor = sim.m_ramps["ecolor_ramp"]->data(RampType_Color, ch);
-		auto & fireCurve = sim.m_ramps["elum_curve"]->data(RampType_Curve, ch);
-		auto & smokeCurve = sim.m_ramps["transp_curve"]->data(RampType_Curve, ch);
-		auto & smokeColor = sim.m_ramps["dcolor_ramp"]->data(RampType_Color, ch);
+		auto & fireColor = m_ramps["ecolor_ramp"]->data(RampType_Color, ch);
+		auto & fireCurve = m_ramps["elum_curve"]->data(RampType_Curve, ch);
+		auto & smokeCurve = m_ramps["transp_curve"]->data(RampType_Curve, ch);
+		auto & smokeColor = m_ramps["dcolor_ramp"]->data(RampType_Color, ch);
 
 		// fire
 		const float fireColors[6] = { 1,0.094,0,  1,0.597,0.255 };
@@ -347,28 +346,26 @@ void setRampDefaults(PhxShaderSim & sim)
 	}
 }
 
-// NOTE: this function is not currently used anywhere,
-// it provides the easiest way to set preset values to the ramps
-// maybe keep it here and use it when preset values change in future
-void initPreset(PhxShaderSim & sim, const char * presetName)
+
+void PhxShaderSim::initPreset(const char * presetName)
 {
 	const int chanCount = RampContext::RampChannel::CHANNEL_COUNT;
 
-	clearRampData(sim);
-	setRampDefaults(sim);
+	clearRampData();
+	setRampDefaults();
 
 	// presets
 	if (!strcmp(presetName, "FumeFX")) {
 		// channel is fuel
 		// fire ramps
-		auto & ecolorRamp = sim.m_ramps["ecolor_ramp"]->data(RampType_Color, RampContext::RampChannel::CHANNEL_FUEL);
+		auto & ecolorRamp = m_ramps["ecolor_ramp"]->data(RampType_Color, RampContext::RampChannel::CHANNEL_FUEL);
 		ecolorRamp.m_xS.clear();
 		ecolorRamp.m_yS.clear();
 		ecolorRamp.m_interps.clear();
 
 		addColorPoint(ecolorRamp, 0.1f, 1.f, 0.33f, 0.f, AurRamps::MCPT_Spline);
 
-		auto & epowerCurve = sim.m_ramps["elum_curve"]->data(RampType_Curve, RampContext::RampChannel::CHANNEL_FUEL); 
+		auto & epowerCurve = m_ramps["elum_curve"]->data(RampType_Curve, RampContext::RampChannel::CHANNEL_FUEL); 
 		epowerCurve.m_xS.clear();
 		epowerCurve.m_yS.clear();
 		epowerCurve.m_interps.clear();
@@ -381,7 +378,7 @@ void initPreset(PhxShaderSim & sim, const char * presetName)
 		// channel is temp
 		// fire ramps
 
-		auto & ecolorRamp = sim.m_ramps["ecolor_ramp"]->data(RampType_Color, RampContext::RampChannel::CHANNEL_TEMPERATURE);
+		auto & ecolorRamp = m_ramps["ecolor_ramp"]->data(RampType_Color, RampContext::RampChannel::CHANNEL_TEMPERATURE);
 		ecolorRamp.m_xS.clear();
 		ecolorRamp.m_yS.clear();
 		ecolorRamp.m_interps.clear();
@@ -391,7 +388,7 @@ void initPreset(PhxShaderSim & sim, const char * presetName)
 		addColorPoint(ecolorRamp, 13.0f, 1.0, 0.88, 0.0, AurRamps::MCPT_Spline);
 		addColorPoint(ecolorRamp, 14.0f, 1.0, 1.00, 1.0, AurRamps::MCPT_Spline);
 
-		auto & epowerCurve = sim.m_ramps["elum_curve"]->data(RampType_Curve, RampContext::RampChannel::CHANNEL_TEMPERATURE); 
+		auto & epowerCurve = m_ramps["elum_curve"]->data(RampType_Curve, RampContext::RampChannel::CHANNEL_TEMPERATURE); 
 		epowerCurve.m_xS.clear();
 		epowerCurve.m_yS.clear();
 		epowerCurve.m_interps.clear();
@@ -404,7 +401,7 @@ void initPreset(PhxShaderSim & sim, const char * presetName)
 		// channel is temp
 		// fire ramps
 
-		auto & ecolorRamp = sim.m_ramps["ecolor_ramp"]->data(RampType_Color, RampContext::RampChannel::CHANNEL_TEMPERATURE);
+		auto & ecolorRamp = m_ramps["ecolor_ramp"]->data(RampType_Color, RampContext::RampChannel::CHANNEL_TEMPERATURE);
 		ecolorRamp.m_xS.clear();
 		ecolorRamp.m_yS.clear();
 		ecolorRamp.m_interps.clear();
@@ -414,7 +411,7 @@ void initPreset(PhxShaderSim & sim, const char * presetName)
 		addColorPoint(ecolorRamp, 3.5f, 1.37, 1.00, 0.00, AurRamps::MCPT_Spline);
 		addColorPoint(ecolorRamp, 4.0f, 1.56, 1.56, 0.98, AurRamps::MCPT_Spline);
 
-		auto & epowerCurve = sim.m_ramps["elum_curve"]->data(RampType_Curve, RampContext::RampChannel::CHANNEL_TEMPERATURE); 
+		auto & epowerCurve = m_ramps["elum_curve"]->data(RampType_Curve, RampContext::RampChannel::CHANNEL_TEMPERATURE); 
 		epowerCurve.m_xS.clear();
 		epowerCurve.m_yS.clear();
 		epowerCurve.m_interps.clear();
@@ -423,7 +420,7 @@ void initPreset(PhxShaderSim & sim, const char * presetName)
 		addCurvePoint(epowerCurve, 4.5, 1.000, AurRamps::MCPT_Spline);
 
 		// smoke opacity
-		auto & transpCurve = sim.m_ramps["transp_curve"]->data(RampType_Curve, RampContext::RampChannel::CHANNEL_SMOKE);
+		auto & transpCurve = m_ramps["transp_curve"]->data(RampType_Curve, RampContext::RampChannel::CHANNEL_SMOKE);
 		transpCurve.m_xS.clear();
 		transpCurve.m_yS.clear();
 		transpCurve.m_interps.clear();
@@ -436,13 +433,8 @@ void initPreset(PhxShaderSim & sim, const char * presetName)
 	}
 }
 
-/// Used as callback for when channel dropdown is changed. It sets the actie channel for the appropriate ramp
-/// @param data - pointer to OP_Node that called the callback
-/// @param index - the index of the selected option [1, count)
-/// @param time - the time that the change was made
-/// @param tplate - the param template that this was triggered for
-/// @retval 1 if houdini should refresh the UI
-int rampDropDownDependCB(void * data, int index, fpreal64 time, const PRM_Template *tplate)
+
+int PhxShaderSim::rampDropDownDependCB(void * data, int index, fpreal64 time, const PRM_Template *tplate)
 {
 	auto simNode = reinterpret_cast<PhxShaderSim*>(data);
 	const string token = tplate->getSparePtr()->getValue("vray_ramp_depend");
@@ -466,13 +458,8 @@ int rampDropDownDependCB(void * data, int index, fpreal64 time, const PRM_Templa
 	return 1;
 }
 
-/// Called when user clicks on button for ramp, this should open the UI if it is not yet open
-/// @param data - pointer to OP_Node that called the callback
-/// @param index - the index of the selected option [1, count)
-/// @param time - the time that the change was made
-/// @param tplate - the param template that this was triggered for
-/// @retval 1 if houdini should refresh the UI
-int rampButtonClickCB(void *data, int index, fpreal64 time, const PRM_Template *tplate)
+
+int PhxShaderSim::rampButtonClickCB(void *data, int index, fpreal64 time, const PRM_Template *tplate)
 {
 	using namespace std;
 	using namespace AurRamps;
@@ -537,8 +524,6 @@ int rampButtonClickCB(void *data, int index, fpreal64 time, const PRM_Template *
 
 	return 1;
 }
-
-} // namespace
 
 
 
@@ -607,7 +592,7 @@ PhxShaderSim::PhxShaderSim(OP_Network *parent, const char *name, OP_Operator *en
 	}
 
 	onLoadSetActiveChannels(false);
-	setRampDefaults(*this);
+	setRampDefaults();
 }
 
 
