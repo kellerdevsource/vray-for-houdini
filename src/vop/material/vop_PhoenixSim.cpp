@@ -21,10 +21,233 @@
 #include <utility>
 
 using namespace AurRamps;
+using namespace std;
+
+namespace VRayForHoudini {
+namespace VOP {
+
+/// RampHandler will implement all AurRams handlers interfaces
+struct RampHandler: public ChangeHandler, public ColorPickerHandler {
+	RampHandler(RampContext * ctx = nullptr): m_ctx(ctx) {}
+
+	/// ChangeHandler overrides
+
+	/// Called when the curve part of the UI is edited
+	/// @param curve - the ui that triggered the change
+	/// @param editReason - how the curve was edited
+	virtual void OnEditCurveDiagram(RampUi & curve, OnEditType editReason);
+
+	/// Called when the color ramp part of the UI is edited
+	/// @param curve - the ui that triggered the change
+	/// @param editReason - how the curve was edited
+	virtual void OnEditColorGradient(RampUi & curve, OnEditType editReason);
+
+	/// Called when the window is about to be closed either by user action or by calling close() on ui
+	virtual void OnWindowDie();
+
+	/// ColorPickerHandler overrides
+
+	/// @param curve - the ui that triggered the picker creation
+	/// @param prefered[in] - the prefered starting color of the picker
+	virtual void Create(RampUi & curve, float prefered[3])
+	{
+		float result[3];
+		bool canceled = curve.defaultColorPicker(prefered, result);
+		curve.setSelectedPointsColor(result, canceled);
+	}
+
+	/// Called when the color picker needs to be closed
+	virtual void Destroy() {}
+
+	/// Holds the current context that this handler is attached to
+	RampContext * m_ctx;
+};
+
+/// Singe frame data for either color or curve ramp
+struct RampData {
+	std::vector<float>                          m_xS;      ///< contains all the keys of the ramp
+	std::vector<float>                          m_yS;      ///< if this is curve, there are same nuber of values as m_xS, else there are 3 times more for rgb color
+	std::vector<AurRamps::MultiCurvePointType>  m_interps; ///< interpolation types for each point
+	AurRamps::RampType                          m_type;    ///< the type of the data, either Ramp or Color but not both
+
+	/// Constructs default data with None type
+	RampData(): m_type(AurRamps::RampType_None) {};
+};
+
+/// RampContext is holder for one instance of ramp in the UI
+/// For example PhxShaderSim has one color ramp, one curve ramp, and on ramp with both
+/// So PhxShaderSim has 3 instances of RampContext
+/// Also this class hold RampData for all possible combinations of RampChannel and RampType
+struct RampContext {
+	friend class PhxShaderSim;
+
+	/// Each ramp has different value depending on the channel it operates
+	enum RampChannel {
+		CHANNEL_DISABLED    = 0,
+		CHANNEL_TEMPERATURE = 1,
+		CHANNEL_SMOKE       = 2,
+		CHANNEL_SPEED       = 3,
+		CHANNEL_FUEL        = 4,
+		CHANNEL_COUNT       = 4,
+	};
+
+	/// Constructs empty context with None type for ramps
+	/// @param type - the type of the data inside the context
+	RampContext(AurRamps::RampType type = AurRamps::RampType_None)
+		: m_ui(nullptr)
+		, m_uiType(type)
+		, m_freeUi(false)
+		, m_activeChan(CHANNEL_SMOKE)
+	{
+		for (int c = 0; c < CHANNEL_COUNT; ++c) {
+			for (int r = AurRamps::RampType_Curve; r <= AurRamps::RampType_Color; ++r) {
+				auto type = static_cast<AurRamps::RampType>(r);
+				m_data[c][rampTypeToIdx(type)].m_type = type;
+			}
+		}
+	}
+
+	/// Checks if the supplied value is valid RampChannel
+	/// @param chan - the desired channel to check
+	static bool isValidChannel(RampChannel chan) {
+		return chan == CHANNEL_TEMPERATURE || chan == CHANNEL_SMOKE || chan == CHANNEL_SPEED || chan == CHANNEL_FUEL;
+	}
+
+	/// Converts RampChannel to index in m_data
+	/// @param chan - the desired channel to convert
+	/// @retval The index in m_data
+	static int rampChanToIdx(RampChannel chan) {
+		UT_ASSERT_MSG(chan >= CHANNEL_TEMPERATURE && chan <= CHANNEL_FUEL, "Unexpected value for rampChanToIdx(type)");
+		return chan - 1;
+	}
+
+	/// Converts RampType to index in m_data.
+	/// @param type - the desired type to convert
+	/// @retval The index in m_data
+	static int rampTypeToIdx(AurRamps::RampType type) {
+		UT_ASSERT_MSG(type == AurRamps::RampType_Color || type == AurRamps::RampType_Curve, "Unexpected value for rampTypeToIdx(type)");
+		return type - 1;
+	}
+
+	/// Returns the appropriate RampData for given type and channel
+	/// @param type - either color or curve data to get
+	/// @param chan - if supplied is used to get data for this channel, otherwise the current one is used
+	/// @retval The RampData
+	RampData & data(AurRamps::RampType type, RampChannel chan = CHANNEL_DISABLED) {
+		if (chan == CHANNEL_DISABLED) {
+			chan = m_activeChan;
+		}
+		return m_data[rampChanToIdx(chan)][rampTypeToIdx(type)];
+	}
+
+	/// Returns the current active channel (the on that is selected in the ui)
+	/// @retval The RampChannel
+	RampChannel getActiveChannel() const {
+		return m_activeChan;
+	}
+
+	/// Sets the current active channel and also refreshes the UI's data if it is open
+	void setActiveChannel(RampChannel ch) {
+		if (ch < CHANNEL_TEMPERATURE || ch > CHANNEL_FUEL) {
+			Log::getLog().error("Invalid active channel set %d", static_cast<int>(ch));
+			return;
+		}
+
+		const bool differ = ch != m_activeChan;
+		m_activeChan = ch;
+		// if we change active channel and there is open UI - we need to update UI's data
+		if (differ) {
+			if (m_ui && !m_freeUi) {
+				if (m_uiType & AurRamps::RampType_Curve) {
+					auto & curveData = data(AurRamps::RampType_Curve);
+					m_ui->setCurvePoints(curveData.m_xS.data(), curveData.m_yS.data(), curveData.m_interps.data(), curveData.m_xS.size());
+				}
+
+				if (m_uiType & AurRamps::RampType_Color) {
+					auto & colorData = data(AurRamps::RampType_Color);
+					// NOTE: here rampData.yS is color type which is 3 floats per point so actual count is rampData.xS.size() !!
+					m_ui->setColorPoints(colorData.m_xS.data(), colorData.m_yS.data(), colorData.m_xS.size());
+				}
+			}
+		}
+	}
+
+	RampHandler             m_handler; ///< Handles all changes on m_ui
+	std::unique_ptr<RampUi> m_ui;      ///< Pointer to the current UI, nullptr if not open
+	bool                    m_freeUi;  ///< Flag to mark the m_ui for deletion when OnWindowDie is called
+	AurRamps::RampType      m_uiType;  ///< Type is Color Curve or Both since there can be combined ramps
+private:
+	typedef RampData RampPair[2];
+	RampChannel m_activeChan; ///< The current active channel as selected in Houdini's UI
+	RampPair    m_data[4];    ///< Data for 4 channels x 2 type
+};
+
+void RampHandler::OnEditCurveDiagram(RampUi & curve, OnEditType editReason)
+{
+	if (!m_ctx || !(m_ctx->m_uiType & RampType_Curve) || editReason == OnEdit_ChangeBegin || editReason == OnEdit_ChangeInProgress) {
+		return;
+	}
+	// sanity check
+	UT_ASSERT(&curve == m_ctx->m_ui);
+
+	auto & data = m_ctx->data(RampType_Curve);
+	const auto size = curve.pointCount(RampType_Curve);
+
+	data.m_xS.resize(size);
+	data.m_yS.resize(size);
+	data.m_interps.resize(size);
+
+	const auto newSize = curve.getCurvePoints(data.m_xS.data(), data.m_yS.data(), data.m_interps.data(), size);
+
+	// if we got less points resize down
+	if (newSize != size) {
+		data.m_xS.resize(newSize);
+		data.m_yS.resize(newSize);
+		data.m_interps.resize(newSize);
+	}
+}
+
+/// Called when the color ramp part of the UI is edited
+/// @param curve - the ui that triggered the change
+/// @param editReason - how the curve was edited
+void RampHandler::OnEditColorGradient(RampUi & curve, OnEditType editReason)
+{
+	if (!m_ctx || !(m_ctx->m_uiType & RampType_Color) || editReason == OnEdit_ChangeBegin || editReason == OnEdit_ChangeInProgress) {
+		return;
+	}
+	// sanity check
+	UT_ASSERT(&curve == m_ctx->m_ui);
+
+	auto & data = m_ctx->data(RampType_Color);
+	const auto size = curve.pointCount(RampType_Color);
+
+	data.m_xS.resize(size);
+	// NOTE: m_Data.yS is of color type so it's 3 floats per point!
+	data.m_yS.resize(size * 3);
+
+	const auto newSize = curve.getColorPoints(data.m_xS.data(), data.m_yS.data(), size);
+
+	// if we got less points resize down
+	if (newSize != size) {
+		data.m_xS.resize(newSize);
+		data.m_yS.resize(newSize * 3);
+	}
+}
+
+void RampHandler::OnWindowDie()
+{
+	if (m_ctx) {
+		m_ctx->m_freeUi = true;
+	}
+	// just in case
+	m_ctx = nullptr;
+}
+
+} // namespace VRayForHoudini
+} // namespace VOP
 
 using namespace VRayForHoudini;
 using namespace VOP;
-using namespace std;
 
 static PRM_Template * AttrItems = nullptr;
 static const char * SAVE_SEPARATOR = "\n";
@@ -37,7 +260,7 @@ namespace {
 /// @param x - key value
 /// @param y - curve value
 /// @param pt - interpolation type
-void addCurvePoint(PhxShaderSim::RampData & data, float x, float y, MultiCurvePointType pt)
+void addCurvePoint(RampData & data, float x, float y, MultiCurvePointType pt)
 {
 	data.m_xS.push_back(x);
 	data.m_yS.push_back(y);
@@ -51,7 +274,7 @@ void addCurvePoint(PhxShaderSim::RampData & data, float x, float y, MultiCurvePo
 /// @param g - color g value
 /// @param b - color b value
 /// @param pt - interpolation type
-void addColorPoint(PhxShaderSim::RampData & data, float x, float r, float g, float b, MultiCurvePointType pt)
+void addColorPoint(RampData & data, float x, float r, float g, float b, MultiCurvePointType pt)
 {
 	data.m_xS.push_back(x);
 
@@ -66,11 +289,11 @@ void addColorPoint(PhxShaderSim::RampData & data, float x, float r, float g, flo
 /// @param sim - target to clear
 void clearRampData(PhxShaderSim & sim)
 {
-	const int chanCount = PhxShaderSim::RampContext::RampChannel::CHANNEL_COUNT;
+	const int chanCount = RampContext::RampChannel::CHANNEL_COUNT;
 	for (auto & ramp : sim.m_ramps) {
 		for (int c = 0; c < chanCount; c++) {
 			const auto type = sim.m_rampTypes[ramp.first];
-			auto & data = ramp.second->data(type, static_cast<PhxShaderSim::RampContext::RampChannel>(c + 1));
+			auto & data = ramp.second->data(type, static_cast<RampContext::RampChannel>(c + 1));
 			data.m_xS.clear();
 			data.m_yS.clear();
 			data.m_interps.clear();
@@ -82,7 +305,7 @@ void clearRampData(PhxShaderSim & sim)
 /// @param sim - target to set defaults to
 void setRampDefaults(PhxShaderSim & sim)
 {
-	const int chanCount = PhxShaderSim::RampContext::RampChannel::CHANNEL_COUNT;
+	const int chanCount = RampContext::RampChannel::CHANNEL_COUNT;
 	const float MINT = 800;
 	const float MAXT = 3000;
 	const float fireMul[chanCount] = { 1.0f, 1.0f / MAXT, 0.1f, 1.0f / MAXT };
@@ -96,7 +319,7 @@ void setRampDefaults(PhxShaderSim & sim)
 
 	// defaults
 	for (int c = 0; c < chanCount; ++c) {
-		const auto ch = static_cast<PhxShaderSim::RampContext::RampChannel>(c + 1);
+		const auto ch = static_cast<RampContext::RampChannel>(c + 1);
 		auto & fireColor = sim.m_ramps["ecolor_ramp"]->data(RampType_Color, ch);
 		auto & fireCurve = sim.m_ramps["elum_curve"]->data(RampType_Curve, ch);
 		auto & smokeCurve = sim.m_ramps["transp_curve"]->data(RampType_Curve, ch);
@@ -129,7 +352,7 @@ void setRampDefaults(PhxShaderSim & sim)
 // maybe keep it here and use it when preset values change in future
 void initPreset(PhxShaderSim & sim, const char * presetName)
 {
-	const int chanCount = PhxShaderSim::RampContext::RampChannel::CHANNEL_COUNT;
+	const int chanCount = RampContext::RampChannel::CHANNEL_COUNT;
 
 	clearRampData(sim);
 	setRampDefaults(sim);
@@ -138,14 +361,14 @@ void initPreset(PhxShaderSim & sim, const char * presetName)
 	if (!strcmp(presetName, "FumeFX")) {
 		// channel is fuel
 		// fire ramps
-		auto & ecolorRamp = sim.m_ramps["ecolor_ramp"]->data(RampType_Color, PhxShaderSim::RampContext::RampChannel::CHANNEL_FUEL);
+		auto & ecolorRamp = sim.m_ramps["ecolor_ramp"]->data(RampType_Color, RampContext::RampChannel::CHANNEL_FUEL);
 		ecolorRamp.m_xS.clear();
 		ecolorRamp.m_yS.clear();
 		ecolorRamp.m_interps.clear();
 
 		addColorPoint(ecolorRamp, 0.1f, 1.f, 0.33f, 0.f, AurRamps::MCPT_Spline);
 
-		auto & epowerCurve = sim.m_ramps["elum_curve"]->data(RampType_Curve, PhxShaderSim::RampContext::RampChannel::CHANNEL_FUEL); 
+		auto & epowerCurve = sim.m_ramps["elum_curve"]->data(RampType_Curve, RampContext::RampChannel::CHANNEL_FUEL); 
 		epowerCurve.m_xS.clear();
 		epowerCurve.m_yS.clear();
 		epowerCurve.m_interps.clear();
@@ -158,7 +381,7 @@ void initPreset(PhxShaderSim & sim, const char * presetName)
 		// channel is temp
 		// fire ramps
 
-		auto & ecolorRamp = sim.m_ramps["ecolor_ramp"]->data(RampType_Color, PhxShaderSim::RampContext::RampChannel::CHANNEL_TEMPERATURE);
+		auto & ecolorRamp = sim.m_ramps["ecolor_ramp"]->data(RampType_Color, RampContext::RampChannel::CHANNEL_TEMPERATURE);
 		ecolorRamp.m_xS.clear();
 		ecolorRamp.m_yS.clear();
 		ecolorRamp.m_interps.clear();
@@ -168,7 +391,7 @@ void initPreset(PhxShaderSim & sim, const char * presetName)
 		addColorPoint(ecolorRamp, 13.0f, 1.0, 0.88, 0.0, AurRamps::MCPT_Spline);
 		addColorPoint(ecolorRamp, 14.0f, 1.0, 1.00, 1.0, AurRamps::MCPT_Spline);
 
-		auto & epowerCurve = sim.m_ramps["elum_curve"]->data(RampType_Curve, PhxShaderSim::RampContext::RampChannel::CHANNEL_TEMPERATURE); 
+		auto & epowerCurve = sim.m_ramps["elum_curve"]->data(RampType_Curve, RampContext::RampChannel::CHANNEL_TEMPERATURE); 
 		epowerCurve.m_xS.clear();
 		epowerCurve.m_yS.clear();
 		epowerCurve.m_interps.clear();
@@ -181,7 +404,7 @@ void initPreset(PhxShaderSim & sim, const char * presetName)
 		// channel is temp
 		// fire ramps
 
-		auto & ecolorRamp = sim.m_ramps["ecolor_ramp"]->data(RampType_Color, PhxShaderSim::RampContext::RampChannel::CHANNEL_TEMPERATURE);
+		auto & ecolorRamp = sim.m_ramps["ecolor_ramp"]->data(RampType_Color, RampContext::RampChannel::CHANNEL_TEMPERATURE);
 		ecolorRamp.m_xS.clear();
 		ecolorRamp.m_yS.clear();
 		ecolorRamp.m_interps.clear();
@@ -191,7 +414,7 @@ void initPreset(PhxShaderSim & sim, const char * presetName)
 		addColorPoint(ecolorRamp, 3.5f, 1.37, 1.00, 0.00, AurRamps::MCPT_Spline);
 		addColorPoint(ecolorRamp, 4.0f, 1.56, 1.56, 0.98, AurRamps::MCPT_Spline);
 
-		auto & epowerCurve = sim.m_ramps["elum_curve"]->data(RampType_Curve, PhxShaderSim::RampContext::RampChannel::CHANNEL_TEMPERATURE); 
+		auto & epowerCurve = sim.m_ramps["elum_curve"]->data(RampType_Curve, RampContext::RampChannel::CHANNEL_TEMPERATURE); 
 		epowerCurve.m_xS.clear();
 		epowerCurve.m_yS.clear();
 		epowerCurve.m_interps.clear();
@@ -200,7 +423,7 @@ void initPreset(PhxShaderSim & sim, const char * presetName)
 		addCurvePoint(epowerCurve, 4.5, 1.000, AurRamps::MCPT_Spline);
 
 		// smoke opacity
-		auto & transpCurve = sim.m_ramps["transp_curve"]->data(RampType_Curve, PhxShaderSim::RampContext::RampChannel::CHANNEL_SMOKE);
+		auto & transpCurve = sim.m_ramps["transp_curve"]->data(RampType_Curve, RampContext::RampChannel::CHANNEL_SMOKE);
 		transpCurve.m_xS.clear();
 		transpCurve.m_yS.clear();
 		transpCurve.m_interps.clear();
@@ -225,14 +448,14 @@ int rampDropDownDependCB(void * data, int index, fpreal64 time, const PRM_Templa
 	const string token = tplate->getSparePtr()->getValue("vray_ramp_depend");
 
 	auto ctx = simNode->m_ramps[token];
-	const auto chan = static_cast<PhxShaderSim::RampContext::RampChannel>(index);
+	const auto chan = static_cast<RampContext::RampChannel>(index);
 
 	if (!ctx) {
 		Log::getLog().error("Missing context for \"%s\"!", token.c_str());
 		return 0;
 	}
 
-	if (!PhxShaderSim::RampContext::isValidChannel(chan)) {
+	if (!RampContext::isValidChannel(chan)) {
 		if (ctx->m_ui && !ctx->m_freeUi) {
 			ctx->m_ui->close();
 		}
@@ -304,7 +527,7 @@ int rampButtonClickCB(void *data, int index, fpreal64 time, const PRM_Template *
 		ctx->m_ui->setColorPoints(colorData.m_xS.data(), colorData.m_yS.data(), colorData.m_xS.size());
 	}
 
-	ctx->m_handler = PhxShaderSim::RampHandler(&*ctx);
+	ctx->m_handler = RampHandler(&*ctx);
 	ctx->m_ui->setChangeHandler(&ctx->m_handler);
 	if (ctx->m_uiType & RampType_Color) {
 		ctx->m_ui->setColorPickerHandler(&ctx->m_handler);
@@ -315,72 +538,8 @@ int rampButtonClickCB(void *data, int index, fpreal64 time, const PRM_Template *
 	return 1;
 }
 
-}
+} // namespace
 
-void PhxShaderSim::RampHandler::OnEditCurveDiagram(RampUi & curve, OnEditType editReason)
-{
-	if (!m_ctx || !(m_ctx->m_uiType & RampType_Curve) || editReason == OnEdit_ChangeBegin || editReason == OnEdit_ChangeInProgress) {
-		return;
-	}
-	// sanity check
-	UT_ASSERT(&curve == m_ctx->m_ui);
-
-	auto & data = m_ctx->data(RampType_Curve);
-	const auto size = curve.pointCount(RampType_Curve);
-
-	data.m_xS.resize(size);
-	data.m_yS.resize(size);
-	data.m_interps.resize(size);
-
-	const auto newSize = curve.getCurvePoints(data.m_xS.data(), data.m_yS.data(), data.m_interps.data(), size);
-
-	// if we got less points resize down
-	if (newSize != size) {
-		data.m_xS.resize(newSize);
-		data.m_yS.resize(newSize);
-		data.m_interps.resize(newSize);
-	}
-}
-
-void PhxShaderSim::RampHandler::OnEditColorGradient(RampUi & curve, OnEditType editReason)
-{
-	if (!m_ctx || !(m_ctx->m_uiType & RampType_Color) || editReason == OnEdit_ChangeBegin || editReason == OnEdit_ChangeInProgress) {
-		return;
-	}
-	// sanity check
-	UT_ASSERT(&curve == m_ctx->m_ui);
-
-	auto & data = m_ctx->data(RampType_Color);
-	const auto size = curve.pointCount(RampType_Color);
-
-	data.m_xS.resize(size);
-	// NOTE: m_Data.yS is of color type so it's 3 floats per point!
-	data.m_yS.resize(size * 3);
-
-	const auto newSize = curve.getColorPoints(data.m_xS.data(), data.m_yS.data(), size);
-
-	// if we got less points resize down
-	if (newSize != size) {
-		data.m_xS.resize(newSize);
-		data.m_yS.resize(newSize * 3);
-	}
-}
-
-void PhxShaderSim::RampHandler::OnWindowDie()
-{
-	if (m_ctx) {
-		m_ctx->m_freeUi = true;
-	}
-	// just in case
-	m_ctx = nullptr;
-}
-
-void PhxShaderSim::RampHandler::Create(AurRamps::RampUi & curve, float prefered[3])
-{
-	float result[3];
-	bool canceled = curve.defaultColorPicker(prefered, result);
-	curve.setSelectedPointsColor(result, canceled);
-}
 
 
 PRM_Template* PhxShaderSim::GetPrmTemplate()
@@ -496,7 +655,7 @@ void PhxShaderSim::finishedLoadingNetwork(bool is_child_call)
 bool PhxShaderSim::savePresetContents(ostream &os)
 {
 	os << SAVE_TOKEN << SAVE_SEPARATOR;
-	return saveRamps(os) && OP_Node::savePresetContents(os);
+	return saveRamps(os) && VOP_Node::savePresetContents(os);
 }
 
 
@@ -505,7 +664,7 @@ bool PhxShaderSim::loadPresetContents(const char *tok, UT_IStream &is)
 	if (!strcmp(tok, SAVE_TOKEN)) {
 		return loadRamps(is);
 	} else {
-		return OP_Node::loadPresetContents(tok, is);
+		return VOP_Node::loadPresetContents(tok, is);
 	}
 }
 
@@ -515,13 +674,13 @@ OP_ERROR PhxShaderSim::saveIntrinsic(ostream &os, const OP_SaveFlags &sflags)
 	os << SAVE_TOKEN << SAVE_SEPARATOR;
 	saveRamps(os);
 
-	return OP_Node::saveIntrinsic(os, sflags);
+	return VOP_Node::saveIntrinsic(os, sflags);
 }
 
 
 bool PhxShaderSim::loadPacket(UT_IStream &is, const char *token, const char *path)
 {
-	if (OP_Node::loadPacket(is, token, path)) {
+	if (VOP_Node::loadPacket(is, token, path)) {
 		return true;
 	}
 
@@ -581,14 +740,14 @@ bool PhxShaderSim::saveRamps(std::ostream & os)
 bool PhxShaderSim::loadRamps(UT_IStream & is)
 {
 	bool success = true;
-	const char * exp = "", * expr = "";
+	const char * expectedStr= "", * expressionStr = "";
 
 #define readSome(declare, expected, expression)                       \
 	declare;                                                          \
 	if ((expected) != (expression)) {                                 \
 		if (success) { /* save exp and expr only on the first error */\
-			exp = #expected;                                          \
-			expr = #expression;                                       \
+			expectedStr = #expected;                                          \
+			expressionStr = #expression;                                       \
 		}                                                             \
 		success = false;                                              \
 	}
@@ -644,7 +803,7 @@ bool PhxShaderSim::loadRamps(UT_IStream & is)
 #undef readSome
 
 	if (!success) {
-		Log::getLog().error("Error reading \"%s\" expecting %s", exp, expr);
+		Log::getLog().error("Error reading \"%s\" expecting %s", expressionStr, expectedStr);
 		return false;
 	} else {
 		return true;
