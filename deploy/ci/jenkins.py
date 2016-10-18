@@ -182,8 +182,4 @@ if __name__ == '__main__':
             sys.exit(-1)
 
     args = ArgsReplacement()
-    if TC.getPlatformSuffix() == 'linux':
-        args.CGR_CXX_COMPILER = 'g++482'
-        args.CGR_C_COMPILER = 'gcc482'
-
     TC.main(args)
