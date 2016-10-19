@@ -129,7 +129,7 @@
 		"1"	"Temperature"
 		"2"	"Smoke"
 		"3"	"Speed"
-		"4"	"Fuel"
+		"10"	"Fuel"
 	    }
 	    range	{ 0 1 }
 	    export	none
@@ -194,6 +194,7 @@
 	    label	"Heat Size"
 	    type	float
 	    default	{ "1" }
+	    disablewhen	"{ renderMode != 2 }"
 	    range	{ -1000! 1000! }
 	    export	none
 	}
@@ -254,12 +255,13 @@
 		"1"	"Temperature"
 		"2"	"Smoke"
 		"3"	"Speed"
-		"4"	"Fuel"
+		"10"	"Fuel"
 		"5"	"Texture"
 		"6"	"RGB"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_ramp_depend" "elum_curve" }
 	}
 	parm {
 	    name	"etex"
@@ -267,6 +269,7 @@
 	    type	uv
 	    size	2
 	    default	{ "0" "0" }
+	    disablewhen	"{ mod_e == 0 }"
 	    range	{ 0 1 }
 	    export	none
 	}
@@ -280,7 +283,7 @@
 	}
 	parm {
 	    name	"fire_opacity_mode"
-	    label	"Opacity Mode"
+	    label	"Fire Opacity Mode"
 	    type	ordinal
 	    default	{ "0" }
 	    menu	{
@@ -293,7 +296,7 @@
 	}
 	parm {
 	    name	"etmult"
-	    label	"Opacity Multiplier"
+	    label	"Fire Multiplier"
 	    type	float
 	    default	{ "1" }
 	    range	{ 0! 100! }
@@ -334,24 +337,26 @@
 	parm {
 	    name	"elum_curve"
 	    label	"Fire Luminance"
-	    type	ramp_flt
-	    default	{ "2" }
-	    range	{ 1! 10 }
+	    type	button
+	    default	{ "1" }
+	    disablewhen	"{ earg != 1 earg != 2 earg != 3 earg != 10 }"
+	    range	{ 0 1 }
 	    export	none
-	    parmtag	{ "rampbasis_var" "elum_interpolations" }
-	    parmtag	{ "rampkeys_var" "elum_positions" }
-	    parmtag	{ "rampvalues_var" "elum_values" }
+	    parmtag	{ "vray_custom_handling" " " }
+	    parmtag	{ "vray_ramp_type" "curve" }
+	    parmtag	{ "vray_ramp_merge" "ecolor_ramp" }
 	}
 	parm {
 	    name	"ecolor_ramp"
 	    label	"Fire Color"
-	    type	ramp_rgb
-	    default	{ "2" }
-	    range	{ 1! 10 }
+	    type	button
+	    invisible
+	    default	{ "1" }
+	    range	{ 0 1 }
 	    export	none
-	    parmtag	{ "rampbasis_var" "ecolor_interpolations" }
-	    parmtag	{ "rampkeys_var" "ecolor_positions" }
-	    parmtag	{ "rampvalues_var" "ecolor_colors" }
+	    parmtag	{ "vray_custom_handling" " " }
+	    parmtag	{ "vray_ramp_type" "color" }
+	    parmtag	{ "vray_ramp_merge" "elum_curve" }
 	}
     }
 
@@ -474,11 +479,12 @@
 		"3"	"Speed"
 		"10"	"Fuel"
 		"4"	"Texture"
-		"5"	"SimpleColor"
+		"5"	"Constant Color"
 		"6"	"RGB"
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_ramp_depend" "dcolor_ramp" }
 	}
 	parm {
 	    name	"dtex"
@@ -486,6 +492,7 @@
 	    type	uv
 	    size	2
 	    default	{ "0" "0" }
+	    disablewhen	"{ mod_d == 0 }"
 	    range	{ 0 1 }
 	    export	none
 	}
@@ -606,13 +613,13 @@
 	parm {
 	    name	"dcolor_ramp"
 	    label	"Color Gradient"
-	    type	ramp_rgb
-	    default	{ "2" }
-	    range	{ 1! 10 }
+	    type	button
+	    default	{ "1" }
+	    disablewhen	"{ darg != 1 darg != 2 darg != 3 darg != 10 }"
+	    range	{ 0 1 }
 	    export	none
-	    parmtag	{ "rampbasis_var" "dcolor_interpolations" }
-	    parmtag	{ "rampkeys_var" "dcolor_positions" }
-	    parmtag	{ "rampvalues_var" "dcolor_colors" }
+	    parmtag	{ "vray_custom_handling" " " }
+	    parmtag	{ "vray_ramp_type" "color" }
 	}
     }
 
@@ -635,6 +642,7 @@
 	    }
 	    range	{ 0 1 }
 	    export	none
+	    parmtag	{ "vray_ramp_depend" "transp_curve" }
 	}
 	parm {
 	    name	"ttex"
@@ -642,6 +650,7 @@
 	    type	uv
 	    size	2
 	    default	{ "0" "0" }
+	    disablewhen	"{ mod_t == 0 }"
 	    range	{ 0 1 }
 	    export	none
 	}
@@ -658,6 +667,7 @@
 	    label	"Simple Smoke Factor"
 	    type	float
 	    default	{ "0" }
+	    disablewhen	"{ targ != 0 }"
 	    range	{ 0! 1! }
 	    export	none
 	}
@@ -723,13 +733,13 @@
 	parm {
 	    name	"transp_curve"
 	    label	"Opacity"
-	    type	ramp_flt
-	    default	{ "2" }
-	    range	{ 1! 10 }
+	    type	button
+	    default	{ "1" }
+	    disablewhen	"{ targ != 1 targ != 2 targ != 3 targ != 10 }"
+	    range	{ 0 1 }
 	    export	none
-	    parmtag	{ "rampbasis_var" "transp_interpolations" }
-	    parmtag	{ "rampkeys_var" "transp_positions" }
-	    parmtag	{ "rampvalues_var" "transp_values" }
+	    parmtag	{ "vray_custom_handling" " " }
+	    parmtag	{ "vray_ramp_type" "curve" }
 	}
     }
 }

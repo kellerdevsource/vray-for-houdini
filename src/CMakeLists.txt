@@ -79,10 +79,14 @@ link_with_vray(${PROJECT_NAME})
 link_with_vray_appsdk(${PROJECT_NAME})
 link_with_boost(${PROJECT_NAME})
 
+
 if (Phoenix_FOUND)
 	target_link_libraries(${PROJECT_NAME}
 		aurloader_s
 		aurloader
+		guiwin_qt_s
+		iutils_s
+		aurramps_s
 	)
 endif()
 
