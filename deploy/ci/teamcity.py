@@ -350,7 +350,6 @@ def get_cmd_arguments():
     args = parser.parse_args()
 
     stop = False
-
     for var in env_vars:
         value = getattr(args, var)
         if value == default:
@@ -363,6 +362,9 @@ def get_cmd_arguments():
                 sys.stderr.write('Missing alue for "%s", which is also missing from env!\n' % var)
                 sys.stderr.flush()
                 stop = True
+
+    if stop:
+        sys.exist(-1)
 
     return args
 
