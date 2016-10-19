@@ -239,7 +239,7 @@ def main(args):
     global _cgr_config_root
 
     _cgr_build_mode = args.CGR_BUILD_MODE
-    _cgr_build_type = args.CGR_BUILD_TYPE
+    _cgr_build_type = args.CGR_BUILD_TYPE.title()
     _cgr_release_root = args.CGR_RELEASE_ROOT
     _cgr_config_root = args.CGR_CONFIG_ROOT
 
