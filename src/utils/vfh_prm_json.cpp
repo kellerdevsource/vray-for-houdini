@@ -885,8 +885,9 @@ PRMTmplList* Parm::generatePrmTemplate(const std::string &pluginID, const std::s
 {
 	typedef std::map<std::string, PRMTmplList> PrmTemplatesMap;
 	static PrmTemplatesMap PrmTemplates;
+	static PRMTmplList emptyList(1, PRM_Template());
 
-	PRMTmplList *prmTmplList = nullptr;
+	PRMTmplList *prmTmplList = &emptyList;
 
 	VRayPluginInfo *pluginInfo = Parm::GetVRayPluginInfo(pluginID);
 	if (!pluginInfo) {
