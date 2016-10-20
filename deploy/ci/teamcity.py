@@ -364,7 +364,7 @@ def get_cmd_arguments():
                 stop = True
 
     if stop:
-        sys.exist(-1)
+        sys.exit(-1)
 
     return args
 
