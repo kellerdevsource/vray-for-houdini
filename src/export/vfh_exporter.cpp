@@ -576,18 +576,27 @@ void VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 
 	pluginDesc.addAttribute(Attrs::PluginAttr("img_pixelAspect", pixelAspect));
 
-	// Houdini's time unit is fixed to second
-	// so here we are exporting animation related properties in seconds
+	int start = OPgetDirector()->getChannelManager()->getFrame(m_timeStart);
+	int end = OPgetDirector()->getChannelManager()->getFrame(m_timeEnd);
+	VRay::ValueList frames(1, VRay::Value(start));
+	if (m_frames > 1) {
+		VRay::ValueList frameRange;
+		frameRange.emplace_back(start);
+		frameRange.emplace_back(end);
+		frames[0].set( frameRange );
+	}
+
+	// we are exporting animation related properties in frames
+	// SettingsOutput::frame_start should be set to start frame of the animation range
+	// but there seems to be some issue with calculating time correctly in AppSDK
+	// (Ticket in Jira: V-Ray | AppSDKASDK-242)
 	// TODO: need to fix this in future
-	// SettingsOutput::frame_start should be set to ctx.getFrame() i.e. start frame of the animation range
-	// however there seems to be a bug in AppSDK and internally time is not caculated correctly
-	// when using VRayRenderer::setCurrentTime() (Ticket in Jira: V-Ray | AppSDKASDK-242)
-	pluginDesc.addAttribute(Attrs::PluginAttr("anim_start", m_timeStart));
+	pluginDesc.addAttribute(Attrs::PluginAttr("anim_start", start));
+	pluginDesc.addAttribute(Attrs::PluginAttr("anim_end", end));
+	pluginDesc.addAttribute(Attrs::PluginAttr("frames_per_second", 1));
 	pluginDesc.addAttribute(Attrs::PluginAttr("frame_start", 0));
-	pluginDesc.addAttribute(Attrs::PluginAttr("anim_end", m_timeEnd));
-	pluginDesc.addAttribute(Attrs::PluginAttr("frames", VRay::IntList(1, getContext().getFrame())));
-	pluginDesc.addAttribute(Attrs::PluginAttr("frames_per_second",
-											  OPgetDirector()->getChannelManager()->getSamplesPerSec()));
+	pluginDesc.addAttribute(Attrs::PluginAttr("frames", frames));
+
 }
 
 
@@ -1860,7 +1869,7 @@ void MotionBlurParams::calcParams(fpreal currFrame)
 {
 	mb_start = currFrame - (mb_duration * (0.5 - mb_interval_center));
 	mb_end   = mb_start + mb_duration;
-	mb_frame_inc = mb_duration / (mb_geom_samples + 1);
+	mb_frame_inc = mb_duration / std::max(mb_geom_samples - 1, 1);
 
 	Log::getLog().info("  MB time: %.3f", currFrame);
 	Log::getLog().info("  MB duration: %.3f", mb_duration);
