@@ -35,18 +35,19 @@ set VRAY_PLUGIN_DESC_PATH=%LAUNCHER_LOCATION%\plugins_desc
 set VRAY_UI_DS_PATH=%LAUNCHER_LOCATION%\ui
 
 :: Phoenix Loaders
-set VRAY_FOR_HOUDINI_AURA_LOADERS=%HOUDINI_USER_DIR%\vfh\lib
+set VRAY_FOR_HOUDINI_AURA_LOADERS=%LAUNCHER_LOCATION%\deploy\lib
+
+:: V-Ray for Houdini dso path
+set HOUDINI_DSO_PATH=%LAUNCHER_LOCATION%\dso\;%HOUDINI_DSO_PATH%
 
 :: Report loading errors
 set HOUDINI_DSO_ERROR=1
 
 :: Install Files
-xcopy /s /y "%LAUNCHER_LOCATION%\dso\vray_for_houdini.dll" "%HOUDINI_USER_DIR%\dso\"
 xcopy /s /y "%LAUNCHER_LOCATION%\deploy\ROP_vray.svg" "%HOUDINI_USER_DIR%\config\Icons\"
 xcopy /s /y "%LAUNCHER_LOCATION%\deploy\vfh*.shelf" "%HOUDINI_USER_DIR%\toolbar\"
 xcopy /s /y "%LAUNCHER_LOCATION%\deploy\scripts\*" "%HOUDINI_USER_DIR%\scripts\"
 xcopy /s /y "%LAUNCHER_LOCATION%\deploy\presets\*" "%HOUDINI_USER_DIR%\presets\"
-xcopy /s /y "%LAUNCHER_LOCATION%\deploy\lib\*" "%HOUDINI_USER_DIR%\vfh\lib\"
 
 :: Add libs to path
 set PATH=%HFS%\bin;%VRAY_PATH%;%PATH%;%HOUDINI_USER_DIR%\vfh\lib
