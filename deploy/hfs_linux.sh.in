@@ -38,7 +38,7 @@ export VRAY_FOR_HOUDINI_AURA_LOADERS=${LAUNCHER_LOCATION}/deploy/lib
 
 # Add libs to path
 export PATH=${HFS}/bin:${VRAY_PATH}:${PATH}
-export LD_LIBRARY_PATH=${VRAY_SDK}/bin:${HOUDINI_USER_DIR}/vfh/lib:${LD_LIBRARY_PATH}
+export LD_LIBRARY_PATH=${VRAY_SDK}/bin:${VRAY_FOR_HOUDINI_AURA_LOADERS}:${LD_LIBRARY_PATH}
 
 # Report loading errors
 export HOUDINI_DSO_ERROR=1
@@ -50,7 +50,6 @@ mkdir -p "${HOUDINI_USER_DIR}/config/Icons"
 mkdir -p "${HOUDINI_USER_DIR}/scripts"
 mkdir -p "${HOUDINI_USER_DIR}/presets"
 
-cp -R "${LAUNCHER_LOCATION}/dso/vray_for_houdini.so" "${HOUDINI_USER_DIR}/dso/"
 cp -R "${LAUNCHER_LOCATION}/deploy/ROP_vray.svg"     "${HOUDINI_USER_DIR}/config/Icons/"
 cp -R "${LAUNCHER_LOCATION}/deploy/scripts/"*        "${HOUDINI_USER_DIR}/scripts"
 cp -R "${LAUNCHER_LOCATION}/deploy/presets"          "${HOUDINI_USER_DIR}/presets"

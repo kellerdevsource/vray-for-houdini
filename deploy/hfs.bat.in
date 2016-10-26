@@ -50,7 +50,7 @@ xcopy /s /y "%LAUNCHER_LOCATION%\deploy\scripts\*" "%HOUDINI_USER_DIR%\scripts\"
 xcopy /s /y "%LAUNCHER_LOCATION%\deploy\presets\*" "%HOUDINI_USER_DIR%\presets\"
 
 :: Add libs to path
-set PATH=%HFS%\bin;%VRAY_PATH%;%PATH%;%HOUDINI_USER_DIR%\vfh\lib
+set PATH=%HFS%\bin;%VRAY_PATH%;%PATH%;%VRAY_FOR_HOUDINI_AURA_LOADERS%
 
 :: Start Houdini
 start "V-Ray For Houdini" /D "%USERPROFILE%\Desktop\" "%HFS%\bin\houdini.exe" -foreground %*
