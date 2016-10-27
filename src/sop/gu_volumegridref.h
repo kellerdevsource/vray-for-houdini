@@ -34,10 +34,11 @@ namespace VRayForHoudini {
 	(exint,  load_nearest, 0),\
 	(exint,  flip_yz,      0),\
 	(const char *, cache_path,  ""),\
-	(const char *, usrchmap,  "")\
+	(const char *, usrchmap,  ""),\
+	(const char *, cache_path_raw, "")\
 	)
 
-#define VFH_VOLUME_GRID_PARAMS_COUNT 13
+#define VFH_VOLUME_GRID_PARAMS_COUNT 14
 
 
 class VRayVolumeGridRef:
@@ -110,6 +111,9 @@ private:
 	/// updateFrom() will update from UT_Options only
 	bool   updateFrom(const UT_Options &options);
 	void   clearDetail() { m_detail = GU_ConstDetailHandle(); }
+
+	/// This will conver from houdini's frame placeholder "$F\d{0,}" to PHX "####"
+	UT_String convertFilePlaceholder(const UT_String & path);
 
 	// builds channel mapping, call after update to cache or ui mappings
 	void                          buildMapping();

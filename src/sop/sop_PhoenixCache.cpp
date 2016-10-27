@@ -82,7 +82,12 @@ OP_ERROR SOP::PhxShaderCache::cookMySop(OP_Context &context)
 		options.setOptionFromTemplate(this, prm, *prm.getTemplatePtr(), t);
 	}
 
-	pack->implementation()->update(options);
+	// lets get raw cache_path so we can replace $F\d{0,} with # for proper phx loading
+	UT_String rawPath;
+	evalStringRaw(rawPath, "cache_path", 0, 0);
+	options.setOptionS("cache_path_raw", rawPath);
+
+	gridRefPtr->update(options);
 	pack->setPathAttribute(getFullPath());
 
 	gdp->destroyStashed();

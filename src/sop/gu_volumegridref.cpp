@@ -471,6 +471,32 @@ void VRayVolumeGridRef::buildMapping() {
 	}
 }
 
+UT_String VRayVolumeGridRef::convertFilePlaceholder(const UT_String & path)
+{
+	UT_String result = "";
+
+	for (int c = 0; c < path.length(); ++c) {
+		if (path[c] == '$' && c < path.length() - 1 && path[c + 1] == 'F') {
+			int skip = 1;
+			int count = 4;
+			if (c < path.length() - 2 && path[c + 2] >= '0' && path[c + 2] <= '9') {
+				count = path[c + 2] - '0';
+				++skip;
+			}
+			// clamp in [1,4]
+			count = std::max(1, std::min(4, count));
+			for (int r = 0; r < count; ++r) {
+				result.append('#');
+			}
+			c += skip;
+		} else {
+			result.append(path[c]);
+		}
+	}
+
+	return result;
+}
+
 bool VRayVolumeGridRef::updateFrom(const UT_Options &options)
 {
 	// difference in cache or mapping raises dirty flag
@@ -489,6 +515,12 @@ bool VRayVolumeGridRef::updateFrom(const UT_Options &options)
 
 	if (diffHash) {
 		attributeDirty();
+	}
+
+	if (pathChange && options.hasOption("cache_path_raw")) {
+		UT_String oldPath;
+		options.getOptionS("cache_path_raw", oldPath);
+		set_cache_path_raw(convertFilePlaceholder(oldPath));
 	}
 
 	return true;
