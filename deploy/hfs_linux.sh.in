@@ -31,11 +31,10 @@ export VRAY_PLUGIN_DESC_PATH="${LAUNCHER_LOCATION}/plugins_desc"
 export VRAY_UI_DS_PATH="${LAUNCHER_LOCATION}/ui"
 
 # V-Ray for Houdini dso path
-export HOUDINI_DSO_PATH=${LAUNCHER_LOCATION}/dso:$HOUDINI_DSO_PATH
-export HOUDINI_SCRIPT_PATH=${LAUNCHER_LOCATION}/deploy/scripts;${HOUDINI_SCRIPT_PATH}
+export UI_PATH=${LAUNCHER_LOCATION}/houdini_home:${HOUDINI_UI_PATH}
 
 # Phoenix Loaders
-export VRAY_FOR_HOUDINI_AURA_LOADERS=${LAUNCHER_LOCATION}/deploy/lib
+export VRAY_FOR_HOUDINI_AURA_LOADERS=${LAUNCHER_LOCATION}/houdini_home/dso
 
 # Add libs to path
 export PATH=${HFS}/bin:${VRAY_PATH}:${PATH}
@@ -43,19 +42,6 @@ export LD_LIBRARY_PATH=${VRAY_SDK}/bin:${VRAY_FOR_HOUDINI_AURA_LOADERS}:${LD_LIB
 
 # Report loading errors
 export HOUDINI_DSO_ERROR=1
-
-# Install Files
-mkdir -p "${HOUDINI_USER_DIR}/toolbar"
-mkdir -p "${HOUDINI_USER_DIR}/config/Icons"
-mkdir -p "${HOUDINI_USER_DIR}/presets"
-
-cp -R "${LAUNCHER_LOCATION}/deploy/ROP_vray.svg"     "${HOUDINI_USER_DIR}/config/Icons/"
-cp -R "${LAUNCHER_LOCATION}/deploy/presets"          "${HOUDINI_USER_DIR}/presets"
-
-# Copy shelves
-for SHELF_FILE in `find "${LAUNCHER_LOCATION}/deploy" -name "*.shelf"`; do
-	cp -R "${SHELF_FILE}" "${HOUDINI_USER_DIR}/toolbar/"
-done
 
 # Start Houdini
 "${HFS}/bin/houdini" -foreground $*

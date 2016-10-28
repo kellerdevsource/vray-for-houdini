@@ -101,43 +101,18 @@ message(STATUS "Source revision: ${SRC_GIT_HASH}")
 add_definitions(-DCGR_GIT_HASH=${SRC_GIT_HASH})
 set(INSTALL_RELEASE_SUBDIR "vfh-${SRC_GIT_HASH}${INSTALL_RELEASE_SUFFIX}")
 
-file(GLOB VFH_SHELVES ${CMAKE_SOURCE_DIR}/deploy/vfh*.shelf)
-file(GLOB VFH_BGEO ${CMAKE_SOURCE_DIR}/deploy/vfh*.bgeo)
-
 option(INSTALL_LOCAL "Install files locally" ON)
 if(INSTALL_LOCAL)
 	install(TARGETS ${PROJECT_NAME} DESTINATION ${HOUDINI_PLUGIN_PATH})
 
-	# Install shelf and icon locally
-	#
-	install(FILES       ${VFH_SHELVES}
-			DESTINATION ${HOUDINI_HOME_PATH}/toolbar)
-
-	install(FILES       ${CMAKE_SOURCE_DIR}/deploy/ROP_vray.svg
-			DESTINATION ${HOUDINI_HOME_PATH}/config/Icons)
-
-	install(FILES       ${VFH_BGEO}
-			DESTINATION ${HOUDINI_HOME_PATH}/geo)
-
-	# Install py modules locally
-	#
-	install(DIRECTORY   ${CMAKE_SOURCE_DIR}/deploy/scripts/python/vfh
-			DESTINATION ${HOUDINI_HOME_PATH}/scripts/python)
-
-	# Install custom node initialization scripts
-	#
-	install(DIRECTORY   ${CMAKE_SOURCE_DIR}/deploy/scripts/nodeinit/
-			DESTINATION ${HOUDINI_HOME_PATH}/scripts)
-
-	# Install custom UI scripts
-	install(DIRECTORY    ${CMAKE_SOURCE_DIR}/deploy/presets/
-			DESTINATION  ${HOUDINI_HOME_PATH}/presets)
+	install(DIRECTORY   ${CMAKE_SOURCE_DIR}/deploy/houdini_home/
+			DESTINATION ${HOUDINI_HOME_PATH}/)
 
 	if (Phoenix_FOUND)
 		install(FILES       ${Phoenix_LIBRARIES}/${CGR_PHOENIX_SHARED}
 							${Phoenix_LIBRARIES}/${CGR_PHOENIX_SHARED_VDB}
 							${Phoenix_LIBRARIES}/${CGR_PHOENIX_SHARED_F3D}
-				DESTINATION ${HOUDINI_HOME_PATH}/vfh/lib
+				DESTINATION ${HOUDINI_HOME_PATH}/dso/
 				PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 	endif()
 endif()
@@ -209,26 +184,11 @@ if(INSTALL_RELEASE)
 			DESTINATION            ${INSTALL_RELEASE_PATH}/ui
 			USE_SOURCE_PERMISSIONS)
 
-		file(GLOB IDX_UI_FILES    "${CMAKE_SOURCE_DIR}/deploy/presets/*.*")
-		file(INSTALL               ${IDX_UI_FILES}
-			DESTINATION            ${INSTALL_RELEASE_PATH}/deploy/presets
-			USE_SOURCE_PERMISSIONS)
+		install(DIRECTORY   ${CMAKE_SOURCE_DIR}/deploy/houdini_home
+				DESTINATION ${INSTALL_RELEASE_PATH}/)
 
 		# Copy plugin
-		cgr_install_runtime(${PROJECT_NAME} ${INSTALL_RELEASE_PATH}/dso)
-
-		# Copy UI & scripts
-		install(FILES       ${VFH_SHELVES}
-				DESTINATION ${INSTALL_RELEASE_PATH}/deploy)
-
-		install(FILES       ${CMAKE_SOURCE_DIR}/deploy/ROP_vray.svg
-				DESTINATION ${INSTALL_RELEASE_PATH}/deploy)
-
-		install(DIRECTORY   ${CMAKE_SOURCE_DIR}/deploy/scripts/python/vfh
-				DESTINATION ${INSTALL_RELEASE_PATH}/deploy/scripts/python)
-
-		install(DIRECTORY   ${CMAKE_SOURCE_DIR}/deploy/scripts/nodeinit/
-				DESTINATION ${INSTALL_RELEASE_PATH}/deploy/scripts/)
+		cgr_install_runtime(${PROJECT_NAME} ${INSTALL_RELEASE_PATH}/houdini_home/dso)
 
 		# Generate & copy startup file
 		if(WIN32)
@@ -286,7 +246,7 @@ if(INSTALL_RELEASE)
 			install(FILES       ${Phoenix_LIBRARIES}/${CGR_PHOENIX_SHARED}
 								${Phoenix_LIBRARIES}/${CGR_PHOENIX_SHARED_VDB}
 								${Phoenix_LIBRARIES}/${CGR_PHOENIX_SHARED_F3D}
-					DESTINATION ${INSTALL_RELEASE_PATH}/deploy/lib
+					DESTINATION ${INSTALL_RELEASE_PATH}/houdini_home/dso
 					PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 		endif()
 
