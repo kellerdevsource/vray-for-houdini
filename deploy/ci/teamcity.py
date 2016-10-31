@@ -239,7 +239,7 @@ def main(args):
     global _cgr_config_root
 
     _cgr_build_mode = args.CGR_BUILD_MODE
-    _cgr_build_type = args.CGR_BUILD_TYPE
+    _cgr_build_type = args.CGR_BUILD_TYPE.title()
     _cgr_release_root = args.CGR_RELEASE_ROOT
     _cgr_config_root = args.CGR_CONFIG_ROOT
 
@@ -350,7 +350,6 @@ def get_cmd_arguments():
     args = parser.parse_args()
 
     stop = False
-
     for var in env_vars:
         value = getattr(args, var)
         if value == default:
@@ -363,6 +362,9 @@ def get_cmd_arguments():
                 sys.stderr.write('Missing alue for "%s", which is also missing from env!\n' % var)
                 sys.stderr.flush()
                 stop = True
+
+    if stop:
+        sys.exit(-1)
 
     return args
 

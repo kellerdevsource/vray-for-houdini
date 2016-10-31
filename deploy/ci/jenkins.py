@@ -117,7 +117,7 @@ if __name__ == '__main__':
     parser.add_argument('--output_dir', required=True, help="Directory for output files")
     parser.add_argument('--libs_repo', required=True, help="Git repo for libs needed for build")
 
-    parser.add_argument('--build_type', required=True, help="Release or Debug", choices=['Debug', 'Release'])
+    parser.add_argument('--build_type', required=True, help="release or debug", choices=['debug', 'release'])
     parser.add_argument('--build_number', help="Current build number, defaults to 42", default='42')
     parser.add_argument('--appsdk_version', help="Appsdk version", default='20160510')
 
