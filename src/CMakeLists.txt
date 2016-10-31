@@ -105,14 +105,14 @@ option(INSTALL_LOCAL "Install files locally" ON)
 if(INSTALL_LOCAL)
 	install(TARGETS ${PROJECT_NAME} DESTINATION ${HOUDINI_PLUGIN_PATH})
 
-	install(DIRECTORY   ${CMAKE_SOURCE_DIR}/deploy/houdini_home/
+	install(DIRECTORY   ${CMAKE_SOURCE_DIR}/deploy/vfh_home/
 			DESTINATION ${HOUDINI_HOME_PATH}/)
 
 	if (Phoenix_FOUND)
 		install(FILES       ${Phoenix_LIBRARIES}/${CGR_PHOENIX_SHARED}
 							${Phoenix_LIBRARIES}/${CGR_PHOENIX_SHARED_VDB}
 							${Phoenix_LIBRARIES}/${CGR_PHOENIX_SHARED_F3D}
-				DESTINATION ${HOUDINI_HOME_PATH}/dso/
+				DESTINATION ${HOUDINI_HOME_PATH}/vfh_lib
 				PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 	endif()
 endif()
@@ -184,11 +184,11 @@ if(INSTALL_RELEASE)
 			DESTINATION            ${INSTALL_RELEASE_PATH}/ui
 			USE_SOURCE_PERMISSIONS)
 
-		install(DIRECTORY   ${CMAKE_SOURCE_DIR}/deploy/houdini_home
+		install(DIRECTORY   ${CMAKE_SOURCE_DIR}/deploy/vfh_home
 				DESTINATION ${INSTALL_RELEASE_PATH}/)
 
 		# Copy plugin
-		cgr_install_runtime(${PROJECT_NAME} ${INSTALL_RELEASE_PATH}/houdini_home/dso)
+		cgr_install_runtime(${PROJECT_NAME} ${INSTALL_RELEASE_PATH}/vfh_home/dso)
 
 		# Generate & copy startup file
 		if(WIN32)
@@ -246,7 +246,7 @@ if(INSTALL_RELEASE)
 			install(FILES       ${Phoenix_LIBRARIES}/${CGR_PHOENIX_SHARED}
 								${Phoenix_LIBRARIES}/${CGR_PHOENIX_SHARED_VDB}
 								${Phoenix_LIBRARIES}/${CGR_PHOENIX_SHARED_F3D}
-					DESTINATION ${INSTALL_RELEASE_PATH}/houdini_home/dso
+					DESTINATION ${INSTALL_RELEASE_PATH}/vfh_home/vfh_lib
 					PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 		endif()
 

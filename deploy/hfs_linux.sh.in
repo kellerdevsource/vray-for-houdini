@@ -31,10 +31,10 @@ export VRAY_PLUGIN_DESC_PATH="${LAUNCHER_LOCATION}/plugins_desc"
 export VRAY_UI_DS_PATH="${LAUNCHER_LOCATION}/ui"
 
 # V-Ray for Houdini dso path
-export UI_PATH=${LAUNCHER_LOCATION}/houdini_home:${HOUDINI_UI_PATH}
+export HOUDINI_PATH=${LAUNCHER_LOCATION}/vfh_home:\&
 
 # Phoenix Loaders
-export VRAY_FOR_HOUDINI_AURA_LOADERS=${LAUNCHER_LOCATION}/houdini_home/dso
+export VRAY_FOR_HOUDINI_AURA_LOADERS=${LAUNCHER_LOCATION}/vfh_home/vfh_lib
 
 # Add libs to path
 export PATH=${HFS}/bin:${VRAY_PATH}:${PATH}

@@ -35,10 +35,10 @@ set VRAY_PLUGIN_DESC_PATH=%LAUNCHER_LOCATION%\plugins_desc
 set VRAY_UI_DS_PATH=%LAUNCHER_LOCATION%\ui
 
 :: Phoenix Loaders
-set VRAY_FOR_HOUDINI_AURA_LOADERS=%LAUNCHER_LOCATION%\houdini_home\dso
+set VRAY_FOR_HOUDINI_AURA_LOADERS=%LAUNCHER_LOCATION%\vfh_home\vfh_lib
 
 :: V-Ray for Houdini dso path
-set UI_PATH=%LAUNCHER_LOCATION%\houdini_home;%HOUDINI_UI_PATH%
+set HOUDINI_PATH=%LAUNCHER_LOCATION%\vfh_home;^&;
 
 :: Report loading errors
 set HOUDINI_DSO_ERROR=1
