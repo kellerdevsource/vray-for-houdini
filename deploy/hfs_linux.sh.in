@@ -15,8 +15,6 @@ export LAUNCHER_LOCATION=`dirname ${LAUNCHER_FILEPATH}`
 
 export HFS="/opt/hfs${HOUDINI_VER_FULL}"
 
-export HOUDINI_USER_DIR=${HOME}/houdini${HOUDINI_VER_MAJOR}
-
 # V-Ray Application SDK variables
 export VRAY_SDK=${LAUNCHER_LOCATION}/appsdk
 export VRAY_PATH=${VRAY_SDK}/bin
