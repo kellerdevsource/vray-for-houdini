@@ -134,6 +134,7 @@ struct VolumeProxy {
 
 void HoudiniVolumeExporter::exportPrimitives(const GU_Detail &detail, PluginDescList &plugins)
 {
+	// TODO: check if there are any houdini volume primitives in detail before everything else
 	GA_ROAttributeRef ref_name = detail.findStringTuple(GA_ATTRIB_PRIMITIVE, "name");
 	const GA_ROHandleS hnd_name(ref_name.getAttribute());
 	if (hnd_name.isInvalid()) {
@@ -354,9 +355,11 @@ void VolumeExporter::exportCache(const GA_Primitive &prim)
 	Attrs::PluginDesc nodeDesc(name, "PhxShaderCache");
 
 	auto packedPrim = UTverify_cast<const GU_PrimPacked *>(&prim);
+	auto volGrid = UTverify_cast<const VRayVolumeGridRef *>(packedPrim->implementation());
 	UT_Options opts;
 	packedPrim->saveOptions(opts, GA_SaveMap(prim.getDetail(), &opts));
 	m_exporter.setAttrsFromUTOptions(nodeDesc, opts);
+	nodeDesc.addAttribute(Attrs::PluginAttr("cache_path", volGrid->get_cache_path_raw()));
 
 	UT_Matrix4 xform;
 	prim.getIntrinsic(prim.findIntrinsic("packedfulltransform"), xform);

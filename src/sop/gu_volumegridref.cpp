@@ -78,7 +78,6 @@ using namespace VRayForHoudini;
 GA_PrimitiveTypeId VRayVolumeGridRef::theTypeId(-1);
 const int MAX_CHAN_MAP_LEN = 2048;
 
-//VFH_DEFINE_FACTORY_BASE(VRayVolumeGridFactoryBase, VRayVolumeGridRef, VFH_VOLUME_GRID_PARAMS, VFH_VOLUME_GRID_PARAMS_COUNT)
 
 class VRayVolumeGridFactory:
 		public GU_PackedFactory
@@ -207,7 +206,7 @@ VRayVolumeGridRef::CachePtr VRayVolumeGridRef::getCache() const
 }
 
 
-UT_Matrix4F VRayVolumeGridRef::toWorldTm(std::shared_ptr<IAur> cache) const
+UT_Matrix4F VRayVolumeGridRef::toWorldTm(CachePtr cache) const
 {
 	if (!cache) {
 		return UT_Matrix4F(1.f);
@@ -473,7 +472,7 @@ void VRayVolumeGridRef::buildMapping() {
 
 UT_String VRayVolumeGridRef::convertFilePlaceholder(const UT_String & path)
 {
-	UT_String result = "";
+	UT_String result(UT_String::ALWAYS_DEEP, "");
 
 	for (int c = 0; c < path.length(); ++c) {
 		if (path[c] == '$' && c < path.length() - 1 && path[c + 1] == 'F') {

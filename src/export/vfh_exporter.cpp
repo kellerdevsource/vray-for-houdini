@@ -585,6 +585,7 @@ void VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 	pluginDesc.addAttribute(Attrs::PluginAttr("anim_start", m_timeStart));
 	pluginDesc.addAttribute(Attrs::PluginAttr("frame_start", 0));
 	pluginDesc.addAttribute(Attrs::PluginAttr("anim_end", m_timeEnd));
+	pluginDesc.addAttribute(Attrs::PluginAttr("frames", VRay::IntList(1, getContext().getFrame())));
 	pluginDesc.addAttribute(Attrs::PluginAttr("frames_per_second",
 											  OPgetDirector()->getChannelManager()->getSamplesPerSec()));
 }
