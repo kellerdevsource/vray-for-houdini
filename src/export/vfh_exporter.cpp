@@ -596,7 +596,6 @@ void VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 	pluginDesc.addAttribute(Attrs::PluginAttr("frames_per_second", 1));
 	pluginDesc.addAttribute(Attrs::PluginAttr("frame_start", 0));
 	pluginDesc.addAttribute(Attrs::PluginAttr("frames", frames));
-
 }
 
 
@@ -1399,7 +1398,7 @@ void VRayExporter::RtCallbackObjManager(OP_Node *caller, void *callee, OP_EventT
 
 void VRayExporter::exportScene()
 {
-	setCurrentTime(m_context.getTime());
+	setCurrentTime(m_context.getFloatFrame());
 
 	Log::getLog().debug("VRayExporter::exportScene(%.3f)",
 						m_context.getFloatFrame());
@@ -1674,7 +1673,7 @@ int VRayExporter::isStereoView() const
 
 int VRayExporter::renderFrame(int locked)
 {
-	setCurrentTime(getContext().getTime());
+	setCurrentTime(getContext().getFloatFrame());
 
 	Log::getLog().debug("VRayExporter::renderFrame(%.3f)", m_context.getFloatFrame());
 
