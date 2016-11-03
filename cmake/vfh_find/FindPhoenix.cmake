@@ -64,10 +64,16 @@ else()
 		set(CGR_PHOENIX_SHARED aurloader.dll)
 		set(CGR_PHOENIX_SHARED_F3D field3dio_phx.dll)
 		set(CGR_PHOENIX_SHARED_VDB openvdbio_phx.dll)
+		set(CGR_PHOENIX_STATIC_RAMP_LIBS guiwin_qt_s.lib
+										 iutils_s.lib
+										 aurramps_s.lib)
 	else()
 		set(CGR_PHOENIX_SHARED libaurloader.so)
 		set(CGR_PHOENIX_SHARED_F3D libfield3dio_phx.so)
 		set(CGR_PHOENIX_SHARED_VDB libopenvdbio_phx.so)
+		set(CGR_PHOENIX_STATIC_RAMP_LIBS guiwin_qt_s.a
+										 iutils_s.a
+										 aurramps_s.a)
 	endif()
 
 
@@ -92,7 +98,8 @@ else()
 	# check for libs
 	foreach(loop_var IN ITEMS   "${CGR_PHOENIX_SHARED}"
 								"${CGR_PHOENIX_SHARED_F3D}"
-								"${CGR_PHOENIX_SHARED_VDB}")
+								"${CGR_PHOENIX_SHARED_VDB}"
+								 ${CGR_PHOENIX_STATIC_RAMP_LIBS})
 
 		if(NOT EXISTS "${Phoenix_LIBRARIES}/${loop_var}" )
 			message(STATUS "Invalid Phoenix SDK path - missing file ${Phoenix_LIBRARIES}/${loop_var} ")
