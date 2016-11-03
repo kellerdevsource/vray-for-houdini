@@ -11,6 +11,8 @@
 #ifndef VRAY_FOR_HOUDINI_VOP_PHOENIX_SIM_H
 #define VRAY_FOR_HOUDINI_VOP_PHOENIX_SIM_H
 
+#ifdef CGR_HAS_AUR
+
 #include <vfh_vray.h>
 #include "vop_node_base.h"
 
@@ -106,6 +108,8 @@ protected:
 
 } // namespace VOP
 } // namespace VRayForHoudini
+
+#endif // CGR_HAS_AUR
 
 #endif // VRAY_FOR_HOUDINI_VOP_PHOENIX_SIM_H
 
