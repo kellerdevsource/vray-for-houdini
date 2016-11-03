@@ -389,6 +389,7 @@ void VolumeExporter::exportCache(const GA_Primitive &prim)
 
 void VolumeExporter::exportSim(SHOP_Node *shop, const Attrs::PluginAttrs &overrideAttrs, const std::string &cacheName)
 {
+#ifdef CGR_HAS_AUR
 	UT_ValArray<OP_Node *> mtlOutList;
 	// find our output node
 	if (!shop->getOpsByName("vray_material_output", mtlOutList)) {
@@ -472,4 +473,5 @@ void VolumeExporter::exportSim(SHOP_Node *shop, const Attrs::PluginAttrs &overri
 			}
 		}
 	}
+#endif // CGR_HAS_AUR
 }
