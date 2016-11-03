@@ -308,23 +308,24 @@ GU_ConstDetailHandle VRayVolumeGridRef::getPackedDetail(GU_PackedContext *contex
 	using namespace chrono;
 
 	auto tStart = high_resolution_clock::now();
-
 	auto cache = getCache();
-	if (!cache) {
+	auto tEndCache = high_resolution_clock::now();
+
+	GU_Detail *gdp = SYSconst_cast(this)->m_handle.writeLock();
+
+	if (cache) {
+		Log::getLog().info("Loading cache took %dms", (int)duration_cast<milliseconds>(tEndCache - tStart).count());
+	} else {
+		gdp->clearAndDestroy();
+		SYSconst_cast(this)->m_dirty = false;
 		return getDetail();
 	}
 
-	auto tEndCache = high_resolution_clock::now();
-	Log::getLog().info("Loading cache took %dms", (int)duration_cast<milliseconds>(tEndCache - tStart).count());
-
 	int gridDimensions[3];
 	cache->GetDim(gridDimensions);
-	auto tm = toWorldTm(cache);
+	const auto tm = toWorldTm(cache);
 
-
-	GU_Detail *gdp = SYSconst_cast(this)->m_handle.writeLock();
 	gdp->stashAll();
-
 	auto tBeginLoop = high_resolution_clock::now();
 	for (int c = 0; c < CHANNEL_COUNT; ++c) {
 		const auto & chan = chInfo[c];
