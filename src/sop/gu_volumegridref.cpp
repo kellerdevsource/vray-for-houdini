@@ -195,13 +195,13 @@ bool VRayVolumeGridRef::getLocalTransform(UT_Matrix4D &m) const
 
 VRayVolumeGridRef::CachePtr VRayVolumeGridRef::getCache() const
 {
-	auto path = this->get_cache_path();
+	auto path = getCurrentCachePath();
 	auto map = this->get_usrchmap();
-	if (!map || !path || !*path) {
+	if (!map || path == "") {
 		return nullptr;
 	}
 
-	auto ptr = *map ? newIAurWithChannelsMapping(path, map) : newIAur(path);
+	auto ptr = *map ? newIAurWithChannelsMapping(path.c_str(), map) : newIAur(path.c_str());
 	return CachePtr(ptr,[](IAur *ptr) {	deleteIAur(ptr); });
 }
 
@@ -412,7 +412,7 @@ UT_StringArray VRayVolumeGridRef::getCacheChannels() const {
 
 	int chanIndex = 0, isChannelVector3D;
 	char chanName[MAX_CHAN_MAP_LEN];
-	while(1 == aurGet3rdPartyChannelName(chanName, MAX_CHAN_MAP_LEN, &isChannelVector3D, this->get_cache_path(), chanIndex++)) {
+	while(1 == aurGet3rdPartyChannelName(chanName, MAX_CHAN_MAP_LEN, &isChannelVector3D, getCurrentCachePath().c_str(), chanIndex++)) {
 		channels.append(chanName);
 	}
 
@@ -422,7 +422,7 @@ UT_StringArray VRayVolumeGridRef::getCacheChannels() const {
 }
 
 void VRayVolumeGridRef::buildMapping() {
-	auto path = this->get_cache_path();
+	auto path = getCurrentCachePath();
 
 	UT_String chanMap;
 
@@ -461,7 +461,7 @@ void VRayVolumeGridRef::buildMapping() {
 
 		// user made no mappings - get default
 		if (chanMap.equal("")) {
-			chanMap = getDefaultMapping(path);
+			chanMap = getDefaultMapping(path.c_str());
 		}
 	}
 
@@ -470,36 +470,108 @@ void VRayVolumeGridRef::buildMapping() {
 	}
 }
 
-UT_String VRayVolumeGridRef::convertFilePlaceholder(const UT_String & path)
+int VRayVolumeGridRef::getCurrentCacheFrame() const
 {
-	UT_String result(UT_String::ALWAYS_DEEP, "");
+	float frame = get_current_frame();
+	const float animLen = get_max_length();
+	const float fractionalLen = animLen * get_play_speed();
+
+	switch (get_anim_mode())
+	{
+	case 1: // direct frame index
+		frame = get_t2f();
+		break;
+	case 0: // standard/linear
+		frame = get_play_speed() * (frame - get_play_at());
+
+		if (fractionalLen > 1e-4f) {
+			if (frame < 0.f || frame > fractionalLen) {
+				if (get_load_nearest()) {
+					// clamp frame in [0, animLen]
+					frame = std::max(0.f, std::min(fractionalLen, frame));
+				} else {
+					frame = INT_MIN;
+				}
+			}
+		}
+
+		frame += get_read_offset();
+		break;
+	case 2: // loop
+		frame = get_play_speed() * (frame - get_play_at());
+
+		if (fractionalLen > 1e-4f) {
+			while (frame < 0) {
+				frame += fractionalLen;
+			}
+			while (frame > fractionalLen) {
+				frame -= fractionalLen;
+			}
+		}
+
+		frame += get_read_offset();
+		break;
+	default:
+		break;
+	}
+
+	return frame;
+}
+
+std::string VRayVolumeGridRef::convertCachePath(const std::string & path, bool toPhx) const
+{
+	std::string result;
+	result.reserve(path.length() + 4);
 
 	for (int c = 0; c < path.length(); ++c) {
 		if (path[c] == '$' && c < path.length() - 1 && path[c + 1] == 'F') {
 			int skip = 1;
-			int count = 4;
+			int digitCount = 4;
+			bool guessPadding = true;
+			// TODO: maybe check for more than one digit? although this means there are more than 1e10 frames?
 			if (c < path.length() - 2 && path[c + 2] >= '0' && path[c + 2] <= '9') {
-				count = path[c + 2] - '0';
+				digitCount = path[c + 2] - '0';
 				++skip;
+				guessPadding = false;
 			}
 			// clamp in [1,4]
-			count = std::max(1, std::min(4, count));
-			for (int r = 0; r < count; ++r) {
-				result.append('#');
+			digitCount = std::max(1, std::min(4, digitCount));
+			if (toPhx) {
+				for (int r = 0; r < digitCount; ++r) {
+					result.push_back('#');
+				}
+			} else {
+				const int frame = getCurrentCacheFrame();
+				char frameStr[32];
+				const int padding = guessPadding ? std::ceil(log10(frame)) : digitCount;
+				sprintf(frameStr, "%0*d", padding, frame);
+				result.append(frameStr);
 			}
 			c += skip;
 		} else {
-			result.append(path[c]);
+			result.push_back(path[c]);
 		}
 	}
 
 	return result;
 }
 
+std::string VRayVolumeGridRef::getCurrentCachePath() const
+{
+	const auto raw = get_cache_path_raw();
+	if (!raw) {
+		return "";
+	} else {
+		return convertCachePath(raw, false);
+	}
+}
+
 bool VRayVolumeGridRef::updateFrom(const UT_Options &options)
 {
+	const float frameBefore = getCurrentCacheFrame();
 	// difference in cache or mapping raises dirty flag
-	const bool pathChange = options.hasOption("cache_path") && options.getOptionS("cache_path") != this->get_cache_path();
+	const bool pathChange = options.hasOption("cache_path") && options.getOptionS("cache_path") != this->get_cache_path_raw() ||  // either the whole cache is changed
+							options.hasOption("current_frame") && options.getOptionI("current_frame") != this->get_current_frame(); // or the frame is changed
 	m_channelDirty = m_channelDirty || pathChange;
 
 	m_dirty = pathChange || m_dirty || options.hasOption("flip_yz") && options.getOptionI("flip_yz") != this->get_flip_yz();
@@ -508,18 +580,20 @@ bool VRayVolumeGridRef::updateFrom(const UT_Options &options)
 	m_options.merge(options);
 	buildMapping();
 
+	// "cache_path" is the phx friendly name (containing '#')
+	// "cache_path_raw" is Houdini's raw string (containing '$F\d{0,}')
+	set_cache_path_raw(options.getOptionS("cache_path"));
+	set_cache_path(convertCachePath(options.getOptionS("cache_path").toStdString(), true).c_str());
+	set_current_cache_path(getCurrentCachePath().c_str());
+
+	m_dirty = m_dirty || (frameBefore != getCurrentCacheFrame());
+
 	if (m_dirty) {
 		transformDirty();
 	}
 
 	if (diffHash) {
 		attributeDirty();
-	}
-
-	if (pathChange && options.hasOption("cache_path_raw")) {
-		UT_String oldPath;
-		options.getOptionS("cache_path_raw", oldPath);
-		set_cache_path_raw(convertFilePlaceholder(oldPath));
 	}
 
 	return true;
