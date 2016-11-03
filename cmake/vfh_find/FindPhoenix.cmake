@@ -78,7 +78,8 @@ else()
 	# check for headers
 	foreach(loop_var IN ITEMS   "aurinterface.h"
 								"aurloader.h"
-								"aura_ver.h")
+								"aura_ver.h"
+								"ramps.h")
 
 		if(NOT EXISTS "${Phoenix_INCLUDES}/${loop_var}" )
 			message(STATUS "Invalid Phoenix SDK path - missing file ${Phoenix_INCLUDES}/${loop_var} ")
