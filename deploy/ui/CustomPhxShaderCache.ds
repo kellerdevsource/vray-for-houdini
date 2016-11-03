@@ -70,6 +70,7 @@
 	    label	"Frame Index"
 	    type	float
 	    default	{ "1" }
+	    disablewhen	"{ anim_mode != 1 }"
 	    range	{ 0! 1e+006! }
 	    export	none
 	}
@@ -78,6 +79,7 @@
 	    label	"Loop Overlap"
 	    type	integer
 	    default	{ "0" }
+	    disablewhen	"{ anim_mode != 2 }"
 	    range	{ 0! 1e+006! }
 	    export	none
 	}
@@ -86,6 +88,7 @@
 	    label	"Cache Start"
 	    type	integer
 	    default	{ "1" }
+	    disablewhen	"{ anim_mode == 1 }"
 	    range	{ 0! 1e+006! }
 	    export	none
 	}
@@ -94,6 +97,7 @@
 	    label	"Play Start"
 	    type	integer
 	    default	{ "1" }
+	    disablewhen	"{ anim_mode == 1 }"
 	    range	{ 0! 1e+006! }
 	    export	none
 	}
@@ -102,6 +106,7 @@
 	    label	"Play Length"
 	    type	integer
 	    default	{ "0" }
+	    disablewhen	"{ anim_mode == 1 }"
 	    range	{ 0! 1e+006! }
 	    export	none
 	}
@@ -110,6 +115,7 @@
 	    label	"Play Speed"
 	    type	float
 	    default	{ "1" }
+	    disablewhen	"{ anim_mode == 1 }"
 	    range	{ -10! 10! }
 	    export	none
 	}
