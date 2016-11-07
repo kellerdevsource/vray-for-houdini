@@ -117,50 +117,44 @@ if(INSTALL_LOCAL)
 	endif()
 endif()
 
-# Create program launcher with all needed environment variables
-#
-option(USE_LAUNCHER "Create launcher" ON)
-if(USE_LAUNCHER)
-	if(WIN32)
-		set(HFS_RUN_FILE_IN  "${CMAKE_SOURCE_DIR}/misc/hfs.bat.in")
-		set(HFS_RUN_FILE_OUT "${CMAKE_BINARY_DIR}/misc/hfs.bat")
-		set(HFS_RUN_FILE_DST "$ENV{USERPROFILE}/Desktop")
+if(WIN32)
+	set(HFS_RUN_FILE_IN  "${CMAKE_SOURCE_DIR}/misc/hfs.bat.in")
+	set(HFS_RUN_FILE_OUT "${CMAKE_BINARY_DIR}/misc/hfs.bat")
+	set(HFS_RUN_FILE_DST "$ENV{USERPROFILE}/Desktop")
 
-		configure_file(${HFS_RUN_FILE_IN} ${HFS_RUN_FILE_OUT} @ONLY)
+	configure_file(${HFS_RUN_FILE_IN} ${HFS_RUN_FILE_OUT} @ONLY)
 
-		message(STATUS "Generating Houdini run file (${HFS_RUN_FILE_DST})")
-		install(FILES       ${HFS_RUN_FILE_OUT}
-				DESTINATION ${HFS_RUN_FILE_DST})
+	message(STATUS "Generating Houdini run file (${HFS_RUN_FILE_DST})")
+	install(FILES       ${HFS_RUN_FILE_OUT}
+			DESTINATION ${HFS_RUN_FILE_DST})
+else()
+	set(HFS_ENV_FILE_DST "$ENV{HOME}/bin/hfs.env")
+	set(HFS_RUN_FILE_DST "$ENV{HOME}/bin/hfs")
+
+	if(APPLE)
+		set(HFS_ENV_FILE_IN "${CMAKE_SOURCE_DIR}/misc/hfs_osx.env.in")
 	else()
-		set(HFS_ENV_FILE_DST "$ENV{HOME}/bin/hfs.env")
-		set(HFS_RUN_FILE_DST "$ENV{HOME}/bin/hfs")
-
-		if(APPLE)
-			set(HFS_ENV_FILE_IN "${CMAKE_SOURCE_DIR}/misc/hfs_osx.env.in")
-		else()
-			set(HFS_ENV_FILE_IN "${CMAKE_SOURCE_DIR}/misc/hfs_linux.env.in")
-		endif()
-		set(HFS_RUN_FILE_IN "${CMAKE_SOURCE_DIR}/misc/hfs.sh.in")
-
-		set(HFS_ENV_FILE_OUT "${CMAKE_BINARY_DIR}/misc/hfs.env")
-		set(HFS_RUN_FILE_OUT "${CMAKE_BINARY_DIR}/misc/hfs")
-
-		string(REGEX MATCHALL "[0-9]+" HOUDINI_VERSION_COMPONENTS ${HOUDINI_VERSION})
-		list(GET HOUDINI_VERSION_COMPONENTS 0 HOUDINI_MAJOR_RELEASE)
-		list(GET HOUDINI_VERSION_COMPONENTS 1 HOUDINI_MINOR_RELEASE)
-
-		configure_file(${HFS_ENV_FILE_IN} ${HFS_ENV_FILE_OUT} @ONLY)
-		configure_file(${HFS_RUN_FILE_IN} ${HFS_RUN_FILE_OUT} @ONLY)
-
-		message(STATUS "Generating Houdini run file (${HFS_RUN_FILE_DST})")
-		install(FILES       ${HFS_ENV_FILE_OUT}
-				DESTINATION "$ENV{HOME}/bin")
-		install(FILES       ${HFS_RUN_FILE_OUT}
-				DESTINATION "$ENV{HOME}/bin"
-				PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+		set(HFS_ENV_FILE_IN "${CMAKE_SOURCE_DIR}/misc/hfs_linux.env.in")
 	endif()
-endif()
+	set(HFS_RUN_FILE_IN "${CMAKE_SOURCE_DIR}/misc/hfs.sh.in")
 
+	set(HFS_ENV_FILE_OUT "${CMAKE_BINARY_DIR}/misc/hfs.env")
+	set(HFS_RUN_FILE_OUT "${CMAKE_BINARY_DIR}/misc/hfs")
+
+	string(REGEX MATCHALL "[0-9]+" HOUDINI_VERSION_COMPONENTS ${HOUDINI_VERSION})
+	list(GET HOUDINI_VERSION_COMPONENTS 0 HOUDINI_MAJOR_RELEASE)
+	list(GET HOUDINI_VERSION_COMPONENTS 1 HOUDINI_MINOR_RELEASE)
+
+	configure_file(${HFS_ENV_FILE_IN} ${HFS_ENV_FILE_OUT} @ONLY)
+	configure_file(${HFS_RUN_FILE_IN} ${HFS_RUN_FILE_OUT} @ONLY)
+
+	message(STATUS "Generating Houdini run file (${HFS_RUN_FILE_DST})")
+	install(FILES       ${HFS_ENV_FILE_OUT}
+			DESTINATION "$ENV{HOME}/bin")
+	install(FILES       ${HFS_RUN_FILE_OUT}
+			DESTINATION "$ENV{HOME}/bin"
+			PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+endif()
 
 # Install to local share
 #
