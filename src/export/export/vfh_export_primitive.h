@@ -37,6 +37,7 @@ protected:
 
 typedef std::shared_ptr<PrimitiveExporter> PrimitiveExporterPtr;
 
+#ifdef CGR_HAS_AUR
 class VolumeExporter: public PrimitiveExporter {
 public:
 	VolumeExporter(OBJ_Node &obj, OP_Context &ctx, VRayExporter &exp): PrimitiveExporter(obj, ctx, exp) {};
@@ -56,9 +57,7 @@ public:
 private:
 
 };
-
-typedef std::shared_ptr<PrimitiveExporter> PrimitiveExporterPtr;
-
+#endif // CGR_HAS_AUR
 
 } // namespace VRayForHoudini
 

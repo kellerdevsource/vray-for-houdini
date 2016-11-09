@@ -25,6 +25,8 @@
 
 using namespace VRayForHoudini;
 
+#ifdef CGR_HAS_AUR
+
 namespace {
 
 // wrapper over GEO_PrimVolume and GEO_PrimVDB providing common interface
@@ -473,3 +475,5 @@ void VolumeExporter::exportSim(SHOP_Node *shop, const Attrs::PluginAttrs &overri
 		}
 	}
 }
+
+#endif // CGR_HAS_AUR

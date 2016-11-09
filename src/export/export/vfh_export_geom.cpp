@@ -435,10 +435,12 @@ int GeometryExporter::exportDetail(SOP_Node &sop, GU_DetailHandleAutoReadLock &g
 
 	const GU_Detail &gdp = *gdl.getGdp();
 
+#ifdef CGR_HAS_AUR
 	VolumeExporter volExp(m_objNode, m_context, m_pluginExporter);
 	HoudiniVolumeExporter hVoldExp(m_objNode, m_context, m_pluginExporter);
 	volExp.exportPrimitives(gdp, pluginList);
 	hVoldExp.exportPrimitives(gdp, pluginList);
+#endif // CGR_HAS_AUR
 
 	// packed prims
 	if (GU_PrimPacked::hasPackedPrimitives(gdp)) {

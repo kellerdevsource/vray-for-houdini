@@ -7,6 +7,7 @@
 //
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
+#ifdef CGR_HAS_AUR
 
 #include <vop_PhoenixSim.h>
 #include <vfh_prm_templates.h>
@@ -880,3 +881,4 @@ OP::VRayNode::PluginResult PhxShaderSim::asPluginDesc(Attrs::PluginDesc &pluginD
 	return OP::VRayNode::PluginResultContinue;
 }
 
+#endif // CGR_HAS_AUR
