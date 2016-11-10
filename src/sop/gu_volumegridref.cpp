@@ -311,7 +311,8 @@ GU_ConstDetailHandle VRayVolumeGridRef::getPackedDetail(GU_PackedContext *contex
 	auto cache = getCache();
 	auto tEndCache = high_resolution_clock::now();
 
-	GU_Detail *gdp = SYSconst_cast(this)->m_handle.writeLock();
+	GU_DetailHandleAutoWriteLock rLock(SYSconst_cast(this)->m_handle);
+	GU_Detail *gdp = rLock.getGdp();
 
 	if (cache) {
 		Log::getLog().info("Loading cache took %dms", (int)duration_cast<milliseconds>(tEndCache - tStart).count());
