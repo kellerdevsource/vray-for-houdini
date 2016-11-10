@@ -535,17 +535,19 @@ std::string VRayVolumeGridRef::getConvertedPath(bool toPhx) const
 	if (toPhx) {
 		return prefix + std::string(width, '#') + suffix;
 	} else {
-		return prefix + std::to_string(getCurrentCacheFrame()) + suffix;
+		char frameStr[64];
+		sprintf(frameStr, "%0*d", width, getCurrentCacheFrame());
+		return std::string(prefix) + frameStr + suffix;
 	}
 }
 
 int VRayVolumeGridRef::splitPath(const UT_String & path, std::string & prefix, std::string & suffix) const
 {
 	UT_String hPrefix, frame, hSuffix;
-	int width = path.parseNumberedFilename(hPrefix, frame, hSuffix);
+	path.parseNumberedFilename(hPrefix, frame, hSuffix);
 	prefix = hPrefix;
 	suffix = hSuffix;
-	return width;
+	return frame.length();
 }
 
 bool VRayVolumeGridRef::updateFrom(const UT_Options &options)
