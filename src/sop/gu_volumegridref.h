@@ -35,12 +35,14 @@ namespace VRayForHoudini {
 	(exint,  flip_yz,      0),\
 	(const char *, cache_path,  ""),\
 	(const char *, usrchmap,  ""),\
-	(const char *, cache_path_raw, ""),\
+	(const char *, cache_path_prefix, ""),\
+	(const char *, cache_path_suffix, ""),\
+	(exint,        frame_number_width, 1),\
 	(fpreal,       current_frame, 0),\
 	(const char *, current_cache_path, "")\
 	)
 
-#define VFH_VOLUME_GRID_PARAMS_COUNT 16
+#define VFH_VOLUME_GRID_PARAMS_COUNT 18
 
 
 class VRayVolumeGridRef:
@@ -114,14 +116,12 @@ private:
 	bool   updateFrom(const UT_Options &options);
 	void   clearDetail() { m_detail = GU_ConstDetailHandle(); }
 
-	/// Converts Houdini's frame template either phx template or frame number depending on settings
-	/// @param path - the cache path with optional Houdini's frame template
+	/// Builds the cache path according to current settings
 	/// @param toPhx - if true frame will be replaced with '#'s otherwise with current cache frame
 	/// @return - replaced cache path
-	std::string convertCachePath(const std::string & path, bool toPhx) const;
+	std::string getConvertedPath(bool toPhx) const;
 
-	/// Returns the correct cache path according to all settings
-	std::string getCurrentCachePath() const;
+	int splitPath(const UT_String & path, std::string & prefix, std::string & suffix) const;
 
 	/// Returns current cache frame based on current frame + cache play settings
 	int getCurrentCacheFrame() const;
