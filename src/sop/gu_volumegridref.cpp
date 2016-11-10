@@ -482,10 +482,10 @@ int VRayVolumeGridRef::getCurrentCacheFrame() const
 
 	switch (get_anim_mode())
 	{
-	case 1: // direct frame index
+	case AnimationMode::DirectIndex:
 		frame = get_t2f();
 		break;
-	case 0: // standard/linear
+	case AnimationMode::Standard:
 		frame = get_play_speed() * (frame - get_play_at());
 
 		if (fractionalLen > 1e-4f) {
@@ -501,7 +501,7 @@ int VRayVolumeGridRef::getCurrentCacheFrame() const
 
 		frame += get_read_offset();
 		break;
-	case 2: // loop
+	case AnimationMode::Loop:
 		frame = get_play_speed() * (frame - get_play_at());
 
 		if (fractionalLen > 1e-4f) {

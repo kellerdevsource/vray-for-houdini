@@ -48,6 +48,12 @@ namespace VRayForHoudini {
 class VRayVolumeGridRef:
 		public GU_PackedImpl
 {
+	// These *must* match phx's values
+	enum AnimationMode {
+		Standard = 0,
+		DirectIndex = 1,
+		Loop = 2,
+	};
 public:
 	typedef std::shared_ptr<IAur> CachePtr;
 
