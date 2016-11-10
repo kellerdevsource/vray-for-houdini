@@ -1,0 +1,29 @@
+{
+    name	TexHSVToRGB
+    label	"HSV To RGB"
+    parm {
+	name	"plugindata"
+	label	"HSV To RGB"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"TexHSVToRGB"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexHSVToRGB" }
+	parmtag	{ "vray_type" "TEXTURE" }
+    }
+    parm {
+	name	"inHsv"
+	label	"Inhsv"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexHSVToRGB" }
+	parmtag	{ "vray_pluginattr" "inHsv" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+}

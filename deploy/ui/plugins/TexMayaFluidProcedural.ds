@@ -1,0 +1,57 @@
+{
+    name	TexMayaFluidProcedural
+    label	"Maya Fluid Procedural"
+    parm {
+	name	"plugindata"
+	label	"Maya Fluid Procedural"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"TexMayaFluidProcedural"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexMayaFluidProcedural" }
+	parmtag	{ "vray_type" "MISC" }
+    }
+    parm {
+	name	"type"
+	label	"Type"
+	type	ordinal
+	default	{ "1" }
+	help	"0 : constant(1.0); 1 : X gradient; 2 : Y gradient; 3 : Z gradient; 4 : center gradient; 5 : -X gradient; 6 : -Y gradient; 7 : -Z gradient; 8 : sphere; 9 : cube; 10 : cone; 11 : double cone;"
+	menu	{
+	    "Constant(1.0)"	"Constant(1.0)"
+	    "X gradient"	"X gradient"
+	    "Y gradient"	"Y gradient"
+	    "Z gradient"	"Z gradient"
+	    "Center gradient"	"Center gradient"
+	    "-X gradient"	"-X gradient"
+	    "-Y gradient"	"-Y gradient"
+	    "-Z gradient"	"-Z gradient"
+	    "Sphere"	"Sphere"
+	    "Cube"	"Cube"
+	    "Cone"	"Cone"
+	    "Double cone"	"Double cone"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7,8,9,10,11" }
+	parmtag	{ "vray_plugin" "TexMayaFluidProcedural" }
+	parmtag	{ "vray_pluginattr" "type" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"edge_fade_out"
+	label	"Edge Fade Out"
+	type	float
+	default	{ "0" }
+	help	"Since the cube drop-off shape is computed a little differently, we need this here for this particular case"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexMayaFluidProcedural" }
+	parmtag	{ "vray_pluginattr" "edge_fade_out" }
+	parmtag	{ "vray_type" "float" }
+    }
+}

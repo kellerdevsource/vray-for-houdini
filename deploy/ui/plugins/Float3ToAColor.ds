@@ -1,0 +1,81 @@
+{
+    name	Float3ToAColor
+    label	"Float 3 To AColor"
+    parm {
+	name	"plugindata"
+	label	"Float 3 To AColor"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"Float3ToAColor"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_category" "utility" }
+	parmtag	{ "vray_plugin" "Float3ToAColor" }
+	parmtag	{ "vray_type" "TEXTURE" }
+    }
+    parm {
+	name	"float1"
+	label	"Float1"
+	type	float
+	default	{ "0" }
+	help	"First color"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "Float3ToAColor" }
+	parmtag	{ "vray_pluginattr" "float1" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"float2"
+	label	"Float2"
+	type	float
+	default	{ "0" }
+	help	"Second color"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "Float3ToAColor" }
+	parmtag	{ "vray_pluginattr" "float2" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"float3"
+	label	"Float3"
+	type	float
+	default	{ "0" }
+	help	"Third color"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "Float3ToAColor" }
+	parmtag	{ "vray_pluginattr" "float3" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"alpha"
+	label	"Alpha"
+	type	float
+	default	{ "0" }
+	help	"Alpha"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "Float3ToAColor" }
+	parmtag	{ "vray_pluginattr" "alpha" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"invert"
+	label	"Invert"
+	type	toggle
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "Float3ToAColor" }
+	parmtag	{ "vray_pluginattr" "invert" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+}

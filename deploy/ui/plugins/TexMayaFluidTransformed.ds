@@ -1,0 +1,108 @@
+{
+    name	TexMayaFluidTransformed
+    label	"Maya Fluid Transformed"
+    parm {
+	name	"plugindata"
+	label	"Maya Fluid Transformed"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"TexMayaFluidTransformed"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexMayaFluidTransformed" }
+	parmtag	{ "vray_type" "TEXTURE" }
+    }
+    parm {
+	name	"fluid_value_scale"
+	label	"Fluid Value Scale"
+	type	float
+	default	{ "1" }
+	help	"Multiplier for the value taken from fluid_tex"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexMayaFluidTransformed" }
+	parmtag	{ "vray_pluginattr" "fluid_value_scale" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"noise_tex_on"
+	label	"Noise Tex On"
+	type	toggle
+	default	{ "0" }
+	help	"Is the built-in noise enabled ?"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexMayaFluidTransformed" }
+	parmtag	{ "vray_pluginattr" "noise_tex_on" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"noise_tex"
+	label	"Noise Tex"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "0" }
+	help	"The fluid's built-in noise"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexMayaFluidTransformed" }
+	parmtag	{ "vray_pluginattr" "noise_tex" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"noise_gain"
+	label	"Noise Gain"
+	type	float
+	default	{ "0" }
+	help	"Tells how much of the noise should be blended with the grid/gradient values"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexMayaFluidTransformed" }
+	parmtag	{ "vray_pluginattr" "noise_gain" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"dynamic_offset_x"
+	label	"Dynamic Offset X"
+	type	float
+	default	{ "0" }
+	help	"The x dynamic offset of the fluid container"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexMayaFluidTransformed" }
+	parmtag	{ "vray_pluginattr" "dynamic_offset_x" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"dynamic_offset_y"
+	label	"Dynamic Offset Y"
+	type	float
+	default	{ "0" }
+	help	"The y dynamic offset of the fluid container"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexMayaFluidTransformed" }
+	parmtag	{ "vray_pluginattr" "dynamic_offset_y" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"dynamic_offset_z"
+	label	"Dynamic Offset Z"
+	type	float
+	default	{ "0" }
+	help	"The z dynamic offset of the fluid container"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexMayaFluidTransformed" }
+	parmtag	{ "vray_pluginattr" "dynamic_offset_z" }
+	parmtag	{ "vray_type" "float" }
+    }
+}

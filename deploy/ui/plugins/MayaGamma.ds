@@ -1,0 +1,31 @@
+{
+    name	MayaGamma
+    label	"Gamma"
+    parm {
+	name	"plugindata"
+	label	"Gamma"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"Gamma correction texture"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_category" "utility" }
+	parmtag	{ "vray_plugin" "MayaGamma" }
+	parmtag	{ "vray_type" "TEXTURE" }
+    }
+    parm {
+	name	"input"
+	label	"Input"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "1" }
+	help	"The input color"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "MayaGamma" }
+	parmtag	{ "vray_pluginattr" "input" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+}

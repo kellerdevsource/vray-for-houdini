@@ -31,8 +31,6 @@ extern boost::format FmtPrefix;
 extern boost::format FmtPrefixAuto;
 extern boost::format FmtPrefixManual;
 
-typedef std::vector<PRM_Template> PRMTmplList;
-typedef std::vector<PRM_Default>  PRMDefList;
 
 enum ParmType {
 	eInt = 0,
@@ -250,9 +248,6 @@ struct AttrDesc {
 	int          custom_handling;
 	int          linked_only;
 	int          convert_to_radians;
-
-	// Custom template
-	PRMTmplList  custom_template;
 };
 
 typedef std::map<std::string, AttrDesc>       AttributeDescs;
@@ -277,18 +272,6 @@ struct SocketDesc {
 };
 typedef std::vector<SocketDesc> SocketsDesc;
 
-struct TabItemDesc {
-	const char *label;
-	const char *pluginID;
-};
-
-void addTabItems(const Parm::TabItemDesc &tabItemDesc, PRMDefList &switcher, PRMTmplList &prmTemplate);
-void addTabsItems(Parm::TabItemDesc tabItemsDesc[], int tabItemsDescCount, PRMDefList &switcher, PRMTmplList &prmTemplate);
-
-void addTabWithTabs(const char *label,
-					TabItemDesc tabItemsDesc[], int tabItemsDescCount,
-					PRMDefList &switcher, PRM_Name &switcherName,
-					PRMTmplList &prmTemplate, PRMDefList &mainSwitcher);
 
 } // namespace Parm
 } // namespace VRayForHoudini

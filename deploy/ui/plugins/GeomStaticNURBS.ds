@@ -1,0 +1,188 @@
+{
+    name	GeomStaticNURBS
+    label	"Geom Static NURBS"
+    parm {
+	name	"plugindata"
+	label	"Geom Static NURBS"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"GeomStaticNURBS"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomStaticNURBS" }
+	parmtag	{ "vray_type" "GEOMETRY" }
+    }
+    parm {
+	name	"trims"
+	label	"Trims"
+	type	oplist
+	default	{ "" }
+	help	"List of TrimmingRegion objects. The orientation is used to determine whether the trim will generate geometry inside of it or outside of it"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "oprelative" "." }
+	parmtag	{ "vray_plugin" "GeomStaticNURBS" }
+	parmtag	{ "vray_pluginattr" "trims" }
+	parmtag	{ "vray_type" "List<Object>" }
+    }
+    parm {
+	name	"listTrimCurves"
+	label	"Listtrimcurves"
+	type	oplist
+	default	{ "" }
+	help	"List of NURBSCurve objects - the trimming curves"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "oprelative" "." }
+	parmtag	{ "vray_plugin" "GeomStaticNURBS" }
+	parmtag	{ "vray_pluginattr" "listTrimCurves" }
+	parmtag	{ "vray_type" "List<Object>" }
+    }
+    parm {
+	name	"maxSubdivDepth"
+	label	"Maxsubdivdepth"
+	type	integer
+	default	{ "5" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomStaticNURBS" }
+	parmtag	{ "vray_pluginattr" "maxSubdivDepth" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"flatnessCoef"
+	label	"Flatnesscoef"
+	type	float
+	default	{ "0.01" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomStaticNURBS" }
+	parmtag	{ "vray_pluginattr" "flatnessCoef" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"regularSubdiv"
+	label	"Regularsubdiv"
+	type	toggle
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomStaticNURBS" }
+	parmtag	{ "vray_pluginattr" "regularSubdiv" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"regularUSteps"
+	label	"Regularusteps"
+	type	integer
+	default	{ "20" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomStaticNURBS" }
+	parmtag	{ "vray_pluginattr" "regularUSteps" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"regularVSteps"
+	label	"Regularvsteps"
+	type	integer
+	default	{ "20" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomStaticNURBS" }
+	parmtag	{ "vray_pluginattr" "regularVSteps" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"uDirectionType"
+	label	"Udirectiontype"
+	type	integer
+	default	{ "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomStaticNURBS" }
+	parmtag	{ "vray_pluginattr" "uDirectionType" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"vDirectionType"
+	label	"Vdirectiontype"
+	type	integer
+	default	{ "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomStaticNURBS" }
+	parmtag	{ "vray_pluginattr" "vDirectionType" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"uDegree"
+	label	"Udegree"
+	type	integer
+	default	{ "3" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomStaticNURBS" }
+	parmtag	{ "vray_pluginattr" "uDegree" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"vDegree"
+	label	"Vdegree"
+	type	integer
+	default	{ "3" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomStaticNURBS" }
+	parmtag	{ "vray_pluginattr" "vDegree" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"flipNormals"
+	label	"Flipnormals"
+	type	toggle
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomStaticNURBS" }
+	parmtag	{ "vray_pluginattr" "flipNormals" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"generateStatic"
+	label	"Generatestatic"
+	type	toggle
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomStaticNURBS" }
+	parmtag	{ "vray_pluginattr" "generateStatic" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"primary_visibility"
+	label	"Primary Visibility"
+	type	toggle
+	default	{ "1" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomStaticNURBS" }
+	parmtag	{ "vray_pluginattr" "primary_visibility" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+}

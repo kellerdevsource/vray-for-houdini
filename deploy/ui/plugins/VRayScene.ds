@@ -1,0 +1,201 @@
+{
+    name	VRayScene
+    label	"VRayScene"
+    parm {
+	name	"plugindata"
+	label	"VRayScene"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"*.vrscene asset loader"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "VRayScene" }
+	parmtag	{ "vray_type" "GEOMETRY" }
+    }
+    parm {
+	name	"filepath"
+	label	"Filepath"
+	type	file
+	default	{ "" }
+	help	"Path to a *.vrscene file"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "filechooser_pattern" "*.vrscene" }
+	parmtag	{ "vray_file_names" "V-Ray Scene, fileAssetOp=load, displayName=File Path" }
+	parmtag	{ "vray_plugin" "VRayScene" }
+	parmtag	{ "vray_pluginattr" "filepath" }
+	parmtag	{ "vray_type" "String" }
+    }
+    parm {
+	name	"mode"
+	label	"Mode"
+	type	ordinal
+	default	{ "0" }
+	help	"Working mode"
+	menu	{
+	    "Objects"	"Objects"
+	    "Camera"	"Camera"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_enumkeys" "0,1" }
+    }
+    parm {
+	name	"use_transform"
+	label	"Use Transform"
+	type	toggle
+	default	{ "1" }
+	help	"Use additional transform"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "VRayScene" }
+	parmtag	{ "vray_pluginattr" "use_transform" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"add_nodes"
+	label	"Add Nodes"
+	type	toggle
+	default	{ "1" }
+	help	"Add nodes from the included files"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "VRayScene" }
+	parmtag	{ "vray_pluginattr" "add_nodes" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"add_lights"
+	label	"Add Lights"
+	type	toggle
+	default	{ "1" }
+	help	"Add lights from the included files"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "VRayScene" }
+	parmtag	{ "vray_pluginattr" "add_lights" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"anim_speed"
+	label	"Anim Speed"
+	type	float
+	default	{ "1" }
+	help	"Animation playback speed"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "VRayScene" }
+	parmtag	{ "vray_pluginattr" "anim_speed" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"anim_type"
+	label	"Playback Type"
+	type	ordinal
+	default	{ "0" }
+	help	"Animated proxy playback type"
+	menu	{
+	    "Loop"	"Loop"
+	    "Once"	"Once"
+	    "Ping-pong"	"Ping-pong"
+	    "Still"	"Still"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_enumkeys" "0,1,2,3" }
+	parmtag	{ "vray_plugin" "VRayScene" }
+	parmtag	{ "vray_pluginattr" "anim_type" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"anim_offset"
+	label	"Anim Offset"
+	type	float
+	default	{ "0" }
+	help	"Animation initial frame offset"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "VRayScene" }
+	parmtag	{ "vray_pluginattr" "anim_offset" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"anim_start"
+	label	"Anim Start"
+	type	integer
+	default	{ "0" }
+	help	"Specifies the first frame of the animation sequence"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "VRayScene" }
+	parmtag	{ "vray_pluginattr" "anim_start" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"anim_length"
+	label	"Anim Length"
+	type	integer
+	default	{ "0" }
+	help	"Specifies the length of the animation sequence"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "VRayScene" }
+	parmtag	{ "vray_pluginattr" "anim_length" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"material_override"
+	label	"Material Override"
+	type	oppath
+	default	{ "" }
+	help	"Override material"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "oprelative" "." }
+	parmtag	{ "vray_plugin" "VRayScene" }
+	parmtag	{ "vray_pluginattr" "material_override" }
+	parmtag	{ "vray_type" "Object" }
+    }
+    multiparm {
+	name	"hidden_objects"
+	label	"Hidden Objects"
+	default	0
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "VRayScene" }
+	parmtag	{ "vray_pluginattr" "hidden_objects" }
+	parmtag	{ "vray_type" "List<String>" }
+
+	parm {
+	    name	"hidden_objects#"
+	    label	"Hidden Objects"
+	    type	string
+	    default	{ "" }
+	    help	"Plugin names list to hide"
+	    range	{ 0 1 }
+	    export	none
+	}
+    }
+
+    parm {
+	name	"flip_axis"
+	label	"Flip Axis"
+	type	toggle
+	default	{ "0" }
+	help	"Flip axis"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+    }
+}

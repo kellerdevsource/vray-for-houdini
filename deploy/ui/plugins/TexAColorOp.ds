@@ -1,0 +1,110 @@
+{
+    name	TexAColorOp
+    label	"Color Operations"
+    parm {
+	name	"plugindata"
+	label	"Color Operations"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"Color operations"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_category" "utility" }
+	parmtag	{ "vray_plugin" "TexAColorOp" }
+	parmtag	{ "vray_type" "TEXTURE" }
+    }
+    parm {
+	name	"color_a"
+	label	"Color A"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "1" }
+	help	"The first color"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexAColorOp" }
+	parmtag	{ "vray_pluginattr" "color_a" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"color_b"
+	label	"Color B"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "1" }
+	help	"The second color"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexAColorOp" }
+	parmtag	{ "vray_pluginattr" "color_b" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"mult_a"
+	label	"Mult A"
+	type	float
+	default	{ "1" }
+	help	"Multiplier for the first color"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexAColorOp" }
+	parmtag	{ "vray_pluginattr" "mult_a" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"mult_b"
+	label	"Mult B"
+	type	float
+	default	{ "1" }
+	help	"Multiplier for the second color"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexAColorOp" }
+	parmtag	{ "vray_pluginattr" "mult_b" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"result_alpha"
+	label	"Result Alpha"
+	type	float
+	default	{ "1" }
+	help	"The alpha for the result; if not specified, the resulting alpha taken from the first color)"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexAColorOp" }
+	parmtag	{ "vray_pluginattr" "result_alpha" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"mode"
+	label	"Output Mode"
+	type	ordinal
+	default	{ "0" }
+	help	"Which output should be considered for the 'Output'"
+	menu	{
+	    "Result A"	"Result A"
+	    "Result B"	"Result B"
+	    "Product"	"Product"
+	    "Sum"	"Sum"
+	    "Difference"	"Difference"
+	    "Power"	"Power"
+	    "Division"	"Division"
+	    "Minimum"	"Minimum"
+	    "Maximum"	"Maximum"
+	    "Absolute Difference"	"Absolute Difference"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7,8,9" }
+	parmtag	{ "vray_plugin" "TexAColorOp" }
+	parmtag	{ "vray_pluginattr" "mode" }
+	parmtag	{ "vray_type" "int" }
+    }
+}

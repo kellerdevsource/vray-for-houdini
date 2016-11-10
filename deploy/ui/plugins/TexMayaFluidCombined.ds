@@ -1,0 +1,16 @@
+{
+    name	TexMayaFluidCombined
+    label	"Maya Fluid Combined"
+    parm {
+	name	"plugindata"
+	label	"Maya Fluid Combined"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"TexMayaFluidCombined"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexMayaFluidCombined" }
+	parmtag	{ "vray_type" "MISC" }
+    }
+}

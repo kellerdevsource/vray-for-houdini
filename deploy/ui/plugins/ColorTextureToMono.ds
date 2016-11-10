@@ -1,0 +1,42 @@
+{
+    name	ColorTextureToMono
+    label	"Color Texture To Mono"
+    parm {
+	name	"plugindata"
+	label	"Color Texture To Mono"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"ColorTextureToMono"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_category" "utility" }
+	parmtag	{ "vray_plugin" "ColorTextureToMono" }
+	parmtag	{ "vray_type" "TEXTURE" }
+    }
+    parm {
+	name	"value"
+	label	"Value"
+	type	float
+	default	{ "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "ColorTextureToMono" }
+	parmtag	{ "vray_pluginattr" "value" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"color_texture"
+	label	"Color Texture"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "ColorTextureToMono" }
+	parmtag	{ "vray_pluginattr" "color_texture" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+}

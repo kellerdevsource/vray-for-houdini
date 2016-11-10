@@ -1,0 +1,201 @@
+{
+    name	VolumeScatterFog
+    label	"Volume Scatter Fog"
+    parm {
+	name	"plugindata"
+	label	"Volume Scatter Fog"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"VolumeScatterFog"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "VolumeScatterFog" }
+	parmtag	{ "vray_type" "EFFECT" }
+    }
+    parm {
+	name	"emission"
+	label	"Emission"
+	type	color
+	size	3
+	default	{ "0" "0" "0" }
+	help	"Fog emission color"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "VolumeScatterFog" }
+	parmtag	{ "vray_pluginattr" "emission" }
+	parmtag	{ "vray_type" "Color" }
+    }
+    parm {
+	name	"color"
+	label	"Color"
+	type	color
+	size	3
+	default	{ "0.5" "0.5" "0.5" }
+	help	"Fog color"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "VolumeScatterFog" }
+	parmtag	{ "vray_pluginattr" "color" }
+	parmtag	{ "vray_type" "Color" }
+    }
+    parm {
+	name	"color_tex"
+	label	"Color Tex"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "0" }
+	help	"Fog color texture map"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "VolumeScatterFog" }
+	parmtag	{ "vray_pluginattr" "color_tex" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"color_mult"
+	label	"Color Mult"
+	type	float
+	default	{ "0.1" }
+	help	"Fog color multiplier"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "VolumeScatterFog" }
+	parmtag	{ "vray_pluginattr" "color_mult" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"ior"
+	label	"Ior"
+	type	float
+	default	{ "1" }
+	help	"The IOR for the volume"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "VolumeScatterFog" }
+	parmtag	{ "vray_pluginattr" "ior" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"bias"
+	label	"Bias"
+	type	float
+	default	{ "0" }
+	help	"Bias for the fogging distance"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "VolumeScatterFog" }
+	parmtag	{ "vray_pluginattr" "bias" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"closed_volume"
+	label	"Closed Volume"
+	type	toggle
+	default	{ "0" }
+	help	"If true, the fog will shade only closed volumes"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "VolumeScatterFog" }
+	parmtag	{ "vray_pluginattr" "closed_volume" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"subdivs"
+	label	"Subdivs"
+	type	integer
+	default	{ "8" }
+	help	"Subdivs for the scattering samples"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "VolumeScatterFog" }
+	parmtag	{ "vray_pluginattr" "subdivs" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"thickness"
+	label	"Thickness"
+	type	float
+	default	{ "1e+18" }
+	help	"Maximum distance to trace into the objects"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "VolumeScatterFog" }
+	parmtag	{ "vray_pluginattr" "thickness" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"light_mult"
+	label	"Light Mult"
+	type	float
+	default	{ "1" }
+	help	"Multiplier for the sss effect"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "VolumeScatterFog" }
+	parmtag	{ "vray_pluginattr" "light_mult" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"scatter_coeff"
+	label	"Scatter Coeff"
+	type	float
+	default	{ "0" }
+	help	"Scatter coefficient (0.0 is full scattering; 1.0 is purely directional)"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "VolumeScatterFog" }
+	parmtag	{ "vray_pluginattr" "scatter_coeff" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"scatter_direction"
+	label	"Scatter Direction"
+	type	float
+	default	{ "1" }
+	help	"Scatter direction (0.0 is forward away from the viewer; 1.0 is backward towards the viewer)"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "VolumeScatterFog" }
+	parmtag	{ "vray_pluginattr" "scatter_direction" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"scatter_levels"
+	label	"Scatter Levels"
+	type	integer
+	default	{ "1" }
+	help	"Maximum number of scattering bounces"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "VolumeScatterFog" }
+	parmtag	{ "vray_pluginattr" "scatter_levels" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"environment_fog"
+	label	"Environment Fog"
+	type	toggle
+	default	{ "0" }
+	help	"true if this is environment fog and false if it is inside an object"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "VolumeScatterFog" }
+	parmtag	{ "vray_pluginattr" "environment_fog" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+}

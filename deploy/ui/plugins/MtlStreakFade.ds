@@ -1,0 +1,28 @@
+{
+    name	MtlStreakFade
+    label	"Streak Fade"
+    parm {
+	name	"plugindata"
+	label	"Streak Fade"
+	type	data
+	invisible
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlStreakFade" }
+	parmtag	{ "vray_type" "MATERIAL" }
+    }
+    parm {
+	name	"fade"
+	label	"Fade"
+	type	float
+	default	{ "1" }
+	help	"1.0f - no fade, < 1.0f - fade"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "MtlStreakFade" }
+	parmtag	{ "vray_pluginattr" "fade" }
+	parmtag	{ "vray_type" "float" }
+    }
+}

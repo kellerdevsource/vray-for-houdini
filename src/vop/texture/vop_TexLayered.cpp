@@ -64,9 +64,9 @@ void VOP::TexLayered::setPluginType()
 }
 
 
-void VOP::TexLayered::addPrmTemplate(Parm::PRMTmplList &prmTemplate)
+void VOP::TexLayered::addPrmTemplate(Parm::PRMList &prmTemplate)
 {
-	prmTemplate.push_back(PRM_Template(PRM_MULTITYPE_LIST, rpm_tmpl_textures, 1, &rpm_name_tex_count, /*choicelist*/ nullptr, &rpm_range_tex_count));
+	prmTemplate.addPrm(PRM_Template(PRM_MULTITYPE_LIST, rpm_tmpl_textures, 1, &rpm_name_tex_count, /*choicelist*/ nullptr, &rpm_range_tex_count));
 }
 
 

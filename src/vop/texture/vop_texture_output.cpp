@@ -14,7 +14,7 @@
 using namespace VRayForHoudini;
 
 
-void VOP::TextureOutput::addPrmTemplate(Parm::PRMTmplList &prmTemplate)
+void VOP::TextureOutput::addPrmTemplate(Parm::PRMList &prmTemplate)
 {
 }
 

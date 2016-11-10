@@ -1,0 +1,16 @@
+{
+    name	OutputTest
+    label	"Output Test"
+    parm {
+	name	"plugindata"
+	label	"Output Test"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"OutputTest"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "OutputTest" }
+	parmtag	{ "vray_type" "SETTINGS" }
+    }
+}

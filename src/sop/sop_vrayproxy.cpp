@@ -20,7 +20,7 @@
 using namespace VRayForHoudini;
 
 
-void SOP::VRayProxy::addPrmTemplate(Parm::PRMTmplList &prmTemplate)
+void SOP::VRayProxy::addPrmTemplate(Parm::PRMList &prmTemplate)
 {
 	const char *lodItems[] = {
 		"bbox", "Bounding Box",
@@ -41,22 +41,22 @@ void SOP::VRayProxy::addPrmTemplate(Parm::PRMTmplList &prmTemplate)
 		"empty", "No Geometry",
 	};
 
-	prmTemplate.push_back(Parm::PRMFactory(PRM_ORD, "loadtype", "Load")
+	prmTemplate.addPrm(Parm::PRMFactory(PRM_ORD, "loadtype", "Load")
 						.setDefault(PRMoneDefaults)
 						.setChoiceListItems(PRM_CHOICELIST_SINGLE, lodItems, CountOf(lodItems))
 						.getPRMTemplate());
-	prmTemplate.push_back(Parm::PRMFactory(PRM_ORD, "viewportlod", "Display As")
+	prmTemplate.addPrm(Parm::PRMFactory(PRM_ORD, "viewportlod", "Display As")
 						.setDefault(PRMzeroDefaults)
 						.setChoiceListItems(PRM_CHOICELIST_SINGLE, viewportlodItems, CountOf(viewportlodItems))
 						.getPRMTemplate());
-	prmTemplate.push_back(Parm::PRMFactory(PRM_ORD, "missingfile", "Missing File")
+	prmTemplate.addPrm(Parm::PRMFactory(PRM_ORD, "missingfile", "Missing File")
 						.setDefault(PRMzeroDefaults)
 						.setChoiceListItems(PRM_CHOICELIST_SINGLE, missingfileItems, CountOf(missingfileItems))
 						.getPRMTemplate());
-	prmTemplate.push_back(Parm::PRMFactory(PRM_CALLBACK, "reload", "Reload Geometry")
+	prmTemplate.addPrm(Parm::PRMFactory(PRM_CALLBACK, "reload", "Reload Geometry")
 						.setCallbackFunc(VRayProxy::cbClearCache)
 						.getPRMTemplate());
-	prmTemplate.push_back(Parm::PRMFactory(PRM_HEADING, "vrayproxyheading", "VRayProxy Settings")
+	prmTemplate.addPrm(Parm::PRMFactory(PRM_HEADING, "vrayproxyheading", "VRayProxy Settings")
 						.getPRMTemplate());
 }
 

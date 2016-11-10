@@ -14,7 +14,6 @@
 #include "vfh_prm_def.h"
 
 #include <PRM/PRM_Include.h>
-#include <PRM/PRM_ScriptPage.h>
 
 #include <string>
 #include <vector>
@@ -23,6 +22,7 @@
 
 
 class OP_Node;
+class PRM_ScriptGroup;
 
 
 namespace VRayForHoudini {
@@ -30,6 +30,16 @@ namespace Parm {
 
 
 class PRMFactory;
+class PRMList;
+
+
+// prepends the passed path with the UI root determined by VRAY_UI_DS_PATH env var
+// if resulting file path doesn't exist searches for the relPath inside UI root
+// does minimal validation if UI root and file path exist
+std::string     expandUiPath(const std::string &relPath);
+bool            addPrmTemplateForPlugin(const std::string &pluginID, Parm::PRMList &prmList);
+PRMList*        generatePrmTemplate(const std::string &pluginID);
+PRM_Template*   getPrmTemplate(const std::string &pluginID);
 
 
 /// @brief PRM_Template list that is always terminated.
@@ -41,22 +51,51 @@ public:
 
 	void                clear();
 	bool                empty() const { return (m_prmVec.size() < 2); }
-	size_t              size() const { return (m_prmVec.size() - 1); }
-	void                reserve(size_t n) { return m_prmVec.reserve(n + 1); }
+	int                 size() const { return std::max(static_cast<int>(m_prmVec.size())-1, 0); }
+	void                reserve(int n) { return m_prmVec.reserve(n + 1); }
 
-	// will copy internal template to heap and return the pointer
+	PRMList&            setCookDependent(bool recook);
+
+	int                 findPRMTemplate(const char *token) const;
+	PRM_Template*       getPRMTemplate(int i)
+	{ return ((i < 0 || i >= size())? nullptr : (m_prmVec.data() + i)); }
+	const PRM_Template* getPRMTemplate(int i) const
+	{ return ((i < 0 || i >= size())? nullptr : (m_prmVec.data() + i)); }
+	// NOTE: use following 2 methods with causion
+	// be careful when accessing internal PRM_Template data and passing it around
+	// adding additional parameters to the PRMList after calling PRMList::getPRMTemplate() might cause
+	// m_prmVec to be resized and invalidate the returened pointers
+	PRM_Template*       getPRMTemplate() { return m_prmVec.data(); }
+	const PRM_Template* getPRMTemplate() const { return m_prmVec.data(); }
+	// NOTE: will copy internal template to heap and return the pointer
 	// this should not be called excessivily as these pointers are not freed
-	PRM_Template*       getPRMTemplate(bool setRecook = true) const;
+	std::shared_ptr<PRM_Template> getPRMTemplateCopy() const;
+
 
 	PRMList& addPrm(const PRM_Template &p);
 	PRMList& addPrm(const PRMFactory &p);
+	// NOTE: you must call addFolder() whenever you open a switcher with switcherBegin()
+	// adding parameter to an open switcher with no folders in it will result in runtime error
 	PRMList& switcherBegin(const char *token, const char *label = nullptr);
+	// NOTE: you must call switcherEnd() to correctly terminate the switcher parameters scope
+	// otherwise switcher folders will not appear as expected in the UI
 	PRMList& switcherEnd();
-	PRMList& addFolder(const std::string &label);
-	PRMList& addFromFile(const std::string &path);
+	// NOTE: you must call addFolder() whenever you open a switcher with switcherBegin()
+	// adding parameter to an open switcher with no folders in it will result in runtime error
+	PRMList& addFolder(const char *label);
+	// NOTE: when loading parameters from file you MUST keep
+	// the PRMList instance alive as it holds internal references to
+	// PRM_ScriptPages used by the loaded PRM_Templates
+	PRMList& addFromFile(const char *filepath);
+	// NOTE: tmpl should be list terminated array of parameters
+	PRMList& addFromPRMTemplate(const PRM_Template tmpl[]);
 
-	// does not validate anything, just prepends the passed path with the UI root
-	static std::string expandUiPath(const std::string &relPath);
+
+	static PRM_Template* loadFromFile(const char *filepath, bool cookDependent = false);
+	// NOTE: tmpl should be list terminated array of parameters
+	static void          setCookDependent(PRM_Template tmpl[], bool recook);
+	// NOTE: tmpl should be list terminated array of parameters
+	static void          renamePRMTemplate(PRM_Template tmpl[], const char *prefix);
 
 private:
 	typedef std::vector<PRM_Template> PRMTemplVec;
@@ -73,10 +112,10 @@ private:
 
 	typedef std::list<SwitcherInfo> SwitcherList;
 	typedef std::vector<SwitcherInfo*> SwitcherStack;
-	typedef std::vector<std::shared_ptr<PRM_ScriptPage> > ScriptPageList;
+	typedef std::list< std::shared_ptr<PRM_ScriptGroup> > ScriptGroupList;
 
 	SwitcherInfo* getCurrentSwitcher();
-	void          incCurrentFolderPrmCnt();
+	void          incCurrentFolderPrmCnt(int cnt);
 
 private:
 	PRMTemplVec    m_prmVec;
@@ -84,7 +123,7 @@ private:
 	SwitcherStack  m_switcherStack;
 	// will hold script pages, so params have valid references at all times
 	// container will free the pages on destruction
-	ScriptPageList m_scriptPages;
+	ScriptGroupList m_scriptGroups;
 };
 
 
@@ -161,7 +200,7 @@ public:
 	/// @brief Specify the list of parameters for each instance of a multiparm.
 	/// @note This setting is ignored for non-multiparm parameters.
 	/// @note Parameter name tokens should include a '#' character.
-	PRMFactory& setMultiparms(const PRMList&);
+	PRMFactory& setMultiparms(const PRM_Template tmpl[]);
 
 	PRMFactory& setParmGroup(int);
 

@@ -1,0 +1,95 @@
+{
+    name	TexMulti
+    label	"Multi"
+    parm {
+	name	"plugindata"
+	label	"Multi"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"TexMulti"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexMulti" }
+	parmtag	{ "vray_type" "TEXTURE" }
+    }
+    parm {
+	name	"textures_list"
+	label	"Textures List"
+	type	oplist
+	default	{ "" }
+	help	"A list of the sub-textures"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "oprelative" "." }
+	parmtag	{ "vray_plugin" "TexMulti" }
+	parmtag	{ "vray_pluginattr" "textures_list" }
+	parmtag	{ "vray_type" "List<Object>" }
+    }
+    parm {
+	name	"mode"
+	label	"Mode"
+	type	ordinal
+	default	{ "0" }
+	help	"The mode for the texture (0 - use face material ID, 1 - use object ID, 2 - random by node handle, 3 - random by render id, 4 - random by node name, 6 - random by instance ID, 30 - the ID is taken from the ID generator texture(id_gen_tex))"
+	menu	{
+	    "Face material ID"	"Face material ID"
+	    "Object ID"	"Object ID"
+	    "Random by node handle"	"Random by node handle"
+	    "Random by render ID"	"Random by render ID"
+	    "Random by node name"	"Random by node name"
+	    "Random by instance ID"	"Random by instance ID"
+	    " Use ID Generator texture"	" Use ID Generator texture"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_enumkeys" "0,1,2,3,4,6,30" }
+	parmtag	{ "vray_plugin" "TexMulti" }
+	parmtag	{ "vray_pluginattr" "mode" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"default_texture"
+	label	"Default Texture"
+	type	color4
+	size	4
+	default	{ "0.5" "0.5" "0.5" "1" }
+	help	"The default texture color"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexMulti" }
+	parmtag	{ "vray_pluginattr" "default_texture" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"id_gen_tex"
+	label	"Id Generator Texture"
+	type	float
+	default	{ "0" }
+	help	"Used when mode is \"Use ID Generator texture\"(30)"
+	disablewhen	"{ mode != \" Use ID Generator texture\" }"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexMulti" }
+	parmtag	{ "vray_pluginattr" "id_gen_tex" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"interpolate"
+	label	"Interpolate"
+	type	toggle
+	default	{ "0" }
+	help	"Used when mode is \"Use ID Generator texture\"(30)"
+	disablewhen	"{ mode != \" Use ID Generator texture\" }"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexMulti" }
+	parmtag	{ "vray_pluginattr" "interpolate" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+}

@@ -1,0 +1,43 @@
+{
+    name	TexSwitchMatrix
+    label	"Switch Matrix"
+    parm {
+	name	"plugindata"
+	label	"Switch Matrix"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"TexSwitchMatrix"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_category" "utility" }
+	parmtag	{ "vray_plugin" "TexSwitchMatrix" }
+	parmtag	{ "vray_type" "TEXTURE" }
+    }
+    parm {
+	name	"nodes"
+	label	"Nodes"
+	type	oplist
+	default	{ "" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "oprelative" "." }
+	parmtag	{ "vray_plugin" "TexSwitchMatrix" }
+	parmtag	{ "vray_pluginattr" "nodes" }
+	parmtag	{ "vray_type" "List<Object>" }
+    }
+    parm {
+	name	"textures"
+	label	"Textures"
+	type	oplist
+	default	{ "" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "oprelative" "." }
+	parmtag	{ "vray_plugin" "TexSwitchMatrix" }
+	parmtag	{ "vray_pluginattr" "textures" }
+	parmtag	{ "vray_type" "List<Object>" }
+    }
+}

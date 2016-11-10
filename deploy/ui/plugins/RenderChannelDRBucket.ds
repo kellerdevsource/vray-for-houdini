@@ -1,0 +1,45 @@
+{
+    name	RenderChannelDRBucket
+    label	"DR Bucket"
+    parm {
+	name	"plugindata"
+	label	"DR Bucket"
+	type	data
+	invisible
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "RenderChannelDRBucket" }
+	parmtag	{ "vray_type" "RENDERCHANNEL" }
+    }
+    parm {
+	name	"name"
+	label	"Name"
+	type	string
+	default	{ "DR" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "RenderChannelDRBucket" }
+	parmtag	{ "vray_pluginattr" "name" }
+	parmtag	{ "vray_type" "String" }
+    }
+    parm {
+	name	"text_alignment"
+	label	"Text Alignment"
+	type	ordinal
+	default	{ "1" }
+	menu	{
+	    "Left"	"Left"
+	    "Center"	"Center"
+	    "Right"	"Right"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_enumkeys" "0,1,2" }
+	parmtag	{ "vray_plugin" "RenderChannelDRBucket" }
+	parmtag	{ "vray_pluginattr" "text_alignment" }
+	parmtag	{ "vray_type" "int" }
+    }
+}

@@ -1,0 +1,16 @@
+{
+    name	FilterPoint
+    label	"Filter Point"
+    parm {
+	name	"plugindata"
+	label	"Filter Point"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"FilterPoint"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "FilterPoint" }
+	parmtag	{ "vray_type" "SETTINGS" }
+    }
+}

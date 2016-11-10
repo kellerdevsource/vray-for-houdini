@@ -1,0 +1,16 @@
+{
+    name	TexMayaHairTransparency
+    label	"Maya Hair Transparency"
+    parm {
+	name	"plugindata"
+	label	"Maya Hair Transparency"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"TexMayaHairTransparency"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexMayaHairTransparency" }
+	parmtag	{ "vray_type" "TEXTURE" }
+    }
+}

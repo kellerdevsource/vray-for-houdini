@@ -1,0 +1,55 @@
+{
+    name	CameraDome
+    label	"Camera Dome"
+    parm {
+	name	"plugindata"
+	label	"Camera Dome"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"CameraDome"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "CameraDome" }
+	parmtag	{ "vray_type" "CAMERA" }
+    }
+    parm {
+	name	"flip_x"
+	label	"Flip X"
+	type	toggle
+	default	{ "0" }
+	help	"Flip in the horizontal image direction"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "CameraDome" }
+	parmtag	{ "vray_pluginattr" "flip_x" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"flip_y"
+	label	"Flip Y"
+	type	toggle
+	default	{ "0" }
+	help	"Flip in the vertical image direction"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "CameraDome" }
+	parmtag	{ "vray_pluginattr" "flip_y" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"fov"
+	label	"Fov"
+	type	float
+	default	{ "0.785398" }
+	help	"Field of view (radians)"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "CameraDome" }
+	parmtag	{ "vray_pluginattr" "fov" }
+	parmtag	{ "vray_type" "float" }
+    }
+}

@@ -1,0 +1,326 @@
+{
+    name	GeomMetaballSystem
+    label	"Geom Metaball System"
+    parm {
+	name	"plugindata"
+	label	"Geom Metaball System"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"GeomMetaballSystem"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
+	parmtag	{ "vray_type" "GEOMETRY" }
+    }
+    parm {
+	name	"useParticleSize"
+	label	"Useparticlesize"
+	type	ordinal
+	default	{ "0" }
+	help	"true : use particle size; false : use particleRadius for size"
+	menu	{
+	    "Use particle size"	"Use particle size"
+	    "Use particleRadius for size"	"Use particleRadius for size"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_enumkeys" "0,1" }
+	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
+	parmtag	{ "vray_pluginattr" "useParticleSize" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"particleRadius"
+	label	"Particleradius"
+	type	float
+	default	{ "1" }
+	help	"Size of partiles when useParticleSize is false"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
+	parmtag	{ "vray_pluginattr" "particleRadius" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"threshold"
+	label	"Threshold"
+	type	float
+	default	{ "0.5" }
+	help	"Field threshold value"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
+	parmtag	{ "vray_pluginattr" "threshold" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"stepLength"
+	label	"Steplength"
+	type	float
+	default	{ "0.1" }
+	help	"Ray marching step length"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
+	parmtag	{ "vray_pluginattr" "stepLength" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"mbSamples"
+	label	"Mbsamples"
+	type	integer
+	default	{ "0" }
+	help	"Number of samples for motion blur. 0 - Use global settings"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
+	parmtag	{ "vray_pluginattr" "mbSamples" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"distanceFunction"
+	label	"Distancefunction"
+	type	ordinal
+	default	{ "0" }
+	help	"Distance function - 0: Power of two; 1: Power of three; 2: Power of four; 3: Power of five; 4: Hermit in power of two; 5: Hermit in power of three; 6: Hermit in power of five; 7: Wyvill;"
+	menu	{
+	    "Power of two"	"Power of two"
+	    "Power of three"	"Power of three"
+	    "Power of four"	"Power of four"
+	    "Power of five"	"Power of five"
+	    "Hermit in power of two"	"Hermit in power of two"
+	    "Hermit in power of three"	"Hermit in power of three"
+	    "Hermit in power of five"	"Hermit in power of five"
+	    "Wyvill"	"Wyvill"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7" }
+	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
+	parmtag	{ "vray_pluginattr" "distanceFunction" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"smoothingBumps"
+	label	"Smoothingbumps"
+	type	integer
+	default	{ "0" }
+	help	"If true - smoothing of the field bump will be performed"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
+	parmtag	{ "vray_pluginattr" "smoothingBumps" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"smoothRadius"
+	label	"Smoothradius"
+	type	float
+	default	{ "0.5" }
+	help	"Radius of the smoothing filter"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
+	parmtag	{ "vray_pluginattr" "smoothRadius" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"smoothExpansion"
+	label	"Smoothexpansion"
+	type	float
+	default	{ "0.25" }
+	help	"Correction coefficient for surface expansion: from 0.0 to 1.0"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
+	parmtag	{ "vray_pluginattr" "smoothExpansion" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"positiveParticles"
+	label	"Positiveparticles"
+	type	oplist
+	default	{ "" }
+	help	"List with positive particle systems"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "oprelative" "." }
+	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
+	parmtag	{ "vray_pluginattr" "positiveParticles" }
+	parmtag	{ "vray_type" "List<Object>" }
+    }
+    parm {
+	name	"negativeParticles"
+	label	"Negativeparticles"
+	type	oplist
+	default	{ "" }
+	help	"List with negative particle systems"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "oprelative" "." }
+	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
+	parmtag	{ "vray_pluginattr" "negativeParticles" }
+	parmtag	{ "vray_type" "List<Object>" }
+    }
+    parm {
+	name	"useTexture"
+	label	"Usetexture"
+	type	integer
+	default	{ "0" }
+	help	"If true - texture will be applied on field"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
+	parmtag	{ "vray_pluginattr" "useTexture" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"fieldTexture"
+	label	"Fieldtexture"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "1" }
+	help	"Field texture"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
+	parmtag	{ "vray_pluginattr" "fieldTexture" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"textureFunction"
+	label	"Texturefunction"
+	type	ordinal
+	default	{ "0" }
+	help	"0 - Multiplication; 1 - Addition;"
+	menu	{
+	    "Multiplication"	"Multiplication"
+	    "Addition"	"Addition"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_enumkeys" "0,1" }
+	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
+	parmtag	{ "vray_pluginattr" "textureFunction" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"textureMultiplier"
+	label	"Texturemultiplier"
+	type	float
+	default	{ "1" }
+	help	"Multiplier of the texture"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
+	parmtag	{ "vray_pluginattr" "textureMultiplier" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"clampField"
+	label	"Clampfield"
+	type	integer
+	default	{ "0" }
+	help	"If true - the field will be clamped before texturing"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
+	parmtag	{ "vray_pluginattr" "clampField" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"clampThreshold"
+	label	"Clampthreshold"
+	type	float
+	default	{ "1" }
+	help	"Field clamping level"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
+	parmtag	{ "vray_pluginattr" "clampThreshold" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"useCache"
+	label	"Usecache"
+	type	integer
+	default	{ "0" }
+	help	"If true - voxel cache will be used for intersection speed-up"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
+	parmtag	{ "vray_pluginattr" "useCache" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"cacheRecursiveBuild"
+	label	"Cacherecursivebuild"
+	type	integer
+	default	{ "0" }
+	help	"If true - voxel cache will be build recursively"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
+	parmtag	{ "vray_pluginattr" "cacheRecursiveBuild" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"cacheSize"
+	label	"Cachesize"
+	type	integer
+	default	{ "3" }
+	help	"Cache size: from 1 to 5"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
+	parmtag	{ "vray_pluginattr" "cacheSize" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"cacheBlockSize"
+	label	"Cacheblocksize"
+	type	integer
+	default	{ "4" }
+	help	"Cache consolidation block size: from 1 to 8"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
+	parmtag	{ "vray_pluginattr" "cacheBlockSize" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"primary_visibility"
+	label	"Primary Visibility"
+	type	toggle
+	default	{ "1" }
+	help	"If off shading an intersection with this geometry will not generate a gbuffer"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
+	parmtag	{ "vray_pluginattr" "primary_visibility" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+}

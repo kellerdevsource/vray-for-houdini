@@ -17,7 +17,7 @@ node_parm.setExpression("if(ch(\"./enabled\"), ch(\"./intensity\"), 0)")
 
 cnode = node.createNode("object_merge")
 node_parm = cnode.parm("objpath1")
-node_parm.setExpression("chsop(\"../obj_geometrypath\")")
+node_parm.setExpression("chsop(\"../geometry\")")
 
 cnode.setRenderFlag(True)
 cnode.setDisplayFlag(True)

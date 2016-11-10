@@ -1,0 +1,391 @@
+{
+    name	TexPtex
+    label	"Ptex"
+    parm {
+	name	"plugindata"
+	label	"Ptex"
+	type	data
+	invisible
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexPtex" }
+	parmtag	{ "vray_type" "TEXTURE" }
+    }
+    parm {
+	name	"ptex_file"
+	label	"Ptex File"
+	type	file
+	default	{ "" }
+	help	"The Ptex texture file"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "filechooser_pattern" "*.ptx" }
+	parmtag	{ "vray_plugin" "TexPtex" }
+	parmtag	{ "vray_pluginattr" "ptex_file" }
+	parmtag	{ "vray_type" "String" }
+    }
+    parm {
+	name	"use_image_sequence"
+	label	"Use Image Sequence"
+	type	toggle
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexPtex" }
+	parmtag	{ "vray_pluginattr" "use_image_sequence" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"image_number"
+	label	"Image Number"
+	type	integer
+	default	{ "0" }
+	disablewhen	"{ use_image_sequence != 1 }"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexPtex" }
+	parmtag	{ "vray_pluginattr" "image_number" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"image_offset"
+	label	"Image Offset"
+	type	integer
+	default	{ "0" }
+	disablewhen	"{ use_image_sequence != 1 }"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexPtex" }
+	parmtag	{ "vray_pluginattr" "image_offset" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"ifl_start_frame"
+	label	"Ifl Start Frame"
+	type	integer
+	default	{ "0" }
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexPtex" }
+	parmtag	{ "vray_pluginattr" "ifl_start_frame" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"ifl_playback_rate"
+	label	"Ifl Playback Rate"
+	type	float
+	default	{ "1" }
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexPtex" }
+	parmtag	{ "vray_pluginattr" "ifl_playback_rate" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"ifl_end_condition"
+	label	"Ifl End Condition"
+	type	ordinal
+	default	{ "0" }
+	help	"Image file list (IFL) end condition"
+	menu	{
+	    "Loop"	"Loop"
+	    "Ping Pong"	"Ping Pong"
+	    "Hold"	"Hold"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_enumkeys" "0,1,2" }
+	parmtag	{ "vray_plugin" "TexPtex" }
+	parmtag	{ "vray_pluginattr" "ifl_end_condition" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"filter_type"
+	label	"Filter Type"
+	type	integer
+	default	{ "0" }
+	help	"Type of filter used for the texture"
+	menu	{
+	    "No filtering"	"No filtering"
+	    "Bi-linear"	"Bi-linear"
+	    "Box"	"Box"
+	    "Gaussian"	"Gaussian"
+	    "Bicubic"	"Bicubic"
+	    "B-Splice"	"B-Splice"
+	    "Catmull-Rom"	"Catmull-Rom"
+	    "Mitchell"	"Mitchell"
+	}
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7" }
+	parmtag	{ "vray_plugin" "TexPtex" }
+	parmtag	{ "vray_pluginattr" "filter_type" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"width"
+	label	"Width"
+	type	float
+	default	{ "1" }
+	help	"width parameter used for filtering"
+	disablewhen	"{ filter_type == \"No filtering\" }"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexPtex" }
+	parmtag	{ "vray_pluginattr" "width" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"blur"
+	label	"Blur"
+	type	float
+	default	{ "0" }
+	help	"blur parameter used for filtering"
+	disablewhen	"{ filter_type == \"No filtering\" }"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexPtex" }
+	parmtag	{ "vray_pluginattr" "blur" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"sharpness"
+	label	"Sharpness"
+	type	float
+	default	{ "0" }
+	help	"Sharpness parameter for the general bicubic filter"
+	disablewhen	"{ filter_type != =4 }"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexPtex" }
+	parmtag	{ "vray_pluginattr" "sharpness" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"lerp"
+	label	"Interpolation Between Mipmap Levels"
+	type	toggle
+	default	{ "0" }
+	help	"Interpolation between mipmap levels"
+	disablewhen	"{ filter_type == \"No filtering\" }"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexPtex" }
+	parmtag	{ "vray_pluginattr" "lerp" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"reverse_vertices"
+	label	"Reverse Vertex Order"
+	type	toggle
+	default	{ "0" }
+	help	"Reverses the order of vertices"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexPtex" }
+	parmtag	{ "vray_pluginattr" "reverse_vertices" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"cache_size"
+	label	"Cache Size(mbs)"
+	type	integer
+	default	{ "50" }
+	help	"The size of the texture cache(in MB)"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexPtex" }
+	parmtag	{ "vray_pluginattr" "cache_size" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"r_channel"
+	label	"R Channel"
+	type	integer
+	default	{ "0" }
+	help	"The index of the channel which will be used as a red channel"
+	disablewhen	"{ auto_color != 0 }"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexPtex" }
+	parmtag	{ "vray_pluginattr" "r_channel" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"g_channel"
+	label	"G Channel"
+	type	integer
+	default	{ "1" }
+	help	"The index of the channel which will be used as a green channel"
+	disablewhen	"{ auto_color != 0 }"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexPtex" }
+	parmtag	{ "vray_pluginattr" "g_channel" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"b_channel"
+	label	"B Channel"
+	type	integer
+	default	{ "2" }
+	help	"The index of the channel which will be used as a blue channel"
+	disablewhen	"{ auto_color != 0 }"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexPtex" }
+	parmtag	{ "vray_pluginattr" "b_channel" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"a_channel"
+	label	"A Channel"
+	type	integer
+	default	{ "-1" }
+	help	"The index of the channel which will be used as a alpha channel"
+	disablewhen	"{ auto_alpha != 0 }"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexPtex" }
+	parmtag	{ "vray_pluginattr" "a_channel" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"auto_color"
+	label	"Auto Select Color Channels"
+	type	toggle
+	default	{ "1" }
+	help	"Use automatic color channel selection"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexPtex" }
+	parmtag	{ "vray_pluginattr" "auto_color" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"auto_alpha"
+	label	"Auto Select Alpha Channel"
+	type	toggle
+	default	{ "1" }
+	help	"Use automatic alpha channel selection"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexPtex" }
+	parmtag	{ "vray_pluginattr" "auto_alpha" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"alpha_type"
+	label	"Alpha Type"
+	type	ordinal
+	default	{ "0" }
+	help	"Where to take the alpha from"
+	menu	{
+	    "-1"	"-1"
+	    "0"	"0"
+	    "1"	"1"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_enumkeys" "-1,0,1" }
+	parmtag	{ "vray_plugin" "TexPtex" }
+	parmtag	{ "vray_pluginattr" "alpha_type" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"color_space"
+	label	"Color Space"
+	type	ordinal
+	default	{ "1" }
+	help	"Color space"
+	menu	{
+	    "Linear"	"Linear"
+	    "Gamma Corrected"	"Gamma Corrected"
+	    "sRGB"	"sRGB"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_enumkeys" "0,1,2" }
+	parmtag	{ "vray_plugin" "TexPtex" }
+	parmtag	{ "vray_pluginattr" "color_space" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"gamma"
+	label	"Gamma"
+	type	float
+	default	{ "1" }
+	disablewhen	"{ color_space != \"Gamma Corrected\" }"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexPtex" }
+	parmtag	{ "vray_pluginattr" "gamma" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"color_gain"
+	label	"Color Gain"
+	type	color4
+	size	4
+	default	{ "1" "1" "1" "1" }
+	help	"A multiplier for the texture color"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexPtex" }
+	parmtag	{ "vray_pluginattr" "color_gain" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"color_offset"
+	label	"Color Offset"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "1" }
+	help	"An additional offset for the texture color"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexPtex" }
+	parmtag	{ "vray_pluginattr" "color_offset" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"anisotropic_filtering"
+	label	"Anisotropic Filtering"
+	type	toggle
+	default	{ "1" }
+	help	"Allow anisotropic texture filtering"
+	disablewhen	"{ filter_type == \"No filtering\" }"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexPtex" }
+	parmtag	{ "vray_pluginattr" "anisotropic_filtering" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+}

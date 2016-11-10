@@ -9,16 +9,23 @@
 //
 
 #include "vfh_prm_templates.h"
-#include "vfh_defines.h"
-#include "vfh_prm_def.h"
 #include "vfh_log.h"
 
+#include "vop/material/vop_MtlMulti.h"
+#include "vop/brdf/vop_BRDFLayered.h"
+#include "vop/texture/vop_TexLayered.h"
+#include "sop/sop_node_def.h"
+
 #include <OP/OP_Node.h>
-#include <PRM/DS_CommandList.h>
-#include <PRM/DS_Command.h>
+#include <OP/OP_SpareParms.h>
 #include <PRM/PRM_Template.h>
 #include <PRM/PRM_ScriptPage.h>
+#include <PRM/PRM_ScriptParm.h>
 #include <PRM/DS_Stream.h>
+#include <UT/UT_IStream.h>
+#include <FS/FS_Info.h>
+
+#include <unordered_map>
 
 
 using namespace VRayForHoudini;
@@ -121,13 +128,184 @@ int VRayForHoudini::Parm::getParmEnumExt(const OP_Node &node, const VRayForHoudi
 }
 
 
-std::string Parm::PRMList::expandUiPath(const std::string &relPath) {
-	const char *uiDsPath = getenv("VRAY_UI_DS_PATH");
-	if (NOT(uiDsPath)) {
-		Log::getLog().error("VRAY_UI_DS_PATH environment variable is not found!");
+std::string Parm::expandUiPath(const std::string &relPath)
+{
+	static const char *uiroot = getenv("VRAY_UI_DS_PATH");
+	if (!UTisstring(uiroot)) {
+		Log::getLog().error("Invalid UI path. Please check if VRAY_UI_DS_PATH env var is pointing to the correct path.");
+	}
+
+	static FS_Info fsuiroot(uiroot);
+	if (   !fsuiroot.exists()
+		|| !fsuiroot.getIsDirectory() ) {
+		Log::getLog().error("Invalid UI path: %s. Please check if VRAY_UI_DS_PATH env var is pointing to the correct path.",
+							uiroot);
 		return "";
 	}
-	return std::string(uiDsPath) + "/" + relPath;
+
+	UT_String uipath = fsuiroot.path();
+	uipath += "/";
+	uipath += relPath;
+	FS_Info fsuipath(uipath);
+	if (fsuipath.fileExists()) {
+		return uipath.toStdString();
+	}
+
+	UT_StringArray files;
+	UT_StringArray dirs;
+	dirs.append(uiroot);
+
+	do {
+		uipath = dirs.last();
+		dirs.removeLast();
+
+		int idx = dirs.size();
+		FS_Info::getContentsFromDiskPath(uipath, files, &dirs);
+		for (int i = 0; i < files.size(); ++i) {
+			UT_String path = uipath;
+			path += "/";
+			path += files(i);
+			if (path.endsWith(relPath.c_str())) {
+				return path.toStdString();
+			}
+		}
+
+		for (int i = idx; i < dirs.size(); ++i) {
+			UT_String path = uipath;
+			path += "/";
+			path += dirs(i);
+			dirs(i) = path;
+		}
+
+	} while (dirs.size() > 0);
+
+	Log::getLog().error("Invalid UI path requested: %s.",
+						relPath.c_str());
+	return "";
+}
+
+
+bool Parm::addPrmTemplateForPlugin(const std::string &pluginID, Parm::PRMList &prmList)
+{
+	if (pluginID.empty()) {
+		return false;
+	}
+
+	static boost::format dspath("plugins/%s.ds");
+	const std::string dsfullpath = Parm::expandUiPath( boost::str(dspath % pluginID) );
+	if (dsfullpath.empty()) {
+		return false;
+	}
+
+	prmList.addFromFile( dsfullpath.c_str() );
+	return true;
+}
+
+
+Parm::PRMList* Parm::generatePrmTemplate(const std::string &pluginID)
+{
+	typedef std::unordered_map< std::string, PRMList > PRMListMap;
+	static PRMListMap prmListMap;
+
+	if (prmListMap.count(pluginID) == 0) {
+		PRMList &prmList = prmListMap[pluginID];
+
+		if (pluginID == "BRDFLayered") {
+			VOP::BRDFLayered::addPrmTemplate(prmList);
+		}
+		else if (pluginID == "TexLayered") {
+			VOP::TexLayered::addPrmTemplate(prmList);
+		}
+		else if (pluginID == "MtlMulti") {
+			VOP::MtlMulti::addPrmTemplate(prmList);
+		}
+		else if (pluginID == "GeomPlane") {
+			SOP::GeomPlane::addPrmTemplate(prmList);
+		}
+		else if (pluginID == "GeomMeshFile") {
+			SOP::VRayProxy::addPrmTemplate(prmList);
+		}
+
+		addPrmTemplateForPlugin(pluginID, prmList);
+	}
+
+	PRMList &prmList = prmListMap.at(pluginID);
+	return &prmList;
+}
+
+
+PRM_Template* Parm::getPrmTemplate(const std::string &pluginID)
+{
+	Parm::PRMList *prmList = generatePrmTemplate(pluginID);
+	if (!prmList) {
+		Log::getLog().warning("No parameter template generated for plugin %s.", pluginID.c_str());
+	}
+
+	return (prmList)? prmList->getPRMTemplate() : nullptr;
+}
+
+
+PRM_Template* Parm::PRMList::loadFromFile(const char *filepath, bool cookDependent)
+{
+	if (!UTisstring(filepath)) {
+		return nullptr;
+	}
+
+	OP_Operator op( "dummy", "dummy",
+				nullptr, static_cast<PRM_Template *>(nullptr), 0 );
+	UT_IFStream is(filepath);
+	OP_SpareParms *opprms = op.loadSpareParms(is);
+	if (!opprms) {
+		return nullptr;
+	}
+
+	// NOTE: opprms is internally cached and reference-counted,
+	// so bumping its ref count here will keep it alive after retrieving the parm templates
+	opprms->bumpRef(1);
+	PRM_Template *tmpl = opprms->getSpareTemplates();
+
+	if (cookDependent) {
+		setCookDependent(tmpl, cookDependent);
+	}
+
+	return tmpl;
+}
+
+
+void Parm::PRMList::setCookDependent(PRM_Template tmpl[], bool recook)
+{
+	if (!tmpl) {
+		return;
+	}
+
+	for (int i = 0; tmpl[i].getType() != PRM_LIST_TERMINATOR; ++i) {
+		if (tmpl[i].getType() != PRM_SWITCHER) {
+			tmpl[i].setNoCook(!recook);
+		}
+	}
+}
+
+
+void Parm::PRMList::renamePRMTemplate(PRM_Template tmpl[], const char *prefix)
+{
+	if (   !tmpl
+		|| !UTisstring(prefix))
+	{
+		return;
+	}
+
+	static boost::format prmname("%s_%s");
+
+	for (int i = 0; tmpl[i].getType() != PRM_LIST_TERMINATOR; ++i) {
+		if (tmpl[i].getType() != PRM_SWITCHER) {
+			PRM_Name *name = tmpl[i].getNamePtr();
+			if (name) {
+				const std::string prmtoken = boost::str(prmname % prefix % name->getToken()) ;
+				name->setToken(prmtoken.c_str());
+				name->harden();
+			}
+		}
+	}
 }
 
 
@@ -154,24 +332,31 @@ void Parm::PRMList::clear()
 	m_prmVec.clear();
 	// NOTE: extra item is list terminator
 	m_prmVec.emplace_back();
-	m_scriptPages.clear();
+	m_scriptGroups.clear();
 }
 
 
-PRM_Template* Parm::PRMList::getPRMTemplate(bool setRecook) const
+Parm::PRMList& Parm::PRMList::setCookDependent(bool recook)
+{
+	setCookDependent(m_prmVec.data(), recook);
+	return *this;
+}
+
+int Parm::PRMList::findPRMTemplate(const char *token) const
+{
+	const int idx = PRM_Template::getTemplateIndexByToken(m_prmVec.data(), token);
+	return (idx < 0 || idx > this->size())? -1 : idx;
+}
+
+
+std::shared_ptr<PRM_Template> Parm::PRMList::getPRMTemplateCopy() const
 {
 	const int count = m_prmVec.size();
 
-	PRM_Template * tpl = new PRM_Template[count];
+	std::shared_ptr<PRM_Template> tpl( new PRM_Template[count], std::default_delete< PRM_Template[] >() );
 
 	for (int c = 0; c < count; ++c) {
-		tpl[c] = m_prmVec[c];
-	}
-
-	if (setRecook) {
-		for (int c = 0; c < count; ++c) {
-			tpl[c].setNoCook(false);
-		}
+		tpl.get()[c] = m_prmVec[c];
 	}
 
 	return tpl;
@@ -182,7 +367,7 @@ Parm::PRMList& Parm::PRMList::addPrm(const PRM_Template& p)
 {
 	m_prmVec.back() = p;
 	m_prmVec.emplace_back();
-	incCurrentFolderPrmCnt();
+	incCurrentFolderPrmCnt(1);
 	return *this;
 }
 
@@ -191,7 +376,7 @@ Parm::PRMList& Parm::PRMList::addPrm(const PRMFactory& p)
 {
 	m_prmVec.back() = p.getPRMTemplate();
 	m_prmVec.emplace_back();
-	incCurrentFolderPrmCnt();
+	incCurrentFolderPrmCnt(1);
 	return *this;
 }
 
@@ -199,7 +384,7 @@ Parm::PRMList& Parm::PRMList::addPrm(const PRMFactory& p)
 Parm::PRMList& Parm::PRMList::switcherBegin(const char *token, const char *label)
 {
 	// add new switcher info to our list with NO default folders
-	m_switcherList.emplace_back(m_prmVec.size() - 1);
+	m_switcherList.emplace_back(this->size());
 	// add the switcher parameter
 	addPrm(PRMFactory(PRM_SWITCHER, token, label));
 	// push our new switcher onto the stack
@@ -219,8 +404,6 @@ Parm::PRMList& Parm::PRMList::switcherEnd()
 			throw std::runtime_error("added switcher with no folders");
 		}
 		else {
-			// NOTE: extra item is list terminator
-			info->m_folders.emplace_back();
 			// set correct folder count and folder info on
 			// the current switcher parameter (i.e the one created with last beginSwitcher())
 			PRM_Template& switcherParm = m_prmVec[info->m_parmIdx];
@@ -233,47 +416,132 @@ Parm::PRMList& Parm::PRMList::switcherEnd()
 }
 
 
-Parm::PRMList& Parm::PRMList::addFolder(const std::string& label)
+Parm::PRMList& Parm::PRMList::addFolder(const char *label)
 {
 	SwitcherInfo *info = getCurrentSwitcher();
 	if (NOT(info)) {
 		throw std::runtime_error("folder added to nonexistent switcher");
 	}
 	else {
-		info->m_folders.emplace_back(/*numParms=*/0, ::strdup(label.c_str()));
+		info->m_folders.emplace_back(/*numParms=*/0, ::strdup(label));
 	}
 
 	return *this;
 }
 
 
-Parm::PRMList& Parm::PRMList::addFromFile(const std::string &path)
+Parm::PRMList& Parm::PRMList::addFromFile(const char *filepath)
 {
-	if (path.empty()) {
+	if (!UTisstring(filepath)) {
 		return *this;
 	}
-	// need to keep the page as myTemplate will have references to it
-	auto currentPage = std::make_shared<PRM_ScriptPage>();
 
-	DS_Stream stream(path.c_str());
-	currentPage->parse(stream, true, 0, false);
+	DS_Stream stream(filepath);
 
-	int size = currentPage->computeTemplateSize();
+	// need to keep all the pages as myTemplate will have references to it
+	std::shared_ptr< PRM_ScriptGroup > group = std::make_shared< PRM_ScriptGroup >(nullptr);
+
+	int res = -1;
+	while ((res = stream.getOpenBrace()) > 0) {
+		PRM_ScriptPage *currentPage = new PRM_ScriptPage();
+		res = currentPage->parse(stream, false, nullptr, false);
+		if (res > 0) {
+			group->addPage(currentPage);
+		}
+		else {
+			Log::getLog().warning("Parse error in file %s.", filepath);
+			delete currentPage;
+		}
+	}
+
+	int size = group->computeTemplateSize();
 	if (!size) {
 		return *this;
 	}
-	m_scriptPages.push_back(currentPage);
+
+	// save group of pages
+	m_scriptGroups.push_back(group);
 
 	// start from the last valid
-	int idx = m_prmVec.size() - 1;
+	int idx = this->size();
+	const int startIdx = idx;
 
 	// resize to accomodate space for new params
 	m_prmVec.resize(m_prmVec.size() + size);
 
 	PRM_ScriptImports *imports = 0;
-	currentPage->fillTemplate(m_prmVec.data(), idx, imports);
+	group->fillTemplate(m_prmVec.data(), idx, imports, 0);
 
-	UT_ASSERT_MSG(idx == m_prmVec.size() - 1, "Read unexpected number of params from file");
+	UT_ASSERT_MSG(idx == this->size(), "Read unexpected number of params from file.");
+
+	// add params to currently active folder, if any
+	size = PRM_Template::countTemplates(m_prmVec.data() + startIdx, true);
+	incCurrentFolderPrmCnt(size);
+
+	return *this;
+}
+
+
+Parm::PRMList& Parm::PRMList::addFromPRMTemplate(const PRM_Template tmpl[])
+{
+	if (!tmpl) {
+		return *this;
+	}
+
+	const int size = PRM_Template::countTemplates(tmpl);
+	// reserve space for new params
+	m_prmVec.reserve(m_prmVec.size() + size);
+
+	for (int i = 0; i < size; ++i) {
+		// handle top most switcher
+		if (tmpl[i].getType() == PRM_SWITCHER) {
+			if (getCurrentSwitcher() != nullptr) {
+				// close current switcher
+				switcherEnd();
+			}
+
+			// add entry for top most switcher in our switcher list
+			switcherBegin(tmpl[i].getToken(), tmpl[i].getLabel());
+			// init folders for top most switcher
+			SwitcherInfo *swinfo = getCurrentSwitcher();
+			UT_ASSERT( swinfo );
+
+			swinfo->m_folders.reserve(tmpl[i].getVectorSize());
+			PRM_Default *prmdeflist = tmpl[i].getFactoryDefaults();
+			for (int j = 0; j < tmpl[i].getVectorSize(); ++j) {
+				PRM_Default &prmdef = prmdeflist[j];
+				swinfo->m_folders.emplace_back(prmdef.getOrdinal(), prmdef.getString());
+			}
+
+			PRM_Template& swprm = m_prmVec[swinfo->m_parmIdx];
+			swprm.assign(swprm, swinfo->m_folders.size(), &swinfo->m_folders.front());
+
+			// find end of switcher
+			const PRM_Template	*endtmpl = PRM_Template::getEndOfSwitcher(tmpl + i);
+			// move to next template in list i.e. first template in folder
+			for (; (tmpl+i+1) != endtmpl; ++i) {
+				const int idx = i+1;
+				if (tmpl[idx].getType() == PRM_SWITCHER) {
+					// add entry for the switcher in our switcher list
+					m_switcherList.emplace_back(this->size());
+					SwitcherInfo &swinfo = m_switcherList.back();
+					swinfo.m_folders.reserve(tmpl[idx].getVectorSize());
+
+					PRM_Default *prmdeflist = tmpl[idx].getFactoryDefaults();
+					for (int j = 0; j < tmpl[idx].getVectorSize(); ++j) {
+						PRM_Default &prmdef = prmdeflist[j];
+						swinfo.m_folders.emplace_back(prmdef.getOrdinal(), prmdef.getString());
+					}
+				}
+				// add the parameter
+				m_prmVec.back() = tmpl[idx];
+				m_prmVec.emplace_back();
+			}
+		}
+		else {
+			addPrm(tmpl[i]);
+		}
+	}
 
 	return *this;
 }
@@ -289,10 +557,10 @@ Parm::PRMList::SwitcherInfo* Parm::PRMList::getCurrentSwitcher()
 }
 
 
-void Parm::PRMList::incCurrentFolderPrmCnt()
+void Parm::PRMList::incCurrentFolderPrmCnt(int cnt)
 {
 	SwitcherInfo *info = getCurrentSwitcher();
-	if (NOT(info)) {
+	if (!info) {
 		return;
 	}
 
@@ -302,7 +570,8 @@ void Parm::PRMList::incCurrentFolderPrmCnt()
 		// If a parameter is added to this ParmList while a switcher with at least
 		// one folder is active, increment the folder's parameter count.
 		PRM_Default& def = info->m_folders.back();
-		def.setOrdinal(def.getOrdinal() + 1);
+		cnt = std::max(-def.getOrdinal(), cnt);
+		def.setOrdinal(def.getOrdinal() + cnt);
 	}
 
 }
@@ -685,9 +954,9 @@ Parm::PRMFactory& Parm::PRMFactory::setSpareData(const PRM_SpareData* d)
 }
 
 
-Parm::PRMFactory& Parm::PRMFactory::setMultiparms(const PRMList& p)
+Parm::PRMFactory& Parm::PRMFactory::setMultiparms(const PRM_Template tmpl[])
 {
-	m_prm->multiparms = p.getPRMTemplate();
+	m_prm->multiparms = tmpl;
 	return *this;
 }
 

@@ -1,0 +1,55 @@
+{
+    name	TexModoStencil
+    label	"Modo Stencil"
+    parm {
+	name	"plugindata"
+	label	"Modo Stencil"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"TexModoStencil"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexModoStencil" }
+	parmtag	{ "vray_type" "TEXTURE" }
+    }
+    parm {
+	name	"base_tex"
+	label	"Base Tex"
+	type	float
+	default	{ "1" }
+	help	"The base texture"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexModoStencil" }
+	parmtag	{ "vray_pluginattr" "base_tex" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"stencil_tex"
+	label	"Stencil Tex"
+	type	float
+	default	{ "1" }
+	help	"The stencil texture. Where stencil_tex is < 0.5 the result color is taken from base_tex, where stencil_tex is >= 0.5 the result is taken from stenciled_value"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexModoStencil" }
+	parmtag	{ "vray_pluginattr" "stencil_tex" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"stenciled_value"
+	label	"Stenciled Value"
+	type	float
+	default	{ "0" }
+	help	"The result where stencil_tex is >= 0.5 "
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexModoStencil" }
+	parmtag	{ "vray_pluginattr" "stenciled_value" }
+	parmtag	{ "vray_type" "float" }
+    }
+}

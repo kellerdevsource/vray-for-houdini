@@ -1,0 +1,29 @@
+{
+    name	TexThickness
+    label	"Thickness"
+    parm {
+	name	"plugindata"
+	label	"Thickness"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"TexThickness"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexThickness" }
+	parmtag	{ "vray_type" "TEXTURE" }
+    }
+    parm {
+	name	"thickness_mult"
+	label	"Thickness Mult"
+	type	float
+	default	{ "1" }
+	help	"The object thickness is multiplied by this value to get the texture color"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexThickness" }
+	parmtag	{ "vray_pluginattr" "thickness_mult" }
+	parmtag	{ "vray_type" "float" }
+    }
+}

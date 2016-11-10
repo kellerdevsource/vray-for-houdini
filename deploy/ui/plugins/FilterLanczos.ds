@@ -1,0 +1,28 @@
+{
+    name	FilterLanczos
+    label	"Lanczos"
+    parm {
+	name	"plugindata"
+	label	"Lanczos"
+	type	data
+	invisible
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "FilterLanczos" }
+	parmtag	{ "vray_type" "SETTINGS" }
+    }
+    parm {
+	name	"size"
+	label	"Size"
+	type	float
+	default	{ "1.5" }
+	help	"Filter width"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "FilterLanczos" }
+	parmtag	{ "vray_pluginattr" "size" }
+	parmtag	{ "vray_type" "float" }
+    }
+}

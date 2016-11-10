@@ -1,0 +1,81 @@
+{
+    name	TexInterpLinear
+    label	"Interp Linear"
+    parm {
+	name	"plugindata"
+	label	"Interp Linear"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"TexInterpLinear"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexInterpLinear" }
+	parmtag	{ "vray_type" "TEXTURE" }
+    }
+    parm {
+	name	"input"
+	label	"Input"
+	type	float
+	default	{ "0" }
+	help	"scalar value to be remapped"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexInterpLinear" }
+	parmtag	{ "vray_pluginattr" "input" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"oldrange_min"
+	label	"Oldrange Min"
+	type	float
+	default	{ "0" }
+	help	"start of the current range of values"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexInterpLinear" }
+	parmtag	{ "vray_pluginattr" "oldrange_min" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"oldrange_max"
+	label	"Oldrange Max"
+	type	float
+	default	{ "0" }
+	help	"end of the current range of values"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexInterpLinear" }
+	parmtag	{ "vray_pluginattr" "oldrange_max" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"newrange_min"
+	label	"Newrange Min"
+	type	float
+	default	{ "0" }
+	help	"start of the new range of values"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexInterpLinear" }
+	parmtag	{ "vray_pluginattr" "newrange_min" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"newrange_max"
+	label	"Newrange Max"
+	type	float
+	default	{ "0" }
+	help	"end of the new range of values"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexInterpLinear" }
+	parmtag	{ "vray_pluginattr" "newrange_max" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+}

@@ -1,0 +1,81 @@
+{
+    name	PhxShaderPGroup
+    label	"Phx Shader P Group"
+    parm {
+	name	"plugindata"
+	label	"Phx Shader P Group"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"PhxShaderPGroup"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "PhxShaderPGroup" }
+	parmtag	{ "vray_type" "MISC" }
+    }
+    parm {
+	name	"pgroup"
+	label	"Pgroup"
+	type	string
+	default	{ "" }
+	help	"the name of the particle group that will be used as a source"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderPGroup" }
+	parmtag	{ "vray_pluginattr" "pgroup" }
+	parmtag	{ "vray_type" "String" }
+    }
+    parm {
+	name	"lifespan_mode"
+	label	"Lifespan Mode"
+	type	integer
+	default	{ "0" }
+	help	"lifespan mode: 0-default, 1-constant, 2-random"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderPGroup" }
+	parmtag	{ "vray_pluginattr" "lifespan_mode" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"lifespan_seed"
+	label	"Lifespan Seed"
+	type	integer
+	default	{ "0" }
+	help	"lifespan randomization seed"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderPGroup" }
+	parmtag	{ "vray_pluginattr" "lifespan_seed" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"lifespan"
+	label	"Lifespan"
+	type	float
+	default	{ "0" }
+	help	"lifespan base"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderPGroup" }
+	parmtag	{ "vray_pluginattr" "lifespan" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"lifespan_random"
+	label	"Lifespan Random"
+	type	float
+	default	{ "0" }
+	help	"lifespan randomization"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderPGroup" }
+	parmtag	{ "vray_pluginattr" "lifespan_random" }
+	parmtag	{ "vray_type" "float" }
+    }
+}

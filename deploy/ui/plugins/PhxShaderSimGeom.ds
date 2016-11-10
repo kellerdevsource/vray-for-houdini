@@ -1,0 +1,55 @@
+{
+    name	PhxShaderSimGeom
+    label	"Phx Shader Sim Geom"
+    parm {
+	name	"plugindata"
+	label	"Phx Shader Sim Geom"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"PhxShaderSimGeom"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "PhxShaderSimGeom" }
+	parmtag	{ "vray_type" "GEOMETRY" }
+    }
+    parm {
+	name	"gpu_di_mode"
+	label	"Gpu Di Mode"
+	type	integer
+	default	{ "2" }
+	help	"Mode for DI computations on the GPU"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderSimGeom" }
+	parmtag	{ "vray_pluginattr" "gpu_di_mode" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"gpu_gi_mode"
+	label	"Gpu Gi Mode"
+	type	integer
+	default	{ "2" }
+	help	"Mode for GI computations on the GPU"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderSimGeom" }
+	parmtag	{ "vray_pluginattr" "gpu_gi_mode" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"gpu_samples_count"
+	label	"Gpu Samples Count"
+	type	integer
+	default	{ "1" }
+	help	"Samples count for cache computation on the GPU"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderSimGeom" }
+	parmtag	{ "vray_pluginattr" "gpu_samples_count" }
+	parmtag	{ "vray_type" "int" }
+    }
+}

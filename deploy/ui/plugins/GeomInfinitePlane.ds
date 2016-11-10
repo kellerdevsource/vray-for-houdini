@@ -1,0 +1,44 @@
+{
+    name	GeomInfinitePlane
+    label	"Geom Infinite Plane"
+    parm {
+	name	"plugindata"
+	label	"Geom Infinite Plane"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"GeomInfinitePlane"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomInfinitePlane" }
+	parmtag	{ "vray_type" "GEOMETRY" }
+    }
+    parm {
+	name	"origin"
+	label	"Origin"
+	type	direction
+	size	3
+	default	{ "0" "0" "0" }
+	help	"origin for plane"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomInfinitePlane" }
+	parmtag	{ "vray_pluginattr" "origin" }
+	parmtag	{ "vray_type" "Vector" }
+    }
+    parm {
+	name	"normal"
+	label	"Normal"
+	type	direction
+	size	3
+	default	{ "0" "0" "1" }
+	help	"normal for plane"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomInfinitePlane" }
+	parmtag	{ "vray_pluginattr" "normal" }
+	parmtag	{ "vray_type" "Vector" }
+    }
+}

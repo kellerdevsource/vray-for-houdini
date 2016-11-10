@@ -1,0 +1,128 @@
+{
+    name	TexOpenVDB
+    label	"OpenVDB"
+    parm {
+	name	"plugindata"
+	label	"OpenVDB"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"TexOpenVDB"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexOpenVDB" }
+	parmtag	{ "vray_type" "TEXTURE" }
+    }
+    parm {
+	name	"file"
+	label	"File"
+	type	file
+	default	{ "" }
+	help	"The path to OpenVDB file"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "filechooser_pattern" "*.vdb" }
+	parmtag	{ "vray_plugin" "TexOpenVDB" }
+	parmtag	{ "vray_pluginattr" "file" }
+	parmtag	{ "vray_type" "String" }
+    }
+    parm {
+	name	"render_grid"
+	label	"Render Grid"
+	type	string
+	default	{ "" }
+	help	"The name of the OpenVDB grid to render"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexOpenVDB" }
+	parmtag	{ "vray_pluginattr" "render_grid" }
+	parmtag	{ "vray_type" "String" }
+    }
+    parm {
+	name	"velocity_grid"
+	label	"Velocity Grid"
+	type	string
+	default	{ "" }
+	help	"The name of the OpenVDB velocity grid to used for motion blur"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexOpenVDB" }
+	parmtag	{ "vray_pluginattr" "velocity_grid" }
+	parmtag	{ "vray_type" "String" }
+    }
+    parm {
+	name	"delay_load"
+	label	"Delay Load"
+	type	toggle
+	default	{ "1" }
+	help	"If true, delay load the OpenVDB voxels until requested"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexOpenVDB" }
+	parmtag	{ "vray_pluginattr" "delay_load" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"interpolation"
+	label	"Interpolation"
+	type	ordinal
+	default	{ "1" }
+	help	"The grid interpolation sampler (0:linear, 1:quadratic: 2:none)"
+	menu	{
+	    "Linear"	"Linear"
+	    "Quadratic"	"Quadratic"
+	    "None"	"None"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_enumkeys" "0,1,2" }
+	parmtag	{ "vray_plugin" "TexOpenVDB" }
+	parmtag	{ "vray_pluginattr" "interpolation" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"use_3d_mapping"
+	label	"Use 3d Mapping"
+	type	toggle
+	default	{ "0" }
+	help	"whther to ignore the uvw generator and use world mapping"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexOpenVDB" }
+	parmtag	{ "vray_pluginattr" "use_3d_mapping" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"float_mult"
+	label	"Float Mult"
+	type	float
+	default	{ "1" }
+	help	"Texture multiplier for float data"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexOpenVDB" }
+	parmtag	{ "vray_pluginattr" "float_mult" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"vector_mult"
+	label	"Vector Mult"
+	type	color4
+	size	4
+	default	{ "1" "1" "1" "1" }
+	help	"Texture multiplier for vector data"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexOpenVDB" }
+	parmtag	{ "vray_pluginattr" "vector_mult" }
+	parmtag	{ "vray_type" "AColor" }
+    }
+}

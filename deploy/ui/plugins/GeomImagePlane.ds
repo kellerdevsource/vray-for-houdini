@@ -1,0 +1,16 @@
+{
+    name	GeomImagePlane
+    label	"Geom Image Plane"
+    parm {
+	name	"plugindata"
+	label	"Geom Image Plane"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"GeomImagePlane"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomImagePlane" }
+	parmtag	{ "vray_type" "GEOMETRY" }
+    }
+}

@@ -1,0 +1,71 @@
+{
+    name	TexColorMathBasic
+    label	"Color Math Basic"
+    parm {
+	name	"plugindata"
+	label	"Color Math Basic"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"TexColorMathBasic"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_category" "utility" }
+	parmtag	{ "vray_plugin" "TexColorMathBasic" }
+	parmtag	{ "vray_type" "TEXTURE" }
+    }
+    parm {
+	name	"op"
+	label	"Op"
+	type	integer
+	default	{ "0" }
+	help	"Operation: Add(), Subtract(), Multiply(), Divide(), Minimum(), Maximum()"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexColorMathBasic" }
+	parmtag	{ "vray_pluginattr" "op" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"alpha"
+	label	"Alpha"
+	type	toggle
+	default	{ "0" }
+	help	"Use alpha in the calculations"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexColorMathBasic" }
+	parmtag	{ "vray_pluginattr" "alpha" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"input1"
+	label	"Input1"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "1" }
+	help	"The first color input"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexColorMathBasic" }
+	parmtag	{ "vray_pluginattr" "input1" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"input2"
+	label	"Input2"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "1" }
+	help	"The second color input"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexColorMathBasic" }
+	parmtag	{ "vray_pluginattr" "input2" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+}

@@ -1,0 +1,30 @@
+{
+    name	TexAColor
+    label	"Color"
+    parm {
+	name	"plugindata"
+	label	"Color"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"Just a color"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexAColor" }
+	parmtag	{ "vray_type" "TEXTURE" }
+    }
+    parm {
+	name	"texture"
+	label	"Color"
+	type	color4
+	size	4
+	default	{ "1" "1" "1" "1" }
+	help	"Color"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexAColor" }
+	parmtag	{ "vray_pluginattr" "texture" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+}

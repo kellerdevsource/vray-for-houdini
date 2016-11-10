@@ -28,7 +28,6 @@ typedef LightNodeBase< VRayPluginID::LightMesh > LightMesh;
 typedef LightNodeBase< VRayPluginID::LightIES > LightIES;
 typedef LightNodeBase< VRayPluginID::LightDome > LightDome;
 
-
 } // namespace OBJ
 } // namespace VRayForHoudini
 

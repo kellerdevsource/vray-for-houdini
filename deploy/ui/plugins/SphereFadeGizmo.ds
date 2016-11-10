@@ -1,0 +1,61 @@
+{
+    name	SphereFadeGizmo
+    label	"Sphere Fade Gizmo"
+    parm {
+	name	"plugindata"
+	label	"Sphere Fade Gizmo"
+	type	data
+	invisible
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "SphereFadeGizmo" }
+	parmtag	{ "vray_type" "EFFECT" }
+    }
+    parm {
+	name	"radius"
+	label	"Radius"
+	type	float
+	default	{ "1" }
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "SphereFadeGizmo" }
+	parmtag	{ "vray_pluginattr" "radius" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"invert"
+	label	"Invert"
+	type	toggle
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "SphereFadeGizmo" }
+	parmtag	{ "vray_pluginattr" "invert" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"shape"
+	label	"Shape"
+	type	integer
+	default	{ "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "SphereFadeGizmo" }
+	parmtag	{ "vray_pluginattr" "shape" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"object"
+	label	"Object"
+	type	string
+	default	{ "" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_custom_handling" "1" }
+    }
+}

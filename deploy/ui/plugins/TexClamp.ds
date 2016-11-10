@@ -1,0 +1,56 @@
+{
+    name	TexClamp
+    label	"Clamp"
+    parm {
+	name	"plugindata"
+	label	"Clamp"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"TexClamp"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_category" "utility" }
+	parmtag	{ "vray_plugin" "TexClamp" }
+	parmtag	{ "vray_type" "TEXTURE" }
+    }
+    parm {
+	name	"texture"
+	label	"Texture"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexClamp" }
+	parmtag	{ "vray_pluginattr" "texture" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"min_color"
+	label	"Min Color"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexClamp" }
+	parmtag	{ "vray_pluginattr" "min_color" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"max_color"
+	label	"Max Color"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexClamp" }
+	parmtag	{ "vray_pluginattr" "max_color" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+}

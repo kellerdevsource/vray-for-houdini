@@ -1,0 +1,16 @@
+{
+    name	TexModoSampler
+    label	"Modo Sampler"
+    parm {
+	name	"plugindata"
+	label	"Modo Sampler"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"TexModoSampler"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexModoSampler" }
+	parmtag	{ "vray_type" "MISC" }
+    }
+}

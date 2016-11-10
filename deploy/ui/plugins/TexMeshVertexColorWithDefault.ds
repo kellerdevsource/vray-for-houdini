@@ -1,0 +1,42 @@
+{
+    name	TexMeshVertexColorWithDefault
+    label	"Mesh Vertex Color With Default"
+    parm {
+	name	"plugindata"
+	label	"Mesh Vertex Color With Default"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"TexMeshVertexColorWithDefault"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexMeshVertexColorWithDefault" }
+	parmtag	{ "vray_type" "TEXTURE" }
+    }
+    parm {
+	name	"vertex_color"
+	label	"Vertex Color"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexMeshVertexColorWithDefault" }
+	parmtag	{ "vray_pluginattr" "vertex_color" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"default_color"
+	label	"Default Color"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexMeshVertexColorWithDefault" }
+	parmtag	{ "vray_pluginattr" "default_color" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+}
