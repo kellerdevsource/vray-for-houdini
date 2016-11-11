@@ -124,7 +124,7 @@ public:
 	int                           startSequence(int start, int end, int step, int locked=false);
 	void                          stopRender();
 
-	int                           exportScene(const std::string &filepath, VRay::VRayExportSettings *settings);
+	int                           exportScene(const std::string &filepath, VRay::VRayExportSettings &settings);
 
 	void                          addCbOnRendererClose(CbOnRendererClose cb)   { m_callbacks.m_cbOnRendererClose.add(cb); }
 	void                          addCbOnRendererClose(CbVoid cb)              { m_callbacks.m_cbOnRendererClose.add(cb); }

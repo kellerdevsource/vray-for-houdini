@@ -1689,7 +1689,7 @@ int VRayExporter::renderFrame(int locked)
 			expSettings.useHexFormat = m_rop->evalInt("exp_hexdata", 0, t);
 			expSettings.compressed = m_rop->evalInt("exp_compressed", 0, t);
 
-			exportVrscene(exportFilepath.toStdString(), &expSettings);
+			exportVrscene(exportFilepath.toStdString(), expSettings);
 		}
 		else {
 			Log::getLog().error("Export mode is selected, but no filepath specified!");
@@ -1710,7 +1710,7 @@ int VRayExporter::renderSequence(int start, int end, int step, int locked)
 }
 
 
-int VRayExporter::exportVrscene(const std::string &filepath, VRay::VRayExportSettings *settings)
+int VRayExporter::exportVrscene(const std::string &filepath, VRay::VRayExportSettings &settings)
 {
 	return m_renderer.exportScene(filepath, settings);
 }

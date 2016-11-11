@@ -553,7 +553,7 @@ void VRayPluginRenderer::removePlugin(const std::string &pluginName)
 	}
 }
 
-int VRayPluginRenderer::exportScene(const std::string &filepath, VRay::VRayExportSettings *settings)
+int VRayPluginRenderer::exportScene(const std::string &filepath, VRay::VRayExportSettings &settings)
 {
 	int res = 0;
 
