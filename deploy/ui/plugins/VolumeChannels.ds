@@ -13,18 +13,4 @@
 	parmtag	{ "vray_plugin" "VolumeChannels" }
 	parmtag	{ "vray_type" "EFFECT" }
     }
-    parm {
-	name	"channels"
-	label	"Channels"
-	type	oplist
-	default	{ "" }
-	help	"Render channels the result of this volume will be written to"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "VolumeChannels" }
-	parmtag	{ "vray_pluginattr" "channels" }
-	parmtag	{ "vray_type" "List<Object>" }
-    }
 }

@@ -14,32 +14,6 @@
 	parmtag	{ "vray_type" "BRDF" }
     }
     parm {
-	name	"brdfs"
-	label	"Brdfs"
-	type	oplist
-	default	{ "" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "BRDFLayered" }
-	parmtag	{ "vray_pluginattr" "brdfs" }
-	parmtag	{ "vray_type" "List<Object>" }
-    }
-    parm {
-	name	"weights"
-	label	"Weights"
-	type	oplist
-	default	{ "" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "BRDFLayered" }
-	parmtag	{ "vray_pluginattr" "weights" }
-	parmtag	{ "vray_type" "List<Object>" }
-    }
-    parm {
 	name	"transparency_tex"
 	label	"Transparency"
 	type	color4
@@ -96,19 +70,5 @@
 	parmtag	{ "vray_plugin" "BRDFLayered" }
 	parmtag	{ "vray_pluginattr" "transparency" }
 	parmtag	{ "vray_type" "Color" }
-    }
-    parm {
-	name	"channels"
-	label	"Channels"
-	type	oplist
-	default	{ "" }
-	help	"Render channels the result of this BRDF will be written to"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "BRDFLayered" }
-	parmtag	{ "vray_pluginattr" "channels" }
-	parmtag	{ "vray_type" "List<Object>" }
     }
 }

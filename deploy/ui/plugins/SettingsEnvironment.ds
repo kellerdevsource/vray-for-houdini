@@ -218,20 +218,6 @@
 	parmtag	{ "vray_type" "float" }
     }
     parm {
-	name	"environment_volume"
-	label	"Environment Volume"
-	type	oplist
-	default	{ "" }
-	help	"A list of environment volumes for the scene"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "SettingsEnvironment" }
-	parmtag	{ "vray_pluginattr" "environment_volume" }
-	parmtag	{ "vray_type" "List<Object>" }
-    }
-    parm {
 	name	"num_environment_objects"
 	label	"Num Environment Objects"
 	type	integer

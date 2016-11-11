@@ -39,32 +39,6 @@
 	parmtag	{ "vray_type" "String" }
     }
     parm {
-	name	"textures"
-	label	"Textures"
-	type	oplist
-	default	{ "" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "MtlGLSL" }
-	parmtag	{ "vray_pluginattr" "textures" }
-	parmtag	{ "vray_type" "List<Object>" }
-    }
-    parm {
-	name	"uvw_generators"
-	label	"Uvw Generators"
-	type	oplist
-	default	{ "" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "MtlGLSL" }
-	parmtag	{ "vray_pluginattr" "uvw_generators" }
-	parmtag	{ "vray_type" "List<Object>" }
-    }
-    parm {
 	name	"transparency"
 	label	"Transparency"
 	type	color

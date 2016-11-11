@@ -14,20 +14,6 @@
 	parmtag	{ "vray_type" "SETTINGS" }
     }
     parm {
-	name	"target_nodes"
-	label	"Target Nodes"
-	type	oplist
-	default	{ "" }
-	help	"The target objects for projection baking"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "BakeView" }
-	parmtag	{ "vray_pluginattr" "target_nodes" }
-	parmtag	{ "vray_type" "List<Object>" }
-    }
-    parm {
 	name	"dilation"
 	label	"Dilation"
 	type	float

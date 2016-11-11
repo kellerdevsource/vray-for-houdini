@@ -12,30 +12,4 @@
 	parmtag	{ "vray_plugin" "UVWGenSwitch" }
 	parmtag	{ "vray_type" "UVWGEN" }
     }
-    parm {
-	name	"nodes"
-	label	"Nodes"
-	type	oplist
-	default	{ "" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "UVWGenSwitch" }
-	parmtag	{ "vray_pluginattr" "nodes" }
-	parmtag	{ "vray_type" "List<Object>" }
-    }
-    parm {
-	name	"uvwgens"
-	label	"Uvwgens"
-	type	oplist
-	default	{ "" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "UVWGenSwitch" }
-	parmtag	{ "vray_pluginattr" "uvwgens" }
-	parmtag	{ "vray_type" "List<Object>" }
-    }
 }

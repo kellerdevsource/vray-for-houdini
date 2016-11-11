@@ -180,21 +180,6 @@
 	parmtag	{ "vray_type" "boolean" }
     }
     parm {
-	name	"excludeList"
-	label	"Exclude List"
-	type	oplist
-	default	{ "" }
-	help	"Specifies which objects will be affected by the VRayToon atmospheric."
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_custom_handling" "1" }
-	parmtag	{ "vray_plugin" "VolumeVRayToon" }
-	parmtag	{ "vray_pluginattr" "excludeList" }
-	parmtag	{ "vray_type" "List<Object>" }
-    }
-    parm {
 	name	"lineColor"
 	label	"Line Color"
 	type	color

@@ -146,32 +146,6 @@
 	parmtag	{ "vray_type" "Texture" }
     }
     parm {
-	name	"textures"
-	label	"Textures"
-	type	oplist
-	default	{ "" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "TexXSILayered" }
-	parmtag	{ "vray_pluginattr" "textures" }
-	parmtag	{ "vray_type" "List<Object>" }
-    }
-    parm {
-	name	"mask_textures"
-	label	"Mask Textures"
-	type	oplist
-	default	{ "" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "TexXSILayered" }
-	parmtag	{ "vray_pluginattr" "mask_textures" }
-	parmtag	{ "vray_type" "List<Object>" }
-    }
-    parm {
 	name	"mask_modes"
 	label	"Mask Modes"
 	type	ordinal

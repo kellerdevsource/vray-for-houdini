@@ -271,18 +271,4 @@
 	parmtag	{ "vray_pluginattr" "outside_tex" }
 	parmtag	{ "vray_type" "Texture" }
     }
-    parm {
-	name	"objects"
-	label	"Objects"
-	type	oplist
-	default	{ "" }
-	help	"List of nodes to measure distance"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "TexDistance" }
-	parmtag	{ "vray_pluginattr" "objects" }
-	parmtag	{ "vray_type" "List<Object>" }
-    }
 }

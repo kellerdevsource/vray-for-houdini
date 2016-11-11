@@ -27,19 +27,6 @@
 	parmtag	{ "vray_type" "int" }
     }
     parm {
-	name	"lights"
-	label	"Lights"
-	type	oplist
-	default	{ "" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "ASGVISNode" }
-	parmtag	{ "vray_pluginattr" "lights" }
-	parmtag	{ "vray_type" "List<Object>" }
-    }
-    parm {
 	name	"visible"
 	label	"Visible"
 	type	toggle

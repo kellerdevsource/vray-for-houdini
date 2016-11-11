@@ -39,20 +39,6 @@
 	parmtag	{ "vray_type" "int" }
     }
     parm {
-	name	"particle_source"
-	label	"Particle Source"
-	type	oplist
-	default	{ "" }
-	help	"A list of particles source"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "PhxShaderFoam" }
-	parmtag	{ "vray_pluginattr" "particle_source" }
-	parmtag	{ "vray_type" "List<Object>" }
-    }
-    parm {
 	name	"color"
 	label	"Color"
 	type	color
@@ -520,20 +506,6 @@
 	parmtag	{ "vray_plugin" "PhxShaderFoam" }
 	parmtag	{ "vray_pluginattr" "useglass" }
 	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"lightlinks"
-	label	"Lightlinks"
-	type	oplist
-	default	{ "" }
-	help	"light linking list used in volumetric mode"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "PhxShaderFoam" }
-	parmtag	{ "vray_pluginattr" "lightlinks" }
-	parmtag	{ "vray_type" "List<Object>" }
     }
     parm {
 	name	"lightcache"

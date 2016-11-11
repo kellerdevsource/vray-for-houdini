@@ -586,18 +586,4 @@
 	parmtag	{ "vray_pluginattr" "option_reflections_cutoff" }
 	parmtag	{ "vray_type" "float" }
     }
-    parm {
-	name	"channels"
-	label	"Channels"
-	type	oplist
-	default	{ "" }
-	help	"Render channels the result of this BRDF will be written to"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "BRDFSkinComplex" }
-	parmtag	{ "vray_pluginattr" "channels" }
-	parmtag	{ "vray_type" "List<Object>" }
-    }
 }

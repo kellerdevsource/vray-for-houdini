@@ -14,34 +14,6 @@
 	parmtag	{ "vray_type" "GEOMETRY" }
     }
     parm {
-	name	"trims"
-	label	"Trims"
-	type	oplist
-	default	{ "" }
-	help	"List of TrimmingRegion objects. The orientation is used to determine whether the trim will generate geometry inside of it or outside of it"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "GeomStaticNURBS" }
-	parmtag	{ "vray_pluginattr" "trims" }
-	parmtag	{ "vray_type" "List<Object>" }
-    }
-    parm {
-	name	"listTrimCurves"
-	label	"Listtrimcurves"
-	type	oplist
-	default	{ "" }
-	help	"List of NURBSCurve objects - the trimming curves"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "GeomStaticNURBS" }
-	parmtag	{ "vray_pluginattr" "listTrimCurves" }
-	parmtag	{ "vray_type" "List<Object>" }
-    }
-    parm {
 	name	"maxSubdivDepth"
 	label	"Maxsubdivdepth"
 	type	integer

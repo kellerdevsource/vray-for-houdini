@@ -51,32 +51,4 @@
 	parmtag	{ "vray_pluginattr" "wrap_id" }
 	parmtag	{ "vray_type" "boolean" }
     }
-    parm {
-	name	"mtls"
-	label	"Mtls"
-	type	oplist
-	default	{ "" }
-	help	"(Deprecated; use mtls_list/ids_list instead). A list of two-element lists with the material id and the material plugin"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "MtlMulti" }
-	parmtag	{ "vray_pluginattr" "mtls" }
-	parmtag	{ "vray_type" "List<Object>" }
-    }
-    parm {
-	name	"mtls_list"
-	label	"Mtls List"
-	type	oplist
-	default	{ "" }
-	help	"A list of the materials"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "MtlMulti" }
-	parmtag	{ "vray_pluginattr" "mtls_list" }
-	parmtag	{ "vray_type" "List<Object>" }
-    }
 }

@@ -13,18 +13,4 @@
 	parmtag	{ "vray_plugin" "MtlSelectRE" }
 	parmtag	{ "vray_type" "MATERIAL" }
     }
-    parm {
-	name	"alpha_elements"
-	label	"Alpha Elements"
-	type	oplist
-	default	{ "" }
-	help	"A list of alpha render elements"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "MtlSelectRE" }
-	parmtag	{ "vray_pluginattr" "alpha_elements" }
-	parmtag	{ "vray_type" "List<Object>" }
-    }
 }

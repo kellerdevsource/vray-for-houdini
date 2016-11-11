@@ -80,20 +80,6 @@
 	parmtag	{ "vray_type" "boolean" }
     }
     parm {
-	name	"channels"
-	label	"Channels"
-	type	oplist
-	default	{ "" }
-	help	"Render channels the result of this BRDF will be written to"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "BRDFLight" }
-	parmtag	{ "vray_pluginattr" "channels" }
-	parmtag	{ "vray_type" "List<Object>" }
-    }
-    parm {
 	name	"compensateExposure"
 	label	"Compensate Exposure"
 	type	toggle

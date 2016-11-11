@@ -155,20 +155,6 @@
 	parmtag	{ "vray_type" "int" }
     }
     parm {
-	name	"material_override"
-	label	"Material Override"
-	type	oppath
-	default	{ "" }
-	help	"Override material"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "VRayScene" }
-	parmtag	{ "vray_pluginattr" "material_override" }
-	parmtag	{ "vray_type" "Object" }
-    }
-    parm {
 	name	"flip_axis"
 	label	"Flip Axis"
 	type	toggle

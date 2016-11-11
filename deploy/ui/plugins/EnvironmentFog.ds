@@ -26,20 +26,6 @@
 	parmtag	{ "vray_type" "boolean" }
     }
     parm {
-	name	"gizmos"
-	label	"Gizmo"
-	type	oplist
-	default	{ "" }
-	help	"List of gizmos"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "EnvironmentFog" }
-	parmtag	{ "vray_pluginattr" "gizmos" }
-	parmtag	{ "vray_type" "List<Object>" }
-    }
-    parm {
 	name	"color"
 	label	"Fog Color"
 	type	color
@@ -463,20 +449,6 @@
 	parmtag	{ "vray_plugin" "EnvironmentFog" }
 	parmtag	{ "vray_pluginattr" "light_mode" }
 	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"lights"
-	label	"Lights"
-	type	oplist
-	default	{ "" }
-	help	"A list with lights. How they affect the fog depends on the 'Light mode' paramter as well."
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "EnvironmentFog" }
-	parmtag	{ "vray_pluginattr" "lights" }
-	parmtag	{ "vray_type" "List<Object>" }
     }
     parm {
 	name	"use_shade_instance"

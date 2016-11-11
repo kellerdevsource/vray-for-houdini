@@ -218,20 +218,6 @@
 	parmtag	{ "vray_type" "int" }
     }
     parm {
-	name	"VRayStereoscopicSettings_exclude_list"
-	label	"Exclude List"
-	type	oplist
-	default	{ "" }
-	help	"A list of plugins for which the shade map won't be used"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
-	parmtag	{ "vray_pluginattr" "exclude_list" }
-	parmtag	{ "vray_type" "List<Object>" }
-    }
-    parm {
 	name	"VRayStereoscopicSettings_left_camera"
 	label	"Left Camera"
 	type	oppath

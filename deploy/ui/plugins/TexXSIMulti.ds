@@ -13,18 +13,4 @@
 	parmtag	{ "vray_plugin" "TexXSIMulti" }
 	parmtag	{ "vray_type" "TEXTURE" }
     }
-    parm {
-	name	"textures"
-	label	"Textures"
-	type	oplist
-	default	{ "" }
-	help	"A list of float textures"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "TexXSIMulti" }
-	parmtag	{ "vray_pluginattr" "textures" }
-	parmtag	{ "vray_type" "List<Object>" }
-    }
 }

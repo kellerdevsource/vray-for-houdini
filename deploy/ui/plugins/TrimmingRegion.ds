@@ -13,18 +13,4 @@
 	parmtag	{ "vray_plugin" "TrimmingRegion" }
 	parmtag	{ "vray_type" "MISC" }
     }
-    parm {
-	name	"innerCurves"
-	label	"Innercurves"
-	type	oplist
-	default	{ "" }
-	help	"List of NURBSCurve objects - the inner curves for the trimming region"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "TrimmingRegion" }
-	parmtag	{ "vray_pluginattr" "innerCurves" }
-	parmtag	{ "vray_type" "List<Object>" }
-    }
 }

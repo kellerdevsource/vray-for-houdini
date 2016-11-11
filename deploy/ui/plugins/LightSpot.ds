@@ -253,62 +253,6 @@
 	parmtag	{ "vray_type" "float" }
     }
     parm {
-	name	"channels"
-	label	"Channels"
-	type	oplist
-	default	{ "" }
-	help	"Render channels the result of this light will be written to"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "LightSpot" }
-	parmtag	{ "vray_pluginattr" "channels" }
-	parmtag	{ "vray_type" "List<Object>" }
-    }
-    parm {
-	name	"channels_raw"
-	label	"Channels Raw"
-	type	oplist
-	default	{ "" }
-	help	"Render channels the raw diffuse result of this light will be written to"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "LightSpot" }
-	parmtag	{ "vray_pluginattr" "channels_raw" }
-	parmtag	{ "vray_type" "List<Object>" }
-    }
-    parm {
-	name	"channels_diffuse"
-	label	"Channels Diffuse"
-	type	oplist
-	default	{ "" }
-	help	"Render channels the diffuse result of this light will be written to"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "LightSpot" }
-	parmtag	{ "vray_pluginattr" "channels_diffuse" }
-	parmtag	{ "vray_type" "List<Object>" }
-    }
-    parm {
-	name	"channels_specular"
-	label	"Channels Specular"
-	type	oplist
-	default	{ "" }
-	help	"Render channels the specular result of this light will be written to"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "LightSpot" }
-	parmtag	{ "vray_pluginattr" "channels_specular" }
-	parmtag	{ "vray_type" "List<Object>" }
-    }
-    parm {
 	name	"use_global_light_level"
 	label	"Use Global Light Level"
 	type	toggle

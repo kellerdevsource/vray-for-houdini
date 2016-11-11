@@ -143,18 +143,4 @@
 	parmtag	{ "vray_pluginattr" "refraction_limit" }
 	parmtag	{ "vray_type" "int" }
     }
-    parm {
-	name	"channels"
-	label	"Channels"
-	type	oplist
-	default	{ "" }
-	help	"Render channels the result will be written to"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "MtlMayaRamp" }
-	parmtag	{ "vray_pluginattr" "channels" }
-	parmtag	{ "vray_type" "List<Object>" }
-    }
 }

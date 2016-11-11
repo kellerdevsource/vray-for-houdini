@@ -147,34 +147,6 @@
 	parmtag	{ "vray_type" "float" }
     }
     parm {
-	name	"positiveParticles"
-	label	"Positiveparticles"
-	type	oplist
-	default	{ "" }
-	help	"List with positive particle systems"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
-	parmtag	{ "vray_pluginattr" "positiveParticles" }
-	parmtag	{ "vray_type" "List<Object>" }
-    }
-    parm {
-	name	"negativeParticles"
-	label	"Negativeparticles"
-	type	oplist
-	default	{ "" }
-	help	"List with negative particle systems"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
-	parmtag	{ "vray_pluginattr" "negativeParticles" }
-	parmtag	{ "vray_type" "List<Object>" }
-    }
-    parm {
 	name	"useTexture"
 	label	"Usetexture"
 	type	integer

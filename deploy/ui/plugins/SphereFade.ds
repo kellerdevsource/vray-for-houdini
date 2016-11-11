@@ -13,21 +13,6 @@
 	parmtag	{ "vray_type" "EFFECT" }
     }
     parm {
-	name	"gizmos"
-	label	"Gizmos"
-	type	oplist
-	default	{ "" }
-	help	"List of gizmos"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_custom_handling" "1" }
-	parmtag	{ "vray_plugin" "SphereFade" }
-	parmtag	{ "vray_pluginattr" "gizmos" }
-	parmtag	{ "vray_type" "List<Object>" }
-    }
-    parm {
 	name	"empty_color"
 	label	"Empty Color"
 	type	color

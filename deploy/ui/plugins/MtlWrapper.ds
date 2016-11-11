@@ -315,20 +315,6 @@
 	parmtag	{ "vray_type" "int" }
     }
     parm {
-	name	"channels"
-	label	"Channels"
-	type	oplist
-	default	{ "" }
-	help	"Render channels the result of this BRDF will be written to"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "MtlWrapper" }
-	parmtag	{ "vray_pluginattr" "channels" }
-	parmtag	{ "vray_type" "List<Object>" }
-    }
-    parm {
 	name	"generate_render_elements"
 	label	"Generate Render Elements"
 	type	toggle
@@ -340,34 +326,6 @@
 	parmtag	{ "vray_plugin" "MtlWrapper" }
 	parmtag	{ "vray_pluginattr" "generate_render_elements" }
 	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"reflection_exclude"
-	label	"Reflection Exclude"
-	type	oplist
-	default	{ "" }
-	help	"A list of plugins that will be excluded from reflections"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "MtlWrapper" }
-	parmtag	{ "vray_pluginattr" "reflection_exclude" }
-	parmtag	{ "vray_type" "List<Object>" }
-    }
-    parm {
-	name	"refraction_exclude"
-	label	"Refraction Exclude"
-	type	oplist
-	default	{ "" }
-	help	"A list of plugins that will be excluded from refractions"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "MtlWrapper" }
-	parmtag	{ "vray_pluginattr" "refraction_exclude" }
-	parmtag	{ "vray_type" "List<Object>" }
     }
     parm {
 	name	"use"

@@ -34,43 +34,4 @@
 	parmtag	{ "vray_pluginattr" "operation" }
 	parmtag	{ "vray_type" "int" }
     }
-    parm {
-	name	"input1D"
-	label	"Input1d"
-	type	oplist
-	default	{ "" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "TexPlusMinusAverage" }
-	parmtag	{ "vray_pluginattr" "input1D" }
-	parmtag	{ "vray_type" "List<Object>" }
-    }
-    parm {
-	name	"input2D"
-	label	"Input2d"
-	type	oplist
-	default	{ "" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "TexPlusMinusAverage" }
-	parmtag	{ "vray_pluginattr" "input2D" }
-	parmtag	{ "vray_type" "List<Object>" }
-    }
-    parm {
-	name	"input3D"
-	label	"Input3d"
-	type	oplist
-	default	{ "" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "TexPlusMinusAverage" }
-	parmtag	{ "vray_pluginattr" "input3D" }
-	parmtag	{ "vray_type" "List<Object>" }
-    }
 }

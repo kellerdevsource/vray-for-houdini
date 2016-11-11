@@ -536,18 +536,4 @@
 	parmtag	{ "vray_pluginattr" "pa_shift" }
 	parmtag	{ "vray_type" "boolean" }
     }
-    parm {
-	name	"particle_systems"
-	label	"Particle Systems"
-	type	oplist
-	default	{ "" }
-	help	"List of particle systems to get the particle data from"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "ParticleTex" }
-	parmtag	{ "vray_pluginattr" "particle_systems" }
-	parmtag	{ "vray_type" "List<Object>" }
-    }
 }

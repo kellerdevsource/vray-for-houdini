@@ -77,19 +77,6 @@
 	parmtag	{ "vray_type" "boolean" }
     }
     parm {
-	name	"exclude_list"
-	label	"Exclude List"
-	type	oplist
-	default	{ "" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "RenderChannelExtraTex" }
-	parmtag	{ "vray_pluginattr" "exclude_list" }
-	parmtag	{ "vray_type" "List<Object>" }
-    }
-    parm {
 	name	"exclude_list_as_inclusive_set"
 	label	"Exclude List As Inclusive Set"
 	type	toggle

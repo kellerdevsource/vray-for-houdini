@@ -14,19 +14,6 @@
 	parmtag	{ "vray_type" "MATERIAL" }
     }
     parm {
-	name	"brdfs"
-	label	"Brdfs"
-	type	oplist
-	default	{ "" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "MtlASGVIS" }
-	parmtag	{ "vray_pluginattr" "brdfs" }
-	parmtag	{ "vray_type" "List<Object>" }
-    }
-    parm {
 	name	"double_sided"
 	label	"Double Sided"
 	type	toggle

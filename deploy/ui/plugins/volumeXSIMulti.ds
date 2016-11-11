@@ -13,18 +13,4 @@
 	parmtag	{ "vray_plugin" "volumeXSIMulti" }
 	parmtag	{ "vray_type" "EFFECT" }
     }
-    parm {
-	name	"volumes"
-	label	"Volumes"
-	type	oplist
-	default	{ "" }
-	help	"A list of volume plugins"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "volumeXSIMulti" }
-	parmtag	{ "vray_pluginattr" "volumes" }
-	parmtag	{ "vray_type" "List<Object>" }
-    }
 }

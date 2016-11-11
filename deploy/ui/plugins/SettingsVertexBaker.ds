@@ -13,19 +13,6 @@
 	parmtag	{ "vray_type" "SETTINGS" }
     }
     parm {
-	name	"objects"
-	label	"Objects"
-	type	oplist
-	default	{ "" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "SettingsVertexBaker" }
-	parmtag	{ "vray_pluginattr" "objects" }
-	parmtag	{ "vray_type" "List<Object>" }
-    }
-    parm {
 	name	"color_set_name"
 	label	"Color Set Name"
 	type	string

@@ -14,20 +14,6 @@
 	parmtag	{ "vray_type" "TEXTURE" }
     }
     parm {
-	name	"textures_list"
-	label	"Textures List"
-	type	oplist
-	default	{ "" }
-	help	"A list of the sub-float-textures"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "TexMultiFloat" }
-	parmtag	{ "vray_pluginattr" "textures_list" }
-	parmtag	{ "vray_type" "List<Object>" }
-    }
-    parm {
 	name	"mode"
 	label	"Mode"
 	type	ordinal

@@ -14,20 +14,6 @@
 	parmtag	{ "vray_type" "EFFECT" }
     }
     parm {
-	name	"lights"
-	label	"Lights"
-	type	oplist
-	default	{ "" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_custom_handling" "1" }
-	parmtag	{ "vray_plugin" "EnvFogMeshGizmo" }
-	parmtag	{ "vray_pluginattr" "lights" }
-	parmtag	{ "vray_type" "List<Object>" }
-    }
-    parm {
 	name	"fade_out_radius"
 	label	"Fade Out Radius"
 	type	float
