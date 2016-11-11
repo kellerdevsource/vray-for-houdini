@@ -132,6 +132,7 @@
 	label	"Single Scatter"
 	type	toggle
 	default	{ "1" }
+	help	"How to compute single scattering (0 - off; 1 - approximation; 2 - raytraced (solid); 3 - raytraced (volumetric); 4 - only provide a volume, BRDF itself is transparent"
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }

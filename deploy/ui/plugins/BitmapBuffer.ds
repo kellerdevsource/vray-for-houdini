@@ -152,6 +152,7 @@
 	label	"Frame Number"
 	type	integer
 	default	{ "0" }
+	help	"When working with image sequences, this parameter specifies which image out of the sequence should be used.  If parameter is omitted or defaulted, the frame number depends on the current frame time value."
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -164,6 +165,7 @@
 	label	"Frame Offset"
 	type	integer
 	default	{ "0" }
+	help	"Start frame offset for image sequences"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }

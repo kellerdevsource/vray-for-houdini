@@ -92,7 +92,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "PhxShaderCache" }
 	parmtag	{ "vray_pluginattr" "velocities_from_uvw" }
-	parmtag	{ "vray_type" "List<Boolean>" }
+	parmtag	{ "vray_type" "boolean" }
     }
     parm {
 	name	"anim_mode"

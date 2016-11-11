@@ -431,7 +431,7 @@
     }
     parm {
 	name	"smoketransp"
-	label	"Simple Smoke Factor"
+	label	"Simple Smoke Opacity"
 	type	float
 	default	{ "0.5" }
 	help	"Simple Smoke Factor"
@@ -492,7 +492,7 @@
 	label	"Transpmode"
 	type	integer
 	default	{ "1" }
-	help	"if 1, the values are interpreted as opacity insteead of transparency."
+	help	"if 1, the values are interpreted as opacity instead of transparency."
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -613,7 +613,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "PhxShaderSim" }
 	parmtag	{ "vray_pluginattr" "velocities_from_uvw" }
-	parmtag	{ "vray_type" "List<Boolean>" }
+	parmtag	{ "vray_type" "boolean" }
     }
     parm {
 	name	"mesher"
@@ -805,7 +805,7 @@
     }
     parm {
 	name	"darg"
-	label	"Diffuse Input"
+	label	"Based On"
 	type	ordinal
 	default	{ "5" }
 	help	"0-disabled; 1-T; 2-Sm; 3-V; 4-texture; 5-simple color; 6-RGB; 10-fuel"
@@ -895,7 +895,7 @@
     }
     parm {
 	name	"targ"
-	label	"Opacity Input"
+	label	"Based On"
 	type	ordinal
 	default	{ "1" }
 	help	"0-simple smoke; 1-T; 2-Sm; 3-V; 4-texture; 10-fuel"
@@ -959,6 +959,7 @@
 	label	"Transp Power"
 	type	float
 	default	{ "1" }
+	help	"deprecated"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -1077,7 +1078,7 @@
     }
     parm {
 	name	"al_enable"
-	label	"Enable Lighting"
+	label	"Emit Light"
 	type	toggle
 	default	{ "0" }
 	help	"enable the additional emissive lights"

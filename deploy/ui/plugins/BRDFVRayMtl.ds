@@ -982,7 +982,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	parmtag	{ "vray_pluginattr" "gtr_gamma" }
-	parmtag	{ "vray_type" "float" }
+	parmtag	{ "vray_type" "TextureFloat" }
     }
     parm {
 	name	"refr_imap_norm_thresh"
