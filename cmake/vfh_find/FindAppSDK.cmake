@@ -18,9 +18,11 @@ if(APPSDK_PATH)
 	set(_appsdk_root ${APPSDK_PATH})
 else()
 	if(NOT APPSDK_VERSION)
-		message(STATUS "V-Ray AppSDK version NOT specified")
+		message(WARNING "V-Ray AppSDK version NOT specified")
 		set(_appsdk_root "")
 	else()
+		message(STATUS "V-Ray AppSDK version: ${APPSDK_VERSION}")
+
 		# no V-Ray AppSDK root path is passed to cmake
 		if(SDK_PATH)
 			# if vfh sdk path is given use it to deduce AppSDK root path based on version
@@ -32,14 +34,13 @@ else()
 	endif()
 endif()
 
-message(STATUS "Searching V-Ray AppSDK path = ${_appsdk_root}")
-message(STATUS "Searching V-Ray AppSDK version = ${APPSDK_VERSION}")
+message(STATUS "V-Ray AppSDK search path: ${_appsdk_root}")
 
 # check if path exists
 if((NOT _appsdk_root) OR (NOT EXISTS ${_appsdk_root}))
 	set(AppSDK_FOUND FALSE)
-else()
 
+else()
 	set(AppSDK_FOUND TRUE)
 	set(AppSDK_INCLUDES "${_appsdk_root}/cpp/include")
 	set(AppSDK_LIBRARIES "${_appsdk_root}/bin")
@@ -50,7 +51,6 @@ else()
 
 endif()
 
-
 # check if all paths exist
 if(AppSDK_FOUND)
 	foreach(loop_var IN ITEMS ${AppSDK_INCLUDES})
@@ -59,6 +59,7 @@ if(AppSDK_FOUND)
 			break()
 		endif()
 	endforeach(loop_var)
+
 	foreach(loop_var IN ITEMS ${AppSDK_LIBRARIES})
 		if(NOT EXISTS ${loop_var})
 			set(AppSDK_FOUND FALSE)
@@ -69,15 +70,10 @@ if(AppSDK_FOUND)
 	if (NOT EXISTS "${_appsdk_root}/bin/plugins")
 		set(AppSDK_FOUND FALSE)
 	endif()
-	if (NOT EXISTS "${_appsdk_root}/bin/vrlservice")
-		set(AppSDK_FOUND FALSE)
-	endif()
 endif()
 
 
 if(NOT AppSDK_FOUND)
-	message(STATUS "V-Ray AppSDK NOT found!")
-
 	set(AppSDK_INCLUDES AppSDK_INCLUDES-NOTFOUND)
 	set(AppSDK_LIBRARIES AppSDK_LIBRARIES-NOTFOUND)
 endif()
