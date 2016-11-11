@@ -13,26 +13,6 @@
 	parmtag	{ "vray_plugin" "SettingsVFBChannels" }
 	parmtag	{ "vray_type" "RENDERCHANNEL" }
     }
-    multiparm {
-	name	"channel_names"
-	label	"Channel Names"
-	default	0
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "SettingsVFBChannels" }
-	parmtag	{ "vray_pluginattr" "channel_names" }
-	parmtag	{ "vray_type" "List<String>" }
-
-	parm {
-	    name	"channel_names#"
-	    label	"Channel Names"
-	    type	string
-	    default	{ "" }
-	    help	"A list of strings that represent render channel names. There are too many to list here - see pixelbuffer.h for the list of RegionChannelAlias items that are available for the vfb"
-	    range	{ 0 1 }
-	    export	none
-	}
-    }
-
     parm {
 	name	"zdepth_black"
 	label	"Zdepth Black"

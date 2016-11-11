@@ -172,26 +172,6 @@
 	parmtag	{ "vray_pluginattr" "osd_subdiv_uvs" }
 	parmtag	{ "vray_type" "boolean" }
     }
-    multiparm {
-	name	"map_channels_names"
-	label	"Map Channels Names"
-	default	0
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomStaticMesh" }
-	parmtag	{ "vray_pluginattr" "map_channels_names" }
-	parmtag	{ "vray_type" "List<String>" }
-
-	parm {
-	    name	"map_channels_names#"
-	    label	"Map Channels Names"
-	    type	string
-	    default	{ "" }
-	    help	"A list containing the names of the mapping channels"
-	    range	{ 0 1 }
-	    export	none
-	}
-    }
-
     parm {
 	name	"osd_subdiv_enable"
 	label	"Enable Opensubdiv"

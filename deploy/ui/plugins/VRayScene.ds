@@ -168,26 +168,6 @@
 	parmtag	{ "vray_pluginattr" "material_override" }
 	parmtag	{ "vray_type" "Object" }
     }
-    multiparm {
-	name	"hidden_objects"
-	label	"Hidden Objects"
-	default	0
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "VRayScene" }
-	parmtag	{ "vray_pluginattr" "hidden_objects" }
-	parmtag	{ "vray_type" "List<String>" }
-
-	parm {
-	    name	"hidden_objects#"
-	    label	"Hidden Objects"
-	    type	string
-	    default	{ "" }
-	    help	"Plugin names list to hide"
-	    range	{ 0 1 }
-	    export	none
-	}
-    }
-
     parm {
 	name	"flip_axis"
 	label	"Flip Axis"

@@ -426,46 +426,6 @@
 	parmtag	{ "vray_pluginattr" "look_ignore_errors" }
 	parmtag	{ "vray_type" "int" }
     }
-    multiparm {
-	name	"context_keys"
-	label	"Context Keys"
-	default	0
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexOCIO" }
-	parmtag	{ "vray_pluginattr" "context_keys" }
-	parmtag	{ "vray_type" "List<String>" }
-
-	parm {
-	    name	"context_keys#"
-	    label	"Context Keys"
-	    type	string
-	    default	{ "" }
-	    help	"List of context key names"
-	    range	{ 0 1 }
-	    export	none
-	}
-    }
-
-    multiparm {
-	name	"context_values"
-	label	"Context Values"
-	default	0
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexOCIO" }
-	parmtag	{ "vray_pluginattr" "context_values" }
-	parmtag	{ "vray_type" "List<String>" }
-
-	parm {
-	    name	"context_values#"
-	    label	"Context Values"
-	    type	string
-	    default	{ "" }
-	    help	"List of context values"
-	    range	{ 0 1 }
-	    export	none
-	}
-    }
-
     parm {
 	name	"inout_type"
 	label	"Inout Type"

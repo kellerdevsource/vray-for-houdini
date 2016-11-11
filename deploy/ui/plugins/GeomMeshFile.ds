@@ -304,26 +304,6 @@
 	parmtag	{ "vray_pluginattr" "visibility_lists_type" }
 	parmtag	{ "vray_type" "int" }
     }
-    multiparm {
-	name	"visibility_list_names"
-	label	"Visibility List Names"
-	default	0
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomMeshFile" }
-	parmtag	{ "vray_pluginattr" "visibility_list_names" }
-	parmtag	{ "vray_type" "List<String>" }
-
-	parm {
-	    name	"visibility_list_names#"
-	    label	"Visibility List Names"
-	    type	string
-	    default	{ "" }
-	    help	"Visibility list of mesh names. Either include or exclude"
-	    range	{ 0 1 }
-	    export	none
-	}
-    }
-
     parm {
 	name	"hair_visibility_lists_type"
 	label	"Hair Visibility Lists Type"
@@ -342,26 +322,6 @@
 	parmtag	{ "vray_pluginattr" "hair_visibility_lists_type" }
 	parmtag	{ "vray_type" "int" }
     }
-    multiparm {
-	name	"hair_visibility_list_names"
-	label	"Hair Visibility List Names"
-	default	0
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomMeshFile" }
-	parmtag	{ "vray_pluginattr" "hair_visibility_list_names" }
-	parmtag	{ "vray_type" "List<String>" }
-
-	parm {
-	    name	"hair_visibility_list_names#"
-	    label	"Hair Visibility List Names"
-	    type	string
-	    default	{ "" }
-	    help	"Visibility list of hair names. Either include or exclude"
-	    range	{ 0 1 }
-	    export	none
-	}
-    }
-
     parm {
 	name	"flip_normals"
 	label	"Flip Normals"
@@ -419,26 +379,6 @@
 	parmtag	{ "vray_pluginattr" "particle_visibility_lists_type" }
 	parmtag	{ "vray_type" "int" }
     }
-    multiparm {
-	name	"particle_visibility_list_names"
-	label	"Particle Visibility List Names"
-	default	0
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomMeshFile" }
-	parmtag	{ "vray_pluginattr" "particle_visibility_list_names" }
-	parmtag	{ "vray_type" "List<String>" }
-
-	parm {
-	    name	"particle_visibility_list_names#"
-	    label	"Particle Visibility List Names"
-	    type	string
-	    default	{ "" }
-	    help	"Visibility list of particle system names. Either include or exclude"
-	    range	{ 0 1 }
-	    export	none
-	}
-    }
-
     parm {
 	name	"sort_voxels"
 	label	"Sort Voxels"
