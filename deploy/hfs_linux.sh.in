@@ -1,23 +1,27 @@
 # V-Ray For Houdini Linux Launcher
 #
 
+# Houdini Version
+export HOUDINI_VER_MAJOR=@HOUDINI_VERSION@
+export HOUDINI_VER_FULL=${HOUDINI_VER_MAJOR}.@HOUDINI_VERSION_BUILD@
+
+# Houdini Install Location
+export HFS="/opt/hfs${HOUDINI_VER_FULL}"
+
 # Use OpenVDB < 3
 #
 export HOUDINI13_VOLUME_COMPATIBILITY=1
 
-export HOUDINI_VER_MAJOR=@HOUDINI_VERSION@
-export HOUDINI_VER_FULL=${HOUDINI_VER_MAJOR}.@HOUDINI_VERSION_BUILD@
 
 # DO NOT EDIT STUFF BELOW
 #
 LAUNCHER_FILEPATH=`readlink -f $0`
 export LAUNCHER_LOCATION=`dirname ${LAUNCHER_FILEPATH}`
 
-export HFS="/opt/hfs${HOUDINI_VER_FULL}"
-
+# Environment Setup
+#
 # V-Ray Application SDK variables
-export VRAY_SDK=${LAUNCHER_LOCATION}/appsdk
-export VRAY_PATH=${VRAY_SDK}/bin
+export VRAY_APPSDK=${LAUNCHER_LOCATION}/appsdk
 
 # Set VFB on top
 export VRAY_VFB_ALWAYS_ON_TOP=1
@@ -28,18 +32,19 @@ export VRAY_PLUGIN_DESC_PATH="${LAUNCHER_LOCATION}/plugins_desc"
 # V-Ray UI dialog scripts
 export VRAY_UI_DS_PATH="${LAUNCHER_LOCATION}/ui"
 
-# V-Ray for Houdini dso path
-export HOUDINI_PATH=${LAUNCHER_LOCATION}/vfh_home:\&
-
 # Phoenix Loaders
 export VRAY_FOR_HOUDINI_AURA_LOADERS=${LAUNCHER_LOCATION}/vfh_home/vfh_lib
 
-# Add libs to path
-export PATH=${HFS}/bin:${VRAY_PATH}:${PATH}
-export LD_LIBRARY_PATH=${VRAY_SDK}/bin:${VRAY_FOR_HOUDINI_AURA_LOADERS}:${LD_LIBRARY_PATH}
+# V-Ray for Houdini dso path
+export HOUDINI_PATH=${LAUNCHER_LOCATION}/vfh_home:\&
 
 # Report loading errors
 export HOUDINI_DSO_ERROR=1
 
+# Add libs to path
+export PATH=${HFS}/bin:${VRAY_APPSDK}/bin:${PATH}
+export LD_LIBRARY_PATH=${VRAY_APPSDK}/bin:${VRAY_FOR_HOUDINI_AURA_LOADERS}:${LD_LIBRARY_PATH}
+
 # Start Houdini
+#
 "${HFS}/bin/houdini" -foreground $*

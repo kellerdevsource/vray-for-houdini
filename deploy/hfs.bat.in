@@ -7,6 +7,9 @@
 set HOUDINI_VER_MAJOR=@HOUDINI_VERSION@
 set HOUDINI_VER_FULL=%HOUDINI_VER_MAJOR%.@HOUDINI_VERSION_BUILD@
 
+:: Houdini Install Location
+set HFS=C:\Program Files\Side Effects Software\Houdini %HOUDINI_VER_FULL%
+
 :: Houdini User Home
 if NOT DEFINED HOME set HOME=%USERPROFILE%\Documents
 
@@ -14,14 +17,15 @@ if NOT DEFINED HOME set HOME=%USERPROFILE%\Documents
 ::
 set HOUDINI13_VOLUME_COMPATIBILITY=1
 
+
 :: DO NOT EDIT STUFF BELOW (well, only if you really know what you're doing)
 ::
 set LAUNCHER_LOCATION=%~dp0
-set HFS=C:\Program Files\Side Effects Software\Houdini %HOUDINI_VER_FULL%
 
+:: Environment Setup
+::
 :: V-Ray Application SDK variables
-set VRAY_SDK=%LAUNCHER_LOCATION%\appsdk
-set VRAY_PATH=%VRAY_SDK%\bin
+set VRAY_APPSDK=%LAUNCHER_LOCATION%\appsdk
 
 :: Set VFB on top
 set VRAY_VFB_ALWAYS_ON_TOP=1
@@ -42,7 +46,8 @@ set HOUDINI_PATH=%LAUNCHER_LOCATION%\vfh_home;^&;
 set HOUDINI_DSO_ERROR=1
 
 :: Add libs to path
-set PATH=%HFS%\bin;%VRAY_PATH%;%PATH%;%VRAY_FOR_HOUDINI_AURA_LOADERS%
+set PATH=%HFS%\bin;%VRAY_APPSDK%\bin;%PATH%;%VRAY_FOR_HOUDINI_AURA_LOADERS%
 
 :: Start Houdini
+::
 start "V-Ray For Houdini" /D "%USERPROFILE%\Desktop\" "%HFS%\bin\houdini.exe" -foreground %*

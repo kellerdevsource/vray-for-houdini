@@ -1,22 +1,31 @@
 # V-Ray For Houdini OS X Launcher
 #
 
+# Houdini Version
+export HOUDINI_VER_MAJOR=@HOUDINI_VERSION@
+export HOUDINI_VER_FULL=${HOUDINI_VER_MAJOR}.@HOUDINI_VERSION_BUILD@
+
+# Houdini Install Location
+export HFS="@HOUDINI_FRAMEWORK_ROOT@/Resources"
+
 # Use OpenVDB < 3
 #
 export HOUDINI13_VOLUME_COMPATIBILITY=1
 export HOUDINI_PYTHON_VERSION=2.6
 
-export HOUDINI_VER_MAJOR=@HOUDINI_VERSION@
-export HOUDINI_VER_FULL=${HOUDINI_VER_MAJOR}.@HOUDINI_VERSION_BUILD@
 
 # DO NOT EDIT STUFF BELOW
 #
 LAUNCHER_FILEPATH=`readlink -f $0`
 export LAUNCHER_LOCATION=`dirname ${LAUNCHER_FILEPATH}`
 
+# Environment Setup
+#
 # V-Ray Application SDK variables
-export VRAY_SDK=${LAUNCHER_LOCATION}/appsdk
-export VRAY_PATH=${VRAY_SDK}/bin
+export VRAY_APPSDK=${LAUNCHER_LOCATION}/appsdk
+
+# Set VFB on top
+export VRAY_VFB_ALWAYS_ON_TOP=1
 
 # V-Ray JSON plugin descriptions
 export VRAY_PLUGIN_DESC_PATH="${LAUNCHER_LOCATION}/plugins_desc"
@@ -24,18 +33,14 @@ export VRAY_PLUGIN_DESC_PATH="${LAUNCHER_LOCATION}/plugins_desc"
 # V-Ray UI dialog scripts
 export VRAY_UI_DS_PATH="${LAUNCHER_LOCATION}/ui"
 
-# V-Ray for Houdini dso path
-export HOUDINI_PATH=${LAUNCHER_LOCATION}/vfh_home:\&
-
 # Phoenix Loaders
 export VRAY_FOR_HOUDINI_AURA_LOADERS=${LAUNCHER_LOCATION}/vfh_home/vfh_lib
 
-# Set VFB on top
-export VRAY_VFB_ALWAYS_ON_TOP=1
+# V-Ray for Houdini dso path
+export HOUDINI_PATH=${LAUNCHER_LOCATION}/vfh_home:\&
 
 # Houdini
 export HOUDINI_DSO_ERROR=1
-export HFS="@HOUDINI_FRAMEWORK_ROOT@/Resources"
 export H="${HFS}"
 export HB="${H}/bin"
 export HDSO="${H}/../Libraries"
@@ -48,8 +53,8 @@ export TEMP=/tmp
 export JAVA_HOME=/Library/Java/Home
 
 # Add libs to path
-export PATH=${HB}:${HSB}:${VRAY_PATH}:${PATH}
-export DYLD_LIBRARY_PATH=${VRAY_SDK}/bin:${VRAY_FOR_HOUDINI_AURA_LOADERS}:${DYLD_LIBRARY_PATH}
+export PATH=${HB}:${HSB}:${VRAY_APPSDK}/bin:${PATH}
+export DYLD_LIBRARY_PATH=${VRAY_APPSDK}/bin:${VRAY_FOR_HOUDINI_AURA_LOADERS}:${DYLD_LIBRARY_PATH}
 
 # Start Houdini
 "${HFS}/bin/houdini" -foreground $*
