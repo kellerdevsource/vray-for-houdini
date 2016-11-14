@@ -1,0 +1,65 @@
+{
+    name	TexModoInvertChannels
+    label	"Modo Invert Channels"
+    parm {
+	name	"plugindata"
+	label	"Modo Invert Channels"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"TexModoInvertChannels"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexModoInvertChannels" }
+	parmtag	{ "vray_type" "TEXTURE" }
+    }
+    parm {
+	name	"texture"
+	label	"Texture"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexModoInvertChannels" }
+	parmtag	{ "vray_pluginattr" "texture" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"invert_red"
+	label	"Invert Red"
+	type	toggle
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexModoInvertChannels" }
+	parmtag	{ "vray_pluginattr" "invert_red" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"invert_green"
+	label	"Invert Green"
+	type	toggle
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexModoInvertChannels" }
+	parmtag	{ "vray_pluginattr" "invert_green" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"invert_blue"
+	label	"Invert Blue"
+	type	toggle
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexModoInvertChannels" }
+	parmtag	{ "vray_pluginattr" "invert_blue" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+}

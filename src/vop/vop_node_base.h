@@ -13,7 +13,6 @@
 
 #include "vfh_defines.h"
 #include "vfh_class_utils.h"
-#include "ui/vfh_ui.h"
 
 #include "op/op_node_base.h"
 

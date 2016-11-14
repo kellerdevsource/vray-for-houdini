@@ -1,0 +1,42 @@
+{
+    name	TexModoMaxColorComponent
+    label	"Modo Max Color Component"
+    parm {
+	name	"plugindata"
+	label	"Modo Max Color Component"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"TexModoMaxColorComponent"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexModoMaxColorComponent" }
+	parmtag	{ "vray_type" "TEXTURE" }
+    }
+    parm {
+	name	"color1"
+	label	"Color1"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexModoMaxColorComponent" }
+	parmtag	{ "vray_pluginattr" "color1" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"color2"
+	label	"Color2"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexModoMaxColorComponent" }
+	parmtag	{ "vray_pluginattr" "color2" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+}

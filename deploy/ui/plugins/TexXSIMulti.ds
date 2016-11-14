@@ -1,0 +1,16 @@
+{
+    name	TexXSIMulti
+    label	"XSI Multi"
+    parm {
+	name	"plugindata"
+	label	"XSI Multi"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"TexXSIMulti"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexXSIMulti" }
+	parmtag	{ "vray_type" "TEXTURE" }
+    }
+}

@@ -1,0 +1,107 @@
+{
+    name	GeomMayaHair
+    label	"Hair"
+    parm {
+	name	"plugindata"
+	label	"Hair"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"Hair settings"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomMayaHair" }
+	parmtag	{ "vray_type" "GEOMETRY" }
+    }
+    parm {
+	name	"opacity"
+	label	"Opacity"
+	type	float
+	default	{ "1" }
+	help	"The Maya hair shader does not allow for different transparency on each hair vertex. Instead it uses a single opacity parameter for all of them"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomMayaHair" }
+	parmtag	{ "vray_pluginattr" "opacity" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"geom_splines"
+	label	"Geom Splines"
+	type	toggle
+	default	{ "0" }
+	help	"If true, hair strands geometry will be represented as splines, instead of line segments"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomMayaHair" }
+	parmtag	{ "vray_pluginattr" "geom_splines" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"use_global_hair_tree"
+	label	"Use Global Hair Tree"
+	type	toggle
+	default	{ "1" }
+	help	"If true, the hair will be added to the global static hair tree"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomMayaHair" }
+	parmtag	{ "vray_pluginattr" "use_global_hair_tree" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"geom_tesselation_mult"
+	label	"Geom Tesselation Mult"
+	type	float
+	default	{ "1" }
+	help	"Manual control over the number of subdivisions when intersecting the spline based hairs"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomMayaHair" }
+	parmtag	{ "vray_pluginattr" "geom_tesselation_mult" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"xgen_generated"
+	label	"Xgen Generated"
+	type	toggle
+	default	{ "0" }
+	help	"If true, the hair is xgen generated"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomMayaHair" }
+	parmtag	{ "vray_pluginattr" "xgen_generated" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"widths_in_pixels"
+	label	"Widths In Pixels"
+	type	toggle
+	default	{ "0" }
+	help	"If true, the widths parameter is in pixels, otherwise it is in world units"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomMayaHair" }
+	parmtag	{ "vray_pluginattr" "widths_in_pixels" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"generate_w_coord"
+	label	"Generate W Coord"
+	type	toggle
+	default	{ "0" }
+	help	"If true, V-Ray will generate a W mapping coordinate that represents the position of the shaded point along the hair strands"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomMayaHair" }
+	parmtag	{ "vray_pluginattr" "generate_w_coord" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+}

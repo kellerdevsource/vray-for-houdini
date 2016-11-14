@@ -1,0 +1,314 @@
+{
+    name	BRDFScanned
+    label	"Scanned"
+    parm {
+	name	"plugindata"
+	label	"Scanned"
+	type	data
+	invisible
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "BRDFScanned" }
+	parmtag	{ "vray_type" "BRDF" }
+    }
+    parm {
+	name	"transparency"
+	label	"Transparency"
+	type	color
+	size	3
+	default	{ "0" "0" "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+    }
+    parm {
+	name	"transparency_tex"
+	label	"Transparency"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "1" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+    }
+    parm {
+	name	"transparency_tex_mult"
+	label	"Transparency Tex Mult"
+	type	float
+	default	{ "1" }
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+    }
+    parm {
+	name	"cutoff"
+	label	"Cutoff"
+	type	float
+	default	{ "0.01" }
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+    }
+    parm {
+	name	"back_side"
+	label	"Back Side"
+	type	toggle
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+    }
+    parm {
+	name	"trace_reflections"
+	label	"Trace Reflections"
+	type	toggle
+	default	{ "1" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+    }
+    parm {
+	name	"trace_depth"
+	label	"Trace Depth"
+	type	integer
+	default	{ "-1" }
+	help	"The maximum reflection depth (-1 is controlled by the global options)"
+	disablewhen	"{ trace_reflections != 1 }"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+    }
+    parm {
+	name	"affect_alpha"
+	label	"Affect Alpha"
+	type	ordinal
+	default	{ "0" }
+	help	"Specifies how render channels are propagated through the BRDF"
+	menu	{
+	    "Color Only"	"Color Only"
+	    "Color+Alpha"	"Color+Alpha"
+	    "All Channels"	"All Channels"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_enumkeys" "0,1,2" }
+    }
+    parm {
+	name	"reflect_exit_color"
+	label	"Reflect Exit Color"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "1" }
+	help	"The color to use when the maximum depth is reached"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+    }
+    parm {
+	name	"reflect_dim_distance"
+	label	"Reflect Dim Distance"
+	type	float
+	default	{ "1e+18" }
+	help	"How much to dim reflection as length of rays increases"
+	disablewhen	"{ trace_reflections != 1 } { reflect_dim_distance_on != 1 }"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+    }
+    parm {
+	name	"reflect_dim_distance_on"
+	label	"Reflect Dim Distance On"
+	type	toggle
+	default	{ "0" }
+	help	"True to enable dim distance"
+	disablewhen	"{ trace_reflections != 1 }"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+    }
+    parm {
+	name	"reflect_dim_distance_falloff"
+	label	"Reflect Dim Distance Falloff"
+	type	float
+	default	{ "0" }
+	help	"Fall off for the dim distance"
+	disablewhen	"{ trace_reflections != 1 } { reflect_dim_distance_on != 1 }"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+    }
+    parm {
+	name	"glossyAsGI"
+	label	"Glossy As Gi"
+	type	ordinal
+	default	{ "1" }
+	help	"Determines if the glossy rays are treated by V-Ray as GI rays"
+	menu	{
+	    "Never"	"Never"
+	    "GI"	"GI"
+	    "Always"	"Always"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_enumkeys" "0,1,2" }
+    }
+    parm {
+	name	"subdivs"
+	label	"Subdivs"
+	type	integer
+	default	{ "8" }
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+    }
+    parm {
+	name	"mtsc_file_path"
+	label	"Mtsc File Path"
+	type	file
+	default	{ "" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+    }
+    parm {
+	name	"material_color_filter"
+	label	"Material Color Filter"
+	type	color
+	size	3
+	default	{ "1" "1" "1" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+    }
+    parm {
+	name	"tiling_factor"
+	label	"Tiling Factor"
+	type	float
+	default	{ "1" }
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFScanned" }
+	parmtag	{ "vray_pluginattr" "tiling_factor" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"gamma_correction"
+	label	"Gamma Correction"
+	type	float
+	default	{ "1" }
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+    }
+    parm {
+	name	"saturation"
+	label	"Saturation"
+	type	float
+	default	{ "1" }
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+    }
+    parm {
+	name	"exposure_correction"
+	label	"Exposure Correction"
+	type	float
+	default	{ "0" }
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+    }
+    parm {
+	name	"map_channel"
+	label	"Map Channel"
+	type	integer
+	default	{ "0" }
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+    }
+    parm {
+	name	"disable_wmap"
+	label	"Disable Wmap"
+	type	toggle
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+    }
+    parm {
+	name	"coarse_indirect"
+	label	"Coarse Indirect"
+	type	toggle
+	default	{ "1" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+    }
+    parm {
+	name	"mult_depth"
+	label	"Mult Depth"
+	type	float
+	default	{ "1" }
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+    }
+    parm {
+	name	"mult_gi"
+	label	"Mult Gi"
+	type	float
+	default	{ "1" }
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+    }
+    parm {
+	name	"mult_direct"
+	label	"Mult Direct"
+	type	float
+	default	{ "1" }
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+    }
+    parm {
+	name	"mult_reflections"
+	label	"Mult Reflections"
+	type	float
+	default	{ "1" }
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+    }
+    parm {
+	name	"file"
+	label	"File"
+	type	file
+	default	{ "" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "filechooser_pattern" "*.vrscan" }
+	parmtag	{ "vray_plugin" "BRDFScanned" }
+	parmtag	{ "vray_pluginattr" "file" }
+	parmtag	{ "vray_type" "String" }
+    }
+    parm {
+	name	"param_block"
+	label	"Param Block"
+	type	integer
+	default	{ "0" }
+	help	"All parameters serialized to a binary param block"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFScanned" }
+	parmtag	{ "vray_pluginattr" "param_block" }
+	parmtag	{ "vray_type" "List<Integer>" }
+    }
+}

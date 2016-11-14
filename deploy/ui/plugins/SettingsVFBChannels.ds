@@ -1,0 +1,55 @@
+{
+    name	SettingsVFBChannels
+    label	"Settings VFB Channels"
+    parm {
+	name	"plugindata"
+	label	"Settings VFB Channels"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"SettingsVFBChannels"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "SettingsVFBChannels" }
+	parmtag	{ "vray_type" "RENDERCHANNEL" }
+    }
+    parm {
+	name	"zdepth_black"
+	label	"Zdepth Black"
+	type	float
+	default	{ "0.001" }
+	help	"Where the black color starts in zdepth"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "SettingsVFBChannels" }
+	parmtag	{ "vray_pluginattr" "zdepth_black" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"zdepth_white"
+	label	"Zdepth White"
+	type	float
+	default	{ "1500" }
+	help	"Where the white color starts in zdepth"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "SettingsVFBChannels" }
+	parmtag	{ "vray_pluginattr" "zdepth_white" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"zdepth_clamp"
+	label	"Zdepth Clamp"
+	type	toggle
+	default	{ "0" }
+	help	"whether we should clamp between near and far or allow outliers"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "SettingsVFBChannels" }
+	parmtag	{ "vray_pluginattr" "zdepth_clamp" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+}

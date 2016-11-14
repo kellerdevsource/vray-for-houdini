@@ -254,7 +254,7 @@ int VRayProxyROP::getExportOptions(fpreal time, VRayProxyExportOptions &options)
 PRM_Template *VRayProxyROP::getMyPrmTemplate()
 {
 	static Parm::PRMList myPrmList;
-	if (NOT(myPrmList.empty())) {
+	if (!myPrmList.empty()) {
 		return myPrmList.getPRMTemplate();
 	}
 

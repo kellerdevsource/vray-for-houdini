@@ -1,0 +1,42 @@
+{
+    name	TexColorConstant
+    label	"Color Constant"
+    parm {
+	name	"plugindata"
+	label	"Color Constant"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"TexColorConstant"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_category" "utility" }
+	parmtag	{ "vray_plugin" "TexColorConstant" }
+	parmtag	{ "vray_type" "TEXTURE" }
+    }
+    parm {
+	name	"color"
+	label	"Color"
+	type	color4
+	size	4
+	default	{ "1" "1" "1" "1" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexColorConstant" }
+	parmtag	{ "vray_pluginattr" "color" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"alpha"
+	label	"Alpha"
+	type	float
+	default	{ "1" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexColorConstant" }
+	parmtag	{ "vray_pluginattr" "alpha" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+}

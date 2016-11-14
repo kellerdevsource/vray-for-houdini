@@ -1,0 +1,16 @@
+{
+    name	VolumeMulti
+    label	"Volume Multi"
+    parm {
+	name	"plugindata"
+	label	"Volume Multi"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"VolumeMulti"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "VolumeMulti" }
+	parmtag	{ "vray_type" "EFFECT" }
+    }
+}

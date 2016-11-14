@@ -1,0 +1,53 @@
+{
+    name	BRDFHair
+    label	"Hair"
+    parm {
+	name	"plugindata"
+	label	"Hair"
+	type	data
+	invisible
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "BRDFHair" }
+	parmtag	{ "vray_type" "BRDF" }
+    }
+    parm {
+	name	"specular_color_tex"
+	label	"Specular Color"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "1" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFHair" }
+	parmtag	{ "vray_pluginattr" "specular_color_tex" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"specular_power"
+	label	"Specular Power"
+	type	float
+	default	{ "1" }
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFHair" }
+	parmtag	{ "vray_pluginattr" "specular_power" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"diffuse_color_tex"
+	label	"Diffuse Color"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "1" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFHair" }
+	parmtag	{ "vray_pluginattr" "diffuse_color_tex" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+}

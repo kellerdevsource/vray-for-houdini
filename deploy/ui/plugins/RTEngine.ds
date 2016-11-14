@@ -1,0 +1,61 @@
+{
+    name	RTEngine
+    label	"Realtime Engine"
+    parm {
+	name	"plugindata"
+	label	"Realtime Engine"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"V-Ray Realtime Engine"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "RTEngine" }
+	parmtag	{ "vray_type" "SETTINGS" }
+    }
+    parm {
+	name	"enabled"
+	label	"Enabled"
+	type	toggle
+	default	{ "0" }
+	help	"Enable Realtime Engine"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "RTEngine" }
+	parmtag	{ "vray_pluginattr" "enabled" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"use_opencl"
+	label	"Device"
+	type	ordinal
+	default	{ "0" }
+	help	"Device type"
+	menu	{
+	    "CPU"	"CPU"
+	    "GPU (OpenCL)"	"GPU (OpenCL)"
+	    "GPU (CUDA)"	"GPU (CUDA)"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_enumkeys" "0,1,4" }
+	parmtag	{ "vray_plugin" "RTEngine" }
+	parmtag	{ "vray_pluginattr" "use_opencl" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"separate_window"
+	label	"Separate Window"
+	type	toggle
+	default	{ "0" }
+	help	"Use a separate window for the Realtime Engine"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "RTEngine" }
+	parmtag	{ "vray_pluginattr" "separate_window" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+}

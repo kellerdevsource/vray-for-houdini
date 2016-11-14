@@ -1,0 +1,16 @@
+{
+    name	volumeXSIMulti
+    label	"volume XSI Multi"
+    parm {
+	name	"plugindata"
+	label	"volume XSI Multi"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"volumeXSIMulti"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "volumeXSIMulti" }
+	parmtag	{ "vray_type" "EFFECT" }
+    }
+}

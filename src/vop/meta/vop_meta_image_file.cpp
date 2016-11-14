@@ -9,43 +9,57 @@
 //
 
 #include "vop_meta_image_file.h"
-
 #include "vfh_prm_templates.h"
-#include "vfh_prm_json.h"
 #include "vfh_tex_utils.h"
 
 
 using namespace VRayForHoudini;
 
 
-static PRM_Name           AttrTabsSwitcher("MetaImageFile");
-static Parm::PRMDefList   AttrTabsSwitcherTitles;
-static Parm::PRMTmplList  AttrItems;
-
-
-static Parm::TabItemDesc MetaImageFileTabItemsDesc[] = {
-	{ "Bitmap",     "BitmapBuffer"             },
-	{ "Texture",    "TexBitmap"                },
-	{ "UV",         "UVWGenMayaPlace2dTexture" },
-	{ "Projection", "UVWGenProjection"         }
-};
-
-
 PRM_Template* VOP::MetaImageFile::GetPrmTemplate()
 {
-	if (!AttrItems.size()) {
-		Parm::addTabsItems(MetaImageFileTabItemsDesc, CountOf(MetaImageFileTabItemsDesc), AttrTabsSwitcherTitles, AttrItems);
+	static Parm::PRMList myPrmList;
+	if (myPrmList.empty()) {
+		myPrmList.reserve(90);
 
-		AttrItems.push_back(PRM_Template()); // List terminator
+		myPrmList.switcherBegin("MetaImageFile");
 
-		AttrItems.insert(AttrItems.begin(),
-						 PRM_Template(PRM_SWITCHER,
-									  AttrTabsSwitcherTitles.size(),
-									  &AttrTabsSwitcher,
-									  &AttrTabsSwitcherTitles[0]));
+		// Bitmap tab
+		myPrmList.addFolder("Bitmap");
+
+		int idx = myPrmList.size();
+		Parm::addPrmTemplateForPlugin( "BitmapBuffer", myPrmList);
+		// hacky way to rename params on order to keep compatibility with old UI
+		Parm::PRMList::renamePRMTemplate(myPrmList.getPRMTemplate() + idx, "BitmapBuffer");
+
+		// Texture tab
+		myPrmList.addFolder("Texture");
+
+		idx = myPrmList.size();
+		Parm::addPrmTemplateForPlugin( "TexBitmap", myPrmList);
+		// hacky way to rename params on order to keep compatibility with old UI
+		Parm::PRMList::renamePRMTemplate(myPrmList.getPRMTemplate() + idx, "TexBitmap");
+
+		// UV tab
+		myPrmList.addFolder("UV");
+
+		idx = myPrmList.size();
+		Parm::addPrmTemplateForPlugin( "UVWGenMayaPlace2dTexture", myPrmList);
+		// hacky way to rename params on order to keep compatibility with old UI
+		Parm::PRMList::renamePRMTemplate(myPrmList.getPRMTemplate() + idx, "UVWGenMayaPlace2dTexture");
+
+		// Projection tab
+		myPrmList.addFolder("Projection");
+
+		idx = myPrmList.size();
+		Parm::addPrmTemplateForPlugin( "UVWGenProjection", myPrmList);
+		// hacky way to rename params on order to keep compatibility with old UI
+		Parm::PRMList::renamePRMTemplate(myPrmList.getPRMTemplate() + idx, "UVWGenProjection");
+
+		myPrmList.switcherEnd();
 	}
 
-	return &AttrItems[0];
+	return myPrmList.getPRMTemplate();
 }
 
 

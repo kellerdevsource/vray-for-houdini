@@ -1,0 +1,29 @@
+{
+    name	TexSwitchInt
+    label	"Switch Int"
+    parm {
+	name	"plugindata"
+	label	"Switch Int"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"TexSwitchInt"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_category" "utility" }
+	parmtag	{ "vray_plugin" "TexSwitchInt" }
+	parmtag	{ "vray_type" "TEXTURE" }
+    }
+    parm {
+	name	"default"
+	label	"Default"
+	type	integer
+	default	{ "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexSwitchInt" }
+	parmtag	{ "vray_pluginattr" "default" }
+	parmtag	{ "vray_type" "int" }
+    }
+}

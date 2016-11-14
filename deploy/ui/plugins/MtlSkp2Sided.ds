@@ -1,0 +1,29 @@
+{
+    name	MtlSkp2Sided
+    label	"Mtl Skp 2 Sided"
+    parm {
+	name	"plugindata"
+	label	"Mtl Skp 2 Sided"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"MtlSkp2Sided"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlSkp2Sided" }
+	parmtag	{ "vray_type" "MATERIAL" }
+    }
+    parm {
+	name	"force_1sided"
+	label	"Force 1sided"
+	type	toggle
+	default	{ "0" }
+	help	"1 to make the sub-materials one-sided"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "MtlSkp2Sided" }
+	parmtag	{ "vray_pluginattr" "force_1sided" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+}

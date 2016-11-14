@@ -1,0 +1,188 @@
+{
+    name	GeomStaticMesh
+    label	"Mesh"
+    parm {
+	name	"plugindata"
+	label	"Mesh"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"Mesh settings"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "GeomStaticMesh" }
+	parmtag	{ "vray_type" "GEOMETRY" }
+    }
+    parm {
+	name	"weld_threshold"
+	label	"Weld Threshold"
+	type	float
+	default	{ "-1" }
+	help	"If this parameter is present, the vertices of the mesh which are within the given threshold of one another will be welded. If absent or negative, no welding is performed"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomStaticMesh" }
+	parmtag	{ "vray_pluginattr" "weld_threshold" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"primary_visibility"
+	label	"Primary Visibility"
+	type	toggle
+	default	{ "1" }
+	help	"If off shading an intersection with this mesh will not generate a gbuffer"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomStaticMesh" }
+	parmtag	{ "vray_pluginattr" "primary_visibility" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"dynamic_geometry"
+	label	"Dynamic Geometry"
+	type	toggle
+	default	{ "0" }
+	help	"When this flag is true V-Ray will use dynamic geometry for this mesh(instead of copying the mesh many times in the BSP tree, only the bounding box will be present many times and ray intersections will occur in a separate object space BSP tree)"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomStaticMesh" }
+	parmtag	{ "vray_pluginattr" "dynamic_geometry" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"environment_geometry"
+	label	"Environment Geometry"
+	type	toggle
+	default	{ "0" }
+	help	"When this flag is true V-Ray will use this geometry as part of the background(for example, this will be included in matte objects"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomStaticMesh" }
+	parmtag	{ "vray_pluginattr" "environment_geometry" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"smooth_uv_borders"
+	label	"Smooth Uv Borders"
+	type	toggle
+	default	{ "1" }
+	help	"true to smooth UVs at mesh borders when rendering this mesh as a subdivision surface"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomStaticMesh" }
+	parmtag	{ "vray_pluginattr" "smooth_uv_borders" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"smooth_uv"
+	label	"Smooth Uvs"
+	type	toggle
+	default	{ "1" }
+	help	"true to smooth UVs when rendering this mesh as a subdivision surface"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomStaticMesh" }
+	parmtag	{ "vray_pluginattr" "smooth_uv" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"osd_subdiv_level"
+	label	"Subdivision Level"
+	type	integer
+	default	{ "0" }
+	help	"Level of OpenSubdiv subdivision"
+	disablewhen	"{ osd_subdiv_enable != 1 }"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomStaticMesh" }
+	parmtag	{ "vray_pluginattr" "osd_subdiv_level" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"osd_subdiv_type"
+	label	"Type"
+	type	ordinal
+	default	{ "0" }
+	help	"Type of OpenSubdiv subdivision"
+	disablewhen	"{ osd_subdiv_level <= 0 } { osd_subdiv_enable != 1 }"
+	menu	{
+	    "Catmull-Clark"	"Catmull-Clark"
+	    "Loop"	"Loop"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_enumkeys" "0,1" }
+	parmtag	{ "vray_plugin" "GeomStaticMesh" }
+	parmtag	{ "vray_pluginattr" "osd_subdiv_type" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"osd_preserve_map_borders"
+	label	"Preserve Map Borders"
+	type	ordinal
+	default	{ "1" }
+	help	"Different modes for subdividing the uv boundaries with OpenSubdiv"
+	disablewhen	"{ osd_subdiv_level <= 0 } { osd_subdiv_uvs != 1 } { osd_subdiv_enable != 1 }"
+	menu	{
+	    "None"	"None"
+	    "Internal"	"Internal"
+	    "All"	"All"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_enumkeys" "0,1,1" }
+	parmtag	{ "vray_plugin" "GeomStaticMesh" }
+	parmtag	{ "vray_pluginattr" "osd_preserve_map_borders" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"osd_preserve_geometry_borders"
+	label	"Preserve Geometry Borders"
+	type	toggle
+	default	{ "0" }
+	help	"Keep the geometry boundaries in place while subdividing the mesh with OpenSubdiv"
+	disablewhen	"{ osd_subdiv_level <= 0 } { osd_subdiv_enable != 1 }"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomStaticMesh" }
+	parmtag	{ "vray_pluginattr" "osd_preserve_geometry_borders" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"osd_subdiv_uvs"
+	label	"Subdivide Uvs"
+	type	toggle
+	default	{ "1" }
+	help	"Smooth UVs when applying subdivision with OpenSubdiv"
+	disablewhen	"{ osd_subdiv_level <= 0 } { osd_subdiv_enable != 1 }"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomStaticMesh" }
+	parmtag	{ "vray_pluginattr" "osd_subdiv_uvs" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"osd_subdiv_enable"
+	label	"Enable Opensubdiv"
+	type	toggle
+	default	{ "1" }
+	help	"True to enable OpenSubdiv subdivision"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "GeomStaticMesh" }
+	parmtag	{ "vray_pluginattr" "osd_subdiv_enable" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+}

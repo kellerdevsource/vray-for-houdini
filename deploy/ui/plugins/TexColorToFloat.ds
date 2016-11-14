@@ -1,0 +1,30 @@
+{
+    name	TexColorToFloat
+    label	"Color To Float"
+    parm {
+	name	"plugindata"
+	label	"Color To Float"
+	type	data
+	invisible
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_category" "utility" }
+	parmtag	{ "vray_plugin" "TexColorToFloat" }
+	parmtag	{ "vray_type" "TEXTURE" }
+    }
+    parm {
+	name	"input"
+	label	"Input"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "1" }
+	help	"The color value"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexColorToFloat" }
+	parmtag	{ "vray_pluginattr" "input" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+}

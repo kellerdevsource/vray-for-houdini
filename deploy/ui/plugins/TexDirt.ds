@@ -1,0 +1,299 @@
+{
+    name	TexDirt
+    label	"Dirt"
+    parm {
+	name	"plugindata"
+	label	"Dirt"
+	type	data
+	invisible
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexDirt" }
+	parmtag	{ "vray_type" "TEXTURE" }
+    }
+    parm {
+	name	"white_color"
+	label	"Unoccluded Color"
+	type	color4
+	size	4
+	default	{ "1" "1" "1" "1" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexDirt" }
+	parmtag	{ "vray_pluginattr" "white_color" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"black_color"
+	label	"Occluded Color"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "1" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexDirt" }
+	parmtag	{ "vray_pluginattr" "black_color" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"radius"
+	label	"Radius"
+	type	float
+	default	{ "0.1" }
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexDirt" }
+	parmtag	{ "vray_pluginattr" "radius" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"distribution"
+	label	"Distribution"
+	type	float
+	default	{ "0" }
+	disablewhen	"{ mode != =0 }"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexDirt" }
+	parmtag	{ "vray_pluginattr" "distribution" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"falloff"
+	label	"Falloff"
+	type	float
+	default	{ "0" }
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexDirt" }
+	parmtag	{ "vray_pluginattr" "falloff" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"subdivs"
+	label	"Subdivs"
+	type	integer
+	default	{ "8" }
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexDirt" }
+	parmtag	{ "vray_pluginattr" "subdivs" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"bias_x"
+	label	"Bias X"
+	type	float
+	default	{ "0" }
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexDirt" }
+	parmtag	{ "vray_pluginattr" "bias_x" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"bias_y"
+	label	"Bias Y"
+	type	float
+	default	{ "0" }
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexDirt" }
+	parmtag	{ "vray_pluginattr" "bias_y" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"bias_z"
+	label	"Bias Z"
+	type	float
+	default	{ "0" }
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexDirt" }
+	parmtag	{ "vray_pluginattr" "bias_z" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"ignore_for_gi"
+	label	"Ignore For Gi"
+	type	toggle
+	default	{ "1" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexDirt" }
+	parmtag	{ "vray_pluginattr" "ignore_for_gi" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"consider_same_object_only"
+	label	"Consider Same Object Only"
+	type	toggle
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexDirt" }
+	parmtag	{ "vray_pluginattr" "consider_same_object_only" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"invert_normal"
+	label	"Invert Normal"
+	type	toggle
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexDirt" }
+	parmtag	{ "vray_pluginattr" "invert_normal" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"double_sided"
+	label	"Double Sided"
+	type	toggle
+	default	{ "0" }
+	help	"if true, the occlusion on both sides of the surface will be calculated"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexDirt" }
+	parmtag	{ "vray_pluginattr" "double_sided" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"work_with_transparency"
+	label	"Work With Transparency"
+	type	toggle
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexDirt" }
+	parmtag	{ "vray_pluginattr" "work_with_transparency" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"ignore_self_occlusion"
+	label	"Ignore Self Occlusion"
+	type	toggle
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexDirt" }
+	parmtag	{ "vray_pluginattr" "ignore_self_occlusion" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"render_nodes_inclusive"
+	label	"As Inclusive List"
+	type	toggle
+	default	{ "0" }
+	help	"if true the render_nodes list is inclusive"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexDirt" }
+	parmtag	{ "vray_pluginattr" "render_nodes_inclusive" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"affect_result_nodes_inclusive"
+	label	"As Inclusive List"
+	type	toggle
+	default	{ "0" }
+	help	"if true the affect_result_nodes list is inclusive"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexDirt" }
+	parmtag	{ "vray_pluginattr" "affect_result_nodes_inclusive" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"mode"
+	label	"Mode"
+	type	ordinal
+	default	{ "0" }
+	help	"Mode"
+	menu	{
+	    "Ambient Occlusion"	"Ambient Occlusion"
+	    "Phong Reflection Occlusion"	"Phong Reflection Occlusion"
+	    "Blinn Reflection Occlusion"	"Blinn Reflection Occlusion"
+	    "Ward Reflection Occlusion"	"Ward Reflection Occlusion"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_enumkeys" "0,1,2,3" }
+	parmtag	{ "vray_plugin" "TexDirt" }
+	parmtag	{ "vray_pluginattr" "mode" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"environment_occlusion"
+	label	"Environment Occlusion"
+	type	toggle
+	default	{ "0" }
+	help	"true to compute the environment for unoccluded samples"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexDirt" }
+	parmtag	{ "vray_pluginattr" "environment_occlusion" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"affect_reflection_elements"
+	label	"Affect Reflection Elements"
+	type	toggle
+	default	{ "0" }
+	help	"true to add the occlusion to relection render elements when mode>0"
+	disablewhen	"{ mode <= \"Ambient Occlusion\" }"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexDirt" }
+	parmtag	{ "vray_pluginattr" "affect_reflection_elements" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"glossiness"
+	label	"Glossiness"
+	type	float
+	default	{ "1" }
+	help	"A texture for the glossiness when mode>0"
+	disablewhen	"{ mode <= \"Ambient Occlusion\" }"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexDirt" }
+	parmtag	{ "vray_pluginattr" "glossiness" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"use_texture_for_excluded"
+	label	"Use Texture For Excluded"
+	type	toggle
+	default	{ "1" }
+	help	"True to return the unoccluded color texture, if the object is excluded. Otherwise return (0,0,0,0)"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexDirt" }
+	parmtag	{ "vray_pluginattr" "use_texture_for_excluded" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+}

@@ -1,0 +1,15 @@
+{
+    name	PhxShaderSimVol
+    label	"Phoenix Shader"
+    parm {
+	name	"plugindata"
+	label	"Phoenix Shader"
+	type	data
+	invisible
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "PhxShaderSimVol" }
+	parmtag	{ "vray_type" "EFFECT" }
+    }
+}

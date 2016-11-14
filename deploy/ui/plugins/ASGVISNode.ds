@@ -1,0 +1,55 @@
+{
+    name	ASGVISNode
+    label	"ASGVIS Node"
+    parm {
+	name	"plugindata"
+	label	"ASGVIS Node"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"ASGVISNode"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "ASGVISNode" }
+	parmtag	{ "vray_type" "GEOMETRY" }
+    }
+    parm {
+	name	"nsamples"
+	label	"Nsamples"
+	type	integer
+	default	{ "0" }
+	help	"Number of transform samples"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "ASGVISNode" }
+	parmtag	{ "vray_pluginattr" "nsamples" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"visible"
+	label	"Visible"
+	type	toggle
+	default	{ "1" }
+	help	"true if the object is renderable (visible) and false otherwise; it only makes sense to use this parameter if it is animated, or if another object depends on this node but it must not be rendered"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "ASGVISNode" }
+	parmtag	{ "vray_pluginattr" "visible" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"objectID"
+	label	"Objectid"
+	type	integer
+	default	{ "-1" }
+	help	"This can be used to give instances of nodes an identifier - if -1 is provided then a unique runtime render id will be calculated"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "ASGVISNode" }
+	parmtag	{ "vray_pluginattr" "objectID" }
+	parmtag	{ "vray_type" "int" }
+    }
+}

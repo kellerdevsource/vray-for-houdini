@@ -14,7 +14,6 @@
 #include "vfh_defines.h"
 #include "vfh_includes.h"
 #include "vfh_class_utils.h"
-#include "vfh_prm_json.h"
 
 #include "op/op_node_base.h"
 

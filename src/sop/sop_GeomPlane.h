@@ -12,6 +12,7 @@
 #define VRAY_FOR_HOUDINI_SOP_NODE_GEOMPLANE_H
 
 #include "sop_node_base.h"
+#include "vfh_prm_templates.h"
 
 
 namespace VRayForHoudini {
@@ -21,7 +22,7 @@ class GeomPlane:
 		public SOP::NodeBase
 {
 public:
-	static void                 addPrmTemplate(Parm::PRMTmplList &prmTemplate);
+	static void                 addPrmTemplate(Parm::PRMList &prmTemplate);
 
 public:
 	GeomPlane(OP_Network *parent, const char *name, OP_Operator *entry):NodeBase(parent, name, entry) {}

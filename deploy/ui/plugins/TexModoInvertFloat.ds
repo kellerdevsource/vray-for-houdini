@@ -1,0 +1,42 @@
+{
+    name	TexModoInvertFloat
+    label	"Modo Invert Float"
+    parm {
+	name	"plugindata"
+	label	"Modo Invert Float"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"TexModoInvertFloat"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexModoInvertFloat" }
+	parmtag	{ "vray_type" "TEXTURE" }
+    }
+    parm {
+	name	"texture"
+	label	"Texture"
+	type	float
+	default	{ "0" }
+	help	"The texture to be inverted"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexModoInvertFloat" }
+	parmtag	{ "vray_pluginattr" "texture" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"invert"
+	label	"Invert"
+	type	toggle
+	default	{ "0" }
+	help	"Parameter that enables the inverting to be animated"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexModoInvertFloat" }
+	parmtag	{ "vray_pluginattr" "invert" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+}

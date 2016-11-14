@@ -12,6 +12,7 @@
 #define VRAY_FOR_HOUDINI_SOP_NODE_VRAYPROXY_H
 
 #include "sop_node_base.h"
+#include "vfh_prm_templates.h"
 
 namespace VRayForHoudini {
 namespace SOP {
@@ -20,7 +21,7 @@ class VRayProxy:
 		public SOP::NodeBase
 {
 public:
-	static void               addPrmTemplate(Parm::PRMTmplList &prmTemplate);
+	static void               addPrmTemplate(Parm::PRMList &prmTemplate);
 	static int                cbClearCache(void *data, int index, float t, const PRM_Template* tplate);
 
 public:

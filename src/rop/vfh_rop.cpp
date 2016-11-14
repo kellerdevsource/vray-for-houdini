@@ -11,10 +11,8 @@
 #include "vfh_rop.h"
 #include "vfh_exporter.h"
 #include "vfh_prm_globals.h"
-#include "vfh_prm_json.h"
 #include "vfh_prm_def.h"
 #include "vfh_prm_templates.h"
-#include "vfh_ui.h"
 #include "vfh_hou_utils.h"
 
 #include <ROP/ROP_Templates.h>
@@ -83,45 +81,6 @@ static PRM_ChoiceList parm_render_ipr_mode_menu(PRM_CHOICELIST_SINGLE, parm_rend
 
 static PRM_Name  parm_render_sep_networks("render_sep_networks", "Networks");
 
-static PRM_Name          RenderSettingsSwitcherName("VRayRenderSettings");
-static Parm::PRMDefList  RenderSettingsSwitcherTabs;
-static Parm::PRMTmplList RenderSettingsPrmTemplate;
-
-static Parm::TabItemDesc RenderSettingsTabItemsDesc[] = {
-	{ "Options",        "SettingsOptions"          },
-	{ "Output",         "SettingsOutput"           },
-	{ "Color Mapping",  "SettingsColorMapping"     },
-	{ "Raycaster",      "SettingsRaycaster"        },
-	{ "Regions",        "SettingsRegionsGenerator" },
-	{ "RT",             "SettingsRTEngine"         },
-	{ "Caustics",       "SettingsCaustics"         },
-	{ "Displacement",   "SettingsDefaultDisplacement" },
-};
-
-static PRM_Name          GiSettingsSwitcherName("VRayGiSettings");
-static Parm::PRMDefList  GiSettingsSwitcherTabs;
-static Parm::TabItemDesc GiSettingsTabItemsDesc[] = {
-	{ "GI",             "SettingsGI"               },
-	{ "Brute Force",    "SettingsDMCGI"            },
-	{ "Irradiance Map", "SettingsIrradianceMap"    },
-	{ "Light Cache",    "SettingsLightCache"       },
-};
-
-static PRM_Name          CameraSettingsSwitcherName("VRayCameraSettings");
-static Parm::PRMDefList  CameraSettingsSwitcherTabs;
-static Parm::TabItemDesc CameraSettingsTabItemsDesc[] = {
-	{ "Camera",         "SettingsCamera"           },
-	{ "Depth Of Field", "SettingsCameraDof"        },
-	{ "Motion Blur",    "SettingsMotionBlur"       },
-	{ "Stereo",         "VRayStereoscopicSettings" },
-};
-
-static PRM_Name          SamplersSettingsSwitcherName("VRaySamplersSettings");
-static Parm::PRMDefList  SamplersSettingsSwitcherTabs;
-static Parm::TabItemDesc SamplersSettingsTabItemsDesc[] = {
-	{ "DMC",            "SettingsDMCSampler"       },
-	{ "AA",             "SettingsImageSampler"     },
-};
 
 static PRM_Default       default_DRHost_address(0.0, "localhost");
 static PRM_Default       default_DRHost_port(0.0, "20207");
@@ -166,7 +125,7 @@ static const int res_override_items[] = {
 static PRM_Template* getCameraOverridesTemplate()
 {
 	static Parm::PRMList camOverrides;
-	if (NOT(camOverrides.size())) {
+	if (camOverrides.empty()) {
 		camOverrides.addPrm(
 					Parm::PRMFactory(PRM_STRING_E, "render_camera", "Camera")
 							.setTypeExtended(PRM_TYPE_DYNAMIC_PATH)
@@ -202,12 +161,10 @@ static PRM_Template* getCameraOverridesTemplate()
 	return camOverrides.getPRMTemplate();
 }
 
-static Parm::PRMTmplList& createObjectsTab(Parm::PRMTmplList& RenderSettingsPrmTemplate)
-{
-	// Objects Tab
-	int prmIdx = RenderSettingsPrmTemplate.size();
 
-	RenderSettingsPrmTemplate.push_back(
+static void addParmObjects(Parm::PRMList &myPrmList)
+{
+	myPrmList.addPrm(
 			Parm::PRMFactory(PRM_STRING_E, "vobject", "Candidate Objects")
 			.setTypeExtended(PRM_TYPE_DYNAMIC_PATH_LIST)
 			.setDefault( "*" )
@@ -216,7 +173,7 @@ static Parm::PRMTmplList& createObjectsTab(Parm::PRMTmplList& RenderSettingsPrmT
 			.addSpareData(RT_UPDATE_SPARE_TAG, RT_UPDATE_SPARE_TAG)
 			.getPRMTemplate()
 			);
-	RenderSettingsPrmTemplate.push_back(
+	myPrmList.addPrm(
 			Parm::PRMFactory(PRM_STRING_E, "forceobject", "Force Objects")
 			.setTypeExtended(PRM_TYPE_DYNAMIC_PATH_LIST)
 			.setDefault(PRMzeroDefaults)
@@ -225,7 +182,7 @@ static Parm::PRMTmplList& createObjectsTab(Parm::PRMTmplList& RenderSettingsPrmT
 			.addSpareData(RT_UPDATE_SPARE_TAG, RT_UPDATE_SPARE_TAG)
 			.getPRMTemplate()
 			);
-	RenderSettingsPrmTemplate.push_back(
+	myPrmList.addPrm(
 			Parm::PRMFactory(PRM_STRING_E, "matte_objects", "Forced Matte")
 			.setTypeExtended(PRM_TYPE_DYNAMIC_PATH_LIST)
 			.setDefault(PRMzeroDefaults)
@@ -234,7 +191,7 @@ static Parm::PRMTmplList& createObjectsTab(Parm::PRMTmplList& RenderSettingsPrmT
 			.addSpareData(RT_UPDATE_SPARE_TAG, RT_UPDATE_SPARE_TAG)
 			.getPRMTemplate()
 			);
-	RenderSettingsPrmTemplate.push_back(
+	myPrmList.addPrm(
 			Parm::PRMFactory(PRM_STRING_E, "phantom_objects", "Forced Phantom")
 			.setTypeExtended(PRM_TYPE_DYNAMIC_PATH_LIST)
 			.setDefault(PRMzeroDefaults)
@@ -243,7 +200,7 @@ static Parm::PRMTmplList& createObjectsTab(Parm::PRMTmplList& RenderSettingsPrmT
 			.addSpareData(RT_UPDATE_SPARE_TAG, RT_UPDATE_SPARE_TAG)
 			.getPRMTemplate()
 			);
-	RenderSettingsPrmTemplate.push_back(
+	myPrmList.addPrm(
 			Parm::PRMFactory(PRM_STRING_E, "excludeobject", "Exclude Objects")
 			.setTypeExtended(PRM_TYPE_DYNAMIC_PATH_LIST)
 			.setDefault(PRMzeroDefaults)
@@ -253,12 +210,12 @@ static Parm::PRMTmplList& createObjectsTab(Parm::PRMTmplList& RenderSettingsPrmT
 			.getPRMTemplate()
 			);
 
-	RenderSettingsPrmTemplate.push_back(
+	myPrmList.addPrm(
 			Parm::PRMFactory(PRM_SEPARATOR, "obj_light_sep")
 			.getPRMTemplate()
 			);
 
-	RenderSettingsPrmTemplate.push_back(
+	myPrmList.addPrm(
 			Parm::PRMFactory(PRM_STRING_E, "sololight", "Solo Light")
 			.setTypeExtended(PRM_TYPE_DYNAMIC_PATH_LIST)
 			.setDefault(PRMzeroDefaults)
@@ -267,7 +224,7 @@ static Parm::PRMTmplList& createObjectsTab(Parm::PRMTmplList& RenderSettingsPrmT
 			.addSpareData(RT_UPDATE_SPARE_TAG, RT_UPDATE_SPARE_TAG)
 			.getPRMTemplate()
 			);
-	RenderSettingsPrmTemplate.push_back(
+	myPrmList.addPrm(
 			Parm::PRMFactory(PRM_STRING_E, "alights", "Candidate Lights")
 			.setTypeExtended(PRM_TYPE_DYNAMIC_PATH_LIST)
 			.setDefault( "*" )
@@ -276,7 +233,7 @@ static Parm::PRMTmplList& createObjectsTab(Parm::PRMTmplList& RenderSettingsPrmT
 			.addSpareData(RT_UPDATE_SPARE_TAG, RT_UPDATE_SPARE_TAG)
 			.getPRMTemplate()
 			);
-	RenderSettingsPrmTemplate.push_back(
+	myPrmList.addPrm(
 			Parm::PRMFactory(PRM_STRING_E, "forcelights", "Force Lights")
 			.setTypeExtended(PRM_TYPE_DYNAMIC_PATH_LIST)
 			.setDefault(PRMzeroDefaults)
@@ -285,7 +242,7 @@ static Parm::PRMTmplList& createObjectsTab(Parm::PRMTmplList& RenderSettingsPrmT
 			.addSpareData(RT_UPDATE_SPARE_TAG, RT_UPDATE_SPARE_TAG)
 			.getPRMTemplate()
 			);
-	RenderSettingsPrmTemplate.push_back(
+	myPrmList.addPrm(
 			Parm::PRMFactory(PRM_STRING_E, "excludelights", "Exclude Lights")
 			.setTypeExtended(PRM_TYPE_DYNAMIC_PATH_LIST)
 			.setDefault(PRMzeroDefaults)
@@ -294,7 +251,7 @@ static Parm::PRMTmplList& createObjectsTab(Parm::PRMTmplList& RenderSettingsPrmT
 			.addSpareData(RT_UPDATE_SPARE_TAG, RT_UPDATE_SPARE_TAG)
 			.getPRMTemplate()
 			);
-	RenderSettingsPrmTemplate.push_back(
+	myPrmList.addPrm(
 			Parm::PRMFactory(PRM_TOGGLE_E, "soho_autoheadlight", "Headlight Creation")
 			.setTypeExtended(PRM_TYPE_DYNAMIC_PATH_LIST)
 			.setDefault(PRMoneDefaults)
@@ -302,12 +259,12 @@ static Parm::PRMTmplList& createObjectsTab(Parm::PRMTmplList& RenderSettingsPrmT
 			.getPRMTemplate()
 			);
 
-	RenderSettingsPrmTemplate.push_back(
+	myPrmList.addPrm(
 			Parm::PRMFactory(PRM_SEPARATOR, "light_fog_sep")
 			.getPRMTemplate()
 			);
 
-	RenderSettingsPrmTemplate.push_back(
+	myPrmList.addPrm(
 			Parm::PRMFactory(PRM_STRING_E, "vfog", "Visible Fog")
 			.setTypeExtended(PRM_TYPE_DYNAMIC_PATH_LIST)
 			.setDefault( "*" )
@@ -316,113 +273,187 @@ static Parm::PRMTmplList& createObjectsTab(Parm::PRMTmplList& RenderSettingsPrmT
 			.addSpareData(RT_UPDATE_SPARE_TAG, RT_UPDATE_SPARE_TAG)
 			.getPRMTemplate()
 			);
+}
 
-	RenderSettingsSwitcherTabs.push_back(PRM_Default(RenderSettingsPrmTemplate.size() - prmIdx, "Objects"));
 
-	return RenderSettingsPrmTemplate;
+static void addParmGlobals(Parm::PRMList &myPrmList)
+{
+	myPrmList.addPrm(PRM_Template(PRM_CALLBACK, 1, &parm_render_interactive, 0, 0, 0, VRayRendererNode::RtStartSession));
+
+	myPrmList.addPrm(PRM_Template(PRM_HEADING, 1, &parm_render_sep_render));
+
+	myPrmList.addPrm(PRM_Template(PRM_ORD, 1, &parm_render_render_mode, PRMzeroDefaults, &parm_render_render_mode_menu));
+	myPrmList.addPrm(PRM_Template(PRM_ORD, 1, &parm_render_ipr_mode, PRMzeroDefaults, &parm_render_ipr_mode_menu));
+	myPrmList.addPrm(PRM_Template(PRM_ORD, 1, &parm_render_export_mode, PRMzeroDefaults, &parm_render_export_mode_menu));
+	myPrmList.addPrm(PRM_Template(PRM_ORD, 1, &parm_render_vfb_mode, PRMzeroDefaults, &parm_render_vfb_mode_menu));
+	myPrmList.addPrm(PRM_Template(PRM_TOGGLE_E, 1, &parm_recreate_renderer, PRMzeroDefaults));
+
+	myPrmList.addPrm(PRM_Template(PRM_HEADING, 1, &parm_render_sep_export));
+	myPrmList.addPrm(PRM_Template(PRM_FILE_E, PRM_TYPE_DYNAMIC_PATH, 1, &parm_render_export_path, &parm_render_export_path_def));
+	myPrmList.addPrm(
+			Parm::PRMFactory(PRM_TOGGLE_E, "exp_separatefiles", "Export Each Frame In Separate File")
+			.setDefault( PRMzeroDefaults )
+			.addConditional("{ render_export_mode == \"Render\" }", PRM_CONDTYPE_DISABLE)
+			.setInvisible(true)
+			.getPRMTemplate()
+			);
+	myPrmList.addPrm(
+			Parm::PRMFactory(PRM_TOGGLE_E, "exp_hexdata", "Export Data In Hex Format")
+			.setDefault( PRMoneDefaults )
+			.addConditional("{ render_export_mode == \"Render\" }", PRM_CONDTYPE_DISABLE)
+			.getPRMTemplate()
+			);
+	myPrmList.addPrm(
+			Parm::PRMFactory(PRM_TOGGLE_E, "exp_compressed", "Export Compressed")
+			.setDefault( PRMoneDefaults )
+			.addConditional("{ render_export_mode == \"Render\" }", PRM_CONDTYPE_DISABLE)
+			.getPRMTemplate()
+			);
+
+
+	myPrmList.addPrm(PRM_Template(PRM_HEADING, 1, &parm_render_sep_networks));
+	myPrmList.addPrm(PRM_Template(PRM_STRING_E, PRM_TYPE_DYNAMIC_PATH, 1, &Parm::parm_render_net_render_channels, &Parm::PRMemptyStringDefault));
+	myPrmList.addPrm(PRM_Template(PRM_STRING_E, PRM_TYPE_DYNAMIC_PATH, 1, &Parm::parm_render_net_environment,     &Parm::PRMemptyStringDefault));
+
+	// Standard ROP settings
+	//
+	myPrmList.addPrm(PRM_Template(PRM_HEADING, 1, &parm_render_scripts));
+
+	int tmpls[] = {
+		ROP_TPRERENDER_TPLATE,
+		ROP_PRERENDER_TPLATE,
+		ROP_LPRERENDER_TPLATE,
+		ROP_TPREFRAME_TPLATE,
+		ROP_PREFRAME_TPLATE,
+		ROP_LPREFRAME_TPLATE,
+		ROP_TPOSTFRAME_TPLATE,
+		ROP_POSTFRAME_TPLATE,
+		ROP_LPOSTFRAME_TPLATE,
+		ROP_TPOSTRENDER_TPLATE,
+		ROP_POSTRENDER_TPLATE,
+		ROP_LPOSTRENDER_TPLATE,
+	};
+	for( auto tmplidx : tmpls ) {
+		myPrmList.addPrm(theRopTemplates[ tmplidx ]);
+	}
+}
+
+
+static void addParmDR(Parm::PRMList &myPrmList)
+{
+	myPrmList.addPrm(PRM_Template(PRM_TOGGLE_E, 1, &parm_DR_enabled, PRMzeroDefaults));
+	myPrmList.addPrm(PRM_Template(PRM_STRING_E, 1, &parm_DefaultDRHost_port, &default_DRHost_port,0,0,0,0,1,0,&condition_DRDisabled));
+	myPrmList.addPrm(PRM_Template(PRM_MULTITYPE_LIST, DRHostPrmTemplate, 1, &parm_DRHost_count,0,&parm_DRHost_countrange,0,0,&condition_DRDisabled));
 }
 
 
 static PRM_Template* getTemplates()
 {
-	if (!RenderSettingsPrmTemplate.size()) {
-		// Render / Exporter settings
-		//
-		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_CALLBACK, 1, &parm_render_interactive, 0, 0, 0, VRayRendererNode::RtStartSession));
+	static Parm::PRMList myPrmList;
+	if (myPrmList.empty()) {
+		myPrmList.reserve(400);
 
-		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_HEADING, 1, &parm_render_sep_render));
+		myPrmList.switcherBegin("VRayRenderSettings");
 
-		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_ORD, 1, &parm_render_render_mode, PRMzeroDefaults, &parm_render_render_mode_menu));
-		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_ORD, 1, &parm_render_ipr_mode, PRMzeroDefaults, &parm_render_ipr_mode_menu));
-		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_ORD, 1, &parm_render_export_mode, PRMzeroDefaults, &parm_render_export_mode_menu));
-		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_ORD, 1, &parm_render_vfb_mode, PRMzeroDefaults, &parm_render_vfb_mode_menu));
-		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_TOGGLE_E, 1, &parm_recreate_renderer, PRMzeroDefaults));
+		// Globals Tab
+		myPrmList.addFolder("Globals");
+		addParmGlobals(myPrmList);
 
-		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_HEADING, 1, &parm_render_sep_export));
-		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_FILE_E, PRM_TYPE_DYNAMIC_PATH, 1, &parm_render_export_path, &parm_render_export_path_def));
-		RenderSettingsPrmTemplate.push_back(
-				Parm::PRMFactory(PRM_TOGGLE_E, "exp_separatefiles", "Export Each Frame In Separate File")
-				.setDefault( PRMzeroDefaults )
-				.addConditional("{ render_export_mode == \"Render\" }", PRM_CONDTYPE_DISABLE)
-				.setInvisible(true)
-				.getPRMTemplate()
-				);
-		RenderSettingsPrmTemplate.push_back(
-				Parm::PRMFactory(PRM_TOGGLE_E, "exp_hexdata", "Export Data In Hex Format")
-				.setDefault( PRMoneDefaults )
-				.addConditional("{ render_export_mode == \"Render\" }", PRM_CONDTYPE_DISABLE)
-				.getPRMTemplate()
-				);
-		RenderSettingsPrmTemplate.push_back(
-				Parm::PRMFactory(PRM_TOGGLE_E, "exp_compressed", "Export Compressed")
-				.setDefault( PRMoneDefaults )
-				.addConditional("{ render_export_mode == \"Render\" }", PRM_CONDTYPE_DISABLE)
-				.getPRMTemplate()
-				);
-
-
-		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_HEADING, 1, &parm_render_sep_networks));
-		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_STRING_E, PRM_TYPE_DYNAMIC_PATH, 1, &Parm::parm_render_net_render_channels, &Parm::PRMemptyStringDefault));
-		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_STRING_E, PRM_TYPE_DYNAMIC_PATH, 1, &Parm::parm_render_net_environment,     &Parm::PRMemptyStringDefault));
-
-		// Standard ROP settings
-		//
-		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_HEADING, 1, &parm_render_scripts));
-		RenderSettingsPrmTemplate.push_back(theRopTemplates[ROP_TPRERENDER_TPLATE]);
-		RenderSettingsPrmTemplate.push_back(theRopTemplates[ROP_PRERENDER_TPLATE]);
-		RenderSettingsPrmTemplate.push_back(theRopTemplates[ROP_LPRERENDER_TPLATE]);
-		RenderSettingsPrmTemplate.push_back(theRopTemplates[ROP_TPREFRAME_TPLATE]);
-		RenderSettingsPrmTemplate.push_back(theRopTemplates[ROP_PREFRAME_TPLATE]);
-		RenderSettingsPrmTemplate.push_back(theRopTemplates[ROP_LPREFRAME_TPLATE]);
-		RenderSettingsPrmTemplate.push_back(theRopTemplates[ROP_TPOSTFRAME_TPLATE]);
-		RenderSettingsPrmTemplate.push_back(theRopTemplates[ROP_POSTFRAME_TPLATE]);
-		RenderSettingsPrmTemplate.push_back(theRopTemplates[ROP_LPOSTFRAME_TPLATE]);
-		RenderSettingsPrmTemplate.push_back(theRopTemplates[ROP_TPOSTRENDER_TPLATE]);
-		RenderSettingsPrmTemplate.push_back(theRopTemplates[ROP_POSTRENDER_TPLATE]);
-		RenderSettingsPrmTemplate.push_back(theRopTemplates[ROP_LPOSTRENDER_TPLATE]);
-
-		RenderSettingsSwitcherTabs.push_back(PRM_Default(RenderSettingsPrmTemplate.size(), "Globals"));
-
-		createObjectsTab(RenderSettingsPrmTemplate);
+		// Objects Tab
+		myPrmList.addFolder("Objects");
+		addParmObjects(myPrmList);
 
 		// Renderer settings
 		//
-		Parm::addTabWithTabs("Camera",
-							 CameraSettingsTabItemsDesc, CountOf(CameraSettingsTabItemsDesc),
-							 CameraSettingsSwitcherTabs, CameraSettingsSwitcherName,
-							 RenderSettingsPrmTemplate, RenderSettingsSwitcherTabs);
 
-		Parm::addTabWithTabs("GI",
-							 GiSettingsTabItemsDesc, CountOf(GiSettingsTabItemsDesc),
-							 GiSettingsSwitcherTabs, GiSettingsSwitcherName,
-							 RenderSettingsPrmTemplate, RenderSettingsSwitcherTabs);
+		// Camera tab
+		myPrmList.addFolder("Camera");
+		myPrmList.switcherBegin("VRayCameraSettings");
 
-		Parm::addTabWithTabs("Sampler",
-							 SamplersSettingsTabItemsDesc, CountOf(SamplersSettingsTabItemsDesc),
-							 SamplersSettingsSwitcherTabs, SamplersSettingsSwitcherName,
-							 RenderSettingsPrmTemplate, RenderSettingsSwitcherTabs);
+		myPrmList.addFolder("Camera");
+		Parm::addPrmTemplateForPlugin( "SettingsCamera", myPrmList);
 
-		Parm::addTabsItems(RenderSettingsTabItemsDesc, CountOf(RenderSettingsTabItemsDesc), RenderSettingsSwitcherTabs, RenderSettingsPrmTemplate);
+		myPrmList.addFolder("Depth Of Field");
+		Parm::addPrmTemplateForPlugin( "SettingsCameraDof", myPrmList);
 
-		// DR Settings
-		const int DRPrmIdx = RenderSettingsPrmTemplate.size();
-		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_TOGGLE_E, 1, &parm_DR_enabled, PRMzeroDefaults));
-		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_STRING_E, 1, &parm_DefaultDRHost_port, &default_DRHost_port,0,0,0,0,1,0,&condition_DRDisabled));
-		RenderSettingsPrmTemplate.push_back(PRM_Template(PRM_MULTITYPE_LIST, DRHostPrmTemplate, 1, &parm_DRHost_count,0,&parm_DRHost_countrange,0,0,&condition_DRDisabled));
-		RenderSettingsSwitcherTabs.push_back(PRM_Default(RenderSettingsPrmTemplate.size() - DRPrmIdx, "DR"));
+		myPrmList.addFolder("Motion Blur");
+		Parm::addPrmTemplateForPlugin( "SettingsMotionBlur", myPrmList);
 
+		myPrmList.addFolder("Stereo");
+		Parm::addPrmTemplateForPlugin( "VRayStereoscopicSettings", myPrmList);
 
-		RenderSettingsPrmTemplate.push_back(PRM_Template()); // List terminator
+		myPrmList.switcherEnd();
 
-		// Main switcher menu
-		RenderSettingsPrmTemplate.insert(RenderSettingsPrmTemplate.begin(),
-										 PRM_Template(PRM_SWITCHER,
-													  RenderSettingsSwitcherTabs.size(),
-													  &RenderSettingsSwitcherName,
-													  &RenderSettingsSwitcherTabs[0]));
+		// GI tab
+		myPrmList.addFolder("GI");
+		myPrmList.switcherBegin("VRayGiSettings");
+
+		myPrmList.addFolder("GI");
+		Parm::addPrmTemplateForPlugin( "SettingsGI", myPrmList);
+
+		myPrmList.addFolder("Brute Force");
+		Parm::addPrmTemplateForPlugin( "SettingsDMCGI", myPrmList);
+
+		myPrmList.addFolder("Irradiance Map");
+		Parm::addPrmTemplateForPlugin( "SettingsIrradianceMap", myPrmList);
+
+		myPrmList.addFolder("Light Cache");
+		Parm::addPrmTemplateForPlugin( "SettingsLightCache", myPrmList);
+
+		myPrmList.switcherEnd();
+
+		// Sampler tab
+		myPrmList.addFolder("Sampler");
+		myPrmList.switcherBegin("VRaySamplersSettings");
+
+		myPrmList.addFolder("DMC");
+		Parm::addPrmTemplateForPlugin( "SettingsDMCSampler", myPrmList);
+
+		myPrmList.addFolder("AA");
+		Parm::addPrmTemplateForPlugin( "SettingsImageSampler", myPrmList);
+
+		myPrmList.switcherEnd();
+
+		// Options tab
+		myPrmList.addFolder("Options");
+		Parm::addPrmTemplateForPlugin( "SettingsOptions", myPrmList);
+
+		// Output tab
+		myPrmList.addFolder("Output");
+		Parm::addPrmTemplateForPlugin( "SettingsOutput", myPrmList);
+
+		// Color Mapping tab
+		myPrmList.addFolder("Color Mapping");
+		Parm::addPrmTemplateForPlugin( "SettingsColorMapping", myPrmList);
+
+		// Raycaster tab
+		myPrmList.addFolder("Raycaster");
+		Parm::addPrmTemplateForPlugin( "SettingsRaycaster", myPrmList);
+
+		// Regions tab
+		myPrmList.addFolder("Regions");
+		Parm::addPrmTemplateForPlugin( "SettingsRegionsGenerator", myPrmList);
+
+		// RT tab
+		myPrmList.addFolder("RT");
+		Parm::addPrmTemplateForPlugin( "SettingsRTEngine", myPrmList);
+
+		// Caustics tab
+		myPrmList.addFolder("Caustics");
+		Parm::addPrmTemplateForPlugin( "SettingsCaustics", myPrmList);
+
+		// Displacement tab
+		myPrmList.addFolder("Displacement");
+		Parm::addPrmTemplateForPlugin( "SettingsDefaultDisplacement", myPrmList);
+
+		// DR Tab
+		myPrmList.addFolder("DR");
+		addParmDR(myPrmList);
+
+		myPrmList.switcherEnd();
 	}
 
-	return &RenderSettingsPrmTemplate[0];
+	return myPrmList.getPRMTemplate();
 }
 
 
@@ -522,31 +553,6 @@ VRayRendererNode::~VRayRendererNode()
 bool VRayRendererNode::updateParmsFlags()
 {
 	bool changed = ROP_Node::updateParmsFlags();
-
-	for (int t = 0; t < CountOf(RenderSettingsTabItemsDesc); ++t) {
-		const Parm::TabItemDesc &tabItemDesc = RenderSettingsTabItemsDesc[t];
-
-		UI::ActiveStateDeps::activateElements(tabItemDesc.pluginID, *this, changed, boost::str(Parm::FmtPrefix % tabItemDesc.pluginID));
-	}
-
-	for (int t = 0; t < CountOf(GiSettingsTabItemsDesc); ++t) {
-		const Parm::TabItemDesc &tabItemDesc = GiSettingsTabItemsDesc[t];
-
-		UI::ActiveStateDeps::activateElements(tabItemDesc.pluginID, *this, changed, boost::str(Parm::FmtPrefix % tabItemDesc.pluginID));
-	}
-
-	for (int t = 0; t < CountOf(SamplersSettingsTabItemsDesc); ++t) {
-		const Parm::TabItemDesc &tabItemDesc = SamplersSettingsTabItemsDesc[t];
-
-		UI::ActiveStateDeps::activateElements(tabItemDesc.pluginID, *this, changed, boost::str(Parm::FmtPrefix % tabItemDesc.pluginID));
-	}
-
-	for (int t = 0; t < CountOf(CameraSettingsTabItemsDesc); ++t) {
-		const Parm::TabItemDesc &tabItemDesc = CameraSettingsTabItemsDesc[t];
-
-		UI::ActiveStateDeps::activateElements(tabItemDesc.pluginID, *this, changed, boost::str(Parm::FmtPrefix % tabItemDesc.pluginID));
-	}
-
 	return changed;
 }
 

@@ -1,0 +1,28 @@
+{
+    name	UVWGenObject
+    label	"Object"
+    parm {
+	name	"plugindata"
+	label	"Object"
+	type	data
+	invisible
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "UVWGenObject" }
+	parmtag	{ "vray_type" "UVWGEN" }
+    }
+    parm {
+	name	"duvw_scale"
+	label	"Duvw Scale"
+	type	float
+	default	{ "1" }
+	help	"Additional scale factor for the texture derivatives"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenObject" }
+	parmtag	{ "vray_pluginattr" "duvw_scale" }
+	parmtag	{ "vray_type" "float" }
+    }
+}

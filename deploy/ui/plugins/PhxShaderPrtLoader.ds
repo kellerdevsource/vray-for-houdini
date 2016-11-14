@@ -1,0 +1,55 @@
+{
+    name	PhxShaderPrtLoader
+    label	"Phx Shader Prt Loader"
+    parm {
+	name	"plugindata"
+	label	"Phx Shader Prt Loader"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"PhxShaderPrtLoader"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "PhxShaderPrtLoader" }
+	parmtag	{ "vray_type" "MISC" }
+    }
+    parm {
+	name	"filesrc"
+	label	"Filesrc"
+	type	string
+	default	{ "" }
+	help	"Path to the prt cache file"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderPrtLoader" }
+	parmtag	{ "vray_pluginattr" "filesrc" }
+	parmtag	{ "vray_type" "String" }
+    }
+    parm {
+	name	"usetm"
+	label	"Usetm"
+	type	toggle
+	default	{ "1" }
+	help	"The particles are transformed relative to the position of the prt loader icon"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderPrtLoader" }
+	parmtag	{ "vray_pluginattr" "usetm" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"velmult"
+	label	"Velmult"
+	type	float
+	default	{ "0" }
+	help	"Velocity multiplier for the particles"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderPrtLoader" }
+	parmtag	{ "vray_pluginattr" "velmult" }
+	parmtag	{ "vray_type" "float" }
+    }
+}

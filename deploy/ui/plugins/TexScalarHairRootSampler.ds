@@ -1,0 +1,16 @@
+{
+    name	TexScalarHairRootSampler
+    label	"Scalar Hair Root Sampler"
+    parm {
+	name	"plugindata"
+	label	"Scalar Hair Root Sampler"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"TexScalarHairRootSampler"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "TexScalarHairRootSampler" }
+	parmtag	{ "vray_type" "TEXTURE" }
+    }
+}

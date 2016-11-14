@@ -1,0 +1,15 @@
+{
+    name	MtlDoubleSided
+    label	"Double Sided"
+    parm {
+	name	"plugindata"
+	label	"Double Sided"
+	type	data
+	invisible
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "MtlDoubleSided" }
+	parmtag	{ "vray_type" "MATERIAL" }
+    }
+}

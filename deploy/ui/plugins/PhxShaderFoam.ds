@@ -1,0 +1,746 @@
+{
+    name	PhxShaderFoam
+    label	"Phx Shader Foam"
+    parm {
+	name	"plugindata"
+	label	"Phx Shader Foam"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"PhxShaderFoam"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_type" "MISC" }
+    }
+    parm {
+	name	"enabled"
+	label	"Enabled"
+	type	toggle
+	default	{ "1" }
+	help	"enable rendeirng"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "enabled" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"geommode"
+	label	"Geommode"
+	type	integer
+	default	{ "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "geommode" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"color"
+	label	"Color"
+	type	color
+	size	3
+	default	{ "1" "1" "1" }
+	help	"foam color"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "color" }
+	parmtag	{ "vray_type" "Color" }
+    }
+    parm {
+	name	"bounces"
+	label	"Bounces"
+	type	integer
+	default	{ "0" }
+	help	"max bounces"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "bounces" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"minw"
+	label	"Minw"
+	type	float
+	default	{ "0.01" }
+	help	"reflection cut off"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "minw" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"ri"
+	label	"Ri"
+	type	float
+	default	{ "2" }
+	help	"refraction index"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "ri" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"difmul"
+	label	"Difmul"
+	type	float
+	default	{ "1" }
+	help	"diffuse multiplier"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "difmul" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"hlwidth"
+	label	"Hlwidth"
+	type	float
+	default	{ "0.5" }
+	help	"highlights width"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "hlwidth" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"hlmult"
+	label	"Hlmult"
+	type	float
+	default	{ "1" }
+	help	"highlights multiplier"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "hlmult" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"reduction"
+	label	"Reduction"
+	type	float
+	default	{ "0" }
+	help	"particle reduction"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "reduction" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"pvar"
+	label	"Pvar"
+	type	float
+	default	{ "0.5" }
+	help	"pressure variation"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "pvar" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"szmul"
+	label	"Szmul"
+	type	float
+	default	{ "1" }
+	help	"size multiplier"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "szmul" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"szadd"
+	label	"Szadd"
+	type	float
+	default	{ "0" }
+	help	"size addend"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "szadd" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"szvar"
+	label	"Szvar"
+	type	float
+	default	{ "0" }
+	help	"size variation"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "szvar" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"szdist"
+	label	"Szdist"
+	type	float
+	default	{ "1" }
+	help	"size distribution"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "szdist" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"scattering"
+	label	"Scattering"
+	type	integer
+	default	{ "2" }
+	help	"scattering method - 0:enabled, 1:disabled, 2:analytic, 3:analytic+shadows"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "scattering" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"mode"
+	label	"Mode"
+	type	integer
+	default	{ "1" }
+	help	"rendering mode - 0:bubble, 1:cellular, 2:splashes"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "mode" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"optimize"
+	label	"Optimize"
+	type	toggle
+	default	{ "1" }
+	help	"optimize bad systems"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "optimize" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"moblur"
+	label	"Moblur"
+	type	integer
+	default	{ "0" }
+	help	"motion blur - 0:from V-Ray, 1:force on, 2:force off"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "moblur" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"mbstep"
+	label	"Mbstep"
+	type	float
+	default	{ "1" }
+	help	"motion blur step"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "mbstep" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"mblimit"
+	label	"Mblimit"
+	type	integer
+	default	{ "100" }
+	help	"maximum point expansion with motion blur"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "mblimit" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"velmult"
+	label	"Velmult"
+	type	float
+	default	{ "1" }
+	help	"particle velocity multiplier"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "velmult" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"subgroup"
+	label	"Subgroup"
+	type	integer
+	default	{ "0" }
+	help	"render subgroup - 0:all, 1:under water, 2:above water, 3:above the size limit, 4:below the size limit"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "subgroup" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"nolqshadows"
+	label	"Nolqshadows"
+	type	toggle
+	default	{ "0" }
+	help	"disable liquid shadows"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "nolqshadows" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"ignoresize"
+	label	"Ignoresize"
+	type	toggle
+	default	{ "0" }
+	help	"ignores the particle size"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "ignoresize" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"szlimit"
+	label	"Szlimit"
+	type	float
+	default	{ "1" }
+	help	"size limit. Particle below/above this limit will not be shaded"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "szlimit" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"fogres"
+	label	"Fogres"
+	type	float
+	default	{ "1" }
+	help	"fog resolution"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "fogres" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"fogmult"
+	label	"Fogmult"
+	type	float
+	default	{ "1" }
+	help	"fog multiplier"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "fogmult" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"rendstep"
+	label	"Rendstep"
+	type	integer
+	default	{ "80" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "rendstep" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"rendshadstep"
+	label	"Rendshadstep"
+	type	integer
+	default	{ "200" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "rendshadstep" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"usereflmap"
+	label	"Usereflmap"
+	type	toggle
+	default	{ "0" }
+	help	"enable the reflection map"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "usereflmap" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"useenvmap"
+	label	"Useenvmap"
+	type	toggle
+	default	{ "0" }
+	help	"enable the environment map"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "useenvmap" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"reflmap"
+	label	"Reflmap"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "0" }
+	help	"reflection texture"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "reflmap" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"envmap"
+	label	"Envmap"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "0" }
+	help	"environment texture"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "envmap" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"usegizmo"
+	label	"Usegizmo"
+	type	integer
+	default	{ "0" }
+	help	"enable using of gizmos"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "usegizmo" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"invgizmo"
+	label	"Invgizmo"
+	type	integer
+	default	{ "0" }
+	help	"invert meaning of gizmos"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "invgizmo" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"useliquid"
+	label	"Useliquid"
+	type	integer
+	default	{ "0" }
+	help	"enable the liquid_sim"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "useliquid" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"useglass"
+	label	"Useglass"
+	type	integer
+	default	{ "0" }
+	help	"enable using of glass geometry"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "useglass" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"lightcache"
+	label	"Lightcache"
+	type	integer
+	default	{ "1" }
+	help	"if true, a light cache will be used for diffuse lighting"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "lightcache" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"pmprimary"
+	label	"Pmprimary"
+	type	toggle
+	default	{ "0" }
+	help	"enable/disable particle mode of primary rays"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "pmprimary" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"oceanlevel"
+	label	"Oceanlevel"
+	type	float
+	default	{ "50" }
+	help	"Mesh 'ocean' level"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "oceanlevel" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"generate_gi"
+	label	"Generate Gi"
+	type	integer
+	default	{ "1" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "generate_gi" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"receive_gi"
+	label	"Receive Gi"
+	type	integer
+	default	{ "1" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "receive_gi" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"gen_gi_mult"
+	label	"Gen Gi Mult"
+	type	float
+	default	{ "1" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "gen_gi_mult" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"rec_gi_mult"
+	label	"Rec Gi Mult"
+	type	float
+	default	{ "1" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "rec_gi_mult" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"generate_caust"
+	label	"Generate Caust"
+	type	integer
+	default	{ "1" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "generate_caust" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"receive_caust"
+	label	"Receive Caust"
+	type	integer
+	default	{ "1" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "receive_caust" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"caust_mult"
+	label	"Caust Mult"
+	type	float
+	default	{ "1" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "caust_mult" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"camera_visibility"
+	label	"Camera Visibility"
+	type	toggle
+	default	{ "1" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "camera_visibility" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"reflections_visibility"
+	label	"Reflections Visibility"
+	type	toggle
+	default	{ "1" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "reflections_visibility" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"refractions_visibility"
+	label	"Refractions Visibility"
+	type	toggle
+	default	{ "1" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "refractions_visibility" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"gi_visibility"
+	label	"Gi Visibility"
+	type	toggle
+	default	{ "1" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "gi_visibility" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"shadows_visibility"
+	label	"Shadows Visibility"
+	type	toggle
+	default	{ "1" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "shadows_visibility" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"probabilistic"
+	label	"Probabilistic"
+	type	integer
+	default	{ "1" }
+	help	"Use probabilistic sampling {0: disabled; 1:Only RT; 2:Always}"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "probabilistic" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"material_id"
+	label	"Material Id"
+	type	color
+	size	3
+	default	{ "0" "0" "0" }
+	help	"Material ID"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "material_id" }
+	parmtag	{ "vray_type" "Color" }
+    }
+    parm {
+	name	"volzdepth"
+	label	"Volzdepth"
+	type	integer
+	default	{ "0" }
+	help	"if true, write to the z-depth render element"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "volzdepth" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"part_age"
+	label	"Part Age"
+	type	integer
+	default	{ "0" }
+	help	"if true, write to the particle age render element"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "PhxShaderFoam" }
+	parmtag	{ "vray_pluginattr" "part_age" }
+	parmtag	{ "vray_type" "int" }
+    }
+}

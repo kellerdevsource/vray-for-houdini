@@ -45,9 +45,9 @@ void VOP::BRDFLayered::setPluginType()
 }
 
 
-void VOP::BRDFLayered::addPrmTemplate(Parm::PRMTmplList &prmTemplate)
+void VOP::BRDFLayered::addPrmTemplate(Parm::PRMList &prmTemplate)
 {
-	prmTemplate.push_back(PRM_Template(PRM_MULTITYPE_LIST, rpm_tmpl_brdfs, 1, &rpm_name_brdf_count, /*choicelist*/ nullptr, &rpm_range_brdf_count));
+	prmTemplate.addPrm(PRM_Template(PRM_MULTITYPE_LIST, rpm_tmpl_brdfs, 1, &rpm_name_brdf_count, /*choicelist*/ nullptr, &rpm_range_brdf_count));
 }
 
 

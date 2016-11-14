@@ -1,0 +1,16 @@
+{
+    name	CustomGlsl
+    label	"Custom Glsl"
+    parm {
+	name	"plugindata"
+	label	"Custom Glsl"
+	type	data
+	invisible
+	default	{ "0" }
+	help	"CustomGlsl"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "vray_plugin" "CustomGlsl" }
+	parmtag	{ "vray_type" "MISC" }
+    }
+}
