@@ -22,25 +22,27 @@ export LAUNCHER_LOCATION=`dirname ${LAUNCHER_FILEPATH}`
 # Environment Setup
 #
 # V-Ray Application SDK variables
-export VRAY_APPSDK=${LAUNCHER_LOCATION}/appsdk
+export VRAY_APPSDK=@_vfh_appsdk_path@
 
 # Set VFB on top
 export VRAY_VFB_ALWAYS_ON_TOP=1
 
 # V-Ray JSON plugin descriptions
-export VRAY_PLUGIN_DESC_PATH="${LAUNCHER_LOCATION}/plugins_desc"
+export VRAY_PLUGIN_DESC_PATH="@_vfh_config_path@/plugins_desc"
 
 # V-Ray UI dialog scripts
-export VRAY_UI_DS_PATH="${LAUNCHER_LOCATION}/ui"
+export VRAY_UI_DS_PATH="@_vfh_config_path@/ui"
 
 # Phoenix Loaders
-export VRAY_FOR_HOUDINI_AURA_LOADERS=${LAUNCHER_LOCATION}/vfh_home/vfh_lib
+export VRAY_FOR_HOUDINI_AURA_LOADERS=@_vfh_deploy_path@/vfh_home/vfh_lib
 
 # V-Ray for Houdini dso path
-export HOUDINI_PATH=${LAUNCHER_LOCATION}/vfh_home:\&
+export HOUDINI_PATH=@_vfh_deploy_path@/vfh_home:\&
+
+# Report loading errors
+export HOUDINI_DSO_ERROR=1
 
 # Houdini
-export HOUDINI_DSO_ERROR=1
 export H="${HFS}"
 export HB="${H}/bin"
 export HDSO="${H}/../Libraries"

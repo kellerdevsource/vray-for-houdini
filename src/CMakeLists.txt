@@ -99,157 +99,157 @@ endif()
 
 message(STATUS "Source revision: ${SRC_GIT_HASH}")
 add_definitions(-DCGR_GIT_HASH=${SRC_GIT_HASH})
-set(INSTALL_RELEASE_SUBDIR "vfh-${SRC_GIT_HASH}${INSTALL_RELEASE_SUFFIX}")
 
+
+# Install
+#
 option(INSTALL_LOCAL "Install files locally" ON)
-if(INSTALL_LOCAL)
-	install(TARGETS ${PROJECT_NAME} DESTINATION ${HOUDINI_PLUGIN_PATH})
+option(INSTALL_RELEASE "Install release build for distribution" OFF)
 
-	install(DIRECTORY   ${CMAKE_SOURCE_DIR}/deploy/vfh_home/
-			DESTINATION ${HOUDINI_HOME_PATH}/)
 
+function(vfh_gen_launcher _location _vfh_appsdk_path _vfh_config_path _vfh_deploy_path _launcher)
+	file(TO_NATIVE_PATH ${_vfh_appsdk_path} _vfh_appsdk_path)
+	file(TO_NATIVE_PATH ${_vfh_config_path} _vfh_config_path)
+	file(TO_NATIVE_PATH ${_vfh_deploy_path} _vfh_deploy_path)
+
+	if(WIN32)
+		set(_mylauncher hfs_launcher.bat)
+		configure_file(${CMAKE_SOURCE_DIR}/deploy/hfs.bat.in
+					   ${CMAKE_BINARY_DIR}/tmp/${_mylauncher}
+					   @ONLY)
+	elseif(APPLE)
+		set(_mylauncher hfs_launcher.sh)
+		configure_file(${CMAKE_SOURCE_DIR}/deploy/hfs_osx.sh.in
+					   ${CMAKE_BINARY_DIR}/tmp/${_mylauncher}
+					   @ONLY)
+	else()
+		set(_mylauncher hfs_launcher.sh)
+		configure_file(${CMAKE_SOURCE_DIR}/deploy/hfs_linux.sh.in
+					   ${CMAKE_BINARY_DIR}/tmp/${_mylauncher}
+					   @ONLY)
+	endif()
+
+	file(INSTALL ${CMAKE_BINARY_DIR}/tmp/${_mylauncher}
+		 DESTINATION ${_location}
+		 FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+		)
+
+	set(${_launcher} ${_location}/${_mylauncher} PARENT_SCOPE)
+	file(REMOVE ${CMAKE_BINARY_DIR}/tmp/${_mylauncher})
+endfunction(vfh_gen_launcher)
+
+
+function(vfh_install_common _location)
+	# Copy Phoenix cache file loader library
 	if (Phoenix_FOUND)
 		install(FILES       ${Phoenix_LIBRARIES}/${CGR_PHOENIX_SHARED}
 							${Phoenix_LIBRARIES}/${CGR_PHOENIX_SHARED_VDB}
 							${Phoenix_LIBRARIES}/${CGR_PHOENIX_SHARED_F3D}
-				DESTINATION ${HOUDINI_HOME_PATH}/vfh_lib
+				DESTINATION ${_location}/vfh_home/vfh_lib
 				PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 	endif()
-endif()
 
-if(WIN32)
-	set(HFS_RUN_FILE_IN  "${CMAKE_SOURCE_DIR}/misc/hfs.bat.in")
-	set(HFS_RUN_FILE_OUT "${CMAKE_BINARY_DIR}/misc/hfs.bat")
-	set(HFS_RUN_FILE_DST "$ENV{USERPROFILE}/Desktop")
+	# Copy plugin
+	cgr_install_runtime(${PROJECT_NAME} ${_location}/vfh_home/dso)
 
-	configure_file(${HFS_RUN_FILE_IN} ${HFS_RUN_FILE_OUT} @ONLY)
+	# Copy config
+	install(DIRECTORY   ${CMAKE_SOURCE_DIR}/deploy/vfh_home
+			DESTINATION ${_location})
 
-	message(STATUS "Generating Houdini run file (${HFS_RUN_FILE_DST})")
-	install(FILES       ${HFS_RUN_FILE_OUT}
-			DESTINATION ${HFS_RUN_FILE_DST})
-else()
-	set(HFS_ENV_FILE_DST "$ENV{HOME}/bin/hfs.env")
-	set(HFS_RUN_FILE_DST "$ENV{HOME}/bin/hfs")
+endfunction(vfh_install_common)
 
-	if(APPLE)
-		set(HFS_ENV_FILE_IN "${CMAKE_SOURCE_DIR}/misc/hfs_osx.env.in")
+
+if(INSTALL_LOCAL)
+	set(DEPLOY_LOCATION ${CMAKE_BINARY_DIR}/deploy)
+
+	vfh_install_common(${DEPLOY_LOCATION})
+
+	# Generate launcher file
+	vfh_gen_launcher(${DEPLOY_LOCATION}           # where
+					 ${APPSDK_ROOT}               # app sdk location
+					 ${CMAKE_SOURCE_DIR}/deploy   # vfh config location
+					 ${DEPLOY_LOCATION}           # vfh dso location
+					 _launcher                    # output launcher
+					)
+
+	# Create shortcuts
+	file(TO_NATIVE_PATH "${_launcher}" SHORTCUT_TARGET)
+	if(WIN32)
+		file(WRITE "$ENV{HOME}/Desktop/hfs.bat" ${SHORTCUT_TARGET})
 	else()
-		set(HFS_ENV_FILE_IN "${CMAKE_SOURCE_DIR}/misc/hfs_linux.env.in")
+		file(WRITE "$ENV{HOME}/bin/hfs.sh" ${SHORTCUT_TARGET})
 	endif()
-	set(HFS_RUN_FILE_IN "${CMAKE_SOURCE_DIR}/misc/hfs.sh.in")
-
-	set(HFS_ENV_FILE_OUT "${CMAKE_BINARY_DIR}/misc/hfs.env")
-	set(HFS_RUN_FILE_OUT "${CMAKE_BINARY_DIR}/misc/hfs")
-
-	string(REGEX MATCHALL "[0-9]+" HOUDINI_VERSION_COMPONENTS ${HOUDINI_VERSION})
-	list(GET HOUDINI_VERSION_COMPONENTS 0 HOUDINI_MAJOR_RELEASE)
-	list(GET HOUDINI_VERSION_COMPONENTS 1 HOUDINI_MINOR_RELEASE)
-
-	configure_file(${HFS_ENV_FILE_IN} ${HFS_ENV_FILE_OUT} @ONLY)
-	configure_file(${HFS_RUN_FILE_IN} ${HFS_RUN_FILE_OUT} @ONLY)
-
-	message(STATUS "Generating Houdini run file (${HFS_RUN_FILE_DST})")
-	install(FILES       ${HFS_ENV_FILE_OUT}
-			DESTINATION "$ENV{HOME}/bin")
-	install(FILES       ${HFS_RUN_FILE_OUT}
-			DESTINATION "$ENV{HOME}/bin"
-			PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 endif()
 
-# Install to local share
-#
-option(INSTALL_RELEASE "Install release build for distribution" OFF)
+
 if(INSTALL_RELEASE)
-	set(INSTALL_RELEASE_ROOT "" CACHE PATH "Release install path")
 
 	if(NOT "${CMAKE_BUILD_TYPE}" STREQUAL "Release")
 		message(WARNING "INSTALL_RELEASE is ON, but CMAKE_BUILD_TYPE is not \"Release\" (${CMAKE_BUILD_TYPE})!")
 	endif()
 
+	set(INSTALL_RELEASE_ROOT "" CACHE PATH "Release install path")
+	set(INSTALL_RELEASE_SUBDIR "vfh-${SRC_GIT_HASH}${INSTALL_RELEASE_SUFFIX}")
+
 	if("${INSTALL_RELEASE_ROOT}" STREQUAL "")
 		message(FATAL_ERROR "INSTALL_RELEASE is ON, but INSTALL_RELEASE_ROOT is not set!")
-	else()
-		# Set install path
-		set(INSTALL_RELEASE_PATH ${INSTALL_RELEASE_ROOT}/${INSTALL_RELEASE_SUBDIR})
-
-		# Add custom ui files
-		install(DIRECTORY   ${CMAKE_SOURCE_DIR}/deploy/ui
-				DESTINATION ${INSTALL_RELEASE_PATH}/)
-
-		install(DIRECTORY   ${CMAKE_SOURCE_DIR}/deploy/vfh_home
-				DESTINATION ${INSTALL_RELEASE_PATH}/)
-
-		# Copy plugin
-		cgr_install_runtime(${PROJECT_NAME} ${INSTALL_RELEASE_PATH}/vfh_home/dso)
-
-		# Generate & copy startup file
-		if(WIN32)
-			configure_file(${CMAKE_SOURCE_DIR}/deploy/hfs.bat.in
-						   ${CMAKE_BINARY_DIR}/deploy/hfs.bat
-						   @ONLY)
-
-			install(FILES       ${CMAKE_BINARY_DIR}/deploy/hfs.bat
-					DESTINATION ${INSTALL_RELEASE_PATH}
-					RENAME      "hfs${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD}.bat")
-
-		elseif(APPLE)
-			configure_file(${CMAKE_SOURCE_DIR}/deploy/hfs_osx.sh.in
-						   ${CMAKE_BINARY_DIR}/deploy/hfs_osx.sh
-						   @ONLY)
-
-			install(FILES       ${CMAKE_BINARY_DIR}/deploy/hfs_osx.sh
-					DESTINATION ${INSTALL_RELEASE_PATH}
-					PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ GROUP_EXECUTE WORLD_READ OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
-					RENAME      "hfs${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD}.sh")
-
-		else()
-			configure_file(${CMAKE_SOURCE_DIR}/deploy/hfs_linux.sh.in
-						   ${CMAKE_BINARY_DIR}/deploy/hfs_linux.sh
-						   @ONLY)
-
-			install(FILES       ${CMAKE_BINARY_DIR}/deploy/hfs_linux.sh
-					DESTINATION ${INSTALL_RELEASE_PATH}
-					PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ GROUP_EXECUTE WORLD_READ OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
-					RENAME      "hfs${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD}.sh")
-		endif()
-
-		# Copy AppSDK
-		file(GLOB APPSDK_BIN         "${APPSDK_ROOT}/bin/*.*")
-		file(GLOB APPSDK_VRAYPLUGINS "${APPSDK_ROOT}/bin/plugins/*.*")
-		file(GLOB APPSDK_VRLSERVICE  "${APPSDK_ROOT}/bin/vrlservice/*.*")
-
-		file(INSTALL    ${APPSDK_BIN}
-			DESTINATION ${INSTALL_RELEASE_PATH}/appsdk/bin
-			USE_SOURCE_PERMISSIONS
-		)
-
-		file(INSTALL    ${APPSDK_VRAYPLUGINS}
-			DESTINATION ${INSTALL_RELEASE_PATH}/appsdk/bin/plugins
-			USE_SOURCE_PERMISSIONS
-		)
-
-		file(INSTALL    ${APPSDK_VRLSERVICE}
-			DESTINATION ${INSTALL_RELEASE_PATH}/appsdk/bin/vrlservice
-			USE_SOURCE_PERMISSIONS
-		)
-
-		# Copy Phoenix cache file loader library
-		if (Phoenix_FOUND)
-			install(FILES       ${Phoenix_LIBRARIES}/${CGR_PHOENIX_SHARED}
-								${Phoenix_LIBRARIES}/${CGR_PHOENIX_SHARED_VDB}
-								${Phoenix_LIBRARIES}/${CGR_PHOENIX_SHARED_F3D}
-					DESTINATION ${INSTALL_RELEASE_PATH}/vfh_home/vfh_lib
-					PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
-		endif()
-
-		# Clone JSON plugin descriptions
-		set(VFH_CLONE_PLUGINS_DESC ${CMAKE_BINARY_DIR}/vfh_clone_plugins_desc.cmake)
-		configure_file(${CMAKE_SOURCE_DIR}/cmake/vfh_clone_plugins_desc.cmake.in ${VFH_CLONE_PLUGINS_DESC})
-		install(SCRIPT ${VFH_CLONE_PLUGINS_DESC})
-
-		# Archive the installation directory
-		set(VFH_PACK ${CMAKE_BINARY_DIR}/vfh_pack.cmake)
-		configure_file(${CMAKE_SOURCE_DIR}/cmake/vfh_pack.cmake.in ${VFH_PACK})
-		install(SCRIPT ${VFH_PACK})
 	endif()
+
+	# Set install path
+	set(INSTALL_RELEASE_PATH ${INSTALL_RELEASE_ROOT}/${INSTALL_RELEASE_SUBDIR})
+
+	vfh_install_common(${INSTALL_RELEASE_PATH})
+
+	# Generate launcher file
+	if(WIN32)
+		vfh_gen_launcher(${INSTALL_RELEASE_PATH}          # where
+						 "%LAUNCHER_LOCATION%\\appsdk"    # app sdk location
+						 "%LAUNCHER_LOCATION%"            # vfh config location
+						 "%LAUNCHER_LOCATION%"            # vfh dso location
+						 _launcher                        # output launcher
+						)
+	else()
+		vfh_gen_launcher(${INSTALL_RELEASE_PATH}          # where
+						 "\${LAUNCHER_LOCATION}/appsdk"   # app sdk location
+						 "\${LAUNCHER_LOCATION}"          # vfh config location
+						 "\${LAUNCHER_LOCATION}"          # vfh dso location
+						 _launcher                        # output launcher
+						)
+	endif()
+	get_filename_component(_launcher_ext ${_launcher} EXT)
+	file(RENAME ${_launcher} ${INSTALL_RELEASE_PATH}/hfs${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD}${_launcher_ext})
+
+	# Copy ui
+	install(DIRECTORY   ${CMAKE_SOURCE_DIR}/deploy/ui
+			DESTINATION ${INSTALL_RELEASE_PATH})
+
+	# Copy AppSDK
+	file(GLOB APPSDK_BIN         "${APPSDK_ROOT}/bin/*.*")
+	file(GLOB APPSDK_VRAYPLUGINS "${APPSDK_ROOT}/bin/plugins/*.*")
+	file(GLOB APPSDK_VRLSERVICE  "${APPSDK_ROOT}/bin/vrlservice/*.*")
+
+	file(INSTALL    ${APPSDK_BIN}
+		DESTINATION ${INSTALL_RELEASE_PATH}/appsdk/bin
+		USE_SOURCE_PERMISSIONS
+	)
+
+	file(INSTALL    ${APPSDK_VRAYPLUGINS}
+		DESTINATION ${INSTALL_RELEASE_PATH}/appsdk/bin/plugins
+		USE_SOURCE_PERMISSIONS
+	)
+
+	file(INSTALL    ${APPSDK_VRLSERVICE}
+		DESTINATION ${INSTALL_RELEASE_PATH}/appsdk/bin/vrlservice
+		USE_SOURCE_PERMISSIONS
+	)
+
+	# Clone JSON plugin descriptions
+	set(VFH_CLONE_PLUGINS_DESC ${CMAKE_BINARY_DIR}/vfh_clone_plugins_desc.cmake)
+	configure_file(${CMAKE_SOURCE_DIR}/cmake/vfh_clone_plugins_desc.cmake.in ${VFH_CLONE_PLUGINS_DESC})
+	install(SCRIPT ${VFH_CLONE_PLUGINS_DESC})
+
+	# Archive the installation directory
+	set(VFH_PACK ${CMAKE_BINARY_DIR}/vfh_pack.cmake)
+	configure_file(${CMAKE_SOURCE_DIR}/cmake/vfh_pack.cmake.in ${VFH_PACK})
+	install(SCRIPT ${VFH_PACK})
 endif()
