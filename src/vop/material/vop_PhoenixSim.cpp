@@ -533,7 +533,7 @@ PRM_Template* PhxShaderSim::GetPrmTemplate()
 {
 	if (!AttrItems) {
 		static Parm::PRMList paramList;
-		paramList.addFromFile(Parm::PRMList::expandUiPath("CustomPhxShaderSim.ds"));
+		paramList.addFromFile(Parm::expandUiPath("CustomPhxShaderSim.ds").c_str());
 		AttrItems = paramList.getPRMTemplate();
 
 		for (int c = 0; c < paramList.size(); ++c) {
