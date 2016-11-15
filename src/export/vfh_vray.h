@@ -15,6 +15,10 @@
 
 #include <vraysdk.hpp>
 
+// WARNING: AppSDK redefines VRAY_DEPRECATED macro in 'vraysdk.hpp'
+// undef here to remove clashes with definition from 'vraysdk/warnings.h'
+#undef VRAY_DEPRECATED
+
 #include <utils.h>
 #include <quaternion.h>
 #include <spectrum.h>
