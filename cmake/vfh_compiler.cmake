@@ -53,8 +53,8 @@ else()
 		endif()
 	endif()
 
-	# disable App SDK warnings
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-invalid-offsetof")
+	# disable warnings from AppSDK
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-pragmas")
 
 	# Houdini specific
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-attributes")
