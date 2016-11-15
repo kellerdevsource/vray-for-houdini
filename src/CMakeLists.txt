@@ -175,7 +175,7 @@ if(INSTALL_LOCAL)
 	# Create shortcuts
 	file(TO_NATIVE_PATH "${_launcher}" SHORTCUT_TARGET)
 	if(WIN32)
-		file(WRITE "$ENV{HOME}/Desktop/hfs.bat" ${SHORTCUT_TARGET})
+		file(WRITE "$ENV{USERPROFILE}/Desktop/hfs.bat" ${SHORTCUT_TARGET})
 	else()
 		file(WRITE "$ENV{HOME}/bin/hfs.sh" ${SHORTCUT_TARGET})
 	endif()
