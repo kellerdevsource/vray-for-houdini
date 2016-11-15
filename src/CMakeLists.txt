@@ -203,7 +203,7 @@ if(INSTALL_RELEASE)
 	# Generate launcher file
 	if(WIN32)
 		vfh_gen_launcher(${INSTALL_RELEASE_PATH}          # where
-						 "%LAUNCHER_LOCATION%\\appsdk"    # app sdk location
+						 "%LAUNCHER_LOCATION%/appsdk"     # app sdk location
 						 "%LAUNCHER_LOCATION%"            # vfh config location
 						 "%LAUNCHER_LOCATION%"            # vfh dso location
 						 _launcher                        # output launcher
