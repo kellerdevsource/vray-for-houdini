@@ -136,6 +136,17 @@ struct VolumeProxy {
 
 void HoudiniVolumeExporter::exportPrimitives(const GU_Detail &detail, PluginDescList &plugins)
 {
+	bool hasExportableVolumes = false;
+	for (GA_Iterator offIt(detail.getPrimitiveRange()); !offIt.atEnd(); offIt.advance()) {
+		VolumeProxy vol(detail.getGEOPrimitive(*offIt));
+		hasExportableVolumes = hasExportableVolumes || !!vol;
+	}
+
+	if (!hasExportableVolumes) {
+		// this is not an error since we try for volumes in every detail
+		return;
+	}
+
 	GA_ROAttributeRef ref_name = detail.findStringTuple(GA_ATTRIB_PRIMITIVE, "name");
 	const GA_ROHandleS hnd_name(ref_name.getAttribute());
 	if (hnd_name.isInvalid()) {

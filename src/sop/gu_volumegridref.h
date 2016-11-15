@@ -34,15 +34,26 @@ namespace VRayForHoudini {
 	(exint,  load_nearest, 0),\
 	(exint,  flip_yz,      0),\
 	(const char *, cache_path,  ""),\
-	(const char *, usrchmap,  "")\
+	(const char *, usrchmap,  ""),\
+	(const char *, cache_path_prefix, ""),\
+	(const char *, cache_path_suffix, ""),\
+	(exint,        frame_number_width, 1),\
+	(fpreal,       current_frame, 0),\
+	(const char *, current_cache_path, "")\
 	)
 
-#define VFH_VOLUME_GRID_PARAMS_COUNT 13
+#define VFH_VOLUME_GRID_PARAMS_COUNT 18
 
 
 class VRayVolumeGridRef:
 		public GU_PackedImpl
 {
+	// These *must* match phx's values
+	enum AnimationMode {
+		Standard = 0,
+		DirectIndex = 1,
+		Loop = 2,
+	};
 public:
 	typedef std::shared_ptr<IAur> CachePtr;
 
@@ -110,6 +121,16 @@ private:
 	/// updateFrom() will update from UT_Options only
 	bool   updateFrom(const UT_Options &options);
 	void   clearDetail() { m_detail = GU_ConstDetailHandle(); }
+
+	/// Builds the cache path according to current settings
+	/// @param toPhx - if true frame will be replaced with '#'s otherwise with current cache frame
+	/// @return - replaced cache path
+	std::string getConvertedPath(bool toPhx) const;
+
+	int splitPath(const UT_String & path, std::string & prefix, std::string & suffix) const;
+
+	/// Returns current cache frame based on current frame + cache play settings
+	int getCurrentCacheFrame() const;
 
 	// builds channel mapping, call after update to cache or ui mappings
 	void                          buildMapping();

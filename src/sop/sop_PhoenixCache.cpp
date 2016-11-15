@@ -80,7 +80,9 @@ OP_ERROR SOP::PhxShaderCache::cookMySop(OP_Context &context)
 		options.setOptionFromTemplate(this, prm, *prm.getTemplatePtr(), t);
 	}
 
-	pack->implementation()->update(options);
+	options.setOptionF("current_frame", context.getFloatFrame());
+
+	gridRefPtr->update(options);
 	pack->setPathAttribute(getFullPath());
 
 	gdp->destroyStashed();

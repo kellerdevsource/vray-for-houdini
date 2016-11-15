@@ -32,7 +32,7 @@ template <typename T> T UT_Options_getter(const UT_Options & opt, const char * n
 template <> inline exint           UT_Options_getter<exint>          (const UT_Options & opt, const char * name) { return opt.getOptionI(name); }
 template <> inline fpreal          UT_Options_getter<fpreal>         (const UT_Options & opt, const char * name) { return opt.getOptionF(name); }
 template <> inline UT_StringHolder UT_Options_getter<UT_StringHolder>(const UT_Options & opt, const char * name) { return opt.getOptionS(name); }
-template <> inline const char *    UT_Options_getter<const char *>   (const UT_Options & opt, const char * name) { return opt.getOptionS(name).buffer(); }
+template <> inline const char *    UT_Options_getter<const char *>   (const UT_Options & opt, const char * name) { return opt.getOptionS(name).nonNullBuffer(); }
 
 
 
@@ -119,10 +119,10 @@ inline GU_PackedImpl::StringGetter PackedImplGetterCast(GU_PackedFactory * self,
 // usse the passed class_name to find the appropriate setter and getter
 #define VFH_REGISTERS(r, state)\
 	registerIntrinsic(\
-			VFH_STRINGIZE(VFH_CURRENT_NAME(state)),\
-			PackedImplGetterCast<VFH_PARAMS_CLASS(state)>(this, & VFH_PARAMS_CLASS(state) :: VFH_TOKENIZE2(get_, VFH_CURRENT_NAME(state))),\
-			PackedImplSetterCast<VFH_PARAMS_CLASS(state)>(this, & VFH_PARAMS_CLASS(state) :: VFH_TOKENIZE2(set_, VFH_CURRENT_NAME(state))) \
-			);
+		VFH_STRINGIZE(VFH_CURRENT_NAME(state)),\
+		PackedImplGetterCast<VFH_PARAMS_CLASS(state)>(this, & VFH_PARAMS_CLASS(state) :: VFH_TOKENIZE2(get_, VFH_CURRENT_NAME(state))),\
+		PackedImplSetterCast<VFH_PARAMS_CLASS(state)>(this, & VFH_PARAMS_CLASS(state) :: VFH_TOKENIZE2(set_, VFH_CURRENT_NAME(state))) \
+	);
 
 
 
