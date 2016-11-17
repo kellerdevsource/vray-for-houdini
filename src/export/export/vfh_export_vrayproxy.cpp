@@ -11,6 +11,7 @@
 #include "vfh_export_vrayproxy.h"
 #include "vfh_exporter.h"
 #include "vfh_export_mesh.h"
+#include "vfh_gu_utils.h"
 
 #include <ROP/ROP_Error.h>
 #include <OBJ/OBJ_Node.h>
@@ -457,10 +458,7 @@ VUtils::ErrorCode VRayProxyExporter::getDescriptionForContext(OP_Context &contex
 		return res;
 	}
 
-	GA_ROAttributeRef ref_guardhair(gdp->findAttribute(GA_ATTRIB_PRIMITIVE, "guardhair"));
-	GA_ROAttributeRef ref_hairid(gdp->findAttribute(GA_ATTRIB_PRIMITIVE, "hairid"));
-
-	geomDescr.m_isHair = (ref_guardhair.isValid() && ref_hairid .isValid());
+	geomDescr.m_isHair = VRayForHoudini::GU::isHairGdp(*gdp);
 
 	VRayExporter &exporter = getVRayExporter();
 	if (geomDescr.m_isHair) {
