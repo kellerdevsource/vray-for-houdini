@@ -280,7 +280,7 @@ VUtils::Box VRayProxyExporter::getVoxelBBox(int i)
 		return m_geomDescrList[i].m_bbox;
 	}
 
-	VUtils::Box previewBBox;
+	VUtils::Box previewBBox(0);
 	for (const auto &geomDecr : m_geomDescrList) {
 		previewBBox += geomDecr.m_bbox;
 	}
