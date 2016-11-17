@@ -16,6 +16,30 @@
 using namespace VRayForHoudini;
 
 
+/// Returns hair width at strand vertex.
+/// @param gdp Detail.
+/// @param strand Strand primitive.
+/// @param v Strand vertex.
+static float getHairWidthAtVertex(const GU_Detail &gdp, const GEO_Primitive &strand, int v)
+{
+	float width = 0.01f;
+
+	const GA_Offset &pointOffs = strand.getPointOffset(v);
+
+	const GA_ROHandleF &pscaleHndl = gdp.findAttribute(GA_ATTRIB_POINT, "pscale");
+	const GA_ROHandleF &widthHnld  = gdp.findAttribute(GA_ATTRIB_POINT, "width");
+
+	if (pscaleHndl.isValid()) {
+		width = pscaleHndl.get(pointOffs);
+	}
+	else if (widthHnld.isValid()) {
+		width = widthHnld.get(pointOffs);
+	}
+
+	return width;
+}
+
+
 void VRayExporter::exportGeomMayaHairGeom(SOP_Node *sop_node, const GU_Detail *gdp, Attrs::PluginDesc &pluginDesc)
 {
 	const int numStrands = gdp->getPrimitiveRange().getEntries();
@@ -39,9 +63,6 @@ void VRayExporter::exportGeomMayaHairGeom(SOP_Node *sop_node, const GU_Detail *g
 	VRay::VUtils::VectorRefList hair_vertices(hair_vertex_total);
 	VRay::VUtils::FloatRefList  widths(hair_vertex_total);
 
-	GA_ROAttributeRef ref_width(gdp->findAttribute(GA_ATTRIB_PRIMITIVE, "width"));
-	const GA_ROHandleF hnd_width(ref_width.getAttribute());
-
 	hair_vertex_index = 0;
 	for (GA_Iterator jt(gdp->getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
 		const GEO_Primitive *face = gdp->getGEOPrimitive(*jt);
@@ -53,9 +74,7 @@ void VRayExporter::exportGeomMayaHairGeom(SOP_Node *sop_node, const GU_Detail *g
 
 			hair_vertices[hair_vertex_index].set(p[0],p[1],p[2]);
 
-			widths[hair_vertex_index] = hnd_width.isValid()
-										? hnd_width.get(off)
-										: 0.01f;
+			widths[hair_vertex_index] = getHairWidthAtVertex(*gdp, *face, i);
 		}
 	}
 
