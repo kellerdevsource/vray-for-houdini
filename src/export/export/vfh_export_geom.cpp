@@ -10,6 +10,7 @@
 
 #include "vfh_export_geom.h"
 #include "vfh_export_mesh.h"
+#include "vfh_gu_utils.h"
 #include "gu_vrayproxyref.h"
 #include "gu_volumegridref.h"
 #include "rop/vfh_rop.h"
@@ -171,10 +172,7 @@ int GeometryExporter::exportNodes()
 		exportVRaySOP(*renderSOP, m_detailToPluginDesc[m_myDetailID]);
 	}
 	else {
-		GA_ROAttributeRef ref_guardhair(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, "guardhair"));
-		GA_ROAttributeRef ref_hairid(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, "hairid"));
-
-		if (ref_guardhair.isValid() && ref_hairid .isValid()) {
+		if (VRayForHoudini::GU::isHairGdp(gdp)) {
 			exportHair(*renderSOP, gdl, m_detailToPluginDesc[m_myDetailID]);
 		}
 		else {
