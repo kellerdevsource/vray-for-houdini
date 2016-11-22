@@ -61,21 +61,21 @@ if((NOT _phx_root) OR (NOT EXISTS ${_phx_root}))
 else()
 
 	if(WIN32)
-		set(CGR_PHOENIX_SHARED aurloader.dll)
-		set(CGR_PHOENIX_SHARED_F3D field3dio_phx.dll)
-		set(CGR_PHOENIX_SHARED_VDB openvdbio_phx.dll)
+		set(CGR_PHOENIX_SHARED      aurloader.dll)
+		set(CGR_PHOENIX_SHARED_F3D  field3dio_phx.dll)
+		set(CGR_PHOENIX_SHARED_VDB  openvdbio_phx.dll)
 		set(CGR_PHOENIX_STATIC_LIBS guiwin_qt_s.lib
-										 iutils_s.lib
-										 aurramps_s.lib
-										 aurloader_s.lib)
+									iutils_s.lib
+									aurramps_s.lib
+									aurloader_s.lib)
 	else()
-		set(CGR_PHOENIX_SHARED libaurloader.so)
-		set(CGR_PHOENIX_SHARED_F3D libfield3dio_phx.so)
-		set(CGR_PHOENIX_SHARED_VDB libopenvdbio_phx.so)
-		set(CGR_PHOENIX_STATIC_LIBS guiwin_qt_s.a
-										 iutils_s.a
-										 aurramps_s.a
-										 aurloader_s.a)
+		set(CGR_PHOENIX_SHARED      libaurloader.so)
+		set(CGR_PHOENIX_SHARED_F3D  libfield3dio_phx.so)
+		set(CGR_PHOENIX_SHARED_VDB  libopenvdbio_phx.so)
+		set(CGR_PHOENIX_STATIC_LIBS libguiwin_qt_s.a
+									libiutils_s.a
+									libaurramps_s.a
+									libaurloader_s.a)
 	endif()
 
 
