@@ -24,11 +24,11 @@ Building From Source
 
 * **V-Ray SDK** (for example, from **V-Ray For Maya** nightly build)
 
-* **Phoenix SDK** (for example, from **Phonix For Maya** nightly build; optional, used to load *.aur files preview)
+* **Phoenix SDK** (for example, from **Phoenix For Maya** nightly build; optional, used to load *.aur, *.vdb, *.f3d files preview)
 
 * Compiler:
 
-    - Windows: MSVC 2012
+    - Windows: MSVC 2012 / MSVC 2015 for Houdini 15.5 and later
     - Linux: GCC 4.8.x
     - OS X: Any available
 
@@ -41,15 +41,9 @@ Building From Source
 
 * Install V-Ray For Maya as usual (Maya itself is not needed)
 
-* Unpack V-Ray Application SDK into the directory with structure `<SomeRoot>/{APPSDK_VERSION}/{APPSDK_PLATFORM}`
+* Install Phoenix For Maya and pass the SDK path as `PHXSDK_PATH` (Optional)
 
-  For example, `{HOME}/src/appsdk/507/linux`
-
-  `"{HOME}/src/appsdk"` is controlled with CMake variable **APPSDK_PATH**
-
-  `"507"` is controlled with CMake variable **APPSDK_VERSION**
-
-  `{linux, windows, darwin}` is appended automatically by CMake scripts.
+* Unpack V-Ray Application SDK into a directory, and pass the path to that directory as `APPSDK_PATH` to cmake
 
 * Clone this repository with submodules:
 
@@ -68,17 +62,18 @@ Building From Source
   ```
   cmake -G Ninja \
     -DCMAKE_BUILD_TYPE=Release \
-    -DHOUDINI_VERSION=14.0 \
-    -DHOUDINI_VERSION_BUILD=361 \
-    -DAPPSDK_PATH=${HOME}/src/appsdk \
-    -DAPPSDK_VERSION=507 \
+    -DHOUDINI_VERSION=15.0 \
+    -DHOUDINI_VERSION_BUILD=459 \
+    -DAPPSDK_PATH=${HOME}/src/appsdk/20161115/linux \
+    -DVRAYSDK_PATH=/usr/ChaosGroup/V-Ray/Maya2016-x64 \
+    -DPHXSDK_PATH=/usr/ChaosGroup/PhoenixFD/Maya2016-x64 \
     ${HOME}/dev/vray-for-houdini
   ```
 
   This will generate a Ninja project; build it and install with: `ninja install`
 
-  It'll build and install plugins (with icons, shelfs, etc) into the default Houdini's user settings directory.
+  It'll build plugins (with icons, shelfs, etc).
 
-  Houdini launch wrapper script with all needed environment variables will be generated at `${HOME}/bin/hfs`.
+  Houdini launch wrapper script with all needed environment variables will be generated at `${HOME}/bin/hfs` or `$ENV{USERPROFILE}/Desktop/hfs.bat`.
 
-  Use it to launch Houdini (or copy variable definitions to your environment).
+  Use it to launch Houdini.

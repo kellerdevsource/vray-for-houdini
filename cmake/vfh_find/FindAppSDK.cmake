@@ -11,7 +11,7 @@
 string(TOLOWER "${CMAKE_HOST_SYSTEM_NAME}" _HOST_SYSTEM_NAME)
 
 set(APPSDK_PATH "" CACHE PATH "V-Ray AppSDK root location")
-set(APPSDK_VERSION "" CACHE STRING "V-Ray AppSDK version")
+set(APPSDK_VERSION "20161115")
 
 if(APPSDK_PATH)
 	# if APPSDK_PATH is specified then just take it as root location for AppSDK

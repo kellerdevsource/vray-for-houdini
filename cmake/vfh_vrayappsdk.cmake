@@ -13,11 +13,10 @@ macro(use_vray_appsdk)
 	find_package(AppSDK)
 
 	if(NOT AppSDK_FOUND)
-		message(FATAL_ERROR "V-Ray AppSDK NOT found.\n"
+		message(FATAL_ERROR "V-Ray AppSDK NOT found. Required version is ${APPSDK_VERSION}\n"
 							"To specify AppSDK search path, use one of the following options:\n"
 							"-DAPPSDK_PATH=<AppSDK root location>\n"
-							"-DSDK_PATH=<VFH dependencies location> -DAPPSDK_VERSION=<AppSDK version>\n"
-							"-DAPPSDK_VERSION=<AppSDK version> to search in default location")
+							"-DSDK_PATH=<VFH dependencies location>")
 	endif()
 
 	set(APPSDK_ROOT "${_appsdk_root}")
