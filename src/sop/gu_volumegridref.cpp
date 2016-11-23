@@ -544,9 +544,15 @@ std::string VRayVolumeGridRef::getConvertedPath(bool toPhx) const
 int VRayVolumeGridRef::splitPath(const UT_String & path, std::string & prefix, std::string & suffix) const
 {
 	UT_String hPrefix, frame, hSuffix;
-	path.parseNumberedFilename(hPrefix, frame, hSuffix);
-	prefix = hPrefix;
-	suffix = hSuffix;
+	int result = path.parseNumberedFilename(hPrefix, frame, hSuffix);
+
+	if (result) {
+		prefix = hPrefix.toStdString();
+		suffix = hSuffix.toStdString();
+	} else {
+		prefix = suffix = "";
+	}
+
 	return frame.length();
 }
 
