@@ -9,6 +9,7 @@
 //
 
 #include "vfh_exporter.h"
+#include "vfh_export_hair.h"
 
 #include <SOP/SOP_Node.h>
 
@@ -90,4 +91,211 @@ VRay::Plugin VRayExporter::exportGeomMayaHair(SOP_Node *sop_node, const GU_Detai
 	Attrs::PluginDesc geomMayaHairDesc(VRayExporter::getPluginName(sop_node, "Hair"), "GeomMayaHair");
 	exportGeomMayaHairGeom(sop_node, gdp, geomMayaHairDesc);
 	return exportPlugin(geomMayaHairDesc);
+}
+
+
+namespace {
+
+typedef UT_Array< const GEO_Primitive * > GEOPrimList;
+
+}
+
+
+static bool getDataFromAttribute(const GA_Attribute *attr, const GEOPrimList &primList,
+								 VRay::VUtils::IntRefList &data)
+{
+	bool res = false;
+	GA_ROAttributeRef attrref(attr);
+	if (   attrref.isValid()
+		&& attrref.getAIFTuple())
+	{
+		const GA_AIFTuple *aiftuple = attrref.getAIFTuple();
+		int idx = 0;
+		for (const GEO_Primitive *prim : primList) {
+			switch (attr->getOwner()) {
+				case GA_ATTRIB_VERTEX:
+				{
+					GA_Range range = prim->getVertexRange();
+					res |= aiftuple->getRange(attr, range, &(data[idx]), 0, 1);
+					idx += range.getEntries();
+					break;
+				}
+				case GA_ATTRIB_POINT:
+				{
+					GA_Range range = prim->getPointRange();
+					res |= aiftuple->getRange(attr, range, &(data[idx]), 0, 1);
+					idx += range.getEntries();
+					break;
+				}
+				case GA_ATTRIB_PRIMITIVE:
+				{
+					for (int i = 0; i < prim->getVertexCount(); ++i, ++idx) {
+						res |= aiftuple->get(attr, prim->getMapOffset(), &(data[idx]), 1);
+					}
+					break;
+				}
+				default:
+					break;
+			}
+		}
+	}
+	return res;
+}
+
+
+static bool getDataFromAttribute(const GA_Attribute *attr, const GEOPrimList &primList,
+								 VRay::VUtils::FloatRefList &data)
+{
+	bool res = false;
+	GA_ROAttributeRef attrref(attr);
+	if (   attrref.isValid()
+		&& attrref.getAIFTuple())
+	{
+		const GA_AIFTuple *aiftuple = attrref.getAIFTuple();
+		int idx = 0;
+		for (const GEO_Primitive *prim : primList) {
+			switch (attr->getOwner()) {
+				case GA_ATTRIB_VERTEX:
+				{
+					GA_Range range = prim->getVertexRange();
+					res |= aiftuple->getRange(attr, range, &(data[idx]), 0, 1);
+					idx += range.getEntries();
+					break;
+				}
+				case GA_ATTRIB_POINT:
+				{
+					GA_Range range = prim->getPointRange();
+					res |= aiftuple->getRange(attr, range, &(data[idx]), 0, 1);
+					idx += range.getEntries();
+					break;
+				}
+				case GA_ATTRIB_PRIMITIVE:
+				{
+					for (int i = 0; i < prim->getVertexCount(); ++i, ++idx) {
+						res |= aiftuple->get(attr, prim->getMapOffset(), &(data[idx]), 1);
+					}
+					break;
+				}
+				default:
+					break;
+			}
+		}
+	}
+	return res;
+}
+
+
+static bool getDataFromAttribute(const GA_Attribute *attr, const GEOPrimList &primList,
+								 VRay::VUtils::VectorRefList &data)
+{
+	bool res = false;
+	GA_ROAttributeRef attrref(attr);
+	if (   attrref.isValid()
+		&& attrref.getAIFTuple())
+	{
+		const GA_AIFTuple *aiftuple = attrref.getAIFTuple();
+		int idx = 0;
+		for (const GEO_Primitive *prim : primList) {
+			switch (attr->getOwner()) {
+				case GA_ATTRIB_VERTEX:
+				{
+					GA_Range range = prim->getVertexRange();
+					res |= aiftuple->getRange(attr, range, &(data[idx].x), 0, 3);
+					idx += range.getEntries();
+					break;
+				}
+				case GA_ATTRIB_POINT:
+				{
+					GA_Range range = prim->getPointRange();
+					res |= aiftuple->getRange(attr, range, &(data[idx].x), 0, 3);
+					idx += range.getEntries();
+					break;
+				}
+				case GA_ATTRIB_PRIMITIVE:
+				{
+					for (int i = 0; i < prim->getVertexCount(); ++i, ++idx) {
+						res |= aiftuple->get(attr, prim->getMapOffset(), &(data[idx].x), 3);
+					}
+					break;
+				}
+				default:
+					break;
+			}
+		}
+	}
+	return res;
+}
+
+
+HairPrimitiveExporter::HairPrimitiveExporter(OBJ_Node &obj, OP_Context &ctx, VRayExporter &exp):
+	PrimitiveExporter(obj, ctx, exp)
+{ }
+
+
+void HairPrimitiveExporter::exportPrimitives(const GU_Detail &gdp, PluginDescList &plugins)
+{
+	GA_PrimitiveTypeId polyTypeId = GEO_PRIMPOLY;
+	GA_PrimitiveTypeId nurbsTypeId = GEO_PRIMNURBCURVE;
+
+	if (   !gdp.containsPrimitiveType(polyTypeId)
+		|| !gdp.containsPrimitiveType(nurbsTypeId) )
+	{
+		return;
+	}
+
+	const int nStrands =  gdp.countPrimitiveType(polyTypeId)
+						+ gdp.countPrimitiveType(nurbsTypeId);
+
+	typedef UT_Array< const GEO_Primitive * > GEOPrimList;
+	GEOPrimList              primList(nStrands);
+	VRay::VUtils::IntRefList strands(nStrands);
+
+	int idx = 0;
+	int nVerts = 0;
+	for (GA_Iterator jt(gdp.getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
+		const GEO_Primitive *prim = gdp.getGEOPrimitive(*jt);
+		if (   prim->getTypeId() != polyTypeId
+			|| prim->getTypeId() != nurbsTypeId )
+		{
+			continue;
+		}
+
+		const int nStarndVerts = prim->getVertexCount();
+		strands[idx++] = nStarndVerts;
+		nVerts += nStarndVerts;
+		primList.append(prim);
+	}
+
+	// collect verts
+	VRay::VUtils::VectorRefList verts(nVerts);
+	getDataFromAttribute(gdp.getP(), primList, verts);
+
+	// collect widths
+	const GA_AttributeOwner searchOrder[] = {
+		GA_ATTRIB_VERTEX,		// Unique vertex data
+		GA_ATTRIB_POINT,		// Shared vertex data
+		GA_ATTRIB_PRIMITIVE,	// Primitive attribute data
+	};
+
+	VRay::VUtils::FloatRefList  widths(nVerts);
+	GA_ROHandleF widthHdl = gdp.findAttribute(GEO_STD_ATTRIB_WIDTH,
+											  searchOrder,
+											  COUNT_OF(searchOrder));
+	if (widthHdl.isInvalid()) {
+		widthHdl = gdp.findAttribute(GEO_STD_ATTRIB_PSCALE,
+									 searchOrder,
+									 COUNT_OF(searchOrder));
+	}
+	getDataFromAttribute(widthHdl.getAttribute(), primList, widths);
+
+	Attrs::PluginDesc hairDesc(VRayExporter::getPluginName(&m_object, "Hair"), "GeomMayaHair");
+	hairDesc.addAttribute(Attrs::PluginAttr("num_hair_vertices", strands));
+	hairDesc.addAttribute(Attrs::PluginAttr("hair_vertices", verts));
+	hairDesc.addAttribute(Attrs::PluginAttr("widths", widths));
+	hairDesc.addAttribute(Attrs::PluginAttr("geom_splines", true));
+
+	plugins.push_back(Attrs::PluginDesc("", "Node"));
+	Attrs::PluginDesc &nodeDesc = plugins.back();
+
+	nodeDesc.addAttribute(Attrs::PluginAttr("geometry", m_exporter.exportPlugin(hairDesc)));
 }
