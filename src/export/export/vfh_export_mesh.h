@@ -88,7 +88,7 @@ public:
 	};
 
 public:
-	static bool isPrimPoly(const GA_Primitive &prim);
+	static bool isPrimPoly(const GEO_Primitive *prim);
 	static bool getDataFromAttribute(const GA_Attribute *attr, VRay::VUtils::VectorRefList &data);
 
 public:

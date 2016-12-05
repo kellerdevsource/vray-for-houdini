@@ -20,12 +20,14 @@
 using namespace VRayForHoudini;
 
 
-bool MeshExporter::isPrimPoly(const GA_Primitive &prim)
+bool MeshExporter::isPrimPoly(const GEO_Primitive *prim)
 {
-	return (
-			   prim.getTypeId() == GEO_PRIMPOLY
-			|| prim.getTypeId() == GEO_PRIMPOLYSOUP
-			);
+	if (!prim) {
+		return false;
+	}
+
+	return (   prim->getTypeId() == GEO_PRIMPOLYSOUP
+			|| (prim->getTypeId() == GEO_PRIMPOLY && UTverify_cast< const GEO_PrimPoly* >(prim)->isClosed()) );
 }
 
 
@@ -77,6 +79,10 @@ int MeshExporter::getSHOPList(SHOPList &shopList) const
 	int shopCnt = 0;
 	for (GA_Iterator jt(m_gdp.getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
 		const GEO_Primitive *prim = m_gdp.getGEOPrimitive(*jt);
+
+		if (!isPrimPoly(prim)) {
+			continue;
+		}
 
 		switch (prim->getTypeId().get()) {
 			case GEO_PRIMPOLYSOUP:
@@ -261,6 +267,10 @@ GA_Size MeshExporter::countFaces() const
 	for (GA_Iterator jt(m_gdp.getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
 		const GEO_Primitive *prim = m_gdp.getGEOPrimitive(*jt);
 
+		if (!isPrimPoly(prim)) {
+			continue;
+		}
+
 		switch (prim->getTypeId().get()) {
 			case GEO_PRIMPOLYSOUP:
 			{
@@ -326,6 +336,10 @@ int MeshExporter::getMeshFaces(VRay::VUtils::IntRefList &faces, VRay::VUtils::In
 	int faceEdgeVisIndex = 0;
 	for (GA_Iterator jt(m_gdp.getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
 		const GEO_Primitive *prim = m_gdp.getGEOPrimitive(*jt);
+
+		if (!isPrimPoly(prim)) {
+			continue;
+		}
 
 		switch (prim->getTypeId().get()) {
 			case GEO_PRIMPOLYSOUP:
@@ -434,6 +448,11 @@ int MeshExporter::getMtlIds(VRay::VUtils::IntRefList &face_mtlIDs)
 	int faceIndex = 0;
 	for (GA_Iterator jt(m_gdp.getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
 		const GEO_Primitive *prim = m_gdp.getGEOPrimitive(*jt);
+
+		if (!isPrimPoly(prim)) {
+			continue;
+		}
+
 		SHOP_Node * shopNode = OPgetDirector()->findSHOPNode(mtlpath.get(*jt));
 		int shopID = hasher(shopNode);
 
@@ -499,7 +518,8 @@ int MeshExporter::getPerPrimMtlOverrides(std::unordered_set< std::string > &o_ma
 	for (GA_Iterator jt(m_gdp.getPrimitiveRange()); !jt.atEnd(); jt.advance(), ++k) {
 		const GA_Offset off = *jt;
 		const GEO_Primitive *prim = m_gdp.getGEOPrimitive(off);
-		if (NOT(isPrimPoly(*prim))) {
+
+		if (!isPrimPoly(prim)) {
 			continue;
 		}
 
@@ -591,7 +611,8 @@ int MeshExporter::getMtlOverrides(MapChannels &mapChannels)
 			int faceVertIndex = 0;
 			for (GA_Iterator jt(m_gdp.getPrimitiveRange()); !jt.atEnd(); jt.advance(), ++k) {
 				const GEO_Primitive *prim = m_gdp.getGEOPrimitive(*jt);
-				if (NOT(isPrimPoly(*prim))) {
+
+				if (!isPrimPoly(prim)) {
 					continue;
 				}
 
@@ -760,6 +781,10 @@ void MeshExporter::getVertexAttrAsMapChannel(const GA_Attribute &attr, MapChanne
 		for (GA_Iterator jt(m_gdp.getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
 			const GEO_Primitive *prim = m_gdp.getGEOPrimitive(*jt);
 
+			if (!isPrimPoly(prim)) {
+				continue;
+			}
+
 			switch (prim->getTypeId().get()) {
 				case GEO_PRIMPOLYSOUP:
 				{
@@ -810,6 +835,10 @@ void MeshExporter::getVertexAttrAsMapChannel(const GA_Attribute &attr, MapChanne
 		int faceVertIndex = 0;
 		for (GA_Iterator jt(m_gdp.getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
 			const GEO_Primitive *prim = m_gdp.getGEOPrimitive(*jt);
+
+			if (!isPrimPoly(prim)) {
+				continue;
+			}
 
 			switch (prim->getTypeId().get()) {
 				case GEO_PRIMPOLYSOUP:
