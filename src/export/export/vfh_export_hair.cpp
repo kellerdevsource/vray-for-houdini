@@ -172,7 +172,12 @@ void HairPrimitiveExporter::exportPrimitives(const GU_Detail &gdp, PluginDescLis
 									 searchOrder,
 									 COUNT_OF(searchOrder));
 	}
-	GEO::getDataFromAttribute(widthHdl.getAttribute(), primList, widths);
+	if (widthHdl.isValid()) {
+		GEO::getDataFromAttribute(widthHdl.getAttribute(), primList, widths);
+	}
+	else {
+		std::memset(widths.get(), 0, widths.size() * sizeof(widths[0]));
+	}
 
 	// export
 	Attrs::PluginDesc hairDesc(VRayExporter::getPluginName(&m_object, "Hair"), "GeomMayaHair");
