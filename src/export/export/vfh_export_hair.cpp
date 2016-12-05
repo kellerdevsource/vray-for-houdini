@@ -98,48 +98,51 @@ VRay::Plugin VRayExporter::exportGeomMayaHair(SOP_Node *sop_node, const GU_Detai
 
 
 HairPrimitiveExporter::HairPrimitiveExporter(OBJ_Node &obj, OP_Context &ctx, VRayExporter &exp):
-	PrimitiveExporter(obj, ctx, exp),
-	m_nurbcurveTypeId(GEO_PRIMNURBCURVE),
-	m_bezcurveTypeId(GEO_PRIMBEZCURVE),
-	m_polyTypeId(GEO_PRIMPOLY)
+	PrimitiveExporter(obj, ctx, exp)
 { }
 
 
-bool HairPrimitiveExporter::isHairPrimitive(const GEO_Primitive *prim) const
+bool HairPrimitiveExporter::isHairPrimitive(const GEO_Primitive *prim)
 {
 	if (!prim) {
 		return false;
 	}
-	return (   prim->getTypeId() == m_nurbcurveTypeId
-			|| prim->getTypeId() == m_bezcurveTypeId
-			|| (prim->getTypeId() == m_polyTypeId && !(UTverify_cast< const GEO_PrimPoly* >(prim)->isClosed())) );
+	return (   prim->getTypeId() == GEO_PRIMNURBCURVE
+			|| prim->getTypeId() == GEO_PRIMBEZCURVE
+			|| (prim->getTypeId() == GEO_PRIMPOLY && !(UTverify_cast< const GEO_PrimPoly* >(prim)->isClosed())) );
 }
 
 
-bool HairPrimitiveExporter::containsHairPrimitives(const GU_Detail &gdp) const
+bool HairPrimitiveExporter::containsHairPrimitives(const GU_Detail &gdp)
 {
-	return (   gdp.containsPrimitiveType(m_nurbcurveTypeId)
-			|| gdp.containsPrimitiveType(m_bezcurveTypeId)
-			|| gdp.containsPrimitiveType(m_polyTypeId) );
+	return (   gdp.containsPrimitiveType(GEO_PRIMNURBCURVE)
+			|| gdp.containsPrimitiveType(GEO_PRIMBEZCURVE)
+			|| gdp.containsPrimitiveType(GEO_PRIMPOLY) );
 }
 
 
-void HairPrimitiveExporter::exportPrimitives(const GU_Detail &gdp, PluginDescList &plugins)
+bool HairPrimitiveExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc &pluginDesc)
 {
 	if (!containsHairPrimitives(gdp)) {
-		return;
+		// no hair primitives
+		return false;
 	}
 
 	// filter primitives
-	GEO::GEOPrimList primList(    gdp.countPrimitiveType(m_nurbcurveTypeId)
-								+ gdp.countPrimitiveType(m_bezcurveTypeId)
-								+ gdp.countPrimitiveType(m_polyTypeId));
+	GEO::GEOPrimList primList(    gdp.countPrimitiveType(GEO_PRIMNURBCURVE)
+								+ gdp.countPrimitiveType(GEO_PRIMBEZCURVE)
+								+ gdp.countPrimitiveType(GEO_PRIMPOLY));
 
 	for (GA_Iterator jt(gdp.getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
 		const GEO_Primitive *prim = gdp.getGEOPrimitive(*jt);
 		if (isHairPrimitive(prim)) {
 			primList.append(prim);
 		}
+	}
+
+	if (primList.size() <= 0) {
+		// no valid hair primitives
+		return false;
 	}
 
 	// collect strands
@@ -179,12 +182,30 @@ void HairPrimitiveExporter::exportPrimitives(const GU_Detail &gdp, PluginDescLis
 		std::memset(widths.get(), 0, widths.size() * sizeof(widths[0]));
 	}
 
+	pluginDesc.pluginID = "GeomMayaHair";
+	pluginDesc.pluginName = VRayExporter::getPluginName(&m_object, "Hair");
+	pluginDesc.addAttribute(Attrs::PluginAttr("num_hair_vertices", strands));
+	pluginDesc.addAttribute(Attrs::PluginAttr("hair_vertices", verts));
+	pluginDesc.addAttribute(Attrs::PluginAttr("widths", widths));
+	pluginDesc.addAttribute(Attrs::PluginAttr("geom_splines", true));
+
+	return true;
+}
+
+
+void HairPrimitiveExporter::exportPrimitives(const GU_Detail &gdp, PluginDescList &plugins)
+{
+	if (!containsHairPrimitives(gdp)) {
+		// no hair primitives
+		return;
+	}
+
 	// export
-	Attrs::PluginDesc hairDesc(VRayExporter::getPluginName(&m_object, "Hair"), "GeomMayaHair");
-	hairDesc.addAttribute(Attrs::PluginAttr("num_hair_vertices", strands));
-	hairDesc.addAttribute(Attrs::PluginAttr("hair_vertices", verts));
-	hairDesc.addAttribute(Attrs::PluginAttr("widths", widths));
-	hairDesc.addAttribute(Attrs::PluginAttr("geom_splines", true));
+	Attrs::PluginDesc hairDesc;
+	if (!asPluginDesc(gdp, hairDesc)) {
+		// no valid hair primitives
+		return;
+	}
 
 	plugins.push_back(Attrs::PluginDesc("", "Node"));
 	Attrs::PluginDesc &nodeDesc = plugins.back();
