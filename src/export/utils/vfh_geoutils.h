@@ -8,20 +8,30 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
-#ifndef VRAY_FOR_HOUDINI_GA_UTILS_H
-#define VRAY_FOR_HOUDINI_GA_UTILS_H
+#ifndef VRAY_FOR_HOUDINI_GEOUTILS_H
+#define VRAY_FOR_HOUDINI_GEOUTILS_H
 
-#include "vop_node_base.h"
+#include "vfh_vray.h"
 
-#include <GA/GA_Attribute.h>
+#include <GEO/GEO_Primitive.h>
 
 
 namespace VRayForHoudini {
-namespace GA {
 
-const char *getGaAttributeName(const GA_Attribute &gaAttr);
+namespace GEO {
 
-} // namespace GA
+typedef UT_ValArray< const GEO_Primitive* > GEOPrimList;
+
+bool getDataFromAttribute(const GA_Attribute *attr, const GEOPrimList &primList,
+								 VRay::VUtils::IntRefList &data);
+
+bool getDataFromAttribute(const GA_Attribute *attr, const GEOPrimList &primList,
+								 VRay::VUtils::FloatRefList &data);
+
+bool getDataFromAttribute(const GA_Attribute *attr, const GEOPrimList &primList,
+								 VRay::VUtils::VectorRefList &data);
+
+} // namespace GEO
 } // namespace VRayForHoudini
 
-#endif // VRAY_FOR_HOUDINI_GA_UTILS_H
+#endif // VRAY_FOR_HOUDINI_GEOUTILS_H

@@ -10,8 +10,11 @@
 
 #include "vfh_exporter.h"
 #include "vfh_export_hair.h"
+#include "vfh_geoutils.h"
+
 
 #include <SOP/SOP_Node.h>
+#include <GEO/GEO_PrimPoly.h>
 
 
 using namespace VRayForHoudini;
@@ -94,181 +97,64 @@ VRay::Plugin VRayExporter::exportGeomMayaHair(SOP_Node *sop_node, const GU_Detai
 }
 
 
-namespace {
-
-typedef UT_Array< const GEO_Primitive * > GEOPrimList;
-
-}
-
-
-static bool getDataFromAttribute(const GA_Attribute *attr, const GEOPrimList &primList,
-								 VRay::VUtils::IntRefList &data)
-{
-	bool res = false;
-	GA_ROAttributeRef attrref(attr);
-	if (   attrref.isValid()
-		&& attrref.getAIFTuple())
-	{
-		const GA_AIFTuple *aiftuple = attrref.getAIFTuple();
-		int idx = 0;
-		for (const GEO_Primitive *prim : primList) {
-			switch (attr->getOwner()) {
-				case GA_ATTRIB_VERTEX:
-				{
-					GA_Range range = prim->getVertexRange();
-					res |= aiftuple->getRange(attr, range, &(data[idx]), 0, 1);
-					idx += range.getEntries();
-					break;
-				}
-				case GA_ATTRIB_POINT:
-				{
-					GA_Range range = prim->getPointRange();
-					res |= aiftuple->getRange(attr, range, &(data[idx]), 0, 1);
-					idx += range.getEntries();
-					break;
-				}
-				case GA_ATTRIB_PRIMITIVE:
-				{
-					for (int i = 0; i < prim->getVertexCount(); ++i, ++idx) {
-						res |= aiftuple->get(attr, prim->getMapOffset(), &(data[idx]), 1);
-					}
-					break;
-				}
-				default:
-					break;
-			}
-		}
-	}
-	return res;
-}
-
-
-static bool getDataFromAttribute(const GA_Attribute *attr, const GEOPrimList &primList,
-								 VRay::VUtils::FloatRefList &data)
-{
-	bool res = false;
-	GA_ROAttributeRef attrref(attr);
-	if (   attrref.isValid()
-		&& attrref.getAIFTuple())
-	{
-		const GA_AIFTuple *aiftuple = attrref.getAIFTuple();
-		int idx = 0;
-		for (const GEO_Primitive *prim : primList) {
-			switch (attr->getOwner()) {
-				case GA_ATTRIB_VERTEX:
-				{
-					GA_Range range = prim->getVertexRange();
-					res |= aiftuple->getRange(attr, range, &(data[idx]), 0, 1);
-					idx += range.getEntries();
-					break;
-				}
-				case GA_ATTRIB_POINT:
-				{
-					GA_Range range = prim->getPointRange();
-					res |= aiftuple->getRange(attr, range, &(data[idx]), 0, 1);
-					idx += range.getEntries();
-					break;
-				}
-				case GA_ATTRIB_PRIMITIVE:
-				{
-					for (int i = 0; i < prim->getVertexCount(); ++i, ++idx) {
-						res |= aiftuple->get(attr, prim->getMapOffset(), &(data[idx]), 1);
-					}
-					break;
-				}
-				default:
-					break;
-			}
-		}
-	}
-	return res;
-}
-
-
-static bool getDataFromAttribute(const GA_Attribute *attr, const GEOPrimList &primList,
-								 VRay::VUtils::VectorRefList &data)
-{
-	bool res = false;
-	GA_ROAttributeRef attrref(attr);
-	if (   attrref.isValid()
-		&& attrref.getAIFTuple())
-	{
-		const GA_AIFTuple *aiftuple = attrref.getAIFTuple();
-		int idx = 0;
-		for (const GEO_Primitive *prim : primList) {
-			switch (attr->getOwner()) {
-				case GA_ATTRIB_VERTEX:
-				{
-					GA_Range range = prim->getVertexRange();
-					res |= aiftuple->getRange(attr, range, &(data[idx].x), 0, 3);
-					idx += range.getEntries();
-					break;
-				}
-				case GA_ATTRIB_POINT:
-				{
-					GA_Range range = prim->getPointRange();
-					res |= aiftuple->getRange(attr, range, &(data[idx].x), 0, 3);
-					idx += range.getEntries();
-					break;
-				}
-				case GA_ATTRIB_PRIMITIVE:
-				{
-					for (int i = 0; i < prim->getVertexCount(); ++i, ++idx) {
-						res |= aiftuple->get(attr, prim->getMapOffset(), &(data[idx].x), 3);
-					}
-					break;
-				}
-				default:
-					break;
-			}
-		}
-	}
-	return res;
-}
-
-
 HairPrimitiveExporter::HairPrimitiveExporter(OBJ_Node &obj, OP_Context &ctx, VRayExporter &exp):
-	PrimitiveExporter(obj, ctx, exp)
+	PrimitiveExporter(obj, ctx, exp),
+	m_nurbcurveTypeId(GEO_PRIMNURBCURVE),
+	m_bezcurveTypeId(GEO_PRIMBEZCURVE),
+	m_polyTypeId(GEO_PRIMPOLY)
 { }
+
+
+bool HairPrimitiveExporter::isHairPrimitive(const GEO_Primitive *prim) const
+{
+	if (!prim) {
+		return false;
+	}
+	return (   prim->getTypeId() == m_nurbcurveTypeId
+			|| prim->getTypeId() == m_bezcurveTypeId
+			|| (prim->getTypeId() == m_polyTypeId && !(UTverify_cast< const GEO_PrimPoly* >(prim)->isClosed())) );
+}
+
+
+bool HairPrimitiveExporter::containsHairPrimitives(const GU_Detail &gdp) const
+{
+	return (   gdp.containsPrimitiveType(m_nurbcurveTypeId)
+			|| gdp.containsPrimitiveType(m_bezcurveTypeId)
+			|| gdp.containsPrimitiveType(m_polyTypeId) );
+}
 
 
 void HairPrimitiveExporter::exportPrimitives(const GU_Detail &gdp, PluginDescList &plugins)
 {
-	GA_PrimitiveTypeId polyTypeId = GEO_PRIMPOLY;
-	GA_PrimitiveTypeId nurbsTypeId = GEO_PRIMNURBCURVE;
-
-	if (   !gdp.containsPrimitiveType(polyTypeId)
-		|| !gdp.containsPrimitiveType(nurbsTypeId) )
-	{
+	if (!containsHairPrimitives(gdp)) {
 		return;
 	}
 
-	const int nStrands =  gdp.countPrimitiveType(polyTypeId)
-						+ gdp.countPrimitiveType(nurbsTypeId);
+	// filter primitives
+	GEO::GEOPrimList primList(    gdp.countPrimitiveType(m_nurbcurveTypeId)
+								+ gdp.countPrimitiveType(m_bezcurveTypeId)
+								+ gdp.countPrimitiveType(m_polyTypeId));
 
-	typedef UT_Array< const GEO_Primitive * > GEOPrimList;
-	GEOPrimList              primList(nStrands);
-	VRay::VUtils::IntRefList strands(nStrands);
-
-	int idx = 0;
-	int nVerts = 0;
 	for (GA_Iterator jt(gdp.getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
 		const GEO_Primitive *prim = gdp.getGEOPrimitive(*jt);
-		if (   prim->getTypeId() != polyTypeId
-			|| prim->getTypeId() != nurbsTypeId )
-		{
-			continue;
+		if (isHairPrimitive(prim)) {
+			primList.append(prim);
 		}
+	}
 
+	// collect strands
+	VRay::VUtils::IntRefList strands( primList.size() );
+	int nVerts = 0;
+	int idx = 0;
+	for (const GEO_Primitive *prim : primList) {
 		const int nStarndVerts = prim->getVertexCount();
 		strands[idx++] = nStarndVerts;
 		nVerts += nStarndVerts;
-		primList.append(prim);
 	}
 
 	// collect verts
 	VRay::VUtils::VectorRefList verts(nVerts);
-	getDataFromAttribute(gdp.getP(), primList, verts);
+	GEO::getDataFromAttribute(gdp.getP(), primList, verts);
 
 	// collect widths
 	const GA_AttributeOwner searchOrder[] = {
@@ -286,8 +172,9 @@ void HairPrimitiveExporter::exportPrimitives(const GU_Detail &gdp, PluginDescLis
 									 searchOrder,
 									 COUNT_OF(searchOrder));
 	}
-	getDataFromAttribute(widthHdl.getAttribute(), primList, widths);
+	GEO::getDataFromAttribute(widthHdl.getAttribute(), primList, widths);
 
+	// export
 	Attrs::PluginDesc hairDesc(VRayExporter::getPluginName(&m_object, "Hair"), "GeomMayaHair");
 	hairDesc.addAttribute(Attrs::PluginAttr("num_hair_vertices", strands));
 	hairDesc.addAttribute(Attrs::PluginAttr("hair_vertices", verts));

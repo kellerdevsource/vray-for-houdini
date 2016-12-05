@@ -8,16 +8,132 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
-#include "vfh_ga_utils.h"
+#include "vfh_geoutils.h"
 
-#include <UT/UT_Version.h>
+using namespace VRayForHoudini;
 
 
-const char *VRayForHoudini::GA::getGaAttributeName(const GA_Attribute &gaAttr)
+bool GEO::getDataFromAttribute(const GA_Attribute *attr, const GEOPrimList &primList,
+							   VRay::VUtils::IntRefList &data)
 {
-#if UT_MAJOR_VERSION_INT >= 15
-	return gaAttr.getName().buffer();
-#else
-	return gaAttr.getName();
-#endif
+	bool res = false;
+	GA_ROAttributeRef attrref(attr);
+	if (   attrref.isValid()
+		&& attrref.getAIFTuple())
+	{
+		const GA_AIFTuple *aiftuple = attrref.getAIFTuple();
+		int idx = 0;
+		for (const GEO_Primitive *prim : primList) {
+			switch (attr->getOwner()) {
+				case GA_ATTRIB_VERTEX:
+				{
+					GA_Range range = prim->getVertexRange();
+					res |= aiftuple->getRange(attr, range, &(data[idx]), 0, 1);
+					idx += range.getEntries();
+					break;
+				}
+				case GA_ATTRIB_POINT:
+				{
+					GA_Range range = prim->getPointRange();
+					res |= aiftuple->getRange(attr, range, &(data[idx]), 0, 1);
+					idx += range.getEntries();
+					break;
+				}
+				case GA_ATTRIB_PRIMITIVE:
+				{
+					for (int i = 0; i < prim->getVertexCount(); ++i, ++idx) {
+						res |= aiftuple->get(attr, prim->getMapOffset(), &(data[idx]), 1);
+					}
+					break;
+				}
+				default:
+					break;
+			}
+		}
+	}
+	return res;
+}
+
+
+bool GEO::getDataFromAttribute(const GA_Attribute *attr, const GEOPrimList &primList,
+							   VRay::VUtils::FloatRefList &data)
+{
+	bool res = false;
+	GA_ROAttributeRef attrref(attr);
+	if (   attrref.isValid()
+		&& attrref.getAIFTuple())
+	{
+		const GA_AIFTuple *aiftuple = attrref.getAIFTuple();
+		int idx = 0;
+		for (const GEO_Primitive *prim : primList) {
+			switch (attr->getOwner()) {
+				case GA_ATTRIB_VERTEX:
+				{
+					GA_Range range = prim->getVertexRange();
+					res |= aiftuple->getRange(attr, range, &(data[idx]), 0, 1);
+					idx += range.getEntries();
+					break;
+				}
+				case GA_ATTRIB_POINT:
+				{
+					GA_Range range = prim->getPointRange();
+					res |= aiftuple->getRange(attr, range, &(data[idx]), 0, 1);
+					idx += range.getEntries();
+					break;
+				}
+				case GA_ATTRIB_PRIMITIVE:
+				{
+					for (int i = 0; i < prim->getVertexCount(); ++i, ++idx) {
+						res |= aiftuple->get(attr, prim->getMapOffset(), &(data[idx]), 1);
+					}
+					break;
+				}
+				default:
+					break;
+			}
+		}
+	}
+	return res;
+}
+
+
+bool GEO::getDataFromAttribute(const GA_Attribute *attr, const GEOPrimList &primList,
+							   VRay::VUtils::VectorRefList &data)
+{
+	bool res = false;
+	GA_ROAttributeRef attrref(attr);
+	if (   attrref.isValid()
+		&& attrref.getAIFTuple())
+	{
+		const GA_AIFTuple *aiftuple = attrref.getAIFTuple();
+		int idx = 0;
+		for (const GEO_Primitive *prim : primList) {
+			switch (attr->getOwner()) {
+				case GA_ATTRIB_VERTEX:
+				{
+					GA_Range range = prim->getVertexRange();
+					res |= aiftuple->getRange(attr, range, &(data[idx].x), 0, 3);
+					idx += range.getEntries();
+					break;
+				}
+				case GA_ATTRIB_POINT:
+				{
+					GA_Range range = prim->getPointRange();
+					res |= aiftuple->getRange(attr, range, &(data[idx].x), 0, 3);
+					idx += range.getEntries();
+					break;
+				}
+				case GA_ATTRIB_PRIMITIVE:
+				{
+					for (int i = 0; i < prim->getVertexCount(); ++i, ++idx) {
+						res |= aiftuple->get(attr, prim->getMapOffset(), &(data[idx].x), 3);
+					}
+					break;
+				}
+				default:
+					break;
+			}
+		}
+	}
+	return res;
 }

@@ -23,7 +23,15 @@ class HairPrimitiveExporter:
 public:
 	HairPrimitiveExporter(OBJ_Node &obj, OP_Context &ctx, VRayExporter &exp);
 
+	bool         isHairPrimitive(const GEO_Primitive *prim) const;
+	bool         containsHairPrimitives(const GU_Detail &gdp) const;
 	virtual void exportPrimitives(const GU_Detail &detail, PluginDescList &plugins) VRAY_OVERRIDE;
+
+private:
+	GA_PrimitiveTypeId m_polyTypeId;
+	GA_PrimitiveTypeId m_nurbcurveTypeId;
+	GA_PrimitiveTypeId m_bezcurveTypeId;
+
 };
 
 } // namespace VRayForHoudini
