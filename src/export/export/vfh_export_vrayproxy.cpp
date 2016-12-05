@@ -11,7 +11,7 @@
 #include "vfh_export_vrayproxy.h"
 #include "vfh_exporter.h"
 #include "vfh_export_mesh.h"
-#include "vfh_gu_utils.h"
+#include "vfh_export_hair.h"
 
 #include <ROP/ROP_Error.h>
 #include <OBJ/OBJ_Node.h>
@@ -26,7 +26,7 @@
 using namespace VRayForHoudini;
 
 
-VRayExporter& getVRayExporter()
+VRayExporter& getDummyExporter()
 {
 	static VRayExporter exporter(nullptr);
 	return exporter;
@@ -458,15 +458,18 @@ VUtils::ErrorCode VRayProxyExporter::getDescriptionForContext(OP_Context &contex
 		return res;
 	}
 
-	geomDescr.m_isHair = VRayForHoudini::GU::isHairGdp(*gdp);
+	VRayExporter &dummyExp = getDummyExporter();
+	HairPrimitiveExporter hairExp(*geomDescr.m_node.getParent()->castToOBJNode(),
+								  context,
+								  dummyExp);
 
-	VRayExporter &exporter = getVRayExporter();
-	if (geomDescr.m_isHair) {
-		exporter.exportGeomMayaHairGeom(&geomDescr.m_node, gdp, geomDescr.m_description);
+	if (hairExp.asPluginDesc(*gdp, geomDescr.m_description)) {
+		geomDescr.m_isHair = true;
 	}
 	else {
-		MeshExporter meshExporter(*gdp, exporter);
+		MeshExporter meshExporter(*gdp, dummyExp);
 		meshExporter.asPluginDesc(geomDescr.m_description);
+		geomDescr.m_isHair = false;
 	}
 
 	if (NOT(geomDescr.hasValidData())) {
