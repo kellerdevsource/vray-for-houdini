@@ -41,7 +41,6 @@ public:
 
 private:
 	int              exportVRaySOP(SOP_Node &sop, PluginDescList &pluginList);
-	int              exportHair(SOP_Node &sop, GU_DetailHandleAutoReadLock &gdl, PluginDescList &pluginList);
 	int              exportDetail(SOP_Node &sop, GU_DetailHandleAutoReadLock &gdl, PluginDescList &pluginList);
 	int              exportPolyMesh(SOP_Node &sop, const GU_Detail &gdp, PluginDescList &pluginList);
 
