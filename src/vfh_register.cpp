@@ -109,6 +109,7 @@ void newDriverOperator(OP_OperatorTable *table)
 void newSopOperator(OP_OperatorTable *table)
 {
 	using namespace SOP;
+
 #ifdef CGR_HAS_AUR
 	const char *vfhPhoenixLoaderDir = getenv("VRAY_FOR_HOUDINI_AURA_LOADERS");
 	if (vfhPhoenixLoaderDir && *vfhPhoenixLoaderDir) {
@@ -123,14 +124,12 @@ void newSopOperator(OP_OperatorTable *table)
 	VFH_SOP_ADD_OPERATOR(table, "GEOMETRY", PhxShaderCache, PhxShaderCache::GetPrmTemplate());
 #endif
 
-	VFH_SOP_ADD_OPERATOR_AUTO(table, "GEOMETRY", GeomPlane);
-
-	VFH_SOP_ADD_OPERATOR_AUTO_INPUTS(table, "GEOMETRY", GeomMayaHair, 1, 1);
 #ifdef CGR_HAS_VRAYSCENE
 	VFH_SOP_ADD_OPERATOR_AUTO(table,           "GEOMETRY", VRayScene);
 #endif
-	VFH_SOP_ADD_OPERATOR_CUSTOM_ID_AUTO(table, "GEOMETRY", VRayProxy, "GeomMeshFile");
 
+	VFH_SOP_ADD_OPERATOR_AUTO(table,           "GEOMETRY", GeomPlane);
+	VFH_SOP_ADD_OPERATOR_CUSTOM_ID_AUTO(table, "GEOMETRY", VRayProxy, "GeomMeshFile");
 	VRayProxyROP::register_sopoperator(table);
 }
 
