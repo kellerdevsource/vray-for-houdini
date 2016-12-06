@@ -15,7 +15,7 @@
 #include "vfh_exporter.h"
 
 #include <OBJ/OBJ_Geometry.h>
-#include <GU/GU_PrimPacked.h>
+#include <GU/GU_Detail.h>
 
 namespace VRayForHoudini {
 

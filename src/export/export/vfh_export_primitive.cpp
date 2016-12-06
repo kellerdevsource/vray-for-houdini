@@ -15,6 +15,7 @@
 #include "vop/material/vop_MaterialOutput.h"
 #include "vop/material/vop_PhoenixSim.h"
 
+#include <GU/GU_PrimPacked.h>
 #include <GU/GU_PrimVDB.h>
 #include <SOP/SOP_Node.h>
 #include <SHOP/SHOP_Node.h>

@@ -11,7 +11,6 @@
 #include "vfh_export_hair.h"
 #include "vfh_geoutils.h"
 
-#include <SOP/SOP_Node.h>
 #include <GEO/GEO_PrimPoly.h>
 
 
