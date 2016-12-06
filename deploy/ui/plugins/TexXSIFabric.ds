@@ -1,18 +1,8 @@
 {
     name	TexXSIFabric
     label	"XSI Fabric"
-    parm {
-	name	"plugindata"
-	label	"XSI Fabric"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexXSIFabric"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexXSIFabric" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "XSI Fabric" }
+    parmtag	{ vray_plugin "TexXSIFabric" }
     parm {
 	name	"compatibility_with"
 	label	"Compatibility With"

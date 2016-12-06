@@ -1,18 +1,8 @@
 {
     name	TexModoStencil
     label	"Modo Stencil"
-    parm {
-	name	"plugindata"
-	label	"Modo Stencil"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexModoStencil"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexModoStencil" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Modo Stencil" }
+    parmtag	{ vray_plugin "TexModoStencil" }
     parm {
 	name	"base_tex"
 	label	"Base Tex"

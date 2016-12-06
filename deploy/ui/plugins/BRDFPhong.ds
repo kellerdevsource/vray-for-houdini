@@ -1,18 +1,8 @@
 {
     name	BRDFPhong
     label	"Phong"
-    parm {
-	name	"plugindata"
-	label	"Phong"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"Phong reflection shader"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "BRDFPhong" }
-	parmtag	{ "vray_type" "BRDF" }
-    }
+    parmtag	{ spare_category "Phong" }
+    parmtag	{ vray_plugin "BRDFPhong" }
     parm {
 	name	"color"
 	label	"Color"

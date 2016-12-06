@@ -1,17 +1,8 @@
 {
     name	BRDFScanned
     label	"Scanned"
-    parm {
-	name	"plugindata"
-	label	"Scanned"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "BRDFScanned" }
-	parmtag	{ "vray_type" "BRDF" }
-    }
+    parmtag	{ spare_category "Scanned" }
+    parmtag	{ vray_plugin "BRDFScanned" }
     parm {
 	name	"transparency"
 	label	"Transparency"

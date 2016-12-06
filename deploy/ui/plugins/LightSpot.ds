@@ -1,17 +1,8 @@
 {
     name	LightSpot
     label	"Spot"
-    parm {
-	name	"plugindata"
-	label	"Spot"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "LightSpot" }
-	parmtag	{ "vray_type" "LIGHT" }
-    }
+    parmtag	{ spare_category "Spot" }
+    parmtag	{ vray_plugin "LightSpot" }
     parm {
 	name	"enabled"
 	label	"Enabled"

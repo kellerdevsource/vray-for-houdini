@@ -1,18 +1,8 @@
 {
     name	PhxShaderSimGeom
     label	"Phx Shader Sim Geom"
-    parm {
-	name	"plugindata"
-	label	"Phx Shader Sim Geom"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"PhxShaderSimGeom"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "PhxShaderSimGeom" }
-	parmtag	{ "vray_type" "GEOMETRY" }
-    }
+    parmtag	{ spare_category "Phx Shader Sim Geom" }
+    parmtag	{ vray_plugin "PhxShaderSimGeom" }
     parm {
 	name	"gpu_di_mode"
 	label	"Gpu Di Mode"

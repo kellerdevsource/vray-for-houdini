@@ -1,18 +1,8 @@
 {
     name	MtlSingleBRDF
     label	"Single"
-    parm {
-	name	"plugindata"
-	label	"Single"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"MtlSingleBRDF settings"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "MtlSingleBRDF" }
-	parmtag	{ "vray_type" "MATERIAL" }
-    }
+    parmtag	{ spare_category "Single" }
+    parmtag	{ vray_plugin "MtlSingleBRDF" }
     parm {
 	name	"filter"
 	label	"Filter"

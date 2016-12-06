@@ -1,16 +1,6 @@
 {
     name	PhxShaderSimMesh
-    label	"Phx Shader Sim Mesh"
-    parm {
-	name	"plugindata"
-	label	"Phx Shader Sim Mesh"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"PhxShaderSimMesh"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "PhxShaderSimMesh" }
-	parmtag	{ "vray_type" "GEOMETRY" }
-    }
+label	"Phx Shader Sim Mesh"
+parmtag	{ spare_category "Phx Shader Sim Mesh" }
+parmtag	{ vray_plugin "PhxShaderSimMesh" }
 }

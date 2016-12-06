@@ -1,19 +1,8 @@
 {
     name	TexColorCurve
     label	"Color Curve"
-    parm {
-	name	"plugindata"
-	label	"Color Curve"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexColorCurve"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TexColorCurve" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Color Curve" }
+    parmtag	{ vray_plugin "TexColorCurve" }
     parm {
 	name	"input"
 	label	"Input"

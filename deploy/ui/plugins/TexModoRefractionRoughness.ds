@@ -1,18 +1,8 @@
 {
     name	TexModoRefractionRoughness
     label	"Modo Refraction Roughness"
-    parm {
-	name	"plugindata"
-	label	"Modo Refraction Roughness"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexModoRefractionRoughness"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexModoRefractionRoughness" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Modo Refraction Roughness" }
+    parmtag	{ vray_plugin "TexModoRefractionRoughness" }
     parm {
 	name	"modo_refraction_roughness"
 	label	"Modo Refraction Roughness"

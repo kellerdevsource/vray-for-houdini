@@ -1,17 +1,8 @@
 {
     name	LightOmniMax
     label	"Omni (3ds max)"
-    parm {
-	name	"plugindata"
-	label	"Omni (3ds max)"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "LightOmniMax" }
-	parmtag	{ "vray_type" "LIGHT" }
-    }
+    parmtag	{ spare_category "Omni (3ds max)" }
+    parmtag	{ vray_plugin "LightOmniMax" }
     parm {
 	name	"enabled"
 	label	"Enabled"

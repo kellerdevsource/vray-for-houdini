@@ -1,16 +1,6 @@
 {
     name	GeomLocalRayserver
-    label	"Local Rayserver"
-    parm {
-	name	"plugindata"
-	label	"Local Rayserver"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"GeomLocalRayserver"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "GeomLocalRayserver" }
-	parmtag	{ "vray_type" "GEOMETRY" }
-    }
+label	"Local Rayserver"
+parmtag	{ spare_category "Local Rayserver" }
+parmtag	{ vray_plugin "GeomLocalRayserver" }
 }

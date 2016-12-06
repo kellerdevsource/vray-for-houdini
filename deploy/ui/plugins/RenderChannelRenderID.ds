@@ -1,18 +1,8 @@
 {
     name	RenderChannelRenderID
     label	"Render ID"
-    parm {
-	name	"plugindata"
-	label	"Render ID"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"The object's render ID contributes the pixel value"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "RenderChannelRenderID" }
-	parmtag	{ "vray_type" "RENDERCHANNEL" }
-    }
+    parmtag	{ spare_category "Render ID" }
+    parmtag	{ vray_plugin "RenderChannelRenderID" }
     parm {
 	name	"name"
 	label	"Name"

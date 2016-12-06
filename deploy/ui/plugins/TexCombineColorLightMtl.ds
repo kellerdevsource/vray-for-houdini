@@ -1,19 +1,8 @@
 {
     name	TexCombineColorLightMtl
     label	"Combine Color Light Mtl"
-    parm {
-	name	"plugindata"
-	label	"Combine Color Light Mtl"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexCombineColorLightMtl"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TexCombineColorLightMtl" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Combine Color Light Mtl" }
+    parmtag	{ vray_plugin "TexCombineColorLightMtl" }
     parm {
 	name	"color"
 	label	"Color"

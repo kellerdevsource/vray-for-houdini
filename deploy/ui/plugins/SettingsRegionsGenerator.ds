@@ -1,18 +1,8 @@
 {
     name	SettingsRegionsGenerator
     label	"Regions"
-    parm {
-	name	"SettingsRegionsGenerator_plugindata"
-	label	"Regions"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"Regions generator settings"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "SettingsRegionsGenerator" }
-	parmtag	{ "vray_type" "SETTINGS" }
-    }
+    parmtag	{ spare_category "Regions" }
+    parmtag	{ vray_plugin "SettingsRegionsGenerator" }
     parm {
 	name	"SettingsRegionsGenerator_xc"
 	label	"W"

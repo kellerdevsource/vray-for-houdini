@@ -1,18 +1,8 @@
 {
     name	TexGradRamp
     label	"Gradient Ramp"
-    parm {
-	name	"plugindata"
-	label	"Gradient Ramp"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"Gradient Ramp texture"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexGradRamp" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Gradient Ramp" }
+    parmtag	{ vray_plugin "TexGradRamp" }
     parm {
 	name	"color_mult"
 	label	"Color Mult"

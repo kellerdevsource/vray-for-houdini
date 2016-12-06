@@ -1,18 +1,8 @@
 {
     name	TexMayaFluidProcedural
     label	"Maya Fluid Procedural"
-    parm {
-	name	"plugindata"
-	label	"Maya Fluid Procedural"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexMayaFluidProcedural"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexMayaFluidProcedural" }
-	parmtag	{ "vray_type" "MISC" }
-    }
+    parmtag	{ spare_category "Maya Fluid Procedural" }
+    parmtag	{ vray_plugin "TexMayaFluidProcedural" }
     parm {
 	name	"type"
 	label	"Type"

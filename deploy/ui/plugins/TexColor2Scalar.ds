@@ -1,19 +1,8 @@
 {
     name	TexColor2Scalar
     label	"Color 2 Scalar"
-    parm {
-	name	"plugindata"
-	label	"Color 2 Scalar"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexColor2Scalar"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TexColor2Scalar" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Color 2 Scalar" }
+    parmtag	{ vray_plugin "TexColor2Scalar" }
     parm {
 	name	"clr_txt"
 	label	"Clr Txt"

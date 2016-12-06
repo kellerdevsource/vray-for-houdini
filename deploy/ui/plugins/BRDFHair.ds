@@ -1,17 +1,8 @@
 {
     name	BRDFHair
     label	"Hair"
-    parm {
-	name	"plugindata"
-	label	"Hair"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "BRDFHair" }
-	parmtag	{ "vray_type" "BRDF" }
-    }
+    parmtag	{ spare_category "Hair" }
+    parmtag	{ vray_plugin "BRDFHair" }
     parm {
 	name	"specular_color_tex"
 	label	"Specular Color"

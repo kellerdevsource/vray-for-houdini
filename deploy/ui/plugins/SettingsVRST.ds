@@ -1,17 +1,8 @@
 {
     name	SettingsVRST
     label	"SettingsVRST"
-    parm {
-	name	"plugindata"
-	label	"SettingsVRST"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "SettingsVRST" }
-	parmtag	{ "vray_type" "SETTINGS" }
-    }
+    parmtag	{ spare_category "SettingsVRST" }
+    parmtag	{ vray_plugin "SettingsVRST" }
     parm {
 	name	"compression"
 	label	"Compression"

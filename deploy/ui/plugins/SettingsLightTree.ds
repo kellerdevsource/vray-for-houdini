@@ -1,17 +1,8 @@
 {
     name	SettingsLightTree
     label	"Light Tree"
-    parm {
-	name	"plugindata"
-	label	"Light Tree"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "SettingsLightTree" }
-	parmtag	{ "vray_type" "SETTINGS" }
-    }
+    parmtag	{ spare_category "Light Tree" }
+    parmtag	{ vray_plugin "SettingsLightTree" }
     parm {
 	name	"on"
 	label	"On"

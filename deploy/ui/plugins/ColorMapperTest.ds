@@ -1,18 +1,8 @@
 {
     name	ColorMapperTest
     label	"Color Mapper Test"
-    parm {
-	name	"plugindata"
-	label	"Color Mapper Test"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"ColorMapperTest"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "ColorMapperTest" }
-	parmtag	{ "vray_type" "MISC" }
-    }
+    parmtag	{ spare_category "Color Mapper Test" }
+    parmtag	{ vray_plugin "ColorMapperTest" }
     parm {
 	name	"type"
 	label	"Type"

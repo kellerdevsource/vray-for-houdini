@@ -1,17 +1,8 @@
 {
     name	Node
     label	"Node"
-    parm {
-	name	"plugindata"
-	label	"Node"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "Node" }
-	parmtag	{ "vray_type" "NODE" }
-    }
+    parmtag	{ spare_category "Node" }
+    parmtag	{ vray_plugin "Node" }
     parm {
 	name	"nsamples"
 	label	"Nsamples"

@@ -1,17 +1,8 @@
 {
     name	TexStucco
     label	"Stucco"
-    parm {
-	name	"plugindata"
-	label	"Stucco"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexStucco" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Stucco" }
+    parmtag	{ vray_plugin "TexStucco" }
     parm {
 	name	"color_mult"
 	label	"Color Mult"

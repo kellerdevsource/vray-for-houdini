@@ -1,18 +1,8 @@
 {
     name	TexSurfaceLuminance
     label	"Surface Luminance"
-    parm {
-	name	"plugindata"
-	label	"Surface Luminance"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexSurfaceLuminance"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexSurfaceLuminance" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Surface Luminance" }
+    parmtag	{ vray_plugin "TexSurfaceLuminance" }
     parm {
 	name	"luminance_mode"
 	label	"Luminance Mode"

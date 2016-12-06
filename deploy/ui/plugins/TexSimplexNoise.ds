@@ -1,18 +1,8 @@
 {
     name	TexSimplexNoise
     label	"Noise (Simplex)"
-    parm {
-	name	"plugindata"
-	label	"Noise (Simplex)"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexSimplexNoise"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexSimplexNoise" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Noise (Simplex)" }
+    parmtag	{ vray_plugin "TexSimplexNoise" }
     parm {
 	name	"compatibility_with"
 	label	"Compatibility With"

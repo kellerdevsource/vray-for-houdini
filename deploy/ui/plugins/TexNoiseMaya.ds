@@ -1,18 +1,8 @@
 {
     name	TexNoiseMaya
     label	"Noise (Maya)"
-    parm {
-	name	"plugindata"
-	label	"Noise (Maya)"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexNoiseMaya"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexNoiseMaya" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Noise (Maya)" }
+    parmtag	{ vray_plugin "TexNoiseMaya" }
     parm {
 	name	"compatibility_with"
 	label	"Compatibility With"

@@ -1,18 +1,8 @@
 {
     name	VolumeAerialPerspective
     label	"Aerial Perspective"
-    parm {
-	name	"plugindata"
-	label	"Aerial Perspective"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"Aerial perspective"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "VolumeAerialPerspective" }
-	parmtag	{ "vray_type" "EFFECT" }
-    }
+    parmtag	{ spare_category "Aerial Perspective" }
+    parmtag	{ vray_plugin "VolumeAerialPerspective" }
     parm {
 	name	"enabled"
 	label	"Enabled"

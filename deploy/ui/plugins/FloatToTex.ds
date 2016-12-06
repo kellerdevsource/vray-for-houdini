@@ -1,19 +1,8 @@
 {
     name	FloatToTex
     label	"FloatToTex"
-    parm {
-	name	"plugindata"
-	label	"FloatToTex"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"Float to texture"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "FloatToTex" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "FloatToTex" }
+    parmtag	{ vray_plugin "FloatToTex" }
     parm {
 	name	"input"
 	label	"Input"

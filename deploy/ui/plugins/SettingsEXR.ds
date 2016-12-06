@@ -1,17 +1,8 @@
 {
     name	SettingsEXR
     label	"SettingsEXR"
-    parm {
-	name	"plugindata"
-	label	"SettingsEXR"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "SettingsEXR" }
-	parmtag	{ "vray_type" "SETTINGS" }
-    }
+    parmtag	{ spare_category "SettingsEXR" }
+    parmtag	{ vray_plugin "SettingsEXR" }
     parm {
 	name	"compression"
 	label	"Compression"

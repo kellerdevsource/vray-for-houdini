@@ -1,18 +1,8 @@
 {
     name	TexModoChanModColorCorrect
     label	"Modo Chan Mod Color Correct"
-    parm {
-	name	"plugindata"
-	label	"Modo Chan Mod Color Correct"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexModoChanModColorCorrect"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexModoChanModColorCorrect" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Modo Chan Mod Color Correct" }
+    parmtag	{ vray_plugin "TexModoChanModColorCorrect" }
     parm {
 	name	"input_color"
 	label	"Input Color"

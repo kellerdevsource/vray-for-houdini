@@ -1,17 +1,8 @@
 {
     name	MtlBump
     label	"Bump"
-    parm {
-	name	"plugindata"
-	label	"Bump"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "MtlBump" }
-	parmtag	{ "vray_type" "MATERIAL" }
-    }
+    parmtag	{ spare_category "Bump" }
+    parmtag	{ vray_plugin "MtlBump" }
     parm {
 	name	"bump_tex_color"
 	label	"Bump Tex Color"

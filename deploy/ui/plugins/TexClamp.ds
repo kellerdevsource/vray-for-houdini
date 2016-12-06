@@ -1,19 +1,8 @@
 {
     name	TexClamp
     label	"Clamp"
-    parm {
-	name	"plugindata"
-	label	"Clamp"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexClamp"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TexClamp" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Clamp" }
+    parmtag	{ vray_plugin "TexClamp" }
     parm {
 	name	"texture"
 	label	"Texture"

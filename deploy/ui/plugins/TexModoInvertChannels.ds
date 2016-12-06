@@ -1,18 +1,8 @@
 {
     name	TexModoInvertChannels
     label	"Modo Invert Channels"
-    parm {
-	name	"plugindata"
-	label	"Modo Invert Channels"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexModoInvertChannels"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexModoInvertChannels" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Modo Invert Channels" }
+    parmtag	{ vray_plugin "TexModoInvertChannels" }
     parm {
 	name	"texture"
 	label	"Texture"

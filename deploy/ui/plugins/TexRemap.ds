@@ -1,19 +1,8 @@
 {
     name	TexRemap
     label	"Remap"
-    parm {
-	name	"plugindata"
-	label	"Remap"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"Remap values"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TexRemap" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Remap" }
+    parmtag	{ vray_plugin "TexRemap" }
     parm {
 	name	"input_value"
 	label	"Input Value"

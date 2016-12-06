@@ -1,18 +1,8 @@
 {
     name	TexOCIO
     label	"OCIO"
-    parm {
-	name	"plugindata"
-	label	"OCIO"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexOCIO"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexOCIO" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "OCIO" }
+    parmtag	{ vray_plugin "TexOCIO" }
     parm {
 	name	"basemap"
 	label	"Basemap"

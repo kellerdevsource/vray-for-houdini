@@ -1,18 +1,8 @@
 {
     name	MayaMtlMatte
     label	"Maya Mtl Matte"
-    parm {
-	name	"plugindata"
-	label	"Maya Mtl Matte"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"MayaMtlMatte"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "MayaMtlMatte" }
-	parmtag	{ "vray_type" "MATERIAL" }
-    }
+    parmtag	{ spare_category "Maya Mtl Matte" }
+    parmtag	{ vray_plugin "MayaMtlMatte" }
     parm {
 	name	"mode"
 	label	"Mode"

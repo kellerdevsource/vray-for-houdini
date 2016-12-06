@@ -1,19 +1,8 @@
 {
     name	ParticleTex
     label	"Particle Tex"
-    parm {
-	name	"plugindata"
-	label	"Particle Tex"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"ParticleTex"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "ParticleTex" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Particle Tex" }
+    parmtag	{ vray_plugin "ParticleTex" }
     parm {
 	name	"compatibility_with"
 	label	"Compatibility With"

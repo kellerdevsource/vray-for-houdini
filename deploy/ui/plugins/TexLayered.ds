@@ -1,17 +1,8 @@
 {
     name	TexLayered
     label	"Layered"
-    parm {
-	name	"plugindata"
-	label	"Layered"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexLayered" }
-	parmtag	{ "vray_type" "SYSTEM" }
-    }
+    parmtag	{ spare_category "Layered" }
+    parmtag	{ vray_plugin "TexLayered" }
     parm {
 	name	"compatibility_with"
 	label	"Compatibility With"

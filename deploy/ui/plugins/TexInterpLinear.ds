@@ -1,18 +1,8 @@
 {
     name	TexInterpLinear
     label	"Interp Linear"
-    parm {
-	name	"plugindata"
-	label	"Interp Linear"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexInterpLinear"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexInterpLinear" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Interp Linear" }
+    parmtag	{ vray_plugin "TexInterpLinear" }
     parm {
 	name	"input"
 	label	"Input"

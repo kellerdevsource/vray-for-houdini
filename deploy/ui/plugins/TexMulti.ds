@@ -1,18 +1,8 @@
 {
     name	TexMulti
     label	"Multi"
-    parm {
-	name	"plugindata"
-	label	"Multi"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexMulti"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexMulti" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Multi" }
+    parmtag	{ vray_plugin "TexMulti" }
     parm {
 	name	"mode"
 	label	"Mode"

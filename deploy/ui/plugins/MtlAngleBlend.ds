@@ -1,18 +1,8 @@
 {
     name	MtlAngleBlend
     label	"Angle Blend"
-    parm {
-	name	"plugindata"
-	label	"Angle Blend"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"MtlAngleBlend"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "MtlAngleBlend" }
-	parmtag	{ "vray_type" "MATERIAL" }
-    }
+    parmtag	{ spare_category "Angle Blend" }
+    parmtag	{ vray_plugin "MtlAngleBlend" }
     parm {
 	name	"start_angle"
 	label	"Start Angle"

@@ -1,18 +1,8 @@
 {
     name	TexBifrostVVMix
     label	"Bifrost VV Mix"
-    parm {
-	name	"plugindata"
-	label	"Bifrost VV Mix"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexBifrostVVMix"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexBifrostVVMix" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Bifrost VV Mix" }
+    parmtag	{ vray_plugin "TexBifrostVVMix" }
     parm {
 	name	"velocity_mult"
 	label	"Velocity Mult"

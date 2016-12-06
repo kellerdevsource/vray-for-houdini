@@ -1,18 +1,8 @@
 {
     name	RenderChannelNormals
     label	"Normals"
-    parm {
-	name	"plugindata"
-	label	"Normals"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"Normals"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "RenderChannelNormals" }
-	parmtag	{ "vray_type" "RENDERCHANNEL" }
-    }
+    parmtag	{ spare_category "Normals" }
+    parmtag	{ vray_plugin "RenderChannelNormals" }
     parm {
 	name	"name"
 	label	"Name"

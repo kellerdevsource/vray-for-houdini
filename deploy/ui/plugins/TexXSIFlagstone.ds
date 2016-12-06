@@ -1,18 +1,8 @@
 {
     name	TexXSIFlagstone
     label	"XSI Flagstone"
-    parm {
-	name	"plugindata"
-	label	"XSI Flagstone"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexXSIFlagstone"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexXSIFlagstone" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "XSI Flagstone" }
+    parmtag	{ vray_plugin "TexXSIFlagstone" }
     parm {
 	name	"compatibility_with"
 	label	"Compatibility With"

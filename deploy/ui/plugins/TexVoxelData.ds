@@ -1,18 +1,8 @@
 {
     name	TexVoxelData
     label	"Voxel Data"
-    parm {
-	name	"plugindata"
-	label	"Voxel Data"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"Voxel data texture"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexVoxelData" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Voxel Data" }
+    parmtag	{ vray_plugin "TexVoxelData" }
     parm {
 	name	"interpolation"
 	label	"Interpolation"

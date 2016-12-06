@@ -1,18 +1,8 @@
 {
     name	TexMayaFluidTransformed
     label	"Maya Fluid Transformed"
-    parm {
-	name	"plugindata"
-	label	"Maya Fluid Transformed"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexMayaFluidTransformed"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexMayaFluidTransformed" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Maya Fluid Transformed" }
+    parmtag	{ vray_plugin "TexMayaFluidTransformed" }
     parm {
 	name	"fluid_value_scale"
 	label	"Fluid Value Scale"

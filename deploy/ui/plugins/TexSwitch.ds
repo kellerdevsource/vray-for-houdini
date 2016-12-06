@@ -1,19 +1,8 @@
 {
     name	TexSwitch
     label	"Switch"
-    parm {
-	name	"plugindata"
-	label	"Switch"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexSwitch"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TexSwitch" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Switch" }
+    parmtag	{ vray_plugin "TexSwitch" }
     parm {
 	name	"default_texture"
 	label	"Default Texture"

@@ -1,17 +1,8 @@
 {
     name	SettingsPtexBaker
     label	"Ptex Baker"
-    parm {
-	name	"plugindata"
-	label	"Ptex Baker"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "SettingsPtexBaker" }
-	parmtag	{ "vray_type" "SETTINGS" }
-    }
+    parmtag	{ spare_category "Ptex Baker" }
+    parmtag	{ vray_plugin "SettingsPtexBaker" }
     parm {
 	name	"texture_name"
 	label	"Texture Name"

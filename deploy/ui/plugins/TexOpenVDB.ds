@@ -1,18 +1,8 @@
 {
     name	TexOpenVDB
     label	"OpenVDB"
-    parm {
-	name	"plugindata"
-	label	"OpenVDB"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexOpenVDB"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexOpenVDB" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "OpenVDB" }
+    parmtag	{ vray_plugin "TexOpenVDB" }
     parm {
 	name	"file"
 	label	"File"

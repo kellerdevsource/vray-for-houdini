@@ -1,17 +1,8 @@
 {
     name	SettingsDMCSampler
     label	"DMC"
-    parm {
-	name	"SettingsDMCSampler_plugindata"
-	label	"DMC"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "SettingsDMCSampler" }
-	parmtag	{ "vray_type" "SETTINGS" }
-    }
+    parmtag	{ spare_category "DMC" }
+    parmtag	{ vray_plugin "SettingsDMCSampler" }
     parm {
 	name	"SettingsDMCSampler_time_dependent"
 	label	"Animated Noise Pattern"

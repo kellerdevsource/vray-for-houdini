@@ -1,19 +1,8 @@
 {
     name	Float3ToAColor
     label	"Float 3 To AColor"
-    parm {
-	name	"plugindata"
-	label	"Float 3 To AColor"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"Float3ToAColor"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "Float3ToAColor" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Float 3 To AColor" }
+    parmtag	{ vray_plugin "Float3ToAColor" }
     parm {
 	name	"float1"
 	label	"Float1"

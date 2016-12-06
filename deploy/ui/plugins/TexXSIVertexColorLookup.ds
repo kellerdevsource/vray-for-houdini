@@ -1,18 +1,8 @@
 {
     name	TexXSIVertexColorLookup
     label	"XSI Vertex Color Lookup"
-    parm {
-	name	"plugindata"
-	label	"XSI Vertex Color Lookup"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexXSIVertexColorLookup"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexXSIVertexColorLookup" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "XSI Vertex Color Lookup" }
+    parmtag	{ vray_plugin "TexXSIVertexColorLookup" }
     parm {
 	name	"channel"
 	label	"Channel"

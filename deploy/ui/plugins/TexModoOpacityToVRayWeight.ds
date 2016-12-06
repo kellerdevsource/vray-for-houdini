@@ -1,18 +1,8 @@
 {
     name	TexModoOpacityToVRayWeight
     label	"Modo Opacity To V Ray Weight"
-    parm {
-	name	"plugindata"
-	label	"Modo Opacity To V Ray Weight"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexModoOpacityToVRayWeight"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexModoOpacityToVRayWeight" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Modo Opacity To V Ray Weight" }
+    parmtag	{ vray_plugin "TexModoOpacityToVRayWeight" }
     parm {
 	name	"opacity"
 	label	"Opacity"

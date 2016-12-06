@@ -1,16 +1,6 @@
 {
     name	TrimmingRegion
-    label	"Trimming Region"
-    parm {
-	name	"plugindata"
-	label	"Trimming Region"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TrimmingRegion"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TrimmingRegion" }
-	parmtag	{ "vray_type" "MISC" }
-    }
+label	"Trimming Region"
+parmtag	{ spare_category "Trimming Region" }
+parmtag	{ vray_plugin "TrimmingRegion" }
 }

@@ -1,19 +1,8 @@
 {
     name	TexColorConstant
     label	"Color Constant"
-    parm {
-	name	"plugindata"
-	label	"Color Constant"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexColorConstant"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TexColorConstant" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Color Constant" }
+    parmtag	{ vray_plugin "TexColorConstant" }
     parm {
 	name	"color"
 	label	"Color"

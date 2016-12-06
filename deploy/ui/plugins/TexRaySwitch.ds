@@ -1,18 +1,8 @@
 {
     name	TexRaySwitch
     label	"Ray Switch"
-    parm {
-	name	"plugindata"
-	label	"Ray Switch"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexRaySwitch"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexRaySwitch" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Ray Switch" }
+    parmtag	{ vray_plugin "TexRaySwitch" }
     parm {
 	name	"default_texture"
 	label	"Default Tex"

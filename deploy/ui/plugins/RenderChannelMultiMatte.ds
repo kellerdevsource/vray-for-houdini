@@ -1,18 +1,8 @@
 {
     name	RenderChannelMultiMatte
     label	"MultiMatte"
-    parm {
-	name	"plugindata"
-	label	"MultiMatte"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"MultiMatte"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "RenderChannelMultiMatte" }
-	parmtag	{ "vray_type" "RENDERCHANNEL" }
-    }
+    parmtag	{ spare_category "MultiMatte" }
+    parmtag	{ vray_plugin "RenderChannelMultiMatte" }
     parm {
 	name	"name"
 	label	"Name"

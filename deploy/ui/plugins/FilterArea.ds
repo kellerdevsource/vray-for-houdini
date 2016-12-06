@@ -1,17 +1,8 @@
 {
     name	FilterArea
     label	"Area"
-    parm {
-	name	"plugindata"
-	label	"Area"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "FilterArea" }
-	parmtag	{ "vray_type" "SETTINGS" }
-    }
+    parmtag	{ spare_category "Area" }
+    parmtag	{ vray_plugin "FilterArea" }
     parm {
 	name	"size"
 	label	"Size"

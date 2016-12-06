@@ -1,18 +1,8 @@
 {
     name	MtlToon
     label	"Toon"
-    parm {
-	name	"plugindata"
-	label	"Toon"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"MtlToon"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "MtlToon" }
-	parmtag	{ "vray_type" "MATERIAL" }
-    }
+    parmtag	{ spare_category "Toon" }
+    parmtag	{ vray_plugin "MtlToon" }
     parm {
 	name	"lineWidth"
 	label	"Linewidth"

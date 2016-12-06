@@ -1,18 +1,8 @@
 {
     name	TexRamp
     label	"Ramp"
-    parm {
-	name	"plugindata"
-	label	"Ramp"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexRamp"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexRamp" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Ramp" }
+    parmtag	{ vray_plugin "TexRamp" }
     parm {
 	name	"compatibility_with"
 	label	"Compatibility With"

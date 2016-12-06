@@ -1,18 +1,8 @@
 {
     name	TexLut
     label	"Lut"
-    parm {
-	name	"plugindata"
-	label	"Lut"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexLut"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexLut" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Lut" }
+    parmtag	{ vray_plugin "TexLut" }
     parm {
 	name	"basemap"
 	label	"Basemap"

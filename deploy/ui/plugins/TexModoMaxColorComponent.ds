@@ -1,18 +1,8 @@
 {
     name	TexModoMaxColorComponent
     label	"Modo Max Color Component"
-    parm {
-	name	"plugindata"
-	label	"Modo Max Color Component"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexModoMaxColorComponent"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexModoMaxColorComponent" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Modo Max Color Component" }
+    parmtag	{ vray_plugin "TexModoMaxColorComponent" }
     parm {
 	name	"color1"
 	label	"Color1"

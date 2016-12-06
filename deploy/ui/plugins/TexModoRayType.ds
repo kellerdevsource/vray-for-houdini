@@ -1,16 +1,6 @@
 {
     name	TexModoRayType
-    label	"Modo Ray Type"
-    parm {
-	name	"plugindata"
-	label	"Modo Ray Type"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexModoRayType"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexModoRayType" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+label	"Modo Ray Type"
+parmtag	{ spare_category "Modo Ray Type" }
+parmtag	{ vray_plugin "TexModoRayType" }
 }

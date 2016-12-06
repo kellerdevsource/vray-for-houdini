@@ -1,19 +1,8 @@
 {
     name	TexRGBMultiplyMax
     label	"RGB Multiply Max"
-    parm {
-	name	"plugindata"
-	label	"RGB Multiply Max"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexRGBMultiplyMax"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TexRGBMultiplyMax" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "RGB Multiply Max" }
+    parmtag	{ vray_plugin "TexRGBMultiplyMax" }
     parm {
 	name	"color_a"
 	label	"Color A"

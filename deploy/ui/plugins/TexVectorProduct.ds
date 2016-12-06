@@ -1,19 +1,8 @@
 {
     name	TexVectorProduct
     label	"Vector Product"
-    parm {
-	name	"plugindata"
-	label	"Vector Product"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"Vector product"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TexVectorProduct" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Vector Product" }
+    parmtag	{ vray_plugin "TexVectorProduct" }
     parm {
 	name	"operation"
 	label	"Operation"

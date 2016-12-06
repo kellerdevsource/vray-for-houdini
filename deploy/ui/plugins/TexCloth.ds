@@ -1,17 +1,8 @@
 {
     name	TexCloth
     label	"Cloth"
-    parm {
-	name	"plugindata"
-	label	"Cloth"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexCloth" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Cloth" }
+    parmtag	{ vray_plugin "TexCloth" }
     parm {
 	name	"color_mult"
 	label	"Color Mult"

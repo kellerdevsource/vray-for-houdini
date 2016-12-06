@@ -1,17 +1,8 @@
 {
     name	TexWood
     label	"Wood"
-    parm {
-	name	"plugindata"
-	label	"Wood"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexWood" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Wood" }
+    parmtag	{ vray_plugin "TexWood" }
     parm {
 	name	"color_mult"
 	label	"Color Mult"

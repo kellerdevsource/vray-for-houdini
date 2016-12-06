@@ -1,18 +1,8 @@
 {
     name	TexXSIVein
     label	"XSI Vein"
-    parm {
-	name	"plugindata"
-	label	"XSI Vein"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexXSIVein"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexXSIVein" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "XSI Vein" }
+    parmtag	{ vray_plugin "TexXSIVein" }
     parm {
 	name	"compatibility_with"
 	label	"Compatibility With"

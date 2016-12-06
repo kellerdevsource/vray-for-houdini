@@ -1,18 +1,8 @@
 {
     name	TexXSIGradient
     label	"XSI Gradient"
-    parm {
-	name	"plugindata"
-	label	"XSI Gradient"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexXSIGradient"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexXSIGradient" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "XSI Gradient" }
+    parmtag	{ vray_plugin "TexXSIGradient" }
     parm {
 	name	"compatibility_with"
 	label	"Compatibility With"

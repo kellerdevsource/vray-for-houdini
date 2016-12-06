@@ -1,17 +1,8 @@
 {
     name	TexFalloff
     label	"Falloff"
-    parm {
-	name	"plugindata"
-	label	"Falloff"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexFalloff" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Falloff" }
+    parmtag	{ vray_plugin "TexFalloff" }
     parm {
 	name	"compatibility_with"
 	label	"Compatibility With"

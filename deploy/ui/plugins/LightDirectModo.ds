@@ -1,18 +1,8 @@
 {
     name	LightDirectModo
     label	"Light Direct Modo"
-    parm {
-	name	"plugindata"
-	label	"Light Direct Modo"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"LightDirectModo"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "LightDirectModo" }
-	parmtag	{ "vray_type" "LIGHT" }
-    }
+    parmtag	{ spare_category "Light Direct Modo" }
+    parmtag	{ vray_plugin "LightDirectModo" }
     parm {
 	name	"enabled"
 	label	"Enabled"

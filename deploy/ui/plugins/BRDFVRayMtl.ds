@@ -1,18 +1,8 @@
 {
     name	BRDFVRayMtl
     label	"VRayMtl"
-    parm {
-	name	"plugindata"
-	label	"VRayMtl"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"Standart V-Ray BRDF"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "BRDFVRayMtl" }
-	parmtag	{ "vray_type" "BRDF" }
-    }
+    parmtag	{ spare_category "VRayMtl" }
+    parmtag	{ vray_plugin "BRDFVRayMtl" }
     parm {
 	name	"opacity"
 	label	"Opacity"

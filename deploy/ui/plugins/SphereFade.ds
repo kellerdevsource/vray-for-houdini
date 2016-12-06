@@ -1,17 +1,8 @@
 {
     name	SphereFade
     label	"Sphere Fade"
-    parm {
-	name	"plugindata"
-	label	"Sphere Fade"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "SphereFade" }
-	parmtag	{ "vray_type" "EFFECT" }
-    }
+    parmtag	{ spare_category "Sphere Fade" }
+    parmtag	{ vray_plugin "SphereFade" }
     parm {
 	name	"empty_color"
 	label	"Empty Color"

@@ -1,18 +1,8 @@
 {
     name	TexStencil
     label	"Stencil"
-    parm {
-	name	"plugindata"
-	label	"Stencil"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"Stencil texture"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexStencil" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Stencil" }
+    parmtag	{ vray_plugin "TexStencil" }
     parm {
 	name	"compatibility_with"
 	label	"Compatibility With"

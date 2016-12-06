@@ -1,18 +1,8 @@
 {
     name	PhxShaderFoam
     label	"Phx Shader Foam"
-    parm {
-	name	"plugindata"
-	label	"Phx Shader Foam"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"PhxShaderFoam"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "PhxShaderFoam" }
-	parmtag	{ "vray_type" "MISC" }
-    }
+    parmtag	{ spare_category "Phx Shader Foam" }
+    parmtag	{ vray_plugin "PhxShaderFoam" }
     parm {
 	name	"enabled"
 	label	"Enabled"

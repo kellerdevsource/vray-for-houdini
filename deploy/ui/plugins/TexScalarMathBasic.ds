@@ -1,18 +1,8 @@
 {
     name	TexScalarMathBasic
     label	"Scalar Math Basic"
-    parm {
-	name	"plugindata"
-	label	"Scalar Math Basic"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexScalarMathBasic"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexScalarMathBasic" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Scalar Math Basic" }
+    parmtag	{ vray_plugin "TexScalarMathBasic" }
     parm {
 	name	"op"
 	label	"Op"

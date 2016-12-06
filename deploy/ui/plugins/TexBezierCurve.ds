@@ -1,18 +1,8 @@
 {
     name	TexBezierCurve
     label	"Bezier Curve"
-    parm {
-	name	"plugindata"
-	label	"Bezier Curve"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexBezierCurve"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexBezierCurve" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Bezier Curve" }
+    parmtag	{ vray_plugin "TexBezierCurve" }
     parm {
 	name	"input_float"
 	label	"Input Float"

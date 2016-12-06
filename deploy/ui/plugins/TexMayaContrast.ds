@@ -1,17 +1,8 @@
 {
     name	TexMayaContrast
     label	"MayaContrast"
-    parm {
-	name	"plugindata"
-	label	"MayaContrast"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexMayaContrast" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "MayaContrast" }
+    parmtag	{ vray_plugin "TexMayaContrast" }
     parm {
 	name	"value"
 	label	"Value"

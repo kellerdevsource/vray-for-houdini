@@ -1,19 +1,8 @@
 {
     name	TexIntToFloat
     label	"Int To Float"
-    parm {
-	name	"plugindata"
-	label	"Int To Float"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexIntToFloat"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TexIntToFloat" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Int To Float" }
+    parmtag	{ vray_plugin "TexIntToFloat" }
     parm {
 	name	"input"
 	label	"Input"

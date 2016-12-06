@@ -1,18 +1,8 @@
 {
     name	CameraPhysical
     label	"Physical Camera"
-    parm {
-	name	"plugindata"
-	label	"Physical Camera"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"V-Ray physical camera settings"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "CameraPhysical" }
-	parmtag	{ "vray_type" "CAMERA" }
-    }
+    parmtag	{ spare_category "Physical Camera" }
+    parmtag	{ vray_plugin "CameraPhysical" }
     parm {
 	name	"type"
 	label	"Type"

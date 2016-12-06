@@ -1,18 +1,8 @@
 {
     name	TexDisplacacementRestrict
     label	"Displacacement Restrict"
-    parm {
-	name	"plugindata"
-	label	"Displacacement Restrict"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexDisplacacementRestrict"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexDisplacacementRestrict" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Displacacement Restrict" }
+    parmtag	{ vray_plugin "TexDisplacacementRestrict" }
     parm {
 	name	"input_tex"
 	label	"Input Tex"

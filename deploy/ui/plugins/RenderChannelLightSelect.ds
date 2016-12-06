@@ -1,17 +1,8 @@
 {
     name	RenderChannelLightSelect
     label	"Light Select"
-    parm {
-	name	"plugindata"
-	label	"Light Select"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "RenderChannelLightSelect" }
-	parmtag	{ "vray_type" "RENDERCHANNEL" }
-    }
+    parmtag	{ spare_category "Light Select" }
+    parmtag	{ vray_plugin "RenderChannelLightSelect" }
     parm {
 	name	"name"
 	label	"Name"

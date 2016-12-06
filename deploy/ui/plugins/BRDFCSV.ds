@@ -1,17 +1,8 @@
 {
     name	BRDFCSV
     label	"CSV"
-    parm {
-	name	"plugindata"
-	label	"CSV"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "BRDFCSV" }
-	parmtag	{ "vray_type" "BRDF" }
-    }
+    parmtag	{ spare_category "CSV" }
+    parmtag	{ vray_plugin "BRDFCSV" }
     parm {
 	name	"transparency"
 	label	"Transparency"

@@ -1,18 +1,8 @@
 {
     name	Instancer
     label	"Instancer"
-    parm {
-	name	"plugindata"
-	label	"Instancer"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"Instancer"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "Instancer" }
-	parmtag	{ "vray_type" "GEOMETRY" }
-    }
+    parmtag	{ spare_category "Instancer" }
+    parmtag	{ vray_plugin "Instancer" }
     parm {
 	name	"nsamples"
 	label	"Nsamples"

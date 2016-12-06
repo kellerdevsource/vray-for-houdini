@@ -1,18 +1,8 @@
 {
     name	Mtl2Sided
     label	"Two Sided"
-    parm {
-	name	"plugindata"
-	label	"Two Sided"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"Mtl2Sided settings"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "Mtl2Sided" }
-	parmtag	{ "vray_type" "MATERIAL" }
-    }
+    parmtag	{ spare_category "Two Sided" }
+    parmtag	{ vray_plugin "Mtl2Sided" }
     parm {
 	name	"translucency_tex"
 	label	"Translucency Texture"

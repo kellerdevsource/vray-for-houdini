@@ -1,17 +1,8 @@
 {
     name	TexBerconWood
     label	"Bercon Wood"
-    parm {
-	name	"plugindata"
-	label	"Bercon Wood"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexBerconWood" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Bercon Wood" }
+    parmtag	{ vray_plugin "TexBerconWood" }
     parm {
 	name	"color_mult"
 	label	"Color Mult"

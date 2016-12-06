@@ -1,17 +1,6 @@
 {
     name	TexSwitchTransform
-    label	"Switch Transform"
-    parm {
-	name	"plugindata"
-	label	"Switch Transform"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexSwitchTransform"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TexSwitchTransform" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+label	"Switch Transform"
+parmtag	{ spare_category "Switch Transform" }
+parmtag	{ vray_plugin "TexSwitchTransform" }
 }

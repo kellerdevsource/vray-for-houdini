@@ -1,17 +1,8 @@
 {
     name	SphereFadeGizmo
     label	"Sphere Fade Gizmo"
-    parm {
-	name	"plugindata"
-	label	"Sphere Fade Gizmo"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "SphereFadeGizmo" }
-	parmtag	{ "vray_type" "EFFECT" }
-    }
+    parmtag	{ spare_category "Sphere Fade Gizmo" }
+    parmtag	{ vray_plugin "SphereFadeGizmo" }
     parm {
 	name	"radius"
 	label	"Radius"

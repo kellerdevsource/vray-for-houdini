@@ -1,18 +1,8 @@
 {
     name	TexModoChanModLogic
     label	"Modo Chan Mod Logic"
-    parm {
-	name	"plugindata"
-	label	"Modo Chan Mod Logic"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexModoChanModLogic"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexModoChanModLogic" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Modo Chan Mod Logic" }
+    parmtag	{ vray_plugin "TexModoChanModLogic" }
     parm {
 	name	"op"
 	label	"Op"

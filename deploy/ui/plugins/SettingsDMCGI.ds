@@ -1,17 +1,8 @@
 {
     name	SettingsDMCGI
     label	"Brute Force"
-    parm {
-	name	"SettingsDMCGI_plugindata"
-	label	"Brute Force"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "SettingsDMCGI" }
-	parmtag	{ "vray_type" "SETTINGS" }
-    }
+    parmtag	{ spare_category "Brute Force" }
+    parmtag	{ vray_plugin "SettingsDMCGI" }
     parm {
 	name	"SettingsDMCGI_subdivs"
 	label	"Subdivs"

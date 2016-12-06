@@ -1,17 +1,8 @@
 {
     name	TexDirt
     label	"Dirt"
-    parm {
-	name	"plugindata"
-	label	"Dirt"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexDirt" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Dirt" }
+    parmtag	{ vray_plugin "TexDirt" }
     parm {
 	name	"white_color"
 	label	"Unoccluded Color"

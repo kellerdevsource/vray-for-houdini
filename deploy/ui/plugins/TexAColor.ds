@@ -1,18 +1,8 @@
 {
     name	TexAColor
     label	"Color"
-    parm {
-	name	"plugindata"
-	label	"Color"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"Just a color"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexAColor" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Color" }
+    parmtag	{ vray_plugin "TexAColor" }
     parm {
 	name	"texture"
 	label	"Color"

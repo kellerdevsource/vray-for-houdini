@@ -1,18 +1,8 @@
 {
     name	VolumeScatterFog
     label	"Volume Scatter Fog"
-    parm {
-	name	"plugindata"
-	label	"Volume Scatter Fog"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"VolumeScatterFog"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "VolumeScatterFog" }
-	parmtag	{ "vray_type" "EFFECT" }
-    }
+    parmtag	{ spare_category "Volume Scatter Fog" }
+    parmtag	{ vray_plugin "VolumeScatterFog" }
     parm {
 	name	"emission"
 	label	"Emission"

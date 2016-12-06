@@ -1,18 +1,8 @@
 {
     name	TexMix
     label	"Mix"
-    parm {
-	name	"plugindata"
-	label	"Mix"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TexMix" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Mix" }
+    parmtag	{ vray_plugin "TexMix" }
     parm {
 	name	"compatibility_with"
 	label	"Compatibility With"

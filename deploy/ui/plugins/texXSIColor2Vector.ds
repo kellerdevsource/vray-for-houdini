@@ -1,18 +1,8 @@
 {
     name	texXSIColor2Vector
     label	"XSI Color 2 Vector"
-    parm {
-	name	"plugindata"
-	label	"XSI Color 2 Vector"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"texXSIColor2Vector"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "texXSIColor2Vector" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "XSI Color 2 Vector" }
+    parmtag	{ vray_plugin "texXSIColor2Vector" }
     parm {
 	name	"compatibility_with"
 	label	"Compatibility With"

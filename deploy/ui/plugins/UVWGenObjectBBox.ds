@@ -1,17 +1,8 @@
 {
     name	UVWGenObjectBBox
     label	"Bounding Box"
-    parm {
-	name	"plugindata"
-	label	"Bounding Box"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "UVWGenObjectBBox" }
-	parmtag	{ "vray_type" "UVWGEN" }
-    }
+    parmtag	{ spare_category "Bounding Box" }
+    parmtag	{ vray_plugin "UVWGenObjectBBox" }
     parm {
 	name	"nsamples"
 	label	"Nsamples"

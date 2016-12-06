@@ -1,18 +1,8 @@
 {
     name	TexUserColor
     label	"User Color"
-    parm {
-	name	"plugindata"
-	label	"User Color"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"User color"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexUserColor" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "User Color" }
+    parmtag	{ vray_plugin "TexUserColor" }
     parm {
 	name	"default_value"
 	label	"Default Value"

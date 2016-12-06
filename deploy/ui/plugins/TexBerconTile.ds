@@ -1,18 +1,8 @@
 {
     name	TexBerconTile
     label	"Bercon Tile"
-    parm {
-	name	"plugindata"
-	label	"Bercon Tile"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexBerconTile"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexBerconTile" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Bercon Tile" }
+    parmtag	{ vray_plugin "TexBerconTile" }
     parm {
 	name	"compatibility_with"
 	label	"Compatibility With"

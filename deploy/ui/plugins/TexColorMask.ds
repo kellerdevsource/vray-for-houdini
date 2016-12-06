@@ -1,19 +1,8 @@
 {
     name	TexColorMask
     label	"Color Mask"
-    parm {
-	name	"plugindata"
-	label	"Color Mask"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexColorMask"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TexColorMask" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Color Mask" }
+    parmtag	{ vray_plugin "TexColorMask" }
     parm {
 	name	"in_color"
 	label	"In Color"

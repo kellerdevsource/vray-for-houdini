@@ -1,17 +1,8 @@
 {
     name	SettingsCaustics
     label	"Caustics"
-    parm {
-	name	"SettingsCaustics_plugindata"
-	label	"Caustics"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "SettingsCaustics" }
-	parmtag	{ "vray_type" "SETTINGS" }
-    }
+    parmtag	{ spare_category "Caustics" }
+    parmtag	{ vray_plugin "SettingsCaustics" }
     parm {
 	name	"SettingsCaustics_on"
 	label	"Enable Caustics"

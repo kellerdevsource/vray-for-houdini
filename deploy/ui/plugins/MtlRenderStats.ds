@@ -1,17 +1,8 @@
 {
     name	MtlRenderStats
     label	"Render Stats"
-    parm {
-	name	"plugindata"
-	label	"Render Stats"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "MtlRenderStats" }
-	parmtag	{ "vray_type" "MATERIAL" }
-    }
+    parmtag	{ spare_category "Render Stats" }
+    parmtag	{ vray_plugin "MtlRenderStats" }
     parm {
 	name	"camera_visibility"
 	label	"Camera Visibility"

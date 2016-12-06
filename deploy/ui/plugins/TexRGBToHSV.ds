@@ -1,19 +1,8 @@
 {
     name	TexRGBToHSV
     label	"RGB To HSV"
-    parm {
-	name	"plugindata"
-	label	"RGB To HSV"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexRGBToHSV"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TexRGBToHSV" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "RGB To HSV" }
+    parmtag	{ vray_plugin "TexRGBToHSV" }
     parm {
 	name	"inRgb"
 	label	"Inrgb"

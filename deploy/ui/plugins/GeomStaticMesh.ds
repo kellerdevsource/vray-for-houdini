@@ -1,18 +1,8 @@
 {
     name	GeomStaticMesh
     label	"Mesh"
-    parm {
-	name	"plugindata"
-	label	"Mesh"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"Mesh settings"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "GeomStaticMesh" }
-	parmtag	{ "vray_type" "GEOMETRY" }
-    }
+    parmtag	{ spare_category "Mesh" }
+    parmtag	{ vray_plugin "GeomStaticMesh" }
     parm {
 	name	"weld_threshold"
 	label	"Weld Threshold"

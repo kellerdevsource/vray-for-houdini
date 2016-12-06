@@ -1,17 +1,8 @@
 {
     name	UVWGenPlanarWorld
     label	"World"
-    parm {
-	name	"plugindata"
-	label	"World"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "UVWGenPlanarWorld" }
-	parmtag	{ "vray_type" "UVWGEN" }
-    }
+    parmtag	{ spare_category "World" }
+    parmtag	{ vray_plugin "UVWGenPlanarWorld" }
     parm {
 	name	"nsamples"
 	label	"Nsamples"

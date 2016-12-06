@@ -1,18 +1,8 @@
 {
     name	TexModoBlendLayersScalar
     label	"Modo Blend Layers Scalar"
-    parm {
-	name	"plugindata"
-	label	"Modo Blend Layers Scalar"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexModoBlendLayersScalar"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexModoBlendLayersScalar" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Modo Blend Layers Scalar" }
+    parmtag	{ vray_plugin "TexModoBlendLayersScalar" }
     parm {
 	name	"opacity"
 	label	"Opacity"

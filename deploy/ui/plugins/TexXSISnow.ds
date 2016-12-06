@@ -1,18 +1,8 @@
 {
     name	TexXSISnow
     label	"XSI Snow"
-    parm {
-	name	"plugindata"
-	label	"XSI Snow"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexXSISnow"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexXSISnow" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "XSI Snow" }
+    parmtag	{ vray_plugin "TexXSISnow" }
     parm {
 	name	"compatibility_with"
 	label	"Compatibility With"

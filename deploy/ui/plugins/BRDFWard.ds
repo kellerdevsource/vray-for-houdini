@@ -1,18 +1,8 @@
 {
     name	BRDFWard
     label	"Ward"
-    parm {
-	name	"plugindata"
-	label	"Ward"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"Ward reflection shader"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "BRDFWard" }
-	parmtag	{ "vray_type" "BRDF" }
-    }
+    parmtag	{ spare_category "Ward" }
+    parmtag	{ vray_plugin "BRDFWard" }
     parm {
 	name	"color"
 	label	"Color"

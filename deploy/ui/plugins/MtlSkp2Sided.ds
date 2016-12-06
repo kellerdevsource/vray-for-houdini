@@ -1,18 +1,8 @@
 {
     name	MtlSkp2Sided
     label	"Mtl Skp 2 Sided"
-    parm {
-	name	"plugindata"
-	label	"Mtl Skp 2 Sided"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"MtlSkp2Sided"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "MtlSkp2Sided" }
-	parmtag	{ "vray_type" "MATERIAL" }
-    }
+    parmtag	{ spare_category "Mtl Skp 2 Sided" }
+    parmtag	{ vray_plugin "MtlSkp2Sided" }
     parm {
 	name	"force_1sided"
 	label	"Force 1sided"

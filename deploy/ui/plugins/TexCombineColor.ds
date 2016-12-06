@@ -1,18 +1,8 @@
 {
     name	TexCombineColor
     label	"Combine Color"
-    parm {
-	name	"plugindata"
-	label	"Combine Color"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TexCombineColor" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Combine Color" }
+    parmtag	{ vray_plugin "TexCombineColor" }
     parm {
 	name	"color"
 	label	"Color"

@@ -1,18 +1,8 @@
 {
     name	TexScalarExponential
     label	"Scalar Exponential"
-    parm {
-	name	"plugindata"
-	label	"Scalar Exponential"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexScalarExponential"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexScalarExponential" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Scalar Exponential" }
+    parmtag	{ vray_plugin "TexScalarExponential" }
     parm {
 	name	"input"
 	label	"Input"

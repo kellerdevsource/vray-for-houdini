@@ -1,18 +1,8 @@
 {
     name	VRayClipper
     label	"V Ray Clipper"
-    parm {
-	name	"plugindata"
-	label	"V Ray Clipper"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"VRayClipper"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "VRayClipper" }
-	parmtag	{ "vray_type" "OBJECT" }
-    }
+    parmtag	{ spare_category "V Ray Clipper" }
+    parmtag	{ vray_plugin "VRayClipper" }
     parm {
 	name	"enabled"
 	label	"Enabled"

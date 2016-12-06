@@ -1,18 +1,8 @@
 {
     name	SettingsVFBChannels
     label	"Settings VFB Channels"
-    parm {
-	name	"plugindata"
-	label	"Settings VFB Channels"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"SettingsVFBChannels"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "SettingsVFBChannels" }
-	parmtag	{ "vray_type" "RENDERCHANNEL" }
-    }
+    parmtag	{ spare_category "Settings VFB Channels" }
+    parmtag	{ vray_plugin "SettingsVFBChannels" }
     parm {
 	name	"zdepth_black"
 	label	"Zdepth Black"

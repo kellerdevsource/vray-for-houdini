@@ -1,18 +1,8 @@
 {
     name	BitmapBuffer
     label	"Image File"
-    parm {
-	name	"plugindata"
-	label	"Image File"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"Image File"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "BitmapBuffer" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Image File" }
+    parmtag	{ vray_plugin "BitmapBuffer" }
     parm {
 	name	"filter_type"
 	label	"Filter Type"

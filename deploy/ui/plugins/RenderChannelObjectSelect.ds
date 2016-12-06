@@ -1,17 +1,8 @@
 {
     name	RenderChannelObjectSelect
     label	"Object Select"
-    parm {
-	name	"plugindata"
-	label	"Object Select"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "RenderChannelObjectSelect" }
-	parmtag	{ "vray_type" "RENDERCHANNEL" }
-    }
+    parmtag	{ spare_category "Object Select" }
+    parmtag	{ vray_plugin "RenderChannelObjectSelect" }
     parm {
 	name	"name"
 	label	"Name"

@@ -1,19 +1,8 @@
 {
     name	TexColor8Mix
     label	"Color 8 Mix"
-    parm {
-	name	"plugindata"
-	label	"Color 8 Mix"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexColor8Mix"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TexColor8Mix" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Color 8 Mix" }
+    parmtag	{ vray_plugin "TexColor8Mix" }
     parm {
 	name	"compatibility_with"
 	label	"Compatibility With"

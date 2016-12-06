@@ -1,18 +1,8 @@
 {
     name	BRDFSkinComplex
     label	"Skin"
-    parm {
-	name	"plugindata"
-	label	"Skin"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"Skin shader"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "BRDFSkinComplex" }
-	parmtag	{ "vray_type" "BRDF" }
-    }
+    parmtag	{ spare_category "Skin" }
+    parmtag	{ vray_plugin "BRDFSkinComplex" }
     parm {
 	name	"scale"
 	label	"Scale"

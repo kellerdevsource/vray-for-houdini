@@ -1,17 +1,6 @@
 {
     name	TexSwitchMatrix
-    label	"Switch Matrix"
-    parm {
-	name	"plugindata"
-	label	"Switch Matrix"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexSwitchMatrix"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TexSwitchMatrix" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+label	"Switch Matrix"
+parmtag	{ spare_category "Switch Matrix" }
+parmtag	{ vray_plugin "TexSwitchMatrix" }
 }

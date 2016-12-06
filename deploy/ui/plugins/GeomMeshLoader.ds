@@ -1,18 +1,8 @@
 {
     name	GeomMeshLoader
     label	"Geom Mesh Loader"
-    parm {
-	name	"plugindata"
-	label	"Geom Mesh Loader"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"GeomMeshLoader"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "GeomMeshLoader" }
-	parmtag	{ "vray_type" "GEOMETRY" }
-    }
+    parmtag	{ spare_category "Geom Mesh Loader" }
+    parmtag	{ vray_plugin "GeomMeshLoader" }
     parm {
 	name	"sphere_size"
 	label	"Sphere Size"

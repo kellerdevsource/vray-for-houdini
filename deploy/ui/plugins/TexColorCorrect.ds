@@ -1,19 +1,8 @@
 {
     name	TexColorCorrect
     label	"Color Correct"
-    parm {
-	name	"plugindata"
-	label	"Color Correct"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexColorCorrect"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TexColorCorrect" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Color Correct" }
+    parmtag	{ vray_plugin "TexColorCorrect" }
     parm {
 	name	"in_color"
 	label	"In Color"

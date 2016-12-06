@@ -1,17 +1,8 @@
 {
     name	LightDirect
     label	"Direct"
-    parm {
-	name	"plugindata"
-	label	"Direct"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "LightDirect" }
-	parmtag	{ "vray_type" "LIGHT" }
-    }
+    parmtag	{ spare_category "Direct" }
+    parmtag	{ vray_plugin "LightDirect" }
     parm {
 	name	"enabled"
 	label	"Enabled"

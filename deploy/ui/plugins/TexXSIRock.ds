@@ -1,18 +1,8 @@
 {
     name	TexXSIRock
     label	"XSI Rock"
-    parm {
-	name	"plugindata"
-	label	"XSI Rock"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexXSIRock"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexXSIRock" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "XSI Rock" }
+    parmtag	{ vray_plugin "TexXSIRock" }
     parm {
 	name	"compatibility_with"
 	label	"Compatibility With"

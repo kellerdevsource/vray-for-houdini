@@ -1,16 +1,6 @@
 {
     name	TexVRayFurSampler
-    label	"V Ray Fur Sampler"
-    parm {
-	name	"plugindata"
-	label	"V Ray Fur Sampler"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexVRayFurSampler"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexVRayFurSampler" }
-	parmtag	{ "vray_type" "MISC" }
-    }
+label	"V Ray Fur Sampler"
+parmtag	{ spare_category "V Ray Fur Sampler" }
+parmtag	{ vray_plugin "TexVRayFurSampler" }
 }

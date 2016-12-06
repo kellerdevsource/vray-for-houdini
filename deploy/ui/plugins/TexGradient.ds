@@ -1,17 +1,8 @@
 {
     name	TexGradient
     label	"Gradient"
-    parm {
-	name	"plugindata"
-	label	"Gradient"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexGradient" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Gradient" }
+    parmtag	{ vray_plugin "TexGradient" }
     parm {
 	name	"color_mult"
 	label	"Color Mult"

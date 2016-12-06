@@ -1,18 +1,8 @@
 {
     name	TexParticleSampler
     label	"Particle Sampler"
-    parm {
-	name	"plugindata"
-	label	"Particle Sampler"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexParticleSampler"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexParticleSampler" }
-	parmtag	{ "vray_type" "MISC" }
-    }
+    parmtag	{ spare_category "Particle Sampler" }
+    parmtag	{ vray_plugin "TexParticleSampler" }
     parm {
 	name	"def_color_tex"
 	label	"Def Color Tex"

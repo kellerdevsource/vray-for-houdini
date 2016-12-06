@@ -1,18 +1,8 @@
 {
     name	TexModoExtractColor
     label	"Modo Extract Color"
-    parm {
-	name	"plugindata"
-	label	"Modo Extract Color"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexModoExtractColor"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexModoExtractColor" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Modo Extract Color" }
+    parmtag	{ vray_plugin "TexModoExtractColor" }
     parm {
 	name	"texture"
 	label	"Texture"

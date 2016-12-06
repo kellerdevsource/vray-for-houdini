@@ -1,17 +1,8 @@
 {
     name	MtlObjBBox
     label	"Object Bounding"
-    parm {
-	name	"plugindata"
-	label	"Object Bounding"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "MtlObjBBox" }
-	parmtag	{ "vray_type" "MATERIAL" }
-    }
+    parmtag	{ spare_category "Object Bounding" }
+    parmtag	{ vray_plugin "MtlObjBBox" }
     parm {
 	name	"bbox_min"
 	label	"Bbox Min"

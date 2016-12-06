@@ -1,18 +1,8 @@
 {
     name	RenderChannelDenoiser
     label	"Denoiser"
-    parm {
-	name	"plugindata"
-	label	"Denoiser"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"RenderChannelDenoiser"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "RenderChannelDenoiser" }
-	parmtag	{ "vray_type" "RENDERCHANNEL" }
-    }
+    parmtag	{ spare_category "Denoiser" }
+    parmtag	{ vray_plugin "RenderChannelDenoiser" }
     parm {
 	name	"name"
 	label	"Name"

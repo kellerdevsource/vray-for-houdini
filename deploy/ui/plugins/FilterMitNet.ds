@@ -1,17 +1,8 @@
 {
     name	FilterMitNet
     label	"Mitchell-Netravali"
-    parm {
-	name	"plugindata"
-	label	"Mitchell-Netravali"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "FilterMitNet" }
-	parmtag	{ "vray_type" "SETTINGS" }
-    }
+    parmtag	{ spare_category "Mitchell-Netravali" }
+    parmtag	{ vray_plugin "FilterMitNet" }
     parm {
 	name	"size"
 	label	"Size"

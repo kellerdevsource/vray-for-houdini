@@ -1,17 +1,8 @@
 {
     name	SettingsLightCache
     label	"Light Cache"
-    parm {
-	name	"SettingsLightCache_plugindata"
-	label	"Light Cache"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "SettingsLightCache" }
-	parmtag	{ "vray_type" "SETTINGS" }
-    }
+    parmtag	{ spare_category "Light Cache" }
+    parmtag	{ vray_plugin "SettingsLightCache" }
     parm {
 	name	"SettingsLightCache_subdivs"
 	label	"Subdivs"

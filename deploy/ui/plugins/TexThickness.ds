@@ -1,18 +1,8 @@
 {
     name	TexThickness
     label	"Thickness"
-    parm {
-	name	"plugindata"
-	label	"Thickness"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexThickness"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexThickness" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Thickness" }
+    parmtag	{ vray_plugin "TexThickness" }
     parm {
 	name	"thickness_mult"
 	label	"Thickness Mult"

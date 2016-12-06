@@ -1,18 +1,8 @@
 {
     name	TexXSIWood
     label	"XSI Wood"
-    parm {
-	name	"plugindata"
-	label	"XSI Wood"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexXSIWood"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexXSIWood" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "XSI Wood" }
+    parmtag	{ vray_plugin "TexXSIWood" }
     parm {
 	name	"compatibility_with"
 	label	"Compatibility With"

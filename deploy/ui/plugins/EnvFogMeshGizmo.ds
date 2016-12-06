@@ -1,18 +1,8 @@
 {
     name	EnvFogMeshGizmo
     label	"Fog Gizmo"
-    parm {
-	name	"plugindata"
-	label	"Fog Gizmo"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"Simulation domain"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "EnvFogMeshGizmo" }
-	parmtag	{ "vray_type" "EFFECT" }
-    }
+    parmtag	{ spare_category "Fog Gizmo" }
+    parmtag	{ vray_plugin "EnvFogMeshGizmo" }
     parm {
 	name	"fade_out_radius"
 	label	"Fade Out Radius"

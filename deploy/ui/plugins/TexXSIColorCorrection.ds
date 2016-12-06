@@ -1,18 +1,8 @@
 {
     name	TexXSIColorCorrection
     label	"XSI Color Correction"
-    parm {
-	name	"plugindata"
-	label	"XSI Color Correction"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexXSIColorCorrection"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexXSIColorCorrection" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "XSI Color Correction" }
+    parmtag	{ vray_plugin "TexXSIColorCorrection" }
     parm {
 	name	"compatibility_with"
 	label	"Compatibility With"

@@ -1,17 +1,8 @@
 {
     name	BRDFCookTorrance
     label	"Cook Torrance"
-    parm {
-	name	"plugindata"
-	label	"Cook Torrance"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "BRDFCookTorrance" }
-	parmtag	{ "vray_type" "BRDF" }
-    }
+    parmtag	{ spare_category "Cook Torrance" }
+    parmtag	{ vray_plugin "BRDFCookTorrance" }
     parm {
 	name	"color"
 	label	"Color"

@@ -1,17 +1,8 @@
 {
     name	FilterBox
     label	"Box"
-    parm {
-	name	"plugindata"
-	label	"Box"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "FilterBox" }
-	parmtag	{ "vray_type" "SETTINGS" }
-    }
+    parmtag	{ spare_category "Box" }
+    parmtag	{ vray_plugin "FilterBox" }
     parm {
 	name	"size"
 	label	"Size"

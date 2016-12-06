@@ -1,18 +1,8 @@
 {
     name	TexInt
     label	"Int"
-    parm {
-	name	"plugindata"
-	label	"Int"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexInt"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexInt" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Int" }
+    parmtag	{ vray_plugin "TexInt" }
     parm {
 	name	"input"
 	label	"Input"

@@ -1,18 +1,8 @@
 {
     name	BRDFReflection
     label	"Reflection"
-    parm {
-	name	"plugindata"
-	label	"Reflection"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"BRDFReflection"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "BRDFReflection" }
-	parmtag	{ "vray_type" "BRDF" }
-    }
+    parmtag	{ spare_category "Reflection" }
+    parmtag	{ vray_plugin "BRDFReflection" }
     parm {
 	name	"color"
 	label	"Color"

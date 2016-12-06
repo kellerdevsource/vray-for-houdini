@@ -1,18 +1,8 @@
 {
     name	MtlDiffuse
     label	"Diffuse"
-    parm {
-	name	"plugindata"
-	label	"Diffuse"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"MtlDiffuse"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "MtlDiffuse" }
-	parmtag	{ "vray_type" "MATERIAL" }
-    }
+    parmtag	{ spare_category "Diffuse" }
+    parmtag	{ vray_plugin "MtlDiffuse" }
     parm {
 	name	"diffuse"
 	label	"Diffuse"

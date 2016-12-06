@@ -1,19 +1,8 @@
 {
     name	TexSwitchInt
     label	"Switch Int"
-    parm {
-	name	"plugindata"
-	label	"Switch Int"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexSwitchInt"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TexSwitchInt" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Switch Int" }
+    parmtag	{ vray_plugin "TexSwitchInt" }
     parm {
 	name	"default"
 	label	"Default"

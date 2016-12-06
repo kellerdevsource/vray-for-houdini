@@ -1,17 +1,8 @@
 {
     name	SettingsOutput
     label	"Output"
-    parm {
-	name	"SettingsOutput_plugindata"
-	label	"Output"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "SettingsOutput" }
-	parmtag	{ "vray_type" "SETTINGS" }
-    }
+    parmtag	{ spare_category "Output" }
+    parmtag	{ vray_plugin "SettingsOutput" }
     parm {
 	name	"SettingsOutput_img_width"
 	label	"Image Width"

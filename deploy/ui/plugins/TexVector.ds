@@ -1,19 +1,8 @@
 {
     name	TexVector
     label	"Vector To Texture"
-    parm {
-	name	"plugindata"
-	label	"Vector To Texture"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"Vector to vector texture"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TexVector" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Vector To Texture" }
+    parmtag	{ vray_plugin "TexVector" }
     parm {
 	name	"vector"
 	label	"Vector"

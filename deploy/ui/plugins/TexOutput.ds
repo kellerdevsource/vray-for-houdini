@@ -1,18 +1,8 @@
 {
     name	TexOutput
     label	"Output"
-    parm {
-	name	"plugindata"
-	label	"Output"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TexOutput" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Output" }
+    parmtag	{ vray_plugin "TexOutput" }
     parm {
 	name	"compatibility_with"
 	label	"Compatibility With"

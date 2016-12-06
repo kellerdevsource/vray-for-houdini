@@ -1,18 +1,8 @@
 {
     name	CameraFilmTransform
     label	"Camera Film Transform"
-    parm {
-	name	"plugindata"
-	label	"Camera Film Transform"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"CameraFilmTransform"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "CameraFilmTransform" }
-	parmtag	{ "vray_type" "CAMERA" }
-    }
+    parmtag	{ spare_category "Camera Film Transform" }
+    parmtag	{ vray_plugin "CameraFilmTransform" }
     parm {
 	name	"prescale"
 	label	"Prescale"

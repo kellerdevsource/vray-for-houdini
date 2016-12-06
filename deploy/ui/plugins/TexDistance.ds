@@ -1,17 +1,8 @@
 {
     name	TexDistance
     label	"Distance"
-    parm {
-	name	"plugindata"
-	label	"Distance"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexDistance" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Distance" }
+    parmtag	{ vray_plugin "TexDistance" }
     parm {
 	name	"compatibility_with"
 	label	"Compatibility With"

@@ -1,18 +1,8 @@
 {
     name	TexModoUVResetAndFalloff
     label	"Modo UV Reset And Falloff"
-    parm {
-	name	"plugindata"
-	label	"Modo UV Reset And Falloff"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexModoUVResetAndFalloff"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexModoUVResetAndFalloff" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Modo UV Reset And Falloff" }
+    parmtag	{ vray_plugin "TexModoUVResetAndFalloff" }
     parm {
 	name	"texture"
 	label	"Texture"

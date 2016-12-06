@@ -1,19 +1,8 @@
 {
     name	PhxShaderOceanTex
     label	"Phx Shader Ocean Tex"
-    parm {
-	name	"plugindata"
-	label	"Phx Shader Ocean Tex"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"PhxShaderOceanTex"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "phoenix" }
-	parmtag	{ "vray_plugin" "PhxShaderOceanTex" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Phx Shader Ocean Tex" }
+    parmtag	{ vray_plugin "PhxShaderOceanTex" }
     parm {
 	name	"compatibility_with"
 	label	"Compatibility With"

@@ -1,18 +1,8 @@
 {
     name	SceneModifierTest
     label	"Scene Modifier Test"
-    parm {
-	name	"plugindata"
-	label	"Scene Modifier Test"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"SceneModifierTest"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "SceneModifierTest" }
-	parmtag	{ "vray_type" "MISC" }
-    }
+    parmtag	{ spare_category "Scene Modifier Test" }
+    parmtag	{ vray_plugin "SceneModifierTest" }
     parm {
 	name	"particle_scene"
 	label	"Particle Scene"

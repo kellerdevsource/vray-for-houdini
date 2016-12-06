@@ -1,16 +1,6 @@
 {
     name	GeomPlane
-    label	"Infinite Plane"
-    parm {
-	name	"plugindata"
-	label	"Infinite Plane"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"Procedural infinite plane"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "GeomPlane" }
-	parmtag	{ "vray_type" "GEOMETRY" }
-    }
+label	"Infinite Plane"
+parmtag	{ spare_category "Infinite Plane" }
+parmtag	{ vray_plugin "GeomPlane" }
 }

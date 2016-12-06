@@ -1,16 +1,6 @@
 {
     name	TexHairRootSampler
-    label	"Hair Root Sampler"
-    parm {
-	name	"plugindata"
-	label	"Hair Root Sampler"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexHairRootSampler"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexHairRootSampler" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+label	"Hair Root Sampler"
+parmtag	{ spare_category "Hair Root Sampler" }
+parmtag	{ vray_plugin "TexHairRootSampler" }
 }

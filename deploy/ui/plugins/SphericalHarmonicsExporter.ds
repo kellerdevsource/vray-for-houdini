@@ -1,18 +1,8 @@
 {
     name	SphericalHarmonicsExporter
     label	"Spherical Harmonics Exporter"
-    parm {
-	name	"plugindata"
-	label	"Spherical Harmonics Exporter"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"Spherical harmonics exporter settings"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "SphericalHarmonicsExporter" }
-	parmtag	{ "vray_type" "SETTINGS" }
-    }
+    parmtag	{ spare_category "Spherical Harmonics Exporter" }
+    parmtag	{ vray_plugin "SphericalHarmonicsExporter" }
     parm {
 	name	"anim_on"
 	label	"Anim On"

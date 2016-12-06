@@ -1,18 +1,8 @@
 {
     name	TexXSIWeightmapLookup
     label	"XSI Weightmap Lookup"
-    parm {
-	name	"plugindata"
-	label	"XSI Weightmap Lookup"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexXSIWeightmapLookup"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexXSIWeightmapLookup" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "XSI Weightmap Lookup" }
+    parmtag	{ vray_plugin "TexXSIWeightmapLookup" }
     parm {
 	name	"channel"
 	label	"Channel"

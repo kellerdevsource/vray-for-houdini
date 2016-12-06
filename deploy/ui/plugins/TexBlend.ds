@@ -1,18 +1,8 @@
 {
     name	TexBlend
     label	"Blend"
-    parm {
-	name	"plugindata"
-	label	"Blend"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TexBlend" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Blend" }
+    parmtag	{ vray_plugin "TexBlend" }
     parm {
 	name	"color_a"
 	label	"Color A"

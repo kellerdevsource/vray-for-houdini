@@ -1,18 +1,8 @@
 {
     name	TexXSIRipple
     label	"XSI Ripple"
-    parm {
-	name	"plugindata"
-	label	"XSI Ripple"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexXSIRipple"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexXSIRipple" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "XSI Ripple" }
+    parmtag	{ vray_plugin "TexXSIRipple" }
     parm {
 	name	"compatibility_with"
 	label	"Compatibility With"

@@ -1,18 +1,8 @@
 {
     name	TexBerconGrad
     label	"Bercon Grad"
-    parm {
-	name	"plugindata"
-	label	"Bercon Grad"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexBerconGrad"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexBerconGrad" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Bercon Grad" }
+    parmtag	{ vray_plugin "TexBerconGrad" }
     parm {
 	name	"compatibility_with"
 	label	"Compatibility With"

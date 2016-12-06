@@ -1,17 +1,8 @@
 {
     name	SettingsDefaultDisplacement
     label	"Displacement"
-    parm {
-	name	"SettingsDefaultDisplacement_plugindata"
-	label	"Displacement"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "SettingsDefaultDisplacement" }
-	parmtag	{ "vray_type" "SETTINGS" }
-    }
+    parmtag	{ spare_category "Displacement" }
+    parmtag	{ vray_plugin "SettingsDefaultDisplacement" }
     parm {
 	name	"SettingsDefaultDisplacement_override_on"
 	label	"Override Max"

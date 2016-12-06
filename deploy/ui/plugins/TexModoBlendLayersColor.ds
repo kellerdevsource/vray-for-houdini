@@ -1,18 +1,8 @@
 {
     name	TexModoBlendLayersColor
     label	"Modo Blend Layers Color"
-    parm {
-	name	"plugindata"
-	label	"Modo Blend Layers Color"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexModoBlendLayersColor"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexModoBlendLayersColor" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Modo Blend Layers Color" }
+    parmtag	{ vray_plugin "TexModoBlendLayersColor" }
     parm {
 	name	"opacity"
 	label	"Opacity"

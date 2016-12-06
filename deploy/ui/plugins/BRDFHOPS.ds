@@ -1,17 +1,8 @@
 {
     name	BRDFHOPS
     label	"HOPS"
-    parm {
-	name	"plugindata"
-	label	"HOPS"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "BRDFHOPS" }
-	parmtag	{ "vray_type" "BRDF" }
-    }
+    parmtag	{ spare_category "HOPS" }
+    parmtag	{ vray_plugin "BRDFHOPS" }
     parm {
 	name	"transparency"
 	label	"Transparency"

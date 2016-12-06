@@ -1,18 +1,8 @@
 {
     name	TexXSINormalMap
     label	"XSI Normal Map"
-    parm {
-	name	"plugindata"
-	label	"XSI Normal Map"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexXSINormalMap"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexXSINormalMap" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "XSI Normal Map" }
+    parmtag	{ vray_plugin "TexXSINormalMap" }
     parm {
 	name	"compatibility_with"
 	label	"Compatibility With"

@@ -1,18 +1,8 @@
 {
     name	TexDistanceBetween
     label	"Distance Between"
-    parm {
-	name	"plugindata"
-	label	"Distance Between"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexDistanceBetween"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexDistanceBetween" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Distance Between" }
+    parmtag	{ vray_plugin "TexDistanceBetween" }
     parm {
 	name	"point1"
 	label	"Point1"

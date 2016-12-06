@@ -1,16 +1,6 @@
 {
     name	TexPerVertexHairSampler
-    label	"Per Vertex Hair Sampler"
-    parm {
-	name	"plugindata"
-	label	"Per Vertex Hair Sampler"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexPerVertexHairSampler"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexPerVertexHairSampler" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+label	"Per Vertex Hair Sampler"
+parmtag	{ spare_category "Per Vertex Hair Sampler" }
+parmtag	{ vray_plugin "TexPerVertexHairSampler" }
 }

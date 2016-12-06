@@ -1,18 +1,8 @@
 {
     name	GeomSphere
     label	"Sphere"
-    parm {
-	name	"plugindata"
-	label	"Sphere"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"GeomSphere"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "GeomSphere" }
-	parmtag	{ "vray_type" "GEOMETRY" }
-    }
+    parmtag	{ spare_category "Sphere" }
+    parmtag	{ vray_plugin "GeomSphere" }
     parm {
 	name	"radius"
 	label	"Radius"

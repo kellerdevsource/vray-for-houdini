@@ -1,17 +1,8 @@
 {
     name	UVWGenObject
     label	"Object"
-    parm {
-	name	"plugindata"
-	label	"Object"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "UVWGenObject" }
-	parmtag	{ "vray_type" "UVWGEN" }
-    }
+    parmtag	{ spare_category "Object" }
+    parmtag	{ vray_plugin "UVWGenObject" }
     parm {
 	name	"duvw_scale"
 	label	"Duvw Scale"

@@ -1,18 +1,8 @@
 {
     name	SettingsColorMappingModo
     label	"Settings Color Mapping Modo"
-    parm {
-	name	"plugindata"
-	label	"Settings Color Mapping Modo"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"SettingsColorMappingModo"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "SettingsColorMappingModo" }
-	parmtag	{ "vray_type" "SETTINGS" }
-    }
+    parmtag	{ spare_category "Settings Color Mapping Modo" }
+    parmtag	{ vray_plugin "SettingsColorMappingModo" }
     parm {
 	name	"type"
 	label	"Type"

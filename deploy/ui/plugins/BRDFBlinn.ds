@@ -1,18 +1,8 @@
 {
     name	BRDFBlinn
     label	"Blinn"
-    parm {
-	name	"plugindata"
-	label	"Blinn"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"Blinn reflection shader"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "BRDFBlinn" }
-	parmtag	{ "vray_type" "BRDF" }
-    }
+    parmtag	{ spare_category "Blinn" }
+    parmtag	{ vray_plugin "BRDFBlinn" }
     parm {
 	name	"color"
 	label	"Color"
