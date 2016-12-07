@@ -29,6 +29,10 @@ public:
 
 	virtual bool asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc &pluginDesc) VRAY_OVERRIDE;
 	virtual void exportPrimitives(const GU_Detail &gdp, PluginDescList &plugins) VRAY_OVERRIDE;
+
+private:
+	OP_Node *findPramOwnerForHairParms() const;
+
 };
 
 } // namespace VRayForHoudini

@@ -17,9 +17,11 @@
 using namespace VRayForHoudini;
 
 
-HairPrimitiveExporter::HairPrimitiveExporter(OBJ_Node &obj, OP_Context &ctx, VRayExporter &exp):
-	PrimitiveExporter(obj, ctx, exp)
-{ }
+namespace {
+
+const char * const theHairParmToken = "geom_splines";
+
+}
 
 
 bool HairPrimitiveExporter::isHairPrimitive(const GEO_Primitive *prim)
@@ -38,6 +40,31 @@ bool HairPrimitiveExporter::containsHairPrimitives(const GU_Detail &gdp)
 	return (   gdp.containsPrimitiveType(GEO_PRIMNURBCURVE)
 			|| gdp.containsPrimitiveType(GEO_PRIMBEZCURVE)
 			|| gdp.containsPrimitiveType(GEO_PRIMPOLY) );
+}
+
+
+HairPrimitiveExporter::HairPrimitiveExporter(OBJ_Node &obj, OP_Context &ctx, VRayExporter &exp):
+	PrimitiveExporter(obj, ctx, exp)
+{ }
+
+
+OP_Node* HairPrimitiveExporter::findPramOwnerForHairParms() const
+{
+	if (   m_object.getParmList()
+		&& m_object.getParmList()->getParmPtr(theHairParmToken))
+	{
+		 return &m_object;
+	}
+
+	OP_Node *obj = m_object.getParent();
+	if (   obj
+		&& obj->getOperator()->getName().contains("fur*")
+		&& obj->getParmList()->getParmPtr(theHairParmToken) )
+	{
+		 return obj;
+	}
+
+	return nullptr;
 }
 
 
@@ -107,7 +134,21 @@ bool HairPrimitiveExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc
 	pluginDesc.addAttribute(Attrs::PluginAttr("num_hair_vertices", strands));
 	pluginDesc.addAttribute(Attrs::PluginAttr("hair_vertices", verts));
 	pluginDesc.addAttribute(Attrs::PluginAttr("widths", widths));
-	pluginDesc.addAttribute(Attrs::PluginAttr("geom_splines", true));
+
+	OP_Node *prmOwner = findPramOwnerForHairParms();
+	if (prmOwner) {
+		m_exporter.setAttrsFromOpNodePrms(pluginDesc, prmOwner);
+	}
+	else {
+		// no hair spare parameters - use defaults
+		pluginDesc.addAttribute(Attrs::PluginAttr("geom_splines", true));
+		pluginDesc.addAttribute(Attrs::PluginAttr("widths_in_pixels", false));
+		pluginDesc.addAttribute(Attrs::PluginAttr("generate_w_coord", false));
+		pluginDesc.addAttribute(Attrs::PluginAttr("use_global_hair_tree", true));
+		pluginDesc.addAttribute(Attrs::PluginAttr("xgen_generated", false));
+		pluginDesc.addAttribute(Attrs::PluginAttr("min_pixel_width", 0.f));
+		pluginDesc.addAttribute(Attrs::PluginAttr("geom_tesselation_mult", 4.f));
+	}
 
 	return true;
 }
