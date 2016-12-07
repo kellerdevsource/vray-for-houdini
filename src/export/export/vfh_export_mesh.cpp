@@ -60,12 +60,11 @@ MeshExporter::MeshExporter(const GU_Detail &gdp, VRayExporter &pluginExporter)
 {}
 
 
-bool MeshExporter::hasPolyGeometry() const
+bool MeshExporter::hasPolyGeometry()
 {
-	return (
-			   m_gdp.containsPrimitiveType(GEO_PRIMPOLY)
-			|| m_gdp.containsPrimitiveType(GEO_PRIMPOLYSOUP)
-			);
+	const bool hasPolyPrimitives =   m_gdp.containsPrimitiveType(GEO_PRIMPOLY)
+								  || m_gdp.containsPrimitiveType(GEO_PRIMPOLYSOUP);
+	return (hasPolyPrimitives && (getNumFaces() > 0));
 }
 
 

@@ -98,7 +98,7 @@ public:
 	MeshExporter& setSOPContext(SOP_Node *sop) { m_sopNode = sop; return *this; }
 	MeshExporter& setSubdivApplied(bool val) { m_hasSubdivApplied = val; return *this; }
 
-	bool                         hasPolyGeometry() const;
+	bool                         hasPolyGeometry();
 	bool                         hasSubdivApplied() const { return m_hasSubdivApplied; }
 	int                          getNumVertices() { return getVertices().size(); }
 	int                          getNumVelocities() { return getVelocities().size(); }
