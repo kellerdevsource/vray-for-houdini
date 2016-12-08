@@ -10,11 +10,22 @@
 
 #include "vfh_geoutils.h"
 
-using namespace VRayForHoudini;
+#include <GA/GA_AttributeFilter.h>
 
 
-bool GEO::getDataFromAttribute(const GA_Attribute *attr, const GEOPrimList &primList,
-							   VRay::VUtils::IntRefList &data)
+GA_AttributeFilter& VRayForHoudini::GEOgetV3AttribFilter()
+{
+	static GA_AttributeFilter theV3Filter = GA_AttributeFilter::selectAnd(
+												GA_AttributeFilter::selectFloatTuple(false),
+												GA_AttributeFilter::selectByTupleSize(3)
+												);
+	return theV3Filter;
+}
+
+
+bool VRayForHoudini::GEOgetDataFromAttribute(const GA_Attribute *attr,
+											 const GEOPrimList &primList,
+											 VRay::VUtils::IntRefList &data)
 {
 	bool res = false;
 	GA_ROAttributeRef attrref(attr);
@@ -54,8 +65,9 @@ bool GEO::getDataFromAttribute(const GA_Attribute *attr, const GEOPrimList &prim
 }
 
 
-bool GEO::getDataFromAttribute(const GA_Attribute *attr, const GEOPrimList &primList,
-							   VRay::VUtils::FloatRefList &data)
+bool VRayForHoudini::GEOgetDataFromAttribute(const GA_Attribute *attr,
+											 const GEOPrimList &primList,
+											 VRay::VUtils::FloatRefList &data)
 {
 	bool res = false;
 	GA_ROAttributeRef attrref(attr);
@@ -95,8 +107,9 @@ bool GEO::getDataFromAttribute(const GA_Attribute *attr, const GEOPrimList &prim
 }
 
 
-bool GEO::getDataFromAttribute(const GA_Attribute *attr, const GEOPrimList &primList,
-							   VRay::VUtils::VectorRefList &data)
+bool VRayForHoudini::GEOgetDataFromAttribute(const GA_Attribute *attr,
+											 const GEOPrimList &primList,
+											 VRay::VUtils::VectorRefList &data)
 {
 	bool res = false;
 	GA_ROAttributeRef attrref(attr);
@@ -136,8 +149,9 @@ bool GEO::getDataFromAttribute(const GA_Attribute *attr, const GEOPrimList &prim
 }
 
 
-bool GEO::getDataFromAttribute(const GA_Attribute *attr, const GEOPrimList &primList,
-							   VRay::VUtils::ColorRefList &data)
+bool VRayForHoudini::GEOgetDataFromAttribute(const GA_Attribute *attr,
+											 const GEOPrimList &primList,
+											 VRay::VUtils::ColorRefList &data)
 {
 	bool res = false;
 	GA_ROAttributeRef attrref(attr);

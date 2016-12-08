@@ -79,9 +79,9 @@ bool HairPrimitiveExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc
 	}
 
 	// filter primitives
-	GEO::GEOPrimList primList(    gdp.countPrimitiveType(GEO_PRIMNURBCURVE)
-								+ gdp.countPrimitiveType(GEO_PRIMBEZCURVE)
-								+ gdp.countPrimitiveType(GEO_PRIMPOLY));
+	GEOPrimList primList(  gdp.countPrimitiveType(GEO_PRIMNURBCURVE)
+						 + gdp.countPrimitiveType(GEO_PRIMBEZCURVE)
+						 + gdp.countPrimitiveType(GEO_PRIMPOLY));
 
 	for (GA_Iterator jt(gdp.getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
 		const GEO_Primitive *prim = gdp.getGEOPrimitive(*jt);
@@ -107,7 +107,7 @@ bool HairPrimitiveExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc
 
 	// collect verts
 	VRay::VUtils::VectorRefList verts(nVerts);
-	GEO::getDataFromAttribute(gdp.getP(), primList, verts);
+	GEOgetDataFromAttribute(gdp.getP(), primList, verts);
 
 	pluginDesc.pluginID = "GeomMayaHair";
 	pluginDesc.pluginName = VRayExporter::getPluginName(&m_object, "Hair");
@@ -146,7 +146,8 @@ bool HairPrimitiveExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc
 
 	if (widthHdl.isValid()) {
 		VRay::VUtils::FloatRefList  widths(nVerts);
-		GEO::getDataFromAttribute(widthHdl.getAttribute(), primList, widths);
+		GEOgetDataFromAttribute(widthHdl.getAttribute(), primList, widths);
+
 		pluginDesc.addAttribute(Attrs::PluginAttr("widths", widths));
 	}
 
@@ -156,7 +157,8 @@ bool HairPrimitiveExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc
 											COUNT_OF(vSearchOrder));
 	if (cdHdl.isValid()) {
 		VRay::VUtils::ColorRefList colors(nVerts);
-		GEO::getDataFromAttribute(cdHdl.getAttribute(), primList, colors);
+		GEOgetDataFromAttribute(cdHdl.getAttribute(), primList, colors);
+
 		pluginDesc.addAttribute(Attrs::PluginAttr("colors", colors));
 	}
 
@@ -166,7 +168,8 @@ bool HairPrimitiveExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc
 												COUNT_OF(vSearchOrder));
 	if (transpHdl.isValid()) {
 		VRay::VUtils::ColorRefList transparency(nVerts);
-		GEO::getDataFromAttribute(transpHdl.getAttribute(), primList, transparency);
+		GEOgetDataFromAttribute(transpHdl.getAttribute(), primList, transparency);
+
 		pluginDesc.addAttribute(Attrs::PluginAttr("transparency", transparency));
 	}
 
@@ -176,7 +179,8 @@ bool HairPrimitiveExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc
 											  COUNT_OF(vSearchOrder));
 	if (incdHdl.isValid()) {
 		VRay::VUtils::ColorRefList incandescence(nVerts);
-		GEO::getDataFromAttribute(incdHdl.getAttribute(), primList, incandescence);
+		GEOgetDataFromAttribute(incdHdl.getAttribute(), primList, incandescence);
+
 		pluginDesc.addAttribute(Attrs::PluginAttr("incandescence", incandescence));
 	}
 
@@ -184,12 +188,62 @@ bool HairPrimitiveExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc
 	VRay::VUtils::VectorRefList uvw(strands.size());
 	GA_ROHandleV3 uvwHdl = gdp.findPrimitiveAttribute(GEO_STD_ATTRIB_TEXTURE);
 	if (uvwHdl.isValid()) {
-		GEO::getDataFromAttribute(uvwHdl.getAttribute(), primList, uvw);
+		GEOgetDataFromAttribute(uvwHdl.getAttribute(), primList, uvw);
 	}
 	else {
 		std::memset(uvw.get(), 0, uvw.size() * sizeof(uvw[0]));
 	}
+
 	pluginDesc.addAttribute(Attrs::PluginAttr("strand_uvw", uvw));
+
+	// add all additional V3 vertex/point attributes as map_channels
+	GEOAttribList attrList;
+	gdp.getAttributes().matchAttributes(GEOgetV3AttribFilter(),
+										vSearchOrder,
+										COUNT_OF(vSearchOrder),
+										attrList);
+
+	MapChannels mapChannels;
+	for (const GA_Attribute *attr : attrList) {
+		if (   attr
+			&& attr->getName() != GEO_STD_ATTRIB_POSITION
+			&& attr->getName() != GEO_STD_ATTRIB_WIDTH
+			&& attr->getName() != GEO_STD_ATTRIB_PSCALE
+			&& attr->getName() != GEO_STD_ATTRIB_DIFFUSE
+			&& attr->getName() != VFH_ATTRIB_TRANSPARENCY
+			&& attr->getName() != VFH_ATTRIB_INCANDESCENCE
+			)
+		{
+			const std::string attrName = attr->getName().toStdString();
+			if (!mapChannels.count(attrName)) {
+				MapChannel &mapChannel = mapChannels[attrName];
+				mapChannel.name = attrName;
+				// assume we can use same count as for stands
+				mapChannel.faces = strands;
+				mapChannel.vertices = VRay::VUtils::VectorRefList(nVerts);
+				GEOgetDataFromAttribute(attr, primList, mapChannel.vertices);
+			}
+		}
+	}
+
+	if (mapChannels.size()) {
+		VRay::VUtils::ValueRefList map_channels(mapChannels.size());
+		int idx = 0;
+		for (const auto &mc : mapChannels) {
+			const MapChannel &mapChannel = mc.second;
+			// Channel data
+			VRay::VUtils::ValueRefList map_channel(4);
+			map_channel[0].setDouble(idx);
+			map_channel[1].setListInt(mapChannel.faces);
+			map_channel[2].setListVector(mapChannel.vertices);
+			map_channel[3].setString(mapChannel.name.c_str());
+
+			map_channels[idx].setList(map_channel);
+			++idx;
+		}
+
+		pluginDesc.addAttribute(Attrs::PluginAttr("map_channels", map_channels));
+	}
 
 	return true;
 }

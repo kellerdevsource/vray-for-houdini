@@ -12,10 +12,10 @@
 #define VRAY_FOR_HOUDINI_EXPORT_MESH_H
 
 #include "vfh_vray.h"
-#include "vfh_hashes.h"
 #include "vfh_defines.h"
 #include "vfh_plugin_attrs.h"
 #include "vfh_exporter.h"
+#include "vfh_geoutils.h"
 #include "vfh_material_override.h"
 
 #include <SOP/SOP_Node.h>
@@ -28,54 +28,6 @@
 namespace VRayForHoudini {
 
 class VRayExporter;
-
-
-struct MapVertex {
-	MapVertex():
-		index(0)
-	{ }
-
-	MapVertex(const UT_Vector3 &vec):
-		index(0)
-	{
-		v[0] = vec[0];
-		v[1] = vec[1];
-		v[2] = vec[2];
-	}
-
-	bool operator == (const MapVertex &_v) const
-	{
-		return (v[0] == _v.v[0]) && (v[1] == _v.v[1]) && (v[2] == _v.v[2]);
-	}
-
-	float        v[3];
-	mutable int  index;
-};
-
-
-struct MapVertexHash
-{
-	std::size_t operator () (const MapVertex &_v) const
-	{
-		VRayForHoudini::Hash::MHash hash;
-		VRayForHoudini::Hash::MurmurHash3_x86_32(_v.v, 3 * sizeof(float), 42, &hash);
-		return (std::size_t)hash;
-	}
-};
-
-
-struct MapChannel
-{
-	typedef std::unordered_set<MapVertex, MapVertexHash> VertexSet;
-
-	std::string                 name;
-	VRay::VUtils::VectorRefList vertices;
-	VRay::VUtils::IntRefList    faces;
-	VertexSet                   verticesSet;
-};
-
-
-typedef std::unordered_map<std::string, MapChannel> MapChannels;
 
 
 class MeshExporter
