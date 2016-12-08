@@ -41,9 +41,8 @@ bool GEO::getDataFromAttribute(const GA_Attribute *attr, const GEOPrimList &prim
 				}
 				case GA_ATTRIB_PRIMITIVE:
 				{
-					for (int i = 0; i < prim->getVertexCount(); ++i, ++idx) {
-						res |= aiftuple->get(attr, prim->getMapOffset(), &(data[idx]), 1);
-					}
+					res |= aiftuple->get(attr, prim->getMapOffset(), &(data[idx]), 1);
+					++idx;
 					break;
 				}
 				default:
@@ -83,9 +82,8 @@ bool GEO::getDataFromAttribute(const GA_Attribute *attr, const GEOPrimList &prim
 				}
 				case GA_ATTRIB_PRIMITIVE:
 				{
-					for (int i = 0; i < prim->getVertexCount(); ++i, ++idx) {
-						res |= aiftuple->get(attr, prim->getMapOffset(), &(data[idx]), 1);
-					}
+					res |= aiftuple->get(attr, prim->getMapOffset(), &(data[idx]), 1);
+					++idx;
 					break;
 				}
 				default:
@@ -125,9 +123,49 @@ bool GEO::getDataFromAttribute(const GA_Attribute *attr, const GEOPrimList &prim
 				}
 				case GA_ATTRIB_PRIMITIVE:
 				{
-					for (int i = 0; i < prim->getVertexCount(); ++i, ++idx) {
-						res |= aiftuple->get(attr, prim->getMapOffset(), &(data[idx].x), 3);
-					}
+					res |= aiftuple->get(attr, prim->getMapOffset(), &(data[idx].x), 3);
+					++idx;
+					break;
+				}
+				default:
+					break;
+			}
+		}
+	}
+	return res;
+}
+
+
+bool GEO::getDataFromAttribute(const GA_Attribute *attr, const GEOPrimList &primList,
+							   VRay::VUtils::ColorRefList &data)
+{
+	bool res = false;
+	GA_ROAttributeRef attrref(attr);
+	if (   attrref.isValid()
+		&& attrref.getAIFTuple())
+	{
+		const GA_AIFTuple *aiftuple = attrref.getAIFTuple();
+		int idx = 0;
+		for (const GEO_Primitive *prim : primList) {
+			switch (attr->getOwner()) {
+				case GA_ATTRIB_VERTEX:
+				{
+					GA_Range range = prim->getVertexRange();
+					res |= aiftuple->getRange(attr, range, &(data[idx].r), 0, 3);
+					idx += range.getEntries();
+					break;
+				}
+				case GA_ATTRIB_POINT:
+				{
+					GA_Range range = prim->getPointRange();
+					res |= aiftuple->getRange(attr, range, &(data[idx].r), 0, 3);
+					idx += range.getEntries();
+					break;
+				}
+				case GA_ATTRIB_PRIMITIVE:
+				{
+					res |= aiftuple->get(attr, prim->getMapOffset(), &(data[idx].r), 3);
+					++idx;
 					break;
 				}
 				default:

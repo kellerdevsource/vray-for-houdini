@@ -31,6 +31,8 @@ bool getDataFromAttribute(const GA_Attribute *attr, const GEOPrimList &primList,
 bool getDataFromAttribute(const GA_Attribute *attr, const GEOPrimList &primList,
 								 VRay::VUtils::VectorRefList &data);
 
+bool getDataFromAttribute(const GA_Attribute *attr, const GEOPrimList &primList,
+								 VRay::VUtils::ColorRefList &data);
 } // namespace GEO
 } // namespace VRayForHoudini
 

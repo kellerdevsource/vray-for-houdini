@@ -19,7 +19,10 @@ using namespace VRayForHoudini;
 
 namespace {
 
-const char * const theHairParmToken = "geom_splines";
+const char * const theHairParm = "geom_splines";
+
+const char * const VFH_ATTRIB_INCANDESCENCE = "incandescence";
+const char * const VFH_ATTRIB_TRANSPARENCY = "transparency";
 
 }
 
@@ -51,7 +54,7 @@ HairPrimitiveExporter::HairPrimitiveExporter(OBJ_Node &obj, OP_Context &ctx, VRa
 OP_Node* HairPrimitiveExporter::findPramOwnerForHairParms() const
 {
 	if (   m_object.getParmList()
-		&& m_object.getParmList()->getParmPtr(theHairParmToken))
+		&& m_object.getParmList()->getParmPtr(theHairParm))
 	{
 		 return &m_object;
 	}
@@ -59,7 +62,7 @@ OP_Node* HairPrimitiveExporter::findPramOwnerForHairParms() const
 	OP_Node *obj = m_object.getParent();
 	if (   obj
 		&& obj->getOperator()->getName().contains("fur*")
-		&& obj->getParmList()->getParmPtr(theHairParmToken) )
+		&& obj->getParmList()->getParmPtr(theHairParm) )
 	{
 		 return obj;
 	}
@@ -106,34 +109,10 @@ bool HairPrimitiveExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc
 	VRay::VUtils::VectorRefList verts(nVerts);
 	GEO::getDataFromAttribute(gdp.getP(), primList, verts);
 
-	// collect widths
-	const GA_AttributeOwner searchOrder[] = {
-		GA_ATTRIB_VERTEX,		// Unique vertex data
-		GA_ATTRIB_POINT,		// Shared vertex data
-		GA_ATTRIB_PRIMITIVE,	// Primitive attribute data
-	};
-
-	VRay::VUtils::FloatRefList  widths(nVerts);
-	GA_ROHandleF widthHdl = gdp.findAttribute(GEO_STD_ATTRIB_WIDTH,
-											  searchOrder,
-											  COUNT_OF(searchOrder));
-	if (widthHdl.isInvalid()) {
-		widthHdl = gdp.findAttribute(GEO_STD_ATTRIB_PSCALE,
-									 searchOrder,
-									 COUNT_OF(searchOrder));
-	}
-	if (widthHdl.isValid()) {
-		GEO::getDataFromAttribute(widthHdl.getAttribute(), primList, widths);
-	}
-	else {
-		std::memset(widths.get(), 0, widths.size() * sizeof(widths[0]));
-	}
-
 	pluginDesc.pluginID = "GeomMayaHair";
 	pluginDesc.pluginName = VRayExporter::getPluginName(&m_object, "Hair");
 	pluginDesc.addAttribute(Attrs::PluginAttr("num_hair_vertices", strands));
 	pluginDesc.addAttribute(Attrs::PluginAttr("hair_vertices", verts));
-	pluginDesc.addAttribute(Attrs::PluginAttr("widths", widths));
 
 	OP_Node *prmOwner = findPramOwnerForHairParms();
 	if (prmOwner) {
@@ -149,6 +128,67 @@ bool HairPrimitiveExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc
 		pluginDesc.addAttribute(Attrs::PluginAttr("min_pixel_width", 0.f));
 		pluginDesc.addAttribute(Attrs::PluginAttr("geom_tesselation_mult", 4.f));
 	}
+
+	// widths
+	const GA_AttributeOwner vSearchOrder[] = {
+		GA_ATTRIB_VERTEX,		// Unique vertex data
+		GA_ATTRIB_POINT,		// Shared vertex data
+	};
+
+	GA_ROHandleF widthHdl = gdp.findAttribute(GEO_STD_ATTRIB_WIDTH,
+											  vSearchOrder,
+											  COUNT_OF(vSearchOrder));
+	if (widthHdl.isInvalid()) {
+		widthHdl = gdp.findAttribute(GEO_STD_ATTRIB_PSCALE,
+									 vSearchOrder,
+									 COUNT_OF(vSearchOrder));
+	}
+
+	if (widthHdl.isValid()) {
+		VRay::VUtils::FloatRefList  widths(nVerts);
+		GEO::getDataFromAttribute(widthHdl.getAttribute(), primList, widths);
+		pluginDesc.addAttribute(Attrs::PluginAttr("widths", widths));
+	}
+
+	// colors
+	GA_ROHandleV3 cdHdl = gdp.findAttribute(GEO_STD_ATTRIB_DIFFUSE,
+											vSearchOrder,
+											COUNT_OF(vSearchOrder));
+	if (cdHdl.isValid()) {
+		VRay::VUtils::ColorRefList colors(nVerts);
+		GEO::getDataFromAttribute(cdHdl.getAttribute(), primList, colors);
+		pluginDesc.addAttribute(Attrs::PluginAttr("colors", colors));
+	}
+
+	// transparency
+	GA_ROHandleV3 transpHdl = gdp.findAttribute(VFH_ATTRIB_TRANSPARENCY,
+												vSearchOrder,
+												COUNT_OF(vSearchOrder));
+	if (transpHdl.isValid()) {
+		VRay::VUtils::ColorRefList transparency(nVerts);
+		GEO::getDataFromAttribute(transpHdl.getAttribute(), primList, transparency);
+		pluginDesc.addAttribute(Attrs::PluginAttr("transparency", transparency));
+	}
+
+	// incandescence
+	GA_ROHandleV3 incdHdl = gdp.findAttribute(VFH_ATTRIB_INCANDESCENCE,
+											  vSearchOrder,
+											  COUNT_OF(vSearchOrder));
+	if (incdHdl.isValid()) {
+		VRay::VUtils::ColorRefList incandescence(nVerts);
+		GEO::getDataFromAttribute(incdHdl.getAttribute(), primList, incandescence);
+		pluginDesc.addAttribute(Attrs::PluginAttr("incandescence", incandescence));
+	}
+
+	// uvw
+	GA_ROHandleV3 uvwHdl = gdp.findPrimitiveAttribute(GEO_STD_ATTRIB_TEXTURE);
+	if (uvwHdl.isValid()) {
+		VRay::VUtils::VectorRefList uvw(strands.size());
+		GEO::getDataFromAttribute(uvwHdl.getAttribute(), primList, uvw);
+		pluginDesc.addAttribute(Attrs::PluginAttr("strand_uvw", uvw));
+	}
+
+
 
 	return true;
 }
