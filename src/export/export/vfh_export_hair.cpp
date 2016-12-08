@@ -181,14 +181,15 @@ bool HairPrimitiveExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc
 	}
 
 	// uvw
+	VRay::VUtils::VectorRefList uvw(strands.size());
 	GA_ROHandleV3 uvwHdl = gdp.findPrimitiveAttribute(GEO_STD_ATTRIB_TEXTURE);
 	if (uvwHdl.isValid()) {
-		VRay::VUtils::VectorRefList uvw(strands.size());
 		GEO::getDataFromAttribute(uvwHdl.getAttribute(), primList, uvw);
-		pluginDesc.addAttribute(Attrs::PluginAttr("strand_uvw", uvw));
 	}
-
-
+	else {
+		std::memset(uvw.get(), 0, uvw.size() * sizeof(uvw[0]));
+	}
+	pluginDesc.addAttribute(Attrs::PluginAttr("strand_uvw", uvw));
 
 	return true;
 }
