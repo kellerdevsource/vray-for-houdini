@@ -72,16 +72,16 @@ typedef UT_Array< const GA_Attribute * >    GEOAttribList;
 GA_AttributeFilter& GEOgetV3AttribFilter();
 
 bool GEOgetDataFromAttribute(const GA_Attribute *attr, const GEOPrimList &primList,
-								 VRay::VUtils::IntRefList &data);
+							 VRay::VUtils::IntRefList &data);
 
 bool GEOgetDataFromAttribute(const GA_Attribute *attr, const GEOPrimList &primList,
-								 VRay::VUtils::FloatRefList &data);
+							 VRay::VUtils::FloatRefList &data);
 
 bool GEOgetDataFromAttribute(const GA_Attribute *attr, const GEOPrimList &primList,
-								 VRay::VUtils::VectorRefList &data);
+							 VRay::VUtils::VectorRefList &data);
 
 bool GEOgetDataFromAttribute(const GA_Attribute *attr, const GEOPrimList &primList,
-								 VRay::VUtils::ColorRefList &data);
+							 VRay::VUtils::ColorRefList &data);
 
 } // namespace VRayForHoudini
 

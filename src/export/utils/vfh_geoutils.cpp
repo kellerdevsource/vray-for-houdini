@@ -13,6 +13,102 @@
 #include <GA/GA_AttributeFilter.h>
 
 
+using namespace VRayForHoudini;
+
+
+namespace {
+
+bool GEOgetAttribRange(const GA_AIFTuple *aiftuple, const GA_Attribute *attr, const GA_Range &range, int result[])
+{
+	return aiftuple->getRange(attr, range, result, 0, 1);
+}
+
+bool GEOgetAttribRange(const GA_AIFTuple *aiftuple, const GA_Attribute *attr, const GA_Range &range, float result[])
+{
+	return aiftuple->getRange(attr, range, result, 0, 1);
+}
+
+bool GEOgetAttribRange(const GA_AIFTuple *aiftuple, const GA_Attribute *attr, const GA_Range &range, VRay::Vector result[])
+{
+	return aiftuple->getRange(attr, range, &result[0].x, 0, 3);
+}
+
+bool GEOgetAttribRange(const GA_AIFTuple *aiftuple, const GA_Attribute *attr, const GA_Range &range, VRay::Color result[])
+{
+	return aiftuple->getRange(attr, range, &result[0].r, 0, 3);
+}
+
+bool GEOgetAttrib(const GA_AIFTuple *aiftuple, const GA_Attribute *attr, GA_Offset ai, int &result)
+{
+	return aiftuple->get(attr, ai, &result, 1);
+}
+
+bool GEOgetAttrib(const GA_AIFTuple *aiftuple, const GA_Attribute *attr, GA_Offset ai, float &result)
+{
+	return aiftuple->get(attr, ai, &result, 1);
+}
+
+bool GEOgetAttrib(const GA_AIFTuple *aiftuple, const GA_Attribute *attr, GA_Offset ai, VRay::Vector &result)
+{
+	return aiftuple->get(attr, ai, &result.x, 3);
+}
+
+bool GEOgetAttrib(const GA_AIFTuple *aiftuple, const GA_Attribute *attr, GA_Offset ai, VRay::Color &result)
+{
+	return aiftuple->get(attr, ai, &result.r, 3);
+}
+
+template < typename T >
+bool GEOgetDataFromAttributeT(const GA_Attribute *attr,
+											 const GEOPrimList &primList,
+											 T &data)
+{
+	GA_ROAttributeRef attrref(attr);
+	if (   attrref.isInvalid()
+		|| !attrref.getAIFTuple())
+	{
+		return false;
+	}
+
+	bool res = true;
+	const GA_AIFTuple *aiftuple = attrref.getAIFTuple();
+	int idx = 0;
+	switch (attr->getOwner()) {
+		case GA_ATTRIB_VERTEX:
+		{
+			for (const GEO_Primitive *prim : primList) {
+				GA_Range range = prim->getVertexRange();
+				res &= GEOgetAttribRange(aiftuple, attr, range, &(data[idx]));
+				idx += range.getEntries();
+			}
+			break;
+		}
+		case GA_ATTRIB_POINT:
+		{
+			for (const GEO_Primitive *prim : primList) {
+				GA_Range range = prim->getPointRange();
+				res &= GEOgetAttribRange(aiftuple, attr, range, &(data[idx]));
+				idx += range.getEntries();
+			}
+			break;
+		}
+		case GA_ATTRIB_PRIMITIVE:
+		{
+			for (const GEO_Primitive *prim : primList) {
+				res &= GEOgetAttrib(aiftuple, attr, prim->getMapOffset(), data[idx]);
+				++idx;
+			}
+			break;
+		}
+		default:
+			break;
+	}
+
+	return res;
+}
+
+}
+
 GA_AttributeFilter& VRayForHoudini::GEOgetV3AttribFilter()
 {
 	static GA_AttributeFilter theV3Filter = GA_AttributeFilter::selectAnd(
@@ -22,170 +118,22 @@ GA_AttributeFilter& VRayForHoudini::GEOgetV3AttribFilter()
 	return theV3Filter;
 }
 
+bool VRayForHoudini::GEOgetDataFromAttribute(const GA_Attribute *attr,
+											const GEOPrimList &primList,
+											VRay::VUtils::IntRefList &data)
+{ return GEOgetDataFromAttributeT< VRay::VUtils::IntRefList >(attr, primList, data); }
 
 bool VRayForHoudini::GEOgetDataFromAttribute(const GA_Attribute *attr,
-											 const GEOPrimList &primList,
-											 VRay::VUtils::IntRefList &data)
-{
-	bool res = false;
-	GA_ROAttributeRef attrref(attr);
-	if (   attrref.isValid()
-		&& attrref.getAIFTuple())
-	{
-		const GA_AIFTuple *aiftuple = attrref.getAIFTuple();
-		int idx = 0;
-		for (const GEO_Primitive *prim : primList) {
-			switch (attr->getOwner()) {
-				case GA_ATTRIB_VERTEX:
-				{
-					GA_Range range = prim->getVertexRange();
-					res |= aiftuple->getRange(attr, range, &(data[idx]), 0, 1);
-					idx += range.getEntries();
-					break;
-				}
-				case GA_ATTRIB_POINT:
-				{
-					GA_Range range = prim->getPointRange();
-					res |= aiftuple->getRange(attr, range, &(data[idx]), 0, 1);
-					idx += range.getEntries();
-					break;
-				}
-				case GA_ATTRIB_PRIMITIVE:
-				{
-					res |= aiftuple->get(attr, prim->getMapOffset(), &(data[idx]), 1);
-					++idx;
-					break;
-				}
-				default:
-					break;
-			}
-		}
-	}
-	return res;
-}
-
+											const GEOPrimList &primList,
+											VRay::VUtils::FloatRefList &data)
+{ return GEOgetDataFromAttributeT< VRay::VUtils::FloatRefList >(attr, primList, data); }
 
 bool VRayForHoudini::GEOgetDataFromAttribute(const GA_Attribute *attr,
-											 const GEOPrimList &primList,
-											 VRay::VUtils::FloatRefList &data)
-{
-	bool res = false;
-	GA_ROAttributeRef attrref(attr);
-	if (   attrref.isValid()
-		&& attrref.getAIFTuple())
-	{
-		const GA_AIFTuple *aiftuple = attrref.getAIFTuple();
-		int idx = 0;
-		for (const GEO_Primitive *prim : primList) {
-			switch (attr->getOwner()) {
-				case GA_ATTRIB_VERTEX:
-				{
-					GA_Range range = prim->getVertexRange();
-					res |= aiftuple->getRange(attr, range, &(data[idx]), 0, 1);
-					idx += range.getEntries();
-					break;
-				}
-				case GA_ATTRIB_POINT:
-				{
-					GA_Range range = prim->getPointRange();
-					res |= aiftuple->getRange(attr, range, &(data[idx]), 0, 1);
-					idx += range.getEntries();
-					break;
-				}
-				case GA_ATTRIB_PRIMITIVE:
-				{
-					res |= aiftuple->get(attr, prim->getMapOffset(), &(data[idx]), 1);
-					++idx;
-					break;
-				}
-				default:
-					break;
-			}
-		}
-	}
-	return res;
-}
-
+											const GEOPrimList &primList,
+											VRay::VUtils::VectorRefList &data)
+{ return GEOgetDataFromAttributeT< VRay::VUtils::VectorRefList >(attr, primList, data); }
 
 bool VRayForHoudini::GEOgetDataFromAttribute(const GA_Attribute *attr,
-											 const GEOPrimList &primList,
-											 VRay::VUtils::VectorRefList &data)
-{
-	bool res = false;
-	GA_ROAttributeRef attrref(attr);
-	if (   attrref.isValid()
-		&& attrref.getAIFTuple())
-	{
-		const GA_AIFTuple *aiftuple = attrref.getAIFTuple();
-		int idx = 0;
-		for (const GEO_Primitive *prim : primList) {
-			switch (attr->getOwner()) {
-				case GA_ATTRIB_VERTEX:
-				{
-					GA_Range range = prim->getVertexRange();
-					res |= aiftuple->getRange(attr, range, &(data[idx].x), 0, 3);
-					idx += range.getEntries();
-					break;
-				}
-				case GA_ATTRIB_POINT:
-				{
-					GA_Range range = prim->getPointRange();
-					res |= aiftuple->getRange(attr, range, &(data[idx].x), 0, 3);
-					idx += range.getEntries();
-					break;
-				}
-				case GA_ATTRIB_PRIMITIVE:
-				{
-					res |= aiftuple->get(attr, prim->getMapOffset(), &(data[idx].x), 3);
-					++idx;
-					break;
-				}
-				default:
-					break;
-			}
-		}
-	}
-	return res;
-}
-
-
-bool VRayForHoudini::GEOgetDataFromAttribute(const GA_Attribute *attr,
-											 const GEOPrimList &primList,
-											 VRay::VUtils::ColorRefList &data)
-{
-	bool res = false;
-	GA_ROAttributeRef attrref(attr);
-	if (   attrref.isValid()
-		&& attrref.getAIFTuple())
-	{
-		const GA_AIFTuple *aiftuple = attrref.getAIFTuple();
-		int idx = 0;
-		for (const GEO_Primitive *prim : primList) {
-			switch (attr->getOwner()) {
-				case GA_ATTRIB_VERTEX:
-				{
-					GA_Range range = prim->getVertexRange();
-					res |= aiftuple->getRange(attr, range, &(data[idx].r), 0, 3);
-					idx += range.getEntries();
-					break;
-				}
-				case GA_ATTRIB_POINT:
-				{
-					GA_Range range = prim->getPointRange();
-					res |= aiftuple->getRange(attr, range, &(data[idx].r), 0, 3);
-					idx += range.getEntries();
-					break;
-				}
-				case GA_ATTRIB_PRIMITIVE:
-				{
-					res |= aiftuple->get(attr, prim->getMapOffset(), &(data[idx].r), 3);
-					++idx;
-					break;
-				}
-				default:
-					break;
-			}
-		}
-	}
-	return res;
-}
+											const GEOPrimList &primList,
+											VRay::VUtils::ColorRefList &data)
+{ return GEOgetDataFromAttributeT< VRay::VUtils::ColorRefList >(attr, primList, data); }
