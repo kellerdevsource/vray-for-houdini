@@ -15,6 +15,7 @@
 #include "vfh_hashes.h"
 
 #include <GEO/GEO_Primitive.h>
+#include <SYS/SYS_Math.h>
 
 #include <unordered_set>
 #include <unordered_map>
@@ -34,7 +35,7 @@ struct MapVertex {
 
 	bool operator == (const MapVertex &_v) const
 	{
-		return (v[0] == _v.v[0]) && (v[1] == _v.v[1]) && (v[2] == _v.v[2]);
+		return SYSalmostEqual(v[0],_v.v[0]) && SYSalmostEqual(v[1],_v.v[1]) && SYSalmostEqual(v[2],_v.v[2]);
 	}
 
 	float        v[3];
