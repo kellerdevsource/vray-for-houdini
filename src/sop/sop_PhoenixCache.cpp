@@ -80,6 +80,14 @@ OP_ERROR SOP::PhxShaderCache::cookMySop(OP_Context &context)
 		options.setOptionFromTemplate(this, prm, *prm.getTemplatePtr(), t);
 	}
 
+	UT_String raw, parsed;
+	evalStringRaw(raw, "cache_path", 0, t);
+	evalString(parsed, "cache_path", 0, t);
+
+	// we check if the user actually entered frame number in the path like 021.vdb or he used $F3.vdb and frame is 21
+	// if user hardcoded frame num we should export constant path and not replace with ### for PHX
+	options.setOptionB("literal_cache_path", raw == parsed);
+
 	options.setOptionF("current_frame", context.getFloatFrame());
 
 	gridRefPtr->update(options);

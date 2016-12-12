@@ -143,6 +143,9 @@ private:
 	UT_BoundingBox         m_bBox;
 	bool                   m_dirty;
 	bool                   m_channelDirty;
+	// if true we will replace frame number with ### for PHX
+	// otherwise user hardcoded frame number and we should not change it
+	bool                   m_doFrameReplace;
 };
 
 
