@@ -596,10 +596,11 @@ bool VRayVolumeGridRef::updateFrom(const UT_Options &options)
 	m_dirty = pathChange || m_dirty || options.hasOption("flip_yz") && options.getOptionI("flip_yz") != this->get_flip_yz();
 
 	m_options.merge(options);
-	buildMapping();
 
 	this->set_current_cache_path(getConvertedPath(false).c_str());
 	this->set_cache_path(getConvertedPath(true).c_str());
+
+	buildMapping();
 
 	const bool diffHash = hashBefore != m_options.hash();
 	if (m_doFrameReplace) {
