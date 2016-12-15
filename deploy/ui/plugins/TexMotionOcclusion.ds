@@ -1,18 +1,8 @@
 {
     name	TexMotionOcclusion
     label	"Motion Occlusion"
-    parm {
-	name	"plugindata"
-	label	"Motion Occlusion"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexMotionOcclusion"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexMotionOcclusion" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Motion Occlusion" }
+    parmtag	{ vray_plugin "TexMotionOcclusion" }
     parm {
 	name	"type"
 	label	"Type"

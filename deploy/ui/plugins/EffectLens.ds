@@ -1,18 +1,8 @@
 {
     name	EffectLens
     label	"Effect Lens"
-    parm {
-	name	"plugindata"
-	label	"Effect Lens"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"EffectLens"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "EffectLens" }
-	parmtag	{ "vray_type" "SETTINGS" }
-    }
+    parmtag	{ spare_category "Effect Lens" }
+    parmtag	{ vray_plugin "EffectLens" }
     parm {
 	name	"bloomWeight"
 	label	"Bloomweight"

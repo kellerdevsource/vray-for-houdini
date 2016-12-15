@@ -1,17 +1,8 @@
 {
     name	xsiUVWGenEnvironment
     label	"Environment (XSI)"
-    parm {
-	name	"plugindata"
-	label	"Environment (XSI)"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "xsiUVWGenEnvironment" }
-	parmtag	{ "vray_type" "UVWGEN" }
-    }
+    parmtag	{ spare_category "Environment (XSI)" }
+    parmtag	{ vray_plugin "xsiUVWGenEnvironment" }
     parm {
 	name	"mapping_type"
 	label	"Mapping Type"

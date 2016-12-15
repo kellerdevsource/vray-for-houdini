@@ -1,17 +1,8 @@
 {
     name	BRDFHair2
     label	"Hair 2"
-    parm {
-	name	"plugindata"
-	label	"Hair 2"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "BRDFHair2" }
-	parmtag	{ "vray_type" "BRDF" }
-    }
+    parmtag	{ spare_category "Hair 2" }
+    parmtag	{ vray_plugin "BRDFHair2" }
     parm {
 	name	"diffuse_color_tex"
 	label	"Diffuse Color"

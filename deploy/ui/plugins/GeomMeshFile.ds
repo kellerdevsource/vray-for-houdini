@@ -1,18 +1,8 @@
 {
     name	GeomMeshFile
     label	"VRayProxy"
-    parm {
-	name	"plugindata"
-	label	"VRayProxy"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"VRayProxy geomtery"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "GeomMeshFile" }
-	parmtag	{ "vray_type" "GEOMETRY" }
-    }
+    parmtag	{ spare_category "VRayProxy" }
+    parmtag	{ vray_plugin "GeomMeshFile" }
     parm {
 	name	"file"
 	label	"File Name"

@@ -1,18 +1,8 @@
 {
     name	TexXSIColorMix
     label	"XSI Color Mix"
-    parm {
-	name	"plugindata"
-	label	"XSI Color Mix"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexXSIColorMix"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexXSIColorMix" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "XSI Color Mix" }
+    parmtag	{ vray_plugin "TexXSIColorMix" }
     parm {
 	name	"compatibility_with"
 	label	"Compatibility With"

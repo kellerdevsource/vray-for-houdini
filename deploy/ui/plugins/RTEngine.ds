@@ -1,18 +1,8 @@
 {
     name	RTEngine
     label	"Realtime Engine"
-    parm {
-	name	"plugindata"
-	label	"Realtime Engine"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"V-Ray Realtime Engine"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "RTEngine" }
-	parmtag	{ "vray_type" "SETTINGS" }
-    }
+    parmtag	{ spare_category "Realtime Engine" }
+    parmtag	{ vray_plugin "RTEngine" }
     parm {
 	name	"enabled"
 	label	"Enabled"

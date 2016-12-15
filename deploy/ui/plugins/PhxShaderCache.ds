@@ -1,18 +1,8 @@
 {
     name	PhxShaderCache
     label	"Phoenix Cache"
-    parm {
-	name	"plugindata"
-	label	"Phoenix Cache"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"Phoenix simulation data cache"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "PhxShaderCache" }
-	parmtag	{ "vray_type" "EFFECT" }
-    }
+    parmtag	{ spare_category "Phoenix Cache" }
+    parmtag	{ vray_plugin "PhxShaderCache" }
     parm {
 	name	"cache_path"
 	label	"Input Cache File"

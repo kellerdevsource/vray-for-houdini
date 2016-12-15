@@ -1,18 +1,8 @@
 {
     name	TexFresnelASGVIS
     label	"Fresnel ASGVIS"
-    parm {
-	name	"plugindata"
-	label	"Fresnel ASGVIS"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexFresnelASGVIS"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexFresnelASGVIS" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Fresnel ASGVIS" }
+    parmtag	{ vray_plugin "TexFresnelASGVIS" }
     parm {
 	name	"fresnel_ior"
 	label	"Fresnel Ior"

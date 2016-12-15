@@ -1,18 +1,8 @@
 {
     name	GeomBifrost
     label	"Bifrost"
-    parm {
-	name	"plugindata"
-	label	"Bifrost"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"GeomBifrost"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "GeomBifrost" }
-	parmtag	{ "vray_type" "GEOMETRY" }
-    }
+    parmtag	{ spare_category "Bifrost" }
+    parmtag	{ vray_plugin "GeomBifrost" }
     parm {
 	name	"file"
 	label	"File"

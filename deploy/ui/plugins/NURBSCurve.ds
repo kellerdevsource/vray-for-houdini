@@ -1,18 +1,8 @@
 {
     name	NURBSCurve
     label	"NURBS Curve"
-    parm {
-	name	"plugindata"
-	label	"NURBS Curve"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"NURBSCurve"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "NURBSCurve" }
-	parmtag	{ "vray_type" "MISC" }
-    }
+    parmtag	{ spare_category "NURBS Curve" }
+    parmtag	{ vray_plugin "NURBSCurve" }
     parm {
 	name	"degree"
 	label	"Degree"

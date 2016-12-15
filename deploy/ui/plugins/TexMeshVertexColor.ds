@@ -1,16 +1,6 @@
 {
     name	TexMeshVertexColor
-    label	"Mesh Vertex Color"
-    parm {
-	name	"plugindata"
-	label	"Mesh Vertex Color"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexMeshVertexColor"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexMeshVertexColor" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+label	"Mesh Vertex Color"
+parmtag	{ spare_category "Mesh Vertex Color" }
+parmtag	{ vray_plugin "TexMeshVertexColor" }
 }

@@ -1,18 +1,8 @@
 {
     name	TexTriPlanar
     label	"TriPlanar"
-    parm {
-	name	"plugindata"
-	label	"TriPlanar"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TriPlanar mapped texture"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexTriPlanar" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "TriPlanar" }
+    parmtag	{ vray_plugin "TexTriPlanar" }
     parm {
 	name	"texture_mode"
 	label	"Texture Mode"

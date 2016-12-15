@@ -1,18 +1,8 @@
 {
     name	TexXSIFalloff
     label	"XSI Falloff"
-    parm {
-	name	"plugindata"
-	label	"XSI Falloff"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexXSIFalloff"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexXSIFalloff" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "XSI Falloff" }
+    parmtag	{ vray_plugin "TexXSIFalloff" }
     parm {
 	name	"curve_falloff"
 	label	"Curve Falloff"

@@ -1,19 +1,8 @@
 {
     name	TexAColorChannel
     label	"Color Channel"
-    parm {
-	name	"plugindata"
-	label	"Color Channel"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexAColorChannel"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TexAColorChannel" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Color Channel" }
+    parmtag	{ vray_plugin "TexAColorChannel" }
     parm {
 	name	"color_a"
 	label	"Color A"

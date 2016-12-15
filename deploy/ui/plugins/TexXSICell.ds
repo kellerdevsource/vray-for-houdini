@@ -1,18 +1,8 @@
 {
     name	TexXSICell
     label	"XSI Cell"
-    parm {
-	name	"plugindata"
-	label	"XSI Cell"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexXSICell"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexXSICell" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "XSI Cell" }
+    parmtag	{ vray_plugin "TexXSICell" }
     parm {
 	name	"compatibility_with"
 	label	"Compatibility With"

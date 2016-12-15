@@ -1,18 +1,8 @@
 {
     name	GeomBox
     label	"Box"
-    parm {
-	name	"plugindata"
-	label	"Box"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"GeomBox"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "GeomBox" }
-	parmtag	{ "vray_type" "GEOMETRY" }
-    }
+    parmtag	{ spare_category "Box" }
+    parmtag	{ vray_plugin "GeomBox" }
     parm {
 	name	"size_x"
 	label	"Size X"

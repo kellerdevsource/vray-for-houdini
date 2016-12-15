@@ -1,18 +1,8 @@
 {
     name	VolumeFog
     label	"Volume Fog"
-    parm {
-	name	"plugindata"
-	label	"Volume Fog"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"VolumeFog"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "VolumeFog" }
-	parmtag	{ "vray_type" "EFFECT" }
-    }
+    parmtag	{ spare_category "Volume Fog" }
+    parmtag	{ vray_plugin "VolumeFog" }
     parm {
 	name	"emission"
 	label	"Emission"

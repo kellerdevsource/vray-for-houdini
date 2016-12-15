@@ -1,17 +1,8 @@
 {
     name	SettingsVFB
     label	"SettingsVFB"
-    parm {
-	name	"plugindata"
-	label	"SettingsVFB"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "SettingsVFB" }
-	parmtag	{ "vray_type" "SETTINGS" }
-    }
+    parmtag	{ spare_category "SettingsVFB" }
+    parmtag	{ vray_plugin "SettingsVFB" }
     parm {
 	name	"bloom_on"
 	label	"Bloom On"

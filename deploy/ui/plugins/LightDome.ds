@@ -1,17 +1,8 @@
 {
     name	LightDome
     label	"Dome"
-    parm {
-	name	"plugindata"
-	label	"Dome"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "LightDome" }
-	parmtag	{ "vray_type" "LIGHT" }
-    }
+    parmtag	{ spare_category "Dome" }
+    parmtag	{ vray_plugin "LightDome" }
     parm {
 	name	"enabled"
 	label	"Enabled"

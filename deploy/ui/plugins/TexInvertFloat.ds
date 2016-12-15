@@ -1,19 +1,8 @@
 {
     name	TexInvertFloat
     label	"Invert Float"
-    parm {
-	name	"plugindata"
-	label	"Invert Float"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexInvertFloat"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TexInvertFloat" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Invert Float" }
+    parmtag	{ vray_plugin "TexInvertFloat" }
     parm {
 	name	"texture"
 	label	"Texture"

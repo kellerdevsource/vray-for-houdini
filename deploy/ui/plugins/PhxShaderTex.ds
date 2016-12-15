@@ -1,19 +1,8 @@
 {
     name	PhxShaderTex
     label	"Phx Shader Tex"
-    parm {
-	name	"plugindata"
-	label	"Phx Shader Tex"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"PhxShaderTex"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "phoenix" }
-	parmtag	{ "vray_plugin" "PhxShaderTex" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Phx Shader Tex" }
+    parmtag	{ vray_plugin "PhxShaderTex" }
     parm {
 	name	"compatibility_with"
 	label	"Compatibility With"

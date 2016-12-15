@@ -126,9 +126,6 @@ public:
 	void                           exportFrame(fpreal time);
 	void                           exportEnd();
 
-	void                           exportGeomMayaHairGeom(SOP_Node *sop_node, const GU_Detail *gdp, Attrs::PluginDesc &pluginDesc);
-	VRay::Plugin                   exportGeomMayaHair(SOP_Node *sop_node, const GU_Detail *gdp);
-
 	VRay::Plugin                   exportObject(OBJ_Node *obj_node);
 	VRay::Plugin                   exportVRayClipper(OBJ_Node &clipperNode);
 	VRay::Plugin                   exportParticles(OBJ_Node *dop_network);

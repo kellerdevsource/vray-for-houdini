@@ -1,18 +1,8 @@
 {
     name	TexMultiFloat
     label	"Multi Float"
-    parm {
-	name	"plugindata"
-	label	"Multi Float"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexMultiFloat"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexMultiFloat" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Multi Float" }
+    parmtag	{ vray_plugin "TexMultiFloat" }
     parm {
 	name	"mode"
 	label	"Mode"

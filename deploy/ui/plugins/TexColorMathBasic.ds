@@ -1,19 +1,8 @@
 {
     name	TexColorMathBasic
     label	"Color Math Basic"
-    parm {
-	name	"plugindata"
-	label	"Color Math Basic"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexColorMathBasic"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TexColorMathBasic" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Color Math Basic" }
+    parmtag	{ vray_plugin "TexColorMathBasic" }
     parm {
 	name	"op"
 	label	"Op"

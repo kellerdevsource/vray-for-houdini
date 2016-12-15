@@ -1,18 +1,8 @@
 {
     name	VRayScene
     label	"VRayScene"
-    parm {
-	name	"plugindata"
-	label	"VRayScene"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"*.vrscene asset loader"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "VRayScene" }
-	parmtag	{ "vray_type" "GEOMETRY" }
-    }
+    parmtag	{ spare_category "VRayScene" }
+    parmtag	{ vray_plugin "VRayScene" }
     parm {
 	name	"filepath"
 	label	"Filepath"

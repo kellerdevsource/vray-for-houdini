@@ -1,17 +1,8 @@
 {
     name	SettingsEnvironment
     label	"Environment"
-    parm {
-	name	"plugindata"
-	label	"Environment"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "SettingsEnvironment" }
-	parmtag	{ "vray_type" "SETTINGS" }
-    }
+    parmtag	{ spare_category "Environment" }
+    parmtag	{ vray_plugin "SettingsEnvironment" }
     parm {
 	name	"bg_color"
 	label	"Bg Color"

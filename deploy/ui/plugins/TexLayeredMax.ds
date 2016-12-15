@@ -1,18 +1,8 @@
 {
     name	TexLayeredMax
     label	"Layered Max"
-    parm {
-	name	"plugindata"
-	label	"Layered Max"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexLayeredMax"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexLayeredMax" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Layered Max" }
+    parmtag	{ vray_plugin "TexLayeredMax" }
     parm {
 	name	"compatibility_with"
 	label	"Compatibility With"

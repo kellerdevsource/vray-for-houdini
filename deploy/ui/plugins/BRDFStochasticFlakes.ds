@@ -1,18 +1,8 @@
 {
     name	BRDFStochasticFlakes
     label	"Stochastic Flakes"
-    parm {
-	name	"plugindata"
-	label	"Stochastic Flakes"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"BRDFStochasticFlakes"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "BRDFStochasticFlakes" }
-	parmtag	{ "vray_type" "BRDF" }
-    }
+    parmtag	{ spare_category "Stochastic Flakes" }
+    parmtag	{ vray_plugin "BRDFStochasticFlakes" }
     parm {
 	name	"enable_flakes"
 	label	"Enable Flakes"

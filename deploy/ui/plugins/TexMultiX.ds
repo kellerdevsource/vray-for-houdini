@@ -1,18 +1,8 @@
 {
     name	TexMultiX
     label	"Multi X"
-    parm {
-	name	"plugindata"
-	label	"Multi X"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexMultiX"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexMultiX" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Multi X" }
+    parmtag	{ vray_plugin "TexMultiX" }
     parm {
 	name	"rnd_by"
 	label	"Rnd By"

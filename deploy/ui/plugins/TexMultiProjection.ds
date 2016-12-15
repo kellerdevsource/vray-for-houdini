@@ -1,18 +1,8 @@
 {
     name	TexMultiProjection
     label	"Multi Projection"
-    parm {
-	name	"plugindata"
-	label	"Multi Projection"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexMultiProjection"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexMultiProjection" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Multi Projection" }
+    parmtag	{ vray_plugin "TexMultiProjection" }
     parm {
 	name	"zdepth_offset"
 	label	"Zdepth Offset"

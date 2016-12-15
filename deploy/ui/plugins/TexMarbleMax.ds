@@ -1,17 +1,8 @@
 {
     name	TexMarbleMax
     label	"MarbleMax"
-    parm {
-	name	"plugindata"
-	label	"MarbleMax"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexMarbleMax" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "MarbleMax" }
+    parmtag	{ vray_plugin "TexMarbleMax" }
     parm {
 	name	"color_mult"
 	label	"Color Mult"

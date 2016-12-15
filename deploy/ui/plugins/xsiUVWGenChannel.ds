@@ -1,17 +1,8 @@
 {
     name	xsiUVWGenChannel
     label	"Channel (XSI)"
-    parm {
-	name	"plugindata"
-	label	"Channel (XSI)"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "xsiUVWGenChannel" }
-	parmtag	{ "vray_type" "UVWGEN" }
-    }
+    parmtag	{ spare_category "Channel (XSI)" }
+    parmtag	{ vray_plugin "xsiUVWGenChannel" }
     parm {
 	name	"nsamples"
 	label	"Nsamples"

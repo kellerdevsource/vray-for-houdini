@@ -1,18 +1,8 @@
 {
     name	SettingsRaycaster
     label	"Raycaster"
-    parm {
-	name	"SettingsRaycaster_plugindata"
-	label	"Raycaster"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"Raycaster options"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "SettingsRaycaster" }
-	parmtag	{ "vray_type" "SETTINGS" }
-    }
+    parmtag	{ spare_category "Raycaster" }
+    parmtag	{ vray_plugin "SettingsRaycaster" }
     parm {
 	name	"SettingsRaycaster_maxLevels"
 	label	"Max Tree Depth"

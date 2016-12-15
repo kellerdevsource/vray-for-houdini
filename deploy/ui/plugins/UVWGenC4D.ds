@@ -1,17 +1,8 @@
 {
     name	UVWGenC4D
     label	"C4D"
-    parm {
-	name	"plugindata"
-	label	"C4D"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "UVWGenC4D" }
-	parmtag	{ "vray_type" "UVWGEN" }
-    }
+    parmtag	{ spare_category "C4D" }
+    parmtag	{ vray_plugin "UVWGenC4D" }
     parm {
 	name	"uvw_channel"
 	label	"Uvw Channel"

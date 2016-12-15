@@ -1,19 +1,8 @@
 {
     name	TexColorExponential
     label	"Color Exponential"
-    parm {
-	name	"plugindata"
-	label	"Color Exponential"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"Color Exponential"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TexColorExponential" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Color Exponential" }
+    parmtag	{ vray_plugin "TexColorExponential" }
     parm {
 	name	"input"
 	label	"Input"

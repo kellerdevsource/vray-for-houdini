@@ -1,19 +1,8 @@
 {
     name	TexSetRange
     label	"Range"
-    parm {
-	name	"plugindata"
-	label	"Range"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexSetRange"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TexSetRange" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Range" }
+    parmtag	{ vray_plugin "TexSetRange" }
     parm {
 	name	"value"
 	label	"Value"

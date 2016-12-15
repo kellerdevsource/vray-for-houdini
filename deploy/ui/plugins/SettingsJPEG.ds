@@ -1,17 +1,8 @@
 {
     name	SettingsJPEG
     label	"SettingsJPEG"
-    parm {
-	name	"plugindata"
-	label	"SettingsJPEG"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "SettingsJPEG" }
-	parmtag	{ "vray_type" "SETTINGS" }
-    }
+    parmtag	{ spare_category "SettingsJPEG" }
+    parmtag	{ vray_plugin "SettingsJPEG" }
     parm {
 	name	"quality"
 	label	"Quality"

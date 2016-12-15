@@ -1,18 +1,8 @@
 {
     name	BRDFDiffuse_forSSSASGVIS
     label	"Diffuse for SSSASGVIS"
-    parm {
-	name	"plugindata"
-	label	"Diffuse for SSSASGVIS"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"BRDFDiffuse_forSSSASGVIS"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "BRDFDiffuse_forSSSASGVIS" }
-	parmtag	{ "vray_type" "BRDF" }
-    }
+    parmtag	{ spare_category "Diffuse for SSSASGVIS" }
+    parmtag	{ vray_plugin "BRDFDiffuse_forSSSASGVIS" }
     parm {
 	name	"color"
 	label	"Color"

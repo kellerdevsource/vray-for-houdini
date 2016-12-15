@@ -1,19 +1,8 @@
 {
     name	TexSwitchFloat
     label	"Switch Float"
-    parm {
-	name	"plugindata"
-	label	"Switch Float"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexSwitchFloat"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TexSwitchFloat" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Switch Float" }
+    parmtag	{ vray_plugin "TexSwitchFloat" }
     parm {
 	name	"default_texture"
 	label	"Default Texture"

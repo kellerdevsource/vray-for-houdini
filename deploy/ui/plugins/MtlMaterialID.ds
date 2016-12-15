@@ -1,17 +1,8 @@
 {
     name	MtlMaterialID
     label	"Material ID"
-    parm {
-	name	"plugindata"
-	label	"Material ID"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "MtlMaterialID" }
-	parmtag	{ "vray_type" "MATERIAL" }
-    }
+    parmtag	{ spare_category "Material ID" }
+    parmtag	{ vray_plugin "MtlMaterialID" }
     parm {
 	name	"material_id_color"
 	label	"Material Id Color"

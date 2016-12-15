@@ -1,18 +1,8 @@
 {
     name	TexXSIRGBAKeyer
     label	"XSIRGBA Keyer"
-    parm {
-	name	"plugindata"
-	label	"XSIRGBA Keyer"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexXSIRGBAKeyer"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexXSIRGBAKeyer" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "XSIRGBA Keyer" }
+    parmtag	{ vray_plugin "TexXSIRGBAKeyer" }
     parm {
 	name	"compatibility_with"
 	label	"Compatibility With"

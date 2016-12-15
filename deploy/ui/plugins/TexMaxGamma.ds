@@ -1,19 +1,8 @@
 {
     name	TexMaxGamma
     label	"Max Gamma"
-    parm {
-	name	"plugindata"
-	label	"Max Gamma"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexMaxGamma"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TexMaxGamma" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Max Gamma" }
+    parmtag	{ vray_plugin "TexMaxGamma" }
     parm {
 	name	"input"
 	label	"Input"

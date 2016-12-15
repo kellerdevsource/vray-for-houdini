@@ -1,18 +1,8 @@
 {
     name	PhxShaderPGroup
     label	"Phx Shader P Group"
-    parm {
-	name	"plugindata"
-	label	"Phx Shader P Group"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"PhxShaderPGroup"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "PhxShaderPGroup" }
-	parmtag	{ "vray_type" "MISC" }
-    }
+    parmtag	{ spare_category "Phx Shader P Group" }
+    parmtag	{ vray_plugin "PhxShaderPGroup" }
     parm {
 	name	"pgroup"
 	label	"Pgroup"

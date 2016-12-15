@@ -1,19 +1,8 @@
 {
     name	MayaGamma
     label	"Gamma"
-    parm {
-	name	"plugindata"
-	label	"Gamma"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"Gamma correction texture"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "MayaGamma" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Gamma" }
+    parmtag	{ vray_plugin "MayaGamma" }
     parm {
 	name	"input"
 	label	"Input"

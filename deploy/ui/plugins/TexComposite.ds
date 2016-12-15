@@ -1,19 +1,8 @@
 {
     name	TexComposite
     label	"Composite"
-    parm {
-	name	"plugindata"
-	label	"Composite"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexComposite"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TexComposite" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Composite" }
+    parmtag	{ vray_plugin "TexComposite" }
     parm {
 	name	"color_a"
 	label	"Color A"

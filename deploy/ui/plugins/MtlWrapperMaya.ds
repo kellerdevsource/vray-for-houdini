@@ -1,18 +1,8 @@
 {
     name	MtlWrapperMaya
     label	"Mtl Wrapper Maya"
-    parm {
-	name	"plugindata"
-	label	"Mtl Wrapper Maya"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"MtlWrapperMaya"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "MtlWrapperMaya" }
-	parmtag	{ "vray_type" "MATERIAL" }
-    }
+    parmtag	{ spare_category "Mtl Wrapper Maya" }
+    parmtag	{ vray_plugin "MtlWrapperMaya" }
     parm {
 	name	"use_irrad_map"
 	label	"Use Irradiance Map"

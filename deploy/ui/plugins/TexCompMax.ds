@@ -1,18 +1,8 @@
 {
     name	TexCompMax
     label	"Comp Max"
-    parm {
-	name	"plugindata"
-	label	"Comp Max"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TexCompMax" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Comp Max" }
+    parmtag	{ vray_plugin "TexCompMax" }
     parm {
 	name	"compatibility_with"
 	label	"Compatibility With"

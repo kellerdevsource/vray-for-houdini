@@ -1,17 +1,8 @@
 {
     name	BRDFSSS2Complex
     label	"SSS 2 Complex"
-    parm {
-	name	"plugindata"
-	label	"SSS 2 Complex"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
-	parmtag	{ "vray_type" "BRDF" }
-    }
+    parmtag	{ spare_category "SSS 2 Complex" }
+    parmtag	{ vray_plugin "BRDFSSS2Complex" }
     parm {
 	name	"prepass_rate"
 	label	"Prepass Rate"

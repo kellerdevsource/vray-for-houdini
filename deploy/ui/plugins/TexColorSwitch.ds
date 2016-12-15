@@ -1,19 +1,8 @@
 {
     name	TexColorSwitch
     label	"Color Switch"
-    parm {
-	name	"plugindata"
-	label	"Color Switch"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexColorSwitch"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TexColorSwitch" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Color Switch" }
+    parmtag	{ vray_plugin "TexColorSwitch" }
     parm {
 	name	"compatibility_with"
 	label	"Compatibility With"

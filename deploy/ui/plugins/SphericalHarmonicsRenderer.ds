@@ -1,18 +1,8 @@
 {
     name	SphericalHarmonicsRenderer
     label	"Spherical Harmonics Renderer"
-    parm {
-	name	"plugindata"
-	label	"Spherical Harmonics Renderer"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"Spherical harmonics renderer settings"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "SphericalHarmonicsRenderer" }
-	parmtag	{ "vray_type" "SETTINGS" }
-    }
+    parmtag	{ spare_category "Spherical Harmonics Renderer" }
+    parmtag	{ vray_plugin "SphericalHarmonicsRenderer" }
     parm {
 	name	"file_name"
 	label	"File Name"

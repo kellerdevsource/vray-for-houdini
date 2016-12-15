@@ -1,19 +1,8 @@
 {
     name	MayaMultiplyDivide
     label	"Maya Multiply Divide"
-    parm {
-	name	"plugindata"
-	label	"Maya Multiply Divide"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"MayaMultiplyDivide"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "MayaMultiplyDivide" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Maya Multiply Divide" }
+    parmtag	{ vray_plugin "MayaMultiplyDivide" }
     parm {
 	name	"color1"
 	label	"Color1"

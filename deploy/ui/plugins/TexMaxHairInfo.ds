@@ -1,18 +1,8 @@
 {
     name	TexMaxHairInfo
     label	"Max Hair Info"
-    parm {
-	name	"plugindata"
-	label	"Max Hair Info"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexMaxHairInfo"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexMaxHairInfo" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Max Hair Info" }
+    parmtag	{ vray_plugin "TexMaxHairInfo" }
     parm {
 	name	"output"
 	label	"Output"

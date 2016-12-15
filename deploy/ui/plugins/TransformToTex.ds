@@ -1,17 +1,6 @@
 {
     name	TransformToTex
-    label	"Transform To Tex"
-    parm {
-	name	"plugindata"
-	label	"Transform To Tex"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TransformToTex"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TransformToTex" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+label	"Transform To Tex"
+parmtag	{ spare_category "Transform To Tex" }
+parmtag	{ vray_plugin "TransformToTex" }
 }

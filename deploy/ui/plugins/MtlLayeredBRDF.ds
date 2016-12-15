@@ -1,18 +1,8 @@
 {
     name	MtlLayeredBRDF
     label	"Mtl Layered BRDF"
-    parm {
-	name	"plugindata"
-	label	"Mtl Layered BRDF"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"MtlLayeredBRDF"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "MtlLayeredBRDF" }
-	parmtag	{ "vray_type" "MATERIAL" }
-    }
+    parmtag	{ spare_category "Mtl Layered BRDF" }
+    parmtag	{ vray_plugin "MtlLayeredBRDF" }
     parm {
 	name	"double_sided"
 	label	"Double Sided"

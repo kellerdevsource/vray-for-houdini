@@ -1,18 +1,8 @@
 {
     name	GeomDisplacedMesh
     label	"Displacement"
-    parm {
-	name	"plugindata"
-	label	"Displacement"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"Displacement settings"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
-	parmtag	{ "vray_type" "GEOMETRY" }
-    }
+    parmtag	{ spare_category "Displacement" }
+    parmtag	{ vray_plugin "GeomDisplacedMesh" }
     parm {
 	name	"displacement_tex_color"
 	label	"Color"

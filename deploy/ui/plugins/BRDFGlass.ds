@@ -1,17 +1,8 @@
 {
     name	BRDFGlass
     label	"Glass"
-    parm {
-	name	"plugindata"
-	label	"Glass"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "BRDFGlass" }
-	parmtag	{ "vray_type" "BRDF" }
-    }
+    parmtag	{ spare_category "Glass" }
+    parmtag	{ vray_plugin "BRDFGlass" }
     parm {
 	name	"color"
 	label	"Color"

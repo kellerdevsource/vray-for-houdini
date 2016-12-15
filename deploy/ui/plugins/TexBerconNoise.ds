@@ -1,18 +1,8 @@
 {
     name	TexBerconNoise
     label	"Bercon Noise"
-    parm {
-	name	"plugindata"
-	label	"Bercon Noise"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexBerconNoise"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexBerconNoise" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Bercon Noise" }
+    parmtag	{ vray_plugin "TexBerconNoise" }
     parm {
 	name	"compatibility_with"
 	label	"Compatibility With"

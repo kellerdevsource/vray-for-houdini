@@ -1,19 +1,8 @@
 {
     name	TexCondition
     label	"Condition (From Texture)"
-    parm {
-	name	"plugindata"
-	label	"Condition (From Texture)"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexCondition"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TexCondition" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Condition (From Texture)" }
+    parmtag	{ vray_plugin "TexCondition" }
     parm {
 	name	"operation"
 	label	"Operation"

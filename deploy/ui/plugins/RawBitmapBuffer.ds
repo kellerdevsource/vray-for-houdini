@@ -1,18 +1,8 @@
 {
     name	RawBitmapBuffer
     label	"Raw Bitmap Buffer"
-    parm {
-	name	"plugindata"
-	label	"Raw Bitmap Buffer"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"RawBitmapBuffer"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "RawBitmapBuffer" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Raw Bitmap Buffer" }
+    parmtag	{ vray_plugin "RawBitmapBuffer" }
     parm {
 	name	"filter_type"
 	label	"Filter Type"

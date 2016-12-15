@@ -1,19 +1,8 @@
 {
     name	TexColorCondition
     label	"Color Condition"
-    parm {
-	name	"plugindata"
-	label	"Color Condition"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexColorCondition"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TexColorCondition" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Color Condition" }
+    parmtag	{ vray_plugin "TexColorCondition" }
     parm {
 	name	"color_a"
 	label	"Color A"

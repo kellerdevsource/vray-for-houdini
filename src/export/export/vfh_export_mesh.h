@@ -12,10 +12,10 @@
 #define VRAY_FOR_HOUDINI_EXPORT_MESH_H
 
 #include "vfh_vray.h"
-#include "vfh_hashes.h"
 #include "vfh_defines.h"
 #include "vfh_plugin_attrs.h"
 #include "vfh_exporter.h"
+#include "vfh_geoutils.h"
 #include "vfh_material_override.h"
 
 #include <SOP/SOP_Node.h>
@@ -30,54 +30,6 @@ namespace VRayForHoudini {
 class VRayExporter;
 
 
-struct MapVertex {
-	MapVertex():
-		index(0)
-	{ }
-
-	MapVertex(const UT_Vector3 &vec):
-		index(0)
-	{
-		v[0] = vec[0];
-		v[1] = vec[1];
-		v[2] = vec[2];
-	}
-
-	bool operator == (const MapVertex &_v) const
-	{
-		return (v[0] == _v.v[0]) && (v[1] == _v.v[1]) && (v[2] == _v.v[2]);
-	}
-
-	float        v[3];
-	mutable int  index;
-};
-
-
-struct MapVertexHash
-{
-	std::size_t operator () (const MapVertex &_v) const
-	{
-		VRayForHoudini::Hash::MHash hash;
-		VRayForHoudini::Hash::MurmurHash3_x86_32(_v.v, 3 * sizeof(float), 42, &hash);
-		return (std::size_t)hash;
-	}
-};
-
-
-struct MapChannel
-{
-	typedef std::unordered_set<MapVertex, MapVertexHash> VertexSet;
-
-	std::string                 name;
-	VRay::VUtils::VectorRefList vertices;
-	VRay::VUtils::IntRefList    faces;
-	VertexSet                   verticesSet;
-};
-
-
-typedef std::unordered_map<std::string, MapChannel> MapChannels;
-
-
 class MeshExporter
 {
 public:
@@ -88,7 +40,7 @@ public:
 	};
 
 public:
-	static bool isPrimPoly(const GA_Primitive &prim);
+	static bool isPrimPoly(const GEO_Primitive *prim);
 	static bool getDataFromAttribute(const GA_Attribute *attr, VRay::VUtils::VectorRefList &data);
 
 public:
@@ -98,7 +50,7 @@ public:
 	MeshExporter& setSOPContext(SOP_Node *sop) { m_sopNode = sop; return *this; }
 	MeshExporter& setSubdivApplied(bool val) { m_hasSubdivApplied = val; return *this; }
 
-	bool                         hasPolyGeometry() const;
+	bool                         hasPolyGeometry();
 	bool                         hasSubdivApplied() const { return m_hasSubdivApplied; }
 	int                          getNumVertices() { return getVertices().size(); }
 	int                          getNumVelocities() { return getVelocities().size(); }

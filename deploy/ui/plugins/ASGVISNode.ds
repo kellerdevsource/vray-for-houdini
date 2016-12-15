@@ -1,18 +1,8 @@
 {
     name	ASGVISNode
     label	"ASGVIS Node"
-    parm {
-	name	"plugindata"
-	label	"ASGVIS Node"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"ASGVISNode"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "ASGVISNode" }
-	parmtag	{ "vray_type" "GEOMETRY" }
-    }
+    parmtag	{ spare_category "ASGVIS Node" }
+    parmtag	{ vray_plugin "ASGVISNode" }
     parm {
 	name	"nsamples"
 	label	"Nsamples"

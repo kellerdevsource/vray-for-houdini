@@ -1,18 +1,8 @@
 {
     name	TexXSILayered
     label	"XSI Layered"
-    parm {
-	name	"plugindata"
-	label	"XSI Layered"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexXSILayered"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexXSILayered" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "XSI Layered" }
+    parmtag	{ vray_plugin "TexXSILayered" }
     parm {
 	name	"compatibility_with"
 	label	"Compatibility With"

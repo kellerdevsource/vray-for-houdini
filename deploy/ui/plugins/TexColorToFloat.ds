@@ -1,18 +1,8 @@
 {
     name	TexColorToFloat
     label	"Color To Float"
-    parm {
-	name	"plugindata"
-	label	"Color To Float"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TexColorToFloat" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Color To Float" }
+    parmtag	{ vray_plugin "TexColorToFloat" }
     parm {
 	name	"input"
 	label	"Input"

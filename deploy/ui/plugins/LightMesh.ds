@@ -1,17 +1,8 @@
 {
     name	LightMesh
     label	"Mesh Light"
-    parm {
-	name	"plugindata"
-	label	"Mesh Light"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "LightMesh" }
-	parmtag	{ "vray_type" "LIGHT" }
-    }
+    parmtag	{ spare_category "Mesh Light" }
+    parmtag	{ vray_plugin "LightMesh" }
     parm {
 	name	"enabled"
 	label	"Enabled"

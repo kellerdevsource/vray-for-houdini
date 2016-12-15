@@ -1,19 +1,8 @@
 {
     name	ColorTextureToMono
     label	"Color Texture To Mono"
-    parm {
-	name	"plugindata"
-	label	"Color Texture To Mono"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"ColorTextureToMono"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "ColorTextureToMono" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Color Texture To Mono" }
+    parmtag	{ vray_plugin "ColorTextureToMono" }
     parm {
 	name	"value"
 	label	"Value"

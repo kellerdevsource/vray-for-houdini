@@ -1,19 +1,8 @@
 {
     name	TexFloatOp
     label	"Float Operations"
-    parm {
-	name	"plugindata"
-	label	"Float Operations"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"Float operations"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TexFloatOp" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Float Operations" }
+    parmtag	{ vray_plugin "TexFloatOp" }
     parm {
 	name	"float_a"
 	label	"A"

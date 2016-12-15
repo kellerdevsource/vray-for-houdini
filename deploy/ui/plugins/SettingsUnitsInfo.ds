@@ -1,17 +1,8 @@
 {
     name	SettingsUnitsInfo
     label	"SettingsUnitsInfo"
-    parm {
-	name	"plugindata"
-	label	"SettingsUnitsInfo"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "SettingsUnitsInfo" }
-	parmtag	{ "vray_type" "SETTINGS" }
-    }
+    parmtag	{ spare_category "SettingsUnitsInfo" }
+    parmtag	{ vray_plugin "SettingsUnitsInfo" }
     parm {
 	name	"meters_scale"
 	label	"Meters Scale"

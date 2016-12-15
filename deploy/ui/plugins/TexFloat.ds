@@ -1,18 +1,8 @@
 {
     name	TexFloat
     label	"Float"
-    parm {
-	name	"plugindata"
-	label	"Float"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexFloat"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexFloat" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Float" }
+    parmtag	{ vray_plugin "TexFloat" }
     parm {
 	name	"input"
 	label	"Input"

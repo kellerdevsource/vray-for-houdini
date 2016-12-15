@@ -1,18 +1,8 @@
 {
     name	TexLuminance
     label	"Luminance"
-    parm {
-	name	"plugindata"
-	label	"Luminance"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexLuminance"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexLuminance" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Luminance" }
+    parmtag	{ vray_plugin "TexLuminance" }
     parm {
 	name	"input"
 	label	"Input"

@@ -1,19 +1,8 @@
 {
     name	TexRGBTintMax
     label	"RGB Tint Max"
-    parm {
-	name	"plugindata"
-	label	"RGB Tint Max"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexRGBTintMax"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TexRGBTintMax" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "RGB Tint Max" }
+    parmtag	{ vray_plugin "TexRGBTintMax" }
     parm {
 	name	"texture"
 	label	"Texture"

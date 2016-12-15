@@ -1,18 +1,8 @@
 {
     name	GeomStaticSmoothedMesh
     label	"Subdivision"
-    parm {
-	name	"plugindata"
-	label	"Subdivision"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"Subdivision surface settings"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "GeomStaticSmoothedMesh" }
-	parmtag	{ "vray_type" "GEOMETRY" }
-    }
+    parmtag	{ spare_category "Subdivision" }
+    parmtag	{ vray_plugin "GeomStaticSmoothedMesh" }
     parm {
 	name	"displacement_tex_color"
 	label	"Color"

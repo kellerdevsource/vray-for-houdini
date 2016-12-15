@@ -1,17 +1,8 @@
 {
     name	TexTiles
     label	"Tiles"
-    parm {
-	name	"plugindata"
-	label	"Tiles"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexTiles" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Tiles" }
+    parmtag	{ vray_plugin "TexTiles" }
     parm {
 	name	"color_mult"
 	label	"Color Mult"

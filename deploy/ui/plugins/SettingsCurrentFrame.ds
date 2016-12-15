@@ -1,17 +1,8 @@
 {
     name	SettingsCurrentFrame
     label	"Current Frame"
-    parm {
-	name	"plugindata"
-	label	"Current Frame"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "SettingsCurrentFrame" }
-	parmtag	{ "vray_type" "SETTINGS" }
-    }
+    parmtag	{ spare_category "Current Frame" }
+    parmtag	{ vray_plugin "SettingsCurrentFrame" }
     parm {
 	name	"current_frame"
 	label	"Current Frame"

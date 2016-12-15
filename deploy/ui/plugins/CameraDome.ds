@@ -1,18 +1,8 @@
 {
     name	CameraDome
     label	"Camera Dome"
-    parm {
-	name	"plugindata"
-	label	"Camera Dome"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"CameraDome"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "CameraDome" }
-	parmtag	{ "vray_type" "CAMERA" }
-    }
+    parmtag	{ spare_category "Camera Dome" }
+    parmtag	{ vray_plugin "CameraDome" }
     parm {
 	name	"flip_x"
 	label	"Flip X"

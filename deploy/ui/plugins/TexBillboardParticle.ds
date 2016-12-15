@@ -1,18 +1,8 @@
 {
     name	TexBillboardParticle
     label	"Billboard Particle"
-    parm {
-	name	"plugindata"
-	label	"Billboard Particle"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexBillboardParticle"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexBillboardParticle" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Billboard Particle" }
+    parmtag	{ vray_plugin "TexBillboardParticle" }
     parm {
 	name	"compatibility_with"
 	label	"Compatibility With"

@@ -1,18 +1,8 @@
 {
     name	SettingsDR
     label	"Settings DR"
-    parm {
-	name	"plugindata"
-	label	"Settings DR"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"SettingsDR"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "SettingsDR" }
-	parmtag	{ "vray_type" "SETTINGS" }
-    }
+    parmtag	{ spare_category "Settings DR" }
+    parmtag	{ vray_plugin "SettingsDR" }
     parm {
 	name	"on"
 	label	"On"

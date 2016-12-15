@@ -1,17 +1,8 @@
 {
     name	TexBitmap
     label	"Image Texture"
-    parm {
-	name	"plugindata"
-	label	"Image Texture"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexBitmap" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Image Texture" }
+    parmtag	{ vray_plugin "TexBitmap" }
     parm {
 	name	"color_mult"
 	label	"Color Mult"

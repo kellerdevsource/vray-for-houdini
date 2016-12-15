@@ -1,19 +1,8 @@
 {
     name	TexAColorOp
     label	"Color Operations"
-    parm {
-	name	"plugindata"
-	label	"Color Operations"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"Color operations"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TexAColorOp" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Color Operations" }
+    parmtag	{ vray_plugin "TexAColorOp" }
     parm {
 	name	"color_a"
 	label	"Color A"

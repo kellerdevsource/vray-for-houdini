@@ -1,18 +1,8 @@
 {
     name	BSDFPointParticle
     label	"Point Particle"
-    parm {
-	name	"plugindata"
-	label	"Point Particle"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"BSDFPointParticle"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "BSDFPointParticle" }
-	parmtag	{ "vray_type" "BRDF" }
-    }
+    parmtag	{ spare_category "Point Particle" }
+    parmtag	{ vray_plugin "BSDFPointParticle" }
     parm {
 	name	"diffuse_color"
 	label	"Diffuse Color"

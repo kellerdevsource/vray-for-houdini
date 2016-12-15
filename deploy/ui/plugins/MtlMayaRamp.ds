@@ -1,18 +1,8 @@
 {
     name	MtlMayaRamp
     label	"Mtl Maya Ramp"
-    parm {
-	name	"plugindata"
-	label	"Mtl Maya Ramp"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"MtlMayaRamp"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "MtlMayaRamp" }
-	parmtag	{ "vray_type" "MATERIAL" }
-    }
+    parmtag	{ spare_category "Mtl Maya Ramp" }
+    parmtag	{ vray_plugin "MtlMayaRamp" }
     parm {
 	name	"color_input"
 	label	"Color Input"

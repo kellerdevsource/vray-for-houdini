@@ -1,18 +1,8 @@
 {
     name	TexModoProcess
     label	"Modo Process"
-    parm {
-	name	"plugindata"
-	label	"Modo Process"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexModoProcess"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexModoProcess" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Modo Process" }
+    parmtag	{ vray_plugin "TexModoProcess" }
     parm {
 	name	"base_texture"
 	label	"Base Texture"

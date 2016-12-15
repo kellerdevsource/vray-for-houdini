@@ -1,18 +1,8 @@
 {
     name	TexInvert
     label	"Invert"
-    parm {
-	name	"plugindata"
-	label	"Invert"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TexInvert" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Invert" }
+    parmtag	{ vray_plugin "TexInvert" }
     parm {
 	name	"texture"
 	label	"Texture"

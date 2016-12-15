@@ -1,17 +1,8 @@
 {
     name	SettingsIrradianceMap
     label	"Irradiance Map"
-    parm {
-	name	"SettingsIrradianceMap_plugindata"
-	label	"Irradiance Map"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "SettingsIrradianceMap" }
-	parmtag	{ "vray_type" "SETTINGS" }
-    }
+    parmtag	{ spare_category "Irradiance Map" }
+    parmtag	{ vray_plugin "SettingsIrradianceMap" }
     parm {
 	name	"SettingsIrradianceMap_min_rate"
 	label	"Min Rate"

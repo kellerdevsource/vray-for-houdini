@@ -1,17 +1,8 @@
 {
     name	TexRock
     label	"Rock"
-    parm {
-	name	"plugindata"
-	label	"Rock"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexRock" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Rock" }
+    parmtag	{ vray_plugin "TexRock" }
     parm {
 	name	"color_mult"
 	label	"Color Mult"

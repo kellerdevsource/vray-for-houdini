@@ -1,19 +1,8 @@
 {
     name	TexVectorOp
     label	"Vector Operations"
-    parm {
-	name	"plugindata"
-	label	"Vector Operations"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"Vector operations"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TexVectorOp" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Vector Operations" }
+    parmtag	{ vray_plugin "TexVectorOp" }
     parm {
 	name	"vector_a"
 	label	"Vector A"

@@ -1,17 +1,8 @@
 {
     name	FilterGaussian
     label	"Gaussian"
-    parm {
-	name	"plugindata"
-	label	"Gaussian"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "FilterGaussian" }
-	parmtag	{ "vray_type" "SETTINGS" }
-    }
+    parmtag	{ spare_category "Gaussian" }
+    parmtag	{ vray_plugin "FilterGaussian" }
     parm {
 	name	"size"
 	label	"Size"

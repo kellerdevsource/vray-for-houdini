@@ -1,18 +1,8 @@
 {
     name	BakeView
     label	"Bake"
-    parm {
-	name	"plugindata"
-	label	"Bake"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"Bake settings"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "BakeView" }
-	parmtag	{ "vray_type" "SETTINGS" }
-    }
+    parmtag	{ spare_category "Bake" }
+    parmtag	{ vray_plugin "BakeView" }
     parm {
 	name	"dilation"
 	label	"Dilation"

@@ -1,19 +1,8 @@
 {
     name	TexRemapFloat
     label	"Remap Float"
-    parm {
-	name	"plugindata"
-	label	"Remap Float"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"Remap float value"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TexRemapFloat" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Remap Float" }
+    parmtag	{ vray_plugin "TexRemapFloat" }
     parm {
 	name	"value"
 	label	"Value"

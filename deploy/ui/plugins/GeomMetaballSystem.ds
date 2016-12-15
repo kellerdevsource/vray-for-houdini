@@ -1,18 +1,8 @@
 {
     name	GeomMetaballSystem
     label	"Geom Metaball System"
-    parm {
-	name	"plugindata"
-	label	"Geom Metaball System"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"GeomMetaballSystem"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
-	parmtag	{ "vray_type" "GEOMETRY" }
-    }
+    parmtag	{ spare_category "Geom Metaball System" }
+    parmtag	{ vray_plugin "GeomMetaballSystem" }
     parm {
 	name	"useParticleSize"
 	label	"Useparticlesize"

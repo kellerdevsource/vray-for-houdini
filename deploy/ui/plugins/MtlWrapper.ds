@@ -1,17 +1,8 @@
 {
     name	MtlWrapper
     label	"Wrapper"
-    parm {
-	name	"plugindata"
-	label	"Wrapper"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "MtlWrapper" }
-	parmtag	{ "vray_type" "MATERIAL" }
-    }
+    parmtag	{ spare_category "Wrapper" }
+    parmtag	{ vray_plugin "MtlWrapper" }
     parm {
 	name	"generate_gi"
 	label	"Generated Gi Mult."

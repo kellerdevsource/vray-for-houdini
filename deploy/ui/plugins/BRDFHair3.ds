@@ -1,17 +1,8 @@
 {
     name	BRDFHair3
     label	"Hair 3"
-    parm {
-	name	"plugindata"
-	label	"Hair 3"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "BRDFHair3" }
-	parmtag	{ "vray_type" "BRDF" }
-    }
+    parmtag	{ spare_category "Hair 3" }
+    parmtag	{ vray_plugin "BRDFHair3" }
     parm {
 	name	"overall_color"
 	label	"Overall Color"

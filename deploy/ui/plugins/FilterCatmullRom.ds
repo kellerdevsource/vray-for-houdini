@@ -1,15 +1,6 @@
 {
     name	FilterCatmullRom
-    label	"Catmull-Rom"
-    parm {
-	name	"plugindata"
-	label	"Catmull-Rom"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "FilterCatmullRom" }
-	parmtag	{ "vray_type" "SETTINGS" }
-    }
+label	"Catmull-Rom"
+parmtag	{ spare_category "Catmull-Rom" }
+parmtag	{ vray_plugin "FilterCatmullRom" }
 }

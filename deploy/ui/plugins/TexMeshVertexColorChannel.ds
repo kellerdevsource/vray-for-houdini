@@ -1,17 +1,8 @@
 {
     name	TexMeshVertexColorChannel
     label	"Mesh Map Channel"
-    parm {
-	name	"plugindata"
-	label	"Mesh Map Channel"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexMeshVertexColorChannel" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Mesh Map Channel" }
+    parmtag	{ vray_plugin "TexMeshVertexColorChannel" }
     parm {
 	name	"channelIndex"
 	label	"Channel Index"

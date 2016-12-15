@@ -1,17 +1,8 @@
 {
     name	TexGrid
     label	"Grid"
-    parm {
-	name	"plugindata"
-	label	"Grid"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexGrid" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Grid" }
+    parmtag	{ vray_plugin "TexGrid" }
     parm {
 	name	"color_mult"
 	label	"Color Mult"

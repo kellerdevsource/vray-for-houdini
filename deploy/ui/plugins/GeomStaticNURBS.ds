@@ -1,18 +1,8 @@
 {
     name	GeomStaticNURBS
     label	"Geom Static NURBS"
-    parm {
-	name	"plugindata"
-	label	"Geom Static NURBS"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"GeomStaticNURBS"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "GeomStaticNURBS" }
-	parmtag	{ "vray_type" "GEOMETRY" }
-    }
+    parmtag	{ spare_category "Geom Static NURBS" }
+    parmtag	{ vray_plugin "GeomStaticNURBS" }
     parm {
 	name	"maxSubdivDepth"
 	label	"Maxsubdivdepth"

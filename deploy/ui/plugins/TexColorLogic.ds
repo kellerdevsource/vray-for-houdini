@@ -1,19 +1,8 @@
 {
     name	TexColorLogic
     label	"Color Logic"
-    parm {
-	name	"plugindata"
-	label	"Color Logic"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexColorLogic"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TexColorLogic" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Color Logic" }
+    parmtag	{ vray_plugin "TexColorLogic" }
     parm {
 	name	"color_a"
 	label	"Color A"

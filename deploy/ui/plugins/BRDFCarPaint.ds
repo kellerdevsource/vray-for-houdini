@@ -1,18 +1,8 @@
 {
     name	BRDFCarPaint
     label	"Car Paint"
-    parm {
-	name	"plugindata"
-	label	"Car Paint"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"Car paint imitation"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "BRDFCarPaint" }
-	parmtag	{ "vray_type" "BRDF" }
-    }
+    parmtag	{ spare_category "Car Paint" }
+    parmtag	{ vray_plugin "BRDFCarPaint" }
     parm {
 	name	"base_color"
 	label	"Base Color"

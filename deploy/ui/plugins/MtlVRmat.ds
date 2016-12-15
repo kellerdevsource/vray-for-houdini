@@ -1,18 +1,8 @@
 {
     name	MtlVRmat
     label	"VRmat"
-    parm {
-	name	"plugindata"
-	label	"VRmat"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"VRmat material"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "MtlVRmat" }
-	parmtag	{ "vray_type" "MATERIAL" }
-    }
+    parmtag	{ spare_category "VRmat" }
+    parmtag	{ vray_plugin "MtlVRmat" }
     parm {
 	name	"filename"
 	label	"Material File"

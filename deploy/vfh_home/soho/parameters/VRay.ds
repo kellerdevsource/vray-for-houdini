@@ -1,0 +1,20 @@
+//
+//  Houdini Parameters for V-Ray
+//
+
+{
+    name    vray
+    label   "V-Ray"
+    parmtag { spare_classtags   "render" }
+
+#if environment(VRAY_UI_DS_PATH)
+
+collection
+#include "$VRAY_UI_DS_PATH/plugins/GeomMayaHair.ds"
+
+collection
+#include "$VRAY_UI_DS_PATH/plugins/CameraPhysical.ds"
+
+#endif
+
+}

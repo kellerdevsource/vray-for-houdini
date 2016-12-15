@@ -1,19 +1,8 @@
 {
     name	MayaProjectionTex
     label	"Maya Projection Tex"
-    parm {
-	name	"plugindata"
-	label	"Maya Projection Tex"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"MayaProjectionTex"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "MayaProjectionTex" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Maya Projection Tex" }
+    parmtag	{ vray_plugin "MayaProjectionTex" }
     parm {
 	name	"compatibility_with"
 	label	"Compatibility With"

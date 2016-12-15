@@ -1,18 +1,8 @@
 {
     name	BRDFMultiBump
     label	"Multi Bump"
-    parm {
-	name	"plugindata"
-	label	"Multi Bump"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"BRDFMultiBump"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "BRDFMultiBump" }
-	parmtag	{ "vray_type" "BRDF" }
-    }
+    parmtag	{ spare_category "Multi Bump" }
+    parmtag	{ vray_plugin "BRDFMultiBump" }
     parm {
 	name	"bump_tex_0"
 	label	"Bump Tex 0"

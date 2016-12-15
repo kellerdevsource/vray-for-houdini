@@ -1,18 +1,8 @@
 {
     name	TexCustomBitmap
     label	"Custom Bitmap"
-    parm {
-	name	"plugindata"
-	label	"Custom Bitmap"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexCustomBitmap"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexCustomBitmap" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Custom Bitmap" }
+    parmtag	{ vray_plugin "TexCustomBitmap" }
     parm {
 	name	"compatibility_with"
 	label	"Compatibility With"

@@ -1,18 +1,8 @@
 {
     name	SettingsGI
     label	"GI"
-    parm {
-	name	"SettingsGI_plugindata"
-	label	"GI"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"Global illumination settings"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "SettingsGI" }
-	parmtag	{ "vray_type" "SETTINGS" }
-    }
+    parmtag	{ spare_category "GI" }
+    parmtag	{ vray_plugin "SettingsGI" }
     parm {
 	name	"SettingsGI_on"
 	label	"On"

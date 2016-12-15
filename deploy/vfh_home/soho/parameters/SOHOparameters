@@ -1,0 +1,16 @@
+#ifndef __VFH_SOHO_PARAMETERS__
+#define __VFH_SOHO_PARAMETERS__
+
+// It's possible to override this file by adding a different version
+// earlier in the HOUDINI_PATH.  You should have
+//   #include "$VFH/vfh_home/soho/parameters/SOHOparameters"
+// to include the system parameters along with V-Ray specific ones
+// where you have $VFH env var set to vfh install location when launching Houdini
+
+// system parameters
+#include "$HFS/houdini/soho/parameters/SOHOparameters"
+
+// V-Ray render parameters
+#include "VRay.ds"
+
+#endif // __VFH_SOHO_PARAMETERS__

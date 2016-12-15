@@ -15,7 +15,7 @@
 #include "vfh_exporter.h"
 
 #include <OBJ/OBJ_Geometry.h>
-#include <GU/GU_PrimPacked.h>
+#include <GU/GU_Detail.h>
 
 namespace VRayForHoudini {
 
@@ -27,6 +27,7 @@ class PrimitiveExporter {
 public:
 	PrimitiveExporter(OBJ_Node &obj, OP_Context &ctx, VRayExporter &exp): m_object(obj), m_context(ctx), m_exporter(exp) {}
 
+	virtual bool asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc &pluginDesc) = 0;
 	virtual void exportPrimitives(const GU_Detail &detail, PluginDescList &plugins) = 0;
 	virtual ~PrimitiveExporter() {}
 protected:
@@ -42,7 +43,9 @@ class VolumeExporter: public PrimitiveExporter {
 public:
 	VolumeExporter(OBJ_Node &obj, OP_Context &ctx, VRayExporter &exp): PrimitiveExporter(obj, ctx, exp) {};
 
+	virtual bool asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc &pluginDesc) VRAY_OVERRIDE { return false; }
 	virtual void exportPrimitives(const GU_Detail &detail, PluginDescList &plugins) VRAY_OVERRIDE;
+
 protected:
 	void exportCache(const GA_Primitive &prim);
 	void exportSim(SHOP_Node *shop, const Attrs::PluginAttrs &overrideAttrs, const std::string &cacheName);

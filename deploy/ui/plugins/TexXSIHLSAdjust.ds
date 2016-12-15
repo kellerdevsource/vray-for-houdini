@@ -1,18 +1,8 @@
 {
     name	TexXSIHLSAdjust
     label	"XSIHLS Adjust"
-    parm {
-	name	"plugindata"
-	label	"XSIHLS Adjust"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexXSIHLSAdjust"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexXSIHLSAdjust" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "XSIHLS Adjust" }
+    parmtag	{ vray_plugin "TexXSIHLSAdjust" }
     parm {
 	name	"compatibility_with"
 	label	"Compatibility With"

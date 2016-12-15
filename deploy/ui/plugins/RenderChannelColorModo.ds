@@ -1,18 +1,8 @@
 {
     name	RenderChannelColorModo
     label	"Render Channel Color Modo"
-    parm {
-	name	"plugindata"
-	label	"Render Channel Color Modo"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"RenderChannelColorModo"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "RenderChannelColorModo" }
-	parmtag	{ "vray_type" "RENDERCHANNEL" }
-    }
+    parmtag	{ spare_category "Render Channel Color Modo" }
+    parmtag	{ vray_plugin "RenderChannelColorModo" }
     parm {
 	name	"name"
 	label	"Name"

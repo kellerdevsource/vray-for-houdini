@@ -1,19 +1,8 @@
 {
     name	TexBlendBumpNormal
     label	"Blend Bump Normal"
-    parm {
-	name	"plugindata"
-	label	"Blend Bump Normal"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexBlendBumpNormal"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TexBlendBumpNormal" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Blend Bump Normal" }
+    parmtag	{ vray_plugin "TexBlendBumpNormal" }
     parm {
 	name	"normalMap1"
 	label	"Normal Map 1"

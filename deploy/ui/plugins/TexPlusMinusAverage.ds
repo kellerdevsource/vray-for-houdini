@@ -1,19 +1,8 @@
 {
     name	TexPlusMinusAverage
     label	"Plus Minus Average"
-    parm {
-	name	"plugindata"
-	label	"Plus Minus Average"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexPlusMinusAverage"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TexPlusMinusAverage" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Plus Minus Average" }
+    parmtag	{ vray_plugin "TexPlusMinusAverage" }
     parm {
 	name	"operation"
 	label	"Operation"

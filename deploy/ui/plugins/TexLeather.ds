@@ -1,17 +1,8 @@
 {
     name	TexLeather
     label	"Leather"
-    parm {
-	name	"plugindata"
-	label	"Leather"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexLeather" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Leather" }
+    parmtag	{ vray_plugin "TexLeather" }
     parm {
 	name	"color_mult"
 	label	"Color Mult"

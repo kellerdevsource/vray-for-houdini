@@ -1,18 +1,8 @@
 {
     name	TexSoftbox
     label	"Soft Box"
-    parm {
-	name	"plugindata"
-	label	"Soft Box"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"Softbox texture for rectangle light"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexSoftbox" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Soft Box" }
+    parmtag	{ vray_plugin "TexSoftbox" }
     parm {
 	name	"compatibility_with"
 	label	"Compatibility With"

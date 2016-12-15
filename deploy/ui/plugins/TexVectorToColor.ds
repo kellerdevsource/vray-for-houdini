@@ -1,19 +1,8 @@
 {
     name	TexVectorToColor
     label	"Vector To Color"
-    parm {
-	name	"plugindata"
-	label	"Vector To Color"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"Vector to color"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TexVectorToColor" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Vector To Color" }
+    parmtag	{ vray_plugin "TexVectorToColor" }
     parm {
 	name	"input"
 	label	"Input"

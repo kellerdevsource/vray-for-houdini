@@ -1,18 +1,8 @@
 {
     name	BRDFRefraction
     label	"Refraction"
-    parm {
-	name	"plugindata"
-	label	"Refraction"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"BRDFRefraction"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "BRDFRefraction" }
-	parmtag	{ "vray_type" "BRDF" }
-    }
+    parmtag	{ spare_category "Refraction" }
+    parmtag	{ vray_plugin "BRDFRefraction" }
     parm {
 	name	"color"
 	label	"Color"

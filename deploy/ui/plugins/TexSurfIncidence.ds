@@ -1,18 +1,8 @@
 {
     name	TexSurfIncidence
     label	"Surf Incidence"
-    parm {
-	name	"plugindata"
-	label	"Surf Incidence"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexSurfIncidence"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexSurfIncidence" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Surf Incidence" }
+    parmtag	{ vray_plugin "TexSurfIncidence" }
     parm {
 	name	"inc_mode"
 	label	"Inc Mode"

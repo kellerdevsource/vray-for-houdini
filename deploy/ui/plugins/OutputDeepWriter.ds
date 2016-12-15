@@ -1,18 +1,8 @@
 {
     name	OutputDeepWriter
     label	"Output Deep Writer"
-    parm {
-	name	"plugindata"
-	label	"Output Deep Writer"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"OutputDeepWriter"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "OutputDeepWriter" }
-	parmtag	{ "vray_type" "SETTINGS" }
-    }
+    parmtag	{ spare_category "Output Deep Writer" }
+    parmtag	{ vray_plugin "OutputDeepWriter" }
     parm {
 	name	"file"
 	label	"File"

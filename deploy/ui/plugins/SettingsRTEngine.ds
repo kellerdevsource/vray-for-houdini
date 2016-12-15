@@ -1,18 +1,8 @@
 {
     name	SettingsRTEngine
     label	"RT"
-    parm {
-	name	"SettingsRTEngine_plugindata"
-	label	"RT"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"Realtime Engine settings"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "SettingsRTEngine" }
-	parmtag	{ "vray_type" "SETTINGS" }
-    }
+    parmtag	{ spare_category "RT" }
+    parmtag	{ vray_plugin "SettingsRTEngine" }
     parm {
 	name	"SettingsRTEngine_cpu_bundle_size"
 	label	"Cpu Ray Bundle Size"

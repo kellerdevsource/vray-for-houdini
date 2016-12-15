@@ -1,17 +1,8 @@
 {
     name	SettingsVertexBaker
     label	"SettingsVertexBaker"
-    parm {
-	name	"plugindata"
-	label	"SettingsVertexBaker"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "SettingsVertexBaker" }
-	parmtag	{ "vray_type" "SETTINGS" }
-    }
+    parmtag	{ spare_category "SettingsVertexBaker" }
+    parmtag	{ vray_plugin "SettingsVertexBaker" }
     parm {
 	name	"color_set_name"
 	label	"Color Set Name"

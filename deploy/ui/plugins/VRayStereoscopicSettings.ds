@@ -1,17 +1,8 @@
 {
     name	VRayStereoscopicSettings
     label	"Stereo"
-    parm {
-	name	"VRayStereoscopicSettings_plugindata"
-	label	"Stereo"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "VRayStereoscopicSettings" }
-	parmtag	{ "vray_type" "SETTINGS" }
-    }
+    parmtag	{ spare_category "Stereo" }
+    parmtag	{ vray_plugin "VRayStereoscopicSettings" }
     parm {
 	name	"VRayStereoscopicSettings_eye_distance"
 	label	"Eye Distance"

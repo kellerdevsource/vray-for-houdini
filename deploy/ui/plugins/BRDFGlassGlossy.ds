@@ -1,17 +1,8 @@
 {
     name	BRDFGlassGlossy
     label	"Glass Glossy"
-    parm {
-	name	"plugindata"
-	label	"Glass Glossy"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "BRDFGlassGlossy" }
-	parmtag	{ "vray_type" "BRDF" }
-    }
+    parmtag	{ spare_category "Glass Glossy" }
+    parmtag	{ vray_plugin "BRDFGlassGlossy" }
     parm {
 	name	"color"
 	label	"Color"

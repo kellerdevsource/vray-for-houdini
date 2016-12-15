@@ -1,19 +1,8 @@
 {
     name	TexNormalMapFlip
     label	"Normal Map Flip"
-    parm {
-	name	"plugindata"
-	label	"Normal Map Flip"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexNormalMapFlip"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TexNormalMapFlip" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Normal Map Flip" }
+    parmtag	{ vray_plugin "TexNormalMapFlip" }
     parm {
 	name	"compatibility_with"
 	label	"Compatibility With"

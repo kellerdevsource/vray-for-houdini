@@ -1,19 +1,8 @@
 {
     name	TexTemperatureToColor
     label	"Temperature To Color"
-    parm {
-	name	"plugindata"
-	label	"Temperature To Color"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"Temperature to color"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TexTemperatureToColor" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Temperature To Color" }
+    parmtag	{ vray_plugin "TexTemperatureToColor" }
     parm {
 	name	"input"
 	label	"Input"

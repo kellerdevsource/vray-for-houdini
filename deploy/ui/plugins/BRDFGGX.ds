@@ -1,17 +1,8 @@
 {
     name	BRDFGGX
     label	"GGX"
-    parm {
-	name	"plugindata"
-	label	"GGX"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "BRDFGGX" }
-	parmtag	{ "vray_type" "BRDF" }
-    }
+    parmtag	{ spare_category "GGX" }
+    parmtag	{ vray_plugin "BRDFGGX" }
     parm {
 	name	"color"
 	label	"Color"

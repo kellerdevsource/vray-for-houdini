@@ -1,18 +1,8 @@
 {
     name	TexICC
     label	"ICC"
-    parm {
-	name	"plugindata"
-	label	"ICC"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexICC"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexICC" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "ICC" }
+    parmtag	{ vray_plugin "TexICC" }
     parm {
 	name	"basemap"
 	label	"Basemap"

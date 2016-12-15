@@ -1,17 +1,8 @@
 {
     name	TexSmoke
     label	"Smoke"
-    parm {
-	name	"plugindata"
-	label	"Smoke"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexSmoke" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Smoke" }
+    parmtag	{ vray_plugin "TexSmoke" }
     parm {
 	name	"color_mult"
 	label	"Color Mult"

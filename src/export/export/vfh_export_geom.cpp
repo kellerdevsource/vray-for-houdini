@@ -10,14 +10,12 @@
 
 #include "vfh_export_geom.h"
 #include "vfh_export_mesh.h"
-#include "vfh_gu_utils.h"
+#include "vfh_export_hair.h"
 #include "gu_vrayproxyref.h"
 #include "gu_volumegridref.h"
 #include "rop/vfh_rop.h"
 #include "sop/sop_node_base.h"
 #include "vop/vop_node_base.h"
-#include "vop/material/vop_MaterialOutput.h"
-#include "vop/material/vop_PhoenixSim.h"
 
 #include <GEO/GEO_Primitive.h>
 #include <GU/GU_Detail.h>
@@ -172,12 +170,7 @@ int GeometryExporter::exportNodes()
 		exportVRaySOP(*renderSOP, m_detailToPluginDesc[m_myDetailID]);
 	}
 	else {
-		if (VRayForHoudini::GU::isHairGdp(gdp)) {
-			exportHair(*renderSOP, gdl, m_detailToPluginDesc[m_myDetailID]);
-		}
-		else {
-			exportDetail(*renderSOP, gdl, m_detailToPluginDesc[m_myDetailID]);
-		}
+		exportDetail(*renderSOP, gdl, m_detailToPluginDesc[m_myDetailID]);
 	}
 
 	VRay::Transform tm = VRayExporter::getObjTransform(&m_objNode, m_context);
@@ -405,24 +398,6 @@ int GeometryExporter::exportVRaySOP(SOP_Node &sop, PluginDescList &pluginList)
 }
 
 
-int GeometryExporter::exportHair(SOP_Node &sop, GU_DetailHandleAutoReadLock &gdl, PluginDescList &pluginList)
-{
-	// add new node to our list of nodes
-	pluginList.push_back(Attrs::PluginDesc("", "Node"));
-	Attrs::PluginDesc &nodeDesc = pluginList.back();
-	int nPlugins = 1;
-
-	if (NOT(m_exportGeometry)) {
-		return nPlugins;
-	}
-
-	VRay::Plugin geom = m_pluginExporter.exportGeomMayaHair(&sop, gdl.getGdp());
-	nodeDesc.addAttribute(Attrs::PluginAttr("geometry", geom));
-
-	return nPlugins;
-}
-
-
 // traverse through all primitives
 // polygonal primitives should be exported as single GeomStaticMesh
 // for packed primitives - need to hash what has alreay been exported
@@ -439,6 +414,10 @@ int GeometryExporter::exportDetail(SOP_Node &sop, GU_DetailHandleAutoReadLock &g
 	volExp.exportPrimitives(gdp, pluginList);
 	hVoldExp.exportPrimitives(gdp, pluginList);
 #endif // CGR_HAS_AUR
+
+	HairPrimitiveExporter hairExp(m_objNode, m_context, m_pluginExporter);
+	hairExp.exportPrimitives(gdp, pluginList);
+
 
 	// packed prims
 	if (GU_PrimPacked::hasPackedPrimitives(gdp)) {

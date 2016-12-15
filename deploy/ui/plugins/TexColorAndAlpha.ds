@@ -1,19 +1,8 @@
 {
     name	TexColorAndAlpha
     label	"Color And Alpha"
-    parm {
-	name	"plugindata"
-	label	"Color And Alpha"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexColorAndAlpha"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_category" "utility" }
-	parmtag	{ "vray_plugin" "TexColorAndAlpha" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Color And Alpha" }
+    parmtag	{ vray_plugin "TexColorAndAlpha" }
     parm {
 	name	"color_input"
 	label	"Color Input"

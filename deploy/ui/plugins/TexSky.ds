@@ -1,17 +1,8 @@
 {
     name	TexSky
     label	"Sky"
-    parm {
-	name	"plugindata"
-	label	"Sky"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexSky" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Sky" }
+    parmtag	{ vray_plugin "TexSky" }
     parm {
 	name	"turbidity"
 	label	"Turbidity"

@@ -1,17 +1,8 @@
 {
     name	TexSnow
     label	"Snow"
-    parm {
-	name	"plugindata"
-	label	"Snow"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexSnow" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Snow" }
+    parmtag	{ vray_plugin "TexSnow" }
     parm {
 	name	"color_mult"
 	label	"Color Mult"

@@ -1,18 +1,8 @@
 {
     name	texXSIColor2Alpha
     label	"XSI Color 2 Alpha"
-    parm {
-	name	"plugindata"
-	label	"XSI Color 2 Alpha"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"texXSIColor2Alpha"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "texXSIColor2Alpha" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "XSI Color 2 Alpha" }
+    parmtag	{ vray_plugin "texXSIColor2Alpha" }
     parm {
 	name	"compatibility_with"
 	label	"Compatibility With"

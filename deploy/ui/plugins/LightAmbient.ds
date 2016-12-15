@@ -1,17 +1,8 @@
 {
     name	LightAmbient
     label	"Ambient"
-    parm {
-	name	"plugindata"
-	label	"Ambient"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "LightAmbient" }
-	parmtag	{ "vray_type" "LIGHT" }
-    }
+    parmtag	{ spare_category "Ambient" }
+    parmtag	{ vray_plugin "LightAmbient" }
     parm {
 	name	"enabled"
 	label	"Enabled"

@@ -1,17 +1,8 @@
 {
     name	TexSampler
     label	"Sampler"
-    parm {
-	name	"plugindata"
-	label	"Sampler"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexSampler" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Sampler" }
+    parmtag	{ vray_plugin "TexSampler" }
     parm {
 	name	"uv_set_name"
 	label	"Uv Set Name"

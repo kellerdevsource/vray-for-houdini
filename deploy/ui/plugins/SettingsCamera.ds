@@ -1,17 +1,8 @@
 {
     name	SettingsCamera
     label	"Camera"
-    parm {
-	name	"SettingsCamera_plugindata"
-	label	"Camera"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "SettingsCamera" }
-	parmtag	{ "vray_type" "CAMERA" }
-    }
+    parmtag	{ spare_category "Camera" }
+    parmtag	{ vray_plugin "SettingsCamera" }
     parm {
 	name	"SettingsCamera_type"
 	label	"Camera Type"

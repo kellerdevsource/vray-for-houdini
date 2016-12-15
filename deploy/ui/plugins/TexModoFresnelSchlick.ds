@@ -1,18 +1,8 @@
 {
     name	TexModoFresnelSchlick
     label	"Modo Fresnel Schlick"
-    parm {
-	name	"plugindata"
-	label	"Modo Fresnel Schlick"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexModoFresnelSchlick"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexModoFresnelSchlick" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Modo Fresnel Schlick" }
+    parmtag	{ vray_plugin "TexModoFresnelSchlick" }
     parm {
 	name	"reflectivity_at_normal"
 	label	"Reflectivity At Normal"

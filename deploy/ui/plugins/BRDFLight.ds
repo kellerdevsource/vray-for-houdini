@@ -1,17 +1,8 @@
 {
     name	BRDFLight
     label	"Light"
-    parm {
-	name	"plugindata"
-	label	"Light"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "BRDFLight" }
-	parmtag	{ "vray_type" "BRDF" }
-    }
+    parmtag	{ spare_category "Light" }
+    parmtag	{ vray_plugin "BRDFLight" }
     parm {
 	name	"color"
 	label	"Light Color"

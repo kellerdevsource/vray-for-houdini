@@ -1,17 +1,8 @@
 {
     name	BRDFFlakes
     label	"Flakes"
-    parm {
-	name	"plugindata"
-	label	"Flakes"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "BRDFFlakes" }
-	parmtag	{ "vray_type" "BRDF" }
-    }
+    parmtag	{ spare_category "Flakes" }
+    parmtag	{ vray_plugin "BRDFFlakes" }
     parm {
 	name	"flake_color"
 	label	"Color"

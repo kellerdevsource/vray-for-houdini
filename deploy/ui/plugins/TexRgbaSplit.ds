@@ -1,18 +1,8 @@
 {
     name	TexRgbaSplit
     label	"Rgba Split"
-    parm {
-	name	"plugindata"
-	label	"Rgba Split"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexRgbaSplit"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexRgbaSplit" }
-	parmtag	{ "vray_type" "MISC" }
-    }
+    parmtag	{ spare_category "Rgba Split" }
+    parmtag	{ vray_plugin "TexRgbaSplit" }
     parm {
 	name	"input"
 	label	"Input"

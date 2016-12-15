@@ -1,17 +1,8 @@
 {
     name	SettingsOptions
     label	"Options"
-    parm {
-	name	"SettingsOptions_plugindata"
-	label	"Options"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "SettingsOptions" }
-	parmtag	{ "vray_type" "SETTINGS" }
-    }
+    parmtag	{ spare_category "Options" }
+    parmtag	{ vray_plugin "SettingsOptions" }
     parm {
 	name	"SettingsOptions_geom_displacement"
 	label	"Enable Displacement"

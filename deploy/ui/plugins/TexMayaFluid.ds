@@ -1,18 +1,8 @@
 {
     name	TexMayaFluid
     label	"Phoenix Fluid"
-    parm {
-	name	"plugindata"
-	label	"Phoenix Fluid"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"Fluid data texture for Phoenix shader"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexMayaFluid" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Phoenix Fluid" }
+    parmtag	{ vray_plugin "TexMayaFluid" }
     parm {
 	name	"size_x"
 	label	"Size X"

@@ -1,18 +1,8 @@
 {
     name	GeomParticleSystem
     label	"Geom Particle System"
-    parm {
-	name	"plugindata"
-	label	"Geom Particle System"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"GeomParticleSystem"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "GeomParticleSystem" }
-	parmtag	{ "vray_type" "GEOMETRY" }
-    }
+    parmtag	{ spare_category "Geom Particle System" }
+    parmtag	{ vray_plugin "GeomParticleSystem" }
     parm {
 	name	"render_type"
 	label	"Render Type"

@@ -1,17 +1,8 @@
 {
     name	SettingsMotionBlur
     label	"Motion Blur"
-    parm {
-	name	"SettingsMotionBlur_plugindata"
-	label	"Motion Blur"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "SettingsMotionBlur" }
-	parmtag	{ "vray_type" "CAMERA" }
-    }
+    parmtag	{ spare_category "Motion Blur" }
+    parmtag	{ vray_plugin "SettingsMotionBlur" }
     parm {
 	name	"SettingsMotionBlur_on"
 	label	"Enable Motion Blur"

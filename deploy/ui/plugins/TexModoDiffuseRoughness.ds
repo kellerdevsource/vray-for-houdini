@@ -1,18 +1,8 @@
 {
     name	TexModoDiffuseRoughness
     label	"Modo Diffuse Roughness"
-    parm {
-	name	"plugindata"
-	label	"Modo Diffuse Roughness"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexModoDiffuseRoughness"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexModoDiffuseRoughness" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Modo Diffuse Roughness" }
+    parmtag	{ vray_plugin "TexModoDiffuseRoughness" }
     parm {
 	name	"modo_diffuse_roughness"
 	label	"Modo Diffuse Roughness"

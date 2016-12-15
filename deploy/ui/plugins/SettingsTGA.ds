@@ -1,17 +1,8 @@
 {
     name	SettingsTGA
     label	"SettingsTGA"
-    parm {
-	name	"plugindata"
-	label	"SettingsTGA"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "SettingsTGA" }
-	parmtag	{ "vray_type" "SETTINGS" }
-    }
+    parmtag	{ spare_category "SettingsTGA" }
+    parmtag	{ vray_plugin "SettingsTGA" }
     parm {
 	name	"compression"
 	label	"Compression"

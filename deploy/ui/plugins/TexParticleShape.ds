@@ -1,18 +1,8 @@
 {
     name	TexParticleShape
     label	"Particle Shape"
-    parm {
-	name	"plugindata"
-	label	"Particle Shape"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexParticleShape"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexParticleShape" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Particle Shape" }
+    parmtag	{ vray_plugin "TexParticleShape" }
     parm {
 	name	"compatibility_with"
 	label	"Compatibility With"

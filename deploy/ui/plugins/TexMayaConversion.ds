@@ -1,18 +1,8 @@
 {
     name	TexMayaConversion
     label	"Maya Conversion"
-    parm {
-	name	"plugindata"
-	label	"Maya Conversion"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexMayaConversion"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexMayaConversion" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "Maya Conversion" }
+    parmtag	{ vray_plugin "TexMayaConversion" }
     parm {
 	name	"input"
 	label	"Input"

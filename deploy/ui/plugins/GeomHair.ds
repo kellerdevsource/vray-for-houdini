@@ -1,18 +1,8 @@
 {
     name	GeomHair
     label	"Geom Hair"
-    parm {
-	name	"plugindata"
-	label	"Geom Hair"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"GeomHair"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "GeomHair" }
-	parmtag	{ "vray_type" "GEOMETRY" }
-    }
+    parmtag	{ spare_category "Geom Hair" }
+    parmtag	{ vray_plugin "GeomHair" }
     parm {
 	name	"length_base"
 	label	"Length Base"

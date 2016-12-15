@@ -1,16 +1,6 @@
 {
     name	TrimmingRegionsComplex
-    label	"Trimming Regions Complex"
-    parm {
-	name	"plugindata"
-	label	"Trimming Regions Complex"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TrimmingRegionsComplex"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TrimmingRegionsComplex" }
-	parmtag	{ "vray_type" "MISC" }
-    }
+label	"Trimming Regions Complex"
+parmtag	{ spare_category "Trimming Regions Complex" }
+parmtag	{ vray_plugin "TrimmingRegionsComplex" }
 }

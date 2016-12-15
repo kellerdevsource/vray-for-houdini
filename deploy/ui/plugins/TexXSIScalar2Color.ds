@@ -1,18 +1,8 @@
 {
     name	TexXSIScalar2Color
     label	"XSI Scalar 2 Color"
-    parm {
-	name	"plugindata"
-	label	"XSI Scalar 2 Color"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"TexXSIScalar2Color"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "TexXSIScalar2Color" }
-	parmtag	{ "vray_type" "TEXTURE" }
-    }
+    parmtag	{ spare_category "XSI Scalar 2 Color" }
+    parmtag	{ vray_plugin "TexXSIScalar2Color" }
     parm {
 	name	"compatibility_with"
 	label	"Compatibility With"

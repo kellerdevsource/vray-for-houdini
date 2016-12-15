@@ -1,18 +1,8 @@
 {
     name	SettingsImageFilter
     label	"Settings Image Filter"
-    parm {
-	name	"plugindata"
-	label	"Settings Image Filter"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"SettingsImageFilter"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "SettingsImageFilter" }
-	parmtag	{ "vray_type" "SETTINGS" }
-    }
+    parmtag	{ spare_category "Settings Image Filter" }
+    parmtag	{ vray_plugin "SettingsImageFilter" }
     parm {
 	name	"on"
 	label	"On"

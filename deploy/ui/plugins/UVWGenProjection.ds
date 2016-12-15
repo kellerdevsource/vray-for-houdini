@@ -1,18 +1,8 @@
 {
     name	UVWGenProjection
     label	"Projection"
-    parm {
-	name	"plugindata"
-	label	"Projection"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"Projection mapping"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "UVWGenProjection" }
-	parmtag	{ "vray_type" "UVWGEN" }
-    }
+    parmtag	{ spare_category "Projection" }
+    parmtag	{ vray_plugin "UVWGenProjection" }
     parm {
 	name	"type"
 	label	"Type"

@@ -1,18 +1,8 @@
 {
     name	RenderView
     label	"Render view"
-    parm {
-	name	"plugindata"
-	label	"Render view"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"Render view settings"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "RenderView" }
-	parmtag	{ "vray_type" "CAMERA" }
-    }
+    parmtag	{ spare_category "Render view" }
+    parmtag	{ vray_plugin "RenderView" }
     parm {
 	name	"fov"
 	label	"Fov"

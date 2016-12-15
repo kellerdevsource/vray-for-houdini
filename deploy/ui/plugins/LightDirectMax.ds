@@ -1,17 +1,8 @@
 {
     name	LightDirectMax
     label	"Direct (3ds max)"
-    parm {
-	name	"plugindata"
-	label	"Direct (3ds max)"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "LightDirectMax" }
-	parmtag	{ "vray_type" "LIGHT" }
-    }
+    parmtag	{ spare_category "Direct (3ds max)" }
+    parmtag	{ vray_plugin "LightDirectMax" }
     parm {
 	name	"enabled"
 	label	"Enabled"

@@ -1,18 +1,8 @@
 {
     name	RenderChannelColor
     label	"Color Channel"
-    parm {
-	name	"plugindata"
-	label	"Color Channel"
-	type	data
-	invisible
-	default	{ "0" }
-	help	"Generic render element"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "RenderChannelColor" }
-	parmtag	{ "vray_type" "RENDERCHANNEL" }
-    }
+    parmtag	{ spare_category "Color Channel" }
+    parmtag	{ vray_plugin "RenderChannelColor" }
     parm {
 	name	"name"
 	label	"Name"

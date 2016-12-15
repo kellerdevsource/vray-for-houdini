@@ -1,17 +1,8 @@
 {
     name	SunLight
     label	"Sun"
-    parm {
-	name	"plugindata"
-	label	"Sun"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "SunLight" }
-	parmtag	{ "vray_type" "LIGHT" }
-    }
+    parmtag	{ spare_category "Sun" }
+    parmtag	{ vray_plugin "SunLight" }
     parm {
 	name	"turbidity"
 	label	"Turbidity"

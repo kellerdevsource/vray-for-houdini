@@ -1,17 +1,8 @@
 {
     name	RenderChannelVelocity
     label	"Velocity"
-    parm {
-	name	"plugindata"
-	label	"Velocity"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "RenderChannelVelocity" }
-	parmtag	{ "vray_type" "RENDERCHANNEL" }
-    }
+    parmtag	{ spare_category "Velocity" }
+    parmtag	{ vray_plugin "RenderChannelVelocity" }
     parm {
 	name	"name"
 	label	"Name"

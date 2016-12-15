@@ -1,17 +1,8 @@
 {
     name	FilterLanczos
     label	"Lanczos"
-    parm {
-	name	"plugindata"
-	label	"Lanczos"
-	type	data
-	invisible
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "vray_plugin" "FilterLanczos" }
-	parmtag	{ "vray_type" "SETTINGS" }
-    }
+    parmtag	{ spare_category "Lanczos" }
+    parmtag	{ vray_plugin "FilterLanczos" }
     parm {
 	name	"size"
 	label	"Size"
