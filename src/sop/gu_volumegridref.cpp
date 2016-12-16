@@ -527,6 +527,10 @@ std::string VRayVolumeGridRef::getConvertedPath(bool toPhx) const
 	const char * prefix = this->get_cache_path_prefix();
 	const char * suffix = this->get_cache_path_suffix();
 
+	if (!m_doFrameReplace) {
+		return prefix;
+	}
+
 	const int width = this->get_frame_number_width();
 	if (!prefix || !suffix || width < 1) {
 		return "";
@@ -547,8 +551,13 @@ int VRayVolumeGridRef::splitPath(const UT_String & path, std::string & prefix, s
 	int result = path.parseNumberedFilename(hPrefix, frame, hSuffix);
 
 	if (result) {
-		prefix = hPrefix.toStdString();
-		suffix = hSuffix.toStdString();
+		if (m_doFrameReplace) {
+			prefix = hPrefix.toStdString();
+			suffix = hSuffix.toStdString();
+		} else {
+			prefix = path.toStdString();
+			suffix = "";
+		}
 	} else {
 		prefix = suffix = "";
 	}
@@ -561,6 +570,7 @@ bool VRayVolumeGridRef::updateFrom(const UT_Options &options)
 	const float frameBefore = getCurrentCacheFrame();
 	const auto hashBefore = m_options.hash();
 
+	m_doFrameReplace = options.hasOption("literal_cache_path") && !options.getOptionB("literal_cache_path");
 	bool pathChange = false;
 
 	if (options.hasOption("cache_path")) {
@@ -576,19 +586,27 @@ bool VRayVolumeGridRef::updateFrom(const UT_Options &options)
 		this->set_frame_number_width(frameWidth);
 	}
 
-	pathChange = pathChange || (options.hasOption("current_frame") && options.getOptionI("current_frame") != this->get_current_frame());
+	if (m_doFrameReplace) {
+		// if we aren't replacing frame we don't care if frame changes
+		pathChange = pathChange || (options.hasOption("current_frame") && options.getOptionI("current_frame") != this->get_current_frame());
+	}
+
 	m_channelDirty = m_channelDirty || pathChange;
 
 	m_dirty = pathChange || m_dirty || options.hasOption("flip_yz") && options.getOptionI("flip_yz") != this->get_flip_yz();
 
 	m_options.merge(options);
-	buildMapping();
 
 	this->set_current_cache_path(getConvertedPath(false).c_str());
 	this->set_cache_path(getConvertedPath(true).c_str());
 
+	buildMapping();
+
 	const bool diffHash = hashBefore != m_options.hash();
-	m_dirty = m_dirty || (frameBefore != getCurrentCacheFrame());
+	if (m_doFrameReplace) {
+		// skip frame check if frame is hardcoded
+		m_dirty = m_dirty || (frameBefore != getCurrentCacheFrame());
+	}
 
 	if (m_dirty) {
 		transformDirty();
