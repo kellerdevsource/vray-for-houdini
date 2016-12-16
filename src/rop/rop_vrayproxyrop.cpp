@@ -46,7 +46,7 @@ VRayProxyROP::~VRayProxyROP()
 int VRayProxyROP::startRender(int nframes, fpreal tstart, fpreal tend)
 {
 	UT_String filepath;
-	evalStringRaw(filepath, "filepath", 0, tstart);
+	evalString(filepath, "filepath", 0, tstart);
 	if (NOT(filepath.isstring())) {
 		addError(ROP_MISSING_FILE, "Invalid file specified");
 		return ROP_ABORT_RENDER;
@@ -62,7 +62,6 @@ int VRayProxyROP::startRender(int nframes, fpreal tstart, fpreal tend)
 
 	UT_String dirpath;
 	UT_String filename;
-	evalString(filepath, "filepath", 0, tstart);
 	filepath.splitPath(dirpath, filename);
 
 	// create parent dirs if necessary
@@ -83,8 +82,12 @@ int VRayProxyROP::startRender(int nframes, fpreal tstart, fpreal tend)
 	m_options.m_animStart          = tstart;
 	m_options.m_animEnd            = tend;
 	m_options.m_animFrames         = nframes;
+
+	UT_String prefix;
+	UT_String frame;
+	UT_String suffix;
 	m_options.m_exportAsAnimation  = ( m_options.m_animFrames > 1)
-									&& NOT(filepath.contains("$F") );
+									&& NOT(filepath.parseNumberedFilename(prefix, frame, suffix));
 
 	if (error() < UT_ERROR_ABORT) {
 		executePreRenderScript(tstart);
