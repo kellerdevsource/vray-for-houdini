@@ -594,7 +594,7 @@ void VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 			VRay::VUtils::ValueRefList frameRange(2);
 			frameRange[0].setDouble(animStart);
 			frameRange[1].setDouble(animEnd);
-			frames[0].setList( frameRange );
+			frames[0].setList(frameRange);
 		}
 	}
 
