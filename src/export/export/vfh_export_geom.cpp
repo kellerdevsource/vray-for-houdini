@@ -690,6 +690,7 @@ int GeometryExporter::exportAlembicRef(SOP_Node &sop, const GU_PrimPacked &prim,
 	pluginDesc.addAttribute(Attrs::PluginAttr("visibility_lists_type", 1));
 	pluginDesc.addAttribute(Attrs::PluginAttr("visibility_list_names", visibilityList));
 	pluginDesc.addAttribute(Attrs::PluginAttr("file", filename));
+	pluginDesc.addAttribute(Attrs::PluginAttr("use_alembic_offset", true));
 
 	VRay::Plugin geom = m_pluginExporter.exportPlugin(pluginDesc);
 	nodeDesc.addAttribute(Attrs::PluginAttr("geometry", geom));
