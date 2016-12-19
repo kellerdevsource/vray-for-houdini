@@ -164,9 +164,10 @@ int GeometryExporter::exportNodes()
 	m_myDetailID = gdl.handle().hash();
 	const GU_Detail &gdp = *gdl.getGdp();
 
-	const bool isVolume = renderSOP->getOperator()->getName().startsWith("VRayNodePhxShaderCache");
-
-	if (!isVolume && renderSOP->getOperator()->getName().startsWith("VRayNode")) {
+	if (   renderSOP->getOperator()->getName().startsWith("VRayNode")
+		&& !renderSOP->getOperator()->getName().startsWith("VRayNodePhxShaderCache")
+		&& !renderSOP->getOperator()->getName().startsWith("VRayNodeVRayProxy"))
+	{
 		exportVRaySOP(*renderSOP, m_detailToPluginDesc[m_myDetailID]);
 	}
 	else {
