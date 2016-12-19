@@ -724,7 +724,11 @@ int GeometryExporter::exportVRayProxyRef(SOP_Node &sop, const GU_PrimPacked &pri
 	pluginDesc.pluginName = VRayExporter::getPluginName(&sop, primname.toStdString());
 
 	auto vrayproxyref = UTverify_cast< const VRayProxyRef * >(prim.implementation());
-	m_pluginExporter.setAttrsFromUTOptions(pluginDesc, vrayproxyref->getOptions());
+	UT_Options options = vrayproxyref->getOptions();
+	if (options.hasOption("anim_offset")) {
+		options.setOptionF("anim_offset", options.getOptionF("anim_offset") - m_context.getFrame());
+	}
+	m_pluginExporter.setAttrsFromUTOptions(pluginDesc, options);
 
 	VRay::Plugin geom = m_pluginExporter.exportPlugin(pluginDesc);
 	nodeDesc.addAttribute(Attrs::PluginAttr("geometry", geom));
