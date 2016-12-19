@@ -44,7 +44,6 @@ class VRayProxyParms
 public:
 	static const UT_StringRef theLODToken;
 	static const UT_StringRef theFileToken;
-	static const UT_StringRef theFrameToken;
 	static const UT_StringRef theAnimTypeToken;
 	static const UT_StringRef theAnimOffsetToken;
 	static const UT_StringRef theAnimSpeedToken;
@@ -63,11 +62,6 @@ public:
 	static exint getLOD(const UT_Options &options)
 	{
 		return ((options.hasOption(theLODToken))? options.getOptionI(theLODToken) : LOD_PREVIEW);
-	}
-
-	static fpreal64 getFloatFrame(const UT_Options &options)
-	{
-		return ((options.hasOption(theFrameToken))? options.getOptionF(theFrameToken) : 0.f);
 	}
 
 	static exint getAnimType(const UT_Options &options)
@@ -131,7 +125,6 @@ public:
 
 	inline UT_StringHolder    getFilepath() const { return getFilepath(m_options); }
 	inline exint              getLOD() const { return getLOD(m_options); }
-	inline fpreal64           getFloatFrame() const { return getFloatFrame(m_options); }
 	inline exint              getAnimType() const { return getAnimType(m_options); }
 	inline fpreal64           getAnimOffset() const { return getAnimOffset(m_options); }
 	inline fpreal64           getAnimSpeed() const { return getAnimSpeed(m_options); }

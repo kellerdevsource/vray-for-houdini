@@ -83,9 +83,6 @@ public:
 	inline void                          setLOD(exint lod);
 	inline const char *                  getLODName() const;
 
-	inline fpreal64                      getFloatFrame() const { return m_options.getFloatFrame(); }
-	inline void                          setFloatFrame(fpreal64 frame);
-
 	inline exint                         getAnimType() const { return m_options.getAnimType(); }
 	inline void                          setAnimType(exint animType);
 	inline const char *                  getAnimTypeName() const;
