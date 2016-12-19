@@ -576,25 +576,32 @@ void VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 
 	pluginDesc.addAttribute(Attrs::PluginAttr("img_pixelAspect", pixelAspect));
 
-	int start = OPgetDirector()->getChannelManager()->getFrame(m_timeStart);
-	int end = OPgetDirector()->getChannelManager()->getFrame(m_timeEnd);
-	VRay::ValueList frames(1, VRay::Value(start));
+	// NOTE: we are exporting animation related properties in frames
+	// and compensating for this by setting SettingsUnitsInfo::seconds_scale
+	// i.e. scaling V-Ray time unit (see function exportSettings())
+	fpreal animStart = m_rop->FSTART();
+	fpreal animEnd = m_rop->FEND();
+	VRay::VUtils::ValueRefList frames(1);
+	frames[0].setDouble(animStart);
 	if (m_frames > 1) {
-		VRay::ValueList frameRange;
-		frameRange.emplace_back(start);
-		frameRange.emplace_back(end);
-		frames[0].set( frameRange );
+		if (m_rop->FINC() > 1) {
+			frames = VRay::VUtils::ValueRefList(m_frames);
+			for (int i = 0; i < m_frames; ++i) {
+				frames[i].setDouble(animStart + i * m_rop->FINC());
+			}
+		}
+		else {
+			VRay::VUtils::ValueRefList frameRange(2);
+			frameRange[0].setDouble(animStart);
+			frameRange[1].setDouble(animEnd);
+			frames[0].setList( frameRange );
+		}
 	}
 
-	// we are exporting animation related properties in frames
-	// SettingsOutput::frame_start should be set to start frame of the animation range
-	// but there seems to be some issue with calculating time correctly in AppSDK
-	// (Ticket in Jira: V-Ray | AppSDKASDK-242)
-	// TODO: need to fix this in future
-	pluginDesc.addAttribute(Attrs::PluginAttr("anim_start", start));
-	pluginDesc.addAttribute(Attrs::PluginAttr("anim_end", end));
+	pluginDesc.addAttribute(Attrs::PluginAttr("anim_start", animStart));
+	pluginDesc.addAttribute(Attrs::PluginAttr("anim_end", animEnd));
 	pluginDesc.addAttribute(Attrs::PluginAttr("frames_per_second", 1));
-	pluginDesc.addAttribute(Attrs::PluginAttr("frame_start", 0));
+	pluginDesc.addAttribute(Attrs::PluginAttr("frame_start", animStart));
 	pluginDesc.addAttribute(Attrs::PluginAttr("frames", frames));
 }
 
@@ -624,6 +631,8 @@ void VRayExporter::exportSettings()
 	pluginDesc.addAttribute(Attrs::PluginAttr("scene_upDir", VRay::Vector(0.0f, 1.0f, 0.0f)));
 	pluginDesc.addAttribute(Attrs::PluginAttr("meters_scale",
 											  OPgetDirector()->getChannelManager()->getUnitLength()));
+	pluginDesc.addAttribute(Attrs::PluginAttr("seconds_scale",
+											  OPgetDirector()->getChannelManager()->getTimeDelta(1)));
 
 	exportPlugin(pluginDesc);
 }
