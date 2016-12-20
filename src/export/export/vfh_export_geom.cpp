@@ -164,9 +164,10 @@ int GeometryExporter::exportNodes()
 	m_myDetailID = gdl.handle().hash();
 	const GU_Detail &gdp = *gdl.getGdp();
 
-	const bool isVolume = renderSOP->getOperator()->getName().startsWith("VRayNodePhxShaderCache");
-
-	if (!isVolume && renderSOP->getOperator()->getName().startsWith("VRayNode")) {
+	if (   renderSOP->getOperator()->getName().startsWith("VRayNode")
+		&& !renderSOP->getOperator()->getName().startsWith("VRayNodePhxShaderCache")
+		&& !renderSOP->getOperator()->getName().startsWith("VRayNodeVRayProxy"))
+	{
 		exportVRaySOP(*renderSOP, m_detailToPluginDesc[m_myDetailID]);
 	}
 	else {
@@ -689,6 +690,7 @@ int GeometryExporter::exportAlembicRef(SOP_Node &sop, const GU_PrimPacked &prim,
 	pluginDesc.addAttribute(Attrs::PluginAttr("visibility_lists_type", 1));
 	pluginDesc.addAttribute(Attrs::PluginAttr("visibility_list_names", visibilityList));
 	pluginDesc.addAttribute(Attrs::PluginAttr("file", filename));
+	pluginDesc.addAttribute(Attrs::PluginAttr("use_alembic_offset", true));
 
 	VRay::Plugin geom = m_pluginExporter.exportPlugin(pluginDesc);
 	nodeDesc.addAttribute(Attrs::PluginAttr("geometry", geom));
@@ -723,7 +725,11 @@ int GeometryExporter::exportVRayProxyRef(SOP_Node &sop, const GU_PrimPacked &pri
 	pluginDesc.pluginName = VRayExporter::getPluginName(&sop, primname.toStdString());
 
 	auto vrayproxyref = UTverify_cast< const VRayProxyRef * >(prim.implementation());
-	m_pluginExporter.setAttrsFromUTOptions(pluginDesc, vrayproxyref->getOptions());
+	UT_Options options = vrayproxyref->getOptions();
+	if (options.hasOption("anim_offset")) {
+		options.setOptionF("anim_offset", options.getOptionF("anim_offset") - m_context.getFrame());
+	}
+	m_pluginExporter.setAttrsFromUTOptions(pluginDesc, options);
 
 	VRay::Plugin geom = m_pluginExporter.exportPlugin(pluginDesc);
 	nodeDesc.addAttribute(Attrs::PluginAttr("geometry", geom));

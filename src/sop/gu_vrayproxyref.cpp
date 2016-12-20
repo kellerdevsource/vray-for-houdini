@@ -93,12 +93,6 @@ VRayProxyFactory::VRayProxyFactory():
 				);
 
 	registerIntrinsic(
-				VRayProxyParms::theFrameToken,
-				FloatGetterCast(&VRayProxyRef::getFloatFrame),
-				FloatSetterCast(&VRayProxyRef::setFloatFrame)
-				);
-
-	registerIntrinsic(
 				VRayProxyParms::theAnimTypeToken,
 				IntGetterCast(&VRayProxyRef::getAnimType),
 				IntSetterCast(&VRayProxyRef::setAnimType)
@@ -410,14 +404,6 @@ void VRayProxyRef::setFilepath(const char *filepath)
 void VRayProxyRef::setLOD(exint lod)
 {
 	m_options.getOptions().setOptionI(VRayProxyParms::theLODToken, lod);
-	m_dirty = true;
-	topologyDirty();
-}
-
-
-void VRayProxyRef::setFloatFrame(fpreal64 frame)
-{
-	m_options.getOptions().setOptionF(VRayProxyParms::theFrameToken, frame);
 	m_dirty = true;
 	topologyDirty();
 }
