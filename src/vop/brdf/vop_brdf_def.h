@@ -14,7 +14,6 @@
 #include "vop_node_base.h"
 #include "vop_BRDFLayered.h"
 
-
 namespace VRayForHoudini {
 namespace VOP {
 
@@ -25,7 +24,9 @@ BRDF_DEF(BRDFBump)
 BRDF_DEF(BRDFCSV)
 BRDF_DEF(BRDFCarPaint)
 BRDF_DEF(BRDFCookTorrance)
+BRDF_DEF(BRDFDiffuse)
 BRDF_DEF(BRDFDiffuse_forSSS)
+BRDF_DEF(BRDFVRayMtl)
 BRDF_DEF(BRDFFlakes)
 BRDF_DEF(BRDFGGX)
 BRDF_DEF(BRDFGlass)

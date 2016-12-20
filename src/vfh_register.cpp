@@ -20,8 +20,6 @@
 #include "vop/vop_context.h"
 #include "vop/material/vop_PhoenixSim.h"
 #include "vop/brdf/vop_brdf_def.h"
-#include "vop/brdf/vop_brdfvraymtl.h"
-#include "vop/brdf/vop_brdfdiffuse.h"
 #include "vop/material/vop_mtl_def.h"
 #include "vop/texture/vop_texture_def.h"
 #include "vop/uvwgen/vop_uvwgen_def.h"
