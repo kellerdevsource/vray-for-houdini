@@ -4,182 +4,24 @@
     parmtag	{ spare_category "Scanned" }
     parmtag	{ vray_plugin "BRDFScanned" }
     parm {
-	name	"transparency"
-	label	"Transparency"
-	type	color
-	size	3
-	default	{ "0" "0" "0" }
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-    }
-    parm {
-	name	"transparency_tex"
-	label	"Transparency"
-	type	color4
-	size	4
-	default	{ "0" "0" "0" "1" }
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-    }
-    parm {
-	name	"transparency_tex_mult"
-	label	"Transparency Tex Mult"
-	type	float
-	default	{ "1" }
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-    }
-    parm {
-	name	"cutoff"
-	label	"Cutoff"
-	type	float
-	default	{ "0.01" }
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-    }
-    parm {
-	name	"back_side"
-	label	"Back Side"
-	type	toggle
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-    }
-    parm {
-	name	"trace_reflections"
-	label	"Trace Reflections"
-	type	toggle
-	default	{ "1" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-    }
-    parm {
-	name	"trace_depth"
-	label	"Trace Depth"
-	type	integer
-	default	{ "-1" }
-	help	"The maximum reflection depth (-1 is controlled by the global options)"
-	disablewhen	"{ trace_reflections != 1 }"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-    }
-    parm {
-	name	"affect_alpha"
-	label	"Affect Alpha"
-	type	ordinal
-	default	{ "0" }
-	help	"Specifies how render channels are propagated through the BRDF"
-	menu	{
-	    "Color Only"	"Color Only"
-	    "Color+Alpha"	"Color+Alpha"
-	    "All Channels"	"All Channels"
-	}
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1,2" }
-    }
-    parm {
-	name	"reflect_exit_color"
-	label	"Reflect Exit Color"
-	type	color4
-	size	4
-	default	{ "0" "0" "0" "1" }
-	help	"The color to use when the maximum depth is reached"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-    }
-    parm {
-	name	"reflect_dim_distance"
-	label	"Reflect Dim Distance"
-	type	float
-	default	{ "1e+18" }
-	help	"How much to dim reflection as length of rays increases"
-	disablewhen	"{ trace_reflections != 1 } { reflect_dim_distance_on != 1 }"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-    }
-    parm {
-	name	"reflect_dim_distance_on"
-	label	"Reflect Dim Distance On"
-	type	toggle
-	default	{ "0" }
-	help	"True to enable dim distance"
-	disablewhen	"{ trace_reflections != 1 }"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-    }
-    parm {
-	name	"reflect_dim_distance_falloff"
-	label	"Reflect Dim Distance Falloff"
-	type	float
-	default	{ "0" }
-	help	"Fall off for the dim distance"
-	disablewhen	"{ trace_reflections != 1 } { reflect_dim_distance_on != 1 }"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-    }
-    parm {
-	name	"glossyAsGI"
-	label	"Glossy As Gi"
-	type	ordinal
-	default	{ "1" }
-	help	"Determines if the glossy rays are treated by V-Ray as GI rays"
-	menu	{
-	    "Never"	"Never"
-	    "GI"	"GI"
-	    "Always"	"Always"
-	}
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1,2" }
-    }
-    parm {
-	name	"subdivs"
-	label	"Subdivs"
-	type	integer
-	default	{ "8" }
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-    }
-    parm {
-	name	"mtsc_file_path"
-	label	"Mtsc File Path"
+	name	"file"
+	label	"File"
 	type	file
 	default	{ "" }
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
-    }
-    parm {
-	name	"material_color_filter"
-	label	"Material Color Filter"
-	type	color
-	size	3
-	default	{ "1" "1" "1" }
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "filechooser_pattern" "*.vrscan" }
+	parmtag	{ "vray_plugin" "BRDFScanned" }
+	parmtag	{ "vray_pluginattr" "file" }
+	parmtag	{ "vray_type" "String" }
     }
     parm {
 	name	"tiling_factor"
 	label	"Tiling Factor"
 	type	float
 	default	{ "1" }
-	range	{ 0 64 }
+	range	{ 0 10 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFScanned" }
@@ -187,10 +29,69 @@
 	parmtag	{ "vray_type" "float" }
     }
     parm {
-	name	"gamma_correction"
-	label	"Gamma Correction"
+	name	"ccmult"
+	label	"Ccmult"
 	type	float
 	default	{ "1" }
+	help	"Clear Coat Multiplier"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFScanned" }
+	parmtag	{ "vray_pluginattr" "ccmult" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"paintcolor"
+	label	"Paintcolor"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "0" }
+	help	"Paint replacement color"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFScanned" }
+	parmtag	{ "vray_pluginattr" "paintcolor" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"filtercolor"
+	label	"Filtercolor"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "0" }
+	help	"Filter color"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFScanned" }
+	parmtag	{ "vray_pluginattr" "filtercolor" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"plain"
+	label	"Plain"
+	type	ordinal
+	default	{ "0" }
+	help	"This option modifies the rendering in order to improve the result for materials without large details"
+	menu	{
+	    "PL None"	"PL None"
+	    "PL HMG"	"PL HMG"
+	    "PL HMGSYM"	"PL HMGSYM"
+	    "PL SCRAMBLE"	"PL SCRAMBLE"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_enumkeys" "0,1,2,3" }
+    }
+    parm {
+	name	"invgamma"
+	label	"Invgamma"
+	type	float
+	default	{ "1" }
+	help	"Inverse gamma"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -205,101 +106,254 @@
 	parmtag	{ "cook_dependent" "1" }
     }
     parm {
-	name	"exposure_correction"
-	label	"Exposure Correction"
+	name	"depthMul"
+	label	"Depthmul"
 	type	float
-	default	{ "0" }
+	default	{ "1" }
+	help	"Displacement/paralax  multiplier"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
     }
     parm {
-	name	"map_channel"
-	label	"Map Channel"
-	type	integer
-	default	{ "0" }
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-    }
-    parm {
-	name	"disable_wmap"
-	label	"Disable Wmap"
+	name	"disablewmap"
+	label	"Disablewmap"
 	type	toggle
 	default	{ "0" }
+	help	"Disable use of the enlargement, directly the original small sample is used for rendering"
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
     }
     parm {
-	name	"coarse_indirect"
-	label	"Coarse Indirect"
-	type	toggle
-	default	{ "1" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-    }
-    parm {
-	name	"mult_depth"
-	label	"Mult Depth"
-	type	float
-	default	{ "1" }
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-    }
-    parm {
-	name	"mult_gi"
-	label	"Mult Gi"
-	type	float
-	default	{ "1" }
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-    }
-    parm {
-	name	"mult_direct"
-	label	"Mult Direct"
-	type	float
-	default	{ "1" }
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-    }
-    parm {
-	name	"mult_reflections"
-	label	"Mult Reflections"
-	type	float
-	default	{ "1" }
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-    }
-    parm {
-	name	"file"
-	label	"File"
-	type	file
-	default	{ "" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "filechooser_pattern" "*.vrscan" }
-	parmtag	{ "vray_plugin" "BRDFScanned" }
-	parmtag	{ "vray_pluginattr" "file" }
-	parmtag	{ "vray_type" "String" }
-    }
-    parm {
-	name	"param_block"
-	label	"Param Block"
-	type	integer
-	default	{ "0" }
-	help	"All parameters serialized to a binary param block"
+	name	"filter"
+	label	"Filter"
+	type	color
+	size	3
+	default	{ "1" "1" "1" }
+	help	"General result multiplier (tint)"
 	range	{ 0 10 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFScanned" }
-	parmtag	{ "vray_pluginattr" "param_block" }
-	parmtag	{ "vray_type" "List<Integer>" }
+    }
+    parm {
+	name	"bumpmul"
+	label	"Bumpmul"
+	type	float
+	default	{ "0" }
+	help	"Bump multiplier for the inclined views"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+    }
+    parm {
+	name	"bumpstart"
+	label	"Bumpstart"
+	type	float
+	default	{ "0" }
+	help	"The z value of the view vector below which bump is gradualy applied"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+    }
+    parm {
+	name	"subdivisions"
+	label	"Subdivisions"
+	type	integer
+	default	{ "0" }
+	help	"The reflection rays count"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+    }
+    parm {
+	name	"cutoff"
+	label	"Cutoff"
+	type	float
+	default	{ "0.01" }
+	help	"Stop of the indirect ray if the total weight is below this value"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+    }
+    parm {
+	name	"mapChannel"
+	label	"Mapchannel"
+	type	integer
+	default	{ "1" }
+	help	"The mapping channel"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+    }
+    parm {
+	name	"dome"
+	label	"Dome"
+	type	toggle
+	default	{ "0" }
+	help	"Prevent double lighting by direct and reflection rays"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+    }
+    parm {
+	name	"multdirect"
+	label	"Multdirect"
+	type	float
+	default	{ "1" }
+	help	"Multiplier for direct light"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+    }
+    parm {
+	name	"multrefl"
+	label	"Multrefl"
+	type	float
+	default	{ "1" }
+	help	"Multiplier for reflected light"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+    }
+    parm {
+	name	"multgi"
+	label	"Multgi"
+	type	float
+	default	{ "1" }
+	help	"Multiplier for GI light"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+    }
+    parm {
+	name	"traceDepth"
+	label	"Tracedepth"
+	type	integer
+	default	{ "-1" }
+	help	"The maximum reflection depth limit (-1 is controlled by the global options)"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+    }
+    parm {
+	name	"scrambleSize"
+	label	"Scramblesize"
+	type	float
+	default	{ "0.066" }
+	help	"Used when the plain option is set to PL_SCRAMBLE, determines the size of the pieces that are continuous in the uv space, measured in cm"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+    }
+    parm {
+	name	"sceneScale"
+	label	"Scenescale"
+	type	float
+	default	{ "100" }
+	help	"The size of one scene unit in cm"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+    }
+    parm {
+	name	"ccior"
+	label	"Ccior"
+	type	float
+	default	{ "1" }
+	help	"The clear coat ior, used for carpaints and other materials with thin refractive layer"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+    }
+    parm {
+	name	"cchlight"
+	label	"Cchlight"
+	type	integer
+	default	{ "1" }
+	help	"The clear coat highlights"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+    }
+    parm {
+	name	"ccbump"
+	label	"Ccbump"
+	type	float
+	default	{ "1" }
+	help	"Used to make the clear coat not perfect"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+    }
+    parm {
+	name	"unfRefl"
+	label	"Unfrefl"
+	type	toggle
+	default	{ "0" }
+	help	"Uniform reflections distribution"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+    }
+    parm {
+	name	"twoside"
+	label	"Twoside"
+	type	toggle
+	default	{ "0" }
+	help	"Same as two side in the standard material"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+    }
+    parm {
+	name	"displace"
+	label	"Displace"
+	type	toggle
+	default	{ "0" }
+	help	"Edge displacement, used to prevent the flat appearance of the edges"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+    }
+    parm {
+	name	"noPrimGI"
+	label	"Noprimgi"
+	type	toggle
+	default	{ "1" }
+	help	"The primary rays are rendered without using the GI engine (better acuracity, lower speed)"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+    }
+    parm {
+	name	"retrace"
+	label	"Retrace"
+	type	float
+	default	{ "0" }
+	help	"The minimal path length of a reflected ray that allows to use GI, if the path is shorter 'fear' ray tracing is used"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+    }
+    parm {
+	name	"noTransp"
+	label	"Notransp"
+	type	toggle
+	default	{ "0" }
+	help	"Force opaque rendering even if backside lighting is present"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+    }
+    parm {
+	name	"transpMul"
+	label	"Transpmul"
+	type	float
+	default	{ "1" }
+	help	"Multiplies the transparency (only the transparency, the translucency remains!)"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
     }
 }
