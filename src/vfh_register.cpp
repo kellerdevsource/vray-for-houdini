@@ -207,6 +207,7 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFSSS2);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFSSS2Complex);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFSampled);
+	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFScanned);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFSkinComplex);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFVRayMtl);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFWard);
