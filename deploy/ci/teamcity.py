@@ -289,7 +289,6 @@ def main(args):
     cmake.append('-DPHXSDK_VERSION=%s'        % args.CGR_PHXSDK_VERSION)
     cmake.append('-DVRAYSDK_VERSION=%s'       % args.CGR_VRAYSDK_VERSION)
     cmake.append('-DCGR_SRC_HASH=%s' % srcHash)
-    cmake.append('-DUSE_LAUNCHER=OFF')
     cmake.append('-DINSTALL_LOCAL=OFF')
     cmake.append('-DINSTALL_RELEASE=ON')
     cmake.append('-DINSTALL_RELEASE_ROOT=%s' % toCmakePath(ReleaseDir))

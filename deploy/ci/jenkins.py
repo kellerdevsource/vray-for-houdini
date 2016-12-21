@@ -89,6 +89,7 @@ def get_repo(repo_url, branch='master', target_dir=None, target_name=None, submo
         if my_repo_url != repo_url:
             sys.stdout.write("Repo dir already exists but repo url is different {} -> {}\n".format(my_repo_url, repo_url))
             remove_directory(clone_dir)
+            sys.stdout.flush()
 
     if not os.path.exists(clone_dir):
         if target_name and not target_dir:
