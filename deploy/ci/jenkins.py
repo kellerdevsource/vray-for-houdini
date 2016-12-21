@@ -17,65 +17,6 @@ import subprocess
 import teamcity as TC
 
 
-def remove_directory(path):
-    # Don't know why, but when deleting from python
-    # on Windows it fails to delete '.git' direcotry,
-    # so using shell command
-    if TC.getPlatformSuffix() == 'windows':
-        os.system("rmdir /Q /S %s" % path)
-        # Well yes, on Windows one remove is not enough...
-        if os.path.exists(path):
-            os.system("rmdir /Q /S %s" % path)
-    else:
-        shutil.rmtree(path)
-
-
-def get_repo(repo_url, branch='master', target_dir=None, target_name=None, submodules=[]):
-    """
-    This will clone the repo in CWD. If target_dir != None it will copy 
-    the sources to target_dir"""
-
-    sys.stdout.write("Repo [%s]\n" % repo_url)
-    sys.stdout.flush()
-
-    repo_name = target_name if target_name else os.path.basename(repo_url)
-    cwd = os.getcwd()
-    clone_dir = os.path.join(cwd, repo_name)
-
-
-    if not os.path.exists(clone_dir):
-        if target_name and not target_dir:
-            # just rename clone
-            os.system("git clone %s %s" % (repo_url, target_name))
-        else:
-            os.system("git clone %s" % repo_url)
-        os.system("git pull origin %s" % branch)
-        os.chdir(clone_dir)
-        os.system("git checkout %s" % branch)
-    else:
-        os.chdir(clone_dir)
-        os.system("git checkout -- .")
-        os.system("git pull origin %s" % branch)
-
-    for module in submodules:
-        os.system("git submodule update --init --remote --recursive %s" % module)
-
-    if target_dir:
-        to_dir = os.path.join(target_dir, repo_name)
-        if target_name:
-            to_dir = os.path.join(target_dir, target_name)
-
-        sys.stdout.write("Exporting sources %s -> %s\n" % (clone_dir, to_dir))
-        sys.stdout.flush()
-
-        if os.path.exists(to_dir):
-            remove_directory(to_dir)
-
-        shutil.copytree(clone_dir, to_dir)
-
-    os.chdir(cwd)
-
-
 def _get_cmd_output_ex(cmd, workDir=None):
     pwd = os.getcwd()
     if workDir:
@@ -108,6 +49,76 @@ def _get_cmd_output(cmd, workDir=None):
 def get_git_head_hash(root):
     git_rev = ['git', 'rev-parse', '--short', 'HEAD']
     return _get_cmd_output(git_rev, root)
+
+
+def get_git_repourl(repo_rootdir):
+    repo_out = _get_cmd_output('git remote -v'.split(), repo_rootdir)
+    repo_out = repo_out.split()
+    return repo_out[1] if len(repo_out) > 1 else ""
+
+
+def remove_directory(path):
+    # Don't know why, but when deleting from python
+    # on Windows it fails to delete '.git' direcotry,
+    # so using shell command
+    if TC.getPlatformSuffix() == 'windows':
+        os.system("rmdir /Q /S %s" % path)
+        # Well yes, on Windows one remove is not enough...
+        if os.path.exists(path):
+            os.system("rmdir /Q /S %s" % path)
+    else:
+        shutil.rmtree(path)
+
+
+def get_repo(repo_url, branch='master', target_dir=None, target_name=None, submodules=[]):
+    """
+    This will clone the repo in CWD. If target_dir != None it will copy 
+    the sources to target_dir"""
+
+    sys.stdout.write("Repo [%s]\n" % repo_url)
+    sys.stdout.flush()
+
+    repo_name = target_name if target_name else os.path.basename(repo_url)
+    cwd = os.getcwd()
+    clone_dir = os.path.join(cwd, repo_name)
+
+    if os.path.exists(clone_dir):
+        my_repo_url = get_git_repourl(clone_dir)
+        print("My repo url: {}".format(my_repo_url))
+        if my_repo_url != repo_url:
+            remove_directory(clone_dir)
+
+    if not os.path.exists(clone_dir):
+        if target_name and not target_dir:
+            # just rename clone
+            os.system("git clone %s %s" % (repo_url, target_name))
+        else:
+            os.system("git clone %s" % repo_url)
+        os.system("git pull origin %s" % branch)
+        os.chdir(clone_dir)
+        os.system("git checkout %s" % branch)
+    else:
+        os.chdir(clone_dir)
+        os.system("git checkout -- .")
+        os.system("git pull origin %s" % branch)
+
+    for module in submodules:
+        os.system("git submodule update --init --remote --recursive %s" % module)
+
+    if target_dir:
+        to_dir = os.path.join(target_dir, repo_name)
+        if target_name:
+            to_dir = os.path.join(target_dir, target_name)
+
+        sys.stdout.write("Exporting sources %s -> %s\n" % (clone_dir, to_dir))
+        sys.stdout.flush()
+
+        if os.path.exists(to_dir):
+            remove_directory(to_dir)
+
+        shutil.copytree(clone_dir, to_dir)
+
+    os.chdir(cwd)
 
 
 if __name__ == '__main__':
