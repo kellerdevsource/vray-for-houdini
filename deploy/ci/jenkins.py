@@ -61,6 +61,8 @@ def remove_directory(path):
     # Don't know why, but when deleting from python
     # on Windows it fails to delete '.git' direcotry,
     # so using shell command
+    sys.stdout.write("Deleting path: {}\n".format(path))
+
     if TC.getPlatformSuffix() == 'windows':
         os.system("rmdir /Q /S %s" % path)
         # Well yes, on Windows one remove is not enough...
@@ -84,8 +86,8 @@ def get_repo(repo_url, branch='master', target_dir=None, target_name=None, submo
 
     if os.path.exists(clone_dir):
         my_repo_url = get_git_repourl(clone_dir)
-        print("My repo url: {}".format(my_repo_url))
         if my_repo_url != repo_url:
+            sys.stdout.write("Repo dir already exists but repo url is different {} -> {}\n".format(my_repo_url, repo_url))
             remove_directory(clone_dir)
 
     if not os.path.exists(clone_dir):
@@ -94,8 +96,8 @@ def get_repo(repo_url, branch='master', target_dir=None, target_name=None, submo
             os.system("git clone %s %s" % (repo_url, target_name))
         else:
             os.system("git clone %s" % repo_url)
-        os.system("git pull origin %s" % branch)
         os.chdir(clone_dir)
+        os.system("git pull origin %s" % branch)
         os.system("git checkout %s" % branch)
     else:
         os.chdir(clone_dir)
