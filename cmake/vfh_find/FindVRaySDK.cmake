@@ -8,8 +8,6 @@
 # Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 #
 
-string(TOLOWER "${CMAKE_HOST_SYSTEM_NAME}" _HOST_SYSTEM_NAME)
-
 set(VRAYSDK_PATH "" CACHE PATH "V-Ray SDK root location")
 set(VRAYSDK_VERSION "" CACHE STRING "V-Ray SDK version")
 
@@ -21,13 +19,15 @@ else()
 	if(SDK_PATH)
 		# if vfh sdk path is given use it to deduce V-Ray SDK root path based on version
 		if(NOT VRAYSDK_VERSION)
-			message(STATUS "V-Ray SDK version NOT specified")
+			message(WARNING "V-Ray SDK version NOT specified")
 			set(_vraysdk_root "")
 		else()
-			set(_vraysdk_root "${SDK_PATH}/${_HOST_SYSTEM_NAME}/vraysdk/vraysdk${VRAYSDK_VERSION}")
+			message(STATUS "V-Ray SDK version = ${VRAYSDK_VERSION}")
+			set(_vraysdk_root "${SDK_PATH}/vraysdk/vraysdk${VRAYSDK_VERSION}")
 		endif()
 	else()
-		# otherwise searching for V-Ray for Maya default installation path
+		# otherwise search for V-Ray for Maya default installation path
+
 		set(_maya_versions "2017;2016;2015;2014")
 		foreach(_maya_version ${_maya_versions})
 			if(WIN32)
@@ -43,6 +43,8 @@ else()
 
 			if(EXISTS ${_vray_for_maya_root})
 				set(_vraysdk_root ${_vray_for_maya_root})
+				message(STATUS "No path specified for V-Ray SDK. Fall back to default search path from V-Ray For Maya installation: ${_vraysdk_root}")
+				break()
 			endif()
 
 		endforeach(_maya_version)
@@ -50,8 +52,7 @@ else()
 endif()
 
 
-message(STATUS "Searching V-Ray SDK path = ${_vraysdk_root}")
-message(STATUS "Searching V-Ray SDK version = ${VRAYSDK_VERSION}")
+message(STATUS "V-Ray SDK search path = ${_vraysdk_root}")
 
 
 # check if path exists
@@ -116,7 +117,7 @@ endif()
 
 
 if(NOT VRaySDK_FOUND)
-	message(STATUS "V-Ray SDK NOT found!")
+	message(WARNING "V-Ray SDK NOT found!")
 
 	set(VRaySDK_INCLUDES VRaySDK_INCLUDES-NOTFOUND)
 	set(VRaySDK_LIBRARIES VRaySDK_LIBRARIES-NOTFOUND)

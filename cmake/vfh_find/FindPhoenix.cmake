@@ -8,8 +8,6 @@
 # Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 #
 
-string(TOLOWER "${CMAKE_HOST_SYSTEM_NAME}" _HOST_SYSTEM_NAME)
-
 set(PHXSDK_PATH "" CACHE PATH "Phoenix SDK root location")
 set(PHXSDK_VERSION "" CACHE STRING "Phoenix SDK version")
 
@@ -21,13 +19,14 @@ else()
 	if(SDK_PATH)
 		# if vfh sdk path is given use it to deduce V-Ray SDK root path based on version
 		if(NOT PHXSDK_VERSION)
-			message(STATUS "Phoenix SDK version NOT specified")
+			message(WARNING "Phoenix SDK version NOT specified")
 			set(_phx_root "")
 		else()
-			set(_phx_root "${SDK_PATH}/${_HOST_SYSTEM_NAME}/phxsdk/phxsdk${PHXSDK_VERSION}")
+			message(STATUS "Phoenix SDK version = ${PHXSDK_VERSION}")
+			set(_phx_root "${SDK_PATH}/phxsdk/phxsdk${PHXSDK_VERSION}")
 		endif()
 	else()
-		# otherwise searching for Phoenix for Maya default installation path
+		# otherwise search for Phoenix for Maya default installation path
 		set(_maya_versions "2017;2016;2015;2014")
 		foreach(_maya_version ${_maya_versions})
 			if(WIN32)
@@ -43,6 +42,8 @@ else()
 
 			if(EXISTS ${_phx_for_maya_root})
 				set(_phx_root ${_phx_for_maya_root})
+				message(STATUS "No path specified for Phoenix SDK. Fall back to default search path from Phoenix for Maya installation: ${_phx_for_maya_root}")
+				break()
 			endif()
 
 		endforeach(_maya_version)
@@ -51,7 +52,7 @@ endif()
 
 
 message(STATUS "Searching Phoenix SDK path = ${_phx_root}")
-message(STATUS "Searching Phoenix SDK version = ${PHXSDK_VERSION}")
+
 
 # check if path exists
 if((NOT _phx_root) OR (NOT EXISTS ${_phx_root}))
@@ -132,7 +133,7 @@ endif()
 
 
 if(NOT Phoenix_FOUND)
-	message(STATUS "Phoenix SDK NOT found!")
+	message(WARNING "Phoenix SDK NOT found!")
 
 	set(Phoenix_INCLUDES Phoenix_INCLUDES-NOTFOUND)
 	set(Phoenix_LIBRARIES Phoenix_LIBRARIES-NOTFOUND)

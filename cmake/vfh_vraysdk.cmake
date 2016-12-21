@@ -14,8 +14,10 @@ macro(use_vray_sdk)
 
 	if(NOT VRaySDK_FOUND)
 		message(FATAL_ERROR "V-Ray SDK NOT found!\n"
-							"V-Ray SDK from V-Ray For Maya installation is utilized by default.\n"
-							"You should either specify VRAYSDK_PATH or SDK_PATH and VRAYSDK_VERSION variables or install V-Ray For Maya."
+							"To specify V-Ray SDK search path, use one of the following options:\n"
+							"-DVRAYSDK_PATH=<V-Ray SDK root location>\n"
+							"-DSDK_PATH=<VFH dependencies location> and VRAYSDK_VERSION\n"
+							"or install V-Ray For Maya"
 							)
 	endif()
 
