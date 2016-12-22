@@ -34,7 +34,7 @@ public:
 		return instance;
 	}
 
-	operator bool () const
+	explicit operator bool () const
 	{
 		return (m_vrayInit != nullptr);
 	}
@@ -212,7 +212,31 @@ static void OnBucketReady(VRay::VRayRenderer &renderer, int x, int y, const char
 
 bool VRayPluginRenderer::initialize()
 {
-	return AppSdkInit::getInstance();
+	return static_cast< bool >(AppSdkInit::getInstance());
+}
+
+
+bool VRayPluginRenderer::isVRScansUIAvailable()
+{
+	if (!initialize()) {
+		return false;
+	}
+
+	VRay::ScannedMaterialParams dummyPamrs;
+	VRay::IntList dummyData;
+	VRay::ScannedMaterialLicenseError licError;
+	bool res = VRay::encodeScannedMaterialParams(dummyPamrs, dummyData, licError);
+
+	if (licError.error()) {
+		Log::getLog().info("Unable to obtain VRScans GUI license: %s", licError.toString());
+	}
+
+	if (!res && !licError.error()) {
+		// This should not happen in general but let's log an error just in case
+		Log::getLog().error("Unable to obtain VRScans GUI license. V-Ray AppSDK internal error.");
+	}
+
+	return res && !licError.error();
 }
 
 
