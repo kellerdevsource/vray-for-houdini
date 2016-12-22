@@ -17,6 +17,11 @@ import subprocess
 import teamcity as TC
 
 
+def log_msg(msg):
+    sys.stdout.write(msg)
+    sys.stdout.flush()
+
+
 def _get_cmd_output_ex(cmd, workDir=None):
     pwd = os.getcwd()
     if workDir:
@@ -61,7 +66,7 @@ def remove_directory(path):
     # Don't know why, but when deleting from python
     # on Windows it fails to delete '.git' direcotry,
     # so using shell command
-    sys.stdout.write("Deleting path: {}\n".format(path))
+    log_msg("Deleting path: {}\n".format(path))
 
     if TC.getPlatformSuffix() == 'windows':
         os.system("rmdir /Q /S %s" % path)
@@ -77,8 +82,7 @@ def get_repo(repo_url, branch='master', target_dir=None, target_name=None, submo
     This will clone the repo in CWD. If target_dir != None it will copy 
     the sources to target_dir"""
 
-    sys.stdout.write("Repo [%s]\n" % repo_url)
-    sys.stdout.flush()
+    log_msg("Repo [%s]\n" % repo_url)
 
     repo_name = target_name if target_name else os.path.basename(repo_url)
     cwd = os.getcwd()
@@ -87,9 +91,8 @@ def get_repo(repo_url, branch='master', target_dir=None, target_name=None, submo
     if os.path.exists(clone_dir):
         my_repo_url = get_git_repourl(clone_dir)
         if my_repo_url != repo_url:
-            sys.stdout.write("Repo dir already exists but repo url is different {} -> {}\n".format(my_repo_url, repo_url))
+            log_msg("Repo dir already exists but repo url is different {} -> {}\n".format(my_repo_url, repo_url))
             remove_directory(clone_dir)
-            sys.stdout.flush()
 
     if not os.path.exists(clone_dir):
         if target_name and not target_dir:
@@ -113,8 +116,7 @@ def get_repo(repo_url, branch='master', target_dir=None, target_name=None, submo
         if target_name:
             to_dir = os.path.join(target_dir, target_name)
 
-        sys.stdout.write("Exporting sources %s -> %s\n" % (clone_dir, to_dir))
-        sys.stdout.flush()
+        log_msg("Exporting sources %s -> %s\n" % (clone_dir, to_dir))
 
         if os.path.exists(to_dir):
             remove_directory(to_dir)
@@ -144,14 +146,12 @@ if __name__ == '__main__':
 
 
     if not os.path.exists(args.output_dir):
-        sys.stdout.write("Path output_dir == [%s] missing, trying to create." % args.output_dir)
-        sys.stdout.flush()
+        log_msg("Path output_dir == [%s] missing, trying to create." % args.output_dir)
         os.makedirs(args.output_dir)
 
     perm_dir = os.path.join(args.perm_dir, 'houdini-dependencies')
     if not os.path.exists(perm_dir):
-        sys.stdout.write("Path perm_dir/houdini-dependencies == [%s] missing, trying to create." % perm_dir)
-        sys.stdout.flush()
+        log_msg("Path perm_dir/houdini-dependencies == [%s] missing, trying to create." % perm_dir)
         os.makedirs(perm_dir)
 
     os.chdir(perm_dir)
@@ -171,8 +171,7 @@ if __name__ == '__main__':
         ninja_path = os.path.join(os.environ['VRAY_CGREPO_PATH'], 'build_scripts', 'cmake', 'tools', 'bin')
     else:
         ninja_path = os.path.join(os.environ['CI_ROOT'], 'ninja', 'ninja')
-    sys.stdout.write('Ninja path [%s]\n' % ninja_path)
-    sys.stdout.flush()
+    log_msg('Ninja path [%s]\n' % ninja_path)
     os.environ['PATH'] = ninja_path + os.pathsep + os.environ['PATH']
 
 
