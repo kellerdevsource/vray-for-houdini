@@ -137,6 +137,8 @@ OP::VRayNode::PluginResult VOP::BRDFScanned::asPluginDesc(Attrs::PluginDesc &plu
 	}
 	else {
 		pluginDesc.addAttribute(Attrs::PluginAttr("param_block", 0));
+		const char *errMsg = (err.error())? err.toString() : "V-Ray AppSDK internal error";
+		Log::getLog().info("Unable to obtain VRScans GUI license: %s", errMsg);
 	}
 
 	return PluginResult::PluginResultContinue;

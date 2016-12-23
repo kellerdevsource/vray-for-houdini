@@ -233,14 +233,13 @@ bool VRayPluginRenderer::hasVRScansGUILicense(VRay::ScannedMaterialLicenseError 
 	VRay::IntList dummyData;
 	bool res = VRay::encodeScannedMaterialParams(dummyPamrs, dummyData, err);
 
-	if (err.error()) {
-		Log::getLog().info("Unable to obtain VRScans GUI license: %s", err.toString());
-	}
-
-	if (!res && !err.error()) {
-		// This should not happen in general but let's log an error just in case
-		Log::getLog().error("Unable to obtain VRScans GUI license. V-Ray AppSDK internal error.");
-		err.errorCode = VRay::LicenseError::vrlauth_notInitializedError;
+	if (!res) {
+		const char *errMsg = (err.error())? err.toString() : "V-Ray AppSDK internal error";
+		if (!err.error()) {
+			// This should not happen in general but let's log an error just in case
+			err.errorCode = VRay::LicenseError::vrlauth_notInitializedError;
+		}
+		Log::getLog().error("Unable to obtain VRScans GUI license: %s", errMsg);
 	}
 
 	isGUIAvailable = res && !err.error();
