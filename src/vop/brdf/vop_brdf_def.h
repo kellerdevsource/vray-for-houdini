@@ -13,6 +13,7 @@
 
 #include "vop_node_base.h"
 #include "vop_BRDFLayered.h"
+#include "vop_BRDFScanned.h"
 
 namespace VRayForHoudini {
 namespace VOP {
@@ -43,7 +44,6 @@ BRDF_DEF(BRDFSSS)
 BRDF_DEF(BRDFSSS2)
 BRDF_DEF(BRDFSSS2Complex)
 BRDF_DEF(BRDFSampled)
-BRDF_DEF(BRDFScanned)
 BRDF_DEF(BRDFSkinComplex)
 BRDF_DEF(BRDFWard)
 
