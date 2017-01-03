@@ -16,7 +16,7 @@ using namespace VRayForHoudini;
 
 namespace {
 
-const char *const VFH_PLUGIN_ATTRIBUTE = "vray_pluginattr";
+const char *const VFH_SPARE_PLUGIN_ATTRIBUTE = "vray_pluginattr";
 
 }
 
@@ -41,7 +41,7 @@ bool VOP::BRDFScanned::updateParmsFlags()
 	for (int i = 0; i < getParmList()->getEntries(); ++i) {
 		const PRM_Parm &prm = getParm(i);
 		const PRM_SpareData *spare = prm.getSparePtr();
-		if (spare && !spare->getValue(VFH_PLUGIN_ATTRIBUTE)) {
+		if (!spare || !spare->getValue(VFH_SPARE_PLUGIN_ATTRIBUTE)) {
 			changed |= enableParm(i, hasGUI);
 		}
 	}
