@@ -8,8 +8,6 @@
 # Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 #
 
-string(TOLOWER "${CMAKE_HOST_SYSTEM_NAME}" _HOST_SYSTEM_NAME)
-
 set(APPSDK_PATH "" CACHE PATH "V-Ray AppSDK root location")
 set(APPSDK_VERSION "20161115")
 
@@ -21,15 +19,18 @@ else()
 		message(WARNING "V-Ray AppSDK version NOT specified")
 		set(_appsdk_root "")
 	else()
-		message(STATUS "V-Ray AppSDK version: ${APPSDK_VERSION}")
+		message(STATUS "V-Ray AppSDK version = ${APPSDK_VERSION}")
 
 		# no V-Ray AppSDK root path is passed to cmake
 		if(SDK_PATH)
 			# if vfh sdk path is given use it to deduce AppSDK root path based on version
-			set(_appsdk_root "${SDK_PATH}/${_HOST_SYSTEM_NAME}/appsdk/appsdk${APPSDK_VERSION}")
+			set(_appsdk_root "${SDK_PATH}/appsdk/appsdk${APPSDK_VERSION}")
 		else()
 			# otherwise search in default location for AppSDK
+			string(TOLOWER "${CMAKE_HOST_SYSTEM_NAME}" _HOST_SYSTEM_NAME)
 			set(_appsdk_root "$ENV{HOME}/src/appsdk_releases/${APPSDK_VERSION}/${_HOST_SYSTEM_NAME}")
+
+			message(STATUS "No path specified for V-Ray AppSDK. Fall back to default search path: ${_appsdk_root}.")
 		endif()
 	endif()
 endif()
@@ -74,6 +75,8 @@ endif()
 
 
 if(NOT AppSDK_FOUND)
+	message(WARNING "V-Ray AppSDK NOT found!")
+
 	set(AppSDK_INCLUDES AppSDK_INCLUDES-NOTFOUND)
 	set(AppSDK_LIBRARIES AppSDK_LIBRARIES-NOTFOUND)
 endif()
