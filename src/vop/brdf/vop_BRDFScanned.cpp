@@ -80,15 +80,13 @@ OP::VRayNode::PluginResult VOP::BRDFScanned::asPluginDesc(Attrs::PluginDesc &plu
 	parms.filter.rgb[1] = options.getOptionV3("filter").g();
 	parms.filter.rgb[2] = options.getOptionV3("filter").b();
 	// uvtrans
-	UT_DMatrix4 m4;
-	OP_Node::buildXform(options.getOptionI("trs"),
-						options.getOptionI("xyz"),
-						options.getOptionV3("trans").x(), options.getOptionV3("trans").y(), options.getOptionV3("trans").z(),
-						options.getOptionV3("rot").x(), options.getOptionV3("rot").y(), options.getOptionV3("rot").z(),
-						options.getOptionV3("scale").x(), options.getOptionV3("scale").y(), options.getOptionV3("scale").z(),
-						options.getOptionV3("pivot").x(), options.getOptionV3("pivot").y(), options.getOptionV3("pivot").z(),
-						m4);
-	parms.uvtrans = VRayExporter::Matrix4ToTransform(m4);
+	OP_Node *uvtrans = VRayExporter::getConnectedNode(this, "uvtrans");
+	if (uvtrans && uvtrans->getOpTypeID() == VOP_OPTYPE_ID) {
+		parms.uvtrans = exporter.exportTransformVop(*(uvtrans->castToVOPNode()));
+	}
+	else {
+		parms.uvtrans.makeIdentity();
+	}
 
 	parms.usemap = options.getOptionI("usemap");
 	parms.bumpmul = options.getOptionF("bumpmul");
