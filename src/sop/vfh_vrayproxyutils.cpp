@@ -112,7 +112,6 @@ bool VRayForHoudini::GetVRayProxyBounds(const VRayProxyParms &options, UT_Boundi
 
 const UT_StringRef VRayProxyParms::theFileToken         = "file";
 const UT_StringRef VRayProxyParms::theLODToken          = "lod";
-const UT_StringRef VRayProxyParms::theFrameToken        = "frame";
 const UT_StringRef VRayProxyParms::theAnimTypeToken     = "anim_type";
 const UT_StringRef VRayProxyParms::theAnimOffsetToken   = "anim_offset";
 const UT_StringRef VRayProxyParms::theAnimSpeedToken    = "anim_speed";
@@ -585,7 +584,6 @@ VRayProxyCache::FrameKey VRayProxyCache::getFrameIdx(const VRayProxyParms &optio
 {
 	UT_ASSERT( m_proxy );
 
-	const fpreal64 frame      = options.getFloatFrame();
 	const exint    animType   = options.getAnimType();
 	const fpreal64 animOffset = options.getAnimOffset();
 	const fpreal64 animSpeed  = options.getAnimSpeed();
@@ -598,7 +596,7 @@ VRayProxyCache::FrameKey VRayProxyCache::getFrameIdx(const VRayProxyParms &optio
 	}
 
 
-	return static_cast<FrameKey>(VUtils::fast_round((VUtils::calcFrameIndex(frame,
+	return static_cast<FrameKey>(VUtils::fast_round((VUtils::calcFrameIndex(0,
 														static_cast<VUtils::MeshFileAnimType::Enum>(animType),
 														animStart,
 														animLength,

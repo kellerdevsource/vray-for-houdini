@@ -163,10 +163,9 @@ OP_ERROR SOP::VRayProxy::cookMySop(OP_Context &context)
 					// Set the options on the primitive
 					UT_Options options;
 					options.setOptionI("lod", evalInt("loadtype", 0, t))
-							.setOptionF("frame", context.getFloatFrame())
 							.setOptionS("file", path)
 							.setOptionI("anim_type", evalInt("anim_type", 0, t))
-							.setOptionF("anim_offset", evalFloat("anim_offset", 0, t))
+							.setOptionF("anim_offset", evalFloat("anim_offset", 0, t) + context.getFrame())
 							.setOptionF("anim_speed", evalFloat("anim_speed", 0, t))
 							.setOptionB("anim_override", evalInt("anim_override", 0, t))
 							.setOptionI("anim_start", evalInt("anim_start", 0, t))
