@@ -10,6 +10,8 @@
 
 #include "vop_BRDFScanned.h"
 #include <OP/OP_NodeInfoParms.h>
+#include <OP/OP_Options.h>
+
 
 using namespace VRayForHoudini;
 
@@ -61,74 +63,57 @@ OP::VRayNode::PluginResult VOP::BRDFScanned::asPluginDesc(Attrs::PluginDesc &plu
 {
 	const fpreal t = exporter.getContext().getTime();
 
-	VRay::ScannedMaterialParams parms;
-	int ival = 0;
-	fpreal fval = 0;
+	OP_Options options;
+	for (int i = 0; i < getParmList()->getEntries(); ++i) {
+		const PRM_Parm &prm = getParm(i);
+		options.setOptionFromTemplate(this, prm, *prm.getTemplatePtr(), t);
+	}
 
-	evalParameterOrProperty("plain", 0, t, ival);
-	parms.plain = static_cast<VRay::ScannedMaterialParams::Plain>(ival);
-	evalParameterOrProperty("invgamma", 0, t, fval);
-	parms.invgamma = fval;
-	evalParameterOrProperty("saturation", 0, t, fval);
-	parms.saturation = fval;
-	evalParameterOrProperty("depthMul", 0, t, fval);
-	parms.depthMul = fval;
-	evalParameterOrProperty("disablewmap", 0, t, ival);
-	parms.disablewmap = ival;
+	VRay::ScannedMaterialParams parms;
+	parms.plain = static_cast<VRay::ScannedMaterialParams::Plain>(options.getOptionI("plain"));
+	parms.invgamma = options.getOptionF("invgamma");
+	parms.saturation = options.getOptionF("saturation");
+	parms.depthMul = options.getOptionF("depthMul");
+	parms.disablewmap = options.getOptionI("disablewmap");
 	// filter color
-	evalParameterOrProperty("filter", 0, t, fval);
-	parms.filter.rgb[0] = fval;
-	evalParameterOrProperty("filter", 1, t, fval);
-	parms.filter.rgb[1] = fval;
-	evalParameterOrProperty("filter", 2, t, fval);
-	parms.filter.rgb[2] = fval;
-//	TODO: uvtrans
-	evalParameterOrProperty("usemap", 0, t, ival);
-	parms.usemap = ival;
-	evalParameterOrProperty("bumpmul", 0, t, fval);
-	parms.bumpmul = fval;
-	evalParameterOrProperty("bumpstart", 0, t, fval);
-	parms.bumpstart = fval;
-	evalParameterOrProperty("subdivision", 0, t, ival);
-	parms.nsamples = ival*ival;
-	evalParameterOrProperty("cutoff", 0, t, fval);
-	parms.cutoff = fval;
-	evalParameterOrProperty("mapChannel", 0, t, ival);
-	parms.mapChannel = ival;
-	evalParameterOrProperty("dome", 0, t, ival);
-	parms.dome = ival;
-	evalParameterOrProperty("multdirect", 0, t, fval);
-	parms.multdirect = fval;
-	evalParameterOrProperty("multrefl", 0, t, fval);
-	parms.multrefl = fval;
-	evalParameterOrProperty("multgi", 0, t, fval);
-	parms.multgi = fval;
-	evalParameterOrProperty("traceDepth", 0, t, ival);
-	parms.traceDepth = ival;
-	evalParameterOrProperty("scrambleSize", 0, t, fval);
-	parms.scrambleSize = fval;
-	evalParameterOrProperty("sceneScale", 0, t, fval);
-	parms.sceneScale = fval;
-	evalParameterOrProperty("ccior", 0, t, fval);
-	parms.ccior = fval;
-	evalParameterOrProperty("cchlight", 0, t, ival);
-	parms.cchlight = ival;
-	evalParameterOrProperty("ccbump", 0, t, fval);
-	parms.ccbump = fval;
-	evalParameterOrProperty("unfRefl", 0, t, ival);
-	parms.unfRefl = ival;
-	evalParameterOrProperty("twoside", 0, t, ival);
-	parms.twoside = ival;
-	evalParameterOrProperty("displace", 0, t, ival);
-	parms.displace = ival;
-	evalParameterOrProperty("noPrimGI", 0, t, ival);
-	parms.noPrimGI = ival;
-	evalParameterOrProperty("retrace", 0, t, fval);
-	parms.retrace = fval;
-	evalParameterOrProperty("noTransp", 0, t, ival);
-	parms.noTransp = ival;
-	evalParameterOrProperty("transpMul", 0, t, fval);
-	parms.transpMul = fval;
+	parms.filter.rgb[0] = options.getOptionV3("filter").r();
+	parms.filter.rgb[1] = options.getOptionV3("filter").g();
+	parms.filter.rgb[2] = options.getOptionV3("filter").b();
+	// uvtrans
+	UT_DMatrix4 m4;
+	OP_Node::buildXform(options.getOptionI("trs"),
+						options.getOptionI("xyz"),
+						options.getOptionV3("trans").x(), options.getOptionV3("trans").y(), options.getOptionV3("trans").z(),
+						options.getOptionV3("rot").x(), options.getOptionV3("rot").y(), options.getOptionV3("rot").z(),
+						options.getOptionV3("scale").x(), options.getOptionV3("scale").y(), options.getOptionV3("scale").z(),
+						options.getOptionV3("pivot").x(), options.getOptionV3("pivot").y(), options.getOptionV3("pivot").z(),
+						m4);
+	parms.uvtrans = VRayExporter::Matrix4ToTransform(m4);
+
+	parms.usemap = options.getOptionI("usemap");
+	parms.bumpmul = options.getOptionF("bumpmul");
+	parms.bumpstart = options.getOptionF("bumpstart");
+	parms.nsamples = options.getOptionI("subdivisions");
+	parms.nsamples *= parms.nsamples * parms.nsamples;
+	parms.cutoff = options.getOptionF("cutoff");
+	parms.mapChannel = options.getOptionI("mapChannel");
+	parms.dome = options.getOptionI("dome");
+	parms.multdirect = options.getOptionF("multdirect");
+	parms.multrefl = options.getOptionF("multrefl");
+	parms.multgi = options.getOptionF("multgi");
+	parms.traceDepth = options.getOptionI("traceDepth");
+	parms.scrambleSize = options.getOptionF("scrambleSize");
+	parms.sceneScale = options.getOptionF("sceneScale");
+	parms.ccior = options.getOptionF("ccior");
+	parms.cchlight = options.getOptionI("cchlight");
+	parms.ccbump = options.getOptionF("ccbump");
+	parms.unfRefl = options.getOptionI("unfRefl");
+	parms.twoside = options.getOptionI("twoside");
+	parms.displace = options.getOptionI("displace");
+	parms.noPrimGI = options.getOptionI("noPrimGI");
+	parms.retrace = options.getOptionF("retrace");
+	parms.noTransp = options.getOptionI("noTransp");
+	parms.transpMul = options.getOptionF("transpMul");
 
 	VRay::IntList parmBlock;
 	VRay::ScannedMaterialLicenseError err;
