@@ -71,9 +71,9 @@ OP::VRayNode::PluginResult VOP::BRDFScanned::asPluginDesc(Attrs::PluginDesc &plu
 
 	VRay::ScannedMaterialParams parms;
 	parms.plain = static_cast<VRay::ScannedMaterialParams::Plain>(options.getOptionI("plain"));
-	parms.invgamma = options.getOptionF("invgamma");
+	parms.invgamma = 1.0 / options.getOptionF("gamma");
 	parms.saturation = options.getOptionF("saturation");
-	parms.depthMul = options.getOptionF("depthMul");
+	parms.depthMul = options.getOptionF("depth_mult");
 	parms.disablewmap = options.getOptionI("disablewmap");
 	// filter color
 	parms.filter.rgb[0] = options.getOptionV3("filter").r();
@@ -93,27 +93,27 @@ OP::VRayNode::PluginResult VOP::BRDFScanned::asPluginDesc(Attrs::PluginDesc &plu
 	parms.usemap = options.getOptionI("usemap");
 	parms.bumpmul = options.getOptionF("bumpmul");
 	parms.bumpstart = options.getOptionF("bumpstart");
-	parms.nsamples = options.getOptionI("subdivisions");
+	parms.nsamples = options.getOptionI("subdivs");
 	parms.nsamples *= parms.nsamples * parms.nsamples;
 	parms.cutoff = options.getOptionF("cutoff");
-	parms.mapChannel = options.getOptionI("mapChannel");
+	parms.mapChannel = options.getOptionI("map_channel");
 	parms.dome = options.getOptionI("dome");
 	parms.multdirect = options.getOptionF("multdirect");
 	parms.multrefl = options.getOptionF("multrefl");
 	parms.multgi = options.getOptionF("multgi");
-	parms.traceDepth = options.getOptionI("traceDepth");
-	parms.scrambleSize = options.getOptionF("scrambleSize");
-	parms.sceneScale = options.getOptionF("sceneScale");
+	parms.traceDepth = options.getOptionI("trace_depth");
+	parms.scrambleSize = options.getOptionF("scramble_size");
+	parms.sceneScale = options.getOptionF("scene_scale");
 	parms.ccior = options.getOptionF("ccior");
 	parms.cchlight = options.getOptionI("cchlight");
 	parms.ccbump = options.getOptionF("ccbump");
-	parms.unfRefl = options.getOptionI("unfRefl");
+	parms.unfRefl = options.getOptionI("unf_refl");
 	parms.twoside = options.getOptionI("twoside");
 	parms.displace = options.getOptionI("displace");
-	parms.noPrimGI = options.getOptionI("noPrimGI");
+	parms.noPrimGI = options.getOptionI("no_prim_gi");
 	parms.retrace = options.getOptionF("retrace");
-	parms.noTransp = options.getOptionI("noTransp");
-	parms.transpMul = options.getOptionF("transpMul");
+	parms.noTransp = options.getOptionI("no_transparency");
+	parms.transpMul = options.getOptionF("transparency_mult");
 
 	VRay::IntList parmBlock;
 	VRay::ScannedMaterialLicenseError err;

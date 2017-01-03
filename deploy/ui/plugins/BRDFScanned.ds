@@ -30,7 +30,7 @@
     }
     parm {
 	name	"ccmult"
-	label	"Ccmult"
+	label	"Clear Coat Mult"
 	type	float
 	default	{ "1" }
 	help	"Clear Coat Multiplier"
@@ -43,7 +43,7 @@
     }
     parm {
 	name	"paintcolor"
-	label	"Paintcolor"
+	label	"Paint Color"
 	type	color4
 	size	4
 	default	{ "0" "0" "0" "0" }
@@ -57,7 +57,7 @@
     }
     parm {
 	name	"filtercolor"
-	label	"Filtercolor"
+	label	"Filter Color"
 	type	color4
 	size	4
 	default	{ "0" "0" "0" "0" }
@@ -71,15 +71,15 @@
     }
     parm {
 	name	"plain"
-	label	"Plain"
+	label	"Plain Materials"
 	type	ordinal
 	default	{ "0" }
 	help	"This option modifies the rendering in order to improve the result for materials without large details"
 	menu	{
-	    "PL None"	"PL None"
-	    "PL HMG"	"PL HMG"
-	    "PL HMGSYM"	"PL HMGSYM"
-	    "PL SCRAMBLE"	"PL SCRAMBLE"
+	    "None"	"None"
+	    "Average BRDF"	"Average BRDF"
+	    "Average Isotropic BRDF"	"Average Isotropic BRDF"
+	    "Scramble"	"Scramble"
 	}
 	range	{ 0 1 }
 	export	none
@@ -87,11 +87,11 @@
 	parmtag	{ "vray_enumkeys" "0,1,2,3" }
     }
     parm {
-	name	"invgamma"
-	label	"Invgamma"
+	name	"gamma"
+	label	"Gamma"
 	type	float
 	default	{ "1" }
-	help	"Inverse gamma"
+	help	"Gamma correction"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -106,18 +106,18 @@
 	parmtag	{ "cook_dependent" "1" }
     }
     parm {
-	name	"depthMul"
-	label	"Depthmul"
+	name	"depth_mult"
+	label	"Depth Mult"
 	type	float
 	default	{ "1" }
-	help	"Displacement/paralax  multiplier"
+	help	"Displacement/paralax multiplier"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
     }
     parm {
 	name	"disablewmap"
-	label	"Disablewmap"
+	label	"Disable Enlargement"
 	type	toggle
 	default	{ "0" }
 	help	"Disable use of the enlargement, directly the original small sample is used for rendering"
@@ -127,7 +127,7 @@
     }
     parm {
 	name	"filter"
-	label	"Filter"
+	label	"Tint"
 	type	color
 	size	3
 	default	{ "1" "1" "1" }
@@ -138,7 +138,7 @@
     }
     parm {
 	name	"bumpmul"
-	label	"Bumpmul"
+	label	"Bump Mult"
 	type	float
 	default	{ "0" }
 	help	"Bump multiplier for the inclined views"
@@ -148,7 +148,7 @@
     }
     parm {
 	name	"bumpstart"
-	label	"Bumpstart"
+	label	"Bump Start"
 	type	float
 	default	{ "0" }
 	help	"The z value of the view vector below which bump is gradualy applied"
@@ -157,10 +157,10 @@
 	parmtag	{ "cook_dependent" "1" }
     }
     parm {
-	name	"subdivisions"
-	label	"Subdivisions"
+	name	"subdivs"
+	label	"Subdivs"
 	type	integer
-	default	{ "0" }
+	default	{ "8" }
 	help	"The reflection rays count"
 	range	{ 0 64 }
 	export	none
@@ -177,8 +177,8 @@
 	parmtag	{ "cook_dependent" "1" }
     }
     parm {
-	name	"mapChannel"
-	label	"Mapchannel"
+	name	"map_channel"
+	label	"Map Channel"
 	type	integer
 	default	{ "1" }
 	help	"The mapping channel"
@@ -198,7 +198,7 @@
     }
     parm {
 	name	"multdirect"
-	label	"Multdirect"
+	label	"Direct Mult"
 	type	float
 	default	{ "1" }
 	help	"Multiplier for direct light"
@@ -208,7 +208,7 @@
     }
     parm {
 	name	"multrefl"
-	label	"Multrefl"
+	label	"Reflection Mult"
 	type	float
 	default	{ "1" }
 	help	"Multiplier for reflected light"
@@ -218,7 +218,7 @@
     }
     parm {
 	name	"multgi"
-	label	"Multgi"
+	label	"Gi Mult"
 	type	float
 	default	{ "1" }
 	help	"Multiplier for GI light"
@@ -227,8 +227,8 @@
 	parmtag	{ "cook_dependent" "1" }
     }
     parm {
-	name	"traceDepth"
-	label	"Tracedepth"
+	name	"trace_depth"
+	label	"Trace Depth"
 	type	integer
 	default	{ "-1" }
 	help	"The maximum reflection depth limit (-1 is controlled by the global options)"
@@ -237,8 +237,8 @@
 	parmtag	{ "cook_dependent" "1" }
     }
     parm {
-	name	"scrambleSize"
-	label	"Scramblesize"
+	name	"scramble_size"
+	label	"Scramble Size"
 	type	float
 	default	{ "0.066" }
 	help	"Used when the plain option is set to PL_SCRAMBLE, determines the size of the pieces that are continuous in the uv space, measured in cm"
@@ -247,8 +247,8 @@
 	parmtag	{ "cook_dependent" "1" }
     }
     parm {
-	name	"sceneScale"
-	label	"Scenescale"
+	name	"scene_scale"
+	label	"Scene Scale"
 	type	float
 	default	{ "100" }
 	help	"The size of one scene unit in cm"
@@ -258,7 +258,7 @@
     }
     parm {
 	name	"ccior"
-	label	"Ccior"
+	label	"Clear Coat Ior"
 	type	float
 	default	{ "1" }
 	help	"The clear coat ior, used for carpaints and other materials with thin refractive layer"
@@ -268,17 +268,17 @@
     }
     parm {
 	name	"cchlight"
-	label	"Cchlight"
-	type	integer
+	label	"Clear Coat Highlights"
+	type	toggle
 	default	{ "1" }
 	help	"The clear coat highlights"
-	range	{ 0 10 }
+	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
     }
     parm {
 	name	"ccbump"
-	label	"Ccbump"
+	label	"Clear Coat Bump"
 	type	float
 	default	{ "1" }
 	help	"Used to make the clear coat not perfect"
@@ -287,21 +287,26 @@
 	parmtag	{ "cook_dependent" "1" }
     }
     parm {
-	name	"unfRefl"
-	label	"Unfrefl"
-	type	toggle
+	name	"unf_refl"
+	label	"Sampling Type"
+	type	ordinal
 	default	{ "0" }
 	help	"Uniform reflections distribution"
+	menu	{
+	    "Importance Sampling"	"Importance Sampling"
+	    "Uniform Sampling"	"Uniform Sampling"
+	}
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_enumkeys" "0,1" }
     }
     parm {
 	name	"twoside"
-	label	"Twoside"
+	label	"Two Sided"
 	type	toggle
 	default	{ "0" }
-	help	"Same as two side in the standard material"
+	help	"Same as two sided in the standard material"
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -317,8 +322,8 @@
 	parmtag	{ "cook_dependent" "1" }
     }
     parm {
-	name	"noPrimGI"
-	label	"Noprimgi"
+	name	"no_prim_gi"
+	label	"No Prim Gi"
 	type	toggle
 	default	{ "1" }
 	help	"The primary rays are rendered without using the GI engine (better acuracity, lower speed)"
@@ -337,8 +342,8 @@
 	parmtag	{ "cook_dependent" "1" }
     }
     parm {
-	name	"noTransp"
-	label	"Notransp"
+	name	"no_transparency"
+	label	"No Transparency"
 	type	toggle
 	default	{ "0" }
 	help	"Force opaque rendering even if backside lighting is present"
@@ -347,8 +352,8 @@
 	parmtag	{ "cook_dependent" "1" }
     }
     parm {
-	name	"transpMul"
-	label	"Transpmul"
+	name	"transparency_mult"
+	label	"Transparency Mult"
 	type	float
 	default	{ "1" }
 	help	"Multiplies the transparency (only the transparency, the translucency remains!)"
