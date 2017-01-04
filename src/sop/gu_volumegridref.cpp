@@ -28,18 +28,19 @@
 #include <chrono>
 
 namespace {
+/// Info for a single channel, could be casted to int to obtain the channel type for PHX
 struct ChannelInfo {
-	const char * propName;
-	const char * displayName;
-	GridChannels::Enum type;
+	const char * propName; ///< the name of the property in the plugin
+	const char * displayName; ///< the displayed name for the channel
+	GridChannels::Enum type; ///< Value of the channel for PHX
 
+	/// Get channel type
 	operator int() const {
 		return static_cast<int>(type);
 	}
 };
 
-const int CHANNEL_COUNT = 9;
-const ChannelInfo chInfo[CHANNEL_COUNT + 1] = {
+const ChannelInfo chInfo[] = {
 	{ "channel_smoke", "Smoke",       GridChannels::ChSm       },
 	{ "channel_temp",  "Temperature", GridChannels::ChT        },
 	{ "channel_fuel",  "Fuel",        GridChannels::ChFl       },
@@ -51,7 +52,10 @@ const ChannelInfo chInfo[CHANNEL_COUNT + 1] = {
 	{ "channel_blue",  "Color B",     GridChannels::ChW        },
 	{ "INVALID",       "INVALID",     GridChannels::ChReserved },
 };
+/// number of valid channels
+const int CHANNEL_COUNT = (sizeof(chInfo) / sizeof(chInfo[0])) - 1;
 
+/// Get ChannelInfo from it's type
 const ChannelInfo & fromType(int type) {
 	for (int c = 0; c < CHANNEL_COUNT; ++c) {
 		if (static_cast<int>(chInfo[c]) == type) {
@@ -61,6 +65,7 @@ const ChannelInfo & fromType(int type) {
 	return chInfo[CHANNEL_COUNT];
 }
 
+/// Get ChannelInfo from it's name
 const ChannelInfo & fromPropName(const char * name) {
 	for (int c = 0; c < CHANNEL_COUNT; ++c) {
 		if (!strcmp(name, chInfo[c].propName)) {
@@ -78,7 +83,7 @@ using namespace VRayForHoudini;
 GA_PrimitiveTypeId VRayVolumeGridRef::theTypeId(-1);
 const int MAX_CHAN_MAP_LEN = 2048;
 
-
+/// Implemetation for the factory creating VRayVolumeGridRef for HDK
 class VRayVolumeGridFactory:
 		public GU_PackedFactory
 {
@@ -107,6 +112,7 @@ private:
 VRayVolumeGridFactory::VRayVolumeGridFactory():
 	GU_PackedFactory("VRayVolumeGridRef", "VRayVolumeGridRef")
 {
+	/// Register all properties from VFH_VOLUME_GRID_PARAMS
 	VFH_MAKE_REGISTERS(VFH_VOLUME_GRID_PARAMS, VFH_VOLUME_GRID_PARAMS_COUNT, VRayVolumeGridRef)
 
 	registerTupleIntrinsic(
@@ -328,6 +334,7 @@ GU_ConstDetailHandle VRayVolumeGridRef::getPackedDetail(GU_PackedContext *contex
 
 	gdp->stashAll();
 	auto tBeginLoop = high_resolution_clock::now();
+	// load each channel from the cache file
 	for (int c = 0; c < CHANNEL_COUNT; ++c) {
 		const auto & chan = chInfo[c];
 
@@ -430,6 +437,7 @@ void VRayVolumeGridRef::buildMapping() {
 	}
 
 	UT_String chanMap;
+	// aur cache has no need for mappings
 	if (UT_String(path).endsWith(".aur")) {
 		chanMap = "";
 		this->setPhxChannelMap(UT_StringArray());
@@ -469,7 +477,7 @@ void VRayVolumeGridRef::buildMapping() {
 		}
 	}
 
-	if(m_dirty = m_dirty || chanMap != this->get_usrchmap()) {
+	if(m_dirty || chanMap != this->get_usrchmap()) {
 		this->set_usrchmap(chanMap);
 	}
 }
@@ -570,9 +578,12 @@ bool VRayVolumeGridRef::updateFrom(const UT_Options &options)
 	const float frameBefore = getCurrentCacheFrame();
 	const auto hashBefore = m_options.hash();
 
+	// flag set to true if parsed cache_path and the value for cache_path are the same - there are no
+	// expressions inside (like $F)
 	m_doFrameReplace = options.hasOption("literal_cache_path") && !options.getOptionB("literal_cache_path");
 	bool pathChange = false;
 
+	// parse the path
 	if (options.hasOption("cache_path")) {
 		std::string prefix, suffix;
 		int frameWidth = splitPath(options.getOptionS("cache_path"), prefix, suffix);
@@ -588,6 +599,7 @@ bool VRayVolumeGridRef::updateFrom(const UT_Options &options)
 
 	if (m_doFrameReplace) {
 		// if we aren't replacing frame we don't care if frame changes
+		// this means user hardcoded a path for a specific frame 
 		pathChange = pathChange || (options.hasOption("current_frame") && options.getOptionI("current_frame") != this->get_current_frame());
 	}
 

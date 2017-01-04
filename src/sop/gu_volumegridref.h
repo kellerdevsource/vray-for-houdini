@@ -21,6 +21,8 @@
 
 namespace VRayForHoudini {
 
+// these are the parameters (intrisics) that will be exposed to Houdini, all are filled from the associated PhxShaderCache node
+// format for each one is (type, name, default_value)
 #define VFH_VOLUME_GRID_PARAMS (\
 	(exint,  cache_load,   1),\
 	(exint,  anim_mode,    0),\
@@ -44,7 +46,7 @@ namespace VRayForHoudini {
 
 #define VFH_VOLUME_GRID_PARAMS_COUNT 18
 
-
+/// Implementation for a volume grid packed primitive
 class VRayVolumeGridRef:
 		public GU_PackedImpl
 {
@@ -61,10 +63,11 @@ public:
 
 	/// Get the type ID for the VRayProxy primitive type.
 	static GA_PrimitiveTypeId typeId() { return theTypeId; }
+	/// Register this factory
 	static void install(GA_PrimitiveFactory *gafactory);
 
 private:
-	static GA_PrimitiveTypeId theTypeId;
+	static GA_PrimitiveTypeId theTypeId; ///< The type id for the primitive
 
 public:
 	VRayVolumeGridRef();
@@ -99,9 +102,12 @@ public:
 	virtual void                   countMemory(UT_MemoryCounter &counter, bool inclusive) const VRAY_OVERRIDE;
 	/// @}
 
+	/// Create a cache ptr from current settings
 	CachePtr                       getCache() const;
+	/// Get the world TM
 	UT_Matrix4F                    toWorldTm(CachePtr cache) const;
 
+	/// Get all channels present in the current cache
 	UT_StringArray                 getCacheChannels() const;
 
 	/// @{
@@ -119,32 +125,38 @@ public:
 
 private:
 	/// updateFrom() will update from UT_Options only
-	bool   updateFrom(const UT_Options &options);
-	void   clearDetail() { m_detail = GU_ConstDetailHandle(); }
+	bool updateFrom(const UT_Options &options);
+	void clearDetail() { m_detail = GU_ConstDetailHandle(); }
 
 	/// Builds the cache path according to current settings
 	/// @param toPhx - if true frame will be replaced with '#'s otherwise with current cache frame
 	/// @return - replaced cache path
 	std::string getConvertedPath(bool toPhx) const;
 
+	/// Split the path if there is a frame number in it
+	/// @path - the cache path
+	/// @prefix[out] - everything up to the frame, equal to @path if there is no frame
+	/// @suffix[out] - everything after the frame, empty if @path has no frame
+	/// @return - the number of digits in the frame (0 if no frame)
 	int splitPath(const UT_String & path, std::string & prefix, std::string & suffix) const;
 
-	/// Returns current cache frame based on current frame + cache play settings
+	/// Get current cache frame based on current frame + cache play settings
 	int getCurrentCacheFrame() const;
 
-	// builds channel mapping, call after update to cache or ui mappings
-	void                          buildMapping();
+	/// Build channel mapping, should be called after update to cache or ui mappings
+	void buildMapping();
 private:
-	GU_ConstDetailHandle   m_detail;
-	GU_DetailHandle        m_handle;
+	GU_ConstDetailHandle   m_detail; ///< Const detail handle - passed to HDK
+	GU_DetailHandle        m_handle; ///< Detail handle - passed to HDK
 
-	UT_Options             m_options;
+	UT_Options             m_options; ///< All params from VFH_VOLUME_GRID_PARAMS are defined in this map
 
-	UT_BoundingBox         m_bBox;
-	bool                   m_dirty;
-	bool                   m_channelDirty;
-	// if true we will replace frame number with ### for PHX
-	// otherwise user hardcoded frame number and we should not change it
+	UT_BoundingBox         m_bBox; ///< The volume bounding box
+	bool                   m_dirty; ///< True if any parameters that might affect preview are changed
+	bool                   m_channelDirty; ///< True if channel mapping have changed since we last built them
+
+	/// if true we will replace frame number with ### for PHX
+	/// otherwise user hardcoded frame number and we should not change it
 	bool                   m_doFrameReplace;
 };
 
@@ -153,7 +165,7 @@ private:
 
 #else // CGR_HAS_AUR
 #include <GU/GU_PackedImpl.h>
-// Define this empty class here so primitive exporters can be compiled without additional ifdefs there
+/// Define this empty class here so primitive exporters can be compiled without additional ifdefs there
 namespace VRayForHoudini {
 class VRayVolumeGridRef: public GU_PackedImpl {
 public:
