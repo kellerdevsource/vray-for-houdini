@@ -33,17 +33,17 @@ struct RampHandler: public ChangeHandler, public ColorPickerHandler {
 
 	/// ChangeHandler overrides
 
-	/// Called when the curve part of the UI is edited
+	/// Called by Ramps lib when the curve part of the UI is edited
 	/// @param curve - the ui that triggered the change
 	/// @param editReason - how the curve was edited
 	virtual void OnEditCurveDiagram(RampUi & curve, OnEditType editReason);
 
-	/// Called when the color ramp part of the UI is edited
+	/// Called by Ramps lib when the color ramp part of the UI is edited
 	/// @param curve - the ui that triggered the change
 	/// @param editReason - how the curve was edited
 	virtual void OnEditColorGradient(RampUi & curve, OnEditType editReason);
 
-	/// Called when the window is about to be closed either by user action or by calling close() on ui
+	/// Called by Ramps lib when the window is about to be closed either by user action or by calling close() on ui
 	virtual void OnWindowDie();
 
 	/// ColorPickerHandler overrides
@@ -57,7 +57,7 @@ struct RampHandler: public ChangeHandler, public ColorPickerHandler {
 		curve.setSelectedPointsColor(result, canceled);
 	}
 
-	/// Called when the color picker needs to be closed
+	/// Called by Ramps lib when the color picker needs to be closed
 	virtual void Destroy() {}
 
 	/// Holds the current context that this handler is attached to
@@ -109,13 +109,13 @@ struct RampContext {
 		}
 	}
 
-	/// Checks if the supplied value is valid RampChannel
+	/// Check if the supplied value is valid RampChannel
 	/// @param chan - the desired channel to check
 	static bool isValidChannel(RampChannel chan) {
 		return chan == CHANNEL_TEMPERATURE || chan == CHANNEL_SMOKE || chan == CHANNEL_SPEED || chan == CHANNEL_FUEL;
 	}
 
-	/// Converts RampChannel to index in m_data
+	/// Convert RampChannel to index in m_data
 	/// @param chan - the desired channel to convert
 	/// @retval The index in m_data
 	static int rampChanToIdx(RampChannel chan) {
@@ -123,7 +123,7 @@ struct RampContext {
 		return chan - 1;
 	}
 
-	/// Converts RampType to index in m_data.
+	/// Convert RampType to index in m_data.
 	/// @param type - the desired type to convert
 	/// @retval The index in m_data
 	static int rampTypeToIdx(AurRamps::RampType type) {
@@ -131,7 +131,7 @@ struct RampContext {
 		return type - 1;
 	}
 
-	/// Returns the appropriate RampData for given type and channel
+	/// Return the appropriate RampData for given type and channel
 	/// @param type - either color or curve data to get
 	/// @param chan - if supplied is used to get data for this channel, otherwise the current one is used
 	/// @retval The RampData
@@ -142,13 +142,13 @@ struct RampContext {
 		return m_data[rampChanToIdx(chan)][rampTypeToIdx(type)];
 	}
 
-	/// Returns the current active channel (the on that is selected in the ui)
+	/// Return the current active channel (the on that is selected in the ui)
 	/// @retval The RampChannel
 	RampChannel getActiveChannel() const {
 		return m_activeChan;
 	}
 
-	/// Sets the current active channel and also refreshes the UI's data if it is open
+	/// Set the current active channel and also refreshes the UI's data if it is open
 	void setActiveChannel(RampChannel ch) {
 		if (ch < CHANNEL_TEMPERATURE || ch > CHANNEL_FUEL) {
 			Log::getLog().error("Invalid active channel set %d", static_cast<int>(ch));
@@ -180,12 +180,16 @@ struct RampContext {
 	AurRamps::RampType      m_uiType;  ///< Type is Color Curve or Both since there can be combined ramps
 private:
 	typedef RampData RampPair[2];
-	RampChannel m_activeChan; ///< The current active channel as selected in Houdini's UI
-	RampPair    m_data[4];    ///< Data for 4 channels x 2 type
+	RampChannel m_activeChan;          ///< The current active channel as selected in Houdini's UI
+	RampPair    m_data[CHANNEL_COUNT]; ///< Data for 4 channels x 2 type
 };
 
+/// Called when the curve ramp part of the UI is edited
+/// @param curve - the ui that triggered the change
+/// @param editReason - how the curve was edited
 void RampHandler::OnEditCurveDiagram(RampUi & curve, OnEditType editReason)
 {
+	// we are interested in finished changes only
 	if (!m_ctx || !(m_ctx->m_uiType & RampType_Curve) || editReason == OnEdit_ChangeBegin || editReason == OnEdit_ChangeInProgress) {
 		return;
 	}
@@ -214,6 +218,7 @@ void RampHandler::OnEditCurveDiagram(RampUi & curve, OnEditType editReason)
 /// @param editReason - how the curve was edited
 void RampHandler::OnEditColorGradient(RampUi & curve, OnEditType editReason)
 {
+	// we are interested in finished change only
 	if (!m_ctx || !(m_ctx->m_uiType & RampType_Color) || editReason == OnEdit_ChangeBegin || editReason == OnEdit_ChangeInProgress) {
 		return;
 	}
@@ -439,6 +444,7 @@ void PhxShaderSim::initPreset(const char * presetName)
 int PhxShaderSim::rampDropDownDependCB(void * data, int index, fpreal64 time, const PRM_Template *tplate)
 {
 	auto simNode = reinterpret_cast<PhxShaderSim*>(data);
+	// this is they ramp key (two ramps could share same key -> they are merge in one window)
 	const string token = tplate->getSparePtr()->getValue("vray_ramp_depend");
 
 	auto ctx = simNode->m_ramps[token];
@@ -505,6 +511,7 @@ int PhxShaderSim::rampButtonClickCB(void *data, int index, fpreal64 time, const 
 
 	ctx->m_ui.reset(RampUi::createRamp(tplate->getLabel(), ctx->m_uiType, 200, 200, 300, height, app));
 
+	// set ramp data to the ramp window, it will be kept in sycn via the callbacks
 	if (ctx->m_uiType & RampType_Curve) {
 		auto & curveData = ctx->data(RampType_Curve);
 		ctx->m_ui->setCurvePoints(curveData.m_xS.data(), curveData.m_yS.data(), curveData.m_interps.data(), curveData.m_xS.size());
@@ -536,6 +543,7 @@ PRM_Template* PhxShaderSim::GetPrmTemplate()
 		paramList.addFromFile(Parm::expandUiPath("CustomPhxShaderSim.ds").c_str());
 		AttrItems = paramList.getPRMTemplate();
 
+		// set callbacks for ramp params
 		for (int c = 0; c < paramList.size(); ++c) {
 			auto & param = AttrItems[c];
 			const auto spareData = param.getSparePtr();
@@ -729,12 +737,13 @@ bool PhxShaderSim::loadRamps(UT_IStream & is)
 	bool success = true;
 	const char * expectedStr= "", * expressionStr = "";
 
+// Try to read some data and check if we read the appropriate amount
 #define readSome(declare, expected, expression)                       \
 	declare;                                                          \
 	if ((expected) != (expression)) {                                 \
 		if (success) { /* save exp and expr only on the first error */\
-			expectedStr = #expected;                                          \
-			expressionStr = #expression;                                       \
+			expectedStr = #expected;                                  \
+			expressionStr = #expression;                              \
 		}                                                             \
 		success = false;                                              \
 	}
@@ -744,7 +753,8 @@ bool PhxShaderSim::loadRamps(UT_IStream & is)
 		readSome(string rampName, 1, is.read(rampName));
 
 		auto ramp = m_ramps.find(rampName);
-		// if we dont have the expected ramp in object we still have to read trogh the data so continue even if error
+		// if we dont have the expected ramp in object we still have to read trogh the data to enable
+		// loading of other ramps from the file
 		if (ramp == m_ramps.end() || !ramp->second) {
 			Log::getLog().error("Ramp name \"%s\" not expected - discarding data!");
 		}
@@ -782,7 +792,7 @@ bool PhxShaderSim::loadRamps(UT_IStream & is)
 			}
 		}
 
-		// this is fail with reading from file - break
+		// this is and error with reading from file - break
 		if (!success) {
 			break;
 		}
@@ -823,6 +833,7 @@ OP::VRayNode::PluginResult PhxShaderSim::asPluginDesc(Attrs::PluginDesc &pluginD
 	attrRendMode.paramValue.valInt = static_cast<int>(rendMode);
 	pluginDesc.add(attrRendMode);
 
+	// in geom mode, this will be property for the geom plugin generated for the sim
 	const bool dynamic_geometry = evalInt("dynamic_geometry", 0, t) == 1;
 	Attrs::PluginAttr attrDynGeom("_vray_dynamic_geometry", Attrs::PluginAttr::AttrTypeIgnore);
 	attrRendMode.paramValue.valInt = dynamic_geometry;
@@ -838,6 +849,7 @@ OP::VRayNode::PluginResult PhxShaderSim::asPluginDesc(Attrs::PluginDesc &pluginD
 		Log::getLog().error("Node \"%s\": Plugin \"%s\" description is not found!",
 							this->getName().buffer(), pluginDesc.pluginID.c_str());
 	} else {
+		// export ramp data
 		for (const auto & ramp : m_ramps) {
 			if (!ramp.second) {
 				continue;
