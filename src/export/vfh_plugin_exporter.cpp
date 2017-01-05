@@ -212,7 +212,7 @@ static void OnBucketReady(VRay::VRayRenderer &renderer, int x, int y, const char
 
 bool VRayPluginRenderer::initialize()
 {
-	return static_cast< bool >(AppSdkInit::getInstance());
+	return static_cast<bool>(AppSdkInit::getInstance());
 }
 
 
@@ -231,7 +231,7 @@ bool VRayPluginRenderer::hasVRScansGUILicense(VRay::ScannedMaterialLicenseError 
 
 	VRay::ScannedMaterialParams dummyParms;
 	VRay::IntList dummyData;
-	bool res = VRay::encodeScannedMaterialParams(dummyParms, dummyData, err);
+	const bool res = VRay::encodeScannedMaterialParams(dummyParms, dummyData, err);
 	if (!res) {
 		const char *errMsg = (err.error())? err.toString() : "V-Ray AppSDK internal error";
 		if (!err.error()) {
