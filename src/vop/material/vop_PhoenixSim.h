@@ -45,23 +45,23 @@ public:
 	/// Called by Houdini when all nodes are loaded, this parses UI and sets proper state on m_ramps
 	virtual void               finishedLoadingNetwork(bool is_child_call=false) VRAY_OVERRIDE;
 
-	/// Called by houdini when scene is saved
+	/// Called by Houdini when scene is saved
 	OP_ERROR                   saveIntrinsic(std::ostream &os, const OP_SaveFlags &sflags) VRAY_OVERRIDE;
-	/// Called on each packet in the saved scene, we parse the one we saved with saveIntrinsic
+	/// Called by Houdini on each packet in the saved scene, we parse the one we saved with saveIntrinsic
 	bool                       loadPacket(UT_IStream &is, const char *token, const char *path) VRAY_OVERRIDE;
 
-	/// Called when houdini saves presets, so we save current ramps data
+	/// Called by Houdini when it saves presets, so we save current ramps data
 	bool                       savePresetContents(std::ostream &os) VRAY_OVERRIDE;
-	/// Called on each packet in preset and we only load the one saved with savePresetContents
+	/// Called by Houdini on each packet in preset and we only load the one saved with savePresetContents
 	bool                       loadPresetContents(const char *tok, UT_IStream &is) VRAY_OVERRIDE;
 
 	virtual PluginResult       asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext=nullptr) VRAY_OVERRIDE;
 
 protected:
-	/// Clears all ramp's points
+	/// Clear all ramp's points
 	void                       clearRampData();
 
-	/// Sets the *non* preset defaults for all ramps in sim
+	/// Set the *non* preset defaults for all ramps in sim
 	void                       setRampDefaults();
 
 	// NOTE: this function is not currently used anywhere,
@@ -69,7 +69,7 @@ protected:
 	// maybe keep it here and use it when preset values change in future
 	void                       initPreset(const char * presetName);
 
-	/// Used as callback for when channel dropdown is changed. It sets the actie channel for the appropriate ramp
+	/// Used as callback for when channel dropdown is changed. It sets the active channel for the appropriate ramp
 	/// @param data - pointer to OP_Node that called the callback
 	/// @param index - the index of the selected option [1, count)
 	/// @param time - the time that the change was made
@@ -85,15 +85,15 @@ protected:
 	/// @retval 1 if houdini should refresh the UI
 	static int                 rampButtonClickCB(void *data, int index, fpreal64 time, const PRM_Template *tplate);
 
-	/// Sets the current active channels for all ramps
+	/// Set the current active channels for all ramps
 	/// @param fromUi - if true this takes the values from the current UI, otherwise uses the default from .ds file.
 	///                 This is true when the scene is loaded from file and we need to parse the loaded channels
 	void                       onLoadSetActiveChannels(bool fromUi);
 
-	/// Writes ramp data to ostream *wuthot* writing the packet name
+	/// Write ramp data to ostream *wuthot* writing the packet name
 	/// @retval - true on success
 	bool                       saveRamps(std::ostream & os);
-	/// Reads ramp data from UT_IStream
+	/// Read ramp data from UT_IStream
 	bool                       loadRamps(UT_IStream & is);
 
 	/// Maps property name to ramp data, but since we can have a curve and color ramp in same window

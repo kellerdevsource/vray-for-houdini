@@ -17,6 +17,10 @@
 
 #include <boost/preprocessor.hpp>
 
+
+// UT_Options_setter, UT_Options_getter, PackedImplSetterCast and PackedImplGetterCast are template specialised wrappers over
+// functions from HDK that have different names for functions with different types for arguments
+// This is needed to have simpler VFH_MAKE_REGISTERS and VFH_MAKE_ACCESSORS
 namespace VRayForHoudini {
 // getters
 template <typename T> inline void UT_Options_setter(UT_Options & opt, const char * name, const T & val);

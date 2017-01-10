@@ -30,11 +30,12 @@ using namespace VRayForHoudini;
 
 namespace {
 
-// wrapper over GEO_PrimVolume and GEO_PrimVDB providing common interface
-// this wrapper *can* be INVALID - it can be initialized with unsuported primitive
-// the wrapper *must* be checkked before use with its bool operator
-// methods called on INVALID wrapper will return default (0/1) initialized data
+/// Wrapper over GEO_PrimVolume and GEO_PrimVDB providing common interface
+/// this wrapper *can* be INVALID - it can be initialized with unsuported primitive
+/// the wrapper *must* be checkked before use with its bool operator
+/// methods called on INVALID wrapper will return default (0/1) initialized data
 struct VolumeProxy {
+	/// Create a proxy from a primitive, could be nyllptr or not supported primitive
 	VolumeProxy(const GEO_Primitive *prim): m_prim(prim), m_vol(nullptr), m_vdb(nullptr) {
 		if (!prim) {
 			return;
@@ -45,6 +46,8 @@ struct VolumeProxy {
 		}
 	};
 
+	/// Get the resolution in voxels
+	/// @res[out] - resolution in order x, y, z
 	void getRes(int res[3]) const {
 		if (m_vol) {
 			m_vol->getRes(res[0], res[1], res[2]);
@@ -53,12 +56,20 @@ struct VolumeProxy {
 		}
 	}
 
+	/// Get total number of voxels in this volume
+	/// @return - voxel count
 	exint voxCount() const {
 		int res[3] = {0, 0, 0};
 		this->getRes(res);
 		return res[0] * res[1] * res[2];
 	}
 
+	/// Copy the volume data to a PTrArray
+	/// @T - the output data type - Color or float
+	/// @F - the type of the accesor function for the elements of PtrArray
+	/// @data - data destination
+	/// @acc - function called for each element in @data, should return reference to which each voxel is assigned to
+	///        if @T is color, @acc should return reference to either the red or green or blue channels - used to export velocities
 	template <typename T, typename F>
 	void copyTo(VRay::VUtils::PtrArray<T> & data, F acc) const {
 		int res[3] = {0, 0, 0};
@@ -97,6 +108,8 @@ struct VolumeProxy {
 		}
 	}
 
+	/// Get the bary center of the volume
+	/// @return - UT_Vector3 in voxel space
 	UT_Vector3 getBaryCenter() const {
 		if (m_vol) {
 			return m_vol->baryCenter();
@@ -106,6 +119,8 @@ struct VolumeProxy {
 		return UT_Vector3(0, 0, 0);
 	}
 
+	/// Get voxel space transform
+	/// @return - 4d matrix
 	UT_Matrix4D getTransform() const {
 		UT_Matrix4D res(1);
 		if (m_vol) {
@@ -116,21 +131,24 @@ struct VolumeProxy {
 		return res;
 	}
 
+	/// Check if this volume is PrimVDB
 	bool isVDB() const {
 		return m_vdb;
 	}
 
+	/// Check if this volume is PrimVolume
 	bool isVOL() const {
 		return m_vol;
 	}
 
+	/// Check if this is a valid volume
 	operator bool() const {
 		return m_prim && (m_vol || m_vdb);
 	}
 
-	const GEO_PrimVDB    *m_vdb;
-	const GEO_PrimVolume *m_vol;
-	const GEO_Primitive  *m_prim;
+	const GEO_PrimVDB    *m_vdb; ///< pointer to the VDB primitive in this is vdb
+	const GEO_PrimVolume *m_vol; ///< pointer to the VOL primitive if this is vol
+	const GEO_Primitive  *m_prim; ///< pointer to the primitive passed to constructor
 };
 }
 
@@ -202,7 +220,7 @@ void HoudiniVolumeExporter::exportPrimitives(const GU_Detail &detail, PluginDesc
 
 	UT_Matrix4 channelTm;
 
-	// check all primities if we can make PrimExporter for it and export it
+	// check all primitives if we can make PrimExporter for it and export it
 	for (GA_Iterator offIt(detail.getPrimitiveRange()); !offIt.atEnd(); offIt.advance()) {
 		const GA_Offset off = *offIt;
 		const GEO_Primitive *prim = detail.getGEOPrimitive(off);
@@ -278,6 +296,7 @@ void HoudiniVolumeExporter::exportPrimitives(const GU_Detail &detail, PluginDesc
 		customFluidData[texType] = fluidTexPlugin;
 	}
 
+	// write velocities if we have any
 	if (vel.count()) {
 		Attrs::PluginDesc velTexDesc(VRayExporter::getPluginName(&m_object, "vel"), "TexMayaFluid");
 		velTexDesc.addAttribute(Attrs::PluginAttr("size_x", velocityRes[0]));
@@ -301,7 +320,7 @@ void HoudiniVolumeExporter::exportPrimitives(const GU_Detail &detail, PluginDesc
 	phxShaderCacheDesc.addAttribute(Attrs::PluginAttr("grid_size_y", (float)res[1]));
 	phxShaderCacheDesc.addAttribute(Attrs::PluginAttr("grid_size_z", (float)res[2]));
 
-	// Skip "cache_path" exporting
+	// Skip "cache_path" exporting - we don't have chache but texture plugins
 	phxShaderCacheDesc.add(Attrs::PluginAttr("cache_path", Attrs::PluginAttr::AttrTypeIgnore));
 
 	VRay::Plugin phxShaderCache = m_exporter.exportPlugin(phxShaderCacheDesc);
@@ -453,7 +472,8 @@ void VolumeExporter::exportSim(SHOP_Node *shop, const Attrs::PluginAttrs &overri
 
 			const auto rendMode = static_cast<RMode>(rendModeAttr->paramValue.valInt);
 			if (rendMode == RMode::Volumetric) {
-				// merge all volumetrics
+				// all volumetic simulations need to be listed in one PhxShaderSimVol so different interescting
+				// volumes can be blended correctly
 				m_exporter.phxAddSimumation(overwriteSim);
 			} else {
 				const bool isMesh = rendMode == RMode::Mesh;
