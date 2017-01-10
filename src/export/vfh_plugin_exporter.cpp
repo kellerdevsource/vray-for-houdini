@@ -34,7 +34,7 @@ public:
 		return instance;
 	}
 
-	operator bool () const
+	explicit operator bool () const
 	{
 		return (m_vrayInit != nullptr);
 	}
@@ -212,7 +212,37 @@ static void OnBucketReady(VRay::VRayRenderer &renderer, int x, int y, const char
 
 bool VRayPluginRenderer::initialize()
 {
-	return AppSdkInit::getInstance();
+	return static_cast<bool>(AppSdkInit::getInstance());
+}
+
+
+bool VRayPluginRenderer::hasVRScansGUILicense(VRay::ScannedMaterialLicenseError &err)
+{
+	if (!initialize()) {
+		err.errorCode = VRay::LicenseError::vrlauth_notInitializedError;
+		return false;
+	}
+
+	static bool isGUIAvailable = false;
+	if (isGUIAvailable) {
+		err.errorCode = VRay::LicenseError::vrlauth_noError;
+		return isGUIAvailable;
+	}
+
+	VRay::ScannedMaterialParams dummyParms;
+	VRay::IntList dummyData;
+	const bool res = VRay::encodeScannedMaterialParams(dummyParms, dummyData, err);
+	if (!res) {
+		const char *errMsg = (err.error())? err.toString() : "V-Ray AppSDK internal error";
+		if (!err.error()) {
+			// This should not happen in general but let's adjust the error code just in case
+			err.errorCode = VRay::LicenseError::vrlauth_notInitializedError;
+		}
+		Log::getLog().warning("Unable to obtain VRScans GUI license: %s", errMsg);
+	}
+
+	isGUIAvailable = res && !err.error();
+	return isGUIAvailable;
 }
 
 

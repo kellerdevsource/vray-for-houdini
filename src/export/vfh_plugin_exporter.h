@@ -94,6 +94,7 @@ class VRayPluginRenderer
 {
 public:
 	static bool initialize();
+	static bool hasVRScansGUILicense(VRay::ScannedMaterialLicenseError &err);
 
 public:
 	VRayPluginRenderer();

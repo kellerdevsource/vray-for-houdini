@@ -20,8 +20,6 @@
 #include "vop/vop_context.h"
 #include "vop/material/vop_PhoenixSim.h"
 #include "vop/brdf/vop_brdf_def.h"
-#include "vop/brdf/vop_brdfvraymtl.h"
-#include "vop/brdf/vop_brdfdiffuse.h"
 #include "vop/material/vop_mtl_def.h"
 #include "vop/texture/vop_texture_def.h"
 #include "vop/uvwgen/vop_uvwgen_def.h"
@@ -209,6 +207,7 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFSSS2);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFSSS2Complex);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFSampled);
+	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFScanned);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFSkinComplex);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFVRayMtl);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFWard);
