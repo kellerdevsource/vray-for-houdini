@@ -16,6 +16,10 @@
 namespace VRayForHoudini{
 namespace CMD {
 
+/// Register custom hscript commands
+/// @note for more info on how to extend hscript see: http://archive.sidefx.com/docs/hdk15.5/_h_d_k__extend_c_m_d.html
+/// @param[in] cman - Houdini command manager
+/// @retval no return val
 void RegisterCommands(CMD_Manager *cman);
 
 }

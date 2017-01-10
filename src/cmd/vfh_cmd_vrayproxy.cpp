@@ -28,7 +28,12 @@ enum CMDError {
 };
 
 
-CMDError parseExportOptions(const CMD_Args &args, VRayProxyExportOptions &options)
+/// Parse command line arguments passed to vrayproxy cmd
+/// and return export options for the vray proxy exporter
+/// @param[in] args - command line arguments passed to vrayproxy cmd
+/// @param[out] options - command line arguments parsed as proxy export options
+/// @retval CMD_ARG_OK == no error or error code for invalid arguments/error while parsing
+static CMDError parseExportOptions(const CMD_Args &args, VRayProxyExportOptions &options)
 {
 	if ( NOT(args.found('n'))) {
 		return CMD_ARG_NOT_FOUND;
@@ -123,7 +128,12 @@ CMDError parseExportOptions(const CMD_Args &args, VRayProxyExportOptions &option
 }
 
 
-int getSOPList(CMD_Args &args, UT_ValArray< SOP_Node * > &sopList)
+/// Return list of SOP nodes passed to vrayproxy command that should be exported to a .vrmesh file
+/// @param[in] args - command line arguments passed to vrayproxy cmd
+/// @param[out] sopList - SOP nodes matching the criterias from command line aruments
+///                       will be appended to this list
+/// @retval number of SOPs found
+static int getSOPList(CMD_Args &args, UT_ValArray< SOP_Node * > &sopList)
 {
 	int ignoreHidden = NOT(args.found('i'));
 
