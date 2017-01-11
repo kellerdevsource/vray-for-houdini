@@ -23,6 +23,8 @@ namespace OP {
 class VRayNode
 {
 public:
+	typedef Parm::VRayPluginInfo PluginInfo;
+
 	enum PluginResult {
 		PluginResultSuccess = 0,
 		PluginResultContinue,
@@ -39,7 +41,7 @@ public:
 
 	std::string               getVRayPluginType() const { return pluginType; }
 	std::string               getVRayPluginID() const   { return pluginID;   }
-	Parm::VRayPluginInfo     *getVRayPluginInfo() const { return pluginInfo; }
+	const PluginInfo         *getVRayPluginInfo() const { return pluginInfo; }
 
 	/// Export as plugin description
 	virtual PluginResult      asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext=nullptr) { return PluginResult::PluginResultNA; }
@@ -49,7 +51,7 @@ protected:
 	virtual void              setPluginType()=0;
 	std::string               pluginType;
 	std::string               pluginID;
-	Parm::VRayPluginInfo     *pluginInfo;
+	const PluginInfo         *pluginInfo;
 
 	VfhDisableCopy(VRayNode)
 };

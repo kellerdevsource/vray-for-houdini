@@ -81,15 +81,23 @@ public:
 	JsonPluginDescGenerator() {}
 	~JsonPluginDescGenerator() { freeData(); }
 
+	/// Get a json object for given pluginID
+	/// @pluginID - the requested plugin's ID
+	/// @return pointer - to the json describing the plugin
+	///         nullptr - json not found for given plugin ID
 	JsonTree  *getTree(const std::string &pluginID);
 
+	/// Initialize settings pluginIDs
 	void       init();
+	/// Check if we already loaded data from files
 	bool       hasData() { return parsedData.size(); }
+	/// Load data from json files
 	void       parseData();
+	/// Free all loaded data
 	void       freeData();
 
 private:
-	JsonDescs  parsedData;
+	JsonDescs  parsedData; ///< Json objects for all plugins
 
 	VfhDisableCopy(JsonPluginDescGenerator)
 } JsonPluginInfoParser;
@@ -97,7 +105,7 @@ private:
 
 void JsonPluginDescGenerator::init()
 {
-	// Some compilers doesn't support initialization lists still.
+	// Some compilers don't support initialization lists still.
 	// Move elsewhere...
 	//
 	// RenderSettingsPlugins.insert("SettingsRTEngine");

@@ -16,27 +16,35 @@
 namespace VRayForHoudini {
 namespace Error {
 
-
+/// Singleton class to register/unregister handler for std::terminate
 class ErrorChaser
 {
 public:
-	ErrorChaser();
 	~ErrorChaser();
 
+	/// Get the ErrorChaser instance
+	static ErrorChaser & getInstance() {
+		static ErrorChaser errorChaser;
+		return errorChaser;
+	}
+
+	/// Check if the crash handler is registered
 	int isEnabled() const { return enabled; }
+
+	/// Register or unregister the crash handler
 	int enable(bool val);
 
 private:
-	static void crashHandler();
-	static void dumpStacktrace();
+	/// Construct a non-enabled ErrorChaser
+	ErrorChaser();
 
+	/// To be executed on std::terminate if registered
+	static void crashHandler();
 private:
 	bool enabled;
 	std::terminate_handler lastTerminateHnldr;
 
 };
-
-ErrorChaser &getErrorChaser();
 
 } // namespace Error
 } // namespace VRayForHoudini

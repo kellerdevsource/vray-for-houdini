@@ -27,27 +27,37 @@ enum LogLevel {
 	LogLevelDebug,
 };
 
+/// Simple logger class wrapping over printf
 struct Logger {
 	Logger()
 		: m_logLevel(LogLevelDebug)
 	{}
 
-	void     info(const tchar *format, ...);
-	void     warning(const tchar *format, ...);
-	void     error(const tchar *format, ...);
-	void     debug(const tchar *format, ...);
-	void     progress(const tchar *format, ...);
+	/// Log string with msg level, always show not taking current log level into account
 	void     msg(const tchar *format, ...);
+	/// Log string with info level
+	void     info(const tchar *format, ...);
+	/// Log string with progress level
+	void     progress(const tchar *format, ...);
+	/// Log string with warning level
+	void     warning(const tchar *format, ...);
+	/// Log string with error level
+	void     error(const tchar *format, ...);
+	/// Log string with debug level
+	void     debug(const tchar *format, ...);
 
+	/// Set max log level to be printed, unless Logger::msg is used where current filter is ignored
 	void     setLogLevel(LogLevel logLevel) { m_logLevel = logLevel; }
 
 private:
+	/// Implementation for the actual logging
 	void     log(LogLevel level, const tchar *format, va_list args);
 
-	LogLevel m_logLevel;
+	LogLevel m_logLevel; ///< Current max log level to be shown
 
 };
 
+/// Get singleton instance to Logger
 Logger &getLog();
 
 } // namespace Log

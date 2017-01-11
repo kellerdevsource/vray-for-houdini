@@ -34,7 +34,7 @@ public:
 		return instance;
 	}
 
-	explicit operator bool () const
+	operator bool () const
 	{
 		return (m_vrayInit != nullptr);
 	}

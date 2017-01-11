@@ -55,7 +55,7 @@ void Error::ErrorChaser::crashHandler()
 	stackTrace.setVerbose(true);
 	stackTrace.doTraceback();
 
-	ErrorChaser &errChaser = getErrorChaser();
+	ErrorChaser &errChaser = ErrorChaser::getInstance();
 	errChaser.lastTerminateHnldr();
 }
 
@@ -95,11 +95,4 @@ int Error::ErrorChaser::enable(bool val)
 	}
 
 	return true;
-}
-
-
-VRayForHoudini::Error::ErrorChaser &VRayForHoudini::Error::getErrorChaser()
-{
-	static ErrorChaser errChaser;
-	return errChaser;
 }

@@ -20,23 +20,30 @@ static VRayPluginsInfo pluginsInfo;
 
 VRayPluginInfo* VRayForHoudini::Parm::NewVRayPluginInfo(const std::string &pluginID)
 {
+	if (pluginsInfo.find(pluginID) != pluginsInfo.end()) {
+		return nullptr;
+	}
 	VRayPluginInfo *pluginInfo = new VRayPluginInfo();
 	pluginsInfo[pluginID] = pluginInfo;
 	return pluginInfo;
 }
 
 
-VRayPluginInfo* VRayForHoudini::Parm::GetVRayPluginInfo(const std::string &pluginID)
+const VRayPluginInfo* VRayForHoudini::Parm::GetVRayPluginInfo(const std::string &pluginID)
 {
 	VRayPluginInfo *pInfo = nullptr;
 
-	if (pluginsInfo.count(pluginID)) {
-		pInfo = pluginsInfo[pluginID];
+	VRayPluginsInfo::iterator pluginInfoIter = pluginsInfo.find(pluginID);
+	if (pluginInfoIter != pluginsInfo.end()) {
+		pInfo = pluginInfoIter->second;
 	}
 	else {
 		VRayPluginInfo *pluginInfo = Parm::generatePluginInfo(pluginID);
-		pluginsInfo[pluginID] = pluginInfo;
-		pInfo = pluginInfo;
+		// don't save nullptrs inside, we have no use for them
+		if (pluginInfo) {
+			pluginsInfo[pluginID] = pluginInfo;
+			pInfo = pluginInfo;
+		}
 	}
 
 	return pInfo;

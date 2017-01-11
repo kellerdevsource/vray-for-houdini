@@ -69,7 +69,7 @@ void newGeometryIO(void *)
 
 void unregister(void *)
 {
-	Error::ErrorChaser &errChaser = Error::getErrorChaser();
+	Error::ErrorChaser &errChaser = Error::ErrorChaser::getInstance();
 	errChaser.enable(false);
 }
 
@@ -87,7 +87,7 @@ void newDriverOperator(OP_OperatorTable *table)
 	Log::getLog().info("Build %s from " __DATE__ ", " __TIME__,
 					   STRINGIZE(CGR_GIT_HASH));
 
-	Error::ErrorChaser &errChaser = Error::getErrorChaser();
+	Error::ErrorChaser &errChaser = Error::ErrorChaser::getInstance();
 	errChaser.enable(true);
 
 	VRayPluginRenderer::initialize();
