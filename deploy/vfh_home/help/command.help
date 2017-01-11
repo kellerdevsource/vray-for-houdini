@@ -41,10 +41,10 @@ vrayproxy
         default - no velocity
     -T <previewType> (optional)
         specifies the simplification type for the preview geometry
-        previewType = 0 - SIMPLIFY_CLUSTERING (quality)
-        previewType = 1 - SIMPLIFY_COMBINED (fast)
-        previewType = 2 - SIMPLIFY_FACE_SAMPLING (very fast)
-        previewType = 3 - SIMPLIFY_EDGE_COLLAPSE (quality)
+        previewType = 0 - SIMPLIFY_FACE_SAMPLING (very fast)
+        previewType = 1 - SIMPLIFY_CLUSTERING (quality)
+        previewType = 2 - SIMPLIFY_EDGE_COLLAPSE (quality)
+        previewType = 3 - SIMPLIFY_COMBINED (fast)
         default - SIMPLIFY_COMBINED
     -F <maxPreviewFaces> (optional)
         max number of faces for preview geometry voxel

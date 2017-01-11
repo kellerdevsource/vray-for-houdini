@@ -83,22 +83,22 @@ static CMDError parseExportOptions(const CMD_Args &args, VRayProxyExportOptions 
 	switch (simplType) {
 		case 0:
 		{
-			options.m_simplificationType = VUtils::SIMPLIFY_CLUSTERING;
+			options.m_simplificationType = VUtils::SIMPLIFY_FACE_SAMPLING;
 			break;
 		}
 		case 1:
 		{
-			options.m_simplificationType = VUtils::SIMPLIFY_COMBINED;
+			options.m_simplificationType = VUtils::SIMPLIFY_CLUSTERING;
 			break;
 		}
 		case 2:
 		{
-			options.m_simplificationType = VUtils::SIMPLIFY_FACE_SAMPLING;
+			options.m_simplificationType = VUtils::SIMPLIFY_EDGE_COLLAPSE;
 			break;
 		}
 		case 3:
 		{
-			options.m_simplificationType = VUtils::SIMPLIFY_EDGE_COLLAPSE;
+			options.m_simplificationType = VUtils::SIMPLIFY_COMBINED;
 			break;
 		}
 		default:
@@ -200,14 +200,12 @@ void CMD::vrayproxy(CMD_Args &args)
 	VRayProxyExportOptions options;
 	if ( parseExportOptions(args, options) != CMD_ARG_OK ) {
 		args.err() << "ERROR Invalid usage: No filepath specified." << std::endl;
-		args.showUsage();
 		return;
 	}
 
 	UT_ValArray< SOP_Node * > sopList;
 	if ( getSOPList(args, sopList) <= 0 ) {
 		args.err() << "ERROR Invalid usage: No valid geometry specified." << std::endl;
-		args.showUsage();
 		return;
 	}
 
