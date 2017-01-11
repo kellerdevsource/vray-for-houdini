@@ -65,6 +65,11 @@ OP::VRayNode::PluginResult VOP::GeomDisplacedMesh::asPluginDesc(Attrs::PluginDes
 				// Check if plugin has "out_intensity" output
 				bool hasOutIntensity = false;
 				const Parm::VRayPluginInfo *texPluginInfo = Parm::GetVRayPluginInfo(texture.getType());
+				if (NOT(texPluginInfo)) {
+					Log::getLog().error("Node \"%s\": Plugin \"%s\" description is not found!",
+										this->getName().buffer(), texture.getType());
+					return OP::VRayNode::PluginResultError;
+				}
 				if (texPluginInfo->outputs.size()) {
 					for (const auto &sock : texPluginInfo->outputs) {
 						if (StrEq(sock.name.getToken(), "out_intensity")) {
