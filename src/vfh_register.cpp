@@ -49,7 +49,17 @@
 
 using namespace VRayForHoudini;
 
+///@note This file contains all entry points of vfh DSO for
+///      registering custom nodes, geometry and tools.
+///      This also is the place for any future entry points you create.
+///      The entry point is of the form newFooOperator()
+///      where Foo is replaced with the network type (Sop, Obj, Dop, etc).
+///      For more info see:
+///      http://archive.sidefx.com/docs/hdk15.5/_h_d_k__intro__creating_plugins.html
+///      http://archive.sidefx.com/docs/hdk15.5/_h_d_k__op_basics__overview__registration.html
 
+
+/// Register file extensions that could be handled by vfh custom translators
 static void registerExtensions()
 {
 	UT_ExtensionList *geoextension = UTgetGeoExtensions();
@@ -59,6 +69,7 @@ static void registerExtensions()
 }
 
 
+/// Called by Houdini to register vfh custom translators
 void newGeometryIO(void *)
 {
 	GU_Detail::registerIOTranslator(new IO::Vrmesh());
@@ -70,12 +81,16 @@ void newGeometryIO(void *)
 }
 
 
+/// Called when Houdini exits, but only if ROP operators have been registered
 void unregister(void *)
 {
 	Error::ErrorChaser &errChaser = Error::getErrorChaser();
 	errChaser.enable(false);
 }
 
+
+/// Called by Houdini to register vfh custom primitives
+/// @param gafactory[out] - primitive factory for DSO defined primitives
 void newGeometryPrim(GA_PrimitiveFactory *gafactory)
 {
 	VRayProxyRef::install(gafactory);
@@ -85,6 +100,8 @@ void newGeometryPrim(GA_PrimitiveFactory *gafactory)
 }
 
 
+/// Called by Houdini to register vfh custom ROP operators
+/// @param table[out] - ROP operator table
 void newDriverOperator(OP_OperatorTable *table)
 {
 	Log::getLog().info("Build %s from " __DATE__ ", " __TIME__,
@@ -107,6 +124,8 @@ void newDriverOperator(OP_OperatorTable *table)
 }
 
 
+/// Called by Houdini to register vfh custom SOP operators
+/// @param table[out] - SOP operator table
 void newSopOperator(OP_OperatorTable *table)
 {
 	using namespace SOP;
@@ -135,6 +154,8 @@ void newSopOperator(OP_OperatorTable *table)
 }
 
 
+/// Called by Houdini to register vfh custom OBJ operators
+/// @param table[out] - OBJ operator table
 void newObjectOperator(OP_OperatorTable *table)
 {
 	using namespace OBJ;
@@ -152,6 +173,8 @@ void newObjectOperator(OP_OperatorTable *table)
 }
 
 
+/// Called by Houdini to register vfh custom SHOP operators
+/// @param table[out] - SHOP operator table
 void newShopOperator(OP_OperatorTable *table)
 {
 	using namespace VOP;
@@ -159,6 +182,8 @@ void newShopOperator(OP_OperatorTable *table)
 }
 
 
+/// Called by Houdini to register vfh custom VOP operators
+/// @param table[out] - VOP operator table
 void newVopOperator(OP_OperatorTable *table)
 {
 	using namespace VOP;
@@ -445,6 +470,8 @@ void newVopOperator(OP_OperatorTable *table)
 }
 
 
+/// Called by Houdini to register vfh custom hscript commands
+/// @param cman[out] - Houdini's command manager
 void CMDextendLibrary(CMD_Manager *cman)
 {
 	CMD::RegisterCommands(cman);
