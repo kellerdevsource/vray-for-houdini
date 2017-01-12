@@ -19,6 +19,9 @@ namespace VRayForHoudini {
 namespace Parm {
 
 /// Descriptor for a single VRay plugin
+/// Used store loaded Plugin's parameters descriptions, types and defaults from JSON files
+/// When exporting, parameters with default handling are read from this description and values
+/// are taken from houdini based on the description
 struct VRayPluginInfo {
 	VRayPluginInfo() {}
 
