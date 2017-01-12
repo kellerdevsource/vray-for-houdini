@@ -34,24 +34,24 @@ struct Logger {
 	{}
 
 	/// Log string with msg level, always show not taking current log level into account
-	void     msg(const tchar *format, ...) const;
+	void msg(const tchar *format, ...) const;
 	/// Log string with info level
-	void     info(const tchar *format, ...) const;
+	void info(const tchar *format, ...) const;
 	/// Log string with progress level
-	void     progress(const tchar *format, ...) const;
+	void progress(const tchar *format, ...) const;
 	/// Log string with warning level
-	void     warning(const tchar *format, ...) const;
+	void warning(const tchar *format, ...) const;
 	/// Log string with error level
-	void     error(const tchar *format, ...) const;
+	void error(const tchar *format, ...) const;
 	/// Log string with debug level
-	void     debug(const tchar *format, ...) const;
+	void debug(const tchar *format, ...) const;
 
 	/// Set max log level to be printed, unless Logger::msg is used where current filter is ignored
-	void     setLogLevel(LogLevel logLevel) { m_logLevel = logLevel; }
+	void setLogLevel(LogLevel logLevel) { m_logLevel = logLevel; }
 
 private:
 	/// Implementation for the actual logging
-	void     log(LogLevel level, const tchar *format, va_list args) const;
+	void log(LogLevel level, const tchar *format, va_list args) const;
 
 	LogLevel m_logLevel; ///< Current max log level to be shown
 

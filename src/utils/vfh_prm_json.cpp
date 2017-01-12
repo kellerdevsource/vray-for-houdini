@@ -85,16 +85,16 @@ public:
 	/// @pluginID - the requested plugin's ID
 	/// @return pointer - to the json describing the plugin
 	///         nullptr - json not found for given plugin ID
-	JsonTree  *getTree(const std::string &pluginID);
+	JsonTree *getTree(const std::string &pluginID);
 
 	/// Initialize settings pluginIDs
-	void       init();
+	void init();
 	/// Check if we already loaded data from files
-	bool       hasData() { return parsedData.size(); }
+	bool hasData() { return parsedData.size(); }
 	/// Load data from json files
-	void       parseData();
+	void parseData();
 	/// Free all loaded data
-	void       freeData();
+	void freeData();
 
 private:
 	JsonDescs  parsedData; ///< Json objects for all plugins

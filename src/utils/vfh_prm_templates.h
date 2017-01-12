@@ -38,15 +38,15 @@ class PRMList;
 /// does minimal validation if UI root and file path exist
 /// @relPath - relative path to the VRAY_UI_DS_PATH env var
 /// @return the full path
-std::string     expandUiPath(const std::string &relPath);
+std::string expandUiPath(const std::string &relPath);
 /// Load params from DS file for this plugin if the DS file exists
 /// @pluginID - the plugin ID
 /// @prmList - list to append params to
 /// @return true - arguments were valid
 ///         false - otherwise
-bool            addPrmTemplateForPlugin(const std::string &pluginID, Parm::PRMList &prmList);
-PRMList*        generatePrmTemplate(const std::string &pluginID);
-PRM_Template*   getPrmTemplate(const std::string &pluginID);
+bool addPrmTemplateForPlugin(const std::string &pluginID, Parm::PRMList &prmList);
+PRMList* generatePrmTemplate(const std::string &pluginID);
+PRM_Template* getPrmTemplate(const std::string &pluginID);
 
 
 /// List of PRM_Templates which is always terminated
@@ -58,30 +58,30 @@ public:
 	~PRMList();
 
 	/// Clear all added templated
-	void                clear();
+	void clear();
 	/// Check if the list is empty
-	bool                empty() const { return (m_prmVec.size() < 2); }
+	bool empty() const { return (m_prmVec.size() < 2); }
 	/// Get the number of added templates
-	int                 size() const { return std::max(static_cast<int>(m_prmVec.size())-1, 0); }
+	int size() const { return std::max(static_cast<int>(m_prmVec.size())-1, 0); }
 
 	/// Reserve space for templates without actually changin size
 	/// @n - the number elements
-	void                reserve(int n) { return m_prmVec.reserve(n + 1); }
+	void reserve(int n) { return m_prmVec.reserve(n + 1); }
 
 	/// Set the cook dependent flag for all templates in the list
-	PRMList&            setCookDependent(bool recook);
+	PRMList& setCookDependent(bool recook);
 
 	/// Find the index for a template by it's token
 	/// @token - the param template token to search for
 	/// @return >= 0 - if template is found
 	///         -1   - otherwise
-	int                 findPRMTemplate(const char *token) const;
+	int findPRMTemplate(const char *token) const;
 
 	/// Get template by index
 	/// @i - the index
 	/// @return pointer - to the template on index i
 	///         nullptr - @i is out of bounds
-	PRM_Template*       getPRMTemplate(int i)
+	PRM_Template* getPRMTemplate(int i)
 	{ return ((i < 0 || i >= size())? nullptr : (m_prmVec.data() + i)); }
 
 	/// Get template by index
@@ -96,7 +96,7 @@ public:
 	/// internal memory to be reallocated and invalidate all returened pointers
 
 	/// Get raw pointer to the internal PRM_Template array
-	PRM_Template*       getPRMTemplate() { return m_prmVec.data(); }
+	PRM_Template* getPRMTemplate() { return m_prmVec.data(); }
 	/// Get raw const pointer to the internal PRM_Template array
 	const PRM_Template* getPRMTemplate() const { return m_prmVec.data(); }
 
@@ -160,12 +160,12 @@ public:
 	/// Set cook dependent flag to all templates in given list
 	/// @tmpl - *terminated* list of templates
 	/// @recook - value to set cook dependent flag to
-	static void          setCookDependent(PRM_Template tmpl[], bool recook);
+	static void setCookDependent(PRM_Template tmpl[], bool recook);
 
 	/// Add prefix to the names of all templates in the given list
 	/// @tmpl - *terminated* list of templates
 	/// @prefix - the prefix to prepend
-	static void          renamePRMTemplate(PRM_Template tmpl[], const char *prefix);
+	static void renamePRMTemplate(PRM_Template tmpl[], const char *prefix);
 
 private:
 	typedef std::vector<PRM_Template> PRMTemplVec;
@@ -212,15 +212,15 @@ class PRMFactory
 public:
 	/// Static methods for convinient creation and saving of new templates
 
-	static PRM_Name*       createPRMName(const char *thetoken=0, const char *thelabel=0, int theflags=0);
-	static PRM_Name*       createPRMName(int nCnt);
-	static PRM_Default*    createPRMDefaut(fpreal thefloat=0, const char *thestring=0, CH_StringMeaning strmeaning=CH_STRING_LITERAL);
-	static PRM_Default*    createPRMDefaut(int nCnt);
+	static PRM_Name* createPRMName(const char *thetoken=0, const char *thelabel=0, int theflags=0);
+	static PRM_Name* createPRMName(int nCnt);
+	static PRM_Default* createPRMDefaut(fpreal thefloat=0, const char *thestring=0, CH_StringMeaning strmeaning=CH_STRING_LITERAL);
+	static PRM_Default* createPRMDefaut(int nCnt);
 	static PRM_ChoiceList* createPRMChoiceList(PRM_ChoiceListType thetype, PRM_Name *thechoicenames);
 	static PRM_ChoiceList* createPRMChoiceList(PRM_ChoiceListType thetype, PRM_ChoiceGenFunc thefunc);
-	static PRM_Range*      createPRMRange(PRM_RangeFlag theminflag=PRM_RANGE_UI, fpreal themin=0, PRM_RangeFlag themaxflag=PRM_RANGE_UI, fpreal themax=1);
-	static PRM_SpareData*  createPRMSpareData();
-	static PRM_SpareData*  createPRMSpareData(const char *thetoken, const char *thevalue);
+	static PRM_Range* createPRMRange(PRM_RangeFlag theminflag=PRM_RANGE_UI, fpreal themin=0, PRM_RangeFlag themaxflag=PRM_RANGE_UI, fpreal themax=1);
+	static PRM_SpareData* createPRMSpareData();
+	static PRM_SpareData* createPRMSpareData(const char *thetoken, const char *thevalue);
 
 public:
 	PRMFactory();
@@ -334,14 +334,14 @@ const PRM_Parm *getParm(const OP_Node &node, const std::string &attrName);
 /// @attrName - the name of the param
 /// @t - the time at which to eval at
 /// @return the value of the param
-int    getParmInt(const OP_Node &node, const std::string &attrName, fpreal t=0.0);
+int getParmInt(const OP_Node &node, const std::string &attrName, fpreal t=0.0);
 
 /// Find and eval node's param as float
 /// @node - the node which will be used for eval
 /// @attrName - the name of the param
 /// @t - the time at which to eval at
 /// @return the value of the param
-float  getParmFloat(const OP_Node &node, const std::string &attrName, fpreal t=0.0);
+float getParmFloat(const OP_Node &node, const std::string &attrName, fpreal t=0.0);
 
 /// Find and eval node's param as enum
 /// @node - the node which will be used for eval
@@ -349,7 +349,7 @@ float  getParmFloat(const OP_Node &node, const std::string &attrName, fpreal t=0
 /// @attrName - the name of the param
 /// @t - the time at which to eval at
 /// @return the value of the param
-int    getParmEnumExt(const OP_Node &node, const AttrDesc &attrDesc, const std::string &attrName, fpreal t=0.0);
+int getParmEnumExt(const OP_Node &node, const AttrDesc &attrDesc, const std::string &attrName, fpreal t=0.0);
 
 } // namespace Parm
 } // namespace VRayForHoudini
