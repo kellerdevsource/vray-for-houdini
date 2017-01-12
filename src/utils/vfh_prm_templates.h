@@ -190,7 +190,9 @@ private:
 	///         nullptr - if there is no current switcher
 	SwitcherInfo* getCurrentSwitcher();
 
-	/// TODO:
+	/// Change the number of parameters in the current folder
+	/// throws std::runtime_error if there no folders
+	/// @cnt - the delta to apply to number of parameters (it can be negative)
 	void          incCurrentFolderPrmCnt(int cnt);
 
 private:
