@@ -58,10 +58,11 @@ struct VRayProxyExportOptions
 	/// @param sop[in] - the sop node being processed
 	/// @retval filepath
 	inline UT_String getFilepath(const SOP_Node &sop) const;
+
 	/// Easy accessor to check if new content should be appended to the .vrmesh file
 	/// @retval false if we are exporting single frame or the first frame of an animation
 	///         true otherwise
-	inline bool      isAppendMode() const;
+	inline bool isAppendMode() const;
 
 	/// filepath to the .vrmesh file
 	/// cmd arg: -n "path/to/filename.vrmesh" (mandatory)
@@ -194,6 +195,7 @@ public:
 	/// @param nodeCnt[in] - number of nodes that should be taken from the list
 	///                      nodeCnt should be > 0
 	VRayProxyExporter(const VRayProxyExportOptions &options, SOP_Node * const *nodes, int nodeCnt);
+
 	~VRayProxyExporter();
 
 	/// Initilize the exporter for the current time (based on what is set in m_options.m_context)
@@ -201,37 +203,44 @@ public:
 	/// @note this should be called for every animation frame before doExportFrame()
 	/// @retval error code - use ErrorCode::error() to check for errors
 	///                      and ErrorCode::getErrorString() to get the error message
-	VUtils::ErrorCode   init();
+	VUtils::ErrorCode init();
+
 	/// Cleanup cached data for current time
-	void                cleanup();
+	void cleanup();
+
 	/// Export cached data for the current time to .vrmesh file
 	/// @retval error code - use ErrorCode::error() to check for errors
 	///                      and ErrorCode::getErrorString() to get the error message
-	VUtils::ErrorCode   doExportFrame();
+	VUtils::ErrorCode doExportFrame();
 
 	/// Follows implementation of VUtils::MeshInterface API
+	///
 	/// Get number of voxels
 	/// @retval number of volxels
-	int                 getNumVoxels(void) VRAY_OVERRIDE { return m_voxels.size(); }
+	int getNumVoxels(void) VRAY_OVERRIDE { return m_voxels.size(); }
+
 	/// Get voxel flags
 	/// @param i[in] - voxel index
 	/// @retval voxel flags is combination of the voxel type and MVF_INSTANCE_VOXEL | MVF_HIDDEN_VOXEL
 	///         where voxel type can be one of the following
 	///         { MVF_PREVIEW_VOXEL, MVF_GEOMETRY_VOXEL, MVF_HAIR_GEOMETRY_VOXEL, MVF_PARTICLE_GEOMETRY_VOXEL}
-	uint32              getVoxelFlags(int i) VRAY_OVERRIDE;
+	uint32 getVoxelFlags(int i) VRAY_OVERRIDE;
+
 	/// Get voxel bbox
 	/// @param i[in] - voxel index
 	/// @retval voxel bbox
-	VUtils::Box         getVoxelBBox(int i) VRAY_OVERRIDE;
+	VUtils::Box getVoxelBBox(int i) VRAY_OVERRIDE;
+
 	/// Get voxel data - the voxel with the largest index is the preview one
 	/// @param i[in] - voxel index
 	/// @param memUsage[in/out] - if not NULL voxel memory usage will output here
 	/// @retval voxel data
 	VUtils::MeshVoxel * getVoxel(int i, uint64 *memUsage = NULL) VRAY_OVERRIDE;
+
 	/// Free voxel data
 	/// @param voxel[in] - voxel which data should be freed
 	/// @param memUsage[in/out] - if not NULL voxel memory usage will output here
-	void                releaseVoxel(VUtils::MeshVoxel *voxel, uint64 *memUsage = NULL) VRAY_OVERRIDE;
+	void releaseVoxel(VUtils::MeshVoxel *voxel, uint64 *memUsage = NULL) VRAY_OVERRIDE;
 
 private:
 	/// GeometryDescription wraps and caches geometry data for a given sop node
@@ -241,38 +250,44 @@ private:
 		/// Constructor
 		/// @param node[in] - sop node
 		GeometryDescription(SOP_Node &node) : m_node(node) { }
+
 		~GeometryDescription() { }
 
 		/// Accessor for the attribute name holding the vertices
 		/// based on whether this objects represents hair or mesh geometry
 		/// @retval attribute name string
-		const char *getVertsAttrName() const { return (m_isHair)? "hair_vertices" : "vertices"; }
+		const char * getVertsAttrName() const { return (m_isHair)? "hair_vertices" : "vertices"; }
+
 		/// Accessor for the attribute name holding the faces
 		/// based on whether this objects represents hair or mesh geometry
 		/// @retval attribute name string
-		const char *getPrimAttrName() const { return (m_isHair)? "num_hair_vertices" : "faces"; }
+		const char * getPrimAttrName() const { return (m_isHair)? "num_hair_vertices" : "faces"; }
+
 		/// Check if the objects contains a valid and cached description
 		/// @retval is description valid
 		int hasValidData() const;
+
 		/// Cleanup(reset) cached data
 		void clearData();
 
 		/// Accessor for a plugin attribute
 		/// @param attrName[in] - attribute name. Note this name must exist on the plugin description
 		/// @retval the plugin attribute
-		Attrs::PluginAttr &getAttr(const char *attrName);
+		Attrs::PluginAttr & getAttr(const char *attrName);
+
 		/// Accessor for the vertices plugin attribute
 		/// @retval the plugin attribute
-		Attrs::PluginAttr &getVertAttr() { return getAttr(getVertsAttrName()); }
+		Attrs::PluginAttr & getVertAttr() { return getAttr(getVertsAttrName()); }
+
 		/// Accessor for the faces plugin attribute
 		/// @retval the plugin attribute
-		Attrs::PluginAttr &getPrimAttr() { return getAttr(getPrimAttrName()); }
+		Attrs::PluginAttr & getPrimAttr() { return getAttr(getPrimAttrName()); }
 
-		SOP_Node &m_node; ///< the sop geometry this structure wraps
-		bool m_isHair; ///< if this object represents hair geometry
+		SOP_Node         &m_node; ///< the sop geometry this structure wraps
+		bool              m_isHair; ///< if this object represents hair geometry
 		Attrs::PluginDesc m_description; ///< cached plugin description of the geometry
-		VRay::Transform m_transform; ///< cached transform of the geometry
-		VUtils::Box m_bbox; ///< cached bounding box of the geometry
+		VRay::Transform   m_transform; ///< cached transform of the geometry
+		VUtils::Box       m_bbox; ///< cached bounding box of the geometry
 
 	private:
 		/// Disable default contructor
@@ -305,7 +320,7 @@ private:
 	/// @note this is called from cacheDescriptionForContext()
 	/// @param context[in] - sample time
 	/// @param geomDescr[out] - geometry description
-	void              getTransformForContext(OP_Context &context, GeometryDescription &geomDescr) const;
+	void getTransformForContext(OP_Context &context, GeometryDescription &geomDescr) const;
 
 	/// Fill mesh voxel data from geometry description
 	/// @note this is called from getVoxel()
@@ -369,18 +384,18 @@ private:
 	/// that should be included in the preview voxel
 	/// (all consequent ones are also included)
 	/// @retval index of the first geometry description
-	int  getPreviewStartIdx() const;
+	int getPreviewStartIdx() const;
 
 private:
-	const VRayProxyExportOptions &m_options; ///< export options
+	const VRayProxyExportOptions    &m_options; ///< export options
 
 	std::vector<VUtils::MeshVoxel>   m_voxels; ///< voxel array - last voxel is the preview one
 	std::vector<GeometryDescription> m_geomDescrList; ///< cache for sop nodes geometry
 
-	VUtils::VertGeomData *m_previewVerts; ///< vertices of preview mesh geometry
-	VUtils::FaceTopoData *m_previewFaces; ///< faces of preview mesh geometry
-	VUtils::VertGeomData *m_previewStrandVerts; ///< vertices of preview hair geometry
-	int                  *m_previewStrands; ///< faces of preview hair geometry
+	VUtils::VertGeomData            *m_previewVerts; ///< vertices of preview mesh geometry
+	VUtils::FaceTopoData            *m_previewFaces; ///< faces of preview mesh geometry
+	VUtils::VertGeomData            *m_previewStrandVerts; ///< vertices of preview hair geometry
+	int                             *m_previewStrands; ///< faces of preview hair geometry
 };
 
 }

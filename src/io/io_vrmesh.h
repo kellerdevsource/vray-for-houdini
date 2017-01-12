@@ -32,23 +32,23 @@ public:
 	Vrmesh() {}
 	Vrmesh(const Vrmesh &other) {}
 
-	virtual                     ~Vrmesh() {}
+	virtual ~Vrmesh() {}
 
 	/// Create a copy of the sub-class
-	virtual GEO_IOTranslator    *duplicate() const VRAY_OVERRIDE;
+	virtual GEO_IOTranslator * duplicate() const VRAY_OVERRIDE;
 
 	/// Return the label for the geometry format that this translator supports.
-	virtual const char          *formatName() const VRAY_OVERRIDE;
+	virtual const char * formatName() const VRAY_OVERRIDE;
 
 	/// Check the extension of the name to see if it matches one that we can handle.
 	/// @param name[in] - extension to check for
 	/// @retval true if there's a match, false otherwise
-	virtual int                  checkExtension(const char *name) VRAY_OVERRIDE;
+	virtual int checkExtension(const char *name) VRAY_OVERRIDE;
 
 	/// Check if the given magic number matches the magic number.
 	/// @param magic[in] - number to check for
 	/// @retval true if there's a match, false otherwise
-	virtual int                  checkMagicNumber(unsigned magic) VRAY_OVERRIDE;
+	virtual int checkMagicNumber(unsigned magic) VRAY_OVERRIDE;
 
 	/// Load a gdp from a stream. If the file format doesn't support reading from streams, it
 	/// can use UT_IStream::isRandomAccessFile to get the raw name to read from.
@@ -58,7 +58,7 @@ public:
 	///	library has already read the magic number and the loader should
 	///	not expect it.
 	/// @retval false if this translator doesn't support loading.
-	virtual GA_Detail::IOStatus  fileLoad(GEO_Detail *geo, UT_IStream &stream,
+	virtual GA_Detail::IOStatus fileLoad(GEO_Detail *geo, UT_IStream &stream,
 										  bool ate_magic) VRAY_OVERRIDE;
 
 	/// Save a gdp to another format via a filename. Return false if
@@ -66,7 +66,7 @@ public:
 	/// @param geo[in] - source geometry detail to be saved
 	/// @param stream[out] - stream to output to
 	/// @retval currently this is not implemented and always returns false
-	virtual GA_Detail::IOStatus  fileSave(const GEO_Detail *geo, std::ostream &stream) VRAY_OVERRIDE;
+	virtual GA_Detail::IOStatus fileSave(const GEO_Detail *geo, std::ostream &stream) VRAY_OVERRIDE;
 };
 
 } // namespace IO
