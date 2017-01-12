@@ -29,17 +29,17 @@ public:
 	/// Provide access to VRayProxyROP custom parameter templates
 	/// @retval pointer to a terminated PRM_Template list
 	///         might be nullptr (no parameters)
-	static PRM_Template *      getMyPrmTemplate();
+	static PRM_Template * getMyPrmTemplate();
 
 	/// Provide access to the ROP parameter templates (custom + generic ROP ones)
 	/// @retval pointer to a OP_TemplatePair instance
 	///         might be nullptr (no parameters)
-	static OP_TemplatePair *   getTemplatePair();
+	static OP_TemplatePair * getTemplatePair();
 
 	/// Provide access to the ROP variables
 	/// @retval pointer to a OP_VariablePair instance
 	///         might be nullptr (no variables)
-	static OP_VariablePair *   getVariablePair();
+	static OP_VariablePair * getVariablePair();
 
 	/// Register this node type as ROP operator
 	/// @param table[out] - ponter to the operator table for ROP contex
