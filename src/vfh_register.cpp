@@ -63,6 +63,9 @@ void newGeometryIO(void *)
 {
 	GU_Detail::registerIOTranslator(new IO::Vrmesh());
 
+	// Note: due to the just-in-time loading of GeometryIO,
+	// the .vrmesh extension won't be added until after your first .vrmesh save/load.
+	// Thus this is replicated in the newDriverOperator.
 	registerExtensions();
 }
 

@@ -25,13 +25,7 @@ using namespace VRayForHoudini;
 using namespace VRayForHoudini::IO;
 
 
-const char *Vrmesh::extension = "vrmesh";
-
-
-Vrmesh::Vrmesh(const Vrmesh &other)
-{
-	// TODO: If needed
-}
+const char *const Vrmesh::extension = "vrmesh";
 
 
 GEO_IOTranslator* Vrmesh::duplicate() const
@@ -49,11 +43,9 @@ const char *Vrmesh::formatName() const
 int Vrmesh::checkExtension(const char *name)
 {
 	UT_String sname(name);
+	const char *ext = sname.fileExtension();
 	// NOTE: +1 to skip dot
-	if (sname.fileExtension() && !strcmp(sname.fileExtension()+1, Vrmesh::extension)) {
-		return true;
-	}
-	return false;
+	return (UTisstring(ext) && !SYSstrcasecmp(ext+1, Vrmesh::extension));
 }
 
 
@@ -75,7 +67,7 @@ GA_Detail::IOStatus Vrmesh::fileLoad(GEO_Detail *geo, UT_IStream &stream, bool /
 	if (   NOT(UTisstring(filepath))
 		|| NOT(VUtils::uniPathOrFileExists(filepath)) )
 	{
-		gdp->addWarning(GU_WARNING_NO_METAOBJECTS, "Iinvalid filepath.");
+		gdp->addWarning(GU_WARNING_NO_METAOBJECTS, "Invalid filepath.");
 		return GA_Detail::IOStatus(false);
 	}
 
@@ -108,5 +100,6 @@ GA_Detail::IOStatus Vrmesh::fileLoad(GEO_Detail *geo, UT_IStream &stream, bool /
 
 GA_Detail::IOStatus Vrmesh::fileSave(const GEO_Detail *, std::ostream &)
 {
-	return GA_Detail::IOStatus(true);
+	// TODO: implement
+	return GA_Detail::IOStatus(false);
 }
