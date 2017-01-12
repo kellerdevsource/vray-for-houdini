@@ -20,8 +20,9 @@ static VRayPluginsInfo pluginsInfo;
 
 VRayPluginInfo* VRayForHoudini::Parm::NewVRayPluginInfo(const std::string &pluginID)
 {
-	if (pluginsInfo.find(pluginID) != pluginsInfo.end()) {
-		return nullptr;
+	VRayPluginsInfo::iterator pInfo = pluginsInfo.find(pluginID);
+	if (pInfo != pluginsInfo.end()) {
+		return pInfo->second;
 	}
 	VRayPluginInfo *pluginInfo = new VRayPluginInfo();
 	pluginsInfo[pluginID] = pluginInfo;

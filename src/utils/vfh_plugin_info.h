@@ -46,7 +46,6 @@ const VRayPluginInfo* GetVRayPluginInfo(const std::string &pluginID);
 /// Create new VRayPluginInfo for given pluginID and save it
 /// @pluginID - string with the plugin ID
 /// @return pointer - to newly created VRayPluginInfo or one previously loaded
-///         nullptr - invalid pluginID provided
 VRayPluginInfo* NewVRayPluginInfo(const std::string &pluginID);
 
 } // namespace Parm
