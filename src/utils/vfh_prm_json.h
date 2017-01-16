@@ -16,6 +16,10 @@
 namespace VRayForHoudini {
 namespace Parm {
 
+/// Allocate new VRayPluginInfo and fill it based ib plugin info for pluginID
+/// @pluginID - the desired ID
+/// @return pointer - to newly allocated VRayPluginInfo with filled info for properties
+///         nullptr - some fail with loading data or invalid pluginID
 VRayPluginInfo *generatePluginInfo(const std::string &pluginID);
 
 } // namespace Parm

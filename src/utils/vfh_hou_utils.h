@@ -14,8 +14,13 @@
 namespace VRayForHoudini {
 namespace HOU {
 
+/// Check if Houdini is running with Indie license
 int isIndie();
+
+/// Check if Houdini is running with Apprentice license
 int isApprentice();
+
+/// Check if Houdini is running with UI enabled
 int isUIAvailable();
 
 } // namespace HOU

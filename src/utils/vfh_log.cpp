@@ -17,7 +17,7 @@ using namespace VRayForHoudini;
 using namespace VRayForHoudini::Log;
 
 
-void Logger::log(LogLevel level, const char *format, va_list args)
+void Logger::log(LogLevel level, const char *format, va_list args) const
 {
 	tchar buf[1024] = "";
 	vsnprintf(buf, CountOf(buf), format, args);
@@ -47,7 +47,7 @@ void Logger::log(LogLevel level, const char *format, va_list args)
 }
 
 
-void Logger::info(const tchar *format, ...)
+void Logger::info(const tchar *format, ...) const
 {
 	va_list args;
 	va_start(args, format);
@@ -58,7 +58,7 @@ void Logger::info(const tchar *format, ...)
 }
 
 
-void Logger::warning(const tchar *format, ...)
+void Logger::warning(const tchar *format, ...) const
 {
 	va_list args;
 	va_start(args, format);
@@ -69,7 +69,7 @@ void Logger::warning(const tchar *format, ...)
 }
 
 
-void Logger::error(const tchar *format, ...)
+void Logger::error(const tchar *format, ...) const
 {
 	va_list args;
 	va_start(args, format);
@@ -80,7 +80,7 @@ void Logger::error(const tchar *format, ...)
 }
 
 
-void Logger::debug(const tchar *format, ...)
+void Logger::debug(const tchar *format, ...) const
 {
 	va_list args;
 	va_start(args, format);
@@ -91,7 +91,7 @@ void Logger::debug(const tchar *format, ...)
 }
 
 
-void Logger::progress(const tchar *format, ...)
+void Logger::progress(const tchar *format, ...) const
 {
 	va_list args;
 	va_start(args, format);
@@ -102,7 +102,7 @@ void Logger::progress(const tchar *format, ...)
 }
 
 
-void Logger::msg(const tchar *format, ...)
+void Logger::msg(const tchar *format, ...) const
 {
 	va_list args;
 	va_start(args, format);

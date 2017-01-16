@@ -23,10 +23,7 @@
 namespace VRayForHoudini {
 namespace Caches {
 
-////-------------------------------------------------------------
-//// LRU Cache
-////-------------------------------------------------------------
-
+/// Least recently used cache with hash map storage type
 template < class Key,
 		   class T,
 		   class Hash = std::hash<Key>,
@@ -48,12 +45,12 @@ private:
 	typedef std::pair< value_type, typename MLRUQueue::iterator > CachedData;
 	typedef std::unordered_map< key_type, CachedData, hasher, key_equal > CacheMap;
 
+	/// Iterator over the cached elements in order of their last use time
 	struct Iter :
 			std::iterator< std::bidirectional_iterator_tag, value_type >
 	{
 		Iter() : m_keyIt(), m_cm(nullptr) { }
 		explicit Iter(const typename MLRUQueue::const_iterator& it, CacheMap * cm) : m_keyIt(it), m_cm(cm) { }
-//		using default copy constructor & copy assignment
 
 		const key_type &key() const
 		{ UT_ASSERT( m_cm ); return (*m_keyIt); }
@@ -110,16 +107,28 @@ public:
 	~LRUCache()
 	{ clear(); }
 
+	/// Get cache capacity
 	size_type capacity() const { return m_capacity; }
+	/// Get number of items in the cache
 	size_type size() const { return m_cacheMap.size(); }
+	/// Check if the cache has no items
 	int empty() const { return (size() == 0); }
 
+	/// Set the callback for loading items into the cache
+	/// @param cb - function taking key_type and value_type
 	void setFetchCallback(const CbFetch& cb) { m_cbfetchValue = cb; }
+	/// Set the callback for evicting items from the cache
+	/// @param cb - function taking key_type and value_type
 	void setEvictCallback(const CbEvict& cb) { m_cbEvictValue = cb; }
 
+	/// Get begin iterator for cached items
 	iterator begin() { return iterator(m_mlruQueue.begin(), &m_cacheMap); }
+	/// Get end iterator for cached items
 	iterator end() { return iterator(m_mlruQueue.end(), &m_cacheMap); }
 
+	/// Change the current capacity of the cache, if the new capacity is less than the
+	/// number of items in the cahce some will be evicted
+	/// @param capacity - the new capacity
 	void setCapacity(const size_type &capacity)
 	{
 		UT_ASSERT( capacity > 0);
@@ -129,60 +138,60 @@ public:
 		}
 	}
 
-/// @brief Checks if there is a cached value under key
-/// @param key - key used to search in cache
-/// @return true - if there exists a cached value with the given key
-///         false - otherwise
+	/// Check if there is a cached value under key
+	/// @param key - key used to search in cache
+	/// @return 1 - if there exists a cached value with the given key
+	///         0 - otherwise
 	int contains(const key_type &key)
 	{
 		typename CacheMap::const_iterator it = m_cacheMap.find(key);
 		return (it != m_cacheMap.end());
 	}
 
-/// @brief Attempts to insert value into cache under the given key
-/// @param key - key used to later search in cache
-/// @param value - value to be cached
-/// @return true if value was inserted successfully
-///         false otherwise
+	/// Insert value into cache under the given key
+	/// @param key - key used to later search in cache
+	/// @param value - value to be cached
+	/// @return 1 - if value was inserted successfully
+	///         0 - the value was already in the cache
 	int insert(const key_type &key, const value_type& value)
 	{
 		typename CacheMap::const_iterator it = m_cacheMap.find(key);
-//		key has already been cached  => exit
+		// key has already been cached  => exit
 		if (it != m_cacheMap.end()) {
 			return false;
 		}
 
-//		when cache is full evict item
+		// when cache is full evict item
 		if (m_mlruQueue.size() >= m_capacity) {
 			evict();
 		}
 
-//		cache item under key and make key MRU(MRU at the front of the queue)
-//		if key not in m_cacheMap => key not in m_mlruQueue
+		// cache item under key and make key MRU(MRU at the front of the queue)
+		// if key not in m_cacheMap => key not in m_mlruQueue
 		typename MLRUQueue::iterator mruIt = m_mlruQueue.emplace(m_mlruQueue.begin(), key);
 		m_cacheMap.emplace(key, std::make_pair(value, mruIt));
 
 		return true;
 	}
 
-/// @brief Attempts to find value stored under key in cache
-///        if no key is found in cache inserts a default value and
-///        fetches data init if fetchValue callback is set
-/// @param key - the key used to search in cache
-/// @return reference to the value stored in cache
+	/// Access value stored under key in cache
+	/// if no key is found in cache inserts a default value and
+	/// fetches data init if fetchValue callback is set
+	/// @param key - the key used to search in cache
+	/// @return reference to the value stored in cache
 	value_type &operator[](const key_type &key)
 	{
 		typename CacheMap::iterator it = m_cacheMap.find(key);
-//		key is in cache => return stored value
+		// key is in cache => return stored value
 		if (it != m_cacheMap.end()) {
-//			make key MRU (MRU key is at the front of the queue)
+			// make key MRU (MRU key is at the front of the queue)
 			CachedData &item = it->second;
 			m_mlruQueue.splice(m_mlruQueue.begin(), m_mlruQueue, item.second);
 			return item.first;
 		}
 
-//		create new element in cache and try fetch
-//		when cache is full evict item
+		// create new element in cache and try fetch
+		// when cache is full evict item
 		if (m_mlruQueue.size() >= m_capacity) {
 			evict();
 		}
@@ -197,19 +206,19 @@ public:
 		return item.first;
 	}
 
-/// @brief Attempts to erase the value stored under key from cache
-/// @param key - key used to search in cache
-/// @return true if entry was erased successfully
-///         false otherwise
+	/// Erase the value stored under key from cache
+	/// @param key - key used to search in cache
+	/// @return 1 - if entry was erased successfully
+	///         0 - the entry was not in the cache in the first place
 	int erase(const key_type &key)
 	{
 		typename CacheMap::const_iterator it = m_cacheMap.find(key);
-//		key is not in cache => exit
+		// key is not in cache => exit
 		if (it == m_cacheMap.end()) {
 			return false;
 		}
 
-//		remove key from m_mlruQueue and item from cache
+		// remove key from m_mlruQueue and item from cache
 		const CachedData &item = it->second;
 		m_mlruQueue.erase(item.second);
 		m_cacheMap.erase(it);
@@ -217,39 +226,39 @@ public:
 		return true;
 	}
 
-/// @brief Attempts to find the value stored under key in cache
-/// @param key - key used to search in cache
-/// @return An iterator pointing to value in cache
-///         or iterator end() if no such key exists in cache
+	/// Find the value stored under key in cache
+	/// @param key - key used to search in cache
+	/// @return An iterator pointing to value in cache
+	///         or iterator end() if no such key exists in cache
 	iterator find(const key_type &key)
 	{
 		typename CacheMap::iterator it = m_cacheMap.find(key);
-//		key is not in cache => exit
+		// key is not in cache => exit
 		if (it == m_cacheMap.end()) {
 			return end();
 		}
 
-//		make key MRU (MRU key is at the front of the queue)
+		// make key MRU (MRU key is at the front of the queue)
 		CachedData &item = it->second;
 		m_mlruQueue.splice(m_mlruQueue.begin(), m_mlruQueue, item.second);
 
 		return iterator(item.second, &m_cacheMap);
 	}
 
-/// @brief Attempts to update the value stored under key in cache
-/// @param key - key used to search in cache
-/// @param value - the new value to store in cache
-/// @return An iterator pointing to the new value in cache
-///         or iterator end() if no such key exists in cache
+	/// Update the value stored under key in cache
+	/// @param key - key used to search in cache
+	/// @param value - the new value to store in cache
+	/// @return An iterator pointing to the new value in cache
+	///         or iterator end() if no such key exists in cache
 	iterator update(const key_type &key,  const value_type& value)
 	{
 		typename CacheMap::iterator it = m_cacheMap.find(key);
-//		key is not in cache => exit
+		// key is not in cache => exit
 		if (it == m_cacheMap.end()) {
 			return end();
 		}
 
-//		make key MRU (MRU key is at the front of the queue)
+		// make key MRU (MRU key is at the front of the queue)
 		CachedData &item = it->second;
 		item.first = value;
 		m_mlruQueue.splice(m_mlruQueue.begin(), m_mlruQueue, item.second);
@@ -257,14 +266,14 @@ public:
 		return iterator(item.second, &m_cacheMap);
 	}
 
-/// @brief Evicts least recently used(LRU) element from cache
+	/// Evict least recently used(LRU) element from cache
 	void evict()
 	{
 		UT_ASSERT( NOT(m_mlruQueue.empty()) );
 
-//		find LRU item
-//		MRU item is at the front of the queue
-//		LRU item is at the back of the queue
+		// find LRU item
+		// MRU item is at the front of the queue
+		// LRU item is at the back of the queue
 		const key_type& key = m_mlruQueue.back();
 		typename CacheMap::iterator it = m_cacheMap.find(key);
 		UT_ASSERT( it != m_cacheMap.end() );
@@ -274,12 +283,12 @@ public:
 			m_cbEvictValue(key, item.first);
 		}
 
-//		erase item from cache
+		// erase item from cache
 		m_cacheMap.erase(it);
 		m_mlruQueue.pop_back();
 	}
 
-/// @brief Clears all data from cache
+	/// Clear all data from cache
 	void clear()
 	{
 		m_mlruQueue.clear();
@@ -287,19 +296,21 @@ public:
 	}
 
 private:
-///	avoid copying
+	///	avoid copying
 	LRUCache(const LRUCache& other);
 	LRUCache &operator =(const LRUCache& other);
 
 private:
-	size_type m_capacity;
-	CacheMap m_cacheMap;
-	MLRUQueue m_mlruQueue;
-	CbFetch m_cbfetchValue;
-	CbEvict m_cbEvictValue;
+	size_type m_capacity; ///< Maximum item that will be held in the cache
+	CacheMap m_cacheMap; ///< The actual container of the cached item (hash map)
+	MLRUQueue m_mlruQueue; ///< Queue of keys in order of their last use time
+	CbFetch m_cbfetchValue; ///< Callback used to load items that are not present cached
+	CbEvict m_cbEvictValue; ///< Callback called when an item is evicted from the cache
 };
 
-
+/// Cache class for caching sequences of similar items that might have intersections
+/// All items from the sequences are cached seperately so if there is an item in more than
+/// one sequence it is only present once in the cache
 template < class Key,
 		   class Sequence,
 		   class ItemHash,
@@ -354,10 +365,15 @@ public:
 	~CacheList()
 	{ clear(); }
 
+	/// Get current capacity of the cache
 	size_type capacity() const { return m_capacity; }
+	/// Get number of sequences in the cache
 	size_type size() const { return m_sequenceCache.size(); }
+	/// Check if the cache is empty
 	int empty() const { return (size() == 0); }
 
+	/// Set current capacity for sequences *and* items for the cache
+	/// @param capacity - the new capacity
 	void setCapacity(size_type capacity)
 	{
 		UT_ASSERT( capacity > 0);
@@ -366,18 +382,18 @@ public:
 		m_sequenceCache.setCapacity(capacity);
 	}
 
-/// @brief Checks if there is an element stored under key in cache
-///        NOTE: if an item from the sequence is missing
-///              it removes the sequence itself and returns false
-///	@return true - sequence is in cache = key exists and all sequence items are cached
-///         false - otherwise
+	/// Check if there is an element stored under key in cache
+	/// NOTE: if an item from the sequence is missing
+	///       it removes the sequence itself and returns false
+	///	@return 1 - sequence is in cache = key exists and all sequence items are cached
+	///         0 - otherwise
 	int contains(const key_type &key)
 	{
 		if (NOT(m_sequenceCache.contains(key))) {
 			return false;
 		}
 
-//		if in cache check if all items from the collection are cached
+		// if in cache check if all items from the collection are cached
 		int inCache = true;
 		CachedData& seqData = m_sequenceCache[key];
 		for (const auto &itemKey : seqData.m_itemKeys) {
@@ -390,25 +406,25 @@ public:
 		return inCache;
 	}
 
-/// @brief Attempts to insert sequence into cache under the given key
-///        each item from the sequence is cached induvidually
-///        i.e. if same element is present in 2 different sequences it won't be stored twice
-/// @param key - key used to later search in cache
-/// @param sequence - value to be cached
-/// @return true if value was inserted successfully
-///         false otherwise
+	/// Insert sequence into cache under the given key
+	/// each item from the sequence is cached induvidually
+	/// i.e. if same element is present in 2 different sequences it won't be stored twice
+	/// @param key - key used to later search in cache
+	/// @param sequence - value to be cached
+	/// @return 1 - if value was inserted successfully
+	///         0 - otherwise
 	int insert(const key_type &key, const value_type &sequence)
 	{
 		if (contains(key)) {
 			return false;
 		}
 
-//		insert new item in sequenceCache
+		// insert new item in sequenceCache
 		CachedData &seqData = m_sequenceCache[key];
 		seqData.m_key = key;
 		seqData.m_itemKeys.resize(sequence.size());
 
-//		cache each item individually
+		// cache each item individually
 		ItemHash hasher;
 		for (int i = 0; i < sequence.size(); ++i) {
 			const Item &item = sequence[i];
@@ -416,11 +432,11 @@ public:
 			seqData.m_itemKeys[i] = itemKey;
 
 			if (m_itemCache.contains(itemKey)) {
-//				in itemCache only increase ref count
+				// in itemCache only increase ref count
 				ItemData &itemData = m_itemCache[itemKey];
 				++itemData.m_refCnt;
 			} else {
-//				not in itemCache insert as new item and init ref count to 1
+				// not in itemCache insert as new item and init ref count to 1
 				ItemData &itemData = m_itemCache[itemKey];
 				itemData.m_item = item;
 				itemData.m_refCnt = 1;
@@ -430,10 +446,10 @@ public:
 		return true;
 	}
 
-/// @brief Attempts to erase the sequence stored under key from cache
-/// @param key - key used to search in cache
-/// @return true if entry was erased successfully
-///         false otherwise
+	/// Erase the sequence stored under key from cache
+	/// @param key - key used to search in cache
+	/// @return 1 - if entry was erased successfully
+	///         0 - otherwise
 	int erase(const key_type &key)
 	{
 		if (NOT(m_sequenceCache.contains(key))) {
@@ -446,10 +462,10 @@ public:
 		return m_sequenceCache.erase(key);
 	}
 
-/// @brief Attempts to find the sequnce stored under key in cache
-/// @param key - key used to search in cache
-/// @return a shared pointer to a new sequence that contains all
-///         items from the cached one or empty pointer if key is not found in cache
+	/// Find the sequnce stored under key in cache
+	/// @param key - key used to search in cache
+	/// @return a shared pointer to a new sequence that contains all
+	///         items from the cached one or empty pointer if key is not found in cache
 	value_ptr find(const key_type &key)
 	{
 		if (NOT(contains(key))) {
@@ -471,11 +487,11 @@ public:
 		return res;
 	}
 
-/// @brief Attempts to update the sequnce stored under key in cache
-/// @param key - key used to search in cache
-/// @param sequence - the new value to store in cache
-/// @return true if updated successfully
-///         false otherwise
+	/// Update the sequnce stored under key in cache
+	/// @param key - key used to search in cache
+	/// @param sequence - the new value to store in cache
+	/// @return 1 - if updated successfully
+	///         0 - otherwise
 	int update(const key_type &key, const value_type &sequence)
 	{
 		if (NOT(m_sequenceCache.contains(key))) {
@@ -488,7 +504,7 @@ public:
 		seqData.m_key = key;
 		seqData.m_itemKeys.resize(sequence.size());
 
-//		cache each item individually
+		// cache each item individually
 		ItemHash hasher;
 		for (int i = 0; i < sequence.size(); ++i) {
 			const Item &item = sequence[i];
@@ -496,11 +512,11 @@ public:
 			seqData.m_itemKeys[i] = itemKey;
 
 			if (m_itemCache.contains(itemKey)) {
-//				in itemCache only increase ref count
+				// in itemCache only increase ref count
 				ItemData &itemData = m_itemCache[itemKey];
 				++itemData.m_refCnt;
 			} else {
-//				not in itemCache insert as new item and init ref count to 1
+				// not in itemCache insert as new item and init ref count to 1
 				ItemData &itemData = m_itemCache[itemKey];
 				itemData.m_item = item;
 				itemData.m_refCnt = 1;
@@ -511,7 +527,7 @@ public:
 		return true;
 	}
 
-/// @brief Clears all data from cache
+	/// Clear all data from cache
 	void clear()
 	{
 		m_sequenceCache.clear();
@@ -519,14 +535,13 @@ public:
 	}
 
 private:
+	/// Avoid copying
 	CacheList(const Self &other);
 	Self & operator =(const Self &other);
 
-/// @brief When evicting an element from the sequenceCache
-///        we need to remove all items in the itemCache for that sequence
-///        that are not part of another sequence
-/// @param key - key under which the sequeceis stored in cache
-/// @param seqData - stores keys corresponding to actual items in itemCache
+	/// Evict a sequence from the cache and all it's items not present in any other sequence
+	/// @param key - key under which the sequeceis stored in cache
+	/// @seqData - stores keys corresponding to actual items in itemCache
 	void evictSequence(const key_type &key, CachedData &seqData)
 	{
 		for (const auto &itemKey : seqData.m_itemKeys) {
@@ -542,9 +557,9 @@ private:
 
 
 private:
-	size_type m_capacity;
-	SequenceCache m_sequenceCache;
-	ItemCache m_itemCache;
+	size_type m_capacity; ///< Capacity for both items and sequences
+	SequenceCache m_sequenceCache; ///< Sequence LRU cache
+	ItemCache m_itemCache; ///< Item LRU cache
 };
 
 }  // namespace Caches
