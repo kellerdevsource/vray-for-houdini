@@ -646,6 +646,7 @@ bool VRayProxyCache::createProxyGeometry(const Geometry &geom, GU_Detail &gdp) c
 		} else if (voxelType & MVF_HAIR_GEOMETRY_VOXEL) {
 			return createHairProxyGeometry(*voxel, gdp);
 		}
+		//TODO: particles/instances
 	}
 
 	return false;
