@@ -72,7 +72,7 @@ int VRayProxyExporter::GeometryDescription::hasValidData() const
 }
 
 
-Attrs::PluginAttr &VRayProxyExporter::GeometryDescription::getAttr(const char *attrName)
+Attrs::PluginAttr& VRayProxyExporter::GeometryDescription::getAttr(const char *attrName)
 {
 	Attrs::PluginAttr *attr = m_description.get(attrName);
 	UT_ASSERT( attr );

@@ -235,7 +235,7 @@ public:
 	/// @param i[in] - voxel index
 	/// @param memUsage[in/out] - if not NULL voxel memory usage will output here
 	/// @retval voxel data
-	VUtils::MeshVoxel * getVoxel(int i, uint64 *memUsage = NULL) VRAY_OVERRIDE;
+	VUtils::MeshVoxel* getVoxel(int i, uint64 *memUsage = NULL) VRAY_OVERRIDE;
 
 	/// Free voxel data
 	/// @param voxel[in] - voxel which data should be freed
@@ -256,12 +256,12 @@ private:
 		/// Accessor for the attribute name holding the vertices
 		/// based on whether this objects represents hair or mesh geometry
 		/// @retval attribute name string
-		const char * getVertsAttrName() const { return (m_isHair)? "hair_vertices" : "vertices"; }
+		const char* getVertsAttrName() const { return (m_isHair)? "hair_vertices" : "vertices"; }
 
 		/// Accessor for the attribute name holding the faces
 		/// based on whether this objects represents hair or mesh geometry
 		/// @retval attribute name string
-		const char * getPrimAttrName() const { return (m_isHair)? "num_hair_vertices" : "faces"; }
+		const char* getPrimAttrName() const { return (m_isHair)? "num_hair_vertices" : "faces"; }
 
 		/// Check if the objects contains a valid and cached description
 		/// @retval is description valid
@@ -273,15 +273,15 @@ private:
 		/// Accessor for a plugin attribute
 		/// @param attrName[in] - attribute name. Note this name must exist on the plugin description
 		/// @retval the plugin attribute
-		Attrs::PluginAttr & getAttr(const char *attrName);
+		Attrs::PluginAttr& getAttr(const char *attrName);
 
 		/// Accessor for the vertices plugin attribute
 		/// @retval the plugin attribute
-		Attrs::PluginAttr & getVertAttr() { return getAttr(getVertsAttrName()); }
+		Attrs::PluginAttr& getVertAttr() { return getAttr(getVertsAttrName()); }
 
 		/// Accessor for the faces plugin attribute
 		/// @retval the plugin attribute
-		Attrs::PluginAttr & getPrimAttr() { return getAttr(getPrimAttrName()); }
+		Attrs::PluginAttr& getPrimAttr() { return getAttr(getPrimAttrName()); }
 
 		SOP_Node         &m_node; ///< the sop geometry this structure wraps
 		bool              m_isHair; ///< if this object represents hair geometry
@@ -293,7 +293,7 @@ private:
 		/// Disable default contructor
 		GeometryDescription();
 		/// Disable assignment
-		GeometryDescription &operator=(const GeometryDescription &other);
+		GeometryDescription& operator=(const GeometryDescription &other);
 	};
 
 private:
