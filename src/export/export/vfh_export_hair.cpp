@@ -116,10 +116,12 @@ bool HairPrimitiveExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc
 
 	OP_Node *prmOwner = findPramOwnerForHairParms();
 	if (prmOwner) {
+		// found parent node with hair rendering parameters set
+		// so update plugin description with those parameters
 		m_exporter.setAttrsFromOpNodePrms(pluginDesc, prmOwner);
 	}
 	else {
-		// no hair spare parameters - use defaults
+		// no hair rendering parameters found - use defaults
 		pluginDesc.addAttribute(Attrs::PluginAttr("geom_splines", true));
 		pluginDesc.addAttribute(Attrs::PluginAttr("widths_in_pixels", false));
 		pluginDesc.addAttribute(Attrs::PluginAttr("generate_w_coord", false));
