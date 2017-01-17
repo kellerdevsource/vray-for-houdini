@@ -19,6 +19,7 @@ namespace VRayForHoudini {
 namespace SOP {
 
 /// SOP node that creates V-Ray infinite plane geometry
+/// TODO: this has to generate custom primitive for the plane geo
 class GeomPlane:
 		public SOP::NodeBase
 {
