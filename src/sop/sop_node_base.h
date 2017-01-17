@@ -25,16 +25,24 @@
 namespace VRayForHoudini {
 namespace SOP {
 
+/// Base class for vfh custom SOP nodes
 class NodeBase:
 		public OP::VRayNode,
 		public SOP_Node
 {
 public:
-	NodeBase(OP_Network *parent, const char *name, OP_Operator *entry):SOP_Node(parent, name, entry) {}
-	virtual              ~NodeBase() {}
+	NodeBase(OP_Network *parent, const char *name, OP_Operator *entry):
+		SOP_Node(parent, name, entry)
+	{ }
+	virtual ~NodeBase()
+	{ }
 
 protected:
-	virtual OP_ERROR      cookMySop(OP_Context &context)=0;
+
+	/// Houdini callback to cook custom geometry for this node
+	/// @note all derived classes are forced to implement this
+	/// @param context[in] - cook time
+	virtual OP_ERROR cookMySop(OP_Context &context)=0;
 
 };
 
