@@ -169,11 +169,11 @@ public:
 	{ return (m_options == other.m_options); }
 
 	/// Get the actual options
-	inline const UT_Options&  getOptions() const { return m_options; }
-	inline UT_Options&        getOptions() { return m_options; }
+	inline const UT_Options& getOptions() const { return m_options; }
+	inline UT_Options& getOptions() { return m_options; }
 
 	/// Get the proxy filepath
-	inline UT_StringHolder    getFilepath() const { return getFilepath(m_options); }
+	inline UT_StringHolder getFilepath() const { return getFilepath(m_options); }
 
 	/// Get the viewport LOD
 	inline exint getLOD() const { return getLOD(m_options); }
@@ -269,19 +269,19 @@ private:
 
 		/// Check if we have cached geometry hashes for this frame
 		/// @param lod[in] - the lod type
-		inline bool         hasVoxelKeys(const LOD &lod) const
+		inline bool hasVoxelKeys(const LOD &lod) const
 		{ return (m_voxelkeys.count(lod) > 0); }
 
 		/// Get geometry hashes for this frame
 		/// @note mapping from geometry hash to detail id is saved in VoxelToDetailMap
 		/// @param lod[in] - the lod type
 		/// @retval list of geometry hashes
-		inline HashKeys &   getVoxelKeys(const LOD &lod)
+		inline HashKeys& getVoxelKeys(const LOD &lod)
 		{ return m_voxelkeys[lod]; }
 
 		/// Erase geometry meta data for a given lod
 		/// @param lod[in] - the lod type
-		inline void         eraseLOD(const LOD &lod)
+		inline void eraseLOD(const LOD &lod)
 		{ m_lodToDetail.erase(lod); m_voxelkeys.erase(lod); }
 
 
