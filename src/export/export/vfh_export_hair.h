@@ -17,8 +17,8 @@
 namespace VRayForHoudini
 {
 
-/// Exports open poly primitives, bezier and nurbs curves from geometry detail
-/// as V-Ray Hair plugin
+/// Exports open poly primitives, bezier and nurbs curves as V-Ray Hair plugin
+/// from geometry detail
 class HairPrimitiveExporter:
 		public PrimitiveExporter
 {
@@ -33,7 +33,7 @@ public:
 	///       but not the actual primitives i.e if the detail contains
 	///       poly prims all of which are closed this function will return
 	///       a false positive
-	/// @param prim[in] - the primitive to test
+	/// @param gdp[in] - detail to test
 	static bool containsHairPrimitives(const GU_Detail &gdp);
 
 public:
