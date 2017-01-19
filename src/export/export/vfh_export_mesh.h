@@ -29,7 +29,8 @@ namespace VRayForHoudini {
 
 class VRayExporter;
 
-
+/// Exports closed poly primitives and polysoups as V-Ray mesh geometry
+/// from geometry detail
 class MeshExporter
 {
 public:
@@ -40,8 +41,18 @@ public:
 	};
 
 public:
+	/// Test if a primitive is polygonal primitive i.e
+	/// closed poly or polysoup
+	/// @param prim[in] - the primitive to test
 	static bool isPrimPoly(const GEO_Primitive *prim);
-	static bool getDataFromAttribute(const GA_Attribute *attr, VRay::VUtils::VectorRefList &data);
+
+	/// Fast test if the detail contains mesh primitives
+	/// @note this will test the gdp only for primitives of certail type
+	///       but not the actual primitives i.e if the detail contains
+	///       poly prims all of which are open this function will return
+	///       a false positive
+	/// @param gdp[in] - detail to test
+	static bool containsPolyPrimitives(const GU_Detail &gdp);
 
 public:
 	MeshExporter(const GU_Detail &gdp, VRayExporter &pluginExporter);
@@ -50,24 +61,30 @@ public:
 	MeshExporter& setSOPContext(SOP_Node *sop) { m_sopNode = sop; return *this; }
 	MeshExporter& setSubdivApplied(bool val) { m_hasSubdivApplied = val; return *this; }
 
-	bool                         hasPolyGeometry();
-	bool                         hasSubdivApplied() const { return m_hasSubdivApplied; }
-	int                          getNumVertices() { return getVertices().size(); }
-	int                          getNumVelocities() { return getVelocities().size(); }
-	int                          getNumNormals() { return getNormals().size(); }
-	int                          getNumFaces()  { if (numFaces <= 0 ) numFaces = countFaces(); return numFaces; }
-	int                          getNumMtlIDs() { if (numMtlIDs <= 0 ) getFaceMtlIDs(); return numMtlIDs; }
-	int                          getNumMapChannels() { return getMapChannels().size(); }
-	VRay::VUtils::VectorRefList& getVertices();
-	VRay::VUtils::VectorRefList& getNormals();
-	VRay::VUtils::VectorRefList& getVelocities();
-	VRay::VUtils::IntRefList&    getFaces();
-	VRay::VUtils::IntRefList     getFaceNormals();
-	VRay::VUtils::IntRefList&    getEdgeVisibility();
-	VRay::VUtils::IntRefList&    getFaceMtlIDs();
-	MapChannels&                 getMapChannels();
+	bool hasPolyGeometry() { return containsPolyPrimitives(m_gdp) && getNumFaces() > 0; }
+	bool hasSubdivApplied() const { return m_hasSubdivApplied; }
 
-	int                          getSHOPList(SHOPList &shopList) const;
+	int getNumVertices() { return getVertices().size(); }
+	VRay::VUtils::VectorRefList& getVertices();
+
+	int getNumFaces();
+	VRay::VUtils::IntRefList& getFaces();
+	VRay::VUtils::IntRefList& getEdgeVisibility();
+
+	int getNumNormals() { return getNormals().size(); }
+	VRay::VUtils::VectorRefList& getNormals();
+	VRay::VUtils::IntRefList getFaceNormals();
+
+	int getNumVelocities() { return getVelocities().size(); }
+	VRay::VUtils::VectorRefList& getVelocities();
+
+	int getNumMapChannels() { return getMapChannels().size(); }
+	MapChannels& getMapChannels();
+
+	int getNumMtlIDs() { return getFaceMtlIDs().size(); }
+	VRay::VUtils::IntRefList& getFaceMtlIDs();
+
+	int getSHOPList(SHOPList &shopList) const;
 
 	std::string                  getVRayPluginType() const { return "GEOMETRY"; }
 	std::string                  getVRayPluginID() const   { return "GeomStaticMesh"; }
@@ -88,14 +105,12 @@ private:
 	};
 
 private:
-	GA_Size countFaces() const;
-	int     getMeshFaces(VRay::VUtils::IntRefList &faces, VRay::VUtils::IntRefList &edge_visibility);
-	int     getMtlIds(VRay::VUtils::IntRefList &face_mtlIDs);
+	const GEOPrimList& getPrimList();
 	int     getPointAttrs(MapChannels &mapChannels);
 	int     getVertexAttrs(MapChannels &mapChannels);
 	void    getVertexAttrAsMapChannel(const GA_Attribute &attr, MapChannel &mapChannel);
 	int     getMtlOverrides(MapChannels &mapChannels);
-	int     getPerPrimMtlOverrides(std::unordered_set< std::string > &o_mapChannelOverrides, std::vector< PrimOverride > &o_primOverrides) const;
+	int     getPerPrimMtlOverrides(std::unordered_set< std::string > &o_mapChannelOverrides, std::vector< PrimOverride > &o_primOverrides);
 
 private:
 	const GU_Detail  &m_gdp;
@@ -104,8 +119,8 @@ private:
 	SOP_Node         *m_sopNode;
 
 	bool              m_hasSubdivApplied;
+	GEOPrimList       m_primList;
 	int               numFaces;
-	int               numMtlIDs;
 	VRay::VUtils::VectorRefList vertices;
 	VRay::VUtils::VectorRefList velocities;
 	VRay::VUtils::VectorRefList normals;
