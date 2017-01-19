@@ -469,8 +469,10 @@ VUtils::ErrorCode VRayProxyExporter::getDescriptionForContext(OP_Context &contex
 		geomDescr.m_isHair = true;
 	}
 	else {
-		MeshExporter meshExporter(*gdp, dummyExp);
-		meshExporter.asPluginDesc(geomDescr.m_description);
+		MeshExporter meshExporter(*geomDescr.m_node.getParent()->castToOBJNode(),
+								  context,
+								  dummyExp);
+		meshExporter.asPluginDesc(*gdp, geomDescr.m_description);
 		geomDescr.m_isHair = false;
 	}
 

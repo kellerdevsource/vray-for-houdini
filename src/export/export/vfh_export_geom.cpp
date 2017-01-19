@@ -441,56 +441,26 @@ int GeometryExporter::exportPolyMesh(SOP_Node &sop, const GU_Detail &gdp, Plugin
 {
 	int nPlugins = 0;
 
-	MeshExporter polyMeshExporter(gdp, m_pluginExporter);
-	polyMeshExporter.setSOPContext(&sop)
-					.setSubdivApplied(hasSubdivApplied());
-
+	MeshExporter polyMeshExporter(m_objNode, m_context, m_pluginExporter);
+	polyMeshExporter.init(gdp);
+	polyMeshExporter.setSubdivApplied(hasSubdivApplied());
 	if (polyMeshExporter.hasPolyGeometry()) {
-		// add new node to our list of nodes
-		pluginList.push_back(Attrs::PluginDesc("", "Node"));
-		Attrs::PluginDesc &nodeDesc = pluginList.back();
-		nPlugins = 1;
-
-		SHOPList shopList;
-		int nSHOPs = polyMeshExporter.getSHOPList(shopList);
-		if (nSHOPs > 0) {
-			nodeDesc.addAttribute(Attrs::PluginAttr(VFH_ATTR_MATERIAL_ID, -1));
+		if (m_exportGeometry) {
+			polyMeshExporter.exportPrimitives(gdp, pluginList);
 		}
+		else {
+			// add new node to our list of nodes
+			pluginList.push_back(Attrs::PluginDesc("", "Node"));
+			Attrs::PluginDesc &nodeDesc = pluginList.back();
 
-		if (NOT(m_exportGeometry)) {
-			return nPlugins;
-		}
-
-		// geometry
-		Attrs::PluginDesc geomDesc;
-		polyMeshExporter.asPluginDesc(geomDesc);
-		VRay::Plugin geom = m_pluginExporter.exportPlugin(geomDesc);
-		nodeDesc.addAttribute(Attrs::PluginAttr("geometry", geom));
-
-		// material
-		if (nSHOPs > 0) {
-			VRay::ValueList mtls_list;
-			VRay::IntList   ids_list;
-			mtls_list.reserve(nSHOPs);
-			ids_list.reserve(nSHOPs);
-
-			SHOPHasher hasher;
-			for (const UT_String &shoppath : shopList) {
-				SHOP_Node *shopNode = OPgetDirector()->findSHOPNode(shoppath);
-				UT_ASSERT( shopNode );
-				mtls_list.emplace_back(m_pluginExporter.exportMaterial(*shopNode));
-				ids_list.emplace_back(hasher(shopNode));
+			SHOPList shopList;
+			int nSHOPs = polyMeshExporter.getSHOPList(shopList);
+			if (nSHOPs > 0) {
+				nodeDesc.addAttribute(Attrs::PluginAttr(VFH_ATTR_MATERIAL_ID, -1));
 			}
-
-			Attrs::PluginDesc mtlDesc;
-			mtlDesc.pluginID = "MtlMulti";
-			mtlDesc.pluginName = VRayExporter::getPluginName(&sop, boost::str(Parm::FmtPrefixManual % "Mtl" % std::to_string(gdp.getUniqueId())));
-
-			mtlDesc.addAttribute(Attrs::PluginAttr("mtls_list", mtls_list));
-			mtlDesc.addAttribute(Attrs::PluginAttr("ids_list",  ids_list));
-
-			nodeDesc.addAttribute(Attrs::PluginAttr("material", m_pluginExporter.exportPlugin(mtlDesc)));
 		}
+
+		nPlugins = 1;
 	}
 
 	return nPlugins;

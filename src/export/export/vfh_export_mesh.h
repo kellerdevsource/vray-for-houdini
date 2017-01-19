@@ -17,6 +17,7 @@
 #include "vfh_exporter.h"
 #include "vfh_geoutils.h"
 #include "vfh_material_override.h"
+#include "vfh_export_primitive.h"
 
 #include <SOP/SOP_Node.h>
 #include <SHOP/SHOP_Node.h>
@@ -31,7 +32,8 @@ class VRayExporter;
 
 /// Exports closed poly primitives and polysoups as V-Ray mesh geometry
 /// from geometry detail
-class MeshExporter
+class MeshExporter:
+		public PrimitiveExporter
 {
 public:
 	/// Test if a primitive is polygonal primitive i.e
@@ -48,13 +50,16 @@ public:
 	static bool containsPolyPrimitives(const GU_Detail &gdp);
 
 public:
-	MeshExporter(const GU_Detail &gdp, VRayExporter &pluginExporter);
+	MeshExporter(OBJ_Node &obj, OP_Context &ctx, VRayExporter &exp);
 	~MeshExporter() { }
 
-	MeshExporter& setSOPContext(SOP_Node *sop) { m_sopNode = sop; return *this; }
-	MeshExporter& setSubdivApplied(bool val) { m_hasSubdivApplied = val; return *this; }
+	bool init(const GU_Detail &gdp);
+	void reset();
 
-	bool hasPolyGeometry() { return containsPolyPrimitives(m_gdp) && getNumFaces() > 0; }
+	bool hasPolyGeometry()
+	{ return m_gdp != nullptr && containsPolyPrimitives(*m_gdp) && getNumFaces() > 0; }
+
+	void setSubdivApplied(bool val) { m_hasSubdivApplied = val; }
 	bool hasSubdivApplied() const { return m_hasSubdivApplied; }
 
 	int getNumVertices() { return getVertices().size(); }
@@ -77,12 +82,21 @@ public:
 	int getNumMtlIDs() { return getFaceMtlIDs().size(); }
 	VRay::VUtils::IntRefList& getFaceMtlIDs();
 
-	int getSHOPList(SHOPList &shopList) const;
+	int getSHOPList(SHOPList &shopList);
 
-	std::string                  getVRayPluginType() const { return "GEOMETRY"; }
-	std::string                  getVRayPluginID() const   { return "GeomStaticMesh"; }
-	std::string                  getVRayPluginName() const;
-	bool                         asPluginDesc(Attrs::PluginDesc &pluginDesc);
+	/// Generate mesh plugin description from all supported primitives in the
+	/// GU_Detail provided
+	/// @param gdp[in] - the detail to traverse
+	/// @param pluginDesc[out] - the mesh plugin description
+	/// @retval true if mesh primitives were found in gdp
+	///         and pluginDesc is modified
+	virtual bool asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc &pluginDesc) VRAY_OVERRIDE;
+
+	/// Export mesh geometry plugin and generate Node plugin description
+	/// for all supported primitives in the GU_Detail provided
+	/// @param gdp[in] - the detail to traverse
+	/// @plugins[out] - the list of plugins generated for this detail
+	virtual void exportPrimitives(const GU_Detail &gdp, PluginDescList &plugins) VRAY_OVERRIDE;
 
 private:
 	struct PrimOverride
@@ -106,23 +120,18 @@ private:
 	int     getPerPrimMtlOverrides(std::unordered_set< std::string > &o_mapChannelOverrides, std::vector< PrimOverride > &o_primOverrides);
 
 private:
-	const GU_Detail  &m_gdp;
-	OP_Context       &m_context;
-	VRayExporter     &m_pluginExporter;
-	SOP_Node         *m_sopNode;
-
-	bool              m_hasSubdivApplied;
-	GEOPrimList       m_primList;
-	int               numFaces;
-	VRay::VUtils::VectorRefList vertices;
-	VRay::VUtils::VectorRefList velocities;
-	VRay::VUtils::VectorRefList normals;
+	const GU_Detail            *m_gdp;
+	bool                        m_hasSubdivApplied;
+	GEOPrimList                 m_primList;
+	int                         numFaces;
 	VRay::VUtils::IntRefList    faces;
 	VRay::VUtils::IntRefList    edge_visibility;
+	VRay::VUtils::VectorRefList vertices;
+	VRay::VUtils::VectorRefList normals;
+	VRay::VUtils::IntRefList    m_faceNormals;
+	VRay::VUtils::VectorRefList velocities;
 	VRay::VUtils::IntRefList    face_mtlIDs;
 	MapChannels                 map_channels_data;
-
-	VRay::VUtils::IntRefList    m_faceNormals;
 };
 
 
