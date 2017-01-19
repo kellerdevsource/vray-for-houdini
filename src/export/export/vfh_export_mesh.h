@@ -34,13 +34,6 @@ class VRayExporter;
 class MeshExporter
 {
 public:
-	enum NormalsType {
-		normalsNone = 0,
-		normalsFromPoint,
-		normalsFromVertex,
-	};
-
-public:
 	/// Test if a primitive is polygonal primitive i.e
 	/// closed poly or polysoup
 	/// @param prim[in] - the primitive to test
@@ -129,7 +122,6 @@ private:
 	VRay::VUtils::IntRefList    face_mtlIDs;
 	MapChannels                 map_channels_data;
 
-	NormalsType                 m_normalsType;
 	VRay::VUtils::IntRefList    m_faceNormals;
 };
 

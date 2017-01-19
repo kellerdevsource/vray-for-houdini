@@ -65,8 +65,7 @@ MeshExporter::MeshExporter(const GU_Detail &gdp, VRayExporter &pluginExporter)
 	, m_sopNode(nullptr)
 	, m_hasSubdivApplied(false)
 	, numFaces(-1)
-	, m_normalsType(normalsNone)
-{}
+{ }
 
 
 const GEOPrimList& MeshExporter::getPrimList()
@@ -74,9 +73,6 @@ const GEOPrimList& MeshExporter::getPrimList()
 	if (   m_primList.size() <= 0
 		&& containsPolyPrimitives(m_gdp) )
 	{
-		m_pcnt = 0;
-		m_vcnt = 0;
-
 		m_primList.setCapacity(m_gdp.countPrimitiveType(GEO_PRIMPOLY)
 							 + m_gdp.countPrimitiveType(GEO_PRIMPOLYSOUP));
 
@@ -84,9 +80,6 @@ const GEOPrimList& MeshExporter::getPrimList()
 			const GEO_Primitive *prim = m_gdp.getGEOPrimitive(*jt);
 			if (isPrimPoly(prim)) {
 				m_primList.append(prim);
-
-				m_pcnt += prim->getPointRange().getEntries();
-				m_vcnt += prim->getVertexRange().getEntries();
 			}
 		}
 	}
@@ -171,7 +164,6 @@ bool MeshExporter::asPluginDesc(Attrs::PluginDesc &pluginDesc)
 	}
 
 	if (getNumMapChannels() > 0) {
-		// TODO: use CharStringList for map_channel_names
 		VRay::VUtils::ValueRefList map_channel_names(map_channels_data.size());
 		VRay::VUtils::ValueRefList map_channels(map_channels_data.size());
 
@@ -213,21 +205,94 @@ VRay::VUtils::VectorRefList& MeshExporter::getVertices()
 
 VRay::VUtils::IntRefList MeshExporter::getFaceNormals()
 {
-	VRay::VUtils::IntRefList faceNormals;
-
-	if (m_normalsType == normalsFromPoint) {
-		faceNormals = getFaces();
-	}
-	else if (m_normalsType == normalsFromVertex) {
-		faceNormals = m_faceNormals;
+	if (m_faceNormals.size() <= 0) {
+		// if we don't have face normals cached, grab them from N attribute
+		getNormals();
 	}
 
-	return faceNormals;
+	return m_faceNormals;
 }
 
 
 VRay::VUtils::VectorRefList& MeshExporter::getNormals()
 {
+	if (normals.size() <= 0) {
+		// if we don't have normals cached, grab them from N attribute
+		// first check for point attribute
+		const GA_Attribute *nattr = m_gdp.findNormalAttribute(GA_ATTRIB_POINT);
+		if (!nattr) {
+			// second check for vertex attribute
+			nattr = m_gdp.findNormalAttribute(GA_ATTRIB_VERTEX);
+		}
+
+		if (!nattr) {
+			// last check for Houdini internal normal attribute
+			// which is always a point attribute
+			nattr = m_gdp.findInternalNormalAttribute();
+		}
+
+		if (getDataFromAttribute(nattr, normals)) {
+			// calculate normals and m_faceNormals simultaneously
+			// valid normals attr found and copied into normals
+			// deal with face normals now
+			UT_ASSERT( nattr );
+			switch (nattr->getOwner()) {
+				case GA_ATTRIB_VERTEX:
+				{
+					// if N is vertex attribute, need to calculate normal faces
+					m_faceNormals = VRay::VUtils::IntRefList(getNumFaces() * 3);
+
+					int faceVertIndex = 0;
+					const GEOPrimList &primList = getPrimList();
+					for (const GEO_Primitive *prim : primList) {
+						switch (prim->getTypeId().get()) {
+							case GEO_PRIMPOLYSOUP:
+							{
+								const GU_PrimPolySoup *polySoup = static_cast<const GU_PrimPolySoup*>(prim);
+								for (GEO_PrimPolySoup::PolygonIterator pst(*polySoup); !pst.atEnd(); ++pst) {
+									// face is valid only if the vertex count is >= 3
+									const GA_Size vCnt = pst.getVertexCount();
+									if ( vCnt > 2) {
+										for (GA_Size i = 1; i < vCnt-1; ++i) {
+											m_faceNormals[faceVertIndex++] = pst.getVertexIndex(i+1);
+											m_faceNormals[faceVertIndex++] = pst.getVertexIndex(i);
+											m_faceNormals[faceVertIndex++] = pst.getVertexIndex(0);
+										}
+									}
+								}
+								break;
+							}
+							case GEO_PRIMPOLY:
+							{
+								// face is valid only if the vertex count is >= 3
+								const GA_Size vCnt = prim->getVertexCount();
+								if ( vCnt > 2) {
+									const GU_PrimPoly *poly = static_cast<const GU_PrimPoly*>(prim);
+									for (GA_Size i = 1; i < vCnt-1; ++i) {
+										m_faceNormals[faceVertIndex++] = poly->getVertexIndex(i+1);
+										m_faceNormals[faceVertIndex++] = poly->getVertexIndex(i);
+										m_faceNormals[faceVertIndex++] = poly->getVertexIndex(0);
+									}
+								}
+								break;
+							}
+							default:
+								;
+						}
+					}
+					break;
+				}
+				case GA_ATTRIB_POINT:
+				default:
+				{
+					// if N is point attribute, faces is used to index normals as well
+					m_faceNormals = getFaces();
+					break;
+				}
+			}
+		}
+	}
+
 	return normals;
 }
 
@@ -236,6 +301,8 @@ VRay::VUtils::VectorRefList& MeshExporter::getVelocities()
 {
 	if (velocities.size() <= 0) {
 		// if we don't have velocities cached, grab them from v attribute
+		// for V-Ray velocity makes sense only when assigned on points, so
+		// faces is used to index velocity as well
 		getDataFromAttribute(m_gdp.findVelocityAttribute(GA_ATTRIB_POINT), velocities);
 	}
 
@@ -285,32 +352,10 @@ VRay::VUtils::IntRefList& MeshExporter::getFaces()
 		// count faces and proceed only if we do have such
 		int nFaces = getNumFaces();
 		if (nFaces > 0) {
-			// Check normals attribute
-			m_normalsType = normalsNone;
-
-			const GA_Attribute *normalsAttr = m_gdp.findAttribute(GA_ATTRIB_POINT, GEO_STD_ATTRIB_NORMAL);
-			if (getDataFromAttribute(normalsAttr, normals)) {
-				m_normalsType = normalsFromPoint;
-
-				UT_ASSERT(m_gdp.getNumPoints() == normals.size());
-			}
-			else {
-				normalsAttr = m_gdp.findAttribute(GA_ATTRIB_VERTEX, GEO_STD_ATTRIB_NORMAL);
-				if (getDataFromAttribute(normalsAttr, normals)) {
-					m_normalsType = normalsFromVertex;
-
-					UT_ASSERT(m_gdp.getNumVertices() == normals.size());
-				}
-			}
-
 			// calculate faces and edge visibility simultaneously
 			faces = VRay::VUtils::IntRefList(nFaces*3);
 			edge_visibility = VRay::VUtils::IntRefList(nFaces/10 + (((nFaces%10) > 0)? 1 : 0));
 			std::memset(edge_visibility.get(), 0, edge_visibility.size() * sizeof(int));
-
-			if (m_normalsType == normalsFromVertex) {
-				m_faceNormals = VRay::VUtils::IntRefList(nFaces * 3);
-			}
 
 			int faceVertIndex = 0;
 			int faceEdgeVisIndex = 0;
@@ -325,24 +370,13 @@ VRay::VUtils::IntRefList& MeshExporter::getFaces()
 							// face is valid only if the vertex count is >= 3
 							if ( vCnt > 2) {
 								for (GA_Size i = 1; i < vCnt-1; ++i) {
-									const int fv0 = faceVertIndex++;
-									const int fv1 = faceVertIndex++;
-									const int fv2 = faceVertIndex++;
+									faces[faceVertIndex++] = pst.getPointIndex(i+1);
+									faces[faceVertIndex++] = pst.getPointIndex(i);
+									faces[faceVertIndex++] = pst.getPointIndex(0);
 
-									const int v0 = i+1;
-									const int v1 = i;
-									const int v2 = 0;
-
-									if (m_normalsType == normalsFromVertex) {
-										m_faceNormals[fv0] = pst.getVertexIndex(v0);
-										m_faceNormals[fv1] = pst.getVertexIndex(v1);
-										m_faceNormals[fv2] = pst.getVertexIndex(v2);
-									}
-
-									faces[fv0] = pst.getPointIndex(v0);
-									faces[fv1] = pst.getPointIndex(v1);
-									faces[fv2] = pst.getPointIndex(v2);
-
+									// v0 = i+1
+									// v1 = i
+									// v2 = 0
 									// here the diagonal is invisible edge
 									// v(1)___v(2)
 									//    |  /|
@@ -366,25 +400,9 @@ VRay::VUtils::IntRefList& MeshExporter::getFaces()
 						// face is valid only if the vertex count is >= 3
 						if ( vCnt > 2) {
 							for (GA_Size i = 1; i < vCnt-1; ++i) {
-								const int fv0 = faceVertIndex++;
-								const int fv1 = faceVertIndex++;
-								const int fv2 = faceVertIndex++;
-
-								const int v0 = i+1;
-								const int v1 = i;
-								const int v2 = 0;
-
-								if (m_normalsType == normalsFromVertex) {
-									const GU_PrimPoly *poly = static_cast<const GU_PrimPoly*>(prim);
-
-									m_faceNormals[fv0] = poly->getVertexIndex(v0);
-									m_faceNormals[fv1] = poly->getVertexIndex(v1);
-									m_faceNormals[fv2] = poly->getVertexIndex(v2);
-								}
-
-								faces[fv0] = prim->getPointIndex(v0);
-								faces[fv1] = prim->getPointIndex(v1);
-								faces[fv2] = prim->getPointIndex(v2);
+								faces[faceVertIndex++] = prim->getPointIndex(i+1);
+								faces[faceVertIndex++] = prim->getPointIndex(i);
+								faces[faceVertIndex++] = prim->getPointIndex(0);
 
 								unsigned char edgeMask = (1 | ((i == 1) << 1) | ((i == (vCnt-2)) << 2));
 								edge_visibility[faceEdgeVisIndex/10] |= (edgeMask << ((faceEdgeVisIndex%10)*3));
