@@ -21,6 +21,10 @@ using namespace VRayForHoudini;
 
 namespace {
 
+/// Helper funtion to copy data from Float3Tuple attribute into a vector list
+/// @param attr[in] - the attribute to copy
+/// @param data[out] - destination vector list
+/// @retval true on success
 static bool getDataFromAttribute(const GA_Attribute *attr, VRay::VUtils::VectorRefList &data)
 {
 	GA_ROAttributeRef attrRef(attr);
@@ -69,11 +73,13 @@ MeshExporter::MeshExporter(OBJ_Node &obj, OP_Context &ctx, VRayExporter &exp):
 bool MeshExporter::init(const GU_Detail &gdp)
 {
 	if (!m_gdp || m_gdp->getUniqueId() != gdp.getUniqueId()) {
+		// we are not initialized
+		// or the gdp is different
 		reset();
 		m_gdp = &gdp;
 		return true;
 	}
-
+	// the gdp is the same so we do nothing
 	return false;
 }
 
@@ -226,7 +232,7 @@ void MeshExporter::exportPrimitives(const GU_Detail &gdp, PluginDescList &plugin
 		Attrs::PluginDesc &nodeDesc = plugins.back();
 		nodeDesc.addAttribute(Attrs::PluginAttr("geometry", geom));
 
-		// material
+		// handle material
 		SHOPList shopList;
 		int nSHOPs = getSHOPList(shopList);
 		if (nSHOPs > 0) {
@@ -323,6 +329,7 @@ VRay::VUtils::VectorRefList& MeshExporter::getNormals()
 									const GA_Size vCnt = pst.getVertexCount();
 									if ( vCnt > 2) {
 										for (GA_Size i = 1; i < vCnt-1; ++i) {
+											// polygon orientation seems to be clockwise in Houdini
 											m_faceNormals[faceVertIndex++] = pst.getVertexIndex(i+1);
 											m_faceNormals[faceVertIndex++] = pst.getVertexIndex(i);
 											m_faceNormals[faceVertIndex++] = pst.getVertexIndex(0);
@@ -338,6 +345,7 @@ VRay::VUtils::VectorRefList& MeshExporter::getNormals()
 								if ( vCnt > 2) {
 									const GU_PrimPoly *poly = static_cast<const GU_PrimPoly*>(prim);
 									for (GA_Size i = 1; i < vCnt-1; ++i) {
+										// polygon orientation seems to be clockwise in Houdini
 										m_faceNormals[faceVertIndex++] = poly->getVertexIndex(i+1);
 										m_faceNormals[faceVertIndex++] = poly->getVertexIndex(i);
 										m_faceNormals[faceVertIndex++] = poly->getVertexIndex(0);
@@ -441,6 +449,7 @@ VRay::VUtils::IntRefList& MeshExporter::getFaces()
 							// face is valid only if the vertex count is >= 3
 							if ( vCnt > 2) {
 								for (GA_Size i = 1; i < vCnt-1; ++i) {
+									// polygon orientation seems to be clockwise in Houdini
 									faces[faceVertIndex++] = pst.getPointIndex(i+1);
 									faces[faceVertIndex++] = pst.getPointIndex(i);
 									faces[faceVertIndex++] = pst.getPointIndex(0);
@@ -471,6 +480,7 @@ VRay::VUtils::IntRefList& MeshExporter::getFaces()
 						// face is valid only if the vertex count is >= 3
 						if ( vCnt > 2) {
 							for (GA_Size i = 1; i < vCnt-1; ++i) {
+								// polygon orientation seems to be clockwise in Houdini
 								faces[faceVertIndex++] = prim->getPointIndex(i+1);
 								faces[faceVertIndex++] = prim->getPointIndex(i);
 								faces[faceVertIndex++] = prim->getPointIndex(0);
@@ -892,6 +902,7 @@ void MeshExporter::getVertexAttrAsMapChannel(const GA_Attribute &attr, MapChanne
 						GA_Size vCnt = pst.getVertexCount();
 						if ( vCnt > 2) {
 							for (GA_Size i = 1; i < vCnt-1; ++i) {
+								// polygon orientation seems to be clockwise in Houdini
 								mapChannel.faces[faceVertIndex++] = mapChannel.verticesSet.find(MapVertex(vaHndl.get(prim->getVertexOffset(i+1))))->index;
 								mapChannel.faces[faceVertIndex++] = mapChannel.verticesSet.find(MapVertex(vaHndl.get(prim->getVertexOffset(i))))->index;
 								mapChannel.faces[faceVertIndex++] = mapChannel.verticesSet.find(MapVertex(vaHndl.get(prim->getVertexOffset(0))))->index;
@@ -905,6 +916,7 @@ void MeshExporter::getVertexAttrAsMapChannel(const GA_Attribute &attr, MapChanne
 					GA_Size vCnt = prim->getVertexCount();
 					if ( vCnt > 2) {
 						for (GA_Size i = 1; i < vCnt-1; ++i) {
+							// polygon orientation seems to be clockwise in Houdini
 							mapChannel.faces[faceVertIndex++] = mapChannel.verticesSet.find(MapVertex(vaHndl.get(prim->getVertexOffset(i+1))))->index;
 							mapChannel.faces[faceVertIndex++] = mapChannel.verticesSet.find(MapVertex(vaHndl.get(prim->getVertexOffset(i))))->index;
 							mapChannel.faces[faceVertIndex++] = mapChannel.verticesSet.find(MapVertex(vaHndl.get(prim->getVertexOffset(0))))->index;
@@ -943,6 +955,7 @@ void MeshExporter::getVertexAttrAsMapChannel(const GA_Attribute &attr, MapChanne
 						const GA_Size vCnt = pst.getVertexCount();
 						if ( vCnt > 2) {
 							for (GA_Size i = 1; i < vCnt-1; ++i) {
+								// polygon orientation seems to be clockwise in Houdini
 								mapChannel.faces[faceVertIndex++] = pst.getVertexIndex(i+1);
 								mapChannel.faces[faceVertIndex++] = pst.getVertexIndex(i);
 								mapChannel.faces[faceVertIndex++] = pst.getVertexIndex(0);
@@ -956,6 +969,7 @@ void MeshExporter::getVertexAttrAsMapChannel(const GA_Attribute &attr, MapChanne
 					const GA_Size vCnt = prim->getVertexCount();
 					if ( vCnt > 2) {
 						for (GA_Size i = 1; i < vCnt-1; ++i) {
+							// polygon orientation seems to be clockwise in Houdini
 							mapChannel.faces[faceVertIndex++] = m_gdp->getVertexMap().indexFromOffset(prim->getVertexOffset(i+1));
 							mapChannel.faces[faceVertIndex++] = m_gdp->getVertexMap().indexFromOffset(prim->getVertexOffset(i));
 							mapChannel.faces[faceVertIndex++] = m_gdp->getVertexMap().indexFromOffset(prim->getVertexOffset(0));
