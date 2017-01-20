@@ -58,10 +58,12 @@ GU_ConstDetailHandle VRayForHoudini::GetVRayProxyDetail(const VRayProxyParms &op
 	UT_AutoLock lock(theLock);
 
 	if (NOT(theCacheMan.contains(filepath))) {
-		// NOTE: insert entry in the cache
+		// insert entry in cache
 		VRayProxyCache &cache = theCacheMan[filepath];
+		// try init
 		VUtils::ErrorCode errCode = cache.init(filepath.c_str());
 		if (errCode.error()) {
+			// if we've failed to init delete the entry we've just created
 			theCacheMan.erase(filepath);
 			return GU_ConstDetailHandle();
 		}
@@ -102,10 +104,12 @@ bool VRayForHoudini::GetVRayProxyBounds(const VRayProxyParms &options, UT_Boundi
 	UT_AutoLock lock(theLock);
 
 	if (NOT(theCacheMan.contains(filepath))) {
+		// if we don't have cache for this file just return false
 		return false;
 	}
 
 	VRayProxyCache &cache = theCacheMan[filepath];
+	// NOTE: this will only work correcly if we've queried the detail first
 	return cache.getBounds(options, box);
 }
 
@@ -136,6 +140,8 @@ VRayProxyCache::GeometryHash::result_type VRayProxyCache::GeometryHash::operator
 		} else if ( voxelType & MVF_HAIR_GEOMETRY_VOXEL ) {
 			channel = voxel->getChannel(HAIR_VERT_CHANNEL);
 		}
+
+		// TODO: add particles/instances
 
 		if (channel && channel->data) {
 			const int len = channel->elementSize * channel->numElements;
@@ -231,21 +237,21 @@ VUtils::ErrorCode VRayProxyCache::init(const VUtils::CharString &filepath)
 	}
 
 	if (res.error()) {
+		// error occured while initilizing the mesh file
 		return res;
 	}
 
 	UT_ASSERT( m_proxy );
 
-	// init cache
+	// init cache capacity
 	HOM_Module &hou = HOM();
 	HOM_Vector2 *animRange = hou.playbar().playbackRange();
 	int nFrames = 1;
 	if (animRange) {
 		HOM_Vector2 &range = *animRange;
 		nFrames = range[1] - range[0];
-	} else {
-		nFrames = std::max(m_proxy->getNumFrames(), 1);
 	}
+	nFrames = std::min(std::max(m_proxy->getNumFrames(), 1), nFrames);
 
 	m_frameCache->setCapacity(nFrames);
 	// TODO: need to set item cache capacity to a reasonable value
@@ -357,6 +363,7 @@ bool VRayProxyCache::cache(const FrameKey &frameIdx, const LOD &lod)
 	switch (lod) {
 		case LOD_BBOX:
 		{
+			// only load and show bbox of the geometry
 			CachedFrame &frameData = (*m_frameCache)[frameIdx];
 			frameData.m_bbox = m_proxy->getBBox();
 
@@ -366,6 +373,7 @@ bool VRayProxyCache::cache(const FrameKey &frameIdx, const LOD &lod)
 			DetailKey key = gdp->getUniqueId();
 			UT_ASSERT( NOT(m_detailCache->contains(key)) );
 
+			// cache the detail
 			GU_DetailHandle &gdh = (*m_detailCache)[key];
 			UT_ASSERT( NOT(gdh.isValid()) );
 
@@ -377,6 +385,7 @@ bool VRayProxyCache::cache(const FrameKey &frameIdx, const LOD &lod)
 		}
 		case LOD_PREVIEW:
 		{
+			// load geometry from the preview voxel
 			voxels.reserve(1);
 			geometry.reserve(2);
 			// last voxel in file is reserved for preview geometry
@@ -389,6 +398,7 @@ bool VRayProxyCache::cache(const FrameKey &frameIdx, const LOD &lod)
 		}
 		case LOD_FULL:
 		{
+			// load geometry from all voxels except preview
 			voxels.reserve(numVoxels);
 			geometry.reserve(2 * numVoxels);
 			// last voxel in file is reserved for preview geometry, so skip it
@@ -406,10 +416,12 @@ bool VRayProxyCache::cache(const FrameKey &frameIdx, const LOD &lod)
 	}
 
 	if (geometry.size()) {
+		// we have some geometry to instert in cache
 		res = insert(frameIdx, lod, geometry);
 	}
 
 	for (VUtils::MeshVoxel *voxel : voxels) {
+		// release allocated voxels
 		m_proxy->releaseVoxel(voxel);
 	}
 
@@ -429,6 +441,9 @@ bool VRayProxyCache::contains(const FrameKey &frameIdx, const LOD &lod)
 		return false;
 	}
 
+	// geometry for this frame is considered cached if all details created
+	// for it are in the geo cache i.e. details for each voxel if lod == LOD_FULL
+	// and/or details for mesh/hair/particles
 	int inCache = m_detailCache->contains(frameData.getDetailKey(lod));
 	if (NOT(inCache)) {
 		// detail is evicted from detail cache need to update the frame cache
@@ -465,18 +480,19 @@ bool VRayProxyCache::insert(const FrameKey &frameIdx, const LOD &lod, const std:
 //	frameData.setDetailKey(lod, key);
 
 
-	// insert new item in frameCache
+	// insert new item in frameCache and cache bbox
 	CachedFrame &frameData = (*m_frameCache)[frameIdx];
 	frameData.m_bbox = m_proxy->getBBox();
 
 	HashKeys &voxelKeys = frameData.getVoxelKeys(lod);
 	voxelKeys.resize(geometry.size());
 
+	// create main detail for the frame
 	GU_Detail *gdp = new GU_Detail();
 	DetailKey key = gdp->getUniqueId();
 	UT_ASSERT( NOT(m_detailCache->contains(key)) );
 
-	// cache each geometry type individually
+	// cache each geometry type as individual detail
 	GeometryHash hasher;
 	for (int i = 0; i < geometry.size(); ++i) {
 		const Geometry &geom = geometry[i];
@@ -488,7 +504,7 @@ bool VRayProxyCache::insert(const FrameKey &frameIdx, const LOD &lod, const std:
 		if (m_voxelToDetail->count(geomHash)) {
 			CachedDetail &detailData = m_voxelToDetail->at(geomHash);
 			if (m_detailCache->contains(detailData.m_detailKey)) {
-				// in detail cache only increase ref count
+				// geometry is already in geo cache so increase ref count
 				++detailData.m_refCnt;
 				detailKey = detailData.m_detailKey;
 				inCache = true;
@@ -496,7 +512,7 @@ bool VRayProxyCache::insert(const FrameKey &frameIdx, const LOD &lod, const std:
 		}
 
 		if (NOT(inCache)) {
-			// not in detail cache insert as new item and init ref count to 1
+			// geometry is NOT in geo cache so insert as new item and init ref count to 1
 			GU_Detail *voxelgdp = new GU_Detail();
 			detailKey = voxelgdp->getUniqueId();
 			UT_ASSERT( NOT(m_detailCache->contains(detailKey)) );
@@ -516,9 +532,11 @@ bool VRayProxyCache::insert(const FrameKey &frameIdx, const LOD &lod, const std:
 		GU_DetailHandle &voxelGdh = (*m_detailCache)[detailKey];
 		UT_ASSERT( voxelGdh.isValid() );
 
+		// now pack the voxel geo in the main detail for this frame
 		GU_PackedGeometry::packGeometry(*gdp, voxelGdh);
 	}
 
+	// cache main detail for this frame
 	GU_DetailHandle &gdh = (*m_detailCache)[key];
 	UT_ASSERT( NOT(gdh.isValid()) );
 
@@ -544,6 +562,8 @@ bool VRayProxyCache::erase(const FrameKey &frameIdx)
 
 void VRayProxyCache::evictFrame(const FrameKey &frameIdx, CachedFrame &frameData)
 {
+	// we need to cleanup data for this frame
+	// first erase main details for each lod
 	for (const auto &keyPair : frameData.m_lodToDetail) {
 		const LOD &lod = keyPair.first;
 		const DetailKey &detailKey = keyPair.second;
@@ -553,6 +573,7 @@ void VRayProxyCache::evictFrame(const FrameKey &frameIdx, CachedFrame &frameData
 		}
 	}
 
+	// second update ref counts on voxel details created for this frame
 	for (const auto &keyPair : frameData.m_voxelkeys) {
 		const LOD &lod = keyPair.first;
 		const HashKeys &voxelKeys = keyPair.second;
@@ -564,6 +585,8 @@ void VRayProxyCache::evictFrame(const FrameKey &frameIdx, CachedFrame &frameData
 
 void VRayProxyCache::updateDetailCacheForKeys(const HashKeys &voxelKeys)
 {
+	// decrease ref counts on voxel details for the given keys
+	// and if necessary remove them from the geo cache
 	for (const auto &voxelKey : voxelKeys) {
 		if (m_voxelToDetail->count(voxelKey)) {
 			CachedDetail& detailData = m_voxelToDetail->at(voxelKey);
@@ -584,6 +607,7 @@ VRayProxyCache::FrameKey VRayProxyCache::getFrameIdx(const VRayProxyParms &optio
 {
 	UT_ASSERT( m_proxy );
 
+	// calc true .vrmesh frame in range [0, animation length] from proxy options
 	const exint    animType   = options.getAnimType();
 	const fpreal64 animOffset = options.getAnimOffset();
 	const fpreal64 animSpeed  = options.getAnimSpeed();
@@ -646,6 +670,7 @@ bool VRayProxyCache::createProxyGeometry(const Geometry &geom, GU_Detail &gdp) c
 		} else if (voxelType & MVF_HAIR_GEOMETRY_VOXEL) {
 			return createHairProxyGeometry(*voxel, gdp);
 		}
+		//TODO: particles/instances
 	}
 
 	return false;
@@ -686,6 +711,7 @@ bool VRayProxyCache::createMeshProxyGeometry(VUtils::MeshVoxel &voxel, GU_Detail
 	}
 
 	// Faces
+	// TODO: may be it will be better using polysoups
 	for (int f = 0; f < numFaces; ++f) {
 		const VUtils::FaceTopoData &face = faces[f];
 
