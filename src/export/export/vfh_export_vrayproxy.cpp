@@ -25,8 +25,10 @@
 
 using namespace VRayForHoudini;
 
-
-VRayExporter& getDummyExporter()
+/// Dummy VRayExporter exporter instance necessary
+/// to create HairPrimitiveExporter or MeshExporter
+/// TODO: we should remove this dependency in future
+static VRayExporter& getDummyExporter()
 {
 	static VRayExporter exporter(nullptr);
 	return exporter;
@@ -70,7 +72,7 @@ int VRayProxyExporter::GeometryDescription::hasValidData() const
 }
 
 
-Attrs::PluginAttr &VRayProxyExporter::GeometryDescription::getAttr(const tchar *attrName)
+Attrs::PluginAttr& VRayProxyExporter::GeometryDescription::getAttr(const char *attrName)
 {
 	Attrs::PluginAttr *attr = m_description.get(attrName);
 	UT_ASSERT( attr );
@@ -89,7 +91,7 @@ void VRayProxyExporter::GeometryDescription::clearData()
 }
 
 
-VUtils::ErrorCode VRayProxyExporter::doExport(VRayProxyExportOptions &options, UT_ValArray<SOP_Node *> sopList)
+VUtils::ErrorCode VRayProxyExporter::doExport(VRayProxyExportOptions &options, const UT_ValArray<SOP_Node *> sopList)
 {
 	VUtils::ErrorCode err;
 

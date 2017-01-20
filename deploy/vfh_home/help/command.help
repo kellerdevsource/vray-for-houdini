@@ -1,0 +1,61 @@
+vrayproxy
+    create .vrmesh file(s) from a set of SOP nodes
+
+    USAGE
+    vrayproxy -n <filepath> [-c] [-f] [-m] [-i] [-l] [t]
+        [-a <animStart> <animEnd>]
+        [-v <velocityStart> <velocityEnd>]
+        [-T <previewType>]
+        [-F <maxPreviewFaces>] [-H <maxPreviewStrands>]
+        [-X <maxFacesPerVoxel>]
+        [-P <pointSize>]
+        followed by a list of sop nodes or pattern
+
+    OPTIONS
+    -n <filepath> (mandatory)
+        .vrmesh filepath
+    -c (optional)
+        create intermediate dirs
+        default is off
+    -f (optional)
+        overwrite existing file(s)
+        default is off
+    -m (optional)
+        export each object in separate file
+        default is off
+    -i (optional)
+        save hidden and templated geometry
+        default is off
+    -l (optional)
+        use last object only for preview geometry
+        default is off
+    -t (optional)
+        export geometry in world space
+        default is off
+    -a <animStart> <animEnd> (optional)
+        export frame range, animStart = strat frame, animEnd = end frame
+        default - current time only
+    -v <velocityStart> <velocityEnd> (optional)
+        export vertex velocity, velocityStart = start sample time in [0,1) range
+        velocityEnd = end sample time in (0,1] range
+        default - no velocity
+    -T <previewType> (optional)
+        specifies the simplification type for the preview geometry
+        previewType = 0 - SIMPLIFY_FACE_SAMPLING (very fast)
+        previewType = 1 - SIMPLIFY_CLUSTERING (quality)
+        previewType = 2 - SIMPLIFY_EDGE_COLLAPSE (quality)
+        previewType = 3 - SIMPLIFY_COMBINED (fast)
+        default - SIMPLIFY_COMBINED
+    -F <maxPreviewFaces> (optional)
+        max number of faces for preview geometry voxel
+        default 100
+    -H <maxPreviewStrands> (optional)
+        max number of strands for preview geometry voxel
+        default 100
+    -X <maxFacesPerVoxel> (optional)
+        maxFacesPerVoxel - specifies max number of faces per voxel
+        default 0 - assume 1 voxel per mesh
+    -P <pointSize> (optional)
+        point cloud information will be computed and stored with each voxel in the file
+        pointSize -  average area covered by one point
+        default - no point cloud

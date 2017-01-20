@@ -21,6 +21,9 @@
 
 namespace VRayForHoudini {
 
+/// VRayProxyExportOptions wraps all options necessary to export .vrmesh file(s).
+/// "vrayproxy" hscript cmd and "V-Ray Proxy ROP" create and configure an instance
+/// of this data structure and pass it to VRayProxyExporter
 struct VRayProxyExportOptions
 {
 	VRayProxyExportOptions() :
@@ -48,194 +51,351 @@ struct VRayProxyExportOptions
 	~VRayProxyExportOptions()
 	{ }
 
+	/// Return the .vrmesh filepath and adjust the filename if needed
+	/// 1. append the sop path to the filename if separate objects
+	///    should be exported into separate files (m_exportAsSingle == false)
+	/// 2. append .vrmesh extension if missing
+	/// @param sop[in] - the sop node being processed
+	/// @retval filepath
 	inline UT_String getFilepath(const SOP_Node &sop) const;
-	inline bool      isAppendMode() const;
 
-///	filepath to the .vrmesh file
-/// cmd arg: -n "path/to/filename.vrmesh" (mandatory)
+	/// Easy accessor to check if new content should be appended to the .vrmesh file
+	/// @retval false if we are exporting single frame or the first frame of an animation
+	///         true otherwise
+	inline bool isAppendMode() const;
+
+	/// filepath to the .vrmesh file
+	/// cmd arg: -n "path/to/filename.vrmesh" (mandatory)
 	UT_String m_filepath;
 
-/// (bool) if true, non-existing dirs in the filepath will be created
-/// default value: true
-/// cmd arg: -c (optional)
+	/// (bool) if true, non-existing dirs in the filepath will be created
+	/// default value: true
+	/// cmd arg: -c (optional)
 	int m_mkpath;
 
-/// (bool) if true, existing file(s) will be overwritten
-/// default value: false
-/// cmd arg: -f (optional)
+	/// (bool) if true, existing file(s) will be overwritten
+	/// default value: false
+	/// cmd arg: -f (optional)
 	int m_overwrite;
 
-///	(bool) if true, export all geometry in a single .vrmesh file,
-/// otherwise export each object in separate file
-/// default value: true
-/// cmd arg: -m (optional, if given m_exportAsSingle will be set to false)
+	/// (bool) if true, export all geometry in a single .vrmesh file,
+	/// otherwise export each object in separate file
+	/// default value: true
+	/// cmd arg: -m (optional, if given m_exportAsSingle will be set to false)
 	int m_exportAsSingle;
 
-/// (bool) if true, export animation range in a single .vrmesh file
-/// otherwise only current frame will be exported
-/// default value: true
-/// cmd arg: -a animStart animEnd (optional)
+	/// (bool) if true, export animation range in a single .vrmesh file
+	/// otherwise only current frame will be exported
+	/// default value: true
+	/// cmd arg: -a animStart animEnd (optional)
 	int m_exportAsAnimation;
 
-/// (fpreal) start time of the animation
-/// default value: 0
-/// cmd arg: -a animStart animEnd (mandatory, if m_exportAsAnimation is true)
+	/// (fpreal) start time of the animation
+	/// default value: 0
+	/// cmd arg: -a animStart animEnd (mandatory, if m_exportAsAnimation is true)
 	fpreal m_animStart;
 
-/// (fpreal) end time of the animation
-/// default value: 0
-/// cmd arg: -a animStart animEnd (mandatory, if m_exportAsAnimation is true)
+	/// (fpreal) end time of the animation
+	/// default value: 0
+	/// cmd arg: -a animStart animEnd (mandatory, if m_exportAsAnimation is true)
 	fpreal m_animEnd;
 
-/// (int) number of frames to be exported
-/// this is calculated based on m_animStart m_animEnd values
-/// default value: 0
+	/// (int) number of frames to be exported
+	/// this is calculated based on m_animStart m_animEnd values
+	/// default value: 0
 	int m_animFrames;
 
-/// (OP_Context) current time at which to export geometry geometry
-/// default value: 0
+	/// (OP_Context) current time at which to export geometry geometry
+	/// default value: 0
 	OP_Context m_context;
 
-/// (bool) if true, use last object in list as preview geometry
-/// this option is always false if exporting single object per file
-/// default value: false
-/// cmd arg: -l (optional)
+	/// (bool) if true, use last object in list as preview geometry
+	/// this option is always false if exporting single object per file
+	/// default value: false
+	/// cmd arg: -l (optional)
 	int m_lastAsPreview;
 
-/// (bool) if true, export geometry in world space
-/// default value: false
-/// cmd arg: -t (optional)
+	/// (bool) if true, export geometry in world space
+	/// default value: false
+	/// cmd arg: -t (optional)
 	int m_applyTransform;
 
-/// (bool) if true, export vertex velocity
-/// this option is always false if exportAnimation is false
-/// vertex velocity is calulated as: (vert_pos(velocityEndTime) - vert_pos(velocityStartTime)) / (velocityEndTime - velocityStartTime)
-/// default value: false
-/// cmd arg: -v velocityStart velocityEnd (optional)
+	/// (bool) if true, export vertex velocity
+	/// this option is always false if exportAnimation is false
+	/// vertex velocity is calulated as: (vert_pos(velocityEndTime) - vert_pos(velocityStartTime)) / (velocityEndTime - velocityStartTime)
+	/// default value: false
+	/// cmd arg: -v velocityStart velocityEnd (optional)
 	int m_exportVelocity;
 
-/// (float) start time for vertex position sample
-/// velocityStart should be in range [0,1)
-/// default value: 0.f
-/// cmd arg: -v velocityStart velocityEnd (mandatory, if exportVelocity is true)
+	/// (float) start time for vertex position sample
+	/// velocityStart should be in range [0,1)
+	/// default value: 0.f
+	/// cmd arg: -v velocityStart velocityEnd (mandatory, if exportVelocity is true)
 	fpreal m_velocityStart;
 
-/// (float) end time for vertex position sample
-/// velocityEnd should be in range (0,1]
-/// default value: 0.05f
-/// cmd arg: -v velocityStart velocityEnd (mandatory, if exportVelocity is true)
+	/// (float) end time for vertex position sample
+	/// velocityEnd should be in range (0,1]
+	/// default value: 0.05f
+	/// cmd arg: -v velocityStart velocityEnd (mandatory, if exportVelocity is true)
 	fpreal m_velocityEnd;
 
-/// (SimplificationType enum) specifies how to do the simplification
-/// default value: SIMPLIFY_COMBINED
-/// cmd arg: -T previewType (optional)
+	/// (SimplificationType enum) specifies how to do the simplification
+	/// default value: SIMPLIFY_COMBINED
+	/// cmd arg: -T previewType (optional)
 	VUtils::SimplificationType m_simplificationType;
 
-/// (int) max number of faces for preview geometry voxel
-/// default value: 100
-/// cmd arg: -F maxPreviewFaces (optional)
+	/// (int) max number of faces for preview geometry voxel
+	/// default value: 100
+	/// cmd arg: -F maxPreviewFaces (optional)
 	int m_maxPreviewFaces;
 
-/// (int) max number of strands for preview geometry voxel
-/// default value: 100
-/// cmd arg: -H maxPreviewStrands (optional)
+	/// (int) max number of strands for preview geometry voxel
+	/// default value: 100
+	/// cmd arg: -H maxPreviewStrands (optional)
 	int m_maxPreviewStrands;
 
-/// (int) max number of faces per voxel
-/// if 0, assume 1 voxel per mesh
-/// default value: 0
-/// cmd arg: -X maxFacesPerVoxel (optional)
+	/// (int) max number of faces per voxel
+	/// if 0, assume 1 voxel per mesh
+	/// default value: 0
+	/// cmd arg: -X maxFacesPerVoxel (optional)
 	int m_maxFacesPerVoxel;
 
-/// (bool) if true, point cloud information will be computed and stored with each voxel in the file
-/// default value: false
-/// cmd arg: -P pointSize (optional)
+	/// (bool) if true, point cloud information will be computed and stored with each voxel in the file
+	/// default value: false
+	/// cmd arg: -P pointSize (optional)
 	int m_exportPCLs;
 
-/// (float) specifies the desired density for the points in the point cloud -
-/// average area covered by one point
-/// default value: 2.f
-/// cmd arg: -P pointSize (optional)
+	/// (float) specifies the desired density for the points in the point cloud -
+	/// average area covered by one point
+	/// default value: 0.5f
+	/// cmd arg: -P pointSize (optional)
 	fpreal m_pointSize;
 };
 
 
-class VRayProxyExporter : public VUtils::MeshInterface
+/// VRayProxyExporter wraps the geometry export of a single frame into a single .vrmesh file
+class VRayProxyExporter:
+		public VUtils::MeshInterface
 {
 public:
-	static VUtils::ErrorCode doExport(VRayProxyExportOptions &options, UT_ValArray<SOP_Node *> sopList);
+	/// Wrap the actual export of .vrmesh file(s) besed on given geometry and export options
+	/// @param options[in] - options used to configure how geometry should be exported
+	/// @param sopList[in] - list of geometry sop nodes. Note that options.m_context would be modified
+	///                       if we are exporting animation
+	/// @retval error code - use ErrorCode::error() to check for errors
+	///                      and ErrorCode::getErrorString() to get the error message
+	static VUtils::ErrorCode doExport(VRayProxyExportOptions &options, const UT_ValArray<SOP_Node *> sopList);
 
 public:
+	/// Constructor
+	/// @note at this point m_geomDescrList is only partially initilized and the number of voxels is determined
+	/// @param options[in] - options used to configure how geometry should be exported
+	/// @param nodes[in] - pointer to an element of a consecutive list of geometry sop nodes
+	///                    nodes should be a valid pointer
+	/// @param nodeCnt[in] - number of nodes that should be taken from the list
+	///                      nodeCnt should be > 0
 	VRayProxyExporter(const VRayProxyExportOptions &options, SOP_Node * const *nodes, int nodeCnt);
+
 	~VRayProxyExporter();
 
-	VUtils::ErrorCode   init();
-	void                cleanup();
-	VUtils::ErrorCode   doExportFrame();
+	/// Initilize the exporter for the current time (based on what is set in m_options.m_context)
+	/// by caching out geometry data for all objects in m_geomDescrList
+	/// @note this should be called for every animation frame before doExportFrame()
+	/// @retval error code - use ErrorCode::error() to check for errors
+	///                      and ErrorCode::getErrorString() to get the error message
+	VUtils::ErrorCode init();
 
-	int                 getNumVoxels(void) VRAY_OVERRIDE { return m_voxels.size(); }
-	uint32              getVoxelFlags(int i) VRAY_OVERRIDE;
-	VUtils::Box         getVoxelBBox(int i) VRAY_OVERRIDE;
-	VUtils::MeshVoxel * getVoxel(int i, uint64 *memUsage = NULL) VRAY_OVERRIDE;
-	void                releaseVoxel(VUtils::MeshVoxel *voxel, uint64 *memUsage = NULL) VRAY_OVERRIDE;
+	/// Cleanup cached data for current time
+	void cleanup();
+
+	/// Export cached data for the current time to .vrmesh file
+	/// @retval error code - use ErrorCode::error() to check for errors
+	///                      and ErrorCode::getErrorString() to get the error message
+	VUtils::ErrorCode doExportFrame();
+
+	/// Follows implementation of VUtils::MeshInterface API
+	///
+	/// Get number of voxels
+	/// @retval number of volxels
+	int getNumVoxels(void) VRAY_OVERRIDE { return m_voxels.size(); }
+
+	/// Get voxel flags
+	/// @param i[in] - voxel index
+	/// @retval voxel flags is combination of the voxel type and MVF_INSTANCE_VOXEL | MVF_HIDDEN_VOXEL
+	///         where voxel type can be one of the following
+	///         { MVF_PREVIEW_VOXEL, MVF_GEOMETRY_VOXEL, MVF_HAIR_GEOMETRY_VOXEL, MVF_PARTICLE_GEOMETRY_VOXEL}
+	uint32 getVoxelFlags(int i) VRAY_OVERRIDE;
+
+	/// Get voxel bbox
+	/// @param i[in] - voxel index
+	/// @retval voxel bbox
+	VUtils::Box getVoxelBBox(int i) VRAY_OVERRIDE;
+
+	/// Get voxel data - the voxel with the largest index is the preview one
+	/// @param i[in] - voxel index
+	/// @param memUsage[in/out] - if not NULL voxel memory usage will output here
+	/// @retval voxel data
+	VUtils::MeshVoxel* getVoxel(int i, uint64 *memUsage = NULL) VRAY_OVERRIDE;
+
+	/// Free voxel data
+	/// @param voxel[in] - voxel which data should be freed
+	/// @param memUsage[in/out] - if not NULL voxel memory usage will output here
+	void releaseVoxel(VUtils::MeshVoxel *voxel, uint64 *memUsage = NULL) VRAY_OVERRIDE;
 
 private:
+	/// GeometryDescription wraps and caches geometry data for a given sop node
+	/// @note this is a helper data structure and should only be visible to VRayProxyExporter
 	struct GeometryDescription
 	{
+		/// Constructor
+		/// @param node[in] - sop node
 		GeometryDescription(SOP_Node &node) : m_node(node) { }
+
 		~GeometryDescription() { }
 
-		const tchar *getVertsAttrName() const { return (m_isHair)? "hair_vertices" : "vertices"; }
-		const tchar *getPrimAttrName() const { return (m_isHair)? "num_hair_vertices" : "faces"; }
+		/// Accessor for the attribute name holding the vertices
+		/// based on whether this objects represents hair or mesh geometry
+		/// @retval attribute name string
+		const char* getVertsAttrName() const { return (m_isHair)? "hair_vertices" : "vertices"; }
+
+		/// Accessor for the attribute name holding the faces
+		/// based on whether this objects represents hair or mesh geometry
+		/// @retval attribute name string
+		const char* getPrimAttrName() const { return (m_isHair)? "num_hair_vertices" : "faces"; }
+
+		/// Check if the objects contains a valid and cached description
+		/// @retval is description valid
 		int hasValidData() const;
+
+		/// Cleanup(reset) cached data
 		void clearData();
 
-		Attrs::PluginAttr &getAttr(const tchar *attrName);
-		Attrs::PluginAttr &getVertAttr() { return getAttr(getVertsAttrName()); }
-		Attrs::PluginAttr &getPrimAttr() { return getAttr(getPrimAttrName()); }
+		/// Accessor for a plugin attribute
+		/// @param attrName[in] - attribute name. Note this name must exist on the plugin description
+		/// @retval the plugin attribute
+		Attrs::PluginAttr& getAttr(const char *attrName);
 
-		SOP_Node &m_node;
-		bool m_isHair;
-		Attrs::PluginDesc m_description;
-		VRay::Transform m_transform;
-		VUtils::Box m_bbox;
+		/// Accessor for the vertices plugin attribute
+		/// @retval the plugin attribute
+		Attrs::PluginAttr& getVertAttr() { return getAttr(getVertsAttrName()); }
+
+		/// Accessor for the faces plugin attribute
+		/// @retval the plugin attribute
+		Attrs::PluginAttr& getPrimAttr() { return getAttr(getPrimAttrName()); }
+
+		SOP_Node         &m_node; ///< the sop geometry this structure wraps
+		bool              m_isHair; ///< if this object represents hair geometry
+		Attrs::PluginDesc m_description; ///< cached plugin description of the geometry
+		VRay::Transform   m_transform; ///< cached transform of the geometry
+		VUtils::Box       m_bbox; ///< cached bounding box of the geometry
 
 	private:
+		/// Disable default contructor
 		GeometryDescription();
-		GeometryDescription &operator=(const GeometryDescription &other);
+		/// Disable assignment
+		GeometryDescription& operator=(const GeometryDescription &other);
 	};
 
 private:
+	/// Disable default contructor
 	VRayProxyExporter();
 
+	/// Sample sop geometry and transform, calc bbox and velocities at the given time
+	/// and return the result in geomDescr
+	/// @param context[in] - sample time
+	/// @param geomDescr[out] - geometry description
+	/// @retval error code - use ErrorCode::error() to check for errors
+	///                      and ErrorCode::getErrorString() to get the error message
 	VUtils::ErrorCode cacheDescriptionForContext(const OP_Context &context, GeometryDescription &geomDescr);
-	VUtils::ErrorCode getDescriptionForContext(OP_Context &context, GeometryDescription &geomDescr);
-	void              getTransformForContext(OP_Context &context, GeometryDescription &geomDescr) const;
 
+	/// Sample sop geometry at the given time and return the result in geomDescr
+	/// @note this is called from cacheDescriptionForContext()
+	/// @param context[in] - sample time
+	/// @param geomDescr[out] - geometry description
+	/// @retval error code - use ErrorCode::error() to check for errors
+	///                      and ErrorCode::getErrorString() to get the error message
+	VUtils::ErrorCode getDescriptionForContext(OP_Context &context, GeometryDescription &geomDescr);
+
+	/// Sample geometry transform at the given time and return the result in geomDescr
+	/// @note this is called from cacheDescriptionForContext()
+	/// @param context[in] - sample time
+	/// @param geomDescr[out] - geometry description
+	void getTransformForContext(OP_Context &context, GeometryDescription &geomDescr) const;
+
+	/// Fill mesh voxel data from geometry description
+	/// @note this is called from getVoxel()
+	/// @param voxel[out] - voxel data
+	/// @param meshDescr[in] - geometry description
 	void buildMeshVoxel(VUtils::MeshVoxel &voxel, GeometryDescription &meshDescr);
+
+	/// Fill hair voxel data from geometry description
+	/// @note this is called from getVoxel()
+	/// @param voxel[out] - voxel data
+	/// @param hairDescr[in] - geometry description
 	void buildHairVoxel(VUtils::MeshVoxel &voxel, GeometryDescription &hairDescr);
+
+	/// Create and fill preview voxel data
+	/// @note this is called from getVoxel()
+	/// @param voxel[out] - voxel data
+	/// @param hairDescr[in] - geometry description
 	void buildPreviewVoxel(VUtils::MeshVoxel &voxel);
 
+	/// Create mesh preview geometry
+	/// and save it in m_previewVerts, m_previewFaces
+	/// fill out data that should be written to OBJECT_INFO_CHANNEL of the preview voxel
+	/// @note this is called from buildPreviewVoxel()
+	/// @param objInfo[out] - data that will be written to OBJECT_INFO_CHANNEL of the preview voxel
 	void createMeshPreviewGeometry(VUtils::ObjectInfoChannelData &objInfo);
+
+	/// Create mesh preview geometry by sampling faces
+	/// and save it in m_previewVerts, m_previewFaces
+	/// fill out data that should be written to OBJECT_INFO_CHANNEL of the preview voxel
+	/// @note this is called from createMeshPreviewGeometry() based on m_options.m_simplificationType
+	/// @param numPreviewVerts[out] - number of preview vertices
+	/// @param numPreviewVerts[out] - number of preview faces
+	/// @param objInfo[out] - data that will be written to OBJECT_INFO_CHANNEL of the preview voxel
 	void simplifyFaceSampling(int &numPreviewVerts, int &numPreviewFaces,
 							  VUtils::ObjectInfoChannelData &objInfo);
+	/// Create mesh preview geometry
+	/// and saves it in m_previewVerts, m_previewFaces
+	/// fill out data that should be written to OBJECT_INFO_CHANNEL of the preview voxel
+	/// @note this is called from createMeshPreviewGeometry() based on m_options.m_simplificationTy
+	/// @param numPreviewVerts[out] - number of preview vertices
+	/// @param numPreviewVerts[out] - number of preview faces
+	/// @param objInfo[out] - data that will be written to OBJECT_INFO_CHANNEL of the preview voxel
 	void simplifyMesh(int &numPreviewVerts, int &numPreviewFaces,
 					  VUtils::ObjectInfoChannelData &objInfo);
+
+	/// Create hair preview geometry by sampling strands
+	/// and save it in m_previewStrandVerts, m_previewStrands
+	/// fill out data that should be written to HAIR_OBJECT_INFO_CHANNEL of the preview voxel
+	/// @note this is called from buildPreviewVoxel()
+	/// @param objInfo[out] - data that will be written to HAIR_OBJECT_INFO_CHANNEL of the preview voxel
 	void createHairPreviewGeometry(VUtils::ObjectInfoChannelData &objInfo);
+
+	/// Helper function to initilize the object info data based for the given voxel type
+	/// @note this is called from createMeshPreviewGeometry() and createHairPreviewGeometry()
+	/// @param type[in] - voxel type can be either MVF_GEOMETRY_VOXEL or MVF_HAIR_GEOMETRY_VOXEL
+	/// @param objInfo[out] - data that should be written to OBJECT_INFO_CHANNEL or HAIR_OBJECT_INFO_CHANNEL
+	///                       of the preview voxel depending on the type
 	void addObjectInfoForType(uint32 type, VUtils::ObjectInfoChannelData &objInfo);
 
-	int  getPreviewStartIdx() const;
+	/// Helper function to get the index of the first geometry description
+	/// that should be included in the preview voxel
+	/// (all consequent ones are also included)
+	/// @retval index of the first geometry description
+	int getPreviewStartIdx() const;
 
 private:
-	const VRayProxyExportOptions &m_options;
+	const VRayProxyExportOptions    &m_options; ///< export options
 
-	std::vector<VUtils::MeshVoxel>   m_voxels;
-	std::vector<GeometryDescription> m_geomDescrList;
+	std::vector<VUtils::MeshVoxel>   m_voxels; ///< voxel array - last voxel is the preview one
+	std::vector<GeometryDescription> m_geomDescrList; ///< cache for sop nodes geometry
 
-	VUtils::VertGeomData *m_previewVerts;
-	VUtils::FaceTopoData *m_previewFaces;
-	VUtils::VertGeomData *m_previewStrandVerts;
-	int                  *m_previewStrands;
+	VUtils::VertGeomData            *m_previewVerts; ///< vertices of preview mesh geometry
+	VUtils::FaceTopoData            *m_previewFaces; ///< faces of preview mesh geometry
+	VUtils::VertGeomData            *m_previewStrandVerts; ///< vertices of preview hair geometry
+	int                             *m_previewStrands; ///< faces of preview hair geometry
 };
 
 }
