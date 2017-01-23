@@ -38,6 +38,11 @@ GeometryExporter::GeometryExporter(OBJ_Geometry &node, VRayExporter &pluginExpor
 
 bool GeometryExporter::hasSubdivApplied() const
 {
+	// here we check if subdivision has been assigned to this node
+	// at render time. V-Ray subdivision is implemented in 2 ways:
+	// 1. as a custom VOP available in V-Ray material context
+	// 2. as spare parameters added to the object node
+
 	bool res = false;
 
 	fpreal t = m_context.getTime();
@@ -142,10 +147,11 @@ Attrs::PluginDesc& GeometryExporter::getPluginDescAt(int idx)
 }
 
 
-void GeometryExporter::cleanup()
+void GeometryExporter::reset()
 {
 	m_myDetailID = 0;
 	m_detailToPluginDesc.clear();
+	m_shopList.clear();
 }
 
 
@@ -153,11 +159,15 @@ int GeometryExporter::exportNodes()
 {
 	SOP_Node *renderSOP = m_objNode.getRenderSopPtr();
 	if (NOT(renderSOP)) {
+		// we don't have a valid render SOP
+		// nothing else to do
 		return 0;
 	}
 
 	GU_DetailHandleAutoReadLock gdl(renderSOP->getCookedGeoHandle(m_context));
 	if (NOT(gdl.isValid())) {
+		// we don't have a valid render geometry gdp
+		// nothing else to do
 		return 0;
 	}
 
@@ -168,17 +178,25 @@ int GeometryExporter::exportNodes()
 		&& !renderSOP->getOperator()->getName().startsWith("VRayNodePhxShaderCache")
 		&& !renderSOP->getOperator()->getName().startsWith("VRayNodeVRayProxy"))
 	{
+		// V-Ray plane SOP and V-Ray scene SOP are still implemented such as
+		// they expect to be final SOP in the SOP network
+		// TODO: need to fix this in future
 		exportVRaySOP(*renderSOP, m_detailToPluginDesc[m_myDetailID]);
 	}
 	else {
+		// handle geometry export from the render gdp
 		exportDetail(*renderSOP, gdl, m_detailToPluginDesc[m_myDetailID]);
 	}
 
+	// get the OBJ transform
 	VRay::Transform tm = VRayExporter::getObjTransform(&m_objNode, m_context);
 
+	// get shop overrides specified on the OBJ node formatted
+	// as Node::user_attributes
 	UT_String userAttrs;
 	getSHOPOverridesAsUserAttributes(userAttrs);
 
+	// handle export of material for this OBJ node
 	VRay::Plugin mtl;
 	if (m_exportGeometry) {
 		mtl = exportMaterial();
@@ -187,7 +205,8 @@ int GeometryExporter::exportNodes()
 	int i = 0;
 	PluginDescList &pluginList = m_detailToPluginDesc.at(m_myDetailID);
 	for (Attrs::PluginDesc &nodeDesc : pluginList) {
-//		TODO: need to fill in node with appropriate names
+		// TODO: need to figure out how to generate names for Node plugins
+		//       comming from different primitives
 		if (nodeDesc.pluginName != "") {
 			continue;
 		}
@@ -370,6 +389,7 @@ int GeometryExporter::exportVRaySOP(SOP_Node &sop, PluginDescList &pluginList)
 	int nPlugins = 1;
 
 	if (NOT(m_exportGeometry)) {
+		// we do not need to export the geometry
 		return nPlugins;
 	}
 
@@ -410,17 +430,21 @@ int GeometryExporter::exportDetail(SOP_Node &sop, GU_DetailHandleAutoReadLock &g
 	const GU_Detail &gdp = *gdl.getGdp();
 
 #ifdef CGR_HAS_AUR
+	// handle export of volume primitives
 	VolumeExporter volExp(m_objNode, m_context, m_pluginExporter);
 	HoudiniVolumeExporter hVoldExp(m_objNode, m_context, m_pluginExporter);
 	volExp.exportPrimitives(gdp, pluginList);
 	hVoldExp.exportPrimitives(gdp, pluginList);
 #endif // CGR_HAS_AUR
 
+	// handle export of hair geometry
 	HairPrimitiveExporter hairExp(m_objNode, m_context, m_pluginExporter);
 	hairExp.exportPrimitives(gdp, pluginList);
 
-
-	// packed prims
+	// handle export of packed primitives:
+	// alembic, vray proxy, packed geometry
+	// TODO: need to implement these as separate primitive exporter
+	// per packed primitive type
 	if (GU_PrimPacked::hasPackedPrimitives(gdp)) {
 		UT_Array<const GA_Primitive *> prims;
 		GU_PrimPacked::getPackedPrimitives(gdp, prims);
@@ -430,7 +454,7 @@ int GeometryExporter::exportDetail(SOP_Node &sop, GU_DetailHandleAutoReadLock &g
 		}
 	}
 
-	// polygonal geometry
+	// handle export of mesh geometry
 	nPlugins += exportPolyMesh(sop, gdp, pluginList);
 
 	return nPlugins;
