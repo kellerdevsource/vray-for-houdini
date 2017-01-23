@@ -163,11 +163,10 @@ private:
 	/// @retval the material V-Ray plugin
 	VRay::Plugin exportMaterial();
 
-	/// Helper function to export packed geometry primitive
-	/// @param sop[in] - parent SOP node for the primitive
-	/// @param prim[in] - the primitive
-	/// @param pluginList[out] - collects plugins generated for the primitive
-	/// @retval number of plugin descriptions added to pluginList
+	/// Helper function to format material overrides specified on the object node
+	/// as Node::user_attributes
+	/// @param userAttrs[out] - string with formatted material overrides
+	/// @retval number of overrides we have found
 	int getSHOPOverridesAsUserAttributes(UT_String& userAttrs) const;
 
 private:
