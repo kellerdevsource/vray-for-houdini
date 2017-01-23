@@ -84,7 +84,7 @@ public:
 private:
 	/// Helper function to export geometry from a custom V-Ray SOP node
 	/// @param sop[in] - V-Ray custom SOP node (V-Ray plane or V-Ray scene)
-	/// @param pluginList[out] - collects plugins generated from the SOP node
+	/// @param pluginList[out] - collects plugins generated for the SOP node
 	/// @retval number of plugin descriptions added to pluginList
 	int exportVRaySOP(SOP_Node &sop, PluginDescList &pluginList);
 
@@ -92,21 +92,82 @@ private:
 	/// This is called recursively when handling packed geometry prims
 	/// @param sop[in] - parent SOP node for the gdp
 	/// @param gdl[in] - read lock handle, fencing the actual gdp
-	/// @param pluginList[out] - collects plugins generated from the gdp
+	/// @param pluginList[out] - collects plugins generated for the gdp
 	/// @retval number of plugin descriptions added to pluginList
 	int exportDetail(SOP_Node &sop, GU_DetailHandleAutoReadLock &gdl, PluginDescList &pluginList);
 
-	int              exportPolyMesh(SOP_Node &sop, const GU_Detail &gdp, PluginDescList &pluginList);
+	/// Helper function to export mesh geometry from a given gdp
+	/// @param sop[in] - parent SOP node for the gdp
+	/// @param gdp[in] - the actual gdp
+	/// @param pluginList[out] - collects plugins generated for the gdp
+	/// @retval number of plugin descriptions added to pluginList
+	int exportPolyMesh(SOP_Node &sop, const GU_Detail &gdp, PluginDescList &pluginList);
 
-	int              exportPacked(SOP_Node &sop, const GU_PrimPacked &prim, PluginDescList &pluginList);
-	uint             getPrimPackedID(const GU_PrimPacked &prim);
-	int              exportPrimPacked(SOP_Node &sop, const GU_PrimPacked &prim, PluginDescList &pluginList);
-	int              exportAlembicRef(SOP_Node &sop, const GU_PrimPacked &prim, PluginDescList &pluginList);
-	int              exportVRayProxyRef(SOP_Node &sop, const GU_PrimPacked &prim, PluginDescList &pluginList);
-	int              exportPackedDisk(SOP_Node &sop, const GU_PrimPacked &prim, PluginDescList &pluginList);
-	int              exportPackedGeometry(SOP_Node &sop, const GU_PrimPacked &prim, PluginDescList &pluginList);
+	/// Helper function to export a packed primitive. It will check if
+	/// the primitive geometry has already been processed
+	/// @param sop[in] - parent SOP node for the primitive
+	/// @param prim[in] - the packed primitive
+	/// @param pluginList[out] - collects plugins generated for the primitive
+	/// @retval number of plugin descriptions added to pluginList
+	int exportPacked(SOP_Node &sop, const GU_PrimPacked &prim, PluginDescList &pluginList);
 
-	VRay::Plugin     exportMaterial();
+	/// Helper function to generate unique id for the packed primitive
+	/// this is used as key in m_detailToPluginDesc map to identify
+	/// plugins generated for the primitve
+	/// @param prim[in] - the packed primitive
+	/// @retval unique primitive id
+	uint getPrimPackedID(const GU_PrimPacked &prim);
+
+	/// Helper function to export a packed primitive
+	/// @param sop[in] - parent SOP node for the primitive
+	/// @param prim[in] - the packed primitive
+	/// @param pluginList[out] - collects plugins generated for the primitive
+	/// @retval number of plugin descriptions added to pluginList
+	int exportPrimPacked(SOP_Node &sop, const GU_PrimPacked &prim, PluginDescList &pluginList);
+
+	/// Helper function to export AlembicRef primitive
+	/// @param sop[in] - parent SOP node for the primitive
+	/// @param prim[in] - the primitive
+	/// @param pluginList[out] - collects plugins generated for the primitive
+	/// @retval number of plugin descriptions added to pluginList
+	int exportAlembicRef(SOP_Node &sop, const GU_PrimPacked &prim, PluginDescList &pluginList);
+
+	/// Helper function to export VRayProxyRef primitive
+	/// @param sop[in] - parent SOP node for the primitive
+	/// @param prim[in] - the primitive
+	/// @param pluginList[out] - collects plugins generated for the primitive
+	/// @retval number of plugin descriptions added to pluginList
+	int exportVRayProxyRef(SOP_Node &sop, const GU_PrimPacked &prim, PluginDescList &pluginList);
+
+	/// Helper function to export PackedDisk primitive (bgeo, bclassic)
+	/// @param sop[in] - parent SOP node for the primitive
+	/// @param prim[in] - the primitive
+	/// @param pluginList[out] - collects plugins generated for the primitive
+	/// @retval number of plugin descriptions added to pluginList
+	int exportPackedDisk(SOP_Node &sop, const GU_PrimPacked &prim, PluginDescList &pluginList);
+
+	/// Helper function to export packed geometry primitive
+	/// @param sop[in] - parent SOP node for the primitive
+	/// @param prim[in] - the primitive
+	/// @param pluginList[out] - collects plugins generated for the primitive
+	/// @retval number of plugin descriptions added to pluginList
+	int exportPackedGeometry(SOP_Node &sop, const GU_PrimPacked &prim, PluginDescList &pluginList);
+
+	/// Helper function to export the material for this OBJ node.
+	/// The material from OBJ node 'shoppath' parameter together with
+	/// V-Ray materials specified on per primitive basis are collected
+	/// during traversal and export of geometry. These are then combined
+	/// into single MtlMulti material which is assigned to all the Nodes.
+	/// Node::user_attributes is utilized to specify the correct material
+	/// id and index the correct material for the specific Node.
+	/// @retval the material V-Ray plugin
+	VRay::Plugin exportMaterial();
+
+	/// Helper function to export packed geometry primitive
+	/// @param sop[in] - parent SOP node for the primitive
+	/// @param prim[in] - the primitive
+	/// @param pluginList[out] - collects plugins generated for the primitive
+	/// @retval number of plugin descriptions added to pluginList
 	int getSHOPOverridesAsUserAttributes(UT_String& userAttrs) const;
 
 private:
@@ -142,7 +203,7 @@ private:
 	/// correct material for the Node. For example: when dealing with instanced
 	/// packed geometry primitives, single geometry could have different materials
 	/// assigned. These are accumulated here.
-	/// @note the material set as OBJ node 'shoppath' parameter is always exported
+	/// @note the material from OBJ node 'shoppath' parameter is always exported
 	///       with id 0. If no such is specified this would be the default material.
 	SHOPList             m_shopList;
 };
