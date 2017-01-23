@@ -23,6 +23,7 @@
 
 namespace VRayForHoudini {
 
+/// Helper structure to hash float3f vertex attribute values
 struct MapVertex {
 	MapVertex():
 		index(0)
@@ -38,11 +39,12 @@ struct MapVertex {
 		return SYSalmostEqual(v[0],_v.v[0]) && SYSalmostEqual(v[1],_v.v[1]) && SYSalmostEqual(v[2],_v.v[2]);
 	}
 
-	float        v[3];
-	mutable int  index;
+	float        v[3]; ///< vertex attribute value
+	mutable int  index; ///< the index of vertex attribute value
 };
 
 
+/// Helper structure to hash MapVertex
 struct MapVertexHash
 {
 	inline std::size_t operator () (const MapVertex &_v) const
@@ -54,14 +56,15 @@ struct MapVertexHash
 };
 
 
+/// Helper structure to wrap relevant map channel properties
 struct MapChannel
 {
 	typedef std::unordered_set<MapVertex, MapVertexHash> VertexSet;
 
-	std::string                 name;
-	VRay::VUtils::VectorRefList vertices;
-	VRay::VUtils::IntRefList    faces;
-	VertexSet                   verticesSet;
+	std::string                 name; ///< map channels name
+	VRay::VUtils::VectorRefList vertices; ///< map channel vertex data
+	VRay::VUtils::IntRefList    faces; ///< map channel face indices
+	VertexSet                   verticesSet; ///< helper to weld vertex attributes
 };
 
 typedef std::unordered_map<std::string, MapChannel> MapChannels;
@@ -70,17 +73,54 @@ typedef std::unordered_map<std::string, MapChannel> MapChannels;
 typedef UT_ValArray< const GEO_Primitive* > GEOPrimList;
 typedef UT_Array< const GA_Attribute * >    GEOAttribList;
 
+/// Get the commonly used float3f attribute filter
 GA_AttributeFilter& GEOgetV3AttribFilter();
 
+/// Copy data from an int attribute to a VRay int list for a given
+/// primitive list
+/// @param attr[in] - the attribute. It can be either vertex, point
+///        or primitive attribute. In case of a point attribute values
+///        referenced multiple times will be copied multiple times in
+///        the output list
+/// @param primList[in] - the primitive list
+/// @param data[out] - output data list of integer values
+/// @retval true if successful
 bool GEOgetDataFromAttribute(const GA_Attribute *attr, const GEOPrimList &primList,
 							 VRay::VUtils::IntRefList &data);
 
+/// Copy data from an float attribute to a VRay float list for a given
+/// primitive list
+/// @param attr[in] - the attribute. It can be either vertex, point
+///        or primitive attribute. In case of a point attribute values
+///        referenced multiple times will be copied multiple times in
+///        the output list
+/// @param primList[in] - the primitive list
+/// @param data[out] - output data list of float values
+/// @retval true if successful
 bool GEOgetDataFromAttribute(const GA_Attribute *attr, const GEOPrimList &primList,
 							 VRay::VUtils::FloatRefList &data);
 
+/// Copy data from an float3f attribute to a VRay vector list for a given
+/// primitive list
+/// @param attr[in] - the attribute. It can be either vertex, point
+///        or primitive attribute. In case of a point attribute values
+///        referenced multiple times will be copied multiple times in
+///        the output list
+/// @param primList[in] - the primitive list
+/// @param data[out] - output data list of vector values
+/// @retval true if successful
 bool GEOgetDataFromAttribute(const GA_Attribute *attr, const GEOPrimList &primList,
 							 VRay::VUtils::VectorRefList &data);
 
+/// Copy data from an float3f attribute to a VRay color list for a given
+/// primitive list
+/// @param attr[in] - the attribute. It can be either vertex, point
+///        or primitive attribute. In case of a point attribute values
+///        referenced multiple times will be copied multiple times in
+///        the output list
+/// @param primList[in] - the primitive list
+/// @param data[out] - output data list of color values
+/// @retval true if successful
 bool GEOgetDataFromAttribute(const GA_Attribute *attr, const GEOPrimList &primList,
 							 VRay::VUtils::ColorRefList &data);
 
