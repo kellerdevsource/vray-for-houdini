@@ -33,7 +33,8 @@ struct MyPoint {
 
 void VRayForHoudini::Texture::exportRampAttribute(VRayExporter &exporter, Attrs::PluginDesc &pluginDesc, OP_Node *op_node,
 												  const std::string &rampAttrName,
-												  const std::string &colAttrName, const std::string &posAttrName, const std::string &typesAttrName, const bool asColor, const bool remapInterp)
+												  const std::string &colAttrName, const std::string &posAttrName, const std::string &typesAttrName,
+												  const bool asColor, const bool remapInterp)
 {
 	const fpreal &t = exporter.getContext().getTime();
 
