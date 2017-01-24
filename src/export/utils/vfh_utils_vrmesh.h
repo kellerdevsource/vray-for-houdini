@@ -19,6 +19,8 @@
 namespace VRayForHoudini {
 namespace Mesh {
 
+/// Helper RAII structure to bind the life cycle of a MeshVoxel
+/// to the lifetime of an instance of this class.
 struct VoxelReleaseRAII {
 	VoxelReleaseRAII(VUtils::MeshInterface &meshIface, int voxelIndex)
 		: m_meshIface(meshIface)
@@ -43,6 +45,13 @@ private:
 	VUTILS_DISABLE_COPY(VoxelReleaseRAII);
 };
 
+
+/// Create mesh geometry from voxels of specified type from a V-Ray proxy file
+/// @param mi[in] - reference V-Ray proxy file interface. Note that mi may be
+///        modified if this is the first time to access its voxels.
+/// @param voxelType[in] - geometry will be created only for voxels
+///        matching this type
+/// @param gdpHandle[out] - write lock handle, guarding the actual output gdp
 int createMeshProxyGeometry(VUtils::MeshInterface &mi, int voxelType, GU_DetailHandle &gdpHandle);
 
 } // namespace Mesh

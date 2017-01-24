@@ -91,7 +91,7 @@ private:
 	/// Helper function to traverse and export primitives from a given gdp
 	/// This is called recursively when handling packed geometry prims
 	/// @param sop[in] - parent SOP node for the gdp
-	/// @param gdl[in] - read lock handle, fencing the actual gdp
+	/// @param gdl[in] - read lock handle, guarding the actual gdp
 	/// @param pluginList[out] - collects plugins generated for the gdp
 	/// @retval number of plugin descriptions added to pluginList
 	int exportDetail(SOP_Node &sop, GU_DetailHandleAutoReadLock &gdl, PluginDescList &pluginList);
