@@ -259,32 +259,84 @@ public:
 
 
 #ifdef CGR_HAS_VRAYSCENE
-	VRay::Plugin                   exportVRayScene(OBJ_Node *obj_node, SOP_Node *geom_node);
+	VRay::Plugin exportVRayScene(OBJ_Node *obj_node, SOP_Node *geom_node);
 #endif
 
-	VRay::Plugin                   exportPlugin(const Attrs::PluginDesc &pluginDesc);
-	void                           exportPluginProperties(VRay::Plugin &plugin, const Attrs::PluginDesc &pluginDesc);
-	int                            exportVrscene(const std::string &filepath, VRay::VRayExportSettings &settings);
+	/// Create or update a plugin from a plugin description
+	/// @param pluginDesc - plugin description with relevant properties set
+	/// @retval invalid Plugin object if not successul
+	VRay::Plugin exportPlugin(const Attrs::PluginDesc &pluginDesc);
 
-	void                           removePlugin(OBJ_Node *node);
-	void                           removePlugin(const std::string &pluginName);
-	void                           removePlugin(const Attrs::PluginDesc &pluginDesc);
+	/// Update a plugin properties from a plugin description
+	/// @param plugin - the plugin to update
+	/// @param pluginDesc - plugin description with relevant properties set
+	void exportPluginProperties(VRay::Plugin &plugin, const Attrs::PluginDesc &pluginDesc);
 
-	int                            renderFrame(int locked=false);
-	int                            renderSequence(int start, int end, int step, int locked=false);
+	/// Exports the current scene contents to the specified file. AppSDK
+	/// serializes all plugins in text format.
+	/// @param filepath - The path to the file where the scene will be exported. The
+	/// file path must contain the name and extension of the destination file.
+	/// @param settings - Additional options such as compression and file splitting
+	/// @retval 0 - no error
+	int exportVrscene(const std::string &filepath, VRay::VRayExportSettings &settings);
 
-	void                           clearKeyFrames(float toTime);
+	/// Delete plugins created for the given OBJ node.
+	void removePlugin(OBJ_Node *node);
 
-	void                           setAnimation(bool on);
-	void                           setCurrentTime(fpreal time);
-	void                           setIPR(int isIPR);
-	void                           setDRSettings();
-	void                           setRendererMode(int mode);
-	void                           setWorkMode(ExpWorkMode mode);
-	void                           setContext(const OP_Context &ctx);
-	void                           setAbort();
-	void                           setRenderSize(int w, int h);
-	void                           setSettingsRtEngine();
+	/// Delete plugin with the given name
+	void removePlugin(const std::string &pluginName);
+
+	/// Delete plugin for the plugin description
+	void removePlugin(const Attrs::PluginDesc &pluginDesc);
+
+	/// Start rendering at the current time. This will do different this depending on
+	/// the work mode of the exporter- export vrscene, render or both
+	/// @param locked[in] - when true this will force the current thread to block
+	///        until rendering is done. By default this is a non-blocking call
+	/// @retval 0 - no error
+	int renderFrame(int locked=false);
+
+	/// Start rendering an animation sequence.
+	/// @param start[in] - animation start time
+	/// @param end[in] - animation end time
+	/// @param step[in] - animation time step
+	/// @param locked[in] - when true this will force the current thread to block
+	///        until rendering is done. By default this is a non-blocking call
+	/// @retval 0 - no error
+	int renderSequence(int start, int end, int step, int locked=false);
+
+	void clearKeyFrames(float toTime);
+
+	/// Set if we are exporting animation
+	/// @note also used for motion blur
+	void setAnimation(bool on);
+
+	/// Set current export time
+	void setCurrentTime(fpreal time);
+
+	/// Set if we are exporting for IPR
+	void setIPR(int isIPR);
+
+	/// Adjust DR options and hosts based on what is set in the ROP parameters
+	void setDRSettings();
+
+	/// Set the render mode: Production/RT CPU/RT GPU
+	void setRendererMode(int mode);
+
+	/// Set the work mode: export vrscene/render/both
+	void setWorkMode(ExpWorkMode mode);
+
+	/// Set current export context
+	void setContext(const OP_Context &ctx);
+
+	/// Abort rendering at first possible time
+	void setAbort();
+
+	/// Set image width and height
+	void setRenderSize(int w, int h);
+
+	/// Export RT engine settings
+	void setSettingsRtEngine();
 
 	OP_Context                    &getContext() { return m_context; }
 	VRayPluginRenderer            &getRenderer() { return m_renderer; }
