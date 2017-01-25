@@ -184,7 +184,7 @@ public:
 	/// Removes all keyframe values at times less than 'toTime'
 	void clearFrames(float toTime);
 
-	/// Start rendering the current time.
+	/// Start rendering at the current time.
 	/// @param locked[in] - when true this will force the current thread to block
 	///        until rendering is done. By default this is a non-blocking call
 	/// @retval 0 - no error
