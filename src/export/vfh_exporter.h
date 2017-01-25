@@ -235,8 +235,6 @@ private:
 	FloatSet                       m_exportedFrames;
 
 public:
-	static bool                    TraverseOBJs(OP_Node &op_node, void *data);
-	static void                    TraverseOBJ(OBJ_Node *obj_node, void *data);
 
 	void                           addOpCallback(OP_Node *op_node, OP_EventMethod cb);
 	void                           delOpCallback(OP_Node *op_node, OP_EventMethod cb);
