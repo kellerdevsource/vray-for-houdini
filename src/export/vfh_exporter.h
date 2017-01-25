@@ -87,57 +87,175 @@ struct MotionBlurParams {
 	fpreal mb_frame_inc;
 };
 
-
+/// Vfh main exporter. This is the main class responsible for translating
+/// Houdini geometry and nodes to V-Ray plugins, intilizing and starting
+/// the rendering process
 class VRayExporter
 {
 public:
+	/// Available work modes for the exporter
 	// NOTE: Keep in sync with "render_export_mode"
 	enum ExpWorkMode {
-		ExpRender = 0,
-		ExpExportRender,
-		ExpExport,
+		ExpRender = 0, ///< only render
+		ExpExportRender, ///< export a vrscene and render
+		ExpExport, ///< export a vrscene
 	};
 
 	VRayExporter(VRayRendererNode *rop);
 	~VRayExporter();
 
 public:
-	int                            initRenderer(int hasUI, int reInit);
-	void                           initExporter(int hasUI, int nframes, fpreal tstart, fpreal tend);
+	/// Create and initilize or reset the V-Ray renderer instance.
+	/// This will stop currently running rendering (if any).
+	/// @param hasUI[in] - true to enable the VFB, false if VFB is not needed
+	///        for example when running Houdini in non-GUI mode
+	/// @param reInit[in] - true to re-create the V-Ray renderer instance
+	///        otherwise it only resets the existing instance
+	/// @retval true on success
+	int initRenderer(int hasUI, int reInit);
 
-	void                           fillCameraData(const OBJ_Node &camera, const OP_Node &rop, ViewParams &viewParams);
-	void                           fillSettingsMotionBlur(ViewParams &viewParams);
-	void                           fillPhysicalCamera(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc);
-	void                           fillSettingsCameraDof(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc);
-	void                           fillCameraDefault(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc);
-	void                           fillSettingsCamera(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc);
-	void                           fillRenderView(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc);
-	void                           fillStereoSettings(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc);
-	void                           fillMotionBlurParams(MotionBlurParams &mbParams);
-	void                           fillSettingsOutput(Attrs::PluginDesc &pluginDesc);
+	/// Prepare for scene export and clear cached data from previous invocations
+	/// @param hasUI[in] - if the VFB is enabled
+	/// @param nframes[in] - how many frames are we going to render
+	/// @param tstart[in] - start export time
+	/// @param tend[in] - end export time
+	void initExporter(int hasUI, int nframes, fpreal tstart, fpreal tend);
 
-	int                            exportView();
-	void                           exportScene();
-	void                           exportSettings();
-	void                           exportLights();
-	void                           exportRenderChannels(OP_Node *op_node);
-	void                           exportEnvironment(OP_Node *op_node);
-	void                           exportEffects(OP_Node *op_net);
-	void                           exportFrame(fpreal time);
-	void                           exportEnd();
+	/// Gather data for camera settings
+	/// @param camera[in] - the active camera
+	/// @param rop[in] - the rop node invoking the rendering
+	/// @param viewParams[out] - collects camera settings
+	void fillCameraData(const OBJ_Node &camera, const OP_Node &rop, ViewParams &viewParams);
 
-	VRay::Plugin                   exportObject(OBJ_Node *obj_node);
-	VRay::Plugin                   exportVRayClipper(OBJ_Node &clipperNode);
-	VRay::Plugin                   exportParticles(OBJ_Node *dop_network);
+	/// Gather data for motion blur
+	/// @param viewParams[out] - collects motion blur settings
+	void fillSettingsMotionBlur(ViewParams &viewParams);
 
-	void                           exportDisplacementDesc(OBJ_Node *obj_node, Attrs::PluginDesc &pluginDesc);
-	VRay::Plugin                   exportDisplacement(OBJ_Node *obj_node, VRay::Plugin &geomPlugin);
-	VRay::Plugin                   exportLight(OBJ_Node *obj_node);
-	VRay::Plugin                   exportVop(OP_Node *op_node, ExportContext *parentContext = nullptr);
-	VRay::Transform                exportTransformVop(VOP_Node &vop_node, ExportContext *parentContext = nullptr);
-	VRay::Plugin                   exportMaterial(SHOP_Node &shop_node);
-	VRay::Plugin                   exportDefaultHeadlight(bool update = false);
-	VRay::Plugin                   exportDefaultMaterial();
+	/// Fill in physical camera settings
+	/// @param viewParams[in] - holds data for camera settings
+	/// @param pluginDesc[out] - physical camera plugin description
+	void fillPhysicalCamera(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc);
+
+	/// Fill in depth of field settings
+	/// @param viewParams[in] - holds data for camera settings
+	/// @param pluginDesc[out] - depth of field plugin description
+	void fillSettingsCameraDof(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc);
+
+	/// Fill in default camera settings
+	/// @param viewParams[in] - holds data for camera settings
+	/// @param pluginDesc[out] - default camera plugin description
+	void fillCameraDefault(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc);
+
+	/// Fill in camera settings
+	/// @param viewParams[in] - holds data for camera settings
+	/// @param pluginDesc[out] - camera settings plugin description
+	void fillSettingsCamera(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc);
+
+	/// Fill in render view settings
+	/// @param viewParams[in] - holds data for camera settings
+	/// @param pluginDesc[out] - render view settings plugin description
+	void fillRenderView(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc);
+
+	/// Fill in stereoscopic settings
+	/// @param viewParams[in] - holds data for camera settings
+	/// @param pluginDesc[out] - stereoscopic settings plugin description
+	void fillStereoSettings(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc);
+
+	/// Fill in motion blur settings
+	/// @param pluginDesc[out] - motion blur settings plugin description
+	void fillMotionBlurParams(MotionBlurParams &mbParams);
+
+	/// Fill in output settings
+	/// @param pluginDesc[out] - output settings plugin description
+	void fillSettingsOutput(Attrs::PluginDesc &pluginDesc);
+
+	/// Export camera related settings - camera, dof, motion blur, etc.
+	/// This is called once for each frame we want to render
+	/// @retval 0 on success
+	int exportView();
+
+	/// Export the actual scene - geometry, materials, lights, environment,
+	/// volumes and render channels. This is called once for each frame we
+	/// want to render
+	void exportScene();
+
+	/// Export global renderer settings - color mapping, gi, irradiance cache, etc.
+	/// This is called once when a render session is initililzed.
+	void exportSettings();
+
+	/// Export active lights in the scene
+	/// This is called once for each frame we want to render
+	void exportLights();
+
+	/// Export render channels
+	/// This is called once for each frame we want to render
+	/// @param op_node[in] - render channels collector VOP node
+	void exportRenderChannels(OP_Node *op_node);
+
+	/// Export environment
+	/// This is called once for each frame we want to render
+	/// @param op_node[in] - environment VOP node
+	void exportEnvironment(OP_Node *op_node);
+
+	/// Export volumetric effects
+	/// This is called once for each frame we want to render
+	/// @param op_node[in] - environment VOP node
+	void exportEffects(OP_Node *op_net);
+
+	/// Export scene at a given time
+	/// This is called once for each frame we want to render
+	void exportFrame(fpreal time);
+
+	/// Export cleanup callback. Called when the rendering has finished.
+	void exportEnd();
+
+	/// Export OBJ_geometry node
+	/// @retval V-Ray plugin created for that node
+	VRay::Plugin exportObject(OBJ_Node *obj_node);
+
+	/// Export VRayClipper node
+	/// @retval V-Ray plugin created for that node
+	VRay::Plugin exportVRayClipper(OBJ_Node &clipperNode);
+
+	VRay::Plugin exportParticles(OBJ_Node *dop_network);
+
+	/// Fill in displacement/subdivision render properties for the given node
+	/// @param obj_node[in] - the OBJ_Geometry node
+	/// @param pluginDesc[out] - diplacement/subdivision plugin description
+	void exportDisplacementDesc(OBJ_Node *obj_node, Attrs::PluginDesc &pluginDesc);
+
+	/// Export the given geomtry with displacement/subdivision at render time
+	/// @param obj_node[in] - the OBJ_Geometry node owner of displacement/subdivision
+	///        render properties
+	/// @param geomPlugin[in] - geometry to displace/subdivide
+	/// @retval V-Ray displacement/subdivision plugin
+	VRay::Plugin exportDisplacement(OBJ_Node *obj_node, VRay::Plugin &geomPlugin);
+
+	/// Export OBJ_Light node
+	/// @retval V-Ray plugin created for that node
+	VRay::Plugin exportLight(OBJ_Node *obj_node);
+
+	/// Export VOP node
+	/// @retval V-Ray plugin created for that node
+	VRay::Plugin exportVop(OP_Node *op_node, ExportContext *parentContext = nullptr);
+
+	/// Export Make transform VOP node
+	/// @retval V-Ray transform for that node
+	VRay::Transform exportTransformVop(VOP_Node &vop_node, ExportContext *parentContext = nullptr);
+
+	/// Export V-Ray material SHOP network
+	/// @retval V-Ray surface material plugin for that node
+	VRay::Plugin exportMaterial(SHOP_Node &shop_node);
+
+	/// Export the default light created when there are no lights in the scene
+	/// @param update[in] - flags whether this is called from IPR callback
+	/// @retval V-Ray plugin for default light
+	VRay::Plugin exportDefaultHeadlight(bool update = false);
+
+	/// Export defaull V-Ray material. This is used when no valid material is found
+	/// for the object
+	/// @retval V-Ray plugin for default material
+	VRay::Plugin exportDefaultMaterial();
 
 
 #ifdef CGR_HAS_VRAYSCENE
