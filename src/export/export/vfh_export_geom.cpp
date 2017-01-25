@@ -38,6 +38,11 @@ GeometryExporter::GeometryExporter(OBJ_Geometry &node, VRayExporter &pluginExpor
 
 bool GeometryExporter::hasSubdivApplied() const
 {
+	// here we check if subdivision has been assigned to this node
+	// at render time. V-Ray subdivision is implemented in 2 ways:
+	// 1. as a custom VOP available in V-Ray material context
+	// 2. as spare parameters added to the object node
+
 	bool res = false;
 
 	fpreal t = m_context.getTime();
@@ -142,10 +147,11 @@ Attrs::PluginDesc& GeometryExporter::getPluginDescAt(int idx)
 }
 
 
-void GeometryExporter::cleanup()
+void GeometryExporter::reset()
 {
 	m_myDetailID = 0;
 	m_detailToPluginDesc.clear();
+	m_shopList.clear();
 }
 
 
@@ -153,13 +159,25 @@ int GeometryExporter::exportNodes()
 {
 	SOP_Node *renderSOP = m_objNode.getRenderSopPtr();
 	if (NOT(renderSOP)) {
+		// we don't have a valid render SOP
+		// nothing else to do
 		return 0;
 	}
 
 	GU_DetailHandleAutoReadLock gdl(renderSOP->getCookedGeoHandle(m_context));
 	if (NOT(gdl.isValid())) {
+		// we don't have a valid render geometry gdp
+		// nothing else to do
 		return 0;
 	}
+
+	// geometry is exported in 2 steps:
+	// 1. we traverse the render gdp, export the geometry that
+	//    we can handle and wrap it in a Node  plugin description
+	//    which is accumulated into m_detailToPluginDesc map
+	// 2. we get the list of Nodes generated for the render gdp
+	//    and adjust properties like transform, material,
+	//    user_attributes, etc.
 
 	m_myDetailID = gdl.handle().hash();
 	const GU_Detail &gdp = *gdl.getGdp();
@@ -168,26 +186,35 @@ int GeometryExporter::exportNodes()
 		&& !renderSOP->getOperator()->getName().startsWith("VRayNodePhxShaderCache")
 		&& !renderSOP->getOperator()->getName().startsWith("VRayNodeVRayProxy"))
 	{
+		// V-Ray plane SOP and V-Ray scene SOP are still implemented such as
+		// they expect to be final SOP in the SOP network
+		// TODO: need to fix this in future
 		exportVRaySOP(*renderSOP, m_detailToPluginDesc[m_myDetailID]);
 	}
 	else {
+		// handle geometry export from the render gdp
 		exportDetail(*renderSOP, gdl, m_detailToPluginDesc[m_myDetailID]);
 	}
 
+	// get the OBJ transform
 	VRay::Transform tm = VRayExporter::getObjTransform(&m_objNode, m_context);
 
+	// format material overrides specified on the object as user_attributes
 	UT_String userAttrs;
 	getSHOPOverridesAsUserAttributes(userAttrs);
 
+	// handle export of material for the object node
 	VRay::Plugin mtl;
 	if (m_exportGeometry) {
 		mtl = exportMaterial();
 	}
 
+	// adjust Node parameters
 	int i = 0;
 	PluginDescList &pluginList = m_detailToPluginDesc.at(m_myDetailID);
 	for (Attrs::PluginDesc &nodeDesc : pluginList) {
-//		TODO: need to fill in node with appropriate names
+		// TODO: need to figure out how to generate names for Node plugins
+		//       comming from different primitives
 		if (nodeDesc.pluginName != "") {
 			continue;
 		}
@@ -215,6 +242,7 @@ int GeometryExporter::exportNodes()
 
 		attr = nodeDesc.get("material");
 		if (NOT(attr)) {
+			// add the material only if it hasn't been specified yet
 			if (mtl) {
 				nodeDesc.addAttribute(Attrs::PluginAttr("material", mtl));
 			}
@@ -244,6 +272,7 @@ VRay::Plugin GeometryExporter::exportMaterial()
 	mtls_list.reserve(m_shopList.size() + 1);
 	ids_list.reserve(m_shopList.size() + 1);
 
+	// object material is always exported with id 0
 	SHOP_Node *shopNode = m_pluginExporter.getObjMaterial(&m_objNode, m_context.getTime());
 	if (shopNode) {
 		mtls_list.emplace_back(m_pluginExporter.exportMaterial(*shopNode));
@@ -254,6 +283,7 @@ VRay::Plugin GeometryExporter::exportMaterial()
 		ids_list.emplace_back(0);
 	}
 
+	// generate id for each SHOP and add it to the material list
 	SHOPHasher hasher;
 	for (const UT_String &shoppath : m_shopList) {
 		SHOP_Node *shopNode = OPgetDirector()->findSHOPNode(shoppath);
@@ -262,6 +292,7 @@ VRay::Plugin GeometryExporter::exportMaterial()
 		ids_list.emplace_back(hasher(shopNode));
 	}
 
+	// export single MtlMulti material
 	Attrs::PluginDesc mtlDesc;
 	mtlDesc.pluginID = "MtlMulti";
 	mtlDesc.pluginName = VRayExporter::getPluginName(&m_objNode, "Mtl");
@@ -282,7 +313,7 @@ VRay::Plugin GeometryExporter::exportMaterial()
 
 	mtl = m_pluginExporter.exportPlugin(mtlDesc);
 
-
+	// handle if object is forced as matte
 	if (isNodeMatte()) {
 		Attrs::PluginDesc mtlDesc;
 		mtlDesc.pluginID = "MtlWrapper";
@@ -298,6 +329,7 @@ VRay::Plugin GeometryExporter::exportMaterial()
 		mtl = m_pluginExporter.exportPlugin(mtlDesc);
 	}
 
+	// handle if object is forced as phantom
 	if (isNodePhantom()) {
 		Attrs::PluginDesc mtlDesc;
 		mtlDesc.pluginID = "MtlRenderStats";
@@ -323,9 +355,11 @@ int GeometryExporter::getSHOPOverridesAsUserAttributes(UT_String &userAttrs) con
 		return nOverrides;
 	}
 
+	// specify the id of the material to use
 	userAttrs += VFH_ATTR_MATERIAL_ID;
 	userAttrs += "=0;";
 
+	// handle shop overrides specified on the object node
 	const PRM_ParmList *shopParmList = shopNode->getParmList();
 	const PRM_ParmList *objParmList = m_objNode.getParmList();
 
@@ -370,6 +404,7 @@ int GeometryExporter::exportVRaySOP(SOP_Node &sop, PluginDescList &pluginList)
 	int nPlugins = 1;
 
 	if (NOT(m_exportGeometry)) {
+		// we do not need to export the geometry
 		return nPlugins;
 	}
 
@@ -399,10 +434,6 @@ int GeometryExporter::exportVRaySOP(SOP_Node &sop, PluginDescList &pluginList)
 }
 
 
-// traverse through all primitives
-// polygonal primitives should be exported as single GeomStaticMesh
-// for packed primitives - need to hash what has alreay been exported
-// hash based on primitive id / detail id
 int GeometryExporter::exportDetail(SOP_Node &sop, GU_DetailHandleAutoReadLock &gdl, PluginDescList &pluginList)
 {
 	int nPlugins = 0;
@@ -410,17 +441,21 @@ int GeometryExporter::exportDetail(SOP_Node &sop, GU_DetailHandleAutoReadLock &g
 	const GU_Detail &gdp = *gdl.getGdp();
 
 #ifdef CGR_HAS_AUR
+	// handle export of volume primitives
 	VolumeExporter volExp(m_objNode, m_context, m_pluginExporter);
 	HoudiniVolumeExporter hVoldExp(m_objNode, m_context, m_pluginExporter);
 	volExp.exportPrimitives(gdp, pluginList);
 	hVoldExp.exportPrimitives(gdp, pluginList);
 #endif // CGR_HAS_AUR
 
+	// handle export of hair geometry
 	HairPrimitiveExporter hairExp(m_objNode, m_context, m_pluginExporter);
 	hairExp.exportPrimitives(gdp, pluginList);
 
-
-	// packed prims
+	// handle export of packed primitives:
+	// alembic, vray proxy, packed geometry
+	// TODO: need to implement these as separate primitive exporter
+	// per packed primitive type
 	if (GU_PrimPacked::hasPackedPrimitives(gdp)) {
 		UT_Array<const GA_Primitive *> prims;
 		GU_PrimPacked::getPackedPrimitives(gdp, prims);
@@ -430,7 +465,7 @@ int GeometryExporter::exportDetail(SOP_Node &sop, GU_DetailHandleAutoReadLock &g
 		}
 	}
 
-	// polygonal geometry
+	// handle export of mesh geometry
 	nPlugins += exportPolyMesh(sop, gdp, pluginList);
 
 	return nPlugins;
@@ -441,56 +476,27 @@ int GeometryExporter::exportPolyMesh(SOP_Node &sop, const GU_Detail &gdp, Plugin
 {
 	int nPlugins = 0;
 
-	MeshExporter polyMeshExporter(gdp, m_pluginExporter);
-	polyMeshExporter.setSOPContext(&sop)
-					.setSubdivApplied(hasSubdivApplied());
-
+	MeshExporter polyMeshExporter(m_objNode, m_context, m_pluginExporter);
+	polyMeshExporter.init(gdp);
+	polyMeshExporter.setSubdivApplied(hasSubdivApplied());
 	if (polyMeshExporter.hasPolyGeometry()) {
-		// add new node to our list of nodes
-		pluginList.push_back(Attrs::PluginDesc("", "Node"));
-		Attrs::PluginDesc &nodeDesc = pluginList.back();
-		nPlugins = 1;
-
-		SHOPList shopList;
-		int nSHOPs = polyMeshExporter.getSHOPList(shopList);
-		if (nSHOPs > 0) {
-			nodeDesc.addAttribute(Attrs::PluginAttr(VFH_ATTR_MATERIAL_ID, -1));
+		if (m_exportGeometry) {
+			polyMeshExporter.exportPrimitives(gdp, pluginList);
 		}
+		else {
+			// we don't want to reexport the geometry so just
+			// add new node to our list of nodes
+			pluginList.push_back(Attrs::PluginDesc("", "Node"));
+			Attrs::PluginDesc &nodeDesc = pluginList.back();
 
-		if (NOT(m_exportGeometry)) {
-			return nPlugins;
-		}
-
-		// geometry
-		Attrs::PluginDesc geomDesc;
-		polyMeshExporter.asPluginDesc(geomDesc);
-		VRay::Plugin geom = m_pluginExporter.exportPlugin(geomDesc);
-		nodeDesc.addAttribute(Attrs::PluginAttr("geometry", geom));
-
-		// material
-		if (nSHOPs > 0) {
-			VRay::ValueList mtls_list;
-			VRay::IntList   ids_list;
-			mtls_list.reserve(nSHOPs);
-			ids_list.reserve(nSHOPs);
-
-			SHOPHasher hasher;
-			for (const UT_String &shoppath : shopList) {
-				SHOP_Node *shopNode = OPgetDirector()->findSHOPNode(shoppath);
-				UT_ASSERT( shopNode );
-				mtls_list.emplace_back(m_pluginExporter.exportMaterial(*shopNode));
-				ids_list.emplace_back(hasher(shopNode));
+			SHOPList shopList;
+			int nSHOPs = polyMeshExporter.getSHOPList(shopList);
+			if (nSHOPs > 0) {
+				nodeDesc.addAttribute(Attrs::PluginAttr(VFH_ATTR_MATERIAL_ID, -1));
 			}
-
-			Attrs::PluginDesc mtlDesc;
-			mtlDesc.pluginID = "MtlMulti";
-			mtlDesc.pluginName = VRayExporter::getPluginName(&sop, boost::str(Parm::FmtPrefixManual % "Mtl" % std::to_string(gdp.getUniqueId())));
-
-			mtlDesc.addAttribute(Attrs::PluginAttr("mtls_list", mtls_list));
-			mtlDesc.addAttribute(Attrs::PluginAttr("ids_list",  ids_list));
-
-			nodeDesc.addAttribute(Attrs::PluginAttr("material", m_pluginExporter.exportPlugin(mtlDesc)));
 		}
+
+		nPlugins = 1;
 	}
 
 	return nPlugins;
@@ -499,11 +505,16 @@ int GeometryExporter::exportPolyMesh(SOP_Node &sop, const GU_Detail &gdp, Plugin
 
 int GeometryExporter::exportPacked(SOP_Node &sop, const GU_PrimPacked &prim, PluginDescList &pluginList)
 {
+	// get primitive unique id and check if we've already
+	// processed that geometry
 	uint packedID = getPrimPackedID(prim);
 	if (NOT(m_detailToPluginDesc.count(packedID))) {
+		// we haven't, so export geometry from that primitive
 		exportPrimPacked(sop, prim, m_detailToPluginDesc[packedID]);
 	}
 
+	// get the list of Node descriptions for the primitive and
+	// adjust it's properties as transform, material, user_attributes, etc.
 	PluginDescList primPluginList = m_detailToPluginDesc.at(packedID);
 
 	UT_Matrix4D fullxform;
@@ -528,7 +539,9 @@ int GeometryExporter::exportPacked(SOP_Node &sop, const GU_PrimPacked &prim, Plu
 			attr->paramValue.valTransform =  tm * attr->paramValue.valTransform;
 		}
 
-
+		// we assign material and user_attributes only if material
+		// has not been previously assigned. Existing VFH_ATTR_MATERIAL_ID
+		// property signals that the node already has material and overrides set
 		attr = nodeDesc.get(VFH_ATTR_MATERIAL_ID);
 		if (   NOT(attr)
 			&& mtlpath.isValid() )
@@ -629,7 +642,7 @@ int GeometryExporter::exportPrimPacked(SOP_Node &sop, const GU_PrimPacked &prim,
 	// packed primitives can be of different types
 	// currently supporting:
 	//   AlembicRef - geometry in alembic file on disk
-	//   PackedDisk - geometry file on disk
+	//   PackedDisk - geometry in partio file on disk
 	//   PackedGeometry - in-mem geometry
 
 	int nPlugins = 0;
@@ -740,9 +753,7 @@ int GeometryExporter::exportVRayProxyRef(SOP_Node &sop, const GU_PrimPacked &pri
 
 int GeometryExporter::exportPackedDisk(SOP_Node &sop, const GU_PrimPacked &prim, PluginDescList &pluginList)
 {
-	// there is path attribute, but it is NOT holding a ref to a SOP node =>
-	// interpret the string as filepath and export as VRayProxy plugin
-	// TODO: need to test - probably not working properly
+	// TODO: implement this
 
 	pluginList.push_back(Attrs::PluginDesc("", "Node"));
 	Attrs::PluginDesc &nodeDesc = pluginList.back();
@@ -774,9 +785,10 @@ int GeometryExporter::exportPackedDisk(SOP_Node &sop, const GU_PrimPacked &prim,
 
 int GeometryExporter::exportPackedGeometry(SOP_Node &sop, const GU_PrimPacked &prim, PluginDescList &pluginList)
 {
-	//PackedGeometry - in-mem geometry
-	//               "path" attibute references a SOP ( Pack )
-	//               otherwise take geometry directly from packed GU_Detail
+	// PackedGeometry - in-mem geometry
+	// "path" attibute references the Pack SOP
+	// so take its input gdp
+	// TODO: just unpack the packed detail
 
 	int nPlugins = 0;
 

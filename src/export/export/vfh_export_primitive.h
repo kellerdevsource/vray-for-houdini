@@ -21,7 +21,6 @@ namespace VRayForHoudini {
 
 typedef std::vector< VRay::Plugin > PluginList;
 typedef std::list< Attrs::PluginDesc > PluginDescList;
-typedef std::unordered_map< uint, PluginDescList > DetailToPluginDesc;
 
 /// Base class for exporting primitives from OBJ nodes
 class PrimitiveExporter {
