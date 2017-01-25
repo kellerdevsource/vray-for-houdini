@@ -87,7 +87,7 @@ private:
 	AppSdkInit& operator=(AppSdkInit const&);
 
 private:
-	// needed to initialize renderer context
+	// needed to initialize V-Ray renderer context
 	VRay::VRayInit       *m_vrayInit;
 	// dummy renderer keeps references to shared plugin libraries
 	// when resetting/removing/destroying true renderers
