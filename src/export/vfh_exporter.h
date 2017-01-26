@@ -338,49 +338,151 @@ public:
 	/// Export RT engine settings
 	void setSettingsRtEngine();
 
-	OP_Context                    &getContext() { return m_context; }
-	VRayPluginRenderer            &getRenderer() { return m_renderer; }
-	VRayRendererNode              &getRop() { return *m_rop; }
-	ROP_RENDER_CODE                getError() const { return m_error; }
+	/// Get current export context
+	OP_Context& getContext() { return m_context; }
 
-	int                            isGPU() const { return m_isGPU; }
-	int                            isIPR() const { return m_isIPR; }
-	int                            isAborted() const { return m_isAborted; }
-	int                            isAnimation() const { return m_isAnimation; }
-	int                            isStereoView() const;
-	int                            isPhysicalView(const OBJ_Node &camera) const;
-	int                            isNodeAnimated(OP_Node *op_node);
-	int                            isLightEnabled(OP_Node *op_node);
+	/// Get vfh plugin renderer
+	VRayPluginRenderer& getRenderer() { return m_renderer; }
 
-	int                            hasVelocityOn(OP_Node &rop) const;
-	int                            hasMotionBlur(OP_Node &rop, OBJ_Node &camera) const;
+	/// Get the V-Ray ROP bound to this exporter
+	VRayRendererNode& getRop() { return *m_rop; }
 
-	static OP_Input               *getConnectedInput(OP_Node *op_node, const std::string &inputName);
-	static OP_Node                *getConnectedNode(OP_Node *op_node, const std::string &inputName);
-	static const Parm::SocketDesc *getConnectedOutputType(OP_Node *op_node, const std::string &inputName);
+	/// Get ROP error code. This is called from the V-Ray ROP on every frame
+	/// to check if rendering should be aborted
+	ROP_RENDER_CODE getError() const { return m_error; }
 
-	static std::string             getPluginName(OP_Node *op_node, const std::string &prefix="", const std::string &suffix="");
-	static std::string             getPluginName(OBJ_Node *obj_node);
+	/// Test if we are using the GPU engine
+	int isGPU() const { return m_isGPU; }
 
-	static OBJ_Node               *getCamera(const OP_Node *rop);
-	SHOP_Node                     *getObjMaterial(OBJ_Node *obj, fpreal t=0.0);
-	static VRay::Transform         getObjTransform(OBJ_Node *obj_node, OP_Context &context, bool flip=false);
-	static void                    getObjTransform(OBJ_Node *obj_node, OP_Context &context, float tm[4][4]);
+	/// Test if we are rendering in IPR mode
+	int isIPR() const { return m_isIPR; }
 
-	static void                    TransformToMatrix4(const VUtils::TraceTransform &tm, UT_Matrix4 &m);
-	static VRay::Transform         Matrix4ToTransform(const UT_Matrix4D &m4, bool flip=false);
-	static OP_Node                *FindChildNodeByType(OP_Node *op_node, const std::string &op_type);
+	/// Test if we need to abort the rendering
+	int isAborted() const { return m_isAborted; }
 
-	bool                           setAttrsFromUTOptions(Attrs::PluginDesc &pluginDesc, const UT_Options &options) const;
-	void                           setAttrValueFromOpNodePrm(Attrs::PluginDesc &plugin, const Parm::AttrDesc &parmDesc, OP_Node &opNode, const std::string &parmName) const;
-	void                           setAttrsFromOpNodePrms(Attrs::PluginDesc &plugin, OP_Node *opNode, const std::string &prefix="", bool remapInterp=false);
-	void                           setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDesc, VOP_Node *vopNode, ExportContext *parentContext=nullptr);
+	/// Test if we are going to export data for more that single frame
+	/// i.e. animation, motion blur or output velocity channel
+	int isAnimation() const { return m_isAnimation; }
 
-	VRay::Plugin                   exportConnectedVop(VOP_Node *vop_node, int inpidx, ExportContext *parentContext = nullptr);
-	VRay::Plugin                   exportConnectedVop(VOP_Node *vop_node, const UT_String &inputName, ExportContext *parentContext = nullptr);
-	void                           phxAddSimumation(VRay::Plugin sim);
+	/// Test if we are using stereo camera. This is setup on the V-Ray ROP
+	int isStereoView() const;
 
-	void                           setAttrsFromSHOPOverrides(Attrs::PluginDesc &pluginDesc, VOP_Node &vopNode);
+	/// Test if we are using physical camera
+	/// @param camera[in] - camera object to read parameters from
+	int isPhysicalView(const OBJ_Node &camera) const;
+
+	/// Test if a node is animated
+	int isNodeAnimated(OP_Node *op_node);
+
+	/// Test if a ligth is enabled i.e. its enabled flag is on,
+	/// intensity is > 0 or its a forced light on the V-Ray ROP
+	int isLightEnabled(OP_Node *op_node);
+
+	/// Test if velocity channels is enabled
+	/// @param rop[in] - the V-Ray ROP to test for velocity channel enabled
+	int hasVelocityOn(OP_Node &rop) const;
+
+	/// Test if motion blur is enabled
+	/// @param rop[in] - the V-Ray ROP
+	/// @param camera[in] - active render camera
+	int hasMotionBlur(OP_Node &rop, OBJ_Node &camera) const;
+
+	/// Helper functions to retrieve the input node given an input connection name
+	/// @param op_node[in] - VOP node
+	/// @param inputName[in] -  the input connection name
+	/// @retval the VOP input
+	static OP_Input* getConnectedInput(OP_Node *op_node, const std::string &inputName);
+	static OP_Node* getConnectedNode(OP_Node *op_node, const std::string &inputName);
+
+	/// Helper function to retrieve the connection type given an input connection name
+	/// @param op_node[in] - VOP node
+	/// @param inputName[in] -  the input connection name
+	/// @retval the connection type
+	static const Parm::SocketDesc* getConnectedOutputType(OP_Node *op_node, const std::string &inputName);
+
+	/// Helper functions to generate a plugin name for a given node
+	/// @param op_node[in] - the node
+	/// @param prefix[in] - name prefix
+	/// @param suffix[in] - name suffix
+	/// @retval plugin name
+	static std::string getPluginName(OP_Node *op_node, const std::string &prefix="", const std::string &suffix="");
+	static std::string getPluginName(OBJ_Node *obj_node);
+
+	/// Helper function to get the active camera from a given ROP node
+	/// @param rop[in] - the ROP node
+	/// @retval the active camera
+	static OBJ_Node* getCamera(const OP_Node *rop);
+
+	/// Helper function to get material for an OBJ_Geometry node
+	/// @param obj[in] - the OBJ node
+	/// @param t[in] - evaluation time for the paremeter
+	/// @retval the SHOP node
+	static SHOP_Node* getObjMaterial(OBJ_Node *obj, fpreal t=0.0);
+
+	/// Helper function to get OBJ node transform as VRay::Transform
+	/// @param obj[in] - the OBJ node
+	/// @param context[in] - evaluation time for the paremeters
+	/// @param flip[in] - whether to flip y and z axis
+	static VRay::Transform getObjTransform(OBJ_Node *obj_node, OP_Context &context, bool flip=false);
+
+	/// Helper function to get OBJ node transform as 2d array of floats
+	/// @param obj[in] - the OBJ node
+	/// @param context[in] - evaluation time for the paremeters
+	/// @param tm[out] - output trasform
+	static void getObjTransform(OBJ_Node *obj_node, OP_Context &context, float tm[4][4]);
+
+	/// Convert from VUtils transform to Houdini one
+	static void TransformToMatrix4(const VUtils::TraceTransform &tm, UT_Matrix4 &m);
+
+	/// Convert from Houdini transform to VRay::Transform
+	/// @param m4[in] - Houdini trasform
+	/// @param flip[in] - whether to flip y and z axis
+	static VRay::Transform Matrix4ToTransform(const UT_Matrix4D &m4, bool flip=false);
+
+	/// Obtain the first child node with given operator type
+	/// @param op_node[in] - parent node
+	/// @param op_type[in] - operator name
+	static OP_Node* FindChildNodeByType(OP_Node *op_node, const std::string &op_type);
+
+	/// Helper function to fill in plugin description attributes from UT_options
+	/// @param pluginDesc[out] - the plugin description
+	/// @param options[in] - UT_Options map that holds attribute values
+	/// @retval true on success
+	bool setAttrsFromUTOptions(Attrs::PluginDesc &pluginDesc, const UT_Options &options) const;
+
+	/// Helper function to fill in single plugin description attribute from a node parameter
+	/// @param pluginDesc[out] - the plugin description
+	/// @param parmDesc[in] - plugin attribute description
+	/// @param opNode[in] - the node
+	/// @param parmName[in] - parameter name
+	void setAttrValueFromOpNodePrm(Attrs::PluginDesc &plugin, const Parm::AttrDesc &parmDesc, OP_Node &opNode, const std::string &parmName) const;
+
+	/// Helper function to fill in plugin description attributes from matching node parameters
+	/// @param pluginDesc[out] - the plugin description
+	/// @param opNode[in] - the node
+	/// @param prefix[in] - common prefix for the name of related parameters
+	/// @param remapInterp[in] - whether to remap ramp interpotaion type (used for ramp parameters)
+	void setAttrsFromOpNodePrms(Attrs::PluginDesc &plugin, OP_Node *opNode, const std::string &prefix="", bool remapInterp=false);
+
+	/// Helper function to fill in plugin description attributes from VOP node connected inputs
+	/// @param pluginDesc[out] - the plugin description
+	/// @param vopNode[in] - the VOP node
+	/// @param parentContext - not used
+	void setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDesc, VOP_Node *vopNode, ExportContext *parentContext=nullptr);
+
+	/// Export connected input for a VOP node
+	/// @param pluginDesc[out] - the plugin description
+	/// @param vopNode[in] - the VOP node
+	/// @param inpidx[in] - input index
+	/// @param inputName[in] - input connection name
+	/// @param parentContext - not used
+	/// @retval VRay::Plugin for the input VOP or invalid plugin on error
+	VRay::Plugin exportConnectedVop(VOP_Node *vop_node, int inpidx, ExportContext *parentContext = nullptr);
+	VRay::Plugin exportConnectedVop(VOP_Node *vop_node, const UT_String &inputName, ExportContext *parentContext = nullptr);
+
+	void setAttrsFromSHOPOverrides(Attrs::PluginDesc &pluginDesc, VOP_Node &vopNode);
+
+	void phxAddSimumation(VRay::Plugin sim);
 
 private:
 	VRayRendererNode              *m_rop;
