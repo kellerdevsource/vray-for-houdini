@@ -480,54 +480,85 @@ public:
 	VRay::Plugin exportConnectedVop(VOP_Node *vop_node, int inpidx, ExportContext *parentContext = nullptr);
 	VRay::Plugin exportConnectedVop(VOP_Node *vop_node, const UT_String &inputName, ExportContext *parentContext = nullptr);
 
+	/// Export input parameter VOPs for a given VOP node as V-Ray user textures.
+	/// Default values for the textures will be queried from the corresponding
+	/// SHOP parameter. Exported user textures are added as attibutes to the plugin
+	/// description.
+	/// @param pluginDesc[out] - VOP plugin description
+	/// @param vopNode[in] - the VOP node
 	void setAttrsFromSHOPOverrides(Attrs::PluginDesc &pluginDesc, VOP_Node &vopNode);
 
+	/// All volumetic primitives need to be gathered and passed to a single global PhxShaderSimVol
+	/// plugin instance so different interescting volumes can be blended correctly.
+	/// This is called from the volume primitive exporters when exporting volume primitives
+	/// @param sim[in] - the volumetric data plugin
 	void phxAddSimumation(VRay::Plugin sim);
 
 private:
-	VRayRendererNode              *m_rop;
-	UI::VFB                        m_vfb;
-	VRayPluginRenderer             m_renderer;
-	OP_Context                     m_context;
-	int                            m_renderMode;
-	int                            m_isAborted;
-	ViewParams                     m_viewParams;
-	int                            m_frames;
-	ROP_RENDER_CODE                m_error;
-	ExpWorkMode                    m_workMode;
-	CbItems                        m_opRegCallbacks;
-	VRay::ValueList                m_phxSimulations;
-	int                            m_isIPR;
-	int                            m_isGPU;
-	int                            m_isAnimation;
-	int                            m_isMotionBlur;
-	int                            m_isVelocityOn;
-	fpreal                         m_timeStart;
-	fpreal                         m_timeEnd;
-	FloatSet                       m_exportedFrames;
+	VRayRendererNode              *m_rop; ///< the ROP node bound to this exporter
+	UI::VFB                        m_vfb; ///< a lightweigth frame buffer window showing the rendered image, when we don't want V-Ray VFB
+	VRayPluginRenderer             m_renderer; ///< the plugin renderer
+	OP_Context                     m_context; ///< current export context
+	int                            m_renderMode; ///< rend
+	int                            m_isAborted; ///< flag whether rendering should be aborted when possible
+	ViewParams                     m_viewParams; ///< used to gather view data from the ROP and camera
+	int                            m_frames; ///< how many frames are we going to export
+	ROP_RENDER_CODE                m_error; ///< ROP error to singnal the ROP rendering should be aborted
+	ExpWorkMode                    m_workMode; ///< what should the exporter do- export vrscene, render or both
+	CbItems                        m_opRegCallbacks; ///< holds registered node callbacks for live IPR updates
+	VRay::ValueList                m_phxSimulations; ///< accumulates volumetric data to pass to PhxShaderSimVol
+	int                            m_isIPR; ///< if we are rendering in IPR mode, i.e. we are tracking live node updates
+	int                            m_isGPU; ///< if we are using RT GPU rendering engine
+	int                            m_isAnimation; ///< if we should export the scene at more than one time
+	int                            m_isMotionBlur; ///< if motion blur is turned on
+	int                            m_isVelocityOn; ///< if we have velocity channel enabled
+	fpreal                         m_timeStart; ///< start time for the export
+	fpreal                         m_timeEnd; ///< end time for the export
+	FloatSet                       m_exportedFrames; ///< set of time points at which the scene has already been exported
 
 public:
+	/// Register event callback for a given node. This callback will be invoked when
+	/// change on the node occurs. The event type will be passed as parameter to the callback
+	/// @param op_node - the node to track
+	/// @param cb - the event callback function
+	void addOpCallback(OP_Node *op_node, OP_EventMethod cb);
 
-	void                           addOpCallback(OP_Node *op_node, OP_EventMethod cb);
-	void                           delOpCallback(OP_Node *op_node, OP_EventMethod cb);
-	void                           delOpCallbacks(OP_Node *op_node);
-	void                           resetOpCallbacks();
+	/// Unregister a callback for the given node. This callback will no longer be invoked when
+	/// change on the node occurs.
+	/// @param op_node - the node to track
+	/// @param cb - the event callback function
+	void delOpCallback(OP_Node *op_node, OP_EventMethod cb);
 
-	void                           onDumpMessage(VRay::VRayRenderer &renderer, const char *msg, int level);
-	void                           onProgress(VRay::VRayRenderer &renderer, const char *msg, int elementNumber, int elementsCount);
-	void                           onAbort(VRay::VRayRenderer &renderer);
+	/// Unregister all callbacks for the given node.
+	/// @param op_node - the node to track
+	void delOpCallbacks(OP_Node *op_node);
 
-	static void                    RtCallbackObjManager(OP_Node *caller, void *callee, OP_EventType type, void *data);
-	static void                    RtCallbackLight(OP_Node *caller, void *callee, OP_EventType type, void *data);
-	static void                    RtCallbackOBJGeometry(OP_Node *caller, void *callee, OP_EventType type, void *data);
-	static void                    RtCallbackSOPChanged(OP_Node *caller, void *callee, OP_EventType type, void *data);
-	static void                    RtCallbackView(OP_Node *caller, void *callee, OP_EventType type, void *data);
-	static void                    RtCallbackVop(OP_Node *caller, void *callee, OP_EventType type, void *data);
-	static void                    RtCallbackSurfaceShop(OP_Node *caller, void *callee, OP_EventType type, void *data);
-	static void                    RtCallbackDisplacementShop(OP_Node *caller, void *callee, OP_EventType type, void *data);
-	static void                    RtCallbackDisplacementVop(OP_Node *caller, void *callee, OP_EventType type, void *data);
-	static void                    RtCallbackDisplacementObj(OP_Node *caller, void *callee, OP_EventType type, void *data);
-	static void                    RtCallbackVRayClipper(OP_Node *caller, void *callee, OP_EventType type, void *data);
+	/// Unregister all callbacks for all nodes.
+	/// @note this will only remove callbacks that have been registered
+	///       through the callback interface
+	void resetOpCallbacks();
+
+	/// Callback function for the event when V-Ray logs a text message.
+	void onDumpMessage(VRay::VRayRenderer &renderer, const char *msg, int level);
+
+	/// Callback function for the event when V-Ray updates its current computation task and the number of workunits done.
+	void onProgress(VRay::VRayRenderer &renderer, const char *msg, int elementNumber, int elementsCount);
+
+	/// Callback function for the event when rendering has finished, successfully or not.
+	void onAbort(VRay::VRayRenderer &renderer);
+
+	/// Callbacks for tracking changes on different types of nodes
+	static void RtCallbackObjManager(OP_Node *caller, void *callee, OP_EventType type, void *data);
+	static void RtCallbackLight(OP_Node *caller, void *callee, OP_EventType type, void *data);
+	static void RtCallbackOBJGeometry(OP_Node *caller, void *callee, OP_EventType type, void *data);
+	static void RtCallbackSOPChanged(OP_Node *caller, void *callee, OP_EventType type, void *data);
+	static void RtCallbackView(OP_Node *caller, void *callee, OP_EventType type, void *data);
+	static void RtCallbackVop(OP_Node *caller, void *callee, OP_EventType type, void *data);
+	static void RtCallbackSurfaceShop(OP_Node *caller, void *callee, OP_EventType type, void *data);
+	static void RtCallbackDisplacementShop(OP_Node *caller, void *callee, OP_EventType type, void *data);
+	static void RtCallbackDisplacementVop(OP_Node *caller, void *callee, OP_EventType type, void *data);
+	static void RtCallbackDisplacementObj(OP_Node *caller, void *callee, OP_EventType type, void *data);
+	static void RtCallbackVRayClipper(OP_Node *caller, void *callee, OP_EventType type, void *data);
 
 };
 
