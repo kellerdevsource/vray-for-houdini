@@ -20,6 +20,8 @@
 namespace VRayForHoudini {
 namespace OP {
 
+
+/// Base class for all Houdini nodes that will represent concrete V-Ray plugin
 class VRayNode
 {
 public:
@@ -34,21 +36,40 @@ public:
 		: pluginInfo(nullptr)
 	{}
 
-	/// Extra initialization
-	void                      init();
+	/// Extra initialization called by the creator
+	void init();
 
-	std::string               getVRayPluginType() const { return pluginType; }
-	std::string               getVRayPluginID() const   { return pluginID;   }
-	Parm::VRayPluginInfo     *getVRayPluginInfo() const { return pluginInfo; }
+	/// Get the plugin type. Plugins are labeled with different categories:
+	/// lights, geometry, textures, uvw generators, etc. The plugin category is
+	/// used with custom VOPs for example to determine input/output plug type and color.
+	std::string getVRayPluginType() const { return pluginType; }
 
-	/// Export as plugin description
-	virtual PluginResult      asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext=nullptr) { return PluginResult::PluginResultNA; }
+	/// Get the V-Ray plugin name.
+	std::string getVRayPluginID() const { return pluginID; }
+
+	/// Get the static meta information about this specific plugin type
+	Parm::VRayPluginInfo* getVRayPluginInfo() const { return pluginInfo; }
+
+	/// Export the plugin instance as plugin description
+	/// @param pluginDesc[out] - accumulates attributes' changes
+	/// @param exporter[in] - reference to the main vfh exporter
+	/// @param parentContext[in] - not used
+	virtual PluginResult asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext=nullptr) { return PluginResult::PluginResultNA; }
 
 protected:
-	/// Defines V-Ray plugin type
-	virtual void              setPluginType()=0;
-	std::string               pluginType;
-	std::string               pluginID;
+	/// Override this to initilize the concrete plugin category and type
+	virtual void setPluginType()=0;
+
+	std::string               pluginType; ///< The plugin category
+	std::string               pluginID; ///< The plugin type
+
+	/// Provides static meta information about this specific plugin type
+	/// like attributes, their types and default values, which attributes
+	/// correspond to input/output plugs for VOPs, etc.
+	/// TODO: better we should use or wrap around VRay::PluginMeta and
+	/// VRay::PropertyMeta from AppSDK as these meta descriptions change
+	/// often with the specific V-Ray version (which now makes our JSON
+	/// descriptions outdated).
 	Parm::VRayPluginInfo     *pluginInfo;
 
 	VfhDisableCopy(VRayNode)
