@@ -157,7 +157,7 @@ void VRayExporter::setAttrsFromSHOPOverrides(Attrs::PluginDesc &pluginDesc, VOP_
 
 		UT_String prmToken = prmVOP->getParmNameCache();
 		const PRM_Parm *prm = creator->getParmList()->getParmPtr(prmToken);
-		// no such parameter on the parent node or
+		// no such parameter on the parent SHOP node or
 		// parameter is not floating point
 		if (   NOT(prm)
 			|| NOT(prm->getType().isFloatType()) )

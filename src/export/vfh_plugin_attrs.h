@@ -19,10 +19,13 @@ namespace Attrs {
 
 const float RAD_TO_DEG = M_PI / 180.f;
 
+/// Descriptor for a plugin attribute:
+/// name, type and value
 struct PluginAttr {
+	/// Available attibute types
 	enum AttrType {
 		AttrTypeUnknown = 0,
-		AttrTypeIgnore,
+		AttrTypeIgnore, ///< to signal we should ignore updates for this attibute
 		AttrTypeInt,
 		AttrTypeFloat,
 		AttrTypeVector,
@@ -212,6 +215,7 @@ struct PluginAttr {
 		paramValue.valRawListValue = attrValue;
 	}
 
+	/// Get attribute type as string
 	const char *typeStr() const {
 		switch (paramType) {
 			case PluginAttr::AttrTypeInt: return "Int";
@@ -264,15 +268,17 @@ struct PluginAttr {
 		VRay::VUtils::ColorRefList       valRawListColor;
 		VRay::VUtils::CharStringRefList  valRawListCharString;
 		VRay::VUtils::ValueRefList       valRawListValue;
-	} paramValue;
+	} paramValue; ///< attribute value
 
-	std::string             paramName;
-	AttrType                paramType;
+	std::string             paramName; ///< attribute name
+	AttrType                paramType; ///< attribute type
 
 };
 typedef std::vector<PluginAttr> PluginAttrs;
 
-
+/// Description of a plugin instance and its attributes. It is used to
+/// accumulate attribute changes and to allow to batch changes together for
+/// a plugin.
 struct PluginDesc {
 	PluginDesc() {}
 	PluginDesc(const std::string &pluginName, const std::string &pluginID):
@@ -280,19 +286,39 @@ struct PluginDesc {
 		pluginID(pluginID)
 	{}
 
-	bool              contains(const std::string &paramName) const;
-	void              addAttribute(const PluginAttr &attr);
-	void              add(const PluginAttr &attr);
-	const PluginAttr *get(const std::string &paramName) const;
-	PluginAttr       *get(const std::string &paramName);
+	/// Test if we have attribute with a given name
+	/// @param paramName[in] - attribute name
+	bool contains(const std::string &paramName) const;
 
-	bool              isDifferent(const PluginDesc &otherDesc) const;
-	bool              isEqual(const PluginDesc &otherDesc) const;
-	void              showAttributes() const;
+	/// Append an attrubute to our description. If an attribute with the same
+	/// name already exists, it will overwrite it.
+	/// @param attr[in] - attribute
+	void addAttribute(const PluginAttr &attr);
 
-	std::string       pluginID;
-	std::string       pluginName;
-	PluginAttrs       pluginAttrs;
+	/// Append an attrubute to our description. If an attribute with the same
+	/// name already exists, it will overwrite it.
+	/// @param attr[in] - attribute
+	void add(const PluginAttr &attr);
+
+	/// Return the attibute with the specified name or nullptr
+	/// @param paramName[in] - attribute name
+	const PluginAttr* get(const std::string &paramName) const;
+	PluginAttr* get(const std::string &paramName);
+
+	/// Compare for difference our attributes with those of the other plugin
+	/// description.
+	bool isDifferent(const PluginDesc &otherDesc) const;
+
+	/// Compare for equality our attributes with those of the other plugin
+	/// description.
+	bool isEqual(const PluginDesc &otherDesc) const;
+
+	/// Dump this description to std out
+	void showAttributes() const;
+
+	std::string       pluginID; ///< plugin name
+	std::string       pluginName; ///< plugin instance name
+	PluginAttrs       pluginAttrs; ///< list of plugin attributes
 };
 
 } // namespace Attrs

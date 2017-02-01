@@ -1220,78 +1220,6 @@ static std::string ObjectTypeToString(const OBJ_OBJECT_TYPE &ob_type)
 }
 
 
-void VRayExporter::TraverseOBJ(OBJ_Node *obj_node, void *data)
-{
-	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(data);
-
-	const fpreal &t = exporter.getContext().getTime();
-
-	if (obj_node) {
-		const OBJ_OBJECT_TYPE &ob_type = obj_node->getObjectType();
-
-		Log::getLog().info("Processing %s node: \"%s\"%s [%i|%i]",
-						   obj_node->getOpType(),
-						   obj_node->getName().buffer(),
-						   ObjectTypeToString(ob_type).c_str(),
-						   obj_node->getVisible(),
-						   obj_node->isObjectRenderable(t));
-	}
-
-	if (obj_node && obj_node->getVisible()) {
-		const OBJ_OBJECT_TYPE &ob_type = obj_node->getObjectType();
-
-		Log::getLog().info("Processing node %s:\"%s\"%s [%i]",
-						   obj_node->getOpType(),
-						   obj_node->getName().buffer(),
-						   ObjectTypeToString(ob_type).c_str(),
-						   obj_node->isObjectRenderable(t));
-
-		if (ob_type & OBJ_NULL) {
-			return;
-		}
-		else if (ob_type & OBJ_LIGHT) {
-			exporter.exportLight(obj_node);
-		}
-		else if (ob_type & OBJ_CAMERA) {
-			/* Must go after OBJ_LIGHT */
-			return;
-		}
-		else if (ob_type == OBJ_GEOMETRY) {
-			exporter.exportObject(obj_node);
-		}
-#if 0
-		else if (ob_type & OBJ_DOPNET) {
-			exporter.exportParticles(obj_node);
-		}
-#endif
-		else if (ob_type & OBJ_SUBNET) {
-			// NOTE: This will handle hair
-			OBJ_SubNet *obj_subnet = obj_node->castToOBJSubNet();
-			if (obj_subnet) {
-				OP_Bundle *op_bundle = obj_subnet->getVisibleObjectBundle(t);
-				if (op_bundle) {
-					const int op_count = op_bundle->entries();
-					for (int i = 0; i < op_count; ++i) {
-						OBJ_Node *b_obj_node = op_bundle->getNode(i)->castToOBJNode();
-						if (b_obj_node) {
-							TraverseOBJ(b_obj_node->castToOBJNode(), data);
-						}
-					}
-				}
-			}
-		}
-		else {
-			OP_Node *op_node = obj_node->getRenderNodePtr();
-			if (op_node) {
-				Log::getLog().info("Found render node: %s",
-								   op_node->getName().buffer());
-				TraverseOBJ(op_node->castToOBJNode(), data);
-			}
-		}
-	}
-}
-
-
 void VRayExporter::resetOpCallbacks()
 {
 	for (auto const &item : m_opRegCallbacks) {
@@ -1375,13 +1303,6 @@ void VRayExporter::onAbort(VRay::VRayRenderer &renderer)
 	if (renderer.isAborted()) {
 		setAbort();
 	}
-}
-
-
-bool VRayExporter::TraverseOBJs(OP_Node &op_node, void *data)
-{
-	VRayExporter::TraverseOBJ(op_node.castToOBJNode(), data);
-	return 0;
 }
 
 

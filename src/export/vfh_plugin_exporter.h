@@ -89,70 +89,162 @@ struct CbCollection {
 	VfhDisableCopy(CbCollection)
 };
 
-
+/// Wraps around VRay::VRayRenderer to provide some commonly used
+/// functionality and hide implementation details of initilizing
+/// the renderer instance, reseting callbacks, creating and/or
+/// updating plugins.
 class VRayPluginRenderer
 {
 public:
+	/// Initilize AppSDK and V-Ray renderer context.
+	/// You'll need to initilize once, before creating a V-Ray renderer instance.
+	/// @retval true on success
 	static bool initialize();
+
+	/// Test if we have a license for VRScans advanced parameters GUI
+	/// @param err[out] - use it to diagnose licensing problems when the
+	///        license test fails
+	/// @retval true if we do, false on no license or error
 	static bool hasVRScansGUILicense(VRay::ScannedMaterialLicenseError &err);
 
 public:
 	VRayPluginRenderer();
 	~VRayPluginRenderer();
 
-	int                           initRenderer(int hasUI, int reInit);
-	void                          freeMem();
+	/// Create and initilize or reset the V-Ray renderer instance.
+	/// @param hasUI[in] - true to enable the VFB, false if VFB is not needed
+	///        for example when running Houdini in non-GUI mode
+	/// @param reInit[in] - true to re-create the V-Ray renderer instance
+	///        otherwise it only resets the existing instance
+	/// @retval true on success
+	int initRenderer(int hasUI, int reInit);
 
-	VRay::Plugin                  getPlugin(const char *pluginName);
+	/// Delete the V-Ray renderer instance (if any)
+	void freeMem();
 
-	VRay::Plugin                  exportPlugin(const Attrs::PluginDesc &pluginDesc);
-	void                          exportPluginProperties(VRay::Plugin &plugin, const Attrs::PluginDesc &pluginDesc);
-	void                          removePlugin(const Attrs::PluginDesc &pluginDesc);
-	void                          removePlugin(const std::string &pluginName);
-	void                          commit();
+	/// Search for a plugin instance with the given name.
+	/// @param pluginName[in] -
+	/// @retval invalid Plugin object if not found or not
+	///         initilized
+	VRay::Plugin getPlugin(const char *pluginName);
 
-	void                          setAnimation(bool on);
-	void                          setCurrentTime(fpreal time);
-	void                          setCamera(VRay::Plugin camera);
-	void                          setRendererMode(int mode);
-	void                          setAutoCommit(const bool enable);
-	void                          setImageSize(const int w, const int h);
+	/// Create or update a plugin from a plugin description
+	/// @param pluginDesc - plugin description with relevant properties set
+	/// @retval invalid Plugin object if not successul
+	VRay::Plugin exportPlugin(const Attrs::PluginDesc &pluginDesc);
 
-	void                          showVFB(bool show=true);
-	void                          clearFrames(float toTime);
+	/// Update a plugin properties from a plugin description
+	/// @param plugin - the plugin to update
+	/// @param pluginDesc - plugin description with relevant properties set
+	void exportPluginProperties(VRay::Plugin &plugin, const Attrs::PluginDesc &pluginDesc);
 
-	int                           startRender(int locked=false);
-	int                           startSequence(int start, int end, int step, int locked=false);
-	void                          stopRender();
+	/// Delete plugin for a given plugin description
+	/// @param pluginDesc - plugin description with plugin name set
+	void removePlugin(const Attrs::PluginDesc &pluginDesc);
 
-	int                           exportScene(const std::string &filepath, VRay::VRayExportSettings &settings);
+	/// Delete plugin with the given name
+	/// @param pluginName - plugin name
+	void removePlugin(const std::string &pluginName);
 
-	void                          addCbOnRendererClose(CbOnRendererClose cb)   { m_callbacks.m_cbOnRendererClose.add(cb); }
-	void                          addCbOnRendererClose(CbVoid cb)              { m_callbacks.m_cbOnRendererClose.add(cb); }
-	void                          addCbOnImageReady(CbOnImageReady cb)         { m_callbacks.m_cbOnImageReady.add(cb); }
-	void                          addCbOnImageReady(CbVoid cb)                 { m_callbacks.m_cbOnImageReady.add(cb); }
-	void                          addCbOnRTImageUpdated(CbOnRTImageUpdated cb) { m_callbacks.m_cbOnRTImageUpdated.add(cb); }
-	void                          addCbOnRTImageUpdated(CbVoid cb)             { m_callbacks.m_cbOnRTImageUpdated.add(cb); }
-	void                          addCbOnBucketInit(CbOnBucketInit cb)         { m_callbacks.m_cbOnBucketInit.add(cb); }
-	void                          addCbOnBucketInit(CbVoid cb)                 { m_callbacks.m_cbOnBucketInit.add(cb); }
-	void                          addCbOnBucketReady(CbOnBucketReady cb)       { m_callbacks.m_cbOnBucketReady.add(cb); }
-	void                          addCbOnBucketReady(CbVoid cb)                { m_callbacks.m_cbOnBucketReady.add(cb); }
-	void                          addCbOnBucketFailed(CbOnBucketFailed cb)     { m_callbacks.m_cbOnBucketFailed.add(cb); }
-	void                          addCbOnBucketFailed(CbVoid cb)               { m_callbacks.m_cbOnBucketFailed.add(cb); }
-	void                          addCbOnDumpMessage(CbOnDumpMessage cb)       { m_callbacks.m_cbOnDumpMessage.add(cb); }
-	void                          addCbOnDumpMessage(CbVoid cb)                { m_callbacks.m_cbOnDumpMessage.add(cb); }
-	void                          addCbOnProgress(CbOnProgress cb)             { m_callbacks.m_cbOnProgress.add(cb); }
-	void                          addCbOnProgress(CbVoid cb)                   { m_callbacks.m_cbOnProgress.add(cb); }
+	/// Commits any accumulated scene changes. This is necessary if
+	/// the autoCommit is set to false on the renderer instance.
+	void commit();
 
-	void                          resetCallbacks();
+	/// Change the autoCommit state of the renderer. When true, every parameter
+	/// change is applied immediately. Otherwise you have to call commit() yourself
+	/// to apply changes. This allows you to batch changes together for efficiency.
+	void setAutoCommit(const bool enable);
 
-	VRay::VRayRenderer           &getVRay() { return *m_vray; }
+	/// When enabled, setting parameter values will add keyframe values for animation.
+	/// Otherwise the old value is just overwritten. The default state is off.
+	void setAnimation(bool on);
+
+	/// Sets the current time for the scene. This is related to the current frame
+	/// through the SettingsOutput plugin.
+	void setCurrentTime(fpreal time);
+
+	/// This method should only be used when doing out-of-process rendering
+	/// i.e. VRay::RendererOptions::inProcess=false. It updates the camera plugin
+	/// used on DR machines when adding/removing CameraPhysical or another specific
+	/// camera.
+	void setCamera(VRay::Plugin camera);
+
+	/// Change the render mode to be used for when *next* rendering starts. If there is
+	/// a current rendering running it will not be affected. You can switch between
+	/// Production and RT mode with this without resetting the scene.
+	/// Valid modes are Production, RT CPU, RT GPU (CUDA)
+	void setRendererMode(int mode);
+
+	/// Sets the frame buffer width and height.
+	void setImageSize(const int w, const int h);
+
+	/// Show/hide VFB
+	void showVFB(bool show=true);
+
+	/// Removes all keyframe values at times less than 'toTime'
+	void clearFrames(float toTime);
+
+	/// Start rendering at the current time.
+	/// @param locked[in] - when true this will force the current thread to block
+	///        until rendering is done. By default this is a non-blocking call
+	/// @retval 0 - no error
+	int startRender(int locked=false);
+
+	/// Start rendering an animation sequence in a separate thread.
+	/// @param start[in] - animation start time
+	/// @param end[in] - animation end time
+	/// @param step[in] - animation time step
+	/// @param locked[in] - when true this will force the current thread to block
+	///        until rendering is done. By default this is a non-blocking call
+	/// @retval 0 - no error
+	int startSequence(int start, int end, int step, int locked=false);
+
+	/// Flags the image rendering thread to stop and waits for it to join.
+	void stopRender();
+
+	/// Exports the current scene contents to the specified file. AppSDK
+	/// serializes all plugins in text format.
+	/// @param filepath The path to the file where the scene will be exported. The
+	/// file path must contain the name and extension of the destination file.
+	/// @param settings Additional options such as compression and file splitting
+	/// @retval 0 - no error
+	int exportScene(const std::string &filepath, VRay::VRayExportSettings &settings);
+
+	/// Register callbacks on different events dispatched from the renderer.
+	/// More than one callback per event can be registered. The order of invocation
+	/// will follow the order of registration. Each event supports 2 types of callbacks:
+	/// 1. a callback that does require any arguments
+	/// 2. a callback that accepts strongly typed arguments
+	void addCbOnRendererClose(CbOnRendererClose cb)   { m_callbacks.m_cbOnRendererClose.add(cb); }
+	void addCbOnRendererClose(CbVoid cb)              { m_callbacks.m_cbOnRendererClose.add(cb); }
+	void addCbOnImageReady(CbOnImageReady cb)         { m_callbacks.m_cbOnImageReady.add(cb); }
+	void addCbOnImageReady(CbVoid cb)                 { m_callbacks.m_cbOnImageReady.add(cb); }
+	void addCbOnRTImageUpdated(CbOnRTImageUpdated cb) { m_callbacks.m_cbOnRTImageUpdated.add(cb); }
+	void addCbOnRTImageUpdated(CbVoid cb)             { m_callbacks.m_cbOnRTImageUpdated.add(cb); }
+	void addCbOnBucketInit(CbOnBucketInit cb)         { m_callbacks.m_cbOnBucketInit.add(cb); }
+	void addCbOnBucketInit(CbVoid cb)                 { m_callbacks.m_cbOnBucketInit.add(cb); }
+	void addCbOnBucketReady(CbOnBucketReady cb)       { m_callbacks.m_cbOnBucketReady.add(cb); }
+	void addCbOnBucketReady(CbVoid cb)                { m_callbacks.m_cbOnBucketReady.add(cb); }
+	void addCbOnBucketFailed(CbOnBucketFailed cb)     { m_callbacks.m_cbOnBucketFailed.add(cb); }
+	void addCbOnBucketFailed(CbVoid cb)               { m_callbacks.m_cbOnBucketFailed.add(cb); }
+	void addCbOnDumpMessage(CbOnDumpMessage cb)       { m_callbacks.m_cbOnDumpMessage.add(cb); }
+	void addCbOnDumpMessage(CbVoid cb)                { m_callbacks.m_cbOnDumpMessage.add(cb); }
+	void addCbOnProgress(CbOnProgress cb)             { m_callbacks.m_cbOnProgress.add(cb); }
+	void addCbOnProgress(CbVoid cb)                   { m_callbacks.m_cbOnProgress.add(cb); }
+
+	/// Clear registered render callbacks
+	void resetCallbacks();
+
+	/// Get the actual renderer instance
+	VRay::VRayRenderer& getVRay() { return *m_vray; }
 
 private:
-	void                          vfbParent(void *parent);
+	/// Set VFB parent window
+	/// @param parent[in] - pointer to the Qt parent window
+	void vfbParent(void *parent);
 
-	VRay::VRayRenderer           *m_vray;
-	CbCollection                  m_callbacks;
+	VRay::VRayRenderer           *m_vray; ///< V-Ray renderer instance
+	CbCollection                  m_callbacks; ///< collection of registered render callbacks
 };
 
 } // namespace VRayForHoudini
