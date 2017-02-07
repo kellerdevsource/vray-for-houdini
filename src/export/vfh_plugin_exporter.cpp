@@ -371,11 +371,7 @@ void VRayPluginRenderer::showVFB(bool show)
 
 			// This will make window float over the parent
 			Qt::WindowFlags windowFlags = 0;
-#ifdef _WIN32
-			windowFlags |= Qt::Window;
-#else
-			windowFlags |= Qt::Dialog;
-#endif
+			windowFlags |= (Qt::Window|Qt::WindowStaysOnTopHint);
 			windowFlags |= (Qt::WindowTitleHint|Qt::WindowMinMaxButtonsHint|Qt::WindowCloseButtonHint);
 
 			vfb->setWindowFlags(windowFlags);
