@@ -357,23 +357,19 @@ void VRayPluginRenderer::showVFB(bool show, const char *title)
 
 	QWidget *mainWindow = RE_QtWindow::mainQtWindow();
 	if (mainWindow) {
-		Log::getLog().info(" ================== Show VFB ========================");
-
-		// first if we are showing the VFB, we need to set its parent
+		// first set VFB parent
 		if (show) {
 			m_vray->vfb.setParentWindow(mainWindow);
 		}
 
 		m_vray->vfb.show(show, show);
 
-		// last we need to set VFB window flags to float on top of
-		// main Houdini window. Flags and title should be set after
-		// first show of the VFB as its window handle does not exists beforehand
+		// last set VFB window flags to float on top of main Houdini window.
+		// Flags and title should be set after first show of the VFB as
+		// its window handle does not exists beforehand
 		if (show) {
 			QWidget *vfb = reinterpret_cast<QWidget*>(m_vray->vfb.getWindowHandle());
 			if (vfb) {
-				Log::getLog().info(" ================== QT VFB present ========================");
-
 				Qt::WindowFlags windowFlags = vfb->windowFlags();
 				windowFlags |= (  Qt::Tool
 								| Qt::WindowTitleHint
