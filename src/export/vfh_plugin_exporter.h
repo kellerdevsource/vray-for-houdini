@@ -239,10 +239,6 @@ public:
 	VRay::VRayRenderer& getVRay() { return *m_vray; }
 
 private:
-	/// Set VFB parent window
-	/// @param parent[in] - pointer to the Qt parent window
-	void vfbParent(void *parent);
-
 	VRay::VRayRenderer           *m_vray; ///< V-Ray renderer instance
 	CbCollection                  m_callbacks; ///< collection of registered render callbacks
 };

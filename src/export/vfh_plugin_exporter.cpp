@@ -261,14 +261,6 @@ VRayPluginRenderer::~VRayPluginRenderer()
 }
 
 
-void VRayPluginRenderer::vfbParent(void *parent)
-{
-	if (m_vray) {
-		m_vray->vfb.setParentWindow(parent);
-	}
-}
-
-
 int VRayPluginRenderer::initRenderer(int hasUI, int reInit)
 {
 	// VFB will take colors from QApplication::palette(),
@@ -356,27 +348,39 @@ void VRayPluginRenderer::setImageSize(const int w, const int h)
 
 void VRayPluginRenderer::showVFB(bool show)
 {
-	if (!m_vray) {
-		return;
-	}
-	if (show == m_vray->vfb.isShown()) {
+	if (   !m_vray
+		|| !m_vray->getOptions().enableFrameBuffer
+		|| show == m_vray->vfb.isShown() )
+	{
 		return;
 	}
 
 	QWidget *mainWindow = RE_QtWindow::mainQtWindow();
 	if (mainWindow) {
-		QWidget *vfb = reinterpret_cast<QWidget*>(m_vray->vfb.getWindowHandle());
-		if (vfb) {
-			vfbParent(mainWindow);
+		Log::getLog().info(" ================== Show VFB ========================");
 
-			// This will make window float over the parent
-			Qt::WindowFlags windowFlags = 0;
-			windowFlags |= (Qt::Window|Qt::WindowStaysOnTopHint);
-			windowFlags |= (Qt::WindowTitleHint|Qt::WindowMinMaxButtonsHint|Qt::WindowCloseButtonHint);
-
-			vfb->setWindowFlags(windowFlags);
+		// first if we are showing the VFB, we need to set its parent
+		if (show) {
+			m_vray->vfb.setParentWindow(mainWindow);
 		}
+
 		m_vray->vfb.show(show, show);
+
+		// last we need to set VFB window flags to float on top of
+		// main Houdini window
+		if (show) {
+			QWidget *vfb = reinterpret_cast<QWidget*>(m_vray->vfb.getWindowHandle());
+			if (vfb) {
+				Log::getLog().info(" ================== QT VFB present ========================");
+
+				Qt::WindowFlags windowFlags = vfb->windowFlags();
+				windowFlags |= (  Qt::Tool
+								| Qt::WindowTitleHint
+								| Qt::WindowMinMaxButtonsHint
+								| Qt::WindowCloseButtonHint);
+				vfb->setWindowFlags(windowFlags);
+			}
+		}
 	}
 }
 
