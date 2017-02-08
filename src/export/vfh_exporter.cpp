@@ -1708,7 +1708,7 @@ void VRayExporter::initExporter(int hasUI, int nframes, fpreal tstart, fpreal te
 		if (hasUI == 0) {
 #ifndef __APPLE__
 			m_vfb.free();
-			getRenderer().showVFB(m_workMode != ExpExport);
+			getRenderer().showVFB(m_workMode != ExpExport, m_rop->getFullPath());
 #endif
 		}
 		else if (hasUI == 1) {

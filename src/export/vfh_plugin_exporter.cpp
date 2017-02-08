@@ -346,7 +346,7 @@ void VRayPluginRenderer::setImageSize(const int w, const int h)
 }
 
 
-void VRayPluginRenderer::showVFB(bool show)
+void VRayPluginRenderer::showVFB(bool show, const char *title)
 {
 	if (   !m_vray
 		|| !m_vray->getOptions().enableFrameBuffer
@@ -367,7 +367,8 @@ void VRayPluginRenderer::showVFB(bool show)
 		m_vray->vfb.show(show, show);
 
 		// last we need to set VFB window flags to float on top of
-		// main Houdini window
+		// main Houdini window. Flags and title should be set after
+		// first show of the VFB as its window handle does not exists beforehand
 		if (show) {
 			QWidget *vfb = reinterpret_cast<QWidget*>(m_vray->vfb.getWindowHandle());
 			if (vfb) {
@@ -380,6 +381,8 @@ void VRayPluginRenderer::showVFB(bool show)
 								| Qt::WindowCloseButtonHint);
 				vfb->setWindowFlags(windowFlags);
 			}
+
+			m_vray->vfb.setTitlePrefix(title);
 		}
 	}
 }

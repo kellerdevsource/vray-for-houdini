@@ -179,7 +179,7 @@ public:
 	void setImageSize(const int w, const int h);
 
 	/// Show/hide VFB
-	void showVFB(bool show=true);
+	void showVFB(bool show=true, const char *title=nullptr);
 
 	/// Removes all keyframe values at times less than 'toTime'
 	void clearFrames(float toTime);
