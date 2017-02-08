@@ -376,9 +376,8 @@ void VRayPluginRenderer::showVFB(bool show, const char *title)
 								| Qt::WindowMinMaxButtonsHint
 								| Qt::WindowCloseButtonHint);
 				vfb->setWindowFlags(windowFlags);
+				m_vray->vfb.setTitlePrefix(title);
 			}
-
-			m_vray->vfb.setTitlePrefix(title);
 		}
 	}
 }
