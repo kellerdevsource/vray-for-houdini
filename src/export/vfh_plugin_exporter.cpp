@@ -371,7 +371,10 @@ void VRayPluginRenderer::showVFB(bool show, const char *title)
 			QWidget *vfb = reinterpret_cast<QWidget*>(m_vray->vfb.getWindowHandle());
 			if (vfb) {
 				Qt::WindowFlags windowFlags = vfb->windowFlags();
-				windowFlags |= (  Qt::Tool
+				windowFlags |= (  Qt::Window
+#ifndef _WIN32
+								| Qt::WindowStaysOnTopHint
+#endif
 								| Qt::WindowTitleHint
 								| Qt::WindowMinMaxButtonsHint
 								| Qt::WindowCloseButtonHint);
