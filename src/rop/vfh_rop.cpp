@@ -782,9 +782,9 @@ OP_Bundle* VRayRendererNode::getActiveLightsBundle()
 			{
 				UT_String name = light->getFullPath();
 
-				fpreal dimmer = 0.0;
-				light->evalParameterOrProperty("dimmer", 0, m_tstart, dimmer);
-				if (dimmer > 0) {
+				int enabled = 0;
+				light->evalParameterOrProperty("enabled", 0, m_tstart, enabled);
+				if (enabled > 0) {
 					bundle->addOp(light);
 				}
 			}

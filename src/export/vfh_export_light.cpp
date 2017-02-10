@@ -54,12 +54,12 @@ int VRayExporter::isLightEnabled(OP_Node *op_node)
 {
 	const fpreal t = getContext().getTime();
 
-	fpreal dimmer = 0;
-	op_node->evalParameterOrProperty("dimmer", 0, t, dimmer);
+	int enabled = 0;
+	op_node->evalParameterOrProperty("enabled", 0, t, enabled);
 
 	OP_Bundle *bundle = m_rop->getForcedLightsBundle();
 	return (   (bundle && bundle->contains(op_node, false))
-			|| (dimmer > 0));
+			|| (enabled > 0));
 }
 
 
