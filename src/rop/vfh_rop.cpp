@@ -776,13 +776,17 @@ OP_Bundle* VRayRendererNode::getActiveLightsBundle()
 		OP_NodeList list;
 		abundle->getMembers(list);
 		for (exint i = 0; i < list.size(); ++i) {
-			OP_Node *light = list(i);
-			UT_String name = light->getFullPath();
+			OBJ_Node *light = list(i)->castToOBJNode();
+			if (   light
+				&& light->isObjectRenderable(m_tstart))
+			{
+				UT_String name = light->getFullPath();
 
-			fpreal dimmer = 0.0;
-			light->evalParameterOrProperty("dimmer", 0, m_tstart, dimmer);
-			if (dimmer > 0) {
-				bundle->addOp(light);
+				fpreal dimmer = 0.0;
+				light->evalParameterOrProperty("dimmer", 0, m_tstart, dimmer);
+				if (dimmer > 0) {
+					bundle->addOp(light);
+				}
 			}
 		}
 	}
@@ -845,10 +849,12 @@ OP_Bundle* VRayRendererNode::getActiveGeometryBundle()
 		vbundle->getMembers(list);
 
 		for (exint i = 0; i < list.size(); ++i) {
-			OP_Node *node = list(i);
-			UT_String name = node->getFullPath();
-
-			if (node->getVisible()) {
+			OBJ_Node *node = list(i)->castToOBJNode();
+			if (   node
+				&& node->isObjectRenderable(m_tstart)
+				&& node->getVisible() )
+			{
+				UT_String name = node->getFullPath();
 				bundle->addOp(node);
 			}
 		}
