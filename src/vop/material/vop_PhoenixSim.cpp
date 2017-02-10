@@ -728,7 +728,7 @@ bool PhxShaderSim::saveRamps(std::ostream & os)
 		}
 	}
 
-	return os;
+	return os.good();
 }
 
 
