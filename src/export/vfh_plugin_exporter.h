@@ -179,7 +179,7 @@ public:
 	void setImageSize(const int w, const int h);
 
 	/// Show/hide VFB
-	void showVFB(bool show=true);
+	void showVFB(bool show=true, const char *title=nullptr);
 
 	/// Removes all keyframe values at times less than 'toTime'
 	void clearFrames(float toTime);
@@ -239,10 +239,6 @@ public:
 	VRay::VRayRenderer& getVRay() { return *m_vray; }
 
 private:
-	/// Set VFB parent window
-	/// @param parent[in] - pointer to the Qt parent window
-	void vfbParent(void *parent);
-
 	VRay::VRayRenderer           *m_vray; ///< V-Ray renderer instance
 	CbCollection                  m_callbacks; ///< collection of registered render callbacks
 };

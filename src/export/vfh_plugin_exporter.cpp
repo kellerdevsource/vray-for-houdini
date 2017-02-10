@@ -261,14 +261,6 @@ VRayPluginRenderer::~VRayPluginRenderer()
 }
 
 
-void VRayPluginRenderer::vfbParent(void *parent)
-{
-	if (m_vray) {
-		m_vray->vfb.setParentWindow(parent);
-	}
-}
-
-
 int VRayPluginRenderer::initRenderer(int hasUI, int reInit)
 {
 	// VFB will take colors from QApplication::palette(),
@@ -354,33 +346,42 @@ void VRayPluginRenderer::setImageSize(const int w, const int h)
 }
 
 
-void VRayPluginRenderer::showVFB(bool show)
+void VRayPluginRenderer::showVFB(bool show, const char *title)
 {
-	if (!m_vray) {
-		return;
-	}
-	if (show == m_vray->vfb.isShown()) {
+	if (   !m_vray
+		|| !m_vray->getOptions().enableFrameBuffer
+		|| show == m_vray->vfb.isShown() )
+	{
 		return;
 	}
 
 	QWidget *mainWindow = RE_QtWindow::mainQtWindow();
 	if (mainWindow) {
-		QWidget *vfb = reinterpret_cast<QWidget*>(m_vray->vfb.getWindowHandle());
-		if (vfb) {
-			vfbParent(mainWindow);
-
-			// This will make window float over the parent
-			Qt::WindowFlags windowFlags = 0;
-#ifdef _WIN32
-			windowFlags |= Qt::Window;
-#else
-			windowFlags |= Qt::Dialog;
-#endif
-			windowFlags |= (Qt::WindowTitleHint|Qt::WindowMinMaxButtonsHint|Qt::WindowCloseButtonHint);
-
-			vfb->setWindowFlags(windowFlags);
+		// first set VFB parent
+		if (show) {
+			m_vray->vfb.setParentWindow(mainWindow);
 		}
+
 		m_vray->vfb.show(show, show);
+
+		// last set VFB window flags to float on top of main Houdini window.
+		// Flags and title should be set after first show of the VFB as
+		// its window handle does not exists beforehand
+		if (show) {
+			QWidget *vfb = reinterpret_cast<QWidget*>(m_vray->vfb.getWindowHandle());
+			if (vfb) {
+				Qt::WindowFlags windowFlags = vfb->windowFlags();
+				windowFlags |= (  Qt::Window
+#ifndef _WIN32
+								| Qt::WindowStaysOnTopHint
+#endif
+								| Qt::WindowTitleHint
+								| Qt::WindowMinMaxButtonsHint
+								| Qt::WindowCloseButtonHint);
+				vfb->setWindowFlags(windowFlags);
+				m_vray->vfb.setTitlePrefix(title);
+			}
+		}
 	}
 }
 
