@@ -299,7 +299,7 @@
 	    label	"Fire Multiplier"
 	    type	float
 	    default	{ "1" }
-	    range	{ 0! 1! }
+	    range	{ 0! 10 }
 	    export	none
 	}
 	parm {
@@ -315,7 +315,7 @@
 	    name	"blackbody"
 	    label	"Physically Based"
 	    type	float
-	    default	{ "1" }
+	    default	{ "0" }
 	    range	{ 0! 1! }
 	    export	none
 	}
