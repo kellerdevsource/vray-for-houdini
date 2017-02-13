@@ -295,11 +295,28 @@
 	    export	none
 	}
 	parm {
-	    name	"etmult"
+	    name	"emult"
 	    label	"Fire Multiplier"
 	    type	float
 	    default	{ "1" }
-	    range	{ 0! 100! }
+	    range	{ 0! 1! }
+	    export	none
+	}
+	parm {
+	    name	"etmult"
+	    label	"Opacity Multiplier"
+	    type	float
+	    default	{ "1" }
+	    disablewhen	"{ fire_opacity_mode == 0 }"
+	    range	{ 0! 1! }
+	    export	none
+	}
+	parm {
+	    name	"blackbody"
+	    label	"Physically Based"
+	    type	float
+	    default	{ "1" }
+	    range	{ 0! 1! }
 	    export	none
 	}
 	parm {
@@ -513,7 +530,7 @@
 	    type	ordinal
 	    default	{ "2" }
 	    menu	{
-		"0"	"Realistic (GI Only)"
+		"0"	"Ray-traced (GI Only)"
 		"1"	"Disabled"
 		"2"	"Approximate"
 		"3"	"Approximate+Shadows"
@@ -532,9 +549,10 @@
 	}
 	parm {
 	    name	"difmul"
-	    label	"Diffuse Multiplier"
+	    label	"Master Multiplier"
 	    type	float
 	    default	{ "1" }
+	    disablewhen	"{ noscatter == 0 }"
 	    range	{ 0! 4! }
 	    export	none
 	}
@@ -543,6 +561,7 @@
 	    label	"Own Light Scatter Mult"
 	    type	float
 	    default	{ "1" }
+	    disablewhen	"{ noscatter == 0 } { noscatter == 1 }"
 	    range	{ 0! 10! }
 	    export	none
 	}
@@ -551,6 +570,7 @@
 	    label	"External Scatter Mult"
 	    type	float
 	    default	{ "1" }
+	    disablewhen	"{ noscatter == 0 } { noscatter == 1 }"
 	    range	{ 0! 10! }
 	    export	none
 	}
