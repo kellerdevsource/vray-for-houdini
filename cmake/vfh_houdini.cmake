@@ -130,7 +130,6 @@ if(WIN32)
 		oldnames
 		ole32
 		oleaut32
-		rayserver_s
 		shell32
 		user32
 		uuid
