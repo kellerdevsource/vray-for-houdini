@@ -308,7 +308,7 @@
 	    type	float
 	    default	{ "1" }
 	    disablewhen	"{ fire_opacity_mode == 0 }"
-	    range	{ 0! 1! }
+	    range	{ 0! 10 }
 	    export	none
 	}
 	parm {
