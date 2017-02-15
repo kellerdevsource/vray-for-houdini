@@ -67,11 +67,11 @@ elseif(WIN32)
 
 	set(USER_HOME "$ENV{HOME}")
 	if(USER_HOME STREQUAL "")
-		set(USER_HOME "$ENV{USERPROFILE}")
+		set(USER_HOME "$ENV{USERPROFILE}/Documents")
 	endif()
 	file(TO_CMAKE_PATH "${USER_HOME}" USER_HOME)
 
-	set(HOUDINI_HOME_PATH "${USER_HOME}/Documents/houdini${HOUDINI_VERSION}")
+	set(HOUDINI_HOME_PATH "${USER_HOME}/houdini${HOUDINI_VERSION}")
 
 	set(HOUDINI_BIN_PATH "${HOUDINI_INSTALL_ROOT}/bin")
 else()
@@ -130,7 +130,6 @@ if(WIN32)
 		oldnames
 		ole32
 		oleaut32
-		rayserver_s
 		shell32
 		user32
 		uuid
