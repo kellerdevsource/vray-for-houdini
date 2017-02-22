@@ -66,7 +66,7 @@ int SOP::VRayProxy::cbClearCache(void *data, int /*index*/, float t, const PRM_T
 	OP_Node *node = reinterpret_cast<OP_Node *>(data);
 	UT_String filepath;
 	{
-		EXPR_GlobalStaticLock::Scope scopedLock;
+//		EXPR_GlobalStaticLock::Scope scopedLock;
 		node->evalString(filepath, "file", 0, t);
 	}
 
@@ -99,18 +99,6 @@ void SOP::VRayProxy::setPluginType()
 }
 
 
-OP_NodeFlags &SOP::VRayProxy::flags()
-{
-	OP_NodeFlags &flags = SOP_Node::flags();
-
-	const auto animType = static_cast<VUtils::MeshFileAnimType::Enum>(evalInt("anim_type", 0, 0.0f));
-	const bool is_animated = (animType != VUtils::MeshFileAnimType::Still);
-	flags.setTimeDep(is_animated);
-
-	return flags;
-}
-
-
 OP_ERROR SOP::VRayProxy::cookMySop(OP_Context &context)
 {
 	if (NOT(gdp)) {
@@ -136,6 +124,10 @@ OP_ERROR SOP::VRayProxy::cookMySop(OP_Context &context)
 	}
 
 	if (error() < UT_ERROR_ABORT) {
+		const auto animType = static_cast<VUtils::MeshFileAnimType::Enum>(evalInt("anim_type", 0, 0.0f));
+		const bool is_animated = (animType != VUtils::MeshFileAnimType::Still);
+		flags().setTimeDep(is_animated);
+
 		UT_Interrupt *boss = UTgetInterrupt();
 		if (boss) {
 			if(boss->opStart("Building V-Ray Scene Preview Mesh")) {

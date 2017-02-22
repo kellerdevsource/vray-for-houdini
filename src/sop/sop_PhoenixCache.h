@@ -27,7 +27,6 @@ public:
 	PhxShaderCache(OP_Network *parent, const char *name, OP_Operator *entry): NodeBase(parent, name, entry) {}
 	virtual                  ~PhxShaderCache() {}
 
-	virtual OP_NodeFlags     &flags() VRAY_OVERRIDE;
 	virtual OP_ERROR          cookMySop(OP_Context &context) VRAY_OVERRIDE;
 	virtual PluginResult      asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext=nullptr) VRAY_OVERRIDE;
 

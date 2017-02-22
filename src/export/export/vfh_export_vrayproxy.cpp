@@ -91,7 +91,7 @@ void VRayProxyExporter::GeometryDescription::clearData()
 }
 
 
-VUtils::ErrorCode VRayProxyExporter::doExport(VRayProxyExportOptions &options, const UT_ValArray<SOP_Node *> sopList)
+VUtils::ErrorCode VRayProxyExporter::doExport(VRayProxyExportOptions &options, const UT_ValArray<SOP_Node *> &sopList)
 {
 	VUtils::ErrorCode err;
 

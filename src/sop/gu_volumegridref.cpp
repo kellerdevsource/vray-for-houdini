@@ -128,14 +128,14 @@ void VRayVolumeGridRef::install(GA_PrimitiveFactory *gafactory)
 	VRayVolumeGridFactory &theFactory = VRayVolumeGridFactory::getInstance();
 	if (theFactory.isRegistered()) {
 		Log::getLog().error("Multiple attempts to install packed primitive %s from %s",
-					theFactory.name(), UT_DSO::getRunningFile());
+					theFactory.name().c_str(), UT_DSO::getRunningFile());
 		return;
 	}
 
 	GU_PrimPacked::registerPacked(gafactory, &theFactory);
 	if (NOT(theFactory.isRegistered())) {
 		Log::getLog().error("Unable to register packed primitive %s from %s",
-					theFactory.name(), UT_DSO::getRunningFile());
+					theFactory.name().c_str(), UT_DSO::getRunningFile());
 		return;
 	}
 
@@ -262,7 +262,7 @@ bool VRayVolumeGridRef::getBounds(UT_BoundingBox &box) const
 		return false;
 	}
 
-	UT_Vector4F min(-1, -1, -1), max(1, 1, 1);
+	UT_Vector3F min(-1, -1, -1), max(1, 1, 1);
 	box.initBounds(min, max);
 	SYSconst_cast(this)->setBoxCache(box);
 
@@ -586,7 +586,7 @@ bool VRayVolumeGridRef::updateFrom(const UT_Options &options)
 	// parse the path
 	if (options.hasOption("cache_path")) {
 		std::string prefix, suffix;
-		int frameWidth = splitPath(options.getOptionS("cache_path"), prefix, suffix);
+		int frameWidth = splitPath(options.getOptionS("cache_path").c_str(), prefix, suffix);
 
 		pathChange = frameWidth != this->get_frame_number_width() ||
 		             prefix     != this->get_cache_path_prefix() ||

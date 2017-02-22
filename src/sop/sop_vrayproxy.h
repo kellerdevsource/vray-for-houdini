@@ -41,9 +41,6 @@ public:
 	virtual ~VRayProxy()
 	{ }
 
-	/// Update flags for this node i.e. if it's time dependent
-	virtual OP_NodeFlags& flags() VRAY_OVERRIDE;
-
 	/// Houdini callback to cook custom geometry for this node
 	/// @param context[in] - cook time
 	virtual OP_ERROR cookMySop(OP_Context &context) VRAY_OVERRIDE;

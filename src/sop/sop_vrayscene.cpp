@@ -29,17 +29,6 @@ void SOP::VRayScene::setPluginType()
 }
 
 
-OP_NodeFlags &SOP::VRayScene::flags()
-{
-	OP_NodeFlags &flags = SOP_Node::flags();
-
-	const bool is_animated = evalInt("anim_type", 0, 0.0) != 3;
-	flags.setTimeDep(is_animated);
-
-	return flags;
-}
-
-
 VUtils::Vrscene::Preview::VrsceneSettings SOP::VRayScene::getVrsceneSettings() const
 {
 	VUtils::Vrscene::Preview::VrsceneSettings settings;
@@ -64,6 +53,9 @@ OP_ERROR SOP::VRayScene::cookMySop(OP_Context &context)
 
 	if (error() < UT_ERROR_ABORT) {
 		UT_Interrupt *boss = UTgetInterrupt();
+
+		const bool is_animated = evalInt("anim_type", 0, 0.0) != 3;
+		flags().setTimeDep(is_animated);
 
 		gdp->clearAndDestroy();
 
@@ -100,7 +92,7 @@ OP_ERROR SOP::VRayScene::cookMySop(OP_Context &context)
 									point->setPos(UT_Vector4F(vert.x, vert.y, vert.z));
 #else
 									GA_Offset pointOffs = gdp->appendPoint();
-									gdp->setPos3(pointOffs, UT_Vector4F(vert.x, vert.y, vert.z));
+									gdp->setPos3(pointOffs, UT_Vector3(vert.x, vert.y, vert.z));
 #endif
 								}
 

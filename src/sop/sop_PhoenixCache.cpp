@@ -43,18 +43,13 @@ void SOP::PhxShaderCache::setPluginType()
 }
 
 
-OP_NodeFlags &SOP::PhxShaderCache::flags()
-{
-	OP_NodeFlags &flags = SOP_Node::flags();
-	flags.setTimeDep(true);
-	return flags;
-}
-
 
 OP_ERROR SOP::PhxShaderCache::cookMySop(OP_Context &context)
 {
 	Log::getLog().info("%s cookMySop(%.3f)",
 					   getName().buffer(), context.getTime());
+
+	flags().setTimeDep(true);
 
 	gdp->stashAll();
 

@@ -37,6 +37,7 @@
 #include <mesh_sets_info.h>
 
 // For HDK to work properly
+#undef INT64
 #undef itoa
 
 inline VRay::Transform toAppSdkTm(const VUtils::TraceTransform &tm)
