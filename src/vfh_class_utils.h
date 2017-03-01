@@ -16,137 +16,70 @@
 
 namespace VRayForHoudini {
 
-
-template<typename T>
-OP_Node* VFH_VRAY_NODE_CREATOR(OP_Network *parent, const char *name, OP_Operator *entry) {
+template< typename T >
+OP_Node* VFH_VRAY_NODE_CREATOR(OP_Network *parent, const char *name, OP_Operator *entry)
+{
 	T *t = new T(parent, name, entry);
 	// Execute extra initialization
-	t->init();
+	if (t) {
+		t->init();
+	}
 	return t;
 }
 
 
-#define VFH_OBJ_ADD_OPERATOR_AUTO(table, OpPluginType, OpClass) \
+#define VFH_ADD_OP_OPERATOR(table, OpClass, OpParmTemplate, MinInp, MaxInp, VarList, Flags, InpLabels, MaxOut) \
 	OP_Operator *op##OpClass = new OP_Operator( \
 		/* Internal name     */ "VRayNode" STRINGIZE(OpClass), \
 		/* UI name           */ "V-Ray " STRINGIZE(OpClass), \
-		/* How to create one */ VFH_VRAY_NODE_CREATOR<OBJ::OpClass>, \
-		/* Parm definitions  */ OBJ::OpClass::GetPrmTemplate(), \
-		/* Min # of inputs   */ 0, \
-		/* Max # of inputs   */ 1 \
+		/* Creator           */ VFH_VRAY_NODE_CREATOR<OpClass>, \
+		/* Parm templates    */ OpParmTemplate, \
+		/* Min # of inputs   */ MinInp, \
+		/* Max # of inputs   */ MaxInp, \
+		/* Variables list    */ VarList, \
+		/* Flags             */ Flags, \
+		/* Input labels      */ InpLabels, \
+		/* Max # of outputs  */ MaxOut, \
+		/* Tab submenu path  */ nullptr \
 	); \
 	op##OpClass->setIconName("ROP_vray"); \
 	table->addOperator(op##OpClass);
 
 
-#define VFH_SOP_ADD_OPERATOR(table, OpPluginType, OpClass, OpParmTemplate) \
-	OP_Operator *op##OpClass = new OP_Operator( \
+#define VFH_ADD_OBJ_OPERATOR(table, OpClass) \
+	VFH_ADD_OP_OPERATOR(table, OpClass, OpClass::GetPrmTemplate(), 0u, 1u, nullptr, 0u, nullptr, 1)
+
+
+#define VFH_ADD_SOP_GENERATOR_CUSTOM(table, OpClass, OpParmTemplate) \
+	VFH_ADD_OP_OPERATOR(table, OpClass, OpParmTemplate, 0u, 0u, nullptr, OP_FLAG_GENERATOR, nullptr, 1)
+
+#define VFH_ADD_SOP_GENERATOR(table, OpClass) \
+	VFH_ADD_SOP_GENERATOR_CUSTOM(table, OpClass, Parm::getPrmTemplate(STRINGIZE(OpClass)))
+
+
+#define VFH_ADD_VOP_OPERATOR(table, OpClass, OpParmTemplate, OpTableName, MinInp, MaxInp, VarList, Flags, MaxOut) \
+	VOP_Operator *op##OpClass = new VOP_Operator( \
 		/* Internal name     */ "VRayNode" STRINGIZE(OpClass), \
 		/* UI name           */ "V-Ray " STRINGIZE(OpClass), \
-		/* How to create one */ VFH_VRAY_NODE_CREATOR<SOP::OpClass>, \
-		/* Parm definitions  */ OpParmTemplate, \
-		/* Min # of inputs   */ 0, \
-		/* Max # of inputs   */ 0 \
-	); \
-	op##OpClass->setIconName("ROP_vray"); \
-	table->addOperator(op##OpClass);
-
-
-#define VFH_SOP_ADD_OPERATOR_INPUTS(table, OpPluginType, OpClass, OpParmTemplate, MinInputs, MaxInputs) \
-	OP_Operator *op##OpClass = new OP_Operator( \
-		/* Internal name     */ "VRayNode" STRINGIZE(OpClass), \
-		/* UI name           */ "V-Ray " STRINGIZE(OpClass), \
-		/* How to create one */ VFH_VRAY_NODE_CREATOR<SOP::OpClass>, \
-		/* Parm definitions  */ OpParmTemplate, \
-		/* Min # of inputs   */ MinInputs, \
-		/* Max # of inputs   */ MaxInputs \
-	); \
-	op##OpClass->setIconName("ROP_vray"); \
-	table->addOperator(op##OpClass);
-
-
-#define VFH_SOP_ADD_OPERATOR_AUTO(table, OpPluginType, OpClass) \
-	OP_Operator *op##OpClass = new OP_Operator( \
-		/* Internal name     */ "VRayNode" STRINGIZE(OpClass), \
-		/* UI name           */ "V-Ray " STRINGIZE(OpClass), \
-		/* How to create one */ VFH_VRAY_NODE_CREATOR<SOP::OpClass>, \
-		/* Parm definitions  */ Parm::getPrmTemplate(STRINGIZE(OpClass)), \
-		/* Min # of inputs   */ 0, \
-		/* Max # of inputs   */ 0 \
-	); \
-	op##OpClass->setIconName("ROP_vray"); \
-	table->addOperator(op##OpClass);
-
-
-#define VFH_SOP_ADD_OPERATOR_AUTO_INPUTS(table, OpPluginType, OpClass, MinInputs, MaxInputs) \
-	OP_Operator *op##OpClass = new OP_Operator( \
-		/* Internal name     */ "VRayNode" STRINGIZE(OpClass), \
-		/* UI name           */ "V-Ray " STRINGIZE(OpClass), \
-		/* How to create one */ VFH_VRAY_NODE_CREATOR<SOP::OpClass>, \
-		/* Parm definitions  */ Parm::getPrmTemplate(STRINGIZE(OpClass)), \
-		/* Min # of inputs   */ MinInputs, \
-		/* Max # of inputs   */ MaxInputs \
-	); \
-	op##OpClass->setIconName("ROP_vray"); \
-	table->addOperator(op##OpClass);
-
-
-#define VFH_SOP_ADD_OPERATOR_CUSTOM_ID_AUTO(table, OpPluginType, OpClass, PluginID) \
-	OP_Operator *op##OpClass = new OP_Operator( \
-		/* Internal name     */ "VRayNode" STRINGIZE(OpClass), \
-		/* UI name           */ "V-Ray " STRINGIZE(OpClass), \
-		/* How to create one */ VFH_VRAY_NODE_CREATOR<SOP::OpClass>, \
-		/* Parm definitions  */ Parm::getPrmTemplate(PluginID), \
-		/* Min # of inputs   */ 0, \
-		/* Max # of inputs   */ 0, \
-		/* Local variables   */ 0, \
-		/* Flags             */ OP_FLAG_GENERATOR \
-	); \
-	op##OpClass->setIconName("ROP_vray"); \
-	table->addOperator(op##OpClass);
-
-
-#define VFH_VOP_ADD_OPERATOR_CUSTOM(table, OpPluginType, OpClass, OpParmTemplate) \
-	VOP_Operator *vop##OpClass = new VOP_Operator( \
-		/* Internal name     */ "VRayNode" STRINGIZE(OpClass), \
-		/* UI name           */ "V-Ray " STRINGIZE(OpClass), \
-		/* How to create one */ VFH_VRAY_NODE_CREATOR<VOP::OpClass>, \
-		/* Parm definitions  */ OpParmTemplate, \
-		/* Min # of inputs   */ 0, \
-		/* Max # of inputs   */ VOP_VARIABLE_INOUT_MAX, \
+		/* Creator           */ VFH_VRAY_NODE_CREATOR<OpClass>, \
+		/* Parm templates    */ OpParmTemplate, \
+		/* Child table name  */ OpTableName, \
+		/* Min # of inputs   */ MinInp, \
+		/* Max # of inputs   */ MaxInp, \
 		/* VOP network mask  */ "VRay", \
-		/* Local variables   */ 0, \
-		/* Special flags     */ OP_FLAG_UNORDERED \
+		/* Local variables   */ VarList, \
+		/* Flags             */ Flags, \
+		/* Max # of outputs  */ MaxOut \
 	); \
-	vop##OpClass->setIconName("ROP_vray"); \
-	table->addOperator(vop##OpClass);
+	op##OpClass->setIconName("ROP_vray"); \
+	table->addOperator(op##OpClass);
 
 
-#define VFH_VOP_ADD_OPERATOR_BASE(table, OpPluginType, OpClass, OpPluginID, OpFlags) \
-	VOP_Operator *vop##OpClass = new VOP_Operator( \
-		/* Internal name     */ "VRayNode" STRINGIZE(OpClass), \
-		/* UI name           */ "V-Ray " STRINGIZE(OpClass), \
-		/* How to create one */ VFH_VRAY_NODE_CREATOR<VOP::OpClass>, \
-		/* Parm definitions  */ Parm::getPrmTemplate(OpPluginID), \
-		/* Min # of inputs   */ 0, \
-		/* Max # of inputs   */ VOP_VARIABLE_INOUT_MAX, \
-		/* VOP network mask  */ "VRay", \
-		/* Local variables   */ 0, \
-		/* Special flags     */ OpFlags \
-	); \
-	vop##OpClass->setIconName("ROP_vray"); \
-	table->addOperator(vop##OpClass);
-
+#define VFH_VOP_ADD_OPERATOR_CUSTOM(table, OpPluginType, OpClass, OpParmTemplate, OpFlags) \
+	VFH_ADD_VOP_OPERATOR(table, OpClass, OpParmTemplate, nullptr, 0u, VOP_VARIABLE_INOUT_MAX, nullptr, OpFlags, 1u)
 
 #define VFH_VOP_ADD_OPERATOR(table, OpPluginType, OpClass) \
-	VFH_VOP_ADD_OPERATOR_BASE(table, OpPluginType, OpClass, STRINGIZE(OpClass), OP_FLAG_UNORDERED)
-
-#define VFH_VOP_ADD_OPERATOR_OUTPUT(table, OpPluginType, OpClass) \
-	VFH_VOP_ADD_OPERATOR_BASE(table, OpPluginType, OpClass, STRINGIZE(OpClass), OP_FLAG_OUTPUT)
-
-#define VFH_VOP_ADD_OPERATOR_OUTPUT_CUSTOM_ID(table, OpPluginType, OpClass, OpPluginID) \
-	VFH_VOP_ADD_OPERATOR_BASE(table, OpPluginType, OpClass, OpPluginID, OP_FLAG_UNORDERED)
-
+	VFH_VOP_ADD_OPERATOR_CUSTOM(table, OpPluginType, OpClass, Parm::getPrmTemplate(STRINGIZE(OpClass)), OP_FLAG_UNORDERED)
 
 } // namespace VRayForHoudini
 

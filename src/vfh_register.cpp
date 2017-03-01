@@ -141,15 +141,15 @@ void newSopOperator(OP_OperatorTable *table)
 		}
 	}
 
-	VFH_SOP_ADD_OPERATOR(table, "GEOMETRY", PhxShaderCache, PhxShaderCache::GetPrmTemplate());
+	VFH_ADD_SOP_GENERATOR_CUSTOM(table, PhxShaderCache, PhxShaderCache::GetPrmTemplate());
 #endif
 
 #ifdef CGR_HAS_VRAYSCENE
-	VFH_SOP_ADD_OPERATOR_AUTO(table,           "GEOMETRY", VRayScene);
+	VFH_ADD_SOP_GENERATOR(table, VRayScene);
 #endif
 
-	VFH_SOP_ADD_OPERATOR_AUTO(table,           "GEOMETRY", GeomPlane);
-	VFH_SOP_ADD_OPERATOR_CUSTOM_ID_AUTO(table, "GEOMETRY", VRayProxy, "GeomMeshFile");
+	VFH_ADD_SOP_GENERATOR(table, GeomPlane);
+	VFH_ADD_SOP_GENERATOR_CUSTOM(table, VRayProxy, Parm::getPrmTemplate("GeomMeshFile"));
 	VRayProxyROP::register_sopoperator(table);
 }
 
@@ -159,17 +159,18 @@ void newSopOperator(OP_OperatorTable *table)
 void newObjectOperator(OP_OperatorTable *table)
 {
 	using namespace OBJ;
-	VFH_OBJ_ADD_OPERATOR_AUTO(table, OBJ::VRayPluginType::Light, SunLight);
-	VFH_OBJ_ADD_OPERATOR_AUTO(table, OBJ::VRayPluginType::Light, LightDirect);
-	VFH_OBJ_ADD_OPERATOR_AUTO(table, OBJ::VRayPluginType::Light, LightAmbient);
-	VFH_OBJ_ADD_OPERATOR_AUTO(table, OBJ::VRayPluginType::Light, LightOmni);
-	VFH_OBJ_ADD_OPERATOR_AUTO(table, OBJ::VRayPluginType::Light, LightSphere);
-	VFH_OBJ_ADD_OPERATOR_AUTO(table, OBJ::VRayPluginType::Light, LightSpot);
-	VFH_OBJ_ADD_OPERATOR_AUTO(table, OBJ::VRayPluginType::Light, LightRectangle);
-	VFH_OBJ_ADD_OPERATOR_AUTO(table, OBJ::VRayPluginType::Light, LightMesh);
-	VFH_OBJ_ADD_OPERATOR_AUTO(table, OBJ::VRayPluginType::Light, LightIES);
-	VFH_OBJ_ADD_OPERATOR_AUTO(table, OBJ::VRayPluginType::Light, LightDome);
-	VFH_OBJ_ADD_OPERATOR_AUTO(table, OBJ::VRayPluginType::Geometry, VRayClipper);
+
+	VFH_ADD_OBJ_OPERATOR(table, SunLight);
+	VFH_ADD_OBJ_OPERATOR(table, LightDirect);
+	VFH_ADD_OBJ_OPERATOR(table, LightAmbient);
+	VFH_ADD_OBJ_OPERATOR(table, LightOmni);
+	VFH_ADD_OBJ_OPERATOR(table, LightSphere);
+	VFH_ADD_OBJ_OPERATOR(table, LightSpot);
+	VFH_ADD_OBJ_OPERATOR(table, LightRectangle);
+	VFH_ADD_OBJ_OPERATOR(table, LightMesh);
+	VFH_ADD_OBJ_OPERATOR(table, LightIES);
+	VFH_ADD_OBJ_OPERATOR(table, LightDome);
+	VFH_ADD_OBJ_OPERATOR(table, VRayClipper);
 }
 
 
@@ -195,8 +196,7 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "EFFECT", EnvFogMeshGizmo);
 	VFH_VOP_ADD_OPERATOR(table, "EFFECT", VolumeVRayToon);
 
-	VFH_VOP_ADD_OPERATOR_OUTPUT_CUSTOM_ID(table, "RENDERCHANNEL", RenderChannelsContainer,
-										  "SettingsRenderChannels");
+	VFH_VOP_ADD_OPERATOR_CUSTOM(table, "RENDERCHANNEL", RenderChannelsContainer, Parm::getPrmTemplate("SettingsRenderChannels"), OP_FLAG_UNORDERED | OP_FLAG_OUTPUT);
 
 	VFH_VOP_ADD_OPERATOR(table, "RENDERCHANNEL", RenderChannelBumpNormals);
 	VFH_VOP_ADD_OPERATOR(table, "RENDERCHANNEL", RenderChannelColor);
@@ -241,7 +241,7 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFWard);
 
 #ifdef CGR_HAS_AUR
-	VFH_VOP_ADD_OPERATOR_CUSTOM(table, "MATERIAL", PhxShaderSim, PhxShaderSim::GetPrmTemplate());
+	VFH_VOP_ADD_OPERATOR_CUSTOM(table, "MATERIAL", PhxShaderSim, PhxShaderSim::GetPrmTemplate(), OP_FLAG_UNORDERED);
 #endif
 
 	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", Mtl2Sided);
@@ -270,7 +270,7 @@ void newVopOperator(OP_OperatorTable *table)
 	// TextureOutput is intended to serve same purposes as MaterialOutput for materials
 	// but used for textures in this case
 	// VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TextureOutput);
-	VFH_VOP_ADD_OPERATOR_CUSTOM(table, "TEXTURE", MetaImageFile, VOP::MetaImageFile::GetPrmTemplate());
+	VFH_VOP_ADD_OPERATOR_CUSTOM(table, "TEXTURE", MetaImageFile, VOP::MetaImageFile::GetPrmTemplate(), OP_FLAG_UNORDERED);
 
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", BitmapBuffer);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", ColorTextureToMono);
