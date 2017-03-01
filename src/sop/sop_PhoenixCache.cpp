@@ -24,10 +24,11 @@
 
 using namespace VRayForHoudini;
 
-static PRM_Template * AttrItems = nullptr;
 
 PRM_Template* SOP::PhxShaderCache::GetPrmTemplate()
 {
+	static PRM_Template *AttrItems = nullptr;
+
 	if (!AttrItems) {
 		AttrItems = Parm::PRMList::loadFromFile(Parm::expandUiPath("CustomPhxShaderCache.ds").c_str(), true);
 	}
