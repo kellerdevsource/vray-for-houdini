@@ -13,7 +13,6 @@
 
 #include <boost/bind.hpp>
 
-//#include <QtCore/QString>
 #include <QtGui/QtGui>
 #include <RE/RE_Window.h>
 
