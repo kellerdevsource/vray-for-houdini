@@ -61,15 +61,12 @@ void SOP::VRayProxy::addPrmTemplate(Parm::PRMList &prmTemplate)
 }
 
 
-int SOP::VRayProxy::cbClearCache(void *data, int /*index*/, float t, const PRM_Template* /*tplate*/)
+int SOP::VRayProxy::cbClearCache(void *data, int /*index*/, fpreal t, const PRM_Template* /*tplate*/)
 {
 	OP_Node *node = reinterpret_cast<OP_Node *>(data);
-	UT_String filepath;
-	{
-//		EXPR_GlobalStaticLock::Scope scopedLock;
-		node->evalString(filepath, "file", 0, t);
-	}
 
+	UT_String filepath;
+	node->evalString(filepath, "file", 0, t);
 	ClearVRayProxyCache(filepath);
 
 	return 0;
@@ -124,7 +121,7 @@ OP_ERROR SOP::VRayProxy::cookMySop(OP_Context &context)
 	}
 
 	if (error() < UT_ERROR_ABORT) {
-		const auto animType = static_cast<VUtils::MeshFileAnimType::Enum>(evalInt("anim_type", 0, 0.0f));
+		const auto animType = static_cast<VUtils::MeshFileAnimType::Enum>(evalInt("anim_type", 0, t));
 		const bool is_animated = (animType != VUtils::MeshFileAnimType::Still);
 		flags().setTimeDep(is_animated);
 

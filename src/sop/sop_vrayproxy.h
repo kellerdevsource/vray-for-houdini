@@ -34,7 +34,7 @@ public:
 	/// @param tplate - pointer to the PRM_Template of the parameter it was triggered for.
 	/// @return It should return 1 if you want the dialog to refresh
 	///        (ie if you changed any values) and 0 otherwise.
-	static int cbClearCache(void *data, int index, float t, const PRM_Template* tplate);
+	static int cbClearCache(void *data, int index, fpreal t, const PRM_Template* tplate);
 
 public:
 	VRayProxy(OP_Network *parent, const char *name, OP_Operator *entry);
