@@ -47,13 +47,9 @@ bool VOP::VRayVOPContextOPFilter::allowOperatorAsChild(OP_Operator *op)
 
 VOP::VRayMaterialBuilder::VRayMaterialBuilder(OP_Network *parent, const char *name, OP_Operator *entry, SHOP_TYPE shader_type)
 	: SHOP_Node(parent, name, entry, shader_type)
-	, m_codeGen(this, new VOP_LanguageContextTypeList(VOP_LANGUAGE_VEX, VOPconvertToContextType(VEX_SURFACE_CONTEXT)), 1, 1)
+	, m_codeGen(this, new VOP_LanguageContextTypeList(VOP_LANGUAGE_VEX, VOP_CVEX_SHADER), 1, 1)
 {
-	setOperatorTable(getOperatorTable(VOP_TABLE_NAME));
-
-	auto info = static_cast<SHOP_OperatorInfo *>(entry->getOpSpecificData());
-	info->setShaderType(shader_type);
-	info->setNumOutputs(0);
+//	setOperatorTable(getOperatorTable(VOP_TABLE_NAME));
 }
 
 
@@ -124,18 +120,22 @@ void VOP::VRayMaterialBuilder::ensureSpareParmsAreUpdatedSubclass()
 
 void VOP::VRayMaterialBuilder::register_shop_operator(OP_OperatorTable *table)
 {
-	SHOP_Operator *op = new SHOP_Operator("vray_material",
-										  "V-Ray Material",
+	SHOP_Operator *op = new SHOP_Operator("vray_material", "V-Ray Material",
 										  VOP::VRayMaterialBuilder::creator,
 										  templates,
-										  0,
-										  0,
+										  VOP_TABLE_NAME,
+										  0, 0,
 										  VOP_CodeGenerator::theLocalVariables,
-										  OP_FLAG_GENERATOR,
+										  OP_FLAG_GENERATOR | OP_FLAG_NETWORK ,
 										  SHOP_AUTOADD_NONE);
 
 	// Set icon
 	op->setIconName("ROP_vray");
+
+	auto info = static_cast<SHOP_OperatorInfo *>(op->getOpSpecificData());
+	info->setShaderType(SHOP_VOP_MATERIAL);
+	info->setRenderMask("VRay OGL");
+	info->setNumOutputs(0);
 
 	table->addOperator(op);
 }
@@ -143,9 +143,9 @@ void VOP::VRayMaterialBuilder::register_shop_operator(OP_OperatorTable *table)
 
 VOP::VRayVOPContext::VRayVOPContext(OP_Network *parent, const char *name, OP_Operator *entry):
 	VOPNET_Node(parent, name, entry)
-	, m_codeGen(this, new VOP_LanguageContextTypeList(VOP_LANGUAGE_VEX, VOPconvertToContextType(VEX_CVEX_CONTEXT)), 1, 1)
+	, m_codeGen(this, new VOP_LanguageContextTypeList(VOP_LANGUAGE_VEX, VOP_CVEX_SHADER), 1, 1)
 {
-	setOperatorTable(getOperatorTable(VOP_TABLE_NAME));
+//	setOperatorTable(getOperatorTable(VOP_TABLE_NAME));
 }
 
 
@@ -210,56 +210,35 @@ void VOP::VRayVOPContext::ensureSpareParmsAreUpdatedSubclass()
 
 void VOP::VRayVOPContext::register_operator_vrayenvcontext(OP_OperatorTable *table)
 {
-	OP_Operator *op = new VOP_Operator("vray_environment",
-									  "V-Ray Environment",
+	OP_Operator *op = new VOP_Operator("vray_environment", "V-Ray Environment",
 									  VOP::VRayVOPContext::creator,
 									  templates,
-									  0,
-									  0,
+									  VOP_TABLE_NAME,
+									  0, 0,
 									  "*",
 									  VOP_CodeGenerator::theLocalVariables,
-									  OP_FLAG_NETWORK | OP_FLAG_GENERATOR | OP_FLAG_MANAGER,
-									  0
-									   );
+									  OP_FLAG_NETWORK | OP_FLAG_GENERATOR,
+									  0 );
 
 	// Set icon
 	op->setIconName("ROP_vray");
-
 	table->addOperator(op);
 }
 
 
 void VOP::VRayVOPContext::register_operator_vrayrccontext(OP_OperatorTable *table)
 {
-	OP_Operator *op = new VOP_Operator("vray_render_channels",
-									  "V-Ray Render Channles",
+	OP_Operator *op = new VOP_Operator("vray_render_channels", "V-Ray Render Channles",
 									  VOP::VRayVOPContext::creator,
 									  templates,
-									  0,
-									  0,
+									  VOP_TABLE_NAME,
+									  0, 0,
 									  "*",
 									  VOP_CodeGenerator::theLocalVariables,
-									  OP_FLAG_NETWORK | OP_FLAG_GENERATOR | OP_FLAG_MANAGER,
-									  0
-									   );
+									  OP_FLAG_NETWORK | OP_FLAG_GENERATOR,
+									  0 );
 
 	// Set icon
 	op->setIconName("ROP_vray");
-
-	table->addOperator(op);
-}
-
-
-void VOP::VRayVOPContext::register_operator(OP_OperatorTable *table)
-{
-	OP_Operator *op = new OP_Operator("vray_vopcontext",
-									  "V-Ray VOP Context",
-									  VOP::VRayVOPContext::creator,
-									  templates,
-									  0);
-
-	// Set icon
-	op->setIconName("ROP_vray");
-
 	table->addOperator(op);
 }

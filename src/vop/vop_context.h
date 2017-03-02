@@ -75,7 +75,6 @@ class VRayVOPContext:
 public:
 	static void                register_operator_vrayenvcontext(OP_OperatorTable *table);
 	static void                register_operator_vrayrccontext(OP_OperatorTable *table);
-	static void                register_operator(OP_OperatorTable *table);
 	static OP_Node            *creator(OP_Network *parent, const char *name, OP_Operator *entry) { return new VRayVOPContext(parent, name, entry); }
 
 public:
