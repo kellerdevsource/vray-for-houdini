@@ -87,13 +87,9 @@ OP_ERROR SOP::VRayScene::cookMySop(OP_Context &context)
 									if (flipAxis) {
 										vert = VUtils::Vrscene::Preview::flipMatrix * vert;
 									}
-#if UT_MAJOR_VERSION_INT < 14
-									GEO_Point *point = gdp->appendPointElement();
-									point->setPos(UT_Vector4F(vert.x, vert.y, vert.z));
-#else
+
 									GA_Offset pointOffs = gdp->appendPoint();
 									gdp->setPos3(pointOffs, UT_Vector3(vert.x, vert.y, vert.z));
-#endif
 								}
 
 								for (int f = 0; f < faces.count(); f += 3) {
@@ -114,10 +110,6 @@ OP_ERROR SOP::VRayScene::cookMySop(OP_Context &context)
 
 		boss->opEnd();
 	}
-
-#if UT_MAJOR_VERSION_INT < 14
-	gdp->notifyCache(GU_CACHE_ALL);
-#endif
 
 	return error();
 }

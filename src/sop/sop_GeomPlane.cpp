@@ -64,10 +64,6 @@ OP_ERROR SOP::GeomPlane::cookMySop(OP_Context &context)
 
 	poly->reverse();
 
-#if UT_MAJOR_VERSION_INT < 14
-	gdp->notifyCache(GU_CACHE_ALL);
-#endif
-
 	return error();
 }
 

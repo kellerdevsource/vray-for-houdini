@@ -91,10 +91,6 @@ OP_ERROR SOP::PhxShaderCache::cookMySop(OP_Context &context)
 
 	gdp->destroyStashed();
 
-#if UT_MAJOR_VERSION_INT < 14
-	gdp->notifyCache(GU_CACHE_ALL);
-#endif
-
 	return error();
 }
 
