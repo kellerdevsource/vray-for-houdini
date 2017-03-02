@@ -12,6 +12,13 @@
 
 #include <HOM/HOM_Module.h>
 #include <HOM/HOM_EnumModules.h>
+#include <UT/UT_HDKVersion.h>
+
+#if HDK_API_VERSION >= 16000000
+#include <RE/RE_Window.h>
+#else
+#include <RE/RE_QtWindow.h>
+#endif
 
 
 int VRayForHoudini::HOU::isApprentice()
@@ -31,3 +38,12 @@ int VRayForHoudini::HOU::isUIAvailable()
 	return (HOM().isUIAvailable());
 }
 
+
+QWidget* VRayForHoudini::HOU::getMainQtWindow()
+{
+#if HDK_API_VERSION >= 16000000
+	return RE_Window::mainQtWindow();
+#else
+	return RE_QtWindow::mainQtWindow();
+#endif
+}

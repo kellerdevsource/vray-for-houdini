@@ -9,9 +9,7 @@
 //
 
 #include "vfh_vfb.h"
-
-//#include <RE/RE_QtWindow.h>
-#include <RE/RE_Window.h>
+#include "vfh_hou_utils.h"
 
 #define PRINT_UI_CALLS  0
 
@@ -173,7 +171,7 @@ void VFB::init()
 	Log::getLog().info("VFB::init");
 #endif
 	if (!m_window) {
-		m_window = new VfbWindow(RE_Window::mainQtWindow());
+		m_window = new VfbWindow(HOU::getMainQtWindow());
 		m_window->setWindowTitle("V-Ray Frame Buffer");
 	}
 

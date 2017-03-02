@@ -12,6 +12,7 @@
 #define VRAY_FOR_HOUDINI_CLASS_UTILS_H
 
 #include <OP/OP_Node.h>
+#include <UT/UT_HDKVersion.h>
 
 
 namespace VRayForHoudini {
@@ -57,6 +58,8 @@ OP_Node* VFH_VRAY_NODE_CREATOR(OP_Network *parent, const char *name, OP_Operator
 	VFH_ADD_SOP_GENERATOR_CUSTOM(table, OpClass, Parm::getPrmTemplate(STRINGIZE(OpClass)))
 
 
+#if HDK_API_VERSION >= 16000000
+
 #define VFH_ADD_VOP_OPERATOR(table, OpClass, OpParmTemplate, OpTableName, MinInp, MaxInp, VarList, Flags, MaxOut) \
 	VOP_Operator *op##OpClass = new VOP_Operator( \
 		/* Internal name     */ "VRayNode" STRINGIZE(OpClass), \
@@ -74,6 +77,25 @@ OP_Node* VFH_VRAY_NODE_CREATOR(OP_Network *parent, const char *name, OP_Operator
 	op##OpClass->setIconName("ROP_vray"); \
 	table->addOperator(op##OpClass);
 
+#else
+
+#define VFH_ADD_VOP_OPERATOR(table, OpClass, OpParmTemplate, OpTableName, MinInp, MaxInp, VarList, Flags, MaxOut) \
+	VOP_Operator *op##OpClass = new VOP_Operator( \
+		/* Internal name     */ "VRayNode" STRINGIZE(OpClass), \
+		/* UI name           */ "V-Ray " STRINGIZE(OpClass), \
+		/* Creator           */ VFH_VRAY_NODE_CREATOR<OpClass>, \
+		/* Parm templates    */ OpParmTemplate, \
+		/* Min # of inputs   */ MinInp, \
+		/* Max # of inputs   */ MaxInp, \
+		/* VOP network mask  */ "VRay", \
+		/* Local variables   */ VarList, \
+		/* Flags             */ Flags, \
+		/* Max # of outputs  */ MaxOut \
+	); \
+	op##OpClass->setIconName("ROP_vray"); \
+	table->addOperator(op##OpClass);
+
+#endif
 
 #define VFH_VOP_ADD_OPERATOR_CUSTOM(table, OpPluginType, OpClass, OpParmTemplate, OpFlags) \
 	VFH_ADD_VOP_OPERATOR(table, OpClass, OpParmTemplate, nullptr, 0u, VOP_VARIABLE_INOUT_MAX, nullptr, OpFlags, 1u)

@@ -128,14 +128,14 @@ void VRayVolumeGridRef::install(GA_PrimitiveFactory *gafactory)
 	VRayVolumeGridFactory &theFactory = VRayVolumeGridFactory::getInstance();
 	if (theFactory.isRegistered()) {
 		Log::getLog().error("Multiple attempts to install packed primitive %s from %s",
-					theFactory.name().c_str(), UT_DSO::getRunningFile());
+					static_cast<const char *>(theFactory.name()), UT_DSO::getRunningFile());
 		return;
 	}
 
 	GU_PrimPacked::registerPacked(gafactory, &theFactory);
 	if (NOT(theFactory.isRegistered())) {
 		Log::getLog().error("Unable to register packed primitive %s from %s",
-					theFactory.name().c_str(), UT_DSO::getRunningFile());
+					static_cast<const char *>(theFactory.name()), UT_DSO::getRunningFile());
 		return;
 	}
 
