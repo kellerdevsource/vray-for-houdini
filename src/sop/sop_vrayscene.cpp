@@ -43,7 +43,7 @@ OP_ERROR SOP::VRayScene::cookMySop(OP_Context &context)
 {
 	Log::getLog().debug("SOP::VRayScene::cookMySop()");
 
-	const float t = context.getTime();
+	const fpreal t = context.getTime();
 
 	UT_String path;
 	evalString(path, "filepath", 0, t);
@@ -54,7 +54,7 @@ OP_ERROR SOP::VRayScene::cookMySop(OP_Context &context)
 	if (error() < UT_ERROR_ABORT) {
 		UT_Interrupt *boss = UTgetInterrupt();
 
-		const bool is_animated = evalInt("anim_type", 0, 0.0) != 3;
+		const bool is_animated = evalInt("anim_type", 0, t) != 3;
 		flags().setTimeDep(is_animated);
 
 		gdp->clearAndDestroy();
