@@ -13,7 +13,7 @@
 #include <VOP/VOP_Operator.h>
 #include <VOP/VOP_OperatorInfo.h>
 #include <OP/OP_Input.h>
-#include <UT/UT_HDKVersion.h>
+#include <UT/UT_Version.h>
 
 #include <boost/format.hpp>
 #include <unordered_set>
@@ -30,7 +30,7 @@ void VOP::MaterialOutput::register_operator(OP_OperatorTable *table)
 {
 	VOP_Operator *op = new VOP_Operator("vray_material_output", "V-Ray Material Output",
 										VOP::MaterialOutput::creator, templates,
-#if HDK_API_VERSION >= 16000000
+#if UT_MAJOR_VERSION_INT >= 16
 										nullptr,
 #endif
 										3, 3,

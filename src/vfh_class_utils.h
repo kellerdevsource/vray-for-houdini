@@ -12,7 +12,7 @@
 #define VRAY_FOR_HOUDINI_CLASS_UTILS_H
 
 #include <OP/OP_Node.h>
-#include <UT/UT_HDKVersion.h>
+#include <UT/UT_Version.h>
 
 
 namespace VRayForHoudini {
@@ -58,7 +58,7 @@ OP_Node* VFH_VRAY_NODE_CREATOR(OP_Network *parent, const char *name, OP_Operator
 	VFH_ADD_SOP_GENERATOR_CUSTOM(table, OpClass, Parm::getPrmTemplate(STRINGIZE(OpClass)))
 
 
-#if HDK_API_VERSION >= 16000000
+#if UT_MAJOR_VERSION_INT >= 16
 
 #define VFH_ADD_VOP_OPERATOR(table, OpClass, OpParmTemplate, OpTableName, MinInp, MaxInp, VarList, Flags, MaxOut) \
 	VOP_Operator *op##OpClass = new VOP_Operator( \

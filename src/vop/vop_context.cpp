@@ -16,7 +16,7 @@
 #include <VOP/VOP_OperatorInfo.h>
 #include <VOP/VOP_LanguageContextTypeList.h>
 #include <VOP/VOP_ExportedParmsManager.h>
-#include <UT/UT_HDKVersion.h>
+#include <UT/UT_Version.h>
 
 
 using namespace VRayForHoudini;
@@ -50,7 +50,7 @@ VOP::VRayMaterialBuilder::VRayMaterialBuilder(OP_Network *parent, const char *na
 	: SHOP_Node(parent, name, entry, shader_type)
 	, m_codeGen(this, new VOP_LanguageContextTypeList(VOP_LANGUAGE_VEX, VOP_CVEX_SHADER), 1, 1)
 {
-#if HDK_API_VERSION < 16000000
+#if UT_MAJOR_VERSION_INT < 16
 	setOperatorTable(getOperatorTable(VOP_TABLE_NAME));
 #endif
 }
@@ -126,7 +126,7 @@ void VOP::VRayMaterialBuilder::register_shop_operator(OP_OperatorTable *table)
 	SHOP_Operator *op = new SHOP_Operator("vray_material", "V-Ray Material",
 										  VOP::VRayMaterialBuilder::creator,
 										  templates,
-#if HDK_API_VERSION >= 16000000
+#if UT_MAJOR_VERSION_INT >= 16
 										  VOP_TABLE_NAME,
 #endif
 										  0, 0,
@@ -150,7 +150,7 @@ VOP::VRayVOPContext::VRayVOPContext(OP_Network *parent, const char *name, OP_Ope
 	VOPNET_Node(parent, name, entry)
 	, m_codeGen(this, new VOP_LanguageContextTypeList(VOP_LANGUAGE_VEX, VOP_CVEX_SHADER), 1, 1)
 {
-#if HDK_API_VERSION < 16000000
+#if UT_MAJOR_VERSION_INT < 16
 	setOperatorTable(getOperatorTable(VOP_TABLE_NAME));
 #endif
 }
@@ -220,7 +220,7 @@ void VOP::VRayVOPContext::register_operator_vrayenvcontext(OP_OperatorTable *tab
 	OP_Operator *op = new VOP_Operator("vray_environment", "V-Ray Environment",
 									  VOP::VRayVOPContext::creator,
 									  templates,
-#if HDK_API_VERSION >= 16000000
+#if UT_MAJOR_VERSION_INT >= 16
 									  VOP_TABLE_NAME,
 #endif
 									  0, 0,
@@ -240,7 +240,7 @@ void VOP::VRayVOPContext::register_operator_vrayrccontext(OP_OperatorTable *tabl
 	OP_Operator *op = new VOP_Operator("vray_render_channels", "V-Ray Render Channles",
 									  VOP::VRayVOPContext::creator,
 									  templates,
-#if HDK_API_VERSION >= 16000000
+#if UT_MAJOR_VERSION_INT >= 16
 									  VOP_TABLE_NAME,
 #endif
 									  0, 0,

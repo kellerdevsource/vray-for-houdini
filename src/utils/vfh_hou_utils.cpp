@@ -12,9 +12,10 @@
 
 #include <HOM/HOM_Module.h>
 #include <HOM/HOM_EnumModules.h>
-#include <UT/UT_HDKVersion.h>
+#include <UT/UT_Version.h>
 
-#if HDK_API_VERSION >= 16000000
+
+#if UT_MAJOR_VERSION_INT >= 16
 #include <RE/RE_Window.h>
 #else
 #include <RE/RE_QtWindow.h>
@@ -41,7 +42,7 @@ int VRayForHoudini::HOU::isUIAvailable()
 
 QWidget* VRayForHoudini::HOU::getMainQtWindow()
 {
-#if HDK_API_VERSION >= 16000000
+#if UT_MAJOR_VERSION_INT >= 16
 	return RE_Window::mainQtWindow();
 #else
 	return RE_QtWindow::mainQtWindow();
