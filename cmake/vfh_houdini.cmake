@@ -10,24 +10,9 @@
 
 include(CheckIncludeFile)
 
-option(HOUDINI_DEFAULT_PATH "Use default Houdini installation path" ON)
-
 set(HOUDINI_VERSION       "14.0" CACHE STRING "Houdini major version")
 set(HOUDINI_VERSION_BUILD "248"  CACHE STRING "Houdini build version")
-
-set(HOUDINI_DEFINES
-	-DAMD64
-	-DSIZEOF_VOID_P=8
-	-DSESI_LITTLE_ENDIAN
-	-D_USE_MATH_DEFINES
-	-DMAKING_DSO
-	-DVERSION=${HOUDINI_VERSION}
-	-DHOUDINI_DSO_VERSION=${HOUDINI_VERSION}
-	-DUT_DSO_TAGINFO=${PLUGIN_TAGINFO}
-)
-
-set(HOUDINI_LINK_FLAGS "")
-set(HOUDINI_INSTALL_ROOT "" CACHE PATH "Houdini install path")
+set(HOUDINI_INSTALL_ROOT  ""     CACHE PATH   "Houdini install path")
 
 set(HOUDINI_HDK_PATH "")
 if(SDK_PATH)
@@ -35,13 +20,11 @@ if(SDK_PATH)
 endif()
 
 if (APPLE)
-	set(HOUDINI_DEF_PATH "/Applications/Houdini ${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD}")
-	if (HOUDINI_DEFAULT_PATH)
-		set(HOUDINI_INSTALL_ROOT "${HOUDINI_DEF_PATH}" CACHE PATH "" FORCE)
+	if (HOUDINI_INSTALL_ROOT STREQUAL "")
+		set(HOUDINI_INSTALL_ROOT "/Applications/Houdini ${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD}" CACHE PATH "" FORCE)
 	endif()
 
 	set(HOUDINI_FRAMEWORK_ROOT "/Library/Frameworks/Houdini.framework/Versions/${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD}")
-
 	if(HOUDINI_HDK_PATH STREQUAL "")
 		set(HOUDINI_HDK_PATH ${HOUDINI_FRAMEWORK_ROOT})
 	endif()
@@ -49,21 +32,17 @@ if (APPLE)
 	set(HOUDINI_INCLUDE_PATH "${HOUDINI_HDK_PATH}/Resources/toolkit/include")
 	set(HOUDINI_LIB_PATH     "${HOUDINI_HDK_PATH}/Libraries")
 
+	set(HOUDINI_BIN_PATH "${HOUDINI_INSTALL_ROOT}/Houdini FX.app/Contents/MacOS")
 	set(HOUDINI_HOME_PATH "$ENV{HOME}/Library/Preferences/houdini/${HOUDINI_VERSION}")
 
-	set(HOUDINI_BIN_PATH "${HOUDINI_INSTALL_ROOT}/Houdini FX.app/Contents/MacOS")
 elseif(WIN32)
-	set(HOUDINI_DEF_PATH "C:/Program Files/Side Effects Software/Houdini ${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD}")
-	if (HOUDINI_DEFAULT_PATH)
-		set(HOUDINI_INSTALL_ROOT "${HOUDINI_DEF_PATH}" CACHE PATH "" FORCE)
+	if (HOUDINI_INSTALL_ROOT STREQUAL "")
+		set(HOUDINI_INSTALL_ROOT "C:/Program Files/Side Effects Software/Houdini ${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD}" CACHE PATH "" FORCE)
 	endif()
 
 	if(HOUDINI_HDK_PATH STREQUAL "")
 		set(HOUDINI_HDK_PATH ${HOUDINI_INSTALL_ROOT})
 	endif()
-
-	set(HOUDINI_INCLUDE_PATH "${HOUDINI_HDK_PATH}/toolkit/include")
-	set(HOUDINI_LIB_PATH     "${HOUDINI_HDK_PATH}/custom/houdini/dsolib")
 
 	set(USER_HOME "$ENV{HOME}")
 	if(USER_HOME STREQUAL "")
@@ -71,13 +50,15 @@ elseif(WIN32)
 	endif()
 	file(TO_CMAKE_PATH "${USER_HOME}" USER_HOME)
 
+	set(HOUDINI_INCLUDE_PATH "${HOUDINI_HDK_PATH}/toolkit/include")
+	set(HOUDINI_LIB_PATH     "${HOUDINI_HDK_PATH}/custom/houdini/dsolib")
+
+	set(HOUDINI_BIN_PATH  "${HOUDINI_INSTALL_ROOT}/bin")
 	set(HOUDINI_HOME_PATH "${USER_HOME}/houdini${HOUDINI_VERSION}")
 
-	set(HOUDINI_BIN_PATH "${HOUDINI_INSTALL_ROOT}/bin")
 else()
-	set(HOUDINI_DEF_PATH "/opt/hfs${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD}")
-	if (HOUDINI_DEFAULT_PATH)
-		set(HOUDINI_INSTALL_ROOT "${HOUDINI_DEF_PATH}" CACHE PATH "" FORCE)
+	if (HOUDINI_INSTALL_ROOT STREQUAL "")
+		set(HOUDINI_INSTALL_ROOT "/opt/hfs${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD}" CACHE PATH "" FORCE)
 	endif()
 
 	if(HOUDINI_HDK_PATH STREQUAL "")
@@ -87,21 +68,37 @@ else()
 	set(HOUDINI_INCLUDE_PATH "${HOUDINI_HDK_PATH}/toolkit/include")
 	set(HOUDINI_LIB_PATH     "${HOUDINI_HDK_PATH}/dsolib")
 
+	set(HOUDINI_BIN_PATH "${HOUDINI_INSTALL_ROOT}/bin")
 	set(HOUDINI_HOME_PATH "$ENV{HOME}/houdini${HOUDINI_VERSION}")
 
-	set(HOUDINI_BIN_PATH "${HOUDINI_INSTALL_ROOT}/bin")
 endif()
 
-# Local install plugin path
-set(HOUDINI_PLUGIN_PATH "${HOUDINI_HOME_PATH}/dso")
+
+# NOTE: exact list of compiler/linker arguments when building for Houdini can be queried with:
+# "hcustom --cflags/ldflags" - Display compiler/linker flags
+# common Houdini compiler flags
+set(HOUDINI_DEFINES
+	-DAMD64
+	-DSIZEOF_VOID_P=8
+	-DSESI_LITTLE_ENDIAN
+	-DFBX_ENABLED=1
+	-DOPENCL_ENABLED=1
+	-DOPENVDB_ENABLED=1
+	-DMAKING_DSO
+	-DVERSION=${HOUDINI_VERSION}
+	-DHOUDINI_DSO_VERSION=${HOUDINI_VERSION}
+	-DUT_DSO_TAGINFO=${PLUGIN_TAGINFO}
+)
+set(HOUDINI_LIBS "")
 
 if(WIN32)
+	# Houdini compiler flags for Windows
 	list(APPEND HOUDINI_DEFINES
 		-DI386
 		-DWIN32
 		-DSWAP_BITFIELDS
-		-D_WIN32_WINNT=0x0501
-		-DWINVER=0x0501
+		-D_WIN32_WINNT=0x0502
+		-DWINVER=0x0502
 		-DNOMINMAX
 		-DSTRICT
 		-DWIN32_LEAN_AND_MEAN
@@ -110,12 +107,17 @@ if(WIN32)
 		-D_CRT_NONSTDC_NO_DEPRECATE
 		-D_SCL_SECURE_NO_WARNINGS
 		-DBOOST_ALL_NO_LIB
-		-DFBX_ENABLED=1
-		-DOPENCL_ENABLED=1
-		-DOPENVDB_ENABLED=1
+		-DEIGEN_MALLOC_ALREADY_ALIGNED=0
+		-DOPENVDB_3_ABI_COMPATIBLE
 	)
 
-	file(GLOB HOUDINI_LINK_FLAGS "${HOUDINI_LIB_PATH}/*.a")
+	file(GLOB HOUDINI_LIBS_A "${HOUDINI_LIB_PATH}/*.a")
+	file(GLOB HOUDINI_LIBS_LIB "${HOUDINI_LIB_PATH}/*.lib")
+
+	list(APPEND HOUDINI_LIBS
+		${HOUDINI_LIBS_A}
+		${HOUDINI_LIBS_LIB}
+	)
 
 	set(SYSTEM_LIBS
 		advapi32
@@ -137,26 +139,21 @@ if(WIN32)
 		ws2_32
 	)
 
-	list(APPEND HOUDINI_LINK_FLAGS ${SYSTEM_LIBS})
-
-	list(APPEND HOUDINI_LINK_FLAGS
-		QtCore4
-		QtGui4
-		openvdb_sesi
-		Half
-	)
+	list(APPEND HOUDINI_LIBS ${SYSTEM_LIBS})
 
 else()
 	list(APPEND HOUDINI_DEFINES
-		-DUSE_PTHREADS
+		-D_GNU_SOURCE
 		-DENABLE_THREADS
 		-DENABLE_UI_THREADS
-		-D_GNU_SOURCE
+		-DUSE_PTHREADS
 		-DGCC3
 		-DGCC4
+		-D_REENTRANT
+		-D_FILE_OFFSET_BITS=64
 	)
 
-	set(HOUDINI_LINK_FLAGS
+	set(HOUDINI_LIBS
 		HoudiniUI
 		HoudiniOPZ
 		HoudiniOP3
@@ -169,18 +166,15 @@ else()
 	)
 
 	if(APPLE)
+		# Houdini compiler flags for Apple
 		list(APPEND HOUDINI_DEFINES
-			-D_REENTRANT
 			-DNEED_SPECIALIZATION_STORAGE
 			-DMBSD
 			-DMBSD_COCOA
 			-DMBSD_INTEL
-			-DFBX_ENABLED=1
-			-DOPENCL_ENABLED=1
-			-DOPENVDB_ENABLED=1
 		)
 
-		list(APPEND HOUDINI_LINK_FLAGS
+		list(APPEND HOUDINI_LIBS
 			z
 			dl
 			tbb
@@ -192,14 +186,12 @@ else()
 		)
 
 	else()
+		# Houdini compiler flags for Linux
 		list(APPEND HOUDINI_DEFINES
 			-DLINUX
-			-DFBX_ENABLED=1
-			-DOPENCL_ENABLED=1
-			-DOPENVDB_ENABLED=1
 		)
 
-		list(APPEND HOUDINI_LINK_FLAGS
+		list(APPEND HOUDINI_LIBS
 			GLU
 			GL
 			X11
@@ -247,6 +239,6 @@ macro(houdini_plugin name sources)
 	set(libraryName ${name})
 	add_library(${libraryName} SHARED ${sources})
 	set_target_properties(${libraryName} PROPERTIES PREFIX "")
-	target_link_libraries(${libraryName} ${HOUDINI_LINK_FLAGS})
+	target_link_libraries(${libraryName} ${HOUDINI_LIBS})
 	vfh_osx_flags(${libraryName})
 endmacro()
