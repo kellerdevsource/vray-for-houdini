@@ -9,7 +9,7 @@
 #
 
 set(APPSDK_PATH "" CACHE PATH "V-Ray AppSDK root location")
-set(APPSDK_VERSION "20161115")
+set(APPSDK_VERSION "20170315" CACHE STRING "V-Ray AppSDK version")
 
 if(APPSDK_PATH)
 	# if APPSDK_PATH is specified then just take it as root location for AppSDK
