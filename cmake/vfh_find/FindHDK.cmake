@@ -10,7 +10,6 @@
 
 find_package( PackageHandleStandardArgs )
 
-# message(STATUS, "HOUDINI_INSTALL_ROOT = ${HOUDINI_INSTALL_ROOT}, HDK_FIND_VERSION  = ${HDK_FIND_VERSION}")
 
 # Houdini 15 and above defines version in SYS/SYS_Version.h
 set(__hdk_version_filepath "toolkit/include/SYS/SYS_Version.h" )
@@ -22,8 +21,6 @@ find_path( __hdk_path ${__hdk_version_filepath}
 
 set(HDK_PATH ${__hdk_path})
 unset(__hdk_path CACHE)
-
-# message(STATUS, "HDK_PATH = ${HDK_PATH}")
 
 if (APPLE)
 	set(HDK_INCLUDES "${HDK_PATH}/../Resources/toolkit/include")
@@ -38,6 +35,7 @@ else()
 	set(HDK_LIBRARIES "${HDK_PATH}/dsolib")
 
 endif()
+
 
 # Find out the current version by parsing HDK version from HDK version file
 set( HDK_VERSION_FILE ${HDK_PATH}/${__hdk_version_filepath} )
@@ -68,8 +66,6 @@ find_package_handle_standard_args( HDK
 	VERSION_VAR   HDK_VERSION
 )
 
-# message(STATUS, "HDK_INCLUDES = ${HDK_INCLUDES}, HDK_LIBRARIES = ${HDK_LIBRARIES}")
-# message(STATUS, "HDK_VERSION = ${HDK_VERSION}")
 
 # Find required libs
 find_library( __hdk_libgeo
