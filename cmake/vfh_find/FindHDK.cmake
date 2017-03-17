@@ -8,13 +8,13 @@
 # Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 #
 
-find_package( PackageHandleStandardArgs )
+find_package(PackageHandleStandardArgs)
 
 
 # Houdini 15 and above defines version in SYS/SYS_Version.h
-set(__hdk_version_filepath "toolkit/include/SYS/SYS_Version.h" )
+set(__hdk_version_filepath "toolkit/include/SYS/SYS_Version.h")
 
-find_path( __hdk_path ${__hdk_version_filepath}
+find_path(__hdk_path ${__hdk_version_filepath}
 	${SDK_PATH}/hdk/hdk${HDK_FIND_VERSION} ${HOUDINI_INSTALL_ROOT}
 	NO_DEFAULT_PATH
 )
@@ -22,11 +22,11 @@ find_path( __hdk_path ${__hdk_version_filepath}
 set(HDK_PATH ${__hdk_path})
 unset(__hdk_path CACHE)
 
-if (APPLE)
+if(APPLE)
 	set(HDK_INCLUDES "${HDK_PATH}/../Resources/toolkit/include")
 	set(HDK_LIBRARIES "${HDK_PATH}/../Libraries")
 
-elseif (WIN32)
+elseif(WIN32)
 	set(HDK_INCLUDES "${HDK_PATH}/toolkit/include")
 	set(HDK_LIBRARIES "${HDK_PATH}/custom/houdini/dsolib")
 
@@ -38,13 +38,13 @@ endif()
 
 
 # Find out the current version by parsing HDK version from HDK version file
-set( HDK_VERSION_FILE ${HDK_PATH}/${__hdk_version_filepath} )
-if (EXISTS ${HDK_VERSION_FILE})
+set(HDK_VERSION_FILE ${HDK_PATH}/${__hdk_version_filepath})
+if(EXISTS ${HDK_VERSION_FILE})
 
-	file( STRINGS "${HDK_VERSION_FILE}" __hdk_major_version REGEX "^#define[\t ]+SYS_VERSION_MAJOR_INT[\t ]+.*")
-	file( STRINGS "${HDK_VERSION_FILE}" __hdk_minor_version REGEX "^#define[\t ]+SYS_VERSION_MINOR_INT[\t ]+.*")
-	file( STRINGS "${HDK_VERSION_FILE}" __hdk_build_version REGEX "^#define[\t ]+SYS_VERSION_BUILD_INT[\t ]+.*")
-	file( STRINGS "${HDK_VERSION_FILE}" __hdk_patch_version REGEX "^#define[\t ]+SYS_VERSION_PATCH_INT[\t ]+.*")
+	file(STRINGS "${HDK_VERSION_FILE}" __hdk_major_version REGEX "^#define[\t ]+SYS_VERSION_MAJOR_INT[\t ]+.*")
+	file(STRINGS "${HDK_VERSION_FILE}" __hdk_minor_version REGEX "^#define[\t ]+SYS_VERSION_MINOR_INT[\t ]+.*")
+	file(STRINGS "${HDK_VERSION_FILE}" __hdk_build_version REGEX "^#define[\t ]+SYS_VERSION_BUILD_INT[\t ]+.*")
+	file(STRINGS "${HDK_VERSION_FILE}" __hdk_patch_version REGEX "^#define[\t ]+SYS_VERSION_PATCH_INT[\t ]+.*")
 
 	string(REGEX REPLACE "^.*SYS_VERSION_MAJOR_INT[\t ]+([0-9]*).*$" "\\1" HDK_MAJOR_VERSION "${__hdk_major_version}")
 	string(REGEX REPLACE "^.*SYS_VERSION_MINOR_INT[\t ]+([0-9]*).*$" "\\1" HDK_MINOR_VERSION "${__hdk_minor_version}")
@@ -61,31 +61,31 @@ if (EXISTS ${HDK_VERSION_FILE})
 
 endif()
 
-find_package_handle_standard_args( HDK
+find_package_handle_standard_args(HDK
 	REQUIRED_VARS HDK_PATH HDK_INCLUDES HDK_LIBRARIES HDK_VERSION
 	VERSION_VAR   HDK_VERSION
 )
 
 
 # Find required libs
-find_library( __hdk_libgeo
+find_library(__hdk_libgeo
 	NAMES openvdb_sesi HoudiniGEO
 	PATHS ${HDK_LIBRARIES}
 	NO_DEFAULT_PATH
 )
 
-set( HDK_LIB_GEO ${__hdk_libgeo} )
-unset( __hdk_libgeo CACHE )
+set(HDK_LIB_GEO ${__hdk_libgeo})
+unset(__hdk_libgeo CACHE)
 
 if(WIN32)
-	find_library( __hdk_libhalf
+	find_library(__hdk_libhalf
 		NAMES Half
 		PATHS ${HDK_LIBRARIES}
 		NO_DEFAULT_PATH
 	)
 
-	list( APPEND HDK_LIB_GEO __hdk_libhalf )
-	unset( __hdk_libhalf CACHE )
+	list(APPEND HDK_LIB_GEO __hdk_libhalf)
+	unset(__hdk_libhalf CACHE)
 endif()
 
 foreach(loop_var IN ITEMS ${HDK_LIB_GEO})
@@ -95,7 +95,7 @@ foreach(loop_var IN ITEMS ${HDK_LIB_GEO})
 	endif()
 endforeach(loop_var)
 
-if (HDK_FOUND)
+if(HDK_FOUND)
 	# NOTE: exact list of compiler/linker arguments when building for Houdini can be queried with:
 	# "hcustom --cflags/ldflags" - Display compiler/linker flags
 	# common Houdini compiler flags
@@ -109,7 +109,7 @@ if (HDK_FOUND)
 	)
 	set(HDK_LIBS "")
 
-	if (WIN32)
+	if(WIN32)
 		list(APPEND HDK_DEFINITIONS
 			-DI386
 			-DWIN32

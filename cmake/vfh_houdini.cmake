@@ -22,7 +22,7 @@ macro(use_houdini_sdk)
 	# Adjust install path
 	if((NOT HOUDINI_INSTALL_ROOT) OR (NOT EXISTS ${HOUDINI_INSTALL_ROOT}))
 		# no valid install path set, fall back to default install location
-		if (APPLE)
+		if(APPLE)
 			set(HOUDINI_INSTALL_ROOT "/Applications/Houdini ${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD}" CACHE PATH "" FORCE)
 
 		elseif(WIN32)
@@ -42,7 +42,7 @@ macro(use_houdini_sdk)
 	message(STATUS "Using HDK library path: ${HDK_LIBRARIES}")
 
 	# Set bin and home path
-	if (APPLE)
+	if(APPLE)
 		#TODO : need to check those
 		set(HOUDINI_BIN_PATH "${HOUDINI_INSTALL_ROOT}/Houdini FX.app/Contents/MacOS")
 		set(HOUDINI_HOME_PATH "$ENV{HOME}/Library/Preferences/houdini/${HOUDINI_VERSION}")
