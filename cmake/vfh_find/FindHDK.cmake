@@ -96,7 +96,7 @@ if(WIN32)
 		NO_DEFAULT_PATH
 	)
 
-	list(APPEND HDK_LIB_GEO __hdk_libhalf)
+	list(APPEND HDK_LIB_GEO ${__hdk_libhalf})
 	unset(__hdk_libhalf CACHE)
 endif()
 
@@ -109,7 +109,7 @@ endforeach(loop_var)
 
 
 if(NOT HDK_FOUND AND HDK_FIND_REQUIRED)
-	message(FATAL_ERROR "Found HDK ${HDK_VERSION}, but one or more required libraries are missing from:\n"
+	message(FATAL_ERROR "Found HDK ${HDK_VERSION}, but one or more required libraries are missing from:"
 						"${HDK_LIBRARIES}")
 endif()
 
