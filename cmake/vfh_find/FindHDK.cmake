@@ -66,6 +66,18 @@ find_package_handle_standard_args(HDK
 	VERSION_VAR   HDK_VERSION
 )
 
+# Version check
+if(NOT ("${HDK_FIND_VERSION_MAJOR}.${HDK_FIND_VERSION_MINOR}"
+		VERSION_EQUAL
+		"${HDK_MAJOR_VERSION}.${HDK_MINOR_VERSION}"))
+	set(HDK_FOUND FALSE)
+endif()
+
+
+if(NOT HDK_FOUND AND HDK_FIND_REQUIRED)
+	message(FATAL_ERROR "Found HDK ${HDK_VERSION}, uncompatible with required version ${HDK_FIND_VERSION}")
+endif()
+
 
 # Find required libs
 find_library(__hdk_libgeo
@@ -94,6 +106,13 @@ foreach(loop_var IN ITEMS ${HDK_LIB_GEO})
 		break()
 	endif()
 endforeach(loop_var)
+
+
+if(NOT HDK_FOUND AND HDK_FIND_REQUIRED)
+	message(FATAL_ERROR "Found HDK ${HDK_VERSION}, but one or more required libraries are missing from:\n"
+						"${HDK_LIBRARIES}")
+endif()
+
 
 if(HDK_FOUND)
 	# NOTE: exact list of compiler/linker arguments when building for Houdini can be queried with:
