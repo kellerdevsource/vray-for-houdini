@@ -20,8 +20,6 @@ include(vfh_vrayappsdk)
 include(vfh_vraysdk)
 include(vfh_phoenix)
 
-add_definitions(-DVRAY_FOR_HOUDINI)
-add_definitions(-DVRAYAPPSDK_VFB_HANDLE)
 
 include_directories(.)
 include_directories(io)
