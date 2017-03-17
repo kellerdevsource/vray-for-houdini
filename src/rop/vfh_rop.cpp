@@ -780,7 +780,7 @@ OP_Bundle* VRayRendererNode::getActiveLightsBundle()
 			if (   light
 				&& light->isObjectRenderable(m_tstart))
 			{
-				UT_String name = light->getFullPath();
+				UT_StringHolder name = light->getFullPath();
 
 				int enabled = 0;
 				light->evalParameterOrProperty("enabled", 0, m_tstart, enabled);
@@ -797,7 +797,7 @@ OP_Bundle* VRayRendererNode::getActiveLightsBundle()
 		exbundle->getMembers(list);
 		for (exint i = 0; i < list.size(); ++i) {
 			OP_Node *light = list(i);
-			UT_String name = light->getFullPath();
+			UT_StringHolder name = light->getFullPath();
 
 			bundle->removeOp(light);
 		}
@@ -854,7 +854,8 @@ OP_Bundle* VRayRendererNode::getActiveGeometryBundle()
 				&& node->isObjectRenderable(m_tstart)
 				&& node->getVisible() )
 			{
-				UT_String name = node->getFullPath();
+				UT_StringHolder name = node->getFullPath();
+
 				bundle->addOp(node);
 			}
 		}
@@ -866,7 +867,7 @@ OP_Bundle* VRayRendererNode::getActiveGeometryBundle()
 		exbundle->getMembers(list);
 		for (exint i = 0; i < list.size(); ++i) {
 			OP_Node *node = list(i);
-			UT_String name = node->getFullPath();
+			UT_StringHolder name = node->getFullPath();
 
 			bundle->removeOp(node);
 		}

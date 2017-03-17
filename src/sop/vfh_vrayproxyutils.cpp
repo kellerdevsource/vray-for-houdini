@@ -702,12 +702,7 @@ bool VRayProxyCache::createMeshProxyGeometry(VUtils::MeshVoxel &voxel, GU_Detail
 		VUtils::Vector &vert = verts[v];
 		GA_Offset pointOffs = voffset + v;
 
-#if UT_MAJOR_VERSION_INT < 14
-		GEO_Point *point = gdp.getGEOPoint(pointOffs);
-		point->setPos(UT_Vector4F(vert.x, vert.y, vert.z));
-#else
 		gdp.setPos3(pointOffs, UT_Vector3F(vert.x, vert.y, vert.z));
-#endif
 	}
 
 	// Faces
@@ -752,12 +747,7 @@ bool VRayProxyCache::createHairProxyGeometry(VUtils::MeshVoxel &voxel, GU_Detail
 		VUtils::Vector &vert = verts[v];
 		GA_Offset pointOffs = voffset + v;
 
-#if UT_MAJOR_VERSION_INT < 14
-		GEO_Point *point = gdp.getGEOPoint(pointOffs);
-		point->setPos(UT_Vector4F(vert.x, vert.y, vert.z));
-#else
 		gdp.setPos3(pointOffs, UT_Vector3F(vert.x, vert.y, vert.z));
-#endif
 	}
 
 	// Strands

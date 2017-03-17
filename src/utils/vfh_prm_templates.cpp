@@ -143,7 +143,7 @@ std::string Parm::expandUiPath(const std::string &relPath)
 		return "";
 	}
 
-	UT_String uipath = fsuiroot.path();
+	UT_String uipath = fsuiroot.path().c_str();
 	uipath += "/";
 	uipath += relPath;
 	FS_Info fsuipath(uipath);

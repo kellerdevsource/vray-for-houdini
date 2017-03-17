@@ -8,8 +8,10 @@
 # Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 #
 
-# CTest module invokes "enable_testing()" command automatically when the BUILD_TESTING option is ON
-# add -DBUILD_TESTING=ON/OFF to enble/disable testing
+# NOTE: Testing can be enabled/disabled through -DBUILD_TESTING=ON/OFF
+# Add -WITH_TESTS=ON/OFF to enable/disable integration tests
+
+if (BUILD_TESTING)
 
 message(STATUS "Tests enabled")
 
@@ -36,3 +38,5 @@ set_property( TEST vfhpytests
 			APPEND PROPERTY ENVIRONMENT "PATH=${APPSDK_ROOT}/bin:${HOUDINI_INSTALL_ROOT}/bin:$ENV{PATH}")
 set_property( TEST vfhpytests
 			APPEND PROPERTY ENVIRONMENT "PYTHONPATH=${APPSDK_ROOT}/python27/bin:$PYTHONPATH")
+
+endif(BUILD_TESTING)

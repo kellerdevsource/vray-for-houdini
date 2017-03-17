@@ -11,6 +11,8 @@
 #ifndef VRAY_FOR_HOUDINI_HOU_UTILS_H
 #define VRAY_FOR_HOUDINI_HOU_UTILS_H
 
+class QWidget;
+
 namespace VRayForHoudini {
 namespace HOU {
 
@@ -22,6 +24,9 @@ int isApprentice();
 
 /// Check if Houdini is running with UI enabled
 int isUIAvailable();
+
+/// Get main Houdini Qt window
+QWidget* getMainQtWindow();
 
 } // namespace HOU
 } // namespace VRayForHoudini

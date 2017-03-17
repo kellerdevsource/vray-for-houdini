@@ -196,14 +196,14 @@ void VRayProxyRef::install(GA_PrimitiveFactory *gafactory)
 	VRayProxyFactory &theFactory = VRayProxyFactory::getInstance();
 	if (theFactory.isRegistered()) {
 		Log::getLog().error("Multiple attempts to install packed primitive %s from %s",
-					theFactory.name(), UT_DSO::getRunningFile());
+					static_cast<const char *>(theFactory.name()), UT_DSO::getRunningFile());
 		return;
 	}
 
 	GU_PrimPacked::registerPacked(gafactory, &theFactory);
 	if (NOT(theFactory.isRegistered())) {
 		Log::getLog().error("Unable to register packed primitive %s from %s",
-					theFactory.name(), UT_DSO::getRunningFile());
+					static_cast<const char *>(theFactory.name()), UT_DSO::getRunningFile());
 		return;
 	}
 

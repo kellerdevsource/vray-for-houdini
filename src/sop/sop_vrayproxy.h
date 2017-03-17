@@ -34,15 +34,12 @@ public:
 	/// @param tplate - pointer to the PRM_Template of the parameter it was triggered for.
 	/// @return It should return 1 if you want the dialog to refresh
 	///        (ie if you changed any values) and 0 otherwise.
-	static int cbClearCache(void *data, int index, float t, const PRM_Template* tplate);
+	static int cbClearCache(void *data, int index, fpreal t, const PRM_Template* tplate);
 
 public:
 	VRayProxy(OP_Network *parent, const char *name, OP_Operator *entry);
 	virtual ~VRayProxy()
 	{ }
-
-	/// Update flags for this node i.e. if it's time dependent
-	virtual OP_NodeFlags& flags() VRAY_OVERRIDE;
 
 	/// Houdini callback to cook custom geometry for this node
 	/// @param context[in] - cook time

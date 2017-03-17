@@ -11,12 +11,8 @@
 #include "vfh_hou_utils.h"
 #include "vfh_plugin_exporter.h"
 
-#include <boost/bind.hpp>
-
-#include <QtCore/QString>
 #include <QtGui/QtGui>
-#include <RE/RE_QtWindow.h>
-
+#include <boost/bind.hpp>
 
 #define PRINT_CALLBACK_CALLS  0
 
@@ -265,7 +261,7 @@ int VRayPluginRenderer::initRenderer(int hasUI, int reInit)
 {
 	// VFB will take colors from QApplication::palette(),
 	// but Houdini's real palette is not stored there for some reason.
-	QWidget *mainWindow = RE_QtWindow::mainQtWindow();
+	QWidget *mainWindow = HOU::getMainQtWindow();
 	if (mainWindow) {
 		// Must be called before VRay::VRayRenderer(options)
 		QApplication::setPalette(mainWindow->palette());
@@ -355,7 +351,7 @@ void VRayPluginRenderer::showVFB(bool show, const char *title)
 		return;
 	}
 
-	QWidget *mainWindow = RE_QtWindow::mainQtWindow();
+	QWidget *mainWindow = HOU::getMainQtWindow();
 	if (mainWindow) {
 		// first set VFB parent
 		if (show) {

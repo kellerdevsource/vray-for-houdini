@@ -13,6 +13,7 @@
 #include <VOP/VOP_Operator.h>
 #include <VOP/VOP_OperatorInfo.h>
 #include <OP/OP_Input.h>
+#include <UT/UT_Version.h>
 
 #include <boost/format.hpp>
 #include <unordered_set>
@@ -27,16 +28,16 @@ static PRM_Template templates[] = {
 
 void VOP::MaterialOutput::register_operator(OP_OperatorTable *table)
 {
-	VOP_Operator *op = new VOP_Operator("vray_material_output",
-									   "V-Ray Material Output",
-									   VOP::MaterialOutput::creator,
-									   templates,
-									   3,
-									   3,
-									   "VRay",
-									   0,
-									   OP_FLAG_UNORDERED,
-									   0);
+	VOP_Operator *op = new VOP_Operator("vray_material_output", "V-Ray Material Output",
+										VOP::MaterialOutput::creator, templates,
+#if UT_MAJOR_VERSION_INT >= 16
+										nullptr,
+#endif
+										3, 3,
+										"VRay",
+										nullptr,
+										OP_FLAG_UNORDERED | OP_FLAG_OUTPUT,
+										0 );
 
 	// Set icon
 	op->setIconName("ROP_vray");

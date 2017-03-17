@@ -569,7 +569,7 @@ int GeometryExporter::exportPacked(SOP_Node &sop, const GU_PrimPacked &prim, Plu
 					&& mtlOverridesDict.setFromPyDictionary(mtlo.get(prim.getMapOffset())) )
 				{
 					while (mtlOverridesDict.getNumOptions() > 0) {
-						UT_String key = mtlOverridesDict.begin().name();
+						UT_String key(mtlOverridesDict.begin().name().c_str());
 
 						int chIdx = -1;
 						PRM_Parm *prm = shopNode->getParmList()->getParmPtrFromChannel(key, &chIdx);

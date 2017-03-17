@@ -244,9 +244,9 @@ int VRayProxyROP::getExportOptions(fpreal time, VRayProxyExportOptions &options)
 	options.m_velocityStart      = evalFloat("velocity", 0, time);
 	options.m_velocityEnd        = evalFloat("velocity", 1, time);
 	options.m_simplificationType = static_cast<VUtils::SimplificationType>(evalInt("simplificationtype", 0, time));
-	options.m_maxPreviewFaces    = std::max(evalInt("max_previewfaces", 0, time), 0);
-	options.m_maxPreviewStrands  = std::max(evalInt("max_previewstrands", 0, time), 0);
-	options.m_maxFacesPerVoxel   = (evalInt("voxelpermesh", 0, time))? 0 : std::max(evalInt("max_facespervoxel", 0, time), 0);
+	options.m_maxPreviewFaces    = SYSmax(evalInt("max_previewfaces", 0, time), 0);
+	options.m_maxPreviewStrands  = SYSmax(evalInt("max_previewstrands", 0, time), 0);
+	options.m_maxFacesPerVoxel   = (evalInt("voxelpermesh", 0, time))? 0 : SYSmax(evalInt("max_facespervoxel", 0, time), 0);
 	options.m_exportPCLs         = evalInt("exp_pcls", 0, time);
 	options.m_pointSize          = evalFloat("pointsize", 0, time);
 

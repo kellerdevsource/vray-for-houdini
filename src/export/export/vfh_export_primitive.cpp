@@ -388,7 +388,7 @@ void VolumeExporter::exportCache(const GA_Primitive &prim)
 
 	auto packedPrim = UTverify_cast<const GU_PrimPacked *>(&prim);
 	UT_Options opts;
-	packedPrim->saveOptions(opts, GA_SaveMap(prim.getDetail(), &opts));
+	packedPrim->saveOptions(opts, GA_SaveMap(prim.getDetail(), nullptr));
 	m_exporter.setAttrsFromUTOptions(nodeDesc, opts);
 
 	UT_Matrix4 xform;

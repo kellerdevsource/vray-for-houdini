@@ -24,10 +24,11 @@
 
 using namespace VRayForHoudini;
 
-static PRM_Template * AttrItems = nullptr;
 
 PRM_Template* SOP::PhxShaderCache::GetPrmTemplate()
 {
+	static PRM_Template *AttrItems = nullptr;
+
 	if (!AttrItems) {
 		AttrItems = Parm::PRMList::loadFromFile(Parm::expandUiPath("CustomPhxShaderCache.ds").c_str(), true);
 	}
@@ -43,18 +44,13 @@ void SOP::PhxShaderCache::setPluginType()
 }
 
 
-OP_NodeFlags &SOP::PhxShaderCache::flags()
-{
-	OP_NodeFlags &flags = SOP_Node::flags();
-	flags.setTimeDep(true);
-	return flags;
-}
-
 
 OP_ERROR SOP::PhxShaderCache::cookMySop(OP_Context &context)
 {
 	Log::getLog().info("%s cookMySop(%.3f)",
 					   getName().buffer(), context.getTime());
+
+	flags().setTimeDep(true);
 
 	gdp->stashAll();
 
@@ -94,10 +90,6 @@ OP_ERROR SOP::PhxShaderCache::cookMySop(OP_Context &context)
 	pack->setPathAttribute(getFullPath());
 
 	gdp->destroyStashed();
-
-#if UT_MAJOR_VERSION_INT < 14
-	gdp->notifyCache(GU_CACHE_ALL);
-#endif
 
 	return error();
 }

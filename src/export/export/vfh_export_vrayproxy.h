@@ -184,7 +184,7 @@ public:
 	///                       if we are exporting animation
 	/// @retval error code - use ErrorCode::error() to check for errors
 	///                      and ErrorCode::getErrorString() to get the error message
-	static VUtils::ErrorCode doExport(VRayProxyExportOptions &options, const UT_ValArray<SOP_Node *> sopList);
+	static VUtils::ErrorCode doExport(VRayProxyExportOptions &options, const UT_ValArray<SOP_Node *> &sopList);
 
 public:
 	/// Constructor

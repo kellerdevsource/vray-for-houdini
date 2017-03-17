@@ -30,15 +30,10 @@ using namespace VRayForHoudini;
 SHOP_Node *VRayExporter::getObjMaterial(OBJ_Node *obj_node, fpreal t)
 {
 	SHOP_Node *shop_node = nullptr;
-
-#if UT_MAJOR_VERSION_INT >= 15
 	OP_Node *op_node = obj_node->getMaterialNode(t);
 	if (op_node) {
 		shop_node = op_node->castToSHOPNode();
 	}
-#else
-	shop_node = obj_node->getMaterialNode(t);
-#endif
 
 	return shop_node;
 }

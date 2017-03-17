@@ -8,8 +8,6 @@
 # Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 #
 
-# Made using: cat sesitag.txt | sesitag -m
-set(PLUGIN_TAGINFO "\"3262197cbf104d152da5089a671b9ff8394bdcd9d530d8aa27f5984e1714bfd251aa2487851869344346dba5159b681c2da1a710878dac641a5874f82bead6fb0cb006e8bedd1ad3f169d85849f95eb181\"")
 set(SDK_PATH "" CACHE STRING "SDK root qpath")
 
 
@@ -22,8 +20,6 @@ include(vfh_vrayappsdk)
 include(vfh_vraysdk)
 include(vfh_phoenix)
 
-add_definitions(-DVRAY_FOR_HOUDINI)
-add_definitions(-DVRAYAPPSDK_VFB_HANDLE)
 
 include_directories(.)
 include_directories(io)

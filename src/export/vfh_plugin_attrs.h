@@ -131,6 +131,12 @@ struct PluginAttr {
 		paramValue.valInt = attrValue;
 	}
 
+	PluginAttr(const std::string &attrName, const exint &attrValue) {
+		paramName = attrName;
+		paramType = PluginAttr::AttrTypeInt;
+		paramValue.valInt = static_cast<int>(attrValue);
+	}
+
 	PluginAttr(const std::string &attrName, const bool &attrValue) {
 		paramName = attrName;
 		paramType = PluginAttr::AttrTypeInt;

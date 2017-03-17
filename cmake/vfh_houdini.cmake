@@ -10,243 +10,76 @@
 
 include(CheckIncludeFile)
 
-option(HOUDINI_DEFAULT_PATH "Use default Houdini installation path" ON)
-
 set(HOUDINI_VERSION       "14.0" CACHE STRING "Houdini major version")
 set(HOUDINI_VERSION_BUILD "248"  CACHE STRING "Houdini build version")
+set(HOUDINI_INSTALL_ROOT  ""     CACHE PATH   "Houdini install path")
 
-set(HOUDINI_DEFINES
-	-DAMD64
-	-DSIZEOF_VOID_P=8
-	-DSESI_LITTLE_ENDIAN
-	-D_USE_MATH_DEFINES
-	-DMAKING_DSO
-	-DVERSION=${HOUDINI_VERSION}
-	-DHOUDINI_DSO_VERSION=${HOUDINI_VERSION}
-	-DUT_DSO_TAGINFO=${PLUGIN_TAGINFO}
-)
-
-set(HOUDINI_LINK_FLAGS "")
-set(HOUDINI_INSTALL_ROOT "" CACHE PATH "Houdini install path")
-
-set(HOUDINI_HDK_PATH "")
-if(SDK_PATH)
-	set(HOUDINI_HDK_PATH "${SDK_PATH}/hdk/hdk${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD}")
-endif()
-
-if (APPLE)
-	set(HOUDINI_DEF_PATH "/Applications/Houdini ${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD}")
-	if (HOUDINI_DEFAULT_PATH)
-		set(HOUDINI_INSTALL_ROOT "${HOUDINI_DEF_PATH}" CACHE PATH "" FORCE)
-	endif()
-
-	set(HOUDINI_FRAMEWORK_ROOT "/Library/Frameworks/Houdini.framework/Versions/${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD}")
-
-	if(HOUDINI_HDK_PATH STREQUAL "")
-		set(HOUDINI_HDK_PATH ${HOUDINI_FRAMEWORK_ROOT})
-	endif()
-
-	set(HOUDINI_INCLUDE_PATH "${HOUDINI_HDK_PATH}/Resources/toolkit/include")
-	set(HOUDINI_LIB_PATH     "${HOUDINI_HDK_PATH}/Libraries")
-
-	set(HOUDINI_HOME_PATH "$ENV{HOME}/Library/Preferences/houdini/${HOUDINI_VERSION}")
-
-	set(HOUDINI_BIN_PATH "${HOUDINI_INSTALL_ROOT}/Houdini FX.app/Contents/MacOS")
-elseif(WIN32)
-	set(HOUDINI_DEF_PATH "C:/Program Files/Side Effects Software/Houdini ${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD}")
-	if (HOUDINI_DEFAULT_PATH)
-		set(HOUDINI_INSTALL_ROOT "${HOUDINI_DEF_PATH}" CACHE PATH "" FORCE)
-	endif()
-
-	if(HOUDINI_HDK_PATH STREQUAL "")
-		set(HOUDINI_HDK_PATH ${HOUDINI_INSTALL_ROOT})
-	endif()
-
-	set(HOUDINI_INCLUDE_PATH "${HOUDINI_HDK_PATH}/toolkit/include")
-	set(HOUDINI_LIB_PATH     "${HOUDINI_HDK_PATH}/custom/houdini/dsolib")
-
-	set(USER_HOME "$ENV{HOME}")
-	if(USER_HOME STREQUAL "")
-		set(USER_HOME "$ENV{USERPROFILE}/Documents")
-	endif()
-	file(TO_CMAKE_PATH "${USER_HOME}" USER_HOME)
-
-	set(HOUDINI_HOME_PATH "${USER_HOME}/houdini${HOUDINI_VERSION}")
-
-	set(HOUDINI_BIN_PATH "${HOUDINI_INSTALL_ROOT}/bin")
-else()
-	set(HOUDINI_DEF_PATH "/opt/hfs${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD}")
-	if (HOUDINI_DEFAULT_PATH)
-		set(HOUDINI_INSTALL_ROOT "${HOUDINI_DEF_PATH}" CACHE PATH "" FORCE)
-	endif()
-
-	if(HOUDINI_HDK_PATH STREQUAL "")
-		set(HOUDINI_HDK_PATH ${HOUDINI_INSTALL_ROOT})
-	endif()
-
-	set(HOUDINI_INCLUDE_PATH "${HOUDINI_HDK_PATH}/toolkit/include")
-	set(HOUDINI_LIB_PATH     "${HOUDINI_HDK_PATH}/dsolib")
-
-	set(HOUDINI_HOME_PATH "$ENV{HOME}/houdini${HOUDINI_VERSION}")
-
-	set(HOUDINI_BIN_PATH "${HOUDINI_INSTALL_ROOT}/bin")
-endif()
-
-# Local install plugin path
-set(HOUDINI_PLUGIN_PATH "${HOUDINI_HOME_PATH}/dso")
-
-if(WIN32)
-	list(APPEND HOUDINI_DEFINES
-		-DI386
-		-DWIN32
-		-DSWAP_BITFIELDS
-		-D_WIN32_WINNT=0x0501
-		-DWINVER=0x0501
-		-DNOMINMAX
-		-DSTRICT
-		-DWIN32_LEAN_AND_MEAN
-		-D_USE_MATH_DEFINES
-		-D_CRT_SECURE_NO_DEPRECATE
-		-D_CRT_NONSTDC_NO_DEPRECATE
-		-D_SCL_SECURE_NO_WARNINGS
-		-DBOOST_ALL_NO_LIB
-		-DFBX_ENABLED=1
-		-DOPENCL_ENABLED=1
-		-DOPENVDB_ENABLED=1
-	)
-
-	file(GLOB HOUDINI_LINK_FLAGS "${HOUDINI_LIB_PATH}/*.a")
-
-	set(SYSTEM_LIBS
-		advapi32
-		comctl32
-		comdlg32
-		gdi32
-		kernel32
-		msvcprt
-		msvcrt
-		odbc32
-		odbccp32
-		oldnames
-		ole32
-		oleaut32
-		shell32
-		user32
-		uuid
-		winspool
-		ws2_32
-	)
-
-	list(APPEND HOUDINI_LINK_FLAGS ${SYSTEM_LIBS})
-
-	list(APPEND HOUDINI_LINK_FLAGS
-		QtCore4
-		QtGui4
-		openvdb_sesi
-		Half
-	)
-
-else()
-	list(APPEND HOUDINI_DEFINES
-		-DUSE_PTHREADS
-		-DENABLE_THREADS
-		-DENABLE_UI_THREADS
-		-D_GNU_SOURCE
-		-DGCC3
-		-DGCC4
-	)
-
-	set(HOUDINI_LINK_FLAGS
-		HoudiniUI
-		HoudiniOPZ
-		HoudiniOP3
-		HoudiniOP2
-		HoudiniOP1
-		HoudiniSIM
-		HoudiniGEO
-		HoudiniPRM
-		HoudiniUT
-	)
-
-	if(APPLE)
-		list(APPEND HOUDINI_DEFINES
-			-D_REENTRANT
-			-DNEED_SPECIALIZATION_STORAGE
-			-DMBSD
-			-DMBSD_COCOA
-			-DMBSD_INTEL
-			-DFBX_ENABLED=1
-			-DOPENCL_ENABLED=1
-			-DOPENVDB_ENABLED=1
-		)
-
-		list(APPEND HOUDINI_LINK_FLAGS
-			z
-			dl
-			tbb
-			tbbmalloc
-			pthread
-			QtCore
-			QtGui
-			"-framework Cocoa"
-		)
-
-	else()
-		list(APPEND HOUDINI_DEFINES
-			-DLINUX
-			-DFBX_ENABLED=1
-			-DOPENCL_ENABLED=1
-			-DOPENVDB_ENABLED=1
-		)
-
-		list(APPEND HOUDINI_LINK_FLAGS
-			GLU
-			GL
-			X11
-			Xext
-			Xi
-			dl
-			pthread
-		)
-	endif()
-endif()
+# Made using: cat sesitag.txt | sesitag -m
+set(PLUGIN_TAGINFO "\"3262197cbf104d152da5089a671b9ff8394bdcd9d530d8aa27f5984e1714bfd251aa2487851869344346dba5159b681c2da1a710878dac641a5874f82bead6fb0cb006e8bedd1ad3f169d85849f95eb181\"")
 
 
 macro(use_houdini_sdk)
-	find_library(HDK_LIB_GEO
-		NAMES openvdb_sesi HoudiniGEO
-		PATHS ${HOUDINI_LIB_PATH}
-	)
+	# Adjust install path
+	if((NOT HOUDINI_INSTALL_ROOT) OR (NOT EXISTS ${HOUDINI_INSTALL_ROOT}))
+		# no valid install path set, fall back to default install location
+		if(APPLE)
+			set(HOUDINI_INSTALL_ROOT "/Applications/Houdini ${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD}" CACHE PATH "" FORCE)
+
+		elseif(WIN32)
+			set(HOUDINI_INSTALL_ROOT "C:/Program Files/Side Effects Software/Houdini ${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD}" CACHE PATH "" FORCE)
+
+		else()
+			set(HOUDINI_INSTALL_ROOT "/opt/hfs${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD}" CACHE PATH "" FORCE)
+
+		endif()
+
+	endif()
+
+	find_package(HDK ${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD} REQUIRED)
 
 	message(STATUS "Using Houdini ${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD}: ${HOUDINI_INSTALL_ROOT}")
-	message(STATUS "Using HDK include path: ${HOUDINI_INCLUDE_PATH}")
-	message(STATUS "Using HDK library path: ${HOUDINI_LIB_PATH}")
+	message(STATUS "Using HDK include path: ${HDK_INCLUDES}")
+	message(STATUS "Using HDK library path: ${HDK_LIBRARIES}")
 
-	if(NOT HDK_LIB_GEO)
-		message(FATAL_ERROR "Houdini SDK is not found! Check HOUDINI_VERSION / HOUDINI_VERSION_BUILD variables!")
-	endif()
+	# Set bin and home path
+	if(APPLE)
+		#TODO : need to check those
+		set(HOUDINI_BIN_PATH "${HOUDINI_INSTALL_ROOT}/Houdini FX.app/Contents/MacOS")
+		set(HOUDINI_HOME_PATH "$ENV{HOME}/Library/Preferences/houdini/${HOUDINI_VERSION}")
+		set(HOUDINI_FRAMEWORK_ROOT "/Library/Frameworks/Houdini.framework/Versions/${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD}")
 
-	if(WIN32)
-		find_library(HDK_LIB_HALF
-			NAMES Half
-			PATHS ${HOUDINI_LIB_PATH}
-		)
-		if(NOT HDK_LIB_HALF)
-			message(FATAL_ERROR "Houdini SDK missing Half.lib - it is requiered on win32!")
+	elseif(WIN32)
+		set(USER_HOME "$ENV{HOME}")
+		if(USER_HOME STREQUAL "")
+			set(USER_HOME "$ENV{USERPROFILE}/Documents")
 		endif()
-		list(APPEND HDK_LIB_GEO ${HDK_LIB_HALF})
+		file(TO_CMAKE_PATH "${USER_HOME}" USER_HOME)
+
+		set(HOUDINI_BIN_PATH  "${HOUDINI_INSTALL_ROOT}/bin")
+		set(HOUDINI_HOME_PATH "${USER_HOME}/houdini${HOUDINI_VERSION}")
+
+	else()
+		set(HOUDINI_BIN_PATH "${HOUDINI_INSTALL_ROOT}/bin")
+		set(HOUDINI_HOME_PATH "$ENV{HOME}/houdini${HOUDINI_VERSION}")
+
 	endif()
 
-	add_definitions(${HOUDINI_DEFINES})
-	include_directories(${HOUDINI_INCLUDE_PATH})
-	link_directories(${HOUDINI_LIB_PATH})
+	add_definitions(${HDK_DEFINITIONS})
+	include_directories(${HDK_INCLUDES})
+	link_directories(${HDK_LIBRARIES})
 endmacro()
 
 
 macro(houdini_plugin name sources)
+	add_definitions(-DMAKING_DSO
+					-DVERSION=${HOUDINI_VERSION}
+					-DHOUDINI_DSO_VERSION=${HOUDINI_VERSION}
+					-DUT_DSO_TAGINFO=${PLUGIN_TAGINFO}
+	)
+
 	set(libraryName ${name})
 	add_library(${libraryName} SHARED ${sources})
 	set_target_properties(${libraryName} PROPERTIES PREFIX "")
-	target_link_libraries(${libraryName} ${HOUDINI_LINK_FLAGS})
+	target_link_libraries(${libraryName} ${HDK_LIBS})
 	vfh_osx_flags(${libraryName})
 endmacro()

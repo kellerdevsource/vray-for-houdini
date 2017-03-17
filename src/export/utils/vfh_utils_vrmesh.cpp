@@ -13,9 +13,6 @@
 
 #include <UT/UT_Version.h>
 
-#if UT_MAJOR_VERSION_INT < 14
-#  include <GEO/GEO_Point.h>
-#endif
 #include <GU/GU_PrimPoly.h>
 #include <GU/GU_Detail.h>
 #include <GU/GU_PackedGeometry.h>
@@ -55,12 +52,7 @@ int VRayForHoudini::Mesh::createMeshProxyGeometry(VUtils::MeshInterface &mi, int
 									const VUtils::Vector &vert = verts[v];
 									const GA_Offset pointOffs = voffset + v;
 
-#if UT_MAJOR_VERSION_INT < 14
-									GEO_Point *point = gdp->getGEOPoint(pointOffs);
-									point->setPos(UT_Vector4F(vert.x, vert.y, vert.z));
-#else
 									primGdp->setPos3(pointOffs, UT_Vector3F(vert.x, vert.y, vert.z));
-#endif
 								}
 
 								// Faces

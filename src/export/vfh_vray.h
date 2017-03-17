@@ -17,7 +17,9 @@
 
 // WARNING: AppSDK redefines VRAY_DEPRECATED macro in 'vraysdk.hpp'
 // undef here to remove clashes with definition from 'vraysdk/warnings.h'
-#undef VRAY_DEPRECATED
+#ifdef VRAY_DEPRECATED
+	#undef VRAY_DEPRECATED
+#endif
 
 #include <utils.h>
 #include <quaternion.h>
@@ -37,6 +39,10 @@
 #include <mesh_sets_info.h>
 
 // For HDK to work properly
+#ifdef INT64
+	#undef INT64
+#endif
+
 #undef itoa
 
 inline VRay::Transform toAppSdkTm(const VUtils::TraceTransform &tm)
