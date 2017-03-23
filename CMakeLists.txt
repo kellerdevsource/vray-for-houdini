@@ -14,9 +14,10 @@ set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_CURRENT_SOURCE_DIR}/cmake;${
 
 project(vray_for_houdini)
 
-# CTest module invokes "enable_testing()" command automatically when the BUILD_TESTING option is ON
-# add -DBUILD_TESTING=ON/OFF to enable/disable tests altogether
-include(CTest)
+option(BUILD_TESTING "Enable build testing" OFF)
+if(BUILD_TESTING)
+	include(CTest)
+endif()
 
 option(WITH_VRAY_FOR_HOUDINI "Build V-Ray For Houdini plugin" ON)
 if(WITH_VRAY_FOR_HOUDINI)
