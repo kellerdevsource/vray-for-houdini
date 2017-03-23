@@ -1,0 +1,392 @@
+{
+    name	BRDFAlHair
+    label	"AlHair"
+    parmtag	{ spare_category "AlHair" }
+    parmtag	{ vray_plugin "BRDFAlHair" }
+    parm {
+	name	"opacity"
+	label	"Opacity"
+	type	float
+	default	{ "1" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFAlHair" }
+	parmtag	{ "vray_pluginattr" "opacity" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"melanin"
+	label	"Melanin"
+	type	float
+	default	{ "0.15" }
+	help	"The melanin content of the hair fibre. Use this to generate natural colors for mammalian hair. 0 will give white hair, 0.2-04 blonde, 0.4-0.6 red, 0.6-0.8 brown and 0.8-1.0 black hair. If you want to set the color of the hair with a texture map, set this to 0 and use the Dye color parameter"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFAlHair" }
+	parmtag	{ "vray_pluginattr" "melanin" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"dye_color"
+	label	"Dye Color"
+	type	color4
+	size	4
+	default	{ "1" "1" "1" "1" }
+	help	"Color tint to apply to the hair"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFAlHair" }
+	parmtag	{ "vray_pluginattr" "dye_color" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"specular_width"
+	label	"Specular Width"
+	type	float
+	default	{ "3" }
+	help	"The width of the hair highlights, essentially how shiny the hair appears. Values in the range 1-7 are sensible for human hair"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFAlHair" }
+	parmtag	{ "vray_pluginattr" "specular_width" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"specular_shift"
+	label	"Specular Shift"
+	type	float
+	default	{ "4" }
+	help	"How much the highlights are shifted along the hair by the cuticles on the hair fibre. Generally this wants to be 1 to 1.5 times the value of the Width parameter"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFAlHair" }
+	parmtag	{ "vray_pluginattr" "specular_shift" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"diffuse_color"
+	label	"Diffuse Color"
+	type	color4
+	size	4
+	default	{ "1" "1" "1" "1" }
+	help	"Tint on the diffuse illumination"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFAlHair" }
+	parmtag	{ "vray_pluginattr" "diffuse_color" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"diffuse_strength"
+	label	"Diffuse Strength"
+	type	float
+	default	{ "1" }
+	help	"Multiplier on the strength of the diffuse illumination"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFAlHair" }
+	parmtag	{ "vray_pluginattr" "diffuse_strength" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"forward_scattering"
+	label	"Forward Scattering"
+	type	float
+	default	{ "0.7" }
+	help	"Controls the amount of light bleeding through the hair in dual-scattering mode"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFAlHair" }
+	parmtag	{ "vray_pluginattr" "forward_scattering" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"back_scattering"
+	label	"Back Scattering"
+	type	float
+	default	{ "0.7" }
+	help	"Controls the amount of light kicked back from the hair in dual-scattering mode"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFAlHair" }
+	parmtag	{ "vray_pluginattr" "back_scattering" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"specular1_color"
+	label	"Specular1 Color"
+	type	color4
+	size	4
+	default	{ "1" "1" "1" "1" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFAlHair" }
+	parmtag	{ "vray_pluginattr" "specular1_color" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"specular1_strength"
+	label	"Specular1 Strength"
+	type	float
+	default	{ "1" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFAlHair" }
+	parmtag	{ "vray_pluginattr" "specular1_strength" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"specular1_shift"
+	label	"Specular1 Shift"
+	type	float
+	default	{ "0" }
+	help	"Offset on the shift of this lobe's highlight"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFAlHair" }
+	parmtag	{ "vray_pluginattr" "specular1_shift" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"specular1_width_scale"
+	label	"Specular1 Width Scale"
+	type	float
+	default	{ "1" }
+	help	"Multiplier on the width of this lobe's highlight"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFAlHair" }
+	parmtag	{ "vray_pluginattr" "specular1_width_scale" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"specular2_color"
+	label	"Specular2 Color"
+	type	color4
+	size	4
+	default	{ "1" "1" "1" "1" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFAlHair" }
+	parmtag	{ "vray_pluginattr" "specular2_color" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"specular2_strength"
+	label	"Specular2 Strength"
+	type	float
+	default	{ "1" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFAlHair" }
+	parmtag	{ "vray_pluginattr" "specular2_strength" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"specular2_shift"
+	label	"Specular2 Shift"
+	type	float
+	default	{ "0" }
+	help	"Offset on the shift of this lobe's highlight"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFAlHair" }
+	parmtag	{ "vray_pluginattr" "specular2_shift" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"specular2_width_scale"
+	label	"Specular2 Width Scale"
+	type	float
+	default	{ "1" }
+	help	"Multiplier on the width of this lobe's highlight"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFAlHair" }
+	parmtag	{ "vray_pluginattr" "specular2_width_scale" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"glint_strength"
+	label	"Glint Strength"
+	type	float
+	default	{ "2.5" }
+	help	"Strength of the caustic glints. Sensible values are in the range 1-5"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFAlHair" }
+	parmtag	{ "vray_pluginattr" "glint_strength" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"transmission_color"
+	label	"Transmission Color"
+	type	color4
+	size	4
+	default	{ "1" "1" "1" "1" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFAlHair" }
+	parmtag	{ "vray_pluginattr" "transmission_color" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"transmission_strength"
+	label	"Transmission Strength"
+	type	float
+	default	{ "1" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFAlHair" }
+	parmtag	{ "vray_pluginattr" "transmission_strength" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"transmission_shift"
+	label	"Transmission Shift"
+	type	float
+	default	{ "0" }
+	help	"Offset on the shift of this lobe's highlight"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFAlHair" }
+	parmtag	{ "vray_pluginattr" "transmission_shift" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"transmission_width_scale"
+	label	"Transmission Width Scale"
+	type	float
+	default	{ "1" }
+	help	"Multiplier on the width of this lobe's highlight"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFAlHair" }
+	parmtag	{ "vray_pluginattr" "transmission_width_scale" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"glint_rolloff"
+	label	"Glint Rolloff"
+	type	float
+	default	{ "5" }
+	help	"Controls the rolloff of the caustic glints in the hair. Lower values make the glints more pingy, higher values make them softer and less apparent"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFAlHair" }
+	parmtag	{ "vray_pluginattr" "glint_rolloff" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"transmission_rolloff"
+	label	"Transmission Rolloff"
+	type	float
+	default	{ "10" }
+	help	"Controls the rolloff of the transmission highlight. Essentially, if you want the transmission highlight to only appear when the light is directly behind the hair, set this value to 10 or lower. If you want to increase the amount the highlight spreads as the light comes around from behind, set this value higher than 10"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFAlHair" }
+	parmtag	{ "vray_pluginattr" "transmission_rolloff" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"random_melanin"
+	label	"Random Melanin"
+	type	float
+	default	{ "0.08" }
+	help	"Adds a random offset to the melanin content of the hair. Values from 0.05 to 0.2 give a very natural color variation"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFAlHair" }
+	parmtag	{ "vray_pluginattr" "random_melanin" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"random_hue"
+	label	"Random Hue"
+	type	float
+	default	{ "0" }
+	help	"Adds a random offest to the hue of the dye color"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFAlHair" }
+	parmtag	{ "vray_pluginattr" "random_hue" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"random_saturation"
+	label	"Random Saturation"
+	type	float
+	default	{ "0" }
+	help	"Adds a random offest to the saturation of the Dye color"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFAlHair" }
+	parmtag	{ "vray_pluginattr" "random_saturation" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"random_tangent"
+	label	"Random Tangent"
+	type	float
+	default	{ "0" }
+	help	"Adds a random offset to the hair tangent which can be useful for breaking up uniform-looking grooms. Note that this value is dependent on your scene scale"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFAlHair" }
+	parmtag	{ "vray_pluginattr" "random_tangent" }
+	parmtag	{ "vray_type" "TextureFloat" }
+    }
+    parm {
+	name	"diffuse_indirect_strength"
+	label	"Diffuse Indirect Strength"
+	type	float
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFAlHair" }
+	parmtag	{ "vray_pluginattr" "diffuse_indirect_strength" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"glossy_indirect_strength"
+	label	"Glossy Indirect Strength"
+	type	float
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BRDFAlHair" }
+	parmtag	{ "vray_pluginattr" "glossy_indirect_strength" }
+	parmtag	{ "vray_type" "float" }
+    }
+}

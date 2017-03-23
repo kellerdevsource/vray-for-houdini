@@ -1,6 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <shelfDocument>
 
+<tool name="vop_VRayNodeBRDFAlSurface" label="VRayMtl" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeBRDFAlSurface</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>BRDF</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFAlSurface', nodename="alSurface")
+
+]]>
+    </script>
+</tool>
+
+<tool name="vop_VRayNodeBRDFAlHair" label="VRayMtl" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeBRDFAlHair</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>BRDF</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFAlHair', nodename="alHair")
+
+]]>
+    </script>
+</tool>
+
 <tool name="vop_VRayNodeBRDFBlinn" label="Blinn" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
