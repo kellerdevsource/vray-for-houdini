@@ -1,14 +1,10 @@
-from PyQt4 import QtGui
 import sys
 import os
 import json
 import re
 
-app = QtGui.QApplication(sys.argv)
-
 import vray
 import uiguides
-
 
 vr = None
 
