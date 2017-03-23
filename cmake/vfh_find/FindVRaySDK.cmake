@@ -96,6 +96,16 @@ else()
 		list(APPEND VRaySDK_LIBRARIES ${_vraysdk_libdirs})
 	endif()
 
+	set(CGR_HAS_VRSCENE FALSE)
+	find_path(__cgr_vrscene_h vrscene_preview.h PATHS ${VRaySDK_INCLUDES})
+	find_library(__cgr_vrscene_lib vrscene_s PATHS ${VRaySDK_LIBRARIES})
+	if (__cgr_vrscene_h AND __cgr_vrscene_lib)
+		set(CGR_HAS_VRSCENE TRUE)
+	endif()
+
+	unset(__cgr_vrscene_h CACHE)
+	unset(__cgr_vrscene_lib CACHE)
+
 endif()
 
 
