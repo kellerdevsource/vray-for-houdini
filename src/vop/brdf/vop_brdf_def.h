@@ -46,6 +46,8 @@ BRDF_DEF(BRDFSSS2Complex)
 BRDF_DEF(BRDFSampled)
 BRDF_DEF(BRDFSkinComplex)
 BRDF_DEF(BRDFWard)
+BRDF_DEF(BRDFAlSurface)
+BRDF_DEF(BRDFAlHair)
 
 } // namespace VOP
 } // namespace VRayForHoudini

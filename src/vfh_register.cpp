@@ -239,6 +239,8 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFSkinComplex);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFVRayMtl);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFWard);
+	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFAlSurface);
+	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFAlHair);
 
 #ifdef CGR_HAS_AUR
 	VFH_VOP_ADD_OPERATOR_CUSTOM(table, "MATERIAL", PhxShaderSim, PhxShaderSim::GetPrmTemplate(), OP_FLAG_UNORDERED);
