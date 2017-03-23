@@ -32,3 +32,5 @@ option(WITH_TEST_APP "Build AppSDK test applications" OFF)
 if(WITH_TEST_APP)
 	add_subdirectory(test/api)
 endif()
+
+set(CMAKE_VS_INCLUDE_INSTALL_TO_DEFAULT_BUILD ON)
