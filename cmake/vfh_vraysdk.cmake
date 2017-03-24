@@ -37,10 +37,10 @@ macro(use_vray_sdk)
 	link_directories(${VRaySDK_LIBRARIES})
 
 	# Check if there is vrscene preview library
-	find_path(CGR_HAS_VRSCENE vrscene_preview.h PATHS ${VRaySDK_INCLUDES})
 	if (CGR_HAS_VRSCENE)
 		add_definitions(-DCGR_HAS_VRAYSCENE)
 	endif()
+
 endmacro()
 
 
