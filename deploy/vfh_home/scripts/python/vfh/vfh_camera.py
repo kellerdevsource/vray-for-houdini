@@ -36,3 +36,6 @@ def add_physical_camera_attributes():
 
                 vfh_attrs.addPluginParms(ptg, CameraPhysicalDesc, parmPrefix = physCamPlugID, parmFolder = physCamTabName)
                 node.setParmTemplateGroup(ptg)
+
+                # Set "Use" by default.
+                node.parm("CameraPhysical_use").set(True)
