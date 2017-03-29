@@ -208,4 +208,8 @@ if __name__ == '__main__':
         args.CGR_CXX_COMPILER = 'g++'
         args.CGR_C_COMPILER = 'gcc'
 
+    # get latest master of submodules
+    os.system("git submodule foreach git fetch")
+    os.system('git submodule foreach git reset --hard origin/master')
+
     TC.main(args)
