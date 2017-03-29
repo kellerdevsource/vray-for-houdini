@@ -122,7 +122,7 @@
 	name	"SettingsColorMapping_adaptation_only"
 	label	"Mode"
 	type	ordinal
-	default	{ "0" }
+	default	{ "2" }
 	help	"When this parameter is on, the color mapping will not be applied to the final image, however V-Ray will proceed with all its calculations as though color mapping is applied (e.g. the noise levels will be corrected accordingly)"
 	menu	{
 	    "Color Mapping & Gamma"	"Color Mapping & Gamma"

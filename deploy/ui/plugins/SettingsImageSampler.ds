@@ -70,7 +70,7 @@
 	name	"SettingsImageSampler_dmc_maxSubdivs"
 	label	"Max Subdivs"
 	type	integer
-	default	{ "4" }
+	default	{ "24" }
 	help	"Max. subdivs value for the adaptive DMC image sampler"
 	disablewhen	"{ SettingsImageSampler_type != \"Adaptive DMC\" }"
 	hidewhen	"{ SettingsImageSampler_type != \"Adaptive DMC\" }"

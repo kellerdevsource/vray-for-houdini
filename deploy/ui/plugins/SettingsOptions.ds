@@ -406,7 +406,7 @@
 	name	"SettingsOptions_ray_max_intensity_on"
 	label	"Clamp Max Ray Intensity"
 	type	toggle
-	default	{ "0" }
+	default	{ "1" }
 	help	"Enable clamping of secondary rays"
 	range	{ 0 1 }
 	export	none
@@ -454,24 +454,30 @@
     }
     parm {
 	name	"SettingsOptions_probabilistic_lights_on"
-	label	"Enable Probabilistic Lights"
-	type	toggle
-	default	{ "0" }
-	help	"Enable probabilistic lights"
+	label	"Light Evaluation Mode"
+	type	ordinal
+	default	{ "2" }
+	help	"Lights evaluation mode"
+	menu	{
+	    "Full Lights Evaluation"	"Full Lights Evaluation"
+	    "Uniform Probabilistic Lights"	"Uniform Probabilistic Lights"
+	    "Adaptive Lights"	"Adaptive Lights"
+	}
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "SettingsOptions" }
 	parmtag	{ "vray_pluginattr" "probabilistic_lights_on" }
-	parmtag	{ "vray_type" "boolean" }
+	parmtag	{ "vray_type" "int" }
     }
     parm {
 	name	"SettingsOptions_num_probabilistic_lights"
-	label	"Number Of Probabilistic Lights"
+	label	"Number Of Lights"
 	type	integer
 	default	{ "8" }
 	help	"The number of probabilistic lights to use when probabilistic_lights_on is true"
-	disablewhen	"{ SettingsOptions_probabilistic_lights_on == 0 }"
+	disablewhen	"{ SettingsOptions_probabilistic_lights_on == \"Full Lights Evaluation\" }"
 	range	{ 1 1e+06 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }

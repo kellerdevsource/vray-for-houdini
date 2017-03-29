@@ -66,12 +66,18 @@
     parm {
 	name	"bloom_mode"
 	label	"Bloom Mode"
-	type	integer
+	type	ordinal
 	default	{ "0" }
-	help	"0-image 1-image and buffer  2-buffer"
-	range	{ 0 64 }
+	help	"Bloom mode"
+	menu	{
+	    "Image Only"	"Image Only"
+	    "Image and Render Elements"	"Image and Render Elements"
+	    "Render Elements Only"	"Render Elements Only"
+	}
+	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "SettingsVFB" }
 	parmtag	{ "vray_pluginattr" "bloom_mode" }
 	parmtag	{ "vray_type" "int" }
@@ -199,12 +205,18 @@
     parm {
 	name	"glare_type"
 	label	"Glare Type"
-	type	integer
-	default	{ "0" }
-	help	"0- from image  1 - from render camera  2 - from camera params"
-	range	{ 0 64 }
+	type	ordinal
+	default	{ "1" }
+	help	"Glare type"
+	menu	{
+	    "From Image"	"From Image"
+	    "From Render Camera"	"From Render Camera"
+	    "From Camera Params"	"From Camera Params"
+	}
+	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "SettingsVFB" }
 	parmtag	{ "vray_pluginattr" "glare_type" }
 	parmtag	{ "vray_type" "int" }
@@ -212,12 +224,18 @@
     parm {
 	name	"glare_mode"
 	label	"Glare Mode"
-	type	integer
+	type	ordinal
 	default	{ "0" }
-	help	"0-image 1-image and buffer  2-buffer"
-	range	{ 0 64 }
+	help	"Glare mode"
+	menu	{
+	    "Image Only"	"Image Only"
+	    "Image and Render Elements"	"Image and Render Elements"
+	    "Render Elements Only"	"Render Elements Only"
+	}
+	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "SettingsVFB" }
 	parmtag	{ "vray_pluginattr" "glare_mode" }
 	parmtag	{ "vray_type" "int" }
@@ -412,5 +430,23 @@
 	export	none
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_custom_handling" "1" }
+    }
+    parm {
+	name	"hardware_accelerated"
+	label	"Hardware Accelerated"
+	type	ordinal
+	default	{ "1" }
+	help	"Hardware Acceleration"
+	menu	{
+	    "CPU"	"CPU"
+	    "GPU"	"GPU"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_enumkeys" "0,1" }
+	parmtag	{ "vray_plugin" "SettingsVFB" }
+	parmtag	{ "vray_pluginattr" "hardware_accelerated" }
+	parmtag	{ "vray_type" "boolean" }
     }
 }

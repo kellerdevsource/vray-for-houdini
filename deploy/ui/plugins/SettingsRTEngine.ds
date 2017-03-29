@@ -8,7 +8,7 @@
 	label	"Cpu Ray Bundle Size"
 	type	integer
 	default	{ "128" }
-	help	"Number of samples to transfer over the network for RT-CPU"
+	help	"Number of samples to transfer over the network for CPU"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -21,7 +21,7 @@
 	label	"Cpu Rays Per Pixel"
 	type	integer
 	default	{ "4" }
-	help	"Number of samples per pixel for RT-CPU"
+	help	"Number of samples per pixel for CPU"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -34,7 +34,7 @@
 	label	"Gpu Ray Bundle Size"
 	type	integer
 	default	{ "128" }
-	help	"Number of samples to transfer over the network for RT-GPU"
+	help	"Number of samples to transfer over the network for GPU"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -47,7 +47,7 @@
 	label	"Gpu Rays Per Pixel"
 	type	integer
 	default	{ "1" }
-	help	"Number of samples per pixel for RT-GPU"
+	help	"Number of samples per pixel for GPU"
 	range	{ 0 64 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -158,12 +158,12 @@
 	name	"SettingsRTEngine_opencl_resizeTextures"
 	label	"Gpu Resize Textures"
 	type	ordinal
-	default	{ "1" }
+	default	{ "0" }
 	help	"Textures transfer mode for the GPU"
 	menu	{
-	    "Transfer \"As Is\" (Don't Resize, Don't Use Paging)"	"Transfer \"As Is\" (Don't Resize, Don't Use Paging)"
+	    "Full-Size Textures"	"Full-Size Textures"
 	    "Resize Textures"	"Resize Textures"
-	    "Use Texture Paging(Out-Of-Core Textures) CUDA Only"	"Use Texture Paging(Out-Of-Core Textures) CUDA Only"
+	    "On-Demand mip-mapped textures"	"On-Demand mip-mapped textures"
 	}
 	range	{ 0 1 }
 	export	none
@@ -177,16 +177,17 @@
 	name	"SettingsRTEngine_opencl_textureFormat"
 	label	"Gpu Texture Format"
 	type	ordinal
-	default	{ "1" }
+	default	{ "2" }
 	help	"Format for the textures on the GPU"
 	menu	{
-	    "32-Bit Float"	"32-Bit Float"
-	    "16-Bit Half Float"	"16-Bit Half Float"
+	    "32-Bit"	"32-Bit"
+	    "16-Bit"	"16-Bit"
+	    "8-Bit"	"8-Bit"
 	}
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1" }
+	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
 	parmtag	{ "vray_pluginattr" "opencl_textureFormat" }
 	parmtag	{ "vray_type" "int" }
@@ -247,9 +248,9 @@
 	name	"SettingsRTEngine_max_sample_level"
 	label	"Max. Paths Per Pixel"
 	type	integer
-	default	{ "0" }
+	default	{ "10000" }
 	help	"Max sample level (0 = inf)"
-	range	{ 0 64 }
+	range	{ 0 500000 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
@@ -260,7 +261,7 @@
 	name	"SettingsRTEngine_noise_threshold"
 	label	"Max. Noise"
 	type	float
-	default	{ "0.001" }
+	default	{ "0.008" }
 	help	"Noise threshold for the image sampler (0 = inf)"
 	range	{ 0 64 }
 	export	none

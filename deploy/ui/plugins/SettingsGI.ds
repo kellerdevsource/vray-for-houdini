@@ -7,7 +7,7 @@
 	name	"SettingsGI_on"
 	label	"On"
 	type	toggle
-	default	{ "0" }
+	default	{ "1" }
 	help	"Enable Global Illumination"
 	range	{ 0 1 }
 	export	none
@@ -34,7 +34,7 @@
 	name	"SettingsGI_reflect_caustics"
 	label	"Reflective Caustics"
 	type	toggle
-	default	{ "0" }
+	default	{ "1" }
 	help	"This allows indirect light to be reflected from specular objects (mirrors etc)"
 	disablewhen	"{ SettingsGI_on != 1 }"
 	range	{ 0 1 }
@@ -89,7 +89,7 @@
 	name	"SettingsGI_primary_engine"
 	label	"Primary Engine"
 	type	ordinal
-	default	{ "0" }
+	default	{ "1" }
 	help	"Primary diffuse bounces engines"
 	disablewhen	"{ SettingsGI_on != 1 } { SettingsGI_on == 0 }"
 	menu	{
@@ -125,7 +125,7 @@
 	name	"SettingsGI_secondary_engine"
 	label	"Secondary Engine"
 	type	ordinal
-	default	{ "1" }
+	default	{ "2" }
 	help	"Secondary diffuse bounces engines"
 	disablewhen	"{ SettingsGI_on != 1 } { SettingsGI_on == 0 }"
 	menu	{

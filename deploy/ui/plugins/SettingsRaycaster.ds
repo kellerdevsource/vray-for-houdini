@@ -7,7 +7,7 @@
 	name	"SettingsRaycaster_maxLevels"
 	label	"Max Tree Depth"
 	type	integer
-	default	{ "60" }
+	default	{ "80" }
 	help	"Max. tree depth"
 	range	{ 0 64 }
 	export	none
@@ -33,7 +33,7 @@
 	name	"SettingsRaycaster_faceLevelCoef"
 	label	"Face/level Coeff"
 	type	float
-	default	{ "2" }
+	default	{ "1" }
 	help	"Balance coefficient between depth and faces per voxel"
 	range	{ 0 64 }
 	export	none
@@ -46,7 +46,7 @@
 	name	"SettingsRaycaster_dynMemLimit"
 	label	"Dyn. Memory Limit(mbs)"
 	type	integer
-	default	{ "4000" }
+	default	{ "6000" }
 	help	"Limit for dynamic geometry, in megabytes"
 	range	{ 0 64 }
 	export	none
@@ -59,7 +59,7 @@
 	name	"SettingsRaycaster_embreeUse"
 	label	"Use Embree"
 	type	toggle
-	default	{ "0" }
+	default	{ "1" }
 	help	"Enable/Disable using the embree ray caster"
 	range	{ 0 1 }
 	export	none
@@ -100,7 +100,7 @@
 	name	"SettingsRaycaster_embreeLowMemory"
 	label	"Conserve Memory"
 	type	toggle
-	default	{ "1" }
+	default	{ "0" }
 	help	"Try to conserve memory, using potentially slower algorithms"
 	disablewhen	"{ SettingsRaycaster_embreeUse != 1 } { SettingsRaycaster_embreeUse == 0 }"
 	range	{ 0 1 }
