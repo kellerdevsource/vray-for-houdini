@@ -7,7 +7,7 @@
 	name	"SettingsDMCSampler_time_dependent"
 	label	"Animated Noise Pattern"
 	type	toggle
-	default	{ "0" }
+	default	{ "1" }
 	help	"This make the samping pattern change with time"
 	range	{ 0 1 }
 	export	none

@@ -231,7 +231,7 @@
 	name	"SettingsImageSampler_progressive_threshold"
 	label	"Noise Threshold"
 	type	float
-	default	{ "0.01" }
+	default	{ "0.005" }
 	help	"Noise threshold for the progressive image sampler"
 	disablewhen	"{ SettingsImageSampler_type != Progressive }"
 	hidewhen	"{ SettingsImageSampler_type != Progressive }"
