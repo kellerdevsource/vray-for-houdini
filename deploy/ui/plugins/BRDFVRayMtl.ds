@@ -157,6 +157,19 @@
 	parmtag	{ "vray_pluginattr" "fresnel" }
 	parmtag	{ "vray_type" "boolean" }
     }
+	parm {
+		name	"option_glossy_fresnel"
+		label	"Glossy Fresnel"
+		type	toggle
+		default	{ "1" }
+		help	"Enable glossy fresnel"
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "cook_dependent" "1" }
+		parmtag	{ "vray_plugin" "BRDFVRayMtl" }
+		parmtag	{ "vray_pluginattr" "option_glossy_fresnel" }
+		parmtag	{ "vray_type" "boolean" }
+	}
     parm {
 	name	"fresnel_ior"
 	label	"Fresnel Ior"
