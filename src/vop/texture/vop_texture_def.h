@@ -203,6 +203,7 @@ TEX_DEF(TransformToTex)
 TEX_DEF(texRenderHair)
 TEX_DEF(texXSIColor2Alpha)
 TEX_DEF(texXSIColor2Vector)
+TEX_DEF(TexTriPlanar)
 
 } // namespace VOP
 } // namespace VRayForHoudini

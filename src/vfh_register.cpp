@@ -457,6 +457,7 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", texRenderHair);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", texXSIColor2Alpha);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", texXSIColor2Vector);
+	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexTriPlanar);
 
 	VFH_VOP_ADD_OPERATOR(table, "UVWGEN", UVWGenBercon);
 	VFH_VOP_ADD_OPERATOR(table, "UVWGEN", UVWGenC4D);
