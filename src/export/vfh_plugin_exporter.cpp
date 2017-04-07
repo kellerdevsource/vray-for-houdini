@@ -21,7 +21,7 @@ using namespace VRayForHoudini;
 using namespace VRayForHoudini::Attrs;
 
 struct AppSdkInit;
-static AppSdkInit *appSdkInit = NULL;
+static AppSdkInit *appSdkInit = nullptr;
 
 struct AppSdkInit
 {
