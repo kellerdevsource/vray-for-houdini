@@ -20,7 +20,6 @@ include(vfh_vrayappsdk)
 include(vfh_vraysdk)
 include(vfh_phoenix)
 
-
 include_directories(.)
 include_directories(io)
 include_directories(ui)
@@ -68,13 +67,14 @@ use_houdini_sdk()
 use_vray_sdk()
 use_vray_appsdk()
 
+set_precompiled_header(vfh_pch.h "${CMAKE_CURRENT_SOURCE_DIR}/vfh_pch.cpp" SOURCES)
+
 houdini_plugin(${PROJECT_NAME} "${SOURCES};${HEADERS}")
 
 link_with_vray_sdk(${PROJECT_NAME})
 link_with_vray(${PROJECT_NAME})
 link_with_vray_appsdk(${PROJECT_NAME})
 link_with_boost(${PROJECT_NAME})
-
 
 if (Phoenix_FOUND)
 	target_link_libraries(${PROJECT_NAME}
@@ -96,12 +96,10 @@ endif()
 message(STATUS "Source revision: ${SRC_GIT_HASH}")
 add_definitions(-DCGR_GIT_HASH=${SRC_GIT_HASH})
 
-
 # Install
 #
 option(INSTALL_LOCAL "Install files locally" ON)
 option(INSTALL_RELEASE "Install release build for distribution" OFF)
-
 
 function(vfh_gen_launcher _location _vfh_appsdk_path _vfh_config_path _vfh_deploy_path _launcher)
 	file(TO_NATIVE_PATH ${_vfh_appsdk_path} _vfh_appsdk_path)
@@ -134,7 +132,6 @@ function(vfh_gen_launcher _location _vfh_appsdk_path _vfh_config_path _vfh_deplo
 	file(REMOVE ${CMAKE_BINARY_DIR}/tmp/${_mylauncher})
 endfunction(vfh_gen_launcher)
 
-
 function(vfh_install_common _location)
 	# Copy Phoenix cache file loader library
 	if (Phoenix_FOUND)
@@ -153,7 +150,6 @@ function(vfh_install_common _location)
 			DESTINATION ${_location})
 
 endfunction(vfh_install_common)
-
 
 if(INSTALL_LOCAL)
 	set(DEPLOY_LOCATION ${CMAKE_BINARY_DIR}/deploy)
@@ -177,9 +173,7 @@ if(INSTALL_LOCAL)
 	endif()
 endif()
 
-
 if(INSTALL_RELEASE)
-
 	if(NOT "${CMAKE_BUILD_TYPE}" STREQUAL "Release")
 		message(WARNING "INSTALL_RELEASE is ON, but CMAKE_BUILD_TYPE is not \"Release\" (${CMAKE_BUILD_TYPE})!")
 	endif()
