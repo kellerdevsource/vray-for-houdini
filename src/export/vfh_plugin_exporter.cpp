@@ -20,14 +20,26 @@
 using namespace VRayForHoudini;
 using namespace VRayForHoudini::Attrs;
 
+struct AppSdkInit;
+static AppSdkInit *appSdkInit = NULL;
 
 struct AppSdkInit
 {
-public:
-	static AppSdkInit& getInstance()
-	{
-		static AppSdkInit instance;
-		return instance;
+	static AppSdkInit &getInstance() {
+		if (!appSdkInit) {
+			try {
+				appSdkInit = new AppSdkInit;
+			}
+			catch (VRay::VRayException &e) {
+				Log::getLog().error("Error instantiating V-Ray AppSDK library:\n%s",
+									e.what());
+			}
+		}
+		return *appSdkInit;
+	}
+
+	static void deleteInstance() {
+		FreePtr(appSdkInit);
 	}
 
 	operator bool () const
@@ -209,6 +221,12 @@ static void OnBucketReady(VRay::VRayRenderer &renderer, int x, int y, const char
 bool VRayPluginRenderer::initialize()
 {
 	return static_cast<bool>(AppSdkInit::getInstance());
+}
+
+
+void VRayPluginRenderer::deinitialize()
+{
+	return AppSdkInit::deleteInstance();
 }
 
 

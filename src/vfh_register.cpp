@@ -84,6 +84,8 @@ void newGeometryIO(void *)
 /// Called when Houdini exits, but only if ROP operators have been registered
 void unregister(void *)
 {
+	VRayPluginRenderer::deinitialize();
+
 	Error::ErrorChaser &errChaser = Error::ErrorChaser::getInstance();
 	errChaser.enable(false);
 }
