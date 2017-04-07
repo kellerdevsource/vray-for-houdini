@@ -37,7 +37,7 @@ void VRayExporter::RtCallbackView(OP_Node *caller, void *callee, OP_EventType ty
 
 	switch (type) {
 		case OP_PARM_CHANGED: {
-			if (Parm::isParmSwitcher(*caller, long(data))) {
+			if (Parm::isParmSwitcher(*caller, reinterpret_cast<intptr_t>(data))) {
 				break;
 			}
 		}
@@ -48,7 +48,7 @@ void VRayExporter::RtCallbackView(OP_Node *caller, void *callee, OP_EventType ty
 				procceedEvent = true;
 			}
 			else if (caller->castToROPNode()) {
-				const PRM_Parm *param = Parm::getParm(*caller, reinterpret_cast<long>(data));
+				const PRM_Parm *param = Parm::getParm(*caller, reinterpret_cast<uintptr_t>(data));
 				if (param) {
 					procceedEvent = boost::starts_with(param->getToken(), "SettingsCamera") ||
 									boost::starts_with(param->getToken(), "SettingsMotionBlur") ||

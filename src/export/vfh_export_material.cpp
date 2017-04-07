@@ -28,7 +28,7 @@ void VRayExporter::RtCallbackSurfaceShop(OP_Node *caller, void *callee, OP_Event
 
 	if (type == OP_INPUT_REWIRED && caller->error() < UT_ERROR_ABORT) {
 		UT_String inputName;
-		const int idx = reinterpret_cast<long>(data);
+		const int idx = reinterpret_cast<uintptr_t>(data);
 		caller->getInputName(inputName, idx);
 
 		if (inputName.equal("Material")) {

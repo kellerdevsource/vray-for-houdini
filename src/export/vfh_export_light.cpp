@@ -30,7 +30,7 @@ void VRayExporter::RtCallbackLight(OP_Node *caller, void *callee, OP_EventType t
 
 	switch (type) {
 		case OP_PARM_CHANGED: {
-			if (Parm::isParmSwitcher(*caller, long(data))) {
+			if (Parm::isParmSwitcher(*caller, reinterpret_cast<intptr_t>(data))) {
 				break;
 			}
 		}

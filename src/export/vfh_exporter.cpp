@@ -757,7 +757,7 @@ void VRayExporter::RtCallbackVop(OP_Node *caller, void *callee, OP_EventType typ
 
 	switch (type) {
 		case OP_PARM_CHANGED: {
-			if (Parm::isParmSwitcher(*caller, long(data))) {
+			if (Parm::isParmSwitcher(*caller, reinterpret_cast<intptr_t>(data))) {
 				break;
 			}
 		}
@@ -880,11 +880,11 @@ void VRayExporter::RtCallbackDisplacementObj(OP_Node *caller, void *callee, OP_E
 
 	switch (type) {
 		case OP_PARM_CHANGED: {
-			if (Parm::isParmSwitcher(*caller, long(data))) {
+			if (Parm::isParmSwitcher(*caller, reinterpret_cast<intptr_t>(data))) {
 				break;
 			}
 
-			const PRM_Parm *parm = Parm::getParm(*caller, reinterpret_cast<long>(data));
+			const PRM_Parm *parm = Parm::getParm(*caller, reinterpret_cast<intptr_t>(data));
 			if (parm) {
 				OBJ_Node *obj_node = caller->castToOBJNode();
 				if (boost::equals(parm->getToken(), "vray_use_displ") ||
@@ -918,7 +918,7 @@ void VRayExporter::RtCallbackDisplacementShop(OP_Node *caller, void *callee, OP_
 
 	if (type == OP_INPUT_REWIRED) {
 		UT_String inputName;
-		const int idx = reinterpret_cast<long>(data);
+		const int idx = reinterpret_cast<intptr_t>(data);
 		caller->getInputName(inputName, idx);
 
 		if (caller->error() < UT_ERROR_ABORT && inputName.equal("Geometry")) {
@@ -956,12 +956,12 @@ void VRayExporter::RtCallbackDisplacementVop(OP_Node *caller, void *callee, OP_E
 
 	switch (type) {
 		case OP_PARM_CHANGED: {
-			if (Parm::isParmSwitcher(*caller, long(data))) {
+			if (Parm::isParmSwitcher(*caller, reinterpret_cast<intptr_t>(data))) {
 				break;
 			}
 		}
 		case OP_INPUT_REWIRED: {
-			const int idx = reinterpret_cast<long>(data);
+			const int idx = reinterpret_cast<intptr_t>(data);
 			SHOP_Node *shop_node = caller->getParent()->castToSHOPNode();
 			if (idx >= 0 && shop_node) {
 				UT_String shopPath;

@@ -52,12 +52,12 @@ void VRayExporter::RtCallbackOBJGeometry(OP_Node *caller, void *callee, OP_Event
 	int shouldReExport = false;
 	switch (type) {
 		case OP_PARM_CHANGED: {
-			if (Parm::isParmSwitcher(*caller, long(data))) {
+			if (Parm::isParmSwitcher(*caller, reinterpret_cast<intptr_t>(data))) {
 				break;
 			}
 
 			// If the parameter is for material override it has OBJ_MATERIAL_SPARE_TAG tag
-			const PRM_Parm *prm = Parm::getParm(*caller, reinterpret_cast<long>(data));
+			const PRM_Parm *prm = Parm::getParm(*caller, reinterpret_cast<intptr_t>(data));
 			if (prm) {
 				UT_StringRef prmToken = prm->getToken();
 				const PRM_SpareData	*spare = prm->getSparePtr();
@@ -105,7 +105,7 @@ void VRayExporter::RtCallbackSOPChanged(OP_Node *caller, void *callee, OP_EventT
 
 	switch (type) {
 		case OP_PARM_CHANGED: {
-			if (Parm::isParmSwitcher(*caller, long(data))) {
+			if (Parm::isParmSwitcher(*caller, reinterpret_cast<intptr_t>(data))) {
 				break;
 			}
 		}
@@ -146,7 +146,7 @@ void VRayExporter::RtCallbackVRayClipper(OP_Node *caller, void *callee, OP_Event
 
 	switch (type) {
 		case OP_PARM_CHANGED: {
-			if (Parm::isParmSwitcher(*caller, long(data))) {
+			if (Parm::isParmSwitcher(*caller, reinterpret_cast<intptr_t>(data))) {
 				break;
 			}
 		}
