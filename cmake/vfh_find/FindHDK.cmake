@@ -154,11 +154,12 @@ if(HDK_FOUND)
 		endif()
 
 		file(GLOB HDK_LIBS_A "${HDK_LIBRARIES}/*.a")
-		file(GLOB HDK_LIBS_LIB "${HDK_LIBRARIES}/*.lib")
 
 		list(APPEND HDK_LIBS
 			${HDK_LIBS_A}
-			${HDK_LIBS_LIB}
+			${HDK_LIBRARIES}/openvdb_sesi.lib
+			${HDK_LIBRARIES}/QtCore4.lib
+			${HDK_LIBRARIES}/QtGui4.lib
 		)
 
 		set(SYSTEM_LIBS
