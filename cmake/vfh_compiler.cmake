@@ -13,10 +13,10 @@ if(APPLE)
 endif()
 
 macro(set_precompiled_header PrecompiledHeader PrecompiledSource SourcesVar)
-	if(MSVC)
-		# Remove precompiled from from source list
-		list(REMOVE_ITEM ${SourcesVar} ${PrecompiledSource})
+	# Remove precompiled from from source list
+	list(REMOVE_ITEM ${SourcesVar} ${PrecompiledSource})
 
+	if(MSVC)
 		get_filename_component(PrecompiledBasename ${PrecompiledHeader} NAME_WE)
 
 		set(PrecompiledBinary "${CMAKE_CURRENT_BINARY_DIR}/${PrecompiledBasename}.pch")
