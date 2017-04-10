@@ -14,7 +14,8 @@
 #include "vfh_defines.h"
 #include "vfh_vray.h"
 
-#include <QtGui/QtGui>
+#include <QtGui>
+#include <QMainWindow>
 #include <boost/function.hpp>
 
 

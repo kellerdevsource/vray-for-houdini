@@ -14,7 +14,7 @@
 #include "vfh_prm_globals.h"
 #include "vfh_log.h"
 
-#include <QtCore/QDirIterator>
+#include <QDirIterator>
 
 #ifdef _MSC_VER
 #  include <boost/config/compiler/visualc.hpp>

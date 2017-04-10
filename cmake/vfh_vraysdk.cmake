@@ -64,10 +64,12 @@ macro(link_with_vray_sdk _name)
 		tiff_s
 	)
 	if(WIN32)
-		list(APPEND VRAY_SDK_LIBS
-			zlib_s
-			QtCore4
-		)
+		if(${HDK_MAJOR_VERSION} VERSION_GREATER "15")
+			list(APPEND VRAY_SDK_LIBS ${HDK_QT_LIBS})
+		else()
+			list(APPEND VRAY_SDK_LIBS QtCore4)
+		endif()
+		list(APPEND VRAY_SDK_LIBS zlib_s)
 	endif()
 	if(CGR_HAS_VRSCENE)
 		list(APPEND VRAY_SDK_LIBS

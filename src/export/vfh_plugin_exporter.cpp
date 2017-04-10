@@ -11,7 +11,9 @@
 #include "vfh_hou_utils.h"
 #include "vfh_plugin_exporter.h"
 
-#include <QtGui/QtGui>
+#include <QtGui>
+#include <QWidget>
+#include <QApplication>
 #include <boost/bind.hpp>
 
 #define PRINT_CALLBACK_CALLS  0

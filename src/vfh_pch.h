@@ -123,8 +123,6 @@
 #include <PRM/PRM_Shared.h>
 #include <PRM/PRM_SpareData.h>
 #include <PRM/PRM_Template.h>
-#include <RE/RE_QtWindow.h>
-#include <RE/RE_Window.h>
 #include <ROP/ROP_Error.h>
 #include <ROP/ROP_Node.h>
 #include <ROP/ROP_Templates.h>
@@ -158,7 +156,20 @@
 #include <VOP/VOP_ParmGenerator.h>
 #include <VOPNET/VOPNET_Node.h>
 
+#if UT_MAJOR_VERSION_INT >= 16
+#include <RE/RE_Window.h>
+#else
+#include <RE/RE_QtWindow.h>
+#endif
+
 // V-Ray Application SDK
 #include <vraysdk.hpp>
+
+// Qt
+#include <QtCore>
+#include <QtGui>
+#if UT_MAJOR_VERSION_INT >= 16
+#  include <QtWidgets>
+#endif
 
 #endif // VRAY_FOR_HOUDINI_PCH_H

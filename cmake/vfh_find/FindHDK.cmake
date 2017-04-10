@@ -146,10 +146,15 @@ if(HDK_FOUND)
 			-DEIGEN_MALLOC_ALREADY_ALIGNED=0
 		)
 
-		if(${HDK_MAJOR_VERSION} VERSION_EQUAL "16")
+		if(${HDK_MAJOR_VERSION} VERSION_GREATER "15")
 			# NOTE: openvdb_sesi is version 3.3.0 but HDK is using 4.0.0 API
 			list(APPEND HDK_DEFINITIONS
 				-DOPENVDB_3_ABI_COMPATIBLE
+
+				-DCXX11_ENABLED=1
+				-DQT_NO_KEYWORDS=1
+				-DQT_DLL
+				-DUSE_QT5=1
 			)
 		endif()
 
@@ -158,9 +163,30 @@ if(HDK_FOUND)
 		list(APPEND HDK_LIBS
 			${HDK_LIBS_A}
 			${HDK_LIBRARIES}/openvdb_sesi.lib
-			${HDK_LIBRARIES}/QtCore4.lib
-			${HDK_LIBRARIES}/QtGui4.lib
 		)
+
+		if(${HDK_MAJOR_VERSION} VERSION_GREATER "15")
+			set(HDK_QT_ROOT "${SDK_PATH}/hdk/qt/5.6.1" CACHE PATH "Qt for Houdini SDK root")
+			set(HDK_INCLUDES  "${HDK_INCLUDES};${HDK_QT_ROOT}/include")
+			set(HDK_INCLUDES  "${HDK_INCLUDES};${HDK_QT_ROOT}/include/QtCore")
+			set(HDK_INCLUDES  "${HDK_INCLUDES};${HDK_QT_ROOT}/include/QtGui")
+			set(HDK_INCLUDES  "${HDK_INCLUDES};${HDK_QT_ROOT}/include/QtWidgets")
+			set(HDK_LIBRARIES "${HDK_LIBRARIES};${HDK_QT_ROOT}/lib")
+			set(HDK_QT_LIBS
+				${HDK_QT_ROOT}/lib/Qt5Core.lib
+				${HDK_QT_ROOT}/lib/Qt5Gui.lib
+				${HDK_QT_ROOT}/lib/Qt5Widgets.lib
+			)
+		else()
+			set(HDK_INCLUDES "${HDK_INCLUDES};${HDK_INCLUDES}/QtCore;${HDK_INCLUDES}/QtGui")
+
+			set(HDK_QT_LIBS
+				${HDK_LIBRARIES}/QtCore4.lib
+				${HDK_LIBRARIES}/QtGui4.lib
+			)
+		endif()
+
+		list(APPEND HDK_LIBS ${HDK_QT_LIBS})
 
 		set(SYSTEM_LIBS
 			advapi32
