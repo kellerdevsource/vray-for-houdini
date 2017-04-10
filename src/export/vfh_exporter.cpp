@@ -1273,13 +1273,13 @@ void VRayExporter::onDumpMessage(VRay::VRayRenderer& /*renderer*/, const char *m
 	message = message.simplified();
 
 	if (level <= VRay::MessageError) {
-		Log::getLog().error("V-Ray: %s", message.toAscii().constData());
+		Log::getLog().error("V-Ray: %s", message.toLocal8Bit().constData());
 	}
 	else if (level > VRay::MessageError && level <= VRay::MessageWarning) {
-		Log::getLog().warning("V-Ray: %s", message.toAscii().constData());
+		Log::getLog().warning("V-Ray: %s", message.toLocal8Bit().constData());
 	}
 	else if (level > VRay::MessageWarning && level <= VRay::MessageInfo) {
-		Log::getLog().info("V-Ray: %s", message.toAscii().constData());
+		Log::getLog().info("V-Ray: %s", message.toLocal8Bit().constData());
 	}
 }
 
@@ -1292,7 +1292,7 @@ void VRayExporter::onProgress(VRay::VRayRenderer& /*renderer*/, const char *msg,
 	const float percentage = 100.0f * elementNumber / elementsCount;
 
 	Log::getLog().progress("V-Ray: %s %.1f%% %s",
-						   message.toAscii().constData(),
+						   message.toLocal8Bit().constData(),
 						   percentage,
 						   (elementNumber >= elementsCount) ? "\n" : "\r");
 }
