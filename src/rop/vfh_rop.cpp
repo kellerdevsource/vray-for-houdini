@@ -567,7 +567,7 @@ void VRayRendererNode::RtCallbackRop(OP_Node *caller, void *callee, OP_EventType
 	switch (type) {
 		case OP_PARM_CHANGED:
 		{
-			long prmIdx = reinterpret_cast< long >(data);
+			const long prmIdx = reinterpret_cast<intptr_t>(data);
 			PRM_Parm &prm = caller->getParm(prmIdx);
 			if (   prm.getSparePtr()
 				&& prm.getSparePtr()->getValue(RT_UPDATE_SPARE_TAG))
