@@ -151,13 +151,15 @@ VRayVolumeGridRef::VRayVolumeGridRef():
 	GU_Detail *gdp = new GU_Detail;
 	m_handle.allocateAndSet(gdp, true);
 	m_detail = m_handle;
+	memset(m_channelDataRange.data(), 0, m_channelDataRange.size() * sizeof(m_channelDataRange[0]));
 }
 
 
 VRayVolumeGridRef::VRayVolumeGridRef(const VRayVolumeGridRef &src):
 	GU_PackedImpl(src),
 	m_detail(),
-	m_dirty(false)
+	m_dirty(false),
+	m_channelDataRange(src.m_channelDataRange)
 {
 	m_handle = src.m_handle;
 	m_detail = m_handle;
@@ -313,6 +315,8 @@ GU_ConstDetailHandle VRayVolumeGridRef::getPackedDetail(GU_PackedContext *contex
 	using namespace std;
 	using namespace chrono;
 
+	memset(SYSconst_cast(this)->m_channelDataRange.data(), 0, m_channelDataRange.size() * sizeof(m_channelDataRange[0]));
+
 	auto tStart = high_resolution_clock::now();
 	auto cache = getCache();
 	auto tEndCache = high_resolution_clock::now();
@@ -357,6 +361,8 @@ GU_ConstDetailHandle VRayVolumeGridRef::getPackedDetail(GU_PackedContext *contex
 
 		auto tStartExtract = high_resolution_clock::now();
 		voxelHandle->extractFromFlattened(grid, gridDimensions[0], gridDimensions[1] * gridDimensions[0]);
+		SYSconst_cast(this)->m_channelDataRange[chan.type].min = volumeGdp->calcMinimum();
+		SYSconst_cast(this)->m_channelDataRange[chan.type].max = volumeGdp->calcMaximum();
 		auto tEndExtract = high_resolution_clock::now();
 
 		int extractTime = duration_cast<milliseconds>(tEndExtract - tStartExtract).count();

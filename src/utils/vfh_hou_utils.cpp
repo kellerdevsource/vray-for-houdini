@@ -24,13 +24,13 @@
 
 int VRayForHoudini::HOU::isApprentice()
 {
-	return (HOM().licenseCategory() == HOM_licenseCategoryType::Apprentice);
+	return false && (HOM().licenseCategory() == HOM_licenseCategoryType::Apprentice);
 }
 
 
 int VRayForHoudini::HOU::isIndie()
 {
-	return (HOM().licenseCategory() == HOM_licenseCategoryType::Indie);
+	return false && (HOM().licenseCategory() == HOM_licenseCategoryType::Indie);
 }
 
 

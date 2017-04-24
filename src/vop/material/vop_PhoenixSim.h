@@ -85,6 +85,8 @@ protected:
 	/// @retval 1 if houdini should refresh the UI
 	static int                 rampButtonClickCB(void *data, int index, fpreal64 time, const PRM_Template *tplate);
 
+	static int                 setVopPathCB(void *data, int index, fpreal64 time, const PRM_Template *tplate);
+
 	/// Set the current active channels for all ramps
 	/// @param fromUi - if true this takes the values from the current UI, otherwise uses the default from .ds file.
 	///                 This is true when the scene is loaded from file and we need to parse the loaded channels

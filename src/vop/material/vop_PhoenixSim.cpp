@@ -12,6 +12,7 @@
 #include <vop_PhoenixSim.h>
 #include <vfh_prm_templates.h>
 #include <vfh_tex_utils.h>
+#include "gu_volumegridref.h"
 
 #include <UT/UT_IStream.h>
 #include <OP/OP_SaveFlags.h>
@@ -78,7 +79,7 @@ struct RampData {
 /// RampContext is holder for one instance of ramp in the UI
 /// For example PhxShaderSim has one color ramp, one curve ramp, and on ramp with both
 /// So PhxShaderSim has 3 instances of RampContext
-/// Also this class hold RampData for all possible combinations of RampChannel and RampType
+/// Also this class holds RampData for all possible combinations of RampChannel and RampType
 struct RampContext {
 	friend class PhxShaderSim;
 
@@ -92,6 +93,8 @@ struct RampContext {
 	};
 
 	static const int CHANNEL_COUNT = 4; ///< actual count of channels - temp, smoke, speed and fuel
+
+	typedef std::array<VRayVolumeGridRef::MinMaxPair, CHANNEL_COUNT> MinMaxMap;
 
 	/// Constructs empty context with None type for ramps
 	/// @param type - the type of the data inside the context
@@ -107,6 +110,7 @@ struct RampContext {
 				m_data[c][rampTypeToIdx(type)].m_type = type;
 			}
 		}
+		memset(m_minMax.data(), 0, m_minMax.size() * sizeof(m_minMax[0]));
 	}
 
 	/// Check if the supplied value is valid RampChannel
@@ -131,6 +135,16 @@ struct RampContext {
 		return type - 1;
 	}
 
+	static GridChannels::Enum rampChannelToPhxChannel(RampChannel chan) {
+		switch (chan) {
+			case CHANNEL_TEMPERATURE: return GridChannels::ChT;
+			case CHANNEL_SMOKE: return GridChannels::ChSm;
+			case CHANNEL_SPEED: return GridChannels::ChSp;
+			case CHANNEL_FUEL: return GridChannels::ChFl;
+		}
+		return GridChannels::ChReserved;
+	}
+
 	/// Return the appropriate RampData for given type and channel
 	/// @param type - either color or curve data to get
 	/// @param chan - if supplied is used to get data for this channel, otherwise the current one is used
@@ -146,6 +160,18 @@ struct RampContext {
 	/// @retval The RampChannel
 	RampChannel getActiveChannel() const {
 		return m_activeChan;
+	}
+
+	/// Set the min/max highligthed areas in the UI - call when the linked SOP is changed or current channel is changed
+	void refreshUi() const {
+		if (!m_ui || m_freeUi) {
+			return;
+		}
+
+		auto sts = m_ui->getSettings();
+		sts.highlightedDataRegionMax = m_minMax[rampChanToIdx(m_activeChan)].max;
+		sts.highlightedDataRegionMin = m_minMax[rampChanToIdx(m_activeChan)].min;
+		m_ui->setSettings(sts);
 	}
 
 	/// Set the current active channel and also refreshes the UI's data if it is open
@@ -171,6 +197,7 @@ struct RampContext {
 					m_ui->setColorPoints(colorData.m_xS.data(), colorData.m_yS.data(), colorData.m_xS.size());
 				}
 			}
+			refreshUi();
 		}
 	}
 
@@ -178,6 +205,7 @@ struct RampContext {
 	std::unique_ptr<RampUi> m_ui;      ///< Pointer to the current UI, nullptr if not open
 	bool                    m_freeUi;  ///< Flag to mark the m_ui for deletion when OnWindowDie is called
 	AurRamps::RampType      m_uiType;  ///< Type is Color Curve or Both since there can be combined ramps
+	MinMaxMap               m_minMax; ///< min max value for each channel
 private:
 	typedef RampData RampPair[2];
 	RampChannel m_activeChan;          ///< The current active channel as selected in Houdini's UI
@@ -529,11 +557,61 @@ int PhxShaderSim::rampButtonClickCB(void *data, int index, fpreal64 time, const 
 		ctx->m_ui->setColorPickerHandler(&ctx->m_handler);
 	}
 
+	ctx->refreshUi();
 	ctx->m_ui->show();
 
 	return 1;
 }
 
+
+int PhxShaderSim::setVopPathCB(void *data, int index, fpreal64 time, const PRM_Template *tplate)
+{
+	const auto token = tplate->getToken();
+	auto simNode = reinterpret_cast<PhxShaderSim*>(data);
+
+	UT_String sopPath;
+	simNode->evalString(sopPath, token, 0, 0);
+	auto cacheSop = OPgetDirector()->findSOPNode(sopPath.buffer());
+
+	if (!cacheSop || !cacheSop->getOperator()->getName().startsWith("VRayNodePhxShaderCache")) {
+		Log::getLog().warning("Only a V-Ray PhxShaderCache sop can be selected!");
+		return 0;
+	}
+
+	OP_Context context(CHgetEvalTime());
+	GU_DetailHandleAutoReadLock gdl(cacheSop->getCookedGeoHandle(context));
+	if (!gdl.isValid()) {
+		return 0;
+	}
+	const GU_Detail &detail = *gdl.getGdp();
+	auto & primList = detail.getPrimitiveList();
+	const int primCount = primList.offsetSize();
+
+	const GA_Primitive * volumePrim = nullptr;
+	// check all primities if we can make PrimExporter for it and export it
+	for (int c = 0; c < primCount; ++c) {
+		auto prim = primList.get(c);
+		if (prim && prim->getTypeId() == VRayVolumeGridRef::typeId()) {
+			volumePrim = prim;
+			break;
+		}
+	}
+
+	auto * packedPrim = UTverify_cast<const GU_PrimPacked *>(volumePrim);
+	const auto * impl = reinterpret_cast<const VRayVolumeGridRef*>(packedPrim->implementation());
+	const auto & ranges = impl->getChannelDataRanges();
+
+	for (auto & rampIter : simNode->m_ramps) {
+		if (auto ramp = rampIter.second) {
+
+			for (int c = 0; c < RampContext::CHANNEL_COUNT; c++) {
+				ramp->m_minMax[c] = ranges[RampContext::rampChannelToPhxChannel(static_cast<RampContext::RampChannel>(c + 1))];
+			}
+			ramp->refreshUi();
+		}
+
+	}
+}
 
 
 PRM_Template* PhxShaderSim::GetPrmTemplate()
@@ -546,6 +624,10 @@ PRM_Template* PhxShaderSim::GetPrmTemplate()
 		// set callbacks for ramp params
 		for (int c = 0; c < paramList.size(); ++c) {
 			auto & param = AttrItems[c];
+			if (!strcmp(param.getToken(), "selectedSopPath")) {
+				param.setCallback(setVopPathCB);
+			}
+
 			const auto spareData = param.getSparePtr();
 			if (spareData) {
 				if (spareData->getValue("vray_ramp_type")) {

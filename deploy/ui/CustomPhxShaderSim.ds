@@ -6,6 +6,15 @@
 	label	"Rendering"
 
 	parm {
+	    name	"selectedSopPath"
+	    label	"Sop path to read data ranges from"
+	    type	oppath
+	    default	{ "" }
+	    parmtag	{ "opfilter" "!!SOP!!" }
+	    parmtag	{ "oprelative" "." }
+	}
+
+	parm {
 	    name	"render"
 	    label	"Enable Rendering"
 	    type	toggle

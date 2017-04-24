@@ -59,6 +59,13 @@ class VRayVolumeGridRef:
 public:
 	typedef std::shared_ptr<IAur> CachePtr;
 
+	struct MinMaxPair {
+		float min;
+		float max;
+	};
+
+	typedef std::array<MinMaxPair, GridChannels::Ch_Count> DataRangeMap;
+
 	VFH_MAKE_ACCESSORS(VFH_VOLUME_GRID_PARAMS, VFH_VOLUME_GRID_PARAMS_COUNT)
 
 	/// Get the type ID for the VRayProxy primitive type.
@@ -123,6 +130,8 @@ public:
 	void                          setPhxChannelMap(const UT_StringArray &map) { m_options.setOptionSArray("phx_channel_map", map); }
 	/// @}
 
+	const DataRangeMap &          getChannelDataRanges() const { return m_channelDataRange; }
+
 private:
 	/// updateFrom() will update from UT_Options only
 	bool updateFrom(const UT_Options &options);
@@ -158,6 +167,8 @@ private:
 	/// if true we will replace frame number with ### for PHX
 	/// otherwise user hardcoded frame number and we should not change it
 	bool                   m_doFrameReplace;
+
+	DataRangeMap           m_channelDataRange;
 };
 
 
