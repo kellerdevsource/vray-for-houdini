@@ -569,6 +569,16 @@ int PhxShaderSim::setVopPathCB(void *data, int index, fpreal64 time, const PRM_T
 	const auto token = tplate->getToken();
 	auto simNode = reinterpret_cast<PhxShaderSim*>(data);
 
+	// zero out all min/max ranges
+	for (auto & rampIter : simNode->m_ramps) {
+		if (auto ramp = rampIter.second) {
+			for (int c = 0; c < RampContext::CHANNEL_COUNT; c++) {
+				ramp->m_minMax[c] = {0, 0};
+			}
+			ramp->refreshUi();
+		}
+	}
+
 	UT_String sopPath;
 	simNode->evalString(sopPath, token, 0, 0);
 	auto cacheSop = OPgetDirector()->findSOPNode(sopPath.buffer());
@@ -607,13 +617,11 @@ int PhxShaderSim::setVopPathCB(void *data, int index, fpreal64 time, const PRM_T
 
 	for (auto & rampIter : simNode->m_ramps) {
 		if (auto ramp = rampIter.second) {
-
 			for (int c = 0; c < RampContext::CHANNEL_COUNT; c++) {
 				ramp->m_minMax[c] = ranges[RampContext::rampChannelToPhxChannel(static_cast<RampContext::RampChannel>(c + 1))];
 			}
 			ramp->refreshUi();
 		}
-
 	}
 
 	return 0;
