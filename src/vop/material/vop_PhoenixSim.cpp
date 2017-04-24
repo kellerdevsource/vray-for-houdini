@@ -597,6 +597,10 @@ int PhxShaderSim::setVopPathCB(void *data, int index, fpreal64 time, const PRM_T
 		}
 	}
 
+	if (!volumePrim) {
+		return 0;
+	}
+
 	auto * packedPrim = UTverify_cast<const GU_PrimPacked *>(volumePrim);
 	const auto * impl = reinterpret_cast<const VRayVolumeGridRef*>(packedPrim->implementation());
 	const auto & ranges = impl->getChannelDataRanges();
@@ -611,6 +615,8 @@ int PhxShaderSim::setVopPathCB(void *data, int index, fpreal64 time, const PRM_T
 		}
 
 	}
+
+	return 0;
 }
 
 
