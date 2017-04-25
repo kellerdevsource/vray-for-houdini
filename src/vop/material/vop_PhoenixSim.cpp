@@ -570,7 +570,7 @@ int PhxShaderSim::setVopPathCB(void *data, int index, fpreal64 time, const PRM_T
 	auto simNode = reinterpret_cast<PhxShaderSim*>(data);
 
 	// zero out all min/max ranges
-	for (auto & rampIter : simNode->m_ramps) {
+	for (auto &rampIter : simNode->m_ramps) {
 		if (auto ramp = rampIter.second) {
 			for (int c = 0; c < RampContext::CHANNEL_COUNT; c++) {
 				ramp->m_minMax[c] = {0, 0};
@@ -594,7 +594,7 @@ int PhxShaderSim::setVopPathCB(void *data, int index, fpreal64 time, const PRM_T
 		return 0;
 	}
 	const GU_Detail &detail = *gdl.getGdp();
-	auto & primList = detail.getPrimitiveList();
+	auto &primList = detail.getPrimitiveList();
 	const int primCount = primList.offsetSize();
 
 	const GA_Primitive * volumePrim = nullptr;
@@ -611,11 +611,11 @@ int PhxShaderSim::setVopPathCB(void *data, int index, fpreal64 time, const PRM_T
 		return 0;
 	}
 
-	auto * packedPrim = UTverify_cast<const GU_PrimPacked *>(volumePrim);
-	const auto * impl = reinterpret_cast<const VRayVolumeGridRef*>(packedPrim->implementation());
-	const auto & ranges = impl->getChannelDataRanges();
+	auto *packedPrim = UTverify_cast<const GU_PrimPacked*>(volumePrim);
+	const auto *impl = reinterpret_cast<const VRayVolumeGridRef*>(packedPrim->implementation());
+	const auto &ranges = impl->getChannelDataRanges();
 
-	for (auto & rampIter : simNode->m_ramps) {
+	for (auto &rampIter : simNode->m_ramps) {
 		if (auto ramp = rampIter.second) {
 			for (int c = 0; c < RampContext::CHANNEL_COUNT; c++) {
 				ramp->m_minMax[c] = ranges[RampContext::rampChannelToPhxChannel(static_cast<RampContext::RampChannel>(c + 1))];
