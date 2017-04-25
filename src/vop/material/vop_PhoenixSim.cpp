@@ -597,8 +597,8 @@ int PhxShaderSim::setVopPathCB(void *data, int index, fpreal64 time, const PRM_T
 	auto &primList = detail.getPrimitiveList();
 	const int primCount = primList.offsetSize();
 
-	const GA_Primitive * volumePrim = nullptr;
-	// check all primities if we can make PrimExporter for it and export it
+	const GA_Primitive *volumePrim = nullptr;
+	// check all primities if we have a VRayVolumeGridRef
 	for (int c = 0; c < primCount; ++c) {
 		auto prim = primList.get(c);
 		if (prim && prim->getTypeId() == VRayVolumeGridRef::typeId()) {
@@ -608,6 +608,7 @@ int PhxShaderSim::setVopPathCB(void *data, int index, fpreal64 time, const PRM_T
 	}
 
 	if (!volumePrim) {
+		Log::getLog().warning("Selected SOP does not contain a VRayNodePhxShaderCache node!");
 		return 0;
 	}
 
