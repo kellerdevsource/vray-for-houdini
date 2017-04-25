@@ -85,6 +85,14 @@ protected:
 	/// @retval 1 if houdini should refresh the UI
 	static int                 rampButtonClickCB(void *data, int index, fpreal64 time, const PRM_Template *tplate);
 
+	/// Called when 'selectedSopPath' is changed so we can update data ranges appropriatelly
+	/// @param data - pointer to OP_Node that called the callback
+	/// @param index - the index of the selected option [1, count)
+	/// @param time - the time that the change was made
+	/// @param tplate - the param template that this was triggered for
+	/// @retval 1 if houdini should refresh the UI
+	static int                 setVopPathCB(void *data, int index, fpreal64 time, const PRM_Template *tplate);
+
 	/// Set the current active channels for all ramps
 	/// @param fromUi - if true this takes the values from the current UI, otherwise uses the default from .ds file.
 	///                 This is true when the scene is loaded from file and we need to parse the loaded channels
