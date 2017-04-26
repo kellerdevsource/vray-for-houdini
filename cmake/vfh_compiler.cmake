@@ -16,10 +16,13 @@ macro(set_precompiled_header PrecompiledHeader PrecompiledSource SourcesVar)
 	# Remove precompiled from from source list
 	list(REMOVE_ITEM ${SourcesVar} ${PrecompiledSource})
 
-	if(MSVC)
+	if (WIN32)
 		# precompiled header requires more than that the default amount of memmory
 		# this flag sets the limit in MB
 		add_definitions(-Zm1000)
+	endif()
+
+	if(MSVC)
 
 		get_filename_component(PrecompiledBasename ${PrecompiledHeader} NAME_WE)
 
