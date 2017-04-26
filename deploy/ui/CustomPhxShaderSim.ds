@@ -655,7 +655,7 @@
 	    name	"smoketransp"
 	    label	"Simple Smoke Opacity"
 	    type	float
-	    default	{ "0" }
+	    default	{ "0.5" }
 	    disablewhen	"{ targ != 0 }"
 	    range	{ 0! 1! }
 	    export	none
