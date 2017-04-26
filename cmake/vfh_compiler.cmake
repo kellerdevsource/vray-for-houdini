@@ -19,7 +19,7 @@ macro(set_precompiled_header PrecompiledHeader PrecompiledSource SourcesVar)
 	if (WIN32)
 		# precompiled header requires more than that the default amount of memmory
 		# this flag sets the limit in MB
-		add_definitions(-Zm1000)
+		add_definitions(-Zm512)
 	endif()
 
 	if(MSVC)
