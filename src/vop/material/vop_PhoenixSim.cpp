@@ -12,13 +12,16 @@
 #include <vop_PhoenixSim.h>
 #include <vfh_prm_templates.h>
 #include <vfh_tex_utils.h>
-#include "gu_volumegridref.h"
+#include <gu_volumegridref.h>
 
 #include <UT/UT_IStream.h>
 #include <OP/OP_SaveFlags.h>
 #include <PRM/PRM_RampUtils.h>
 #include <HOM/HOM_Ramp.h>
 #include <CH/CH_Channel.h>
+#include <GEO/GEO_Detail.h>
+#include <GU/GU_PrimPacked.h>
+#include <GU/GU_Detail.h>
 
 #include <utility>
 
@@ -568,12 +571,12 @@ int PhxShaderSim::setVopPathCB(void *data, int index, fpreal64 time, const PRM_T
 {
 	const auto token = tplate->getToken();
 	auto simNode = reinterpret_cast<PhxShaderSim*>(data);
-
+	const VRayVolumeGridRef::MinMaxPair zeroMinMax = {0, 0};
 	// zero out all min/max ranges
 	for (auto &rampIter : simNode->m_ramps) {
 		if (auto ramp = rampIter.second) {
 			for (int c = 0; c < RampContext::CHANNEL_COUNT; c++) {
-				ramp->m_minMax[c] = {0, 0};
+				ramp->m_minMax[c] = zeroMinMax;
 			}
 			ramp->refreshUi();
 		}
