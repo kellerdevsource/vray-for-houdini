@@ -67,7 +67,7 @@ use_houdini_sdk()
 use_vray_sdk()
 use_vray_appsdk()
 
-set_precompiled_header(vfh_pch.h "${CMAKE_CURRENT_SOURCE_DIR}/vfh_pch.cpp" SOURCES)
+# set_precompiled_header(vfh_pch.h "${CMAKE_CURRENT_SOURCE_DIR}/vfh_pch.cpp" SOURCES)
 
 houdini_plugin(${PROJECT_NAME} "${SOURCES};${HEADERS}")
 
