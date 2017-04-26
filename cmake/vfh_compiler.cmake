@@ -16,7 +16,7 @@ macro(set_precompiled_header PrecompiledHeader PrecompiledSource SourcesVar)
 	# Remove precompiled from from source list
 	list(REMOVE_ITEM ${SourcesVar} ${PrecompiledSource})
 
-	if(MSVC AND MSVC_VERSION > 1700)
+	if(MSVC_VERSION GREATER 1700)
 
 		get_filename_component(PrecompiledBasename ${PrecompiledHeader} NAME_WE)
 
