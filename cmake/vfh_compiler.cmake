@@ -60,7 +60,7 @@ if(WIN32)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
 	# precompiled header requires more than that the default amount of memmory
 	# this flag sets the limit in MB
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zm512")
+	set(CMAKE_CXX_FLAGS "/Zm512 -Zm512 ${CMAKE_CXX_FLAGS}")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4838 /wd4805")
 	set(CMAKE_CXX_FLAGS_DEBUG "/Od /MD /Zi /DNDEBUG")
 
