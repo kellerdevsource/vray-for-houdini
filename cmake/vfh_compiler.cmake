@@ -17,6 +17,10 @@ macro(set_precompiled_header PrecompiledHeader PrecompiledSource SourcesVar)
 	list(REMOVE_ITEM ${SourcesVar} ${PrecompiledSource})
 
 	if(MSVC)
+		# precompiled header requires more than that the default amount of memmory
+		# this flag sets the limit in MB
+		add_definitions(-Zm1000)
+
 		get_filename_component(PrecompiledBasename ${PrecompiledHeader} NAME_WE)
 
 		set(PrecompiledBinary "${CMAKE_CURRENT_BINARY_DIR}/${PrecompiledBasename}.pch")
