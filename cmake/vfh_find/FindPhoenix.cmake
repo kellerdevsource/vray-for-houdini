@@ -23,7 +23,7 @@ else()
 			set(_phx_root "")
 		else()
 			message(STATUS "Phoenix SDK version = ${PHXSDK_VERSION}")
-			set(_phx_root "${SDK_PATH}/phxsdk/phxsdk${PHXSDK_VERSION}")
+			set(_phx_root "${SDK_PATH}/phxsdk/${HOUDINI_VERSION}/${PHXSDK_VERSION}")
 		endif()
 	else()
 		# otherwise search for Phoenix for Maya default installation path
