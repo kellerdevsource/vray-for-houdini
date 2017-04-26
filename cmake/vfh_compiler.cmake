@@ -16,7 +16,7 @@ macro(set_precompiled_header PrecompiledHeader PrecompiledSource SourcesVar)
 	# Remove precompiled from from source list
 	list(REMOVE_ITEM ${SourcesVar} ${PrecompiledSource})
 
-	if(MSVC)
+	if(MSVC AND MSVC_VERSION > 1700)
 
 		get_filename_component(PrecompiledBasename ${PrecompiledHeader} NAME_WE)
 
@@ -59,8 +59,8 @@ if(WIN32)
 	# enable multi core compilation
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
 	# precompiled header requires more than that the default amount of memmory
-	# this flag sets the limit in MB
-	set(CMAKE_CXX_FLAGS "/Zm512 -Zm512 ${CMAKE_CXX_FLAGS}")
+	# this flag sets the limit as FACTOR * 0.75 MB
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zm512")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4838 /wd4805")
 	set(CMAKE_CXX_FLAGS_DEBUG "/Od /MD /Zi /DNDEBUG")
 
