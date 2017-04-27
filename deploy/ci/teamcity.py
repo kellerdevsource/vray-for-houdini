@@ -274,7 +274,7 @@ def main(args):
             cmake.append('-DMSVC_VERSION=1900')
             setup_msvc_2015(args.CGR_SDK)
         else:
-            cmake.append('-DMSVC_VERSION=1800')
+            cmake.append('-DMSVC_VERSION=1700')
             setup_msvc_2012(args.CGR_SDK)
 
     if sys.platform == 'linux':
