@@ -80,7 +80,7 @@ struct VolumeProxy {
 		};
 
 		if (m_vdb) {
-			std::shared_ptr<openvdb::FloatGrid> fGrid = NULL; // openvdb::gridConstPtrCast<openvdb::FloatGrid>(m_vdb->getGridPtr());
+			auto fGrid = openvdb::gridConstPtrCast<openvdb::FloatGrid>(m_vdb->getGridPtr());
 			if (!fGrid) {
 				return;
 			}
