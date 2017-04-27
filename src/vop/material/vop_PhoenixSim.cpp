@@ -16,6 +16,8 @@
 
 #include <UT/UT_IStream.h>
 #include <OP/OP_SaveFlags.h>
+#include <OP/OP_Director.h>
+#include <SOP/SOP_Node.h>
 #include <PRM/PRM_RampUtils.h>
 #include <HOM/HOM_Ramp.h>
 #include <CH/CH_Channel.h>
