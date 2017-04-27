@@ -80,7 +80,7 @@ struct VolumeProxy {
 		};
 
 		if (m_vdb) {
-			auto fGrid = openvdb::gridConstPtrCast<openvdb::FloatGrid>(m_vdb->getGridPtr());
+			auto fGrid = nullptr; // openvdb::gridConstPtrCast<openvdb::FloatGrid>(m_vdb->getGridPtr());
 			if (!fGrid) {
 				return;
 			}
