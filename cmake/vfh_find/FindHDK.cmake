@@ -89,7 +89,7 @@ find_library(__hdk_libgeo
 set(HDK_LIB_GEO ${__hdk_libgeo})
 unset(__hdk_libgeo CACHE)
 
-if(WIN32)
+if(MSVC_VERSION EQUAL 1700)
 	find_library(__hdk_libhalf
 		NAMES Half
 		PATHS ${HDK_LIBRARIES}
@@ -163,6 +163,7 @@ if(HDK_FOUND)
 		list(APPEND HDK_LIBS
 			${HDK_LIBS_A}
 			${HDK_LIBRARIES}/openvdb_sesi.lib
+			${HDK_LIB_GEO}
 		)
 
 		if(${HDK_MAJOR_VERSION} VERSION_GREATER "15")
