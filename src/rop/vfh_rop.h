@@ -129,6 +129,10 @@ public:
 	/// Callback for the "Render RT" button on the ROP node.
 	/// This will start the renderer in IPR mode.
 	static int RtStartSession(void *data, int index, fpreal t, const PRM_Template *tplate);
+
+	/// Callback for the "Show VFB" button on the ROP node
+	/// Shows VFB window if there is one
+	static int RendererShowVFB(void *data, int index, fpreal t, const PRM_Template *tplate);
 };
 
 } // namespace VRayForHoudini

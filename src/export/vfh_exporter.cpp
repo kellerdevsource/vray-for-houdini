@@ -1804,6 +1804,18 @@ int VRayExporter::hasMotionBlur(OP_Node &rop, OBJ_Node &camera) const
 }
 
 
+void VRayExporter::showVFB()
+{
+	if (m_vfb.isInitialized()) {
+		m_vfb.show();
+	} else if (getRenderer().isVRayInit()) {
+		getRenderer().showVFB();
+	} else {
+		Log::getLog().warning("Can't show VFB - no render or no UI.");
+	}
+}
+
+
 void MotionBlurParams::calcParams(fpreal currFrame)
 {
 	mb_start = currFrame - (mb_duration * (0.5 - mb_interval_center));

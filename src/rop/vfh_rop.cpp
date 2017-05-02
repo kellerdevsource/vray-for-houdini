@@ -34,6 +34,7 @@ static const UT_StringRef apprenticeLimitMsg = "Third-party render engines are n
 
 static PRM_Name     parm_render_scripts("parm_render_scripts", "Scripts");
 
+static PRM_Name     parm_render_show_vfb("show_current_vfb", "Show VFB");
 static PRM_Name     parm_render_interactive("render_rt", "Render RT");
 
 static PRM_Name     parm_render_vfb_mode("render_vfb_mode", "Framebuffer");
@@ -278,6 +279,7 @@ static void addParmObjects(Parm::PRMList &myPrmList)
 
 static void addParmGlobals(Parm::PRMList &myPrmList)
 {
+	myPrmList.addPrm(PRM_Template(PRM_CALLBACK, 1, &parm_render_show_vfb, 0, 0, 0, VRayRendererNode::RendererShowVFB));
 	myPrmList.addPrm(PRM_Template(PRM_CALLBACK, 1, &parm_render_interactive, 0, 0, 0, VRayRendererNode::RtStartSession));
 
 	myPrmList.addPrm(PRM_Template(PRM_HEADING, 1, &parm_render_sep_render));
@@ -589,6 +591,15 @@ int VRayRendererNode::RtStartSession(void *data, int /*index*/, fpreal t, const 
 {
 	VRayRendererNode &rop = *reinterpret_cast< VRayRendererNode* >(data);
 	rop.startIPR(t);
+	return 1;
+}
+
+
+int VRayRendererNode::RendererShowVFB(void *data, int /*index*/, fpreal /*t*/, const PRM_Template* /*tplate*/) {
+	VRayRendererNode &rop = *reinterpret_cast< VRayRendererNode* >(data);
+	if (!isBackground()) {
+		rop.m_exporter.showVFB();
+	}
 	return 1;
 }
 

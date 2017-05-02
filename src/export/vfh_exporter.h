@@ -383,6 +383,9 @@ public:
 	/// @param camera[in] - active render camera
 	int hasMotionBlur(OP_Node &rop, OBJ_Node &camera) const;
 
+	/// Show VFB if renderer is started and VFB is enabled
+	void showVFB();
+
 	/// Helper functions to retrieve the input node given an input connection name
 	/// @param op_node[in] - VOP node
 	/// @param inputName[in] -  the input connection name

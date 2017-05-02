@@ -238,6 +238,9 @@ public:
 	/// Clear registered render callbacks
 	void resetCallbacks();
 
+	/// Check if VRay::VRayRenderer is instantiated
+	bool isVRayInit() const { return !!m_vray; }
+
 	/// Get the actual renderer instance
 	VRay::VRayRenderer& getVRay() { return *m_vray; }
 
