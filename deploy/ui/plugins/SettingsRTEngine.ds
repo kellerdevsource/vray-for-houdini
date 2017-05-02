@@ -8,9 +8,8 @@
 	label	"Cpu Ray Bundle Size"
 	type	integer
 	default	{ "128" }
-	help	"Number of samples to transfer over the network for CPU"
+	help	"Number of samples to transfer over the network for RT-CPU"
 	range	{ 0 64 }
-	export	none
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
 	parmtag	{ "vray_pluginattr" "cpu_bundle_size" }
@@ -21,9 +20,8 @@
 	label	"Cpu Rays Per Pixel"
 	type	integer
 	default	{ "4" }
-	help	"Number of samples per pixel for CPU"
+	help	"Number of samples per pixel for RT-CPU"
 	range	{ 0 64 }
-	export	none
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
 	parmtag	{ "vray_pluginattr" "cpu_samples_per_pixel" }
@@ -34,9 +32,8 @@
 	label	"Gpu Ray Bundle Size"
 	type	integer
 	default	{ "128" }
-	help	"Number of samples to transfer over the network for GPU"
+	help	"Number of samples to transfer over the network for RT-GPU"
 	range	{ 0 64 }
-	export	none
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
 	parmtag	{ "vray_pluginattr" "gpu_bundle_size" }
@@ -47,9 +44,8 @@
 	label	"Gpu Rays Per Pixel"
 	type	integer
 	default	{ "1" }
-	help	"Number of samples per pixel for GPU"
+	help	"Number of samples per pixel for RT-GPU"
 	range	{ 0 64 }
-	export	none
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
 	parmtag	{ "vray_pluginattr" "gpu_samples_per_pixel" }
@@ -62,7 +58,6 @@
 	default	{ "5" }
 	help	"Maximum trace depth for reflections/refractions etc"
 	range	{ 0 64 }
-	export	none
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
 	parmtag	{ "vray_pluginattr" "trace_depth" }
@@ -75,7 +70,6 @@
 	default	{ "3" }
 	help	"Maximum trace depth for GI"
 	range	{ 0 64 }
-	export	none
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
 	parmtag	{ "vray_pluginattr" "gi_depth" }
@@ -87,8 +81,6 @@
 	type	toggle
 	default	{ "0" }
 	help	"true to enable coherent tracing of gi/reflections/refractions etc"
-	range	{ 0 1 }
-	export	none
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
 	parmtag	{ "vray_pluginattr" "coherent_tracing" }
@@ -100,8 +92,6 @@
 	type	toggle
 	default	{ "0" }
 	help	"Enable side-by-side stereo rendering"
-	range	{ 0 1 }
-	export	none
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
 	parmtag	{ "vray_pluginattr" "stereo_mode" }
@@ -115,7 +105,6 @@
 	help	"Distance between the two cameras for stereo mode"
 	disablewhen	"{ SettingsRTEngine_stereo_mode != 1 }"
 	range	{ 0 64 }
-	export	none
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
 	parmtag	{ "vray_pluginattr" "stereo_eye_distance" }
@@ -133,8 +122,6 @@
 	    "Rotation"	"Rotation"
 	    "Shear"	"Shear"
 	}
-	range	{ 0 1 }
-	export	none
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
@@ -148,7 +135,6 @@
 	default	{ "512" }
 	help	"OpenCL Single Kernel maximum texture size - bigger textures are scaled to fit this size"
 	range	{ 0 64 }
-	export	none
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
 	parmtag	{ "vray_pluginattr" "opencl_texsize" }
@@ -158,15 +144,13 @@
 	name	"SettingsRTEngine_opencl_resizeTextures"
 	label	"Gpu Resize Textures"
 	type	ordinal
-	default	{ "0" }
+	default	{ "1" }
 	help	"Textures transfer mode for the GPU"
 	menu	{
-	    "Full-Size Textures"	"Full-Size Textures"
+	    "Transfer \"As Is\" (Don't Resize, Don't Use Paging)"	"Transfer \"As Is\" (Don't Resize, Don't Use Paging)"
 	    "Resize Textures"	"Resize Textures"
-	    "On-Demand mip-mapped textures"	"On-Demand mip-mapped textures"
+	    "Use Texture Paging(Out-Of-Core Textures) CUDA Only"	"Use Texture Paging(Out-Of-Core Textures) CUDA Only"
 	}
-	range	{ 0 1 }
-	export	none
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
@@ -177,17 +161,14 @@
 	name	"SettingsRTEngine_opencl_textureFormat"
 	label	"Gpu Texture Format"
 	type	ordinal
-	default	{ "2" }
+	default	{ "1" }
 	help	"Format for the textures on the GPU"
 	menu	{
-	    "32-Bit"	"32-Bit"
-	    "16-Bit"	"16-Bit"
-	    "8-Bit"	"8-Bit"
+	    "32-Bit Float"	"32-Bit Float"
+	    "16-Bit Half Float"	"16-Bit Half Float"
 	}
-	range	{ 0 1 }
-	export	none
 	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1,2" }
+	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
 	parmtag	{ "vray_pluginattr" "opencl_textureFormat" }
 	parmtag	{ "vray_type" "int" }
@@ -199,7 +180,6 @@
 	default	{ "1" }
 	help	"Progressive increase for samples_per_pixel (from 1 to real value). Use this for faster feadback"
 	range	{ 0 10 }
-	export	none
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
 	parmtag	{ "vray_pluginattr" "progressive_samples_per_pixel" }
@@ -212,7 +192,6 @@
 	default	{ "4" }
 	help	"Non-zero to use undersampling, 0 otherwise. The value specifies the blur resolution. Value of n means 1/(2^n) initial resolution in each dimension."
 	range	{ 0 5 }
-	export	none
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
 	parmtag	{ "vray_pluginattr" "undersampling" }
@@ -224,8 +203,6 @@
 	type	toggle
 	default	{ "0" }
 	help	"Produce only RGBA"
-	range	{ 0 1 }
-	export	none
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
 	parmtag	{ "vray_pluginattr" "disable_render_elements" }
@@ -238,7 +215,6 @@
 	default	{ "0" }
 	help	"Max render time (0 = inf)"
 	range	{ 0 64 }
-	export	none
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
 	parmtag	{ "vray_pluginattr" "max_render_time" }
@@ -248,10 +224,9 @@
 	name	"SettingsRTEngine_max_sample_level"
 	label	"Max. Paths Per Pixel"
 	type	integer
-	default	{ "10000" }
+	default	{ "0" }
 	help	"Max sample level (0 = inf)"
-	range	{ 0 500000 }
-	export	none
+	range	{ 0 64 }
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
 	parmtag	{ "vray_pluginattr" "max_sample_level" }
@@ -261,10 +236,9 @@
 	name	"SettingsRTEngine_noise_threshold"
 	label	"Max. Noise"
 	type	float
-	default	{ "0.008" }
+	default	{ "0.001" }
 	help	"Noise threshold for the image sampler (0 = inf)"
 	range	{ 0 64 }
-	export	none
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
 	parmtag	{ "vray_pluginattr" "noise_threshold" }
@@ -276,8 +250,6 @@
 	type	toggle
 	default	{ "0" }
 	help	"Show AA mask"
-	range	{ 0 1 }
-	export	none
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
 	parmtag	{ "vray_pluginattr" "enable_mask" }
@@ -290,7 +262,6 @@
 	default	{ "0" }
 	help	"Max time, in milliseconds, between (partial) image updates (0=disable partial image updates)"
 	range	{ 0 10 }
-	export	none
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
 	parmtag	{ "vray_pluginattr" "max_draw_interval" }
@@ -303,7 +274,6 @@
 	default	{ "0" }
 	help	"Min time, in milliseconds, between image updates (0=show all frames)"
 	range	{ 0 10 }
-	export	none
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRTEngine" }
 	parmtag	{ "vray_pluginattr" "min_draw_interval" }

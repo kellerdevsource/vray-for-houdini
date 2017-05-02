@@ -199,14 +199,19 @@ void VRayExporter::setAttrValueFromOpNodePrm(Attrs::PluginDesc &pluginDesc, cons
 		else if (attrDesc.value.type == Parm::eEnum) {
 			const int menuIndex = opNode.evalInt(parmName.c_str(), 0, t);
 
-			const Parm::EnumItem &enumItem = attrDesc.value.defEnumItems[menuIndex];
-			if (enumItem.valueType == Parm::EnumItem::EnumValueInt) {
-				attr.paramType = Attrs::PluginAttr::AttrTypeInt;
-				attr.paramValue.valInt = enumItem.value;
-			}
-			else {
-				attr.paramType = Attrs::PluginAttr::AttrTypeString;
-				attr.paramValue.valString = enumItem.valueString;
+			if (menuIndex < 0 || menuIndex >= attrDesc.value.defEnumItems.size()) {
+				Log::getLog().error("Param enum value out-of-bounds index %s::%s",
+					pluginDesc.pluginID.c_str(), attrDesc.attr.c_str());
+			} else {
+				const Parm::EnumItem &enumItem = attrDesc.value.defEnumItems[menuIndex];
+				if (enumItem.valueType == Parm::EnumItem::EnumValueInt) {
+					attr.paramType = Attrs::PluginAttr::AttrTypeInt;
+					attr.paramValue.valInt = enumItem.value;
+				}
+				else {
+					attr.paramType = Attrs::PluginAttr::AttrTypeString;
+					attr.paramValue.valString = enumItem.valueString;
+				}
 			}
 		}
 		else if (attrDesc.value.type == Parm::eFloat ||
