@@ -4,9 +4,11 @@
 <toolshelf name="vray_render" label="V-Ray">
     <memberTool name="vray_render_start"/>
     <memberTool name="vray_render_rt"/>
+    <memberTool name="vray_show_vfb"/>
     <memberTool name="vray_physical_camera"/>
     <memberTool name="vray_displacement"/>
-    <memberTool name="vray_proxy"/>
+    <memberTool name="vray_proxy_export"/>
+    <memberTool name="vray_proxy_import"/>
 </toolshelf>
 
 
@@ -37,6 +39,18 @@ vfh_rop.render_rt()
     </script>
 </tool>
 
+<tool name="vray_show_vfb" label="VFB" icon="ROP_vray.svg">
+    <script scriptType="python">
+<![CDATA[
+
+import vfh.vfh_show_all_vfb as vfb
+vfb.show_vfbs()
+
+]]>
+    </script>
+</tool>
+
+
 
 <tool name="vray_physical_camera" label="Physical Camera" icon="ROP_vray.svg">
     <script scriptType="python">
@@ -65,8 +79,7 @@ map(vrayattr.addVRayDisplamentParams, geoList)
     </script>
 </tool>
 
-
-<tool name="vray_proxy" label="Export Proxy" icon="ROP_vray.svg">
+<tool name="vray_proxy_export" label="Proxy Export" icon="ROP_vray.svg">
     <script scriptType="python">
 <![CDATA[
 
@@ -74,6 +87,18 @@ import vfh.shelftools.vrayproxy as vrayproxy
 
 dialog = vrayproxy.VRayProxyDialog()
 dialog.show(1)
+
+]]>
+    </script>
+</tool>
+
+<tool name="vray_proxy_import" label="Proxy Import" icon="ROP_vray.svg">
+    <script scriptType="python">
+<![CDATA[
+
+import vfh.vfh_proxy_import as vrayproxy
+
+dialog = vrayproxy.add_proxy_import_to_selected_sop()
 
 ]]>
     </script>
