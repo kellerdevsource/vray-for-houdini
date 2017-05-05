@@ -19,7 +19,8 @@ def show_vfbs():
                 if param.name() == 'show_current_vfb':
                     didShow = True
                     param.pressButton()
+                    break
 
     if not didShow:
-        sys.stdout.write('No vray out nodes found to show VFB for!')
+        sys.stdout.write('No V-Ray Renderer out nodes found to show VFB for!')
         sys.stdout.flush()
