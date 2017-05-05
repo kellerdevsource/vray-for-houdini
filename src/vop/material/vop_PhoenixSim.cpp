@@ -12,6 +12,7 @@
 #include <vop_PhoenixSim.h>
 #include <vfh_prm_templates.h>
 #include <vfh_tex_utils.h>
+#include <vfh_hou_utils.h>
 #include <gu_volumegridref.h>
 
 #include <UT/UT_IStream.h>
@@ -524,6 +525,10 @@ int PhxShaderSim::rampButtonClickCB(void *data, int index, fpreal64 time, const 
 	if (ctx->m_freeUi) {
 		ctx->m_ui.reset(nullptr);
 		ctx->m_freeUi = false;
+	} else if (ctx->m_ui) {
+		ctx->m_ui->close();
+		ctx->m_ui.reset(nullptr);
+		return 0;
 	}
 
 	if (ctx->m_freeUi) {
@@ -543,7 +548,13 @@ int PhxShaderSim::rampButtonClickCB(void *data, int index, fpreal64 time, const 
 	}
 
 	ctx->m_ui.reset(RampUi::createRamp(tplate->getLabel(), ctx->m_uiType, 200, 200, 300, height, app));
-
+	QWidget *windowHandle = reinterpret_cast<QWidget*>(ctx->m_ui->getWindowHande());
+	if (windowHandle) {
+		windowHandle->setParent(HOU::getMainQtWindow());
+		Qt::WindowFlags windowFlags = windowHandle->windowFlags();
+		windowFlags |= (Qt::Window | Qt::WindowStaysOnTopHint);
+		windowHandle->setWindowFlags(windowFlags);
+	}
 	// set ramp data to the ramp window, it will be kept in sycn via the callbacks
 	if (ctx->m_uiType & RampType_Curve) {
 		auto & curveData = ctx->data(RampType_Curve);
