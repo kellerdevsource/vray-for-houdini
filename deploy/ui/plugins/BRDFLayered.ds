@@ -1,6 +1,6 @@
 {
     name	BRDFLayered
-    label	"Layered"
+    label	"Blend"
     parmtag	{ spare_category "Layered" }
     parmtag	{ vray_plugin "BRDFLayered" }
     parm {
