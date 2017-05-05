@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <shelfDocument>
 
-<tool name="vop_VRayNodeBRDFAlSurface" label="VRayMtl" icon="ROP_vray">
+<tool name="vop_VRayNodeBRDFAlSurface" label="V-Ray alSurface" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -20,7 +20,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeBRDFAlSurface', nodename="alSurface")
     </script>
 </tool>
 
-<tool name="vop_VRayNodeBRDFAlHair" label="VRayMtl" icon="ROP_vray">
+<tool name="vop_VRayNodeBRDFAlHair" label="V-Ray alHair" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -339,7 +339,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeBRDFHair3', nodename="hair3")
 </tool>
 
 
-<tool name="vop_VRayNodeBRDFLayered" label="Layered" icon="ROP_vray">
+<tool name="vop_VRayNodeBRDFLayered" label="Blend" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -539,7 +539,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeBRDFSkinComplex', nodename="skin")
 </tool>
 
 
-<tool name="vop_VRayNodeBRDFVRayMtl" label="VRayMtl" icon="ROP_vray">
+<tool name="vop_VRayNodeBRDFVRayMtl" label="V-RayMtl" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -1679,7 +1679,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodePhxShaderCache', nodename="phoenixcach
 </tool>
 
 
-<tool name="vop_VRayNodePhxShaderSim" label="Phoenix Shader Sim" icon="ROP_vray">
+<tool name="vop_VRayNodePhxShaderSim" label="VolumeGrid Shader" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -2219,7 +2219,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeSettingsEXR', nodename="settingsexr")
 </tool>
 
 
-<tool name="vop_VRayNodeSettingsEnvironment" label="Environment" icon="ROP_vray">
+<tool name="vop_VRayNodeSettingsEnvironment" label="Env Settings" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -2227,7 +2227,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeSettingsEXR', nodename="settingsexr")
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeSettingsEnvironment</contextOpType>
     </toolMenuContext>
-    <toolSubmenu>Settings</toolSubmenu>
+    <toolSubmenu>Mapping</toolSubmenu>
     <script scriptType="python">
 <![CDATA[
 
@@ -3379,7 +3379,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexInvert', nodename="invert")
 </tool>
 
 
-<tool name="vop_VRayNodeTexLayered" label="Layered" icon="ROP_vray">
+<tool name="vop_VRayNodeTexLayered" label="Layered Texture" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -3387,7 +3387,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexInvert', nodename="invert")
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeTexLayered</contextOpType>
     </toolMenuContext>
-    <toolSubmenu>System</toolSubmenu>
+    <toolSubmenu>Texture</toolSubmenu>
     <script scriptType="python">
 <![CDATA[
 
@@ -4199,7 +4199,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeUVWGenChannel', nodename="channel")
 </tool>
 
 
-<tool name="vop_VRayNodeUVWGenEnvironment" label="Environment" icon="ROP_vray">
+<tool name="vop_VRayNodeUVWGenEnvironment" label="Env Placement" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
