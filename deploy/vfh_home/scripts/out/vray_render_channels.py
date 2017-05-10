@@ -11,7 +11,7 @@ import hou
 
 # The node is passed in kwargs['node']
 node = kwargs['node']
-cnode = node.createNode("VRayNodeRenderChannelsContainer")
+cnode = node.createNode("OUT_Container")
 
 cnode.setName("Out_container")
 
