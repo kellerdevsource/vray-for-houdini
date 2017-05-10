@@ -18,7 +18,7 @@ drivertoolutils.genericTool(kwargs, 'vray_renderer', nodename="vray")
 </tool>
 
 
-<tool name="driver_vray_render_channels" label="Render Elements" icon="ROP_vray">
+<tool name="driver_vray_render_channels" label="V-Ray Render Elements" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="network">
         <contextOpType>Driver/vray_render_channels</contextOpType>

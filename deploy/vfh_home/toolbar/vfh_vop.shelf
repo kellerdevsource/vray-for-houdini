@@ -4458,5 +4458,24 @@ voptoolutils.genericTool(kwargs, 'VRayNodexsiUVWGenEnvironment', nodename="envir
     </script>
 </tool>
 
+<tool name="vop_VRayNodeRenderChannelsContainer" label="Out Container" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeRenderChannelsContainer</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>Render Elements</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelsContainer', nodename="Out_container")
+
+]]>
+    </script>
+</tool>
+
 
 </shelfDocument>

@@ -13,4 +13,6 @@ import hou
 node = kwargs['node']
 cnode = node.createNode("VRayNodeRenderChannelsContainer")
 
+cnode.setName("Out_container")
+
 node.layoutChildren()
