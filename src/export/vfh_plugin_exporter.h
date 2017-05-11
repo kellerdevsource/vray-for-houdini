@@ -245,6 +245,15 @@ public:
 	VRay::VRayRenderer& getVRay() { return *m_vray; }
 
 private:
+	struct RenderRegion {
+		int left;
+		int top;
+		int width;
+		int height;
+		bool saved;
+	};
+
+	RenderRegion                  m_savedRegion; ///< Saves render regions between renders
 	VRay::VRayRenderer           *m_vray; ///< V-Ray renderer instance
 	CbCollection                  m_callbacks; ///< collection of registered render callbacks
 };

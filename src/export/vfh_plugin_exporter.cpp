@@ -294,6 +294,17 @@ int VRayPluginRenderer::initRenderer(int hasUI, int reInit)
 			resetCallbacks();
 		}
 		else if (m_vray) {
+			// Workaround to make render regions persist trough renders
+			m_savedRegion.saved = false;
+
+			const bool gotRegion = m_vray->getRenderRegion(m_savedRegion.left, m_savedRegion.top, m_savedRegion.width, m_savedRegion.height);
+			int width = 0, height = 0;
+			if (gotRegion && m_vray->getImageSize(width, height)) {
+				if (m_savedRegion.width != width || m_savedRegion.height != height) {
+					m_savedRegion.saved = true;
+				}
+			}
+
 			m_vray->stop();
 			m_vray->reset();
 		}
@@ -631,6 +642,11 @@ int VRayPluginRenderer::startRender(int locked)
 {
 	if (m_vray) {
 		Log::getLog().info("Starting render for frame %.3f...", m_vray->getCurrentTime());
+
+		// TODO: unhack this when appsdk saves render regions after m_vray->reset()
+		if (m_savedRegion.saved) {
+			m_vray->setRenderRegion(m_savedRegion.left, m_savedRegion.top, m_savedRegion.width, m_savedRegion.height);
+		}
 
 		m_vray->start();
 
