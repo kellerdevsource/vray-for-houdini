@@ -320,5 +320,4 @@ objecttoolutils.genericTool(kwargs, 'VRayNodeSunLight', nodename="sunlight")
     </script>
 </tool>
 
-
 </shelfDocument>

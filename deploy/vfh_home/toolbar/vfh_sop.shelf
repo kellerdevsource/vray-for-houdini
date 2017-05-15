@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<shelfDocument>
+
+<tool name="sop_VRayNodeGeomPlane" label="V-Ray Plane" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>SOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Sop/VRayNodeGeomPlane</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import soptoolutils;
+soptoolutils.genericTool(kwargs, 'VRayNodeGeomPlane', nodename="infiniteplane")
+
+]]>
+    </script>
+</tool>
+
+<tool name="sop_VRayNodePhxShaderCache" label="Volume Grid Cache" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>SOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Sop/VRayNodePhxShaderCache</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import soptoolutils;
+soptoolutils.genericTool(kwargs, 'VRayNodePhxShaderCache', nodename="phoenixcache")
+
+]]>
+    </script>
+</tool>
+
+<tool name="sop_VRayNodeVRayScene" label="V-Ray Scene" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>SOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Sop/VRayNodeVRayScene</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import soptoolutils;
+soptoolutils.genericTool(kwargs, 'VRayNodeVRayScene', nodename="vrayscene")
+
+]]>
+    </script>
+</tool>
+
+<tool name="sop_VRayNodeVRayProxy" label="V-Ray Proxy Import" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>SOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Sop/VRayNodeVRayProxy</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import soptoolutils;
+soptoolutils.genericTool(kwargs, 'VRayNodeVRayProxy', nodename="vrayproxy")
+
+]]>
+    </script>
+</tool>
+
+<tool name="sop_rop_vrayproxy" label="V-Ray Proxy Export" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>SOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Sop/rop_vrayproxy</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import soptoolutils;
+soptoolutils.genericTool(kwargs, 'rop_vrayproxy', nodename="rop_vrayproxy")
+
+]]>
+    </script>
+</tool>
+
+</shelfDocument>

@@ -959,26 +959,6 @@ voptoolutils.genericTool(kwargs, 'VRayNodeGeomMayaHair', nodename="hair")
 </tool>
 
 
-<tool name="vop_VRayNodeGeomMeshFile" label="VRayProxy" icon="ROP_vray">
-    <readOnly/>
-    <toolMenuContext name="viewer">
-        <contextNetType>VOP</contextNetType>
-    </toolMenuContext>
-    <toolMenuContext name="network">
-        <contextOpType>Vop/VRayNodeGeomMeshFile</contextOpType>
-    </toolMenuContext>
-    <toolSubmenu>Geometry</toolSubmenu>
-    <script scriptType="python">
-<![CDATA[
-
-import voptoolutils;
-voptoolutils.genericTool(kwargs, 'VRayNodeGeomMeshFile', nodename="vrayproxy")
-
-]]>
-    </script>
-</tool>
-
-
 <tool name="vop_VRayNodeGeomPlane" label="Infinite Plane" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
@@ -1653,26 +1633,6 @@ voptoolutils.genericTool(kwargs, 'VRayNodeMtlWrapper', nodename="wrapper")
 
 import voptoolutils;
 voptoolutils.genericTool(kwargs, 'VRayNodeNode', nodename="node")
-
-]]>
-    </script>
-</tool>
-
-
-<tool name="vop_VRayNodePhxShaderCache" label="Phoenix Cache" icon="ROP_vray">
-    <readOnly/>
-    <toolMenuContext name="viewer">
-        <contextNetType>VOP</contextNetType>
-    </toolMenuContext>
-    <toolMenuContext name="network">
-        <contextOpType>Vop/VRayNodePhxShaderCache</contextOpType>
-    </toolMenuContext>
-    <toolSubmenu>Effect</toolSubmenu>
-    <script scriptType="python">
-<![CDATA[
-
-import voptoolutils;
-voptoolutils.genericTool(kwargs, 'VRayNodePhxShaderCache', nodename="phoenixcache")
 
 ]]>
     </script>
@@ -4353,26 +4313,6 @@ voptoolutils.genericTool(kwargs, 'VRayNodeUVWGenProjection', nodename="projectio
 
 import voptoolutils;
 voptoolutils.genericTool(kwargs, 'VRayNodeUVWGenSwitch', nodename="switch")
-
-]]>
-    </script>
-</tool>
-
-
-<tool name="vop_VRayNodeVRayScene" label="VRayScene" icon="ROP_vray">
-    <readOnly/>
-    <toolMenuContext name="viewer">
-        <contextNetType>VOP</contextNetType>
-    </toolMenuContext>
-    <toolMenuContext name="network">
-        <contextOpType>Vop/VRayNodeVRayScene</contextOpType>
-    </toolMenuContext>
-    <toolSubmenu>Geometry</toolSubmenu>
-    <script scriptType="python">
-<![CDATA[
-
-import voptoolutils;
-voptoolutils.genericTool(kwargs, 'VRayNodeVRayScene', nodename="vrayscene")
 
 ]]>
     </script>
