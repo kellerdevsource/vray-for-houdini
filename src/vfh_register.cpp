@@ -198,7 +198,7 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "EFFECT", EnvFogMeshGizmo);
 	VFH_VOP_ADD_OPERATOR(table, "EFFECT", VolumeVRayToon);
 
-	VFH_VOP_ADD_OPERATOR_CUSTOM_TEST(table, "RENDERCHANNEL", RenderChannelsContainer, Parm::getPrmTemplate("SettingsRenderChannels"), OP_FLAG_UNORDERED | OP_FLAG_OUTPUT);
+	VFH_VOP_ADD_OPERATOR_CUSTOM(table, "RENDERCHANNEL", RenderChannelsContainer, Parm::getPrmTemplate("SettingsRenderChannels"), OP_FLAG_UNORDERED | OP_FLAG_OUTPUT);
 
 	VFH_VOP_ADD_OPERATOR(table, "RENDERCHANNEL", RenderChannelBumpNormals);
 	VFH_VOP_ADD_OPERATOR(table, "RENDERCHANNEL", RenderChannelColor);
