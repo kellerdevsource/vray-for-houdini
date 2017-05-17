@@ -22,6 +22,7 @@
 	name	"mode"
 	label	"Mode"
 	type	ordinal
+	invisible
 	default	{ "0" }
 	help	"Working mode"
 	menu	{
