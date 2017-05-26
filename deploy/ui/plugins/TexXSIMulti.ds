@@ -1,6 +1,0 @@
-{
-    name	TexXSIMulti
-label	"XSI Multi"
-parmtag	{ spare_category "XSI Multi" }
-parmtag	{ vray_plugin "TexXSIMulti" }
-}

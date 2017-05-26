@@ -1,6 +1,0 @@
-{
-    name	volumeXSIMulti
-label	"volume XSI Multi"
-parmtag	{ spare_category "volume XSI Multi" }
-parmtag	{ vray_plugin "volumeXSIMulti" }
-}
