@@ -479,10 +479,10 @@
 		"1"	"Temperature"
 		"2"	"Smoke"
 		"3"	"Speed"
-		"10"	"Fuel"
 		"4"	"Texture"
 		"5"	"Constant Color"
 		"6"	"RGB"
+		"10"	"Fuel"
 	    }
 	    range	{ 0 1 }
 	    export	none
