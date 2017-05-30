@@ -1,20 +1,32 @@
 //
-//  Houdini Parameters for V-Ray
+// Houdini Parameters for V-Ray
 //
 
 {
-    name    vray
-    label   "V-Ray"
-    parmtag { spare_classtags   "render" }
+    name vray
+    label "V-Ray"
+    parmtag { spare_classtags "render" }
 
 #if environment(VRAY_UI_DS_PATH)
+
+collection
+#include "$VRAY_UI_DS_PATH/plugins/CameraPhysical.ds"
 
 collection
 #include "$VRAY_UI_DS_PATH/plugins/GeomMayaHair.ds"
 
 collection
-#include "$VRAY_UI_DS_PATH/plugins/CameraPhysical.ds"
+#include "$VRAY_UI_DS_PATH/plugins/MtlWrapper.ds"
 
-#endif
+collection
+#include "$VRAY_UI_DS_PATH/plugins/MtlRenderStats.ds"
+
+collection
+#include "$VRAY_UI_DS_PATH/plugins/MtlOverride.ds"
+
+collection
+#include "$VRAY_UI_DS_PATH/plugins/MtlRoundEdges.ds"
+
+#endif // VRAY_UI_DS_PATH
 
 }
