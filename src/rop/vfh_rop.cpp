@@ -452,6 +452,39 @@ static PRM_Template* getTemplates()
 		myPrmList.addFolder("DR");
 		addParmDR(myPrmList);
 
+#if 0
+		myPrmList.addFolder("SOHO");
+		myPrmList.addPrm(
+			Parm::PRMFactory(PRM_FILE_E, "soho_program", "soho_program")
+			.setDefault("vfh_ipr")
+			.getPRMTemplate()
+		);
+		myPrmList.addPrm(
+			Parm::PRMFactory(PRM_FILE_E, "soho_pipecmd", "soho_pipecmd")
+			.setDefault("vfh_ipr.py")
+			.getPRMTemplate()
+		);
+		myPrmList.addPrm(
+			Parm::PRMFactory(PRM_ORD_E, "soho_outputmode", "soho_outputmode")
+			.setDefault("0")
+			.getPRMTemplate()
+		);
+		myPrmList.addPrm(
+			Parm::PRMFactory(PRM_TOGGLE_E, "soho_ipr_support", "soho_ipr_support")
+			.setDefault(1)
+			.getPRMTemplate()
+		);
+		myPrmList.addPrm(
+			Parm::PRMFactory(PRM_TOGGLE_E, "soho_viewport_menu", "soho_viewport_menu")
+			.setDefault(1)
+			.getPRMTemplate()
+		);
+		myPrmList.addPrm(
+			Parm::PRMFactory(PRM_TOGGLE_E, "soho_previewsupport", "soho_previewsupport")
+			.setDefault(1)
+			.getPRMTemplate()
+		);
+#endif
 		myPrmList.switcherEnd();
 	}
 
