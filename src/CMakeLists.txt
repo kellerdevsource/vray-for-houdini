@@ -10,7 +10,6 @@
 
 set(SDK_PATH "" CACHE STRING "SDK root qpath")
 
-
 include(CheckIncludeFile)
 
 include(vfh_compiler)
@@ -67,7 +66,12 @@ use_houdini_sdk()
 use_vray_sdk()
 use_vray_appsdk()
 
-set_precompiled_header(vfh_pch.h "${CMAKE_CURRENT_SOURCE_DIR}/vfh_pch.cpp" SOURCES)
+option(USE_PCH "Use precompiled header" OFF)
+if(USE_PCH)
+	set_precompiled_header(vfh_pch.h "${CMAKE_CURRENT_SOURCE_DIR}/vfh_pch.cpp" SOURCES)
+else()
+	list(REMOVE_ITEM SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/vfh_pch.cpp")
+endif()
 
 houdini_plugin(${PROJECT_NAME} "${SOURCES};${HEADERS}")
 
@@ -100,6 +104,36 @@ add_definitions(-DCGR_GIT_HASH=${SRC_GIT_HASH})
 #
 option(INSTALL_LOCAL "Install files locally" ON)
 option(INSTALL_RELEASE "Install release build for distribution" OFF)
+
+function(vfh_generate_launcher)
+	cmake_parse_arguments(ARG "" "FILENAME;TEMPLATE_FILENAME;LOCATION;APPSDK_PATH" "" ${ARGN})
+
+	if(NOT ARG_TEMPLATE_FILENAME)
+		if(WIN32)
+			set(ARG_TEMPLATE_FILENAME "hfs.bat.in")
+		elseif(APPLE)
+			set(ARG_TEMPLATE_FILENAME "hfs_osx.bat.in")
+		else()
+			set(ARG_TEMPLATE_FILENAME "hfs_linux.bat.in")
+		endif()
+	endif()
+
+	if(NOT ARG_FILENAME)
+		if(WIN32)
+			set(ARG_FILENAME "vfh_hfs.bat")
+		else()
+			set(ARG_FILENAME "vfh_hfs.sh")
+		endif()
+	endif()
+
+	file(TO_NATIVE_PATH ${CMAKE_SOURCE_DIR} CMAKE_SOURCE_DIR)
+	file(TO_NATIVE_PATH ${APPSDK_ROOT} APPSDK_ROOT)
+	file(TO_NATIVE_PATH ${Phoenix_LIBRARIES} Phoenix_LIBRARIES)
+
+	configure_file(${CMAKE_SOURCE_DIR}/deploy/${ARG_TEMPLATE_FILENAME}
+				   ${CMAKE_BINARY_DIR}/${ARG_FILENAME}
+				   @ONLY)
+endfunction()
 
 function(vfh_gen_launcher _location _vfh_appsdk_path _vfh_config_path _vfh_deploy_path _launcher)
 	file(TO_NATIVE_PATH ${_vfh_appsdk_path} _vfh_appsdk_path)
@@ -171,9 +205,8 @@ if(INSTALL_LOCAL)
 	else()
 		file(WRITE "$ENV{HOME}/bin/hfs.sh" ${SHORTCUT_TARGET})
 	endif()
-endif()
 
-if(INSTALL_RELEASE)
+elif(INSTALL_RELEASE)
 	if(NOT "${CMAKE_BUILD_TYPE}" STREQUAL "Release")
 		message(WARNING "INSTALL_RELEASE is ON, but CMAKE_BUILD_TYPE is not \"Release\" (${CMAKE_BUILD_TYPE})!")
 	endif()
@@ -226,4 +259,10 @@ if(INSTALL_RELEASE)
 	set(VFH_PACK ${CMAKE_BINARY_DIR}/vfh_pack.cmake)
 	configure_file(${CMAKE_SOURCE_DIR}/cmake/vfh_pack.cmake.in ${VFH_PACK})
 	install(SCRIPT ${VFH_PACK})
+
+else()
+	vfh_generate_launcher(TEMPLATE_FILENAME "hfs.local.bat.in")
+
+	file(TO_CMAKE_PATH "$ENV{HOME}/houdini${HOUDINI_VERSION}/dso" HFS_HOME_DSO)
+	cgr_install_runtime(${PROJECT_NAME} ${HFS_HOME_DSO})
 endif()
