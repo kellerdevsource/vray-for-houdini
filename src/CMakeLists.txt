@@ -206,7 +206,7 @@ if(INSTALL_LOCAL)
 		file(WRITE "$ENV{HOME}/bin/hfs.sh" ${SHORTCUT_TARGET})
 	endif()
 
-elif(INSTALL_RELEASE)
+elseif(INSTALL_RELEASE)
 	if(NOT "${CMAKE_BUILD_TYPE}" STREQUAL "Release")
 		message(WARNING "INSTALL_RELEASE is ON, but CMAKE_BUILD_TYPE is not \"Release\" (${CMAKE_BUILD_TYPE})!")
 	endif()
