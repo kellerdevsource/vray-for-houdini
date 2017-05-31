@@ -113,6 +113,9 @@ if(NOT HDK_FOUND AND HDK_FIND_REQUIRED)
 						"${HDK_LIBRARIES}")
 endif()
 
+if(${HDK_MAJOR_VERSION} VERSION_GREATER "15")
+	set(HDK_QT_ROOT "${SDK_PATH}/hdk/qt/5.6.1" CACHE PATH "Qt for Houdini SDK root")
+endif()
 
 if(HDK_FOUND)
 	# NOTE: exact list of compiler/linker arguments when building for Houdini can be queried with:
@@ -167,7 +170,6 @@ if(HDK_FOUND)
 		)
 
 		if(${HDK_MAJOR_VERSION} VERSION_GREATER "15")
-			set(HDK_QT_ROOT "${SDK_PATH}/hdk/qt/5.6.1" CACHE PATH "Qt for Houdini SDK root")
 			set(HDK_INCLUDES  "${HDK_INCLUDES};${HDK_QT_ROOT}/include")
 			set(HDK_INCLUDES  "${HDK_INCLUDES};${HDK_QT_ROOT}/include/QtCore")
 			set(HDK_INCLUDES  "${HDK_INCLUDES};${HDK_QT_ROOT}/include/QtGui")
@@ -212,7 +214,15 @@ if(HDK_FOUND)
 		list(APPEND HDK_LIBS ${SYSTEM_LIBS})
 
 	else()
-		set(HDK_INCLUDES "${HDK_INCLUDES};${HDK_INCLUDES}/QtCore;${HDK_INCLUDES}/QtGui")
+		if(${HDK_MAJOR_VERSION} VERSION_GREATER "15")
+			set(HDK_INCLUDES  "${HDK_INCLUDES};${HDK_QT_ROOT}/include")
+			set(HDK_INCLUDES  "${HDK_INCLUDES};${HDK_QT_ROOT}/include/QtCore")
+			set(HDK_INCLUDES  "${HDK_INCLUDES};${HDK_QT_ROOT}/include/QtGui")
+			set(HDK_INCLUDES  "${HDK_INCLUDES};${HDK_QT_ROOT}/include/QtWidgets")
+			set(HDK_LIBRARIES "${HDK_LIBRARIES};${HDK_QT_ROOT}/lib")
+		else()
+			set(HDK_INCLUDES "${HDK_INCLUDES};${HDK_INCLUDES}/QtCore;${HDK_INCLUDES}/QtGui")
+		endif()
 
 		list(APPEND HDK_DEFINITIONS
 			-D_GNU_SOURCE
