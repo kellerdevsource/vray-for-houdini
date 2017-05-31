@@ -261,8 +261,9 @@ elif(INSTALL_RELEASE)
 	install(SCRIPT ${VFH_PACK})
 
 else()
-	vfh_generate_launcher(TEMPLATE_FILENAME "hfs.local.bat.in")
+	set(VFH_DSO_DIRPATH ${CMAKE_BINARY_DIR}/dso)
+	cgr_install_runtime(${PROJECT_NAME} ${VFH_DSO_DIRPATH})
 
-	file(TO_CMAKE_PATH "$ENV{HOME}/houdini${HOUDINI_VERSION}/dso" HFS_HOME_DSO)
-	cgr_install_runtime(${PROJECT_NAME} ${HFS_HOME_DSO})
+	file(TO_NATIVE_PATH ${VFH_DSO_DIRPATH} VFH_DSO_DIRPATH)
+	vfh_generate_launcher(TEMPLATE_FILENAME "hfs.local.bat.in")
 endif()
