@@ -635,7 +635,7 @@ int VRayRendererNode::initSession(int interactive, int nframes, fpreal tstart, f
 
 		// Whether to re-create V-Ray renderer
 		const int reCreate = evalInt(parm_recreate_renderer.getToken(), 0, 0.0) ||
-							 (wasRT != isRT) |\
+							 (wasRT != isRT) ||
 							 (wasGPU != isGPU);
 
 		m_exporter.setIPR(isRT);
