@@ -353,7 +353,7 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 			//if plugin value is type brdf insert single
 			const Parm::VRayPluginInfo *pluginInfo2 = Parm::GetVRayPluginInfo( plugin_value.getType() );
 
-			if(pluginInfo2->pluginType == Parm::PluginType::PluginTypeBRDF && pluginDesc.pluginID != "MtlSingleBRDF"){
+			if(pluginInfo2->pluginType == Parm::PluginType::PluginTypeBRDF && pluginDesc.pluginID != "MtlSingleBRDF" && pluginInfo->pluginType == Parm::PluginType::PluginTypeMaterial){
 				//VRay::Plugin pluginBRDF = exportVop(vopNode);
 
 				Attrs::PluginDesc mtlPluginDesc(VRayExporter::getPluginName(vopNode, "Mtl"), "MtlSingleBRDF");
