@@ -115,7 +115,6 @@ void VOP::NodeBase::getAllowedInputTypeInfosSubclass(unsigned idx, VOP_VopTypeIn
 
 		if(socketTypeInfo.vopType == VOP_SURFACE_SHADER){
 			VOP_TypeInfo type_info(VOP_TYPE_BSDF);
-			type_infos.clear();
 			type_infos.append(type_info);
 		}
 	}
