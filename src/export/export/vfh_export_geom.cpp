@@ -251,7 +251,7 @@ int GeometryExporter::exportNodes()
 			if (NOT(attr)) {
 				// pass material overrides with "user_attributes"
 				if (userAttrs.isstring()) {
-					nodeDesc.addAttribute(Attrs::PluginAttr("user_attributes", userAttrs));
+					nodeDesc.addAttribute(Attrs::PluginAttr("user_attributes", userAttrs.toStdString()));
 				}
 			}
 		}
@@ -599,7 +599,7 @@ int GeometryExporter::exportPacked(SOP_Node &sop, const GU_PrimPacked &prim, Plu
 				}
 
 				if (userAtrs.isstring()) {
-					nodeDesc.addAttribute(Attrs::PluginAttr("user_attributes", userAtrs));
+					nodeDesc.addAttribute(Attrs::PluginAttr("user_attributes", userAtrs.toStdString()));
 				}
 			}
 		}
@@ -702,7 +702,7 @@ int GeometryExporter::exportAlembicRef(SOP_Node &sop, const GU_PrimPacked &prim,
 	pluginDesc.addAttribute(Attrs::PluginAttr("use_full_names", true));
 	pluginDesc.addAttribute(Attrs::PluginAttr("visibility_lists_type", 1));
 	pluginDesc.addAttribute(Attrs::PluginAttr("visibility_list_names", visibilityList));
-	pluginDesc.addAttribute(Attrs::PluginAttr("file", filename));
+	pluginDesc.addAttribute(Attrs::PluginAttr("file", filename.toStdString()));
 	pluginDesc.addAttribute(Attrs::PluginAttr("use_alembic_offset", true));
 
 	VRay::Plugin geom = m_pluginExporter.exportPlugin(pluginDesc);
@@ -774,7 +774,7 @@ int GeometryExporter::exportPackedDisk(SOP_Node &sop, const GU_PrimPacked &prim,
 	pluginDesc.pluginID = "GeomMeshFile";
 	pluginDesc.pluginName = VRayExporter::getPluginName(&sop, primname.toStdString());
 
-	pluginDesc.addAttribute(Attrs::PluginAttr("file", filename));
+	pluginDesc.addAttribute(Attrs::PluginAttr("file", filename.toStdString()));
 
 	VRay::Plugin geom = m_pluginExporter.exportPlugin(pluginDesc);
 	nodeDesc.addAttribute(Attrs::PluginAttr("geometry", geom));
