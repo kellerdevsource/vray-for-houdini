@@ -264,6 +264,12 @@ else()
 	set(VFH_DSO_DIRPATH ${CMAKE_BINARY_DIR}/dso)
 	cgr_install_runtime(${PROJECT_NAME} ${VFH_DSO_DIRPATH})
 
+	if(WIN32)
+		set(TEMPLATE_FILENAME "hfs.local.bat.in")
+	else()
+		set(TEMPLATE_FILENAME "hfs.local.sh.in")
+	endif()
+
 	file(TO_NATIVE_PATH ${VFH_DSO_DIRPATH} VFH_DSO_DIRPATH)
-	vfh_generate_launcher(TEMPLATE_FILENAME "hfs.local.bat.in")
+	vfh_generate_launcher(TEMPLATE_FILENAME ${TEMPLATE_FILENAME})
 endif()
