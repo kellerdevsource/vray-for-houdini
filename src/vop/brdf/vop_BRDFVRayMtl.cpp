@@ -12,16 +12,16 @@ VRayForHoudini::OP::VRayNode::PluginResult
 	const fpreal &t = exporter.getContext().getTime();
 
 	const int hilightLockVal = evalInt("hilight_glossiness_lock", 0, t);
-	const fpreal hilightGlossinessValue = evalFloat("hilight_glossiness",0,t);
-	const fpreal reflectionColourValue = evalFloat("reflect_glossiness",0,t);
+	const fpreal hilightGlossinessValue = evalFloat("hilight_glossiness", 0,t);
+	const fpreal reflectionColourValue = evalFloat("reflect_glossiness", 0,t);
 
 	if(hilightLockVal){
-		pluginDesc.addAttribute(VRayForHoudini::Attrs::PluginAttr("hilight_glossiness",reflectionColourValue));
-		pluginDesc.addAttribute(VRayForHoudini::Attrs::PluginAttr("reflect_glossiness",reflectionColourValue));
+		pluginDesc.addAttribute(VRayForHoudini::Attrs::PluginAttr("hilight_glossiness", reflectionColourValue));
+		pluginDesc.addAttribute(VRayForHoudini::Attrs::PluginAttr("reflect_glossiness", reflectionColourValue));
 	}
 	else{
-		pluginDesc.addAttribute(VRayForHoudini::Attrs::PluginAttr("hilight_glossiness",hilightGlossinessValue));
-		pluginDesc.addAttribute(VRayForHoudini::Attrs::PluginAttr("reflect_glossiness",reflectionColourValue));
+		pluginDesc.addAttribute(VRayForHoudini::Attrs::PluginAttr("hilight_glossiness", hilightGlossinessValue));
+		pluginDesc.addAttribute(VRayForHoudini::Attrs::PluginAttr("reflect_glossiness", reflectionColourValue));
 	}
 
 	return PluginResult::PluginResultNA;
