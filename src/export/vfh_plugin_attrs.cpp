@@ -41,7 +41,7 @@ void VRayForHoudini::Attrs::PluginDesc::showAttributes() const
 			case PluginAttr::AttrTypeTransform: std::cout << p.paramValue.valTransform; break;
 			case PluginAttr::AttrTypeMatrix:    std::cout << p.paramValue.valTransform.matrix; break;
 			case PluginAttr::AttrTypeString:    std::cout << p.paramValue.valString; break;
-			case PluginAttr::AttrTypePlugin:    std::cout << p.paramValue.valPlugin; break;
+			case PluginAttr::AttrTypePlugin:    std::cout << p.paramValue.valPlugin.getName(); break;
 		}
 
 		std::cout << std::endl;

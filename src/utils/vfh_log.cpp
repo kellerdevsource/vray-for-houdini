@@ -39,6 +39,11 @@ void Logger::log(LogLevel level, const char *format, va_list args) const
 		}
 
 		vutils_cprintf(true, "%s" VUTILS_COLOR_DEFAULT, buf);
+
+		if (level == LogLevelDebug) {
+			VUtils::debug("V-Ray For Houdini: %s\n", buf);
+		}
+
 		if (level != LogLevelProgress) {
 			printf("\n");
 		}

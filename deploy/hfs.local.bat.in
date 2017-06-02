@@ -2,14 +2,10 @@
 ::
 @echo off
 
-:: Houdini Install Location
+:: Houdini location
 set HFS=C:\Program Files\Side Effects Software\Houdini @HOUDINI_VERSION@.@HOUDINI_VERSION_BUILD@
 
-:: Houdini User Home
-if NOT DEFINED HOME set HOME=%USERPROFILE%\Documents
-
 :: Use OpenVDB < 3
-::
 set HOUDINI13_VOLUME_COMPATIBILITY=1
 
 :: V-Ray Application SDK variables
@@ -21,11 +17,12 @@ set VRAY_PLUGIN_DESC_PATH=@CMAKE_SOURCE_DIR@\deploy\plugins_desc
 :: V-Ray UI dialog scripts
 set VRAY_UI_DS_PATH=@CMAKE_SOURCE_DIR@\deploy\ui
 
-:: Phoenix Loaders
+:: Phoenix loaders
 set VRAY_FOR_HOUDINI_AURA_LOADERS=@Phoenix_LIBRARIES@
 
-:: V-Ray for Houdini dso path
-set HOUDINI_PATH=@CMAKE_SOURCE_DIR@\deploy\vfh_home;@;^&
+:: Houdini paths
+set HOUDINI_PATH=@CMAKE_SOURCE_DIR@\deploy\vfh_home;^&
+set HOUDINI_DSO_PATH=@VFH_DSO_DIRPATH@;^&
 
 :: Report loading errors
 set HOUDINI_DSO_ERROR=1

@@ -4359,45 +4359,6 @@ voptoolutils.genericTool(kwargs, 'VRayNodeVolumeVRayToon', nodename="toon")
 </tool>
 
 
-<tool name="vop_VRayNodexsiUVWGenChannel" label="Channel (XSI)" icon="ROP_vray">
-    <readOnly/>
-    <toolMenuContext name="viewer">
-        <contextNetType>VOP</contextNetType>
-    </toolMenuContext>
-    <toolMenuContext name="network">
-        <contextOpType>Vop/VRayNodexsiUVWGenChannel</contextOpType>
-    </toolMenuContext>
-    <toolSubmenu>Mapping</toolSubmenu>
-    <script scriptType="python">
-<![CDATA[
-
-import voptoolutils;
-voptoolutils.genericTool(kwargs, 'VRayNodexsiUVWGenChannel', nodename="channel_xsi")
-
-]]>
-    </script>
-</tool>
-
-
-<tool name="vop_VRayNodexsiUVWGenEnvironment" label="Environment (XSI)" icon="ROP_vray">
-    <readOnly/>
-    <toolMenuContext name="viewer">
-        <contextNetType>VOP</contextNetType>
-    </toolMenuContext>
-    <toolMenuContext name="network">
-        <contextOpType>Vop/VRayNodexsiUVWGenEnvironment</contextOpType>
-    </toolMenuContext>
-    <toolSubmenu>Mapping</toolSubmenu>
-    <script scriptType="python">
-<![CDATA[
-
-import voptoolutils;
-voptoolutils.genericTool(kwargs, 'VRayNodexsiUVWGenEnvironment', nodename="environment_xsi")
-
-]]>
-    </script>
-</tool>
-
 <tool name="vop_VRayNodeRenderChannelsContainer" label="Out Container" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">

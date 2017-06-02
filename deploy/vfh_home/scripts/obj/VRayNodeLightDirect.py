@@ -47,3 +47,5 @@ mergenode.setRenderFlag(True)
 mergenode.setDisplayFlag(True)
 
 node.layoutChildren()
+
+node.setName("vraylightdirect")

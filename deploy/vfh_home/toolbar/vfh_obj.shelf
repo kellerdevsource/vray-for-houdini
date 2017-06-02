@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <shelfDocument>
 
-<tool name="object_VRayNodeLightAmbient" label="LightAmbient" icon="ROP_vray">
+<tool name="object_VRayNodeLightAmbient" label="V-Ray LightAmbient" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>OBJ</contextNetType>
@@ -41,7 +41,7 @@ objecttoolutils.genericTool(kwargs, 'VRayNodeLightAmbientMax', nodename="lightam
 </tool>
 
 
-<tool name="object_VRayNodeLightDirect" label="LightDirect" icon="ROP_vray">
+<tool name="object_VRayNodeLightDirect" label="V-Ray LightDirect" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>OBJ</contextNetType>
@@ -81,7 +81,7 @@ objecttoolutils.genericTool(kwargs, 'VRayNodeLightDirectMax', nodename="lightdir
 </tool>
 
 
-<tool name="object_VRayNodeLightDome" label="LightDome" icon="ROP_vray">
+<tool name="object_VRayNodeLightDome" label="V-Ray LightDome" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>OBJ</contextNetType>
@@ -101,7 +101,7 @@ objecttoolutils.genericTool(kwargs, 'VRayNodeLightDome', nodename="lightdome")
 </tool>
 
 
-<tool name="object_VRayNodeLightIES" label="LightIES" icon="ROP_vray">
+<tool name="object_VRayNodeLightIES" label="V-Ray LightIES" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>OBJ</contextNetType>
@@ -141,7 +141,7 @@ objecttoolutils.genericTool(kwargs, 'VRayNodeLightIESMax', nodename="lightiesmax
 </tool>
 
 
-<tool name="object_VRayNodeLightMesh" label="LightMesh" icon="ROP_vray">
+<tool name="object_VRayNodeLightMesh" label="V-Ray LightMesh" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>OBJ</contextNetType>
@@ -161,7 +161,7 @@ objecttoolutils.genericTool(kwargs, 'VRayNodeLightMesh', nodename="lightmesh")
 </tool>
 
 
-<tool name="object_VRayNodeLightOmni" label="LightOmni" icon="ROP_vray">
+<tool name="object_VRayNodeLightOmni" label="V-Ray LightOmni" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>OBJ</contextNetType>
@@ -201,7 +201,7 @@ objecttoolutils.genericTool(kwargs, 'VRayNodeLightOmniMax', nodename="lightomnim
 </tool>
 
 
-<tool name="object_VRayNodeLightRectangle" label="LightRectangle" icon="ROP_vray">
+<tool name="object_VRayNodeLightRectangle" label="V-Ray LightRectangle" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>OBJ</contextNetType>
@@ -221,7 +221,7 @@ objecttoolutils.genericTool(kwargs, 'VRayNodeLightRectangle', nodename="lightrec
 </tool>
 
 
-<tool name="object_VRayNodeLightSphere" label="LightSphere" icon="ROP_vray">
+<tool name="object_VRayNodeLightSphere" label="V-Ray LightSphere" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>OBJ</contextNetType>
@@ -241,7 +241,7 @@ objecttoolutils.genericTool(kwargs, 'VRayNodeLightSphere', nodename="lightsphere
 </tool>
 
 
-<tool name="object_VRayNodeLightSpot" label="LightSpot" icon="ROP_vray">
+<tool name="object_VRayNodeLightSpot" label="V-Ray LightSpot" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>OBJ</contextNetType>
@@ -301,7 +301,7 @@ objecttoolutils.genericTool(kwargs, 'VRayNodeMayaLightDirect', nodename="mayalig
 </tool>
 
 
-<tool name="object_VRayNodeSunLight" label="SunLight" icon="ROP_vray">
+<tool name="object_VRayNodeSunLight" label="V-Ray SunLight" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>OBJ</contextNetType>

@@ -29,13 +29,7 @@ struct AppSdkInit
 {
 	static AppSdkInit &getInstance() {
 		if (!appSdkInit) {
-			try {
-				appSdkInit = new AppSdkInit;
-			}
-			catch (VRay::VRayException &e) {
-				Log::getLog().error("Error instantiating V-Ray AppSDK library:\n%s",
-									e.what());
-			}
+			appSdkInit = new AppSdkInit;
 		}
 		return *appSdkInit;
 	}
@@ -44,65 +38,62 @@ struct AppSdkInit
 		FreePtr(appSdkInit);
 	}
 
-	operator bool () const
-	{
-		return (m_vrayInit != nullptr);
+	explicit operator bool () const {
+		return !!m_vrayInit;
 	}
 
 private:
-	// don't allow public construct/destruct
-	AppSdkInit():
-		m_vrayInit(nullptr)
+	AppSdkInit()
+		: m_vrayInit(nullptr)
 	{
 		try {
 #ifdef __APPLE__
-			bool VFBEnabled = false;
+			const bool isVfbEnabled = false;
 #else
-			bool VFBEnabled = HOU::isUIAvailable();
+			const bool isVfbEnabled = HOU::isUIAvailable();
 #endif
-			m_vrayInit = new VRay::VRayInit(VFBEnabled);
-			if (!m_vrayInit) {
-				throw VRay::VRayException("Unable to initialize V-Ray AppSDK.");
-			}
+			m_vrayInit = new VRay::VRayInit(isVfbEnabled);
+		}
+		catch (VRay::VRayException &e) {
+			Log::getLog().error("Error initializing V-Ray AppSDK library:\n%s",
+								e.what());
+		}
 
+		try {
 			VRay::RendererOptions options;
 			options.enableFrameBuffer = false;
 			options.showFrameBuffer = false;
-			m_dummyRenderer = new VRay::VRayRenderer(options);
 
-			Log::getLog().info("Using V-Ray AppSDK %s", VRay::getSDKVersionDetails());
-			Log::getLog().info("Using V-Ray %s", VRay::getVRayVersionDetails());
+			m_dummyRenderer = new VRay::VRayRenderer(options);
 		}
 		catch (VRay::VRayException &e) {
-			Log::getLog().error("Error while initializing V-Ray AppSDK library:\n%s",
+			Log::getLog().error("Error initializing VRay::VRayRenderer instance:\n%s",
 								e.what());
-			cleanup();
 		}
+
+		Log::getLog().info("Using V-Ray AppSDK %s", VRay::getSDKVersionDetails());
+		Log::getLog().info("Using V-Ray %s", VRay::getVRayVersionDetails());
 	}
 
-	~AppSdkInit()
-	{
+	~AppSdkInit() {
 		Log::getLog().debug("~AppSdkInit()");
 		cleanup();
 	}
 
-	void cleanup()
-	{
+	void cleanup() {
 		FreePtr(m_dummyRenderer);
 		FreePtr(m_vrayInit);
 	}
 
-	// disable copy & assignment
-	AppSdkInit(AppSdkInit const&);
-	AppSdkInit& operator=(AppSdkInit const&);
+	/// Needed to initialize V-Ray renderer context.
+	VRay::VRayInit *m_vrayInit;
 
-private:
-	// needed to initialize V-Ray renderer context
-	VRay::VRayInit       *m_vrayInit;
-	// dummy renderer keeps references to shared plugin libraries
+	// Dummy renderer keeps references to shared plugin libraries
 	// when resetting/removing/destroying true renderers
 	// dummy renderer instance will prevent unloading of shared plugin libraries
-	VRay::VRayRenderer   *m_dummyRenderer;
+	VRay::VRayRenderer *m_dummyRenderer;
+
+	VUTILS_DISABLE_COPY(AppSdkInit);
 };
 
 
