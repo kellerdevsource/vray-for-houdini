@@ -17,6 +17,8 @@ set(HOUDINI_INSTALL_ROOT  ""     CACHE PATH   "Houdini install path")
 # Made using: cat sesitag.txt | sesitag -m
 set(PLUGIN_TAGINFO "\"3262197cbf104d152da5089a671b9ff8394bdcd9d530d8aa27f5984e1714bfd251aa2487851869344346dba5159b681c2da1a710878dac641a5874f82bead6fb0cb006e8bedd1ad3f169d85849f95eb181\"")
 
+set(VFH_DSO_DIRPATH ${CMAKE_BINARY_DIR}/dso)
+set(VFH_BIN_DIRPATH ${CMAKE_BINARY_DIR}/bin)
 
 macro(use_houdini_sdk)
 	# Adjust install path
