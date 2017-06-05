@@ -17,11 +17,6 @@ VRayForHoudini::OP::VRayNode::PluginResult
 
 	if(hilightLockVal){
 		pluginDesc.addAttribute(VRayForHoudini::Attrs::PluginAttr("hilight_glossiness", reflectionColourValue));
-		pluginDesc.addAttribute(VRayForHoudini::Attrs::PluginAttr("reflect_glossiness", reflectionColourValue));
-	}
-	else{
-		pluginDesc.addAttribute(VRayForHoudini::Attrs::PluginAttr("hilight_glossiness", hilightGlossinessValue));
-		pluginDesc.addAttribute(VRayForHoudini::Attrs::PluginAttr("reflect_glossiness", reflectionColourValue));
 	}
 
 	return PluginResult::PluginResultNA;
