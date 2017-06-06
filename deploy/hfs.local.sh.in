@@ -1,35 +1,18 @@
-# V-Ray For Houdini Windows Launcher
+# V-Ray For Houdini Linux Developer Launcher
 #
-@echo off
 
-# Houdini Install Location
-export HFS="/opt/hfs@HOUDINI_VERSION@.@HOUDINI_VERSION_BUILD@"
-
-# Use OpenVDB < 3
-export HOUDINI13_VOLUME_COMPATIBILITY=1
-
-# V-Ray Application SDK variables
 export VRAY_APPSDK=@APPSDK_ROOT@
-
-# V-Ray JSON plugin descriptions
 export VRAY_PLUGIN_DESC_PATH=@CMAKE_SOURCE_DIR@/deploy/plugins_desc
-
-# V-Ray UI dialog scripts
 export VRAY_UI_DS_PATH=@CMAKE_SOURCE_DIR@/deploy/ui
-
-# Phoenix loaders
 export VRAY_FOR_HOUDINI_AURA_LOADERS=@Phoenix_LIBRARIES@
 
-# Houdini paths
-export HOUDINI_PATH=@CMAKE_SOURCE_DIR@/deploy/vfh_home:^&
-export HOUDINI_DSO_PATH=@VFH_DSO_DIRPATH@:^&
-
-# Report loading errors
 export HOUDINI_DSO_ERROR=1
+export HOUDINI13_VOLUME_COMPATIBILITY=1
+export HFS="/opt/hfs@HOUDINI_VERSION@.@HOUDINI_VERSION_BUILD@"
+export HOUDINI_PATH=@CMAKE_SOURCE_DIR@/deploy/vfh_home:\&
+export HOUDINI_DSO_PATH=@VFH_DSO_DIRPATH@:\&
 
-# Add libs to path
-export PATH=${HFS}/bin:${VRAY_APPSDK}/bin:${PATH}:${VRAY_FOR_HOUDINI_AURA_LOADERS}
+export PATH=${HFS}/bin:${VRAY_APPSDK}/bin:@VFH_BIN_DIRPATH@:${PATH}
+export LD_LIBRARY_PATH=${VRAY_APPSDK}/bin:${VRAY_FOR_HOUDINI_AURA_LOADERS}:${LD_LIBRARY_PATH}
 
-# Start Houdini
-#
 "${HFS}/bin/houdini" -foreground $*
