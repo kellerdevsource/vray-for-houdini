@@ -131,8 +131,16 @@ function(vfh_generate_launcher)
 	file(TO_NATIVE_PATH ${Phoenix_LIBRARIES} Phoenix_LIBRARIES)
 
 	configure_file(${CMAKE_SOURCE_DIR}/deploy/${ARG_TEMPLATE_FILENAME}
-				   ${CMAKE_BINARY_DIR}/${ARG_FILENAME}
+				   ${CMAKE_BINARY_DIR}/tmp/${ARG_FILENAME}
 				   @ONLY)
+
+	file(INSTALL ${CMAKE_BINARY_DIR}/tmp/${ARG_FILENAME}
+		DESTINATION
+			${CMAKE_BINARY_DIR}
+		FILE_PERMISSIONS
+			OWNER_READ OWNER_WRITE OWNER_EXECUTE
+			GROUP_READ GROUP_EXECUTE
+			WORLD_READ WORLD_EXECUTE)
 endfunction()
 
 function(vfh_gen_launcher _location _vfh_appsdk_path _vfh_config_path _vfh_deploy_path _launcher)
@@ -272,14 +280,4 @@ else()
 
 	file(TO_NATIVE_PATH ${VFH_DSO_DIRPATH} VFH_DSO_DIRPATH)
 	vfh_generate_launcher(TEMPLATE_FILENAME ${TEMPLATE_FILENAME})
-
-	if(UNIX)
-		file(COPY ${CMAKE_BINARY_DIR}/vfh_hfs.sh
-			DESTINATION
-				${CMAKE_BINARY_DIR}
-			FILE_PERMISSIONS
-				OWNER_READ OWNER_WRITE OWNER_EXECUTE
-				GROUP_READ GROUP_EXECUTE
-				WORLD_READ WORLD_EXECUTE)
-	endif()
 endif()
