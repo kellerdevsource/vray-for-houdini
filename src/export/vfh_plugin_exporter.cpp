@@ -390,7 +390,8 @@ void VRayPluginRenderer::showVFB(bool show, const char *title)
 			if (vfb) {
 				Qt::WindowFlags windowFlags = vfb->windowFlags();
 				windowFlags |= (  Qt::Window
-#ifndef _WIN32
+// Need to set this flag only for Qt4
+#if !defined(_WIN32) && (UT_MAJOR_VERSION_INT < 16)
 								| Qt::WindowStaysOnTopHint
 #endif
 								| Qt::WindowTitleHint
