@@ -219,7 +219,7 @@ if(INSTALL_RELEASE)
 
 	# Clone JSON plugin descriptions
 	set(VFH_CLONE_PLUGINS_DESC ${CMAKE_BINARY_DIR}/vfh_clone_plugins_desc.cmake)
-	configure_file(${CMAKE_SOURCE_DIR}/cmake/vfh_clone_plugins_desc.cmake.in ${VFH_CLONE_PLUGINS_DESC})
+	configure_file(${CMAKE_SOURCE_DIR}/cmake/vfh_clone_plugins_desc.cmake.in ${VFH_CLONE_PLUGINS_DESC} @ONLY)
 	install(SCRIPT ${VFH_CLONE_PLUGINS_DESC})
 
 	# Archive the installation directory

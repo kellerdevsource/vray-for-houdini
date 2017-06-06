@@ -12,14 +12,26 @@ include(FindGit)
 
 execute_process(
 	COMMAND
-		"${GIT_EXECUTABLE}" clone https://github.com/bdancer/plugins_desc.git
+		"@GIT_EXECUTABLE@" clone https://github.com/bdancer/plugins_desc.git
 	WORKING_DIRECTORY
-		${INSTALL_RELEASE_PATH}
+		@INSTALL_RELEASE_PATH@
+	RESULT_VARIABLE
+		GIT_CLONE_RESULT
 )
+
+if (NOT (${GIT_CLONE_RESULT} EQUAL "0"))
+	message(FATAL_ERROR "Failed to execute git command \"@GIT_EXECUTABLE@ clone https://github.com/bdancer/plugins_desc.git\" ")
+endif()
 
 execute_process(
 	COMMAND
-		"${GIT_EXECUTABLE}" pull --rebase origin master
+		"@GIT_EXECUTABLE@" pull --rebase origin master
 	WORKING_DIRECTORY
-		${INSTALL_RELEASE_PATH}/plugins_desc
+		@INSTALL_RELEASE_PATH@/plugins_desc
+	RESULT_VARIABLE
+		GIT_PULL_RESULT
 )
+
+if (NOT (${GIT_PULL_RESULT} EQUAL "0"))
+	message(FATAL_ERROR "Failed to execute git command \"@GIT_EXECUTABLE@ pull --rebase origin master\" ")
+endif()
