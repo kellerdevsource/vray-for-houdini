@@ -286,4 +286,6 @@ if(HDK_FOUND)
 
 	endif()
 
+	# Boost spirit
+	set(HDK_INCLUDES "${HDK_INCLUDES};${SDK_PATH}/hdk/boost_shared")
 endif(HDK_FOUND)
