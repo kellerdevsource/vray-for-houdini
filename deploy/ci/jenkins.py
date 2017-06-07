@@ -53,7 +53,7 @@ if __name__ == '__main__':
         run.call("git clone %s %s" % (config.VFH_SDK_REPO, config.VFH_SDK_DIR), config.PERMANENT_DIR)
 
     log.message("Cleaning build directory...")
-    cleanDir(config.BUILD_DIR)
+    utils.cleanDir(config.BUILD_DIR)
     os.makedirs(config.BUILD_DIR)
 
     log.message("Configuring the project...")
