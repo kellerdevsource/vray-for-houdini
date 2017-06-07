@@ -33,6 +33,7 @@ if __name__ == '__main__':
         'OS' : utils.getPlatform(),
         'BUILD_NUMBER' : config.BUILD_NUMBER,
         'DEBUG' : "-dbg" if config.CMAKE_BUILD_TYPE == "Debug" else "",
+        'QT' : "-qt%s" % (config.HOUDINI_QT_VERSION) if config.HOUDINI_VERSION >= 16.0 else "",
     }
 
     archiveName = os.path.join(config.OUTPUT_DIR, config.OUTPUT_FILE_FMT.format(**nameArgs))

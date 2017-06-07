@@ -47,7 +47,7 @@ VFH_SDK_DIR = utils.toCmakePath(os.path.join(PERMANENT_DIR, "sdk"))
 CMAKE_BUILD_TYPE = os.environ['CMAKE_BUILD_TYPE']
 
 # Output configuration
-OUTPUT_FILE_FMT = "vfh-{BUILD_NUMBER}-{SRC_GIT_HASH}-hfs{HOUDINI_VERSION}.{HOUDINI_VERSION_BUILD}-{OS}{DEBUG}.{EXT}"
+OUTPUT_FILE_FMT = "vfh-{BUILD_NUMBER}-{SRC_GIT_HASH}-hfs{HOUDINI_VERSION}.{HOUDINI_VERSION_BUILD}{QT}-{OS}{DEBUG}.{EXT}"
 
 log.message("Houdini version: %s.%s" % (HOUDINI_VERSION, HOUDINI_VERSION_BUILD))
 log.message("HDK Qt version: %s" % HOUDINI_QT_VERSION)
