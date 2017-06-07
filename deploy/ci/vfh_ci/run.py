@@ -13,8 +13,8 @@ import os
 
 from . import log
 
-def call(cmd, cwd=os.getcwd()):
+def call(cmd, cwd):
     if type(cmd) in {list}:
         cmd = " ".join(cmd)
     log.message("Calling: %s" % cmd)
-    # return subprocess.call(cmd, cwd=cwd)
+    return subprocess.call(cmd, cwd=cwd)

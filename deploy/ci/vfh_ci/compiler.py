@@ -16,6 +16,16 @@ import sys
 
 from . import utils
 
+
+def setup_ninja():
+    if sys.platform in {'win32'}:
+        ninjaPath = os.path.join(os.environ['VRAY_CGREPO_PATH'], "build_scripts/cmake/tools/bin")
+    else:
+        ninjaPath = os.path.join(os.environ['CI_ROOT'], "ninja/ninja")
+
+    os.environ['PATH'] = os.pathsep.join([ninjaPath] + os.environ['PATH'].split(os.pathsep))
+
+
 def setup_msvc_2012(sdkPath):
     env = {
         'INCLUDE' : [
@@ -41,6 +51,7 @@ def setup_msvc_2012(sdkPath):
 
     for var in env:
         os.environ[var] = os.pathsep.join(env[var]).format(KDRIVE=sdkPath)
+
 
 def setup_msvc_2015(sdkPath):
     env = {
@@ -74,11 +85,12 @@ def setup_msvc_2015(sdkPath):
     for var in env:
         os.environ[var] = os.pathsep.join(env[var]).format(KDRIVE=sdkPath)
 
-def setup_compiler(houdiniMajorVersion, sdkPath):
-    if sys.platform not in {'win32'}:
-        return
 
-    if houdiniMajorVersion < 16.0:
-        setup_msvc_2012(sdkPath)
-    else:
-        setup_msvc_2015(sdkPath)
+def setup_compiler(houdiniMajorVersion, sdkPath):
+    setup_ninja()
+
+    if sys.platform in {'win32'}:
+        if houdiniMajorVersion < 16.0:
+            setup_msvc_2012(sdkPath)
+        else:
+            setup_msvc_2015(sdkPath)
