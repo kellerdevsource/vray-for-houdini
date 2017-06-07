@@ -10,76 +10,92 @@
 
 find_package(PackageHandleStandardArgs)
 
+# Full requested Houdini version (like "16.0.600").
+set(REQUESTED_HDK_VERSION ${HDK_FIND_VERSION_MAJOR}.${HDK_FIND_VERSION_MINOR}.${HDK_FIND_VERSION_PATCH})
 
-# Houdini 15 and above defines version in SYS/SYS_Version.h
-set(__hdk_version_filepath "toolkit/include/SYS/SYS_Version.h")
+# HDK path in our internal SDK repository.
+set(VFH_SDK_HDK ${SDK_PATH}/hdk/${HDK_FIND_VERSION_MAJOR}.${HDK_FIND_VERSION_MINOR}/${HDK_FIND_VERSION_PATCH})
 
-find_path(__hdk_path ${__hdk_version_filepath}
-	${SDK_PATH}/hdk/hdk${HDK_FIND_VERSION} ${HOUDINI_INSTALL_ROOT}
+# If installation path is not set use some default one.
+if(NOT HOUDINI_INSTALL_ROOT)
+	if(APPLE)
+		set(HOUDINI_INSTALL_ROOT "/Applications/Houdini ${REQUESTED_HDK_VERSION}")
+	elseif(WIN32)
+		set(HOUDINI_INSTALL_ROOT "C:/Program Files/Side Effects Software/Houdini ${REQUESTED_HDK_VERSION}")
+	else()
+		set(HOUDINI_INSTALL_ROOT "/opt/hfs${REQUESTED_HDK_VERSION}")
+	endif()
+endif()
+
+message(STATUS "Searching for the HDK under:")
+message(STATUS "  SDK: ${VFH_SDK_HDK}")
+message(STATUS "  Installation: ${HOUDINI_INSTALL_ROOT}")
+
+# Find out the current version by parsing HDK version from HDK version file
+#
+set(__SYS_VERSION_H "toolkit/include/SYS/SYS_Version.h")
+
+# We could change the requested version of HDK -
+# invalidate cache value in this case.
+if(NOT REQUESTED_HDK_VERSION VERSION_EQUAL HDK_VERSION)
+	unset(HDK_PATH CACHE)
+endif()
+
+find_path(HDK_PATH ${__SYS_VERSION_H}
+	PATHS
+		${VFH_SDK_HDK}
+		${HOUDINI_INSTALL_ROOT}
 	NO_DEFAULT_PATH
 )
 
-set(HDK_PATH ${__hdk_path})
-unset(__hdk_path CACHE)
+set(HDK_VERSION_FILE ${HDK_PATH}/${__SYS_VERSION_H})
+if(EXISTS ${HDK_VERSION_FILE})
+	file(STRINGS "${HDK_VERSION_FILE}" HDK_MAJOR_VERSION REGEX "^#define[\t ]+SYS_VERSION_MAJOR_INT[\t ]+.*")
+	file(STRINGS "${HDK_VERSION_FILE}" HDK_MINOR_VERSION REGEX "^#define[\t ]+SYS_VERSION_MINOR_INT[\t ]+.*")
+	file(STRINGS "${HDK_VERSION_FILE}" HDK_BUILD_VERSION REGEX "^#define[\t ]+SYS_VERSION_BUILD_INT[\t ]+.*")
+	file(STRINGS "${HDK_VERSION_FILE}" HDK_PATCH_VERSION REGEX "^#define[\t ]+SYS_VERSION_PATCH_INT[\t ]+.*")
 
-if(APPLE)
-	set(HDK_INCLUDES "${HDK_PATH}/../Resources/toolkit/include")
-	set(HDK_LIBRARIES "${HDK_PATH}/../Libraries")
+	string(REGEX REPLACE "^.*SYS_VERSION_MAJOR_INT[\t ]+([0-9]*).*$" "\\1" HDK_MAJOR_VERSION "${HDK_MAJOR_VERSION}")
+	string(REGEX REPLACE "^.*SYS_VERSION_MINOR_INT[\t ]+([0-9]*).*$" "\\1" HDK_MINOR_VERSION "${HDK_MINOR_VERSION}")
+	string(REGEX REPLACE "^.*SYS_VERSION_BUILD_INT[\t ]+([0-9]*).*$" "\\1" HDK_BUILD_VERSION "${HDK_BUILD_VERSION}")
+	string(REGEX REPLACE "^.*SYS_VERSION_PATCH_INT[\t ]+([0-9]*).*$" "\\1" HDK_PATCH_VERSION "${HDK_PATCH_VERSION}")
 
-elseif(WIN32)
-	set(HDK_INCLUDES "${HDK_PATH}/toolkit/include")
-	set(HDK_LIBRARIES "${HDK_PATH}/custom/houdini/dsolib")
-
-else()
-	set(HDK_INCLUDES "${HDK_PATH}/toolkit/include")
-	set(HDK_LIBRARIES "${HDK_PATH}/dsolib")
-
+	set(HDK_VERSION "${HDK_MAJOR_VERSION}.${HDK_MINOR_VERSION}.${HDK_BUILD_VERSION}.${HDK_PATCH_VERSION}" CACHE INTERNAL "Parsed HDK version")
 endif()
 
-
-# Find out the current version by parsing HDK version from HDK version file
-set(HDK_VERSION_FILE ${HDK_PATH}/${__hdk_version_filepath})
-if(EXISTS ${HDK_VERSION_FILE})
-
-	file(STRINGS "${HDK_VERSION_FILE}" __hdk_major_version REGEX "^#define[\t ]+SYS_VERSION_MAJOR_INT[\t ]+.*")
-	file(STRINGS "${HDK_VERSION_FILE}" __hdk_minor_version REGEX "^#define[\t ]+SYS_VERSION_MINOR_INT[\t ]+.*")
-	file(STRINGS "${HDK_VERSION_FILE}" __hdk_build_version REGEX "^#define[\t ]+SYS_VERSION_BUILD_INT[\t ]+.*")
-	file(STRINGS "${HDK_VERSION_FILE}" __hdk_patch_version REGEX "^#define[\t ]+SYS_VERSION_PATCH_INT[\t ]+.*")
-
-	string(REGEX REPLACE "^.*SYS_VERSION_MAJOR_INT[\t ]+([0-9]*).*$" "\\1" HDK_MAJOR_VERSION "${__hdk_major_version}")
-	string(REGEX REPLACE "^.*SYS_VERSION_MINOR_INT[\t ]+([0-9]*).*$" "\\1" HDK_MINOR_VERSION "${__hdk_minor_version}")
-	string(REGEX REPLACE "^.*SYS_VERSION_BUILD_INT[\t ]+([0-9]*).*$" "\\1" HDK_BUILD_VERSION "${__hdk_build_version}")
-	string(REGEX REPLACE "^.*SYS_VERSION_PATCH_INT[\t ]+([0-9]*).*$" "\\1" HDK_PATCH_VERSION "${__hdk_patch_version}")
-
-	# Clean up cache
-	unset(__hdk_major_version)
-	unset(__hdk_minor_version)
-	unset(__hdk_build_version)
-	unset(__hdk_patch_version)
-
-	set(HDK_VERSION "${HDK_MAJOR_VERSION}.${HDK_MINOR_VERSION}.${HDK_BUILD_VERSION}.${HDK_PATCH_VERSION}")
-
+# Set include / library paths
+#
+if(APPLE)
+	set(HDK_INCLUDES  "${HDK_PATH}/../Resources/toolkit/include")
+	set(HDK_LIBRARIES "${HDK_PATH}/../Libraries")
+elseif(WIN32)
+	set(HDK_INCLUDES  "${HDK_PATH}/toolkit/include")
+	set(HDK_LIBRARIES "${HDK_PATH}/custom/houdini/dsolib")
+else()
+	set(HDK_INCLUDES  "${HDK_PATH}/toolkit/include")
+	set(HDK_LIBRARIES "${HDK_PATH}/dsolib")
 endif()
 
 find_package_handle_standard_args(HDK
-	REQUIRED_VARS HDK_PATH HDK_INCLUDES HDK_LIBRARIES HDK_VERSION
-	VERSION_VAR   HDK_VERSION
+	REQUIRED_VARS
+		HDK_PATH HDK_INCLUDES HDK_LIBRARIES HDK_VERSION
+	VERSION_VAR
+		HDK_VERSION
 )
 
-# Version check
-if(NOT ("${HDK_FIND_VERSION_MAJOR}.${HDK_FIND_VERSION_MINOR}"
-		VERSION_EQUAL
-		"${HDK_MAJOR_VERSION}.${HDK_MINOR_VERSION}"))
+# Check if we've found the correct version
+#
+set(FOUND_HDK_VERSION ${HDK_MAJOR_VERSION}.${HDK_MINOR_VERSION}.${HDK_BUILD_VERSION})
+if(NOT REQUESTED_HDK_VERSION VERSION_EQUAL FOUND_HDK_VERSION)
 	set(HDK_FOUND FALSE)
 endif()
 
-
 if(NOT HDK_FOUND AND HDK_FIND_REQUIRED)
-	message(FATAL_ERROR "Found HDK ${HDK_VERSION}, uncompatible with required version ${HDK_FIND_VERSION}")
+	message(FATAL_ERROR "Found HDK ${FOUND_HDK_VERSION}, uncompatible with required version ${HDK_FIND_VERSION}")
 endif()
 
-
-# Find required libs
+# Find required libraries
+#
 find_library(__hdk_libgeo
 	NAMES openvdb_sesi HoudiniGEO
 	PATHS ${HDK_LIBRARIES}
@@ -107,20 +123,19 @@ foreach(loop_var IN ITEMS ${HDK_LIB_GEO})
 	endif()
 endforeach(loop_var)
 
-
 if(NOT HDK_FOUND AND HDK_FIND_REQUIRED)
 	message(FATAL_ERROR "Found HDK ${HDK_VERSION}, but one or more required libraries are missing from:"
 						"${HDK_LIBRARIES}")
 endif()
 
-if(${HDK_MAJOR_VERSION} VERSION_GREATER "15")
-	set(HDK_QT_ROOT "${SDK_PATH}/hdk/qt/5.6.1" CACHE PATH "Qt for Houdini SDK root")
+if(HOUDINI_QT_VERSION VERSION_GREATER 4)
+	set(HDK_QT_ROOT "${SDK_PATH}/hdk/qt/5.6.1" CACHE PATH "Qt 5.x for Houdini SDK root")
 endif()
 
 if(HDK_FOUND)
-	# NOTE: exact list of compiler/linker arguments when building for Houdini can be queried with:
-	# "hcustom --cflags/ldflags" - Display compiler/linker flags
-	# common Houdini compiler flags
+	# NOTE: The exact list of compiler/linker flags can be obtained with:
+	#   "hcustom --cflags / --ldflags"
+	#
 	set(HDK_DEFINITIONS
 		-DAMD64
 		-DSIZEOF_VOID_P=8
@@ -129,7 +144,49 @@ if(HDK_FOUND)
 		-DOPENCL_ENABLED=1
 		-DOPENVDB_ENABLED=1
 	)
-	set(HDK_LIBS "")
+
+	if(HDK_MAJOR_VERSION VERSION_GREATER 15.0)
+		# NOTE: openvdb_sesi is version 3.3.0, but HDK is using 4.0.0 API.
+		list(APPEND HDK_DEFINITIONS
+			-DOPENVDB_3_ABI_COMPATIBLE
+			-DCXX11_ENABLED=1
+			-DQT_NO_KEYWORDS=1
+			-DQT_DLL
+		)
+	endif()
+
+	set(HDK_INCLUDE_PATH ${HDK_INCLUDES})
+
+	# For Boost spirit
+	set(HDK_INCLUDES
+		${SDK_PATH}/hdk/boost_shared
+		${HDK_INCLUDE_PATH}
+	)
+
+	# For Windows linking
+	file(GLOB HDK_LIBS_A "${HDK_LIBRARIES}/*.a")
+
+	if(HOUDINI_QT_VERSION VERSION_GREATER 4)
+		list(APPEND HDK_DEFINITIONS
+			-DUSE_QT5=1
+		)
+
+		list(APPEND HDK_INCLUDES
+			${HDK_QT_ROOT}/include
+			${HDK_QT_ROOT}/include/QtCore
+			${HDK_QT_ROOT}/include/QtGui
+			${HDK_QT_ROOT}/include/QtWidgets
+		)
+
+		list(APPEND HDK_LIBRARIES
+			${HDK_QT_ROOT}/lib
+		)
+	else()
+		list(APPEND HDK_INCLUDES
+			${HDK_INCLUDE_PATH}/QtCore
+			${HDK_INCLUDE_PATH}/QtGui
+		)
+	endif()
 
 	if(WIN32)
 		list(APPEND HDK_DEFINITIONS
@@ -149,49 +206,26 @@ if(HDK_FOUND)
 			-DEIGEN_MALLOC_ALREADY_ALIGNED=0
 		)
 
-		if(${HDK_MAJOR_VERSION} VERSION_GREATER "15")
-			# NOTE: openvdb_sesi is version 3.3.0 but HDK is using 4.0.0 API
-			list(APPEND HDK_DEFINITIONS
-				-DOPENVDB_3_ABI_COMPATIBLE
-
-				-DCXX11_ENABLED=1
-				-DQT_NO_KEYWORDS=1
-				-DQT_DLL
-				-DUSE_QT5=1
-			)
-		endif()
-
-		file(GLOB HDK_LIBS_A "${HDK_LIBRARIES}/*.a")
-
-		list(APPEND HDK_LIBS
+		set(HDK_LIBS
 			${HDK_LIBS_A}
-			${HDK_LIBRARIES}/openvdb_sesi.lib
 			${HDK_LIB_GEO}
+			openvdb_sesi.lib
 		)
 
-		if(${HDK_MAJOR_VERSION} VERSION_GREATER "15")
-			set(HDK_INCLUDES  "${HDK_INCLUDES};${HDK_QT_ROOT}/include")
-			set(HDK_INCLUDES  "${HDK_INCLUDES};${HDK_QT_ROOT}/include/QtCore")
-			set(HDK_INCLUDES  "${HDK_INCLUDES};${HDK_QT_ROOT}/include/QtGui")
-			set(HDK_INCLUDES  "${HDK_INCLUDES};${HDK_QT_ROOT}/include/QtWidgets")
-			set(HDK_LIBRARIES "${HDK_LIBRARIES};${HDK_QT_ROOT}/lib")
-			set(HDK_QT_LIBS
+		if(HOUDINI_QT_VERSION VERSION_GREATER 4)
+			list(APPEND HDK_LIBS
 				${HDK_QT_ROOT}/lib/Qt5Core.lib
 				${HDK_QT_ROOT}/lib/Qt5Gui.lib
 				${HDK_QT_ROOT}/lib/Qt5Widgets.lib
 			)
 		else()
-			set(HDK_INCLUDES "${HDK_INCLUDES};${HDK_INCLUDES}/QtCore;${HDK_INCLUDES}/QtGui")
-
-			set(HDK_QT_LIBS
+			list(APPEND HDK_LIBS
 				${HDK_LIBRARIES}/QtCore4.lib
 				${HDK_LIBRARIES}/QtGui4.lib
 			)
 		endif()
 
-		list(APPEND HDK_LIBS ${HDK_QT_LIBS})
-
-		set(SYSTEM_LIBS
+		list(APPEND HDK_LIBS
 			advapi32
 			comctl32
 			comdlg32
@@ -210,20 +244,7 @@ if(HDK_FOUND)
 			winspool
 			ws2_32
 		)
-
-		list(APPEND HDK_LIBS ${SYSTEM_LIBS})
-
 	else()
-		if(${HDK_MAJOR_VERSION} VERSION_GREATER "15")
-			set(HDK_INCLUDES  "${HDK_INCLUDES};${HDK_QT_ROOT}/include")
-			set(HDK_INCLUDES  "${HDK_INCLUDES};${HDK_QT_ROOT}/include/QtCore")
-			set(HDK_INCLUDES  "${HDK_INCLUDES};${HDK_QT_ROOT}/include/QtGui")
-			set(HDK_INCLUDES  "${HDK_INCLUDES};${HDK_QT_ROOT}/include/QtWidgets")
-			set(HDK_LIBRARIES "${HDK_LIBRARIES};${HDK_QT_ROOT}/lib")
-		else()
-			set(HDK_INCLUDES "${HDK_INCLUDES};${HDK_INCLUDES}/QtCore;${HDK_INCLUDES}/QtGui")
-		endif()
-
 		list(APPEND HDK_DEFINITIONS
 			-D_GNU_SOURCE
 			-DENABLE_THREADS
@@ -248,7 +269,6 @@ if(HDK_FOUND)
 		)
 
 		if(APPLE)
-			# Houdini compiler flags for Apple
 			list(APPEND HDK_DEFINITIONS
 				-DNEED_SPECIALIZATION_STORAGE
 				-DMBSD
@@ -266,9 +286,7 @@ if(HDK_FOUND)
 				QtGui
 				"-framework Cocoa"
 			)
-
 		else()
-			# Houdini compiler flags for Linux
 			list(APPEND HDK_DEFINITIONS
 				-DLINUX
 			)
@@ -283,9 +301,7 @@ if(HDK_FOUND)
 				pthread
 			)
 		endif()
-
 	endif()
+endif()
 
-	# Boost spirit
-	set(HDK_INCLUDES "${HDK_INCLUDES};${SDK_PATH}/hdk/boost_shared")
-endif(HDK_FOUND)
+unset(__SYS_VERSION_H)

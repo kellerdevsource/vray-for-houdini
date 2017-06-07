@@ -21,8 +21,8 @@ macro(use_vray_sdk)
 							)
 	endif()
 
-	message(STATUS "Using V-Ray SDK include path: ${VRaySDK_INCLUDES}")
-	message(STATUS "Using V-Ray SDK library path: ${VRaySDK_LIBRARIES}")
+	message_array("Using V-Ray SDK include path" VRaySDK_INCLUDES)
+	message_array("Using V-Ray SDK library path" VRaySDK_LIBRARIES)
 
 	if(WIN32)
 		# Both V-Ray SDK and HDK defines some basic types,

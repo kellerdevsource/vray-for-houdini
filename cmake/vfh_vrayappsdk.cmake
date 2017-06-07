@@ -20,7 +20,7 @@ macro(use_vray_appsdk)
 	endif()
 
 	set(APPSDK_ROOT "${_appsdk_root}")
-	message(STATUS "Using V-Ray AppSDK: ${APPSDK_ROOT}")
+	message_array("Using V-Ray AppSDK" APPSDK_ROOT)
 
 	add_definitions(-DVRAY_SDK_INTEROPERABILITY)
 
