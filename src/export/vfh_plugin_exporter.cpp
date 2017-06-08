@@ -38,7 +38,7 @@ struct AppSdkInit
 		FreePtr(appSdkInit);
 	}
 
-	explicit operator bool () const {
+	operator bool () const {
 		return !!m_vrayInit;
 	}
 

@@ -14,6 +14,17 @@ Binary builds are available at "[V-Ray For Houdini](https://nightlies.chaosgroup
 
 You'll have to request access at support@chaosgroup.com for this section.
 
+Build archive name description:
+
+```
+    vfh-701-078856b-hfs16.0.600-qt5-windows.zip
+        |   |          |        |   │
+        |   |          |        |   └─ OS
+        |   |          |        └─ Qt version (optional, only for > 16.x)
+        |   |          └─ Houdini version
+        │   └─ Source revision
+        └─ Incremental build number
+```
 
 Building From Source
 --------------------

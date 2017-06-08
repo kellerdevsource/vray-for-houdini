@@ -102,7 +102,7 @@ add_definitions(-DCGR_GIT_HASH=${SRC_GIT_HASH})
 
 # Install
 #
-option(INSTALL_LOCAL "Install files locally" ON)
+option(INSTALL_LOCAL "Install files locally" OFF)
 option(INSTALL_RELEASE "Install release build for distribution" OFF)
 
 function(vfh_generate_launcher)
@@ -257,6 +257,20 @@ elseif(INSTALL_RELEASE)
 	# Copy AppSDK
 	install(DIRECTORY   ${APPSDK_ROOT}/bin
 			DESTINATION ${INSTALL_RELEASE_PATH}/appsdk)
+
+	# Default libvray.dll is Qt5
+	if(HOUDINI_QT_VERSION VERSION_EQUAL 4)
+		set(VRAYDSO_QT4 ${APPSDK_ROOT}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}vray_qt4${CMAKE_SHARED_LIBRARY_SUFFIX})
+		# If doesn't exist - it's already Qt 4
+		if(EXISTS VRAYDSO_QT4)
+			install(FILES ${VRAYDSO_QT4}
+				DESTINATION
+					${INSTALL_RELEASE_PATH}/appsdk/bin
+				RENAME
+					${CMAKE_SHARED_LIBRARY_PREFIX}vray${CMAKE_SHARED_LIBRARY_SUFFIX}
+			)
+		endif()
+	endif()
 
 	# Clone JSON plugin descriptions
 	set(VFH_CLONE_PLUGINS_DESC ${CMAKE_BINARY_DIR}/vfh_clone_plugins_desc.cmake)
