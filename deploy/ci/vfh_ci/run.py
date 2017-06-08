@@ -16,5 +16,5 @@ from . import log
 def call(cmd, cwd):
     if type(cmd) in {str}:
         cmd = cmd.split()
-    log.message("Calling: %s" % cmd)
+    log.message("Calling: \"%s\"" % " ".join(cmd))
     return subprocess.call(cmd, cwd=cwd)
