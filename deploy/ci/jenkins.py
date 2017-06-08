@@ -39,11 +39,11 @@ if __name__ == '__main__':
     archiveFilename = config.OUTPUT_FILE_FMT.format(**nameArgs)
     log.message("Archive filename: %s" % (archiveFilename))
 
-    archiveFilePath = os.path.join(config.OUTPUT_DIR, archiveFilename)
+    archiveFilePath = utils.p(config.OUTPUT_DIR, archiveFilename)
     log.message("Archive directory: %s" % (archiveFilePath))
 
     # Clean up old repository
-    utils.removeDir(utils.toCmakePath(os.path.join(config.PERMANENT_DIR, "houdini-dependencies")))
+    utils.removeDir(utils.p(config.PERMANENT_DIR, "houdini-dependencies"))
 
     log.message("Resetting submodules to origin/master...")
     run.call("git submodule foreach git clean -dxfq", config.SOURCE_DIR)
@@ -76,17 +76,17 @@ if __name__ == '__main__':
     elif utils.getPlatform() in {'linux'}:
         cmake.append('-DWITH_STATIC_LIBC=ON')
 
-    cmake.append('-DSDK_PATH=%s' % utils.toCmakePath(config.VFH_SDK_DIR))
+    cmake.append('-DSDK_PATH=%s' % utils.p(config.VFH_SDK_DIR))
     cmake.append('-DHOUDINI_VERSION=%s' % config.HOUDINI_VERSION)
     cmake.append('-DHOUDINI_VERSION_BUILD=%s' % config.HOUDINI_VERSION_BUILD)
     cmake.append('-DHOUDINI_QT_VERSION=%s' % config.HOUDINI_QT_VERSION)
     cmake.append('-DCGR_SRC_HASH=%s' % config.SOURCE_HASH)
     cmake.append('-DINSTALL_LOCAL=OFF')
     cmake.append('-DINSTALL_RELEASE=ON')
-    cmake.append('-DINSTALL_RELEASE_ROOT=%s' % utils.toCmakePath(config.OUTPUT_DIR))
+    cmake.append('-DINSTALL_RELEASE_ROOT=%s' % utils.p(config.OUTPUT_DIR))
     if config.CMAKE_BUILD_TYPE in {"Debug"}:
         cmake.append('-DINSTALL_RELEASE_SUFFIX=-dbg')
-    cmake.append('-DINSTALL_RELEASE_ARCHIVE_FILEPATH=%s' % utils.toCmakePath(archiveFilePath))
+    cmake.append('-DINSTALL_RELEASE_ARCHIVE_FILEPATH=%s' % utils.p(archiveFilePath))
     cmake.append(config.SOURCE_DIR)
 
     err = run.call(cmake, config.BUILD_DIR)
