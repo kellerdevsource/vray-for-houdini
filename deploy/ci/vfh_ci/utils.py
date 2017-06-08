@@ -61,6 +61,8 @@ def cleanDir(dirpath):
 def removeDir(path):
     if not os.path.exists(path):
         return
+    if not os.path.isdir(path):
+        return
 
     # Don't know why, but when deleting from python
     # on Windows it fails to delete '.git' direcotry,
