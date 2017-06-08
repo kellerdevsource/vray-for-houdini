@@ -56,7 +56,8 @@ if __name__ == '__main__':
         run.call("git fetch", config.VFH_SDK_DIR)
         run.call("git reset --hard origin/master", config.VFH_SDK_DIR)
     else:
-        os.makedirs(config.VFH_SDK_DIR)
+        if not os.path.exists(config.VFH_SDK_DIR):
+            os.makedirs(config.VFH_SDK_DIR)
         run.call("git clone %s %s" % (config.VFH_SDK_REPO, config.VFH_SDK_DIR), config.PERMANENT_DIR)
 
     log.message("Cleaning build directory...")
