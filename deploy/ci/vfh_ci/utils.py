@@ -70,6 +70,8 @@ def removeDir(path):
     log.message("Deleting path: %s" % path)
 
     if getPlatform() == 'windows':
+        # Need Windows slashes here
+        path = os.path.normpath(path)
         os.system("rmdir /Q /S %s" % path)
         # Well yes, on Windows one remove is not enough...
         if os.path.exists(path):
