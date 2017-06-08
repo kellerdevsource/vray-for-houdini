@@ -9,13 +9,8 @@
 #
 
 if __name__ == '__main__':
-    import argparse
-    import datetime
     import os
-    import shutil
-    import subprocess
     import sys
-    import tempfile
 
     from vfh_ci import config
     from vfh_ci import log
