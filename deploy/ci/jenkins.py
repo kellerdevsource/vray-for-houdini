@@ -78,7 +78,6 @@ if __name__ == '__main__':
     cmake.append('-DHOUDINI_VERSION_BUILD=%s' % config.HOUDINI_VERSION_BUILD)
     cmake.append('-DHOUDINI_QT_VERSION=%s' % config.HOUDINI_QT_VERSION)
     cmake.append('-DCGR_SRC_HASH=%s' % config.SOURCE_HASH)
-    cmake.append('-DINSTALL_LOCAL=OFF')
     cmake.append('-DINSTALL_RELEASE=ON')
     cmake.append('-DINSTALL_RELEASE_ROOT=%s' % utils.p(config.OUTPUT_DIR))
     if config.CMAKE_BUILD_TYPE in {"Debug"}:
