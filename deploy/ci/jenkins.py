@@ -53,7 +53,7 @@ if __name__ == '__main__':
     log.message("Clone / update SDK...")
     if os.path.exists(config.VFH_SDK_DIR):
         run.call("git clean -dxfq", config.VFH_SDK_DIR)
-        run.call("git git fetch", config.VFH_SDK_DIR)
+        run.call("git fetch", config.VFH_SDK_DIR)
         run.call("git reset --hard origin/master", config.VFH_SDK_DIR)
     else:
         os.makedirs(config.VFH_SDK_DIR)
