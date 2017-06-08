@@ -258,6 +258,15 @@ elseif(INSTALL_RELEASE)
 	install(DIRECTORY   ${APPSDK_ROOT}/bin
 			DESTINATION ${INSTALL_RELEASE_PATH}/appsdk)
 
+	# Default libvray.dll is Qt5
+	if(HOUDINI_QT_VERSION VERSION_EQUAL 4)
+		set(VRAYDSO_QT4 ${APPSDK_ROOT}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}vray_qt4${CMAKE_SHARED_LIBRARY_SUFFIX})
+		# If doesn't exist - it's already Qt 4
+		if(EXISTS VRAYDSO_QT4)
+			install(FILES ${VRAYDSO_QT4} DESTINATION ${INSTALL_RELEASE_PATH}/appsdk/bin)
+		endif()
+	endif()
+
 	# Clone JSON plugin descriptions
 	set(VFH_CLONE_PLUGINS_DESC ${CMAKE_BINARY_DIR}/vfh_clone_plugins_desc.cmake)
 	configure_file(${CMAKE_SOURCE_DIR}/cmake/vfh_clone_plugins_desc.cmake.in ${VFH_CLONE_PLUGINS_DESC} @ONLY)
