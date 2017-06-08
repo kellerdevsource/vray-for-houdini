@@ -62,7 +62,8 @@ if __name__ == '__main__':
 
     log.message("Cleaning build directory...")
     utils.cleanDir(config.BUILD_DIR)
-    os.makedirs(config.BUILD_DIR)
+    if not os.path.exists(config.BUILD_DIR):
+        os.makedirs(config.BUILD_DIR)
 
     log.message("Configuring the project...")
     cmake = ['cmake']
