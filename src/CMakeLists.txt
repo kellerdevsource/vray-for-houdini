@@ -102,7 +102,7 @@ add_definitions(-DCGR_GIT_HASH=${SRC_GIT_HASH})
 
 # Install
 #
-option(INSTALL_LOCAL "Install files locally" ON)
+option(INSTALL_LOCAL "Install files locally" OFF)
 option(INSTALL_RELEASE "Install release build for distribution" OFF)
 
 function(vfh_generate_launcher)
