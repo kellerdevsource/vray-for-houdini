@@ -110,40 +110,6 @@ if(NOT HDK_FOUND AND HDK_FIND_REQUIRED)
 	message(FATAL_ERROR "Found HDK ${FOUND_HDK_VERSION}, uncompatible with required version ${HDK_FIND_VERSION}")
 endif()
 
-# Find required libraries
-#
-find_library(__hdk_libgeo
-	NAMES openvdb_sesi HoudiniGEO
-	PATHS ${HDK_LIBRARIES}
-	NO_DEFAULT_PATH
-)
-
-set(HDK_LIB_GEO ${__hdk_libgeo})
-unset(__hdk_libgeo CACHE)
-
-if(MSVC_VERSION EQUAL 1700)
-	find_library(__hdk_libhalf
-		NAMES Half
-		PATHS ${HDK_LIBRARIES}
-		NO_DEFAULT_PATH
-	)
-
-	list(APPEND HDK_LIB_GEO ${__hdk_libhalf})
-	unset(__hdk_libhalf CACHE)
-endif()
-
-foreach(loop_var IN ITEMS ${HDK_LIB_GEO})
-	if(NOT EXISTS ${loop_var})
-		set(HDK_FOUND FALSE)
-		break()
-	endif()
-endforeach(loop_var)
-
-if(NOT HDK_FOUND AND HDK_FIND_REQUIRED)
-	message(FATAL_ERROR "Found HDK ${HDK_VERSION}, but one or more required libraries are missing from:"
-						"${HDK_LIBRARIES}")
-endif()
-
 if(HOUDINI_QT_VERSION VERSION_GREATER 4)
 	set(HDK_QT_ROOT "${SDK_PATH}/hdk/qt/5.6.1" CACHE PATH "Qt 5.x for Houdini SDK root")
 endif()
@@ -172,6 +138,7 @@ if(HDK_FOUND)
 	endif()
 
 	set(HDK_INCLUDE_PATH ${HDK_INCLUDES})
+	set(HDK_LIB_PATH     ${HDK_LIBRARIES})
 
 	# For Boost spirit
 	set(HDK_INCLUDES
@@ -180,7 +147,6 @@ if(HDK_FOUND)
 	)
 
 	# For Windows linking
-	file(GLOB HDK_LIBS_A "${HDK_LIBRARIES}/*.a")
 
 	if(HOUDINI_QT_VERSION VERSION_GREATER 4)
 		list(APPEND HDK_DEFINITIONS
@@ -222,9 +188,11 @@ if(HDK_FOUND)
 			-DEIGEN_MALLOC_ALREADY_ALIGNED=0
 		)
 
+		file(GLOB HDK_LIBS_A "${HDK_LIB_PATH}/*.a")
+
 		set(HDK_LIBS
 			${HDK_LIBS_A}
-			${HDK_LIB_GEO}
+			$<$<CONFIG:Release>:Half.lib>
 			openvdb_sesi.lib
 		)
 
@@ -236,8 +204,8 @@ if(HDK_FOUND)
 			)
 		else()
 			list(APPEND HDK_LIBS
-				${HDK_LIBRARIES}/QtCore4.lib
-				${HDK_LIBRARIES}/QtGui4.lib
+				${HDK_LIB_PATH}/QtCore4.lib
+				${HDK_LIB_PATH}/QtGui4.lib
 			)
 		endif()
 
