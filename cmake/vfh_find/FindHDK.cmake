@@ -16,6 +16,11 @@ set(REQUESTED_HDK_VERSION ${HDK_FIND_VERSION_MAJOR}.${HDK_FIND_VERSION_MINOR}.${
 # HDK path in our internal SDK repository.
 set(VFH_SDK_HDK ${SDK_PATH}/hdk/${HDK_FIND_VERSION_MAJOR}.${HDK_FIND_VERSION_MINOR}/${HDK_FIND_VERSION_PATCH})
 
+# Add Qt version to path
+if(HDK_FIND_VERSION_MAJOR VERSION_GREATER 15)
+	set(VFH_SDK_HDK ${VFH_SDK_HDK}/qt${HOUDINI_QT_VERSION})
+endif()
+
 # If installation path is not set use some default one.
 if(NOT HOUDINI_INSTALL_ROOT)
 	if(APPLE)
