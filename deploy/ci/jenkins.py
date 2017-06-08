@@ -50,6 +50,9 @@ if __name__ == '__main__':
         run.call("git clean -dxfq", config.VFH_SDK_DIR)
         run.call("git fetch", config.VFH_SDK_DIR)
         run.call("git reset --hard origin/master", config.VFH_SDK_DIR)
+
+        # Needed after SDK history reset
+        run.call("git gc --aggressive --prune=all")
     else:
         if not os.path.exists(config.VFH_SDK_DIR):
             os.makedirs(config.VFH_SDK_DIR)
