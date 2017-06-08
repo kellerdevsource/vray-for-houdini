@@ -96,7 +96,7 @@ def getCmdOutput(cmd, cwd=os.getcwd()):
 def p(*args):
     """Custom path join function with user home expansion
     and slash conversion"""
-    p = os.path.join(args)
+    p = os.path.join(*args)
     p = os.path.expanduser(p)
     p = os.path.normpath(p)
     return toCmakePath(p)
