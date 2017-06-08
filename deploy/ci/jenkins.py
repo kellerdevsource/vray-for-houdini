@@ -36,7 +36,14 @@ if __name__ == '__main__':
         'QT' : "-qt%s" % (config.HOUDINI_QT_VERSION) if config.HOUDINI_VERSION >= 16.0 else "",
     }
 
-    archiveName = os.path.join(config.OUTPUT_DIR, config.OUTPUT_FILE_FMT.format(**nameArgs))
+    archiveFilename = config.OUTPUT_FILE_FMT.format(**nameArgs)
+    log.message("Archive filename: %s" % (archiveFilename))
+
+    archiveFilePath = os.path.join(config.OUTPUT_DIR, archiveFilename)
+    log.message("Archive directory: %s" % (archiveFilePath))
+
+    # Clean up old repository
+    utils.removeDir(utils.toCmakePath(os.path.join(config.PERMANENT_DIR, "houdini-dependencies")))
 
     log.message("Resetting submodules to origin/master...")
     run.call("git submodule foreach git clean -dxfq", config.SOURCE_DIR)
@@ -79,7 +86,7 @@ if __name__ == '__main__':
     cmake.append('-DINSTALL_RELEASE_ROOT=%s' % utils.toCmakePath(config.OUTPUT_DIR))
     if config.CMAKE_BUILD_TYPE in {"Debug"}:
         cmake.append('-DINSTALL_RELEASE_SUFFIX=-dbg')
-    cmake.append('-DINSTALL_RELEASE_ARCHIVE_FILEPATH=%s' % utils.toCmakePath(archiveName))
+    cmake.append('-DINSTALL_RELEASE_ARCHIVE_FILEPATH=%s' % utils.toCmakePath(archiveFilePath))
     cmake.append(config.SOURCE_DIR)
 
     err = run.call(cmake, config.BUILD_DIR)

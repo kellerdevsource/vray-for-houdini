@@ -58,6 +58,24 @@ def cleanDir(dirpath):
             shutil.rmtree(os.path.join(root, d))
 
 
+def removeDir(path):
+    if not os.path.exists(path):
+        return
+
+    # Don't know why, but when deleting from python
+    # on Windows it fails to delete '.git' direcotry,
+    # so using shell command
+    log.message("Deleting path: %s" % path)
+
+    if getPlatform() == 'windows':
+        os.system("rmdir /Q /S %s" % path)
+        # Well yes, on Windows one remove is not enough...
+        if os.path.exists(path):
+            os.system("rmdir /Q /S %s" % path)
+    else:
+        shutil.rmtree(path)
+
+
 def getCmdOutput(cmd, cwd=os.getcwd()):
     try:
         if type(cmd) is str:
