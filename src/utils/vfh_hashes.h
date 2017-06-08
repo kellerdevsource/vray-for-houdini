@@ -17,7 +17,7 @@
 namespace std {
 	template <> struct hash<VRay::Plugin> {
 		size_t operator()(VRay::Plugin plugin) const {
-			return std::hash<size_t>()(plugin.getId());
+			return std::hash<const char *>()(plugin.getName());
 		}
 	};
 };
