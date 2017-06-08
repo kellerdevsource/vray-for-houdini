@@ -3,7 +3,7 @@
 @echo off
 
 :: Houdini location
-set HFS=C:\Program Files\Side Effects Software\Houdini @HOUDINI_VERSION@.@HOUDINI_VERSION_BUILD@
+set HFS=@HOUDINI_INSTALL_ROOT@
 
 :: Use OpenVDB < 3
 set HOUDINI13_VOLUME_COMPATIBILITY=1
