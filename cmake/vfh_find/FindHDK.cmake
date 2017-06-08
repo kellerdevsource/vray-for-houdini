@@ -32,9 +32,6 @@ if(NOT HOUDINI_INSTALL_ROOT)
 	endif()
 endif()
 
-message(STATUS "Searching for the HDK under:")
-message(STATUS "  SDK: ${VFH_SDK_HDK}")
-message(STATUS "  Installation: ${HOUDINI_INSTALL_ROOT}")
 
 # Find out the current version by parsing HDK version from HDK version file
 #
@@ -46,10 +43,24 @@ if(NOT REQUESTED_HDK_VERSION VERSION_EQUAL HDK_VERSION)
 	unset(HDK_PATH CACHE)
 endif()
 
+message(STATUS "Searching for the HDK under:")
+set(HDK_SEARCH_PATH)
+
+if(EXISTS ${VFH_SDK_HDK})
+	message(STATUS "  SDK: ${VFH_SDK_HDK}")
+	list(APPEND HDK_SEARCH_PATH ${VFH_SDK_HDK})
+elseif(EXISTS ${HOUDINI_INSTALL_ROOT})
+	message(STATUS "  Installation: ${HOUDINI_INSTALL_ROOT}")
+	list(APPEND HDK_SEARCH_PATH ${HOUDINI_INSTALL_ROOT})
+endif()
+
+if(NOT HDK_SEARCH_PATH)
+	message(FATAL_ERROR "No HDK search paths found!")
+endif()
+
 find_path(HDK_PATH ${__SYS_VERSION_H}
 	PATHS
-		${VFH_SDK_HDK}
-		${HOUDINI_INSTALL_ROOT}
+		${HDK_SEARCH_PATH}
 	NO_DEFAULT_PATH
 )
 
