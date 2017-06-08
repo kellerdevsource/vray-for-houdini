@@ -35,7 +35,7 @@ if __name__ == '__main__':
     log.message("Archive filename: %s" % (archiveFilename))
 
     archiveFilePath = utils.p(config.OUTPUT_DIR, archiveFilename)
-    log.message("Archive directory: %s" % (archiveFilePath))
+    log.message("Archive directory: %s" % (config.OUTPUT_DIR))
 
     # Clean up old repository
     utils.removeDir(utils.p(config.PERMANENT_DIR, "houdini-dependencies"))
