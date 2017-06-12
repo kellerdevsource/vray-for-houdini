@@ -90,7 +90,7 @@ def setup_compiler(houdiniMajorVersion, sdkPath):
     setup_ninja()
 
     if sys.platform in {'win32'}:
-        if houdiniMajorVersion < 16.0:
-            setup_msvc_2012(sdkPath)
-        else:
+        if houdiniMajorVersion >= 15.5:
             setup_msvc_2015(sdkPath)
+        else:
+            setup_msvc_2012(sdkPath)
