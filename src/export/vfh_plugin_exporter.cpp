@@ -68,12 +68,13 @@ struct AppSdkInit
 	}
 
 	operator bool () const {
-		return !!m_vrayInit;
+		return m_vrayInit && m_dummyRenderer;
 	}
 
 private:
 	AppSdkInit()
 		: m_vrayInit(nullptr)
+		, m_dummyRenderer(nullptr)
 	{
 		QWidget *mainWindow = HOU::getMainQtWindow();
 		if (mainWindow) {
@@ -350,7 +351,14 @@ int VRayPluginRenderer::initRenderer(int hasUI, int reInit)
 				options.keepRTRunning = true;
 
 				m_vray = new VRay::VRayRenderer(options);
+			}
+			catch (VRay::VRayException &e) {
+				Log::getLog().error("Error initializing V-Ray! Error: \"%s\"",
+									e.what());
+				freeMem();
+			}
 
+			if (m_vray) {
 				m_vray->setOnDumpMessage(OnDumpMessage,       (void*)&m_callbacks.m_cbOnDumpMessage);
 				m_vray->setOnProgress(OnProgress,             (void*)&m_callbacks.m_cbOnProgress);
 				m_vray->setOnRendererClose(OnRendererClose,   (void*)&m_callbacks.m_cbOnRendererClose);
@@ -362,11 +370,6 @@ int VRayPluginRenderer::initRenderer(int hasUI, int reInit)
 					m_vray->setOnBucketFailed(OnBucketFailed,     (void*)&m_callbacks.m_cbOnBucketFailed);
 					m_vray->setOnBucketReady(OnBucketReady,       (void*)&m_callbacks.m_cbOnBucketReady);
 				}
-			}
-			catch (VRay::VRayException &e) {
-				Log::getLog().error("Error initializing V-Ray! Error: \"%s\"",
-									e.what());
-				freeMem();
 			}
 		}
 	}
