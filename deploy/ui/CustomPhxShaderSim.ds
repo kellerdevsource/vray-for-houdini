@@ -6,6 +6,16 @@
 	label	"Rendering"
 
 	parm {
+	    name	"setPresetParam"
+	    label	"Set this param to one of [FumeFX, HoudiniVolume, HoudiniLiquid, MayaFluids]"
+	    type	string
+	    invisible
+	    default	{ "" }
+	    range	{ 0 1 }
+	    export	none
+	}
+
+	parm {
 	    name	"selectedSopPath"
 	    label	"Sop path to read data ranges from"
 	    type	oppath

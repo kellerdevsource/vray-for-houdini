@@ -9,6 +9,10 @@
     <memberTool name="vray_displacement"/>
     <memberTool name="vray_proxy_export"/>
     <memberTool name="vray_proxy_import"/>
+    <memberTool name="vray_preset_fumefx"/>
+    <memberTool name="vray_preset_hou_fire_smoke"/>
+    <memberTool name="vray_preset_hou_liquid"/>
+    <memberTool name="vray_preset_maya_liquid"/>
 </toolshelf>
 
 
@@ -100,6 +104,44 @@ import vfh.vfh_proxy_import as vrayproxy
 
 dialog = vrayproxy.add_proxy_import_to_selected_sop()
 
+]]>
+    </script>
+</tool>
+
+
+<tool name="vray_preset_fumefx" label="FumeFX Fire/Smoke Preset" icon="ROP_vray.svg">
+    <script scriptType="python">
+<![CDATA[
+import vfh.vfh_phoenix_presets as phx_preset
+phx_preset.apply_preset('FumeFX')
+]]>
+    </script>
+</tool>
+
+
+<tool name="vray_preset_hou_fire_smoke" label="Houdini Fire/Smoke Preset" icon="ROP_vray.svg">
+    <script scriptType="python">
+<![CDATA[
+import vfh.vfh_phoenix_presets as phx_preset
+phx_preset.apply_preset('HoudiniVolume')
+]]>
+    </script>
+</tool>
+
+<tool name="vray_preset_hou_liquid" label="Houdini Liquid Preset" icon="ROP_vray.svg">
+    <script scriptType="python">
+<![CDATA[
+import vfh.vfh_phoenix_presets as phx_preset
+phx_preset.apply_preset('FumeFX')
+]]>
+    </script>
+</tool>
+
+<tool name="vray_preset_maya_liquid" label="Maya Fluid Preset" icon="ROP_vray.svg">
+    <script scriptType="python">
+<![CDATA[
+import vfh.vfh_phoenix_presets as phx_preset
+phx_preset.apply_preset('MayaFluids')
 ]]>
     </script>
 </tool>
