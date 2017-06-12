@@ -112,8 +112,6 @@ void newDriverOperator(OP_OperatorTable *table)
 	Error::ErrorChaser &errChaser = Error::ErrorChaser::getInstance();
 	errChaser.enable(true);
 
-	VRayPluginRenderer::initialize();
-
 	VRayRendererNode::register_operator(table);
 	VRayProxyROP::register_ropoperator(table),
 

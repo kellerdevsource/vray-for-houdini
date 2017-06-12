@@ -22,6 +22,35 @@
 using namespace VRayForHoudini;
 using namespace VRayForHoudini::Attrs;
 
+static QRegExp cssRgbMatch("(\\d+)");
+
+static QColor getSelectionColor(const QString &styleSheet)
+{
+	QColor selectionColor;
+
+	// Find the first occurence of "selection-background-color: rgb(184, 133, 32);"
+	QStringList lines = styleSheet.split('\n');
+	for (QString line : lines) {
+		if (line.contains("selection-background-color")) {
+			QStringList colors;
+			int pos = 0;
+
+			while ((pos = cssRgbMatch.indexIn(line, pos)) != -1) {
+				colors << cssRgbMatch.cap(1);
+				pos += cssRgbMatch.matchedLength();
+			}
+
+			selectionColor.setRed(colors[0].toInt());
+			selectionColor.setGreen(colors[1].toInt());
+			selectionColor.setBlue(colors[2].toInt());
+
+			break;
+		}
+	}
+
+	return selectionColor;
+}
+
 struct AppSdkInit;
 static AppSdkInit *appSdkInit = nullptr;
 
@@ -46,6 +75,24 @@ private:
 	AppSdkInit()
 		: m_vrayInit(nullptr)
 	{
+		QWidget *mainWindow = HOU::getMainQtWindow();
+		if (mainWindow) {
+			// VFB will take colors from QApplication::palette(),
+			// but Houdini's real palette is not stored there.
+			// Must be called before VRay::VRayInit().
+			QPalette houdiniPalette = mainWindow->palette();
+
+			// Pressed button color is incorrect in palette...
+			QString styleSheet = mainWindow->styleSheet();
+
+			houdiniPalette.setBrush(QPalette::Highlight,
+									QBrush(getSelectionColor(styleSheet)));
+
+			QApplication::setPalette(houdiniPalette);
+
+			QApplication::setFont(mainWindow->font());
+		}
+
 		try {
 #ifdef __APPLE__
 			const bool isVfbEnabled = false;
@@ -63,6 +110,8 @@ private:
 			VRay::RendererOptions options;
 			options.enableFrameBuffer = false;
 			options.showFrameBuffer = false;
+			options.useDefaultVfbTheme = false;
+			options.vfbDrawStyle = VRay::RendererOptions::ThemeStyleMaya;
 
 			m_dummyRenderer = new VRay::VRayRenderer(options);
 		}
@@ -270,15 +319,6 @@ VRayPluginRenderer::~VRayPluginRenderer()
 
 int VRayPluginRenderer::initRenderer(int hasUI, int reInit)
 {
-	// VFB will take colors from QApplication::palette(),
-	// but Houdini's real palette is not stored there for some reason.
-	QWidget *mainWindow = HOU::getMainQtWindow();
-	if (mainWindow) {
-		// Must be called before VRay::VRayRenderer(options)
-		QApplication::setPalette(mainWindow->palette());
-		QApplication::setFont(mainWindow->font());
-	}
-
 	if (initialize()) {
 		if (reInit) {
 			freeMem();
