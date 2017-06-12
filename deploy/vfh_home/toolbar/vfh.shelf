@@ -132,7 +132,7 @@ phx_preset.apply_preset('HoudiniVolume')
     <script scriptType="python">
 <![CDATA[
 import vfh.vfh_phoenix_presets as phx_preset
-phx_preset.apply_preset('FumeFX')
+phx_preset.apply_preset('HoudiniLiquid')
 ]]>
     </script>
 </tool>
