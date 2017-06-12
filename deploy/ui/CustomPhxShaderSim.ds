@@ -326,7 +326,7 @@
 	    label	"Opacity Multiplier"
 	    type	float
 	    default	{ "1" }
-	    disablewhen	"{ fire_opacity_mode == 0 }"
+	    disablewhen	"{ fire_opacity_mode != 3 }"
 	    range	{ 0! 10 }
 	    export	none
 	}
