@@ -13,13 +13,7 @@ export HFS="@HOUDINI_FRAMEWORK_ROOT@/Resources"
 export HOUDINI13_VOLUME_COMPATIBILITY=1
 export HOUDINI_PYTHON_VERSION=2.6
 
-
 # DO NOT EDIT STUFF BELOW
-#
-LAUNCHER_FILEPATH=`readlink -f $0`
-export LAUNCHER_LOCATION=`dirname ${LAUNCHER_FILEPATH}`
-
-# Environment Setup
 #
 # V-Ray Application SDK variables
 export VRAY_APPSDK=@_vfh_appsdk_path@

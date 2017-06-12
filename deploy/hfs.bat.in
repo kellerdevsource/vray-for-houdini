@@ -10,13 +10,9 @@ set HOUDINI_VER_FULL=%HOUDINI_VER_MAJOR%.@HOUDINI_VERSION_BUILD@
 :: Houdini Install Location
 set HFS=C:\Program Files\Side Effects Software\Houdini %HOUDINI_VER_FULL%
 
-:: Houdini User Home
-if NOT DEFINED HOME set HOME=%USERPROFILE%\Documents
-
 :: Use OpenVDB < 3
 ::
 set HOUDINI13_VOLUME_COMPATIBILITY=1
-
 
 :: DO NOT EDIT STUFF BELOW (well, only if you really know what you're doing)
 ::

@@ -12,13 +12,7 @@ export HFS="/opt/hfs${HOUDINI_VER_FULL}"
 #
 export HOUDINI13_VOLUME_COMPATIBILITY=1
 
-
 # DO NOT EDIT STUFF BELOW
-#
-LAUNCHER_FILEPATH=`readlink -f $0`
-export LAUNCHER_LOCATION=`dirname ${LAUNCHER_FILEPATH}`
-
-# Environment Setup
 #
 # V-Ray Application SDK variables
 export VRAY_APPSDK=@_vfh_appsdk_path@
