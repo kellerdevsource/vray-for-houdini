@@ -48,13 +48,9 @@ set HOUDINI_DSO_ERROR=1
 :: Add libs to path
 set PATH=%HFS%\bin;%VRAY_APPSDK%\bin;%PATH%;%VRAY_FOR_HOUDINI_AURA_LOADERS%
 
-where dbgcore.dll
-IF NOT ERRORLEVEL 1 (
-	goto :startHOU
-)
-set PATH=%VRAY_APPSDK%\bin\compat;%PATH%
+where /Q dbgcore.dll
+IF ERRORLEVEL 1 set PATH=%VRAY_APPSDK%\bin\compat;%PATH%
 
-:startHOU
 :: Start Houdini
 ::
 start "V-Ray For Houdini" /D "%USERPROFILE%\Desktop\" "%HFS%\bin\houdini.exe" -foreground %*
