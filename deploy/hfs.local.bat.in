@@ -28,19 +28,13 @@ set HOUDINI_DSO_PATH=@VFH_DSO_DIRPATH@;^&
 set HOUDINI_DSO_ERROR=1
 
 :: Add libs to path
-if not exist dbgcore.dll (
-	goto :includeCompat
-) else (
-	goto :noComapt
+set PATH=%HFS%\bin;%VRAY_APPSDK%\bin;%PATH%;%VRAY_FOR_HOUDINI_AURA_LOADERS%
+
+if exist dbgcore.dll (
+	goto :startHOU
 )
 
-:noComapt
-set PATH=%HFS%\bin;%VRAY_APPSDK%\bin;%PATH%;%VRAY_FOR_HOUDINI_AURA_LOADERS%
-goto :startHOU
-
-:includeCompat
-set PATH=%HFS%\bin;%VRAY_APPSDK%\bin;%VRAY_APPSDK%\bin\compat;%PATH%;%VRAY_FOR_HOUDINI_AURA_LOADERS%
-goto :startHOU
+set PATH=%VRAY_APPSDK%\bin\compat;%PATH%
 
 :startHOU
 :: Start Houdini
