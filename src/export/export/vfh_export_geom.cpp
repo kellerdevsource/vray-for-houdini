@@ -433,6 +433,102 @@ int GeometryExporter::exportVRaySOP(SOP_Node &sop, PluginDescList &pluginList)
 	return nPlugins;
 }
 
+int GeometryExporter::exportRenderPoints(const GU_Detail &gdp, VMRenderPoints renderPoints, PluginDescList &pluginList)
+{
+	const GA_Size numPoints = gdp.getNumPoints();
+	if (!numPoints) {
+		return 0;
+	}
+	if (renderPoints == vmRenderPointsNone) {
+		return 0;
+	}
+
+	// Parameters.
+	const fpreal renderScale = m_objNode.evalFloat("vm_pointscale", 0, 0.0);
+
+	// Particles positions.
+	VRay::VUtils::VectorRefList positions;
+	VRay::VUtils::VectorRefList validPointsArray(numPoints);
+
+	// Particles widths.
+	VRay::VUtils::FloatRefList radii;
+	VRay::VUtils::FloatRefList validRadiiArray;
+
+	GA_ROHandleF widthHndl(gdp.findAttribute(GA_ATTRIB_POINT, GEO_STD_ATTRIB_WIDTH));
+	if (widthHndl.isValid()) {
+		validRadiiArray = VRay::VUtils::FloatRefList(numPoints);
+	}
+
+	int positionsIdx = 0;
+	for (GA_Index i = 0; i < numPoints; ++i) {
+		const GA_Offset ptOff = gdp.pointOffset(i);
+
+		int isValidPoint;
+		if (renderPoints == vmRenderPointsAll) {
+			isValidPoint = true;
+		}
+		else {
+			GA_OffsetArray pointUsers;
+			gdp.getPrimitivesReferencingPoint(pointUsers, ptOff);
+			isValidPoint = (pointUsers.size() == 0);
+		}
+
+		if (isValidPoint) {
+			const UT_Vector3 &point = gdp.getPos3(ptOff);
+
+			validPointsArray[positionsIdx].set(point.x(), point.y(), point.z());
+			if (widthHndl.isValid()) {
+				validRadiiArray[positionsIdx] = renderScale * widthHndl.get(ptOff);
+			}
+
+			++positionsIdx;
+		}
+	}
+
+	if (positionsIdx == numPoints) {
+		positions = validPointsArray;
+		radii = validRadiiArray;
+	}
+	else {
+		positions = VRay::VUtils::VectorRefList(positionsIdx);
+		radii = VRay::VUtils::FloatRefList(positionsIdx);
+
+		for (int i = 0; i < positionsIdx; ++i) {
+			positions[i] = validPointsArray[i];
+			radii[i] = validRadiiArray[i];
+		}
+	}
+
+	if (!positions.size()) {
+		return 0;
+	}
+
+	int render_type;
+	const VMRenderPointsAs renderPointsAs =
+		static_cast<VMRenderPointsAs>(m_objNode.evalInt("vm_renderpointsas", 0, 0.0));
+	switch (renderPointsAs) {
+		case vmRenderPointsAsSphere: render_type = 7; break;
+		case vmRenderPointsAsCirle:  render_type = 6; break;
+	}
+
+	Attrs::PluginDesc partDesc("", "GeomParticleSystem");
+	partDesc.addAttribute(Attrs::PluginAttr("positions", positions));
+	partDesc.addAttribute(Attrs::PluginAttr("render_type", render_type));
+	if (radii.size()) {
+		partDesc.addAttribute(Attrs::PluginAttr("radii", radii));
+	}
+	else {
+		const fpreal defaultRadius = 0.01;
+		partDesc.addAttribute(Attrs::PluginAttr("radius", defaultRadius * renderScale));
+	}
+
+	Attrs::PluginDesc partNode("", "Node");
+	partNode.addAttribute(Attrs::PluginAttr("geometry", m_pluginExporter.exportPlugin(partDesc)));
+
+	pluginList.push_back(partNode);
+
+	return 1;
+}
 
 int GeometryExporter::exportDetail(SOP_Node &sop, GU_DetailHandleAutoReadLock &gdl, PluginDescList &pluginList)
 {
@@ -465,8 +561,22 @@ int GeometryExporter::exportDetail(SOP_Node &sop, GU_DetailHandleAutoReadLock &g
 		}
 	}
 
-	// handle export of mesh geometry
-	nPlugins += exportPolyMesh(sop, gdp, pluginList);
+	// Export mesh geometry.
+	const VMRenderPoints renderPoints =
+		static_cast<VMRenderPoints>(m_objNode.evalInt("vm_renderpoints", 0, 0.0));
+
+	if (renderPoints != vmRenderPointsAll) {
+		const int numPolyPlugins = exportPolyMesh(sop, gdp, pluginList);
+		if (numPolyPlugins) {
+			nPlugins += numPolyPlugins;
+		}
+	}
+
+	if (gdp.getNumPoints() &&
+		(renderPoints == vmRenderPointsAll || renderPoints == vmRenderPointsUnconnected))
+	{
+		nPlugins += exportRenderPoints(gdp, renderPoints, pluginList);
+	}
 
 	return nPlugins;
 }
