@@ -30,7 +30,7 @@ typedef std::vector<bool> DynamicBitset;
 namespace {
 void fillFreePointMap(const GU_Detail &detail, DynamicBitset &map) {
 	const GA_Size verticesCount = detail.getNumVertices();
-	for (int c = 0; c < verticesCount; c++) {
+	for (GA_Size c = 0; c < verticesCount; c++) {
 		const GA_Offset vertOffset = detail.vertexOffset(c);
 		const GA_Offset pointOffset = detail.vertexPoint(vertOffset);
 		const GA_Index pointIndex = detail.pointIndex(pointOffset);
