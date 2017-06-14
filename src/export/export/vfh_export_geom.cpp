@@ -26,6 +26,21 @@ using namespace VRayForHoudini;
 
 const char *const VFH_ATTR_MATERIAL_ID = "switchmtl";
 
+typedef std::vector<bool> DynamicBitset;
+namespace {
+void fillFreePointMap(const GU_Detail &detail, DynamicBitset &map) {
+	const GA_Size verticesCount = detail.getNumVertices();
+	for (int c = 0; c < verticesCount; c++) {
+		const GA_Offset vertOffset = detail.vertexOffset(c);
+		const GA_Offset pointOffset = detail.vertexPoint(vertOffset);
+		const GA_Index pointIndex = detail.pointIndex(pointOffset);
+		if (pointIndex < map.size()) {
+			map[pointIndex] = false;
+		}
+	}
+}
+}
+
 
 GeometryExporter::GeometryExporter(OBJ_Geometry &node, VRayExporter &pluginExporter):
 	m_objNode(node),
@@ -433,20 +448,6 @@ int GeometryExporter::exportVRaySOP(SOP_Node &sop, PluginDescList &pluginList)
 	return nPlugins;
 }
 
-void fillFreePointMap(const GU_Detail &detail, std::vector<bool> &map)
-{
-	auto cnt = detail.getNumVertices();
-	for (int c = 0; c < cnt; c++) {
-		const GA_Offset vertOffset = detail.vertexOffset(c);
-		const GA_Offset pointOffset = detail.vertexPoint(vertOffset);
-		const GA_Index pointIndex = detail.pointIndex(pointOffset);
-		if (pointIndex < map.size()) {
-			map[pointIndex] = false;
-		}
-	}
-
-}
-
 int GeometryExporter::exportRenderPoints(const GU_Detail &gdp, VMRenderPoints renderPoints, PluginDescList &pluginList)
 {
 	const GA_Size numPoints = gdp.getNumPoints();
@@ -457,7 +458,7 @@ int GeometryExporter::exportRenderPoints(const GU_Detail &gdp, VMRenderPoints re
 		return 0;
 	}
 
-	std::vector<bool> freePointMap(numPoints, true);
+	DynamicBitset freePointMap(numPoints, true);
 	if (renderPoints != vmRenderPointsAll) {
 		fillFreePointMap(gdp, freePointMap);
 	}
