@@ -433,6 +433,20 @@ int GeometryExporter::exportVRaySOP(SOP_Node &sop, PluginDescList &pluginList)
 	return nPlugins;
 }
 
+void fillFreePointMap(const GU_Detail &detail, std::vector<bool> &map)
+{
+	auto cnt = detail.getNumVertices();
+	for (int c = 0; c < cnt; c++) {
+		const GA_Offset vertOffset = detail.vertexOffset(c);
+		const GA_Offset pointOffset = detail.vertexPoint(vertOffset);
+		const GA_Index pointIndex = detail.pointIndex(pointOffset);
+		if (pointIndex < map.size()) {
+			map[pointIndex] = false;
+		}
+	}
+
+}
+
 int GeometryExporter::exportRenderPoints(const GU_Detail &gdp, VMRenderPoints renderPoints, PluginDescList &pluginList)
 {
 	const GA_Size numPoints = gdp.getNumPoints();
@@ -441,6 +455,11 @@ int GeometryExporter::exportRenderPoints(const GU_Detail &gdp, VMRenderPoints re
 	}
 	if (renderPoints == vmRenderPointsNone) {
 		return 0;
+	}
+
+	std::vector<bool> freePointMap(numPoints, true);
+	if (renderPoints != vmRenderPointsAll) {
+		fillFreePointMap(gdp, freePointMap);
 	}
 
 	// Parameters.
@@ -468,9 +487,7 @@ int GeometryExporter::exportRenderPoints(const GU_Detail &gdp, VMRenderPoints re
 			isValidPoint = true;
 		}
 		else {
-			GA_OffsetArray pointUsers;
-			gdp.getPrimitivesReferencingPoint(pointUsers, ptOff);
-			isValidPoint = (pointUsers.size() == 0);
+			isValidPoint = freePointMap[i];
 		}
 
 		if (isValidPoint) {
