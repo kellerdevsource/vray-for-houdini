@@ -491,11 +491,14 @@ int GeometryExporter::exportRenderPoints(const GU_Detail &gdp, VMRenderPoints re
 	}
 	else {
 		positions = VRay::VUtils::VectorRefList(positionsIdx);
-		radii = VRay::VUtils::FloatRefList(positionsIdx);
-
 		for (int i = 0; i < positionsIdx; ++i) {
 			positions[i] = validPointsArray[i];
-			radii[i] = validRadiiArray[i];
+		}
+		if (widthHndl.isValid()) {
+			radii = VRay::VUtils::FloatRefList(positionsIdx);
+			for (int i = 0; i < positionsIdx; ++i) {
+				radii[i] = validRadiiArray[i];
+			}
 		}
 	}
 
