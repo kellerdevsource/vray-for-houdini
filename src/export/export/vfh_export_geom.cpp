@@ -537,8 +537,6 @@ int GeometryExporter::exportRenderPoints(const GU_Detail &gdp, VMRenderPoints re
 		return 0;
 	}
 
-
-
 	Attrs::PluginDesc partDesc("", "GeomParticleSystem");
 	partDesc.addAttribute(Attrs::PluginAttr("positions", positions));
 	partDesc.addAttribute(Attrs::PluginAttr("render_type", renderType));
