@@ -446,17 +446,45 @@ int GeometryExporter::exportRenderPoints(const GU_Detail &gdp, VMRenderPoints re
 	// Parameters.
 	const fpreal renderScale = m_objNode.evalFloat("vm_pointscale", 0, 0.0);
 
+	int renderType;
+	fpreal radiusMult = renderScale;
+
+	const VMRenderPointsAs renderPointsAs =
+		static_cast<VMRenderPointsAs>(m_objNode.evalInt("vm_renderpointsas", 0, 0.0));
+	switch (renderPointsAs) {
+		case vmRenderPointsAsSphere: {
+			renderType = 7;
+			radiusMult *= 0.01;
+			break;
+		}
+		case vmRenderPointsAsCirle: {
+			renderType = 6;
+			radiusMult *= 5.0;
+			break;
+		}
+	}
+
 	// Particles positions.
 	VRay::VUtils::VectorRefList positions;
 	VRay::VUtils::VectorRefList validPointsArray(numPoints);
+
+	VRay::VUtils::VectorRefList velocities;
+	VRay::VUtils::VectorRefList validVelocitiesArray(numPoints);
 
 	// Particles widths.
 	VRay::VUtils::FloatRefList radii;
 	VRay::VUtils::FloatRefList validRadiiArray;
 
+	// Particle size attibute.
 	GA_ROHandleF widthHndl(gdp.findAttribute(GA_ATTRIB_POINT, GEO_STD_ATTRIB_WIDTH));
 	if (widthHndl.isValid()) {
 		validRadiiArray = VRay::VUtils::FloatRefList(numPoints);
+	}
+
+	// Particle velocity attibute.
+	GA_ROHandleV3 velocityHndl(gdp.findAttribute(GA_ATTRIB_POINT, GEO_STD_ATTRIB_VELOCITY));
+	if (velocityHndl.isValid()) {
+		validVelocitiesArray = VRay::VUtils::VectorRefList(numPoints);
 	}
 
 	int positionsIdx = 0;
@@ -478,7 +506,11 @@ int GeometryExporter::exportRenderPoints(const GU_Detail &gdp, VMRenderPoints re
 
 			validPointsArray[positionsIdx].set(point.x(), point.y(), point.z());
 			if (widthHndl.isValid()) {
-				validRadiiArray[positionsIdx] = renderScale * widthHndl.get(ptOff);
+				validRadiiArray[positionsIdx] = radiusMult * widthHndl.get(ptOff);
+			}
+			if (velocityHndl.isValid()) {
+				const UT_Vector3F &v = velocityHndl.get(ptOff);
+				validVelocitiesArray[positionsIdx].set(v.x(), v.y(), v.z());
 			}
 
 			++positionsIdx;
@@ -488,6 +520,7 @@ int GeometryExporter::exportRenderPoints(const GU_Detail &gdp, VMRenderPoints re
 	if (positionsIdx == numPoints) {
 		positions = validPointsArray;
 		radii = validRadiiArray;
+		velocities = validVelocitiesArray;
 	}
 	else {
 		positions = VRay::VUtils::VectorRefList(positionsIdx);
@@ -496,6 +529,7 @@ int GeometryExporter::exportRenderPoints(const GU_Detail &gdp, VMRenderPoints re
 		for (int i = 0; i < positionsIdx; ++i) {
 			positions[i] = validPointsArray[i];
 			radii[i] = validRadiiArray[i];
+			velocities[i] = validVelocitiesArray[i];
 		}
 	}
 
@@ -503,23 +537,21 @@ int GeometryExporter::exportRenderPoints(const GU_Detail &gdp, VMRenderPoints re
 		return 0;
 	}
 
-	int render_type;
-	const VMRenderPointsAs renderPointsAs =
-		static_cast<VMRenderPointsAs>(m_objNode.evalInt("vm_renderpointsas", 0, 0.0));
-	switch (renderPointsAs) {
-		case vmRenderPointsAsSphere: render_type = 7; break;
-		case vmRenderPointsAsCirle:  render_type = 6; break;
-	}
+
 
 	Attrs::PluginDesc partDesc("", "GeomParticleSystem");
 	partDesc.addAttribute(Attrs::PluginAttr("positions", positions));
-	partDesc.addAttribute(Attrs::PluginAttr("render_type", render_type));
+	partDesc.addAttribute(Attrs::PluginAttr("render_type", renderType));
+	if (velocities.size()) {
+		partDesc.addAttribute(Attrs::PluginAttr("velocities", velocities));
+	}
 	if (radii.size()) {
 		partDesc.addAttribute(Attrs::PluginAttr("radii", radii));
+		partDesc.addAttribute(Attrs::PluginAttr("point_radii", true));
 	}
 	else {
-		const fpreal defaultRadius = 0.01;
-		partDesc.addAttribute(Attrs::PluginAttr("radius", defaultRadius * renderScale));
+		partDesc.addAttribute(Attrs::PluginAttr("radius", radiusMult));
+		partDesc.addAttribute(Attrs::PluginAttr("point_size", radiusMult));
 	}
 
 	Attrs::PluginDesc partNode("", "Node");
