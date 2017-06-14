@@ -193,6 +193,7 @@ if(HDK_FOUND)
 		set(HDK_LIBS
 			${HDK_LIBS_A}
 			$<$<CONFIG:Release>:Half.lib>
+			$<$<CONFIG:RelWithDebInfo>:Half.lib>
 			openvdb_sesi.lib
 		)
 
