@@ -28,7 +28,9 @@ const char *const VFH_ATTR_MATERIAL_ID = "switchmtl";
 
 typedef std::vector<bool> DynamicBitset;
 namespace {
-void fillFreePointMap(const GU_Detail &detail, DynamicBitset &map) {
+/// Check all points inside the detail and clear the bitset's indecies of those points which belong to some primitive
+/// Additionally return the number of "free" points (thats the size of the map minus the non free point count)
+GA_Size fillFreePointMap(const GU_Detail &detail, DynamicBitset &map) {
 	const GA_Size verticesCount = detail.getNumVertices();
 	for (GA_Size c = 0; c < verticesCount; c++) {
 		const GA_Offset vertOffset = detail.vertexOffset(c);
@@ -38,6 +40,11 @@ void fillFreePointMap(const GU_Detail &detail, DynamicBitset &map) {
 			map[pointIndex] = false;
 		}
 	}
+	GA_Size freePointCount = 0;
+	for (GA_Size c = 0; c < map.size(); c++) {
+		freePointCount += map[c];
+	}
+	return freePointCount;
 }
 }
 
@@ -459,24 +466,24 @@ int GeometryExporter::exportRenderPoints(const GU_Detail &gdp, VMRenderPoints re
 	}
 
 	DynamicBitset freePointMap(numPoints, true);
+	GA_Size freePointCount = numPoints;
 	if (renderPoints != vmRenderPointsAll) {
-		fillFreePointMap(gdp, freePointMap);
+		freePointCount = fillFreePointMap(gdp, freePointMap);
 	}
 
 	// Parameters.
 	const fpreal renderScale = m_objNode.evalFloat("vm_pointscale", 0, 0.0);
 
 	// Particles positions.
-	VRay::VUtils::VectorRefList positions;
-	VRay::VUtils::VectorRefList validPointsArray(numPoints);
+	VRay::VUtils::VectorRefList positions(freePointCount);
 
 	// Particles widths.
 	VRay::VUtils::FloatRefList radii;
-	VRay::VUtils::FloatRefList validRadiiArray;
 
 	GA_ROHandleF widthHndl(gdp.findAttribute(GA_ATTRIB_POINT, GEO_STD_ATTRIB_WIDTH));
-	if (widthHndl.isValid()) {
-		validRadiiArray = VRay::VUtils::FloatRefList(numPoints);
+	const bool haveWidths = widthHndl.isValid();
+	if (haveWidths) {
+		radii = VRay::VUtils::FloatRefList(freePointCount);
 	}
 
 	int positionsIdx = 0;
@@ -494,29 +501,13 @@ int GeometryExporter::exportRenderPoints(const GU_Detail &gdp, VMRenderPoints re
 		if (isValidPoint) {
 			const UT_Vector3 &point = gdp.getPos3(ptOff);
 
-			validPointsArray[positionsIdx].set(point.x(), point.y(), point.z());
-			if (widthHndl.isValid()) {
-				validRadiiArray[positionsIdx] = renderScale * widthHndl.get(ptOff);
+			UT_ASSERT_MSG(positionsIdx < positions.size(), "Incorrect calculation of free points inside detail!");
+			positions[positionsIdx].set(point.x(), point.y(), point.z());
+			if (haveWidths) {
+				radii[positionsIdx] = renderScale * widthHndl.get(ptOff);
 			}
 
 			++positionsIdx;
-		}
-	}
-
-	if (positionsIdx == numPoints) {
-		positions = validPointsArray;
-		radii = validRadiiArray;
-	}
-	else {
-		positions = VRay::VUtils::VectorRefList(positionsIdx);
-		for (int i = 0; i < positionsIdx; ++i) {
-			positions[i] = validPointsArray[i];
-		}
-		if (widthHndl.isValid()) {
-			radii = VRay::VUtils::FloatRefList(positionsIdx);
-			for (int i = 0; i < positionsIdx; ++i) {
-				radii[i] = validRadiiArray[i];
-			}
 		}
 	}
 
