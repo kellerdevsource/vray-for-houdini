@@ -525,6 +525,7 @@ int GeometryExporter::exportRenderPoints(const GU_Detail &gdp, VMRenderPoints re
 	else {
 		positions = VRay::VUtils::VectorRefList(positionsIdx);
 		radii = VRay::VUtils::FloatRefList(positionsIdx);
+		velocities = VRay::VUtils::VectorRefList(positionsIdx);
 
 		for (int i = 0; i < positionsIdx; ++i) {
 			positions[i] = validPointsArray[i];
