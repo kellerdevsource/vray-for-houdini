@@ -36,6 +36,7 @@ GA_Size fillFreePointMap(const GU_Detail &detail, DynamicBitset &map) {
 		const GA_Offset vertOffset = detail.vertexOffset(c);
 		const GA_Offset pointOffset = detail.vertexPoint(vertOffset);
 		const GA_Index pointIndex = detail.pointIndex(pointOffset);
+		// we cant just count these becase some vertices share points
 		if (pointIndex < map.size()) {
 			map[pointIndex] = false;
 		}
