@@ -33,7 +33,7 @@ public:
 		, pluginInfo(nullptr)
 	{}
 
-	virtual ~VRayNode() = default;
+	virtual ~VRayNode() {}
 
 	/// Extra initialization called by the creator
 	void init();

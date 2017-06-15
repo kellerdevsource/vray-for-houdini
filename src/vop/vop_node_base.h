@@ -103,7 +103,7 @@ public: \
 	OpPluginID(OP_Network *parent, const char *name, OP_Operator *entry) \
 		: NodeBase(parent, name, entry) \
 	{} \
-	virtual ~OpPluginID() = default; \
+	virtual ~OpPluginID() {} \
 protected: \
 	virtual void setPluginType() VRAY_OVERRIDE { \
 		pluginType = VRayPluginType::OpPluginType; \
