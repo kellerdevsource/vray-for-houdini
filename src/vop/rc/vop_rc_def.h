@@ -18,7 +18,7 @@
 namespace VRayForHoudini {
 namespace VOP {
 
-#define RC_DEF(PluginID) NODE_BASE_DEF("RENDERCHANNEL", PluginID)
+#define RC_DEF(PluginID) NODE_BASE_DEF(RENDERCHANNEL, PluginID)
 
 RC_DEF(RenderChannelBumpNormals)
 RC_DEF(RenderChannelColor)

@@ -17,7 +17,7 @@ using namespace VRayForHoudini;
 
 void VOP::TexFalloff::setPluginType()
 {
-	pluginType = "TEXTURE";
+	pluginType = VRayPluginType::TEXTURE;
 	pluginID   = "TexFalloff";
 }
 

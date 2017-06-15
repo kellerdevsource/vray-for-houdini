@@ -277,31 +277,31 @@ int GeometryExporter::exportNodes() {
 }
 
 
-VRay::Plugin GeometryExporter::exportMaterial() {
-	VRay::Plugin mtl;
-
+VRay::Plugin GeometryExporter::exportMaterial()
+{
 	VRay::ValueList mtls_list;
 	VRay::IntList   ids_list;
 	mtls_list.reserve(m_shopList.size() + 1);
 	ids_list.reserve(m_shopList.size() + 1);
 
 	// object material is always exported with id 0
-	SHOP_Node *shopNode = m_pluginExporter.getObjMaterial(&m_objNode, m_context.getTime());
-	if (shopNode) {
-		mtls_list.emplace_back(m_pluginExporter.exportMaterial(*shopNode));
+	OP_Node *matNode = m_pluginExporter.getObjMaterial(&m_objNode, m_context.getTime());
+	if (matNode) {
+		mtls_list.emplace_back(m_pluginExporter.exportMaterial(matNode));
 		ids_list.emplace_back(0);
-	} else {
+	}
+	else {
 		mtls_list.emplace_back(m_pluginExporter.exportDefaultMaterial());
 		ids_list.emplace_back(0);
 	}
 
 	// generate id for each SHOP and add it to the material list
 	SHOPHasher hasher;
-	for (const UT_String &shoppath : m_shopList) {
-		SHOP_Node *shopNode = OPgetDirector()->findSHOPNode(shoppath);
-		UT_ASSERT(shopNode);
-		mtls_list.emplace_back(m_pluginExporter.exportMaterial(*shopNode));
-		ids_list.emplace_back(hasher(shopNode));
+	for (const UT_String &matPath : m_shopList) {
+		OP_Node *opNode = getOpNodeFromPath(matPath);
+		UT_ASSERT(opNode);
+		mtls_list.emplace_back(m_pluginExporter.exportMaterial(opNode));
+		ids_list.emplace_back(hasher(opNode));
 	}
 
 	// export single MtlMulti material
@@ -323,34 +323,34 @@ VRay::Plugin GeometryExporter::exportMaterial() {
 
 	mtlDesc.addAttribute(Attrs::PluginAttr("mtlid_gen_float", myMtlID, "scalar"));
 
-	mtl = m_pluginExporter.exportPlugin(mtlDesc);
+	VRay::Plugin mtl = m_pluginExporter.exportPlugin(mtlDesc);
 
 	// handle if object is forced as matte
 	if (isNodeMatte()) {
-		Attrs::PluginDesc mtlDesc;
-		mtlDesc.pluginID = "MtlWrapper";
-		mtlDesc.pluginName = VRayExporter::getPluginName(&m_objNode, "MtlWrapper");
+		Attrs::PluginDesc mtlWrapperDesc;
+		mtlWrapperDesc.pluginID = "MtlWrapper";
+		mtlWrapperDesc.pluginName = VRayExporter::getPluginName(&m_objNode, "MtlWrapper");
 
-		mtlDesc.addAttribute(Attrs::PluginAttr("base_material", mtl));
-		mtlDesc.addAttribute(Attrs::PluginAttr("matte_surface", 1));
-		mtlDesc.addAttribute(Attrs::PluginAttr("alpha_contribution", -1));
-		mtlDesc.addAttribute(Attrs::PluginAttr("affect_alpha", 1));
-		mtlDesc.addAttribute(Attrs::PluginAttr("reflection_amount", 0));
-		mtlDesc.addAttribute(Attrs::PluginAttr("refraction_amount", 0));
+		mtlWrapperDesc.addAttribute(Attrs::PluginAttr("base_material", mtl));
+		mtlWrapperDesc.addAttribute(Attrs::PluginAttr("matte_surface", 1));
+		mtlWrapperDesc.addAttribute(Attrs::PluginAttr("alpha_contribution", -1));
+		mtlWrapperDesc.addAttribute(Attrs::PluginAttr("affect_alpha", 1));
+		mtlWrapperDesc.addAttribute(Attrs::PluginAttr("reflection_amount", 0));
+		mtlWrapperDesc.addAttribute(Attrs::PluginAttr("refraction_amount", 0));
 
-		mtl = m_pluginExporter.exportPlugin(mtlDesc);
+		mtl = m_pluginExporter.exportPlugin(mtlWrapperDesc);
 	}
 
 	// handle if object is forced as phantom
 	if (isNodePhantom()) {
-		Attrs::PluginDesc mtlDesc;
-		mtlDesc.pluginID = "MtlRenderStats";
-		mtlDesc.pluginName = VRayExporter::getPluginName(&m_objNode, "MtlRenderStats");
+		Attrs::PluginDesc mtlStatsDesc;
+		mtlStatsDesc.pluginID = "MtlRenderStats";
+		mtlStatsDesc.pluginName = VRayExporter::getPluginName(&m_objNode, "MtlRenderStats");
 
-		mtlDesc.addAttribute(Attrs::PluginAttr("base_mtl", mtl));
-		mtlDesc.addAttribute(Attrs::PluginAttr("camera_visibility", 0));
+		mtlStatsDesc.addAttribute(Attrs::PluginAttr("base_mtl", mtl));
+		mtlStatsDesc.addAttribute(Attrs::PluginAttr("camera_visibility", 0));
 
-		mtl = m_pluginExporter.exportPlugin(mtlDesc);
+		mtl = m_pluginExporter.exportPlugin(mtlStatsDesc);
 	}
 
 
@@ -361,8 +361,8 @@ VRay::Plugin GeometryExporter::exportMaterial() {
 int GeometryExporter::getSHOPOverridesAsUserAttributes(UT_String &userAttrs) const {
 	int nOverrides = 0;
 
-	SHOP_Node *shopNode = m_pluginExporter.getObjMaterial(&m_objNode, m_context.getTime());
-	if (NOT(shopNode)) {
+	OP_Node *shopNode = m_pluginExporter.getObjMaterial(&m_objNode, m_context.getTime());
+	if (!shopNode) {
 		return nOverrides;
 	}
 
@@ -440,21 +440,6 @@ int GeometryExporter::exportVRaySOP(SOP_Node &sop, PluginDescList &pluginList) {
 	return nPlugins;
 }
 
-/// Returns OP_Node instance from node path.
-/// @param path Node path. May be changed if path has "op:/" syntax.
-/// @returns OP_Node instance or NULL.
-static OP_Node *getOpNodeFromPath(UT_String &path, fpreal t)
-{
-	if (path.startsWith(OPREF_PREFIX)) {
-		int op_id = 0;
-		fpreal op_time = 0.0;
-
-		OPgetDirector()->evalOpPathString(path, 0, 0, t, op_id, op_time);
-	}
-
-	return OPgetDirector()->findNode(path.buffer());
-}
-
 int GeometryExporter::exportRenderPoints(const GU_Detail &gdp, VMRenderPoints renderPoints, PluginDescList &pluginList)
 {
 	const GA_Size numPoints = gdp.getNumPoints();
@@ -497,21 +482,33 @@ int GeometryExporter::exportRenderPoints(const GU_Detail &gdp, VMRenderPoints re
 
 	// Particle properties.
 	VRay::VUtils::VectorRefList positions(freePointCount);
-	VRay::VUtils::VectorRefList velocities;
-	VRay::VUtils::FloatRefList radii;
 
-	// Particle size attibute.
-	GA_ROHandleF widthHndl(gdp.findAttribute(GA_ATTRIB_POINT, GEO_STD_ATTRIB_WIDTH));
-	const bool haveWidths = widthHndl.isValid();
-	if (haveWidths) {
-		radii = VRay::VUtils::FloatRefList(freePointCount);
+	VRay::VUtils::VectorRefList velocities;
+	GA_ROHandleV3 velocityHndl(gdp.findAttribute(GA_ATTRIB_POINT, GEO_STD_ATTRIB_VELOCITY));
+	if (velocityHndl.isValid()) {
+		velocities = VRay::VUtils::VectorRefList(freePointCount);
 	}
 
-	// Particle velocity attibute.
-	GA_ROHandleV3 velocityHndl(gdp.findAttribute(GA_ATTRIB_POINT, GEO_STD_ATTRIB_VELOCITY));
-	const bool haveVelocities = velocityHndl.isValid();
-	if (haveVelocities) {
-		velocities = VRay::VUtils::VectorRefList(freePointCount);
+	VRay::VUtils::ColorRefList color;
+	GA_ROHandleV3 cdHndl(gdp.findAttribute(GA_ATTRIB_POINT, GEO_STD_ATTRIB_DIFFUSE));
+	if (cdHndl.isValid()) {
+		color = VRay::VUtils::ColorRefList(freePointCount);
+	}
+
+	VRay::VUtils::FloatRefList opacity;
+	GA_ROHandleF opacityHndl(gdp.findAttribute(GA_ATTRIB_POINT, GEO_STD_ATTRIB_ALPHA));
+	if (opacityHndl.isValid()) {
+		opacity = VRay::VUtils::FloatRefList(freePointCount);
+	}
+
+	VRay::VUtils::FloatRefList pscale;
+	const GA_Attribute *pscaleAttr = gdp.findAttribute(GA_ATTRIB_POINT, GEO_STD_ATTRIB_PSCALE);
+	if (!pscaleAttr) {
+		pscaleAttr = gdp.findAttribute(GA_ATTRIB_POINT, GEO_STD_ATTRIB_WIDTH);
+	}
+	GA_ROHandleF pscaleHndl(pscaleAttr);
+	if (pscaleHndl.isValid()) {
+		pscale = VRay::VUtils::FloatRefList(freePointCount);
 	}
 
 	enum ParticleMode {
@@ -584,16 +581,12 @@ int GeometryExporter::exportRenderPoints(const GU_Detail &gdp, VMRenderPoints re
 					instanceNode = m_pluginExporter.exportObject(instaceObjNode);
 					if (instanceNode) {
 						if (materialPathHndl.isValid()) {
-							UT_String instanceMtlPath = materialPathHndl.get(ptOff);
-							OP_Node *instaceMtlOpNode = getOpNodeFromPath(instanceMtlPath, m_context.getTime());
-							if (instaceMtlOpNode) {
-								SHOP_Node *instaceMtlShopNode = instaceMtlOpNode->castToSHOPNode();
-								UT_ASSERT_MSG(instaceObjNode, "Not an SHOP node!");
-								if (instaceMtlShopNode) {
-									instanceMtl = m_pluginExporter.exportMaterial(*instaceMtlShopNode);
-									if (instanceMtl) {
-										additional_params_flags |= useMaterial;
-									}
+							const UT_String &instanceMtlPath = materialPathHndl.get(ptOff);
+							OP_Node *instaceMatNode = getOpNodeFromPath(instanceMtlPath, m_context.getTime());
+							if (instaceMatNode) {
+								instanceMtl = m_pluginExporter.exportMaterial(instaceMatNode);
+								if (instanceMtl) {
+									additional_params_flags |= useMaterial;
 								}
 							}
 						}
@@ -629,7 +622,7 @@ int GeometryExporter::exportRenderPoints(const GU_Detail &gdp, VMRenderPoints re
 
 				// Particle velocity.
 				UT_Vector3 velocity(0.0, 0.0, 0.0);
-				if (haveVelocities) {
+				if (velocityHndl.isValid()) {
 					// velocity = velocityHndl.get(ptOff);
 				}
 
@@ -669,18 +662,29 @@ int GeometryExporter::exportRenderPoints(const GU_Detail &gdp, VMRenderPoints re
 
 			const int isValidPoint = renderPoints == vmRenderPointsAll ? true : freePointMap[i];
 			if (isValidPoint) {
+				UT_ASSERT_MSG(positionsIdx < positions.size(), "Incorrect calculation of free points inside detail!");
+
 				const UT_Vector3 &point = gdp.getPos3(ptOff);
 
-				UT_ASSERT_MSG(positionsIdx < positions.size(), "Incorrect calculation of free points inside detail!");
 				positions[positionsIdx].set(point.x(), point.y(), point.z());
 
-				if (haveVelocities) {
+				if (velocityHndl.isValid()) {
 					const UT_Vector3F &v = velocityHndl.get(ptOff);
 					velocities[positionsIdx].set(v.x(), v.y(), v.z());
 				}
+				if (pscaleHndl.isValid()) {
+					pscale[positionsIdx] = radiusMult * pscaleHndl.get(ptOff);
+				}
 
-				if (haveWidths) {
-					radii[positionsIdx] = renderScale * widthHndl.get(ptOff);
+				if (cdHndl.isValid()) {
+					const UT_Vector3F &cd = cdHndl.get(ptOff);
+					color[positionsIdx].r = cd.x();
+					color[positionsIdx].g = cd.y();
+					color[positionsIdx].g = cd.z();
+				}
+
+				if (opacityHndl.isValid()) {
+					opacity[positionsIdx] = opacityHndl.get(ptOff);
 				}
 
 				++positionsIdx;
@@ -693,11 +697,16 @@ int GeometryExporter::exportRenderPoints(const GU_Detail &gdp, VMRenderPoints re
 		if (velocities.size()) {
 			partDesc.addAttribute(Attrs::PluginAttr("velocities", velocities));
 		}
-		if (radii.size()) {
-			partDesc.addAttribute(Attrs::PluginAttr("radii", radii));
-			partDesc.addAttribute(Attrs::PluginAttr("point_radii", true));
+		if (color.size()) {
+			partDesc.addAttribute(Attrs::PluginAttr("colors", color));
 		}
-		else {
+		if (opacity.size()) {
+			partDesc.addAttribute(Attrs::PluginAttr("opacity_pp", opacity));
+		}
+		if (pscale.size()) {
+			partDesc.addAttribute(Attrs::PluginAttr("radii", pscale));
+			partDesc.addAttribute(Attrs::PluginAttr("point_radii", true));
+		} else {
 			partDesc.addAttribute(Attrs::PluginAttr("radius", radiusMult));
 			partDesc.addAttribute(Attrs::PluginAttr("point_size", radiusMult));
 		}

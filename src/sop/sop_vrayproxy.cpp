@@ -91,7 +91,7 @@ SOP::VRayProxy::VRayProxy(OP_Network *parent, const char *name, OP_Operator *ent
 
 void SOP::VRayProxy::setPluginType()
 {
-	pluginType = "GEOMETRY";
+	pluginType = VRayPluginType::GEOMETRY;
 	pluginID   = "GeomMeshFile";
 }
 

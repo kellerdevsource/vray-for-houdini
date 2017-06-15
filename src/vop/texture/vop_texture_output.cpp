@@ -21,7 +21,7 @@ void VOP::TextureOutput::addPrmTemplate(Parm::PRMList &prmTemplate)
 
 void VOP::TextureOutput::setPluginType()
 {
-	pluginType = "CUSTOM_TEXTURE";
+	pluginType = VRayPluginType::CUSTOM_TEXTURE;
 	pluginID   = "CustomTextureOutput";
 }
 

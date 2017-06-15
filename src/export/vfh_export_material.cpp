@@ -32,13 +32,7 @@ void VRayExporter::RtCallbackSurfaceShop(OP_Node *caller, void *callee, OP_Event
 		caller->getInputName(inputName, idx);
 
 		if (inputName.equal("Material")) {
-			SHOP_Node *shop_node = caller->getParent()->castToSHOPNode();
-			if (shop_node) {
-				UT_String shopPath;
-				shop_node->getFullPath(shopPath);
-
-				exporter.exportMaterial(*shop_node);
-			}
+			exporter.exportMaterial(caller->getParent());
 		}
 	}
 	else if (type == OP_NODE_PREDELETE) {
@@ -46,63 +40,79 @@ void VRayExporter::RtCallbackSurfaceShop(OP_Node *caller, void *callee, OP_Event
 	}
 }
 
-
-VRay::Plugin VRayExporter::exportMaterial(SHOP_Node &shop_node)
+VRay::Plugin VRayExporter::exportMaterial(VOP_Node *vopNode)
 {
+	if (!vopNode) {
+		return VRay::Plugin();
+	}
+
+	VRay::Plugin material = exportVop(vopNode);
+
+	const VOP_Type vopType = vopNode->getShaderType();
+	if (vopType == VOP_TYPE_BSDF) {
+		// Wrap BRDF into MtlSingleBRDF for RT GPU to work properly.
+		Attrs::PluginDesc mtlPluginDesc(getPluginName(vopNode, "MtlSingle"), "MtlSingleBRDF");
+		mtlPluginDesc.addAttribute(Attrs::PluginAttr("brdf", material));
+		material = exportPlugin(mtlPluginDesc);
+	}
+
+	if (material && isIPR()) {
+		// Wrap material into MtlRenderStats to always have the same material name.
+		// Used when rewiring materials when running interactive RT session.
+		Attrs::PluginDesc pluginDesc(getPluginName(vopNode, "MtlStats"), "MtlRenderStats");
+		pluginDesc.addAttribute(Attrs::PluginAttr("base_mtl", material));
+		material = exportPlugin(pluginDesc);
+	}
+
+	return material;
+}
+
+VRay::Plugin VRayExporter::exportMaterial(OP_Node *matNode)
+{
+	if (!matNode) {
+		return VRay::Plugin();
+	}
+
 	VRay::Plugin material;
-	UT_ValArray<OP_Node *> mtlOutList;
-	if ( shop_node.getOpsByName("vray_material_output", mtlOutList) ) {
-		// there is at least 1 "vray_material_output" node so take the first one
-		VOP::MaterialOutput *mtlOut = static_cast< VOP::MaterialOutput * >( mtlOutList(0) );
-		addOpCallback(mtlOut, VRayExporter::RtCallbackSurfaceShop);
 
-		if (mtlOut->error() < UT_ERROR_ABORT ) {
-			Log::getLog().info("Exporting material output \"%s\"...",
-							   mtlOut->getName().buffer());
+	SHOP_Node *shopNode = CAST_SHOPNODE(matNode);
+	VOP_Node *vopNode = CAST_VOPNODE(matNode);
+	if (vopNode) {
+		material = exportMaterial(vopNode);
+	}
+	else if (shopNode) {
+		UT_ValArray<OP_Node*> mtlOutList;
+		const int numMtlOutput = shopNode->getOpsByName("vray_material_output", mtlOutList);
+		if (numMtlOutput == 0) {
+			Log::getLog().error("Can't find \"V-Ray Material Output\" node under \"%s\"!",
+								shopNode->getName().buffer());
+		}
+		else {
+			if (numMtlOutput > 1) {
+				Log::getLog().info("\"%s\": Multiple \"V-Ray Material Output\" nodes! Using the first found...",
+									matNode->getName().buffer());
+			}
 
-			const int idx = mtlOut->getInputFromName("Material");
-			OP_Node *inpNode = mtlOut->getInput(idx);
-			if (inpNode) {
-				VOP_Node *vopNode = inpNode->castToVOPNode();
-				if (vopNode) {
-					switch (mtlOut->getInputType(idx)) {
-						case VOP_SURFACE_SHADER: {
-							material = exportVop(vopNode);
-							break;
-						}
-						case VOP_TYPE_BSDF: {
-							VRay::Plugin pluginBRDF = exportVop(vopNode);
+			// There is at least 1 "vray_material_output" node so take the first one
+			VOP::MaterialOutput *mtlOut = static_cast<VOP::MaterialOutput*>(mtlOutList(0));
 
-							// Wrap BRDF into MtlSingleBRDF for RT GPU to work properly
-							Attrs::PluginDesc mtlPluginDesc(VRayExporter::getPluginName(vopNode, "Mtl"), "MtlSingleBRDF");
-							mtlPluginDesc.addAttribute(Attrs::PluginAttr("brdf", pluginBRDF));
+			addOpCallback(mtlOut, VRayExporter::RtCallbackSurfaceShop);
 
-							material = exportPlugin(mtlPluginDesc);
-							break;
-						}
-						default:
-							Log::getLog().error("Unsupported input type for node \"%s\", input %d!",
-												mtlOut->getName().buffer(), idx);
-					}
+			if (mtlOut->error() < UT_ERROR_ABORT) {
+				Log::getLog().info("Exporting material output \"%s\"...",
+								   mtlOut->getName().buffer());
 
-					if (material && isIPR()) {
-						// Wrap material into MtlRenderStats to always have the same material name
-						// Used when rewiring materials when running interactive RT session
-						Attrs::PluginDesc pluginDesc(VRayExporter::getPluginName(&shop_node, "Mtl"), "MtlRenderStats");
+				const int idx = mtlOut->getInputFromName("Material");
 
-						pluginDesc.addAttribute(Attrs::PluginAttr("base_mtl", material));
-						material = exportPlugin(pluginDesc);
-					}
+				OP_Node *inpNode = mtlOut->getInput(idx);
+				if (inpNode) {
+					material = exportMaterial(CAST_VOPNODE(inpNode));
 				}
 			}
 		}
 	}
-	else {
-		Log::getLog().error("Can't find \"V-Ray Material Output\" operator under \"%s\"!",
-							shop_node.getName().buffer());
-	}
 
-	if ( NOT(material) ) {
+	if (!material) {
 		material = exportDefaultMaterial();
 	}
 

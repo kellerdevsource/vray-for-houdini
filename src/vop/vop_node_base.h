@@ -61,6 +61,8 @@ public:
 
 	virtual unsigned          maxOutputs() const VRAY_OVERRIDE;
 
+	VOP_Type getShaderType() const VRAY_OVERRIDE;
+
 protected:
 	/// Returns the internal name of the supplied input. This input name is
 	/// used when the code generator substitutes variables return by getCode.
@@ -98,12 +100,14 @@ class OpPluginID: \
 		public NodeBase \
 { \
 public: \
-	OpPluginID(OP_Network *parent, const char *name, OP_Operator *entry):NodeBase(parent, name, entry) {} \
-	virtual ~OpPluginID() {} \
+	OpPluginID(OP_Network *parent, const char *name, OP_Operator *entry) \
+		: NodeBase(parent, name, entry) \
+	{} \
+	virtual ~OpPluginID() = default; \
 protected: \
 	virtual void setPluginType() VRAY_OVERRIDE { \
-		pluginType = OpPluginType; \
-		pluginID   = STRINGIZE(OpPluginID); \
+		pluginType = VRayPluginType::OpPluginType; \
+		pluginID = STRINGIZE(OpPluginID); \
 	} \
 };
 

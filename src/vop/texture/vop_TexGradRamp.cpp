@@ -17,7 +17,7 @@ using namespace VRayForHoudini;
 
 void VOP::TexGradRamp::setPluginType()
 {
-	pluginType = "TEXTURE";
+	pluginType = VRayPluginType::TEXTURE;
 	pluginID   = "TexGradRamp";
 }
 

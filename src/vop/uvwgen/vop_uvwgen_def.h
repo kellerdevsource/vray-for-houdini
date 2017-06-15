@@ -17,10 +17,9 @@
 namespace VRayForHoudini {
 namespace VOP {
 
-#define UVWGEN_DEF(PluginID) NODE_BASE_DEF("UVWGEN", PluginID)
+#define UVWGEN_DEF(PluginID) NODE_BASE_DEF(UVWGEN, PluginID)
 
 UVWGEN_DEF(UVWGenBercon)
-UVWGEN_DEF(UVWGenC4D)
 UVWGEN_DEF(UVWGenChannel)
 UVWGEN_DEF(UVWGenEnvironment)
 UVWGEN_DEF(UVWGenExplicit)

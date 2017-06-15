@@ -65,7 +65,7 @@ PRM_Template* VOP::MetaImageFile::GetPrmTemplate()
 
 void VOP::MetaImageFile::setPluginType()
 {
-	pluginType = "TEXTURE";
+	pluginType = VRayPluginType::TEXTURE;
 
 	// Base plugin
 	pluginID = "CustomTexBitmap";

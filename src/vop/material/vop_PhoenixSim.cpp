@@ -930,7 +930,7 @@ bool PhxShaderSim::loadRamps(UT_IStream & is)
 
 void PhxShaderSim::setPluginType()
 {
-	pluginType = "MATERIAL";
+	pluginType = VRayPluginType::MATERIAL;
 	pluginID   = "PhxShaderSim";
 }
 
