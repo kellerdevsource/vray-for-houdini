@@ -35,17 +35,17 @@ namespace VRayForHoudini {
 class VRayRendererNode;
 
 enum class VRayPluginType {
-	LIGHT = 0,
+	UNKNOWN = 0,
 	GEOMETRY,
+	LIGHT,
 	BRDF,
 	MATERIAL,
 	TEXTURE,
+	CUSTOM_TEXTURE,
 	UVWGEN,
 	RENDERCHANNEL,
 	EFFECT,
-	UNKNOWN,
-	CUSTOM_TEXTURE,
-	MAX_PLUGINTYPE,
+	OBJECT,
 	SETTINGS,
 };
 
