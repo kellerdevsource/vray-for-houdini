@@ -477,22 +477,31 @@ int GeometryExporter::exportRenderPoints(const GU_Detail &gdp, VMRenderPoints re
 	VRay::VUtils::VectorRefList positions(freePointCount);
 
 	VRay::VUtils::VectorRefList velocities;
-
-	// Particles widths.
-	VRay::VUtils::FloatRefList radii;
-
-	// Particle size attibute.
-	GA_ROHandleF widthHndl(gdp.findAttribute(GA_ATTRIB_POINT, GEO_STD_ATTRIB_WIDTH));
-	const bool haveWidths = widthHndl.isValid();
-	if (haveWidths) {
-		radii = VRay::VUtils::FloatRefList(freePointCount);
+	GA_ROHandleV3 velocityHndl(gdp.findAttribute(GA_ATTRIB_POINT, GEO_STD_ATTRIB_VELOCITY));
+	if (velocityHndl.isValid()) {
+		velocities = VRay::VUtils::VectorRefList(freePointCount);
 	}
 
-	// Particle velocity attibute.
-	GA_ROHandleV3 velocityHndl(gdp.findAttribute(GA_ATTRIB_POINT, GEO_STD_ATTRIB_VELOCITY));
-	const bool haveVelocities = velocityHndl.isValid();
-	if (haveVelocities) {
-		velocities = VRay::VUtils::VectorRefList(freePointCount);
+	VRay::VUtils::ColorRefList color;
+	GA_ROHandleV3 cdHndl(gdp.findAttribute(GA_ATTRIB_POINT, GEO_STD_ATTRIB_DIFFUSE));
+	if (cdHndl.isValid()) {
+		color = VRay::VUtils::ColorRefList(freePointCount);
+	}
+
+	VRay::VUtils::FloatRefList opacity;
+	GA_ROHandleF opacityHndl(gdp.findAttribute(GA_ATTRIB_POINT, GEO_STD_ATTRIB_ALPHA));
+	if (opacityHndl.isValid()) {
+		opacity = VRay::VUtils::FloatRefList(freePointCount);
+	}
+
+	VRay::VUtils::FloatRefList pscale;
+	const GA_Attribute *pscaleAttr = gdp.findAttribute(GA_ATTRIB_POINT, GEO_STD_ATTRIB_PSCALE);
+	if (!pscaleAttr) {
+		pscaleAttr = gdp.findAttribute(GA_ATTRIB_POINT, GEO_STD_ATTRIB_WIDTH);
+	}
+	GA_ROHandleF pscaleHndl(pscaleAttr);
+	if (pscaleHndl.isValid()) {
+		pscale = VRay::VUtils::FloatRefList(freePointCount);
 	}
 
 	int positionsIdx = 0;
@@ -507,17 +516,29 @@ int GeometryExporter::exportRenderPoints(const GU_Detail &gdp, VMRenderPoints re
 		}
 
 		if (isValidPoint) {
+			UT_ASSERT_MSG(positionsIdx < positions.size(), "Incorrect calculation of free points inside detail!");
+
 			const UT_Vector3 &point = gdp.getPos3(ptOff);
 
-			UT_ASSERT_MSG(positionsIdx < positions.size(), "Incorrect calculation of free points inside detail!");
 			positions[positionsIdx].set(point.x(), point.y(), point.z());
 
-			if (haveVelocities) {
+			if (velocityHndl.isValid()) {
 				const UT_Vector3F &v = velocityHndl.get(ptOff);
 				velocities[positionsIdx].set(v.x(), v.y(), v.z());
 			}
-			if (haveWidths) {
-				radii[positionsIdx] = renderScale * widthHndl.get(ptOff);
+			if (pscaleHndl.isValid()) {
+				pscale[positionsIdx] = radiusMult * pscaleHndl.get(ptOff);
+			}
+
+			if (cdHndl.isValid()) {
+				const UT_Vector3F &cd = cdHndl.get(ptOff);
+				color[positionsIdx].r = cd.x();
+				color[positionsIdx].g = cd.y();
+				color[positionsIdx].g = cd.z();
+			}
+
+			if (opacityHndl.isValid()) {
+				opacity[positionsIdx] = opacityHndl.get(ptOff);
 			}
 
 			++positionsIdx;
@@ -534,8 +555,14 @@ int GeometryExporter::exportRenderPoints(const GU_Detail &gdp, VMRenderPoints re
 	if (velocities.size()) {
 		partDesc.addAttribute(Attrs::PluginAttr("velocities", velocities));
 	}
-	if (radii.size()) {
-		partDesc.addAttribute(Attrs::PluginAttr("radii", radii));
+	if (color.size()) {
+		partDesc.addAttribute(Attrs::PluginAttr("colors", color));
+	}
+	if (opacity.size()) {
+		partDesc.addAttribute(Attrs::PluginAttr("opacity_pp", opacity));
+	}
+	if (pscale.size()) {
+		partDesc.addAttribute(Attrs::PluginAttr("radii", pscale));
 		partDesc.addAttribute(Attrs::PluginAttr("point_radii", true));
 	} else {
 		partDesc.addAttribute(Attrs::PluginAttr("radius", radiusMult));
