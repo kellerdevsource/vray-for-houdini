@@ -321,6 +321,10 @@ VRay::Plugin VRayExporter::exportObject(OBJ_Node *obj_node)
 	}
 #endif
 
+	Log::getLog().info("  OBJ: %s [%s]",
+						obj_node->getName().buffer(),
+						obj_node->getOperator()->getName().buffer());
+
 	SOP_Node *geom_node = obj_node->getRenderSopPtr();
 	if (!geom_node) {
 		Log::getLog().error("OBJ \"%s\": Render SOP is not found!",
@@ -331,14 +335,16 @@ VRay::Plugin VRayExporter::exportObject(OBJ_Node *obj_node)
 				   geom_node->getOperator()->getName().buffer(),
 				   obj_node->getName().buffer());
 
-		if (obj_node->getOperator()->getName().equal("VRayNodeVRayClipper")) {
+		const UT_String &objOpType = obj_node->getOperator()->getName();
+
+		if (objOpType.equal("VRayNodeVRayClipper")) {
 			plugin = exportVRayClipper(*obj_node);
 		}
-		else if (obj_node->getOperator()->getName().equal("VRayNodeVRayScene")) {
 #ifdef CGR_HAS_VRAYSCENE
+		else if (objOpType.equal("VRayNodeVRayScene")) {
 			plugin = exportVRayScene(obj_node, geom_node);
-#endif
 		}
+#endif
 		else {
 			OBJ_Geometry *obj_geo = obj_node->castToOBJGeometry();
 			if (obj_geo) {

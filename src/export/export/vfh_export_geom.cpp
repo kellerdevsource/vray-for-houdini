@@ -55,7 +55,10 @@ GeometryExporter::GeometryExporter(OBJ_Geometry &node, VRayExporter &pluginExpor
 	m_context(pluginExporter.getContext()),
 	m_pluginExporter(pluginExporter),
 	m_myDetailID(0),
-	m_exportGeometry(true) {}
+	m_exportGeometry(true)
+{
+	isInstancer = m_objNode.getOperator()->getName().equal("instance");
+}
 
 
 bool GeometryExporter::hasSubdivApplied() const {
@@ -437,48 +440,64 @@ int GeometryExporter::exportVRaySOP(SOP_Node &sop, PluginDescList &pluginList) {
 	return nPlugins;
 }
 
-int GeometryExporter::exportRenderPoints(const GU_Detail &gdp, VMRenderPoints renderPoints, PluginDescList &pluginList) {
+/// Returns OP_Node instance from node path.
+/// @param path Node path. May be changed if path has "op:/" syntax.
+/// @returns OP_Node instance or NULL.
+static OP_Node *getOpNodeFromPath(UT_String &path, fpreal t)
+{
+	if (path.startsWith(OPREF_PREFIX)) {
+		int op_id = 0;
+		fpreal op_time = 0.0;
+
+		OPgetDirector()->evalOpPathString(path, 0, 0, t, op_id, op_time);
+	}
+
+	return OPgetDirector()->findNode(path.buffer());
+}
+
+int GeometryExporter::exportRenderPoints(const GU_Detail &gdp, VMRenderPoints renderPoints, PluginDescList &pluginList)
+{
 	const GA_Size numPoints = gdp.getNumPoints();
 	if (!numPoints) {
 		return 0;
 	}
-	if (renderPoints == vmRenderPointsNone) {
+	if (!isInstancer && renderPoints == vmRenderPointsNone) {
 		return 0;
 	}
 
 	DynamicBitset freePointMap(numPoints, true);
 	GA_Size freePointCount = numPoints;
-	if (renderPoints != vmRenderPointsAll) {
+	if (renderPoints == vmRenderPointsUnconnected) {
 		freePointCount = fillFreePointMap(gdp, freePointMap);
+	}
+	if (!freePointCount) {
+		return 0;
 	}
 
 	// Parameters.
-	const fpreal renderScale = m_objNode.evalFloat("vm_pointscale", 0, 0.0);
+	const fpreal renderScale = m_objNode.evalFloat("vm_pointscale", 0, m_context.getTime());
 
 	int renderType;
 	fpreal radiusMult = renderScale;
 
 	const VMRenderPointsAs renderPointsAs =
-		static_cast<VMRenderPointsAs>(m_objNode.evalInt("vm_renderpointsas", 0, 0.0));
+		static_cast<VMRenderPointsAs>(m_objNode.evalInt("vm_renderpointsas", 0, m_context.getTime()));
 	switch (renderPointsAs) {
-	case vmRenderPointsAsSphere: {
-		renderType = 7;
-		radiusMult *= 0.01;
-		break;
-	}
-	case vmRenderPointsAsCirle: {
-		renderType = 6;
-		radiusMult *= 5.0;
-		break;
-	}
+		case vmRenderPointsAsSphere: {
+			renderType = 7;
+			radiusMult *= 0.01;
+			break;
+		}
+		case vmRenderPointsAsCirle: {
+			renderType = 6;
+			radiusMult *= 5.0;
+			break;
+		}
 	}
 
-	// Particles positions.
+	// Particle properties.
 	VRay::VUtils::VectorRefList positions(freePointCount);
-
 	VRay::VUtils::VectorRefList velocities;
-
-	// Particles widths.
 	VRay::VUtils::FloatRefList radii;
 
 	// Particle size attibute.
@@ -495,55 +514,199 @@ int GeometryExporter::exportRenderPoints(const GU_Detail &gdp, VMRenderPoints re
 		velocities = VRay::VUtils::VectorRefList(freePointCount);
 	}
 
-	int positionsIdx = 0;
-	for (GA_Index i = 0; i < numPoints; ++i) {
-		const GA_Offset ptOff = gdp.pointOffset(i);
+	enum ParticleMode {
+		particleModeGeomParticleSystem = 0, ///< Use simple particles with GeomParticleSystem.
+		particleModeInstancer, ///< Object instancing with Instancer.
+	};
 
-		int isValidPoint;
-		if (renderPoints == vmRenderPointsAll) {
-			isValidPoint = true;
-		} else {
-			isValidPoint = freePointMap[i];
+	// Which plugin to use for particles.
+	ParticleMode particleMode = particleModeGeomParticleSystem;
+
+	// Object instancing.
+	GA_ROHandleS instanceHndl(gdp.findAttribute(GA_ATTRIB_POINT, "instance"));
+
+	// XXX: What if another attribute name is used?
+	GA_ROHandleS instancePathHndl(gdp.findAttribute(GA_ATTRIB_POINT, "instancepath"));
+
+	GA_ROHandleS materialPathHndl(gdp.findAttribute(GA_ATTRIB_POINT, "shop_materialpath"));
+
+	if (instanceHndl.isValid() || instancePathHndl.isValid()) {
+		particleMode = particleModeInstancer;
+	}
+
+	VRay::Plugin geomPlugin;
+
+	if (particleMode == particleModeInstancer) {
+		/// XXX: AppSDK should include this.
+		enum HierarchicalParameterizedNodeParameterFlags {
+			useParentTimes = (1 << 0),
+			useObjectID = (1 << 1),
+			usePrimaryVisibility = (1 << 2),
+			useUserAttributes = (1 << 3),
+			useParentTimesAtleastForGeometry = (1 << 4),
+			useMaterial = (1 << 5),
+			useGeometry = (1 << 6),
+		};
+
+		Attrs::PluginDesc instancer2("", "Instancer2");
+
+		// +1 because first element is time.
+		VRay::VUtils::ValueRefList instances(freePointCount+1);
+		instances[0].setDouble(0.0);
+
+		int validPointIdx = 0;
+		for (GA_Index i = 0; i < numPoints; ++i) {
+			const GA_Offset ptOff = gdp.pointOffset(i);
+
+			const int isValidPoint = renderPoints == vmRenderPointsAll ? true : freePointMap[i];
+			if (isValidPoint) {
+				UT_String instanceObjectPath;
+				if (instanceHndl.isValid()) {
+					instanceObjectPath = instanceHndl.get(ptOff);
+				}
+				else if (instancePathHndl.isValid()) {
+					instanceObjectPath = instancePathHndl.get(ptOff);
+				}
+				UT_ASSERT_MSG(instanceObjectPath.length(), "Instance object is not set!");
+
+				OP_Node *instaceOpNode = getOpNodeFromPath(instanceObjectPath, m_context.getTime());
+				UT_ASSERT_MSG(instanceObjectPath, "Instance object is not found!");
+
+				OBJ_Node *instaceObjNode = instaceOpNode->castToOBJNode();
+				UT_ASSERT_MSG(instaceObjNode, "Not an OBJ node!");
+
+				uint32_t additional_params_flags = 0;
+
+				VRay::Plugin instanceNode;
+				VRay::Plugin instanceMtl;
+
+				if (instaceObjNode) {
+					instanceNode = m_pluginExporter.exportObject(instaceObjNode);
+					if (instanceNode) {
+						if (materialPathHndl.isValid()) {
+							UT_String instanceMtlPath = materialPathHndl.get(ptOff);
+							OP_Node *instaceMtlOpNode = getOpNodeFromPath(instanceMtlPath, m_context.getTime());
+							if (instaceMtlOpNode) {
+								SHOP_Node *instaceMtlShopNode = instaceMtlOpNode->castToSHOPNode();
+								UT_ASSERT_MSG(instaceObjNode, "Not an SHOP node!");
+								if (instaceMtlShopNode) {
+									instanceMtl = m_pluginExporter.exportMaterial(*instaceMtlShopNode);
+									if (instanceMtl) {
+										additional_params_flags |= useMaterial;
+									}
+								}
+							}
+						}
+					}
+				}
+
+				// Index + TM + VEL_TM + Flags + Node
+				int itemListSize = 5;
+				if (instanceMtl) {
+					itemListSize++;
+				}
+
+				int itemListOffs = 0;
+
+				VRay::VUtils::ValueRefList item(itemListSize);
+
+				// Particle index.
+				item[itemListOffs++].setDouble(validPointIdx);
+
+				// Particle transform.
+				// TODO: Proper matrix from point attributes
+				const UT_Vector3 &point = gdp.getPos3(ptOff);
+				VRay::Transform tm;
+				tm.matrix.makeIdentity();
+				tm.offset.set(point.x(), point.y(), point.z());
+
+				// Mult with object inv. tm.
+				VRay::Transform objTm = VRayExporter::getObjTransform(instaceObjNode, m_context, false);
+				objTm.makeInverse();
+				tm = tm * objTm;
+
+				item[itemListOffs++].setTransform(tm);
+
+				// Particle velocity.
+				UT_Vector3 velocity(0.0, 0.0, 0.0);
+				if (haveVelocities) {
+					// velocity = velocityHndl.get(ptOff);
+				}
+
+				VRay::VUtils::TraceTransform vel;
+				vel.m.makeZero();
+				vel.ffs.x = velocity.x();
+				vel.ffs.y = velocity.y();
+				vel.ffs.z = velocity.z();
+
+				item[itemListOffs++].setTraceTransform(vel);
+
+				item[itemListOffs++].setDouble(additional_params_flags);
+
+				if (additional_params_flags & useMaterial) {
+					item[itemListOffs++].setPlugin(instanceMtl);
+				}
+
+				item[itemListOffs++].setPlugin(instanceNode);
+
+				// +1 because first element is time.
+				instances[validPointIdx+1].setList(item);
+
+				++validPointIdx;
+			}
 		}
 
-		if (isValidPoint) {
-			const UT_Vector3 &point = gdp.getPos3(ptOff);
+		instancer2.addAttribute(Attrs::PluginAttr("instances", instances));
+		instancer2.addAttribute(Attrs::PluginAttr("use_additional_params", true));
+		instancer2.addAttribute(Attrs::PluginAttr("use_time_instancing", false));
 
-			UT_ASSERT_MSG(positionsIdx < positions.size(), "Incorrect calculation of free points inside detail!");
-			positions[positionsIdx].set(point.x(), point.y(), point.z());
+		geomPlugin = m_pluginExporter.exportPlugin(instancer2);
+	}
+	else if (particleMode == particleModeGeomParticleSystem) {
+		int positionsIdx = 0;
+		for (GA_Index i = 0; i < numPoints; ++i) {
+			const GA_Offset ptOff = gdp.pointOffset(i);
 
-			if (haveVelocities) {
-				const UT_Vector3F &v = velocityHndl.get(ptOff);
-				velocities[positionsIdx].set(v.x(), v.y(), v.z());
+			const int isValidPoint = renderPoints == vmRenderPointsAll ? true : freePointMap[i];
+			if (isValidPoint) {
+				const UT_Vector3 &point = gdp.getPos3(ptOff);
+
+				UT_ASSERT_MSG(positionsIdx < positions.size(), "Incorrect calculation of free points inside detail!");
+				positions[positionsIdx].set(point.x(), point.y(), point.z());
+
+				if (haveVelocities) {
+					const UT_Vector3F &v = velocityHndl.get(ptOff);
+					velocities[positionsIdx].set(v.x(), v.y(), v.z());
+				}
+
+				if (haveWidths) {
+					radii[positionsIdx] = renderScale * widthHndl.get(ptOff);
+				}
+
+				++positionsIdx;
 			}
-			if (haveWidths) {
-				radii[positionsIdx] = renderScale * widthHndl.get(ptOff);
-			}
-
-			++positionsIdx;
 		}
-	}
 
-	if (!positions.size()) {
-		return 0;
-	}
+		Attrs::PluginDesc partDesc("", "GeomParticleSystem");
+		partDesc.addAttribute(Attrs::PluginAttr("positions", positions));
+		partDesc.addAttribute(Attrs::PluginAttr("render_type", renderType));
+		if (velocities.size()) {
+			partDesc.addAttribute(Attrs::PluginAttr("velocities", velocities));
+		}
+		if (radii.size()) {
+			partDesc.addAttribute(Attrs::PluginAttr("radii", radii));
+			partDesc.addAttribute(Attrs::PluginAttr("point_radii", true));
+		}
+		else {
+			partDesc.addAttribute(Attrs::PluginAttr("radius", radiusMult));
+			partDesc.addAttribute(Attrs::PluginAttr("point_size", radiusMult));
+		}
 
-	Attrs::PluginDesc partDesc("", "GeomParticleSystem");
-	partDesc.addAttribute(Attrs::PluginAttr("positions", positions));
-	partDesc.addAttribute(Attrs::PluginAttr("render_type", renderType));
-	if (velocities.size()) {
-		partDesc.addAttribute(Attrs::PluginAttr("velocities", velocities));
-	}
-	if (radii.size()) {
-		partDesc.addAttribute(Attrs::PluginAttr("radii", radii));
-		partDesc.addAttribute(Attrs::PluginAttr("point_radii", true));
-	} else {
-		partDesc.addAttribute(Attrs::PluginAttr("radius", radiusMult));
-		partDesc.addAttribute(Attrs::PluginAttr("point_size", radiusMult));
-	}
+		geomPlugin = m_pluginExporter.exportPlugin(partDesc);
+	} 
 
 	Attrs::PluginDesc partNode("", "Node");
-	partNode.addAttribute(Attrs::PluginAttr("geometry", m_pluginExporter.exportPlugin(partDesc)));
+	partNode.addAttribute(Attrs::PluginAttr("geometry", geomPlugin));
 
 	pluginList.push_back(partNode);
 
@@ -571,7 +734,7 @@ int GeometryExporter::exportDetail(SOP_Node &sop, GU_DetailHandleAutoReadLock &g
 	// alembic, vray proxy, packed geometry
 	// TODO: need to implement these as separate primitive exporter
 	// per packed primitive type
-	if (GU_PrimPacked::hasPackedPrimitives(gdp)) {
+	if (!isInstancer && GU_PrimPacked::hasPackedPrimitives(gdp)) {
 		UT_Array<const GA_Primitive *> prims;
 		GU_PrimPacked::getPackedPrimitives(gdp, prims);
 		for (const GA_Primitive *prim : prims) {
@@ -592,7 +755,10 @@ int GeometryExporter::exportDetail(SOP_Node &sop, GU_DetailHandleAutoReadLock &g
 	}
 
 	if (gdp.getNumPoints() &&
-		(renderPoints == vmRenderPointsAll || renderPoints == vmRenderPointsUnconnected)) {
+		(renderPoints == vmRenderPointsAll ||
+		renderPoints == vmRenderPointsUnconnected ||
+		isInstancer))
+	{
 		nPlugins += exportRenderPoints(gdp, renderPoints, pluginList);
 	}
 
@@ -902,6 +1068,25 @@ int GeometryExporter::exportPackedGeometry(SOP_Node &sop, const GU_PrimPacked &p
 	int nPlugins = 0;
 
 	const GA_ROHandleS pathHndl(prim.getDetail().findAttribute(GA_ATTRIB_PRIMITIVE, "path"));
+
+#if 0
+	if (pathHndl.isValid()) {
+		UT_String path = pathHndl.get(prim.getMapOffset());
+
+		OP_Node *opNode = getOpNodeFromPath(path, m_context.getTime());
+		if (opNode) {
+			SOP_Node *sopNode = opNode->castToSOPNode();
+			OBJ_Node *objNode = opNode->castToOBJNode();
+			if (objNode) {
+				m_pluginExporter.exportObject(objNode);
+			}
+			else if (sopNode) {
+				
+			}
+		}
+	}
+#endif
+
 	if (NOT(pathHndl.isValid())) {
 		// there is no path attribute =>
 		// take geometry directly from primitive packed detail

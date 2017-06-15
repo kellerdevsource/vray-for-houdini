@@ -241,6 +241,7 @@ public:
 
 	/// Export V-Ray material SHOP network
 	/// @retval V-Ray surface material plugin for that node
+	/// TODO: Refactor to support any shader node.
 	VRay::Plugin exportMaterial(SHOP_Node &shop_node);
 
 	/// Export the default light created when there are no lights in the scene
