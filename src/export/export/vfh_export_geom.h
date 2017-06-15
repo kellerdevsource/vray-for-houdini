@@ -224,7 +224,7 @@ private:
 	///       with id 0. If no such is specified this would be the default material.
 	SHOPList             m_shopList;
 
-	int isInstancer;
+	const int isInstancer;
 
 	VUtils::HashMap<OP_Node*> exportedObjects;
 };

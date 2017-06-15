@@ -50,14 +50,14 @@ namespace {
 }
 
 
-GeometryExporter::GeometryExporter(OBJ_Geometry &node, VRayExporter &pluginExporter):
-	m_objNode(node),
-	m_context(pluginExporter.getContext()),
-	m_pluginExporter(pluginExporter),
-	m_myDetailID(0),
-	m_exportGeometry(true)
+GeometryExporter::GeometryExporter(OBJ_Geometry &node, VRayExporter &pluginExporter)
+	: m_objNode(node)
+	, m_context(pluginExporter.getContext())
+	, m_pluginExporter(pluginExporter)
+	, m_exportGeometry(true)
+	, m_myDetailID(0)
+	, isInstancer(m_objNode.getOperator()->getName().equal("instance"))
 {
-	isInstancer = m_objNode.getOperator()->getName().equal("instance");
 }
 
 
