@@ -18,7 +18,7 @@
 namespace VRayForHoudini {
 namespace VOP {
 
-#define ENV_DEF(PluginID) NODE_BASE_DEF("EFFECT", PluginID)
+#define ENV_DEF(PluginID) NODE_BASE_DEF(EFFECT, PluginID)
 
 ENV_DEF(EnvironmentFog)
 ENV_DEF(EnvFogMeshGizmo)

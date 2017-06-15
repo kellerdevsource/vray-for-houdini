@@ -17,7 +17,7 @@ using namespace VRayForHoudini;
 
 void VOP::TexRemap::setPluginType()
 {
-	pluginType = "TEXTURE";
+	pluginType = VRayPluginType::TEXTURE;
 	pluginID   = "TexRemap";
 }
 

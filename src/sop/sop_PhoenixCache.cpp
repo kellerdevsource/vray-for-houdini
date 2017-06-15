@@ -39,7 +39,7 @@ PRM_Template* SOP::PhxShaderCache::GetPrmTemplate()
 
 void SOP::PhxShaderCache::setPluginType()
 {
-	pluginType = "GEOMETRY";
+	pluginType = VRayPluginType::GEOMETRY;
 	pluginID   = "CustomPhxShaderCache";
 }
 

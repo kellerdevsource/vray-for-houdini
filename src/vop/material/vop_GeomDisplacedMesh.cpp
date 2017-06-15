@@ -16,7 +16,7 @@ using namespace VRayForHoudini;
 
 void VOP::GeomDisplacedMesh::setPluginType()
 {
-	pluginType = "GEOMETRY";
+	pluginType = VRayPluginType::GEOMETRY;
 	pluginID   = "GeomDisplacedMesh";
 }
 

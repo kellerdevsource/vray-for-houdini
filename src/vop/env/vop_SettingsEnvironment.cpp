@@ -16,7 +16,7 @@ using namespace VRayForHoudini;
 
 void VOP::SettingsEnvironment::setPluginType()
 {
-	pluginType = "SETTINGS";
+	pluginType = VRayPluginType::SETTINGS;
 	pluginID   = "SettingsEnvironment";
 }
 

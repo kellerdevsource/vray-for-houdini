@@ -274,31 +274,31 @@ int GeometryExporter::exportNodes() {
 }
 
 
-VRay::Plugin GeometryExporter::exportMaterial() {
-	VRay::Plugin mtl;
-
+VRay::Plugin GeometryExporter::exportMaterial()
+{
 	VRay::ValueList mtls_list;
 	VRay::IntList   ids_list;
 	mtls_list.reserve(m_shopList.size() + 1);
 	ids_list.reserve(m_shopList.size() + 1);
 
 	// object material is always exported with id 0
-	SHOP_Node *shopNode = m_pluginExporter.getObjMaterial(&m_objNode, m_context.getTime());
-	if (shopNode) {
-		mtls_list.emplace_back(m_pluginExporter.exportMaterial(*shopNode));
+	OP_Node *matNode = m_pluginExporter.getObjMaterial(&m_objNode, m_context.getTime());
+	if (matNode) {
+		mtls_list.emplace_back(m_pluginExporter.exportMaterial(matNode));
 		ids_list.emplace_back(0);
-	} else {
+	}
+	else {
 		mtls_list.emplace_back(m_pluginExporter.exportDefaultMaterial());
 		ids_list.emplace_back(0);
 	}
 
 	// generate id for each SHOP and add it to the material list
 	SHOPHasher hasher;
-	for (const UT_String &shoppath : m_shopList) {
-		SHOP_Node *shopNode = OPgetDirector()->findSHOPNode(shoppath);
-		UT_ASSERT(shopNode);
-		mtls_list.emplace_back(m_pluginExporter.exportMaterial(*shopNode));
-		ids_list.emplace_back(hasher(shopNode));
+	for (const UT_String &matPath : m_shopList) {
+		OP_Node *opNode = getOpNodeFromPath(matPath);
+		UT_ASSERT(opNode);
+		mtls_list.emplace_back(m_pluginExporter.exportMaterial(opNode));
+		ids_list.emplace_back(hasher(opNode));
 	}
 
 	// export single MtlMulti material
@@ -320,34 +320,34 @@ VRay::Plugin GeometryExporter::exportMaterial() {
 
 	mtlDesc.addAttribute(Attrs::PluginAttr("mtlid_gen_float", myMtlID, "scalar"));
 
-	mtl = m_pluginExporter.exportPlugin(mtlDesc);
+	VRay::Plugin mtl = m_pluginExporter.exportPlugin(mtlDesc);
 
 	// handle if object is forced as matte
 	if (isNodeMatte()) {
-		Attrs::PluginDesc mtlDesc;
-		mtlDesc.pluginID = "MtlWrapper";
-		mtlDesc.pluginName = VRayExporter::getPluginName(&m_objNode, "MtlWrapper");
+		Attrs::PluginDesc mtlWrapperDesc;
+		mtlWrapperDesc.pluginID = "MtlWrapper";
+		mtlWrapperDesc.pluginName = VRayExporter::getPluginName(&m_objNode, "MtlWrapper");
 
-		mtlDesc.addAttribute(Attrs::PluginAttr("base_material", mtl));
-		mtlDesc.addAttribute(Attrs::PluginAttr("matte_surface", 1));
-		mtlDesc.addAttribute(Attrs::PluginAttr("alpha_contribution", -1));
-		mtlDesc.addAttribute(Attrs::PluginAttr("affect_alpha", 1));
-		mtlDesc.addAttribute(Attrs::PluginAttr("reflection_amount", 0));
-		mtlDesc.addAttribute(Attrs::PluginAttr("refraction_amount", 0));
+		mtlWrapperDesc.addAttribute(Attrs::PluginAttr("base_material", mtl));
+		mtlWrapperDesc.addAttribute(Attrs::PluginAttr("matte_surface", 1));
+		mtlWrapperDesc.addAttribute(Attrs::PluginAttr("alpha_contribution", -1));
+		mtlWrapperDesc.addAttribute(Attrs::PluginAttr("affect_alpha", 1));
+		mtlWrapperDesc.addAttribute(Attrs::PluginAttr("reflection_amount", 0));
+		mtlWrapperDesc.addAttribute(Attrs::PluginAttr("refraction_amount", 0));
 
-		mtl = m_pluginExporter.exportPlugin(mtlDesc);
+		mtl = m_pluginExporter.exportPlugin(mtlWrapperDesc);
 	}
 
 	// handle if object is forced as phantom
 	if (isNodePhantom()) {
-		Attrs::PluginDesc mtlDesc;
-		mtlDesc.pluginID = "MtlRenderStats";
-		mtlDesc.pluginName = VRayExporter::getPluginName(&m_objNode, "MtlRenderStats");
+		Attrs::PluginDesc mtlStatsDesc;
+		mtlStatsDesc.pluginID = "MtlRenderStats";
+		mtlStatsDesc.pluginName = VRayExporter::getPluginName(&m_objNode, "MtlRenderStats");
 
-		mtlDesc.addAttribute(Attrs::PluginAttr("base_mtl", mtl));
-		mtlDesc.addAttribute(Attrs::PluginAttr("camera_visibility", 0));
+		mtlStatsDesc.addAttribute(Attrs::PluginAttr("base_mtl", mtl));
+		mtlStatsDesc.addAttribute(Attrs::PluginAttr("camera_visibility", 0));
 
-		mtl = m_pluginExporter.exportPlugin(mtlDesc);
+		mtl = m_pluginExporter.exportPlugin(mtlStatsDesc);
 	}
 
 
@@ -358,8 +358,8 @@ VRay::Plugin GeometryExporter::exportMaterial() {
 int GeometryExporter::getSHOPOverridesAsUserAttributes(UT_String &userAttrs) const {
 	int nOverrides = 0;
 
-	SHOP_Node *shopNode = m_pluginExporter.getObjMaterial(&m_objNode, m_context.getTime());
-	if (NOT(shopNode)) {
+	OP_Node *shopNode = m_pluginExporter.getObjMaterial(&m_objNode, m_context.getTime());
+	if (!shopNode) {
 		return nOverrides;
 	}
 

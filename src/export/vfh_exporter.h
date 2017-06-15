@@ -34,6 +34,21 @@ namespace VRayForHoudini {
 
 class VRayRendererNode;
 
+enum class VRayPluginType {
+	LIGHT = 0,
+	GEOMETRY,
+	BRDF,
+	MATERIAL,
+	TEXTURE,
+	UVWGEN,
+	RENDERCHANNEL,
+	EFFECT,
+	UNKNOWN,
+	CUSTOM_TEXTURE,
+	MAX_PLUGINTYPE,
+	SETTINGS,
+};
+
 enum VRayLightType {
 	VRayLightOmni      = 0,
 	VRayLightRectangle = 2,
@@ -232,16 +247,23 @@ public:
 	VRay::Plugin exportLight(OBJ_Node *obj_node);
 
 	/// Export VOP node
-	/// @retval V-Ray plugin created for that node
-	VRay::Plugin exportVop(OP_Node *op_node, ExportContext *parentContext = nullptr);
+	/// @param vopNode VOP node instance.
+	/// @return V-Ray plugin.
+	VRay::Plugin exportVop(OP_Node *opNode, ExportContext *parentContext=nullptr);
 
 	/// Export Make transform VOP node
 	/// @retval V-Ray transform for that node
 	VRay::Transform exportTransformVop(VOP_Node &vop_node, ExportContext *parentContext = nullptr);
 
-	/// Export V-Ray material SHOP network
-	/// @retval V-Ray surface material plugin for that node
-	VRay::Plugin exportMaterial(SHOP_Node &shop_node);
+	/// Export V-Ray material from SHOP network or VOP node.
+	/// @param node SHOP or VOP node.
+	/// @returns V-Ray plugin.
+	VRay::Plugin exportMaterial(OP_Node *node);
+
+	/// Export V-Ray material from VOP node.
+	/// @param node VOP node.
+	/// @returns V-Ray plugin.
+	VRay::Plugin exportMaterial(VOP_Node *node);
 
 	/// Export the default light created when there are no lights in the scene
 	/// @param update[in] - flags whether this is called from IPR callback
@@ -416,7 +438,7 @@ public:
 	/// @param obj[in] - the OBJ node
 	/// @param t[in] - evaluation time for the paremeter
 	/// @retval the SHOP node
-	static SHOP_Node* getObjMaterial(OBJ_Node *obj, fpreal t=0.0);
+	static OP_Node *getObjMaterial(OBJ_Node *objNode, fpreal t=0.0);
 
 	/// Helper function to get OBJ node transform as VRay::Transform
 	/// @param obj[in] - the OBJ node

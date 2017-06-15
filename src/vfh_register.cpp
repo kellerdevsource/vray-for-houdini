@@ -264,8 +264,8 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", MtlWrapper);
 	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", MtlWrapperMaya);
 
-	VFH_VOP_ADD_OPERATOR(table, "GEOMETRY", GeomDisplacedMesh);
-	VFH_VOP_ADD_OPERATOR(table, "GEOMETRY", GeomStaticSmoothedMesh);
+	VFH_VOP_ADD_OPERATOR(table, VRayPluginType::GEOMETRY, GeomDisplacedMesh);
+	VFH_VOP_ADD_OPERATOR(table, VRayPluginType::GEOMETRY, GeomStaticSmoothedMesh);
 
 
 	// TODO: need to enable this at some point.

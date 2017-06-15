@@ -30,15 +30,11 @@
 using namespace VRayForHoudini;
 
 
-SHOP_Node *VRayExporter::getObjMaterial(OBJ_Node *obj_node, fpreal t)
+OP_Node* VRayExporter::getObjMaterial(OBJ_Node *objNode, fpreal t)
 {
-	SHOP_Node *shop_node = nullptr;
-	OP_Node *op_node = obj_node->getMaterialNode(t);
-	if (op_node) {
-		shop_node = op_node->castToSHOPNode();
-	}
-
-	return shop_node;
+	if (!objNode)
+		return nullptr;
+	return objNode ? objNode->getMaterialNode(t) : nullptr;
 }
 
 
@@ -426,9 +422,8 @@ VRay::Plugin VRayExporter::exportVRayClipper(OBJ_Node &clipperNode)
 	pluginDesc.addAttribute(Attrs::PluginAttr("transform", VRayExporter::getObjTransform(&clipperNode, m_context, NOT(clipNodePlugin))));
 
 	// material
-	SHOP_Node *shopNode = getObjMaterial(&clipperNode, t);
-	if (shopNode) {
-		VRay::Plugin mtlPlugin = exportMaterial(*shopNode);
+	VRay::Plugin mtlPlugin = exportMaterial(clipperNode.getMaterialNode(t));
+	if (mtlPlugin) {
 		pluginDesc.addAttribute(Attrs::PluginAttr("material", mtlPlugin));
 	}
 
