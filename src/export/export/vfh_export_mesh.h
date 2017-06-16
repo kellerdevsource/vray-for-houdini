@@ -180,7 +180,7 @@ public:
 	/// @param pluginDesc[out] - the mesh plugin description
 	/// @retval true if mesh primitives were found in gdp
 	///         and pluginDesc is modified
-	virtual bool asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc &pluginDesc) VRAY_OVERRIDE;
+	bool asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc &pluginDesc);
 
 	/// Export mesh geometry plugin and generate Node plugin description
 	/// for all supported primitives in the GU_Detail provided

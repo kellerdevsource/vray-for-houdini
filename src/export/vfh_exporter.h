@@ -247,7 +247,7 @@ public:
 	VRay::Plugin exportLight(OBJ_Node *obj_node);
 
 	/// Export VOP node
-	/// @param vopNode VOP node instance.
+	/// @param opNode VOP node instance.
 	/// @return V-Ray plugin.
 	VRay::Plugin exportVop(OP_Node *opNode, ExportContext *parentContext=nullptr);
 
@@ -426,8 +426,10 @@ public:
 	/// @param prefix[in] - name prefix
 	/// @param suffix[in] - name suffix
 	/// @retval plugin name
+	static std::string getPluginName(const OP_Node &opNode, const char *prefix);
 	static std::string getPluginName(OP_Node *op_node, const std::string &prefix="", const std::string &suffix="");
 	static std::string getPluginName(OBJ_Node *obj_node);
+	static std::string getPluginName(OBJ_Node &obj_node);
 
 	/// Helper function to get the active camera from a given ROP node
 	/// @param rop[in] - the ROP node

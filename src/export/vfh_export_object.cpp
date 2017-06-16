@@ -42,8 +42,8 @@ void VRayExporter::RtCallbackOBJGeometry(OP_Node *caller, void *callee, OP_Event
 {
 	Log::getLog().debug("RtCallbackOBJGeometry: %s from \"%s\"", OPeventToString(type), caller->getName().buffer());
 
-	UT_ASSERT( caller->castToOBJNode() );
-	UT_ASSERT( caller->castToOBJNode()->castToOBJGeometry() );
+	UT_ASSERT(caller->castToOBJNode());
+	UT_ASSERT(caller->castToOBJNode()->castToOBJGeometry());
 
 	VRayExporter &exporter = *reinterpret_cast< VRayExporter* >(callee);
 	OBJ_Geometry *obj_geo = caller->castToOBJNode()->castToOBJGeometry();
@@ -60,29 +60,19 @@ void VRayExporter::RtCallbackOBJGeometry(OP_Node *caller, void *callee, OP_Event
 			if (prm) {
 				UT_StringRef prmToken = prm->getToken();
 				const PRM_SpareData	*spare = prm->getSparePtr();
-				shouldReExport =
-						(   prmToken.equal(obj_geo->getMaterialParmToken())
-						|| (spare && spare->getValue(OBJ_MATERIAL_SPARE_TAG))
-						);
+				shouldReExport = (prmToken.equal(obj_geo->getMaterialParmToken()) ||
+				                 (spare && spare->getValue(OBJ_MATERIAL_SPARE_TAG)));
 			}
 		}
 		case OP_FLAG_CHANGED:
 		case OP_INPUT_CHANGED:
-		case OP_INPUT_REWIRED:
-		{
-
-			GeometryExporter geoExporter(*obj_geo, exporter);
-			geoExporter.setExportGeometry(shouldReExport);
-
-			int nPlugins = geoExporter.exportNodes();
-			for (int i = 0; i < nPlugins; ++i) {
-				exporter.exportPlugin(geoExporter.getPluginDescAt(i));
-			}
-
+		case OP_INPUT_REWIRED: {
+			ObjectExporter objExporter(exporter, *obj_geo);
+			objExporter.setExportGeometry(shouldReExport);
+			objExporter.exportNode();
 			break;
 		}
-		case OP_NODE_PREDELETE:
-		{
+		case OP_NODE_PREDELETE: {
 			exporter.delOpCallbacks(caller);
 			break;
 		}
@@ -110,23 +100,18 @@ void VRayExporter::RtCallbackSOPChanged(OP_Node *caller, void *callee, OP_EventT
 		}
 		case OP_FLAG_CHANGED:
 		case OP_INPUT_CHANGED:
-		case OP_INPUT_REWIRED:
-		{
+		case OP_INPUT_REWIRED: {
 			SOP_Node *geom_node = obj_geo->getRenderSopPtr();
 			if (geom_node) {
 				exporter.addOpCallback(geom_node, VRayExporter::RtCallbackSOPChanged);
 			}
 
-			GeometryExporter geoExporter(*obj_geo, exporter);
-			int nPlugins = geoExporter.exportNodes();
-			for (int i = 0; i < nPlugins; ++i) {
-				 exporter.exportPlugin(geoExporter.getPluginDescAt(i));
-			}
-
+			ObjectExporter objExporter(exporter, *obj_geo);
+			GeometryExporter geoExporter(objExporter, *obj_geo, exporter);
+			geoExporter.exportGeometry();
 			break;
 		}
-		case OP_NODE_PREDELETE:
-		{
+		case OP_NODE_PREDELETE: {
 			exporter.delOpCallbacks(caller);
 			break;
 		}
@@ -208,153 +193,44 @@ static void dumpType(OBJ_OBJECT_TYPE objType) {
 	Log::getLog().debug("OBJ_OBJECT_TYPE = %s", objTypeStr.c_str());
 }
 
-VRay::Plugin VRayExporter::exportObject(OBJ_Node *obj_node)
+VRay::Plugin VRayExporter::exportObject(OBJ_Node *objNode)
 {
+	if (!objNode) {
+		return VRay::Plugin();
+	}
+
 	VRay::Plugin plugin;
-	if (NOT(obj_node)) {
-		return plugin;
-	}
 
-#if 0
-	OBJ_OBJECT_TYPE objType = obj_node->getObjectType();
-	dumpType(objType);
-
-	OP_Node *renNode = obj_node->getRenderNodePtr();
-	if (renNode) {
-		DOP_Node *dopRenNode = CAST_DOPNODE(renNode);
-		if (dopRenNode) {
-			Log::getLog().debug("DOP_Node");
-		}
-
-		POPNET_Node *popNetRenNode = CAST_POPNETNODE(renNode);
-		if (popNetRenNode) {
-			Log::getLog().debug("POPNET_Node");
-		}
-
-		POP_Node *popRenNode = CAST_POPNODE(renNode);
-		if (popRenNode) {
-			POP_ContextData pdata("popRenNode");
-			GEO_PrimParticle *part = pdata.getPrimPart(popRenNode);
-			if (part) {
-				Log::getLog().debug("part = %i", part->getNumParticles());
-			}
-		}
-
-		SOP_Node *geomRenNode = CAST_SOPNODE(renNode);
-		if (geomRenNode) {
-			GU_DetailHandleAutoReadLock gdl(geomRenNode->getCookedGeoHandle(m_context));
-			if (gdl.isValid()) {
-				const GU_Detail &gdp = *gdl.getGdp();
-				for (GA_AttributeDict::iterator it = gdp.getAttributeDict(GA_ATTRIB_PRIMITIVE).begin(GA_SCOPE_PUBLIC); !it.atEnd(); ++it) {
-					GA_Attribute *attrib = it.attrib();
-					Log::getLog().debug("attrib = %s", attrib->getName().buffer());
-				}
-
-				const GA_IntrinsicManager &iman = gdp.getIntrinsicManager();
-
-				UT_StringArray inames;
-				iman.extractNames(inames);
-				for (int i = 0; i < inames.size(); ++i) {
-					Log::getLog().debug("intrin = %s", inames[i].buffer());
-				}
-
-				if (gdp.containsPrimitiveType(GEO_PRIMPART)) {
-					Log::getLog().debug("GEO_PRIMPART");
-				}
-
-				{
-					auto & primList = gdp.getPrimitiveList();
-					const int primCount = primList.offsetSize();
-					for (int c = 0; c < primCount; ++c) {
-						const GA_Primitive *prim = primList.get(c);
-						if (prim && prim->getTypeId() == GEO_PRIMPART) {
-							const GU_PrimParticle *part = UTverify_cast<const GU_PrimParticle*>(prim);
-							if (part) {
-								const GEO_PartRender &partRen = part->getRenderAttribs();
-							}
-						}
-					}
-				}
-
-				{
-					GA_LocalIntrinsic id = gdp.findIntrinsic("pointattributes");
-
-					bool readonly = gdp.getIntrinsicReadOnly(id);
-					exint tuplesize = gdp.getIntrinsicTupleSize(id);
-					GA_StorageClass storage = gdp.getIntrinsicStorage(id);
-					const char *name = gdp.getIntrinsicName(id);
-					const UT_Options *options = gdp.getIntrinsicOptions(id);
-
-					switch (storage) {
-						case GA_STORECLASS_INT: {
-							UT_StackBuffer<int64> values(tuplesize);
-							exint   evalsize = gdp.getIntrinsic(id, values, tuplesize);
-							UT_ASSERT(evalsize == tuplesize);
-							dumpValues(name, options, readonly, storage, values, evalsize);
-							break;
-						}
-						case GA_STORECLASS_FLOAT: {
-							UT_StackBuffer<fpreal64> values(tuplesize);
-							exint evalsize = gdp.getIntrinsic(id, values, tuplesize);
-							UT_ASSERT(evalsize == tuplesize);
-							dumpValues(name, options, readonly, storage, values, evalsize);
-							break;
-						}
-						case GA_STORECLASS_STRING: {
-							UT_StringArray values;
-							exint evalsize = gdp.getIntrinsic(id, values);
-							UT_ASSERT(evalsize == tuplesize);
-							UT_ASSERT(evalsize == values.entries());
-							dumpValues(name, options, readonly, storage, values, evalsize);
-							break;
-						}
-						default:
-							break;
-					}
-				}
-			}
-		}
-	}
-#endif
-
-	Log::getLog().info("  OBJ: %s [%s]",
-						obj_node->getName().buffer(),
-						obj_node->getOperator()->getName().buffer());
-
-	SOP_Node *geom_node = obj_node->getRenderSopPtr();
-	if (!geom_node) {
-		Log::getLog().error("OBJ \"%s\": Render SOP is not found!",
-					obj_node->getName().buffer());
+	OP_Node *renderOp = objNode->getRenderNodePtr();
+	if (!renderOp) {
+		Log::getLog().error("OBJ \"%s\": Render OP is not found!",
+							objNode->getName().buffer());
 	}
 	else {
-		Log::getLog().info("  Render SOP: %s:\"%s\"",
-				   geom_node->getOperator()->getName().buffer(),
-				   obj_node->getName().buffer());
-
-		const UT_String &objOpType = obj_node->getOperator()->getName();
+		const UT_String &objOpType = objNode->getOperator()->getName();
 
 		if (objOpType.equal("VRayNodeVRayClipper")) {
-			plugin = exportVRayClipper(*obj_node);
+			plugin = exportVRayClipper(*objNode);
 		}
 #ifdef CGR_HAS_VRAYSCENE
 		else if (objOpType.equal("VRayNodeVRayScene")) {
-			plugin = exportVRayScene(obj_node, geom_node);
+			plugin = exportVRayScene(objNode, CAST_SOPNODE(renderOp));
 		}
 #endif
 		else {
-			OBJ_Geometry *obj_geo = obj_node->castToOBJGeometry();
-			if (obj_geo) {
-				addOpCallback(obj_geo, VRayExporter::RtCallbackOBJGeometry);
-				addOpCallback(geom_node, VRayExporter::RtCallbackSOPChanged);
+			addOpCallback(objNode, RtCallbackOBJGeometry);
+			addOpCallback(renderOp, RtCallbackSOPChanged);
 
-				GeometryExporter geoExporter(*obj_geo, *this);
-				int nPlugins = geoExporter.exportNodes();
-				for (int i = 0; i < nPlugins; ++i) {
-					VRay::Plugin nodePlugin = exportPlugin(geoExporter.getPluginDescAt(i));
-					if (NOT(plugin)) {
-						plugin = nodePlugin;
-					}
-				}
+			ObjectExporter objExporter(*this, *objNode);
+			plugin = objExporter.exportNode();
+
+			if (!plugin) {
+				Log::getLog().info("Error exporting OBJ: %s [%s]",
+								   objNode->getName().buffer(),
+								   objNode->getOperator()->getName().buffer());
+				Log::getLog().info("  Render OP: %s:\"%s\"",
+								   renderOp->getName().buffer(),
+								   renderOp->getOperator()->getName().buffer());
 			}
 		}
 	}

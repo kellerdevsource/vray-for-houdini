@@ -200,12 +200,11 @@ OP::VRayNode::PluginResult LightNodeBase< VRayPluginID::LightMesh >::asPluginDes
 			if (obj_node) {
 				OBJ_Geometry * obj_geom = obj_node->castToOBJGeometry();
 				if (obj_geom) {
-					GeometryExporter geoExporter(*obj_geom, exporter);
-					if (geoExporter.exportNodes() > 0) {
-						Attrs::PluginAttr *attr = geoExporter.getPluginDescAt(0).get("geometry");
-						if (attr) {
-							pluginDesc.addAttribute(Attrs::PluginAttr("geometry", attr->paramValue.valPlugin));
-						}
+					ObjectExporter objExporter(exporter, *obj_node);
+					GeometryExporter geoExporter(objExporter, *obj_geom, exporter);
+					VRay::Plugin geometry = geoExporter.exportGeometry();
+					if (geometry) {
+						pluginDesc.addAttribute(Attrs::PluginAttr("geometry", geometry));
 					}
 				}
 				else {

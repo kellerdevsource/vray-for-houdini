@@ -228,7 +228,7 @@ void RampHandler::OnEditCurveDiagram(RampUi & curve, OnEditType editReason)
 		return;
 	}
 	// sanity check
-	UT_ASSERT(&curve == m_ctx->m_ui);
+	UT_ASSERT(&curve == m_ctx->m_ui.get());
 
 	auto & data = m_ctx->data(RampType_Curve);
 	const auto size = curve.pointCount(RampType_Curve);
@@ -257,7 +257,7 @@ void RampHandler::OnEditColorGradient(RampUi & curve, OnEditType editReason)
 		return;
 	}
 	// sanity check
-	UT_ASSERT(&curve == m_ctx->m_ui);
+	UT_ASSERT(&curve == m_ctx->m_ui.get());
 
 	auto & data = m_ctx->data(RampType_Color);
 	const auto size = curve.pointCount(RampType_Color);

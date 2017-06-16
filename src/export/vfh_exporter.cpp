@@ -43,9 +43,26 @@
 #include <boost/bind.hpp>
 #include <boost/format.hpp>
 #include <boost/algorithm/string.hpp>
-
+#include "vfh_export_geom.h"
 
 using namespace VRayForHoudini;
+
+
+static boost::format FmtPluginNameWithPrefix("%s@%s");
+
+
+std::string VRayExporter::getPluginName(const OP_Node &opNode, const char *prefix)
+{
+	std::string pluginName = boost::str(FmtPluginNameWithPrefix % prefix % opNode.getFullPath().buffer());
+
+	// AppSDK doesn't like "/" for some reason.
+	boost::replace_all(pluginName, "/", "|");
+	if (boost::ends_with(pluginName, "|")) {
+		pluginName.pop_back();
+	}
+
+	return pluginName;
+}
 
 
 std::string VRayExporter::getPluginName(OP_Node *op_node, const std::string &prefix, const std::string &suffix)
@@ -83,6 +100,12 @@ std::string VRayExporter::getPluginName(OBJ_Node *obj_node)
 	}
 
 	return pluginName;
+}
+
+
+std::string VRayExporter::getPluginName(OBJ_Node &objNode)
+{
+	return VRayExporter::getPluginName(&objNode);
 }
 
 
@@ -1352,6 +1375,9 @@ void VRayExporter::exportScene()
 	// add RT update callbacks to detect scene export changes
 	addOpCallback(m_rop, VRayRendererNode::RtCallbackRop);
 	addOpCallback(OPgetDirector()->getManager("obj"), VRayExporter::RtCallbackObjManager);
+
+	// Clear plugin cache table.
+	clearOpPluginCache();
 
 	// export geometry nodes
 	OP_Bundle *activeGeo = m_rop->getActiveGeometryBundle();

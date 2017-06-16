@@ -69,10 +69,6 @@ VRay::Plugin VRayExporter::exportMaterial(VOP_Node *vopNode)
 
 VRay::Plugin VRayExporter::exportMaterial(OP_Node *matNode)
 {
-	if (!matNode) {
-		return VRay::Plugin();
-	}
-
 	VRay::Plugin material;
 
 	SHOP_Node *shopNode = CAST_SHOPNODE(matNode);
