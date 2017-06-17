@@ -534,7 +534,7 @@ int GeometryExporter::exportRenderPoints(const GU_Detail &gdp, VMRenderPoints re
 				const UT_Vector3F &cd = cdHndl.get(ptOff);
 				color[positionsIdx].r = cd.x();
 				color[positionsIdx].g = cd.y();
-				color[positionsIdx].g = cd.z();
+				color[positionsIdx].b = cd.z();
 			}
 
 			if (opacityHndl.isValid()) {
