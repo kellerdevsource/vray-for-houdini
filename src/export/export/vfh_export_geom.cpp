@@ -967,7 +967,7 @@ VRay::Plugin GeometryExporter::exportPointParticles(const GU_Detail &gdp, VMRend
 				const UT_Vector3F &cd = cdHndl.get(ptOff);
 				color[positionsIdx].r = cd.x();
 				color[positionsIdx].g = cd.y();
-				color[positionsIdx].g = cd.z();
+				color[positionsIdx].b = cd.z();
 			}
 
 			if (opacityHndl.isValid()) {
