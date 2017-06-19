@@ -30,7 +30,7 @@ static PRM_Range rpm_range_mtl_count(PRM_RANGE_RESTRICTED, 1, PRM_RANGE_UI, 8);
 
 void VOP::MtlMulti::setPluginType()
 {
-	pluginType = "MATERIAL";
+	pluginType = VRayPluginType::MATERIAL;
 	pluginID   = "MtlMulti";
 }
 

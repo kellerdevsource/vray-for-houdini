@@ -22,6 +22,35 @@
 using namespace VRayForHoudini;
 using namespace VRayForHoudini::Attrs;
 
+static QRegExp cssRgbMatch("(\\d+)");
+
+static QColor getSelectionColor(const QString &styleSheet)
+{
+	QColor selectionColor;
+
+	// Find the first occurence of "selection-background-color: rgb(184, 133, 32);"
+	QStringList lines = styleSheet.split('\n');
+	for (QString line : lines) {
+		if (line.contains("selection-background-color")) {
+			QStringList colors;
+			int pos = 0;
+
+			while ((pos = cssRgbMatch.indexIn(line, pos)) != -1) {
+				colors << cssRgbMatch.cap(1);
+				pos += cssRgbMatch.matchedLength();
+			}
+
+			selectionColor.setRed(colors[0].toInt());
+			selectionColor.setGreen(colors[1].toInt());
+			selectionColor.setBlue(colors[2].toInt());
+
+			break;
+		}
+	}
+
+	return selectionColor;
+}
+
 struct AppSdkInit;
 static AppSdkInit *appSdkInit = nullptr;
 
@@ -38,14 +67,33 @@ struct AppSdkInit
 		FreePtr(appSdkInit);
 	}
 
-	explicit operator bool () const {
-		return !!m_vrayInit;
+	operator bool () const {
+		return m_vrayInit && m_dummyRenderer;
 	}
 
 private:
 	AppSdkInit()
 		: m_vrayInit(nullptr)
+		, m_dummyRenderer(nullptr)
 	{
+		QWidget *mainWindow = HOU::getMainQtWindow();
+		if (mainWindow) {
+			// VFB will take colors from QApplication::palette(),
+			// but Houdini's real palette is not stored there.
+			// Must be called before VRay::VRayInit().
+			QPalette houdiniPalette = mainWindow->palette();
+
+			// Pressed button color is incorrect in palette...
+			QString styleSheet = mainWindow->styleSheet();
+
+			houdiniPalette.setBrush(QPalette::Highlight,
+									QBrush(getSelectionColor(styleSheet)));
+
+			QApplication::setPalette(houdiniPalette);
+
+			QApplication::setFont(mainWindow->font());
+		}
+
 		try {
 #ifdef __APPLE__
 			const bool isVfbEnabled = false;
@@ -63,6 +111,8 @@ private:
 			VRay::RendererOptions options;
 			options.enableFrameBuffer = false;
 			options.showFrameBuffer = false;
+			options.useDefaultVfbTheme = false;
+			options.vfbDrawStyle = VRay::RendererOptions::ThemeStyleMaya;
 
 			m_dummyRenderer = new VRay::VRayRenderer(options);
 		}
@@ -270,15 +320,6 @@ VRayPluginRenderer::~VRayPluginRenderer()
 
 int VRayPluginRenderer::initRenderer(int hasUI, int reInit)
 {
-	// VFB will take colors from QApplication::palette(),
-	// but Houdini's real palette is not stored there for some reason.
-	QWidget *mainWindow = HOU::getMainQtWindow();
-	if (mainWindow) {
-		// Must be called before VRay::VRayRenderer(options)
-		QApplication::setPalette(mainWindow->palette());
-		QApplication::setFont(mainWindow->font());
-	}
-
 	if (initialize()) {
 		if (reInit) {
 			freeMem();
@@ -310,7 +351,14 @@ int VRayPluginRenderer::initRenderer(int hasUI, int reInit)
 				options.keepRTRunning = true;
 
 				m_vray = new VRay::VRayRenderer(options);
+			}
+			catch (VRay::VRayException &e) {
+				Log::getLog().error("Error initializing V-Ray! Error: \"%s\"",
+									e.what());
+				freeMem();
+			}
 
+			if (m_vray) {
 				m_vray->setOnDumpMessage(OnDumpMessage,       (void*)&m_callbacks.m_cbOnDumpMessage);
 				m_vray->setOnProgress(OnProgress,             (void*)&m_callbacks.m_cbOnProgress);
 				m_vray->setOnRendererClose(OnRendererClose,   (void*)&m_callbacks.m_cbOnRendererClose);
@@ -322,11 +370,6 @@ int VRayPluginRenderer::initRenderer(int hasUI, int reInit)
 					m_vray->setOnBucketFailed(OnBucketFailed,     (void*)&m_callbacks.m_cbOnBucketFailed);
 					m_vray->setOnBucketReady(OnBucketReady,       (void*)&m_callbacks.m_cbOnBucketReady);
 				}
-			}
-			catch (VRay::VRayException &e) {
-				Log::getLog().error("Error initializing V-Ray! Error: \"%s\"",
-									e.what());
-				freeMem();
 			}
 		}
 	}
@@ -390,7 +433,8 @@ void VRayPluginRenderer::showVFB(bool show, const char *title)
 			if (vfb) {
 				Qt::WindowFlags windowFlags = vfb->windowFlags();
 				windowFlags |= (  Qt::Window
-#ifndef _WIN32
+// Need to set this flag only for Qt4
+#if !defined(_WIN32) && (UT_MAJOR_VERSION_INT < 16)
 								| Qt::WindowStaysOnTopHint
 #endif
 								| Qt::WindowTitleHint

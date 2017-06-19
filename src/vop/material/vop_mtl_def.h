@@ -20,7 +20,7 @@
 namespace VRayForHoudini {
 namespace VOP {
 
-#define MTL_DEF(PluginID) NODE_BASE_DEF("MATERIAL", PluginID)
+#define MTL_DEF(PluginID) NODE_BASE_DEF(MATERIAL, PluginID)
 
 MTL_DEF(Mtl2Sided)
 MTL_DEF(MtlBump)

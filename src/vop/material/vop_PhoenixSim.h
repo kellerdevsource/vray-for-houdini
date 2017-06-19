@@ -64,10 +64,13 @@ protected:
 	/// Set the *non* preset defaults for all ramps in sim
 	void                       setRampDefaults();
 
-	// NOTE: this function is not currently used anywhere,
-	// it provides the easiest way to set preset values to the ramps
-	// maybe keep it here and use it when preset values change in future
-	void                       initPreset(const char * presetName);
+	/// Used as callback for when the current preset field is set to update ramp data accordingly
+	/// @param data - pointer to OP_Node that called the callback
+	/// @param index - the index of the selected option [1, count)
+	/// @param time - the time that the change was made
+	/// @param tplate - the param template that this was triggered for
+	/// @retval 1 if houdini should refresh the UI
+	static int                 setPresetTypeCB(void *data, int index, fpreal64 time, const PRM_Template *tplate);
 
 	/// Used as callback for when channel dropdown is changed. It sets the active channel for the appropriate ramp
 	/// @param data - pointer to OP_Node that called the callback

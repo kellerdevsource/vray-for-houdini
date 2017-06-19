@@ -22,14 +22,6 @@
 namespace VRayForHoudini {
 namespace OBJ {
 
-enum class VRayPluginType
-{
-	Light = 0,
-	Geometry,
-	MAX_PLUGINTYPE
-};
-
-
 enum class VRayPluginID
 {
 	SunLight = 0,
@@ -46,7 +38,6 @@ enum class VRayPluginID
 	MAX_PLUGINID
 };
 
-const char *getVRayPluginTypeName(VRayPluginType pluginType);
 const char *getVRayPluginIDName(VRayPluginID pluginID);
 
 
@@ -84,10 +75,9 @@ public:
 	virtual PluginResult        asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext=nullptr) VRAY_OVERRIDE;
 
 protected:
-	virtual void                setPluginType() VRAY_OVERRIDE
-	{
-		pluginType = getVRayPluginTypeName(VRayPluginType::Light);
-		pluginID = getVRayPluginIDName(PluginID);;
+	void setPluginType() VRAY_OVERRIDE {
+		pluginType = VRayPluginType::LIGHT;
+		pluginID = getVRayPluginIDName(PluginID);
 	}
 };
 

@@ -23,19 +23,18 @@
 
 #include <boost/algorithm/string.hpp>
 
+#include <GA/GA_IntrinsicMacros.h>
+#include <GU/GU_PrimPart.h>
+#include <POP/POP_ContextData.h>
 
 using namespace VRayForHoudini;
 
 
-SHOP_Node *VRayExporter::getObjMaterial(OBJ_Node *obj_node, fpreal t)
+OP_Node* VRayExporter::getObjMaterial(OBJ_Node *objNode, fpreal t)
 {
-	SHOP_Node *shop_node = nullptr;
-	OP_Node *op_node = obj_node->getMaterialNode(t);
-	if (op_node) {
-		shop_node = op_node->castToSHOPNode();
-	}
-
-	return shop_node;
+	if (!objNode)
+		return nullptr;
+	return objNode ? objNode->getMaterialNode(t) : nullptr;
 }
 
 
@@ -168,6 +167,46 @@ void VRayExporter::RtCallbackVRayClipper(OP_Node *caller, void *callee, OP_Event
 	}
 }
 
+template <typename ValueType>
+static void dumpValues(const char *name, const UT_Options *options, bool readonly, GA_StorageClass storage, ValueType values, exint evalsize) {
+	Log::getLog().debug("name = %s", name);
+}
+
+static void dumpType(OBJ_OBJECT_TYPE objType) {
+	std::string objTypeStr;
+	if (objType & OBJ_WORLD) { objTypeStr += "OBJ_WORLD | "; }
+	if (objType & OBJ_GEOMETRY) {  objTypeStr += "OBJ_GEOMETRY | ";  }
+	if (objType & OBJ_CAMERA) { objTypeStr += "OBJ_CAMERA | "; }
+	if (objType & OBJ_LIGHT)    { objTypeStr += "OBJ_LIGHT | "; }
+	if (objType & OBJ_RENDERER) {  objTypeStr += "OBJ_RENDERER | ";  }
+	if (objType & OBJ_FOG) {  objTypeStr += "OBJ_FOG | ";  }
+	if (objType & OBJ_BONE) {  objTypeStr += "OBJ_BONE | ";  }
+	if (objType & OBJ_HANDLE) { objTypeStr += "OBJ_HANDLE | "; }
+	if (objType & OBJ_BLEND) { objTypeStr += "OBJ_BLEND | "; }
+	if (objType & OBJ_FORCE) { objTypeStr += "OBJ_FORCE | "; }
+	if (objType & OBJ_CAMSWITCH) { objTypeStr += "OBJ_CAMSWITCH | "; }
+	if (objType & OBJ_SOUND) { objTypeStr += "OBJ_SOUND | "; }
+	if (objType & OBJ_MICROPHONE) { objTypeStr += "OBJ_MICROPHONE | "; }
+	if (objType & OBJ_SUBNET) { objTypeStr += "OBJ_SUBNET | "; }
+	if (objType & OBJ_FETCH) { objTypeStr += "OBJ_FETCH | "; }
+	if (objType & OBJ_NULL) {  objTypeStr += "OBJ_NULL | ";  }
+	if (objType & OBJ_STICKY) { objTypeStr += "OBJ_STICKY | "; }
+	if (objType & OBJ_DOPNET) { objTypeStr += "OBJ_DOPNET | "; }
+	if (objType & OBJ_RIVET) { objTypeStr += "OBJ_RIVET | "; }
+	if (objType & OBJ_MUSCLE) { objTypeStr += "OBJ_MUSCLE | "; }
+	if (objType & OBJ_STD_LIGHT) { objTypeStr += "OBJ_STD_LIGHT | "; }
+	if (objType & OBJ_STD_BONE) {  objTypeStr += "OBJ_STD_BONE | ";  }
+	if (objType & OBJ_STD_HANDLE) { objTypeStr += "OBJ_STD_HANDLE | "; }
+	if (objType & OBJ_STD_BLEND) { objTypeStr += "OBJ_STD_BLEND | "; }
+	if (objType & OBJ_STD_FETCH) { objTypeStr += "OBJ_STD_FETCH | "; }
+	if (objType & OBJ_STD_STICKY) { objTypeStr += "OBJ_STD_STICKY | "; }
+	if (objType & OBJ_STD_RIVET) { objTypeStr += "OBJ_STD_RIVET | "; }
+	if (objType & OBJ_STD_NULL) {  objTypeStr += "OBJ_STD_NULL | ";  }
+	if (objType & OBJ_STD_MUSCLE) { objTypeStr += "OBJ_STD_MUSCLE | "; }
+	if (objType & OBJ_STD_CAMSWITCH) { objTypeStr += "OBJ_STD_CAMSWITCH | "; }
+	if (objType & OBJ_ALL) {  objTypeStr += "OBJ_ALL"; }
+	Log::getLog().debug("OBJ_OBJECT_TYPE = %s", objTypeStr.c_str());
+}
 
 VRay::Plugin VRayExporter::exportObject(OBJ_Node *obj_node)
 {
@@ -175,6 +214,108 @@ VRay::Plugin VRayExporter::exportObject(OBJ_Node *obj_node)
 	if (NOT(obj_node)) {
 		return plugin;
 	}
+
+#if 0
+	OBJ_OBJECT_TYPE objType = obj_node->getObjectType();
+	dumpType(objType);
+
+	OP_Node *renNode = obj_node->getRenderNodePtr();
+	if (renNode) {
+		DOP_Node *dopRenNode = CAST_DOPNODE(renNode);
+		if (dopRenNode) {
+			Log::getLog().debug("DOP_Node");
+		}
+
+		POPNET_Node *popNetRenNode = CAST_POPNETNODE(renNode);
+		if (popNetRenNode) {
+			Log::getLog().debug("POPNET_Node");
+		}
+
+		POP_Node *popRenNode = CAST_POPNODE(renNode);
+		if (popRenNode) {
+			POP_ContextData pdata("popRenNode");
+			GEO_PrimParticle *part = pdata.getPrimPart(popRenNode);
+			if (part) {
+				Log::getLog().debug("part = %i", part->getNumParticles());
+			}
+		}
+
+		SOP_Node *geomRenNode = CAST_SOPNODE(renNode);
+		if (geomRenNode) {
+			GU_DetailHandleAutoReadLock gdl(geomRenNode->getCookedGeoHandle(m_context));
+			if (gdl.isValid()) {
+				const GU_Detail &gdp = *gdl.getGdp();
+				for (GA_AttributeDict::iterator it = gdp.getAttributeDict(GA_ATTRIB_PRIMITIVE).begin(GA_SCOPE_PUBLIC); !it.atEnd(); ++it) {
+					GA_Attribute *attrib = it.attrib();
+					Log::getLog().debug("attrib = %s", attrib->getName().buffer());
+				}
+
+				const GA_IntrinsicManager &iman = gdp.getIntrinsicManager();
+
+				UT_StringArray inames;
+				iman.extractNames(inames);
+				for (int i = 0; i < inames.size(); ++i) {
+					Log::getLog().debug("intrin = %s", inames[i].buffer());
+				}
+
+				if (gdp.containsPrimitiveType(GEO_PRIMPART)) {
+					Log::getLog().debug("GEO_PRIMPART");
+				}
+
+				{
+					auto & primList = gdp.getPrimitiveList();
+					const int primCount = primList.offsetSize();
+					for (int c = 0; c < primCount; ++c) {
+						const GA_Primitive *prim = primList.get(c);
+						if (prim && prim->getTypeId() == GEO_PRIMPART) {
+							const GU_PrimParticle *part = UTverify_cast<const GU_PrimParticle*>(prim);
+							if (part) {
+								const GEO_PartRender &partRen = part->getRenderAttribs();
+							}
+						}
+					}
+				}
+
+				{
+					GA_LocalIntrinsic id = gdp.findIntrinsic("pointattributes");
+
+					bool readonly = gdp.getIntrinsicReadOnly(id);
+					exint tuplesize = gdp.getIntrinsicTupleSize(id);
+					GA_StorageClass storage = gdp.getIntrinsicStorage(id);
+					const char *name = gdp.getIntrinsicName(id);
+					const UT_Options *options = gdp.getIntrinsicOptions(id);
+
+					switch (storage) {
+						case GA_STORECLASS_INT: {
+							UT_StackBuffer<int64> values(tuplesize);
+							exint   evalsize = gdp.getIntrinsic(id, values, tuplesize);
+							UT_ASSERT(evalsize == tuplesize);
+							dumpValues(name, options, readonly, storage, values, evalsize);
+							break;
+						}
+						case GA_STORECLASS_FLOAT: {
+							UT_StackBuffer<fpreal64> values(tuplesize);
+							exint evalsize = gdp.getIntrinsic(id, values, tuplesize);
+							UT_ASSERT(evalsize == tuplesize);
+							dumpValues(name, options, readonly, storage, values, evalsize);
+							break;
+						}
+						case GA_STORECLASS_STRING: {
+							UT_StringArray values;
+							exint evalsize = gdp.getIntrinsic(id, values);
+							UT_ASSERT(evalsize == tuplesize);
+							UT_ASSERT(evalsize == values.entries());
+							dumpValues(name, options, readonly, storage, values, evalsize);
+							break;
+						}
+						default:
+							break;
+					}
+				}
+			}
+		}
+	}
+#endif
 
 	SOP_Node *geom_node = obj_node->getRenderSopPtr();
 	if (!geom_node) {
@@ -281,9 +422,8 @@ VRay::Plugin VRayExporter::exportVRayClipper(OBJ_Node &clipperNode)
 	pluginDesc.addAttribute(Attrs::PluginAttr("transform", VRayExporter::getObjTransform(&clipperNode, m_context, NOT(clipNodePlugin))));
 
 	// material
-	SHOP_Node *shopNode = getObjMaterial(&clipperNode, t);
-	if (shopNode) {
-		VRay::Plugin mtlPlugin = exportMaterial(*shopNode);
+	VRay::Plugin mtlPlugin = exportMaterial(clipperNode.getMaterialNode(t));
+	if (mtlPlugin) {
 		pluginDesc.addAttribute(Attrs::PluginAttr("material", mtlPlugin));
 	}
 

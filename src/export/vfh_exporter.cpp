@@ -645,7 +645,7 @@ void VRayExporter::exportSettings()
 
 void VRayExporter::exportEnvironment(OP_Node *op_node)
 {
-	exportVop(op_node);
+	exportVop(CAST_VOPNODE(op_node));
 }
 
 
@@ -655,20 +655,20 @@ void VRayExporter::exportEffects(OP_Node *op_net)
 	// Add simulations from ROP
 	OP_Node *sim_node = VRayExporter::FindChildNodeByType(op_net, "VRayNodePhxShaderSimVol");
 	if (sim_node) {
-		exportVop(sim_node);
+		exportVop(CAST_VOPNODE(sim_node));
 	}
 }
 
 
 void VRayExporter::phxAddSimumation(VRay::Plugin sim)
 {
-	m_phxSimulations.push_back(VRay::Value(sim));
+	m_phxSimulations.insert(sim);
 }
 
 
 void VRayExporter::exportRenderChannels(OP_Node *op_node)
 {
-	exportVop(op_node);
+	exportVop(CAST_VOPNODE(op_node));
 }
 
 
@@ -768,7 +768,7 @@ void VRayExporter::RtCallbackVop(OP_Node *caller, void *callee, OP_EventType typ
 		}
 		case OP_INPUT_CHANGED:
 		case OP_INPUT_REWIRED: {
-			exporter.exportVop(caller, nullptr);
+			exporter.exportVop(CAST_VOPNODE(caller), nullptr);
 			break;
 		}
 		case OP_NODE_PREDELETE: {
@@ -781,9 +781,13 @@ void VRayExporter::RtCallbackVop(OP_Node *caller, void *callee, OP_EventType typ
 }
 
 
-VRay::Plugin VRayExporter::exportVop(OP_Node *op_node, ExportContext *parentContext)
+VRay::Plugin VRayExporter::exportVop(OP_Node *opNode, ExportContext *parentContext)
 {
-	VOP_Node *vop_node = op_node->castToVOPNode();
+	VOP_Node *vop_node = CAST_VOPNODE(opNode);
+	if (!vop_node) {
+		return VRay::Plugin();
+	}
+
 	const UT_String &opType = vop_node->getOperator()->getName();
 
 	Log::getLog().info("Exporting node \"%s\" [%s]...",
@@ -801,7 +805,7 @@ VRay::Plugin VRayExporter::exportVop(OP_Node *op_node, ExportContext *parentCont
 	else if (opType.startsWith("VRayNode")) {
 		VOP::NodeBase *vrayNode = static_cast<VOP::NodeBase*>(vop_node);
 
-		addOpCallback(op_node, VRayExporter::RtCallbackVop);
+		addOpCallback(vop_node, VRayExporter::RtCallbackVop);
 
 		Attrs::PluginDesc pluginDesc;
 		//TODO: need consistent naming for surface/displacement/other vops and their overrides
@@ -829,10 +833,10 @@ VRay::Plugin VRayExporter::exportVop(OP_Node *op_node, ExportContext *parentCont
 
 			setAttrsFromOpNodePrms(pluginDesc, vop_node);
 
-			if (vrayNode->getVRayPluginType() == "RENDERCHANNEL") {
+			if (vrayNode->getVRayPluginType() == VRayPluginType::RENDERCHANNEL) {
 				Attrs::PluginAttr *attr_chan_name = pluginDesc.get("name");
 				if (NOT(attr_chan_name) || attr_chan_name->paramValue.valString.empty()) {
-					const std::string channelName = op_node->getName().buffer();
+					const std::string channelName = vop_node->getName().buffer();
 					if (NOT(attr_chan_name)) {
 						pluginDesc.addAttribute(Attrs::PluginAttr("name", channelName));
 					}
@@ -1067,7 +1071,7 @@ VRay::Plugin VRayExporter::exportDisplacement(OBJ_Node *obj_node, VRay::Plugin &
 						addOpCallback(op_node, VRayExporter::RtCallbackDisplacementShop);
 
 						if (mtl_out->error() < UT_ERROR_ABORT ) {
-							const int idx = mtl_out->getInputFromName("Geometry");
+							const int idx = mtl_out->getInputFromName("geometry");
 							VOP::NodeBase *input = dynamic_cast<VOP::NodeBase*>(mtl_out->getInput(idx));
 							if (input) {
 								addOpCallback(input, VRayExporter::RtCallbackDisplacementVop);
@@ -1402,9 +1406,13 @@ void VRayExporter::exportScene()
 	}
 
 	// Add simulations from OBJ
-	if (m_phxSimulations.size()) {
+	if (!m_phxSimulations.empty()) {
 		Attrs::PluginDesc phxSims("VRayNodePhxShaderSimVol", "PhxShaderSimVol");
-		phxSims.addAttribute(Attrs::PluginAttr("phoenix_sim", m_phxSimulations));
+		VRay::ValueList sims(m_phxSimulations.size());
+		std::transform(m_phxSimulations.begin(), m_phxSimulations.end(), sims.begin(), [](const VRay::Plugin &plugin) {
+			return VRay::Value(plugin);
+		});
+		phxSims.addAttribute(Attrs::PluginAttr("phoenix_sim", sims));
 
 		exportPlugin(phxSims);
 	}

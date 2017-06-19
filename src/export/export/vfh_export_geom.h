@@ -21,6 +21,17 @@
 
 namespace VRayForHoudini {
 
+enum VMRenderPoints {
+	vmRenderPointsNone = 0, ///< Don't render points separately from primitives.
+	vmRenderPointsAll, ///< Render only points.
+	vmRenderPointsUnconnected, ///< Render unconnected points.
+};
+
+enum VMRenderPointsAs {
+	vmRenderPointsAsSphere = 0, ///< Render points as spheres. Maps to GeomParticleSystem "render_type" 7 (Spheres).
+	vmRenderPointsAsCirle, ///< Render points as circles. Maps GeomParticleSystem "render_type" 6 (Points).
+};
+
 /// Wraps the export of geometry from a OBJ_Geometry node.
 /// In Houdini single gdp can contain multiple primitive types:
 /// polygons, curves, volumes, packed geometry, delay load prims (bgeo,
@@ -152,6 +163,13 @@ private:
 	/// @param pluginList[out] - collects plugins generated for the primitive
 	/// @retval number of plugin descriptions added to pluginList
 	int exportPackedGeometry(SOP_Node &sop, const GU_PrimPacked &prim, PluginDescList &pluginList);
+
+	/// Export points as particles.
+	/// @param gdp Detail.
+	/// @param renderPoints Points rendering mode.
+	/// @param[out] pluginList Collects plugins generated for the primitive.
+	/// @returns Number of plugin descriptions added to pluginList.
+	int exportRenderPoints(const GU_Detail &gdp, VMRenderPoints renderPoints, PluginDescList &pluginList);
 
 	/// Helper function to export the material for this OBJ node.
 	/// The material from OBJ node 'shoppath' parameter together with

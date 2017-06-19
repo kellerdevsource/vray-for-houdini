@@ -11,7 +11,9 @@
 find_package(Phoenix)
 
 if(Phoenix_FOUND)
-	message(STATUS "Using Phoenix SDK include path: ${Phoenix_INCLUDES}")
-	message(STATUS "Using Phoenix SDK library path: ${Phoenix_LIBRARIES}")
-	message(STATUS "Using Phoenix SDK loaders: [${CGR_PHOENIX_SHARED}, ${CGR_PHOENIX_SHARED_F3D}, ${CGR_PHOENIX_SHARED_VDB}]")
+	message_array("Using Phoenix SDK include path" Phoenix_INCLUDES)
+	message_array("Using Phoenix SDK library path" Phoenix_LIBRARIES)
+
+	set(PHOENIX_LOADERS "${CGR_PHOENIX_SHARED};${CGR_PHOENIX_SHARED_F3D};${CGR_PHOENIX_SHARED_VDB}")
+	message_array("Using Phoenix loaders" PHOENIX_LOADERS)
 endif()

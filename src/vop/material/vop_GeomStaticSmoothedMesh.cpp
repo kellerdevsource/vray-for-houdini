@@ -16,7 +16,7 @@ using namespace VRayForHoudini;
 
 void VOP::GeomStaticSmoothedMesh::setPluginType()
 {
-	pluginType = "GEOMETRY";
+	pluginType = VRayPluginType::GEOMETRY;
 	pluginID   = "GeomStaticSmoothedMesh";
 }
 

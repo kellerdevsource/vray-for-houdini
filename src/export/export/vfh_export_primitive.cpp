@@ -9,6 +9,8 @@
 //
 
 #include "vfh_export_primitive.h"
+#include "vfh_attr_utils.h"
+
 #include "gu_volumegridref.h"
 
 #include "vop/vop_node_base.h"
@@ -349,12 +351,14 @@ void HoudiniVolumeExporter::exportPrimitives(const GU_Detail &detail, PluginDesc
 		}
 	}
 
-	auto shop = m_exporter.getObjMaterial(&m_object, m_context.getTime());;
+	OP_Node *matNode = m_exporter.getObjMaterial(&m_object, m_context.getTime());;
 
-	if (shop) {
-		exportSim(shop, overrides, phxShaderCache.getName());
-	} else {
-		Log::getLog().error("Can'f find shop node for %s", phxShaderCache.getName());
+	SHOP_Node *shopNode = CAST_SHOPNODE(matNode);
+	if (!shopNode) {
+		Log::getLog().error("Can't find shop node for %s", phxShaderCache.getName());
+	}
+	else {
+		exportSim(shopNode, overrides, phxShaderCache.getName());
 	}
 }
 
@@ -406,17 +410,21 @@ void VolumeExporter::exportCache(const GA_Primitive &prim)
 	// TODO: add overrides
 	// GA_ROHandleS mtlo(prim.getDetail().findAttribute(GA_ATTRIB_PRIMITIVE, "material_override"));
 
-	auto path = mtlpath.isValid() ? mtlpath.get(prim.getMapOffset()) : nullptr;
-	SHOP_Node *shop = mtlpath.isValid() ? OPgetDirector()->findSHOPNode(path) : nullptr;
-
-	if (!shop) {
-		shop = m_exporter.getObjMaterial(&m_object, m_context.getTime());
+	OP_Node *matNode = nullptr;
+	if (mtlpath.isValid()) {
+		const UT_String &path = mtlpath.get(prim.getMapOffset());
+		matNode = getOpNodeFromPath(path, m_context.getTime());
+	}
+	if (!matNode) {
+		matNode = m_exporter.getObjMaterial(&m_object, m_context.getTime());
 	}
 
-	if (shop) {
-		exportSim(shop, overrides, cachePlugin.getName());
-	} else {
-		Log::getLog().error("Can'f find shop node for %s", cachePlugin.getName());
+	SHOP_Node *shopNode = CAST_SHOPNODE(matNode);
+	if (!shopNode) {
+		Log::getLog().error("Can't find shop node for %s", cachePlugin.getName());
+	}
+	else {
+		exportSim(shopNode, overrides, cachePlugin.getName());
 	}
 }
 

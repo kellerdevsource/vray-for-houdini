@@ -16,4 +16,5 @@ __all__ = [
     'vfh_json',
     'vfh_proxy_import',
     'vfh_show_all_vfb',
+    'vfh_phoenix_presets',
 ]

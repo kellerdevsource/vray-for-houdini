@@ -102,7 +102,7 @@ add_definitions(-DCGR_GIT_HASH=${SRC_GIT_HASH})
 
 # Install
 #
-option(INSTALL_LOCAL "Install files locally" ON)
+option(INSTALL_LOCAL "Install files locally" OFF)
 option(INSTALL_RELEASE "Install release build for distribution" OFF)
 
 function(vfh_generate_launcher)
@@ -131,8 +131,16 @@ function(vfh_generate_launcher)
 	file(TO_NATIVE_PATH ${Phoenix_LIBRARIES} Phoenix_LIBRARIES)
 
 	configure_file(${CMAKE_SOURCE_DIR}/deploy/${ARG_TEMPLATE_FILENAME}
-				   ${CMAKE_BINARY_DIR}/${ARG_FILENAME}
+				   ${CMAKE_BINARY_DIR}/tmp/${ARG_FILENAME}
 				   @ONLY)
+
+	file(INSTALL ${CMAKE_BINARY_DIR}/tmp/${ARG_FILENAME}
+		DESTINATION
+			${CMAKE_BINARY_DIR}
+		FILE_PERMISSIONS
+			OWNER_READ OWNER_WRITE OWNER_EXECUTE
+			GROUP_READ GROUP_EXECUTE
+			WORLD_READ WORLD_EXECUTE)
 endfunction()
 
 function(vfh_gen_launcher _location _vfh_appsdk_path _vfh_config_path _vfh_deploy_path _launcher)
@@ -247,12 +255,37 @@ elseif(INSTALL_RELEASE)
 			DESTINATION ${INSTALL_RELEASE_PATH})
 
 	# Copy AppSDK
-	install(DIRECTORY   ${APPSDK_ROOT}/bin
-			DESTINATION ${INSTALL_RELEASE_PATH}/appsdk)
+	if(HOUDINI_QT_VERSION VERSION_EQUAL 4)
+		set(EXCLUDE_LIBVRAY "*${CMAKE_SHARED_LIBRARY_PREFIX}vray${CMAKE_SHARED_LIBRARY_SUFFIX}")
+	else()
+		set(EXCLUDE_LIBVRAY "*${CMAKE_SHARED_LIBRARY_PREFIX}vray_qt4${CMAKE_SHARED_LIBRARY_SUFFIX}")
+	endif()
+
+	install(DIRECTORY
+			${APPSDK_ROOT}/bin
+	        DESTINATION
+			${INSTALL_RELEASE_PATH}/appsdk
+	        PATTERN
+			${EXCLUDE_LIBVRAY} EXCLUDE
+	)
+
+	# Default libvray.dll is Qt5
+	if(HOUDINI_QT_VERSION VERSION_EQUAL 4)
+		set(VRAYDSO_QT4 ${APPSDK_ROOT}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}vray_qt4${CMAKE_SHARED_LIBRARY_SUFFIX})
+		# If doesn't exist - it's already Qt 4
+		if(EXISTS ${VRAYDSO_QT4})
+			install(FILES ${VRAYDSO_QT4}
+				DESTINATION
+					${INSTALL_RELEASE_PATH}/appsdk/bin
+				RENAME
+					${CMAKE_SHARED_LIBRARY_PREFIX}vray${CMAKE_SHARED_LIBRARY_SUFFIX}
+			)
+		endif()
+	endif()
 
 	# Clone JSON plugin descriptions
 	set(VFH_CLONE_PLUGINS_DESC ${CMAKE_BINARY_DIR}/vfh_clone_plugins_desc.cmake)
-	configure_file(${CMAKE_SOURCE_DIR}/cmake/vfh_clone_plugins_desc.cmake.in ${VFH_CLONE_PLUGINS_DESC})
+	configure_file(${CMAKE_SOURCE_DIR}/cmake/vfh_clone_plugins_desc.cmake.in ${VFH_CLONE_PLUGINS_DESC} @ONLY)
 	install(SCRIPT ${VFH_CLONE_PLUGINS_DESC})
 
 	# Archive the installation directory

@@ -112,8 +112,6 @@ void newDriverOperator(OP_OperatorTable *table)
 	Error::ErrorChaser &errChaser = Error::ErrorChaser::getInstance();
 	errChaser.enable(true);
 
-	VRayPluginRenderer::initialize();
-
 	VRayRendererNode::register_operator(table);
 	VRayProxyROP::register_ropoperator(table),
 
@@ -266,8 +264,8 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", MtlWrapper);
 	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", MtlWrapperMaya);
 
-	VFH_VOP_ADD_OPERATOR(table, "GEOMETRY", GeomDisplacedMesh);
-	VFH_VOP_ADD_OPERATOR(table, "GEOMETRY", GeomStaticSmoothedMesh);
+	VFH_VOP_ADD_OPERATOR(table, VRayPluginType::GEOMETRY, GeomDisplacedMesh);
+	VFH_VOP_ADD_OPERATOR(table, VRayPluginType::GEOMETRY, GeomStaticSmoothedMesh);
 
 
 	// TODO: need to enable this at some point.

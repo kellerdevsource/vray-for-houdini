@@ -54,7 +54,7 @@ bool VOP::BRDFScanned::updateParmsFlags()
 
 void VOP::BRDFScanned::setPluginType()
 {
-	pluginType = "BRDF";
+	pluginType = VRayPluginType::BRDF;
 	pluginID   = "BRDFScanned";
 }
 

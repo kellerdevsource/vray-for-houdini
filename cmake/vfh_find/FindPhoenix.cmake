@@ -17,13 +17,9 @@ if(PHXSDK_PATH)
 else()
 	# no Phoenix sdk root path is passed to cmake
 	if(SDK_PATH)
-		# if vfh sdk path is given use it to deduce V-Ray SDK root path based on version
-		if(NOT PHXSDK_VERSION)
-			message(WARNING "Phoenix SDK version NOT specified")
-			set(_phx_root "")
-		else()
-			message(STATUS "Phoenix SDK version = ${PHXSDK_VERSION}")
-			set(_phx_root "${SDK_PATH}/phxsdk/${HOUDINI_VERSION}/${PHXSDK_VERSION}")
+		set(_phx_root "${SDK_PATH}/phxsdk/qt${HOUDINI_QT_VERSION}")
+		if(WIN32)
+			set(_phx_root "${_phx_root}/${HDK_RUNTIME}")
 		endif()
 	else()
 		# otherwise search for Phoenix for Maya default installation path
@@ -51,7 +47,7 @@ else()
 endif()
 
 
-message(STATUS "Searching Phoenix SDK path = ${_phx_root}")
+message(STATUS "Phoenix SDK search path: ${_phx_root}")
 
 
 # check if path exists

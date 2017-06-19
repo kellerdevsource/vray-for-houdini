@@ -3,7 +3,7 @@
 @echo off
 
 :: Houdini location
-set HFS=C:\Program Files\Side Effects Software\Houdini @HOUDINI_VERSION@.@HOUDINI_VERSION_BUILD@
+set HFS=@HOUDINI_INSTALL_ROOT@
 
 :: Use OpenVDB < 3
 set HOUDINI13_VOLUME_COMPATIBILITY=1
@@ -20,15 +20,20 @@ set VRAY_UI_DS_PATH=@CMAKE_SOURCE_DIR@\deploy\ui
 :: Phoenix loaders
 set VRAY_FOR_HOUDINI_AURA_LOADERS=@Phoenix_LIBRARIES@
 
-:: Houdini paths
+:: Houdini
 set HOUDINI_PATH=@CMAKE_SOURCE_DIR@\deploy\vfh_home;^&
 set HOUDINI_DSO_PATH=@VFH_DSO_DIRPATH@;^&
-
-:: Report loading errors
 set HOUDINI_DSO_ERROR=1
+set HOUDINI_SOHO_DEVELOPER=1
+set HOUDINI_DISABLE_CONSOLE=0
+set HOUDINI_TEXT_CONSOLE=0
+set HOUDINI_WINDOW_CONSOLE=1
 
 :: Add libs to path
 set PATH=%HFS%\bin;%VRAY_APPSDK%\bin;%PATH%;%VRAY_FOR_HOUDINI_AURA_LOADERS%
+
+where /Q dbgcore.dll
+IF ERRORLEVEL 1 set PATH=%VRAY_APPSDK%\bin\compat;%PATH%
 
 :: Start Houdini
 ::

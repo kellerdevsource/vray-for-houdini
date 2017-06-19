@@ -21,7 +21,7 @@
 namespace VRayForHoudini {
 namespace VOP {
 
-#define TEX_DEF(PluginID) NODE_BASE_DEF("TEXTURE", PluginID)
+#define TEX_DEF(PluginID) NODE_BASE_DEF(TEXTURE, PluginID)
 
 TEX_DEF(BitmapBuffer)
 
