@@ -103,6 +103,9 @@ static const char intrFilename[] = "filename";
 
 static const char VFH_ATTR_MATERIAL_ID[] = "switchmtl";
 
+static const UT_String typeGeomStaticMesh = "GeomStaticMesh";
+static const UT_String typeNode = "Node";
+
 /// Identity transform.
 static VRay::Transform identityTm(1);
 
@@ -514,6 +517,18 @@ VRay::Plugin GeometryExporter::getNodeForInstancerGeometry(VRay::Plugin geometry
 	return node;
 }
 
+/// Ensures "dynamic_geometry" is set for GeomStaticMesh.
+/// @param plugin Node or geometry plugin.
+static void ensureDynamicGeometryForInstancer(VRay::Plugin plugin)
+{
+	VRay::Plugin geometry = plugin;
+	if (typeNode.equal(geometry.getType())) {
+		geometry = geometry.getPlugin("geometry");
+	}
+	if (typeGeomStaticMesh.equal(geometry.getType())) {
+		geometry.setValue("dynamic_geometry", true);
+	}
+}
 
 VRay::Plugin GeometryExporter::exportDetail(const GU_Detail &gdp)
 {
@@ -552,6 +567,8 @@ VRay::Plugin GeometryExporter::exportDetail(const GU_Detail &gdp)
 
 					UT_Matrix4D fullxform;
 					primPacked->getFullTransform4(fullxform);
+
+					ensureDynamicGeometryForInstancer(fromPacked);
 
 					InstancerItem item;
 					item.geometry = fromPacked;
@@ -1236,6 +1253,7 @@ VRay::Plugin GeometryExporter::exportPointInstancer(const GU_Detail &gdp, int is
 		uint32_t additional_params_flags = 0;
 
 		VRay::Plugin instanceNode = pluginExporter.exportObject(instaceObjNode);
+		ensureDynamicGeometryForInstancer(instanceNode);
 
 		VRay::Plugin instanceMtl;
 		if (materialPathHndl.isValid()) {
