@@ -25,7 +25,7 @@ macro(set_precompiled_header PrecompiledHeader PrecompiledSource SourcesVar)
 
 		set_source_files_properties(${PrecompiledSource}
 			PROPERTIES
-				COMPILE_FLAGS "/Yc\"${PrecompiledHeader}\" /Fp\"${PrecompiledBinary}\""
+				COMPILE_FLAGS "/Yc\"${PrecompiledHeader}\" /Fp\"${PrecompiledBinary}\" /Zm2000"
 				OBJECT_OUTPUTS "${PrecompiledBinary}"
 		)
 
