@@ -109,8 +109,6 @@ bool HairPrimitiveExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc
 	VRay::VUtils::VectorRefList verts(nVerts);
 	GEOgetDataFromAttribute(gdp.getP(), primList, verts);
 
-	pluginDesc.pluginID = "GeomMayaHair";
-	pluginDesc.pluginName = VRayExporter::getPluginName(&m_object, "Hair");
 	pluginDesc.addAttribute(Attrs::PluginAttr("num_hair_vertices", strands));
 	pluginDesc.addAttribute(Attrs::PluginAttr("hair_vertices", verts));
 
@@ -230,18 +228,18 @@ bool HairPrimitiveExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc
 	// NOTE: Channel index 0 is used for UVW coordinates if and _only_ if strand_uvw is not set.
 	if (mapChannels.size()) {
 		VRay::VUtils::ValueRefList map_channels(mapChannels.size());
-		int idx = 0;
+		int channelIdx = 0;
 		for (const auto &mc : mapChannels) {
 			const MapChannel &mapChannel = mc.second;
 			// Channel data
 			VRay::VUtils::ValueRefList map_channel(4);
-			map_channel[0].setDouble(idx);
+			map_channel[0].setDouble(channelIdx);
 			map_channel[1].setListInt(mapChannel.faces);
 			map_channel[2].setListVector(mapChannel.vertices);
 			map_channel[3].setString(mapChannel.name.c_str());
 
-			map_channels[idx].setList(map_channel);
-			++idx;
+			map_channels[channelIdx].setList(map_channel);
+			++channelIdx;
 		}
 
 		pluginDesc.addAttribute(Attrs::PluginAttr("map_channels", map_channels));
@@ -259,7 +257,8 @@ void HairPrimitiveExporter::exportPrimitives(const GU_Detail &gdp, InstancerItem
 	}
 
 	// export
-	Attrs::PluginDesc hairDesc;
+	Attrs::PluginDesc hairDesc(VRayExporter::getPluginName(&m_object, "Hair"),
+							   "GeomMayaHair");
 	if (!asPluginDesc(gdp, hairDesc)) {
 		return;
 	}

@@ -562,9 +562,6 @@ VRay::Plugin GeometryExporter::exportDetail(const GU_Detail &gdp)
 				if (fromPacked) {
 					const GA_Detail &parentGdp = prim->getDetail();
 
-					GA_ROHandleS materialPathHndl(parentGdp.findAttribute(GA_ATTRIB_PRIMITIVE, GEO_STD_ATTRIB_MATERIAL));
-					// GA_ROHandleS materialOverHndl(parentGdp.findAttribute(GA_ATTRIB_PRIMITIVE, "material_override"));
-
 					UT_Matrix4D fullxform;
 					primPacked->getFullTransform4(fullxform);
 
@@ -574,6 +571,7 @@ VRay::Plugin GeometryExporter::exportDetail(const GU_Detail &gdp)
 					item.geometry = fromPacked;
 					item.tm = VRayExporter::Matrix4ToTransform(fullxform);
 
+					GA_ROHandleS materialPathHndl(parentGdp.findAttribute(GA_ATTRIB_PRIMITIVE, GEO_STD_ATTRIB_MATERIAL));
 					if (materialPathHndl.isValid()) {
 						const UT_String &matPath = materialPathHndl.get(prim->getMapOffset());
 						OP_Node *matNode = getOpNodeFromPath(matPath, ctx.getTime());
@@ -584,6 +582,8 @@ VRay::Plugin GeometryExporter::exportDetail(const GU_Detail &gdp)
 							}
 						}
 					}
+
+					// TODO: GA_ROHandleS materialOverHndl(parentGdp.findAttribute(GA_ATTRIB_PRIMITIVE, "material_override"));
 
 					instancerItems += item;
 				}
@@ -1116,14 +1116,14 @@ static VRay::Transform getPointInstanceTM(const GU_Detail &gdp, const PointInsta
 	// X = pivot matrix (translate by -pivot)
 	UT_Matrix4F X(1);
 	if (attrs.pivot.isValid()) {
-		const UT_Vector3F pivot = attrs.pivot.get(ptOff);
+		const UT_Vector3F &pivot = attrs.pivot.get(ptOff);
 		X.translate(-pivot);
 	}
 
 	// O = orient matrix 
 	UT_Matrix3F O(1);
 	if (attrs.orient.isValid()) {
-		const UT_QuaternionF orient = attrs.orient.get(ptOff);
+		const UT_QuaternionF &orient = attrs.orient.get(ptOff);
 		orient.getRotationMatrix(O);
 	}
 
