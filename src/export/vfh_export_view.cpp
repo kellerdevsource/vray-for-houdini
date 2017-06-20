@@ -283,8 +283,6 @@ int VRayExporter::exportView()
 
 	static VUtils::FastCriticalSection csect;
 	if (csect.tryEnter()) {
-		csect.enter();
-
 		OBJ_Node *camera = VRayExporter::getCamera(m_rop);
 
 		addOpCallback(camera, VRayExporter::RtCallbackView);

@@ -82,6 +82,13 @@ void VRayForHoudini::clearOpPluginCache() {
 	primPackedTypeIDs.init();
 
 	opPluginCache.clear();
+}
+
+void VRayForHoudini::clearPrimPluginCache() {
+	// clearOpPluginCache() is called before export,
+	// so we could init types here.
+	primPackedTypeIDs.init();
+
 	primPluginCache.clear();
 	geomNodeCache.clear();
 }
@@ -479,34 +486,30 @@ VRay::Plugin GeometryExporter::getNodeForInstancerGeometry(VRay::Plugin geometry
 		return VRay::Plugin();
 	}
 
-	VRay::Plugin node;
-
+	// Already a Node plugin.
 	if (UT_String("Node").equal(geometry.getType())) {
-		// Already a Node plugin.
-		node = geometry;
+		return geometry;
 	}
-	else {
-		GeomNodeCache::iterator gnIt = geomNodeCache.find(geometry.getName());
-		if (gnIt != geomNodeCache.end()) {
-			node = gnIt.data();
-		}
-		else {
-			static boost::format nodeNameFmt("Node@%s");
 
-			// Wrap into Node plugin.
-			Attrs::PluginDesc nodeDesc(boost::str(nodeNameFmt % geometry.getName()),
-										"Node");
-			nodeDesc.addAttribute(Attrs::PluginAttr("geometry", geometry));
-			nodeDesc.addAttribute(Attrs::PluginAttr("material", pluginExporter.exportDefaultMaterial()));
-			nodeDesc.addAttribute(Attrs::PluginAttr("transform", VRay::Transform(1)));
-			nodeDesc.addAttribute(Attrs::PluginAttr("visible", false));
-
-			node = pluginExporter.exportPlugin(nodeDesc);
-			UT_ASSERT(node);
-
-			geomNodeCache.insert(geometry.getName(), node);
-		}
+	GeomNodeCache::iterator gnIt = geomNodeCache.find(geometry.getName());
+	if (gnIt != geomNodeCache.end()) {
+		return gnIt.data();
 	}
+
+	static boost::format nodeNameFmt("Node@%s");
+
+	// Wrap into Node plugin.
+	Attrs::PluginDesc nodeDesc(boost::str(nodeNameFmt % geometry.getName()),
+								"Node");
+	nodeDesc.addAttribute(Attrs::PluginAttr("geometry", geometry));
+	nodeDesc.addAttribute(Attrs::PluginAttr("material", pluginExporter.exportDefaultMaterial()));
+	nodeDesc.addAttribute(Attrs::PluginAttr("transform", VRay::Transform(1)));
+	nodeDesc.addAttribute(Attrs::PluginAttr("visible", false));
+
+	VRay::Plugin node = pluginExporter.exportPlugin(nodeDesc);
+	UT_ASSERT(node);
+
+	geomNodeCache.insert(geometry.getName(), node);
 
 	return node;
 }
@@ -543,6 +546,7 @@ VRay::Plugin GeometryExporter::exportDetail(const GU_Detail &gdp)
 				VRay::Plugin fromPacked = exportPacked(*primPacked);
 				if (fromPacked) {
 					const GA_Detail &parentGdp = prim->getDetail();
+
 					GA_ROHandleS materialPathHndl(parentGdp.findAttribute(GA_ATTRIB_PRIMITIVE, GEO_STD_ATTRIB_MATERIAL));
 					// GA_ROHandleS materialOverHndl(parentGdp.findAttribute(GA_ATTRIB_PRIMITIVE, "material_override"));
 
@@ -589,8 +593,10 @@ VRay::Plugin GeometryExporter::exportDetail(const GU_Detail &gdp)
 	int instanceIdx = 0;
 	int instancesListIdx = 0;
 
+	const int numParticles = plugins.count() + instancerItems.count();
+
 	// +1 because first value is time.
-	VRay::VUtils::ValueRefList instances(plugins.count()+instancerItems.count()+1);
+	VRay::VUtils::ValueRefList instances(numParticles+1);
 	instances[instancesListIdx++].setDouble(0.0);
 
 	for (int i = 0; i < plugins.count(); ++i) {
@@ -636,6 +642,8 @@ VRay::Plugin GeometryExporter::exportDetail(const GU_Detail &gdp)
 		instances[instancesListIdx++].setList(item);
 	}
 
+	instancerItems.clear();
+
 	Attrs::PluginDesc instancer2(VRayExporter::getPluginName(objNode, "Geom"),
 								 "Instancer2");
 	instancer2.addAttribute(Attrs::PluginAttr("instances", instances));
@@ -652,24 +660,12 @@ VRay::Plugin GeometryExporter::exportPolyMesh(const GU_Detail &gdp)
 	polyMeshExporter.setSubdivApplied(hasSubdivApplied());
 	if (polyMeshExporter.hasPolyGeometry()) {
 		if (m_exportGeometry) {
-			polyMeshExporter.exportPrimitives(gdp, instancerItems);
-		}
-#if 0
-		else {
-			// we don't want to reexport the geometry so just
-			// add new node to our list of nodes
-			pluginList.push_back(Attrs::PluginDesc("", "Node"));
-			Attrs::PluginDesc &nodeDesc = pluginList.back();
-
-			SHOPList shopList;
-			int nSHOPs = polyMeshExporter.getSHOPList(shopList);
-			if (nSHOPs > 0) {
-				nodeDesc.addAttribute(Attrs::PluginAttr(VFH_ATTR_MATERIAL_ID, -1));
+			Attrs::PluginDesc geomDesc;
+			if (polyMeshExporter.asPluginDesc(gdp, geomDesc)) {
+				return pluginExporter.exportPlugin(geomDesc);
 			}
 		}
-#endif
 	}
-
 	return VRay::Plugin();
 }
 
@@ -893,7 +889,7 @@ VRay::Plugin GeometryExporter::exportPackedGeometry(const GU_PrimPacked &prim)
 ObjectExporter::ObjectExporter(VRayExporter &pluginExporter, OBJ_Node &objNode)
 	: pluginExporter(pluginExporter)
 	, objNode(objNode)
-	, m_exportGeometry(true)
+	, exportGeometry(true)
 {}
 
 GeometryExporter::GeometryExporter(ObjectExporter &objExporter, OBJ_Node &objNode, VRayExporter &pluginExporter)
@@ -1064,20 +1060,150 @@ VRay::Plugin GeometryExporter::exportInstancer(const GU_Detail &gdp)
 	return instancer;
 }
 
+/// Holds attributes for calculating instance transform:
+///   http://www.sidefx.com/docs/houdini/copy/instanceattrs
+struct PointInstanceAttrs {
+	explicit PointInstanceAttrs(const GU_Detail &gdp) {
+		orient     = gdp.findPointAttribute(GEO_STD_ATTRIB_ORIENT);
+		pscale     = gdp.findPointAttribute(GEO_STD_ATTRIB_PSCALE);
+		scale      = gdp.findPointAttribute("scale");
+		n          = gdp.findPointAttribute(GEO_STD_ATTRIB_NORMAL);
+		up         = gdp.findPointAttribute(GEO_STD_ATTRIB_UP);
+		v          = gdp.findPointAttribute(GEO_STD_ATTRIB_VELOCITY);
+		rot        = gdp.findPointAttribute("rot");
+		trans      = gdp.findPointAttribute("trans");
+		pivot      = gdp.findPointAttribute("pivot");
+		transform3 = gdp.findPointAttribute("transform");
+		transform4 = gdp.findPointAttribute("transform");
+	}
+
+	GA_ROHandleV4 orient;
+	GA_ROHandleF  pscale;
+	GA_ROHandleV3 scale;
+	GA_ROHandleV3 n;
+	GA_ROHandleV3 up;
+	GA_ROHandleV3 v;
+	GA_ROHandleV4 rot;
+	GA_ROHandleV3 trans;
+	GA_ROHandleV3 pivot;
+	GA_ROHandleM3 transform3;
+	GA_ROHandleM4 transform4;
+};
+
+/// Returns instance transform from point attributes:
+///   http://www.sidefx.com/docs/houdini/copy/instanceattrs
+/// @param gdp Detail.
+/// @param ptOff Point offset.
+static VRay::Transform getPointInstanceTM(const GU_Detail &gdp, const PointInstanceAttrs &attrs, GA_Offset ptOff)
+{
+	// X = pivot matrix (translate by -pivot)
+	UT_Matrix4F X(1);
+	if (attrs.pivot.isValid()) {
+		const UT_Vector3F pivot = attrs.pivot.get(ptOff);
+		X.translate(-pivot);
+	}
+
+	// O = orient matrix 
+	UT_Matrix3F O(1);
+	if (attrs.orient.isValid()) {
+		const UT_QuaternionF orient = attrs.orient.get(ptOff);
+		orient.getRotationMatrix(O);
+	}
+
+	// S = scale matrix (scale * pscale) 
+	UT_Matrix3F S(1);
+	UT_Vector3F scale(1.0f, 1.0f, 1.0f);
+	if (attrs.scale.isValid()) {
+		scale = attrs.scale.get(ptOff);
+	}
+	if (attrs.pscale.isValid()) {
+		scale *= attrs.pscale.get(ptOff);
+	}
+	S.scale(scale);
+
+	// L = alignment matrix
+	// IF N exists AND up exists and isn't {0,0,0}: 
+	//    L = mlookatup(N,0,up) 
+	// ELSE IF N exists: 
+	//    L = dihedral({0,0,1},N) 
+	// ELSE IF v exists AND up exists and isn't {0,0,0}: 
+	//    L = mlookatup(v,0,up) 
+	// ELSE IF v exists: 
+	//    L = dihedral({0,0,1},v) 
+	UT_Matrix3F L(1);
+	if (attrs.n.isValid() || attrs.v.isValid()) {
+		GA_ROHandleV3 nvHndl = attrs.n.isValid() ? attrs.n : attrs.v;
+
+		UT_Vector3F nv = nvHndl.get(ptOff);
+		if (attrs.up.isValid()) {
+			const UT_Vector3F &up = attrs.up.get(ptOff);
+			if (!up.isEqual(UT_Vector3F(0.0f, 0.0f, 0.0f))) {
+				L.lookat(nv, up, 0);
+			}
+		}
+		else {
+			UT_Vector3F a(0.0f, 0.0f, 1.0f);
+			L.dihedral(a, nv);
+		}
+	}
+
+	// R = rot matrix 
+	UT_Matrix3F R(1);
+	if (attrs.rot.isValid()) {
+		const UT_QuaternionF rot = attrs.rot.get(ptOff);
+		rot.getRotationMatrix(R);
+	}
+
+	// T = trans matrix (trans + P) 
+	UT_Matrix4F T(1);
+	UT_Vector3F P = gdp.getPos3(ptOff);
+	if (attrs.trans.isValid()) {
+		P += attrs.trans.get(ptOff);
+	}
+	T.setTranslates(P);
+
+	// M = transform matrix
+	UT_Matrix3F M(1);
+	if (attrs.transform3.isValid()) {
+		M = attrs.transform3.get(ptOff);
+	}
+	else if (attrs.transform4.isValid()) {
+		M = attrs.transform4.get(ptOff);
+	}
+
+	// IF transform exists:
+	//    Transform = X*M*T
+	// ELSE IF orient exists: 
+	//    Transform = X*S*(O*R)*T
+	// ELSE: 
+	//    Transform = X*S*L*R*T
+	UT_Matrix4F Transform;
+	if (attrs.transform3.isValid() ||
+		attrs.transform4.isValid())
+	{
+		Transform = X * toM4(M) * T;
+	}
+	else if (attrs.orient.isValid()) {
+		Transform = X * toM4(S * (O * R)) * T;
+	}
+	else {
+		Transform = X * toM4(S * L * R) * T;
+	}
+
+	return utMatrixToVRayTransform(Transform);
+}
+
 VRay::Plugin GeometryExporter::exportPointInstancer(const GU_Detail &gdp, int isInstanceNode)
 {
 	const GA_Size numPoints = gdp.getNumPoints();
+
+	PointInstanceAttrs pointInstanceAttrs(gdp);
 
 	GA_ROHandleV3 velocityHndl(gdp.findAttribute(GA_ATTRIB_POINT, GEO_STD_ATTRIB_VELOCITY));
 
 	GA_ROHandleS instanceHndl(gdp.findAttribute(GA_ATTRIB_POINT, "instance"));
 	GA_ROHandleS instancePathHndl(gdp.findAttribute(GA_ATTRIB_POINT, "instancepath"));
 	GA_ROHandleS materialPathHndl(gdp.findAttribute(GA_ATTRIB_POINT, GEO_STD_ATTRIB_MATERIAL));
-
-	GA_ROHandleV3 cdHndl(gdp.findAttribute(GA_ATTRIB_POINT, GEO_STD_ATTRIB_DIFFUSE));
-	GA_ROHandleF opacityHndl(gdp.findAttribute(GA_ATTRIB_POINT, GEO_STD_ATTRIB_ALPHA));
-	GA_ROHandleF pscaleHndl(gdp.findAttribute(GA_ATTRIB_POINT, GEO_STD_ATTRIB_PSCALE));
-	GA_ROHandleV3 scaleHndl(gdp.findAttribute(GA_ATTRIB_POINT, "scale"));
 
 	Attrs::PluginDesc instancer2(VRayExporter::getPluginName(objNode, "Instancer2"), "Instancer2");
 
@@ -1125,6 +1251,7 @@ VRay::Plugin GeometryExporter::exportPointInstancer(const GU_Detail &gdp, int is
 
 		QString userAttributes;
 		GEOAttribList attrList;
+		// TODO: Export non-vector attributes.
 		gdp.getAttributes().matchAttributes(GEOgetV3AttribFilter(), GA_ATTRIB_POINT, attrList);
 		for (const GA_Attribute *attr : attrList) {
 			if (attr &&
@@ -1161,28 +1288,8 @@ VRay::Plugin GeometryExporter::exportPointInstancer(const GU_Detail &gdp, int is
 		// Particle index.
 		item[itemListOffs++].setDouble(validPointIdx);
 
-		// Particle transform:
-		//   http://www.sidefx.com/docs/houdini/copy/instanceattrs
-		//
-		const UT_Vector3 &point = gdp.getPos3(ptOff);
-		VRay::Transform tm;
-		tm.matrix.makeIdentity();
-		tm.offset.set(point.x(), point.y(), point.z());
-
-		VRay::Vector scale(1.0f, 1.0f, 1.0f);
-		if (scaleHndl.isValid()) {
-			const UT_Vector3 &s = scaleHndl.get(ptOff);
-			scale.x *= s.x();
-			scale.y *= s.y();
-			scale.z *= s.z();
-		}
-		if (pscaleHndl.isValid()) {
-			scale *= pscaleHndl.get(ptOff);
-		}
-
-		tm.matrix.v0.x *= scale.x;
-		tm.matrix.v1.y *= scale.y;
-		tm.matrix.v2.z *= scale.z;
+		// Particle transform.
+		VRay::Transform tm = getPointInstanceTM(gdp, pointInstanceAttrs, ptOff);
 
 		// Mult with object inv. tm.
 		VRay::Transform objTm = VRayExporter::getObjTransform(instaceObjNode, ctx, false);
@@ -1260,21 +1367,19 @@ VRay::Plugin GeometryExporter::exportGeometry()
 	return exportGeometry(*renderSOP);
 }
 
-VRay::Plugin ObjectExporter::exportNode(int cached)
+VRay::Plugin ObjectExporter::exportNode()
 {
 	using namespace Attrs;
 
-	if (cached) {
-		OpPluginCache::iterator pIt = opPluginCache.find(&objNode);
-		if (pIt != opPluginCache.end()) {
-			return pIt.data();
-		}
+	OpPluginCache::iterator pIt = opPluginCache.find(&objNode);
+	if (pIt != opPluginCache.end()) {
+		return pIt.data();
 	}
 
 	OP_Context &cxt = pluginExporter.getContext();
 
 	VRay::Plugin geometry;
-	if (m_exportGeometry) {
+	if (exportGeometry) {
 		GeometryExporter geoExporter(*this, objNode, pluginExporter);
 		geometry = geoExporter.exportGeometry();
 	}
@@ -1285,7 +1390,7 @@ VRay::Plugin ObjectExporter::exportNode(int cached)
 	const VRay::Transform transform = pluginExporter.getObjTransform(&objNode, cxt);
 
 	PluginDesc nodeDesc(VRayExporter::getPluginName(objNode, "Node"),"Node");
-	if (m_exportGeometry) {
+	if (exportGeometry) {
 		nodeDesc.add(PluginAttr("geometry", geometry));
 	}
 	nodeDesc.add(PluginAttr("material", material));

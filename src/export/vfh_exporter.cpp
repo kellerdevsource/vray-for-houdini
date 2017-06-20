@@ -108,15 +108,14 @@ std::string VRayExporter::getPluginName(OBJ_Node &objNode)
 	return VRayExporter::getPluginName(&objNode);
 }
 
-
-VRay::Transform VRayExporter::Matrix4ToTransform(const UT_Matrix4D &m4, bool flip)
+VRay::Transform VRayExporter::Matrix4ToTransform(const UT_Matrix4D &m, bool flip)
 {
 	VRay::Transform tm;
 	for (int i = 0; i < 3; ++i) {
 		for (int j = 0; j < 3; ++j) {
-			tm.matrix[i][j] = m4[i][j];
+			tm.matrix[i][j] = m[i][j];
 		}
-		tm.offset[i] = m4[3][i];
+		tm.offset[i] = m[3][i];
 	}
 
 	if (flip) {
@@ -1396,8 +1395,9 @@ void VRayExporter::exportScene()
 	addOpCallback(m_rop, VRayRendererNode::RtCallbackRop);
 	addOpCallback(OPgetDirector()->getManager("obj"), VRayExporter::RtCallbackObjManager);
 
-	// Clear plugin cache table.
+	// Clear plugin caches.
 	clearOpPluginCache();
+	clearPrimPluginCache();
 
 	// export geometry nodes
 	OP_Bundle *activeGeo = m_rop->getActiveGeometryBundle();

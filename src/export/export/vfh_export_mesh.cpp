@@ -220,19 +220,23 @@ bool MeshExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc &pluginD
 }
 
 
-void MeshExporter::exportPrimitives(const GU_Detail &gdp, InstancerItems &plugins)
+void MeshExporter::exportPrimitives(const GU_Detail &gdp, InstancerItems&)
 {
-	// geometry
-	Attrs::PluginDesc geomDesc;
-	if (!asPluginDesc(gdp, geomDesc)) {
-		return;
+	// Check if this is needed / could be reused
+#if 0
+	else {
+		// we don't want to reexport the geometry so just
+		// add new node to our list of nodes
+		pluginList.push_back(Attrs::PluginDesc("", "Node"));
+		Attrs::PluginDesc &nodeDesc = pluginList.back();
+
+		SHOPList shopList;
+		int nSHOPs = polyMeshExporter.getSHOPList(shopList);
+		if (nSHOPs > 0) {
+			nodeDesc.addAttribute(Attrs::PluginAttr(VFH_ATTR_MATERIAL_ID, -1));
+		}
 	}
-
-	InstancerItem item;
-	item.geometry = m_exporter.exportPlugin(geomDesc);
-
-	plugins += item;
-
+#endif
 #if 0
 	// add new node to our list of nodes
 	plugins.push_back(Attrs::PluginDesc("", "Node"));

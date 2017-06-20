@@ -223,7 +223,7 @@ private:
 	/// set by the IPR OBJ callbacks to signal the exporter of whether
 	/// to re-export geometry plugins (i.e. something on the actual
 	/// geometry has changed). By default this flag is on.
-	bool m_exportGeometry;
+	int m_exportGeometry;
 
 	/// Primitive items.
 	InstancerItems instancerItems;
@@ -233,10 +233,10 @@ class ObjectExporter
 {
 public:
 	ObjectExporter(VRayExporter &pluginExporter, OBJ_Node &objNode);
+	
+	void setExportGeometry(int value) { exportGeometry = value; }
 
-	void setExportGeometry(bool value) { m_exportGeometry = value; }
-
-	VRay::Plugin exportNode(int cached=true);
+	VRay::Plugin exportNode();
 
 protected:
 	/// Plugin exporter.
@@ -248,16 +248,15 @@ protected:
 	/// Primitive items.
 	InstancerItems instancerItems;
 
-	/// A flag if we should export the actual geometry from the render
-	/// detail or only update corresponding Nodes' properties. This is
-	/// set by the IPR OBJ callbacks to signal the exporter of whether
-	/// to re-export geometry plugins (i.e. something on the actual
-	/// geometry has changed). By default this flag is on.
-	bool m_exportGeometry;
+	/// Export node geometry data or just the node attributes.
+	int exportGeometry;
 };
 
-/// Clears OP to plugin table.
+/// Clears OBJ plugin cache.
 void clearOpPluginCache();
+
+/// Clears primitive plugin cache.
+void clearPrimPluginCache();
 
 } // namespace VRayForHoudini
 

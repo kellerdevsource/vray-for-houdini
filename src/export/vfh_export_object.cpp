@@ -71,10 +71,11 @@ void VRayExporter::RtCallbackOBJGeometry(OP_Node *caller, void *callee, OP_Event
 		case OP_FLAG_CHANGED:
 		case OP_INPUT_CHANGED:
 		case OP_INPUT_REWIRED: {
+			clearOpPluginCache();
+
 			ObjectExporter objExporter(exporter, *obj_geo);
 			objExporter.setExportGeometry(shouldReExport);
-			// Don't check cache here since we need to update the plugin.
-			objExporter.exportNode(false);
+			objExporter.exportNode();
 			break;
 		}
 		case OP_NODE_PREDELETE: {
@@ -111,6 +112,8 @@ void VRayExporter::RtCallbackSOPChanged(OP_Node *caller, void *callee, OP_EventT
 		case OP_FLAG_CHANGED:
 		case OP_INPUT_CHANGED:
 		case OP_INPUT_REWIRED: {
+			clearPrimPluginCache();
+
 			SOP_Node *geom_node = obj_geo->getRenderSopPtr();
 			if (geom_node) {
 				exporter.addOpCallback(geom_node, VRayExporter::RtCallbackSOPChanged);
