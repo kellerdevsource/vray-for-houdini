@@ -187,7 +187,7 @@ public:
 	/// @note calls asPluginDesc() to export the geometry
 	/// @param gdp[in] - the detail to traverse
 	/// @param plugins[out] - collects the Node plugins generated for this detail
-	virtual void exportPrimitives(const GU_Detail &gdp, PluginDescList &plugins) VRAY_OVERRIDE;
+	void exportPrimitives(const GU_Detail &gdp, InstancerItems &instancerItems) VRAY_OVERRIDE;
 
 private:
 	/// Helper structure used when digesting material overrides into map channels

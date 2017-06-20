@@ -21,22 +21,6 @@
 
 namespace VRayForHoudini {
 
-struct InstancerItem {
-	/// Geometry.
-	VRay::Plugin geometry;
-
-	/// Override material.
-	VRay::Plugin material;
-
-	/// Transform.
-	VRay::Transform tm;
-
-	/// User attributes.
-	UT_String userAttributes;
-};
-
-typedef VUtils::Table<InstancerItem> InstancerItems;
-
 enum VMRenderPoints {
 	vmRenderPointsNone = 0, ///< Don't render points separately from primitives.
 	vmRenderPointsAll, ///< Render only points.
@@ -102,14 +86,14 @@ private:
 	/// @param gdl[in] - read lock handle, guarding the actual gdp
 	/// @param pluginList[out] - collects plugins generated for the gdp
 	/// @retval number of plugin descriptions added to pluginList
-	VRay::Plugin exportDetail(SOP_Node &sop, const GU_Detail &gdp);
+	VRay::Plugin exportDetail(const GU_Detail &gdp);
 
 	/// Helper function to export mesh geometry from a given gdp
 	/// @param sop[in] - parent SOP node for the gdp
 	/// @param gdp[in] - the actual gdp
 	/// @param pluginList[out] - collects plugins generated for the gdp
 	/// @retval number of plugin descriptions added to pluginList
-	VRay::Plugin exportPolyMesh(SOP_Node &sop, const GU_Detail &gdp);
+	VRay::Plugin exportPolyMesh(const GU_Detail &gdp);
 
 	/// Helper function to export a packed primitive. It will check if
 	/// the primitive geometry has already been processed
@@ -117,7 +101,7 @@ private:
 	/// @param prim[in] - the packed primitive
 	/// @param pluginList[out] - collects plugins generated for the primitive
 	/// @retval number of plugin descriptions added to pluginList
-	int exportPacked(SOP_Node &sop, const GU_PrimPacked &prim);
+	VRay::Plugin exportPacked(const GU_PrimPacked &prim);
 
 	/// Helper function to generate unique id for the packed primitive
 	/// this is used as key in m_detailToPluginDesc map to identify
@@ -131,37 +115,35 @@ private:
 	/// @param prim[in] - the packed primitive
 	/// @param pluginList[out] - collects plugins generated for the primitive
 	/// @retval number of plugin descriptions added to pluginList
-	VRay::Plugin exportPrimPacked(SOP_Node &sop, const GU_PrimPacked &prim);
-
-	VRay::Plugin exportPackedPrimitives(SOP_Node &sop, const GU_Detail &gdp);
+	VRay::Plugin exportPrimPacked(const GU_PrimPacked &prim);
 
 	/// Helper function to export AlembicRef primitive
 	/// @param sop[in] - parent SOP node for the primitive
 	/// @param prim[in] - the primitive
 	/// @param pluginList[out] - collects plugins generated for the primitive
 	/// @retval number of plugin descriptions added to pluginList
-	VRay::Plugin exportAlembicRef(SOP_Node &sop, const GU_PrimPacked &prim);
+	VRay::Plugin exportAlembicRef(const GU_PrimPacked &prim);
 
 	/// Helper function to export VRayProxyRef primitive
 	/// @param sop[in] - parent SOP node for the primitive
 	/// @param prim[in] - the primitive
 	/// @param pluginList[out] - collects plugins generated for the primitive
 	/// @retval number of plugin descriptions added to pluginList
-	VRay::Plugin exportVRayProxyRef(SOP_Node &sop, const GU_PrimPacked &prim);
+	VRay::Plugin exportVRayProxyRef(const GU_PrimPacked &prim);
 
 	/// Helper function to export PackedDisk primitive (bgeo, bclassic)
 	/// @param sop[in] - parent SOP node for the primitive
 	/// @param prim[in] - the primitive
 	/// @param pluginList[out] - collects plugins generated for the primitive
 	/// @retval number of plugin descriptions added to pluginList
-	VRay::Plugin exportPackedDisk(SOP_Node &sop, const GU_PrimPacked &prim);
+	VRay::Plugin exportPackedDisk(const GU_PrimPacked &prim);
 
 	/// Helper function to export packed geometry primitive
 	/// @param sop[in] - parent SOP node for the primitive
 	/// @param prim[in] - the primitive
 	/// @param pluginList[out] - collects plugins generated for the primitive
 	/// @retval number of plugin descriptions added to pluginList
-	VRay::Plugin exportPackedGeometry(SOP_Node &sop, const GU_PrimPacked &prim);
+	VRay::Plugin exportPackedGeometry(const GU_PrimPacked &prim);
 
 	/// Export points as particles.
 	/// @param gdp Detail.
@@ -191,6 +173,10 @@ public:
 	/// @returns Geometry plugin.
 	VRay::Plugin exportGeometry();
 
+	/// Export SOP geometry.
+	/// @returns Geometry plugin.
+	VRay::Plugin exportGeometry(SOP_Node &sop);
+
 private:
 	/// Export point particles data.
 	/// @param gdp Detail.
@@ -201,7 +187,7 @@ private:
 	/// Export point particle instancer.
 	/// @param gdp Detail.
 	/// @returns Geometry plugin.
-	VRay::Plugin exportPointInstancer(const GU_Detail &gdp);
+	VRay::Plugin exportPointInstancer(const GU_Detail &gdp, int isInstanceNode=false);
 
 	/// Export instancer.
 	/// @param gdp Detail.
@@ -212,8 +198,12 @@ private:
 	/// @param gdp Detail.
 	int isPointInstancer(const GU_Detail &gdp) const;
 
+	static int isInstanceNode(const OP_Node &node);
+
 	/// Returns point particles mode.
 	VMRenderPoints getParticlesMode() const;
+
+	VRay::Plugin getNodeForInstancerGeometry(VRay::Plugin geometry);
 
 	/// Object exporter for "path" / "instancepath".
 	ObjectExporter &objExporter;
@@ -234,6 +224,9 @@ private:
 	/// to re-export geometry plugins (i.e. something on the actual
 	/// geometry has changed). By default this flag is on.
 	bool m_exportGeometry;
+
+	/// Primitive items.
+	InstancerItems instancerItems;
 };
 
 class ObjectExporter
@@ -243,7 +236,7 @@ public:
 
 	void setExportGeometry(bool value) { m_exportGeometry = value; }
 
-	VRay::Plugin exportNode();
+	VRay::Plugin exportNode(int cached=true);
 
 protected:
 	/// Plugin exporter.

@@ -16,6 +16,26 @@
 
 namespace VRayForHoudini {
 
+struct InstancerItem {
+	InstancerItem()
+		: tm(1)
+	{}
+
+	/// Geometry.
+	VRay::Plugin geometry;
+
+	/// Override material.
+	VRay::Plugin material;
+
+	/// Transform.
+	VRay::Transform tm;
+
+	/// User attributes.
+	UT_String userAttributes;
+};
+
+typedef VUtils::Table<InstancerItem, -1> InstancerItems;
+
 typedef VUtils::Table<VRay::Plugin> PluginsTable;
 typedef std::vector< VRay::Plugin > PluginList;
 typedef std::list< Attrs::PluginDesc > PluginDescList;
@@ -34,7 +54,7 @@ public:
 	/// Generate plugin descriptions for all supported primitives in the provided GU_Detail
 	/// @gdp - the detail to traverse
 	/// @plugins[out] - the list of plugins generated for this detail
-	virtual void exportPrimitives(const GU_Detail &detail, PluginDescList &plugins) = 0;
+	virtual void exportPrimitives(const GU_Detail &detail, InstancerItems &plugins) = 0;
 
 protected:
 	/// Object node owner of all details that will be passed to exportPrimitives.
@@ -63,7 +83,7 @@ public:
 	/// Generate plugin descriptions for all supported primitives in the provided GU_Detail
 	/// @gdp - the detail to traverse
 	/// @plugins[out] - the list of plugins generated for this detail
-	void exportPrimitives(const GU_Detail &detail, PluginDescList &plugins) VRAY_OVERRIDE;
+	void exportPrimitives(const GU_Detail &detail, InstancerItems &plugins) VRAY_OVERRIDE;
 
 protected:
 	/// Export the PhxShaderCache for the given primitive
@@ -90,7 +110,7 @@ public:
 	/// Generate plugin descriptions for all supported primitives in the provided GU_Detail
 	/// @gdp - the detail to traverse
 	/// @plugins[out] - the list of plugins generated for this detail
-	void exportPrimitives(const GU_Detail &detail, PluginDescList &plugins) VRAY_OVERRIDE;
+	void exportPrimitives(const GU_Detail &detail, InstancerItems &plugins) VRAY_OVERRIDE;
 };
 
 #endif // CGR_HAS_AUR

@@ -227,7 +227,7 @@ bool HairPrimitiveExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc
 			}
 		}
 	}
-
+	// NOTE: Channel index 0 is used for UVW coordinates if and _only_ if strand_uvw is not set.
 	if (mapChannels.size()) {
 		VRay::VUtils::ValueRefList map_channels(mapChannels.size());
 		int idx = 0;
@@ -251,7 +251,7 @@ bool HairPrimitiveExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc
 }
 
 
-void HairPrimitiveExporter::exportPrimitives(const GU_Detail &gdp, PluginDescList &plugins)
+void HairPrimitiveExporter::exportPrimitives(const GU_Detail &gdp, InstancerItems &plugins)
 {
 	if (!containsHairPrimitives(gdp)) {
 		// no hair primitives
@@ -261,12 +261,11 @@ void HairPrimitiveExporter::exportPrimitives(const GU_Detail &gdp, PluginDescLis
 	// export
 	Attrs::PluginDesc hairDesc;
 	if (!asPluginDesc(gdp, hairDesc)) {
-		// no valid hair primitives
 		return;
 	}
 
-	plugins.push_back(Attrs::PluginDesc("", "Node"));
-	Attrs::PluginDesc &nodeDesc = plugins.back();
+	InstancerItem item;
+	item.geometry = m_exporter.exportPlugin(hairDesc);
 
-	nodeDesc.addAttribute(Attrs::PluginAttr("geometry", m_exporter.exportPlugin(hairDesc)));
+	plugins += item;
 }

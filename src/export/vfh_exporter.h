@@ -228,8 +228,6 @@ public:
 	/// @retval V-Ray plugin created for that node
 	VRay::Plugin exportVRayClipper(OBJ_Node &clipperNode);
 
-	VRay::Plugin exportParticles(OBJ_Node *dop_network);
-
 	/// Fill in displacement/subdivision render properties for the given node
 	/// @param obj_node[in] - the OBJ_Geometry node
 	/// @param pluginDesc[out] - diplacement/subdivision plugin description
@@ -583,6 +581,8 @@ public:
 	static void RtCallbackDisplacementObj(OP_Node *caller, void *callee, OP_EventType type, void *data);
 	static void RtCallbackVRayClipper(OP_Node *caller, void *callee, OP_EventType type, void *data);
 
+	/// A lock for callbacks.
+	static VUtils::FastCriticalSection csect;
 };
 
 } // namespace VRayForHoudini

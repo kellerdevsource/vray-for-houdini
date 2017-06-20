@@ -220,46 +220,53 @@ bool MeshExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc &pluginD
 }
 
 
-void MeshExporter::exportPrimitives(const GU_Detail &gdp, PluginDescList &plugins)
+void MeshExporter::exportPrimitives(const GU_Detail &gdp, InstancerItems &plugins)
 {
 	// geometry
 	Attrs::PluginDesc geomDesc;
-	if (asPluginDesc(gdp, geomDesc)) {
-		VRay::Plugin geom = m_exporter.exportPlugin(geomDesc);
-
-		// add new node to our list of nodes
-		plugins.push_back(Attrs::PluginDesc("", "Node"));
-		Attrs::PluginDesc &nodeDesc = plugins.back();
-		nodeDesc.addAttribute(Attrs::PluginAttr("geometry", geom));
-
-		// handle material
-		SHOPList shopList;
-		int nSHOPs = getSHOPList(shopList);
-		if (nSHOPs > 0) {
-			VRay::ValueList mtls_list;
-			VRay::IntList   ids_list;
-			mtls_list.reserve(nSHOPs);
-			ids_list.reserve(nSHOPs);
-
-			SHOPHasher hasher;
-			for (const UT_String &shopPath : shopList) {
-				OP_Node *matNode = getOpNodeFromPath(shopPath);
-				UT_ASSERT(matNode);
-				mtls_list.emplace_back(m_exporter.exportMaterial(matNode));
-				ids_list.emplace_back(hasher(matNode));
-			}
-
-			Attrs::PluginDesc mtlDesc;
-			mtlDesc.pluginID = "MtlMulti";
-			mtlDesc.pluginName = VRayExporter::getPluginName(&m_object,
-															 boost::str(Parm::FmtPrefixManual % "Mtl" % std::to_string(gdp.getUniqueId())));
-
-			mtlDesc.addAttribute(Attrs::PluginAttr("mtls_list", mtls_list));
-			mtlDesc.addAttribute(Attrs::PluginAttr("ids_list",  ids_list));
-
-			nodeDesc.addAttribute(Attrs::PluginAttr("material", m_exporter.exportPlugin(mtlDesc)));
-		}
+	if (!asPluginDesc(gdp, geomDesc)) {
+		return;
 	}
+
+	InstancerItem item;
+	item.geometry = m_exporter.exportPlugin(geomDesc);
+
+	plugins += item;
+
+#if 0
+	// add new node to our list of nodes
+	plugins.push_back(Attrs::PluginDesc("", "Node"));
+	Attrs::PluginDesc &nodeDesc = plugins.back();
+	nodeDesc.addAttribute(Attrs::PluginAttr("geometry", geom));
+
+	// handle material
+	SHOPList shopList;
+	int nSHOPs = getSHOPList(shopList);
+	if (nSHOPs > 0) {
+		VRay::ValueList mtls_list;
+		VRay::IntList   ids_list;
+		mtls_list.reserve(nSHOPs);
+		ids_list.reserve(nSHOPs);
+
+		SHOPHasher hasher;
+		for (const UT_String &shopPath : shopList) {
+			OP_Node *matNode = getOpNodeFromPath(shopPath);
+			UT_ASSERT(matNode);
+			mtls_list.emplace_back(m_exporter.exportMaterial(matNode));
+			ids_list.emplace_back(hasher(matNode));
+		}
+
+		Attrs::PluginDesc mtlDesc;
+		mtlDesc.pluginID = "MtlMulti";
+		mtlDesc.pluginName = VRayExporter::getPluginName(&m_object,
+															boost::str(Parm::FmtPrefixManual % "Mtl" % std::to_string(gdp.getUniqueId())));
+
+		mtlDesc.addAttribute(Attrs::PluginAttr("mtls_list", mtls_list));
+		mtlDesc.addAttribute(Attrs::PluginAttr("ids_list",  ids_list));
+
+		nodeDesc.addAttribute(Attrs::PluginAttr("material", m_exporter.exportPlugin(mtlDesc)));
+	}
+#endif
 }
 
 

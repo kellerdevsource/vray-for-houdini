@@ -52,7 +52,7 @@ public:
 	/// @param gdp[in] - the detail to traverse
 	/// @param plugins[out] - if any plugins are generted they will appended
 	///                       to this list
-	virtual void exportPrimitives(const GU_Detail &gdp, PluginDescList &plugins) VRAY_OVERRIDE;
+	void exportPrimitives(const GU_Detail &gdp, InstancerItems &plugins) VRAY_OVERRIDE;
 
 private:
 	/// Helper function to get the node which holds optional hair geometry rendering

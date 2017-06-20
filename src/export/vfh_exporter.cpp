@@ -778,6 +778,9 @@ int VRayExporter::isNodeAnimated(OP_Node *op_node)
 
 void VRayExporter::RtCallbackVop(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
+	if (!csect.tryEnter())
+		return;
+
 	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
 
 	Log::getLog().info("RtCallbackVop: %s from \"%s\"",
@@ -801,6 +804,8 @@ void VRayExporter::RtCallbackVop(OP_Node *caller, void *callee, OP_EventType typ
 		default:
 			break;
 	}
+
+	csect.leave();
 }
 
 
@@ -905,6 +910,9 @@ VRay::Plugin VRayExporter::exportVop(OP_Node *opNode, ExportContext *parentConte
 
 void VRayExporter::RtCallbackDisplacementObj(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
+	if (!csect.tryEnter())
+		return;
+
 	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
 
 	Log::getLog().info("RtCallbackDisplacementObj: %s from \"%s\"",
@@ -938,11 +946,16 @@ void VRayExporter::RtCallbackDisplacementObj(OP_Node *caller, void *callee, OP_E
 		default:
 			break;
 	}
+
+	csect.leave();
 }
 
 
 void VRayExporter::RtCallbackDisplacementShop(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
+	if (!csect.tryEnter())
+		return;
+
 	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
 
 	Log::getLog().info("RtCallbackDisplacementShop: %s from \"%s\"",
@@ -976,11 +989,16 @@ void VRayExporter::RtCallbackDisplacementShop(OP_Node *caller, void *callee, OP_
 	else if (type == OP_NODE_PREDELETE) {
 		exporter.delOpCallback(caller, VRayExporter::RtCallbackDisplacementShop);
 	}
+
+	csect.leave();
 }
 
 
 void VRayExporter::RtCallbackDisplacementVop(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
+	if (!csect.tryEnter())
+		return;
+
 	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
 
 	Log::getLog().info("RtCallbackDisplacementVop: %s from \"%s\"",
@@ -1021,6 +1039,8 @@ void VRayExporter::RtCallbackDisplacementVop(OP_Node *caller, void *callee, OP_E
 		default:
 			break;
 	}
+
+	csect.leave();
 }
 
 

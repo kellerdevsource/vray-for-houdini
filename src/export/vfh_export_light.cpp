@@ -21,6 +21,9 @@ using namespace VRayForHoudini;
 
 void VRayExporter::RtCallbackLight(OP_Node *caller, void *callee, OP_EventType type, void* data)
 {
+	if (!csect.tryEnter())
+		return;
+
 	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
 
 	OBJ_Node *obj_node = caller->castToOBJNode();
@@ -47,6 +50,8 @@ void VRayExporter::RtCallbackLight(OP_Node *caller, void *callee, OP_EventType t
 		default:
 			break;
 	}
+
+	csect.leave();
 }
 
 

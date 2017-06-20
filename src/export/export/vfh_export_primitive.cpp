@@ -155,7 +155,7 @@ struct VolumeProxy {
 }
 
 
-void HoudiniVolumeExporter::exportPrimitives(const GU_Detail &detail, PluginDescList &plugins)
+void HoudiniVolumeExporter::exportPrimitives(const GU_Detail &detail, InstancerItems&)
 {
 	bool hasExportableVolumes = false;
 	for (GA_Iterator offIt(detail.getPrimitiveRange()); !offIt.atEnd(); offIt.advance()) {
@@ -362,7 +362,7 @@ void HoudiniVolumeExporter::exportPrimitives(const GU_Detail &detail, PluginDesc
 	}
 }
 
-void VolumeExporter::exportPrimitives(const GU_Detail &detail, PluginDescList &plugins)
+void VolumeExporter::exportPrimitives(const GU_Detail &detail, InstancerItems&)
 {
 	auto & primList = detail.getPrimitiveList();
 	const int primCount = primList.offsetSize();

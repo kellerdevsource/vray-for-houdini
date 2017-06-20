@@ -29,6 +29,7 @@
 
 using namespace VRayForHoudini;
 
+VUtils::FastCriticalSection VRayExporter::csect;
 
 OP_Node* VRayExporter::getObjMaterial(OBJ_Node *objNode, fpreal t)
 {
@@ -37,9 +38,11 @@ OP_Node* VRayExporter::getObjMaterial(OBJ_Node *objNode, fpreal t)
 	return objNode ? objNode->getMaterialNode(t) : nullptr;
 }
 
-
 void VRayExporter::RtCallbackOBJGeometry(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
+	if (!csect.tryEnter())
+		return;
+
 	Log::getLog().debug("RtCallbackOBJGeometry: %s from \"%s\"", OPeventToString(type), caller->getName().buffer());
 
 	UT_ASSERT(caller->castToOBJNode());
@@ -60,6 +63,7 @@ void VRayExporter::RtCallbackOBJGeometry(OP_Node *caller, void *callee, OP_Event
 			if (prm) {
 				UT_StringRef prmToken = prm->getToken();
 				const PRM_SpareData	*spare = prm->getSparePtr();
+				Log::getLog().debug("  Parm: %s", prmToken.buffer());
 				shouldReExport = (prmToken.equal(obj_geo->getMaterialParmToken()) ||
 				                 (spare && spare->getValue(OBJ_MATERIAL_SPARE_TAG)));
 			}
@@ -69,7 +73,8 @@ void VRayExporter::RtCallbackOBJGeometry(OP_Node *caller, void *callee, OP_Event
 		case OP_INPUT_REWIRED: {
 			ObjectExporter objExporter(exporter, *obj_geo);
 			objExporter.setExportGeometry(shouldReExport);
-			objExporter.exportNode();
+			// Don't check cache here since we need to update the plugin.
+			objExporter.exportNode(false);
 			break;
 		}
 		case OP_NODE_PREDELETE: {
@@ -79,11 +84,16 @@ void VRayExporter::RtCallbackOBJGeometry(OP_Node *caller, void *callee, OP_Event
 		default:
 			break;
 	}
+
+	csect.leave();
 }
 
 
 void VRayExporter::RtCallbackSOPChanged(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
+	if (!csect.tryEnter())
+		return;
+
 	Log::getLog().debug("RtCallbackSOPChanged: %s from \"%s\"", OPeventToString(type), caller->getName().buffer());
 
 	UT_ASSERT( caller->getCreator()->castToOBJNode() );
@@ -118,11 +128,16 @@ void VRayExporter::RtCallbackSOPChanged(OP_Node *caller, void *callee, OP_EventT
 		default:
 			break;
 	}
+
+	csect.leave();
 }
 
 
 void VRayExporter::RtCallbackVRayClipper(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
+	if (!csect.tryEnter())
+		return;
+
 	VRayExporter &exporter = *reinterpret_cast< VRayExporter* >(callee);
 	OBJ_Node *clipperNode = caller->castToOBJNode();
 
@@ -150,6 +165,8 @@ void VRayExporter::RtCallbackVRayClipper(OP_Node *caller, void *callee, OP_Event
 		default:
 			break;
 	}
+
+	csect.leave();
 }
 
 template <typename ValueType>

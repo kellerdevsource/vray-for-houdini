@@ -26,19 +26,65 @@
 
 using namespace VRayForHoudini;
 
+// TODO: Move to AppSDK headers.
+enum HierarchicalParameterizedNodeParameterFlags {
+	useParentTimes = (1 << 0),
+	useObjectID = (1 << 1),
+	usePrimaryVisibility = (1 << 2),
+	useUserAttributes = (1 << 3),
+	useParentTimesAtleastForGeometry = (1 << 4),
+	useMaterial = (1 << 5),
+	useGeometry = (1 << 6),
+};
+
+static struct PrimPackedTypeIDs {
+	PrimPackedTypeIDs()
+		: initialized(false)
+		, alembicRef(0)
+		, packedDisk(0)
+		, packedGeometry(0)
+		, vrayProxyRef(0)
+	{}
+
+	void init() {
+		if (initialized)
+			return;
+
+		alembicRef = GU_PrimPacked::lookupTypeId("AlembicRef");
+		packedDisk = GU_PrimPacked::lookupTypeId("PackedDisk");
+		packedGeometry = GU_PrimPacked::lookupTypeId("PackedGeometry");
+		vrayProxyRef = GU_PrimPacked::lookupTypeId("VRayProxyRef");
+
+		initialized = true;
+	}
+
+private:
+	int initialized;
+
+public:
+	GA_PrimitiveTypeId alembicRef;
+	GA_PrimitiveTypeId packedDisk;
+	GA_PrimitiveTypeId packedGeometry;
+	GA_PrimitiveTypeId vrayProxyRef;
+} primPackedTypeIDs;
+
 /// XXX: Move to ObjectExporter
 typedef VUtils::HashMapKey<OP_Node*, VRay::Plugin> OpPluginCache;
-
+typedef VUtils::HashMapKey<int, VRay::Plugin> PrimPluginCache;
+typedef VUtils::HashMap<VRay::Plugin> GeomNodeCache;
 static OpPluginCache opPluginCache;
+static PrimPluginCache primPluginCache;
+static GeomNodeCache geomNodeCache;
 
 void VRayForHoudini::clearOpPluginCache() {
-	opPluginCache.clear();
-}
+	// clearOpPluginCache() is called before export,
+	// so we could init types here.
+	primPackedTypeIDs.init();
 
-static const GA_PrimitiveTypeId typeIdAlembicRef = GU_PrimPacked::lookupTypeId("AlembicRef");
-static const GA_PrimitiveTypeId typeIdPackedDisk = GU_PrimPacked::lookupTypeId("PackedDisk");
-static const GA_PrimitiveTypeId typeIdPackedGeometry = GU_PrimPacked::lookupTypeId("PackedGeometry");
-static const GA_PrimitiveTypeId typeIdVRayProxyRef = GU_PrimPacked::lookupTypeId("VRayProxyRef");
+	opPluginCache.clear();
+	primPluginCache.clear();
+	geomNodeCache.clear();
+}
 
 static const char intrAlembicFilename[] = "abcfilename";
 static const char intrAlembicObjectPath[] = "abcobjectpath";
@@ -49,6 +95,9 @@ static const char intrGeometryID[] = "geometryid";
 static const char intrFilename[] = "filename";
 
 static const char VFH_ATTR_MATERIAL_ID[] = "switchmtl";
+
+/// Identity transform.
+static VRay::Transform identityTm(1);
 
 /// A bit-set for detecting unconnected points.
 typedef std::vector<bool> DynamicBitset;
@@ -424,20 +473,46 @@ VRay::Plugin GeometryExporter::exportVRaySOP(SOP_Node &sop)
 	return pluginExporter.exportPlugin(pluginDesc);
 }
 
-VRay::Plugin GeometryExporter::exportPackedPrimitives(SOP_Node &sop, const GU_Detail &gdp)
+VRay::Plugin GeometryExporter::getNodeForInstancerGeometry(VRay::Plugin geometry)
 {
-	if (GU_PrimPacked::hasPackedPrimitives(gdp)) {
-		UT_Array<const GA_Primitive *> prims;
-		GU_PrimPacked::getPackedPrimitives(gdp, prims);
-		for (const GA_Primitive *prim : prims) {
-			auto *primPacked = UTverify_cast< const GU_PrimPacked * >(prim);
-			exportPacked(sop, *primPacked);
+	if (!geometry) {
+		return VRay::Plugin();
+	}
+
+	VRay::Plugin node;
+
+	if (UT_String("Node").equal(geometry.getType())) {
+		// Already a Node plugin.
+		node = geometry;
+	}
+	else {
+		GeomNodeCache::iterator gnIt = geomNodeCache.find(geometry.getName());
+		if (gnIt != geomNodeCache.end()) {
+			node = gnIt.data();
+		}
+		else {
+			static boost::format nodeNameFmt("Node@%s");
+
+			// Wrap into Node plugin.
+			Attrs::PluginDesc nodeDesc(boost::str(nodeNameFmt % geometry.getName()),
+										"Node");
+			nodeDesc.addAttribute(Attrs::PluginAttr("geometry", geometry));
+			nodeDesc.addAttribute(Attrs::PluginAttr("material", pluginExporter.exportDefaultMaterial()));
+			nodeDesc.addAttribute(Attrs::PluginAttr("transform", VRay::Transform(1)));
+			nodeDesc.addAttribute(Attrs::PluginAttr("visible", false));
+
+			node = pluginExporter.exportPlugin(nodeDesc);
+			UT_ASSERT(node);
+
+			geomNodeCache.insert(geometry.getName(), node);
 		}
 	}
-	return VRay::Plugin();
+
+	return node;
 }
 
-VRay::Plugin GeometryExporter::exportDetail(SOP_Node &sop, const GU_Detail &gdp)
+
+VRay::Plugin GeometryExporter::exportDetail(const GU_Detail &gdp)
 {
 	PluginsTable plugins;
 
@@ -450,87 +525,134 @@ VRay::Plugin GeometryExporter::exportDetail(SOP_Node &sop, const GU_Detail &gdp)
 	}
 
 	if (renderPoints != vmRenderPointsAll) {
-		PluginDescList __descList;
 #ifdef CGR_HAS_AUR
 		VolumeExporter volExp(objNode, ctx, pluginExporter);
+		volExp.exportPrimitives(gdp, instancerItems);
+
 		HoudiniVolumeExporter hVoldExp(objNode, ctx, pluginExporter);
-		volExp.exportPrimitives(gdp, __descList);
-		hVoldExp.exportPrimitives(gdp, __descList);
+		hVoldExp.exportPrimitives(gdp, instancerItems);
 #endif
-
 		HairPrimitiveExporter hairExp(objNode, ctx, pluginExporter);
-		hairExp.exportPrimitives(gdp, __descList);
+		hairExp.exportPrimitives(gdp, instancerItems);
 
-		VRay::Plugin fromPacked = exportPackedPrimitives(sop, gdp);
-		if (fromPacked) {
-			plugins += fromPacked;
+		if (GU_PrimPacked::hasPackedPrimitives(gdp)) {
+			UT_Array<const GA_Primitive*> prims;
+			GU_PrimPacked::getPackedPrimitives(gdp, prims);
+			for (const GA_Primitive *prim : prims) {
+				const GU_PrimPacked *primPacked = UTverify_cast<const GU_PrimPacked*>(prim);
+				VRay::Plugin fromPacked = exportPacked(*primPacked);
+				if (fromPacked) {
+					const GA_Detail &parentGdp = prim->getDetail();
+					GA_ROHandleS materialPathHndl(parentGdp.findAttribute(GA_ATTRIB_PRIMITIVE, GEO_STD_ATTRIB_MATERIAL));
+					// GA_ROHandleS materialOverHndl(parentGdp.findAttribute(GA_ATTRIB_PRIMITIVE, "material_override"));
+
+					UT_Matrix4D fullxform;
+					primPacked->getFullTransform4(fullxform);
+
+					InstancerItem item;
+					item.geometry = fromPacked;
+					item.tm = VRayExporter::Matrix4ToTransform(fullxform);
+
+					if (materialPathHndl.isValid()) {
+						const UT_String &matPath = materialPathHndl.get(prim->getMapOffset());
+						OP_Node *matNode = getOpNodeFromPath(matPath, ctx.getTime());
+						if (matNode) {
+							VRay::Plugin material = pluginExporter.exportMaterial(matNode);
+							if (material) {
+								item.material = material;
+							}
+						}
+					}
+
+					instancerItems += item;
+				}
+			}
 		}
 
-		VRay::Plugin fromPoly = exportPolyMesh(sop, gdp);
+		VRay::Plugin fromPoly = exportPolyMesh(gdp);
 		if (fromPoly) {
 			plugins += fromPoly;
 		}
 	}
 
-	if (!plugins.count()) {
+	if (!plugins.count() && !instancerItems.count()) {
 		return VRay::Plugin();
 	}
-	if (plugins.count() == 1) {
-		return plugins[0];
+	if (plugins.count() == 1 || instancerItems.count() == 1) {
+		if (plugins.count())
+			return plugins[0];
+		if (instancerItems.count())
+			return instancerItems[0].geometry;
 	}
 
 	// Combine point particles and geometry under Instancer2.
-	int instancesIdx = 0;
+	int instanceIdx = 0;
+	int instancesListIdx = 0;
+
 	// +1 because first value is time.
-	VRay::VUtils::ValueRefList instances(plugins.count()+1);
-	instances[instancesIdx++].setDouble(0.0);
+	VRay::VUtils::ValueRefList instances(plugins.count()+instancerItems.count()+1);
+	instances[instancesListIdx++].setDouble(0.0);
 
 	for (int i = 0; i < plugins.count(); ++i) {
-		static VRay::Transform tm;
-		tm.makeIdentity();
+		VRay::Plugin plugin = plugins[i];
 
-		// Instancer works with Node plugins.
-		Attrs::PluginDesc nodeDesc("", "Node");
-		nodeDesc.addAttribute(Attrs::PluginAttr("geometry", plugins[i]));
-		nodeDesc.addAttribute(Attrs::PluginAttr("material", pluginExporter.exportDefaultMaterial()));
-		nodeDesc.addAttribute(Attrs::PluginAttr("transform", tm));
-		nodeDesc.addAttribute(Attrs::PluginAttr("visible", false));
-
-		VRay::Plugin node = pluginExporter.exportPlugin(nodeDesc);
-		UT_ASSERT(node);
+		// Instancer works only with Node plugins.
+		VRay::Plugin node = getNodeForInstancerGeometry(plugin);
 
 		// Index + TM + VEL_TM + Node
 		VRay::VUtils::ValueRefList item(4);
-		item[0].setDouble(i);
-		item[1].setTransform(tm);
-		item[2].setTransform(tm);
+		item[0].setDouble(instanceIdx++);
+		item[1].setTransform(identityTm);
+		item[2].setTransform(identityTm);
 		item[3].setPlugin(node);
 
-		instances[instancesIdx++].setList(item);
+		instances[instancesListIdx++].setList(item);
 	}
 
-	Attrs::PluginDesc instancer2(VRayExporter::getPluginName(objNode),
+	for (int i = 0; i < instancerItems.count(); ++i) {
+		const InstancerItem &instancerItem = instancerItems[i];
+		
+		uint32_t additional_params_flags = useMaterial;
+
+		// Instancer works only with Node plugins.
+		VRay::Plugin node = getNodeForInstancerGeometry(instancerItem.geometry);
+
+		// Index + TM + VEL_TM + flags + Mtl + Node
+		const int itemSize = 6;
+
+		VRay::Plugin itemMtl = instancerItem.material
+		                ? instancerItem.material
+		                : pluginExporter.exportDefaultMaterial();
+
+		VRay::VUtils::ValueRefList item(itemSize);
+		int indexOffs = 0;
+		item[indexOffs++].setDouble(instanceIdx++);
+		item[indexOffs++].setTransform(instancerItem.tm);
+		item[indexOffs++].setTransform(VRay::Transform(0));
+		item[indexOffs++].setDouble(additional_params_flags);
+		item[indexOffs++].setPlugin(itemMtl);
+		item[indexOffs++].setPlugin(node);
+
+		instances[instancesListIdx++].setList(item);
+	}
+
+	Attrs::PluginDesc instancer2(VRayExporter::getPluginName(objNode, "Geom"),
 								 "Instancer2");
 	instancer2.addAttribute(Attrs::PluginAttr("instances", instances));
+	instancer2.addAttribute(Attrs::PluginAttr("use_additional_params", true));
 	instancer2.addAttribute(Attrs::PluginAttr("use_time_instancing", false));
 
 	return pluginExporter.exportPlugin(instancer2);
 }
 
-VRay::Plugin GeometryExporter::exportPolyMesh(SOP_Node &sop, const GU_Detail &gdp)
+VRay::Plugin GeometryExporter::exportPolyMesh(const GU_Detail &gdp)
 {
 	MeshExporter polyMeshExporter(objNode, ctx, pluginExporter);
 	polyMeshExporter.init(gdp);
 	polyMeshExporter.setSubdivApplied(hasSubdivApplied());
 	if (polyMeshExporter.hasPolyGeometry()) {
 		if (m_exportGeometry) {
-			Attrs::PluginDesc geomDesc;
-			if (polyMeshExporter.asPluginDesc(gdp, geomDesc)) {
-				return pluginExporter.exportPlugin(geomDesc);
-			}
-
-			PluginDescList __descList;
-			polyMeshExporter.exportPrimitives(gdp, __descList);
+			polyMeshExporter.exportPrimitives(gdp, instancerItems);
 		}
 #if 0
 		else {
@@ -551,51 +673,33 @@ VRay::Plugin GeometryExporter::exportPolyMesh(SOP_Node &sop, const GU_Detail &gd
 	return VRay::Plugin();
 }
 
-
-int GeometryExporter::exportPacked(SOP_Node &sop, const GU_PrimPacked &prim)
+VRay::Plugin GeometryExporter::exportPacked(const GU_PrimPacked &prim)
 {
-#if 1
-	return 0;
-#else
-	// get primitive unique id and check if we've already
-	// processed that geometry
-	uint packedID = getPrimPackedID(prim);
-	if (NOT(m_detailToPluginDesc.count(packedID))) {
-		// we haven't, so export geometry from that primitive
-		exportPrimPacked(sop, prim, m_detailToPluginDesc[packedID]);
+	const int packedID = getPrimPackedID(prim);
+
+	PrimPluginCache::iterator pIt = primPluginCache.find(packedID);
+	if (pIt != primPluginCache.end()) {
+		return pIt.data();
 	}
 
-	// get the list of Node descriptions for the primitive and
-	// adjust it's properties as transform, material, user_attributes, etc.
-	PluginDescList primPluginList = m_detailToPluginDesc.at(packedID);
+	VRay::Plugin primPlugin = exportPrimPacked(prim);
+	if (!primPlugin) {
+		UT_ASSERT_MSG(false, "Unsupported packed primitive type!");
+	}
+	else {
+		primPluginCache.insert(packedID, primPlugin);
+	}
 
-	UT_Matrix4D fullxform;
-	prim.getFullTransform4(fullxform);
-	VRay::Transform tm = VRayExporter::Matrix4ToTransform(fullxform);
+	return primPlugin;
 
-	GA_ROHandleS mtlpath(prim.getDetail().findAttribute(GA_ATTRIB_PRIMITIVE, GEO_STD_ATTRIB_MATERIAL));
-	GA_ROHandleS mtlo(prim.getDetail().findAttribute(GA_ATTRIB_PRIMITIVE, "material_override"));
-
+#if 0
 	SHOPHasher hasher;
 	for (Attrs::PluginDesc &pluginDesc : primPluginList) {
-		pluginList.push_back(pluginDesc);
-		Attrs::PluginDesc &nodeDesc = pluginList.back();
-
-		Attrs::PluginAttr *attr = nullptr;
-
-		attr = nodeDesc.get("transform");
-		if (NOT(attr)) {
-			nodeDesc.addAttribute(Attrs::PluginAttr("transform", tm));
-		} else {
-			attr->paramValue.valTransform = tm * attr->paramValue.valTransform;
-		}
-
 		// we assign material and user_attributes only if material
 		// has not been previously assigned. Existing VFH_ATTR_MATERIAL_ID
 		// property signals that the node already has material and overrides set
 		attr = nodeDesc.get(VFH_ATTR_MATERIAL_ID);
-		if (NOT(attr)
-			&& mtlpath.isValid()) {
+		if (NOT(attr) && mtlpath.isValid()) {
 			const char *shoppath = mtlpath.get(prim.getMapOffset());
 			SHOP_Node *shopNode = OPgetDirector()->findSHOPNode(shoppath);
 			if (shopNode) {
@@ -652,27 +756,26 @@ int GeometryExporter::exportPacked(SOP_Node &sop, const GU_PrimPacked &prim)
 			}
 		}
 	}
-
-	return primPluginList.size();
 #endif
 }
 
 int GeometryExporter::getPrimPackedID(const GU_PrimPacked &prim)
 {
 	const GA_PrimitiveTypeId primTypeID = prim.getTypeId();
-	if (primTypeID == typeIdAlembicRef ||
-		primTypeID == typeIdPackedDisk)
+
+	if (primTypeID == primPackedTypeIDs.packedGeometry) {
+		int geoID = -1;
+		prim.getIntrinsic(prim.findIntrinsic(intrGeometryID), geoID);
+		return geoID;
+	}
+	if (primTypeID == primPackedTypeIDs.alembicRef ||
+		primTypeID == primPackedTypeIDs.packedDisk)
 	{
 		UT_String primname;
 		prim.getIntrinsic(prim.findIntrinsic(intrPackedPrimitiveName), primname);
 		return primname.hash();
 	}
-	if (primTypeID == typeIdPackedGeometry) {
-		int geoID = -1;
-		prim.getIntrinsic(prim.findIntrinsic(intrGeometryID), geoID);
-		return geoID;
-	}
-	if (primTypeID ==  typeIdVRayProxyRef) {
+	if (primTypeID ==  primPackedTypeIDs.vrayProxyRef) {
 		const VRayProxyRef *vrayproxyref = UTverify_cast<const VRayProxyRef*>(prim.implementation());
 		return vrayproxyref->getOptions().hash();
 	}
@@ -682,20 +785,21 @@ int GeometryExporter::getPrimPackedID(const GU_PrimPacked &prim)
 	return 0;
 }
 
-VRay::Plugin GeometryExporter::exportPrimPacked(SOP_Node &sop, const GU_PrimPacked &prim)
+VRay::Plugin GeometryExporter::exportPrimPacked(const GU_PrimPacked &prim)
 {
 	const GA_PrimitiveTypeId primTypeID = prim.getTypeId();
-	if (primTypeID == typeIdAlembicRef) {
-		return exportAlembicRef(sop, prim);
+
+	if (primTypeID == primPackedTypeIDs.packedGeometry) {
+		return exportPackedGeometry(prim);
 	}
-	if (primTypeID == typeIdPackedDisk) {
-		return exportPackedDisk(sop, prim);
+	if (primTypeID == primPackedTypeIDs.alembicRef) {
+		return exportAlembicRef(prim);
 	}
-	if (primTypeID == typeIdPackedGeometry) {
-		return exportPackedGeometry(sop, prim);
+	if (primTypeID == primPackedTypeIDs.vrayProxyRef) {
+		return exportVRayProxyRef(prim);
 	}
-	if (primTypeID == typeIdVRayProxyRef) {
-		return exportVRayProxyRef(sop, prim);
+	if (primTypeID == primPackedTypeIDs.packedDisk) {
+		return exportPackedDisk(prim);
 	}
 
 	UT_ASSERT(false);
@@ -703,18 +807,11 @@ VRay::Plugin GeometryExporter::exportPrimPacked(SOP_Node &sop, const GU_PrimPack
 	return VRay::Plugin();
 }
 
-VRay::Plugin GeometryExporter::exportAlembicRef(SOP_Node &sop, const GU_PrimPacked &prim)
+VRay::Plugin GeometryExporter::exportAlembicRef(const GU_PrimPacked &prim)
 {
 	if (!m_exportGeometry) {
 		return VRay::Plugin();
 	}
-
-#if 0
-	UT_Matrix4 xform;
-	prim.getIntrinsic(prim.findIntrinsic(intrPackedLocalTransform), xform);
-	xform.invert();
-	VRay::Transform tm = VRayExporter::Matrix4ToTransform(UT_Matrix4D(xform));
-#endif
 
 	UT_String primname;
 	prim.getIntrinsic(prim.findIntrinsic(intrPackedPrimitiveName), primname);
@@ -728,7 +825,7 @@ VRay::Plugin GeometryExporter::exportAlembicRef(SOP_Node &sop, const GU_PrimPack
 	VRay::VUtils::CharStringRefList visibilityList(1);
 	visibilityList[0] = objname;
 
-	Attrs::PluginDesc pluginDesc(VRayExporter::getPluginName(&sop, primname.buffer()),
+	Attrs::PluginDesc pluginDesc(primname.buffer(),
 								 "GeomMeshFile");
 	pluginDesc.addAttribute(Attrs::PluginAttr("use_full_names", true));
 	pluginDesc.addAttribute(Attrs::PluginAttr("visibility_lists_type", 1));
@@ -739,42 +836,34 @@ VRay::Plugin GeometryExporter::exportAlembicRef(SOP_Node &sop, const GU_PrimPack
 	return pluginExporter.exportPlugin(pluginDesc);
 }
 
-VRay::Plugin GeometryExporter::exportVRayProxyRef(SOP_Node &sop, const GU_PrimPacked &prim)
+VRay::Plugin GeometryExporter::exportVRayProxyRef(const GU_PrimPacked &prim)
 {
 	if (!m_exportGeometry) {
 		return VRay::Plugin();
 	}
 
-#if 0
-	UT_Matrix4 xform;
-	prim.getIntrinsic(prim.findIntrinsic(intrPackedLocalTransform), xform);
-	xform.invert();
-	VRay::Transform tm = VRayExporter::Matrix4ToTransform(UT_Matrix4D(xform));
-#endif
-
 	UT_String primname;
 	prim.getIntrinsic(prim.findIntrinsic(intrPackedPrimitiveName), primname);
 
-	Attrs::PluginDesc pluginDesc(VRayExporter::getPluginName(&sop, primname.buffer()),
+	Attrs::PluginDesc pluginDesc(VRayExporter::getPluginName(objNode, primname.buffer()),
 								 "GeomMeshFile");
 
 	const VRayProxyRef *vrayproxyref = UTverify_cast<const VRayProxyRef*>(prim.implementation());
+
 	UT_Options options = vrayproxyref->getOptions();
+#if 0
+	// TODO: Utilize "use_time_instancing" here
 	if (options.hasOption("anim_offset")) {
-		// XXX: We coudl utilize "use_time_instancing" here
 		options.setOptionF("anim_offset", options.getOptionF("anim_offset") - ctx.getFrame());
 	}
+#endif
 	pluginExporter.setAttrsFromUTOptions(pluginDesc, options);
 
 	return pluginExporter.exportPlugin(pluginDesc);
 }
 
-VRay::Plugin GeometryExporter::exportPackedDisk(SOP_Node &sop, const GU_PrimPacked &prim)
+VRay::Plugin GeometryExporter::exportPackedDisk(const GU_PrimPacked &prim)
 {
-	// TODO: Implement PackedDisk geometry
-#if 1
-	return VRay::Plugin();
-#else
 	if (!m_exportGeometry) {
 		return VRay::Plugin();
 	}
@@ -785,60 +874,20 @@ VRay::Plugin GeometryExporter::exportPackedDisk(SOP_Node &sop, const GU_PrimPack
 	UT_String filename;
 	prim.getIntrinsic(prim.findIntrinsic(intrFilename), filename);
 
-	Attrs::PluginDesc pluginDesc(VRayExporter::getPluginName(&sop, primname.buffer()),
+	Attrs::PluginDesc pluginDesc(VRayExporter::getPluginName(objNode, primname.buffer()),
 								 "GeomMeshFile");
 	pluginDesc.addAttribute(Attrs::PluginAttr("file", filename.toStdString()));
 
 	return pluginExporter.exportPlugin(pluginDesc);
-#endif
 }
 
-VRay::Plugin GeometryExporter::exportPackedGeometry(SOP_Node &sop, const GU_PrimPacked &prim)
+VRay::Plugin GeometryExporter::exportPackedGeometry(const GU_PrimPacked &prim)
 {
-	const GA_ROHandleS pathHndl(prim.getDetail().findAttribute(GA_ATTRIB_PRIMITIVE, "path"));
-	if (!pathHndl.isValid()) {
-		GU_DetailHandleAutoReadLock gdl(prim.getPackedDetail());
-		if (gdl) {
-			return exportDetail(sop, *gdl);
-		}
+	GU_DetailHandleAutoReadLock gdl(prim.getPackedDetail());
+	if (!gdl) {
+		return VRay::Plugin();
 	}
-
-	const UT_String &path = pathHndl.get(prim.getMapOffset());
-	OP_Node *opNode = getOpNodeFromPath(path, ctx.getTime());
-	if (!opNode) {
-		GU_DetailHandleAutoReadLock gdl(prim.getPackedDetail());
-		if (gdl) {
-			return exportDetail(sop, *gdl);
-		}
-	}
-
-	OpPluginCache::iterator pIt = opPluginCache.find(opNode);
-	if (pIt != opPluginCache.end()) {
-		return pIt.data();
-	}
-
-	VRay::Plugin geometry;
-			
-	OBJ_Node *objNode = CAST_OBJNODE(opNode);
-	SOP_Node *sopNode = CAST_SOPNODE(opNode);
-	if (sopNode) {
-		GU_DetailHandleAutoReadLock gdl(sopNode->getCookedGeoHandle(ctx));
-		if (gdl) {
-			geometry = exportDetail(*sopNode, *gdl);
-		}
-	}
-	else if (objNode) {
-		ObjectExporter objExporter(pluginExporter, *objNode);
-		GeometryExporter geoExporter(objExporter, *objNode, pluginExporter);				
-		geometry = geoExporter.exportGeometry();
-	}
-	else {
-		UT_ASSERT(false);
-	}
-
-	opPluginCache.insert(opNode, geometry);
-
-	return geometry;
+	return exportDetail(*gdl);
 }
 
 ObjectExporter::ObjectExporter(VRayExporter &pluginExporter, OBJ_Node &objNode)
@@ -863,6 +912,11 @@ VMRenderPoints GeometryExporter::getParticlesMode() const
 static GA_ROHandleS getAttribInstancePath(const GU_Detail &gdp)
 {
 	return GA_ROHandleS(gdp.findAttribute(GA_ATTRIB_POINT, "instancepath"));
+}
+
+int GeometryExporter::isInstanceNode(const OP_Node &node)
+{
+	return node.getOperator()->getName().equal("instance");	
 }
 
 int GeometryExporter::isPointInstancer(const GU_Detail &gdp) const
@@ -1010,7 +1064,7 @@ VRay::Plugin GeometryExporter::exportInstancer(const GU_Detail &gdp)
 	return instancer;
 }
 
-VRay::Plugin GeometryExporter::exportPointInstancer(const GU_Detail &gdp)
+VRay::Plugin GeometryExporter::exportPointInstancer(const GU_Detail &gdp, int isInstanceNode)
 {
 	const GA_Size numPoints = gdp.getNumPoints();
 
@@ -1018,23 +1072,12 @@ VRay::Plugin GeometryExporter::exportPointInstancer(const GU_Detail &gdp)
 
 	GA_ROHandleS instanceHndl(gdp.findAttribute(GA_ATTRIB_POINT, "instance"));
 	GA_ROHandleS instancePathHndl(gdp.findAttribute(GA_ATTRIB_POINT, "instancepath"));
-	GA_ROHandleS materialPathHndl(gdp.findAttribute(GA_ATTRIB_POINT, "shop_materialpath"));
+	GA_ROHandleS materialPathHndl(gdp.findAttribute(GA_ATTRIB_POINT, GEO_STD_ATTRIB_MATERIAL));
 
 	GA_ROHandleV3 cdHndl(gdp.findAttribute(GA_ATTRIB_POINT, GEO_STD_ATTRIB_DIFFUSE));
 	GA_ROHandleF opacityHndl(gdp.findAttribute(GA_ATTRIB_POINT, GEO_STD_ATTRIB_ALPHA));
 	GA_ROHandleF pscaleHndl(gdp.findAttribute(GA_ATTRIB_POINT, GEO_STD_ATTRIB_PSCALE));
 	GA_ROHandleV3 scaleHndl(gdp.findAttribute(GA_ATTRIB_POINT, "scale"));
-
-	// TODO: Move to AppSDK headers.
-	enum HierarchicalParameterizedNodeParameterFlags {
-		useParentTimes = (1 << 0),
-		useObjectID = (1 << 1),
-		usePrimaryVisibility = (1 << 2),
-		useUserAttributes = (1 << 3),
-		useParentTimesAtleastForGeometry = (1 << 4),
-		useMaterial = (1 << 5),
-		useGeometry = (1 << 6),
-	};
 
 	Attrs::PluginDesc instancer2(VRayExporter::getPluginName(objNode, "Instancer2"), "Instancer2");
 
@@ -1052,6 +1095,9 @@ VRay::Plugin GeometryExporter::exportPointInstancer(const GU_Detail &gdp)
 		}
 		else if (instancePathHndl.isValid()) {
 			instanceObjectPath = instancePathHndl.get(ptOff);
+		}
+		else if (isInstanceNode) {
+			objNode.evalString(instanceObjectPath, "instancepath", 0, ctx.getTime());
 		}
 		UT_ASSERT_MSG(instanceObjectPath.length(), "Instance object path is not set!");
 
@@ -1146,19 +1192,14 @@ VRay::Plugin GeometryExporter::exportPointInstancer(const GU_Detail &gdp)
 		item[itemListOffs++].setTransform(tm);
 
 		// Particle velocity.
-		UT_Vector3 velocity(0.0, 0.0, 0.0);
+		VRay::Transform vel(0);
 		if (velocityHndl.isValid()) {
-			// XXX: This value seems incorrect.
-			// velocity = velocityHndl.get(ptOff);
+			// const UT_Vector3 &velocity = velocityHndl.get(ptOff);
+			// vel.offset.set(velocity.x(), velocity.y(), velocity.z());
+			// vel.offset = vel.offset * objTm;
 		}
 
-		VRay::VUtils::TraceTransform vel;
-		vel.m.makeZero();
-		vel.ffs.x = velocity.x();
-		vel.ffs.y = velocity.y();
-		vel.ffs.z = velocity.z();
-
-		item[itemListOffs++].setTraceTransform(vel);
+		item[itemListOffs++].setTransform(vel);
 
 		item[itemListOffs++].setDouble(additional_params_flags);
 
@@ -1184,6 +1225,31 @@ VRay::Plugin GeometryExporter::exportPointInstancer(const GU_Detail &gdp)
 	return pluginExporter.exportPlugin(instancer2);
 }
 
+VRay::Plugin GeometryExporter::exportGeometry(SOP_Node &renderSOP)
+{
+	const UT_String &renderOpType = renderSOP.getOperator()->getName();
+	if (renderOpType.startsWith("VRayNode") &&
+		!renderOpType.equal("VRayNodePhxShaderCache") &&
+		!renderOpType.equal("VRayNodeVRayProxy"))
+	{
+		return exportVRaySOP(renderSOP);
+	}
+
+	GU_DetailHandleAutoReadLock gdl(renderSOP.getCookedGeoHandle(ctx));
+	if (!gdl) {
+		return VRay::Plugin();
+	}
+
+	const GU_Detail &gdp = *gdl;
+
+	const int isInstance = isInstanceNode(objNode);
+	if (isInstance || isPointInstancer(gdp)) {
+		return exportPointInstancer(gdp, isInstance);
+	}
+
+	return exportDetail(gdp);
+}
+
 VRay::Plugin GeometryExporter::exportGeometry()
 {
 	SOP_Node *renderSOP = objNode.getRenderSopPtr();
@@ -1191,41 +1257,27 @@ VRay::Plugin GeometryExporter::exportGeometry()
 		return VRay::Plugin();
 	}
 
-	const UT_String &renderOpType = renderSOP->getOperator()->getName();
-	if (renderOpType.startsWith("VRayNode") &&
-		!renderOpType.equal("VRayNodePhxShaderCache") &&
-		!renderOpType.equal("VRayNodeVRayProxy"))
-	{
-		return exportVRaySOP(*renderSOP);
-	}
-
-	GU_DetailHandleAutoReadLock gdl(renderSOP->getCookedGeoHandle(ctx));
-	if (!gdl) {
-		return VRay::Plugin();
-	}
-
-	const GU_Detail &gdp = *gdl;
-
-	if (isPointInstancer(gdp)) {
-		return exportPointInstancer(gdp);
-	}
-
-	return exportDetail(*renderSOP, gdp);
+	return exportGeometry(*renderSOP);
 }
 
-VRay::Plugin ObjectExporter::exportNode()
+VRay::Plugin ObjectExporter::exportNode(int cached)
 {
 	using namespace Attrs;
 
-	OpPluginCache::iterator pIt = opPluginCache.find(&objNode);
-	if (pIt != opPluginCache.end()) {
-		return pIt.data();
+	if (cached) {
+		OpPluginCache::iterator pIt = opPluginCache.find(&objNode);
+		if (pIt != opPluginCache.end()) {
+			return pIt.data();
+		}
 	}
 
 	OP_Context &cxt = pluginExporter.getContext();
 
-	GeometryExporter geoExporter(*this, objNode, pluginExporter);
-	VRay::Plugin geometry = geoExporter.exportGeometry();
+	VRay::Plugin geometry;
+	if (m_exportGeometry) {
+		GeometryExporter geoExporter(*this, objNode, pluginExporter);
+		geometry = geoExporter.exportGeometry();
+	}
 
 	OP_Node *matNode = objNode.getMaterialNode(cxt.getTime());
 	VRay::Plugin material = pluginExporter.exportMaterial(matNode);
@@ -1233,7 +1285,9 @@ VRay::Plugin ObjectExporter::exportNode()
 	const VRay::Transform transform = pluginExporter.getObjTransform(&objNode, cxt);
 
 	PluginDesc nodeDesc(VRayExporter::getPluginName(objNode, "Node"),"Node");
-	nodeDesc.add(PluginAttr("geometry", geometry));
+	if (m_exportGeometry) {
+		nodeDesc.add(PluginAttr("geometry", geometry));
+	}
 	nodeDesc.add(PluginAttr("material", material));
 	nodeDesc.add(PluginAttr("transform", transform));
 	nodeDesc.add(PluginAttr("visible", GeometryExporter::isNodeVisible(pluginExporter.getRop(), objNode)));
