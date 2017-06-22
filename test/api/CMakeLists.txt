@@ -10,7 +10,7 @@
 
 project(appsdk_cpp)
 
-find_package(Qt4 REQUIRED)
+find_package(Qt5Widgets)
 
 include(vfh_compiler)
 include(vfh_vrayappsdk)
@@ -24,4 +24,4 @@ add_executable(${PROJECT_NAME} "${SOURCES};${HEADERS}")
 
 link_with_vray_appsdk(${PROJECT_NAME})
 
-target_link_libraries(${PROJECT_NAME} Qt4::QtGui)
+target_link_libraries(${PROJECT_NAME} Qt5::Widgets)

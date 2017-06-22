@@ -39,6 +39,9 @@ now = soho.getDefaultedFloat('state:time', [0.0])[0]
 # SOHO always returns lists of values.
 camera = soho.getDefaultedString('camera', ['/obj/cam1'])[0]
 
+port = soho.getDefaultedInt("vm_image_mplay_socketport", [0])[0]
+print(port)
+
 # Initialize SOHO with the camera.
 # XXX: This doesn't work for me, but it should according to the documentation...
 #   soho.initialize(now, camera)
