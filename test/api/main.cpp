@@ -1,193 +1,312 @@
+/// Based on: houdini/public/deepmplay/README.html
+
 #include <vraysdk.hpp>
+
 #include <QtWidgets>
+#include <QtCore>
 
+typedef std::vector<VRay::RenderElement> RenderElementsList;
 
-static VRay::VRayInit vrayInit(true);
+static QMutex callbackMtx;
 
-#define MAGIC (('h'<<24)+('M'<<16)+('P'<<8)+('0'))
+#pragma pack(push, 1)
 
+struct ImageHeader {
+	ImageHeader()
+		: magic_number(('h'<<24)+('M'<<16)+('P'<< 8)+'0')
+		, xres(0)
+		, yres(0)
+		, single_image_storage(0)
+		, single_image_array_size(0)
+		, multi_plane_count(0)
+	{}
 
+	const int magic_number;
+	int xres;
+	int yres;
 
+	/// Pixel format:
+	///  0 = Floating point data
+	///  1 = Unsigned char data
+	///  2 = Unsigned short data
+	///  4 = Unsigned int data
+	int single_image_storage;
 
+	/// Channles per pixel
+	///  1 = A single channel image
+	///  3 = RGB data
+	///  4 = RGBA data
+	int single_image_array_size;
 
+	int multi_plane_count;
 
-static void onDumpMessage(VRay::VRayRenderer &/*renderer*/, const char *msg, int /*level*/, void* /*userData*/)
-{
-	//QString message(msg);
-	/*fprintf(stdout, "Message: %s\n",
-			message.simplified().toAscii().constData());*/
+	int reserved[2];
+};
 
-	fflush(stdout);
-}
+struct PlaneDefinition {
+	PlaneDefinition()
+		: plane_number(0)
+		, name_length(0)
+		, data_format(0)
+		, array_size(0)
+	{}
 
+	///< Sequentially increasing integer
+	int plane_number;
 
-static void onProgress(VRay::VRayRenderer &/*renderer*/, const char *msg, int elementNumber, int elementsCount, void* /*userData*/)
-{
-	const float percentage = 100.0 * elementNumber / elementsCount;
+	///< The length of the plane name
+	int name_length;
 
-	QString message;
-	message.sprintf("%s %.0f%%",
-					msg, percentage);
+	///< Format of the data
+	int data_format;
 
-	//fprintf(stdout, "Progress: %s\n",
-			//message.simplified().toAscii().constData());
+	///< Array size of the data
+	int array_size;
 
-	fflush(stdout);
-}
+	int reserved[4];
+};
 
-static void writeTile(const int &x0, 
-	const int &x1, 
-	const int &y0, 
-	const int &y1, 
-	const int *colours,
-	const int &cpos,
-	QProcess *process) {
+struct PlaneSelect {
+	PlaneSelect()
+		: plane_marker(-1)
+		, plane_index(0)
+	{}
 
-	int tileHeader[4] = { 0 };
-	tileHeader[0] = x0;
-	tileHeader[1] = x1 - 1;
-	tileHeader[2] = y0;
-	tileHeader[3] = y1 - 1;
+	const int plane_marker;
 
-	const int tileHeaderSize = _countof(tileHeader) * sizeof(int);
-	QByteArray tileHeaderByteArray(reinterpret_cast<const char*>(tileHeader), tileHeaderSize);
-	if (process->write(reinterpret_cast<const char*>(tileHeader), tileHeaderSize) != tileHeaderSize) {
-		Q_ASSERT(false);
+	int plane_index;
+
+	int reserved[2];
+};
+
+/// NOTE: The tile coordinates are specified as inclusive coordinates.
+struct TileHeader {
+	TileHeader()
+		: x0(0)
+		, x1(0)
+		, y0(0)
+		, y1(0)
+	{}
+	int	x0;
+	int x1;
+	int	y0;
+	int y1;
+};
+
+#pragma pack(pop)
+
+struct VRayIMDisplayImage {
+	VRayIMDisplayImage()
+		: name("C")
+		, image(nullptr)
+		, ownImage(true)
+	{}
+
+	std::string name;
+	VRay::VRayImage *image;
+	int ownImage;
+};
+
+typedef QList<VRayIMDisplayImage> VRayIMDisplayImages;
+
+struct IMDisplay {
+	IMDisplay() {
+		const QString programPath = "C:/Program Files/Side Effects Software/Houdini 16.0.600/bin/imdisplay.exe";
+
+		QStringList arguments;
+
+		// The -p option will cause imdisplay.exe to read an image from standard in.
+		arguments << "-p";
+
+		// When using the -p option, the -k option will cause imdisplay
+		// to keep reading image data after the entire image has been read.
+		arguments << "-k";
+
+		// The -f option will flip the image vertically for display
+		arguments << "-f";
+
+		// [hostname:]port will connect to the mplay process which is listening
+		// on the given host/port.
+		arguments << "-s" << "62218";
+
+		proc.start(programPath, arguments);
+		proc.waitForStarted();
 	}
 
-	
+	~IMDisplay() {
+		if (proc.state() != QProcess::Running)
+			return;
+		proc.waitForBytesWritten();
+		proc.closeWriteChannel();
+		proc.close();
+	}
 
-	const int size = (x1 - x0) + (y1 - y0);
+	template <typename HeaderType>
+	void writeHeader(const HeaderType &header) {
+		proc.write(reinterpret_cast<const char*>(&header), sizeof(HeaderType));
+		proc.waitForBytesWritten();
+	}
 
-	int colourValue[4] = { colours[cpos], 
-		colours[cpos + 1], 
-		colours[cpos + 2], 
-		colours[cpos + 3] 
-	};
-
-	const int colourValueSize = _countof(colourValue) * sizeof(int);
-	QByteArray colourArray(reinterpret_cast<const char*>(colourValue), colourValueSize);
-	for (int i = 0; i < size; i++) {
-		if (process->write(reinterpret_cast<const char*>(colourValue), colourValueSize) != colourValueSize) {
-			Q_ASSERT(false);
+	void writeImages(const VRayIMDisplayImages &images) {
+		if (!images.count()) {
+			return;
 		}
 
+		// All images are of the same size / format
+		VRay::VRayImage *firstImage = images[0].image;
+
+		int width = 0;
+		int height = 0;
+		firstImage->getSize(width, height);
+
+		const int numPixels = width * height;
+		const int numPixelBytes = numPixels * sizeof(float) * 4;
+
+		ImageHeader imageHeader;
+		imageHeader.xres = width;
+		imageHeader.yres = height;
+		imageHeader.multi_plane_count = images.count();
+		writeHeader(imageHeader);
+
+		for (int imageIdx = 0; imageIdx < images.count(); ++imageIdx) {
+			const VRayIMDisplayImage &vi = images[imageIdx];
+			const char *planeName = vi.name.c_str();
+			const int   planeNameSize = vi.name.length();
+
+			PlaneDefinition planesDef;
+			planesDef.name_length = planeNameSize;
+			planesDef.data_format = 0;
+			planesDef.array_size = 4;
+			writeHeader(planesDef);
+
+			// Write plane name.
+			proc.write(reinterpret_cast<const char*>(planeName), planeNameSize);
+			proc.waitForBytesWritten();
+		}
+
+		for (int imageIdx = 0; imageIdx < images.count(); ++imageIdx) {
+			const VRayIMDisplayImage &vi = images[imageIdx];
+
+			PlaneSelect planeHeader;
+			planeHeader.plane_index = imageIdx;
+			writeHeader(planeHeader);
+
+			TileHeader tileHeader;
+			tileHeader.x1 = width - 1;
+			tileHeader.y1 = height - 1;
+			writeHeader(tileHeader);
+
+			proc.write(reinterpret_cast<const char*>(vi.image->getPixelData()), numPixelBytes);
+			proc.waitForBytesWritten();
+		}
+
+		TileHeader eof;
+		eof.x0 = -2;
+		writeHeader(eof);
+	}
+
+private:
+	QProcess proc;
+
+	Q_DISABLE_COPY(IMDisplay)
+};
+
+struct CallbackData {
+	CallbackData() {}
+
+	IMDisplay imdisplay;
+
+private:
+    Q_DISABLE_COPY(CallbackData)
+};
+
+static void writeRendererImages(VRay::VRayRenderer &renderer, VRay::VRayImage *beautyPass)
+{
+	VRayIMDisplayImages images;
+
+	VRayIMDisplayImage beautyImage;
+	beautyImage.name = "C";
+	beautyImage.image = beautyPass;
+	beautyImage.ownImage = false;
+
+	images += beautyImage;
+
+	VRay::RenderElements reMan = renderer.getRenderElements();
+	RenderElementsList reList = reMan.getAllByType(VRay::RenderElement::NONE);
+	for (const VRay::RenderElement &re : reList) {
+		VRayIMDisplayImage image;
+		image.image = re.getImage();
+		image.name = re.getName();
+
+		images += image;
+	}
+
+	IMDisplay imd;
+	imd.writeImages(images);
+
+	for (VRayIMDisplayImage &vi : images) {
+		if (vi.ownImage) {
+			delete vi.image;
+		}
 	}
 }
 
-static void onImageReady(VRay::VRayRenderer &renderer, void* userData) {
+static void onRTImageUpdated(VRay::VRayRenderer &renderer, VRay::VRayImage *image, void*)
+{
+	if (!callbackMtx.tryLock())
+		return;
 
-	VRay::VRayImage *temp = renderer.getImage();
-
-	int width, height;
-	temp->getSize(width, height);
-	const long size = width*height * sizeof(float) * 4;
-
-	VRay::AColor* colourData = temp->getPixelData();
-	//image obtained ^
-	//open pipe v (start process with Qt)
-
-	QObject *program = nullptr;
-
-	QString programPath = "C:/Program Files/Side Effects Software/Houdini 16.0.600/bin/imdisplay.exe";
-	QStringList arguments;
-
-	arguments << "-p" << "-k" << "-s" << "58121";// << "-n" << "\"TestWindow\"";
-
-	QProcess *imDisplayProcess = new QProcess(program);
-	imDisplayProcess->start(programPath, arguments);
-
-
-	QProcess::ProcessError errorCode = imDisplayProcess->error();
-	//sending data portion v
-
-	int header[8] = { 0 };
-
-	header[0] = MAGIC;
-	header[1] = width;
-	header[2] = height;
-
-	//total number of channels
-	//header[5]
-
-	//format
-	//0-floating point data
-	//1-unsigned char data
-	//2-unsigned short data
-	//4-unsigned int data
-	header[3] = 4;
-	//size of array
-	//4-RGBA
-	//3-RGB
-	//1-single channel image
-	header[4] = 4;
-
-	int colours[32] = { 0, 0, 0, 255,
-					255, 0, 0, 255,
-					0, 255, 0, 255,
-					0, 0, 255, 255,
-					255, 255, 0, 255,
-					0, 255, 255, 255,
-					255, 0, 255, 255,
-					255, 255, 255, 255 };
-
-	const int headerSize = _countof(header) * sizeof(int);
-	QByteArray byteArray(reinterpret_cast<const char*>(header), headerSize);
-
-	if (imDisplayProcess->write(reinterpret_cast<const char*>(header), headerSize) != headerSize) {
-		Q_ASSERT(false);
+	VRay::VRayImage *rtImage = image->clone();
+	if (rtImage) {
+		writeRendererImages(renderer, rtImage);
+		delete rtImage;
 	}
-	//write the Tile header (treating entire image as one tile)
-	errorCode = imDisplayProcess->error();
-	
 
-	while (true) {
-		writeTile(0, width, 0, height, colours, 24, imDisplayProcess);
-		Sleep(100);
-		printf("wrote once");
-	}
-	errorCode = imDisplayProcess->error();
-	/*QByteArray imageData(reinterpret_cast<const char*>(colours), 36*sizeof(int));
-	if (imDisplayProcess->write(imageData) != 36 * sizeof(int)) {
-		Q_ASSERT(false);
-	}*/
-	//imDisplayProcess->close();
-
-	delete temp;
+	callbackMtx.unlock();
 }
 
-static void renderScene(const std::string &filepath)
+static void onImageReady(VRay::VRayRenderer &renderer, void*) 
+{
+	if (!callbackMtx.tryLock())
+		return;
+
+	VRay::VRayImage *finalImage = renderer.getImage();
+	if (finalImage) {
+		writeRendererImages(renderer, finalImage);
+		delete finalImage;
+	}
+
+	callbackMtx.unlock();
+}
+
+static void renderScene(const char *filepath)
 {
 	VRay::RendererOptions options;
-	options.renderMode = VRay::RendererOptions::RENDER_MODE_PRODUCTION;
+	options.renderMode = VRay::RendererOptions::RENDER_MODE_RT_CPU;
 	options.keepRTRunning = true;
-	options.imageWidth  = 640;
-	options.imageHeight = 480;
+	options.imageWidth  = 800;
+	options.imageHeight = 600;
 	options.rtNoiseThreshold = 0.5f;
+	options.showFrameBuffer = false;
 
-	VRay::VRayRenderer *vray = new VRay::VRayRenderer(options);
-	if (vray) {
-		vray->setOnDumpMessage(onDumpMessage);
-		vray->setOnProgress(onProgress);
-		vray->setOnImageReady(onImageReady);
+	VRay::VRayRenderer vray(options);
+	vray.setOnImageReady(onImageReady);
+	vray.setOnRTImageUpdated(onRTImageUpdated);
 
-		if (vray->load(filepath) == 0) {
-			vray->start();
-			vray->waitForImageReady();
-		}
+	if (vray.load(filepath) == 0) {
+		vray.start();
+		vray.waitForImageReady();
 	}
 }
-
 
 int main(int argc, char *argv[])
 {
-	QApplication app(argc, argv);
+	VRay::VRayInit vrayInit(false);
 
 	if (argc == 2) {
 		const char *sceneFilePath = argv[1];
-
 		renderScene(sceneFilePath);
 	}
 
-	return app.exec();
+	return 0;
 }
