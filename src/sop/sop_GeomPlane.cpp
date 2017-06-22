@@ -23,7 +23,7 @@ static PRM_Name prm_size_name("plane_size", "Viewport Size");
 
 void SOP::GeomPlane::setPluginType()
 {
-	pluginType = "GEOMETRY";
+	pluginType = VRayPluginType::GEOMETRY;
 	pluginID   = "GeomInfinitePlane";
 }
 

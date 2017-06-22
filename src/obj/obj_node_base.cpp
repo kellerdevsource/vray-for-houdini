@@ -15,18 +15,6 @@
 using namespace VRayForHoudini;
 
 
-const char *OBJ::getVRayPluginTypeName(VRayPluginType pluginType)
-{
-	static const char* pluginTypeNames[static_cast<std::underlying_type<VRayPluginType>::type>( VRayPluginType::MAX_PLUGINTYPE )] =
-	{
-		"LIGHT",
-		"GEOMETRY"
-	};
-
-	return (pluginType < VRayPluginType::MAX_PLUGINTYPE)? pluginTypeNames[static_cast<std::underlying_type<VRayPluginType>::type>( pluginType )] : nullptr;
-}
-
-
 const char *OBJ::getVRayPluginIDName(VRayPluginID pluginID)
 {
 	static const char* pluginIDNames[static_cast<std::underlying_type<VRayPluginID>::type>( VRayPluginID::MAX_PLUGINID )] =
@@ -84,7 +72,7 @@ OP::VRayNode::PluginResult OBJ::VRayClipper::asPluginDesc(Attrs::PluginDesc &plu
 
 void OBJ::VRayClipper::setPluginType()
 {
-	pluginType = getVRayPluginTypeName(VRayPluginType::Geometry);
+	pluginType = VRayPluginType::GEOMETRY;
 	pluginID = getVRayPluginIDName(VRayPluginID::VRayClipper);
 }
 

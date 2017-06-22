@@ -18,7 +18,7 @@
 namespace VRayForHoudini {
 namespace VOP {
 
-#define BRDF_DEF(PluginID) NODE_BASE_DEF("BRDF", PluginID)
+#define BRDF_DEF(PluginID) NODE_BASE_DEF(BRDF, PluginID)
 
 BRDF_DEF(BRDFBlinn)
 BRDF_DEF(BRDFBump)

@@ -242,11 +242,11 @@ void MeshExporter::exportPrimitives(const GU_Detail &gdp, PluginDescList &plugin
 			ids_list.reserve(nSHOPs);
 
 			SHOPHasher hasher;
-			for (const UT_String &shoppath : shopList) {
-				SHOP_Node *shopNode = OPgetDirector()->findSHOPNode(shoppath);
-				UT_ASSERT( shopNode );
-				mtls_list.emplace_back(m_exporter.exportMaterial(*shopNode));
-				ids_list.emplace_back(hasher(shopNode));
+			for (const UT_String &shopPath : shopList) {
+				OP_Node *matNode = getOpNodeFromPath(shopPath);
+				UT_ASSERT(matNode);
+				mtls_list.emplace_back(m_exporter.exportMaterial(matNode));
+				ids_list.emplace_back(hasher(matNode));
 			}
 
 			Attrs::PluginDesc mtlDesc;

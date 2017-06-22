@@ -59,7 +59,7 @@ static PRM_Template rpm_tmpl_textures[] = {
 
 void VOP::TexLayered::setPluginType()
 {
-	pluginType = "TEXTURE";
+	pluginType = VRayPluginType::TEXTURE;
 	pluginID   = "TexLayered";
 }
 

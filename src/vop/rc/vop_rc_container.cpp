@@ -18,7 +18,7 @@ using namespace VRayForHoudini;
 
 void VOP::RenderChannelsContainer::setPluginType()
 {
-	pluginType = "SETTINGS";
+	pluginType = VRayPluginType::SETTINGS;
 	pluginID   = "SettingsRenderChannels";
 }
 

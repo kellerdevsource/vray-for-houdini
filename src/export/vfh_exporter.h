@@ -19,6 +19,7 @@
 #include "vfh_export_view.h"
 #include "vfh_vfb.h"
 #include "vfh_log.h"
+#include "vfh_hashes.h"
 
 
 #include "vfh_export_context.h"
@@ -33,6 +34,21 @@
 namespace VRayForHoudini {
 
 class VRayRendererNode;
+
+enum class VRayPluginType {
+	UNKNOWN = 0,
+	GEOMETRY,
+	LIGHT,
+	BRDF,
+	MATERIAL,
+	TEXTURE,
+	CUSTOM_TEXTURE,
+	UVWGEN,
+	RENDERCHANNEL,
+	EFFECT,
+	OBJECT,
+	SETTINGS,
+};
 
 enum VRayLightType {
 	VRayLightOmni      = 0,
@@ -232,16 +248,23 @@ public:
 	VRay::Plugin exportLight(OBJ_Node *obj_node);
 
 	/// Export VOP node
-	/// @retval V-Ray plugin created for that node
-	VRay::Plugin exportVop(OP_Node *op_node, ExportContext *parentContext = nullptr);
+	/// @param vopNode VOP node instance.
+	/// @return V-Ray plugin.
+	VRay::Plugin exportVop(OP_Node *opNode, ExportContext *parentContext=nullptr);
 
 	/// Export Make transform VOP node
 	/// @retval V-Ray transform for that node
 	VRay::Transform exportTransformVop(VOP_Node &vop_node, ExportContext *parentContext = nullptr);
 
-	/// Export V-Ray material SHOP network
-	/// @retval V-Ray surface material plugin for that node
-	VRay::Plugin exportMaterial(SHOP_Node &shop_node);
+	/// Export V-Ray material from SHOP network or VOP node.
+	/// @param node SHOP or VOP node.
+	/// @returns V-Ray plugin.
+	VRay::Plugin exportMaterial(OP_Node *node);
+
+	/// Export V-Ray material from VOP node.
+	/// @param node VOP node.
+	/// @returns V-Ray plugin.
+	VRay::Plugin exportMaterial(VOP_Node *node);
 
 	/// Export the default light created when there are no lights in the scene
 	/// @param update[in] - flags whether this is called from IPR callback
@@ -416,7 +439,7 @@ public:
 	/// @param obj[in] - the OBJ node
 	/// @param t[in] - evaluation time for the paremeter
 	/// @retval the SHOP node
-	static SHOP_Node* getObjMaterial(OBJ_Node *obj, fpreal t=0.0);
+	static OP_Node *getObjMaterial(OBJ_Node *objNode, fpreal t=0.0);
 
 	/// Helper function to get OBJ node transform as VRay::Transform
 	/// @param obj[in] - the OBJ node
@@ -505,7 +528,7 @@ private:
 	ROP_RENDER_CODE                m_error; ///< ROP error to singnal the ROP rendering should be aborted
 	ExpWorkMode                    m_workMode; ///< what should the exporter do- export vrscene, render or both
 	CbItems                        m_opRegCallbacks; ///< holds registered node callbacks for live IPR updates
-	VRay::ValueList                m_phxSimulations; ///< accumulates volumetric data to pass to PhxShaderSimVol
+	Hash::PluginHashSet            m_phxSimulations; ///< accumulates volumetric data to pass to PhxShaderSimVol
 	int                            m_isIPR; ///< if we are rendering in IPR mode, i.e. we are tracking live node updates
 	int                            m_isGPU; ///< if we are using RT GPU rendering engine
 	int                            m_isAnimation; ///< if we should export the scene at more than one time

@@ -12,6 +12,11 @@
 
 #include <stdarg.h>
 
+#ifdef _WIN32
+#define VS_DEBUG(...) VUtils::debug(__VA_ARGS__)
+#else
+#define VS_DEBUG(...)
+#endif
 
 using namespace VRayForHoudini;
 using namespace VRayForHoudini::Log;
@@ -28,21 +33,20 @@ void Logger::log(LogLevel level, const char *format, va_list args) const
 
 	if (showMessage) {
 		vutils_cprintf(true, VUTILS_COLOR_MAGENTA "V-Ray For Houdini" VUTILS_COLOR_DEFAULT "|");
+		VS_DEBUG("V-Ray For Houdini [");
 
 		switch (level) {
-			case LogLevelInfo:    { vutils_cprintf(true, VUTILS_COLOR_BLUE   "    Info" VUTILS_COLOR_DEFAULT "| "); break; }
-			case LogLevelProgress:{ vutils_cprintf(true, VUTILS_COLOR_BLUE   "Progress" VUTILS_COLOR_DEFAULT "| "); break; }
-			case LogLevelWarning: { vutils_cprintf(true, VUTILS_COLOR_YELLOW " Warning" VUTILS_COLOR_DEFAULT "| " VUTILS_COLOR_YELLOW); break; }
-			case LogLevelError:   { vutils_cprintf(true, VUTILS_COLOR_RED    "   Error" VUTILS_COLOR_DEFAULT "| " VUTILS_COLOR_RED); break; }
-			case LogLevelDebug:   { vutils_cprintf(true, VUTILS_COLOR_CYAN   "   Debug" VUTILS_COLOR_DEFAULT "| " VUTILS_COLOR_CYAN); break; }
-			case LogLevelMsg:     { vutils_cprintf(true, VUTILS_COLOR_GREEN  "     Msg" VUTILS_COLOR_DEFAULT "| " VUTILS_COLOR_GREEN); break; }
+			case LogLevelInfo:    { vutils_cprintf(true, VUTILS_COLOR_BLUE   "    Info" VUTILS_COLOR_DEFAULT "| "); VS_DEBUG("Info"); break; }
+			case LogLevelProgress:{ vutils_cprintf(true, VUTILS_COLOR_BLUE   "Progress" VUTILS_COLOR_DEFAULT "| "); VS_DEBUG("Progress"); break; }
+			case LogLevelWarning: { vutils_cprintf(true, VUTILS_COLOR_YELLOW " Warning" VUTILS_COLOR_DEFAULT "| " VUTILS_COLOR_YELLOW); VS_DEBUG("Warning"); break; }
+			case LogLevelError:   { vutils_cprintf(true, VUTILS_COLOR_RED    "   Error" VUTILS_COLOR_DEFAULT "| " VUTILS_COLOR_RED); VS_DEBUG("Error"); break; }
+			case LogLevelDebug:   { vutils_cprintf(true, VUTILS_COLOR_CYAN   "   Debug" VUTILS_COLOR_DEFAULT "| " VUTILS_COLOR_CYAN); VS_DEBUG("Debug"); break; }
+			case LogLevelMsg:     { vutils_cprintf(true, VUTILS_COLOR_GREEN  "     Msg" VUTILS_COLOR_DEFAULT "| " VUTILS_COLOR_GREEN); VS_DEBUG("Msg"); break; }
 		}
 
 		vutils_cprintf(true, "%s" VUTILS_COLOR_DEFAULT, buf);
 
-		if (level == LogLevelDebug) {
-			VUtils::debug("V-Ray For Houdini: %s\n", buf);
-		}
+		VS_DEBUG("] %s\n", buf);
 
 		if (level != LogLevelProgress) {
 			printf("\n");

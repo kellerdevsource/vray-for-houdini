@@ -6,6 +6,16 @@
 	label	"Rendering"
 
 	parm {
+	    name	"setPresetParam"
+	    label	"Set this param to one of [FumeFX, HoudiniVolume, HoudiniLiquid, MayaFluids]"
+	    type	string
+	    invisible
+	    default	{ "" }
+	    range	{ 0 1 }
+	    export	none
+	}
+
+	parm {
 	    name	"selectedSopPath"
 	    label	"Sop path to read data ranges from"
 	    type	oppath
@@ -316,7 +326,7 @@
 	    label	"Opacity Multiplier"
 	    type	float
 	    default	{ "1" }
-	    disablewhen	"{ fire_opacity_mode == 0 }"
+	    disablewhen	"{ fire_opacity_mode != 3 }"
 	    range	{ 0! 10 }
 	    export	none
 	}

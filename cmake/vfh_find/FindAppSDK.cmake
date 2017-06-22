@@ -19,12 +19,13 @@ else()
 		message(WARNING "V-Ray AppSDK version NOT specified")
 		set(_appsdk_root "")
 	else()
-		message(STATUS "V-Ray AppSDK version = ${APPSDK_VERSION}")
-
 		# no V-Ray AppSDK root path is passed to cmake
 		if(SDK_PATH)
 			# if vfh sdk path is given use it to deduce AppSDK root path based on version
-			set(_appsdk_root "${SDK_PATH}/appsdk/appsdk${APPSDK_VERSION}")
+			set(_appsdk_root "${SDK_PATH}/appsdk")
+			if(WIN32)
+				set(_appsdk_root "${_appsdk_root}/${HDK_RUNTIME}")
+			endif()
 		else()
 			# otherwise search in default location for AppSDK
 			string(TOLOWER "${CMAKE_HOST_SYSTEM_NAME}" _HOST_SYSTEM_NAME)
@@ -40,16 +41,14 @@ message(STATUS "V-Ray AppSDK search path: ${_appsdk_root}")
 # check if path exists
 if((NOT _appsdk_root) OR (NOT EXISTS ${_appsdk_root}))
 	set(AppSDK_FOUND FALSE)
-
 else()
 	set(AppSDK_FOUND TRUE)
 	set(AppSDK_INCLUDES "${_appsdk_root}/cpp/include")
 	set(AppSDK_LIBRARIES "${_appsdk_root}/bin")
 
 	if(WIN32)
-		list(APPEND AppSDK_LIBRARIES "${_appsdk_root}/lib")
+		list(APPEND AppSDK_LIBRARIES "${_appsdk_root}/cpp/lib")
 	endif()
-
 endif()
 
 # check if all paths exist

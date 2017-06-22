@@ -20,6 +20,15 @@ VOP::NodeBase::NodeBase(OP_Network *parent, const char *name, OP_Operator *entry
 {
 }
 
+VOP_Type VOP::NodeBase::getShaderType() const
+{
+	switch (pluginType)	{
+		case VRayPluginType::BRDF: return VOP_TYPE_BSDF;
+		case VRayPluginType::MATERIAL: return VOP_SURFACE_SHADER;
+		case VRayPluginType::TEXTURE: return VOP_GENERIC_SHADER;
+		default: return VOP_TYPE_UNDEF;
+	}
+}
 
 bool VOP::NodeBase::hasPluginInfo() const
 {

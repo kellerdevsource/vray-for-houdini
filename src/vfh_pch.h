@@ -70,7 +70,6 @@
 #include <GT/GT_PrimInstance.h>
 #include <GU/GU_Detail.h>
 #include <GU/GU_DetailHandle.h>
-#include <GU/GU_DetailHandle.h>
 #include <GU/GU_PackedContext.h>
 #include <GU/GU_PackedFactory.h>
 #include <GU/GU_PackedGeometry.h>
@@ -98,7 +97,6 @@
 #include <OP/OP_Director.h>
 #include <OP/OP_Input.h>
 #include <OP/OP_Network.h>
-#include <OP/OP_Node.h>
 #include <OP/OP_Node.h>
 #include <OP/OP_NodeInfoParms.h>
 #include <OP/OP_OperatorTable.h>

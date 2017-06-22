@@ -40,7 +40,7 @@ static PRM_Template rpm_tmpl_brdfs[] = {
 
 void VOP::BRDFLayered::setPluginType()
 {
-	pluginType = "BRDF";
+	pluginType = VRayPluginType::BRDF;
 	pluginID   = "BRDFLayered";
 }
 

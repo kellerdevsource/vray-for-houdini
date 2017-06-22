@@ -24,7 +24,7 @@ VUtils::Vrscene::Preview::VrsceneDescManager  SOP::VRayScene::m_vrsceneMan;
 
 void SOP::VRayScene::setPluginType()
 {
-	pluginType = "GEOMETRY";
+	pluginType = VRayPluginType::GEOMETRY;
 	pluginID   = "VRayScene";
 }
 

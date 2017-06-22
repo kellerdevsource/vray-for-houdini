@@ -388,25 +388,29 @@ void PhxShaderSim::setRampDefaults()
 }
 
 
-void PhxShaderSim::initPreset(const char * presetName)
+int PhxShaderSim::setPresetTypeCB(void *data, int index, fpreal64 time, const PRM_Template *tplate)
 {
 	const int chanCount = RampContext::CHANNEL_COUNT;
+	auto simNode = reinterpret_cast<PhxShaderSim*>(data);
 
-	clearRampData();
-	setRampDefaults();
+	UT_String presetName;
+	simNode->evalString(presetName, tplate->getToken(), 0, time);
+
+	simNode->clearRampData();
+	simNode->setRampDefaults();
 
 	// presets
-	if (!strcmp(presetName, "FumeFX")) {
+	if (presetName == "FumeFX") {
 		// channel is fuel
 		// fire ramps
-		auto & ecolorRamp = m_ramps["ecolor_ramp"]->data(RampType_Color, RampContext::RampChannel::CHANNEL_FUEL);
+		auto & ecolorRamp = simNode->m_ramps["ecolor_ramp"]->data(RampType_Color, RampContext::RampChannel::CHANNEL_FUEL);
 		ecolorRamp.m_xS.clear();
 		ecolorRamp.m_yS.clear();
 		ecolorRamp.m_interps.clear();
 
 		addColorPoint(ecolorRamp, 0.1f, 1.f, 0.33f, 0.f, AurRamps::MCPT_Spline);
 
-		auto & epowerCurve = m_ramps["elum_curve"]->data(RampType_Curve, RampContext::RampChannel::CHANNEL_FUEL); 
+		auto & epowerCurve = simNode->m_ramps["elum_curve"]->data(RampType_Curve, RampContext::RampChannel::CHANNEL_FUEL);
 		epowerCurve.m_xS.clear();
 		epowerCurve.m_yS.clear();
 		epowerCurve.m_interps.clear();
@@ -415,11 +419,11 @@ void PhxShaderSim::initPreset(const char * presetName)
 		addCurvePoint(epowerCurve, 0.100, 1.000, AurRamps::MCPT_Linear);
 		addCurvePoint(epowerCurve, 0.200, 0.130, AurRamps::MCPT_Linear);
 		addCurvePoint(epowerCurve, 1.000, 0.100, AurRamps::MCPT_Linear);
-	} else if (!strcmp(presetName, "HoudiniVolume")) {
+	} else if (presetName == "HoudiniVolume") {
 		// channel is temp
 		// fire ramps
 
-		auto & ecolorRamp = m_ramps["ecolor_ramp"]->data(RampType_Color, RampContext::RampChannel::CHANNEL_TEMPERATURE);
+		auto & ecolorRamp = simNode->m_ramps["ecolor_ramp"]->data(RampType_Color, RampContext::RampChannel::CHANNEL_TEMPERATURE);
 		ecolorRamp.m_xS.clear();
 		ecolorRamp.m_yS.clear();
 		ecolorRamp.m_interps.clear();
@@ -429,20 +433,20 @@ void PhxShaderSim::initPreset(const char * presetName)
 		addColorPoint(ecolorRamp, 13.0f, 1.0, 0.88, 0.0, AurRamps::MCPT_Spline);
 		addColorPoint(ecolorRamp, 14.0f, 1.0, 1.00, 1.0, AurRamps::MCPT_Spline);
 
-		auto & epowerCurve = m_ramps["elum_curve"]->data(RampType_Curve, RampContext::RampChannel::CHANNEL_TEMPERATURE); 
+		auto & epowerCurve = simNode->m_ramps["elum_curve"]->data(RampType_Curve, RampContext::RampChannel::CHANNEL_TEMPERATURE);
 		epowerCurve.m_xS.clear();
 		epowerCurve.m_yS.clear();
 		epowerCurve.m_interps.clear();
 
 		addCurvePoint(epowerCurve,  0.01, 0.000, AurRamps::MCPT_Spline);
 		addCurvePoint(epowerCurve, 14.00, 1.000, AurRamps::MCPT_Spline);
-	} else if (!strcmp(presetName, "HoudiniLiquid")) {
+	} else if (presetName == "HoudiniLiquid") {
 
-	} else if (!strcmp(presetName, "MayaFluids")) {
+	} else if (presetName == "MayaFluids") {
 		// channel is temp
 		// fire ramps
 
-		auto & ecolorRamp = m_ramps["ecolor_ramp"]->data(RampType_Color, RampContext::RampChannel::CHANNEL_TEMPERATURE);
+		auto & ecolorRamp = simNode->m_ramps["ecolor_ramp"]->data(RampType_Color, RampContext::RampChannel::CHANNEL_TEMPERATURE);
 		ecolorRamp.m_xS.clear();
 		ecolorRamp.m_yS.clear();
 		ecolorRamp.m_interps.clear();
@@ -452,7 +456,7 @@ void PhxShaderSim::initPreset(const char * presetName)
 		addColorPoint(ecolorRamp, 3.5f, 1.37, 1.00, 0.00, AurRamps::MCPT_Spline);
 		addColorPoint(ecolorRamp, 4.0f, 1.56, 1.56, 0.98, AurRamps::MCPT_Spline);
 
-		auto & epowerCurve = m_ramps["elum_curve"]->data(RampType_Curve, RampContext::RampChannel::CHANNEL_TEMPERATURE); 
+		auto & epowerCurve = simNode->m_ramps["elum_curve"]->data(RampType_Curve, RampContext::RampChannel::CHANNEL_TEMPERATURE);
 		epowerCurve.m_xS.clear();
 		epowerCurve.m_yS.clear();
 		epowerCurve.m_interps.clear();
@@ -461,7 +465,7 @@ void PhxShaderSim::initPreset(const char * presetName)
 		addCurvePoint(epowerCurve, 4.5, 1.000, AurRamps::MCPT_Spline);
 
 		// smoke opacity
-		auto & transpCurve = m_ramps["transp_curve"]->data(RampType_Curve, RampContext::RampChannel::CHANNEL_SMOKE);
+		auto & transpCurve = simNode->m_ramps["transp_curve"]->data(RampType_Curve, RampContext::RampChannel::CHANNEL_SMOKE);
 		transpCurve.m_xS.clear();
 		transpCurve.m_yS.clear();
 		transpCurve.m_interps.clear();
@@ -472,6 +476,7 @@ void PhxShaderSim::initPreset(const char * presetName)
 		addCurvePoint(transpCurve, 0.110, 0.83, AurRamps::MCPT_Spline);
 		addCurvePoint(transpCurve, 0.440, 0.95, AurRamps::MCPT_Spline);
 	}
+	return 1;
 }
 
 
@@ -657,6 +662,8 @@ PRM_Template* PhxShaderSim::GetPrmTemplate()
 			auto & param = AttrItems[c];
 			if (!strcmp(param.getToken(), "selectedSopPath")) {
 				param.setCallback(setVopPathCB);
+			} else if (!strcmp(param.getToken(), "setPresetParam")) {
+				param.setCallback(setPresetTypeCB);
 			}
 
 			const auto spareData = param.getSparePtr();
@@ -923,7 +930,7 @@ bool PhxShaderSim::loadRamps(UT_IStream & is)
 
 void PhxShaderSim::setPluginType()
 {
-	pluginType = "MATERIAL";
+	pluginType = VRayPluginType::MATERIAL;
 	pluginID   = "PhxShaderSim";
 }
 
