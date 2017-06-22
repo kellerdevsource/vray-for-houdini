@@ -169,6 +169,11 @@ private:
 	bool                   m_doFrameReplace;
 
 	DataRangeMap           m_channelDataRange;
+
+	/// cache handling
+	mutable CachePtr       m_cachePtr;
+	mutable std::string    m_last_cache_path;
+	mutable std::string    m_last_user_char_map;
 };
 
 
