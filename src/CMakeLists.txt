@@ -10,15 +10,6 @@
 
 set(SDK_PATH "" CACHE STRING "SDK root qpath")
 
-include(CheckIncludeFile)
-
-include(vfh_compiler)
-include(vfh_macro)
-include(vfh_houdini)
-include(vfh_vrayappsdk)
-include(vfh_vraysdk)
-include(vfh_phoenix)
-
 include_directories(.)
 include_directories(io)
 include_directories(ui)
@@ -294,7 +285,6 @@ elseif(INSTALL_RELEASE)
 	install(SCRIPT ${VFH_PACK})
 
 else()
-	set(VFH_DSO_DIRPATH ${CMAKE_BINARY_DIR}/dso)
 	cgr_install_runtime(${PROJECT_NAME} ${VFH_DSO_DIRPATH})
 
 	if(WIN32)
@@ -304,5 +294,6 @@ else()
 	endif()
 
 	file(TO_NATIVE_PATH ${VFH_DSO_DIRPATH} VFH_DSO_DIRPATH)
+	file(TO_NATIVE_PATH ${VFH_BIN_DIRPATH} VFH_BIN_DIRPATH)
 	vfh_generate_launcher(TEMPLATE_FILENAME ${TEMPLATE_FILENAME})
 endif()
