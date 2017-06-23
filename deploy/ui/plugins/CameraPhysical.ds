@@ -1,7 +1,7 @@
 {
     name	CameraPhysical
     label	"Physical Camera"
-    parmtag	{ spare_category "Physical Camera" }
+    parmtag	{ spare_category "V-Ray Physical Camera" }
     parmtag	{ vray_plugin "CameraPhysical" }
     parm {
 	name	"type"
