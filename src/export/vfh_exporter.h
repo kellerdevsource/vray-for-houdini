@@ -19,6 +19,7 @@
 #include "vfh_export_view.h"
 #include "vfh_vfb.h"
 #include "vfh_log.h"
+#include "vfh_hashes.h"
 
 
 #include "vfh_export_context.h"
@@ -527,7 +528,7 @@ private:
 	ROP_RENDER_CODE                m_error; ///< ROP error to singnal the ROP rendering should be aborted
 	ExpWorkMode                    m_workMode; ///< what should the exporter do- export vrscene, render or both
 	CbItems                        m_opRegCallbacks; ///< holds registered node callbacks for live IPR updates
-	VRay::ValueList                m_phxSimulations; ///< accumulates volumetric data to pass to PhxShaderSimVol
+	Hash::PluginHashSet            m_phxSimulations; ///< accumulates volumetric data to pass to PhxShaderSimVol
 	int                            m_isIPR; ///< if we are rendering in IPR mode, i.e. we are tracking live node updates
 	int                            m_isGPU; ///< if we are using RT GPU rendering engine
 	int                            m_isAnimation; ///< if we should export the scene at more than one time

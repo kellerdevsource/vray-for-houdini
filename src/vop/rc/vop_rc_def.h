@@ -32,6 +32,7 @@ RC_DEF(RenderChannelRenderID)
 RC_DEF(RenderChannelVelocity)
 RC_DEF(RenderChannelZDepth)
 RC_DEF(RenderChannelDenoiser)
+RC_DEF(RenderChannelMultiMatte)
 
 } // namespace VOP
 } // namespace VRayForHoudini

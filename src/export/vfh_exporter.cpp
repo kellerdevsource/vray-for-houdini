@@ -684,7 +684,7 @@ void VRayExporter::exportEffects(OP_Node *op_net)
 
 void VRayExporter::phxAddSimumation(VRay::Plugin sim)
 {
-	m_phxSimulations.push_back(VRay::Value(sim));
+	m_phxSimulations.insert(sim);
 }
 
 
@@ -1452,9 +1452,13 @@ void VRayExporter::exportScene()
 	}
 
 	// Add simulations from OBJ
-	if (m_phxSimulations.size()) {
+	if (!m_phxSimulations.empty()) {
 		Attrs::PluginDesc phxSims("VRayNodePhxShaderSimVol", "PhxShaderSimVol");
-		phxSims.addAttribute(Attrs::PluginAttr("phoenix_sim", m_phxSimulations));
+		VRay::ValueList sims(m_phxSimulations.size());
+		std::transform(m_phxSimulations.begin(), m_phxSimulations.end(), sims.begin(), [](const VRay::Plugin &plugin) {
+			return VRay::Value(plugin);
+		});
+		phxSims.addAttribute(Attrs::PluginAttr("phoenix_sim", sims));
 
 		exportPlugin(phxSims);
 	}

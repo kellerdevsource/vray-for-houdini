@@ -316,6 +316,13 @@ int GeometryExporter::_exportNodes() {
 			}
 		}
 
+		static const char parmObjectID[] = "objectID";
+		PRM_Parm *prmObjectID = m_objNode.getParmList()->getParmPtr(parmObjectID);
+		if (prmObjectID) {
+			const int objectID = m_objNode.evalInt(parmObjectID, 0, m_context.getTime());
+			nodeDesc.addAttribute(Attrs::PluginAttr("objectID", objectID));
+		}
+
 		// TODO: adjust other Node attrs
 	}
 
