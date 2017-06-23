@@ -17,4 +17,7 @@ collection
 
 #endif
 
+collection
+#include "VRayObjectProperties.ds"
+
 }
