@@ -238,16 +238,27 @@ VRay::Plugin VRayExporter::exportObject(OBJ_Node *objNode)
 		}
 #endif
 		else {
+			if (objOpType.equal("guidegroom") ||
+				objOpType.equal("guidedeform"))
+			{
+				return plugin;
+			}
+
 			addOpCallback(objNode, RtCallbackOBJGeometry);
 			addOpCallback(renderOp, RtCallbackSOPChanged);
 
 			ObjectExporter objExporter(*this, *objNode);
 			plugin = objExporter.exportNode();
 
-			if (!plugin) {
+			if (plugin) {
+				Log::getLog().debug("Exporting OBJ: %s [%s]",
+									objNode->getName().buffer(),
+									objOpType.buffer());
+			}
+			else {
 				Log::getLog().info("Error exporting OBJ: %s [%s]",
 								   objNode->getName().buffer(),
-								   objNode->getOperator()->getName().buffer());
+								   objOpType.buffer());
 				Log::getLog().info("  Render OP: %s:\"%s\"",
 								   renderOp->getName().buffer(),
 								   renderOp->getOperator()->getName().buffer());
