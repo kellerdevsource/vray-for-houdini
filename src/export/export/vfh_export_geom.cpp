@@ -101,8 +101,8 @@ static const char intrFilename[] = "filename";
 
 static const char VFH_ATTR_MATERIAL_ID[] = "switchmtl";
 
-static const UT_String typeGeomStaticMesh = "GeomStaticMesh";
-static const UT_String typeNode = "Node";
+static const UT_String vrayPluginTypeGeomStaticMesh = "GeomStaticMesh";
+static const UT_String vrayPluginTypeNode = "Node";
 
 /// Identity transform.
 static VRay::Transform identityTm(1);
@@ -495,7 +495,7 @@ VRay::Plugin GeometryExporter::getNodeForInstancerGeometry(VRay::Plugin geometry
 	}
 
 	// Already a Node plugin.
-	if (typeNode.equal(geometry.getType())) {
+	if (vrayPluginTypeNode.equal(geometry.getType())) {
 		return geometry;
 	}
 
@@ -527,10 +527,10 @@ VRay::Plugin GeometryExporter::getNodeForInstancerGeometry(VRay::Plugin geometry
 static void ensureDynamicGeometryForInstancer(VRay::Plugin plugin)
 {
 	VRay::Plugin geometry = plugin;
-	if (typeNode.equal(geometry.getType())) {
+	if (vrayPluginTypeNode.equal(geometry.getType())) {
 		geometry = geometry.getPlugin("geometry");
 	}
-	if (geometry && typeGeomStaticMesh.equal(geometry.getType())) {
+	if (geometry && vrayPluginTypeGeomStaticMesh.equal(geometry.getType())) {
 		geometry.setValue("dynamic_geometry", true);
 	}
 }
