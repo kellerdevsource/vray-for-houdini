@@ -100,6 +100,7 @@ static const char intrGeometryID[] = "geometryid";
 static const char intrFilename[] = "filename";
 
 static const char VFH_ATTR_MATERIAL_ID[] = "switchmtl";
+static const char GEO_VFH_ATTRIB_OBJECTID[] = "vray_objectID";
 
 static const UT_String vrayPluginTypeGeomStaticMesh = "GeomStaticMesh";
 static const UT_String vrayPluginTypeNode = "Node";
@@ -537,13 +538,11 @@ static void ensureDynamicGeometryForInstancer(VRay::Plugin plugin)
 
 VRay::Plugin GeometryExporter::exportDetail(const GU_Detail &gdp)
 {
-	PluginsTable plugins;
-
 	const VMRenderPoints renderPoints = getParticlesMode();
 	if (renderPoints != vmRenderPointsNone) {
 		VRay::Plugin fromPart = exportPointParticles(gdp, renderPoints);
 		if (fromPart) {
-			plugins += fromPart;
+			instancerItems += InstancerItem(fromPart);
 		}
 	}
 
@@ -555,6 +554,11 @@ VRay::Plugin GeometryExporter::exportDetail(const GU_Detail &gdp)
 		HoudiniVolumeExporter hVoldExp(objNode, ctx, pluginExporter);
 		hVoldExp.exportPrimitives(gdp, instancerItems);
 #endif
+		VRay::Plugin fromPoly = exportPolyMesh(gdp);
+		if (fromPoly) {
+			instancerItems += InstancerItem(fromPoly);
+		}
+
 		HairPrimitiveExporter hairExp(objNode, ctx, pluginExporter);
 		hairExp.exportPrimitives(gdp, instancerItems);
 
@@ -588,69 +592,52 @@ VRay::Plugin GeometryExporter::exportDetail(const GU_Detail &gdp)
 						}
 					}
 
+					GA_ROHandleI objectIdHndl(parentGdp.findAttribute(GA_ATTRIB_PRIMITIVE, GEO_VFH_ATTRIB_OBJECTID));
+					if (objectIdHndl.isValid()) {
+						item.objectID = objectIdHndl.get(prim->getMapOffset());
+					}
+
 					// TODO: GA_ROHandleS materialOverHndl(parentGdp.findAttribute(GA_ATTRIB_PRIMITIVE, "material_override"));
 
 					instancerItems += item;
 				}
 			}
 		}
-
-		VRay::Plugin fromPoly = exportPolyMesh(gdp);
-		if (fromPoly) {
-			plugins += fromPoly;
-		}
 	}
 
-	if (!plugins.count() && !instancerItems.count()) {
+	if (!instancerItems.count()) {
 		return VRay::Plugin();
 	}
-	if (plugins.count() == 1 || instancerItems.count() == 1) {
-		if (plugins.count())
-			return plugins[0];
-		if (instancerItems.count())
-			return instancerItems[0].geometry;
+	if (instancerItems.count() == 1) {
+		return instancerItems[0].geometry;
 	}
 
 	// Combine point particles and geometry under Instancer2.
 	int instanceIdx = 0;
 	int instancesListIdx = 0;
 
-	const int numParticles = plugins.count() + instancerItems.count();
+	const int numParticles = instancerItems.count();
 
 	// +1 because first value is time.
 	VRay::VUtils::ValueRefList instances(numParticles+1);
 	instances[instancesListIdx++].setDouble(0.0);
 
-	for (int i = 0; i < plugins.count(); ++i) {
-		VRay::Plugin plugin = plugins[i];
-
-		// Instancer works only with Node plugins.
-		VRay::Plugin node = getNodeForInstancerGeometry(plugin);
-
-		// Index + TM + VEL_TM + Node
-		VRay::VUtils::ValueRefList item(4);
-		item[0].setDouble(instanceIdx++);
-		item[1].setTransform(identityTm);
-		item[2].setTransform(identityTm);
-		item[3].setPlugin(node);
-
-		instances[instancesListIdx++].setList(item);
-	}
-
 	for (int i = 0; i < instancerItems.count(); ++i) {
 		const InstancerItem &instancerItem = instancerItems[i];
 		
-		uint32_t additional_params_flags = useMaterial;
+		uint32_t additional_params_flags = 0;
+		if (instancerItem.material) {
+			additional_params_flags |= useMaterial;
+		}
+		if (instancerItem.objectID != InstancerItem::objectIdUndefined) {
+			additional_params_flags |= useObjectID;
+		}
 
 		// Instancer works only with Node plugins.
 		VRay::Plugin node = getNodeForInstancerGeometry(instancerItem.geometry);
 
-		// Index + TM + VEL_TM + flags + Mtl + Node
-		const int itemSize = 6;
-
-		VRay::Plugin itemMtl = instancerItem.material
-		                ? instancerItem.material
-		                : pluginExporter.exportDefaultMaterial();
+		// Index + TM + VEL_TM + AdditionalParams + Node + AdditionalParamsMembers
+		const int itemSize = 5 + __popcnt(additional_params_flags);
 
 		VRay::VUtils::ValueRefList item(itemSize);
 		int indexOffs = 0;
@@ -658,7 +645,12 @@ VRay::Plugin GeometryExporter::exportDetail(const GU_Detail &gdp)
 		item[indexOffs++].setTransform(instancerItem.tm);
 		item[indexOffs++].setTransform(VRay::Transform(0));
 		item[indexOffs++].setDouble(additional_params_flags);
-		item[indexOffs++].setPlugin(itemMtl);
+		if (additional_params_flags & useObjectID) {
+			item[indexOffs++].setDouble(instancerItem.objectID);
+		}
+		if (additional_params_flags & useMaterial) {
+			item[indexOffs++].setPlugin(instancerItem.material);
+		}
 		item[indexOffs++].setPlugin(node);
 
 		instances[instancesListIdx++].setList(item);
