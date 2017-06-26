@@ -498,6 +498,10 @@ VRayPluginInfo* Parm::generatePluginInfo(const std::string &pluginID)
 				attrDesc.value.type = ParmType::ePlugin;
 				socketType = VOP_TYPE_BSDF;
 			}
+			else if (attrType == "MATERIAL") {
+				attrDesc.value.type = ParmType::ePlugin;
+				socketType = VOP_SURFACE_SHADER;
+			}
 			else if (attrType == "UVWGEN") {
 				attrDesc.value.type = ParmType::ePlugin;
 				socketType = VOP_TYPE_VECTOR;
