@@ -495,7 +495,7 @@ VRay::Plugin GeometryExporter::getNodeForInstancerGeometry(VRay::Plugin geometry
 	}
 
 	// Already a Node plugin.
-	if (UT_String("Node").equal(geometry.getType())) {
+	if (typeNode.equal(geometry.getType())) {
 		return geometry;
 	}
 
