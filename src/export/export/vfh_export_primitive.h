@@ -14,6 +14,8 @@
 #include "vfh_vray.h"
 #include "vfh_exporter.h"
 
+#include <GU/GU_Detail.h>
+
 namespace VRayForHoudini {
 
 struct InstancerItem {
