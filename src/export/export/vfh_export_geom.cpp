@@ -67,6 +67,38 @@ public:
 	GA_PrimitiveTypeId vrayProxyRef;
 } primPackedTypeIDs;
 
+struct MtlOverrideItem {
+	enum MtlOverrideItemType {
+		itemTypeNone = 0,
+		itemTypeInt,
+		itemTypeDouble,
+		itemTypeVector,
+	};
+
+	MtlOverrideItem()
+		: type(itemTypeNone)
+		, valueInt(0)
+		, valueDouble(0.0)
+		, valueVector(0.0f, 0.0f, 0.0f)
+	{}
+
+	/// Sets override value type.
+	void setType(MtlOverrideItemType value) { type = value; }
+
+	/// Returns override value type.
+	MtlOverrideItemType getType() const { return type; }
+
+	MtlOverrideItemType type;
+
+	union {
+		exint valueInt;
+		fpreal valueDouble;
+		VRay::Vector valueVector;
+	};
+};
+
+typedef VUtils::HashMap<MtlOverrideItem> MtlOverrideItems;
+
 /// XXX: Move to ObjectExporter
 typedef VUtils::HashMapKey<OP_Node*, VRay::Plugin> OpPluginCache;
 typedef VUtils::HashMapKey<int, VRay::Plugin> PrimPluginCache;
@@ -537,6 +569,37 @@ static void ensureDynamicGeometryForInstancer(VRay::Plugin plugin)
 	}
 }
 
+static void overrideItemsToUserAttributes(MtlOverrideItems &overrides, InstancerItem &instancerItem) {
+	for (MtlOverrideItems::iterator oiIt = overrides.begin(); oiIt != overrides.end(); ++oiIt) {
+		const tchar *overrideName = oiIt.key();
+		const MtlOverrideItem &overrideItem = oiIt.data();
+
+		switch (overrideItem.getType()) {
+			case MtlOverrideItem::itemTypeInt: {
+				instancerItem.userAttributes += QString::asprintf("%s=%lld;",
+															overrideName,
+															overrideItem.valueInt);
+				break;
+			}
+			case MtlOverrideItem::itemTypeDouble: {
+				instancerItem.userAttributes += QString::asprintf("%s=%g",
+															overrideName,
+															overrideItem.valueDouble);
+				break;
+			}
+			case MtlOverrideItem::itemTypeVector: {
+				instancerItem.userAttributes += QString::asprintf("%s=%g,%g,%g;",
+															overrideName,
+															overrideItem.valueVector.x, overrideItem.valueVector.y, overrideItem.valueVector.z);
+				break;
+			}
+			default: {
+				vassert(false);
+			}
+		}
+	}
+}
+
 VRay::Plugin GeometryExporter::exportDetail(const GU_Detail &gdp)
 {
 	InstancerItems instancerItems;
@@ -595,6 +658,85 @@ VRay::Plugin GeometryExporter::exportDetail(const GU_Detail &gdp)
 					}
 
 					if (materialStyleSheetHndl.isValid()) {
+						//
+						// {
+						// 	"styles":[
+						// 		{
+						// 			"overrides":{
+						// 				"material":{
+						// 					"name":"/shop/vraymtl"
+						// 				},
+						// 				"materialParameters":{
+						// 					"diffuse":[0.80046379566192627,0.510895013809204102,0.775474309921264648,1
+						// 					]
+						// 				}
+						// 			}
+						// 		}
+						// 	]
+						// }
+						//
+						const QString &styleSheet = materialStyleSheetHndl.get(primOffset);
+
+						QJsonParseError parserError;
+						QJsonDocument styleSheetParser = QJsonDocument::fromJson(styleSheet.toUtf8(), &parserError);
+
+						MtlOverrideItems overrideItems;
+
+						QJsonObject jsonObject = styleSheetParser.object();
+						if (jsonObject.contains("styles")) {
+							QJsonArray styles = jsonObject["styles"].toArray();
+
+							for (const QJsonValue &style : styles) {
+								QJsonObject obj = style.toObject();
+
+								if (obj.contains("overrides")) {
+									QJsonObject overrides = obj["overrides"].toObject();
+
+									if (overrides.contains("material")) {
+										QJsonObject material = overrides["material"].toObject();
+
+										if (material.contains("name")) {
+											const UT_String &matPath = material["name"].toString().toLocal8Bit().constData();
+											OP_Node *matNode = getOpNodeFromPath(matPath, ctx.getTime());
+											if (matNode) {
+												VRay::Plugin materialPlugin = pluginExporter.exportMaterial(matNode);
+												if (materialPlugin) {
+													item.material = materialPlugin;
+
+													if (overrides.contains("materialParameters")) {
+														QJsonObject materialParameters = overrides["materialParameters"].toObject();
+
+														QStringList keys = materialParameters.keys();
+														for (const QString &paramName : keys) {
+															const tchar *parmName = paramName.toLocal8Bit().constData();
+															QJsonValue paramJsonValue = materialParameters[paramName];
+
+															if (paramJsonValue.isArray()) {
+																QJsonArray paramJsonVector = paramJsonValue.toArray();
+																if (paramJsonVector.size() >= 3) {
+																	MtlOverrideItem &overrideItem = overrideItems[parmName];
+																	overrideItem.setType(MtlOverrideItem::itemTypeVector);
+																	overrideItem.valueVector.set(paramJsonVector.takeAt(0).toDouble(),
+																								 paramJsonVector.takeAt(1).toDouble(),
+																								 paramJsonVector.takeAt(2).toDouble());
+																}
+															}
+															else if (paramJsonValue.isDouble()) {
+																MtlOverrideItem &overrideItem = overrideItems[parmName];
+																overrideItem.setType(MtlOverrideItem::itemTypeDouble);
+																overrideItem.valueDouble = paramJsonValue.toDouble();
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+
+						overrideItemsToUserAttributes(overrideItems, item);
 					}
 					else if (materialPathHndl.isValid()) {
 						const UT_String &matPath = materialPathHndl.get(primOffset);
@@ -610,37 +752,6 @@ VRay::Plugin GeometryExporter::exportDetail(const GU_Detail &gdp)
 										UT_StringArray mtlOverrideKeys;
 										mtlOverride.getKeys(mtlOverrideKeys);
 
-										struct MtlOverrideItem {
-											enum MtlOverrideItemType {
-												itemTypeNone = 0,
-												itemTypeInt,
-												itemTypeDouble,
-												itemTypeVector,
-											};
-
-											MtlOverrideItem()
-												: type(itemTypeNone)
-												, valueInt(0)
-												, valueDouble(0.0)
-												, valueVector(0.0f, 0.0f, 0.0f)
-											{}
-
-											/// Sets override value type.
-											void setType(MtlOverrideItemType value) { type = value; }
-
-											/// Returns override value type.
-											MtlOverrideItemType getType() const { return type; }
-
-											MtlOverrideItemType type;
-
-											union {
-												exint valueInt;
-												fpreal valueDouble;
-												VRay::Vector valueVector;
-											};
-										};
-
-										typedef VUtils::HashMap<MtlOverrideItem> MtlOverrideItems;
 										MtlOverrideItems overrideItems;
 
 										for (const UT_StringHolder &key : mtlOverrideKeys) {
@@ -678,34 +789,7 @@ VRay::Plugin GeometryExporter::exportDetail(const GU_Detail &gdp)
 											}
 										}
 
-										for (MtlOverrideItems::iterator oiIt = overrideItems.begin(); oiIt != overrideItems.end(); ++oiIt) {
-											const tchar *overrideName = oiIt.key();
-											const MtlOverrideItem &overrideItem = oiIt.data();
-
-											switch (overrideItem.getType()) {
-												case MtlOverrideItem::itemTypeInt: {
-													item.userAttributes += QString::asprintf("%s=%lld;",
-																							 overrideName,
-																							 overrideItem.valueInt);
-													break;
-												}
-												case MtlOverrideItem::itemTypeDouble: {
-													item.userAttributes += QString::asprintf("%s=%g",
-																							 overrideName,
-																							 overrideItem.valueDouble);
-													break;
-												}
-												case MtlOverrideItem::itemTypeVector: {
-													item.userAttributes += QString::asprintf("%s=%g,%g,%g;",
-																							 overrideName,
-																							 overrideItem.valueVector.x, overrideItem.valueVector.y, overrideItem.valueVector.z);
-													break;
-												}
-												default: {
-													vassert(false);
-												}
-											}
-										}
+										overrideItemsToUserAttributes(overrideItems, item);
 									}
 								}
 							}
