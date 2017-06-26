@@ -22,8 +22,6 @@
 #include <OP/OP_Bundle.h>
 #include <GA/GA_Types.h>
 
-#include <QStringBuilder>
-
 using namespace VRayForHoudini;
 
 // TODO: Move to AppSDK headers.
@@ -1146,6 +1144,21 @@ static VRay::Transform getPointInstanceTM(const GU_Detail &gdp, const PointInsta
 	S.scale(scale);
 
 	// L = alignment matrix
+	UT_Matrix3F L(1);
+	UT_Vector3F up(0.0f, 0.0f, 0.0f);
+	static UT_Vector3F a(0.0f, 0.0f, 1.0f);
+	if (attrs.up.isValid()) {
+		up = attrs.up.get(ptOff);
+	}
+	UT_Vector3F n(0.0f, 0.0f, 0.0f);
+	if (attrs.n.isValid()) {
+		n = attrs.n.get(ptOff);
+	}
+	UT_Vector3F v(0.0f, 0.0f, 0.0f);
+	if (attrs.v.isValid()) {
+		v = attrs.v.get(ptOff);
+	}
+
 	// IF N exists AND up exists and isn't {0,0,0}: 
 	//    L = mlookatup(N,0,up) 
 	// ELSE IF N exists: 
@@ -1154,21 +1167,23 @@ static VRay::Transform getPointInstanceTM(const GU_Detail &gdp, const PointInsta
 	//    L = mlookatup(v,0,up) 
 	// ELSE IF v exists: 
 	//    L = dihedral({0,0,1},v) 
-	UT_Matrix3F L(1);
-	if (attrs.n.isValid() || attrs.v.isValid()) {
-		GA_ROHandleV3 nvHndl = attrs.n.isValid() ? attrs.n : attrs.v;
-
-		UT_Vector3F nv = nvHndl.get(ptOff);
-		if (attrs.up.isValid()) {
-			const UT_Vector3F &up = attrs.up.get(ptOff);
-			if (!up.isEqual(UT_Vector3F(0.0f, 0.0f, 0.0f))) {
-				L.lookat(nv, up, 0);
-			}
-		}
-		else {
-			UT_Vector3F a(0.0f, 0.0f, 1.0f);
-			L.dihedral(a, nv);
-		}
+	if (attrs.n.isValid() &&
+		attrs.up.isValid() &&
+		!up.isEqual(UT_Vector3F(0.0f, 0.0f, 0.0f)))
+	{
+		L.lookat(n, up, 0);
+	}
+	else if (attrs.n.isValid()) {
+		L.dihedral(a, n);
+	}
+	else if (attrs.v.isValid() &&
+			 attrs.up.isValid() &&
+			 !up.isEqual(UT_Vector3F(0.0f, 0.0f, 0.0f)))
+	{
+		L.lookat(v, up, 0);
+	}
+	else if (attrs.v.isValid()) {
+		L.dihedral(a, v);
 	}
 
 	// R = rot matrix 
@@ -1319,6 +1334,8 @@ VRay::Plugin GeometryExporter::exportPointInstancer(const GU_Detail &gdp, int is
 		// Mult with object inv. tm.
 		VRay::Transform objTm = VRayExporter::getObjTransform(instaceObjNode, ctx, false);
 		objTm.makeInverse();
+		// Houdini seems to ignore object offset for point instancing
+		objTm.offset.makeZero();
 		tm = tm * objTm;
 
 		item[itemListOffs++].setTransform(tm);
