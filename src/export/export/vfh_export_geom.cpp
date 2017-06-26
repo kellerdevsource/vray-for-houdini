@@ -612,7 +612,7 @@ VRay::Plugin GeometryExporter::exportDetail(const GU_Detail &gdp)
 		return instancerItems[0].geometry;
 	}
 
-	// Combine point particles and geometry under Instancer2.
+	// Combine point particles, geometry and instancer items under Instancer2.
 	int instanceIdx = 0;
 	int instancesListIdx = 0;
 
@@ -669,17 +669,20 @@ VRay::Plugin GeometryExporter::exportDetail(const GU_Detail &gdp)
 
 VRay::Plugin GeometryExporter::exportPolyMesh(const GU_Detail &gdp)
 {
+	if (m_exportGeometry) {
+		return VRay::Plugin();
+	}
+
 	MeshExporter polyMeshExporter(objNode, ctx, pluginExporter);
 	polyMeshExporter.init(gdp);
 	polyMeshExporter.setSubdivApplied(hasSubdivApplied());
 	if (polyMeshExporter.hasPolyGeometry()) {
-		if (m_exportGeometry) {
-			Attrs::PluginDesc geomDesc;
-			if (polyMeshExporter.asPluginDesc(gdp, geomDesc)) {
-				return pluginExporter.exportPlugin(geomDesc);
-			}
+		Attrs::PluginDesc geomDesc;
+		if (polyMeshExporter.asPluginDesc(gdp, geomDesc)) {
+			return pluginExporter.exportPlugin(geomDesc);
 		}
 	}
+
 	return VRay::Plugin();
 }
 
