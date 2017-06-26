@@ -530,7 +530,7 @@ static void ensureDynamicGeometryForInstancer(VRay::Plugin plugin)
 	if (typeNode.equal(geometry.getType())) {
 		geometry = geometry.getPlugin("geometry");
 	}
-	if (typeGeomStaticMesh.equal(geometry.getType())) {
+	if (geometry && typeGeomStaticMesh.equal(geometry.getType())) {
 		geometry.setValue("dynamic_geometry", true);
 	}
 }
