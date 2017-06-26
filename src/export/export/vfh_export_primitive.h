@@ -18,17 +18,17 @@
 
 namespace VRayForHoudini {
 
-struct InstancerItem {
-	enum ObjectIDTypes {
-		objectIdUndefined = -1,
-	};
+enum ObjectIDTypes {
+	objectIdUndefined = -1,
+};
 
-	InstancerItem(VRay::Plugin geometry=VRay::Plugin(),
+struct PrimitiveItem {
+	PrimitiveItem(VRay::Plugin geometry=VRay::Plugin(),
 				  VRay::Plugin material=VRay::Plugin())
 		: geometry(geometry)
 		, material(material)
 		, tm(1)
-		, objectID(objectIdUndefined)
+		, objectID(ObjectIDTypes::objectIdUndefined)
 	{}
 
 	/// Geometry.
@@ -41,10 +41,19 @@ struct InstancerItem {
 	VRay::Transform tm;
 
 	/// User attributes.
-	UT_String userAttributes;
+	QString userAttributes;
 
 	/// Object ID.
 	int objectID;
+};
+
+struct InstancerItem
+	: PrimitiveItem
+{
+	InstancerItem(VRay::Plugin geometry=VRay::Plugin(),
+				  VRay::Plugin material=VRay::Plugin())
+		: PrimitiveItem(geometry, material)
+	{}
 };
 
 typedef VUtils::Table<InstancerItem, -1> InstancerItems;

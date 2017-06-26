@@ -539,6 +539,8 @@ static void ensureDynamicGeometryForInstancer(VRay::Plugin plugin)
 
 VRay::Plugin GeometryExporter::exportDetail(const GU_Detail &gdp)
 {
+	InstancerItems instancerItems;
+
 	const VMRenderPoints renderPoints = getParticlesMode();
 	if (renderPoints != vmRenderPointsNone) {
 		VRay::Plugin fromPart = exportPointParticles(gdp, renderPoints);
@@ -566,11 +568,18 @@ VRay::Plugin GeometryExporter::exportDetail(const GU_Detail &gdp)
 		if (GU_PrimPacked::hasPackedPrimitives(gdp)) {
 			UT_Array<const GA_Primitive*> prims;
 			GU_PrimPacked::getPackedPrimitives(gdp, prims);
+
+			GA_ROHandleS materialStyleSheetHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GA_Names::material_stylesheet));
+			GA_ROHandleS materialOverrideHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GA_Names::material_override));
+			GA_ROHandleS materialPathHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GEO_STD_ATTRIB_MATERIAL));
+
+			GA_ROHandleI objectIdHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GEO_VFH_ATTRIB_OBJECTID));
+
 			for (const GA_Primitive *prim : prims) {
 				const GU_PrimPacked *primPacked = UTverify_cast<const GU_PrimPacked*>(prim);
 				VRay::Plugin fromPacked = exportPacked(*primPacked);
 				if (fromPacked) {
-					const GA_Detail &parentGdp = prim->getDetail();
+					const GA_Offset primOffset = prim->getMapOffset();
 
 					UT_Matrix4D fullxform;
 					primPacked->getFullTransform4(fullxform);
@@ -581,24 +590,127 @@ VRay::Plugin GeometryExporter::exportDetail(const GU_Detail &gdp)
 					item.geometry = fromPacked;
 					item.tm = VRayExporter::Matrix4ToTransform(fullxform);
 
-					GA_ROHandleS materialPathHndl(parentGdp.findAttribute(GA_ATTRIB_PRIMITIVE, GEO_STD_ATTRIB_MATERIAL));
-					if (materialPathHndl.isValid()) {
-						const UT_String &matPath = materialPathHndl.get(prim->getMapOffset());
+					if (objectIdHndl.isValid()) {
+						item.objectID = objectIdHndl.get(primOffset);
+					}
+
+					if (materialStyleSheetHndl.isValid()) {
+					}
+					else if (materialPathHndl.isValid()) {
+						const UT_String &matPath = materialPathHndl.get(primOffset);
 						OP_Node *matNode = getOpNodeFromPath(matPath, ctx.getTime());
 						if (matNode) {
 							VRay::Plugin material = pluginExporter.exportMaterial(matNode);
 							if (material) {
 								item.material = material;
+
+								if (materialOverrideHndl.isValid()) {
+									SHOP_GeoOverride mtlOverride;
+									if (mtlOverride.load(materialOverrideHndl.get(primOffset))) {
+										UT_StringArray mtlOverrideKeys;
+										mtlOverride.getKeys(mtlOverrideKeys);
+
+										struct MtlOverrideItem {
+											enum MtlOverrideItemType {
+												itemTypeNone = 0,
+												itemTypeInt,
+												itemTypeDouble,
+												itemTypeVector,
+											};
+
+											MtlOverrideItem()
+												: type(itemTypeNone)
+												, valueInt(0)
+												, valueDouble(0.0)
+												, valueVector(0.0f, 0.0f, 0.0f)
+											{}
+
+											/// Sets override value type.
+											void setType(MtlOverrideItemType value) { type = value; }
+
+											/// Returns override value type.
+											MtlOverrideItemType getType() const { return type; }
+
+											MtlOverrideItemType type;
+
+											union {
+												exint valueInt;
+												fpreal valueDouble;
+												VRay::Vector valueVector;
+											};
+										};
+
+										typedef VUtils::HashMap<MtlOverrideItem> MtlOverrideItems;
+										MtlOverrideItems overrideItems;
+
+										for (const UT_StringHolder &key : mtlOverrideKeys) {
+											// Channel for vector components.
+											// NOTE: We support only 3-component vectors for now.
+											int channelIIdx = -1;
+
+											PRM_Parm *keyParm = matNode->getParmList()->getParmPtrFromChannel(key, &channelIIdx);
+											if (keyParm && channelIIdx >= 0 && channelIIdx < 4) {
+												const PRM_Type &keyParmType = keyParm->getType();
+
+												if (keyParmType.isFloatType()) {
+													MtlOverrideItem &overrideItem = overrideItems[keyParm->getToken()];
+
+													fpreal channelValue = 0.0;
+													mtlOverride.import(key, channelValue);
+
+													if (keyParmType.getFloatType() == PRM_Type::PRM_FLOAT_RGBA) {
+														overrideItem.setType(MtlOverrideItem::itemTypeVector);
+														overrideItem.valueVector[channelIIdx] = channelValue;
+													}
+													else if (channelIIdx == 0) {
+														overrideItem.setType(MtlOverrideItem::itemTypeDouble);
+														overrideItem.valueDouble = channelValue;
+													}
+													else {
+														// TODO: Implement other cases / print warning.
+													}
+												}
+												else if (keyParmType.isOrdinalType() && channelIIdx == 0) {
+													MtlOverrideItem &overrideItem = overrideItems[keyParm->getToken()];
+													overrideItem.setType(MtlOverrideItem::itemTypeInt);
+													mtlOverride.import(key, overrideItem.valueInt);
+												}
+											}
+										}
+
+										for (MtlOverrideItems::iterator oiIt = overrideItems.begin(); oiIt != overrideItems.end(); ++oiIt) {
+											const tchar *overrideName = oiIt.key();
+											const MtlOverrideItem &overrideItem = oiIt.data();
+
+											switch (overrideItem.getType()) {
+												case MtlOverrideItem::itemTypeInt: {
+													item.userAttributes += QString::asprintf("%s=%lld;",
+																							 overrideName,
+																							 overrideItem.valueInt);
+													break;
+												}
+												case MtlOverrideItem::itemTypeDouble: {
+													item.userAttributes += QString::asprintf("%s=%g",
+																							 overrideName,
+																							 overrideItem.valueDouble);
+													break;
+												}
+												case MtlOverrideItem::itemTypeVector: {
+													item.userAttributes += QString::asprintf("%s=%g,%g,%g;",
+																							 overrideName,
+																							 overrideItem.valueVector.x, overrideItem.valueVector.y, overrideItem.valueVector.z);
+													break;
+												}
+												default: {
+													vassert(false);
+												}
+											}
+										}
+									}
+								}
 							}
 						}
 					}
-
-					GA_ROHandleI objectIdHndl(parentGdp.findAttribute(GA_ATTRIB_PRIMITIVE, GEO_VFH_ATTRIB_OBJECTID));
-					if (objectIdHndl.isValid()) {
-						item.objectID = objectIdHndl.get(prim->getMapOffset());
-					}
-
-					// TODO: GA_ROHandleS materialOverHndl(parentGdp.findAttribute(GA_ATTRIB_PRIMITIVE, "material_override"));
 
 					instancerItems += item;
 				}
@@ -630,8 +742,11 @@ VRay::Plugin GeometryExporter::exportDetail(const GU_Detail &gdp)
 		if (instancerItem.material) {
 			additional_params_flags |= useMaterial;
 		}
-		if (instancerItem.objectID != InstancerItem::objectIdUndefined) {
+		if (instancerItem.objectID != objectIdUndefined) {
 			additional_params_flags |= useObjectID;
+		}
+		if (instancerItem.userAttributes.length()) {
+			additional_params_flags |= useUserAttributes;
 		}
 
 		// Instancer works only with Node plugins.
@@ -648,6 +763,9 @@ VRay::Plugin GeometryExporter::exportDetail(const GU_Detail &gdp)
 		item[indexOffs++].setDouble(additional_params_flags);
 		if (additional_params_flags & useObjectID) {
 			item[indexOffs++].setDouble(instancerItem.objectID);
+		}
+		if (additional_params_flags & useUserAttributes) {
+			item[indexOffs++].setString(instancerItem.userAttributes.toLocal8Bit().constData());
 		}
 		if (additional_params_flags & useMaterial) {
 			item[indexOffs++].setPlugin(instancerItem.material);

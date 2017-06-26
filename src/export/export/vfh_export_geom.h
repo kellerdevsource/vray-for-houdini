@@ -224,9 +224,6 @@ private:
 	/// to re-export geometry plugins (i.e. something on the actual
 	/// geometry has changed). By default this flag is on.
 	int m_exportGeometry;
-
-	/// Primitive items.
-	InstancerItems instancerItems;
 };
 
 class ObjectExporter
