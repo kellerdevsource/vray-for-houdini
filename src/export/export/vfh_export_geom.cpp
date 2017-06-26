@@ -21,6 +21,7 @@
 #include <GU/GU_Detail.h>
 #include <OP/OP_Bundle.h>
 #include <GA/GA_Types.h>
+#include <GA/GA_Names.h>
 
 using namespace VRayForHoudini;
 
@@ -1083,15 +1084,15 @@ struct PointInstanceAttrs {
 	explicit PointInstanceAttrs(const GU_Detail &gdp) {
 		orient     = gdp.findPointAttribute(GEO_STD_ATTRIB_ORIENT);
 		pscale     = gdp.findPointAttribute(GEO_STD_ATTRIB_PSCALE);
-		scale      = gdp.findPointAttribute("scale");
+		scale      = gdp.findPointAttribute(GA_Names::scale);
 		n          = gdp.findPointAttribute(GEO_STD_ATTRIB_NORMAL);
 		up         = gdp.findPointAttribute(GEO_STD_ATTRIB_UP);
 		v          = gdp.findPointAttribute(GEO_STD_ATTRIB_VELOCITY);
-		rot        = gdp.findPointAttribute("rot");
-		trans      = gdp.findPointAttribute("trans");
-		pivot      = gdp.findPointAttribute("pivot");
-		transform3 = gdp.findPointAttribute("transform");
-		transform4 = gdp.findPointAttribute("transform");
+		rot        = gdp.findPointAttribute(GA_Names::rot);
+		trans      = gdp.findPointAttribute(GA_Names::trans);
+		pivot      = gdp.findPointAttribute(GA_Names::pivot);
+		transform3 = gdp.findPointAttribute(GA_Names::transform);
+		transform4 = gdp.findPointAttribute(GA_Names::transform);
 	}
 
 	GA_ROHandleV4 orient;

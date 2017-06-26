@@ -25,6 +25,7 @@
 #include <GU/GU_PrimVolume.h>
 #include <GU/GU_Detail.h>
 #include <GA/GA_SaveMap.h>
+#include <GA/GA_Names.h>
 
 using namespace VRayForHoudini;
 
