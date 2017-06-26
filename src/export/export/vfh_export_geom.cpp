@@ -670,7 +670,7 @@ VRay::Plugin GeometryExporter::exportDetail(const GU_Detail &gdp)
 
 VRay::Plugin GeometryExporter::exportPolyMesh(const GU_Detail &gdp)
 {
-	if (m_exportGeometry) {
+	if (!m_exportGeometry) {
 		return VRay::Plugin();
 	}
 
