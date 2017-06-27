@@ -54,6 +54,7 @@ static struct PrimPackedTypeIDs {
 		packedDisk = GU_PrimPacked::lookupTypeId("PackedDisk");
 		packedGeometry = GU_PrimPacked::lookupTypeId("PackedGeometry");
 		vrayProxyRef = GU_PrimPacked::lookupTypeId("VRayProxyRef");
+		vrayVolumeGridRef = GU_PrimPacked::lookupTypeId("VRayVolumeGridRef");
 
 		initialized = true;
 	}
@@ -66,6 +67,7 @@ public:
 	GA_PrimitiveTypeId packedDisk;
 	GA_PrimitiveTypeId packedGeometry;
 	GA_PrimitiveTypeId vrayProxyRef;
+	GA_PrimitiveTypeId vrayVolumeGridRef;
 } primPackedTypeIDs;
 
 /// XXX: Move to ObjectExporter
@@ -554,9 +556,11 @@ void GeometryExporter::exportPrimitives(const GU_Detail &gdp, InstancerItems &in
 		VRay::Plugin primPlugin;
 		VRay::Transform primTm;
 
-		const GA_PrimitiveTypeId &primTypeId = prim->getTypeId();
+		const GA_PrimitiveTypeId &primTypeID = prim->getTypeId();
 
-		if (GU_PrimPacked::isPackedPrimitive(*prim)) {
+		if (GU_PrimPacked::isPackedPrimitive(*prim) &&
+			primTypeID != primPackedTypeIDs.vrayVolumeGridRef)
+		{
 			const GU_PrimPacked &primPacked = static_cast<const GU_PrimPacked&>(*prim);
 			const int primKey = getPrimKey(primPacked);
 
@@ -574,15 +578,15 @@ void GeometryExporter::exportPrimitives(const GU_Detail &gdp, InstancerItems &in
 				primTm = utMatrixToVRayTransform(tm4);
 			}
 		}
-		else if (primTypeId == VRayVolumeGridRef::typeId()) {
+		else if (primTypeID == VRayVolumeGridRef::typeId()) {
 			phoenixPrims.append(prim);
 		}
-		else if	(primTypeId == GEO_PRIMVOLUME ||
-				 primTypeId == GEO_PRIMVDB)
+		else if	(primTypeID == GEO_PRIMVOLUME ||
+				 primTypeID == GEO_PRIMVDB)
 		{
 			volumePrims.append(prim);
 		}
-		else if (primTypeId == GEO_PRIMSPHERE) {
+		else if (primTypeID == GEO_PRIMSPHERE) {
 			const GU_PrimSphere &primSphere = static_cast<const GU_PrimSphere&>(*prim);
 			const int primKey = getPrimKey(primSphere);
 
@@ -600,10 +604,10 @@ void GeometryExporter::exportPrimitives(const GU_Detail &gdp, InstancerItems &in
 				primTm = utMatrixToVRayTransform(tm4);
 			}
 		}
-		else if (primTypeId == GEO_PRIMPOLYSOUP) {
+		else if (primTypeID == GEO_PRIMPOLYSOUP) {
 			polyPrims.append(prim);
 		}
-		else if (primTypeId == GEO_PRIMPOLY) {
+		else if (primTypeID == GEO_PRIMPOLY) {
 			const GEO_PrimPoly &primPoly = static_cast<const GEO_PrimPoly&>(*prim);
 
 			// TODO: Hair from open poly detection.
@@ -615,8 +619,8 @@ void GeometryExporter::exportPrimitives(const GU_Detail &gdp, InstancerItems &in
 				hairPrims.append(prim);
 			}
 		}
-		else if (primTypeId == GEO_PRIMNURBCURVE ||
-				 primTypeId == GEO_PRIMBEZCURVE)
+		else if (primTypeID == GEO_PRIMNURBCURVE ||
+				 primTypeID == GEO_PRIMBEZCURVE)
 		{
 			hairPrims.append(prim);
 		}
@@ -832,8 +836,12 @@ int GeometryExporter::getPrimPackedID(const GU_PrimPacked &prim)
 		return primname.hash() ^ objname.hash();
 	}
 	if (primTypeID == primPackedTypeIDs.vrayProxyRef) {
-		const VRayProxyRef *vrayproxyref = UTverify_cast<const VRayProxyRef*>(prim.implementation());
-		return vrayproxyref->getOptions().hash();
+		const VRayProxyRef *vrayProxyRref = UTverify_cast<const VRayProxyRef*>(prim.implementation());
+		return vrayProxyRref->getOptions().hash();
+	}
+	if (primTypeID == primPackedTypeIDs.vrayVolumeGridRef) {
+		const VRayVolumeGridRef *vrayVolumeGridRef = UTverify_cast<const VRayVolumeGridRef*>(prim.implementation());
+		return vrayVolumeGridRef->getOptions().hash();
 	}
 
 	UT_ASSERT_MSG(false, "Unsupported packed primitive type!");
@@ -857,9 +865,18 @@ VRay::Plugin GeometryExporter::exportPrimPacked(const GU_PrimPacked &prim)
 	if (primTypeID == primPackedTypeIDs.packedDisk) {
 		return exportPackedDisk(prim);
 	}
+	if (primTypeID == primPackedTypeIDs.vrayVolumeGridRef) {
+		return exportVolumeGridRef(prim);
+	}
 
 	UT_ASSERT_MSG(false, "Unsupported packed primitive type!");
 
+	return VRay::Plugin();
+}
+
+VRay::Plugin GeometryExporter::exportVolumeGridRef(const GU_PrimPacked &prim)
+{
+	// TODO: Think of implementing it here.
 	return VRay::Plugin();
 }
 

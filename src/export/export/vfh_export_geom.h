@@ -92,6 +92,8 @@ private:
 
 	VRay::Plugin exportHair(const GU_Detail &gdp, const GEOPrimList &primList);
 
+	VRay::Plugin exportVolumeGridRef(const GU_PrimPacked &prim);
+
 	/// Helper function to generate unique id for the packed primitive
 	/// this is used as key in m_detailToPluginDesc map to identify
 	/// plugins generated for the primitve
