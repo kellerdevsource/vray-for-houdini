@@ -135,6 +135,7 @@ static const char intrFilename[] = "filename";
 
 static const char VFH_ATTR_MATERIAL_ID[] = "switchmtl";
 static const char GEO_VFH_ATTRIB_OBJECTID[] = "vray_objectID";
+static const char GEO_VFH_ATTRIB_ANIM_OFFSET[] = "anim_offset";
 
 static const UT_String vrayPluginTypeGeomStaticMesh = "GeomStaticMesh";
 static const UT_String vrayPluginTypeNode = "Node";
@@ -713,6 +714,7 @@ void GeometryExporter::exportPrimitives(const GU_Detail &gdp, InstancerItems &in
 	GA_ROHandleS materialOverrideHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GA_Names::material_override));
 	GA_ROHandleS materialPathHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GEO_STD_ATTRIB_MATERIAL));
 	GA_ROHandleI objectIdHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GEO_VFH_ATTRIB_OBJECTID));
+	GA_ROHandleI animOffsetHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GEO_VFH_ATTRIB_ANIM_OFFSET));
 
 	for (GA_Iterator jt(gdp.getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
 		const GEO_Primitive *prim = gdp.getGEOPrimitive(*jt);
@@ -827,7 +829,11 @@ void GeometryExporter::exportPrimitives(const GU_Detail &gdp, InstancerItems &in
 					}
 				}
 			}
-
+#if 0
+			if (animOffsetHndl.isValid()) {
+				// TODO: Utilize "use_time_instancing" here
+			}
+#endif
 			instancerItems += item;
 		}
 	}
@@ -1068,12 +1074,6 @@ VRay::Plugin GeometryExporter::exportVRayProxyRef(const GU_PrimPacked &prim)
 	const VRayProxyRef *vrayproxyref = UTverify_cast<const VRayProxyRef*>(prim.implementation());
 
 	UT_Options options = vrayproxyref->getOptions();
-#if 0
-	// TODO: Utilize "use_time_instancing" here
-	if (options.hasOption("anim_offset")) {
-		options.setOptionF("anim_offset", options.getOptionF("anim_offset") - ctx.getFrame());
-	}
-#endif
 	pluginExporter.setAttrsFromUTOptions(pluginDesc, options);
 
 	return pluginExporter.exportPlugin(pluginDesc);
