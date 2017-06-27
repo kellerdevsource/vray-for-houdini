@@ -535,6 +535,10 @@ static void allocateOverrideMapChannel(MapChannel &mapChannel, const GEOPrimList
 
 	mapChannel.vertices = VRay::VUtils::VectorRefList(numMapVertex);
 	mapChannel.faces = VRay::VUtils::IntRefList(numMapVertex);
+
+	for (int i = 0; i < numMapVertex; ++i) {
+		mapChannel.vertices[i].set(NAN, NAN, NAN);
+	}
 }
 
 static void setMapChannelOverrideData(const MtlOverrideItem &overrideItem, VRay::VUtils::VectorRefList &vertices, int v0, int v1, int v2)
