@@ -25,7 +25,6 @@
 #include <unordered_set>
 #include <unordered_map>
 
-
 namespace VRayForHoudini {
 
 class VRayExporter;
@@ -36,26 +35,11 @@ class VRayExporter;
 /// so subsequent calls will be much faster. You should call init() to initialize
 /// the translator with a geometry detail before using any of the get<Foo>()
 /// methods.
-class MeshExporter:
-		public PrimitiveExporter
+class MeshExporter
+	: public PrimitiveExporter
 {
 public:
-	/// Test if a primitive can be handled by this translator i.e
-	/// closed poly or polysoup
-	/// @param prim[in] - the primitive to test
-	static bool isPrimPoly(const GEO_Primitive *prim);
-
-	/// Fast test if the detail contains primitives that can be handled
-	/// by this translator
-	/// @note this will test the gdp only for primitives of certail type
-	///       but not the actual primitives i.e. if the detail contains
-	///       poly prims all of which are open this function will return
-	///       a false positive
-	/// @param gdp[in] - detail to test
-	static bool containsPolyPrimitives(const GU_Detail &gdp);
-
-public:
-	MeshExporter(OBJ_Node &obj, OP_Context &ctx, VRayExporter &exp);
+	MeshExporter(OBJ_Node &obj, OP_Context &ctx, VRayExporter &exp, const GEOPrimList &primList);
 	~MeshExporter() { }
 
 	/// Intilize the translator with the passed gdp.
@@ -77,8 +61,7 @@ public:
 	void reset();
 
 	/// Test if there is any valid mesh geometry to export
-	bool hasPolyGeometry()
-	{ return m_gdp != nullptr && containsPolyPrimitives(*m_gdp) && getNumFaces() > 0; }
+	bool hasPolyGeometry() const { return primList.size(); }
 
 	/// Test if we have subdivision applied to geometry at render time
 	bool hasSubdivApplied() const { return m_hasSubdivApplied; }
@@ -203,12 +186,6 @@ private:
 		MtlOverrides mtlOverrides; ///< map of map channel name to override value for the face
 	};
 
-private:
-	/// Get the list of primitives that can be handled by MeshExporter(cached internally)
-	/// @note check if the translator has been properly initialized
-	///       with hasPolyGeometry() before using this
-	const GEOPrimList& getPrimList();
-
 	/// Helper funtion to digest point attibutes into map channels
 	/// @note check if the translator has been properly initialized
 	///       with hasPolyGeometry() before using this
@@ -216,7 +193,6 @@ private:
 	///        from point attributes
 	/// @retval number of channels added to mapChannels
 	int getPointAttrs(MapChannels &mapChannels);
-
 
 	/// Helper funtion to digest vertex attibutes into map channels
 	/// @note check if the translator has been properly initialized
@@ -252,10 +228,11 @@ private:
 	int getPerPrimMtlOverrides(std::unordered_set< std::string > &o_mapChannelOverrides,
 							   std::vector< PrimOverride > &o_primOverrides);
 
-private:
+	/// A list of poly primitives that can be handled by this translator.
+	const GEOPrimList &primList;
+
 	const GU_Detail            *m_gdp; ///< current geometry detail
 	bool                        m_hasSubdivApplied; ///< if we have subdivision applied to geometry at render time
-	GEOPrimList                 m_primList; ///< list of primitives that can be handled by this translator
 	int                         numFaces; ///< number of mesh faces
 	VRay::VUtils::IntRefList    faces; ///< list of mesh faces (triangles)
 	VRay::VUtils::IntRefList    edge_visibility; ///< list of visible edges (1 bit per edge, 3 bits per face)

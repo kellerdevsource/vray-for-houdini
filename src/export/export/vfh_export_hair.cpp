@@ -26,43 +26,23 @@ const char * const VFH_ATTRIB_TRANSPARENCY = "transparency";
 
 }
 
-
-bool HairPrimitiveExporter::isHairPrimitive(const GEO_Primitive *prim)
-{
-	if (!prim) {
-		return false;
-	}
-	return (   prim->getTypeId() == GEO_PRIMNURBCURVE
-			|| prim->getTypeId() == GEO_PRIMBEZCURVE
-			|| (prim->getTypeId() == GEO_PRIMPOLY && !(UTverify_cast< const GEO_PrimPoly* >(prim)->isClosed())) );
-}
-
-
-bool HairPrimitiveExporter::containsHairPrimitives(const GU_Detail &gdp)
-{
-	return (   gdp.containsPrimitiveType(GEO_PRIMNURBCURVE)
-			|| gdp.containsPrimitiveType(GEO_PRIMBEZCURVE)
-			|| gdp.containsPrimitiveType(GEO_PRIMPOLY) );
-}
-
-
-HairPrimitiveExporter::HairPrimitiveExporter(OBJ_Node &obj, OP_Context &ctx, VRayExporter &exp):
-	PrimitiveExporter(obj, ctx, exp)
-{ }
-
+HairPrimitiveExporter::HairPrimitiveExporter(OBJ_Node &obj, OP_Context &ctx, VRayExporter &exp, const GEOPrimList &primList)
+	: PrimitiveExporter(obj, ctx, exp)
+	, primList(primList)
+{}
 
 OP_Node* HairPrimitiveExporter::findPramOwnerForHairParms() const
 {
-	if (   m_object.getParmList()
-		&& m_object.getParmList()->getParmPtr(theHairParm))
+	if (m_object.getParmList() &&
+		m_object.getParmList()->getParmPtr(theHairParm))
 	{
 		 return &m_object;
 	}
 
 	OP_Node *obj = m_object.getParent();
-	if (   obj
-		&& obj->getOperator()->getName().contains("fur*")
-		&& obj->getParmList()->getParmPtr(theHairParm) )
+	if (obj &&
+		obj->getOperator()->getName().contains("fur*") &&
+		obj->getParmList()->getParmPtr(theHairParm) )
 	{
 		 return obj;
 	}
@@ -70,28 +50,9 @@ OP_Node* HairPrimitiveExporter::findPramOwnerForHairParms() const
 	return nullptr;
 }
 
-
 bool HairPrimitiveExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc &pluginDesc)
 {
-	if (!containsHairPrimitives(gdp)) {
-		// no hair primitives
-		return false;
-	}
-
-	// filter primitives
-	GEOPrimList primList(  gdp.countPrimitiveType(GEO_PRIMNURBCURVE)
-						 + gdp.countPrimitiveType(GEO_PRIMBEZCURVE)
-						 + gdp.countPrimitiveType(GEO_PRIMPOLY));
-
-	for (GA_Iterator jt(gdp.getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
-		const GEO_Primitive *prim = gdp.getGEOPrimitive(*jt);
-		if (isHairPrimitive(prim)) {
-			primList.append(prim);
-		}
-	}
-
-	if (primList.size() <= 0) {
-		// no valid hair primitives
+	if (!primList.size()) {
 		return false;
 	}
 
@@ -246,25 +207,4 @@ bool HairPrimitiveExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc
 	}
 
 	return true;
-}
-
-
-void HairPrimitiveExporter::exportPrimitives(const GU_Detail &gdp, InstancerItems &plugins)
-{
-	if (!containsHairPrimitives(gdp)) {
-		// no hair primitives
-		return;
-	}
-
-	// export
-	Attrs::PluginDesc hairDesc(VRayExporter::getPluginName(&m_object, "Hair"),
-							   "GeomMayaHair");
-	if (!asPluginDesc(gdp, hairDesc)) {
-		return;
-	}
-
-	InstancerItem item;
-	item.geometry = m_exporter.exportPlugin(hairDesc);
-
-	plugins += item;
 }

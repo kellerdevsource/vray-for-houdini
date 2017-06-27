@@ -15,6 +15,7 @@
 #include "vfh_exporter.h"
 #include "vfh_material_override.h"
 #include "vfh_export_primitive.h"
+#include "vfh_geoutils.h"
 
 #include <OBJ/OBJ_Geometry.h>
 #include <GU/GU_PrimPacked.h>
@@ -66,6 +67,14 @@ private:
 	/// @returns V-Ray plugin instance.
 	VRay::Plugin exportVRaySOP(SOP_Node &vraySop);
 
+	int getPrimKey(const GA_Primitive &prim);
+	int getPrimPluginFromCache(int primKey, VRay::Plugin &plugin);
+	void addPrimPluginToCache(int primKey, VRay::Plugin &plugin);
+
+	VRay::Plugin exportPrimSphere(const GA_Primitive &prim);
+
+	void exportPrimitives(const GU_Detail &gdp, InstancerItems &instancerItems);
+
 	/// Helper function to traverse and export primitives from a given gdp
 	/// This is called recursively when handling packed geometry prims
 	/// @param sop[in] - parent SOP node for the gdp
@@ -79,15 +88,9 @@ private:
 	/// @param gdp[in] - the actual gdp
 	/// @param pluginList[out] - collects plugins generated for the gdp
 	/// @retval number of plugin descriptions added to pluginList
-	VRay::Plugin exportPolyMesh(const GU_Detail &gdp);
+	VRay::Plugin exportPolyMesh(const GU_Detail &gdp, const GEOPrimList &primList);
 
-	/// Helper function to export a packed primitive. It will check if
-	/// the primitive geometry has already been processed
-	/// @param sop[in] - parent SOP node for the primitive
-	/// @param prim[in] - the packed primitive
-	/// @param pluginList[out] - collects plugins generated for the primitive
-	/// @retval number of plugin descriptions added to pluginList
-	VRay::Plugin exportPacked(const GU_PrimPacked &prim);
+	VRay::Plugin exportHair(const GU_Detail &gdp, const GEOPrimList &primList);
 
 	/// Helper function to generate unique id for the packed primitive
 	/// this is used as key in m_detailToPluginDesc map to identify
@@ -174,11 +177,6 @@ private:
 	/// @param gdp Detail.
 	/// @returns Geometry plugin.
 	VRay::Plugin exportPointInstancer(const GU_Detail &gdp, int isInstanceNode=false);
-
-	/// Export instancer.
-	/// @param gdp Detail.
-	/// @returns Geometry plugin.
-	VRay::Plugin exportInstancer(const GU_Detail &gdp);
 
 	/// Returns true if object is a point intancer.
 	/// @param gdp Detail.

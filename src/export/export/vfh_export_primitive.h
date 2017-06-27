@@ -23,8 +23,8 @@ enum ObjectIDTypes {
 };
 
 struct PrimitiveItem {
-	PrimitiveItem(VRay::Plugin geometry=VRay::Plugin(),
-				  VRay::Plugin material=VRay::Plugin())
+	explicit PrimitiveItem(VRay::Plugin geometry=VRay::Plugin(),
+						   VRay::Plugin material=VRay::Plugin())
 		: geometry(geometry)
 		, material(material)
 		, tm(1)
@@ -50,8 +50,8 @@ struct PrimitiveItem {
 struct InstancerItem
 	: PrimitiveItem
 {
-	InstancerItem(VRay::Plugin geometry=VRay::Plugin(),
-				  VRay::Plugin material=VRay::Plugin())
+	explicit InstancerItem(VRay::Plugin geometry=VRay::Plugin(),
+						   VRay::Plugin material=VRay::Plugin())
 		: PrimitiveItem(geometry, material)
 	{}
 };

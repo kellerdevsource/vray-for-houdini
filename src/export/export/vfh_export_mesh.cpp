@@ -43,30 +43,12 @@ static bool getDataFromAttribute(const GA_Attribute *attr, VRay::VUtils::VectorR
 
 }
 
-
-bool MeshExporter::isPrimPoly(const GEO_Primitive *prim)
-{
-	if (!prim) {
-		return false;
-	}
-
-	return (   prim->getTypeId() == GEO_PRIMPOLYSOUP
-			|| (prim->getTypeId() == GEO_PRIMPOLY && UTverify_cast< const GEO_PrimPoly* >(prim)->isClosed()) );
-}
-
-
-bool MeshExporter::containsPolyPrimitives(const GU_Detail &gdp)
-{
-	return     gdp.containsPrimitiveType(GEO_PRIMPOLY)
-			|| gdp.containsPrimitiveType(GEO_PRIMPOLYSOUP);
-}
-
-
-MeshExporter::MeshExporter(OBJ_Node &obj, OP_Context &ctx, VRayExporter &exp):
-	PrimitiveExporter(obj, ctx, exp),
-	m_gdp(nullptr),
-	m_hasSubdivApplied(false),
-	numFaces(-1)
+MeshExporter::MeshExporter(OBJ_Node &obj, OP_Context &ctx, VRayExporter &exp, const GEOPrimList &primList)
+	: PrimitiveExporter(obj, ctx, exp)
+	, m_gdp(nullptr)
+	, m_hasSubdivApplied(false)
+	, numFaces(-1)
+	, primList(primList)
 { }
 
 
@@ -86,8 +68,6 @@ bool MeshExporter::init(const GU_Detail &gdp)
 
 void MeshExporter::reset()
 {
-	// clear cached data from current gdp
-	m_primList.clear();
 	numFaces = -1;
 	faces = VRay::VUtils::IntRefList();
 	edge_visibility = VRay::VUtils::IntRefList();
@@ -97,70 +77,13 @@ void MeshExporter::reset()
 	velocities = VRay::VUtils::VectorRefList();
 	face_mtlIDs = VRay::VUtils::IntRefList();
 	map_channels_data.clear();
-	// clear current gdp
 	m_gdp = nullptr;
 }
-
-
-const GEOPrimList& MeshExporter::getPrimList()
-{
-	UT_ASSERT( m_gdp );
-
-	if (   m_primList.size() <= 0
-		&& containsPolyPrimitives(*m_gdp) )
-	{
-		m_primList.setCapacity(m_gdp->countPrimitiveType(GEO_PRIMPOLY)
-							 + m_gdp->countPrimitiveType(GEO_PRIMPOLYSOUP));
-
-		for (GA_Iterator jt(m_gdp->getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
-			const GEO_Primitive *prim = m_gdp->getGEOPrimitive(*jt);
-			if (isPrimPoly(prim)) {
-				m_primList.append(prim);
-			}
-		}
-	}
-
-	return m_primList;
-}
-
-
-int MeshExporter::getSHOPList(SHOPList &shopList)
-{
-	UT_ASSERT( m_gdp );
-
-	GA_ROHandleS mtlpath(m_gdp->findAttribute(GA_ATTRIB_PRIMITIVE, GEO_STD_ATTRIB_MATERIAL));
-	if (mtlpath.isInvalid()) {
-		return 0;
-	}
-
-	int shopCnt = 0;
-	const GEOPrimList &primList = getPrimList();
-	for (const GEO_Primitive *prim : primList) {
-		switch (prim->getTypeId().get()) {
-			case GEO_PRIMPOLYSOUP:
-			case GEO_PRIMPOLY:
-			{
-				UT_String shoppath(mtlpath.get(prim->getMapOffset()), false);
-				if (   OPgetDirector()->findSHOPNode(shoppath)
-					&& NOT(shopList.count(shoppath)) )
-				{
-					shopList.insert(shoppath);
-					++shopCnt;
-				}
-			}
-			default:
-				;
-		}
-	}
-
-	return shopCnt;
-}
-
 
 bool MeshExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc &pluginDesc)
 {
 	init(gdp);
-	if (!hasPolyGeometry()) {
+	if (!primList.size()) {
 		return false;
 	}
 
@@ -329,7 +252,6 @@ VRay::VUtils::VectorRefList& MeshExporter::getNormals()
 					m_faceNormals = VRay::VUtils::IntRefList(getNumFaces() * 3);
 
 					int faceVertIndex = 0;
-					const GEOPrimList &primList = getPrimList();
 					for (const GEO_Primitive *prim : primList) {
 						switch (prim->getTypeId().get()) {
 							case GEO_PRIMPOLYSOUP:
@@ -406,7 +328,7 @@ int MeshExporter::getNumFaces()
 		// if we don't have cached face count, recalculate number of faces
 		// for current geometry detail
 		numFaces = 0;
-		const GEOPrimList &primList = getPrimList();
+
 		for (const GEO_Primitive *prim : primList) {
 			switch (prim->getTypeId().get()) {
 				case GEO_PRIMPOLYSOUP:
@@ -449,7 +371,7 @@ VRay::VUtils::IntRefList& MeshExporter::getFaces()
 
 			int faceVertIndex = 0;
 			int faceEdgeVisIndex = 0;
-			const GEOPrimList &primList = getPrimList();
+
 			for (const GEO_Primitive *prim : primList) {
 				switch (prim->getTypeId().get()) {
 					case GEO_PRIMPOLYSOUP:
@@ -549,9 +471,8 @@ VRay::VUtils::IntRefList& MeshExporter::getFaceMtlIDs()
 
 				int faceIndex = 0;
 				SHOPHasher hasher;
-				const GEOPrimList &primList = getPrimList();
-				for (const GEO_Primitive *prim : primList) {
 
+				for (const GEO_Primitive *prim : primList) {
 					int shopID = hasher(mtlpath.get(prim->getMapOffset()));
 
 					switch (prim->getTypeId().get()) {
@@ -635,8 +556,6 @@ int MeshExporter::getPerPrimMtlOverrides(std::unordered_set< std::string > &o_ma
 	{
 		return 0;
 	}
-
-	const GEOPrimList &primList = getPrimList();
 	o_primOverrides.resize(primList.size());
 
 	int k = 0;
@@ -719,8 +638,6 @@ int MeshExporter::getMtlOverrides(MapChannels &mapChannels)
 	std::unordered_set< std::string > mapChannelOverrides;
 	std::vector< PrimOverride > primOverrides;
 	if ( getPerPrimMtlOverrides(mapChannelOverrides, primOverrides) > 0) {
-
-		const GEOPrimList &primList = getPrimList();
 		for (const std::string channelName : mapChannelOverrides ) {
 			if (mapChannels.count(channelName) > 0) {
 				// if map channel with this name already exists
@@ -902,7 +819,7 @@ void MeshExporter::getVertexAttrAsMapChannel(const GA_Attribute &attr, MapChanne
 
 		// Process map channels (uv and other tuple(3) attributes)
 		int faceVertIndex = 0;
-		const GEOPrimList &primList = getPrimList();
+
 		for (const GEO_Primitive *prim : primList) {
 
 			switch (prim->getTypeId().get()) {
@@ -955,7 +872,7 @@ void MeshExporter::getVertexAttrAsMapChannel(const GA_Attribute &attr, MapChanne
 		getDataFromAttribute(&attr, mapChannel.vertices);
 
 		int faceVertIndex = 0;
-		const GEOPrimList &primList = getPrimList();
+
 		for (const GEO_Primitive *prim : primList) {
 
 			switch (prim->getTypeId().get()) {

@@ -662,6 +662,200 @@ static void processMaterialOverrides(VRayExporter &pluginExporter,  OP_Node &mat
 	}
 }
 
+int GeometryExporter::getPrimKey(const GA_Primitive &prim)
+{
+	int primKey = 0;
+
+	if (prim.getTypeId() == GEO_PRIMSPHERE) {
+		primKey = reinterpret_cast<uintptr_t>(&prim);
+	}
+	else if (GU_PrimPacked::isPackedPrimitive(prim)) {
+		primKey = getPrimPackedID(static_cast<const GU_PrimPacked&>(prim));
+	}
+
+	return primKey;
+}
+
+int GeometryExporter::getPrimPluginFromCache(int primKey, VRay::Plugin &plugin)
+{
+	PrimPluginCache::iterator pIt = primPluginCache.find(primKey);
+	if (pIt != primPluginCache.end()) {
+		plugin = pIt.data();
+		return true;
+	}
+	return false;
+}
+
+void GeometryExporter::addPrimPluginToCache(int primKey, VRay::Plugin &plugin)
+{
+	primPluginCache.insert(primKey, plugin);
+}
+
+VRay::Plugin GeometryExporter::exportPrimSphere(const GA_Primitive&)
+{
+	Attrs::PluginDesc geomSphere(VRayExporter::getPluginName(objNode, "GeomSphere"),
+									"GeomSphere");
+	geomSphere.addAttribute(Attrs::PluginAttr("radius", 1.0));
+	geomSphere.addAttribute(Attrs::PluginAttr("subdivs", 8));
+
+	return pluginExporter.exportPlugin(geomSphere);
+}
+
+void GeometryExporter::exportPrimitives(const GU_Detail &gdp, InstancerItems &instancerItems)
+{
+	// TODO: Preallocate at least some space.
+	GEOPrimList polyPrims;
+	GEOPrimList hairPrims;
+	GEOPrimList volumePrims;
+	GEOPrimList phoenixPrims;
+
+	GA_ROHandleS materialStyleSheetHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GA_Names::material_stylesheet));
+	GA_ROHandleS materialOverrideHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GA_Names::material_override));
+	GA_ROHandleS materialPathHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GEO_STD_ATTRIB_MATERIAL));
+	GA_ROHandleI objectIdHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GEO_VFH_ATTRIB_OBJECTID));
+
+	for (GA_Iterator jt(gdp.getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
+		const GEO_Primitive *prim = gdp.getGEOPrimitive(*jt);
+		if (!prim) {
+			continue;
+		}
+
+		VRay::Plugin primPlugin;
+		VRay::Transform primTm;
+
+		const GA_PrimitiveTypeId &primTypeId = prim->getTypeId();
+
+		if (GU_PrimPacked::isPackedPrimitive(*prim)) {
+			const GU_PrimPacked &primPacked = static_cast<const GU_PrimPacked&>(*prim);
+			const int primKey = getPrimKey(primPacked);
+
+			if (!getPrimPluginFromCache(primKey, primPlugin)) {
+				primPlugin = exportPrimPacked(primPacked);
+
+				// NOTE: It's ok to add invalid plugins to cache here,
+				// because if we've failed to export plugin once we should not retry.
+				addPrimPluginToCache(primKey, primPlugin);
+			}
+
+			if (primPlugin) {
+				UT_Matrix4D tm4;
+				primPacked.getFullTransform4(tm4);
+				primTm = utMatrixToVRayTransform(tm4);
+			}
+		}
+		else if (primTypeId == VRayVolumeGridRef::typeId()) {
+			phoenixPrims.append(prim);
+		}
+		else if	(primTypeId == GEO_PRIMVOLUME ||
+				 primTypeId == GEO_PRIMVDB)
+		{
+			volumePrims.append(prim);
+		}
+		else if (primTypeId == GEO_PRIMSPHERE) {
+			const GU_PrimSphere &primSphere = static_cast<const GU_PrimSphere&>(*prim);
+			const int primKey = getPrimKey(primSphere);
+
+			if (!getPrimPluginFromCache(primKey, primPlugin)) {
+				primPlugin = exportPrimSphere(*prim);
+
+				// NOTE: It's ok to add invalid plugins to cache here,
+				// because if we've failed to export plugin once we should not retry.
+				addPrimPluginToCache(primKey, primPlugin);
+			}
+
+			if (primPlugin) {
+				UT_Matrix4 tm4;
+				primSphere.getTransform4(tm4);
+				primTm = utMatrixToVRayTransform(tm4);
+			}
+		}
+		else if (primTypeId == GEO_PRIMPOLYSOUP) {
+			polyPrims.append(prim);
+		}
+		else if (primTypeId == GEO_PRIMPOLY) {
+			const GEO_PrimPoly &primPoly = static_cast<const GEO_PrimPoly&>(*prim);
+
+			// TODO: Hair from open poly detection.
+			const int isHair = true;
+			if (primPoly.isClosed()) {
+				polyPrims.append(prim);
+			}
+			else if (isHair) {
+				hairPrims.append(prim);
+			}
+		}
+		else if (primTypeId == GEO_PRIMNURBCURVE ||
+				 primTypeId == GEO_PRIMBEZCURVE)
+		{
+			hairPrims.append(prim);
+		}
+
+		// If we have a plugin at this point it means it's smth "instanceable".
+		if (primPlugin) {
+			const GA_Offset primOffset = prim->getMapOffset();
+
+			ensureDynamicGeometryForInstancer(primPlugin);
+
+			InstancerItem item;
+			item.geometry = primPlugin;
+			item.tm = primTm;
+
+			if (objectIdHndl.isValid()) {
+				item.objectID = objectIdHndl.get(primOffset);
+			}
+
+			if (materialStyleSheetHndl.isValid()) {
+				const QString &styleSheet = materialStyleSheetHndl.get(primOffset);
+				if (!styleSheet.isEmpty()) {
+					processStyleSheet(pluginExporter, styleSheet, item);
+				}
+			}
+			else if (materialPathHndl.isValid()) {
+				const UT_String &matPath = materialPathHndl.get(primOffset);
+				OP_Node *matNode = getOpNodeFromPath(matPath, ctx.getTime());
+				if (matNode) {
+					VRay::Plugin material = pluginExporter.exportMaterial(matNode);
+					if (material) {
+						item.material = material;
+
+						if (materialOverrideHndl.isValid()) {
+							const UT_String &materialOverrides = materialOverrideHndl.get(primOffset);
+							if (!materialOverrides.equal("")) {
+								processMaterialOverrides(pluginExporter, *matNode, materialOverrides, item);
+							}
+						}
+					}
+				}
+			}
+
+			instancerItems += item;
+		}
+	}
+
+#ifdef CGR_HAS_AUR
+	// phoenixPrims
+	VolumeExporter volExp(objNode, ctx, pluginExporter);
+	volExp.exportPrimitives(gdp, instancerItems);
+
+	// volumePrims
+	HoudiniVolumeExporter hVoldExp(objNode, ctx, pluginExporter);
+	hVoldExp.exportPrimitives(gdp, instancerItems);
+#endif
+
+	// NOTE: For polygon and hair material overrides are baked as map channels.
+
+	// NOTE: Try caching poly data with m_gdp->getUniqueId().
+	VRay::Plugin fromPoly = exportPolyMesh(gdp, polyPrims);
+	if (fromPoly) {
+		instancerItems += InstancerItem(fromPoly);
+	}
+
+	// NOTE: Try caching hair data with m_gdp->getUniqueId().
+	VRay::Plugin fromHair = exportHair(gdp, polyPrims);
+	if (fromHair) {
+		instancerItems += InstancerItem(fromHair);
+	}
+}
 
 VRay::Plugin GeometryExporter::exportDetail(const GU_Detail &gdp)
 {
@@ -676,122 +870,13 @@ VRay::Plugin GeometryExporter::exportDetail(const GU_Detail &gdp)
 	}
 
 	if (renderPoints != vmRenderPointsAll) {
-#ifdef CGR_HAS_AUR
-		VolumeExporter volExp(objNode, ctx, pluginExporter);
-		volExp.exportPrimitives(gdp, instancerItems);
-
-		HoudiniVolumeExporter hVoldExp(objNode, ctx, pluginExporter);
-		hVoldExp.exportPrimitives(gdp, instancerItems);
-#endif
-		// "Runtime" primitives.
-		// Currently only sphere
-		if (gdp.containsPrimitiveType(GEO_PRIMSPHERE)) {
-			for (GA_Iterator jt(gdp.getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
-				const GEO_Primitive *prim = gdp.getGEOPrimitive(*jt);
-				if (prim->getTypeId() == GEO_PRIMSPHERE) {
-					const GU_PrimSphere *primSphere = UTverify_cast<const GU_PrimSphere*>(prim);
-					if (primSphere) {
-						const uintptr_t primKey = reinterpret_cast<uintptr_t>(primSphere);
-
-						VRay::Plugin fromSphere;
-
-						PrimPluginCache::iterator pIt = primPluginCache.find(primKey);
-						if (pIt != primPluginCache.end()) {
-							fromSphere = pIt.data();
-						}
-						else {
-							Attrs::PluginDesc geomSphere(VRayExporter::getPluginName(objNode, "GeomSphere"),
-														 "GeomSphere");
-							geomSphere.addAttribute(Attrs::PluginAttr("radius", 1.0));
-							geomSphere.addAttribute(Attrs::PluginAttr("subdivs", 8));
-
-							fromSphere = pluginExporter.exportPlugin(geomSphere);
-
-							primPluginCache.insert(primKey, fromSphere);
-						}
-
-						if (fromSphere) {
-							UT_Matrix4 fullxform;
-							primSphere->getTransform4(fullxform);
-
-							InstancerItem item;
-							item.geometry = fromSphere;
-							item.tm = utMatrixToVRayTransform(fullxform);
-
-							instancerItems += item;
-						}
-					}
-				}
-			}
-		}
-
-		VRay::Plugin fromPoly = exportPolyMesh(gdp);
-		if (fromPoly) {
-			instancerItems += InstancerItem(fromPoly);
-		}
-
-		HairPrimitiveExporter hairExp(objNode, ctx, pluginExporter);
-		hairExp.exportPrimitives(gdp, instancerItems);
-
-		if (GU_PrimPacked::hasPackedPrimitives(gdp)) {
-			UT_Array<const GA_Primitive*> prims;
-			GU_PrimPacked::getPackedPrimitives(gdp, prims);
-
-			GA_ROHandleS materialStyleSheetHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GA_Names::material_stylesheet));
-			GA_ROHandleS materialOverrideHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GA_Names::material_override));
-			GA_ROHandleS materialPathHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GEO_STD_ATTRIB_MATERIAL));
-
-			GA_ROHandleI objectIdHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GEO_VFH_ATTRIB_OBJECTID));
-
-			for (const GA_Primitive *prim : prims) {
-				const GU_PrimPacked *primPacked = UTverify_cast<const GU_PrimPacked*>(prim);
-				VRay::Plugin fromPacked = exportPacked(*primPacked);
-				if (fromPacked) {
-					const GA_Offset primOffset = prim->getMapOffset();
-
-					UT_Matrix4D fullxform;
-					primPacked->getFullTransform4(fullxform);
-
-					ensureDynamicGeometryForInstancer(fromPacked);
-
-					InstancerItem item;
-					item.geometry = fromPacked;
-					item.tm = utMatrixToVRayTransform(fullxform);
-
-					if (objectIdHndl.isValid()) {
-						item.objectID = objectIdHndl.get(primOffset);
-					}
-
-					if (materialStyleSheetHndl.isValid()) {
-						const QString &styleSheet = materialStyleSheetHndl.get(primOffset);
-						processStyleSheet(pluginExporter, styleSheet, item);
-					}
-					else if (materialPathHndl.isValid()) {
-						const UT_String &matPath = materialPathHndl.get(primOffset);
-						OP_Node *matNode = getOpNodeFromPath(matPath, ctx.getTime());
-						if (matNode) {
-							VRay::Plugin material = pluginExporter.exportMaterial(matNode);
-							if (material) {
-								item.material = material;
-
-								if (materialOverrideHndl.isValid()) {
-									const UT_String &materialOverrides = materialOverrideHndl.get(primOffset);
-
-									processMaterialOverrides(pluginExporter, *matNode, materialOverrides, item);
-								}
-							}
-						}
-					}
-
-					instancerItems += item;
-				}
-			}
-		}
+		exportPrimitives(gdp, instancerItems);
 	}
 
 	if (!instancerItems.count()) {
 		return VRay::Plugin();
 	}
+
 	if (instancerItems.count() == 1) {
 		return instancerItems[0].geometry;
 	}
@@ -857,13 +942,28 @@ VRay::Plugin GeometryExporter::exportDetail(const GU_Detail &gdp)
 	return pluginExporter.exportPlugin(instancer2);
 }
 
-VRay::Plugin GeometryExporter::exportPolyMesh(const GU_Detail &gdp)
+VRay::Plugin GeometryExporter::exportHair(const GU_Detail &gdp, const GEOPrimList &primList)
 {
 	if (!m_exportGeometry) {
 		return VRay::Plugin();
 	}
 
-	MeshExporter polyMeshExporter(objNode, ctx, pluginExporter);
+	HairPrimitiveExporter hairExp(objNode, ctx, pluginExporter, primList);
+	Attrs::PluginDesc hairDesc;
+	if (hairExp.asPluginDesc(gdp, hairDesc)) {
+		return pluginExporter.exportPlugin(hairDesc);
+	}
+
+	return VRay::Plugin();
+}
+
+VRay::Plugin GeometryExporter::exportPolyMesh(const GU_Detail &gdp, const GEOPrimList &primList)
+{
+	if (!m_exportGeometry) {
+		return VRay::Plugin();
+	}
+
+	MeshExporter polyMeshExporter(objNode, ctx, pluginExporter, primList);
 	polyMeshExporter.init(gdp);
 	polyMeshExporter.setSubdivApplied(hasSubdivApplied());
 	if (polyMeshExporter.hasPolyGeometry()) {
@@ -874,26 +974,6 @@ VRay::Plugin GeometryExporter::exportPolyMesh(const GU_Detail &gdp)
 	}
 
 	return VRay::Plugin();
-}
-
-VRay::Plugin GeometryExporter::exportPacked(const GU_PrimPacked &prim)
-{
-	const int packedID = getPrimPackedID(prim);
-
-	PrimPluginCache::iterator pIt = primPluginCache.find(packedID);
-	if (pIt != primPluginCache.end()) {
-		return pIt.data();
-	}
-
-	VRay::Plugin primPlugin = exportPrimPacked(prim);
-	if (!primPlugin) {
-		UT_ASSERT_MSG(false, "Unsupported packed primitive type!");
-	}
-	else {
-		primPluginCache.insert(packedID, primPlugin);
-	}
-
-	return primPlugin;
 }
 
 int GeometryExporter::getPrimPackedID(const GU_PrimPacked &prim)
@@ -939,7 +1019,7 @@ VRay::Plugin GeometryExporter::exportPrimPacked(const GU_PrimPacked &prim)
 		return exportPackedDisk(prim);
 	}
 
-	UT_ASSERT(false);
+	UT_ASSERT_MSG(false, "Unsupported packed primitive type!");
 
 	return VRay::Plugin();
 }
@@ -1192,13 +1272,6 @@ VRay::Plugin GeometryExporter::exportPointParticles(const GU_Detail &gdp, VMRend
 	}
 
 	return pluginExporter.exportPlugin(partDesc);
-}
-
-VRay::Plugin GeometryExporter::exportInstancer(const GU_Detail &gdp)
-{
-	VRay::Plugin instancer;
-	
-	return instancer;
 }
 
 /// Holds attributes for calculating instance transform:
