@@ -39,21 +39,8 @@ class MeshExporter
 	: public PrimitiveExporter
 {
 public:
-	MeshExporter(OBJ_Node &obj, OP_Context &ctx, VRayExporter &exp, const GEOPrimList &primList);
+	MeshExporter(OBJ_Node &obj, const GU_Detail &gdp, OP_Context &ctx, VRayExporter &exp, const GEOPrimList &primList);
 	~MeshExporter() { }
-
-	/// Intilize the translator with the passed gdp.
-	/// This will clear any cached data for current gdp (if any)
-	/// and init the translator with the new one.
-	/// @note you should call init() to initialize the translator
-	///       with a geometry detail before using any of the get<Foo>()
-	/// @param gdp[in] - geometry detail
-	/// @retval true if the translator is properly initilized
-	///         with the new gdp, or false on error or if the
-	///         gdp passed is the same as the current one (comaprison
-	///         is based on detail unique id) in which case cached data
-	///         will remain.
-	bool init(const GU_Detail &gdp);
 
 	/// Reset the translator as unintilized i.e.
 	/// clear any cached data for current gdp (if any)
@@ -231,7 +218,9 @@ private:
 	/// A list of poly primitives that can be handled by this translator.
 	const GEOPrimList &primList;
 
-	const GU_Detail            *m_gdp; ///< current geometry detail
+	/// Current geometry detail
+	const GU_Detail &gdp;
+
 	bool                        m_hasSubdivApplied; ///< if we have subdivision applied to geometry at render time
 	int                         numFaces; ///< number of mesh faces
 	VRay::VUtils::IntRefList    faces; ///< list of mesh faces (triangles)

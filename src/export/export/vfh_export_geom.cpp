@@ -714,7 +714,7 @@ void GeometryExporter::exportPrimitives(const GU_Detail &gdp, InstancerItems &in
 	GA_ROHandleS materialOverrideHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GA_Names::material_override));
 	GA_ROHandleS materialPathHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GEO_STD_ATTRIB_MATERIAL));
 	GA_ROHandleI objectIdHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GEO_VFH_ATTRIB_OBJECTID));
-	GA_ROHandleI animOffsetHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GEO_VFH_ATTRIB_ANIM_OFFSET));
+	GA_ROHandleF animOffsetHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GEO_VFH_ATTRIB_ANIM_OFFSET));
 
 	for (GA_Iterator jt(gdp.getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
 		const GEO_Primitive *prim = gdp.getGEOPrimitive(*jt);
@@ -850,13 +850,13 @@ void GeometryExporter::exportPrimitives(const GU_Detail &gdp, InstancerItems &in
 
 	// NOTE: For polygon and hair material overrides are baked as map channels.
 
-	// NOTE: Try caching poly data with m_gdp->getUniqueId().
+	// NOTE: Try caching poly data by polyPrims.
 	VRay::Plugin fromPoly = exportPolyMesh(gdp, polyPrims);
 	if (fromPoly) {
 		instancerItems += InstancerItem(fromPoly);
 	}
 
-	// NOTE: Try caching hair data with m_gdp->getUniqueId().
+	// NOTE: Try caching hair data by hairPrims.
 	VRay::Plugin fromHair = exportHair(gdp, hairPrims);
 	if (fromHair) {
 		instancerItems += InstancerItem(fromHair);
@@ -969,8 +969,7 @@ VRay::Plugin GeometryExporter::exportPolyMesh(const GU_Detail &gdp, const GEOPri
 		return VRay::Plugin();
 	}
 
-	MeshExporter polyMeshExporter(objNode, ctx, pluginExporter, primList);
-	polyMeshExporter.init(gdp);
+	MeshExporter polyMeshExporter(objNode, gdp, ctx, pluginExporter, primList);
 	polyMeshExporter.setSubdivApplied(hasSubdivApplied());
 	if (polyMeshExporter.hasPolyGeometry()) {
 		Attrs::PluginDesc geomDesc;

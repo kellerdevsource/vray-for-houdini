@@ -473,6 +473,7 @@ VUtils::ErrorCode VRayProxyExporter::getDescriptionForContext(OP_Context &contex
 	else {
 		GEOPrimList primList;
 		MeshExporter meshExporter(*geomDescr.m_node.getParent()->castToOBJNode(),
+								  *gdp,
 								  context,
 								  dummyExp,
 								  primList);

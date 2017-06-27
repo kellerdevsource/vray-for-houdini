@@ -43,28 +43,13 @@ static bool getDataFromAttribute(const GA_Attribute *attr, VRay::VUtils::VectorR
 
 }
 
-MeshExporter::MeshExporter(OBJ_Node &obj, OP_Context &ctx, VRayExporter &exp, const GEOPrimList &primList)
+MeshExporter::MeshExporter(OBJ_Node &obj, const GU_Detail &gdp, OP_Context &ctx, VRayExporter &exp, const GEOPrimList &primList)
 	: PrimitiveExporter(obj, ctx, exp)
-	, m_gdp(nullptr)
+	, primList(primList)
+	, gdp(gdp)
 	, m_hasSubdivApplied(false)
 	, numFaces(-1)
-	, primList(primList)
 { }
-
-
-bool MeshExporter::init(const GU_Detail &gdp)
-{
-	if (!m_gdp || m_gdp->getUniqueId() != gdp.getUniqueId()) {
-		// we are not initialized
-		// or the gdp is different
-		reset();
-		m_gdp = &gdp;
-		return true;
-	}
-	// the gdp is the same so we do nothing
-	return false;
-}
-
 
 void MeshExporter::reset()
 {
@@ -77,17 +62,15 @@ void MeshExporter::reset()
 	velocities = VRay::VUtils::VectorRefList();
 	face_mtlIDs = VRay::VUtils::IntRefList();
 	map_channels_data.clear();
-	m_gdp = nullptr;
 }
 
 bool MeshExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc &pluginDesc)
 {
-	init(gdp);
 	if (!primList.size()) {
 		return false;
 	}
 
-	Log::getLog().info("Mesh: %i points", m_gdp->getNumPoints());
+	Log::getLog().info("Mesh: %i points", gdp.getNumPoints());
 
 	const std::string meshName = boost::str(Parm::FmtPrefixManual % "Geom" % std::to_string(gdp.getUniqueId()));
 	pluginDesc.pluginName = VRayExporter::getPluginName(&m_object, meshName);
@@ -199,11 +182,9 @@ void MeshExporter::exportPrimitives(const GU_Detail &gdp, InstancerItems&)
 
 VRay::VUtils::VectorRefList& MeshExporter::getVertices()
 {
-	UT_ASSERT( m_gdp );
-
 	if (vertices.size() <= 0) {
 		// if we don't have vertices cached, grab them from P attribute
-		getDataFromAttribute(m_gdp->getP(), vertices);
+		getDataFromAttribute(gdp.getP(), vertices);
 	}
 
 	return vertices;
@@ -223,21 +204,19 @@ VRay::VUtils::IntRefList MeshExporter::getFaceNormals()
 
 VRay::VUtils::VectorRefList& MeshExporter::getNormals()
 {
-	UT_ASSERT( m_gdp );
-
 	if (normals.size() <= 0) {
 		// if we don't have normals cached, grab them from N attribute
 		// first check for point attribute
-		const GA_Attribute *nattr = m_gdp->findNormalAttribute(GA_ATTRIB_POINT);
+		const GA_Attribute *nattr = gdp.findNormalAttribute(GA_ATTRIB_POINT);
 		if (!nattr) {
 			// second check for vertex attribute
-			nattr = m_gdp->findNormalAttribute(GA_ATTRIB_VERTEX);
+			nattr = gdp.findNormalAttribute(GA_ATTRIB_VERTEX);
 		}
 
 		if (!nattr) {
 			// last check for Houdini internal normal attribute
 			// which is always a point attribute
-			nattr = m_gdp->findInternalNormalAttribute();
+			nattr = gdp.findInternalNormalAttribute();
 		}
 
 		if (getDataFromAttribute(nattr, normals)) {
@@ -309,13 +288,11 @@ VRay::VUtils::VectorRefList& MeshExporter::getNormals()
 
 VRay::VUtils::VectorRefList& MeshExporter::getVelocities()
 {
-	UT_ASSERT( m_gdp );
-
 	if (velocities.size() <= 0) {
 		// if we don't have velocities cached, grab them from v attribute
 		// for V-Ray velocity makes sense only when assigned on points, so
 		// faces is used to index velocity as well
-		getDataFromAttribute(m_gdp->findVelocityAttribute(GA_ATTRIB_POINT), velocities);
+		getDataFromAttribute(gdp.findVelocityAttribute(GA_ATTRIB_POINT), velocities);
 	}
 
 	return velocities;
@@ -456,13 +433,11 @@ VRay::VUtils::IntRefList& MeshExporter::getEdgeVisibility()
 
 VRay::VUtils::IntRefList& MeshExporter::getFaceMtlIDs()
 {
-	UT_ASSERT( m_gdp );
-
 	if (face_mtlIDs.size() <= 0) {
 		// if we don't have list of face mtl ids cached,
 		// digest the material primitive attribute (if any)
 		// into a list of face mtl ids
-		GA_ROHandleS mtlpath(m_gdp->findAttribute(GA_ATTRIB_PRIMITIVE, GEO_STD_ATTRIB_MATERIAL));
+		GA_ROHandleS mtlpath(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GEO_STD_ATTRIB_MATERIAL));
 		if (mtlpath.isValid()) {
 			// count faces and proceed only if we do have such
 			const int nFaces = getNumFaces();
@@ -527,7 +502,6 @@ MapChannels& MeshExporter::getMapChannels()
 	return map_channels_data;
 }
 
-
 //
 // MATERIAL OVERRIDE
 //
@@ -542,17 +516,14 @@ MapChannels& MeshExporter::getMapChannels()
 // * Check override type and descide whether to export a separate material or:
 //   - Override attribute with mesh's map channel (using TexUserColor or TexUserScalar)
 //   - Override attribute with texture id map (using TexMultiID)
-
-
 int MeshExporter::getPerPrimMtlOverrides(std::unordered_set< std::string > &o_mapChannelOverrides,
 										 std::vector< PrimOverride > &o_primOverrides)
 {
-	UT_ASSERT( m_gdp );
+	GA_ROHandleS materialPathHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GEO_STD_ATTRIB_MATERIAL));
+	GA_ROHandleS materialOverrideHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, "material_override"));
 
-	GA_ROHandleS materialPathHndl(m_gdp->findAttribute(GA_ATTRIB_PRIMITIVE, GEO_STD_ATTRIB_MATERIAL));
-	GA_ROHandleS materialOverrideHndl(m_gdp->findAttribute(GA_ATTRIB_PRIMITIVE, "material_override"));
-	if (   !materialPathHndl.isValid()
-		|| !materialOverrideHndl.isValid())
+	if (!materialPathHndl.isValid() ||
+		!materialOverrideHndl.isValid())
 	{
 		return 0;
 	}
@@ -715,22 +686,22 @@ int MeshExporter::getMtlOverrides(MapChannels &mapChannels)
 
 int MeshExporter::getPointAttrs(MapChannels &mapChannels)
 {
-	UT_ASSERT( m_gdp );
-
 	int nMapChannels = 0;
 
 	// add all vector3 vertex attributes to map_channels_data
 	GEOAttribList attrList;
-	m_gdp->getAttributes().matchAttributes(GEOgetV3AttribFilter(),
-										GA_ATTRIB_POINT,
-										attrList);
+	gdp.getAttributes().matchAttributes(GEOgetV3AttribFilter(), GA_ATTRIB_POINT, attrList);
+
 	for (const GA_Attribute *attr : attrList) {
+		if (!attr) {
+			continue;
+		}
+
 		// "P","N","v" point attributes are handled separately
 		// as different plugin properties so skip them here
-		if (   attr
-			&& attr->getName() != GEO_STD_ATTRIB_POSITION
-			&& attr->getName() != GEO_STD_ATTRIB_NORMAL
-			&& attr->getName() != GEO_STD_ATTRIB_VELOCITY )
+		if (attr->getName() != GEO_STD_ATTRIB_POSITION &&
+			attr->getName() != GEO_STD_ATTRIB_NORMAL &&
+			attr->getName() != GEO_STD_ATTRIB_VELOCITY)
 		{
 			const std::string attrName = attr->getName().toStdString();
 			if (!mapChannels.count(attrName)) {
@@ -741,7 +712,8 @@ int MeshExporter::getPointAttrs(MapChannels &mapChannels)
 				mapChannel.faces = getFaces();
 
 				getDataFromAttribute(attr, mapChannel.vertices);
-				UT_ASSERT( m_gdp->getNumPoints() == mapChannel.vertices.size() );
+
+				UT_ASSERT(gdp.getNumPoints() == mapChannel.vertices.size());
 
 				++nMapChannels;
 			}
@@ -754,22 +726,22 @@ int MeshExporter::getPointAttrs(MapChannels &mapChannels)
 
 int MeshExporter::getVertexAttrs(MapChannels &mapChannels)
 {
-	UT_ASSERT( m_gdp );
-
 	int nMapChannels = 0;
 
 	// add all vector3 vertex attributes to map_channels_data
 	GEOAttribList attrList;
-	m_gdp->getAttributes().matchAttributes(GEOgetV3AttribFilter(),
-										GA_ATTRIB_VERTEX,
-										attrList);
+	gdp.getAttributes().matchAttributes(GEOgetV3AttribFilter(), GA_ATTRIB_VERTEX, attrList);
+
 	for (const GA_Attribute *attr : attrList) {
+		if (!attr) {
+			continue;
+		}
+
 		// "P","N","v" vertex attributes are handled separately
 		// as different plugin properties so skip them here
-		if (   attr
-			&& attr->getName() != GEO_STD_ATTRIB_POSITION
-			&& attr->getName() != GEO_STD_ATTRIB_NORMAL
-			&& attr->getName() != GEO_STD_ATTRIB_VELOCITY )
+		if (attr->getName() != GEO_STD_ATTRIB_POSITION &&
+			attr->getName() != GEO_STD_ATTRIB_NORMAL &&
+			attr->getName() != GEO_STD_ATTRIB_VELOCITY )
 		{
 			const std::string attrName = attr->getName().toStdString();
 			if (!mapChannels.count(attrName)) {
@@ -786,8 +758,6 @@ int MeshExporter::getVertexAttrs(MapChannels &mapChannels)
 
 void MeshExporter::getVertexAttrAsMapChannel(const GA_Attribute &attr, MapChannel &mapChannel)
 {
-	UT_ASSERT( m_gdp );
-
 	mapChannel.name = attr.getName();
 	Log::getLog().info("Found map channel: %s", mapChannel.name.c_str());
 
@@ -796,8 +766,9 @@ void MeshExporter::getVertexAttrAsMapChannel(const GA_Attribute &attr, MapChanne
 
 	if (m_hasSubdivApplied) {
 		// weld vertex attribute values before populating the map channel
-		GA_Offset start, end;
-		for (GA_Iterator it(m_gdp->getVertexRange()); it.blockAdvance(start, end); ) {
+		GA_Offset start;
+		GA_Offset end;
+		for (GA_Iterator it(gdp.getVertexRange()); it.blockAdvance(start, end); ) {
 			vaPageHndl.setPage(start);
 			for (GA_Offset offset = start; offset < end; ++offset) {
 				const UT_Vector3 &val = vaPageHndl.value(offset);
@@ -866,7 +837,7 @@ void MeshExporter::getVertexAttrAsMapChannel(const GA_Attribute &attr, MapChanne
 		// populate map channel with original values
 
 		// init map channel data
-		mapChannel.vertices = VRay::VUtils::VectorRefList(m_gdp->getNumVertices());
+		mapChannel.vertices = VRay::VUtils::VectorRefList(gdp.getNumVertices());
 		mapChannel.faces = VRay::VUtils::IntRefList(getNumFaces() * 3);
 
 		getDataFromAttribute(&attr, mapChannel.vertices);
@@ -898,9 +869,9 @@ void MeshExporter::getVertexAttrAsMapChannel(const GA_Attribute &attr, MapChanne
 					if ( vCnt > 2) {
 						for (GA_Size i = 1; i < vCnt-1; ++i) {
 							// polygon orientation seems to be clockwise in Houdini
-							mapChannel.faces[faceVertIndex++] = m_gdp->getVertexMap().indexFromOffset(prim->getVertexOffset(i+1));
-							mapChannel.faces[faceVertIndex++] = m_gdp->getVertexMap().indexFromOffset(prim->getVertexOffset(i));
-							mapChannel.faces[faceVertIndex++] = m_gdp->getVertexMap().indexFromOffset(prim->getVertexOffset(0));
+							mapChannel.faces[faceVertIndex++] = gdp.getVertexMap().indexFromOffset(prim->getVertexOffset(i+1));
+							mapChannel.faces[faceVertIndex++] = gdp.getVertexMap().indexFromOffset(prim->getVertexOffset(i));
+							mapChannel.faces[faceVertIndex++] = gdp.getVertexMap().indexFromOffset(prim->getVertexOffset(0));
 						}
 					}
 					break;
