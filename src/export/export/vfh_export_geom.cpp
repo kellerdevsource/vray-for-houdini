@@ -825,9 +825,11 @@ int GeometryExporter::getPrimPackedID(const GU_PrimPacked &prim)
 	if (primTypeID == primPackedTypeIDs.alembicRef ||
 		primTypeID == primPackedTypeIDs.packedDisk)
 	{
+		UT_String objname;
+		prim.getIntrinsic(prim.findIntrinsic(intrAlembicObjectPath), objname);
 		UT_String primname;
 		prim.getIntrinsic(prim.findIntrinsic(intrPackedPrimitiveName), primname);
-		return primname.hash();
+		return primname.hash() ^ objname.hash();
 	}
 	if (primTypeID == primPackedTypeIDs.vrayProxyRef) {
 		const VRayProxyRef *vrayproxyref = UTverify_cast<const VRayProxyRef*>(prim.implementation());
