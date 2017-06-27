@@ -345,7 +345,7 @@ static void ensureDynamicGeometryForInstancer(VRay::Plugin plugin)
 }
 
 static void overrideItemsToUserAttributes(MtlOverrideItems &overrides, InstancerItem &instancerItem) {
-	for (MtlOverrideItems::iterator oiIt = overrides.begin(); oiIt != overrides.end(); ++oiIt) {
+	FOR_IT (MtlOverrideItems, oiIt, overrides) {
 		const tchar *overrideName = oiIt.key();
 		const MtlOverrideItem &overrideItem = oiIt.data();
 

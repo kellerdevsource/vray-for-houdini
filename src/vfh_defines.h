@@ -43,4 +43,7 @@ private: \
 	cls(const cls&); \
 	cls& operator=(const cls&);
 
+#define FOR_IT(type, itName, var) for (type::iterator itName = var.begin(); itName != var.end(); ++itName)
+#define FOR_CONST_IT(type, itName, var) for (type::const_iterator itName = var.begin(); itName != var.end(); ++itName)
+
 #endif // VRAY_FOR_HOUDINI_UTIL_DEFINES_H

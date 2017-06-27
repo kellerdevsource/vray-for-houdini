@@ -161,16 +161,18 @@ public:
 
 private:
 	/// Helper structure used when digesting material overrides into map channels
-	struct PrimOverride
-	{
-		typedef std::unordered_map< std::string, VRay::Vector > MtlOverrides;
+	struct PrimOverride {
+		typedef std::unordered_map<std::string, VRay::Vector> MtlOverrides;
 
-		PrimOverride(SHOP_Node *shopNode = nullptr):
-			shopNode(shopNode)
+		explicit PrimOverride(OP_Node *shopNode=nullptr)
+			: matNode(shopNode)
 		{}
 
-		SHOP_Node    *shopNode; ///< the material assigned to the primitive with "shop_materialpath" attribute
-		MtlOverrides mtlOverrides; ///< map of map channel name to override value for the face
+		/// The material assigned to the face.
+		OP_Node *matNode;
+
+		/// Map of map channel name to override value for the face.
+		MtlOverrides mtlOverrides;
 	};
 
 	/// Helper funtion to digest point attibutes into map channels
@@ -203,17 +205,7 @@ private:
 	/// @param mapChannels[out] - collects generated map channels
 	///        from material override attribute
 	/// @retval number of channels added to mapChannels
-	int getMtlOverrides(MapChannels &mapChannels);
-
-	/// Helper funtion to digest per primitive material overrides into map channels
-	/// @note check if the translator has been properly initialized
-	///       with hasPolyGeometry() before using this
-	/// @param o_mapChannelOverrides[out] - map channel names that will be generated
-	///       from material overrides
-	/// @param o_primOverrides[out] - list of per primitive overrides
-	/// @retval number of map channels to be generated from material overrides
-	int getPerPrimMtlOverrides(std::unordered_set< std::string > &o_mapChannelOverrides,
-							   std::vector< PrimOverride > &o_primOverrides);
+	void getMtlOverrides(MapChannels &mapChannels);
 
 	/// A list of poly primitives that can be handled by this translator.
 	const GEOPrimList &primList;

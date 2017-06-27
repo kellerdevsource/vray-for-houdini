@@ -68,7 +68,7 @@ class PrimitiveExporter
 public:
 	PrimitiveExporter(OBJ_Node &obj, OP_Context &ctx, VRayExporter &exp)
 		: m_object(obj)
-		, m_context(ctx)
+		, ctx(ctx)
 		, m_exporter(exp)
 	{}
 	virtual ~PrimitiveExporter() {}
@@ -83,7 +83,7 @@ protected:
 	OBJ_Node &m_object;
 
 	/// Current context used to obtain current time.
-	OP_Context &m_context;
+	OP_Context &ctx;
 
 	/// Exporter instance for writing plugins.
 	VRayExporter &m_exporter;

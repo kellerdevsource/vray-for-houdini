@@ -15,7 +15,7 @@
 #include <GU/GU_PrimPolySoup.h>
 #include <GU/GU_PrimPoly.h>
 #include <GA/GA_PageHandle.h>
-
+#include <GA/GA_Names.h>
 
 using namespace VRayForHoudini;
 
@@ -491,196 +491,200 @@ VRay::VUtils::IntRefList& MeshExporter::getFaceMtlIDs()
 MapChannels& MeshExporter::getMapChannels()
 {
 	if (map_channels_data.size() <= 0) {
-		int nMapChannels = 0;
-		nMapChannels += getVertexAttrs(map_channels_data);
-		nMapChannels += getPointAttrs(map_channels_data);
-		nMapChannels += getMtlOverrides(map_channels_data);
-
-		UT_ASSERT( map_channels_data.size() == nMapChannels );
+		getVertexAttrs(map_channels_data);
+		getPointAttrs(map_channels_data);
+		getMtlOverrides(map_channels_data);
 	}
 
 	return map_channels_data;
 }
 
-//
-// MATERIAL OVERRIDE
-//
-// Primitive color override example
-//   "diffuser" : 1.0, "diffuseg" : 1.0, "diffuseb" : 1.0
-//
-// We don't care about the separate channel names,
-// We need find the actual SHOP parameter name and export attribute as "diffuse".
-// Then we bake float and color attributes as map channels.
-//
-// * Bake color and float attributes into mesh's map channles named after the SHOP parameter name.
-// * Check override type and descide whether to export a separate material or:
-//   - Override attribute with mesh's map channel (using TexUserColor or TexUserScalar)
-//   - Override attribute with texture id map (using TexMultiID)
-int MeshExporter::getPerPrimMtlOverrides(std::unordered_set< std::string > &o_mapChannelOverrides,
-										 std::vector< PrimOverride > &o_primOverrides)
+static int validNumVertices(const GA_Size numVertices)
 {
-	GA_ROHandleS materialPathHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GEO_STD_ATTRIB_MATERIAL));
-	GA_ROHandleS materialOverrideHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, "material_override"));
-
-	if (!materialPathHndl.isValid() ||
-		!materialOverrideHndl.isValid())
-	{
-		return 0;
-	}
-	o_primOverrides.resize(primList.size());
-
-	int k = 0;
-	for (const GEO_Primitive *prim : primList) {
-		const GA_Offset off = prim->getMapOffset();
-
-		PrimOverride &primOverride = o_primOverrides[k++];
-		primOverride.shopNode = OPgetDirector()->findSHOPNode( materialPathHndl.get(off) );
-		if (!primOverride.shopNode) {
-			// material not set for this primitive => leave overrides empty
-			continue;
-		}
-
-		// material override is python dict as string
-		// using HDK helper class SHOP_GeoOverride to parse that
-		SHOP_GeoOverride mtlOverride;
-		mtlOverride.load( materialOverrideHndl.get(off) );
-		if (mtlOverride.entries() <= 0) {
-			// no overrides set for this primitive => leave overrides empty
-			continue;
-		}
-
-		const PRM_ParmList *shopPrmList = primOverride.shopNode->getParmList();
-		UT_StringArray mtlOverrideChs;
-		mtlOverride.getKeys(mtlOverrideChs);
-		for ( const UT_StringHolder &chName : mtlOverrideChs) {
-			int chIdx = -1;
-			PRM_Parm *prm = shopPrmList->getParmPtrFromChannel(chName, &chIdx);
-			if (!prm) {
-				// no corresponding parameter on the shop node
-				continue;
-			}
-			// skip overrides of 4th component on 4-tuple params
-			// we can not store the 4th channel in VRay::Vector which has only 3 components
-			// TODO: need a way to export these
-			if (   chIdx < 0
-				|| chIdx >= 3)
-			{
-				continue;
-			}
-			// skip overrides on string and toggle params
-			// they can't be exported as map channels
-			const PRM_Type &prmType = prm->getType();
-			if (   mtlOverride.isString(chName.buffer())
-				|| NOT(prmType.isFloatType()) )
-			{
-				continue;
-			}
-
-			std::string channelName = prm->getToken();
-			if ( primOverride.mtlOverrides.count(channelName) == 0 ) {
-				// if we encounter this for first time for this primitive
-				// get default value from the shop param. Thus if NOT all param channels
-				// are overridden we still get the default value for the channel
-				// from the shop param
-				o_mapChannelOverrides.insert(channelName);
-				VRay::Vector &val = primOverride.mtlOverrides[ channelName ];
-				for (int i = 0; i < prm->getVectorSize() && i < 3; ++i) {
-					fpreal fval = 0;
-					prm->getValue(m_context.getTime(), fval, i, m_context.getThread());
-					val[i] = fval;
-				}
-			}
-			// override the channel value
-			VRay::Vector &val = primOverride.mtlOverrides[ channelName ];
-			fpreal fval = 0;
-			mtlOverride.import(chName, fval);
-			val[ chIdx ] = fval;
-		}
-	}
-
-	return k;
+	return numVertices >= 3 && numVertices <= 4;
 }
 
-
-int MeshExporter::getMtlOverrides(MapChannels &mapChannels)
+static void allocateOverrideMapChannel(MapChannel &mapChannel, const GEOPrimList &primList)
 {
-	int nMapChannels = 0;
+	int numMapVertex = 0;
 
-	std::unordered_set< std::string > mapChannelOverrides;
-	std::vector< PrimOverride > primOverrides;
-	if ( getPerPrimMtlOverrides(mapChannelOverrides, primOverrides) > 0) {
-		for (const std::string channelName : mapChannelOverrides ) {
-			if (mapChannels.count(channelName) > 0) {
-				// if map channel with this name already exists
-				// skip override
-				continue;
-			}
-
-			MapChannel &mapChannel = mapChannels[ channelName ];
-			// max number of different vertices in the channel is bounded by number of primitives
-			mapChannel.vertices = VRay::VUtils::VectorRefList(primList.size());
-			mapChannel.faces = VRay::VUtils::IntRefList(numFaces * 3);
-
-			int k = 0;
-			int faceVertIndex = 0;
-			for (const GEO_Primitive *prim : primList) {
-				PrimOverride &primOverride = primOverrides[k];
-				if ( primOverride.shopNode ) {
-					VRay::Vector &val = mapChannel.vertices[k];
-					// if the parameter is overriden by the primitive get the overriden value
-					if ( primOverride.mtlOverrides.count(channelName) ) {
-						val = primOverride.mtlOverrides[channelName];
+	for (const GEO_Primitive *prim : primList) {
+		switch (prim->getTypeId().get()) {
+			case GEO_PRIMPOLYSOUP: {
+				const GU_PrimPolySoup *polySoup = static_cast<const GU_PrimPolySoup*>(prim);
+				for (GEO_PrimPolySoup::PolygonIterator pst(*polySoup); !pst.atEnd(); ++pst) {
+					const GA_Size numVertices = pst.getVertexCount();
+					if (validNumVertices(numVertices)) {
+						numMapVertex += (numVertices == 4) ? 6 : 3;
 					}
-					// else if the parameter exists on the shop node get the default value from there
-					else if ( primOverride.shopNode->hasParm(channelName.c_str()) ) {
-						const PRM_Parm &prm = primOverride.shopNode->getParm(channelName.c_str());
-						for (int i = 0; i < prm.getVectorSize() && i < 3; ++i) {
-							fpreal fval = 0;
-							prm.getValue(m_context.getTime(), fval, i, m_context.getThread());
-							val[i] = fval;
-						}
-					}
-					// finally there is no such param on the shop node so leave a default value of Vector(0,0,0)
 				}
-
-				// TODO: need to refactor this:
-				// for all map channels "faces" will be same  array so no need to recalc it every time
-				switch (prim->getTypeId().get()) {
-					case GEO_PRIMPOLYSOUP:
-					{
-						const GU_PrimPolySoup *polySoup = static_cast<const GU_PrimPolySoup*>(prim);
-						for (GA_Size i = 0; i < polySoup->getPolygonCount(); ++i) {
-							GA_Size vCnt = std::max(polySoup->getPolygonSize(i) - 2, GA_Size(0));
-							for (GA_Size j = 0; j < vCnt; ++j) {
-								mapChannel.faces[faceVertIndex++] = k;
-								mapChannel.faces[faceVertIndex++] = k;
-								mapChannel.faces[faceVertIndex++] = k;
-							}
-						}
-						break;
-					}
-					case GEO_PRIMPOLY:
-					{
-						GA_Size vCnt = std::max(prim->getVertexCount() - 2, GA_Size(0));
-						for (GA_Size j = 0; j < vCnt; ++j) {
-							mapChannel.faces[faceVertIndex++] = k;
-							mapChannel.faces[faceVertIndex++] = k;
-							mapChannel.faces[faceVertIndex++] = k;
-						}
-						break;
-					}
-					default:
-						;
-				}
-
-				++k;
+				break;
 			}
-
-			++nMapChannels;
+			case GEO_PRIMPOLY: {
+				const GA_Size numVertices = prim->getVertexCount();
+				if (validNumVertices(numVertices)) {
+					numMapVertex += (numVertices == 4) ? 6 : 3;
+				}
+				break;
+			}
+			default: {
+				UT_ASSERT(false);
+			}
 		}
 	}
 
-	return nMapChannels;
+	mapChannel.vertices = VRay::VUtils::VectorRefList(numMapVertex);
+	mapChannel.faces = VRay::VUtils::IntRefList(numMapVertex);
+}
+
+static void setMapChannelOverrideData(const MtlOverrideItem &overrideItem, VRay::VUtils::VectorRefList &vertices, int v0, int v1, int v2)
+{
+	UT_ASSERT(v0 < vertices.count());
+	UT_ASSERT(v1 < vertices.count());
+	UT_ASSERT(v2 < vertices.count());
+
+	VRay::Vector &vert0 = vertices[v0];
+	VRay::Vector &vert1 = vertices[v1];
+	VRay::Vector &vert2 = vertices[v2];
+
+	switch (overrideItem.getType()) {
+		case MtlOverrideItem::itemTypeInt: {
+			vert0.set(static_cast<float>(overrideItem.valueInt),
+					  static_cast<float>(overrideItem.valueInt), 
+					  static_cast<float>(overrideItem.valueInt));
+			vert1.set(static_cast<float>(overrideItem.valueInt),
+					  static_cast<float>(overrideItem.valueInt), 
+					  static_cast<float>(overrideItem.valueInt));
+			vert2.set(static_cast<float>(overrideItem.valueInt),
+					  static_cast<float>(overrideItem.valueInt), 
+					  static_cast<float>(overrideItem.valueInt));
+			break;
+		}
+		case MtlOverrideItem::itemTypeDouble: {
+			vert0.set(static_cast<float>(overrideItem.valueDouble),
+					  static_cast<float>(overrideItem.valueDouble), 
+					  static_cast<float>(overrideItem.valueDouble));
+			vert1.set(static_cast<float>(overrideItem.valueDouble),
+					  static_cast<float>(overrideItem.valueDouble), 
+					  static_cast<float>(overrideItem.valueDouble));
+			vert2.set(static_cast<float>(overrideItem.valueDouble),
+					  static_cast<float>(overrideItem.valueDouble), 
+					  static_cast<float>(overrideItem.valueDouble));
+			break;
+		}
+		case MtlOverrideItem::itemTypeVector: {
+			vert0 = overrideItem.valueVector;
+			vert1 = overrideItem.valueVector;
+			vert2 = overrideItem.valueVector;
+			break;
+		}
+		default: {
+			vert0.makeZero();
+			vert1.makeZero();
+			vert2.makeZero();
+		}
+	}
+}
+
+static void setMapChannelOverrideFaceData(MapChannels &mapChannels, const GEOPrimList &primList, const int faceIndex, const MtlOverrideItems &overrides)
+{
+	const int v0 = (faceIndex * 3) + 0;
+	const int v1 = (faceIndex * 3) + 1;
+	const int v2 = (faceIndex * 3) + 2;
+
+	FOR_CONST_IT (MtlOverrideItems, oiIt, overrides) {
+		const tchar *paramName = oiIt.key();
+
+		MapChannel &mapChannel = mapChannels[paramName];
+
+		// Allocate data if not yet allocated
+		if (!mapChannel.vertices.count() || !mapChannel.faces.count()) {
+			allocateOverrideMapChannel(mapChannel, primList);
+		}
+
+		mapChannel.faces[v0] = v0;
+		mapChannel.faces[v1] = v1;
+		mapChannel.faces[v2] = v2;
+
+		setMapChannelOverrideData(oiIt.data(), mapChannel.vertices, v0, v1, v2);
+	}
+}
+
+void MeshExporter::getMtlOverrides(MapChannels &mapChannels)
+{
+	GA_ROHandleS materialStyleSheetHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GA_Names::material_stylesheet));
+	GA_ROHandleS materialPathHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GEO_STD_ATTRIB_MATERIAL));
+	GA_ROHandleS materialOverrideHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GA_Names::material_override));
+
+	const int hasStyleSheet = materialStyleSheetHndl.isValid();
+	const int hasMaterialOverrides = materialPathHndl.isValid() && materialOverrideHndl.isValid();
+	if (!(hasStyleSheet || hasMaterialOverrides)) {
+		return;
+	}
+
+	int faceIndex = 0;
+
+	for (const GEO_Primitive *prim : primList) {
+		const GA_Offset primOffset = prim->getMapOffset();
+
+		PrimMaterial primMaterial;
+
+		if (hasStyleSheet) {
+			const QString &styleSheet = materialStyleSheetHndl.get(primOffset);
+			if (!styleSheet.isEmpty()) {
+				primMaterial = processStyleSheet(styleSheet, ctx.getTime());
+			}
+		}
+		else if (hasMaterialOverrides) {
+			const UT_String &matPath = materialPathHndl.get(primOffset);
+			const UT_String &materialOverrides = materialOverrideHndl.get(primOffset);
+
+			if (!(matPath.equal("") && materialOverrides.equal(""))) {
+				primMaterial = processMaterialOverrides(matPath, materialOverrides, ctx.getTime());
+			}
+		}
+
+		switch (prim->getTypeId().get()) {
+			case GEO_PRIMPOLYSOUP: {
+				const GU_PrimPolySoup *polySoup = static_cast<const GU_PrimPolySoup*>(prim);
+				for (GEO_PrimPolySoup::PolygonIterator pst(*polySoup); !pst.atEnd(); ++pst) {
+					const GA_Size numVertices = pst.getVertexCount();
+					if (validNumVertices(numVertices)) {
+						if (primMaterial.isValid() && primMaterial.overrides.size()) {
+							setMapChannelOverrideFaceData(mapChannels, primList, faceIndex, primMaterial.overrides);
+						}
+						++faceIndex;
+						if (numVertices == 4) {
+							if (primMaterial.isValid() && primMaterial.overrides.size()) {
+								setMapChannelOverrideFaceData(mapChannels, primList, faceIndex, primMaterial.overrides);
+							}
+							++faceIndex;
+						}
+					}
+				}
+				break;
+			}
+			case GEO_PRIMPOLY: {
+				const GA_Size numVertices = prim->getVertexCount();
+				if (validNumVertices(numVertices)) {
+					if (primMaterial.isValid() && primMaterial.overrides.size()) {
+						setMapChannelOverrideFaceData(mapChannels, primList, faceIndex, primMaterial.overrides);
+					}
+					++faceIndex;
+					if (numVertices == 4) {
+						if (primMaterial.isValid() && primMaterial.overrides.size()) {
+							setMapChannelOverrideFaceData(mapChannels, primList, faceIndex, primMaterial.overrides);
+						}
+						++faceIndex;
+					}
+				}
+				break;
+			}
+			default: {
+				UT_ASSERT(false);
+			}
+		}
+	}
 }
 
 

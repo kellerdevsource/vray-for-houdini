@@ -217,7 +217,7 @@ void HoudiniVolumeExporter::exportPrimitives(const GU_Detail &detail, InstancerI
 	int velocityRes[3] = {0, 0, 0};
 
 
-	VRay::Transform nodeTm = VRayExporter::getObjTransform(&m_object, m_context);
+	VRay::Transform nodeTm = VRayExporter::getObjTransform(&m_object, ctx);
 	VRay::Transform phxTm;
 
 	VRay::VUtils::ColorRefList vel;
@@ -383,7 +383,7 @@ void HoudiniVolumeExporter::exportPrimitives(const GU_Detail &detail, InstancerI
 		}
 	}
 
-	OP_Node *matNode = m_exporter.getObjMaterial(&m_object, m_context.getTime());;
+	OP_Node *matNode = m_exporter.getObjMaterial(&m_object, ctx.getTime());;
 
 	OP_Node *phxSimNode = getPhoenixShaderSimNode(matNode);
 	if (!phxSimNode) {
@@ -431,7 +431,7 @@ void VolumeExporter::exportCache(const GA_Primitive &prim)
 	prim.getIntrinsic(prim.findIntrinsic("packedfulltransform"), xform);
 
 	auto primTm = utMatrixToVRayTransform(xform);
-	auto objTm = VRayExporter::getObjTransform(&m_object, m_context);
+	auto objTm = VRayExporter::getObjTransform(&m_object, ctx);
 	auto cachePlugin = m_exporter.exportPlugin(nodeDesc);
 
 	Attrs::PluginAttrs overrides;
@@ -445,10 +445,10 @@ void VolumeExporter::exportCache(const GA_Primitive &prim)
 	OP_Node *matNode = nullptr;
 	if (mtlpath.isValid()) {
 		const UT_String &path = mtlpath.get(prim.getMapOffset());
-		matNode = getOpNodeFromPath(path, m_context.getTime());
+		matNode = getOpNodeFromPath(path, ctx.getTime());
 	}
 	if (!matNode) {
-		matNode = m_exporter.getObjMaterial(&m_object, m_context.getTime());
+		matNode = m_exporter.getObjMaterial(&m_object, ctx.getTime());
 	}
 
 	OP_Node *phxSimNode = getPhoenixShaderSimNode(matNode);
