@@ -89,7 +89,7 @@ bool MeshExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc &pluginD
 
 	Log::getLog().info("Mesh: %i points", m_gdp->getNumPoints());
 
-	const std::string meshName = boost::str(Parm::FmtPrefixManual % "Geom" % std::to_string(m_gdp->getUniqueId()));
+	const std::string meshName = boost::str(Parm::FmtPrefixManual % "Geom" % std::to_string(gdp.getUniqueId()));
 	pluginDesc.pluginName = VRayExporter::getPluginName(&m_object, meshName);
 	pluginDesc.pluginID = "GeomStaticMesh";
 
