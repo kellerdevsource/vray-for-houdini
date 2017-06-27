@@ -14,11 +14,10 @@ using namespace VRayForHoudini;
 using namespace Parm;
 
 
-VOP::NodeBase::NodeBase(OP_Network *parent, const char *name, OP_Operator *entry):
-	OP::VRayNode(),
-	VOP_Node(parent, name, entry)
-{
-}
+VOP::NodeBase::NodeBase(OP_Network *parent, const char *name, OP_Operator *entry)
+	: VOP_Node(parent, name, entry)
+	, OP::VRayNode()
+{}
 
 VOP_Type VOP::NodeBase::getShaderType() const
 {
