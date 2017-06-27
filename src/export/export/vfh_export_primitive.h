@@ -116,7 +116,7 @@ protected:
 	/// @shop - pointer to the SHOP node containing the sim properties
 	/// @overrideAttrs - list of attributes that need to be overriden in the sim plugin, e.g. node_transform
 	/// @cacheName - the name of the PhxShaderCache for the 'cache' property
-	void exportSim(SHOP_Node *shop, const Attrs::PluginAttrs &overrideAttrs, const std::string &cacheName);
+	void exportSim(OP_Node &phxSimNode, const Attrs::PluginAttrs &overrideAttrs, const std::string &cacheName);
 };
 
 /// Specialization for exporting Houdini's volumes as textures
