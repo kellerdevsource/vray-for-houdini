@@ -19,6 +19,7 @@
 
 #include <GEO/GEO_Primitive.h>
 #include <GU/GU_Detail.h>
+#include <GU/GU_PrimSphere.h>
 #include <OP/OP_Bundle.h>
 #include <GA/GA_Types.h>
 #include <GA/GA_Names.h>
@@ -682,6 +683,48 @@ VRay::Plugin GeometryExporter::exportDetail(const GU_Detail &gdp)
 		HoudiniVolumeExporter hVoldExp(objNode, ctx, pluginExporter);
 		hVoldExp.exportPrimitives(gdp, instancerItems);
 #endif
+		// "Runtime" primitives.
+		// Currently only sphere
+		if (gdp.containsPrimitiveType(GEO_PRIMSPHERE)) {
+			for (GA_Iterator jt(gdp.getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
+				const GEO_Primitive *prim = gdp.getGEOPrimitive(*jt);
+				if (prim->getTypeId() == GEO_PRIMSPHERE) {
+					const GU_PrimSphere *primSphere = UTverify_cast<const GU_PrimSphere*>(prim);
+					if (primSphere) {
+						const uintptr_t primKey = reinterpret_cast<uintptr_t>(primSphere);
+
+						VRay::Plugin fromSphere;
+
+						PrimPluginCache::iterator pIt = primPluginCache.find(primKey);
+						if (pIt != primPluginCache.end()) {
+							fromSphere = pIt.data();
+						}
+						else {
+							Attrs::PluginDesc geomSphere(VRayExporter::getPluginName(objNode, "GeomSphere"),
+														 "GeomSphere");
+							geomSphere.addAttribute(Attrs::PluginAttr("radius", 1.0));
+							geomSphere.addAttribute(Attrs::PluginAttr("subdivs", 8));
+
+							fromSphere = pluginExporter.exportPlugin(geomSphere);
+
+							primPluginCache.insert(primKey, fromSphere);
+						}
+
+						if (fromSphere) {
+							UT_Matrix4 fullxform;
+							primSphere->getTransform4(fullxform);
+
+							InstancerItem item;
+							item.geometry = fromSphere;
+							item.tm = utMatrixToVRayTransform(fullxform);
+
+							instancerItems += item;
+						}
+					}
+				}
+			}
+		}
+
 		VRay::Plugin fromPoly = exportPolyMesh(gdp);
 		if (fromPoly) {
 			instancerItems += InstancerItem(fromPoly);
@@ -713,7 +756,7 @@ VRay::Plugin GeometryExporter::exportDetail(const GU_Detail &gdp)
 
 					InstancerItem item;
 					item.geometry = fromPacked;
-					item.tm = VRayExporter::Matrix4ToTransform(fullxform);
+					item.tm = utMatrixToVRayTransform(fullxform);
 
 					if (objectIdHndl.isValid()) {
 						item.objectID = objectIdHndl.get(primOffset);
