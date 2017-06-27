@@ -17,11 +17,10 @@
 
 #include <systemstuff.h>
 
-/// Returns OP_Node from path.
+/// Expands OP_Node path.
 /// @param path Path. May be changed if path has "op:/" syntax.
 /// @param t Time.
-/// @returns OP_Node instance or NULL.
-FORCEINLINE OP_Node *getOpNodeFromPath(UT_String &path, fpreal t=0.0)
+FORCEINLINE void expandOpNodePath(UT_String &path, fpreal t=0.0)
 {
 	if (path.startsWith(OPREF_PREFIX)) {
 		int op_id = 0;
@@ -29,7 +28,15 @@ FORCEINLINE OP_Node *getOpNodeFromPath(UT_String &path, fpreal t=0.0)
 
 		OPgetDirector()->evalOpPathString(path, 0, 0, t, op_id, op_time);
 	}
+}
 
+/// Returns OP_Node from path.
+/// @param path Path. May be changed if path has "op:/" syntax.
+/// @param t Time.
+/// @returns OP_Node instance or NULL.
+FORCEINLINE OP_Node *getOpNodeFromPath(UT_String &path, fpreal t=0.0)
+{
+	expandOpNodePath(path, t);
 	return OPgetDirector()->findNode(path.buffer());
 }
 

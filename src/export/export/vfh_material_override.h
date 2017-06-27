@@ -13,9 +13,12 @@
 
 #include "vfh_attr_utils.h"
 
+#include <hash_map.h>
 #include <unordered_set>
 
 namespace VRayForHoudini {
+
+class VRayExporter;
 
 /// SHOPHasher is a helper structure to generate material IDs when
 /// combining several V-Ray materials into MtlMulti.
@@ -74,6 +77,52 @@ struct SHOPHasher
 
 /// Set of V-Ray shop materials to be combined into a single MtlMulti
 typedef std::unordered_set<UT_String , SHOPHasher> SHOPList;
+
+struct MtlOverrideItem {
+	enum MtlOverrideItemType {
+		itemTypeNone = 0,
+		itemTypeInt,
+		itemTypeDouble,
+		itemTypeVector,
+		itemTypeString,
+	};
+
+	MtlOverrideItem()
+		: type(itemTypeNone)
+		, valueInt(0)
+		, valueDouble(0.0)
+		, valueVector(0.0f, 0.0f, 0.0f)
+	{}
+
+	/// Sets override value type.
+	void setType(MtlOverrideItemType value) { type = value; }
+
+	/// Returns override value type.
+	MtlOverrideItemType getType() const { return type; }
+
+	MtlOverrideItemType type;
+
+	exint valueInt;
+	fpreal valueDouble;
+	VRay::Vector valueVector;
+	QString valueString;
+};
+
+typedef VUtils::HashMap<MtlOverrideItem> MtlOverrideItems;
+
+struct PrimMaterial {
+	PrimMaterial()
+		: matNode(nullptr)
+	{}
+
+	bool isValid() const {return !!matNode; }
+
+	OP_Node *matNode;
+	MtlOverrideItems overrides;
+};
+
+PrimMaterial processStyleSheet(const QString &styleSheet, fpreal t);
+PrimMaterial processMaterialOverrides(const UT_String &matPath, const UT_String &materialOverrides, fpreal t);
 
 } // namespace VRayForHoudini
 
