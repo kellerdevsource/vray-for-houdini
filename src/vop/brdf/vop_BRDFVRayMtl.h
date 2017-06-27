@@ -13,20 +13,26 @@
 
 #include "vop_node_base.h"
 
-class BRDFVRayMtl: 
-	public VRayForHoudini::VOP::NodeBase {
+namespace VRayForHoudini {
+
+class BRDFVRayMtl
+	: public VOP::NodeBase
+{
 public: 
-	BRDFVRayMtl(OP_Network *parent, const char *name, OP_Operator *entry):NodeBase(parent, name, entry) {}
+	BRDFVRayMtl(OP_Network *parent, const char *name, OP_Operator *entry)
+		: NodeBase(parent, name, entry)
+	{}
 	virtual ~BRDFVRayMtl() {} 
 
-	virtual PluginResult asPluginDesc(VRayForHoudini::Attrs::PluginDesc &pluginDesc, VRayForHoudini::VRayExporter &exporter, VRayForHoudini::ExportContext *parentContext=nullptr) VRAY_OVERRIDE;
-protected: 
-	virtual void setPluginType() VRAY_OVERRIDE { 
-		pluginType = "BRDF"; 
+	PluginResult asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext=nullptr) VRAY_OVERRIDE;
+
+protected:
+	void setPluginType() VRAY_OVERRIDE { 
+		pluginType = VRayPluginType::BRDF; 
 		pluginID   = "BRDFVRayMtl"; 
 	} 
-
-
 };
 
-#endif
+} // VRayForHoudini
+
+#endif // VRAY_FOR_HOUDINI_VOP_NODE_BRDF_VRAYMTL_H
