@@ -22,7 +22,7 @@ public:
 	virtual PluginResult asPluginDesc(VRayForHoudini::Attrs::PluginDesc &pluginDesc, VRayForHoudini::VRayExporter &exporter, VRayForHoudini::ExportContext *parentContext=nullptr) VRAY_OVERRIDE;
 protected: 
 	virtual void setPluginType() VRAY_OVERRIDE { 
-		pluginType = "BRDF"; 
+		pluginType = VRayForHoudini::VRayPluginType::BRDF;
 		pluginID   = "BRDFVRayMtl"; 
 	} 
 
