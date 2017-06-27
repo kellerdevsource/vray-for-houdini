@@ -294,6 +294,7 @@ VRay::Transform VRayExporter::exportTransformVop(VOP_Node &vop_node, ExportConte
 void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDesc, VOP_Node *vopNode, ExportContext *parentContext)
 {
 	const Parm::VRayPluginInfo *pluginInfo = Parm::GetVRayPluginInfo( pluginDesc.pluginID );
+	
 	if (NOT(pluginInfo)) {
 		Log::getLog().error("Node \"%s\": Plugin \"%s\" description is not found!",
 							vopNode->getName().buffer(), pluginDesc.pluginID.c_str());
@@ -315,6 +316,7 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 		}
 
 		VRay::Plugin plugin_value = exportConnectedVop(vopNode, attrName.c_str(), parentContext);
+
 		if (NOT(plugin_value)) {
 
 			if (  NOT(attrDesc.linked_only)
@@ -347,6 +349,18 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 		}
 
 		if (plugin_value) {
+			//if plugin value is type brdf insert single
+			const Parm::VRayPluginInfo *childPluginInfo = Parm::GetVRayPluginInfo( plugin_value.getType() );
+
+			if(childPluginInfo->pluginType == Parm::PluginType::PluginTypeBRDF 
+					&& pluginDesc.pluginID != "MtlSingleBRDF" 
+					&& pluginInfo->pluginType == Parm::PluginType::PluginTypeMaterial)
+			{
+				Attrs::PluginDesc mtlPluginDesc(VRayExporter::getPluginName(vopNode, "Mtl"), "MtlSingleBRDF");
+				mtlPluginDesc.addAttribute(Attrs::PluginAttr("brdf", plugin_value));
+				plugin_value = exportPlugin(mtlPluginDesc);
+			}
+
 			Log::getLog().info("  Setting plugin value: %s = %s",
 							   attrName.c_str(), plugin_value.getName());
 
