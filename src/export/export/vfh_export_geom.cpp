@@ -222,124 +222,6 @@ int ObjectExporter::isNodePhantom() const
 	return bundle->contains(&objNode, false);
 }
 
-#if 0
-int GeometryExporter::_exportNodes() {
-	SOP_Node *renderSOP = m_objNode.getRenderSopPtr();
-	if (NOT(renderSOP)) {
-		// we don't have a valid render SOP
-		// nothing else to do
-		return 0;
-	}
-
-	GU_DetailHandleAutoReadLock gdl(renderSOP->getCookedGeoHandle(m_context));
-	if (NOT(gdl)) {
-		// we don't have a valid render geometry gdp
-		// nothing else to do
-		return 0;
-	}
-
-	// geometry is exported in 2 steps:
-	// 1. we traverse the render gdp, export the geometry that
-	//    we can handle and wrap it in a Node  plugin description
-	//    which is accumulated into m_detailToPluginDesc map
-	// 2. we get the list of Nodes generated for the render gdp
-	//    and adjust properties like transform, material,
-	//    user_attributes, etc.
-
-	m_myDetailID = gdl.handle().hash();
-	const GU_Detail &gdp = *gdl.getGdp();
-
-	if (renderSOP->getOperator()->getName().startsWith("VRayNode")
-		&& !renderSOP->getOperator()->getName().startsWith("VRayNodePhxShaderCache")
-		&& !renderSOP->getOperator()->getName().startsWith("VRayNodeVRayProxy")) {
-		// V-Ray plane SOP and V-Ray scene SOP are still implemented such as
-		// they expect to be final SOP in the SOP network
-		// TODO: need to fix this in future
-		exportVRaySOP(*renderSOP, m_detailToPluginDesc[m_myDetailID]);
-	} else {
-		// handle geometry export from the render gdp
-		exportDetail(*renderSOP, gdl, m_detailToPluginDesc[m_myDetailID]);
-	}
-
-	// get the OBJ transform
-	VRay::Transform tm = VRayExporter::getObjTransform(&m_objNode, m_context);
-
-	// format material overrides specified on the object as user_attributes
-	UT_String userAttrs;
-	getSHOPOverridesAsUserAttributes(userAttrs);
-
-	// handle export of material for the object node
-	VRay::Plugin mtl;
-	if (m_exportGeometry) {
-		mtl = exportMaterial();
-	}
-
-	// adjust Node parameters
-	int i = 0;
-	PluginDescList &pluginList = m_detailToPluginDesc.at(m_myDetailID);
-	for (Attrs::PluginDesc &nodeDesc : pluginList) {
-		// TODO: need to figure out how to generate names for Node plugins
-		//       comming from different primitives
-		if (nodeDesc.pluginName != "") {
-			continue;
-		}
-		nodeDesc.pluginName = VRayExporter::getPluginName(&m_objNode, boost::str(Parm::FmtPrefixManual % "Node" % std::to_string(i++)));
-
-		Attrs::PluginAttr *attr = nullptr;
-
-		attr = nodeDesc.get("transform");
-		if (NOT(attr)) {
-			nodeDesc.addAttribute(Attrs::PluginAttr("transform", tm));
-		} else {
-			attr->paramValue.valTransform = tm * attr->paramValue.valTransform;
-		}
-
-		nodeDesc.addAttribute(Attrs::PluginAttr("visible", isNodeVisible()));
-
-		attr = nodeDesc.get("geometry");
-		if (attr) {
-			VRay::Plugin geomDispl = m_pluginExporter.exportDisplacement(&m_objNode, attr->paramValue.valPlugin);
-			if (geomDispl) {
-				attr->paramValue.valPlugin = geomDispl;
-			}
-		}
-
-		attr = nodeDesc.get("material");
-		if (NOT(attr)) {
-			// add the material only if it hasn't been specified yet
-			if (mtl) {
-				nodeDesc.addAttribute(Attrs::PluginAttr("material", mtl));
-			}
-
-			attr = nodeDesc.get(VFH_ATTR_MATERIAL_ID);
-			if (NOT(attr)) {
-				// pass material overrides with "user_attributes"
-				if (userAttrs.isstring()) {
-					nodeDesc.addAttribute(Attrs::PluginAttr("user_attributes", userAttrs.toStdString()));
-				}
-			}
-		}
-
-		static const char parmObjectID[] = "objectID";
-		PRM_Parm *prmObjectID = m_objNode.getParmList()->getParmPtr(parmObjectID);
-		if (prmObjectID) {
-			const int objectID = m_objNode.evalInt(parmObjectID, 0, m_context.getTime());
-			nodeDesc.addAttribute(Attrs::PluginAttr("objectID", objectID));
-		}
-
-		// TODO: adjust other Node attrs
-	}
-
-	return pluginList.size();
-}
-#endif
-
-
-VRay::Plugin GeometryExporter::exportMaterial()
-{
-	return pluginExporter.exportDefaultMaterial();
-}
-
 int GeometryExporter::getSHOPOverridesAsUserAttributes(UT_String &userAttrs) const {
 	int nOverrides = 0;
 
@@ -386,7 +268,6 @@ int GeometryExporter::getSHOPOverridesAsUserAttributes(UT_String &userAttrs) con
 
 	return nOverrides;
 }
-
 
 VRay::Plugin GeometryExporter::exportVRaySOP(SOP_Node &sop)
 {
@@ -986,7 +867,7 @@ int GeometryExporter::isInstanceNode(const OP_Node &node)
 	return node.getOperator()->getName().equal("instance");	
 }
 
-int GeometryExporter::isPointInstancer(const GU_Detail &gdp) const
+int GeometryExporter::isPointInstancer(const GU_Detail &gdp)
 {
 	const GA_ROHandleS instancePathHndl = getAttribInstancePath(gdp);
 	return instancePathHndl.isValid();
@@ -1336,8 +1217,10 @@ VRay::Plugin GeometryExporter::exportPointInstancer(const GU_Detail &gdp, int is
 		// TODO: Export non-vector attributes.
 		gdp.getAttributes().matchAttributes(GEOgetV3AttribFilter(), GA_ATTRIB_POINT, attrList);
 		for (const GA_Attribute *attr : attrList) {
-			if (attr &&
-				attr->getName() != GEO_STD_ATTRIB_POSITION &&
+			if (!attr) {
+				continue;
+			}
+			if (attr->getName() != GEO_STD_ATTRIB_POSITION &&
 				attr->getName() != GEO_STD_ATTRIB_NORMAL &&
 				attr->getName() != GEO_STD_ATTRIB_VELOCITY)
 			{
@@ -1472,24 +1355,24 @@ VRay::Plugin ObjectExporter::exportNode()
 	VRay::Plugin material = pluginExporter.exportMaterial(matNode);
 
 	if (isNodeMatte()) {
-		Attrs::PluginDesc mtlWrapperDesc(VRayExporter::getPluginName(&objNode, "MtlWrapper"),
-										 "MtlWrapper");
+		PluginDesc mtlWrapperDesc(VRayExporter::getPluginName(&objNode, "MtlWrapper"),
+								  "MtlWrapper");
 
-		mtlWrapperDesc.addAttribute(Attrs::PluginAttr("base_material", material));
-		mtlWrapperDesc.addAttribute(Attrs::PluginAttr("matte_surface", 1));
-		mtlWrapperDesc.addAttribute(Attrs::PluginAttr("alpha_contribution", -1));
-		mtlWrapperDesc.addAttribute(Attrs::PluginAttr("affect_alpha", 1));
-		mtlWrapperDesc.addAttribute(Attrs::PluginAttr("reflection_amount", 0));
-		mtlWrapperDesc.addAttribute(Attrs::PluginAttr("refraction_amount", 0));
+		mtlWrapperDesc.addAttribute(PluginAttr("base_material", material));
+		mtlWrapperDesc.addAttribute(PluginAttr("matte_surface", 1));
+		mtlWrapperDesc.addAttribute(PluginAttr("alpha_contribution", -1));
+		mtlWrapperDesc.addAttribute(PluginAttr("affect_alpha", 1));
+		mtlWrapperDesc.addAttribute(PluginAttr("reflection_amount", 0));
+		mtlWrapperDesc.addAttribute(PluginAttr("refraction_amount", 0));
 
 		material = pluginExporter.exportPlugin(mtlWrapperDesc);
 	}
 
 	if (isNodePhantom()) {
-		Attrs::PluginDesc mtlStatsDesc(VRayExporter::getPluginName(&objNode, "MtlRenderStats"),
-									   "MtlRenderStats");
-		mtlStatsDesc.addAttribute(Attrs::PluginAttr("base_mtl", material));
-		mtlStatsDesc.addAttribute(Attrs::PluginAttr("camera_visibility", 0));
+		PluginDesc mtlStatsDesc(VRayExporter::getPluginName(&objNode, "MtlRenderStats"),
+								"MtlRenderStats");
+		mtlStatsDesc.addAttribute(PluginAttr("base_mtl", material));
+		mtlStatsDesc.addAttribute(PluginAttr("camera_visibility", 0));
 
 		material = pluginExporter.exportPlugin(mtlStatsDesc);
 	}

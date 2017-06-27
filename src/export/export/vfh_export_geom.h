@@ -143,16 +143,6 @@ private:
 	/// @returns Number of plugin descriptions added to pluginList.
 	int exportRenderPoints(const GU_Detail &gdp, VMRenderPoints renderPoints);
 
-	/// Helper function to export the material for this OBJ node.
-	/// The material from OBJ node 'shoppath' parameter together with
-	/// V-Ray materials specified on per primitive basis are collected
-	/// during traversal and export of geometry. These are then combined
-	/// into single MtlMulti material which is assigned to all the Nodes.
-	/// Node::user_attributes is utilized to specify the correct material
-	/// id and index the correct material for the specific Node.
-	/// @retval the material V-Ray plugin
-	VRay::Plugin exportMaterial();
-
 	/// Helper function to format material overrides specified on the object node
 	/// as Node::user_attributes
 	/// @param userAttrs[out] - string with formatted material overrides
@@ -182,8 +172,7 @@ private:
 
 	/// Returns true if object is a point intancer.
 	/// @param gdp Detail.
-	int isPointInstancer(const GU_Detail &gdp) const;
-
+	static int isPointInstancer(const GU_Detail &gdp);
 	static int isInstanceNode(const OP_Node &node);
 
 	/// Returns point particles mode.
