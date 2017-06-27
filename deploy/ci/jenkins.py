@@ -75,6 +75,8 @@ if __name__ == '__main__':
             cmake.append('-DMSVC_VERSION=1700')
     elif utils.getPlatform() in {'linux'}:
         cmake.append('-DWITH_STATIC_LIBC=ON')
+        cmake.append('-DCMAKE_CXX_COMPILER=g++482')
+        cmake.append('-DCMAKE_C_COMPILER=gcc482')
 
     cmake.append('-DSDK_PATH=%s' % utils.p(config.VFH_SDK_DIR))
     cmake.append('-DHOUDINI_VERSION=%s' % config.HOUDINI_VERSION)
