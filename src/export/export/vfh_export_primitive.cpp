@@ -245,7 +245,7 @@ void HoudiniVolumeExporter::exportPrimitives(const GU_Detail &detail, InstancerI
 		// phxTm matrix to convert from voxel space to object local space
 		// Voxel space is defined to be the 2-radius cube from (-1,-1,-1) to (1,1,1) centered at (0,0,0)
 		// Need to scale uniformly by 2 as for TexMayaFluid seems to span from (0,0,0) to (1,1,1)
-		phxTm = VRayExporter::Matrix4ToTransform(m4);
+		phxTm = utMatrixToVRayTransform(m4);
 		phxTm.offset.set(center.x(), center.y(), center.z());
 		phxTm.matrix.v0.x *= 2.0f;
 		phxTm.matrix.v1.y *= 2.0f;
@@ -399,7 +399,7 @@ void VolumeExporter::exportCache(const GA_Primitive &prim)
 	UT_Matrix4 xform;
 	prim.getIntrinsic(prim.findIntrinsic("packedfulltransform"), xform);
 
-	auto primTm = VRayExporter::Matrix4ToTransform(UT_Matrix4D(xform));
+	auto primTm = utMatrixToVRayTransform(xform);
 	auto objTm = VRayExporter::getObjTransform(&m_object, m_context);
 	auto cachePlugin = m_exporter.exportPlugin(nodeDesc);
 
