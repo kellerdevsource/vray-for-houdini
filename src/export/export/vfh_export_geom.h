@@ -47,20 +47,6 @@ public:
 	GeometryExporter(ObjectExporter &objExporter, OBJ_Node &objNode, VRayExporter &pluginExporter);
 	~GeometryExporter() { }
 
-	/// Test if the current geometry node is visible i.e.
-	/// its display flag is on or it is forced to render regardless
-	/// of its display state (when set as forced geometry on the V-Ray ROP)
-	static int isNodeVisible(VRayRendererNode &rop, OBJ_Node &node);
-	int isNodeVisible() const;
-
-	/// Test if the current geometry node should be rendered
-	/// as matte object (when set as matte geometry on the V-Ray ROP)
-	int isNodeMatte() const;
-
-	/// Test if the current geometry node should be rendered
-	/// as phantom object (when set as phantom geometry on the V-Ray ROP)
-	int isNodePhantom() const;
-
 	/// This is set by the IPR OBJ callbacks to signal the exporter of
 	/// whether to re-export the actual geometry (i.e. something on the
 	/// geometry plugins has changed) or only update corresponding Nodes'
@@ -232,6 +218,24 @@ public:
 	ObjectExporter(VRayExporter &pluginExporter, OBJ_Node &objNode);
 	
 	void setExportGeometry(int value) { exportGeometry = value; }
+
+	/// Test if the current geometry node is visible i.e.
+	/// its display flag is on or it is forced to render regardless
+	/// of its display state (when set as forced geometry on the V-Ray ROP)
+	static int isNodeVisible(VRayRendererNode &rop, OBJ_Node &node);
+
+	/// Test if the current geometry node is visible i.e.
+	/// its display flag is on or it is forced to render regardless
+	/// of its display state (when set as forced geometry on the V-Ray ROP)
+	int isNodeVisible() const;
+
+	/// Test if the current geometry node should be rendered
+	/// as matte object (when set as matte geometry on the V-Ray ROP)
+	int isNodeMatte() const;
+
+	/// Test if the current geometry node should be rendered
+	/// as phantom object (when set as phantom geometry on the V-Ray ROP)
+	int isNodePhantom() const;
 
 	VRay::Plugin exportNode();
 

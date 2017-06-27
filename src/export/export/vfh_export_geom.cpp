@@ -216,7 +216,7 @@ bool GeometryExporter::hasSubdivApplied() const
 	return res;
 }
 
-int GeometryExporter::isNodeVisible(VRayRendererNode &rop, OBJ_Node &node)
+int ObjectExporter::isNodeVisible(VRayRendererNode &rop, OBJ_Node &node)
 {
 	OP_Bundle *bundle = rop.getForcedGeometryBundle();
 	if (!bundle) {
@@ -225,12 +225,12 @@ int GeometryExporter::isNodeVisible(VRayRendererNode &rop, OBJ_Node &node)
 	return bundle->contains(&node, false) || node.getVisible();
 }
 
-int GeometryExporter::isNodeVisible() const
+int ObjectExporter::isNodeVisible() const
 {
 	return isNodeVisible(pluginExporter.getRop(), objNode);
 }
 
-int GeometryExporter::isNodeMatte() const
+int ObjectExporter::isNodeMatte() const
 {
 	VRayRendererNode &rop = pluginExporter.getRop();
 	OP_Bundle *bundle = rop.getMatteGeometryBundle();
@@ -240,7 +240,7 @@ int GeometryExporter::isNodeMatte() const
 	return bundle->contains(&objNode, false);
 }
 
-int GeometryExporter::isNodePhantom() const
+int ObjectExporter::isNodePhantom() const
 {
 	VRayRendererNode &rop = pluginExporter.getRop();
 	OP_Bundle *bundle = rop.getPhantomGeometryBundle();
@@ -365,85 +365,7 @@ int GeometryExporter::_exportNodes() {
 
 VRay::Plugin GeometryExporter::exportMaterial()
 {
-#if 1
 	return pluginExporter.exportDefaultMaterial();
-#else
-	VRay::ValueList mtls_list;
-	VRay::IntList   ids_list;
-	mtls_list.reserve(m_shopList.size() + 1);
-	ids_list.reserve(m_shopList.size() + 1);
-
-	// object material is always exported with id 0
-	OP_Node *matNode = pluginExporter.getObjMaterial(&objNode, ctx.getTime());
-	if (matNode) {
-		mtls_list.emplace_back(pluginExporter.exportMaterial(matNode));
-		ids_list.emplace_back(0);
-	}
-	else {
-		mtls_list.emplace_back(pluginExporter.exportDefaultMaterial());
-		ids_list.emplace_back(0);
-	}
-
-	// generate id for each SHOP and add it to the material list
-	SHOPHasher hasher;
-	for (const UT_String &matPath : m_shopList) {
-		OP_Node *opNode = getOpNodeFromPath(matPath);
-		UT_ASSERT(opNode);
-		mtls_list.emplace_back(pluginExporter.exportMaterial(opNode));
-		ids_list.emplace_back(hasher(opNode));
-	}
-
-	// export single MtlMulti material
-	Attrs::PluginDesc mtlDesc;
-	mtlDesc.pluginID = "MtlMulti";
-	mtlDesc.pluginName = VRayExporter::getPluginName(&objNode, "Mtl");
-
-	mtlDesc.addAttribute(Attrs::PluginAttr("mtls_list", mtls_list));
-	mtlDesc.addAttribute(Attrs::PluginAttr("ids_list", ids_list));
-
-	Attrs::PluginDesc myMtlIDDesc;
-	myMtlIDDesc.pluginID = "TexUserScalar";
-	myMtlIDDesc.pluginName = VRayExporter::getPluginName(&objNode, "MtlID");
-
-	myMtlIDDesc.addAttribute(Attrs::PluginAttr("default_value", 0));
-	myMtlIDDesc.addAttribute(Attrs::PluginAttr("user_attribute", VFH_ATTR_MATERIAL_ID));
-
-	VRay::Plugin myMtlID = pluginExporter.exportPlugin(myMtlIDDesc);
-
-	mtlDesc.addAttribute(Attrs::PluginAttr("mtlid_gen_float", myMtlID, "scalar"));
-
-	VRay::Plugin mtl = pluginExporter.exportPlugin(mtlDesc);
-
-	// handle if object is forced as matte
-	if (isNodeMatte()) {
-		Attrs::PluginDesc mtlWrapperDesc;
-		mtlWrapperDesc.pluginID = "MtlWrapper";
-		mtlWrapperDesc.pluginName = VRayExporter::getPluginName(&objNode, "MtlWrapper");
-
-		mtlWrapperDesc.addAttribute(Attrs::PluginAttr("base_material", mtl));
-		mtlWrapperDesc.addAttribute(Attrs::PluginAttr("matte_surface", 1));
-		mtlWrapperDesc.addAttribute(Attrs::PluginAttr("alpha_contribution", -1));
-		mtlWrapperDesc.addAttribute(Attrs::PluginAttr("affect_alpha", 1));
-		mtlWrapperDesc.addAttribute(Attrs::PluginAttr("reflection_amount", 0));
-		mtlWrapperDesc.addAttribute(Attrs::PluginAttr("refraction_amount", 0));
-
-		mtl = pluginExporter.exportPlugin(mtlWrapperDesc);
-	}
-
-	// handle if object is forced as phantom
-	if (isNodePhantom()) {
-		Attrs::PluginDesc mtlStatsDesc;
-		mtlStatsDesc.pluginID = "MtlRenderStats";
-		mtlStatsDesc.pluginName = VRayExporter::getPluginName(&objNode, "MtlRenderStats");
-
-		mtlStatsDesc.addAttribute(Attrs::PluginAttr("base_mtl", mtl));
-		mtlStatsDesc.addAttribute(Attrs::PluginAttr("camera_visibility", 0));
-
-		mtl = pluginExporter.exportPlugin(mtlStatsDesc);
-	}
-
-	return mtl;
-#endif
 }
 
 int GeometryExporter::getSHOPOverridesAsUserAttributes(UT_String &userAttrs) const {
@@ -600,7 +522,7 @@ static void overrideItemsToUserAttributes(MtlOverrideItems &overrides, Instancer
 	}
 }
 
-static void parseStyleSheet(VRayExporter &pluginExporter, const QString &styleSheet, InstancerItem &instancerItem) {
+static void processStyleSheet(VRayExporter &pluginExporter, const QString &styleSheet, InstancerItem &instancerItem) {
 	QJsonParseError parserError;
 	QJsonDocument styleSheetParser = QJsonDocument::fromJson(styleSheet.toUtf8(), &parserError);
 
@@ -652,6 +574,9 @@ static void parseStyleSheet(VRayExporter &pluginExporter, const QString &styleSh
 										const tchar *parmName = paramName.toLocal8Bit().constData();
 										QJsonValue paramJsonValue = materialParameters[paramName];
 
+										// NOTES:
+										//  * Assuming current array value is a color
+										//  * Only 3 components will be used for vectors
 										if (paramJsonValue.isArray()) {
 											QJsonArray paramJsonVector = paramJsonValue.toArray();
 											if (paramJsonVector.size() >= 3) {
@@ -686,7 +611,7 @@ static void parseStyleSheet(VRayExporter &pluginExporter, const QString &styleSh
 	overrideItemsToUserAttributes(overrideItems, instancerItem);
 }
 
-static void parseMaterialOverrides(VRayExporter &pluginExporter,  OP_Node &matNode, const UT_String &materialOverrides, InstancerItem &instancerItem) {
+static void processMaterialOverrides(VRayExporter &pluginExporter,  OP_Node &matNode, const UT_String &materialOverrides, InstancerItem &instancerItem) {
 	SHOP_GeoOverride mtlOverride;
 	if (mtlOverride.load(materialOverrides)) {
 		UT_StringArray mtlOverrideKeys;
@@ -696,7 +621,7 @@ static void parseMaterialOverrides(VRayExporter &pluginExporter,  OP_Node &matNo
 
 		for (const UT_StringHolder &key : mtlOverrideKeys) {
 			// Channel for vector components.
-			// NOTE: We support only 3-component vectors for now.
+			// NOTE: Only 3 components will be used for vectors.
 			int channelIIdx = -1;
 
 			PRM_Parm *keyParm = matNode.getParmList()->getParmPtrFromChannel(key, &channelIIdx);
@@ -796,7 +721,7 @@ VRay::Plugin GeometryExporter::exportDetail(const GU_Detail &gdp)
 
 					if (materialStyleSheetHndl.isValid()) {
 						const QString &styleSheet = materialStyleSheetHndl.get(primOffset);
-						parseStyleSheet(pluginExporter, styleSheet, item);
+						processStyleSheet(pluginExporter, styleSheet, item);
 					}
 					else if (materialPathHndl.isValid()) {
 						const UT_String &matPath = materialPathHndl.get(primOffset);
@@ -809,7 +734,7 @@ VRay::Plugin GeometryExporter::exportDetail(const GU_Detail &gdp)
 								if (materialOverrideHndl.isValid()) {
 									const UT_String &materialOverrides = materialOverrideHndl.get(primOffset);
 
-									parseMaterialOverrides(pluginExporter, *matNode, materialOverrides, item);
+									processMaterialOverrides(pluginExporter, *matNode, materialOverrides, item);
 								}
 							}
 						}
@@ -926,72 +851,6 @@ VRay::Plugin GeometryExporter::exportPacked(const GU_PrimPacked &prim)
 	}
 
 	return primPlugin;
-
-#if 0
-	SHOPHasher hasher;
-	for (Attrs::PluginDesc &pluginDesc : primPluginList) {
-		// we assign material and user_attributes only if material
-		// has not been previously assigned. Existing VFH_ATTR_MATERIAL_ID
-		// property signals that the node already has material and overrides set
-		attr = nodeDesc.get(VFH_ATTR_MATERIAL_ID);
-		if (NOT(attr) && mtlpath.isValid()) {
-			const char *shoppath = mtlpath.get(prim.getMapOffset());
-			SHOP_Node *shopNode = OPgetDirector()->findSHOPNode(shoppath);
-			if (shopNode) {
-				// add material for export
-				m_shopList.insert(shoppath);
-
-				// pass material id with "user_attributes"
-				int shopID = hasher(shopNode);
-				nodeDesc.addAttribute(Attrs::PluginAttr(VFH_ATTR_MATERIAL_ID, shopID));
-
-				UT_String userAtrs;
-
-				userAtrs += VFH_ATTR_MATERIAL_ID;
-				userAtrs += "=";
-				userAtrs += std::to_string(shopID);
-				userAtrs += ";";
-
-				// pass material overrides with "user_attributes"
-				UT_Options mtlOverridesDict;
-				if (mtlo.isValid()
-					&& mtlOverridesDict.setFromPyDictionary(mtlo.get(prim.getMapOffset()))) {
-					while (mtlOverridesDict.getNumOptions() > 0) {
-						UT_String key(mtlOverridesDict.begin().name().c_str());
-
-						int chIdx = -1;
-						PRM_Parm *prm = shopNode->getParmList()->getParmPtrFromChannel(key, &chIdx);
-						if (NOT(prm)
-							|| NOT(prm->getType().isFloatType())) {
-							mtlOverridesDict.removeOption(key);
-							continue;
-						}
-
-						UT_StringArray prmValTokens;
-						for (int i = 0; i < prm->getVectorSize(); ++i) {
-							prm->getChannelToken(key, i);
-							fpreal chval = (mtlOverridesDict.hasOption(key)) ? mtlOverridesDict.getOptionF(key) : shopNode->evalFloat(prm, i, ctx.getTime());
-							prmValTokens.append(std::to_string(chval));
-							mtlOverridesDict.removeOption(key);
-						}
-
-						UT_String prmValToken;
-						prmValTokens.join(",", prmValToken);
-
-						userAtrs += prm->getToken();
-						userAtrs += "=";
-						userAtrs += prmValToken;
-						userAtrs += ";";
-					}
-				}
-
-				if (userAtrs.isstring()) {
-					nodeDesc.addAttribute(Attrs::PluginAttr("user_attributes", userAtrs.toStdString()));
-				}
-			}
-		}
-	}
-#endif
 }
 
 int GeometryExporter::getPrimPackedID(const GU_PrimPacked &prim)
@@ -1646,6 +1505,29 @@ VRay::Plugin ObjectExporter::exportNode()
 	OP_Node *matNode = objNode.getMaterialNode(cxt.getTime());
 	VRay::Plugin material = pluginExporter.exportMaterial(matNode);
 
+	if (isNodeMatte()) {
+		Attrs::PluginDesc mtlWrapperDesc(VRayExporter::getPluginName(&objNode, "MtlWrapper"),
+										 "MtlWrapper");
+
+		mtlWrapperDesc.addAttribute(Attrs::PluginAttr("base_material", material));
+		mtlWrapperDesc.addAttribute(Attrs::PluginAttr("matte_surface", 1));
+		mtlWrapperDesc.addAttribute(Attrs::PluginAttr("alpha_contribution", -1));
+		mtlWrapperDesc.addAttribute(Attrs::PluginAttr("affect_alpha", 1));
+		mtlWrapperDesc.addAttribute(Attrs::PluginAttr("reflection_amount", 0));
+		mtlWrapperDesc.addAttribute(Attrs::PluginAttr("refraction_amount", 0));
+
+		material = pluginExporter.exportPlugin(mtlWrapperDesc);
+	}
+
+	if (isNodePhantom()) {
+		Attrs::PluginDesc mtlStatsDesc(VRayExporter::getPluginName(&objNode, "MtlRenderStats"),
+									   "MtlRenderStats");
+		mtlStatsDesc.addAttribute(Attrs::PluginAttr("base_mtl", material));
+		mtlStatsDesc.addAttribute(Attrs::PluginAttr("camera_visibility", 0));
+
+		material = pluginExporter.exportPlugin(mtlStatsDesc);
+	}
+
 	const VRay::Transform transform = pluginExporter.getObjTransform(&objNode, cxt);
 
 	PluginDesc nodeDesc(VRayExporter::getPluginName(objNode, "Node"),"Node");
@@ -1654,7 +1536,7 @@ VRay::Plugin ObjectExporter::exportNode()
 	}
 	nodeDesc.add(PluginAttr("material", material));
 	nodeDesc.add(PluginAttr("transform", transform));
-	nodeDesc.add(PluginAttr("visible", GeometryExporter::isNodeVisible(pluginExporter.getRop(), objNode)));
+	nodeDesc.add(PluginAttr("visible", isNodeVisible()));
 
 	VRay::Plugin node = pluginExporter.exportPlugin(nodeDesc);
 	UT_ASSERT(node);
