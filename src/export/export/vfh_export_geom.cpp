@@ -851,7 +851,7 @@ void GeometryExporter::exportPrimitives(const GU_Detail &gdp, InstancerItems &in
 	}
 
 	// NOTE: Try caching hair data with m_gdp->getUniqueId().
-	VRay::Plugin fromHair = exportHair(gdp, polyPrims);
+	VRay::Plugin fromHair = exportHair(gdp, hairPrims);
 	if (fromHair) {
 		instancerItems += InstancerItem(fromHair);
 	}
