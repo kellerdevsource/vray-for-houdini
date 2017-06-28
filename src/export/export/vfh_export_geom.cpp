@@ -531,11 +531,13 @@ void GeometryExporter::exportPrimitives(const GU_Detail &gdp, InstancerItems &in
 			}
 			else if (materialPathHndl.isValid()) {
 				const UT_String &matPath = materialPathHndl.get(primOffset);
-				const UT_String &materialOverrides = materialOverrideHndl.get(primOffset);
 
-				if (!(matPath.equal("") && materialOverrides.equal(""))) {
-					primMaterial = processMaterialOverrides(matPath, materialOverrides, ctx.getTime());
+				UT_String materialOverrides;
+				if (materialOverrideHndl.isValid()) {
+					materialOverrideHndl.get(primOffset);
 				}
+
+				primMaterial = processMaterialOverrides(matPath, materialOverrides, ctx.getTime());
 			}
 
 			if (primMaterial.isValid()) {
