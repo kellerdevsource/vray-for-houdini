@@ -499,11 +499,13 @@ MapChannels& MeshExporter::getMapChannels()
 	return map_channels_data;
 }
 
+/// Returns true if face is a tri-face or quad-face.
 static int validNumVertices(const GA_Size numVertices)
 {
 	return numVertices >= 3 && numVertices <= 4;
 }
 
+/// Allocated map channel data.
 static void allocateOverrideMapChannel(MapChannel &mapChannel, const GEOPrimList &primList)
 {
 	int numMapVertex = 0;
@@ -536,6 +538,8 @@ static void allocateOverrideMapChannel(MapChannel &mapChannel, const GEOPrimList
 	mapChannel.vertices = VRay::VUtils::VectorRefList(numMapVertex);
 	mapChannel.faces = VRay::VUtils::IntRefList(numMapVertex);
 
+	// Set default value to NAN, this will be used to detect
+	// non-overridden faces.
 	for (int i = 0; i < numMapVertex; ++i) {
 		mapChannel.vertices[i].set(NAN, NAN, NAN);
 	}
@@ -590,13 +594,17 @@ static void setMapChannelOverrideData(const MtlOverrideItem &overrideItem, VRay:
 	}
 }
 
-static void setMapChannelOverrideFaceData(MapChannels &mapChannels, const GEOPrimList &primList, const int faceIndex, const MtlOverrideItems &overrides)
+static void setMapChannelOverrideFaceData(MapChannels &mapChannels, const GEOPrimList &primList, const int faceIndex, const PrimMaterial &primMaterial)
 {
+	if (!(primMaterial.isValid() && primMaterial.overrides.size())) {
+		return;
+	}
+
 	const int v0 = (faceIndex * 3) + 0;
 	const int v1 = (faceIndex * 3) + 1;
 	const int v2 = (faceIndex * 3) + 2;
 
-	FOR_CONST_IT (MtlOverrideItems, oiIt, overrides) {
+	FOR_CONST_IT (MtlOverrideItems, oiIt, primMaterial.overrides) {
 		const tchar *paramName = oiIt.key();
 
 		MapChannel &mapChannel = mapChannels[paramName];
@@ -605,6 +613,10 @@ static void setMapChannelOverrideFaceData(MapChannels &mapChannels, const GEOPri
 		if (!mapChannel.vertices.count() || !mapChannel.faces.count()) {
 			allocateOverrideMapChannel(mapChannel, primList);
 		}
+
+		UT_ASSERT(v0 < mapChannel.faces.count());
+		UT_ASSERT(v1 < mapChannel.faces.count());
+		UT_ASSERT(v2 < mapChannel.faces.count());
 
 		mapChannel.faces[v0] = v0;
 		mapChannel.faces[v1] = v1;
@@ -632,7 +644,6 @@ void MeshExporter::getMtlOverrides(MapChannels &mapChannels)
 		const GA_Offset primOffset = prim->getMapOffset();
 
 		PrimMaterial primMaterial;
-
 		if (hasStyleSheet) {
 			const QString &styleSheet = materialStyleSheetHndl.get(primOffset);
 			if (!styleSheet.isEmpty()) {
@@ -654,14 +665,10 @@ void MeshExporter::getMtlOverrides(MapChannels &mapChannels)
 				for (GEO_PrimPolySoup::PolygonIterator pst(*polySoup); !pst.atEnd(); ++pst) {
 					const GA_Size numVertices = pst.getVertexCount();
 					if (validNumVertices(numVertices)) {
-						if (primMaterial.isValid() && primMaterial.overrides.size()) {
-							setMapChannelOverrideFaceData(mapChannels, primList, faceIndex, primMaterial.overrides);
-						}
+						setMapChannelOverrideFaceData(mapChannels, primList, faceIndex, primMaterial);
 						++faceIndex;
 						if (numVertices == 4) {
-							if (primMaterial.isValid() && primMaterial.overrides.size()) {
-								setMapChannelOverrideFaceData(mapChannels, primList, faceIndex, primMaterial.overrides);
-							}
+							setMapChannelOverrideFaceData(mapChannels, primList, faceIndex, primMaterial);
 							++faceIndex;
 						}
 					}
@@ -671,14 +678,10 @@ void MeshExporter::getMtlOverrides(MapChannels &mapChannels)
 			case GEO_PRIMPOLY: {
 				const GA_Size numVertices = prim->getVertexCount();
 				if (validNumVertices(numVertices)) {
-					if (primMaterial.isValid() && primMaterial.overrides.size()) {
-						setMapChannelOverrideFaceData(mapChannels, primList, faceIndex, primMaterial.overrides);
-					}
+					setMapChannelOverrideFaceData(mapChannels, primList, faceIndex, primMaterial);
 					++faceIndex;
 					if (numVertices == 4) {
-						if (primMaterial.isValid() && primMaterial.overrides.size()) {
-							setMapChannelOverrideFaceData(mapChannels, primList, faceIndex, primMaterial.overrides);
-						}
+						setMapChannelOverrideFaceData(mapChannels, primList, faceIndex, primMaterial);
 						++faceIndex;
 					}
 				}
