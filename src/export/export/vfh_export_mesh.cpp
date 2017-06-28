@@ -19,6 +19,10 @@
 
 using namespace VRayForHoudini;
 
+/// This is a specific value for TexUserColor / TexUserScalar
+/// to specify that attribute is unset for a particular face.
+static const float almostMaxFloat = FLT_MAX / 2.0f;
+
 namespace {
 
 /// Helper funtion to copy data from Float3Tuple attribute into a vector list
@@ -538,10 +542,9 @@ static void allocateOverrideMapChannel(MapChannel &mapChannel, const GEOPrimList
 	mapChannel.vertices = VRay::VUtils::VectorRefList(numMapVertex);
 	mapChannel.faces = VRay::VUtils::IntRefList(numMapVertex);
 
-	// Set default value to NAN, this will be used to detect
-	// non-overridden faces.
 	for (int i = 0; i < numMapVertex; ++i) {
-		mapChannel.vertices[i].set(NAN, NAN, NAN);
+		mapChannel.vertices[i].set(almostMaxFloat, almostMaxFloat, almostMaxFloat);
+		mapChannel.faces[i] = i;
 	}
 }
 
