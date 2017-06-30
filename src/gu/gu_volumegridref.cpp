@@ -593,8 +593,6 @@ bool VRayVolumeGridRef::updateFrom(const UT_Options &options)
 	const float frameBefore = getCurrentCacheFrame();
 	const auto hashBefore = m_options.hash();
 
-	// flag set to true if parsed cache_path and the value for cache_path are the same - there are no
-	// expressions inside (like $F)
 	m_doFrameReplace = options.hasOption("literal_cache_path") && !options.getOptionB("literal_cache_path");
 	bool pathChange = false;
 
