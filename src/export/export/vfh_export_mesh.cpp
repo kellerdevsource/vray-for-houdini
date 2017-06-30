@@ -130,38 +130,6 @@ bool MeshExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc &pluginD
 	return true;
 }
 
-#if 0
-void MeshExporter::exportPrimitives(const GU_Detail &gdp, PrimitiveItems&)
-{
-	// Check if this is needed / could be reused
-
-	else {
-		// we don't want to reexport the geometry so just
-		// add new node to our list of nodes
-		pluginList.push_back(Attrs::PluginDesc("", "Node"));
-		Attrs::PluginDesc &nodeDesc = pluginList.back();
-
-		SHOPList shopList;
-		int nSHOPs = polyMeshExporter.getSHOPList(shopList);
-		if (nSHOPs > 0) {
-			nodeDesc.addAttribute(Attrs::PluginAttr(VFH_ATTR_MATERIAL_ID, -1));
-		}
-	}
-
-	// add new node to our list of nodes
-	plugins.push_back(Attrs::PluginDesc("", "Node"));
-	Attrs::PluginDesc &nodeDesc = plugins.back();
-	nodeDesc.addAttribute(Attrs::PluginAttr("geometry", geom));
-
-	// handle material
-	SHOPList shopList;
-	int nSHOPs = getSHOPList(shopList);
-	if (nSHOPs > 0) {
-
-	}
-}
-#endif
-
 VRay::VUtils::VectorRefList& MeshExporter::getVertices()
 {
 	if (vertices.size() <= 0) {
@@ -422,21 +390,19 @@ VRay::VUtils::IntRefList& MeshExporter::getFaceMtlIDs()
 		return face_mtlIDs;
 	}
 
-	const int nFaces = getNumFaces();
-	if (!nFaces) {
+	const int numFaces = getNumFaces();
+	if (!numFaces) {
 		return face_mtlIDs;
 	}
 
-	face_mtlIDs = VRay::VUtils::IntRefList(nFaces);
-
-	int faceIndex = 0;
-	SHOPHasher hasher;
+	face_mtlIDs = VRay::VUtils::IntRefList(numFaces);
 
 	typedef VUtils::HashMapKey<OP_Node*, VRay::Plugin> OpPluginCache;
 	typedef VUtils::HashMapKey<OP_Node*, int> MatOpToID;
 
 	MatOpToID matNameToID;
 	OpPluginCache matPluginCache;
+
 	int matIndex = 0;
 
 	OP_Node *objMatNode = objNode.getMaterialNode(ctx.getTime());
@@ -446,6 +412,7 @@ VRay::VUtils::IntRefList& MeshExporter::getFaceMtlIDs()
 		matNameToID.insert(objMatNode, matIndex++);
 	}
 
+	int faceIndex = 0;
 	for (const GEO_Primitive *prim : primList) {
 		const GA_Offset primOffset = prim->getMapOffset();
 
@@ -490,33 +457,30 @@ VRay::VUtils::IntRefList& MeshExporter::getFaceMtlIDs()
 		}
 
 		switch (prim->getTypeId().get()) {
-		case GEO_PRIMPOLYSOUP:
-		{
-			const GU_PrimPolySoup *polySoup = static_cast<const GU_PrimPolySoup*>(prim);
-			for (int i = 0; i < polySoup->getPolygonCount(); ++i) {
-				const GA_Size numVertices = std::max(polySoup->getPolygonSize(i) - 2, GA_Size(0));
+			case GEO_PRIMPOLYSOUP: {
+				const GU_PrimPolySoup *polySoup = static_cast<const GU_PrimPolySoup*>(prim);
+				for (int i = 0; i < polySoup->getPolygonCount(); ++i) {
+					const GA_Size numVertices = std::max(polySoup->getPolygonSize(i) - 2, GA_Size(0));
+					for (int j = 0; j < numVertices; ++j) {
+						face_mtlIDs[faceIndex++] = faceMtlID;
+					}
+				}
+				break;
+			}
+			case GEO_PRIMPOLY: {
+				const GA_Size numVertices = std::max(prim->getVertexCount() - 2, GA_Size(0));
 				for (int j = 0; j < numVertices; ++j) {
 					face_mtlIDs[faceIndex++] = faceMtlID;
 				}
+				break;
 			}
-			break;
-		}
-		case GEO_PRIMPOLY:
-		{
-			const GA_Size numVertices = std::max(prim->getVertexCount() - 2, GA_Size(0));
-			for (int j = 0; j < numVertices; ++j) {
-				face_mtlIDs[faceIndex++] = faceMtlID;
+			default: {
+				break;
 			}
-			break;
-		}
-		default:
-		{
-			break;
-		}
 		}
 	}
 
-	UT_ASSERT(faceIndex == nFaces);
+	UT_ASSERT(faceIndex == numFaces);
 
 	const int numMaterials = matNameToID.size();
 
