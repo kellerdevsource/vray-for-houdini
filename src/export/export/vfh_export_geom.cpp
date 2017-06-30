@@ -552,12 +552,14 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 
 			UT_String materialOverrides;
 			if (materialOverrideHndl.isValid()) {
-				materialOverrideHndl.get(primOffset);
+				materialOverrides = materialOverrideHndl.get(primOffset);
 			}
 
 			item.primMaterial = processMaterialOverrides(matPath, materialOverrides, ctx.getTime());
 		}
 
+		// Primitive attributes
+		// TODO: Float primitive attributes
 		addAttributesAsOverrides(primVecAttrList, primOffset, item.primMaterial.overrides);
 
 		if (isPackedPrim) {
@@ -573,6 +575,8 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 			}
 			item.tm = utMatrixToVRayTransform(tm4);
 
+			// Point attributes for packed instancing.
+			// TODO: Float point attributes
 			if (numPoints == numPrims) {
 				const GA_Offset pointOffset = gdp.pointOffset(primIndex);
 
