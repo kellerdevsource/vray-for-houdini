@@ -787,8 +787,9 @@ OP_Bundle* VRayRendererNode::getActiveLightsBundle()
 		abundle->getMembers(list);
 		for (exint i = 0; i < list.size(); ++i) {
 			OBJ_Node *light = list(i)->castToOBJNode();
-			if (   light
-				&& light->isObjectRenderable(m_tstart))
+			if (light &&
+				light->isObjectRenderable(m_tstart) &&
+				light->getVisible())
 			{
 				UT_StringHolder name = light->getFullPath();
 

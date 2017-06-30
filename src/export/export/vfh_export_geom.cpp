@@ -28,6 +28,7 @@
 #include <OP/OP_Bundle.h>
 #include <GA/GA_Types.h>
 #include <GA/GA_Names.h>
+#include "obj/obj_node_base.h"
 
 using namespace VRayForHoudini;
 
@@ -74,6 +75,8 @@ public:
 	GA_PrimitiveTypeId vrayProxyRef;
 	GA_PrimitiveTypeId vrayVolumeGridRef;
 } primPackedTypeIDs;
+
+static boost::format objGeomNameFmt("%s|%i@%s");
 
 static const char intrAlembicFilename[] = "abcfilename";
 static const char intrAlembicObjectPath[] = "abcobjectpath";
@@ -255,55 +258,6 @@ int ObjectExporter::isNodePhantom(OBJ_Node &objNode) const
 	return bundle->contains(&objNode, false);
 }
 
-#if 0
-int ObjectExporter::getSHOPOverridesAsUserAttributes(UT_String &userAttrs) const {
-	int nOverrides = 0;
-
-	OP_Node *shopNode = pluginExporter.getObjMaterial(&objNode, ctx.getTime());
-	if (!shopNode) {
-		return nOverrides;
-	}
-
-	// specify the id of the material to use
-	userAttrs += VFH_ATTR_MATERIAL_ID;
-	userAttrs += "=0;";
-
-	// handle shop overrides specified on the object node
-	const PRM_ParmList *shopParmList = shopNode->getParmList();
-	const PRM_ParmList *objParmList = objNode.getParmList();
-
-	for (int i = 0; i < shopParmList->getEntries(); ++i) {
-		const PRM_Parm *shopPrm = shopParmList->getParmPtr(i);
-		const PRM_Parm *objPrm = objParmList->getParmPtr(shopPrm->getToken());
-
-		if (objPrm
-			&& shopPrm->getType() == objPrm->getType()
-			&& objPrm->getType().isFloatType()
-			&& NOT(objPrm->getBypassFlag())) {
-			// we have parameter with matching name on the OBJ_Node
-			// => treat as override
-			UT_StringArray prmValTokens;
-			for (int i = 0; i < objPrm->getVectorSize(); ++i) {
-				fpreal chval = objNode.evalFloat(objPrm, i, ctx.getTime());
-				prmValTokens.append(std::to_string(chval));
-			}
-
-			UT_String prmValToken;
-			prmValTokens.join(",", prmValToken);
-
-			userAttrs += shopPrm->getToken();
-			userAttrs += "=";
-			userAttrs += prmValToken;
-			userAttrs += ";";
-
-			++nOverrides;
-		}
-	}
-
-	return nOverrides;
-}
-#endif
-
 VRay::Plugin ObjectExporter::exportVRaySOP(OBJ_Node&, SOP_Node &sop)
 {
 	if (!doExportGeometry) {
@@ -379,28 +333,28 @@ static void ensureDynamicGeometryForInstancer(VRay::Plugin plugin)
 	}
 }
 
-static void overrideItemsToUserAttributes(MtlOverrideItems &overrides, PrimitiveItem &instancerItem) {
-	FOR_IT (MtlOverrideItems, oiIt, overrides) {
+static void overrideItemsToUserAttributes(const MtlOverrideItems &overrides, QString &userAttributes) {
+	FOR_CONST_IT (MtlOverrideItems, oiIt, overrides) {
 		const tchar *overrideName = oiIt.key();
 		const MtlOverrideItem &overrideItem = oiIt.data();
 
 		switch (overrideItem.getType()) {
 			case MtlOverrideItem::itemTypeInt: {
-				instancerItem.userAttributes += QString::asprintf("%s=%lld;",
-															overrideName,
-															overrideItem.valueInt);
+				userAttributes += QString::asprintf("%s=%lld;",
+													overrideName,
+													overrideItem.valueInt);
 				break;
 			}
 			case MtlOverrideItem::itemTypeDouble: {
-				instancerItem.userAttributes += QString::asprintf("%s=%g",
-															overrideName,
-															overrideItem.valueDouble);
+				userAttributes += QString::asprintf("%s=%g",
+													overrideName,
+													overrideItem.valueDouble);
 				break;
 			}
 			case MtlOverrideItem::itemTypeVector: {
-				instancerItem.userAttributes += QString::asprintf("%s=%g,%g,%g;",
-															overrideName,
-															overrideItem.valueVector.x, overrideItem.valueVector.y, overrideItem.valueVector.z);
+				userAttributes += QString::asprintf("%s=%g,%g,%g;",
+													overrideName,
+													overrideItem.valueVector.x, overrideItem.valueVector.y, overrideItem.valueVector.z);
 				break;
 			}
 			default: {
@@ -490,13 +444,16 @@ static void addAttributesAsOverrides(const GEOAttribList &attrList, GA_Offset of
 		if (!attrHndl.isValid())
 			continue;
 
-		const UT_Vector3F &c = attrHndl.get(offs);
-
 		const char *attrName = attr->getName().buffer();
 
-		MtlOverrideItem &overrideItem = overrides[attrName];
-		overrideItem.setType(MtlOverrideItem::itemTypeVector);
-		overrideItem.valueVector = utVectorVRayVector(c);
+		MtlOverrideItems::iterator moIt = overrides.find(attrName);
+		if (moIt == overrides.end()) {
+			const UT_Vector3F &c = attrHndl.get(offs);
+
+			MtlOverrideItem &overrideItem = overrides[attrName];
+			overrideItem.setType(MtlOverrideItem::itemTypeVector);
+			overrideItem.valueVector = utVectorVRayVector(c);
+		}
 	}
 }
 
@@ -645,14 +602,6 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 		}
 
 		if (item.geometry) {
-			ensureDynamicGeometryForInstancer(item.geometry);
-
-			overrideItemsToUserAttributes(item.primMaterial.overrides, item);
-
-			if (item.primMaterial.matNode) {
-				item.material = pluginExporter.exportMaterial(item.primMaterial.matNode);
-			}
-
 			instancerItems += item;
 		}
 	}
@@ -662,7 +611,7 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 	exportHair(objNode, gdp, hairPrims, instancerItems);
 }
 
-VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_Detail &gdp, const PrimitiveItems &instancerItems)
+VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_Detail &gdp, const PrimitiveItems &instancerItems, const char *prefix)
 {
 	if (!instancerItems.count()) {
 		return VRay::Plugin();
@@ -681,24 +630,33 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_D
 	instances[instancesListIdx++].setDouble(0.0);
 
 	for (int i = 0; i < instancerItems.count(); ++i) {
-		const PrimitiveItem &instancerItem = instancerItems[i];
+		const PrimitiveItem &primItem = instancerItems[i];
 
-		uint32_t additional_params_flags = 0;
-		if (instancerItem.material) {
-			additional_params_flags |= useMaterial;
-		}
-		if (instancerItem.objectID != objectIdUndefined) {
-			additional_params_flags |= useObjectID;
-		}
-		if (instancerItem.userAttributes.length()) {
-			additional_params_flags |= useUserAttributes;
-		}
-		if (instancerItem.flags & PrimitiveItem::itemFlagsUseTime) {
-			// TODO: Utilize use_time_instancing.
-		}
+		ensureDynamicGeometryForInstancer(primItem.geometry);
+
+		QString userAttributes;
+		overrideItemsToUserAttributes(primItem.primMaterial.overrides, userAttributes);
 
 		// Instancer works only with Node plugins.
-		VRay::Plugin node = getNodeForInstancerGeometry(instancerItem.geometry, objMaterial);
+		VRay::Plugin node = getNodeForInstancerGeometry(primItem.geometry, objMaterial);
+		VRay::Plugin material;
+		if (primItem.primMaterial.matNode) {
+			material = pluginExporter.exportMaterial(primItem.primMaterial.matNode);
+		}
+
+		uint32_t additional_params_flags = 0;
+		if (material) {
+			additional_params_flags |= useMaterial;
+		}
+		if (primItem.objectID != objectIdUndefined) {
+			additional_params_flags |= useObjectID;
+		}
+		if (userAttributes.length()) {
+			additional_params_flags |= useUserAttributes;
+		}
+		if (primItem.flags & PrimitiveItem::itemFlagsUseTime) {
+			// TODO: Utilize use_time_instancing.
+		}
 
 		// Index + TM + VEL_TM + AdditionalParams + Node + AdditionalParamsMembers
 		const int itemSize = 5 + __popcnt(additional_params_flags);
@@ -706,26 +664,24 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_D
 		VRay::VUtils::ValueRefList item(itemSize);
 		int indexOffs = 0;
 		item[indexOffs++].setDouble(instanceIdx++);
-		item[indexOffs++].setTransform(instancerItem.tm);
+		item[indexOffs++].setTransform(primItem.tm);
 		item[indexOffs++].setTransform(VRay::Transform(0));
 		item[indexOffs++].setDouble(additional_params_flags);
 		if (additional_params_flags & useObjectID) {
-			item[indexOffs++].setDouble(instancerItem.objectID);
+			item[indexOffs++].setDouble(primItem.objectID);
 		}
 		if (additional_params_flags & useUserAttributes) {
-			item[indexOffs++].setString(instancerItem.userAttributes.toLocal8Bit().constData());
+			item[indexOffs++].setString(userAttributes.toLocal8Bit().constData());
 		}
 		if (additional_params_flags & useMaterial) {
-			item[indexOffs++].setPlugin(instancerItem.material);
+			item[indexOffs++].setPlugin(material);
 		}
 		item[indexOffs++].setPlugin(node);
 
 		instances[instancesListIdx++].setList(item);
 	}
 
-	static boost::format instancer2NameFmt("Instancer2|%i@%s");
-
-	Attrs::PluginDesc instancer2(boost::str(instancer2NameFmt % gdp.getUniqueId() % objNode.getName().buffer()),
+	Attrs::PluginDesc instancer2(boost::str(objGeomNameFmt % prefix % gdp.getUniqueId() % objNode.getName().buffer()),
 								 "Instancer2");
 	instancer2.addAttribute(Attrs::PluginAttr("instances", instances));
 	instancer2.addAttribute(Attrs::PluginAttr("use_additional_params", true));
@@ -751,7 +707,7 @@ VRay::Plugin ObjectExporter::exportDetail(OBJ_Node &objNode, const GU_Detail &gd
 		processPrimitives(objNode, gdp, instancerItems);
 	}
 
-	return exportDetailInstancer(objNode, gdp, instancerItems);
+	return exportDetailInstancer(objNode, gdp, instancerItems, "GeometryInstancer");
 }
 
 void ObjectExporter::exportHair(OBJ_Node &objNode, const GU_Detail &gdp, const GEOPrimList &primList, PrimitiveItems &instancerItems)
@@ -1228,32 +1184,34 @@ static VRay::Transform getPointInstanceTM(const GU_Detail &gdp, const PointInsta
 
 VRay::Plugin ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_Detail &gdp, int isInstanceNode)
 {
-	const GA_Size numPoints = gdp.getNumPoints();
-
-	PointInstanceAttrs pointInstanceAttrs(gdp);
+	PrimitiveItems instancerItems;
 
 	GA_ROHandleV3 velocityHndl(gdp.findAttribute(GA_ATTRIB_POINT, GEO_STD_ATTRIB_VELOCITY));
 
 	GA_ROHandleS instanceHndl(gdp.findAttribute(GA_ATTRIB_POINT, "instance"));
 	GA_ROHandleS instancePathHndl(gdp.findAttribute(GA_ATTRIB_POINT, "instancepath"));
-	GA_ROHandleS materialPathHndl(gdp.findAttribute(GA_ATTRIB_POINT, GEO_STD_ATTRIB_MATERIAL));
 
-	Attrs::PluginDesc instancer2(VRayExporter::getPluginName(objNode, "Instancer2"), "Instancer2");
+	GA_ROHandleS materialStyleSheetHndl(gdp.findAttribute(GA_ATTRIB_POINT, GA_Names::material_stylesheet));
+	GA_ROHandleS materialOverrideHndl(gdp.findAttribute(GA_ATTRIB_POINT, GA_Names::material_override));
+	GA_ROHandleS materialPathHndl(gdp.findAttribute(GA_ATTRIB_POINT, GA_Names::shop_materialpath));
 
-	// +1 because first element is time.
-	VRay::VUtils::ValueRefList instances(numPoints+1);
-	instances[0].setDouble(0.0);
+	GEOAttribList pointVecAttrList;
+	gdp.getAttributes().matchAttributes(GEOgetV3AttribFilter(), GA_ATTRIB_POINT, pointVecAttrList); 
+
+	PointInstanceAttrs pointInstanceAttrs(gdp);
+
+	const GA_Size numPoints = gdp.getNumPoints();
 
 	int validPointIdx = 0;
 	for (GA_Index i = 0; i < numPoints; ++i) {
-		const GA_Offset ptOff = gdp.pointOffset(i);
+		const GA_Offset pointOffset = gdp.pointOffset(i);
 
 		UT_String instanceObjectPath;
 		if (instanceHndl.isValid()) {
-			instanceObjectPath = instanceHndl.get(ptOff);
+			instanceObjectPath = instanceHndl.get(pointOffset);
 		}
 		else if (instancePathHndl.isValid()) {
-			instanceObjectPath = instancePathHndl.get(ptOff);
+			instanceObjectPath = instancePathHndl.get(pointOffset);
 		}
 		else if (isInstanceNode) {
 			objNode.evalString(instanceObjectPath, "instancepath", 0, ctx.getTime());
@@ -1266,108 +1224,36 @@ VRay::Plugin ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_De
 		OBJ_Node *instaceObjNode = CAST_OBJNODE(instaceOpNode);
 		UT_ASSERT_MSG(instaceObjNode, "Instance object is not an OBJ node!");
 
-		uint32_t additional_params_flags = 0;
-
-		VRay::Plugin instanceNode = pluginExporter.exportObject(instaceObjNode);
-		ensureDynamicGeometryForInstancer(instanceNode);
-
-		VRay::Plugin instanceMtl;
-		if (materialPathHndl.isValid()) {
-			const UT_String &instanceMtlPath = materialPathHndl.get(ptOff);
-			OP_Node *instaceMatNode = getOpNodeFromPath(instanceMtlPath, ctx.getTime());
-			if (instaceMatNode) {
-				instanceMtl = pluginExporter.exportMaterial(instaceMatNode);
-				if (instanceMtl) {
-					additional_params_flags |= useMaterial;
-				}
-			}
-		}
-
-		QString userAttributes;
-		GEOAttribList attrList;
-		// TODO: Export non-vector attributes.
-		gdp.getAttributes().matchAttributes(GEOgetV3AttribFilter(), GA_ATTRIB_POINT, attrList);
-		for (const GA_Attribute *attr : attrList) {
-			if (!attr) {
-				continue;
-			}
-			if (attr->getName() != GEO_STD_ATTRIB_POSITION &&
-				attr->getName() != GEO_STD_ATTRIB_NORMAL &&
-				attr->getName() != GEO_STD_ATTRIB_VELOCITY)
-			{
-				GA_ROHandleV3 attrHndl(attr);
-				if (attrHndl.isValid()) {
-					const UT_Vector3 &value = attrHndl.get(ptOff);
-
-					userAttributes += QString::asprintf("%s=%g,%g,%g;",
-														attr->getName().buffer(), value.x(), value.y(), value.z());
-				}
-			}
-		}
-
-		// Index + TM + VEL_TM + Flags + Node
-		int itemListSize = 5;
-
-		if (instanceMtl) {
-			itemListSize++;
-		}
-
-		if (userAttributes.length()) {
-			additional_params_flags |= useUserAttributes;
-			itemListSize++;
-		}
-
-		int itemListOffs = 0;
-
-		VRay::VUtils::ValueRefList item(itemListSize);
-
-		// Particle index.
-		item[itemListOffs++].setDouble(validPointIdx);
+		PrimitiveItem item;
 
 		// Particle transform.
-		VRay::Transform tm = getPointInstanceTM(gdp, pointInstanceAttrs, ptOff);
+		item.tm = getPointInstanceTM(gdp, pointInstanceAttrs, pointOffset);
+
+		// Point material overrides.
+		getPrimMaterial(item.primMaterial);
+		mergeMaterialOverride(item.primMaterial, materialStyleSheetHndl, materialPathHndl, materialOverrideHndl, pointOffset, ctx.getTime());
+		addAttributesAsOverrides(pointVecAttrList, pointOffset, item.primMaterial.overrides);
 
 		// Mult with object inv. tm.
 		VRay::Transform objTm = VRayExporter::getObjTransform(instaceObjNode, ctx, false);
 		objTm.makeInverse();
-		// Houdini seems to ignore object offset for point instancing
+		// NOTE: Houdini seems to ignore object offset for point instancing.
 		objTm.offset.makeZero();
-		tm = tm * objTm;
+		item.tm = item.tm * objTm;
 
-		item[itemListOffs++].setTransform(tm);
+		pushContext(PrimContext(item.tm, pointOffset, item.primMaterial));
+		item.geometry = pluginExporter.exportObject(instaceObjNode);
+		popContext();
 
-		// Particle velocity.
-		VRay::Transform vel(0);
-		if (velocityHndl.isValid()) {
-			// const UT_Vector3 &velocity = velocityHndl.get(ptOff);
-			// vel.offset.set(velocity.x(), velocity.y(), velocity.z());
-			// vel.offset = vel.offset * objTm;
+		const int isLight = !!instaceObjNode->castToOBJLight();
+		if (!isLight && item.geometry) {
+			instancerItems += item;
 		}
-
-		item[itemListOffs++].setTransform(vel);
-
-		item[itemListOffs++].setDouble(additional_params_flags);
-
-		if (additional_params_flags & useUserAttributes) {
-			item[itemListOffs++].setString(userAttributes.toLocal8Bit().constData());
-		}
-		if (additional_params_flags & useMaterial) {
-			item[itemListOffs++].setPlugin(instanceMtl);
-		}
-
-		item[itemListOffs++].setPlugin(instanceNode);
-
-		// +1 because first element is time.
-		instances[validPointIdx+1].setList(item);
 
 		++validPointIdx;
 	}
 
-	instancer2.addAttribute(Attrs::PluginAttr("instances", instances));
-	instancer2.addAttribute(Attrs::PluginAttr("use_additional_params", true));
-	instancer2.addAttribute(Attrs::PluginAttr("use_time_instancing", false));
-
-	return pluginExporter.exportPlugin(instancer2);
+	return exportDetailInstancer(objNode, gdp, instancerItems, "PointInstancer");
 }
 
 VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode)
@@ -1408,6 +1294,98 @@ VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode)
 	return geometry;
 }
 
+int ObjectExporter::isLightEnabled(OBJ_Node &objLight) const
+{
+	VRayRendererNode &rop = pluginExporter.getRop();
+
+	int enabled = 0;
+	objLight.evalParameterOrProperty("enabled", 0, ctx.getTime(), enabled);
+
+	OP_Bundle *bundle = rop.getForcedLightsBundle();
+	return bundle && (bundle->contains(&objLight, false) || (enabled > 0));
+}
+
+VRay::Plugin ObjectExporter::exportLight(OBJ_Light &objLight)
+{
+	const fpreal t = ctx.getTime();
+
+	Attrs::PluginDesc pluginDesc;
+
+	OP::VRayNode *vrayNode = dynamic_cast<OP::VRayNode*>(&objLight);
+	if (vrayNode) {
+		pluginDesc.addAttribute(Attrs::PluginAttr("enabled", isLightEnabled(objLight)));
+
+		ExportContext expContext(CT_OBJ, pluginExporter, objLight);
+		OP::VRayNode::PluginResult res = vrayNode->asPluginDesc(pluginDesc, pluginExporter, &expContext);
+
+		if (res == OP::VRayNode::PluginResultError) {
+			Log::getLog().error("Error creating plugin descripion for node: \"%s\" [%s]",
+						objLight.getName().buffer(),
+						objLight.getOperator()->getName().buffer());
+		}
+		else if (res == OP::VRayNode::PluginResultNA ||
+				 res == OP::VRayNode::PluginResultContinue)
+		{
+			pluginExporter.setAttrsFromOpNodePrms(pluginDesc, &objLight);
+		}
+
+		const bool fliptm = vrayNode->getVRayPluginID() == OBJ::getVRayPluginIDName(OBJ::VRayPluginID::LightDome);
+
+		VRay::Transform tm = getTm() * VRayExporter::getObjTransform(&objLight, ctx, fliptm);
+		pluginDesc.addAttribute(Attrs::PluginAttr("transform", tm));
+	}
+	else {
+		const VRayLightType lightType = static_cast<VRayLightType>(objLight.evalInt("light_type", 0, 0.0));
+
+		Log::getLog().info("  Found light: type = %i",
+				   lightType);
+
+		// Point
+		if (lightType == VRayLightOmni) {
+			pluginDesc.pluginID = "LightOmniMax";
+		}
+		// Grid
+		else if (lightType == VRayLightRectangle) {
+			pluginDesc.pluginID = "LightRectangle";
+
+			pluginDesc.addAttribute(Attrs::PluginAttr("u_size", objLight.evalFloat("areasize", 0, t) / 2.0));
+			pluginDesc.addAttribute(Attrs::PluginAttr("v_size", objLight.evalFloat("areasize", 1, t) / 2.0));
+
+			pluginDesc.addAttribute(Attrs::PluginAttr("invisible", NOT(objLight.evalInt("light_contribprimary", 0, t))));
+		}
+		// Sphere
+		else if (lightType == VRayLightSphere) {
+			pluginDesc.pluginID = "LightSphere";
+
+			pluginDesc.addAttribute(Attrs::PluginAttr("radius", objLight.evalFloat("areasize", 0, t) / 2.0));
+		}
+		// Distant
+		else if (lightType == VRayLightDome) {
+			pluginDesc.pluginID = "LightDome";
+		}
+		// Sun
+		else if (lightType == VRayLightSun) {
+			pluginDesc.pluginID = "SunLight";
+		}
+
+		pluginDesc.addAttribute(Attrs::PluginAttr("intensity", objLight.evalFloat("light_intensity", 0, t)));
+		pluginDesc.addAttribute(Attrs::PluginAttr("enabled",   objLight.evalInt("light_enable", 0, t)));
+
+		if (lightType != VRayLightSun) {
+			pluginDesc.addAttribute(Attrs::PluginAttr("color", Attrs::PluginAttr::AttrTypeColor,
+															   objLight.evalFloat("light_color", 0, t),
+															   objLight.evalFloat("light_color", 1, t),
+															   objLight.evalFloat("light_color", 2, t)));
+		}
+
+		pluginDesc.addAttribute(Attrs::PluginAttr("transform", getTm()));
+	}
+
+	pluginDesc.pluginName = boost::str(objGeomNameFmt % "Light" % getDetailID() % objLight.getName().buffer());
+
+	return pluginExporter.exportPlugin(pluginDesc);
+}
+
 VRay::Plugin ObjectExporter::exportNode(OBJ_Node &objNode)
 {
 	using namespace Attrs;
@@ -1420,6 +1398,10 @@ VRay::Plugin ObjectExporter::exportNode(OBJ_Node &objNode)
 	VRay::Plugin geometry;
 	if (doExportGeometry) {
 		geometry = exportGeometry(objNode);
+	}
+
+	if (doExportGeometry && !geometry) {
+		return VRay::Plugin();
 	}
 
 	OP_Node *matNode = objNode.getMaterialNode(ctx.getTime());
@@ -1463,4 +1445,23 @@ VRay::Plugin ObjectExporter::exportNode(OBJ_Node &objNode)
 	pluginCache.op.insert(&objNode, node);
 
 	return node;
+}
+
+VRay::Plugin ObjectExporter::exportObject(OBJ_Node &objNode)
+{
+	VRay::Plugin plugin;
+
+	OBJ_Light *objLight = objNode.castToOBJLight();
+	if (objLight) {
+		const VRay::Transform tm = pluginExporter.getObjTransform(&objNode, ctx);
+
+		pushContext(PrimContext(tm));
+		plugin = exportLight(*objLight);
+		popContext();
+	}
+	else {
+		plugin = exportNode(objNode);
+	}
+
+	return plugin;
 }

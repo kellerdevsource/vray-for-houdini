@@ -80,7 +80,7 @@ void VRayExporter::RtCallbackOBJGeometry(OP_Node *caller, void *callee, OP_Event
 			objExporter.setExportGeometry(shouldReExport);
 
 			// Update node
-			objExporter.exportNode(objNode);
+			objExporter.exportObject(objNode);
 
 			// Restore state
 			objExporter.setExportGeometry(geomExpState);
@@ -221,58 +221,70 @@ static void dumpType(OBJ_OBJECT_TYPE objType) {
 	Log::getLog().debug("OBJ_OBJECT_TYPE = %s", objTypeStr.c_str());
 }
 
-VRay::Plugin VRayExporter::exportObject(OBJ_Node *objNode)
+VRay::Plugin VRayExporter::exportObject(OP_Node *opNode)
 {
-	if (!objNode) {
+	if (!opNode) {
 		return VRay::Plugin();
 	}
 
-	VRay::Plugin plugin;
+	const UT_String &objOpType = opNode->getOperator()->getName();
+	if (objOpType.equal("guidegroom") ||
+		objOpType.equal("guidedeform"))
+	{
+		return VRay::Plugin();
+	}
+
+	OBJ_Node *objNode = opNode->castToOBJNode();
+	OBJ_Light *objLight = objNode->castToOBJLight();
+	if (!objNode &&
+		!objLight)
+	{
+		return VRay::Plugin();
+	}
 
 	OP_Node *renderOp = objNode->getRenderNodePtr();
+
+	if (objOpType.equal("VRayNodeVRayClipper")) {
+		return exportVRayClipper(*objNode);
+	}
+#ifdef CGR_HAS_VRAYSCENE
+	if (objOpType.equal("VRayNodeVRayScene")) {
+		return exportVRayScene(objNode, CAST_SOPNODE(renderOp));
+	}
+#endif
+
 	if (!renderOp) {
 		Log::getLog().error("OBJ \"%s\": Render OP is not found!",
-							objNode->getName().buffer());
+							opNode->getName().buffer());
 	}
 	else {
-		const UT_String &objOpType = objNode->getOperator()->getName();
-
-		if (objOpType.equal("VRayNodeVRayClipper")) {
-			plugin = exportVRayClipper(*objNode);
+		if (objLight) {
+			addOpCallback(opNode, RtCallbackLight);
 		}
-#ifdef CGR_HAS_VRAYSCENE
-		else if (objOpType.equal("VRayNodeVRayScene")) {
-			plugin = exportVRayScene(objNode, CAST_SOPNODE(renderOp));
-		}
-#endif
 		else {
-			if (objOpType.equal("guidegroom") ||
-				objOpType.equal("guidedeform"))
-			{
-				return plugin;
-			}
-
-			addOpCallback(objNode, RtCallbackOBJGeometry);
+			addOpCallback(opNode, RtCallbackOBJGeometry);
 			addOpCallback(renderOp, RtCallbackSOPChanged);
-
-			plugin = objectExporter.exportNode(*objNode);
-			if (plugin) {
-				Log::getLog().debug("Exporting OBJ: %s [%s]",
-									objNode->getName().buffer(),
-									objOpType.buffer());
-			}
-			else {
-				Log::getLog().error("Error exporting OBJ: %s [%s]",
-									objNode->getName().buffer(),
-									objOpType.buffer());
-				Log::getLog().error("  Render OP: %s:\"%s\"",
-									renderOp->getName().buffer(),
-									renderOp->getOperator()->getName().buffer());
-			}
 		}
+
+		VRay::Plugin plugin = objectExporter.exportObject(*objNode);
+		if (plugin) {
+			Log::getLog().debug("Exporting OBJ: %s [%s]",
+								opNode->getName().buffer(),
+								objOpType.buffer());
+		}
+		else {
+			Log::getLog().error("Error exporting OBJ: %s [%s]",
+								opNode->getName().buffer(),
+								objOpType.buffer());
+			Log::getLog().error("  Render OP: %s:\"%s\"",
+								renderOp->getName().buffer(),
+								renderOp->getOperator()->getName().buffer());
+		}
+
+		return plugin;
 	}
 
-	return plugin;
+	return VRay::Plugin();
 }
 
 

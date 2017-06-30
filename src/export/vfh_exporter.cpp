@@ -1408,21 +1408,24 @@ void VRayExporter::exportScene()
 	if (activeGeo) {
 		for (int i = 0; i < activeGeo->entries(); ++i) {
 			OP_Node *node = activeGeo->getNode(i);
-			if (!node) {
-				continue;
+			if (node) {
+				exportObject(node);
 			}
-
-			OBJ_Node *objNode = node->castToOBJNode();
-			if (!objNode) {
-				continue;
-			}
-
-			exportObject(objNode);
 		}
 	}
 
-	// export light nodes
-	exportLights();
+	OP_Bundle *activeLights = m_rop->getActiveLightsBundle();
+	if (!activeLights || activeLights->entries() <= 0) {
+		exportDefaultHeadlight();
+	}
+	else if (activeLights) {
+		for (int i = 0; i < activeLights->entries(); ++i) {
+			OBJ_Node *objNode = CAST_OBJNODE(activeLights->getNode(i));
+			if (objNode) {
+				exportObject(objNode);
+			}
+		}
+	}
 
 	UT_String env_network_path;
 	m_rop->evalString(env_network_path, Parm::parm_render_net_environment.getToken(), 0, 0.0f);

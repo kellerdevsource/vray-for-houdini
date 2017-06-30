@@ -221,7 +221,7 @@ public:
 
 	/// Export OBJ_geometry node
 	/// @retval V-Ray plugin created for that node
-	VRay::Plugin exportObject(OBJ_Node *obj_node);
+	VRay::Plugin exportObject(OP_Node *opNode);
 
 	/// Export VRayClipper node
 	/// @retval V-Ray plugin created for that node
@@ -238,10 +238,6 @@ public:
 	/// @param geomPlugin[in] - geometry to displace/subdivide
 	/// @retval V-Ray displacement/subdivision plugin
 	VRay::Plugin exportDisplacement(OBJ_Node *obj_node, VRay::Plugin &geomPlugin);
-
-	/// Export OBJ_Light node
-	/// @retval V-Ray plugin created for that node
-	VRay::Plugin exportLight(OBJ_Node *obj_node);
 
 	/// Export VOP node
 	/// @param opNode VOP node instance.
@@ -388,10 +384,6 @@ public:
 
 	/// Test if a node is animated
 	int isNodeAnimated(OP_Node *op_node);
-
-	/// Test if a ligth is enabled i.e. its enabled flag is on,
-	/// intensity is > 0 or its a forced light on the V-Ray ROP
-	int isLightEnabled(OP_Node *op_node);
 
 	/// Test if velocity channels is enabled
 	/// @param rop[in] - the V-Ray ROP to test for velocity channel enabled

@@ -84,6 +84,10 @@ public:
 	/// of its display state (when set as forced geometry on the V-Ray ROP)
 	static int isNodeVisible(VRayRendererNode &rop, OBJ_Node &node);
 
+	/// Test if a ligth is enabled i.e. its enabled flag is on,
+	/// intensity is > 0 or its a forced light on the V-Ray ROP
+	int isLightEnabled(OBJ_Node &objLight) const;
+
 	/// Test if the current geometry node is visible i.e.
 	/// its display flag is on or it is forced to render regardless
 	/// of its display state (when set as forced geometry on the V-Ray ROP)
@@ -143,17 +147,9 @@ public:
 
 	void processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, PrimitiveItems &instancerItems);
 
-	VRay::Plugin exportDetailInstancer(OBJ_Node &objNode, const GU_Detail &gdp, const PrimitiveItems &instancerItems);
+	VRay::Plugin exportDetailInstancer(OBJ_Node &objNode, const GU_Detail &gdp, const PrimitiveItems &instancerItems, const char *prefix);
 
 	VRay::Plugin exportDetail(OBJ_Node &objNode, const GU_Detail &gdp);
-
-#if 0
-	/// Helper function to format material overrides specified on the object node
-	/// as Node::user_attributes
-	/// @param userAttrs[out] - string with formatted material overrides
-	/// @returns number of overrides we have found
-	int getSHOPOverridesAsUserAttributes(UT_String& userAttrs) const;
-#endif
 
 	/// Export point particles data.
 	/// @param gdp Detail.
@@ -186,8 +182,9 @@ public:
 
 	/// Export object.
 	/// @returns Node plugin.
-	VRay::Plugin exportNode(OBJ_Node &objNode);
+	VRay::Plugin exportObject(OBJ_Node &objNode);
 
+private:
 	/// Push context frame when exporting nested object.
 	void pushContext(const PrimContext &value) { primContextStack.push(value); }
 
@@ -203,7 +200,14 @@ public:
 
 	void getPrimMaterial(PrimMaterial &primMaterial) const;
 
-protected:
+	/// Export light object.
+	/// @returns Light plugin.
+	VRay::Plugin exportLight(OBJ_Light &objLight);
+
+	/// Export geometric object.
+	/// @returns Node plugin.
+	VRay::Plugin exportNode(OBJ_Node &objNode);
+
 	/// Plugin exporter.
 	VRayExporter &pluginExporter;
 
