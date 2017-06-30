@@ -461,17 +461,26 @@ VUtils::ErrorCode VRayProxyExporter::getDescriptionForContext(OP_Context &contex
 	}
 
 	VRayExporter &dummyExp = getDummyExporter();
+	GEOPrimList hairPrimList;
+
+	ObjectExporter objectExporter(dummyExp);
+
 	HairPrimitiveExporter hairExp(*geomDescr.m_node.getParent()->castToOBJNode(),
 								  context,
-								  dummyExp);
+								  dummyExp,
+								  hairPrimList);
 
 	if (hairExp.asPluginDesc(*gdp, geomDescr.m_description)) {
 		geomDescr.m_isHair = true;
 	}
 	else {
+		GEOPrimList primList;
 		MeshExporter meshExporter(*geomDescr.m_node.getParent()->castToOBJNode(),
+								  *gdp,
 								  context,
-								  dummyExp);
+								  dummyExp,
+								  objectExporter,
+								  primList);
 		meshExporter.asPluginDesc(*gdp, geomDescr.m_description);
 		geomDescr.m_isHair = false;
 	}

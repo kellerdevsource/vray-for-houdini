@@ -12,64 +12,27 @@
 #define VRAY_FOR_HOUDINI_EXPORT_MESH_H
 
 #include "vfh_vray.h"
-#include "vfh_defines.h"
 #include "vfh_plugin_attrs.h"
 #include "vfh_exporter.h"
 #include "vfh_geoutils.h"
-#include "vfh_material_override.h"
 #include "vfh_export_primitive.h"
-
-#include <SOP/SOP_Node.h>
-#include <SHOP/SHOP_Node.h>
-
-#include <unordered_set>
-#include <unordered_map>
-
 
 namespace VRayForHoudini {
 
 class VRayExporter;
-
+class ObjectExporter;
 /// Exports closed poly primitives and polysoups from a geometry detail
 /// as single V-Ray mesh geometry plugin. The translator caches internally data
 /// that has been processed once one of the get<Foo>() methods is called
 /// so subsequent calls will be much faster. You should call init() to initialize
 /// the translator with a geometry detail before using any of the get<Foo>()
-/// methods.
-class MeshExporter:
-		public PrimitiveExporter
+/// methods
+class MeshExporter
+	: public PrimitiveExporter
 {
 public:
-	/// Test if a primitive can be handled by this translator i.e
-	/// closed poly or polysoup
-	/// @param prim[in] - the primitive to test
-	static bool isPrimPoly(const GEO_Primitive *prim);
-
-	/// Fast test if the detail contains primitives that can be handled
-	/// by this translator
-	/// @note this will test the gdp only for primitives of certail type
-	///       but not the actual primitives i.e. if the detail contains
-	///       poly prims all of which are open this function will return
-	///       a false positive
-	/// @param gdp[in] - detail to test
-	static bool containsPolyPrimitives(const GU_Detail &gdp);
-
-public:
-	MeshExporter(OBJ_Node &obj, OP_Context &ctx, VRayExporter &exp);
-	~MeshExporter() { }
-
-	/// Intilize the translator with the passed gdp.
-	/// This will clear any cached data for current gdp (if any)
-	/// and init the translator with the new one.
-	/// @note you should call init() to initialize the translator
-	///       with a geometry detail before using any of the get<Foo>()
-	/// @param gdp[in] - geometry detail
-	/// @retval true if the translator is properly initilized
-	///         with the new gdp, or false on error or if the
-	///         gdp passed is the same as the current one (comaprison
-	///         is based on detail unique id) in which case cached data
-	///         will remain.
-	bool init(const GU_Detail &gdp);
+	MeshExporter(OBJ_Node &obj, const GU_Detail &gdp, OP_Context &ctx, VRayExporter &exp, ObjectExporter &objectExporter, const GEOPrimList &primList);
+	~MeshExporter() {}
 
 	/// Reset the translator as unintilized i.e.
 	/// clear any cached data for current gdp (if any)
@@ -77,8 +40,7 @@ public:
 	void reset();
 
 	/// Test if there is any valid mesh geometry to export
-	bool hasPolyGeometry()
-	{ return m_gdp != nullptr && containsPolyPrimitives(*m_gdp) && getNumFaces() > 0; }
+	bool hasPolyGeometry() const { return primList.size(); }
 
 	/// Test if we have subdivision applied to geometry at render time
 	bool hasSubdivApplied() const { return m_hasSubdivApplied; }
@@ -164,15 +126,6 @@ public:
 	///       with hasPolyGeometry() before using this
 	VRay::VUtils::IntRefList& getFaceMtlIDs();
 
-	/// Get the list of valid materials assigned per face
-	/// based on "shop_materialpath" attribute. These are exported as
-	/// MtlMulti to allow different materials per face
-	/// @note check if the translator has been properly initialized
-	///       with hasPolyGeometry() before using this
-	/// @param shopList[out]
-	/// @retval number of valid materials found
-	int getSHOPList(SHOPList &shopList);
-
 	/// Generate mesh plugin description from all supported primitives in the
 	/// GU_Detail provided
 	/// @note this will init the translator internally with the passed gdp
@@ -180,35 +133,11 @@ public:
 	/// @param pluginDesc[out] - the mesh plugin description
 	/// @retval true if mesh primitives were found in gdp
 	///         and pluginDesc is modified
-	virtual bool asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc &pluginDesc) VRAY_OVERRIDE;
+	bool asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc &pluginDesc);
 
-	/// Export mesh geometry plugin and generate Node plugin description
-	/// for all supported primitives in the GU_Detail provided
-	/// @note calls asPluginDesc() to export the geometry
-	/// @param gdp[in] - the detail to traverse
-	/// @param plugins[out] - collects the Node plugins generated for this detail
-	virtual void exportPrimitives(const GU_Detail &gdp, PluginDescList &plugins) VRAY_OVERRIDE;
+	VRay::Plugin getMaterial() const { return material; }
 
 private:
-	/// Helper structure used when digesting material overrides into map channels
-	struct PrimOverride
-	{
-		typedef std::unordered_map< std::string, VRay::Vector > MtlOverrides;
-
-		PrimOverride(SHOP_Node *shopNode = nullptr):
-			shopNode(shopNode)
-		{}
-
-		SHOP_Node    *shopNode; ///< the material assigned to the primitive with "shop_materialpath" attribute
-		MtlOverrides mtlOverrides; ///< map of map channel name to override value for the face
-	};
-
-private:
-	/// Get the list of primitives that can be handled by MeshExporter(cached internally)
-	/// @note check if the translator has been properly initialized
-	///       with hasPolyGeometry() before using this
-	const GEOPrimList& getPrimList();
-
 	/// Helper funtion to digest point attibutes into map channels
 	/// @note check if the translator has been properly initialized
 	///       with hasPolyGeometry() before using this
@@ -216,7 +145,6 @@ private:
 	///        from point attributes
 	/// @retval number of channels added to mapChannels
 	int getPointAttrs(MapChannels &mapChannels);
-
 
 	/// Helper funtion to digest vertex attibutes into map channels
 	/// @note check if the translator has been properly initialized
@@ -240,23 +168,20 @@ private:
 	/// @param mapChannels[out] - collects generated map channels
 	///        from material override attribute
 	/// @retval number of channels added to mapChannels
-	int getMtlOverrides(MapChannels &mapChannels);
+	void getMtlOverrides(MapChannels &mapChannels);
 
-	/// Helper funtion to digest per primitive material overrides into map channels
-	/// @note check if the translator has been properly initialized
-	///       with hasPolyGeometry() before using this
-	/// @param o_mapChannelOverrides[out] - map channel names that will be generated
-	///       from material overrides
-	/// @param o_primOverrides[out] - list of per primitive overrides
-	/// @retval number of map channels to be generated from material overrides
-	int getPerPrimMtlOverrides(std::unordered_set< std::string > &o_mapChannelOverrides,
-							   std::vector< PrimOverride > &o_primOverrides);
+	/// A list of poly primitives that can be handled by this translator.
+	const GEOPrimList &primList;
 
-private:
-	const GU_Detail            *m_gdp; ///< current geometry detail
+	/// Current geometry detail
+	const GU_Detail &gdp;
+
+	ObjectExporter &objectExporter;
+
 	bool                        m_hasSubdivApplied; ///< if we have subdivision applied to geometry at render time
-	GEOPrimList                 m_primList; ///< list of primitives that can be handled by this translator
 	int                         numFaces; ///< number of mesh faces
+
+	// Plugin parameters
 	VRay::VUtils::IntRefList    faces; ///< list of mesh faces (triangles)
 	VRay::VUtils::IntRefList    edge_visibility; ///< list of visible edges (1 bit per edge, 3 bits per face)
 	VRay::VUtils::VectorRefList vertices; ///< list of mesh vertices
@@ -265,6 +190,14 @@ private:
 	VRay::VUtils::VectorRefList velocities; ///< list of vertex velocities
 	VRay::VUtils::IntRefList    face_mtlIDs; ///< list of material ids used to index the correct material
 	MapChannels                 map_channels_data; /// mesh map channels
+
+	/// A list of shader names.
+	/// Each item is a list of 2 elements:
+	///  0 - face material ID
+	///  1 - shader name
+	VRay::VUtils::ValueRefList shadersNamesList;
+
+	VRay::Plugin material;
 };
 
 

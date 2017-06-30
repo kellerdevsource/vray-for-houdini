@@ -349,6 +349,9 @@ int VRayPluginRenderer::initRenderer(int hasUI, int reInit)
 				options.useDefaultVfbTheme = false;
 				options.vfbDrawStyle = VRay::RendererOptions::ThemeStyleMaya;
 				options.keepRTRunning = true;
+				options.rtNoiseThreshold = 0.0f;
+				options.rtSampleLevel = INT_MAX;
+				options.rtTimeout = 0;
 
 				m_vray = new VRay::VRayRenderer(options);
 			}
@@ -615,6 +618,9 @@ void VRayPluginRenderer::setRendererMode(int mode)
 			VRay::RendererOptions options = m_vray->getOptions();
 			options.numThreads = VUtils::getNumProcessors() - 1;
 			options.keepRTRunning = true;
+			options.rtNoiseThreshold = 0.0f;
+			options.rtSampleLevel = INT_MAX;
+			options.rtTimeout = 0;
 
 			m_vray->setOptions(options);
 		}

@@ -228,7 +228,7 @@ void RampHandler::OnEditCurveDiagram(RampUi & curve, OnEditType editReason)
 		return;
 	}
 	// sanity check
-	UT_ASSERT(&curve == m_ctx->m_ui);
+	UT_ASSERT(&curve == m_ctx->m_ui.get());
 
 	auto & data = m_ctx->data(RampType_Curve);
 	const auto size = curve.pointCount(RampType_Curve);
@@ -257,7 +257,7 @@ void RampHandler::OnEditColorGradient(RampUi & curve, OnEditType editReason)
 		return;
 	}
 	// sanity check
-	UT_ASSERT(&curve == m_ctx->m_ui);
+	UT_ASSERT(&curve == m_ctx->m_ui.get());
 
 	auto & data = m_ctx->data(RampType_Color);
 	const auto size = curve.pointCount(RampType_Color);
@@ -602,8 +602,8 @@ int PhxShaderSim::setVopPathCB(void *data, int index, fpreal64 time, const PRM_T
 
 	UT_String sopPath;
 	simNode->evalString(sopPath, token, 0, 0);
-	auto cacheSop = OPgetDirector()->findSOPNode(sopPath.buffer());
 
+	SOP_Node *cacheSop = getSOPNodeFromPath(sopPath);
 	if (!cacheSop || !cacheSop->getOperator()->getName().startsWith("VRayNodePhxShaderCache")) {
 		Log::getLog().warning("Only a V-Ray PhxShaderCache sop can be selected!");
 		return 0;

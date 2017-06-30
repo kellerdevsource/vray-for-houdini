@@ -287,9 +287,9 @@ typedef std::vector<PluginAttr> PluginAttrs;
 /// a plugin.
 struct PluginDesc {
 	PluginDesc() {}
-	PluginDesc(const std::string &pluginName, const std::string &pluginID):
-		pluginName(pluginName),
-		pluginID(pluginID)
+	PluginDesc(const std::string &pluginName, const std::string &pluginID)
+		: pluginName(pluginName)
+		, pluginID(pluginID)
 	{}
 
 	/// Test if we have attribute with a given name
@@ -322,9 +322,14 @@ struct PluginDesc {
 	/// Dump this description to std out
 	void showAttributes() const;
 
-	std::string       pluginID; ///< plugin name
-	std::string       pluginName; ///< plugin instance name
-	PluginAttrs       pluginAttrs; ///< list of plugin attributes
+	/// Plugin instance name.
+	std::string pluginName;
+
+	/// Plugin type name.
+	std::string pluginID;
+
+	/// A list of plugin attributes.
+	PluginAttrs pluginAttrs;
 };
 
 } // namespace Attrs

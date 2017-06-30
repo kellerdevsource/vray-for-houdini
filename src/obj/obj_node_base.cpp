@@ -193,31 +193,22 @@ OP::VRayNode::PluginResult LightNodeBase< VRayPluginID::LightMesh >::asPluginDes
 
 	UT_String geometrypath;
 	evalString(geometrypath, "geometry", 0, t);
-	if (NOT(geometrypath.equal(""))) {
-		OP_Node *op_node = OPgetDirector()->findNode(geometrypath.buffer());
-		if (op_node) {
-			OBJ_Node *obj_node = op_node->castToOBJNode();
-			if (obj_node) {
-				OBJ_Geometry * obj_geom = obj_node->castToOBJGeometry();
-				if (obj_geom) {
-					GeometryExporter geoExporter(*obj_geom, exporter);
-					if (geoExporter.exportNodes() > 0) {
-						Attrs::PluginAttr *attr = geoExporter.getPluginDescAt(0).get("geometry");
-						if (attr) {
-							pluginDesc.addAttribute(Attrs::PluginAttr("geometry", attr->paramValue.valPlugin));
-						}
-					}
-				}
-				else {
-					Log::getLog().error("Geometry node export failed!");
-				}
-			}
-			else {
-				Log::getLog().error("Geometry node not found!");
-			}
+	if (!geometrypath.equal("")) {
+		OBJ_Node *obj_node = getOBJNodeFromPath(geometrypath, t);
+		if (!obj_node) {
+			Log::getLog().error("Geometry node not found!");
 		}
 		else {
-			Log::getLog().error("Geometry node not found!");
+			OBJ_Geometry *obj_geom = obj_node->castToOBJGeometry();
+			if (!obj_geom) {
+				Log::getLog().error("Geometry node export failed!");
+			}
+			else {
+				VRay::Plugin geometry = exporter.getObjectExporter().exportGeometry(*obj_node);
+				if (geometry) {
+					pluginDesc.addAttribute(Attrs::PluginAttr("geometry", geometry));
+				}
+			}
 		}
 	}
 
@@ -235,10 +226,14 @@ OP::VRayNode::PluginResult LightNodeBase< VRayPluginID::SunLight >::asPluginDesc
 
 	UT_String targetpath;
 	evalString(targetpath, "lookatpath", 0, exporter.getContext().getTime());
-	OBJ_Node *targetNode = OPgetDirector()->findOBJNode(targetpath);
-	if (targetNode) {
-		VRay::Transform tm = exporter.getObjTransform(targetNode, exporter.getContext());
-		pluginDesc.addAttribute(Attrs::PluginAttr("target_transform", tm));
+
+	OP_Node *opNode = getOpNodeFromPath(targetpath, exporter.getContext().getTime());
+	if (opNode) {
+		OBJ_Node *targetNode = CAST_OBJNODE(opNode);
+		if (targetNode) {
+			const VRay::Transform &tm = exporter.getObjTransform(targetNode, exporter.getContext());
+			pluginDesc.addAttribute(Attrs::PluginAttr("target_transform", tm));
+		}
 	}
 
 	return OP::VRayNode::PluginResultContinue;

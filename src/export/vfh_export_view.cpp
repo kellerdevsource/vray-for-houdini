@@ -30,6 +30,9 @@ const std::string VRayForHoudini::ViewPluginsDesc::settingsMotionBlurPluginName(
 
 void VRayExporter::RtCallbackView(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
+	if (!csect.tryEnter())
+		return;
+
 	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
 
 	Log::getLog().info("RtCallbackView: %s from \"%s\"",
@@ -70,6 +73,8 @@ void VRayExporter::RtCallbackView(OP_Node *caller, void *callee, OP_EventType ty
 		default:
 			break;
 	}
+
+	csect.leave();
 }
 
 
@@ -278,8 +283,6 @@ int VRayExporter::exportView()
 
 	static VUtils::FastCriticalSection csect;
 	if (csect.tryEnter()) {
-		csect.enter();
-
 		OBJ_Node *camera = VRayExporter::getCamera(m_rop);
 
 		addOpCallback(camera, VRayExporter::RtCallbackView);
