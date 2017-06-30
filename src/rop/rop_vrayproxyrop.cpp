@@ -12,6 +12,7 @@
 #include "vfh_log.h"
 #include "vfh_prm_templates.h"
 #include "vfh_export_vrayproxy.h"
+#include "vfh_attr_utils.h"
 
 #include <ROP/ROP_Error.h>
 #include <ROP/ROP_Templates.h>
@@ -167,7 +168,7 @@ int VRayProxyROP::getSOPList(fpreal time, UT_ValArray<SOP_Node *> &sopList)
 		if (evalInt("use_soppath", 0, time)) {
 			UT_String soppath;
 			evalString(soppath, "soppath", 0, time);
-			SOP_Node *sopNode = OPgetDirector()->findSOPNode(soppath);
+			SOP_Node *sopNode = getSOPNodeFromPath(soppath, time);
 			if (sopNode) {
 				sopList.append(sopNode);
 			}
@@ -176,7 +177,7 @@ int VRayProxyROP::getSOPList(fpreal time, UT_ValArray<SOP_Node *> &sopList)
 			// get a manager that contains objects
 			UT_String root;
 			evalString(root, "root", 0, time);
-			OP_Network *rootnet = OPgetDirector()->findOBJNode(root);
+			OP_Network *rootnet = getOBJNodeFromPath(root, time);
 			rootnet = (rootnet)? rootnet : OPgetDirector()->getManager("obj");
 
 			UT_ASSERT( rootnet );

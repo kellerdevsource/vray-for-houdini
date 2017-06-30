@@ -166,7 +166,7 @@ OBJ_Node *VRayExporter::getCamera(const OP_Node *rop)
 	UT_String camera_path;
 	rop->evalString(camera_path, "render_camera", 0, 0.0);
 	if (NOT(camera_path.equal(""))) {
-		OP_Node *node = OPgetDirector()->findNode(camera_path.buffer());
+		OP_Node *node = getOpNodeFromPath(camera_path);
 		if (node) {
 			camera = node->castToOBJNode();
 		}
@@ -441,7 +441,7 @@ void VRayExporter::setAttrsFromOpNodePrms(Attrs::PluginDesc &pluginDesc, OP_Node
 				{
 					UT_String parmVal;
 					opNode->evalString(parmVal, parm->getToken(), 0, 0.0f);
-					OP_Node *tex_node = OPgetDirector()->findNode(parmVal.buffer());
+					OP_Node *tex_node = getOpNodeFromPath(parmVal);
 					if (tex_node) {
 						VRay::Plugin texPlugin = exportVop(tex_node);
 						if (texPlugin) {
@@ -584,9 +584,10 @@ bool VRayExporter::setAttrsFromUTOptions(Attrs::PluginDesc &pluginDesc, const UT
 
 VRayExporter::VRayExporter(VRayRendererNode *rop)
 	: m_rop(rop)
+	, m_error(ROP_CONTINUE_RENDER)
 	, m_isIPR(false)
 	, m_isAnimation(false)
-	, m_error(ROP_CONTINUE_RENDER)
+	, objectExporter(*this)
 {
 	Log::getLog().debug("VRayExporter()");
 }
@@ -1064,7 +1065,7 @@ void VRayExporter::exportDisplacementDesc(OBJ_Node *obj_node, Attrs::PluginDesc 
 	if (parm) {
 		UT_String texpath;
 		obj_node->evalString(texpath, parm, 0, 0.0f);
-		OP_Node *tex_node = OPgetDirector()->findNode(texpath.buffer());
+		OP_Node *tex_node = getOpNodeFromPath(texpath);
 		if (tex_node) {
 			VRay::Plugin texture = exportVop(tex_node);
 			if (texture) {
@@ -1119,9 +1120,10 @@ VRay::Plugin VRayExporter::exportDisplacement(OBJ_Node *obj_node, VRay::Plugin &
 			{
 				UT_String shopPath;
 				obj_node->evalString(shopPath, "vray_displshoppath", 0, 0.0);
-				SHOP_Node *shop_node = OPgetDirector()->findSHOPNode(shopPath.buffer());
-				if (shop_node) {
-					OP_Node *op_node = VRayExporter::FindChildNodeByType(shop_node, "vray_material_output");
+				OP_Node *matNode = getOpNodeFromPath(shopPath);
+				if (matNode) {
+#pragma message("Reimplement me!")
+					OP_Node *op_node = VRayExporter::FindChildNodeByType(matNode, "vray_material_output");
 					if (op_node) {
 						VOP::MaterialOutput *mtl_out = static_cast<VOP::MaterialOutput *>(op_node);
 						addOpCallback(op_node, VRayExporter::RtCallbackDisplacementShop);
@@ -1156,7 +1158,7 @@ VRay::Plugin VRayExporter::exportDisplacement(OBJ_Node *obj_node, VRay::Plugin &
 					}
 					else {
 						Log::getLog().error("Can't find \"V-Ray Material Output\" operator under \"%s\"!",
-											shop_node->getName().buffer());
+											matNode->getName().buffer());
 					}
 				}
 				break;
@@ -1410,8 +1412,8 @@ void VRayExporter::exportScene()
 	addOpCallback(OPgetDirector()->getManager("obj"), VRayExporter::RtCallbackObjManager);
 
 	// Clear plugin caches.
-	clearOpPluginCache();
-	clearPrimPluginCache();
+	objectExporter.clearOpPluginCache();
+	objectExporter.clearPrimPluginCache();
 
 	// export geometry nodes
 	OP_Bundle *activeGeo = m_rop->getActiveGeometryBundle();
@@ -1437,7 +1439,7 @@ void VRayExporter::exportScene()
 	UT_String env_network_path;
 	m_rop->evalString(env_network_path, Parm::parm_render_net_environment.getToken(), 0, 0.0f);
 	if (NOT(env_network_path.equal(""))) {
-		OP_Node *env_network = OPgetDirector()->findNode(env_network_path.buffer());
+		OP_Node *env_network = getOpNodeFromPath(env_network_path);
 		if (env_network) {
 			OP_Node *env_node = VRayExporter::FindChildNodeByType(env_network, "VRayNodeSettingsEnvironment");
 			if (NOT(env_node)) {
@@ -1453,7 +1455,7 @@ void VRayExporter::exportScene()
 	UT_String channels_network_path;
 	m_rop->evalString(channels_network_path, Parm::parm_render_net_render_channels.getToken(), 0, 0.0f);
 	if (NOT(channels_network_path.equal(""))) {
-		OP_Node *channels_network = OPgetDirector()->findNode(channels_network_path.buffer());
+		OP_Node *channels_network = getOpNodeFromPath(channels_network_path);
 		if (channels_network) {
 			OP_Node *chan_node = VRayExporter::FindChildNodeByType(channels_network, "VRayNodeRenderChannelsContainer");
 			if (NOT(chan_node)) {
@@ -1833,18 +1835,23 @@ int VRayExporter::hasVelocityOn(OP_Node &rop) const
 
 	UT_String rcNetworkPath;
 	rop.evalString(rcNetworkPath, Parm::parm_render_net_render_channels.getToken(), 0, t);
-	OP_Network *rcNetwork = dynamic_cast< OP_Network * >(OPgetDirector()->findNode(rcNetworkPath));
-	if (NOT(rcNetwork)) {
+	OP_Node *rcNode = getOpNodeFromPath(rcNetworkPath, t);
+	if (!rcNode) {
 		return false;
 	}
 
-	UT_ValArray< OP_Node * > rcOutputList;
-	if (NOT(rcNetwork->getOpsByName("VRayNodeRenderChannelsContainer", rcOutputList))) {
+	OP_Network *rcNetwork = UTverify_cast<OP_Network*>(rcNode);
+	if (!rcNetwork) {
 		return false;
 	}
 
-	UT_ValArray< OP_Node * > velVOPList;
-	if (NOT(rcNetwork->getOpsByName("VRayNodeRenderChannelVelocity", velVOPList))) {
+	UT_ValArray<OP_Node*> rcOutputList;
+	if (!rcNetwork->getOpsByName("VRayNodeRenderChannelsContainer", rcOutputList)) {
+		return false;
+	}
+
+	UT_ValArray<OP_Node*> velVOPList;
+	if (!rcNetwork->getOpsByName("VRayNodeRenderChannelVelocity", velVOPList)) {
 		return false;
 	}
 

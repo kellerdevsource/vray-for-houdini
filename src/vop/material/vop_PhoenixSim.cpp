@@ -602,8 +602,8 @@ int PhxShaderSim::setVopPathCB(void *data, int index, fpreal64 time, const PRM_T
 
 	UT_String sopPath;
 	simNode->evalString(sopPath, token, 0, 0);
-	auto cacheSop = OPgetDirector()->findSOPNode(sopPath.buffer());
 
+	SOP_Node *cacheSop = getSOPNodeFromPath(sopPath);
 	if (!cacheSop || !cacheSop->getOperator()->getName().startsWith("VRayNodePhxShaderCache")) {
 		Log::getLog().warning("Only a V-Ray PhxShaderCache sop can be selected!");
 		return 0;

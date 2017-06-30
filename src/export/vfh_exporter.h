@@ -11,25 +11,20 @@
 #ifndef VRAY_FOR_HOUDINI_EXPORTER_H
 #define VRAY_FOR_HOUDINI_EXPORTER_H
 
-#include "vfh_defines.h"
 #include "vfh_typedefs.h"
 #include "vfh_vray.h"
 #include "vfh_plugin_exporter.h"
 #include "vfh_plugin_info.h"
 #include "vfh_export_view.h"
 #include "vfh_vfb.h"
-#include "vfh_log.h"
 #include "vfh_hashes.h"
-
+#include "vfh_export_geom.h"
 
 #include "vfh_export_context.h"
 
 #include <OP/OP_Node.h>
 #include <OBJ/OBJ_Node.h>
 #include <ROP/ROP_Node.h>
-
-#include <unordered_map>
-
 
 namespace VRayForHoudini {
 
@@ -58,40 +53,38 @@ enum VRayLightType {
 	VRayLightSun       = 8,
 };
 
-
 struct OpInterestItem {
-	OpInterestItem():
-		op_node(nullptr),
-		cb(nullptr),
-		cb_data(nullptr)
+	OpInterestItem(OP_Node *op_node=nullptr, OP_EventMethod cb=nullptr, void *cb_data=nullptr)
+		: op_node(op_node)
+		, cb(cb)
+		, cb_data(cb_data)
 	{}
 
-	OpInterestItem(OP_Node *op_node, OP_EventMethod cb, void *cb_data):
-		op_node(op_node),
-		cb(cb),
-		cb_data(cb_data)
-	{}
-
-	OP_Node        *op_node;
-	OP_EventMethod  cb;
-	void           *cb_data;
+	OP_Node *op_node;
+	OP_EventMethod cb;
+	void *cb_data;
 };
-typedef std::vector<OpInterestItem> CbItems;
 
+typedef std::vector<OpInterestItem> CbItems;
 
 struct MotionBlurParams {
 	MotionBlurParams()
 		: mb_geom_samples(1)
 		, mb_duration(0.)
 		, mb_interval_center(0.)
+		, mb_start(0)
+		, mb_end(0)
+		, mb_frame_inc(0)
 	{}
 
 	void   calcParams(fpreal currFrame);
 
 	int    mb_geom_samples;
-	/// (fpreal) motion blur duration in frames
+
+	/// Motion blur duration in frames.
 	fpreal mb_duration;
-	/// (fpreal) motion blur interval center in frames
+
+	/// Motion blur interval center in frames.
 	fpreal mb_interval_center;
 
 	fpreal mb_start;
@@ -113,10 +106,9 @@ public:
 		ExpExport, ///< export a vrscene
 	};
 
-	VRayExporter(VRayRendererNode *rop);
+	explicit VRayExporter(VRayRendererNode *rop);
 	~VRayExporter();
 
-public:
 	/// Create and initilize or reset the V-Ray renderer instance.
 	/// This will stop currently running rendering (if any).
 	/// @param hasUI[in] - true to enable the VFB, false if VFB is not needed
@@ -516,6 +508,9 @@ public:
 	/// @param sim[in] - the volumetric data plugin
 	void phxAddSimumation(VRay::Plugin sim);
 
+	/// Returns object exporter.
+	ObjectExporter& getObjectExporter() { return objectExporter; }
+
 private:
 	VRayRendererNode              *m_rop; ///< the ROP node bound to this exporter
 	UI::VFB                        m_vfb; ///< a lightweigth frame buffer window showing the rendered image, when we don't want V-Ray VFB
@@ -537,6 +532,9 @@ private:
 	fpreal                         m_timeStart; ///< start time for the export
 	fpreal                         m_timeEnd; ///< end time for the export
 	FloatSet                       m_exportedFrames; ///< set of time points at which the scene has already been exported
+
+	/// Object exporter.
+	ObjectExporter objectExporter;
 
 public:
 	/// Register event callback for a given node. This callback will be invoked when

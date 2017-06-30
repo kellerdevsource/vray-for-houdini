@@ -728,13 +728,12 @@ OP_Bundle* getBundleFromOpNodePrm(OP_Node *node, const char *pn, fpreal time)
 
 	OP_Network *opcreator = nullptr;
 	const char *opfilter = nullptr;
-	if (   prm
-		&& prm->getSparePtr())
-	{
-		opcreator = UTverify_cast< OP_Network * >(OPgetDirector()->findNode(prm->getSparePtr()->getOpRelative()));
-		opfilter = prm->getSparePtr()->getOpFilter();
-	}
+	if (prm && prm->getSparePtr()) {
+		const PRM_SpareData	&prmSpareData = *prm->getSparePtr();
 
+		opcreator = UTverify_cast<OP_Network*>(getOpNodeFromPath(prmSpareData.getOpRelative()));
+		opfilter = prmSpareData.getOpFilter();
+	}
 	if (!opcreator) {
 		opcreator = node->getCreator();
 	}

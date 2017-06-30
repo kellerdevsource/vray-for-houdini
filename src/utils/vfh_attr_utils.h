@@ -8,7 +8,6 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
-
 #ifndef VRAY_FOR_HOUDINI_VFH_ATTR_UTILS_H
 #define VRAY_FOR_HOUDINI_VFH_ATTR_UTILS_H
 
@@ -50,6 +49,21 @@ FORCEINLINE OP_Node *getOpNodeFromPath(const UT_String &path, fpreal t=0.0)
 	return getOpNodeFromPath(newPath, t);
 }
 
+#define getCastOpNodeFromPath(PREFIX) \
+/*! Returns PREFIX##_Node from path. \
+ * @param path Path. \
+ * @param t Time. \
+ * @returns PREFIX##_Node instance or NULL. \
+ */ \
+FORCEINLINE PREFIX##_Node *get##PREFIX##NodeFromPath(const UT_String &path, fpreal t=0.0) \
+{ \
+	return CAST_##PREFIX##NODE(getOpNodeFromPath(path, t)); \
+}
+
+getCastOpNodeFromPath(OBJ)
+getCastOpNodeFromPath(SOP)
+getCastOpNodeFromPath(VOP)
+
 /// Converts M3 to M4 leaving the offset 0.0.
 /// @param m3 UT_Matrix3T matrix.
 template <typename S>
@@ -83,6 +97,16 @@ FORCEINLINE VRay::Transform utMatrixToVRayTransform(const UT_MatrixType &m, bool
 		VUtils::swap(tm.matrix[1], tm.matrix[2]);
 	}
 	return tm;
+}
+
+/// Convert from Houdini vector to VRay::Vector
+/// @param v Houdini vector.
+template <typename UT_VectorType>
+FORCEINLINE VRay::Vector utVectorVRayVector(const UT_VectorType &v)
+{
+	VRay::Vector vec;
+	vec.set(v(0), v(1), v(2));
+	return vec;
 }
 
 #endif // VRAY_FOR_HOUDINI_VFH_ATTR_UTILS_H

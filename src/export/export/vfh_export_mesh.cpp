@@ -21,7 +21,8 @@ using namespace VRayForHoudini;
 
 /// This is a specific value for TexUserColor / TexUserScalar
 /// to specify that attribute is unset for a particular face.
-static const float almostMaxFloat = FLT_MAX / 2.0f;
+/// Using ALMOST_FLT_MAX = FLT_MAX / 2 because of face UV bary interpolation.
+static const float ALMOST_FLT_MAX = FLT_MAX / 2.0f;
 
 namespace {
 
@@ -130,7 +131,7 @@ bool MeshExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc &pluginD
 }
 
 
-void MeshExporter::exportPrimitives(const GU_Detail &gdp, InstancerItems&)
+void MeshExporter::exportPrimitives(const GU_Detail &gdp, PrimitiveItems&)
 {
 	// Check if this is needed / could be reused
 #if 0
@@ -543,7 +544,7 @@ static void allocateOverrideMapChannel(MapChannel &mapChannel, const GEOPrimList
 	mapChannel.faces = VRay::VUtils::IntRefList(numMapVertex);
 
 	for (int i = 0; i < numMapVertex; ++i) {
-		mapChannel.vertices[i].set(almostMaxFloat, almostMaxFloat, almostMaxFloat);
+		mapChannel.vertices[i].set(ALMOST_FLT_MAX, 0.0f, 0.0f);
 		mapChannel.faces[i] = i;
 	}
 }
@@ -599,7 +600,7 @@ static void setMapChannelOverrideData(const MtlOverrideItem &overrideItem, VRay:
 
 static void setMapChannelOverrideFaceData(MapChannels &mapChannels, const GEOPrimList &primList, const int faceIndex, const PrimMaterial &primMaterial)
 {
-	if (!(primMaterial.isValid() && primMaterial.overrides.size())) {
+	if (primMaterial.overrides.size()) {
 		return;
 	}
 

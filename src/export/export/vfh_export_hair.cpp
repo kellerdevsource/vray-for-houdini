@@ -9,22 +9,17 @@
 //
 
 #include "vfh_export_hair.h"
+#include "vfh_exporter.h"
 #include "vfh_geoutils.h"
 
 #include <GEO/GEO_PrimPoly.h>
 
-
 using namespace VRayForHoudini;
-
-
-namespace {
+using namespace VRayForHoudini::Attrs;
 
 const char * const theHairParm = "geom_splines";
-
 const char * const VFH_ATTRIB_INCANDESCENCE = "incandescence";
 const char * const VFH_ATTRIB_TRANSPARENCY = "transparency";
-
-}
 
 HairPrimitiveExporter::HairPrimitiveExporter(OBJ_Node &obj, OP_Context &ctx, VRayExporter &exp, const GEOPrimList &primList)
 	: PrimitiveExporter(obj, ctx, exp)

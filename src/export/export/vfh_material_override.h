@@ -18,8 +18,6 @@
 
 namespace VRayForHoudini {
 
-class VRayExporter;
-
 /// SHOPHasher is a helper structure to generate material IDs when
 /// combining several V-Ray materials into MtlMulti.
 struct SHOPHasher
@@ -100,6 +98,7 @@ struct MtlOverrideItem {
 	/// Returns override value type.
 	MtlOverrideItemType getType() const { return type; }
 
+	/// Override value type.
 	MtlOverrideItemType type;
 
 	exint valueInt;
@@ -115,9 +114,10 @@ struct PrimMaterial {
 		: matNode(nullptr)
 	{}
 
-	bool isValid() const {return !!matNode; }
-
+	/// Material node (SHOP, VOP).
 	OP_Node *matNode;
+
+	/// Material overrides from stylesheet or SHOP overrides.
 	MtlOverrideItems overrides;
 };
 

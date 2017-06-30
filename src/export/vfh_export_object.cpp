@@ -16,16 +16,12 @@
 #include "vfh_prm_templates.h"
 #include "vfh_export_geom.h"
 
-#include <SHOP/SHOP_Node.h>
 #include <PRM/PRM_Parm.h>
 #include <OP/OP_Bundle.h>
 #include <OP/OP_BundleList.h>
+#include <GA/GA_IntrinsicMacros.h>
 
 #include <boost/algorithm/string.hpp>
-
-#include <GA/GA_IntrinsicMacros.h>
-#include <GU/GU_PrimPart.h>
-#include <POP/POP_ContextData.h>
 
 using namespace VRayForHoudini;
 
@@ -48,8 +44,10 @@ void VRayExporter::RtCallbackOBJGeometry(OP_Node *caller, void *callee, OP_Event
 	UT_ASSERT(caller->castToOBJNode());
 	UT_ASSERT(caller->castToOBJNode()->castToOBJGeometry());
 
-	VRayExporter &exporter = *reinterpret_cast< VRayExporter* >(callee);
-	OBJ_Geometry *obj_geo = caller->castToOBJNode()->castToOBJGeometry();
+	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
+
+	OBJ_Node &objNode = *caller->castToOBJNode();
+	OBJ_Geometry &objGeo = *objNode.castToOBJGeometry();
 
 	int shouldReExport = false;
 	switch (type) {
@@ -64,18 +62,27 @@ void VRayExporter::RtCallbackOBJGeometry(OP_Node *caller, void *callee, OP_Event
 				UT_StringRef prmToken = prm->getToken();
 				const PRM_SpareData	*spare = prm->getSparePtr();
 				Log::getLog().debug("  Parm: %s", prmToken.buffer());
-				shouldReExport = (prmToken.equal(obj_geo->getMaterialParmToken()) ||
+				shouldReExport = (prmToken.equal(objGeo.getMaterialParmToken()) ||
 				                 (spare && spare->getValue(OBJ_MATERIAL_SPARE_TAG)));
 			}
 		}
 		case OP_FLAG_CHANGED:
 		case OP_INPUT_CHANGED:
 		case OP_INPUT_REWIRED: {
-			clearOpPluginCache();
+			ObjectExporter &objExporter = exporter.getObjectExporter();
 
-			ObjectExporter objExporter(exporter, *obj_geo);
+			// Otherwise we won't update plugin.
+			objExporter.clearOpPluginCache();
+
+			// Store current state
+			const int geomExpState = objExporter.getExportGeometry();
 			objExporter.setExportGeometry(shouldReExport);
-			objExporter.exportNode();
+
+			// Update node
+			objExporter.exportNode(objNode);
+
+			// Restore state
+			objExporter.setExportGeometry(geomExpState);
 			break;
 		}
 		case OP_NODE_PREDELETE: {
@@ -97,11 +104,14 @@ void VRayExporter::RtCallbackSOPChanged(OP_Node *caller, void *callee, OP_EventT
 
 	Log::getLog().debug("RtCallbackSOPChanged: %s from \"%s\"", OPeventToString(type), caller->getName().buffer());
 
-	UT_ASSERT( caller->getCreator()->castToOBJNode() );
-	UT_ASSERT( caller->getCreator()->castToOBJNode()->castToOBJGeometry() );
+	UT_ASSERT(caller->getCreator());
+	UT_ASSERT(caller->getCreator()->castToOBJNode());
+	UT_ASSERT(caller->getCreator()->castToOBJNode()->castToOBJGeometry());
 
 	VRayExporter &exporter = *reinterpret_cast< VRayExporter* >(callee);
-	OBJ_Geometry *obj_geo = caller->getCreator()->castToOBJNode()->castToOBJGeometry();
+
+	OBJ_Node &objNode = *caller->getCreator()->castToOBJNode();
+	OBJ_Geometry &objGeo = *objNode.castToOBJGeometry();
 
 	switch (type) {
 		case OP_PARM_CHANGED: {
@@ -112,16 +122,13 @@ void VRayExporter::RtCallbackSOPChanged(OP_Node *caller, void *callee, OP_EventT
 		case OP_FLAG_CHANGED:
 		case OP_INPUT_CHANGED:
 		case OP_INPUT_REWIRED: {
-			clearPrimPluginCache();
-
-			SOP_Node *geom_node = obj_geo->getRenderSopPtr();
+			SOP_Node *geom_node = objGeo.getRenderSopPtr();
 			if (geom_node) {
-				exporter.addOpCallback(geom_node, VRayExporter::RtCallbackSOPChanged);
+				exporter.addOpCallback(geom_node, RtCallbackSOPChanged);
 			}
-
-			ObjectExporter objExporter(exporter, *obj_geo);
-			GeometryExporter geoExporter(objExporter, *obj_geo, exporter);
-			geoExporter.exportGeometry();
+			ObjectExporter &objExporter = exporter.getObjectExporter();
+			objExporter.clearPrimPluginCache();
+			objExporter.exportGeometry(objNode);
 			break;
 		}
 		case OP_NODE_PREDELETE: {
@@ -247,21 +254,19 @@ VRay::Plugin VRayExporter::exportObject(OBJ_Node *objNode)
 			addOpCallback(objNode, RtCallbackOBJGeometry);
 			addOpCallback(renderOp, RtCallbackSOPChanged);
 
-			ObjectExporter objExporter(*this, *objNode);
-			plugin = objExporter.exportNode();
-
+			plugin = objectExporter.exportNode(*objNode);
 			if (plugin) {
 				Log::getLog().debug("Exporting OBJ: %s [%s]",
 									objNode->getName().buffer(),
 									objOpType.buffer());
 			}
 			else {
-				Log::getLog().info("Error exporting OBJ: %s [%s]",
-								   objNode->getName().buffer(),
-								   objOpType.buffer());
-				Log::getLog().info("  Render OP: %s:\"%s\"",
-								   renderOp->getName().buffer(),
-								   renderOp->getOperator()->getName().buffer());
+				Log::getLog().error("Error exporting OBJ: %s [%s]",
+									objNode->getName().buffer(),
+									objOpType.buffer());
+				Log::getLog().error("  Render OP: %s:\"%s\"",
+									renderOp->getName().buffer(),
+									renderOp->getOperator()->getName().buffer());
 			}
 		}
 	}
@@ -280,7 +285,7 @@ VRay::Plugin VRayExporter::exportVRayClipper(OBJ_Node &clipperNode)
 	// find and export clipping geometry plugins
 	UT_String nodePath;
 	clipperNode.evalString(nodePath, "clip_mesh", 0, 0, t);
-	OP_Node *opNode = OPgetDirector()->findNode(nodePath.buffer());
+	OP_Node *opNode = getOpNodeFromPath(nodePath, t);
 	VRay::Plugin clipNodePlugin;
 	if (   opNode
 		&& opNode->getOpTypeID() == OBJ_OPTYPE_ID
