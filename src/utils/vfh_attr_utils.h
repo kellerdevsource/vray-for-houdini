@@ -16,6 +16,13 @@
 
 #include "vfh_vray.h"
 
+const char VFH_ATTR_MATERIAL_ID[] = "switchmtl";
+const char VFH_ATTR_MATERIAL_STYLESHEET[] = "material_stylesheet";
+const char VFH_ATTR_MATERIAL_OVERRIDE[] = "material_override";
+const char VFH_ATTRIB_TRANSFORM[] = "transform";
+const char VFH_ATTRIB_OBJECTID[] = "vray_objectID";
+const char VFH_ATTRIB_ANIM_OFFSET[] = "anim_offset";
+
 /// Expands OP_Node path.
 /// @param path Path. May be changed if path has "op:/" syntax.
 /// @param t Time.

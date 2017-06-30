@@ -20,6 +20,7 @@
 #include "rop/vfh_rop.h"
 #include "sop/sop_node_base.h"
 #include "vop/vop_node_base.h"
+#include "obj/obj_node_base.h"
 
 #include <GEO/GEO_Primitive.h>
 #include <GEO/GEO_PrimPoly.h>
@@ -28,7 +29,6 @@
 #include <OP/OP_Bundle.h>
 #include <GA/GA_Types.h>
 #include <GA/GA_Names.h>
-#include "obj/obj_node_base.h"
 
 using namespace VRayForHoudini;
 
@@ -85,10 +85,6 @@ static const char intrPackedPrimitiveName[] = "packedprimitivename";
 static const char intrPackedLocalTransform[] = "packedlocaltransform";
 static const char intrGeometryID[] = "geometryid";
 static const char intrFilename[] = "filename";
-
-static const char VFH_ATTR_MATERIAL_ID[] = "switchmtl";
-static const char GEO_VFH_ATTRIB_OBJECTID[] = "vray_objectID";
-static const char GEO_VFH_ATTRIB_ANIM_OFFSET[] = "anim_offset";
 
 static const UT_String vrayPluginTypeGeomStaticMesh = "GeomStaticMesh";
 static const UT_String vrayPluginTypeNode = "Node";
@@ -469,12 +465,12 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 	const GA_Size numPoints = gdp.getNumPoints();
 	const GA_Size numPrims = gdp.getNumPrimitives();
 
-	GA_ROHandleS materialStyleSheetHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GA_Names::material_stylesheet));
-	GA_ROHandleS materialOverrideHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GA_Names::material_override));
+	GA_ROHandleS materialStyleSheetHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTR_MATERIAL_STYLESHEET));
+	GA_ROHandleS materialOverrideHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTR_MATERIAL_OVERRIDE));
 	GA_ROHandleS materialPathHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GA_Names::shop_materialpath));
 
-	GA_ROHandleI objectIdHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GEO_VFH_ATTRIB_OBJECTID));
-	GA_ROHandleF animOffsetHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GEO_VFH_ATTRIB_ANIM_OFFSET));
+	GA_ROHandleI objectIdHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTRIB_OBJECTID));
+	GA_ROHandleF animOffsetHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTRIB_ANIM_OFFSET));
 
 	GEOAttribList primVecAttrList;
 	gdp.getAttributes().matchAttributes(GEOgetV3AttribFilter(), GA_ATTRIB_PRIMITIVE, primVecAttrList); 
@@ -673,7 +669,7 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_D
 		}
 
 		// Index + TM + VEL_TM + AdditionalParams + Node + AdditionalParamsMembers
-		const int itemSize = 5 + __popcnt(additional_params_flags);
+		const int itemSize = 5 + VUtils::__popcnt(additional_params_flags);
 
 		VRay::VUtils::ValueRefList item(itemSize);
 		int indexOffs = 0;
@@ -1059,8 +1055,8 @@ struct PointInstanceAttrs {
 		rot        = gdp.findPointAttribute(GA_Names::rot);
 		trans      = gdp.findPointAttribute(GA_Names::trans);
 		pivot      = gdp.findPointAttribute(GA_Names::pivot);
-		transform3 = gdp.findPointAttribute(GA_Names::transform);
-		transform4 = gdp.findPointAttribute(GA_Names::transform);
+		transform3 = gdp.findPointAttribute(VFH_ATTRIB_TRANSFORM);
+		transform4 = gdp.findPointAttribute(VFH_ATTRIB_TRANSFORM);
 	}
 
 	GA_ROHandleV4 orient;
@@ -1205,8 +1201,8 @@ VRay::Plugin ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_De
 	GA_ROHandleS instanceHndl(gdp.findAttribute(GA_ATTRIB_POINT, "instance"));
 	GA_ROHandleS instancePathHndl(gdp.findAttribute(GA_ATTRIB_POINT, "instancepath"));
 
-	GA_ROHandleS materialStyleSheetHndl(gdp.findAttribute(GA_ATTRIB_POINT, GA_Names::material_stylesheet));
-	GA_ROHandleS materialOverrideHndl(gdp.findAttribute(GA_ATTRIB_POINT, GA_Names::material_override));
+	GA_ROHandleS materialStyleSheetHndl(gdp.findAttribute(GA_ATTRIB_POINT, VFH_ATTR_MATERIAL_STYLESHEET));
+	GA_ROHandleS materialOverrideHndl(gdp.findAttribute(GA_ATTRIB_POINT, VFH_ATTR_MATERIAL_OVERRIDE));
 	GA_ROHandleS materialPathHndl(gdp.findAttribute(GA_ATTRIB_POINT, GA_Names::shop_materialpath));
 
 	GEOAttribList pointVecAttrList;
@@ -1288,7 +1284,7 @@ VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode)
 	}
 
 	GU_DetailHandleAutoReadLock gdl(renderSOP->getCookedGeoHandle(ctx));
-	if (!gdl) {
+	if (!gdl.isValid()) {
 		return VRay::Plugin();
 	}
 

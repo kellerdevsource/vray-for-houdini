@@ -389,7 +389,7 @@ VRay::VUtils::IntRefList& MeshExporter::getFaceMtlIDs()
 	                      : objNode.getMaterialNode(ctx.getTime());
 	material = pluginExporter.exportMaterial(objMatNode);
 
-	GA_ROHandleS materialStyleSheetHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GA_Names::material_stylesheet));
+	GA_ROHandleS materialStyleSheetHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTR_MATERIAL_STYLESHEET));
 	GA_ROHandleS materialPathHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GEO_STD_ATTRIB_MATERIAL));
 
 	const int hasStyleSheet = materialStyleSheetHndl.isValid();
@@ -681,9 +681,9 @@ static void setMapChannelOverrideFaceData(MapChannels &mapChannels, const GEOPri
 
 void MeshExporter::getMtlOverrides(MapChannels &mapChannels)
 {
-	GA_ROHandleS materialStyleSheetHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GA_Names::material_stylesheet));
+	GA_ROHandleS materialStyleSheetHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTR_MATERIAL_STYLESHEET));
 	GA_ROHandleS materialPathHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GEO_STD_ATTRIB_MATERIAL));
-	GA_ROHandleS materialOverrideHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GA_Names::material_override));
+	GA_ROHandleS materialOverrideHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTR_MATERIAL_OVERRIDE));
 
 	if (!(materialStyleSheetHndl.isValid() || materialPathHndl.isValid())) {
 		return;
