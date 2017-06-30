@@ -335,27 +335,29 @@ static void ensureDynamicGeometryForInstancer(VRay::Plugin plugin)
 }
 
 static void overrideItemsToUserAttributes(const MtlOverrideItems &overrides, QString &userAttributes) {
+	QString buf;
+
 	FOR_CONST_IT (MtlOverrideItems, oiIt, overrides) {
 		const tchar *overrideName = oiIt.key();
 		const MtlOverrideItem &overrideItem = oiIt.data();
 
 		switch (overrideItem.getType()) {
 			case MtlOverrideItem::itemTypeInt: {
-				userAttributes += QString::asprintf("%s=%lld;",
-													overrideName,
-													overrideItem.valueInt);
+				userAttributes += buf.sprintf("%s=%lld;",
+											  overrideName,
+											  overrideItem.valueInt);
 				break;
 			}
 			case MtlOverrideItem::itemTypeDouble: {
-				userAttributes += QString::asprintf("%s=%g",
-													overrideName,
-													overrideItem.valueDouble);
+				userAttributes += buf.sprintf("%s=%g",
+											  overrideName,
+											  overrideItem.valueDouble);
 				break;
 			}
 			case MtlOverrideItem::itemTypeVector: {
-				userAttributes += QString::asprintf("%s=%g,%g,%g;",
-													overrideName,
-													overrideItem.valueVector.x, overrideItem.valueVector.y, overrideItem.valueVector.z);
+				userAttributes += buf.sprintf("%s=%g,%g,%g;",
+											  overrideName,
+											  overrideItem.valueVector.x, overrideItem.valueVector.y, overrideItem.valueVector.z);
 				break;
 			}
 			default: {
