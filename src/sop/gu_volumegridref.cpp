@@ -205,12 +205,26 @@ VRayVolumeGridRef::CachePtr VRayVolumeGridRef::getCache() const
 {
 	auto path = this->get_current_cache_path();
 	auto map = this->get_usrchmap();
+
+	if (path != nullptr 
+		&& map != nullptr 
+		&& m_last_cache_path == path
+		&& m_last_user_char_map == map) {
+		return m_cachePtr;
+	}
+
 	if (!UTisstring(path) || !map) {
 		return nullptr;
 	}
 
+	// remember last cache source
+	m_last_cache_path = path;
+	m_last_user_char_map = map;
+
+	// load new cache
 	auto ptr = *map ? newIAurWithChannelsMapping(path, map) : newIAur(path);
-	return CachePtr(ptr,[](IAur *ptr) {	deleteIAur(ptr); });
+	m_cachePtr = CachePtr(ptr, [](IAur *ptr) {	deleteIAur(ptr); });
+	return m_cachePtr;
 }
 
 
