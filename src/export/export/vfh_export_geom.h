@@ -62,7 +62,6 @@ class ObjectExporter
 	typedef VUtils::HashMapKey<OP_Node*, VRay::Plugin> OpPluginCache;
 	typedef VUtils::HashMapKey<int, VRay::Plugin> PrimPluginCache;
 	typedef VUtils::HashMap<VRay::Plugin> GeomNodeCache;
-	typedef VUtils::HashMap<VRay::Plugin> GeomNodeCache;
 
 public:
 	explicit ObjectExporter(VRayExporter &pluginExporter);
