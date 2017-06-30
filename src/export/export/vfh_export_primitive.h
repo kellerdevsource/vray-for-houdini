@@ -35,6 +35,7 @@ struct PrimitiveItem {
 		: prim(nullptr)
 		, primID(0)
 		, geometry(geometry)
+		, material(material)
 		, tm(1)
 		, objectID(objectIdUndefined)
 		, t(0.0)
@@ -52,6 +53,9 @@ struct PrimitiveItem {
 
 	/// Exporterd geometry plugin.
 	VRay::Plugin geometry;
+
+	/// Exporterd material plugin.
+	VRay::Plugin material;
 
 	/// Transform.
 	VRay::Transform tm;

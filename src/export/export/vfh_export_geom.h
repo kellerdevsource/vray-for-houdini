@@ -183,6 +183,15 @@ public:
 	/// Export object.
 	/// @returns Node plugin.
 	VRay::Plugin exportObject(OBJ_Node &objNode);
+ 
+	/// Returns transform from the primitive context stack.
+	VRay::Transform getTm() const;
+
+	/// Returns primitive ID from the primitive context stack.
+	exint getDetailID() const;
+
+	/// Returns material from the primitive context stack.
+	void getPrimMaterial(PrimMaterial &primMaterial) const;
 
 private:
 	/// Push context frame when exporting nested object.
@@ -191,14 +200,6 @@ private:
 	/// Pop frame when going back to parent context.
 	/// @returns Popped context frame.
 	PrimContext popContext() { return primContextStack.pop(); }
-
-	/// Returns transform from the primitive context stack.
-	VRay::Transform getTm() const;
-
-	/// Returns primitive ID from the primitive context stack.
-	exint getDetailID() const;
-
-	void getPrimMaterial(PrimMaterial &primMaterial) const;
 
 	/// Export light object.
 	/// @returns Light plugin.

@@ -153,8 +153,9 @@ exint ObjectExporter::getDetailID() const
 void ObjectExporter::getPrimMaterial(PrimMaterial &primMaterial) const
 {
 	PrimContextIt it(primContextStack);
-	while (it.hasNext()) {
-		const PrimMaterial &primMtl(it.next().primMaterial);
+	it.toBack();
+	while (it.hasPrevious()) {
+		const PrimMaterial &primMtl(it.previous().primMaterial);
 		if (primMtl.matNode) {
 			primMaterial.matNode = primMtl.matNode;
 		}
@@ -390,7 +391,7 @@ int ObjectExporter::getPrimPluginFromCache(int primKey, VRay::Plugin &plugin)
 
 void ObjectExporter::addPrimPluginToCache(int primKey, VRay::Plugin &plugin)
 {
-	UT_ASSERT(primKey > 0);
+	UT_ASSERT(primKey != 0);
 	UT_ASSERT(plugin);
 
 	pluginCache.prim.insert(primKey, plugin);
@@ -507,15 +508,15 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 			item.t = animOffsetHndl.get(primOffset);
 		}
 
+		// Material overrides.
+		mergeMaterialOverride(item.primMaterial, materialStyleSheetHndl, materialPathHndl, materialOverrideHndl, primOffset, ctx.getTime());
+		addAttributesAsOverrides(primVecAttrList, primOffset, item.primMaterial.overrides);
+
 		// Check parent overrides.
 		getPrimMaterial(item.primMaterial);
 
-		// Merge current.
-		mergeMaterialOverride(item.primMaterial, materialStyleSheetHndl, materialPathHndl, materialOverrideHndl, primOffset, ctx.getTime());
-
 		// Primitive attributes
 		// TODO: Float primitive attributes
-		addAttributesAsOverrides(primVecAttrList, primOffset, item.primMaterial.overrides);
 
 		if (isPackedPrim) {
 			const GU_PrimPacked &primPacked = static_cast<const GU_PrimPacked&>(*prim);
@@ -540,7 +541,7 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 		}
 
 		if (isVolumePrim) {
-			pushContext(PrimContext(item.tm, item.primID));
+			pushContext(PrimContext(item.tm, item.primID, item.primMaterial));
 			exportPrimVolume(objNode, item);
 			popContext();
 		}
@@ -637,12 +638,23 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_D
 		QString userAttributes;
 		overrideItemsToUserAttributes(primItem.primMaterial.overrides, userAttributes);
 
-		// Instancer works only with Node plugins.
-		VRay::Plugin node = getNodeForInstancerGeometry(primItem.geometry, objMaterial);
-		VRay::Plugin material;
-		if (primItem.primMaterial.matNode) {
-			material = pluginExporter.exportMaterial(primItem.primMaterial.matNode);
+		VRay::Plugin material = objMaterial;
+		if (primItem.material) {
+			material = primItem.material;
 		}
+		else if (primItem.primMaterial.matNode) {
+			OpPluginCache::iterator pIt = pluginCache.op.find(primItem.primMaterial.matNode);
+			if (pIt != pluginCache.op.end()) {
+				material = pIt.data();
+			}
+			else {
+				material = pluginExporter.exportMaterial(primItem.primMaterial.matNode);
+				pluginCache.op.insert(primItem.primMaterial.matNode, material);
+			}
+		}
+
+		// Instancer works only with Node plugins.
+		VRay::Plugin node = getNodeForInstancerGeometry(primItem.geometry, material);
 
 		uint32_t additional_params_flags = 0;
 		if (material) {
@@ -651,7 +663,7 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_D
 		if (primItem.objectID != objectIdUndefined) {
 			additional_params_flags |= useObjectID;
 		}
-		if (userAttributes.length()) {
+		if (primItem.primMaterial.overrides.size()) {
 			additional_params_flags |= useUserAttributes;
 		}
 		if (primItem.flags & PrimitiveItem::itemFlagsUseTime) {
@@ -734,7 +746,7 @@ void ObjectExporter::exportPolyMesh(OBJ_Node &objNode, const GU_Detail &gdp, con
 	}
 
 	// NOTE: Try caching poly data by polyPrims.
-	MeshExporter polyMeshExporter(objNode, gdp, ctx, pluginExporter, primList);
+	MeshExporter polyMeshExporter(objNode, gdp, ctx, pluginExporter, *this, primList);
 	polyMeshExporter.setSubdivApplied(hasSubdivApplied(objNode));
 	if (polyMeshExporter.hasPolyGeometry()) {
 		Attrs::PluginDesc geomDesc;
@@ -1229,10 +1241,12 @@ VRay::Plugin ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_De
 		// Particle transform.
 		item.tm = getPointInstanceTM(gdp, pointInstanceAttrs, pointOffset);
 
-		// Point material overrides.
-		getPrimMaterial(item.primMaterial);
+		// Material overrides.
 		mergeMaterialOverride(item.primMaterial, materialStyleSheetHndl, materialPathHndl, materialOverrideHndl, pointOffset, ctx.getTime());
 		addAttributesAsOverrides(pointVecAttrList, pointOffset, item.primMaterial.overrides);
+
+		// Check parent overrides.
+		getPrimMaterial(item.primMaterial);
 
 		// Mult with object inv. tm.
 		VRay::Transform objTm = VRayExporter::getObjTransform(instaceObjNode, ctx, false);

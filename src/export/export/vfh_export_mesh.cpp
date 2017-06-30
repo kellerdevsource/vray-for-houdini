@@ -45,10 +45,11 @@ static bool getDataFromAttribute(const GA_Attribute *attr, VRay::VUtils::VectorR
 }
 }
 
-MeshExporter::MeshExporter(OBJ_Node &obj, const GU_Detail &gdp, OP_Context &ctx, VRayExporter &exp, const GEOPrimList &primList)
+MeshExporter::MeshExporter(OBJ_Node &obj, const GU_Detail &gdp, OP_Context &ctx, VRayExporter &exp, ObjectExporter &objectExporter, const GEOPrimList &primList)
 	: PrimitiveExporter(obj, ctx, exp)
 	, primList(primList)
 	, gdp(gdp)
+	, objectExporter(objectExporter)
 	, m_hasSubdivApplied(false)
 	, numFaces(-1)
 { }
@@ -379,6 +380,14 @@ VRay::VUtils::IntRefList& MeshExporter::getFaceMtlIDs()
 	if (face_mtlIDs.size()) {
 		return face_mtlIDs;
 	}
+ 
+	PrimMaterial primMaterial;
+	objectExporter.getPrimMaterial(primMaterial);
+
+	OP_Node *objMatNode = primMaterial.matNode
+	                      ? primMaterial.matNode
+	                      : objNode.getMaterialNode(ctx.getTime());
+	material = pluginExporter.exportMaterial(objMatNode);
 
 	GA_ROHandleS materialStyleSheetHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GA_Names::material_stylesheet));
 	GA_ROHandleS materialPathHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GEO_STD_ATTRIB_MATERIAL));
@@ -405,10 +414,8 @@ VRay::VUtils::IntRefList& MeshExporter::getFaceMtlIDs()
 
 	int matIndex = 0;
 
-	OP_Node *objMatNode = objNode.getMaterialNode(ctx.getTime());
-	VRay::Plugin objMaterial = pluginExporter.exportMaterial(objMatNode);
-	if (objMaterial) {
-		matPluginCache.insert(objMatNode, objMaterial);
+	if (material) {
+		matPluginCache.insert(objMatNode, material);
 		matNameToID.insert(objMatNode, matIndex++);
 	}
 
@@ -416,7 +423,6 @@ VRay::VUtils::IntRefList& MeshExporter::getFaceMtlIDs()
 	for (const GEO_Primitive *prim : primList) {
 		const GA_Offset primOffset = prim->getMapOffset();
 
-		PrimMaterial primMaterial;
 		if (hasStyleSheet) {
 			const QString &styleSheet = materialStyleSheetHndl.get(primOffset);
 			if (!styleSheet.isEmpty()) {
@@ -490,7 +496,7 @@ VRay::VUtils::IntRefList& MeshExporter::getFaceMtlIDs()
 			material = opIt.data();
 		}
 	}
-	else {
+	else if (numMaterials > 1) {
 		VRay::VUtils::ValueRefList materialList(numMaterials);
 		VRay::VUtils::CharStringRefList shaderSetsList(numMaterials);
 

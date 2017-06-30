@@ -20,19 +20,19 @@
 namespace VRayForHoudini {
 
 class VRayExporter;
-
+class ObjectExporter;
 /// Exports closed poly primitives and polysoups from a geometry detail
 /// as single V-Ray mesh geometry plugin. The translator caches internally data
 /// that has been processed once one of the get<Foo>() methods is called
 /// so subsequent calls will be much faster. You should call init() to initialize
 /// the translator with a geometry detail before using any of the get<Foo>()
-/// methods.
+/// methods
 class MeshExporter
 	: public PrimitiveExporter
 {
 public:
-	MeshExporter(OBJ_Node &obj, const GU_Detail &gdp, OP_Context &ctx, VRayExporter &exp, const GEOPrimList &primList);
-	~MeshExporter() { }
+	MeshExporter(OBJ_Node &obj, const GU_Detail &gdp, OP_Context &ctx, VRayExporter &exp, ObjectExporter &objectExporter, const GEOPrimList &primList);
+	~MeshExporter() {}
 
 	/// Reset the translator as unintilized i.e.
 	/// clear any cached data for current gdp (if any)
@@ -175,6 +175,8 @@ private:
 
 	/// Current geometry detail
 	const GU_Detail &gdp;
+
+	ObjectExporter &objectExporter;
 
 	bool                        m_hasSubdivApplied; ///< if we have subdivision applied to geometry at render time
 	int                         numFaces; ///< number of mesh faces
