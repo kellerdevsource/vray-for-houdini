@@ -195,12 +195,6 @@ bool ObjectExporter::hasSubdivApplied(OBJ_Node &objNode) const
 		return res;
 	}
 
-	enum DisplacementType {
-		displacementTypeFromMat = 0,
-		displacementTypeDisplace,
-		displacementTypeSmooth,
-	};
-
 	const int displType = objNode.evalInt("vray_displ_type", 0, t);
 	switch (displType) {
 		case displacementTypeFromMat: {

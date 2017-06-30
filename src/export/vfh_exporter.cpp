@@ -44,6 +44,7 @@
 #include <boost/format.hpp>
 #include <boost/algorithm/string.hpp>
 #include "vfh_export_geom.h"
+#include "vfh_op_utils.h"
 
 using namespace VRayForHoudini;
 
@@ -1115,57 +1116,46 @@ VRay::Plugin VRayExporter::exportDisplacement(OBJ_Node *obj_node, VRay::Plugin &
 		Attrs::PluginDesc pluginDesc;
 		const int displType = obj_node->evalInt("vray_displ_type", 0, 0.0);
 		switch (displType) {
-			// use shopnet
-			case 0:
-			{
+			case displacementTypeFromMat: {
 				UT_String shopPath;
 				obj_node->evalString(shopPath, "vray_displshoppath", 0, 0.0);
 				OP_Node *matNode = getOpNodeFromPath(shopPath);
 				if (matNode) {
-#pragma message("Reimplement VRayExporter::exportDisplacement()!")
-					OP_Node *op_node = VRayExporter::FindChildNodeByType(matNode, "vray_material_output");
-					if (op_node) {
-						VOP::MaterialOutput *mtl_out = static_cast<VOP::MaterialOutput *>(op_node);
-						addOpCallback(op_node, VRayExporter::RtCallbackDisplacementShop);
-
-						if (mtl_out->error() < UT_ERROR_ABORT ) {
-							const int idx = mtl_out->getInputFromName("geometry");
-							VOP::NodeBase *input = dynamic_cast<VOP::NodeBase*>(mtl_out->getInput(idx));
-							if (input) {
-								addOpCallback(input, VRayExporter::RtCallbackDisplacementVop);
-
-								// TODO: use shop export context to handle material overrides
-								ExportContext expContext(CT_OBJ, *this, *obj_node);
-								OP::VRayNode::PluginResult res = input->asPluginDesc(pluginDesc, *this, &expContext);
-								if (res == OP::VRayNode::PluginResultError) {
-									Log::getLog().error("Error creating plugin descripion for node: \"%s\" [%s]",
-														input->getName().buffer(), input->getOperator()->getName().buffer());
-								}
-								else if (res == OP::VRayNode::PluginResultNA ||
-										 res == OP::VRayNode::PluginResultContinue)
-								{
-									if (geomPlugin) {
-										pluginDesc.addAttribute(Attrs::PluginAttr("mesh", geomPlugin));
-									}
-
-									setAttrsFromOpNodeConnectedInputs(pluginDesc, input);
-									setAttrsFromOpNodePrms(pluginDesc, input);
-								}
-
-								plugin = exportPlugin(pluginDesc);
-							}
-						}
+					VOP_Node *matVopNode = CAST_VOPNODE(getVRayNodeFromOp(*matNode, "geometry"));
+					if (!matVopNode) {
+						Log::getLog().error("Can't find a valid V-Ray node for \"%s\"!",
+											matNode->getName().buffer());
 					}
 					else {
-						Log::getLog().error("Can't find \"V-Ray Material Output\" operator under \"%s\"!",
-											matNode->getName().buffer());
+						VOP::NodeBase *vrayVopNode = static_cast<VOP::NodeBase*>(matVopNode);
+						if (vrayVopNode) {
+							addOpCallback(vrayVopNode, RtCallbackDisplacementVop);
+
+							ExportContext expContext(CT_OBJ, *this, *obj_node);
+
+							OP::VRayNode::PluginResult res = vrayVopNode->asPluginDesc(pluginDesc, *this, &expContext);
+							if (res == OP::VRayNode::PluginResultError) {
+								Log::getLog().error("Error creating plugin descripion for node: \"%s\" [%s]",
+													vrayVopNode->getName().buffer(), vrayVopNode->getOperator()->getName().buffer());
+							}
+							else if (res == OP::VRayNode::PluginResultNA ||
+									 res == OP::VRayNode::PluginResultContinue)
+							{
+								if (geomPlugin) {
+									pluginDesc.addAttribute(Attrs::PluginAttr("mesh", geomPlugin));
+								}
+
+								setAttrsFromOpNodeConnectedInputs(pluginDesc, vrayVopNode);
+								setAttrsFromOpNodePrms(pluginDesc, vrayVopNode);
+							}
+
+							plugin = exportPlugin(pluginDesc);
+						}
 					}
 				}
 				break;
 			}
-				// use GeomDisplacedMesh
-			case 1:
-			{
+			case displacementTypeDisplace: {
 				pluginDesc.pluginName = VRayExporter::getPluginName(obj_node, "GeomDisplacedMesh@");
 				pluginDesc.pluginID = "GeomDisplacedMesh";
 				if (geomPlugin) {
@@ -1176,9 +1166,7 @@ VRay::Plugin VRayExporter::exportDisplacement(OBJ_Node *obj_node, VRay::Plugin &
 				plugin = exportPlugin(pluginDesc);
 				break;
 			}
-				// use GeomStaticSmoothedMesh
-			case 2:
-			{
+			case displacementTypeSmooth: {
 				pluginDesc.pluginName = VRayExporter::getPluginName(obj_node, "GeomStaticSmoothedMesh@");
 				pluginDesc.pluginID = "GeomStaticSmoothedMesh";
 				if (geomPlugin) {

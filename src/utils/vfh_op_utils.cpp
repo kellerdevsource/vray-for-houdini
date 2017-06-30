@@ -33,7 +33,7 @@ OP_Node* VRayForHoudini::getVRayNodeFromOp(OP_Node &matNode, const char *socketN
 	}
 
 	VOP_Node *vopNode = CAST_VOPNODE(res);
-	if (vopNode && vopNode->getOperator()->getName().startsWith("VRayNode")) {
+	if (vopNode && pluginID && vopNode->getOperator()->getName().startsWith("VRayNode")) {
 		VOP::NodeBase *vrayVopNode = static_cast<VOP::NodeBase*>(vopNode);
 		if (vrayVopNode->getVRayPluginID() != pluginID) {
 			return nullptr;

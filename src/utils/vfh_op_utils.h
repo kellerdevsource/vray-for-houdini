@@ -21,7 +21,7 @@ namespace VRayForHoudini {
 /// @param matNode SHOP or VOP node.
 /// @param socketName Socket name for "V-Ray Material Output" node.
 /// @param pluginID V-Ray plugin ID to match.
-OP_Node *getVRayNodeFromOp(OP_Node &matNode, const char *socketName, const char *pluginID);
+OP_Node *getVRayNodeFromOp(OP_Node &matNode, const char *socketName, const char *pluginID=nullptr);
 
 } // namespace VRayForHoudini
 
