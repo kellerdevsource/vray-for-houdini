@@ -16,6 +16,8 @@
 #include "vfh_geoutils.h"
 
 #include <GU/GU_PrimPacked.h>
+#include <OBJ/OBJ_Light.h>
+
 #include <QStack>
 
 namespace VRayForHoudini {
