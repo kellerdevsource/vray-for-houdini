@@ -14,7 +14,7 @@
 #include <SHOP/SHOP_GeoOverride.h>
 #include <UT/UT_Version.h>
 
-#if UT_MAJOR_VERSION_INT >= 16
+#ifdef USE_QT5
 #include <QtCore>
 #endif
 
@@ -22,7 +22,7 @@ using namespace VRayForHoudini;
 
 void VRayForHoudini::mergeStyleSheet(PrimMaterial &primMaterial, const QString &styleSheet, fpreal t, int materialOnly)
 {
-#if UT_MAJOR_VERSION_INT >= 16
+#ifdef USE_QT5
 	QJsonParseError parserError;
 	QJsonDocument styleSheetParser = QJsonDocument::fromJson(styleSheet.toUtf8(), &parserError);
 
