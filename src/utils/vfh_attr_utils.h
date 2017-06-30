@@ -14,7 +14,7 @@
 #include <OP/OP_Node.h>
 #include <OP/OP_Director.h>
 
-#include <systemstuff.h>
+#include "vfh_vray.h"
 
 /// Expands OP_Node path.
 /// @param path Path. May be changed if path has "op:/" syntax.

@@ -13,7 +13,10 @@
 
 #include "vfh_vray.h"
 #include "vfh_material_override.h"
-#include "vfh_plugin_exporter.h"
+
+#include <GA/GA_Primitive.h>
+#include <GU/GU_Detail.h>
+#include <GU/GU_PrimPacked.h>
 
 namespace VRayForHoudini {
 

@@ -11,10 +11,18 @@
 
 #include "vfh_material_override.h"
 
+#include <SHOP/SHOP_GeoOverride.h>
+#include <UT/UT_Version.h>
+
+#if UT_MAJOR_VERSION_INT >= 16
+#include <QtCore>
+#endif
+
 using namespace VRayForHoudini;
 
 void VRayForHoudini::mergeStyleSheet(PrimMaterial &primMaterial, const QString &styleSheet, fpreal t, int materialOnly)
 {
+#if UT_MAJOR_VERSION_INT >= 16
 	QJsonParseError parserError;
 	QJsonDocument styleSheetParser = QJsonDocument::fromJson(styleSheet.toUtf8(), &parserError);
 
@@ -109,6 +117,7 @@ void VRayForHoudini::mergeStyleSheet(PrimMaterial &primMaterial, const QString &
 			}
 		}
 	}
+#endif
 }
 
 void VRayForHoudini::mergeMaterialOverrides(PrimMaterial &primMaterial, const UT_String &matPath, const UT_String &materialOverrides, fpreal t, int materialOnly)

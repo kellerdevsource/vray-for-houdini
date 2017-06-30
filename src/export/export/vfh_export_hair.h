@@ -13,9 +13,9 @@
 
 #include "vfh_export_primitive.h"
 #include "vfh_export_geom.h"
+#include "vfh_plugin_exporter.h"
 
-namespace VRayForHoudini
-{
+namespace VRayForHoudini {
 
 /// Exports open poly primitives, bezier and nurbs curves as V-Ray Hair plugin
 /// from geometry detail

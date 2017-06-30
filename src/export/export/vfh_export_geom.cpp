@@ -22,6 +22,7 @@
 #include "vop/vop_node_base.h"
 
 #include <GEO/GEO_Primitive.h>
+#include <GEO/GEO_PrimPoly.h>
 #include <GU/GU_Detail.h>
 #include <GU/GU_PrimSphere.h>
 #include <OP/OP_Bundle.h>

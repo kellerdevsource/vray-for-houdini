@@ -20,6 +20,7 @@
 #include <OP/OP_Bundle.h>
 #include <OP/OP_BundleList.h>
 #include <GA/GA_IntrinsicMacros.h>
+#include <OBJ/OBJ_Geometry.h>
 
 #include <boost/algorithm/string.hpp>
 
