@@ -1122,7 +1122,7 @@ VRay::Plugin VRayExporter::exportDisplacement(OBJ_Node *obj_node, VRay::Plugin &
 				obj_node->evalString(shopPath, "vray_displshoppath", 0, 0.0);
 				OP_Node *matNode = getOpNodeFromPath(shopPath);
 				if (matNode) {
-#pragma message("Reimplement me!")
+#pragma message("Reimplement VRayExporter::exportDisplacement()!")
 					OP_Node *op_node = VRayExporter::FindChildNodeByType(matNode, "vray_material_output");
 					if (op_node) {
 						VOP::MaterialOutput *mtl_out = static_cast<VOP::MaterialOutput *>(op_node);
