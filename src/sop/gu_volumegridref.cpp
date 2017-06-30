@@ -206,8 +206,9 @@ VRayVolumeGridRef::CachePtr VRayVolumeGridRef::getCache() const
 	auto path = this->get_current_cache_path();
 	auto map = this->get_usrchmap();
 
-	if (m_cachePtr.use_count() != 0
-		&& m_last_cache_path == path 
+	if (path != nullptr 
+		&& map != nullptr 
+		&& m_last_cache_path == path
 		&& m_last_user_char_map == map) {
 		return m_cachePtr;
 	}

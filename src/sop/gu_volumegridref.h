@@ -171,9 +171,10 @@ private:
 	DataRangeMap           m_channelDataRange;
 
 	/// cache handling
-	mutable CachePtr       m_cachePtr;
-	mutable std::string    m_last_cache_path;
-	mutable std::string    m_last_user_char_map;
+	/// members are mutable so that they can be modified in const member functions (like getCache)
+	mutable CachePtr       m_cachePtr; ///< Holds pointer to the Phoenix cache loaded
+	mutable std::string    m_last_cache_path; ///< The last file path used to load cache
+	mutable std::string    m_last_user_char_map; ///< The last 
 };
 
 
