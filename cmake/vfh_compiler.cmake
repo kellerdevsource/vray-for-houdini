@@ -25,7 +25,7 @@ macro(set_precompiled_header PrecompiledHeader PrecompiledSource SourcesVar)
 
 		set_source_files_properties(${PrecompiledSource}
 			PROPERTIES
-				COMPILE_FLAGS "/Yc\"${PrecompiledHeader}\" /Fp\"${PrecompiledBinary}\""
+				COMPILE_FLAGS "/Yc\"${PrecompiledHeader}\" /Fp\"${PrecompiledBinary}\" /Zm2000"
 				OBJECT_OUTPUTS "${PrecompiledBinary}"
 		)
 
@@ -58,9 +58,6 @@ if(WIN32)
 	set(CMAKE_CXX_FLAGS "/wd4355 /w14996 /wd4800 /wd4244 /wd4305 /wd4251 /wd4275 /wd4396 /wd4018 /wd4267 /wd4146 /EHsc /GT /bigobj")
 	# enable multi core compilation
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
-	# precompiled header requires more than that the default amount of memmory
-	# this flag sets the limit as FACTOR * 0.75 MB
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zm2000")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4838 /wd4805")
 	set(CMAKE_CXX_FLAGS_DEBUG "/Od /MD /Zi /DNDEBUG")
 
