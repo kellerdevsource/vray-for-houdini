@@ -426,6 +426,9 @@ int ObjectExporter::getPrimPluginFromCache(int primKey, VRay::Plugin &plugin)
 
 void ObjectExporter::addPrimPluginToCache(int primKey, VRay::Plugin &plugin)
 {
+	UT_ASSERT(primKey > 0);
+	UT_ASSERT(plugin);
+
 	pluginCache.prim.insert(primKey, plugin);
 }
 
@@ -587,7 +590,7 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 			const int primKey = getPrimKey(primPacked);
 
 			// If key is 0 don't check cache.
-			if (primKey) {
+			if (primKey > 0) {
 				getPrimPluginFromCache(primKey, item.geometry);
 			}
 			if (!item.geometry) {
@@ -595,9 +598,7 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 				item.geometry = exportPrimPacked(objNode, primPacked);
 				popContext();
 			}
-			if (primKey) {
-				// NOTE: It's ok to add invalid plugins to cache here,
-				// because if we've failed to export plugin once we should not retry.
+			if (primKey > 0 && item.geometry) {
 				addPrimPluginToCache(primKey, item.geometry);
 			}
 		}
@@ -615,10 +616,9 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 			}
 			if (!getPrimPluginFromCache(primKey, item.geometry)) {
 				item.geometry = exportPrimSphere(objNode, *prim);
-
-				// NOTE: It's ok to add invalid plugins to cache here,
-				// because if we've failed to export plugin once we should not retry.
-				addPrimPluginToCache(primKey, item.geometry);
+				if (item.geometry) {
+					addPrimPluginToCache(primKey, item.geometry);
+				}
 			}
 		}
 		else if (primTypeID == GEO_PRIMPOLYSOUP) {
@@ -662,6 +662,10 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 
 VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const PrimitiveItems &instancerItems)
 {
+	if (!instancerItems.count()) {
+		return VRay::Plugin();
+	}
+
 	int instanceIdx = 0;
 	int instancesListIdx = 0;
 
@@ -788,6 +792,10 @@ int ObjectExporter::getPrimPackedID(const GU_PrimPacked &prim)
 {
 	const GA_PrimitiveTypeId primTypeID = prim.getTypeId();
 
+	if (primTypeID == primPackedTypeIDs.vrayVolumeGridRef) {
+		// 0 means don't cache.
+		return 0;
+	}
 	if (primTypeID == primPackedTypeIDs.vrayProxyRef) {
 		const VRayProxyRef *vrayProxyRref = UTverify_cast<const VRayProxyRef*>(prim.implementation());
 		return vrayProxyRref->getOptions().hash();
