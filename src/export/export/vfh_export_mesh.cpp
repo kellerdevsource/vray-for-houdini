@@ -74,8 +74,7 @@ bool MeshExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc &pluginD
 
 	Log::getLog().debug("Mesh: %i points", gdp.getNumPoints());
 
-	const std::string meshName = boost::str(Parm::FmtPrefixManual % "Geom" % std::to_string(gdp.getUniqueId()));
-	pluginDesc.pluginName = VRayExporter::getPluginName(&objNode, meshName);
+	pluginDesc.pluginName = VRayExporter::getPluginName(&objNode, boost::str(Parm::FmtPrefixManual % "GeomStaticMesh" % std::to_string(gdp.getUniqueId())));
 	pluginDesc.pluginID = "GeomStaticMesh";
 
 	if (pluginExporter.isIPR() && pluginExporter.isGPU()) {
@@ -716,9 +715,7 @@ void MeshExporter::getMtlOverrides(MapChannels &mapChannels)
 	GA_ROHandleS materialPathHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GEO_STD_ATTRIB_MATERIAL));
 	GA_ROHandleS materialOverrideHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GA_Names::material_override));
 
-	const int hasStyleSheet = materialStyleSheetHndl.isValid();
-	const int hasMaterialOverrides = materialPathHndl.isValid() && materialOverrideHndl.isValid();
-	if (!(hasStyleSheet || hasMaterialOverrides)) {
+	if (!(materialStyleSheetHndl.isValid() || materialPathHndl.isValid())) {
 		return;
 	}
 
@@ -728,20 +725,7 @@ void MeshExporter::getMtlOverrides(MapChannels &mapChannels)
 		const GA_Offset primOffset = prim->getMapOffset();
 
 		PrimMaterial primMaterial;
-		if (hasStyleSheet) {
-			const QString &styleSheet = materialStyleSheetHndl.get(primOffset);
-			if (!styleSheet.isEmpty()) {
-				mergeStyleSheet(primMaterial, styleSheet, ctx.getTime());
-			}
-		}
-		else if (hasMaterialOverrides) {
-			const UT_String &matPath = materialPathHndl.get(primOffset);
-			const UT_String &materialOverrides = materialOverrideHndl.get(primOffset);
-
-			if (!matPath.equal("")) {
-				mergeMaterialOverrides(primMaterial, matPath, materialOverrides, ctx.getTime());
-			}
-		}
+		mergeMaterialOverride(primMaterial, materialStyleSheetHndl, materialPathHndl, materialOverrideHndl, primOffset, ctx.getTime());
 
 		switch (prim->getTypeId().get()) {
 			case GEO_PRIMPOLYSOUP: {

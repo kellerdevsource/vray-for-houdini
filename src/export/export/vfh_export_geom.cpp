@@ -558,23 +558,8 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 		// Check parent overrides.
 		getPrimMaterial(item.primMaterial);
 
-		if (materialStyleSheetHndl.isValid()) {
-			const QString &styleSheet = materialStyleSheetHndl.get(primOffset);
-
-			if (!styleSheet.isEmpty()) {
-				mergeStyleSheet(item.primMaterial, styleSheet, ctx.getTime());
-			}
-		}
-		else if (materialPathHndl.isValid()) {
-			const UT_String &matPath = materialPathHndl.get(primOffset);
-
-			UT_String materialOverrides;
-			if (materialOverrideHndl.isValid()) {
-				materialOverrides = materialOverrideHndl.get(primOffset);
-			}
-
-			mergeMaterialOverrides(item.primMaterial, matPath, materialOverrides, ctx.getTime());
-		}
+		// Merge current.
+		mergeMaterialOverride(item.primMaterial, materialStyleSheetHndl, materialPathHndl, materialOverrideHndl, primOffset, ctx.getTime());
 
 		// Primitive attributes
 		// TODO: Float primitive attributes
@@ -682,7 +667,7 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 	exportHair(objNode, gdp, hairPrims, instancerItems);
 }
 
-VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const PrimitiveItems &instancerItems)
+VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_Detail &gdp, const PrimitiveItems &instancerItems)
 {
 	if (!instancerItems.count()) {
 		return VRay::Plugin();
@@ -743,7 +728,9 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const Prim
 		instances[instancesListIdx++].setList(item);
 	}
 
-	Attrs::PluginDesc instancer2(VRayExporter::getPluginName(objNode, "Geom"),
+	static boost::format instancer2NameFmt("Instancer2|%i@%s");
+
+	Attrs::PluginDesc instancer2(boost::str(instancer2NameFmt % gdp.getUniqueId() % objNode.getName().buffer()),
 								 "Instancer2");
 	instancer2.addAttribute(Attrs::PluginAttr("instances", instances));
 	instancer2.addAttribute(Attrs::PluginAttr("use_additional_params", true));
@@ -769,7 +756,7 @@ VRay::Plugin ObjectExporter::exportDetail(OBJ_Node &objNode, const GU_Detail &gd
 		processPrimitives(objNode, gdp, instancerItems);
 	}
 
-	return exportDetailInstancer(objNode, instancerItems);
+	return exportDetailInstancer(objNode, gdp, instancerItems);
 }
 
 void ObjectExporter::exportHair(OBJ_Node &objNode, const GU_Detail &gdp, const GEOPrimList &primList, PrimitiveItems &instancerItems)

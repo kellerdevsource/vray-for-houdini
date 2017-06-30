@@ -121,8 +121,23 @@ struct PrimMaterial {
 	MtlOverrideItems overrides;
 };
 
-void mergeStyleSheet(PrimMaterial &primMaterial, const QString &styleSheet, fpreal t, int materialOnly=false);
-void mergeMaterialOverrides(PrimMaterial &primMaterial, const UT_String &matPath, const UT_String &materialOverrides, fpreal t, int materialOnly=false);
+void mergeStyleSheet(PrimMaterial &primMaterial,
+					 const QString &styleSheet,
+					 fpreal t,
+					 int materialOnly=false);
+
+void mergeMaterialOverrides(PrimMaterial &primMaterial,
+							const UT_String &matPath,
+							const UT_String &materialOverrides,
+							fpreal t,
+							int materialOnly=false);
+
+void mergeMaterialOverride(PrimMaterial &primMaterial,
+						   const GA_ROHandleS &materialStyleSheetHndl,
+						   const GA_ROHandleS &materialPathHndl,
+						   const GA_ROHandleS &materialOverrideHndl,
+						   GA_Offset primOffset,
+						   fpreal t);
 
 } // namespace VRayForHoudini
 

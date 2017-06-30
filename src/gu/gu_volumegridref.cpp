@@ -84,29 +84,23 @@ GA_PrimitiveTypeId VRayVolumeGridRef::theTypeId(-1);
 const int MAX_CHAN_MAP_LEN = 2048;
 
 /// Implemetation for the factory creating VRayVolumeGridRef for HDK
-class VRayVolumeGridFactory:
-		public GU_PackedFactory
+class VRayVolumeGridFactory
+	: public GU_PackedFactory
 {
 public:
-	static VRayVolumeGridFactory &getInstance()
-	{
+	static VRayVolumeGridFactory &getInstance() {
 		static VRayVolumeGridFactory theFactory;
 		return  theFactory;
 	}
 
-	virtual GU_PackedImpl* create() const VRAY_OVERRIDE
-	{
+	GU_PackedImpl* create() const VRAY_OVERRIDE {
 		return new VRayVolumeGridRef();
 	}
 
 private:
 	VRayVolumeGridFactory();
-	virtual ~VRayVolumeGridFactory()
-	{ }
 
-	VRayVolumeGridFactory(const VRayVolumeGridFactory &other);
-	VRayVolumeGridFactory& operator =(const VRayVolumeGridFactory &other);
-
+	VUTILS_DISABLE_COPY(VRayVolumeGridFactory);
 };
 
 VRayVolumeGridFactory::VRayVolumeGridFactory():
@@ -127,15 +121,15 @@ void VRayVolumeGridRef::install(GA_PrimitiveFactory *gafactory)
 {
 	VRayVolumeGridFactory &theFactory = VRayVolumeGridFactory::getInstance();
 	if (theFactory.isRegistered()) {
-		Log::getLog().error("Multiple attempts to install packed primitive %s from %s",
-					static_cast<const char *>(theFactory.name()), UT_DSO::getRunningFile());
+		Log::getLog().debug("Multiple attempts to install packed primitive %s from %s",
+							static_cast<const char *>(theFactory.name()), UT_DSO::getRunningFile());
 		return;
 	}
 
 	GU_PrimPacked::registerPacked(gafactory, &theFactory);
 	if (NOT(theFactory.isRegistered())) {
 		Log::getLog().error("Unable to register packed primitive %s from %s",
-					static_cast<const char *>(theFactory.name()), UT_DSO::getRunningFile());
+							static_cast<const char *>(theFactory.name()), UT_DSO::getRunningFile());
 		return;
 	}
 
@@ -143,17 +137,18 @@ void VRayVolumeGridRef::install(GA_PrimitiveFactory *gafactory)
 }
 
 
-VRayVolumeGridRef::VRayVolumeGridRef():
-	GU_PackedImpl(),
-	m_detail(),
-	m_dirty(false)
+VRayVolumeGridRef::VRayVolumeGridRef()
+	: GU_PackedImpl()
+	, m_detail()
+	, m_dirty(false)
+	, m_channelDirty(false)
+	, m_doFrameReplace(false)
 {
 	GU_Detail *gdp = new GU_Detail;
 	m_handle.allocateAndSet(gdp, true);
 	m_detail = m_handle;
 	memset(m_channelDataRange.data(), 0, m_channelDataRange.size() * sizeof(m_channelDataRange[0]));
 }
-
 
 VRayVolumeGridRef::VRayVolumeGridRef(const VRayVolumeGridRef &src):
 	GU_PackedImpl(src),

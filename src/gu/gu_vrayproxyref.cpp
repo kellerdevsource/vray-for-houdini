@@ -41,29 +41,23 @@ static const UT_StringRef theLODNameToken      = "lodname";
 GA_PrimitiveTypeId VRayProxyRef::theTypeId(-1);
 
 
-class VRayProxyFactory:
-		public GU_PackedFactory
+class VRayProxyFactory
+	: public GU_PackedFactory
 {
 public:
-	static VRayProxyFactory &getInstance()
-	{
+	static VRayProxyFactory &getInstance() {
 		static VRayProxyFactory theFactory;
-		return  theFactory;
+		return theFactory;
 	}
 
-	virtual GU_PackedImpl* create() const VRAY_OVERRIDE
-	{
+	GU_PackedImpl* create() const VRAY_OVERRIDE {
 		return new VRayProxyRef();
 	}
 
 private:
 	VRayProxyFactory();
-	virtual ~VRayProxyFactory()
-	{ }
 
-	VRayProxyFactory(const VRayProxyFactory &other);
-	VRayProxyFactory& operator =(const VRayProxyFactory &other);
-
+	VUTILS_DISABLE_COPY(VRayProxyFactory);
 };
 
 
@@ -195,19 +189,20 @@ void VRayProxyRef::install(GA_PrimitiveFactory *gafactory)
 {
 	VRayProxyFactory &theFactory = VRayProxyFactory::getInstance();
 	if (theFactory.isRegistered()) {
-		Log::getLog().error("Multiple attempts to install packed primitive %s from %s",
-					static_cast<const char *>(theFactory.name()), UT_DSO::getRunningFile());
+		Log::getLog().debug("Multiple attempts to install packed primitive %s from %s",
+							static_cast<const char *>(theFactory.name()), UT_DSO::getRunningFile());
 		return;
 	}
 
 	GU_PrimPacked::registerPacked(gafactory, &theFactory);
 	if (NOT(theFactory.isRegistered())) {
 		Log::getLog().error("Unable to register packed primitive %s from %s",
-					static_cast<const char *>(theFactory.name()), UT_DSO::getRunningFile());
+							static_cast<const char *>(theFactory.name()), UT_DSO::getRunningFile());
 		return;
 	}
 
 	theTypeId = theFactory.typeDef().getId();
+
 	// Register the GT tesselation too (now we know what type id we have)
 	GT_PrimVRayProxyCollect::registerPrimitive(theTypeId);
 }

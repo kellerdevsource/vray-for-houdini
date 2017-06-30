@@ -143,7 +143,7 @@ public:
 
 	void processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, PrimitiveItems &instancerItems);
 
-	VRay::Plugin exportDetailInstancer(OBJ_Node &objNode, const PrimitiveItems &instancerItems);
+	VRay::Plugin exportDetailInstancer(OBJ_Node &objNode, const GU_Detail &gdp, const PrimitiveItems &instancerItems);
 
 	VRay::Plugin exportDetail(OBJ_Node &objNode, const GU_Detail &gdp);
 

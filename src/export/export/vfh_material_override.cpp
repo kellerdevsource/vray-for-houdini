@@ -177,3 +177,30 @@ void VRayForHoudini::mergeMaterialOverrides(PrimMaterial &primMaterial, const UT
 		}
 	}
 }
+
+void VRayForHoudini::mergeMaterialOverride(PrimMaterial &primMaterial,
+										   const GA_ROHandleS &materialStyleSheetHndl,
+										   const GA_ROHandleS &materialPathHndl,
+										   const GA_ROHandleS &materialOverrideHndl,
+										   GA_Offset primOffset,
+										   fpreal t)
+{
+	if (materialStyleSheetHndl.isValid()) {
+		const QString &styleSheet = materialStyleSheetHndl.get(primOffset);
+		if (!styleSheet.isEmpty()) {
+			mergeStyleSheet(primMaterial, styleSheet, t);
+		}
+	}
+	else if (materialPathHndl.isValid()) {
+		const UT_String &matPath = materialPathHndl.get(primOffset);
+
+		UT_String materialOverrides;
+		if (materialOverrideHndl.isValid()) {
+			materialOverrides = materialOverrideHndl.get(primOffset);
+		}
+
+		if (!matPath.equal("")) {
+			mergeMaterialOverrides(primMaterial, matPath, materialOverrides, t);
+		}
+	}
+}
