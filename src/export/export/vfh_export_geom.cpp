@@ -662,14 +662,6 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 
 VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const PrimitiveItems &instancerItems)
 {
-	if (!instancerItems.count()) {
-		return VRay::Plugin();
-	}
-
-	if (instancerItems.count() == 1) {
-		return instancerItems[0].geometry;
-	}
-
 	int instanceIdx = 0;
 	int instancesListIdx = 0;
 
