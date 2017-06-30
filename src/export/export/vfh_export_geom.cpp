@@ -656,18 +656,8 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 	}
 
 	// NOTE: For polygon and hair material overrides are baked as map channels.
-
-	// NOTE: Try caching poly data by polyPrims.
-	VRay::Plugin fromPoly = exportPolyMesh(objNode, gdp, polyPrims);
-	if (fromPoly) {
-		instancerItems += PrimitiveItem(fromPoly);
-	}
-
-	// NOTE: Try caching hair data by hairPrims.
-	VRay::Plugin fromHair = exportHair(objNode, gdp, hairPrims);
-	if (fromHair) {
-		instancerItems += PrimitiveItem(fromHair);
-	}
+	exportPolyMesh(objNode, gdp, polyPrims, instancerItems);
+	exportHair(objNode, gdp, hairPrims, instancerItems);
 }
 
 VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const PrimitiveItems &instancerItems)
@@ -764,37 +754,42 @@ VRay::Plugin ObjectExporter::exportDetail(OBJ_Node &objNode, const GU_Detail &gd
 	return exportDetailInstancer(objNode, instancerItems);
 }
 
-VRay::Plugin ObjectExporter::exportHair(OBJ_Node &objNode, const GU_Detail &gdp, const GEOPrimList &primList)
+void ObjectExporter::exportHair(OBJ_Node &objNode, const GU_Detail &gdp, const GEOPrimList &primList, PrimitiveItems &instancerItems)
 {
 	if (!doExportGeometry) {
-		return VRay::Plugin();
+		return;
 	}
 
+	// NOTE: Try caching hair data by hairPrims.
 	HairPrimitiveExporter hairExp(objNode, ctx, pluginExporter, primList);
 	Attrs::PluginDesc hairDesc;
 	if (hairExp.asPluginDesc(gdp, hairDesc)) {
-		return pluginExporter.exportPlugin(hairDesc);
+		VRay::Plugin geometry = pluginExporter.exportPlugin(hairDesc);
+		if (geometry) {
+			instancerItems += PrimitiveItem(geometry);
+		}
 	}
-
-	return VRay::Plugin();
 }
 
-VRay::Plugin ObjectExporter::exportPolyMesh(OBJ_Node &objNode, const GU_Detail &gdp, const GEOPrimList &primList)
+void ObjectExporter::exportPolyMesh(OBJ_Node &objNode, const GU_Detail &gdp, const GEOPrimList &primList, PrimitiveItems &instancerItems)
 {
 	if (!doExportGeometry) {
-		return VRay::Plugin();
+		return;
 	}
 
+	// NOTE: Try caching poly data by polyPrims.
 	MeshExporter polyMeshExporter(objNode, gdp, ctx, pluginExporter, primList);
 	polyMeshExporter.setSubdivApplied(hasSubdivApplied(objNode));
 	if (polyMeshExporter.hasPolyGeometry()) {
 		Attrs::PluginDesc geomDesc;
 		if (polyMeshExporter.asPluginDesc(gdp, geomDesc)) {
-			return pluginExporter.exportPlugin(geomDesc);
+			VRay::Plugin geometry = pluginExporter.exportPlugin(geomDesc);
+			if (geometry) {
+				VRay::Plugin material = polyMeshExporter.getMaterial();
+				instancerItems += PrimitiveItem(geometry, material);
+			}
 		}
 	}
-
-	return VRay::Plugin();
 }
 
 int ObjectExporter::getPrimPackedID(const GU_PrimPacked &prim)

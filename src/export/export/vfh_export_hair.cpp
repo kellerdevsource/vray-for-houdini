@@ -28,13 +28,13 @@ HairPrimitiveExporter::HairPrimitiveExporter(OBJ_Node &obj, OP_Context &ctx, VRa
 
 OP_Node* HairPrimitiveExporter::findPramOwnerForHairParms() const
 {
-	if (m_object.getParmList() &&
-		m_object.getParmList()->getParmPtr(theHairParm))
+	if (objNode.getParmList() &&
+		objNode.getParmList()->getParmPtr(theHairParm))
 	{
-		 return &m_object;
+		 return &objNode;
 	}
 
-	OP_Node *obj = m_object.getParent();
+	OP_Node *obj = objNode.getParent();
 	if (obj &&
 		obj->getOperator()->getName().contains("fur*") &&
 		obj->getParmList()->getParmPtr(theHairParm) )
@@ -52,7 +52,7 @@ bool HairPrimitiveExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc
 	}
 
 	const std::string meshName = boost::str(Parm::FmtPrefixManual % "Hair" % std::to_string(gdp.getUniqueId()));
-	pluginDesc.pluginName = VRayExporter::getPluginName(&m_object, meshName);
+	pluginDesc.pluginName = VRayExporter::getPluginName(&objNode, meshName);
 	pluginDesc.pluginID = "GeomMayaHair";
 
 	// collect strands
@@ -76,7 +76,7 @@ bool HairPrimitiveExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc
 	if (prmOwner) {
 		// found parent node with hair rendering parameters set
 		// so update plugin description with those parameters
-		m_exporter.setAttrsFromOpNodePrms(pluginDesc, prmOwner);
+		pluginExporter.setAttrsFromOpNodePrms(pluginDesc, prmOwner);
 	}
 	else {
 		// no hair rendering parameters found - use defaults

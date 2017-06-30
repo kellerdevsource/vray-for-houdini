@@ -78,16 +78,16 @@ class VRayExporter;
 class PrimitiveExporter
 {
 public:
-	PrimitiveExporter(OBJ_Node &obj, OP_Context &ctx, VRayExporter &exp)
-		: m_object(obj)
+	PrimitiveExporter(OBJ_Node &objNode, OP_Context &ctx, VRayExporter &pluginExporter)
+		: objNode(objNode)
 		, ctx(ctx)
-		, m_exporter(exp)
+		, pluginExporter(pluginExporter)
 		, tm(1)
 		, detailID(0)
 	{}
 	virtual ~PrimitiveExporter() {}
 
-	virtual void exportPrimitive(const PrimitiveItem &item) = 0;
+	virtual void exportPrimitive(const PrimitiveItem &item) {}
 
 	/// Generate plugin descriptions for all supported primitives in the provided GU_Detail
 	/// @gdp - the detail to traverse
@@ -102,13 +102,13 @@ public:
 
 protected:
 	/// Object node owner of all details that will be passed to exportPrimitives.
-	OBJ_Node &m_object;
+	OBJ_Node &objNode;
 
 	/// Current context used to obtain current time.
 	OP_Context &ctx;
 
 	/// Exporter instance for writing plugins.
-	VRayExporter &m_exporter;
+	VRayExporter &pluginExporter;
 
 	/// Transform.
 	VRay::Transform tm;

@@ -13,7 +13,7 @@
 
 using namespace VRayForHoudini;
 
-PrimMaterial VRayForHoudini::processStyleSheet(const QString &styleSheet, fpreal t)
+PrimMaterial VRayForHoudini::processStyleSheet(const QString &styleSheet, fpreal t, int materialOnly)
 {
 	QJsonParseError parserError;
 	QJsonDocument styleSheetParser = QJsonDocument::fromJson(styleSheet.toUtf8(), &parserError);
@@ -53,6 +53,9 @@ PrimMaterial VRayForHoudini::processStyleSheet(const QString &styleSheet, fpreal
 					if (material.contains("name")) {
 						const UT_String &matPath = material["name"].toString().toLocal8Bit().constData();
 						OP_Node *matNode = getOpNodeFromPath(matPath, t);
+						if (materialOnly) {
+							break;
+						}
 						if (matNode) {
 							primMaterial.matNode = matNode;
 
@@ -103,12 +106,12 @@ PrimMaterial VRayForHoudini::processStyleSheet(const QString &styleSheet, fpreal
 	return primMaterial;
 }
 
-PrimMaterial VRayForHoudini::processMaterialOverrides(const UT_String &matPath, const UT_String &materialOverrides, fpreal t)
+PrimMaterial VRayForHoudini::processMaterialOverrides(const UT_String &matPath, const UT_String &materialOverrides, fpreal t, int materialOnly)
 {
 	PrimMaterial primMaterial;
 	primMaterial.matNode = getOpNodeFromPath(matPath, t);
 	
-	if (primMaterial.matNode) { 
+	if (primMaterial.matNode && !materialOnly) { 
 		//
 		// { "diffuser" : 1.0, "diffuseg" : 1.0, "diffuseb" : 1.0 }
 		//

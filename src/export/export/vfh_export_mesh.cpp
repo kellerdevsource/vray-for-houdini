@@ -21,11 +21,9 @@ using namespace VRayForHoudini;
 
 /// This is a specific value for TexUserColor / TexUserScalar
 /// to specify that attribute is unset for a particular face.
-/// Using ALMOST_FLT_MAX = FLT_MAX / 2 because of face UV bary interpolation.
-static const float ALMOST_FLT_MAX = FLT_MAX / 2.0f;
+static const float ALMOST_FLT_MAX = FLT_MAX;
 
 namespace {
-
 /// Helper funtion to copy data from Float3Tuple attribute into a vector list
 /// @param attr[in] - the attribute to copy
 /// @param data[out] - destination vector list
@@ -45,7 +43,6 @@ static bool getDataFromAttribute(const GA_Attribute *attr, VRay::VUtils::VectorR
 	data = VRay::VUtils::VectorRefList(attr->getIndexMap().indexSize());
 	return aifTuple->getRange(attr, GA_Range(attr->getIndexMap()), &(data.get()->x));
 }
-
 }
 
 MeshExporter::MeshExporter(OBJ_Node &obj, const GU_Detail &gdp, OP_Context &ctx, VRayExporter &exp, const GEOPrimList &primList)
@@ -75,13 +72,13 @@ bool MeshExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc &pluginD
 		return false;
 	}
 
-	Log::getLog().info("Mesh: %i points", gdp.getNumPoints());
+	Log::getLog().debug("Mesh: %i points", gdp.getNumPoints());
 
 	const std::string meshName = boost::str(Parm::FmtPrefixManual % "Geom" % std::to_string(gdp.getUniqueId()));
-	pluginDesc.pluginName = VRayExporter::getPluginName(&m_object, meshName);
+	pluginDesc.pluginName = VRayExporter::getPluginName(&objNode, meshName);
 	pluginDesc.pluginID = "GeomStaticMesh";
 
-	if (m_exporter.isIPR() && m_exporter.isGPU()) {
+	if (pluginExporter.isIPR() && pluginExporter.isGPU()) {
 		pluginDesc.addAttribute(Attrs::PluginAttr("dynamic_geometry", true));
 	}
 
@@ -91,6 +88,10 @@ bool MeshExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc &pluginD
 
 	if (getNumMtlIDs() > 0) {
 		pluginDesc.addAttribute(Attrs::PluginAttr("face_mtlIDs", getFaceMtlIDs()));
+
+		if (shadersNamesList.count()) {
+			pluginDesc.addAttribute(Attrs::PluginAttr("shaders_names", shadersNamesList));
+		}
 	}
 
 	if (getNumNormals() > 0) {
@@ -124,17 +125,17 @@ bool MeshExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc &pluginD
 		}
 
 		pluginDesc.addAttribute(Attrs::PluginAttr("map_channels_names", map_channel_names));
-		pluginDesc.addAttribute(Attrs::PluginAttr("map_channels",      map_channels));
+		pluginDesc.addAttribute(Attrs::PluginAttr("map_channels", map_channels));
 	}
 
 	return true;
 }
 
-
+#if 0
 void MeshExporter::exportPrimitives(const GU_Detail &gdp, PrimitiveItems&)
 {
 	// Check if this is needed / could be reused
-#if 0
+
 	else {
 		// we don't want to reexport the geometry so just
 		// add new node to our list of nodes
@@ -147,8 +148,7 @@ void MeshExporter::exportPrimitives(const GU_Detail &gdp, PrimitiveItems&)
 			nodeDesc.addAttribute(Attrs::PluginAttr(VFH_ATTR_MATERIAL_ID, -1));
 		}
 	}
-#endif
-#if 0
+
 	// add new node to our list of nodes
 	plugins.push_back(Attrs::PluginDesc("", "Node"));
 	Attrs::PluginDesc &nodeDesc = plugins.back();
@@ -158,32 +158,10 @@ void MeshExporter::exportPrimitives(const GU_Detail &gdp, PrimitiveItems&)
 	SHOPList shopList;
 	int nSHOPs = getSHOPList(shopList);
 	if (nSHOPs > 0) {
-		VRay::ValueList mtls_list;
-		VRay::IntList   ids_list;
-		mtls_list.reserve(nSHOPs);
-		ids_list.reserve(nSHOPs);
 
-		SHOPHasher hasher;
-		for (const UT_String &shopPath : shopList) {
-			OP_Node *matNode = getOpNodeFromPath(shopPath);
-			UT_ASSERT(matNode);
-			mtls_list.emplace_back(m_exporter.exportMaterial(matNode));
-			ids_list.emplace_back(hasher(matNode));
-		}
-
-		Attrs::PluginDesc mtlDesc;
-		mtlDesc.pluginID = "MtlMulti";
-		mtlDesc.pluginName = VRayExporter::getPluginName(&m_object,
-															boost::str(Parm::FmtPrefixManual % "Mtl" % std::to_string(gdp.getUniqueId())));
-
-		mtlDesc.addAttribute(Attrs::PluginAttr("mtls_list", mtls_list));
-		mtlDesc.addAttribute(Attrs::PluginAttr("ids_list",  ids_list));
-
-		nodeDesc.addAttribute(Attrs::PluginAttr("material", m_exporter.exportPlugin(mtlDesc)));
 	}
-#endif
 }
-
+#endif
 
 VRay::VUtils::VectorRefList& MeshExporter::getVertices()
 {
@@ -195,7 +173,6 @@ VRay::VUtils::VectorRefList& MeshExporter::getVertices()
 	return vertices;
 }
 
-
 VRay::VUtils::IntRefList MeshExporter::getFaceNormals()
 {
 	if (m_faceNormals.size() <= 0) {
@@ -205,7 +182,6 @@ VRay::VUtils::IntRefList MeshExporter::getFaceNormals()
 
 	return m_faceNormals;
 }
-
 
 VRay::VUtils::VectorRefList& MeshExporter::getNormals()
 {
@@ -228,68 +204,67 @@ VRay::VUtils::VectorRefList& MeshExporter::getNormals()
 			// calculate normals and m_faceNormals simultaneously
 			// valid normals attr found and copied into normals
 			// deal with face normals now
-			UT_ASSERT( nattr );
+			UT_ASSERT(nattr);
 			switch (nattr->getOwner()) {
-				case GA_ATTRIB_VERTEX:
-				{
-					// if N is vertex attribute, need to calculate normal faces
-					m_faceNormals = VRay::VUtils::IntRefList(getNumFaces() * 3);
+			case GA_ATTRIB_VERTEX:
+			{
+				// if N is vertex attribute, need to calculate normal faces
+				m_faceNormals = VRay::VUtils::IntRefList(getNumFaces() * 3);
 
-					int faceVertIndex = 0;
-					for (const GEO_Primitive *prim : primList) {
-						switch (prim->getTypeId().get()) {
-							case GEO_PRIMPOLYSOUP:
-							{
-								const GU_PrimPolySoup *polySoup = static_cast<const GU_PrimPolySoup*>(prim);
-								for (GEO_PrimPolySoup::PolygonIterator pst(*polySoup); !pst.atEnd(); ++pst) {
-									// face is valid only if the vertex count is >= 3
-									const GA_Size vCnt = pst.getVertexCount();
-									if ( vCnt > 2) {
-										for (GA_Size i = 1; i < vCnt-1; ++i) {
-											// polygon orientation seems to be clockwise in Houdini
-											m_faceNormals[faceVertIndex++] = pst.getVertexIndex(i+1);
-											m_faceNormals[faceVertIndex++] = pst.getVertexIndex(i);
-											m_faceNormals[faceVertIndex++] = pst.getVertexIndex(0);
-										}
-									}
+				int faceVertIndex = 0;
+				for (const GEO_Primitive *prim : primList) {
+					switch (prim->getTypeId().get()) {
+					case GEO_PRIMPOLYSOUP:
+					{
+						const GU_PrimPolySoup *polySoup = static_cast<const GU_PrimPolySoup*>(prim);
+						for (GEO_PrimPolySoup::PolygonIterator pst(*polySoup); !pst.atEnd(); ++pst) {
+							// face is valid only if the vertex count is >= 3
+							const GA_Size vCnt = pst.getVertexCount();
+							if (vCnt > 2) {
+								for (GA_Size i = 1; i < vCnt - 1; ++i) {
+									// polygon orientation seems to be clockwise in Houdini
+									m_faceNormals[faceVertIndex++] = pst.getVertexIndex(i + 1);
+									m_faceNormals[faceVertIndex++] = pst.getVertexIndex(i);
+									m_faceNormals[faceVertIndex++] = pst.getVertexIndex(0);
 								}
-								break;
 							}
-							case GEO_PRIMPOLY:
-							{
-								// face is valid only if the vertex count is >= 3
-								const GA_Size vCnt = prim->getVertexCount();
-								if ( vCnt > 2) {
-									const GU_PrimPoly *poly = static_cast<const GU_PrimPoly*>(prim);
-									for (GA_Size i = 1; i < vCnt-1; ++i) {
-										// polygon orientation seems to be clockwise in Houdini
-										m_faceNormals[faceVertIndex++] = poly->getVertexIndex(i+1);
-										m_faceNormals[faceVertIndex++] = poly->getVertexIndex(i);
-										m_faceNormals[faceVertIndex++] = poly->getVertexIndex(0);
-									}
-								}
-								break;
-							}
-							default:
-								;
 						}
+						break;
 					}
-					break;
+					case GEO_PRIMPOLY:
+					{
+						// face is valid only if the vertex count is >= 3
+						const GA_Size vCnt = prim->getVertexCount();
+						if (vCnt > 2) {
+							const GU_PrimPoly *poly = static_cast<const GU_PrimPoly*>(prim);
+							for (GA_Size i = 1; i < vCnt - 1; ++i) {
+								// polygon orientation seems to be clockwise in Houdini
+								m_faceNormals[faceVertIndex++] = poly->getVertexIndex(i + 1);
+								m_faceNormals[faceVertIndex++] = poly->getVertexIndex(i);
+								m_faceNormals[faceVertIndex++] = poly->getVertexIndex(0);
+							}
+						}
+						break;
+					}
+					default:
+					;
+					}
 				}
-				case GA_ATTRIB_POINT:
-				default:
-				{
-					// if N is point attribute, faces is used to index normals as well
-					m_faceNormals = getFaces();
-					break;
-				}
+				break;
+			}
+			case GA_ATTRIB_POINT:
+			default:
+			{
+				// if N is point attribute, faces is used to index normals as well
+				m_faceNormals = getFaces();
+				break;
+			}
 			}
 		}
 	}
 
 	return normals;
 }
-
 
 VRay::VUtils::VectorRefList& MeshExporter::getVelocities()
 {
@@ -303,40 +278,38 @@ VRay::VUtils::VectorRefList& MeshExporter::getVelocities()
 	return velocities;
 }
 
-
 int MeshExporter::getNumFaces()
 {
-	if (numFaces <= 0 ) {
+	if (numFaces <= 0) {
 		// if we don't have cached face count, recalculate number of faces
 		// for current geometry detail
 		numFaces = 0;
 
 		for (const GEO_Primitive *prim : primList) {
 			switch (prim->getTypeId().get()) {
-				case GEO_PRIMPOLYSOUP:
-				{
-					const GU_PrimPolySoup *polySoup = static_cast<const GU_PrimPolySoup*>(prim);
-					for (GA_Size i = 0; i < polySoup->getPolygonCount(); ++i) {
-						// face is valid only if the vertex count is >= 3
-						numFaces += std::max(polySoup->getPolygonSize(i) - 2, GA_Size(0));
-					}
-					break;
-				}
-				case GEO_PRIMPOLY:
-				{
+			case GEO_PRIMPOLYSOUP:
+			{
+				const GU_PrimPolySoup *polySoup = static_cast<const GU_PrimPolySoup*>(prim);
+				for (GA_Size i = 0; i < polySoup->getPolygonCount(); ++i) {
 					// face is valid only if the vertex count is >= 3
-					numFaces += std::max(prim->getVertexCount() - 2, GA_Size(0));
-					break;
+					numFaces += std::max(polySoup->getPolygonSize(i) - 2, GA_Size(0));
 				}
-				default:
-					;
+				break;
+			}
+			case GEO_PRIMPOLY:
+			{
+				// face is valid only if the vertex count is >= 3
+				numFaces += std::max(prim->getVertexCount() - 2, GA_Size(0));
+				break;
+			}
+			default:
+			;
 			}
 		}
 	}
 
 	return numFaces;
 }
-
 
 VRay::VUtils::IntRefList& MeshExporter::getFaces()
 {
@@ -347,8 +320,8 @@ VRay::VUtils::IntRefList& MeshExporter::getFaces()
 		int nFaces = getNumFaces();
 		if (nFaces > 0) {
 			// calculate faces and edge visibility simultaneously
-			faces = VRay::VUtils::IntRefList(nFaces*3);
-			edge_visibility = VRay::VUtils::IntRefList(nFaces/10 + (((nFaces%10) > 0)? 1 : 0));
+			faces = VRay::VUtils::IntRefList(nFaces * 3);
+			edge_visibility = VRay::VUtils::IntRefList(nFaces / 10 + (((nFaces % 10) > 0) ? 1 : 0));
 			std::memset(edge_visibility.get(), 0, edge_visibility.size() * sizeof(int));
 
 			int faceVertIndex = 0;
@@ -356,72 +329,71 @@ VRay::VUtils::IntRefList& MeshExporter::getFaces()
 
 			for (const GEO_Primitive *prim : primList) {
 				switch (prim->getTypeId().get()) {
-					case GEO_PRIMPOLYSOUP:
-					{
-						const GU_PrimPolySoup *polySoup = static_cast<const GU_PrimPolySoup*>(prim);
-						for (GEO_PrimPolySoup::PolygonIterator pst(*polySoup); !pst.atEnd(); ++pst) {
-							const GA_Size vCnt = pst.getVertexCount();
-							// face is valid only if the vertex count is >= 3
-							if ( vCnt > 2) {
-								for (GA_Size i = 1; i < vCnt-1; ++i) {
-									// polygon orientation seems to be clockwise in Houdini
-									faces[faceVertIndex++] = pst.getPointIndex(i+1);
-									faces[faceVertIndex++] = pst.getPointIndex(i);
-									faces[faceVertIndex++] = pst.getPointIndex(0);
-
-									// v0 = i+1
-									// v1 = i
-									// v2 = 0
-									// here the diagonal is invisible edge
-									// v(1)___v(2)
-									//    |  /|
-									//    | / |
-									//    |/__|
-									// v(0)   v(3)
-									// first edge v(i+1)->v(i) is always visible
-									// second edge v(i)->v(0) is visible only when i == 1
-									// third edge v(0)->v(i+1) is visible only when i+1 == vCnt-1
-									unsigned char edgeMask = 1 | ((i == 1) << 1) | ((i == (vCnt-2)) << 2);
-									edge_visibility[faceEdgeVisIndex/10] |= (edgeMask << ((faceEdgeVisIndex%10)*3));
-									++faceEdgeVisIndex;
-								}
-							}
-						}
-						break;
-					}
-					case GEO_PRIMPOLY:
-					{
-						const GA_Size vCnt = prim->getVertexCount();
+				case GEO_PRIMPOLYSOUP:
+				{
+					const GU_PrimPolySoup *polySoup = static_cast<const GU_PrimPolySoup*>(prim);
+					for (GEO_PrimPolySoup::PolygonIterator pst(*polySoup); !pst.atEnd(); ++pst) {
+						const GA_Size vCnt = pst.getVertexCount();
 						// face is valid only if the vertex count is >= 3
-						if ( vCnt > 2) {
-							for (GA_Size i = 1; i < vCnt-1; ++i) {
+						if (vCnt > 2) {
+							for (GA_Size i = 1; i < vCnt - 1; ++i) {
 								// polygon orientation seems to be clockwise in Houdini
-								faces[faceVertIndex++] = prim->getPointIndex(i+1);
-								faces[faceVertIndex++] = prim->getPointIndex(i);
-								faces[faceVertIndex++] = prim->getPointIndex(0);
+								faces[faceVertIndex++] = pst.getPointIndex(i + 1);
+								faces[faceVertIndex++] = pst.getPointIndex(i);
+								faces[faceVertIndex++] = pst.getPointIndex(0);
 
-								unsigned char edgeMask = (1 | ((i == 1) << 1) | ((i == (vCnt-2)) << 2));
-								edge_visibility[faceEdgeVisIndex/10] |= (edgeMask << ((faceEdgeVisIndex%10)*3));
+								// v0 = i+1
+								// v1 = i
+								// v2 = 0
+								// here the diagonal is invisible edge
+								// v(1)___v(2)
+								//    |  /|
+								//    | / |
+								//    |/__|
+								// v(0)   v(3)
+								// first edge v(i+1)->v(i) is always visible
+								// second edge v(i)->v(0) is visible only when i == 1
+								// third edge v(0)->v(i+1) is visible only when i+1 == vCnt-1
+								unsigned char edgeMask = 1 | ((i == 1) << 1) | ((i == (vCnt - 2)) << 2);
+								edge_visibility[faceEdgeVisIndex / 10] |= (edgeMask << ((faceEdgeVisIndex % 10) * 3));
 								++faceEdgeVisIndex;
 							}
 						}
-						break;
 					}
-					default:
-						;
+					break;
+				}
+				case GEO_PRIMPOLY:
+				{
+					const GA_Size vCnt = prim->getVertexCount();
+					// face is valid only if the vertex count is >= 3
+					if (vCnt > 2) {
+						for (GA_Size i = 1; i < vCnt - 1; ++i) {
+							// polygon orientation seems to be clockwise in Houdini
+							faces[faceVertIndex++] = prim->getPointIndex(i + 1);
+							faces[faceVertIndex++] = prim->getPointIndex(i);
+							faces[faceVertIndex++] = prim->getPointIndex(0);
+
+							unsigned char edgeMask = (1 | ((i == 1) << 1) | ((i == (vCnt - 2)) << 2));
+							edge_visibility[faceEdgeVisIndex / 10] |= (edgeMask << ((faceEdgeVisIndex % 10) * 3));
+							++faceEdgeVisIndex;
+						}
+					}
+					break;
+				}
+				default:
+				;
 				}
 			}
 
-			UT_ASSERT( faceVertIndex == nFaces*3 );
-			UT_ASSERT( faceEdgeVisIndex == nFaces );
-			UT_ASSERT( edge_visibility.size() >= (faceEdgeVisIndex/10) );
-			UT_ASSERT( edge_visibility.size() <= (faceEdgeVisIndex/10 + 1) );
+			UT_ASSERT(faceVertIndex == nFaces * 3);
+			UT_ASSERT(faceEdgeVisIndex == nFaces);
+			UT_ASSERT(edge_visibility.size() >= (faceEdgeVisIndex / 10));
+			UT_ASSERT(edge_visibility.size() <= (faceEdgeVisIndex / 10 + 1));
 		}
 	}
 
 	return faces;
 }
-
 
 VRay::VUtils::IntRefList& MeshExporter::getEdgeVisibility()
 {
@@ -435,63 +407,164 @@ VRay::VUtils::IntRefList& MeshExporter::getEdgeVisibility()
 	return edge_visibility;
 }
 
-
 VRay::VUtils::IntRefList& MeshExporter::getFaceMtlIDs()
 {
-	if (face_mtlIDs.size() <= 0) {
-		// if we don't have list of face mtl ids cached,
-		// digest the material primitive attribute (if any)
-		// into a list of face mtl ids
-		GA_ROHandleS mtlpath(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GEO_STD_ATTRIB_MATERIAL));
-		if (mtlpath.isValid()) {
-			// count faces and proceed only if we do have such
-			const int nFaces = getNumFaces();
-			if (nFaces > 0) {
-				face_mtlIDs = VRay::VUtils::IntRefList(nFaces);
+	if (face_mtlIDs.size()) {
+		return face_mtlIDs;
+	}
 
-				int faceIndex = 0;
-				SHOPHasher hasher;
+	GA_ROHandleS materialStyleSheetHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GA_Names::material_stylesheet));
+	GA_ROHandleS materialPathHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GEO_STD_ATTRIB_MATERIAL));
 
-				for (const GEO_Primitive *prim : primList) {
-					int shopID = hasher(mtlpath.get(prim->getMapOffset()));
+	const int hasStyleSheet = materialStyleSheetHndl.isValid();
+	const int hasMaterialPath = materialPathHndl.isValid();
 
-					switch (prim->getTypeId().get()) {
-						case GEO_PRIMPOLYSOUP:
-						{
-							const GU_PrimPolySoup *polySoup = static_cast<const GU_PrimPolySoup*>(prim);
-							for (GA_Size i = 0; i < polySoup->getPolygonCount(); ++i) {
-								// face is valid only if the vertex count is >= 3
-								const GA_Size nCnt = std::max(polySoup->getPolygonSize(i) - 2, GA_Size(0));
-								for (GA_Size j = 0; j < nCnt; ++j) {
-									face_mtlIDs[faceIndex++] = shopID;
-								}
-							}
-							break;
-						}
-						case GEO_PRIMPOLY:
-						{
-							// face is valid only if the vertex count is >= 3
-							const GA_Size nCnt = std::max(prim->getVertexCount() - 2, GA_Size(0));
-							for (GA_Size j = 0; j < nCnt; ++j) {
-								face_mtlIDs[faceIndex++] = shopID;
-							}
-							break;
-						}
-						default:
-							;
-					}
-				}
+	if (!(hasStyleSheet || hasMaterialPath)) {
+		return face_mtlIDs;
+	}
 
-				UT_ASSERT( faceIndex == nFaces );
+	const int nFaces = getNumFaces();
+	if (!nFaces) {
+		return face_mtlIDs;
+	}
+
+	face_mtlIDs = VRay::VUtils::IntRefList(nFaces);
+
+	int faceIndex = 0;
+	SHOPHasher hasher;
+
+	typedef VUtils::HashMapKey<OP_Node*, VRay::Plugin> OpPluginCache;
+	typedef VUtils::HashMapKey<OP_Node*, int> MatOpToID;
+
+	MatOpToID matNameToID;
+	OpPluginCache matPluginCache;
+	int matIndex = 0;
+
+	OP_Node *objMatNode = objNode.getMaterialNode(ctx.getTime());
+	VRay::Plugin objMaterial = pluginExporter.exportMaterial(objMatNode);
+	if (objMaterial) {
+		matPluginCache.insert(objMatNode, objMaterial);
+		matNameToID.insert(objMatNode, matIndex++);
+	}
+
+	for (const GEO_Primitive *prim : primList) {
+		const GA_Offset primOffset = prim->getMapOffset();
+
+		PrimMaterial primMaterial;
+		if (hasStyleSheet) {
+			const QString &styleSheet = materialStyleSheetHndl.get(primOffset);
+			if (!styleSheet.isEmpty()) {
+				primMaterial = processStyleSheet(styleSheet, ctx.getTime(), true);
+			}
+		}
+		else if (hasMaterialPath) {
+			const UT_String &matPath = materialPathHndl.get(primOffset);
+			if (!matPath.equal("")) {
+				primMaterial.matNode = getOpNodeFromPath(matPath, ctx.getTime());
 			}
 		}
 
-		UT_ASSERT( face_mtlIDs.size() == 0 || face_mtlIDs.size() == getNumFaces() );
+		// Object material is always 0.
+		int faceMtlID = 0;
+		if (primMaterial.matNode) {
+			VRay::Plugin matPlugin;
+
+			OpPluginCache::iterator opIt = matPluginCache.find(primMaterial.matNode);
+			if (opIt != matPluginCache.end()) {
+				matPlugin = opIt.data();
+			}
+			else {
+				matPlugin = pluginExporter.exportMaterial(primMaterial.matNode);
+				matPluginCache.insert(primMaterial.matNode, matPlugin);
+			}
+
+			if (matPlugin) {
+				MatOpToID::iterator mIt = matNameToID.find(primMaterial.matNode);
+				if (mIt != matNameToID.end()) {
+					faceMtlID = mIt.data();
+				}
+				else {
+					faceMtlID = matIndex++;
+					matNameToID.insert(primMaterial.matNode, faceMtlID);
+				}
+			}
+		}
+
+		switch (prim->getTypeId().get()) {
+		case GEO_PRIMPOLYSOUP:
+		{
+			const GU_PrimPolySoup *polySoup = static_cast<const GU_PrimPolySoup*>(prim);
+			for (int i = 0; i < polySoup->getPolygonCount(); ++i) {
+				const GA_Size numVertices = std::max(polySoup->getPolygonSize(i) - 2, GA_Size(0));
+				for (int j = 0; j < numVertices; ++j) {
+					face_mtlIDs[faceIndex++] = faceMtlID;
+				}
+			}
+			break;
+		}
+		case GEO_PRIMPOLY:
+		{
+			const GA_Size numVertices = std::max(prim->getVertexCount() - 2, GA_Size(0));
+			for (int j = 0; j < numVertices; ++j) {
+				face_mtlIDs[faceIndex++] = faceMtlID;
+			}
+			break;
+		}
+		default:
+		{
+			break;
+		}
+		}
+	}
+
+	UT_ASSERT(faceIndex == nFaces);
+
+	const int numMaterials = matNameToID.size();
+
+	if (numMaterials == 1) {
+		OpPluginCache::iterator opIt = matPluginCache.find(matNameToID.begin().key());
+		if (opIt != matPluginCache.end()) {
+			material = opIt.data();
+		}
+	}
+	else {
+		VRay::VUtils::ValueRefList materialList(numMaterials);
+		VRay::VUtils::CharStringRefList shaderSetsList(numMaterials);
+
+		shadersNamesList = VRay::VUtils::ValueRefList(numMaterials);
+
+		FOR_IT (MatOpToID, mIt, matNameToID) {
+			const int mtlID = mIt.data();
+
+			OP_Node *matNode = mIt.key();
+			const char *mtlName = "NULL";
+			VRay::Plugin mtlPlugin;
+
+			OpPluginCache::iterator opIt = matPluginCache.find(matNode);
+			if (opIt != matPluginCache.end()) {
+				mtlPlugin = opIt.data();
+				mtlName = mtlPlugin.getName();
+			}
+
+			VRay::VUtils::ValueRefList item(2);
+			item[0].setDouble(mtlID);
+			item[1].setString(mtlName);
+
+			materialList[mItIdx].setPlugin(mtlPlugin);
+			shaderSetsList[mItIdx].set(mtlName);
+			shadersNamesList[mItIdx].setList(item);
+		}
+
+		Attrs::PluginDesc mtlMulti(VRayExporter::getPluginName(&objNode, boost::str(Parm::FmtPrefixManual % "Mtl" % std::to_string(gdp.getUniqueId()))),
+								   "MtlMulti");
+		mtlMulti.addAttribute(Attrs::PluginAttr("mtls_list", materialList));
+		mtlMulti.addAttribute(Attrs::PluginAttr("shader_sets_list", shaderSetsList));
+
+		material = pluginExporter.exportPlugin(mtlMulti);
 	}
 
 	return face_mtlIDs;
 }
-
 
 MapChannels& MeshExporter::getMapChannels()
 {
@@ -517,26 +590,29 @@ static void allocateOverrideMapChannel(MapChannel &mapChannel, const GEOPrimList
 
 	for (const GEO_Primitive *prim : primList) {
 		switch (prim->getTypeId().get()) {
-			case GEO_PRIMPOLYSOUP: {
-				const GU_PrimPolySoup *polySoup = static_cast<const GU_PrimPolySoup*>(prim);
-				for (GEO_PrimPolySoup::PolygonIterator pst(*polySoup); !pst.atEnd(); ++pst) {
-					const GA_Size numVertices = pst.getVertexCount();
-					if (validNumVertices(numVertices)) {
-						numMapVertex += (numVertices == 4) ? 6 : 3;
-					}
-				}
-				break;
-			}
-			case GEO_PRIMPOLY: {
-				const GA_Size numVertices = prim->getVertexCount();
+		case GEO_PRIMPOLYSOUP:
+		{
+			const GU_PrimPolySoup *polySoup = static_cast<const GU_PrimPolySoup*>(prim);
+			for (GEO_PrimPolySoup::PolygonIterator pst(*polySoup); !pst.atEnd(); ++pst) {
+				const GA_Size numVertices = pst.getVertexCount();
 				if (validNumVertices(numVertices)) {
 					numMapVertex += (numVertices == 4) ? 6 : 3;
 				}
-				break;
 			}
-			default: {
-				UT_ASSERT(false);
+			break;
+		}
+		case GEO_PRIMPOLY:
+		{
+			const GA_Size numVertices = prim->getVertexCount();
+			if (validNumVertices(numVertices)) {
+				numMapVertex += (numVertices == 4) ? 6 : 3;
 			}
+			break;
+		}
+		default:
+		{
+			UT_ASSERT(false);
+		}
 		}
 	}
 
@@ -560,47 +636,51 @@ static void setMapChannelOverrideData(const MtlOverrideItem &overrideItem, VRay:
 	VRay::Vector &vert2 = vertices[v2];
 
 	switch (overrideItem.getType()) {
-		case MtlOverrideItem::itemTypeInt: {
-			vert0.set(static_cast<float>(overrideItem.valueInt),
-					  static_cast<float>(overrideItem.valueInt), 
-					  static_cast<float>(overrideItem.valueInt));
-			vert1.set(static_cast<float>(overrideItem.valueInt),
-					  static_cast<float>(overrideItem.valueInt), 
-					  static_cast<float>(overrideItem.valueInt));
-			vert2.set(static_cast<float>(overrideItem.valueInt),
-					  static_cast<float>(overrideItem.valueInt), 
-					  static_cast<float>(overrideItem.valueInt));
-			break;
-		}
-		case MtlOverrideItem::itemTypeDouble: {
-			vert0.set(static_cast<float>(overrideItem.valueDouble),
-					  static_cast<float>(overrideItem.valueDouble), 
-					  static_cast<float>(overrideItem.valueDouble));
-			vert1.set(static_cast<float>(overrideItem.valueDouble),
-					  static_cast<float>(overrideItem.valueDouble), 
-					  static_cast<float>(overrideItem.valueDouble));
-			vert2.set(static_cast<float>(overrideItem.valueDouble),
-					  static_cast<float>(overrideItem.valueDouble), 
-					  static_cast<float>(overrideItem.valueDouble));
-			break;
-		}
-		case MtlOverrideItem::itemTypeVector: {
-			vert0 = overrideItem.valueVector;
-			vert1 = overrideItem.valueVector;
-			vert2 = overrideItem.valueVector;
-			break;
-		}
-		default: {
-			vert0.makeZero();
-			vert1.makeZero();
-			vert2.makeZero();
-		}
+	case MtlOverrideItem::itemTypeInt:
+	{
+		vert0.set(static_cast<float>(overrideItem.valueInt),
+				  static_cast<float>(overrideItem.valueInt),
+				  static_cast<float>(overrideItem.valueInt));
+		vert1.set(static_cast<float>(overrideItem.valueInt),
+				  static_cast<float>(overrideItem.valueInt),
+				  static_cast<float>(overrideItem.valueInt));
+		vert2.set(static_cast<float>(overrideItem.valueInt),
+				  static_cast<float>(overrideItem.valueInt),
+				  static_cast<float>(overrideItem.valueInt));
+		break;
+	}
+	case MtlOverrideItem::itemTypeDouble:
+	{
+		vert0.set(static_cast<float>(overrideItem.valueDouble),
+				  static_cast<float>(overrideItem.valueDouble),
+				  static_cast<float>(overrideItem.valueDouble));
+		vert1.set(static_cast<float>(overrideItem.valueDouble),
+				  static_cast<float>(overrideItem.valueDouble),
+				  static_cast<float>(overrideItem.valueDouble));
+		vert2.set(static_cast<float>(overrideItem.valueDouble),
+				  static_cast<float>(overrideItem.valueDouble),
+				  static_cast<float>(overrideItem.valueDouble));
+		break;
+	}
+	case MtlOverrideItem::itemTypeVector:
+	{
+		vert0 = overrideItem.valueVector;
+		vert1 = overrideItem.valueVector;
+		vert2 = overrideItem.valueVector;
+		break;
+	}
+	default:
+	{
+		vert0.makeZero();
+		vert1.makeZero();
+		vert2.makeZero();
+	}
 	}
 }
 
 static void setMapChannelOverrideFaceData(MapChannels &mapChannels, const GEOPrimList &primList, const int faceIndex, const PrimMaterial &primMaterial)
 {
-	if (primMaterial.overrides.size()) {
+	if (!primMaterial.overrides.size()) {
 		return;
 	}
 
@@ -608,7 +688,7 @@ static void setMapChannelOverrideFaceData(MapChannels &mapChannels, const GEOPri
 	const int v1 = (faceIndex * 3) + 1;
 	const int v2 = (faceIndex * 3) + 2;
 
-	FOR_CONST_IT (MtlOverrideItems, oiIt, primMaterial.overrides) {
+	FOR_CONST_IT(MtlOverrideItems, oiIt, primMaterial.overrides) {
 		const tchar *paramName = oiIt.key();
 
 		MapChannel &mapChannel = mapChannels[paramName];
@@ -664,23 +744,11 @@ void MeshExporter::getMtlOverrides(MapChannels &mapChannels)
 		}
 
 		switch (prim->getTypeId().get()) {
-			case GEO_PRIMPOLYSOUP: {
-				const GU_PrimPolySoup *polySoup = static_cast<const GU_PrimPolySoup*>(prim);
-				for (GEO_PrimPolySoup::PolygonIterator pst(*polySoup); !pst.atEnd(); ++pst) {
-					const GA_Size numVertices = pst.getVertexCount();
-					if (validNumVertices(numVertices)) {
-						setMapChannelOverrideFaceData(mapChannels, primList, faceIndex, primMaterial);
-						++faceIndex;
-						if (numVertices == 4) {
-							setMapChannelOverrideFaceData(mapChannels, primList, faceIndex, primMaterial);
-							++faceIndex;
-						}
-					}
-				}
-				break;
-			}
-			case GEO_PRIMPOLY: {
-				const GA_Size numVertices = prim->getVertexCount();
+		case GEO_PRIMPOLYSOUP:
+		{
+			const GU_PrimPolySoup *polySoup = static_cast<const GU_PrimPolySoup*>(prim);
+			for (GEO_PrimPolySoup::PolygonIterator pst(*polySoup); !pst.atEnd(); ++pst) {
+				const GA_Size numVertices = pst.getVertexCount();
 				if (validNumVertices(numVertices)) {
 					setMapChannelOverrideFaceData(mapChannels, primList, faceIndex, primMaterial);
 					++faceIndex;
@@ -689,15 +757,29 @@ void MeshExporter::getMtlOverrides(MapChannels &mapChannels)
 						++faceIndex;
 					}
 				}
-				break;
 			}
-			default: {
-				UT_ASSERT(false);
+			break;
+		}
+		case GEO_PRIMPOLY:
+		{
+			const GA_Size numVertices = prim->getVertexCount();
+			if (validNumVertices(numVertices)) {
+				setMapChannelOverrideFaceData(mapChannels, primList, faceIndex, primMaterial);
+				++faceIndex;
+				if (numVertices == 4) {
+					setMapChannelOverrideFaceData(mapChannels, primList, faceIndex, primMaterial);
+					++faceIndex;
+				}
 			}
+			break;
+		}
+		default:
+		{
+			UT_ASSERT(false);
+		}
 		}
 	}
 }
-
 
 int MeshExporter::getPointAttrs(MapChannels &mapChannels)
 {
@@ -738,7 +820,6 @@ int MeshExporter::getPointAttrs(MapChannels &mapChannels)
 	return nMapChannels;
 }
 
-
 int MeshExporter::getVertexAttrs(MapChannels &mapChannels)
 {
 	int nMapChannels = 0;
@@ -756,7 +837,7 @@ int MeshExporter::getVertexAttrs(MapChannels &mapChannels)
 		// as different plugin properties so skip them here
 		if (attr->getName() != GEO_STD_ATTRIB_POSITION &&
 			attr->getName() != GEO_STD_ATTRIB_NORMAL &&
-			attr->getName() != GEO_STD_ATTRIB_VELOCITY )
+			attr->getName() != GEO_STD_ATTRIB_VELOCITY)
 		{
 			const std::string attrName = attr->getName().toStdString();
 			if (!mapChannels.count(attrName)) {
@@ -769,7 +850,6 @@ int MeshExporter::getVertexAttrs(MapChannels &mapChannels)
 
 	return nMapChannels;
 }
-
 
 void MeshExporter::getVertexAttrAsMapChannel(const GA_Attribute &attr, MapChannel &mapChannel)
 {
@@ -796,54 +876,53 @@ void MeshExporter::getVertexAttrAsMapChannel(const GA_Attribute &attr, MapChanne
 		mapChannel.faces = VRay::VUtils::IntRefList(getNumFaces() * 3);
 
 		int i = 0;
-		for (auto &mv: mapChannel.verticesSet) {
+		for (auto &mv : mapChannel.verticesSet) {
 			mv.index = i;
 			mapChannel.vertices[i++].set(mv.v[0], mv.v[1], mv.v[2]);
 		}
 
-		UT_ASSERT( i == mapChannel.vertices.size() );
+		UT_ASSERT(i == mapChannel.vertices.size());
 
 		// Process map channels (uv and other tuple(3) attributes)
 		int faceVertIndex = 0;
 
 		for (const GEO_Primitive *prim : primList) {
-
 			switch (prim->getTypeId().get()) {
-				case GEO_PRIMPOLYSOUP:
-				{
-					const GU_PrimPolySoup *polySoup = static_cast<const GU_PrimPolySoup*>(prim);
-					for (GEO_PrimPolySoup::PolygonIterator pst(*polySoup); !pst.atEnd(); ++pst) {
-						GA_Size vCnt = pst.getVertexCount();
-						if ( vCnt > 2) {
-							for (GA_Size i = 1; i < vCnt-1; ++i) {
-								// polygon orientation seems to be clockwise in Houdini
-								mapChannel.faces[faceVertIndex++] = mapChannel.verticesSet.find(MapVertex(vaHndl.get(prim->getVertexOffset(i+1))))->index;
-								mapChannel.faces[faceVertIndex++] = mapChannel.verticesSet.find(MapVertex(vaHndl.get(prim->getVertexOffset(i))))->index;
-								mapChannel.faces[faceVertIndex++] = mapChannel.verticesSet.find(MapVertex(vaHndl.get(prim->getVertexOffset(0))))->index;
-							}
-						}
-					}
-					break;
-				}
-				case GEO_PRIMPOLY:
-				{
-					GA_Size vCnt = prim->getVertexCount();
-					if ( vCnt > 2) {
-						for (GA_Size i = 1; i < vCnt-1; ++i) {
+			case GEO_PRIMPOLYSOUP:
+			{
+				const GU_PrimPolySoup *polySoup = static_cast<const GU_PrimPolySoup*>(prim);
+				for (GEO_PrimPolySoup::PolygonIterator pst(*polySoup); !pst.atEnd(); ++pst) {
+					GA_Size vCnt = pst.getVertexCount();
+					if (vCnt > 2) {
+						for (GA_Size i = 1; i < vCnt - 1; ++i) {
 							// polygon orientation seems to be clockwise in Houdini
-							mapChannel.faces[faceVertIndex++] = mapChannel.verticesSet.find(MapVertex(vaHndl.get(prim->getVertexOffset(i+1))))->index;
+							mapChannel.faces[faceVertIndex++] = mapChannel.verticesSet.find(MapVertex(vaHndl.get(prim->getVertexOffset(i + 1))))->index;
 							mapChannel.faces[faceVertIndex++] = mapChannel.verticesSet.find(MapVertex(vaHndl.get(prim->getVertexOffset(i))))->index;
 							mapChannel.faces[faceVertIndex++] = mapChannel.verticesSet.find(MapVertex(vaHndl.get(prim->getVertexOffset(0))))->index;
 						}
 					}
-					break;
 				}
-				default:
-					;
+				break;
+			}
+			case GEO_PRIMPOLY:
+			{
+				GA_Size vCnt = prim->getVertexCount();
+				if (vCnt > 2) {
+					for (GA_Size i = 1; i < vCnt - 1; ++i) {
+						// polygon orientation seems to be clockwise in Houdini
+						mapChannel.faces[faceVertIndex++] = mapChannel.verticesSet.find(MapVertex(vaHndl.get(prim->getVertexOffset(i + 1))))->index;
+						mapChannel.faces[faceVertIndex++] = mapChannel.verticesSet.find(MapVertex(vaHndl.get(prim->getVertexOffset(i))))->index;
+						mapChannel.faces[faceVertIndex++] = mapChannel.verticesSet.find(MapVertex(vaHndl.get(prim->getVertexOffset(0))))->index;
+					}
+				}
+				break;
+			}
+			default:
+			;
 			}
 		}
 
-		UT_ASSERT( faceVertIndex == mapChannel.faces.size() );
+		UT_ASSERT(faceVertIndex == mapChannel.faces.size());
 
 		// cleanup hash
 		mapChannel.verticesSet.clear();
@@ -860,42 +939,41 @@ void MeshExporter::getVertexAttrAsMapChannel(const GA_Attribute &attr, MapChanne
 		int faceVertIndex = 0;
 
 		for (const GEO_Primitive *prim : primList) {
-
 			switch (prim->getTypeId().get()) {
-				case GEO_PRIMPOLYSOUP:
-				{
-					const GU_PrimPolySoup *polySoup = static_cast<const GU_PrimPolySoup*>(prim);
-					for (GEO_PrimPolySoup::PolygonIterator pst(*polySoup); !pst.atEnd(); ++pst) {
-						const GA_Size vCnt = pst.getVertexCount();
-						if ( vCnt > 2) {
-							for (GA_Size i = 1; i < vCnt-1; ++i) {
-								// polygon orientation seems to be clockwise in Houdini
-								mapChannel.faces[faceVertIndex++] = pst.getVertexIndex(i+1);
-								mapChannel.faces[faceVertIndex++] = pst.getVertexIndex(i);
-								mapChannel.faces[faceVertIndex++] = pst.getVertexIndex(0);
-							}
-						}
-					}
-					break;
-				}
-				case GEO_PRIMPOLY:
-				{
-					const GA_Size vCnt = prim->getVertexCount();
-					if ( vCnt > 2) {
-						for (GA_Size i = 1; i < vCnt-1; ++i) {
+			case GEO_PRIMPOLYSOUP:
+			{
+				const GU_PrimPolySoup *polySoup = static_cast<const GU_PrimPolySoup*>(prim);
+				for (GEO_PrimPolySoup::PolygonIterator pst(*polySoup); !pst.atEnd(); ++pst) {
+					const GA_Size vCnt = pst.getVertexCount();
+					if (vCnt > 2) {
+						for (GA_Size i = 1; i < vCnt - 1; ++i) {
 							// polygon orientation seems to be clockwise in Houdini
-							mapChannel.faces[faceVertIndex++] = gdp.getVertexMap().indexFromOffset(prim->getVertexOffset(i+1));
-							mapChannel.faces[faceVertIndex++] = gdp.getVertexMap().indexFromOffset(prim->getVertexOffset(i));
-							mapChannel.faces[faceVertIndex++] = gdp.getVertexMap().indexFromOffset(prim->getVertexOffset(0));
+							mapChannel.faces[faceVertIndex++] = pst.getVertexIndex(i + 1);
+							mapChannel.faces[faceVertIndex++] = pst.getVertexIndex(i);
+							mapChannel.faces[faceVertIndex++] = pst.getVertexIndex(0);
 						}
 					}
-					break;
 				}
-				default:
-					;
+				break;
+			}
+			case GEO_PRIMPOLY:
+			{
+				const GA_Size vCnt = prim->getVertexCount();
+				if (vCnt > 2) {
+					for (GA_Size i = 1; i < vCnt - 1; ++i) {
+						// polygon orientation seems to be clockwise in Houdini
+						mapChannel.faces[faceVertIndex++] = gdp.getVertexMap().indexFromOffset(prim->getVertexOffset(i + 1));
+						mapChannel.faces[faceVertIndex++] = gdp.getVertexMap().indexFromOffset(prim->getVertexOffset(i));
+						mapChannel.faces[faceVertIndex++] = gdp.getVertexMap().indexFromOffset(prim->getVertexOffset(0));
+					}
+				}
+				break;
+			}
+			default:
+			;
 			}
 		}
 
-		UT_ASSERT( faceVertIndex == mapChannel.faces.size() );
+		UT_ASSERT(faceVertIndex == mapChannel.faces.size());
 	}
 }

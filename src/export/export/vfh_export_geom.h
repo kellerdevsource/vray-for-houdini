@@ -112,9 +112,9 @@ public:
 	/// @returns unique primitive id.
 	int getPrimPackedID(const GU_PrimPacked &prim);
 
-	VRay::Plugin exportPolyMesh(OBJ_Node &objNode, const GU_Detail &gdp, const GEOPrimList &primList);
+	void exportPolyMesh(OBJ_Node &objNode, const GU_Detail &gdp, const GEOPrimList &primList, PrimitiveItems &instancerItems);
 
-	VRay::Plugin exportHair(OBJ_Node &objNode, const GU_Detail &gdp, const GEOPrimList &primList);
+	void exportHair(OBJ_Node &objNode, const GU_Detail &gdp, const GEOPrimList &primList, PrimitiveItems &instancerItems);
 
 	/// A helper function to export geometry from a custom V-Ray SOP node.
 	/// @param sop V-Ray SOP node.

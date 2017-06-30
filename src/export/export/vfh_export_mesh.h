@@ -12,18 +12,10 @@
 #define VRAY_FOR_HOUDINI_EXPORT_MESH_H
 
 #include "vfh_vray.h"
-#include "vfh_defines.h"
 #include "vfh_plugin_attrs.h"
 #include "vfh_exporter.h"
 #include "vfh_geoutils.h"
-#include "vfh_material_override.h"
 #include "vfh_export_primitive.h"
-
-#include <SOP/SOP_Node.h>
-#include <SHOP/SHOP_Node.h>
-
-#include <unordered_set>
-#include <unordered_map>
 
 namespace VRayForHoudini {
 
@@ -134,15 +126,6 @@ public:
 	///       with hasPolyGeometry() before using this
 	VRay::VUtils::IntRefList& getFaceMtlIDs();
 
-	/// Get the list of valid materials assigned per face
-	/// based on "shop_materialpath" attribute. These are exported as
-	/// MtlMulti to allow different materials per face
-	/// @note check if the translator has been properly initialized
-	///       with hasPolyGeometry() before using this
-	/// @param shopList[out]
-	/// @retval number of valid materials found
-	int getSHOPList(SHOPList &shopList);
-
 	/// Generate mesh plugin description from all supported primitives in the
 	/// GU_Detail provided
 	/// @note this will init the translator internally with the passed gdp
@@ -152,30 +135,9 @@ public:
 	///         and pluginDesc is modified
 	bool asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc &pluginDesc);
 
-	/// Export mesh geometry plugin and generate Node plugin description
-	/// for all supported primitives in the GU_Detail provided
-	/// @note calls asPluginDesc() to export the geometry
-	/// @param gdp[in] - the detail to traverse
-	/// @param plugins[out] - collects the Node plugins generated for this detail
-	void exportPrimitives(const GU_Detail &gdp, PrimitiveItems &instancerItems) VRAY_OVERRIDE;
-	void exportPrimitive(const PrimitiveItem &item) VRAY_OVERRIDE {}
+	VRay::Plugin getMaterial() const { return material; }
 
 private:
-	/// Helper structure used when digesting material overrides into map channels
-	struct PrimOverride {
-		typedef std::unordered_map<std::string, VRay::Vector> MtlOverrides;
-
-		explicit PrimOverride(OP_Node *shopNode=nullptr)
-			: matNode(shopNode)
-		{}
-
-		/// The material assigned to the face.
-		OP_Node *matNode;
-
-		/// Map of map channel name to override value for the face.
-		MtlOverrides mtlOverrides;
-	};
-
 	/// Helper funtion to digest point attibutes into map channels
 	/// @note check if the translator has been properly initialized
 	///       with hasPolyGeometry() before using this
@@ -216,6 +178,8 @@ private:
 
 	bool                        m_hasSubdivApplied; ///< if we have subdivision applied to geometry at render time
 	int                         numFaces; ///< number of mesh faces
+
+	// Plugin parameters
 	VRay::VUtils::IntRefList    faces; ///< list of mesh faces (triangles)
 	VRay::VUtils::IntRefList    edge_visibility; ///< list of visible edges (1 bit per edge, 3 bits per face)
 	VRay::VUtils::VectorRefList vertices; ///< list of mesh vertices
@@ -224,6 +188,14 @@ private:
 	VRay::VUtils::VectorRefList velocities; ///< list of vertex velocities
 	VRay::VUtils::IntRefList    face_mtlIDs; ///< list of material ids used to index the correct material
 	MapChannels                 map_channels_data; /// mesh map channels
+
+	/// A list of shader names.
+	/// Each item is a list of 2 elements:
+	///  0 - face material ID
+	///  1 - shader name
+	VRay::VUtils::ValueRefList shadersNamesList;
+
+	VRay::Plugin material;
 };
 
 

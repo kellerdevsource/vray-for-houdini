@@ -121,8 +121,8 @@ struct PrimMaterial {
 	MtlOverrideItems overrides;
 };
 
-PrimMaterial processStyleSheet(const QString &styleSheet, fpreal t);
-PrimMaterial processMaterialOverrides(const UT_String &matPath, const UT_String &materialOverrides, fpreal t);
+PrimMaterial processStyleSheet(const QString &styleSheet, fpreal t, int materialOnly=false);
+PrimMaterial processMaterialOverrides(const UT_String &matPath, const UT_String &materialOverrides, fpreal t, int materialOnly=false);
 
 } // namespace VRayForHoudini
 
