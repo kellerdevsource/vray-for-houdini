@@ -146,6 +146,21 @@ exint ObjectExporter::getDetailID() const
 	return detailID;
 }
 
+void ObjectExporter::getPrimMaterial(PrimMaterial &primMaterial) const
+{
+	PrimContextIt it(primContextStack);
+	while (it.hasNext()) {
+		const PrimMaterial &primMtl(it.next().primMaterial);
+		if (primMtl.matNode) {
+			primMaterial.matNode = primMtl.matNode;
+		}
+
+		FOR_CONST_IT (MtlOverrideItems, moIt, primMtl.overrides) {
+			primMaterial.overrides.insert(moIt.key(), moIt.data());
+		}
+	}
+}
+
 void ObjectExporter::clearOpPluginCache()
 {
 	// clearOpPluginCache() is called before export,
@@ -540,11 +555,14 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 			item.t = animOffsetHndl.get(primOffset);
 		}
 
+		// Check parent overrides.
+		getPrimMaterial(item.primMaterial);
+
 		if (materialStyleSheetHndl.isValid()) {
 			const QString &styleSheet = materialStyleSheetHndl.get(primOffset);
 
 			if (!styleSheet.isEmpty()) {
-				item.primMaterial = processStyleSheet(styleSheet, ctx.getTime());
+				mergeStyleSheet(item.primMaterial, styleSheet, ctx.getTime());
 			}
 		}
 		else if (materialPathHndl.isValid()) {
@@ -555,7 +573,7 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 				materialOverrides = materialOverrideHndl.get(primOffset);
 			}
 
-			item.primMaterial = processMaterialOverrides(matPath, materialOverrides, ctx.getTime());
+			mergeMaterialOverrides(item.primMaterial, matPath, materialOverrides, ctx.getTime());
 		}
 
 		// Primitive attributes
@@ -598,7 +616,7 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 				getPrimPluginFromCache(primKey, item.geometry);
 			}
 			if (!item.geometry) {
-				pushContext(PrimContext(item.tm, item.primID));
+				pushContext(PrimContext(item.tm, item.primID, item.primMaterial));
 				item.geometry = exportPrimPacked(objNode, primPacked);
 				popContext();
 			}

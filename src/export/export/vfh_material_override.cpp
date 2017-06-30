@@ -13,12 +13,10 @@
 
 using namespace VRayForHoudini;
 
-PrimMaterial VRayForHoudini::processStyleSheet(const QString &styleSheet, fpreal t, int materialOnly)
+void VRayForHoudini::mergeStyleSheet(PrimMaterial &primMaterial, const QString &styleSheet, fpreal t, int materialOnly)
 {
 	QJsonParseError parserError;
 	QJsonDocument styleSheetParser = QJsonDocument::fromJson(styleSheet.toUtf8(), &parserError);
-
-	PrimMaterial primMaterial;
 
 	//
 	// {
@@ -57,15 +55,24 @@ PrimMaterial VRayForHoudini::processStyleSheet(const QString &styleSheet, fpreal
 							break;
 						}
 						if (matNode) {
-							primMaterial.matNode = matNode;
+							// There is already some top-level material assigned.
+							if (!primMaterial.matNode) {
+								primMaterial.matNode = matNode;
+							}
 
 							if (overrides.contains("materialParameters")) {
 								QJsonObject materialParameters = overrides["materialParameters"].toObject();
 
 								QStringList keys = materialParameters.keys();
 								for (const QString &paramName : keys) {
-									const tchar *parmName = paramName.toLocal8Bit().constData();
+									const char *parmName = paramName.toLocal8Bit().constData();
 									QJsonValue paramJsonValue = materialParameters[paramName];
+
+									MtlOverrideItems::iterator moIt = primMaterial.overrides.find(parmName);
+									if (moIt != primMaterial.overrides.end()) {
+										// There is already some top-level override for this parameter.
+										continue;
+									}
 
 									// NOTES:
 									//  * Assuming current array value is a color
@@ -102,14 +109,14 @@ PrimMaterial VRayForHoudini::processStyleSheet(const QString &styleSheet, fpreal
 			}
 		}
 	}
-
-	return primMaterial;
 }
 
-PrimMaterial VRayForHoudini::processMaterialOverrides(const UT_String &matPath, const UT_String &materialOverrides, fpreal t, int materialOnly)
+void VRayForHoudini::mergeMaterialOverrides(PrimMaterial &primMaterial, const UT_String &matPath, const UT_String &materialOverrides, fpreal t, int materialOnly)
 {
-	PrimMaterial primMaterial;
-	primMaterial.matNode = getOpNodeFromPath(matPath, t);
+	// There is already some top-level material assigned.
+	if (!primMaterial.matNode) {
+		primMaterial.matNode = getOpNodeFromPath(matPath, t);
+	}
 	
 	if (primMaterial.matNode && !materialOnly) { 
 		//
@@ -128,9 +135,16 @@ PrimMaterial VRayForHoudini::processMaterialOverrides(const UT_String &matPath, 
 				PRM_Parm *keyParm = primMaterial.matNode->getParmList()->getParmPtrFromChannel(key, &channelIIdx);
 				if (keyParm && channelIIdx >= 0 && channelIIdx < 4) {
 					const PRM_Type &keyParmType = keyParm->getType();
+					const char *parmName = keyParm->getToken();
+
+					MtlOverrideItems::iterator moIt = primMaterial.overrides.find(parmName);
+					if (moIt != primMaterial.overrides.end()) {
+						// There is already some top-level override for this parameter.
+						continue;
+					}
 
 					if (keyParmType.isFloatType()) {
-						MtlOverrideItem &overrideItem = primMaterial.overrides[keyParm->getToken()];
+						MtlOverrideItem &overrideItem = primMaterial.overrides[parmName];
 					
 						fpreal channelValue = 0.0;
 						mtlOverride.import(key, channelValue);
@@ -162,6 +176,4 @@ PrimMaterial VRayForHoudini::processMaterialOverrides(const UT_String &matPath, 
 			}
 		}
 	}
-
-	return primMaterial;
 }

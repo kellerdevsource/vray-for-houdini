@@ -454,7 +454,7 @@ VRay::VUtils::IntRefList& MeshExporter::getFaceMtlIDs()
 		if (hasStyleSheet) {
 			const QString &styleSheet = materialStyleSheetHndl.get(primOffset);
 			if (!styleSheet.isEmpty()) {
-				primMaterial = processStyleSheet(styleSheet, ctx.getTime(), true);
+				mergeStyleSheet(primMaterial, styleSheet, ctx.getTime(), true);
 			}
 		}
 		else if (hasMaterialPath) {
@@ -731,24 +731,36 @@ void MeshExporter::getMtlOverrides(MapChannels &mapChannels)
 		if (hasStyleSheet) {
 			const QString &styleSheet = materialStyleSheetHndl.get(primOffset);
 			if (!styleSheet.isEmpty()) {
-				primMaterial = processStyleSheet(styleSheet, ctx.getTime());
+				mergeStyleSheet(primMaterial, styleSheet, ctx.getTime());
 			}
 		}
 		else if (hasMaterialOverrides) {
 			const UT_String &matPath = materialPathHndl.get(primOffset);
 			const UT_String &materialOverrides = materialOverrideHndl.get(primOffset);
 
-			if (!(matPath.equal("") && materialOverrides.equal(""))) {
-				primMaterial = processMaterialOverrides(matPath, materialOverrides, ctx.getTime());
+			if (!matPath.equal("")) {
+				mergeMaterialOverrides(primMaterial, matPath, materialOverrides, ctx.getTime());
 			}
 		}
 
 		switch (prim->getTypeId().get()) {
-		case GEO_PRIMPOLYSOUP:
-		{
-			const GU_PrimPolySoup *polySoup = static_cast<const GU_PrimPolySoup*>(prim);
-			for (GEO_PrimPolySoup::PolygonIterator pst(*polySoup); !pst.atEnd(); ++pst) {
-				const GA_Size numVertices = pst.getVertexCount();
+			case GEO_PRIMPOLYSOUP: {
+				const GU_PrimPolySoup *polySoup = static_cast<const GU_PrimPolySoup*>(prim);
+				for (GEO_PrimPolySoup::PolygonIterator pst(*polySoup); !pst.atEnd(); ++pst) {
+					const GA_Size numVertices = pst.getVertexCount();
+					if (validNumVertices(numVertices)) {
+						setMapChannelOverrideFaceData(mapChannels, primList, faceIndex, primMaterial);
+						++faceIndex;
+						if (numVertices == 4) {
+							setMapChannelOverrideFaceData(mapChannels, primList, faceIndex, primMaterial);
+							++faceIndex;
+						}
+					}
+				}
+				break;
+			}
+			case GEO_PRIMPOLY: {
+				const GA_Size numVertices = prim->getVertexCount();
 				if (validNumVertices(numVertices)) {
 					setMapChannelOverrideFaceData(mapChannels, primList, faceIndex, primMaterial);
 					++faceIndex;
@@ -757,26 +769,11 @@ void MeshExporter::getMtlOverrides(MapChannels &mapChannels)
 						++faceIndex;
 					}
 				}
+				break;
 			}
-			break;
-		}
-		case GEO_PRIMPOLY:
-		{
-			const GA_Size numVertices = prim->getVertexCount();
-			if (validNumVertices(numVertices)) {
-				setMapChannelOverrideFaceData(mapChannels, primList, faceIndex, primMaterial);
-				++faceIndex;
-				if (numVertices == 4) {
-					setMapChannelOverrideFaceData(mapChannels, primList, faceIndex, primMaterial);
-					++faceIndex;
-				}
+			default: {
+				UT_ASSERT(false);
 			}
-			break;
-		}
-		default:
-		{
-			UT_ASSERT(false);
-		}
 		}
 	}
 }

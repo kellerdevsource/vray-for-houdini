@@ -48,10 +48,10 @@ struct PrimitiveItem {
 	/// Material.
 	PrimMaterial primMaterial;
 
-	/// Geometry.
+	/// Exporterd geometry plugin.
 	VRay::Plugin geometry;
 
-	/// Override material.
+	/// Exporterd material plugin.
 	VRay::Plugin material;
 
 	/// Transform.

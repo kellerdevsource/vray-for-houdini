@@ -34,9 +34,12 @@ enum VMRenderPointsAs {
 /// Primitive export context frame.
 /// Used for non-Instancer objects like volumes and lights.
 struct PrimContext {
-	explicit PrimContext(VRay::Transform tm=VRay::Transform(1), exint detailID=0)
+	explicit PrimContext(VRay::Transform tm=VRay::Transform(1),
+						 exint detailID=0,
+						 PrimMaterial primMaterial=PrimMaterial())
 		: tm(tm)
 		, detailID(detailID)
+		, primMaterial(primMaterial)
 	{}
 
 	/// Base transform.
@@ -44,6 +47,9 @@ struct PrimContext {
 
 	/// Primitive ID.
 	exint detailID;
+
+	/// Material overrides.
+	PrimMaterial primMaterial;
 };
 
 typedef QStack<PrimContext> PrimContextStack;
@@ -194,6 +200,8 @@ public:
 
 	/// Returns primitive ID from the primitive context stack.
 	exint getDetailID() const;
+
+	void getPrimMaterial(PrimMaterial &primMaterial) const;
 
 protected:
 	/// Plugin exporter.
