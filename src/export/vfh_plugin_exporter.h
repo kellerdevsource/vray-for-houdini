@@ -149,6 +149,10 @@ public:
 	/// @param pluginName - plugin name
 	void removePlugin(const std::string &pluginName);
 
+	/// Delete plugin.
+	/// @param plugin V-Ray plugin instance.
+	void removePlugin(VRay::Plugin plugin);
+
 	/// Commits any accumulated scene changes. This is necessary if
 	/// the autoCommit is set to false on the renderer instance.
 	void commit();

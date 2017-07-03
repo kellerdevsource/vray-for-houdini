@@ -146,6 +146,14 @@ exint ObjectExporter::getDetailID() const
 	return detailID;
 }
 
+OP_Node* ObjectExporter::getGenerator() const
+{
+	if (!primContextStack.size())
+		return nullptr;
+	// Return the bottom-most generator.
+	return primContextStack[0].generator;
+}
+
 void ObjectExporter::getPrimMaterial(PrimMaterial &primMaterial) const
 {
 	PrimContextIt it(primContextStack);
@@ -169,6 +177,11 @@ void ObjectExporter::clearOpPluginCache()
 	primPackedTypeIDs.init();
 
 	pluginCache.op.clear();
+}
+
+void ObjectExporter::clearOpDepPluginCache()
+{
+	pluginCache.generated.clear();
 }
 
 void ObjectExporter::clearPrimPluginCache()
@@ -405,7 +418,7 @@ VRay::Plugin ObjectExporter::exportPrimSphere(OBJ_Node &objNode, const GA_Primit
 	return pluginExporter.exportPlugin(geomSphere);
 }
 
-void ObjectExporter::exportPrimVolume(OBJ_Node &objNode, const PrimitiveItem &item) const
+void ObjectExporter::exportPrimVolume(OBJ_Node &objNode, const PrimitiveItem &item)
 {
 #ifdef CGR_HAS_AUR
 	const GA_PrimitiveTypeId &primTypeID = item.prim->getTypeId();
@@ -413,11 +426,13 @@ void ObjectExporter::exportPrimVolume(OBJ_Node &objNode, const PrimitiveItem &it
 	const VRay::Transform &tm = getTm();
 	const exint detailID = getDetailID();
 
+	PluginSet volumePlugins;
+
 	if (primTypeID == primPackedTypeIDs.vrayVolumeGridRef) {
 		VolumeExporter volumeGridExp(objNode, ctx, pluginExporter);
 		volumeGridExp.setTM(tm);
 		volumeGridExp.setDetailID(detailID);
-		volumeGridExp.exportPrimitive(item);
+		volumeGridExp.exportPrimitive(item, volumePlugins);
 	}
 	else if (primTypeID == GEO_PRIMVOLUME ||
 			 primTypeID == GEO_PRIMVDB)
@@ -425,10 +440,14 @@ void ObjectExporter::exportPrimVolume(OBJ_Node &objNode, const PrimitiveItem &it
 		HoudiniVolumeExporter volumeExp(objNode, ctx, pluginExporter);
 		volumeExp.setTM(tm);
 		volumeExp.setDetailID(detailID);
-		volumeExp.exportPrimitive(item);
+		volumeExp.exportPrimitive(item, volumePlugins);
 	}
 	else {
 		UT_ASSERT(false && "Unsupported volume primitive type!");
+	}
+
+	FOR_IT(PluginSet, pIt, volumePlugins) {
+		addGenerated(objNode, pIt.key());
 	}
 #endif
 }
@@ -511,7 +530,7 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 		}
 
 		if (isVolumePrim) {
-			pushContext(PrimContext(item.tm, item.primID, item.primMaterial));
+			pushContext(PrimContext(&objNode, item.tm, item.primID, item.primMaterial));
 			exportPrimVolume(objNode, item);
 			popContext();
 		}
@@ -524,7 +543,7 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 				getPrimPluginFromCache(primKey, item.geometry);
 			}
 			if (!item.geometry) {
-				pushContext(PrimContext(item.tm, item.primID, item.primMaterial));
+				pushContext(PrimContext(&objNode, item.tm, item.primID, item.primMaterial));
 				item.geometry = exportPrimPacked(objNode, primPacked);
 				popContext();
 			}
@@ -760,6 +779,10 @@ int ObjectExporter::getPrimPackedID(const GU_PrimPacked &prim)
 
 VRay::Plugin ObjectExporter::exportPrimPacked(OBJ_Node &objNode, const GU_PrimPacked &prim)
 {
+	if (!doExportGeometry) {
+		return VRay::Plugin();
+	}
+
 	const GA_PrimitiveTypeId primTypeID = prim.getTypeId();
 
 	if (primTypeID == primPackedTypeIDs.vrayProxyRef) {
@@ -1219,7 +1242,7 @@ VRay::Plugin ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_De
 		objTm.offset.makeZero();
 		item.tm = item.tm * objTm;
 
-		pushContext(PrimContext(item.tm, pointOffset, item.primMaterial));
+		pushContext(PrimContext(&objNode, item.tm, pointOffset, item.primMaterial));
 		item.geometry = pluginExporter.exportObject(instaceObjNode);
 		popContext();
 
@@ -1258,14 +1281,17 @@ VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode)
 
 	const VRay::Transform tm = pluginExporter.getObjTransform(&objNode, ctx);
 
-	pushContext(PrimContext(tm, gdp.getUniqueId()));
+	pushContext(PrimContext(&objNode, tm, gdp.getUniqueId()));
+	
+	VRay::Plugin geometry;
 
 	const int isInstance = isInstanceNode(objNode);
 	if (isInstance || isPointInstancer(gdp)) {
-		return exportPointInstancer(objNode, gdp, isInstance);
+		geometry = exportPointInstancer(objNode, gdp, isInstance);
 	}
-
-	VRay::Plugin geometry = exportDetail(objNode, gdp);
+	else {
+		geometry = exportDetail(objNode, gdp);
+	}
 
 	popContext();
 
@@ -1377,14 +1403,7 @@ VRay::Plugin ObjectExporter::exportNode(OBJ_Node &objNode)
 		return pIt.data();
 	}
 
-	VRay::Plugin geometry;
-	if (doExportGeometry) {
-		geometry = exportGeometry(objNode);
-	}
-
-	if (doExportGeometry && !geometry) {
-		return VRay::Plugin();
-	}
+	VRay::Plugin geometry = exportGeometry(objNode);
 
 	OP_Node *matNode = objNode.getMaterialNode(ctx.getTime());
 	VRay::Plugin material = pluginExporter.exportMaterial(matNode);
@@ -1414,7 +1433,7 @@ VRay::Plugin ObjectExporter::exportNode(OBJ_Node &objNode)
 	}
 
 	PluginDesc nodeDesc(VRayExporter::getPluginName(objNode, "Node"),"Node");
-	if (doExportGeometry) {
+	if (geometry) {
 		nodeDesc.add(PluginAttr("geometry", geometry));
 	}
 	nodeDesc.add(PluginAttr("material", material));
@@ -1429,6 +1448,40 @@ VRay::Plugin ObjectExporter::exportNode(OBJ_Node &objNode)
 	return node;
 }
 
+void ObjectExporter::addGenerated(OP_Node &key, VRay::Plugin plugin)
+{
+	if (!plugin) {
+		return;
+	}
+
+	PluginSet &pluginsSet = pluginCache.generated[&key];
+	pluginsSet.insert(plugin);
+}
+
+void ObjectExporter::removeGenerated(OP_Node &key)
+{
+	OpPluginGenCache::iterator cIt = pluginCache.generated.find(&key);
+	if (cIt == pluginCache.generated.end()) {
+		return;
+	}
+
+	PluginSet &pluginsSet = cIt.data();
+
+	FOR_IT (PluginSet, pIt, pluginsSet) {
+		pluginExporter.removePlugin(pIt.key());
+	}
+
+	pluginCache.generated.erase(cIt);
+}
+
+void ObjectExporter::removeObject(OBJ_Node &objNode)
+{
+	// Remove generated plugin (lights, volumes).
+	removeGenerated(objNode);
+
+	// TODO: Remove object plugin itself.
+}
+
 VRay::Plugin ObjectExporter::exportObject(OBJ_Node &objNode)
 {
 	VRay::Plugin plugin;
@@ -1437,8 +1490,15 @@ VRay::Plugin ObjectExporter::exportObject(OBJ_Node &objNode)
 	if (objLight) {
 		const VRay::Transform tm = pluginExporter.getObjTransform(&objNode, ctx);
 
-		pushContext(PrimContext(tm));
+		pushContext(PrimContext(&objNode, tm));
+
 		plugin = exportLight(*objLight);
+
+		OP_Node *objGen = getGenerator();
+		if (objGen) {
+			addGenerated(*objGen, plugin);
+		}
+
 		popContext();
 	}
 	else {

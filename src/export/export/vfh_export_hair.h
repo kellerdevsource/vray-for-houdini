@@ -39,7 +39,7 @@ public:
 	/// @param plugins[out] - if any plugins are generted they will appended
 	///                       to this list
 	void exportPrimitives(const GU_Detail &gdp, PrimitiveItems &plugins) VRAY_OVERRIDE {}
-	void exportPrimitive(const PrimitiveItem &item) VRAY_OVERRIDE {}
+	void exportPrimitive(const PrimitiveItem &item, PluginSet &pluginsSet) VRAY_OVERRIDE {}
 
 private:
 	/// Helper function to get the node which holds optional hair geometry rendering

@@ -300,6 +300,10 @@ public:
 	/// Delete plugin for the plugin description
 	void removePlugin(const Attrs::PluginDesc &pluginDesc);
 
+	/// Delete plugin.
+	/// @param plugin V-Ray plugin instance.
+	void removePlugin(VRay::Plugin plugin);
+
 	/// Start rendering at the current time. This will do different this depending on
 	/// the work mode of the exporter- export vrscene, render or both
 	/// @param locked[in] - when true this will force the current thread to block

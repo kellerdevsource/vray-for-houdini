@@ -33,16 +33,20 @@ enum VMRenderPointsAs {
 	vmRenderPointsAsCirle, ///< Render points as circles. Maps GeomParticleSystem "render_type" 6 (Points).
 };
 
-/// Primitive export context frame.
+/// Primitive export context item.
 /// Used for non-Instancer objects like volumes and lights.
 struct PrimContext {
-	explicit PrimContext(VRay::Transform tm=VRay::Transform(1),
+	explicit PrimContext(OP_Node *generator=nullptr,
+						 VRay::Transform tm=VRay::Transform(1),
 						 exint detailID=0,
 						 PrimMaterial primMaterial=PrimMaterial())
-		: tm(tm)
+		: generator(generator)
+		, tm(tm)
 		, detailID(detailID)
 		, primMaterial(primMaterial)
 	{}
+
+	OP_Node *generator;
 
 	/// Base transform.
 	VRay::Transform tm;
@@ -54,13 +58,17 @@ struct PrimContext {
 	PrimMaterial primMaterial;
 };
 
+/// Primitive export context stack.
 typedef QStack<PrimContext> PrimContextStack;
+
+/// Primitive export context stack iterator.
 typedef QVectorIterator<PrimContext> PrimContextIt;
 
 class VRayExporter;
 class VRayRendererNode;
 class ObjectExporter
 {
+	typedef VUtils::HashMapKey<OP_Node*, PluginSet> OpPluginGenCache;
 	typedef VUtils::HashMapKey<OP_Node*, VRay::Plugin> OpPluginCache;
 	typedef VUtils::HashMapKey<int, VRay::Plugin> PrimPluginCache;
 	typedef VUtils::HashMap<VRay::Plugin> GeomNodeCache;
@@ -70,6 +78,10 @@ public:
 
 	/// Clears OBJ plugin cache.
 	void clearOpPluginCache();
+
+	/// Clears OBJ plugin dependency cache for
+	/// non directly instancable object.
+	void clearOpDepPluginCache();
 
 	/// Clears primitive plugin cache.
 	void clearPrimPluginCache();
@@ -144,7 +156,7 @@ public:
 
 	VRay::Plugin exportPrimSphere(OBJ_Node &objNode, const GA_Primitive &prim);
 
-	void exportPrimVolume(OBJ_Node &objNode, const PrimitiveItem &item) const;
+	void exportPrimVolume(OBJ_Node &objNode, const PrimitiveItem &item);
 
 	void processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, PrimitiveItems &instancerItems);
 
@@ -184,6 +196,9 @@ public:
 	/// Export object.
 	/// @returns Node plugin.
 	VRay::Plugin exportObject(OBJ_Node &objNode);
+
+	/// Remove object.
+	void removeObject(OBJ_Node &objNode);
  
 	/// Returns transform from the primitive context stack.
 	VRay::Transform getTm() const;
@@ -193,6 +208,12 @@ public:
 
 	/// Returns material from the primitive context stack.
 	void getPrimMaterial(PrimMaterial &primMaterial) const;
+
+	OP_Node *getGenerator() const;
+
+	void addGenerated(OP_Node &key, VRay::Plugin plugin);
+
+	void removeGenerated(OP_Node &key);
 
 private:
 	/// Push context frame when exporting nested object.
@@ -232,6 +253,10 @@ private:
 
 		/// Wrapper nodes cache for Instancer plugin.
 		GeomNodeCache instancerNodeWrapper;
+
+		/// Maps OP_Node with generated set of plugins for
+		/// non directly instancable object.
+		OpPluginGenCache generated;
 	} pluginCache;
 
 	/// Primitive export context stack.

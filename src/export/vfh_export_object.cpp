@@ -80,6 +80,7 @@ void VRayExporter::RtCallbackOBJGeometry(OP_Node *caller, void *callee, OP_Event
 			objExporter.setExportGeometry(shouldReExport);
 
 			// Update node
+			objExporter.removeGenerated(objNode);
 			objExporter.exportObject(objNode);
 
 			// Restore state
@@ -129,6 +130,7 @@ void VRayExporter::RtCallbackSOPChanged(OP_Node *caller, void *callee, OP_EventT
 			}
 			ObjectExporter &objExporter = exporter.getObjectExporter();
 			objExporter.clearPrimPluginCache();
+			objExporter.removeGenerated(objNode);
 			objExporter.exportGeometry(objNode);
 			break;
 		}

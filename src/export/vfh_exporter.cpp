@@ -1401,6 +1401,7 @@ void VRayExporter::exportScene()
 
 	// Clear plugin caches.
 	objectExporter.clearOpPluginCache();
+	objectExporter.clearOpDepPluginCache();
 	objectExporter.clearPrimPluginCache();
 
 	// export geometry nodes
@@ -1537,6 +1538,10 @@ void VRayExporter::removePlugin(const Attrs::PluginDesc &pluginDesc)
 	m_renderer.removePlugin(pluginDesc);
 }
 
+void VRayExporter::removePlugin(VRay::Plugin plugin)
+{
+	m_renderer.removePlugin(plugin);
+}
 
 void VRayExporter::setCurrentTime(fpreal time)
 {

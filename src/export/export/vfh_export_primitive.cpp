@@ -164,7 +164,7 @@ static OP_Node* getPhoenixShaderSimNode(OP_Node *matNode)
 	return getVRayNodeFromOp(*matNode, "PhxShaderSim", "PhxShaderSim");
 }
 
-void HoudiniVolumeExporter::exportPrimitive(const PrimitiveItem &item)
+void HoudiniVolumeExporter::exportPrimitive(const PrimitiveItem &item, PluginSet &pluginsSet)
 {
 #if 0
 	GA_ROAttributeRef ref_name = detail.findStringTuple(GA_ATTRIB_PRIMITIVE, "name");
@@ -379,7 +379,7 @@ VRay::Plugin VolumeExporter::exportVRayVolumeGridRef(OBJ_Node &objNode, const GU
 	return pluginExporter.exportPlugin(phxCache);
 }
 
-void VolumeExporter::exportPrimitive(const PrimitiveItem &item)
+void VolumeExporter::exportPrimitive(const PrimitiveItem &item, PluginSet &pluginsSet)
 {
 	const GU_PrimPacked *primPacked = UTverify_cast<const GU_PrimPacked*>(item.prim);
 	UT_ASSERT_MSG(primPacked, "PhxShaderCache plugin is not set!");

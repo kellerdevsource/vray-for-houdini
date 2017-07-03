@@ -636,6 +636,14 @@ void VRayPluginRenderer::removePlugin(const Attrs::PluginDesc &pluginDesc)
 }
 
 
+void VRayPluginRenderer::removePlugin(VRay::Plugin plugin)
+{
+	vassert(m_vray);
+
+	m_vray->removePlugin(plugin);
+}
+
+
 void VRayPluginRenderer::removePlugin(const std::string &pluginName)
 {
 	if (m_vray) {

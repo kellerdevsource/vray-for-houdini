@@ -20,6 +20,8 @@
 
 namespace VRayForHoudini {
 
+typedef VUtils::HashSet<VRay::Plugin> PluginSet;
+
 enum ObjectIDTypes {
 	objectIdUndefined = -1,
 };
@@ -87,7 +89,7 @@ public:
 	{}
 	virtual ~PrimitiveExporter() {}
 
-	virtual void exportPrimitive(const PrimitiveItem &item) {}
+	virtual void exportPrimitive(const PrimitiveItem &item, PluginSet &pluginsSet) {}
 
 	/// Generate plugin descriptions for all supported primitives in the provided GU_Detail
 	/// @gdp - the detail to traverse
@@ -128,7 +130,7 @@ public:
 		: PrimitiveExporter(obj, ctx, exp)
 	{}
 
-	void exportPrimitive(const PrimitiveItem &item) VRAY_OVERRIDE;
+	void exportPrimitive(const PrimitiveItem &item, PluginSet &pluginsSet) VRAY_OVERRIDE;
 
 protected:
 	VRay::Plugin exportVRayVolumeGridRef(OBJ_Node &objNode, const GU_PrimPacked &prim) const;
@@ -144,7 +146,7 @@ public:
 		: VolumeExporter(obj, ctx, exp)
 	{}
 
-	void exportPrimitive(const PrimitiveItem &item) VRAY_OVERRIDE;
+	void exportPrimitive(const PrimitiveItem &item, PluginSet &pluginsSet) VRAY_OVERRIDE;
 };
 
 #endif // CGR_HAS_AUR
