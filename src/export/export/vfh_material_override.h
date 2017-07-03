@@ -13,9 +13,10 @@
 
 #include "vfh_attr_utils.h"
 
+#include <QString>
+
 #include <hash_map.h>
 #include <GA/GA_Handle.h>
-#include <QString>
 
 namespace VRayForHoudini {
 

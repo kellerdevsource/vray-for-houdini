@@ -17,6 +17,9 @@
 #ifndef QT_NO_KEYWORDS
 #  define QT_NO_KEYWORDS
 #endif
+#ifdef Q_FOREACH
+#  undef Q_FOREACH
+#endif
 
 #define STRINGIZE_NX(A) #A
 #define STRINGIZE(A) STRINGIZE_NX(A)
