@@ -12,6 +12,7 @@
 #include "vfh_material_override.h"
 
 #include <SHOP/SHOP_GeoOverride.h>
+#include <GA/GA_AttributeFilter.h>
 
 #include <rapidjson/document.h>
 
