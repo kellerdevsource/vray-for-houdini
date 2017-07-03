@@ -12,19 +12,17 @@
 #include "vfh_material_override.h"
 
 #include <SHOP/SHOP_GeoOverride.h>
-#include <UT/UT_Version.h>
 
-#ifdef USE_QT5
-#include <QtCore>
-#endif
+#include <rapidjson/document.h>
 
 using namespace VRayForHoudini;
 
 void VRayForHoudini::mergeStyleSheet(PrimMaterial &primMaterial, const QString &styleSheet, fpreal t, int materialOnly)
 {
-#ifdef USE_QT5
-	QJsonParseError parserError;
-	QJsonDocument styleSheetParser = QJsonDocument::fromJson(styleSheet.toUtf8(), &parserError);
+	using namespace rapidjson;
+
+	Document document;
+	document.Parse(styleSheet.toLocal8Bit().constData());
 
 	//
 	// {
@@ -43,81 +41,79 @@ void VRayForHoudini::mergeStyleSheet(PrimMaterial &primMaterial, const QString &
 	// 	]
 	// }
 	//
-	QJsonObject jsonObject = styleSheetParser.object();
-	if (jsonObject.contains("styles")) {
-		QJsonArray styles = jsonObject["styles"].toArray();
+	if (!document.HasMember("styles"))
+		return;
 
-		for (const QJsonValue &style : styles) {
-			QJsonObject obj = style.toObject();
+	const Value &styles = document["styles"];
+	UT_ASSERT(styles.IsArray());
 
-			if (obj.contains("overrides")) {
-				QJsonObject overrides = obj["overrides"].toObject();
+	for (Value::ConstValueIterator it = styles.Begin(); it != styles.End(); ++it) {
+		const Value &style = *it;
+		if (style.IsObject() && style.HasMember("overrides")) {
+			const Value &styleOver = style["overrides"];
 
-				if (overrides.contains("material")) {
-					QJsonObject material = overrides["material"].toObject();
+			if (styleOver.HasMember("material")) {
+				const Value &mtlOver = styleOver["material"];
+				if (mtlOver.HasMember("name")) {
+					const char *matPath = mtlOver["name"].GetString();
 
-					if (material.contains("name")) {
-						const UT_String &matPath = material["name"].toString().toLocal8Bit().constData();
-						OP_Node *matNode = getOpNodeFromPath(matPath, t);
-						if (materialOnly) {
-							break;
+					OP_Node *matNode = getOpNodeFromPath(matPath, t);
+					if (matNode) {
+						// There is already some top-level material assigned.
+						if (!primMaterial.matNode) {
+							primMaterial.matNode = matNode;
 						}
-						if (matNode) {
-							// There is already some top-level material assigned.
-							if (!primMaterial.matNode) {
-								primMaterial.matNode = matNode;
-							}
+					}
 
-							if (overrides.contains("materialParameters")) {
-								QJsonObject materialParameters = overrides["materialParameters"].toObject();
+					if (materialOnly) {
+						break;
+					}
+				}
+			}
 
-								QStringList keys = materialParameters.keys();
-								for (const QString &paramName : keys) {
-									const char *parmName = paramName.toLocal8Bit().constData();
-									QJsonValue paramJsonValue = materialParameters[paramName];
+			if (!materialOnly && styleOver.HasMember("materialParameters")) {
+				const Value &paramOverrides = styleOver["materialParameters"];
 
-									MtlOverrideItems::iterator moIt = primMaterial.overrides.find(parmName);
-									if (moIt != primMaterial.overrides.end()) {
-										// There is already some top-level override for this parameter.
-										continue;
-									}
+				for (Value::ConstMemberIterator pIt = paramOverrides.MemberBegin(); pIt != paramOverrides.MemberEnd(); ++pIt) {
+					const char *parmName = pIt->name.GetString();
+					const Value &paramJsonValue = pIt->value;
 
-									// NOTES:
-									//  * Assuming current array value is a color
-									//  * Only first 3 components will be used for vectors
-									if (paramJsonValue.isArray()) {
-										QJsonArray paramJsonVector = paramJsonValue.toArray();
-										if (paramJsonVector.size() >= 3) {
-											MtlOverrideItem &overrideItem = primMaterial.overrides[parmName];
-											overrideItem.setType(MtlOverrideItem::itemTypeVector);
-											overrideItem.valueVector.set(paramJsonVector.takeAt(0).toDouble(),
-																			paramJsonVector.takeAt(1).toDouble(),
-																			paramJsonVector.takeAt(2).toDouble());
-										}
-										else {
-											// TODO: Implement other cases / print warning.
-										}
-									}
-									else if (paramJsonValue.isDouble()) {
-										MtlOverrideItem &overrideItem = primMaterial.overrides[parmName];
-										overrideItem.setType(MtlOverrideItem::itemTypeDouble);
-										overrideItem.valueDouble = paramJsonValue.toDouble();
-									}
-									else if (paramJsonValue.isString()) {
-										// TODO: String type.
-									}
-									else {
-										// TODO: Implement other cases / print warning.
-									}
-								}
-							}
+					MtlOverrideItems::iterator moIt = primMaterial.overrides.find(parmName);
+					if (moIt != primMaterial.overrides.end()) {
+						// There is already some top-level override for this parameter.
+						continue;
+					}
+
+					// NOTES:
+					//  * Assuming current array value is a color
+					//  * Only first 3 components will be used for vectors
+					if (paramJsonValue.IsArray()) {
+						if (paramJsonValue.Size() >= 3) {
+							MtlOverrideItem &overrideItem = primMaterial.overrides[parmName];
+							overrideItem.setType(MtlOverrideItem::itemTypeVector);
+							overrideItem.valueVector.set(paramJsonValue[0].GetDouble(),
+														 paramJsonValue[1].GetDouble(),
+														 paramJsonValue[2].GetDouble());
 						}
+						else {
+							// TODO: Implement other cases / print warning.
+						}
+					}
+					else if (paramJsonValue.IsDouble()) {
+						MtlOverrideItem &overrideItem = primMaterial.overrides[parmName];
+						overrideItem.setType(MtlOverrideItem::itemTypeDouble);
+						overrideItem.valueDouble = paramJsonValue.GetDouble();
+					}
+					else if (paramJsonValue.IsString()) {
+						// TODO: String type.
+					}
+					else {
+						// TODO: Implement other cases / print warning.
 					}
 				}
 			}
 		}
 	}
-#endif
 }
 
 void VRayForHoudini::mergeMaterialOverrides(PrimMaterial &primMaterial, const UT_String &matPath, const UT_String &materialOverrides, fpreal t, int materialOnly)
@@ -126,7 +122,7 @@ void VRayForHoudini::mergeMaterialOverrides(PrimMaterial &primMaterial, const UT
 	if (!primMaterial.matNode) {
 		primMaterial.matNode = getOpNodeFromPath(matPath, t);
 	}
-	
+
 	if (primMaterial.matNode && !materialOnly) { 
 		//
 		// { "diffuser" : 1.0, "diffuseg" : 1.0, "diffuseb" : 1.0 }
@@ -154,7 +150,7 @@ void VRayForHoudini::mergeMaterialOverrides(PrimMaterial &primMaterial, const UT
 
 					if (keyParmType.isFloatType()) {
 						MtlOverrideItem &overrideItem = primMaterial.overrides[parmName];
-					
+
 						fpreal channelValue = 0.0;
 						mtlOverride.import(key, channelValue);
 

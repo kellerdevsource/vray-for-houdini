@@ -37,6 +37,9 @@ include_directories(export/utils)
 include_directories(export/export)
 include_directories(utils)
 
+# Qt has JSON modules only in > 5.x version and we need to support 4.x also.
+include_directories(${CMAKE_SOURCE_DIR}/thirdparty/rapidjson/include)
+
 file(GLOB_RECURSE SOURCES "*.cpp")
 file(GLOB_RECURSE HEADERS "*.h" "*.hpp")
 
