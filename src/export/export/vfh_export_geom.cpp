@@ -828,7 +828,7 @@ VRay::Plugin ObjectExporter::exportAlembicRef(OBJ_Node &objNode, const GU_PrimPa
 	pluginDesc.addAttribute(Attrs::PluginAttr("visibility_list_names", visibilityList));
 	pluginDesc.addAttribute(Attrs::PluginAttr("file", filename.toStdString()));
 	pluginDesc.addAttribute(Attrs::PluginAttr("use_alembic_offset", true));
-	pluginDesc.addAttribute(Attrs::PluginAttr("particle_width_multiplier", 0.1f));
+	pluginDesc.addAttribute(Attrs::PluginAttr("particle_width_multiplier", 0.05f));
 
 	return pluginExporter.exportPlugin(pluginDesc);
 }
