@@ -23,11 +23,27 @@ using namespace VRayForHoudini;
 /// to specify that attribute is unset for a particular face.
 static const float ALMOST_FLT_MAX = FLT_MAX;
 
+bool getDataFromAttribute(const GA_Attribute *attr, VRay::VUtils::VectorRefList &data)
+{
+	GA_ROAttributeRef attrRef(attr);
+	if (attrRef.isInvalid()) {
+		return false;
+	}
+
+	const GA_AIFTuple *aifTuple = attrRef.getAIFTuple();
+	if (!aifTuple) {
+		return false;
+	}
+
+	data = VRay::VUtils::VectorRefList(attr->getIndexMap().indexSize());
+	return aifTuple->getRange(attr, GA_Range(attr->getIndexMap()), &(data.get()->x));
+}
+
 /// Helper funtion to copy data from Float3Tuple attribute into a vector list
 /// @param attr[in] - the attribute to copy
 /// @param data[out] - destination vector list
 /// @retval true on success
-static bool getDataFromAttribute(const GA_Attribute *attr, VRay::VUtils::VectorRefList &data)
+static bool getDataFromAttributeAuto(const GA_Attribute *attr, VRay::VUtils::VectorRefList &data)
 {
 	GA_ROAttributeRef attrRef(attr);
 	if (attrRef.isInvalid()) {
