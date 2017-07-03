@@ -883,7 +883,7 @@ VRay::Plugin ObjectExporter::exportPackedDisk(OBJ_Node &objNode, const GU_PrimPa
 VRay::Plugin ObjectExporter::exportPackedGeometry(OBJ_Node &objNode, const GU_PrimPacked &prim)
 {
 	GU_DetailHandleAutoReadLock gdl(prim.getPackedDetail());
-	if (!gdl) {
+	if (!gdl.isValid()) {
 		return VRay::Plugin();
 	}
 	return exportDetail(objNode, *gdl);
