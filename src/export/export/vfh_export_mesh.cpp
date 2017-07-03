@@ -23,7 +23,11 @@ using namespace VRayForHoudini;
 /// to specify that attribute is unset for a particular face.
 static const float ALMOST_FLT_MAX = FLT_MAX;
 
-bool getDataFromAttribute(const GA_Attribute *attr, VRay::VUtils::VectorRefList &data)
+/// Helper funtion to copy data from Float3Tuple attribute into a vector list
+/// @param attr[in] - the attribute to copy
+/// @param data[out] - destination vector list
+/// @retval true on success
+static bool getDataFromAttribute(const GA_Attribute *attr, VRay::VUtils::VectorRefList &data)
 {
 	GA_ROAttributeRef attrRef(attr);
 	if (attrRef.isInvalid()) {
@@ -37,58 +41,6 @@ bool getDataFromAttribute(const GA_Attribute *attr, VRay::VUtils::VectorRefList 
 
 	data = VRay::VUtils::VectorRefList(attr->getIndexMap().indexSize());
 	return aifTuple->getRange(attr, GA_Range(attr->getIndexMap()), &(data.get()->x));
-}
-
-/// Helper funtion to copy data from Float3Tuple attribute into a vector list
-/// @param attr[in] - the attribute to copy
-/// @param data[out] - destination vector list
-/// @retval true on success
-static bool getDataFromAttributeAuto(const GA_Attribute *attr, VRay::VUtils::VectorRefList &data)
-{
-	GA_ROAttributeRef attrRef(attr);
-	if (attrRef.isInvalid()) {
-		return false;
-	}
-
-	const GA_AIFTuple *aifTuple = attrRef.getAIFTuple();
-	if (!aifTuple) {
-		return false;
-	}
-
-	const GA_IndexMap &indexMap = attr->getIndexMap();
-	GA_Range indexRange(indexMap);
-
-	data = VRay::VUtils::VectorRefList(indexMap.indexSize());
-
-	const int tupleSize = attrRef.getTupleSize();
-	if (tupleSize == 3) {
-		return aifTuple->getRange(attr, indexRange, &(data.get()->x));
-	}
-
-	if (tupleSize == 1 || tupleSize == 4) {
-		int dataIdx = 0;
-		for (GA_Range::const_iterator rIt = indexRange.begin(); rIt != indexRange.end(); ++rIt) {
-			const GA_Offset offs = indexMap.offsetFromIndex(*rIt);
-
-			if (tupleSize == 1) {
-				fpreal32 v;
-				aifTuple->get(attr, offs, v);
-
-				data[dataIdx++].set(v, v, v);
-			}
-			else if (tupleSize == 4) {
-				fpreal32 v[4];
-				aifTuple->get(attr, offs, v, 4);
-
-				data[dataIdx++].set(v[0], v[1], v[2]);
-			}
-		}
-	}
-	else {
-		UT_ASSERT_MSG(false, "Unexpected tuple size!");
-	}
-
-	return true;
 }
 
 MeshExporter::MeshExporter(OBJ_Node &obj, const GU_Detail &gdp, OP_Context &ctx, VRayExporter &exp, ObjectExporter &objectExporter, const GEOPrimList &primList)
@@ -651,45 +603,41 @@ static void setMapChannelOverrideData(const MtlOverrideItem &overrideItem, VRay:
 	VRay::Vector &vert2 = vertices[v2];
 
 	switch (overrideItem.getType()) {
-	case MtlOverrideItem::itemTypeInt:
-	{
-		vert0.set(static_cast<float>(overrideItem.valueInt),
-				  static_cast<float>(overrideItem.valueInt),
-				  static_cast<float>(overrideItem.valueInt));
-		vert1.set(static_cast<float>(overrideItem.valueInt),
-				  static_cast<float>(overrideItem.valueInt),
-				  static_cast<float>(overrideItem.valueInt));
-		vert2.set(static_cast<float>(overrideItem.valueInt),
-				  static_cast<float>(overrideItem.valueInt),
-				  static_cast<float>(overrideItem.valueInt));
-		break;
-	}
-	case MtlOverrideItem::itemTypeDouble:
-	{
-		vert0.set(static_cast<float>(overrideItem.valueDouble),
-				  static_cast<float>(overrideItem.valueDouble),
-				  static_cast<float>(overrideItem.valueDouble));
-		vert1.set(static_cast<float>(overrideItem.valueDouble),
-				  static_cast<float>(overrideItem.valueDouble),
-				  static_cast<float>(overrideItem.valueDouble));
-		vert2.set(static_cast<float>(overrideItem.valueDouble),
-				  static_cast<float>(overrideItem.valueDouble),
-				  static_cast<float>(overrideItem.valueDouble));
-		break;
-	}
-	case MtlOverrideItem::itemTypeVector:
-	{
-		vert0 = overrideItem.valueVector;
-		vert1 = overrideItem.valueVector;
-		vert2 = overrideItem.valueVector;
-		break;
-	}
-	default:
-	{
-		vert0.makeZero();
-		vert1.makeZero();
-		vert2.makeZero();
-	}
+		case MtlOverrideItem::itemTypeInt: {
+			vert0.set(static_cast<float>(overrideItem.valueInt),
+					  static_cast<float>(overrideItem.valueInt),
+					  static_cast<float>(overrideItem.valueInt));
+			vert1.set(static_cast<float>(overrideItem.valueInt),
+					  static_cast<float>(overrideItem.valueInt),
+					  static_cast<float>(overrideItem.valueInt));
+			vert2.set(static_cast<float>(overrideItem.valueInt),
+					  static_cast<float>(overrideItem.valueInt),
+					  static_cast<float>(overrideItem.valueInt));
+			break;
+		}
+		case MtlOverrideItem::itemTypeDouble: {
+			vert0.set(static_cast<float>(overrideItem.valueDouble),
+					  static_cast<float>(overrideItem.valueDouble),
+					  static_cast<float>(overrideItem.valueDouble));
+			vert1.set(static_cast<float>(overrideItem.valueDouble),
+					  static_cast<float>(overrideItem.valueDouble),
+					  static_cast<float>(overrideItem.valueDouble));
+			vert2.set(static_cast<float>(overrideItem.valueDouble),
+					  static_cast<float>(overrideItem.valueDouble),
+					  static_cast<float>(overrideItem.valueDouble));
+			break;
+		}
+		case MtlOverrideItem::itemTypeVector: {
+			vert0 = overrideItem.valueVector;
+			vert1 = overrideItem.valueVector;
+			vert2 = overrideItem.valueVector;
+			break;
+		}
+		default: {
+			vert0.makeZero();
+			vert1.makeZero();
+			vert2.makeZero();
+		}
 	}
 }
 
@@ -704,6 +652,14 @@ static void setMapChannelOverrideFaceData(MapChannels &mapChannels, const GEOPri
 	const int v2 = (faceIndex * 3) + 2;
 
 	FOR_CONST_IT(MtlOverrideItems, oiIt, primMaterial.overrides) {
+		const MtlOverrideItem &overrideItem = oiIt.data();
+
+		UT_ASSERT(overrideItem.getType() != MtlOverrideItem::itemTypeNone);
+
+		if (overrideItem.getType() == MtlOverrideItem::itemTypeString) {
+			continue;
+		}
+
 		const tchar *paramName = oiIt.key();
 
 		MapChannel &mapChannel = mapChannels[paramName];
@@ -721,7 +677,7 @@ static void setMapChannelOverrideFaceData(MapChannels &mapChannels, const GEOPri
 		mapChannel.faces[v1] = v1;
 		mapChannel.faces[v2] = v2;
 
-		setMapChannelOverrideData(oiIt.data(), mapChannel.vertices, v0, v1, v2);
+		setMapChannelOverrideData(overrideItem, mapChannel.vertices, v0, v1, v2);
 	}
 }
 
@@ -737,11 +693,19 @@ void MeshExporter::getMtlOverrides(MapChannels &mapChannels)
 
 	int faceIndex = 0;
 
+	MtlOverrideAttrExporter attrExporter(gdp);
+
 	for (const GEO_Primitive *prim : primList) {
 		const GA_Offset primOffset = prim->getMapOffset();
 
 		PrimMaterial primMaterial;
 		mergeMaterialOverride(primMaterial, materialStyleSheetHndl, materialPathHndl, materialOverrideHndl, primOffset, ctx.getTime());
+
+		attrExporter.fromPrimitive(primMaterial.overrides, primOffset);
+
+		// Merge other primitive attributes.
+		// Merge vertex attributes.
+		// Merge point attributes.
 
 		switch (prim->getTypeId().get()) {
 			case GEO_PRIMPOLYSOUP: {
@@ -783,7 +747,7 @@ int MeshExporter::getPointAttrs(MapChannels &mapChannels)
 	int nMapChannels = 0;
 
 	GEOAttribList attrList;
-	MtlOverrideAttrExporter::buildAttributesList(gdp, GA_ATTRIB_POINT, attrList);
+	gdp.getAttributes().matchAttributes(GEOgetV3AttribFilter(), GA_ATTRIB_POINT, attrList);
 
 	for (const GA_Attribute *attr : attrList) {
 		if (!attr) {
@@ -821,7 +785,7 @@ int MeshExporter::getVertexAttrs(MapChannels &mapChannels)
 	int nMapChannels = 0;
 
 	GEOAttribList attrList;
-	MtlOverrideAttrExporter::buildAttributesList(gdp, GA_ATTRIB_VERTEX, attrList);
+	gdp.getAttributes().matchAttributes(GEOgetV3AttribFilter(), GA_ATTRIB_VERTEX, attrList);
 
 	for (const GA_Attribute *attr : attrList) {
 		if (!attr) {
