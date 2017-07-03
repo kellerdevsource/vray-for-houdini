@@ -1315,6 +1315,9 @@ VRay::Plugin ObjectExporter::exportLight(OBJ_Light &objLight)
 
 	Attrs::PluginDesc pluginDesc;
 
+	PrimMaterial primMaterial;
+	getPrimMaterial(primMaterial);
+
 	OP::VRayNode *vrayNode = dynamic_cast<OP::VRayNode*>(&objLight);
 	if (vrayNode) {
 		pluginDesc.addAttribute(Attrs::PluginAttr("enabled", isLightEnabled(objLight)));
@@ -1338,6 +1341,15 @@ VRay::Plugin ObjectExporter::exportLight(OBJ_Light &objLight)
 		const bool flipTM = vrayNode->getVRayPluginID() == OBJ::getVRayPluginIDName(OBJ::VRayPluginID::LightDome);
 		if (flipTM) {
 			VUtils::swap(tm.matrix[1], tm.matrix[2]);
+		}
+
+		MtlOverrideItems::iterator oIt = primMaterial.overrides.find("Cd");
+		if (oIt != primMaterial.overrides.end()) {
+			const MtlOverrideItem &cdItem = oIt.data();
+
+			if (cdItem.getType() == MtlOverrideItem::itemTypeVector) {
+				pluginDesc.addAttribute(Attrs::PluginAttr("color_tex", cdItem.valueVector[0], cdItem.valueVector[1], cdItem.valueVector[2]));
+			}
 		}
 
 		pluginDesc.addAttribute(Attrs::PluginAttr("transform", tm));
