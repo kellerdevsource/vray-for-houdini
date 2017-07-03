@@ -210,15 +210,6 @@ void VRayForHoudini::mergeMaterialOverride(PrimMaterial &primMaterial,
 	}
 }
 
-const char* MtlOverrideAttrExporter::getAttributeName(const char *attrName)
-{
-	const char *attrPacked = ::strchr(attrName, ':');
-	if (attrPacked) {
-		return attrPacked + 1;
-	}
-	return attrName;
-}
-
 void MtlOverrideAttrExporter::buildAttributesList(const GA_Detail &gdp, GA_AttributeOwner owner, GEOAttribList &attrList)
 {
 	gdp.getAttributes().matchAttributes(
@@ -234,7 +225,7 @@ void MtlOverrideAttrExporter::addAttributesAsOverrides(const GEOAttribList &attr
 		if (!attr)
 			continue;
 
-		const char *attrName = getAttributeName(attr->getName().buffer());
+		const char *attrName = attr->getName().buffer();
 
 		MtlOverrideItems::iterator moIt = overrides.find(attrName);
 		if (moIt == overrides.end()) {

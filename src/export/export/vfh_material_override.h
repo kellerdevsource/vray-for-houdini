@@ -85,8 +85,6 @@ struct MtlOverrideAttrExporter {
 private:
 	static void addAttributesAsOverrides(const GEOAttribList &attrList, GA_Offset offs, MtlOverrideItems &overrides);
 
-	static const char* getAttributeName(const char *attrName);
-
 	GEOAttribList primAttrList;
 	GEOAttribList pointAttrList;
 };
