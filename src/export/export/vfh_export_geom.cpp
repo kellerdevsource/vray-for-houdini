@@ -1307,9 +1307,13 @@ VRay::Plugin ObjectExporter::exportLight(OBJ_Light &objLight)
 			pluginExporter.setAttrsFromOpNodePrms(pluginDesc, &objLight);
 		}
 
-		const bool fliptm = vrayNode->getVRayPluginID() == OBJ::getVRayPluginIDName(OBJ::VRayPluginID::LightDome);
+		VRay::Transform tm = getTm();
 
-		VRay::Transform tm = getTm() * VRayExporter::getObjTransform(&objLight, ctx, fliptm);
+		const bool flipTM = vrayNode->getVRayPluginID() == OBJ::getVRayPluginIDName(OBJ::VRayPluginID::LightDome);
+		if (flipTM) {
+			VUtils::swap(tm.matrix[1], tm.matrix[2]);
+		}
+
 		pluginDesc.addAttribute(Attrs::PluginAttr("transform", tm));
 	}
 	else {
