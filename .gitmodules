@@ -5,3 +5,4 @@
 [submodule "thirdparty/rapidjson"]
 	path = thirdparty/rapidjson
 	url = https://github.com/miloyip/rapidjson.git
+	ignore = all
