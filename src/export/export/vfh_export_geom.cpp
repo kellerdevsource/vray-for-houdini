@@ -433,28 +433,78 @@ void ObjectExporter::exportPrimVolume(OBJ_Node &objNode, const PrimitiveItem &it
 #endif
 }
 
-static void addAttributesAsOverrides(const GEOAttribList &attrList, GA_Offset offs, MtlOverrideItems &overrides)
-{
-	for (const GA_Attribute *attr : attrList) {
-		if (!attr)
-			continue;
+struct MtlOverrideAttrExporter {
+	explicit MtlOverrideAttrExporter(const GA_Detail &gdp) {
+		buildAttributesList(gdp, GA_ATTRIB_PRIMITIVE, primAttrList);
+		buildAttributesList(gdp, GA_ATTRIB_POINT,     pointAttrList);
+	}
 
-		GA_ROHandleV3 attrHndl(attr);
-		if (!attrHndl.isValid())
-			continue;
+	void fromPrimitive(MtlOverrideItems &overrides, GA_Offset offs) const {
+		addAttributesAsOverrides(primAttrList, offs, overrides);
+	}
 
-		const char *attrName = attr->getName().buffer();
+	void fromPoint(MtlOverrideItems &overrides, GA_Offset offs) const {
+		addAttributesAsOverrides(pointAttrList, offs, overrides);
+	}
 
-		MtlOverrideItems::iterator moIt = overrides.find(attrName);
-		if (moIt == overrides.end()) {
-			const UT_Vector3F &c = attrHndl.get(offs);
+private:
+	static void buildAttributesList(const GA_Detail &gdp, GA_AttributeOwner owner, GEOAttribList &attrList) {
+		gdp.getAttributes().matchAttributes(
+			GA_AttributeFilter::selectAnd(GA_AttributeFilter::selectFloatTuple(false),
+			                              GA_AttributeFilter::selectByTupleRange(3,4)),
+			owner, attrList);
+		gdp.getAttributes().matchAttributes(GA_AttributeFilter::selectAlphaNum(), owner, attrList);
+	}
 
-			MtlOverrideItem &overrideItem = overrides[attrName];
-			overrideItem.setType(MtlOverrideItem::itemTypeVector);
-			overrideItem.valueVector = utVectorVRayVector(c);
+	static void addAttributesAsOverrides(const GEOAttribList &attrList, GA_Offset offs, MtlOverrideItems &overrides) {
+		for (const GA_Attribute *attr : attrList) {
+			if (!attr)
+				continue;
+
+			const char *attrName = getAttributeName(attr->getName().buffer());
+
+			MtlOverrideItems::iterator moIt = overrides.find(attrName);
+			if (moIt == overrides.end()) {
+				MtlOverrideItem &overrideItem = overrides[attrName];
+
+				GA_ROHandleV3 v3Hndl(attr);
+				GA_ROHandleV4 v4Hndl(attr);
+				GA_ROHandleS sHndl(attr);
+				GA_ROHandleF fHndl(attr);
+
+				if (sHndl.isValid()) {
+					overrideItem.setType(MtlOverrideItem::itemTypeString);
+					overrideItem.valueString = sHndl.get(offs);
+				}
+				else if (fHndl.isValid()) {
+					overrideItem.setType(MtlOverrideItem::itemTypeDouble);
+					overrideItem.valueDouble = fHndl.get(offs);
+				}
+				else if (v4Hndl.isValid()) {
+					const UT_Vector4F &c = v4Hndl.get(offs);
+					overrideItem.setType(MtlOverrideItem::itemTypeVector);
+					overrideItem.valueVector = utVectorVRayVector(c);
+				}
+				else if (v3Hndl.isValid()) {
+					const UT_Vector3F &c = v3Hndl.get(offs);
+					overrideItem.setType(MtlOverrideItem::itemTypeVector);
+					overrideItem.valueVector = utVectorVRayVector(c);
+				}
+			}
 		}
 	}
-}
+
+	static const char* getAttributeName(const char *attrName) {
+		const char *attrPacked = ::strchr(attrName, ':');
+		if (attrPacked) {
+			return attrPacked + 1;
+		}
+		return attrName;
+	}
+
+	GEOAttribList primAttrList;
+	GEOAttribList pointAttrList;
+};
 
 void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, PrimitiveItems &instancerItems)
 {
@@ -472,11 +522,7 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 	GA_ROHandleI objectIdHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTRIB_OBJECTID));
 	GA_ROHandleF animOffsetHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTRIB_ANIM_OFFSET));
 
-	GEOAttribList primVecAttrList;
-	gdp.getAttributes().matchAttributes(GEOgetV3AttribFilter(), GA_ATTRIB_PRIMITIVE, primVecAttrList); 
-
-	GEOAttribList pointVecAttrList;
-	gdp.getAttributes().matchAttributes(GEOgetV3AttribFilter(), GA_ATTRIB_POINT, pointVecAttrList); 
+	MtlOverrideAttrExporter attrExp(gdp);
 
 	for (GA_Iterator jt(gdp.getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
 		const GEO_Primitive *prim = gdp.getGEOPrimitive(*jt);
@@ -508,14 +554,13 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 
 		// Material overrides.
 		mergeMaterialOverride(item.primMaterial, materialStyleSheetHndl, materialPathHndl, materialOverrideHndl, primOffset, ctx.getTime());
-		addAttributesAsOverrides(primVecAttrList, primOffset, item.primMaterial.overrides);
+
+		attrExp.fromPrimitive(item.primMaterial.overrides, primOffset);
 
 		// Check parent overrides.
 		getPrimMaterial(item.primMaterial);
 
 		// Primitive attributes
-		// TODO: Float primitive attributes
-
 		if (isPackedPrim) {
 			const GU_PrimPacked &primPacked = static_cast<const GU_PrimPacked&>(*prim);
 
@@ -534,7 +579,7 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 			if (numPoints == numPrims) {
 				const GA_Offset pointOffset = gdp.pointOffset(primIndex);
 
-				addAttributesAsOverrides(pointVecAttrList, pointOffset, item.primMaterial.overrides);
+				attrExp.fromPoint(item.primMaterial.overrides, pointOffset);
 			}
 		}
 
@@ -1205,10 +1250,8 @@ VRay::Plugin ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_De
 	GA_ROHandleS materialOverrideHndl(gdp.findAttribute(GA_ATTRIB_POINT, VFH_ATTR_MATERIAL_OVERRIDE));
 	GA_ROHandleS materialPathHndl(gdp.findAttribute(GA_ATTRIB_POINT, GA_Names::shop_materialpath));
 
-	GEOAttribList pointVecAttrList;
-	gdp.getAttributes().matchAttributes(GEOgetV3AttribFilter(), GA_ATTRIB_POINT, pointVecAttrList); 
-
 	PointInstanceAttrs pointInstanceAttrs(gdp);
+	MtlOverrideAttrExporter attrExp(gdp);
 
 	const GA_Size numPoints = gdp.getNumPoints();
 
@@ -1241,7 +1284,7 @@ VRay::Plugin ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_De
 
 		// Material overrides.
 		mergeMaterialOverride(item.primMaterial, materialStyleSheetHndl, materialPathHndl, materialOverrideHndl, pointOffset, ctx.getTime());
-		addAttributesAsOverrides(pointVecAttrList, pointOffset, item.primMaterial.overrides);
+		attrExp.fromPoint(item.primMaterial.overrides, pointOffset);
 
 		// Check parent overrides.
 		getPrimMaterial(item.primMaterial);
