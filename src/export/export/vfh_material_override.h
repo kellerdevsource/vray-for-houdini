@@ -80,60 +80,12 @@ struct MtlOverrideAttrExporter {
 		addAttributesAsOverrides(pointAttrList, offs, overrides);
 	}
 
-	static void buildAttributesList(const GA_Detail &gdp, GA_AttributeOwner owner, GEOAttribList &attrList) {
-		gdp.getAttributes().matchAttributes(
-			GA_AttributeFilter::selectAnd(GA_AttributeFilter::selectFloatTuple(false),
-			                              GA_AttributeFilter::selectByTupleRange(3,4)),
-			owner, attrList);
-		gdp.getAttributes().matchAttributes(GA_AttributeFilter::selectAlphaNum(), owner, attrList);
-	}
+	static void buildAttributesList(const GA_Detail &gdp, GA_AttributeOwner owner, GEOAttribList &attrList);
 
 private:
-	static void addAttributesAsOverrides(const GEOAttribList &attrList, GA_Offset offs, MtlOverrideItems &overrides) {
-		for (const GA_Attribute *attr : attrList) {
-			if (!attr)
-				continue;
+	static void addAttributesAsOverrides(const GEOAttribList &attrList, GA_Offset offs, MtlOverrideItems &overrides);
 
-			const char *attrName = getAttributeName(attr->getName().buffer());
-
-			MtlOverrideItems::iterator moIt = overrides.find(attrName);
-			if (moIt == overrides.end()) {
-				MtlOverrideItem &overrideItem = overrides[attrName];
-
-				GA_ROHandleV3 v3Hndl(attr);
-				GA_ROHandleV4 v4Hndl(attr);
-				GA_ROHandleS sHndl(attr);
-				GA_ROHandleF fHndl(attr);
-
-				if (sHndl.isValid()) {
-					overrideItem.setType(MtlOverrideItem::itemTypeString);
-					overrideItem.valueString = sHndl.get(offs);
-				}
-				else if (fHndl.isValid()) {
-					overrideItem.setType(MtlOverrideItem::itemTypeDouble);
-					overrideItem.valueDouble = fHndl.get(offs);
-				}
-				else if (v4Hndl.isValid()) {
-					const UT_Vector4F &c = v4Hndl.get(offs);
-					overrideItem.setType(MtlOverrideItem::itemTypeVector);
-					overrideItem.valueVector = utVectorVRayVector(c);
-				}
-				else if (v3Hndl.isValid()) {
-					const UT_Vector3F &c = v3Hndl.get(offs);
-					overrideItem.setType(MtlOverrideItem::itemTypeVector);
-					overrideItem.valueVector = utVectorVRayVector(c);
-				}
-			}
-		}
-	}
-
-	static const char* getAttributeName(const char *attrName) {
-		const char *attrPacked = ::strchr(attrName, ':');
-		if (attrPacked) {
-			return attrPacked + 1;
-		}
-		return attrName;
-	}
+	static const char* getAttributeName(const char *attrName);
 
 	GEOAttribList primAttrList;
 	GEOAttribList pointAttrList;
