@@ -246,6 +246,18 @@ public:
 
 private:
 	struct RenderRegion {
+		RenderRegion()
+			: left(-1)
+			, top(-1)
+			, width(-1)
+			, height(-1)
+			, saved(false)
+		{}
+
+		bool isValid() const {
+			return saved && left >= 0 && top >= 0 && width > 0 && height > 0;
+		}
+
 		int left;
 		int top;
 		int width;

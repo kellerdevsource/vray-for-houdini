@@ -5,7 +5,7 @@
     parmtag { spare_category "V-Ray Object" }
 
     parm {
-        name    "objectID"
+        name    "vray_objectID"
         label   "Object ID"
         type    integer
         default { "0" }

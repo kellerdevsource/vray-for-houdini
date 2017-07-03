@@ -595,6 +595,7 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_D
 
 	OP_Node *matNode = objNode.getMaterialNode(ctx.getTime());
 	VRay::Plugin objMaterial = pluginExporter.exportMaterial(matNode);
+	const int objectID = objNode.evalInt(VFH_ATTRIB_OBJECTID, 0, ctx.getTime());
 
 	// +1 because first value is time.
 	VRay::VUtils::ValueRefList instances(numParticles+1);
@@ -626,12 +627,9 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_D
 		// Instancer works only with Node plugins.
 		VRay::Plugin node = getNodeForInstancerGeometry(primItem.geometry, material);
 
-		uint32_t additional_params_flags = 0;
+		uint32_t additional_params_flags = useObjectID;
 		if (material) {
 			additional_params_flags |= useMaterial;
-		}
-		if (primItem.objectID != objectIdUndefined) {
-			additional_params_flags |= useObjectID;
 		}
 		if (primItem.primMaterial.overrides.size()) {
 			additional_params_flags |= useUserAttributes;
@@ -649,9 +647,7 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_D
 		item[indexOffs++].setTransform(primItem.tm);
 		item[indexOffs++].setTransform(VRay::Transform(0));
 		item[indexOffs++].setDouble(additional_params_flags);
-		if (additional_params_flags & useObjectID) {
-			item[indexOffs++].setDouble(primItem.objectID);
-		}
+		item[indexOffs++].setDouble(primItem.objectID != objectIdUndefined ? primItem.objectID : objectID);
 		if (additional_params_flags & useUserAttributes) {
 			item[indexOffs++].setString(userAttributes.toLocal8Bit().constData());
 		}

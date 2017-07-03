@@ -685,7 +685,7 @@ int VRayPluginRenderer::startRender(int locked)
 		Log::getLog().info("Starting render for frame %.3f...", m_vray->getCurrentTime());
 
 		// TODO: unhack this when appsdk saves render regions after m_vray->reset()
-		if (m_savedRegion.saved) {
+		if (m_savedRegion.isValid()) {
 			m_vray->setRenderRegion(m_savedRegion.left, m_savedRegion.top, m_savedRegion.width, m_savedRegion.height);
 		}
 
