@@ -23,7 +23,6 @@ using namespace VRayForHoudini;
 /// to specify that attribute is unset for a particular face.
 static const float ALMOST_FLT_MAX = FLT_MAX;
 
-namespace {
 /// Helper funtion to copy data from Float3Tuple attribute into a vector list
 /// @param attr[in] - the attribute to copy
 /// @param data[out] - destination vector list
@@ -36,13 +35,44 @@ static bool getDataFromAttribute(const GA_Attribute *attr, VRay::VUtils::VectorR
 	}
 
 	const GA_AIFTuple *aifTuple = attrRef.getAIFTuple();
-	if (NOT(aifTuple)) {
+	if (!aifTuple) {
 		return false;
 	}
 
-	data = VRay::VUtils::VectorRefList(attr->getIndexMap().indexSize());
-	return aifTuple->getRange(attr, GA_Range(attr->getIndexMap()), &(data.get()->x));
-}
+	const GA_IndexMap &indexMap = attr->getIndexMap();
+	GA_Range indexRange(indexMap);
+
+	data = VRay::VUtils::VectorRefList(indexMap.indexSize());
+
+	const int tupleSize = attrRef.getTupleSize();
+	if (tupleSize == 3) {
+		return aifTuple->getRange(attr, indexRange, &(data.get()->x));
+	}
+
+	if (tupleSize == 1 || tupleSize == 4) {
+		int dataIdx = 0;
+		for (GA_Range::const_iterator rIt = indexRange.begin(); rIt != indexRange.end(); ++rIt) {
+			const GA_Offset offs = indexMap.offsetFromIndex(*rIt);
+
+			if (tupleSize == 1) {
+				fpreal32 v;
+				aifTuple->get(attr, offs, v);
+
+				data[dataIdx++].set(v, v, v);
+			}
+			else if (tupleSize == 4) {
+				fpreal32 v[4];
+				aifTuple->get(attr, offs, v, 4);
+
+				data[dataIdx++].set(v[0], v[1], v[2]);
+			}
+		}
+	}
+	else {
+		UT_ASSERT_MSG(false, "Unexpected tuple size!");
+	}
+
+	return true;
 }
 
 MeshExporter::MeshExporter(OBJ_Node &obj, const GU_Detail &gdp, OP_Context &ctx, VRayExporter &exp, ObjectExporter &objectExporter, const GEOPrimList &primList)
@@ -736,9 +766,8 @@ int MeshExporter::getPointAttrs(MapChannels &mapChannels)
 {
 	int nMapChannels = 0;
 
-	// add all vector3 vertex attributes to map_channels_data
 	GEOAttribList attrList;
-	gdp.getAttributes().matchAttributes(GEOgetV3AttribFilter(), GA_ATTRIB_POINT, attrList);
+	MtlOverrideAttrExporter::buildAttributesList(gdp, GA_ATTRIB_POINT, attrList);
 
 	for (const GA_Attribute *attr : attrList) {
 		if (!attr) {
@@ -775,9 +804,8 @@ int MeshExporter::getVertexAttrs(MapChannels &mapChannels)
 {
 	int nMapChannels = 0;
 
-	// add all vector3 vertex attributes to map_channels_data
 	GEOAttribList attrList;
-	gdp.getAttributes().matchAttributes(GEOgetV3AttribFilter(), GA_ATTRIB_VERTEX, attrList);
+	MtlOverrideAttrExporter::buildAttributesList(gdp, GA_ATTRIB_VERTEX, attrList);
 
 	for (const GA_Attribute *attr : attrList) {
 		if (!attr) {
