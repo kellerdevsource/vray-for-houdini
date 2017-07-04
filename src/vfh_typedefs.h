@@ -12,6 +12,7 @@
 #define VRAY_FOR_HOUDINI_TYPEDEFS_H
 
 #include <set>
+#include <string>
 
 typedef std::set<std::string> StringSet;
 typedef std::set<float> FloatSet;
