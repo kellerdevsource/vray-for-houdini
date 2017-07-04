@@ -11,6 +11,7 @@
 #ifndef VRAY_FOR_HOUDINI_EXPORT_VRAYPROXY_H
 #define VRAY_FOR_HOUDINI_EXPORT_VRAYPROXY_H
 
+#include "vfh_exporter.h"
 #include "vfh_plugin_attrs.h"
 
 #include <SOP/SOP_Node.h>
@@ -18,38 +19,121 @@
 #include <mesh_file.h>
 #include <simplifier.h>
 
-
 namespace VRayForHoudini {
+
+/// SOP node array type.
+typedef UT_ValArray<SOP_Node*> SOPList;
+
+/// GeometryDescription wraps and caches geometry data for a given sop node
+/// @note this is a helper data structure and should only be visible to VRayProxyExporter
+class VRayExporterProxy;
+struct GeometryDescription {
+	friend class VRayExporterProxy;
+
+	enum GeometryDescriptionType {
+		geometryDescriptionUnknown = 0,
+		geometryDescriptionMesh,
+		geometryDescriptionHair,
+	};
+
+	GeometryDescription();
+
+	/// Accessor for a plugin attribute
+	/// @param attrName[in] - attribute name. Note this name must exist on the plugin description
+	/// @retval the plugin attribute
+	const Attrs::PluginAttr &getAttr(const char *attrName) const;
+
+	/// Accessor for the attribute name holding the vertices
+	/// based on whether this objects represents hair or mesh geometry
+	/// @retval attribute name string
+	const char *getVertsAttrName() const {
+		switch (geometryType) {
+			case geometryDescriptionMesh: return "vertices";
+			case geometryDescriptionHair: return "hair_vertices";
+			default: return "NULL";
+		}
+	}
+
+	/// Accessor for the attribute name holding the faces
+	/// based on whether this objects represents hair or mesh geometry
+	/// @retval attribute name string
+	const char *getPrimAttrName() const {
+		switch (geometryType) {
+			case geometryDescriptionMesh: return "faces";
+			case geometryDescriptionHair: return "num_hair_vertices";
+			default: return "NULL";
+		}
+	}
+
+	/// Accessor for the vertices plugin attribute
+	/// @retval the plugin attribute
+	const Attrs::PluginAttr &getVertAttr() const { return getAttr(getVertsAttrName()); }
+
+	/// Accessor for the faces plugin attribute
+	/// @retval the plugin attribute
+	const Attrs::PluginAttr &getPrimAttr() const { return getAttr(getPrimAttrName()); }
+
+	/// Returns plugin geometry type.
+	GeometryDescriptionType getGeometryType() const { return geometryType; }
+
+	/// Geometry type. Hair or mesh for now.
+	GeometryDescriptionType geometryType;
+
+	/// Node this geometry comes from.
+	OP_Node *opNode;
+
+	/// Cached transform of the geometry
+	VRay::Transform transform;
+
+	/// Cached bounding box of the geometry
+	VUtils::Box bbox;
+
+	/// Cached plugin description of the geometry.
+	Attrs::PluginDesc pluginDesc;
+};
+
+typedef VUtils::Table<GeometryDescription, -1> GeometryDescriptions;
+
+class VRayExporterProxy
+	: public VRayExporter
+{
+public:
+	VRayExporterProxy(ObjectExporter &objectExporter, GeometryDescriptions &data)
+		: VRayExporter(nullptr)
+		, objectExporter(objectExporter)
+		, data(data)
+	{}
+
+	VRay::Plugin exportPlugin(const Attrs::PluginDesc &pluginDesc) VRAY_OVERRIDE;
+
+private:
+	ObjectExporter &objectExporter;
+
+	GeometryDescriptions &data;
+
+	VUTILS_DISABLE_COPY(VRayExporterProxy);
+};
+
+class VRayProxyObjectExporter
+	: public ObjectExporter
+{
+public:
+	explicit VRayProxyObjectExporter(GeometryDescriptions &data)
+		: ObjectExporter(pluginExporter)
+		, pluginExporter(*this, data)
+	{}
+
+	void setContext(const OP_Context &value) { pluginExporter.setContext(value); }
+
+private:
+	VRayExporterProxy pluginExporter;
+};
 
 /// VRayProxyExportOptions wraps all options necessary to export .vrmesh file(s).
 /// "vrayproxy" hscript cmd and "V-Ray Proxy ROP" create and configure an instance
 /// of this data structure and pass it to VRayProxyExporter
-struct VRayProxyExportOptions
-{
-	VRayProxyExportOptions() :
-		m_filepath(UT_String::ALWAYS_DEEP),
-		m_mkpath(true),
-		m_overwrite(false),
-		m_exportAsSingle(true),
-		m_exportAsAnimation(false),
-		m_animStart(0),
-		m_animEnd(0),
-		m_animFrames(0),
-		m_lastAsPreview(false),
-		m_applyTransform(false),
-		m_exportVelocity(false),
-		m_velocityStart(0.f),
-		m_velocityEnd(0.05f),
-		m_simplificationType(VUtils::SIMPLIFY_COMBINED),
-		m_maxPreviewFaces(100),
-		m_maxPreviewStrands(100),
-		m_maxFacesPerVoxel(0),
-		m_exportPCLs(false),
-		m_pointSize(0.5f)
-	{ }
-
-	~VRayProxyExportOptions()
-	{ }
+struct VRayProxyExportOptions {
+	VRayProxyExportOptions();
 
 	/// Return the .vrmesh filepath and adjust the filename if needed
 	/// 1. append the sop path to the filename if separate objects
@@ -172,7 +256,6 @@ struct VRayProxyExportOptions
 	fpreal m_pointSize;
 };
 
-
 /// VRayProxyExporter wraps the geometry export of a single frame into a single .vrmesh file
 class VRayProxyExporter:
 		public VUtils::MeshInterface
@@ -184,9 +267,8 @@ public:
 	///                       if we are exporting animation
 	/// @retval error code - use ErrorCode::error() to check for errors
 	///                      and ErrorCode::getErrorString() to get the error message
-	static VUtils::ErrorCode doExport(VRayProxyExportOptions &options, const UT_ValArray<SOP_Node *> &sopList);
+	static VUtils::ErrorCode doExport(VRayProxyExportOptions &options, const SOPList &sopList);
 
-public:
 	/// Constructor
 	/// @note at this point m_geomDescrList is only partially initilized and the number of voxels is determined
 	/// @param options[in] - options used to configure how geometry should be exported
@@ -194,8 +276,7 @@ public:
 	///                    nodes should be a valid pointer
 	/// @param nodeCnt[in] - number of nodes that should be taken from the list
 	///                      nodeCnt should be > 0
-	VRayProxyExporter(const VRayProxyExportOptions &options, SOP_Node * const *nodes, int nodeCnt);
-
+	VRayProxyExporter(const VRayProxyExportOptions &options, const SOPList &sopList);
 	~VRayProxyExporter();
 
 	/// Initilize the exporter for the current time (based on what is set in m_options.m_context)
@@ -242,85 +323,13 @@ public:
 	/// @param memUsage[in/out] - if not NULL voxel memory usage will output here
 	void releaseVoxel(VUtils::MeshVoxel *voxel, uint64 *memUsage = NULL) VRAY_OVERRIDE;
 
-private:
-	/// GeometryDescription wraps and caches geometry data for a given sop node
-	/// @note this is a helper data structure and should only be visible to VRayProxyExporter
-	struct GeometryDescription
-	{
-		/// Constructor
-		/// @param node[in] - sop node
-		GeometryDescription(SOP_Node &node) : m_node(node) { }
-
-		~GeometryDescription() { }
-
-		/// Accessor for the attribute name holding the vertices
-		/// based on whether this objects represents hair or mesh geometry
-		/// @retval attribute name string
-		const char* getVertsAttrName() const { return (m_isHair)? "hair_vertices" : "vertices"; }
-
-		/// Accessor for the attribute name holding the faces
-		/// based on whether this objects represents hair or mesh geometry
-		/// @retval attribute name string
-		const char* getPrimAttrName() const { return (m_isHair)? "num_hair_vertices" : "faces"; }
-
-		/// Check if the objects contains a valid and cached description
-		/// @retval is description valid
-		int hasValidData() const;
-
-		/// Cleanup(reset) cached data
-		void clearData();
-
-		/// Accessor for a plugin attribute
-		/// @param attrName[in] - attribute name. Note this name must exist on the plugin description
-		/// @retval the plugin attribute
-		Attrs::PluginAttr& getAttr(const char *attrName);
-
-		/// Accessor for the vertices plugin attribute
-		/// @retval the plugin attribute
-		Attrs::PluginAttr& getVertAttr() { return getAttr(getVertsAttrName()); }
-
-		/// Accessor for the faces plugin attribute
-		/// @retval the plugin attribute
-		Attrs::PluginAttr& getPrimAttr() { return getAttr(getPrimAttrName()); }
-
-		SOP_Node         &m_node; ///< the sop geometry this structure wraps
-		bool              m_isHair; ///< if this object represents hair geometry
-		Attrs::PluginDesc m_description; ///< cached plugin description of the geometry
-		VRay::Transform   m_transform; ///< cached transform of the geometry
-		VUtils::Box       m_bbox; ///< cached bounding box of the geometry
-
-	private:
-		/// Disable default contructor
-		GeometryDescription();
-		/// Disable assignment
-		GeometryDescription& operator=(const GeometryDescription &other);
-	};
-
-private:
-	/// Disable default contructor
-	VRayProxyExporter();
-
-	/// Sample sop geometry and transform, calc bbox and velocities at the given time
-	/// and return the result in geomDescr
-	/// @param context[in] - sample time
-	/// @param geomDescr[out] - geometry description
-	/// @retval error code - use ErrorCode::error() to check for errors
-	///                      and ErrorCode::getErrorString() to get the error message
-	VUtils::ErrorCode cacheDescriptionForContext(const OP_Context &context, GeometryDescription &geomDescr);
-
-	/// Sample sop geometry at the given time and return the result in geomDescr
-	/// @note this is called from cacheDescriptionForContext()
-	/// @param context[in] - sample time
-	/// @param geomDescr[out] - geometry description
-	/// @retval error code - use ErrorCode::error() to check for errors
-	///                      and ErrorCode::getErrorString() to get the error message
-	VUtils::ErrorCode getDescriptionForContext(OP_Context &context, GeometryDescription &geomDescr);
+	VUtils::ErrorCode preprocessDescriptions(const OP_Context &context);
 
 	/// Sample geometry transform at the given time and return the result in geomDescr
 	/// @note this is called from cacheDescriptionForContext()
 	/// @param context[in] - sample time
 	/// @param geomDescr[out] - geometry description
-	void getTransformForContext(OP_Context &context, GeometryDescription &geomDescr) const;
+	void getTransformForContext(const OP_Context &context, GeometryDescription &geomDescr) const;
 
 	/// Fill mesh voxel data from geometry description
 	/// @note this is called from getVoxel()
@@ -387,17 +396,24 @@ private:
 	int getPreviewStartIdx() const;
 
 private:
-	const VRayProxyExportOptions    &m_options; ///< export options
+	/// Input SOP list.
+	const SOPList &sopList;
+
+	/// SOP geometry descriptions to make vrmesh from.
+	GeometryDescriptions geometryDescriptions;
+
+	const VRayProxyExportOptions &m_options; ///< export options
 
 	std::vector<VUtils::MeshVoxel>   m_voxels; ///< voxel array - last voxel is the preview one
-	std::vector<GeometryDescription> m_geomDescrList; ///< cache for sop nodes geometry
 
 	VUtils::VertGeomData            *m_previewVerts; ///< vertices of preview mesh geometry
 	VUtils::FaceTopoData            *m_previewFaces; ///< faces of preview mesh geometry
 	VUtils::VertGeomData            *m_previewStrandVerts; ///< vertices of preview hair geometry
 	int                             *m_previewStrands; ///< faces of preview hair geometry
+
+	VUTILS_DISABLE_COPY(VRayProxyExporter)
 };
 
-}
+} // namespace VRayForHoudini
 
 #endif // VRAY_FOR_HOUDINI_EXPORT_VRAYPROXY_H

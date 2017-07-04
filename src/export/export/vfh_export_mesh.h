@@ -133,7 +133,7 @@ public:
 	/// @param pluginDesc[out] - the mesh plugin description
 	/// @retval true if mesh primitives were found in gdp
 	///         and pluginDesc is modified
-	bool asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc &pluginDesc);
+	bool asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc &pluginDesc) VRAY_OVERRIDE;
 
 	VRay::Plugin getMaterial() const { return material; }
 

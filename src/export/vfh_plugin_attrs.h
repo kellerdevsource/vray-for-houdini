@@ -19,6 +19,8 @@ namespace Attrs {
 
 const float RAD_TO_DEG = M_PI / 180.f;
 
+struct PluginDesc;
+
 /// Descriptor for a plugin attribute:
 /// name, type and value
 struct PluginAttr {
@@ -35,6 +37,7 @@ struct PluginAttr {
 		AttrTypeMatrix,
 		AttrTypeString,
 		AttrTypePlugin,
+		AttrTypePluginDesc,
 		AttrTypeListInt,
 		AttrTypeListFloat,
 		AttrTypeListVector,
@@ -90,6 +93,8 @@ struct PluginAttr {
 		paramType = PluginAttr::AttrTypePlugin;
 		paramValue.valPlugin = attrValue;
 	}
+
+	PluginAttr(const std::string &attrName, const PluginDesc *attrValue);
 
 	PluginAttr(const std::string &attrName, const VRay::Plugin &attrValue, const std::string &output) {
 		paramName = attrName;
@@ -222,43 +227,17 @@ struct PluginAttr {
 	}
 
 	/// Get attribute type as string
-	const char *typeStr() const {
-		switch (paramType) {
-			case PluginAttr::AttrTypeInt: return "Int";
-			case PluginAttr::AttrTypeFloat: return "Float";
-			case PluginAttr::AttrTypeVector: return "Vector";
-			case PluginAttr::AttrTypeColor: return "Color";
-			case PluginAttr::AttrTypeAColor: return "AColor";
-			case PluginAttr::AttrTypeTransform: return "Transform";
-			case PluginAttr::AttrTypeMatrix: return "Matrix";
-			case PluginAttr::AttrTypeString: return "String";
-			case PluginAttr::AttrTypePlugin: return "Plugin";
-			case PluginAttr::AttrTypeListInt: return "ListInt";
-			case PluginAttr::AttrTypeListFloat: return "ListFloat";
-			case PluginAttr::AttrTypeListVector: return "ListVector";
-			case PluginAttr::AttrTypeListColor: return "ListColor";
-			case PluginAttr::AttrTypeListTransform: return "ListTransform";
-			case PluginAttr::AttrTypeListString: return "ListString";
-			case PluginAttr::AttrTypeListPlugin: return "ListPlugin";
-			case PluginAttr::AttrTypeListValue: return "ListValue";
-			case PluginAttr::AttrTypeRawListInt: return "RawListInt";
-			case PluginAttr::AttrTypeRawListFloat: return "RawListFloat";
-			case PluginAttr::AttrTypeRawListVector: return "RawListVector";
-			case PluginAttr::AttrTypeRawListColor: return "RawListColor";
-			case PluginAttr::AttrTypeRawListCharString: return "RawListCharString";
-			case PluginAttr::AttrTypeRawListValue: return "RawListValue";
-			default:
-				break;
-		}
-		return "AttrTypeUnknown";
-	}
+	const char *typeStr() const;
 
 	struct PluginAttrValue {
+		PluginAttrValue();
+
 		int                 valInt;
 		float               valFloat;
 		float               valVector[4];
 		std::string         valString;
 		VRay::Plugin        valPlugin;
+		const PluginDesc   *valPluginDesc;
 		std::string         valPluginOutput;
 		VRay::Transform     valTransform;
 
@@ -278,7 +257,6 @@ struct PluginAttr {
 
 	std::string             paramName; ///< attribute name
 	AttrType                paramType; ///< attribute type
-
 };
 typedef std::vector<PluginAttr> PluginAttrs;
 
@@ -286,11 +264,8 @@ typedef std::vector<PluginAttr> PluginAttrs;
 /// accumulate attribute changes and to allow to batch changes together for
 /// a plugin.
 struct PluginDesc {
-	PluginDesc() {}
-	PluginDesc(const std::string &pluginName, const std::string &pluginID)
-		: pluginName(pluginName)
-		, pluginID(pluginID)
-	{}
+	PluginDesc();
+	PluginDesc(const std::string &pluginName, const std::string &pluginID);
 
 	/// Test if we have attribute with a given name
 	/// @param paramName[in] - attribute name
@@ -330,6 +305,10 @@ struct PluginDesc {
 
 	/// A list of plugin attributes.
 	PluginAttrs pluginAttrs;
+};
+
+struct PluginResult {
+	
 };
 
 } // namespace Attrs
