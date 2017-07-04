@@ -59,6 +59,12 @@ struct PrimMaterial {
 		: matNode(nullptr)
 	{}
 
+	/// Merge overrides overwriting existing values.
+	void mergeOverrides(const MtlOverrideItems &items);
+
+	/// Merge overrides not overwriting existing values.
+	void appendOverrides(const MtlOverrideItems &items);
+
 	/// Material node (SHOP, VOP).
 	OP_Node *matNode;
 
@@ -69,30 +75,61 @@ struct PrimMaterial {
 struct SheetTarget {
 	enum SheetTargetType {
 		sheetTargetUnknown = -1,
+		sheetTargetAll,
 		sheetTargetPrimitive,
-	};
-
-	enum SheetTargetPrimitiveType {
-		sheetTargetPrimitiveTypeUnknown = -1,
-		sheetTargetPrimitiveTypeGroup,
 	};
 
 	explicit SheetTarget(SheetTargetType targetType=sheetTargetUnknown)
 		: targetType(targetType)
 	{}
 
+	struct TargetPrimitive {
+		enum TargetType {
+			primitiveTypeUnknown = -1,
+			primitiveTypeGroup,
+		};
+
+		explicit TargetPrimitive(TargetType targetType=primitiveTypeUnknown)
+			: targetType(targetType)
+		{}
+
+		UT_String group;
+
+		TargetType targetType;
+	} primitive;
+
 	SheetTargetType targetType;
 };
 
 struct TargetStyleSheet {
+	explicit TargetStyleSheet(SheetTarget::SheetTargetType target=SheetTarget::sheetTargetUnknown)
+		: target(target)
+	{}
+
 	SheetTarget target;
 	PrimMaterial overrides;
 };
 
-struct ObjectStyleSheet {
-	typedef VUtils::Table<TargetStyleSheet, -1> ObjectStyles;
+typedef VUtils::Table<TargetStyleSheet, -1> TargetStyleSheets;
 
-	ObjectStyles styles;
+struct ObjectStyleSheet {
+	ObjectStyleSheet()
+	{}
+
+	ObjectStyleSheet(const ObjectStyleSheet &other) {
+		*this = other;
+	}
+
+	ObjectStyleSheet& operator=(const ObjectStyleSheet &other) {
+		styles.copy(other.styles);
+		return *this;
+	}
+
+	void operator+=(const ObjectStyleSheet &other) {
+		styles += other.styles;
+	}
+
+	TargetStyleSheets styles;
 };
 
 struct MtlOverrideAttrExporter {
@@ -136,7 +173,7 @@ void mergeMaterialOverride(PrimMaterial &primMaterial,
 						   GA_Offset primOffset,
 						   fpreal t);
 
-void getObjectStyleSheet(OBJ_Node &objNode, ObjectStyleSheet &objSheet, fpreal t);
+void parseObjectStyleSheet(OBJ_Node &objNode, ObjectStyleSheet &objSheet, fpreal t);
 
 } // namespace VRayForHoudini
 

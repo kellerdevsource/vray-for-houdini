@@ -9,6 +9,7 @@
 //   https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
+#include "vfh_defines.h"
 #include "vfh_material_override.h"
 
 #include <SHOP/SHOP_GeoOverride.h>
@@ -16,12 +17,69 @@
 
 #include <rapidjson/document.h>
 
+
 using namespace VRayForHoudini;
+using namespace rapidjson;
+
+void PrimMaterial::mergeOverrides(const MtlOverrideItems &items)
+{
+	FOR_CONST_IT (MtlOverrideItems, it, items) {
+		overrides.insert(it.key(), it.data());
+	}
+}
+
+void PrimMaterial::appendOverrides(const MtlOverrideItems &items)
+{
+	FOR_CONST_IT (MtlOverrideItems, it, items) {
+		if (overrides.find(it.key()) == overrides.end()) {
+			overrides.insert(it.key(), it.data());
+		}
+	}
+}
+
+static void parseStyleSheetOverrides(const Value &paramOverrides, MtlOverrideItems &overrides)
+{
+	for (Value::ConstMemberIterator pIt = paramOverrides.MemberBegin(); pIt != paramOverrides.MemberEnd(); ++pIt) {
+		const char *parmName = pIt->name.GetString();
+		const Value &paramJsonValue = pIt->value;
+
+		MtlOverrideItems::iterator moIt = overrides.find(parmName);
+		if (moIt != overrides.end()) {
+			// There is already some top-level override for this parameter.
+			continue;
+		}
+
+		// NOTES:
+		//  * Assuming current array value is a color
+		//  * Only first 3 components will be used for vectors
+		if (paramJsonValue.IsArray()) {
+			if (paramJsonValue.Size() >= 3) {
+				MtlOverrideItem &overrideItem = overrides[parmName];
+				overrideItem.setType(MtlOverrideItem::itemTypeVector);
+				overrideItem.valueVector.set(paramJsonValue[0].GetDouble(),
+												paramJsonValue[1].GetDouble(),
+												paramJsonValue[2].GetDouble());
+			}
+			else {
+				// TODO: Implement other cases / print warning.
+			}
+		}
+		else if (paramJsonValue.IsDouble()) {
+			MtlOverrideItem &overrideItem = overrides[parmName];
+			overrideItem.setType(MtlOverrideItem::itemTypeDouble);
+			overrideItem.valueDouble = paramJsonValue.GetDouble();
+		}
+		else if (paramJsonValue.IsString()) {
+			// TODO: String type.
+		}
+		else {
+			// TODO: Implement other cases / print warning.
+		}
+	}
+}
 
 void VRayForHoudini::mergeStyleSheet(PrimMaterial &primMaterial, const QString &styleSheet, fpreal t, int materialOnly)
 {
-	using namespace rapidjson;
-
 	Document document;
 	document.Parse(styleSheet.toLocal8Bit().constData());
 
@@ -75,43 +133,7 @@ void VRayForHoudini::mergeStyleSheet(PrimMaterial &primMaterial, const QString &
 			if (!materialOnly && styleOver.HasMember("materialParameters")) {
 				const Value &paramOverrides = styleOver["materialParameters"];
 
-				for (Value::ConstMemberIterator pIt = paramOverrides.MemberBegin(); pIt != paramOverrides.MemberEnd(); ++pIt) {
-					const char *parmName = pIt->name.GetString();
-					const Value &paramJsonValue = pIt->value;
-
-					MtlOverrideItems::iterator moIt = primMaterial.overrides.find(parmName);
-					if (moIt != primMaterial.overrides.end()) {
-						// There is already some top-level override for this parameter.
-						continue;
-					}
-
-					// NOTES:
-					//  * Assuming current array value is a color
-					//  * Only first 3 components will be used for vectors
-					if (paramJsonValue.IsArray()) {
-						if (paramJsonValue.Size() >= 3) {
-							MtlOverrideItem &overrideItem = primMaterial.overrides[parmName];
-							overrideItem.setType(MtlOverrideItem::itemTypeVector);
-							overrideItem.valueVector.set(paramJsonValue[0].GetDouble(),
-														 paramJsonValue[1].GetDouble(),
-														 paramJsonValue[2].GetDouble());
-						}
-						else {
-							// TODO: Implement other cases / print warning.
-						}
-					}
-					else if (paramJsonValue.IsDouble()) {
-						MtlOverrideItem &overrideItem = primMaterial.overrides[parmName];
-						overrideItem.setType(MtlOverrideItem::itemTypeDouble);
-						overrideItem.valueDouble = paramJsonValue.GetDouble();
-					}
-					else if (paramJsonValue.IsString()) {
-						// TODO: String type.
-					}
-					else {
-						// TODO: Implement other cases / print warning.
-					}
-				}
+				parseStyleSheetOverrides(paramOverrides, primMaterial.overrides);
 			}
 		}
 	}
@@ -259,7 +281,23 @@ void MtlOverrideAttrExporter::addAttributesAsOverrides(const GEOAttribList &attr
 	}
 }
 
-void VRayForHoudini::getObjectStyleSheet(OBJ_Node &objNode, ObjectStyleSheet &objSheet, fpreal t)
+static void parseStyleSheetTarget(const Value &target, SheetTarget &sheetTarget)
+{
+	for (Value::ConstMemberIterator pIt = target.MemberBegin(); pIt != target.MemberEnd(); ++pIt) {
+		const UT_String key(pIt->name.GetString());
+		const Value &value = pIt->value;
+		if (key.equal("group")) {
+			sheetTarget.targetType = SheetTarget::sheetTargetPrimitive;
+			sheetTarget.primitive.targetType = SheetTarget::TargetPrimitive::primitiveTypeGroup;
+			sheetTarget.primitive.group = value.GetString();
+		}
+		else {
+			// ...
+		}
+	}
+}
+
+void VRayForHoudini::parseObjectStyleSheet(OBJ_Node &objNode, ObjectStyleSheet &objSheet, fpreal t)
 {
 	using namespace rapidjson;
 
@@ -298,44 +336,42 @@ void VRayForHoudini::getObjectStyleSheet(OBJ_Node &objNode, ObjectStyleSheet &ob
 		const Value &style = *it;
 		UT_ASSERT(style.IsObject());
 
-		SheetTarget::SheetTargetType sheetTarget = SheetTarget::sheetTargetUnknown;
-		SheetTarget::SheetTargetPrimitiveType sheetTargetPrimitiveType = SheetTarget::sheetTargetPrimitiveTypeUnknown;
-		UT_String primitiveGroupName;
-
-		if (style.HasMember("target")) {
-			const Value &target = style["target"];
-
-			for (Value::ConstMemberIterator pIt = target.MemberBegin(); pIt != target.MemberEnd(); ++pIt) {
-				const UT_String key(pIt->name.GetString());
-				const Value &value = pIt->value;
-				if (key.equal("group")) {
-					sheetTarget = SheetTarget::sheetTargetPrimitive;
-					sheetTargetPrimitiveType = SheetTarget::sheetTargetPrimitiveTypeGroup;
-					primitiveGroupName = value.GetString();
-				}
-				else {
-					// ...
-				}
-			}
-		}
-
-		if (sheetTarget == SheetTarget::sheetTargetUnknown) {
-			continue;
-		}
-
 		if (style.HasMember("overrides")) {
 			const Value &styleOver = style["overrides"];
+
+			PrimMaterial styleOverrides;
 
 			if (styleOver.HasMember("material")) {
 				const Value &mtlOver = styleOver["material"];
 				if (mtlOver.HasMember("name")) {
 					const char *matPath = mtlOver["name"].GetString();
 
-					OP_Node *matNode = getOpNodeFromPath(matPath, t);
-					if (matNode) {
-						// TODO: .
-					}
+					styleOverrides.matNode = getOpNodeFromPath(matPath, t);
 				}
+			}
+
+			if (styleOver.HasMember("materialParameters")) {
+				const Value &paramOverrides = styleOver["materialParameters"];
+
+				parseStyleSheetOverrides(paramOverrides, styleOverrides.overrides);
+			}
+
+			if (style.HasMember("target")) {
+				const Value &target = style["target"];
+
+				// If no specific target will be found later, then style will apply to all.
+				TargetStyleSheet targetStyle(SheetTarget::sheetTargetAll);
+				targetStyle.overrides = styleOverrides;
+
+				if (target.HasMember("subTarget")) {
+					const Value &subTarget = target["subTarget"];
+					parseStyleSheetTarget(subTarget, targetStyle.target);
+				}
+				else {
+					parseStyleSheetTarget(target, targetStyle.target);
+				}
+
+				objSheet.styles += targetStyle;
 			}
 		}
 	}

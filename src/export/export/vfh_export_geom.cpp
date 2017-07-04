@@ -170,6 +170,18 @@ void ObjectExporter::getPrimMaterial(PrimMaterial &primMaterial) const
 	}
 }
 
+ObjectStyleSheet ObjectExporter::getObjectStyleSheet() const
+{
+	ObjectStyleSheet styleSheet;
+
+	PrimContextIt it(primContextStack);
+	while (it.hasNext()) {
+		styleSheet += it.next().styleSheet;
+	}
+
+	return styleSheet;
+}
+
 void ObjectExporter::clearOpPluginCache()
 {
 	// clearOpPluginCache() is called before export,
@@ -1268,7 +1280,11 @@ VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode, SOP_Node &sopNode
 
 	const VRay::Transform tm = pluginExporter.getObjTransform(&objNode, ctx);
 
-	pushContext(PrimContext(&objNode, tm, gdp.getUniqueId()));
+	PrimContext primContext(&objNode, tm, gdp.getUniqueId());
+
+	parseObjectStyleSheet(objNode, primContext.styleSheet, ctx.getTime());
+
+	pushContext(primContext);
 	
 	VRay::Plugin geometry;
 
@@ -1519,9 +1535,6 @@ VRay::Plugin ObjectExporter::exportObject(OBJ_Node &objNode)
 		popContext();
 	}
 	else {
-		ObjectStyleSheet objSheet;
-		getObjectStyleSheet(objNode, objSheet, ctx.getTime());
-
 		plugin = exportNode(objNode);
 	}
 
