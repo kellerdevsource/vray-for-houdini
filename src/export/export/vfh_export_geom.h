@@ -54,6 +54,9 @@ struct PrimContext {
 	/// Primitive ID.
 	exint detailID;
 
+	/// Object style sheets.
+	ObjectStyleSheet styleSheet;
+
 	/// Material overrides.
 	PrimMaterial primMaterial;
 };
@@ -212,6 +215,9 @@ public:
 
 	/// Returns material from the primitive context stack.
 	void getPrimMaterial(PrimMaterial &primMaterial) const;
+
+	/// Returns object style sheet from the context stack.
+	ObjectStyleSheet getObjectStyleSheet() const;
 
 	OP_Node *getGenerator() const;
 

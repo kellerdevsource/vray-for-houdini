@@ -382,6 +382,8 @@ VRay::VUtils::IntRefList& MeshExporter::getFaceMtlIDs()
 	PrimMaterial primMaterial;
 	objectExporter.getPrimMaterial(primMaterial);
 
+	const ObjectStyleSheet &objectStyleSheet = objectExporter.getObjectStyleSheet();
+
 	OP_Node *objMatNode = primMaterial.matNode
 	                      ? primMaterial.matNode
 	                      : objNode.getMaterialNode(ctx.getTime());
@@ -390,12 +392,8 @@ VRay::VUtils::IntRefList& MeshExporter::getFaceMtlIDs()
 	GA_ROHandleS materialStyleSheetHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTR_MATERIAL_STYLESHEET));
 	GA_ROHandleS materialPathHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GEO_STD_ATTRIB_MATERIAL));
 
-	const int hasStyleSheet = materialStyleSheetHndl.isValid();
-	const int hasMaterialPath = materialPathHndl.isValid();
-
-	if (!(hasStyleSheet || hasMaterialPath)) {
-		return face_mtlIDs;
-	}
+	const int hasStyleSheetAttr = materialStyleSheetHndl.isValid();
+	const int hasMaterialPathAttr = materialPathHndl.isValid();
 
 	const int numFaces = getNumFaces();
 	if (!numFaces) {
@@ -421,41 +419,69 @@ VRay::VUtils::IntRefList& MeshExporter::getFaceMtlIDs()
 	for (const GEO_Primitive *prim : primList) {
 		const GA_Offset primOffset = prim->getMapOffset();
 
-		if (hasStyleSheet) {
-			const QString &styleSheet = materialStyleSheetHndl.get(primOffset);
-			if (!styleSheet.isEmpty()) {
-				mergeStyleSheet(primMaterial, styleSheet, ctx.getTime(), true);
+		// Check if material comes from overrides
+		OP_Node *primMtlNode = primMaterial.matNode;
+
+		for (int i = 0; i < objectStyleSheet.styles.count(); ++i) {
+			const TargetStyleSheet &style = objectStyleSheet.styles[i];
+			const SheetTarget &styleTarge = style.target;
+
+			if (style.overrides.matNode) {
+				if (styleTarge.targetType == SheetTarget::sheetTargetAll) {
+					primMtlNode = style.overrides.matNode;
+				}
+				else if (styleTarge.targetType == SheetTarget::sheetTargetPrimitive) {
+					const SheetTarget::TargetPrimitive &primTarget = styleTarge.primitive;
+
+					if (primTarget.targetType == SheetTarget::TargetPrimitive::primitiveTypeGroup) {
+						const GA_PrimitiveGroup *primGroup = gdp.findPrimitiveGroup(primTarget.group);
+						if (primGroup && primGroup->contains(prim)) {
+							primMtlNode = style.overrides.matNode;
+						}
+					}
+				}
 			}
 		}
-		else if (hasMaterialPath) {
-			const UT_String &matPath = materialPathHndl.get(primOffset);
-			if (!matPath.equal("")) {
-				primMaterial.matNode = getOpNodeFromPath(matPath, ctx.getTime());
+
+		// If material comes from top level we don't need to export
+		// primitive materials, otherwise check material attributes.
+		if (primMtlNode) {
+			if (hasStyleSheetAttr) {
+				const QString &styleSheet = materialStyleSheetHndl.get(primOffset);
+				if (!styleSheet.isEmpty()) {
+					mergeStyleSheet(primMaterial, styleSheet, ctx.getTime(), true);
+				}
+			}
+			else if (hasMaterialPathAttr) {
+				const UT_String &matPath = materialPathHndl.get(primOffset);
+				if (!matPath.equal("")) {
+					primMtlNode = getOpNodeFromPath(matPath, ctx.getTime());
+				}
 			}
 		}
 
 		// Object material is always 0.
 		int faceMtlID = 0;
-		if (primMaterial.matNode) {
+		if (primMtlNode) {
 			VRay::Plugin matPlugin;
 
-			OpPluginCache::iterator opIt = matPluginCache.find(primMaterial.matNode);
+			OpPluginCache::iterator opIt = matPluginCache.find(primMtlNode);
 			if (opIt != matPluginCache.end()) {
 				matPlugin = opIt.data();
 			}
 			else {
-				matPlugin = pluginExporter.exportMaterial(primMaterial.matNode);
-				matPluginCache.insert(primMaterial.matNode, matPlugin);
+				matPlugin = pluginExporter.exportMaterial(primMtlNode);
+				matPluginCache.insert(primMtlNode, matPlugin);
 			}
 
 			if (matPlugin) {
-				MatOpToID::iterator mIt = matNameToID.find(primMaterial.matNode);
+				MatOpToID::iterator mIt = matNameToID.find(primMtlNode);
 				if (mIt != matNameToID.end()) {
 					faceMtlID = mIt.data();
 				}
 				else {
 					faceMtlID = matIndex++;
-					matNameToID.insert(primMaterial.matNode, faceMtlID);
+					matNameToID.insert(primMtlNode, faceMtlID);
 				}
 			}
 		}
@@ -683,13 +709,11 @@ static void setMapChannelOverrideFaceData(MapChannels &mapChannels, const GEOPri
 
 void MeshExporter::getMtlOverrides(MapChannels &mapChannels)
 {
+	const ObjectStyleSheet &objectStyleSheet = objectExporter.getObjectStyleSheet();
+
 	GA_ROHandleS materialStyleSheetHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTR_MATERIAL_STYLESHEET));
 	GA_ROHandleS materialPathHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GEO_STD_ATTRIB_MATERIAL));
 	GA_ROHandleS materialOverrideHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTR_MATERIAL_OVERRIDE));
-
-	if (!(materialStyleSheetHndl.isValid() || materialPathHndl.isValid())) {
-		return;
-	}
 
 	int faceIndex = 0;
 
@@ -700,6 +724,25 @@ void MeshExporter::getMtlOverrides(MapChannels &mapChannels)
 
 		PrimMaterial primMaterial;
 		mergeMaterialOverride(primMaterial, materialStyleSheetHndl, materialPathHndl, materialOverrideHndl, primOffset, ctx.getTime());
+
+		for (int i = 0; i < objectStyleSheet.styles.count(); ++i) {
+			const TargetStyleSheet &style = objectStyleSheet.styles[i];
+			const SheetTarget &styleTarge = style.target;
+
+			if (styleTarge.targetType == SheetTarget::sheetTargetAll) {
+				primMaterial.mergeOverrides(style.overrides.overrides);
+			}
+			else if (styleTarge.targetType == SheetTarget::sheetTargetPrimitive) {
+				const SheetTarget::TargetPrimitive &primTarget = styleTarge.primitive;
+
+				if (primTarget.targetType == SheetTarget::TargetPrimitive::primitiveTypeGroup) {
+					const GA_PrimitiveGroup *primGroup = gdp.findPrimitiveGroup(primTarget.group);
+					if (primGroup && primGroup->contains(prim)) {
+						primMaterial.mergeOverrides(style.overrides.overrides);
+					}
+				}
+			}
+		}
 
 		attrExporter.fromPrimitive(primMaterial.overrides, primOffset);
 
