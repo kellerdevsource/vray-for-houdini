@@ -1515,6 +1515,9 @@ VRay::Plugin ObjectExporter::exportObject(OBJ_Node &objNode)
 		popContext();
 	}
 	else {
+		ObjectStyleSheet objSheet;
+		getObjectStyleSheet(objNode, objSheet, ctx.getTime());
+
 		plugin = exportNode(objNode);
 	}
 

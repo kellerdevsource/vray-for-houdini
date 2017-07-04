@@ -258,3 +258,85 @@ void MtlOverrideAttrExporter::addAttributesAsOverrides(const GEOAttribList &attr
 		}
 	}
 }
+
+void VRayForHoudini::getObjectStyleSheet(OBJ_Node &objNode, ObjectStyleSheet &objSheet, fpreal t)
+{
+	using namespace rapidjson;
+
+	UT_String styleSheet;
+	objNode.evalString(styleSheet, "shop_materialstylesheet", 0, t);
+
+	Document document;
+	document.Parse(styleSheet.buffer());
+
+	if (!document.HasMember("styles"))
+		return;
+
+	const Value &styles = document["styles"];
+	UT_ASSERT(styles.IsArray());
+
+	//
+	// {
+	//     "styles":[
+	//         {
+	//             "label":"Style",
+	//             "target":{
+	//                 "label":"Target",
+	//                 "group":"ballgrp"
+	//             },
+	//             "overrides":{
+	//                 "material":{
+	//                     "name":"`opfullpath('/shop/vrmat_balls_packedAssign')`"
+	//                 }
+	//             }
+	//         }
+	//     ]
+	// }
+	// 
+
+	for (Value::ConstValueIterator it = styles.Begin(); it != styles.End(); ++it) {
+		const Value &style = *it;
+		UT_ASSERT(style.IsObject());
+
+		SheetTarget::SheetTargetType sheetTarget = SheetTarget::sheetTargetUnknown;
+		SheetTarget::SheetTargetPrimitiveType sheetTargetPrimitiveType = SheetTarget::sheetTargetPrimitiveTypeUnknown;
+		UT_String primitiveGroupName;
+
+		if (style.HasMember("target")) {
+			const Value &target = style["target"];
+
+			for (Value::ConstMemberIterator pIt = target.MemberBegin(); pIt != target.MemberEnd(); ++pIt) {
+				const UT_String key(pIt->name.GetString());
+				const Value &value = pIt->value;
+				if (key.equal("group")) {
+					sheetTarget = SheetTarget::sheetTargetPrimitive;
+					sheetTargetPrimitiveType = SheetTarget::sheetTargetPrimitiveTypeGroup;
+					primitiveGroupName = value.GetString();
+				}
+				else {
+					// ...
+				}
+			}
+		}
+
+		if (sheetTarget == SheetTarget::sheetTargetUnknown) {
+			continue;
+		}
+
+		if (style.HasMember("overrides")) {
+			const Value &styleOver = style["overrides"];
+
+			if (styleOver.HasMember("material")) {
+				const Value &mtlOver = styleOver["material"];
+				if (mtlOver.HasMember("name")) {
+					const char *matPath = mtlOver["name"].GetString();
+
+					OP_Node *matNode = getOpNodeFromPath(matPath, t);
+					if (matNode) {
+						// TODO: .
+					}
+				}
+			}
+		}
+	}
+}

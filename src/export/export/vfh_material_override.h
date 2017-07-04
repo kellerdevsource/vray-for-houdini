@@ -66,6 +66,35 @@ struct PrimMaterial {
 	MtlOverrideItems overrides;
 };
 
+struct SheetTarget {
+	enum SheetTargetType {
+		sheetTargetUnknown = -1,
+		sheetTargetPrimitive,
+	};
+
+	enum SheetTargetPrimitiveType {
+		sheetTargetPrimitiveTypeUnknown = -1,
+		sheetTargetPrimitiveTypeGroup,
+	};
+
+	explicit SheetTarget(SheetTargetType targetType=sheetTargetUnknown)
+		: targetType(targetType)
+	{}
+
+	SheetTargetType targetType;
+};
+
+struct TargetStyleSheet {
+	SheetTarget target;
+	PrimMaterial overrides;
+};
+
+struct ObjectStyleSheet {
+	typedef VUtils::Table<TargetStyleSheet, -1> ObjectStyles;
+
+	ObjectStyles styles;
+};
+
 struct MtlOverrideAttrExporter {
 	explicit MtlOverrideAttrExporter(const GA_Detail &gdp) {
 		buildAttributesList(gdp, GA_ATTRIB_PRIMITIVE, primAttrList);
@@ -106,6 +135,8 @@ void mergeMaterialOverride(PrimMaterial &primMaterial,
 						   const GA_ROHandleS &materialOverrideHndl,
 						   GA_Offset primOffset,
 						   fpreal t);
+
+void getObjectStyleSheet(OBJ_Node &objNode, ObjectStyleSheet &objSheet, fpreal t);
 
 } // namespace VRayForHoudini
 
