@@ -521,7 +521,6 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 			item.tm = utMatrixToVRayTransform(tm4);
 
 			// Point attributes for packed instancing.
-			// TODO: Float point attributes
 			if (numPoints == numPrims) {
 				const GA_Offset pointOffset = gdp.pointOffset(primIndex);
 
@@ -650,7 +649,7 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_D
 		if (material) {
 			additional_params_flags |= useMaterial;
 		}
-		if (primItem.primMaterial.overrides.size()) {
+		if (!userAttributes.isEmpty()) {
 			additional_params_flags |= useUserAttributes;
 		}
 		if (primItem.flags & PrimitiveItem::itemFlagsUseTime) {
@@ -1258,22 +1257,9 @@ VRay::Plugin ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_De
 	return exportDetailInstancer(objNode, gdp, instancerItems, "PointInstancer");
 }
 
-VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode)
+VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode, SOP_Node &sopNode)
 {
-	SOP_Node *renderSOP = objNode.getRenderSopPtr();
-	if (!renderSOP) {
-		return VRay::Plugin();
-	}
-
-	const UT_String &renderOpType = renderSOP->getOperator()->getName();
-	if (renderOpType.startsWith("VRayNode") &&
-		!renderOpType.equal("VRayNodePhxShaderCache") &&
-		!renderOpType.equal("VRayNodeVRayProxy"))
-	{
-		return exportVRaySOP(objNode, *renderSOP);
-	}
-
-	GU_DetailHandleAutoReadLock gdl(renderSOP->getCookedGeoHandle(ctx));
+	GU_DetailHandleAutoReadLock gdl(sopNode.getCookedGeoHandle(ctx));
 	if (!gdl.isValid()) {
 		return VRay::Plugin();
 	}
@@ -1297,6 +1283,24 @@ VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode)
 	popContext();
 
 	return geometry;
+}
+
+VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode)
+{
+	SOP_Node *renderSOP = objNode.getRenderSopPtr();
+	if (!renderSOP) {
+		return VRay::Plugin();
+	}
+
+	const UT_String &renderOpType = renderSOP->getOperator()->getName();
+	if (renderOpType.startsWith("VRayNode") &&
+		!renderOpType.equal("VRayNodePhxShaderCache") &&
+		!renderOpType.equal("VRayNodeVRayProxy"))
+	{
+		return exportVRaySOP(objNode, *renderSOP);
+	}
+
+	return exportGeometry(objNode, *renderSOP);
 }
 
 int ObjectExporter::isLightEnabled(OBJ_Node &objLight) const

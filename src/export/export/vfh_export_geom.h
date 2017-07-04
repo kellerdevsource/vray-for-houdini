@@ -193,6 +193,10 @@ public:
 	/// @returns Geometry plugin.
 	VRay::Plugin exportGeometry(OBJ_Node &objNode);
 
+	/// Export SOP geometry.
+	/// @returns Geometry plugin.
+	VRay::Plugin exportGeometry(OBJ_Node &objNode, SOP_Node &sopNode);
+
 	/// Export object.
 	/// @returns Node plugin.
 	VRay::Plugin exportObject(OBJ_Node &objNode);
