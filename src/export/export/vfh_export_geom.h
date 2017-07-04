@@ -54,6 +54,9 @@ struct PrimContext {
 	/// Primitive ID.
 	exint detailID;
 
+	/// Object style sheets.
+	ObjectStyleSheet styleSheet;
+
 	/// Material overrides.
 	PrimMaterial primMaterial;
 };
@@ -193,6 +196,10 @@ public:
 	/// @returns Geometry plugin.
 	VRay::Plugin exportGeometry(OBJ_Node &objNode);
 
+	/// Export SOP geometry.
+	/// @returns Geometry plugin.
+	VRay::Plugin exportGeometry(OBJ_Node &objNode, SOP_Node &sopNode);
+
 	/// Export object.
 	/// @returns Node plugin.
 	VRay::Plugin exportObject(OBJ_Node &objNode);
@@ -208,6 +215,9 @@ public:
 
 	/// Returns material from the primitive context stack.
 	void getPrimMaterial(PrimMaterial &primMaterial) const;
+
+	/// Returns object style sheet from the context stack.
+	ObjectStyleSheet getObjectStyleSheet() const;
 
 	OP_Node *getGenerator() const;
 

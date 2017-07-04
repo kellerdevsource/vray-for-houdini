@@ -170,6 +170,18 @@ void ObjectExporter::getPrimMaterial(PrimMaterial &primMaterial) const
 	}
 }
 
+ObjectStyleSheet ObjectExporter::getObjectStyleSheet() const
+{
+	ObjectStyleSheet styleSheet;
+
+	PrimContextIt it(primContextStack);
+	while (it.hasNext()) {
+		styleSheet += it.next().styleSheet;
+	}
+
+	return styleSheet;
+}
+
 void ObjectExporter::clearOpPluginCache()
 {
 	// clearOpPluginCache() is called before export,
@@ -521,7 +533,6 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 			item.tm = utMatrixToVRayTransform(tm4);
 
 			// Point attributes for packed instancing.
-			// TODO: Float point attributes
 			if (numPoints == numPrims) {
 				const GA_Offset pointOffset = gdp.pointOffset(primIndex);
 
@@ -650,7 +661,7 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_D
 		if (material) {
 			additional_params_flags |= useMaterial;
 		}
-		if (primItem.primMaterial.overrides.size()) {
+		if (!userAttributes.isEmpty()) {
 			additional_params_flags |= useUserAttributes;
 		}
 		if (primItem.flags & PrimitiveItem::itemFlagsUseTime) {
@@ -1258,6 +1269,38 @@ VRay::Plugin ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_De
 	return exportDetailInstancer(objNode, gdp, instancerItems, "PointInstancer");
 }
 
+VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode, SOP_Node &sopNode)
+{
+	GU_DetailHandleAutoReadLock gdl(sopNode.getCookedGeoHandle(ctx));
+	if (!gdl.isValid()) {
+		return VRay::Plugin();
+	}
+
+	const GU_Detail &gdp = *gdl;
+
+	const VRay::Transform tm = pluginExporter.getObjTransform(&objNode, ctx);
+
+	PrimContext primContext(&objNode, tm, gdp.getUniqueId());
+
+	parseObjectStyleSheet(objNode, primContext.styleSheet, ctx.getTime());
+
+	pushContext(primContext);
+	
+	VRay::Plugin geometry;
+
+	const int isInstance = isInstanceNode(objNode);
+	if (isInstance || isPointInstancer(gdp)) {
+		geometry = exportPointInstancer(objNode, gdp, isInstance);
+	}
+	else {
+		geometry = exportDetail(objNode, gdp);
+	}
+
+	popContext();
+
+	return geometry;
+}
+
 VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode)
 {
 	SOP_Node *renderSOP = objNode.getRenderSopPtr();
@@ -1273,30 +1316,7 @@ VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode)
 		return exportVRaySOP(objNode, *renderSOP);
 	}
 
-	GU_DetailHandleAutoReadLock gdl(renderSOP->getCookedGeoHandle(ctx));
-	if (!gdl.isValid()) {
-		return VRay::Plugin();
-	}
-
-	const GU_Detail &gdp = *gdl;
-
-	const VRay::Transform tm = pluginExporter.getObjTransform(&objNode, ctx);
-
-	pushContext(PrimContext(&objNode, tm, gdp.getUniqueId()));
-	
-	VRay::Plugin geometry;
-
-	const int isInstance = isInstanceNode(objNode);
-	if (isInstance || isPointInstancer(gdp)) {
-		geometry = exportPointInstancer(objNode, gdp, isInstance);
-	}
-	else {
-		geometry = exportDetail(objNode, gdp);
-	}
-
-	popContext();
-
-	return geometry;
+	return exportGeometry(objNode, *renderSOP);
 }
 
 int ObjectExporter::isLightEnabled(OBJ_Node &objLight) const

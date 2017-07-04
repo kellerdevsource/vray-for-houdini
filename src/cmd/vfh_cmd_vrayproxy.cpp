@@ -133,7 +133,7 @@ static CMDError parseExportOptions(const CMD_Args &args, VRayProxyExportOptions 
 /// @param[out] sopList - SOP nodes matching the criterias from command line aruments
 ///                       will be appended to this list
 /// @retval number of SOPs found
-static int getSOPList(CMD_Args &args, UT_ValArray< SOP_Node * > &sopList)
+static int getSOPList(CMD_Args &args, SOPList &sopList)
 {
 	int ignoreHidden = NOT(args.found('i'));
 
@@ -198,13 +198,13 @@ static int getSOPList(CMD_Args &args, UT_ValArray< SOP_Node * > &sopList)
 void CMD::vrayproxy(CMD_Args &args)
 {
 	VRayProxyExportOptions options;
-	if ( parseExportOptions(args, options) != CMD_ARG_OK ) {
+	if (parseExportOptions(args, options) != CMD_ARG_OK) {
 		args.err() << "ERROR Invalid usage: No filepath specified." << std::endl;
 		return;
 	}
 
-	UT_ValArray< SOP_Node * > sopList;
-	if ( getSOPList(args, sopList) <= 0 ) {
+	SOPList sopList;
+	if (getSOPList(args, sopList) <= 0) {
 		args.err() << "ERROR Invalid usage: No valid geometry specified." << std::endl;
 		return;
 	}

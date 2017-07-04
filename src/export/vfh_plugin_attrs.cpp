@@ -13,14 +13,63 @@
 
 #include <iostream>
 
-
 using namespace VRayForHoudini;
-using namespace VRayForHoudini::Attrs;
-
+using namespace Attrs;
 
 #define ReturnTrueIfNotEq(member) if (p.member != other->member) { return true; } break;
 #define ReturnTrueIfFloatNotEq(member) if (!IsFloatEq(p.member, other->member)) { return true; } break;
 
+Attrs::PluginDesc::PluginDesc()
+{}
+
+Attrs::PluginDesc::PluginDesc(const std::string &pluginName, const std::string &pluginID)
+	: pluginName(pluginName)
+	, pluginID(pluginID)
+{}
+
+PluginAttr::PluginAttrValue::PluginAttrValue()
+	: valPluginDesc(nullptr)
+{}
+
+PluginAttr::PluginAttr(const std::string &attrName, const Attrs::PluginDesc *attrValue)
+	: paramName(attrName)
+	, paramType(AttrTypePluginDesc)
+{
+	paramValue.valPluginDesc = attrValue;
+}
+
+const char *PluginAttr::typeStr() const
+{
+	switch (paramType) {
+		case PluginAttr::AttrTypeInt: return "Int";
+		case PluginAttr::AttrTypeFloat: return "Float";
+		case PluginAttr::AttrTypeVector: return "Vector";
+		case PluginAttr::AttrTypeColor: return "Color";
+		case PluginAttr::AttrTypeAColor: return "AColor";
+		case PluginAttr::AttrTypeTransform: return "Transform";
+		case PluginAttr::AttrTypeMatrix: return "Matrix";
+		case PluginAttr::AttrTypeString: return "String";
+		case PluginAttr::AttrTypePlugin: return "Plugin";
+		case PluginAttr::AttrTypePluginDesc: return "PluginDesc";
+		case PluginAttr::AttrTypeListInt: return "ListInt";
+		case PluginAttr::AttrTypeListFloat: return "ListFloat";
+		case PluginAttr::AttrTypeListVector: return "ListVector";
+		case PluginAttr::AttrTypeListColor: return "ListColor";
+		case PluginAttr::AttrTypeListTransform: return "ListTransform";
+		case PluginAttr::AttrTypeListString: return "ListString";
+		case PluginAttr::AttrTypeListPlugin: return "ListPlugin";
+		case PluginAttr::AttrTypeListValue: return "ListValue";
+		case PluginAttr::AttrTypeRawListInt: return "RawListInt";
+		case PluginAttr::AttrTypeRawListFloat: return "RawListFloat";
+		case PluginAttr::AttrTypeRawListVector: return "RawListVector";
+		case PluginAttr::AttrTypeRawListColor: return "RawListColor";
+		case PluginAttr::AttrTypeRawListCharString: return "RawListCharString";
+		case PluginAttr::AttrTypeRawListValue: return "RawListValue";
+		default:
+			break;
+	}
+	return "AttrTypeUnknown";
+}
 
 void VRayForHoudini::Attrs::PluginDesc::showAttributes() const
 {

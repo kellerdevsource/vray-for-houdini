@@ -13,6 +13,7 @@
 
 #include "vfh_vray.h"
 #include "vfh_material_override.h"
+#include "vfh_plugin_attrs.h"
 
 #include <GA/GA_Primitive.h>
 #include <GU/GU_Detail.h>
@@ -90,11 +91,9 @@ public:
 	virtual ~PrimitiveExporter() {}
 
 	virtual void exportPrimitive(const PrimitiveItem &item, PluginSet &pluginsSet) {}
-
-	/// Generate plugin descriptions for all supported primitives in the provided GU_Detail
-	/// @gdp - the detail to traverse
-	/// @plugins[out] - the list of plugins generated for this detail
 	virtual void exportPrimitives(const GU_Detail &detail, PrimitiveItems &plugins) {}
+
+	virtual bool asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc &pluginDesc) { return false; }
 
 	/// Sets transform.
 	void setTM(const VRay::Transform &value) { tm = value; }

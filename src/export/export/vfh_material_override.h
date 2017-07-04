@@ -59,11 +59,77 @@ struct PrimMaterial {
 		: matNode(nullptr)
 	{}
 
+	/// Merge overrides overwriting existing values.
+	void mergeOverrides(const MtlOverrideItems &items);
+
+	/// Merge overrides not overwriting existing values.
+	void appendOverrides(const MtlOverrideItems &items);
+
 	/// Material node (SHOP, VOP).
 	OP_Node *matNode;
 
 	/// Material overrides from stylesheet or SHOP overrides.
 	MtlOverrideItems overrides;
+};
+
+struct SheetTarget {
+	enum SheetTargetType {
+		sheetTargetUnknown = -1,
+		sheetTargetAll,
+		sheetTargetPrimitive,
+	};
+
+	explicit SheetTarget(SheetTargetType targetType=sheetTargetUnknown)
+		: targetType(targetType)
+	{}
+
+	struct TargetPrimitive {
+		enum TargetType {
+			primitiveTypeUnknown = -1,
+			primitiveTypeGroup,
+		};
+
+		explicit TargetPrimitive(TargetType targetType=primitiveTypeUnknown)
+			: targetType(targetType)
+		{}
+
+		UT_String group;
+
+		TargetType targetType;
+	} primitive;
+
+	SheetTargetType targetType;
+};
+
+struct TargetStyleSheet {
+	explicit TargetStyleSheet(SheetTarget::SheetTargetType target=SheetTarget::sheetTargetUnknown)
+		: target(target)
+	{}
+
+	SheetTarget target;
+	PrimMaterial overrides;
+};
+
+typedef VUtils::Table<TargetStyleSheet, -1> TargetStyleSheets;
+
+struct ObjectStyleSheet {
+	ObjectStyleSheet()
+	{}
+
+	ObjectStyleSheet(const ObjectStyleSheet &other) {
+		*this = other;
+	}
+
+	ObjectStyleSheet& operator=(const ObjectStyleSheet &other) {
+		styles.copy(other.styles);
+		return *this;
+	}
+
+	void operator+=(const ObjectStyleSheet &other) {
+		styles += other.styles;
+	}
+
+	TargetStyleSheets styles;
 };
 
 struct MtlOverrideAttrExporter {
@@ -106,6 +172,8 @@ void mergeMaterialOverride(PrimMaterial &primMaterial,
 						   const GA_ROHandleS &materialOverrideHndl,
 						   GA_Offset primOffset,
 						   fpreal t);
+
+void parseObjectStyleSheet(OBJ_Node &objNode, ObjectStyleSheet &objSheet, fpreal t);
 
 } // namespace VRayForHoudini
 
