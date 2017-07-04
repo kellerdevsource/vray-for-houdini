@@ -17,20 +17,18 @@
 using namespace VRayForHoudini;
 using namespace VRayForHoudini::Attrs;
 
-const char * const theHairParm = "geom_splines";
-const char * const VFH_ATTRIB_INCANDESCENCE = "incandescence";
-const char * const VFH_ATTRIB_TRANSPARENCY = "transparency";
+const char* const theHairParm = "geom_splines";
+const char* const VFH_ATTRIB_INCANDESCENCE = "incandescence";
+const char* const VFH_ATTRIB_TRANSPARENCY = "transparency";
 
 HairPrimitiveExporter::HairPrimitiveExporter(OBJ_Node &obj, OP_Context &ctx, VRayExporter &exp, const GEOPrimList &primList)
 	: PrimitiveExporter(obj, ctx, exp)
 	, primList(primList)
 {}
 
-OP_Node* HairPrimitiveExporter::findPramOwnerForHairParms() const
+OP_Node* HairPrimitiveExporter::findPramOwnerForHairParms(OBJ_Node &objNode)
 {
-	if (objNode.getParmList() &&
-		objNode.getParmList()->getParmPtr(theHairParm))
-	{
+	if (objNode.getParmList() && objNode.getParmList()->getParmPtr(theHairParm)) {
 		 return &objNode;
 	}
 
@@ -72,7 +70,7 @@ bool HairPrimitiveExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc
 	pluginDesc.addAttribute(Attrs::PluginAttr("num_hair_vertices", strands));
 	pluginDesc.addAttribute(Attrs::PluginAttr("hair_vertices", verts));
 
-	OP_Node *prmOwner = findPramOwnerForHairParms();
+	OP_Node *prmOwner = findPramOwnerForHairParms(objNode);
 	if (prmOwner) {
 		// found parent node with hair rendering parameters set
 		// so update plugin description with those parameters

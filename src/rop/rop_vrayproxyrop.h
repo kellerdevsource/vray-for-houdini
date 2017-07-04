@@ -16,14 +16,10 @@
 
 #include <ROP/ROP_Node.h>
 
-
 namespace VRayForHoudini {
 
-class VRayProxyExportOptions;
-
-
-class VRayProxyROP:
-		public ROP_Node
+class VRayProxyROP
+	: public ROP_Node
 {
 public:
 	/// Provide access to VRayProxyROP custom parameter templates
@@ -67,14 +63,14 @@ protected:
 	/// Hide destructor for this class
 	virtual ~VRayProxyROP();
 
-	 /// Called before the rendering begins to verify and initialize export options
-	 /// and geometry to export, create parent directories if necessary
-	 /// and execute prerender scripts
-	 /// @param nframes[in] - number of frames to be exported
-	 /// @param tstart[in] - start time of export
-	 /// @param tend[in] - end time of export
-	 /// @retval return false if the rendering process is aborted, true otherwise
-	virtual int startRender(int nframes, fpreal tstart, fpreal tend) VRAY_OVERRIDE;
+	/// Called before the rendering begins to verify and initialize export options
+	/// and geometry to export, create parent directories if necessary
+	/// and execute prerender scripts
+	/// @param nframes[in] - number of frames to be exported
+	/// @param tstart[in] - start time of export
+	/// @param tend[in] - end time of export
+	/// @retval return false if the rendering process is aborted, true otherwise
+	int startRender(int nframes, fpreal tstart, fpreal tend) VRAY_OVERRIDE;
 
 	/// Called for each frame, executes per frame scripts
 	/// @param time[in] - current export time
@@ -83,12 +79,12 @@ protected:
 	/// @retval one of three return codes
 	///         ROP_ABORT_RENDER, ROP_CONTINUE_RENDER, ROP_RETRY_RENDER
 	///         which tell Houdini whether to stop rendering, continue, or retry the frame
-	virtual ROP_RENDER_CODE renderFrame(fpreal time, UT_Interrupt *boss = 0) VRAY_OVERRIDE;
+	ROP_RENDER_CODE renderFrame(fpreal time, UT_Interrupt *boss = 0) VRAY_OVERRIDE;
 
 	/// Called after the rendering of all frames is done
 	/// @retval one of three return codes to indicate the result of its operations
 	///         ROP_ABORT_RENDER, ROP_CONTINUE_RENDER, ROP_RETRY_RENDER
-	virtual ROP_RENDER_CODE endRender() VRAY_OVERRIDE;
+	ROP_RENDER_CODE endRender() VRAY_OVERRIDE;
 
 private:
 	/// Return geometry sop nodes that should be exported
@@ -96,7 +92,7 @@ private:
 	/// @param time[in] - current export time
 	/// @param sopList[out] - return geometry sop nodes that should be exported
 	/// @retval number of sops found
-	int getSOPList(fpreal time, UT_ValArray<SOP_Node *> &sopList);
+	int getSOPList(fpreal time, SOPList &sopList);
 
 	/// Return export options at given time
 	/// @note called from renderFrame() as some of the options might vary per frame
@@ -105,9 +101,12 @@ private:
 	/// @retval true if no errors occur
 	int getExportOptions(fpreal time, VRayProxyExportOptions &options) const;
 
-private:
+	VUtils::ErrorCode doExport(const SOPList &sopList) const;
+
 	VRayProxyExportOptions  m_options; ///< export options to configure .vrmesh exporter
-	UT_ValArray<SOP_Node *> m_sopList; ///< list with geometry that should be exported
+	SOPList m_sopList; ///< list with geometry that should be exported
+
+	VUTILS_DISABLE_COPY(VRayProxyROP)
 };
 
 } // namespace VRayForHoudini

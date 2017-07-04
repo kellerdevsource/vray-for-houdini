@@ -113,7 +113,7 @@ public:
 	};
 
 	explicit VRayExporter(VRayRendererNode *rop);
-	~VRayExporter();
+	virtual ~VRayExporter();
 
 	/// Create and initilize or reset the V-Ray renderer instance.
 	/// This will stop currently running rendering (if any).
@@ -276,7 +276,7 @@ public:
 	/// Create or update a plugin from a plugin description
 	/// @param pluginDesc - plugin description with relevant properties set
 	/// @retval invalid Plugin object if not successul
-	VRay::Plugin exportPlugin(const Attrs::PluginDesc &pluginDesc);
+	virtual VRay::Plugin exportPlugin(const Attrs::PluginDesc &pluginDesc);
 
 	/// Update a plugin properties from a plugin description
 	/// @param plugin - the plugin to update
