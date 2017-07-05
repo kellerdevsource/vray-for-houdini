@@ -322,6 +322,7 @@ void VRayForHoudini::parseObjectStyleSheet(OBJ_Node &objNode, ObjectStyleSheet &
 	//                 "label":"Target",
 	//                 "group":"ballgrp"
 	//             },
+	//             "flags":["solo", "mute"],
 	//             "overrides":{
 	//                 "material":{
 	//                     "name":"`opfullpath('/shop/vrmat_balls_packedAssign')`"
@@ -335,6 +336,23 @@ void VRayForHoudini::parseObjectStyleSheet(OBJ_Node &objNode, ObjectStyleSheet &
 	for (Value::ConstValueIterator it = styles.Begin(); it != styles.End(); ++it) {
 		const Value &style = *it;
 		UT_ASSERT(style.IsObject());
+
+		int mute = false;
+
+		if (style.HasMember("flags")) {
+			const Value &flags = style["flags"];
+
+			for (Value::ConstValueIterator flagsIt = flags.Begin(); flagsIt != flags.End(); ++flagsIt) {
+				const UT_String flag(flagsIt->GetString());
+				if (flag.equal("mute")) {
+					mute = true;
+				}
+			}
+		}
+
+		if (mute) {
+			continue;
+		}
 
 		if (style.HasMember("overrides")) {
 			const Value &styleOver = style["overrides"];
