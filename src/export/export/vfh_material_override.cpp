@@ -17,9 +17,60 @@
 
 #include <rapidjson/document.h>
 
-
 using namespace VRayForHoudini;
 using namespace rapidjson;
+
+//
+// {
+//     "styles":[
+//         {
+//             "label":"Style",
+//             "target":{
+//                 "label":"Target",
+//                 "group":"ballgrp"
+//             },
+//             "flags":["solo", "mute"],
+//             "overrides":{
+//                 "material":{
+//                     "name":"`opfullpath('/shop/vrmat_balls_packedAssign')`"
+//                 }
+// 				   "materialParameters":{
+// 					    "diffuse":[0.8,0.5,0.7,1]
+// 				   }
+//             }
+//         }
+//     ]
+// }
+//
+
+namespace Styles {
+	const char styles[] = "styles";
+
+	const char flags[] = "flags";
+
+	namespace Flags {
+		const char mute[] = "mute";
+		const char solo[] = "solo";
+	}
+
+	const char target[] = "target";
+
+	namespace Target {
+		const char subTarget[] = "subTarget";
+		const char group[] = "group";
+	}
+
+	const char overrides[] = "overrides";
+
+	namespace Overrides {
+		const char material[] = "material";
+		const char materialParameters[] = "materialParameters";
+
+		namespace Material {
+			const char name[] = "name";
+		}
+	}
+}
 
 void PrimMaterial::mergeOverrides(const MtlOverrideItems &items)
 {
@@ -83,38 +134,22 @@ void VRayForHoudini::mergeStyleSheet(PrimMaterial &primMaterial, const QString &
 	Document document;
 	document.Parse(styleSheet.toLocal8Bit().constData());
 
-	//
-	// {
-	// 	"styles":[
-	// 		{
-	// 			"overrides":{
-	// 				"material":{
-	// 					"name":"/shop/vraymtl"
-	// 				},
-	// 				"materialParameters":{
-	// 					"diffuse":[0.80046379566192627,0.510895013809204102,0.775474309921264648,1
-	// 					]
-	// 				}
-	// 			}
-	// 		}
-	// 	]
-	// }
-	//
-	if (!document.HasMember("styles"))
+
+	if (!document.HasMember(Styles::styles))
 		return;
 
-	const Value &styles = document["styles"];
+	const Value &styles = document[Styles::styles];
 	UT_ASSERT(styles.IsArray());
 
 	for (Value::ConstValueIterator it = styles.Begin(); it != styles.End(); ++it) {
 		const Value &style = *it;
-		if (style.IsObject() && style.HasMember("overrides")) {
-			const Value &styleOver = style["overrides"];
+		if (style.IsObject() && style.HasMember(Styles::overrides)) {
+			const Value &styleOver = style[Styles::overrides];
 
-			if (styleOver.HasMember("material")) {
-				const Value &mtlOver = styleOver["material"];
-				if (mtlOver.HasMember("name")) {
-					const char *matPath = mtlOver["name"].GetString();
+			if (styleOver.HasMember(Styles::Overrides::material)) {
+				const Value &mtlOver = styleOver[Styles::Overrides::material];
+				if (mtlOver.HasMember(Styles::Overrides::Material::name)) {
+					const char *matPath = mtlOver[Styles::Overrides::Material::name].GetString();
 
 					OP_Node *matNode = getOpNodeFromPath(matPath, t);
 					if (matNode) {
@@ -130,8 +165,8 @@ void VRayForHoudini::mergeStyleSheet(PrimMaterial &primMaterial, const QString &
 				}
 			}
 
-			if (!materialOnly && styleOver.HasMember("materialParameters")) {
-				const Value &paramOverrides = styleOver["materialParameters"];
+			if (!materialOnly && styleOver.HasMember(Styles::Overrides::materialParameters)) {
+				const Value &paramOverrides = styleOver[Styles::Overrides::materialParameters];
 
 				parseStyleSheetOverrides(paramOverrides, primMaterial.overrides);
 			}
@@ -297,6 +332,62 @@ static void parseStyleSheetTarget(const Value &target, SheetTarget &sheetTarget)
 	}
 }
 
+static void parseStyleSheet(const Value &style, ObjectStyleSheet &objSheet, fpreal t)
+{
+	// Ignore current style.
+	int mute = false;
+
+	if (style.HasMember(Styles::flags)) {
+		const Value &flagsValue = style[Styles::flags];
+
+		for (Value::ConstValueIterator flagsIt = flagsValue.Begin(); flagsIt != flagsValue.End(); ++flagsIt) {
+			const UT_String flag(flagsIt->GetString());
+			if (flag.equal(Styles::Flags::mute)) {
+				mute = true;
+			}
+		}
+	}
+
+	if (!mute && style.HasMember(Styles::overrides)) {
+		const Value &styleOver = style[Styles::overrides];
+
+		PrimMaterial styleOverrides;
+
+		if (styleOver.HasMember(Styles::Overrides::material)) {
+			const Value &mtlOver = styleOver[Styles::Overrides::material];
+			if (mtlOver.HasMember(Styles::Overrides::Material::name)) {
+				const char *matPath = mtlOver[Styles::Overrides::Material::name].GetString();
+
+				styleOverrides.matNode = getOpNodeFromPath(matPath, t);
+			}
+		}
+
+		if (styleOver.HasMember(Styles::Overrides::materialParameters)) {
+			const Value &paramOverrides = styleOver[Styles::Overrides::materialParameters];
+
+			parseStyleSheetOverrides(paramOverrides, styleOverrides.overrides);
+		}
+
+		if (style.HasMember(Styles::target)) {
+			const Value &target = style[Styles::target];
+
+			// If no specific target will be found later, then style will apply to all.
+			TargetStyleSheet targetStyle(SheetTarget::sheetTargetAll);
+			targetStyle.overrides = styleOverrides;
+
+			if (target.HasMember(Styles::Target::subTarget)) {
+				const Value &subTarget = target[Styles::Target::subTarget];
+				parseStyleSheetTarget(subTarget, targetStyle.target);
+			}
+			else {
+				parseStyleSheetTarget(target, targetStyle.target);
+			}
+
+			objSheet.styles += targetStyle;
+		}
+	}
+}
+
 void VRayForHoudini::parseObjectStyleSheet(OBJ_Node &objNode, ObjectStyleSheet &objSheet, fpreal t)
 {
 	using namespace rapidjson;
@@ -307,90 +398,39 @@ void VRayForHoudini::parseObjectStyleSheet(OBJ_Node &objNode, ObjectStyleSheet &
 	Document document;
 	document.Parse(styleSheet.buffer());
 
-	if (!document.HasMember("styles"))
+	if (!document.HasMember(Styles::styles))
 		return;
 
-	const Value &styles = document["styles"];
+	const Value &styles = document[Styles::styles];
 	UT_ASSERT(styles.IsArray());
 
-	//
-	// {
-	//     "styles":[
-	//         {
-	//             "label":"Style",
-	//             "target":{
-	//                 "label":"Target",
-	//                 "group":"ballgrp"
-	//             },
-	//             "flags":["solo", "mute"],
-	//             "overrides":{
-	//                 "material":{
-	//                     "name":"`opfullpath('/shop/vrmat_balls_packedAssign')`"
-	//                 }
-	//             }
-	//         }
-	//     ]
-	// }
-	// 
+	/// Use only one "solo" style.
+	int solo = false;
 
 	for (Value::ConstValueIterator it = styles.Begin(); it != styles.End(); ++it) {
 		const Value &style = *it;
 		UT_ASSERT(style.IsObject());
 
-		int mute = false;
+		if (style.HasMember(Styles::flags)) {
+			const Value &flagsValue = style[Styles::flags];
 
-		if (style.HasMember("flags")) {
-			const Value &flags = style["flags"];
-
-			for (Value::ConstValueIterator flagsIt = flags.Begin(); flagsIt != flags.End(); ++flagsIt) {
+			for (Value::ConstValueIterator flagsIt = flagsValue.Begin(); flagsIt != flagsValue.End(); ++flagsIt) {
 				const UT_String flag(flagsIt->GetString());
-				if (flag.equal("mute")) {
-					mute = true;
+
+				if (flag.equal(Styles::Flags::solo)) {
+					parseStyleSheet(style, objSheet, t);
+					solo = true;
 				}
 			}
 		}
+	}
 
-		if (mute) {
-			continue;
-		}
+	if (!solo) {
+		for (Value::ConstValueIterator it = styles.Begin(); it != styles.End(); ++it) {
+			const Value &style = *it;
+			UT_ASSERT(style.IsObject());
 
-		if (style.HasMember("overrides")) {
-			const Value &styleOver = style["overrides"];
-
-			PrimMaterial styleOverrides;
-
-			if (styleOver.HasMember("material")) {
-				const Value &mtlOver = styleOver["material"];
-				if (mtlOver.HasMember("name")) {
-					const char *matPath = mtlOver["name"].GetString();
-
-					styleOverrides.matNode = getOpNodeFromPath(matPath, t);
-				}
-			}
-
-			if (styleOver.HasMember("materialParameters")) {
-				const Value &paramOverrides = styleOver["materialParameters"];
-
-				parseStyleSheetOverrides(paramOverrides, styleOverrides.overrides);
-			}
-
-			if (style.HasMember("target")) {
-				const Value &target = style["target"];
-
-				// If no specific target will be found later, then style will apply to all.
-				TargetStyleSheet targetStyle(SheetTarget::sheetTargetAll);
-				targetStyle.overrides = styleOverrides;
-
-				if (target.HasMember("subTarget")) {
-					const Value &subTarget = target["subTarget"];
-					parseStyleSheetTarget(subTarget, targetStyle.target);
-				}
-				else {
-					parseStyleSheetTarget(target, targetStyle.target);
-				}
-
-				objSheet.styles += targetStyle;
-			}
+			parseStyleSheet(style, objSheet, t);
 		}
 	}
 }
