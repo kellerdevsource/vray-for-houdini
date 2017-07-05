@@ -20,29 +20,6 @@
 using namespace VRayForHoudini;
 using namespace rapidjson;
 
-//
-// {
-//     "styles":[
-//         {
-//             "label":"Style",
-//             "target":{
-//                 "label":"Target",
-//                 "group":"ballgrp"
-//             },
-//             "flags":["solo", "mute"],
-//             "overrides":{
-//                 "material":{
-//                     "name":"`opfullpath('/shop/vrmat_balls_packedAssign')`"
-//                 }
-// 				   "materialParameters":{
-// 					    "diffuse":[0.8,0.5,0.7,1]
-// 				   }
-//             }
-//         }
-//     ]
-// }
-//
-
 namespace Styles {
 	const char styles[] = "styles";
 
