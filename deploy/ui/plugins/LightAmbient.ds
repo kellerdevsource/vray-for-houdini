@@ -3,397 +3,516 @@
     label	"Ambient"
     parmtag	{ spare_category "Ambient" }
     parmtag	{ vray_plugin "LightAmbient" }
-    parm {
-	name	"enabled"
-	label	"Enabled"
-	type	toggle
-	default	{ "1" }
-	help	"true if the light is casting light (turned on) and false otherwise; it only makes sense to use this parameter if it is animated, or if another object depends on this node but it must not be rendered"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightAmbient" }
-	parmtag	{ "vray_pluginattr" "enabled" }
-	parmtag	{ "vray_type" "boolean" }
+
+
+    groupsimple { //-----------------------------------------------------------------------------------------------------------------------------------
+      name "folder_main"
+      label "Main"
+
+      parm {
+      name	"enabled"
+      label	"Enabled"
+      type	toggle
+      default	{ "1" }
+      help	"true if the light is casting light (turned on) and false otherwise; it only makes sense to use this parameter if it is animated, or if another object depends on this node but it must not be rendered"
+      range	{ 0 1 }
+      export	none
+      parmtag	{ "cook_dependent" "1" }
+      parmtag	{ "vray_plugin" "LightAmbient" }
+      parmtag	{ "vray_pluginattr" "enabled" }
+      parmtag	{ "vray_type" "boolean" }
+      }
+
+      parm {
+      name	"intensity"
+      label	"Intensity"
+      type	float
+      joinnext
+      disablewhen	"{ map_intensity == 1 }"
+      default	{ "1" }
+      help	"Light intensity"
+      range	{ 0 8 }
+      export	none
+      parmtag	{ "cook_dependent" "1" }
+      parmtag	{ "vray_plugin" "LightAmbient" }
+      parmtag	{ "vray_pluginattr" "intensity" }
+      parmtag	{ "vray_type" "float" }
+      }
+      parm {
+        name	"map_intensity"
+        label	"Map"
+        type	toggle
+        default	{ "0" }
+        help	"Enable to map intensity"
+        range	{ 0 1 }
+        export	none
+      }
+      parm {
+      name	"intensity_tex"
+      label	"Intensity Tex"
+      type	oppath
+      hidewhen	"{ map_intensity == 0 }"
+      default	{ "" }
+      help	"A float texture that if present will override the intensity parameter"
+      range	{ 0 1 }
+      export	none
+      parmtag	{ "cook_dependent" "1" }
+      parmtag	{ "oprelative" "." }
+      parmtag	{ "vray_linked_only" "1" }
+      parmtag	{ "vray_plugin" "LightAmbient" }
+      parmtag	{ "vray_pluginattr" "intensity_tex" }
+      parmtag	{ "vray_type" "TextureFloat" }
+      }
+
+
+      parm {
+        name	"color"
+        label	"Color"
+        type	color
+        joinnext
+        disablewhen "{ map_color == 1 }"
+        size	3
+        default	{ "1" "1" "1" }
+        help	"Color of the light"
+        range	{ 0 10 }
+        export	none
+        parmtag	{ "cook_dependent" "1" }
+        parmtag	{ "vray_plugin" "LightAmbient" }
+        parmtag	{ "vray_pluginattr" "color" }
+        parmtag	{ "vray_type" "Color" }
+      }
+
+      parm {
+        name	"map_color"
+        label	"Map"
+        type	toggle
+        default	{ "0" }
+        help	"Enable to map color"
+        range	{ 0 1 }
+        export	none
+      }
+
+      parm {
+        name	"color_tex"
+        label	"Color Tex"
+        type	oppath
+        hidewhen "{ map_color == 0 }"
+        default	{ "" }
+        help	"A color texture that if present will override the color parameter"
+        range	{ 0 1 }
+        export	none
+        parmtag	{ "cook_dependent" "1" }
+        parmtag	{ "oprelative" "." }
+        parmtag	{ "vray_linked_only" "1" }
+        parmtag	{ "vray_plugin" "LightAmbient" }
+        parmtag	{ "vray_pluginattr" "color_tex" }
+        parmtag	{ "vray_type" "Texture" }
+      }
+
+      parm {
+      	name	"units"
+      	label	"Units"
+      	type	ordinal
+        joinnext
+      	default	{ "0" }
+      	help	"Units for the intensity (0 - default, 1 - lumens, 2 - lm/m/m/sr, 3 - watts, 4 - w/m/m/sr)"
+      	menu	{
+      	    "Default"	"Default"
+      	    "Lumens"	"Lumens"
+      	    "Lm/m/m/sr"	"Lm/m/m/sr"
+      	    "Watts"	"Watts"
+      	    "W/m/m/sr"	"W/m/m/sr"
+      	}
+      	range	{ 0 1 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_enumkeys" "0,1,2,3,4" }
+      	parmtag	{ "vray_plugin" "LightAmbient" }
+      	parmtag	{ "vray_pluginattr" "units" }
+      	parmtag	{ "vray_type" "int" }
+      }
+
+      parm {
+      	name	"use_global_light_level"
+      	label	"Use Global Light Level"
+      	type	toggle
+      	default	{ "1" }
+      	help	"true if the light should use the global light level setting"
+      	range	{ 0 1 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "LightAmbient" }
+      	parmtag	{ "vray_pluginattr" "use_global_light_level" }
+      	parmtag	{ "vray_type" "boolean" }
+      }
+
+      parm {
+      	name	"decay"
+      	label	"Decay"
+      	type	float
+      	default	{ "2" }
+      	range	{ 0 2 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "LightAmbient" }
+      	parmtag	{ "vray_pluginattr" "decay" }
+      	parmtag	{ "vray_type" "float" }
+      }
+      parm {
+        name	"ambient_shade"
+        label	"Ambient Shade"
+        type	oppath
+        default	{ "" }
+        range	{ 0 1 }
+        export	none
+        parmtag	{ "cook_dependent" "1" }
+        parmtag	{ "oprelative" "." }
+        parmtag	{ "vray_plugin" "LightAmbient" }
+        parmtag	{ "vray_pluginattr" "ambient_shade" }
+        parmtag	{ "vray_type" "TextureFloat" }
+      }
+
     }
-    parm {
-	name	"color"
-	label	"Color"
-	type	color
-	size	3
-	default	{ "1" "1" "1" }
-	help	"Color of the light"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightAmbient" }
-	parmtag	{ "vray_pluginattr" "color" }
-	parmtag	{ "vray_type" "Color" }
-    }
-    parm {
-	name	"color_tex"
-	label	"Color Tex"
-	type	oppath
-	default	{ "" }
-	help	"A color texture that if present will override the color parameter"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_linked_only" "1" }
-	parmtag	{ "vray_plugin" "LightAmbient" }
-	parmtag	{ "vray_pluginattr" "color_tex" }
-	parmtag	{ "vray_type" "Texture" }
-    }
-    parm {
-	name	"shadows"
-	label	"Shadows"
-	type	toggle
-	default	{ "1" }
-	help	"true if the light casts shadows and false otherwise"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightAmbient" }
-	parmtag	{ "vray_pluginattr" "shadows" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"shadowColor"
-	label	"Shadowcolor"
-	type	color
-	size	3
-	default	{ "0" "0" "0" }
-	help	"The shadow color. Anything but black is not physically accurate"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightAmbient" }
-	parmtag	{ "vray_pluginattr" "shadowColor" }
-	parmtag	{ "vray_type" "Color" }
-    }
-    parm {
-	name	"shadowColor_tex"
-	label	"Shadowcolor Tex"
-	type	oppath
-	default	{ "" }
-	help	"A color texture that if present will override the shadowColor parameter"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_linked_only" "1" }
-	parmtag	{ "vray_plugin" "LightAmbient" }
-	parmtag	{ "vray_pluginattr" "shadowColor_tex" }
-	parmtag	{ "vray_type" "Texture" }
-    }
-    parm {
-	name	"shadowBias"
-	label	"Shadow Bias"
-	type	float
-	default	{ "0" }
-	help	"Shadow offset from the surface. Helps to prevent polygonal shadow artifacts on low-poly surfaces"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightAmbient" }
-	parmtag	{ "vray_pluginattr" "shadowBias" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"photonSubdivs"
-	label	"Photon Subdivs"
-	type	integer
-	default	{ "500" }
-	help	"Determines the number of photons emitted by this light when calculating the Global Photon Map. 1000 subdivs equal 1 million photons."
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightAmbient" }
-	parmtag	{ "vray_pluginattr" "photonSubdivs" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"causticSubdivs"
-	label	"Caustics Subdivs"
-	type	integer
-	default	{ "1000" }
-	help	"Determines the number of photons emitted by this light when calculating the Caustics Photon Map. 1000 subdivs equal 1 million photons."
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightAmbient" }
-	parmtag	{ "vray_pluginattr" "causticSubdivs" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"diffuseMult"
-	label	"Diffuse Multiplier"
-	type	float
-	default	{ "1" }
-	help	"Multiplier for the diffuse photons"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightAmbient" }
-	parmtag	{ "vray_pluginattr" "diffuseMult" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"causticMult"
-	label	"Caustics Multiplier"
-	type	float
-	default	{ "1" }
-	help	"Multiplier for the caustic photons"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightAmbient" }
-	parmtag	{ "vray_pluginattr" "causticMult" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"cutoffThreshold"
-	label	"Cut-off Threshold"
-	type	float
-	default	{ "0.001" }
-	help	"Light cut-off threshold (speed optimization). If the light intensity for a point is below this threshold, the light will not be computed"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightAmbient" }
-	parmtag	{ "vray_pluginattr" "cutoffThreshold" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"affectDiffuse"
-	label	"Affect Diffuse"
-	type	toggle
-	default	{ "1" }
-	help	"true if the light produces diffuse lighting and false otherwise"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightAmbient" }
-	parmtag	{ "vray_pluginattr" "affectDiffuse" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"affectSpecular"
-	label	"Affect Specular"
-	type	toggle
-	default	{ "1" }
-	help	"true if the light produces specular hilights and false otherwise"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightAmbient" }
-	parmtag	{ "vray_pluginattr" "affectSpecular" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"bumped_below_surface_check"
-	label	"Bumped Normal Check"
-	type	toggle
-	default	{ "0" }
-	help	"true if the bumped normal should be used to check if the light dir is below the surface"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightAmbient" }
-	parmtag	{ "vray_pluginattr" "bumped_below_surface_check" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"nsamples"
-	label	"Nsamples"
-	type	integer
-	default	{ "0" }
-	help	"Number of parameter samples for motion blur"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightAmbient" }
-	parmtag	{ "vray_pluginattr" "nsamples" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"diffuse_contribution"
-	label	"Diffuse Contribution"
-	type	float
-	default	{ "1" }
-	help	"Diffuse contribution for the light"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightAmbient" }
-	parmtag	{ "vray_pluginattr" "diffuse_contribution" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"specular_contribution"
-	label	"Specular Contribution"
-	type	float
-	default	{ "1" }
-	help	"Specular contribution for the light"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightAmbient" }
-	parmtag	{ "vray_pluginattr" "specular_contribution" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"use_global_light_level"
-	label	"Use Global Light Level"
-	type	toggle
-	default	{ "1" }
-	help	"true if the light should use the global light level setting"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightAmbient" }
-	parmtag	{ "vray_pluginattr" "use_global_light_level" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"units"
-	label	"Units"
-	type	ordinal
-	default	{ "0" }
-	help	"Units for the intensity (0 - default, 1 - lumens, 2 - lm/m/m/sr, 3 - watts, 4 - w/m/m/sr)"
-	menu	{
-	    "Default"	"Default"
-	    "Lumens"	"Lumens"
-	    "Lm/m/m/sr"	"Lm/m/m/sr"
-	    "Watts"	"Watts"
-	    "W/m/m/sr"	"W/m/m/sr"
-	}
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1,2,3,4" }
-	parmtag	{ "vray_plugin" "LightAmbient" }
-	parmtag	{ "vray_pluginattr" "units" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"intensity"
-	label	"Intensity"
-	type	float
-	default	{ "1" }
-	help	"Light intensity"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightAmbient" }
-	parmtag	{ "vray_pluginattr" "intensity" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"intensity_tex"
-	label	"Intensity Tex"
-	type	oppath
-	default	{ "" }
-	help	"A float texture that if present will override the intensity parameter"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_linked_only" "1" }
-	parmtag	{ "vray_plugin" "LightAmbient" }
-	parmtag	{ "vray_pluginattr" "intensity_tex" }
-	parmtag	{ "vray_type" "TextureFloat" }
-    }
-    parm {
-	name	"shadowRadius"
-	label	"Shadowradius"
-	type	float
-	default	{ "0" }
-	help	"The size of the light; 0.0 is a point light, larger values produces soft (area) shadows"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightAmbient" }
-	parmtag	{ "vray_pluginattr" "shadowRadius" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"shadowRadius_tex"
-	label	"Shadowradius Tex"
-	type	oppath
-	default	{ "" }
-	help	"A float texture that if present will override the shadows radius parameter"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_linked_only" "1" }
-	parmtag	{ "vray_plugin" "LightAmbient" }
-	parmtag	{ "vray_pluginattr" "shadowRadius_tex" }
-	parmtag	{ "vray_type" "TextureFloat" }
-    }
-    parm {
-	name	"areaSpeculars"
-	label	"Areaspeculars"
-	type	toggle
-	default	{ "0" }
-	help	"If true, the hilights will match the shape of the light; if false, hilights will always be calculated as from a point light"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightAmbient" }
-	parmtag	{ "vray_pluginattr" "areaSpeculars" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"shadowSubdivs"
-	label	"Shadowsubdivs"
-	type	integer
-	default	{ "8" }
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightAmbient" }
-	parmtag	{ "vray_pluginattr" "shadowSubdivs" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"storeWithIrradianceMap"
-	label	"Store With Irradiance Map"
-	type	toggle
-	default	{ "0" }
-	help	"When this option is on and GI calculation is set to Irradiance map V-Ray will calculate the effects of this light and store them in the irradiance map. The result is that the irradiance map is computed more slowly but the rendering takes less time. You can also save the irradiance map and reuse it later."
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightAmbient" }
-	parmtag	{ "vray_pluginattr" "storeWithIrradianceMap" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"decay"
-	label	"Decay"
-	type	float
-	default	{ "2" }
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightAmbient" }
-	parmtag	{ "vray_pluginattr" "decay" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"ambient_shade"
-	label	"Ambient Shade"
-	type	oppath
-	default	{ "" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_plugin" "LightAmbient" }
-	parmtag	{ "vray_pluginattr" "ambient_shade" }
-	parmtag	{ "vray_type" "TextureFloat" }
-    }
+
+
+      groupcollapsible { //-----------------------------------------------------------------------------------------------------------------------------------
+        name "folder_shadows"
+        label "Shadows"
+
+
+
+        parm {
+          name	"shadows"
+          label	"Shadows"
+          type	toggle
+          default	{ "1" }
+          help	"true if the light casts shadows and false otherwise"
+          range	{ 0 1 }
+          export	none
+          parmtag	{ "cook_dependent" "1" }
+          parmtag	{ "vray_plugin" "LightAmbient" }
+          parmtag	{ "vray_pluginattr" "shadows" }
+          parmtag	{ "vray_type" "boolean" }
+        }
+
+        parm {
+          name	"shadowColor"
+        	label	"Shadowcolor"
+        	type	color
+          disablewhen "{ map_shadow_color == 1 }"
+          joinnext
+        	size	3
+        	default	{ "0" "0" "0" }
+        	help	"The shadow color. Anything but black is not physically accurate"
+        	range	{ 0 10 }
+        	export	none
+          parmtag	{ "cook_dependent" "1" }
+          parmtag	{ "vray_plugin" "LightAmbient" }
+          parmtag	{ "vray_pluginattr" "shadowColor" }
+          parmtag	{ "vray_type" "Color" }
+        }
+
+        parm {
+          name	"map_shadow_color"
+          label	"Map"
+          type	toggle
+          default	{ "0" }
+          help	"Enable to map shadow color"
+          range	{ 0 1 }
+          export	none
+        }
+
+        parm {
+          name	"shadowColor_tex"
+        	label	"Shadowcolor Tex"
+        	type	oppath
+          hidewhen "{ map_shadow_color == 0 }"
+        	default	{ "" }
+        	help	"A color texture that if present will override the shadowColor parameter"
+        	range	{ 0 1 }
+        	export	none
+          parmtag	{ "cook_dependent" "1" }
+          parmtag	{ "oprelative" "." }
+          parmtag	{ "vray_linked_only" "1" }
+          parmtag	{ "vray_plugin" "LightAmbient" }
+          parmtag	{ "vray_pluginattr" "shadowColor_tex" }
+          parmtag	{ "vray_type" "Texture" }
+        }
+
+
+        parm {
+          name	"shadowRadius"
+          label	"Shadowradius"
+          type	float
+          joinnext
+          disablewhen "{ map_shadow_radius == 1 }"
+          default	{ "0" }
+          help	"The size of the light; 0.0 is a point light, larger values produces soft (area) shadows"
+          range	{ 0 64 }
+          export	none
+        	parmtag	{ "cook_dependent" "1" }
+        	parmtag	{ "vray_plugin" "LightAmbient" }
+        	parmtag	{ "vray_pluginattr" "shadowRadius" }
+        	parmtag	{ "vray_type" "float" }
+        }
+        parm {
+          name	"map_shadow_radius"
+          label	"Map"
+          type	toggle
+          default	{ "0" }
+          help	"Enable to map shadow color"
+          range	{ 0 1 }
+          export	none
+        }
+
+        parm {
+          name	"shadowRadius_tex"
+          label	"Shadowradius Tex"
+          type	oppath
+          hidewhen "{ map_shadow_radius == 0 }"
+          default	{ "" }
+          help	"A float texture that if present will override the shadows radius parameter"
+          range	{ 0 1 }
+          export	none
+        	parmtag	{ "cook_dependent" "1" }
+        	parmtag	{ "oprelative" "." }
+        	parmtag	{ "vray_linked_only" "1" }
+        	parmtag	{ "vray_plugin" "LightAmbient" }
+        	parmtag	{ "vray_pluginattr" "shadowRadius_tex" }
+        	parmtag	{ "vray_type" "TextureFloat" }
+        }
+
+
+        parm {
+          name	"shadowBias"
+          label	"Shadow Bias"
+          type	float
+          default	{ "0" }
+          help	"Shadow offset from the surface. Helps to prevent polygonal shadow artifacts on low-poly surfaces"
+          range	{ 0 1 }
+          export	none
+          parmtag	{ "cook_dependent" "1" }
+          parmtag	{ "vray_plugin" "LightAmbient" }
+          parmtag	{ "vray_pluginattr" "shadowBias" }
+          parmtag	{ "vray_type" "float" }
+        }
+
+
+        parm {
+        	name	"shadowSubdivs"
+        	label	"Shadowsubdivs"
+        	type	integer
+        	default	{ "8" }
+        	range	{ 0 64 }
+        	export	none
+        	parmtag	{ "cook_dependent" "1" }
+        	parmtag	{ "vray_plugin" "LightAmbient" }
+        	parmtag	{ "vray_pluginattr" "shadowSubdivs" }
+        	parmtag	{ "vray_type" "int" }
+        }
+
+      }
+
+
+        groupcollapsible { //-----------------------------------------------------------------------------------------------------------------------------------
+          name "folder_advanced"
+          label "Advanced"
+
+          parm {
+            name	"affectDiffuse"
+            label	"Affect Diffuse"
+            type	toggle
+            default	{ "1" }
+            help	"true if the light produces diffuse lighting and false otherwise"
+            range	{ 0 1 }
+            export	none
+            parmtag	{ "cook_dependent" "1" }
+            parmtag	{ "vray_plugin" "LightAmbient" }
+            parmtag	{ "vray_pluginattr" "affectDiffuse" }
+            parmtag	{ "vray_type" "boolean" }
+          }
+
+          parm {
+            name	"affectSpecular"
+            label	"Affect Specular"
+            type	toggle
+            default	{ "1" }
+            help	"true if the light produces specular hilights and false otherwise"
+            range	{ 0 1 }
+            export	none
+            parmtag	{ "cook_dependent" "1" }
+            parmtag	{ "vray_plugin" "LightAmbient" }
+            parmtag	{ "vray_pluginattr" "affectSpecular" }
+            parmtag	{ "vray_type" "boolean" }
+          }
+
+
+          parm {
+            name	"diffuse_contribution"
+            label	"Diffuse Contribution"
+            type	float
+            disablewhen "{ affectDiffuse == 0 }"
+            default	{ "1" }
+            help	"Diffuse contribution for the light"
+            range	{ 0 64 }
+            export	none
+          	parmtag	{ "cook_dependent" "1" }
+          	parmtag	{ "vray_plugin" "LightAmbient" }
+          	parmtag	{ "vray_pluginattr" "diffuse_contribution" }
+          	parmtag	{ "vray_type" "float" }
+          }
+
+          parm {
+            name	"specular_contribution"
+            label	"Specular Contribution"
+            type	float
+            disablewhen "{ affectSpecular == 0 }"
+            default	{ "1" }
+            help	"Specular contribution for the light"
+            range	{ 0 64 }
+            export	none
+          	parmtag	{ "cook_dependent" "1" }
+          	parmtag	{ "vray_plugin" "LightAmbient" }
+          	parmtag	{ "vray_pluginattr" "specular_contribution" }
+          	parmtag	{ "vray_type" "float" }
+          }
+
+          parm {
+          	name	"nsamples"
+          	label	"MoBlur Nsamples"
+          	type	integer
+          	default	{ "0" }
+          	help	"Number of parameter samples for motion blur"
+          	range	{ 0 64 }
+          	export	none
+          	parmtag	{ "cook_dependent" "1" }
+          	parmtag	{ "vray_plugin" "LightAmbient" }
+          	parmtag	{ "vray_pluginattr" "nsamples" }
+          	parmtag	{ "vray_type" "int" }
+          }
+
+          parm {
+          	name	"areaSpeculars"
+          	label	"Areaspeculars"
+          	type	toggle
+          	default	{ "0" }
+          	help	"If true, the hilights will match the shape of the light; if false, hilights will always be calculated as from a point light"
+          	range	{ 0 1 }
+          	export	none
+          	parmtag	{ "cook_dependent" "1" }
+          	parmtag	{ "vray_plugin" "LightAmbient" }
+          	parmtag	{ "vray_pluginattr" "areaSpeculars" }
+          	parmtag	{ "vray_type" "boolean" }
+          }
+
+          parm {
+          	name	"cutoffThreshold"
+          	label	"Cut-off Threshold"
+          	type	float
+          	default	{ "0.001" }
+          	help	"Light cut-off threshold (speed optimization). If the light intensity for a point is below this threshold, the light will not be computed"
+          	range	{ 0 64 }
+          	export	none
+          	parmtag	{ "cook_dependent" "1" }
+          	parmtag	{ "vray_plugin" "LightAmbient" }
+          	parmtag	{ "vray_pluginattr" "cutoffThreshold" }
+          	parmtag	{ "vray_type" "float" }
+          }
+
+          parm {
+          	name	"bumped_below_surface_check"
+          	label	"Bumped Normal Check"
+          	type	toggle
+          	default	{ "0" }
+          	help	"true if the bumped normal should be used to check if the light dir is below the surface"
+          	range	{ 0 1 }
+          	export	none
+          	parmtag	{ "cook_dependent" "1" }
+          	parmtag	{ "vray_plugin" "LightAmbient" }
+          	parmtag	{ "vray_pluginattr" "bumped_below_surface_check" }
+          	parmtag	{ "vray_type" "boolean" }
+          }
+
+
+        }
+
+        groupcollapsible { //-----------------------------------------------------------------------------------------------------------------------------------
+          name "folder_gi"
+          label "GI"
+
+          parm {
+            name	"storeWithIrradianceMap"
+            label	"Store With Irradiance Map"
+            type	toggle
+            default	{ "0" }
+            help	"When this option is on and GI calculation is set to Irradiance map V-Ray will calculate the effects of this light and store them in the irradiance map. The result is that the irradiance map is computed more slowly but the rendering takes less time. You can also save the irradiance map and reuse it later."
+            range	{ 0 1 }
+            export	none
+            parmtag	{ "cook_dependent" "1" }
+            parmtag	{ "vray_plugin" "LightAmbient" }
+            parmtag	{ "vray_pluginattr" "storeWithIrradianceMap" }
+            parmtag	{ "vray_type" "boolean" }
+          }
+
+          parm {
+            name	"diffuseMult"
+            label	"Diffuse Multiplier"
+            type	float
+            default	{ "1" }
+            help	"Multiplier for the diffuse photons"
+            range	{ 0 1 }
+            export	none
+            parmtag	{ "cook_dependent" "1" }
+            parmtag	{ "vray_plugin" "LightAmbient" }
+            parmtag	{ "vray_pluginattr" "diffuseMult" }
+            parmtag	{ "vray_type" "float" }
+          }
+          parm {
+            name	"causticMult"
+            label	"Caustics Multiplier"
+            type	float
+            default	{ "1" }
+            help	"Multiplier for the caustic photons"
+            range	{ 0 1 }
+            export	none
+            parmtag	{ "cook_dependent" "1" }
+            parmtag	{ "vray_plugin" "LightAmbient" }
+            parmtag	{ "vray_pluginattr" "causticMult" }
+            parmtag	{ "vray_type" "float" }
+          }
+
+          parm {
+            name	"photonSubdivs"
+            label	"Photon Subdivs"
+            type	integer
+            default	{ "500" }
+            help	"Determines the number of photons emitted by this light when calculating the Global Photon Map. 1000 subdivs equal 1 million photons."
+            range	{ 0 64 }
+            export	none
+            parmtag	{ "cook_dependent" "1" }
+            parmtag	{ "vray_plugin" "LightAmbient" }
+            parmtag	{ "vray_pluginattr" "photonSubdivs" }
+            parmtag	{ "vray_type" "int" }
+          }
+          parm {
+            name	"causticSubdivs"
+            label	"Caustics Subdivs"
+            type	integer
+            default	{ "1000" }
+            help	"Determines the number of photons emitted by this light when calculating the Caustics Photon Map. 1000 subdivs equal 1 million photons."
+            range	{ 0 64 }
+            export	none
+            parmtag	{ "cook_dependent" "1" }
+            parmtag	{ "vray_plugin" "LightAmbient" }
+            parmtag	{ "vray_pluginattr" "causticSubdivs" }
+            parmtag	{ "vray_type" "int" }
+          }
+
+
+
+
+
+        }
+
+
 }
