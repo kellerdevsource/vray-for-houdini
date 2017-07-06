@@ -3,6 +3,11 @@
     label	"Displacement"
     parmtag	{ spare_category "Displacement" }
     parmtag	{ vray_plugin "GeomDisplacedMesh" }
+
+
+
+
+
     parm {
 	name	"displacement_tex_color"
 	label	"Color"
