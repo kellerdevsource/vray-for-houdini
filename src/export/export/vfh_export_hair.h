@@ -12,47 +12,19 @@
 #define VRAY_FOR_HOUDINI_EXPORT_HAIR_H
 
 #include "vfh_export_primitive.h"
+#include "vfh_export_geom.h"
+#include "vfh_plugin_exporter.h"
 
+namespace VRayForHoudini {
 
-namespace VRayForHoudini
-{
-
-/// Exports open poly primitives, bezier and nurbs curves as V-Ray Hair plugin
-/// from geometry detail
-class HairPrimitiveExporter:
-		public PrimitiveExporter
+/// Exports open poly primitives, bezier and nurbs curves as GeomMayaHair plugin.
+class HairPrimitiveExporter
+	: public PrimitiveExporter
 {
 public:
-	/// Test if a primitive is hair primitive i.e
-	/// open poly, bezier or nurbs curve
-	/// @param prim[in] - the primitive to test
-	static bool isHairPrimitive(const GEO_Primitive *prim);
+	HairPrimitiveExporter(OBJ_Node &obj, OP_Context &ctx, VRayExporter &exp, const GEOPrimList &primList);
 
-	/// Fast test if the detail contains hair primitives
-	/// @note this will test the gdp only for primitives of certail type
-	///       but not the actual primitives i.e if the detail contains
-	///       poly prims all of which are closed this function will return
-	///       a false positive
-	/// @param gdp[in] - detail to test
-	static bool containsHairPrimitives(const GU_Detail &gdp);
-
-public:
-	HairPrimitiveExporter(OBJ_Node &obj, OP_Context &ctx, VRayExporter &exp);
-
-	/// Generate hair plugin description from all supported primitives in the
-	/// GU_Detail provided
-	/// @param gdp[in] - the detail to traverse
-	/// @param pluginDesc[out] - the hair plugin description
-	/// @retval true if hair primitives were found in gdp
-	///         and pluginDesc is modified
-	virtual bool asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc &pluginDesc) VRAY_OVERRIDE;
-
-	/// Export hair geometry plugin and generate Node plugin description
-	/// for all supported primitives in the GU_Detail provided
-	/// @param gdp[in] - the detail to traverse
-	/// @param plugins[out] - if any plugins are generted they will appended
-	///                       to this list
-	virtual void exportPrimitives(const GU_Detail &gdp, PluginDescList &plugins) VRAY_OVERRIDE;
+	bool asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc &pluginDesc) VRAY_OVERRIDE;
 
 private:
 	/// Helper function to get the node which holds optional hair geometry rendering
@@ -60,8 +32,9 @@ private:
 	/// or parent fur network via "Edit Rendering Parameters" interface in Houdini
 	/// @retval pointer to the actual node holding the rendering parameters
 	///         might be nullptr in which case the defaults are used
-	OP_Node* findPramOwnerForHairParms() const;
+	static OP_Node* findPramOwnerForHairParms(OBJ_Node &obj);
 
+	const GEOPrimList &primList;
 };
 
 } // namespace VRayForHoudini

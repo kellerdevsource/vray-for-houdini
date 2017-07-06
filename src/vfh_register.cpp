@@ -210,6 +210,7 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "RENDERCHANNEL", RenderChannelVelocity);
 	VFH_VOP_ADD_OPERATOR(table, "RENDERCHANNEL", RenderChannelZDepth);
 	VFH_VOP_ADD_OPERATOR(table, "RENDERCHANNEL", RenderChannelDenoiser);
+	VFH_VOP_ADD_OPERATOR(table, "RENDERCHANNEL", RenderChannelMultiMatte);
 
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFBlinn);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFBump);

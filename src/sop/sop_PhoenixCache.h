@@ -8,9 +8,9 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
-#ifdef  CGR_HAS_AUR
 #ifndef VRAY_FOR_HOUDINI_SOP_NODE_PHOENIX_CACHE_H
 #define VRAY_FOR_HOUDINI_SOP_NODE_PHOENIX_CACHE_H
+#ifdef  CGR_HAS_AUR
 
 #include "sop_node_base.h"
 
@@ -40,5 +40,5 @@ private:
 } // namespace SOP
 } // namespace VRayForHoudini
 
-#endif // VRAY_FOR_HOUDINI_SOP_NODE_PHOENIX_CACHE_H
 #endif // CGR_HAS_AUR
+#endif // VRAY_FOR_HOUDINI_SOP_NODE_PHOENIX_CACHE_H

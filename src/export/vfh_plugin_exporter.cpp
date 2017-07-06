@@ -349,6 +349,9 @@ int VRayPluginRenderer::initRenderer(int hasUI, int reInit)
 				options.useDefaultVfbTheme = false;
 				options.vfbDrawStyle = VRay::RendererOptions::ThemeStyleMaya;
 				options.keepRTRunning = true;
+				options.rtNoiseThreshold = 0.0f;
+				options.rtSampleLevel = INT_MAX;
+				options.rtTimeout = 0;
 
 				m_vray = new VRay::VRayRenderer(options);
 			}
@@ -615,6 +618,9 @@ void VRayPluginRenderer::setRendererMode(int mode)
 			VRay::RendererOptions options = m_vray->getOptions();
 			options.numThreads = VUtils::getNumProcessors() - 1;
 			options.keepRTRunning = true;
+			options.rtNoiseThreshold = 0.0f;
+			options.rtSampleLevel = INT_MAX;
+			options.rtTimeout = 0;
 
 			m_vray->setOptions(options);
 		}
@@ -627,6 +633,14 @@ void VRayPluginRenderer::setRendererMode(int mode)
 void VRayPluginRenderer::removePlugin(const Attrs::PluginDesc &pluginDesc)
 {
 	removePlugin(pluginDesc.pluginName);
+}
+
+
+void VRayPluginRenderer::removePlugin(VRay::Plugin plugin)
+{
+	vassert(m_vray);
+
+	m_vray->removePlugin(plugin);
 }
 
 
@@ -679,7 +693,7 @@ int VRayPluginRenderer::startRender(int locked)
 		Log::getLog().info("Starting render for frame %.3f...", m_vray->getCurrentTime());
 
 		// TODO: unhack this when appsdk saves render regions after m_vray->reset()
-		if (m_savedRegion.saved) {
+		if (m_savedRegion.isValid()) {
 			m_vray->setRenderRegion(m_savedRegion.left, m_savedRegion.top, m_savedRegion.width, m_savedRegion.height);
 		}
 

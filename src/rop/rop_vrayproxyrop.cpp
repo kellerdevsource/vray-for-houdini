@@ -12,6 +12,7 @@
 #include "vfh_log.h"
 #include "vfh_prm_templates.h"
 #include "vfh_export_vrayproxy.h"
+#include "vfh_attr_utils.h"
 
 #include <ROP/ROP_Error.h>
 #include <ROP/ROP_Templates.h>
@@ -96,6 +97,17 @@ int VRayProxyROP::startRender(int nframes, fpreal tstart, fpreal tend)
 	return ROP_CONTINUE_RENDER;
 }
 
+VUtils::ErrorCode VRayProxyROP::doExport(const SOPList &sopList) const
+{
+	VRayProxyExporter exporter(m_options, sopList);
+
+	VUtils::ErrorCode err = exporter.init();
+	if (!err.error()) {
+		err = exporter.doExportFrame();
+	}
+
+	return err;
+}
 
 ROP_RENDER_CODE VRayProxyROP::renderFrame(fpreal time, UT_Interrupt *boss)
 {
@@ -108,19 +120,15 @@ ROP_RENDER_CODE VRayProxyROP::renderFrame(fpreal time, UT_Interrupt *boss)
 	executePreFrameScript(time);
 
 	if (error() < UT_ERROR_ABORT) {
-		int nodeCnt = ((m_options.m_exportAsSingle)? m_sopList.size() : 1);
-		for (int i = 0; i < m_sopList.size(); i += nodeCnt) {
-			VRayProxyExporter exporter(m_options, m_sopList.getRawArray() + i, nodeCnt);
-			VUtils::ErrorCode err = exporter.init();
-			if (err.error()) {
-				addError(ROP_MESSAGE, err.getErrorString().ptr());
-				continue;
-			}
+		if (m_options.m_exportAsSingle) {
+			doExport(m_sopList);
+		}
+		else {
+			for (int sopIdx = 0; sopIdx < m_sopList.size(); ++sopIdx) {
+				SOPList singleItem;
+				singleItem.append(m_sopList(sopIdx));
 
-			// Do actual export
-			err = exporter.doExportFrame();
-			if (err.error()) {
-				addError(ROP_MESSAGE, err.getErrorString().ptr());
+				doExport(singleItem);
 			}
 		}
 	}
@@ -130,7 +138,7 @@ ROP_RENDER_CODE VRayProxyROP::renderFrame(fpreal time, UT_Interrupt *boss)
 		executePostFrameScript(time);
 	}
 
-	return (error() >= UT_ERROR_ABORT)? ROP_ABORT_RENDER : ROP_CONTINUE_RENDER;
+	return error() >= UT_ERROR_ABORT ? ROP_ABORT_RENDER : ROP_CONTINUE_RENDER;
 }
 
 
@@ -144,7 +152,7 @@ ROP_RENDER_CODE VRayProxyROP::endRender()
 }
 
 
-int VRayProxyROP::getSOPList(fpreal time, UT_ValArray<SOP_Node *> &sopList)
+int VRayProxyROP::getSOPList(fpreal time, SOPList &sopList)
 {
 	int nSOPs = sopList.size();
 	OP_Context context(time);
@@ -167,7 +175,7 @@ int VRayProxyROP::getSOPList(fpreal time, UT_ValArray<SOP_Node *> &sopList)
 		if (evalInt("use_soppath", 0, time)) {
 			UT_String soppath;
 			evalString(soppath, "soppath", 0, time);
-			SOP_Node *sopNode = OPgetDirector()->findSOPNode(soppath);
+			SOP_Node *sopNode = getSOPNodeFromPath(soppath, time);
 			if (sopNode) {
 				sopList.append(sopNode);
 			}
@@ -176,7 +184,7 @@ int VRayProxyROP::getSOPList(fpreal time, UT_ValArray<SOP_Node *> &sopList)
 			// get a manager that contains objects
 			UT_String root;
 			evalString(root, "root", 0, time);
-			OP_Network *rootnet = OPgetDirector()->findOBJNode(root);
+			OP_Network *rootnet = getOBJNodeFromPath(root, time);
 			rootnet = (rootnet)? rootnet : OPgetDirector()->getManager("obj");
 
 			UT_ASSERT( rootnet );
