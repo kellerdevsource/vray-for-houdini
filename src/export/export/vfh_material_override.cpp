@@ -49,8 +49,6 @@ namespace Styles {
 	}
 }
 
-const char VFH_ATTR_SHOP_MATERIAL_STYLESHEET[] = "shop_materialstylesheet";
-
 void PrimMaterial::mergeOverrides(const MtlOverrideItems &items)
 {
 	FOR_CONST_IT (MtlOverrideItems, it, items) {
