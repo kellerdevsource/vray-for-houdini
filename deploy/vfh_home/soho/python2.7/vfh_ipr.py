@@ -16,6 +16,8 @@ import soho
 import sohoglue
 import hou
 
+import _vfh_ipr
+
 from soho import SohoParm
 
 def printDebug(fmt, *args):
@@ -40,7 +42,8 @@ now = soho.getDefaultedFloat('state:time', [0.0])[0]
 camera = soho.getDefaultedString('camera', ['/obj/cam1'])[0]
 
 port = soho.getDefaultedInt("vm_image_mplay_socketport", [0])[0]
-print(port)
+
+printDebug("IPR Port: %s" % (port))
 
 # Initialize SOHO with the camera.
 # XXX: This doesn't work for me, but it should according to the documentation...
@@ -65,6 +68,8 @@ elif mode in {"generate"}:
     # command open between invocations of the soho_program.
     #
     printDebug("Processing \"generate\"...")
+
+    _vfh_ipr.init()
 
     printDebug("mode = \"%s\"" % (mode))
     printDebug("now = %.3f" % (now))

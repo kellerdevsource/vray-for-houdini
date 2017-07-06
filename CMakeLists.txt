@@ -30,6 +30,7 @@ endif()
 
 option(WITH_VRAY_FOR_HOUDINI "Build V-Ray For Houdini plugin" ON)
 if(WITH_VRAY_FOR_HOUDINI)
+	add_subdirectory(src/ipr/python)
 	add_subdirectory(src/ipr)
 	add_subdirectory(src)
 endif()
