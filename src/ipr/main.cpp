@@ -8,12 +8,7 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
-#include <Windows.h>
-
-int main(int argc, char const *argv[])
+int main(int, char const*[])
 {
-	while (true) {
-		Sleep(1000);
-	}
 	return 0;
 }
