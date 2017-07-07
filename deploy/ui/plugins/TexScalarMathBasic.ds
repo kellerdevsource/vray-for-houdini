@@ -3,56 +3,74 @@
     label	"Scalar Math Basic"
     parmtag	{ spare_category "Scalar Math Basic" }
     parmtag	{ vray_plugin "TexScalarMathBasic" }
-    parm {
-	name	"op"
-	label	"Op"
-	type	integer
-	default	{ "0" }
-	help	"Operation: Add(), Subtract(), Multiply(), Divide(), Minimum(), Maximum()"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexScalarMathBasic" }
-	parmtag	{ "vray_pluginattr" "op" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"input1"
-	label	"Input1"
-	type	float
-	default	{ "0" }
-	help	"The first scalar input"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexScalarMathBasic" }
-	parmtag	{ "vray_pluginattr" "input1" }
-	parmtag	{ "vray_type" "TextureFloat" }
-    }
-    parm {
-	name	"input2"
-	label	"Input2"
-	type	float
-	default	{ "0" }
-	help	"The second scalar input"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexScalarMathBasic" }
-	parmtag	{ "vray_pluginattr" "input2" }
-	parmtag	{ "vray_type" "TextureFloat" }
-    }
-    parm {
-	name	"max_displacement"
-	label	"Max Displacement"
-	type	float
-	default	{ "-1" }
-	help	"Specifies the maximum displacement value.  If the displacement value is higher than the Max Displacement value, displacement will be clipped"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexScalarMathBasic" }
-	parmtag	{ "vray_pluginattr" "max_displacement" }
-	parmtag	{ "vray_type" "float" }
+
+    groupsimple {
+      name "folder_main"
+      label "Main"
+
+
+      parm {
+        name	"operation"
+        label	"Operation"
+        type	ordinal
+      	default	{ "0" }
+      	help	"Operation to perform on the inputs"
+      	menu	{
+      	    0	"Add"
+      	    1	"Subtract"
+            2 "Multiply"
+            3 "Divide"
+            4 "Minimum"
+            5 "Maximum"
+      	}
+      	range	{ 0 1 }
+      	export	none
+        parmtag	{ "cook_dependent" "1" }
+        parmtag	{ "vray_plugin" "TexScalarMathBasic" }
+        parmtag	{ "vray_pluginattr" "op" }
+        parmtag	{ "vray_type" "int" }
+      }
+
+      parm {
+      	name	"input1"
+      	label	"Input1"
+      	type	float
+      	default	{ "0" }
+      	help	"The first scalar input"
+      	range	{ 0 10 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "TexScalarMathBasic" }
+      	parmtag	{ "vray_pluginattr" "input1" }
+      	parmtag	{ "vray_type" "TextureFloat" }
+      }
+      parm {
+      	name	"input2"
+      	label	"Input2"
+      	type	float
+      	default	{ "0" }
+      	help	"The second scalar input"
+      	range	{ 0 10 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "TexScalarMathBasic" }
+      	parmtag	{ "vray_pluginattr" "input2" }
+      	parmtag	{ "vray_type" "TextureFloat" }
+      }
+
+      parm {
+      	name	"max_displacement"
+      	label	"Max Displacement"
+      	type	float
+      	default	{ "-1" }
+      	help	"Specifies the maximum displacement value.  If the displacement value is higher than the Max Displacement value, displacement will be clipped"
+      	range	{ -1 10 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "TexScalarMathBasic" }
+      	parmtag	{ "vray_pluginattr" "max_displacement" }
+      	parmtag	{ "vray_type" "float" }
+      }
+
     }
 }
