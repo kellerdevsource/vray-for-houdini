@@ -1,0 +1,129 @@
+group {
+    name "SettingsOptions"
+    label "Options"
+#include "SettingsOptions.ds"
+}
+
+group {
+    name "FolderVRayRendererGI"
+    label "Global Illumination"
+
+    group {
+        name "SettingsGI"
+        label "General"
+#include "SettingsGI.ds"
+    }
+
+    group {
+        name "SettingsDMCGI"
+        label "Brute Force"
+#include "SettingsDMCGI.ds"
+    }
+
+    group {
+        name "SettingsIrradianceMap"
+        label "Irradiance Map"
+#include "SettingsIrradianceMap.ds"
+    }
+
+    group {
+        name "SettingsLightCache"
+        label "Light Cache"
+#include "SettingsLightCache.ds"
+    }
+}
+
+group {
+    name "FolderVRayRendererSampler"
+    label "Sampler"
+
+    groupsimple {
+        name "SettingsDMCSampler"
+        label "DMC Sampler"
+#include "SettingsDMCSampler.ds"
+    }
+
+    groupsimple {
+        name "SettingsImageSampler"
+        label "Image Sampler"
+#include "SettingsImageSampler.ds"
+    }
+
+    groupsimple {
+        name "SettingsRegionsGenerator"
+        label "Buckets"
+#include "SettingsRegionsGenerator.ds"
+
+        hidewhen "{ SettingsImageSampler_type == "Progressive" }"
+    }
+}
+
+group {
+    name "SettingsColorMapping"
+    label "Color Mapping"
+#include "SettingsColorMapping.ds"
+}
+
+group {
+    name "FolderVRayRendererCamera"
+    label "Camera"
+
+    group {
+        name "SettingsCamera"
+        label "General"
+#include "SettingsCamera.ds"
+    }
+
+    group {
+        name "SettingsCameraDof"
+        label "Depth Of Field"
+#include "SettingsCameraDof.ds"
+    }
+
+    group {
+        name "SettingsMotionBlur"
+        label "Motion Blur"
+#include "SettingsMotionBlur.ds"
+    }
+
+    group {
+        name "VRayStereoscopicSettings"
+        label "Stereo"
+#include "VRayStereoscopicSettings.ds"
+    }
+}
+
+group {
+    name "VRaySettingsDR"
+    label "DR"
+#include "DRItems.ds"
+}
+
+group {
+    name "FolderVRayRendererAdvanced"
+    label "Advanced"
+
+    group {
+        name "SettingsRaycaster"
+        label "Raycaster"
+#include "SettingsRaycaster.ds"
+    }
+
+    group {
+        name "SettingsRTEngine"
+        label "Realtime Engine"
+#include "SettingsRTEngine.ds"
+    }
+
+    group {
+        name "SettingsCaustics"
+        label "Caustics"
+#include "SettingsCaustics.ds"
+    }
+
+    group {
+        name "SettingsDefaultDisplacement"
+        label "Displacement"
+#include "SettingsDefaultDisplacement.ds"
+    }
+}

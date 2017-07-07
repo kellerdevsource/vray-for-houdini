@@ -1,0 +1,53 @@
+parm {
+    name "dr_enabled"
+    label "Enable"
+    type toggle
+    default { 0 }
+}
+
+parm {
+    name "drhost_port"
+    label "Default Port"
+    type int
+    default { 20207 }
+    disablewhen "{ dr_enabled == 0 }"
+}
+
+multiparm {
+    name "drhost_cnt"
+    label "Number of Hosts"
+
+    parm {
+        name "drhost#_enabled"
+        label "Enabled"
+        type toggle
+        default { 1 }
+        disablewhen "{ dr_enabled == 0 }"
+    }
+
+    parm {
+        name "drhost#_address"
+        label "Host Address"
+        type string
+        disablewhen "{ dr_enabled == 0 } { drhost#_enabled == 0 }"
+    }
+
+    parm {
+        name "drhost#_usedefaultport"
+        label "Use Default Port"
+        type toggle
+        default { 1 }
+        disablewhen "{ dr_enabled == 0 } { drhost#_enabled == 0 }"
+    }
+
+    parm {
+        name "drhost#_port"
+        label "Host Port"
+        type int
+        default { 20207 }
+        hidewhen "{ drhost#_usedefaultport == 1 }"
+        disablewhen "{ dr_enabled == 0 } { drhost#_enabled == 0 }"
+    }
+
+    disablewhen "{ dr_enabled == 0 }"
+}

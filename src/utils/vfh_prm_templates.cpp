@@ -430,13 +430,16 @@ Parm::PRMList& Parm::PRMList::addFolder(const char *label)
 }
 
 
-Parm::PRMList& Parm::PRMList::addFromFile(const char *filepath)
+Parm::PRMList& Parm::PRMList::addFromFile(const char *filepath, const char *includePath)
 {
 	if (!UTisstring(filepath)) {
 		return *this;
 	}
 
 	DS_Stream stream(filepath);
+	if (includePath && *includePath) {
+		stream.addIncludePath(includePath);
+	}
 
 	// need to keep all the pages as myTemplate will have references to it
 	std::shared_ptr< PRM_ScriptGroup > group = std::make_shared< PRM_ScriptGroup >(nullptr);
@@ -444,7 +447,8 @@ Parm::PRMList& Parm::PRMList::addFromFile(const char *filepath)
 	int res = -1;
 	while ((res = stream.getOpenBrace()) > 0) {
 		PRM_ScriptPage *currentPage = new PRM_ScriptPage();
-		res = currentPage->parse(stream, false, nullptr, false);
+
+		res = currentPage->parse(stream, false, nullptr, true, true);
 		if (res > 0) {
 			group->addPage(currentPage);
 		}

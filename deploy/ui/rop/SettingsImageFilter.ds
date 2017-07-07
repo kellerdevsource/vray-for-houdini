@@ -1,8 +1,3 @@
-{
-    name	SettingsImageFilter
-    label	"Settings Image Filter"
-    parmtag	{ spare_category "Settings Image Filter" }
-    parmtag	{ vray_plugin "SettingsImageFilter" }
     parm {
 	name	"on"
 	label	"On"
@@ -42,4 +37,3 @@
 	parmtag	{ "vray_pluginattr" "size" }
 	parmtag	{ "vray_type" "float" }
     }
-}

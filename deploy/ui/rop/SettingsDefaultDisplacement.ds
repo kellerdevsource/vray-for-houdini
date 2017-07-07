@@ -1,8 +1,3 @@
-{
-    name	SettingsDefaultDisplacement
-    label	"Displacement"
-    parmtag	{ spare_category "Displacement" }
-    parmtag	{ vray_plugin "SettingsDefaultDisplacement" }
     parm {
 	name	"SettingsDefaultDisplacement_override_on"
 	label	"Override Max"
@@ -93,4 +88,3 @@
 	parmtag	{ "vray_pluginattr" "relative" }
 	parmtag	{ "vray_type" "boolean" }
     }
-}

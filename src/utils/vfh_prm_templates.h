@@ -142,7 +142,7 @@ public:
 	/// PRM_ScriptPages used by the loaded PRM_Templates
 	/// @filepath - full path to the .ds file
 	/// @return *this
-	PRMList& addFromFile(const char *filepath);
+	PRMList& addFromFile(const char *filepath, const char *includePath=nullptr);
 
 	/// Append all templates from a terminated list of templates
 	/// NOTE: tmpl should be list terminated array of parameters

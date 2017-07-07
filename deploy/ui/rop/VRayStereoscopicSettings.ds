@@ -1,8 +1,3 @@
-{
-    name	VRayStereoscopicSettings
-    label	"Stereo"
-    parmtag	{ spare_category "Stereo" }
-    parmtag	{ vray_plugin "VRayStereoscopicSettings" }
     parm {
 	name	"VRayStereoscopicSettings_eye_distance"
 	label	"Eye Distance"
@@ -338,4 +333,4 @@
 	parmtag	{ "vray_pluginattr" "film_offset_y_right" }
 	parmtag	{ "vray_type" "float" }
     }
-}
+

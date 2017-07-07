@@ -1,8 +1,3 @@
-{
-    name	SettingsIrradianceMap
-    label	"Irradiance Map"
-    parmtag	{ spare_category "Irradiance Map" }
-    parmtag	{ vray_plugin "SettingsIrradianceMap" }
     parm {
 	name	"SettingsIrradianceMap_min_rate"
 	label	"Min Rate"
@@ -396,4 +391,3 @@
 	parmtag	{ "vray_pluginattr" "auto_save_file" }
 	parmtag	{ "vray_type" "String" }
     }
-}
