@@ -15,6 +15,7 @@
 #include "vfh_exporter.h"
 #include "vfh_log.h"
 #include "vfh_hou_utils.h"
+#include "vfh_ipr_viewer.h"
 
 using namespace VRayForHoudini;
 
@@ -72,8 +73,8 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 	Log::getLog().debug("vfhInit()");
 
 	const char *rop = nullptr;
-	const int port = 0;
-	const float now = 0.0f;
+	int port = 0;
+	float now = 0.0f;
 
 	static char *kwlist[] = {
 	    /* 0 */"rop",
@@ -92,7 +93,11 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 		/* 2 */ &now))
 	{
 		HOM_AutoLock autoLock;
-		VRayPluginRenderer::initialize();
+
+		// TODO: Make a configurable option.
+		const int noVFB = false;
+
+		VRayPluginRenderer::initialize(noVFB);
 
 		UT_String ropPath(rop);
 		OP_Node *ropNode = getOpNodeFromPath(ropPath);
@@ -111,7 +116,14 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 			// Whether to re-create V-Ray renderer
 			const int reCreate = wasGPU != isGPU;
 
-			if (exporter.initRenderer(HOU::isUIAvailable(), reCreate)) {
+			if (exporter.initRenderer(noVFB, reCreate)) {
+				initImdisplay(port);
+
+				exporter.getRenderer().getVRay().setOnRenderStart(onRenderStart);
+				exporter.getRenderer().getVRay().setOnImageReady(onImageReady);
+				exporter.getRenderer().getVRay().setOnRTImageUpdated(onRTImageUpdated);
+				exporter.getRenderer().getVRay().setOnBucketReady(onBucketReady);
+
 				exporter.setRendererMode(rendererMode);
 				exporter.setDRSettings();
 				exporter.setWorkMode(getExporterWorkMode(*ropNode));

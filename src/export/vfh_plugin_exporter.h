@@ -99,7 +99,7 @@ public:
 	/// Initilize AppSDK and V-Ray renderer context.
 	/// You'll need to initilize once, before creating a V-Ray renderer instance.
 	/// @retval true on success
-	static bool initialize();
+	static bool initialize(int initVFB=true);
 
 	/// Deinitilize AppSDK and V-Ray renderer context. Free the license.
 	static void deinitialize();

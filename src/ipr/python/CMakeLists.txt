@@ -18,9 +18,11 @@ include_directories(${CMAKE_SOURCE_DIR}/src/utils)
 
 set(SOURCES
 	vfh_ipr.cpp
+	vfh_ipr_viewer.cpp
 )
 
 set(HEADERS
+	vfh_ipr_viewer.h
 )
 
 use_houdini_sdk()
