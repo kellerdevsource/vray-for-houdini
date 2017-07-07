@@ -10,6 +10,9 @@
 #if environment(VRAY_UI_DS_PATH)
 
 collection
+#include "$VRAY_UI_DS_PATH/vfh_rop.ds"
+
+collection
 #include "$VRAY_UI_DS_PATH/plugins/CameraPhysical.ds"
 
 collection

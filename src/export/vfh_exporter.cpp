@@ -51,6 +51,14 @@ using namespace VRayForHoudini;
 
 static boost::format FmtPluginNameWithPrefix("%s@%s");
 
+void VRayExporter::reset()
+{
+	objectExporter.clearPrimPluginCache();
+	objectExporter.clearOpDepPluginCache();
+	objectExporter.clearOpPluginCache();
+
+	m_renderer.reset();
+}
 
 std::string VRayExporter::getPluginName(const OP_Node &opNode, const char *prefix)
 {
@@ -1284,22 +1292,25 @@ void VRayExporter::resetOpCallbacks()
 	}
 
 	m_opRegCallbacks.clear();
+
+	reset();
 }
 
 
 void VRayExporter::addOpCallback(OP_Node *op_node, OP_EventMethod cb)
 {
 	// Install callbacks only for interactive session
-	if (isIPR()) {
-		if (!op_node->hasOpInterest(this, cb)) {
-			Log::getLog().info("addOpInterest(%s)",
-							   op_node->getName().buffer());
+	if (isIPR() != iprModeRT)
+		return;
 
-			op_node->addOpInterest(this, cb);
+	if (!op_node->hasOpInterest(this, cb)) {
+		Log::getLog().info("addOpInterest(%s)",
+							op_node->getName().buffer());
 
-			// Store registered callback for faster removal
-			m_opRegCallbacks.push_back(OpInterestItem(op_node, cb, this));
-		}
+		op_node->addOpInterest(this, cb);
+
+		// Store registered callback for faster removal
+		m_opRegCallbacks.push_back(OpInterestItem(op_node, cb, this));
 	}
 }
 
@@ -1358,6 +1369,8 @@ void VRayExporter::onAbort(VRay::VRayRenderer &renderer)
 	if (renderer.isAborted()) {
 		setAbort();
 	}
+
+	reset();
 }
 
 void VRayExporter::exportScene()
@@ -1923,4 +1936,43 @@ const char* VRayForHoudini::getVRayPluginIDName(VRayPluginID pluginID)
 	};
 
 	return (pluginID < VRayPluginID::MAX_PLUGINID) ? pluginIDNames[static_cast<std::underlying_type<VRayPluginID>::type>(pluginID)] : nullptr;
+}
+
+int VRayForHoudini::getRendererMode(OP_Node &rop)
+{
+	int renderMode = rop.evalInt("render_render_mode", 0, 0.0);
+	switch (renderMode) {
+		case 0: renderMode = -1; break; // Production CPU
+		case 1: renderMode =  1; break; // RT GPU (OpenCL)
+		case 2: renderMode =  4; break; // RT GPU (CUDA)
+		default: renderMode = -1; break;
+	}
+	return renderMode;
+}
+
+int VRayForHoudini::getRendererIprMode(OP_Node &rop)
+{
+	int renderMode = rop.evalInt("render_rt_mode", 0, 0.0);
+	switch (renderMode) {
+		case 0: renderMode =  0; break; // RT CPU
+		case 1: renderMode =  1; break; // RT GPU (OpenCL)
+		case 2: renderMode =  4; break; // RT GPU (CUDA)
+		default: renderMode = 0; break;
+	}
+	return renderMode;
+}
+
+VRayExporter::ExpWorkMode VRayForHoudini::getExporterWorkMode(OP_Node &rop)
+{
+	return static_cast<VRayExporter::ExpWorkMode>(rop.evalInt("render_export_mode", 0, 0.0));
+}
+
+int VRayForHoudini::isBackground()
+{
+	return !HOU::isUIAvailable();
+}
+
+int VRayForHoudini::getFrameBufferType(OP_Node &rop)
+{
+	return isBackground() ? 0 : 1;
 }

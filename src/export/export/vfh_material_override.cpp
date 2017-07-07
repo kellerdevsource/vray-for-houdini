@@ -177,12 +177,14 @@ void VRayForHoudini::mergeMaterialOverrides(PrimMaterial &primMaterial, const UT
 					const PRM_Type &keyParmType = keyParm->getType();
 					const char *parmName = keyParm->getToken();
 
+					// Can't check cache here! Use style-sheet parameter type!
+#if 0
+					// There is already some top-level override for this parameter.
 					MtlOverrideItems::iterator moIt = primMaterial.overrides.find(parmName);
 					if (moIt != primMaterial.overrides.end()) {
-						// There is already some top-level override for this parameter.
 						continue;
 					}
-
+#endif
 					if (keyParmType.isFloatType()) {
 						MtlOverrideItem &overrideItem = primMaterial.overrides[parmName];
 
@@ -373,7 +375,7 @@ void VRayForHoudini::parseObjectStyleSheet(OBJ_Node &objNode, ObjectStyleSheet &
 	objNode.evalString(styleSheet, VFH_ATTR_SHOP_MATERIAL_STYLESHEET, 0, t);
 
 	const char *styleBuf = styleSheet.buffer();
-	if (UTisstring(styleBuf))
+	if (!UTisstring(styleBuf))
 		return;
 
 	Document document;

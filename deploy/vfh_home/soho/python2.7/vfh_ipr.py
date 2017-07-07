@@ -30,6 +30,14 @@ def dumpObjects(listName):
     for obj in soho.objectList(listName):
         printDebug("   %s", obj.getName())
 
+def exportObjects(listName):
+    for obj in soho.objectList(listName):
+        _vfh_ipr.exportOpNode(opNode=obj.getName())
+
+def deleteObjects(listName):
+    for obj in soho.objectList(listName):
+        _vfh_ipr.deleteNode(opNode=obj.getName())
+
 mode = soho.getDefaultedString('state:previewmode', ['default'])[0]
 
 # Evaluate an intrinsic parameter (see HDK_SOHO_API::evaluate())
@@ -43,6 +51,7 @@ camera = soho.getDefaultedString('camera', ['/obj/cam1'])[0]
 
 # MPlay / Render View port.
 port = soho.getDefaultedInt("vm_image_mplay_socketport", [0])[0]
+pid = soho.getDefaultedInt("soho:pipepid", [0])[0]
 
 # ROP node.
 ropPath = soho.getOutputDriver().getName()
@@ -59,33 +68,27 @@ soho.addObjects(now, "*", "*", "*", True)
 # Before we can evaluate the scene from SOHO, we need to lock the object lists.
 soho.lockObjects(now)
 
-if mode in {"default"}:
-    # default: Standard rendering mode
-    #
-    printDebug("Processing \"default\"...")
+printDebug("Processing Mode: \"%s\"" % mode)
 
-elif mode in {"generate"}:
+if mode in {"generate"}:
     # generate: Generation phase of IPR rendering 
     # In generate mode, SOHO will keep the pipe (soho_pipecmd)
     # command open between invocations of the soho_program.
+    #   objlist:all
+    #   objlist:camera
+    #   objlist:light
+    #   objlist:instance
+    #   objlist:fog
+    #   objlist:space
+    #   objlist:mat
     #
-    printDebug("Processing \"generate\"...")
     printDebug("IPR Port: %s" % port)
     printDebug("Driver: %s" % ropPath)
-    printDebug("mode = \"%s\"" % (mode))
-    printDebug("now = %.3f" % (now))
-    printDebug("camera = %s" % (camera))
+    printDebug("Camera: %s" % camera)
+    printDebug("Now: %.3f" % now)
+    printDebug("PID: %i" % pid)
 
-    _vfh_ipr.init(ropPath)
-
-    # dumpObjects("objlist:all")
-
-    dumpObjects("objlist:camera")
-    dumpObjects("objlist:light")
-    dumpObjects("objlist:instance")
-    dumpObjects("objlist:fog")
-    dumpObjects("objlist:space")
-    dumpObjects("objlist:mat")
+    _vfh_ipr.init(rop=ropPath, port=port, now=now)
 
 elif mode in {"update"}:
     # update: Send updated changes from previous generation
@@ -105,13 +108,12 @@ elif mode in {"update"}:
     #   objlist:deletedfog
     # will list all objects which have been deleted from the scene.
     #
-    printDebug("Processing \"update\"...")
+    exportObjects("objlist:dirtyinstance")
+    exportObjects("objlist:dirtylight")
+    # exportObjects("objlist:dirtyspace")
+    # exportObjects("objlist:dirtyfog")
 
-    dumpObjects("objlist:dirtyinstance")
-    dumpObjects("objlist:dirtylight")
-    dumpObjects("objlist:dirtyspace")
-    dumpObjects("objlist:dirtyfog")
-    dumpObjects("objlist:deletedinstance")
-    dumpObjects("objlist:deletedlight")
-    dumpObjects("objlist:deletedspace")
-    dumpObjects("objlist:deletedfog")
+    deleteObjects("objlist:deletedinstance")
+    deleteObjects("objlist:deletedlight")
+    # deleteObjects("objlist:deletedspace")
+    # deleteObjects("objlist:deletedfog")

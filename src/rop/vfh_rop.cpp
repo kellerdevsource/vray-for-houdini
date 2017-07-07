@@ -67,45 +67,6 @@ OP_VariablePair* VRayRendererNode::getVariablePair()
 	return pair;
 }
 
-static int getRendererMode(OP_Node &rop)
-{
-	int renderMode = rop.evalInt("render_render_mode", 0, 0.0);
-	switch (renderMode) {
-		case 0: renderMode = -1; break; // Production CPU
-		case 1: renderMode =  1; break; // RT GPU (OpenCL)
-		case 2: renderMode =  4; break; // RT GPU (CUDA)
-		default: renderMode = -1; break;
-	}
-	return renderMode;
-}
-
-static int getRendererIprMode(OP_Node &rop)
-{
-	int renderMode = rop.evalInt("render_rt_mode", 0, 0.0);
-	switch (renderMode) {
-		case 0: renderMode =  0; break; // RT CPU
-		case 1: renderMode =  1; break; // RT GPU (OpenCL)
-		case 2: renderMode =  4; break; // RT GPU (CUDA)
-		default: renderMode = 0; break;
-	}
-	return renderMode;
-}
-
-static VRayExporter::ExpWorkMode getExporterWorkMode(OP_Node &rop)
-{
-	return static_cast<VRayExporter::ExpWorkMode>(rop.evalInt("render_export_mode", 0, 0.0));
-}
-
-static int isBackground()
-{
-	return NOT(HOU::isUIAvailable());
-}
-
-static int getFrameBufferType(OP_Node &rop)
-{
-	return isBackground() ? 0 : 1;
-}
-
 VRayRendererNode::VRayRendererNode(OP_Network *net, const char *name, OP_Operator *entry)
 	: ROP_Node(net, name, entry)
 	, m_exporter(this)

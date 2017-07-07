@@ -248,6 +248,9 @@ public:
 	/// Get the actual renderer instance
 	VRay::VRayRenderer& getVRay() { return *m_vray; }
 
+	/// Reset scene data.
+	void reset() const;
+
 private:
 	struct RenderRegion {
 		RenderRegion()

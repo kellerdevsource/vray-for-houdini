@@ -772,3 +772,12 @@ void VRayPluginRenderer::setAutoCommit(const bool enable)
 		m_vray->setAutoCommit(enable);
 	}
 }
+
+void VRayPluginRenderer::reset() const
+{
+	if (!m_vray)
+		return;
+
+	m_vray->stop();
+	m_vray->reset();
+}

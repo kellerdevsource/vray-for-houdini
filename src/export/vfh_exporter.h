@@ -126,6 +126,12 @@ public:
 		ExpExport, ///< export a vrscene
 	};
 
+	enum IprMode {
+		iprModeNone = 0,
+		iprModeRT,
+		iprModeRenderView,
+	};
+
 	explicit VRayExporter(OP_Node *rop);
 	virtual ~VRayExporter();
 
@@ -415,6 +421,9 @@ public:
 	/// Show VFB if renderer is started and VFB is enabled
 	void showVFB();
 
+	/// Reset exporter / renderer.
+	void reset();
+
 	/// Helper functions to retrieve the input node given an input connection name
 	/// @param op_node[in] - VOP node
 	/// @param inputName[in] -  the input connection name
@@ -603,6 +612,13 @@ public:
 };
 
 const char *getVRayPluginIDName(VRayPluginID pluginID);
+
+int getFrameBufferType(OP_Node &rop);
+int getRendererMode(OP_Node &rop);
+int getRendererIprMode(OP_Node &rop);
+VRayExporter::ExpWorkMode getExporterWorkMode(OP_Node &rop);
+
+int isBackground();
 
 } // namespace VRayForHoudini
 
