@@ -23,9 +23,6 @@ class BRDFLayered:
 		public VOP::NodeBase
 {
 public:
-	static void           addPrmTemplate(Parm::PRMList &prmTemplate);
-
-public:
 	BRDFLayered(OP_Network *parent, const char *name, OP_Operator *entry):NodeBase(parent, name, entry) {}
 	virtual              ~BRDFLayered() {}
 

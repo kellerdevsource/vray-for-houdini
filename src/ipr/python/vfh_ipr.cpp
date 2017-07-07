@@ -10,9 +10,12 @@
 
 #include <Python.h>
 
+#include "vfh_exporter.h"
 #include "vfh_log.h"
 
 using namespace VRayForHoudini;
+
+VRayExporter exporter(nullptr);
 
 static PyObject* vfhInit(PyObject *self, PyObject *args, PyObject *keywds)
 {

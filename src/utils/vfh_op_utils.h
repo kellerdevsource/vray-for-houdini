@@ -23,6 +23,26 @@ namespace VRayForHoudini {
 /// @param pluginID V-Ray plugin ID to match.
 OP_Node *getVRayNodeFromOp(OP_Node &matNode, const char *socketName, const char *pluginID=nullptr);
 
+/// Get the internal budle holding active lights that should be exported to V-Ray.
+/// It will take into account parameters on the V-Ray ROP Object tab
+OP_Bundle* getActiveLightsBundle(OP_Node &rop, fpreal t);
+
+/// Get the internal budle holding forced lights set on the V-Ray ROP Object tab
+OP_Bundle* getForcedLightsBundle(OP_Node &rop, fpreal t);
+
+/// Get the internal budle holding active geometry nodes that should be exported to V-Ray.
+/// It will take into account parameters on the V-Ray ROP Object tab
+OP_Bundle* getActiveGeometryBundle(OP_Node &rop, fpreal t);
+
+/// Get the internal budle holding forced geometry set on the V-Ray ROP Object tab
+OP_Bundle* getForcedGeometryBundle(OP_Node &rop, fpreal t);
+
+/// Get the internal budle holding matte geometry set on the V-Ray ROP Object tab
+OP_Bundle* getMatteGeometryBundle(OP_Node &rop, fpreal t);
+
+/// Get the internal budle holding phantom geometry set on the V-Ray ROP Object tab
+OP_Bundle* getPhantomGeometryBundle(OP_Node &rop, fpreal t);
+
 } // namespace VRayForHoudini
 
 #endif // VRAY_FOR_HOUDINI_VFH_OP_UTILS_H

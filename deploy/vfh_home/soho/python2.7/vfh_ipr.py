@@ -41,9 +41,11 @@ now = soho.getDefaultedFloat('state:time', [0.0])[0]
 # SOHO always returns lists of values.
 camera = soho.getDefaultedString('camera', ['/obj/cam1'])[0]
 
+# MPlay / Render View port.
 port = soho.getDefaultedInt("vm_image_mplay_socketport", [0])[0]
 
-printDebug("IPR Port: %s" % (port))
+# ROP node.
+ropPath = soho.getOutputDriver().getName()
 
 # Initialize SOHO with the camera.
 # XXX: This doesn't work for me, but it should according to the documentation...
@@ -68,12 +70,13 @@ elif mode in {"generate"}:
     # command open between invocations of the soho_program.
     #
     printDebug("Processing \"generate\"...")
-
-    _vfh_ipr.init()
-
+    printDebug("IPR Port: %s" % port)
+    printDebug("Driver: %s" % ropPath)
     printDebug("mode = \"%s\"" % (mode))
     printDebug("now = %.3f" % (now))
     printDebug("camera = %s" % (camera))
+
+    _vfh_ipr.init(ropPath)
 
     # dumpObjects("objlist:all")
 

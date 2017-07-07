@@ -149,7 +149,8 @@ void newSopOperator(OP_OperatorTable *table)
 #endif
 
 	VFH_ADD_SOP_GENERATOR(table, GeomPlane);
-	VFH_ADD_SOP_GENERATOR_CUSTOM(table, VRayProxy, Parm::getPrmTemplate("GeomMeshFile"));
+	VFH_ADD_SOP_GENERATOR_CUSTOM(table, VRayProxy, VRayProxy::getPrmTemplate());
+
 	VRayProxyROP::register_sopoperator(table);
 }
 

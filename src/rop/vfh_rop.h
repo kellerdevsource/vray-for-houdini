@@ -48,26 +48,6 @@ public:
 	/// @retval false if no change was made
 	virtual bool updateParmsFlags() VRAY_OVERRIDE;
 
-	/// Get the internal budle holding active lights that should be exported to V-Ray.
-	/// It will take into account parameters on the V-Ray ROP Object tab
-	OP_Bundle* getActiveLightsBundle();
-
-	/// Get the internal budle holding forced lights set on the V-Ray ROP Object tab
-	OP_Bundle* getForcedLightsBundle();
-
-	/// Get the internal budle holding active geometry nodes that should be exported to V-Ray.
-	/// It will take into account parameters on the V-Ray ROP Object tab
-	OP_Bundle* getActiveGeometryBundle();
-
-	/// Get the internal budle holding forced geometry set on the V-Ray ROP Object tab
-	OP_Bundle* getForcedGeometryBundle();
-
-	/// Get the internal budle holding matte geometry set on the V-Ray ROP Object tab
-	OP_Bundle* getMatteGeometryBundle();
-
-	/// Get the internal budle holding phantom geometry set on the V-Ray ROP Object tab
-	OP_Bundle* getPhantomGeometryBundle();
-
 	/// Start a rendering session in IPR mode. We always use RT GPU engine for IPR
 	/// @param time[in] - current time
 	void startIPR(fpreal time);
@@ -114,9 +94,6 @@ private:
 	VRayExporter                 m_exporter; ///< vfh main exporter bound to this ROP node
 	fpreal                       m_tstart; ///< start render time
 	fpreal                       m_tend; ///< end render time
-	UT_String                    m_activeLightsBundleName; ///< bundle name for the lights that should be passed to V-Ray
-	UT_String                    m_activeGeoBundleName; ///< bundle name for the OBJ geometry nodes that should be passed to V-Ray
-	UT_String                    m_forcedGeoBundleName; ///< bundle name for the forced OBJ geometry nodes that should be passed to V-Ray
 
 public:
 	/// Register this node type as ROP operator

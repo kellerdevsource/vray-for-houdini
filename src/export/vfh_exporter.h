@@ -16,7 +16,6 @@
 #include "vfh_plugin_exporter.h"
 #include "vfh_plugin_info.h"
 #include "vfh_export_view.h"
-#include "vfh_vfb.h"
 #include "vfh_hashes.h"
 #include "vfh_export_geom.h"
 
@@ -29,6 +28,21 @@
 namespace VRayForHoudini {
 
 class VRayRendererNode;
+
+enum class VRayPluginID {
+	SunLight = 0,
+	LightDirect,
+	LightAmbient,
+	LightOmni,
+	LightSphere,
+	LightSpot,
+	LightRectangle,
+	LightMesh,
+	LightIES,
+	LightDome,
+	VRayClipper,
+	MAX_PLUGINID
+};
 
 enum class VRayPluginType {
 	UNKNOWN = 0,
@@ -112,7 +126,7 @@ public:
 		ExpExport, ///< export a vrscene
 	};
 
-	explicit VRayExporter(VRayRendererNode *rop);
+	explicit VRayExporter(OP_Node *rop);
 	virtual ~VRayExporter();
 
 	/// Create and initilize or reset the V-Ray renderer instance.
@@ -360,7 +374,7 @@ public:
 	VRayPluginRenderer& getRenderer() { return m_renderer; }
 
 	/// Get the V-Ray ROP bound to this exporter
-	VRayRendererNode& getRop() { return *m_rop; }
+	OP_Node& getRop() const { return *m_rop; }
 
 	/// Get ROP error code. This is called from the V-Ray ROP on every frame
 	/// to check if rendering should be aborted
@@ -513,9 +527,12 @@ public:
 	/// Returns object exporter.
 	ObjectExporter& getObjectExporter() { return objectExporter; }
 
+	void setROP(OP_Node &value) { m_rop = &value; }
+
 private:
-	VRayRendererNode              *m_rop; ///< the ROP node bound to this exporter
-	UI::VFB                        m_vfb; ///< a lightweigth frame buffer window showing the rendered image, when we don't want V-Ray VFB
+	/// The driver node bound to this exporter.
+	OP_Node *m_rop;
+
 	VRayPluginRenderer             m_renderer; ///< the plugin renderer
 	OP_Context                     m_context; ///< current export context
 	int                            m_renderMode; ///< rend
@@ -570,7 +587,6 @@ public:
 	void onAbort(VRay::VRayRenderer &renderer);
 
 	/// Callbacks for tracking changes on different types of nodes
-	static void RtCallbackObjManager(OP_Node *caller, void *callee, OP_EventType type, void *data);
 	static void RtCallbackLight(OP_Node *caller, void *callee, OP_EventType type, void *data);
 	static void RtCallbackOBJGeometry(OP_Node *caller, void *callee, OP_EventType type, void *data);
 	static void RtCallbackSOPChanged(OP_Node *caller, void *callee, OP_EventType type, void *data);
@@ -585,6 +601,8 @@ public:
 	/// A lock for callbacks.
 	static VUtils::FastCriticalSection csect;
 };
+
+const char *getVRayPluginIDName(VRayPluginID pluginID);
 
 } // namespace VRayForHoudini
 

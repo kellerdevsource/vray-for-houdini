@@ -373,7 +373,7 @@ void VRayForHoudini::parseObjectStyleSheet(OBJ_Node &objNode, ObjectStyleSheet &
 	objNode.evalString(styleSheet, VFH_ATTR_SHOP_MATERIAL_STYLESHEET, 0, t);
 
 	const char *styleBuf = styleSheet.buffer();
-	if (!(styleBuf && *styleBuf))
+	if (UTisstring(styleBuf))
 		return;
 
 	Document document;
