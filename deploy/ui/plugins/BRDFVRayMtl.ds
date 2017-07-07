@@ -25,7 +25,6 @@
       name	"option_reflect_on_back"
       label	"Reflect On Back Side"
       type	toggle
-      joinnext
       default	{ "0" }
       help	"true to compute reflections for back sides of objects"
       range	{ 0 1 }
@@ -35,21 +34,6 @@
       parmtag	{ "vray_pluginattr" "option_reflect_on_back" }
       parmtag	{ "vray_type" "boolean" }
     }
-
-    parm {
-    	name	"opacity"
-    	label	"Opacity"
-    	type	float
-    	default	{ "1" }
-    	help	"The opacity of the material"
-    	range	{ 0 64 }
-    	export	none
-    	parmtag	{ "cook_dependent" "1" }
-    	parmtag	{ "vray_plugin" "BRDFVRayMtl" }
-    	parmtag	{ "vray_pluginattr" "opacity" }
-    	parmtag	{ "vray_type" "TextureFloat" }
-    }
-
 
     group {
       name "folder_diffuse"
@@ -82,6 +66,21 @@
           parmtag	{ "vray_pluginattr" "roughness" }
           parmtag	{ "vray_type" "TextureFloat" }
         }
+
+        parm {
+        	name	"opacity"
+        	label	"Opacity"
+        	type	float
+        	default	{ "1" }
+        	help	"The opacity of the material"
+        	range	{ 0 1 }
+        	export	none
+        	parmtag	{ "cook_dependent" "1" }
+        	parmtag	{ "vray_plugin" "BRDFVRayMtl" }
+        	parmtag	{ "vray_pluginattr" "opacity" }
+        	parmtag	{ "vray_type" "TextureFloat" }
+        }
+        
         parm {
           name	"self_illumination"
           label	"Self-illumination Color"
@@ -144,7 +143,7 @@
           size	4
           default	{ "0" "0" "0" "1" }
           help	"The reflection color of the material"
-          range	{ 0 10 }
+          range	{ 0 1 }
           export	none
           parmtag	{ "cook_dependent" "1" }
           parmtag	{ "vray_plugin" "BRDFVRayMtl" }
@@ -160,7 +159,7 @@
           default	{ "1" }
           help	"The glossiness of the hilights"
           disablewhen	"{ hilight_glossiness_lock != 0 }"
-          range	{ 0 64 }
+          range	{ 0 1 }
           export	none
           parmtag	{ "cook_dependent" "1" }
           parmtag	{ "vray_plugin" "BRDFVRayMtl" }
@@ -187,7 +186,7 @@
           type	float
           default	{ "1" }
           help	"The glossiness of the reflections"
-          range	{ 0 64 }
+          range	{ 0 1 }
           export	none
           parmtag	{ "cook_dependent" "1" }
           parmtag	{ "vray_plugin" "BRDFVRayMtl" }
@@ -200,7 +199,7 @@
           type	integer
           default	{ "8" }
           help	"Subdivs for glossy reflectons"
-          range	{ 0 20 }
+          range	{ 0 24 }
           export	none
           parmtag	{ "cook_dependent" "1" }
           parmtag	{ "vray_plugin" "BRDFVRayMtl" }
@@ -291,7 +290,7 @@
               type	float
               default	{ "0" }
               help	"The anisotropy for glossy reflections, from -1 to 1 (0.0 is isotropic reflections)"
-              range	{ 0 64 }
+              range	{ -1 1 }
               export	none
               parmtag	{ "cook_dependent" "1" }
               parmtag	{ "vray_plugin" "BRDFVRayMtl" }
@@ -375,7 +374,7 @@
             size	3
             default	{ "0" "0" "0" }
             help	"The color to use when the maximum depth is reached"
-            range	{ 0 10 }
+            range	{ 0 1 }
             export	none
             parmtag	{ "cook_dependent" "1" }
             parmtag	{ "vray_plugin" "BRDFVRayMtl" }
@@ -429,7 +428,7 @@
             default	{ "0" }
             help	"Fall off for the dim distance"
             disablewhen	"{ reflect_dim_distance_on != 1 }"
-            range	{ 0 64 }
+            range	{ 0 1 }
             export	none
             parmtag	{ "cook_dependent" "1" }
             parmtag	{ "vray_plugin" "BRDFVRayMtl" }
@@ -442,7 +441,7 @@
             type	float
             default	{ "0" }
             help	"How much to soften hilights and reflections at grazing light angles"
-            range	{ 0 64 }
+            range	{ 0 1 }
             export	none
             parmtag	{ "cook_dependent" "1" }
             parmtag	{ "vray_plugin" "BRDFVRayMtl" }
@@ -493,7 +492,7 @@
           	type	integer
           	default	{ "-1" }
           	disablewhen	"{ refl_interpolation_on != 1 }"
-          	range	{ 0 64 }
+          	range	{ 0 1 }
           	export	none
           	parmtag	{ "cook_dependent" "1" }
           	parmtag	{ "vray_plugin" "BRDFVRayMtl" }
@@ -506,7 +505,7 @@
           	type	integer
           	default	{ "1" }
           	disablewhen	"{ refl_interpolation_on != 1 }"
-          	range	{ 0 64 }
+          	range	{ 0 5 }
           	export	none
           	parmtag	{ "cook_dependent" "1" }
           	parmtag	{ "vray_plugin" "BRDFVRayMtl" }
@@ -519,7 +518,7 @@
           	type	integer
           	default	{ "20" }
           	disablewhen	"{ refl_interpolation_on != 1 }"
-          	range	{ 0 64 }
+          	range	{ 0 32 }
           	export	none
           	parmtag	{ "cook_dependent" "1" }
           	parmtag	{ "vray_plugin" "BRDFVRayMtl" }
@@ -532,7 +531,7 @@
           	type	float
           	default	{ "0.25" }
           	disablewhen	"{ refl_interpolation_on != 1 }"
-          	range	{ 0 64 }
+          	range	{ 0 1 }
           	export	none
           	parmtag	{ "cook_dependent" "1" }
           	parmtag	{ "vray_plugin" "BRDFVRayMtl" }
@@ -545,7 +544,7 @@
           	type	float
           	default	{ "0.4" }
           	disablewhen	"{ refl_interpolation_on != 1 }"
-          	range	{ 0 64 }
+          	range	{ 0 1 }
           	export	none
           	parmtag	{ "cook_dependent" "1" }
           	parmtag	{ "vray_plugin" "BRDFVRayMtl" }
@@ -859,7 +858,7 @@
               type	integer
               default	{ "5" }
               help	"The maximum depth for refractions"
-              range	{ 0 10 }
+              range	{ 0 8 }
               export	none
               parmtag	{ "cook_dependent" "1" }
               parmtag	{ "vray_plugin" "BRDFVRayMtl" }
@@ -937,7 +936,7 @@
             type	integer
             default	{ "-1" }
             disablewhen	"{ refr_interpolation_on != 1 }"
-            range	{ 0 64 }
+            range	{ 0 1 }
             export	none
             parmtag	{ "cook_dependent" "1" }
             parmtag	{ "vray_plugin" "BRDFVRayMtl" }
@@ -950,7 +949,7 @@
             type	integer
             default	{ "1" }
             disablewhen	"{ refr_interpolation_on != 1 }"
-            range	{ 0 64 }
+            range	{ 0 5 }
             export	none
             parmtag	{ "cook_dependent" "1" }
             parmtag	{ "vray_plugin" "BRDFVRayMtl" }
@@ -963,7 +962,7 @@
             type	integer
             default	{ "20" }
             disablewhen	"{ refr_interpolation_on != 1 }"
-            range	{ 0 64 }
+            range	{ 0 32 }
             export	none
             parmtag	{ "cook_dependent" "1" }
             parmtag	{ "vray_plugin" "BRDFVRayMtl" }
@@ -976,7 +975,7 @@
             type	float
             default	{ "0.25" }
             disablewhen	"{ refr_interpolation_on != 1 }"
-            range	{ 0 64 }
+            range	{ 0 1 }
             export	none
             parmtag	{ "cook_dependent" "1" }
             parmtag	{ "vray_plugin" "BRDFVRayMtl" }
@@ -990,7 +989,7 @@
             type	float
             default	{ "0.4" }
             disablewhen	"{ refr_interpolation_on != 1 }"
-            range	{ 0 64 }
+            range	{ 0 1 }
             export	none
             parmtag	{ "cook_dependent" "1" }
             parmtag	{ "vray_plugin" "BRDFVRayMtl" }
