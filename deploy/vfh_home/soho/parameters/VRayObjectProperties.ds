@@ -1,0 +1,15 @@
+{
+    name VRayObjectProperties
+    label "V-Ray Object Properties"
+
+    parmtag { spare_category "V-Ray Object" }
+
+    parm {
+        name    "vray_objectID"
+        label   "Object ID"
+        type    integer
+        default { "0" }
+        range   { 0! 10000! }
+        export  none
+    }
+}

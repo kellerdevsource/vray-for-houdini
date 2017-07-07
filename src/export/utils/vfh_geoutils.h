@@ -69,7 +69,6 @@ struct MapChannel
 
 typedef std::unordered_map<std::string, MapChannel> MapChannels;
 
-
 typedef UT_ValArray< const GEO_Primitive* > GEOPrimList;
 typedef UT_Array< const GA_Attribute * >    GEOAttribList;
 

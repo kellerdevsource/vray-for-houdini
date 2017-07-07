@@ -14,6 +14,7 @@ include_directories(.)
 include_directories(io)
 include_directories(ui)
 include_directories(op)
+include_directories(gu)
 include_directories(sop)
 include_directories(vop)
 include_directories(rop)
@@ -27,8 +28,152 @@ include_directories(export/utils)
 include_directories(export/export)
 include_directories(utils)
 
-file(GLOB_RECURSE SOURCES "*.cpp")
-file(GLOB_RECURSE HEADERS "*.h" "*.hpp")
+# Qt has JSON modules only in > 5.x version and we need to support 4.x also.
+include_directories(${CMAKE_SOURCE_DIR}/thirdparty/rapidjson/include)
+
+set(SOURCES
+	cmd/vfh_cmd_register.cpp
+	cmd/vfh_cmd_vrayproxy.cpp
+	export/export/vfh_export_geom.cpp
+	export/export/vfh_export_hair.cpp
+	export/export/vfh_export_mesh.cpp
+	export/export/vfh_export_primitive.cpp
+	export/export/vfh_export_vrayproxy.cpp
+	export/export/vfh_material_override.cpp
+	export/utils/vfh_geoutils.cpp
+	export/utils/vfh_tex_utils.cpp
+	export/utils/vfh_utils_vrmesh.cpp
+	export/vfh_export_context.cpp
+	export/vfh_export_light.cpp
+	export/vfh_export_material.cpp
+	export/vfh_export_object.cpp
+	export/vfh_export_view.cpp
+	export/vfh_exporter.cpp
+	export/vfh_plugin_attrs.cpp
+	export/vfh_plugin_exporter.cpp
+	gu/gu_volumegridref.cpp
+	gu/gu_vrayproxyref.cpp
+	io/io_vrmesh.cpp
+	obj/obj_node_base.cpp
+	op/op_node_base.cpp
+	rop/rop_vrayproxyrop.cpp
+	rop/vfh_rop.cpp
+	sop/sop_GeomPlane.cpp
+	sop/sop_PhoenixCache.cpp
+	sop/sop_vrayproxy.cpp
+	sop/sop_vrayscene.cpp
+	sop/vfh_vrayproxyutils.cpp
+	ui/vfh_vfb.cpp
+	utils/vfh_error.cpp
+	utils/vfh_hashes.cpp
+	utils/vfh_hou_utils.cpp
+	utils/vfh_log.cpp
+	utils/vfh_op_utils.cpp
+	utils/vfh_plugin_info.cpp
+	utils/vfh_prm_def.cpp
+	utils/vfh_prm_defaults.cpp
+	utils/vfh_prm_globals.cpp
+	utils/vfh_prm_json.cpp
+	utils/vfh_prm_templates.cpp
+	vfh_register.cpp
+	vop/brdf/vop_BRDFLayered.cpp
+	vop/brdf/vop_BRDFScanned.cpp
+	vop/brdf/vop_BRDFVRayMtl.cpp
+	vop/env/vop_SettingsEnvironment.cpp
+	vop/material/vop_GeomDisplacedMesh.cpp
+	vop/material/vop_GeomStaticSmoothedMesh.cpp
+	vop/material/vop_MaterialOutput.cpp
+	vop/material/vop_MtlMulti.cpp
+	vop/material/vop_PhoenixSim.cpp
+	vop/meta/vop_meta_image_file.cpp
+	vop/rc/vop_rc_container.cpp
+	vop/texture/vop_TexFalloff.cpp
+	vop/texture/vop_TexGradRamp.cpp
+	vop/texture/vop_TexLayered.cpp
+	vop/texture/vop_TexRemap.cpp
+	vop/texture/vop_texture_output.cpp
+	vop/vop_context.cpp
+	vop/vop_node_base.cpp
+)
+
+set(HEADERS
+	cmd/vfh_cmd_register.h
+	cmd/vfh_cmd_vrayproxy.h
+	export/export/vfh_export_geom.h
+	export/export/vfh_export_hair.h
+	export/export/vfh_export_mesh.h
+	export/export/vfh_export_primitive.h
+	export/export/vfh_export_vrayproxy.h
+	export/export/vfh_material_override.h
+	export/utils/vfh_geoutils.h
+	export/utils/vfh_tex_utils.h
+	export/utils/vfh_utils_vrmesh.h
+	export/vfh_export_context.h
+	export/vfh_export_view.h
+	export/vfh_exporter.h
+	export/vfh_plugin_attrs.h
+	export/vfh_plugin_exporter.h
+	export/vfh_vray.h
+	gu/gu_volumegridref.h
+	gu/gu_vrayproxyref.h
+	io/io_vrmesh.h
+	obj/obj_node_base.h
+	obj/obj_node_def.h
+	op/op_node_base.h
+	rop/rop_vrayproxyrop.h
+	rop/vfh_rop.h
+	sop/sop_GeomPlane.h
+	sop/sop_PhoenixCache.h
+	sop/sop_node_base.h
+	sop/sop_node_def.h
+	sop/sop_vrayproxy.h
+	sop/sop_vrayscene.h
+	sop/vfh_vrayproxyutils.h
+	ui/vfh_vfb.h
+	utils/vfh_attr_utils.h
+	utils/vfh_error.h
+	utils/vfh_hashes.h
+	utils/vfh_hou_utils.h
+	utils/vfh_log.h
+	utils/vfh_op_utils.h
+	utils/vfh_plugin_info.h
+	utils/vfh_primitives.h
+	utils/vfh_prm_def.h
+	utils/vfh_prm_defaults.h
+	utils/vfh_prm_globals.h
+	utils/vfh_prm_json.h
+	utils/vfh_prm_templates.h
+	vfh_class_utils.h
+	vfh_defines.h
+	vfh_includes.h
+	vfh_typedefs.h
+	vop/brdf/vop_BRDFLayered.h
+	vop/brdf/vop_BRDFScanned.h
+	vop/brdf/vop_BRDFVRayMtl.h
+	vop/brdf/vop_brdf_def.h
+	vop/env/vop_SettingsEnvironment.h
+	vop/env/vop_env_def.h
+	vop/material/vop_GeomDisplacedMesh.h
+	vop/material/vop_GeomStaticSmoothedMesh.h
+	vop/material/vop_MaterialOutput.h
+	vop/material/vop_MtlMulti.h
+	vop/material/vop_PhoenixSim.h
+	vop/material/vop_mtl_def.h
+	vop/meta/vop_meta_def.h
+	vop/meta/vop_meta_image_file.h
+	vop/rc/vop_rc_container.h
+	vop/rc/vop_rc_def.h
+	vop/texture/vop_TexFalloff.h
+	vop/texture/vop_TexGradRamp.h
+	vop/texture/vop_TexLayered.h
+	vop/texture/vop_TexRemap.h
+	vop/texture/vop_texture_def.h
+	vop/texture/vop_texture_output.h
+	vop/uvwgen/vop_uvwgen_def.h
+	vop/vop_context.h
+	vop/vop_node_base.h
+	utils/vfh_lru_cache.hpp
+)
 
 if (WIN32)
 	macro(GroupSources curdir)

@@ -29,4 +29,7 @@ collection
 
 #endif // VRAY_UI_DS_PATH
 
+collection
+#include "VRayObjectProperties.ds"
+
 }

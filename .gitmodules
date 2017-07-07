@@ -2,3 +2,7 @@
 	path = deploy/plugins_desc
 	url = https://github.com/bdancer/plugins_desc.git
 	ignore = all
+[submodule "thirdparty/rapidjson"]
+	path = thirdparty/rapidjson
+	url = https://github.com/miloyip/rapidjson.git
+	ignore = all

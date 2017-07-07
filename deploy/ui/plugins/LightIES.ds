@@ -3,445 +3,535 @@
     label	"IES"
     parmtag	{ spare_category "IES" }
     parmtag	{ vray_plugin "LightIES" }
-    parm {
-	name	"enabled"
-	label	"Enabled"
-	type	toggle
-	default	{ "1" }
-	help	"true if the light is casting light (turned on) and false otherwise; it only makes sense to use this parameter if it is animated, or if another object depends on this node but it must not be rendered"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightIES" }
-	parmtag	{ "vray_pluginattr" "enabled" }
-	parmtag	{ "vray_type" "boolean" }
+
+    groupsimple { //-----------------------------------------------------------------------------------------------------------------------------------
+      name "folder_main"
+      label "Main"
+
+      parm {
+        name	"enabled"
+        label	"Enabled"
+        type	toggle
+        default	{ "1" }
+        help	"true if the light is casting light (turned on) and false otherwise; it only makes sense to use this parameter if it is animated, or if another object depends on this node but it must not be rendered"
+        range	{ 0 1 }
+        export	none
+        parmtag	{ "cook_dependent" "1" }
+        parmtag	{ "vray_plugin" "LightIES" }
+        parmtag	{ "vray_pluginattr" "enabled" }
+        parmtag	{ "vray_type" "boolean" }
+      }
+
+      parm {
+        name	"power"
+        label	"Power"
+        type	float
+        joinnext
+        default	{ "0" }
+        help	"Limuous power (in lm); if zero, the default lumious power from the IES profile is used"
+        range	{ 0 64 }
+        export	none
+        parmtag	{ "cook_dependent" "1" }
+        parmtag	{ "vray_plugin" "LightIES" }
+        parmtag	{ "vray_pluginattr" "power" }
+        parmtag	{ "vray_type" "float" }
+      }
+
+      parm {
+      	name	"rescale_max_intensty"
+      	label	"Rescale Max Intensty"
+      	type	toggle
+      	default	{ "0" }
+      	help	"If this is true, the intensity values of the IES file will be scaled, so the new maximum value is new_max_intensity"
+      	range	{ 0 1 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "LightIES" }
+      	parmtag	{ "vray_pluginattr" "rescale_max_intensty" }
+      	parmtag	{ "vray_type" "boolean" }
+      }
+      parm {
+      	name	"new_max_intensity"
+      	label	"New Max Intensity"
+      	type	float
+        hidewhen "{ rescale_max_intensty == 0 }"
+      	default	{ "1" }
+      	help	"The new maximum intensity after rescaling the intensities in the IES file, when rescale_max_intensty is true. This value is in cd(candelas)"
+      	disablewhen	"{ rescale_max_intensty != 1 }"
+      	range	{ 0 10 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "LightIES" }
+      	parmtag	{ "vray_pluginattr" "new_max_intensity" }
+      	parmtag	{ "vray_type" "float" }
+      }
+
+      parm {
+      	name	"ies_file"
+      	label	"Ies File"
+      	type	file
+      	default	{ "" }
+      	help	"IES file with luminaire description"
+      	range	{ 0 1 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "filechooser_pattern" "*.ies" }
+      	parmtag	{ "vray_plugin" "LightIES" }
+      	parmtag	{ "vray_pluginattr" "ies_file" }
+      	parmtag	{ "vray_type" "String" }
+      }
+
+      parm {
+        name	"color"
+        label	"Color"
+        type	color
+        joinnext
+        disablewhen "{ map_color == 1 }"
+        size	3
+        default	{ "1" "1" "1" }
+        help	"Color of the light"
+        range	{ 0 10 }
+        export	none
+        parmtag	{ "cook_dependent" "1" }
+        parmtag	{ "vray_plugin" "LightIES" }
+        parmtag	{ "vray_pluginattr" "color" }
+        parmtag	{ "vray_type" "Color" }
+      }
+
+      parm {
+        name	"map_color"
+        label	"Map"
+        type	toggle
+        default	{ "0" }
+        help	"Enable to map color"
+        range	{ 0 1 }
+        export	none
+      }
+
+      parm {
+        name	"color_tex"
+        label	"Color Tex"
+        type	oppath
+        hidewhen "{ map_color == 0 }"
+        default	{ "" }
+        help	"A color texture that if present will override the color parameter"
+        range	{ 0 1 }
+        export	none
+        parmtag	{ "cook_dependent" "1" }
+        parmtag	{ "oprelative" "." }
+        parmtag	{ "vray_linked_only" "1" }
+        parmtag	{ "vray_plugin" "LightIES" }
+        parmtag	{ "vray_pluginattr" "color_tex" }
+        parmtag	{ "vray_type" "Texture" }
+      }
+
+      parm {
+      	name	"ies_light_shape"
+      	label	"Ies Light Shape"
+      	type	ordinal
+      	default	{ "0" }
+      	help	"IES light shape"
+      	menu	{
+      	    0	"From File"
+      	    1	"Custom"
+      	}
+      	range	{ 0 1 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_enumkeys" "-1,0" }
+      	parmtag	{ "vray_plugin" "LightIES" }
+      	parmtag	{ "vray_pluginattr" "ies_light_shape" }
+      	parmtag	{ "vray_type" "int" }
+      }
+
+      parm {
+      	name	"ies_light_width"
+      	label	"Ies Light Width"
+      	type	float
+        hidewhen "{ ies_light_shape 0 }"
+      	default	{ "0" }
+      	help	"Light shape width (in metres)"
+      	range	{ 0 64 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "LightIES" }
+      	parmtag	{ "vray_pluginattr" "ies_light_width" }
+      	parmtag	{ "vray_type" "float" }
+      }
+
+      parm {
+      	name	"ies_light_length"
+      	label	"Ies Light Length"
+      	type	float
+        hidewhen "{ ies_light_shape == 0 }"
+      	default	{ "0" }
+      	help	"Light shape length (in metres)"
+      	range	{ 0 64 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "LightIES" }
+      	parmtag	{ "vray_pluginattr" "ies_light_length" }
+      	parmtag	{ "vray_type" "float" }
+      }
+
+      parm {
+      	name	"ies_light_height"
+      	label	"Ies Light Height"
+      	type	float
+        hidewhen "{ ies_light_shape == 0 }"
+      	default	{ "0" }
+      	help	"Light shape height (in metres)"
+      	range	{ 0 64 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "LightIES" }
+      	parmtag	{ "vray_pluginattr" "ies_light_height" }
+      	parmtag	{ "vray_type" "float" }
+      }
+
+      parm {
+      	name	"ies_light_diameter"
+      	label	"Ies Light Diameter"
+      	type	float
+        hidewhen "{ ies_light_shape == 0 }"
+      	default	{ "0" }
+      	help	"Light shape diameter (in metres)"
+      	range	{ 0 64 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "LightIES" }
+      	parmtag	{ "vray_pluginattr" "ies_light_diameter" }
+      	parmtag	{ "vray_type" "float" }
+      }
+
+      parm {
+      	name	"filter_color"
+      	label	"Filter Color"
+      	type	color
+      	size	3
+      	default	{ "1" "1" "1" }
+      	range	{ 0 10 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "LightIES" }
+      	parmtag	{ "vray_pluginattr" "filter_color" }
+      	parmtag	{ "vray_type" "Color" }
+      }
+      parm {
+      	name	"soft_shadows"
+      	label	"Soft Shadows"
+      	type	toggle
+      	default	{ "0" }
+      	help	"true to use the shape of the light as described in the IES profile"
+      	range	{ 0 1 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "LightIES" }
+      	parmtag	{ "vray_pluginattr" "soft_shadows" }
+      	parmtag	{ "vray_type" "int" }
+      }
+
+      parm {
+      	name	"use_global_light_level"
+      	label	"Use Global Light Level"
+      	type	toggle
+      	default	{ "1" }
+      	help	"true if the light should use the global light level setting"
+      	range	{ 0 1 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "LightIES" }
+      	parmtag	{ "vray_pluginattr" "use_global_light_level" }
+      	parmtag	{ "vray_type" "boolean" }
+      }
+
     }
-    parm {
-	name	"color"
-	label	"Color"
-	type	color
-	size	3
-	default	{ "1" "1" "1" }
-	help	"Color of the light"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightIES" }
-	parmtag	{ "vray_pluginattr" "color" }
-	parmtag	{ "vray_type" "Color" }
+
+    groupcollapsible { //-----------------------------------------------------------------------------------------------------------------------------------
+      name "folder_shadows"
+      label "Shadows"
+
+      parm {
+        name	"shadows"
+        label	"Shadows"
+        type	toggle
+        default	{ "1" }
+        help	"true if the light casts shadows and false otherwise"
+        range	{ 0 1 }
+        export	none
+        parmtag	{ "cook_dependent" "1" }
+        parmtag	{ "vray_plugin" "LightIES" }
+        parmtag	{ "vray_pluginattr" "shadows" }
+        parmtag	{ "vray_type" "boolean" }
+      }
+      parm {
+        name	"shadowColor"
+        label	"Shadowcolor"
+        type	color
+        disablewhen "{ map_shadow_color == 1 }"
+        joinnext
+        size	3
+        default	{ "0" "0" "0" }
+        help	"The shadow color. Anything but black is not physically accurate"
+        range	{ 0 10 }
+        export	none
+        parmtag	{ "cook_dependent" "1" }
+        parmtag	{ "vray_plugin" "LightIES" }
+        parmtag	{ "vray_pluginattr" "shadowColor" }
+        parmtag	{ "vray_type" "Color" }
+      }
+
+      parm {
+        name	"map_shadow_color"
+        label	"Map"
+        type	toggle
+        default	{ "0" }
+        help	"Enable to map shadow color"
+        range	{ 0 1 }
+        export	none
+      }
+
+      parm {
+        name	"shadowColor_tex"
+        label	"Shadowcolor Tex"
+        type	oppath
+        hidewhen "{ map_shadow_color == 0 }"
+        default	{ "" }
+        help	"A color texture that if present will override the shadowColor parameter"
+        range	{ 0 1 }
+        export	none
+        parmtag	{ "cook_dependent" "1" }
+        parmtag	{ "oprelative" "." }
+        parmtag	{ "vray_linked_only" "1" }
+        parmtag	{ "vray_plugin" "LightIES" }
+        parmtag	{ "vray_pluginattr" "shadowColor_tex" }
+        parmtag	{ "vray_type" "Texture" }
+      }
+
+      parm {
+        name	"shadowBias"
+        label	"Shadow Bias"
+        type	float
+        default	{ "0" }
+        help	"Shadow offset from the surface. Helps to prevent polygonal shadow artifacts on low-poly surfaces"
+        range	{ 0 1 }
+        export	none
+        parmtag	{ "cook_dependent" "1" }
+        parmtag	{ "vray_plugin" "LightIES" }
+        parmtag	{ "vray_pluginattr" "shadowBias" }
+        parmtag	{ "vray_type" "float" }
+      }
+
+      parm {
+      	name	"shadowSubdivs"
+      	label	"Shadowsubdivs"
+      	type	integer
+      	default	{ "8" }
+      	range	{ 0 64 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "LightIES" }
+      	parmtag	{ "vray_pluginattr" "shadowSubdivs" }
+      	parmtag	{ "vray_type" "int" }
+      }
+
+
+
     }
-    parm {
-	name	"color_tex"
-	label	"Color Tex"
-	type	oppath
-	default	{ "" }
-	help	"A color texture that if present will override the color parameter"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_linked_only" "1" }
-	parmtag	{ "vray_plugin" "LightIES" }
-	parmtag	{ "vray_pluginattr" "color_tex" }
-	parmtag	{ "vray_type" "Texture" }
+
+    groupcollapsible { //-----------------------------------------------------------------------------------------------------------------------------------
+      name "folder_advanced"
+      label "Advanced"
+
+
+      parm {
+        name	"affectDiffuse"
+        label	"Affect Diffuse"
+        type	toggle
+        default	{ "1" }
+        help	"true if the light produces diffuse lighting and false otherwise"
+        range	{ 0 1 }
+        export	none
+        parmtag	{ "cook_dependent" "1" }
+        parmtag	{ "vray_plugin" "LightIES" }
+        parmtag	{ "vray_pluginattr" "affectDiffuse" }
+        parmtag	{ "vray_type" "boolean" }
+      }
+
+      parm {
+        name	"affectSpecular"
+        label	"Affect Specular"
+        type	toggle
+        default	{ "1" }
+        help	"true if the light produces specular hilights and false otherwise"
+        range	{ 0 1 }
+        export	none
+        parmtag	{ "cook_dependent" "1" }
+        parmtag	{ "vray_plugin" "LightIES" }
+        parmtag	{ "vray_pluginattr" "affectSpecular" }
+        parmtag	{ "vray_type" "boolean" }
+      }
+
+      parm {
+        name	"diffuse_contribution"
+        label	"Diffuse Contribution"
+        type	float
+        disablewhen "{ affectDiffuse == 0 }"
+        default	{ "1" }
+        help	"Diffuse contribution for the light"
+        range	{ 0 64 }
+        export	none
+        parmtag	{ "cook_dependent" "1" }
+        parmtag	{ "vray_plugin" "LightIES" }
+        parmtag	{ "vray_pluginattr" "diffuse_contribution" }
+        parmtag	{ "vray_type" "float" }
+      }
+      parm {
+        name	"specular_contribution"
+        label	"Specular Contribution"
+        type	float
+        disablewhen "{ affectSpecular == 0 }"
+        default	{ "1" }
+        help	"Specular contribution for the light"
+        range	{ 0 64 }
+        export	none
+        parmtag	{ "cook_dependent" "1" }
+        parmtag	{ "vray_plugin" "LightIES" }
+        parmtag	{ "vray_pluginattr" "specular_contribution" }
+        parmtag	{ "vray_type" "float" }
+      }
+
+      parm {
+        name	"nsamples"
+        label	" MoBlur Nsamples"
+        type	integer
+        default	{ "0" }
+        help	"Number of parameter samples for motion blur"
+        range	{ 0 64 }
+        export	none
+        parmtag	{ "cook_dependent" "1" }
+        parmtag	{ "vray_plugin" "LightIES" }
+        parmtag	{ "vray_pluginattr" "nsamples" }
+        parmtag	{ "vray_type" "int" }
+      }
+
+      parm {
+      	name	"area_speculars"
+      	label	"Area Speculars"
+      	type	toggle
+      	default	{ "1" }
+      	help	"true to cause specular highlights produced by the light to match the light shape; false to always produce speculars as a point light"
+      	range	{ 0 1 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "LightIES" }
+      	parmtag	{ "vray_pluginattr" "area_speculars" }
+      	parmtag	{ "vray_type" "boolean" }
+      }
+
+      parm {
+        name	"cutoffThreshold"
+        label	"Cut-off Threshold"
+        type	float
+        default	{ "0.001" }
+        help	"Light cut-off threshold (speed optimization). If the light intensity for a point is below this threshold, the light will not be computed"
+        range	{ 0 64 }
+        export	none
+        parmtag	{ "cook_dependent" "1" }
+        parmtag	{ "vray_plugin" "LightIES" }
+        parmtag	{ "vray_pluginattr" "cutoffThreshold" }
+        parmtag	{ "vray_type" "float" }
+      }
+      parm {
+        name	"bumped_below_surface_check"
+        label	"Bumped Normal Check"
+        type	toggle
+        default	{ "0" }
+        help	"true if the bumped normal should be used to check if the light dir is below the surface"
+        range	{ 0 1 }
+        export	none
+        parmtag	{ "cook_dependent" "1" }
+        parmtag	{ "vray_plugin" "LightIES" }
+        parmtag	{ "vray_pluginattr" "bumped_below_surface_check" }
+        parmtag	{ "vray_type" "boolean" }
+      }
+
     }
-    parm {
-	name	"shadows"
-	label	"Shadows"
-	type	toggle
-	default	{ "1" }
-	help	"true if the light casts shadows and false otherwise"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightIES" }
-	parmtag	{ "vray_pluginattr" "shadows" }
-	parmtag	{ "vray_type" "boolean" }
+
+
+    groupcollapsible { //-----------------------------------------------------------------------------------------------------------------------------------
+      name "folder_gi"
+      label "GI"
+
+      parm {
+        name	"storeWithIrradianceMap"
+        label	"Store With Irradiance Map"
+        type	toggle
+        default	{ "0" }
+        help	"When this option is on and GI calculation is set to Irradiance map V-Ray will calculate the effects of this light and store them in the irradiance map. The result is that the irradiance map is computed more slowly but the rendering takes less time. You can also save the irradiance map and reuse it later."
+        range	{ 0 1 }
+        export	none
+        parmtag	{ "cook_dependent" "1" }
+        parmtag	{ "vray_plugin" "LightIES" }
+        parmtag	{ "vray_pluginattr" "storeWithIrradianceMap" }
+        parmtag	{ "vray_type" "boolean" }
+      }
+
+      parm {
+        name	"diffuseMult"
+        label	"Diffuse Multiplier"
+        type	float
+        default	{ "1" }
+        help	"Multiplier for the diffuse photons"
+        range	{ 0 64 }
+        export	none
+        parmtag	{ "cook_dependent" "1" }
+        parmtag	{ "vray_plugin" "LightIES" }
+        parmtag	{ "vray_pluginattr" "diffuseMult" }
+        parmtag	{ "vray_type" "float" }
+      }
+
+      parm {
+        name	"causticMult"
+        label	"Caustics Multiplier"
+        type	float
+        default	{ "1" }
+        help	"Multiplier for the caustic photons"
+        range	{ 0 64 }
+        export	none
+        parmtag	{ "cook_dependent" "1" }
+        parmtag	{ "vray_plugin" "LightIES" }
+        parmtag	{ "vray_pluginattr" "causticMult" }
+        parmtag	{ "vray_type" "float" }
+      }
+
+      parm {
+        name	"photonSubdivs"
+        label	"Photon Subdivs"
+        type	integer
+        default	{ "500" }
+        help	"Determines the number of photons emitted by this light when calculating the Global Photon Map. 1000 subdivs equal 1 million photons."
+        range	{ 0 64 }
+        export	none
+        parmtag	{ "cook_dependent" "1" }
+        parmtag	{ "vray_plugin" "LightIES" }
+        parmtag	{ "vray_pluginattr" "photonSubdivs" }
+        parmtag	{ "vray_type" "int" }
+      }
+      parm {
+        name	"causticSubdivs"
+        label	"Caustics Subdivs"
+        type	integer
+        default	{ "1000" }
+        help	"Determines the number of photons emitted by this light when calculating the Caustics Photon Map. 1000 subdivs equal 1 million photons."
+        range	{ 0 64 }
+        export	none
+        parmtag	{ "cook_dependent" "1" }
+        parmtag	{ "vray_plugin" "LightIES" }
+        parmtag	{ "vray_pluginattr" "causticSubdivs" }
+        parmtag	{ "vray_type" "int" }
+      }
+
     }
-    parm {
-	name	"shadowColor"
-	label	"Shadowcolor"
-	type	color
-	size	3
-	default	{ "0" "0" "0" }
-	help	"The shadow color. Anything but black is not physically accurate"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightIES" }
-	parmtag	{ "vray_pluginattr" "shadowColor" }
-	parmtag	{ "vray_type" "Color" }
-    }
-    parm {
-	name	"shadowColor_tex"
-	label	"Shadowcolor Tex"
-	type	oppath
-	default	{ "" }
-	help	"A color texture that if present will override the shadowColor parameter"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "oprelative" "." }
-	parmtag	{ "vray_linked_only" "1" }
-	parmtag	{ "vray_plugin" "LightIES" }
-	parmtag	{ "vray_pluginattr" "shadowColor_tex" }
-	parmtag	{ "vray_type" "Texture" }
-    }
-    parm {
-	name	"shadowBias"
-	label	"Shadow Bias"
-	type	float
-	default	{ "0" }
-	help	"Shadow offset from the surface. Helps to prevent polygonal shadow artifacts on low-poly surfaces"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightIES" }
-	parmtag	{ "vray_pluginattr" "shadowBias" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"photonSubdivs"
-	label	"Photon Subdivs"
-	type	integer
-	default	{ "500" }
-	help	"Determines the number of photons emitted by this light when calculating the Global Photon Map. 1000 subdivs equal 1 million photons."
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightIES" }
-	parmtag	{ "vray_pluginattr" "photonSubdivs" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"causticSubdivs"
-	label	"Caustics Subdivs"
-	type	integer
-	default	{ "1000" }
-	help	"Determines the number of photons emitted by this light when calculating the Caustics Photon Map. 1000 subdivs equal 1 million photons."
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightIES" }
-	parmtag	{ "vray_pluginattr" "causticSubdivs" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"diffuseMult"
-	label	"Diffuse Multiplier"
-	type	float
-	default	{ "1" }
-	help	"Multiplier for the diffuse photons"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightIES" }
-	parmtag	{ "vray_pluginattr" "diffuseMult" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"causticMult"
-	label	"Caustics Multiplier"
-	type	float
-	default	{ "1" }
-	help	"Multiplier for the caustic photons"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightIES" }
-	parmtag	{ "vray_pluginattr" "causticMult" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"cutoffThreshold"
-	label	"Cut-off Threshold"
-	type	float
-	default	{ "0.001" }
-	help	"Light cut-off threshold (speed optimization). If the light intensity for a point is below this threshold, the light will not be computed"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightIES" }
-	parmtag	{ "vray_pluginattr" "cutoffThreshold" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"affectDiffuse"
-	label	"Affect Diffuse"
-	type	toggle
-	default	{ "1" }
-	help	"true if the light produces diffuse lighting and false otherwise"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightIES" }
-	parmtag	{ "vray_pluginattr" "affectDiffuse" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"affectSpecular"
-	label	"Affect Specular"
-	type	toggle
-	default	{ "1" }
-	help	"true if the light produces specular hilights and false otherwise"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightIES" }
-	parmtag	{ "vray_pluginattr" "affectSpecular" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"bumped_below_surface_check"
-	label	"Bumped Normal Check"
-	type	toggle
-	default	{ "0" }
-	help	"true if the bumped normal should be used to check if the light dir is below the surface"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightIES" }
-	parmtag	{ "vray_pluginattr" "bumped_below_surface_check" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"nsamples"
-	label	"Nsamples"
-	type	integer
-	default	{ "0" }
-	help	"Number of parameter samples for motion blur"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightIES" }
-	parmtag	{ "vray_pluginattr" "nsamples" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"diffuse_contribution"
-	label	"Diffuse Contribution"
-	type	float
-	default	{ "1" }
-	help	"Diffuse contribution for the light"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightIES" }
-	parmtag	{ "vray_pluginattr" "diffuse_contribution" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"specular_contribution"
-	label	"Specular Contribution"
-	type	float
-	default	{ "1" }
-	help	"Specular contribution for the light"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightIES" }
-	parmtag	{ "vray_pluginattr" "specular_contribution" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"use_global_light_level"
-	label	"Use Global Light Level"
-	type	toggle
-	default	{ "1" }
-	help	"true if the light should use the global light level setting"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightIES" }
-	parmtag	{ "vray_pluginattr" "use_global_light_level" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"shadowSubdivs"
-	label	"Shadowsubdivs"
-	type	integer
-	default	{ "8" }
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightIES" }
-	parmtag	{ "vray_pluginattr" "shadowSubdivs" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"storeWithIrradianceMap"
-	label	"Store With Irradiance Map"
-	type	toggle
-	default	{ "0" }
-	help	"When this option is on and GI calculation is set to Irradiance map V-Ray will calculate the effects of this light and store them in the irradiance map. The result is that the irradiance map is computed more slowly but the rendering takes less time. You can also save the irradiance map and reuse it later."
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightIES" }
-	parmtag	{ "vray_pluginattr" "storeWithIrradianceMap" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"ies_file"
-	label	"Ies File"
-	type	file
-	default	{ "" }
-	help	"IES file with luminaire description"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "filechooser_pattern" "*.ies" }
-	parmtag	{ "vray_plugin" "LightIES" }
-	parmtag	{ "vray_pluginattr" "ies_file" }
-	parmtag	{ "vray_type" "String" }
-    }
-    parm {
-	name	"filter_color"
-	label	"Filter Color"
-	type	color
-	size	3
-	default	{ "1" "1" "1" }
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightIES" }
-	parmtag	{ "vray_pluginattr" "filter_color" }
-	parmtag	{ "vray_type" "Color" }
-    }
-    parm {
-	name	"soft_shadows"
-	label	"Soft Shadows"
-	type	toggle
-	default	{ "0" }
-	help	"true to use the shape of the light as described in the IES profile"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightIES" }
-	parmtag	{ "vray_pluginattr" "soft_shadows" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"area_speculars"
-	label	"Area Speculars"
-	type	toggle
-	default	{ "1" }
-	help	"true to cause specular highlights produced by the light to match the light shape; false to always produce speculars as a point light"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightIES" }
-	parmtag	{ "vray_pluginattr" "area_speculars" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"power"
-	label	"Power"
-	type	float
-	default	{ "0" }
-	help	"Limuous power (in lm); if zero, the default lumious power from the IES profile is used"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightIES" }
-	parmtag	{ "vray_pluginattr" "power" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"ies_light_shape"
-	label	"Ies Light Shape"
-	type	ordinal
-	default	{ "0" }
-	help	"IES light shape"
-	menu	{
-	    "From File"	"From File"
-	    "Custom"	"Custom"
-	}
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "-1,0" }
-	parmtag	{ "vray_plugin" "LightIES" }
-	parmtag	{ "vray_pluginattr" "ies_light_shape" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"ies_light_width"
-	label	"Ies Light Width"
-	type	float
-	default	{ "0" }
-	help	"Light shape width (in metres)"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightIES" }
-	parmtag	{ "vray_pluginattr" "ies_light_width" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"ies_light_length"
-	label	"Ies Light Length"
-	type	float
-	default	{ "0" }
-	help	"Light shape length (in metres)"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightIES" }
-	parmtag	{ "vray_pluginattr" "ies_light_length" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"ies_light_height"
-	label	"Ies Light Height"
-	type	float
-	default	{ "0" }
-	help	"Light shape height (in metres)"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightIES" }
-	parmtag	{ "vray_pluginattr" "ies_light_height" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"ies_light_diameter"
-	label	"Ies Light Diameter"
-	type	float
-	default	{ "0" }
-	help	"Light shape diameter (in metres)"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightIES" }
-	parmtag	{ "vray_pluginattr" "ies_light_diameter" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"rescale_max_intensty"
-	label	"Rescale Max Intensty"
-	type	toggle
-	default	{ "0" }
-	help	"If this is true, the intensity values of the IES file will be scaled, so the new maximum value is new_max_intensity"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightIES" }
-	parmtag	{ "vray_pluginattr" "rescale_max_intensty" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"new_max_intensity"
-	label	"New Max Intensity"
-	type	float
-	default	{ "1" }
-	help	"The new maximum intensity after rescaling the intensities in the IES file, when rescale_max_intensty is true. This value is in cd(candelas)"
-	disablewhen	"{ rescale_max_intensty != 1 }"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "LightIES" }
-	parmtag	{ "vray_pluginattr" "new_max_intensity" }
-	parmtag	{ "vray_type" "float" }
-    }
+
 }

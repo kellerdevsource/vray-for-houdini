@@ -9,35 +9,34 @@
 //
 
 #include "vfh_exporter.h"
+#include "vfh_op_utils.h"
+
 #include "vop/material/vop_mtl_def.h"
 
 #include <SHOP/SHOP_Node.h>
 #include <VOP/VOP_ParmGenerator.h>
 #include <OP/OP_Options.h>
 
-
 using namespace VRayForHoudini;
-
 
 void VRayExporter::RtCallbackSurfaceShop(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
+	if (!csect.tryEnter())
+		return;
+
 	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
 
 	Log::getLog().info("RtCallbackSurfaceShop: %s from \"%s\"",
 					   OPeventToString(type), caller->getName().buffer());
 
-	if (type == OP_INPUT_REWIRED && caller->error() < UT_ERROR_ABORT) {
-		UT_String inputName;
-		const int idx = reinterpret_cast<uintptr_t>(data);
-		caller->getInputName(inputName, idx);
-
-		if (inputName.equal("Material")) {
-			exporter.exportMaterial(caller->getParent());
-		}
+	if (type == OP_INPUT_REWIRED) {
+		exporter.exportMaterial(caller);
 	}
 	else if (type == OP_NODE_PREDELETE) {
-		exporter.delOpCallback(caller, VRayExporter::RtCallbackSurfaceShop);
+		exporter.delOpCallback(caller, RtCallbackSurfaceShop);
 	}
+
+	csect.leave();
 }
 
 VRay::Plugin VRayExporter::exportMaterial(VOP_Node *vopNode)
@@ -69,46 +68,20 @@ VRay::Plugin VRayExporter::exportMaterial(VOP_Node *vopNode)
 
 VRay::Plugin VRayExporter::exportMaterial(OP_Node *matNode)
 {
-	if (!matNode) {
-		return VRay::Plugin();
-	}
-
 	VRay::Plugin material;
 
-	SHOP_Node *shopNode = CAST_SHOPNODE(matNode);
 	VOP_Node *vopNode = CAST_VOPNODE(matNode);
 	if (vopNode) {
+		addOpCallback(matNode, RtCallbackSurfaceShop);
+
 		material = exportMaterial(vopNode);
 	}
-	else if (shopNode) {
-		UT_ValArray<OP_Node*> mtlOutList;
-		const int numMtlOutput = shopNode->getOpsByName("vray_material_output", mtlOutList);
-		if (numMtlOutput == 0) {
-			Log::getLog().error("Can't find \"V-Ray Material Output\" node under \"%s\"!",
-								shopNode->getName().buffer());
-		}
-		else {
-			if (numMtlOutput > 1) {
-				Log::getLog().info("\"%s\": Multiple \"V-Ray Material Output\" nodes! Using the first found...",
-									matNode->getName().buffer());
-			}
+	else {
+		OP_Node *materialNode = getVRayNodeFromOp(*matNode, "Material");
+		if (materialNode) {
+			addOpCallback(matNode, RtCallbackSurfaceShop);
 
-			// There is at least 1 "vray_material_output" node so take the first one
-			VOP::MaterialOutput *mtlOut = static_cast<VOP::MaterialOutput*>(mtlOutList(0));
-
-			addOpCallback(mtlOut, VRayExporter::RtCallbackSurfaceShop);
-
-			if (mtlOut->error() < UT_ERROR_ABORT) {
-				Log::getLog().info("Exporting material output \"%s\"...",
-								   mtlOut->getName().buffer());
-
-				const int idx = mtlOut->getInputFromName("Material");
-
-				OP_Node *inpNode = mtlOut->getInput(idx);
-				if (inpNode) {
-					material = exportMaterial(CAST_VOPNODE(inpNode));
-				}
-			}
+			material = exportMaterial(CAST_VOPNODE(materialNode));
 		}
 	}
 

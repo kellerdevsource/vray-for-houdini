@@ -14,11 +14,10 @@ using namespace VRayForHoudini;
 using namespace Parm;
 
 
-VOP::NodeBase::NodeBase(OP_Network *parent, const char *name, OP_Operator *entry):
-	OP::VRayNode(),
-	VOP_Node(parent, name, entry)
-{
-}
+VOP::NodeBase::NodeBase(OP_Network *parent, const char *name, OP_Operator *entry)
+	: VOP_Node(parent, name, entry)
+	, OP::VRayNode()
+{}
 
 VOP_Type VOP::NodeBase::getShaderType() const
 {
@@ -118,9 +117,17 @@ void VOP::NodeBase::getAllowedInputTypeInfosSubclass(unsigned idx, VOP_VopTypeIn
 	if (hasPluginInfo() && (idx >= 0) && (idx < pluginInfo->inputs.size())) {
 		const SocketDesc &socketTypeInfo = pluginInfo->inputs[idx];
 
-		VOP_TypeInfo type_info(socketTypeInfo.vopType);
 		type_infos.clear();
-		type_infos.append(type_info);
+
+		const VOP_Type vopType = socketTypeInfo.vopType;
+		type_infos.append(VOP_TypeInfo(vopType));
+
+		if (vopType == VOP_SURFACE_SHADER) {
+			type_infos.append(VOP_TypeInfo(VOP_TYPE_BSDF));
+		}
+		if (vopType == VOP_TYPE_BSDF) {
+			type_infos.append(VOP_TypeInfo(VOP_SURFACE_SHADER));
+		}
 	}
 }
 

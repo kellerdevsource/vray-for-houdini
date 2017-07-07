@@ -4367,7 +4367,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeVolumeVRayToon', nodename="toon")
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeRenderChannelsContainer</contextOpType>
     </toolMenuContext>
-    <toolSubmenu>Render Elements</toolSubmenu>
+    <toolSubmenu>Render Channel</toolSubmenu>
     <script scriptType="python">
 <![CDATA[
 
