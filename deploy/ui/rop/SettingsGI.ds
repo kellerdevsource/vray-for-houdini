@@ -1,8 +1,3 @@
-{
-    name	SettingsGI
-    label	"GI"
-    parmtag	{ spare_category "GI" }
-    parmtag	{ vray_plugin "SettingsGI" }
     parm {
 	name	"SettingsGI_on"
 	label	"On"
@@ -242,4 +237,3 @@
 	parmtag	{ "vray_pluginattr" "ao_subdivs" }
 	parmtag	{ "vray_type" "int" }
     }
-}

@@ -1,10 +1,5 @@
-{
-    name	SettingsDR
-    label	"Settings DR"
-    parmtag	{ spare_category "Settings DR" }
-    parmtag	{ vray_plugin "SettingsDR" }
-    parm {
-	name	"on"
+parm {
+	name	"SettingsDR_on"
 	label	"On"
 	type	toggle
 	default	{ "0" }

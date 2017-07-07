@@ -1,8 +1,4 @@
-{
-    name	SettingsMotionBlur
-    label	"Motion Blur"
-    parmtag	{ spare_category "Motion Blur" }
-    parmtag	{ vray_plugin "SettingsMotionBlur" }
+
     parm {
 	name	"SettingsMotionBlur_on"
 	label	"Enable Motion Blur"
@@ -146,4 +142,4 @@
 	parmtag	{ "vray_pluginattr" "sampling_type" }
 	parmtag	{ "vray_type" "int" }
     }
-}
+

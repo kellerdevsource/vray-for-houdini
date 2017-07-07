@@ -1,8 +1,3 @@
-{
-    name	SettingsDMCSampler
-    label	"DMC"
-    parmtag	{ spare_category "DMC" }
-    parmtag	{ vray_plugin "SettingsDMCSampler" }
     parm {
 	name	"SettingsDMCSampler_time_dependent"
 	label	"Animated Noise Pattern"
@@ -108,4 +103,3 @@
 	parmtag	{ "vray_pluginattr" "use_local_subdivs" }
 	parmtag	{ "vray_type" "boolean" }
     }
-}
