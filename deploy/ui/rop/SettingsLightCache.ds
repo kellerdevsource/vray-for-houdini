@@ -1,8 +1,3 @@
-{
-    name	SettingsLightCache
-    label	"Light Cache"
-    parmtag	{ spare_category "Light Cache" }
-    parmtag	{ vray_plugin "SettingsLightCache" }
     parm {
 	name	"SettingsLightCache_subdivs"
 	label	"Subdivs"
@@ -371,4 +366,3 @@
 	parmtag	{ "vray_pluginattr" "retrace_leak_prevention" }
 	parmtag	{ "vray_type" "float" }
     }
-}

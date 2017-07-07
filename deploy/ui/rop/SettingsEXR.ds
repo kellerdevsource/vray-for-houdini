@@ -1,8 +1,3 @@
-{
-    name	SettingsEXR
-    label	"SettingsEXR"
-    parmtag	{ spare_category "SettingsEXR" }
-    parmtag	{ vray_plugin "SettingsEXR" }
     parm {
 	name	"compression"
 	label	"Compression"
@@ -115,4 +110,3 @@
 	parmtag	{ "vray_pluginattr" "deep_alpha_colors" }
 	parmtag	{ "vray_type" "int" }
     }
-}

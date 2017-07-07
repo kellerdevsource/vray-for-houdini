@@ -1,8 +1,3 @@
-{
-    name	SettingsCaustics
-    label	"Caustics"
-    parmtag	{ spare_category "Caustics" }
-    parmtag	{ vray_plugin "SettingsCaustics" }
     parm {
 	name	"SettingsCaustics_on"
 	label	"Enable Caustics"
@@ -163,4 +158,3 @@
 	parmtag	{ "vray_pluginattr" "show_calc_phase" }
 	parmtag	{ "vray_type" "boolean" }
     }
-}

@@ -1,8 +1,3 @@
-{
-    name	SettingsEnvironment
-    label	"Environment"
-    parmtag	{ spare_category "Environment" }
-    parmtag	{ vray_plugin "SettingsEnvironment" }
     parm {
 	name	"bg_color"
 	label	"Bg Color"
@@ -300,4 +295,3 @@
 	parmtag	{ "vray_pluginattr" "use_secondary_matte" }
 	parmtag	{ "vray_type" "boolean" }
     }
-}

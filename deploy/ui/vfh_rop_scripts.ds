@@ -1,0 +1,39 @@
+// Taken from events.ds
+#define VFH_RENDERSCRIPT(TOKEN, LABEL) \
+    parm { \
+        name t##TOKEN \
+        label "" \
+        type toggle \
+        default { 1 } \
+        nolabel \
+        joinnext \
+        parmtag { spare_category "Scripts" } \
+    } \
+    parm { \
+        name TOKEN \
+        label LABEL \
+        type file \
+        joinnext \
+        default { "" } \
+        disablewhen { { t##TOKEN == 0 } } \
+        parmtag { filechooser_mode  "read" } \
+        parmtag { spare_category "Scripts" } \
+    } \
+    parm { \
+        name l##TOKEN \
+        label "" \
+        type string \
+        nolabel \
+        default { "hscript" } \
+        menu { \
+            "hscript" "Hscript" \
+            "python" "Python" \
+        } \
+        disablewhen { { t##TOKEN == 0 } } \
+        parmtag { spare_category "Scripts" } \
+    }
+
+VFH_RENDERSCRIPT(prerender, "Pre-Render Script")
+VFH_RENDERSCRIPT(preframe,  "Pre-Frame Script")
+VFH_RENDERSCRIPT(postframe, "Post-Frame Script")
+VFH_RENDERSCRIPT(postrender, "Post-Render Script")

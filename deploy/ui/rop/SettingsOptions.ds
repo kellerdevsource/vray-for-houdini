@@ -1,8 +1,3 @@
-{
-    name	SettingsOptions
-    label	"Options"
-    parmtag	{ spare_category "Options" }
-    parmtag	{ vray_plugin "SettingsOptions" }
     parm {
 	name	"SettingsOptions_geom_displacement"
 	label	"Enable Displacement"
@@ -526,4 +521,3 @@
 	parmtag	{ "vray_pluginattr" "probabilistic_vol_gi_samples" }
 	parmtag	{ "vray_type" "int" }
     }
-}

@@ -1,8 +1,3 @@
-{
-    name	SettingsRaycaster
-    label	"Raycaster"
-    parmtag	{ spare_category "Raycaster" }
-    parmtag	{ vray_plugin "SettingsRaycaster" }
     parm {
 	name	"SettingsRaycaster_maxLevels"
 	label	"Max Tree Depth"
@@ -143,4 +138,3 @@
 	parmtag	{ "vray_pluginattr" "optLevel" }
 	parmtag	{ "vray_type" "int" }
     }
-}

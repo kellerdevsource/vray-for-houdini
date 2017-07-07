@@ -1,8 +1,3 @@
-{
-    name	SettingsCameraDof
-    label	"Depth Of Field"
-    parmtag	{ spare_category "Depth Of Field" }
-    parmtag	{ vray_plugin "SettingsCameraDof" }
     parm {
 	name	"SettingsCameraDof_on"
 	label	"Enable Depth-of-field"
@@ -139,4 +134,3 @@
 	parmtag	{ "vray_pluginattr" "subdivs" }
 	parmtag	{ "vray_type" "int" }
     }
-}
