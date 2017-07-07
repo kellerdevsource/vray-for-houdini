@@ -24,484 +24,39 @@
 #include <OP/OP_Bundle.h>
 #include <UT/UT_Interrupt.h>
 
-
 using namespace VRayForHoudini;
-
 
 static const UT_StringRef RT_UPDATE_SPARE_TAG = "rt_update";
 static const UT_StringRef apprenticeLimitMsg = "Third-party render engines are not allowed in Houdini Apprentice!";
 
-
-static PRM_Name     parm_render_scripts("parm_render_scripts", "Scripts");
-
-static PRM_Name     parm_render_show_vfb("show_current_vfb", "Show VFB");
-static PRM_Name     parm_render_interactive("render_rt", "Render RT");
-
-static PRM_Name     parm_render_vfb_mode("render_vfb_mode", "Framebuffer");
-static PRM_Name     parm_render_vfb_mode_items[] = {
-	PRM_Name("Native"),
-	PRM_Name("Simple"),
-	PRM_Name(),
-};
-static PRM_ChoiceList parm_render_vfb_mode_menu(PRM_CHOICELIST_SINGLE, parm_render_vfb_mode_items);
-
-static PRM_Name     parm_render_sep_render("render_sep_render", "Render Settings");
-
-static PRM_Name     parm_render_sep_export("render_sep_export", "Export Settings");
-static PRM_Name     parm_render_export_path("render_export_filepath", "Export Filepath");
-static PRM_Default  parm_render_export_path_def(0, "$HIP/$HIPNAME.vrscene");
-
-static PRM_Name     parm_render_export_mode("render_export_mode", "Export Mode");
-static PRM_Name     parm_render_export_mode_items[] = {
-	PRM_Name("Render"),
-	PRM_Name("Export & Render"),
-	PRM_Name("Export"),
-	PRM_Name(),
-};
-static PRM_ChoiceList parm_render_export_mode_menu(PRM_CHOICELIST_SINGLE, parm_render_export_mode_items);
-
-static PRM_Name     parm_render_render_mode("render_render_mode", "Render Mode");
-static PRM_Name     parm_render_render_mode_items[] = {
-	PRM_Name("Production"),
-	PRM_Name("RT CPU"),
-	PRM_Name("GPU OpenCL"),
-	PRM_Name("GPU CUDA"),
-	PRM_Name(),
-};
-static PRM_ChoiceList parm_render_render_mode_menu(PRM_CHOICELIST_SINGLE, parm_render_render_mode_items);
-
-static PRM_Name  parm_render_ipr_mode("render_rt_mode", "RT Render Mode");
-static PRM_Name  parm_render_ipr_mode_items[] = {
-	PRM_Name("RT CPU"),
-	PRM_Name("GPU OpenCL"),
-	PRM_Name("GPU CUDA"),
-	PRM_Name(),
-};
-static PRM_ChoiceList parm_render_ipr_mode_menu(PRM_CHOICELIST_SINGLE, parm_render_ipr_mode_items);
-
-
-static PRM_Name  parm_render_sep_networks("render_sep_networks", "Networks");
-
-
-static PRM_Default       default_DRHost_address(0.0, "localhost");
-static PRM_Default       default_DRHost_port(0.0, "20207");
-static PRM_Name          parm_DR_enabled("dr_enabled", "Enabled");
-static PRM_Name          parm_DefaultDRHost_port("drhost_port", "Default Port");
-static PRM_Name          parm_DRHost_count("drhost_cnt", "Number of Hosts");
-static PRM_Range         parm_DRHost_countrange(PRM_RANGE_RESTRICTED, 1, PRM_RANGE_UI, 31);
-static PRM_Name          parm_DRHost_enabled("drhost#_enabled", "Enabled");
-static PRM_Name          parm_DRHost_address("drhost#_address", "Host Address");
-static PRM_Name          parm_DRHost_usedefaultport("drhost#_usedefaultport", "Use Default Port");
-static PRM_Name          parm_DRHost_port("drhost#_port", "Host Port");
-static PRM_Conditional   condition_DRDisabled("{ dr_enabled == 0 }");
-static PRM_Conditional   condition_DRHostDisabled("{ dr_enabled == 0 } { drhost#_enabled == 0 }");
-static PRM_Conditional   condition_DRHostPortDisabled("{ dr_enabled == 0 } { drhost#_enabled == 0 } { drhost#_usedefaultport == 1 }");
-
-static PRM_Name          parm_recreate_renderer("recreate_renderer", "Recreate Renderer");
-
-static PRM_Template      DRHostPrmTemplate[] = {
-	PRM_Template(PRM_TOGGLE_E, 1, &parm_DRHost_enabled, PRMoneDefaults,0,0,0,0,1,0,&condition_DRDisabled),
-	PRM_Template(PRM_STRING_E, 1, &parm_DRHost_address, &default_DRHost_address,0,0,0,0,1,0,&condition_DRHostDisabled),
-	PRM_Template(PRM_TOGGLE_E, 1, &parm_DRHost_usedefaultport, PRMoneDefaults,0,0,0,0,1,0,&condition_DRHostDisabled),
-	PRM_Template(PRM_STRING_E, 1, &parm_DRHost_port, &default_DRHost_port,0,0,0,0,1,0,&condition_DRHostPortDisabled),
-	PRM_Template()
-};
-
-static const char *res_fraction_items[] = {
-	"0.1",       "1/10 (One Tenth Resolution)",
-	"0.2",       "1/5 (One Fifth Resolution)",
-	"0.25",      "1/4 (Quarter Resolution)",
-	"0.3333333", "1/3 (One Third Resolution)",
-	"0.5",       "1/2 (Half Resolution)",
-	"0.6666666", "2/3 (Two Thirds Resolution)",
-	"0.75",      "3/4 (Three Quarter Resolution)",
-	"specific",  "User Specified Resolution",
-};
-
-static const int res_override_items[] = {
-	1280, 720
-};
-
-
-static PRM_Template* getCameraOverridesTemplate()
-{
-	static Parm::PRMList camOverrides;
-	if (camOverrides.empty()) {
-		camOverrides.addPrm(
-					Parm::PRMFactory(PRM_STRING_E, "render_camera", "Camera")
-							.setTypeExtended(PRM_TYPE_DYNAMIC_PATH)
-							.setDefault("/obj/cam1")
-					);
-		camOverrides.addPrm(
-					Parm::PRMFactory(PRM_TOGGLE_E, "override_camerares", "Override Camera Resolution")
-							.setDefault(PRMzeroDefaults)
-					);
-		camOverrides.addPrm(
-					Parm::PRMFactory(PRM_ORD_E, "res_fraction", "Resolution Scale")
-							.setChoiceListItems(PRM_CHOICELIST_SINGLE, res_fraction_items, CountOf(res_fraction_items))
-							.setDefault("0.5")
-							.addConditional("{ override_camerares == 0 }", PRM_CONDTYPE_HIDE)
-							.addConditional("{ override_camerares == 0 }", PRM_CONDTYPE_DISABLE)
-					);
-		camOverrides.addPrm(
-					Parm::PRMFactory(PRM_INT_E, "res_override", "Resolution")
-							.setVectorSize(2)
-							.setDefaults( res_override_items, CountOf(res_override_items))
-							.addConditional("{ override_camerares == 0 }", PRM_CONDTYPE_HIDE)
-							.addConditional("{ override_camerares == 0 } { res_fraction != \"specific\" }", PRM_CONDTYPE_DISABLE)
-					);
-		camOverrides.addPrm(
-					Parm::PRMFactory(PRM_INT_E, "aspect_override", "Pixel Aspect Ratio")
-							.setDefault(1)
-							.setRange(PRM_RANGE_UI, 0, PRM_RANGE_UI, 2)
-							.addConditional("{ override_camerares == 0 }", PRM_CONDTYPE_HIDE)
-							.addConditional("{ override_camerares == 0 } { res_fraction != \"specific\" }", PRM_CONDTYPE_DISABLE)
-					);
-	}
-
-	return camOverrides.getPRMTemplate();
-}
-
-
-static void addParmObjects(Parm::PRMList &myPrmList)
-{
-	myPrmList.addPrm(
-			Parm::PRMFactory(PRM_STRING_E, "vobject", "Candidate Objects")
-			.setTypeExtended(PRM_TYPE_DYNAMIC_PATH_LIST)
-			.setDefault( "*" )
-			.addSpareData("opfilter", "!!OBJ/GEOMETRY!!")
-			.addSpareData("oprelative", "/obj")
-			.addSpareData(RT_UPDATE_SPARE_TAG, RT_UPDATE_SPARE_TAG)
-			.getPRMTemplate()
-			);
-	myPrmList.addPrm(
-			Parm::PRMFactory(PRM_STRING_E, "forceobject", "Force Objects")
-			.setTypeExtended(PRM_TYPE_DYNAMIC_PATH_LIST)
-			.setDefault(PRMzeroDefaults)
-			.addSpareData("opfilter", "!!OBJ/GEOMETRY!!")
-			.addSpareData("oprelative", "/obj")
-			.addSpareData(RT_UPDATE_SPARE_TAG, RT_UPDATE_SPARE_TAG)
-			.getPRMTemplate()
-			);
-	myPrmList.addPrm(
-			Parm::PRMFactory(PRM_STRING_E, "matte_objects", "Forced Matte")
-			.setTypeExtended(PRM_TYPE_DYNAMIC_PATH_LIST)
-			.setDefault(PRMzeroDefaults)
-			.addSpareData("opfilter", "!!OBJ/GEOMETRY!!")
-			.addSpareData("oprelative", "/obj")
-			.addSpareData(RT_UPDATE_SPARE_TAG, RT_UPDATE_SPARE_TAG)
-			.getPRMTemplate()
-			);
-	myPrmList.addPrm(
-			Parm::PRMFactory(PRM_STRING_E, "phantom_objects", "Forced Phantom")
-			.setTypeExtended(PRM_TYPE_DYNAMIC_PATH_LIST)
-			.setDefault(PRMzeroDefaults)
-			.addSpareData("opfilter", "!!OBJ/GEOMETRY!!")
-			.addSpareData("oprelative", "/obj")
-			.addSpareData(RT_UPDATE_SPARE_TAG, RT_UPDATE_SPARE_TAG)
-			.getPRMTemplate()
-			);
-	myPrmList.addPrm(
-			Parm::PRMFactory(PRM_STRING_E, "excludeobject", "Exclude Objects")
-			.setTypeExtended(PRM_TYPE_DYNAMIC_PATH_LIST)
-			.setDefault(PRMzeroDefaults)
-			.addSpareData("opfilter", "!!OBJ/GEOMETRY!!")
-			.addSpareData("oprelative", "/obj")
-			.addSpareData(RT_UPDATE_SPARE_TAG, RT_UPDATE_SPARE_TAG)
-			.getPRMTemplate()
-			);
-
-	myPrmList.addPrm(
-			Parm::PRMFactory(PRM_SEPARATOR, "obj_light_sep")
-			.getPRMTemplate()
-			);
-
-	myPrmList.addPrm(
-			Parm::PRMFactory(PRM_STRING_E, "sololight", "Solo Light")
-			.setTypeExtended(PRM_TYPE_DYNAMIC_PATH_LIST)
-			.setDefault(PRMzeroDefaults)
-			.addSpareData("opfilter", "!!OBJ/LIGHT!!")
-			.addSpareData("oprelative", "/obj")
-			.addSpareData(RT_UPDATE_SPARE_TAG, RT_UPDATE_SPARE_TAG)
-			.getPRMTemplate()
-			);
-	myPrmList.addPrm(
-			Parm::PRMFactory(PRM_STRING_E, "alights", "Candidate Lights")
-			.setTypeExtended(PRM_TYPE_DYNAMIC_PATH_LIST)
-			.setDefault( "*" )
-			.addSpareData("opfilter", "!!OBJ/LIGHT!!")
-			.addSpareData("oprelative", "/obj")
-			.addSpareData(RT_UPDATE_SPARE_TAG, RT_UPDATE_SPARE_TAG)
-			.getPRMTemplate()
-			);
-	myPrmList.addPrm(
-			Parm::PRMFactory(PRM_STRING_E, "forcelights", "Force Lights")
-			.setTypeExtended(PRM_TYPE_DYNAMIC_PATH_LIST)
-			.setDefault(PRMzeroDefaults)
-			.addSpareData("opfilter", "!!OBJ/LIGHT!!")
-			.addSpareData("oprelative", "/obj")
-			.addSpareData(RT_UPDATE_SPARE_TAG, RT_UPDATE_SPARE_TAG)
-			.getPRMTemplate()
-			);
-	myPrmList.addPrm(
-			Parm::PRMFactory(PRM_STRING_E, "excludelights", "Exclude Lights")
-			.setTypeExtended(PRM_TYPE_DYNAMIC_PATH_LIST)
-			.setDefault(PRMzeroDefaults)
-			.addSpareData("opfilter", "!!OBJ/LIGHT!!")
-			.addSpareData("oprelative", "/obj")
-			.addSpareData(RT_UPDATE_SPARE_TAG, RT_UPDATE_SPARE_TAG)
-			.getPRMTemplate()
-			);
-	myPrmList.addPrm(
-			Parm::PRMFactory(PRM_TOGGLE_E, "soho_autoheadlight", "Headlight Creation")
-			.setTypeExtended(PRM_TYPE_DYNAMIC_PATH_LIST)
-			.setDefault(PRMoneDefaults)
-			.addSpareData(RT_UPDATE_SPARE_TAG, RT_UPDATE_SPARE_TAG)
-			.getPRMTemplate()
-			);
-
-	myPrmList.addPrm(
-			Parm::PRMFactory(PRM_SEPARATOR, "light_fog_sep")
-			.getPRMTemplate()
-			);
-
-	myPrmList.addPrm(
-			Parm::PRMFactory(PRM_STRING_E, "vfog", "Visible Fog")
-			.setTypeExtended(PRM_TYPE_DYNAMIC_PATH_LIST)
-			.setDefault( "*" )
-			.addSpareData("opfilter", "!!OBJ/FOG!!")
-			.addSpareData("oprelative", "/obj")
-			.addSpareData(RT_UPDATE_SPARE_TAG, RT_UPDATE_SPARE_TAG)
-			.getPRMTemplate()
-			);
-}
-
-
-static void addParmGlobals(Parm::PRMList &myPrmList)
-{
-	myPrmList.addPrm(PRM_Template(PRM_CALLBACK, 1, &parm_render_show_vfb, 0, 0, 0, VRayRendererNode::RendererShowVFB));
-	myPrmList.addPrm(PRM_Template(PRM_CALLBACK, 1, &parm_render_interactive, 0, 0, 0, VRayRendererNode::RtStartSession));
-
-	myPrmList.addPrm(PRM_Template(PRM_HEADING, 1, &parm_render_sep_render));
-
-	myPrmList.addPrm(PRM_Template(PRM_ORD, 1, &parm_render_render_mode, PRMzeroDefaults, &parm_render_render_mode_menu));
-	myPrmList.addPrm(PRM_Template(PRM_ORD, 1, &parm_render_ipr_mode, PRMzeroDefaults, &parm_render_ipr_mode_menu));
-	myPrmList.addPrm(PRM_Template(PRM_ORD, 1, &parm_render_export_mode, PRMzeroDefaults, &parm_render_export_mode_menu));
-	myPrmList.addPrm(PRM_Template(PRM_ORD, 1, &parm_render_vfb_mode, PRMzeroDefaults, &parm_render_vfb_mode_menu));
-	myPrmList.addPrm(PRM_Template(PRM_TOGGLE_E, 1, &parm_recreate_renderer, PRMzeroDefaults));
-
-	myPrmList.addPrm(PRM_Template(PRM_HEADING, 1, &parm_render_sep_export));
-	myPrmList.addPrm(PRM_Template(PRM_FILE_E, PRM_TYPE_DYNAMIC_PATH, 1, &parm_render_export_path, &parm_render_export_path_def));
-	myPrmList.addPrm(
-			Parm::PRMFactory(PRM_TOGGLE_E, "exp_separatefiles", "Export Each Frame In Separate File")
-			.setDefault( PRMzeroDefaults )
-			.addConditional("{ render_export_mode == \"Render\" }", PRM_CONDTYPE_DISABLE)
-			.setInvisible(true)
-			.getPRMTemplate()
-			);
-	myPrmList.addPrm(
-			Parm::PRMFactory(PRM_TOGGLE_E, "exp_hexdata", "Export Data In Hex Format")
-			.setDefault( PRMoneDefaults )
-			.addConditional("{ render_export_mode == \"Render\" }", PRM_CONDTYPE_DISABLE)
-			.getPRMTemplate()
-			);
-	myPrmList.addPrm(
-			Parm::PRMFactory(PRM_TOGGLE_E, "exp_compressed", "Export Compressed")
-			.setDefault( PRMoneDefaults )
-			.addConditional("{ render_export_mode == \"Render\" }", PRM_CONDTYPE_DISABLE)
-			.getPRMTemplate()
-			);
-
-
-	myPrmList.addPrm(PRM_Template(PRM_HEADING, 1, &parm_render_sep_networks));
-	myPrmList.addPrm(PRM_Template(PRM_STRING_E, PRM_TYPE_DYNAMIC_PATH, 1, &Parm::parm_render_net_render_channels, &Parm::PRMemptyStringDefault));
-	myPrmList.addPrm(PRM_Template(PRM_STRING_E, PRM_TYPE_DYNAMIC_PATH, 1, &Parm::parm_render_net_environment,     &Parm::PRMemptyStringDefault));
-
-	// Standard ROP settings
-	//
-	myPrmList.addPrm(PRM_Template(PRM_HEADING, 1, &parm_render_scripts));
-
-	int tmpls[] = {
-		ROP_TPRERENDER_TPLATE,
-		ROP_PRERENDER_TPLATE,
-		ROP_LPRERENDER_TPLATE,
-		ROP_TPREFRAME_TPLATE,
-		ROP_PREFRAME_TPLATE,
-		ROP_LPREFRAME_TPLATE,
-		ROP_TPOSTFRAME_TPLATE,
-		ROP_POSTFRAME_TPLATE,
-		ROP_LPOSTFRAME_TPLATE,
-		ROP_TPOSTRENDER_TPLATE,
-		ROP_POSTRENDER_TPLATE,
-		ROP_LPOSTRENDER_TPLATE,
-	};
-	for( auto tmplidx : tmpls ) {
-		myPrmList.addPrm(theRopTemplates[ tmplidx ]);
-	}
-}
-
-
-static void addParmDR(Parm::PRMList &myPrmList)
-{
-	myPrmList.addPrm(PRM_Template(PRM_TOGGLE_E, 1, &parm_DR_enabled, PRMzeroDefaults));
-	myPrmList.addPrm(PRM_Template(PRM_STRING_E, 1, &parm_DefaultDRHost_port, &default_DRHost_port,0,0,0,0,1,0,&condition_DRDisabled));
-	myPrmList.addPrm(PRM_Template(PRM_MULTITYPE_LIST, DRHostPrmTemplate, 1, &parm_DRHost_count,0,&parm_DRHost_countrange,0,0,&condition_DRDisabled));
-}
-
-
-static PRM_Template* getTemplates()
-{
-	static Parm::PRMList myPrmList;
-	if (myPrmList.empty()) {
-		myPrmList.reserve(400);
-
-		myPrmList.switcherBegin("VRayRenderSettings");
-
-		// Globals Tab
-		myPrmList.addFolder("Globals");
-		addParmGlobals(myPrmList);
-
-		// Objects Tab
-		myPrmList.addFolder("Objects");
-		addParmObjects(myPrmList);
-
-		// Renderer settings
-		//
-
-		// Camera tab
-		myPrmList.addFolder("Camera");
-		myPrmList.switcherBegin("VRayCameraSettings");
-
-		myPrmList.addFolder("Camera");
-		Parm::addPrmTemplateForPlugin( "SettingsCamera", myPrmList);
-
-		myPrmList.addFolder("Depth Of Field");
-		Parm::addPrmTemplateForPlugin( "SettingsCameraDof", myPrmList);
-
-		myPrmList.addFolder("Motion Blur");
-		Parm::addPrmTemplateForPlugin( "SettingsMotionBlur", myPrmList);
-
-		myPrmList.addFolder("Stereo");
-		Parm::addPrmTemplateForPlugin( "VRayStereoscopicSettings", myPrmList);
-
-		myPrmList.switcherEnd();
-
-		// GI tab
-		myPrmList.addFolder("GI");
-		myPrmList.switcherBegin("VRayGiSettings");
-
-		myPrmList.addFolder("GI");
-		Parm::addPrmTemplateForPlugin( "SettingsGI", myPrmList);
-
-		myPrmList.addFolder("Brute Force");
-		Parm::addPrmTemplateForPlugin( "SettingsDMCGI", myPrmList);
-
-		myPrmList.addFolder("Irradiance Map");
-		Parm::addPrmTemplateForPlugin( "SettingsIrradianceMap", myPrmList);
-
-		myPrmList.addFolder("Light Cache");
-		Parm::addPrmTemplateForPlugin( "SettingsLightCache", myPrmList);
-
-		myPrmList.switcherEnd();
-
-		// Sampler tab
-		myPrmList.addFolder("Sampler");
-		myPrmList.switcherBegin("VRaySamplersSettings");
-
-		myPrmList.addFolder("DMC");
-		Parm::addPrmTemplateForPlugin( "SettingsDMCSampler", myPrmList);
-
-		myPrmList.addFolder("AA");
-		Parm::addPrmTemplateForPlugin( "SettingsImageSampler", myPrmList);
-
-		myPrmList.switcherEnd();
-
-		// Options tab
-		myPrmList.addFolder("Options");
-		Parm::addPrmTemplateForPlugin( "SettingsOptions", myPrmList);
-
-		// Output tab
-		myPrmList.addFolder("Output");
-		Parm::addPrmTemplateForPlugin( "SettingsOutput", myPrmList);
-
-		// Color Mapping tab
-		myPrmList.addFolder("Color Mapping");
-		Parm::addPrmTemplateForPlugin( "SettingsColorMapping", myPrmList);
-
-		// Raycaster tab
-		myPrmList.addFolder("Raycaster");
-		Parm::addPrmTemplateForPlugin( "SettingsRaycaster", myPrmList);
-
-		// Regions tab
-		myPrmList.addFolder("Regions");
-		Parm::addPrmTemplateForPlugin( "SettingsRegionsGenerator", myPrmList);
-
-		// RT tab
-		myPrmList.addFolder("RT");
-		Parm::addPrmTemplateForPlugin( "SettingsRTEngine", myPrmList);
-
-		// Caustics tab
-		myPrmList.addFolder("Caustics");
-		Parm::addPrmTemplateForPlugin( "SettingsCaustics", myPrmList);
-
-		// Displacement tab
-		myPrmList.addFolder("Displacement");
-		Parm::addPrmTemplateForPlugin( "SettingsDefaultDisplacement", myPrmList);
-
-		// DR Tab
-		myPrmList.addFolder("DR");
-		addParmDR(myPrmList);
-
-#if 0
-		myPrmList.addFolder("SOHO");
-		myPrmList.addPrm(
-			Parm::PRMFactory(PRM_FILE_E, "soho_program", "soho_program")
-			.setDefault("vfh_ipr")
-			.getPRMTemplate()
-		);
-		myPrmList.addPrm(
-			Parm::PRMFactory(PRM_FILE_E, "soho_pipecmd", "soho_pipecmd")
-			.setDefault("vfh_ipr.py")
-			.getPRMTemplate()
-		);
-		myPrmList.addPrm(
-			Parm::PRMFactory(PRM_ORD_E, "soho_outputmode", "soho_outputmode")
-			.setDefault("0")
-			.getPRMTemplate()
-		);
-		myPrmList.addPrm(
-			Parm::PRMFactory(PRM_TOGGLE_E, "soho_ipr_support", "soho_ipr_support")
-			.setDefault(1)
-			.getPRMTemplate()
-		);
-		myPrmList.addPrm(
-			Parm::PRMFactory(PRM_TOGGLE_E, "soho_viewport_menu", "soho_viewport_menu")
-			.setDefault(1)
-			.getPRMTemplate()
-		);
-		myPrmList.addPrm(
-			Parm::PRMFactory(PRM_TOGGLE_E, "soho_previewsupport", "soho_previewsupport")
-			.setDefault(1)
-			.getPRMTemplate()
-		);
-#endif
-		myPrmList.switcherEnd();
-	}
-
-	return myPrmList.getPRMTemplate();
-}
-
+static Parm::PRMList prmList;
 
 OP_TemplatePair* VRayRendererNode::getTemplatePair()
 {
 	static OP_TemplatePair *ropPair = nullptr;
 	if (!ropPair) {
-		OP_TemplatePair *base = new OP_TemplatePair(getCameraOverridesTemplate(), new OP_TemplatePair(getTemplates()));
-		ropPair = new OP_TemplatePair(ROP_Node::getROPbaseTemplate(), base);
+		if (prmList.empty()) {
+			UT_String uiPath = getenv("VRAY_UI_DS_PATH");
+			uiPath += "/rop";
+			prmList.addFromFile(Parm::expandUiPath("vfh_rop.ds").c_str(), uiPath.buffer());
+
+			PRM_Template *prmTemplate = prmList.getPRMTemplate();
+
+			for (int c = 0; c < prmList.size(); ++c) {
+				PRM_Template &param = prmTemplate[c];
+				if (vutils_strcmp(param.getToken(), "show_current_vfb") == 0) {
+					param.setCallback(RendererShowVFB);
+				}
+				else if (vutils_strcmp(param.getToken(), "render_rt") == 0) {
+					param.setCallback(RtStartSession);
+				}
+			}
+		}
+
+		ropPair = new OP_TemplatePair(getROPbaseTemplate(), new OP_TemplatePair(prmList.getPRMTemplate()));
 	}
 	return ropPair;
 }
-
 
 OP_VariablePair* VRayRendererNode::getVariablePair()
 {
@@ -512,55 +67,44 @@ OP_VariablePair* VRayRendererNode::getVariablePair()
 	return pair;
 }
 
-
 static int getRendererMode(OP_Node &rop)
 {
-	int renderMode = rop.evalInt(parm_render_render_mode.getToken(), 0, 0.0);
+	int renderMode = rop.evalInt("render_render_mode", 0, 0.0);
 	switch (renderMode) {
-		case 0: renderMode = -1; break; // Production
-		case 1: renderMode =  0; break; // RT CPU
-		case 2: renderMode =  1; break; // RT GPU (OpenCL)
-		case 3: renderMode =  4; break; // RT GPU (CUDA)
+		case 0: renderMode = -1; break; // Production CPU
+		case 1: renderMode =  1; break; // RT GPU (OpenCL)
+		case 2: renderMode =  4; break; // RT GPU (CUDA)
+		default: renderMode = -1; break;
 	}
 	return renderMode;
 }
 
-
 static int getRendererIprMode(OP_Node &rop)
 {
-	int renderMode = rop.evalInt(parm_render_ipr_mode.getToken(), 0, 0.0);
+	int renderMode = rop.evalInt("render_rt_mode", 0, 0.0);
 	switch (renderMode) {
 		case 0: renderMode =  0; break; // RT CPU
 		case 1: renderMode =  1; break; // RT GPU (OpenCL)
 		case 2: renderMode =  4; break; // RT GPU (CUDA)
+		default: renderMode = 0; break;
 	}
 	return renderMode;
 }
 
-
 static VRayExporter::ExpWorkMode getExporterWorkMode(OP_Node &rop)
 {
-	return static_cast<VRayExporter::ExpWorkMode>(rop.evalInt(parm_render_export_mode.getToken(), 0, 0.0));
+	return static_cast<VRayExporter::ExpWorkMode>(rop.evalInt("render_export_mode", 0, 0.0));
 }
-
 
 static int isBackground()
 {
 	return NOT(HOU::isUIAvailable());
 }
 
-
 static int getFrameBufferType(OP_Node &rop)
 {
-	int fbType = isBackground() ? -1 : 0;
-
-	if (fbType >= 0) {
-		fbType = rop.evalInt(parm_render_vfb_mode.getToken(), 0, 0.0);
-	}
-
-	return fbType;
+	return isBackground() ? -1 : 0;
 }
-
 
 VRayRendererNode::VRayRendererNode(OP_Network *net, const char *name, OP_Operator *entry)
 	: ROP_Node(net, name, entry)
@@ -622,14 +166,14 @@ void VRayRendererNode::RtCallbackRop(OP_Node *caller, void *callee, OP_EventType
 
 int VRayRendererNode::RtStartSession(void *data, int /*index*/, fpreal t, const PRM_Template* /*tplate*/)
 {
-	VRayRendererNode &rop = *reinterpret_cast< VRayRendererNode* >(data);
+	VRayRendererNode &rop = *reinterpret_cast<VRayRendererNode*>(data);
 	rop.startIPR(t);
 	return 1;
 }
 
 
 int VRayRendererNode::RendererShowVFB(void *data, int /*index*/, fpreal /*t*/, const PRM_Template* /*tplate*/) {
-	VRayRendererNode &rop = *reinterpret_cast< VRayRendererNode* >(data);
+	VRayRendererNode &rop = *reinterpret_cast<VRayRendererNode*>(data);
 	if (!isBackground()) {
 		rop.m_exporter.showVFB();
 	}
@@ -667,9 +211,7 @@ int VRayRendererNode::initSession(int interactive, int nframes, fpreal tstart, f
 		const int isGPU  = (rendererMode > VRay::RendererOptions::RENDER_MODE_RT_CPU);
 
 		// Whether to re-create V-Ray renderer
-		const int reCreate = evalInt(parm_recreate_renderer.getToken(), 0, 0.0) ||
-							 (wasRT != isRT) ||
-							 (wasGPU != isGPU);
+		const int reCreate = (wasRT != isRT) || (wasGPU != isGPU);
 
 		m_exporter.setIPR(isRT);
 

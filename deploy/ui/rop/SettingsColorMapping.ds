@@ -1,8 +1,3 @@
-{
-    name	SettingsColorMapping
-    label	"Color Mapping"
-    parmtag	{ spare_category "Color Mapping" }
-    parmtag	{ vray_plugin "SettingsColorMapping" }
     parm {
 	name	"SettingsColorMapping_type"
 	label	"Type"
@@ -164,4 +159,3 @@
 	parmtag	{ "vray_pluginattr" "exposure" }
 	parmtag	{ "vray_type" "Color" }
     }
-}

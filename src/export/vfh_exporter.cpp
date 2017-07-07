@@ -1429,7 +1429,7 @@ void VRayExporter::exportScene()
 	}
 
 	UT_String env_network_path;
-	m_rop->evalString(env_network_path, Parm::parm_render_net_environment.getToken(), 0, 0.0f);
+	m_rop->evalString(env_network_path, "render_network_environment", 0, 0.0f);
 	if (NOT(env_network_path.equal(""))) {
 		OP_Node *env_network = getOpNodeFromPath(env_network_path);
 		if (env_network) {
@@ -1445,7 +1445,7 @@ void VRayExporter::exportScene()
 	}
 
 	UT_String channels_network_path;
-	m_rop->evalString(channels_network_path, Parm::parm_render_net_render_channels.getToken(), 0, 0.0f);
+	m_rop->evalString(channels_network_path, "render_network_render_channels", 0, 0.0f);
 	if (NOT(channels_network_path.equal(""))) {
 		OP_Node *channels_network = getOpNodeFromPath(channels_network_path);
 		if (channels_network) {
@@ -1830,7 +1830,7 @@ int VRayExporter::hasVelocityOn(OP_Node &rop) const
 	const fpreal t = m_context.getTime();
 
 	UT_String rcNetworkPath;
-	rop.evalString(rcNetworkPath, Parm::parm_render_net_render_channels.getToken(), 0, t);
+	rop.evalString(rcNetworkPath, "render_network_render_channels", 0, t);
 	OP_Node *rcNode = getOpNodeFromPath(rcNetworkPath, t);
 	if (!rcNode) {
 		return false;

@@ -57,14 +57,17 @@ void VRayExporter::RtCallbackOBJGeometry(OP_Node *caller, void *callee, OP_Event
 				break;
 			}
 
-			// If the parameter is for material override it has OBJ_MATERIAL_SPARE_TAG tag
 			const PRM_Parm *prm = Parm::getParm(*caller, reinterpret_cast<intptr_t>(data));
 			if (prm) {
-				UT_StringRef prmToken = prm->getToken();
+				const UT_StringRef &prmToken = prm->getToken();
 				const PRM_SpareData	*spare = prm->getSparePtr();
+
 				Log::getLog().debug("  Parm: %s", prmToken.buffer());
-				shouldReExport = (prmToken.equal(objGeo.getMaterialParmToken()) ||
-				                 (spare && spare->getValue(OBJ_MATERIAL_SPARE_TAG)));
+
+				shouldReExport =
+					prmToken.equal(objGeo.getMaterialParmToken()) ||
+					prmToken.equal(VFH_ATTR_SHOP_MATERIAL_STYLESHEET) ||
+					(spare && spare->getValue(OBJ_MATERIAL_SPARE_TAG));
 			}
 		}
 		case OP_FLAG_CHANGED:
@@ -74,6 +77,7 @@ void VRayExporter::RtCallbackOBJGeometry(OP_Node *caller, void *callee, OP_Event
 
 			// Otherwise we won't update plugin.
 			objExporter.clearOpPluginCache();
+			objExporter.clearPrimPluginCache();
 
 			// Store current state
 			const int geomExpState = objExporter.getExportGeometry();

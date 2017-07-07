@@ -22,6 +22,7 @@ const char VFH_ATTR_MATERIAL_OVERRIDE[] = "material_override";
 const char VFH_ATTRIB_TRANSFORM[] = "transform";
 const char VFH_ATTRIB_OBJECTID[] = "vray_objectID";
 const char VFH_ATTRIB_ANIM_OFFSET[] = "anim_offset";
+const char VFH_ATTR_SHOP_MATERIAL_STYLESHEET[] = "shop_materialstylesheet";
 
 /// Expands OP_Node path.
 /// @param path Path. May be changed if path has "op:/" syntax.

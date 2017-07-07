@@ -49,8 +49,6 @@ namespace Styles {
 	}
 }
 
-const char VFH_ATTR_SHOP_MATERIAL_STYLESHEET[] = "shop_materialstylesheet";
-
 void PrimMaterial::mergeOverrides(const MtlOverrideItems &items)
 {
 	FOR_CONST_IT (MtlOverrideItems, it, items) {
@@ -374,8 +372,12 @@ void VRayForHoudini::parseObjectStyleSheet(OBJ_Node &objNode, ObjectStyleSheet &
 	UT_String styleSheet;
 	objNode.evalString(styleSheet, VFH_ATTR_SHOP_MATERIAL_STYLESHEET, 0, t);
 
+	const char *styleBuf = styleSheet.buffer();
+	if (!(styleBuf && *styleBuf))
+		return;
+
 	Document document;
-	document.Parse(styleSheet.buffer());
+	document.Parse(styleBuf);
 
 	if (!document.HasMember(Styles::styles))
 		return;

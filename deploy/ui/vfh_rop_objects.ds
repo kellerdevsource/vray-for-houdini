@@ -1,0 +1,119 @@
+parm {
+    name    "vobject"
+    label   "Candidate Objects"
+    type oplist
+    default { "*" }
+    parmtag { "opfilter" "!!OBJ/GEOMETRY!!" }
+    parmtag { "oprelative" "/obj" }
+    parmtag { "rt_update" "rt_update" }
+}
+
+parm {
+    name    "forceobject"
+    label   "Force Objects"
+    type oplist
+    default { "" }
+    parmtag { "opfilter" "!!OBJ/GEOMETRY!!" }
+    parmtag { "oprelative" "/obj" }
+    parmtag { "rt_update" "rt_update" }
+}
+
+parm {
+    name    "matte_objects"
+    label   "Forced Matte"
+    type oplist
+    default { "" }
+    parmtag { "opfilter" "!!OBJ/GEOMETRY!!" }
+    parmtag { "oprelative" "/obj" }
+    parmtag { "rt_update" "rt_update" }
+}
+
+parm {
+    name    "phantom_objects"
+    label   "Forced Phantom"
+    type oplist
+    default { "" }
+    parmtag { "opfilter" "!!OBJ/GEOMETRY!!" }
+    parmtag { "oprelative" "/obj" }
+    parmtag { "rt_update" "rt_update" }
+}
+
+parm {
+    name    "excludeobject"
+    label   "Exclude Objects"
+    type oplist
+    default { "" }
+    parmtag { "opfilter" "!!OBJ/GEOMETRY!!" }
+    parmtag { "oprelative" "/obj" }
+    parmtag { "rt_update" "rt_update" }
+}
+
+parm {
+    name lights_separator
+    label ""
+    type separator
+}
+
+parm {
+    name    "sololight"
+    label   "Solo Light"
+    type oplist
+    default { "" }
+    parmtag { "opfilter" "!!OBJ/LIGHT!!" }
+    parmtag { "oprelative" "/obj" }
+    parmtag { "rt_update" "rt_update" }
+}
+
+parm {
+    name    "alights"
+    label   "Candidate Lights"
+    type oplist
+    default { "*" }
+    parmtag { "opfilter" "!!OBJ/LIGHT!!" }
+    parmtag { "oprelative" "/obj" }
+    parmtag { "rt_update" "rt_update" }
+}
+
+parm {
+    name    "forcelights"
+    label   "Force Lights"
+    type oplist
+    default { "" }
+    parmtag { "opfilter" "!!OBJ/LIGHT!!" }
+    parmtag { "oprelative" "/obj" }
+    parmtag { "rt_update" "rt_update" }
+}
+
+parm {
+    name    "excludelights"
+    label   "Exclude Lights"
+    type oplist
+    default { "" }
+    parmtag { "opfilter" "!!OBJ/LIGHT!!" }
+    parmtag { "oprelative" "/obj" }
+    parmtag { "rt_update" "rt_update" }
+}
+
+parm {
+    name    "soho_autoheadlight"
+    label   "Headlight Creation"
+    type    toggle
+    default { 1 }
+    parmtag { "rt_update" "rt_update" }
+}
+
+parm {
+    name fog_separator
+    label ""
+    type separator
+}
+
+parm {
+    name    "vfog"
+    label   "Visible Fog"
+    type oplist
+    default { "*" }
+    parmtag { "opfilter" "!!OBJ/FOG!!" }
+    parmtag { "oprelative" "/obj" }
+    parmtag { "rt_update" "rt_update" }
+}

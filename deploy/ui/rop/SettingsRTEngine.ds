@@ -1,8 +1,3 @@
-{
-    name	SettingsRTEngine
-    label	"RT"
-    parmtag	{ spare_category "RT" }
-    parmtag	{ vray_plugin "SettingsRTEngine" }
     parm {
 	name	"SettingsRTEngine_cpu_bundle_size"
 	label	"Cpu Ray Bundle Size"
@@ -279,4 +274,3 @@
 	parmtag	{ "vray_pluginattr" "min_draw_interval" }
 	parmtag	{ "vray_type" "int" }
     }
-}
