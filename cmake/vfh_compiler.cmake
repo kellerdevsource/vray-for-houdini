@@ -17,7 +17,6 @@ macro(set_precompiled_header PrecompiledHeader PrecompiledSource SourcesVar)
 	list(REMOVE_ITEM ${SourcesVar} ${PrecompiledSource})
 
 	if(MSVC_VERSION GREATER 1700)
-
 		get_filename_component(PrecompiledBasename ${PrecompiledHeader} NAME_WE)
 
 		set(PrecompiledBinary "${CMAKE_CURRENT_BINARY_DIR}/${PrecompiledBasename}.pch")
@@ -43,7 +42,7 @@ macro(set_precompiled_header PrecompiledHeader PrecompiledSource SourcesVar)
 	endif()
 endmacro()
 
-function(vfh_osx_flags _project_name)
+macro(vfh_osx_flags _project_name)
 	if(APPLE)
 		# This sets search paths for modules like libvray.dylib
 		# (no need for install_name_tool tweaks)
@@ -51,7 +50,7 @@ function(vfh_osx_flags _project_name)
 			PROPERTIES
 				INSTALL_RPATH "@loader_path;@executable_path")
 	endif()
-endfunction()
+endmacro()
 
 macro(set_compiler_flags)
 	if(WIN32)

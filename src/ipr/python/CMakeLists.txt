@@ -25,10 +25,6 @@ set(HEADERS
 	vfh_ipr_viewer.h
 )
 
-use_houdini_sdk()
-use_vray_sdk()
-use_vray_appsdk()
-
 houdini_plugin(${PROJECT_NAME} "${SOURCES};${HEADERS}")
 
 target_link_libraries(${PROJECT_NAME} vray_for_houdini_exporter)

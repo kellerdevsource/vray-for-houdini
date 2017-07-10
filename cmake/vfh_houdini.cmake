@@ -35,8 +35,7 @@ set(VFH_PYTHON_DIRPATH ${CMAKE_BINARY_DIR}/python)
 
 find_package(HDK ${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD} REQUIRED)
 
-set(HDK_DSO_LIB_DEFINES
-	-DMAKING_DSO
+set(HDK_DSO_DEFINITIONS
 	-DVERSION=${HOUDINI_VERSION}
 	-DHOUDINI_DSO_VERSION=${HOUDINI_VERSION}
 	-DUT_DSO_TAGINFO=${PLUGIN_TAGINFO}
@@ -73,18 +72,21 @@ macro(use_houdini_sdk)
 		set(HOUDINI_HOME_PATH "$ENV{HOME}/houdini${HOUDINI_VERSION}")
 	endif()
 
-	add_definitions(${HDK_DEFINITIONS})
+	add_definitions(
+		${HDK_DEFINITIONS}
+		${HDK_DSO_DEFINITIONS}
+	)
 	include_directories(${HDK_INCLUDES})
 	link_directories(${HDK_LIBRARIES})
 endmacro()
 
-function(houdini_plugin name sources)
+macro(houdini_library name sources)
+	add_library(${name} STATIC ${sources})
+endmacro()
+
+macro(houdini_plugin name sources)
 	add_library(${name} SHARED ${sources})
-
 	set_target_properties(${name} PROPERTIES PREFIX "")
-
-	target_compile_definitions(${name} PRIVATE ${HDK_DSO_LIB_DEFINES})
 	target_link_libraries(${name} ${HDK_LIBS})
-
 	vfh_osx_flags(${name})
-endfunction()
+endmacro()
