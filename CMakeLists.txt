@@ -23,6 +23,8 @@ include(vfh_phoenix)
 
 project(vray_for_houdini)
 
+set_compiler_flags()
+
 option(BUILD_TESTING "Enable build testing" OFF)
 if(BUILD_TESTING)
 	include(CTest)
