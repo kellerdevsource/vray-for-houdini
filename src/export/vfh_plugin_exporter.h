@@ -99,7 +99,7 @@ public:
 	/// Initilize AppSDK and V-Ray renderer context.
 	/// You'll need to initilize once, before creating a V-Ray renderer instance.
 	/// @retval true on success
-	static bool initialize();
+	static bool initialize(int initVFB=true);
 
 	/// Deinitilize AppSDK and V-Ray renderer context. Free the license.
 	static void deinitialize();
@@ -148,6 +148,10 @@ public:
 	/// Delete plugin with the given name
 	/// @param pluginName - plugin name
 	void removePlugin(const std::string &pluginName);
+
+	/// Delete plugin.
+	/// @param plugin V-Ray plugin instance.
+	void removePlugin(VRay::Plugin plugin);
 
 	/// Commits any accumulated scene changes. This is necessary if
 	/// the autoCommit is set to false on the renderer instance.
@@ -244,8 +248,23 @@ public:
 	/// Get the actual renderer instance
 	VRay::VRayRenderer& getVRay() { return *m_vray; }
 
+	/// Reset scene data.
+	void reset() const;
+
 private:
 	struct RenderRegion {
+		RenderRegion()
+			: left(-1)
+			, top(-1)
+			, width(-1)
+			, height(-1)
+			, saved(false)
+		{}
+
+		bool isValid() const {
+			return saved && left >= 0 && top >= 0 && width > 0 && height > 0;
+		}
+
 		int left;
 		int top;
 		int width;

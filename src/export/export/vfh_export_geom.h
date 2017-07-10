@@ -12,12 +12,13 @@
 #define VRAY_FOR_HOUDINI_EXPORT_GEOM_H
 
 #include "vfh_vray.h"
-#include "vfh_exporter.h"
-#include "vfh_material_override.h"
 #include "vfh_export_primitive.h"
+#include "vfh_geoutils.h"
 
-#include <OBJ/OBJ_Geometry.h>
+#include <QStack>
+
 #include <GU/GU_PrimPacked.h>
+#include <OBJ/OBJ_Light.h>
 
 namespace VRayForHoudini {
 
@@ -32,199 +33,246 @@ enum VMRenderPointsAs {
 	vmRenderPointsAsCirle, ///< Render points as circles. Maps GeomParticleSystem "render_type" 6 (Points).
 };
 
-/// Wraps the export of geometry from a OBJ_Geometry node.
-/// In Houdini single gdp can contain multiple primitive types:
-/// polygons, curves, volumes, packed geometry, delay load prims (bgeo,
-/// alembic, V-Ray proxy), etc.
-/// GeometryExporter will take up an OBJ node and handle the export of
-/// different primitive types by calling the corresponding primitive exporter.
-/// Usually this would result in generating separate Node plugin for each
-/// primitive type: f: OBJ_Geometry -> set of Node plugins
-class GeometryExporter
+/// Primitive export context item.
+/// Used for non-Instancer objects like volumes and lights.
+struct PrimContext {
+	explicit PrimContext(OP_Node *generator=nullptr,
+						 VRay::Transform tm=VRay::Transform(1),
+						 exint detailID=0,
+						 PrimMaterial primMaterial=PrimMaterial())
+		: generator(generator)
+		, tm(tm)
+		, detailID(detailID)
+		, primMaterial(primMaterial)
+	{}
+
+	OP_Node *generator;
+
+	/// Base transform.
+	VRay::Transform tm;
+
+	/// Primitive ID.
+	exint detailID;
+
+	/// Object style sheets.
+	ObjectStyleSheet styleSheet;
+
+	/// Material overrides.
+	PrimMaterial primMaterial;
+};
+
+/// Primitive export context stack.
+typedef QStack<PrimContext> PrimContextStack;
+
+/// Primitive export context stack iterator.
+typedef QVectorIterator<PrimContext> PrimContextIt;
+
+class VRayExporter;
+class VRayRendererNode;
+class ObjectExporter
 {
+	typedef VUtils::HashMapKey<OP_Node*, PluginSet> OpPluginGenCache;
+	typedef VUtils::HashMapKey<OP_Node*, VRay::Plugin> OpPluginCache;
+	typedef VUtils::HashMapKey<int, VRay::Plugin> PrimPluginCache;
+	typedef VUtils::HashMap<VRay::Plugin> GeomNodeCache;
+
 public:
-	GeometryExporter(OBJ_Geometry &node, VRayExporter &pluginExporter);
-	~GeometryExporter() { }
+	explicit ObjectExporter(VRayExporter &pluginExporter);
+
+	/// Clears OBJ plugin cache.
+	void clearOpPluginCache();
+
+	/// Clears OBJ plugin dependency cache for
+	/// non directly instancable object.
+	void clearOpDepPluginCache();
+
+	/// Clears primitive plugin cache.
+	void clearPrimPluginCache();
+
+	/// Sets the flag to actually export geometry.
+	void setExportGeometry(int value) { doExportGeometry = value; }
+
+	/// Returns export geometry flag.
+	int getExportGeometry() const { return doExportGeometry; }
 
 	/// Test if the current geometry node is visible i.e.
 	/// its display flag is on or it is forced to render regardless
 	/// of its display state (when set as forced geometry on the V-Ray ROP)
-	int isNodeVisible() const;
+	static int isNodeVisible(OP_Node &rop, OBJ_Node &node, fpreal t);
+
+	/// Test if the current geometry node is visible i.e.
+	/// its display flag is on or it is forced to render regardless
+	/// of its display state (when set as forced geometry on the V-Ray ROP)
+	int isNodeVisible(OBJ_Node &node) const;
+
+	/// Test if a ligth is enabled i.e. its enabled flag is on,
+	/// intensity is > 0 or its a forced light on the V-Ray ROP
+	int isLightEnabled(OBJ_Node &objLight) const;
 
 	/// Test if the current geometry node should be rendered
 	/// as matte object (when set as matte geometry on the V-Ray ROP)
-	int isNodeMatte() const;
+	int isNodeMatte(OBJ_Node &node) const;
 
 	/// Test if the current geometry node should be rendered
 	/// as phantom object (when set as phantom geometry on the V-Ray ROP)
-	int isNodePhantom() const;
-
-	/// This is set by the IPR OBJ callbacks to signal the exporter of
-	/// whether to re-export the actual geometry (i.e. something on the
-	/// geometry plugins has changed) or only update corresponding Nodes'
-	/// properties.
-	/// @param val[in] - a flag whether to re-export actual geometry
-	GeometryExporter& setExportGeometry(bool val)
-	{ m_exportGeometry = val; return *this; }
+	int isNodePhantom(OBJ_Node &node) const;
 
 	/// Test if subdivision has been applied to the node at render time
 	/// @note This will affect the export of vertex attributes on mesh
 	///       geometry. Vertex attribute values that have the same value
 	///       will be welded into single one
-	bool hasSubdivApplied() const;
+	bool hasSubdivApplied(OBJ_Node &objNode) const;
 
-	/// Export the object's geometry. Different primitive types are handled by
-	/// different primitive exporters ususally by exporting separate Node plugins
-	/// for each type.
-	/// @retval number of plugin descriptions generated for this
-	///         OBJ node
-	int exportNodes();
+	int getPrimKey(const GA_Primitive &prim);
 
-	/// Clear data generated from export
-	void reset();
+	int getPrimPluginFromCache(int primKey, VRay::Plugin &plugin);
 
-	/// Get number of plugin descriptions generated for this OBJ node
-	int getNumPluginDesc() const;
-
-	/// Get the plugin description at a given index
-	/// @param idx[in] - index in range [0, getNumPluginDesc())
-	/// @retval the plugin description at the specified index
-	///         throws std::out_of_range if no such exists
-	Attrs::PluginDesc& getPluginDescAt(int idx);
-
-private:
-	/// Helper function to export geometry from a custom V-Ray SOP node
-	/// @param sop[in] - V-Ray custom SOP node (V-Ray plane or V-Ray scene)
-	/// @param pluginList[out] - collects plugins generated for the SOP node
-	/// @retval number of plugin descriptions added to pluginList
-	int exportVRaySOP(SOP_Node &sop, PluginDescList &pluginList);
-
-	/// Helper function to traverse and export primitives from a given gdp
-	/// This is called recursively when handling packed geometry prims
-	/// @param sop[in] - parent SOP node for the gdp
-	/// @param gdl[in] - read lock handle, guarding the actual gdp
-	/// @param pluginList[out] - collects plugins generated for the gdp
-	/// @retval number of plugin descriptions added to pluginList
-	int exportDetail(SOP_Node &sop, GU_DetailHandleAutoReadLock &gdl, PluginDescList &pluginList);
-
-	/// Helper function to export mesh geometry from a given gdp
-	/// @param sop[in] - parent SOP node for the gdp
-	/// @param gdp[in] - the actual gdp
-	/// @param pluginList[out] - collects plugins generated for the gdp
-	/// @retval number of plugin descriptions added to pluginList
-	int exportPolyMesh(SOP_Node &sop, const GU_Detail &gdp, PluginDescList &pluginList);
-
-	/// Helper function to export a packed primitive. It will check if
-	/// the primitive geometry has already been processed
-	/// @param sop[in] - parent SOP node for the primitive
-	/// @param prim[in] - the packed primitive
-	/// @param pluginList[out] - collects plugins generated for the primitive
-	/// @retval number of plugin descriptions added to pluginList
-	int exportPacked(SOP_Node &sop, const GU_PrimPacked &prim, PluginDescList &pluginList);
+	/// It's ok to add invalid plugins to cache here,
+	/// because if we've failed to export plugin once we should not retry.
+	void addPrimPluginToCache(int primKey, VRay::Plugin &plugin);
 
 	/// Helper function to generate unique id for the packed primitive
 	/// this is used as key in m_detailToPluginDesc map to identify
 	/// plugins generated for the primitve
-	/// @param prim[in] - the packed primitive
-	/// @retval unique primitive id
-	uint getPrimPackedID(const GU_PrimPacked &prim);
+	/// @param prim The packed primitive.
+	/// @returns unique primitive id.
+	int getPrimPackedID(const GU_PrimPacked &prim);
 
-	/// Helper function to export a packed primitive
-	/// @param sop[in] - parent SOP node for the primitive
-	/// @param prim[in] - the packed primitive
-	/// @param pluginList[out] - collects plugins generated for the primitive
-	/// @retval number of plugin descriptions added to pluginList
-	int exportPrimPacked(SOP_Node &sop, const GU_PrimPacked &prim, PluginDescList &pluginList);
+	void exportPolyMesh(OBJ_Node &objNode, const GU_Detail &gdp, const GEOPrimList &primList, PrimitiveItems &instancerItems);
 
-	/// Helper function to export AlembicRef primitive
-	/// @param sop[in] - parent SOP node for the primitive
-	/// @param prim[in] - the primitive
-	/// @param pluginList[out] - collects plugins generated for the primitive
-	/// @retval number of plugin descriptions added to pluginList
-	int exportAlembicRef(SOP_Node &sop, const GU_PrimPacked &prim, PluginDescList &pluginList);
+	void exportHair(OBJ_Node &objNode, const GU_Detail &gdp, const GEOPrimList &primList, PrimitiveItems &instancerItems);
 
-	/// Helper function to export VRayProxyRef primitive
-	/// @param sop[in] - parent SOP node for the primitive
-	/// @param prim[in] - the primitive
-	/// @param pluginList[out] - collects plugins generated for the primitive
-	/// @retval number of plugin descriptions added to pluginList
-	int exportVRayProxyRef(SOP_Node &sop, const GU_PrimPacked &prim, PluginDescList &pluginList);
+	/// A helper function to export geometry from a custom V-Ray SOP node.
+	/// @param sop V-Ray SOP node.
+	/// @returns V-Ray plugin instance.
+	VRay::Plugin exportVRaySOP(OBJ_Node &objNode, SOP_Node &sop);
 
-	/// Helper function to export PackedDisk primitive (bgeo, bclassic)
-	/// @param sop[in] - parent SOP node for the primitive
-	/// @param prim[in] - the primitive
-	/// @param pluginList[out] - collects plugins generated for the primitive
-	/// @retval number of plugin descriptions added to pluginList
-	int exportPackedDisk(SOP_Node &sop, const GU_PrimPacked &prim, PluginDescList &pluginList);
+	VRay::Plugin exportVRayProxyRef(OBJ_Node &objNode, const GU_PrimPacked &prim);
 
-	/// Helper function to export packed geometry primitive
-	/// @param sop[in] - parent SOP node for the primitive
-	/// @param prim[in] - the primitive
-	/// @param pluginList[out] - collects plugins generated for the primitive
-	/// @retval number of plugin descriptions added to pluginList
-	int exportPackedGeometry(SOP_Node &sop, const GU_PrimPacked &prim, PluginDescList &pluginList);
+	VRay::Plugin exportAlembicRef(OBJ_Node &objNode, const GU_PrimPacked &prim);
 
-	/// Export points as particles.
+	VRay::Plugin exportPackedDisk(OBJ_Node &objNode, const GU_PrimPacked &prim);
+
+	VRay::Plugin exportPackedGeometry(OBJ_Node &objNode, const GU_PrimPacked &prim);
+
+	VRay::Plugin exportPrimPacked(OBJ_Node &objNode, const GU_PrimPacked &prim);
+
+	VRay::Plugin exportPrimSphere(OBJ_Node &objNode, const GA_Primitive &prim);
+
+	void exportPrimVolume(OBJ_Node &objNode, const PrimitiveItem &item);
+
+	void processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, PrimitiveItems &instancerItems);
+
+	VRay::Plugin exportDetailInstancer(OBJ_Node &objNode, const GU_Detail &gdp, const PrimitiveItems &instancerItems, const char *prefix);
+
+	VRay::Plugin exportDetail(OBJ_Node &objNode, const GU_Detail &gdp);
+
+	/// Export point particles data.
 	/// @param gdp Detail.
-	/// @param renderPoints Points rendering mode.
-	/// @param[out] pluginList Collects plugins generated for the primitive.
-	/// @returns Number of plugin descriptions added to pluginList.
-	int exportRenderPoints(const GU_Detail &gdp, VMRenderPoints renderPoints, PluginDescList &pluginList);
+	/// @param pointsMode Point particles rendering mode.
+	/// @returns Geometry plugin.
+	VRay::Plugin exportPointParticles(OBJ_Node &objNode, const GU_Detail &gdp, VMRenderPoints pointsMode);
 
-	/// Helper function to export the material for this OBJ node.
-	/// The material from OBJ node 'shoppath' parameter together with
-	/// V-Ray materials specified on per primitive basis are collected
-	/// during traversal and export of geometry. These are then combined
-	/// into single MtlMulti material which is assigned to all the Nodes.
-	/// Node::user_attributes is utilized to specify the correct material
-	/// id and index the correct material for the specific Node.
-	/// @retval the material V-Ray plugin
-	VRay::Plugin exportMaterial();
+	/// Export point particle instancer.
+	/// @param gdp Detail.
+	/// @returns Geometry plugin.
+	VRay::Plugin exportPointInstancer(OBJ_Node &objNode, const GU_Detail &gdp, int isInstanceNode=false);
 
-	/// Helper function to format material overrides specified on the object node
-	/// as Node::user_attributes
-	/// @param userAttrs[out] - string with formatted material overrides
-	/// @retval number of overrides we have found
-	int getSHOPOverridesAsUserAttributes(UT_String& userAttrs) const;
+	/// Returns true if object is a point intancer.
+	/// @param gdp Detail.
+	static int isPointInstancer(const GU_Detail &gdp);
+	static int isInstanceNode(const OP_Node &node);
+
+	/// Returns point particles mode.
+	VMRenderPoints getParticlesMode(OBJ_Node &objNode) const;
+
+	/// Instancer works only with Node plugins. This method will wrap geometry into
+	/// the Node plugin if needed.
+	/// @param geometry Geometry plugin instance.
+	/// @returns Node plugin instance.
+	VRay::Plugin getNodeForInstancerGeometry(VRay::Plugin geometry, VRay::Plugin objMaterial);
+
+	/// Export object geometry.
+	/// @returns Geometry plugin.
+	VRay::Plugin exportGeometry(OBJ_Node &objNode);
+
+	/// Export SOP geometry.
+	/// @returns Geometry plugin.
+	VRay::Plugin exportGeometry(OBJ_Node &objNode, SOP_Node &sopNode);
+
+	/// Export object.
+	/// @returns Node plugin.
+	VRay::Plugin exportObject(OBJ_Node &objNode);
+
+	/// Remove object.
+	void removeObject(OBJ_Node &objNode);
+ 
+	/// Returns transform from the primitive context stack.
+	VRay::Transform getTm() const;
+
+	/// Returns primitive ID from the primitive context stack.
+	exint getDetailID() const;
+
+	/// Returns material from the primitive context stack.
+	void getPrimMaterial(PrimMaterial &primMaterial) const;
+
+	/// Returns object style sheet from the context stack.
+	ObjectStyleSheet getObjectStyleSheet() const;
+
+	OP_Node *getGenerator() const;
+
+	void addGenerated(OP_Node &key, VRay::Plugin plugin);
+
+	void removeGenerated(OP_Node &key);
 
 private:
-	typedef std::unordered_map< uint, PluginDescList > DetailToPluginDesc;
+	/// Push context frame when exporting nested object.
+	void pushContext(const PrimContext &value) { primContextStack.push(value); }
 
-	/// The OBJ node owner of all details that will be processed
-	/// by this exporter
-	OBJ_Geometry        &m_objNode;
-	/// Current time
-	OP_Context          &m_context;
-	/// A reference to the main vfh exporter
-	VRayExporter        &m_pluginExporter;
+	/// Pop frame when going back to parent context.
+	/// @returns Popped context frame.
+	PrimContext popContext() { return primContextStack.pop(); }
+
+	/// Export light object.
+	/// @returns Light plugin.
+	VRay::Plugin exportLight(OBJ_Light &objLight);
+
+	/// Export geometric object.
+	/// @returns Node plugin.
+	VRay::Plugin exportNode(OBJ_Node &objNode);
+
+	/// Plugin exporter.
+	VRayExporter &pluginExporter;
+
+	/// Exporting context.
+	OP_Context &ctx;
 
 	/// A flag if we should export the actual geometry from the render
 	/// detail or only update corresponding Nodes' properties. This is
 	/// set by the IPR OBJ callbacks to signal the exporter of whether
 	/// to re-export geometry plugins (i.e. something on the actual
 	/// geometry has changed). By default this flag is on.
-	bool                 m_exportGeometry;
-	/// Unique id of the main gdp (taken from the render SOP)
-	/// This is used as a key in m_detailToPluginDesc map to
-	/// identify Node plugins generated for this OBJ node
-	uint                 m_myDetailID;
-	/// A map of gdp unique id to list of Node plugins generated
-	/// for this gdp. This is used to check if geometry has already
-	/// been processed and what are the corrsponding V-Ray Node plugins
-	/// when exporting packed geometry or delay load prims.
-	DetailToPluginDesc   m_detailToPluginDesc;
-	/// A list of V-Ray materials that accumulates all the materials that should
-	/// be exported for this OBJ node. These are combined into a single MtlMulti
-	/// V-Ray plugin and the corresponding material id (generated from SHOPHasher
-	/// and properly formatted in Node::user_attributes) is used to index the
-	/// correct material for the Node. For example: when dealing with instanced
-	/// packed geometry primitives, single geometry could have different materials
-	/// assigned. These are accumulated here.
-	/// @note the material from OBJ node 'shoppath' parameter is always exported
-	///       with id 0. If no such is specified this would be the default material.
-	SHOPList             m_shopList;
-};
+	int doExportGeometry;
 
+	struct PluginCaches {
+		/// OP_Node centric plugin cache.
+		OpPluginCache op;
+
+		/// Unique primitive plugin cache.
+		PrimPluginCache prim;
+
+		/// Wrapper nodes cache for Instancer plugin.
+		GeomNodeCache instancerNodeWrapper;
+
+		/// Maps OP_Node with generated set of plugins for
+		/// non directly instancable object.
+		OpPluginGenCache generated;
+	} pluginCache;
+
+	/// Primitive export context stack.
+	/// Used for non-Instancer objects like volumes and lights.
+	PrimContextStack primContextStack;
+};
 
 } // namespace VRayForHoudini
 

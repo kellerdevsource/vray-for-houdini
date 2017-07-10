@@ -140,14 +140,19 @@ if(HDK_FOUND)
 	set(HDK_INCLUDE_PATH ${HDK_INCLUDES})
 	set(HDK_LIB_PATH     ${HDK_LIBRARIES})
 
-	# For Boost spirit
 	set(HDK_INCLUDES
+		# For Boost spirit
 		${SDK_PATH}/hdk/boost_shared
+		${HDK_PATH}/python27/include
 		${HDK_INCLUDE_PATH}
 	)
 
-	# For Windows linking
+	set(HDK_LIBRARIES
+		${HDK_PATH}/python27/libs
+		${HDK_LIB_PATH}
+	)
 
+	# For Windows linking
 	if(HOUDINI_QT_VERSION VERSION_GREATER 4)
 		list(APPEND HDK_DEFINITIONS
 			-DUSE_QT5=1
@@ -187,6 +192,10 @@ if(HDK_FOUND)
 			-DBOOST_ALL_NO_LIB
 			-DEIGEN_MALLOC_ALREADY_ALIGNED=0
 		)
+
+		if(WIN32)
+			set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /D UT_ASSERT_LEVEL=1")
+		endif()
 
 		file(GLOB HDK_LIBS_A "${HDK_LIB_PATH}/*.a")
 

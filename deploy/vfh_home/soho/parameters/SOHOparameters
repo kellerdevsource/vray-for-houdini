@@ -7,6 +7,8 @@
 // to include the system parameters along with V-Ray specific ones
 // where you have $VFH env var set to vfh install location when launching Houdini
 
+#define _SOHO_USER_IPR_MODE
+
 // system parameters
 #include "$HFS/houdini/soho/parameters/SOHOparameters"
 

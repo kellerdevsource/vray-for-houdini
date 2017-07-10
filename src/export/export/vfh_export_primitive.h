@@ -12,74 +12,142 @@
 #define VRAY_FOR_HOUDINI_EXPORT_PRIMITIVE_H
 
 #include "vfh_vray.h"
-#include "vfh_exporter.h"
+#include "vfh_material_override.h"
+#include "vfh_plugin_attrs.h"
 
-#include <OBJ/OBJ_Geometry.h>
+#include <GA/GA_Primitive.h>
 #include <GU/GU_Detail.h>
+#include <GU/GU_PrimPacked.h>
 
 namespace VRayForHoudini {
 
-typedef std::vector< VRay::Plugin > PluginList;
-typedef std::list< Attrs::PluginDesc > PluginDescList;
+typedef VUtils::HashSet<VRay::Plugin> PluginSet;
 
-/// Base class for exporting primitives from OBJ nodes
-class PrimitiveExporter {
-public:
-	PrimitiveExporter(OBJ_Node &obj, OP_Context &ctx, VRayExporter &exp): m_object(obj), m_context(ctx), m_exporter(exp) {}
-
-	/// TODO: is this needed?
-	virtual bool asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc &pluginDesc) = 0;
-
-	/// Generate plugin descriptions for all supported primitives in the provided GU_Detail
-	/// @gdp - the detail to traverse
-	/// @plugins[out] - the list of plugins generated for this detail
-	virtual void exportPrimitives(const GU_Detail &detail, PluginDescList &plugins) = 0;
-	virtual ~PrimitiveExporter() {}
-protected:
-	OBJ_Node     &m_object; ///< Object node owner of all details that will be passed to exportPrimitives
-	OP_Context   &m_context; ///< Current context used to obtain current time
-	VRayExporter &m_exporter; ///< Exporter instance for writing plugins
+enum ObjectIDTypes {
+	objectIdUndefined = -1,
 };
 
-typedef std::shared_ptr<PrimitiveExporter> PrimitiveExporterPtr;
+struct PrimitiveItem {
+	enum InstancerItemFlags {
+		itemFlagsNone = 0,
+		itemFlagsUseTime = (1 << 0),
+	};
 
-#ifdef CGR_HAS_AUR
-/// Exports all VRayVolumeGridRef primitives of passed details
-class VolumeExporter: public PrimitiveExporter {
+	explicit PrimitiveItem(VRay::Plugin geometry=VRay::Plugin(),
+						   VRay::Plugin material=VRay::Plugin())
+		: prim(nullptr)
+		, primID(0)
+		, geometry(geometry)
+		, material(material)
+		, tm(1)
+		, objectID(objectIdUndefined)
+		, t(0.0)
+		, flags(itemFlagsNone)
+	{}
+
+	/// Primitive.
+	const GA_Primitive *prim;
+
+	/// Primitive ID.
+	exint primID;
+
+	/// Material.
+	PrimMaterial primMaterial;
+
+	/// Exporterd geometry plugin.
+	VRay::Plugin geometry;
+
+	/// Exporterd material plugin.
+	VRay::Plugin material;
+
+	/// Transform.
+	VRay::Transform tm;
+
+	/// Object ID.
+	int objectID;
+
+	/// Time instancing.
+	fpreal t;
+
+	/// Flags.
+	uint32_t flags;
+};
+
+typedef VUtils::Table<PrimitiveItem, -1> PrimitiveItems;
+
+class VRayExporter;
+
+/// Base class for exporting primitives from OBJ nodes
+class PrimitiveExporter
+{
 public:
-	VolumeExporter(OBJ_Node &obj, OP_Context &ctx, VRayExporter &exp): PrimitiveExporter(obj, ctx, exp) {};
+	PrimitiveExporter(OBJ_Node &objNode, OP_Context &ctx, VRayExporter &pluginExporter)
+		: objNode(objNode)
+		, ctx(ctx)
+		, pluginExporter(pluginExporter)
+		, tm(1)
+		, detailID(0)
+	{}
+	virtual ~PrimitiveExporter() {}
 
-	virtual bool asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc &pluginDesc) VRAY_OVERRIDE { return false; }
-	/// Generate plugin descriptions for all supported primitives in the provided GU_Detail
-	/// @gdp - the detail to traverse
-	/// @plugins[out] - the list of plugins generated for this detail
-	virtual void exportPrimitives(const GU_Detail &detail, PluginDescList &plugins) VRAY_OVERRIDE;
+	virtual void exportPrimitive(const PrimitiveItem &item, PluginSet &pluginsSet) {}
+	virtual void exportPrimitives(const GU_Detail &detail, PrimitiveItems &plugins) {}
+
+	virtual bool asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc &pluginDesc) { return false; }
+
+	/// Sets transform.
+	void setTM(const VRay::Transform &value) { tm = value; }
+
+	/// Sets detail ID.
+	void setDetailID(exint value) { detailID = value;}
 
 protected:
-	/// Export the PhxShaderCache for the given primitive
-	/// @prim - the primitive
-	void exportCache(const GA_Primitive &prim);
+	/// Object node owner of all details that will be passed to exportPrimitives.
+	OBJ_Node &objNode;
 
-	/// Export the PhxShaderSim for the given SHOP node and associate it with a PhxShaderCache by name
-	/// @shop - pointer to the SHOP node containing the sim properties
-	/// @overrideAttrs - list of attributes that need to be overriden in the sim plugin, e.g. node_transform
-	/// @cacheName - the name of the PhxShaderCache for the 'cache' property
-	void exportSim(SHOP_Node *shop, const Attrs::PluginAttrs &overrideAttrs, const std::string &cacheName);
+	/// Current context used to obtain current time.
+	OP_Context &ctx;
+
+	/// Exporter instance for writing plugins.
+	VRayExporter &pluginExporter;
+
+	/// Transform.
+	VRay::Transform tm;
+
+	/// Detail ID. Used to generate unique plugin name.
+	exint detailID;
+};
+
+#ifdef CGR_HAS_AUR
+
+/// Exports all VRayVolumeGridRef primitives of passed details.
+class VolumeExporter
+	: public PrimitiveExporter
+{
+public:
+	VolumeExporter(OBJ_Node &obj, OP_Context &ctx, VRayExporter &exp)
+		: PrimitiveExporter(obj, ctx, exp)
+	{}
+
+	void exportPrimitive(const PrimitiveItem &item, PluginSet &pluginsSet) VRAY_OVERRIDE;
+
+protected:
+	VRay::Plugin exportVRayVolumeGridRef(OBJ_Node &objNode, const GU_PrimPacked &prim) const;
 };
 
 /// Specialization for exporting Houdini's volumes as textures
 /// Uses VolumeExporter::exportCache and VolumeExporter::exportSim to export needed plugins
-class HoudiniVolumeExporter: public VolumeExporter {
+class HoudiniVolumeExporter
+	: public VolumeExporter
+{
 public:
-	HoudiniVolumeExporter(OBJ_Node &obj, OP_Context &ctx, VRayExporter &exp): VolumeExporter(obj, ctx, exp) {};
+	HoudiniVolumeExporter(OBJ_Node &obj, OP_Context &ctx, VRayExporter &exp)
+		: VolumeExporter(obj, ctx, exp)
+	{}
 
-	/// Generate plugin descriptions for all supported primitives in the provided GU_Detail
-	/// @gdp - the detail to traverse
-	/// @plugins[out] - the list of plugins generated for this detail
-	virtual void exportPrimitives(const GU_Detail &detail, PluginDescList &plugins) VRAY_OVERRIDE;
-private:
-
+	void exportPrimitive(const PrimitiveItem &item, PluginSet &pluginsSet) VRAY_OVERRIDE;
 };
+
 #endif // CGR_HAS_AUR
 
 } // namespace VRayForHoudini

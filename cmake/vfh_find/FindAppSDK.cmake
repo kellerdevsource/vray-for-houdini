@@ -66,10 +66,6 @@ if(AppSDK_FOUND)
 			break()
 		endif()
 	endforeach(loop_var)
-
-	if (NOT EXISTS "${_appsdk_root}/bin/plugins")
-		set(AppSDK_FOUND FALSE)
-	endif()
 endif()
 
 

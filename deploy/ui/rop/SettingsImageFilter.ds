@@ -1,0 +1,39 @@
+    parm {
+	name	"on"
+	label	"On"
+	type	toggle
+	default	{ "0" }
+	help	"Enable/disable image filter"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "SettingsImageFilter" }
+	parmtag	{ "vray_pluginattr" "on" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"type"
+	label	"Type"
+	type	integer
+	default	{ "0" }
+	help	"0 - Sinc, 1 - Lanczos, 2 - Catmull Rom, 3 - Triangle, 4 - Box, 5- Area"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "SettingsImageFilter" }
+	parmtag	{ "vray_pluginattr" "type" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"size"
+	label	"Size"
+	type	float
+	default	{ "1" }
+	help	"Image filter size (where applicable)"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "SettingsImageFilter" }
+	parmtag	{ "vray_pluginattr" "size" }
+	parmtag	{ "vray_type" "float" }
+    }

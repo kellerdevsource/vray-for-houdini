@@ -56,9 +56,9 @@ static AppSdkInit *appSdkInit = nullptr;
 
 struct AppSdkInit
 {
-	static AppSdkInit &getInstance() {
+	static AppSdkInit &getInstance(int initVFB=false) {
 		if (!appSdkInit) {
-			appSdkInit = new AppSdkInit;
+			appSdkInit = new AppSdkInit(initVFB);
 		}
 		return *appSdkInit;
 	}
@@ -72,7 +72,7 @@ struct AppSdkInit
 	}
 
 private:
-	AppSdkInit()
+	AppSdkInit(int initVFB=false)
 		: m_vrayInit(nullptr)
 		, m_dummyRenderer(nullptr)
 	{
@@ -100,7 +100,7 @@ private:
 #else
 			const bool isVfbEnabled = HOU::isUIAvailable();
 #endif
-			m_vrayInit = new VRay::VRayInit(isVfbEnabled);
+			m_vrayInit = new VRay::VRayInit(initVFB && isVfbEnabled);
 		}
 		catch (VRay::VRayException &e) {
 			Log::getLog().error("Error initializing V-Ray AppSDK library:\n%s",
@@ -261,9 +261,9 @@ static void OnBucketReady(VRay::VRayRenderer &renderer, int x, int y, const char
 }
 
 
-bool VRayPluginRenderer::initialize()
+bool VRayPluginRenderer::initialize(int initVFB)
 {
-	return static_cast<bool>(AppSdkInit::getInstance());
+	return static_cast<bool>(AppSdkInit::getInstance(initVFB));
 }
 
 
@@ -349,6 +349,9 @@ int VRayPluginRenderer::initRenderer(int hasUI, int reInit)
 				options.useDefaultVfbTheme = false;
 				options.vfbDrawStyle = VRay::RendererOptions::ThemeStyleMaya;
 				options.keepRTRunning = true;
+				options.rtNoiseThreshold = 0.0f;
+				options.rtSampleLevel = INT_MAX;
+				options.rtTimeout = 0;
 
 				m_vray = new VRay::VRayRenderer(options);
 			}
@@ -615,6 +618,9 @@ void VRayPluginRenderer::setRendererMode(int mode)
 			VRay::RendererOptions options = m_vray->getOptions();
 			options.numThreads = VUtils::getNumProcessors() - 1;
 			options.keepRTRunning = true;
+			options.rtNoiseThreshold = 0.0f;
+			options.rtSampleLevel = INT_MAX;
+			options.rtTimeout = 0;
 
 			m_vray->setOptions(options);
 		}
@@ -627,6 +633,14 @@ void VRayPluginRenderer::setRendererMode(int mode)
 void VRayPluginRenderer::removePlugin(const Attrs::PluginDesc &pluginDesc)
 {
 	removePlugin(pluginDesc.pluginName);
+}
+
+
+void VRayPluginRenderer::removePlugin(VRay::Plugin plugin)
+{
+	vassert(m_vray);
+
+	m_vray->removePlugin(plugin);
 }
 
 
@@ -679,7 +693,7 @@ int VRayPluginRenderer::startRender(int locked)
 		Log::getLog().info("Starting render for frame %.3f...", m_vray->getCurrentTime());
 
 		// TODO: unhack this when appsdk saves render regions after m_vray->reset()
-		if (m_savedRegion.saved) {
+		if (m_savedRegion.isValid()) {
 			m_vray->setRenderRegion(m_savedRegion.left, m_savedRegion.top, m_savedRegion.width, m_savedRegion.height);
 		}
 
@@ -757,4 +771,13 @@ void VRayPluginRenderer::setAutoCommit(const bool enable)
 	if (m_vray) {
 		m_vray->setAutoCommit(enable);
 	}
+}
+
+void VRayPluginRenderer::reset() const
+{
+	if (!m_vray)
+		return;
+
+	m_vray->stop();
+	m_vray->reset();
 }
