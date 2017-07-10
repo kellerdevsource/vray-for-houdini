@@ -202,21 +202,13 @@ if (Phoenix_FOUND)
 	link_directories(${Phoenix_LIBRARIES})
 endif()
 
-use_houdini_sdk()
-use_vray_sdk()
-use_vray_appsdk()
-
 option(USE_PCH "Use precompiled header" OFF)
 if(USE_PCH)
-	set_precompiled_header(vfh_pch.h "${CMAKE_CURRENT_SOURCE_DIR}/vfh_pch.cpp" EXPORTER_SOURCES)
-	set_precompiled_header(vfh_pch.h "${CMAKE_CURRENT_SOURCE_DIR}/vfh_pch.cpp" SOURCES)
-else()
-	list(REMOVE_ITEM EXPORTER_SOURCES vfh_pch.cpp)
-	list(REMOVE_ITEM SOURCES vfh_pch.cpp)
+	# set_precompiled_header(vfh_pch.h "${CMAKE_CURRENT_SOURCE_DIR}/vfh_pch.cpp" EXPORTER_SOURCES)
+	# set_precompiled_header(vfh_pch.h "${CMAKE_CURRENT_SOURCE_DIR}/vfh_pch.cpp" SOURCES)
 endif()
 
-add_library(vray_for_houdini_exporter STATIC "${EXPORTER_SOURCES};${EXPORTER_HEADERS}")
-
+houdini_library(vray_for_houdini_exporter "${EXPORTER_SOURCES};${EXPORTER_HEADERS}")
 houdini_plugin(${PROJECT_NAME} "${SOURCES};${HEADERS}")
 
 target_link_libraries(${PROJECT_NAME} vray_for_houdini_exporter)
