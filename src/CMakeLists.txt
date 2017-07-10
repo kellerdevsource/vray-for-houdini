@@ -240,7 +240,6 @@ add_definitions(-DCGR_GIT_HASH=${SRC_GIT_HASH})
 
 # Install
 #
-option(INSTALL_LOCAL "Install files locally" OFF)
 option(INSTALL_RELEASE "Install release build for distribution" OFF)
 
 function(vfh_generate_launcher)
@@ -326,33 +325,23 @@ function(vfh_install_common _location)
 	cgr_install_runtime(${PROJECT_NAME} ${_location}/vfh_home/dso)
 
 	# Copy config
-	install(DIRECTORY   ${CMAKE_SOURCE_DIR}/deploy/vfh_home
-			DESTINATION ${_location})
+	install(DIRECTORY ${CMAKE_SOURCE_DIR}/deploy/vfh_home
+			DESTINATION ${_location}
+			PATTERN "otls/*" EXCLUDE
+			PATTERN "otls" EXCLUDE
+			PATTERN "*.pyc" EXCLUDE
+	)
 
+	if (WITH_SOHO)
+		install(DIRECTORY ${CMAKE_SOURCE_DIR}/deploy/vfh_home/otls
+				DESTINATION ${_location}/vfh_home
+				PATTERN "backup/*" EXCLUDE
+				PATTERN "backup" EXCLUDE
+		)
+	endif()
 endfunction(vfh_install_common)
 
-if(INSTALL_LOCAL)
-	set(DEPLOY_LOCATION ${CMAKE_BINARY_DIR}/deploy)
-
-	vfh_install_common(${DEPLOY_LOCATION})
-
-	# Generate launcher file
-	vfh_gen_launcher(${DEPLOY_LOCATION}           # where
-					 ${APPSDK_ROOT}               # app sdk location
-					 ${CMAKE_SOURCE_DIR}/deploy   # vfh config location
-					 ${DEPLOY_LOCATION}           # vfh dso location
-					 _launcher                    # output launcher
-					)
-
-	# Create shortcuts
-	file(TO_NATIVE_PATH "${_launcher}" SHORTCUT_TARGET)
-	if(WIN32)
-		file(WRITE "$ENV{USERPROFILE}/Desktop/hfs.bat" ${SHORTCUT_TARGET})
-	else()
-		file(WRITE "$ENV{HOME}/bin/hfs.sh" ${SHORTCUT_TARGET})
-	endif()
-
-elseif(INSTALL_RELEASE)
+if(INSTALL_RELEASE)
 	if(NOT "${CMAKE_BUILD_TYPE}" STREQUAL "Release")
 		message(WARNING "INSTALL_RELEASE is ON, but CMAKE_BUILD_TYPE is not \"Release\" (${CMAKE_BUILD_TYPE})!")
 	endif()
