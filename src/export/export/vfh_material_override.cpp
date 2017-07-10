@@ -111,7 +111,6 @@ void VRayForHoudini::mergeStyleSheet(PrimMaterial &primMaterial, const QString &
 	Document document;
 	document.Parse(styleSheet.toLocal8Bit().constData());
 
-
 	if (!document.HasMember(Styles::styles))
 		return;
 

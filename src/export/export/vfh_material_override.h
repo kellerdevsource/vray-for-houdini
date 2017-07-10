@@ -94,8 +94,12 @@ struct SheetTarget {
 			: targetType(targetType)
 		{}
 
-		UT_String group;
+		const char *getGroup() const { return group.toLocal8Bit().constData(); }
 
+		/// Primitive group name.
+		QString group;
+
+		/// Group type.
 		TargetType targetType;
 	} primitive;
 
