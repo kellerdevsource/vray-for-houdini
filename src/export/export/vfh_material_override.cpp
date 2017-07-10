@@ -355,12 +355,13 @@ static void parseStyleSheet(const Value &style, ObjectStyleSheet &objSheet, fpre
 			parseStyleSheetOverrides(paramOverrides, styleOverrides.overrides);
 		}
 
+		// If no specific target will be found later, then style will apply to all.
+		TargetStyleSheet targetStyle(SheetTarget::sheetTargetAll);
+		targetStyle.overrides = styleOverrides;
+
 		if (style.HasMember(Styles::target)) {
 			const Value &target = style[Styles::target];
 
-			// If no specific target will be found later, then style will apply to all.
-			TargetStyleSheet targetStyle(SheetTarget::sheetTargetAll);
-			targetStyle.overrides = styleOverrides;
 
 			if (target.HasMember(Styles::Target::subTarget)) {
 				const Value &subTarget = target[Styles::Target::subTarget];
@@ -369,9 +370,9 @@ static void parseStyleSheet(const Value &style, ObjectStyleSheet &objSheet, fpre
 			else {
 				parseStyleSheetTarget(target, targetStyle.target);
 			}
-
-			objSheet.styles += targetStyle;
 		}
+
+		objSheet.styles += targetStyle;
 	}
 }
 
