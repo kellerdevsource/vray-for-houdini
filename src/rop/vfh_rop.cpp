@@ -67,74 +67,25 @@ OP_VariablePair* VRayRendererNode::getVariablePair()
 	return pair;
 }
 
-static int getRendererMode(OP_Node &rop)
-{
-	int renderMode = rop.evalInt("render_render_mode", 0, 0.0);
-	switch (renderMode) {
-		case 0: renderMode = -1; break; // Production CPU
-		case 1: renderMode =  1; break; // RT GPU (OpenCL)
-		case 2: renderMode =  4; break; // RT GPU (CUDA)
-		default: renderMode = -1; break;
-	}
-	return renderMode;
-}
-
-static int getRendererIprMode(OP_Node &rop)
-{
-	int renderMode = rop.evalInt("render_rt_mode", 0, 0.0);
-	switch (renderMode) {
-		case 0: renderMode =  0; break; // RT CPU
-		case 1: renderMode =  1; break; // RT GPU (OpenCL)
-		case 2: renderMode =  4; break; // RT GPU (CUDA)
-		default: renderMode = 0; break;
-	}
-	return renderMode;
-}
-
-static VRayExporter::ExpWorkMode getExporterWorkMode(OP_Node &rop)
-{
-	return static_cast<VRayExporter::ExpWorkMode>(rop.evalInt("render_export_mode", 0, 0.0));
-}
-
-static int isBackground()
-{
-	return NOT(HOU::isUIAvailable());
-}
-
-static int getFrameBufferType(OP_Node &rop)
-{
-	return isBackground() ? -1 : 0;
-}
-
 VRayRendererNode::VRayRendererNode(OP_Network *net, const char *name, OP_Operator *entry)
 	: ROP_Node(net, name, entry)
 	, m_exporter(this)
+	, m_tstart(0)
+	, m_tend(0)
 {
 	Log::getLog().debug("VRayRendererNode()");
-
-	m_activeLightsBundleName.itoa(getUniqueId());
-	m_activeLightsBundleName.prepend("V-RayROPLights_");
-
-	m_activeGeoBundleName.itoa(getUniqueId());
-	m_activeGeoBundleName.prepend("V-RayROPGeo_");
-
-	m_forcedGeoBundleName.itoa(getUniqueId());
-	m_forcedGeoBundleName.prepend("V-RayROPForcedGeo_");
 }
-
 
 VRayRendererNode::~VRayRendererNode()
 {
 	Log::getLog().debug("~VRayRendererNode()");
 }
 
-
 bool VRayRendererNode::updateParmsFlags()
 {
 	bool changed = ROP_Node::updateParmsFlags();
 	return changed;
 }
-
 
 void VRayRendererNode::RtCallbackRop(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
@@ -144,8 +95,7 @@ void VRayRendererNode::RtCallbackRop(OP_Node *caller, void *callee, OP_EventType
 	VRayRendererNode &rop = *UTverify_cast< VRayRendererNode* >(caller);
 
 	switch (type) {
-		case OP_PARM_CHANGED:
-		{
+		case OP_PARM_CHANGED: {
 			const long prmIdx = reinterpret_cast<intptr_t>(data);
 			PRM_Parm &prm = caller->getParm(prmIdx);
 			if (   prm.getSparePtr()
@@ -155,14 +105,15 @@ void VRayRendererNode::RtCallbackRop(OP_Node *caller, void *callee, OP_EventType
 			}
 			break;
 		}
-		case OP_NODE_PREDELETE:
-		{
+		case OP_NODE_PREDELETE: {
 			exporter.delOpCallbacks(caller);
+			break;
+		}
+		default: {
 			break;
 		}
 	}
 }
-
 
 int VRayRendererNode::RtStartSession(void *data, int /*index*/, fpreal t, const PRM_Template* /*tplate*/)
 {
@@ -171,7 +122,6 @@ int VRayRendererNode::RtStartSession(void *data, int /*index*/, fpreal t, const 
 	return 1;
 }
 
-
 int VRayRendererNode::RendererShowVFB(void *data, int /*index*/, fpreal /*t*/, const PRM_Template* /*tplate*/) {
 	VRayRendererNode &rop = *reinterpret_cast<VRayRendererNode*>(data);
 	if (!isBackground()) {
@@ -179,7 +129,6 @@ int VRayRendererNode::RendererShowVFB(void *data, int /*index*/, fpreal /*t*/, c
 	}
 	return 1;
 }
-
 
 int VRayRendererNode::initSession(int interactive, int nframes, fpreal tstart, fpreal tend)
 {
@@ -216,6 +165,9 @@ int VRayRendererNode::initSession(int interactive, int nframes, fpreal tstart, f
 		m_exporter.setIPR(isRT);
 
 		if (m_exporter.initRenderer(!isBackground(), reCreate)) {
+			// Add RT update callbacks to detect scene export changes.
+			m_exporter.addOpCallback(this, RtCallbackRop);
+
 			m_exporter.setRendererMode(rendererMode);
 			m_exporter.setDRSettings();
 
@@ -231,7 +183,6 @@ int VRayRendererNode::initSession(int interactive, int nframes, fpreal tstart, f
 	return error;
 }
 
-
 void VRayRendererNode::startIPR(fpreal time)
 {
 	if (HOU::isApprentice()) {
@@ -244,7 +195,6 @@ void VRayRendererNode::startIPR(fpreal time)
 		m_exporter.exportFrame(time);
 	}
 }
-
 
 int VRayRendererNode::startRender(int nframes, fpreal tstart, fpreal tend)
 {
@@ -260,7 +210,6 @@ int VRayRendererNode::startRender(int nframes, fpreal tstart, fpreal tend)
 	return err;
 }
 
-
 ROP_RENDER_CODE VRayRendererNode::renderFrame(fpreal time, UT_Interrupt *boss)
 {
 	Log::getLog().debug("VRayRendererNode::renderFrame(%.3f)", time);
@@ -274,7 +223,6 @@ ROP_RENDER_CODE VRayRendererNode::renderFrame(fpreal time, UT_Interrupt *boss)
 	return m_exporter.getError();
 }
 
-
 ROP_RENDER_CODE VRayRendererNode::endRender()
 {
 	Log::getLog().debug("VRayRendererNode::endRender()");
@@ -285,242 +233,6 @@ ROP_RENDER_CODE VRayRendererNode::endRender()
 
 	return ROP_CONTINUE_RENDER;
 }
-
-
-OP_Bundle* getBundleFromOpNodePrm(OP_Node *node, const char *pn, fpreal time)
-{
-	if (!node){
-		return nullptr;
-	}
-
-	if (!UTisstring(pn)) {
-		return nullptr;
-	}
-
-	UT_String mask;
-	PRM_Parm *prm = nullptr;
-	node->evalParameterOrProperty(pn, 0, time, mask, &prm);
-
-	OP_Network *opcreator = nullptr;
-	const char *opfilter = nullptr;
-	if (prm && prm->getSparePtr()) {
-		const PRM_SpareData	&prmSpareData = *prm->getSparePtr();
-
-		opcreator = UTverify_cast<OP_Network*>(getOpNodeFromPath(prmSpareData.getOpRelative()));
-		opfilter = prmSpareData.getOpFilter();
-	}
-	if (!opcreator) {
-		opcreator = node->getCreator();
-	}
-
-	UT_String bundleName;
-	bundleName.itoa(node->getUniqueId());
-	bundleName.prepend(pn);
-	OP_Bundle *bundle = OPgetDirector()->getBundles()->getPattern(bundleName,
-																  opcreator,
-																  opcreator,
-																  mask,
-																  opfilter,
-																  0,
-																  false,
-																  0);
-
-	return bundle;
-}
-
-
-OP_Bundle* VRayRendererNode::getActiveLightsBundle()
-{
-	// if "sololight" parm is set ignore others
-	OP_Bundle *sbundle = getBundleFromOpNodePrm(this, "sololight", m_tstart);
-	if (sbundle && sbundle->entries() > 0) {
-		return sbundle;
-	}
-
-	OP_BundleList *blist = OPgetDirector()->getBundles();
-	OP_Bundle *bundle = blist->getBundle(m_activeLightsBundleName);
-	if (!bundle) {
-		bundle = blist->createBundle(m_activeLightsBundleName, true);
-	}
-
-	if (!bundle) {
-		return bundle;
-	}
-
-	bundle->clear();
-
-	OP_Bundle *fbundle = getBundleFromOpNodePrm(this, "forcelights", m_tstart);
-	if (fbundle) {
-		OP_NodeList list;
-		fbundle->getMembers(list);
-		bundle->addOpList(list);
-	}
-
-	OP_Bundle *abundle = getBundleFromOpNodePrm(this, "alights", m_tstart);
-	if (abundle) {
-		OP_NodeList list;
-		abundle->getMembers(list);
-		for (exint i = 0; i < list.size(); ++i) {
-			OBJ_Node *light = list(i)->castToOBJNode();
-			if (light &&
-				light->isObjectRenderable(m_tstart) &&
-				light->getVisible())
-			{
-				UT_StringHolder name = light->getFullPath();
-
-				int enabled = 0;
-				light->evalParameterOrProperty("enabled", 0, m_tstart, enabled);
-				if (enabled > 0) {
-					bundle->addOp(light);
-				}
-			}
-		}
-	}
-
-	OP_Bundle *exbundle = getBundleFromOpNodePrm(this, "excludelights", m_tstart);
-	if (exbundle) {
-		OP_NodeList list;
-		exbundle->getMembers(list);
-		for (exint i = 0; i < list.size(); ++i) {
-			OP_Node *light = list(i);
-			UT_StringHolder name = light->getFullPath();
-
-			bundle->removeOp(light);
-		}
-	}
-
-	return bundle;
-}
-
-
-OP_Bundle* VRayRendererNode::getForcedLightsBundle()
-{
-	// if "sololight" parm is set ignore others
-	OP_Bundle *sbundle = getBundleFromOpNodePrm(this, "sololight", m_tstart);
-	if (sbundle && sbundle->entries() > 0) {
-		return sbundle;
-	}
-
-	OP_Bundle *fbundle = getBundleFromOpNodePrm(this, "forcelights", m_tstart);
-	return fbundle;
-}
-
-
-OP_Bundle* VRayRendererNode::getActiveGeometryBundle()
-{
-	OP_BundleList *blist = OPgetDirector()->getBundles();
-	OP_Bundle *bundle = blist->getBundle(m_activeGeoBundleName);
-	if (!bundle) {
-		bundle = blist->createBundle(m_activeGeoBundleName, true);
-	}
-
-	if (!bundle) {
-		return bundle;
-	}
-
-	bundle->clear();
-
-	OP_Bundle *fbundle = getForcedGeometryBundle();
-	if (   fbundle
-		&& fbundle->entries() > 0)
-	{
-		OP_NodeList list;
-		fbundle->getMembers(list);
-		bundle->addOpList(list);
-	}
-
-	OP_Bundle *vbundle = getBundleFromOpNodePrm(this, "vobject", m_tstart);
-	if (vbundle) {
-		OP_NodeList list;
-		vbundle->getMembers(list);
-
-		for (exint i = 0; i < list.size(); ++i) {
-			OBJ_Node *node = list(i)->castToOBJNode();
-			if (   node
-				&& node->isObjectRenderable(m_tstart)
-				&& node->getVisible() )
-			{
-				UT_StringHolder name = node->getFullPath();
-
-				bundle->addOp(node);
-			}
-		}
-	}
-
-	OP_Bundle *exbundle = getBundleFromOpNodePrm(this, "excludeobject", m_tstart);
-	if (exbundle) {
-		OP_NodeList list;
-		exbundle->getMembers(list);
-		for (exint i = 0; i < list.size(); ++i) {
-			OP_Node *node = list(i);
-			UT_StringHolder name = node->getFullPath();
-
-			bundle->removeOp(node);
-		}
-	}
-
-	return bundle;
-}
-
-
-OP_Bundle* VRayRendererNode::getForcedGeometryBundle()
-{
-	OP_BundleList *blist = OPgetDirector()->getBundles();
-	OP_Bundle *bundle = blist->getBundle(m_forcedGeoBundleName);
-	if (!bundle) {
-		bundle = blist->createBundle(m_forcedGeoBundleName, true);
-	}
-
-	if (!bundle) {
-		return bundle;
-	}
-
-	bundle->clear();
-
-	OP_Bundle *fbundle = getBundleFromOpNodePrm(this, "forceobject", m_tstart);
-	if (   fbundle
-		&& fbundle->entries() > 0)
-	{
-		OP_NodeList list;
-		fbundle->getMembers(list);
-		bundle->addOpList(list);
-	}
-
-	fbundle = getMatteGeometryBundle();
-	if (   fbundle
-		&& fbundle->entries() > 0)
-	{
-		OP_NodeList list;
-		fbundle->getMembers(list);
-		bundle->addOpList(list);
-	}
-
-	fbundle = getPhantomGeometryBundle();
-	if (   fbundle
-		&& fbundle->entries() > 0)
-	{
-		OP_NodeList list;
-		fbundle->getMembers(list);
-		bundle->addOpList(list);
-	}
-
-	return bundle;
-}
-
-
-OP_Bundle* VRayRendererNode::getMatteGeometryBundle()
-{
-	OP_Bundle *bundle = getBundleFromOpNodePrm(this, "matte_objects", m_tstart);
-	return bundle;
-}
-
-
-OP_Bundle* VRayRendererNode::getPhantomGeometryBundle()
-{
-	OP_Bundle *bundle = getBundleFromOpNodePrm(this, "phantom_objects", m_tstart);
-	return bundle;
-}
-
 
 void VRayRendererNode::register_operator(OP_OperatorTable *table)
 {

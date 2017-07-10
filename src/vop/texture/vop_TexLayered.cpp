@@ -12,41 +12,7 @@
 
 #include "vop_TexLayered.h"
 
-
 using namespace VRayForHoudini;
-
-
-static PRM_Name  rpm_name_tex_count("textures_count", "Texture Count");
-static PRM_Range rpm_range_tex_count(PRM_RANGE_RESTRICTED, 1, PRM_RANGE_UI, 8);
-
-static PRM_Name  rpm_name_tex_blend_mode("tex#blend_mode", "Blend Mode #");
-static PRM_Name  rpm_name_tex_blend_mode_items[] = {
-	PRM_Name("None"),
-	PRM_Name("Over"),
-	PRM_Name("In"),
-	PRM_Name("Out"),
-	PRM_Name("Add"),
-	PRM_Name("Subtract"),
-	PRM_Name("Multiply"),
-	PRM_Name("Difference"),
-	PRM_Name("Lighten"),
-	PRM_Name("Darken"),
-	PRM_Name("Saturate"),
-	PRM_Name("Desaturate"),
-	PRM_Name("Illuminate"),
-	PRM_Name(),
-};
-static PRM_ChoiceList rpm_name_tex_blend_mode_menu(PRM_CHOICELIST_SINGLE, rpm_name_tex_blend_mode_items);
-
-static PRM_Name  rpm_name_tex_blend_amount("tex#blend_amount", "Blend Amount #");
-static PRM_Range rpm_range_tex_blend_amount(PRM_RANGE_RESTRICTED, 0.0, PRM_RANGE_RESTRICTED, 1.0);
-
-static PRM_Template rpm_tmpl_textures[] = {
-	PRM_Template(PRM_ORD, 1, &rpm_name_tex_blend_mode, PRMoneDefaults, &rpm_name_tex_blend_mode_menu),
-	PRM_Template(PRM_FLT, 1, &rpm_name_tex_blend_amount, PRMoneDefaults, /*choicelist*/ nullptr, &rpm_range_tex_blend_amount),
-	PRM_Template()
-};
-
 
 // NOTE: Sockets order:
 //
@@ -62,13 +28,6 @@ void VOP::TexLayered::setPluginType()
 	pluginType = VRayPluginType::TEXTURE;
 	pluginID   = "TexLayered";
 }
-
-
-void VOP::TexLayered::addPrmTemplate(Parm::PRMList &prmTemplate)
-{
-	prmTemplate.addPrm(PRM_Template(PRM_MULTITYPE_LIST, rpm_tmpl_textures, 1, &rpm_name_tex_count, /*choicelist*/ nullptr, &rpm_range_tex_count));
-}
-
 
 const char* VOP::TexLayered::inputLabel(unsigned idx) const
 {
@@ -155,7 +114,7 @@ void VOP::TexLayered::getAllowedInputTypeInfosSubclass(unsigned idx, VOP_VopType
 int VOP::TexLayered::customInputsCount() const
 {
 	// One socket per texture
-	int numCustomInputs = evalInt(rpm_name_tex_count.getToken(), 0, 0.0);
+	int numCustomInputs = evalInt("textures_count", 0, 0.0);
 
 	return numCustomInputs;
 }
@@ -185,7 +144,7 @@ OP::VRayNode::PluginResult VOP::TexLayered::asPluginDesc(Attrs::PluginDesc &plug
 {
 	const fpreal &t = exporter.getContext().getTime();
 
-	const int tex_count = evalInt(rpm_name_tex_count.getToken(), 0, 0.0);
+	const int tex_count = evalInt("textures_count", 0, 0.0);
 
 	VRay::ValueList textures;
 	VRay::IntList   blend_modes;
@@ -207,8 +166,8 @@ OP::VRayNode::PluginResult VOP::TexLayered::asPluginDesc(Attrs::PluginDesc &plug
 							getName().buffer(), texSockName.c_str());
 			}
 			else {
-				const int   blend_mode   = evalIntInst(rpm_name_tex_blend_mode.getToken(), &i, 0, t);
-				const float blend_amount = evalFloatInst(rpm_name_tex_blend_amount.getToken(), &i, 0, t);
+				const int   blend_mode   = evalIntInst("tex#blend_mode", &i, 0, t);
+				const float blend_amount = evalFloatInst("tex#blend_amount", &i, 0, t);
 
 				if (blend_amount != 1.0f) {
 					Attrs::PluginDesc blendDesc(VRayExporter::getPluginName(this, paramPrefix), "TexAColorOp");

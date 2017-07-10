@@ -246,9 +246,9 @@ bool ObjectExporter::hasSubdivApplied(OBJ_Node &objNode) const
 	return res;
 }
 
-int ObjectExporter::isNodeVisible(VRayRendererNode &rop, OBJ_Node &objNode)
+int ObjectExporter::isNodeVisible(OP_Node &rop, OBJ_Node &objNode, fpreal t)
 {
-	OP_Bundle *bundle = rop.getForcedGeometryBundle();
+	OP_Bundle *bundle = getForcedGeometryBundle(rop, t);
 	if (!bundle) {
 		return objNode.getVisible();
 	}
@@ -257,13 +257,12 @@ int ObjectExporter::isNodeVisible(VRayRendererNode &rop, OBJ_Node &objNode)
 
 int ObjectExporter::isNodeVisible(OBJ_Node &objNode) const
 {
-	return isNodeVisible(pluginExporter.getRop(), objNode);
+	return isNodeVisible(pluginExporter.getRop(), objNode, ctx.getTime());
 }
 
 int ObjectExporter::isNodeMatte(OBJ_Node &objNode) const
 {
-	VRayRendererNode &rop = pluginExporter.getRop();
-	OP_Bundle *bundle = rop.getMatteGeometryBundle();
+	OP_Bundle *bundle = getMatteGeometryBundle(pluginExporter.getRop(), ctx.getTime());
 	if (!bundle) {
 		return false;
 	}
@@ -272,8 +271,7 @@ int ObjectExporter::isNodeMatte(OBJ_Node &objNode) const
 
 int ObjectExporter::isNodePhantom(OBJ_Node &objNode) const
 {
-	VRayRendererNode &rop = pluginExporter.getRop();
-	OP_Bundle *bundle = rop.getPhantomGeometryBundle();
+	OP_Bundle *bundle = getPhantomGeometryBundle(pluginExporter.getRop(), ctx.getTime());
 	if (!bundle) {
 		return false;
 	}
@@ -1321,12 +1319,10 @@ VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode)
 
 int ObjectExporter::isLightEnabled(OBJ_Node &objLight) const
 {
-	VRayRendererNode &rop = pluginExporter.getRop();
-
 	int enabled = 0;
 	objLight.evalParameterOrProperty("enabled", 0, ctx.getTime(), enabled);
 
-	OP_Bundle *bundle = rop.getForcedLightsBundle();
+	OP_Bundle *bundle = getForcedLightsBundle(pluginExporter.getRop(), ctx.getTime());
 	return bundle && (bundle->contains(&objLight, false) || (enabled > 0));
 }
 
@@ -1359,7 +1355,7 @@ VRay::Plugin ObjectExporter::exportLight(OBJ_Light &objLight)
 
 		VRay::Transform tm = getTm();
 
-		const bool flipTM = vrayNode->getVRayPluginID() == OBJ::getVRayPluginIDName(OBJ::VRayPluginID::LightDome);
+		const bool flipTM = vrayNode->getVRayPluginID() == getVRayPluginIDName(VRayPluginID::LightDome);
 		if (flipTM) {
 			VUtils::swap(tm.matrix[1], tm.matrix[2]);
 		}

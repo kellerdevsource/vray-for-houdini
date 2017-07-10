@@ -51,6 +51,14 @@ using namespace VRayForHoudini;
 
 static boost::format FmtPluginNameWithPrefix("%s@%s");
 
+void VRayExporter::reset()
+{
+	objectExporter.clearPrimPluginCache();
+	objectExporter.clearOpDepPluginCache();
+	objectExporter.clearOpPluginCache();
+
+	m_renderer.reset();
+}
 
 std::string VRayExporter::getPluginName(const OP_Node &opNode, const char *prefix)
 {
@@ -583,7 +591,7 @@ bool VRayExporter::setAttrsFromUTOptions(Attrs::PluginDesc &pluginDesc, const UT
 }
 
 
-VRayExporter::VRayExporter(VRayRendererNode *rop)
+VRayExporter::VRayExporter(OP_Node *rop)
 	: m_rop(rop)
 	, m_error(ROP_CONTINUE_RENDER)
 	, m_isIPR(false)
@@ -622,15 +630,15 @@ void VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 	// NOTE: we are exporting animation related properties in frames
 	// and compensating for this by setting SettingsUnitsInfo::seconds_scale
 	// i.e. scaling V-Ray time unit (see function exportSettings())
-	fpreal animStart = m_rop->FSTART();
-	fpreal animEnd = m_rop->FEND();
+	fpreal animStart = CAST_ROPNODE(m_rop)->FSTART();
+	fpreal animEnd = CAST_ROPNODE(m_rop)->FEND();
 	VRay::VUtils::ValueRefList frames(1);
 	frames[0].setDouble(animStart);
 	if (m_frames > 1) {
-		if (m_rop->FINC() > 1) {
+		if (CAST_ROPNODE(m_rop)->FINC() > 1) {
 			frames = VRay::VUtils::ValueRefList(m_frames);
 			for (int i = 0; i < m_frames; ++i) {
-				frames[i].setDouble(animStart + i * m_rop->FINC());
+				frames[i].setDouble(animStart + i * CAST_ROPNODE(m_rop)->FINC());
 			}
 		}
 		else {
@@ -1284,22 +1292,25 @@ void VRayExporter::resetOpCallbacks()
 	}
 
 	m_opRegCallbacks.clear();
+
+	reset();
 }
 
 
 void VRayExporter::addOpCallback(OP_Node *op_node, OP_EventMethod cb)
 {
 	// Install callbacks only for interactive session
-	if (isIPR()) {
-		if (!op_node->hasOpInterest(this, cb)) {
-			Log::getLog().info("addOpInterest(%s)",
-							   op_node->getName().buffer());
+	if (isIPR() != iprModeRT)
+		return;
 
-			op_node->addOpInterest(this, cb);
+	if (!op_node->hasOpInterest(this, cb)) {
+		Log::getLog().info("addOpInterest(%s)",
+							op_node->getName().buffer());
 
-			// Store registered callback for faster removal
-			m_opRegCallbacks.push_back(OpInterestItem(op_node, cb, this));
-		}
+		op_node->addOpInterest(this, cb);
+
+		// Store registered callback for faster removal
+		m_opRegCallbacks.push_back(OpInterestItem(op_node, cb, this));
 	}
 }
 
@@ -1358,33 +1369,9 @@ void VRayExporter::onAbort(VRay::VRayRenderer &renderer)
 	if (renderer.isAborted()) {
 		setAbort();
 	}
+
+	reset();
 }
-
-
-void VRayExporter::RtCallbackObjManager(OP_Node *caller, void *callee, OP_EventType type, void *data)
-{
-	Log::getLog().info("RtCallbackObjManager: %s from \"%s\"",
-					   OPeventToString(type), caller->getName().buffer());
-
-	VRayExporter &exporter = *reinterpret_cast< VRayExporter* >(callee);
-
-	switch (type) {
-		case OP_CHILD_CREATED:
-		case OP_CHILD_DELETED:
-		case OP_CHILD_REORDERED: /* undo */
-		case OP_GROUPLIST_CHANGED:
-		{
-			exporter.getRop().startIPR(exporter.getContext().getTime());
-			break;
-		}
-		case OP_NODE_PREDELETE:
-		{
-			exporter.delOpCallbacks(caller);
-			break;
-		}
-	}
-}
-
 
 void VRayExporter::exportScene()
 {
@@ -1395,17 +1382,13 @@ void VRayExporter::exportScene()
 
 	exportView();
 
-	// add RT update callbacks to detect scene export changes
-	addOpCallback(m_rop, VRayRendererNode::RtCallbackRop);
-	addOpCallback(OPgetDirector()->getManager("obj"), VRayExporter::RtCallbackObjManager);
-
 	// Clear plugin caches.
 	objectExporter.clearOpPluginCache();
 	objectExporter.clearOpDepPluginCache();
 	objectExporter.clearPrimPluginCache();
 
 	// export geometry nodes
-	OP_Bundle *activeGeo = m_rop->getActiveGeometryBundle();
+	OP_Bundle *activeGeo = getActiveGeometryBundle(*m_rop, m_context.getTime());
 	if (activeGeo) {
 		for (int i = 0; i < activeGeo->entries(); ++i) {
 			OP_Node *node = activeGeo->getNode(i);
@@ -1415,7 +1398,7 @@ void VRayExporter::exportScene()
 		}
 	}
 
-	OP_Bundle *activeLights = m_rop->getActiveLightsBundle();
+	OP_Bundle *activeLights = getActiveLightsBundle(*m_rop, m_context.getTime());
 	if (!activeLights || activeLights->entries() <= 0) {
 		exportDefaultHeadlight();
 	}
@@ -1646,11 +1629,6 @@ void VRayExporter::setRenderSize(int w, int h)
 {
 	Log::getLog().info("VRayExporter::setRenderSize(%i, %i)",
 					   w, h);
-
-	if (m_vfb.isInitialized()) {
-		m_vfb.resize(w, h);
-	}
-
 	m_renderer.setImageSize(w, h);
 }
 
@@ -1769,37 +1747,8 @@ void VRayExporter::initExporter(int hasUI, int nframes, fpreal tstart, fpreal te
 	getRenderer().resetCallbacks();
 	resetOpCallbacks();
 
-	if (hasUI >= 0) {
-#ifdef __APPLE__
-		// Forse Qt FB
-		const int hasUI = 1;
-		getRenderer().showVFB(false);
-#else
-#endif
-		if (hasUI == 0) {
-#ifndef __APPLE__
-			m_vfb.free();
-			getRenderer().showVFB(m_workMode != ExpExport, m_rop->getFullPath());
-#endif
-		}
-		else if (hasUI == 1) {
-			if (m_workMode != ExpExport) {
-				m_vfb.init();
-				m_vfb.show();
-				m_vfb.set_abort_callback(UI::AbortCb(boost::bind(&VRayPluginRenderer::stopRender, &getRenderer())));
-
-				getRenderer().addCbOnDumpMessage(CbOnDumpMessage(boost::bind(&UI::VFB::on_dump_message, &m_vfb, _1, _2, _3)));
-				getRenderer().addCbOnProgress(CbOnProgress(boost::bind(&UI::VFB::on_progress, &m_vfb, _1, _2, _3, _4)));
-
-				getRenderer().addCbOnImageReady(CbOnImageReady(boost::bind(&UI::VFB::on_image_ready, &m_vfb, _1)));
-
-				getRenderer().addCbOnBucketInit(CbOnBucketInit(boost::bind(&UI::VFB::on_bucket_init, &m_vfb, _1, _2, _3, _4, _5, _6)));
-				getRenderer().addCbOnBucketFailed(CbOnBucketFailed(boost::bind(&UI::VFB::on_bucket_failed, &m_vfb, _1, _2, _3, _4, _5, _6)));
-				getRenderer().addCbOnBucketReady(CbOnBucketReady(boost::bind(&UI::VFB::on_bucket_ready, &m_vfb, _1, _2, _3, _4, _5)));
-
-				getRenderer().addCbOnRTImageUpdated(CbOnRTImageUpdated(boost::bind(&UI::VFB::on_rt_image_updated, &m_vfb, _1, _2)));
-			}
-		}
+	if (hasUI) {
+		getRenderer().showVFB(m_workMode != ExpExport, m_rop->getFullPath());
 	}
 
 	m_renderer.addCbOnProgress(CbOnProgress(boost::bind(&VRayExporter::onProgress, this, _1, _2, _3, _4)));
@@ -1877,11 +1826,10 @@ int VRayExporter::hasMotionBlur(OP_Node &rop, OBJ_Node &camera) const
 
 void VRayExporter::showVFB()
 {
-	if (m_vfb.isInitialized()) {
-		m_vfb.show();
-	} else if (getRenderer().isVRayInit()) {
+	if (getRenderer().isVRayInit()) {
 		getRenderer().showVFB();
-	} else {
+	}
+	else {
 		Log::getLog().warning("Can't show VFB - no render or no UI.");
 	}
 }
@@ -1969,4 +1917,62 @@ void VRayExporter::exportEnd()
 	}
 
 	m_error = ROP_CONTINUE_RENDER;
+}
+
+const char* VRayForHoudini::getVRayPluginIDName(VRayPluginID pluginID)
+{
+	static const char* pluginIDNames[static_cast<std::underlying_type<VRayPluginID>::type>(VRayPluginID::MAX_PLUGINID)] = {
+		"SunLight",
+		"LightDirect",
+		"LightAmbient",
+		"LightOmni",
+		"LightSphere",
+		"LightSpot",
+		"LightRectangle",
+		"LightMesh",
+		"LightIES",
+		"LightDome",
+		"VRayClipper"
+	};
+
+	return (pluginID < VRayPluginID::MAX_PLUGINID) ? pluginIDNames[static_cast<std::underlying_type<VRayPluginID>::type>(pluginID)] : nullptr;
+}
+
+int VRayForHoudini::getRendererMode(OP_Node &rop)
+{
+	int renderMode = rop.evalInt("render_render_mode", 0, 0.0);
+	switch (renderMode) {
+		case 0: renderMode = -1; break; // Production CPU
+		case 1: renderMode =  1; break; // RT GPU (OpenCL)
+		case 2: renderMode =  4; break; // RT GPU (CUDA)
+		default: renderMode = -1; break;
+	}
+	return renderMode;
+}
+
+int VRayForHoudini::getRendererIprMode(OP_Node &rop)
+{
+	int renderMode = rop.evalInt("render_rt_mode", 0, 0.0);
+	switch (renderMode) {
+		case 0: renderMode =  0; break; // RT CPU
+		case 1: renderMode =  1; break; // RT GPU (OpenCL)
+		case 2: renderMode =  4; break; // RT GPU (CUDA)
+		default: renderMode = 0; break;
+	}
+	return renderMode;
+}
+
+VRayExporter::ExpWorkMode VRayForHoudini::getExporterWorkMode(OP_Node &rop)
+{
+	return static_cast<VRayExporter::ExpWorkMode>(rop.evalInt("render_export_mode", 0, 0.0));
+}
+
+int VRayForHoudini::isBackground()
+{
+	return !HOU::isUIAvailable();
+}
+
+int VRayForHoudini::getFrameBufferType(OP_Node &rop)
+{
+	return isBackground() ? 0 : 1;
 }

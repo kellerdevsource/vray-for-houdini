@@ -56,9 +56,9 @@ static AppSdkInit *appSdkInit = nullptr;
 
 struct AppSdkInit
 {
-	static AppSdkInit &getInstance() {
+	static AppSdkInit &getInstance(int initVFB=false) {
 		if (!appSdkInit) {
-			appSdkInit = new AppSdkInit;
+			appSdkInit = new AppSdkInit(initVFB);
 		}
 		return *appSdkInit;
 	}
@@ -72,7 +72,7 @@ struct AppSdkInit
 	}
 
 private:
-	AppSdkInit()
+	AppSdkInit(int initVFB=false)
 		: m_vrayInit(nullptr)
 		, m_dummyRenderer(nullptr)
 	{
@@ -100,7 +100,7 @@ private:
 #else
 			const bool isVfbEnabled = HOU::isUIAvailable();
 #endif
-			m_vrayInit = new VRay::VRayInit(isVfbEnabled);
+			m_vrayInit = new VRay::VRayInit(initVFB && isVfbEnabled);
 		}
 		catch (VRay::VRayException &e) {
 			Log::getLog().error("Error initializing V-Ray AppSDK library:\n%s",
@@ -261,9 +261,9 @@ static void OnBucketReady(VRay::VRayRenderer &renderer, int x, int y, const char
 }
 
 
-bool VRayPluginRenderer::initialize()
+bool VRayPluginRenderer::initialize(int initVFB)
 {
-	return static_cast<bool>(AppSdkInit::getInstance());
+	return static_cast<bool>(AppSdkInit::getInstance(initVFB));
 }
 
 
@@ -771,4 +771,13 @@ void VRayPluginRenderer::setAutoCommit(const bool enable)
 	if (m_vray) {
 		m_vray->setAutoCommit(enable);
 	}
+}
+
+void VRayPluginRenderer::reset() const
+{
+	if (!m_vray)
+		return;
+
+	m_vray->stop();
+	m_vray->reset();
 }

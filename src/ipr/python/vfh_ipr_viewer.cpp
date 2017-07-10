@@ -1,10 +1,23 @@
-#include <vraysdk.hpp>
+//
+// Copyright (c) 2015-2017, Chaos Software Ltd
+//
+// V-Ray For Houdini
+//
+// ACCESSIBLE SOURCE CODE WITHOUT DISTRIBUTION OF MODIFICATION LICENSE
+//
+// Full license text:
+//  https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
+//
+
+#include "vfh_ipr_viewer.h"
+
+#include <UT/UT_WritePipe.h>
+
+#include <QtCore>
 
 #include <mutex>
 #include <queue>
-#include <QtWidgets>
-#include <QtCore>
-#include <UT\UT_WritePipe.h>
+
 #include <stdio.h>
 
 #ifndef _WIN32
@@ -12,8 +25,6 @@ inline FILE* _popen(const char* command, const char* type) {
 	return popen(command, type);
 }
 #endif
-
-//structures
 
 struct ImageHeader {
 	ImageHeader()
@@ -55,16 +66,16 @@ struct PlaneDefinition {
 		, array_size(0)
 	{}
 
-	///< Sequentially increasing integer
+	/// Sequentially increasing integer
 	int plane_number;
 
-	///< The length of the plane name
+	/// The length of the plane name
 	int name_length;
 
-	///< Format of the data
+	/// Format of the data
 	int data_format;
 
-	///< Array size of the data
+	/// Array size of the data
 	int array_size;
 
 	int reserved[4];
@@ -102,6 +113,10 @@ struct VRayIMDisplayImage {
 		, image(nullptr)
 		, ownImage(true)
 		, single(true)
+		, x0(0)
+		, x1(0)
+		, y0(0)
+		, y1(0)
 	{}
 
 	std::string name;
@@ -113,21 +128,31 @@ struct VRayIMDisplayImage {
 	int x1;
 	int y0;
 	int y1;
-
-	/*~VRayIMDisplayImage() {
-		delete image;
-	}*/
 };
-//typedefs
+
 typedef QList<VRayIMDisplayImage> VRayIMDisplayImages;
 typedef std::vector<VRay::RenderElement> RenderElementsList;
 
-//globals
 class Tasks {
 public:
-	Tasks() {
-		fd = _popen("imdisplay -p -k -f -s 62904", "wb");
-		finalImage = false;
+	Tasks()
+		: finalImage(false)
+		, fd(nullptr)
+	{}
+
+	~Tasks() {
+		transmitData();
+
+		if (fd) {
+			wp.close(false);
+		}
+	}
+
+	void init(int port) {
+		static char buf[MAX_PATH] = "";
+		vutils_sprintf_n(buf, COUNT_OF(buf), "imdisplay -p -k -f -s %i", port);
+
+		fd = wp.open(buf);
 	}
 
 	void setRendererOptions(VRay::VRayRenderer &renderer) {
@@ -202,11 +227,7 @@ public:
 		}
 	}
 
-	~Tasks() {
-		transmitData();
-	}
 private:
-
 	template <typename HeaderType>
 	void writeHeader(const HeaderType &header) {
 		if (fwrite(reinterpret_cast<const char*>(&header), sizeof(HeaderType), 1, fd) != 1) {
@@ -215,14 +236,13 @@ private:
 		}
 	}
 
-	//cut a single image into tiles and adds them to the images to be written queue
+	// Split a single image into tiles and adds them to the images to be written queue.
 	void cutUpSingleImage(VRayIMDisplayImages &images) {
 		const int tileSize = 64;
 		int width, height;
 		images[0].image->getSize(width, height);
 
 		int numberOfTiles = ((width / 64) * (height / 64) + ((width % 64) ? 1 : 0) + ((height % 64) ? 1 : 0));
-
 
 		for (int m = 0; m < ((height / 64) + ((height % 64) ? 1 : 0)); m++) {
 			int currentMRes = m * tileSize;
@@ -269,7 +289,6 @@ private:
 					writeHeader(planeHeader);
 				}
 
-
 				TileHeader tileHeader;
 				tileHeader.x0 = vi.x0;
 				tileHeader.x1 = vi.x1;
@@ -283,7 +302,6 @@ private:
 					perror("Failed writing image data, reason: ");
 					Q_ASSERT(false);
 				}
-				//delete vi.image;
 			}
 
 			if (finalImage&&imagesQueue.size() == 1) {
@@ -297,14 +315,14 @@ private:
 	}
 
 	bool finalImage;
+	UT_WritePipe wp;
 	FILE* fd;
 	std::queue<VRayIMDisplayImages> imagesQueue;
 	std::mutex mtx;
-}tasks;
+} tasks;
 
-
-
-static void writeFinalRendererImages(VRay::VRayRenderer &renderer, VRay::VRayImage *beautyPass) {
+static void writeFinalRendererImages(VRay::VRayRenderer &renderer, VRay::VRayImage *beautyPass)
+{
 	VRayIMDisplayImages images;
 
 	VRayIMDisplayImage beautyImage;
@@ -351,7 +369,13 @@ static void writeRendererImages(VRay::VRayRenderer &renderer, VRay::VRayImage *b
 	tasks.registerTask(images);
 }
 
-static void onRTImageUpdated(VRay::VRayRenderer &renderer, VRay::VRayImage *image, void*)
+
+void VRayForHoudini::initImdisplay(int port)
+{
+	tasks.init(port);
+}
+
+void VRayForHoudini::onRTImageUpdated(VRay::VRayRenderer &renderer, VRay::VRayImage *image, void*)
 {
 	VRay::VRayImage *rtImage = image->clone();
 	if (rtImage) {
@@ -361,7 +385,7 @@ static void onRTImageUpdated(VRay::VRayRenderer &renderer, VRay::VRayImage *imag
 	}
 }
 
-static void onImageReady(VRay::VRayRenderer &renderer, void*)
+void VRayForHoudini::onImageReady(VRay::VRayRenderer &renderer, void*)
 {
 	VRay::VRayImage *finalImage = renderer.getImage();
 	if (finalImage) {
@@ -371,7 +395,8 @@ static void onImageReady(VRay::VRayRenderer &renderer, void*)
 	}
 }
 
-void onBucketReady(VRay::VRayRenderer& renderer, int x, int y, const char* host, VRay::VRayImage* img, void*) {
+void VRayForHoudini::onBucketReady(VRay::VRayRenderer&, int x, int y, const char*, VRay::VRayImage* img, void*)
+{
 	int width, height;
 	img->getSize(width, height);
 	VRayIMDisplayImage bucketTileData;
@@ -386,44 +411,9 @@ void onBucketReady(VRay::VRayRenderer& renderer, int x, int y, const char* host,
 	temporary.push_back(bucketTileData);
 
 	tasks.registerTask(temporary);
-
-
 }
 
-void onRenderStart(VRay::VRayRenderer &renderer, void* extraData) {
+void VRayForHoudini::onRenderStart(VRay::VRayRenderer &renderer, void*)
+{
 	tasks.setRendererOptions(renderer);
-}
-
-static void renderScene(const char *filepath)
-{
-	VRay::RendererOptions options;
-	options.renderMode = VRay::RendererOptions::RENDER_MODE_PRODUCTION;
-	options.keepRTRunning = true;
-	options.imageWidth = 800;
-	options.imageHeight = 600;
-	options.rtNoiseThreshold = 0.5f;
-	options.showFrameBuffer = false;
-
-	VRay::VRayRenderer vray(options);
-	vray.setOnImageReady(onImageReady);
-	vray.setOnRTImageUpdated(onRTImageUpdated);
-	vray.setOnBucketReady(onBucketReady);
-	vray.setOnRenderStart(onRenderStart);
-
-	if (vray.load(filepath) == 0) {
-		vray.start();
-		vray.waitForImageReady();
-	}
-}
-
-int main(int argc, char *argv[])
-{
-	VRay::VRayInit vrayInit(false);
-
-	if (argc == 2) {
-		const char *sceneFilePath = argv[1];
-		renderScene(sceneFilePath);
-	}
-
-	return 0;
 }

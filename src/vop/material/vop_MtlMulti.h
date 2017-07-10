@@ -23,9 +23,6 @@ class MtlMulti:
 		public VOP::NodeBase
 {
 public:
-	static void           addPrmTemplate(Parm::PRMList &prmTemplate);
-
-public:
 	MtlMulti(OP_Network *parent, const char *name, OP_Operator *entry):NodeBase(parent, name, entry) {}
 	virtual              ~MtlMulti() {}
 

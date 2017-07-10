@@ -36,7 +36,7 @@ public:
 	virtual ~VRayNode() {}
 
 	/// Extra initialization called by the creator
-	void init();
+	virtual void init();
 
 	/// Get the plugin type. Plugins are labeled with different categories:
 	/// lights, geometry, textures, uvw generators, etc. The plugin category is

@@ -37,6 +37,9 @@
 #include <SHOP/SHOP_Node.h>
 #include <SHOP/SHOP_Operator.h>
 
+#ifndef MAKING_DSO
+#  define MAKING_DSO
+#endif
 #include <UT/UT_DSOVersion.h>
 #include <UT/UT_Exit.h>
 #include <UT/UT_IOTable.h>
@@ -45,7 +48,6 @@
 #ifdef CGR_HAS_AUR
 #  include <aurloader.h>
 #endif
-
 
 using namespace VRayForHoudini;
 
@@ -149,7 +151,8 @@ void newSopOperator(OP_OperatorTable *table)
 #endif
 
 	VFH_ADD_SOP_GENERATOR(table, GeomPlane);
-	VFH_ADD_SOP_GENERATOR_CUSTOM(table, VRayProxy, Parm::getPrmTemplate("GeomMeshFile"));
+	VFH_ADD_SOP_GENERATOR_CUSTOM(table, VRayProxy, VRayProxy::getPrmTemplate());
+
 	VRayProxyROP::register_sopoperator(table);
 }
 

@@ -98,16 +98,16 @@ public:
 	/// Test if the current geometry node is visible i.e.
 	/// its display flag is on or it is forced to render regardless
 	/// of its display state (when set as forced geometry on the V-Ray ROP)
-	static int isNodeVisible(VRayRendererNode &rop, OBJ_Node &node);
-
-	/// Test if a ligth is enabled i.e. its enabled flag is on,
-	/// intensity is > 0 or its a forced light on the V-Ray ROP
-	int isLightEnabled(OBJ_Node &objLight) const;
+	static int isNodeVisible(OP_Node &rop, OBJ_Node &node, fpreal t);
 
 	/// Test if the current geometry node is visible i.e.
 	/// its display flag is on or it is forced to render regardless
 	/// of its display state (when set as forced geometry on the V-Ray ROP)
 	int isNodeVisible(OBJ_Node &node) const;
+
+	/// Test if a ligth is enabled i.e. its enabled flag is on,
+	/// intensity is > 0 or its a forced light on the V-Ray ROP
+	int isLightEnabled(OBJ_Node &objLight) const;
 
 	/// Test if the current geometry node should be rendered
 	/// as matte object (when set as matte geometry on the V-Ray ROP)
