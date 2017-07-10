@@ -148,6 +148,7 @@ private:
 VRayVolumeGridFactory::VRayVolumeGridFactory():
 	GU_PackedFactory("VRayVolumeGridRef", "VRayVolumeGridRef")
 {
+	// do this here because it is guaranteed to run before any instance of VRayVolumeGridRef is created
 	VRayVolumeGridRef::dataCache.setFetchCallback([](const VolumeCacheKey & key, VRayVolumeGridRef::VolumeCacheData & data) {
 		using namespace std;
 		using namespace chrono;
@@ -215,6 +216,8 @@ VRayVolumeGridFactory::VRayVolumeGridFactory():
 		}
 	});
 
+	// we dont need the evict callback, because the data is in RAII objects and will be freed when evicted from cache
+	// so just print info
 	VRayVolumeGridRef::dataCache.setEvictCallback([](const VolumeCacheKey & key, VRayVolumeGridRef::VolumeCacheData &) {
 		Log::getLog().info("Evicting \"%s\" from cache", key.path.c_str());
 	});

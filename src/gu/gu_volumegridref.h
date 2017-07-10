@@ -111,6 +111,9 @@ public:
 	/// Register this factory
 	static void install(GA_PrimitiveFactory *gafactory);
 
+	/// Data cache used to cache last 10 volumes loaded
+	/// The load callback is set in VRayVolumeGridFactory::VRayVolumeGridFactory() because it is called before
+	/// any VRayVolumeGridRef instance is created
 	static VolumeCache dataCache;
 private:
 	static GA_PrimitiveTypeId theTypeId; ///< The type id for the primitive
