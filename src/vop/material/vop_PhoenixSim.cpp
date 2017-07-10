@@ -28,6 +28,8 @@
 
 #include <utility>
 
+#include <QWidget>
+
 using namespace AurRamps;
 using namespace std;
 

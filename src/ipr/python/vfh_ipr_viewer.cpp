@@ -13,7 +13,7 @@
 
 #include <UT/UT_WritePipe.h>
 
-#include <QtWidgets>
+#include <QtCore>
 
 #include <mutex>
 #include <queue>
