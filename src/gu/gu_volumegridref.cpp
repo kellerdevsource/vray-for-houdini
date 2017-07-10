@@ -177,7 +177,7 @@ VRayVolumeGridFactory::VRayVolumeGridFactory():
 		data.aurPtr->GetDim(gridDimensions);
 		// TODO: maybe the flip YZ flag should be part of the key?
 		// what if there are two instances having the same cache but one has the flag set and the other does not?
-		const auto tm = cacheWorldTm(data.aurPtr, false);
+		const auto tm = cacheWorldTm(data.aurPtr, key.flipYZ);
 
 		auto tBeginLoop = high_resolution_clock::now();
 		// load each channel from the cache file
@@ -315,7 +315,8 @@ VRayVolumeGridRef::CachePtr VRayVolumeGridRef::getCache() const
 	}
 	auto map = this->get_usrchmap();
 
-	return dataCache[{path, map ? map : ""}].aurPtr;
+	VolumeCacheKey key = {path, map ? map : "", this->get_flip_yz()};
+	return dataCache[key].aurPtr;
 }
 
 
@@ -399,7 +400,8 @@ GU_ConstDetailHandle VRayVolumeGridRef::getPackedDetail(GU_PackedContext *contex
 	}
 	auto map = this->get_usrchmap();
 
-	VolumeCacheData &data = dataCache[{path, map ? map : ""}];
+	VolumeCacheKey key = {path, map ? map : "", this->get_flip_yz()};
+	VolumeCacheData &data = dataCache[key];
 
 	if (!data.aurPtr) {
 		gdp->clearAndDestroy();

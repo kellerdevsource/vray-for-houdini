@@ -14,7 +14,9 @@
 #ifdef CGR_HAS_AUR
 #include "vfh_vray.h"
 #include "vfh_primitives.h"
+
 #include "vfh_lru_cache.hpp"
+#include "vfh_hashes.h"
 
 #include <aurinterface.h>
 
@@ -23,9 +25,10 @@ namespace VRayForHoudini {
 struct VolumeCacheKey {
 	std::string path;
 	std::string map;
+	bool flipYZ;
 };
 inline bool operator==(const VolumeCacheKey & left, const VolumeCacheKey & right) {
-	return left.path == right.path && left.map == right.map;
+	return left.path == right.path && left.map == right.map && left.flipYZ == right.flipYZ;
 }
 }
 
@@ -33,7 +36,11 @@ inline bool operator==(const VolumeCacheKey & left, const VolumeCacheKey & right
 namespace std {
 template <> struct hash<VRayForHoudini::VolumeCacheKey> {
 	size_t operator()(const VRayForHoudini::VolumeCacheKey & volumeKey) const {
-		return std::hash<std::string>()(volumeKey.path + volumeKey.map);
+		VRayForHoudini::Hash::MHash hash = 42;
+		VRayForHoudini::Hash::MurmurHash3_x86_32(volumeKey.path.c_str(), volumeKey.path.length(), hash, &hash);
+		VRayForHoudini::Hash::MurmurHash3_x86_32(volumeKey.map.c_str(), volumeKey.map.length(), hash, &hash);
+		VRayForHoudini::Hash::MurmurHash3_x86_32(&volumeKey.flipYZ, sizeof(volumeKey.flipYZ), hash, &hash);
+		return hash;
 	}
 };
 };
