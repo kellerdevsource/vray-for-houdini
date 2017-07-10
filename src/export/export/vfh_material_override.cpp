@@ -167,7 +167,23 @@ void VRayForHoudini::mergeMaterialOverrides(PrimMaterial &primMaterial, const UT
 			UT_StringArray mtlOverrideKeys;
 			mtlOverride.getKeys(mtlOverrideKeys);
 
+			UT_StringArray validKeys;
+
+			// Check keys if there is already some top-level override for this parameter.
 			for (const UT_StringHolder &key : mtlOverrideKeys) {
+				int channelIIdx = -1;
+				PRM_Parm *keyParm = primMaterial.matNode->getParmList()->getParmPtrFromChannel(key, &channelIIdx);
+				if (keyParm && channelIIdx >= 0 && channelIIdx < 4) {
+					const char *parmName = keyParm->getToken();
+
+					MtlOverrideItems::iterator moIt = primMaterial.overrides.find(parmName);
+					if (moIt == primMaterial.overrides.end()) {
+						validKeys.append(key);
+					}
+				}
+			}
+
+			for (const UT_StringHolder &key : validKeys) {
 				// Channel for vector components.
 				// NOTE: Only first 3 components will be used for vectors.
 				int channelIIdx = -1;
@@ -177,14 +193,6 @@ void VRayForHoudini::mergeMaterialOverrides(PrimMaterial &primMaterial, const UT
 					const PRM_Type &keyParmType = keyParm->getType();
 					const char *parmName = keyParm->getToken();
 
-					// Can't check cache here! Use style-sheet parameter type!
-#if 0
-					// There is already some top-level override for this parameter.
-					MtlOverrideItems::iterator moIt = primMaterial.overrides.find(parmName);
-					if (moIt != primMaterial.overrides.end()) {
-						continue;
-					}
-#endif
 					if (keyParmType.isFloatType()) {
 						MtlOverrideItem &overrideItem = primMaterial.overrides[parmName];
 
