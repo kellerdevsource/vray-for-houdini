@@ -56,12 +56,14 @@ endfunction()
 macro(set_compiler_flags)
 	if(WIN32)
 		# Houdini specific
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc /GT /bigobj")
+		set(CMAKE_CXX_FLAGS "/EHsc /GT /bigobj")
+
 		# Houdini specific warnings
-		set(CMAKE_CXX_FLAGS "/wd4355 /w14996 /wd4800 /wd4244 /wd4305 /wd4275")
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4355 /w14996 /wd4800 /wd4244")
 		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4396 /wd4018 /wd4267 /wd4146")
 		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4800 /wd4838 /wd4805 /wd4290")
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4305 /wd4244")
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4305 /wd4244 /wd4305 /wd4275")
+
 		# Enable multi core compilation
 		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
 
