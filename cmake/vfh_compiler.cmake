@@ -56,13 +56,13 @@ endfunction()
 if(WIN32)
 	# Houdini specific
 	set(CMAKE_CXX_FLAGS "/wd4355 /w14996 /wd4800 /wd4244 /wd4305 /wd4251 /wd4275 /wd4396 /wd4018 /wd4267 /wd4146 /EHsc /GT /bigobj")
-	# enable multi core compilation
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4800 /wd4838 /wd4805 /wd4290 /wd4305 /wd4244")
+	# Enable multi core compilation
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4838 /wd4805")
-	set(CMAKE_CXX_FLAGS_DEBUG "/Od /MD /Zi /DNDEBUG")
+
+	set(CMAKE_CXX_FLAGS_DEBUG "/MD /Od /Zi /DNDEBUG")
 
 	add_definitions(-DOPENEXR_DLL)
-
 else()
 	set(CMAKE_CXX_FLAGS       "-std=c++11")
 	set(CMAKE_CXX_FLAGS_DEBUG "-g -DNDEBUG")
