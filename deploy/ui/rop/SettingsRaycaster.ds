@@ -4,7 +4,7 @@
 	type	integer
 	default	{ "80" }
 	help	"Max. tree depth"
-	range	{ 0 64 }
+	range	{ 1 100 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRaycaster" }
@@ -17,7 +17,7 @@
 	type	float
 	default	{ "0" }
 	help	"Min. voxel size"
-	range	{ 0 64 }
+	range	{ 0 100 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRaycaster" }
@@ -30,7 +30,7 @@
 	type	float
 	default	{ "1" }
 	help	"Balance coefficient between depth and faces per voxel"
-	range	{ 0 64 }
+	range	{ 0 100 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRaycaster" }
@@ -41,9 +41,9 @@
 	name	"SettingsRaycaster_dynMemLimit"
 	label	"Dyn. Memory Limit(mbs)"
 	type	integer
-	default	{ "6000" }
+	default	{ "5000" }
 	help	"Limit for dynamic geometry, in megabytes"
-	range	{ 0 64 }
+	range	{ 0 16000 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsRaycaster" }
@@ -109,7 +109,7 @@
 	name	"SettingsRaycaster_embreeRayPackets"
 	label	"Use Ray Packets"
 	type	toggle
-	default	{ "1" }
+	default	{ "0" }
 	help	"Turn on the packet ray casting"
 	disablewhen	"{ SettingsRaycaster_embreeUse != 1 } { SettingsRaycaster_embreeUse == 0 }"
 	range	{ 0 1 }

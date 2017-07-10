@@ -1,52 +1,17 @@
 group {
-    name "SettingsOptions"
-    label "Options"
-#include "SettingsOptions.ds"
-}
-
-group {
-    name "FolderVRayRendererGI"
-    label "Global Illumination"
-
-    group {
-        name "SettingsGI"
-        label "General"
-#include "SettingsGI.ds"
-    }
-
-    group {
-        name "SettingsDMCGI"
-        label "Brute Force"
-#include "SettingsDMCGI.ds"
-    }
-
-    group {
-        name "SettingsIrradianceMap"
-        label "Irradiance Map"
-#include "SettingsIrradianceMap.ds"
-    }
-
-    group {
-        name "SettingsLightCache"
-        label "Light Cache"
-#include "SettingsLightCache.ds"
-    }
-}
-
-group {
     name "FolderVRayRendererSampler"
     label "Sampler"
-
-    groupsimple {
-        name "SettingsDMCSampler"
-        label "DMC Sampler"
-#include "SettingsDMCSampler.ds"
-    }
 
     groupsimple {
         name "SettingsImageSampler"
         label "Image Sampler"
 #include "SettingsImageSampler.ds"
+    }
+
+    groupsimple {
+        name "SettingsDMCSampler"
+        label "DMC Sampler"
+#include "SettingsDMCSampler.ds"
     }
 
     groupsimple {
@@ -59,71 +24,94 @@ group {
 }
 
 group {
+    name "FolderVRayRendererGI"
+    label "Global Illumination"
+#include "SettingsGI.ds"
+#include "SettingsCaustics.ds"
+#include "SettingsDMCGI.ds"
+#include "SettingsLightCache.ds"
+#include "SettingsIrradianceMap.ds"
+/*
+    group {
+        name "SettingsGI"
+        label "General"
+
+    }
+    group {
+        name "SettingsDMCGI"
+        label "Brute Force"
+    }
+    group {
+      name "SettingsLightCache"
+      label "Light Cache"
+    }
+    group {
+        name "SettingsIrradianceMap"
+        label "Irradiance Map"
+    }
+*/
+}
+group {
+    name "FolderVRayRendererCamera"
+    label "Camera"
+#include "SettingsCamera.ds"
+#include "SettingsCameraDof.ds"
+#include "SettingsMotionBlur.ds"
+#include "VRayStereoscopicSettings.ds"
+/*
+    group {
+        name "SettingsCamera"
+        label "General"
+    }
+
+    group {
+        name "SettingsCameraDof"
+        label "Depth Of Field"
+    }
+
+    group {
+        name "SettingsMotionBlur"
+        label "Motion Blur"
+    }
+
+    group {
+        name "VRayStereoscopicSettings"
+        label "Stereo"
+    }
+*/
+}
+
+group {
     name "SettingsColorMapping"
     label "Color Mapping"
 #include "SettingsColorMapping.ds"
 }
 
 group {
-    name "FolderVRayRendererCamera"
-    label "Camera"
+    name "SettingsDefaultDisplacement"
+    label "Displacement"
+    disablewhen "{ SettingsOptions_geom_displacement == 0 }"
 
-    group {
-        name "SettingsCamera"
-        label "General"
-#include "SettingsCamera.ds"
-    }
-
-    group {
-        name "SettingsCameraDof"
-        label "Depth Of Field"
-#include "SettingsCameraDof.ds"
-    }
-
-    group {
-        name "SettingsMotionBlur"
-        label "Motion Blur"
-#include "SettingsMotionBlur.ds"
-    }
-
-    group {
-        name "VRayStereoscopicSettings"
-        label "Stereo"
-#include "VRayStereoscopicSettings.ds"
-    }
+#include "SettingsDefaultDisplacement.ds"
 }
+
+
+group {
+    name "SettingsOptions"
+    label "Options"
+#include "SettingsOptions.ds"
+}
+
+
+group {
+    name "SettingsRTEngine"
+    label "RT"
+#include "SettingsRTEngine.ds"
+}
+
 
 group {
     name "VRaySettingsDR"
     label "DR"
 #include "DRItems.ds"
-}
-
-group {
-    name "FolderVRayRendererAdvanced"
-    label "Advanced"
-
-    group {
-        name "SettingsRaycaster"
-        label "Raycaster"
-#include "SettingsRaycaster.ds"
-    }
-
-    group {
-        name "SettingsRTEngine"
-        label "Realtime Engine"
-#include "SettingsRTEngine.ds"
-    }
-
-    group {
-        name "SettingsCaustics"
-        label "Caustics"
-#include "SettingsCaustics.ds"
-    }
-
-    group {
-        name "SettingsDefaultDisplacement"
-        label "Displacement"
-#include "SettingsDefaultDisplacement.ds"
-    }
 }
