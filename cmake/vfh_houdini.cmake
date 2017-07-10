@@ -35,6 +35,13 @@ set(VFH_PYTHON_DIRPATH ${CMAKE_BINARY_DIR}/python)
 
 find_package(HDK ${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD} REQUIRED)
 
+set(HDK_DSO_LIB_DEFINES
+	-DMAKING_DSO
+	-DVERSION=${HOUDINI_VERSION}
+	-DHOUDINI_DSO_VERSION=${HOUDINI_VERSION}
+	-DUT_DSO_TAGINFO=${PLUGIN_TAGINFO}
+)
+
 macro(use_houdini_sdk)
 	message(STATUS "Using Houdini ${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD}: ${HOUDINI_INSTALL_ROOT}")
 	message_array("Using HDK include path" HDK_INCLUDES)
@@ -71,17 +78,13 @@ macro(use_houdini_sdk)
 	link_directories(${HDK_LIBRARIES})
 endmacro()
 
+function(houdini_plugin name sources)
+	add_library(${name} SHARED ${sources})
 
-macro(houdini_plugin name sources)
-	add_definitions(-DMAKING_DSO
-					-DVERSION=${HOUDINI_VERSION}
-					-DHOUDINI_DSO_VERSION=${HOUDINI_VERSION}
-					-DUT_DSO_TAGINFO=${PLUGIN_TAGINFO}
-	)
+	set_target_properties(${name} PROPERTIES PREFIX "")
 
-	set(libraryName ${name})
-	add_library(${libraryName} SHARED ${sources})
-	set_target_properties(${libraryName} PROPERTIES PREFIX "")
-	target_link_libraries(${libraryName} ${HDK_LIBS})
-	vfh_osx_flags(${libraryName})
-endmacro()
+	target_compile_definitions(${name} PRIVATE ${HDK_DSO_LIB_DEFINES})
+	target_link_libraries(${name} ${HDK_LIBS})
+
+	vfh_osx_flags(${name})
+endfunction()
