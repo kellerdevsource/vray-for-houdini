@@ -60,7 +60,6 @@ set(EXPORTER_SOURCES
 	utils/vfh_prm_globals.cpp
 	utils/vfh_prm_json.cpp
 	utils/vfh_prm_templates.cpp
-	vfh_pch.cpp
 )
 
 set(EXPORTER_HEADERS
@@ -110,7 +109,6 @@ set(SOURCES
 	sop/sop_vrayscene.cpp
 	sop/vfh_vrayproxyutils.cpp
 	vfh_register.cpp
-	vfh_pch.cpp
 	vop/brdf/vop_BRDFLayered.cpp
 	vop/brdf/vop_BRDFScanned.cpp
 	vop/brdf/vop_BRDFVRayMtl.cpp
