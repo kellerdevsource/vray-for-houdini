@@ -60,6 +60,7 @@ set(EXPORTER_SOURCES
 	utils/vfh_prm_globals.cpp
 	utils/vfh_prm_json.cpp
 	utils/vfh_prm_templates.cpp
+	vfh_pch.cpp
 )
 
 set(EXPORTER_HEADERS
@@ -109,6 +110,7 @@ set(SOURCES
 	sop/sop_vrayscene.cpp
 	sop/vfh_vrayproxyutils.cpp
 	vfh_register.cpp
+	vfh_pch.cpp
 	vop/brdf/vop_BRDFLayered.cpp
 	vop/brdf/vop_BRDFScanned.cpp
 	vop/brdf/vop_BRDFVRayMtl.cpp
@@ -208,9 +210,11 @@ use_vray_appsdk()
 
 option(USE_PCH "Use precompiled header" OFF)
 if(USE_PCH)
+	set_precompiled_header(vfh_pch.h "${CMAKE_CURRENT_SOURCE_DIR}/vfh_pch.cpp" EXPORTER_SOURCES)
 	set_precompiled_header(vfh_pch.h "${CMAKE_CURRENT_SOURCE_DIR}/vfh_pch.cpp" SOURCES)
 else()
-	list(REMOVE_ITEM SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/vfh_pch.cpp")
+	list(REMOVE_ITEM EXPORTER_SOURCES vfh_pch.cpp)
+	list(REMOVE_ITEM SOURCES vfh_pch.cpp)
 endif()
 
 add_library(vray_for_houdini_exporter STATIC "${EXPORTER_SOURCES};${EXPORTER_HEADERS}")
