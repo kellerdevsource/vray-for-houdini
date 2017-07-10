@@ -151,9 +151,6 @@ public:
 	/// Load or get from cache pointer to the AUR cache
 	CachePtr                       getCache() const;
 
-	/// Load or get from cache pointer to the detail of the current AUR cache
-	GU_DetailHandle                getDetail();
-
 	/// Get the world TM
 	UT_Matrix4F                    toWorldTm(CachePtr cache) const;
 
