@@ -649,7 +649,11 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_D
 
 	OP_Node *matNode = objNode.getMaterialNode(ctx.getTime());
 	VRay::Plugin objMaterial = pluginExporter.exportMaterial(matNode);
-	const int objectID = objNode.evalInt(VFH_ATTRIB_OBJECTID, 0, ctx.getTime());
+
+	int objectID = 0;
+	if (Parm::isParmExist(objNode, VFH_ATTRIB_OBJECTID)) {
+		objectID = objNode.evalInt(VFH_ATTRIB_OBJECTID, 0, ctx.getTime());
+	}
 
 	// +1 because first value is time.
 	VRay::VUtils::ValueRefList instances(numParticles+1);
