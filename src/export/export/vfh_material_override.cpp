@@ -12,6 +12,10 @@
 #include "vfh_defines.h"
 #include "vfh_material_override.h"
 
+#include <STY/STY_Styler.h>
+#include <STY/STY_OverrideValues.h>
+#include <STY/STY_OverrideValuesFilter.h>
+
 #include <SHOP/SHOP_GeoOverride.h>
 #include <GA/GA_AttributeFilter.h>
 
@@ -302,6 +306,44 @@ void MtlOverrideAttrExporter::addAttributesAsOverrides(const GEOAttribList &attr
 	}
 }
 
+void SheetTarget::TargetPrimitive::setGroupName(const QString &value)
+{
+	targetType = primitiveTypeGroup;
+	group = value;
+}
+
+const char *SheetTarget::TargetPrimitive::getGroupName() const
+{
+	return group.toLocal8Bit().constData();
+}
+
+int PrimRange::inRange(int index) const
+{
+	if (from == primRangeNotSet) {
+		return false;
+	}
+	if (to == primRangeNotSet) {
+		return index == from;
+	}
+	return index >= from && index <= to;
+}
+
+void SheetTarget::TargetPrimitive::addRange(const PrimRange &range)
+{
+	targetType = primitiveTypeRange;
+	ranges.insert(range);
+}
+
+int SheetTarget::TargetPrimitive::isInRange(int index) const
+{
+	for (const PrimRange &range : ranges) {
+		if (range.inRange(index)) {
+			return true;
+		}
+	}
+	return false;
+}
+
 static void parseStyleSheetTarget(const Value &target, SheetTarget &sheetTarget)
 {
 	for (Value::ConstMemberIterator pIt = target.MemberBegin(); pIt != target.MemberEnd(); ++pIt) {
@@ -309,8 +351,24 @@ static void parseStyleSheetTarget(const Value &target, SheetTarget &sheetTarget)
 		const Value &value = pIt->value;
 		if (key.equal("group")) {
 			sheetTarget.targetType = SheetTarget::sheetTargetPrimitive;
-			sheetTarget.primitive.targetType = SheetTarget::TargetPrimitive::primitiveTypeGroup;
-			sheetTarget.primitive.group = value.GetString();
+
+			const QString groupValue = value.GetString();
+			const QStringList groups = groupValue.split(' ', QString::SkipEmptyParts);
+
+			for (const QString &group : groups) {
+				static QRegExp re("\\d*");
+
+				if (group.contains('-')) {
+					const QStringList groupRangeValue = group.split('-');
+					sheetTarget.primitive.addRange(PrimRange(groupRangeValue[0].toInt(), groupRangeValue[1].toInt()));
+				}
+				else if (re.exactMatch(group)) {
+					sheetTarget.primitive.addRange(PrimRange(group.toInt()));
+				}
+				else {
+					sheetTarget.primitive.setGroupName(group);
+				}
+			}
 		}
 		else {
 			// ...
@@ -360,7 +418,6 @@ static void parseStyleSheet(const Value &style, ObjectStyleSheet &objSheet, fpre
 
 		if (style.HasMember(Styles::target)) {
 			const Value &target = style[Styles::target];
-
 
 			if (target.HasMember(Styles::Target::subTarget)) {
 				const Value &subTarget = target[Styles::Target::subTarget];
