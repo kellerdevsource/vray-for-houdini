@@ -434,7 +434,7 @@ VRay::VUtils::IntRefList& MeshExporter::getFaceMtlIDs()
 					const SheetTarget::TargetPrimitive &primTarget = styleTarge.primitive;
 
 					if (primTarget.targetType == SheetTarget::TargetPrimitive::primitiveTypeGroup) {
-						const GA_PrimitiveGroup *primGroup = gdp.findPrimitiveGroup(primTarget.getGroup());
+						const GA_PrimitiveGroup *primGroup = gdp.findPrimitiveGroup(primTarget.getGroupName());
 						if (primGroup && primGroup->contains(prim)) {
 							primMtlNode = style.overrides.matNode;
 						}
@@ -731,13 +731,13 @@ void MeshExporter::getMtlOverrides(MapChannels &mapChannels)
 			const SheetTarget &styleTarge = style.target;
 
 			if (styleTarge.targetType == SheetTarget::sheetTargetAll) {
-				primMaterial.mergeOverrides(style.overrides.overrides);
+				primMaterial.appendOverrides(style.overrides.overrides);
 			}
 			else if (styleTarge.targetType == SheetTarget::sheetTargetPrimitive) {
 				const SheetTarget::TargetPrimitive &primTarget = styleTarge.primitive;
 
 				if (primTarget.targetType == SheetTarget::TargetPrimitive::primitiveTypeGroup) {
-					const GA_PrimitiveGroup *primGroup = gdp.findPrimitiveGroup(primTarget.getGroup());
+					const GA_PrimitiveGroup *primGroup = gdp.findPrimitiveGroup(primTarget.getGroupName());
 					if (primGroup && primGroup->contains(prim)) {
 						primMaterial.appendOverrides(style.overrides.overrides);
 					}

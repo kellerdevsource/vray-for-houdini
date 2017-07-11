@@ -164,9 +164,7 @@ void ObjectExporter::getPrimMaterial(PrimMaterial &primMaterial) const
 			primMaterial.matNode = primMtl.matNode;
 		}
 
-		FOR_CONST_IT (MtlOverrideItems, moIt, primMtl.overrides) {
-			primMaterial.overrides.insert(moIt.key(), moIt.data());
-		}
+		primMaterial.mergeOverrides(primMtl.overrides);
 	}
 }
 
@@ -368,13 +366,13 @@ static void overrideItemsToUserAttributes(const MtlOverrideItems &overrides, QSt
 				break;
 			}
 			case MtlOverrideItem::itemTypeDouble: {
-				userAttributes += buf.sprintf("%s=%g",
+				userAttributes += buf.sprintf("%s=%.3f",
 											  overrideName,
 											  overrideItem.valueDouble);
 				break;
 			}
 			case MtlOverrideItem::itemTypeVector: {
-				userAttributes += buf.sprintf("%s=%g,%g,%g;",
+				userAttributes += buf.sprintf("%s=%.3f,%.3f,%.3f;",
 											  overrideName,
 											  overrideItem.valueVector.x, overrideItem.valueVector.y, overrideItem.valueVector.z);
 				break;
@@ -479,6 +477,7 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 	GA_ROHandleF animOffsetHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTRIB_ANIM_OFFSET));
 
 	MtlOverrideAttrExporter attrExp(gdp);
+	const ObjectStyleSheet &objectStyleSheet = getObjectStyleSheet();
 
 	for (GA_Iterator jt(gdp.getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
 		const GEO_Primitive *prim = gdp.getGEOPrimitive(*jt);
@@ -508,14 +507,6 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 			item.t = animOffsetHndl.get(primOffset);
 		}
 
-		// Material overrides.
-		mergeMaterialOverride(item.primMaterial, materialStyleSheetHndl, materialPathHndl, materialOverrideHndl, primOffset, ctx.getTime());
-
-		attrExp.fromPrimitive(item.primMaterial.overrides, primOffset);
-
-		// Check parent overrides.
-		getPrimMaterial(item.primMaterial);
-
 		// Primitive attributes
 		if (isPackedPrim) {
 			const GU_PrimPacked &primPacked = static_cast<const GU_PrimPacked&>(*prim);
@@ -534,9 +525,44 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 			if (numPoints == numPrims) {
 				const GA_Offset pointOffset = gdp.pointOffset(primIndex);
 
+				for (int i = 0; i < objectStyleSheet.styles.count(); ++i) {
+					const TargetStyleSheet &style = objectStyleSheet.styles[i];
+					const SheetTarget &styleTarge = style.target;
+
+					int mergeOverrides = false;
+
+					if (styleTarge.targetType == SheetTarget::sheetTargetAll) {
+						mergeOverrides = true;
+					}
+					else if (styleTarge.targetType == SheetTarget::sheetTargetPrimitive) {
+						const SheetTarget::TargetPrimitive &primTarget = styleTarge.primitive;
+						if (primTarget.targetType == SheetTarget::TargetPrimitive::primitiveTypeGroup) {
+							const GA_PrimitiveGroup *primGroup = gdp.findPrimitiveGroup(primTarget.getGroupName());
+
+							mergeOverrides = primGroup && primGroup->contains(prim);
+						}
+						else if (primTarget.targetType == SheetTarget::TargetPrimitive::primitiveTypeRange) {
+							mergeOverrides = primTarget.isInRange(primIndex);
+						}
+					}
+
+					if (mergeOverrides) {
+						item.primMaterial.appendOverrides(style.overrides.overrides);
+					}
+				}
+
 				attrExp.fromPoint(item.primMaterial.overrides, pointOffset);
 			}
 		}
+
+		// Material overrides.
+		mergeMaterialOverride(item.primMaterial, materialStyleSheetHndl, materialPathHndl, materialOverrideHndl, primOffset, ctx.getTime());
+
+		// Primitive attributes
+		attrExp.fromPrimitive(item.primMaterial.overrides, primOffset);
+
+		// Check parent overrides.
+		getPrimMaterial(item.primMaterial);
 
 		if (isVolumePrim) {
 			pushContext(PrimContext(&objNode, item.tm, item.primID, item.primMaterial));
@@ -1211,6 +1237,8 @@ VRay::Plugin ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_De
 
 	const GA_Size numPoints = gdp.getNumPoints();
 
+	const ObjectStyleSheet &objectStyleSheet = getObjectStyleSheet();
+
 	int validPointIdx = 0;
 	for (GA_Index i = 0; i < numPoints; ++i) {
 		const GA_Offset pointOffset = gdp.pointOffset(i);
@@ -1244,6 +1272,27 @@ VRay::Plugin ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_De
 
 		// Check parent overrides.
 		getPrimMaterial(item.primMaterial);
+
+#if 0
+		for (int s = 0; s < objectStyleSheet.styles.count(); ++s) {
+			const TargetStyleSheet &style = objectStyleSheet.styles[s];
+			const SheetTarget &styleTarge = style.target;
+
+			if (styleTarge.targetType == SheetTarget::sheetTargetAll) {
+				item.primMaterial.mergeOverrides(style.overrides.overrides);
+			}
+			else if (styleTarge.targetType == SheetTarget::sheetTargetPrimitive) {
+				const SheetTarget::TargetPrimitive &primTarget = styleTarge.primitive;
+
+				if (primTarget.targetType == SheetTarget::TargetPrimitive::primitiveTypeGroup) {
+					const GA_PrimitiveGroup *primGroup = gdp.findPrimitiveGroup(primTarget.getGroup());
+					if (primGroup && primGroup->contains(prim)) {
+						item.primMaterial.appendOverrides(style.overrides.overrides);
+					}
+				}
+			}
+		}
+#endif
 
 		// Mult with object inv. tm.
 		VRay::Transform objTm = VRayExporter::getObjTransform(instaceObjNode, ctx, false);
