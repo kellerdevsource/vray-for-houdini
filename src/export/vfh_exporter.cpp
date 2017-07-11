@@ -627,6 +627,49 @@ void VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 
 	pluginDesc.addAttribute(Attrs::PluginAttr("img_pixelAspect", pixelAspect));
 
+	enum ImageFormat {
+	    imageFormatPNG = 0,
+        imageFormatJPEG,
+        imageFormatTIFF,
+        imageFormatTGA,
+        imageFormatSGI,
+        imageFormatOpenEXR,
+        imageFormatVRayImage,
+	};
+
+	const ImageFormat imgFormat =
+		static_cast<ImageFormat>(m_rop->evalInt("SettingsOutput_img_format", 0, t));
+
+	UT_String fileName;
+	m_rop->evalString(fileName, "SettingsOutput_img_file", 0, t);
+
+	fileName.append(".");
+
+	switch (imgFormat) {
+		case imageFormatPNG: fileName.append("png"); break;
+		case imageFormatJPEG: fileName.append("jpg"); break;
+		case imageFormatTIFF: fileName.append("tiff"); break;
+		case imageFormatTGA: fileName.append("tga"); break;
+		case imageFormatSGI: fileName.append("sgi"); break;
+		case imageFormatOpenEXR: fileName.append("exr"); break;
+		case imageFormatVRayImage: fileName.append("vrimg"); break;
+		default: fileName.append("tmp"); break;
+	}
+
+	UT_String dirPath;
+	m_rop->evalString(dirPath, "SettingsOutput_img_dir", 0, t);
+
+	// Create output directory.
+	VUtils::uniMakeDir(dirPath.buffer());
+
+	// Ensure slash at the end.
+	if (!dirPath.endsWith("/")) {
+		dirPath.append("/");
+	}
+
+	pluginDesc.addAttribute(Attrs::PluginAttr("img_dir", dirPath.toStdString()));
+	pluginDesc.addAttribute(Attrs::PluginAttr("img_file", fileName.toStdString()));
+
 	// NOTE: we are exporting animation related properties in frames
 	// and compensating for this by setting SettingsUnitsInfo::seconds_scale
 	// i.e. scaling V-Ray time unit (see function exportSettings())
