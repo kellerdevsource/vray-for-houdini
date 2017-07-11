@@ -42,8 +42,8 @@ export HOUDINI_DSO_ERROR=1
 
 # Add libs to path
 export PATH=${HFS}/bin:${VRAY_APPSDK}/bin:${PATH}
-export LD_LIBRARY_PATH=${VRAY_APPSDK}/bin:${VRAY_FOR_HOUDINI_AURA_LOADERS}:${LD_LIBRARY_PATH}
+export LD_LIBRARY_PATH=${HFS}/dsolib:${VRAY_APPSDK}/bin:${VRAY_FOR_HOUDINI_AURA_LOADERS}:${LD_LIBRARY_PATH}
 
 # Start Houdini
 #
-"${HFS}/bin/houdini" -foreground $*
+@HFS_BIN@ $*

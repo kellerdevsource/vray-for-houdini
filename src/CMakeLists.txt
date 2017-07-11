@@ -242,74 +242,86 @@ add_definitions(-DCGR_GIT_HASH=${SRC_GIT_HASH})
 #
 option(INSTALL_RELEASE "Install release build for distribution" OFF)
 
+# Generate launcher with all needed environment variables set.
+#
 function(vfh_generate_launcher)
-	cmake_parse_arguments(ARG "" "FILENAME;TEMPLATE_FILENAME;LOCATION;APPSDK_PATH" "" ${ARGN})
+	cmake_parse_arguments(ARG "BATCH;RELEASE" "TEMPLATE_FILENAME;FILENAME;DESTINATION;BIN" "" ${ARGN})
+
+	if(NOT ARG_BIN)
+		if(WIN32)
+			if(ARG_BATCH)
+				set(ARG_BIN "\"%HFS%\\bin\\hbatch.exe\"")
+			else()
+				set(ARG_BIN "start \"V-Ray For Houdini\" /D \"%USERPROFILE%\\Desktop\" \"%HFS%\\bin\\houdini.exe\"")
+			endif()
+		elseif(APPLE)
+		else()
+			if(ARG_BATCH)
+				set(ARG_BIN "\"${HFS}/bin/hbatch\"")
+			else()
+				set(ARG_BIN "\"${HFS}/bin/houdini\" -foreground")
+			endif()
+		endif()
+	endif()
 
 	if(NOT ARG_TEMPLATE_FILENAME)
 		if(WIN32)
 			set(ARG_TEMPLATE_FILENAME "hfs.bat.in")
 		elseif(APPLE)
-			set(ARG_TEMPLATE_FILENAME "hfs_osx.bat.in")
+			set(ARG_TEMPLATE_FILENAME "hfs_osx.sh.in")
 		else()
 			set(ARG_TEMPLATE_FILENAME "hfs_linux.bat.in")
 		endif()
 	endif()
 
+	if(NOT ARG_DESTINATION)
+		set(ARG_DESTINATION ${CMAKE_BINARY_DIR})
+	endif()
+
 	if(NOT ARG_FILENAME)
-		if(WIN32)
-			set(ARG_FILENAME "vfh_hfs.bat")
+		if(ARG_RELEASE)
+			if(ARG_BATCH)
+				set(FILENAME_PREFIX hbatch)
+			else()
+				set(FILENAME_PREFIX hfs)
+			endif()
+			set(FILENAME_PREFIX ${FILENAME_PREFIX}${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD})
 		else()
-			set(ARG_FILENAME "vfh_hfs.sh")
+			if(ARG_BATCH)
+				set(FILENAME_PREFIX vfh_hbatch)
+			else()
+				set(FILENAME_PREFIX vfh_hfs)
+			endif()
+		endif()
+
+		if(WIN32)
+			set(ARG_FILENAME ${FILENAME_PREFIX}.bat)
+		else()
+			set(ARG_FILENAME ${FILENAME_PREFIX}.sh)
 		endif()
 	endif()
 
 	file(TO_NATIVE_PATH ${CMAKE_SOURCE_DIR} CMAKE_SOURCE_DIR)
 	file(TO_NATIVE_PATH ${APPSDK_ROOT} APPSDK_ROOT)
 	file(TO_NATIVE_PATH ${Phoenix_LIBRARIES} Phoenix_LIBRARIES)
+	set(HFS_BIN ${ARG_BIN})
+
+	set(TMP_FILEPATH ${CMAKE_BINARY_DIR}/tmp/${ARG_FILENAME})
 
 	configure_file(${CMAKE_SOURCE_DIR}/deploy/${ARG_TEMPLATE_FILENAME}
-				   ${CMAKE_BINARY_DIR}/tmp/${ARG_FILENAME}
-				   @ONLY)
+	               ${TMP_FILEPATH}
+	               @ONLY)
 
-	file(INSTALL ${CMAKE_BINARY_DIR}/tmp/${ARG_FILENAME}
+	file(INSTALL ${TMP_FILEPATH}
 		DESTINATION
-			${CMAKE_BINARY_DIR}
+			${ARG_DESTINATION}
 		FILE_PERMISSIONS
 			OWNER_READ OWNER_WRITE OWNER_EXECUTE
 			GROUP_READ GROUP_EXECUTE
 			WORLD_READ WORLD_EXECUTE)
+
+	file(REMOVE ${TMP_FILEPATH})
 endfunction()
-
-function(vfh_gen_launcher _location _vfh_appsdk_path _vfh_config_path _vfh_deploy_path _launcher)
-	file(TO_NATIVE_PATH ${_vfh_appsdk_path} _vfh_appsdk_path)
-	file(TO_NATIVE_PATH ${_vfh_config_path} _vfh_config_path)
-	file(TO_NATIVE_PATH ${_vfh_deploy_path} _vfh_deploy_path)
-
-	if(WIN32)
-		set(_mylauncher hfs_launcher.bat)
-		configure_file(${CMAKE_SOURCE_DIR}/deploy/hfs.bat.in
-					   ${CMAKE_BINARY_DIR}/tmp/${_mylauncher}
-					   @ONLY)
-	elseif(APPLE)
-		set(_mylauncher hfs_launcher.sh)
-		configure_file(${CMAKE_SOURCE_DIR}/deploy/hfs_osx.sh.in
-					   ${CMAKE_BINARY_DIR}/tmp/${_mylauncher}
-					   @ONLY)
-	else()
-		set(_mylauncher hfs_launcher.sh)
-		configure_file(${CMAKE_SOURCE_DIR}/deploy/hfs_linux.sh.in
-					   ${CMAKE_BINARY_DIR}/tmp/${_mylauncher}
-					   @ONLY)
-	endif()
-
-	file(INSTALL ${CMAKE_BINARY_DIR}/tmp/${_mylauncher}
-		 DESTINATION ${_location}
-		 FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
-		)
-
-	set(${_launcher} ${_location}/${_mylauncher} PARENT_SCOPE)
-	file(REMOVE ${CMAKE_BINARY_DIR}/tmp/${_mylauncher})
-endfunction(vfh_gen_launcher)
 
 function(vfh_install_common _location)
 	# Copy Phoenix cache file loader library
@@ -359,23 +371,8 @@ if(INSTALL_RELEASE)
 	vfh_install_common(${INSTALL_RELEASE_PATH})
 
 	# Generate launcher file
-	if(WIN32)
-		vfh_gen_launcher(${INSTALL_RELEASE_PATH}          # where
-						 "%LAUNCHER_LOCATION%/appsdk"     # app sdk location
-						 "%LAUNCHER_LOCATION%"            # vfh config location
-						 "%LAUNCHER_LOCATION%"            # vfh dso location
-						 _launcher                        # output launcher
-						)
-	else()
-		vfh_gen_launcher(${INSTALL_RELEASE_PATH}          # where
-						 "\${LAUNCHER_LOCATION}/appsdk"   # app sdk location
-						 "\${LAUNCHER_LOCATION}"          # vfh config location
-						 "\${LAUNCHER_LOCATION}"          # vfh dso location
-						 _launcher                        # output launcher
-						)
-	endif()
-	get_filename_component(_launcher_ext ${_launcher} EXT)
-	file(RENAME ${_launcher} ${INSTALL_RELEASE_PATH}/hfs${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD}${_launcher_ext})
+	vfh_generate_launcher(RELEASE BATCH DESTINATION ${INSTALL_RELEASE_PATH})
+	vfh_generate_launcher(RELEASE       DESTINATION ${INSTALL_RELEASE_PATH})
 
 	# Copy ui
 	install(DIRECTORY   ${CMAKE_SOURCE_DIR}/deploy/ui
@@ -388,12 +385,9 @@ if(INSTALL_RELEASE)
 		set(EXCLUDE_LIBVRAY "*${CMAKE_SHARED_LIBRARY_PREFIX}vray_qt4${CMAKE_SHARED_LIBRARY_SUFFIX}")
 	endif()
 
-	install(DIRECTORY
-			${APPSDK_ROOT}/bin
-	        DESTINATION
-			${INSTALL_RELEASE_PATH}/appsdk
-	        PATTERN
-			${EXCLUDE_LIBVRAY} EXCLUDE
+	install(DIRECTORY ${APPSDK_ROOT}/bin
+			DESTINATION ${INSTALL_RELEASE_PATH}/appsdk
+			PATTERN ${EXCLUDE_LIBVRAY} EXCLUDE
 	)
 
 	# Default libvray.dll is Qt5
@@ -425,11 +419,15 @@ else()
 
 	if(WIN32)
 		set(TEMPLATE_FILENAME "hfs.local.bat.in")
-	else()
+	elseif(APPLE)
 		set(TEMPLATE_FILENAME "hfs.local.sh.in")
+	else(APPLE)
+		set(TEMPLATE_FILENAME "hfs.local.osx.sh.in")
 	endif()
 
 	file(TO_NATIVE_PATH ${VFH_DSO_DIRPATH} VFH_DSO_DIRPATH)
 	file(TO_NATIVE_PATH ${VFH_BIN_DIRPATH} VFH_BIN_DIRPATH)
-	vfh_generate_launcher(TEMPLATE_FILENAME ${TEMPLATE_FILENAME})
+
+	vfh_generate_launcher(BATCH TEMPLATE_FILENAME ${TEMPLATE_FILENAME})
+	vfh_generate_launcher(      TEMPLATE_FILENAME ${TEMPLATE_FILENAME})
 endif()
