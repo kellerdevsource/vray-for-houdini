@@ -628,13 +628,13 @@ void VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 	pluginDesc.addAttribute(Attrs::PluginAttr("img_pixelAspect", pixelAspect));
 
 	enum ImageFormat {
-	    imageFormatPNG = 0,
-        imageFormatJPEG,
-        imageFormatTIFF,
-        imageFormatTGA,
-        imageFormatSGI,
-        imageFormatOpenEXR,
-        imageFormatVRayImage,
+		imageFormatPNG = 0,
+		imageFormatJPEG,
+		imageFormatTIFF,
+		imageFormatTGA,
+		imageFormatSGI,
+		imageFormatOpenEXR,
+		imageFormatVRayImage,
 	};
 
 	const ImageFormat imgFormat =
