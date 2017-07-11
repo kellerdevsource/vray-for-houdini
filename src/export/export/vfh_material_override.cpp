@@ -449,6 +449,18 @@ void VRayForHoudini::parseObjectStyleSheet(OBJ_Node &objNode, ObjectStyleSheet &
 	if (!document.HasMember(Styles::styles))
 		return;
 
+	STY_StyleSheetHandle styStyleSheetHandle(new STY_StyleSheet(styleBuf, NULL, STY_LOAD_FOR_STYLING));
+	STY_Styler styStyler(styStyleSheetHandle);
+
+	STY_OverrideValuesFilter styOverrideValuesFilter("*");
+
+	STY_OverrideValues styOverrideValues;
+	styStyler.getOverrides(styOverrideValues, styOverrideValuesFilter);
+
+	for (const auto &styOverrideValue : styOverrideValues) {
+		std::cout << styOverrideValue.first << std::endl;
+	}
+
 	const Value &styles = document[Styles::styles];
 	UT_ASSERT(styles.IsArray());
 
