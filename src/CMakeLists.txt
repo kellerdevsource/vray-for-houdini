@@ -270,7 +270,7 @@ function(vfh_generate_launcher)
 		elseif(APPLE)
 			set(ARG_TEMPLATE_FILENAME "hfs_osx.sh.in")
 		else()
-			set(ARG_TEMPLATE_FILENAME "hfs_linux.bat.in")
+			set(ARG_TEMPLATE_FILENAME "hfs_linux.sh.in")
 		endif()
 	endif()
 
