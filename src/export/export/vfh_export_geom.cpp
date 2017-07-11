@@ -32,17 +32,6 @@
 
 using namespace VRayForHoudini;
 
-// TODO: Move to AppSDK headers.
-enum HierarchicalParameterizedNodeParameterFlags {
-	useParentTimes = (1 << 0),
-	useObjectID = (1 << 1),
-	usePrimaryVisibility = (1 << 2),
-	useUserAttributes = (1 << 3),
-	useParentTimesAtleastForGeometry = (1 << 4),
-	useMaterial = (1 << 5),
-	useGeometry = (1 << 6),
-};
-
 static struct PrimPackedTypeIDs {
 	PrimPackedTypeIDs()
 		: initialized(false)
@@ -649,7 +638,11 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_D
 
 	OP_Node *matNode = objNode.getMaterialNode(ctx.getTime());
 	VRay::Plugin objMaterial = pluginExporter.exportMaterial(matNode);
-	const int objectID = objNode.evalInt(VFH_ATTRIB_OBJECTID, 0, ctx.getTime());
+
+	int objectID = 0;
+	if (Parm::isParmExist(objNode, VFH_ATTRIB_OBJECTID)) {
+		objectID = objNode.evalInt(VFH_ATTRIB_OBJECTID, 0, ctx.getTime());
+	}
 
 	// +1 because first value is time.
 	VRay::VUtils::ValueRefList instances(numParticles+1);
@@ -681,12 +674,12 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_D
 		// Instancer works only with Node plugins.
 		VRay::Plugin node = getNodeForInstancerGeometry(primItem.geometry, material);
 
-		uint32_t additional_params_flags = useObjectID;
+		uint32_t additional_params_flags = VRay::InstancerParamFlags::useObjectID;
 		if (material) {
-			additional_params_flags |= useMaterial;
+			additional_params_flags |= VRay::InstancerParamFlags::useMaterial;
 		}
 		if (!userAttributes.isEmpty()) {
-			additional_params_flags |= useUserAttributes;
+			additional_params_flags |= VRay::InstancerParamFlags::useUserAttributes;
 		}
 		if (primItem.flags & PrimitiveItem::itemFlagsUseTime) {
 			// TODO: Utilize use_time_instancing.
@@ -702,10 +695,10 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_D
 		item[indexOffs++].setTransform(VRay::Transform(0));
 		item[indexOffs++].setDouble(additional_params_flags);
 		item[indexOffs++].setDouble(primItem.objectID != objectIdUndefined ? primItem.objectID : objectID);
-		if (additional_params_flags & useUserAttributes) {
+		if (additional_params_flags & VRay::InstancerParamFlags::useUserAttributes) {
 			item[indexOffs++].setString(userAttributes.toLocal8Bit().constData());
 		}
-		if (additional_params_flags & useMaterial) {
+		if (additional_params_flags & VRay::InstancerParamFlags::useMaterial) {
 			item[indexOffs++].setPlugin(material);
 		}
 		item[indexOffs++].setPlugin(node);
