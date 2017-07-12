@@ -17,22 +17,70 @@
 #include "vfh_hou_utils.h"
 #include "vfh_ipr_viewer.h"
 
+#include "lib/vfh_vray_instances.h"
+
 using namespace VRayForHoudini;
 
-VRayExporter exporter(nullptr);
+static VRayExporter *exporter = nullptr;
 
-static PyObject* vfhDeleteOpNode(PyObject*, PyObject *args, PyObject *keywds)
+static void freeExporter()
 {
+	FreePtr(exporter);
+}
+
+static VRayExporter& getExporter()
+{
+	if (!exporter) {
+		exporter = new VRayExporter(nullptr);
+	}
+	return *exporter;
+}
+
+static struct VRayExporterIprUnload {
+	~VRayExporterIprUnload() {
+		deleteVRayInit();
+	}
+} exporterUnload;
+
+static void onVFBClosed(VRay::VRayRenderer&, void*)
+{
+	getExporter().reset();
+}
+
+static PyObject* vfhExportView(PyObject*, PyObject *args, PyObject *keywds)
+{
+	const char *rop = nullptr;
+
+	static char *kwlist[] = {
+	    /* 0 */ "rop",
+	    NULL
+	};
+
+	//                                 012345678911
+	//                                           01
+	static const char kwlistTypes[] = "s";
+
+	if (PyArg_ParseTupleAndKeywords(args, keywds, kwlistTypes, kwlist,
+		/* 0 */ &rop))
+	{
+		HOM_AutoLock autoLock;
+
+		VRayExporter &exporter = getExporter();
+
+		exporter.exportDefaultHeadlight(true);
+		exporter.exportView();
+	}
+
 	Py_INCREF(Py_None);
     return Py_None;
 }
 
-static PyObject* vfhExportOpNode(PyObject*, PyObject *args, PyObject *keywds)
+static PyObject* vfhDeleteOpNode(PyObject*, PyObject *args, PyObject *keywds)
 {
 	const char *opNodePath = nullptr;
 
 	static char *kwlist[] = {
-	    /* 0 */"opNode",
+	    /* 0 */ "opNode",
 	    NULL
 	};
 
@@ -45,8 +93,40 @@ static PyObject* vfhExportOpNode(PyObject*, PyObject *args, PyObject *keywds)
 	{
 		HOM_AutoLock autoLock;
 
-		// exporter.exportDefaultHeadlight(true);
-		// exporter.exportView();
+		VRayExporter &exporter = getExporter();
+
+		OBJ_Node *objNode = CAST_OBJNODE(getOpNodeFromPath(opNodePath));
+		if (objNode) {
+			Log::getLog().debug("vfhDeleteOpNode(\"%s\")", opNodePath);
+
+			ObjectExporter &objExporter = exporter.getObjectExporter();
+
+			objExporter.removeObject(*objNode);
+		}
+	}
+
+	Py_RETURN_NONE;
+}
+
+static PyObject* vfhExportOpNode(PyObject*, PyObject *args, PyObject *keywds)
+{
+	const char *opNodePath = nullptr;
+
+	static char *kwlist[] = {
+	    /* 0 */ "opNode",
+	    NULL
+	};
+
+	//                                 012345678911
+	//                                           01
+	static const char kwlistTypes[] = "s";
+
+	if (PyArg_ParseTupleAndKeywords(args, keywds, kwlistTypes, kwlist,
+		/* 0 */ &opNodePath))
+	{
+		HOM_AutoLock autoLock;
+
+		VRayExporter &exporter = getExporter();
 
 		OBJ_Node *objNode = CAST_OBJNODE(getOpNodeFromPath(opNodePath));
 		if (objNode) {
@@ -64,8 +144,7 @@ static PyObject* vfhExportOpNode(PyObject*, PyObject *args, PyObject *keywds)
 		}
 	}
 
-	Py_INCREF(Py_None);
-    return Py_None;
+    Py_RETURN_NONE;
 }
 
 static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
@@ -77,9 +156,9 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 	float now = 0.0f;
 
 	static char *kwlist[] = {
-	    /* 0 */"rop",
-	    /* 1 */"port",
-	    /* 2 */"now",
+	    /* 0 */ "rop",
+	    /* 1 */ "port",
+	    /* 2 */ "now",
 	    NULL
 	};
 
@@ -92,41 +171,43 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 		/* 1 */ &port,
 		/* 2 */ &now))
 	{
+		enum IPROutput {
+			iprOutputRenderView = 0,
+			iprOutputVFB,
+		};
+
 		HOM_AutoLock autoLock;
-
-		// TODO: Make a configurable option.
-		const int noVFB = false;
-
-		VRayPluginRenderer::initialize(noVFB);
 
 		UT_String ropPath(rop);
 		OP_Node *ropNode = getOpNodeFromPath(ropPath);
 		if (ropNode) {
-			exporter.reset();
+			const IPROutput iprOutput = static_cast<IPROutput>(ropNode->evalInt("render_rt_output", 0, 0.0));
+
+			const int isRenderView = iprOutput == iprOutputRenderView;
+			const int isVFB = iprOutput == iprOutputVFB;
+
+			VRayExporter &exporter = getExporter();
+
 			exporter.setROP(*ropNode);
 			exporter.setIPR(VRayExporter::iprModeRenderView);
 
-			// Renderer mode (CPU / GPU)
-			const int rendererMode = getRendererIprMode(*ropNode);
+			if (exporter.initRenderer(isVFB, false)) {
+				if (isRenderView) {
+					initImdisplay(port);
+				}
 
-			// Rendering device
-			const int wasGPU = exporter.isGPU();
-			const int isGPU  = (rendererMode > VRay::RendererOptions::RENDER_MODE_RT_CPU);
-
-			// Whether to re-create V-Ray renderer
-			const int reCreate = wasGPU != isGPU;
-
-			if (exporter.initRenderer(noVFB, reCreate)) {
-				initImdisplay(port);
-
-				exporter.getRenderer().getVRay().setOnRenderStart(onRenderStart);
-				exporter.getRenderer().getVRay().setOnImageReady(onImageReady);
-				exporter.getRenderer().getVRay().setOnRTImageUpdated(onRTImageUpdated);
-				exporter.getRenderer().getVRay().setOnBucketReady(onBucketReady);
-
-				exporter.setRendererMode(rendererMode);
 				exporter.setDRSettings();
+
+				exporter.setRendererMode(getRendererIprMode(*ropNode));
 				exporter.setWorkMode(getExporterWorkMode(*ropNode));
+
+				exporter.getRenderer().showVFB(isVFB);
+				exporter.getRenderer().getVRay().setOnVFBClosed(isVFB ? onVFBClosed : nullptr);
+
+				exporter.getRenderer().getVRay().setOnRenderStart(isRenderView ? onRenderStart : nullptr);
+				exporter.getRenderer().getVRay().setOnImageReady(isRenderView ? onImageReady : nullptr);
+				exporter.getRenderer().getVRay().setOnRTImageUpdated(isRenderView? onRTImageUpdated : nullptr);
+				exporter.getRenderer().getVRay().setOnBucketReady(isRenderView ? onBucketReady : nullptr);
 
 				exporter.initExporter(getFrameBufferType(*ropNode), 1, now, now);
 
@@ -136,16 +217,7 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 		}
 	}
    
-	Py_INCREF(Py_None);
-    return Py_None;
-}
-
-static PyObject* vfhFree(PyObject*, PyObject *args, PyObject *keywds)
-{
-	exporter.reset();
-
-	Py_INCREF(Py_None);
-    return Py_None;
+    Py_RETURN_NONE;
 }
 
 static PyMethodDef methods[] = {
@@ -154,6 +226,12 @@ static PyMethodDef methods[] = {
 		reinterpret_cast<PyCFunction>(vfhInit),
 		METH_VARARGS | METH_KEYWORDS,
 		"Init V-Ray IPR."
+	},
+	{
+		"exportView",
+		reinterpret_cast<PyCFunction>(vfhExportView),
+		METH_VARARGS | METH_KEYWORDS,
+		"Export view."
 	},
 	{
 		"exportOpNode",
@@ -166,12 +244,6 @@ static PyMethodDef methods[] = {
 		reinterpret_cast<PyCFunction>(vfhDeleteOpNode),
 		METH_VARARGS | METH_KEYWORDS,
 		"Export object."
-	},
-	{
-		"free",
-		reinterpret_cast<PyCFunction>(vfhFree),
-		METH_VARARGS | METH_KEYWORDS,
-		"Free V-Ray IPR."
 	},
 	{ NULL, NULL, 0, NULL }
 };

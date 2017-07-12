@@ -1550,7 +1550,12 @@ void ObjectExporter::removeObject(OBJ_Node &objNode)
 	// Remove generated plugin (lights, volumes).
 	removeGenerated(objNode);
 
-	// TODO: Remove object plugin itself.
+	// Remove self.
+	OpPluginCache::iterator pIt = pluginCache.op.find(&objNode);
+	if (pIt != pluginCache.op.end()) {
+		pluginExporter.removePlugin(pIt.data());
+		pluginCache.op.erase(pIt);
+	}
 }
 
 VRay::Plugin ObjectExporter::exportObject(OBJ_Node &objNode)
