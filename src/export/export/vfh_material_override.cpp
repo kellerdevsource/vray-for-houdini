@@ -11,6 +11,7 @@
 
 #include "vfh_defines.h"
 #include "vfh_material_override.h"
+#include "vfh_prm_templates.h"
 
 #include <STY/STY_Styler.h>
 #include <STY/STY_OverrideValues.h>
@@ -438,6 +439,9 @@ static void parseStyleSheet(const Value &style, ObjectStyleSheet &objSheet, fpre
 void VRayForHoudini::parseObjectStyleSheet(OBJ_Node &objNode, ObjectStyleSheet &objSheet, fpreal t)
 {
 	using namespace rapidjson;
+
+	if (!Parm::isParmExist(objNode, VFH_ATTR_SHOP_MATERIAL_STYLESHEET))
+		return;
 
 	UT_String styleSheet;
 	objNode.evalString(styleSheet, VFH_ATTR_SHOP_MATERIAL_STYLESHEET, 0, t);
