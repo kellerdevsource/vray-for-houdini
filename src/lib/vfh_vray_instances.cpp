@@ -188,7 +188,8 @@ void VRayForHoudini::deleteVRayInit()
 	Log::getLog().debug("deleteVRayInit()");
 
 	if (!vrayInstances.isAttached()) {
-		return;
+		if (!vrayInstances.attach())
+			return;
 	}
 
 	if (vrayInstances.lock()) {

@@ -105,6 +105,11 @@ static GA_Size fillFreePointMap(const GU_Detail &detail, DynamicBitset &map)
 	return numPoints;
 }
 
+static UT_StringHolder getKeyFromOpNode(OP_Node &opNode)
+{
+	return opNode.getFullPath();
+}
+
 ObjectExporter::ObjectExporter(VRayExporter &pluginExporter)
 	: pluginExporter(pluginExporter)
 	, ctx(pluginExporter.getContext())
@@ -661,13 +666,15 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_D
 			material = primItem.material;
 		}
 		else if (primItem.primMaterial.matNode) {
-			OpPluginCache::iterator pIt = pluginCache.op.find(primItem.primMaterial.matNode);
+			const UT_StringHolder &matKey = getKeyFromOpNode(*primItem.primMaterial.matNode);
+
+			OpPluginCache::iterator pIt = pluginCache.op.find(matKey.buffer());
 			if (pIt != pluginCache.op.end()) {
 				material = pIt.data();
 			}
 			else {
 				material = pluginExporter.exportMaterial(primItem.primMaterial.matNode);
-				pluginCache.op.insert(primItem.primMaterial.matNode, material);
+				pluginCache.op.insert(matKey.buffer(), material);
 			}
 		}
 
@@ -1469,7 +1476,9 @@ VRay::Plugin ObjectExporter::exportNode(OBJ_Node &objNode)
 {
 	using namespace Attrs;
 
-	OpPluginCache::iterator pIt = pluginCache.op.find(&objNode);
+	const UT_StringHolder &key = getKeyFromOpNode(objNode);
+
+	OpPluginCache::iterator pIt = pluginCache.op.find(key.buffer());
 	if (pIt != pluginCache.op.end()) {
 		return pIt.data();
 	}
@@ -1514,24 +1523,26 @@ VRay::Plugin ObjectExporter::exportNode(OBJ_Node &objNode)
 	VRay::Plugin node = pluginExporter.exportPlugin(nodeDesc);
 	UT_ASSERT(node);
 
-	pluginCache.op.insert(&objNode, node);
+	pluginCache.op.insert(key.buffer(), node);
 
 	return node;
 }
 
-void ObjectExporter::addGenerated(OP_Node &key, VRay::Plugin plugin)
+void ObjectExporter::addGenerated(OP_Node &opNode, VRay::Plugin plugin)
 {
 	if (!plugin) {
 		return;
 	}
 
-	PluginSet &pluginsSet = pluginCache.generated[&key];
+	const UT_StringHolder &key = getKeyFromOpNode(opNode);
+
+	PluginSet &pluginsSet = pluginCache.generated[key.buffer()];
 	pluginsSet.insert(plugin);
 }
 
-void ObjectExporter::removeGenerated(OP_Node &key)
+void ObjectExporter::removeGenerated(const char *key)
 {
-	OpPluginGenCache::iterator cIt = pluginCache.generated.find(&key);
+	OpPluginGenCache::iterator cIt = pluginCache.generated.find(key);
 	if (cIt == pluginCache.generated.end()) {
 		return;
 	}
@@ -1545,13 +1556,27 @@ void ObjectExporter::removeGenerated(OP_Node &key)
 	pluginCache.generated.erase(cIt);
 }
 
+void ObjectExporter::removeGenerated(OP_Node &opNode)
+{
+	const UT_StringHolder &key = getKeyFromOpNode(opNode);
+
+	removeGenerated(key.buffer());
+}
+
 void ObjectExporter::removeObject(OBJ_Node &objNode)
+{
+	const UT_StringHolder &key = getKeyFromOpNode(objNode);
+
+	removeObject(key.buffer());
+}
+
+void ObjectExporter::removeObject(const char *objNode)
 {
 	// Remove generated plugin (lights, volumes).
 	removeGenerated(objNode);
 
 	// Remove self.
-	OpPluginCache::iterator pIt = pluginCache.op.find(&objNode);
+	OpPluginCache::iterator pIt = pluginCache.op.find(objNode);
 	if (pIt != pluginCache.op.end()) {
 		pluginExporter.removePlugin(pIt.data());
 		pluginCache.op.erase(pIt);

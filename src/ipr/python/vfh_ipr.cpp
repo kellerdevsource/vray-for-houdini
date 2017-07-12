@@ -71,8 +71,7 @@ static PyObject* vfhExportView(PyObject*, PyObject *args, PyObject *keywds)
 		exporter.exportView();
 	}
 
-	Py_INCREF(Py_None);
-    return Py_None;
+	Py_RETURN_NONE;
 }
 
 static PyObject* vfhDeleteOpNode(PyObject*, PyObject *args, PyObject *keywds)
@@ -93,15 +92,11 @@ static PyObject* vfhDeleteOpNode(PyObject*, PyObject *args, PyObject *keywds)
 	{
 		HOM_AutoLock autoLock;
 
-		VRayExporter &exporter = getExporter();
-
-		OBJ_Node *objNode = CAST_OBJNODE(getOpNodeFromPath(opNodePath));
-		if (objNode) {
+		if (UTisstring(opNodePath)) {
 			Log::getLog().debug("vfhDeleteOpNode(\"%s\")", opNodePath);
 
-			ObjectExporter &objExporter = exporter.getObjectExporter();
-
-			objExporter.removeObject(*objNode);
+			ObjectExporter &objExporter = getExporter().getObjectExporter();
+			objExporter.removeObject(opNodePath);
 		}
 	}
 
@@ -126,13 +121,11 @@ static PyObject* vfhExportOpNode(PyObject*, PyObject *args, PyObject *keywds)
 	{
 		HOM_AutoLock autoLock;
 
-		VRayExporter &exporter = getExporter();
-
 		OBJ_Node *objNode = CAST_OBJNODE(getOpNodeFromPath(opNodePath));
 		if (objNode) {
 			Log::getLog().debug("vfhExportOpNode(\"%s\")", opNodePath);
 
-			ObjectExporter &objExporter = exporter.getObjectExporter();
+			ObjectExporter &objExporter = getExporter().getObjectExporter();
 
 			// Otherwise we won't update plugin.
 			objExporter.clearOpPluginCache();
@@ -243,7 +236,7 @@ static PyMethodDef methods[] = {
 		"deleteOpNode",
 		reinterpret_cast<PyCFunction>(vfhDeleteOpNode),
 		METH_VARARGS | METH_KEYWORDS,
-		"Export object."
+		"Delete object."
 	},
 	{ NULL, NULL, 0, NULL }
 };
