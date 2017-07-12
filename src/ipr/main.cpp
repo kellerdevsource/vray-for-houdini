@@ -8,7 +8,16 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
+#include <QtNetwork/QTcpSocket>
+
 int main(int, char const*[])
 {
+	QTcpSocket socket;
+	if (!socket.bind(424242)) {
+		return 1;
+	}
+
+	while (true) {}
+
 	return 0;
 }

@@ -14,3 +14,5 @@ add_executable(${PROJECT_NAME} main.cpp)
 set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME vfh_ipr)
 
 cgr_install_runtime(${PROJECT_NAME} ${VFH_BIN_DIRPATH})
+
+target_link_libraries(${PROJECT_NAME} Qt5Network)
