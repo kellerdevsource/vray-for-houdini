@@ -21,6 +21,9 @@
 
 #include <rapidjson/document.h>
 
+#include <QStringList>
+#include <QRegExp>
+
 using namespace VRayForHoudini;
 using namespace rapidjson;
 
