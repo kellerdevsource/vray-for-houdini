@@ -372,7 +372,7 @@ static void overrideItemsToUserAttributes(const MtlOverrideItems &overrides, QSt
 				break;
 			}
 			default: {
-				vassert(false);
+				break;
 			}
 		}
 	}

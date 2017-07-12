@@ -250,6 +250,10 @@ void VRayForHoudini::deleteVRayRenderer(VRay::VRayRenderer* &instance)
 {
 	Log::getLog().debug("deleteVRayRenderer()");
 
+	if (!vrayInstances.isAttached()) {
+		vrayInstances.attach();
+	}
+
 	vassert(vrayInstances.isAttached());
 
 	if (vrayInstances.lock()) {
@@ -270,10 +274,10 @@ void VRayForHoudini::deleteVRayRenderer(VRay::VRayRenderer* &instance)
 
 void VRayForHoudini::dumpSharedMemory()
 {
+	Log::getLog().debug("dumpSharedMemory()");
+
 	if (!vrayInstances.isAttached())
 		return;
-
-	Log::getLog().debug("dumpSharedMemory()");
 
 	if (vrayInstances.lock()) {
 		InstancesStorage *is = reinterpret_cast<InstancesStorage*>(vrayInstances.data());
