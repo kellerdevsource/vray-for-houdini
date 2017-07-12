@@ -10,23 +10,45 @@
 
 #include <Python.h>
 
-#include <HOM/HOM_Module.h>
-
 #include "vfh_exporter.h"
 #include "vfh_log.h"
-#include "vfh_hou_utils.h"
 #include "vfh_ipr_viewer.h"
+#include "vfh_vray_instances.h"
 
-#include "lib/vfh_vray_instances.h"
+#include <HOM/HOM_Module.h>
+
+#include <QThread>
+#include <QtNetwork/QTcpSocket>
+#include <QtNetwork/QHostAddress>
 
 using namespace VRayForHoudini;
 
 static VRayExporter *exporter = nullptr;
 
-static void freeExporter()
+static class WorkerThread
+	: public QThread
 {
-	FreePtr(exporter);
-}
+public:
+	void setCallback(std::function<void()> value) {
+		cb = value;
+	}
+
+private:
+	void run() VRAY_OVERRIDE {
+		while (true) {
+			QTcpSocket socket;
+			socket.connectToHost(QHostAddress(QHostAddress::LocalHost), 424242);
+			if (!socket.waitForConnected(1000)) {
+				Log::getLog().debug("Stop requested...");
+				cb();
+				return;
+			}
+			msleep(100);
+		}
+    }
+
+	std::function<void()> cb;
+} stopPoll;
 
 static VRayExporter& getExporter()
 {
@@ -34,6 +56,15 @@ static VRayExporter& getExporter()
 		exporter = new VRayExporter(nullptr);
 	}
 	return *exporter;
+}
+
+static void freeExporter()
+{
+	stopPoll.exit();
+
+	getExporter().reset();
+
+	FreePtr(exporter);
 }
 
 static struct VRayExporterIprUnload {
@@ -44,7 +75,7 @@ static struct VRayExporterIprUnload {
 
 static void onVFBClosed(VRay::VRayRenderer&, void*)
 {
-	getExporter().reset();
+	freeExporter();
 }
 
 static PyObject* vfhExportView(PyObject*, PyObject *args, PyObject *keywds)
@@ -206,6 +237,9 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 
 				exporter.exportSettings();
 				exporter.exportFrame(now);
+
+				stopPoll.setCallback([]{ freeExporter(); });
+				stopPoll.start(QThread::LowPriority);
 			}
 		}
 	}

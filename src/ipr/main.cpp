@@ -8,12 +8,14 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
-#include <QtNetwork/QTcpSocket>
+#include <QtNetwork/QTcpServer>
+#include <QtNetwork/QHostAddress>
 
 int main(int, char const*[])
 {
-	QTcpSocket socket;
-	if (!socket.bind(424242)) {
+	QTcpServer server;
+
+	if (!server.listen(QHostAddress(QHostAddress::LocalHost), 424242)) {
 		return 1;
 	}
 
