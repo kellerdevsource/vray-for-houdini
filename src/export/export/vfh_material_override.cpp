@@ -13,6 +13,8 @@
 #include "vfh_material_override.h"
 
 #include <STY/STY_Styler.h>
+#include <STY/STY_Subject.h>
+#include <STY/STY_TargetMatchStatus.h>
 #include <STY/STY_OverrideValues.h>
 #include <STY/STY_OverrideValuesFilter.h>
 
@@ -452,16 +454,66 @@ void VRayForHoudini::parseObjectStyleSheet(OBJ_Node &objNode, ObjectStyleSheet &
 	if (!document.HasMember(Styles::styles))
 		return;
 
+	class sty_FooSubject
+		: public STY_Subject
+	{
+	public:
+		STY_TargetMatchStatus matchesStyleTarget(const STY_TargetHandle &target) const VRAY_OVERRIDE {
+			const STY_Target &tgt = *target;
+			std::cout << "Target: " << tgt.getLabel() << std::endl;
+
+			const STY_TargetType &tgtType = tgt.getType();
+
+			const STY_OptionEntryMap &tgtReq = tgt.getTargetRequirements();
+
+			for (const auto &reqIt : tgtReq) {
+				std::cout << "  Req: " << reqIt.first << std::endl;
+
+				const STY_OptionEntryHandle &opt = reqIt.second;
+
+				UT_Int64Array    int_vals;
+				UT_Fpreal64Array flt_vals;
+				UT_StringArray   str_vals;
+				if (opt->importOption(int_vals))
+					std::cout << int_vals;
+				else if (opt->importOption(flt_vals))
+					std::cout << flt_vals;
+				else if (opt->importOption(str_vals))
+					std::cout << str_vals;
+				std::cout << std::endl;
+			}
+
+			return STY_TargetMatchStatus(true, STY_TargetHandle());
+		}
+	};
+
 	STY_StyleSheetHandle styStyleSheetHandle(new STY_StyleSheet(styleBuf, NULL, STY_LOAD_FOR_STYLING));
 	STY_Styler styStyler(styStyleSheetHandle);
 
-	STY_OverrideValuesFilter styOverrideValuesFilter("*");
+	sty_FooSubject stySubject;
+	STY_Styler styFinalStyler = styStyler.cloneWithSubject(stySubject);
 
+	STY_OverrideValuesFilter styOverrideValuesFilter(nullptr);
 	STY_OverrideValues styOverrideValues;
-	styStyler.getOverrides(styOverrideValues, styOverrideValuesFilter);
+	styFinalStyler.getOverrides(styOverrideValues, styOverrideValuesFilter);
 
-	for (const auto &styOverrideValue : styOverrideValues) {
-		std::cout << styOverrideValue.first << std::endl;
+	UT_Int64Array    int_vals;
+	UT_Fpreal64Array flt_vals;
+	UT_StringArray   str_vals;
+	std::cout << "Overrides:\n";
+	for (const auto &styOverrideValueCategory : styOverrideValues) {
+		std::cout << "Override category: " << styOverrideValueCategory.first << std::endl;
+		for (const auto &styOverrideValue : styOverrideValueCategory.second) {
+			STY_OptionEntryHandle opt = styOverrideValue.second.myValue;
+			std::cout << "Override value: " << styOverrideValue.first << " = ";
+			if (opt->importOption(int_vals))
+				std::cout << int_vals;
+			else if (opt->importOption(flt_vals))
+				std::cout << flt_vals;
+			else if (opt->importOption(str_vals))
+				std::cout << str_vals;
+			std::cout << std::endl;
+		}
 	}
 
 	const Value &styles = document[Styles::styles];
