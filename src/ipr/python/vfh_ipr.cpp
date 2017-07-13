@@ -171,12 +171,13 @@ static PyObject* vfhExportOpNode(PyObject*, PyObject *args, PyObject *keywds)
     Py_RETURN_NONE;
 }
 
+static int port = 0;
+
 static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 {
 	Log::getLog().debug("vfhInit()");
 
 	const char *rop = nullptr;
-	int port = 0;
 	float now = 0.0f;
 
 	static char *kwlist[] = {
@@ -216,10 +217,6 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 			exporter.setIPR(VRayExporter::iprModeRenderView);
 
 			if (exporter.initRenderer(isVFB, false)) {
-				if (isRenderView) {
-					initImdisplay(port);
-				}
-
 				exporter.setDRSettings();
 
 				exporter.setRendererMode(getRendererIprMode(*ropNode));
@@ -227,19 +224,31 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 
 				exporter.getRenderer().showVFB(isVFB);
 				exporter.getRenderer().getVRay().setOnVFBClosed(isVFB ? onVFBClosed : nullptr);
-
-				exporter.getRenderer().getVRay().setOnRenderStart(isRenderView ? onRenderStart : nullptr);
 				exporter.getRenderer().getVRay().setOnImageReady(isRenderView ? onImageReady : nullptr);
 				exporter.getRenderer().getVRay().setOnRTImageUpdated(isRenderView? onRTImageUpdated : nullptr);
 				exporter.getRenderer().getVRay().setOnBucketReady(isRenderView ? onBucketReady : nullptr);
+
+				exporter.getRenderer().getVRay().setKeepBucketsInCallback(isRenderView);
+				exporter.getRenderer().getVRay().setKeepRTframesInCallback(isRenderView);
+
+				if (isRenderView) {
+					exporter.getRenderer().getVRay().setRTImageUpdateTimeout(250);
+				}
 
 				exporter.initExporter(getFrameBufferType(*ropNode), 1, now, now);
 
 				exporter.exportSettings();
 				exporter.exportFrame(now);
 
-				stopPoll.setCallback([]{ freeExporter(); });
+#if 0
+				stopPoll.setCallback([]{
+					closeImdisplay();
+					freeExporter();
+				});
 				stopPoll.start(QThread::LowPriority);
+#endif
+
+				initImdisplay(exporter.getRenderer().getVRay(), port);
 			}
 		}
 	}

@@ -9,22 +9,15 @@
 //  https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
+#include "vfh_defines.h"
+#include "vfh_log.h"
 #include "vfh_ipr_viewer.h"
-
-#include <UT/UT_WritePipe.h>
 
 #include <QtCore>
 
-#include <mutex>
-#include <queue>
+#include <UT/UT_WritePipe.h>
 
-#include <stdio.h>
-
-#ifndef _WIN32
-inline FILE* _popen(const char* command, const char* type) {
-	return popen(command, type);
-}
-#endif
+using namespace VRayForHoudini;
 
 struct ImageHeader {
 	ImageHeader()
@@ -107,313 +100,305 @@ struct TileHeader {
 	int y1;
 };
 
-struct VRayIMDisplayImage {
-	VRayIMDisplayImage()
-		: name("C")
-		, image(nullptr)
-		, ownImage(true)
-		, single(true)
+struct TileImage {
+	explicit TileImage(VRay::VRayImage *image=nullptr, const std::string &name="C")
+		: image(image)
+		, name(name)
 		, x0(0)
 		, x1(0)
 		, y0(0)
 		, y1(0)
 	{}
 
-	std::string name;
-	VRay::VRayImage *image;
-	int ownImage;
+	void freeMem() {
+		FreePtr(image);
+	}
 
-	int single;
+	void setRegion(const VRay::ImageRegion &region) {
+		x0 = region.getX();
+		y0 = region.getY();
+
+		// Those are inclusive.
+		x1 = x0 + region.getWidth() - 1;
+		y1 = y0 + region.getHeight() - 1;
+	}
+
+	VRay::VRayImage *image;
+	std::string name;
+
 	int x0;
 	int x1;
 	int y0;
 	int y1;
 };
 
-typedef QList<VRayIMDisplayImage> VRayIMDisplayImages;
+typedef QList<TileImage> PlaneImages;
+
 typedef std::vector<VRay::RenderElement> RenderElementsList;
 
-class Tasks {
+#define USE_PLANES  0
+#define USE_BUCKETS 1
+
+class Tasks
+	: public QThread
+{
 public:
-	Tasks()
-		: finalImage(false)
-		, fd(nullptr)
-	{}
-
+	Tasks() {}
 	~Tasks() {
-		transmitData();
-
-		if (fd) {
-			wp.close(false);
-		}
+		close();
 	}
 
 	void init(int port) {
 		static char buf[MAX_PATH] = "";
 		vutils_sprintf_n(buf, COUNT_OF(buf), "imdisplay -p -k -f -s %i", port);
 
-		fd = wp.open(buf);
+		/// TODO: Error checking.
+		wp.open(buf);
+	}
+
+	void close() {
+		if (wp.getFilePtr()) {
+			TileHeader eof;
+			eof.x0 = -2;
+			writeHeader(eof);
+		}
+
+		wp.close();
+	}
+
+	void add(const PlaneImages &images) {
+		mutex.lock();
+		Log::getLog().debug("Tasks::add()");
+		if (!queue.isEmpty()) {
+			queue.clear();
+		}
+		queue.enqueue(images);
+		mutex.unlock();
+	}
+
+	void clear() {
+		mutex.lock();
+		queue.clear();
+		mutex.unlock();
 	}
 
 	void setRendererOptions(VRay::VRayRenderer &renderer) {
 		VRay::RendererOptions rendererOptions = renderer.getOptions();
-		
+
+		const VRay::RenderElements &reMan = renderer.getRenderElements();
+		const RenderElementsList &reList = reMan.getAllByType(VRay::RenderElement::NONE);
+
 		ImageHeader imageHeader;
 		imageHeader.xres = rendererOptions.imageWidth;
 		imageHeader.yres = rendererOptions.imageHeight;
-
-		VRay::RenderElements reMan = renderer.getRenderElements();
-		RenderElementsList reList = reMan.getAllByType(VRay::RenderElement::NONE);
-		if (reList.size() < 2) {//channel count
-			imageHeader.single_image_array_size = 4;
-			imageHeader.single_image_storage = 0;
-		}
-		else {
-			imageHeader.multi_plane_count = reList.size();
-		}
+		imageHeader.single_image_storage = 0;
+		imageHeader.single_image_array_size = 4;
+#if USE_PLANES
+		imageHeader.multi_plane_count = 1 + reList.size();
+#else
+		imageHeader.multi_plane_count = 0;
+#endif
 		writeHeader(imageHeader);
 
-		if (reList.size() > 1) {
-			for (int imageIdx = 0; imageIdx < reList.size(); ++imageIdx) {
-				//for (int k = 0; k < 2; k++) {
-					//const VRayIMDisplayImage &vi = images[imageIdx];
-					char tempArray[40] = { '\0' };
-					const char *planeName = itoa(imageIdx, tempArray, 10);
-					std::string temp = tempArray;
-					const int   planeNameSize = temp.size();
+#if USE_PLANES
+		PlaneDefinition cPlaneDef;
+		cPlaneDef.name_length = 1;
+		cPlaneDef.data_format = 0;
+		cPlaneDef.array_size = 4;
+		writeHeader(cPlaneDef);
+		write(1, sizeof(char), "C");
 
-					PlaneDefinition planesDef;
-					planesDef.name_length = planeNameSize;
-					planesDef.data_format = 0;
-					planesDef.array_size = 4;
-					writeHeader(planesDef);
+		for (const VRay::RenderElement &re : reList) {
+			const std::string &reName = re.getName();
+			const int planeNameSize = reName.size();
 
-					// Write plane name.
-					if (fwrite(reinterpret_cast<const char*>(planeName), sizeof(char), planeNameSize, fd) != planeNameSize) {
-						perror("Failed writing plane data, reason: ");
-						Q_ASSERT(false);
-					}
-				//}
-			}
+			PlaneDefinition rePlaneDef;
+			rePlaneDef.name_length = planeNameSize;
+			rePlaneDef.data_format = 0;
+			rePlaneDef.array_size = 4;
+			writeHeader(rePlaneDef);
+
+			write(planeNameSize, sizeof(char), reName.c_str());
 		}
-
+#endif
 	}
 
-	void registerTask(VRayIMDisplayImages &images, bool fnlImage = false) {
-		if (images.empty()) {
-			return;
-		}
+protected:
+	void run() VRAY_OVERRIDE {
+		while (true) {
+			// NOTE: May be lock isEmpty() also
+			if (!queue.isEmpty()) {
+				mutex.lock();
+				PlaneImages images = queue.dequeue();
+				mutex.unlock();
 
-		if (images[0].single) {
-			mtx.try_lock();
-			cutUpSingleImage(images);
-			mtx.unlock();
-		}
-		else {
-			mtx.try_lock();
-			imagesQueue.push(images);
-			mtx.unlock();
-		}
-		finalImage = fnlImage||finalImage;
-		transmitData();
-	}
-
-	void transmitData() {
-		while (imagesQueue.size()>0) {
-			mtx.try_lock();
-			writeImages(imagesQueue.front());
-			imagesQueue.pop();
-			mtx.unlock();
-		}
-	}
-
-private:
-	template <typename HeaderType>
-	void writeHeader(const HeaderType &header) {
-		if (fwrite(reinterpret_cast<const char*>(&header), sizeof(HeaderType), 1, fd) != 1) {
-			perror("Failed writing header data, reason: ");
-			Q_ASSERT(false);
-		}
-	}
-
-	// Split a single image into tiles and adds them to the images to be written queue.
-	void cutUpSingleImage(VRayIMDisplayImages &images) {
-		const int tileSize = 64;
-		int width, height;
-		images[0].image->getSize(width, height);
-
-		int numberOfTiles = ((width / 64) * (height / 64) + ((width % 64) ? 1 : 0) + ((height % 64) ? 1 : 0));
-
-		for (int m = 0; m < ((height / 64) + ((height % 64) ? 1 : 0)); m++) {
-			int currentMRes = m * tileSize;
-			for (int i = 0; i < ((width / 64) + ((width % 64) ? 1 : 0)); i++) {
-				int currentIRes = i * tileSize;
-				VRayIMDisplayImages tempImages;
-				for (int channel = 0; channel < images.count(); channel++) {
-					VRayIMDisplayImage temp;
-
-					int maxXRes = (currentIRes + tileSize - 1) < width ? (currentIRes + tileSize - 1) : width-1;
-					int maxYRes = (currentMRes + tileSize - 1) < height ? (currentMRes + tileSize - 1) : height-1;
-
-					temp.image = images[channel].image->crop(currentIRes, 
-															currentMRes, 
-															maxXRes - currentIRes+1,
-															maxYRes - currentMRes+1);
-					temp.x0 = currentIRes;
-					temp.x1 = maxXRes;
-					temp.y0 = currentMRes;
-					temp.y1 = maxYRes;
-					temp.single = false;
-
-					tempImages.push_back(temp);
-				}
-				imagesQueue.push(tempImages);
-			}
-		}
-	}
-
-	void writeImages(VRayIMDisplayImages &images) {
-		if (!images.count()) {
-			return;
-		}
-		writeTiles(images);
-	}
-
-	void writeTiles(VRayIMDisplayImages &images) {
-		if (!images[0].single) {
-			for (int imageIdx = 0; imageIdx < images.count(); ++imageIdx) {
-				const VRayIMDisplayImage &vi = images[imageIdx];
-				if (images.count() > 1) {
+				int imageIdx = 0;
+				for (TileImage &image : images) {
+#if USE_PLANES
 					PlaneSelect planeHeader;
 					planeHeader.plane_index = imageIdx;
 					writeHeader(planeHeader);
+#endif
+#if USE_BUCKETS
+					writeTileBuckets(image);
+#else
+					writeTile(image);
+#endif
+					imageIdx++;
 				}
-
-				TileHeader tileHeader;
-				tileHeader.x0 = vi.x0;
-				tileHeader.x1 = vi.x1;
-				tileHeader.y0 = vi.y0;
-				tileHeader.y1 = vi.y1;
-				writeHeader(tileHeader);
-
-				size_t numPixels = images[imageIdx].image->getWidth() * images[imageIdx].image->getHeight();
-				size_t size = 0;
-				if((size = fwrite(vi.image->getPixelData(), sizeof(float) * 4, numPixels, fd)) != numPixels) {
-					perror("Failed writing image data, reason: ");
-					Q_ASSERT(false);
-				}
-			}
-
-			if (finalImage&&imagesQueue.size() == 1) {
-				TileHeader eof;
-				eof.x0 = -2;
-				writeHeader(eof);
 			}
 		}
-		else
-			cutUpSingleImage(images);
+    }
+
+private:
+	/// Writes image tile to the pipe splitted into buckets.
+	/// @param image Image data.
+	void writeTileBuckets(TileImage &image) {
+		static const int tileSize = 64;
+
+		int width = 0;
+		int height = 0;
+		image.image->getSize(width, height);
+
+		const int numY = height / 64 + (height % 64 ? 1 : 0);
+		const int numX = width  / 64 + (width  % 64 ? 1 : 0);
+
+		for (int m = 0; m < numY; ++m) {
+			const int currentMRes = m * tileSize;
+			for (int i = 0; i < numX; ++i) {
+				const int currentIRes = i * tileSize;
+				const int maxXRes = (currentIRes + tileSize - 1) < width  ? (currentIRes + tileSize - 1) : width  - 1;
+				const int maxYRes = (currentMRes + tileSize - 1) < height ? (currentMRes + tileSize - 1) : height - 1;
+
+				TileImage imageBucket;
+				imageBucket.image = image.image->crop(currentIRes,
+													  currentMRes,
+													  maxXRes - currentIRes + 1,
+													  maxYRes - currentMRes + 1);
+				imageBucket.x0 = currentIRes;
+				imageBucket.x1 = maxXRes;
+				imageBucket.y0 = currentMRes;
+				imageBucket.y1 = maxYRes;
+
+				writeTile(imageBucket);
+			}
+		}
 	}
 
-	bool finalImage;
+	/// Writes image tile to the pipe.
+	/// @param image Image data.
+	void writeTile(TileImage &image) {
+		TileHeader tileHeader;
+		tileHeader.x0 = image.x0;
+		tileHeader.x1 = image.x1;
+		tileHeader.y0 = image.y0;
+		tileHeader.y1 = image.y1;
+		writeHeader(tileHeader);
+
+		const int numPixels = image.image->getWidth() * image.image->getHeight();
+
+		write(numPixels, sizeof(float) * 4, image.image->getPixelData());
+
+		image.freeMem();
+	}
+
+	/// Write specified header to pipe.
+	/// @param header Imdisplay header.
+	template <typename HeaderType>
+	void writeHeader(const HeaderType &header) {
+		write(1, sizeof(HeaderType), &header);
+	}
+
+	/// Write to pipe.
+	/// @param numElements Elements count.
+	/// @param elementSize Element size.
+	/// @param data Data pointer.
+	void write(int numElements, int elementSize, const void *data) {
+		if (!wp.getFilePtr()) {
+			return;
+		}
+
+		if (fwrite(data, elementSize, numElements, wp.getFilePtr()) != numElements) {
+			Log::getLog().error("Pipe write fail!");
+
+			clear();
+			close();
+		}
+	}
+
+	/// Pipe to the imdisplay.
 	UT_WritePipe wp;
-	FILE* fd;
-	std::queue<VRayIMDisplayImages> imagesQueue;
-	std::mutex mtx;
+
+	/// Image queue.
+	QQueue<PlaneImages> queue;
+
+	/// Queue lock.
+	QMutex mutex;
+
+	VfhDisableCopy(Tasks)
 } tasks;
 
-static void writeFinalRendererImages(VRay::VRayRenderer &renderer, VRay::VRayImage *beautyPass)
+static void addImages(VRay::VRayRenderer &renderer, VRay::VRayImage *image, int x, int y)
 {
-	VRayIMDisplayImages images;
+	vassert(image);
 
-	VRayIMDisplayImage beautyImage;
-	beautyImage.name = "C";
-	beautyImage.image = beautyPass->clone();
-	beautyImage.ownImage = false;
+	int width = 0;
+	int height = 0;
+	image->getSize(width, height);
 
-	images += beautyImage;
+	VRay::ImageRegion region(x, y);
+	region.setWidth(width);
+	region.setHeight(height);
 
-	VRay::RenderElements reMan = renderer.getRenderElements();
-	RenderElementsList reList = reMan.getAllByType(VRay::RenderElement::NONE);
+	PlaneImages planes;
+
+	TileImage rgbaImage(image);
+	rgbaImage.setRegion(region);
+	planes.append(rgbaImage);
+
+	const VRay::RenderElements &reMan = renderer.getRenderElements();
+	const RenderElementsList &reList = reMan.getAllByType(VRay::RenderElement::NONE);
 	for (const VRay::RenderElement &re : reList) {
-		VRayIMDisplayImage image;
-		image.image = re.getImage();
-		image.name = re.getName();
+		TileImage renderElementImage(re.getImage(&region), re.getName());
+		renderElementImage.setRegion(region);
 
-		images += image;
+		planes.append(renderElementImage);
 	}
 
-	tasks.registerTask(images, true);
+	tasks.add(planes);
 }
 
-static void writeRendererImages(VRay::VRayRenderer &renderer, VRay::VRayImage *beautyPass)
+void VRayForHoudini::onBucketReady(VRay::VRayRenderer &renderer, int x, int y, const char*, VRay::VRayImage *image, void*)
 {
-	VRayIMDisplayImages images;
-
-	VRayIMDisplayImage beautyImage;
-	beautyImage.name = "C";
-	beautyImage.image = beautyPass->clone();
-	beautyImage.ownImage = false;
-
-	images += beautyImage;
-
-	VRay::RenderElements reMan = renderer.getRenderElements();
-	RenderElementsList reList = reMan.getAllByType(VRay::RenderElement::NONE);
-	for (const VRay::RenderElement &re : reList) {
-		VRayIMDisplayImage image;
-		image.image = re.getImage();
-		image.name = re.getName();
-
-		images += image;
-	}
-
-	tasks.registerTask(images);
-}
-
-
-void VRayForHoudini::initImdisplay(int port)
-{
-	tasks.init(port);
+	addImages(renderer, image, x, y);
 }
 
 void VRayForHoudini::onRTImageUpdated(VRay::VRayRenderer &renderer, VRay::VRayImage *image, void*)
 {
-	VRay::VRayImage *rtImage = image->clone();
-	if (rtImage) {
-		writeRendererImages(renderer, rtImage);
-		tasks.transmitData();
-		delete rtImage;
-	}
+	addImages(renderer, image, 0, 0);
 }
 
 void VRayForHoudini::onImageReady(VRay::VRayRenderer &renderer, void*)
 {
-	VRay::VRayImage *finalImage = renderer.getImage();
-	if (finalImage) {
-		writeFinalRendererImages(renderer, finalImage);
-		tasks.transmitData();
-		delete finalImage;
-	}
+	addImages(renderer, renderer.getImage(), 0, 0);
 }
 
-void VRayForHoudini::onBucketReady(VRay::VRayRenderer&, int x, int y, const char*, VRay::VRayImage* img, void*)
+void VRayForHoudini::closeImdisplay()
 {
-	int width, height;
-	img->getSize(width, height);
-	VRayIMDisplayImage bucketTileData;
-	bucketTileData.image = img->clone();
-	bucketTileData.x0 = x;
-	bucketTileData.x1 = x + width - 1;
-	bucketTileData.y0 = y;
-	bucketTileData.y1 = y + height - 1;
-	bucketTileData.single = false;
+	Log::getLog().debug("closeImdisplay()");
 
-	VRayIMDisplayImages temporary;
-	temporary.push_back(bucketTileData);
-
-	tasks.registerTask(temporary);
+	tasks.clear();
+	tasks.close();
+	tasks.terminate();
 }
 
-void VRayForHoudini::onRenderStart(VRay::VRayRenderer &renderer, void*)
+void VRayForHoudini::initImdisplay(VRay::VRayRenderer &renderer, int port)
 {
+	Log::getLog().debug("initImdisplay()");
+
+	closeImdisplay();
+
+	tasks.init(port);
 	tasks.setRendererOptions(renderer);
+	tasks.start(QThread::LowPriority);
 }

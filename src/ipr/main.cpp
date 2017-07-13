@@ -14,7 +14,6 @@
 int main(int, char const*[])
 {
 	QTcpServer server;
-
 	if (!server.listen(QHostAddress(QHostAddress::LocalHost), 424242)) {
 		return 1;
 	}

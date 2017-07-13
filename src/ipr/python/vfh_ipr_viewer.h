@@ -16,7 +16,8 @@
 
 namespace VRayForHoudini {
 
-void initImdisplay(int port);
+void initImdisplay(VRay::VRayRenderer &renderer, int port);
+void closeImdisplay();
 
 void onRTImageUpdated(VRay::VRayRenderer &renderer, VRay::VRayImage *image, void *userData);
 void onImageReady(VRay::VRayRenderer &renderer, void *userData);
