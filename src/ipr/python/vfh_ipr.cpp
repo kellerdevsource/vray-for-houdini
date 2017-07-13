@@ -206,7 +206,11 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 		UT_String ropPath(rop);
 		OP_Node *ropNode = getOpNodeFromPath(ropPath);
 		if (ropNode) {
-			const IPROutput iprOutput = static_cast<IPROutput>(ropNode->evalInt("render_rt_output", 0, 0.0));
+			const IPROutput iprOutput =
+				static_cast<IPROutput>(ropNode->evalInt("render_rt_output", 0, 0.0));
+
+			const int iprModeMenu = ropNode->evalInt("render_rt_update_mode", 0, 0.0);
+			const VRayExporter::IprMode iprMode = iprModeMenu == 0 ? VRayExporter::iprModeRT : VRayExporter::iprModeSOHO;
 
 			const int isRenderView = iprOutput == iprOutputRenderView;
 			const int isVFB = iprOutput == iprOutputVFB;
@@ -214,7 +218,7 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 			VRayExporter &exporter = getExporter();
 
 			exporter.setROP(*ropNode);
-			exporter.setIPR(VRayExporter::iprModeSOHO);
+			exporter.setIPR(iprMode);
 
 			if (exporter.initRenderer(isVFB, false)) {
 				exporter.setDRSettings();

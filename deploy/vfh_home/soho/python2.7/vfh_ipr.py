@@ -20,6 +20,8 @@ import _vfh_ipr
 
 from soho import SohoParm
 
+RENDER_RT_MODE_SOHO = 1
+
 def printDebug(fmt, *args):
     sys.stdout.write("V-Ray For Houdini IPR| ")
     sys.stdout.write(fmt % args)
@@ -54,18 +56,25 @@ port = soho.getDefaultedInt("vm_image_mplay_socketport", [0])[0]
 
 # ROP node.
 ropPath = soho.getOutputDriver().getName()
+ropNode = hou.node(ropPath)
 
-# Initialize SOHO with the camera.
-# XXX: This doesn't work for me, but it should according to the documentation...
-#   soho.initialize(now, camera)
-if not sohoglue.initialize(now, camera, None):
-    soho.error("Unable to initialize rendering module with given camera")
+# Use callbacks or SOHO
+render_rt_update_mode = hou.evalParm("render_rt_update_mode")
 
-# Now, add objects to our scene
-soho.addObjects(now, "*", "*", "*", True)
+if render_rt_update_mode == RENDER_RT_MODE_SOHO:
+    printDebug("Initialize SOHO...")
 
-# Before we can evaluate the scene from SOHO, we need to lock the object lists.
-soho.lockObjects(now)
+    # Initialize SOHO with the camera.
+    # XXX: This doesn't work for me, but it should according to the documentation...
+    #   soho.initialize(now, camera)
+    if not sohoglue.initialize(now, camera, None):
+        soho.error("Unable to initialize rendering module with given camera")
+
+    # Now, add objects to our scene
+    soho.addObjects(now, "*", "*", "*", True)
+
+    # Before we can evaluate the scene from SOHO, we need to lock the object lists.
+    soho.lockObjects(now)
 
 printDebug("Processing Mode: \"%s\"" % mode)
 
@@ -88,7 +97,7 @@ if mode in {"generate"}:
 
     _vfh_ipr.init(rop=ropPath, port=port, now=now)
 
-elif mode in {"update"}:
+elif render_rt_update_mode == RENDER_RT_MODE_SOHO and mode in {"update"}:
     # update: Send updated changes from previous generation
     #
     # In this rendering mode, the special object list parameters:
