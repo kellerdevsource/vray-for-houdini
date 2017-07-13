@@ -47,104 +47,6 @@ groupsimple {
 }
 
 
-groupsimple {
-  name "folder_options_system"
-  label "System"
-  parm {
-    name	"SettingsOptions_misc_abortOnMissingAsset"
-    label	"Abort Rendering On Missing Asset"
-    type	toggle
-    default	{ "0" }
-    range	{ 0 1 }
-    export	none
-    parmtag	{ "cook_dependent" "1" }
-    parmtag	{ "vray_plugin" "SettingsOptions" }
-    parmtag	{ "vray_pluginattr" "misc_abortOnMissingAsset" }
-    parmtag	{ "vray_type" "boolean" }
-  }
-  parm {
-    name	"SettingsOptions_misc_lowThreadPriority"
-    label	"Low Thread Priority"
-    type	toggle
-    default	{ "0" }
-    help	"Low thread priority"
-    range	{ 0 1 }
-    export	none
-    parmtag	{ "cook_dependent" "1" }
-    parmtag	{ "vray_plugin" "SettingsOptions" }
-    parmtag	{ "vray_pluginattr" "misc_lowThreadPriority" }
-    parmtag	{ "vray_type" "boolean" }
-  }
-  parm {
-    name	"SettingsOptions_gi_dontRenderImage"
-    label	"Don't Render Final Image"
-    type	toggle
-    default	{ "0" }
-    help	"Don't render final image"
-    range	{ 0 1 }
-    export	none
-    parmtag	{ "cook_dependent" "1" }
-    parmtag	{ "vray_plugin" "SettingsOptions" }
-    parmtag	{ "vray_pluginattr" "gi_dontRenderImage" }
-    parmtag	{ "vray_type" "boolean" }
-  }
-  parm {
-    name	"SettingsOptions_ray_bias"
-    label	"Secondary Ray Bias"
-    type	float
-    default	{ "0" }
-    help	"Secondary ray bias"
-    range	{ 0 1000 }
-    export	none
-    parmtag	{ "cook_dependent" "1" }
-    parmtag	{ "vray_plugin" "SettingsOptions" }
-    parmtag	{ "vray_pluginattr" "ray_bias" }
-    parmtag	{ "vray_type" "float" }
-  }
-
-  parm {
-    name	"SettingsOptions_ray_max_intensity_on"
-    label	"Clamp Max Ray Intensity"
-    type	toggle
-    default	{ "1" }
-    help	"Enable clamping of secondary rays"
-    range	{ 0 1 }
-    export	none
-    parmtag	{ "cook_dependent" "1" }
-    parmtag	{ "vray_plugin" "SettingsOptions" }
-    parmtag	{ "vray_pluginattr" "ray_max_intensity_on" }
-    parmtag	{ "vray_type" "boolean" }
-  }
-  parm {
-    name	"SettingsOptions_ray_max_intensity"
-    label	"Max Ray Intensity"
-    type	float
-    default	{ "20" }
-    help	"The max secondary ray intensity when ray_max_intensity_on is enabled"
-    disablewhen	"{ SettingsOptions_ray_max_intensity_on == 0 }"
-    range	{ 0 1000 }
-    export	none
-    parmtag	{ "cook_dependent" "1" }
-    parmtag	{ "vray_plugin" "SettingsOptions" }
-    parmtag	{ "vray_pluginattr" "ray_max_intensity" }
-    parmtag	{ "vray_type" "float" }
-  }
-  parm {
-    name	"SettingsOptions_gi_texFilteringMultiplier"
-    label	"Gi Texture Filtering Multiplier"
-    type	float
-    default	{ "5" }
-    help	"GI texturing multiplier"
-    disablewhen	"{ SettingsOptions_mtl_doMaps != 1 } { SettingsOptions_mtl_filterMaps != 1 } { SettingsOptions_mtl_filterMapsForSecondaryRays != 1 }"
-    range	{ 1 10 }
-    export	none
-    parmtag	{ "cook_dependent" "1" }
-    parmtag	{ "vray_plugin" "SettingsOptions" }
-    parmtag	{ "vray_pluginattr" "gi_texFilteringMultiplier" }
-    parmtag	{ "vray_type" "float" }
-  }
-#include "SettingsRaycaster.ds"
-}
 
 
 groupsimple {
@@ -506,6 +408,106 @@ groupsimple {
   }
 
 }
+
+groupsimple {
+  name "folder_options_system"
+  label "System"
+  parm {
+    name	"SettingsOptions_misc_abortOnMissingAsset"
+    label	"Abort Rendering On Missing Asset"
+    type	toggle
+    default	{ "0" }
+    range	{ 0 1 }
+    export	none
+    parmtag	{ "cook_dependent" "1" }
+    parmtag	{ "vray_plugin" "SettingsOptions" }
+    parmtag	{ "vray_pluginattr" "misc_abortOnMissingAsset" }
+    parmtag	{ "vray_type" "boolean" }
+  }
+  parm {
+    name	"SettingsOptions_misc_lowThreadPriority"
+    label	"Low Thread Priority"
+    type	toggle
+    default	{ "0" }
+    help	"Low thread priority"
+    range	{ 0 1 }
+    export	none
+    parmtag	{ "cook_dependent" "1" }
+    parmtag	{ "vray_plugin" "SettingsOptions" }
+    parmtag	{ "vray_pluginattr" "misc_lowThreadPriority" }
+    parmtag	{ "vray_type" "boolean" }
+  }
+  parm {
+    name	"SettingsOptions_gi_dontRenderImage"
+    label	"Don't Render Final Image"
+    type	toggle
+    default	{ "0" }
+    help	"Don't render final image"
+    range	{ 0 1 }
+    export	none
+    parmtag	{ "cook_dependent" "1" }
+    parmtag	{ "vray_plugin" "SettingsOptions" }
+    parmtag	{ "vray_pluginattr" "gi_dontRenderImage" }
+    parmtag	{ "vray_type" "boolean" }
+  }
+  parm {
+    name	"SettingsOptions_ray_bias"
+    label	"Secondary Ray Bias"
+    type	float
+    default	{ "0" }
+    help	"Secondary ray bias"
+    range	{ 0 1000 }
+    export	none
+    parmtag	{ "cook_dependent" "1" }
+    parmtag	{ "vray_plugin" "SettingsOptions" }
+    parmtag	{ "vray_pluginattr" "ray_bias" }
+    parmtag	{ "vray_type" "float" }
+  }
+
+  parm {
+    name	"SettingsOptions_ray_max_intensity_on"
+    label	"Clamp Max Ray Intensity"
+    type	toggle
+    default	{ "1" }
+    help	"Enable clamping of secondary rays"
+    range	{ 0 1 }
+    export	none
+    parmtag	{ "cook_dependent" "1" }
+    parmtag	{ "vray_plugin" "SettingsOptions" }
+    parmtag	{ "vray_pluginattr" "ray_max_intensity_on" }
+    parmtag	{ "vray_type" "boolean" }
+  }
+  parm {
+    name	"SettingsOptions_ray_max_intensity"
+    label	"Max Ray Intensity"
+    type	float
+    default	{ "20" }
+    help	"The max secondary ray intensity when ray_max_intensity_on is enabled"
+    disablewhen	"{ SettingsOptions_ray_max_intensity_on == 0 }"
+    range	{ 0 1000 }
+    export	none
+    parmtag	{ "cook_dependent" "1" }
+    parmtag	{ "vray_plugin" "SettingsOptions" }
+    parmtag	{ "vray_pluginattr" "ray_max_intensity" }
+    parmtag	{ "vray_type" "float" }
+  }
+  parm {
+    name	"SettingsOptions_gi_texFilteringMultiplier"
+    label	"Gi Texture Filtering Multiplier"
+    type	float
+    default	{ "5" }
+    help	"GI texturing multiplier"
+    disablewhen	"{ SettingsOptions_mtl_doMaps != 1 } { SettingsOptions_mtl_filterMaps != 1 } { SettingsOptions_mtl_filterMapsForSecondaryRays != 1 }"
+    range	{ 1 10 }
+    export	none
+    parmtag	{ "cook_dependent" "1" }
+    parmtag	{ "vray_plugin" "SettingsOptions" }
+    parmtag	{ "vray_pluginattr" "gi_texFilteringMultiplier" }
+    parmtag	{ "vray_type" "float" }
+  }
+#include "SettingsRaycaster.ds"
+}
+
 
 groupsimple {
   name "folder_options_dr"

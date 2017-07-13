@@ -1,6 +1,7 @@
 groupcollapsible {
   name "gi_settings_caustics"
   label "Caustics"
+  disablewhen " { SettingsGI_on == 0 } "
   parm {
   	name	"SettingsCaustics_on"
   	label	"Enable Caustics"

@@ -28,9 +28,10 @@ group {
     label "Global Illumination"
 #include "SettingsGI.ds"
 #include "SettingsCaustics.ds"
+#include "SettingsIrradianceMap.ds"
 #include "SettingsDMCGI.ds"
 #include "SettingsLightCache.ds"
-#include "SettingsIrradianceMap.ds"
+
 /*
     group {
         name "SettingsGI"

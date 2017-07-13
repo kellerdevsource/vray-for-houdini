@@ -2,6 +2,7 @@ groupsimple {
   name "folder_gi_IRmap"
   label "Irradiance Map"
   hidewhen "{ SettingsGI_primary_engine != 0 } "
+  disablewhen " { SettingsGI_on == 0 } "
 
 
 

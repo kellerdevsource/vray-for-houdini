@@ -24,9 +24,9 @@ groupsimple {
         label "Device"
         type ordinal
         menu {
-            "CPU" "CPU"
-            "CUDA" "GPU (CUDA)"
-            "OPENCL" "GPU (OpenCL)"
+            0 "CPU"
+            1 "GPU (CUDA)"
+            2 "GPU (OpenCL)"
         }
         default { "0" }
     }
