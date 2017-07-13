@@ -19,6 +19,12 @@
 
 using namespace VRayForHoudini;
 
+/// Write image as buckets.
+#define USE_BUCKETS 1
+
+/// A typedef for render elements array.
+typedef std::vector<VRay::RenderElement> RenderElementsList;
+
 struct ImageHeader {
 	ImageHeader()
 		: magic_number(('h' << 24) + ('M' << 16) + ('P' << 8) + '0')
@@ -132,19 +138,16 @@ struct TileImage {
 	int y1;
 };
 
+/// A list of images planes.
 typedef QList<TileImage> PlaneImages;
 
-typedef std::vector<VRay::RenderElement> RenderElementsList;
-
-#define USE_PLANES  0
-#define USE_BUCKETS 1
-
-class Tasks
+/// A thread for writing into "imdisplay".
+class ImdisplayThread
 	: public QThread
 {
 public:
-	Tasks() {}
-	~Tasks() {
+	ImdisplayThread() {}
+	~ImdisplayThread() {
 		close();
 	}
 
@@ -167,11 +170,10 @@ public:
 	}
 
 	void add(const PlaneImages &images) {
+		// No need to write previous images.
+		clear();
+
 		mutex.lock();
-		Log::getLog().debug("Tasks::add()");
-		if (!queue.isEmpty()) {
-			queue.clear();
-		}
 		queue.enqueue(images);
 		mutex.unlock();
 	}
@@ -193,14 +195,9 @@ public:
 		imageHeader.yres = rendererOptions.imageHeight;
 		imageHeader.single_image_storage = 0;
 		imageHeader.single_image_array_size = 4;
-#if USE_PLANES
 		imageHeader.multi_plane_count = 1 + reList.size();
-#else
-		imageHeader.multi_plane_count = 0;
-#endif
 		writeHeader(imageHeader);
 
-#if USE_PLANES
 		PlaneDefinition cPlaneDef;
 		cPlaneDef.name_length = 1;
 		cPlaneDef.data_format = 0;
@@ -220,7 +217,6 @@ public:
 
 			write(planeNameSize, sizeof(char), reName.c_str());
 		}
-#endif
 	}
 
 protected:
@@ -234,11 +230,9 @@ protected:
 
 				int imageIdx = 0;
 				for (TileImage &image : images) {
-#if USE_PLANES
 					PlaneSelect planeHeader;
 					planeHeader.plane_index = imageIdx;
 					writeHeader(planeHeader);
-#endif
 #if USE_BUCKETS
 					writeTileBuckets(image);
 #else
@@ -335,8 +329,8 @@ private:
 	/// Queue lock.
 	QMutex mutex;
 
-	VfhDisableCopy(Tasks)
-} tasks;
+	VfhDisableCopy(ImdisplayThread)
+} imdisplayThread;
 
 static void addImages(VRay::VRayRenderer &renderer, VRay::VRayImage *image, int x, int y)
 {
@@ -365,7 +359,7 @@ static void addImages(VRay::VRayRenderer &renderer, VRay::VRayImage *image, int 
 		planes.append(renderElementImage);
 	}
 
-	tasks.add(planes);
+	imdisplayThread.add(planes);
 }
 
 void VRayForHoudini::onBucketReady(VRay::VRayRenderer &renderer, int x, int y, const char*, VRay::VRayImage *image, void*)
@@ -387,9 +381,9 @@ void VRayForHoudini::closeImdisplay()
 {
 	Log::getLog().debug("closeImdisplay()");
 
-	tasks.clear();
-	tasks.close();
-	tasks.terminate();
+	imdisplayThread.clear();
+	imdisplayThread.close();
+	imdisplayThread.terminate();
 }
 
 void VRayForHoudini::initImdisplay(VRay::VRayRenderer &renderer, int port)
@@ -398,7 +392,7 @@ void VRayForHoudini::initImdisplay(VRay::VRayRenderer &renderer, int port)
 
 	closeImdisplay();
 
-	tasks.init(port);
-	tasks.setRendererOptions(renderer);
-	tasks.start(QThread::LowPriority);
+	imdisplayThread.init(port);
+	imdisplayThread.setRendererOptions(renderer);
+	imdisplayThread.start(QThread::LowPriority);
 }
