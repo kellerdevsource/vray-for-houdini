@@ -123,11 +123,7 @@ struct ViewPluginsDesc {
 
 
 struct ViewParams {
-	ViewParams()
-		: usePhysicalCamera(false)
-		, cameraObject(nullptr)
-	{}
-	ViewParams(OBJ_Node *camera)
+	explicit ViewParams(OBJ_Node *camera=nullptr)
 		: usePhysicalCamera(false)
 		, cameraObject(camera)
 	{}
@@ -138,8 +134,6 @@ struct ViewParams {
 
 	RenderSizeParams  renderSize;
 	RenderViewParams  renderView;
-	ViewPluginsDesc   viewPlugins;
-
 	int               usePhysicalCamera;
 	OBJ_Node         *cameraObject;
 };
