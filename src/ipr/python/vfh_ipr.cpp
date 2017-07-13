@@ -214,7 +214,7 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 			VRayExporter &exporter = getExporter();
 
 			exporter.setROP(*ropNode);
-			exporter.setIPR(VRayExporter::iprModeRenderView);
+			exporter.setIPR(VRayExporter::iprModeSOHO);
 
 			if (exporter.initRenderer(isVFB, false)) {
 				exporter.setDRSettings();

@@ -129,7 +129,7 @@ public:
 	enum IprMode {
 		iprModeNone = 0,
 		iprModeRT,
-		iprModeRenderView,
+		iprModeSOHO,
 	};
 
 	explicit VRayExporter(OP_Node *rop);
