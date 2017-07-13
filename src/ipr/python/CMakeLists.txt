@@ -14,6 +14,7 @@ include_directories(${CMAKE_SOURCE_DIR}/src)
 include_directories(${CMAKE_SOURCE_DIR}/src/export)
 include_directories(${CMAKE_SOURCE_DIR}/src/export/utils)
 include_directories(${CMAKE_SOURCE_DIR}/src/export/export)
+include_directories(${CMAKE_SOURCE_DIR}/src/lib)
 include_directories(${CMAKE_SOURCE_DIR}/src/utils)
 
 set(SOURCES
@@ -28,6 +29,7 @@ set(HEADERS
 houdini_plugin(${PROJECT_NAME} "${SOURCES};${HEADERS}")
 
 target_link_libraries(${PROJECT_NAME} vray_for_houdini_exporter)
+target_link_libraries(${PROJECT_NAME} Qt5Network)
 
 link_with_vray_sdk(${PROJECT_NAME})
 link_with_vray(${PROJECT_NAME})

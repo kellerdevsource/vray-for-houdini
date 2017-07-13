@@ -32,6 +32,17 @@ groupsimple {
     }
 
     parm {
+        name "render_rt_output"
+        label "Output"
+        type ordinal
+        menu {
+            "0" "Render View"
+            "1" "VFB"
+        }
+        default { "1" }
+    }
+
+    parm {
         name "render_rt"
         label "Render IPR"
         type button

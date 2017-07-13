@@ -593,14 +593,22 @@ bool VRayExporter::setAttrsFromUTOptions(Attrs::PluginDesc &pluginDesc, const UT
 
 VRayExporter::VRayExporter(OP_Node *rop)
 	: m_rop(rop)
+	, m_renderMode(0)
+	, m_isAborted(0)
+	, m_frames(0)
 	, m_error(ROP_CONTINUE_RENDER)
+	, m_workMode(ExpRender)
 	, m_isIPR(false)
+	, m_isGPU(0)
 	, m_isAnimation(false)
+	, m_isMotionBlur(0)
+	, m_isVelocityOn(0)
+	, m_timeStart(0)
+	, m_timeEnd(0)
 	, objectExporter(*this)
 {
 	Log::getLog().debug("VRayExporter()");
 }
-
 
 VRayExporter::~VRayExporter()
 {
@@ -626,6 +634,49 @@ void VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 	}
 
 	pluginDesc.addAttribute(Attrs::PluginAttr("img_pixelAspect", pixelAspect));
+
+	enum ImageFormat {
+		imageFormatPNG = 0,
+		imageFormatJPEG,
+		imageFormatTIFF,
+		imageFormatTGA,
+		imageFormatSGI,
+		imageFormatOpenEXR,
+		imageFormatVRayImage,
+	};
+
+	const ImageFormat imgFormat =
+		static_cast<ImageFormat>(m_rop->evalInt("SettingsOutput_img_format", 0, t));
+
+	UT_String fileName;
+	m_rop->evalString(fileName, "SettingsOutput_img_file", 0, t);
+
+	fileName.append(".");
+
+	switch (imgFormat) {
+		case imageFormatPNG: fileName.append("png"); break;
+		case imageFormatJPEG: fileName.append("jpg"); break;
+		case imageFormatTIFF: fileName.append("tiff"); break;
+		case imageFormatTGA: fileName.append("tga"); break;
+		case imageFormatSGI: fileName.append("sgi"); break;
+		case imageFormatOpenEXR: fileName.append("exr"); break;
+		case imageFormatVRayImage: fileName.append("vrimg"); break;
+		default: fileName.append("tmp"); break;
+	}
+
+	UT_String dirPath;
+	m_rop->evalString(dirPath, "SettingsOutput_img_dir", 0, t);
+
+	// Create output directory.
+	VUtils::uniMakeDir(dirPath.buffer());
+
+	// Ensure slash at the end.
+	if (!dirPath.endsWith("/")) {
+		dirPath.append("/");
+	}
+
+	pluginDesc.addAttribute(Attrs::PluginAttr("img_dir", dirPath.toStdString()));
+	pluginDesc.addAttribute(Attrs::PluginAttr("img_file", fileName.toStdString()));
 
 	// NOTE: we are exporting animation related properties in frames
 	// and compensating for this by setting SettingsUnitsInfo::seconds_scale
@@ -1292,8 +1343,6 @@ void VRayExporter::resetOpCallbacks()
 	}
 
 	m_opRegCallbacks.clear();
-
-	reset();
 }
 
 

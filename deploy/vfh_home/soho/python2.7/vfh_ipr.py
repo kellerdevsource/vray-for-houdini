@@ -36,7 +36,7 @@ def exportObjects(listName):
 
 def deleteObjects(listName):
     for obj in soho.objectList(listName):
-        _vfh_ipr.deleteNode(opNode=obj.getName())
+        _vfh_ipr.deleteOpNode(opNode=obj.getName())
 
 mode = soho.getDefaultedString('state:previewmode', ['default'])[0]
 
@@ -51,7 +51,6 @@ camera = soho.getDefaultedString('camera', ['/obj/cam1'])[0]
 
 # MPlay / Render View port.
 port = soho.getDefaultedInt("vm_image_mplay_socketport", [0])[0]
-pid = soho.getDefaultedInt("soho:pipepid", [0])[0]
 
 # ROP node.
 ropPath = soho.getOutputDriver().getName()
@@ -86,7 +85,6 @@ if mode in {"generate"}:
     printDebug("Driver: %s" % ropPath)
     printDebug("Camera: %s" % camera)
     printDebug("Now: %.3f" % now)
-    printDebug("PID: %i" % pid)
 
     _vfh_ipr.init(rop=ropPath, port=port, now=now)
 
@@ -108,6 +106,11 @@ elif mode in {"update"}:
     #   objlist:deletedfog
     # will list all objects which have been deleted from the scene.
     #
+
+    # Update view.
+    # TODO: Find a specific event for view update.
+    _vfh_ipr.exportView(rop=ropPath)
+
     exportObjects("objlist:dirtyinstance")
     exportObjects("objlist:dirtylight")
     # exportObjects("objlist:dirtyspace")

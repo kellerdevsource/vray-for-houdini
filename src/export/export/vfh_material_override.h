@@ -15,6 +15,7 @@
 #include "vfh_geoutils.h"
 
 #include <QString>
+#include <QSet>
 
 #include <hash_map.h>
 #include <GA/GA_Handle.h>
@@ -73,6 +74,32 @@ struct PrimMaterial {
 	MtlOverrideItems overrides;
 };
 
+struct PrimRange {
+	enum PrimRangeTypes {
+		primRangeNotSet = -1,
+	};
+
+	explicit PrimRange(int from=primRangeNotSet, int to=primRangeNotSet)
+		: from(from)
+		, to(to)
+	{}
+
+	int inRange(int index) const;
+
+	bool operator==(const PrimRange &other) const {
+        return from == other.from && to == other.to;
+    }
+
+	int from;
+	int to;
+};
+
+FORCEINLINE uint qHash(const PrimRange &value) {
+	return ::qHash(value.to);
+}
+
+typedef QSet<PrimRange> PrimRanges;
+
 struct SheetTarget {
 	enum SheetTargetType {
 		sheetTargetUnknown = -1,
@@ -88,15 +115,35 @@ struct SheetTarget {
 		enum TargetType {
 			primitiveTypeUnknown = -1,
 			primitiveTypeGroup,
+			primitiveTypeRange,
 		};
 
 		explicit TargetPrimitive(TargetType targetType=primitiveTypeUnknown)
 			: targetType(targetType)
 		{}
 
-		UT_String group;
+		/// Sets group name.
+		void setGroupName(const QString &value);
 
+		/// Returns group name.
+		const char *getGroupName() const;
+
+		/// Add primitive range.
+		void addRange(const PrimRange &range);
+
+		/// Returs true if index in a group range.
+		/// @param index Primitive index.
+		int isInRange(int index) const;
+
+		/// Group type.
 		TargetType targetType;
+
+	private:
+		/// Primitive group name.
+		QString group;
+
+		/// Primitive ranges;
+		PrimRanges ranges;
 	} primitive;
 
 	SheetTargetType targetType;

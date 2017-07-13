@@ -93,6 +93,9 @@ void VRayExporter::RtCallbackOBJGeometry(OP_Node *caller, void *callee, OP_Event
 		}
 		case OP_NODE_PREDELETE: {
 			exporter.delOpCallbacks(caller);
+
+			ObjectExporter &objExporter = exporter.getObjectExporter();
+			objExporter.removeObject(objNode);
 			break;
 		}
 		default:

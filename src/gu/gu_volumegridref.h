@@ -15,9 +15,36 @@
 #include "vfh_vray.h"
 #include "vfh_primitives.h"
 
+#include "vfh_lru_cache.hpp"
+#include "vfh_hashes.h"
+
 #include <aurinterface.h>
 
 #include <GU/GU_PackedImpl.h>
+namespace VRayForHoudini {
+struct VolumeCacheKey {
+	std::string path;
+	std::string map;
+	bool flipYZ;
+};
+inline bool operator==(const VolumeCacheKey & left, const VolumeCacheKey & right) {
+	return left.path == right.path && left.map == right.map && left.flipYZ == right.flipYZ;
+}
+}
+
+// extending namespace std with the proper specialization is the "correct" way according to the standard
+namespace std {
+template <> struct hash<VRayForHoudini::VolumeCacheKey> {
+	size_t operator()(const VRayForHoudini::VolumeCacheKey & volumeKey) const {
+		VRayForHoudini::Hash::MHash hash = 42;
+		VRayForHoudini::Hash::MurmurHash3_x86_32(volumeKey.path.c_str(), volumeKey.path.length(), hash, &hash);
+		VRayForHoudini::Hash::MurmurHash3_x86_32(volumeKey.map.c_str(), volumeKey.map.length(), hash, &hash);
+		VRayForHoudini::Hash::MurmurHash3_x86_32(&volumeKey.flipYZ, sizeof(volumeKey.flipYZ), hash, &hash);
+		return hash;
+	}
+};
+};
+
 
 namespace VRayForHoudini {
 
@@ -63,8 +90,19 @@ public:
 		float min;
 		float max;
 	};
-
 	typedef std::array<MinMaxPair, GridChannels::Ch_Count> DataRangeMap;
+	enum {
+		DataRangeMapSize = sizeof(DataRangeMap),
+	};
+
+	struct VolumeCacheData {
+		CachePtr aurPtr;
+		GU_DetailHandle detailHandle;
+		DataRangeMap dataRange;
+	};
+
+	typedef Caches::LRUCache<VolumeCacheKey, VolumeCacheData, std::hash<VolumeCacheKey>, std::equal_to<VolumeCacheKey>, 10> VolumeCache;
+
 
 	VFH_MAKE_ACCESSORS(VFH_VOLUME_GRID_PARAMS, VFH_VOLUME_GRID_PARAMS_COUNT)
 
@@ -73,6 +111,10 @@ public:
 	/// Register this factory
 	static void install(GA_PrimitiveFactory *gafactory);
 
+	/// Data cache used to cache last 10 volumes loaded
+	/// The load callback is set in VRayVolumeGridFactory::VRayVolumeGridFactory() because it is called before
+	/// any VRayVolumeGridRef instance is created
+	static VolumeCache dataCache;
 private:
 	static GA_PrimitiveTypeId theTypeId; ///< The type id for the primitive
 
@@ -85,7 +127,7 @@ public:
 	/// Virtual interface from GU_PackedImpl interface
 	virtual GU_PackedFactory* getFactory() const VRAY_OVERRIDE;
 	virtual GU_PackedImpl*    copy() const VRAY_OVERRIDE { return new VRayVolumeGridRef(*this); }
-	virtual bool              isValid() const VRAY_OVERRIDE { return m_detail.isValid(); }
+	virtual bool              isValid() const VRAY_OVERRIDE { return m_handle.isValid(); }
 	virtual void              clearData() VRAY_OVERRIDE;
 
 	virtual bool   load(const UT_Options &options, const GA_LoadMap &) VRAY_OVERRIDE
@@ -109,8 +151,9 @@ public:
 	virtual void                   countMemory(UT_MemoryCounter &counter, bool inclusive) const VRAY_OVERRIDE;
 	/// @}
 
-	/// Create a cache ptr from current settings
+	/// Load or get from cache pointer to the AUR cache
 	CachePtr                       getCache() const;
+
 	/// Get the world TM
 	UT_Matrix4F                    toWorldTm(CachePtr cache) const;
 
@@ -119,8 +162,7 @@ public:
 
 	/// @{
 	/// Member data accessors for intrinsics
-	const GU_ConstDetailHandle &  getDetail() const { return m_detail; }
-	VRayVolumeGridRef&            setDetail(const GU_ConstDetailHandle &h) { m_detail = h; return *this; }
+	const GU_ConstDetailHandle    getDetail() const { return m_handle; }
 
 	inline const UT_Options &     getOptions() const { return m_options; }
 
@@ -135,7 +177,7 @@ public:
 private:
 	/// updateFrom() will update from UT_Options only
 	bool updateFrom(const UT_Options &options);
-	void clearDetail() { m_detail = GU_ConstDetailHandle(); }
+	void clearDetail() { m_handle = GU_DetailHandle(); }
 
 	/// Builds the cache path according to current settings
 	/// @param toPhx - if true frame will be replaced with '#'s otherwise with current cache frame
@@ -155,9 +197,7 @@ private:
 	/// Build channel mapping, should be called after update to cache or ui mappings
 	void buildMapping();
 private:
-	GU_ConstDetailHandle   m_detail; ///< Const detail handle - passed to HDK
 	GU_DetailHandle        m_handle; ///< Detail handle - passed to HDK
-
 	UT_Options             m_options; ///< All params from VFH_VOLUME_GRID_PARAMS are defined in this map
 
 	UT_BoundingBox         m_bBox; ///< The volume bounding box
@@ -169,12 +209,6 @@ private:
 	bool                   m_doFrameReplace;
 
 	DataRangeMap           m_channelDataRange;
-
-	/// cache handling
-	/// members are mutable so that they can be modified in const member functions (like getCache)
-	mutable CachePtr       m_cachePtr; ///< Holds pointer to the Phoenix cache loaded
-	mutable std::string    m_last_cache_path; ///< The last file path used to load cache
-	mutable std::string    m_last_user_char_map; ///< The last 
 };
 
 

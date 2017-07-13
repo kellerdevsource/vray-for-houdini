@@ -70,7 +70,7 @@ macro(set_compiler_flags)
 
 		add_definitions(-DOPENEXR_DLL)
 	else()
-		set(CMAKE_CXX_FLAGS "-std=c++11")
+		set(CMAKE_CXX_FLAGS "-fPIC -std=c++11")
 		set(CMAKE_CXX_FLAGS_DEBUG "-g -DNDEBUG")
 		set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG")
 
