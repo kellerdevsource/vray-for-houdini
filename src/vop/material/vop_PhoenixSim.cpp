@@ -9,11 +9,13 @@
 //
 #ifdef CGR_HAS_AUR
 
-#include <vop_PhoenixSim.h>
-#include <vfh_prm_templates.h>
-#include <vfh_tex_utils.h>
-#include <vfh_hou_utils.h>
-#include <gu_volumegridref.h>
+#include "vfh_prm_templates.h"
+#include "vfh_tex_utils.h"
+#include "vfh_hou_utils.h"
+#include "vfh_attr_utils.h"
+
+#include "vop_PhoenixSim.h"
+#include "gu_volumegridref.h"
 
 #include <UT/UT_IStream.h>
 #include <OP/OP_SaveFlags.h>

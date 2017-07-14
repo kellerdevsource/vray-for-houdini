@@ -14,6 +14,7 @@
 #include "vfh_log.h"
 #include "vfh_ipr_viewer.h"
 #include "vfh_vray_instances.h"
+#include "vfh_attr_utils.h"
 
 #include <HOM/HOM_Module.h>
 
