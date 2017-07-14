@@ -108,31 +108,31 @@ int VRayExporter::isPhysicalView(const OBJ_Node &camera) const
 }
 
 
-void VRayExporter::fillCameraData(const OBJ_Node &camera, const OP_Node &rop, ViewParams &viewParams)
+void VRayExporter::fillViewParamFromCameraNode(const OBJ_Node &camera, ViewParams &viewParams)
 {
 	const fpreal t = m_context.getTime();
 
 	int imageWidth  = camera.evalInt("res", 0, t);
 	int imageHeight = camera.evalInt("res", 1, t);
-	if (rop.evalInt("override_camerares", 0, t)) {
+	if (m_rop->evalInt("override_camerares", 0, t)) {
 		UT_String resfraction;
-		rop.evalString(resfraction, "res_fraction", 0, t);
+		m_rop->evalString(resfraction, "res_fraction", 0, t);
 		if (resfraction.isFloat()) {
 			fpreal k = resfraction.toFloat();
 			imageWidth  *= k;
 			imageHeight *= k;
 		}
 		else {
-			imageWidth  = rop.evalInt("res_override", 0, t);
-			imageHeight = rop.evalInt("res_override", 1, t);
+			imageWidth  = m_rop->evalInt("res_override", 0, t);
+			imageHeight = m_rop->evalInt("res_override", 1, t);
 		}
 	}
 
 	float fov = 0.785398f;
 
-	viewParams.renderView.fovOverride = Parm::getParmInt(rop, "SettingsCamera_override_fov");
+	viewParams.renderView.fovOverride = Parm::getParmInt(*m_rop, "SettingsCamera_override_fov");
 	if (viewParams.renderView.fovOverride) {
-		fov = Parm::getParmFloat(rop, "SettingsCamera_fov");
+		fov = Parm::getParmFloat(*m_rop, "SettingsCamera_fov");
 	}
 	else {
 		// From https://www.sidefx.com/docs/houdini13.0/ref/cameralenses
@@ -150,14 +150,14 @@ void VRayExporter::fillCameraData(const OBJ_Node &camera, const OP_Node &rop, Vi
 		aspectCorrectFovOrtho(viewParams);
 	}
 
-	viewParams.renderView.stereoParams.use = Parm::getParmInt(rop, "VRayStereoscopicSettings_use");
-	viewParams.renderView.stereoParams.stereo_eye_distance       = Parm::getParmFloat(rop, "VRayStereoscopicSettings_eye_distance");
-	viewParams.renderView.stereoParams.stereo_interocular_method = Parm::getParmInt(rop,   "VRayStereoscopicSettings_interocular_method");
-	viewParams.renderView.stereoParams.stereo_specify_focus      = Parm::getParmInt(rop,   "VRayStereoscopicSettings_specify_focus");
-	viewParams.renderView.stereoParams.stereo_focus_distance     = Parm::getParmFloat(rop, "VRayStereoscopicSettings_focus_distance");
-	viewParams.renderView.stereoParams.stereo_focus_method       = Parm::getParmInt(rop,   "VRayStereoscopicSettings_focus_method");
-	viewParams.renderView.stereoParams.stereo_view               = Parm::getParmInt(rop,   "VRayStereoscopicSettings_view");
-	viewParams.renderView.stereoParams.adjust_resolution         = Parm::getParmInt(rop,   "VRayStereoscopicSettings_adjust_resolution");
+	viewParams.renderView.stereoParams.use = Parm::getParmInt(*m_rop, "VRayStereoscopicSettings_use");
+	viewParams.renderView.stereoParams.stereo_eye_distance       = Parm::getParmFloat(*m_rop, "VRayStereoscopicSettings_eye_distance");
+	viewParams.renderView.stereoParams.stereo_interocular_method = Parm::getParmInt(*m_rop,   "VRayStereoscopicSettings_interocular_method");
+	viewParams.renderView.stereoParams.stereo_specify_focus      = Parm::getParmInt(*m_rop,   "VRayStereoscopicSettings_specify_focus");
+	viewParams.renderView.stereoParams.stereo_focus_distance     = Parm::getParmFloat(*m_rop, "VRayStereoscopicSettings_focus_distance");
+	viewParams.renderView.stereoParams.stereo_focus_method       = Parm::getParmInt(*m_rop,   "VRayStereoscopicSettings_focus_method");
+	viewParams.renderView.stereoParams.stereo_view               = Parm::getParmInt(*m_rop,   "VRayStereoscopicSettings_view");
+	viewParams.renderView.stereoParams.adjust_resolution         = Parm::getParmInt(*m_rop,   "VRayStereoscopicSettings_adjust_resolution");
 
 	if (viewParams.renderView.stereoParams.use &&
 		viewParams.renderView.stereoParams.adjust_resolution)
@@ -175,15 +175,18 @@ void VRayExporter::fillSettingsMotionBlur(ViewParams &viewParams)
 	if (useCameraSettings) {
 		OBJ_Node *camera = VRayExporter::getCamera(m_rop);
 		const fpreal shutter = camera->evalFloat("shutter", 0, t);
-		viewParams.viewPlugins.settingsMotionBlur.addAttribute(Attrs::PluginAttr("duration", shutter));
+		viewPlugins.settingsMotionBlur.addAttribute(Attrs::PluginAttr("duration", shutter));
 	}
 
-	setAttrsFromOpNodePrms(viewParams.viewPlugins.settingsMotionBlur, m_rop, "SettingsMotionBlur_");
+	setAttrsFromOpNodePrms(viewPlugins.settingsMotionBlur, m_rop, "SettingsMotionBlur_");
 }
 
 
 void VRayExporter::fillPhysicalCamera(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc)
 {
+	if (!viewParams.cameraObject)
+		return;
+
 	OBJ_Node &camera = *viewParams.cameraObject;
 	const fpreal t = getContext().getTime();
 
@@ -276,111 +279,118 @@ void VRayExporter::fillSettingsCameraDof(const ViewParams &viewParams, Attrs::Pl
 	setAttrsFromOpNodePrms(pluginDesc, m_rop, "SettingsCameraDof_");
 }
 
+void VRayExporter::exportView(ViewParams viewParams)
+{
+	if (isAnimation() && HOU::isIndie()) {
+		const int maxIndieW = 1920;
+		const int maxIndieH = 1080;
+
+		const float aspect = float(maxIndieW) / float(maxIndieH);
+
+		if (viewParams.renderSize.w > maxIndieW ||
+			viewParams.renderSize.h > maxIndieH)
+		{
+			if (viewParams.renderSize.w > maxIndieW) {
+				viewParams.renderSize.w = maxIndieW;
+				viewParams.renderSize.h = viewParams.renderSize.w / aspect;
+			}
+
+			if (viewParams.renderSize.h > maxIndieH) {
+				viewParams.renderSize.h = maxIndieH;
+				viewParams.renderSize.w = viewParams.renderSize.h * aspect;
+			}
+
+			Log::getLog().warning("Houdini Indie render resolution for animations is 1920 x 1080 maximum");
+			Log::getLog().warning("Clamping resolution to %i x %i",
+									viewParams.renderSize.w, viewParams.renderSize.h);
+		}
+	}
+
+	const bool needReset = m_viewParams.needReset(viewParams);
+	if (needReset) {
+		Log::getLog().warning("VRayExporter::exportView: Reseting view plugins...");
+
+		getRenderer().setAutoCommit(false);
+
+		removePlugin(ViewPluginsDesc::settingsCameraPluginName);
+		removePlugin(ViewPluginsDesc::settingsCameraDofPluginName);
+		removePlugin(ViewPluginsDesc::stereoSettingsPluginName);
+		removePlugin(ViewPluginsDesc::cameraPhysicalPluginName);
+		removePlugin(ViewPluginsDesc::cameraDefaultPluginName);
+
+		exportPlugin(viewPlugins.settingsCamera);
+		exportPlugin(viewPlugins.settingsMotionBlur);
+
+		if (!viewParams.renderView.ortho && !viewParams.usePhysicalCamera) {
+			exportPlugin(viewPlugins.settingsCameraDof);
+		}
+
+		if (viewParams.usePhysicalCamera) {
+			getRenderer().setCamera(exportPlugin(viewPlugins.cameraPhysical));
+		}
+		else {
+			getRenderer().setCamera(exportPlugin(viewPlugins.cameraDefault));
+		}
+
+		if (!isIPR() && !isGPU() && viewParams.renderView.stereoParams.use) {
+			exportPlugin(viewPlugins.stereoSettings);
+		}
+
+		exportPlugin(viewPlugins.renderView);
+
+		getRenderer().commit();
+		getRenderer().setAutoCommit(true);
+	}
+	else if (m_viewParams.changedParams(viewParams)) {
+		exportPlugin(viewPlugins.renderView);
+	}
+
+	if (m_viewParams.changedSize(viewParams)) {
+		setRenderSize(viewParams.renderSize.w, viewParams.renderSize.h);
+	}
+
+	// Store new params
+	m_viewParams = viewParams;
+}
 
 int VRayExporter::exportView()
 {
 	Log::getLog().debug("VRayExporter::exportView()");
 
 	static VUtils::FastCriticalSection csect;
-	if (csect.tryEnter()) {
-		OBJ_Node *camera = VRayExporter::getCamera(m_rop);
+	if (!csect.tryEnter())
+		return 1;
 
-		addOpCallback(camera, VRayExporter::RtCallbackView);
-		addOpCallback(m_rop, VRayExporter::RtCallbackView);
+	OBJ_Node *camera = getCamera(m_rop);
+	if (!camera)
+		return 1;
 
-		ViewParams viewParams(camera);
-		viewParams.usePhysicalCamera = isPhysicalView(*camera);
+	addOpCallback(camera, RtCallbackView);
+	addOpCallback(m_rop, RtCallbackView);
 
-		fillCameraData(*camera, *m_rop, viewParams);
-		fillSettingsMotionBlur(viewParams);
-		fillSettingsCamera(viewParams, viewParams.viewPlugins.settingsCamera);
-		fillRenderView(viewParams, viewParams.viewPlugins.renderView);
+	ViewParams viewParams(camera);
+	viewParams.usePhysicalCamera = isPhysicalView(*camera);
 
-		if (!isIPR() && !isGPU()) {
-			fillStereoSettings(viewParams, viewParams.viewPlugins.stereoSettings);
-		}
+	fillViewParamFromCameraNode(*camera, viewParams);
+	fillSettingsMotionBlur(viewParams);
+	fillSettingsCamera(viewParams, viewPlugins.settingsCamera);
+	fillRenderView(viewParams, viewPlugins.renderView);
 
-		if (viewParams.usePhysicalCamera) {
-			fillPhysicalCamera(viewParams, viewParams.viewPlugins.cameraPhysical);
-		}
-		else {
-			fillCameraDefault(viewParams, viewParams.viewPlugins.cameraDefault);
-			fillSettingsCameraDof(viewParams, viewParams.viewPlugins.settingsCameraDof);
-		}
-
-		if (isAnimation() && HOU::isIndie()) {
-			const int maxIndieW = 1920;
-			const int maxIndieH = 1080;
-
-			const float aspect = float(maxIndieW) / float(maxIndieH);
-
-			if (viewParams.renderSize.w > maxIndieW ||
-				viewParams.renderSize.h > maxIndieH)
-			{
-				if (viewParams.renderSize.w > maxIndieW) {
-					viewParams.renderSize.w = maxIndieW;
-					viewParams.renderSize.h = viewParams.renderSize.w / aspect;
-				}
-
-				if (viewParams.renderSize.h > maxIndieH) {
-					viewParams.renderSize.h = maxIndieH;
-					viewParams.renderSize.w = viewParams.renderSize.h * aspect;
-				}
-
-				Log::getLog().warning("Houdini Indie render resolution for animations is 1920 x 1080 maximum");
-				Log::getLog().warning("Clamping resolution to %i x %i",
-									  viewParams.renderSize.w, viewParams.renderSize.h);
-			}
-		}
-
-		const bool needReset = m_viewParams.needReset(viewParams);
-		if (needReset) {
-			Log::getLog().warning("VRayExporter::exportView: Reseting view plugins...");
-
-			getRenderer().setAutoCommit(false);
-
-			removePlugin(ViewPluginsDesc::settingsCameraPluginName);
-			removePlugin(ViewPluginsDesc::settingsCameraDofPluginName);
-			removePlugin(ViewPluginsDesc::stereoSettingsPluginName);
-			removePlugin(ViewPluginsDesc::cameraPhysicalPluginName);
-			removePlugin(ViewPluginsDesc::cameraDefaultPluginName);
-
-			exportPlugin(viewParams.viewPlugins.settingsCamera);
-			exportPlugin(viewParams.viewPlugins.settingsMotionBlur);
-
-			if (!viewParams.renderView.ortho && !viewParams.usePhysicalCamera) {
-				exportPlugin(viewParams.viewPlugins.settingsCameraDof);
-			}
-
-			if (viewParams.usePhysicalCamera) {
-				getRenderer().setCamera(exportPlugin(viewParams.viewPlugins.cameraPhysical));
-			}
-			else {
-				getRenderer().setCamera(exportPlugin(viewParams.viewPlugins.cameraDefault));
-			}
-
-			if (!isIPR() && !isGPU() && viewParams.renderView.stereoParams.use) {
-				exportPlugin(viewParams.viewPlugins.stereoSettings);
-			}
-
-			exportPlugin(viewParams.viewPlugins.renderView);
-
-			getRenderer().commit();
-			getRenderer().setAutoCommit(true);
-		}
-		else if (m_viewParams.changedParams(viewParams)) {
-			exportPlugin(viewParams.viewPlugins.renderView);
-		}
-
-		if (m_viewParams.changedSize(viewParams)) {
-			setRenderSize(viewParams.renderSize.w, viewParams.renderSize.h);
-		}
-
-		// Store new params
-		m_viewParams = viewParams;
-
-		csect.leave();
+	if (!isIPR() && !isGPU()) {
+		fillStereoSettings(viewParams, viewPlugins.stereoSettings);
 	}
+
+	if (viewParams.usePhysicalCamera) {
+		fillPhysicalCamera(viewParams, viewPlugins.cameraPhysical);
+	}
+	else {
+		fillCameraDefault(viewParams, viewPlugins.cameraDefault);
+		fillSettingsCameraDof(viewParams, viewPlugins.settingsCameraDof);
+	}
+
+	exportView(viewParams);
+
+	csect.leave();
 
 	return 0;
 }
@@ -415,7 +425,6 @@ int ViewParams::needReset(const ViewParams &other) const
 {
 	return (MemberNotEq(usePhysicalCamera) ||
 			MemberNotEq(cameraObject) ||
-			viewPlugins.needReset(other.viewPlugins) ||
 			renderView.needReset(other.renderView));
 }
 

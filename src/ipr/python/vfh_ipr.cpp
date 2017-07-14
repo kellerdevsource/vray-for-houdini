@@ -80,26 +80,76 @@ static void onVFBClosed(VRay::VRayRenderer&, void*)
 
 static PyObject* vfhExportView(PyObject*, PyObject *args, PyObject *keywds)
 {
+	const char *camera = nullptr;
 	const char *rop = nullptr;
+	PyObject *transform = nullptr;
+
+	float aperture = 0.0f;
+	float focal = 0.0f;
+
+	int ortho = false;
 
 	static char *kwlist[] = {
 	    /* 0 */ "rop",
+	    /* 1 */ "camera",
+		/* 2 */ "ortho",
+		/* 3 */ "transform",
+		/* 4 */ "aperture",
+		/* 5 */ "focal",
 	    NULL
 	};
 
-	//                                 012345678911
-	//                                           01
-	static const char kwlistTypes[] = "s";
+	//                                 0 12345678911
+	//                                            01
+	static const char kwlistTypes[] = "s|siOff";
 
 	if (PyArg_ParseTupleAndKeywords(args, keywds, kwlistTypes, kwlist,
-		/* 0 */ &rop))
-	{
-		HOM_AutoLock autoLock;
+		/* 0 */ &rop,
+		/* 1 */ &camera,
+		/* 2 */ &ortho,
+		/* 3 */ &transform,
+		/* 4 */ &aperture,
+		/* 5 */ &focal
+	)) {
+		// HOM_AutoLock autoLock;
 
 		VRayExporter &exporter = getExporter();
 
 		exporter.exportDefaultHeadlight(true);
-		exporter.exportView();
+
+		OP_Node *ropNode = nullptr;
+		if (UTisstring(rop)) {
+			ropNode = getOpNodeFromPath(rop);
+		}
+
+		OBJ_Node *cameraNode = nullptr;
+		if (UTisstring(camera)) {
+			cameraNode = CAST_OBJNODE(getOpNodeFromPath(camera));
+		}
+		if (!cameraNode && ropNode) {
+			cameraNode = exporter.getCamera(ropNode);
+		}
+
+		ViewParams viewParams(cameraNode);
+		if (cameraNode) {
+			exporter.fillViewParamFromCameraNode(*cameraNode, viewParams);
+		}
+
+		if (transform && PyList_Check(transform)) {
+			if (PyList_Size(transform) == 16) {
+#define tmItem(x) PyFloat_AS_DOUBLE(PyList_GET_ITEM(transform, x))
+				VRay::Transform tm;
+				tm.matrix.v0.set(tmItem(0), tmItem(1), tmItem(2));
+				tm.matrix.v1.set(tmItem(4), tmItem(5), tmItem(6));
+				tm.matrix.v2.set(tmItem(8), tmItem(9), tmItem(10));
+				tm.offset.set(tmItem(12), tmItem(13), tmItem(14));
+
+				viewParams.renderView.tm = tm;
+#undef tmItem
+			}
+		}
+
+		exporter.exportView(viewParams);
 	}
 
 	Py_RETURN_NONE;
@@ -206,7 +256,11 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 		UT_String ropPath(rop);
 		OP_Node *ropNode = getOpNodeFromPath(ropPath);
 		if (ropNode) {
-			const IPROutput iprOutput = static_cast<IPROutput>(ropNode->evalInt("render_rt_output", 0, 0.0));
+			const IPROutput iprOutput =
+				static_cast<IPROutput>(ropNode->evalInt("render_rt_output", 0, 0.0));
+
+			const int iprModeMenu = ropNode->evalInt("render_rt_update_mode", 0, 0.0);
+			const VRayExporter::IprMode iprMode = iprModeMenu == 0 ? VRayExporter::iprModeRT : VRayExporter::iprModeSOHO;
 
 			const int isRenderView = iprOutput == iprOutputRenderView;
 			const int isVFB = iprOutput == iprOutputVFB;
@@ -214,7 +268,7 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 			VRayExporter &exporter = getExporter();
 
 			exporter.setROP(*ropNode);
-			exporter.setIPR(VRayExporter::iprModeRenderView);
+			exporter.setIPR(iprMode);
 
 			if (exporter.initRenderer(isVFB, false)) {
 				exporter.setDRSettings();

@@ -250,6 +250,9 @@ void VRayForHoudini::deleteVRayRenderer(VRay::VRayRenderer* &instance)
 {
 	Log::getLog().debug("deleteVRayRenderer()");
 
+	if (!instance)
+		return;
+
 	if (!vrayInstances.isAttached()) {
 		vrayInstances.attach();
 	}
