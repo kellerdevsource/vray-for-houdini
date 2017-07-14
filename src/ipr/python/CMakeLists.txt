@@ -11,6 +11,7 @@
 project(vray_for_houdini_python_ipr)
 
 include_directories(${CMAKE_SOURCE_DIR}/src)
+include_directories(${CMAKE_SOURCE_DIR}/src/ipr)
 include_directories(${CMAKE_SOURCE_DIR}/src/export)
 include_directories(${CMAKE_SOURCE_DIR}/src/export/utils)
 include_directories(${CMAKE_SOURCE_DIR}/src/export/export)
@@ -25,6 +26,12 @@ set(SOURCES
 set(HEADERS
 	vfh_ipr_viewer.h
 )
+
+vfh_make_moc(TARGET vfh_ipr
+	FILE_IN       ${CMAKE_CURRENT_SOURCE_DIR}/vfh_ipr.cpp
+	FILE_OUT_NAME vfh_ipr.moc
+)
+list(APPEND SOURCES vfh_ipr.moc)
 
 houdini_plugin(${PROJECT_NAME} "${SOURCES};${HEADERS}")
 

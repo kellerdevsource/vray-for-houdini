@@ -13,42 +13,104 @@
 #include "vfh_exporter.h"
 #include "vfh_log.h"
 #include "vfh_ipr_viewer.h"
+#include "vfh_ipr_checker.h"
 #include "vfh_vray_instances.h"
 
 #include <HOM/HOM_Module.h>
 
 #include <QThread>
+#include <QByteArray>
 #include <QtNetwork/QTcpSocket>
 #include <QtNetwork/QHostAddress>
+#include <QApplication>
+#include <QWidget>
+#include <QTimer>
+#include <QDialog>
 
 using namespace VRayForHoudini;
 
 static VRayExporter *exporter = nullptr;
 
-static class WorkerThread
-	: public QThread
-{
+
+class PingPongClient: public QDialog {
+	Q_OBJECT
+
+	Q_DISABLE_COPY(PingPongClient)
 public:
+	PingPongClient(QDialog *parent = Q_NULLPTR)
+		: QDialog(parent)
+		, socket(new QTcpSocket(this))
+		, timer(new QTimer(this))
+		, diff(0)
+		, fail(0)
+	{
+		timer->setInterval(100);
+		connect(timer, &QTimer::timeout, this, &PingPongClient::tick);
+	}
+
+	~PingPongClient() {
+		delete timer;
+		delete socket;
+	}
+
 	void setCallback(std::function<void()> value) {
 		cb = value;
 	}
 
-private:
-	void run() VRAY_OVERRIDE {
-		while (true) {
-			QTcpSocket socket;
-			socket.connectToHost(QHostAddress(QHostAddress::LocalHost), 424242);
-			if (!socket.waitForConnected(1000)) {
-				Log::getLog().debug("Stop requested...");
-				cb();
-				return;
-			}
-			msleep(100);
-		}
-    }
+	void start() {
+		socket->connectToHost(QHostAddress::LocalHost, 5050);
+		timer->start();
+	}
 
+	void stop() {
+		timer->stop();
+	}
+
+private Q_SLOTS :
+	void tick() {
+		PingPongPacket pingPack(PingPongPacket::PacketInfo::PING);
+		
+		auto data = socket->read(pingPack.size());
+		if (data.size()) {
+			PingPongPacket pongPack(data.data());
+			if (pongPack && pongPack.info == PingPongPacket::PacketInfo::PONG) {
+				diff--;
+			}
+		}
+
+		if (socket->write(pingPack.data(), pingPack.size()) != pingPack.size()) {
+			++fail;
+		} else {
+			fail = 0;
+			diff++;
+		}
+
+		if (fail >= 10) {
+			// 10 failed writes
+			fail = 0;
+			cb();
+			return;
+		}
+
+		if (diff > 10) {
+			// 10 pings without pong
+			diff = 0;
+			cb();
+			return;
+		} else if (diff < -10) {
+			// 10 pongs, without sending ping
+			diff = 0;
+			cb();
+			return;
+		}
+	}
+private:
+	QTcpSocket * socket;
+	QTimer * timer;
+	int diff;
+	int fail;
 	std::function<void()> cb;
-} stopPoll;
+} * stopChecker = nullptr;
 
 static VRayExporter& getExporter()
 {
@@ -60,7 +122,7 @@ static VRayExporter& getExporter()
 
 static void freeExporter()
 {
-	stopPoll.exit();
+	stopChecker->stop();
 
 	getExporter().reset();
 
@@ -69,6 +131,10 @@ static void freeExporter()
 
 static struct VRayExporterIprUnload {
 	~VRayExporterIprUnload() {
+		if (stopChecker) {
+			stopChecker->stop();
+		}
+		delete stopChecker;
 		deleteVRayInit();
 	}
 } exporterUnload;
@@ -240,13 +306,14 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 				exporter.exportSettings();
 				exporter.exportFrame(now);
 
-#if 0
-				stopPoll.setCallback([]{
-					closeImdisplay();
-					freeExporter();
-				});
-				stopPoll.start(QThread::LowPriority);
-#endif
+				if (!stopChecker) {
+					stopChecker = new PingPongClient();
+					stopChecker->setCallback([]{
+						closeImdisplay();
+						freeExporter();
+					});
+				}
+				stopChecker->start();
 
 				initImdisplay(exporter.getRenderer().getVRay(), port);
 			}

@@ -8,17 +8,17 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
-#include <QtNetwork/QTcpServer>
-#include <QtNetwork/QHostAddress>
+#include "vfh_ipr_checker.h"
+#include "vfh_ipr_server.h"
 
-int main(int, char const*[])
+#include <QApplication>
+#include <QtCore>
+
+int main(int argc, char ** argv)
 {
-	QTcpServer server;
-	if (!server.listen(QHostAddress(QHostAddress::LocalHost), 424242)) {
-		return 1;
-	}
-
-	while (true) {}
-
-	return 0;
+	QCoreApplication::addLibraryPath("C:/Program Files/Side Effects Software/Houdini 16.0.600/bin/Qt_plugins");
+	QApplication app(argc, argv);
+	Server server;
+	
+	return app.exec();
 }

@@ -28,10 +28,14 @@ static void OnDumpMessage(VRay::VRayRenderer &renderer, const char *msg, int lev
 {
 	CbSetOnDumpMessage *callbacks = reinterpret_cast<CbSetOnDumpMessage*>(userData);
 	for (CbSetOnDumpMessage::CbTypeArray::const_iterator cbIt = callbacks->m_cbTyped.begin(); cbIt != callbacks->m_cbTyped.end(); ++cbIt) {
-		(*cbIt)(renderer, msg, level);
+		if (*cbIt) {
+			(*cbIt)(renderer, msg, level);
+		}
 	}
 	for (CbSetOnDumpMessage::CbVoidArray::const_iterator cbIt = callbacks->m_cbVoid.begin(); cbIt != callbacks->m_cbVoid.end(); ++cbIt) {
-		(*cbIt)();
+		if (*cbIt) {
+			(*cbIt)();
+		}
 	}
 }
 

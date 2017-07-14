@@ -140,7 +140,7 @@ struct TileImage {
 
 /// A list of images planes.
 typedef QList<TileImage> PlaneImages;
-
+const int z = sizeof(PlaneImages);
 /// A thread for writing into "imdisplay".
 class ImdisplayThread
 	: public QThread
