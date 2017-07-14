@@ -14,6 +14,7 @@
 #include "vfh_prm_templates.h"
 #include "vfh_tex_utils.h"
 #include "vfh_hou_utils.h"
+#include "vfh_attr_utils.h"
 
 #include "obj/obj_node_base.h"
 #include "vop/vop_node_base.h"
