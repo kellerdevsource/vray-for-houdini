@@ -11,11 +11,19 @@
 
 #include "vfh_defines.h"
 #include "vfh_material_override.h"
+#include "vfh_prm_templates.h"
+
+#include <STY/STY_Styler.h>
+#include <STY/STY_OverrideValues.h>
+#include <STY/STY_OverrideValuesFilter.h>
 
 #include <SHOP/SHOP_GeoOverride.h>
 #include <GA/GA_AttributeFilter.h>
 
 #include <rapidjson/document.h>
+
+#include <QStringList>
+#include <QRegExp>
 
 using namespace VRayForHoudini;
 using namespace rapidjson;
@@ -111,7 +119,6 @@ void VRayForHoudini::mergeStyleSheet(PrimMaterial &primMaterial, const QString &
 	Document document;
 	document.Parse(styleSheet.toLocal8Bit().constData());
 
-
 	if (!document.HasMember(Styles::styles))
 		return;
 
@@ -167,7 +174,23 @@ void VRayForHoudini::mergeMaterialOverrides(PrimMaterial &primMaterial, const UT
 			UT_StringArray mtlOverrideKeys;
 			mtlOverride.getKeys(mtlOverrideKeys);
 
+			UT_StringArray validKeys;
+
+			// Check keys if there is already some top-level override for this parameter.
 			for (const UT_StringHolder &key : mtlOverrideKeys) {
+				int channelIIdx = -1;
+				PRM_Parm *keyParm = primMaterial.matNode->getParmList()->getParmPtrFromChannel(key, &channelIIdx);
+				if (keyParm && channelIIdx >= 0 && channelIIdx < 4) {
+					const char *parmName = keyParm->getToken();
+
+					MtlOverrideItems::iterator moIt = primMaterial.overrides.find(parmName);
+					if (moIt == primMaterial.overrides.end()) {
+						validKeys.append(key);
+					}
+				}
+			}
+
+			for (const UT_StringHolder &key : validKeys) {
 				// Channel for vector components.
 				// NOTE: Only first 3 components will be used for vectors.
 				int channelIIdx = -1;
@@ -176,12 +199,6 @@ void VRayForHoudini::mergeMaterialOverrides(PrimMaterial &primMaterial, const UT
 				if (keyParm && channelIIdx >= 0 && channelIIdx < 4) {
 					const PRM_Type &keyParmType = keyParm->getType();
 					const char *parmName = keyParm->getToken();
-
-					MtlOverrideItems::iterator moIt = primMaterial.overrides.find(parmName);
-					if (moIt != primMaterial.overrides.end()) {
-						// There is already some top-level override for this parameter.
-						continue;
-					}
 
 					if (keyParmType.isFloatType()) {
 						MtlOverrideItem &overrideItem = primMaterial.overrides[parmName];
@@ -293,6 +310,44 @@ void MtlOverrideAttrExporter::addAttributesAsOverrides(const GEOAttribList &attr
 	}
 }
 
+void SheetTarget::TargetPrimitive::setGroupName(const QString &value)
+{
+	targetType = primitiveTypeGroup;
+	group = value;
+}
+
+const char *SheetTarget::TargetPrimitive::getGroupName() const
+{
+	return group.toLocal8Bit().constData();
+}
+
+int PrimRange::inRange(int index) const
+{
+	if (from == primRangeNotSet) {
+		return false;
+	}
+	if (to == primRangeNotSet) {
+		return index == from;
+	}
+	return index >= from && index <= to;
+}
+
+void SheetTarget::TargetPrimitive::addRange(const PrimRange &range)
+{
+	targetType = primitiveTypeRange;
+	ranges.insert(range);
+}
+
+int SheetTarget::TargetPrimitive::isInRange(int index) const
+{
+	for (const PrimRange &range : ranges) {
+		if (range.inRange(index)) {
+			return true;
+		}
+	}
+	return false;
+}
+
 static void parseStyleSheetTarget(const Value &target, SheetTarget &sheetTarget)
 {
 	for (Value::ConstMemberIterator pIt = target.MemberBegin(); pIt != target.MemberEnd(); ++pIt) {
@@ -300,8 +355,24 @@ static void parseStyleSheetTarget(const Value &target, SheetTarget &sheetTarget)
 		const Value &value = pIt->value;
 		if (key.equal("group")) {
 			sheetTarget.targetType = SheetTarget::sheetTargetPrimitive;
-			sheetTarget.primitive.targetType = SheetTarget::TargetPrimitive::primitiveTypeGroup;
-			sheetTarget.primitive.group = value.GetString();
+
+			const QString groupValue = value.GetString();
+			const QStringList groups = groupValue.split(' ', QString::SkipEmptyParts);
+
+			for (const QString &group : groups) {
+				static QRegExp re("\\d*");
+
+				if (group.contains('-')) {
+					const QStringList groupRangeValue = group.split('-');
+					sheetTarget.primitive.addRange(PrimRange(groupRangeValue[0].toInt(), groupRangeValue[1].toInt()));
+				}
+				else if (re.exactMatch(group)) {
+					sheetTarget.primitive.addRange(PrimRange(group.toInt()));
+				}
+				else {
+					sheetTarget.primitive.setGroupName(group);
+				}
+			}
 		}
 		else {
 			// ...
@@ -345,12 +416,12 @@ static void parseStyleSheet(const Value &style, ObjectStyleSheet &objSheet, fpre
 			parseStyleSheetOverrides(paramOverrides, styleOverrides.overrides);
 		}
 
+		// If no specific target will be found later, then style will apply to all.
+		TargetStyleSheet targetStyle(SheetTarget::sheetTargetAll);
+		targetStyle.overrides = styleOverrides;
+
 		if (style.HasMember(Styles::target)) {
 			const Value &target = style[Styles::target];
-
-			// If no specific target will be found later, then style will apply to all.
-			TargetStyleSheet targetStyle(SheetTarget::sheetTargetAll);
-			targetStyle.overrides = styleOverrides;
 
 			if (target.HasMember(Styles::Target::subTarget)) {
 				const Value &subTarget = target[Styles::Target::subTarget];
@@ -359,9 +430,9 @@ static void parseStyleSheet(const Value &style, ObjectStyleSheet &objSheet, fpre
 			else {
 				parseStyleSheetTarget(target, targetStyle.target);
 			}
-
-			objSheet.styles += targetStyle;
 		}
+
+		objSheet.styles += targetStyle;
 	}
 }
 
@@ -369,11 +440,14 @@ void VRayForHoudini::parseObjectStyleSheet(OBJ_Node &objNode, ObjectStyleSheet &
 {
 	using namespace rapidjson;
 
+	if (!Parm::isParmExist(objNode, VFH_ATTR_SHOP_MATERIAL_STYLESHEET))
+		return;
+
 	UT_String styleSheet;
 	objNode.evalString(styleSheet, VFH_ATTR_SHOP_MATERIAL_STYLESHEET, 0, t);
 
 	const char *styleBuf = styleSheet.buffer();
-	if (!(styleBuf && *styleBuf))
+	if (!UTisstring(styleBuf))
 		return;
 
 	Document document;

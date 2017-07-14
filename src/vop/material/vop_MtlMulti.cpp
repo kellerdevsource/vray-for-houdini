@@ -12,13 +12,7 @@
 
 #include "vop_MtlMulti.h"
 
-
 using namespace VRayForHoudini;
-
-
-static PRM_Name  rpm_name_mtl_count("mtl_count", "Materials Count");
-static PRM_Range rpm_range_mtl_count(PRM_RANGE_RESTRICTED, 1, PRM_RANGE_UI, 8);
-
 
 // NOTE: Sockets order:
 //
@@ -32,12 +26,6 @@ void VOP::MtlMulti::setPluginType()
 {
 	pluginType = VRayPluginType::MATERIAL;
 	pluginID   = "MtlMulti";
-}
-
-
-void VOP::MtlMulti::addPrmTemplate(Parm::PRMList &prmTemplate)
-{
-	prmTemplate.addPrm(PRM_Template(PRM_INT, 1, &rpm_name_mtl_count, PRMoneDefaults, /*choicelist*/ nullptr, &rpm_range_mtl_count));
 }
 
 
@@ -126,7 +114,7 @@ void VOP::MtlMulti::getAllowedInputTypeInfosSubclass(unsigned idx, VOP_VopTypeIn
 int VOP::MtlMulti::customInputsCount() const
 {
 	// One socket per texture
-	int numCustomInputs = evalInt(rpm_name_mtl_count.getToken(), 0, 0.0);
+	int numCustomInputs = evalInt("mtl_count", 0, 0.0);
 
 	return numCustomInputs;
 }
@@ -154,7 +142,7 @@ void VOP::MtlMulti::getCode(UT_String &codestr, const VOP_CodeGenContext &)
 
 OP::VRayNode::PluginResult VOP::MtlMulti::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
 {
-	const int mtls_count = evalInt(rpm_name_mtl_count.getToken(), 0, 0.0);
+	const int mtls_count = evalInt("mtl_count", 0, 0.0);
 
 	VRay::ValueList mtls_list;
 	VRay::IntList   ids_list;

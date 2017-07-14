@@ -1,3 +1,4 @@
+
 group {
     name "FolderVRayRendererSampler"
     label "Sampler"
@@ -5,19 +6,19 @@ group {
     groupsimple {
         name "SettingsImageSampler"
         label "Image Sampler"
-#include "SettingsImageSampler.ds"
+#include "$VRAY_UI_DS_PATH/rop/SettingsImageSampler.ds"
     }
 
     groupsimple {
         name "SettingsDMCSampler"
         label "DMC Sampler"
-#include "SettingsDMCSampler.ds"
+#include "$VRAY_UI_DS_PATH/rop/SettingsDMCSampler.ds"
     }
 
     groupsimple {
         name "SettingsRegionsGenerator"
         label "Buckets"
-#include "SettingsRegionsGenerator.ds"
+#include "$VRAY_UI_DS_PATH/rop/SettingsRegionsGenerator.ds"
 
         hidewhen "{ SettingsImageSampler_type == "Progressive" }"
     }
@@ -26,93 +27,55 @@ group {
 group {
     name "FolderVRayRendererGI"
     label "Global Illumination"
-#include "SettingsGI.ds"
-#include "SettingsCaustics.ds"
-#include "SettingsIrradianceMap.ds"
-#include "SettingsDMCGI.ds"
-#include "SettingsLightCache.ds"
+#include "$VRAY_UI_DS_PATH/rop/SettingsGI.ds"
+#include "$VRAY_UI_DS_PATH/rop/SettingsCaustics.ds"
+#include "$VRAY_UI_DS_PATH/rop/SettingsIrradianceMap.ds"
+#include "$VRAY_UI_DS_PATH/rop/SettingsDMCGI.ds"
+#include "$VRAY_UI_DS_PATH/rop/SettingsLightCache.ds"
 
-/*
-    group {
-        name "SettingsGI"
-        label "General"
-
-    }
-    group {
-        name "SettingsDMCGI"
-        label "Brute Force"
-    }
-    group {
-      name "SettingsLightCache"
-      label "Light Cache"
-    }
-    group {
-        name "SettingsIrradianceMap"
-        label "Irradiance Map"
-    }
-*/
 }
+
 group {
     name "FolderVRayRendererCamera"
     label "Camera"
-#include "SettingsCamera.ds"
-#include "SettingsCameraDof.ds"
-#include "SettingsMotionBlur.ds"
-#include "VRayStereoscopicSettings.ds"
-/*
-    group {
-        name "SettingsCamera"
-        label "General"
-    }
+#include "$VRAY_UI_DS_PATH/rop/SettingsCamera.ds"
+#include "$VRAY_UI_DS_PATH/rop/SettingsCameraDof.ds"
+#include "$VRAY_UI_DS_PATH/rop/SettingsMotionBlur.ds"
+#include "$VRAY_UI_DS_PATH/rop/VRayStereoscopicSettings.ds"
 
-    group {
-        name "SettingsCameraDof"
-        label "Depth Of Field"
-    }
-
-    group {
-        name "SettingsMotionBlur"
-        label "Motion Blur"
-    }
-
-    group {
-        name "VRayStereoscopicSettings"
-        label "Stereo"
-    }
-*/
 }
 
 group {
     name "SettingsColorMapping"
     label "Color Mapping"
-#include "SettingsColorMapping.ds"
+#include "$VRAY_UI_DS_PATH/rop/SettingsColorMapping.ds"
 }
+
 
 group {
     name "SettingsDefaultDisplacement"
     label "Displacement"
     disablewhen "{ SettingsOptions_geom_displacement == 0 }"
-
-#include "SettingsDefaultDisplacement.ds"
+#include "$VRAY_UI_DS_PATH/rop/SettingsDefaultDisplacement.ds"
 }
 
 
 group {
     name "SettingsOptions"
     label "Options"
-#include "SettingsOptions.ds"
+#include "$VRAY_UI_DS_PATH/rop/SettingsOptions.ds"
 }
 
 
 group {
     name "SettingsRTEngine"
     label "RT"
-#include "SettingsRTEngine.ds"
+#include "$VRAY_UI_DS_PATH/rop/SettingsRTEngine.ds"
 }
 
 
 group {
     name "VRaySettingsDR"
     label "DR"
-#include "DRItems.ds"
+#include "$VRAY_UI_DS_PATH/rop/DRItems.ds"
 }

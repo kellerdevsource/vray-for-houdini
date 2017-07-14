@@ -58,4 +58,4 @@ export PATH=${HB}:${HSB}:${VRAY_APPSDK}/bin:${PATH}
 export DYLD_LIBRARY_PATH=${VRAY_APPSDK}/bin:${VRAY_FOR_HOUDINI_AURA_LOADERS}:${DYLD_LIBRARY_PATH}
 
 # Start Houdini
-"${HFS}/bin/houdini" -foreground $*
+@HFS_BIN@ $*

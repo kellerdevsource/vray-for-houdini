@@ -75,12 +75,54 @@ const ChannelInfo & fromPropName(const char * name) {
 	return chInfo[CHANNEL_COUNT - 1];
 }
 
+UT_Matrix4F cacheWorldTm(VRayForHoudini::VRayVolumeGridRef::CachePtr cache, bool flipYZ) {
+	if (!cache) {
+		return UT_Matrix4F(1.f);
+	}
+
+	float flTransform[12];
+	cache->GetObject2GridTransform(flTransform);
+
+	// houdini translations is in last row instead of last col
+	UT_Matrix4F m4(
+		flTransform[0], flTransform[1], flTransform[2], 0.f,
+		flTransform[3], flTransform[4], flTransform[5], 0.f,
+		flTransform[6], flTransform[7], flTransform[8], 0.f,
+		flTransform[9], flTransform[10], flTransform[11], 1.0
+	);
+
+	if (flipYZ) {
+		for (int c = 0; c < 4; ++c) {
+			auto old = m4(1, c);
+			m4(1, c) = -m4(2, c);
+			m4(2, c) = old;
+		}
+	}
+
+	m4.invert();
+
+	int gridDimensions[3];
+	cache->GetDim(gridDimensions);
+
+	// houdini simulations are 2x2x2 box from (-1,-1,-1) to (1,1,1)
+	// this will transform houdini box to grid dimentions
+	UT_Matrix4F hou2phx(1.f);
+
+	for (int c = 0; c < 3; ++c) {
+		hou2phx(3, c) = gridDimensions[c] * 0.5f;
+		hou2phx(c, c) = gridDimensions[c] * 0.5f;
+	}
+
+	return hou2phx * m4;
+}
+
 }
 
 
 using namespace VRayForHoudini;
 
 GA_PrimitiveTypeId VRayVolumeGridRef::theTypeId(-1);
+VRayVolumeGridRef::VolumeCache VRayVolumeGridRef::dataCache;
 const int MAX_CHAN_MAP_LEN = 2048;
 
 /// Implemetation for the factory creating VRayVolumeGridRef for HDK
@@ -106,6 +148,80 @@ private:
 VRayVolumeGridFactory::VRayVolumeGridFactory():
 	GU_PackedFactory("VRayVolumeGridRef", "VRayVolumeGridRef")
 {
+	// do this here because it is guaranteed to run before any instance of VRayVolumeGridRef is created
+	VRayVolumeGridRef::dataCache.setFetchCallback([](const VolumeCacheKey & key, VRayVolumeGridRef::VolumeCacheData & data) {
+		using namespace std;
+		using namespace chrono;
+
+		auto tStart = high_resolution_clock::now();
+		IAur * aurPtr;
+		if (key.map.empty()) {
+			aurPtr = newIAur(key.path.c_str());
+		} else {
+			aurPtr = newIAurWithChannelsMapping(key.path.c_str(), key.map.c_str());
+		}
+		data.aurPtr = VRayVolumeGridRef::CachePtr(aurPtr, [](IAur *ptr) { deleteIAur(ptr); });
+		auto tEndCache = high_resolution_clock::now();
+		memset(data.dataRange.data(), 0, VRayVolumeGridRef::DataRangeMapSize);
+
+		if (data.aurPtr) {
+			Log::getLog().info("Loading cache took %dms", (int)duration_cast<milliseconds>(tEndCache - tStart).count());
+		} else {
+			Log::getLog().warning("Failed to load cache \"%s\"", key.path.c_str());
+			return;
+		}
+
+		GU_Detail *gdp = new GU_Detail();
+		data.detailHandle.allocateAndSet(gdp, true);
+
+		int gridDimensions[3];
+		data.aurPtr->GetDim(gridDimensions);
+		// TODO: maybe the flip YZ flag should be part of the key?
+		// what if there are two instances having the same cache but one has the flag set and the other does not?
+		const auto tm = cacheWorldTm(data.aurPtr, key.flipYZ);
+
+		auto tBeginLoop = high_resolution_clock::now();
+		// load each channel from the cache file
+		for (int c = 0; c < CHANNEL_COUNT; ++c) {
+			const auto & chan = chInfo[c];
+
+			if (!data.aurPtr->ChannelPresent(chan.type)) {
+				continue;
+			}
+			GU_PrimVolume *volumeGdp = (GU_PrimVolume *)GU_PrimVolume::build(gdp);
+
+			auto visType = chan.type == GridChannels::ChSm ? GEO_VOLUMEVIS_SMOKE : GEO_VOLUMEVIS_INVISIBLE;
+			volumeGdp->setVisualization(visType, volumeGdp->getVisIso(), volumeGdp->getVisDensity());
+
+			UT_VoxelArrayWriteHandleF voxelHandle = volumeGdp->getVoxelWriteHandle();
+			voxelHandle->size(gridDimensions[0], gridDimensions[1], gridDimensions[2]);
+
+			auto tStartExpand = high_resolution_clock::now();
+			const float *grid = data.aurPtr->ExpandChannel(chan.type);
+			auto tEndExpand = high_resolution_clock::now();
+
+			int expandTime = duration_cast<milliseconds>(tEndExpand - tStartExpand).count();
+
+			auto tStartExtract = high_resolution_clock::now();
+			voxelHandle->extractFromFlattened(grid, gridDimensions[0], gridDimensions[1] * gridDimensions[0]);
+			data.dataRange[chan.type].min = volumeGdp->calcMinimum();
+			data.dataRange[chan.type].max = volumeGdp->calcMaximum();
+			auto tEndExtract = high_resolution_clock::now();
+
+			int extractTime = duration_cast<milliseconds>(tEndExtract - tStartExtract).count();
+
+			Log::getLog().info("Expanding channel '%s' took %dms, extracting took %dms", chan.displayName, expandTime, extractTime);
+
+			volumeGdp->setTransform4(tm);
+		}
+	});
+
+	// we dont need the evict callback, because the data is in RAII objects and will be freed when evicted from cache
+	// so just print info
+	VRayVolumeGridRef::dataCache.setEvictCallback([](const VolumeCacheKey & key, VRayVolumeGridRef::VolumeCacheData &) {
+		Log::getLog().info("Evicting \"%s\" from cache", key.path.c_str());
+	});
+
 	/// Register all properties from VFH_VOLUME_GRID_PARAMS
 	VFH_MAKE_REGISTERS(VFH_VOLUME_GRID_PARAMS, VFH_VOLUME_GRID_PARAMS_COUNT, VRayVolumeGridRef)
 
@@ -139,26 +255,24 @@ void VRayVolumeGridRef::install(GA_PrimitiveFactory *gafactory)
 
 VRayVolumeGridRef::VRayVolumeGridRef()
 	: GU_PackedImpl()
-	, m_detail()
 	, m_dirty(false)
 	, m_channelDirty(false)
 	, m_doFrameReplace(false)
 {
 	GU_Detail *gdp = new GU_Detail;
 	m_handle.allocateAndSet(gdp, true);
-	m_detail = m_handle;
-	memset(m_channelDataRange.data(), 0, m_channelDataRange.size() * sizeof(m_channelDataRange[0]));
+	memset(m_channelDataRange.data(), 0, DataRangeMapSize);
 }
 
-VRayVolumeGridRef::VRayVolumeGridRef(const VRayVolumeGridRef &src):
-	GU_PackedImpl(src),
-	m_detail(),
-	m_dirty(false),
-	m_channelDataRange(src.m_channelDataRange)
+VRayVolumeGridRef::VRayVolumeGridRef(const VRayVolumeGridRef &src)
+	: GU_PackedImpl(src)
+	, m_handle(src.m_handle)
+	, m_options(src.m_options)
+	, m_dirty(false)
+	, m_channelDirty(false)
+	, m_doFrameReplace(src.m_doFrameReplace)
+	, m_channelDataRange(src.m_channelDataRange)
 {
-	m_handle = src.m_handle;
-	m_detail = m_handle;
-	m_options = src.m_options;
 }
 
 
@@ -199,70 +313,19 @@ bool VRayVolumeGridRef::getLocalTransform(UT_Matrix4D &m) const
 VRayVolumeGridRef::CachePtr VRayVolumeGridRef::getCache() const
 {
 	auto path = this->get_current_cache_path();
-	auto map = this->get_usrchmap();
-
-	if (path != nullptr 
-		&& map != nullptr 
-		&& m_last_cache_path == path
-		&& m_last_user_char_map == map) {
-		return m_cachePtr;
-	}
-
-	if (!UTisstring(path) || !map) {
+	if (!*path) {
 		return nullptr;
 	}
+	auto map = this->get_usrchmap();
 
-	// remember last cache source
-	m_last_cache_path = path;
-	m_last_user_char_map = map;
-
-	// load new cache
-	auto ptr = *map ? newIAurWithChannelsMapping(path, map) : newIAur(path);
-	m_cachePtr = CachePtr(ptr, [](IAur *ptr) {	deleteIAur(ptr); });
-	return m_cachePtr;
+	VolumeCacheKey key = {path, map ? map : "", this->get_flip_yz()};
+	return dataCache[key].aurPtr;
 }
 
 
 UT_Matrix4F VRayVolumeGridRef::toWorldTm(CachePtr cache) const
 {
-	if (!cache) {
-		return UT_Matrix4F(1.f);
-	}
-
-	float flTransform[12];
-	cache->GetObject2GridTransform(flTransform);
-
-	// houdini translations is in last row instead of last col
-	UT_Matrix4F m4(
-		flTransform[0], flTransform[1],  flTransform[2],  0.f,
-		flTransform[3], flTransform[4],  flTransform[5],  0.f,
-		flTransform[6], flTransform[7],  flTransform[8],  0.f,
-		flTransform[9], flTransform[10], flTransform[11], 1.0
-	);
-
-	if (this->get_flip_yz()) {
-		for (int c = 0; c < 4; ++c) {
-			auto old = m4(1, c);
-			m4(1, c) = -m4(2, c);
-			m4(2, c) = old;
-		}
-	}
-
-	m4.invert();
-
-	int gridDimensions[3];
-	cache->GetDim(gridDimensions);
-
-	// houdini simulations are 2x2x2 box from (-1,-1,-1) to (1,1,1)
-	// this will transform houdini box to grid dimentions
-	UT_Matrix4F hou2phx(1.f);
-
-	for(int c = 0; c < 3; ++c) {
-		hou2phx(3, c) = gridDimensions[c] * 0.5f;
-		hou2phx(c, c) = gridDimensions[c] * 0.5f;
-	}
-
-	return hou2phx * m4;
+	return cacheWorldTm(cache, this->get_flip_yz());
 }
 
 
@@ -324,69 +387,36 @@ GU_ConstDetailHandle VRayVolumeGridRef::getPackedDetail(GU_PackedContext *contex
 	using namespace std;
 	using namespace chrono;
 
-	memset(SYSconst_cast(this)->m_channelDataRange.data(), 0, m_channelDataRange.size() * sizeof(m_channelDataRange[0]));
+	auto *self = SYSconst_cast(this);
 
-	auto tStart = high_resolution_clock::now();
-	auto cache = getCache();
-	auto tEndCache = high_resolution_clock::now();
+	memset(self->m_channelDataRange.data(), 0, DataRangeMapSize);
 
 	GU_DetailHandleAutoWriteLock rLock(SYSconst_cast(this)->m_handle);
 	GU_Detail *gdp = rLock.getGdp();
+	gdp->stashAll();
+	self->m_dirty = false;
 
-	if (cache) {
-		Log::getLog().info("Loading cache took %dms", (int)duration_cast<milliseconds>(tEndCache - tStart).count());
-	} else {
+	auto path = this->get_current_cache_path();
+	if (!*path) {
 		gdp->clearAndDestroy();
-		SYSconst_cast(this)->m_dirty = false;
+		return getDetail();
+	}
+	auto map = this->get_usrchmap();
+
+	VolumeCacheKey key = {path, map ? map : "", this->get_flip_yz()};
+	VolumeCacheData &data = dataCache[key];
+
+	if (!data.aurPtr) {
+		gdp->clearAndDestroy();
 		return getDetail();
 	}
 
-	int gridDimensions[3];
-	cache->GetDim(gridDimensions);
-	const auto tm = toWorldTm(cache);
-
-	gdp->stashAll();
-	auto tBeginLoop = high_resolution_clock::now();
-	// load each channel from the cache file
-	for (int c = 0; c < CHANNEL_COUNT; ++c) {
-		const auto & chan = chInfo[c];
-
-		if (!cache->ChannelPresent(chan.type)) {
-			continue;
-		}
-		GU_PrimVolume *volumeGdp = (GU_PrimVolume *)GU_PrimVolume::build(gdp);
-
-		auto visType = chan.type == GridChannels::ChSm ? GEO_VOLUMEVIS_SMOKE : GEO_VOLUMEVIS_INVISIBLE;
-		volumeGdp->setVisualization(visType, volumeGdp->getVisIso(), volumeGdp->getVisDensity());
-
-		UT_VoxelArrayWriteHandleF voxelHandle = volumeGdp->getVoxelWriteHandle();
-		voxelHandle->size(gridDimensions[0], gridDimensions[1], gridDimensions[2]);
-
-		auto tStartExpand = high_resolution_clock::now();
-		const float *grid = cache->ExpandChannel(chan.type);
-		auto tEndExpand = high_resolution_clock::now();
-
-		int expandTime = duration_cast<milliseconds>(tEndExpand - tStartExpand).count();
-
-		auto tStartExtract = high_resolution_clock::now();
-		voxelHandle->extractFromFlattened(grid, gridDimensions[0], gridDimensions[1] * gridDimensions[0]);
-		SYSconst_cast(this)->m_channelDataRange[chan.type].min = volumeGdp->calcMinimum();
-		SYSconst_cast(this)->m_channelDataRange[chan.type].max = volumeGdp->calcMaximum();
-		auto tEndExtract = high_resolution_clock::now();
-
-		int extractTime = duration_cast<milliseconds>(tEndExtract - tStartExtract).count();
-
-		Log::getLog().info("Expanding channel '%s' took %dms, extracting took %dms", chan.displayName, expandTime, extractTime);
-
-		volumeGdp->setTransform4(tm);
+	if (data.detailHandle == m_handle) {
+		return getDetail();
 	}
-	gdp->destroyStashed();
-	auto tEndLoop = high_resolution_clock::now();
 
-	Log::getLog().info("Generating packed prim %dms", (int)duration_cast<milliseconds>(tEndLoop - tBeginLoop).count());
-
-	auto self = SYSconst_cast(this);
-	self->m_dirty = false;
+	self->m_handle = data.detailHandle;
+	memcpy(self->m_channelDataRange.data(), data.dataRange.data(), DataRangeMapSize);
 
 	return getDetail();
 }

@@ -11,9 +11,10 @@
 #include "vfh_defines.h"
 #include "vfh_class_utils.h"
 #include "vfh_log.h"
-#include "utils/vfh_error.h"
-
+#include "vfh_error.h"
+#include "vfh_vray_instances.h"
 #include "vfh_rop.h"
+
 #include "rop/rop_vrayproxyrop.h"
 #include "obj/obj_node_def.h"
 #include "sop/sop_node_def.h"
@@ -27,16 +28,17 @@
 #include "vop/rc/vop_rc_def.h"
 #include "vop/env/vop_env_def.h"
 #include "cmd/vfh_cmd_register.h"
-
 #include "gu_volumegridref.h"
 #include "gu_vrayproxyref.h"
-
 #include "io/io_vrmesh.h"
 
 // For newShopOperator()
 #include <SHOP/SHOP_Node.h>
 #include <SHOP/SHOP_Operator.h>
 
+#ifndef MAKING_DSO
+#  define MAKING_DSO
+#endif
 #include <UT/UT_DSOVersion.h>
 #include <UT/UT_Exit.h>
 #include <UT/UT_IOTable.h>
@@ -45,7 +47,6 @@
 #ifdef CGR_HAS_AUR
 #  include <aurloader.h>
 #endif
-
 
 using namespace VRayForHoudini;
 
@@ -84,7 +85,7 @@ void newGeometryIO(void *)
 /// Called when Houdini exits, but only if ROP operators have been registered
 void unregister(void *)
 {
-	VRayPluginRenderer::deinitialize();
+	deleteVRayInit();
 
 	Error::ErrorChaser &errChaser = Error::ErrorChaser::getInstance();
 	errChaser.enable(false);
@@ -149,7 +150,8 @@ void newSopOperator(OP_OperatorTable *table)
 #endif
 
 	VFH_ADD_SOP_GENERATOR(table, GeomPlane);
-	VFH_ADD_SOP_GENERATOR_CUSTOM(table, VRayProxy, Parm::getPrmTemplate("GeomMeshFile"));
+	VFH_ADD_SOP_GENERATOR_CUSTOM(table, VRayProxy, VRayProxy::getPrmTemplate());
+
 	VRayProxyROP::register_sopoperator(table);
 }
 

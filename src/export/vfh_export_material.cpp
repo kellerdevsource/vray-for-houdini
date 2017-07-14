@@ -70,18 +70,20 @@ VRay::Plugin VRayExporter::exportMaterial(OP_Node *matNode)
 {
 	VRay::Plugin material;
 
-	VOP_Node *vopNode = CAST_VOPNODE(matNode);
-	if (vopNode) {
-		addOpCallback(matNode, RtCallbackSurfaceShop);
-
-		material = exportMaterial(vopNode);
-	}
-	else {
-		OP_Node *materialNode = getVRayNodeFromOp(*matNode, "Material");
-		if (materialNode) {
+	if (matNode) {
+		VOP_Node *vopNode = CAST_VOPNODE(matNode);
+		if (vopNode) {
 			addOpCallback(matNode, RtCallbackSurfaceShop);
 
-			material = exportMaterial(CAST_VOPNODE(materialNode));
+			material = exportMaterial(vopNode);
+		}
+		else {
+			OP_Node *materialNode = getVRayNodeFromOp(*matNode, "Material");
+			if (materialNode) {
+				addOpCallback(matNode, RtCallbackSurfaceShop);
+
+				material = exportMaterial(CAST_VOPNODE(materialNode));
+			}
 		}
 	}
 

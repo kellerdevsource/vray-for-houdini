@@ -27,8 +27,17 @@
 
 #define StrEq(nameA, nameB) (vutils_strcmp(nameA, nameB) == 0)
 
-#define FreePtr(p)    if (p) { delete    p; p = nullptr; }
-#define FreePtrArr(p) if (p) { delete [] p; p = nullptr; }
+template<typename T>
+void FreePtr(T* &p) {
+	delete p;
+	p = nullptr;
+}
+
+template<typename T>
+void FreePtrArr(T* &p) {
+	delete [] p;
+	p = nullptr;
+}
 
 template <typename T, int N>
 char (&ArraySizeHelper(T (&array)[N]))[N];

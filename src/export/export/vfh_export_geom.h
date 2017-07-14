@@ -71,8 +71,8 @@ class VRayExporter;
 class VRayRendererNode;
 class ObjectExporter
 {
-	typedef VUtils::HashMapKey<OP_Node*, PluginSet> OpPluginGenCache;
-	typedef VUtils::HashMapKey<OP_Node*, VRay::Plugin> OpPluginCache;
+	typedef VUtils::HashMap<PluginSet> OpPluginGenCache;
+	typedef VUtils::HashMap<VRay::Plugin> OpPluginCache;
 	typedef VUtils::HashMapKey<int, VRay::Plugin> PrimPluginCache;
 	typedef VUtils::HashMap<VRay::Plugin> GeomNodeCache;
 
@@ -98,16 +98,16 @@ public:
 	/// Test if the current geometry node is visible i.e.
 	/// its display flag is on or it is forced to render regardless
 	/// of its display state (when set as forced geometry on the V-Ray ROP)
-	static int isNodeVisible(VRayRendererNode &rop, OBJ_Node &node);
-
-	/// Test if a ligth is enabled i.e. its enabled flag is on,
-	/// intensity is > 0 or its a forced light on the V-Ray ROP
-	int isLightEnabled(OBJ_Node &objLight) const;
+	static int isNodeVisible(OP_Node &rop, OBJ_Node &node, fpreal t);
 
 	/// Test if the current geometry node is visible i.e.
 	/// its display flag is on or it is forced to render regardless
 	/// of its display state (when set as forced geometry on the V-Ray ROP)
 	int isNodeVisible(OBJ_Node &node) const;
+
+	/// Test if a ligth is enabled i.e. its enabled flag is on,
+	/// intensity is > 0 or its a forced light on the V-Ray ROP
+	int isLightEnabled(OBJ_Node &objLight) const;
 
 	/// Test if the current geometry node should be rendered
 	/// as matte object (when set as matte geometry on the V-Ray ROP)
@@ -206,6 +206,9 @@ public:
 
 	/// Remove object.
 	void removeObject(OBJ_Node &objNode);
+
+	/// Remove object.
+	void removeObject(const char *objNode);
  
 	/// Returns transform from the primitive context stack.
 	VRay::Transform getTm() const;
@@ -224,6 +227,8 @@ public:
 	void addGenerated(OP_Node &key, VRay::Plugin plugin);
 
 	void removeGenerated(OP_Node &key);
+
+	void removeGenerated(const char *key);
 
 private:
 	/// Push context frame when exporting nested object.

@@ -11,33 +11,7 @@
 #include "obj_node_base.h"
 #include "vfh_export_geom.h"
 
-
 using namespace VRayForHoudini;
-
-
-const char *OBJ::getVRayPluginIDName(VRayPluginID pluginID)
-{
-	static const char* pluginIDNames[static_cast<std::underlying_type<VRayPluginID>::type>( VRayPluginID::MAX_PLUGINID )] =
-	{
-		"SunLight",
-		"LightDirect",
-		"LightAmbient",
-		"LightOmni",
-		"LightSphere",
-		"LightSpot",
-		"LightRectangle",
-		"LightMesh",
-		"LightIES",
-		"LightDome",
-		"VRayClipper"
-	};
-
-	return (pluginID < VRayPluginID::MAX_PLUGINID)? pluginIDNames[static_cast<std::underlying_type<VRayPluginID>::type>( pluginID )] : nullptr;
-}
-
-
-///////                           VRayClipper definition
-///
 
 PRM_Template* OBJ::VRayClipper::GetPrmTemplate()
 {

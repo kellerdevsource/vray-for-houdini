@@ -505,7 +505,7 @@ groupsimple {
     parmtag	{ "vray_pluginattr" "gi_texFilteringMultiplier" }
     parmtag	{ "vray_type" "float" }
   }
-#include "SettingsRaycaster.ds"
+#include "$VRAY_UI_DS_PATH/rop/SettingsRaycaster.ds"
 }
 
 

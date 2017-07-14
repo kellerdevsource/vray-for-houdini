@@ -1,6 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <shelfDocument>
 
+<tool name="driver_rop_vrayproxy" label="V-Ray Proxy ROP" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="network">
+        <contextOpType>Driver/rop_vrayproxy</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import drivertoolutils
+drivertoolutils.genericTool(kwargs, 'rop_vrayproxy', nodename="vrayproxy")
+
+]]>
+    </script>
+</tool>
+
+<tool name="driver_rop_vray" label="V-Ray ROP" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="network">
+        <contextOpType>Driver/vray</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import drivertoolutils
+drivertoolutils.genericTool(kwargs, 'vray', nodename="vray")
+
+]]>
+    </script>
+</tool>
+
 <tool name="driver_vray_renderer" label="V-Ray Renderer" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="network">

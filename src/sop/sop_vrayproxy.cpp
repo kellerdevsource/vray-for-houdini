@@ -16,64 +16,35 @@
 #include <GU/GU_PrimPacked.h>
 #include <EXPR/EXPR_Lock.h>
 
-
 using namespace VRayForHoudini;
 
-
-void SOP::VRayProxy::addPrmTemplate(Parm::PRMList &prmTemplate)
+PRM_Template* SOP::VRayProxy::getPrmTemplate()
 {
-	const char *lodItems[] = {
-		"bbox", "Bounding Box",
-		"preview", "Preview Geometry",
-		"full", "Full Geometry",
-	};
-
-	const char *viewportlodItems[] = {
-		GEOviewportLOD(GEO_VIEWPORT_FULL), GEOviewportLOD(GEO_VIEWPORT_FULL, true),
-		GEOviewportLOD(GEO_VIEWPORT_POINTS), GEOviewportLOD(GEO_VIEWPORT_POINTS, true),
-		GEOviewportLOD(GEO_VIEWPORT_BOX), GEOviewportLOD(GEO_VIEWPORT_BOX, true),
-		GEOviewportLOD(GEO_VIEWPORT_CENTROID), GEOviewportLOD(GEO_VIEWPORT_CENTROID, true),
-		GEOviewportLOD(GEO_VIEWPORT_HIDDEN), GEOviewportLOD(GEO_VIEWPORT_HIDDEN, true),
-	};
-
-	const char *missingfileItems[] = {
-		"error", "Report Error",
-		"empty", "No Geometry",
-	};
-
-	prmTemplate.addPrm(Parm::PRMFactory(PRM_ORD, "loadtype", "Load")
-						.setDefault(PRMoneDefaults)
-						.setChoiceListItems(PRM_CHOICELIST_SINGLE, lodItems, CountOf(lodItems))
-						.getPRMTemplate());
-	prmTemplate.addPrm(Parm::PRMFactory(PRM_ORD, "viewportlod", "Display As")
-						.setDefault(PRMzeroDefaults)
-						.setChoiceListItems(PRM_CHOICELIST_SINGLE, viewportlodItems, CountOf(viewportlodItems))
-						.getPRMTemplate());
-	prmTemplate.addPrm(Parm::PRMFactory(PRM_ORD, "missingfile", "Missing File")
-						.setDefault(PRMzeroDefaults)
-						.setChoiceListItems(PRM_CHOICELIST_SINGLE, missingfileItems, CountOf(missingfileItems))
-						.getPRMTemplate());
-	prmTemplate.addPrm(Parm::PRMFactory(PRM_CALLBACK, "reload", "Reload Geometry")
-						.setCallbackFunc(VRayProxy::cbClearCache)
-						.getPRMTemplate());
-	prmTemplate.addPrm(Parm::PRMFactory(PRM_HEADING, "vrayproxyheading", "VRayProxy Settings")
-						.getPRMTemplate());
+	PRM_Template *prmTemplate = Parm::getPrmTemplate("GeomMeshFile");
+	while (prmTemplate && prmTemplate->getType() != PRM_LIST_TERMINATOR) {
+		if (vutils_strcmp(prmTemplate->getToken(), "reload") == 0) {
+			prmTemplate->setCallback(cbClearCache);
+			break;
+		}
+		prmTemplate++;
+	}
+	return prmTemplate;
 }
-
 
 int SOP::VRayProxy::cbClearCache(void *data, int /*index*/, fpreal t, const PRM_Template* /*tplate*/)
 {
-	OP_Node *node = reinterpret_cast<OP_Node *>(data);
+	OP_Node *node = reinterpret_cast<OP_Node*>(data);
 
 	UT_String filepath;
 	node->evalString(filepath, "file", 0, t);
+
 	ClearVRayProxyCache(filepath);
 
 	return 0;
 }
 
-SOP::VRayProxy::VRayProxy(OP_Network *parent, const char *name, OP_Operator *entry):
-	NodeBase(parent, name, entry)
+SOP::VRayProxy::VRayProxy(OP_Network *parent, const char *name, OP_Operator *entry)
+	: NodeBase(parent, name, entry)
 {
 	// This indicates that this SOP manually manages its data IDs,
 	// so that Houdini can identify what attributes may have changed,
@@ -88,13 +59,11 @@ SOP::VRayProxy::VRayProxy(OP_Network *parent, const char *name, OP_Operator *ent
 	mySopFlags.setManagesDataIDs(true);
 }
 
-
 void SOP::VRayProxy::setPluginType()
 {
 	pluginType = VRayPluginType::GEOMETRY;
 	pluginID   = "GeomMeshFile";
 }
-
 
 OP_ERROR SOP::VRayProxy::cookMySop(OP_Context &context)
 {
@@ -211,7 +180,6 @@ OP_ERROR SOP::VRayProxy::cookMySop(OP_Context &context)
 
 	return error();
 }
-
 
 OP::VRayNode::PluginResult SOP::VRayProxy::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
 {

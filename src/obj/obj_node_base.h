@@ -22,25 +22,6 @@
 namespace VRayForHoudini {
 namespace OBJ {
 
-enum class VRayPluginID
-{
-	SunLight = 0,
-	LightDirect,
-	LightAmbient,
-	LightOmni,
-	LightSphere,
-	LightSpot,
-	LightRectangle,
-	LightMesh,
-	LightIES,
-	LightDome,
-	VRayClipper,
-	MAX_PLUGINID
-};
-
-const char *getVRayPluginIDName(VRayPluginID pluginID);
-
-
 class VRayClipper:
 		public OP::VRayNode,
 		public OBJ_Geometry

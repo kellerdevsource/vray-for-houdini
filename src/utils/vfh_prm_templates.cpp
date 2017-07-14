@@ -204,28 +204,11 @@ bool Parm::addPrmTemplateForPlugin(const std::string &pluginID, Parm::PRMList &p
 
 Parm::PRMList* Parm::generatePrmTemplate(const std::string &pluginID)
 {
-	typedef std::unordered_map< std::string, PRMList > PRMListMap;
+	typedef std::unordered_map<std::string, PRMList> PRMListMap;
 	static PRMListMap prmListMap;
 
 	if (prmListMap.count(pluginID) == 0) {
 		PRMList &prmList = prmListMap[pluginID];
-
-		if (pluginID == "BRDFLayered") {
-			VOP::BRDFLayered::addPrmTemplate(prmList);
-		}
-		else if (pluginID == "TexLayered") {
-			VOP::TexLayered::addPrmTemplate(prmList);
-		}
-		else if (pluginID == "MtlMulti") {
-			VOP::MtlMulti::addPrmTemplate(prmList);
-		}
-		else if (pluginID == "GeomPlane") {
-			SOP::GeomPlane::addPrmTemplate(prmList);
-		}
-		else if (pluginID == "GeomMeshFile") {
-			SOP::VRayProxy::addPrmTemplate(prmList);
-		}
-
 		addPrmTemplateForPlugin(pluginID, prmList);
 	}
 

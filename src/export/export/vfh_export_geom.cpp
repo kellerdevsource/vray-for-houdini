@@ -32,17 +32,6 @@
 
 using namespace VRayForHoudini;
 
-// TODO: Move to AppSDK headers.
-enum HierarchicalParameterizedNodeParameterFlags {
-	useParentTimes = (1 << 0),
-	useObjectID = (1 << 1),
-	usePrimaryVisibility = (1 << 2),
-	useUserAttributes = (1 << 3),
-	useParentTimesAtleastForGeometry = (1 << 4),
-	useMaterial = (1 << 5),
-	useGeometry = (1 << 6),
-};
-
 static struct PrimPackedTypeIDs {
 	PrimPackedTypeIDs()
 		: initialized(false)
@@ -116,6 +105,11 @@ static GA_Size fillFreePointMap(const GU_Detail &detail, DynamicBitset &map)
 	return numPoints;
 }
 
+static UT_StringHolder getKeyFromOpNode(OP_Node &opNode)
+{
+	return opNode.getFullPath();
+}
+
 ObjectExporter::ObjectExporter(VRayExporter &pluginExporter)
 	: pluginExporter(pluginExporter)
 	, ctx(pluginExporter.getContext())
@@ -164,9 +158,7 @@ void ObjectExporter::getPrimMaterial(PrimMaterial &primMaterial) const
 			primMaterial.matNode = primMtl.matNode;
 		}
 
-		FOR_CONST_IT (MtlOverrideItems, moIt, primMtl.overrides) {
-			primMaterial.overrides.insert(moIt.key(), moIt.data());
-		}
+		primMaterial.mergeOverrides(primMtl.overrides);
 	}
 }
 
@@ -246,9 +238,9 @@ bool ObjectExporter::hasSubdivApplied(OBJ_Node &objNode) const
 	return res;
 }
 
-int ObjectExporter::isNodeVisible(VRayRendererNode &rop, OBJ_Node &objNode)
+int ObjectExporter::isNodeVisible(OP_Node &rop, OBJ_Node &objNode, fpreal t)
 {
-	OP_Bundle *bundle = rop.getForcedGeometryBundle();
+	OP_Bundle *bundle = getForcedGeometryBundle(rop, t);
 	if (!bundle) {
 		return objNode.getVisible();
 	}
@@ -257,13 +249,12 @@ int ObjectExporter::isNodeVisible(VRayRendererNode &rop, OBJ_Node &objNode)
 
 int ObjectExporter::isNodeVisible(OBJ_Node &objNode) const
 {
-	return isNodeVisible(pluginExporter.getRop(), objNode);
+	return isNodeVisible(pluginExporter.getRop(), objNode, ctx.getTime());
 }
 
 int ObjectExporter::isNodeMatte(OBJ_Node &objNode) const
 {
-	VRayRendererNode &rop = pluginExporter.getRop();
-	OP_Bundle *bundle = rop.getMatteGeometryBundle();
+	OP_Bundle *bundle = getMatteGeometryBundle(pluginExporter.getRop(), ctx.getTime());
 	if (!bundle) {
 		return false;
 	}
@@ -272,8 +263,7 @@ int ObjectExporter::isNodeMatte(OBJ_Node &objNode) const
 
 int ObjectExporter::isNodePhantom(OBJ_Node &objNode) const
 {
-	VRayRendererNode &rop = pluginExporter.getRop();
-	OP_Bundle *bundle = rop.getPhantomGeometryBundle();
+	OP_Bundle *bundle = getPhantomGeometryBundle(pluginExporter.getRop(), ctx.getTime());
 	if (!bundle) {
 		return false;
 	}
@@ -370,19 +360,19 @@ static void overrideItemsToUserAttributes(const MtlOverrideItems &overrides, QSt
 				break;
 			}
 			case MtlOverrideItem::itemTypeDouble: {
-				userAttributes += buf.sprintf("%s=%g",
+				userAttributes += buf.sprintf("%s=%.3f",
 											  overrideName,
 											  overrideItem.valueDouble);
 				break;
 			}
 			case MtlOverrideItem::itemTypeVector: {
-				userAttributes += buf.sprintf("%s=%g,%g,%g;",
+				userAttributes += buf.sprintf("%s=%.3f,%.3f,%.3f;",
 											  overrideName,
 											  overrideItem.valueVector.x, overrideItem.valueVector.y, overrideItem.valueVector.z);
 				break;
 			}
 			default: {
-				vassert(false);
+				break;
 			}
 		}
 	}
@@ -481,6 +471,7 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 	GA_ROHandleF animOffsetHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTRIB_ANIM_OFFSET));
 
 	MtlOverrideAttrExporter attrExp(gdp);
+	const ObjectStyleSheet &objectStyleSheet = getObjectStyleSheet();
 
 	for (GA_Iterator jt(gdp.getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
 		const GEO_Primitive *prim = gdp.getGEOPrimitive(*jt);
@@ -510,14 +501,6 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 			item.t = animOffsetHndl.get(primOffset);
 		}
 
-		// Material overrides.
-		mergeMaterialOverride(item.primMaterial, materialStyleSheetHndl, materialPathHndl, materialOverrideHndl, primOffset, ctx.getTime());
-
-		attrExp.fromPrimitive(item.primMaterial.overrides, primOffset);
-
-		// Check parent overrides.
-		getPrimMaterial(item.primMaterial);
-
 		// Primitive attributes
 		if (isPackedPrim) {
 			const GU_PrimPacked &primPacked = static_cast<const GU_PrimPacked&>(*prim);
@@ -536,9 +519,44 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 			if (numPoints == numPrims) {
 				const GA_Offset pointOffset = gdp.pointOffset(primIndex);
 
+				for (int i = 0; i < objectStyleSheet.styles.count(); ++i) {
+					const TargetStyleSheet &style = objectStyleSheet.styles[i];
+					const SheetTarget &styleTarge = style.target;
+
+					int mergeOverrides = false;
+
+					if (styleTarge.targetType == SheetTarget::sheetTargetAll) {
+						mergeOverrides = true;
+					}
+					else if (styleTarge.targetType == SheetTarget::sheetTargetPrimitive) {
+						const SheetTarget::TargetPrimitive &primTarget = styleTarge.primitive;
+						if (primTarget.targetType == SheetTarget::TargetPrimitive::primitiveTypeGroup) {
+							const GA_PrimitiveGroup *primGroup = gdp.findPrimitiveGroup(primTarget.getGroupName());
+
+							mergeOverrides = primGroup && primGroup->contains(prim);
+						}
+						else if (primTarget.targetType == SheetTarget::TargetPrimitive::primitiveTypeRange) {
+							mergeOverrides = primTarget.isInRange(primIndex);
+						}
+					}
+
+					if (mergeOverrides) {
+						item.primMaterial.appendOverrides(style.overrides.overrides);
+					}
+				}
+
 				attrExp.fromPoint(item.primMaterial.overrides, pointOffset);
 			}
 		}
+
+		// Material overrides.
+		mergeMaterialOverride(item.primMaterial, materialStyleSheetHndl, materialPathHndl, materialOverrideHndl, primOffset, ctx.getTime());
+
+		// Primitive attributes
+		attrExp.fromPrimitive(item.primMaterial.overrides, primOffset);
+
+		// Check parent overrides.
+		getPrimMaterial(item.primMaterial);
 
 		if (isVolumePrim) {
 			pushContext(PrimContext(&objNode, item.tm, item.primID, item.primMaterial));
@@ -625,7 +643,11 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_D
 
 	OP_Node *matNode = objNode.getMaterialNode(ctx.getTime());
 	VRay::Plugin objMaterial = pluginExporter.exportMaterial(matNode);
-	const int objectID = objNode.evalInt(VFH_ATTRIB_OBJECTID, 0, ctx.getTime());
+
+	int objectID = 0;
+	if (Parm::isParmExist(objNode, VFH_ATTRIB_OBJECTID)) {
+		objectID = objNode.evalInt(VFH_ATTRIB_OBJECTID, 0, ctx.getTime());
+	}
 
 	// +1 because first value is time.
 	VRay::VUtils::ValueRefList instances(numParticles+1);
@@ -644,25 +666,27 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_D
 			material = primItem.material;
 		}
 		else if (primItem.primMaterial.matNode) {
-			OpPluginCache::iterator pIt = pluginCache.op.find(primItem.primMaterial.matNode);
+			const UT_StringHolder &matKey = getKeyFromOpNode(*primItem.primMaterial.matNode);
+
+			OpPluginCache::iterator pIt = pluginCache.op.find(matKey.buffer());
 			if (pIt != pluginCache.op.end()) {
 				material = pIt.data();
 			}
 			else {
 				material = pluginExporter.exportMaterial(primItem.primMaterial.matNode);
-				pluginCache.op.insert(primItem.primMaterial.matNode, material);
+				pluginCache.op.insert(matKey.buffer(), material);
 			}
 		}
 
 		// Instancer works only with Node plugins.
 		VRay::Plugin node = getNodeForInstancerGeometry(primItem.geometry, material);
 
-		uint32_t additional_params_flags = useObjectID;
+		uint32_t additional_params_flags = VRay::InstancerParamFlags::useObjectID;
 		if (material) {
-			additional_params_flags |= useMaterial;
+			additional_params_flags |= VRay::InstancerParamFlags::useMaterial;
 		}
 		if (!userAttributes.isEmpty()) {
-			additional_params_flags |= useUserAttributes;
+			additional_params_flags |= VRay::InstancerParamFlags::useUserAttributes;
 		}
 		if (primItem.flags & PrimitiveItem::itemFlagsUseTime) {
 			// TODO: Utilize use_time_instancing.
@@ -678,10 +702,10 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_D
 		item[indexOffs++].setTransform(VRay::Transform(0));
 		item[indexOffs++].setDouble(additional_params_flags);
 		item[indexOffs++].setDouble(primItem.objectID != objectIdUndefined ? primItem.objectID : objectID);
-		if (additional_params_flags & useUserAttributes) {
+		if (additional_params_flags & VRay::InstancerParamFlags::useUserAttributes) {
 			item[indexOffs++].setString(userAttributes.toLocal8Bit().constData());
 		}
-		if (additional_params_flags & useMaterial) {
+		if (additional_params_flags & VRay::InstancerParamFlags::useMaterial) {
 			item[indexOffs++].setPlugin(material);
 		}
 		item[indexOffs++].setPlugin(node);
@@ -1213,6 +1237,8 @@ VRay::Plugin ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_De
 
 	const GA_Size numPoints = gdp.getNumPoints();
 
+	const ObjectStyleSheet &objectStyleSheet = getObjectStyleSheet();
+
 	int validPointIdx = 0;
 	for (GA_Index i = 0; i < numPoints; ++i) {
 		const GA_Offset pointOffset = gdp.pointOffset(i);
@@ -1246,6 +1272,27 @@ VRay::Plugin ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_De
 
 		// Check parent overrides.
 		getPrimMaterial(item.primMaterial);
+
+#if 0
+		for (int s = 0; s < objectStyleSheet.styles.count(); ++s) {
+			const TargetStyleSheet &style = objectStyleSheet.styles[s];
+			const SheetTarget &styleTarge = style.target;
+
+			if (styleTarge.targetType == SheetTarget::sheetTargetAll) {
+				item.primMaterial.mergeOverrides(style.overrides.overrides);
+			}
+			else if (styleTarge.targetType == SheetTarget::sheetTargetPrimitive) {
+				const SheetTarget::TargetPrimitive &primTarget = styleTarge.primitive;
+
+				if (primTarget.targetType == SheetTarget::TargetPrimitive::primitiveTypeGroup) {
+					const GA_PrimitiveGroup *primGroup = gdp.findPrimitiveGroup(primTarget.getGroup());
+					if (primGroup && primGroup->contains(prim)) {
+						item.primMaterial.appendOverrides(style.overrides.overrides);
+					}
+				}
+			}
+		}
+#endif
 
 		// Mult with object inv. tm.
 		VRay::Transform objTm = VRayExporter::getObjTransform(instaceObjNode, ctx, false);
@@ -1321,12 +1368,10 @@ VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode)
 
 int ObjectExporter::isLightEnabled(OBJ_Node &objLight) const
 {
-	VRayRendererNode &rop = pluginExporter.getRop();
-
 	int enabled = 0;
 	objLight.evalParameterOrProperty("enabled", 0, ctx.getTime(), enabled);
 
-	OP_Bundle *bundle = rop.getForcedLightsBundle();
+	OP_Bundle *bundle = getForcedLightsBundle(pluginExporter.getRop(), ctx.getTime());
 	return bundle && (bundle->contains(&objLight, false) || (enabled > 0));
 }
 
@@ -1359,7 +1404,7 @@ VRay::Plugin ObjectExporter::exportLight(OBJ_Light &objLight)
 
 		VRay::Transform tm = getTm();
 
-		const bool flipTM = vrayNode->getVRayPluginID() == OBJ::getVRayPluginIDName(OBJ::VRayPluginID::LightDome);
+		const bool flipTM = vrayNode->getVRayPluginID() == getVRayPluginIDName(VRayPluginID::LightDome);
 		if (flipTM) {
 			VUtils::swap(tm.matrix[1], tm.matrix[2]);
 		}
@@ -1431,7 +1476,9 @@ VRay::Plugin ObjectExporter::exportNode(OBJ_Node &objNode)
 {
 	using namespace Attrs;
 
-	OpPluginCache::iterator pIt = pluginCache.op.find(&objNode);
+	const UT_StringHolder &key = getKeyFromOpNode(objNode);
+
+	OpPluginCache::iterator pIt = pluginCache.op.find(key.buffer());
 	if (pIt != pluginCache.op.end()) {
 		return pIt.data();
 	}
@@ -1476,24 +1523,26 @@ VRay::Plugin ObjectExporter::exportNode(OBJ_Node &objNode)
 	VRay::Plugin node = pluginExporter.exportPlugin(nodeDesc);
 	UT_ASSERT(node);
 
-	pluginCache.op.insert(&objNode, node);
+	pluginCache.op.insert(key.buffer(), node);
 
 	return node;
 }
 
-void ObjectExporter::addGenerated(OP_Node &key, VRay::Plugin plugin)
+void ObjectExporter::addGenerated(OP_Node &opNode, VRay::Plugin plugin)
 {
 	if (!plugin) {
 		return;
 	}
 
-	PluginSet &pluginsSet = pluginCache.generated[&key];
+	const UT_StringHolder &key = getKeyFromOpNode(opNode);
+
+	PluginSet &pluginsSet = pluginCache.generated[key.buffer()];
 	pluginsSet.insert(plugin);
 }
 
-void ObjectExporter::removeGenerated(OP_Node &key)
+void ObjectExporter::removeGenerated(const char *key)
 {
-	OpPluginGenCache::iterator cIt = pluginCache.generated.find(&key);
+	OpPluginGenCache::iterator cIt = pluginCache.generated.find(key);
 	if (cIt == pluginCache.generated.end()) {
 		return;
 	}
@@ -1507,12 +1556,31 @@ void ObjectExporter::removeGenerated(OP_Node &key)
 	pluginCache.generated.erase(cIt);
 }
 
+void ObjectExporter::removeGenerated(OP_Node &opNode)
+{
+	const UT_StringHolder &key = getKeyFromOpNode(opNode);
+
+	removeGenerated(key.buffer());
+}
+
 void ObjectExporter::removeObject(OBJ_Node &objNode)
+{
+	const UT_StringHolder &key = getKeyFromOpNode(objNode);
+
+	removeObject(key.buffer());
+}
+
+void ObjectExporter::removeObject(const char *objNode)
 {
 	// Remove generated plugin (lights, volumes).
 	removeGenerated(objNode);
 
-	// TODO: Remove object plugin itself.
+	// Remove self.
+	OpPluginCache::iterator pIt = pluginCache.op.find(objNode);
+	if (pIt != pluginCache.op.end()) {
+		pluginExporter.removePlugin(pIt.data());
+		pluginCache.op.erase(pIt);
+	}
 }
 
 VRay::Plugin ObjectExporter::exportObject(OBJ_Node &objNode)

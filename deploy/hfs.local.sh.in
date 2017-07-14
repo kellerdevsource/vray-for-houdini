@@ -1,10 +1,11 @@
-# V-Ray For Houdini Linux Developer Launcher
+# V-Ray For Houdini Linux Development Launcher
 #
 
 export VRAY_APPSDK=@APPSDK_ROOT@
 export VRAY_PLUGIN_DESC_PATH=@CMAKE_SOURCE_DIR@/deploy/plugins_desc
 export VRAY_UI_DS_PATH=@CMAKE_SOURCE_DIR@/deploy/ui
 export VRAY_FOR_HOUDINI_AURA_LOADERS=@Phoenix_LIBRARIES@
+export PYTHONPATH=@VFH_PYTHON_DIRPATH@;^&
 
 export HOUDINI_DSO_ERROR=1
 export HOUDINI13_VOLUME_COMPATIBILITY=1
@@ -12,7 +13,8 @@ export HFS="@HOUDINI_INSTALL_ROOT@"
 export HOUDINI_PATH=@CMAKE_SOURCE_DIR@/deploy/vfh_home:\&
 export HOUDINI_DSO_PATH=@VFH_DSO_DIRPATH@:\&
 
+# Add libs to path
 export PATH=${HFS}/bin:${VRAY_APPSDK}/bin:@VFH_BIN_DIRPATH@:${PATH}
-export LD_LIBRARY_PATH=${VRAY_APPSDK}/bin:${VRAY_FOR_HOUDINI_AURA_LOADERS}:${LD_LIBRARY_PATH}
+export LD_LIBRARY_PATH=${HFS}/dsolib:${VRAY_APPSDK}/bin:${VRAY_FOR_HOUDINI_AURA_LOADERS}:${LD_LIBRARY_PATH}
 
-"${HFS}/bin/houdini" -foreground $*
+@HFS_BIN@ $*
