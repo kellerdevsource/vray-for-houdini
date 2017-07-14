@@ -12,15 +12,20 @@
 #include "vfh_defines.h"
 #include "vfh_material_override.h"
 #include "vfh_prm_templates.h"
-
-#include <STY/STY_Styler.h>
-#include <STY/STY_Subject.h>
-#include <STY/STY_TargetMatchStatus.h>
-#include <STY/STY_OverrideValues.h>
-#include <STY/STY_OverrideValuesFilter.h>
+#include "vfh_log.h"
+#include "vfh_attr_utils.h"
 
 #include <SHOP/SHOP_GeoOverride.h>
 #include <GA/GA_AttributeFilter.h>
+#include <GEO/GEO_Detail.h>
+
+#include <STY/STY_StylerGroup.h>
+#include <STY/STY_TargetMatchStatus.h>
+#include <STY/STY_OverrideValues.h>
+#include <STY/STY_OverrideValuesFilter.h>
+#include <STY/STY_Subject.h>
+#include <GSTY/GSTY_SubjectPrim.h>
+#include <GSTY/GSTY_SubjectPrimGroup.h>
 
 #include <rapidjson/document.h>
 
@@ -59,11 +64,27 @@ namespace Styles {
 	}
 }
 
+void PrimMaterial::merge(const PrimMaterial &other)
+{
+	if (other.matNode) {
+		matNode = other.matNode;
+	}
+	mergeOverrides(other.overrides);
+}
+
 void PrimMaterial::mergeOverrides(const MtlOverrideItems &items)
 {
 	FOR_CONST_IT (MtlOverrideItems, it, items) {
 		overrides.insert(it.key(), it.data());
 	}
+}
+
+void PrimMaterial::append(const PrimMaterial &other)
+{
+	if (!matNode && other.matNode) {
+		matNode = other.matNode;
+	}
+	appendOverrides(other.overrides);
 }
 
 void PrimMaterial::appendOverrides(const MtlOverrideItems &items)
@@ -312,244 +333,118 @@ void MtlOverrideAttrExporter::addAttributesAsOverrides(const GEOAttribList &attr
 	}
 }
 
-void SheetTarget::TargetPrimitive::setGroupName(const QString &value)
+static void mergeOverrideValues(const STY_OverrideValues &styOverrideValues, PrimMaterial &primMaterial)
 {
-	targetType = primitiveTypeGroup;
-	group = value;
-}
+	UT_Int64Array intVals;
+	UT_Fpreal64Array floatVals;
+	UT_StringArray stringVals;
 
-const char *SheetTarget::TargetPrimitive::getGroupName() const
-{
-	return group.toLocal8Bit().constData();
-}
-
-int PrimRange::inRange(int index) const
-{
-	if (from == primRangeNotSet) {
-		return false;
-	}
-	if (to == primRangeNotSet) {
-		return index == from;
-	}
-	return index >= from && index <= to;
-}
-
-void SheetTarget::TargetPrimitive::addRange(const PrimRange &range)
-{
-	targetType = primitiveTypeRange;
-	ranges.insert(range);
-}
-
-int SheetTarget::TargetPrimitive::isInRange(int index) const
-{
-	for (const PrimRange &range : ranges) {
-		if (range.inRange(index)) {
-			return true;
-		}
-	}
-	return false;
-}
-
-static void parseStyleSheetTarget(const Value &target, SheetTarget &sheetTarget)
-{
-	for (Value::ConstMemberIterator pIt = target.MemberBegin(); pIt != target.MemberEnd(); ++pIt) {
-		const UT_String key(pIt->name.GetString());
-		const Value &value = pIt->value;
-		if (key.equal("group")) {
-			sheetTarget.targetType = SheetTarget::sheetTargetPrimitive;
-
-			const QString groupValue = value.GetString();
-			const QStringList groups = groupValue.split(' ', QString::SkipEmptyParts);
-
-			for (const QString &group : groups) {
-				static QRegExp re("\\d*");
-
-				if (group.contains('-')) {
-					const QStringList groupRangeValue = group.split('-');
-					sheetTarget.primitive.addRange(PrimRange(groupRangeValue[0].toInt(), groupRangeValue[1].toInt()));
-				}
-				else if (re.exactMatch(group)) {
-					sheetTarget.primitive.addRange(PrimRange(group.toInt()));
-				}
-				else {
-					sheetTarget.primitive.setGroupName(group);
-				}
-			}
-		}
-		else {
-			// ...
-		}
-	}
-}
-
-static void parseStyleSheet(const Value &style, ObjectStyleSheet &objSheet, fpreal t)
-{
-	// Ignore current style.
-	int mute = false;
-
-	if (style.HasMember(Styles::flags)) {
-		const Value &flagsValue = style[Styles::flags];
-
-		for (Value::ConstValueIterator flagsIt = flagsValue.Begin(); flagsIt != flagsValue.End(); ++flagsIt) {
-			const UT_String flag(flagsIt->GetString());
-			if (flag.equal(Styles::Flags::mute)) {
-				mute = true;
-			}
-		}
-	}
-
-	if (!mute && style.HasMember(Styles::overrides)) {
-		const Value &styleOver = style[Styles::overrides];
-
-		PrimMaterial styleOverrides;
-
-		if (styleOver.HasMember(Styles::Overrides::material)) {
-			const Value &mtlOver = styleOver[Styles::Overrides::material];
-			if (mtlOver.HasMember(Styles::Overrides::Material::name)) {
-				const char *matPath = mtlOver[Styles::Overrides::Material::name].GetString();
-
-				styleOverrides.matNode = getOpNodeFromPath(matPath, t);
-			}
-		}
-
-		if (styleOver.HasMember(Styles::Overrides::materialParameters)) {
-			const Value &paramOverrides = styleOver[Styles::Overrides::materialParameters];
-
-			parseStyleSheetOverrides(paramOverrides, styleOverrides.overrides);
-		}
-
-		// If no specific target will be found later, then style will apply to all.
-		TargetStyleSheet targetStyle(SheetTarget::sheetTargetAll);
-		targetStyle.overrides = styleOverrides;
-
-		if (style.HasMember(Styles::target)) {
-			const Value &target = style[Styles::target];
-
-			if (target.HasMember(Styles::Target::subTarget)) {
-				const Value &subTarget = target[Styles::Target::subTarget];
-				parseStyleSheetTarget(subTarget, targetStyle.target);
-			}
-			else {
-				parseStyleSheetTarget(target, targetStyle.target);
-			}
-		}
-
-		objSheet.styles += targetStyle;
-	}
-}
-
-void VRayForHoudini::parseObjectStyleSheet(OBJ_Node &objNode, ObjectStyleSheet &objSheet, fpreal t)
-{
-	using namespace rapidjson;
-
-	if (!Parm::isParmExist(objNode, VFH_ATTR_SHOP_MATERIAL_STYLESHEET))
+	if (!styOverrideValues.size())
 		return;
+
+	for (const auto &styOverrideValueCategory : styOverrideValues) {
+		const UT_StringHolder &key = styOverrideValueCategory.first;
+		const STY_OverrideValueMap &values = styOverrideValueCategory.second;
+
+		if (key.equal(Styles::Overrides::material)) {
+			const auto &nameIt = values.find(Styles::Overrides::Material::name);
+			if (nameIt != values.end()) {
+				const auto &nameValuePair = *nameIt;
+
+				STY_OptionEntryHandle nameOpt = nameValuePair.second.myValue;
+				if (nameOpt->importOption(stringVals)) {
+					primMaterial.matNode = getOpNodeFromPath(stringVals[0].buffer());
+				}
+			}
+		}
+		else if (key.equal(Styles::Overrides::materialParameters)) {
+			for (const auto &value : values) {
+				const UT_StringHolder &attrName = value.first;
+				STY_OptionEntryHandle opt = value.second.myValue;
+
+				MtlOverrideItems::iterator moIt = primMaterial.overrides.find(attrName);
+				if (moIt != primMaterial.overrides.end())
+					continue;
+
+				MtlOverrideItem overrideItem;
+
+				if (opt->importOption(intVals)) {
+					if (intVals.size() == 1) {
+						overrideItem.setType(MtlOverrideItem::itemTypeInt);
+						overrideItem.valueInt = intVals(0);
+					}
+					else if (intVals.size() == 3 ||
+							 intVals.size() == 4)
+					{
+						overrideItem.setType(MtlOverrideItem::itemTypeVector);
+						overrideItem.valueVector = utVectorVRayVector(intVals);
+					}
+				}
+				else if (opt->importOption(stringVals)) {
+					if (stringVals.size() == 1) {
+						overrideItem.setType(MtlOverrideItem::itemTypeString);
+						overrideItem.valueString = stringVals(0).buffer();
+					}
+				}
+				else if (opt->importOption(floatVals)) {
+					if (floatVals.size() == 1) {
+						overrideItem.setType(MtlOverrideItem::itemTypeDouble);
+						overrideItem.valueDouble = floatVals(0);
+					}
+					else if (floatVals.size() == 3 ||
+							 floatVals.size() == 4)
+					{
+						overrideItem.setType(MtlOverrideItem::itemTypeVector);
+						overrideItem.valueVector = utVectorVRayVector(floatVals);
+					}
+				}
+
+				if (overrideItem.getType() != MtlOverrideItem::itemTypeNone) {
+					primMaterial.overrides.insert(attrName.buffer(), overrideItem);
+				}
+			}
+		}
+	}
+}
+
+static void mergeOverrideValues(const STY_Styler &styler, PrimMaterial &primMaterial)
+{
+	static const STY_OverrideValuesFilter styOverrideValuesFilter(nullptr);
+
+	STY_OverrideValues styOverrideValues;
+	styler.getOverrides(styOverrideValues, styOverrideValuesFilter);
+
+	mergeOverrideValues(styOverrideValues, primMaterial);
+}
+
+void VRayForHoudini::getOverridesForPrimitive(const STY_Styler &geoStyler, const GEO_Primitive &prim, PrimMaterial &primMaterial)
+{
+	STY_Styler primStyler = getStylerForPrimitive(geoStyler, prim);
+	mergeOverrideValues(primStyler, primMaterial);
+}
+
+STY_Styler VRayForHoudini::getStylerForPrimitive(const STY_Styler &geoStyler, const GEO_Primitive &prim)
+{
+	GSTY_SubjectPrim primSubject(&prim);
+	return geoStyler.cloneWithSubject(primSubject);
+}
+
+STY_Styler VRayForHoudini::getStylerForObject(OBJ_Node &objNode, fpreal t)
+{
+	if (!Parm::isParmExist(objNode, VFH_ATTR_SHOP_MATERIAL_STYLESHEET))
+		return STY_Styler();
 
 	UT_String styleSheet;
 	objNode.evalString(styleSheet, VFH_ATTR_SHOP_MATERIAL_STYLESHEET, 0, t);
 
 	const char *styleBuf = styleSheet.buffer();
 	if (!UTisstring(styleBuf))
-		return;
+		return STY_Styler();
 
-	Document document;
-	document.Parse(styleBuf);
-
-	if (!document.HasMember(Styles::styles))
-		return;
-
-	class sty_FooSubject
-		: public STY_Subject
-	{
-	public:
-		STY_TargetMatchStatus matchesStyleTarget(const STY_TargetHandle &target) const VRAY_OVERRIDE {
-			const STY_Target &tgt = *target;
-			std::cout << "Target: " << tgt.getLabel() << std::endl;
-
-			const STY_TargetType &tgtType = tgt.getType();
-
-			const STY_OptionEntryMap &tgtReq = tgt.getTargetRequirements();
-
-			for (const auto &reqIt : tgtReq) {
-				std::cout << "  Req: " << reqIt.first << std::endl;
-
-				const STY_OptionEntryHandle &opt = reqIt.second;
-
-				UT_Int64Array    int_vals;
-				UT_Fpreal64Array flt_vals;
-				UT_StringArray   str_vals;
-				if (opt->importOption(int_vals))
-					std::cout << int_vals;
-				else if (opt->importOption(flt_vals))
-					std::cout << flt_vals;
-				else if (opt->importOption(str_vals))
-					std::cout << str_vals;
-				std::cout << std::endl;
-			}
-
-			return STY_TargetMatchStatus(true, STY_TargetHandle());
-		}
-	};
+	Log::getLog().debug("getStylerForObject(%s)", objNode.getName().buffer()); 
 
 	STY_StyleSheetHandle styStyleSheetHandle(new STY_StyleSheet(styleBuf, NULL, STY_LOAD_FOR_STYLING));
 	STY_Styler styStyler(styStyleSheetHandle);
 
-	sty_FooSubject stySubject;
-	STY_Styler styFinalStyler = styStyler.cloneWithSubject(stySubject);
-
-	STY_OverrideValuesFilter styOverrideValuesFilter(nullptr);
-	STY_OverrideValues styOverrideValues;
-	styFinalStyler.getOverrides(styOverrideValues, styOverrideValuesFilter);
-
-	UT_Int64Array    int_vals;
-	UT_Fpreal64Array flt_vals;
-	UT_StringArray   str_vals;
-	std::cout << "Overrides:\n";
-	for (const auto &styOverrideValueCategory : styOverrideValues) {
-		std::cout << "Override category: " << styOverrideValueCategory.first << std::endl;
-		for (const auto &styOverrideValue : styOverrideValueCategory.second) {
-			STY_OptionEntryHandle opt = styOverrideValue.second.myValue;
-			std::cout << "Override value: " << styOverrideValue.first << " = ";
-			if (opt->importOption(int_vals))
-				std::cout << int_vals;
-			else if (opt->importOption(flt_vals))
-				std::cout << flt_vals;
-			else if (opt->importOption(str_vals))
-				std::cout << str_vals;
-			std::cout << std::endl;
-		}
-	}
-
-	const Value &styles = document[Styles::styles];
-	UT_ASSERT(styles.IsArray());
-
-	/// Use only one "solo" style.
-	int solo = false;
-
-	for (Value::ConstValueIterator it = styles.Begin(); it != styles.End(); ++it) {
-		const Value &style = *it;
-		UT_ASSERT(style.IsObject());
-
-		if (style.HasMember(Styles::flags)) {
-			const Value &flagsValue = style[Styles::flags];
-
-			for (Value::ConstValueIterator flagsIt = flagsValue.Begin(); flagsIt != flagsValue.End(); ++flagsIt) {
-				const UT_String flag(flagsIt->GetString());
-
-				if (flag.equal(Styles::Flags::solo)) {
-					parseStyleSheet(style, objSheet, t);
-					solo = true;
-				}
-			}
-		}
-	}
-
-	if (!solo) {
-		for (Value::ConstValueIterator it = styles.Begin(); it != styles.End(); ++it) {
-			const Value &style = *it;
-			UT_ASSERT(style.IsObject());
-
-			parseStyleSheet(style, objSheet, t);
-		}
-	}
+	return styStyler;
 }
