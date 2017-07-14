@@ -191,6 +191,9 @@ void VRayExporter::setAttrsFromSHOPOverrides(Attrs::PluginDesc &pluginDesc, VOP_
 				mtlOverrideDesc.addAttribute(attr);
 				mtlOverrideDesc.addAttribute(Attrs::PluginAttr("user_attribute", prm->getToken()));
 
+				// Set priority to user attribute.
+				mtlOverrideDesc.addAttribute(Attrs::PluginAttr("attribute_priority", 1));
+
 				VRay::Plugin mtlOverridePlg = exportPlugin(mtlOverrideDesc);
 				pluginDesc.addAttribute(Attrs::PluginAttr(attrName, mtlOverridePlg, "color"));
 
