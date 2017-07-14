@@ -71,8 +71,8 @@ class VRayExporter;
 class VRayRendererNode;
 class ObjectExporter
 {
-	typedef VUtils::HashMapKey<OP_Node*, PluginSet> OpPluginGenCache;
-	typedef VUtils::HashMapKey<OP_Node*, VRay::Plugin> OpPluginCache;
+	typedef VUtils::HashMap<PluginSet> OpPluginGenCache;
+	typedef VUtils::HashMap<VRay::Plugin> OpPluginCache;
 	typedef VUtils::HashMapKey<int, VRay::Plugin> PrimPluginCache;
 	typedef VUtils::HashMap<VRay::Plugin> GeomNodeCache;
 
@@ -206,6 +206,9 @@ public:
 
 	/// Remove object.
 	void removeObject(OBJ_Node &objNode);
+
+	/// Remove object.
+	void removeObject(const char *objNode);
  
 	/// Returns transform from the primitive context stack.
 	VRay::Transform getTm() const;
@@ -224,6 +227,8 @@ public:
 	void addGenerated(OP_Node &key, VRay::Plugin plugin);
 
 	void removeGenerated(OP_Node &key);
+
+	void removeGenerated(const char *key);
 
 private:
 	/// Push context frame when exporting nested object.

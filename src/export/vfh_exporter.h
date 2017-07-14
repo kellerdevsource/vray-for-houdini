@@ -129,7 +129,7 @@ public:
 	enum IprMode {
 		iprModeNone = 0,
 		iprModeRT,
-		iprModeRenderView,
+		iprModeSOHO,
 	};
 
 	explicit VRayExporter(OP_Node *rop);
@@ -153,9 +153,8 @@ public:
 
 	/// Gather data for camera settings
 	/// @param camera[in] - the active camera
-	/// @param rop[in] - the rop node invoking the rendering
 	/// @param viewParams[out] - collects camera settings
-	void fillCameraData(const OBJ_Node &camera, const OP_Node &rop, ViewParams &viewParams);
+	void fillViewParamFromCameraNode(const OBJ_Node &camera, ViewParams &viewParams);
 
 	/// Gather data for motion blur
 	/// @param viewParams[out] - collects motion blur settings
@@ -203,6 +202,11 @@ public:
 	/// This is called once for each frame we want to render
 	/// @retval 0 on success
 	int exportView();
+
+	/// Export view from the specified view parameters.
+	/// Used in SOHO IPR.
+	/// @param viewParams View parameters
+	void exportView(ViewParams viewParams);
 
 	/// Export the actual scene - geometry, materials, lights, environment,
 	/// volumes and render channels. This is called once for each frame we
@@ -563,6 +567,9 @@ private:
 
 	/// Object exporter.
 	ObjectExporter objectExporter;
+
+	/// View plugins storage for easier access.
+	ViewPluginsDesc viewPlugins;
 
 public:
 	/// Register event callback for a given node. This callback will be invoked when

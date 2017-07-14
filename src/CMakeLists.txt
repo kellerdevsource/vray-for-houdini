@@ -17,6 +17,7 @@ include_directories(gu)
 include_directories(sop)
 include_directories(vop)
 include_directories(rop)
+include_directories(lib)
 include_directories(vop/brdf)
 include_directories(vop/material)
 include_directories(vop/texture)
@@ -60,6 +61,7 @@ set(EXPORTER_SOURCES
 	utils/vfh_prm_globals.cpp
 	utils/vfh_prm_json.cpp
 	utils/vfh_prm_templates.cpp
+	lib/vfh_vray_instances.cpp
 )
 
 set(EXPORTER_HEADERS
@@ -91,6 +93,7 @@ set(EXPORTER_HEADERS
 	utils/vfh_prm_globals.h
 	utils/vfh_prm_json.h
 	utils/vfh_prm_templates.h
+	lib/vfh_vray_instances.h
 )
 
 set(SOURCES
@@ -257,9 +260,9 @@ function(vfh_generate_launcher)
 		elseif(APPLE)
 		else()
 			if(ARG_BATCH)
-				set(ARG_BIN "\"${HFS}/bin/hbatch\"")
+				set(ARG_BIN "\"\${HFS}/bin/hbatch\"")
 			else()
-				set(ARG_BIN "\"${HFS}/bin/houdini\" -foreground")
+				set(ARG_BIN "\"\${HFS}/bin/houdini\" -foreground")
 			endif()
 		endif()
 	endif()

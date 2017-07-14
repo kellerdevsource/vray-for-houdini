@@ -593,14 +593,22 @@ bool VRayExporter::setAttrsFromUTOptions(Attrs::PluginDesc &pluginDesc, const UT
 
 VRayExporter::VRayExporter(OP_Node *rop)
 	: m_rop(rop)
+	, m_renderMode(0)
+	, m_isAborted(0)
+	, m_frames(0)
 	, m_error(ROP_CONTINUE_RENDER)
-	, m_isIPR(false)
+	, m_workMode(ExpRender)
+	, m_isIPR(iprModeNone)
+	, m_isGPU(0)
 	, m_isAnimation(false)
+	, m_isMotionBlur(0)
+	, m_isVelocityOn(0)
+	, m_timeStart(0)
+	, m_timeEnd(0)
 	, objectExporter(*this)
 {
 	Log::getLog().debug("VRayExporter()");
 }
-
 
 VRayExporter::~VRayExporter()
 {
@@ -1335,8 +1343,6 @@ void VRayExporter::resetOpCallbacks()
 	}
 
 	m_opRegCallbacks.clear();
-
-	reset();
 }
 
 
