@@ -335,6 +335,7 @@ void MtlOverrideAttrExporter::addAttributesAsOverrides(const GEOAttribList &attr
 
 static void mergeOverrideValues(const STY_OverrideValues &styOverrideValues, PrimMaterial &primMaterial)
 {
+#if UT_MAJOR_VERSION_INT >= 16
 	UT_Int64Array intVals;
 	UT_Fpreal64Array floatVals;
 	UT_StringArray stringVals;
@@ -405,32 +406,44 @@ static void mergeOverrideValues(const STY_OverrideValues &styOverrideValues, Pri
 			}
 		}
 	}
+#endif
 }
 
 static void mergeOverrideValues(const STY_Styler &styler, PrimMaterial &primMaterial)
 {
+#if UT_MAJOR_VERSION_INT >= 16
 	static const STY_OverrideValuesFilter styOverrideValuesFilter(nullptr);
 
 	STY_OverrideValues styOverrideValues;
 	styler.getOverrides(styOverrideValues, styOverrideValuesFilter);
 
 	mergeOverrideValues(styOverrideValues, primMaterial);
+#endif
 }
 
 void VRayForHoudini::getOverridesForPrimitive(const STY_Styler &geoStyler, const GEO_Primitive &prim, PrimMaterial &primMaterial)
 {
+#if UT_MAJOR_VERSION_INT >= 16
 	STY_Styler primStyler = getStylerForPrimitive(geoStyler, prim);
 	mergeOverrideValues(primStyler, primMaterial);
+#endif
 }
 
 STY_Styler VRayForHoudini::getStylerForPrimitive(const STY_Styler &geoStyler, const GEO_Primitive &prim)
 {
+#if UT_MAJOR_VERSION_INT < 16
+	return STY_Styler();
+#else
 	GSTY_SubjectPrim primSubject(&prim);
 	return geoStyler.cloneWithSubject(primSubject);
+#endif
 }
 
 STY_Styler VRayForHoudini::getStylerForObject(OBJ_Node &objNode, fpreal t)
 {
+#if UT_MAJOR_VERSION_INT < 16
+	return STY_Styler();
+#else
 	if (!Parm::isParmExist(objNode, VFH_ATTR_SHOP_MATERIAL_STYLESHEET))
 		return STY_Styler();
 
@@ -447,4 +460,5 @@ STY_Styler VRayForHoudini::getStylerForObject(OBJ_Node &objNode, fpreal t)
 	STY_Styler styStyler(styStyleSheetHandle);
 
 	return styStyler;
+#endif
 }
