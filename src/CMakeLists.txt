@@ -205,12 +205,6 @@ if (Phoenix_FOUND)
 	link_directories(${Phoenix_LIBRARIES})
 endif()
 
-option(USE_PCH "Use precompiled header" OFF)
-if(USE_PCH)
-	# set_precompiled_header(vfh_pch.h "${CMAKE_CURRENT_SOURCE_DIR}/vfh_pch.cpp" EXPORTER_SOURCES)
-	# set_precompiled_header(vfh_pch.h "${CMAKE_CURRENT_SOURCE_DIR}/vfh_pch.cpp" SOURCES)
-endif()
-
 houdini_library(vray_for_houdini_exporter "${EXPORTER_SOURCES};${EXPORTER_HEADERS}")
 houdini_plugin(${PROJECT_NAME} "${SOURCES};${HEADERS}")
 
