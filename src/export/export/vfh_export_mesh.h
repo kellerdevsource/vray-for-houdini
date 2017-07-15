@@ -114,18 +114,6 @@ public:
 	///       with hasPolyGeometry() before using this
 	MapChannels& getMapChannels();
 
-	/// Get the number of matrial ids
-	/// @note check if the translator has been properly initialized
-	///       with hasPolyGeometry() before using this
-	int getNumMtlIDs() { return getFaceMtlIDs().size(); }
-
-	/// Get the list of per face matrial ids (cached internally)
-	/// These are ued by MtlMulti plugin to index the correct material
-	/// for the face
-	/// @note check if the translator has been properly initialized
-	///       with hasPolyGeometry() before using this
-	VRay::VUtils::IntRefList& getFaceMtlIDs();
-
 	/// Generate mesh plugin description from all supported primitives in the
 	/// GU_Detail provided
 	/// @note this will init the translator internally with the passed gdp
@@ -135,7 +123,8 @@ public:
 	///         and pluginDesc is modified
 	bool asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc &pluginDesc) VRAY_OVERRIDE;
 
-	VRay::Plugin getMaterial() const { return material; }
+	/// Build material taking overrides into account.
+	VRay::Plugin getMaterial();
 
 private:
 	/// Helper funtion to digest point attibutes into map channels
@@ -168,7 +157,9 @@ private:
 	/// @param mapChannels[out] - collects generated map channels
 	///        from material override attribute
 	/// @retval number of channels added to mapChannels
-	void getMtlOverrides(MapChannels &mapChannels);
+	void getMtlOverrides(MapChannels &mapChannels) const;
+
+	VRay::Plugin getMultiMaterial();
 
 	/// A list of poly primitives that can be handled by this translator.
 	const GEOPrimList &primList;
@@ -188,16 +179,16 @@ private:
 	VRay::VUtils::VectorRefList normals; ///< list of vertex normals
 	VRay::VUtils::IntRefList    m_faceNormals; ///< list of faces for vertex normals
 	VRay::VUtils::VectorRefList velocities; ///< list of vertex velocities
-	VRay::VUtils::IntRefList    face_mtlIDs; ///< list of material ids used to index the correct material
-	MapChannels                 map_channels_data; /// mesh map channels
+
+	/// Mesh mapping channels (UV only).
+	/// TODO: Resolve UV.
+	MapChannels map_channels_data;
 
 	/// A list of shader names.
 	/// Each item is a list of 2 elements:
 	///  0 - face material ID
 	///  1 - shader name
 	VRay::VUtils::ValueRefList shadersNamesList;
-
-	VRay::Plugin material;
 };
 
 
