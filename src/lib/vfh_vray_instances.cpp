@@ -267,6 +267,7 @@ void VRayForHoudini::deleteVRayRenderer(VRay::VRayRenderer* &instance)
 			if (vrayInstance == instance) {
 				Log::getLog().debug("Deleting VRayRenderer: 0x%X", vrayInstance);
 				FreePtr(vrayInstance);
+				instance = nullptr;
 				break;
 			}
 		}
