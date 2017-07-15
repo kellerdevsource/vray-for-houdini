@@ -126,12 +126,13 @@ public:
 	bool hasSubdivApplied(OBJ_Node &objNode) const;
 
 	int getPrimKey(const GA_Primitive &prim);
-
 	int getPrimPluginFromCache(int primKey, VRay::Plugin &plugin);
+	int getMeshPluginFromCache(int primKey, VRay::Plugin &plugin);
 
 	/// It's ok to add invalid plugins to cache here,
 	/// because if we've failed to export plugin once we should not retry.
 	void addPrimPluginToCache(int primKey, VRay::Plugin &plugin);
+	void addMeshPluginToCache(int primKey, VRay::Plugin &plugin);
 
 	/// Helper function to generate unique id for the packed primitive
 	/// this is used as key in m_detailToPluginDesc map to identify
@@ -140,9 +141,9 @@ public:
 	/// @returns unique primitive id.
 	int getPrimPackedID(const GU_PrimPacked &prim);
 
-	void exportPolyMesh(OBJ_Node &objNode, const GU_Detail &gdp, const GEOPrimList &primList, PrimitiveItems &instancerItems);
+	void exportPolyMesh(OBJ_Node &objNode, const GU_Detail &gdp, const GEOPrimList &primList);
 
-	void exportHair(OBJ_Node &objNode, const GU_Detail &gdp, const GEOPrimList &primList, PrimitiveItems &instancerItems);
+	void exportHair(OBJ_Node &objNode, const GU_Detail &gdp, const GEOPrimList &primList);
 
 	/// A helper function to export geometry from a custom V-Ray SOP node.
 	/// @param sop V-Ray SOP node.
@@ -155,7 +156,7 @@ public:
 
 	VRay::Plugin exportPackedDisk(OBJ_Node &objNode, const GU_PrimPacked &prim);
 
-	VRay::Plugin exportPackedGeometry(OBJ_Node &objNode, const GU_PrimPacked &prim);
+	void exportPackedGeometry(OBJ_Node &objNode, const GU_PrimPacked &prim);
 
 	VRay::Plugin exportPrimPacked(OBJ_Node &objNode, const GU_PrimPacked &prim);
 
@@ -163,11 +164,11 @@ public:
 
 	void exportPrimVolume(OBJ_Node &objNode, const PrimitiveItem &item);
 
-	void processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, PrimitiveItems &instancerItems);
+	void processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp);
 
-	VRay::Plugin exportDetailInstancer(OBJ_Node &objNode, const GU_Detail &gdp, const PrimitiveItems &instancerItems, const char *prefix);
+	VRay::Plugin exportDetailInstancer(OBJ_Node &objNode, const GU_Detail &gdp, const char *prefix);
 
-	VRay::Plugin exportDetail(OBJ_Node &objNode, const GU_Detail &gdp);
+	void exportDetail(OBJ_Node &objNode, const GU_Detail &gdp);
 
 	/// Export point particles data.
 	/// @param gdp Detail.
@@ -276,6 +277,9 @@ private:
 		/// Unique primitive plugin cache.
 		PrimPluginCache prim;
 
+		/// Mesh primitive plugin cache.
+		PrimPluginCache meshPrim;
+
 		/// Wrapper nodes cache for Instancer plugin.
 		GeomNodeCache instancerNodeWrapper;
 
@@ -287,6 +291,9 @@ private:
 	/// Primitive export context stack.
 	/// Used for non-Instancer objects like volumes and lights.
 	PrimContextStack primContextStack;
+
+	/// All primitive items for final Instancer.
+	PrimitiveItems instancerItems;
 };
 
 } // namespace VRayForHoudini
