@@ -64,10 +64,16 @@ function(vfh_make_moc)
 	set(FILE_OUT_DIR ${CMAKE_CURRENT_BINARY_DIR})
 	file(MAKE_DIRECTORY ${FILE_OUT_DIR})
 
+	if (WIN32)
+		set(MOC_PATH ${HDK_PATH}/qt/5.6.1/bin/moc.exe)
+	else()
+
+	endif()
+
 	# Execute moc on file changes
 	add_custom_command(
 		OUTPUT ${FILE_OUT_DIR}/${PAR_FILE_OUT_NAME}
-		COMMAND moc.exe ${PAR_DEFINITIONS} -o${PAR_FILE_OUT_NAME} ${PAR_FILE_IN}
+		COMMAND ${MOC_PATH} ${PAR_DEFINITIONS} -o${PAR_FILE_OUT_NAME} ${PAR_FILE_IN}
 		DEPENDS	${PAR_FILE_IN}
 		COMMENT	"Using ${MOC_COMPILER} to compile ${PAR_FILE_IN} to ${PAR_FILE_OUT_NAME}"
 		WORKING_DIRECTORY ${FILE_OUT_DIR}
