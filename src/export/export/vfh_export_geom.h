@@ -22,6 +22,13 @@
 
 namespace VRayForHoudini {
 
+enum DisplacementType {
+	displacementTypeNone = -1,
+	displacementTypeFromMat = 0,
+	displacementTypeDisplace,
+	displacementTypeSmooth,
+};
+
 enum VMRenderPoints {
 	vmRenderPointsNone = 0, ///< Don't render points separately from primitives.
 	vmRenderPointsAll, ///< Render only points.
@@ -41,20 +48,21 @@ struct PrimContext {
 						 exint detailID=0,
 						 PrimMaterial primMaterial=PrimMaterial(),
 						 STY_Styler styler=STY_Styler())
-		: generator(generator)
+		: objNode(generator)
 		, tm(tm)
-		, detailID(detailID)
+		, primID(detailID)
 		, primMaterial(primMaterial)
 		, styler(styler)
 	{}
 
-	OP_Node *generator;
+	/// Primitive generator.
+	OP_Node *objNode;
 
-	/// Base transform.
+	/// Transform.
 	VRay::Transform tm;
 
 	/// Primitive ID.
-	exint detailID;
+	exint primID;
 
 	/// Material overrides.
 	PrimMaterial primMaterial;
@@ -123,7 +131,7 @@ public:
 	/// @note This will affect the export of vertex attributes on mesh
 	///       geometry. Vertex attribute values that have the same value
 	///       will be welded into single one
-	bool hasSubdivApplied(OBJ_Node &objNode) const;
+	DisplacementType hasSubdivApplied(OBJ_Node &objNode) const;
 
 	int getPrimKey(const GA_Primitive &prim);
 	int getPrimPluginFromCache(int primKey, VRay::Plugin &plugin);

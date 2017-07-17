@@ -495,6 +495,7 @@ VRay::Plugin MeshExporter::getMultiMaterial()
 	const int numMaterials = matNameToID.size();
 	if (numMaterials) {
 		VRay::VUtils::ValueRefList materialList(numMaterials);
+		VRay::VUtils::IntRefList idsList(numMaterials);
 		VRay::VUtils::CharStringRefList shaderSetsList(numMaterials);
 
 		shadersNamesList = VRay::VUtils::ValueRefList(numMaterials);
@@ -518,17 +519,19 @@ VRay::Plugin MeshExporter::getMultiMaterial()
 
 			materialList[mItIdx].setPlugin(mtlPlugin);
 			shaderSetsList[mItIdx].set(mtlName);
+			idsList[mItIdx] = mItIdx;
 			shadersNamesList[mItIdx].setList(item);
 		}
 
-		Attrs::PluginDesc texExtMaterialIDDesc(boost::str(texExtMaterialIDFmt % detailID % objNode.getName().buffer()),
+		Attrs::PluginDesc texExtMaterialIDDesc(boost::str(texExtMaterialIDFmt % primID % objNode.getName().buffer()),
 											   "TexExtMaterialID");
 		texExtMaterialIDDesc.addAttribute(Attrs::PluginAttr("ids_list", face_mtlIDs));
 		VRay::Plugin texExtMaterialID = pluginExporter.exportPlugin(texExtMaterialIDDesc);
 
-		Attrs::PluginDesc mtlMulti(boost::str(mtlMultiFmt % detailID % objNode.getName().buffer()),
+		Attrs::PluginDesc mtlMulti(boost::str(mtlMultiFmt % primID % objNode.getName().buffer()),
 								   "MtlMulti");
 		mtlMulti.addAttribute(Attrs::PluginAttr("mtls_list", materialList));
+		mtlMulti.addAttribute(Attrs::PluginAttr("ids_list", idsList));
 		mtlMulti.addAttribute(Attrs::PluginAttr("mtlid_gen", texExtMaterialID));
 
 		// NOTE: No need for this now.
@@ -567,7 +570,7 @@ VRay::Plugin MeshExporter::getMaterial()
 			++i;
 		}
 
-		Attrs::PluginDesc extMapChannels(boost::str(texExtMapChannelFmt % detailID % objNode.getName().buffer()),
+		Attrs::PluginDesc extMapChannels(boost::str(texExtMapChannelFmt % primID % objNode.getName().buffer()),
 										 "TexExtMapChannels");
 		extMapChannels.addAttribute(Attrs::PluginAttr("map_channels", map_channels));
 

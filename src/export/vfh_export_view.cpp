@@ -300,7 +300,7 @@ void VRayExporter::exportView(ViewParams viewParams)
 				viewParams.renderSize.w = viewParams.renderSize.h * aspect;
 			}
 
-			Log::getLog().warning("Houdini Indie render resolution for animations is 1920 x 1080 maximum");
+			Log::getLog().warning("Maximum resolution for animations in Houdini Indie is 1920 x 1080");
 			Log::getLog().warning("Clamping resolution to %i x %i",
 									viewParams.renderSize.w, viewParams.renderSize.h);
 		}
@@ -332,7 +332,7 @@ void VRayExporter::exportView(ViewParams viewParams)
 			getRenderer().setCamera(exportPlugin(viewPlugins.cameraDefault));
 		}
 
-		if (!isIPR() && !isGPU() && viewParams.renderView.stereoParams.use) {
+		if (viewParams.renderView.stereoParams.use && !isIPR() && !isGPU()) {
 			exportPlugin(viewPlugins.stereoSettings);
 		}
 
@@ -357,8 +357,8 @@ int VRayExporter::exportView()
 {
 	Log::getLog().debug("VRayExporter::exportView()");
 
-	static VUtils::FastCriticalSection csect;
-	if (!csect.tryEnter())
+	static VUtils::FastCriticalSection viewCsect;
+	if (!viewCsect.tryEnter())
 		return 1;
 
 	OBJ_Node *camera = getCamera(m_rop);
@@ -390,7 +390,7 @@ int VRayExporter::exportView()
 
 	exportView(viewParams);
 
-	csect.leave();
+	viewCsect.leave();
 
 	return 0;
 }

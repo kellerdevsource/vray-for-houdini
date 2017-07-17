@@ -135,7 +135,7 @@ exint ObjectExporter::getDetailID() const
 
 	PrimContextIt it(primContextStack);
 	while (it.hasNext()) {
-		detailID ^= it.next().detailID;
+		detailID ^= it.next().primID;
 	}
 
 	return detailID;
@@ -146,7 +146,7 @@ OP_Node* ObjectExporter::getGenerator() const
 	if (primContextStack.isEmpty())
 		return nullptr;
 
-	return primContextStack[0].generator;
+	return primContextStack[0].objNode;
 }
 
 void ObjectExporter::getPrimMaterial(PrimMaterial &primMaterial) const
@@ -195,44 +195,43 @@ void ObjectExporter::clearPrimPluginCache()
 	pluginCache.instancerNodeWrapper.clear();
 }
 
-bool ObjectExporter::hasSubdivApplied(OBJ_Node &objNode) const
+DisplacementType ObjectExporter::hasSubdivApplied(OBJ_Node &objNode) const
 {
 	// Here we check if subdivision has been assigned to this node
 	// at render time. V-Ray subdivision is implemented in 2 ways:
 	// 1. as a custom VOP available in V-Ray material context
 	// 2. as spare parameters added to the object node.
-	bool res = false;
 
-	fpreal t = ctx.getTime();
-	bool hasDispl = objNode.hasParm("vray_use_displ") && objNode.evalInt("vray_use_displ", 0, t);
-	if (NOT(hasDispl)) {
-		return res;
-	}
+	const fpreal t = ctx.getTime();
 
-	const int displType = objNode.evalInt("vray_displ_type", 0, t);
+	const bool hasDispl = objNode.hasParm("vray_use_displ") && objNode.evalInt("vray_use_displ", 0, t);
+	if (!hasDispl)
+		return displacementTypeNone;
+
+	DisplacementType displType = static_cast<DisplacementType>(objNode.evalInt("vray_displ_type", 0, t));
 	switch (displType) {
 		case displacementTypeFromMat: {
 			UT_String shopPath;
 			objNode.evalString(shopPath, "vray_displshoppath", 0, t);
 			OP_Node *shop = getOpNodeFromPath(shopPath, t);
 			if (shop) {
-				if (getVRayNodeFromOp(*shop, "Geometry", "GeomStaticSmoothedMesh")) {
-					res = true;
+				if (!getVRayNodeFromOp(*shop, "Geometry", "GeomStaticSmoothedMesh")) {
+					displType = displacementTypeNone;
 				}
 			}
 			break;
 		}
 		case displacementTypeDisplace:
 		case displacementTypeSmooth: {
-			res = true;
 			break;
 		}
 		default: {
+			displType = displacementTypeNone;
 			break;
 		}
 	}
 
-	return res;
+	return displType;
 }
 
 int ObjectExporter::isNodeVisible(OP_Node &rop, OBJ_Node &objNode, fpreal t)
@@ -442,15 +441,14 @@ void ObjectExporter::exportPrimVolume(OBJ_Node &objNode, const PrimitiveItem &it
 #ifdef CGR_HAS_AUR
 	const GA_PrimitiveTypeId &primTypeID = item.prim->getTypeId();
 
-	const VRay::Transform &tm = getTm();
-	const exint detailID = getDetailID();
+	const VRay::Transform &tm = VRayExporter::getObjTransform(&objNode, ctx, false) *  item.tm;
 
 	PluginSet volumePlugins;
 
 	if (primTypeID == primPackedTypeIDs.vrayVolumeGridRef) {
 		VolumeExporter volumeGridExp(objNode, ctx, pluginExporter);
 		volumeGridExp.setTM(tm);
-		volumeGridExp.setDetailID(detailID);
+		volumeGridExp.setDetailID(item.primID);
 		volumeGridExp.exportPrimitive(item, volumePlugins);
 	}
 	else if (primTypeID == GEO_PRIMVOLUME ||
@@ -458,7 +456,7 @@ void ObjectExporter::exportPrimVolume(OBJ_Node &objNode, const PrimitiveItem &it
 	{
 		HoudiniVolumeExporter volumeExp(objNode, ctx, pluginExporter);
 		volumeExp.setTM(tm);
-		volumeExp.setDetailID(detailID);
+		volumeExp.setDetailID(item.primID);
 		volumeExp.exportPrimitive(item, volumePlugins);
 	}
 	else {
@@ -517,7 +515,7 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp)
 
 		PrimitiveItem item;
 		item.prim = prim;
-		item.primID = gdp.getUniqueId() ^ primOffset;
+		item.primID = getDetailID() ^ gdp.getUniqueId() ^ primOffset;
 		item.tm = getTm();
 
 		if (objectIdHndl.isValid()) {
@@ -764,12 +762,17 @@ void ObjectExporter::exportPolyMesh(OBJ_Node &objNode, const GU_Detail &gdp, con
 {
 	PrimitiveItem item;
 	item.tm = getTm();
+	getPrimMaterial(item.primMaterial);
 
 	const int primKey = gdp.getUniqueId();
 
 	MeshExporter polyMeshExporter(objNode, gdp, ctx, pluginExporter, *this, primList);
-	polyMeshExporter.setSubdivApplied(hasSubdivApplied(objNode));
 	if (polyMeshExporter.hasPolyGeometry()) {
+		const DisplacementType subdivType = hasSubdivApplied(objNode);
+
+		polyMeshExporter.setSubdivApplied(subdivType != displacementTypeNone);
+		polyMeshExporter.setDetailID(getDetailID());
+
 		// This will update material overrides.
 		item.material = polyMeshExporter.getMaterial();
 
@@ -778,8 +781,22 @@ void ObjectExporter::exportPolyMesh(OBJ_Node &objNode, const GU_Detail &gdp, con
 				Attrs::PluginDesc geomDesc;
 				if (polyMeshExporter.asPluginDesc(gdp, geomDesc)) {
 					item.geometry = pluginExporter.exportPlugin(geomDesc);
+
+					if (item.geometry) {
+						if (subdivType != displacementTypeNone) {
+							Attrs::PluginDesc subdivDesc(VRayExporter::getPluginName(objNode, "GeomDisplacedMesh@"),
+														 "GeomDisplacedMesh");
+
+							subdivDesc.addAttribute(Attrs::PluginAttr("mesh", item.geometry));
+
+							pluginExporter.exportDisplacementDesc(&objNode, subdivDesc);
+
+							item.geometry = pluginExporter.exportPlugin(subdivDesc);
+						}
+					}
+
+					addMeshPluginToCache(primKey, item.geometry);
 				}
-				addMeshPluginToCache(primKey, item.geometry);
 			}
 		}
 
@@ -1310,8 +1327,6 @@ VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode, SOP_Node &sopNode
 
 	const GU_Detail &gdp = *gdl;
 
-	const VRay::Transform tm = pluginExporter.getObjTransform(&objNode, ctx);
-
 	PrimContext primContext(&objNode, identityTm, gdp.getUniqueId());
 
 	STY_Styler currentStyler = getStyler();
@@ -1463,13 +1478,8 @@ VRay::Plugin ObjectExporter::exportNode(OBJ_Node &objNode)
 {
 	using namespace Attrs;
 
-	VRay::Plugin geometry = exportGeometry(objNode);
-
-	OP_Node *matNode = objNode.getMaterialNode(ctx.getTime());
-	VRay::Plugin material = pluginExporter.exportMaterial(matNode);
-	const VRay::Transform tm = pluginExporter.getObjTransform(&objNode, ctx);
-
-	// XXX: This should be propageted to the particle material. 
+	// XXX: This should be propageted to the particle material.
+#if 0
 	if (isNodeMatte(objNode)) {
 		PluginDesc mtlWrapperDesc(VRayExporter::getPluginName(&objNode, "MtlWrapper"),
 								  "MtlWrapper");
@@ -1492,19 +1502,20 @@ VRay::Plugin ObjectExporter::exportNode(OBJ_Node &objNode)
 
 		material = pluginExporter.exportPlugin(mtlStatsDesc);
 	}
+#endif
 
-	PluginDesc nodeDesc(VRayExporter::getPluginName(objNode, "Node"),"Node");
+	PluginDesc nodeDesc(VRayExporter::getPluginName(objNode, "Node"),
+						"Node");
+
+	VRay::Plugin geometry = exportGeometry(objNode);
 	if (geometry) {
 		nodeDesc.add(PluginAttr("geometry", geometry));
 	}
-	nodeDesc.add(PluginAttr("material", material));
-	nodeDesc.add(PluginAttr("transform", tm));
+	nodeDesc.add(PluginAttr("material", pluginExporter.exportDefaultMaterial()));
+	nodeDesc.add(PluginAttr("transform", pluginExporter.getObjTransform(&objNode, ctx)));
 	nodeDesc.add(PluginAttr("visible", isNodeVisible(objNode)));
 
-	VRay::Plugin node = pluginExporter.exportPlugin(nodeDesc);
-	UT_ASSERT(node);
-
-	return node;
+	return pluginExporter.exportPlugin(nodeDesc);
 }
 
 void ObjectExporter::addGenerated(OP_Node &opNode, VRay::Plugin plugin)

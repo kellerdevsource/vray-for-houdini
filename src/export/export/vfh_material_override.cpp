@@ -27,6 +27,8 @@
 #include <GSTY/GSTY_SubjectPrim.h>
 #include <GSTY/GSTY_SubjectPrimGroup.h>
 
+#include <UT/UT_Version.h>
+
 #include <rapidjson/document.h>
 
 #include <QStringList>

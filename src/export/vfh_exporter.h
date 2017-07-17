@@ -67,12 +67,6 @@ enum VRayLightType {
 	VRayLightSun       = 8,
 };
 
-enum DisplacementType {
-	displacementTypeFromMat = 0,
-	displacementTypeDisplace,
-	displacementTypeSmooth,
-};
-
 struct OpInterestItem {
 	OpInterestItem(OP_Node *op_node=nullptr, OP_EventMethod cb=nullptr, void *cb_data=nullptr)
 		: op_node(op_node)

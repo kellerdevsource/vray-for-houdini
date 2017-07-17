@@ -86,7 +86,7 @@ public:
 		, ctx(ctx)
 		, pluginExporter(pluginExporter)
 		, tm(1)
-		, detailID(0)
+		, primID(0)
 	{}
 	virtual ~PrimitiveExporter() {}
 
@@ -99,7 +99,7 @@ public:
 	void setTM(const VRay::Transform &value) { tm = value; }
 
 	/// Sets detail ID.
-	void setDetailID(exint value) { detailID = value;}
+	void setDetailID(exint value) { primID = value;}
 
 protected:
 	/// Object node owner of all details that will be passed to exportPrimitives.
@@ -115,7 +115,7 @@ protected:
 	VRay::Transform tm;
 
 	/// Detail ID. Used to generate unique plugin name.
-	exint detailID;
+	exint primID;
 };
 
 #ifdef CGR_HAS_AUR
