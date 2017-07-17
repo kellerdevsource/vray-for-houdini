@@ -902,13 +902,16 @@ VRay::Plugin VRayExporter::exportVop(OP_Node *opNode, ExportContext *parentConte
 		const int switcher = vop_node->evalInt("switcher", 0, t);
 		return exportConnectedVop(vop_node, switcher+1, parentContext);
 	}
-	else if (opType == "null") {
+
+	if (opType == "null") {
 		return exportConnectedVop(vop_node, 0, parentContext);
 	}
-	else if (opType.equal("principledshader")) {
+
+	if (opType.startsWith("principledshader")) {
 		return exportPrincipledShader(*opNode, parentContext);
 	}
-	else if (opType.startsWith("VRayNode")) {
+
+	if (opType.startsWith("VRayNode")) {
 		VOP::NodeBase *vrayNode = static_cast<VOP::NodeBase*>(vop_node);
 
 		addOpCallback(vop_node, VRayExporter::RtCallbackVop);
@@ -977,10 +980,8 @@ VRay::Plugin VRayExporter::exportVop(OP_Node *opNode, ExportContext *parentConte
 			return exportPlugin(pluginDesc);
 		}
 	}
-	else {
-		Log::getLog().error("Unsupported VOP node: %s",
-							opType.buffer());
-	}
+
+	Log::getLog().error("Unsupported VOP node: %s", opType.buffer());
 
 	return VRay::Plugin();
 }
