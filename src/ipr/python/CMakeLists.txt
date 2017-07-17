@@ -21,19 +21,19 @@ include_directories(${CMAKE_SOURCE_DIR}/src/utils)
 set(SOURCES
 	vfh_ipr.cpp
 	vfh_ipr_viewer.cpp
-	vfh_ipr_checker.cpp
+	vfh_ipr_client.cpp
 )
 
 set(HEADERS
 	vfh_ipr_viewer.h
-	vfh_ipr_checker.h
+	vfh_ipr_client.h
 )
 
-list(APPEND SOURCES moc_vfh_ipr_checker.cpp)
+list(APPEND SOURCES moc_vfh_ipr_client.cpp)
 houdini_plugin(${PROJECT_NAME} "${SOURCES};${HEADERS}")
 vfh_make_moc(TARGET ${PROJECT_NAME}
-	FILE_IN       ${CMAKE_CURRENT_SOURCE_DIR}/vfh_ipr_checker.h
-	FILE_OUT_NAME moc_vfh_ipr_checker.cpp
+	FILE_IN       ${CMAKE_CURRENT_SOURCE_DIR}/vfh_ipr_client.h
+	FILE_OUT_NAME moc_vfh_ipr_client.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} vray_for_houdini_exporter)

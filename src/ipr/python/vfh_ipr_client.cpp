@@ -9,7 +9,7 @@
 //
 
 #include "vfh_ipr_server.h"
-#include "vfh_ipr_checker.h"
+#include "vfh_ipr_client.h"
 #include "vfh_ipr_checker_types.h"
 
 #include <QWidget>
