@@ -22,11 +22,14 @@ public:
 	explicit Server(QWidget *parent = Q_NULLPTR);
 	~Server();
 private:
-	QTcpSocket * client;
-	QTcpServer * server;
+	QTcpSocket * client; ///< Connected socket for client
+	QTcpServer * server; ///< Server created on startup
 
 protected Q_SLOTS:
+	///< Slot called when client connects, used to connect QTcpSocket::readyRead to onData slot
 	void onConnected();
+
+	/// Slot called when there is data to read from the client
 	void onData();
 };
 

@@ -25,18 +25,25 @@ public:
 
 	~PingPongClient();
 
+	/// Set function callback to be called when we can't reach the "server"
 	void setCallback(std::function<void()> value);
 
+	/// Start checking for "server" running
 	void start();
 
+	/// Stop checking for server
 	void stop();
 
-private Q_SLOTS :
+private Q_SLOTS:
+	/// Ping server, read data from socket, and decide if it needs to call
+	/// the set callback
+	/// NOTE: Since this is connected to the QTimer::timeout signal it will be
+	/// called on the main thread
 	void tick();
 private:
-	QTcpSocket * socket;
-	QTimer * timer;
-	int diff;
-	int fail;
-	std::function<void()> cb;
+	QTcpSocket * socket; ///< Socket that connects to the server
+	QTimer * timer; ///< Timer used to schedule pings to server
+	int diff; ///< The difference between sent pings and received pongs
+	int fail; ///< Number of failed writes to the socket
+	std::function<void()> cb; ///< Callback function when we abs(diff) > 10 or fail > 10
 };
