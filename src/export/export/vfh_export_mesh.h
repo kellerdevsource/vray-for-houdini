@@ -46,7 +46,7 @@ public:
 	void reset();
 
 	/// Test if there is any valid mesh geometry to export
-	bool hasPolyGeometry() const { return primList.size(); }
+	bool hasData() const VRAY_OVERRIDE { return primList.size(); }
 
 	/// Test if we have subdivision applied to geometry at render time
 	bool hasSubdivApplied() const { return m_hasSubdivApplied; }
@@ -165,7 +165,7 @@ private:
 	/// @retval number of channels added to mapChannels
 	void getMtlOverrides(MapChannels &mapChannels) const;
 
-	VRay::Plugin getMultiMaterial();
+	VRay::Plugin getMultiMaterial(const MapChannels &mapChannelOverrides);
 
 	/// A list of poly primitives that can be handled by this translator.
 	const GEOPrimList &primList;
@@ -188,12 +188,6 @@ private:
 
 	/// Mesh mapping channels (UV only).
 	MapChannels map_channels_data;
-
-	/// A list of shader names.
-	/// Each item is a list of 2 elements:
-	///  0 - face material ID
-	///  1 - shader name
-	VRay::VUtils::ValueRefList shadersNamesList;
 };
 
 

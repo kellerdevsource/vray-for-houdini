@@ -94,6 +94,7 @@ public:
 	virtual void exportPrimitives(const GU_Detail &detail, PrimitiveItems &plugins) {}
 
 	virtual bool asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc &pluginDesc) { return false; }
+	virtual bool hasData() const { return false; }
 
 	/// Sets transform.
 	void setTM(const VRay::Transform &value) { tm = value; }

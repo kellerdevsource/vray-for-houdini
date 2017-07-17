@@ -84,6 +84,7 @@ class ObjectExporter
 	typedef VUtils::HashMap<PluginSet> OpPluginGenCache;
 	typedef VUtils::HashMap<VRay::Plugin> OpPluginCache;
 	typedef VUtils::HashMapKey<int, VRay::Plugin> PrimPluginCache;
+	typedef VUtils::HashMapKey<Hash::MHash, VRay::Plugin> HashPluginCache;
 	typedef VUtils::HashMap<VRay::Plugin> GeomNodeCache;
 
 public:
@@ -133,21 +134,23 @@ public:
 	///       will be welded into single one
 	DisplacementType hasSubdivApplied(OBJ_Node &objNode) const;
 
-	int getPrimKey(const GA_Primitive &prim);
-	int getPrimPluginFromCache(int primKey, VRay::Plugin &plugin);
-	int getMeshPluginFromCache(int primKey, VRay::Plugin &plugin);
+	int getPrimKey(const GA_Primitive &prim) const;
+	int getPrimPluginFromCache(int primKey, VRay::Plugin &plugin) const;
+	int getMeshPluginFromCache(int primKey, VRay::Plugin &plugin) const;
+	int getPluginFromCache(Hash::MHash key, VRay::Plugin &plugin) const;
 
 	/// It's ok to add invalid plugins to cache here,
 	/// because if we've failed to export plugin once we should not retry.
 	void addPrimPluginToCache(int primKey, VRay::Plugin &plugin);
 	void addMeshPluginToCache(int primKey, VRay::Plugin &plugin);
+	void addPluginToCache(Hash::MHash key, VRay::Plugin &plugin);
 
 	/// Helper function to generate unique id for the packed primitive
 	/// this is used as key in m_detailToPluginDesc map to identify
 	/// plugins generated for the primitve
 	/// @param prim The packed primitive.
 	/// @returns unique primitive id.
-	int getPrimPackedID(const GU_PrimPacked &prim);
+	int getPrimPackedID(const GU_PrimPacked &prim) const;
 
 	void exportPolyMesh(OBJ_Node &objNode, const GU_Detail &gdp, const GEOPrimList &primList);
 
@@ -221,6 +224,9 @@ public:
 	/// Remove object.
 	void removeObject(const char *objNode);
  
+	/// Fill primitive item properties from context.
+	void fillFromContext(PrimitiveItem &item) const;
+
 	/// Returns transform from the primitive context stack.
 	VRay::Transform getTm() const;
 
@@ -278,7 +284,8 @@ private:
 	/// geometry has changed). By default this flag is on.
 	int doExportGeometry;
 
-	struct PluginCaches {
+	/// NOTE: mutable because HashMapKey doesn't have const methods.
+	mutable struct PluginCaches {
 		/// OP_Node centric plugin cache.
 		OpPluginCache op;
 
@@ -294,6 +301,9 @@ private:
 		/// Maps OP_Node with generated set of plugins for
 		/// non directly instancable object.
 		OpPluginGenCache generated;
+
+		/// Plugin cache by data hash.
+		HashPluginCache hashCache;
 	} pluginCache;
 
 	/// Primitive export context stack.

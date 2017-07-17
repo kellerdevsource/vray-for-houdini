@@ -56,22 +56,21 @@ struct MtlOverrideItem {
 
 typedef VUtils::HashMap<MtlOverrideItem> MtlOverrideItems;
 
+enum OverrideAppendMode {
+	overrideAppend = 0,
+	overrideMerge,
+};
+
 struct PrimMaterial {
 	PrimMaterial()
 		: matNode(nullptr)
 	{}
 
-	/// Merge overrides overwriting existing values.
-	void merge(const PrimMaterial &other);
-
-	/// Merge overrides overwriting existing values.
-	void mergeOverrides(const MtlOverrideItems &items);
+	/// Merge overrides not overwriting existing values.
+	void append(const PrimMaterial &other, OverrideAppendMode mode=overrideAppend);
 
 	/// Merge overrides not overwriting existing values.
-	void append(const PrimMaterial &other);
-
-	/// Merge overrides not overwriting existing values.
-	void appendOverrides(const MtlOverrideItems &items);
+	void appendOverrides(const MtlOverrideItems &items, OverrideAppendMode mode=overrideAppend);
 
 	/// Material node (SHOP, VOP).
 	OP_Node *matNode;
@@ -107,10 +106,12 @@ private:
 /// @param primMaterial Material override to append to.
 /// @param styleSheet Style sheet buffer.
 /// @param t Time.
+/// @param mode Append or merge values.
 /// @param materialOnly Process material tag only.
 void appendStyleSheet(PrimMaterial &primMaterial,
 					  const UT_StringHolder &styleSheet,
 					  fpreal t,
+					  OverrideAppendMode mode=overrideAppend,
 					  int materialOnly=false);
 
 /// Append material overrides from material override attributes.
