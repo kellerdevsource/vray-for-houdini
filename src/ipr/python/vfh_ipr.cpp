@@ -23,94 +23,11 @@
 #include <QtNetwork/QTcpSocket>
 #include <QtNetwork/QHostAddress>
 #include <QApplication>
-#include <QWidget>
-#include <QTimer>
-#include <QDialog>
 
 using namespace VRayForHoudini;
 
 static VRayExporter *exporter = nullptr;
-
-
-class PingPongClient: public QDialog {
-	Q_OBJECT
-
-	Q_DISABLE_COPY(PingPongClient)
-public:
-	PingPongClient(QDialog *parent = Q_NULLPTR)
-		: QDialog(parent)
-		, socket(new QTcpSocket(this))
-		, timer(new QTimer(this))
-		, diff(0)
-		, fail(0)
-	{
-		timer->setInterval(100);
-		connect(timer, &QTimer::timeout, this, &PingPongClient::tick);
-	}
-
-	~PingPongClient() {
-		delete timer;
-		delete socket;
-	}
-
-	void setCallback(std::function<void()> value) {
-		cb = value;
-	}
-
-	void start() {
-		socket->connectToHost(QHostAddress::LocalHost, 5050);
-		timer->start();
-	}
-
-	void stop() {
-		timer->stop();
-	}
-
-private Q_SLOTS :
-	void tick() {
-		PingPongPacket pingPack(PingPongPacket::PacketInfo::PING);
-		
-		auto data = socket->read(pingPack.size());
-		if (data.size()) {
-			PingPongPacket pongPack(data.data());
-			if (pongPack && pongPack.info == PingPongPacket::PacketInfo::PONG) {
-				diff--;
-			}
-		}
-
-		if (socket->write(pingPack.data(), pingPack.size()) != pingPack.size()) {
-			++fail;
-		} else {
-			fail = 0;
-			diff++;
-		}
-
-		if (fail >= 10) {
-			// 10 failed writes
-			fail = 0;
-			cb();
-			return;
-		}
-
-		if (diff > 10) {
-			// 10 pings without pong
-			diff = 0;
-			cb();
-			return;
-		} else if (diff < -10) {
-			// 10 pongs, without sending ping
-			diff = 0;
-			cb();
-			return;
-		}
-	}
-private:
-	QTcpSocket * socket;
-	QTimer * timer;
-	int diff;
-	int fail;
-	std::function<void()> cb;
-} * stopChecker = nullptr;
+static PingPongClient *stopChecker = nullptr;
 
 static VRayExporter& getExporter()
 {

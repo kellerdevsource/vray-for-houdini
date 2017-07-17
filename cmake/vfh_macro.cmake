@@ -78,5 +78,5 @@ function(vfh_make_moc)
 	set_source_files_properties(${PAR_FILE_IN} PROPERTIES OBJECT_DEPENDS ${FILE_OUT_DIR}/${PAR_FILE_OUT_NAME})
 
 	# For target to find output moc files
-	# target_include_directories(${PAR_TARGET} PRIVATE ${FILE_OUT_DIR})
+	target_include_directories(${PAR_TARGET} PRIVATE ${FILE_OUT_DIR})
 endfunction()

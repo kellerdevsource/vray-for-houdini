@@ -1,13 +1,13 @@
 //
 // Copyright (c) 2015-2017, Chaos Software Ltd
 //
-// V-Ray For Houdini
+// V-Ray For Houdini Python IPR Module
 //
 // ACCESSIBLE SOURCE CODE WITHOUT DISTRIBUTION OF MODIFICATION LICENSE
 //
-// Full license text:
-//  https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
+// Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
+
 
 #include "vfh_defines.h"
 #include "vfh_log.h"
@@ -140,7 +140,7 @@ struct TileImage {
 
 /// A list of images planes.
 typedef QList<TileImage> PlaneImages;
-const int z = sizeof(PlaneImages);
+
 /// A thread for writing into "imdisplay".
 class ImdisplayThread
 	: public QThread

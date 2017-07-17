@@ -16,7 +16,7 @@
 
 int main(int argc, char ** argv)
 {
-	QCoreApplication::addLibraryPath("C:/Program Files/Side Effects Software/Houdini 16.0.600/bin/Qt_plugins");
+	QCoreApplication::addLibraryPath("./Qt_plugins");
 	QApplication app(argc, argv);
 	Server server;
 	

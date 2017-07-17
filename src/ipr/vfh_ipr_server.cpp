@@ -1,9 +1,17 @@
+//
+// Copyright (c) 2015-2017, Chaos Software Ltd
+//
+// V-Ray For Houdini IPR
+//
+// ACCESSIBLE SOURCE CODE WITHOUT DISTRIBUTION OF MODIFICATION LICENSE
+//
+// Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
+//
+
 #pragma once
 
 #include "vfh_ipr_server.h"
-
-
-#include "vfh_ipr_checker.h"
+#include "vfh_ipr_checker_types.h"
 
 #include <QtWidgets>
 #include <QDialog>
