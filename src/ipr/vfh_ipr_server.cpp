@@ -47,13 +47,13 @@ void Server::onConnected() {
 
 void Server::onData() {
 	const int packetSize = sizeof(PingPongPacket);
-	auto data = client->read(packetSize);
+	const QByteArray& data = client->read(packetSize);
 	if (data.size() != packetSize) {
 		Q_ASSERT(!"Invalid packed received");
 	} else {
-		auto recv = PingPongPacket(data.data());
+		const PingPongPacket& recv = PingPongPacket(data.data());
 		if (recv && recv.info == PingPongPacket::PacketInfo::PING) {
-			PingPongPacket pongPack(PingPongPacket::PacketInfo::PONG);
+			const PingPongPacket pongPack(PingPongPacket::PacketInfo::PONG);
 			const int sentSize = client->write(pongPack.data(), pongPack.size());
 			Q_ASSERT(sentSize == packetSize && "Failed to write pong to clinet");
 			

@@ -8,7 +8,8 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
-#pragma once
+#ifndef VRAY_FOR_HOUDINI_IPR_CHECKER_H
+#define VRAY_FOR_HOUDINI_IPR_CHECKER_H
 
 #include <QDialog>
 #include <functional>
@@ -16,7 +17,9 @@
 class QTcpSocket;
 class QTimer;
 
-class PingPongClient: public QDialog {
+class PingPongClient:
+	public QDialog
+{
 	Q_OBJECT
 
 	Q_DISABLE_COPY(PingPongClient)
@@ -40,10 +43,18 @@ private Q_SLOTS:
 	/// NOTE: Since this is connected to the QTimer::timeout signal it will be
 	/// called on the main thread
 	void tick();
+
 private:
-	QTcpSocket * socket; ///< Socket that connects to the server
-	QTimer * timer; ///< Timer used to schedule pings to server
-	int diff; ///< The difference between sent pings and received pongs
-	int fail; ///< Number of failed writes to the socket
-	std::function<void()> cb; ///< Callback function when we abs(diff) > 10 or fail > 10
+	/// Socket that connects to the server
+	QTcpSocket *socket;
+	/// Timer used to schedule pings to server
+	QTimer *timer;
+	/// The difference between sent pings and received pongs
+	int diff;
+	/// Number of failed writes to the socket
+	int fail;
+	/// Callback function when we abs(diff) > 10 or fail > 10
+	std::function<void()> cb;
 };
+
+#endif // VRAY_FOR_HOUDINI_IPR_CHECKER_H

@@ -8,14 +8,17 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
-#pragma once
+#ifndef VRAY_FOR_HOUDINI_IPR_SERVER_H
+#define VRAY_FOR_HOUDINI_IPR_SERVER_H
 
 #include <QDialog>
 class QTcpSocket;
 class QTcpServer;
 
 /// Simple echo server to keep the renderer running
-class Server: public QDialog {
+class Server:
+	public QDialog
+{
 	Q_OBJECT
 
 public:
@@ -26,10 +29,11 @@ private:
 	QTcpServer * server; ///< Server created on startup
 
 protected Q_SLOTS:
-	///< Slot called when client connects, used to connect QTcpSocket::readyRead to onData slot
+	/// Slot called when client connects, used to connect QTcpSocket::readyRead to onData slot
 	void onConnected();
 
 	/// Slot called when there is data to read from the client
 	void onData();
 };
 
+#endif // VRAY_FOR_HOUDINI_IPR_SERVER_H

@@ -21,7 +21,6 @@ set(HEADERS
 	vfh_ipr_server.h
 )
 
-
 list(APPEND SOURCES moc_vfh_ipr_server.cpp)
 add_executable(${PROJECT_NAME} "${SOURCES};${HEADERS}")
 vfh_make_moc(TARGET ${PROJECT_NAME}

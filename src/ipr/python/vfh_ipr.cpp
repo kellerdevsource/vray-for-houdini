@@ -39,6 +39,7 @@ static VRayExporter& getExporter()
 
 static void freeExporter()
 {
+	UT_ASSERT_MSG(stopChecker, "stopChecker is null in freeExporter()");
 	stopChecker->stop();
 
 	getExporter().reset();
@@ -48,9 +49,6 @@ static void freeExporter()
 
 static struct VRayExporterIprUnload {
 	~VRayExporterIprUnload() {
-		if (stopChecker) {
-			stopChecker->stop();
-		}
 		delete stopChecker;
 		deleteVRayInit();
 	}

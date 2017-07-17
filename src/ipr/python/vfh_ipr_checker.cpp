@@ -46,7 +46,6 @@ void PingPongClient::stop() {
 	timer->stop();
 }
 
-
 void PingPongClient::tick() {
 	PingPongPacket pingPack(PingPongPacket::PacketInfo::PING);
 	
