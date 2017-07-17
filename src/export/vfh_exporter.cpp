@@ -905,6 +905,9 @@ VRay::Plugin VRayExporter::exportVop(OP_Node *opNode, ExportContext *parentConte
 	else if (opType == "null") {
 		return exportConnectedVop(vop_node, 0, parentContext);
 	}
+	else if (opType.equal("principledshader")) {
+		return exportPrincipledShader(*opNode, parentContext);
+	}
 	else if (opType.startsWith("VRayNode")) {
 		VOP::NodeBase *vrayNode = static_cast<VOP::NodeBase*>(vop_node);
 
