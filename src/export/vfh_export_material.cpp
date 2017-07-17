@@ -72,17 +72,24 @@ VRay::Plugin VRayExporter::exportMaterial(OP_Node *matNode)
 
 	if (matNode) {
 		VOP_Node *vopNode = CAST_VOPNODE(matNode);
+		SHOP_Node *shopNode = CAST_SHOPNODE(matNode);
 		if (vopNode) {
 			addOpCallback(matNode, RtCallbackSurfaceShop);
 
 			material = exportMaterial(vopNode);
 		}
-		else {
-			OP_Node *materialNode = getVRayNodeFromOp(*matNode, "Material");
-			if (materialNode) {
-				addOpCallback(matNode, RtCallbackSurfaceShop);
+		else if (shopNode) {
+			const UT_String &opType = shopNode->getOperator()->getName();
+			if (opType.equal("principledshader")) {
+				material = exportPrincipledShader(*matNode);
+			}
+			else {
+				OP_Node *materialNode = getVRayNodeFromOp(*matNode, "Material");
+				if (materialNode) {
+					addOpCallback(matNode, RtCallbackSurfaceShop);
 
-				material = exportMaterial(CAST_VOPNODE(materialNode));
+					material = exportMaterial(CAST_VOPNODE(materialNode));
+				}
 			}
 		}
 	}
