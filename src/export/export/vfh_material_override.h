@@ -76,7 +76,7 @@ struct PrimMaterial {
 	/// Material node (SHOP, VOP).
 	OP_Node *matNode;
 
-	/// Material overrides from stylesheet or SHOP overrides.
+	/// Material overrides from style sheet or SHOP overrides.
 	MtlOverrideItems overrides;
 };
 
@@ -103,25 +103,43 @@ private:
 	GEOAttribList pointAttrList;
 };
 
-void mergeStyleSheet(PrimMaterial &primMaterial,
-					 const QString &styleSheet,
-					 fpreal t,
-					 int materialOnly=false);
+/// Append material overrides from the style sheet.
+/// @param primMaterial Material override to append to.
+/// @param styleSheet Style sheet buffer.
+/// @param t Time.
+/// @param materialOnly Process material tag only.
+void appendStyleSheet(PrimMaterial &primMaterial,
+					  const UT_StringHolder &styleSheet,
+					  fpreal t,
+					  int materialOnly=false);
 
-void mergeMaterialOverrides(PrimMaterial &primMaterial,
+/// Append material overrides from material override attributes.
+/// @param primMaterial Material override to append to.
+/// @param matPath Material OP path.
+/// @param materialOverrides Material overrides buffer.
+/// @param t Time.
+/// @param materialOnly Process material tag only.
+void appendMaterialOverrides(PrimMaterial &primMaterial,
 							const UT_String &matPath,
 							const UT_String &materialOverrides,
 							fpreal t,
 							int materialOnly=false);
 
-void mergeMaterialOverride(PrimMaterial &primMaterial,
+/// Append material overrides from pritimive override handles.
+/// @param primMaterial Material override to append to.
+/// @param materialStyleSheetHndl Style sheet handle.
+/// @param materialPathHndl Material path handle.
+/// @param materialOverrideHndl Material override handle.
+/// @param offset Data offset for the handle.
+/// @param t Time.
+void appendMaterialOverride(PrimMaterial &primMaterial,
 						   const GA_ROHandleS &materialStyleSheetHndl,
 						   const GA_ROHandleS &materialPathHndl,
 						   const GA_ROHandleS &materialOverrideHndl,
-						   GA_Offset primOffset,
+						   GA_Offset offset,
 						   fpreal t);
 
-/// Get styler for the object.
+/// Get styler for the object from "shop_materialstylesheet" attribute.
 /// @param objNode OBJ node instance.
 /// @param t Time.
 STY_Styler getStylerForObject(OBJ_Node &objNode, fpreal t);
@@ -134,7 +152,7 @@ STY_Styler getStylerForPrimitive(const STY_Styler &geoStyler, const GEO_Primitiv
 /// Fills style sheet material overrides for a primitive.
 /// @param geoStyler Current top level styler.
 /// @param prim Primitive instance.
-/// @param primMaterial Material to set value to.
+/// @param primMaterial Material override to append to.
 void getOverridesForPrimitive(const STY_Styler &geoStyler, const GEO_Primitive &prim, PrimMaterial &primMaterial);
 
 } // namespace VRayForHoudini

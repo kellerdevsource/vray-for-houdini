@@ -434,10 +434,8 @@ VRay::VUtils::IntRefList& MeshExporter::getFaceMtlIDs()
 		// If still no material then check material attributes.
 		if (!primMtlNode) {
 			if (hasStyleSheetAttr) {
-				const QString &styleSheet = materialStyleSheetHndl.get(primOffset);
-				if (!styleSheet.isEmpty()) {
-					mergeStyleSheet(topPrimMaterial, styleSheet, ctx.getTime(), true);
-				}
+				const UT_String styleSheet(materialStyleSheetHndl.get(primOffset), true);
+				appendStyleSheet(topPrimMaterial, styleSheet, ctx.getTime(), true);
 			}
 			else if (hasMaterialPathAttr) {
 				const UT_String &matPath = materialPathHndl.get(primOffset);
@@ -712,7 +710,7 @@ void MeshExporter::getMtlOverrides(MapChannels &mapChannels)
 		getOverridesForPrimitive(geoStyler, *prim, primMaterial);
 
 		// Overrides from primitive style sheet / material attributes.
-		mergeMaterialOverride(primMaterial, materialStyleSheetHndl, materialPathHndl, materialOverrideHndl, primOffset, ctx.getTime());
+		appendMaterialOverride(primMaterial, materialStyleSheetHndl, materialPathHndl, materialOverrideHndl, primOffset, ctx.getTime());
 
 		// Overrides from primitive attributes.
 		attrExporter.fromPrimitive(primMaterial.overrides, primOffset);
