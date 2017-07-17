@@ -8,17 +8,22 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
-#include "vfh_ipr_checker.h"
 #include "vfh_ipr_server.h"
 
 #include <QApplication>
 #include <QtCore>
+#include <QProcessEnvironment>
+#include <QDir>
+#include <QDebug>
 
 int main(int argc, char ** argv)
 {
-	QCoreApplication::addLibraryPath("./Qt_plugins");
+	// we need to load "platform" plugins for windows, so we use one from houdini installation
+	QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+	QCoreApplication::addLibraryPath(env.value("HFS", "") + "/bin/Qt_plugins/");
+
 	QApplication app(argc, argv);
 	Server server;
-	
+
 	return app.exec();
 }
