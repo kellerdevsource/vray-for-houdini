@@ -87,11 +87,7 @@ bool MeshExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc &pluginD
 	pluginDesc.addAttribute(Attrs::PluginAttr("vertices", getVertices()));
 	pluginDesc.addAttribute(Attrs::PluginAttr("faces", getFaces()));
 	pluginDesc.addAttribute(Attrs::PluginAttr("edge_visibility", getEdgeVisibility()));
-#if 0
-	if (shadersNamesList.count()) {
-		pluginDesc.addAttribute(Attrs::PluginAttr("shaders_names", shadersNamesList));
-	}
-#endif
+
 	if (getNumNormals() > 0) {
 		pluginDesc.addAttribute(Attrs::PluginAttr("normals", getNormals()));
 		pluginDesc.addAttribute(Attrs::PluginAttr("faceNormals", getFaceNormals()));
@@ -532,9 +528,6 @@ VRay::Plugin MeshExporter::getMultiMaterial()
 		mtlMulti.addAttribute(Attrs::PluginAttr("ids_list", idsList));
 		mtlMulti.addAttribute(Attrs::PluginAttr("mtlid_gen", texExtMaterialID));
 
-		// NOTE: No need for this now.
-		// mtlMulti.addAttribute(Attrs::PluginAttr("shader_sets_list", shaderSetsList));
-
 		objectMaterial = pluginExporter.exportPlugin(mtlMulti);
 	}
 
@@ -546,8 +539,8 @@ VRay::Plugin MeshExporter::getMaterial()
 	VRay::Plugin multiMaterial = getMultiMaterial();
 
 	MapChannels mapChannelOverrides;
-	getVertexAttrs(mapChannelOverrides);
-	getPointAttrs(mapChannelOverrides);
+	getVertexAttrs(mapChannelOverrides, skipMapChannelUV);
+	getPointAttrs(mapChannelOverrides, skipMapChannelUV);
 	getMtlOverrides(mapChannelOverrides);
 
 	if (mapChannelOverrides.size()) {
@@ -580,6 +573,10 @@ VRay::Plugin MeshExporter::getMaterial()
 
 MapChannels& MeshExporter::getMapChannels()
 {
+	if (map_channels_data.size() <= 0) {
+		getVertexAttrs(map_channels_data, skipMapChannelNonUV);
+		getPointAttrs(map_channels_data, skipMapChannelNonUV);
+	}
 	return map_channels_data;
 }
 
@@ -784,7 +781,33 @@ void MeshExporter::getMtlOverrides(MapChannels &mapChannels) const
 	}
 }
 
-int MeshExporter::getPointAttrs(MapChannels &mapChannels)
+static int isMapChannelAttr(const GA_Attribute *attr, SkipMapChannel skipChannels)
+{
+	if (!attr)
+		return false;
+
+	// "P", "N", "v" attributes are handled separately
+	// as different plugin properties.
+	const int isMeshAttr = attr->getName() != GEO_STD_ATTRIB_POSITION &&
+	                       attr->getName() != GEO_STD_ATTRIB_NORMAL &&
+	                       attr->getName() != GEO_STD_ATTRIB_VELOCITY;
+	if (isMeshAttr)
+		return false;
+
+	const int isUvAttr = attr->getName().startsWith(GEO_STD_ATTRIB_TEXTURE);
+
+	if (skipChannels == skipMapChannelUV) {
+		return isUvAttr;
+	}
+
+	if (skipChannels == skipMapChannelNonUV) {
+		return !isUvAttr;
+	}
+
+	return true;
+}
+
+int MeshExporter::getPointAttrs(MapChannels &mapChannels, SkipMapChannel skipChannels)
 {
 	int nMapChannels = 0;
 
@@ -792,37 +815,29 @@ int MeshExporter::getPointAttrs(MapChannels &mapChannels)
 	gdp.getAttributes().matchAttributes(GEOgetV3AttribFilter(), GA_ATTRIB_POINT, attrList);
 
 	for (const GA_Attribute *attr : attrList) {
-		if (!attr) {
+		if (!isMapChannelAttr(attr, skipChannels))
 			continue;
-		}
 
-		// "P","N","v" point attributes are handled separately
-		// as different plugin properties so skip them here
-		if (attr->getName() != GEO_STD_ATTRIB_POSITION &&
-			attr->getName() != GEO_STD_ATTRIB_NORMAL &&
-			attr->getName() != GEO_STD_ATTRIB_VELOCITY)
-		{
-			const std::string attrName = attr->getName().toStdString();
-			if (!mapChannels.count(attrName)) {
-				MapChannel &mapChannel = mapChannels[attrName];
-				mapChannel.name = attrName;
-				mapChannel.vertices = VRay::VUtils::VectorRefList(getNumVertices());
-				// we can use same face indices as for mesh vertices
-				mapChannel.faces = getFaces();
+		const std::string attrName = attr->getName().toStdString();
+		if (!mapChannels.count(attrName)) {
+			MapChannel &mapChannel = mapChannels[attrName];
+			mapChannel.name = attrName;
+			mapChannel.vertices = VRay::VUtils::VectorRefList(getNumVertices());
+			// we can use same face indices as for mesh vertices
+			mapChannel.faces = getFaces();
 
-				getDataFromAttribute(attr, mapChannel.vertices);
+			getDataFromAttribute(attr, mapChannel.vertices);
 
-				UT_ASSERT(gdp.getNumPoints() == mapChannel.vertices.size());
+			UT_ASSERT(gdp.getNumPoints() == mapChannel.vertices.size());
 
-				++nMapChannels;
-			}
+			++nMapChannels;
 		}
 	}
 
 	return nMapChannels;
 }
 
-int MeshExporter::getVertexAttrs(MapChannels &mapChannels)
+int MeshExporter::getVertexAttrs(MapChannels &mapChannels, SkipMapChannel skipChannels)
 {
 	int nMapChannels = 0;
 
@@ -830,22 +845,14 @@ int MeshExporter::getVertexAttrs(MapChannels &mapChannels)
 	gdp.getAttributes().matchAttributes(GEOgetV3AttribFilter(), GA_ATTRIB_VERTEX, attrList);
 
 	for (const GA_Attribute *attr : attrList) {
-		if (!attr) {
+		if (!isMapChannelAttr(attr, skipChannels))
 			continue;
-		}
 
-		// "P","N","v" vertex attributes are handled separately
-		// as different plugin properties so skip them here
-		if (attr->getName() != GEO_STD_ATTRIB_POSITION &&
-			attr->getName() != GEO_STD_ATTRIB_NORMAL &&
-			attr->getName() != GEO_STD_ATTRIB_VELOCITY)
-		{
-			const std::string attrName = attr->getName().toStdString();
-			if (!mapChannels.count(attrName)) {
-				MapChannel &map_channel = mapChannels[attrName];
-				getVertexAttrAsMapChannel(*attr, map_channel);
-				++nMapChannels;
-			}
+		const std::string attrName = attr->getName().toStdString();
+		if (!mapChannels.count(attrName)) {
+			MapChannel &map_channel = mapChannels[attrName];
+			getVertexAttrAsMapChannel(*attr, map_channel);
+			++nMapChannels;
 		}
 	}
 

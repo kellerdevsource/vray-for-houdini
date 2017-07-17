@@ -19,6 +19,12 @@
 
 namespace VRayForHoudini {
 
+enum SkipMapChannel {
+	skipMapChannelNone = 0, ///< Export all channels.
+	skipMapChannelUV, ///< Skip UV channels.
+	skipMapChannelNonUV, ///< Skip non-UV channels.
+};
+
 class VRayExporter;
 class ObjectExporter;
 /// Exports closed poly primitives and polysoups from a geometry detail
@@ -133,7 +139,7 @@ private:
 	/// @param mapChannels[out] - collects generated map channels
 	///        from point attributes
 	/// @retval number of channels added to mapChannels
-	int getPointAttrs(MapChannels &mapChannels);
+	int getPointAttrs(MapChannels &mapChannels, SkipMapChannel skipChannels=skipMapChannelNone);
 
 	/// Helper funtion to digest vertex attibutes into map channels
 	/// @note check if the translator has been properly initialized
@@ -141,7 +147,7 @@ private:
 	/// @param mapChannels[out] - collects generated map channels
 	///        from vertex attributes
 	/// @retval number of channels added to mapChannels
-	int getVertexAttrs(MapChannels &mapChannels);
+	int getVertexAttrs(MapChannels &mapChannels, SkipMapChannel skipChannels=skipMapChannelNone);
 
 	/// Helper funtion to digest single vertex attibute into a map channel
 	/// @note called from getVertexAttrs() when adding new map channels
@@ -181,7 +187,6 @@ private:
 	VRay::VUtils::VectorRefList velocities; ///< list of vertex velocities
 
 	/// Mesh mapping channels (UV only).
-	/// TODO: Resolve UV.
 	MapChannels map_channels_data;
 
 	/// A list of shader names.
