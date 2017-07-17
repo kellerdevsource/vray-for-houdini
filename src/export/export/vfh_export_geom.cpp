@@ -551,7 +551,7 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp)
 		}
 
 		// Material overrides.
-		mergeMaterialOverride(item.primMaterial, materialStyleSheetHndl, materialPathHndl, materialOverrideHndl, primOffset, ctx.getTime());
+		appendMaterialOverride(item.primMaterial, materialStyleSheetHndl, materialPathHndl, materialOverrideHndl, primOffset, ctx.getTime());
 
 		// Primitive attributes
 		attrExp.fromPrimitive(item.primMaterial.overrides, primOffset);
@@ -1290,7 +1290,7 @@ VRay::Plugin ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_De
 		item.tm = getPointInstanceTM(gdp, pointInstanceAttrs, pointOffset);
 
 		// Material overrides.
-		mergeMaterialOverride(item.primMaterial, materialStyleSheetHndl, materialPathHndl, materialOverrideHndl, pointOffset, ctx.getTime());
+		appendMaterialOverride(item.primMaterial, materialStyleSheetHndl, materialPathHndl, materialOverrideHndl, pointOffset, ctx.getTime());
 		attrExp.fromPoint(item.primMaterial.overrides, pointOffset);
 
 		// Check parent overrides.
