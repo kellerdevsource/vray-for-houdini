@@ -781,20 +781,25 @@ void MeshExporter::getMtlOverrides(MapChannels &mapChannels) const
 	}
 }
 
-static int isMapChannelAttr(const GA_Attribute *attr, SkipMapChannel skipChannels)
+/// Returns true if we need to skip this attribute.
+/// @param attr Mesh attribute.
+/// @param skipChannels Skip type.
+static int skipMapChannel(const GA_Attribute *attr, SkipMapChannel skipChannels)
 {
 	if (!attr)
-		return false;
+		return true;
+
+	const UT_StringHolder &attrName = attr->getName();
 
 	// "P", "N", "v" attributes are handled separately
 	// as different plugin properties.
-	const int isMeshAttr = attr->getName() != GEO_STD_ATTRIB_POSITION &&
-	                       attr->getName() != GEO_STD_ATTRIB_NORMAL &&
-	                       attr->getName() != GEO_STD_ATTRIB_VELOCITY;
+	const int isMeshAttr = attrName != GEO_STD_ATTRIB_POSITION &&
+	                       attrName != GEO_STD_ATTRIB_NORMAL &&
+	                       attrName != GEO_STD_ATTRIB_VELOCITY;
 	if (isMeshAttr)
-		return false;
+		return true;
 
-	const int isUvAttr = attr->getName().startsWith(GEO_STD_ATTRIB_TEXTURE);
+	const int isUvAttr = attrName.startsWith(GEO_STD_ATTRIB_TEXTURE);
 
 	if (skipChannels == skipMapChannelUV) {
 		return isUvAttr;
@@ -804,7 +809,7 @@ static int isMapChannelAttr(const GA_Attribute *attr, SkipMapChannel skipChannel
 		return !isUvAttr;
 	}
 
-	return true;
+	return false;
 }
 
 int MeshExporter::getPointAttrs(MapChannels &mapChannels, SkipMapChannel skipChannels)
@@ -815,7 +820,7 @@ int MeshExporter::getPointAttrs(MapChannels &mapChannels, SkipMapChannel skipCha
 	gdp.getAttributes().matchAttributes(GEOgetV3AttribFilter(), GA_ATTRIB_POINT, attrList);
 
 	for (const GA_Attribute *attr : attrList) {
-		if (!isMapChannelAttr(attr, skipChannels))
+		if (skipMapChannel(attr, skipChannels))
 			continue;
 
 		const std::string attrName = attr->getName().toStdString();
@@ -845,7 +850,7 @@ int MeshExporter::getVertexAttrs(MapChannels &mapChannels, SkipMapChannel skipCh
 	gdp.getAttributes().matchAttributes(GEOgetV3AttribFilter(), GA_ATTRIB_VERTEX, attrList);
 
 	for (const GA_Attribute *attr : attrList) {
-		if (!isMapChannelAttr(attr, skipChannels))
+		if (skipMapChannel(attr, skipChannels))
 			continue;
 
 		const std::string attrName = attr->getName().toStdString();
