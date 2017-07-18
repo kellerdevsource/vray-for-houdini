@@ -8,7 +8,6 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
-
 #ifndef VRAY_FOR_HOUDINI_IRP_VIEWER_H
 #define VRAY_FOR_HOUDINI_IRP_VIEWER_H
 

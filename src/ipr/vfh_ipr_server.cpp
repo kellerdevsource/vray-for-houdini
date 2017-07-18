@@ -8,8 +8,6 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
-#pragma once
-
 #include "vfh_ipr_server.h"
 #include "vfh_ipr_checker_types.h"
 

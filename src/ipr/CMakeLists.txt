@@ -10,7 +10,6 @@
 
 project(vray_for_houdini_ipr)
 
-
 set(SOURCES
 	main.cpp
 	vfh_ipr_server.cpp
