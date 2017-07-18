@@ -56,7 +56,6 @@ void Server::onData() {
 			const PingPongPacket pongPack(PingPongPacket::PacketInfo::PONG);
 			const int sentSize = client->write(pongPack.data(), pongPack.size());
 			Q_ASSERT(sentSize == packetSize && "Failed to write pong to clinet");
-			
 		}
 	}
 }
