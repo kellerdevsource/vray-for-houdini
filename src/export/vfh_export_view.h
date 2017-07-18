@@ -31,6 +31,19 @@ struct RenderSizeParams {
 	int  h;
 };
 
+struct RenderCropRegionParams {
+	RenderCropRegionParams()
+		: x(0)
+		, y(0)
+		, width(0)
+		, height(0)
+	{}
+
+	int x;
+	int y;
+	int width;
+	int height;
+};
 
 struct StereoViewParams {
 	StereoViewParams()
@@ -131,11 +144,13 @@ struct ViewParams {
 	int               changedParams(const ViewParams &other) const;
 	int               changedSize(const ViewParams &other) const;
 	int               needReset(const ViewParams &other) const;
+	int               changedCropRegion(const ViewParams &other) const;
 
 	RenderSizeParams  renderSize;
 	RenderViewParams  renderView;
 	int               usePhysicalCamera;
 	OBJ_Node         *cameraObject;
+	RenderCropRegionParams cropRegion;
 };
 
 } // namespace VRayForHoudini

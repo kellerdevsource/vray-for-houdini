@@ -349,6 +349,13 @@ void VRayExporter::exportView(ViewParams viewParams)
 		setRenderSize(viewParams.renderSize.w, viewParams.renderSize.h);
 	}
 
+	if (m_viewParams.changedCropRegion(viewParams)) {
+		getRenderer().getVRay().setRenderRegion(
+			viewParams.cropRegion.x,
+			viewParams.cropRegion.y,
+			viewParams.cropRegion.width,
+			viewParams.cropRegion.height);
+	}
 	// Store new params
 	m_viewParams = viewParams;
 }
@@ -426,6 +433,14 @@ int ViewParams::needReset(const ViewParams &other) const
 	return (MemberNotEq(usePhysicalCamera) ||
 			MemberNotEq(cameraObject) ||
 			renderView.needReset(other.renderView));
+}
+
+int ViewParams::changedCropRegion(const ViewParams & other) const
+{
+	return (MemberNotEq(cropRegion.x) ||
+		MemberNotEq(cropRegion.y)||
+		MemberNotEq(cropRegion.width)||
+		MemberNotEq(cropRegion.height));
 }
 
 

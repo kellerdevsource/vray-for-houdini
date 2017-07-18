@@ -84,6 +84,13 @@ static PyObject* vfhExportView(PyObject*, PyObject *args, PyObject *keywds)
 	const char *rop = nullptr;
 	PyObject *transform = nullptr;
 
+	PyObject *res = nullptr;
+	float cropLeft = 0;
+	float cropRight = 0;
+	float cropBottom = 0;
+	float cropTop = 0;
+
+
 	float aperture = 0.0f;
 	float focal = 0.0f;
 
@@ -96,12 +103,18 @@ static PyObject* vfhExportView(PyObject*, PyObject *args, PyObject *keywds)
 		/* 3 */ "transform",
 		/* 4 */ "aperture",
 		/* 5 */ "focal",
+		/* 6 */ "res",
+		/* 7 */ "cropl",
+		/* 8 */ "cropr",
+		/* 9 */ "cropb",
+		/* 10 */ "cropt",
+
 	    NULL
 	};
 
 	//                                 0 12345678911
 	//                                            01
-	static const char kwlistTypes[] = "s|siOff";
+	static const char kwlistTypes[] = "s|siOffOffff";
 
 	if (PyArg_ParseTupleAndKeywords(args, keywds, kwlistTypes, kwlist,
 		/* 0 */ &rop,
@@ -109,7 +122,13 @@ static PyObject* vfhExportView(PyObject*, PyObject *args, PyObject *keywds)
 		/* 2 */ &ortho,
 		/* 3 */ &transform,
 		/* 4 */ &aperture,
-		/* 5 */ &focal
+		/* 5 */ &focal,
+		/* 6 */ &res,
+		/* 7 */ &cropLeft,
+		/* 8 */ &cropRight,
+		/* 9 */ &cropBottom,
+		/* 10 */ &cropTop
+
 	)) {
 		// HOM_AutoLock autoLock;
 
@@ -134,7 +153,12 @@ static PyObject* vfhExportView(PyObject*, PyObject *args, PyObject *keywds)
 		if (cameraNode) {
 			exporter.fillViewParamFromCameraNode(*cameraNode, viewParams);
 		}
-
+#define resItem(x) PyInt_AsLong(PyList_GetItem(res, x))
+		viewParams.cropRegion.x = resItem(0) * cropLeft;
+		viewParams.cropRegion.y = resItem(1) * cropTop;
+		viewParams.cropRegion.width = (resItem(0) * cropRight) - viewParams.cropRegion.x;
+		viewParams.cropRegion.height = (resItem(1) * cropBottom) - viewParams.cropRegion.y;//coordinates for y axis run from bottom to top
+#undef resItem
 		if (transform && PyList_Check(transform)) {
 			if (PyList_Size(transform) == 16) {
 #define tmItem(x) PyFloat_AS_DOUBLE(PyList_GET_ITEM(transform, x))
@@ -150,6 +174,9 @@ static PyObject* vfhExportView(PyObject*, PyObject *args, PyObject *keywds)
 		}
 
 		exporter.exportView(viewParams);
+	}
+	else {
+		PyErr_Print();
 	}
 
 	Py_RETURN_NONE;

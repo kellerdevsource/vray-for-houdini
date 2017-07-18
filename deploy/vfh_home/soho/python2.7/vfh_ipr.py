@@ -157,6 +157,12 @@ elif render_rt_update_mode == RENDER_RT_MODE_SOHO and mode in {"update"}:
         camera=camera,
         transform=transform,
         ortho=ortho,
+        res = camParmsEval['res'].Value,
+        cropl = camParmsEval['cropl'].Value[0],
+        cropr = camParmsEval['cropr'].Value[0],
+        cropt = camParmsEval['cropt'].Value[0],
+        cropb = camParmsEval['cropb'].Value[0],
+        
     )
 
     exportObjects("objlist:dirtyinstance")
