@@ -29,10 +29,6 @@ enum MaterialOutputInputs {
 };
 
 struct MaterialOutputInputSocket {
-	MaterialOutputInputSocket(const char *label, const VOP_TypeInfo &typeInfo)
-		: label(label)
-		, typeInfo(typeInfo)
-	{}
 	const char *label;
 	const VOP_TypeInfo typeInfo;
 };
