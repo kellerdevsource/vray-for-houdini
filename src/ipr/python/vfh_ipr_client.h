@@ -45,6 +45,10 @@ private Q_SLOTS:
 	void tick();
 
 private:
+	/// Call the callback passed as argument, ensures it is called only once, *not* thread safe
+	void callCallback();
+
+private:
 	/// Socket that connects to the server
 	QTcpSocket *socket;
 	/// Timer used to schedule pings to server
@@ -55,6 +59,8 @@ private:
 	int fail;
 	/// Callback function when we abs(diff) > 10 or fail > 10
 	std::function<void()> cb;
+	/// True if we called the cb already, false otherwise
+	bool cbCalled;
 };
 
 #endif // VRAY_FOR_HOUDINI_IPR_CHECKER_H

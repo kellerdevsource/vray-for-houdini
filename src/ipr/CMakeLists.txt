@@ -14,12 +14,20 @@ project(vray_for_houdini_ipr)
 set(SOURCES
 	main.cpp
 	vfh_ipr_server.cpp
+	${CMAKE_SOURCE_DIR}/src/utils/vfh_log.cpp
 )
 
 set(HEADERS
 	vfh_ipr_checker_types.h
 	vfh_ipr_server.h
+	${CMAKE_SOURCE_DIR}/src/utils/vfh_log.h
 )
+
+use_vray_sdk()
+
+include_directories(${CMAKE_SOURCE_DIR}/src)
+include_directories(${CMAKE_SOURCE_DIR}/src/export)
+include_directories(${CMAKE_SOURCE_DIR}/src/utils)
 
 list(APPEND SOURCES moc_vfh_ipr_server.cpp)
 add_executable(${PROJECT_NAME} "${SOURCES};${HEADERS}")
@@ -28,6 +36,7 @@ vfh_make_moc(TARGET ${PROJECT_NAME}
 	FILE_OUT_NAME moc_vfh_ipr_server.cpp
 )
 
+link_with_vray_sdk(${PROJECT_NAME})
 set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME vfh_ipr)
 
 cgr_install_runtime(${PROJECT_NAME} ${VFH_BIN_DIRPATH})

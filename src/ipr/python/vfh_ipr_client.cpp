@@ -23,8 +23,9 @@ PingPongClient::PingPongClient(QDialog *parent)
 	, timer(new QTimer(this))
 	, diff(0)
 	, fail(0)
+	, cbCalled(false)
 {
-	timer->setInterval(100);
+	timer->setInterval(10);
 	connect(timer, &QTimer::timeout, this, &PingPongClient::tick);
 }
 
@@ -38,12 +39,21 @@ void PingPongClient::setCallback(std::function<void()> value) {
 }
 
 void PingPongClient::start() {
+	cbCalled = false;
 	socket->connectToHost(QHostAddress::LocalHost, 5050);
+	connect(socket, &QTcpSocket::disconnected, this, &PingPongClient::callCallback);
 	timer->start();
 }
 
 void PingPongClient::stop() {
 	timer->stop();
+}
+
+void PingPongClient::callCallback() {
+	if (!cbCalled) {
+		cbCalled = true;
+		cb();
+	}
 }
 
 void PingPongClient::tick() {
@@ -67,19 +77,19 @@ void PingPongClient::tick() {
 	if (fail >= 10) {
 		// 10 failed writes
 		fail = 0;
-		cb();
+		callCallback();
 		return;
 	}
 
 	if (diff > 10) {
 		// 10 pings without pong
 		diff = 0;
-		cb();
+		callCallback();
 		return;
 	} else if (diff < -10) {
 		// 10 pongs, without sending ping
 		diff = 0;
-		cb();
+		callCallback();
 		return;
 	}
 }
