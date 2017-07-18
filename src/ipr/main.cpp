@@ -18,9 +18,14 @@
 
 int main(int argc, char ** argv)
 {
-	// we need to load "platform" plugins for windows, so we use one from houdini installation
+	// We need to load "platform" plugins for windows, so we use one from houdini installation
 	QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-	QCoreApplication::addLibraryPath(env.value("HFS", "") + "/bin/Qt_plugins/");
+	QString hfsPath = env.value("HFS", "");
+	if (hfsPath.isEmpty()) {
+		puts("Failed to find HFS to start IPR");
+		return 1;
+	}
+	QCoreApplication::addLibraryPath( + "/bin/Qt_plugins/");
 
 	QApplication app(argc, argv);
 	Server server;
