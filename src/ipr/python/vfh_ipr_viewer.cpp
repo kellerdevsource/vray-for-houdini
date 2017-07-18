@@ -316,7 +316,8 @@ private:
 			Log::getLog().error("Pipe write fail!");
 
 			clear();
-			close();
+			// dont call close() here because it will try to write EOF header
+			wp.close();
 		}
 	}
 
