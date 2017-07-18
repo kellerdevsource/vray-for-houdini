@@ -9,6 +9,7 @@
 //
 
 #include "vfh_ipr_server.h"
+#include "vfh_log.h"
 
 #include <QApplication>
 #include <QtCore>
@@ -22,7 +23,7 @@ int main(int argc, char ** argv)
 	QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
 	QString hfsPath = env.value("HFS", "");
 	if (hfsPath.isEmpty()) {
-		puts("Failed to find HFS to start IPR");
+		VRayForHoudini::Log::getLog().error("Environment variable \"HFS\" missiing! IPR not started!");
 		return 1;
 	}
 	QCoreApplication::addLibraryPath(hfsPath + "/bin/Qt_plugins/");
