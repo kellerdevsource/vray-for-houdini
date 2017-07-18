@@ -14,8 +14,8 @@
 #include "vfh_defines.h"
 #include "vfh_vray.h" // For proper "systemstuff.h" inclusion
 
-/// this define enables compilation of anything from <atomic> which is included by the boost lockfree queue
-/// it was introduced because the old implementation of atomic (before vs 2015 update 2) is bugged
+/// This define enables compilation of anything from <atomic> which is included by the boost lockfree queue
+/// It was introduced because the old implementation of atomic (before vs 2015 update 2) is bugged
 /// if the atomic variables are not properly aligned
 #define _ENABLE_ATOMIC_ALIGNMENT_FIX
 #include <boost/lockfree/queue.hpp>
@@ -78,12 +78,12 @@ public:
 	/// Using this pair instead of std::pair, because lockfree::queue requires a template
 	/// argument which has trivial ctor, dtor and assignment operator
 	struct LogPair {
-		LogLevel level; ///< the message's log level
-		LogLineType line; ///< the message data, null terminated
+		LogLevel level; ///< The message's log level
+		LogLineType line; ///< The message data, null terminated
 	};
 
 private:
-	boost::lockfree::queue<LogPair> m_queue; ///< queue for messages to be logged
+	boost::lockfree::queue<LogPair> m_queue; ///< Queue for messages to be logged
 
 	/// Loop and dump any messages from the queue to stdout
 	/// Used as base for the thread that is processing the messages
