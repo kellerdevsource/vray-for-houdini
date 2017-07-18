@@ -25,7 +25,7 @@ int main(int argc, char ** argv)
 		puts("Failed to find HFS to start IPR");
 		return 1;
 	}
-	QCoreApplication::addLibraryPath( + "/bin/Qt_plugins/");
+	QCoreApplication::addLibraryPath(hfsPath + "/bin/Qt_plugins/");
 
 	QApplication app(argc, argv);
 	Server server;
