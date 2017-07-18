@@ -63,12 +63,13 @@ function(vfh_make_moc)
 	# by the custom command, so do it manually
 	set(FILE_OUT_DIR ${CMAKE_CURRENT_BINARY_DIR})
 	file(MAKE_DIRECTORY ${FILE_OUT_DIR})
-
 	if (WIN32)
-		set(MOC_PATH ${HDK_PATH}/qt/5.6.1/bin/moc.exe)
+		set(EXE_EXT ".exe")
 	else()
-
+		set(EXE_EXT "")
 	endif()
+
+	set(MOC_PATH ${QT_TOOLS_PATH}/moc${EXE_EXT})
 
 	# Execute moc on file changes
 	add_custom_command(
