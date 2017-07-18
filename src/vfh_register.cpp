@@ -63,6 +63,7 @@ using namespace VRayForHoudini;
 /// Register file extensions that could be handled by vfh custom translators
 static void registerExtensions()
 {
+	Log::Logger::startLogging();
 	UT_ExtensionList *geoextension = UTgetGeoExtensions();
 	if (geoextension && !geoextension->findExtension(IO::Vrmesh::extension)) {
 		geoextension->addExtension(IO::Vrmesh::extension);
@@ -86,6 +87,7 @@ void newGeometryIO(void *)
 void unregister(void *)
 {
 	deleteVRayInit();
+	Log::Logger::stopLogging();
 
 	Error::ErrorChaser &errChaser = Error::ErrorChaser::getInstance();
 	errChaser.enable(false);
