@@ -131,6 +131,7 @@ public:
 
 	/// Build material taking overrides into account.
 	VRay::Plugin getMaterial();
+	VRay::Plugin getExtMapChannels();
 
 private:
 	/// Helper funtion to digest point attibutes into map channels
@@ -165,7 +166,7 @@ private:
 	/// @retval number of channels added to mapChannels
 	void getMtlOverrides(MapChannels &mapChannels) const;
 
-	VRay::Plugin getMultiMaterial(const MapChannels &mapChannelOverrides);
+	VRay::Plugin exportExtMapChannels(const MapChannels &mapChannelOverrides) const;
 
 	/// A list of poly primitives that can be handled by this translator.
 	const GEOPrimList &primList;

@@ -18,10 +18,16 @@
 #include <GA/GA_PageHandle.h>
 #include <GA/GA_Names.h>
 
+#define USE_GROUP_STYLER 1
+#if USE_GROUP_STYLER
+#  include <GSTY/GSTY_SubjectPrimGroup.h>
+#  include <STY/STY_StylerGroup.h>
+#endif
+
 using namespace VRayForHoudini;
 using namespace Hash;
 
-static boost::format texExtMapChannelFmt("TexExtMapChannels|%i@%s");
+static boost::format extMapChannelFmt("ExtMapChannels|%i@%s");
 static boost::format texExtMaterialIDFmt("TexExtMaterialID|%i@%s");
 static boost::format mtlMultiFmt("MtlMulti|%i@%s");
 
@@ -402,7 +408,7 @@ VRay::VUtils::IntRefList& MeshExporter::getEdgeVisibility()
 	return edge_visibility;
 }
 
-VRay::Plugin MeshExporter::getMultiMaterial(const MapChannels &mapChannelOverrides)
+VRay::Plugin MeshExporter::getMaterial()
 {
 	const int numFaces = getNumFaces();
 	if (!numFaces) {
@@ -440,13 +446,25 @@ VRay::Plugin MeshExporter::getMultiMaterial(const MapChannels &mapChannelOverrid
 
 	const STY_Styler &geoStyler = objectExporter.getStyler();
 
+#if USE_GROUP_STYLER
+	GSTY_SubjectPrimGroup primSubjects(gdp, primList);
+	STY_StylerGroup primStylers;
+	primStylers.append(geoStyler, primSubjects);
+#endif
+
 	int faceIndex = 0;
 	for (const GEO_Primitive *prim : primList) {
 		const GA_Offset primOffset = prim->getMapOffset();
 
 		// Check if material comes from style sheet
 		PrimMaterial primMaterial;
+#if USE_GROUP_STYLER
+		const GA_Index primIndex = prim->getMapIndex();
+		const STY_Styler &primStyler = primStylers.getStyler(primIndex);
+		appendOverrideValues(primStyler, primMaterial, overrideMerge, true);
+#else
 		getOverridesForPrimitive(geoStyler, *prim, primMaterial);
+#endif
 
 		OP_Node *primMtlNode = primMaterial.matNode;
 
@@ -551,40 +569,7 @@ VRay::Plugin MeshExporter::getMultiMaterial(const MapChannels &mapChannelOverrid
 			objExproter.addPluginToCache(mtlIdListHash, texExtMaterialID);
 		}
 
-		VRay::Plugin texExtMapChannels;
-		MHash mapChannelsHash = 0;
-		if (mapChannelOverrides.size()) {
-			VRay::VUtils::ValueRefList map_channels(mapChannelOverrides.size());
-
-			int i = 0;
-			for (const auto &mcIt : mapChannelOverrides) {
-				const std::string &map_channel_name = mcIt.first;
-				const MapChannel &map_channel_data = mcIt.second;
-
-				VRay::VUtils::ValueRefList map_channel(3);
-				map_channel[0].setString(map_channel_name.c_str());
-				map_channel[1].setListVector(map_channel_data.vertices);
-				map_channel[2].setListInt(map_channel_data.faces);
-
-				map_channels[i].setList(map_channel);
-
-				++i;
-			}
-
-			mapChannelsHash = getMapChannelsHash(map_channels);
-
-			if (!objExproter.getPluginFromCache(mapChannelsHash, texExtMapChannels)) {
-				Attrs::PluginDesc extMapChannels(boost::str(texExtMapChannelFmt % mapChannelsHash % objNode.getName().buffer()),
-												 "TexExtMapChannels");
-				extMapChannels.addAttribute(Attrs::PluginAttr("map_channels", map_channels));
-
-				texExtMapChannels = pluginExporter.exportPlugin(extMapChannels);
-
-				objExproter.addPluginToCache(mapChannelsHash, texExtMapChannels);
-			}
-		}
-
-		const MHash mtlMultiIdHash = mtlIdListHash ^ mapChannelsHash ^ primID;
+		const MHash mtlMultiIdHash = mtlIdListHash ^ primID;
 
 		if (!objExproter.getPluginFromCache(mtlMultiIdHash, objectMaterial)) {
 			Attrs::PluginDesc mtlMulti(boost::str(mtlMultiFmt % mtlMultiIdHash % objNode.getName().buffer()),
@@ -592,7 +577,6 @@ VRay::Plugin MeshExporter::getMultiMaterial(const MapChannels &mapChannelOverrid
 			mtlMulti.addAttribute(Attrs::PluginAttr("mtls_list", materialList));
 			mtlMulti.addAttribute(Attrs::PluginAttr("ids_list", idsList));
 			mtlMulti.addAttribute(Attrs::PluginAttr("mtlid_gen", texExtMaterialID));
-			mtlMulti.addAttribute(Attrs::PluginAttr("map_channels", texExtMapChannels));
 
 			objectMaterial = pluginExporter.exportPlugin(mtlMulti);
 
@@ -603,16 +587,54 @@ VRay::Plugin MeshExporter::getMultiMaterial(const MapChannels &mapChannelOverrid
 	return objectMaterial;
 }
 
+VRay::Plugin MeshExporter::exportExtMapChannels(const MapChannels &mapChannelOverrides) const
+{
+	if (mapChannelOverrides.size() <= 0)
+		return VRay::Plugin();
 
+	ObjectExporter &objExproter = pluginExporter.getObjectExporter();
 
-VRay::Plugin MeshExporter::getMaterial()
+	VRay::VUtils::ValueRefList map_channels(mapChannelOverrides.size());
+
+	int i = 0;
+	for (const auto &mcIt : mapChannelOverrides) {
+		const std::string &map_channel_name = mcIt.first;
+		const MapChannel &map_channel_data = mcIt.second;
+
+		VRay::VUtils::ValueRefList map_channel(3);
+		map_channel[0].setString(map_channel_name.c_str());
+		map_channel[1].setListVector(map_channel_data.vertices);
+		map_channel[2].setListInt(map_channel_data.faces);
+
+		map_channels[i].setList(map_channel);
+
+		++i;
+	}
+
+	const MHash mapChannelsHash = getMapChannelsHash(map_channels);
+
+	VRay::Plugin texExtMapChannels;
+	if (!objExproter.getPluginFromCache(mapChannelsHash, texExtMapChannels)) {
+		Attrs::PluginDesc extMapChannels(boost::str(extMapChannelFmt % mapChannelsHash % objNode.getName().buffer()),
+											"ExtMapChannels");
+		extMapChannels.addAttribute(Attrs::PluginAttr("map_channels", map_channels));
+
+		texExtMapChannels = pluginExporter.exportPlugin(extMapChannels);
+
+		objExproter.addPluginToCache(mapChannelsHash, texExtMapChannels);
+	}
+
+	return texExtMapChannels;
+}
+
+VRay::Plugin MeshExporter::getExtMapChannels()
 {
 	MapChannels mapChannelOverrides;
 	getMtlOverrides(mapChannelOverrides);
 	getPointAttrs(mapChannelOverrides, skipMapChannelUV);
 	getVertexAttrs(mapChannelOverrides, skipMapChannelUV);
 
-	return getMultiMaterial(mapChannelOverrides);
+	return exportExtMapChannels(mapChannelOverrides);
 }
 
 MapChannels& MeshExporter::getMapChannels()
@@ -770,7 +792,14 @@ void MeshExporter::getMtlOverrides(MapChannels &mapChannels) const
 	int faceIndex = 0;
 
 	MtlOverrideAttrExporter attrExporter(gdp);
+
 	const STY_Styler &geoStyler = objectExporter.getStyler();
+
+#if USE_GROUP_STYLER
+	GSTY_SubjectPrimGroup primSubjects(gdp, primList);
+	STY_StylerGroup primStylers;
+	primStylers.append(geoStyler, primSubjects);
+#endif
 
 	for (const GEO_Primitive *prim : primList) {
 		const GA_Offset primOffset = prim->getMapOffset();
@@ -778,8 +807,13 @@ void MeshExporter::getMtlOverrides(MapChannels &mapChannels) const
 		PrimMaterial primMaterial;
 
 		// Style sheet overrides.
+#if USE_GROUP_STYLER
+		const GA_Index primIndex = prim->getMapIndex();
+		const STY_Styler &primStyler = primStylers.getStyler(primIndex);
+		appendOverrideValues(primStyler, primMaterial, overrideMerge);
+#else
 		getOverridesForPrimitive(geoStyler, *prim, primMaterial);
-
+#endif
 		// Overrides from primitive style sheet / material attributes.
 		appendMaterialOverride(primMaterial, materialStyleSheetHndl, materialPathHndl, materialOverrideHndl, primOffset, ctx.getTime());
 

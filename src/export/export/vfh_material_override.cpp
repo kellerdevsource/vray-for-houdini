@@ -218,7 +218,7 @@ static void appendOverrideValues(const STY_OverrideValues &styOverrideValues, Pr
 #endif
 }
 
-static void appendOverrideValues(const STY_Styler &styler, PrimMaterial &primMaterial, OverrideAppendMode mode=overrideAppend, int materialOnly=false)
+void VRayForHoudini::appendOverrideValues(const STY_Styler &styler, PrimMaterial &primMaterial, OverrideAppendMode mode, int materialOnly)
 {
 #if UT_MAJOR_VERSION_INT >= 16
 	static const STY_OverrideValuesFilter styOverrideValuesFilter(nullptr);

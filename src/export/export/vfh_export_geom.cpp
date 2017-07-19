@@ -722,6 +722,10 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_D
 		if (primItem.flags & PrimitiveItem::itemFlagsUseTime) {
 			// TODO: Utilize use_time_instancing.
 		}
+		static const int useMapChannels = (1 << 7);
+		if (primItem.mapChannels) {
+			additional_params_flags |= useMapChannels;
+		}
 
 		// Index + TM + VEL_TM + AdditionalParams + Node + AdditionalParamsMembers
 		const int itemSize = 5 + VUtils::__popcnt(additional_params_flags);
@@ -738,6 +742,9 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_D
 		}
 		if (additional_params_flags & VRay::InstancerParamFlags::useMaterial) {
 			item[indexOffs++].setPlugin(material);
+		}
+		if (additional_params_flags & useMapChannels) {
+			item[indexOffs++].setPlugin(primItem.mapChannels);
 		}
 		item[indexOffs++].setPlugin(node);
 
@@ -816,6 +823,7 @@ void ObjectExporter::exportPolyMesh(OBJ_Node &objNode, const GU_Detail &gdp, con
 
 	// This will set/update material/override.
 	item.material = polyMeshExporter.getMaterial();
+	item.mapChannels = polyMeshExporter.getExtMapChannels();
 
 	if (doExportGeometry) {
 		if (!getMeshPluginFromCache(item.primID, item.geometry)) {

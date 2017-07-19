@@ -54,11 +54,14 @@ struct PrimitiveItem {
 	/// Material.
 	PrimMaterial primMaterial;
 
-	/// Exporterd geometry plugin.
+	/// Exported geometry plugin.
 	VRay::Plugin geometry;
 
-	/// Exporterd material plugin.
+	/// Exported material plugin.
 	VRay::Plugin material;
+
+	/// Map channel overrides.
+	VRay::Plugin mapChannels;
 
 	/// Transform.
 	VRay::Transform tm;

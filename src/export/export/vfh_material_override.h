@@ -40,6 +40,7 @@ struct MtlOverrideItem {
 	{}
 
 	/// Sets override value type.
+	/// @param value Override value type.
 	void setType(MtlOverrideItemType value) { type = value; }
 
 	/// Returns override value type.
@@ -57,8 +58,8 @@ struct MtlOverrideItem {
 typedef VUtils::HashMap<MtlOverrideItem> MtlOverrideItems;
 
 enum OverrideAppendMode {
-	overrideAppend = 0,
-	overrideMerge,
+	overrideAppend = 0, ///< Append new keys only.
+	overrideMerge, ///< Merge overrides overwriting existing key.
 };
 
 struct PrimMaterial {
@@ -66,10 +67,12 @@ struct PrimMaterial {
 		: matNode(nullptr)
 	{}
 
-	/// Merge overrides not overwriting existing values.
+	/// Merge overrides.
 	void append(const PrimMaterial &other, OverrideAppendMode mode=overrideAppend);
 
-	/// Merge overrides not overwriting existing values.
+	/// Merge overrides.
+	/// @param items Override items.
+	/// @param mode Merge mode.
 	void appendOverrides(const MtlOverrideItems &items, OverrideAppendMode mode=overrideAppend);
 
 	/// Material node (SHOP, VOP).
@@ -101,6 +104,8 @@ private:
 	GEOAttribList primAttrList;
 	GEOAttribList pointAttrList;
 };
+
+void appendOverrideValues(const STY_Styler &styler, PrimMaterial &primMaterial, OverrideAppendMode mode=overrideAppend, int materialOnly=false);
 
 /// Append material overrides from the style sheet.
 /// @param primMaterial Material override to append to.
