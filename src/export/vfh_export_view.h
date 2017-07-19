@@ -148,10 +148,16 @@ struct ViewParams {
 
 	RenderSizeParams  renderSize;
 	RenderViewParams  renderView;
+	RenderCropRegionParams cropRegion;
+
 	int               usePhysicalCamera;
 	OBJ_Node         *cameraObject;
-	RenderCropRegionParams cropRegion;
 };
+
+/// Returns FOV value based on aperture and focal.
+/// @param aperture Aperture.
+/// @param focal Focal.
+float getFov(float aperture, float focal);
 
 } // namespace VRayForHoudini
 

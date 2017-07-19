@@ -1429,7 +1429,9 @@ void VRayExporter::exportScene()
 	Log::getLog().debug("VRayExporter::exportScene(%.3f)",
 						m_context.getFloatFrame());
 
-	exportView();
+	if (m_isIPR != iprModeSOHO) {
+		exportView();
+	}
 
 	// Clear plugin caches.
 	objectExporter.clearOpPluginCache();

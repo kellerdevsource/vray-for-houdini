@@ -206,7 +206,10 @@ public:
 	/// Export view from the specified view parameters.
 	/// Used in SOHO IPR.
 	/// @param viewParams View parameters
-	void exportView(ViewParams viewParams);
+	void exportView(const ViewParams &viewParams);
+
+	/// Returns current view parameters.
+	const ViewParams &getViewParams() const { return m_viewParams; }
 
 	/// Export the actual scene - geometry, materials, lights, environment,
 	/// volumes and render channels. This is called once for each frame we

@@ -15,9 +15,7 @@
 
 #include <boost/algorithm/string.hpp>
 
-
 using namespace VRayForHoudini;
-
 
 const std::string VRayForHoudini::ViewPluginsDesc::settingsCameraDofPluginName("settingsCameraDof");
 const std::string VRayForHoudini::ViewPluginsDesc::settingsCameraPluginName("settingsCamera");
@@ -27,6 +25,11 @@ const std::string VRayForHoudini::ViewPluginsDesc::renderViewPluginName("renderV
 const std::string VRayForHoudini::ViewPluginsDesc::stereoSettingsPluginName("stereoSettings");
 const std::string VRayForHoudini::ViewPluginsDesc::settingsMotionBlurPluginName("settingsMotionBlur");
 
+float VRayForHoudini::getFov(float aperture, float focal)
+{
+	// From https://www.sidefx.com/docs/houdini13.0/ref/cameralenses
+	return 2.0f * atanf(aperture / 2.0f / focal);
+}
 
 void VRayExporter::RtCallbackView(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
@@ -77,13 +80,11 @@ void VRayExporter::RtCallbackView(OP_Node *caller, void *callee, OP_EventType ty
 	csect.leave();
 }
 
-
 static float getLensShift(const OBJ_Node &camera)
 {
 	// TODO: getLensShift
 	return 0.0f;
 }
-
 
 static void aspectCorrectFovOrtho(ViewParams &viewParams)
 {
@@ -93,7 +94,6 @@ static void aspectCorrectFovOrtho(ViewParams &viewParams)
 		viewParams.renderView.ortho_width *= aspect;
 	}
 }
-
 
 int VRayExporter::isPhysicalView(const OBJ_Node &camera) const
 {
@@ -106,7 +106,6 @@ int VRayExporter::isPhysicalView(const OBJ_Node &camera) const
 
 	return isPhysical;
 }
-
 
 void VRayExporter::fillViewParamFromCameraNode(const OBJ_Node &camera, ViewParams &viewParams)
 {
@@ -135,10 +134,9 @@ void VRayExporter::fillViewParamFromCameraNode(const OBJ_Node &camera, ViewParam
 		fov = Parm::getParmFloat(*m_rop, "SettingsCamera_fov");
 	}
 	else {
-		// From https://www.sidefx.com/docs/houdini13.0/ref/cameralenses
-		const float apx   = camera.evalFloat("aperture", 0, t);
+		const float aperture = camera.evalFloat("aperture", 0, t);
 		const float focal = camera.evalFloat("focal", 0, t);
-		fov = 2.0f * atanf((apx / 2.0f) / focal);
+		fov = getFov(aperture, focal);
 	}
 
 	viewParams.renderSize.w = imageWidth;
@@ -166,7 +164,6 @@ void VRayExporter::fillViewParamFromCameraNode(const OBJ_Node &camera, ViewParam
 	}
 }
 
-
 void VRayExporter::fillSettingsMotionBlur(ViewParams &viewParams)
 {
 	const fpreal t = m_context.getTime();
@@ -180,7 +177,6 @@ void VRayExporter::fillSettingsMotionBlur(ViewParams &viewParams)
 
 	setAttrsFromOpNodePrms(viewPlugins.settingsMotionBlur, m_rop, "SettingsMotionBlur_");
 }
-
 
 void VRayExporter::fillPhysicalCamera(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc)
 {
@@ -213,7 +209,6 @@ void VRayExporter::fillPhysicalCamera(const ViewParams &viewParams, Attrs::Plugi
 	setAttrsFromOpNodePrms(pluginDesc, &camera, "CameraPhysical_");
 }
 
-
 void VRayExporter::fillRenderView(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc)
 {
 	pluginDesc.add(Attrs::PluginAttr("transform", viewParams.renderView.tm));
@@ -239,18 +234,15 @@ void VRayExporter::fillRenderView(const ViewParams &viewParams, Attrs::PluginDes
 	}
 }
 
-
 void VRayExporter::fillStereoSettings(const ViewParams& /*viewParams*/, Attrs::PluginDesc &pluginDesc)
 {
 	setAttrsFromOpNodePrms(pluginDesc, m_rop, "VRayStereoscopicSettings_");
 }
 
-
 void VRayExporter::fillCameraDefault(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc)
 {
 	pluginDesc.add(Attrs::PluginAttr("orthographic", viewParams.renderView.ortho));
 }
-
 
 void VRayExporter::fillSettingsCamera(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc)
 {
@@ -262,7 +254,6 @@ void VRayExporter::fillSettingsCamera(const ViewParams &viewParams, Attrs::Plugi
 
 	setAttrsFromOpNodePrms(pluginDesc, m_rop, "SettingsCamera_");
 }
-
 
 void VRayExporter::fillSettingsCameraDof(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc)
 {
@@ -279,8 +270,10 @@ void VRayExporter::fillSettingsCameraDof(const ViewParams &viewParams, Attrs::Pl
 	setAttrsFromOpNodePrms(pluginDesc, m_rop, "SettingsCameraDof_");
 }
 
-void VRayExporter::exportView(ViewParams viewParams)
+void VRayExporter::exportView(const ViewParams &newViewParams)
 {
+	ViewParams viewParams(newViewParams);
+
 	if (isAnimation() && HOU::isIndie()) {
 		const int maxIndieW = 1920;
 		const int maxIndieH = 1080;
@@ -350,17 +343,18 @@ void VRayExporter::exportView(ViewParams viewParams)
 		exportPlugin(viewPlugins.renderView);
 	}
 
-	if (m_viewParams.changedSize(viewParams)) {
+	if (m_viewParams.changedSize(viewParams) ||
+		m_viewParams.changedCropRegion(viewParams))
+	{
 		setRenderSize(viewParams.renderSize.w, viewParams.renderSize.h);
-	}
-
-	if (m_viewParams.changedCropRegion(viewParams)) {
 		getRenderer().getVRay().setRenderRegion(
 			viewParams.cropRegion.x,
 			viewParams.cropRegion.y,
 			viewParams.cropRegion.width,
 			viewParams.cropRegion.height);
+		setRenderSize(viewParams.renderSize.w, viewParams.renderSize.h);
 	}
+
 	// Store new params
 	m_viewParams = viewParams;
 }
@@ -407,7 +401,6 @@ int VRayExporter::exportView()
 	return 0;
 }
 
-
 int ViewPluginsDesc::needReset(const ViewPluginsDesc &other) const
 {
 	// NOTE: No need to reset on RenderView, we handle it differently
@@ -419,19 +412,16 @@ int ViewPluginsDesc::needReset(const ViewPluginsDesc &other) const
 			cameraDefault.isDifferent(other.cameraDefault));
 }
 
-
 int ViewParams::changedParams(const ViewParams &other) const
 {
 	return MemberNotEq(renderView);
 }
-
 
 int ViewParams::changedSize(const ViewParams &other) const
 {
 	return (MemberNotEq(renderSize.w) ||
 			MemberNotEq(renderSize.h));
 }
-
 
 int ViewParams::needReset(const ViewParams &other) const
 {
@@ -443,11 +433,10 @@ int ViewParams::needReset(const ViewParams &other) const
 int ViewParams::changedCropRegion(const ViewParams & other) const
 {
 	return (MemberNotEq(cropRegion.x) ||
-		MemberNotEq(cropRegion.y)||
-		MemberNotEq(cropRegion.width)||
-		MemberNotEq(cropRegion.height));
+			MemberNotEq(cropRegion.y) ||
+			MemberNotEq(cropRegion.width) ||
+			MemberNotEq(cropRegion.height));
 }
-
 
 bool StereoViewParams::operator ==(const StereoViewParams &other) const
 {
@@ -460,12 +449,10 @@ bool StereoViewParams::operator ==(const StereoViewParams &other) const
 			MemberEq(stereo_view));
 }
 
-
 bool StereoViewParams::operator !=(const StereoViewParams &other) const
 {
 	return !(*this == other);
 }
-
 
 bool RenderViewParams::operator ==(const RenderViewParams &other) const
 {
@@ -479,12 +466,10 @@ bool RenderViewParams::operator ==(const RenderViewParams &other) const
 			MemberEq(tm));
 }
 
-
 bool RenderViewParams::operator !=(const RenderViewParams &other) const
 {
 	return !(*this == other);
 }
-
 
 int RenderViewParams::needReset(const RenderViewParams &other) const
 {
