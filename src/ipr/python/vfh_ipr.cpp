@@ -371,6 +371,8 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 			exporter.exportScene();
 			exporter.exportView(viewParams);
 			exporter.renderFrame();
+
+			initImdisplay(exporter.getRenderer().getVRay());
 		}
 	}
    
