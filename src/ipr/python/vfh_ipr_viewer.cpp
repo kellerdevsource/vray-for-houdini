@@ -146,12 +146,14 @@ class ImdisplayThread
 	: public QThread
 {
 public:
-	ImdisplayThread() {}
+	ImdisplayThread()
+		: port(0)
+	{}
 	~ImdisplayThread() {
 		close();
 	}
 
-	void init(int port) {
+	void init() {
 		static char buf[MAX_PATH] = "";
 		vutils_sprintf_n(buf, COUNT_OF(buf), "imdisplay -p -k -f -s %i", port);
 
@@ -160,13 +162,8 @@ public:
 	}
 
 	void close() {
-		if (wp.getFilePtr()) {
-			TileHeader eof;
-			eof.x0 = -2;
-			writeHeader(eof);
-		}
-
-		wp.close();
+		wp.terminate();
+		wp.close(false);
 	}
 
 	void add(const PlaneImages &images) {
@@ -182,6 +179,14 @@ public:
 		mutex.lock();
 		queue.clear();
 		mutex.unlock();
+	}
+
+	void setPort(int value) {
+		port = value;
+	}
+
+	int getPort() const {
+		return port;
 	}
 
 	void setRendererOptions(VRay::VRayRenderer &renderer) {
@@ -296,6 +301,12 @@ private:
 		image.freeMem();
 	}
 
+	void writeEOF() {
+		TileHeader eof;
+		eof.x0 = -2;
+		writeHeader(eof);
+	}
+
 	/// Write specified header to pipe.
 	/// @param header Imdisplay header.
 	template <typename HeaderType>
@@ -313,8 +324,6 @@ private:
 		}
 
 		if (fwrite(data, elementSize, numElements, wp.getFilePtr()) != numElements) {
-			Log::getLog().error("Pipe write fail!");
-
 			clear();
 			close();
 		}
@@ -322,6 +331,9 @@ private:
 
 	/// Pipe to the imdisplay.
 	UT_WritePipe wp;
+
+	/// Imdisplay port.
+	int port;
 
 	/// Image queue.
 	QQueue<PlaneImages> queue;
@@ -382,17 +394,27 @@ void VRayForHoudini::closeImdisplay()
 	Log::getLog().debug("closeImdisplay()");
 
 	imdisplayThread.clear();
-	imdisplayThread.close();
 	imdisplayThread.terminate();
+	imdisplayThread.close();
 }
 
-void VRayForHoudini::initImdisplay(VRay::VRayRenderer &renderer, int port)
+void VRayForHoudini::setImdisplayPort(int port)
+{
+	return imdisplayThread.setPort(port);
+}
+
+int VRayForHoudini::getImdisplayPort()
+{
+	return imdisplayThread.getPort();
+}
+
+void VRayForHoudini::initImdisplay(VRay::VRayRenderer &renderer)
 {
 	Log::getLog().debug("initImdisplay()");
 
 	closeImdisplay();
 
-	imdisplayThread.init(port);
+	imdisplayThread.init();
 	imdisplayThread.setRendererOptions(renderer);
 	imdisplayThread.start(QThread::LowPriority);
 }
