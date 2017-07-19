@@ -37,6 +37,7 @@ camParms = {
     'cropRight'   : SohoParm('cropr',       'real',   [-1],            False),
     'cropBottom'  : SohoParm('cropb',       'real',   [-1],            False),
     'cropTop'     : SohoParm('cropt',       'real',   [-1],            False),
+    'camera'      : SohoParm('camera',      'string', ['/obj/cam1'],   False)
 }
 
 def printDebug(fmt, *args):

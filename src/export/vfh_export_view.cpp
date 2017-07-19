@@ -318,6 +318,10 @@ void VRayExporter::exportView(ViewParams viewParams)
 		removePlugin(ViewPluginsDesc::cameraPhysicalPluginName);
 		removePlugin(ViewPluginsDesc::cameraDefaultPluginName);
 
+		//this is where the fill functions should go
+
+		//fillRenderView(viewParams, viewPlugins.renderView);
+
 		exportPlugin(viewPlugins.settingsCamera);
 		exportPlugin(viewPlugins.settingsMotionBlur);
 
@@ -342,6 +346,7 @@ void VRayExporter::exportView(ViewParams viewParams)
 		getRenderer().setAutoCommit(true);
 	}
 	else if (m_viewParams.changedParams(viewParams)) {
+		fillRenderView(viewParams, viewPlugins.renderView);
 		exportPlugin(viewPlugins.renderView);
 	}
 

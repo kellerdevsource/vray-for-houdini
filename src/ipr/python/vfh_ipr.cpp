@@ -157,7 +157,7 @@ static PyObject* vfhExportView(PyObject*, PyObject *args, PyObject *keywds)
 		viewParams.cropRegion.x = resItem(0) * cropLeft;
 		viewParams.cropRegion.y = resItem(1) * cropTop;
 		viewParams.cropRegion.width = (resItem(0) * cropRight) - viewParams.cropRegion.x;
-		viewParams.cropRegion.height = (resItem(1) * cropBottom) - viewParams.cropRegion.y;//coordinates for y axis run from bottom to top
+		viewParams.cropRegion.height = (resItem(1) * cropBottom) -  viewParams.cropRegion.y + resItem(1);//adding the height, since houdini y axis is reversed
 #undef resItem
 		if (transform && PyList_Check(transform)) {
 			if (PyList_Size(transform) == 16) {
@@ -174,6 +174,13 @@ static PyObject* vfhExportView(PyObject*, PyObject *args, PyObject *keywds)
 		}
 
 		exporter.exportView(viewParams);
+		int imgWidth, imgHeight;
+		exporter.getRenderer().getVRay().getImageSize(imgWidth, imgHeight);
+
+		printf("Width: %i, Height: %i\n", imgWidth, imgHeight);
+		int a, b, c, d;
+		bool temp = exporter.getRenderer	().getVRay().getRenderRegion(a, b, c, d);
+		printf("rgnLeft: %i, rgnTop: %i, width: %i, height: %i\n bool: %i\n", a, b, c, d, temp);
 	}
 	else {
 		PyErr_Print();
