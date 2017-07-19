@@ -303,6 +303,8 @@ void VRayExporter::exportView(const ViewParams &newViewParams)
 	if (needReset) {
 		Log::getLog().warning("VRayExporter::exportView: Reseting view plugins...");
 
+		const int prevAutoCommit = getRenderer().getVRay().getAutoCommit();
+
 		getRenderer().setAutoCommit(false);
 
 		removePlugin(ViewPluginsDesc::settingsCameraPluginName);
@@ -311,9 +313,21 @@ void VRayExporter::exportView(const ViewParams &newViewParams)
 		removePlugin(ViewPluginsDesc::cameraPhysicalPluginName);
 		removePlugin(ViewPluginsDesc::cameraDefaultPluginName);
 
-		//this is where the fill functions should go
+		fillRenderView(viewParams, viewPlugins.renderView);
+		fillSettingsMotionBlur(viewParams);
+		fillSettingsCamera(viewParams, viewPlugins.settingsCamera);
 
-		//fillRenderView(viewParams, viewPlugins.renderView);
+		if (!isIPR() && !isGPU()) {
+			fillStereoSettings(viewParams, viewPlugins.stereoSettings);
+		}
+
+		if (viewParams.usePhysicalCamera) {
+			fillPhysicalCamera(viewParams, viewPlugins.cameraPhysical);
+		}
+		else {
+			fillCameraDefault(viewParams, viewPlugins.cameraDefault);
+			fillSettingsCameraDof(viewParams, viewPlugins.settingsCameraDof);
+		}
 
 		exportPlugin(viewPlugins.settingsCamera);
 		exportPlugin(viewPlugins.settingsMotionBlur);
@@ -336,7 +350,7 @@ void VRayExporter::exportView(const ViewParams &newViewParams)
 		exportPlugin(viewPlugins.renderView);
 
 		getRenderer().commit();
-		getRenderer().setAutoCommit(true);
+		getRenderer().setAutoCommit(prevAutoCommit);
 	}
 	else if (m_viewParams.changedParams(viewParams)) {
 		fillRenderView(viewParams, viewPlugins.renderView);
@@ -377,21 +391,6 @@ int VRayExporter::exportView()
 	viewParams.usePhysicalCamera = isPhysicalView(*camera);
 
 	fillViewParamFromCameraNode(*camera, viewParams);
-	fillSettingsMotionBlur(viewParams);
-	fillSettingsCamera(viewParams, viewPlugins.settingsCamera);
-	fillRenderView(viewParams, viewPlugins.renderView);
-
-	if (!isIPR() && !isGPU()) {
-		fillStereoSettings(viewParams, viewPlugins.stereoSettings);
-	}
-
-	if (viewParams.usePhysicalCamera) {
-		fillPhysicalCamera(viewParams, viewPlugins.cameraPhysical);
-	}
-	else {
-		fillCameraDefault(viewParams, viewPlugins.cameraDefault);
-		fillSettingsCameraDof(viewParams, viewPlugins.settingsCameraDof);
-	}
 
 	exportView(viewParams);
 
