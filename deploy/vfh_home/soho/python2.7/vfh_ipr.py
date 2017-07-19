@@ -66,12 +66,7 @@ def main():
         if not camParmsEval:
             return {}
 
-        printDebug("Camera overrides:")
-        for key in camParmsEval:
-            val = camParmsEval[key].Value[0] if len(camParmsEval[key].Value) == 1 else camParmsEval[key].Value
-            printDebug("  %s: %s" % (key, val))
-
-        return {
+        viewParams = {
             'camera'    : camera,
             'transform' : camParmsEval['space:world'].Value,
             'ortho'     : 1 if camParmsEval['projection'].Value[0] in {'ortho'} else 0,
@@ -81,6 +76,17 @@ def main():
             'cropt'     : camParmsEval['cropt'].Value[0],
             'cropb'     : camParmsEval['cropb'].Value[0],
         }
+
+        cropX = viewParams['res'][0] * viewParams['cropl']
+        cropY = viewParams['res'][1] * (1.0 - viewParams['cropt'])
+        cropW = viewParams['res'][0] * (viewParams['cropr'] - viewParams['cropl'])
+        cropH = viewParams['res'][1] * (viewParams['cropt'] - viewParams['cropb'])
+
+        printDebug("  Res: %s" % viewParams['res'])
+        printDebug("  Crop: %i-%i %i x %i " % (cropX, cropY, cropW, cropH))
+
+        return viewParams
+
 
     def exportView(rop, camera, sohoCam, t):
         printDebug("exportView()")
@@ -185,5 +191,4 @@ def main():
 try:
     main()
 except:
-    with open("C:\\tmp\\vfh_ipr_log.txt", "w") as log:
-        traceback.print_exc(file=log)
+    traceback.print_exc()

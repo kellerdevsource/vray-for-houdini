@@ -346,7 +346,6 @@ void VRayExporter::exportView(const ViewParams &newViewParams)
 	if (m_viewParams.changedSize(viewParams) ||
 		m_viewParams.changedCropRegion(viewParams))
 	{
-		setRenderSize(viewParams.renderSize.w, viewParams.renderSize.h);
 		getRenderer().getVRay().setRenderRegion(
 			viewParams.cropRegion.x,
 			viewParams.cropRegion.y,

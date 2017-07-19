@@ -162,13 +162,7 @@ static void fillViewParamsFromDict(PyObject *viewParamsDict, ViewParams &viewPar
 
 static void updateView(const ViewParams &viewParams)
 {
-	VRayExporter &exporter = getExporter();
 
-	if (exporter.getViewParams().changedSize(viewParams)) {
-		initImdisplay(exporter.getRenderer().getVRay());
-	}
-
-	exporter.exportView(viewParams);
 }
 
 static PyObject* vfhExportView(PyObject*, PyObject *args, PyObject *keywds)
@@ -211,7 +205,16 @@ static PyObject* vfhExportView(PyObject*, PyObject *args, PyObject *keywds)
 		fillViewParamsFromDict(viewParamsDict, viewParams);
 	}
 
-	updateView(viewParams);
+	// Copy params; no const ref!
+	ViewParams oldViewParams = exporter.getViewParams();
+
+	// Update view.
+	exporter.exportView(viewParams);
+
+	// Update pipe if needed.
+	if (oldViewParams.changedSize(viewParams)) {
+		initImdisplay(exporter.getRenderer().getVRay());
+	}
 
 	Py_RETURN_NONE;
 }
@@ -340,6 +343,9 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 		exporter.setIPR(iprMode);
 
 		if (exporter.initRenderer(isVFB, false)) {
+			ViewParams viewParams;
+			fillViewParamsFromDict(viewParamsDict, viewParams);
+
 			exporter.setDRSettings();
 
 			exporter.setRendererMode(getRendererIprMode(*ropNode));
@@ -359,15 +365,12 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 			}
 
 			exporter.initExporter(getFrameBufferType(*ropNode), 1, now, now);
-
-			ViewParams viewParams;
-			fillViewParamsFromDict(viewParamsDict, viewParams);
-
-			// XXX: Must go before exportFrame().
-			updateView(viewParams);
+			exporter.setCurrentTime(now);
 
 			exporter.exportSettings();
-			exporter.exportFrame(now);
+			exporter.exportScene();
+			exporter.exportView(viewParams);
+			exporter.renderFrame();
 		}
 	}
    
