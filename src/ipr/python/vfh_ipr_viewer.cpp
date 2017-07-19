@@ -239,7 +239,23 @@ public:
 
 	void add(TileQueueMessage *msg) {
 		QMutexLocker locker(&mutex);
-		/// TODO: Clean previous messages of the same type.
+
+		/// Remove previous messages of the same type.
+		QList<int> indexesToRemove;
+		int indexToRemove = 0;
+		for (const TileQueueMessage *queueMsg : queue) {
+			if (queueMsg->type() == msg->type()) {
+				indexesToRemove.append(indexToRemove);
+			}
+			indexToRemove++;
+		}
+
+		for (const int index : indexesToRemove) {
+			TileQueueMessage *queueMsg = queue[index];
+			queue.removeAt(index);
+			delete queueMsg;
+		}
+
 		queue.enqueue(msg);
 	}
 
