@@ -191,5 +191,4 @@ def main():
 try:
     main()
 except:
-    with open("C:\\tmp\\vfh_ipr_log.txt", "w") as log:
-        traceback.print_exc(file=log)
+    traceback.print_exc()
