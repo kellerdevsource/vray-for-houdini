@@ -169,8 +169,6 @@ static PyObject* vfhExportView(PyObject*, PyObject *args, PyObject *keywds)
 {
 	PyObject *viewParamsDict = nullptr;
 
-	const char *camera = nullptr;
-
 	static char *kwlist[] = {
 		/* 0 */ "viewParams",
 	    NULL
@@ -191,6 +189,8 @@ static PyObject* vfhExportView(PyObject*, PyObject *args, PyObject *keywds)
 
 	VRayExporter &exporter = getExporter();
 	exporter.exportDefaultHeadlight(true);
+
+	const char *camera = PyString_AsString(PyDict_GetItemString(viewParamsDict, "camera"));;
 
 	OBJ_Node *cameraNode = nullptr;
 	if (UTisstring(camera)) {
