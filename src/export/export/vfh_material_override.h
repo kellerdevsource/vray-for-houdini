@@ -11,15 +11,15 @@
 #ifndef VRAY_FOR_HOUDINI_MATERIAL_OVERRIDE_H
 #define VRAY_FOR_HOUDINI_MATERIAL_OVERRIDE_H
 
-#include "vfh_attr_utils.h"
 #include "vfh_geoutils.h"
 
 #include <QString>
-#include <QSet>
 
 #include <hash_map.h>
+
 #include <GA/GA_Handle.h>
 #include <OBJ/OBJ_Node.h>
+#include <STY/STY_Styler.h>
 
 namespace VRayForHoudini {
 
@@ -62,7 +62,13 @@ struct PrimMaterial {
 	{}
 
 	/// Merge overrides overwriting existing values.
+	void merge(const PrimMaterial &other);
+
+	/// Merge overrides overwriting existing values.
 	void mergeOverrides(const MtlOverrideItems &items);
+
+	/// Merge overrides not overwriting existing values.
+	void append(const PrimMaterial &other);
 
 	/// Merge overrides not overwriting existing values.
 	void appendOverrides(const MtlOverrideItems &items);
@@ -70,114 +76,8 @@ struct PrimMaterial {
 	/// Material node (SHOP, VOP).
 	OP_Node *matNode;
 
-	/// Material overrides from stylesheet or SHOP overrides.
+	/// Material overrides from style sheet or SHOP overrides.
 	MtlOverrideItems overrides;
-};
-
-struct PrimRange {
-	enum PrimRangeTypes {
-		primRangeNotSet = -1,
-	};
-
-	explicit PrimRange(int from=primRangeNotSet, int to=primRangeNotSet)
-		: from(from)
-		, to(to)
-	{}
-
-	int inRange(int index) const;
-
-	bool operator==(const PrimRange &other) const {
-        return from == other.from && to == other.to;
-    }
-
-	int from;
-	int to;
-};
-
-FORCEINLINE uint qHash(const PrimRange &value) {
-	return ::qHash(value.to);
-}
-
-typedef QSet<PrimRange> PrimRanges;
-
-struct SheetTarget {
-	enum SheetTargetType {
-		sheetTargetUnknown = -1,
-		sheetTargetAll,
-		sheetTargetPrimitive,
-	};
-
-	explicit SheetTarget(SheetTargetType targetType=sheetTargetUnknown)
-		: targetType(targetType)
-	{}
-
-	struct TargetPrimitive {
-		enum TargetType {
-			primitiveTypeUnknown = -1,
-			primitiveTypeGroup,
-			primitiveTypeRange,
-		};
-
-		explicit TargetPrimitive(TargetType targetType=primitiveTypeUnknown)
-			: targetType(targetType)
-		{}
-
-		/// Sets group name.
-		void setGroupName(const QString &value);
-
-		/// Returns group name.
-		const char *getGroupName() const;
-
-		/// Add primitive range.
-		void addRange(const PrimRange &range);
-
-		/// Returs true if index in a group range.
-		/// @param index Primitive index.
-		int isInRange(int index) const;
-
-		/// Group type.
-		TargetType targetType;
-
-	private:
-		/// Primitive group name.
-		QString group;
-
-		/// Primitive ranges;
-		PrimRanges ranges;
-	} primitive;
-
-	SheetTargetType targetType;
-};
-
-struct TargetStyleSheet {
-	explicit TargetStyleSheet(SheetTarget::SheetTargetType target=SheetTarget::sheetTargetUnknown)
-		: target(target)
-	{}
-
-	SheetTarget target;
-	PrimMaterial overrides;
-};
-
-typedef VUtils::Table<TargetStyleSheet, -1> TargetStyleSheets;
-
-struct ObjectStyleSheet {
-	ObjectStyleSheet()
-	{}
-
-	ObjectStyleSheet(const ObjectStyleSheet &other) {
-		*this = other;
-	}
-
-	ObjectStyleSheet& operator=(const ObjectStyleSheet &other) {
-		styles.copy(other.styles);
-		return *this;
-	}
-
-	void operator+=(const ObjectStyleSheet &other) {
-		styles += other.styles;
-	}
-
-	TargetStyleSheets styles;
 };
 
 struct MtlOverrideAttrExporter {
@@ -203,25 +103,57 @@ private:
 	GEOAttribList pointAttrList;
 };
 
-void mergeStyleSheet(PrimMaterial &primMaterial,
-					 const QString &styleSheet,
-					 fpreal t,
-					 int materialOnly=false);
+/// Append material overrides from the style sheet.
+/// @param primMaterial Material override to append to.
+/// @param styleSheet Style sheet buffer.
+/// @param t Time.
+/// @param materialOnly Process material tag only.
+void appendStyleSheet(PrimMaterial &primMaterial,
+					  const UT_StringHolder &styleSheet,
+					  fpreal t,
+					  int materialOnly=false);
 
-void mergeMaterialOverrides(PrimMaterial &primMaterial,
+/// Append material overrides from material override attributes.
+/// @param primMaterial Material override to append to.
+/// @param matPath Material OP path.
+/// @param materialOverrides Material overrides buffer.
+/// @param t Time.
+/// @param materialOnly Process material tag only.
+void appendMaterialOverrides(PrimMaterial &primMaterial,
 							const UT_String &matPath,
 							const UT_String &materialOverrides,
 							fpreal t,
 							int materialOnly=false);
 
-void mergeMaterialOverride(PrimMaterial &primMaterial,
+/// Append material overrides from pritimive override handles.
+/// @param primMaterial Material override to append to.
+/// @param materialStyleSheetHndl Style sheet handle.
+/// @param materialPathHndl Material path handle.
+/// @param materialOverrideHndl Material override handle.
+/// @param offset Data offset for the handle.
+/// @param t Time.
+void appendMaterialOverride(PrimMaterial &primMaterial,
 						   const GA_ROHandleS &materialStyleSheetHndl,
 						   const GA_ROHandleS &materialPathHndl,
 						   const GA_ROHandleS &materialOverrideHndl,
-						   GA_Offset primOffset,
+						   GA_Offset offset,
 						   fpreal t);
 
-void parseObjectStyleSheet(OBJ_Node &objNode, ObjectStyleSheet &objSheet, fpreal t);
+/// Get styler for the object from "shop_materialstylesheet" attribute.
+/// @param objNode OBJ node instance.
+/// @param t Time.
+STY_Styler getStylerForObject(OBJ_Node &objNode, fpreal t);
+
+/// Get styler for the primitive.
+/// @param geoStyler Current top level styler.
+/// @param prim Primitive instance.
+STY_Styler getStylerForPrimitive(const STY_Styler &geoStyler, const GEO_Primitive &prim);
+
+/// Fills style sheet material overrides for a primitive.
+/// @param geoStyler Current top level styler.
+/// @param prim Primitive instance.
+/// @param primMaterial Material override to append to.
+void getOverridesForPrimitive(const STY_Styler &geoStyler, const GEO_Primitive &prim, PrimMaterial &primMaterial);
 
 } // namespace VRayForHoudini
 

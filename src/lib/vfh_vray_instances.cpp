@@ -196,10 +196,11 @@ void VRayForHoudini::deleteVRayInit()
 		InstancesStorage *is = reinterpret_cast<InstancesStorage*>(vrayInstances.data());
 
 		for (int i = 0; i < maxInstances; ++i) {
-			VRay::VRayRenderer* &vrayInstance = is->vrayInstances[i];
+			VRay::VRayRenderer *vrayInstance = is->vrayInstances[i];
 			if (vrayInstance) {
 				Log::getLog().debug("Deleting VRayRenderer: 0x%X", vrayInstance);
-				FreePtr(is->vrayInstances[i]);
+				FreePtr(vrayInstance);
+				is->vrayInstances[i] = nullptr;
 			}
 		}
 
@@ -250,6 +251,9 @@ void VRayForHoudini::deleteVRayRenderer(VRay::VRayRenderer* &instance)
 {
 	Log::getLog().debug("deleteVRayRenderer()");
 
+	if (!instance)
+		return;
+
 	if (!vrayInstances.isAttached()) {
 		vrayInstances.attach();
 	}
@@ -264,6 +268,7 @@ void VRayForHoudini::deleteVRayRenderer(VRay::VRayRenderer* &instance)
 			if (vrayInstance == instance) {
 				Log::getLog().debug("Deleting VRayRenderer: 0x%X", vrayInstance);
 				FreePtr(vrayInstance);
+				instance = nullptr;
 				break;
 			}
 		}

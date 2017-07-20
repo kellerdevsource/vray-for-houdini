@@ -566,7 +566,7 @@ int VRayPluginRenderer::startRender(int locked)
 			m_vray->setRenderRegion(m_savedRegion.left, m_savedRegion.top, m_savedRegion.width, m_savedRegion.height);
 		}
 
-		m_vray->start();
+		m_vray->startSync();
 
 		if (locked) {
 			m_vray->waitForImageReady();

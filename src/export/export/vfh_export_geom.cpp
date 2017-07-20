@@ -12,6 +12,7 @@
 #include "vfh_export_mesh.h"
 #include "vfh_export_hair.h"
 #include "vfh_op_utils.h"
+#include "vfh_attr_utils.h"
 #include "vfh_exporter.h"
 #include "vfh_geoutils.h"
 
@@ -31,6 +32,8 @@
 #include <GA/GA_Names.h>
 
 using namespace VRayForHoudini;
+
+#define USE_STY 1
 
 static struct PrimPackedTypeIDs {
 	PrimPackedTypeIDs()
@@ -142,9 +145,9 @@ exint ObjectExporter::getDetailID() const
 
 OP_Node* ObjectExporter::getGenerator() const
 {
-	if (!primContextStack.size())
+	if (primContextStack.isEmpty())
 		return nullptr;
-	// Return the bottom-most generator.
+
 	return primContextStack[0].generator;
 }
 
@@ -162,16 +165,11 @@ void ObjectExporter::getPrimMaterial(PrimMaterial &primMaterial) const
 	}
 }
 
-ObjectStyleSheet ObjectExporter::getObjectStyleSheet() const
+STY_Styler ObjectExporter::getStyler() const
 {
-	ObjectStyleSheet styleSheet;
-
-	PrimContextIt it(primContextStack);
-	while (it.hasNext()) {
-		styleSheet += it.next().styleSheet;
-	}
-
-	return styleSheet;
+	if (primContextStack.isEmpty())
+		return STY_Styler();
+	return primContextStack.top().styler;
 }
 
 void ObjectExporter::clearOpPluginCache()
@@ -471,7 +469,18 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 	GA_ROHandleF animOffsetHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTRIB_ANIM_OFFSET));
 
 	MtlOverrideAttrExporter attrExp(gdp);
+
+#if USE_STY
+	const STY_Styler &geoStyler = getStyler();
+	if (geoStyler.hasAnyData()) {
+		Log::getLog().debug("gdpStyler.hasAnyData()");
+	}
+	if (geoStyler.hasStyles()) {
+		Log::getLog().debug("gdpStyler.hasStyles()");
+	}
+#else
 	const ObjectStyleSheet &objectStyleSheet = getObjectStyleSheet();
+#endif
 
 	for (GA_Iterator jt(gdp.getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
 		const GEO_Primitive *prim = gdp.getGEOPrimitive(*jt);
@@ -489,6 +498,8 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 								  primTypeID == GEO_PRIMVOLUME ||
 								  primTypeID == GEO_PRIMVDB;
 
+		const STY_Styler &primStyler = getStylerForPrimitive(geoStyler, *prim);
+
 		PrimitiveItem item;
 		item.prim = prim;
 		item.primID = gdp.getUniqueId() ^ primOffset;
@@ -500,6 +511,9 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 		if (animOffsetHndl.isValid()) {
 			item.t = animOffsetHndl.get(primOffset);
 		}
+
+		// Style sheet overrides.
+		getOverridesForPrimitive(geoStyler, *prim, item.primMaterial);
 
 		// Primitive attributes
 		if (isPackedPrim) {
@@ -518,39 +532,12 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 			// Point attributes for packed instancing.
 			if (numPoints == numPrims) {
 				const GA_Offset pointOffset = gdp.pointOffset(primIndex);
-
-				for (int i = 0; i < objectStyleSheet.styles.count(); ++i) {
-					const TargetStyleSheet &style = objectStyleSheet.styles[i];
-					const SheetTarget &styleTarge = style.target;
-
-					int mergeOverrides = false;
-
-					if (styleTarge.targetType == SheetTarget::sheetTargetAll) {
-						mergeOverrides = true;
-					}
-					else if (styleTarge.targetType == SheetTarget::sheetTargetPrimitive) {
-						const SheetTarget::TargetPrimitive &primTarget = styleTarge.primitive;
-						if (primTarget.targetType == SheetTarget::TargetPrimitive::primitiveTypeGroup) {
-							const GA_PrimitiveGroup *primGroup = gdp.findPrimitiveGroup(primTarget.getGroupName());
-
-							mergeOverrides = primGroup && primGroup->contains(prim);
-						}
-						else if (primTarget.targetType == SheetTarget::TargetPrimitive::primitiveTypeRange) {
-							mergeOverrides = primTarget.isInRange(primIndex);
-						}
-					}
-
-					if (mergeOverrides) {
-						item.primMaterial.appendOverrides(style.overrides.overrides);
-					}
-				}
-
 				attrExp.fromPoint(item.primMaterial.overrides, pointOffset);
 			}
 		}
 
 		// Material overrides.
-		mergeMaterialOverride(item.primMaterial, materialStyleSheetHndl, materialPathHndl, materialOverrideHndl, primOffset, ctx.getTime());
+		appendMaterialOverride(item.primMaterial, materialStyleSheetHndl, materialPathHndl, materialOverrideHndl, primOffset, ctx.getTime());
 
 		// Primitive attributes
 		attrExp.fromPrimitive(item.primMaterial.overrides, primOffset);
@@ -559,7 +546,7 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 		getPrimMaterial(item.primMaterial);
 
 		if (isVolumePrim) {
-			pushContext(PrimContext(&objNode, item.tm, item.primID, item.primMaterial));
+			pushContext(PrimContext(&objNode, item.tm, item.primID, item.primMaterial, primStyler));
 			exportPrimVolume(objNode, item);
 			popContext();
 		}
@@ -572,7 +559,7 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 				getPrimPluginFromCache(primKey, item.geometry);
 			}
 			if (!item.geometry) {
-				pushContext(PrimContext(&objNode, item.tm, item.primID, item.primMaterial));
+				pushContext(PrimContext(&objNode, item.tm, item.primID, item.primMaterial, primStyler));
 				item.geometry = exportPrimPacked(objNode, primPacked);
 				popContext();
 			}
@@ -1237,8 +1224,6 @@ VRay::Plugin ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_De
 
 	const GA_Size numPoints = gdp.getNumPoints();
 
-	const ObjectStyleSheet &objectStyleSheet = getObjectStyleSheet();
-
 	int validPointIdx = 0;
 	for (GA_Index i = 0; i < numPoints; ++i) {
 		const GA_Offset pointOffset = gdp.pointOffset(i);
@@ -1267,32 +1252,11 @@ VRay::Plugin ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_De
 		item.tm = getPointInstanceTM(gdp, pointInstanceAttrs, pointOffset);
 
 		// Material overrides.
-		mergeMaterialOverride(item.primMaterial, materialStyleSheetHndl, materialPathHndl, materialOverrideHndl, pointOffset, ctx.getTime());
+		appendMaterialOverride(item.primMaterial, materialStyleSheetHndl, materialPathHndl, materialOverrideHndl, pointOffset, ctx.getTime());
 		attrExp.fromPoint(item.primMaterial.overrides, pointOffset);
 
 		// Check parent overrides.
 		getPrimMaterial(item.primMaterial);
-
-#if 0
-		for (int s = 0; s < objectStyleSheet.styles.count(); ++s) {
-			const TargetStyleSheet &style = objectStyleSheet.styles[s];
-			const SheetTarget &styleTarge = style.target;
-
-			if (styleTarge.targetType == SheetTarget::sheetTargetAll) {
-				item.primMaterial.mergeOverrides(style.overrides.overrides);
-			}
-			else if (styleTarge.targetType == SheetTarget::sheetTargetPrimitive) {
-				const SheetTarget::TargetPrimitive &primTarget = styleTarge.primitive;
-
-				if (primTarget.targetType == SheetTarget::TargetPrimitive::primitiveTypeGroup) {
-					const GA_PrimitiveGroup *primGroup = gdp.findPrimitiveGroup(primTarget.getGroup());
-					if (primGroup && primGroup->contains(prim)) {
-						item.primMaterial.appendOverrides(style.overrides.overrides);
-					}
-				}
-			}
-		}
-#endif
 
 		// Mult with object inv. tm.
 		VRay::Transform objTm = VRayExporter::getObjTransform(instaceObjNode, ctx, false);
@@ -1328,9 +1292,13 @@ VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode, SOP_Node &sopNode
 	const VRay::Transform tm = pluginExporter.getObjTransform(&objNode, ctx);
 
 	PrimContext primContext(&objNode, tm, gdp.getUniqueId());
-
+#if USE_STY
+	STY_Styler currentStyler = getStyler();
+	STY_Styler objectStyler = getStylerForObject(objNode, ctx.getTime());
+	primContext.styler = objectStyler.cloneWithAddedStyler(currentStyler, STY_TargetHandle());
+#else
 	parseObjectStyleSheet(objNode, primContext.styleSheet, ctx.getTime());
-
+#endif
 	pushContext(primContext);
 	
 	VRay::Plugin geometry;
