@@ -56,10 +56,10 @@ void logMessage(LogLevel level, Logger::LogLineType logBuff) {
 static std::thread * loggerThread = nullptr; ///< the thread used for logging
 static std::once_flag startLogger; ///< flag to ensure we start the thread only once
 static volatile bool isStoppedLogger = false; ///< stop flag for the thread
-static VUtils::GetEnvVarInt disableThreadLog("VFH_NO_THREAD_LOGGER", 0);
+static VUtils::GetEnvVarInt threadedLogger("VFH_THREADED_LOGGER", 1);
 
 void Logger::writeMessages() {
-	if (disableThreadLog.getValue() != 0) {
+	if (threadedLogger.getValue() == 0) {
 		return;
 	}
 	auto & log = getLog();
@@ -75,7 +75,7 @@ void Logger::writeMessages() {
 }
 
 void Logger::startLogging() {
-	if (disableThreadLog.getValue() == 0) {
+	if (threadedLogger.getValue()) {
 		std::call_once(startLogger, [] {
 			loggerThread = new std::thread(&Logger::writeMessages);
 		});
@@ -83,7 +83,7 @@ void Logger::startLogging() {
 }
 
 void Logger::stopLogging() {
-	if (disableThreadLog.getValue() == 0) {
+	if (threadedLogger.getValue()) {
 		static std::mutex mtx;
 		std::lock_guard<std::mutex> lock(mtx);
 		isStoppedLogger = true;
@@ -105,7 +105,7 @@ void Logger::log(LogLevel level, const char *format, va_list args)
 							: level <= m_logLevel;
 
 	if (showMessage) {
-		if (disableThreadLog.getValue() == 0) {
+		if (threadedLogger.getValue()) {
 			m_queue.push(LogPair{level, buf});
 		} else {
 			logMessage(level, buf);
