@@ -807,7 +807,7 @@ void ObjectExporter::exportHair(OBJ_Node &objNode, const GU_Detail &gdp, const G
 
 	PrimitiveItem item;
 	getPrimMaterial(item.primMaterial);
-	item.tm = getTm();
+	item.tm = primContextStack.back().tm;
 	item.primID = gdp.getUniqueId() ^ keyDataHair;
 
 	if (doExportGeometry) {
