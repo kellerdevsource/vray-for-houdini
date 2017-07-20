@@ -815,7 +815,8 @@ void ObjectExporter::exportPolyMesh(OBJ_Node &objNode, const GU_Detail &gdp, con
 	const bool hasSubdivApplied = subdivType != displacementTypeNone;
 
 	PrimitiveItem item;
-	item.tm = getTm();
+	// The top of the stack contains the final tranform.
+	item.tm = primContextStack.back().tm;
 	item.primID = gdp.getUniqueId() ^ keyDataPoly;
 
 	polyMeshExporter.setSubdivApplied(hasSubdivApplied);
