@@ -70,7 +70,6 @@ private:
 
 	LogLevel m_logLevel; ///< Current max log level to be shown
 
-#ifndef VFH_NO_THREAD_LOGGER
 public:
 	/// One line of log, assume it wont be longer than 1k
 	typedef std::array<tchar, 1024> LogLineType;
@@ -88,7 +87,6 @@ private:
 	/// Loop and dump any messages from the queue to stdout
 	/// Used as base for the thread that is processing the messages
 	static void writeMessages();
-#endif
 };
 
 /// Get singleton instance to Logger

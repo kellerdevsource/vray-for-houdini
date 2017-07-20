@@ -9,6 +9,7 @@
 //
 
 #include "vfh_log.h"
+#include "getenvvars.h"
 
 #include <stdarg.h>
 
@@ -55,8 +56,12 @@ void logMessage(LogLevel level, Logger::LogLineType logBuff) {
 static std::thread * loggerThread = nullptr; ///< the thread used for logging
 static std::once_flag startLogger; ///< flag to ensure we start the thread only once
 static volatile bool isStoppedLogger = false; ///< stop flag for the thread
+static VUtils::GetEnvVarInt disableThreadLog("VFH_NO_THREAD_LOGGER", 0);
 
 void Logger::writeMessages() {
+	if (disableThreadLog.getValue() != 0) {
+		return;
+	}
 	auto & log = getLog();
 	while (!isStoppedLogger) {
 		if (log.m_queue.empty()) {
@@ -70,24 +75,24 @@ void Logger::writeMessages() {
 }
 
 void Logger::startLogging() {
-#ifndef VFH_NO_THREAD_LOGGER
-	std::call_once(startLogger, [] {
-		loggerThread = new std::thread(&Logger::writeMessages);
-	});
-#endif
+	if (disableThreadLog.getValue() == 0) {
+		std::call_once(startLogger, [] {
+			loggerThread = new std::thread(&Logger::writeMessages);
+		});
+	}
 }
 
 void Logger::stopLogging() {
-#ifndef VFH_NO_THREAD_LOGGER
-	static std::mutex mtx;
-	std::lock_guard<std::mutex> lock(mtx);
-	isStoppedLogger = true;
-	if (loggerThread && loggerThread->joinable()) {
-		loggerThread->join();
-		delete loggerThread;
-		loggerThread = nullptr;
+	if (disableThreadLog.getValue() == 0) {
+		static std::mutex mtx;
+		std::lock_guard<std::mutex> lock(mtx);
+		isStoppedLogger = true;
+		if (loggerThread && loggerThread->joinable()) {
+			loggerThread->join();
+			delete loggerThread;
+			loggerThread = nullptr;
+		}
 	}
-#endif
 }
 
 void Logger::log(LogLevel level, const char *format, va_list args)
@@ -100,11 +105,11 @@ void Logger::log(LogLevel level, const char *format, va_list args)
 							: level <= m_logLevel;
 
 	if (showMessage) {
-#ifndef VFH_NO_THREAD_LOGGER
-		m_queue.push(LogPair{level, buf});
-#else
-		logMessage(level, buf);
-#endif
+		if (disableThreadLog.getValue() == 0) {
+			m_queue.push(LogPair{level, buf});
+		} else {
+			logMessage(level, buf);
+		}
 	}
 }
 
