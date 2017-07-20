@@ -307,11 +307,12 @@ private:
 	/// @param elementSize Element size.
 	/// @param data Data pointer.
 	void write(int numElements, int elementSize, const void *data) {
-		if (!wp.getFilePtr()) {
+		FILE * fp = wp.getFilePtr();
+		if (!fp) {
 			return;
 		}
 
-		if (fwrite(data, elementSize, numElements, wp.getFilePtr()) != numElements) {
+		if (fwrite(data, elementSize, numElements, fp) != numElements) {
 			Log::getLog().error("Pipe write fail!");
 
 			clear();
