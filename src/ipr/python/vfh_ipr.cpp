@@ -369,6 +369,12 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
     Py_RETURN_NONE;
 }
 
+static PyObject * vfhUnload(PyObject *)
+{
+	Log::Logger::stopLogging();
+	Py_RETURN_NONE;
+}
+
 static PyMethodDef methods[] = {
 	{
 		"init",
@@ -394,10 +400,17 @@ static PyMethodDef methods[] = {
 		METH_VARARGS | METH_KEYWORDS,
 		"Delete object."
 	},
+	{
+		"unloadModule",
+		reinterpret_cast<PyCFunction>(vfhUnload),
+		METH_NOARGS,
+		"Call at unload time."
+	},
 	{ NULL, NULL, 0, NULL }
 };
 
 PyMODINIT_FUNC init_vfh_ipr()
 {
+	Log::Logger::startLogging();
 	Py_InitModule("_vfh_ipr", methods);
 }
