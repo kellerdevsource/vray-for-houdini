@@ -806,6 +806,7 @@ void ObjectExporter::exportHair(OBJ_Node &objNode, const GU_Detail &gdp, const G
 		return;
 
 	PrimitiveItem item;
+	getPrimMaterial(item.primMaterial);
 	item.tm = getTm();
 	item.primID = gdp.getUniqueId() ^ keyDataHair;
 
@@ -836,6 +837,8 @@ void ObjectExporter::exportPolyMesh(OBJ_Node &objNode, const GU_Detail &gdp, con
 	const bool hasSubdivApplied = subdivType != displacementTypeNone;
 
 	PrimitiveItem item;
+	getPrimMaterial(item.primMaterial);
+
 	// The top of the stack contains the final tranform.
 	item.tm = primContextStack.back().tm;
 	item.primID = gdp.getUniqueId() ^ keyDataPoly;
