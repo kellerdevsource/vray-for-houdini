@@ -208,8 +208,7 @@ public:
 	}
 
 	~ImdisplayThread() {
-		quit();
-        wait();
+		terminate();
 	}
 
 	void init() {
@@ -239,21 +238,30 @@ public:
 
 	void add(TileQueueMessage *msg) {
 		QMutexLocker locker(&mutex);
-
-		/// Remove previous messages of the same type.
-		QList<int> indexesToRemove;
-		int indexToRemove = 0;
-		for (const TileQueueMessage *queueMsg : queue) {
-			if (queueMsg->type() == msg->type()) {
-				indexesToRemove.append(indexToRemove);
+		
+		if (msg->type() == TileQueueMessage::TileQueueMessageType::messageTypeImageHeader) {
+			/// Clear the queue if new resolution comes
+			for (TileQueueMessage *message : queue) {
+				delete message;
 			}
-			indexToRemove++;
+			queue.clear();
 		}
+		else {
+			/// Remove previous messages of the same type.
+			QList<int> indexesToRemove;
+			int indexToRemove = 0;
+			for (const TileQueueMessage *queueMsg : queue) {
+				if (queueMsg->type() == msg->type()) {
+					indexesToRemove.append(indexToRemove);
+				}
+				indexToRemove++;
+			}
 
-		for (const int index : indexesToRemove) {
-			TileQueueMessage *queueMsg = queue[index];
-			queue.removeAt(index);
-			delete queueMsg;
+			for (const int index : indexesToRemove) {
+				TileQueueMessage *queueMsg = queue[index];
+				queue.removeAt(index);
+				delete queueMsg;
+			}
 		}
 
 		queue.enqueue(msg);
@@ -290,6 +298,8 @@ protected:
 		while (true) {
 			if (queue.isEmpty())
 				continue;
+			if (!pipe.isOpen())
+				break;
 
 			mutex.lock();
 			TileQueueMessage *msg = queue.dequeue();
