@@ -14,6 +14,14 @@
 #include "vfh_defines.h"
 #include "vfh_vray.h" // For proper "systemstuff.h" inclusion
 
+/// This define enables compilation of anything from <atomic> which is included by the boost lockfree queue
+/// It was introduced because the old implementation of atomic (before vs 2015 update 2) is bugged
+/// if the atomic variables are not properly aligned
+#define _ENABLE_ATOMIC_ALIGNMENT_FIX
+#include <boost/lockfree/queue.hpp>
+
+#include <functional>
+#include <array>
 
 namespace VRayForHoudini {
 namespace Log {
@@ -34,27 +42,53 @@ struct Logger {
 	{}
 
 	/// Log string with msg level, always show not taking current log level into account
-	void msg(const tchar *format, ...) const;
+	void msg(const tchar *format, ...);
 	/// Log string with info level
-	void info(const tchar *format, ...) const;
+	void info(const tchar *format, ...);
 	/// Log string with progress level
-	void progress(const tchar *format, ...) const;
+	void progress(const tchar *format, ...);
 	/// Log string with warning level
-	void warning(const tchar *format, ...) const;
+	void warning(const tchar *format, ...);
 	/// Log string with error level
-	void error(const tchar *format, ...) const;
+	void error(const tchar *format, ...);
 	/// Log string with debug level
-	void debug(const tchar *format, ...) const;
+	void debug(const tchar *format, ...);
 
 	/// Set max log level to be printed, unless Logger::msg is used where current filter is ignored
 	void setLogLevel(LogLevel logLevel) { m_logLevel = logLevel; }
 
+	/// Initialize the logger, needs to be called only once
+	/// Dont call this from static variable's ctor, which is inside a module (causes deadlock)
+	static void startLogging();
+
+	/// Call this before exiting the application, and not from static variable's dtor
+	/// It will stop and join the logger thread
+	static void stopLogging();
 private:
 	/// Implementation for the actual logging
-	void log(LogLevel level, const tchar *format, va_list args) const;
+	void log(LogLevel level, const tchar *format, va_list args);
 
 	LogLevel m_logLevel; ///< Current max log level to be shown
 
+#ifndef VFH_NO_THREAD_LOGGER
+public:
+	/// One line of log, assume it wont be longer than 1k
+	typedef std::array<tchar, 1024> LogLineType;
+
+	/// Using this pair instead of std::pair, because lockfree::queue requires a template
+	/// argument which has trivial ctor, dtor and assignment operator
+	struct LogPair {
+		LogLevel level; ///< The message's log level
+		LogLineType line; ///< The message data, null terminated
+	};
+
+private:
+	boost::lockfree::queue<LogPair> m_queue; ///< Queue for messages to be logged
+
+	/// Loop and dump any messages from the queue to stdout
+	/// Used as base for the thread that is processing the messages
+	static void writeMessages();
+#endif
 };
 
 /// Get singleton instance to Logger
