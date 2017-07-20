@@ -113,9 +113,40 @@ static GA_Size fillFreePointMap(const GU_Detail &detail, DynamicBitset &map)
 	return numPoints;
 }
 
+/// Returns full OP_Node path for using as a hash key.
+/// @param opNode OP_Node instance.
 static UT_StringHolder getKeyFromOpNode(OP_Node &opNode)
 {
 	return opNode.getFullPath();
+}
+
+/// Gets plugin from cache.
+/// @param container Hash container. NOTE: Non-const because of HashMapKey.
+/// @param key Hash key.
+/// @param plugin Output plugin.
+/// @returns 1 if plugin was found; 0 - otherwise.
+template <typename ContainerType, typename KeyType>
+static int getPluginFromCacheImpl(ContainerType &container, const KeyType &key, VRay::Plugin &plugin)
+{
+	typename ContainerType::iterator it = container.find(key);
+	if (it != container.end()) {
+		plugin = it.data();
+		return true;
+	}
+	return false;
+}
+
+/// Adds plugin from cache.
+/// @param container Hash container.
+/// @param key Hash key.
+/// @param plugin Output plugin.
+template <typename ContainerType, typename KeyType>
+static void addPluginToCacheImpl(ContainerType &container, const KeyType &key, VRay::Plugin &plugin)
+{
+	vassert(key);
+	vassert(container.find(key) == container.end());
+
+	container.insert(key, plugin);
 }
 
 ObjectExporter::ObjectExporter(VRayExporter &pluginExporter)
@@ -405,61 +436,56 @@ int ObjectExporter::getPrimKey(const GA_Primitive &prim) const
 	return primKey;
 }
 
-int ObjectExporter::getPrimPluginFromCache(int primKey, VRay::Plugin &plugin) const
+int ObjectExporter::getPrimPluginFromCache(int key, VRay::Plugin &plugin) const
 {
-	PrimPluginCache::iterator pIt = pluginCache.prim.find(primKey);
-	if (pIt != pluginCache.prim.end()) {
-		plugin = pIt.data();
-		return true;
-	}
-	return false;
+	return getPluginFromCacheImpl(pluginCache.prim, key, plugin);
 }
 
-int ObjectExporter::getMeshPluginFromCache(int primKey, VRay::Plugin &plugin) const
+int ObjectExporter::getMeshPluginFromCache(int key, VRay::Plugin &plugin) const
 {
-	PrimPluginCache::iterator pIt = pluginCache.meshPrim.find(primKey);
-	if (pIt != pluginCache.meshPrim.end()) {
-		plugin = pIt.data();
-		return true;
-	}
-	return false;
+	return getPluginFromCacheImpl(pluginCache.meshPrim, key, plugin);
 }
 
 int ObjectExporter::getPluginFromCache(Hash::MHash key, VRay::Plugin &plugin) const
 {
-	HashPluginCache::iterator pIt = pluginCache.hashCache.find(key);
-	if (pIt != pluginCache.hashCache.end()) {
-		plugin = pIt.data();
-		return true;
-	}
-	return false;
+	return getPluginFromCacheImpl(pluginCache.hashCache, key, plugin);
+}
+
+int ObjectExporter::getPluginFromCache(const char *key, VRay::Plugin &plugin) const
+{
+	return getPluginFromCacheImpl(pluginCache.op, key, plugin);
+}
+
+int ObjectExporter::getPluginFromCache(OP_Node &opNode, VRay::Plugin &plugin) const
+{
+	const UT_StringHolder &opKey = getKeyFromOpNode(opNode);
+	return getPluginFromCache(opKey.buffer(), plugin);
 }
 
 void ObjectExporter::addPluginToCache(Hash::MHash key, VRay::Plugin &plugin)
 {
-	vassert(plugin);
-	vassert(key != 0);
-	vassert(pluginCache.hashCache.find(key) == pluginCache.hashCache.end());
-
-	pluginCache.hashCache.insert(key, plugin);
+	addPluginToCacheImpl(pluginCache.hashCache, key, plugin);
 }
 
-void ObjectExporter::addMeshPluginToCache(int primKey, VRay::Plugin &plugin)
+void ObjectExporter::addMeshPluginToCache(int key, VRay::Plugin &plugin)
 {
-	vassert(plugin);
-	vassert(primKey != 0);
-	vassert(pluginCache.meshPrim.find(primKey) == pluginCache.meshPrim.end());
-
-	pluginCache.meshPrim.insert(primKey, plugin);
+	addPluginToCacheImpl(pluginCache.meshPrim, key, plugin);
 }
 
-void ObjectExporter::addPrimPluginToCache(int primKey, VRay::Plugin &plugin)
+void ObjectExporter::addPrimPluginToCache(int key, VRay::Plugin &plugin)
 {
-	vassert(plugin);
-	vassert(primKey != 0);
-	vassert(pluginCache.prim.find(primKey) == pluginCache.prim.end());
+	addPluginToCacheImpl(pluginCache.prim, key, plugin);
+}
 
-	pluginCache.prim.insert(primKey, plugin);
+void ObjectExporter::addPluginToCache(const char *key, VRay::Plugin &plugin)
+{
+	addPluginToCacheImpl(pluginCache.op, key, plugin);
+}
+
+void ObjectExporter::addPluginToCache(OP_Node &opNode, VRay::Plugin &plugin)
+{
+	const UT_StringHolder &key = getKeyFromOpNode(opNode);
+	addPluginToCache(key, plugin);
 }
 
 VRay::Plugin ObjectExporter::exportPrimSphere(OBJ_Node &objNode, const GA_Primitive&)
@@ -697,15 +723,10 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_D
 			material = primItem.material;
 		}
 		else if (primItem.primMaterial.matNode) {
-			const UT_StringHolder &matKey = getKeyFromOpNode(*primItem.primMaterial.matNode);
-
-			OpPluginCache::iterator pIt = pluginCache.op.find(matKey.buffer());
-			if (pIt != pluginCache.op.end()) {
-				material = pIt.data();
-			}
-			else {
+			if (!getPluginFromCache(*primItem.primMaterial.matNode, material)) {
 				material = pluginExporter.exportMaterial(primItem.primMaterial.matNode);
-				pluginCache.op.insert(matKey.buffer(), material);
+
+				addPluginToCache(*primItem.primMaterial.matNode, material);
 			}
 		}
 

@@ -135,15 +135,21 @@ public:
 	DisplacementType hasSubdivApplied(OBJ_Node &objNode) const;
 
 	int getPrimKey(const GA_Primitive &prim) const;
-	int getPrimPluginFromCache(int primKey, VRay::Plugin &plugin) const;
-	int getMeshPluginFromCache(int primKey, VRay::Plugin &plugin) const;
-	int getPluginFromCache(Hash::MHash key, VRay::Plugin &plugin) const;
 
-	/// It's ok to add invalid plugins to cache here,
-	/// because if we've failed to export plugin once we should not retry.
+	int getPrimPluginFromCache(int primKey, VRay::Plugin &plugin) const;
 	void addPrimPluginToCache(int primKey, VRay::Plugin &plugin);
+
+	int getMeshPluginFromCache(int primKey, VRay::Plugin &plugin) const;
 	void addMeshPluginToCache(int primKey, VRay::Plugin &plugin);
+
+	int getPluginFromCache(Hash::MHash key, VRay::Plugin &plugin) const;
 	void addPluginToCache(Hash::MHash key, VRay::Plugin &plugin);
+
+	int getPluginFromCache(const char *key, VRay::Plugin &plugin) const;
+	void addPluginToCache(const char *key, VRay::Plugin &plugin);
+
+	int getPluginFromCache(OP_Node &opNode, VRay::Plugin &plugin) const;
+	void addPluginToCache(OP_Node &opNode, VRay::Plugin &plugin);
 
 	/// Helper function to generate unique id for the packed primitive
 	/// this is used as key in m_detailToPluginDesc map to identify
