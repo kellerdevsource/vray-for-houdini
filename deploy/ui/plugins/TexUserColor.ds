@@ -41,6 +41,6 @@
             "0" "Map Channel"
             "1" "User Attribute"
         }
-        default { "1" }
+        default { "0" }
     }
 }
