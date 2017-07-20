@@ -12,7 +12,6 @@
 
 import sys
 
-import atexit
 import traceback
 
 import hou
@@ -25,15 +24,8 @@ import _vfh_ipr
 
 from soho import SohoParm
 
-def at_exit():
-    _vfh_ipr.unloadModule()
-
-# currently there is no sane way to ensure this will be registered only once
-# however the _vfh_ipr.unloadModule() function does work only the first time
-# so subsequent calls are cheap and fast
-atexit.register(at_exit)
-
 RENDER_RT_MODE_SOHO = 1
+
 
 def main():
     def printDebug(fmt, *args):
