@@ -69,6 +69,7 @@ public:
 static boost::format objGeomNameFmt("%s|%i@%s");
 static boost::format hairNameFmt("GeomMayaHair|%i@%s");
 static boost::format polyNameFmt("GeomStaticMesh|%i@%s");
+static boost::format alembicNameFmt("Alembic|%i@%s");
 
 static const char intrAlembicFilename[] = "abcfilename";
 static const char intrAlembicObjectPath[] = "abcobjectpath";
@@ -589,15 +590,26 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp)
 		if (isPackedPrim) {
 			const GU_PrimPacked &primPacked = static_cast<const GU_PrimPacked&>(*prim);
 
-			// Getting transform here because VRayVolumeGridRef is also a packed primitive
-			UT_Matrix4D tm4;
-			if (isVolumePrim) {
-				primPacked.getLocalTransform4(tm4);
+			int usePackedTm = true;
+
+			if (primTypeID == primPackedTypeIDs.alembicRef) {
+				int abcUseTransform = 0;
+				if (prim->getIntrinsic(prim->findIntrinsic("abcusetransform"), abcUseTransform)) {
+					usePackedTm = !abcUseTransform;
+				}
 			}
-			else {
-				primPacked.getFullTransform4(tm4);
+
+			if (usePackedTm) {
+				// Getting transform here because VRayVolumeGridRef is also a packed primitive
+				UT_Matrix4D tm4;
+				if (isVolumePrim) {
+					primPacked.getLocalTransform4(tm4);
+				}
+				else {
+					primPacked.getFullTransform4(tm4);
+				}
+				item.tm = item.tm * utMatrixToVRayTransform(tm4);
 			}
-			item.tm = item.tm * utMatrixToVRayTransform(tm4);
 
 			// Point attributes for packed instancing.
 			if (numPoints == numPrims) {
@@ -923,11 +935,11 @@ int ObjectExporter::getPrimPackedID(const GU_PrimPacked &prim) const
 	if (primTypeID == primPackedTypeIDs.alembicRef ||
 		primTypeID == primPackedTypeIDs.packedDisk)
 	{
-		UT_String objname;
-		prim.getIntrinsic(prim.findIntrinsic(intrAlembicObjectPath), objname);
-		UT_String primname;
-		prim.getIntrinsic(prim.findIntrinsic(intrPackedPrimitiveName), primname);
-		return primname.hash() ^ objname.hash();
+		UT_String objName;
+		prim.getIntrinsic(prim.findIntrinsic(intrAlembicObjectPath), objName);
+		UT_String fileName;
+		prim.getIntrinsic(prim.findIntrinsic(intrAlembicFilename), fileName);
+		return objName.hash() ^ fileName.hash();
 	}
 
 	UT_ASSERT_MSG(false, "Unsupported packed primitive type!");
@@ -978,7 +990,9 @@ VRay::Plugin ObjectExporter::exportAlembicRef(OBJ_Node &objNode, const GU_PrimPa
 	VRay::VUtils::CharStringRefList visibilityList(1);
 	visibilityList[0] = objname;
 
-	Attrs::PluginDesc pluginDesc(primname.buffer(),
+	const int key = getPrimPackedID(prim);
+
+	Attrs::PluginDesc pluginDesc(boost::str(alembicNameFmt % key % primname.buffer()),
 								 "GeomMeshFile");
 	pluginDesc.addAttribute(Attrs::PluginAttr("use_full_names", true));
 	pluginDesc.addAttribute(Attrs::PluginAttr("visibility_lists_type", 1));
