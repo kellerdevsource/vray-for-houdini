@@ -689,6 +689,8 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp)
 
 VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_Detail &gdp, const char *prefix)
 {
+	using namespace Attrs;
+
 	if (!instancerItems.count()) {
 		return VRay::Plugin();
 	}
@@ -728,6 +730,29 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_D
 
 				addPluginToCache(*primItem.primMaterial.matNode, material);
 			}
+		}
+
+		if (isNodeMatte(objNode)) {
+			PluginDesc mtlWrapperDesc(VRayExporter::getPluginName(&objNode, "MtlWrapper"),
+									  "MtlWrapper");
+
+			mtlWrapperDesc.addAttribute(PluginAttr("base_material", material));
+			mtlWrapperDesc.addAttribute(PluginAttr("matte_surface", 1));
+			mtlWrapperDesc.addAttribute(PluginAttr("alpha_contribution", -1));
+			mtlWrapperDesc.addAttribute(PluginAttr("affect_alpha", 1));
+			mtlWrapperDesc.addAttribute(PluginAttr("reflection_amount", 0));
+			mtlWrapperDesc.addAttribute(PluginAttr("refraction_amount", 0));
+
+			material = pluginExporter.exportPlugin(mtlWrapperDesc);
+		}
+
+		if (isNodePhantom(objNode)) {
+			PluginDesc mtlStatsDesc(VRayExporter::getPluginName(&objNode, "MtlRenderStats"),
+									"MtlRenderStats");
+			mtlStatsDesc.addAttribute(PluginAttr("base_mtl", material));
+			mtlStatsDesc.addAttribute(PluginAttr("camera_visibility", 0));
+
+			material = pluginExporter.exportPlugin(mtlStatsDesc);
 		}
 
 		// Instancer works only with Node plugins.
@@ -1549,32 +1574,6 @@ VRay::Plugin ObjectExporter::exportLight(OBJ_Light &objLight)
 VRay::Plugin ObjectExporter::exportNode(OBJ_Node &objNode)
 {
 	using namespace Attrs;
-
-	// XXX: This should be propageted to the particle material.
-#if 0
-	if (isNodeMatte(objNode)) {
-		PluginDesc mtlWrapperDesc(VRayExporter::getPluginName(&objNode, "MtlWrapper"),
-								  "MtlWrapper");
-
-		mtlWrapperDesc.addAttribute(PluginAttr("base_material", material));
-		mtlWrapperDesc.addAttribute(PluginAttr("matte_surface", 1));
-		mtlWrapperDesc.addAttribute(PluginAttr("alpha_contribution", -1));
-		mtlWrapperDesc.addAttribute(PluginAttr("affect_alpha", 1));
-		mtlWrapperDesc.addAttribute(PluginAttr("reflection_amount", 0));
-		mtlWrapperDesc.addAttribute(PluginAttr("refraction_amount", 0));
-
-		material = pluginExporter.exportPlugin(mtlWrapperDesc);
-	}
-
-	if (isNodePhantom(objNode)) {
-		PluginDesc mtlStatsDesc(VRayExporter::getPluginName(&objNode, "MtlRenderStats"),
-								"MtlRenderStats");
-		mtlStatsDesc.addAttribute(PluginAttr("base_mtl", material));
-		mtlStatsDesc.addAttribute(PluginAttr("camera_visibility", 0));
-
-		material = pluginExporter.exportPlugin(mtlStatsDesc);
-	}
-#endif
 
 	PluginDesc nodeDesc(VRayExporter::getPluginName(objNode, "Node"),
 						"Node");
