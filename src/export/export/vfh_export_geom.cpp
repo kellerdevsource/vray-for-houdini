@@ -404,7 +404,7 @@ static void overrideItemsToUserAttributes(const MtlOverrideItems &overrides, QSt
 				break;
 			}
 			case MtlOverrideItem::itemTypeDouble: {
-				userAttributes += buf.sprintf("%s=%.3f",
+				userAttributes += buf.sprintf("%s=%.3f;",
 											  overrideName,
 											  overrideItem.valueDouble);
 				break;
