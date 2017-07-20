@@ -19,6 +19,7 @@ set(VFH_SDK_HDK ${SDK_PATH}/hdk/${HDK_FIND_VERSION_MAJOR}.${HDK_FIND_VERSION_MIN
 # Add Qt version to path
 if(HDK_FIND_VERSION_MAJOR VERSION_GREATER 15)
 	set(VFH_SDK_HDK ${VFH_SDK_HDK}/qt${HOUDINI_QT_VERSION})
+	set(QT_TOOLS_PATH ${VFH_SDK_HDK}/bin)
 endif()
 
 # If installation path is not set use some default one.
