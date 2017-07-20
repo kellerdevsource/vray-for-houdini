@@ -311,10 +311,6 @@ struct PluginDesc {
 	PluginAttrs pluginAttrs;
 };
 
-struct PluginResult {
-	
-};
-
 } // namespace Attrs
 } // namespace VRayForHoudini
 
