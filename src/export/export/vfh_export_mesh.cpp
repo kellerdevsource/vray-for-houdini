@@ -553,7 +553,7 @@ VRay::Plugin MeshExporter::getMaterial()
 			}
 
 			materialList[mItIdx].setPlugin(mtlPlugin);
-			idsList[mItIdx] = mItIdx;
+			idsList[mItIdx] = mIt.data();
 		}
 
 		VRay::Plugin texExtMaterialID;
