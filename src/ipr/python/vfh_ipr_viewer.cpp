@@ -208,8 +208,7 @@ public:
 	}
 
 	~ImdisplayThread() {
-		quit();
-        wait();
+		terminate();
 	}
 
 	void init() {
@@ -290,6 +289,8 @@ protected:
 		while (true) {
 			if (queue.isEmpty())
 				continue;
+			if (!pipe.isOpen())
+				break;
 
 			mutex.lock();
 			TileQueueMessage *msg = queue.dequeue();
