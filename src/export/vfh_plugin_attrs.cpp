@@ -12,12 +12,24 @@
 #include "vfh_vray.h"
 
 #include <iostream>
+#include <boost/bind/bind.hpp>
 
 using namespace VRayForHoudini;
 using namespace Attrs;
 
 #define ReturnTrueIfNotEq(member) if (p.member != other->member) { return true; } break;
 #define ReturnTrueIfFloatNotEq(member) if (!IsFloatEq(p.member, other->member)) { return true; } break;
+
+template <typename VectorType>
+FORCEINLINE bool vectorNotEqual(const VectorType &a, const VectorType &b) {
+	if (!IsFloatEq(a[0], b[0]))
+		return true;
+	if (!IsFloatEq(a[1], b[1]))
+		return true;
+	if (!IsFloatEq(a[2], b[2]))
+		return true;
+	return false;
+}
 
 Attrs::PluginDesc::PluginDesc()
 {}
@@ -28,7 +40,9 @@ Attrs::PluginDesc::PluginDesc(const std::string &pluginName, const std::string &
 {}
 
 PluginAttr::PluginAttrValue::PluginAttrValue()
-	: valPluginDesc(nullptr)
+	: valInt(0)
+	, valFloat(0)
+	, valPluginDesc(nullptr)
 {}
 
 PluginAttr::PluginAttr(const std::string &attrName, const Attrs::PluginDesc *attrValue)
@@ -71,13 +85,13 @@ const char *PluginAttr::typeStr() const
 	return "AttrTypeUnknown";
 }
 
-void VRayForHoudini::Attrs::PluginDesc::showAttributes() const
+void Attrs::PluginDesc::showAttributes() const
 {
 	printf("Plugin \"%s_%s\" parameters:\n",
 		   pluginID.c_str(), pluginName.c_str());
 
-	for (const auto &pIt : pluginAttrs) {
-		const PluginAttr &p = pIt;
+	FOR_CONST_IT (PluginAttrs, pIt, pluginAttrs) {
+		const PluginAttr &p = pIt.data();
 
 		std::cout << p.paramName.c_str() << " [" << p.typeStr() << "] = ";
 
@@ -97,64 +111,49 @@ void VRayForHoudini::Attrs::PluginDesc::showAttributes() const
 	}
 }
 
-
 bool Attrs::PluginDesc::contains(const std::string &paramName) const
 {
-	if (get(paramName)) {
-		return true;
-	}
-	return false;
+	return pluginAttrs.find(paramName.c_str()) != pluginAttrs.end();
 }
-
 
 const PluginAttr *Attrs::PluginDesc::get(const std::string &paramName) const
 {
-	for (const auto &pIt : pluginAttrs) {
-		const PluginAttr &p = pIt;
-		if (paramName == p.paramName) {
-			return &p;
-		}
+	PluginAttrs::const_iterator it = pluginAttrs.find(paramName.c_str());
+	if (it != pluginAttrs.end()) {
+		return &it.data();
 	}
 	return nullptr;
 }
-
 
 PluginAttr *Attrs::PluginDesc::get(const std::string &paramName)
 {
-	for (auto &pIt : pluginAttrs) {
-		PluginAttr &p = pIt;
-		if (paramName == p.paramName) {
-			return &p;
-		}
+	PluginAttrs::iterator it = pluginAttrs.find(paramName.c_str());
+	if (it != pluginAttrs.end()) {
+		return &it.data();
 	}
 	return nullptr;
 }
 
-
 void Attrs::PluginDesc::addAttribute(const PluginAttr &attr)
 {
-	PluginAttr *_attr = get(attr.paramName);
-	if (_attr) {
-		*_attr = attr;
-	}
-	else {
-		pluginAttrs.push_back(attr);
-	}
+	pluginAttrs.insert(attr.paramName.c_str(), attr);
 }
-
 
 void Attrs::PluginDesc::add(const PluginAttr &attr)
 {
 	addAttribute(attr);
 }
 
-
-bool VRayForHoudini::Attrs::PluginDesc::isDifferent(const VRayForHoudini::Attrs::PluginDesc &otherDesc) const
+void Attrs::PluginDesc::remove(const char *name)
 {
-	for (const auto &p : pluginAttrs) {
-		const std::string &attrName = p.paramName;
+	pluginAttrs.erase(name);
+}
 
-		const PluginAttr *other = otherDesc.get(attrName);
+bool Attrs::PluginDesc::isDifferent(const VRayForHoudini::Attrs::PluginDesc &otherDesc) const
+{
+	FOR_CONST_IT (PluginAttrs, pIt, pluginAttrs) {
+		const PluginAttr &p = pIt.data();
+		const PluginAttr *other = otherDesc.get(pIt.key());
 		if (other) {
 			if (p.paramType != other->paramType) {
 				return true;
@@ -163,21 +162,48 @@ bool VRayForHoudini::Attrs::PluginDesc::isDifferent(const VRayForHoudini::Attrs:
 				case PluginAttr::AttrTypeUnknown:
 				case PluginAttr::AttrTypeIgnore:
 					break;
-				case PluginAttr::AttrTypeInt:       ReturnTrueIfNotEq(paramValue.valInt);
-				case PluginAttr::AttrTypeFloat:     ReturnTrueIfFloatNotEq(paramValue.valFloat);
-//				case PluginAttr::AttrTypeVector:    ReturnTrueIfNotEq(paramValue.valVector);
-//				case PluginAttr::AttrTypeColor:     ReturnTrueIfNotEq(paramValue.valVector);
-//				case PluginAttr::AttrTypeAColor:    ReturnTrueIfNotEq(paramValue.valVector);
-//				case PluginAttr::AttrTypeTransform: ReturnTrueIfNotEq(paramValue.valTransform);
-//				case PluginAttr::AttrTypeString:    ReturnTrueIfNotEq(paramValue.valString);
-//				case PluginAttr::AttrTypePlugin:    ReturnTrueIfNotEq(paramValue.valPlugin);
+				case PluginAttr::AttrTypeInt: {
+					ReturnTrueIfNotEq(paramValue.valInt);
+				}
+				case PluginAttr::AttrTypeFloat: {
+					ReturnTrueIfFloatNotEq(paramValue.valFloat);
+				}
+				case PluginAttr::AttrTypeColor:
+				case PluginAttr::AttrTypeVector:
+				case PluginAttr::AttrTypeAColor: {
+					if (vectorNotEqual(p.paramValue.valVector, other->paramValue.valVector))
+						return true;
+					break;
+				}
+				case PluginAttr::AttrTypeTransform: {
+					if (vectorNotEqual(p.paramValue.valTransform.matrix.v0, other->paramValue.valTransform.matrix.v0))
+						return true;
+					if (vectorNotEqual(p.paramValue.valTransform.matrix.v1, other->paramValue.valTransform.matrix.v1))
+						return true;
+					if (vectorNotEqual(p.paramValue.valTransform.matrix.v2, other->paramValue.valTransform.matrix.v2))
+						return true;
+					if (vectorNotEqual(p.paramValue.valTransform.offset, other->paramValue.valTransform.offset))
+						return true;
+					break;
+				}
+				case PluginAttr::AttrTypeString: {
+					if (vutils_strcmp(p.paramValue.valString.c_str(), other->paramValue.valString.c_str()) != 0)
+						return true;
+					break;
+				}
+				case PluginAttr::AttrTypePlugin: {
+					if (vutils_strcmp(p.paramValue.valPlugin.getName(), other->paramValue.valPlugin.getName()) != 0)
+						return true;
+					break;
+				}
+				default:
+					break;
 			}
 		}
 	}
 
 	return false;
 }
-
 
 bool Attrs::PluginDesc::isEqual(const PluginDesc &otherDesc) const
 {
