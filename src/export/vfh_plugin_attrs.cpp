@@ -11,9 +11,6 @@
 #include "vfh_plugin_attrs.h"
 #include "vfh_vray.h"
 
-#include <iostream>
-#include <boost/bind/bind.hpp>
-
 using namespace VRayForHoudini;
 using namespace Attrs;
 
@@ -83,32 +80,6 @@ const char *PluginAttr::typeStr() const
 			break;
 	}
 	return "AttrTypeUnknown";
-}
-
-void Attrs::PluginDesc::showAttributes() const
-{
-	printf("Plugin \"%s_%s\" parameters:\n",
-		   pluginID.c_str(), pluginName.c_str());
-
-	FOR_CONST_IT (PluginAttrs, pIt, pluginAttrs) {
-		const PluginAttr &p = pIt.data();
-
-		std::cout << p.paramName.c_str() << " [" << p.typeStr() << "] = ";
-
-		switch (p.paramType) {
-			case PluginAttr::AttrTypeInt:       std::cout << p.paramValue.valInt; break;
-			case PluginAttr::AttrTypeFloat:     std::cout << p.paramValue.valFloat; break;
-			case PluginAttr::AttrTypeVector:    std::cout << p.paramValue.valVector; break;
-			case PluginAttr::AttrTypeColor:     std::cout << p.paramValue.valVector; break;
-			case PluginAttr::AttrTypeAColor:    std::cout << p.paramValue.valVector; break;
-			case PluginAttr::AttrTypeTransform: std::cout << p.paramValue.valTransform; break;
-			case PluginAttr::AttrTypeMatrix:    std::cout << p.paramValue.valTransform.matrix; break;
-			case PluginAttr::AttrTypeString:    std::cout << p.paramValue.valString; break;
-			case PluginAttr::AttrTypePlugin:    std::cout << p.paramValue.valPlugin.getName(); break;
-		}
-
-		std::cout << std::endl;
-	}
 }
 
 bool Attrs::PluginDesc::contains(const std::string &paramName) const

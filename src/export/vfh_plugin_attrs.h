@@ -298,9 +298,6 @@ struct PluginDesc {
 	/// description.
 	bool isEqual(const PluginDesc &otherDesc) const;
 
-	/// Dump this description to std out
-	void showAttributes() const;
-
 	/// Plugin instance name.
 	std::string pluginName;
 
