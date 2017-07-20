@@ -196,7 +196,7 @@ public:
 	/// Export point particle instancer.
 	/// @param gdp Detail.
 	/// @returns Geometry plugin.
-	VRay::Plugin exportPointInstancer(OBJ_Node &objNode, const GU_Detail &gdp, int isInstanceNode=false);
+	void exportPointInstancer(OBJ_Node &objNode, const GU_Detail &gdp, int isInstanceNode=false);
 
 	/// Returns true if object is a point intancer.
 	/// @param gdp Detail.

@@ -1320,10 +1320,8 @@ static VRay::Transform getPointInstanceTM(const GU_Detail &gdp, const PointInsta
 	return utMatrixToVRayTransform(Transform);
 }
 
-VRay::Plugin ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_Detail &gdp, int isInstanceNode)
+void ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_Detail &gdp, int isInstanceNode)
 {
-	PrimitiveItems instancerItems;
-
 	GA_ROHandleV3 velocityHndl(gdp.findAttribute(GA_ATTRIB_POINT, GEO_STD_ATTRIB_VELOCITY));
 
 	GA_ROHandleS instanceHndl(gdp.findAttribute(GA_ATTRIB_POINT, "instance"));
@@ -1390,8 +1388,6 @@ VRay::Plugin ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_De
 
 		++validPointIdx;
 	}
-
-	return exportDetailInstancer(objNode, gdp, "PointInstancer");
 }
 
 VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode, SOP_Node &sopNode)
@@ -1669,7 +1665,11 @@ VRay::Plugin ObjectExporter::exportObject(OBJ_Node &objNode)
 		popContext();
 	}
 	else {
-		plugin = exportNode(objNode);
+		if (!getPluginFromCache(objNode, plugin)) {
+			plugin = exportNode(objNode);
+
+			addPluginToCache(objNode, plugin);
+		}
 	}
 
 	return plugin;
