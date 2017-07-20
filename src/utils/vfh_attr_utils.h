@@ -113,7 +113,7 @@ template <typename UT_VectorType>
 FORCEINLINE VRay::Vector utVectorVRayVector(const UT_VectorType &v)
 {
 	VRay::Vector vec;
-	vec.set(v(0), v(1), v(2));
+	vec.set(static_cast<float>(v(0)), static_cast<float>(v(1)), static_cast<float>(v(2)));
 	return vec;
 }
 

@@ -19,17 +19,34 @@
 #include <unordered_set>
 
 using namespace VRayForHoudini;
+using namespace VOP;
 
+enum MaterialOutputInputs {
+	materialOutputInputMaterial = 0,
+	materialOutputInputSurface,
+	materialOutputInputSimulation,
+	materialOutputInputMax,
+};
+
+struct MaterialOutputInputSocket {
+	const char *label;
+	const VOP_TypeInfo typeInfo;
+};
+
+static MaterialOutputInputSocket materialOutputInputSockets[] = {
+	{ "Material",   VOP_TypeInfo(VOP_SURFACE_SHADER)    },
+	{ "Surface",    VOP_TypeInfo(VOP_GEOMETRY_SHADER)   },
+	{ "Simulation", VOP_TypeInfo(VOP_ATMOSPHERE_SHADER) },
+} ;
 
 static PRM_Template templates[] = {
 	PRM_Template()
 };
 
-
-void VOP::MaterialOutput::register_operator(OP_OperatorTable *table)
+void MaterialOutput::register_operator(OP_OperatorTable *table)
 {
 	VOP_Operator *op = new VOP_Operator("vray_material_output", "V-Ray Material Output",
-										VOP::MaterialOutput::creator, templates,
+										MaterialOutput::creator, templates,
 #if UT_MAJOR_VERSION_INT >= 16
 										nullptr,
 #endif
@@ -44,97 +61,84 @@ void VOP::MaterialOutput::register_operator(OP_OperatorTable *table)
 	table->addOperator(op);
 }
 
-
-void VOP::MaterialOutput::getCode(UT_String &, const VOP_CodeGenContext &)
+OP_Node* MaterialOutput::creator(OP_Network *parent, const char *name, OP_Operator *entry)
 {
+	return new MaterialOutput(parent, name, entry);
 }
 
+MaterialOutput::MaterialOutput(OP_Network *parent, const char *name, OP_Operator *entry)
+	: VOP_Node(parent, name, entry)
+{}
 
-bool VOP::MaterialOutput::generateErrorsSubclass()
+MaterialOutput::~MaterialOutput()
+{}
+
+unsigned MaterialOutput::orderedInputs() const
 {
-	bool hasErr = VOP_Node::generateErrorsSubclass();
-	if (hasErr) {
-		return hasErr;
-	}
-
-	std::unordered_set<std::string> inpTypes;
-	for (int idx = 0; idx < nConnectedInputs(); ++idx) {
-		UT_String inpName;
-		getInputName(inpName, idx);
-
-		if (inpTypes.count(inpName.buffer())) {
-			addError(VOP_INPUT_TYPE_COLLISION);
-			hasErr = true;
-			break;
-		}
-		inpTypes.insert(inpName.buffer());
-	}
-
-	return hasErr;
+	return materialOutputInputMax;
 }
 
-void VOP::MaterialOutput::getInputNameSubclass(UT_String &in, int idx) const
+unsigned MaterialOutput::getNumVisibleInputs() const
 {
-	static boost::format FmtShader("Input%i");
-
-	switch (getInputType(idx)) {
-		case VOP_TYPE_BSDF:
-		case VOP_SURFACE_SHADER:
-			in = "Material";
-			break;
-		case VOP_GEOMETRY_SHADER:
-			in = "Geometry";
-			break;
-		case VOP_ATMOSPHERE_SHADER:
-			in = "PhxShaderSim";
-			break;
-		default:
-			const std::string &label = boost::str(FmtShader % (idx + 1));
-			in = label.c_str();
-	}
+	return orderedInputs();
 }
 
-
-int VOP::MaterialOutput::getInputFromNameSubclass(const UT_String &in) const
+bool MaterialOutput::willAutoconvertInputType(int idx)
 {
-	int idx = -1;
-	if (sscanf(in.buffer(), "Input%i", &idx) == 1) {
-		return idx - 1;
-	}
+	return true;
+}
 
-	for (idx = 0; idx < nConnectedInputs(); ++idx) {
-		UT_String inpName;
-		getInputName(inpName, idx);
-		if (in.equal(inpName)) {
+const char* MaterialOutput::inputLabel(unsigned idx) const
+{
+	if (idx >= materialOutputInputMax)
+		return nullptr;
+	return materialOutputInputSockets[idx].label;
+}
+
+void MaterialOutput::getInputNameSubclass(UT_String &in, int idx) const
+{
+	if (idx >= materialOutputInputMax)
+		in = "Unknown";
+	else
+		in = inputLabel(idx);
+}
+
+int MaterialOutput::getInputFromNameSubclass(const UT_String &in) const
+{
+	for (int idx = 0; idx < materialOutputInputMax; ++idx) {
+		if (in.equal(materialOutputInputSockets[idx].label)) {
 			return idx;
 		}
 	}
-
 	return -1;
 }
 
-
-void VOP::MaterialOutput::getInputTypeInfoSubclass(VOP_TypeInfo &type_info, int idx)
+void MaterialOutput::getInputTypeInfoSubclass(VOP_TypeInfo &type_info, int idx)
 {
-	getInputTypeInfoFromInputNode(type_info, idx, false);
-	if (idx < nConnectedInputs()) {
-		VOP_VopTypeInfoArray allowedTypes;
-		getAllowedInputTypeInfos(idx, allowedTypes);
-		for (auto allowed : allowedTypes) {
-			if (type_info == allowed) {
-				return;
-			}
-		}
-
-		type_info.setTypeInfoFromType(VOP_TYPE_ERROR);
-	}
+	if (idx >= materialOutputInputMax)
+		type_info = VOP_TypeInfo(VOP_TYPE_ERROR);
+	else
+		type_info = materialOutputInputSockets[idx].typeInfo;
 }
 
-
-void VOP::MaterialOutput::getAllowedInputTypeInfosSubclass(unsigned idx, VOP_VopTypeInfoArray &type_infos)
+void MaterialOutput::getAllowedInputTypeInfosSubclass(unsigned idx, VOP_VopTypeInfoArray &type_infos)
 {
-	type_infos.append(VOP_TypeInfo(VOP_TYPE_BSDF));
-	type_infos.append(VOP_TypeInfo(VOP_SURFACE_SHADER));
-	type_infos.append(VOP_TypeInfo(VOP_GEOMETRY_SHADER));
-	type_infos.append(VOP_TypeInfo(VOP_ATMOSPHERE_SHADER));
+	switch (idx) {
+		case materialOutputInputMaterial: {
+			type_infos.append(VOP_TypeInfo(VOP_TYPE_BSDF));
+			type_infos.append(VOP_TypeInfo(VOP_SURFACE_SHADER));
+			break;
+		}
+		case materialOutputInputSurface: {
+			type_infos.append(VOP_TypeInfo(VOP_GEOMETRY_SHADER));
+			break;
+		}
+		case materialOutputInputSimulation: {
+			type_infos.append(VOP_TypeInfo(VOP_ATMOSPHERE_SHADER));
+		}
+		default: {
+			type_infos.append(VOP_TypeInfo(VOP_TYPE_ERROR));
+			break;
+		}
+	}
 }

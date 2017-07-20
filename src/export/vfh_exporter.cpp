@@ -14,6 +14,7 @@
 #include "vfh_prm_templates.h"
 #include "vfh_tex_utils.h"
 #include "vfh_hou_utils.h"
+#include "vfh_attr_utils.h"
 
 #include "obj/obj_node_base.h"
 #include "vop/vop_node_base.h"
@@ -1429,7 +1430,9 @@ void VRayExporter::exportScene()
 	Log::getLog().debug("VRayExporter::exportScene(%.3f)",
 						m_context.getFloatFrame());
 
-	exportView();
+	if (m_isIPR != iprModeSOHO) {
+		exportView();
+	}
 
 	// Clear plugin caches.
 	objectExporter.clearOpPluginCache();

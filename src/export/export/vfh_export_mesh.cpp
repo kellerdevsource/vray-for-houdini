@@ -9,6 +9,7 @@
 //
 
 #include "vfh_export_mesh.h"
+#include "vfh_attr_utils.h"
 
 #include <SHOP/SHOP_GeoOverride.h>
 #include <GU/GU_Detail.h>
@@ -382,8 +383,6 @@ VRay::VUtils::IntRefList& MeshExporter::getFaceMtlIDs()
 	PrimMaterial topPrimMaterial;
 	objectExporter.getPrimMaterial(topPrimMaterial);
 
-	const ObjectStyleSheet &objectStyleSheet = objectExporter.getObjectStyleSheet();
-
 	OP_Node *objMatNode = topPrimMaterial.matNode
 	                      ? topPrimMaterial.matNode
 	                      : objNode.getMaterialNode(ctx.getTime());
@@ -415,33 +414,17 @@ VRay::VUtils::IntRefList& MeshExporter::getFaceMtlIDs()
 		matNameToID.insert(objMatNode, matIndex++);
 	}
 
+	const STY_Styler &geoStyler = objectExporter.getStyler();
+
 	int faceIndex = 0;
 	for (const GEO_Primitive *prim : primList) {
 		const GA_Offset primOffset = prim->getMapOffset();
 
 		// Check if material comes from style sheet
-		OP_Node *primMtlNode = NULL;
+		PrimMaterial primMaterial;
+		getOverridesForPrimitive(geoStyler, *prim, primMaterial);
 
-		for (int i = 0; i < objectStyleSheet.styles.count(); ++i) {
-			const TargetStyleSheet &style = objectStyleSheet.styles[i];
-			const SheetTarget &styleTarge = style.target;
-
-			if (style.overrides.matNode) {
-				if (styleTarge.targetType == SheetTarget::sheetTargetAll) {
-					primMtlNode = style.overrides.matNode;
-				}
-				else if (styleTarge.targetType == SheetTarget::sheetTargetPrimitive) {
-					const SheetTarget::TargetPrimitive &primTarget = styleTarge.primitive;
-
-					if (primTarget.targetType == SheetTarget::TargetPrimitive::primitiveTypeGroup) {
-						const GA_PrimitiveGroup *primGroup = gdp.findPrimitiveGroup(primTarget.getGroupName());
-						if (primGroup && primGroup->contains(prim)) {
-							primMtlNode = style.overrides.matNode;
-						}
-					}
-				}
-			}
-		}
+		OP_Node *primMtlNode = primMaterial.matNode;
 
 		// If there is no material from stylesheet, try top level material.
 		if (!primMtlNode) {
@@ -451,10 +434,8 @@ VRay::VUtils::IntRefList& MeshExporter::getFaceMtlIDs()
 		// If still no material then check material attributes.
 		if (!primMtlNode) {
 			if (hasStyleSheetAttr) {
-				const QString &styleSheet = materialStyleSheetHndl.get(primOffset);
-				if (!styleSheet.isEmpty()) {
-					mergeStyleSheet(topPrimMaterial, styleSheet, ctx.getTime(), true);
-				}
+				const UT_String styleSheet(materialStyleSheetHndl.get(primOffset), true);
+				appendStyleSheet(topPrimMaterial, styleSheet, ctx.getTime(), true);
 			}
 			else if (hasMaterialPathAttr) {
 				const UT_String &matPath = materialPathHndl.get(primOffset);
@@ -711,8 +692,6 @@ static void setMapChannelOverrideFaceData(MapChannels &mapChannels, const GEOPri
 
 void MeshExporter::getMtlOverrides(MapChannels &mapChannels)
 {
-	const ObjectStyleSheet &objectStyleSheet = objectExporter.getObjectStyleSheet();
-
 	GA_ROHandleS materialStyleSheetHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTR_MATERIAL_STYLESHEET));
 	GA_ROHandleS materialPathHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GEO_STD_ATTRIB_MATERIAL));
 	GA_ROHandleS materialOverrideHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTR_MATERIAL_OVERRIDE));
@@ -720,33 +699,20 @@ void MeshExporter::getMtlOverrides(MapChannels &mapChannels)
 	int faceIndex = 0;
 
 	MtlOverrideAttrExporter attrExporter(gdp);
+	const STY_Styler &geoStyler = objectExporter.getStyler();
 
 	for (const GEO_Primitive *prim : primList) {
 		const GA_Offset primOffset = prim->getMapOffset();
 
 		PrimMaterial primMaterial;
 
-		for (int i = 0; i < objectStyleSheet.styles.count(); ++i) {
-			const TargetStyleSheet &style = objectStyleSheet.styles[i];
-			const SheetTarget &styleTarge = style.target;
+		// Style sheet overrides.
+		getOverridesForPrimitive(geoStyler, *prim, primMaterial);
 
-			if (styleTarge.targetType == SheetTarget::sheetTargetAll) {
-				primMaterial.appendOverrides(style.overrides.overrides);
-			}
-			else if (styleTarge.targetType == SheetTarget::sheetTargetPrimitive) {
-				const SheetTarget::TargetPrimitive &primTarget = styleTarge.primitive;
+		// Overrides from primitive style sheet / material attributes.
+		appendMaterialOverride(primMaterial, materialStyleSheetHndl, materialPathHndl, materialOverrideHndl, primOffset, ctx.getTime());
 
-				if (primTarget.targetType == SheetTarget::TargetPrimitive::primitiveTypeGroup) {
-					const GA_PrimitiveGroup *primGroup = gdp.findPrimitiveGroup(primTarget.getGroupName());
-					if (primGroup && primGroup->contains(prim)) {
-						primMaterial.appendOverrides(style.overrides.overrides);
-					}
-				}
-			}
-		}
-
-		mergeMaterialOverride(primMaterial, materialStyleSheetHndl, materialPathHndl, materialOverrideHndl, primOffset, ctx.getTime());
-
+		// Overrides from primitive attributes.
 		attrExporter.fromPrimitive(primMaterial.overrides, primOffset);
 
 		// Merge other primitive attributes.

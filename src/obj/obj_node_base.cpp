@@ -9,7 +9,9 @@
 //
 
 #include "obj_node_base.h"
+
 #include "vfh_export_geom.h"
+#include "vfh_attr_utils.h"
 
 using namespace VRayForHoudini;
 
