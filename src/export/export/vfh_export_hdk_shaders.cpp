@@ -25,7 +25,7 @@ static void getColor(OP_Node &opNode, const char *parmName, fpreal color[3], fpr
 	color[2] = opNode.evalFloat(parmName, 2, t);
 }
 
-static VRay::Plugin exportTexUserColor(VRayExporter &exporter, OP_Node &opNode, const char *parmName, int lookUpPriority)
+static VRay::Plugin exportTexUserColor(VRayExporter &exporter, OP_Node &opNode, const char *parmName, int lookUpPriority=0)
 {
 	const fpreal t = exporter.getContext().getTime();
 
@@ -48,7 +48,7 @@ static VRay::Plugin exportTexUserColor(VRayExporter &exporter, OP_Node &opNode, 
 
 VRay::Plugin VRayExporter::exportPrincipledShader(OP_Node &opNode, ExportContext *parentContext)
 {
-	const fpreal t  = getContext().getTime();
+	const fpreal t = getContext().getTime();
 
 	UT_String nodePath;
 	opNode.getFullPath(nodePath);
@@ -73,4 +73,17 @@ VRay::Plugin VRayExporter::exportPrincipledShader(OP_Node &opNode, ExportContext
 	mtlSingleBRDF.add(PluginAttr("brdf", exportPlugin(brdfVRayMtl)));
 
 	return exportPlugin(mtlSingleBRDF);
+}
+
+VRay::Plugin VRayExporter::exportNodeParameter(OP_Node &opNode, ExportContext*)
+{
+#if 0
+	int parmType;
+	opNode.evalInt("parmtype", 0, 0.0);
+#endif
+
+	UT_String paramName;
+	opNode.evalString(paramName, "parmname", 0, 0.0);
+
+	return exportTexUserColor(*this, opNode, paramName.buffer());
 }
