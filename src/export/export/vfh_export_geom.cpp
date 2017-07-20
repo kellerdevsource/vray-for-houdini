@@ -725,11 +725,7 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_D
 			material = primItem.material;
 		}
 		else if (primItem.primMaterial.matNode) {
-			if (!getPluginFromCache(*primItem.primMaterial.matNode, material)) {
-				material = pluginExporter.exportMaterial(primItem.primMaterial.matNode);
-
-				addPluginToCache(*primItem.primMaterial.matNode, material);
-			}
+			material = pluginExporter.exportMaterial(primItem.primMaterial.matNode);
 		}
 
 		if (isNodeMatte(objNode)) {
