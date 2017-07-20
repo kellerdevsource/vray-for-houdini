@@ -70,6 +70,7 @@ static boost::format objGeomNameFmt("%s|%i@%s");
 static boost::format hairNameFmt("GeomMayaHair|%i@%s");
 static boost::format polyNameFmt("GeomStaticMesh|%i@%s");
 static boost::format alembicNameFmt("Alembic|%i@%s");
+static boost::format vrmeshNameFmt("VRayProxy|%i@%s");
 
 static const char intrAlembicFilename[] = "abcfilename";
 static const char intrAlembicObjectPath[] = "abcobjectpath";
@@ -92,6 +93,9 @@ typedef std::vector<bool> DynamicBitset;
 /// We'll XOR getUniqueId() with those values to get a cache key.
 static const int keyDataHair = 0xA41857F8;
 static const int keyDataPoly = 0xF1625C6B;
+
+/// Plugin is always the same.
+static const int keyDataSphereID = 100;
 
 /// Check all points inside the detail and clear the bitset's indices of those
 /// points which belong to some primitive. Additionally return the number of
@@ -428,7 +432,7 @@ int ObjectExporter::getPrimKey(const GA_Primitive &prim) const
 	int primKey = 0;
 
 	if (prim.getTypeId() == GEO_PRIMSPHERE) {
-		primKey = reinterpret_cast<uintptr_t>(&prim);
+		primKey = keyDataSphereID;
 	}
 	else if (GU_PrimPacked::isPackedPrimitive(prim)) {
 		primKey = getPrimPackedID(static_cast<const GU_PrimPacked&>(prim));
@@ -1013,13 +1017,18 @@ VRay::Plugin ObjectExporter::exportVRayProxyRef(OBJ_Node &objNode, const GU_Prim
 	UT_String primname;
 	prim.getIntrinsic(prim.findIntrinsic(intrPackedPrimitiveName), primname);
 
-	Attrs::PluginDesc pluginDesc(VRayExporter::getPluginName(objNode, primname.buffer()),
+	const int key = getPrimPackedID(prim);
+
+	Attrs::PluginDesc pluginDesc(boost::str(vrmeshNameFmt % key % primname.buffer()),
 								 "GeomMeshFile");
 
 	const VRayProxyRef *vrayproxyref = UTverify_cast<const VRayProxyRef*>(prim.implementation());
 
 	UT_Options options = vrayproxyref->getOptions();
 	pluginExporter.setAttrsFromUTOptions(pluginDesc, options);
+
+	// Scale will be exported as primitive transform.
+	pluginDesc.remove("scale");
 
 	return pluginExporter.exportPlugin(pluginDesc);
 }
