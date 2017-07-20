@@ -142,7 +142,7 @@ void VRayExporter::fillViewParamFromCameraNode(const OBJ_Node &camera, ViewParam
 	viewParams.renderSize.w = imageWidth;
 	viewParams.renderSize.h = imageHeight;
 	viewParams.renderView.fov = fov;
-	viewParams.renderView.tm = VRayExporter::getObjTransform(camera.castToOBJNode(), m_context);
+	viewParams.renderView.tm = getObjTransform(camera.castToOBJNode(), m_context);
 
 	if (!viewParams.renderView.fovOverride) {
 		aspectCorrectFovOrtho(viewParams);
@@ -299,13 +299,12 @@ void VRayExporter::exportView(const ViewParams &newViewParams)
 		}
 	}
 
+	const int prevAutoCommit = getRenderer().getVRay().getAutoCommit();
+	getRenderer().setAutoCommit(false);
+
 	const bool needReset = m_viewParams.needReset(viewParams);
 	if (needReset) {
 		Log::getLog().warning("VRayExporter::exportView: Reseting view plugins...");
-
-		const int prevAutoCommit = getRenderer().getVRay().getAutoCommit();
-
-		getRenderer().setAutoCommit(false);
 
 		removePlugin(ViewPluginsDesc::settingsCameraPluginName);
 		removePlugin(ViewPluginsDesc::settingsCameraDofPluginName);
@@ -348,14 +347,14 @@ void VRayExporter::exportView(const ViewParams &newViewParams)
 		}
 
 		exportPlugin(viewPlugins.renderView);
-
-		getRenderer().commit();
-		getRenderer().setAutoCommit(prevAutoCommit);
 	}
 	else if (m_viewParams.changedParams(viewParams)) {
 		fillRenderView(viewParams, viewPlugins.renderView);
 		exportPlugin(viewPlugins.renderView);
 	}
+
+	getRenderer().commit();
+	getRenderer().setAutoCommit(prevAutoCommit);
 
 	if (m_viewParams.changedSize(viewParams) ||
 		m_viewParams.changedCropRegion(viewParams))

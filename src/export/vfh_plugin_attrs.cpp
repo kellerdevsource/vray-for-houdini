@@ -14,8 +14,8 @@
 using namespace VRayForHoudini;
 using namespace Attrs;
 
-#define ReturnTrueIfNotEq(member) if (p.member != other->member) { return true; } break;
-#define ReturnTrueIfFloatNotEq(member) if (!IsFloatEq(p.member, other->member)) { return true; } break;
+#define ReturnTrueIfNotEq(member) if (p.member != other->member) { return true; }
+#define ReturnTrueIfFloatNotEq(member) if (!IsFloatEq(p.member, other->member)) { return true; }
 
 template <typename VectorType>
 FORCEINLINE bool vectorNotEqual(const VectorType &a, const VectorType &b) {
@@ -52,30 +52,30 @@ PluginAttr::PluginAttr(const std::string &attrName, const Attrs::PluginDesc *att
 const char *PluginAttr::typeStr() const
 {
 	switch (paramType) {
-		case PluginAttr::AttrTypeInt: return "Int";
-		case PluginAttr::AttrTypeFloat: return "Float";
-		case PluginAttr::AttrTypeVector: return "Vector";
-		case PluginAttr::AttrTypeColor: return "Color";
-		case PluginAttr::AttrTypeAColor: return "AColor";
-		case PluginAttr::AttrTypeTransform: return "Transform";
-		case PluginAttr::AttrTypeMatrix: return "Matrix";
-		case PluginAttr::AttrTypeString: return "String";
-		case PluginAttr::AttrTypePlugin: return "Plugin";
-		case PluginAttr::AttrTypePluginDesc: return "PluginDesc";
-		case PluginAttr::AttrTypeListInt: return "ListInt";
-		case PluginAttr::AttrTypeListFloat: return "ListFloat";
-		case PluginAttr::AttrTypeListVector: return "ListVector";
-		case PluginAttr::AttrTypeListColor: return "ListColor";
-		case PluginAttr::AttrTypeListTransform: return "ListTransform";
-		case PluginAttr::AttrTypeListString: return "ListString";
-		case PluginAttr::AttrTypeListPlugin: return "ListPlugin";
-		case PluginAttr::AttrTypeListValue: return "ListValue";
-		case PluginAttr::AttrTypeRawListInt: return "RawListInt";
-		case PluginAttr::AttrTypeRawListFloat: return "RawListFloat";
-		case PluginAttr::AttrTypeRawListVector: return "RawListVector";
-		case PluginAttr::AttrTypeRawListColor: return "RawListColor";
-		case PluginAttr::AttrTypeRawListCharString: return "RawListCharString";
-		case PluginAttr::AttrTypeRawListValue: return "RawListValue";
+		case AttrTypeInt: return "Int";
+		case AttrTypeFloat: return "Float";
+		case AttrTypeVector: return "Vector";
+		case AttrTypeColor: return "Color";
+		case AttrTypeAColor: return "AColor";
+		case AttrTypeTransform: return "Transform";
+		case AttrTypeMatrix: return "Matrix";
+		case AttrTypeString: return "String";
+		case AttrTypePlugin: return "Plugin";
+		case AttrTypePluginDesc: return "PluginDesc";
+		case AttrTypeListInt: return "ListInt";
+		case AttrTypeListFloat: return "ListFloat";
+		case AttrTypeListVector: return "ListVector";
+		case AttrTypeListColor: return "ListColor";
+		case AttrTypeListTransform: return "ListTransform";
+		case AttrTypeListString: return "ListString";
+		case AttrTypeListPlugin: return "ListPlugin";
+		case AttrTypeListValue: return "ListValue";
+		case AttrTypeRawListInt: return "RawListInt";
+		case AttrTypeRawListFloat: return "RawListFloat";
+		case AttrTypeRawListVector: return "RawListVector";
+		case AttrTypeRawListColor: return "RawListColor";
+		case AttrTypeRawListCharString: return "RawListCharString";
+		case AttrTypeRawListValue: return "RawListValue";
 		default:
 			break;
 	}
@@ -107,7 +107,7 @@ PluginAttr *Attrs::PluginDesc::get(const std::string &paramName)
 
 void Attrs::PluginDesc::addAttribute(const PluginAttr &attr)
 {
-	pluginAttrs.insert(attr.paramName.c_str(), attr);
+	pluginAttrs[attr.paramName.c_str()] = attr;
 }
 
 void Attrs::PluginDesc::add(const PluginAttr &attr)
@@ -120,7 +120,7 @@ void Attrs::PluginDesc::remove(const char *name)
 	pluginAttrs.erase(name);
 }
 
-bool Attrs::PluginDesc::isDifferent(const VRayForHoudini::Attrs::PluginDesc &otherDesc) const
+bool Attrs::PluginDesc::isDifferent(const Attrs::PluginDesc &otherDesc) const
 {
 	FOR_CONST_IT (PluginAttrs, pIt, pluginAttrs) {
 		const PluginAttr &p = pIt.data();
@@ -135,9 +135,11 @@ bool Attrs::PluginDesc::isDifferent(const VRayForHoudini::Attrs::PluginDesc &oth
 					break;
 				case PluginAttr::AttrTypeInt: {
 					ReturnTrueIfNotEq(paramValue.valInt);
+					break;
 				}
 				case PluginAttr::AttrTypeFloat: {
 					ReturnTrueIfFloatNotEq(paramValue.valFloat);
+					break;
 				}
 				case PluginAttr::AttrTypeColor:
 				case PluginAttr::AttrTypeVector:
@@ -158,7 +160,7 @@ bool Attrs::PluginDesc::isDifferent(const VRayForHoudini::Attrs::PluginDesc &oth
 					break;
 				}
 				case PluginAttr::AttrTypeString: {
-					if (vutils_strcmp(p.paramValue.valString.c_str(), other->paramValue.valString.c_str()) != 0)
+					if (p.paramValue.valString != other->paramValue.valString)
 						return true;
 					break;
 				}

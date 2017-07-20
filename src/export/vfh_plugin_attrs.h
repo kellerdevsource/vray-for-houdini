@@ -258,7 +258,8 @@ struct PluginAttr {
 	std::string             paramName; ///< attribute name
 	AttrType                paramType; ///< attribute type
 };
-typedef VUtils::HashMap<PluginAttr> PluginAttrs;
+
+typedef VUtils::HashMap<PluginAttr, true, 512, false, 50> PluginAttrs;
 
 /// Description of a plugin instance and its attributes. It is used to
 /// accumulate attribute changes and to allow to batch changes together for

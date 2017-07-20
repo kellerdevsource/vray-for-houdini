@@ -79,7 +79,7 @@ void PrimMaterial::appendOverrides(const MtlOverrideItems &items, OverrideAppend
 			}
 		}
 
-		overrides.insert(it.key(), it.data());
+		overrides[it.key()] = it.data();
 	}
 }
 
@@ -210,7 +210,7 @@ static void appendOverrideValues(const STY_OverrideValues &styOverrideValues, Pr
 				}
 
 				if (overrideItem.getType() != MtlOverrideItem::itemTypeNone) {
-					primMaterial.overrides.insert(attrName.buffer(), overrideItem);
+					primMaterial.overrides[attrName.buffer()] = overrideItem;
 				}
 			}
 		}
