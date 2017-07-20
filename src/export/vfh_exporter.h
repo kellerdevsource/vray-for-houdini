@@ -274,11 +274,6 @@ public:
 	/// @returns V-Ray plugin.
 	VRay::Plugin exportMaterial(OP_Node *node);
 
-	/// Export V-Ray material from VOP node.
-	/// @param node VOP node.
-	/// @returns V-Ray plugin.
-	VRay::Plugin exportMaterial(VOP_Node *node);
-
 	/// Export the default light created when there are no lights in the scene
 	/// @param update[in] - flags whether this is called from IPR callback
 	/// @retval V-Ray plugin for default light
@@ -542,6 +537,11 @@ public:
 	void setROP(OP_Node &value) { m_rop = &value; }
 
 private:
+	/// Export V-Ray material from VOP node.
+	/// @param node VOP node.
+	/// @returns V-Ray plugin.
+	VRay::Plugin exportMaterial(VOP_Node *node);
+
 	/// The driver node bound to this exporter.
 	OP_Node *m_rop;
 
