@@ -57,9 +57,7 @@ VRay::Plugin VRayExporter::exportPrincipledShader(OP_Node &opNode, ExportContext
 								  "BRDFVRayMtl");
 
 	if (Parm::getParmInt(opNode, "basecolor_usePointColor", t)) {
-		const int usePacked = Parm::getParmInt(opNode, "basecolor_usePackedColor", t);
-
-		brdfVRayMtl.add(PluginAttr("diffuse", exportTexUserColor(*this, opNode, "basecolor", !usePacked)));
+		brdfVRayMtl.add(PluginAttr("diffuse", exportTexUserColor(*this, opNode, "basecolor", 0)));
 	}
 	else {
 		fpreal color[3];
