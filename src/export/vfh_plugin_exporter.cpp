@@ -353,8 +353,8 @@ VRay::Plugin VRayPluginRenderer::exportPlugin(const Attrs::PluginDesc &pluginDes
 
 void VRayPluginRenderer::exportPluginProperties(VRay::Plugin &plugin, const Attrs::PluginDesc &pluginDesc)
 {
-	for (const auto &pIt : pluginDesc.pluginAttrs) {
-		const PluginAttr &p = pIt;
+	FOR_CONST_IT (PluginAttrs, pIt, pluginDesc.pluginAttrs) {
+		const PluginAttr &p = pIt.data();
 
 		if (p.paramType == PluginAttr::AttrTypeIgnore) {
 			continue;
