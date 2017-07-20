@@ -458,6 +458,8 @@ VRay::Plugin MeshExporter::getMaterial()
 
 		// Check if material comes from style sheet
 		PrimMaterial primMaterial;
+		primMaterial.matNode = topPrimMaterial.matNode;
+
 #if USE_GROUP_STYLER
 		const GA_Index primIndex = prim->getMapIndex();
 		const STY_Styler &primStyler = primStylers.getStyler(primIndex);
@@ -477,7 +479,7 @@ VRay::Plugin MeshExporter::getMaterial()
 		if (!primMtlNode) {
 			if (hasStyleSheetAttr) {
 				const UT_String styleSheet(materialStyleSheetHndl.get(primOffset), true);
-				appendStyleSheet(topPrimMaterial, styleSheet, ctx.getTime(), overrideAppend, true);
+				appendStyleSheet(primMaterial, styleSheet, ctx.getTime(), overrideAppend, true);
 			}
 			else if (hasMaterialPathAttr) {
 				const UT_String &matPath = materialPathHndl.get(primOffset);
@@ -804,6 +806,8 @@ void MeshExporter::getMtlOverrides(MapChannels &mapChannels) const
 	for (const GEO_Primitive *prim : primList) {
 		const GA_Offset primOffset = prim->getMapOffset();
 
+		// Parent override will be exported as user attribute,
+		// so don't merge anything here.
 		PrimMaterial primMaterial;
 
 		// Style sheet overrides.
