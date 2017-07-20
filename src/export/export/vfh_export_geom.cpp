@@ -644,9 +644,9 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp)
 				pushContext(PrimContext(&objNode, item.tm, item.primID, item.primMaterial, primStyler));
 				item.geometry = exportPrimPacked(objNode, primPacked);
 				popContext();
-			}
-			if (primKey > 0 && item.geometry) {
-				addPrimPluginToCache(primKey, item.geometry);
+				if (primKey > 0 && item.geometry) {
+					addPrimPluginToCache(primKey, item.geometry);
+				}
 			}
 		}
 		else if (primTypeID == GEO_PRIMSPHERE) {
