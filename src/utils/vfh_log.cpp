@@ -85,12 +85,14 @@ void Logger::startLogging() {
 void Logger::stopLogging() {
 	if (threadedLogger.getValue()) {
 		static std::mutex mtx;
-		std::lock_guard<std::mutex> lock(mtx);
-		isStoppedLogger = true;
-		if (loggerThread && loggerThread->joinable()) {
-			loggerThread->join();
-			delete loggerThread;
-			loggerThread = nullptr;
+		if (loggerThread) {
+			std::lock_guard<std::mutex> lock(mtx);
+			isStoppedLogger = true;
+			if (loggerThread && loggerThread->joinable()) {
+				loggerThread->join();
+				delete loggerThread;
+				loggerThread = nullptr;
+			}
 		}
 	}
 }
