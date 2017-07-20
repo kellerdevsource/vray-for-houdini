@@ -171,10 +171,10 @@ OP::VRayNode::PluginResult VOP::TexLayered::asPluginDesc(Attrs::PluginDesc &plug
 
 				if (blend_amount != 1.0f) {
 					Attrs::PluginDesc blendDesc(VRayExporter::getPluginName(this, paramPrefix), "TexAColorOp");
-					blendDesc.pluginAttrs.push_back(Attrs::PluginAttr("mode", 0)); // Mode: "result_a"
-					blendDesc.pluginAttrs.push_back(Attrs::PluginAttr("color_a", tex_plugin));
-					blendDesc.pluginAttrs.push_back(Attrs::PluginAttr("mult_a", 1.0f));
-					blendDesc.pluginAttrs.push_back(Attrs::PluginAttr("result_alpha", blend_amount));
+					blendDesc.add(Attrs::PluginAttr("mode", 0)); // Mode: "result_a"
+					blendDesc.add(Attrs::PluginAttr("color_a", tex_plugin));
+					blendDesc.add(Attrs::PluginAttr("mult_a", 1.0f));
+					blendDesc.add(Attrs::PluginAttr("result_alpha", blend_amount));
 
 					tex_plugin = exporter.exportPlugin(blendDesc);
 				}
@@ -195,8 +195,8 @@ OP::VRayNode::PluginResult VOP::TexLayered::asPluginDesc(Attrs::PluginDesc &plug
 	std::reverse(blend_modes.begin(), blend_modes.end());
 #endif
 
-	pluginDesc.pluginAttrs.push_back(Attrs::PluginAttr("textures", textures));
-	pluginDesc.pluginAttrs.push_back(Attrs::PluginAttr("blend_modes", blend_modes));
+	pluginDesc.add(Attrs::PluginAttr("textures", textures));
+	pluginDesc.add(Attrs::PluginAttr("blend_modes", blend_modes));
 
 	return PluginResult::PluginResultContinue;
 }
