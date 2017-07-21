@@ -25,7 +25,45 @@
 #include <QtNetwork/QHostAddress>
 #include <QApplication>
 
+#include <mutex>
+
 using namespace VRayForHoudini;
+
+class CallOnceUntilReset {
+public:
+	typedef std::function<void()> CB;
+
+	CallOnceUntilReset(CB onStop)
+		: isCalled(false)
+		, onStop(onStop)
+	{}
+
+	CB getCallableFunction() {
+		return [this]() {
+			this->stop();
+		};
+	}
+
+	void reset() {
+		std::lock_guard<std::mutex> lock(mtx);
+		isCalled = false;
+	}
+
+	void stop() {
+		if (!isCalled) {
+			std::lock_guard<std::mutex> lock(mtx);
+			if (!isCalled) {
+				isCalled = true;
+				onStop();
+			}
+		}
+	}
+
+private:
+	std::mutex mtx;
+	bool isCalled;
+	CB onStop;
+} * stopCallback;
 
 FORCEINLINE int getInt(PyObject *list, int idx)
 {
@@ -354,14 +392,20 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 			exporter.exportView(viewParams);
 			exporter.renderFrame();
 
+			if (!stopCallback) {
+				stopCallback = new CallOnceUntilReset([]() {
+					closeImdisplay();
+					freeExporter();
+				});
+			}
+			stopCallback->reset();
+
+			setImdisplayOnStop(stopCallback->getCallableFunction());
 			initImdisplay(exporter.getRenderer().getVRay());
 
 			if (!stopChecker) {
 				stopChecker = new PingPongClient();
-				stopChecker->setCallback([] {
-					closeImdisplay();
-					freeExporter();
-				});
+				stopChecker->setCallback(stopCallback->getCallableFunction());
 			}
 			stopChecker->start();
 		}
