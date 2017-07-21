@@ -49,11 +49,7 @@ void PingPongClient::start() {
 	cbCalled = false;
 	socket->connectToHost(QHostAddress::LocalHost, 5050);
 	connect(socket, &QTcpSocket::disconnected, this, &PingPongClient::callCallback);
-
-	// TODO: is it safe to connect readyRead to onData before QTcpSocket::connected ?
-	connect(socket, &QTcpSocket::connected, [this]() {
-		connect(socket, &QTcpSocket::readyRead, this, &PingPongClient::onData);
-	});
+	connect(socket, &QTcpSocket::readyRead, this, &PingPongClient::onData);
 	timer->start();
 }
 
