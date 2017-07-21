@@ -379,6 +379,7 @@ public:
 
 	/// Get the V-Ray ROP bound to this exporter
 	OP_Node& getRop() const { return *m_rop; }
+	const OP_Node* getRopPtr() const { return m_rop; }
 
 	/// Get ROP error code. This is called from the V-Ray ROP on every frame
 	/// to check if rendering should be aborted

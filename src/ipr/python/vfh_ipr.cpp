@@ -57,15 +57,15 @@ FORCEINLINE float getFloat(PyObject *dict, const char *key, float defValue)
 	return PyFloat_AS_DOUBLE(item);
 }
 
-static VRayExporter *exporter = nullptr;
+static VRayExporter *vrayExporter = nullptr;
 static PingPongClient *stopChecker = nullptr;
 
 static VRayExporter& getExporter()
 {
-	if (!exporter) {
-		exporter = new VRayExporter(nullptr);
+	if (!vrayExporter) {
+		vrayExporter = new VRayExporter(nullptr);
 	}
-	return *exporter;
+	return *vrayExporter;
 }
 
 static void freeExporter()
@@ -77,7 +77,7 @@ static void freeExporter()
 
 	getExporter().reset();
 
-	FreePtr(exporter);
+	FreePtr(vrayExporter);
 }
 
 static struct VRayExporterIprUnload {
@@ -163,6 +163,10 @@ static PyObject* vfhExportView(PyObject*, PyObject *args, PyObject *keywds)
 	HOM_AutoLock autoLock;
 
 	VRayExporter &exporter = getExporter();
+
+	if (!exporter.getRopPtr()) {
+		Py_RETURN_NONE;
+	}
 
 	exporter.exportDefaultHeadlight(true);
 
