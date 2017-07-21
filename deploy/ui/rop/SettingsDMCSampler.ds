@@ -48,7 +48,7 @@
         type	float
         default	{ "0.85" }
         help	"A value of 1.0 means full adaptation; a value of 0.0 means no adaptation"
-        range	{ 0 64 }
+        range	{ 0 1 }
         export	none
         parmtag	{ "cook_dependent" "1" }
         parmtag	{ "vray_plugin" "SettingsDMCSampler" }
@@ -61,7 +61,7 @@
         type	float
         default	{ "0.005" }
         help	"Controls V-Ray's judgement of when a blurry value is \"good enough\" to be used"
-        range	{ 0.001 0.1 }
+        range	{ 0.001 1 }
         export	none
         parmtag	{ "cook_dependent" "1" }
         parmtag	{ "vray_plugin" "SettingsDMCSampler" }
@@ -74,7 +74,7 @@
         type	integer
         default	{ "16" }
         help	"The minimum number of samples that must be made before the early termination algorithm is used"
-        range	{ 0 64 }
+        range	{ 2 64 }
         export	none
         parmtag	{ "cook_dependent" "1" }
         parmtag	{ "vray_plugin" "SettingsDMCSampler" }

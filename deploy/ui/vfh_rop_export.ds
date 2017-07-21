@@ -1,3 +1,20 @@
+/*
+groupsimple {
+	name "VrayRendererFolderUIStyle"
+	label "UI"
+	
+	parm {
+		name "ui_style"
+		label "Style"
+		type ordinal
+		menu {
+			0 "Simple"
+			1 "Advanced"
+		}
+		default { "1" }
+	}
+}
+*/
 groupsimple {
     name "VRayRendererFolderDriverProduction"
     label "Production"

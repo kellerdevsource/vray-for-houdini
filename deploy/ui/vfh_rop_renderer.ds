@@ -17,21 +17,23 @@ group {
 
     groupsimple {
         name "SettingsRegionsGenerator"
-        label "Buckets"
+        label "Render Region Division"
 #include "$VRAY_UI_DS_PATH/rop/SettingsRegionsGenerator.ds"
 
-        hidewhen "{ SettingsImageSampler_type == "Progressive" }"
+        hidewhen "{ SettingsImageSampler_type == 3 }"
     }
+	
+#include "$VRAY_UI_DS_PATH/rop/SettingsColorMapping.ds"
 }
 
 group {
     name "FolderVRayRendererGI"
     label "Global Illumination"
 #include "$VRAY_UI_DS_PATH/rop/SettingsGI.ds"
-#include "$VRAY_UI_DS_PATH/rop/SettingsCaustics.ds"
 #include "$VRAY_UI_DS_PATH/rop/SettingsIrradianceMap.ds"
 #include "$VRAY_UI_DS_PATH/rop/SettingsDMCGI.ds"
 #include "$VRAY_UI_DS_PATH/rop/SettingsLightCache.ds"
+#include "$VRAY_UI_DS_PATH/rop/SettingsCaustics.ds"
 
 }
 
@@ -45,26 +47,29 @@ group {
 
 }
 
+/*
 group {
     name "SettingsColorMapping"
     label "Color Mapping"
 #include "$VRAY_UI_DS_PATH/rop/SettingsColorMapping.ds"
 }
+*/
 
+group {
+    name "SettingsOptions"
+    label "Options"
+#include "$VRAY_UI_DS_PATH/rop/SettingsOptions.ds"
+#include "$VRAY_UI_DS_PATH/rop/SettingsRaycaster.ds"
+}
 
+/*
 group {
     name "SettingsDefaultDisplacement"
     label "Displacement"
     disablewhen "{ SettingsOptions_geom_displacement == 0 }"
 #include "$VRAY_UI_DS_PATH/rop/SettingsDefaultDisplacement.ds"
 }
-
-
-group {
-    name "SettingsOptions"
-    label "Options"
-#include "$VRAY_UI_DS_PATH/rop/SettingsOptions.ds"
-}
+*/
 
 
 group {

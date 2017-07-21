@@ -7,7 +7,7 @@ groupsimple {
       name    "SettingsDMCGI_subdivs"
       label   "Subdivs"
       type    integer
-      disablewhen	"{ SettingsGI_on != 1 } { SettingsGI_on == 0 }"
+	  disablewhen " { SettingsDMCSampler_use_local_subdivs == 0 } "
       default { "8" }
       help    "The number of samples used to approximate GI"
       range   { 1 16 }
@@ -22,7 +22,7 @@ groupsimple {
       name    "SettingsDMCGI_depth"
       label   "Depth"
       type    integer
-      disablewhen	"{ SettingsGI_on != 1 } { SettingsGI_on == 0 }"
+	  disablewhen " { SettingsGI_secondary_engine != 1 } "
       default { "3" }
       help    "The number of light bounces that will be computed"
       range   { 1 24 }

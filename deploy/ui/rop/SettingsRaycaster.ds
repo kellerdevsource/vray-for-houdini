@@ -1,7 +1,12 @@
-    parm {
+groupsimple {
+	name "folder_options_raycaster"
+	label "Raycaster"
+	
+	parm {
 	name	"SettingsRaycaster_maxLevels"
 	label	"Max Tree Depth"
 	type	integer
+	invisible
 	default	{ "80" }
 	help	"Max. tree depth"
 	range	{ 1 100 }
@@ -15,6 +20,7 @@
 	name	"SettingsRaycaster_minLeafSize"
 	label	"Min Leaf Size"
 	type	float
+	invisible
 	default	{ "0" }
 	help	"Min. voxel size"
 	range	{ 0 100 }
@@ -28,6 +34,7 @@
 	name	"SettingsRaycaster_faceLevelCoef"
 	label	"Face/level Coeff"
 	type	float
+	invisible
 	default	{ "1" }
 	help	"Balance coefficient between depth and faces per voxel"
 	range	{ 0 100 }
@@ -36,19 +43,6 @@
 	parmtag	{ "vray_plugin" "SettingsRaycaster" }
 	parmtag	{ "vray_pluginattr" "faceLevelCoef" }
 	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"SettingsRaycaster_dynMemLimit"
-	label	"Dyn. Memory Limit(mbs)"
-	type	integer
-	default	{ "5000" }
-	help	"Limit for dynamic geometry, in megabytes"
-	range	{ 0 16000 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "SettingsRaycaster" }
-	parmtag	{ "vray_pluginattr" "dynMemLimit" }
-	parmtag	{ "vray_type" "int" }
     }
     parm {
 	name	"SettingsRaycaster_embreeUse"
@@ -91,6 +85,7 @@
 	parmtag	{ "vray_pluginattr" "embreeHair" }
 	parmtag	{ "vray_type" "boolean" }
     }
+	
     parm {
 	name	"SettingsRaycaster_embreeLowMemory"
 	label	"Conserve Memory"
@@ -119,10 +114,24 @@
 	parmtag	{ "vray_pluginattr" "embreeRayPackets" }
 	parmtag	{ "vray_type" "boolean" }
     }
+	parm {
+	name	"SettingsRaycaster_dynMemLimit"
+	label	"Dyn. Memory Limit(mbs)"
+	type	integer
+	default	{ "5000" }
+	help	"Limit for dynamic geometry, in megabytes"
+	range	{ 0 16000 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "SettingsRaycaster" }
+	parmtag	{ "vray_pluginattr" "dynMemLimit" }
+	parmtag	{ "vray_type" "int" }
+    }
     parm {
 	name	"SettingsRaycaster_optLevel"
 	label	"Tree Build Quality"
 	type	ordinal
+	invisible
 	default	{ "0" }
 	help	"Optimization level (must be 0)"
 	menu	{
@@ -138,3 +147,4 @@
 	parmtag	{ "vray_pluginattr" "optLevel" }
 	parmtag	{ "vray_type" "int" }
     }
+}

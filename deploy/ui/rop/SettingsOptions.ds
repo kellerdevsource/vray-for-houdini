@@ -2,19 +2,8 @@ groupsimple {
   name "folder_options_geometry"
   label "Geometry"
 
-  parm {
-    name	"SettingsOptions_geom_displacement"
-    label	"Enable Displacement"
-    type	toggle
-    default	{ "1" }
-    help	"Render displacement"
-    range	{ 0 1 }
-    export	none
-    parmtag	{ "cook_dependent" "1" }
-    parmtag	{ "vray_plugin" "SettingsOptions" }
-    parmtag	{ "vray_pluginattr" "geom_displacement" }
-    parmtag	{ "vray_type" "boolean" }
-  }
+
+
 
   parm {
     name	"SettingsOptions_geom_doHidden"
@@ -29,11 +18,13 @@ groupsimple {
     parmtag	{ "vray_pluginattr" "geom_doHidden" }
     parmtag	{ "vray_type" "boolean" }
   }
+#include "$VRAY_UI_DS_PATH/rop/SettingsDefaultDisplacement.ds"
 
   parm {
     name	"SettingsOptions_geom_backfaceCull"
     label	"Force Back Face Culling"
     type	toggle
+	invisible
     default	{ "0" }
     help	"If true, back faces will be invisible to camera and shadow rays"
     range	{ 0 1 }
@@ -55,7 +46,7 @@ groupsimple {
 
   parm {
     name	"SettingsOptions_light_doLights"
-    label	"Use Lights"
+    label	"Lights"
     type	toggle
     default	{ "1" }
     help	"Use lights"
@@ -68,7 +59,7 @@ groupsimple {
   }
   parm {
     name	"SettingsOptions_light_doDefaultLights"
-    label	"Use Default Lights"
+    label	"Default Lights"
     type	toggle
     default	{ "1" }
     help	"Use default lights (when no lights are presented in a scene)"
@@ -93,19 +84,6 @@ groupsimple {
     parmtag	{ "vray_type" "boolean" }
   }
   parm {
-    name	"SettingsOptions_light_onlyGI"
-    label	"Show Gi Only"
-    type	toggle
-    default	{ "0" }
-    help	"Use only GI from lights"
-    range	{ 0 1 }
-    export	none
-    parmtag	{ "cook_dependent" "1" }
-    parmtag	{ "vray_plugin" "SettingsOptions" }
-    parmtag	{ "vray_pluginattr" "light_onlyGI" }
-    parmtag	{ "vray_type" "boolean" }
-  }
-  parm {
     name	"SettingsOptions_light_doShadows"
     label	"Shadows"
     type	toggle
@@ -118,10 +96,26 @@ groupsimple {
     parmtag	{ "vray_pluginattr" "light_doShadows" }
     parmtag	{ "vray_type" "boolean" }
   }
+  
+  parm {
+    name	"SettingsOptions_light_onlyGI"
+    label	"Show GI Only"
+    type	toggle
+	invisible
+    default	{ "0" }
+    help	"Use only GI from lights"
+    range	{ 0 1 }
+    export	none
+    parmtag	{ "cook_dependent" "1" }
+    parmtag	{ "vray_plugin" "SettingsOptions" }
+    parmtag	{ "vray_pluginattr" "light_onlyGI" }
+    parmtag	{ "vray_type" "boolean" }
+  }
+  
 
   parm {
     name	"SettingsOptions_light_disableSelfIllumination"
-    label	"Disable Self-illumination"
+    label	"Disable Self-Illumination"
     type	toggle
     default	{ "0" }
     help	"self-Illumination"
@@ -202,7 +196,7 @@ groupsimple {
 
   parm {
     name	"SettingsOptions_mtl_SSSEnabled"
-    label	"Sss Enabled"
+    label	"SSS"
     type	toggle
     default	{ "1" }
     range	{ 0 1 }
@@ -215,7 +209,7 @@ groupsimple {
 
   parm {
     name	"SettingsOptions_mtl_limitDepth"
-    label	"Use Global Max Depth"
+    label	"Global Max Depth"
     type	toggle
     default	{ "0" }
     help	"Limit max depth"
@@ -233,7 +227,7 @@ groupsimple {
     default	{ "5" }
     help	"Max. ray depth for reflections and refractions"
     disablewhen	"{ SettingsOptions_mtl_limitDepth == 0 }"
-    range	{ 0 64 }
+    range	{ 0 1000 }
     export	none
     parmtag	{ "cook_dependent" "1" }
     parmtag	{ "vray_plugin" "SettingsOptions" }
@@ -246,7 +240,7 @@ groupsimple {
     type	integer
     default	{ "50" }
     help	"Max. transparency levels"
-    range	{ 0 64 }
+    range	{ 0 1000 }
     export	none
     parmtag	{ "cook_dependent" "1" }
     parmtag	{ "vray_plugin" "SettingsOptions" }
@@ -259,7 +253,7 @@ groupsimple {
     type	float
     default	{ "0.001" }
     help	"Transparency cutoff"
-    range	{ 0 64 }
+    range	{ 0 1 }
     export	none
     parmtag	{ "cook_dependent" "1" }
     parmtag	{ "vray_plugin" "SettingsOptions" }
@@ -330,7 +324,7 @@ groupsimple {
   }
   parm {
     name	"SettingsOptions_mtl_filterMapsForSecondaryRays"
-    label	"Filter Maps For Glossy/gi Rays"
+    label	"Filter Maps For Glossy / GI Rays"
     type	toggle
     default	{ "1" }
     help	"false to turn off filtering for glossy and GI rays"
@@ -367,7 +361,7 @@ groupsimple {
 
   parm {
     name	"SettingsOptions_probabilistic_vol_on"
-    label	"Enable Probabilistic Volumetrics"
+    label	"Probabilistic Volumetrics"
     type	toggle
     default	{ "0" }
     help	"Enable probabilistic volumetric sampling"
@@ -380,12 +374,12 @@ groupsimple {
   }
   parm {
     name	"SettingsOptions_probabilistic_vol_samples"
-    label	"Number Of Direct Samples"
+    label	"Num. Samples"
     type	integer
-    default	{ "5" }
+    default	{ "20" }
     help	"The number of probabilistic samples to shade for primary/shadow rays when probabilistic_vol_on is true"
     disablewhen	"{ SettingsOptions_probabilistic_vol_on == 0 }"
-    range	{ 1 1e+06 }
+    range	{ 1 100 }
     export	none
     parmtag	{ "cook_dependent" "1" }
     parmtag	{ "vray_plugin" "SettingsOptions" }
@@ -394,12 +388,12 @@ groupsimple {
   }
   parm {
     name	"SettingsOptions_probabilistic_vol_gi_samples"
-    label	"Number Of Gi Samples"
+    label	"Num. GI Samples"
     type	integer
-    default	{ "5" }
+    default	{ "3" }
     help	"The number of probabilistic samples to shade for gi/glossy when probabilistic_vol_on is true"
     disablewhen	"{ SettingsOptions_probabilistic_vol_on == 0 }"
-    range	{ 1 1e+06 }
+    range	{ 1 100 }
     export	none
     parmtag	{ "cook_dependent" "1" }
     parmtag	{ "vray_plugin" "SettingsOptions" }
@@ -411,7 +405,8 @@ groupsimple {
 
 groupsimple {
   name "folder_options_system"
-  label "System"
+  label "Rendering"
+  
   parm {
     name	"SettingsOptions_misc_abortOnMissingAsset"
     label	"Abort Rendering On Missing Asset"
@@ -428,6 +423,7 @@ groupsimple {
     name	"SettingsOptions_misc_lowThreadPriority"
     label	"Low Thread Priority"
     type	toggle
+	invisible
     default	{ "0" }
     help	"Low thread priority"
     range	{ 0 1 }
@@ -493,7 +489,7 @@ groupsimple {
   }
   parm {
     name	"SettingsOptions_gi_texFilteringMultiplier"
-    label	"Gi Texture Filtering Multiplier"
+    label	"GI Texture Filtering Multiplier"
     type	float
     default	{ "5" }
     help	"GI texturing multiplier"
@@ -505,89 +501,6 @@ groupsimple {
     parmtag	{ "vray_pluginattr" "gi_texFilteringMultiplier" }
     parmtag	{ "vray_type" "float" }
   }
-#include "$VRAY_UI_DS_PATH/rop/SettingsRaycaster.ds"
 }
 
 
-groupsimple {
-  name "folder_options_dr"
-  label "Distributed rendering"
-
-  parm {
-    name	"SettingsOptions_misc_transferAssets"
-    label	"Transfer Missing Assets"
-    type	toggle
-    default	{ "0" }
-    help	"Transfer missing assets on DR"
-    range	{ 0 1 }
-    export	none
-    parmtag	{ "cook_dependent" "1" }
-    parmtag	{ "vray_plugin" "SettingsOptions" }
-    parmtag	{ "vray_pluginattr" "misc_transferAssets" }
-    parmtag	{ "vray_type" "boolean" }
-  }
-  parm {
-    name	"SettingsOptions_misc_useCachedAssets"
-    label	"Use Cached Assets On Dr"
-    type	toggle
-    disablewhen "{ SettingsOptions_misc_transferAssets == 0 }"
-    default	{ "1" }
-    help	"Use cached assets on DR"
-    range	{ 0 1 }
-    export	none
-    parmtag	{ "cook_dependent" "1" }
-    parmtag	{ "vray_plugin" "SettingsOptions" }
-    parmtag	{ "vray_pluginattr" "misc_useCachedAssets" }
-    parmtag	{ "vray_type" "boolean" }
-  }
-  parm {
-    name	"SettingsOptions_dr_assetsCacheLimitType"
-    label	"Cache Limit Type"
-    type	ordinal
-    disablewhen "{ SettingsOptions_misc_transferAssets == 0 }"
-    default	{ "0" }
-    help	"Type of the assets cache limit"
-    menu	{
-        "None"	"None"
-        "Age (Hours)"	"Age (Hours)"
-        "Size (GB)"	"Size (GB)"
-    }
-    range	{ 0 1 }
-    export	none
-    parmtag	{ "cook_dependent" "1" }
-    parmtag	{ "vray_enumkeys" "0,1,2" }
-    parmtag	{ "vray_plugin" "SettingsOptions" }
-    parmtag	{ "vray_pluginattr" "dr_assetsCacheLimitType" }
-    parmtag	{ "vray_type" "int" }
-  }
-  parm {
-    name	"SettingsOptions_dr_assetsCacheLimitValue"
-    label	"Cache Limit Value"
-    type	float
-    disablewhen "{ SettingsOptions_misc_transferAssets == 0 } { SettingsOptions_dr_assetsCacheLimitType ==  \"None\" } "
-    default	{ "0" }
-    help	"Value of the assets cache limit"
-    range	{ 0 64 }
-    export	none
-    parmtag	{ "cook_dependent" "1" }
-    parmtag	{ "vray_plugin" "SettingsOptions" }
-    parmtag	{ "vray_pluginattr" "dr_assetsCacheLimitValue" }
-    parmtag	{ "vray_type" "float" }
-  }
-  parm {
-    name	"SettingsOptions_dr_overwriteLocalCacheSettings"
-    label	"Overwrite Local Cache Settings"
-    type	toggle
-    disablewhen "{ SettingsOptions_misc_transferAssets == 0 }"
-    default	{ "0" }
-    help	"If is true the client's cache settings will overwrite server settings"
-    range	{ 0 1 }
-    export	none
-    parmtag	{ "cook_dependent" "1" }
-    parmtag	{ "vray_plugin" "SettingsOptions" }
-    parmtag	{ "vray_pluginattr" "dr_overwriteLocalCacheSettings" }
-    parmtag	{ "vray_type" "boolean" }
-  }
-
-
-}

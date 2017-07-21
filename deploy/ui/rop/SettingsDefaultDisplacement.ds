@@ -1,12 +1,25 @@
+parm {
+    name	"SettingsOptions_geom_displacement"
+    label	"Displacement"
+    type	toggle
+    default	{ "1" }
+    help	"Render displacement"
+    range	{ 0 1 }
+    export	none
+    parmtag	{ "cook_dependent" "1" }
+    parmtag	{ "vray_plugin" "SettingsOptions" }
+    parmtag	{ "vray_pluginattr" "geom_displacement" }
+    parmtag	{ "vray_type" "boolean" }
+  }
+
 groupsimple {
   name "folder_displacement"
-  label "Displacement"
-
-
+  label "Displacement Options"
+  hidewhen " { SettingsOptions_geom_displacement == 0 } "
 
   parm {
     name	"SettingsDefaultDisplacement_override_on"
-    label	"Override Max"
+    label	"Override Settings Globally"
     type	toggle
     default	{ "0" }
     help	"Override settings globally"
@@ -17,13 +30,14 @@ groupsimple {
     parmtag	{ "vray_pluginattr" "override_on" }
     parmtag	{ "vray_type" "boolean" }
   }
+
   parm {
     name	"SettingsDefaultDisplacement_edgeLength"
     label	"Edge Length"
     type	float
     default	{ "4" }
     help	"Max. height"
-    range	{ 0 64 }
+    range	{ 0 1000 }
     export	none
     parmtag	{ "cook_dependent" "1" }
     parmtag	{ "vray_plugin" "SettingsDefaultDisplacement" }
@@ -47,9 +61,9 @@ groupsimple {
     name	"SettingsDefaultDisplacement_maxSubdivs"
     label	"Max Subdivs"
     type	integer
-    default	{ "256" }
+    default	{ "4" }
     help	"Determines the maximum subdivisions for a triangle of the original mesh"
-    range	{ 0 64 }
+    range	{ 1 16 }
     export	none
     parmtag	{ "cook_dependent" "1" }
     parmtag	{ "vray_plugin" "SettingsDefaultDisplacement" }
@@ -75,7 +89,7 @@ groupsimple {
     type	float
     default	{ "1" }
     help	"Determines the displacement amount for white areas in the displacement map"
-    range	{ 0 64 }
+    range	{ -100 100 }
     export	none
     parmtag	{ "cook_dependent" "1" }
     parmtag	{ "vray_plugin" "SettingsDefaultDisplacement" }
@@ -86,6 +100,7 @@ groupsimple {
     name	"SettingsDefaultDisplacement_relative"
     label	"Relative"
     type	toggle
+	invisible
     default	{ "0" }
     range	{ 0 1 }
     export	none

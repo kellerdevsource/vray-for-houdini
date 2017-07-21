@@ -1,8 +1,4 @@
-groupcollapsible {
-  name "gi_settings_caustics"
-  label "Caustics"
-  disablewhen " { SettingsGI_on == 0 } "
-  parm {
+parm {
   	name	"SettingsCaustics_on"
   	label	"Enable Caustics"
   	type	toggle
@@ -16,6 +12,12 @@ groupcollapsible {
   	parmtag	{ "vray_pluginattr" "on" }
   	parmtag	{ "vray_type" "boolean" }
   }
+
+groupsimple {
+  name "gi_settings_caustics"
+  label "Caustics"
+  hidewhen " { SettingsCaustics_on == 0 } "
+  
 
   parm {
   	name	"SettingsCaustics_multiplier"
@@ -95,7 +97,7 @@ groupcollapsible {
   	name	"SettingsCaustics_file"
   	label	"File"
   	type	file
-  	default	{ "//lightmaps/caustics.vrmap" }
+  	default	{ "$HIP/lightmaps/caustics.vrmap" }
   	help	"File to take caustics map from when 'Mode' is 'From File'"
   	disablewhen	"{ SettingsCaustics_mode != \"From File\" } { SettingsCaustics_on != 1 }"
   	range	{ 0 1 }
@@ -125,7 +127,7 @@ groupcollapsible {
   	name	"SettingsCaustics_auto_save"
   	label	"Auto Save"
   	type	toggle
-  	default	{ "0" }
+  	default	{ "1" }
   	help	"True to save the caustics photon map automatically at the end of the rendering"
   	disablewhen	"{ SettingsCaustics_on != 1 } { SettingsCaustics_mode == \"From File\" }"
   	range	{ 0 1 }
@@ -139,7 +141,7 @@ groupcollapsible {
   	name	"SettingsCaustics_auto_save_file"
   	label	"Auto Save File"
   	type	file
-  	default	{ "//lightmaps/caustics.vrmap" }
+  	default	{ "$HIP/lightmaps/caustics.vrmap" }
   	help	"Auto save filepath"
   	disablewhen	"{ SettingsCaustics_auto_save != 1 } { SettingsCaustics_on != 1 } { SettingsCaustics_mode == \"From File\" }"
   	range	{ 0 1 }

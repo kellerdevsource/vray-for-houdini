@@ -7,6 +7,7 @@ groupsimple {
 		type	integer
 		default	{ "5" }
 		help	"Maximum trace depth for reflections/refractions etc"
+		help	"Maximum trace depth for reflections/refractions etc"
 		range	{ 0 64 }
 		parmtag	{ "cook_dependent" "1" }
 		parmtag	{ "vray_plugin" "SettingsRTEngine" }
@@ -15,7 +16,7 @@ groupsimple {
 	}
 	parm {
 		name	"SettingsRTEngine_gi_depth"
-		label	"Gi Depth"
+		label	"GI Depth"
 		type	integer
 		default	{ "3" }
 		help	"Maximum trace depth for GI"
@@ -76,121 +77,6 @@ groupsimple {
 	label "Performance"
 	
 	parm {
-		name	"SettingsRTEngine_cpu_bundle_size"
-		label	"Cpu Ray Bundle Size"
-		type	integer
-		hidewhen " { render_rt_mode != 0 } "
-		default	{ "128" }
-		help	"Number of samples to transfer over the network for RT-CPU"
-		range	{ 0 64 }
-		parmtag	{ "cook_dependent" "1" }
-		parmtag	{ "vray_plugin" "SettingsRTEngine" }
-		parmtag	{ "vray_pluginattr" "cpu_bundle_size" }
-		parmtag	{ "vray_type" "int" }
-	}
-	parm {
-		name	"SettingsRTEngine_cpu_samples_per_pixel"
-		label	"Cpu Rays Per Pixel"
-		type	integer
-		hidewhen " { render_rt_mode != 0 } "
-		default	{ "4" }
-		help	"Number of samples per pixel for RT-CPU"
-		range	{ 0 64 }
-		parmtag	{ "cook_dependent" "1" }
-		parmtag	{ "vray_plugin" "SettingsRTEngine" }
-		parmtag	{ "vray_pluginattr" "cpu_samples_per_pixel" }
-		parmtag	{ "vray_type" "int" }
-	}
-	parm {
-		name	"SettingsRTEngine_gpu_bundle_size"
-		label	"Gpu Ray Bundle Size"
-		type	integer
-		hidewhen " { render_rt_mode == 0 } "
-		default	{ "128" }
-		help	"Number of samples to transfer over the network for RT-GPU"
-		range	{ 0 64 }
-		parmtag	{ "cook_dependent" "1" }
-		parmtag	{ "vray_plugin" "SettingsRTEngine" }
-		parmtag	{ "vray_pluginattr" "gpu_bundle_size" }
-		parmtag	{ "vray_type" "int" }
-	}
-	parm {
-		name	"SettingsRTEngine_gpu_samples_per_pixel"
-		label	"Gpu Rays Per Pixel"
-		type	integer
-		hidewhen " { render_rt_mode == 0 } "
-		default	{ "1" }
-		help	"Number of samples per pixel for RT-GPU"
-		range	{ 0 64 }
-		parmtag	{ "cook_dependent" "1" }
-		parmtag	{ "vray_plugin" "SettingsRTEngine" }
-		parmtag	{ "vray_pluginattr" "gpu_samples_per_pixel" }
-		parmtag	{ "vray_type" "int" }
-	}
-	parm {
-		name	"SettingsRTEngine_opencl_resizeTextures"
-		label	"Gpu Resize Textures"
-		type	ordinal
-		hidewhen " { render_rt_mode == 0 } "
-		default	{ "1" }
-		help	"Textures transfer mode for the GPU"
-		menu	{
-			"Transfer \"As Is\" (Don't Resize, Don't Use Paging)"	"Transfer \"As Is\" (Don't Resize, Don't Use Paging)"
-			"Resize Textures"	"Resize Textures"
-			"Use Texture Paging(Out-Of-Core Textures) CUDA Only"	"Use Texture Paging(Out-Of-Core Textures) CUDA Only"
-		}
-		parmtag	{ "cook_dependent" "1" }
-		parmtag	{ "vray_enumkeys" "0,1,2" }
-		parmtag	{ "vray_plugin" "SettingsRTEngine" }
-		parmtag	{ "vray_pluginattr" "opencl_resizeTextures" }
-		parmtag	{ "vray_type" "int" }
-	}
-	parm {
-		name	"SettingsRTEngine_opencl_textureFormat"
-		label	"Gpu Texture Format"
-		type	ordinal
-		hidewhen " { render_rt_mode == 0 } "
-		default	{ "1" }
-		help	"Format for the textures on the GPU"
-		menu	{
-			"32-Bit Float"	"32-Bit Float"
-			"16-Bit Half Float"	"16-Bit Half Float"
-		}
-		parmtag	{ "cook_dependent" "1" }
-		parmtag	{ "vray_enumkeys" "0,1" }
-		parmtag	{ "vray_plugin" "SettingsRTEngine" }
-		parmtag	{ "vray_pluginattr" "opencl_textureFormat" }
-		parmtag	{ "vray_type" "int" }
-	}
-	parm {
-		name	"SettingsRTEngine_opencl_texsize"
-		label	"Gpu Texture Size"
-		type	integer
-		hidewhen " { render_rt_mode == 0 } "
-		default	{ "512" }
-		help	"OpenCL Single Kernel maximum texture size - bigger textures are scaled to fit this size"
-		range	{ 0 64 }
-		parmtag	{ "cook_dependent" "1" }
-		parmtag	{ "vray_plugin" "SettingsRTEngine" }
-		parmtag	{ "vray_pluginattr" "opencl_texsize" }
-		parmtag	{ "vray_type" "int" }
-	}
-
-
-	parm {
-		name	"SettingsRTEngine_progressive_samples_per_pixel"
-		label	"Progressive Rays Per Pixel"
-		type	integer
-		default	{ "1" }
-		help	"Progressive increase for samples_per_pixel (from 1 to real value). Use this for faster feadback"
-		range	{ 0 10 }
-		parmtag	{ "cook_dependent" "1" }
-		parmtag	{ "vray_plugin" "SettingsRTEngine" }
-		parmtag	{ "vray_pluginattr" "progressive_samples_per_pixel" }
-		parmtag	{ "vray_type" "boolean" }
-	}
-
-	parm {
 		name	"SettingsRTEngine_undersampling"
 		label	"Undersampling"
 		type	integer
@@ -203,9 +89,141 @@ groupsimple {
 		parmtag	{ "vray_type" "int" }
 	}
 	parm {
-		name	"SettingsRTEngine_min_draw_interval"
-		label	"Min Draw Interval"
+		name	"SettingsRTEngine_progressive_samples_per_pixel"
+		label	"Progressive RPP"
 		type	integer
+		default	{ "1" }
+		help	"Progressive increase for samples_per_pixel (from 1 to real value). Use this for faster feadback"
+		range	{ 1 10 }
+		parmtag	{ "cook_dependent" "1" }
+		parmtag	{ "vray_plugin" "SettingsRTEngine" }
+		parmtag	{ "vray_pluginattr" "progressive_samples_per_pixel" }
+		parmtag	{ "vray_type" "boolean" }
+	}
+	
+	groupsimple {
+		name "folder_rt_cpu_settings"
+		label "CPU settings"
+		hidewhen " { render_rt_mode != 0 render_render_mode != \"CPU\" }"
+
+		
+		parm {
+			name	"SettingsRTEngine_cpu_bundle_size"
+			label	"Ray Bundle Size"
+			type	integer
+			default	{ "128" }
+			help	"Number of samples to transfer over the network for RT-CPU"
+			range	{ 0 64 }
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "SettingsRTEngine" }
+			parmtag	{ "vray_pluginattr" "cpu_bundle_size" }
+			parmtag	{ "vray_type" "int" }
+		}
+		parm {
+			name	"SettingsRTEngine_cpu_samples_per_pixel"
+			label	"Rays Per Pixel"
+			type	integer
+			default	{ "4" }
+			help	"Number of samples per pixel for RT-CPU"
+			range	{ 0 64 }
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "SettingsRTEngine" }
+			parmtag	{ "vray_pluginattr" "cpu_samples_per_pixel" }
+			parmtag	{ "vray_type" "int" }
+		}
+		
+		
+	}
+	
+	groupsimple {
+		name "folder_rt_gpu_settings"
+		label "GPU Settings"
+		hidewhen " { render_rt_mode == 0 render_render_mode == \"CPU\" }"
+
+		
+		parm {
+			name	"SettingsRTEngine_gpu_bundle_size"
+			label	"Ray Bundle Size"
+			type	integer
+			default	{ "128" }
+			help	"Number of samples to transfer over the network for RT-GPU"
+			range	{ 0 64 }
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "SettingsRTEngine" }
+			parmtag	{ "vray_pluginattr" "gpu_bundle_size" }
+			parmtag	{ "vray_type" "int" }
+		}
+		parm {
+			name	"SettingsRTEngine_gpu_samples_per_pixel"
+			label	"Rays Per Pixel"
+			type	integer
+			default	{ "1" }
+			help	"Number of samples per pixel for RT-GPU"
+			range	{ 0 64 }
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "SettingsRTEngine" }
+			parmtag	{ "vray_pluginattr" "gpu_samples_per_pixel" }
+			parmtag	{ "vray_type" "int" }
+		}
+		parm {
+			name	"SettingsRTEngine_opencl_resizeTextures"
+			label	"Resize Textures"
+			type	ordinal
+			default	{ "1" }
+			help	"Textures transfer mode for the GPU"
+			menu	{
+				"Transfer \"As Is\" (Don't Resize, Don't Use Paging)"	"Transfer \"As Is\" (Don't Resize, Don't Use Paging)"
+				"Resize Textures"	"Resize Textures"
+				"Use Texture Paging(Out-Of-Core Textures) CUDA Only"	"Use Texture Paging(Out-Of-Core Textures) CUDA Only"
+			}
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_enumkeys" "0,1,2" }
+			parmtag	{ "vray_plugin" "SettingsRTEngine" }
+			parmtag	{ "vray_pluginattr" "opencl_resizeTextures" }
+			parmtag	{ "vray_type" "int" }
+		}
+		parm {
+			name	"SettingsRTEngine_opencl_textureFormat"
+			label	"Texture Format"
+			type	ordinal
+			default	{ "1" }
+			help	"Format for the textures on the GPU"
+			menu	{
+				"32-Bit Float"	"32-Bit Float"
+				"16-Bit Half Float"	"16-Bit Half Float"
+			}
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_enumkeys" "0,1" }
+			parmtag	{ "vray_plugin" "SettingsRTEngine" }
+			parmtag	{ "vray_pluginattr" "opencl_textureFormat" }
+			parmtag	{ "vray_type" "int" }
+		}
+		parm {
+			name	"SettingsRTEngine_opencl_texsize"
+			label	"Texture Size"
+			type	integer
+			default	{ "512" }
+			help	"OpenCL Single Kernel maximum texture size - bigger textures are scaled to fit this size"
+			range	{ 0 64 }
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "SettingsRTEngine" }
+			parmtag	{ "vray_pluginattr" "opencl_texsize" }
+			parmtag	{ "vray_type" "int" }
+		}
+		
+	}
+	
+	
+	
+
+	
+
+	
+	parm {
+		name	"SettingsRTEngine_min_draw_interval"
+		label	"Min. Draw Interval"
+		type	integer
+		invisible
 		default	{ "0" }
 		help	"Min time, in milliseconds, between image updates (0=show all frames)"
 		range	{ 0 10 }
@@ -216,8 +234,9 @@ groupsimple {
 	}
 	parm {
 		name	"SettingsRTEngine_max_draw_interval"
-		label	"Max Draw Interval"
+		label	"Max. Draw Interval"
 		type	integer
+		invisible
 		default	{ "0" }
 		help	"Max time, in milliseconds, between (partial) image updates (0=disable partial image updates)"
 		range	{ 0 10 }
@@ -234,6 +253,7 @@ groupsimple {
 groupsimple { 
 	name "folder_rt_options"
 	label "Options"
+	invisible
 	
 	parm {
 		name	"SettingsRTEngine_coherent_tracing"
@@ -259,7 +279,7 @@ groupsimple {
 	}
 	parm {
 		name	"SettingsRTEngine_enable_mask"
-		label	"Show Aa Mask"
+		label	"Show AA Mask"
 		type	toggle
 		default	{ "0" }
 		help	"Show AA mask"

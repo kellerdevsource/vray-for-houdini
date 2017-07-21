@@ -3,217 +3,288 @@
     label	"Physical Camera"
     parmtag	{ spare_category "V-Ray Physical Camera" }
     parmtag	{ vray_plugin "CameraPhysical" }
+	
+	parm {
+		name	"type"
+		label	"Camera Type"
+		type	ordinal
+		joinnext
+		default	{ "0" }
+		help	"Camera type"
+		menu	{
+			"Still"	"Still"
+			"Cinematic"	"Cinematic"
+			"Video"	"Video"
+		}
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "cook_dependent" "1" }
+		parmtag	{ "vray_enumkeys" "0,1,2" }
+		parmtag	{ "vray_plugin" "CameraPhysical" }
+		parmtag	{ "vray_pluginattr" "type" }
+		parmtag	{ "vray_type" "int" }
+    }
+	
+	parm {
+		name	"use_dof"
+		label	"Enable DOF"
+		type	toggle
+		joinnext
+		default	{ "0" }
+		help	"Turns on depth of field sampling"
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "cook_dependent" "1" }
+		parmtag	{ "vray_plugin" "CameraPhysical" }
+		parmtag	{ "vray_pluginattr" "use_dof" }
+		parmtag	{ "vray_type" "boolean" }
+    }
     parm {
-	name	"type"
-	label	"Type"
-	type	ordinal
-	default	{ "0" }
-	help	"Camera type"
-	menu	{
-	    "Still"	"Still"
-	    "Cinematic"	"Cinematic"
-	    "Video"	"Video"
+		name	"use_moblur"
+		label	"Enable Motion Blur"
+		type	toggle
+		default	{ "0" }
+		help	"Turns on motion blur sampling"
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "cook_dependent" "1" }
+		parmtag	{ "vray_plugin" "CameraPhysical" }
+		parmtag	{ "vray_pluginattr" "use_moblur" }
+		parmtag	{ "vray_type" "boolean" }
+    }
+	
+	parm {
+		name	"film_width"
+		label	"Film Width"
+		type	float
+		joinnext
+		default	{ "36" }
+		help	"Specifies the horizontal size of the film gate in milimeters"
+		range	{ 0 135 }
+		export	none
+		parmtag	{ "cook_dependent" "1" }
+		parmtag	{ "vray_plugin" "CameraPhysical" }
+		parmtag	{ "vray_pluginattr" "film_width" }
+		parmtag	{ "vray_type" "float" }
+    }
+	
+	parm {
+		name	"focal_length"
+		label	"Focal Length"
+		type	float
+		default	{ "40" }
+		help	"Specifies the equivalen focal length of the camera lens"
+		range	{ 0 100 }
+		export	none
+		parmtag	{ "cook_dependent" "1" }
+		parmtag	{ "vray_plugin" "CameraPhysical" }
+		parmtag	{ "vray_pluginattr" "focal_length" }
+		parmtag	{ "vray_type" "float" }
+    }
+	
+	parm {
+		name	"f_number"
+		label	"F-stop"
+		type	float
+		joinnext
+		default	{ "16" }
+		help	"Determines the width of the camera aperture and, indirectly, exposure"
+		range	{ 0 16 }
+		export	none
+		parmtag	{ "cook_dependent" "1" }
+		parmtag	{ "vray_plugin" "CameraPhysical" }
+		parmtag	{ "vray_pluginattr" "f_number" }
+		parmtag	{ "vray_type" "float" }
+    }
+	
+	parm {
+		name	"shutter_speed"
+		label	"Shutter Speed"
+		type	float
+		default	{ "100" }
+		help	"The shutter speed, in inverse seconds"
+		disablewhen	"{ type != Still }"
+		range	{ 0 1000 }
+		export	none
+		parmtag	{ "cook_dependent" "1" }
+		parmtag	{ "vray_plugin" "CameraPhysical" }
+		parmtag	{ "vray_pluginattr" "shutter_speed" }
+		parmtag	{ "vray_type" "float" }
+    }
+	
+	parm {
+		name	"ISO"
+		label	"ISO"
+		type	float
+		default	{ "100" }
+		help	"The film power (i.e. sensitivity)"
+		range	{ 0 800 }
+		export	none
+		parmtag	{ "cook_dependent" "1" }
+		parmtag	{ "vray_plugin" "CameraPhysical" }
+		parmtag	{ "vray_pluginattr" "ISO" }
+		parmtag	{ "vray_type" "float" }
+    }
+	
+	groupsimple {
+		name "folder_camPhys_shutterProperties"
+		label "Shutter"
+		
+		parm {
+			name	"toggle_camPhys_advancedShutterSettings"
+			label	"Advanced Shutter Settings"
+			type	toggle
+			default	{ "0" }
+			help	"Turns on depth of field sampling"
+			range	{ 0 1 }
+			export	none
+		}
+		
+		parm {
+			name	"shutter_angle"
+			label	"Shutter Angle"
+			type	float
+			hidewhen "{ toggle_camPhys_advancedShutterSettings == 0 }"
+			default	{ "180" }
+			help	"Shutter angle (in degrees)"
+			disablewhen	"{ type != Cinematic }"
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "CameraPhysical" }
+			parmtag	{ "vray_pluginattr" "shutter_angle" }
+			parmtag	{ "vray_type" "float" }
+		}
+		parm {
+			name	"shutter_offset"
+			label	"Shutter Offset"
+			type	float
+			hidewhen "{ toggle_camPhys_advancedShutterSettings == 0 }"
+			default	{ "0" }
+			help	"Shutter offset (in degress)"
+			disablewhen	"{ type != Cinematic }"
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "CameraPhysical" }
+			parmtag	{ "vray_pluginattr" "shutter_offset" }
+			parmtag	{ "vray_type" "float" }
+		}
+		
+		
+		
+		
 	}
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1,2" }
-	parmtag	{ "vray_plugin" "CameraPhysical" }
-	parmtag	{ "vray_pluginattr" "type" }
-	parmtag	{ "vray_type" "int" }
+	
+	
+	
+	
+	
+	
+    
+    
+    parm {
+		name	"zoom_factor"
+		label	"Zoom Factor"
+		type	float
+		default	{ "1" }
+		help	"Zoom factor"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "cook_dependent" "1" }
+		parmtag	{ "vray_plugin" "CameraPhysical" }
+		parmtag	{ "vray_pluginattr" "zoom_factor" }
+		parmtag	{ "vray_type" "float" }
     }
     parm {
-	name	"film_width"
-	label	"Film Width"
-	type	float
-	default	{ "36" }
-	help	"Specifies the horizontal size of the film gate in milimeters"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "CameraPhysical" }
-	parmtag	{ "vray_pluginattr" "film_width" }
-	parmtag	{ "vray_type" "float" }
+		name	"distortion"
+		label	"Distortion"
+		type	float
+		default	{ "0" }
+		help	"Specifies the distortion coefficient for the camera lens"
+		disablewhen	"{ distortion_type != Quadratic distortion_type != Cubic }"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "cook_dependent" "1" }
+		parmtag	{ "vray_plugin" "CameraPhysical" }
+		parmtag	{ "vray_pluginattr" "distortion" }
+		parmtag	{ "vray_type" "float" }
     }
     parm {
-	name	"focal_length"
-	label	"Focal Length"
-	type	float
-	default	{ "40" }
-	help	"Specifies the equivalen focal length of the camera lens"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "CameraPhysical" }
-	parmtag	{ "vray_pluginattr" "focal_length" }
-	parmtag	{ "vray_type" "float" }
+		name	"distortion_type"
+		label	"Distortion Type"
+		type	ordinal
+		default	{ "0" }
+		help	"Distortion type"
+		menu	{
+			"Quadratic"	"Quadratic"
+			"Cubic"	"Cubic"
+			"Lens File"	"Lens File"
+		}
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "cook_dependent" "1" }
+		parmtag	{ "vray_enumkeys" "0,1,2" }
+		parmtag	{ "vray_plugin" "CameraPhysical" }
+		parmtag	{ "vray_pluginattr" "distortion_type" }
+		parmtag	{ "vray_type" "int" }
+    }
+    
+    parm {
+		name	"lens_shift"
+		label	"Vertical Tilt"
+		type	float
+		default	{ "0" }
+		help	"Shift lenses for 2-point perspective"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "cook_dependent" "1" }
+		parmtag	{ "vray_plugin" "CameraPhysical" }
+		parmtag	{ "vray_pluginattr" "lens_shift" }
+		parmtag	{ "vray_type" "float" }
+    }
+   
+    
+    parm {
+		name	"latency"
+		label	"Latency"
+		type	float
+		default	{ "0" }
+		help	"CCD matrix latency, in seconds"
+		disablewhen	"{ type != Video }"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "cook_dependent" "1" }
+		parmtag	{ "vray_plugin" "CameraPhysical" }
+		parmtag	{ "vray_pluginattr" "latency" }
+		parmtag	{ "vray_type" "float" }
+    }
+    
+    parm {
+		name	"specify_focus"
+		label	"Specify Focus"
+		type	toggle
+		default	{ "0" }
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "cook_dependent" "1" }
+		parmtag	{ "vray_plugin" "CameraPhysical" }
+		parmtag	{ "vray_pluginattr" "specify_focus" }
+		parmtag	{ "vray_type" "boolean" }
     }
     parm {
-	name	"zoom_factor"
-	label	"Zoom Factor"
-	type	float
-	default	{ "1" }
-	help	"Zoom factor"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "CameraPhysical" }
-	parmtag	{ "vray_pluginattr" "zoom_factor" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"distortion"
-	label	"Distortion"
-	type	float
-	default	{ "0" }
-	help	"Specifies the distortion coefficient for the camera lens"
-	disablewhen	"{ distortion_type != Quadratic distortion_type != Cubic }"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "CameraPhysical" }
-	parmtag	{ "vray_pluginattr" "distortion" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"distortion_type"
-	label	"Distortion Type"
-	type	ordinal
-	default	{ "0" }
-	help	"Distortion type"
-	menu	{
-	    "Quadratic"	"Quadratic"
-	    "Cubic"	"Cubic"
-	    "Lens File"	"Lens File"
-	}
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1,2" }
-	parmtag	{ "vray_plugin" "CameraPhysical" }
-	parmtag	{ "vray_pluginattr" "distortion_type" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"f_number"
-	label	"F-stop"
-	type	float
-	default	{ "8" }
-	help	"Determines the width of the camera aperture and, indirectly, exposure"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "CameraPhysical" }
-	parmtag	{ "vray_pluginattr" "f_number" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"lens_shift"
-	label	"Vertical Tilt"
-	type	float
-	default	{ "0" }
-	help	"Shift lenses for 2-point perspective"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "CameraPhysical" }
-	parmtag	{ "vray_pluginattr" "lens_shift" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"shutter_speed"
-	label	"Shutter Speed"
-	type	float
-	default	{ "300" }
-	help	"The shutter speed, in inverse seconds"
-	disablewhen	"{ type != Still }"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "CameraPhysical" }
-	parmtag	{ "vray_pluginattr" "shutter_speed" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"shutter_angle"
-	label	"Shutter Angle"
-	type	float
-	default	{ "180" }
-	help	"Shutter angle (in degrees)"
-	disablewhen	"{ type != Cinematic }"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "CameraPhysical" }
-	parmtag	{ "vray_pluginattr" "shutter_angle" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"shutter_offset"
-	label	"Shutter Offset"
-	type	float
-	default	{ "0" }
-	help	"Shutter offset (in degress)"
-	disablewhen	"{ type != Cinematic }"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "CameraPhysical" }
-	parmtag	{ "vray_pluginattr" "shutter_offset" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"latency"
-	label	"Latency"
-	type	float
-	default	{ "0" }
-	help	"CCD matrix latency, in seconds"
-	disablewhen	"{ type != Video }"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "CameraPhysical" }
-	parmtag	{ "vray_pluginattr" "latency" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"ISO"
-	label	"Iso"
-	type	float
-	default	{ "200" }
-	help	"The film power (i.e. sensitivity)"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "CameraPhysical" }
-	parmtag	{ "vray_pluginattr" "ISO" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"specify_focus"
-	label	"Specify Focus"
-	type	toggle
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "CameraPhysical" }
-	parmtag	{ "vray_pluginattr" "specify_focus" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"focus_distance"
-	label	"Focus Distance"
-	type	float
-	default	{ "200" }
-	help	"focus distance in mm"
-	disablewhen	"{ specify_focus != 1 }"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "CameraPhysical" }
-	parmtag	{ "vray_pluginattr" "focus_distance" }
-	parmtag	{ "vray_type" "float" }
+		name	"focus_distance"
+		label	"Focus Distance"
+		type	float
+		default	{ "200" }
+		help	"focus distance in mm"
+		disablewhen	"{ specify_focus != 1 }"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "cook_dependent" "1" }
+		parmtag	{ "vray_plugin" "CameraPhysical" }
+		parmtag	{ "vray_pluginattr" "focus_distance" }
+		parmtag	{ "vray_type" "float" }
     }
     parm {
 	name	"targeted"
@@ -361,32 +432,7 @@
 	parmtag	{ "vray_pluginattr" "anisotropy" }
 	parmtag	{ "vray_type" "float" }
     }
-    parm {
-	name	"use_dof"
-	label	"Enable Dof"
-	type	toggle
-	default	{ "0" }
-	help	"Turns on depth of field sampling"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "CameraPhysical" }
-	parmtag	{ "vray_pluginattr" "use_dof" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"use_moblur"
-	label	"Enable Motion Blur"
-	type	toggle
-	default	{ "0" }
-	help	"Turns on motion blur sampling"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "CameraPhysical" }
-	parmtag	{ "vray_pluginattr" "use_moblur" }
-	parmtag	{ "vray_type" "boolean" }
-    }
+    
     parm {
 	name	"subdivs"
 	label	"Subdivs"

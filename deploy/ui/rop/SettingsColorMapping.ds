@@ -1,4 +1,4 @@
-groupsimple {
+groupcollapsible {
   name "folder_colorMapping"
   label "Color Mapping"
   parm {
@@ -27,10 +27,10 @@ groupsimple {
 
   parm {
     name	"SettingsColorMapping_dark_mult"
-    label	"Dark Multiplier"
+    label	"Dark Colors Multiplier"
     type	float
     default	{ "1" }
-    help	"Multiplier for dark colors"
+    help	"The multiplier for dark colors"
     range	{ -10 10 }
     export	none
     parmtag	{ "cook_dependent" "1" }
@@ -40,7 +40,7 @@ groupsimple {
   }
   parm {
     name	"SettingsColorMapping_bright_mult"
-    label	"Bright Multiplier"
+    label	"Bright Colors Multiplier"
     type	float
     default	{ "1" }
     help	"Multiplier for bright colors"
@@ -85,9 +85,9 @@ groupsimple {
     default	{ "2" }
     help	"When this parameter is on, the color mapping will not be applied to the final image, however V-Ray will proceed with all its calculations as though color mapping is applied (e.g. the noise levels will be corrected accordingly)"
     menu	{
-      "Color Mapping & Gamma"	"Color Mapping & Gamma"
-      "Don't Affect Colors"	"Don't Affect Colors"
-      "Color Mapping Only"	"Color Mapping Only"
+      "Color Mapping & Gamma"	"Color Mapping and Gamma"
+      "Don't Affect Colors"	"Don't Affect Colors, only adaptation"
+      "Color Mapping Only"	"Color Mapping Only, no gamma"
     }
     range	{ 0 1 }
     export	none
@@ -124,13 +124,7 @@ groupsimple {
     parmtag	{ "vray_pluginattr" "clamp_level" }
     parmtag	{ "vray_type" "float" }
   }
-
-}
-
-groupsimple {
-  name "folder_colorMapping_advanced"
-  label "Advanced"
-
+  
   parm {
     name	"SettingsColorMapping_subpixel_mapping"
     label	"Subpixel Mapping"
@@ -149,8 +143,9 @@ groupsimple {
     name	"SettingsColorMapping_linearWorkflow"
     label	"Linear Workflow"
     type	toggle
+	invisible
     default	{ "0" }
-    help	"When this option is checked V-Ray will automatically apply the inverse of the Gamma correction that you have set in the Gamma field to all materials in scene"
+    help	"When this option is checked V-Ray will automatically apply the inverse of the Gamma correction that you have set in the Gamma field to all materials in the scene. Note: this is not a replacement for proper linear workflow."
     range	{ 0 1 }
     export	none
     parmtag	{ "cook_dependent" "1" }
@@ -165,7 +160,7 @@ groupsimple {
     size	3
     default	{ "1" "1" "1" }
     help	"Additional image exposure"
-    range	{ 0 10 }
+    range	{ 0 1 }
     export	none
     parmtag	{ "cook_dependent" "1" }
     parmtag	{ "vray_plugin" "SettingsColorMapping" }
@@ -174,3 +169,4 @@ groupsimple {
   }
 
 }
+

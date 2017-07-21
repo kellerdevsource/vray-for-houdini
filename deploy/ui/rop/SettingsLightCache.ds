@@ -128,7 +128,7 @@ groupsimple {
     	    0	"Single Frame"
     	    1	"Fly-Through"
     	    2	"From File"
-    	    3	"Progressive Path Tracing"
+    	    //3	"Progressive Path Tracing"
     	}
     	range	{ 0 1 }
     	export	none
@@ -142,7 +142,7 @@ groupsimple {
     	name	"SettingsLightCache_file"
     	label	"File"
     	type	file
-    	default	{ "//lightmaps/light_cache.vrmap" }
+    	default	{ "$HIP/lightmaps/light_cache.vrmap" }
     	help	"Light cache file"
     	disablewhen	"{ SettingsGI_on != 1 } { SettingsLightCache_mode != \"From File\" }"
     	range	{ 0 1 }
@@ -195,7 +195,7 @@ groupsimple {
       name	"SettingsLightCache_auto_save_file"
       label	"Auto Save File"
       type	file
-      default	{ "//lightmaps/light_cache.vrmap" }
+      default	{ "$HIP/lightmaps/light_cache.vrmap" }
       help	"Light cache auto save file name"
       disablewhen	"{ SettingsGI_on != 1 } { SettingsLightCache_mode == \"From File\" } { SettingsLightCache_auto_save != 1 }"
       range	{ 0 1 }
@@ -359,6 +359,7 @@ groupsimple {
   groupcollapsible {
     name "folder_gi_lc_options"
     label "Options"
+	invisible
 
     parm {
     	name	"SettingsLightCache_adaptive_sampling"
@@ -403,9 +404,10 @@ groupsimple {
     	name	"SettingsLightCache_num_passes"
     	label	"Number Of Passes"
     	type	integer
-    	default	{ "8" }
+		hidewhen " { SettingsLightCache_num_passes_auto == 1 } "
+    	default	{ "64" }
     	help	"The light cache is computed in several passes, which are then combined into the final light cache"
-    	disablewhen	"{ SettingsGI_on != 1 } { SettingsLightCache_num_passes_auto == 0 }"
+    	//disablewhen	"{ SettingsGI_on != 1 } { SettingsLightCache_num_passes_auto == 0 }"
     	range	{ 0 64 }
     	export	none
     	parmtag	{ "cook_dependent" "1" }
