@@ -379,7 +379,6 @@ public:
 
 	/// Get the V-Ray ROP bound to this exporter
 	OP_Node& getRop() const { return *m_rop; }
-	const OP_Node* getRopPtr() const { return m_rop; }
 
 	/// Set the V-Rap ROP bound to this exporter
 	void setROP(OP_Node &value) { m_rop = &value; }
