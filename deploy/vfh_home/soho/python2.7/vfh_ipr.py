@@ -175,18 +175,21 @@ def main():
         # will list all objects which have been deleted from the scene.
         #
 
-        # Update view.
-        exportView(ropPath, camera, sohoCam, now)
+        if not _vfh_ipr.isRopValid():
+            _vfh_ipr.init(rop=ropPath, port=port, now=now, viewParams=getViewParams(camera, sohoCam, now))
+        else:
+            # Update view.
+            exportView(ropPath, camera, sohoCam, now)
 
-        exportObjects("objlist:dirtyinstance")
-        exportObjects("objlist:dirtylight")
-        # exportObjects("objlist:dirtyspace")
-        # exportObjects("objlist:dirtyfog")
+            exportObjects("objlist:dirtyinstance")
+            exportObjects("objlist:dirtylight")
+            # exportObjects("objlist:dirtyspace")
+            # exportObjects("objlist:dirtyfog")
 
-        deleteObjects("objlist:deletedinstance")
-        deleteObjects("objlist:deletedlight")
-        # deleteObjects("objlist:deletedspace")
-        # deleteObjects("objlist:deletedfog")
+            deleteObjects("objlist:deletedinstance")
+            deleteObjects("objlist:deletedlight")
+            # deleteObjects("objlist:deletedspace")
+            # deleteObjects("objlist:deletedfog")
 
 try:
     main()
