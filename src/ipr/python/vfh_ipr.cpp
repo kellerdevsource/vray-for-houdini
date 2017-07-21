@@ -370,6 +370,14 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
     Py_RETURN_NONE;
 }
 
+static PyObject * vfhIsRopValid(PyObject *)
+{
+	if (getExporter().getRopPtr()) {
+		Py_RETURN_TRUE;
+	}
+	Py_RETURN_FALSE;
+}
+
 static PyMethodDef methods[] = {
 	{
 		"init",
@@ -394,6 +402,12 @@ static PyMethodDef methods[] = {
 		reinterpret_cast<PyCFunction>(vfhDeleteOpNode),
 		METH_VARARGS | METH_KEYWORDS,
 		"Delete object."
+	},
+	{
+		"isRopValid",
+		reinterpret_cast<PyCFunction>(vfhIsRopValid),
+		METH_NOARGS,
+		"Check if current rop is valid."
 	},
 	{ NULL, NULL, 0, NULL }
 };
