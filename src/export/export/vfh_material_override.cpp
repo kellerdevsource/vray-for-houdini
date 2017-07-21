@@ -374,7 +374,11 @@ STY_Styler VRayForHoudini::getStylerForPrimitive(const STY_Styler &geoStyler, co
 #if UT_MAJOR_VERSION_INT < 16
 	return STY_Styler();
 #else
+#if UT_BUILD_VERSION_INT > 633
+	GSTY_SubjectPrim primSubject(&prim, nullptr);
+#else
 	GSTY_SubjectPrim primSubject(&prim);
+#endif
 	return geoStyler.cloneWithSubject(primSubject);
 #endif
 }
