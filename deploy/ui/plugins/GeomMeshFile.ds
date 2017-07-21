@@ -6,7 +6,7 @@
 
     parm {
         name "reload"
-        label "Reload Geometryr"
+        label "Reload Geometry"
         type button
     }
 
