@@ -11,6 +11,8 @@
 #ifndef VRAY_FOR_HOUDINI_VFH_ERROR_H
 #define VRAY_FOR_HOUDINI_VFH_ERROR_H
 
+#ifndef VASSERT_ENABLED
+
 #include <exception>
 
 namespace VRayForHoudini {
@@ -49,4 +51,5 @@ private:
 } // namespace Error
 } // namespace VRayForHoudini
 
+#endif // VASSERT_ENABLED
 #endif // VRAY_FOR_HOUDINI_VFH_ERROR_H

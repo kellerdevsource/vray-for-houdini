@@ -89,8 +89,10 @@ void unregister(void *)
 	deleteVRayInit();
 	Log::Logger::stopLogging();
 
+#ifndef VASSERT_ENABLED
 	Error::ErrorChaser &errChaser = Error::ErrorChaser::getInstance();
 	errChaser.enable(false);
+#endif
 }
 
 
@@ -111,9 +113,10 @@ void newDriverOperator(OP_OperatorTable *table)
 {
 	Log::getLog().info("Build %s from " __DATE__ ", " __TIME__,
 					   STRINGIZE(CGR_GIT_HASH));
-
+#ifndef VASSERT_ENABLED
 	Error::ErrorChaser &errChaser = Error::ErrorChaser::getInstance();
 	errChaser.enable(true);
+#endif
 
 	VRayRendererNode::register_operator(table);
 	VRayProxyROP::register_ropoperator(table),
