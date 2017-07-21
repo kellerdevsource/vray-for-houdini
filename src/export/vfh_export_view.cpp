@@ -86,12 +86,11 @@ static float getLensShift(const OBJ_Node &camera, OP_Context &context)
 
 	VRay::Transform tm = VRayExporter::getObjTransform(camera.castToOBJNode(), context);
 	
-	VRay::Vector v0 = tm.matrix.v1;
-	VRay::Vector v1 = tm.matrix.v2;
+	const VRay::Vector v0 = tm.matrix.v1;
+	const VRay::Vector v1 = tm.matrix.v2;
 	
-	float dd = v0.x * v0.x + v0.y * v0.y;
-	float d = sqrtf(dd);
-	if (v1.z > 0.0f) d = -d;
+	const float dd = v0.x * v0.x + v0.y * v0.y;
+	const float d = (v1.z > 0.0f)?-sqrtf(dd) : sqrtf(dd);
 	shift = -d / sqrtf(1.0f - dd);
 
 	return shift;
