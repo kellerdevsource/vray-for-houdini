@@ -84,6 +84,7 @@ static struct VRayExporterIprUnload {
 	~VRayExporterIprUnload() {
 		delete stopChecker;
 		deleteVRayInit();
+		Log::Logger::stopLogging();
 	}
 } exporterUnload;
 
@@ -369,12 +370,6 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
     Py_RETURN_NONE;
 }
 
-static PyObject * vfhUnload(PyObject *)
-{
-	Log::Logger::stopLogging();
-	Py_RETURN_NONE;
-}
-
 static PyMethodDef methods[] = {
 	{
 		"init",
@@ -399,12 +394,6 @@ static PyMethodDef methods[] = {
 		reinterpret_cast<PyCFunction>(vfhDeleteOpNode),
 		METH_VARARGS | METH_KEYWORDS,
 		"Delete object."
-	},
-	{
-		"unloadModule",
-		reinterpret_cast<PyCFunction>(vfhUnload),
-		METH_NOARGS,
-		"Call at unload time."
 	},
 	{ NULL, NULL, 0, NULL }
 };

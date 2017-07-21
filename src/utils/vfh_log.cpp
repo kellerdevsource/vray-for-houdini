@@ -19,6 +19,8 @@
 #include <atomic>
 #include <array>
 
+#include <QThread>
+
 #include <boost/aligned_storage.hpp>
 
 #ifdef _WIN32
@@ -53,10 +55,25 @@ void logMessage(LogLevel level, Logger::LogLineType logBuff) {
 
 #endif
 
-static std::thread * loggerThread = nullptr; ///< the thread used for logging
+class ThreadedLogger:
+	public QThread
+{
+public:
+	ThreadedLogger(std::function<void()> cb): runFunction(cb) {
+
+	}
+protected:
+	void run() VRAY_OVERRIDE {
+		runFunction();
+	}
+	std::function<void()> runFunction;
+};
+
+static ThreadedLogger * loggerThread = nullptr; ///< the thread used for logging
 static std::once_flag startLogger; ///< flag to ensure we start the thread only once
 static volatile bool isStoppedLogger = false; ///< stop flag for the thread
 static VUtils::GetEnvVarInt threadedLogger("VFH_THREADED_LOGGER", 1);
+
 
 void Logger::writeMessages() {
 	if (threadedLogger.getValue() == 0) {
@@ -77,7 +94,8 @@ void Logger::writeMessages() {
 void Logger::startLogging() {
 	if (threadedLogger.getValue()) {
 		std::call_once(startLogger, [] {
-			loggerThread = new std::thread(&Logger::writeMessages);
+			loggerThread = new ThreadedLogger(&Logger::writeMessages);
+			loggerThread->start();
 		});
 	}
 }
@@ -88,8 +106,9 @@ void Logger::stopLogging() {
 		if (loggerThread) {
 			std::lock_guard<std::mutex> lock(mtx);
 			isStoppedLogger = true;
-			if (loggerThread && loggerThread->joinable()) {
-				loggerThread->join();
+			if (loggerThread) {
+				loggerThread->terminate();
+				loggerThread->wait();
 				delete loggerThread;
 				loggerThread = nullptr;
 			}
