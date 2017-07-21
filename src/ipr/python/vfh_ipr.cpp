@@ -13,14 +13,17 @@
 #include "vfh_exporter.h"
 #include "vfh_log.h"
 #include "vfh_ipr_viewer.h"
+#include "vfh_ipr_client.h"
 #include "vfh_vray_instances.h"
 #include "vfh_attr_utils.h"
 
 #include <HOM/HOM_Module.h>
 
 #include <QThread>
+#include <QByteArray>
 #include <QtNetwork/QTcpSocket>
 #include <QtNetwork/QHostAddress>
+#include <QApplication>
 
 using namespace VRayForHoudini;
 
@@ -55,31 +58,7 @@ FORCEINLINE float getFloat(PyObject *dict, const char *key, float defValue)
 }
 
 static VRayExporter *exporter = nullptr;
-
-static class WorkerThread
-	: public QThread
-{
-public:
-	void setCallback(std::function<void()> value) {
-		cb = value;
-	}
-
-private:
-	void run() VRAY_OVERRIDE {
-		while (true) {
-			QTcpSocket socket;
-			socket.connectToHost(QHostAddress(QHostAddress::LocalHost), 424242);
-			if (!socket.waitForConnected(1000)) {
-				Log::getLog().debug("Stop requested...");
-				cb();
-				return;
-			}
-			msleep(100);
-		}
-    }
-
-	std::function<void()> cb;
-} stopPoll;
+static PingPongClient *stopChecker = nullptr;
 
 static VRayExporter& getExporter()
 {
@@ -91,9 +70,10 @@ static VRayExporter& getExporter()
 
 static void freeExporter()
 {
-	closeImdisplay();
+	UT_ASSERT_MSG(stopChecker, "stopChecker is null in freeExporter()");
+	stopChecker->stop();
 
-	stopPoll.exit();
+	closeImdisplay();
 
 	getExporter().reset();
 
@@ -102,6 +82,7 @@ static void freeExporter()
 
 static struct VRayExporterIprUnload {
 	~VRayExporterIprUnload() {
+		delete stopChecker;
 		deleteVRayInit();
 	}
 } exporterUnload;
@@ -373,6 +354,15 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 			exporter.renderFrame();
 
 			initImdisplay(exporter.getRenderer().getVRay());
+
+			if (!stopChecker) {
+				stopChecker = new PingPongClient();
+				stopChecker->setCallback([] {
+					closeImdisplay();
+					freeExporter();
+				});
+			}
+			stopChecker->start();
 		}
 	}
    

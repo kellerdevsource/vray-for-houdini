@@ -5,6 +5,12 @@
     parmtag { vray_plugin "GeomMeshFile" }
 
     parm {
+        name "reload"
+        label "Reload Geometryr"
+        type button
+    }
+
+    parm {
         name "file"
         label "File Name"
         type file
@@ -18,12 +24,6 @@
         parmtag { "vray_plugin" "GeomMeshFile" }
         parmtag { "vray_pluginattr" "file" }
         parmtag { "vray_type" "String" }
-    }
-
-    parm {
-        name "reload"
-        label "Reload Geometryr"
-        type button
     }
 
     parm {
