@@ -96,7 +96,6 @@ static void fillViewParamsFromDict(PyObject *viewParamsDict, ViewParams &viewPar
 {
 	if (!viewParamsDict)
 		return;
-
 	if (!PyDict_Check(viewParamsDict))
 		return;
 
@@ -141,11 +140,6 @@ static void fillViewParamsFromDict(PyObject *viewParamsDict, ViewParams &viewPar
 	}
 }
 
-static void updateView(const ViewParams &viewParams)
-{
-
-}
-
 static PyObject* vfhExportView(PyObject*, PyObject *args, PyObject *keywds)
 {
 	PyObject *viewParamsDict = nullptr;
@@ -169,9 +163,10 @@ static PyObject* vfhExportView(PyObject*, PyObject *args, PyObject *keywds)
 	HOM_AutoLock autoLock;
 
 	VRayExporter &exporter = getExporter();
+
 	exporter.exportDefaultHeadlight(true);
 
-	const char *camera = PyString_AsString(PyDict_GetItemString(viewParamsDict, "camera"));;
+	const char *camera = PyString_AsString(PyDict_GetItemString(viewParamsDict, "camera"));
 
 	OBJ_Node *cameraNode = nullptr;
 	if (UTisstring(camera)) {
@@ -346,7 +341,8 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 			}
 
 			exporter.initExporter(getFrameBufferType(*ropNode), 1, now, now);
-			exporter.setCurrentTime(now);
+
+			exporter.setFrame(now);
 
 			exporter.exportSettings();
 			exporter.exportScene();

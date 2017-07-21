@@ -233,6 +233,8 @@ public:
 	/// @param op_node[in] - environment VOP node
 	void exportEffects(OP_Node *op_net);
 
+	void setFrame(fpreal time);
+
 	/// Export scene at a given time
 	/// This is called once for each frame we want to render
 	void exportFrame(fpreal time);

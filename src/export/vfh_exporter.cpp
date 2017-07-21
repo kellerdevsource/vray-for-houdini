@@ -1910,13 +1910,17 @@ void MotionBlurParams::calcParams(fpreal currFrame)
 	Log::getLog().info("  MB inc:   %.3f", mb_frame_inc);
 }
 
+void VRayExporter::setFrame(fpreal time)
+{
+	m_context.setTime(time);
+}
 
 void VRayExporter::exportFrame(fpreal time)
 {
-	m_context.setTime(time);
-
 	Log::getLog().debug("VRayExporter::exportFrame(%.3f)",
 						m_context.getFloatFrame());
+
+	setFrame(time);
 
 	if (   !m_isMotionBlur
 		&& !m_isVelocityOn)
