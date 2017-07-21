@@ -93,7 +93,7 @@ void Logger::writeMessages() {
 
 void Logger::startLogging() {
 	if (threadedLogger.getValue()) {
-		std::call_once(startLogger, [] {
+		std::call_once(startLogger, []() {
 			loggerThread = new ThreadedLogger(&Logger::writeMessages);
 			loggerThread->start();
 		});

@@ -52,8 +52,8 @@ struct PingPongPacket
 	}
 
 	/// Get the packets size
-	int size() const {
-		return sizeof(*this);
+	static int size() {
+		return sizeof(PingPongPacket);
 	}
 
 	/// Test if the packet is valid

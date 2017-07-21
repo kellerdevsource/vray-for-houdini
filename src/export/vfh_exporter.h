@@ -381,6 +381,12 @@ public:
 	OP_Node& getRop() const { return *m_rop; }
 	const OP_Node* getRopPtr() const { return m_rop; }
 
+	/// Set the V-Rap ROP bound to this exporter
+	void setROP(OP_Node &value) { m_rop = &value; }
+
+	/// Get pointer to the bound V-Ray ROP
+	const OP_Node * getRopPtr() const { return m_rop; }
+
 	/// Get ROP error code. This is called from the V-Ray ROP on every frame
 	/// to check if rendering should be aborted
 	ROP_RENDER_CODE getError() const { return m_error; }
@@ -537,9 +543,6 @@ public:
 
 	/// Returns object exporter.
 	ObjectExporter& getObjectExporter() { return objectExporter; }
-
-	void setROP(OP_Node &value) { m_rop = &value; }
-
 private:
 	/// Export V-Ray material from VOP node.
 	/// @param node VOP node.
