@@ -164,11 +164,6 @@ static PyObject* vfhExportView(PyObject*, PyObject *args, PyObject *keywds)
 	HOM_AutoLock autoLock;
 
 	VRayExporter &exporter = getExporter();
-
-	if (!exporter.getRopPtr()) {
-		Py_RETURN_NONE;
-	}
-
 	exporter.exportDefaultHeadlight(true);
 
 	const char *camera = PyString_AsString(PyDict_GetItemString(viewParamsDict, "camera"));
