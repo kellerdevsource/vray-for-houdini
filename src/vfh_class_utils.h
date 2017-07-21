@@ -12,6 +12,7 @@
 #define VRAY_FOR_HOUDINI_CLASS_UTILS_H
 
 #include <OP/OP_Node.h>
+#include <VOP/VOP_Operator.h>
 #include <UT/UT_Version.h>
 
 namespace VRayForHoudini {
@@ -85,7 +86,40 @@ OP_Node* VFH_VRAY_NODE_CREATOR(OP_Network *parent, const char *name, OP_Operator
 #if UT_MAJOR_VERSION_INT >= 16
 
 #define VFH_ADD_VOP_OPERATOR(table, OpClass, OpParmTemplate, OpTableName, MinInp, MaxInp, VarList, Flags, MaxOut) \
-	VOP_Operator *op##OpClass = new VOP_Operator( \
+class VfhOperator##OpClass \
+	: public VOP_Operator \
+{ \
+public: \
+	VfhOperator##OpClass( \
+		const char	*name, \
+		const char *english, \
+		OP_Constructor construct, \
+		PRM_Template *templates, \
+		const char *child_table_name, \
+		unsigned min_sources, \
+		unsigned max_sources, \
+		const char *vopnetMask, \
+		CH_LocalVariable *variables = 0, \
+		unsigned flags = 0, \
+		unsigned num_outputs = 1) \
+		: VOP_Operator(name, \
+					   english, \
+					   construct, \
+					   templates, \
+					   child_table_name, \
+					   min_sources, \
+					   max_sources, \
+					   vopnetMask, \
+					   variables, \
+					   flags, \
+					   num_outputs) \
+	{} \
+	bool getOpHelpURL(UT_String &url) VRAY_OVERRIDE { \
+		url.harden("https://docs.chaosgroup.com/display/VRAYHOUDINI4EDIT/Copy+of+V-Ray+" STRINGIZE(OpClass)); \
+		return true; \
+	} \
+}; \
+	VOP_Operator *op##OpClass = new VfhOperator##OpClass( \
 		/* Internal name     */ "VRayNode" STRINGIZE(OpClass), \
 		/* UI name           */ "V-Ray " STRINGIZE(OpClass), \
 		/* Creator           */ VFH_VRAY_NODE_CREATOR<OpClass>, \
@@ -104,7 +138,38 @@ OP_Node* VFH_VRAY_NODE_CREATOR(OP_Network *parent, const char *name, OP_Operator
 #else
 
 #define VFH_ADD_VOP_OPERATOR(table, OpClass, OpParmTemplate, OpTableName, MinInp, MaxInp, VarList, Flags, MaxOut) \
-	VOP_Operator *op##OpClass = new VOP_Operator( \
+class VfhOperator##OpClass \
+	: public VOP_Operator \
+{ \
+public: \
+	VfhOperator##OpClass( \
+		const char	*name, \
+		const char *english,
+		OP_Constructor construct, \
+		PRM_Template *templates, \
+		unsigned min_sources, \
+		unsigned max_sources, \
+		const char *vopnetMask, \
+		CH_LocalVariable *variables = 0, \
+		unsigned flags = 0, \
+		unsigned num_outputs = 1) \
+		: VOP_Operator(name, \
+					   english, \
+					   construct, \
+					   templates, \
+					   min_sources, \
+					   max_sources, \
+					   vopnetMask, \
+					   variables, \
+					   flags, \
+					   num_outputs)
+	{} \
+	bool getOpHelpURL(UT_String &url) VRAY_OVERRIDE { \
+		url.harden("https://docs.chaosgroup.com/display/VRAYHOUDINI4EDIT/Copy+of+V-Ray+" STRINGIZE(OpClass)); \
+		return true; \
+	} \
+}; \
+	VOP_Operator *op##OpClass = new VfhOperator##OpClass( \
 		/* Internal name     */ "VRayNode" STRINGIZE(OpClass), \
 		/* UI name           */ "V-Ray " STRINGIZE(OpClass), \
 		/* Creator           */ VFH_VRAY_NODE_CREATOR<OpClass>, \

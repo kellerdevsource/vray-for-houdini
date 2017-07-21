@@ -18,6 +18,11 @@
 
 int main(int argc, char ** argv)
 {
+	VRayForHoudini::Log::Logger::startLogging();
+	std::shared_ptr<void> _stopLoggingAtExit = std::shared_ptr<void>(nullptr, [](void*) {
+		VRayForHoudini::Log::Logger::stopLogging();
+	});
+
 	// We need to load "platform" plugins for windows, so we use one from houdini installation
 	QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
 	QString hfsPath = env.value("HFS", "");

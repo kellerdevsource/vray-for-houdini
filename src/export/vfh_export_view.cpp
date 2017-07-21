@@ -80,10 +80,20 @@ void VRayExporter::RtCallbackView(OP_Node *caller, void *callee, OP_EventType ty
 	csect.leave();
 }
 
-static float getLensShift(const OBJ_Node &camera)
+static float getLensShift(const OBJ_Node &camera, OP_Context &context)
 {
-	// TODO: getLensShift
-	return 0.0f;
+	const VRay::Transform &tm = VRayExporter::getObjTransform(camera.castToOBJNode(), context);
+	
+	const VRay::Vector &v0 = tm.matrix.v1;
+	const VRay::Vector &v1 = tm.matrix.v2;
+	
+	const float dd = v0.x * v0.x + v0.y * v0.y;
+	float d = sqrtf(dd);
+	if (v1.z > 0.0f)
+		d = -d;
+	const float shift = -d / sqrtf(1.0f - dd);
+
+	return shift;
 }
 
 static void aspectCorrectFovOrtho(ViewParams &viewParams)
@@ -197,7 +207,7 @@ void VRayExporter::fillPhysicalCamera(const ViewParams &viewParams, Attrs::Plugi
 	}
 
 	const float lens_shift = camera.evalInt("CameraPhysical_auto_lens_shift", 0, 0.0)
-							 ? getLensShift(camera)
+							 ? getLensShift(camera, getContext())
 							 : camera.evalFloat("CameraPhysical_lens_shift", 0, t);
 
 	pluginDesc.add(Attrs::PluginAttr("fov", viewParams.renderView.fov));

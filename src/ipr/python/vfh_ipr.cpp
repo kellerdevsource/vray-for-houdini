@@ -84,6 +84,7 @@ static struct VRayExporterIprUnload {
 	~VRayExporterIprUnload() {
 		delete stopChecker;
 		deleteVRayInit();
+		Log::Logger::stopLogging();
 	}
 } exporterUnload;
 
@@ -399,5 +400,6 @@ static PyMethodDef methods[] = {
 
 PyMODINIT_FUNC init_vfh_ipr()
 {
+	Log::Logger::startLogging();
 	Py_InitModule("_vfh_ipr", methods);
 }
