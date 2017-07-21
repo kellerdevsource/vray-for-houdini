@@ -12,6 +12,8 @@
 #define VRAY_FOR_HOUDINI_IPR_CHECKER_H
 
 #include <QDialog>
+
+#include <atomic>
 #include <functional>
 
 class QTcpSocket;
@@ -42,7 +44,10 @@ private Q_SLOTS:
 	/// the set callback
 	/// NOTE: Since this is connected to the QTimer::timeout signal it will be
 	/// called on the main thread
-	void tick();
+	void sendPing();
+
+	/// Called when there is data to be read from socket
+	void onData();
 
 private:
 	/// Call the callback passed as argument, ensures it is called only once, *not* thread safe
@@ -54,7 +59,9 @@ private:
 	/// Timer used to schedule pings to server
 	QTimer *timer;
 	/// The difference between sent pings and received pongs
-	int diff;
+	std::atomic<int> diff;
+	/// Counter to reset the diff in ping/pong packets
+	int resetDiff;
 	/// Number of failed writes to the socket
 	int fail;
 	/// Callback function when we abs(diff) > 10 or fail > 10
