@@ -445,11 +445,9 @@ void VRayPluginRenderer::exportPluginProperties(VRay::Plugin &plugin, const Attr
 			plugin.setValue(p.paramName, p.paramValue.valRawListValue);
 		}
 
-#if 1
-		if (pluginDesc.pluginID == "RenderView") {
+#if CGR_DEBUG_APPSDK_VALUES
 		Log::getLog().debug("Setting plugin parameter: \"%s\" %s.%s = %s",
 							pluginDesc.pluginName.c_str(), pluginDesc.pluginID.c_str(), p.paramName.c_str(), plugin.getValue(p.paramName).toString().c_str());
-		}
 #endif
 	}
 }
