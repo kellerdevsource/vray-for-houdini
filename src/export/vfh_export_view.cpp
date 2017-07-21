@@ -82,15 +82,16 @@ void VRayExporter::RtCallbackView(OP_Node *caller, void *callee, OP_EventType ty
 
 static float getLensShift(const OBJ_Node &camera, OP_Context &context)
 {
-	VRay::Transform tm = VRayExporter::getObjTransform(camera.castToOBJNode(), context);
+	const VRay::Transform &tm = VRayExporter::getObjTransform(camera.castToOBJNode(), context);
 	
 	const VRay::Vector &v0 = tm.matrix.v1;
 	const VRay::Vector &v1 = tm.matrix.v2;
 	
 	const float dd = v0.x * v0.x + v0.y * v0.y;
 	float d = sqrtf(dd);
-	if (v1.z > 0.0f) d = -d;
-	float shift = -d / sqrtf(1.0f - dd);
+	if (v1.z > 0.0f)
+		d = -d;
+	const float shift = -d / sqrtf(1.0f - dd);
 
 	return shift;
 }
