@@ -26,7 +26,6 @@ from soho import SohoParm
 
 RENDER_RT_MODE_SOHO = 1
 
-
 def main():
     def printDebug(fmt, *args):
         sys.stdout.write("V-Ray For Houdini IPR| ")
