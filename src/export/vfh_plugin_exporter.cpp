@@ -353,8 +353,8 @@ VRay::Plugin VRayPluginRenderer::exportPlugin(const Attrs::PluginDesc &pluginDes
 
 void VRayPluginRenderer::exportPluginProperties(VRay::Plugin &plugin, const Attrs::PluginDesc &pluginDesc)
 {
-	for (const auto &pIt : pluginDesc.pluginAttrs) {
-		const PluginAttr &p = pIt;
+	FOR_CONST_IT (PluginAttrs, pIt, pluginDesc.pluginAttrs) {
+		const PluginAttr &p = pIt.data();
 
 		if (p.paramType == PluginAttr::AttrTypeIgnore) {
 			continue;
@@ -446,8 +446,8 @@ void VRayPluginRenderer::exportPluginProperties(VRay::Plugin &plugin, const Attr
 		}
 
 #if CGR_DEBUG_APPSDK_VALUES
-		Log::getLog().debug("Setting plugin parameter: \"%s\" %s_%s = %s",
-							pluginDesc.pluginName.c_str(), pluginDesc.pluginID.c_str(), p.paramName.c_str(), plug.getValue(p.paramName).toString().c_str());
+		Log::getLog().debug("Setting plugin parameter: \"%s\" %s.%s = %s",
+							pluginDesc.pluginName.c_str(), pluginDesc.pluginID.c_str(), p.paramName.c_str(), plugin.getValue(p.paramName).toString().c_str());
 #endif
 	}
 }

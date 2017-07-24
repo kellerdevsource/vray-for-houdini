@@ -21,6 +21,9 @@ using namespace VRayForHoudini;
 /// Write image as buckets.
 #define USE_BUCKETS 1
 
+/// Write render channels in IRP.
+#define USE_RENDER_CHANNELS 0
+
 /// A typedef for render elements array.
 typedef std::vector<VRay::RenderElement> RenderElementsList;
 
@@ -202,8 +205,6 @@ public:
 	{
 		setObjectName("ImdisplayPipe");
 		setTerminationEnabled();
-
-		// TODO: utilize finished() / terminated() signals to clean-up left data.
 	}
 
 	~ImdisplayThread() {
@@ -441,12 +442,12 @@ private:
 	/// @param data Data pointer.
 	static void write(QThread &worker, QProcess &pipe, int numElements, int elementSize, const void *data) {
 		if (pipe.state() != QProcess::Running) {
-			worker.exit();
+			worker.terminate();
 		}
 
 		pipe.write(reinterpret_cast<const char*>(data), elementSize * numElements);
 		if (!pipe.waitForBytesWritten()) {
-			worker.exit();
+			worker.terminate();
 		}
 	}
 
@@ -482,6 +483,7 @@ static void addImages(VRay::VRayRenderer &renderer, VRay::VRayImage *image, int 
 	rgbaImage->setRegion(region);
 	planes.append(rgbaImage);
 
+#if USE_RENDER_CHANNELS
 	const VRay::RenderElements &reMan = renderer.getRenderElements();
 	const RenderElementsList &reList = reMan.getAllByType(VRay::RenderElement::NONE);
 	for (const VRay::RenderElement &re : reList) {
@@ -490,6 +492,7 @@ static void addImages(VRay::VRayRenderer &renderer, VRay::VRayImage *image, int 
 
 		planes.append(renderElementImage);
 	}
+#endif
 
 	imdisplayThread.add(new TileImageMessage(planes));
 }
@@ -533,10 +536,12 @@ void VRayForHoudini::initImdisplay(VRay::VRayRenderer &renderer)
 	imageHeaderMsg->imageHeight = rendererOptions.imageHeight;
 	imageHeaderMsg->planeNames.append("C");
 
+#if USE_RENDER_CHANNELS
 	const VRay::RenderElements &reMan = renderer.getRenderElements();
 	for (const VRay::RenderElement &re : reMan.getAllByType(VRay::RenderElement::NONE)) {
 		imageHeaderMsg->planeNames.append(re.getName().c_str());
 	}
+#endif
 
 	imdisplayThread.add(imageHeaderMsg);
 }
@@ -546,5 +551,5 @@ void VRayForHoudini::closeImdisplay()
 	Log::getLog().debug("closeImdisplay()");
 
 	imdisplayThread.clear();
-	imdisplayThread.exit();
+	imdisplayThread.terminate();
 }

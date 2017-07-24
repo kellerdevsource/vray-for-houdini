@@ -277,12 +277,7 @@ VRay::Plugin VRayExporter::exportObject(OP_Node *opNode)
 		}
 
 		VRay::Plugin plugin = objectExporter.exportObject(*objNode);
-		if (plugin) {
-			Log::getLog().debug("Exporting OBJ: %s [%s]",
-								opNode->getName().buffer(),
-								objOpType.buffer());
-		}
-		else {
+		if (!plugin) {
 			Log::getLog().error("Error exporting OBJ: %s [%s]",
 								opNode->getName().buffer(),
 								objOpType.buffer());

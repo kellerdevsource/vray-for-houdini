@@ -49,10 +49,6 @@ bool HairPrimitiveExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc
 		return false;
 	}
 
-	const std::string meshName = boost::str(Parm::FmtPrefixManual % "Hair" % std::to_string(gdp.getUniqueId()));
-	pluginDesc.pluginName = VRayExporter::getPluginName(&objNode, meshName);
-	pluginDesc.pluginID = "GeomMayaHair";
-
 	// collect strands
 	VRay::VUtils::IntRefList strands( primList.size() );
 	int nVerts = 0;

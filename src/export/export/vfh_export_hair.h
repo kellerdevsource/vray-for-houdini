@@ -25,6 +25,7 @@ public:
 	HairPrimitiveExporter(OBJ_Node &obj, OP_Context &ctx, VRayExporter &exp, const GEOPrimList &primList);
 
 	bool asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc &pluginDesc) VRAY_OVERRIDE;
+	bool hasData() const VRAY_OVERRIDE { return primList.size(); }
 
 private:
 	/// Helper function to get the node which holds optional hair geometry rendering

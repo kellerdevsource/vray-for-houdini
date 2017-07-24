@@ -37,6 +37,7 @@ set(EXPORTER_SOURCES
 	export/export/vfh_export_mesh.cpp
 	export/export/vfh_export_primitive.cpp
 	export/export/vfh_export_vrayproxy.cpp
+	export/export/vfh_export_hdk_shaders.cpp
 	export/export/vfh_material_override.cpp
 	export/utils/vfh_geoutils.cpp
 	export/utils/vfh_tex_utils.cpp

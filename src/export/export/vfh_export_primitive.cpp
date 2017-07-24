@@ -410,8 +410,6 @@ void VolumeExporter::exportPrimitive(const PrimitiveItem &item, PluginSet &plugi
 
 	VOP::NodeBase &phxSimVopNode = static_cast<VOP::NodeBase&>(*simVop);
 
-	const int primID = detailID;
-
 	static boost::format phxSimNameFmt("PhxShaderSim|%i@%s");
 	Attrs::PluginDesc phxSim(boost::str(phxSimNameFmt % primID % objNode.getName().buffer()),
 							 "PhxShaderSim");

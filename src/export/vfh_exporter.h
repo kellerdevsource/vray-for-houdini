@@ -67,12 +67,6 @@ enum VRayLightType {
 	VRayLightSun       = 8,
 };
 
-enum DisplacementType {
-	displacementTypeFromMat = 0,
-	displacementTypeDisplace,
-	displacementTypeSmooth,
-};
-
 struct OpInterestItem {
 	OpInterestItem(OP_Node *op_node=nullptr, OP_EventMethod cb=nullptr, void *cb_data=nullptr)
 		: op_node(op_node)
@@ -239,6 +233,8 @@ public:
 	/// @param op_node[in] - environment VOP node
 	void exportEffects(OP_Node *op_net);
 
+	void setFrame(fpreal time);
+
 	/// Export scene at a given time
 	/// This is called once for each frame we want to render
 	void exportFrame(fpreal time);
@@ -279,11 +275,6 @@ public:
 	/// @param node SHOP or VOP node.
 	/// @returns V-Ray plugin.
 	VRay::Plugin exportMaterial(OP_Node *node);
-
-	/// Export V-Ray material from VOP node.
-	/// @param node VOP node.
-	/// @returns V-Ray plugin.
-	VRay::Plugin exportMaterial(VOP_Node *node);
 
 	/// Export the default light created when there are no lights in the scene
 	/// @param update[in] - flags whether this is called from IPR callback
@@ -532,6 +523,9 @@ public:
 	VRay::Plugin exportConnectedVop(VOP_Node *vop_node, int inpidx, ExportContext *parentContext = nullptr);
 	VRay::Plugin exportConnectedVop(VOP_Node *vop_node, const UT_String &inputName, ExportContext *parentContext = nullptr);
 
+	VRay::Plugin exportPrincipledShader(OP_Node &opNode, ExportContext *parentContext=nullptr);
+	VRay::Plugin exportNodeParameter(OP_Node &opNode, ExportContext *parentContext=nullptr);
+
 	/// Export input parameter VOPs for a given VOP node as V-Ray user textures.
 	/// Default values for the textures will be queried from the corresponding
 	/// SHOP parameter. Exported user textures are added as attibutes to the plugin
@@ -549,6 +543,11 @@ public:
 	/// Returns object exporter.
 	ObjectExporter& getObjectExporter() { return objectExporter; }
 private:
+	/// Export V-Ray material from VOP node.
+	/// @param node VOP node.
+	/// @returns V-Ray plugin.
+	VRay::Plugin exportMaterial(VOP_Node *node);
+
 	/// The driver node bound to this exporter.
 	OP_Node *m_rop;
 

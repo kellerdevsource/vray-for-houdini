@@ -6,7 +6,7 @@
 
     parm {
         name "reload"
-        label "Reload Geometryr"
+        label "Reload Geometry"
         type button
     }
 
@@ -38,6 +38,7 @@
             "GEO_VIEWPORT_HIDDEN" "Hidden"
         }
         default { "0" }
+        parmtag { "cook_dependent" "1" }
     }
 
     parm {
@@ -49,6 +50,7 @@
             "1" "Preview Geometry"
             "2" "Full Geometry"
         }
+        parmtag { "cook_dependent" "1" }
         default { "1" }
     }
 
