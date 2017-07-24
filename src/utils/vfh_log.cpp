@@ -127,7 +127,8 @@ void Logger::log(LogLevel level, const char *format, va_list args)
 
 	if (showMessage) {
 		if (threadedLogger.getValue()) {
-			m_queue.push(LogPair{level, buf});
+			const LogPair pair = {level, buf};
+			m_queue.push(pair);
 		} else {
 			logMessage(level, buf);
 		}

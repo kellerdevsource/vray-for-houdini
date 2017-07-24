@@ -2,6 +2,8 @@
 ::
 @echo off
 
+setlocal
+
 set VRAY_APPSDK=@APPSDK_ROOT@
 set VRAY_PLUGIN_DESC_PATH=@CMAKE_SOURCE_DIR@\deploy\plugins_desc
 set VRAY_UI_DS_PATH=@CMAKE_SOURCE_DIR@\deploy\ui

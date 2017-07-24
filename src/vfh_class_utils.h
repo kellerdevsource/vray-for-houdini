@@ -144,7 +144,7 @@ class VfhOperator##OpClass \
 public: \
 	VfhOperator##OpClass( \
 		const char	*name, \
-		const char *english,
+		const char *english, \
 		OP_Constructor construct, \
 		PRM_Template *templates, \
 		unsigned min_sources, \
@@ -162,7 +162,7 @@ public: \
 					   vopnetMask, \
 					   variables, \
 					   flags, \
-					   num_outputs)
+					   num_outputs) \
 	{} \
 	bool getOpHelpURL(UT_String &url) VRAY_OVERRIDE { \
 		url.harden("https://docs.chaosgroup.com/display/VRAYHOUDINI4EDIT/Copy+of+V-Ray+" STRINGIZE(OpClass)); \

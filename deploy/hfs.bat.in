@@ -3,6 +3,8 @@
 
 @echo off
 
+setlocal
+
 :: Houdini Install Location
 set HFS=C:\Program Files\Side Effects Software\Houdini @HOUDINI_VERSION@.@HOUDINI_VERSION_BUILD@
 
