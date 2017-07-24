@@ -185,7 +185,7 @@
       	type	integer
       	default	{ "0" }
       	help	"Start frame offset for image sequences"
-      	range	{ 0 64 }
+      	range	{ 0 3 }
       	export	none
       	parmtag	{ "cook_dependent" "1" }
       	parmtag	{ "vray_plugin" "BitmapBuffer" }
@@ -234,7 +234,7 @@
       	label	"Ifl Start Frame"
       	type	integer
       	default	{ "0" }
-      	range	{ 0 64 }
+      	range	{ 0 2 }
       	export	none
       	parmtag	{ "cook_dependent" "1" }
       	parmtag	{ "vray_plugin" "BitmapBuffer" }

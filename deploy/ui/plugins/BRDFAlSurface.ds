@@ -44,7 +44,7 @@
       	size	4
       	default	{ "0" "0" "0" "1" }
       	help	"Overall bump map (applied to all components)"
-      	range	{ 0 10 }
+      	range	{ 0 1 }
       	export	none
       	parmtag	{ "cook_dependent" "1" }
       	parmtag	{ "vray_plugin" "BRDFAlSurface" }

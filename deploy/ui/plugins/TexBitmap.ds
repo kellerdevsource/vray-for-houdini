@@ -196,7 +196,7 @@
       	default	{ "0" }
       	help	"U coordinate of the valid texture sector"
       	disablewhen	"{ placement_type != Crop placement_type != Place }"
-      	range	{ 0 64 }
+      	range	{ 0 1 }
       	export	none
       	parmtag	{ "cook_dependent" "1" }
       	parmtag	{ "vray_plugin" "TexBitmap" }
@@ -210,7 +210,7 @@
       	default	{ "0" }
       	help	"V coordinate of the valid texture sector"
       	disablewhen	"{ placement_type != Crop placement_type != Place }"
-      	range	{ 0 64 }
+      	range	{ 0 1 }
       	export	none
       	parmtag	{ "cook_dependent" "1" }
       	parmtag	{ "vray_plugin" "TexBitmap" }

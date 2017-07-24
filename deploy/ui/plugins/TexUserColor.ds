@@ -28,7 +28,7 @@
       	type	float
       	default	{ "0" }
       	help	"Default value if the attribute is not found"
-      	range	{ 0 5 }
+      	range	{ 0 1 }
       	export	none
       	parmtag	{ "cook_dependent" "1" }
       }

@@ -1105,7 +1105,7 @@
       	default	{ "1" "1" "1" "1" }
       	help	"Environment override texture"
       	disablewhen	"{ use_environment_override != 1 }"
-      	range	{ 0 10 }
+      	range	{ 0 1 }
       	export	none
       	parmtag	{ "cook_dependent" "1" }
       	parmtag	{ "vray_linked_only" "1" }
