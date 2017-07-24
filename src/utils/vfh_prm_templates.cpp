@@ -11,11 +11,6 @@
 #include "vfh_prm_templates.h"
 #include "vfh_log.h"
 
-#include "vop/material/vop_MtlMulti.h"
-#include "vop/brdf/vop_BRDFLayered.h"
-#include "vop/texture/vop_TexLayered.h"
-#include "sop/sop_node_def.h"
-
 #include <OP/OP_Node.h>
 #include <OP/OP_SpareParms.h>
 #include <PRM/PRM_Template.h>

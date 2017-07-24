@@ -126,7 +126,7 @@ set(SOURCES
 	vop/rc/vop_rc_container.cpp
 	vop/texture/vop_TexFalloff.cpp
 	vop/texture/vop_TexGradRamp.cpp
-	vop/texture/vop_TexLayered.cpp
+	vop/texture/vop_TexLayeredMax.cpp
 	vop/texture/vop_TexRemap.cpp
 	vop/texture/vop_texture_output.cpp
 	vop/vop_context.cpp
@@ -173,7 +173,7 @@ set(HEADERS
 	vop/rc/vop_rc_def.h
 	vop/texture/vop_TexFalloff.h
 	vop/texture/vop_TexGradRamp.h
-	vop/texture/vop_TexLayered.h
+	vop/texture/vop_TexLayeredMax.h
 	vop/texture/vop_TexRemap.h
 	vop/texture/vop_texture_def.h
 	vop/texture/vop_texture_output.h
