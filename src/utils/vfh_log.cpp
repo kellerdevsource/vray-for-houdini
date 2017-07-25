@@ -73,7 +73,8 @@ static ThreadedLogger * loggerThread = nullptr; ///< the thread used for logging
 static std::once_flag startLogger; ///< flag to ensure we start the thread only once
 static volatile bool isStoppedLogger = false; ///< stop flag for the thread
 static VUtils::GetEnvVarInt threadedLogger("VFH_THREADED_LOGGER", 1);
-
+const auto appStart = std::chrono::high_resolution_clock::now();
+const std::thread::id MAIN_TID = std::this_thread::get_id();
 
 void Logger::writeMessages() {
 	if (threadedLogger.getValue() == 0) {
@@ -93,7 +94,9 @@ void Logger::writeMessages() {
 
 void Logger::startLogging() {
 	if (threadedLogger.getValue()) {
-		std::call_once(startLogger, []() {
+		Logger & log = getLog();
+		std::call_once(startLogger, [&log]() {
+			log.m_queue.reserve_unsafe(128);
 			loggerThread = new ThreadedLogger(&Logger::writeMessages);
 			loggerThread->start();
 		});
@@ -119,7 +122,25 @@ void Logger::stopLogging() {
 void Logger::log(LogLevel level, const char *format, va_list args)
 {
 	LogLineType buf;
-	vsnprintf(buf.data(), buf.size(), format, args);
+
+	using namespace std::chrono;
+	const auto now = high_resolution_clock::now() - appStart;
+	const unsigned msecs = duration_cast<milliseconds>(now).count() % 1000;
+	const unsigned secs = duration_cast<seconds>(now).count() % 60;
+	const std::thread::id thisTID = std::this_thread::get_id();
+	const unsigned tid = std::hash<std::thread::id>()(thisTID) % 10000;
+
+	if (thisTID == MAIN_TID) {
+		const int realPad = snprintf(buf.data(), buf.size(), VUTILS_COLOR_YELLOW "[%2u:%-3u](#%4u) " VUTILS_COLOR_DEFAULT, secs, msecs, tid);
+		const int pad = (sizeof(VUTILS_COLOR_YELLOW) - 1) + 16 + (sizeof(VUTILS_COLOR_DEFAULT) - 1);
+		vassert(realPad == pad && "Unexpected length for time and TID in log message");
+		vsnprintf(buf.data() + pad, buf.size() - pad, format, args);
+	} else {
+		const int realPad = snprintf(buf.data(), buf.size(), VUTILS_COLOR_YELLOW "[%2u:%-3u](%4u) " VUTILS_COLOR_DEFAULT, secs, msecs, tid);
+		const int pad = (sizeof(VUTILS_COLOR_YELLOW) - 1) + 15 + (sizeof(VUTILS_COLOR_DEFAULT) - 1);
+		vassert(realPad == pad && "Unexpected length for time and TID in log message");
+		vsnprintf(buf.data() + pad, buf.size() - pad, format, args);
+	}
 
 	const int showMessage = level == LogLevelMsg
 							? true
@@ -127,8 +148,18 @@ void Logger::log(LogLevel level, const char *format, va_list args)
 
 	if (showMessage) {
 		if (threadedLogger.getValue()) {
+			// try to push 10 times and relent the thread after each unsuccessfull attempt
+			// this will prevent endless loop in normal push
 			const LogPair pair = {level, buf};
-			m_queue.push(pair);
+			for (int c = 0; c < 10; c++) {
+				if (m_queue.bounded_push(pair)) {
+					return;
+				}
+				// TODO: is it worth to sleep(1) after 5 attempts?
+				std::this_thread::yield();
+			}
+			// at this point we tried 10 pushes but did not work, so just log the message from this thread
+			logMessage(level, buf);
 		} else {
 			logMessage(level, buf);
 		}
