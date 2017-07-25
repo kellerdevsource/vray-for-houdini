@@ -25,7 +25,69 @@
 #include <QtNetwork/QHostAddress>
 #include <QApplication>
 
+#include <mutex>
+
 using namespace VRayForHoudini;
+
+/// Class wrapping callback function and flag to call it only once
+/// the flag is protected by mutex so the callback is called only once
+/// NOTE: consider doing this with atomic bool
+class CallOnceUntilReset {
+public:
+	typedef std::function<void()> CB;
+
+	CallOnceUntilReset(CB callback)
+		: m_isCalled(false)
+		, m_callback(callback)
+	{}
+
+	/// Get function that when called will inturn call the callback if flag is not set
+	/// Used to avoid the need to pass the object and function pointer
+	CB getCallableFunction() {
+		return std::bind(&CallOnceUntilReset::call, this);
+	}
+
+	/// Reset the "called" flag to false
+	void reset() {
+		std::lock_guard<std::mutex> lock(m_mtx);
+		m_isCalled = false;
+	}
+
+	/// Manually set the "called" flag to false
+	void set() {
+		std::lock_guard<std::mutex> lock(m_mtx);
+		m_isCalled = true;
+	}
+
+	/// Manually call the saved callback if the "called" flag is false
+	/// This function call's are serialized with mutex
+	void call() {
+		if (!m_isCalled) {
+			std::lock_guard<std::mutex> lock(m_mtx);
+			if (!m_isCalled) {
+				m_isCalled = true;
+				m_callback();
+			}
+		}
+	}
+
+	/// Return the "called" flag
+	/// NOTE: until this function returns the flag could have changed already
+	bool isCalled() const {
+		return m_isCalled;
+	}
+
+	CallOnceUntilReset(const CallOnceUntilReset &) = delete;
+	CallOnceUntilReset & operator=(const CallOnceUntilReset &) = delete;
+
+private:
+	/// Lock protecting the called flag
+	std::mutex m_mtx;
+	/// Flag so that we call the callback only once
+	bool m_isCalled;
+	/// The saved callback function
+	CB m_callback;
+} * stopCallback;
 
 FORCEINLINE int getInt(PyObject *list, int idx)
 {
@@ -75,13 +137,18 @@ static void freeExporter()
 
 	closeImdisplay();
 
-	getExporter().reset();
-
-	FreePtr(vrayExporter);
+	if (vrayExporter) {
+		vrayExporter->reset();
+		FreePtr(vrayExporter);
+	}
 }
 
 static struct VRayExporterIprUnload {
 	~VRayExporterIprUnload() {
+		if (stopCallback) {
+			// Prevent stop cb from being called here
+			stopCallback->set();
+		}
 		delete stopChecker;
 		deleteVRayInit();
 		Log::Logger::stopLogging();
@@ -298,12 +365,30 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 	};
 
 	HOM_AutoLock autoLock;
-
+	
 	setImdisplayPort(port);
+	
+	if (!stopCallback) {
+		stopCallback = new CallOnceUntilReset([]() {
+			freeExporter();
+		});
+		setImdisplayOnStop(stopCallback->getCallableFunction());
+	}
+
+	if (!stopChecker) {
+		stopChecker = new PingPongClient();
+		stopChecker->setCallback(stopCallback->getCallableFunction());
+	}
+
+	// Reset the cb's flag so it can be called asap
+	stopCallback->reset();
+	stopChecker->start();
 
 	UT_String ropPath(rop);
 	OP_Node *ropNode = getOpNodeFromPath(ropPath);
 	if (ropNode) {
+		// Start the imdisplay thread so we can get pipe signals sooner
+		startImdisplay();
 		const IPROutput iprOutput =
 			static_cast<IPROutput>(ropNode->evalInt("render_rt_output", 0, 0.0));
 
@@ -318,50 +403,42 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 		exporter.setROP(*ropNode);
 		exporter.setIPR(iprMode);
 
-		if (exporter.initRenderer(isVFB, false)) {
-			ViewParams viewParams;
-			fillViewParamsFromDict(viewParamsDict, viewParams);
 
-			exporter.setDRSettings();
-
-			exporter.setRendererMode(getRendererIprMode(*ropNode));
-			exporter.setWorkMode(getExporterWorkMode(*ropNode));
-
-			exporter.getRenderer().showVFB(isVFB);
-			exporter.getRenderer().getVRay().setOnVFBClosed(isVFB ? onVFBClosed : nullptr);
-			exporter.getRenderer().getVRay().setOnImageReady(isRenderView ? onImageReady : nullptr);
-			exporter.getRenderer().getVRay().setOnRTImageUpdated(isRenderView? onRTImageUpdated : nullptr);
-			exporter.getRenderer().getVRay().setOnBucketReady(isRenderView ? onBucketReady : nullptr);
-
-			exporter.getRenderer().getVRay().setKeepBucketsInCallback(isRenderView);
-			exporter.getRenderer().getVRay().setKeepRTframesInCallback(isRenderView);
-
-			if (isRenderView) {
-				exporter.getRenderer().getVRay().setRTImageUpdateTimeout(250);
-			}
-
-			exporter.initExporter(getFrameBufferType(*ropNode), 1, now, now);
-
-			exporter.setFrame(now);
-
-			exporter.exportSettings();
-			exporter.exportScene();
-			exporter.exportView(viewParams);
-			exporter.renderFrame();
-
-			initImdisplay(exporter.getRenderer().getVRay());
-
-			if (!stopChecker) {
-				stopChecker = new PingPongClient();
-				stopChecker->setCallback([] {
-					closeImdisplay();
-					freeExporter();
-				});
-			}
-			stopChecker->start();
+		if (!exporter.initRenderer(isVFB, false)) {
+			Py_RETURN_NONE;
 		}
+		ViewParams viewParams;
+		fillViewParamsFromDict(viewParamsDict, viewParams);
+
+		exporter.setDRSettings();
+
+		exporter.setRendererMode(getRendererIprMode(*ropNode));
+		exporter.setWorkMode(getExporterWorkMode(*ropNode));
+
+		exporter.getRenderer().showVFB(isVFB);
+		exporter.getRenderer().getVRay().setOnVFBClosed(isVFB ? onVFBClosed : nullptr);
+		exporter.getRenderer().getVRay().setOnImageReady(isRenderView ? onImageReady : nullptr);
+		exporter.getRenderer().getVRay().setOnRTImageUpdated(isRenderView? onRTImageUpdated : nullptr);
+		exporter.getRenderer().getVRay().setOnBucketReady(isRenderView ? onBucketReady : nullptr);
+
+		exporter.getRenderer().getVRay().setKeepBucketsInCallback(isRenderView);
+		exporter.getRenderer().getVRay().setKeepRTframesInCallback(isRenderView);
+
+		if (isRenderView) {
+			exporter.getRenderer().getVRay().setRTImageUpdateTimeout(250);
+		}
+
+		exporter.initExporter(getFrameBufferType(*ropNode), 1, now, now);
+
+		exporter.setFrame(now);
+
+		exporter.exportSettings();
+		exporter.exportScene();
+		exporter.exportView(viewParams);
+		exporter.renderFrame();
+		initImdisplay(exporter.getRenderer().getVRay());
 	}
-   
+	
     Py_RETURN_NONE;
 }
 

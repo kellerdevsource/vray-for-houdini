@@ -12,10 +12,13 @@
 #define VRAY_FOR_HOUDINI_IRP_VIEWER_H
 
 #include "vfh_vray.h"
+#include <functional>
 
 namespace VRayForHoudini {
 
+void startImdisplay();
 void initImdisplay(VRay::VRayRenderer &renderer);
+void setImdisplayOnStop(std::function<void()> fn);
 void setImdisplayPort(int port);
 int getImdisplayPort();
 void closeImdisplay();
