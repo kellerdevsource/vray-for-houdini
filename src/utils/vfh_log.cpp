@@ -55,6 +55,7 @@ void logMessage(LogLevel level, Logger::LogLineType logBuff) {
 
 #endif
 
+/// Thread logging any messages pushed in the Logger's queue
 class ThreadedLogger:
 	public QThread
 {
@@ -69,12 +70,13 @@ protected:
 	std::function<void()> runFunction;
 };
 
-static ThreadedLogger * loggerThread = nullptr; ///< the thread used for logging
-static std::once_flag startLogger; ///< flag to ensure we start the thread only once
-static volatile bool isStoppedLogger = false; ///< stop flag for the thread
+static ThreadedLogger * loggerThread = nullptr; ///< The thread used for logging
+static std::once_flag startLogger; ///< Flag to ensure we start the thread only once
+static volatile bool isStoppedLogger = false; ///< Stop flag for the thread
 static VUtils::GetEnvVarInt threadedLogger("VFH_THREADED_LOGGER", 1);
-const auto appStart = std::chrono::high_resolution_clock::now();
-const std::thread::id MAIN_TID = std::this_thread::get_id();
+
+const auto appStart = std::chrono::high_resolution_clock::now(); ///< The time at which the app was started
+const std::thread::id MAIN_TID = std::this_thread::get_id(); ///< The ID of the main thread - used to distingquish in log
 
 void Logger::writeMessages() {
 	if (threadedLogger.getValue() == 0) {
@@ -96,6 +98,7 @@ void Logger::startLogging() {
 	if (threadedLogger.getValue()) {
 		Logger & log = getLog();
 		std::call_once(startLogger, [&log]() {
+			// We can use unsafe here since we are the only thread accessing it
 			log.m_queue.reserve_unsafe(128);
 			loggerThread = new ThreadedLogger(&Logger::writeMessages);
 			loggerThread->start();
@@ -148,8 +151,8 @@ void Logger::log(LogLevel level, const char *format, va_list args)
 
 	if (showMessage) {
 		if (threadedLogger.getValue()) {
-			// try to push 10 times and relent the thread after each unsuccessfull attempt
-			// this will prevent endless loop in normal push
+			// Try to push 10 times and relent the thread after each unsuccessfull attempt
+			// This will prevent endless loop in normal push
 			const LogPair pair = {level, buf};
 			for (int c = 0; c < 10; c++) {
 				if (m_queue.bounded_push(pair)) {
@@ -158,7 +161,7 @@ void Logger::log(LogLevel level, const char *format, va_list args)
 				// TODO: is it worth to sleep(1) after 5 attempts?
 				std::this_thread::yield();
 			}
-			// at this point we tried 10 pushes but did not work, so just log the message from this thread
+			// At this point we tried 10 pushes but did not work, so just log the message from this thread
 			logMessage(level, buf);
 		} else {
 			logMessage(level, buf);
