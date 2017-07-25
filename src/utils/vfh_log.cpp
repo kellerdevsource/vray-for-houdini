@@ -32,12 +32,18 @@
 using namespace VRayForHoudini;
 using namespace VRayForHoudini::Log;
 
-#ifndef VFH_NO_THREAD_LOGGER
-void logMessage(LogLevel level, Logger::LogLineType logBuff) {
-	vutils_cprintf(true, VUTILS_COLOR_MAGENTA "V-Ray For Houdini" VUTILS_COLOR_DEFAULT "|");
+const std::thread::id MAIN_TID = std::this_thread::get_id(); ///< The ID of the main thread - used to distingquish in log
+
+void logMessage(Logger::LogData data)
+{
+	tchar strTime[100], strDate[100];
+	vutils_timeToStr(strTime, COUNT_OF(strTime), data.time);
+	vutils_dateToStr(strDate, COUNT_OF(strDate), data.time);
+	vutils_cprintf(true, VUTILS_COLOR_BLUE "[%s:%s]" VUTILS_COLOR_MAGENTA "VFH" VUTILS_COLOR_DEFAULT "| ", strDate, strTime);
+
 	VS_DEBUG("V-Ray For Houdini [");
 
-	switch (level) {
+	switch (data.level) {
 	case LogLevelInfo:     { vutils_cprintf(true, VUTILS_COLOR_BLUE   "    Info" VUTILS_COLOR_DEFAULT "| ");                     VS_DEBUG("Info"); break; }
 	case LogLevelProgress: { vutils_cprintf(true, VUTILS_COLOR_BLUE   "Progress" VUTILS_COLOR_DEFAULT "| ");                     VS_DEBUG("Progress"); break; }
 	case LogLevelWarning:  { vutils_cprintf(true, VUTILS_COLOR_YELLOW " Warning" VUTILS_COLOR_DEFAULT "| " VUTILS_COLOR_YELLOW); VS_DEBUG("Warning"); break; }
@@ -46,14 +52,22 @@ void logMessage(LogLevel level, Logger::LogLineType logBuff) {
 	case LogLevelMsg:      { vutils_cprintf(true, VUTILS_COLOR_GREEN  "     Msg" VUTILS_COLOR_DEFAULT "| " VUTILS_COLOR_GREEN);  VS_DEBUG("Msg"); break; }
 	}
 
-	vutils_cprintf(true, "%s\n" VUTILS_COLOR_DEFAULT, logBuff.data());
-	VS_DEBUG("] %s\n", logBuff.data());
+	if (data.level == LogLevelDebug) {
+		const unsigned tid = std::hash<std::thread::id>()(data.tid) % 10000;
+		if (data.tid == MAIN_TID) {
+			vutils_cprintf(true, VUTILS_COLOR_YELLOW "(#%4u) " VUTILS_COLOR_DEFAULT, tid);
+		} else {
+			vutils_cprintf(true, VUTILS_COLOR_YELLOW "(%4u) " VUTILS_COLOR_DEFAULT, tid);
+		}
+	}
+
+	vutils_cprintf(true, "%s\n" VUTILS_COLOR_DEFAULT, data.line.data());
+	VS_DEBUG("] %s\n", data.line.data());
 
 	fflush(stdout);
 	fflush(stderr);
 }
 
-#endif
 
 /// Thread logging any messages pushed in the Logger's queue
 class ThreadedLogger:
@@ -75,10 +89,8 @@ static std::once_flag startLogger; ///< Flag to ensure we start the thread only 
 static volatile bool isStoppedLogger = false; ///< Stop flag for the thread
 static VUtils::GetEnvVarInt threadedLogger("VFH_THREADED_LOGGER", 1);
 
-const auto appStart = std::chrono::high_resolution_clock::now(); ///< The time at which the app was started
-const std::thread::id MAIN_TID = std::this_thread::get_id(); ///< The ID of the main thread - used to distingquish in log
-
-void Logger::writeMessages() {
+void Logger::writeMessages()
+{
 	if (threadedLogger.getValue() == 0) {
 		return;
 	}
@@ -87,14 +99,15 @@ void Logger::writeMessages() {
 		if (log.m_queue.empty()) {
 			std::this_thread::sleep_for(std::chrono::milliseconds(1));
 		}
-		LogPair msg;
-		while (log.m_queue.pop(msg)) {
-			logMessage(msg.level, msg.line);
+		LogData data;
+		while (log.m_queue.pop(data)) {
+			logMessage(data);
 		}
 	}
 }
 
-void Logger::startLogging() {
+void Logger::startLogging()
+{
 	if (threadedLogger.getValue()) {
 		Logger & log = getLog();
 		std::call_once(startLogger, [&log]() {
@@ -106,7 +119,8 @@ void Logger::startLogging() {
 	}
 }
 
-void Logger::stopLogging() {
+void Logger::stopLogging()
+{
 	if (threadedLogger.getValue()) {
 		static std::mutex mtx;
 		if (loggerThread) {
@@ -132,44 +146,27 @@ void Logger::log(LogLevel level, const char *format, va_list args)
 		return;
 	}
 
-	LogLineType buf;
+	LogData data;
+	time(&data.time);
+	data.tid = std::this_thread::get_id();
+	data.level = level;
 
-	using namespace std::chrono;
-	const auto now = high_resolution_clock::now() - appStart;
-	const unsigned msecs = duration_cast<milliseconds>(now).count() % 1000;
-	const unsigned secs = duration_cast<seconds>(now).count() % 60;
-
-	int step = snprintf(buf.data(), buf.size(), VUTILS_COLOR_YELLOW "[%2u:%-3u]", secs, msecs);
-	if (level == LogLevelDebug) {
-		const std::thread::id thisTID = std::this_thread::get_id();
-		const unsigned tid = std::hash<std::thread::id>()(thisTID) % 10000;
-		if (thisTID == MAIN_TID) {
-			step += snprintf(buf.data() + step, buf.size() - step, "(#%4u) " VUTILS_COLOR_DEFAULT, tid);
-		} else {
-			step += snprintf(buf.data() + step, buf.size() - step, "(%4u) " VUTILS_COLOR_DEFAULT, tid);
-		}
-	} else {
-		memcpy(buf.data() + step, " " VUTILS_COLOR_DEFAULT, sizeof(VUTILS_COLOR_DEFAULT));
-		step += sizeof(VUTILS_COLOR_DEFAULT);
-	}
-
-	vsnprintf(buf.data() + step, buf.size() - step, format, args);
+	vsnprintf(data.line.data(), data.line.size(), format, args);
 
 	if (threadedLogger.getValue()) {
 		// Try to push 10 times and relent the thread after each unsuccessfull attempt
 		// This will prevent endless loop in normal push
-		const LogPair pair = {level, buf};
 		for (int c = 0; c < 10; c++) {
-			if (m_queue.bounded_push(pair)) {
+			if (m_queue.bounded_push(data)) {
 				return;
 			}
 			// TODO: is it worth to sleep(1) after 5 attempts?
 			std::this_thread::yield();
 		}
 		// At this point we tried 10 pushes but did not work, so just log the message from this thread
-		logMessage(level, buf);
+		logMessage(data);
 	} else {
-		logMessage(level, buf);
+		logMessage(data);
 	}
 }
 

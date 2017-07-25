@@ -22,6 +22,8 @@
 
 #include <functional>
 #include <array>
+#include <thread>
+#include <ctime>
 
 namespace VRayForHoudini {
 namespace Log {
@@ -76,13 +78,15 @@ public:
 
 	/// Using this pair instead of std::pair, because lockfree::queue requires a template
 	/// argument which has trivial ctor, dtor and assignment operator
-	struct LogPair {
+	struct LogData {
 		LogLevel level; ///< The message's log level
 		LogLineType line; ///< The message data, null terminated
+		time_t time; ///< The time the log was made
+		std::thread::id tid; ///< The thread ID of the caller thread
 	};
 
 private:
-	boost::lockfree::queue<LogPair> m_queue; ///< Queue for messages to be logged
+	boost::lockfree::queue<LogData> m_queue; ///< Queue for messages to be logged
 
 	/// Loop and dump any messages from the queue to stdout
 	/// Used as base for the thread that is processing the messages
