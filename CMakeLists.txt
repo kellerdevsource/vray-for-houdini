@@ -13,7 +13,7 @@ cmake_minimum_required(VERSION 3.7.0)
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_CURRENT_SOURCE_DIR}/cmake;${CMAKE_CURRENT_SOURCE_DIR}/cmake/vfh_find")
 
 option(WITH_VRAY_FOR_HOUDINI "Build V-Ray For Houdini plugin"             ON)
-option(WITH_SOHO             "Build V-Ray For Houdini SOHO Python module" OFF)
+option(WITH_SOHO             "Build V-Ray For Houdini SOHO Python module" ON)
 
 option(BUILD_TESTING         "Enable build testing"           OFF)
 option(WITH_TESTS            "Run tests"                      OFF)
