@@ -376,7 +376,6 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 	
 	if (!stopCallback) {
 		stopCallback = new CallOnceUntilReset([]() {
-			//Log::getLog().debug("+++++++++++++++++ STOP NOW [%p]", ::exporter);
 			freeExporter();
 		});
 		setImdisplayOnStop(stopCallback->getCallableFunction());
@@ -410,7 +409,6 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 		exporter.setROP(*ropNode);
 		exporter.setIPR(iprMode);
 
-		//Log::getLog().debug("RESET NOW [%p]", ::exporter);
 		if (!exporter.initRenderer(isVFB, false)) {
 			Py_RETURN_NONE;
 		}
