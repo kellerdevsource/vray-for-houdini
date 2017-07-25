@@ -146,7 +146,7 @@ static void freeExporter()
 static struct VRayExporterIprUnload {
 	~VRayExporterIprUnload() {
 		if (stopCallback) {
-			// prevent stop cb from being called here
+			// Prevent stop cb from being called here
 			stopCallback->set();
 		}
 		delete stopChecker;
@@ -386,14 +386,14 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 		stopChecker->setCallback(stopCallback->getCallableFunction());
 	}
 
-	// reset the cb's flag so it can be called asap
+	// Reset the cb's flag so it can be called asap
 	stopCallback->reset();
 	stopChecker->start();
 
 	UT_String ropPath(rop);
 	OP_Node *ropNode = getOpNodeFromPath(ropPath);
 	if (ropNode) {
-		// start the imdisplay thread so we can get pipe signals sooner
+		// Start the imdisplay thread so we can get pipe signals sooner
 		startImdisplay();
 		const IPROutput iprOutput =
 			static_cast<IPROutput>(ropNode->evalInt("render_rt_output", 0, 0.0));

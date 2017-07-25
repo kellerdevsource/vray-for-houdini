@@ -232,8 +232,8 @@ void ImdisplayThread::stop(bool callCallback) {
 		onStop();
 	}
 	isRunning = false;
-	// try to stop for 250ms but terminate if we cant
-	// this will avoid slow shutdown
+	// Try to stop for 250ms but terminate if we cant
+	// This will avoid slow shutdown
 	if (!wait(250)) {
 		terminate();
 		wait();
@@ -355,7 +355,7 @@ void ImdisplayThread::run() {
 		}
 	}
 
-	// disconnect all signals from pipe so we dont get unnecessary calls
+	// Disconnect all signals from pipe so we dont get unnecessary calls
 	disconnect(&pipe, 0, 0, 0);
 
 	pipe.kill();
