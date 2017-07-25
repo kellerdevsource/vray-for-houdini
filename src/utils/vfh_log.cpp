@@ -55,6 +55,7 @@ void logMessage(LogLevel level, Logger::LogLineType logBuff) {
 
 #endif
 
+/// Thread logging any messages pushed in the Logger's queue
 class ThreadedLogger:
 	public QThread
 {
@@ -69,11 +70,13 @@ protected:
 	std::function<void()> runFunction;
 };
 
-static ThreadedLogger * loggerThread = nullptr; ///< the thread used for logging
-static std::once_flag startLogger; ///< flag to ensure we start the thread only once
-static volatile bool isStoppedLogger = false; ///< stop flag for the thread
+static ThreadedLogger * loggerThread = nullptr; ///< The thread used for logging
+static std::once_flag startLogger; ///< Flag to ensure we start the thread only once
+static volatile bool isStoppedLogger = false; ///< Stop flag for the thread
 static VUtils::GetEnvVarInt threadedLogger("VFH_THREADED_LOGGER", 1);
 
+const auto appStart = std::chrono::high_resolution_clock::now(); ///< The time at which the app was started
+const std::thread::id MAIN_TID = std::this_thread::get_id(); ///< The ID of the main thread - used to distingquish in log
 
 void Logger::writeMessages() {
 	if (threadedLogger.getValue() == 0) {
@@ -93,7 +96,10 @@ void Logger::writeMessages() {
 
 void Logger::startLogging() {
 	if (threadedLogger.getValue()) {
-		std::call_once(startLogger, []() {
+		Logger & log = getLog();
+		std::call_once(startLogger, [&log]() {
+			// We can use unsafe here since we are the only thread accessing it
+			log.m_queue.reserve_unsafe(128);
 			loggerThread = new ThreadedLogger(&Logger::writeMessages);
 			loggerThread->start();
 		});
@@ -118,20 +124,52 @@ void Logger::stopLogging() {
 
 void Logger::log(LogLevel level, const char *format, va_list args)
 {
+	const bool showMessage = level == LogLevelMsg
+		? true
+		: level <= m_logLevel;
+
+	if (!showMessage) {
+		return;
+	}
+
 	LogLineType buf;
-	vsnprintf(buf.data(), buf.size(), format, args);
 
-	const int showMessage = level == LogLevelMsg
-							? true
-							: level <= m_logLevel;
+	using namespace std::chrono;
+	const auto now = high_resolution_clock::now() - appStart;
+	const unsigned msecs = duration_cast<milliseconds>(now).count() % 1000;
+	const unsigned secs = duration_cast<seconds>(now).count() % 60;
 
-	if (showMessage) {
-		if (threadedLogger.getValue()) {
-			const LogPair pair = {level, buf};
-			m_queue.push(pair);
+	int step = snprintf(buf.data(), buf.size(), VUTILS_COLOR_YELLOW "[%2u:%-3u]", secs, msecs);
+	if (level == LogLevelDebug) {
+		const std::thread::id thisTID = std::this_thread::get_id();
+		const unsigned tid = std::hash<std::thread::id>()(thisTID) % 10000;
+		if (thisTID == MAIN_TID) {
+			step += snprintf(buf.data() + step, buf.size() - step, "(#%4u) " VUTILS_COLOR_DEFAULT, tid);
 		} else {
-			logMessage(level, buf);
+			step += snprintf(buf.data() + step, buf.size() - step, "(%4u) " VUTILS_COLOR_DEFAULT, tid);
 		}
+	} else {
+		memcpy(buf.data() + step, " " VUTILS_COLOR_DEFAULT, sizeof(VUTILS_COLOR_DEFAULT));
+		step += sizeof(VUTILS_COLOR_DEFAULT);
+	}
+
+	vsnprintf(buf.data() + step, buf.size() - step, format, args);
+
+	if (threadedLogger.getValue()) {
+		// Try to push 10 times and relent the thread after each unsuccessfull attempt
+		// This will prevent endless loop in normal push
+		const LogPair pair = {level, buf};
+		for (int c = 0; c < 10; c++) {
+			if (m_queue.bounded_push(pair)) {
+				return;
+			}
+			// TODO: is it worth to sleep(1) after 5 attempts?
+			std::this_thread::yield();
+		}
+		// At this point we tried 10 pushes but did not work, so just log the message from this thread
+		logMessage(level, buf);
+	} else {
+		logMessage(level, buf);
 	}
 }
 
