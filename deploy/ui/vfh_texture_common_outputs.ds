@@ -1,0 +1,47 @@
+parm {
+    name "out_color"
+    label "Out Color"
+    type color4
+    parmtag { "cook_dependent" "0" }
+    parmtag { "vray_label" "color" }
+    parmtag { "vray_pluginattr" "color" }
+    parmtag { "vray_type" "OutputTexture" }
+    export none
+    invisible
+}
+
+parm {
+    name "out_intensity"
+    label "Out Intensity"
+    type float
+    parmtag { "cook_dependent" "0" }
+    parmtag { "vray_label" "intensity" }
+    parmtag { "vray_pluginattr" "out_intensity" }
+    parmtag { "vray_type" "OutputTextureFloat" }
+    export none
+    invisible
+}
+
+parm {
+    name "out_transparency"
+    label "Out Transparency"
+    type float
+    parmtag { "cook_dependent" "0" }
+    parmtag { "vray_label" "transparency" }
+    parmtag { "vray_pluginattr" "out_transparency" }
+    parmtag { "vray_type" "OutputTextureFloat" }
+    export none
+    invisible
+}
+
+parm {
+    name "out_alpha"
+    label "Out Alpha"
+    type float
+    parmtag { "cook_dependent" "0" }
+    parmtag { "vray_label" "alpha" }
+    parmtag { "vray_pluginattr" "out_alpha" }
+    parmtag { "vray_type" "OutputTextureFloat" }
+    export none
+    invisible
+}
