@@ -45,7 +45,8 @@ public:
 	
 	/// Stop the thread
 	/// tries to stop gracefully for 250ms, after that calls terminate() if thread has not stopped
-	void stop();
+	/// @param callCallback - if true it will also call the onStop callback
+	void stop(bool callCallback = false);
 
 	void setOnStopCallback(std::function<void()> cb);
 

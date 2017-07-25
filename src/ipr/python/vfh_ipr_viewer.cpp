@@ -227,8 +227,13 @@ void ImdisplayThread::restart() {
 	start(LowPriority);
 }
 
-void ImdisplayThread::stop() {
+void ImdisplayThread::stop(bool callCallback) {
+	if (callCallback) {
+		onStop();
+	}
 	isRunning = false;
+	// try to stop for 250ms but terminate if we cant
+	// this will avoid slow shutdown
 	if (!wait(250)) {
 		terminate();
 		wait();
@@ -290,20 +295,18 @@ int ImdisplayThread::getPort() const {
 }
 
 void ImdisplayThread::onPipeClose() {
-	stop();
-	onStop();
+	stop(true);
 }
 
 void ImdisplayThread::onPipeError(QProcess::ProcessError error) {
-	stop();
-	onStop();
+	stop(true);
 }
 
 void ImdisplayThread::onPipeStateChange(QProcess::ProcessState newState) {
-	if (newState == QProcess::ProcessState::NotRunning) {
-		stop();
-		onStop();
+	if (newState != QProcess::ProcessState::NotRunning) {
+		return;
 	}
+	stop(true);
 }
 
 
@@ -351,6 +354,8 @@ void ImdisplayThread::run() {
 			}
 		}
 	}
+
+	// disconnect all signals from pipe so we dont get unnecessary calls
 	disconnect(&pipe, 0, 0, 0);
 
 	pipe.kill();
@@ -365,6 +370,9 @@ void ImdisplayThread::processImageHeaderMessage(QProcess &pipe, ImageHeaderMessa
 	imageHeader.single_image_storage = 0;
 	imageHeader.single_image_array_size = 4;
 	imageHeader.multi_plane_count = msg.planeNames.count();
+	if (!isRunning) {
+		return;
+	}
 	writeHeader(pipe, imageHeader);
 
 	if (!isRunning) {
@@ -461,7 +469,9 @@ void ImdisplayThread::writeTile(QProcess &pipe, const TileImage &image) {
 	tileHeader.y0 = image.y0;
 	tileHeader.y1 = image.y1;
 	writeHeader(pipe, tileHeader);
-
+	if (!isRunning) {
+		return;
+	}
 	const int numPixels = image.image->getWidth() * image.image->getHeight();
 
 	write(pipe, numPixels, sizeof(float) * 4, image.image->getPixelData());
@@ -480,6 +490,10 @@ void ImdisplayThread::writeEOF(QProcess &pipe) {
 /// @param elementSize Element size.
 /// @param data Data pointer.
 void ImdisplayThread::write(QProcess &pipe, int numElements, int elementSize, const void *data) {
+	if (!isRunning) {
+		return;
+	}
+
 	if (pipe.state() != QProcess::Running) {
 		exit();
 	}
