@@ -27,6 +27,7 @@ set(SOURCES
 set(HEADERS
 	vfh_ipr_viewer.h
 	vfh_ipr_client.h
+	vfh_ipr_imdisplay_viewer.h
 )
 
 list(APPEND SOURCES moc_vfh_ipr_client.cpp)

@@ -16,6 +16,7 @@
 
 namespace VRayForHoudini {
 
+void startImdisplay();
 void initImdisplay(VRay::VRayRenderer &renderer);
 void setImdisplayOnStop(std::function<void()> fn);
 void setImdisplayPort(int port);

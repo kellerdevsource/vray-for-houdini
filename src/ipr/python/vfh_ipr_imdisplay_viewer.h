@@ -27,6 +27,7 @@ class ImageHeaderMessage;
 class TileImageMessage;
 class TileImage;
 
+// TODO: use smart pointers for the messages
 /// A queue of pipe writing tasks.
 typedef QQueue<TileQueueMessage*> TileMessageQueue;
 
@@ -38,18 +39,20 @@ class ImdisplayThread
 public:
 	ImdisplayThread();
 
-	~ImdisplayThread();
-
 	void init();
 
 	void restart();
+	
+	/// Stop the thread
+	/// tries to stop gracefully for 250ms, after that calls terminate() if thread has not stopped
+	void stop();
 
 	void setOnStopCallback(std::function<void()> cb);
 
 	void add(TileQueueMessage *msg);
 
 	void clear();
-	
+
 	/// Set imdisplay port.
 	/// @param value Port.
 	void setPort(int value);
@@ -72,40 +75,41 @@ private:
 	/// Writes image header data to the pipe.
 	/// @param pipe Process pipe.
 	/// @param msg ImageHeaderMessage message.
-	static void processImageHeaderMessage(QThread &worker, QProcess &pipe, ImageHeaderMessage &msg);
+	void processImageHeaderMessage(QProcess &pipe, ImageHeaderMessage &msg);
 
 	/// Writes image tile message to the pipe.
 	/// @param pipe Process pipe.
 	/// @param msg TileImageMessage message.
-	static void processTileMessage(QThread &worker, QProcess &pipe, TileImageMessage &msg);
+	void processTileMessage(QProcess &pipe, TileImageMessage &msg);
 
 	/// Writes image tile to the pipe splitted into buckets.
 	/// @param pipe Process pipe.
 	/// @param image Image data.
-	static void writeTileBuckets(QThread &worker, QProcess &pipe, const TileImage &image);
+	void writeTileBuckets(QProcess &pipe, const TileImage &image);
 
 	/// Writes image tile to the pipe. Frees allocated image data.
 	/// @param pipe Process pipe.
 	/// @param image Image data.
-	static void writeTile(QThread &worker, QProcess &pipe, const TileImage &image);
+	void writeTile(QProcess &pipe, const TileImage &image);
 
 	/// Writes end of file marker to the pipe.
 	/// @param pipe Process pipe.
-	static void writeEOF(QThread &worker, QProcess &pipe);
+	void writeEOF(QProcess &pipe);
 
 	/// Write specified header to pipe.
 	/// @param header Imdisplay header.
 	template <typename HeaderType>
-	static void writeHeader(QThread &worker, QProcess &pipe, const HeaderType &header) {
-		write(worker, pipe, 1, sizeof(HeaderType), &header);
+	void writeHeader(QProcess &pipe, const HeaderType &header) {
+		write(pipe, 1, sizeof(HeaderType), &header);
 	}
 
 	/// Write to pipe.
 	/// @param numElements Elements count.
 	/// @param elementSize Element size.
 	/// @param data Data pointer.
-	static void write(QThread &worker, QProcess &pipe, int numElements, int elementSize, const void *data);
+	void write(QProcess &pipe, int numElements, int elementSize, const void *data);
 
+	/// Arguments to be passed to the started process
 	QStringList arguments;
 
 	/// Imdisplay port.
@@ -113,6 +117,9 @@ private:
 
 	/// Message queue.
 	TileMessageQueue queue;
+
+	/// Flag set to true when the thread can run, set to false in the stop() method
+	bool isRunning;
 
 	/// Queue lock.
 	QMutex mutex;
