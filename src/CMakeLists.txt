@@ -226,19 +226,7 @@ if (Phoenix_FOUND)
 	)
 endif()
 
-set(CGR_SRC_HASH "" CACHE STRING "Sources hash (for Teamcity)")
-
-set(SRC_GIT_HASH ${CGR_SRC_HASH})
-if("${CGR_SRC_HASH}" STREQUAL "")
-	cgr_get_git_hash(${CMAKE_SOURCE_DIR} SRC_GIT_HASH)
-endif()
-
-message(STATUS "Source revision: ${SRC_GIT_HASH}")
 add_definitions(-DCGR_GIT_HASH=${SRC_GIT_HASH})
-
-# Install
-#
-option(INSTALL_RELEASE "Install release build for distribution" OFF)
 
 # Generate launcher with all needed environment variables set.
 #
@@ -349,10 +337,6 @@ function(vfh_install_common _location)
 				PATTERN "backup" EXCLUDE
 		)
 
-		file(GLOB VFH_IPR_EXE ${VFH_BIN_DIRPATH}/*)
-		install(PROGRAMS ${VFH_IPR_EXE}
-				DESTINATION ${_location}/vfh_home/bin)
-
 		file(GLOB VFH_IPR_PYTHON ${VFH_PYTHON_DIRPATH}/*)
 		install(FILES ${VFH_IPR_PYTHON}
 				DESTINATION ${_location}/vfh_home/soho/python2.7)
@@ -360,20 +344,6 @@ function(vfh_install_common _location)
 endfunction(vfh_install_common)
 
 if(INSTALL_RELEASE)
-	if(NOT "${CMAKE_BUILD_TYPE}" STREQUAL "Release")
-		message(WARNING "INSTALL_RELEASE is ON, but CMAKE_BUILD_TYPE is not \"Release\" (${CMAKE_BUILD_TYPE})!")
-	endif()
-
-	set(INSTALL_RELEASE_ROOT "" CACHE PATH "Release install path")
-	set(INSTALL_RELEASE_SUBDIR "vfh-${SRC_GIT_HASH}${INSTALL_RELEASE_SUFFIX}")
-
-	if("${INSTALL_RELEASE_ROOT}" STREQUAL "")
-		message(FATAL_ERROR "INSTALL_RELEASE is ON, but INSTALL_RELEASE_ROOT is not set!")
-	endif()
-
-	# Set install path
-	set(INSTALL_RELEASE_PATH ${INSTALL_RELEASE_ROOT}/${INSTALL_RELEASE_SUBDIR})
-
 	vfh_install_common(${INSTALL_RELEASE_PATH})
 
 	# Generate launcher file

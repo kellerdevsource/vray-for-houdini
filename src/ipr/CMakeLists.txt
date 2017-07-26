@@ -39,5 +39,6 @@ link_with_vray_sdk(${PROJECT_NAME})
 set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME vfh_ipr)
 
 cgr_install_runtime(${PROJECT_NAME} ${VFH_BIN_DIRPATH})
+cgr_install_runtime(${PROJECT_NAME} ${INSTALL_RELEASE_PATH}/bin)
 
 target_link_libraries(${PROJECT_NAME} Qt5Network Qt5Core Qt5Gui Qt5Widgets)
