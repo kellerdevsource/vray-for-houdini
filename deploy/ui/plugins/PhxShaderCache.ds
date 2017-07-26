@@ -17,7 +17,7 @@
 	parmtag	{ "vray_file_names" "OpenVDB,Field3D,Phoenix FD" }
 	parmtag	{ "vray_plugin" "PhxShaderCache" }
 	parmtag	{ "vray_pluginattr" "cache_path" }
-	parmtag	{ "vray_type" "String" }
+	parmtag	{ "vray_type" "string" }
     }
     parm {
 	name	"grid_size_x"
@@ -306,6 +306,6 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "PhxShaderCache" }
 	parmtag	{ "vray_pluginattr" "usrchmap" }
-	parmtag	{ "vray_type" "String" }
+	parmtag	{ "vray_type" "string" }
     }
 }

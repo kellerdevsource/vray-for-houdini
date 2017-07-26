@@ -15,7 +15,7 @@
 	parmtag	{ "filechooser_pattern" "*.vdb" }
 	parmtag	{ "vray_plugin" "GeomBifrost" }
 	parmtag	{ "vray_pluginattr" "file" }
-	parmtag	{ "vray_type" "String" }
+	parmtag	{ "vray_type" "string" }
     }
     parm {
 	name	"render_grid"
@@ -28,7 +28,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomBifrost" }
 	parmtag	{ "vray_pluginattr" "render_grid" }
-	parmtag	{ "vray_type" "String" }
+	parmtag	{ "vray_type" "string" }
     }
     parm {
 	name	"velocity_grid"
@@ -41,7 +41,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomBifrost" }
 	parmtag	{ "vray_pluginattr" "velocity_grid" }
-	parmtag	{ "vray_type" "String" }
+	parmtag	{ "vray_type" "string" }
     }
     parm {
 	name	"delay_load"

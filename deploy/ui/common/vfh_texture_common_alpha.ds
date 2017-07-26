@@ -44,7 +44,7 @@ groupcollapsible {
         range   { 0 64 }
         export  none
         parmtag { "cook_dependent" "1" }
-        parmtag {  "TexGradient" }
+        parmtag { "TexGradient" }
         parmtag { "vray_pluginattr" "alpha_offset" }
         parmtag { "vray_type" "TextureFloat" }
     }

@@ -36,9 +36,7 @@ OP_TemplatePair* VRayRendererNode::getTemplatePair()
 	static OP_TemplatePair *ropPair = nullptr;
 	if (!ropPair) {
 		if (prmList.empty()) {
-			UT_String uiPath = getenv("VRAY_UI_DS_PATH");
-			uiPath += "/rop";
-			prmList.addFromFile(Parm::expandUiPath("vfh_rop.ds").c_str(), uiPath.buffer());
+			prmList.addFromFile("vfh_rop.ds");
 
 			PRM_Template *prmTemplate = prmList.getPRMTemplate();
 

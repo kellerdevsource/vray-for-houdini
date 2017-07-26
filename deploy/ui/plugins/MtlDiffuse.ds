@@ -14,7 +14,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlDiffuse" }
 	parmtag	{ "vray_pluginattr" "diffuse" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"diffuse_tex"
@@ -52,7 +52,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlDiffuse" }
 	parmtag	{ "vray_pluginattr" "reflection" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"transparency"
@@ -65,6 +65,6 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlDiffuse" }
 	parmtag	{ "vray_pluginattr" "transparency" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
 }

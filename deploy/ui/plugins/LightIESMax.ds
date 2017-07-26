@@ -28,7 +28,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "LightIESMax" }
 	parmtag	{ "vray_pluginattr" "color" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"color_tex"
@@ -70,7 +70,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "LightIESMax" }
 	parmtag	{ "vray_pluginattr" "shadowColor" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"shadowColor_tex"
@@ -293,7 +293,7 @@
 	parmtag	{ "filechooser_pattern" "*.ies" }
 	parmtag	{ "vray_plugin" "LightIESMax" }
 	parmtag	{ "vray_pluginattr" "ies_file" }
-	parmtag	{ "vray_type" "String" }
+	parmtag	{ "vray_type" "string" }
     }
     parm {
 	name	"filter_color"
@@ -306,7 +306,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "LightIESMax" }
 	parmtag	{ "vray_pluginattr" "filter_color" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"soft_shadows"

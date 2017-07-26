@@ -135,7 +135,7 @@ void VRayExporter::setAttrsFromSHOPOverrides(Attrs::PluginDesc &pluginDesc, VOP_
 		return;
 	}
 
-	const Parm::VRayPluginInfo *pluginInfo = Parm::GetVRayPluginInfo( pluginDesc.pluginID );
+	const Parm::VRayPluginInfo *pluginInfo = Parm::getVRayPluginInfo(pluginDesc.pluginID.c_str());
 	if (!pluginInfo) {
 		return;
 	}
@@ -155,8 +155,8 @@ void VRayExporter::setAttrsFromSHOPOverrides(Attrs::PluginDesc &pluginDesc, VOP_
 		const std::string attrName = inpName.toStdString();
 		// plugin doesn't have such attribute or
 		// it has already been exported
-		if (   NOT(pluginInfo->attributes.count(attrName))
-			|| pluginDesc.contains(attrName) )
+		if (!pluginInfo->hasAttribute(attrName.c_str()) ||
+			pluginDesc.contains(attrName))
 		{
 			continue;
 		}
@@ -171,7 +171,7 @@ void VRayExporter::setAttrsFromSHOPOverrides(Attrs::PluginDesc &pluginDesc, VOP_
 			continue;
 		}
 
-		const Parm::AttrDesc &attrDesc = pluginInfo->attributes.at(attrName);
+		const Parm::AttrDesc &attrDesc = pluginInfo->getAttribute(attrName.c_str());
 		switch (attrDesc.value.type) {
 			case Parm::eBool:
 			case Parm::eEnum:

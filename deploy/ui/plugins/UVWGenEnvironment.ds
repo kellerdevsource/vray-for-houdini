@@ -26,7 +26,7 @@
 	parmtag	{ "vray_enumkeys" "angular,cubic,spherical,mirror_ball,screen,max_spherical,spherical_vray,max_cylindrical,max_shrink_wrap" }
 	parmtag	{ "vray_plugin" "UVWGenEnvironment" }
 	parmtag	{ "vray_pluginattr" "mapping_type" }
-	parmtag	{ "vray_type" "String" }
+	parmtag	{ "vray_type" "string" }
     }
     parm {
 	name	"wrap_u"

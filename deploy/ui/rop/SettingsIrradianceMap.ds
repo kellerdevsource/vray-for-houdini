@@ -279,7 +279,7 @@
 	parmtag	{ "vray_file_names" "V-Ray Irradiance map" }
 	parmtag	{ "vray_plugin" "SettingsIrradianceMap" }
 	parmtag	{ "vray_pluginattr" "file" }
-	parmtag	{ "vray_type" "String" }
+	parmtag	{ "vray_type" "string" }
     }
     parm {
 	name	"SettingsIrradianceMap_show_samples"
@@ -389,5 +389,5 @@
 	parmtag	{ "vray_file_names" "V-Ray Irradiance map" }
 	parmtag	{ "vray_plugin" "SettingsIrradianceMap" }
 	parmtag	{ "vray_pluginattr" "auto_save_file" }
-	parmtag	{ "vray_type" "String" }
+	parmtag	{ "vray_type" "string" }
     }

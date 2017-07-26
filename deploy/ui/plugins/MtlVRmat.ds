@@ -15,7 +15,7 @@
 	parmtag	{ "filechooser_pattern" "*.vrmat,*.vismat,*.vrscene" }
 	parmtag	{ "vray_plugin" "MtlVRmat" }
 	parmtag	{ "vray_pluginattr" "filename" }
-	parmtag	{ "vray_type" "String" }
+	parmtag	{ "vray_type" "string" }
     }
     parm {
 	name	"mtlname"
@@ -28,6 +28,6 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlVRmat" }
 	parmtag	{ "vray_pluginattr" "mtlname" }
-	parmtag	{ "vray_type" "String" }
+	parmtag	{ "vray_type" "string" }
     }
 }

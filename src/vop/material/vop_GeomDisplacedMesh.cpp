@@ -54,7 +54,7 @@ OP::VRayNode::PluginResult VOP::GeomDisplacedMesh::asPluginDesc(Attrs::PluginDes
 				&& fromSocketInfo->type >= Parm::ParmType::eOutputColor
 				&& fromSocketInfo->type  < Parm::ParmType::eUnknown)
 			{
-				pluginDesc.addAttribute(Attrs::PluginAttr("displacement_tex_color", texture, fromSocketInfo->name.getToken()));
+				pluginDesc.addAttribute(Attrs::PluginAttr("displacement_tex_color", texture, fromSocketInfo->attrName.ptr()));
 			}
 			else {
 				pluginDesc.addAttribute(Attrs::PluginAttr("displacement_tex_color", texture));
@@ -63,18 +63,18 @@ OP::VRayNode::PluginResult VOP::GeomDisplacedMesh::asPluginDesc(Attrs::PluginDes
 			if (NOT(texFloat)) {
 				// Check if plugin has "out_intensity" output
 				bool hasOutIntensity = false;
-				const Parm::VRayPluginInfo *texPluginInfo = Parm::GetVRayPluginInfo(texture.getType());
+				const Parm::VRayPluginInfo *texPluginInfo = Parm::getVRayPluginInfo(texture.getType());
 				if (NOT(texPluginInfo)) {
 					Log::getLog().error("Node \"%s\": Plugin \"%s\" description is not found!",
 										this->getName().buffer(), texture.getType());
 					return OP::VRayNode::PluginResultError;
 				}
-				if (texPluginInfo->outputs.size()) {
-					for (const auto &sock : texPluginInfo->outputs) {
-						if (StrEq(sock.name.getToken(), "out_intensity")) {
-							hasOutIntensity = true;
-							break;
-						}
+
+				for (int i = 0; i < texPluginInfo->outputs.count(); ++i) {
+					const Parm::SocketDesc &sock = texPluginInfo->outputs[i];
+					if (VUtils::isEqual(sock.attrName, "out_intensity")) {
+						hasOutIntensity = true;
+						break;
 					}
 				}
 
@@ -100,7 +100,7 @@ OP::VRayNode::PluginResult VOP::GeomDisplacedMesh::asPluginDesc(Attrs::PluginDes
 				&& fromSocketInfo->type >= Parm::ParmType::eOutputColor
 				&& fromSocketInfo->type  < Parm::ParmType::eUnknown)
 			{
-				pluginDesc.addAttribute(Attrs::PluginAttr("displacement_tex_float", texture, fromSocketInfo->name.getToken()));
+				pluginDesc.addAttribute(Attrs::PluginAttr("displacement_tex_float", texture, fromSocketInfo->attrName.ptr()));
 			}
 			else {
 				pluginDesc.addAttribute(Attrs::PluginAttr("displacement_tex_float", texture));

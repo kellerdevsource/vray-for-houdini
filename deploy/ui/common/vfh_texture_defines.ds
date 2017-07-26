@@ -1,0 +1,12 @@
+#define VFH_TEXTURE_OUTPUT(ATTR) \
+parm { \
+    name ATTR \
+    label ATTR \
+    type color4 \
+    parmtag { "cook_dependent" "1" } \
+    parmtag { "vray_label" ATTR } \
+    parmtag { "vray_pluginattr" ATTR } \
+    parmtag { "vray_type" "OutputTexture" } \
+    export none \
+    invisible \
+}

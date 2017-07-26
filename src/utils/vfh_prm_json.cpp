@@ -8,6 +8,8 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
+#if 0
+
 #include "vfh_defines.h"
 #include "vfh_prm_def.h"
 #include "vfh_prm_json.h"
@@ -71,136 +73,6 @@ using namespace VRayForHoudini;
 using namespace VRayForHoudini::Parm;
 
 
-typedef boost::property_tree::ptree       JsonTree;
-typedef JsonTree::value_type              JsonItem;
-typedef std::map<std::string, JsonTree>   JsonDescs;
-
-
-struct JsonPluginDescGenerator {
-public:
-	JsonPluginDescGenerator() {}
-	~JsonPluginDescGenerator() { freeData(); }
-
-	/// Get a json object for given pluginID
-	/// @pluginID - the requested plugin's ID
-	/// @return pointer - to the json describing the plugin
-	///         nullptr - json not found for given plugin ID
-	JsonTree *getTree(const std::string &pluginID);
-
-	/// Initialize settings pluginIDs
-	void init();
-	/// Check if we already loaded data from files
-	bool hasData() { return parsedData.size(); }
-	/// Load data from json files
-	void parseData();
-	/// Free all loaded data
-	void freeData();
-
-private:
-	JsonDescs  parsedData; ///< Json objects for all plugins
-
-	VfhDisableCopy(JsonPluginDescGenerator)
-} JsonPluginInfoParser;
-
-
-void JsonPluginDescGenerator::init()
-{
-	// Some compilers don't support initialization lists still.
-	// Move elsewhere...
-	//
-	// RenderSettingsPlugins.insert("SettingsRTEngine");
-
-	RenderSettingsPlugins.insert("SettingsOptions");
-	RenderSettingsPlugins.insert("SettingsColorMapping");
-	RenderSettingsPlugins.insert("SettingsDMCSampler");
-	RenderSettingsPlugins.insert("SettingsImageSampler");
-	RenderSettingsPlugins.insert("SettingsGI");
-	RenderSettingsPlugins.insert("SettingsIrradianceMap");
-	RenderSettingsPlugins.insert("SettingsLightCache");
-	RenderSettingsPlugins.insert("SettingsDMCGI");
-	RenderSettingsPlugins.insert("SettingsRaycaster");
-	RenderSettingsPlugins.insert("SettingsRegionsGenerator");
-	RenderSettingsPlugins.insert("SettingsOutput");
-	RenderSettingsPlugins.insert("SettingsCaustics");
-	RenderSettingsPlugins.insert("SettingsDefaultDisplacement");
-
-	RenderGIPlugins.insert("SettingsGI");
-	RenderGIPlugins.insert("SettingsLightCache");
-	RenderGIPlugins.insert("SettingsIrradianceMap");
-	RenderGIPlugins.insert("SettingsDMCGI");
-}
-
-
-void JsonPluginDescGenerator::parseData()
-{
-	Log::getLog().info("Parse plugin description data...");
-
-	const char *jsonDescsFilepath = getenv("VRAY_PLUGIN_DESC_PATH");
-	if (NOT(jsonDescsFilepath)) {
-		Log::getLog().error("VRAY_PLUGIN_DESC_PATH environment variable is not found!");
-		return;
-	}
-
-	QDirIterator it(jsonDescsFilepath, QDirIterator::Subdirectories);
-	while (it.hasNext()) {
-		const QString &filePath = it.next();
-		if (filePath.endsWith(".json")) {
-			QFileInfo fileInfo(filePath);
-
-#ifdef __APPLE__
-			std::ifstream fileStream(filePath.toAscii().constData());
-#else
-			std::ifstream fileStream(filePath.toStdString());
-#endif
-			const std::string &fileName = fileInfo.baseName().toStdString();
-
-			try {
-				JsonTree &pTree = parsedData[fileName];
-				boost::property_tree::json_parser::read_json(fileStream, pTree);
-			}
-			catch (...) {
-				Log::getLog().error("Error parsing %s",
-							fileName.c_str());
-			}
-		}
-	}
-
-	if (NOT(parsedData.size())) {
-		Log::getLog().error("No descriptions parsed! May be VRAY_PLUGIN_DESC_PATH points to an empty / incorrect directory?");
-	}
-}
-
-
-JsonTree* JsonPluginDescGenerator::getTree(const std::string &pluginID)
-{
-	return parsedData.count(pluginID) ? &parsedData[pluginID] : nullptr;
-}
-
-
-void JsonPluginDescGenerator::freeData()
-{
-	parsedData.clear();
-}
-
-
-static void makeSpaceSeparatedTitleCase(std::string &attrName)
-{
-	// Title case and "_" to space
-	for (int i = 0; i < attrName.length(); ++i) {
-		const char &c = attrName[i];
-		if (!(c >= 'A' && c <= 'Z')) {
-			if ((i == 0) || (attrName[i-1] == '_')) {
-				if (i) {
-					attrName[i-1] = ' ';
-				}
-				// Don't modify digits
-				if (!(c >= '0' && c <= '9')) {
-					attrName[i] -= 32;
-				}
-			}
-		}
-	}
-}
 
 
 VRayPluginInfo* Parm::generatePluginInfo(const std::string &pluginID)
@@ -215,36 +87,6 @@ VRayPluginInfo* Parm::generatePluginInfo(const std::string &pluginID)
 	const JsonTree *jsonPluginDesc = JsonPluginInfoParser.getTree(pluginID);
 	if (jsonPluginDesc) {
 		const std::string &pluginTypeStr = jsonPluginDesc->get_child("Type").data();
-
-		Parm::PluginType pluginType = Parm::PluginTypeUnknown;
-
-		if (pluginTypeStr == "BRDF") {
-			pluginType = Parm::PluginTypeBRDF;
-		}
-		else if (pluginTypeStr == "MATERIAL") {
-			pluginType = Parm::PluginTypeMaterial;
-		}
-		else if (pluginTypeStr == "UVWGEN") {
-			pluginType = Parm::PluginTypeUvwgen;
-		}
-		else if (pluginTypeStr == "TEXTURE") {
-			pluginType = Parm::PluginTypeTexture;
-		}
-		else if (pluginTypeStr == "GEOMETRY") {
-			pluginType = Parm::PluginTypeGeometry;
-		}
-		else if (pluginTypeStr == "RENDERCHANNEL") {
-			pluginType = Parm::PluginTypeRenderChannel;
-		}
-		else if (pluginTypeStr == "EFFECT") {
-			pluginType = Parm::PluginTypeEffect;
-		}
-		else if (pluginTypeStr == "SETTINGS") {
-			pluginType = Parm::PluginTypeSettings;
-		}
-		else if (pluginTypeStr == "LIGHT") {
-			pluginType = Parm::PluginTypeLight;
-		}
 
 		pluginInfo = Parm::NewVRayPluginInfo(pluginID);
 		pluginInfo->pluginType = pluginType;
@@ -323,14 +165,6 @@ VRayPluginInfo* Parm::generatePluginInfo(const std::string &pluginID)
 				// Skip was used in a meaning of non-automatic export,
 				// so param should be generated
 				attrDesc.custom_handling = v.second.get<bool>("skip");
-			}
-
-			if (v.second.count("name")) {
-				attrDesc.label = v.second.get_child("name").data();
-			}
-			else {
-				attrDesc.label = attrName;
-				makeSpaceSeparatedTitleCase(attrDesc.label);
 			}
 
 			if (v.second.count("options")) {
@@ -594,3 +428,5 @@ VRayPluginInfo* Parm::generatePluginInfo(const std::string &pluginID)
 
 	return pluginInfo;
 }
+
+#endif

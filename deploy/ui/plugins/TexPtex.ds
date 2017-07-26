@@ -15,7 +15,7 @@
 	parmtag	{ "filechooser_pattern" "*.ptx" }
 	parmtag	{ "vray_plugin" "TexPtex" }
 	parmtag	{ "vray_pluginattr" "ptex_file" }
-	parmtag	{ "vray_type" "String" }
+	parmtag	{ "vray_type" "string" }
     }
     parm {
 	name	"use_image_sequence"

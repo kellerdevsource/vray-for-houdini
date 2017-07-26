@@ -13,9 +13,6 @@
 
 #include "vfh_typedefs.h"
 
-#include <PRM/PRM_Name.h>
-#include <PRM/PRM_ChoiceList.h>
-
 namespace VRayForHoudini {
 namespace Parm {
 

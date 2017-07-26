@@ -17,7 +17,7 @@
 	parmtag	{ "vray_file_names" "V-Ray scene" }
 	parmtag	{ "vray_plugin" "SceneModifierTest" }
 	parmtag	{ "vray_pluginattr" "particle_scene" }
-	parmtag	{ "vray_type" "String" }
+	parmtag	{ "vray_type" "string" }
     }
     parm {
 	name	"proxy_scene"
@@ -33,7 +33,7 @@
 	parmtag	{ "vray_file_names" "V-Ray scene" }
 	parmtag	{ "vray_plugin" "SceneModifierTest" }
 	parmtag	{ "vray_pluginattr" "proxy_scene" }
-	parmtag	{ "vray_type" "String" }
+	parmtag	{ "vray_type" "string" }
     }
     parm {
 	name	"material_scene"
@@ -49,6 +49,6 @@
 	parmtag	{ "vray_file_names" "V-Ray scene" }
 	parmtag	{ "vray_plugin" "SceneModifierTest" }
 	parmtag	{ "vray_pluginattr" "material_scene" }
-	parmtag	{ "vray_type" "String" }
+	parmtag	{ "vray_type" "string" }
     }
 }

@@ -15,7 +15,7 @@
 	parmtag	{ "filechooser_pattern" "*.vrsh,*.xml" }
 	parmtag	{ "vray_plugin" "SphericalHarmonicsRenderer" }
 	parmtag	{ "vray_pluginattr" "file_name" }
-	parmtag	{ "vray_type" "String" }
+	parmtag	{ "vray_type" "string" }
     }
     parm {
 	name	"use_single_vrsh"

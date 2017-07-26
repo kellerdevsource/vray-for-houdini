@@ -198,7 +198,7 @@
 	parmtag	{ "vray_file_names" "V-Ray Light Cache map" }
 	parmtag	{ "vray_plugin" "SettingsLightCache" }
 	parmtag	{ "vray_pluginattr" "file" }
-	parmtag	{ "vray_type" "String" }
+	parmtag	{ "vray_type" "string" }
     }
     parm {
 	name	"SettingsLightCache_dont_delete"
@@ -243,7 +243,7 @@
 	parmtag	{ "vray_file_names" "V-Ray Light Cache map" }
 	parmtag	{ "vray_plugin" "SettingsLightCache" }
 	parmtag	{ "vray_pluginattr" "auto_save_file" }
-	parmtag	{ "vray_type" "String" }
+	parmtag	{ "vray_type" "string" }
     }
     parm {
 	name	"SettingsLightCache_num_passes"

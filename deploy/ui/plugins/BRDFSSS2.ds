@@ -289,7 +289,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFSSS2" }
 	parmtag	{ "vray_pluginattr" "background_color" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"samples_color"
@@ -302,7 +302,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFSSS2" }
 	parmtag	{ "vray_pluginattr" "samples_color" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"color_mode"

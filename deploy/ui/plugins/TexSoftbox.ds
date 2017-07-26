@@ -348,7 +348,7 @@
 	parmtag	{ "vray_custom_handling" "1" }
 	parmtag	{ "vray_plugin" "TexSoftbox" }
 	parmtag	{ "vray_pluginattr" "base_color" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"base_tex"
@@ -391,7 +391,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexSoftbox" }
 	parmtag	{ "vray_pluginattr" "base_tint" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"base_tint_strength"
@@ -631,7 +631,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexSoftbox" }
 	parmtag	{ "vray_pluginattr" "spots_tint" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"spots_tint_strength"
@@ -756,7 +756,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexSoftbox" }
 	parmtag	{ "vray_pluginattr" "frame_tint" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"frame_tint_strength"

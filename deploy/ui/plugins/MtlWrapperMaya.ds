@@ -135,7 +135,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlWrapperMaya" }
 	parmtag	{ "vray_pluginattr" "shadow_tint_color" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"shadow_brightness"

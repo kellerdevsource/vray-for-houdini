@@ -10,14 +10,14 @@
 
         parm {
             name "tex#blend_amount"
-            label "Blend Amount #"
+            label "Blend #"
             type float
             default { 1.0 }
         }
 
         parm {
             name "tex#blend_mode"
-            label "Blend Mode #"
+            label "Mode #"
             type ordinal
 
             menu {
@@ -52,7 +52,7 @@
         }
     }
 
-#include "$VRAY_UI_DS_PATH/vfh_texture_common_color.ds"
-#include "$VRAY_UI_DS_PATH/vfh_texture_common_alpha.ds"
-#include "$VRAY_UI_DS_PATH/vfh_texture_common_outputs.ds"
+#include "vfh_texture_common_color.ds"
+#include "vfh_texture_common_alpha.ds"
+#include "vfh_texture_common_outputs.ds"
 }

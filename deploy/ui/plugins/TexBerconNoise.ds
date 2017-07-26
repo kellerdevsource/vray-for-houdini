@@ -347,7 +347,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexBerconNoise" }
 	parmtag	{ "vray_pluginattr" "noise_color1" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"noise_color2"
@@ -361,7 +361,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexBerconNoise" }
 	parmtag	{ "vray_pluginattr" "noise_color2" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"noise_map1"

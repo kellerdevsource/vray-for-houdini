@@ -249,7 +249,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	parmtag	{ "vray_pluginattr" "reflect_exit_color" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"hilight_soften"
@@ -480,7 +480,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	parmtag	{ "vray_pluginattr" "refract_exit_color" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"refract_exit_color_on"
@@ -566,7 +566,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFVRayMtl" }
 	parmtag	{ "vray_pluginattr" "fog_color" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"fog_color_tex"
@@ -1039,4 +1039,6 @@
 	parmtag	{ "vray_pluginattr" "use_environment_override" }
 	parmtag	{ "vray_type" "boolean" }
     }
+
+#include "vfh_brdf_common.ds"
 }

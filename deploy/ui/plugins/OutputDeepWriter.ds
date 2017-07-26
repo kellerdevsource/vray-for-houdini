@@ -15,7 +15,7 @@
 	parmtag	{ "filechooser_pattern" "*.vrst" }
 	parmtag	{ "vray_plugin" "OutputDeepWriter" }
 	parmtag	{ "vray_pluginattr" "file" }
-	parmtag	{ "vray_type" "String" }
+	parmtag	{ "vray_type" "string" }
     }
     parm {
 	name	"float_colors_mode"

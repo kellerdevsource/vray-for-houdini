@@ -150,7 +150,7 @@ OP::VRayNode::PluginResult VOP::TexLayeredMax::asPluginDesc(Attrs::PluginDesc &p
 	}
 
 	if (!textures.size()) {
-		return PluginResult::PluginResultError;
+		return PluginResultError;
 	}
 
 	std::reverse(textures.begin(), textures.end());
@@ -161,5 +161,5 @@ OP::VRayNode::PluginResult VOP::TexLayeredMax::asPluginDesc(Attrs::PluginDesc &p
 	pluginDesc.add(Attrs::PluginAttr("blend_modes", blend_modes));
 	pluginDesc.add(Attrs::PluginAttr("opacities", opacities));
 
-	return PluginResult::PluginResultContinue;
+	return PluginResultContinue;
 }

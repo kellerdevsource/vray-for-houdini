@@ -29,7 +29,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexRGBTintMax" }
 	parmtag	{ "vray_pluginattr" "red" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"green"
@@ -43,7 +43,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexRGBTintMax" }
 	parmtag	{ "vray_pluginattr" "green" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"blue"
@@ -57,6 +57,6 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexRGBTintMax" }
 	parmtag	{ "vray_pluginattr" "blue" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
 }

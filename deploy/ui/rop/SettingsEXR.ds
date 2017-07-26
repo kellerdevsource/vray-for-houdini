@@ -50,7 +50,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsEXR" }
 	parmtag	{ "vray_pluginattr" "extra_attributes" }
-	parmtag	{ "vray_type" "String" }
+	parmtag	{ "vray_type" "string" }
     }
     parm {
 	name	"auto_data_window"

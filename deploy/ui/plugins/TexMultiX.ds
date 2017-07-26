@@ -171,6 +171,6 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexMultiX" }
 	parmtag	{ "vray_pluginattr" "def_color" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
 }

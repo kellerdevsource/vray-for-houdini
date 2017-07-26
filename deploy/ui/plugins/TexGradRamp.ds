@@ -72,6 +72,7 @@
         parmtag { "rampcolordefault" "1pos ( 0 ) 1c ( 0 0 1 ) 1interp ( linear )  2pos ( 1 ) 2c ( 1 0 0 ) 2interp ( linear )" }
         parmtag { "rampkeys_var" "positions" }
         parmtag { "rampvalues_var" "colors" }
+        parmtag { "rampbasis_var" "interpolation" }        
     }
 
     parm {
@@ -229,6 +230,5 @@
         }
     }
 
-#include "$VRAY_UI_DS_PATH/vfh_texture_common.ds"
-#include "$VRAY_UI_DS_PATH/vfh_texture_common_outputs.ds"
+#include "$VRAY_UI_DS_PATH/common/vfh_texture_common.ds"
 }

@@ -27,7 +27,7 @@
 	parmtag	{ "filechooser_pattern" "*.icc" }
 	parmtag	{ "vray_plugin" "TexICC" }
 	parmtag	{ "vray_pluginattr" "file" }
-	parmtag	{ "vray_type" "String" }
+	parmtag	{ "vray_type" "string" }
     }
     parm {
 	name	"render_intent"

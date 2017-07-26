@@ -1,0 +1,10 @@
+parm {
+    name "brdf"
+    label "BRDF"
+    type int
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_label" "brdf" }
+    parmtag { "vray_pluginattr" "" }
+    parmtag { "vray_type" "OutputPluginBRDF" }
+    invisible
+}

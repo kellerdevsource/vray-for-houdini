@@ -250,7 +250,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsVFB" }
 	parmtag	{ "vray_pluginattr" "glare_image_path" }
-	parmtag	{ "vray_type" "String" }
+	parmtag	{ "vray_type" "string" }
     }
     parm {
 	name	"glare_obstacle_image_path"
@@ -262,7 +262,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsVFB" }
 	parmtag	{ "vray_pluginattr" "glare_obstacle_image_path" }
-	parmtag	{ "vray_type" "String" }
+	parmtag	{ "vray_type" "string" }
     }
     parm {
 	name	"glare_diffraction_on"

@@ -62,6 +62,7 @@ set(EXPORTER_SOURCES
 	utils/vfh_prm_globals.cpp
 	utils/vfh_prm_json.cpp
 	utils/vfh_prm_templates.cpp
+	utils/vfh_sys_utils.cpp
 	lib/vfh_vray_instances.cpp
 )
 
@@ -94,6 +95,7 @@ set(EXPORTER_HEADERS
 	utils/vfh_prm_globals.h
 	utils/vfh_prm_json.h
 	utils/vfh_prm_templates.h
+	utils/vfh_sys_utils.h
 	lib/vfh_vray_instances.h
 )
 

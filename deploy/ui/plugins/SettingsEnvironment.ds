@@ -10,7 +10,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsEnvironment" }
 	parmtag	{ "vray_pluginattr" "bg_color" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"bg_tex"
@@ -51,7 +51,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsEnvironment" }
 	parmtag	{ "vray_pluginattr" "gi_color" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"gi_tex"
@@ -92,7 +92,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsEnvironment" }
 	parmtag	{ "vray_pluginattr" "reflect_color" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"reflect_tex"
@@ -133,7 +133,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsEnvironment" }
 	parmtag	{ "vray_pluginattr" "refract_color" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"refract_tex"
@@ -174,7 +174,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsEnvironment" }
 	parmtag	{ "vray_pluginattr" "secondary_matte_color" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"secondary_matte_tex"
@@ -228,7 +228,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SettingsEnvironment" }
 	parmtag	{ "vray_pluginattr" "global_light_level" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"use_bg"

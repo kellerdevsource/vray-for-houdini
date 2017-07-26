@@ -15,7 +15,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VolumeScatterFog" }
 	parmtag	{ "vray_pluginattr" "emission" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"color"
@@ -29,7 +29,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "VolumeScatterFog" }
 	parmtag	{ "vray_pluginattr" "color" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"color_tex"

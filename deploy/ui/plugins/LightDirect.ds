@@ -77,7 +77,7 @@
         parmtag	{ "cook_dependent" "1" }
         parmtag	{ "vray_plugin" "LightDirect" }
         parmtag	{ "vray_pluginattr" "color" }
-        parmtag	{ "vray_type" "Color" }
+        parmtag	{ "vray_type" "color" }
       }
       parm {
         name	"map_color"
@@ -190,7 +190,7 @@
       	parmtag	{ "cook_dependent" "1" }
       	parmtag	{ "vray_plugin" "LightDirect" }
       	parmtag	{ "vray_pluginattr" "shadowColor" }
-      	parmtag	{ "vray_type" "Color" }
+      	parmtag	{ "vray_type" "color" }
       }
       parm {
         name	"map_shadow_color"

@@ -10,6 +10,7 @@
 
 #include "vfh_prm_templates.h"
 #include "vfh_log.h"
+#include "vfh_sys_utils.h"
 
 #include <OP/OP_Node.h>
 #include <OP/OP_SpareParms.h>
@@ -18,13 +19,106 @@
 #include <PRM/PRM_ScriptParm.h>
 #include <PRM/DS_Stream.h>
 #include <UT/UT_IStream.h>
-#include <FS/FS_Info.h>
+
+#include <QDirIterator>
+#include <QMap>
+#include <QSet>
 
 #include <unordered_map>
 
-
 using namespace VRayForHoudini;
 
+static const char dsExt[] = ".ds";
+
+/// *.ds files storage directory path.
+static Sys::GetEnvVar uiRootPath("VRAY_UI_DS_PATH");
+
+/// *.ds file paths storage.
+struct DsFilesLocations
+{
+	typedef QMap<QString, QString> DsNameToPathMap;
+	typedef QSet<QString> DsIncludePaths;
+
+	DsFilesLocations()
+		: initialized(false)
+	{}
+
+	/// Returns *.ds file location.
+	/// @param fileName *.ds file name. Could be without extension.
+	QString getFilePath(const char *fileName) {
+		initFilesMap();
+
+		QFileInfo requestedFileInfo(fileName);
+
+		// We need only the file name here.
+		QString requestedFile = requestedFileInfo.fileName();
+
+		// Check extension.
+		if (!requestedFile.endsWith(dsExt)) {
+			requestedFile.append(dsExt);
+		}
+
+		DsNameToPathMap::const_iterator it = dsFiles.find(requestedFile);
+		if (it != dsFiles.end()) {
+			return it.value();
+		}
+
+		vassert(false && "Requested .ds file is not found!");
+
+		return QString();
+	}
+
+	/// Returns *.ds include paths.
+	const DsIncludePaths &getIncludePaths() {
+		initFilesMap();
+
+		return dsIncludePaths;
+	}
+
+private:
+	/// Iterates through *.ds files storage and builds name-path map.
+	void initFilesMap() {
+		if (initialized)
+			return;
+
+		QDir uiDir(uiRootPath.getValue());
+		if (!uiDir.exists()) {
+			Log::getLog().error("Invalid UI path!");
+			Log::getLog().error("Please, check if VRAY_UI_DS_PATH environment "
+								"variable is pointing to the correct location!");
+			_exit(0);
+		}
+
+		QDirIterator it(uiDir, QDirIterator::Subdirectories);
+		while (it.hasNext()) {
+			const QString &fileName = it.fileName();
+			const QString &filePath = it.fileInfo().absoluteFilePath();
+			const QString &dirPath  = it.fileInfo().path();
+
+			it.next();
+
+			if (!fileName.endsWith(dsExt))
+				continue;
+
+			// No duplicate file names are allowed.
+			vassert(!dsFiles.contains(fileName));
+
+			dsFiles.insert(fileName, filePath);
+			dsIncludePaths.insert(dirPath);
+		}
+
+		initialized = true;
+	}
+
+	/// A map of *.ds files locations.
+	DsNameToPathMap dsFiles;
+
+	/// Include paths for parsing *.ds files.
+	DsIncludePaths dsIncludePaths;
+
+	/// Initialization flag.
+	int initialized;
+} dsFilesLocations;
 
 int VRayForHoudini::Parm::isParmExist(const OP_Node &node, const std::string &attrName)
 {
@@ -112,8 +206,8 @@ int VRayForHoudini::Parm::getParmEnumExt(const OP_Node &node, const VRayForHoudi
 {
 	int value = node.evalInt(attrName.c_str(), 0, t);
 
-	if (value < attrDesc.value.defEnumItems.size()) {
-		const Parm::EnumItem &enumItem = attrDesc.value.defEnumItems[value];
+	if (value < attrDesc.value.enumInfo.size()) {
+		const Parm::EnumItem &enumItem = attrDesc.value.enumInfo[value];
 		if (enumItem.valueType == Parm::EnumItem::EnumValueInt) {
 			value = enumItem.value;
 		}
@@ -123,60 +217,9 @@ int VRayForHoudini::Parm::getParmEnumExt(const OP_Node &node, const VRayForHoudi
 }
 
 
-std::string Parm::expandUiPath(const std::string &relPath)
+std::string Parm::expandUiPath(const char *filePath)
 {
-	static const char *uiroot = getenv("VRAY_UI_DS_PATH");
-	if (!UTisstring(uiroot)) {
-		Log::getLog().error("Invalid UI path. Please check if VRAY_UI_DS_PATH env var is pointing to the correct path.");
-	}
-
-	static FS_Info fsuiroot(uiroot);
-	if (   !fsuiroot.exists()
-		|| !fsuiroot.getIsDirectory() ) {
-		Log::getLog().error("Invalid UI path: %s. Please check if VRAY_UI_DS_PATH env var is pointing to the correct path.",
-							uiroot);
-		return "";
-	}
-
-	UT_String uipath = fsuiroot.path().c_str();
-	uipath += "/";
-	uipath += relPath;
-	FS_Info fsuipath(uipath);
-	if (fsuipath.fileExists()) {
-		return uipath.toStdString();
-	}
-
-	UT_StringArray files;
-	UT_StringArray dirs;
-	dirs.append(uiroot);
-
-	do {
-		uipath = dirs.last();
-		dirs.removeLast();
-
-		int idx = dirs.size();
-		FS_Info::getContentsFromDiskPath(uipath, files, &dirs);
-		for (int i = 0; i < files.size(); ++i) {
-			UT_String path = uipath;
-			path += "/";
-			path += files(i);
-			if (path.endsWith(relPath.c_str())) {
-				return path.toStdString();
-			}
-		}
-
-		for (int i = idx; i < dirs.size(); ++i) {
-			UT_String path = uipath;
-			path += "/";
-			path += dirs(i);
-			dirs(i) = path;
-		}
-
-	} while (dirs.size() > 0);
-
-	Log::getLog().error("Invalid UI path requested: %s.",
-						relPath.c_str());
-	return "";
+	return dsFilesLocations.getFilePath(filePath).toStdString();
 }
 
 
@@ -186,8 +229,7 @@ bool Parm::addPrmTemplateForPlugin(const std::string &pluginID, Parm::PRMList &p
 		return false;
 	}
 
-	static boost::format dspath("plugins/%s.ds");
-	const std::string dsfullpath = Parm::expandUiPath( boost::str(dspath % pluginID) );
+	const std::string dsfullpath = Parm::expandUiPath(pluginID.c_str());
 	if (dsfullpath.empty()) {
 		return false;
 	}
@@ -408,19 +450,18 @@ Parm::PRMList& Parm::PRMList::addFolder(const char *label)
 }
 
 
-Parm::PRMList& Parm::PRMList::addFromFile(const char *filepath, const char *includePath)
+Parm::PRMList& Parm::PRMList::addFromFile(const char *filepath)
 {
-	if (!UTisstring(filepath)) {
-		return *this;
+	const QString &dsFilePath = dsFilesLocations.getFilePath(filepath);
+	const DsFilesLocations::DsIncludePaths &incPaths = dsFilesLocations.getIncludePaths();
+
+	DS_Stream stream(dsFilePath.toLocal8Bit().constData());
+	for (const QString &incPath : incPaths) {
+		stream.addIncludePath(incPath.toLocal8Bit().constData());
 	}
 
-	DS_Stream stream(filepath);
-	if (includePath && *includePath) {
-		stream.addIncludePath(includePath);
-	}
-
-	// need to keep all the pages as myTemplate will have references to it
-	std::shared_ptr< PRM_ScriptGroup > group = std::make_shared< PRM_ScriptGroup >(nullptr);
+	// Need to keep all the pages as myTemplate will have references to it.
+	std::shared_ptr<PRM_ScriptGroup> group = std::make_shared<PRM_ScriptGroup>(nullptr);
 
 	int res = -1;
 	while ((res = stream.getOpenBrace()) > 0) {

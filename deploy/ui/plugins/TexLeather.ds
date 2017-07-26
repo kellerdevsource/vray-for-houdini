@@ -456,7 +456,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexLeather" }
 	parmtag	{ "vray_pluginattr" "cell_color" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"crease_color"
@@ -469,7 +469,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexLeather" }
 	parmtag	{ "vray_pluginattr" "crease_color" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"cell_color_tex_mult"

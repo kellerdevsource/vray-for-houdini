@@ -35,7 +35,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexModoEnvironmentColor" }
 	parmtag	{ "vray_pluginattr" "zenith_color" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"sky_color"
@@ -48,7 +48,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexModoEnvironmentColor" }
 	parmtag	{ "vray_pluginattr" "sky_color" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"ground_color"
@@ -61,7 +61,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexModoEnvironmentColor" }
 	parmtag	{ "vray_pluginattr" "ground_color" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"nadir_color"
@@ -74,7 +74,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexModoEnvironmentColor" }
 	parmtag	{ "vray_pluginattr" "nadir_color" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"sky_exponent"

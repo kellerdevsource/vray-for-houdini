@@ -339,7 +339,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "ColorCorrection" }
 	parmtag	{ "vray_pluginattr" "adv_rgb_brightness" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"adv_rgb_contrast"
@@ -353,7 +353,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "ColorCorrection" }
 	parmtag	{ "vray_pluginattr" "adv_rgb_contrast" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"adv_rgb_base"
@@ -367,7 +367,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "ColorCorrection" }
 	parmtag	{ "vray_pluginattr" "adv_rgb_base" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"adv_rgb_offset"
@@ -381,6 +381,6 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "ColorCorrection" }
 	parmtag	{ "vray_pluginattr" "adv_rgb_offset" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
 }

@@ -14,7 +14,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "PhxShaderPGroup" }
 	parmtag	{ "vray_pluginattr" "pgroup" }
-	parmtag	{ "vray_type" "String" }
+	parmtag	{ "vray_type" "string" }
     }
     parm {
 	name	"lifespan_mode"

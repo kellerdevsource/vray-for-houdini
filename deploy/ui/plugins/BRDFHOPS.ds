@@ -14,7 +14,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFHOPS" }
 	parmtag	{ "vray_pluginattr" "transparency" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"transparency_tex"
@@ -208,7 +208,7 @@
 	parmtag	{ "filechooser_pattern" "*.csv" }
 	parmtag	{ "vray_plugin" "BRDFHOPS" }
 	parmtag	{ "vray_pluginattr" "csv_path" }
-	parmtag	{ "vray_type" "String" }
+	parmtag	{ "vray_type" "string" }
     }
     parm {
 	name	"csv_color_filter"
@@ -221,7 +221,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFHOPS" }
 	parmtag	{ "vray_pluginattr" "csv_color_filter" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"flakes_csv_path"
@@ -234,7 +234,7 @@
 	parmtag	{ "filechooser_pattern" "*.flakecsv" }
 	parmtag	{ "vray_plugin" "BRDFHOPS" }
 	parmtag	{ "vray_pluginattr" "flakes_csv_path" }
-	parmtag	{ "vray_type" "String" }
+	parmtag	{ "vray_type" "string" }
     }
     parm {
 	name	"coat_color"

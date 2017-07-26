@@ -301,7 +301,7 @@
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "CameraPhysical" }
         parmtag { "vray_pluginattr" "white_balance" }
-        parmtag { "vray_type" "Color" }
+        parmtag { "vray_type" "color" }
     }
 
     parm {
@@ -458,7 +458,7 @@
         parmtag { "filechooser_pattern" "*.vrlens" }
         parmtag { "vray_plugin" "CameraPhysical" }
         parmtag { "vray_pluginattr" "lens_file" }
-        parmtag { "vray_type" "String" }
+        parmtag { "vray_type" "string" }
     }
 
     parm {

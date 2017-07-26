@@ -13,7 +13,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexVertexColorDirect" }
 	parmtag	{ "vray_pluginattr" "color_set_name" }
-	parmtag	{ "vray_type" "String" }
+	parmtag	{ "vray_type" "string" }
     }
     parm {
 	name	"default_color"

@@ -14,7 +14,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "SphereFade" }
 	parmtag	{ "vray_pluginattr" "empty_color" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"affect_alpha"

@@ -14,7 +14,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "UVWGenModo" }
 	parmtag	{ "vray_pluginattr" "uv_set_name" }
-	parmtag	{ "vray_type" "String" }
+	parmtag	{ "vray_type" "string" }
     }
     parm {
 	name	"uvwgen_has_local_tm"

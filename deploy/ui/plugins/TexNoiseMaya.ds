@@ -371,7 +371,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexNoiseMaya" }
 	parmtag	{ "vray_pluginattr" "color1" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"color2"
@@ -385,7 +385,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexNoiseMaya" }
 	parmtag	{ "vray_pluginattr" "color2" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"color1_tex"

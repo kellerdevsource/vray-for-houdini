@@ -14,7 +14,7 @@
 	parmtag	{ "filechooser_pattern" "*.glsl" }
 	parmtag	{ "vray_plugin" "MtlGLSL" }
 	parmtag	{ "vray_pluginattr" "shader_file" }
-	parmtag	{ "vray_type" "String" }
+	parmtag	{ "vray_type" "string" }
     }
     parm {
 	name	"shader_node"
@@ -27,7 +27,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlGLSL" }
 	parmtag	{ "vray_pluginattr" "shader_node" }
-	parmtag	{ "vray_type" "String" }
+	parmtag	{ "vray_type" "string" }
     }
     parm {
 	name	"transparency"
@@ -40,7 +40,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "MtlGLSL" }
 	parmtag	{ "vray_pluginattr" "transparency" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"transparency_tex"

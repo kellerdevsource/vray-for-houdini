@@ -1414,7 +1414,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "PhxShaderSim" }
 	parmtag	{ "vray_pluginattr" "material_id" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"volnorm"
@@ -1660,7 +1660,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "PhxShaderSim" }
 	parmtag	{ "vray_pluginattr" "ecolor" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"etmult"
@@ -1721,7 +1721,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "PhxShaderSim" }
 	parmtag	{ "vray_pluginattr" "dcolor" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"transp"

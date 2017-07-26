@@ -15,7 +15,7 @@
 	parmtag	{ "vray_custom_handling" "1" }
 	parmtag	{ "vray_plugin" "BRDFDiffuse" }
 	parmtag	{ "vray_pluginattr" "color" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"color_tex"
@@ -55,7 +55,7 @@
 	parmtag	{ "vray_custom_handling" "1" }
 	parmtag	{ "vray_plugin" "BRDFDiffuse" }
 	parmtag	{ "vray_pluginattr" "transparency" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"transparency_tex"

@@ -219,7 +219,7 @@ void VRayExporter::setAttrValueFromOpNodePrm(Attrs::PluginDesc &pluginDesc, cons
 						   opNode.getName().buffer(), parmName.c_str());
 #endif
 		Attrs::PluginAttr attr;
-		attr.paramName = attrDesc.attr;
+		attr.paramName = attrDesc.attr.ptr();
 
 		if (attrDesc.value.type == Parm::eBool ||
 			attrDesc.value.type == Parm::eInt  ||
@@ -231,11 +231,12 @@ void VRayExporter::setAttrValueFromOpNodePrm(Attrs::PluginDesc &pluginDesc, cons
 		else if (attrDesc.value.type == Parm::eEnum) {
 			const int menuIndex = opNode.evalInt(parmName.c_str(), 0, t);
 
-			if (menuIndex < 0 || menuIndex >= attrDesc.value.defEnumItems.size()) {
+			if (menuIndex < 0 || menuIndex >= attrDesc.value.enumInfo.size()) {
 				Log::getLog().error("Param enum value out-of-bounds index %s::%s",
-					pluginDesc.pluginID.c_str(), attrDesc.attr.c_str());
-			} else {
-				const Parm::EnumItem &enumItem = attrDesc.value.defEnumItems[menuIndex];
+					pluginDesc.pluginID.c_str(), attrDesc.attr.ptr());
+			}
+			else {
+				const Parm::EnumItem &enumItem = attrDesc.value.enumInfo[menuIndex];
 				if (enumItem.valueType == Parm::EnumItem::EnumValueInt) {
 					attr.paramType = Attrs::PluginAttr::AttrTypeInt;
 					attr.paramValue.valInt = enumItem.value;
@@ -251,7 +252,7 @@ void VRayExporter::setAttrValueFromOpNodePrm(Attrs::PluginDesc &pluginDesc, cons
 			attr.paramType = Attrs::PluginAttr::AttrTypeFloat;
 			attr.paramValue.valFloat = (float)opNode.evalFloat(parmName.c_str(), 0, t);
 
-			if (attrDesc.convert_to_radians) {
+			if (attrDesc.flags & Parm::attrFlagToRadians) {
 				attr.paramValue.valFloat *= Attrs::RAD_TO_DEG;
 			}
 		}
@@ -325,7 +326,7 @@ VRay::Transform VRayExporter::exportTransformVop(VOP_Node &vop_node, ExportConte
 
 void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDesc, VOP_Node *vopNode, ExportContext *parentContext)
 {
-	const Parm::VRayPluginInfo *pluginInfo = Parm::GetVRayPluginInfo( pluginDesc.pluginID );
+	const Parm::VRayPluginInfo *pluginInfo = Parm::getVRayPluginInfo(pluginDesc.pluginID.c_str());
 	
 	if (NOT(pluginInfo)) {
 		Log::getLog().error("Node \"%s\": Plugin \"%s\" description is not found!",
@@ -333,27 +334,32 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 		return;
 	}
 
+	OP::VRayNode *vrayNode = dynamic_cast<OP::VRayNode*>(vopNode);
+	vassert(vrayNode);
+
 	// handle connected VOP inputs
-	for (const auto &inSockInfo : pluginInfo->inputs) {
-		const std::string attrName = inSockInfo.name.getToken();
-		if (   NOT(pluginInfo->attributes.count(attrName))
-			|| pluginDesc.contains(attrName) )
+	for (int i = 0; i < pluginInfo->inputs.count(); ++i) {
+		const Parm::SocketDesc &inSockInfo = pluginInfo->inputs[i];
+
+		const std::string attrName = inSockInfo.attrName.ptr();
+
+		if (!pluginInfo->hasAttribute(attrName.c_str()) ||
+			pluginDesc.contains(attrName) )
 		{
 			continue;
 		}
 
-		const Parm::AttrDesc &attrDesc = pluginInfo->attributes.at(attrName);
-		if ( attrDesc.custom_handling ) {
+		const Parm::AttrDesc &attrDesc = pluginInfo->getAttribute(attrName.c_str());
+		if (attrDesc.flags & Parm::attrFlagCustomHandling) {
 			continue;
 		}
 
 		VRay::Plugin plugin_value = exportConnectedVop(vopNode, attrName.c_str(), parentContext);
 
 		if (NOT(plugin_value)) {
-
-			if (  NOT(attrDesc.linked_only)
-				&& pluginInfo->pluginType == Parm::PluginTypeTexture
-				&& attrName == "uvwgen" )
+			if (!(attrDesc.flags & Parm::attrFlagLinkedOnly) &&
+				vrayNode->getVRayPluginType() == VRayPluginType::TEXTURE &&
+				attrName == "uvwgen" )
 			{
 				Attrs::PluginDesc uvwGen(VRayExporter::getPluginName(vopNode, "Uvw"), "UVWGenObject");
 				plugin_value = exportPlugin(uvwGen);
@@ -364,16 +370,16 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 				if (inpvop) {
 					if (inpvop->getOperator()->getName() == "makexform") {
 						switch (inSockInfo.type) {
-							case Parm::eMatrix:
-							{
+							case Parm::eMatrix: {
 								pluginDesc.addAttribute(Attrs::PluginAttr(attrName, exportTransformVop(*inpvop, parentContext).matrix));
 								break;
 							}
-							case Parm::eTransform:
-							{
+							case Parm::eTransform: {
 								pluginDesc.addAttribute(Attrs::PluginAttr(attrName, exportTransformVop(*inpvop, parentContext)));
 								break;
 							}
+							default:
+								break;
 						}
 					}
 				}
@@ -381,20 +387,17 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 		}
 
 		if (plugin_value) {
-			//if plugin value is type brdf insert single
-			const Parm::VRayPluginInfo *childPluginInfo = Parm::GetVRayPluginInfo( plugin_value.getType() );
-
-			if(childPluginInfo->pluginType == Parm::PluginType::PluginTypeBRDF 
-					&& pluginDesc.pluginID != "MtlSingleBRDF" 
-					&& pluginInfo->pluginType == Parm::PluginType::PluginTypeMaterial)
-			{
-				Attrs::PluginDesc mtlPluginDesc(VRayExporter::getPluginName(vopNode, "Mtl"), "MtlSingleBRDF");
-				mtlPluginDesc.addAttribute(Attrs::PluginAttr("brdf", plugin_value));
-				plugin_value = exportPlugin(mtlPluginDesc);
+			OP::VRayNode *conVRayNode = dynamic_cast<OP::VRayNode*>(getConnectedNode(vopNode, attrName));
+			if (conVRayNode) {
+				// If we're connecting BRDF to the material socket we need to wrap it into MtlSingleBRDF.
+				if (inSockInfo.vopType == VOP_SURFACE_SHADER && 
+					conVRayNode->getVRayPluginType() == VRayPluginType::BRDF)
+				{
+					Attrs::PluginDesc mtlPluginDesc(VRayExporter::getPluginName(vopNode, "Mtl"), "MtlSingleBRDF");
+					mtlPluginDesc.addAttribute(Attrs::PluginAttr("brdf", plugin_value));
+					plugin_value = exportPlugin(mtlPluginDesc);
+				}
 			}
-
-			Log::getLog().info("  Setting plugin value: %s = %s",
-							   attrName.c_str(), plugin_value.getName());
 
 			const Parm::SocketDesc *fromSocketInfo = getConnectedOutputType(vopNode, attrName.c_str());
 
@@ -402,13 +405,12 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 				fromSocketInfo->type >= Parm::ParmType::eOutputColor &&
 				fromSocketInfo->type  < Parm::ParmType::eUnknown)
 			{
-				Log::getLog().info("    Using output: %s (\"%s\")",
-								   fromSocketInfo->name.getToken(), fromSocketInfo->name.getLabel());
-				pluginDesc.addAttribute(Attrs::PluginAttr(attrName, plugin_value, fromSocketInfo->name.getToken()));
+				pluginDesc.addAttribute(Attrs::PluginAttr(attrName, plugin_value, fromSocketInfo->attrName.ptr()));
 			}
 			else {
 				pluginDesc.addAttribute(Attrs::PluginAttr(attrName, plugin_value));
 			}
+
 		}
 	}
 }
@@ -416,20 +418,20 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 
 void VRayExporter::setAttrsFromOpNodePrms(Attrs::PluginDesc &pluginDesc, OP_Node *opNode, const std::string &prefix, bool remapInterp)
 {
-	const Parm::VRayPluginInfo *pluginInfo = Parm::GetVRayPluginInfo(pluginDesc.pluginID);
+	const Parm::VRayPluginInfo *pluginInfo = Parm::getVRayPluginInfo(pluginDesc.pluginID.c_str());
 	if (NOT(pluginInfo)) {
 		Log::getLog().error("Node \"%s\": Plugin \"%s\" description is not found!",
 							opNode->getName().buffer(), pluginDesc.pluginID.c_str());
 	}
 	else {
-		for (const auto &aIt : pluginInfo->attributes) {
-			const std::string    &attrName = aIt.first;
-			const Parm::AttrDesc &attrDesc = aIt.second;
+		FOR_CONST_IT (Parm::AttributeDescs, aIt, pluginInfo->attributes) {
+			const std::string    &attrName = aIt.key();
+			const Parm::AttrDesc &attrDesc = aIt.data();
 
-			if (!(pluginDesc.contains(attrName) || attrDesc.custom_handling)) {
+			if (!(pluginDesc.contains(attrName) || attrDesc.flags & Parm::attrFlagCustomHandling)) {
 				const std::string &parmName = prefix.empty()
-											  ? attrDesc.attr
-											  : boost::str(Parm::FmtPrefixManual % prefix % attrDesc.attr);
+											  ? attrDesc.attr.ptr()
+											  : boost::str(Parm::FmtPrefixManual % prefix % attrDesc.attr.ptr());
 
 				const PRM_Parm *parm = Parm::getParm(*opNode, parmName);
 
@@ -441,9 +443,8 @@ void VRayExporter::setAttrsFromOpNodePrms(Attrs::PluginDesc &pluginDesc, OP_Node
 					}
 				}
 
-				bool isTextureAttr = (   attrDesc.value.type == Parm::eTextureInt
-									|| attrDesc.value.type == Parm::eTextureFloat
-									|| attrDesc.value.type == Parm::eTextureColor);
+				const bool isTextureAttr = attrDesc.value.type >= Parm::eTextureColor &&
+				                           attrDesc.value.type <= Parm::eTextureTransform;
 
 				if ( isTextureAttr
 					&& parm
@@ -459,7 +460,7 @@ void VRayExporter::setAttrsFromOpNodePrms(Attrs::PluginDesc &pluginDesc, OP_Node
 						}
 					}
 				}
-				else if (!attrDesc.linked_only) {
+				else if (!(attrDesc.flags & Parm::attrFlagLinkedOnly)) {
 					if (attrDesc.value.type == Parm::eRamp) {
 						static StringSet rampColorAsPluginList;
 						if (rampColorAsPluginList.empty()) {
@@ -471,9 +472,9 @@ void VRayExporter::setAttrsFromOpNodePrms(Attrs::PluginDesc &pluginDesc, OP_Node
 
 						Texture::exportRampAttribute(*this, pluginDesc, opNode,
 													 /* Houdini ramp attr */ parmName,
-													 /* V-Ray attr: colors */ attrDesc.value.defRamp.colors,
-													 /* V-Ray attr: pos    */ attrDesc.value.defRamp.positions,
-													 /* V-Ray attr: interp */ attrDesc.value.defRamp.interpolations,
+													 /* V-Ray attr: colors */ attrDesc.value.colorRampInfo.colors,
+													 /* V-Ray attr: pos    */ attrDesc.value.colorRampInfo.positions,
+													 /* V-Ray attr: interp */ attrDesc.value.colorRampInfo.interpolations,
 													 /* As color list not plugin */ asColorList,
 													 /* Remap to vray interpolations*/ remapInterp);
 
@@ -484,7 +485,7 @@ void VRayExporter::setAttrsFromOpNodePrms(Attrs::PluginDesc &pluginDesc, OP_Node
 						VRay::IntList    interpolations;
 						VRay::FloatList  positions;
 						VRay::FloatList  values;
-						VRay::FloatList *valuesPtr = attrDesc.value.defCurve.values.empty()
+						VRay::FloatList *valuesPtr = attrDesc.value.curveRampInfo.values.empty()
 													 ? nullptr
 													 : &values;
 
@@ -496,10 +497,10 @@ void VRayExporter::setAttrsFromOpNodePrms(Attrs::PluginDesc &pluginDesc, OP_Node
 											  /* Don't need handles */ false,
 											  /* Remap to vray interpolations*/ remapInterp);
 
-						pluginDesc.addAttribute(Attrs::PluginAttr(attrDesc.value.defCurve.interpolations, interpolations));
-						pluginDesc.addAttribute(Attrs::PluginAttr(attrDesc.value.defCurve.positions,      positions));
+						pluginDesc.addAttribute(Attrs::PluginAttr(attrDesc.value.curveRampInfo.interpolations, interpolations));
+						pluginDesc.addAttribute(Attrs::PluginAttr(attrDesc.value.curveRampInfo.positions,      positions));
 						if (valuesPtr) {
-							pluginDesc.addAttribute(Attrs::PluginAttr(attrDesc.value.defCurve.values,     values));
+							pluginDesc.addAttribute(Attrs::PluginAttr(attrDesc.value.curveRampInfo.values,     values));
 						}
 					}
 					else {
@@ -516,21 +517,21 @@ bool VRayExporter::setAttrsFromUTOptions(Attrs::PluginDesc &pluginDesc, const UT
 {
 	bool res = false;
 
-	const Parm::VRayPluginInfo *pluginInfo = Parm::GetVRayPluginInfo(pluginDesc.pluginID);
+	const Parm::VRayPluginInfo *pluginInfo = Parm::getVRayPluginInfo(pluginDesc.pluginID.c_str());
 	if (NOT(pluginInfo)) {
 		return res;
 	}
 
-	for (const auto &aIt : pluginInfo->attributes) {
-		const std::string    &attrName = aIt.first;
-		const Parm::AttrDesc &attrDesc = aIt.second;
+	FOR_CONST_IT (Parm::AttributeDescs, aIt, pluginInfo->attributes) {
+		const std::string    &attrName = aIt.key();
+		const Parm::AttrDesc &attrDesc = aIt.data();
 
 		if (NOT(options.hasOption(attrName))) {
 			continue;
 		}
 
 		Attrs::PluginAttr attr;
-		attr.paramName = attrDesc.attr;
+		attr.paramName = attrDesc.attr.ptr();
 
 		if (   attrDesc.value.type == Parm::eBool
 			|| attrDesc.value.type == Parm::eInt
@@ -540,7 +541,7 @@ bool VRayExporter::setAttrsFromUTOptions(Attrs::PluginDesc &pluginDesc, const UT
 			attr.paramValue.valInt = options.getOptionI(attrName);
 		}
 		else if (attrDesc.value.type == Parm::eEnum) {
-			const Parm::EnumItem &enumItem = attrDesc.value.defEnumItems.at(0);
+			const Parm::EnumItem &enumItem = attrDesc.value.enumInfo.at(0);
 			if (enumItem.valueType == Parm::EnumItem::EnumValueInt) {
 				attr.paramType = Attrs::PluginAttr::AttrTypeInt;
 				attr.paramValue.valInt = options.getOptionI(attrName);
@@ -556,7 +557,7 @@ bool VRayExporter::setAttrsFromUTOptions(Attrs::PluginDesc &pluginDesc, const UT
 			attr.paramType = Attrs::PluginAttr::AttrTypeFloat;
 			attr.paramValue.valFloat = options.getOptionF(attrName);
 
-			if (attrDesc.convert_to_radians) {
+			if (attrDesc.flags & Parm::attrFlagToRadians) {
 				attr.paramValue.valFloat *= Attrs::RAD_TO_DEG;
 			}
 		}
@@ -712,7 +713,7 @@ void VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 void VRayExporter::exportSettings()
 {
 	for (const auto &sp : Parm::RenderSettingsPlugins) {
-		const Parm::VRayPluginInfo *pluginInfo = Parm::GetVRayPluginInfo(sp);
+		const Parm::VRayPluginInfo *pluginInfo = Parm::getVRayPluginInfo(sp.c_str());
 		if (!pluginInfo) {
 			Log::getLog().error("Plugin \"%s\" description is not found!",
 								sp.c_str());
@@ -801,7 +802,7 @@ const Parm::SocketDesc* VRayExporter::getConnectedOutputType(OP_Node *op_node, c
 
 				const int &fromOutputIdx = fromOutput->getNodeOutputIndex();
 
-				if (fromOutputIdx < pluginInfo->outputs.size()) {
+				if (fromOutputIdx < pluginInfo->outputs.count()) {
 					return &pluginInfo->outputs[fromOutputIdx];
 				}
 			}
@@ -1142,18 +1143,18 @@ void VRayExporter::exportDisplacementDesc(OBJ_Node *obj_node, Attrs::PluginDesc 
 
 				// Check if plugin has "out_intensity" output
 				bool hasOutIntensity = false;
-				const Parm::VRayPluginInfo *texPluginInfo = Parm::GetVRayPluginInfo(texture.getType());
+				const Parm::VRayPluginInfo *texPluginInfo = Parm::getVRayPluginInfo(texture.getType());
 				if (NOT(texPluginInfo)) {
 					Log::getLog().error("Node \"%s\": Plugin \"%s\" description is not found!",
 										obj_node->getName().buffer(), texture.getType());
 					return;
 				}
-				if (texPluginInfo->outputs.size()) {
-					for (const auto &sock : texPluginInfo->outputs) {
-						if (StrEq(sock.name.getToken(), "out_intensity")) {
-							hasOutIntensity = true;
-							break;
-						}
+
+				for (int i = 0; i < texPluginInfo->outputs.count(); ++i) {
+					const Parm::SocketDesc &sock = texPluginInfo->outputs[i];
+					if (VUtils::isEqual(sock.attrName, "out_intensity")) {
+						hasOutIntensity = true;
+						break;
 					}
 				}
 

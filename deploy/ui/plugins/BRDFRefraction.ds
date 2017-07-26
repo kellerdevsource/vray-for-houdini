@@ -14,7 +14,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFRefraction" }
 	parmtag	{ "vray_pluginattr" "color" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"color_tex"
@@ -52,7 +52,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFRefraction" }
 	parmtag	{ "vray_pluginattr" "transparency" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"transparency_tex"
@@ -201,7 +201,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFRefraction" }
 	parmtag	{ "vray_pluginattr" "reflect_exit_color" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"refract_exit_color"
@@ -215,7 +215,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFRefraction" }
 	parmtag	{ "vray_pluginattr" "refract_exit_color" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"fog_color"
@@ -229,7 +229,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFRefraction" }
 	parmtag	{ "vray_pluginattr" "fog_color" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"fog_color_mult"
@@ -256,7 +256,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFRefraction" }
 	parmtag	{ "vray_pluginattr" "fog_emission" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"fog_bias"
@@ -441,7 +441,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "BRDFRefraction" }
 	parmtag	{ "vray_pluginattr" "translucency" }
-	parmtag	{ "vray_type" "Color" }
+	parmtag	{ "vray_type" "color" }
     }
     parm {
 	name	"translucency_tex"
