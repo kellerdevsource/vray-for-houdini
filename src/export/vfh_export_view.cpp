@@ -82,6 +82,9 @@ void VRayExporter::RtCallbackView(OP_Node *caller, void *callee, OP_EventType ty
 
 static float getLensShift(const OBJ_Node &camera, OP_Context &context)
 {
+#if 1
+	return 0.0f;
+#else
 	const VRay::Transform &tm = VRayExporter::getObjTransform(camera.castToOBJNode(), context);
 	
 	const VRay::Vector &v0 = tm.matrix.v1;
@@ -94,6 +97,7 @@ static float getLensShift(const OBJ_Node &camera, OP_Context &context)
 	const float shift = -d / sqrtf(1.0f - dd);
 
 	return shift;
+#endif
 }
 
 static void aspectCorrectFovOrtho(ViewParams &viewParams)
