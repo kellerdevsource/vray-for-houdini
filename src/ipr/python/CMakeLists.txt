@@ -55,6 +55,5 @@ set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME _vfh_ipr)
 if (WIN32)
 	set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".pyd")
 endif()
-set(VFH_IPR_PYTHON ${PROJECT_NAME} PARENT_SCOPE)
 
 cgr_install_runtime(${PROJECT_NAME} ${VFH_PYTHON_DIRPATH})

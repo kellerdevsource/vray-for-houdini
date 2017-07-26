@@ -353,7 +353,7 @@ function(vfh_install_common _location)
 		install(PROGRAMS ${VFH_IPR_EXE}
 				DESTINATION ${_location}/vfh_home/bin/)
 
-		file(GLOB VFH_IPR_PYTHON ${CMAKE_BINARY_DIR}/python/*)
+		file(GLOB VFH_IPR_PYTHON ${VFH_PYTHON_DIRPATH}/*)
 		install(FILES ${VFH_IPR_PYTHON}
 				DESTINATION ${_location}/vfh_home/soho/python2.7/)
 	endif()
