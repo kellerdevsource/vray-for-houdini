@@ -450,6 +450,25 @@ static PyObject * vfhIsRopValid(PyObject *)
 	Py_RETURN_FALSE;
 }
 
+static PyObject* vfhLogMessage(PyObject*, PyObject *args, PyObject *keywds)
+{
+	int logLevel;
+	const char * message = nullptr;
+
+	//                                 012345678911
+	//                                           01
+	static const char kwlistTypes[] = "is";
+
+	if (!PyArg_ParseTuple(args, kwlistTypes, &logLevel, &message)) {
+		PyErr_Print();
+		Py_RETURN_NONE;
+	}
+
+	Log::getLog().log(static_cast<Log::LogLevel>(logLevel), message);
+
+	Py_RETURN_NONE;
+}
+
 static PyMethodDef methods[] = {
 	{
 		"init",
@@ -480,6 +499,12 @@ static PyMethodDef methods[] = {
 		reinterpret_cast<PyCFunction>(vfhIsRopValid),
 		METH_NOARGS,
 		"Check if current rop is valid."
+	},
+	{
+		"logMessage",
+		reinterpret_cast<PyCFunction>(vfhLogMessage),
+		METH_VARARGS,
+		"Log message."
 	},
 	{ NULL, NULL, 0, NULL }
 };
