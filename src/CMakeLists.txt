@@ -336,10 +336,6 @@ function(vfh_install_common _location)
 				PATTERN "backup/*" EXCLUDE
 				PATTERN "backup" EXCLUDE
 		)
-
-		file(GLOB VFH_IPR_PYTHON ${VFH_PYTHON_DIRPATH}/*)
-		install(FILES ${VFH_IPR_PYTHON}
-				DESTINATION ${_location}/vfh_home/soho/python2.7)
 	endif()
 endfunction(vfh_install_common)
 
