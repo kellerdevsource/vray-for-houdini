@@ -40,7 +40,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME vfh_ipr)
 
 cgr_install_runtime(${PROJECT_NAME} ${VFH_BIN_DIRPATH})
 if (INSTALL_RELEASE)
-	cgr_install_runtime(${PROJECT_NAME} ${INSTALL_RELEASE_PATH}/bin)
+	cgr_install_runtime(${PROJECT_NAME} ${INSTALL_RELEASE_PATH}/vfh_home/bin)
 endif()
 
 target_link_libraries(${PROJECT_NAME} Qt5Network Qt5Core Qt5Gui Qt5Widgets)
