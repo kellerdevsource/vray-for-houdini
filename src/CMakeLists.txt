@@ -327,7 +327,7 @@ function(vfh_install_common _location)
 		install(FILES       ${Phoenix_LIBRARIES}/${CGR_PHOENIX_SHARED}
 							${Phoenix_LIBRARIES}/${CGR_PHOENIX_SHARED_VDB}
 							${Phoenix_LIBRARIES}/${CGR_PHOENIX_SHARED_F3D}
-				DESTINATION ${_location}/vfh_home/vfh_lib
+				DESTINATION ${_location}/vfh_home/libs
 				PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 	endif()
 
@@ -348,6 +348,14 @@ function(vfh_install_common _location)
 				PATTERN "backup/*" EXCLUDE
 				PATTERN "backup" EXCLUDE
 		)
+
+		file(GLOB VFH_IPR_EXE ${VFH_BIN_DIRPATH}/*)
+		install(PROGRAMS ${VFH_IPR_EXE}
+				DESTINATION ${_location}/vfh_home/bin/)
+
+		file(GLOB VFH_IPR_PYTHON ${CMAKE_BINARY_DIR}/python/*)
+		install(FILES ${VFH_IPR_PYTHON}
+				DESTINATION ${_location}/vfh_home/soho/python2.7/)
 	endif()
 endfunction(vfh_install_common)
 
