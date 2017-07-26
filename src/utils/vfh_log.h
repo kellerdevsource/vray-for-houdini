@@ -55,6 +55,8 @@ struct Logger {
 	void error(const tchar *format, ...);
 	/// Log string with debug level
 	void debug(const tchar *format, ...);
+	/// Log string with custom level
+	void log(LogLevel level, const tchar *format, ...);
 
 	/// Set max log level to be printed, unless Logger::msg is used where current filter is ignored
 	void setLogLevel(LogLevel logLevel) { m_logLevel = logLevel; }
@@ -68,7 +70,7 @@ struct Logger {
 	static void stopLogging();
 private:
 	/// Implementation for the actual logging
-	void log(LogLevel level, const tchar *format, va_list args);
+	void valog(LogLevel level, const tchar *format, va_list args);
 
 	LogLevel m_logLevel; ///< Current max log level to be shown
 
