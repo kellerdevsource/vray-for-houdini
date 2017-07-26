@@ -57,4 +57,6 @@ if (WIN32)
 endif()
 
 cgr_install_runtime(${PROJECT_NAME} ${VFH_PYTHON_DIRPATH})
-cgr_install_runtime(${PROJECT_NAME} ${INSTALL_RELEASE_PATH}/vfh_home/soho/python2.7)
+if (INSTALL_RELEASE)
+	cgr_install_runtime(${PROJECT_NAME} ${INSTALL_RELEASE_PATH}/vfh_home/soho/python2.7)
+endif()
