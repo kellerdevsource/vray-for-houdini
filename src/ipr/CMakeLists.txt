@@ -37,6 +37,7 @@ vfh_make_moc(TARGET ${PROJECT_NAME}
 
 link_with_vray_sdk(${PROJECT_NAME})
 set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME vfh_ipr)
+set(VFH_IPR_EXE ${PROJECT_NAME} PARENT_SCOPE)
 
 cgr_install_runtime(${PROJECT_NAME} ${VFH_BIN_DIRPATH})
 
