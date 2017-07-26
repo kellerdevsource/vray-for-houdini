@@ -257,11 +257,6 @@ void VRayExporter::fillCameraDefault(const ViewParams &viewParams, Attrs::Plugin
 void VRayExporter::fillSettingsCamera(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc)
 {
 	pluginDesc.add(Attrs::PluginAttr("fov", -1.0f));
-
-	if (viewParams.usePhysicalCamera) {
-		pluginDesc.add(Attrs::PluginAttr("type", 8));
-	}
-
 	setAttrsFromOpNodePrms(pluginDesc, m_rop, "SettingsCamera_");
 }
 
