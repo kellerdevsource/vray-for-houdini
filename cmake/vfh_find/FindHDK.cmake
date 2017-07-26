@@ -143,7 +143,7 @@ if(HDK_FOUND)
 
 	if (WIN32)
 		set(PYTHON_INCLUDE_PATH ${HDK_PATH}/python27/include)
-		set(PYTHON_LIB_PATH ${HDK_PATH}/python27/lib)
+		set(PYTHON_LIB_PATH ${HDK_PATH}/python27/libs)
 	else()
 		set(PYTHON_INCLUDE_PATH ${HDK_PATH}/python/include/python2.7)
 		set(PYTHON_LIB_PATH ${HDK_PATH}/python/lib)
