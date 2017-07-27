@@ -19,6 +19,7 @@
 	groupsimple {
 		name "folder_physcam_main"
 		label "Main"
+		hidewhentab "{ use == 0 }"
 		
 		parm {
 			name	"type"
@@ -118,7 +119,7 @@
 			label	"Focal Length"
 			type	float
 			hidewhen "{ specify_fov == 1 }"
-			default	{ "40" }
+			default	{ "50" }
 			help	"Specifies the equivalen focal length of the camera lens"
 			range	{ 0 100 }
 			export	none
@@ -247,7 +248,7 @@
 			name	"specify_focus"
 			label	" "
 			type	toggle
-			hidewhen "{ use_dof == 0 use_moblur == 0 } "
+			hidewhen "{ use_dof == 0 } "
 			joinnext
 			default	{ "1" }
 			range	{ 0 1 }
@@ -264,7 +265,7 @@
 			default	{ "200" }
 			help	"focus distance in mm"
 			disablewhen	"{ specify_focus != 1 }"
-			hidewhen "{ use_dof == 0 use_moblur == 0 } "
+			hidewhen "{ use_dof == 0  } "
 			range	{ 0 800 }
 			export	none
 			parmtag	{ "cook_dependent" "1" }
@@ -276,7 +277,7 @@
 			name	"targeted"
 			label	" "
 			type	toggle
-			hidewhen "{ use_dof == 0 use_moblur == 0 }"
+			hidewhen "{ use_dof == 0  }"
 			disablewhen "{ specify_focus == 1 }" 
 			joinnext
 			default	{ "1" }
@@ -292,7 +293,7 @@
 			name	"target_distance"
 			label	"Target Distance"
 			type	float
-			hidewhen "{ use_dof == 0 use_moblur == 0 }"
+			hidewhen "{ use_dof == 0 }"
 			disablewhen "{ specify_focus == 1 }" 
 			default	{ "200" }
 			help	"target distance"
@@ -394,6 +395,7 @@
 	groupsimple {
 		name "folder_physcam_distortion"
 		label "Distortion"
+		hidewhentab "{ use == 0 }"
 		
 		parm {
 			name "parm_distortion_enable"
@@ -555,6 +557,7 @@
 	groupsimple {
 		name "folder_physcam_bokeh"
 		label "Bokeh"
+		hidewhentab "{ use == 0 }"
 		
 		parm {
 			name	"blades_enable"
@@ -643,6 +646,7 @@
 	groupsimple {
 		name "folder_physcam_bmpapperture"
 		label "Bitmap Apperture"
+		hidewhentab "{ use == 0 }"
 		
 		parm {
 			name	"bmpaperture_enable"
@@ -702,18 +706,10 @@
 		
 		
 	}
-    
-    
-    
-    
-    
-    
-    
 
-
-	
 	
 }
+
 
 
 

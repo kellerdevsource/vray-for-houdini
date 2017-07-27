@@ -62,7 +62,7 @@ groupsimple {
 		  0	"Irradiance Map"
 		  1	"Brute Force"
 		  2	"Light Cache"
-		  3	"Spherical Harmonics"
+		  //3	"Spherical Harmonics"
 	  }
 	  range	{ 0 1 }
 	  export	none

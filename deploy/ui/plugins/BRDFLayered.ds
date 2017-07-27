@@ -8,17 +8,7 @@
       name "folder_main"
       label "Main"
 	  
-		multiparm {
-        name "brdf_count"
-        label "BRDF Count"
-
-			parm {
-				name "brdf#weight"
-				label "BRDF Weight #"
-				type float
-				default { 1.0 }
-			}
-		}	
+		
 
 
       parm {
@@ -70,25 +60,33 @@
       }
 
 
+		parm {
+			name	"transparency_tex"
+			label	"Transparency"
+			type	color4
+			invisible
+			size	4
+			default	{ "0" "0" "0" "1" }
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFLayered" }
+			parmtag	{ "vray_pluginattr" "transparency_tex" }
+			parmtag	{ "vray_type" "Texture" }
 
-
-
-    parm {
-    	name	"transparency_tex"
-    	label	"Transparency"
-    	type	color4
-		invisible
-    	size	4
-    	default	{ "0" "0" "0" "1" }
-    	range	{ 0 1 }
-    	export	none
-    	parmtag	{ "cook_dependent" "1" }
-    	parmtag	{ "vray_plugin" "BRDFLayered" }
-    	parmtag	{ "vray_pluginattr" "transparency_tex" }
-    	parmtag	{ "vray_type" "Texture" }
-
-    }
+		}
 
 	}
+	multiparm {
+        name "brdf_count"
+        label "BRDF Count"
+
+		parm {
+			name "brdf#weight"
+			label "BRDF Weight #"
+			type float
+			default { 1.0 }
+		}
+	}	
 
 }

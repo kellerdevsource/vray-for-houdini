@@ -3,6 +3,19 @@
     label	"Car Paint"
     parmtag	{ spare_category "Car Paint" }
     parmtag	{ vray_plugin "BRDFCarPaint" }
+	
+	parm {
+      	name	"doubleSided"
+      	label	"Double Sided"
+      	type	toggle
+      	default	{ "0" }
+      	range	{ 0 1 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "BRDFCarPaint" }
+      	parmtag	{ "vray_pluginattr" "doubleSided" }
+      	parmtag	{ "vray_type" "boolean" }
+      }
 
     group {
       name "folder_base"
@@ -10,7 +23,7 @@
 
       parm {
         name	"base_color"
-        label	"Base Color"
+        label	"Color"
         type	color4
         size	4
         default	{ "0.3" "0.4" "0.5" "1" }
@@ -23,7 +36,7 @@
       }
       parm {
         name	"base_reflection"
-        label	"Base Reflection"
+        label	"Reflection"
         type	float
         default	{ "0.5" }
         range	{ 0 1 }
@@ -35,7 +48,7 @@
       }
       parm {
         name	"base_glossiness"
-        label	"Base Glossiness"
+        label	"Glossiness"
         type	float
         default	{ "0.6" }
         range	{ 0 1 }
@@ -48,7 +61,7 @@
 
       parm {
       	name	"base_bump_type"
-      	label	"Base Bump Type"
+      	label	"Bump Type"
       	type	ordinal
       	default	{ "0" }
       	help	"The type of bump mapping (see BRDFBump for more details)"
@@ -72,7 +85,7 @@
 
       parm {
       	name	"base_bump_float"
-      	label	"Base Bump Float"
+      	label	"Bump Float"
       	type	float
         invisible
       	default	{ "0" }
@@ -86,7 +99,7 @@
       }
       parm {
       	name	"base_bump_color"
-      	label	"Base Bump Color"
+      	label	"Bump Color"
       	type	color4
         invisible
       	size	4
@@ -102,7 +115,7 @@
 
       parm {
       	name	"base_bump_amount"
-      	label	"Base Bump Amount"
+      	label	"Bump Amount"
       	type	float
       	default	{ "0" }
       	help	"Bump amount for the base layer"
@@ -116,7 +129,7 @@
 
       parm {
       	name	"base_traceReflections"
-      	label	"Base Trace Reflections"
+      	label	"Trace Reflections"
       	type	toggle
       	default	{ "1" }
       	help	"Toggle reflections for base layer"
@@ -172,10 +185,34 @@
       	parmtag	{ "vray_pluginattr" "coat_glossiness" }
       	parmtag	{ "vray_type" "TextureFloat" }
       }
+	  parm {
+      	name	"coat_bump_type"
+      	label	"Coat Bump Type"
+      	type	ordinal
+      	default	{ "0" }
+      	help	"The type of bump mapping"
+      	menu	{
+      	    "Bump"	"Bump"
+      	    "Normal (Tangent)"	"Normal (Tangent)"
+      	    "Normal (Object)"	"Normal (Object)"
+      	    "Normal (Camera)"	"Normal (Camera)"
+      	    "Normal (World)"	"Normal (World)"
+      	    "From Bump Output"	"From Bump Output"
+      	    "Explicit Normal"	"Explicit Normal"
+      	}
+      	range	{ 0 1 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6" }
+      	parmtag	{ "vray_plugin" "BRDFCarPaint" }
+      	parmtag	{ "vray_pluginattr" "coat_bump_type" }
+      	parmtag	{ "vray_type" "int" }
+      }
       parm {
       	name	"coat_bump_float"
       	label	"Coat Bump Float"
       	type	float
+		invisible
       	default	{ "0" }
       	help	"Bump texture for the coat layer"
       	range	{ 0 1 }
@@ -189,6 +226,7 @@
       	name	"coat_bump_color"
       	label	"Coat Bump Color"
       	type	color4
+		invisible
       	size	4
       	default	{ "0" "0" "0" "1" }
       	help	"Bump texture for the coat layer (color version)"
@@ -212,28 +250,19 @@
       	parmtag	{ "vray_pluginattr" "coat_bump_amount" }
       	parmtag	{ "vray_type" "TextureFloat" }
       }
-      parm {
-      	name	"coat_bump_type"
-      	label	"Coat Bump Type"
-      	type	ordinal
-      	default	{ "0" }
-      	help	"The type of bump mapping"
-      	menu	{
-      	    "Bump"	"Bump"
-      	    "Normal (Tangent)"	"Normal (Tangent)"
-      	    "Normal (Object)"	"Normal (Object)"
-      	    "Normal (Camera)"	"Normal (Camera)"
-      	    "Normal (World)"	"Normal (World)"
-      	    "From Bump Output"	"From Bump Output"
-      	    "Explicit Normal"	"Explicit Normal"
-      	}
+      
+	  parm {
+      	name	"coat_traceReflections"
+      	label	"Coat Trace Reflections"
+      	type	toggle
+      	default	{ "1" }
+      	help	"Toggle reflections for coat layer"
       	range	{ 0 1 }
       	export	none
       	parmtag	{ "cook_dependent" "1" }
-      	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6" }
       	parmtag	{ "vray_plugin" "BRDFCarPaint" }
-      	parmtag	{ "vray_pluginattr" "coat_bump_type" }
-      	parmtag	{ "vray_type" "int" }
+      	parmtag	{ "vray_pluginattr" "coat_traceReflections" }
+      	parmtag	{ "vray_type" "boolean" }
       }
 
     }
@@ -258,6 +287,19 @@
       	parmtag	{ "vray_enumkeys" "0,1" }
       	parmtag	{ "vray_plugin" "BRDFCarPaint" }
       	parmtag	{ "vray_pluginattr" "mapping_type" }
+      	parmtag	{ "vray_type" "int" }
+      }
+	   parm {
+      	name	"mapping_channel"
+      	label	"Mapping Channel"
+      	type	integer
+      	default	{ "0" }
+      	help	"The mapping channel when the mapping_type is Explicit"
+      	range	{ 0 64 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "BRDFCarPaint" }
+      	parmtag	{ "vray_pluginattr" "mapping_channel" }
       	parmtag	{ "vray_type" "int" }
       }
 
@@ -398,19 +440,7 @@
       name "folder_options"
       label "Options"
 
-      parm {
-      	name	"coat_traceReflections"
-      	label	"Coat Trace Reflections"
-      	type	toggle
-      	default	{ "1" }
-      	help	"Toggle reflections for coat layer"
-      	range	{ 0 1 }
-      	export	none
-      	parmtag	{ "cook_dependent" "1" }
-      	parmtag	{ "vray_plugin" "BRDFCarPaint" }
-      	parmtag	{ "vray_pluginattr" "coat_traceReflections" }
-      	parmtag	{ "vray_type" "boolean" }
-      }
+      
       parm {
       	name	"traceReflections"
       	label	"Trace Reflections"
@@ -423,17 +453,17 @@
       	parmtag	{ "vray_pluginattr" "traceReflections" }
       	parmtag	{ "vray_type" "boolean" }
       }
-      parm {
-      	name	"doubleSided"
-      	label	"Double Sided"
-      	type	toggle
-      	default	{ "0" }
-      	range	{ 0 1 }
+	  parm {
+      	name	"cutoff_threshold"
+      	label	"Cutoff Threshold"
+      	type	float
+      	default	{ "0.001" }
+      	range	{ 0 0.1 }
       	export	none
       	parmtag	{ "cook_dependent" "1" }
       	parmtag	{ "vray_plugin" "BRDFCarPaint" }
-      	parmtag	{ "vray_pluginattr" "doubleSided" }
-      	parmtag	{ "vray_type" "boolean" }
+      	parmtag	{ "vray_pluginattr" "cutoff_threshold" }
+      	parmtag	{ "vray_type" "float" }
       }
       parm {
       	name	"subdivs"
@@ -447,33 +477,9 @@
       	parmtag	{ "vray_pluginattr" "subdivs" }
       	parmtag	{ "vray_type" "int" }
       }
-      parm {
-      	name	"cutoff_threshold"
-      	label	"Cutoff Threshold"
-      	type	float
-      	default	{ "0.001" }
-      	range	{ 0 0.1 }
-      	export	none
-      	parmtag	{ "cook_dependent" "1" }
-      	parmtag	{ "vray_plugin" "BRDFCarPaint" }
-      	parmtag	{ "vray_pluginattr" "cutoff_threshold" }
-      	parmtag	{ "vray_type" "float" }
-      }
+      
 
-      parm {
-      	name	"mapping_channel"
-      	label	"Mapping Channel"
-      	type	integer
-        invisible
-      	default	{ "0" }
-      	help	"The mapping channel"
-      	range	{ 0 64 }
-      	export	none
-      	parmtag	{ "cook_dependent" "1" }
-      	parmtag	{ "vray_plugin" "BRDFCarPaint" }
-      	parmtag	{ "vray_pluginattr" "mapping_channel" }
-      	parmtag	{ "vray_type" "int" }
-      }
+     
       parm {
       	name	"use_environment_override"
       	label	"Use Environment Override"

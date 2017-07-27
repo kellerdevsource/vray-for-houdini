@@ -3,42 +3,44 @@
     label	"Hair"
     parmtag	{ spare_category "Hair" }
     parmtag	{ vray_plugin "BRDFHair" }
-    parm {
-	name	"specular_color_tex"
-	label	"Specular Color"
-	type	color4
-	size	4
-	default	{ "0" "0" "0" "1" }
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFHair" }
-	parmtag	{ "vray_pluginattr" "specular_color_tex" }
-	parmtag	{ "vray_type" "Texture" }
+	
+	parm {
+		name	"diffuse_color_tex"
+		label	"Diffuse Color"
+		type	color4
+		size	4
+		default	{ "0" "0" "0" "1" }
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "cook_dependent" "1" }
+		parmtag	{ "vray_plugin" "BRDFHair" }
+		parmtag	{ "vray_pluginattr" "diffuse_color_tex" }
+		parmtag	{ "vray_type" "Texture" }
     }
     parm {
-	name	"specular_power"
-	label	"Specular Power"
-	type	float
-	default	{ "1" }
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFHair" }
-	parmtag	{ "vray_pluginattr" "specular_power" }
-	parmtag	{ "vray_type" "float" }
+		name	"specular_color_tex"
+		label	"Specular Color"
+		type	color4
+		size	4
+		default	{ "0" "0" "0" "1" }
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "cook_dependent" "1" }
+		parmtag	{ "vray_plugin" "BRDFHair" }
+		parmtag	{ "vray_pluginattr" "specular_color_tex" }
+		parmtag	{ "vray_type" "Texture" }
     }
     parm {
-	name	"diffuse_color_tex"
-	label	"Diffuse Color"
-	type	color4
-	size	4
-	default	{ "0" "0" "0" "1" }
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFHair" }
-	parmtag	{ "vray_pluginattr" "diffuse_color_tex" }
-	parmtag	{ "vray_type" "Texture" }
+		name	"specular_power"
+		label	"Specular Power"
+		type	float
+		default	{ "1" }
+		range	{ 0 5 }
+		export	none
+		parmtag	{ "cook_dependent" "1" }
+		parmtag	{ "vray_plugin" "BRDFHair" }
+		parmtag	{ "vray_pluginattr" "specular_power" }
+		parmtag	{ "vray_type" "float" }
     }
+    
 }

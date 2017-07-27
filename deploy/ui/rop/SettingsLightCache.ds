@@ -144,7 +144,7 @@ groupsimple {
     	type	file
     	default	{ "$HIP/lightmaps/light_cache.vrmap" }
     	help	"Light cache file"
-    	disablewhen	"{ SettingsGI_on != 1 } { SettingsLightCache_mode != \"From File\" }"
+    	disablewhen	"{ SettingsGI_on != 1 } { SettingsLightCache_mode != 2 }"
     	range	{ 0 1 }
     	export	none
     	parmtag	{ "cook_dependent" "1" }

@@ -3,164 +3,197 @@
     label	"SSS"
     parmtag	{ spare_category "SSS" }
     parmtag	{ vray_plugin "BRDFSSS" }
-    parm {
-	name	"color"
-	label	"Color"
-	type	color
-	size	3
-	default	{ "1" "1" "1" }
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFSSS" }
-	parmtag	{ "vray_pluginattr" "color" }
-	parmtag	{ "vray_type" "Color" }
-    }
-    parm {
-	name	"color_tex"
-	label	"Color"
-	type	color4
-	size	4
-	default	{ "0" "0" "0" "1" }
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFSSS" }
-	parmtag	{ "vray_pluginattr" "color_tex" }
-	parmtag	{ "vray_type" "Texture" }
-    }
-    parm {
-	name	"color_tex_mult"
-	label	"Color Tex Mult"
-	type	float
-	default	{ "1" }
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFSSS" }
-	parmtag	{ "vray_pluginattr" "color_tex_mult" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"translucency"
-	label	"Translucency"
-	type	color
-	size	3
-	default	{ "1" "1" "1" }
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFSSS" }
-	parmtag	{ "vray_pluginattr" "translucency" }
-	parmtag	{ "vray_type" "Color" }
-    }
-    parm {
-	name	"translucency_tex"
-	label	"Translucency"
-	type	color4
-	size	4
-	default	{ "0" "0" "0" "1" }
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFSSS" }
-	parmtag	{ "vray_pluginattr" "translucency_tex" }
-	parmtag	{ "vray_type" "Texture" }
-    }
-    parm {
-	name	"translucency_tex_mult"
-	label	"Translucency Tex Mult"
-	type	float
-	default	{ "1" }
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFSSS" }
-	parmtag	{ "vray_pluginattr" "translucency_tex_mult" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"glossiness"
-	label	"Glossiness"
-	type	float
-	default	{ "0" }
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFSSS" }
-	parmtag	{ "vray_pluginattr" "glossiness" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"glossiness_tex"
-	label	"Glossiness Tex"
-	type	float
-	default	{ "1" }
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFSSS" }
-	parmtag	{ "vray_pluginattr" "glossiness_tex" }
-	parmtag	{ "vray_type" "TextureFloat" }
-    }
-    parm {
-	name	"glossiness_tex_mult"
-	label	"Glossiness Tex Mult"
-	type	float
-	default	{ "1" }
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFSSS" }
-	parmtag	{ "vray_pluginattr" "glossiness_tex_mult" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"subdivs"
-	label	"Subdivs"
-	type	integer
-	default	{ "8" }
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFSSS" }
-	parmtag	{ "vray_pluginattr" "subdivs" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"thickness"
-	label	"Thickness"
-	type	float
-	default	{ "1e+18" }
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFSSS" }
-	parmtag	{ "vray_pluginattr" "thickness" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"scatter_coeff"
-	label	"Scatter Coeff"
-	type	float
-	default	{ "0" }
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFSSS" }
-	parmtag	{ "vray_pluginattr" "scatter_coeff" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"scatter_direction"
-	label	"Scatter Direction"
-	type	float
-	default	{ "1" }
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFSSS" }
-	parmtag	{ "vray_pluginattr" "scatter_direction" }
-	parmtag	{ "vray_type" "float" }
-    }
+	
+	group {
+		name "folder_main"
+		label "Main"
+		
+		parm {
+			name	"thickness"
+			label	"Thickness"
+			type	float
+			default	{ "1e+18" }
+			range	{ 0 1e+18 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFSSS" }
+			parmtag	{ "vray_pluginattr" "thickness" }
+			parmtag	{ "vray_type" "float" }
+		}
+		parm {
+			name	"scatter_coeff"
+			label	"Scatter Coeff"
+			type	float
+			default	{ "0" }
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFSSS" }
+			parmtag	{ "vray_pluginattr" "scatter_coeff" }
+			parmtag	{ "vray_type" "float" }
+		}
+		parm {
+			name	"scatter_direction"
+			label	"Scatter Direction"
+			type	float
+			default	{ "1" }
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFSSS" }
+			parmtag	{ "vray_pluginattr" "scatter_direction" }
+			parmtag	{ "vray_type" "float" }
+		}
+		parm {
+			name	"subdivs"
+			label	"Subdivs"
+			type	integer
+			default	{ "8" }
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFSSS" }
+			parmtag	{ "vray_pluginattr" "subdivs" }
+			parmtag	{ "vray_type" "int" }
+		}
+		
+		
+	}
+	
+	
+	group {
+		name "folder_diffuse"
+		label "Diffuse"
+		
+		parm {
+			name	"color"
+			label	"Color"
+			type	color
+			size	3
+			default	{ "1" "1" "1" }
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFSSS" }
+			parmtag	{ "vray_pluginattr" "color" }
+			parmtag	{ "vray_type" "Color" }
+		}
+		parm {
+			name	"color_tex"
+			label	"Color"
+			type	color4
+			invisible
+			size	4
+			default	{ "0" "0" "0" "1" }
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFSSS" }
+			parmtag	{ "vray_pluginattr" "color_tex" }
+			parmtag	{ "vray_type" "Texture" }
+		}
+		parm {
+			name	"color_tex_mult"
+			label	"Color Tex Mult"
+			type	float
+			default	{ "1" }
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFSSS" }
+			parmtag	{ "vray_pluginattr" "color_tex_mult" }
+			parmtag	{ "vray_type" "float" }
+		}
+		parm {
+			name	"translucency"
+			label	"Translucency"
+			type	color
+			size	3
+			default	{ "1" "1" "1" }
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFSSS" }
+			parmtag	{ "vray_pluginattr" "translucency" }
+			parmtag	{ "vray_type" "Color" }
+		}
+		parm {
+			name	"translucency_tex"
+			label	"Translucency"
+			type	color4
+			invisible
+			size	4
+			default	{ "0" "0" "0" "1" }
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFSSS" }
+			parmtag	{ "vray_pluginattr" "translucency_tex" }
+			parmtag	{ "vray_type" "Texture" }
+		}
+		parm {
+			name	"translucency_tex_mult"
+			label	"Translucency Tex Mult"
+			type	float
+			default	{ "1" }
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFSSS" }
+			parmtag	{ "vray_pluginattr" "translucency_tex_mult" }
+			parmtag	{ "vray_type" "float" }
+		}
+	
+	
+	}
+	
+	
+	group {
+		name "folder_refl"
+		label "Reflection"
+		
+		parm {
+			name	"glossiness"
+			label	"Glossiness"
+			type	float
+			default	{ "0" }
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFSSS" }
+			parmtag	{ "vray_pluginattr" "glossiness" }
+			parmtag	{ "vray_type" "float" }
+		}
+		parm {
+			name	"glossiness_tex"
+			label	"Glossiness Tex"
+			type	float
+			invisible
+			default	{ "1" }
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFSSS" }
+			parmtag	{ "vray_pluginattr" "glossiness_tex" }
+			parmtag	{ "vray_type" "TextureFloat" }
+		}
+		parm {
+			name	"glossiness_tex_mult"
+			label	"Glossiness Tex Mult"
+			type	float
+			default	{ "1" }
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFSSS" }
+			parmtag	{ "vray_pluginattr" "glossiness_tex_mult" }
+			parmtag	{ "vray_type" "float" }
+		}
+		
+		
+	}
+	
+ 
+	
+	
 }

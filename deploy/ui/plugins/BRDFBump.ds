@@ -104,19 +104,7 @@
       	parmtag	{ "vray_type" "float" }
       }
 
-      parm {
-      	name	"maya_compatible"
-      	label	"Maya Compatible"
-      	type	toggle
-      	default	{ "0" }
-      	help	"When this is true the BRDFBump will try to match the Maya bump/normal mapping"
-      	range	{ 0 1 }
-      	export	none
-      	parmtag	{ "cook_dependent" "1" }
-      	parmtag	{ "vray_plugin" "BRDFBump" }
-      	parmtag	{ "vray_pluginattr" "maya_compatible" }
-      	parmtag	{ "vray_type" "boolean" }
-      }
+      
 
       parm {
       	name	"bump_map_mult"
@@ -195,6 +183,20 @@
     	parmtag	{ "vray_pluginattr" "additional_bump" }
     	parmtag	{ "vray_type" "Texture" }
     }
+	
+	parm {
+      	name	"maya_compatible"
+      	label	"Maya Compatible"
+      	type	toggle
+      	default	{ "0" }
+      	help	"When this is true the BRDFBump will try to match the Maya bump/normal mapping"
+      	range	{ 0 1 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "BRDFBump" }
+      	parmtag	{ "vray_pluginattr" "maya_compatible" }
+      	parmtag	{ "vray_type" "boolean" }
+      }
 
 
 

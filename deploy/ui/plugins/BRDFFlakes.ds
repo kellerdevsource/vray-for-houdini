@@ -3,255 +3,274 @@
     label	"Flakes"
     parmtag	{ spare_category "Flakes" }
     parmtag	{ vray_plugin "BRDFFlakes" }
-    parm {
-	name	"flake_color"
-	label	"Color"
-	type	color4
-	size	4
-	default	{ "0.3" "0.4" "0.8" "1" }
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFFlakes" }
-	parmtag	{ "vray_pluginattr" "flake_color" }
-	parmtag	{ "vray_type" "Texture" }
+	
+	parm {
+		name	"doubleSided"
+		label	"Double-sided"
+		type	toggle
+		default	{ "1" }
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "cook_dependent" "1" }
+		parmtag	{ "vray_plugin" "BRDFFlakes" }
+		parmtag	{ "vray_pluginattr" "doubleSided" }
+		parmtag	{ "vray_type" "int" }
     }
-    parm {
-	name	"flake_glossiness"
-	label	"Glossiness"
-	type	float
-	default	{ "0.8" }
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFFlakes" }
-	parmtag	{ "vray_pluginattr" "flake_glossiness" }
-	parmtag	{ "vray_type" "TextureFloat" }
-    }
-    parm {
-	name	"flake_orientation"
-	label	"Orientation"
-	type	float
-	default	{ "0.3" }
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFFlakes" }
-	parmtag	{ "vray_pluginattr" "flake_orientation" }
-	parmtag	{ "vray_type" "TextureFloat" }
-    }
-    parm {
-	name	"flake_density"
-	label	"Density"
-	type	float
-	default	{ "0.5" }
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFFlakes" }
-	parmtag	{ "vray_pluginattr" "flake_density" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"flake_scale"
-	label	"Scale"
-	type	float
-	default	{ "0.01" }
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFFlakes" }
-	parmtag	{ "vray_pluginattr" "flake_scale" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"flake_size"
-	label	"Size"
-	type	float
-	default	{ "0.5" }
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFFlakes" }
-	parmtag	{ "vray_pluginattr" "flake_size" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"flake_map_size"
-	label	"Map Size"
-	type	integer
-	default	{ "1024" }
-	help	"The size of the internal flakes map"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFFlakes" }
-	parmtag	{ "vray_pluginattr" "flake_map_size" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"flake_filtering_mode"
-	label	"Filtering Mode"
-	type	ordinal
-	default	{ "1" }
-	help	"Flake filtering mode"
-	menu	{
-	    "Simple"	"Simple"
-	    "Directional"	"Directional"
+	
+	group {
+		name "folder_main"
+		label "Main"
+		
+		parm {
+			name	"mapping_type"
+			label	"Mapping Type"
+			type	ordinal
+			default	{ "0" }
+			help	"The mapping method for the flakes"
+			menu	{
+				"Explicit"	"Explicit"
+				"Triplanar"	"Triplanar"
+			}
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_enumkeys" "0,1" }
+			parmtag	{ "vray_plugin" "BRDFFlakes" }
+			parmtag	{ "vray_pluginattr" "mapping_type" }
+			parmtag	{ "vray_type" "int" }
+		}
+		parm {
+			name	"mapping_channel"
+			label	"Mapping Channel"
+			type	integer
+			default	{ "0" }
+			help	"The mapping channel when the mapping_type is 0"
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFFlakes" }
+			parmtag	{ "vray_pluginattr" "mapping_channel" }
+			parmtag	{ "vray_type" "int" }
+		}
+		parm {
+			name	"flake_color"
+			label	"Color"
+			type	color4
+			size	4
+			default	{ "0.3" "0.4" "0.8" "1" }
+			range	{ 0 10 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFFlakes" }
+			parmtag	{ "vray_pluginattr" "flake_color" }
+			parmtag	{ "vray_type" "Texture" }
+		}
+		parm {
+			name	"flake_glossiness"
+			label	"Glossiness"
+			type	float
+			default	{ "0.8" }
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFFlakes" }
+			parmtag	{ "vray_pluginattr" "flake_glossiness" }
+			parmtag	{ "vray_type" "TextureFloat" }
+		}
+		parm {
+			name	"flake_orientation"
+			label	"Orientation"
+			type	float
+			default	{ "0.3" }
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFFlakes" }
+			parmtag	{ "vray_pluginattr" "flake_orientation" }
+			parmtag	{ "vray_type" "TextureFloat" }
+		}
+		parm {
+			name	"flake_density"
+			label	"Density"
+			type	float
+			default	{ "0.5" }
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFFlakes" }
+			parmtag	{ "vray_pluginattr" "flake_density" }
+			parmtag	{ "vray_type" "float" }
+		}
+		parm {
+			name	"flake_scale"
+			label	"Scale"
+			type	float
+			default	{ "0.01" }
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFFlakes" }
+			parmtag	{ "vray_pluginattr" "flake_scale" }
+			parmtag	{ "vray_type" "float" }
+		}
+		parm {
+			name	"flake_size"
+			label	"Size"
+			type	float
+			default	{ "0.5" }
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFFlakes" }
+			parmtag	{ "vray_pluginattr" "flake_size" }
+			parmtag	{ "vray_type" "float" }
+		}
+		parm {
+			name	"flake_map_size"
+			label	"Map Size"
+			type	integer
+			default	{ "1024" }
+			help	"The size of the internal flakes map"
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFFlakes" }
+			parmtag	{ "vray_pluginattr" "flake_map_size" }
+			parmtag	{ "vray_type" "int" }
+		}
+		parm {
+			name	"flake_filtering_mode"
+			label	"Filtering Mode"
+			type	ordinal
+			default	{ "1" }
+			help	"Flake filtering mode"
+			menu	{
+				"Simple"	"Simple"
+				"Directional"	"Directional"
+			}
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_enumkeys" "0,1" }
+			parmtag	{ "vray_plugin" "BRDFFlakes" }
+			parmtag	{ "vray_pluginattr" "flake_filtering_mode" }
+			parmtag	{ "vray_type" "int" }
+		}
+		parm {
+			name	"flake_seed"
+			label	"Seed"
+			type	integer
+			default	{ "1" }
+			help	"The random seed for the flakes"
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFFlakes" }
+			parmtag	{ "vray_pluginattr" "flake_seed" }
+			parmtag	{ "vray_type" "int" }
+		}
+		
+		
 	}
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1" }
-	parmtag	{ "vray_plugin" "BRDFFlakes" }
-	parmtag	{ "vray_pluginattr" "flake_filtering_mode" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"flake_seed"
-	label	"Seed"
-	type	integer
-	default	{ "1" }
-	help	"The random seed for the flakes"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFFlakes" }
-	parmtag	{ "vray_pluginattr" "flake_seed" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"traceReflections"
-	label	"Trace Reflections"
-	type	toggle
-	default	{ "1" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFFlakes" }
-	parmtag	{ "vray_pluginattr" "traceReflections" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"doubleSided"
-	label	"Double Sided"
-	type	integer
-	default	{ "1" }
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFFlakes" }
-	parmtag	{ "vray_pluginattr" "doubleSided" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"subdivs"
-	label	"Subdivs"
-	type	integer
-	default	{ "8" }
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFFlakes" }
-	parmtag	{ "vray_pluginattr" "subdivs" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"cutoff_threshold"
-	label	"Cutoff Threshold"
-	type	float
-	default	{ "0.001" }
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFFlakes" }
-	parmtag	{ "vray_pluginattr" "cutoff_threshold" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"mapping_type"
-	label	"Mapping Type"
-	type	ordinal
-	default	{ "0" }
-	help	"The mapping method for the flakes"
-	menu	{
-	    "Explicit"	"Explicit"
-	    "Triplanar"	"Triplanar"
+	group {
+		name "folder_options"
+		label "Options"
+		parm {
+			name	"traceReflections"
+			label	"Trace Reflections"
+			type	toggle
+			default	{ "1" }
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFFlakes" }
+			parmtag	{ "vray_pluginattr" "traceReflections" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		parm {
+			name	"trace_depth"
+			label	"Trace Depth"
+			type	integer
+			default	{ "-1" }
+			help	"The maximum reflection depth (-1 is controlled by the global options)"
+			range	{ 1 1000 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFFlakes" }
+			parmtag	{ "vray_pluginattr" "trace_depth" }
+			parmtag	{ "vray_type" "int" }
+		}
+		parm {
+			name	"cutoff_threshold"
+			label	"Cutoff Threshold"
+			type	float
+			default	{ "0.001" }
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFFlakes" }
+			parmtag	{ "vray_pluginattr" "cutoff_threshold" }
+			parmtag	{ "vray_type" "float" }
+		}
+		parm {
+			name	"subdivs"
+			label	"Subdivs"
+			type	integer
+			default	{ "8" }
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFFlakes" }
+			parmtag	{ "vray_pluginattr" "subdivs" }
+			parmtag	{ "vray_type" "int" }
+		}
+		parm {
+			name	"use_environment_override"
+			label	"Use Environment Override"
+			type	toggle
+			default	{ "1" }
+			help	"True to use the 'environment override' texture"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFFlakes" }
+			parmtag	{ "vray_pluginattr" "use_environment_override" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		parm {
+			name	"environment_override"
+			label	"Environment Override"
+			type	color4
+			size	4
+			default	{ "0" "0" "0" "1" }
+			help	"Environment override texture"
+			hidewhen	"{ use_environment_override != 1 }"
+			range	{ 0 10 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFFlakes" }
+			parmtag	{ "vray_pluginattr" "environment_override" }
+			parmtag	{ "vray_type" "Texture" }
+		}
+		parm {
+			name	"environment_priority"
+			label	"Environment Priority"
+			type	integer
+			default	{ "0" }
+			help	"Environment override priority (used when several materials override it along a ray path)"
+			hidewhen	"{ use_environment_override != 1 }"
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFFlakes" }
+			parmtag	{ "vray_pluginattr" "environment_priority" }
+			parmtag	{ "vray_type" "int" }
+		}
+			
+		
 	}
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1" }
-	parmtag	{ "vray_plugin" "BRDFFlakes" }
-	parmtag	{ "vray_pluginattr" "mapping_type" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"mapping_channel"
-	label	"Mapping Channel"
-	type	integer
-	default	{ "0" }
-	help	"The mapping channel when the mapping_type is 0"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFFlakes" }
-	parmtag	{ "vray_pluginattr" "mapping_channel" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"environment_override"
-	label	"Environment Override"
-	type	color4
-	size	4
-	default	{ "0" "0" "0" "1" }
-	help	"Environment override texture"
-	disablewhen	"{ use_environment_override != 1 }"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFFlakes" }
-	parmtag	{ "vray_pluginattr" "environment_override" }
-	parmtag	{ "vray_type" "Texture" }
-    }
-    parm {
-	name	"environment_priority"
-	label	"Environment Priority"
-	type	integer
-	default	{ "0" }
-	help	"Environment override priority (used when several materials override it along a ray path)"
-	disablewhen	"{ use_environment_override != 1 }"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFFlakes" }
-	parmtag	{ "vray_pluginattr" "environment_priority" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"trace_depth"
-	label	"Trace Depth"
-	type	integer
-	default	{ "-1" }
-	help	"The maximum reflection depth (-1 is controlled by the global options)"
-	range	{ 1 1000 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFFlakes" }
-	parmtag	{ "vray_pluginattr" "trace_depth" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"use_environment_override"
-	label	"Use Environment Override"
-	type	toggle
-	default	{ "1" }
-	help	"True to use the 'environment override' texture"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFFlakes" }
-	parmtag	{ "vray_pluginattr" "use_environment_override" }
-	parmtag	{ "vray_type" "boolean" }
-    }
+	
+  
+    
+    
 }
