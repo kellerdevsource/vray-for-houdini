@@ -393,13 +393,16 @@ GU_ConstDetailHandle VRayVolumeGridRef::getPackedDetail(GU_PackedContext *contex
 
 	GU_DetailHandleAutoWriteLock rLock(SYSconst_cast(this)->m_handle);
 	GU_Detail *gdp = rLock.getGdp();
-	gdp->stashAll();
+	//gdp->stashAll();
 	self->m_dirty = false;
 
 	auto path = this->get_current_cache_path();
 	if (!*path) {
-		gdp->clearAndDestroy();
-		return getDetail();
+		//gdp->clearAndDestroy();
+
+		self->m_handle = GU_DetailHandle();
+		memcpy(self->m_channelDataRange.data(), DataRangeMap().data(), DataRangeMapSize);
+		return GU_ConstDetailHandle();
 	}
 	auto map = this->get_usrchmap();
 
@@ -407,8 +410,11 @@ GU_ConstDetailHandle VRayVolumeGridRef::getPackedDetail(GU_PackedContext *contex
 	VolumeCacheData &data = dataCache[key];
 
 	if (!data.aurPtr) {
-		gdp->clearAndDestroy();
-		return getDetail();
+		//gdp->clearAndDestroy();
+
+		self->m_handle = GU_DetailHandle();
+		memcpy(self->m_channelDataRange.data(), DataRangeMap().data(), DataRangeMapSize);
+		return GU_ConstDetailHandle();
 	}
 
 	if (data.detailHandle == m_handle) {

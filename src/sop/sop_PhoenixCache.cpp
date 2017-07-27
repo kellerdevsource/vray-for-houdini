@@ -52,12 +52,22 @@ OP_ERROR SOP::PhxShaderCache::cookMySop(OP_Context &context)
 
 	flags().setTimeDep(true);
 
-	gdp->stashAll();
+	//gdp->stashAll();
 
 	const float t = context.getTime();
 
-	// Create a packed primitive
-	GU_PrimPacked *pack = GU_PrimPacked::build(*gdp, "VRayVolumeGridRef");
+	GU_PrimPacked *pack = nullptr;
+	GA_Primitive *prim = nullptr;
+	GA_FOR_ALL_PRIMITIVES(gdp, prim) {
+		if (strcmp(prim->getTypeName(), "VRayVolumeGridRef") == 0) {
+			pack = UTverify_cast<GU_PrimPacked*>(prim);
+		}
+	}
+	if (pack == nullptr) {
+		// Create a packed primitive
+		pack = GU_PrimPacked::build(*gdp, "VRayVolumeGridRef");
+	}
+
 	auto gridRefPtr = UTverify_cast<VRayVolumeGridRef*>(pack->implementation());
 	if (NOT(pack)) {
 		addWarning(SOP_MESSAGE, "Can't create packed primitive VRayVolumeGridRef");
@@ -87,7 +97,7 @@ OP_ERROR SOP::PhxShaderCache::cookMySop(OP_Context &context)
 	gridRefPtr->update(options);
 	pack->setPathAttribute(getFullPath());
 
-	gdp->destroyStashed();
+	//gdp->destroyStashed();
 
 	return error();
 }
