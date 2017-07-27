@@ -161,7 +161,7 @@ static OP_Node* getPhoenixShaderSimNode(OP_Node *matNode)
 {
 	if (!matNode)
 		return nullptr;
-	return getVRayNodeFromOp(*matNode, "PhxShaderSim", "PhxShaderSim");
+	return getVRayNodeFromOp(*matNode, "Simulation", "PhxShaderSim");
 }
 
 void HoudiniVolumeExporter::exportPrimitive(const PrimitiveItem &item, PluginSet &pluginsSet)

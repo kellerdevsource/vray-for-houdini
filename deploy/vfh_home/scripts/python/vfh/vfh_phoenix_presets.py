@@ -38,7 +38,7 @@ def _setup_phx_material_node(phxCacheNode, materialNode):
 	if not shaderNode:
 		shaderNode = materialNode.createNode('VRayNodePhxShaderSim')
 
-	outputNode.setNextInput(shaderNode)
+	outputNode.setNamedInput('Simulation', shaderNode, 0)
 	return shaderNode
 
 
