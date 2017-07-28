@@ -554,20 +554,9 @@ void VRayForHoudini::onImageReady(VRay::VRayRenderer &renderer, void*)
 	addImages(renderer, renderer.getImage(), 0, 0);
 }
 
-void VRayForHoudini::setImdisplayPort(int port)
+ImdisplayThread & VRayForHoudini::getImdisplay()
 {
-	imdisplayThread.setPort(port);
-}
-
-int VRayForHoudini::getImdisplayPort()
-{
-	return imdisplayThread.getPort();
-}
-
-void VRayForHoudini::startImdisplay()
-{
-	imdisplayThread.init();
-	imdisplayThread.restart();
+	return imdisplayThread;
 }
 
 void VRayForHoudini::initImdisplay(VRay::VRayRenderer &renderer)
@@ -589,11 +578,6 @@ void VRayForHoudini::initImdisplay(VRay::VRayRenderer &renderer)
 #endif
 
 	imdisplayThread.add(imageHeaderMsg);
-}
-
-void VRayForHoudini::setImdisplayOnStop(std::function<void()> fn)
-{
-	imdisplayThread.setOnStopCallback(fn);
 }
 
 void VRayForHoudini::closeImdisplay()
