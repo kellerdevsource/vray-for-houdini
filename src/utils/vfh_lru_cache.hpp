@@ -8,6 +8,9 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
+#ifndef VRAY_FOR_HOUDINI_LRU_CACHE_H
+#define VRAY_FOR_HOUDINI_LRU_CACHE_H
+
 #include "vfh_defines.h"
 
 #include <vector>
@@ -565,3 +568,4 @@ private:
 }  // namespace Caches
 }  // namespace VRayForHoudini
 
+#endif // VRAY_FOR_HOUDINI_LRU_CACHE_H

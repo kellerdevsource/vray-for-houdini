@@ -1,0 +1,112 @@
+    parm {
+	name	"compression"
+	label	"Compression"
+	type	ordinal
+	default	{ "3" }
+	help	"Compression for OpenEXR output"
+	menu	{
+	    "Default"	"Default"
+	    "No Compression"	"No Compression"
+	    "RLE"	"RLE"
+	    "ZIPS"	"ZIPS"
+	    "ZIP"	"ZIP"
+	    "PIZ"	"PIZ"
+	    "pxr24"	"pxr24"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6" }
+	parmtag	{ "vray_plugin" "SettingsEXR" }
+	parmtag	{ "vray_pluginattr" "compression" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"bits_per_channel"
+	label	"Bits Per Channel"
+	type	ordinal
+	default	{ "0" }
+	help	"Bits per channel"
+	menu	{
+	    "16"	"16"
+	    "32"	"32"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_enumkeys" "16,32" }
+	parmtag	{ "vray_plugin" "SettingsEXR" }
+	parmtag	{ "vray_pluginattr" "bits_per_channel" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"extra_attributes"
+	label	"Extra Attributes"
+	type	string
+	default	{ "" }
+	help	"Extra attributes to write in the header"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "SettingsEXR" }
+	parmtag	{ "vray_pluginattr" "extra_attributes" }
+	parmtag	{ "vray_type" "String" }
+    }
+    parm {
+	name	"auto_data_window"
+	label	"Auto Data Window"
+	type	toggle
+	default	{ "0" }
+	help	"true to enable auto data window based on the alpha channel when writing scanline-based multichannel OpenEXR files"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "SettingsEXR" }
+	parmtag	{ "vray_pluginattr" "auto_data_window" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"write_integer_ids"
+	label	"Write Integer Ids"
+	type	toggle
+	default	{ "0" }
+	help	"true to write integer elemnt ids when using Image Format exr"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "SettingsEXR" }
+	parmtag	{ "vray_pluginattr" "write_integer_ids" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"multipart"
+	label	"Multipart"
+	type	toggle
+	default	{ "0" }
+	help	"true to create multi-part exr file"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "SettingsEXR" }
+	parmtag	{ "vray_pluginattr" "multipart" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"deep_alpha_colors"
+	label	"Deep Alpha Colors"
+	type	ordinal
+	default	{ "0" }
+	help	"Deep alpha colors (0 - monochrome, 1 - RGB, 2 - monochrome+RGB)"
+	menu	{
+	    "Monochrome"	"Monochrome"
+	    "RGB"	"RGB"
+	    "Monochrome+RGB"	"Monochrome+RGB"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_enumkeys" "0,1,2" }
+	parmtag	{ "vray_plugin" "SettingsEXR" }
+	parmtag	{ "vray_pluginattr" "deep_alpha_colors" }
+	parmtag	{ "vray_type" "int" }
+    }

@@ -22,6 +22,7 @@ const char VFH_ATTR_MATERIAL_OVERRIDE[] = "material_override";
 const char VFH_ATTRIB_TRANSFORM[] = "transform";
 const char VFH_ATTRIB_OBJECTID[] = "vray_objectID";
 const char VFH_ATTRIB_ANIM_OFFSET[] = "anim_offset";
+const char VFH_ATTR_SHOP_MATERIAL_STYLESHEET[] = "shop_materialstylesheet";
 
 /// Expands OP_Node path.
 /// @param path Path. May be changed if path has "op:/" syntax.
@@ -29,10 +30,11 @@ const char VFH_ATTRIB_ANIM_OFFSET[] = "anim_offset";
 FORCEINLINE void expandOpNodePath(UT_String &path, fpreal t=0.0)
 {
 	if (path.startsWith(OPREF_PREFIX)) {
+#if 0
 		int op_id = 0;
 		fpreal op_time = 0.0;
-
 		OPgetDirector()->evalOpPathString(path, 0, 0, t, op_id, op_time);
+#endif
 	}
 }
 
@@ -112,7 +114,7 @@ template <typename UT_VectorType>
 FORCEINLINE VRay::Vector utVectorVRayVector(const UT_VectorType &v)
 {
 	VRay::Vector vec;
-	vec.set(v(0), v(1), v(2));
+	vec.set(static_cast<float>(v(0)), static_cast<float>(v(1)), static_cast<float>(v(2)));
 	return vec;
 }
 

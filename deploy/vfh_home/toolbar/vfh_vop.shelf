@@ -3339,20 +3339,20 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexInvert', nodename="invert")
 </tool>
 
 
-<tool name="vop_VRayNodeTexLayered" label="Layered Texture" icon="ROP_vray">
+<tool name="vop_VRayNodeTexLayeredMax" label="Layered Texture" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
     </toolMenuContext>
     <toolMenuContext name="network">
-        <contextOpType>Vop/VRayNodeTexLayered</contextOpType>
+        <contextOpType>Vop/VRayNodeTexLayeredMax</contextOpType>
     </toolMenuContext>
     <toolSubmenu>Texture</toolSubmenu>
     <script scriptType="python">
 <![CDATA[
 
 import voptoolutils;
-voptoolutils.genericTool(kwargs, 'VRayNodeTexLayered', nodename="layered")
+voptoolutils.genericTool(kwargs, 'VRayNodeTexLayeredMax', nodename="layered")
 
 ]]>
     </script>

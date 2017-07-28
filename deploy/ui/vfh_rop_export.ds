@@ -1,0 +1,123 @@
+groupsimple {
+    name "VRayRendererFolderDriverProduction"
+    label "Production"
+
+    parm {
+        name "render_render_mode"
+        label "Device"
+        type ordinal
+        menu {
+            "CPU" "CPU"
+            "CUDA" "GPU (CUDA)"
+            "OPENCL" "GPU (OpenCL)"
+        }
+        default { "0" }
+    }
+}
+
+groupsimple {
+    name "VRayRendererFolderDriverIPR"
+    label "IPR"
+
+    parm {
+        name "render_rt_mode"
+        label "Device"
+        type ordinal
+        menu {
+            "CPU" "CPU"
+            "CUDA" "GPU (CUDA)"
+            "OPENCL" "GPU (OpenCL)"
+        }
+        default { "0" }
+    }
+
+    parm {
+        name "render_rt_output"
+        label "Output"
+        type ordinal
+        menu {
+            "0" "Render View"
+            "1" "VFB"
+        }
+        default { "0" }
+    }
+
+    parm {
+        name "render_rt_update_mode"
+        label "Callback"
+        type ordinal
+        menu {
+            "0" "Install Callbacks"
+            "1" "SOHO"
+        }
+        default { "1" }
+    }
+
+    parm {
+        name "render_rt"
+        label "Render IPR"
+        type button
+        hidewhen "{ render_rt_output == "0" } { render_rt_update_mode == "1" }"
+    }
+}
+
+groupsimple {
+    name "VRayRendererFolderDriverExport"
+    label "Export Settings"
+
+    parm {
+        name "exporter_log_level"
+        label "Log Level"
+        type ordinal
+        menu {
+            "0" "Errors"
+            "1" "Debug"
+        }
+        default { "0" }
+    }
+
+    parm {
+        name "render_export_mode"
+        label "Export Mode"
+        type ordinal
+        menu {
+            "No Export" "No Export"
+            "Export & Render" "Export & Render"
+            "Export" "Export"
+        }
+        default { "0" }
+    }
+
+    parm {
+        name "render_export_filepath"
+        label "Export Filepath"
+        type file
+        default { "$HIP/$HIPNAME.vrscene" }
+        disablewhen "{ render_export_mode == \"No Export\" }"
+    }
+
+    parm {
+        name    "exp_compressed"
+        label   "Export Compressed Data"
+        type    toggle
+        default { "1" }
+        disablewhen "{ render_export_mode == \"No Export\" }"
+    }
+
+    parm {
+        name    "exp_hexdata"
+        label   "Export Data In Hex Format"
+        type    toggle
+        default { "1" }
+        disablewhen "{ render_export_mode == \"No Export\" }"
+        hidewhen "{ exp_compressed == 1 }"
+    }
+
+    parm {
+        name    "exp_separatefiles"
+        label   "Export Each Frame In Separate File"
+        type    toggle
+        default { "0" }
+        disablewhen "{ render_export_mode == \"No Export\" }"
+    }
+}

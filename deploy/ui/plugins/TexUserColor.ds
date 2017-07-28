@@ -1,43 +1,46 @@
 {
-    name	TexUserColor
-    label	"User Color"
-    parmtag	{ spare_category "User Color" }
-    parmtag	{ vray_plugin "TexUserColor" }
+    name    TexUserColor
+    label   "User Color"
+    parmtag { spare_category "User Color" }
+    parmtag { vray_plugin "TexUserColor" }
+
     parm {
-	name	"default_value"
-	label	"Default Value"
-	type	float
-	default	{ "1" }
-	help	"Default value if the attribute is not found"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
+        name    "user_attribute"
+        label   "User Attribute"
+        type    string
+        default { "" }
+        help    "User attribute name of type float or color"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexUserColor" }
+        parmtag { "vray_pluginattr" "user_attribute" }
+        parmtag { "vray_type" "String" }
     }
+
     parm {
-	name	"user_attribute"
-	label	"User Attribute"
-	type	string
-	default	{ "" }
-	help	"User attribute name of type float or color"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexUserColor" }
-	parmtag	{ "vray_pluginattr" "user_attribute" }
-	parmtag	{ "vray_type" "String" }
+        name    "default_color"
+        label   "Default Color"
+        type    color4
+        size    4
+        default { "0.5" "0.5" "0.5" "1" }
+        help    "Default color when the attribute is not found"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexUserColor" }
+        parmtag { "vray_pluginattr" "default_color" }
+        parmtag { "vray_type" "Texture" }
     }
+
     parm {
-	name	"default_color"
-	label	"Default Color"
-	type	color4
-	size	4
-	default	{ "0.5" "0.5" "0.5" "1" }
-	help	"Default color when the attribute is not found"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexUserColor" }
-	parmtag	{ "vray_pluginattr" "default_color" }
-	parmtag	{ "vray_type" "Texture" }
+        name "attribute_priority"
+        label "Attribute Priority"
+        type ordinal
+        menu {
+            "0" "Map Channel"
+            "1" "User Attribute"
+        }
+        default { "0" }
     }
 }

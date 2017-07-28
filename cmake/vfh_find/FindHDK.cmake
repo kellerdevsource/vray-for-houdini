@@ -19,6 +19,7 @@ set(VFH_SDK_HDK ${SDK_PATH}/hdk/${HDK_FIND_VERSION_MAJOR}.${HDK_FIND_VERSION_MIN
 # Add Qt version to path
 if(HDK_FIND_VERSION_MAJOR VERSION_GREATER 15)
 	set(VFH_SDK_HDK ${VFH_SDK_HDK}/qt${HOUDINI_QT_VERSION})
+	set(QT_TOOLS_PATH ${VFH_SDK_HDK}/bin)
 endif()
 
 # If installation path is not set use some default one.
@@ -140,14 +141,27 @@ if(HDK_FOUND)
 	set(HDK_INCLUDE_PATH ${HDK_INCLUDES})
 	set(HDK_LIB_PATH     ${HDK_LIBRARIES})
 
-	# For Boost spirit
+	if (WIN32)
+		set(PYTHON_INCLUDE_PATH ${HDK_PATH}/python27/include)
+		set(PYTHON_LIB_PATH ${HDK_PATH}/python27/libs)
+	else()
+		set(PYTHON_INCLUDE_PATH ${HDK_PATH}/python/include/python2.7)
+		set(PYTHON_LIB_PATH ${HDK_PATH}/python/lib)
+	endif()
+
 	set(HDK_INCLUDES
+		# For Boost spirit
+		${PYTHON_INCLUDE_PATH}
 		${SDK_PATH}/hdk/boost_shared
 		${HDK_INCLUDE_PATH}
 	)
 
-	# For Windows linking
+	set(HDK_LIBRARIES
+		${PYTHON_LIB_PATH}
+		${HDK_LIB_PATH}
+	)
 
+	# For Windows linking
 	if(HOUDINI_QT_VERSION VERSION_GREATER 4)
 		list(APPEND HDK_DEFINITIONS
 			-DUSE_QT5=1

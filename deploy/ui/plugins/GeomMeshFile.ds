@@ -1,565 +1,612 @@
 {
-    name	GeomMeshFile
-    label	"VRayProxy"
-    parmtag	{ spare_category "VRayProxy" }
-    parmtag	{ vray_plugin "GeomMeshFile" }
+    name GeomMeshFile
+    label "VRayProxy"
+    parmtag { spare_category "VRayProxy" }
+    parmtag { vray_plugin "GeomMeshFile" }
+
     parm {
-	name	"file"
-	label	"File Name"
-	type	file
-	default	{ "" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "filechooser_mode" "read" }
-	parmtag	{ "filechooser_pattern" "*.vrmesh,*.abc" }
-	parmtag	{ "vray_file_names" "V-Ray Mesh,Alembic" }
-	parmtag	{ "vray_plugin" "GeomMeshFile" }
-	parmtag	{ "vray_pluginattr" "file" }
-	parmtag	{ "vray_type" "String" }
+        name "reload"
+        label "Reload Geometry"
+        type button
+    }
+
+    parm {
+        name "file"
+        label "File Name"
+        type file
+        default { "" }
+        range { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "filechooser_mode" "read" }
+        parmtag { "filechooser_pattern" "*.vrmesh,*.abc" }
+        parmtag { "vray_file_names" "V-Ray Mesh,Alembic" }
+        parmtag { "vray_plugin" "GeomMeshFile" }
+        parmtag { "vray_pluginattr" "file" }
+        parmtag { "vray_type" "String" }
+    }
+
+    parm {
+        name "viewportlod"
+        label "Display As"
+        type ordinal
+        menu {
+            "GEO_VIEWPORT_FULL" "Full"
+            "GEO_VIEWPORT_POINTS" "Points"
+            "GEO_VIEWPORT_BOX" "Box"
+            "GEO_VIEWPORT_CENTROID" "Centroid"
+            "GEO_VIEWPORT_HIDDEN" "Hidden"
+        }
+        default { "0" }
+        parmtag { "cook_dependent" "1" }
+    }
+
+    parm {
+        name "loadtype"
+        label "Load"
+        type ordinal
+        menu {
+            "0" "Bounding Box"
+            "1" "Preview Geometry"
+            "2" "Full Geometry"
+        }
+        parmtag { "cook_dependent" "1" }
+        default { "1" }
+    }
+
+    parm {
+        name "missingfile"
+        label "Missing File"
+        type ordinal
+        menu {
+            "0" "Report Error"
+            "1" "No Geometry"
+        }
+        default { "0" }
+    }
+
+    parm {
+    name    "anim_type"
+    label   "Playback Type"
+    type    ordinal
+    default { "0" }
+    help    "Animated proxy playback type"
+    menu    {
+        "Loop"  "Loop"
+        "Once"  "Once"
+        "Ping-pong" "Ping-pong"
+        "Still" "Still"
+    }
+    range   { 0 1 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_enumkeys" "0,1,2,3" }
+    parmtag { "vray_plugin" "GeomMeshFile" }
+    parmtag { "vray_pluginattr" "anim_type" }
+    parmtag { "vray_type" "int" }
     }
     parm {
-	name	"anim_type"
-	label	"Playback Type"
-	type	ordinal
-	default	{ "0" }
-	help	"Animated proxy playback type"
-	menu	{
-	    "Loop"	"Loop"
-	    "Once"	"Once"
-	    "Ping-pong"	"Ping-pong"
-	    "Still"	"Still"
-	}
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1,2,3" }
-	parmtag	{ "vray_plugin" "GeomMeshFile" }
-	parmtag	{ "vray_pluginattr" "anim_type" }
-	parmtag	{ "vray_type" "int" }
+    name    "anim_override"
+    label   "Sequence Override"
+    type    toggle
+    default { "0" }
+    help    "Controls if anim_start and anim_length are taken in consideration. Useful only, when the file name contains frame filter"
+    range   { 0 1 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "GeomMeshFile" }
+    parmtag { "vray_pluginattr" "anim_override" }
+    parmtag { "vray_type" "boolean" }
     }
     parm {
-	name	"anim_override"
-	label	"Sequence Override"
-	type	toggle
-	default	{ "0" }
-	help	"Controls if anim_start and anim_length are taken in consideration. Useful only, when the file name contains frame filter"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomMeshFile" }
-	parmtag	{ "vray_pluginattr" "anim_override" }
-	parmtag	{ "vray_type" "boolean" }
+    name    "anim_speed"
+    label   "Playback Speed"
+    type    float
+    default { "1" }
+    help    "Animated proxy playback speed"
+    disablewhen "{ anim_override != 1 }"
+    range   { 0 64 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "GeomMeshFile" }
+    parmtag { "vray_pluginattr" "anim_speed" }
+    parmtag { "vray_type" "float" }
     }
     parm {
-	name	"anim_speed"
-	label	"Playback Speed"
-	type	float
-	default	{ "1" }
-	help	"Animated proxy playback speed"
-	disablewhen	"{ anim_override != 1 }"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomMeshFile" }
-	parmtag	{ "vray_pluginattr" "anim_speed" }
-	parmtag	{ "vray_type" "float" }
+    name    "anim_offset"
+    label   "Start Offset"
+    type    float
+    default { "0" }
+    help    "Animated proxy initial frame offset"
+    disablewhen "{ anim_override != 1 }"
+    range   { 0 64 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "GeomMeshFile" }
+    parmtag { "vray_pluginattr" "anim_offset" }
+    parmtag { "vray_type" "float" }
     }
     parm {
-	name	"anim_offset"
-	label	"Start Offset"
-	type	float
-	default	{ "0" }
-	help	"Animated proxy initial frame offset"
-	disablewhen	"{ anim_override != 1 }"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomMeshFile" }
-	parmtag	{ "vray_pluginattr" "anim_offset" }
-	parmtag	{ "vray_type" "float" }
+    name    "anim_start"
+    label   "Sequence Start"
+    type    integer
+    default { "0" }
+    help    "Specifies the first frame of the animation sequence"
+    disablewhen "{ anim_override != 1 } { anim_override == 0 }"
+    range   { 0 64 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "GeomMeshFile" }
+    parmtag { "vray_pluginattr" "anim_start" }
+    parmtag { "vray_type" "int" }
     }
     parm {
-	name	"anim_start"
-	label	"Sequence Start"
-	type	integer
-	default	{ "0" }
-	help	"Specifies the first frame of the animation sequence"
-	disablewhen	"{ anim_override != 1 } { anim_override == 0 }"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomMeshFile" }
-	parmtag	{ "vray_pluginattr" "anim_start" }
-	parmtag	{ "vray_type" "int" }
+    name    "anim_length"
+    label   "Sequence Length"
+    type    integer
+    default { "0" }
+    help    "Specifies the length of the animation sequence"
+    disablewhen "{ anim_override != 1 } { anim_override == 0 }"
+    range   { 0 64 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "GeomMeshFile" }
+    parmtag { "vray_pluginattr" "anim_length" }
+    parmtag { "vray_type" "int" }
     }
     parm {
-	name	"anim_length"
-	label	"Sequence Length"
-	type	integer
-	default	{ "0" }
-	help	"Specifies the length of the animation sequence"
-	disablewhen	"{ anim_override != 1 } { anim_override == 0 }"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomMeshFile" }
-	parmtag	{ "vray_pluginattr" "anim_length" }
-	parmtag	{ "vray_type" "int" }
+    name    "primary_visibility"
+    label   "Primary Visibility"
+    type    toggle
+    default { "1" }
+    range   { 0 1 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "GeomMeshFile" }
+    parmtag { "vray_pluginattr" "primary_visibility" }
+    parmtag { "vray_type" "boolean" }
     }
     parm {
-	name	"primary_visibility"
-	label	"Primary Visibility"
-	type	toggle
-	default	{ "1" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomMeshFile" }
-	parmtag	{ "vray_pluginattr" "primary_visibility" }
-	parmtag	{ "vray_type" "boolean" }
+    name    "scale"
+    label   "Scale"
+    type    float
+    default { "1" }
+    help    "Size scaling factor"
+    range   { 0 64 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "GeomMeshFile" }
+    parmtag { "vray_pluginattr" "scale" }
+    parmtag { "vray_type" "float" }
     }
     parm {
-	name	"scale"
-	label	"Scale"
-	type	float
-	default	{ "1" }
-	help	"Size scaling factor"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomMeshFile" }
-	parmtag	{ "vray_pluginattr" "scale" }
-	parmtag	{ "vray_type" "float" }
+    name    "flip_axis"
+    label   "Flip Axis"
+    type    toggle
+    default { "0" }
+    help    "Transform the proxy from Y-up to Z-up (and vice versa) coordinate system"
+    range   { 0 1 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "GeomMeshFile" }
+    parmtag { "vray_pluginattr" "flip_axis" }
+    parmtag { "vray_type" "int" }
     }
     parm {
-	name	"flip_axis"
-	label	"Flip Axis"
-	type	toggle
-	default	{ "0" }
-	help	"Transform the proxy from Y-up to Z-up (and vice versa) coordinate system"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomMeshFile" }
-	parmtag	{ "vray_pluginattr" "flip_axis" }
-	parmtag	{ "vray_type" "int" }
+    name    "smooth_uv_borders"
+    label   "Smooth Uv Borders"
+    type    toggle
+    default { "1" }
+    help    "true to smooth UVs at mesh borders when rendering this mesh as a subdivision surface"
+    range   { 0 1 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "GeomMeshFile" }
+    parmtag { "vray_pluginattr" "smooth_uv_borders" }
+    parmtag { "vray_type" "boolean" }
     }
     parm {
-	name	"smooth_uv_borders"
-	label	"Smooth Uv Borders"
-	type	toggle
-	default	{ "1" }
-	help	"true to smooth UVs at mesh borders when rendering this mesh as a subdivision surface"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomMeshFile" }
-	parmtag	{ "vray_pluginattr" "smooth_uv_borders" }
-	parmtag	{ "vray_type" "boolean" }
+    name    "smooth_uv"
+    label   "Smooth Uv"
+    type    toggle
+    default { "1" }
+    help    "true to smooth UVs when rendering this mesh as a subdivision surface"
+    range   { 0 1 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "GeomMeshFile" }
+    parmtag { "vray_pluginattr" "smooth_uv" }
+    parmtag { "vray_type" "boolean" }
     }
     parm {
-	name	"smooth_uv"
-	label	"Smooth Uv"
-	type	toggle
-	default	{ "1" }
-	help	"true to smooth UVs when rendering this mesh as a subdivision surface"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomMeshFile" }
-	parmtag	{ "vray_pluginattr" "smooth_uv" }
-	parmtag	{ "vray_type" "boolean" }
+    name    "compute_normals"
+    label   "Compute Normals"
+    type    toggle
+    default { "1" }
+    help    "true to calculate smooth normals"
+    range   { 0 1 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "GeomMeshFile" }
+    parmtag { "vray_pluginattr" "compute_normals" }
+    parmtag { "vray_type" "boolean" }
     }
     parm {
-	name	"compute_normals"
-	label	"Compute Normals"
-	type	toggle
-	default	{ "1" }
-	help	"true to calculate smooth normals"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomMeshFile" }
-	parmtag	{ "vray_pluginattr" "compute_normals" }
-	parmtag	{ "vray_type" "boolean" }
+    name    "smooth_angle"
+    label   "Smooth Angle"
+    type    float
+    default { "30" }
+    help    "smooth angle in degrees"
+    disablewhen "{ compute_normals != 1 } { compute_normals == 0 }"
+    range   { 0 64 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "GeomMeshFile" }
+    parmtag { "vray_pluginattr" "smooth_angle" }
+    parmtag { "vray_type" "float" }
     }
     parm {
-	name	"smooth_angle"
-	label	"Smooth Angle"
-	type	float
-	default	{ "30" }
-	help	"smooth angle in degrees"
-	disablewhen	"{ compute_normals != 1 } { compute_normals == 0 }"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomMeshFile" }
-	parmtag	{ "vray_pluginattr" "smooth_angle" }
-	parmtag	{ "vray_type" "float" }
+    name    "compute_bbox"
+    label   "Recompute Bounding Box"
+    type    toggle
+    default { "0" }
+    help    "true to compute the bounding box, false to read it from the file"
+    range   { 0 1 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "GeomMeshFile" }
+    parmtag { "vray_pluginattr" "compute_bbox" }
+    parmtag { "vray_type" "boolean" }
     }
     parm {
-	name	"compute_bbox"
-	label	"Recompute Bounding Box"
-	type	toggle
-	default	{ "0" }
-	help	"true to compute the bounding box, false to read it from the file"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomMeshFile" }
-	parmtag	{ "vray_pluginattr" "compute_bbox" }
-	parmtag	{ "vray_type" "boolean" }
+    name    "num_preview_faces"
+    label   "Preview Faces"
+    type    integer
+    default { "10000" }
+    help    "number of faces in preview"
+    range   { 0 64 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "GeomMeshFile" }
+    parmtag { "vray_pluginattr" "num_preview_faces" }
+    parmtag { "vray_type" "int" }
     }
     parm {
-	name	"num_preview_faces"
-	label	"Preview Faces"
-	type	integer
-	default	{ "10000" }
-	help	"number of faces in preview"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomMeshFile" }
-	parmtag	{ "vray_pluginattr" "num_preview_faces" }
-	parmtag	{ "vray_type" "int" }
+    name    "use_face_sets"
+    label   "Use Face Sets"
+    type    toggle
+    default { "1" }
+    help    "turn on/off face sets"
+    range   { 0 1 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "GeomMeshFile" }
+    parmtag { "vray_pluginattr" "use_face_sets" }
+    parmtag { "vray_type" "boolean" }
     }
     parm {
-	name	"use_face_sets"
-	label	"Use Face Sets"
-	type	toggle
-	default	{ "1" }
-	help	"turn on/off face sets"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomMeshFile" }
-	parmtag	{ "vray_pluginattr" "use_face_sets" }
-	parmtag	{ "vray_type" "boolean" }
+    name    "use_full_names"
+    label   "Use Full Names"
+    type    toggle
+    default { "0" }
+    help    "read the full path instead of only the name"
+    range   { 0 1 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "GeomMeshFile" }
+    parmtag { "vray_pluginattr" "use_full_names" }
+    parmtag { "vray_type" "boolean" }
     }
     parm {
-	name	"use_full_names"
-	label	"Use Full Names"
-	type	toggle
-	default	{ "0" }
-	help	"read the full path instead of only the name"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomMeshFile" }
-	parmtag	{ "vray_pluginattr" "use_full_names" }
-	parmtag	{ "vray_type" "boolean" }
+    name    "object_path"
+    label   "Starting Object Path"
+    type    string
+    default { "" }
+    help    "Starting object path in Alembic hierarchy"
+    range   { 0 1 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "GeomMeshFile" }
+    parmtag { "vray_pluginattr" "object_path" }
+    parmtag { "vray_type" "String" }
     }
     parm {
-	name	"object_path"
-	label	"Starting Object Path"
-	type	string
-	default	{ "" }
-	help	"Starting object path in Alembic hierarchy"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomMeshFile" }
-	parmtag	{ "vray_pluginattr" "object_path" }
-	parmtag	{ "vray_type" "String" }
+    name    "hair_width_multiplier"
+    label   "Hair Width Multiplier"
+    type    float
+    default { "1" }
+    help    "Hair width multiplier"
+    range   { 0 64 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "GeomMeshFile" }
+    parmtag { "vray_pluginattr" "hair_width_multiplier" }
+    parmtag { "vray_type" "float" }
     }
     parm {
-	name	"hair_width_multiplier"
-	label	"Hair Width Multiplier"
-	type	float
-	default	{ "1" }
-	help	"Hair width multiplier"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomMeshFile" }
-	parmtag	{ "vray_pluginattr" "hair_width_multiplier" }
-	parmtag	{ "vray_type" "float" }
+    name    "visibility_lists_type"
+    label   "Visibility Lists Type"
+    type    ordinal
+    default { "0" }
+    help    "Specifies the type of both names and ids lists"
+    menu    {
+        "Exclude"   "Exclude"
+        "Include"   "Include"
+    }
+    range   { 0 1 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_enumkeys" "0,1" }
+    parmtag { "vray_plugin" "GeomMeshFile" }
+    parmtag { "vray_pluginattr" "visibility_lists_type" }
+    parmtag { "vray_type" "int" }
     }
     parm {
-	name	"visibility_lists_type"
-	label	"Visibility Lists Type"
-	type	ordinal
-	default	{ "0" }
-	help	"Specifies the type of both names and ids lists"
-	menu	{
-	    "Exclude"	"Exclude"
-	    "Include"	"Include"
-	}
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1" }
-	parmtag	{ "vray_plugin" "GeomMeshFile" }
-	parmtag	{ "vray_pluginattr" "visibility_lists_type" }
-	parmtag	{ "vray_type" "int" }
+    name    "hair_visibility_lists_type"
+    label   "Hair Visibility Lists Type"
+    type    ordinal
+    default { "0" }
+    help    "Specifies the type of both names and ids lists"
+    menu    {
+        "Exclude"   "Exclude"
+        "Include"   "Include"
+    }
+    range   { 0 1 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_enumkeys" "0,1" }
+    parmtag { "vray_plugin" "GeomMeshFile" }
+    parmtag { "vray_pluginattr" "hair_visibility_lists_type" }
+    parmtag { "vray_type" "int" }
     }
     parm {
-	name	"hair_visibility_lists_type"
-	label	"Hair Visibility Lists Type"
-	type	ordinal
-	default	{ "0" }
-	help	"Specifies the type of both names and ids lists"
-	menu	{
-	    "Exclude"	"Exclude"
-	    "Include"	"Include"
-	}
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1" }
-	parmtag	{ "vray_plugin" "GeomMeshFile" }
-	parmtag	{ "vray_pluginattr" "hair_visibility_lists_type" }
-	parmtag	{ "vray_type" "int" }
+    name    "flip_normals"
+    label   "Flip Normals"
+    type    toggle
+    default { "0" }
+    help    "True to flip the vertex normals"
+    range   { 0 1 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "GeomMeshFile" }
+    parmtag { "vray_pluginattr" "flip_normals" }
+    parmtag { "vray_type" "boolean" }
     }
     parm {
-	name	"flip_normals"
-	label	"Flip Normals"
-	type	toggle
-	default	{ "0" }
-	help	"True to flip the vertex normals"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomMeshFile" }
-	parmtag	{ "vray_pluginattr" "flip_normals" }
-	parmtag	{ "vray_type" "boolean" }
+    name    "particle_width_multiplier"
+    label   "Particle Width Multiplier"
+    type    float
+    default { "1" }
+    help    "Particle width multiplier"
+    range   { 0 10 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "GeomMeshFile" }
+    parmtag { "vray_pluginattr" "particle_width_multiplier" }
+    parmtag { "vray_type" "float" }
     }
     parm {
-	name	"particle_width_multiplier"
-	label	"Particle Width Multiplier"
-	type	float
-	default	{ "1" }
-	help	"Particle width multiplier"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomMeshFile" }
-	parmtag	{ "vray_pluginattr" "particle_width_multiplier" }
-	parmtag	{ "vray_type" "float" }
+    name    "velocity_multiplier"
+    label   "Velocity Multiplier"
+    type    float
+    default { "1" }
+    help    "Alembic velocity multiplier"
+    range   { 0 10 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "GeomMeshFile" }
+    parmtag { "vray_pluginattr" "velocity_multiplier" }
+    parmtag { "vray_type" "float" }
     }
     parm {
-	name	"velocity_multiplier"
-	label	"Velocity Multiplier"
-	type	float
-	default	{ "1" }
-	help	"Alembic velocity multiplier"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomMeshFile" }
-	parmtag	{ "vray_pluginattr" "velocity_multiplier" }
-	parmtag	{ "vray_type" "float" }
+    name    "particle_visibility_lists_type"
+    label   "Particle Visibility Lists Type"
+    type    ordinal
+    default { "1" }
+    help    "Specifies the type of both names and ids lists. 0 - exclude; 1 - include"
+    menu    {
+        "Exclude"   "Exclude"
+        "Include"   "Include"
+    }
+    range   { 0 1 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_enumkeys" "0,1" }
+    parmtag { "vray_plugin" "GeomMeshFile" }
+    parmtag { "vray_pluginattr" "particle_visibility_lists_type" }
+    parmtag { "vray_type" "int" }
     }
     parm {
-	name	"particle_visibility_lists_type"
-	label	"Particle Visibility Lists Type"
-	type	ordinal
-	default	{ "1" }
-	help	"Specifies the type of both names and ids lists. 0 - exclude; 1 - include"
-	menu	{
-	    "Exclude"	"Exclude"
-	    "Include"	"Include"
-	}
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1" }
-	parmtag	{ "vray_plugin" "GeomMeshFile" }
-	parmtag	{ "vray_pluginattr" "particle_visibility_lists_type" }
-	parmtag	{ "vray_type" "int" }
+    name    "sort_voxels"
+    label   "Sort Voxels"
+    type    integer
+    default { "0" }
+    help    "Sort Alembic voxels after reading by their names. 0 - skip sorting; 1 - sort"
+    range   { 0 10 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "GeomMeshFile" }
+    parmtag { "vray_pluginattr" "sort_voxels" }
+    parmtag { "vray_type" "int" }
     }
     parm {
-	name	"sort_voxels"
-	label	"Sort Voxels"
-	type	integer
-	default	{ "0" }
-	help	"Sort Alembic voxels after reading by their names. 0 - skip sorting; 1 - sort"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomMeshFile" }
-	parmtag	{ "vray_pluginattr" "sort_voxels" }
-	parmtag	{ "vray_type" "int" }
+    name    "first_map_channel"
+    label   "First Map Channel"
+    type    integer
+    default { "-1" }
+    help    "Specifies how to remap the mapping channels: -1 - no remapping; 0 - channel 0, 1 - channel 1"
+    range   { 0 10 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "GeomMeshFile" }
+    parmtag { "vray_pluginattr" "first_map_channel" }
+    parmtag { "vray_type" "int" }
     }
     parm {
-	name	"first_map_channel"
-	label	"First Map Channel"
-	type	integer
-	default	{ "-1" }
-	help	"Specifies how to remap the mapping channels: -1 - no remapping; 0 - channel 0, 1 - channel 1"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomMeshFile" }
-	parmtag	{ "vray_pluginattr" "first_map_channel" }
-	parmtag	{ "vray_type" "int" }
+    name    "particle_render_mode"
+    label   "Particle Render Mode"
+    type    ordinal
+    default { "1" }
+    help    "Set to 0 to render particles as spheres. Set it to 1 to render them as points"
+    menu    {
+        "Spheres"   "Spheres"
+        "Points"    "Points"
+    }
+    range   { 0 1 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_enumkeys" "0,1" }
+    parmtag { "vray_plugin" "GeomMeshFile" }
+    parmtag { "vray_pluginattr" "particle_render_mode" }
+    parmtag { "vray_type" "int" }
     }
     parm {
-	name	"particle_render_mode"
-	label	"Particle Render Mode"
-	type	ordinal
-	default	{ "1" }
-	help	"Set to 0 to render particles as spheres. Set it to 1 to render them as points"
-	menu	{
-	    "Spheres"	"Spheres"
-	    "Points"	"Points"
-	}
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1" }
-	parmtag	{ "vray_plugin" "GeomMeshFile" }
-	parmtag	{ "vray_pluginattr" "particle_render_mode" }
-	parmtag	{ "vray_type" "int" }
+    name    "use_alembic_offset"
+    label   "Use Alembic Offset"
+    type    toggle
+    default { "0" }
+    help    "True to use alembic animation frame offset"
+    range   { 0 1 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "GeomMeshFile" }
+    parmtag { "vray_pluginattr" "use_alembic_offset" }
+    parmtag { "vray_type" "boolean" }
     }
     parm {
-	name	"use_alembic_offset"
-	label	"Use Alembic Offset"
-	type	toggle
-	default	{ "0" }
-	help	"True to use alembic animation frame offset"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomMeshFile" }
-	parmtag	{ "vray_pluginattr" "use_alembic_offset" }
-	parmtag	{ "vray_type" "boolean" }
+    name    "velocity_color_set"
+    label   "Velocity Color Set"
+    type    string
+    default { "" }
+    help    "Optional name for the color set where the velocity is written"
+    range   { 0 1 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "GeomMeshFile" }
+    parmtag { "vray_pluginattr" "velocity_color_set" }
+    parmtag { "vray_type" "String" }
     }
     parm {
-	name	"velocity_color_set"
-	label	"Velocity Color Set"
-	type	string
-	default	{ "" }
-	help	"Optional name for the color set where the velocity is written"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomMeshFile" }
-	parmtag	{ "vray_pluginattr" "velocity_color_set" }
-	parmtag	{ "vray_type" "String" }
+    name    "instancing"
+    label   "Instancing"
+    type    toggle
+    default { "1" }
+    help    "Turns on/off the instancing of alembic duplicated objects"
+    range   { 0 1 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "GeomMeshFile" }
+    parmtag { "vray_pluginattr" "instancing" }
+    parmtag { "vray_type" "boolean" }
     }
     parm {
-	name	"instancing"
-	label	"Instancing"
-	type	toggle
-	default	{ "1" }
-	help	"Turns on/off the instancing of alembic duplicated objects"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomMeshFile" }
-	parmtag	{ "vray_pluginattr" "instancing" }
-	parmtag	{ "vray_type" "boolean" }
+    name    "subdiv_all_meshes"
+    label   "Subdivide All Meshes"
+    type    toggle
+    default { "0" }
+    help    "True to subdivide alembic PolyMesh and SubD objects; false to subdivide only SubD objects"
+    range   { 0 1 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "GeomMeshFile" }
+    parmtag { "vray_pluginattr" "subdiv_all_meshes" }
+    parmtag { "vray_type" "boolean" }
     }
     parm {
-	name	"subdiv_all_meshes"
-	label	"Subdivide All Meshes"
-	type	toggle
-	default	{ "0" }
-	help	"True to subdivide alembic PolyMesh and SubD objects; false to subdivide only SubD objects"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomMeshFile" }
-	parmtag	{ "vray_pluginattr" "subdiv_all_meshes" }
-	parmtag	{ "vray_type" "boolean" }
+    name    "subdiv_type"
+    label   "Subdiv Type"
+    type    integer
+    default { "0" }
+    help    "0 for Catmull-Clark subdivision and 1 for Loop subdivision"
+    range   { 0 10 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "GeomMeshFile" }
+    parmtag { "vray_pluginattr" "subdiv_type" }
+    parmtag { "vray_type" "int" }
     }
     parm {
-	name	"subdiv_type"
-	label	"Subdiv Type"
-	type	integer
-	default	{ "0" }
-	help	"0 for Catmull-Clark subdivision and 1 for Loop subdivision"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomMeshFile" }
-	parmtag	{ "vray_pluginattr" "subdiv_type" }
-	parmtag	{ "vray_type" "int" }
+    name    "subdiv_level"
+    label   "Subdivision Level"
+    type    integer
+    default { "1" }
+    help    "The subdivision level"
+    range   { 0 10 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "GeomMeshFile" }
+    parmtag { "vray_pluginattr" "subdiv_level" }
+    parmtag { "vray_type" "int" }
     }
     parm {
-	name	"subdiv_level"
-	label	"Subdivision Level"
-	type	integer
-	default	{ "1" }
-	help	"The subdivision level"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomMeshFile" }
-	parmtag	{ "vray_pluginattr" "subdiv_level" }
-	parmtag	{ "vray_type" "int" }
+    name    "subdiv_uvs"
+    label   "Subdivide Uvs"
+    type    toggle
+    default { "1" }
+    help    "Subdivide or skip mapping channels"
+    range   { 0 1 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "GeomMeshFile" }
+    parmtag { "vray_pluginattr" "subdiv_uvs" }
+    parmtag { "vray_type" "boolean" }
     }
     parm {
-	name	"subdiv_uvs"
-	label	"Subdivide Uvs"
-	type	toggle
-	default	{ "1" }
-	help	"Subdivide or skip mapping channels"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomMeshFile" }
-	parmtag	{ "vray_pluginattr" "subdiv_uvs" }
-	parmtag	{ "vray_type" "boolean" }
+    name    "subdiv_preserve_geom_borders"
+    label   "Preserve Geometry Borders"
+    type    toggle
+    default { "0" }
+    help    "If true, the borders won't be subdivided"
+    range   { 0 1 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "GeomMeshFile" }
+    parmtag { "vray_pluginattr" "subdiv_preserve_geom_borders" }
+    parmtag { "vray_type" "boolean" }
     }
     parm {
-	name	"subdiv_preserve_geom_borders"
-	label	"Preserve Geometry Borders"
-	type	toggle
-	default	{ "0" }
-	help	"If true, the borders won't be subdivided"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomMeshFile" }
-	parmtag	{ "vray_pluginattr" "subdiv_preserve_geom_borders" }
-	parmtag	{ "vray_type" "boolean" }
+    name    "subdiv_preserve_map_borders"
+    label   "Preserve Map Borders"
+    type    ordinal
+    default { "1" }
+    help    "Determines the smoothing mode of the mapping channels' borders. 0-None, 1-Internal and 2-All"
+    menu    {
+        "None"  "None"
+        "Internal"  "Internal"
+        "All"   "All"
+    }
+    range   { 0 1 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_enumkeys" "0,1,2" }
+    parmtag { "vray_plugin" "GeomMeshFile" }
+    parmtag { "vray_pluginattr" "subdiv_preserve_map_borders" }
+    parmtag { "vray_type" "int" }
     }
     parm {
-	name	"subdiv_preserve_map_borders"
-	label	"Preserve Map Borders"
-	type	ordinal
-	default	{ "1" }
-	help	"Determines the smoothing mode of the mapping channels' borders. 0-None, 1-Internal and 2-All"
-	menu	{
-	    "None"	"None"
-	    "Internal"	"Internal"
-	    "All"	"All"
-	}
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1,2" }
-	parmtag	{ "vray_plugin" "GeomMeshFile" }
-	parmtag	{ "vray_pluginattr" "subdiv_preserve_map_borders" }
-	parmtag	{ "vray_type" "int" }
+    name    "use_point_cloud"
+    label   "Use Point Cloud"
+    type    toggle
+    default { "0" }
+    help    "If true, use the point cloud inside the vrmesh if available"
+    range   { 0 1 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "GeomMeshFile" }
+    parmtag { "vray_pluginattr" "use_point_cloud" }
+    parmtag { "vray_type" "boolean" }
     }
     parm {
-	name	"use_point_cloud"
-	label	"Use Point Cloud"
-	type	toggle
-	default	{ "0" }
-	help	"If true, use the point cloud inside the vrmesh if available"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomMeshFile" }
-	parmtag	{ "vray_pluginattr" "use_point_cloud" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"point_cloud_mult"
-	label	"Point Cloud Mult"
-	type	float
-	default	{ "1" }
-	help	"A LOD multiplier. A value smaller than 1.0 means that the level will be of greater detail than required by distance to the object"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomMeshFile" }
-	parmtag	{ "vray_pluginattr" "point_cloud_mult" }
-	parmtag	{ "vray_type" "float" }
+    name    "point_cloud_mult"
+    label   "Point Cloud Mult"
+    type    float
+    default { "1" }
+    help    "A LOD multiplier. A value smaller than 1.0 means that the level will be of greater detail than required by distance to the object"
+    range   { 0 10 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "GeomMeshFile" }
+    parmtag { "vray_pluginattr" "point_cloud_mult" }
+    parmtag { "vray_type" "float" }
     }
 }

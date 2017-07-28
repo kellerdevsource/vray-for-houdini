@@ -1,0 +1,65 @@
+groupcollapsible {
+    name "VfhTextureCommonAlpha"
+    label "Alpha Tweaks"
+
+    parm {
+        name    "alpha_from_intensity"
+        label   "Source"
+        type    ordinal
+        default { "0" }
+        help    ""
+        menu    {
+            "0" "Alpha"
+            "1" "Color Intensity / Luminance"
+            "2" "Force Opaque"
+        }
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_enumkeys" "0,1,2" }
+        parmtag { "vray_pluginattr" "alpha_from_intensity" }
+        parmtag { "vray_type" "int" }
+    }
+
+    parm {
+        name    "alpha_mult"
+        label   "Mult"
+        type    float
+        default { "1" }
+        help    "A multiplier for the texture alpha"
+        range   { 0 64 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag {  "TexGradient" }
+        parmtag { "vray_pluginattr" "alpha_mult" }
+        parmtag { "vray_type" "TextureFloat" }
+    }
+
+    parm {
+        name    "alpha_offset"
+        label   "Offset"
+        type    float
+        default { "0" }
+        help    "An additional offset for the texture alpha"
+        range   { 0 64 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag {  "TexGradient" }
+        parmtag { "vray_pluginattr" "alpha_offset" }
+        parmtag { "vray_type" "TextureFloat" }
+    }
+
+    parm {
+        name    "invert_alpha"
+        label   "Invert"
+        type    toggle
+        default { "0" }
+        help    "If true and invert is on, the resulting texture alpha will be inverted too. If false, just the color will be inverted"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag {  "TexGradient" }
+        parmtag { "vray_pluginattr" "invert_alpha" }
+        parmtag { "vray_type" "boolean" }
+    }
+}

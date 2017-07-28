@@ -12,21 +12,7 @@
 
 #include "vop_BRDFLayered.h"
 
-
 using namespace VRayForHoudini;
-
-
-static PRM_Name  rpm_name_brdf_count("brdf_count", "BRDF Count");
-static PRM_Range rpm_range_brdf_count(PRM_RANGE_RESTRICTED, 1, PRM_RANGE_UI, 8);
-
-static PRM_Name  rpm_name_brdf_weight("brdf#weight", "BRDF Weight #");
-static PRM_Range rpm_range_brdf_weight(PRM_RANGE_RESTRICTED, 0.0, PRM_RANGE_RESTRICTED, 1.0);
-
-static PRM_Template rpm_tmpl_brdfs[] = {
-	PRM_Template(PRM_FLT, 1, &rpm_name_brdf_weight, PRMoneDefaults, /*choicelist*/ nullptr, &rpm_range_brdf_weight),
-	PRM_Template()
-};
-
 
 // NOTE: Sockets order:
 //
@@ -43,13 +29,6 @@ void VOP::BRDFLayered::setPluginType()
 	pluginType = VRayPluginType::BRDF;
 	pluginID   = "BRDFLayered";
 }
-
-
-void VOP::BRDFLayered::addPrmTemplate(Parm::PRMList &prmTemplate)
-{
-	prmTemplate.addPrm(PRM_Template(PRM_MULTITYPE_LIST, rpm_tmpl_brdfs, 1, &rpm_name_brdf_count, /*choicelist*/ nullptr, &rpm_range_brdf_count));
-}
-
 
 const char* VOP::BRDFLayered::inputLabel(unsigned idx) const
 {
@@ -166,7 +145,7 @@ void VOP::BRDFLayered::getAllowedInputTypeInfosSubclass(unsigned idx, VOP_VopTyp
 int VOP::BRDFLayered::customInputsCount() const
 {
 	// One socket for BRDF and one for Weight
-	int numCustomInputs = evalInt(rpm_name_brdf_count.getToken(), 0, 0.0) * 2;
+	int numCustomInputs = evalInt("brdf_count", 0, 0.0) * 2;
 
 	return numCustomInputs;
 }
@@ -202,7 +181,7 @@ OP::VRayNode::PluginResult VOP::BRDFLayered::asPluginDesc(Attrs::PluginDesc &plu
 {
 	const fpreal &t = exporter.getContext().getTime();
 
-	const int brdf_count = evalInt(rpm_name_brdf_count.getToken(), 0, 0.0);
+	const int brdf_count = evalInt("brdf_count", 0, 0.0);
 
 	VRay::ValueList brdfs;
 	VRay::ValueList weights;
@@ -236,7 +215,7 @@ OP::VRayNode::PluginResult VOP::BRDFLayered::asPluginDesc(Attrs::PluginDesc &plu
 					const fpreal weight_value = evalFloatInst("brdf#weight", &i, 0, t);
 
 					Attrs::PluginDesc weight_tex(VRayExporter::getPluginName(this, paramPrefix), "TexAColor");
-					weight_tex.pluginAttrs.push_back(Attrs::PluginAttr("texture", weight_value, weight_value, weight_value, 1.0f));
+					weight_tex.add(Attrs::PluginAttr("texture", weight_value, weight_value, weight_value, 1.0f));
 
 					weight_plugin = exporter.exportPlugin(weight_tex);
 				}
@@ -257,8 +236,8 @@ OP::VRayNode::PluginResult VOP::BRDFLayered::asPluginDesc(Attrs::PluginDesc &plu
 		return PluginResult::PluginResultError;
 	}
 
-	pluginDesc.pluginAttrs.push_back(Attrs::PluginAttr("brdfs", brdfs));
-	pluginDesc.pluginAttrs.push_back(Attrs::PluginAttr("weights", weights));
+	pluginDesc.add(Attrs::PluginAttr("brdfs", brdfs));
+	pluginDesc.add(Attrs::PluginAttr("weights", weights));
 
 	return PluginResult::PluginResultContinue;
 }

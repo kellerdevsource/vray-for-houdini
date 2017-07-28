@@ -10,29 +10,16 @@
 
 #include "sop_GeomPlane.h"
 
-
 #include <GEO/GEO_Point.h>
 #include <GU/GU_PrimPoly.h>
 
-
 using namespace VRayForHoudini;
-
-
-static PRM_Name prm_size_name("plane_size", "Viewport Size");
-
 
 void SOP::GeomPlane::setPluginType()
 {
 	pluginType = VRayPluginType::GEOMETRY;
 	pluginID   = "GeomInfinitePlane";
 }
-
-
-void SOP::GeomPlane::addPrmTemplate(Parm::PRMList &prmTemplate)
-{
-	prmTemplate.addPrm(PRM_Template(PRM_FLT, 1, &prm_size_name, PRMoneDefaults));
-}
-
 
 OP_ERROR SOP::GeomPlane::cookMySop(OP_Context &context)
 {
@@ -42,7 +29,7 @@ OP_ERROR SOP::GeomPlane::cookMySop(OP_Context &context)
 		gdp->clearAndDestroy();
 	}
 
-	const float size = evalFloat(prm_size_name.getToken(), 0, 0.0);
+	const float size = evalFloat("plane_size", 0, 0.0);
 
 	GU_PrimPoly *poly = GU_PrimPoly::build(gdp, 4, GU_POLY_CLOSED, 0);
 
@@ -66,7 +53,6 @@ OP_ERROR SOP::GeomPlane::cookMySop(OP_Context &context)
 
 	return error();
 }
-
 
 OP::VRayNode::PluginResult SOP::GeomPlane::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
 {

@@ -15,6 +15,7 @@
 #include "vfh_exporter.h"
 #include "vfh_prm_templates.h"
 #include "vfh_export_geom.h"
+#include "vfh_attr_utils.h"
 
 #include <PRM/PRM_Parm.h>
 #include <OP/OP_Bundle.h>
@@ -57,14 +58,17 @@ void VRayExporter::RtCallbackOBJGeometry(OP_Node *caller, void *callee, OP_Event
 				break;
 			}
 
-			// If the parameter is for material override it has OBJ_MATERIAL_SPARE_TAG tag
 			const PRM_Parm *prm = Parm::getParm(*caller, reinterpret_cast<intptr_t>(data));
 			if (prm) {
-				UT_StringRef prmToken = prm->getToken();
+				const UT_StringRef &prmToken = prm->getToken();
 				const PRM_SpareData	*spare = prm->getSparePtr();
+
 				Log::getLog().debug("  Parm: %s", prmToken.buffer());
-				shouldReExport = (prmToken.equal(objGeo.getMaterialParmToken()) ||
-				                 (spare && spare->getValue(OBJ_MATERIAL_SPARE_TAG)));
+
+				shouldReExport =
+					prmToken.equal(objGeo.getMaterialParmToken()) ||
+					prmToken.equal(VFH_ATTR_SHOP_MATERIAL_STYLESHEET) ||
+					(spare && spare->getValue(OBJ_MATERIAL_SPARE_TAG));
 			}
 		}
 		case OP_FLAG_CHANGED:
@@ -74,6 +78,7 @@ void VRayExporter::RtCallbackOBJGeometry(OP_Node *caller, void *callee, OP_Event
 
 			// Otherwise we won't update plugin.
 			objExporter.clearOpPluginCache();
+			objExporter.clearPrimPluginCache();
 
 			// Store current state
 			const int geomExpState = objExporter.getExportGeometry();
@@ -89,6 +94,9 @@ void VRayExporter::RtCallbackOBJGeometry(OP_Node *caller, void *callee, OP_Event
 		}
 		case OP_NODE_PREDELETE: {
 			exporter.delOpCallbacks(caller);
+
+			ObjectExporter &objExporter = exporter.getObjectExporter();
+			objExporter.removeObject(objNode);
 			break;
 		}
 		default:
@@ -269,12 +277,7 @@ VRay::Plugin VRayExporter::exportObject(OP_Node *opNode)
 		}
 
 		VRay::Plugin plugin = objectExporter.exportObject(*objNode);
-		if (plugin) {
-			Log::getLog().debug("Exporting OBJ: %s [%s]",
-								opNode->getName().buffer(),
-								objOpType.buffer());
-		}
-		else {
+		if (!plugin) {
 			Log::getLog().error("Error exporting OBJ: %s [%s]",
 								opNode->getName().buffer(),
 								objOpType.buffer());

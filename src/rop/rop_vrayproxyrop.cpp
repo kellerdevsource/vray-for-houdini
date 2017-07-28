@@ -126,7 +126,7 @@ ROP_RENDER_CODE VRayProxyROP::renderFrame(fpreal time, UT_Interrupt *boss)
 		else {
 			for (int sopIdx = 0; sopIdx < m_sopList.size(); ++sopIdx) {
 				SOPList singleItem;
-				singleItem.append(m_sopList[sopIdx]);
+				singleItem.append(m_sopList(sopIdx));
 
 				doExport(singleItem);
 			}

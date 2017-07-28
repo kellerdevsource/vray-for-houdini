@@ -10,6 +10,7 @@
 
 #include "vfh_hou_utils.h"
 #include "vfh_plugin_exporter.h"
+#include "vfh_vray_instances.h"
 
 #include <QtGui>
 #include <QWidget>
@@ -22,139 +23,19 @@
 using namespace VRayForHoudini;
 using namespace VRayForHoudini::Attrs;
 
-static QRegExp cssRgbMatch("(\\d+)");
-
-static QColor getSelectionColor(const QString &styleSheet)
-{
-	QColor selectionColor;
-
-	// Find the first occurence of "selection-background-color: rgb(184, 133, 32);"
-	QStringList lines = styleSheet.split('\n');
-	for (QString line : lines) {
-		if (line.contains("selection-background-color")) {
-			QStringList colors;
-			int pos = 0;
-
-			while ((pos = cssRgbMatch.indexIn(line, pos)) != -1) {
-				colors << cssRgbMatch.cap(1);
-				pos += cssRgbMatch.matchedLength();
-			}
-
-			selectionColor.setRed(colors[0].toInt());
-			selectionColor.setGreen(colors[1].toInt());
-			selectionColor.setBlue(colors[2].toInt());
-
-			break;
-		}
-	}
-
-	return selectionColor;
-}
-
-struct AppSdkInit;
-static AppSdkInit *appSdkInit = nullptr;
-
-struct AppSdkInit
-{
-	static AppSdkInit &getInstance() {
-		if (!appSdkInit) {
-			appSdkInit = new AppSdkInit;
-		}
-		return *appSdkInit;
-	}
-
-	static void deleteInstance() {
-		FreePtr(appSdkInit);
-	}
-
-	operator bool () const {
-		return m_vrayInit && m_dummyRenderer;
-	}
-
-private:
-	AppSdkInit()
-		: m_vrayInit(nullptr)
-		, m_dummyRenderer(nullptr)
-	{
-		QWidget *mainWindow = HOU::getMainQtWindow();
-		if (mainWindow) {
-			// VFB will take colors from QApplication::palette(),
-			// but Houdini's real palette is not stored there.
-			// Must be called before VRay::VRayInit().
-			QPalette houdiniPalette = mainWindow->palette();
-
-			// Pressed button color is incorrect in palette...
-			QString styleSheet = mainWindow->styleSheet();
-
-			houdiniPalette.setBrush(QPalette::Highlight,
-									QBrush(getSelectionColor(styleSheet)));
-
-			QApplication::setPalette(houdiniPalette);
-
-			QApplication::setFont(mainWindow->font());
-		}
-
-		try {
-#ifdef __APPLE__
-			const bool isVfbEnabled = false;
-#else
-			const bool isVfbEnabled = HOU::isUIAvailable();
-#endif
-			m_vrayInit = new VRay::VRayInit(isVfbEnabled);
-		}
-		catch (VRay::VRayException &e) {
-			Log::getLog().error("Error initializing V-Ray AppSDK library:\n%s",
-								e.what());
-		}
-
-		try {
-			VRay::RendererOptions options;
-			options.enableFrameBuffer = false;
-			options.showFrameBuffer = false;
-			options.useDefaultVfbTheme = false;
-			options.vfbDrawStyle = VRay::RendererOptions::ThemeStyleMaya;
-
-			m_dummyRenderer = new VRay::VRayRenderer(options);
-		}
-		catch (VRay::VRayException &e) {
-			Log::getLog().error("Error initializing VRay::VRayRenderer instance:\n%s",
-								e.what());
-		}
-
-		Log::getLog().info("Using V-Ray AppSDK %s", VRay::getSDKVersionDetails());
-		Log::getLog().info("Using V-Ray %s", VRay::getVRayVersionDetails());
-	}
-
-	~AppSdkInit() {
-		Log::getLog().debug("~AppSdkInit()");
-		cleanup();
-	}
-
-	void cleanup() {
-		FreePtr(m_dummyRenderer);
-		FreePtr(m_vrayInit);
-	}
-
-	/// Needed to initialize V-Ray renderer context.
-	VRay::VRayInit *m_vrayInit;
-
-	// Dummy renderer keeps references to shared plugin libraries
-	// when resetting/removing/destroying true renderers
-	// dummy renderer instance will prevent unloading of shared plugin libraries
-	VRay::VRayRenderer *m_dummyRenderer;
-
-	VUTILS_DISABLE_COPY(AppSdkInit);
-};
-
 
 static void OnDumpMessage(VRay::VRayRenderer &renderer, const char *msg, int level, void *userData)
 {
 	CbSetOnDumpMessage *callbacks = reinterpret_cast<CbSetOnDumpMessage*>(userData);
 	for (CbSetOnDumpMessage::CbTypeArray::const_iterator cbIt = callbacks->m_cbTyped.begin(); cbIt != callbacks->m_cbTyped.end(); ++cbIt) {
-		(*cbIt)(renderer, msg, level);
+		if (*cbIt) {
+			(*cbIt)(renderer, msg, level);
+		}
 	}
 	for (CbSetOnDumpMessage::CbVoidArray::const_iterator cbIt = callbacks->m_cbVoid.begin(); cbIt != callbacks->m_cbVoid.end(); ++cbIt) {
-		(*cbIt)();
+		if (*cbIt) {
+			(*cbIt)();
+		}
 	}
 }
 
@@ -260,22 +141,9 @@ static void OnBucketReady(VRay::VRayRenderer &renderer, int x, int y, const char
 	}
 }
 
-
-bool VRayPluginRenderer::initialize()
-{
-	return static_cast<bool>(AppSdkInit::getInstance());
-}
-
-
-void VRayPluginRenderer::deinitialize()
-{
-	return AppSdkInit::deleteInstance();
-}
-
-
 bool VRayPluginRenderer::hasVRScansGUILicense(VRay::ScannedMaterialLicenseError &err)
 {
-	if (!initialize()) {
+	if (!newVRayInit()) {
 		err.errorCode = VRay::LicenseError::vrlauth_notInitializedError;
 		return false;
 	}
@@ -320,59 +188,60 @@ VRayPluginRenderer::~VRayPluginRenderer()
 
 int VRayPluginRenderer::initRenderer(int hasUI, int reInit)
 {
-	if (initialize()) {
-		if (reInit) {
+	if (!newVRayInit())
+		return 0;
+
+	if (reInit) {
+		freeMem();
+		resetCallbacks();
+	}
+	else if (m_vray) {
+		// Workaround to make render regions persist trough renders
+		m_savedRegion.saved = false;
+
+		const bool gotRegion = m_vray->getRenderRegion(m_savedRegion.left, m_savedRegion.top, m_savedRegion.width, m_savedRegion.height);
+		int width = 0, height = 0;
+		if (gotRegion && m_vray->getImageSize(width, height)) {
+			if (m_savedRegion.width != width || m_savedRegion.height != height) {
+				m_savedRegion.saved = true;
+			}
+		}
+
+		m_vray->stop();
+		m_vray->reset();
+	}
+
+	if (!m_vray) {
+		try {
+			VRay::RendererOptions options;
+			options.enableFrameBuffer = hasUI;
+			options.showFrameBuffer = false;
+			options.useDefaultVfbTheme = false;
+			options.vfbDrawStyle = VRay::RendererOptions::ThemeStyleMaya;
+			options.keepRTRunning = true;
+			options.rtNoiseThreshold = 0.0f;
+			options.rtSampleLevel = INT_MAX;
+			options.rtTimeout = 0;
+
+			m_vray = newVRayRenderer(options);
+		}
+		catch (VRay::VRayException &e) {
+			Log::getLog().error("Error initializing V-Ray! Error: \"%s\"",
+								e.what());
 			freeMem();
-			resetCallbacks();
-		}
-		else if (m_vray) {
-			// Workaround to make render regions persist trough renders
-			m_savedRegion.saved = false;
-
-			const bool gotRegion = m_vray->getRenderRegion(m_savedRegion.left, m_savedRegion.top, m_savedRegion.width, m_savedRegion.height);
-			int width = 0, height = 0;
-			if (gotRegion && m_vray->getImageSize(width, height)) {
-				if (m_savedRegion.width != width || m_savedRegion.height != height) {
-					m_savedRegion.saved = true;
-				}
-			}
-
-			m_vray->stop();
-			m_vray->reset();
 		}
 
-		if (!m_vray) {
-			try {
-				VRay::RendererOptions options;
-				options.enableFrameBuffer = hasUI;
-				options.showFrameBuffer = false;
-				options.useDefaultVfbTheme = false;
-				options.vfbDrawStyle = VRay::RendererOptions::ThemeStyleMaya;
-				options.keepRTRunning = true;
-				options.rtNoiseThreshold = 0.0f;
-				options.rtSampleLevel = INT_MAX;
-				options.rtTimeout = 0;
+		if (m_vray) {
+			m_vray->setOnDumpMessage(OnDumpMessage,       (void*)&m_callbacks.m_cbOnDumpMessage);
+			m_vray->setOnProgress(OnProgress,             (void*)&m_callbacks.m_cbOnProgress);
+			m_vray->setOnRendererClose(OnRendererClose,   (void*)&m_callbacks.m_cbOnRendererClose);
 
-				m_vray = new VRay::VRayRenderer(options);
-			}
-			catch (VRay::VRayException &e) {
-				Log::getLog().error("Error initializing V-Ray! Error: \"%s\"",
-									e.what());
-				freeMem();
-			}
-
-			if (m_vray) {
-				m_vray->setOnDumpMessage(OnDumpMessage,       (void*)&m_callbacks.m_cbOnDumpMessage);
-				m_vray->setOnProgress(OnProgress,             (void*)&m_callbacks.m_cbOnProgress);
-				m_vray->setOnRendererClose(OnRendererClose,   (void*)&m_callbacks.m_cbOnRendererClose);
-
-				if (hasUI) {
-					m_vray->setOnImageReady(OnImageReady,         (void*)&m_callbacks.m_cbOnImageReady);
-					m_vray->setOnRTImageUpdated(OnRTImageUpdated, (void*)&m_callbacks.m_cbOnRTImageUpdated);
-					m_vray->setOnBucketInit(OnBucketInit,         (void*)&m_callbacks.m_cbOnBucketInit);
-					m_vray->setOnBucketFailed(OnBucketFailed,     (void*)&m_callbacks.m_cbOnBucketFailed);
-					m_vray->setOnBucketReady(OnBucketReady,       (void*)&m_callbacks.m_cbOnBucketReady);
-				}
+			if (hasUI) {
+				m_vray->setOnImageReady(OnImageReady,         (void*)&m_callbacks.m_cbOnImageReady);
+				m_vray->setOnRTImageUpdated(OnRTImageUpdated, (void*)&m_callbacks.m_cbOnRTImageUpdated);
+				m_vray->setOnBucketInit(OnBucketInit,         (void*)&m_callbacks.m_cbOnBucketInit);
+				m_vray->setOnBucketFailed(OnBucketFailed,     (void*)&m_callbacks.m_cbOnBucketFailed);
+				m_vray->setOnBucketReady(OnBucketReady,       (void*)&m_callbacks.m_cbOnBucketReady);
 			}
 		}
 	}
@@ -387,18 +256,9 @@ void VRayPluginRenderer::freeMem()
 
 	if (m_vray) {
 		m_vray->stop();
-		m_vray->setOnImageReady(NULL);
-		m_vray->setOnDumpMessage(NULL);
-		m_vray->setOnProgress(NULL);
-		m_vray->setOnRendererClose(NULL);
-		m_vray->setOnImageReady(NULL);
-		m_vray->setOnRTImageUpdated(NULL);
-		m_vray->setOnBucketInit(NULL);
-		m_vray->setOnBucketFailed(NULL);
-		m_vray->setOnBucketReady(NULL);
 	}
 
-	FreePtr(m_vray);
+	deleteVRayRenderer(m_vray);
 }
 
 
@@ -493,8 +353,8 @@ VRay::Plugin VRayPluginRenderer::exportPlugin(const Attrs::PluginDesc &pluginDes
 
 void VRayPluginRenderer::exportPluginProperties(VRay::Plugin &plugin, const Attrs::PluginDesc &pluginDesc)
 {
-	for (const auto &pIt : pluginDesc.pluginAttrs) {
-		const PluginAttr &p = pIt;
+	FOR_CONST_IT (PluginAttrs, pIt, pluginDesc.pluginAttrs) {
+		const PluginAttr &p = pIt.data();
 
 		if (p.paramType == PluginAttr::AttrTypeIgnore) {
 			continue;
@@ -586,8 +446,8 @@ void VRayPluginRenderer::exportPluginProperties(VRay::Plugin &plugin, const Attr
 		}
 
 #if CGR_DEBUG_APPSDK_VALUES
-		Log::getLog().debug("Setting plugin parameter: \"%s\" %s_%s = %s",
-							pluginDesc.pluginName.c_str(), pluginDesc.pluginID.c_str(), p.paramName.c_str(), plug.getValue(p.paramName).toString().c_str());
+		Log::getLog().debug("Setting plugin parameter: \"%s\" %s.%s = %s",
+							pluginDesc.pluginName.c_str(), pluginDesc.pluginID.c_str(), p.paramName.c_str(), plugin.getValue(p.paramName).toString().c_str());
 #endif
 	}
 }
@@ -697,7 +557,7 @@ int VRayPluginRenderer::startRender(int locked)
 			m_vray->setRenderRegion(m_savedRegion.left, m_savedRegion.top, m_savedRegion.width, m_savedRegion.height);
 		}
 
-		m_vray->start();
+		m_vray->startSync();
 
 		if (locked) {
 			m_vray->waitForImageReady();
@@ -771,4 +631,13 @@ void VRayPluginRenderer::setAutoCommit(const bool enable)
 	if (m_vray) {
 		m_vray->setAutoCommit(enable);
 	}
+}
+
+void VRayPluginRenderer::reset() const
+{
+	if (!m_vray)
+		return;
+
+	m_vray->stop();
+	m_vray->reset();
 }

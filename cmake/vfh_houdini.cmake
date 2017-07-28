@@ -20,6 +20,10 @@ if (HOUDINI_VERSION VERSION_LESS 16.0)
 	set(HOUDINI_QT_VERSION 4 CACHE STRING "HDK < 16.x is only Qt 4.x" FORCE)
 endif()
 
+if(${HOUDINI_QT_VERSION} VERSION_LESS 5)
+	set(WITH_SOHO OFF)
+endif()
+
 # Compiler version.
 set(HDK_RUNTIME vc11 CACHE STRING "Houdini runtime" FORCE)
 if (HOUDINI_VERSION VERSION_GREATER_EQUAL 15.5)
@@ -29,7 +33,17 @@ endif()
 # Made using: cat sesitag.txt | sesitag -m
 set(PLUGIN_TAGINFO "\"3262197cbf104d152da5089a671b9ff8394bdcd9d530d8aa27f5984e1714bfd251aa2487851869344346dba5159b681c2da1a710878dac641a5874f82bead6fb0cb006e8bedd1ad3f169d85849f95eb181\"")
 
+set(VFH_DSO_DIRPATH ${CMAKE_BINARY_DIR}/dso)
+set(VFH_BIN_DIRPATH ${CMAKE_BINARY_DIR}/bin)
+set(VFH_PYTHON_DIRPATH ${CMAKE_BINARY_DIR}/python)
+
 find_package(HDK ${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD} REQUIRED)
+
+set(HDK_DSO_DEFINITIONS
+	-DVERSION=${HOUDINI_VERSION}
+	-DHOUDINI_DSO_VERSION=${HOUDINI_VERSION}
+	-DUT_DSO_TAGINFO=${PLUGIN_TAGINFO}
+)
 
 macro(use_houdini_sdk)
 	message(STATUS "Using Houdini ${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD}: ${HOUDINI_INSTALL_ROOT}")
@@ -62,22 +76,21 @@ macro(use_houdini_sdk)
 		set(HOUDINI_HOME_PATH "$ENV{HOME}/houdini${HOUDINI_VERSION}")
 	endif()
 
-	add_definitions(${HDK_DEFINITIONS})
+	add_definitions(
+		${HDK_DEFINITIONS}
+		${HDK_DSO_DEFINITIONS}
+	)
 	include_directories(${HDK_INCLUDES})
 	link_directories(${HDK_LIBRARIES})
 endmacro()
 
+macro(houdini_library name sources)
+	add_library(${name} STATIC ${sources})
+endmacro()
 
 macro(houdini_plugin name sources)
-	add_definitions(-DMAKING_DSO
-					-DVERSION=${HOUDINI_VERSION}
-					-DHOUDINI_DSO_VERSION=${HOUDINI_VERSION}
-					-DUT_DSO_TAGINFO=${PLUGIN_TAGINFO}
-	)
-
-	set(libraryName ${name})
-	add_library(${libraryName} SHARED ${sources})
-	set_target_properties(${libraryName} PROPERTIES PREFIX "")
-	target_link_libraries(${libraryName} ${HDK_LIBS})
-	vfh_osx_flags(${libraryName})
+	add_library(${name} SHARED ${sources})
+	set_target_properties(${name} PROPERTIES PREFIX "")
+	target_link_libraries(${name} ${HDK_LIBS})
+	vfh_osx_flags(${name})
 endmacro()

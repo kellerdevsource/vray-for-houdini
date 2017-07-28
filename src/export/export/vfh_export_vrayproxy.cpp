@@ -138,7 +138,7 @@ VUtils::ErrorCode VRayProxyExporter::init()
 	objectExporter.setContext(ctx);
 
 	for (int i = 0; i < sopList.size(); ++i) {
-		SOP_Node *sopNode = sopList[i];
+		SOP_Node *sopNode = sopList(i);
 		if (sopNode) {
 			OBJ_Node *objNode = CAST_OBJNODE(sopNode->getParentNetwork());
 			if (objNode) {
@@ -247,7 +247,7 @@ VUtils::ErrorCode VRayProxyExporter::doExport(VRayProxyExportOptions &options, c
 		else {
 			for (int sopIdx = 0; sopIdx < sopList.size(); ++sopIdx) {
 				SOPList singleItem;
-				singleItem.append(sopList[sopIdx]);
+				singleItem.append(sopList(sopIdx));
 
 				err = _doExport(options, singleItem);
 			}

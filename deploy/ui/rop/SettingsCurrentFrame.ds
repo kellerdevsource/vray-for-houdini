@@ -1,0 +1,13 @@
+parm {
+    name    "SettingsCurrentFrame_current_frame"
+    label   "Current Frame"
+    type    integer
+    default { "0" }
+    help    "current frame"
+    range   { 0 64 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "SettingsCurrentFrame" }
+    parmtag { "vray_pluginattr" "current_frame" }
+    parmtag { "vray_type" "int" }
+}

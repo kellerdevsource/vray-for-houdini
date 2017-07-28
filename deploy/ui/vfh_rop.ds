@@ -1,0 +1,46 @@
+{
+    name VRayRenderer
+    label "V-Ray Renderer"
+
+    parmtag { spare_classtags "render" }
+    parmtag { spare_category "V-Ray Renderer" }
+
+#include "$VRAY_UI_DS_PATH/vfh_rop_camera.ds"
+
+    parm {
+        name    "render_network_environment"
+        label   "Environment"
+        type    oppath
+        default { "" }
+    }
+
+    group {
+        name "VRayRendererFolderExport"
+        label "Export"
+#include "$VRAY_UI_DS_PATH/vfh_rop_export.ds"
+    }
+
+    group {
+        name "VRayRendererFolderOutput"
+        label "Images"
+#include "$VRAY_UI_DS_PATH/rop/SettingsOutput.ds"
+    }
+
+    group {
+        name "VRayRendererFolderRenderer"
+        label "Renderer"
+#include "$VRAY_UI_DS_PATH/vfh_rop_renderer.ds"
+    }
+
+    group {
+        name "VRayRendererFolderObjects"
+        label "Objects"
+#include "$VRAY_UI_DS_PATH/vfh_rop_objects.ds"
+    }
+
+    group {
+        name "VRayRendererFolderScripts"
+        label "Scripts"
+#include "$VRAY_UI_DS_PATH/vfh_rop_scripts.ds"
+    }
+}

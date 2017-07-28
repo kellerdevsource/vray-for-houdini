@@ -70,18 +70,31 @@ VRay::Plugin VRayExporter::exportMaterial(OP_Node *matNode)
 {
 	VRay::Plugin material;
 
-	VOP_Node *vopNode = CAST_VOPNODE(matNode);
-	if (vopNode) {
-		addOpCallback(matNode, RtCallbackSurfaceShop);
+	if (matNode) {
+		if (!objectExporter.getPluginFromCache(*matNode, material)) {
+			VOP_Node *vopNode = CAST_VOPNODE(matNode);
+			SHOP_Node *shopNode = CAST_SHOPNODE(matNode);
+			if (vopNode) {
+				addOpCallback(matNode, RtCallbackSurfaceShop);
 
-		material = exportMaterial(vopNode);
-	}
-	else {
-		OP_Node *materialNode = getVRayNodeFromOp(*matNode, "Material");
-		if (materialNode) {
-			addOpCallback(matNode, RtCallbackSurfaceShop);
+				material = exportMaterial(vopNode);
+			}
+			else if (shopNode) {
+				const UT_String &opType = shopNode->getOperator()->getName();
+				if (opType.equal("principledshader")) {
+					material = exportPrincipledShader(*matNode);
+				}
+				else {
+					OP_Node *materialNode = getVRayNodeFromOp(*matNode, "Material");
+					if (materialNode) {
+						addOpCallback(matNode, RtCallbackSurfaceShop);
 
-			material = exportMaterial(CAST_VOPNODE(materialNode));
+						material = exportMaterial(CAST_VOPNODE(materialNode));
+					}
+				}
+			}
+
+			objectExporter.addPluginToCache(*matNode, material);
 		}
 	}
 
@@ -95,13 +108,23 @@ VRay::Plugin VRayExporter::exportMaterial(OP_Node *matNode)
 
 VRay::Plugin VRayExporter::exportDefaultMaterial()
 {
-	Attrs::PluginDesc brdfDesc("BRDFDiffuse@Clay", "BRDFDiffuse");
-	brdfDesc.addAttribute(Attrs::PluginAttr("color", 0.5f, 0.5f, 0.5f));
+	VRay::Plugin material;
 
-	Attrs::PluginDesc mtlDesc("Mtl@Clay", "MtlSingleBRDF");
-	mtlDesc.addAttribute(Attrs::PluginAttr("brdf", exportPlugin(brdfDesc)));
+	static const char clayMaterial[] = "Mtl@Clay";
 
-	return exportPlugin(mtlDesc);
+	if (!objectExporter.getPluginFromCache(clayMaterial, material)) {
+		Attrs::PluginDesc brdfDesc("BRDFDiffuse@Clay", "BRDFDiffuse");
+		brdfDesc.addAttribute(Attrs::PluginAttr("color", 0.5f, 0.5f, 0.5f));
+
+		Attrs::PluginDesc mtlDesc(clayMaterial, "MtlSingleBRDF");
+		mtlDesc.addAttribute(Attrs::PluginAttr("brdf", exportPlugin(brdfDesc)));
+
+		material = exportPlugin(mtlDesc);
+
+		objectExporter.addPluginToCache(clayMaterial, material);
+	}
+
+	return material;
 }
 
 
@@ -188,6 +211,9 @@ void VRayExporter::setAttrsFromSHOPOverrides(Attrs::PluginDesc &pluginDesc, VOP_
 				}
 				mtlOverrideDesc.addAttribute(attr);
 				mtlOverrideDesc.addAttribute(Attrs::PluginAttr("user_attribute", prm->getToken()));
+
+				// Set priority to user attribute.
+				mtlOverrideDesc.addAttribute(Attrs::PluginAttr("attribute_priority", 1));
 
 				VRay::Plugin mtlOverridePlg = exportPlugin(mtlOverrideDesc);
 				pluginDesc.addAttribute(Attrs::PluginAttr(attrName, mtlOverridePlg, "color"));

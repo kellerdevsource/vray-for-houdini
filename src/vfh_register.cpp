@@ -11,9 +11,10 @@
 #include "vfh_defines.h"
 #include "vfh_class_utils.h"
 #include "vfh_log.h"
-#include "utils/vfh_error.h"
-
+#include "vfh_error.h"
+#include "vfh_vray_instances.h"
 #include "vfh_rop.h"
+
 #include "rop/rop_vrayproxyrop.h"
 #include "obj/obj_node_def.h"
 #include "sop/sop_node_def.h"
@@ -27,16 +28,17 @@
 #include "vop/rc/vop_rc_def.h"
 #include "vop/env/vop_env_def.h"
 #include "cmd/vfh_cmd_register.h"
-
 #include "gu_volumegridref.h"
 #include "gu_vrayproxyref.h"
-
 #include "io/io_vrmesh.h"
 
 // For newShopOperator()
 #include <SHOP/SHOP_Node.h>
 #include <SHOP/SHOP_Operator.h>
 
+#ifndef MAKING_DSO
+#  define MAKING_DSO
+#endif
 #include <UT/UT_DSOVersion.h>
 #include <UT/UT_Exit.h>
 #include <UT/UT_IOTable.h>
@@ -45,7 +47,6 @@
 #ifdef CGR_HAS_AUR
 #  include <aurloader.h>
 #endif
-
 
 using namespace VRayForHoudini;
 
@@ -62,6 +63,7 @@ using namespace VRayForHoudini;
 /// Register file extensions that could be handled by vfh custom translators
 static void registerExtensions()
 {
+	Log::Logger::startLogging();
 	UT_ExtensionList *geoextension = UTgetGeoExtensions();
 	if (geoextension && !geoextension->findExtension(IO::Vrmesh::extension)) {
 		geoextension->addExtension(IO::Vrmesh::extension);
@@ -84,10 +86,13 @@ void newGeometryIO(void *)
 /// Called when Houdini exits, but only if ROP operators have been registered
 void unregister(void *)
 {
-	VRayPluginRenderer::deinitialize();
+	deleteVRayInit();
+	Log::Logger::stopLogging();
 
+#ifndef VASSERT_ENABLED
 	Error::ErrorChaser &errChaser = Error::ErrorChaser::getInstance();
 	errChaser.enable(false);
+#endif
 }
 
 
@@ -108,9 +113,10 @@ void newDriverOperator(OP_OperatorTable *table)
 {
 	Log::getLog().info("Build %s from " __DATE__ ", " __TIME__,
 					   STRINGIZE(CGR_GIT_HASH));
-
+#ifndef VASSERT_ENABLED
 	Error::ErrorChaser &errChaser = Error::ErrorChaser::getInstance();
 	errChaser.enable(true);
+#endif
 
 	VRayRendererNode::register_operator(table);
 	VRayProxyROP::register_ropoperator(table),
@@ -149,7 +155,8 @@ void newSopOperator(OP_OperatorTable *table)
 #endif
 
 	VFH_ADD_SOP_GENERATOR(table, GeomPlane);
-	VFH_ADD_SOP_GENERATOR_CUSTOM(table, VRayProxy, Parm::getPrmTemplate("GeomMeshFile"));
+	VFH_ADD_SOP_GENERATOR_CUSTOM(table, VRayProxy, VRayProxy::getPrmTemplate());
+
 	VRayProxyROP::register_sopoperator(table);
 }
 
@@ -289,7 +296,6 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexBerconTile);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexBerconWood);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexBezierCurve);
-	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexBifrostVVMix);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexBillboardParticle);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexBitmap);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexBlend);
@@ -341,7 +347,6 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexInterpLinear);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexInvert);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexInvertFloat);
-	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexLayered);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexLayeredMax);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexLeather);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexLuminance);
