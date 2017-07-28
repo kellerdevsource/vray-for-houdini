@@ -13,7 +13,6 @@
 
 #include "vfh_defines.h"
 #include "vfh_log.h"
-#include "vfh_ipr_viewer.h"
 
 #include <QThread>
 #include <QProcess>

@@ -12,16 +12,17 @@
 #define VRAY_FOR_HOUDINI_IRP_VIEWER_H
 
 #include "vfh_vray.h"
+#include "vfh_ipr_imdisplay_viewer.h"
 #include <functional>
 
 namespace VRayForHoudini {
 
-void startImdisplay();
+/// Initialize the imdisplay thread
 void initImdisplay(VRay::VRayRenderer &renderer);
-void setImdisplayOnStop(std::function<void()> fn);
-void setImdisplayPort(int port);
-int getImdisplayPort();
+/// Stop the imdisplay thread
 void closeImdisplay();
+/// Get the instanced imdisplay thread
+ImdisplayThread & getImdisplay();
 
 void onRTImageUpdated(VRay::VRayRenderer &renderer, VRay::VRayImage *image, void *userData);
 void onImageReady(VRay::VRayRenderer &renderer, void *userData);
