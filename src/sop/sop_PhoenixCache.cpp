@@ -52,23 +52,33 @@ OP_ERROR SOP::PhxShaderCache::cookMySop(OP_Context &context)
 
 	flags().setTimeDep(true);
 
-	//gdp->stashAll();
 
 	const float t = context.getTime();
 
-	GU_PrimPacked *pack = nullptr;
+	VRayVolumeGridRef* gridRefPtr = nullptr;
 	GA_Primitive *prim = nullptr;
 	GA_FOR_ALL_PRIMITIVES(gdp, prim) {
 		if (strcmp(prim->getTypeName(), "VRayVolumeGridRef") == 0) {
-			pack = UTverify_cast<GU_PrimPacked*>(prim);
+			auto pack = UTverify_cast<VRayVolumeGridRef*>(UTverify_cast<GU_PrimPacked*>(prim)->implementation());
+			gridRefPtr = new VRayVolumeGridRef(std::move(*UTverify_cast<VRayVolumeGridRef*>(UTverify_cast<GU_PrimPacked*>(prim)->implementation())));
 		}
 	}
-	if (pack == nullptr) {
-		// Create a packed primitive
-		pack = GU_PrimPacked::build(*gdp, "VRayVolumeGridRef");
+	
+	gdp->stashAll();
+	
+	// Create a packed primitive
+	GU_PrimPacked *pack = GU_PrimPacked::build(*gdp, "VRayVolumeGridRef");
+	if (!gridRefPtr) {
+		// if we don't have previous gridref use the new one
+		gridRefPtr = UTverify_cast<VRayVolumeGridRef*>(pack->implementation());
+	}
+	else {
+		// if we have previous gridref move its cache to the new one
+		UTverify_cast<VRayVolumeGridRef*>(pack->implementation())->m_dataCache = std::move(gridRefPtr->m_dataCache);
+		delete gridRefPtr;
+		gridRefPtr = UTverify_cast<VRayVolumeGridRef*>(pack->implementation());
 	}
 
-	auto gridRefPtr = UTverify_cast<VRayVolumeGridRef*>(pack->implementation());
 	if (NOT(pack)) {
 		addWarning(SOP_MESSAGE, "Can't create packed primitive VRayVolumeGridRef");
 		return error();

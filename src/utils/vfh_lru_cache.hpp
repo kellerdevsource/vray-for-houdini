@@ -110,6 +110,32 @@ public:
 	~LRUCache()
 	{ clear(); }
 
+	LRUCache(LRUCache&& source)
+	{
+		m_capacity = source.m_capacity;
+		m_cacheMap = std::move(source.m_cacheMap);
+		m_mlruQueue = std::move(source.m_mlruQueue);
+		m_cbfetchValue = source.m_cbfetchValue;
+		m_cbEvictValue = source.m_cbEvictValue;
+
+		source.m_capacity = 0;
+	}
+
+	LRUCache &operator=(LRUCache&& source)
+	{
+		if (&source != this) {
+			m_capacity = source.m_capacity;
+			m_cacheMap = std::move(source.m_cacheMap);
+			m_mlruQueue = std::move(source.m_mlruQueue);
+			m_cbfetchValue = source.m_cbfetchValue;
+			m_cbEvictValue = source.m_cbEvictValue;
+
+			source.m_capacity = 0;
+		}
+
+		return *this;
+	}
+
 	/// Get cache capacity
 	size_type capacity() const { return m_capacity; }
 	/// Get number of items in the cache
@@ -301,7 +327,7 @@ public:
 private:
 	///	avoid copying
 	LRUCache(const LRUCache& other);
-	LRUCache &operator =(const LRUCache& other);
+	LRUCache &operator=(const LRUCache& other);
 
 private:
 	size_type m_capacity; ///< Maximum item that will be held in the cache

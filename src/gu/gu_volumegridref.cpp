@@ -271,6 +271,18 @@ VRayVolumeGridRef::VRayVolumeGridRef(const VRayVolumeGridRef &src)
 	this->initDataCache();
 }
 
+VRayForHoudini::VRayVolumeGridRef::VRayVolumeGridRef(VRayVolumeGridRef &&src)
+	: m_dataCache(std::move(src.m_dataCache)),
+	m_handle(std::move(src.m_handle)),
+	m_options(std::move(src.m_options)),
+	m_bBox(std::move(src.m_bBox)),
+	m_dirty(std::move(src.m_dirty)),
+	m_channelDirty(std::move(src.m_channelDirty)),
+	m_doFrameReplace(std::move(src.m_doFrameReplace)),
+	m_channelDataRange(std::move(src.m_channelDataRange))
+{
+}
+
 
 VRayVolumeGridRef::~VRayVolumeGridRef()
 {
@@ -400,22 +412,21 @@ GU_ConstDetailHandle VRayVolumeGridRef::getPackedDetail(GU_PackedContext *contex
 
 	GU_DetailHandleAutoWriteLock rLock(SYSconst_cast(this)->m_handle);
 	GU_Detail *gdp = rLock.getGdp();
+	gdp->stashAll();
 	self->m_dirty = false;
 
 	auto path = this->get_current_cache_path();
 	if (!*path) {
-		self->m_handle = GU_DetailHandle();
-		memcpy(self->m_channelDataRange.data(), DataRangeMap().data(), DataRangeMapSize);
+		gdp->clearAndDestroy();
 		return getDetail();
 	}
 	auto map = this->get_usrchmap();
 
-	VolumeCacheKey key = {path, map ? map : "", this->get_flip_yz()};
+	VolumeCacheKey key = { path, map ? map : "", this->get_flip_yz() };
 	VolumeCacheData &data = m_dataCache[key];
 
 	if (!data.aurPtr) {
-		self->m_handle = GU_DetailHandle();
-		memcpy(self->m_channelDataRange.data(), DataRangeMap().data(), DataRangeMapSize);
+		gdp->clearAndDestroy();
 		return getDetail();
 	}
 
