@@ -119,6 +119,7 @@ private:
 public:
 	VRayVolumeGridRef();
 	VRayVolumeGridRef(const VRayVolumeGridRef &src);
+	VRayVolumeGridRef(VRayVolumeGridRef &&src);
 	virtual ~VRayVolumeGridRef();
 
 	/// @{
@@ -196,8 +197,9 @@ private:
 
 	/// Build channel mapping, should be called after update to cache or ui mappings
 	void buildMapping();
-private:
+public:
 	mutable VolumeCache    m_dataCache; ///< Data cache used to cache last 10 volumes loaded, mutable(needs to be updated from const functions not changing other (immutable)members)
+private:
 	GU_DetailHandle        m_handle; ///< Detail handle - passed to HDK
 	UT_Options             m_options; ///< All params from VFH_VOLUME_GRID_PARAMS are defined in this map
 
