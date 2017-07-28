@@ -1,3 +1,20 @@
+/*
+groupsimple {
+	name "VrayRendererFolderUIStyle"
+	label "UI"
+	
+	parm {
+		name "ui_style"
+		label "Style"
+		type ordinal
+		menu {
+			0 "Simple"
+			1 "Advanced"
+		}
+		default { "1" }
+	}
+}
+*/
 groupsimple {
     name "VRayRendererFolderDriverProduction"
     label "Production"
@@ -24,9 +41,9 @@ groupsimple {
         label "Device"
         type ordinal
         menu {
-            "CPU" "CPU"
-            "CUDA" "GPU (CUDA)"
-            "OPENCL" "GPU (OpenCL)"
+            0 "CPU"
+            1 "GPU (CUDA)"
+            2 "GPU (OpenCL)"
         }
         default { "0" }
     }

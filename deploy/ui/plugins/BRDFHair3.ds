@@ -3,272 +3,325 @@
     label	"Hair 3"
     parmtag	{ spare_category "Hair 3" }
     parmtag	{ vray_plugin "BRDFHair3" }
-    parm {
-	name	"overall_color"
-	label	"Overall Color"
-	type	color4
-	size	4
-	default	{ "0.9" "0.9" "0.9" "1" }
-	help	"Overall color multiplier"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFHair3" }
-	parmtag	{ "vray_pluginattr" "overall_color" }
-	parmtag	{ "vray_type" "Texture" }
-    }
-    parm {
-	name	"transparency"
-	label	"Transparency"
-	type	color4
-	size	4
-	default	{ "0" "0" "0" "1" }
-	help	"Transparency"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFHair3" }
-	parmtag	{ "vray_pluginattr" "transparency" }
-	parmtag	{ "vray_type" "Texture" }
-    }
-    parm {
-	name	"diffuse_color"
-	label	"Diffuse Color"
-	type	color4
-	size	4
-	default	{ "0" "0" "0" "1" }
-	help	"Diffuse hair color"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFHair3" }
-	parmtag	{ "vray_pluginattr" "diffuse_color" }
-	parmtag	{ "vray_type" "Texture" }
-    }
-    parm {
-	name	"diffuse_amount"
-	label	"Diffuse Amount"
-	type	float
-	default	{ "1" }
-	help	"Multiplier for the diffuse color"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFHair3" }
-	parmtag	{ "vray_pluginattr" "diffuse_amount" }
-	parmtag	{ "vray_type" "TextureFloat" }
-    }
-    parm {
-	name	"primary_specular"
-	label	"Prim. Specular"
-	type	color4
-	size	4
-	default	{ "0.2" "0.2" "0.2" "1" }
-	help	"Primary specular color"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFHair3" }
-	parmtag	{ "vray_pluginattr" "primary_specular" }
-	parmtag	{ "vray_type" "Texture" }
-    }
-    parm {
-	name	"primary_specular_amount"
-	label	"Prim. Specular Amount"
-	type	float
-	default	{ "1" }
-	help	"Multiplier for the primary specular color"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFHair3" }
-	parmtag	{ "vray_pluginattr" "primary_specular_amount" }
-	parmtag	{ "vray_type" "TextureFloat" }
-    }
-    parm {
-	name	"primary_glossiness"
-	label	"Prim. Glossiness"
-	type	float
-	default	{ "0.8" }
-	help	"Primary glossiness"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFHair3" }
-	parmtag	{ "vray_pluginattr" "primary_glossiness" }
-	parmtag	{ "vray_type" "TextureFloat" }
-    }
-    parm {
-	name	"secondary_specular"
-	label	"Sec. Specular"
-	type	color4
-	size	4
-	default	{ "0.2" "0.2" "0.2" "1" }
-	help	"Secondary specular color"
-	disablewhen	"{ secondary_lock_to_transmission != 0 }"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFHair3" }
-	parmtag	{ "vray_pluginattr" "secondary_specular" }
-	parmtag	{ "vray_type" "Texture" }
-    }
-    parm {
-	name	"secondary_specular_amount"
-	label	"Sec. Specular Amount"
-	type	float
-	default	{ "1" }
-	help	"Multiplier for the secondary specular color"
-	disablewhen	"{ secondary_lock_to_transmission != 0 }"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFHair3" }
-	parmtag	{ "vray_pluginattr" "secondary_specular_amount" }
-	parmtag	{ "vray_type" "TextureFloat" }
-    }
-    parm {
-	name	"secondary_glossiness"
-	label	"Sec. Glossiness"
-	type	float
-	default	{ "0.5" }
-	help	"Secondary glossiness"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFHair3" }
-	parmtag	{ "vray_pluginattr" "secondary_glossiness" }
-	parmtag	{ "vray_type" "TextureFloat" }
-    }
-    parm {
-	name	"secondary_lock_to_transmission"
-	label	"Sec. Lock To Transmission"
-	type	toggle
-	default	{ "1" }
-	help	"true to derive the secondary specular color from the transmission color"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFHair3" }
-	parmtag	{ "vray_pluginattr" "secondary_lock_to_transmission" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"transmission"
-	label	"Transmission"
-	type	color4
-	size	4
-	default	{ "0.2" "0.2" "0.2" "1" }
-	help	"Transmission color"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFHair3" }
-	parmtag	{ "vray_pluginattr" "transmission" }
-	parmtag	{ "vray_type" "Texture" }
-    }
-    parm {
-	name	"transmission_amount"
-	label	"Transmission Amount"
-	type	float
-	default	{ "1" }
-	help	"Multiplier for the transmission color"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFHair3" }
-	parmtag	{ "vray_pluginattr" "transmission_amount" }
-	parmtag	{ "vray_type" "TextureFloat" }
-    }
-    parm {
-	name	"transmission_glossiness_length"
-	label	"Trans. Gloss. Length"
-	type	float
-	default	{ "0.8" }
-	help	"Transmission glossiness along strand length"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFHair3" }
-	parmtag	{ "vray_pluginattr" "transmission_glossiness_length" }
-	parmtag	{ "vray_type" "TextureFloat" }
-    }
-    parm {
-	name	"transmission_glossiness_width"
-	label	"Trans. Gloss. Width"
-	type	float
-	default	{ "0.8" }
-	help	"Transmission glossiness across strand width"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFHair3" }
-	parmtag	{ "vray_pluginattr" "transmission_glossiness_width" }
-	parmtag	{ "vray_type" "TextureFloat" }
-    }
-    parm {
-	name	"opaque_for_shadows"
-	label	"Opaque For Shadows"
-	type	toggle
-	default	{ "0" }
-	help	"true to always compute the material as opaque for shadow rays"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFHair3" }
-	parmtag	{ "vray_pluginattr" "opaque_for_shadows" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"opaque_for_gi"
-	label	"Opaque For Gi"
-	type	toggle
-	default	{ "0" }
-	help	"true to always compute the material as opaque for GI rays"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFHair3" }
-	parmtag	{ "vray_pluginattr" "opaque_for_gi" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"simplify_for_gi"
-	label	"Simplify For Gi"
-	type	toggle
-	default	{ "1" }
-	help	"true to use a simpler and less precise representation of the BRDF for GI rays"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFHair3" }
-	parmtag	{ "vray_pluginattr" "simplify_for_gi" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"use_cached_gi"
-	label	"Use Cached Gi"
-	type	toggle
-	default	{ "1" }
-	help	"true to use the light cache/irradiance map; false to always use brute force GI for the hair"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFHair3" }
-	parmtag	{ "vray_pluginattr" "use_cached_gi" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"light_multiplier"
-	label	"Light Multiplier"
-	type	float
-	default	{ "1" }
-	help	"A multiplier for the direct lighting of the hair; could be useful to brighten up the result when not using GI"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFHair3" }
-	parmtag	{ "vray_pluginattr" "light_multiplier" }
-	parmtag	{ "vray_type" "float" }
-    }
+	
+	group {
+		name "folder_main"
+		label "Main"
+		
+		parm {
+			name	"overall_color"
+			label	"Overall Color"
+			type	color4
+			size	4
+			default	{ "0.9" "0.9" "0.9" "1" }
+			help	"Overall color multiplier"
+			range	{ 0 10 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFHair3" }
+			parmtag	{ "vray_pluginattr" "overall_color" }
+			parmtag	{ "vray_type" "Texture" }
+		}
+		parm {
+			name	"transparency"
+			label	"Transparency"
+			type	color4
+			size	4
+			default	{ "0" "0" "0" "1" }
+			help	"Transparency"
+			range	{ 0 10 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFHair3" }
+			parmtag	{ "vray_pluginattr" "transparency" }
+			parmtag	{ "vray_type" "Texture" }
+		}
+		parm {
+			name	"light_multiplier"
+			label	"Light Multiplier"
+			type	float
+			default	{ "1" }
+			help	"A multiplier for the direct lighting of the hair; could be useful to brighten up the result when not using GI"
+			range	{ 0 10 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFHair3" }
+			parmtag	{ "vray_pluginattr" "light_multiplier" }
+			parmtag	{ "vray_type" "float" }
+		}
+		
+		parm {
+			name	"opaque_for_shadows"
+			label	"Opaque For Shadows"
+			type	toggle
+			default	{ "0" }
+			help	"true to always compute the material as opaque for shadow rays"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFHair3" }
+			parmtag	{ "vray_pluginattr" "opaque_for_shadows" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		parm {
+			name	"opaque_for_gi"
+			label	"Opaque For Gi"
+			type	toggle
+			default	{ "0" }
+			help	"true to always compute the material as opaque for GI rays"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFHair3" }
+			parmtag	{ "vray_pluginattr" "opaque_for_gi" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		parm {
+			name	"simplify_for_gi"
+			label	"Simplify For Gi"
+			type	toggle
+			default	{ "1" }
+			help	"true to use a simpler and less precise representation of the BRDF for GI rays"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFHair3" }
+			parmtag	{ "vray_pluginattr" "simplify_for_gi" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		parm {
+			name	"use_cached_gi"
+			label	"Use Cached Gi"
+			type	toggle
+			default	{ "1" }
+			help	"true to use the light cache/irradiance map; false to always use brute force GI for the hair"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFHair3" }
+			parmtag	{ "vray_pluginattr" "use_cached_gi" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		
+		
+		
+	}
+	
+	group {
+		name "folder_diffuse"
+		label "Diffuse"
+		
+		 parm {
+			name	"diffuse_color"
+			label	"Color"
+			type	color4
+			size	4
+			default	{ "0" "0" "0" "1" }
+			help	"Diffuse hair color"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFHair3" }
+			parmtag	{ "vray_pluginattr" "diffuse_color" }
+			parmtag	{ "vray_type" "Texture" }
+		}
+		parm {
+			name	"diffuse_amount"
+			label	"Amount"
+			type	float
+			default	{ "1" }
+			help	"Multiplier for the diffuse color"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFHair3" }
+			parmtag	{ "vray_pluginattr" "diffuse_amount" }
+			parmtag	{ "vray_type" "TextureFloat" }
+		}
+		
+		
+		
+		
+	}
+	
+	group {
+		name "folder_prim_spec"
+		label "Specular 1"
+		
+		parm {
+			name	"primary_specular"
+			label	"Color"
+			type	color4
+			size	4
+			default	{ "0.2" "0.2" "0.2" "1" }
+			help	"Primary specular color"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFHair3" }
+			parmtag	{ "vray_pluginattr" "primary_specular" }
+			parmtag	{ "vray_type" "Texture" }
+		}
+		parm {
+			name	"primary_specular_amount"
+			label	"Amount"
+			type	float
+			default	{ "1" }
+			help	"Multiplier for the primary specular color"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFHair3" }
+			parmtag	{ "vray_pluginattr" "primary_specular_amount" }
+			parmtag	{ "vray_type" "TextureFloat" }
+		}
+		parm {
+			name	"primary_glossiness"
+			label	"Glossiness"
+			type	float
+			default	{ "0.8" }
+			help	"Primary glossiness"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFHair3" }
+			parmtag	{ "vray_pluginattr" "primary_glossiness" }
+			parmtag	{ "vray_type" "TextureFloat" }
+		}
+		
+		
+	}
+	
+	group {
+		name "folder_sec_spec"
+		label "Specular 2"
+		
+		parm {
+			name	"secondary_specular"
+			label	"Color"
+			type	color4
+			size	4
+			default	{ "0.2" "0.2" "0.2" "1" }
+			help	"Secondary specular color"
+			disablewhen	"{ secondary_lock_to_transmission != 0 }"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFHair3" }
+			parmtag	{ "vray_pluginattr" "secondary_specular" }
+			parmtag	{ "vray_type" "Texture" }
+		}
+		parm {
+			name	"secondary_specular_amount"
+			label	"Amount"
+			type	float
+			default	{ "1" }
+			help	"Multiplier for the secondary specular color"
+			disablewhen	"{ secondary_lock_to_transmission != 0 }"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFHair3" }
+			parmtag	{ "vray_pluginattr" "secondary_specular_amount" }
+			parmtag	{ "vray_type" "TextureFloat" }
+		}
+		parm {
+			name	"secondary_glossiness"
+			label	"Glossiness"
+			type	float
+			default	{ "0.5" }
+			help	"Secondary glossiness"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFHair3" }
+			parmtag	{ "vray_pluginattr" "secondary_glossiness" }
+			parmtag	{ "vray_type" "TextureFloat" }
+		}
+		parm {
+			name	"secondary_lock_to_transmission"
+			label	"Lock To Transmission"
+			type	toggle
+			default	{ "1" }
+			help	"true to derive the secondary specular color from the transmission color"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFHair3" }
+			parmtag	{ "vray_pluginattr" "secondary_lock_to_transmission" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		
+		
+		
+	}
+	
+	group {
+		name "folder_transmission"
+		label "Transmission"
+		
+		 parm {
+			name	"transmission"
+			label	"Color"
+			type	color4
+			size	4
+			default	{ "0.2" "0.2" "0.2" "1" }
+			help	"Transmission color"
+			range	{ 0 10 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFHair3" }
+			parmtag	{ "vray_pluginattr" "transmission" }
+			parmtag	{ "vray_type" "Texture" }
+		}
+		parm {
+			name	"transmission_amount"
+			label	"Amount"
+			type	float
+			default	{ "1" }
+			help	"Multiplier for the transmission color"
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFHair3" }
+			parmtag	{ "vray_pluginattr" "transmission_amount" }
+			parmtag	{ "vray_type" "TextureFloat" }
+		}
+		parm {
+			name	"transmission_glossiness_length"
+			label	"Glossiness Along Length"
+			type	float
+			default	{ "0.8" }
+			help	"Transmission glossiness along strand length"
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFHair3" }
+			parmtag	{ "vray_pluginattr" "transmission_glossiness_length" }
+			parmtag	{ "vray_type" "TextureFloat" }
+		}
+		parm {
+			name	"transmission_glossiness_width"
+			label	"Glossiness Across Width"
+			type	float
+			default	{ "0.8" }
+			help	"Transmission glossiness across strand width"
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFHair3" }
+			parmtag	{ "vray_pluginattr" "transmission_glossiness_width" }
+			parmtag	{ "vray_type" "TextureFloat" }
+		}
+		
+		
+	
+	}
+	
+    
+   
+    
+    
+   
+    
 }
