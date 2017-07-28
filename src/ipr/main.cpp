@@ -8,17 +8,32 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
-#include <QtNetwork/QTcpServer>
-#include <QtNetwork/QHostAddress>
+#include "vfh_ipr_server.h"
+#include "vfh_log.h"
 
-int main(int, char const*[])
+#include <QApplication>
+#include <QtCore>
+#include <QProcessEnvironment>
+#include <QDir>
+
+int main(int argc, char ** argv)
 {
-	QTcpServer server;
-	if (!server.listen(QHostAddress(QHostAddress::LocalHost), 424242)) {
+	VRayForHoudini::Log::Logger::startLogging();
+	std::shared_ptr<void> _stopLoggingAtExit = std::shared_ptr<void>(nullptr, [](void*) {
+		VRayForHoudini::Log::Logger::stopLogging();
+	});
+
+	// We need to load "platform" plugins for windows, so we use one from houdini installation
+	QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+	QString hfsPath = env.value("HFS", "");
+	if (hfsPath.isEmpty()) {
+		VRayForHoudini::Log::getLog().error("Environment variable \"HFS\" missiing! IPR not started!");
 		return 1;
 	}
+	QCoreApplication::addLibraryPath(hfsPath + "/bin/Qt_plugins/");
 
-	while (true) {}
+	QApplication app(argc, argv);
+	Server server;
 
-	return 0;
+	return app.exec();
 }

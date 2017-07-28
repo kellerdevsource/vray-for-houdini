@@ -54,11 +54,14 @@ struct PrimitiveItem {
 	/// Material.
 	PrimMaterial primMaterial;
 
-	/// Exporterd geometry plugin.
+	/// Exported geometry plugin.
 	VRay::Plugin geometry;
 
-	/// Exporterd material plugin.
+	/// Exported material plugin.
 	VRay::Plugin material;
+
+	/// Map channel overrides.
+	VRay::Plugin mapChannels;
 
 	/// Transform.
 	VRay::Transform tm;
@@ -86,7 +89,7 @@ public:
 		, ctx(ctx)
 		, pluginExporter(pluginExporter)
 		, tm(1)
-		, detailID(0)
+		, primID(0)
 	{}
 	virtual ~PrimitiveExporter() {}
 
@@ -94,12 +97,13 @@ public:
 	virtual void exportPrimitives(const GU_Detail &detail, PrimitiveItems &plugins) {}
 
 	virtual bool asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc &pluginDesc) { return false; }
+	virtual bool hasData() const { return false; }
 
 	/// Sets transform.
 	void setTM(const VRay::Transform &value) { tm = value; }
 
 	/// Sets detail ID.
-	void setDetailID(exint value) { detailID = value;}
+	void setDetailID(exint value) { primID = value;}
 
 protected:
 	/// Object node owner of all details that will be passed to exportPrimitives.
@@ -115,7 +119,7 @@ protected:
 	VRay::Transform tm;
 
 	/// Detail ID. Used to generate unique plugin name.
-	exint detailID;
+	exint primID;
 };
 
 #ifdef CGR_HAS_AUR

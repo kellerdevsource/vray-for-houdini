@@ -28,10 +28,14 @@ static void OnDumpMessage(VRay::VRayRenderer &renderer, const char *msg, int lev
 {
 	CbSetOnDumpMessage *callbacks = reinterpret_cast<CbSetOnDumpMessage*>(userData);
 	for (CbSetOnDumpMessage::CbTypeArray::const_iterator cbIt = callbacks->m_cbTyped.begin(); cbIt != callbacks->m_cbTyped.end(); ++cbIt) {
-		(*cbIt)(renderer, msg, level);
+		if (*cbIt) {
+			(*cbIt)(renderer, msg, level);
+		}
 	}
 	for (CbSetOnDumpMessage::CbVoidArray::const_iterator cbIt = callbacks->m_cbVoid.begin(); cbIt != callbacks->m_cbVoid.end(); ++cbIt) {
-		(*cbIt)();
+		if (*cbIt) {
+			(*cbIt)();
+		}
 	}
 }
 
@@ -252,15 +256,6 @@ void VRayPluginRenderer::freeMem()
 
 	if (m_vray) {
 		m_vray->stop();
-		m_vray->setOnImageReady(NULL);
-		m_vray->setOnDumpMessage(NULL);
-		m_vray->setOnProgress(NULL);
-		m_vray->setOnRendererClose(NULL);
-		m_vray->setOnImageReady(NULL);
-		m_vray->setOnRTImageUpdated(NULL);
-		m_vray->setOnBucketInit(NULL);
-		m_vray->setOnBucketFailed(NULL);
-		m_vray->setOnBucketReady(NULL);
 	}
 
 	deleteVRayRenderer(m_vray);
@@ -358,8 +353,8 @@ VRay::Plugin VRayPluginRenderer::exportPlugin(const Attrs::PluginDesc &pluginDes
 
 void VRayPluginRenderer::exportPluginProperties(VRay::Plugin &plugin, const Attrs::PluginDesc &pluginDesc)
 {
-	for (const auto &pIt : pluginDesc.pluginAttrs) {
-		const PluginAttr &p = pIt;
+	FOR_CONST_IT (PluginAttrs, pIt, pluginDesc.pluginAttrs) {
+		const PluginAttr &p = pIt.data();
 
 		if (p.paramType == PluginAttr::AttrTypeIgnore) {
 			continue;
@@ -451,8 +446,8 @@ void VRayPluginRenderer::exportPluginProperties(VRay::Plugin &plugin, const Attr
 		}
 
 #if CGR_DEBUG_APPSDK_VALUES
-		Log::getLog().debug("Setting plugin parameter: \"%s\" %s_%s = %s",
-							pluginDesc.pluginName.c_str(), pluginDesc.pluginID.c_str(), p.paramName.c_str(), plug.getValue(p.paramName).toString().c_str());
+		Log::getLog().debug("Setting plugin parameter: \"%s\" %s.%s = %s",
+							pluginDesc.pluginName.c_str(), pluginDesc.pluginID.c_str(), p.paramName.c_str(), plugin.getValue(p.paramName).toString().c_str());
 #endif
 	}
 }
@@ -562,7 +557,7 @@ int VRayPluginRenderer::startRender(int locked)
 			m_vray->setRenderRegion(m_savedRegion.left, m_savedRegion.top, m_savedRegion.width, m_savedRegion.height);
 		}
 
-		m_vray->start();
+		m_vray->startSync();
 
 		if (locked) {
 			m_vray->waitForImageReady();

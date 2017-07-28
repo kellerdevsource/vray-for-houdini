@@ -14,6 +14,7 @@
 #include "vfh_prm_templates.h"
 #include "vfh_tex_utils.h"
 #include "vfh_hou_utils.h"
+#include "vfh_attr_utils.h"
 
 #include "obj/obj_node_base.h"
 #include "vop/vop_node_base.h"
@@ -901,10 +902,20 @@ VRay::Plugin VRayExporter::exportVop(OP_Node *opNode, ExportContext *parentConte
 		const int switcher = vop_node->evalInt("switcher", 0, t);
 		return exportConnectedVop(vop_node, switcher+1, parentContext);
 	}
-	else if (opType == "null") {
+
+	if (opType == "null") {
 		return exportConnectedVop(vop_node, 0, parentContext);
 	}
-	else if (opType.startsWith("VRayNode")) {
+
+	if (opType.startsWith("principledshader")) {
+		return exportPrincipledShader(*opNode, parentContext);
+	}
+
+	if (opType == "parameter") {
+		return exportConnectedVop(vop_node, 0, parentContext);
+	}
+
+	if (opType.startsWith("VRayNode")) {
 		VOP::NodeBase *vrayNode = static_cast<VOP::NodeBase*>(vop_node);
 
 		addOpCallback(vop_node, VRayExporter::RtCallbackVop);
@@ -973,10 +984,8 @@ VRay::Plugin VRayExporter::exportVop(OP_Node *opNode, ExportContext *parentConte
 			return exportPlugin(pluginDesc);
 		}
 	}
-	else {
-		Log::getLog().error("Unsupported VOP node: %s",
-							opType.buffer());
-	}
+
+	Log::getLog().error("Unsupported VOP node: %s", opType.buffer());
 
 	return VRay::Plugin();
 }
@@ -1429,7 +1438,9 @@ void VRayExporter::exportScene()
 	Log::getLog().debug("VRayExporter::exportScene(%.3f)",
 						m_context.getFloatFrame());
 
-	exportView();
+	if (m_isIPR != iprModeSOHO) {
+		exportView();
+	}
 
 	// Clear plugin caches.
 	objectExporter.clearOpPluginCache();
@@ -1899,13 +1910,17 @@ void MotionBlurParams::calcParams(fpreal currFrame)
 	Log::getLog().info("  MB inc:   %.3f", mb_frame_inc);
 }
 
+void VRayExporter::setFrame(fpreal time)
+{
+	m_context.setTime(time);
+}
 
 void VRayExporter::exportFrame(fpreal time)
 {
-	m_context.setTime(time);
-
 	Log::getLog().debug("VRayExporter::exportFrame(%.3f)",
 						m_context.getFloatFrame());
+
+	setFrame(time);
 
 	if (   !m_isMotionBlur
 		&& !m_isVelocityOn)

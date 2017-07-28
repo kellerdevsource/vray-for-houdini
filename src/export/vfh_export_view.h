@@ -31,6 +31,19 @@ struct RenderSizeParams {
 	int  h;
 };
 
+struct RenderCropRegionParams {
+	RenderCropRegionParams()
+		: x(0)
+		, y(0)
+		, width(0)
+		, height(0)
+	{}
+
+	int x;
+	int y;
+	int width;
+	int height;
+};
 
 struct StereoViewParams {
 	StereoViewParams()
@@ -110,7 +123,7 @@ struct ViewPluginsDesc {
 		, stereoSettings(stereoSettingsPluginName, "VRayStereoscopicSettings")
 	{}
 
-	int                needReset(const ViewPluginsDesc &other) const;
+	int needReset(const ViewPluginsDesc &other) const;
 
 	Attrs::PluginDesc  settingsCameraDof;
 	Attrs::PluginDesc  settingsMotionBlur;
@@ -131,12 +144,20 @@ struct ViewParams {
 	int               changedParams(const ViewParams &other) const;
 	int               changedSize(const ViewParams &other) const;
 	int               needReset(const ViewParams &other) const;
+	int               changedCropRegion(const ViewParams &other) const;
 
 	RenderSizeParams  renderSize;
 	RenderViewParams  renderView;
+	RenderCropRegionParams cropRegion;
+
 	int               usePhysicalCamera;
 	OBJ_Node         *cameraObject;
 };
+
+/// Returns FOV value based on aperture and focal.
+/// @param aperture Aperture.
+/// @param focal Focal.
+float getFov(float aperture, float focal);
 
 } // namespace VRayForHoudini
 

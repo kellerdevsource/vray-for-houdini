@@ -19,26 +19,25 @@
 namespace VRayForHoudini {
 namespace VOP {
 
-class MaterialOutput:
-		public VOP_Node
+class MaterialOutput
+	: public VOP_Node
 {
 public:
-	static OP_Node           *creator(OP_Network *parent, const char *name, OP_Operator *entry) { return new MaterialOutput(parent, name, entry); }
-	static void               register_operator(OP_OperatorTable *table);
-
-public:
-	virtual void              getCode(UT_String &codestr, const VOP_CodeGenContext &context) VRAY_OVERRIDE;
+	static OP_Node *creator(OP_Network *parent, const char *name, OP_Operator *entry);
+	static void register_operator(OP_OperatorTable *table);
 
 protected:
-	MaterialOutput(OP_Network *parent, const char *name, OP_Operator *entry) : VOP_Node(parent, name, entry) { }
-	virtual                  ~MaterialOutput() { }
+	MaterialOutput(OP_Network *parent, const char *name, OP_Operator *entry);
+	virtual ~MaterialOutput();
 
-	virtual bool              willAutoconvertInputType(int idx) VRAY_OVERRIDE { return false; }
-	virtual bool              generateErrorsSubclass() VRAY_OVERRIDE;
-	virtual void              getInputNameSubclass(UT_String &in, int idx) const VRAY_OVERRIDE;
-	virtual int               getInputFromNameSubclass(const UT_String &in) const VRAY_OVERRIDE;
-	virtual void              getInputTypeInfoSubclass(VOP_TypeInfo &type_info, int idx) VRAY_OVERRIDE;
-	virtual void              getAllowedInputTypeInfosSubclass(unsigned idx, VOP_VopTypeInfoArray &type_infos) VRAY_OVERRIDE;
+	const char *inputLabel(unsigned idx) const VRAY_OVERRIDE;
+	unsigned getNumVisibleInputs() const VRAY_OVERRIDE;
+	unsigned orderedInputs() const VRAY_OVERRIDE;
+	bool willAutoconvertInputType(int idx) VRAY_OVERRIDE;
+	void getInputNameSubclass(UT_String &in, int idx) const VRAY_OVERRIDE;
+	int getInputFromNameSubclass(const UT_String &in) const VRAY_OVERRIDE;
+	void getInputTypeInfoSubclass(VOP_TypeInfo &type_info, int idx) VRAY_OVERRIDE;
+	void getAllowedInputTypeInfosSubclass(unsigned idx, VOP_VopTypeInfoArray &type_infos) VRAY_OVERRIDE;
 };
 
 } // namespace VOP

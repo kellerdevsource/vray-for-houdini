@@ -10,6 +10,8 @@
 //
 
 #include "vfh_op_utils.h"
+#include "vfh_attr_utils.h"
+
 #include "vop_node_base.h"
 
 #include <SHOP/SHOP_Node.h>

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2016, Chaos Software Ltd
+// Copyright (c) 2015-2017, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -8,28 +8,19 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
-#include <boost/format.hpp>
+#include "vop_TexLayeredMax.h"
 
-#include "vop_TexLayered.h"
+#include <boost/format.hpp>
 
 using namespace VRayForHoudini;
 
-// NOTE: Sockets order:
-//
-//   - Auto. sockets from description
-//   - Base Texture
-//   - texture_1
-//   - ...
-//   - texture_<tex_count>
-//
-
-void VOP::TexLayered::setPluginType()
+void VOP::TexLayeredMax::setPluginType()
 {
 	pluginType = VRayPluginType::TEXTURE;
-	pluginID   = "TexLayered";
+	pluginID   = "TexLayeredMax";
 }
 
-const char* VOP::TexLayered::inputLabel(unsigned idx) const
+const char* VOP::TexLayeredMax::inputLabel(unsigned idx) const
 {
 	const int numBaseInputs = VOP::NodeBase::orderedInputs();
 
@@ -43,14 +34,12 @@ const char* VOP::TexLayered::inputLabel(unsigned idx) const
 	return label.c_str();
 }
 
-
-int VOP::TexLayered::getInputFromName(const UT_String &in) const
+int VOP::TexLayeredMax::getInputFromName(const UT_String &in) const
 {
 	return getInputFromNameSubclass(in);
 }
 
-
-void VOP::TexLayered::getInputNameSubclass(UT_String &in, int idx) const
+void VOP::TexLayeredMax::getInputNameSubclass(UT_String &in, int idx) const
 {
 	const int numBaseInputs = VOP::NodeBase::orderedInputs();
 
@@ -63,8 +52,7 @@ void VOP::TexLayered::getInputNameSubclass(UT_String &in, int idx) const
 	}
 }
 
-
-int VOP::TexLayered::getInputFromNameSubclass(const UT_String &in) const
+int VOP::TexLayeredMax::getInputFromNameSubclass(const UT_String &in) const
 {
 	int inIdx = -1;
 
@@ -83,8 +71,7 @@ int VOP::TexLayered::getInputFromNameSubclass(const UT_String &in) const
 	return inIdx;
 }
 
-
-void VOP::TexLayered::getInputTypeInfoSubclass(VOP_TypeInfo &type_info, int idx)
+void VOP::TexLayeredMax::getInputTypeInfoSubclass(VOP_TypeInfo &type_info, int idx)
 {
 	const int numBaseInputs = VOP::NodeBase::orderedInputs();
 
@@ -96,8 +83,7 @@ void VOP::TexLayered::getInputTypeInfoSubclass(VOP_TypeInfo &type_info, int idx)
 	}
 }
 
-
-void VOP::TexLayered::getAllowedInputTypeInfosSubclass(unsigned idx, VOP_VopTypeInfoArray &type_infos)
+void VOP::TexLayeredMax::getAllowedInputTypeInfosSubclass(unsigned idx, VOP_VopTypeInfoArray &type_infos)
 {
 	const int numBaseInputs = VOP::NodeBase::orderedInputs();
 
@@ -110,23 +96,17 @@ void VOP::TexLayered::getAllowedInputTypeInfosSubclass(unsigned idx, VOP_VopType
 	}
 }
 
-
-int VOP::TexLayered::customInputsCount() const
+int VOP::TexLayeredMax::customInputsCount() const
 {
-	// One socket per texture
-	int numCustomInputs = evalInt("textures_count", 0, 0.0);
-
-	return numCustomInputs;
+	return evalInt("textures_count", 0, 0.0);
 }
 
-
-unsigned VOP::TexLayered::getNumVisibleInputs() const
+unsigned VOP::TexLayeredMax::getNumVisibleInputs() const
 {
 	return orderedInputs();
 }
 
-
-unsigned VOP::TexLayered::orderedInputs() const
+unsigned VOP::TexLayeredMax::orderedInputs() const
 {
 	int orderedInputs = VOP::NodeBase::orderedInputs();
 	orderedInputs += customInputsCount();
@@ -134,13 +114,7 @@ unsigned VOP::TexLayered::orderedInputs() const
 	return orderedInputs;
 }
 
-
-void VOP::TexLayered::getCode(UT_String &codestr, const VOP_CodeGenContext &)
-{
-}
-
-
-OP::VRayNode::PluginResult VOP::TexLayered::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
+OP::VRayNode::PluginResult VOP::TexLayeredMax::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
 {
 	const fpreal &t = exporter.getContext().getTime();
 
@@ -148,55 +122,44 @@ OP::VRayNode::PluginResult VOP::TexLayered::asPluginDesc(Attrs::PluginDesc &plug
 
 	VRay::ValueList textures;
 	VRay::IntList   blend_modes;
+	VRay::FloatList opacities;
 
 	for (int i = 1; i <= tex_count; ++i) {
-		const std::string &paramPrefix = boost::str(boost::format("@%i") % i);
-
 		const std::string &texSockName = boost::str(boost::format("tex_%i") % i);
 
 		OP_Node *tex_node = VRayExporter::getConnectedNode(this, texSockName);
-		if (NOT(tex_node)) {
+		if (!tex_node) { 
 			Log::getLog().warning("Node \"%s\": Texture node is not connected to \"%s\", ignoring...",
 					   getName().buffer(), texSockName.c_str());
 		}
 		else {
 			VRay::Plugin tex_plugin = exporter.exportVop(tex_node, parentContext);
-			if (NOT(tex_plugin)) {
+			if (!tex_plugin) {
 				Log::getLog().error("Node \"%s\": Failed to export texture node connected to \"%s\", ignoring...",
 							getName().buffer(), texSockName.c_str());
 			}
 			else {
-				const int   blend_mode   = evalIntInst("tex#blend_mode", &i, 0, t);
+				const int blend_mode   = evalIntInst("tex#blend_mode", &i, 0, t);
 				const float blend_amount = evalFloatInst("tex#blend_amount", &i, 0, t);
-
-				if (blend_amount != 1.0f) {
-					Attrs::PluginDesc blendDesc(VRayExporter::getPluginName(this, paramPrefix), "TexAColorOp");
-					blendDesc.pluginAttrs.push_back(Attrs::PluginAttr("mode", 0)); // Mode: "result_a"
-					blendDesc.pluginAttrs.push_back(Attrs::PluginAttr("color_a", tex_plugin));
-					blendDesc.pluginAttrs.push_back(Attrs::PluginAttr("mult_a", 1.0f));
-					blendDesc.pluginAttrs.push_back(Attrs::PluginAttr("result_alpha", blend_amount));
-
-					tex_plugin = exporter.exportPlugin(blendDesc);
-				}
 
 				textures.push_back(VRay::Value(tex_plugin));
 				blend_modes.push_back(blend_mode);
+				opacities.push_back(blend_amount);
 			}
 		}
 	}
 
-	if (NOT(textures.size())) {
+	if (!textures.size()) {
 		return PluginResult::PluginResultError;
 	}
 
-	// TODO: Check if this is need for this UI
-#if 0
 	std::reverse(textures.begin(), textures.end());
 	std::reverse(blend_modes.begin(), blend_modes.end());
-#endif
+	std::reverse(opacities.begin(), opacities.end());
 
-	pluginDesc.pluginAttrs.push_back(Attrs::PluginAttr("textures", textures));
-	pluginDesc.pluginAttrs.push_back(Attrs::PluginAttr("blend_modes", blend_modes));
+	pluginDesc.add(Attrs::PluginAttr("textures", textures));
+	pluginDesc.add(Attrs::PluginAttr("blend_modes", blend_modes));
+	pluginDesc.add(Attrs::PluginAttr("opacities", opacities));
 
 	return PluginResult::PluginResultContinue;
 }

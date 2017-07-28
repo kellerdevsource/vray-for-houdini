@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015-2016, Chaos Software Ltd
+# Copyright (c) 2015-2017, Chaos Software Ltd
 #
 # V-Ray For Houdini
 #
@@ -12,30 +12,34 @@ import hou
 import os
 import sys
 
-from vfh import vfh_json
-from vfh import vfh_attrs
+UI = os.environ.get('VRAY_UI_DS_PATH', None)
 
 def add_physical_camera_attributes():
-    physCamPlugID = 'CameraPhysical'
-    CameraPhysicalDesc = vfh_json.getPluginDesc(physCamPlugID)
+    if UI is None:
+        return
 
-    if not CameraPhysicalDesc:
-        sys.stderr.write("CameraPhysical plugin description is not found!\n")
+    physCamDS = os.path.join(UI, "plugins", "CameraPhysical.ds")
+    if not os.path.exists(physCamDS):
+        sys.stderr.write("CameraPhysical.ds is not found!\n")
+        return
 
-    else:
-        physCamTabName = "V-Ray Physical Camera"
+    for node in hou.selectedNodes():
+        if node.type().name() not in {"cam"}:
+            continue
 
-        for node in hou.selectedNodes():
-            if node.type().name() == "cam":
-                sys.stdout.write("Adding \"Physical Camera\" attributes to \"%s\"...\n" % node.name())
+        folderName = "V-Ray Physical Camera"
 
-                ptg = node.parmTemplateGroup()
+        group = node.parmTemplateGroup()
+        if group.findFolder(folderName):
+            continue
 
-                if not ptg.findFolder(physCamTabName):
-                    vfh_attrs.insertInFolderAfterLastTab(ptg, ptg, hou.FolderParmTemplate("vray.%s" % physCamPlugID, physCamTabName))
+        sys.stdout.write("Adding \"Physical Camera\" attributes to \"%s\"...\n" % node.name())
 
-                vfh_attrs.addPluginParms(ptg, CameraPhysicalDesc, parmPrefix = physCamPlugID, parmFolder = physCamTabName)
-                node.setParmTemplateGroup(ptg)
+        folder = hou.FolderParmTemplate("VRayPhysicalCamera", folderName)
+        physCamGroup = hou.ParmTemplateGroup()
+        physCamGroup.setToDialogScript(open(physCamDS, 'r').read())
+        for parmTmpl in physCamGroup.parmTemplates():
+            folder.addParmTemplate(parmTmpl)
 
-                # Set "Use" by default.
-                node.parm("CameraPhysical_use").set(True)
+        group.append(folder)
+        node.setParmTemplateGroup(group)

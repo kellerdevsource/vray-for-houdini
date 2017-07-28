@@ -67,12 +67,6 @@ enum VRayLightType {
 	VRayLightSun       = 8,
 };
 
-enum DisplacementType {
-	displacementTypeFromMat = 0,
-	displacementTypeDisplace,
-	displacementTypeSmooth,
-};
-
 struct OpInterestItem {
 	OpInterestItem(OP_Node *op_node=nullptr, OP_EventMethod cb=nullptr, void *cb_data=nullptr)
 		: op_node(op_node)
@@ -206,7 +200,10 @@ public:
 	/// Export view from the specified view parameters.
 	/// Used in SOHO IPR.
 	/// @param viewParams View parameters
-	void exportView(ViewParams viewParams);
+	void exportView(const ViewParams &viewParams);
+
+	/// Returns current view parameters.
+	const ViewParams &getViewParams() const { return m_viewParams; }
 
 	/// Export the actual scene - geometry, materials, lights, environment,
 	/// volumes and render channels. This is called once for each frame we
@@ -235,6 +232,8 @@ public:
 	/// This is called once for each frame we want to render
 	/// @param op_node[in] - environment VOP node
 	void exportEffects(OP_Node *op_net);
+
+	void setFrame(fpreal time);
 
 	/// Export scene at a given time
 	/// This is called once for each frame we want to render
@@ -276,11 +275,6 @@ public:
 	/// @param node SHOP or VOP node.
 	/// @returns V-Ray plugin.
 	VRay::Plugin exportMaterial(OP_Node *node);
-
-	/// Export V-Ray material from VOP node.
-	/// @param node VOP node.
-	/// @returns V-Ray plugin.
-	VRay::Plugin exportMaterial(VOP_Node *node);
 
 	/// Export the default light created when there are no lights in the scene
 	/// @param update[in] - flags whether this is called from IPR callback
@@ -385,6 +379,12 @@ public:
 
 	/// Get the V-Ray ROP bound to this exporter
 	OP_Node& getRop() const { return *m_rop; }
+
+	/// Set the V-Rap ROP bound to this exporter
+	void setROP(OP_Node &value) { m_rop = &value; }
+
+	/// Get pointer to the bound V-Ray ROP
+	const OP_Node * getRopPtr() const { return m_rop; }
 
 	/// Get ROP error code. This is called from the V-Ray ROP on every frame
 	/// to check if rendering should be aborted
@@ -523,6 +523,9 @@ public:
 	VRay::Plugin exportConnectedVop(VOP_Node *vop_node, int inpidx, ExportContext *parentContext = nullptr);
 	VRay::Plugin exportConnectedVop(VOP_Node *vop_node, const UT_String &inputName, ExportContext *parentContext = nullptr);
 
+	VRay::Plugin exportPrincipledShader(OP_Node &opNode, ExportContext *parentContext=nullptr);
+	VRay::Plugin exportNodeParameter(OP_Node &opNode, ExportContext *parentContext=nullptr);
+
 	/// Export input parameter VOPs for a given VOP node as V-Ray user textures.
 	/// Default values for the textures will be queried from the corresponding
 	/// SHOP parameter. Exported user textures are added as attibutes to the plugin
@@ -539,10 +542,12 @@ public:
 
 	/// Returns object exporter.
 	ObjectExporter& getObjectExporter() { return objectExporter; }
-
-	void setROP(OP_Node &value) { m_rop = &value; }
-
 private:
+	/// Export V-Ray material from VOP node.
+	/// @param node VOP node.
+	/// @returns V-Ray plugin.
+	VRay::Plugin exportMaterial(VOP_Node *node);
+
 	/// The driver node bound to this exporter.
 	OP_Node *m_rop;
 

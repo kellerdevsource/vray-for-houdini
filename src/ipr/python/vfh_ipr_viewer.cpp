@@ -1,17 +1,17 @@
 //
 // Copyright (c) 2015-2017, Chaos Software Ltd
 //
-// V-Ray For Houdini
+// V-Ray For Houdini Python IPR Module
 //
 // ACCESSIBLE SOURCE CODE WITHOUT DISTRIBUTION OF MODIFICATION LICENSE
 //
-// Full license text:
-//  https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
+// Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
 #include "vfh_defines.h"
 #include "vfh_log.h"
 #include "vfh_ipr_viewer.h"
+#include "vfh_ipr_imdisplay_viewer.h"
 
 #include <QtCore>
 
@@ -22,8 +22,12 @@ using namespace VRayForHoudini;
 /// Write image as buckets.
 #define USE_BUCKETS 1
 
+/// Write render channels in IRP.
+#define USE_RENDER_CHANNELS 0
+
 /// A typedef for render elements array.
 typedef std::vector<VRay::RenderElement> RenderElementsList;
+static ImdisplayThread imdisplayThread;
 
 struct ImageHeader {
 	ImageHeader()
@@ -107,7 +111,7 @@ struct TileHeader {
 };
 
 struct TileImage {
-	explicit TileImage(VRay::VRayImage *image=nullptr, const std::string &name="C")
+	explicit TileImage(VRay::VRayImage *image=nullptr, const QString &name="C")
 		: image(image)
 		, name(name)
 		, x0(0)
@@ -116,7 +120,7 @@ struct TileImage {
 		, y1(0)
 	{}
 
-	void freeMem() {
+	~TileImage() {
 		FreePtr(image);
 	}
 
@@ -130,7 +134,7 @@ struct TileImage {
 	}
 
 	VRay::VRayImage *image;
-	std::string name;
+	QString name;
 
 	int x0;
 	int x1;
@@ -139,198 +143,369 @@ struct TileImage {
 };
 
 /// A list of images planes.
-typedef QList<TileImage> PlaneImages;
+typedef QList<TileImage*> PlaneImages;
 
-/// A thread for writing into "imdisplay".
-class ImdisplayThread
-	: public QThread
+/// Queue message base.
+struct TileQueueMessage {
+	enum TileQueueMessageType {
+		messageTypeNone = -1,
+		messageTypeImageHeader = 0,
+		messageTypeImageTiles,
+	};
+
+	virtual ~TileQueueMessage() {}
+
+	/// Returns message type.
+	virtual TileQueueMessageType type() const = 0;
+};
+
+/// Image header message.
+struct ImageHeaderMessage
+	: TileQueueMessage
 {
-public:
-	ImdisplayThread() {}
-	~ImdisplayThread() {
-		close();
-	}
+	ImageHeaderMessage()
+		: imageWidth(0)
+		, imageHeight(0)
+	{}
 
-	void init(int port) {
-		static char buf[MAX_PATH] = "";
-		vutils_sprintf_n(buf, COUNT_OF(buf), "imdisplay -p -k -f -s %i", port);
+	TileQueueMessageType type() const VRAY_OVERRIDE { return messageTypeImageHeader; }
 
-		/// TODO: Error checking.
-		wp.open(buf);
-	}
+	int imageWidth;
+	int imageHeight;
+	QList<QString> planeNames;
+};
 
-	void close() {
-		if (wp.getFilePtr()) {
-			TileHeader eof;
-			eof.x0 = -2;
-			writeHeader(eof);
+/// Image planes message.
+struct TileImageMessage
+	: TileQueueMessage
+{
+	explicit TileImageMessage(const PlaneImages &images)
+		: images(images)
+	{}
+
+	virtual ~TileImageMessage() {
+		for (const TileImage *image : images) {
+			delete image;
 		}
-
-		wp.close();
 	}
 
-	void add(const PlaneImages &images) {
-		// No need to write previous images.
-		clear();
+	TileQueueMessageType type() const VRAY_OVERRIDE { return messageTypeImageTiles; }
 
-		mutex.lock();
-		queue.enqueue(images);
-		mutex.unlock();
+	PlaneImages images;
+};
+
+
+ImdisplayThread::ImdisplayThread()
+	: port(0)
+	, onStop([]() {})
+{
+	setObjectName("ImdisplayPipe");
+	setTerminationEnabled();
+
+	// TODO: utilize finished() / terminated() signals to clean-up left data.
+}
+
+void ImdisplayThread::init() {
+	arguments.clear();
+
+	// The -p option will cause imdisplay.exe to read an image from standard in.
+	arguments << "-p";
+
+	// When using the -p option, the -k option will cause imdisplay
+	// to keep reading image data after the entire image has been read.
+	arguments << "-k";
+
+	// The -f option will flip the image vertically for display
+	arguments << "-f";
+
+	// [hostname:]port will connect to the mplay process which is listening
+	// on the given host/port.
+	arguments << "-s" << QString::number(port);
+}
+
+void ImdisplayThread::restart() {
+	clear();
+	stop();
+	isRunning = true;
+	start(LowPriority);
+}
+
+void ImdisplayThread::stop(bool callCallback) {
+	if (callCallback) {
+		onStop();
 	}
+	isRunning = false;
+	// Try to stop for 250ms but terminate if we cant
+	// This will avoid slow shutdown
+	if (!wait(250)) {
+		terminate();
+		wait();
+	}
+}
 
-	void clear() {
-		mutex.lock();
+void ImdisplayThread::setOnStopCallback(std::function<void()> cb) {
+	onStop = cb;
+}
+
+void ImdisplayThread::add(TileQueueMessage *msg) {
+	QMutexLocker locker(&mutex);
+
+	if (msg->type() == TileQueueMessage::TileQueueMessageType::messageTypeImageHeader) {
+		/// Clear the queue if new resolution comes
+		for (TileQueueMessage *message : queue) {
+			delete message;
+		}
 		queue.clear();
-		mutex.unlock();
 	}
+	else {
+		/// Remove previous messages of the same type.
+		QList<int> indexesToRemove;
+		int indexToRemove = 0;
+		for (const TileQueueMessage *queueMsg : queue) {
+			if (queueMsg->type() == msg->type()) {
+				indexesToRemove.append(indexToRemove);
+			}
+			indexToRemove++;
+		}
 
-	void setRendererOptions(VRay::VRayRenderer &renderer) {
-		VRay::RendererOptions rendererOptions = renderer.getOptions();
-
-		const VRay::RenderElements &reMan = renderer.getRenderElements();
-		const RenderElementsList &reList = reMan.getAllByType(VRay::RenderElement::NONE);
-
-		ImageHeader imageHeader;
-		imageHeader.xres = rendererOptions.imageWidth;
-		imageHeader.yres = rendererOptions.imageHeight;
-		imageHeader.single_image_storage = 0;
-		imageHeader.single_image_array_size = 4;
-		imageHeader.multi_plane_count = 1 + reList.size();
-		writeHeader(imageHeader);
-
-		PlaneDefinition cPlaneDef;
-		cPlaneDef.name_length = 1;
-		cPlaneDef.data_format = 0;
-		cPlaneDef.array_size = 4;
-		writeHeader(cPlaneDef);
-		write(1, sizeof(char), "C");
-
-		for (const VRay::RenderElement &re : reList) {
-			const std::string &reName = re.getName();
-			const int planeNameSize = reName.size();
-
-			PlaneDefinition rePlaneDef;
-			rePlaneDef.name_length = planeNameSize;
-			rePlaneDef.data_format = 0;
-			rePlaneDef.array_size = 4;
-			writeHeader(rePlaneDef);
-
-			write(planeNameSize, sizeof(char), reName.c_str());
+		for (const int index : indexesToRemove) {
+			TileQueueMessage *queueMsg = queue[index];
+			queue.removeAt(index);
+			delete queueMsg;
 		}
 	}
 
-protected:
-	void run() VRAY_OVERRIDE {
-		while (true) {
-			// NOTE: May be lock isEmpty() also
-			if (!queue.isEmpty()) {
-				mutex.lock();
-				PlaneImages images = queue.dequeue();
-				mutex.unlock();
+	queue.enqueue(msg);
+}
 
-				int imageIdx = 0;
-				for (TileImage &image : images) {
-					PlaneSelect planeHeader;
-					planeHeader.plane_index = imageIdx;
-					writeHeader(planeHeader);
-#if USE_BUCKETS
-					writeTileBuckets(image);
-#else
-					writeTile(image);
-#endif
-					imageIdx++;
-				}
+void ImdisplayThread::clear() {
+	QMutexLocker locker(&mutex);
+	for (const TileQueueMessage *msg : queue) {
+		delete msg;
+	}
+	queue.clear();
+}
+
+/// Set imdisplay port.
+/// @param value Port.
+void ImdisplayThread::setPort(int value) {
+	port = value;
+}
+
+/// Returns current imdisplay port.
+int ImdisplayThread::getPort() const {
+	return port;
+}
+
+void ImdisplayThread::onPipeClose() {
+	stop(true);
+}
+
+void ImdisplayThread::onPipeError(QProcess::ProcessError error) {
+	stop(true);
+}
+
+void ImdisplayThread::onPipeStateChange(QProcess::ProcessState newState) {
+	if (newState != QProcess::ProcessState::NotRunning) {
+		return;
+	}
+	stop(true);
+}
+
+
+void ImdisplayThread::run() {
+	/// Pipe to the imdisplay.
+	QProcess pipe;
+	pipe.start("imdisplay", arguments);
+
+	connect(&pipe, &QProcess::aboutToClose, this, &ImdisplayThread::onPipeClose);
+	connect(&pipe, &QProcess::errorOccurred, this, &ImdisplayThread::onPipeError);
+	connect(&pipe, &QProcess::stateChanged, this, &ImdisplayThread::onPipeStateChange);
+	connect(&pipe, &QProcess::readChannelFinished, this, &ImdisplayThread::onPipeClose);
+	
+	if (!pipe.waitForStarted()) {
+		return;
+	}
+
+	while (isRunning) {
+		if (queue.isEmpty())
+			continue;
+		if (!pipe.isOpen())
+			break;
+
+		std::unique_ptr<TileQueueMessage> msg;
+		{
+			QMutexLocker locker(&mutex);
+			msg = std::unique_ptr<TileQueueMessage>(queue.dequeue());
+		}
+
+		if (!isRunning) {
+			break;
+		}
+
+		switch (msg->type()) {
+			case TileQueueMessage::messageTypeImageHeader: {
+				processImageHeaderMessage(pipe, static_cast<ImageHeaderMessage&>(*msg));
+				break;
+			}
+			case TileQueueMessage::messageTypeImageTiles: {
+				processTileMessage(pipe, static_cast<TileImageMessage&>(*msg));
+				break;
+			}
+			default: {
+				break;
 			}
 		}
-    }
-
-private:
-	/// Writes image tile to the pipe splitted into buckets.
-	/// @param image Image data.
-	void writeTileBuckets(TileImage &image) {
-		static const int tileSize = 64;
-
-		int width = 0;
-		int height = 0;
-		image.image->getSize(width, height);
-
-		const int numY = height / 64 + (height % 64 ? 1 : 0);
-		const int numX = width  / 64 + (width  % 64 ? 1 : 0);
-
-		for (int m = 0; m < numY; ++m) {
-			const int currentMRes = m * tileSize;
-			for (int i = 0; i < numX; ++i) {
-				const int currentIRes = i * tileSize;
-				const int maxXRes = (currentIRes + tileSize - 1) < width  ? (currentIRes + tileSize - 1) : width  - 1;
-				const int maxYRes = (currentMRes + tileSize - 1) < height ? (currentMRes + tileSize - 1) : height - 1;
-
-				TileImage imageBucket;
-				imageBucket.image = image.image->crop(currentIRes,
-													  currentMRes,
-													  maxXRes - currentIRes + 1,
-													  maxYRes - currentMRes + 1);
-				imageBucket.x0 = currentIRes;
-				imageBucket.x1 = maxXRes;
-				imageBucket.y0 = currentMRes;
-				imageBucket.y1 = maxYRes;
-
-				writeTile(imageBucket);
-			}
-		}
 	}
 
-	/// Writes image tile to the pipe.
-	/// @param image Image data.
-	void writeTile(TileImage &image) {
-		TileHeader tileHeader;
-		tileHeader.x0 = image.x0;
-		tileHeader.x1 = image.x1;
-		tileHeader.y0 = image.y0;
-		tileHeader.y1 = image.y1;
-		writeHeader(tileHeader);
+	// Disconnect all signals from pipe so we dont get unnecessary calls
+	disconnect(&pipe, 0, 0, 0);
 
-		const int numPixels = image.image->getWidth() * image.image->getHeight();
+	pipe.kill();
+	pipe.waitForFinished();
+}
 
-		write(numPixels, sizeof(float) * 4, image.image->getPixelData());
 
-		image.freeMem();
+void ImdisplayThread::processImageHeaderMessage(QProcess &pipe, ImageHeaderMessage &msg) {
+	ImageHeader imageHeader;
+	imageHeader.xres = msg.imageWidth;
+	imageHeader.yres = msg.imageHeight;
+	imageHeader.single_image_storage = 0;
+	imageHeader.single_image_array_size = 4;
+	imageHeader.multi_plane_count = msg.planeNames.count();
+	if (!isRunning) {
+		return;
+	}
+	writeHeader(pipe, imageHeader);
+
+	if (!isRunning) {
+		return;
 	}
 
-	/// Write specified header to pipe.
-	/// @param header Imdisplay header.
-	template <typename HeaderType>
-	void writeHeader(const HeaderType &header) {
-		write(1, sizeof(HeaderType), &header);
-	}
+	for (const QString &planeName : msg.planeNames) {
+		const int planeNameSize = planeName.length();
 
-	/// Write to pipe.
-	/// @param numElements Elements count.
-	/// @param elementSize Element size.
-	/// @param data Data pointer.
-	void write(int numElements, int elementSize, const void *data) {
-		if (!wp.getFilePtr()) {
+		if (!isRunning) {
 			return;
 		}
 
-		if (fwrite(data, elementSize, numElements, wp.getFilePtr()) != numElements) {
-			Log::getLog().error("Pipe write fail!");
+		PlaneDefinition rePlaneDef;
+		rePlaneDef.name_length = planeNameSize;
+		rePlaneDef.data_format = 0;
+		rePlaneDef.array_size = 4;
+		writeHeader(pipe, rePlaneDef);
 
-			clear();
-			close();
+		if (!isRunning) {
+			return;
+		}
+
+		write(pipe, planeNameSize, sizeof(char), planeName.toLocal8Bit().constData());
+	}
+}
+
+void ImdisplayThread::processTileMessage(QProcess &pipe, TileImageMessage &msg) {
+	int imageIdx = 0;
+	for (const TileImage *image : msg.images) {
+		if (!isRunning) {
+			return;
+		}
+
+		PlaneSelect planeHeader;
+		planeHeader.plane_index = imageIdx;
+		writeHeader(pipe, planeHeader);
+#if USE_BUCKETS
+		writeTileBuckets(pipe, *image);
+#else
+		writeTile(pipe, *image);
+#endif
+		imageIdx++;
+	}
+}
+
+/// Writes image tile to the pipe splitted into buckets.
+/// @param pipe Process pipe.
+/// @param image Image data.
+void ImdisplayThread::writeTileBuckets(QProcess &pipe, const TileImage &image) {
+	static const int tileSize = 64;
+
+	int width = 0;
+	int height = 0;
+	image.image->getSize(width, height);
+
+	const int numY = height / tileSize + (height % tileSize ? 1 : 0);
+	const int numX = width  / tileSize + (width  % tileSize ? 1 : 0);
+
+	for (int m = 0; m < numY && isRunning; ++m) {
+		const int currentMRes = m * tileSize;
+		for (int i = 0; i < numX && isRunning; ++i) {
+			const int currentIRes = i * tileSize;
+			const int maxXRes = (currentIRes + tileSize - 1) < width  ? (currentIRes + tileSize - 1) : width  - 1;
+			const int maxYRes = (currentMRes + tileSize - 1) < height ? (currentMRes + tileSize - 1) : height - 1;
+
+			auto cropImage = std::unique_ptr<VRay::VRayImage>(image.image->crop(currentIRes,
+																				currentMRes,
+																				maxXRes - currentIRes + 1,
+																				maxYRes - currentMRes + 1));
+			if (!isRunning) {
+				return;
+			}
+			auto imageBucket = std::unique_ptr<TileImage>(new TileImage(cropImage.release(), image.name));
+			imageBucket->x0 = currentIRes;
+			imageBucket->x1 = maxXRes;
+			imageBucket->y0 = currentMRes;
+			imageBucket->y1 = maxYRes;
+			if (!isRunning) {
+				return;
+			}
+			writeTile(pipe, *imageBucket);
 		}
 	}
+}
 
-	/// Pipe to the imdisplay.
-	UT_WritePipe wp;
+/// Writes image tile to the pipe. Frees allocated image data.
+/// @param pipe Process pipe.
+/// @param image Image data.
+void ImdisplayThread::writeTile(QProcess &pipe, const TileImage &image) {
+	TileHeader tileHeader;
+	tileHeader.x0 = image.x0;
+	tileHeader.x1 = image.x1;
+	tileHeader.y0 = image.y0;
+	tileHeader.y1 = image.y1;
+	writeHeader(pipe, tileHeader);
+	if (!isRunning) {
+		return;
+	}
+	const int numPixels = image.image->getWidth() * image.image->getHeight();
 
-	/// Image queue.
-	QQueue<PlaneImages> queue;
+	write(pipe, numPixels, sizeof(float) * 4, image.image->getPixelData());
+}
 
-	/// Queue lock.
-	QMutex mutex;
+/// Writes end of file marker to the pipe.
+/// @param pipe Process pipe.
+void ImdisplayThread::writeEOF(QProcess &pipe) {
+	TileHeader eof;
+	eof.x0 = -2;
+	writeHeader(pipe, eof);
+}
 
-	VfhDisableCopy(ImdisplayThread)
-} imdisplayThread;
+/// Write to pipe.
+/// @param numElements Elements count.
+/// @param elementSize Element size.
+/// @param data Data pointer.
+void ImdisplayThread::write(QProcess &pipe, int numElements, int elementSize, const void *data) {
+	if (!isRunning) {
+		return;
+	}
+
+	if (pipe.state() != QProcess::Running) {
+		exit();
+	}
+
+	pipe.write(reinterpret_cast<const char*>(data), elementSize * numElements);
+	if (!pipe.waitForBytesWritten()) {
+		exit();
+	}
+}
 
 static void addImages(VRay::VRayRenderer &renderer, VRay::VRayImage *image, int x, int y)
 {
@@ -346,20 +521,22 @@ static void addImages(VRay::VRayRenderer &renderer, VRay::VRayImage *image, int 
 
 	PlaneImages planes;
 
-	TileImage rgbaImage(image);
-	rgbaImage.setRegion(region);
+	TileImage *rgbaImage = new TileImage(image, "C");
+	rgbaImage->setRegion(region);
 	planes.append(rgbaImage);
 
+#if USE_RENDER_CHANNELS
 	const VRay::RenderElements &reMan = renderer.getRenderElements();
 	const RenderElementsList &reList = reMan.getAllByType(VRay::RenderElement::NONE);
 	for (const VRay::RenderElement &re : reList) {
-		TileImage renderElementImage(re.getImage(&region), re.getName());
-		renderElementImage.setRegion(region);
+		TileImage *renderElementImage = new TileImage(re.getImage(&region), re.getName().c_str());
+		renderElementImage->setRegion(region);
 
 		planes.append(renderElementImage);
 	}
+#endif
 
-	imdisplayThread.add(planes);
+	imdisplayThread.add(new TileImageMessage(planes));
 }
 
 void VRayForHoudini::onBucketReady(VRay::VRayRenderer &renderer, int x, int y, const char*, VRay::VRayImage *image, void*)
@@ -377,22 +554,52 @@ void VRayForHoudini::onImageReady(VRay::VRayRenderer &renderer, void*)
 	addImages(renderer, renderer.getImage(), 0, 0);
 }
 
+void VRayForHoudini::setImdisplayPort(int port)
+{
+	imdisplayThread.setPort(port);
+}
+
+int VRayForHoudini::getImdisplayPort()
+{
+	return imdisplayThread.getPort();
+}
+
+void VRayForHoudini::startImdisplay()
+{
+	imdisplayThread.init();
+	imdisplayThread.restart();
+}
+
+void VRayForHoudini::initImdisplay(VRay::VRayRenderer &renderer)
+{
+	Log::getLog().debug("initImdisplay()");
+
+	const VRay::RendererOptions &rendererOptions = renderer.getOptions();
+
+	ImageHeaderMessage *imageHeaderMsg = new ImageHeaderMessage();
+	imageHeaderMsg->imageWidth = rendererOptions.imageWidth;
+	imageHeaderMsg->imageHeight = rendererOptions.imageHeight;
+	imageHeaderMsg->planeNames.append("C");
+
+#if USE_RENDER_CHANNELS
+	const VRay::RenderElements &reMan = renderer.getRenderElements();
+	for (const VRay::RenderElement &re : reMan.getAllByType(VRay::RenderElement::NONE)) {
+		imageHeaderMsg->planeNames.append(re.getName().c_str());
+	}
+#endif
+
+	imdisplayThread.add(imageHeaderMsg);
+}
+
+void VRayForHoudini::setImdisplayOnStop(std::function<void()> fn)
+{
+	imdisplayThread.setOnStopCallback(fn);
+}
+
 void VRayForHoudini::closeImdisplay()
 {
 	Log::getLog().debug("closeImdisplay()");
 
 	imdisplayThread.clear();
-	imdisplayThread.close();
-	imdisplayThread.terminate();
-}
-
-void VRayForHoudini::initImdisplay(VRay::VRayRenderer &renderer, int port)
-{
-	Log::getLog().debug("initImdisplay()");
-
-	closeImdisplay();
-
-	imdisplayThread.init(port);
-	imdisplayThread.setRendererOptions(renderer);
-	imdisplayThread.start(QThread::LowPriority);
+	imdisplayThread.stop();
 }

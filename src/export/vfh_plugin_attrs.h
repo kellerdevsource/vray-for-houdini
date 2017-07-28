@@ -258,7 +258,8 @@ struct PluginAttr {
 	std::string             paramName; ///< attribute name
 	AttrType                paramType; ///< attribute type
 };
-typedef std::vector<PluginAttr> PluginAttrs;
+
+typedef VUtils::HashMap<PluginAttr, true, 512, false, 50> PluginAttrs;
 
 /// Description of a plugin instance and its attributes. It is used to
 /// accumulate attribute changes and to allow to batch changes together for
@@ -281,6 +282,10 @@ struct PluginDesc {
 	/// @param attr[in] - attribute
 	void add(const PluginAttr &attr);
 
+	/// Remove attrubute.
+	/// @param name Attribute name.
+	void remove(const char *name);
+
 	/// Return the attibute with the specified name or nullptr
 	/// @param paramName[in] - attribute name
 	const PluginAttr* get(const std::string &paramName) const;
@@ -294,9 +299,6 @@ struct PluginDesc {
 	/// description.
 	bool isEqual(const PluginDesc &otherDesc) const;
 
-	/// Dump this description to std out
-	void showAttributes() const;
-
 	/// Plugin instance name.
 	std::string pluginName;
 
@@ -305,10 +307,6 @@ struct PluginDesc {
 
 	/// A list of plugin attributes.
 	PluginAttrs pluginAttrs;
-};
-
-struct PluginResult {
-	
 };
 
 } // namespace Attrs

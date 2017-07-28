@@ -5,6 +5,12 @@
     parmtag { vray_plugin "GeomMeshFile" }
 
     parm {
+        name "reload"
+        label "Reload Geometry"
+        type button
+    }
+
+    parm {
         name "file"
         label "File Name"
         type file
@@ -21,12 +27,6 @@
     }
 
     parm {
-        name "reload"
-        label "Reload Geometryr"
-        type button
-    }
-
-    parm {
         name "viewportlod"
         label "Display As"
         type ordinal
@@ -38,6 +38,7 @@
             "GEO_VIEWPORT_HIDDEN" "Hidden"
         }
         default { "0" }
+        parmtag { "cook_dependent" "1" }
     }
 
     parm {
@@ -49,6 +50,7 @@
             "1" "Preview Geometry"
             "2" "Full Geometry"
         }
+        parmtag { "cook_dependent" "1" }
         default { "1" }
     }
 

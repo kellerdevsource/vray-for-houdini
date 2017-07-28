@@ -22,6 +22,13 @@
 
 namespace VRayForHoudini {
 
+enum DisplacementType {
+	displacementTypeNone = -1,
+	displacementTypeFromMat = 0,
+	displacementTypeDisplace,
+	displacementTypeSmooth,
+};
+
 enum VMRenderPoints {
 	vmRenderPointsNone = 0, ///< Don't render points separately from primitives.
 	vmRenderPointsAll, ///< Render only points.
@@ -39,26 +46,29 @@ struct PrimContext {
 	explicit PrimContext(OP_Node *generator=nullptr,
 						 VRay::Transform tm=VRay::Transform(1),
 						 exint detailID=0,
-						 PrimMaterial primMaterial=PrimMaterial())
-		: generator(generator)
+						 PrimMaterial primMaterial=PrimMaterial(),
+						 STY_Styler styler=STY_Styler())
+		: objNode(generator)
 		, tm(tm)
-		, detailID(detailID)
+		, primID(detailID)
 		, primMaterial(primMaterial)
+		, styler(styler)
 	{}
 
-	OP_Node *generator;
+	/// Primitive generator.
+	OP_Node *objNode;
 
-	/// Base transform.
+	/// Transform.
 	VRay::Transform tm;
 
 	/// Primitive ID.
-	exint detailID;
-
-	/// Object style sheets.
-	ObjectStyleSheet styleSheet;
+	exint primID;
 
 	/// Material overrides.
 	PrimMaterial primMaterial;
+
+	/// Current level styler.
+	STY_Styler styler;
 };
 
 /// Primitive export context stack.
@@ -74,6 +84,7 @@ class ObjectExporter
 	typedef VUtils::HashMap<PluginSet> OpPluginGenCache;
 	typedef VUtils::HashMap<VRay::Plugin> OpPluginCache;
 	typedef VUtils::HashMapKey<int, VRay::Plugin> PrimPluginCache;
+	typedef VUtils::HashMapKey<Hash::MHash, VRay::Plugin> HashPluginCache;
 	typedef VUtils::HashMap<VRay::Plugin> GeomNodeCache;
 
 public:
@@ -121,26 +132,35 @@ public:
 	/// @note This will affect the export of vertex attributes on mesh
 	///       geometry. Vertex attribute values that have the same value
 	///       will be welded into single one
-	bool hasSubdivApplied(OBJ_Node &objNode) const;
+	DisplacementType hasSubdivApplied(OBJ_Node &objNode) const;
 
-	int getPrimKey(const GA_Primitive &prim);
+	int getPrimKey(const GA_Primitive &prim) const;
 
-	int getPrimPluginFromCache(int primKey, VRay::Plugin &plugin);
-
-	/// It's ok to add invalid plugins to cache here,
-	/// because if we've failed to export plugin once we should not retry.
+	int getPrimPluginFromCache(int primKey, VRay::Plugin &plugin) const;
 	void addPrimPluginToCache(int primKey, VRay::Plugin &plugin);
+
+	int getMeshPluginFromCache(int primKey, VRay::Plugin &plugin) const;
+	void addMeshPluginToCache(int primKey, VRay::Plugin &plugin);
+
+	int getPluginFromCache(Hash::MHash key, VRay::Plugin &plugin) const;
+	void addPluginToCache(Hash::MHash key, VRay::Plugin &plugin);
+
+	int getPluginFromCache(const char *key, VRay::Plugin &plugin) const;
+	void addPluginToCache(const char *key, VRay::Plugin &plugin);
+
+	int getPluginFromCache(OP_Node &opNode, VRay::Plugin &plugin) const;
+	void addPluginToCache(OP_Node &opNode, VRay::Plugin &plugin);
 
 	/// Helper function to generate unique id for the packed primitive
 	/// this is used as key in m_detailToPluginDesc map to identify
 	/// plugins generated for the primitve
 	/// @param prim The packed primitive.
 	/// @returns unique primitive id.
-	int getPrimPackedID(const GU_PrimPacked &prim);
+	int getPrimPackedID(const GU_PrimPacked &prim) const;
 
-	void exportPolyMesh(OBJ_Node &objNode, const GU_Detail &gdp, const GEOPrimList &primList, PrimitiveItems &instancerItems);
+	void exportPolyMesh(OBJ_Node &objNode, const GU_Detail &gdp, const GEOPrimList &primList);
 
-	void exportHair(OBJ_Node &objNode, const GU_Detail &gdp, const GEOPrimList &primList, PrimitiveItems &instancerItems);
+	void exportHair(OBJ_Node &objNode, const GU_Detail &gdp, const GEOPrimList &primList);
 
 	/// A helper function to export geometry from a custom V-Ray SOP node.
 	/// @param sop V-Ray SOP node.
@@ -153,7 +173,7 @@ public:
 
 	VRay::Plugin exportPackedDisk(OBJ_Node &objNode, const GU_PrimPacked &prim);
 
-	VRay::Plugin exportPackedGeometry(OBJ_Node &objNode, const GU_PrimPacked &prim);
+	void exportPackedGeometry(OBJ_Node &objNode, const GU_PrimPacked &prim);
 
 	VRay::Plugin exportPrimPacked(OBJ_Node &objNode, const GU_PrimPacked &prim);
 
@@ -161,11 +181,11 @@ public:
 
 	void exportPrimVolume(OBJ_Node &objNode, const PrimitiveItem &item);
 
-	void processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, PrimitiveItems &instancerItems);
+	void processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp);
 
-	VRay::Plugin exportDetailInstancer(OBJ_Node &objNode, const GU_Detail &gdp, const PrimitiveItems &instancerItems, const char *prefix);
+	VRay::Plugin exportDetailInstancer(OBJ_Node &objNode, const GU_Detail &gdp, const char *prefix);
 
-	VRay::Plugin exportDetail(OBJ_Node &objNode, const GU_Detail &gdp);
+	void exportDetail(OBJ_Node &objNode, const GU_Detail &gdp);
 
 	/// Export point particles data.
 	/// @param gdp Detail.
@@ -176,7 +196,7 @@ public:
 	/// Export point particle instancer.
 	/// @param gdp Detail.
 	/// @returns Geometry plugin.
-	VRay::Plugin exportPointInstancer(OBJ_Node &objNode, const GU_Detail &gdp, int isInstanceNode=false);
+	void exportPointInstancer(OBJ_Node &objNode, const GU_Detail &gdp, int isInstanceNode=false);
 
 	/// Returns true if object is a point intancer.
 	/// @param gdp Detail.
@@ -210,6 +230,9 @@ public:
 	/// Remove object.
 	void removeObject(const char *objNode);
  
+	/// Fill primitive item properties from context.
+	void fillFromContext(PrimitiveItem &item) const;
+
 	/// Returns transform from the primitive context stack.
 	VRay::Transform getTm() const;
 
@@ -219,15 +242,23 @@ public:
 	/// Returns material from the primitive context stack.
 	void getPrimMaterial(PrimMaterial &primMaterial) const;
 
-	/// Returns object style sheet from the context stack.
-	ObjectStyleSheet getObjectStyleSheet() const;
+	/// Returns current level styler.
+	STY_Styler getStyler() const;
 
+	/// Returns the top-most object that we are exporting.
 	OP_Node *getGenerator() const;
 
+	/// Adds plugin to a list of plugins generated by a node.
+	/// @param key Node intance.
+	/// @param plugin V-Ray plugin instance.
 	void addGenerated(OP_Node &key, VRay::Plugin plugin);
 
+	/// Remove generated plugins.
+	/// @param key Node intance.
 	void removeGenerated(OP_Node &key);
 
+	/// Remove generated plugins.
+	/// @param key Node full path.
 	void removeGenerated(const char *key);
 
 private:
@@ -259,12 +290,16 @@ private:
 	/// geometry has changed). By default this flag is on.
 	int doExportGeometry;
 
-	struct PluginCaches {
+	/// NOTE: mutable because HashMapKey doesn't have const methods.
+	mutable struct PluginCaches {
 		/// OP_Node centric plugin cache.
 		OpPluginCache op;
 
 		/// Unique primitive plugin cache.
 		PrimPluginCache prim;
+
+		/// Mesh primitive plugin cache.
+		PrimPluginCache meshPrim;
 
 		/// Wrapper nodes cache for Instancer plugin.
 		GeomNodeCache instancerNodeWrapper;
@@ -272,11 +307,17 @@ private:
 		/// Maps OP_Node with generated set of plugins for
 		/// non directly instancable object.
 		OpPluginGenCache generated;
+
+		/// Plugin cache by data hash.
+		HashPluginCache hashCache;
 	} pluginCache;
 
 	/// Primitive export context stack.
 	/// Used for non-Instancer objects like volumes and lights.
 	PrimContextStack primContextStack;
+
+	/// All primitive items for final Instancer.
+	PrimitiveItems instancerItems;
 };
 
 } // namespace VRayForHoudini

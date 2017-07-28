@@ -15,6 +15,7 @@
 #include "vfh_exporter.h"
 #include "vfh_prm_templates.h"
 #include "vfh_export_geom.h"
+#include "vfh_attr_utils.h"
 
 #include <PRM/PRM_Parm.h>
 #include <OP/OP_Bundle.h>
@@ -276,12 +277,7 @@ VRay::Plugin VRayExporter::exportObject(OP_Node *opNode)
 		}
 
 		VRay::Plugin plugin = objectExporter.exportObject(*objNode);
-		if (plugin) {
-			Log::getLog().debug("Exporting OBJ: %s [%s]",
-								opNode->getName().buffer(),
-								objOpType.buffer());
-		}
-		else {
+		if (!plugin) {
 			Log::getLog().error("Error exporting OBJ: %s [%s]",
 								opNode->getName().buffer(),
 								objOpType.buffer());

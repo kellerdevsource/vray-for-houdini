@@ -8,6 +8,8 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
+#ifndef VASSERT_ENABLED
+
 #include "vfh_error.h"
 #include "vfh_log.h"
 
@@ -96,3 +98,5 @@ int Error::ErrorChaser::enable(bool val)
 
 	return true;
 }
+
+#endif

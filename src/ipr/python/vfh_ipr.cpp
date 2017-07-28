@@ -13,63 +13,145 @@
 #include "vfh_exporter.h"
 #include "vfh_log.h"
 #include "vfh_ipr_viewer.h"
+#include "vfh_ipr_client.h"
 #include "vfh_vray_instances.h"
+#include "vfh_attr_utils.h"
 
 #include <HOM/HOM_Module.h>
 
 #include <QThread>
+#include <QByteArray>
 #include <QtNetwork/QTcpSocket>
 #include <QtNetwork/QHostAddress>
+#include <QApplication>
+
+#include <mutex>
 
 using namespace VRayForHoudini;
 
-static VRayExporter *exporter = nullptr;
-
-static class WorkerThread
-	: public QThread
-{
+/// Class wrapping callback function and flag to call it only once
+/// the flag is protected by mutex so the callback is called only once
+/// NOTE: consider doing this with atomic bool
+class CallOnceUntilReset {
 public:
-	void setCallback(std::function<void()> value) {
-		cb = value;
+	typedef std::function<void()> CB;
+
+	CallOnceUntilReset(CB callback)
+		: m_isCalled(false)
+		, m_callback(callback)
+	{}
+
+	/// Get function that when called will inturn call the callback if flag is not set
+	/// Used to avoid the need to pass the object and function pointer
+	CB getCallableFunction() {
+		return std::bind(&CallOnceUntilReset::call, this);
 	}
 
-private:
-	void run() VRAY_OVERRIDE {
-		while (true) {
-			QTcpSocket socket;
-			socket.connectToHost(QHostAddress(QHostAddress::LocalHost), 424242);
-			if (!socket.waitForConnected(1000)) {
-				Log::getLog().debug("Stop requested...");
-				cb();
-				return;
-			}
-			msleep(100);
-		}
-    }
+	/// Reset the "called" flag to false
+	void reset() {
+		std::lock_guard<std::mutex> lock(m_mtx);
+		m_isCalled = false;
+	}
 
-	std::function<void()> cb;
-} stopPoll;
+	/// Manually set the "called" flag to false
+	void set() {
+		std::lock_guard<std::mutex> lock(m_mtx);
+		m_isCalled = true;
+	}
+
+	/// Manually call the saved callback if the "called" flag is false
+	/// This function call's are serialized with mutex
+	void call() {
+		if (!m_isCalled) {
+			std::lock_guard<std::mutex> lock(m_mtx);
+			if (!m_isCalled) {
+				m_isCalled = true;
+				m_callback();
+			}
+		}
+	}
+
+	/// Return the "called" flag
+	/// NOTE: until this function returns the flag could have changed already
+	bool isCalled() const {
+		return m_isCalled;
+	}
+
+	CallOnceUntilReset(const CallOnceUntilReset &) = delete;
+	CallOnceUntilReset & operator=(const CallOnceUntilReset &) = delete;
+
+private:
+	/// Lock protecting the called flag
+	std::mutex m_mtx;
+	/// Flag so that we call the callback only once
+	bool m_isCalled;
+	/// The saved callback function
+	CB m_callback;
+} * stopCallback;
+
+FORCEINLINE int getInt(PyObject *list, int idx)
+{
+	return PyInt_AS_LONG(PyList_GET_ITEM(list, idx));
+}
+
+FORCEINLINE float getFloat(PyObject *list, int idx)
+{
+	return PyFloat_AS_DOUBLE(PyList_GET_ITEM(list, idx));
+}
+
+FORCEINLINE int getInt(PyObject *dict, const char *key, int defValue)
+{
+	if (!dict)
+		return defValue;
+	PyObject *item = PyDict_GetItemString(dict, key);
+	if (!item)
+		return defValue;
+	return PyInt_AS_LONG(item);
+}
+
+FORCEINLINE float getFloat(PyObject *dict, const char *key, float defValue)
+{
+	if (!dict)
+		return defValue;
+	PyObject *item = PyDict_GetItemString(dict, key);
+	if (!item)
+		return defValue;
+	return PyFloat_AS_DOUBLE(item);
+}
+
+static VRayExporter *vrayExporter = nullptr;
+static PingPongClient *stopChecker = nullptr;
 
 static VRayExporter& getExporter()
 {
-	if (!exporter) {
-		exporter = new VRayExporter(nullptr);
+	if (!vrayExporter) {
+		vrayExporter = new VRayExporter(nullptr);
 	}
-	return *exporter;
+	return *vrayExporter;
 }
 
 static void freeExporter()
 {
-	stopPoll.exit();
+	UT_ASSERT_MSG(stopChecker, "stopChecker is null in freeExporter()");
+	stopChecker->stop();
 
-	getExporter().reset();
+	closeImdisplay();
 
-	FreePtr(exporter);
+	if (vrayExporter) {
+		vrayExporter->reset();
+		FreePtr(vrayExporter);
+	}
 }
 
 static struct VRayExporterIprUnload {
 	~VRayExporterIprUnload() {
+		if (stopCallback) {
+			// Prevent stop cb from being called here
+			stopCallback->set();
+		}
+		delete stopChecker;
 		deleteVRayInit();
+		Log::Logger::stopLogging();
 	}
 } exporterUnload;
 
@@ -78,78 +160,103 @@ static void onVFBClosed(VRay::VRayRenderer&, void*)
 	freeExporter();
 }
 
+static void fillViewParamsFromDict(PyObject *viewParamsDict, ViewParams &viewParams)
+{
+	if (!viewParamsDict)
+		return;
+	if (!PyDict_Check(viewParamsDict))
+		return;
+
+	PyObject *transform = PyDict_GetItemString(viewParamsDict, "transform");
+	PyObject *res = PyDict_GetItemString(viewParamsDict, "res");
+
+	const int ortho = getInt(viewParamsDict, "ortho", 0);
+
+	const float cropLeft   = getFloat(viewParamsDict, "cropl", 0.0f);
+	const float cropRight  = getFloat(viewParamsDict, "cropr", 1.0f);
+	const float cropBottom = getFloat(viewParamsDict, "cropb", 0.0f);
+	const float cropTop    = getFloat(viewParamsDict, "cropt", 1.0f);
+
+	const float aperture = getFloat(viewParamsDict, "aperture", 41.4214f);
+	const float focal = getFloat(viewParamsDict, "focal", 50.0f);
+
+	const int resX = getInt(res, 0);
+	const int resY = getInt(res, 1);
+
+	viewParams.renderView.fov = getFov(aperture, focal);
+	viewParams.renderView.ortho = ortho;
+
+	viewParams.renderSize.w = resX;
+	viewParams.renderSize.h = resY;
+
+	viewParams.cropRegion.x = resX * cropLeft;
+	viewParams.cropRegion.y = resY * (1.0f - cropTop);
+	viewParams.cropRegion.width  = resX * (cropRight - cropLeft);
+	viewParams.cropRegion.height = resY * (cropTop - cropBottom);
+
+	if (transform &&
+		PyList_Check(transform) &&
+		PyList_Size(transform) == 16)
+	{
+		VRay::Transform tm;
+		tm.matrix.v0.set(getFloat(transform, 0), getFloat(transform, 1), getFloat(transform, 2));
+		tm.matrix.v1.set(getFloat(transform, 4), getFloat(transform, 5), getFloat(transform, 6));
+		tm.matrix.v2.set(getFloat(transform, 8), getFloat(transform, 9), getFloat(transform, 10));
+		tm.offset.set(getFloat(transform, 12), getFloat(transform, 13), getFloat(transform, 14));
+
+		viewParams.renderView.tm = tm;
+	}
+}
+
 static PyObject* vfhExportView(PyObject*, PyObject *args, PyObject *keywds)
 {
-	const char *camera = nullptr;
-	const char *rop = nullptr;
-	PyObject *transform = nullptr;
-
-	float aperture = 0.0f;
-	float focal = 0.0f;
-
-	int ortho = false;
+	PyObject *viewParamsDict = nullptr;
 
 	static char *kwlist[] = {
-	    /* 0 */ "rop",
-	    /* 1 */ "camera",
-		/* 2 */ "ortho",
-		/* 3 */ "transform",
-		/* 4 */ "aperture",
-		/* 5 */ "focal",
+		/* 0 */ "viewParams",
 	    NULL
 	};
 
 	//                                 0 12345678911
 	//                                            01
-	static const char kwlistTypes[] = "s|siOff";
+	static const char kwlistTypes[] = "O";
 
-	if (PyArg_ParseTupleAndKeywords(args, keywds, kwlistTypes, kwlist,
-		/* 0 */ &rop,
-		/* 1 */ &camera,
-		/* 2 */ &ortho,
-		/* 3 */ &transform,
-		/* 4 */ &aperture,
-		/* 5 */ &focal
+	if (!PyArg_ParseTupleAndKeywords(args, keywds, kwlistTypes, kwlist,
+		/* 0 */ &viewParamsDict
 	)) {
-		// HOM_AutoLock autoLock;
+		PyErr_Print();
+		Py_RETURN_NONE;
+	}
 
-		VRayExporter &exporter = getExporter();
+	HOM_AutoLock autoLock;
 
-		exporter.exportDefaultHeadlight(true);
+	VRayExporter &exporter = getExporter();
+	exporter.exportDefaultHeadlight(true);
 
-		OP_Node *ropNode = nullptr;
-		if (UTisstring(rop)) {
-			ropNode = getOpNodeFromPath(rop);
-		}
+	const char *camera = PyString_AsString(PyDict_GetItemString(viewParamsDict, "camera"));
 
-		OBJ_Node *cameraNode = nullptr;
-		if (UTisstring(camera)) {
-			cameraNode = CAST_OBJNODE(getOpNodeFromPath(camera));
-		}
-		if (!cameraNode && ropNode) {
-			cameraNode = exporter.getCamera(ropNode);
-		}
+	OBJ_Node *cameraNode = nullptr;
+	if (UTisstring(camera)) {
+		cameraNode = CAST_OBJNODE(getOpNodeFromPath(camera));
+	}
 
-		ViewParams viewParams(cameraNode);
-		if (cameraNode) {
-			exporter.fillViewParamFromCameraNode(*cameraNode, viewParams);
-		}
+	ViewParams viewParams(cameraNode);
+	if (cameraNode && !cameraNode->getName().contains("ipr_camera")) {
+		exporter.fillViewParamFromCameraNode(*cameraNode, viewParams);
+	}
+	else {
+		fillViewParamsFromDict(viewParamsDict, viewParams);
+	}
 
-		if (transform && PyList_Check(transform)) {
-			if (PyList_Size(transform) == 16) {
-#define tmItem(x) PyFloat_AS_DOUBLE(PyList_GET_ITEM(transform, x))
-				VRay::Transform tm;
-				tm.matrix.v0.set(tmItem(0), tmItem(1), tmItem(2));
-				tm.matrix.v1.set(tmItem(4), tmItem(5), tmItem(6));
-				tm.matrix.v2.set(tmItem(8), tmItem(9), tmItem(10));
-				tm.offset.set(tmItem(12), tmItem(13), tmItem(14));
+	// Copy params; no const ref!
+	ViewParams oldViewParams = exporter.getViewParams();
 
-				viewParams.renderView.tm = tm;
-#undef tmItem
-			}
-		}
+	// Update view.
+	exporter.exportView(viewParams);
 
-		exporter.exportView(viewParams);
+	// Update pipe if needed.
+	if (oldViewParams.changedSize(viewParams)) {
+		initImdisplay(exporter.getRenderer().getVRay());
 	}
 
 	Py_RETURN_NONE;
@@ -221,93 +328,145 @@ static PyObject* vfhExportOpNode(PyObject*, PyObject *args, PyObject *keywds)
     Py_RETURN_NONE;
 }
 
-static int port = 0;
-
 static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 {
 	Log::getLog().debug("vfhInit()");
 
 	const char *rop = nullptr;
 	float now = 0.0f;
+	int port = 0;
+	PyObject *viewParamsDict = nullptr;
 
 	static char *kwlist[] = {
 	    /* 0 */ "rop",
 	    /* 1 */ "port",
 	    /* 2 */ "now",
+	    /* 3 */ "viewParams",
 	    NULL
 	};
 
-	//                                 012345678911
+	//                                 012 345678911
 	//                                           01
-	static const char kwlistTypes[] = "sif";
+	static const char kwlistTypes[] = "sif|O";
 
-	if (PyArg_ParseTupleAndKeywords(args, keywds, kwlistTypes, kwlist,
+	if (!PyArg_ParseTupleAndKeywords(args, keywds, kwlistTypes, kwlist,
 		/* 0 */ &rop,
 		/* 1 */ &port,
-		/* 2 */ &now))
-	{
-		enum IPROutput {
-			iprOutputRenderView = 0,
-			iprOutputVFB,
-		};
-
-		HOM_AutoLock autoLock;
-
-		UT_String ropPath(rop);
-		OP_Node *ropNode = getOpNodeFromPath(ropPath);
-		if (ropNode) {
-			const IPROutput iprOutput =
-				static_cast<IPROutput>(ropNode->evalInt("render_rt_output", 0, 0.0));
-
-			const int iprModeMenu = ropNode->evalInt("render_rt_update_mode", 0, 0.0);
-			const VRayExporter::IprMode iprMode = iprModeMenu == 0 ? VRayExporter::iprModeRT : VRayExporter::iprModeSOHO;
-
-			const int isRenderView = iprOutput == iprOutputRenderView;
-			const int isVFB = iprOutput == iprOutputVFB;
-
-			VRayExporter &exporter = getExporter();
-
-			exporter.setROP(*ropNode);
-			exporter.setIPR(iprMode);
-
-			if (exporter.initRenderer(isVFB, false)) {
-				exporter.setDRSettings();
-
-				exporter.setRendererMode(getRendererIprMode(*ropNode));
-				exporter.setWorkMode(getExporterWorkMode(*ropNode));
-
-				exporter.getRenderer().showVFB(isVFB);
-				exporter.getRenderer().getVRay().setOnVFBClosed(isVFB ? onVFBClosed : nullptr);
-				exporter.getRenderer().getVRay().setOnImageReady(isRenderView ? onImageReady : nullptr);
-				exporter.getRenderer().getVRay().setOnRTImageUpdated(isRenderView? onRTImageUpdated : nullptr);
-				exporter.getRenderer().getVRay().setOnBucketReady(isRenderView ? onBucketReady : nullptr);
-
-				exporter.getRenderer().getVRay().setKeepBucketsInCallback(isRenderView);
-				exporter.getRenderer().getVRay().setKeepRTframesInCallback(isRenderView);
-
-				if (isRenderView) {
-					exporter.getRenderer().getVRay().setRTImageUpdateTimeout(250);
-				}
-
-				exporter.initExporter(getFrameBufferType(*ropNode), 1, now, now);
-
-				exporter.exportSettings();
-				exporter.exportFrame(now);
-
-#if 0
-				stopPoll.setCallback([]{
-					closeImdisplay();
-					freeExporter();
-				});
-				stopPoll.start(QThread::LowPriority);
-#endif
-
-				initImdisplay(exporter.getRenderer().getVRay(), port);
-			}
-		}
+		/* 2 */ &now,
+		/* 3 */ &viewParamsDict
+	)) {
+		PyErr_Print();
+		Py_RETURN_NONE;
 	}
-   
+
+	enum IPROutput {
+		iprOutputRenderView = 0,
+		iprOutputVFB,
+	};
+
+	HOM_AutoLock autoLock;
+	
+	setImdisplayPort(port);
+	
+	if (!stopCallback) {
+		stopCallback = new CallOnceUntilReset([]() {
+			freeExporter();
+		});
+		setImdisplayOnStop(stopCallback->getCallableFunction());
+	}
+
+	if (!stopChecker) {
+		stopChecker = new PingPongClient();
+		stopChecker->setCallback(stopCallback->getCallableFunction());
+	}
+
+	// Reset the cb's flag so it can be called asap
+	stopCallback->reset();
+	stopChecker->start();
+
+	UT_String ropPath(rop);
+	OP_Node *ropNode = getOpNodeFromPath(ropPath);
+	if (ropNode) {
+		// Start the imdisplay thread so we can get pipe signals sooner
+		startImdisplay();
+		const IPROutput iprOutput =
+			static_cast<IPROutput>(ropNode->evalInt("render_rt_output", 0, 0.0));
+
+		const int iprModeMenu = ropNode->evalInt("render_rt_update_mode", 0, 0.0);
+		const VRayExporter::IprMode iprMode = iprModeMenu == 0 ? VRayExporter::iprModeRT : VRayExporter::iprModeSOHO;
+
+		const int isRenderView = iprOutput == iprOutputRenderView;
+		const int isVFB = iprOutput == iprOutputVFB;
+
+		VRayExporter &exporter = getExporter();
+
+		exporter.setROP(*ropNode);
+		exporter.setIPR(iprMode);
+
+
+		if (!exporter.initRenderer(isVFB, false)) {
+			Py_RETURN_NONE;
+		}
+		ViewParams viewParams;
+		fillViewParamsFromDict(viewParamsDict, viewParams);
+
+		exporter.setDRSettings();
+
+		exporter.setRendererMode(getRendererIprMode(*ropNode));
+		exporter.setWorkMode(getExporterWorkMode(*ropNode));
+
+		exporter.getRenderer().showVFB(isVFB);
+		exporter.getRenderer().getVRay().setOnVFBClosed(isVFB ? onVFBClosed : nullptr);
+		exporter.getRenderer().getVRay().setOnImageReady(isRenderView ? onImageReady : nullptr);
+		exporter.getRenderer().getVRay().setOnRTImageUpdated(isRenderView? onRTImageUpdated : nullptr);
+		exporter.getRenderer().getVRay().setOnBucketReady(isRenderView ? onBucketReady : nullptr);
+
+		exporter.getRenderer().getVRay().setKeepBucketsInCallback(isRenderView);
+		exporter.getRenderer().getVRay().setKeepRTframesInCallback(isRenderView);
+
+		if (isRenderView) {
+			exporter.getRenderer().getVRay().setRTImageUpdateTimeout(250);
+		}
+
+		exporter.initExporter(getFrameBufferType(*ropNode), 1, now, now);
+
+		exporter.setFrame(now);
+
+		exporter.exportSettings();
+		exporter.exportScene();
+		exporter.exportView(viewParams);
+		exporter.renderFrame();
+		initImdisplay(exporter.getRenderer().getVRay());
+	}
+	
     Py_RETURN_NONE;
+}
+
+static PyObject * vfhIsRopValid(PyObject *)
+{
+	if (getExporter().getRopPtr()) {
+		Py_RETURN_TRUE;
+	}
+	Py_RETURN_FALSE;
+}
+
+static PyObject* vfhLogMessage(PyObject*, PyObject *args, PyObject *keywds)
+{
+	int logLevel;
+	const char * message = nullptr;
+
+	//                                 012345678911
+	//                                           01
+	static const char kwlistTypes[] = "is";
+
+	if (!PyArg_ParseTuple(args, kwlistTypes, &logLevel, &message)) {
+		PyErr_Print();
+		Py_RETURN_NONE;
+	}
+
+	Log::getLog().log(static_cast<Log::LogLevel>(logLevel), message);
+
+	Py_RETURN_NONE;
 }
 
 static PyMethodDef methods[] = {
@@ -335,10 +494,23 @@ static PyMethodDef methods[] = {
 		METH_VARARGS | METH_KEYWORDS,
 		"Delete object."
 	},
+	{
+		"isRopValid",
+		reinterpret_cast<PyCFunction>(vfhIsRopValid),
+		METH_NOARGS,
+		"Check if current rop is valid."
+	},
+	{
+		"logMessage",
+		reinterpret_cast<PyCFunction>(vfhLogMessage),
+		METH_VARARGS,
+		"Log message."
+	},
 	{ NULL, NULL, 0, NULL }
 };
 
 PyMODINIT_FUNC init_vfh_ipr()
 {
+	Log::Logger::startLogging();
 	Py_InitModule("_vfh_ipr", methods);
 }
