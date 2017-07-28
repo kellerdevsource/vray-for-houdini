@@ -256,6 +256,7 @@ static PyObject* vfhExportView(PyObject*, PyObject *args, PyObject *keywds)
 
 	// Update pipe if needed.
 	if (oldViewParams.changedSize(viewParams)) {
+		getImdisplay().restart();
 		initImdisplay(exporter.getRenderer().getVRay());
 	}
 
@@ -366,13 +367,13 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 
 	HOM_AutoLock autoLock;
 	
-	setImdisplayPort(port);
+	getImdisplay().setPort(port);
 	
 	if (!stopCallback) {
 		stopCallback = new CallOnceUntilReset([]() {
 			freeExporter();
 		});
-		setImdisplayOnStop(stopCallback->getCallableFunction());
+		getImdisplay().setOnStopCallback(stopCallback->getCallableFunction());
 	}
 
 	if (!stopChecker) {
@@ -388,7 +389,8 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 	OP_Node *ropNode = getOpNodeFromPath(ropPath);
 	if (ropNode) {
 		// Start the imdisplay thread so we can get pipe signals sooner
-		startImdisplay();
+		getImdisplay().init();
+		getImdisplay().restart();
 		const IPROutput iprOutput =
 			static_cast<IPROutput>(ropNode->evalInt("render_rt_output", 0, 0.0));
 
