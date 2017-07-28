@@ -5,9 +5,9 @@ parm {
   default { "1" }
   help    "The type of the image sampler"
   menu    {
-      //0 "Fixed"
+      0 "Fixed"
       1 "Adaptive DMC"
-      //2	"Adaptive Subdivision"
+      2	"Adaptive Subdivision"
       3	"Progressive" 
   }
   range   { 0 1 }
