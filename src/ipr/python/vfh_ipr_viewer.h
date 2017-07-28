@@ -17,10 +17,12 @@
 
 namespace VRayForHoudini {
 
+/// Initialize the imdisplay thread
 void initImdisplay(VRay::VRayRenderer &renderer);
+/// Stop the imdisplay thread
 void closeImdisplay();
+/// Get the instanced imdisplay thread
 ImdisplayThread & getImdisplay();
-
 
 void onRTImageUpdated(VRay::VRayRenderer &renderer, VRay::VRayImage *image, void *userData);
 void onImageReady(VRay::VRayRenderer &renderer, void *userData);
