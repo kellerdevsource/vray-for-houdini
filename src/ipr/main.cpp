@@ -16,8 +16,34 @@
 #include <QProcessEnvironment>
 #include <QDir>
 
+#include <unistd.h>
+#include <cstdio>
+
+void initLinux()
+{
+#ifndef WIN32
+	pid_t parentPID = getppid();
+	pid_t myPID = getpid();
+	char fname[1024] = {0,};
+	sprintf(fname, "/tmp/%d", static_cast<int>(parentPID));
+
+	FILE * pidFile = fopen(fname, "wb");
+	if (!pidFile) {
+		exit(-1);
+	}
+
+	if (fwrite(&myPID, sizeof(myPID), 1, pidFile) != 1) {
+		exit(-1);
+	}
+
+	fclose(pidFile);
+#endif
+}
+
 int main(int argc, char ** argv)
 {
+	initLinux();
+
 	VRayForHoudini::Log::Logger::startLogging();
 	std::shared_ptr<void> _stopLoggingAtExit = std::shared_ptr<void>(nullptr, [](void*) {
 		VRayForHoudini::Log::Logger::stopLogging();
