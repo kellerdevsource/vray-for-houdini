@@ -43,7 +43,7 @@ private:
 };
 
 ProcessCheckPtr makeProcessChecker(ProcessCheck::OnStop cb, const std::string &name) {
-	return std::make_unique<LnxProcessCheck>(cb, name);
+	return ProcessCheckPtr(new LnxProcessCheck(cb, name));
 }
 
 bool LnxProcessCheck::start() {
