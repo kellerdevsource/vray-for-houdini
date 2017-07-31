@@ -3,158 +3,176 @@
     label	"Denoiser"
     parmtag	{ spare_category "Denoiser" }
     parmtag	{ vray_plugin "RenderChannelDenoiser" }
-    parm {
-	name	"name"
-	label	"Name"
-	type	string
-	default	{ "denoiser" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "RenderChannelDenoiser" }
-	parmtag	{ "vray_pluginattr" "name" }
-	parmtag	{ "vray_type" "String" }
+	
+	 parm {
+		name	"enabled"
+		label	"Enabled"
+		type	toggle
+		default	{ "1" }
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "cook_dependent" "1" }
+		parmtag	{ "vray_plugin" "RenderChannelDenoiser" }
+		parmtag	{ "vray_pluginattr" "enabled" }
+		parmtag	{ "vray_type" "int" }
     }
-    parm {
-	name	"enabled"
-	label	"Enabled"
-	type	toggle
-	default	{ "1" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "RenderChannelDenoiser" }
-	parmtag	{ "vray_pluginattr" "enabled" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"mode"
-	label	"Denoise Mode"
-	type	ordinal
-	default	{ "2" }
-	help	"Specifies what to do with the result"
-	menu	{
-	    "None"	"None"
-	    "Replace RGB"	"Replace RGB"
-	    "Separate Channel"	"Separate Channel"
+	
+	
+	groupsimple {
+		name "folder_main"
+		label "Main"
+		hidewhentab "{ enabled == 0 }"
+		
+		parm {
+			name	"name"
+			label	"Name"
+			type	string
+			default	{ "denoiser" }
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "RenderChannelDenoiser" }
+			parmtag	{ "vray_pluginattr" "name" }
+			parmtag	{ "vray_type" "String" }
+		}
+		parm {
+			name	"mode"
+			label	"Mode"
+			type	ordinal
+			default	{ "2" }
+			help	"Specifies what to do with the result"
+			menu	{
+				"None"	"None"
+				"Replace RGB"	"Replace RGB"
+				"Separate Channel"	"Separate Channel"
+			}
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_enumkeys" "0,1,2" }
+			parmtag	{ "vray_plugin" "RenderChannelDenoiser" }
+			parmtag	{ "vray_pluginattr" "mode" }
+			parmtag	{ "vray_type" "int" }
+		}
+		parm {
+			name	"type"
+			label	"Type"
+			type	ordinal
+			default	{ "0" }
+			help	"Denoise type"
+			menu	{
+				"RGB Only"	"RGB Only"
+				"All Channels"	"All Channels"
+			}
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_enumkeys" "0,1" }
+			parmtag	{ "vray_plugin" "RenderChannelDenoiser" }
+			parmtag	{ "vray_pluginattr" "type" }
+			parmtag	{ "vray_type" "int" }
+		}
+		parm {
+			name	"preset"
+			label	"Preset"
+			type	ordinal
+			default	{ "1" }
+			help	"Specifies one a few predefined presets for the radius and the strength"
+			menu	{
+				"Mild"	"Mild"
+				"Default"	"Default"
+				"Strong"	"Strong"
+				"Custom"	"Custom"
+			}
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_enumkeys" "0,1,2,3" }
+			parmtag	{ "vray_plugin" "RenderChannelDenoiser" }
+			parmtag	{ "vray_pluginattr" "preset" }
+			parmtag	{ "vray_type" "int" }
+		}
+		parm {
+			name	"radius"
+			label	"Radius"
+			type	float
+			default	{ "10" }
+			help	"Specifies pixel radius for denoising"
+			hidewhen	"{ preset != Custom }"
+			range	{ 0 10 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "RenderChannelDenoiser" }
+			parmtag	{ "vray_pluginattr" "radius" }
+			parmtag	{ "vray_type" "float" }
+		}
+		parm {
+			name	"strength"
+			label	"Strength"
+			type	float
+			default	{ "1" }
+			help	"Denoiser strength, a multiplier for the noise level render element from V-Ray"
+			hidewhen	"{ preset != Custom }"
+			range	{ 0 10 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "RenderChannelDenoiser" }
+			parmtag	{ "vray_pluginattr" "strength" }
+			parmtag	{ "vray_type" "float" }
+		}
+		parm {
+			name	"generate_render_elements"
+			label	"Generate Render Elements"
+			type	ordinal
+			default	{ "2" }
+			help	"How to add the needed render elements (0 - Minimal: Only noiseLevel and defocusAmount; 1 - By Denoiser Type: Only those needed for the specific denoiser type (one-pass or render elements); 2 - Add all possible denoising elements so that denoising type can be switched)"
+			menu	{
+				"Minimal"	"Minimal"
+				"By Denoiser Type"	"By Denoiser Type"
+				"All Possible"	"All Possible"
+			}
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_enumkeys" "0,1,2" }
+			parmtag	{ "vray_plugin" "RenderChannelDenoiser" }
+			parmtag	{ "vray_pluginattr" "generate_render_elements" }
+			parmtag	{ "vray_type" "int" }
+		}
+		parm {
+			name	"use_gpu"
+			label	"Use GPU"
+			type	toggle
+			default	{ "0" }
+			help	"Enable usage of GPU version if OpenCL support is found"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "RenderChannelDenoiser" }
+			parmtag	{ "vray_pluginattr" "use_gpu" }
+			parmtag	{ "vray_type" "int" }
+		}
+		parm {
+			name	"progressive_update"
+			label	"Progressive Rendering Update Frequency"
+			type	integer
+			default	{ "0" }
+			help	"Frequency of update during progressive rendering (0 - never; 100 - update as often as possible)"
+			range	{ 0 100 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "RenderChannelDenoiser" }
+			parmtag	{ "vray_pluginattr" "progressive_update" }
+			parmtag	{ "vray_type" "int" }
+		}
+			
+		
 	}
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1,2" }
-	parmtag	{ "vray_plugin" "RenderChannelDenoiser" }
-	parmtag	{ "vray_pluginattr" "mode" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"type"
-	label	"Type"
-	type	ordinal
-	default	{ "0" }
-	help	"Denoise type"
-	menu	{
-	    "RGB Only"	"RGB Only"
-	    "All Channels"	"All Channels"
-	}
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1" }
-	parmtag	{ "vray_plugin" "RenderChannelDenoiser" }
-	parmtag	{ "vray_pluginattr" "type" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"generate_render_elements"
-	label	"Render Elements"
-	type	ordinal
-	default	{ "2" }
-	help	"How to add the needed render elements (0 - Minimal: Only noiseLevel and defocusAmount; 1 - By Denoiser Type: Only those needed for the specific denoiser type (one-pass or render elements); 2 - Add all possible denoising elements so that denoising type can be switched)"
-	menu	{
-	    "Minimal"	"Minimal"
-	    "By Denoiser Type"	"By Denoiser Type"
-	    "All Possible"	"All Possible"
-	}
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1,2" }
-	parmtag	{ "vray_plugin" "RenderChannelDenoiser" }
-	parmtag	{ "vray_pluginattr" "generate_render_elements" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"preset"
-	label	"Preset"
-	type	ordinal
-	default	{ "1" }
-	help	"Specifies one a few predefined presets for the radius and the strength"
-	menu	{
-	    "Mild"	"Mild"
-	    "Default"	"Default"
-	    "Strong"	"Strong"
-	    "Custom"	"Custom"
-	}
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1,2,3" }
-	parmtag	{ "vray_plugin" "RenderChannelDenoiser" }
-	parmtag	{ "vray_pluginattr" "preset" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"radius"
-	label	"Radius"
-	type	float
-	default	{ "10" }
-	help	"Specifies pixel radius for denoising"
-	disablewhen	"{ preset != Custom }"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "RenderChannelDenoiser" }
-	parmtag	{ "vray_pluginattr" "radius" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"strength"
-	label	"Strength"
-	type	float
-	default	{ "1" }
-	help	"Denoiser strength, a multiplier for the noise level render element from V-Ray"
-	disablewhen	"{ preset != Custom }"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "RenderChannelDenoiser" }
-	parmtag	{ "vray_pluginattr" "strength" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"use_gpu"
-	label	"Use Gpu"
-	type	toggle
-	default	{ "0" }
-	help	"Enable usage of GPU version if OpenCL support is found"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "RenderChannelDenoiser" }
-	parmtag	{ "vray_pluginattr" "use_gpu" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"progressive_update"
-	label	"Progressive Update"
-	type	integer
-	default	{ "0" }
-	help	"Frequency of update during progressive rendering (0 - never; 100 - update as often as possible)"
-	range	{ 0 100 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "RenderChannelDenoiser" }
-	parmtag	{ "vray_pluginattr" "progressive_update" }
-	parmtag	{ "vray_type" "int" }
-    }
+	
+    
+   
+    
+    
+    
+    
 }

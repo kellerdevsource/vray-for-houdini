@@ -3,17 +3,27 @@
     label	"Render ID"
     parmtag	{ spare_category "Render ID" }
     parmtag	{ vray_plugin "RenderChannelRenderID" }
-    parm {
-	name	"name"
-	label	"Name"
-	type	string
-	default	{ "Render ID" }
-	help	"Channel name"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "RenderChannelRenderID" }
-	parmtag	{ "vray_pluginattr" "name" }
-	parmtag	{ "vray_type" "String" }
-    }
+	
+	groupsimple {
+		name "folder_main"
+		label "Main"
+		
+		parm {
+			name	"name"
+			label	"Name"
+			type	string
+			default	{ "Render ID" }
+			help	"Channel name"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "RenderChannelRenderID" }
+			parmtag	{ "vray_pluginattr" "name" }
+			parmtag	{ "vray_type" "String" }
+		}
+		
+	
+	}
+	
+    
 }

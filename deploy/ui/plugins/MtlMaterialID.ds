@@ -3,30 +3,39 @@
     label	"Material ID"
     parmtag	{ spare_category "Material ID" }
     parmtag	{ vray_plugin "MtlMaterialID" }
-    parm {
-	name	"material_id_color"
-	label	"Material Id Color"
-	type	color4
-	size	4
-	default	{ "0" "0" "0" "1" }
-	help	"The material id color"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "MtlMaterialID" }
-	parmtag	{ "vray_pluginattr" "material_id_color" }
-	parmtag	{ "vray_type" "Texture" }
-    }
-    parm {
-	name	"material_id_number"
-	label	"Id"
-	type	integer
-	default	{ "0" }
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "MtlMaterialID" }
-	parmtag	{ "vray_pluginattr" "material_id_number" }
-	parmtag	{ "vray_type" "int" }
-    }
+	
+	groupsimple {
+		name "folder_main"
+		label "Main"
+		
+		parm {
+			name	"material_id_color"
+			label	"Material ID Color"
+			type	color4
+			size	4
+			default	{ "0" "0" "0" "1" }
+			help	"The material id color"
+			range	{ 0 10 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "MtlMaterialID" }
+			parmtag	{ "vray_pluginattr" "material_id_color" }
+			parmtag	{ "vray_type" "Texture" }
+		}
+		parm {
+			name	"material_id_number"
+			label	"ID Number"
+			type	integer
+			default	{ "0" }
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "MtlMaterialID" }
+			parmtag	{ "vray_pluginattr" "material_id_number" }
+			parmtag	{ "vray_type" "int" }
+		}
+			
+		
+	}
+   
 }

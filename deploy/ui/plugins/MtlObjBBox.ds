@@ -3,32 +3,42 @@
     label	"Object Bounding"
     parmtag	{ spare_category "Object Bounding" }
     parmtag	{ vray_plugin "MtlObjBBox" }
-    parm {
-	name	"bbox_min"
-	label	"Bbox Min"
-	type	direction
-	size	3
-	default	{ "0" "0" "0" }
-	help	"Min. coordinates for object bounding box"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "MtlObjBBox" }
-	parmtag	{ "vray_pluginattr" "bbox_min" }
-	parmtag	{ "vray_type" "Vector" }
-    }
-    parm {
-	name	"bbox_max"
-	label	"Bbox Max"
-	type	direction
-	size	3
-	default	{ "0" "0" "0" }
-	help	"Max. coordinates for object bounding box"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "MtlObjBBox" }
-	parmtag	{ "vray_pluginattr" "bbox_max" }
-	parmtag	{ "vray_type" "Vector" }
-    }
+	
+	groupsimple {
+		name "folder_main"
+		label "Main"
+		
+		parm {
+			name	"bbox_min"
+			label	"Min. Bounds"
+			type	direction
+			size	3
+			default	{ "0" "0" "0" }
+			help	"Min. coordinates for object bounding box"
+			range	{ 0 10 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "MtlObjBBox" }
+			parmtag	{ "vray_pluginattr" "bbox_min" }
+			parmtag	{ "vray_type" "Vector" }
+		}
+		parm {
+			name	"bbox_max"
+			label	"Max. Bounds"
+			type	direction
+			size	3
+			default	{ "0" "0" "0" }
+			help	"Max. coordinates for object bounding box"
+			range	{ 0 10 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "MtlObjBBox" }
+			parmtag	{ "vray_pluginattr" "bbox_max" }
+			parmtag	{ "vray_type" "Vector" }
+		}
+		
+		
+	}
+	
+    
 }
