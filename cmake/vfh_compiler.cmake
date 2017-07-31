@@ -101,8 +101,8 @@ macro(set_compiler_flags)
 		# Houdini SDK / V-Ray SDK
 		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-switch -Wno-narrowing -Wno-int-to-pointer-cast")
 
-		# Add time lib
-		set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -lrt")
+		# Add time lib and export dynamic
+		set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -lrt --export-dynamic")
 
 		if (NOT APPLE)
 			set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-literal-suffix -Wno-unused-local-typedefs")

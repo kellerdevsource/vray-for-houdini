@@ -21,6 +21,10 @@ def main():
     import sohoglue
     import SOHOcommon
 
+    import sys
+    import ctypes
+    sys.setdlopenflags( sys.getdlopenflags() | ctypes.RTLD_GLOBAL )
+
     import _vfh_ipr
 
     from soho import SohoParm
