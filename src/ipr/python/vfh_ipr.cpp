@@ -446,10 +446,10 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 
 static PyObject * vfhIsRopValid(PyObject *)
 {
-	if (getExporter().getRopPtr()) {
-		Py_RETURN_TRUE;
+	if (!vrayExporter || !getExporter().getRopPtr()) {
+		Py_RETURN_FALSE;
 	}
-	Py_RETURN_FALSE;
+	Py_RETURN_TRUE;
 }
 
 static PyObject* vfhLogMessage(PyObject*, PyObject *args, PyObject *keywds)
