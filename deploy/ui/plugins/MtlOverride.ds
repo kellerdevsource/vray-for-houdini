@@ -3,44 +3,57 @@
     label	"Override"
     parmtag	{ spare_category "Override" }
     parmtag	{ vray_plugin "MtlOverride" }
-    parm {
-	name	"environment_override"
-	label	"Environment"
-	type	color4
-	size	4
-	default	{ "1" "1" "1" "1" }
-	help	"Environment override texture"
-	disablewhen	"{ use_environment_override != 1 }"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "MtlOverride" }
-	parmtag	{ "vray_pluginattr" "environment_override" }
-	parmtag	{ "vray_type" "Texture" }
-    }
-    parm {
-	name	"environment_priority"
-	label	"Environment Priority"
-	type	integer
-	default	{ "0" }
-	help	"Environment override priority (used when several materials override it along a ray path)"
-	disablewhen	"{ use_environment_override != 1 }"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "MtlOverride" }
-	parmtag	{ "vray_pluginattr" "environment_priority" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"use"
-	label	"Use"
-	type	toggle
-	default	{ "0" }
-	help	"Use Override material"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_custom_handling" "1" }
-    }
+	
+	groupsimple {
+		name "folder_main"
+		label "Main"
+		
+		parm {
+			name	"use"
+			label	"Use"
+			type	toggle
+			default	{ "1" }
+			help	"Use Override material"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_custom_handling" "1" }
+		}
+		parm {
+			name	"environment_override"
+			label	"Environment"
+			type	color4
+			size	4
+			default	{ "1" "1" "1" "1" }
+			help	"Environment override texture"
+			disablewhen	"{ use != 1 }"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "MtlOverride" }
+			parmtag	{ "vray_pluginattr" "environment_override" }
+			parmtag	{ "vray_type" "Texture" }
+		}
+		parm {
+			name	"environment_priority"
+			label	"Environment Priority"
+			type	integer
+			default	{ "0" }
+			help	"Environment override priority (used when several materials override it along a ray path)"
+			disablewhen	"{ use != 1 }"
+			range	{ 0 5 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "MtlOverride" }
+			parmtag	{ "vray_pluginattr" "environment_priority" }
+			parmtag	{ "vray_type" "int" }
+		}
+		
+		
+		
+		
+	}
+	
+    
+   
 }

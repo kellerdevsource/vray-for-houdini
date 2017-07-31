@@ -3,81 +3,92 @@
     label	"Object Select"
     parmtag	{ spare_category "Object Select" }
     parmtag	{ vray_plugin "RenderChannelObjectSelect" }
-    parm {
-	name	"name"
-	label	"Name"
-	type	string
-	default	{ "Object Select" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "RenderChannelObjectSelect" }
-	parmtag	{ "vray_pluginattr" "name" }
-	parmtag	{ "vray_type" "String" }
-    }
-    parm {
-	name	"id"
-	label	"Id"
-	type	integer
-	default	{ "0" }
-	help	"The object/material ID that will be extracted"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "RenderChannelObjectSelect" }
-	parmtag	{ "vray_pluginattr" "id" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"use_mtl_id"
-	label	"Use Mtl Id"
-	type	toggle
-	default	{ "0" }
-	help	"Use the material IDs instead of the object IDs"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "RenderChannelObjectSelect" }
-	parmtag	{ "vray_pluginattr" "use_mtl_id" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"affect_matte_objects"
-	label	"Affect Matte Objects"
-	type	toggle
-	default	{ "1" }
-	help	"Affect Matte Objects"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "RenderChannelObjectSelect" }
-	parmtag	{ "vray_pluginattr" "affect_matte_objects" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"consider_for_aa"
-	label	"Consider For Aa"
-	type	toggle
-	default	{ "0" }
-	help	"Consider this render element for antialiasing (may slow down rendering)"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "RenderChannelObjectSelect" }
-	parmtag	{ "vray_pluginattr" "consider_for_aa" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"invert_selection"
-	label	"Invert Selection"
-	type	toggle
-	default	{ "0" }
-	help	"true to use object/material IDs different from the specified by id"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "RenderChannelObjectSelect" }
-	parmtag	{ "vray_pluginattr" "invert_selection" }
-	parmtag	{ "vray_type" "boolean" }
-    }
+ 
+	groupsimple {
+		name "folder_main"
+		label "Main"
+		
+		parm {
+			name	"name"
+			label	"Name"
+			type	string
+			default	{ "Object Select" }
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "RenderChannelObjectSelect" }
+			parmtag	{ "vray_pluginattr" "name" }
+			parmtag	{ "vray_type" "String" }
+		}
+		parm {
+			name	"use_mtl_id"
+			label	"Use Mtl Id"
+			type	toggle
+			default	{ "0" }
+			help	"Use the material IDs instead of the object IDs"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "RenderChannelObjectSelect" }
+			parmtag	{ "vray_pluginattr" "use_mtl_id" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		parm {
+			name	"id"
+			label	"Id"
+			type	integer
+			default	{ "0" }
+			help	"The object/material ID that will be extracted"
+			range	{ 0 10 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "RenderChannelObjectSelect" }
+			parmtag	{ "vray_pluginattr" "id" }
+			parmtag	{ "vray_type" "int" }
+		}
+		
+		parm {
+			name	"affect_matte_objects"
+			label	"Affect Matte Objects"
+			type	toggle
+			default	{ "1" }
+			help	"Affect Matte Objects"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "RenderChannelObjectSelect" }
+			parmtag	{ "vray_pluginattr" "affect_matte_objects" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		parm {
+			name	"consider_for_aa"
+			label	"Consider For Aa"
+			type	toggle
+			default	{ "0" }
+			help	"Consider this render element for antialiasing (may slow down rendering)"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "RenderChannelObjectSelect" }
+			parmtag	{ "vray_pluginattr" "consider_for_aa" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		parm {
+			name	"invert_selection"
+			label	"Invert Selection"
+			type	toggle
+			default	{ "0" }
+			help	"true to use object/material IDs different from the specified by id"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "RenderChannelObjectSelect" }
+			parmtag	{ "vray_pluginattr" "invert_selection" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		
+		
+	}
+	
+	
 }

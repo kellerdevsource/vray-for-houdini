@@ -3,34 +3,45 @@
     label	"DR Bucket"
     parmtag	{ spare_category "DR Bucket" }
     parmtag	{ vray_plugin "RenderChannelDRBucket" }
-    parm {
-	name	"name"
-	label	"Name"
-	type	string
-	default	{ "DR" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "RenderChannelDRBucket" }
-	parmtag	{ "vray_pluginattr" "name" }
-	parmtag	{ "vray_type" "String" }
-    }
-    parm {
-	name	"text_alignment"
-	label	"Text Alignment"
-	type	ordinal
-	default	{ "1" }
-	menu	{
-	    "Left"	"Left"
-	    "Center"	"Center"
-	    "Right"	"Right"
+	
+	groupsimple {
+		name "folder_main"
+		label "Main"
+		
+		parm {
+			name	"name"
+			label	"Name"
+			type	string
+			default	{ "DR" }
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "RenderChannelDRBucket" }
+			parmtag	{ "vray_pluginattr" "name" }
+			parmtag	{ "vray_type" "String" }
+		}
+		parm {
+			name	"text_alignment"
+			label	"Text Alignment"
+			type	ordinal
+			default	{ "1" }
+			menu	{
+				"Left"	"Left"
+				"Center"	"Center"
+				"Right"	"Right"
+			}
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_enumkeys" "0,1,2" }
+			parmtag	{ "vray_plugin" "RenderChannelDRBucket" }
+			parmtag	{ "vray_pluginattr" "text_alignment" }
+			parmtag	{ "vray_type" "int" }
+		}
+		
+		
 	}
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1,2" }
-	parmtag	{ "vray_plugin" "RenderChannelDRBucket" }
-	parmtag	{ "vray_pluginattr" "text_alignment" }
-	parmtag	{ "vray_type" "int" }
-    }
+	
+   
+	
 }

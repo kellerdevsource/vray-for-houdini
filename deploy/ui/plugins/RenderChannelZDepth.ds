@@ -3,82 +3,95 @@
     label	"Z-Depth"
     parmtag	{ spare_category "Z-Depth" }
     parmtag	{ vray_plugin "RenderChannelZDepth" }
-    parm {
-	name	"name"
-	label	"Name"
-	type	string
-	default	{ "Z-Depth" }
-	help	"Channel name"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "RenderChannelZDepth" }
-	parmtag	{ "vray_pluginattr" "name" }
-	parmtag	{ "vray_type" "String" }
-    }
-    parm {
-	name	"depth_from_camera"
-	label	"Depth From Camera"
-	type	toggle
-	default	{ "0" }
-	help	"From camera"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "RenderChannelZDepth" }
-	parmtag	{ "vray_pluginattr" "depth_from_camera" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"depth_clamp"
-	label	"Depth Clamp"
-	type	toggle
-	default	{ "1" }
-	help	"Clamp"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "RenderChannelZDepth" }
-	parmtag	{ "vray_pluginattr" "depth_clamp" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"filtering"
-	label	"Filtering"
-	type	toggle
-	default	{ "0" }
-	help	"Filtering"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "RenderChannelZDepth" }
-	parmtag	{ "vray_pluginattr" "filtering" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"depth_black"
-	label	"Depth Black"
-	type	float
-	default	{ "0" }
-	help	"Black distance"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "RenderChannelZDepth" }
-	parmtag	{ "vray_pluginattr" "depth_black" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"depth_white"
-	label	"Depth White"
-	type	float
-	default	{ "1000" }
-	help	"White distance"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "RenderChannelZDepth" }
-	parmtag	{ "vray_pluginattr" "depth_white" }
-	parmtag	{ "vray_type" "float" }
-    }
+	
+	groupsimple {
+		name "folder_main"
+		label "Main"
+		
+		parm {
+			name	"name"
+			label	"Name"
+			type	string
+			default	{ "Z-Depth" }
+			help	"Channel name"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "RenderChannelZDepth" }
+			parmtag	{ "vray_pluginattr" "name" }
+			parmtag	{ "vray_type" "String" }
+		}
+		
+		parm {
+			name	"depth_clamp"
+			label	"Depth Clamp"
+			type	toggle
+			default	{ "1" }
+			help	"Clamp"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "RenderChannelZDepth" }
+			parmtag	{ "vray_pluginattr" "depth_clamp" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		
+		parm {
+			name	"depth_from_camera"
+			label	"Use Depth From Camera"
+			type	toggle
+			default	{ "0" }
+			help	"From camera"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "RenderChannelZDepth" }
+			parmtag	{ "vray_pluginattr" "depth_from_camera" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		parm {
+			name	"depth_black"
+			label	"Depth Black"
+			type	float
+			hidewhen "{ depth_from_camera == 1 }"
+			default	{ "0" }
+			help	"Black distance"
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "RenderChannelZDepth" }
+			parmtag	{ "vray_pluginattr" "depth_black" }
+			parmtag	{ "vray_type" "float" }
+		}
+		parm {
+			name	"depth_white"
+			label	"Depth White"
+			type	float
+			hidewhen "{ depth_from_camera == 1 }"
+			default	{ "1000" }
+			help	"White distance"
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "RenderChannelZDepth" }
+			parmtag	{ "vray_pluginattr" "depth_white" }
+			parmtag	{ "vray_type" "float" }
+		}
+		parm {
+			name	"filtering"
+			label	"Filtering"
+			type	toggle
+			default	{ "0" }
+			help	"Filtering"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "RenderChannelZDepth" }
+			parmtag	{ "vray_pluginattr" "filtering" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		
+	}
+  
+	
 }

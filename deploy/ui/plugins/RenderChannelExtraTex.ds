@@ -3,81 +3,94 @@
     label	"ExtraTex"
     parmtag	{ spare_category "ExtraTex" }
     parmtag	{ vray_plugin "RenderChannelExtraTex" }
-    parm {
-	name	"name"
-	label	"Name"
-	type	string
-	default	{ "ExtraTex" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "RenderChannelExtraTex" }
-	parmtag	{ "vray_pluginattr" "name" }
-	parmtag	{ "vray_type" "String" }
-    }
-    parm {
-	name	"consider_for_aa"
-	label	"Consider For Aa"
-	type	toggle
-	default	{ "0" }
-	help	"Consider this render element for antialiasing (may slow down rendering)"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "RenderChannelExtraTex" }
-	parmtag	{ "vray_pluginattr" "consider_for_aa" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"affect_matte_objects"
-	label	"Affect Matte Objects"
-	type	toggle
-	default	{ "1" }
-	help	"Affect Matte Objects"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "RenderChannelExtraTex" }
-	parmtag	{ "vray_pluginattr" "affect_matte_objects" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"texmap"
-	label	"Texmap"
-	type	color4
-	size	4
-	default	{ "0" "0" "0" "1" }
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "RenderChannelExtraTex" }
-	parmtag	{ "vray_pluginattr" "texmap" }
-	parmtag	{ "vray_type" "Texture" }
-    }
-    parm {
-	name	"filtering"
-	label	"Filtering"
-	type	toggle
-	default	{ "1" }
-	help	"Filtering"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "RenderChannelExtraTex" }
-	parmtag	{ "vray_pluginattr" "filtering" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"exclude_list_as_inclusive_set"
-	label	"Exclude List As Inclusive Set"
-	type	toggle
-	default	{ "0" }
-	help	"true : apply extra texture only to objects in excludeList; false : apply extra texture to all objects out of excludeList"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "RenderChannelExtraTex" }
-	parmtag	{ "vray_pluginattr" "exclude_list_as_inclusive_set" }
-	parmtag	{ "vray_type" "boolean" }
-    }
+	
+	groupsimple {
+		name "folder_main"
+		label "Main"
+		
+		parm {
+			name	"name"
+			label	"Name"
+			type	string
+			default	{ "ExtraTex" }
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "RenderChannelExtraTex" }
+			parmtag	{ "vray_pluginattr" "name" }
+			parmtag	{ "vray_type" "String" }
+		}
+		parm {
+			name	"texmap"
+			label	"Texmap"
+			type	color4
+			invisible
+			size	4
+			default	{ "0" "0" "0" "1" }
+			range	{ 0 10 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "RenderChannelExtraTex" }
+			parmtag	{ "vray_pluginattr" "texmap" }
+			parmtag	{ "vray_type" "Texture" }
+		}
+		parm {
+			name	"consider_for_aa"
+			label	"Consider for Anti-Aliasing"
+			type	toggle
+			default	{ "0" }
+			help	"Consider this render element for antialiasing (may slow down rendering)"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "RenderChannelExtraTex" }
+			parmtag	{ "vray_pluginattr" "consider_for_aa" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		parm {
+			name	"filtering"
+			label	"Filtering"
+			type	toggle
+			default	{ "1" }
+			help	"Filtering"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "RenderChannelExtraTex" }
+			parmtag	{ "vray_pluginattr" "filtering" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		parm {
+			name	"affect_matte_objects"
+			label	"Affect Matte Objects"
+			type	toggle
+			default	{ "1" }
+			help	"Affect Matte Objects"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "RenderChannelExtraTex" }
+			parmtag	{ "vray_pluginattr" "affect_matte_objects" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		parm {
+			name	"exclude_list_as_inclusive_set"
+			label	"Exclude List As Inclusive Set"
+			type	toggle
+			default	{ "0" }
+			help	"true : apply extra texture only to objects in excludeList; false : apply extra texture to all objects out of excludeList"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "RenderChannelExtraTex" }
+			parmtag	{ "vray_pluginattr" "exclude_list_as_inclusive_set" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		
+		
+		
+	}
+	
+  
+	
 }

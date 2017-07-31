@@ -3,572 +3,639 @@
     label	"Fog"
     parmtag	{ spare_category "Fog" }
     parmtag	{ vray_plugin "EnvironmentFog" }
-    parm {
-	name	"enabled"
-	label	"Enabled"
-	type	toggle
-	default	{ "1" }
-	help	"If false, disable the rendering"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "EnvironmentFog" }
-	parmtag	{ "vray_pluginattr" "enabled" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"color"
-	label	"Fog Color"
-	type	color
-	size	3
-	default	{ "1" "1" "1" }
-	help	"Fog color"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "EnvironmentFog" }
-	parmtag	{ "vray_pluginattr" "color" }
-	parmtag	{ "vray_type" "Color" }
-    }
-    parm {
-	name	"color_tex"
-	label	"Fog Color (map)"
-	type	color4
-	size	4
-	default	{ "1" "1" "1" "1" }
-	help	"Fog texture"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_linked_only" "1" }
-	parmtag	{ "vray_plugin" "EnvironmentFog" }
-	parmtag	{ "vray_pluginattr" "color_tex" }
-	parmtag	{ "vray_type" "Texture" }
-    }
-    parm {
-	name	"color_mult"
-	label	"Fog Color Multiplier"
-	type	float
-	default	{ "1" }
-	help	"Fog color multiplier"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "EnvironmentFog" }
-	parmtag	{ "vray_pluginattr" "color_mult" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"emission"
-	label	"Emission Color"
-	type	color
-	size	3
-	default	{ "1" "1" "1" }
-	help	"Fog emission color"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "EnvironmentFog" }
-	parmtag	{ "vray_pluginattr" "emission" }
-	parmtag	{ "vray_type" "Color" }
-    }
-    parm {
-	name	"emission_tex"
-	label	"Emission Color (map)"
-	type	color4
-	size	4
-	default	{ "0" "0" "0" "1" }
-	help	"Fog emission texture"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "EnvironmentFog" }
-	parmtag	{ "vray_pluginattr" "emission_tex" }
-	parmtag	{ "vray_type" "Texture" }
-    }
-    parm {
-	name	"emission_mult"
-	label	"Emission Multiplier"
-	type	float
-	default	{ "1" }
-	help	"Fog emission multiplier"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "EnvironmentFog" }
-	parmtag	{ "vray_pluginattr" "emission_mult" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"emission_mult_tex"
-	label	"Emission Multiplier (map)"
-	type	float
-	default	{ "1" }
-	help	"Fog emission texture multiplier"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "EnvironmentFog" }
-	parmtag	{ "vray_pluginattr" "emission_mult_tex" }
-	parmtag	{ "vray_type" "TextureFloat" }
-    }
-    parm {
-	name	"distance"
-	label	"Fog Distance"
-	type	float
-	default	{ "1" }
-	help	"Distance between fog particles"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "EnvironmentFog" }
-	parmtag	{ "vray_pluginattr" "distance" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"density"
-	label	"Fog Density"
-	type	float
-	default	{ "1" }
-	help	"Fog density"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "EnvironmentFog" }
-	parmtag	{ "vray_pluginattr" "density" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"density_tex"
-	label	"Fog Density (map)"
-	type	float
-	default	{ "1" }
-	help	"Texture for fog density"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "EnvironmentFog" }
-	parmtag	{ "vray_pluginattr" "density_tex" }
-	parmtag	{ "vray_type" "TextureFloat" }
-    }
-    parm {
-	name	"opacity_mode"
-	label	"Opacity Mode"
-	type	toggle
-	default	{ "0" }
-	help	"Treat density as opacity"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "EnvironmentFog" }
-	parmtag	{ "vray_pluginattr" "opacity_mode" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"use_height"
-	label	"Use Height"
-	type	toggle
-	default	{ "0" }
-	help	"Whether or not the height should be taken into account"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "EnvironmentFog" }
-	parmtag	{ "vray_pluginattr" "use_height" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"height"
-	label	"Height"
-	type	float
-	default	{ "100" }
-	help	"Fog starting point along the Z-axis"
-	disablewhen	"{ use_height != 1 }"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "EnvironmentFog" }
-	parmtag	{ "vray_pluginattr" "height" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"subdivs"
-	label	"Subdivs"
-	type	integer
-	default	{ "8" }
-	help	"Fog subdivision"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "EnvironmentFog" }
-	parmtag	{ "vray_pluginattr" "subdivs" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"yup"
-	label	"Y Is Up"
-	type	toggle
-	default	{ "0" }
-	help	"if true, y is the up axis, not z"
-	disablewhen	"{ use_height != 1 }"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "EnvironmentFog" }
-	parmtag	{ "vray_pluginattr" "yup" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"solid_mode"
-	label	"Solid Mode"
-	type	toggle
-	default	{ "0" }
-	help	"If true, this will cause to disable randomization when sampling and take 1 sample at 0.5 density"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "EnvironmentFog" }
-	parmtag	{ "vray_pluginattr" "solid_mode" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"solid_threshold"
-	label	"Solid Threshold"
-	type	float
-	default	{ "0.5" }
-	help	"Solid mode transparency threshold"
-	disablewhen	"{ solid_mode != 1 }"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "EnvironmentFog" }
-	parmtag	{ "vray_pluginattr" "solid_threshold" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"jitter"
-	label	"Jitter"
-	type	toggle
-	default	{ "0" }
-	help	"If true, add a random offset when start sampling"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "EnvironmentFog" }
-	parmtag	{ "vray_pluginattr" "jitter" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"shadow_opacity"
-	label	"Shadow Opacity"
-	type	float
-	default	{ "1" }
-	help	"volume opacity scale for shadow rays"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "EnvironmentFog" }
-	parmtag	{ "vray_pluginattr" "shadow_opacity" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"scale"
-	label	"Scale"
-	type	float
-	default	{ "1" }
-	help	"stretch aspect for the 3 axis, when the fog container must grow/shrink preserving its original density"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "EnvironmentFog" }
-	parmtag	{ "vray_pluginattr" "scale" }
-	parmtag	{ "vray_type" "List<Float>" }
-    }
-    parm {
-	name	"fade_out_mode"
-	label	"Fade Out Mode"
-	type	ordinal
-	default	{ "0" }
-	help	"Fade out mode"
-	menu	{
-	    "Multiply"	"Multiply"
-	    "Substract"	"Substract"
+	
+	groupsimple {
+		name "folder_main"
+		label "Main"
+		
+		parm {
+			name	"enabled"
+			label	"Enabled"
+			type	toggle
+			default	{ "1" }
+			help	"If false, disable the rendering"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "EnvironmentFog" }
+			parmtag	{ "vray_pluginattr" "enabled" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		parm {
+			name	"opacity_mode"
+			label	"Treat Density as Opacity"
+			type	toggle
+			default	{ "0" }
+			help	"Treat density as opacity"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "EnvironmentFog" }
+			parmtag	{ "vray_pluginattr" "opacity_mode" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		parm {
+			name	"color"
+			label	"Fog Color"
+			type	color
+			size	3
+			default	{ "1" "1" "1" }
+			help	"Fog color"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "EnvironmentFog" }
+			parmtag	{ "vray_pluginattr" "color" }
+			parmtag	{ "vray_type" "Color" }
+		}
+		parm {
+			name	"color_tex"
+			label	"Fog Color (map)"
+			type	color4
+			invisible
+			size	4
+			default	{ "1" "1" "1" "1" }
+			help	"Fog texture"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_linked_only" "1" }
+			parmtag	{ "vray_plugin" "EnvironmentFog" }
+			parmtag	{ "vray_pluginattr" "color_tex" }
+			parmtag	{ "vray_type" "Texture" }
+		}
+		parm {
+			name	"color_mult"
+			label	"Fog Color Multiplier"
+			type	float
+			default	{ "1" }
+			help	"Fog color multiplier"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "EnvironmentFog" }
+			parmtag	{ "vray_pluginattr" "color_mult" }
+			parmtag	{ "vray_type" "float" }
+		}
+		parm {
+			name	"emission"
+			label	"Emission Color"
+			type	color
+			size	3
+			default	{ "1" "1" "1" }
+			help	"Fog emission color"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "EnvironmentFog" }
+			parmtag	{ "vray_pluginattr" "emission" }
+			parmtag	{ "vray_type" "Color" }
+		}
+		parm {
+			name	"emission_tex"
+			label	"Emission Color (map)"
+			type	color4
+			invisible
+			size	4
+			default	{ "0" "0" "0" "1" }
+			help	"Fog emission texture"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "EnvironmentFog" }
+			parmtag	{ "vray_pluginattr" "emission_tex" }
+			parmtag	{ "vray_type" "Texture" }
+		}
+		parm {
+			name	"emission_mult"
+			label	"Emission Multiplier"
+			type	float
+			default	{ "1" }
+			help	"Fog emission multiplier"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "EnvironmentFog" }
+			parmtag	{ "vray_pluginattr" "emission_mult" }
+			parmtag	{ "vray_type" "float" }
+		}
+		parm {
+			name	"emission_mult_tex"
+			label	"Emission Multiplier (map)"
+			type	float
+			invisible
+			default	{ "1" }
+			help	"Fog emission texture multiplier"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "EnvironmentFog" }
+			parmtag	{ "vray_pluginattr" "emission_mult_tex" }
+			parmtag	{ "vray_type" "TextureFloat" }
+		}
+		parm {
+			name	"distance"
+			label	"Fog Distance"
+			type	float
+			default	{ "10" }
+			help	"Distance between fog particles"
+			range	{ 0.01 1000 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "EnvironmentFog" }
+			parmtag	{ "vray_pluginattr" "distance" }
+			parmtag	{ "vray_type" "float" }
+		}
+		parm {
+			name	"density"
+			label	"Fog Density"
+			type	float
+			default	{ "1" }
+			help	"Fog density"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "EnvironmentFog" }
+			parmtag	{ "vray_pluginattr" "density" }
+			parmtag	{ "vray_type" "float" }
+		}
+		parm {
+			name	"density_tex"
+			label	"Fog Density (map)"
+			type	float
+			invisible
+			default	{ "1" }
+			help	"Texture for fog density"
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "EnvironmentFog" }
+			parmtag	{ "vray_pluginattr" "density_tex" }
+			parmtag	{ "vray_type" "TextureFloat" }
+		}
+		parm {
+			name	"use_height"
+			label	"Use Height"
+			type	toggle
+			default	{ "0" }
+			help	"Whether or not the height should be taken into account"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "EnvironmentFog" }
+			parmtag	{ "vray_pluginattr" "use_height" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		parm {
+			name	"yup"
+			label	"Y Is Up"
+			type	toggle
+			default	{ "0" }
+			help	"if true, y is the up axis, not z"
+			hidewhen	"{ use_height != 1 }"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "EnvironmentFog" }
+			parmtag	{ "vray_pluginattr" "yup" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		parm {
+			name	"height"
+			label	"Height"
+			type	float
+			hidewhen "{ use_height == 0 }"
+			default	{ "100" }
+			help	"Fog starting point along the Z-axis"
+			disablewhen	"{ use_height != 1 }"
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "EnvironmentFog" }
+			parmtag	{ "vray_pluginattr" "height" }
+			parmtag	{ "vray_type" "float" }
+		}
+		parm {
+			name	"subdivs"
+			label	"Subdivs"
+			type	integer
+			default	{ "8" }
+			help	"Fog subdivision"
+			range	{ 0 32 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "EnvironmentFog" }
+			parmtag	{ "vray_pluginattr" "subdivs" }
+			parmtag	{ "vray_type" "int" }
+		}
+		parm {
+			name	"light_mode"
+			label	"Light Mode"
+			type	ordinal
+			default	{ "1" }
+			help	"Light mode"
+			menu	{
+				"No Lights"	"No Lights"
+				"Per-Gizmo"	"Per-Gizmo"
+				"Override"	"Override Shape Lights"
+				"Intersect"	"Intersect with Shape Lights"
+				"Add"	"Add to Shape Lights"
+			}
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_enumkeys" "0,1,2,3,4" }
+			parmtag	{ "vray_plugin" "EnvironmentFog" }
+			parmtag	{ "vray_pluginattr" "light_mode" }
+			parmtag	{ "vray_type" "int" }
+		}
+		parm {
+			name	"ior"
+			label	"Index of Refraction"
+			type	float
+			default	{ "1" }
+			help	"Index of refraction for the volume, which describes the way light bends when crossing the material surface. A value of 1.0 means the light will not change direction"
+			range	{ 0 10 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "EnvironmentFog" }
+			parmtag	{ "vray_pluginattr" "ior" }
+			parmtag	{ "vray_type" "float" }
+		}
+		parm {
+			name	"scale"
+			label	"Scale"
+			type	float
+			default	{ "1" }
+			help	"stretch aspect for the 3 axis, when the fog container must grow/shrink preserving its original density"
+			range	{ 0 5 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "EnvironmentFog" }
+			parmtag	{ "vray_pluginattr" "scale" }
+			parmtag	{ "vray_type" "List<Float>" }
+		}
+		parm {
+			name	"shadow_opacity"
+			label	"Shadow Opacity"
+			type	float
+			default	{ "1" }
+			help	"volume opacity scale for shadow rays"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "EnvironmentFog" }
+			parmtag	{ "vray_pluginattr" "shadow_opacity" }
+			parmtag	{ "vray_type" "float" }
+		}
+		
+		
+		
+	
 	}
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1" }
-	parmtag	{ "vray_plugin" "EnvironmentFog" }
-	parmtag	{ "vray_pluginattr" "fade_out_mode" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"fade_out_radius"
-	label	"Fade Out Radius"
-	type	float
-	default	{ "0" }
-	help	"fade out effect for the edges"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "EnvironmentFog" }
-	parmtag	{ "vray_pluginattr" "fade_out_radius" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"per_object_fade_out_radius"
-	label	"Per Object Fade Out Radius"
-	type	toggle
-	default	{ "0" }
-	help	"fade out effect for the edges per object"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "EnvironmentFog" }
-	parmtag	{ "vray_pluginattr" "per_object_fade_out_radius" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"scatter_gi"
-	label	"Scatter Gi"
-	type	toggle
-	default	{ "0" }
-	help	"Scatter global illumination"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "EnvironmentFog" }
-	parmtag	{ "vray_pluginattr" "scatter_gi" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"scatter_bounces"
-	label	"Scatter Bounces"
-	type	integer
-	default	{ "8" }
-	help	"Number of GI bounces calculated inside the fog"
-	disablewhen	"{ scatter_gi != 1 }"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "EnvironmentFog" }
-	parmtag	{ "vray_pluginattr" "scatter_bounces" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"simplify_gi"
-	label	"Simplify Textures For Gi"
-	type	toggle
-	default	{ "0" }
-	help	"Simplify global illumination"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "EnvironmentFog" }
-	parmtag	{ "vray_pluginattr" "simplify_gi" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"step_size"
-	label	"Step Size"
-	type	float
-	default	{ "1" }
-	help	"Size of one step through the volume"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "EnvironmentFog" }
-	parmtag	{ "vray_pluginattr" "step_size" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"max_steps"
-	label	"Max Steps"
-	type	integer
-	default	{ "1000" }
-	help	"Maximum number of steps through the volume"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "EnvironmentFog" }
-	parmtag	{ "vray_pluginattr" "max_steps" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"tex_samples"
-	label	"Texture Samples"
-	type	integer
-	default	{ "4" }
-	help	"Number of texture samples for each step through the volume"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "EnvironmentFog" }
-	parmtag	{ "vray_pluginattr" "tex_samples" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"cutoff_threshold"
-	label	"Cutoff Threshold"
-	type	float
-	default	{ "0.001" }
-	help	"Controls when the raymarcher will stop traversing the volume"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "EnvironmentFog" }
-	parmtag	{ "vray_pluginattr" "cutoff_threshold" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"light_mode"
-	label	"Light Mode"
-	type	ordinal
-	default	{ "1" }
-	help	"Light mode"
-	menu	{
-	    "No Lights"	"No Lights"
-	    "Per-Gizmo"	"Per-Gizmo"
-	    "Override"	"Override"
-	    "Intersect"	"Intersect"
-	    "Add"	"Add"
+	
+	groupcollapsible {
+		name "folder_GI"
+		label "Global Illumination"
+		
+		parm {
+			name	"scatter_gi"
+			label	"Scatter Gi"
+			type	toggle
+			default	{ "0" }
+			help	"Scatter global illumination"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "EnvironmentFog" }
+			parmtag	{ "vray_pluginattr" "scatter_gi" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		parm {
+			name	"simplify_gi"
+			label	"Simplify Textures For Gi"
+			type	toggle
+			default	{ "0" }
+			help	"Simplify global illumination"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "EnvironmentFog" }
+			parmtag	{ "vray_pluginattr" "simplify_gi" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		parm {
+			name	"scatter_bounces"
+			label	"Scatter Bounces"
+			type	integer
+			disablewhen "{ scatter_gi == 0 }"
+			default	{ "8" }
+			help	"Number of GI bounces calculated inside the fog"
+			disablewhen	"{ scatter_gi != 1 }"
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "EnvironmentFog" }
+			parmtag	{ "vray_pluginattr" "scatter_bounces" }
+			parmtag	{ "vray_type" "int" }
+		}
+		
+		
 	}
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1,2,3,4" }
-	parmtag	{ "vray_plugin" "EnvironmentFog" }
-	parmtag	{ "vray_pluginattr" "light_mode" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"use_shade_instance"
-	label	"Use Shade Instance"
-	type	toggle
-	default	{ "0" }
-	help	"True if the shade instance should be used when sampling textures"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "EnvironmentFog" }
-	parmtag	{ "vray_pluginattr" "use_shade_instance" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"affect_background"
-	label	"Affect Background"
-	type	toggle
-	default	{ "1" }
-	help	"Affect background"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "EnvironmentFog" }
-	parmtag	{ "vray_pluginattr" "affect_background" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"affect_reflections"
-	label	"Affect Reflections"
-	type	toggle
-	default	{ "1" }
-	help	"true if the fog is visible to reflection rays"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "EnvironmentFog" }
-	parmtag	{ "vray_pluginattr" "affect_reflections" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"affect_refractions"
-	label	"Affect Refractions"
-	type	toggle
-	default	{ "1" }
-	help	"true if the fog is visible to refraction rays"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "EnvironmentFog" }
-	parmtag	{ "vray_pluginattr" "affect_refractions" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"affect_shadows"
-	label	"Affect Shadows"
-	type	toggle
-	default	{ "1" }
-	help	"true if the fog affects shadow rays"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "EnvironmentFog" }
-	parmtag	{ "vray_pluginattr" "affect_shadows" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"affect_gi"
-	label	"Affect Gi"
-	type	toggle
-	default	{ "1" }
-	help	"true if the fog affects GI rays"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "EnvironmentFog" }
-	parmtag	{ "vray_pluginattr" "affect_gi" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"affect_camera"
-	label	"Affect Camera"
-	type	toggle
-	default	{ "1" }
-	help	"true if the fog affects primary camera rays"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "EnvironmentFog" }
-	parmtag	{ "vray_pluginattr" "affect_camera" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"deep_output"
-	label	"Deep Output"
-	type	toggle
-	default	{ "0" }
-	help	"Toggle the deep image output. Note that enabling this option will force ray marching even for simple volumetrics, which can cause slower rendering"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "EnvironmentFog" }
-	parmtag	{ "vray_pluginattr" "deep_output" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"ior"
-	label	"Ior"
-	type	float
-	default	{ "1" }
-	help	"Index of refraction for the volume, which describes the way light bends when crossing the material surface. A value of 1.0 means the light will not change direction"
-	range	{ 0 100 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "EnvironmentFog" }
-	parmtag	{ "vray_pluginattr" "ior" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"use_shade_data"
-	label	"Use Shade Data"
-	type	toggle
-	default	{ "1" }
-	help	"True if the shade data should be used when sampling textures. The light mode will be ignored if this is true and the shader is not global!"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "EnvironmentFog" }
-	parmtag	{ "vray_pluginattr" "use_shade_data" }
-	parmtag	{ "vray_type" "boolean" }
-    }
+
+	groupcollapsible {
+		name "folder_raymarching"
+		label "Raymarching"
+		
+		parm {
+			name	"step_size"
+			label	"Step Size"
+			type	float
+			default	{ "1" }
+			help	"Size of one step through the volume"
+			range	{ 0.01 10 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "EnvironmentFog" }
+			parmtag	{ "vray_pluginattr" "step_size" }
+			parmtag	{ "vray_type" "float" }
+		}
+		parm {
+			name	"max_steps"
+			label	"Max Steps"
+			type	integer
+			default	{ "1000" }
+			help	"Maximum number of steps through the volume"
+			range	{ 1 1000 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "EnvironmentFog" }
+			parmtag	{ "vray_pluginattr" "max_steps" }
+			parmtag	{ "vray_type" "int" }
+		}
+		parm {
+			name	"tex_samples"
+			label	"Texture Samples"
+			type	integer
+			default	{ "4" }
+			help	"Number of texture samples for each step through the volume"
+			range	{ 1 1000 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "EnvironmentFog" }
+			parmtag	{ "vray_pluginattr" "tex_samples" }
+			parmtag	{ "vray_type" "int" }
+		}
+		parm {
+			name	"cutoff_threshold"
+			label	"Cutoff Threshold"
+			type	float
+			default	{ "0.001" }
+			help	"Controls when the raymarcher will stop traversing the volume"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "EnvironmentFog" }
+			parmtag	{ "vray_pluginattr" "cutoff_threshold" }
+			parmtag	{ "vray_type" "float" }
+		}
+		parm {
+			name	"deep_output"
+			label	"Deep Output"
+			type	toggle
+			default	{ "0" }
+			help	"Toggle the deep image output. Note that enabling this option will force ray marching even for simple volumetrics, which can cause slower rendering"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "EnvironmentFog" }
+			parmtag	{ "vray_pluginattr" "deep_output" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		
+		
+	}
+	
+	groupcollapsible {
+		name "folder_fadeout"
+		label "Fadeout"
+		
+		parm {
+			name	"fade_out_mode"
+			label	"Fade Out Mode"
+			type	ordinal
+			default	{ "0" }
+			help	"Fade out mode"
+			menu	{
+				"Multiply"	"Multiply by Density"
+				"Substract"	"Substract (Add Density to Falloff)"
+			}
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_enumkeys" "0,1" }
+			parmtag	{ "vray_plugin" "EnvironmentFog" }
+			parmtag	{ "vray_pluginattr" "fade_out_mode" }
+			parmtag	{ "vray_type" "int" }
+		}
+		parm {
+			name	"fade_out_radius"
+			label	"Fade Out Radius"
+			type	float
+			default	{ "0" }
+			help	"fade out effect for the edges"
+			range	{ 0 100 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "EnvironmentFog" }
+			parmtag	{ "vray_pluginattr" "fade_out_radius" }
+			parmtag	{ "vray_type" "float" }
+		}
+		parm {
+			name	"per_object_fade_out_radius"
+			label	"Per Object Fade Out Radius"
+			type	toggle
+			default	{ "0" }
+			help	"fade out effect for the edges per object"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "EnvironmentFog" }
+			parmtag	{ "vray_pluginattr" "per_object_fade_out_radius" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		
+		
+		
+		
+	}
+
+	
+	
+	groupcollapsible {
+		name "folder_options"
+		label "Options"
+		
+		parm {
+			name	"jitter"
+			label	"Jitter Samples"
+			type	toggle
+			default	{ "0" }
+			help	"If true, add a random offset when start sampling"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "EnvironmentFog" }
+			parmtag	{ "vray_pluginattr" "jitter" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		
+		parm {
+			name	"affect_background"
+			label	"Affect Background"
+			type	toggle
+			default	{ "1" }
+			help	"Affect background"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "EnvironmentFog" }
+			parmtag	{ "vray_pluginattr" "affect_background" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		parm {
+			name	"affect_reflections"
+			label	"Affect Reflections"
+			type	toggle
+			default	{ "1" }
+			help	"true if the fog is visible to reflection rays"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "EnvironmentFog" }
+			parmtag	{ "vray_pluginattr" "affect_reflections" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		parm {
+			name	"affect_refractions"
+			label	"Affect Refractions"
+			type	toggle
+			default	{ "1" }
+			help	"true if the fog is visible to refraction rays"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "EnvironmentFog" }
+			parmtag	{ "vray_pluginattr" "affect_refractions" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		parm {
+			name	"affect_shadows"
+			label	"Affect Shadows"
+			type	toggle
+			default	{ "1" }
+			help	"true if the fog affects shadow rays"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "EnvironmentFog" }
+			parmtag	{ "vray_pluginattr" "affect_shadows" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		parm {
+			name	"affect_gi"
+			label	"Affect Gi"
+			type	toggle
+			default	{ "1" }
+			help	"true if the fog affects GI rays"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "EnvironmentFog" }
+			parmtag	{ "vray_pluginattr" "affect_gi" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		parm {
+			name	"affect_camera"
+			label	"Affect Camera"
+			type	toggle
+			default	{ "1" }
+			help	"true if the fog affects primary camera rays"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "EnvironmentFog" }
+			parmtag	{ "vray_pluginattr" "affect_camera" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		parm {
+			name	"use_shade_instance"
+			label	"Use Shade Instance"
+			type	toggle
+			default	{ "0" }
+			help	"True if the shade instance should be used when sampling textures"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "EnvironmentFog" }
+			parmtag	{ "vray_pluginattr" "use_shade_instance" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		
+		
+		parm {
+			name	"use_shade_data"
+			label	"Use Shade Data"
+			type	toggle
+			default	{ "1" }
+			help	"True if the shade data should be used when sampling textures. The light mode will be ignored if this is true and the shader is not global!"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "EnvironmentFog" }
+			parmtag	{ "vray_pluginattr" "use_shade_data" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		parm {
+			name	"solid_mode"
+			label	"Solid Mode"
+			type	toggle
+			default	{ "0" }
+			help	"If true, this will disable randomization when sampling and take 1 sample at 0.5 density"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "EnvironmentFog" }
+			parmtag	{ "vray_pluginattr" "solid_mode" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		parm {
+			name	"solid_threshold"
+			label	"Solid Threshold"
+			type	float
+			default	{ "0.5" }
+			help	"Solid mode transparency threshold"
+			disablewhen	"{ solid_mode != 1 }"
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "EnvironmentFog" }
+			parmtag	{ "vray_pluginattr" "solid_threshold" }
+			parmtag	{ "vray_type" "float" }
+		}
+		
+		
+		
+	}
+    
+    
+    
+    
+    
+    
+   
+    
+	
+    
+    
 }

@@ -3,51 +3,63 @@
     label   "Multi ID"
     parmtag { spare_category "Multi ID" }
     parmtag { vray_plugin "MtlMulti" }
+	
+	groupsimple {
+		name "folder_main"
+		label "Main"
+		
+		parm {
+			name "mtl_count"
+			label "Materials Count"
+			type int
+			default { 1 }
+		}
+		parm {
+			name    "wrap_id"
+			label   "Wrap ID"
+			type    toggle
+			default { "0" }
+			help    "Wrap the material ID's to the largest specified ID for the material"
+			range   { 0 1 }
+			export  none
+			parmtag { "cook_dependent" "1" }
+			parmtag { "vray_plugin" "MtlMulti" }
+			parmtag { "vray_pluginattr" "wrap_id" }
+			parmtag { "vray_type" "boolean" }
+		}
+		
+		parm {
+			name    "mtlid_gen"
+			label   "Tex Int Material ID Gen"
+			type    integer
+			default { "1" }
+			help    "An integer texture that generates material ids; if not present, neither mtlid_gen_float is present then surface material id will be used"
+			range   { 0 1 }
+			export  none
+			parmtag { "cook_dependent" "1" }
+			parmtag { "vray_plugin" "MtlMulti" }
+			parmtag { "vray_pluginattr" "mtlid_gen" }
+			parmtag { "vray_type" "TextureInt" }
+		}
+		parm {
+			name    "mtlid_gen_float"
+			label   "Tex Float Material ID Gen"
+			type    float
+			default { "1" }
+			help    "A float texture that generates material ids; if not present, neither mtlid_gen is present then surface material id will be used"
+			range   { 0 1 }
+			export  none
+			parmtag { "cook_dependent" "1" }
+			parmtag { "vray_plugin" "MtlMulti" }
+			parmtag { "vray_pluginattr" "mtlid_gen_float" }
+			parmtag { "vray_type" "TextureFloat" }
+		}
+		
+		
+		
+	}
 
-    parm {
-        name "mtl_count"
-        label "Materials Count"
-        type int
-        default { 1 }
-    }
+    
 
-    parm {
-    name    "mtlid_gen"
-    label   "Mtlid Gen"
-    type    integer
-    default { "1" }
-    help    "An integer texture that generates material ids; if not present, neither mtlid_gen_float is present then surface material id will be used"
-    range   { 0 64 }
-    export  none
-    parmtag { "cook_dependent" "1" }
-    parmtag { "vray_plugin" "MtlMulti" }
-    parmtag { "vray_pluginattr" "mtlid_gen" }
-    parmtag { "vray_type" "TextureInt" }
-    }
-    parm {
-    name    "mtlid_gen_float"
-    label   "Mtlid Gen Float"
-    type    float
-    default { "1" }
-    help    "A float texture that generates material ids; if not present, neither mtlid_gen is present then surface material id will be used"
-    range   { 0 64 }
-    export  none
-    parmtag { "cook_dependent" "1" }
-    parmtag { "vray_plugin" "MtlMulti" }
-    parmtag { "vray_pluginattr" "mtlid_gen_float" }
-    parmtag { "vray_type" "TextureFloat" }
-    }
-    parm {
-    name    "wrap_id"
-    label   "Wrap Id"
-    type    toggle
-    default { "0" }
-    help    "Wrap the material ID's to the largest specified ID for the material"
-    range   { 0 1 }
-    export  none
-    parmtag { "cook_dependent" "1" }
-    parmtag { "vray_plugin" "MtlMulti" }
-    parmtag { "vray_pluginattr" "wrap_id" }
-    parmtag { "vray_type" "boolean" }
-    }
+    
 }

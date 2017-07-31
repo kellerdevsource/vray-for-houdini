@@ -3,30 +3,41 @@
     label	"Normals"
     parmtag	{ spare_category "Normals" }
     parmtag	{ vray_plugin "RenderChannelNormals" }
-    parm {
-	name	"name"
-	label	"Name"
-	type	string
-	default	{ "Normals" }
-	help	"Channel name"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "RenderChannelNormals" }
-	parmtag	{ "vray_pluginattr" "name" }
-	parmtag	{ "vray_type" "String" }
-    }
-    parm {
-	name	"filtering"
-	label	"Filtering"
-	type	toggle
-	default	{ "0" }
-	help	"Filtering"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "RenderChannelNormals" }
-	parmtag	{ "vray_pluginattr" "filtering" }
-	parmtag	{ "vray_type" "boolean" }
-    }
+	
+	groupsimple {
+		name "folder_main"
+		label "Main"
+		
+		parm {
+			name	"name"
+			label	"Name"
+			type	string
+			default	{ "Normals" }
+			help	"Channel name"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "RenderChannelNormals" }
+			parmtag	{ "vray_pluginattr" "name" }
+			parmtag	{ "vray_type" "String" }
+		}
+		parm {
+			name	"filtering"
+			label	"Filtering"
+			type	toggle
+			default	{ "0" }
+			help	"Filtering"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "RenderChannelNormals" }
+			parmtag	{ "vray_pluginattr" "filtering" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		
+		
+	}
+	
+	
+    
 }
