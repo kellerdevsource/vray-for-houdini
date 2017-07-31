@@ -95,7 +95,7 @@ if __name__ == '__main__':
         sys.exit(err)
 
     log.message("Building the project...")
-    ninja = ["ninja", "-v", "install"]
+    ninja = ["ninja", "install"]
 
     err = run.call(ninja, config.BUILD_DIR)
     if err:
