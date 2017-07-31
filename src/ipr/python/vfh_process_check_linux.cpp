@@ -14,6 +14,8 @@
 #include <unistd.h>
 #include <cstdio>
 
+#include <sys/wait.h>
+
 #include <thread>
 #include <memory>
 
