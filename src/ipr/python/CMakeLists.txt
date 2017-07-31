@@ -24,10 +24,21 @@ set(SOURCES
 	vfh_ipr_client.cpp
 )
 
+if (WIN32)
+	list(APPEND SOURCES vfh_process_check_win32.cpp)
+else()
+	if (APPLE)
+		message(FATAL_ERROR "vfh_ipr not yet supported for MAC")
+	else()
+		list(APPEND SOURCES vfh_process_check_linux.cpp)
+	endif()
+endif()
+
 set(HEADERS
 	vfh_ipr_viewer.h
 	vfh_ipr_client.h
 	vfh_ipr_imdisplay_viewer.h
+	vfh_process_check.h
 )
 
 list(APPEND SOURCES moc_vfh_ipr_client.cpp)

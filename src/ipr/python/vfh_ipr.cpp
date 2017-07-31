@@ -16,6 +16,7 @@
 #include "vfh_ipr_client.h"
 #include "vfh_vray_instances.h"
 #include "vfh_attr_utils.h"
+#include "vfh_process_check.h"
 
 #include <HOM/HOM_Module.h>
 
@@ -121,6 +122,7 @@ FORCEINLINE float getFloat(PyObject *dict, const char *key, float defValue)
 
 static VRayExporter *vrayExporter = nullptr;
 static PingPongClient *stopChecker = nullptr;
+static ProcessCheckPtr procCheck = nullptr;
 
 static VRayExporter& getExporter()
 {
@@ -371,10 +373,20 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 	
 	if (!stopCallback) {
 		stopCallback = new CallOnceUntilReset([]() {
+			if (procCheck) {
+				procCheck->stop();
+				procCheck.reset();
+			}
 			freeExporter();
 		});
 		getImdisplay().setOnStopCallback(stopCallback->getCallableFunction());
 	}
+
+	if (!procCheck) {
+		procCheck = makeProcessChecker(stopCallback->getCallableFunction(), "vfh_ipr.exe");
+	}
+	procCheck->stop();
+	procCheck->start();
 
 	if (!stopChecker) {
 		stopChecker = new PingPongClient();
@@ -383,7 +395,7 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 
 	// Reset the cb's flag so it can be called asap
 	stopCallback->reset();
-	stopChecker->start();
+	//stopChecker->start();
 
 	UT_String ropPath(rop);
 	OP_Node *ropNode = getOpNodeFromPath(ropPath);
