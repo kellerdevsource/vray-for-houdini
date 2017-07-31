@@ -56,8 +56,12 @@ int main(int argc, char ** argv)
 		VRayForHoudini::Log::getLog().error("Environment variable \"HFS\" missiing! IPR not started!");
 		return 1;
 	}
-	QCoreApplication::addLibraryPath(hfsPath + "/bin/Qt_plugins/");
 
+#ifdef WIN32
+	QCoreApplication::addLibraryPath(hfsPath + "/bin/Qt_plugins/");
+#else
+	QCoreApplication::addLibraryPath(hfsPath + "/dsolib/Qt_plugins/");
+#endif
 	QApplication app(argc, argv);
 	Server server;
 
