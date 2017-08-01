@@ -315,27 +315,59 @@ void ImdisplayThread::onPipeStateChange(QProcess::ProcessState newState) {
 
 void ImdisplayThread::run() {
 	/// Pipe to the imdisplay.
-	QProcess pipe;
-	pipe.start("imdisplay", arguments);
+	// TODO: consider using make_shared when we support it in linux builds
+	auto pipe = std::shared_ptr<QProcess>(new QProcess(), [this](QProcess * proc) {
+		// Disconnect all signals from pipe so we dont get unnecessary calls
+		disconnect(proc, nullptr, nullptr, nullptr);
 
-	connect(&pipe, &QProcess::aboutToClose, this, &ImdisplayThread::onPipeClose);
-	connect(&pipe, &QProcess::errorOccurred, this, &ImdisplayThread::onPipeError);
-	connect(&pipe, &QProcess::stateChanged, this, &ImdisplayThread::onPipeStateChange);
-	connect(&pipe, &QProcess::readChannelFinished, this, &ImdisplayThread::onPipeClose);
+		proc->kill();
+		int maxRetries = 15;
+		bool freePtr = true;
+
+		while (!proc->waitForFinished(10)) {
+			if (!this->isRunning) {
+				freePtr = false;
+				break;
+			}
+		}
+
+		if (freePtr) {
+			delete proc;
+		} else {
+			// We should either leak this pointer or connect delete later - but both seem to cause problems on linux
+			connect(proc, static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), proc, &QObject::deleteLater);
+		}
+	});
+	pipe->start("imdisplay", arguments);
+
+	connect(pipe.get(), &QProcess::aboutToClose, this, &ImdisplayThread::onPipeClose);
+	connect(pipe.get(), &QProcess::errorOccurred, this, &ImdisplayThread::onPipeError);
+	connect(pipe.get(), &QProcess::stateChanged, this, &ImdisplayThread::onPipeStateChange);
+	connect(pipe.get(), &QProcess::readChannelFinished, this, &ImdisplayThread::onPipeClose);
 	
-	if (!pipe.waitForStarted()) {
-		return;
+	int maxRetries = 300;
+	// Default wait time is 30 000 ms, so emulate it by also checking running flag
+	while (!pipe->waitForStarted(10)) {
+		if (!isRunning) {
+			return;
+		}
 	}
 
 	while (isRunning) {
-		if (queue.isEmpty())
+		if (queue.isEmpty()) {
 			continue;
-		if (!pipe.isOpen())
+		}
+		if (!pipe->isOpen()) {
 			break;
+		}
 
 		std::unique_ptr<TileQueueMessage> msg;
 		{
 			QMutexLocker locker(&mutex);
+			// Queue could be cleared from another thread while mutex is not locked
+			if (queue.isEmpty()) {
+				break;
+			}
 			msg = std::unique_ptr<TileQueueMessage>(queue.dequeue());
 		}
 
@@ -345,11 +377,11 @@ void ImdisplayThread::run() {
 
 		switch (msg->type()) {
 			case TileQueueMessage::messageTypeImageHeader: {
-				processImageHeaderMessage(pipe, static_cast<ImageHeaderMessage&>(*msg));
+				processImageHeaderMessage(*pipe, static_cast<ImageHeaderMessage&>(*msg));
 				break;
 			}
 			case TileQueueMessage::messageTypeImageTiles: {
-				processTileMessage(pipe, static_cast<TileImageMessage&>(*msg));
+				processTileMessage(*pipe, static_cast<TileImageMessage&>(*msg));
 				break;
 			}
 			default: {
@@ -357,12 +389,6 @@ void ImdisplayThread::run() {
 			}
 		}
 	}
-
-	// Disconnect all signals from pipe so we dont get unnecessary calls
-	disconnect(&pipe, 0, 0, 0);
-
-	pipe.kill();
-	pipe.waitForFinished();
 }
 
 
@@ -502,8 +528,13 @@ void ImdisplayThread::write(QProcess &pipe, int numElements, int elementSize, co
 	}
 
 	pipe.write(reinterpret_cast<const char*>(data), elementSize * numElements);
-	if (!pipe.waitForBytesWritten()) {
-		exit();
+	int maxRetries = 300;
+	while (!pipe.waitForBytesWritten(10)) {
+		if (!isRunning) {
+			// TODO: exit() only works when the thread has it's own event loop but we override run()
+			exit();
+			return;
+		}
 	}
 }
 
