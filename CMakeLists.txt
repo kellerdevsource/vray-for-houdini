@@ -23,7 +23,7 @@ option(WITH_TEST_APP         "Build AppSDK test applications" OFF)
 # Install
 #
 option(INSTALL_RELEASE "Install release build for distribution" OFF)
-if(NOT "${CMAKE_BUILD_TYPE}" STREQUAL "Release" AND "${CMAKE_GENERATOR}" STREQUAL "Ninja")
+if(INSTALL_RELEASE AND NOT "${CMAKE_BUILD_TYPE}" STREQUAL "Release" AND "${CMAKE_GENERATOR}" STREQUAL "Ninja")
 	message(WARNING "INSTALL_RELEASE is ON, but CMAKE_BUILD_TYPE is not \"Release\" (${CMAKE_BUILD_TYPE})!")
 endif()
 
