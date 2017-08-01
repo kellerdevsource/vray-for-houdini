@@ -55,6 +55,7 @@ vfh_make_moc(TARGET ${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME} vray_for_houdini_exporter)
+target_link_libraries(${PROJECT_NAME} vray_for_houdini)
 target_link_libraries(${PROJECT_NAME} Qt5Network)
 
 link_with_vray_sdk(${PROJECT_NAME})
