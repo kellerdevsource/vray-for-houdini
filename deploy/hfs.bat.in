@@ -42,6 +42,8 @@ set PATH=%HFS%\bin;%VRAY_APPSDK%\bin;%LAUNCHER_LOCATION%\vfh_home\bin;%PATH%;%VR
 where /Q dbgcore.dll
 IF ERRORLEVEL 1 set PATH=%VRAY_APPSDK%\bin\compat;%PATH%
 
+set QT_QPA_PLATFORM_PLUGIN_PATH=%HFS%\bin\Qt_plugins\platforms
+
 :: Start Houdini
 ::
 @HFS_BIN@ %*
