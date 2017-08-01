@@ -12,23 +12,11 @@
 #include "vfh_prm_templates.h"
 #include "vfh_tex_utils.h"
 
-
 using namespace VRayForHoudini;
 
 struct MetaImageFileOutputSocket {
 	const char *label;
 	const VOP_TypeInfo typeInfo;
-};
-
-static enum UvwMenuSelection {
-	UVWGenChannel            = 0,
-	UVWGenEnvironment        = 1,
-	UVWGenExplicit           = 2,
-	UVWGenMayaPlace2dTexture = 3,
-	UVWGenObject             = 4,
-	UVWGenObjectBBox         = 5,
-	UVWGenPlanarWorld        = 6,
-	UVWGenProjection         = 7
 };
 
 static MetaImageFileOutputSocket metaImageFileOutputSockets[] = {
@@ -50,7 +38,6 @@ PRM_Template* VOP::MetaImageFile::GetPrmTemplate()
 
 	return myPrmList.getPRMTemplate();
 }
-
 
 void VOP::MetaImageFile::setPluginType()
 {
@@ -80,13 +67,10 @@ OP::VRayNode::PluginResult VOP::MetaImageFile::asPluginDesc(Attrs::PluginDesc &p
 		"UVWGenPlanarWorld",
 		"UVWGenProjection"
 	};
-	
-	UT_String selectedUVWGen = "";
 
-	vassert(selectedUVGen > -1 && selectedUVGen < COUNT_OF(uvGenOptions));
+	vassert(selectedUVGen >= 0 && selectedUVGen < COUNT_OF(uvGenOptions));
 
-	selectedUVWGen = uvGenOptions[selectedUVGen];
-	
+	UT_String selectedUVWGen = uvGenOptions[selectedUVGen];
 	
 	Attrs::PluginDesc selectedUVPluginDesc(VRayExporter::getPluginName(*this, selectedUVWGen.c_str()), selectedUVWGen.c_str());
 	selectedUVWGen += "_";
@@ -103,8 +87,6 @@ OP::VRayNode::PluginResult VOP::MetaImageFile::asPluginDesc(Attrs::PluginDesc &p
 unsigned VOP::MetaImageFile::getNumVisibleOutputs() const {
 	return ouputSocketCount;
 }
-
-
 
 unsigned VOP::MetaImageFile::maxOutputs() const {
 	return ouputSocketCount;
