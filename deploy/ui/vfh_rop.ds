@@ -5,7 +5,7 @@
     parmtag { spare_classtags "render" }
     parmtag { spare_category "V-Ray Renderer" }
 
-#include "$VRAY_UI_DS_PATH/rop/vfh_rop_camera.ds"
+#include "vfh_rop_camera.ds"
 
     parm {
         name    "render_network_environment"
@@ -17,30 +17,30 @@
     group {
         name "VRayRendererFolderExport"
         label "Export"
-#include "$VRAY_UI_DS_PATH/rop/vfh_rop_export.ds"
+#include "vfh_rop_export.ds"
     }
 
     group {
         name "VRayRendererFolderOutput"
         label "Images"
-#include "$VRAY_UI_DS_PATH/rop/plugins/SettingsOutput.ds"
+#include "SettingsOutput.ds"
     }
 
     group {
         name "VRayRendererFolderRenderer"
         label "Renderer"
-#include "$VRAY_UI_DS_PATH/rop/vfh_rop_renderer.ds"
+#include "vfh_rop_renderer.ds"
     }
 
     group {
         name "VRayRendererFolderObjects"
         label "Objects"
-#include "$VRAY_UI_DS_PATH/rop/vfh_rop_objects.ds"
+#include "vfh_rop_objects.ds"
     }
 
     group {
         name "VRayRendererFolderScripts"
         label "Scripts"
-#include "$VRAY_UI_DS_PATH/rop/vfh_rop_scripts.ds"
+#include "vfh_rop_scripts.ds"
     }
 }
