@@ -15,5 +15,6 @@
         invisible
     }
 
+#include "TexBitmapParms.ds"
 #include "vfh_texture_common.ds"
 }

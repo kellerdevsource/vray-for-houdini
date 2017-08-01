@@ -3,17 +3,6 @@
     label	"Object"
     parmtag	{ spare_category "Object" }
     parmtag	{ vray_plugin "UVWGenObject" }
-    parm {
-	name	"duvw_scale"
-	label	"Duvw Scale"
-	type	float
-	default	{ "1" }
-	help	"Additional scale factor for the texture derivatives"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "UVWGenObject" }
-	parmtag	{ "vray_pluginattr" "duvw_scale" }
-	parmtag	{ "vray_type" "float" }
-    }
+    
+#include "$VRAY_UI_DS_PATH/plugins/UVWGenObjectParms.ds"
 }
