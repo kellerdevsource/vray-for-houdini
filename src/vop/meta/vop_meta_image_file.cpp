@@ -69,44 +69,24 @@ OP::VRayNode::PluginResult VOP::MetaImageFile::asPluginDesc(Attrs::PluginDesc &p
 
 	const fpreal &t = exporter.getContext().getTime();
 	const int selectedUVGen = evalInt("meta_image_uv_generator", 0, t);
+	
+	const UT_String uvGenOptions[] = {
+		"UVWGenChannel",
+		"UVWGenEnvironment",
+		"UVWGenExplicit",
+		"UVWGenMayaPlace2dTexture",
+		"UVWGenObject",
+		"UVWGenObjectBBox",
+		"UVWGenPlanarWorld",
+		"UVWGenProjection"
+	};
+	
 	UT_String selectedUVWGen = "";
-	switch (selectedUVGen) {
-	case UVWGenChannel:
-		selectedUVWGen = "UVWGenChannel";
-		break;
 
-	case UVWGenEnvironment:
-		selectedUVWGen = "UVWGenEnvironment";
-		break;
+	vassert(selectedUVGen > -1 && selectedUVGen < COUNT_OF(uvGenOptions));
 
-	case UVWGenExplicit:
-		selectedUVWGen = "UVWGenExplicit";
-		break;
-
-	case UVWGenMayaPlace2dTexture:
-		selectedUVWGen = "UVWGenMayaPlace2dTexture";
-		break;
-
-	case UVWGenObject:
-		selectedUVWGen = "UVWGenObject";
-		break;
-
-	case UVWGenObjectBBox:
-		selectedUVWGen = "UVWGenObjectBBox";
-		break;
-
-	case UVWGenPlanarWorld:
-		selectedUVWGen = "UVWGenPlanarWorld";
-		break;
-
-	case UVWGenProjection:
-		selectedUVWGen = "UVWGenProjection";
-		break;
-
-	default:
-		selectedUVWGen = "UVWGenChannel";
-		break;
-	}
+	selectedUVWGen = uvGenOptions[selectedUVGen];
+	
 	
 	Attrs::PluginDesc selectedUVPluginDesc(VRayExporter::getPluginName(*this, selectedUVWGen.c_str()), selectedUVWGen.c_str());
 	selectedUVWGen += "_";
