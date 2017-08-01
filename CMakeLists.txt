@@ -59,6 +59,7 @@ set_compiler_flags()
 use_houdini_sdk()
 use_vray_sdk()
 use_vray_appsdk()
+use_phx_sdk()
 
 if(BUILD_TESTING)
 	include(CTest)

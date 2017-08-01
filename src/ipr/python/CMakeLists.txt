@@ -55,8 +55,7 @@ vfh_make_moc(TARGET ${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME} vray_for_houdini_exporter)
-find_package(Phoenix)
-link_directories(${Phoenix_LIBRARIES})
+use_phx_sdk()
 target_link_libraries(${PROJECT_NAME} vray_for_houdini)
 target_link_libraries(${PROJECT_NAME} Qt5Network)
 
