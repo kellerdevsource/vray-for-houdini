@@ -3,132 +3,154 @@
     label	"Bump"
     parmtag	{ spare_category "Bump" }
     parmtag	{ vray_plugin "MtlBump" }
+
+
     parm {
-	name	"bump_tex_color"
-	label	"Bump Tex Color"
-	type	color4
-	size	4
-	default	{ "0" "0" "0" "1" }
-	help	"Bump texture"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "MtlBump" }
-	parmtag	{ "vray_pluginattr" "bump_tex_color" }
-	parmtag	{ "vray_type" "Texture" }
+    	name	"bump_tex_color"
+    	label	"Bump Texture(Color)"
+    	type	color4
+		invisible
+    	size	4
+    	default	{ "0" "0" "0" "1" }
+    	help	"Bump texture"
+    	range	{ 0 1 }
+    	export	none
+    	parmtag	{ "cook_dependent" "1" }
+    	parmtag	{ "vray_plugin" "MtlBump" }
+    	parmtag	{ "vray_pluginattr" "bump_tex_color" }
+    	parmtag	{ "vray_type" "Texture" }
     }
+
     parm {
-	name	"bump_tex_float"
-	label	"Bump Tex Float"
-	type	float
-	default	{ "1" }
-	help	"Bump texture"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "MtlBump" }
-	parmtag	{ "vray_pluginattr" "bump_tex_float" }
-	parmtag	{ "vray_type" "TextureFloat" }
+    	name	"bump_tex_float"
+    	label	"Bump Texture(Float)"
+    	type	float
+		invisible
+    	default	{ "1" }
+    	help	"Bump texture"
+    	range	{ 0 1 }
+    	export	none
+    	parmtag	{ "cook_dependent" "1" }
+    	parmtag	{ "vray_plugin" "MtlBump" }
+    	parmtag	{ "vray_pluginattr" "bump_tex_float" }
+    	parmtag	{ "vray_type" "TextureFloat" }
     }
-    parm {
-	name	"bump_tex_mult"
-	label	"Bump Tex Mult"
-	type	float
-	default	{ "1" }
-	help	"Bump amount"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "MtlBump" }
-	parmtag	{ "vray_pluginattr" "bump_tex_mult" }
-	parmtag	{ "vray_type" "float" }
+
+    groupsimple {
+      name "folder_main"
+      label "Main"
+
+      parm {
+        name	"map_type"
+        label	"Type"
+        type	ordinal
+        default	{ "0" }
+        help	"The type of the map"
+        menu	{
+          0	"Bump"
+          1	"Normal (Tangent)"
+          2	"Normal (Object)"
+          3	"Normal (Camera)"
+          4	"Normal (World)"
+          5	"From Bump"
+          6	"Explicit Normal"
+        }
+        range	{ 0 1 }
+        export	none
+        parmtag	{ "cook_dependent" "1" }
+        parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6" }
+        parmtag	{ "vray_plugin" "MtlBump" }
+        parmtag	{ "vray_pluginattr" "map_type" }
+        parmtag	{ "vray_type" "int" }
+      }
+
+      
+      parm {
+      	name	"bump_tex_mult"
+      	label	"Bump Amount"
+      	type	float
+      	default	{ "1" }
+      	help	"Bump amount"
+      	range	{ 0 2 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "MtlBump" }
+      	parmtag	{ "vray_pluginattr" "bump_tex_mult" }
+      	parmtag	{ "vray_type" "float" }
+      }
+
+      parm {
+      	name	"bump_tex_mult_tex"
+      	label	"Bump Texture Mult"
+      	type	float
+      	default	{ "1" }
+      	help	"Bump amount texture"
+      	range	{ 0 2 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "MtlBump" }
+      	parmtag	{ "vray_pluginattr" "bump_tex_mult_tex" }
+      	parmtag	{ "vray_type" "TextureFloat" }
+      }
+
+      parm {
+      	name	"bump_delta_scale"
+      	label	"Bump Delta Scale"
+      	type	float
+        hidewhen "{ map_type != 0 }"
+      	default	{ "1" }
+      	help	"Scale for sampling the bitmap when map_type is 0. Normally this is tied to the ray differentials, but can be changed if necessary"
+      	range	{ 1 3 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "MtlBump" }
+      	parmtag	{ "vray_pluginattr" "bump_delta_scale" }
+      	parmtag	{ "vray_type" "float" }
+      }
+	  parm {
+      	name	"bump_shadows"
+      	label	"Bump Shadows"
+      	type	toggle
+      	default	{ "0" }
+      	help	"true to offset the surface shading point, in addition to the normal"
+      	range	{ 0 1 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "MtlBump" }
+      	parmtag	{ "vray_pluginattr" "bump_shadows" }
+      	parmtag	{ "vray_type" "boolean" }
+      }
+
+      parm {
+      	name	"compute_bump_for_shadows"
+      	label	"Compute Bump For Shadows"
+      	type	toggle
+      	default	{ "0" }
+      	help	"true to compute bump mapping for shadow rays in case the material is transparent; false to skip the bump map for shadow rays (faster rendering)"
+      	range	{ 0 1 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "MtlBump" }
+      	parmtag	{ "vray_pluginattr" "compute_bump_for_shadows" }
+      	parmtag	{ "vray_type" "boolean" }
+      }
+
+      parm {
+      	name	"maya_compatible"
+      	label	"Maya Compatible"
+      	type	toggle
+      	default	{ "0" }
+      	help	"When this is true the BRDFBump will try to match the Maya bump/normal mapping"
+      	range	{ 0 1 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "MtlBump" }
+      	parmtag	{ "vray_pluginattr" "maya_compatible" }
+      	parmtag	{ "vray_type" "boolean" }
+      }
+
+
     }
-    parm {
-	name	"bump_tex_mult_tex"
-	label	"Bump Tex Mult Tex"
-	type	float
-	default	{ "1" }
-	help	"Bump amount texture"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "MtlBump" }
-	parmtag	{ "vray_pluginattr" "bump_tex_mult_tex" }
-	parmtag	{ "vray_type" "TextureFloat" }
-    }
-    parm {
-	name	"bump_shadows"
-	label	"Bump Shadows"
-	type	toggle
-	default	{ "0" }
-	help	"true to offset the surface shading point, in addition to the normal"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "MtlBump" }
-	parmtag	{ "vray_pluginattr" "bump_shadows" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"bump_delta_scale"
-	label	"Bump Delta Scale"
-	type	float
-	default	{ "1" }
-	help	"Scale for sampling the bitmap when map_type is 0. Normally this is tied to the ray differentials, but can be changed if necessary"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "MtlBump" }
-	parmtag	{ "vray_pluginattr" "bump_delta_scale" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"maya_compatible"
-	label	"Maya Compatible"
-	type	toggle
-	default	{ "0" }
-	help	"When this is true the BRDFBump will try to match the Maya bump/normal mapping"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "MtlBump" }
-	parmtag	{ "vray_pluginattr" "maya_compatible" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"map_type"
-	label	"Type"
-	type	ordinal
-	default	{ "0" }
-	help	"The type of the map"
-	menu	{
-	    "Bump"	"Bump"
-	    "Normal (Tangent)"	"Normal (Tangent)"
-	    "Normal (Object)"	"Normal (Object)"
-	    "Normal (Camera)"	"Normal (Camera)"
-	    "Normal (World)"	"Normal (World)"
-	    "From Bump"	"From Bump"
-	    "Explicit Normal"	"Explicit Normal"
-	}
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6" }
-	parmtag	{ "vray_plugin" "MtlBump" }
-	parmtag	{ "vray_pluginattr" "map_type" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"compute_bump_for_shadows"
-	label	"Compute Bump For Shadows"
-	type	toggle
-	default	{ "1" }
-	help	"true to compute bump mapping for shadow rays in case the material is transparent; false to skip the bump map for shadow rays (faster rendering)"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "MtlBump" }
-	parmtag	{ "vray_pluginattr" "compute_bump_for_shadows" }
-	parmtag	{ "vray_type" "boolean" }
-    }
+
+
 }

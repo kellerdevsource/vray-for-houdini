@@ -136,7 +136,7 @@ void Logger::stopLogging()
 	}
 }
 
-void Logger::log(LogLevel level, const char *format, va_list args)
+void Logger::valog(LogLevel level, const char *format, va_list args)
 {
 	const bool showMessage = level == LogLevelMsg
 		? true
@@ -171,12 +171,23 @@ void Logger::log(LogLevel level, const char *format, va_list args)
 }
 
 
+void Logger::log(LogLevel level, const tchar *format, ...)
+{
+	va_list args;
+	va_start(args, format);
+
+	valog(level, format, args);
+
+	va_end(args);
+}
+
+
 void Logger::info(const tchar *format, ...)
 {
 	va_list args;
 	va_start(args, format);
 
-	log(Log::LogLevelInfo, format, args);
+	valog(Log::LogLevelInfo, format, args);
 
 	va_end(args);
 }
@@ -187,7 +198,7 @@ void Logger::warning(const tchar *format, ...)
 	va_list args;
 	va_start(args, format);
 
-	log(Log::LogLevelWarning, format, args);
+	valog(Log::LogLevelWarning, format, args);
 
 	va_end(args);
 }
@@ -198,7 +209,7 @@ void Logger::error(const tchar *format, ...)
 	va_list args;
 	va_start(args, format);
 
-	log(Log::LogLevelError, format, args);
+	valog(Log::LogLevelError, format, args);
 
 	va_end(args);
 }
@@ -209,7 +220,7 @@ void Logger::debug(const tchar *format, ...)
 	va_list args;
 	va_start(args, format);
 
-	log(Log::LogLevelDebug, format, args);
+	valog(Log::LogLevelDebug, format, args);
 
 	va_end(args);
 }
@@ -220,7 +231,7 @@ void Logger::progress(const tchar *format, ...)
 	va_list args;
 	va_start(args, format);
 
-	log(Log::LogLevelProgress, format, args);
+	valog(Log::LogLevelProgress, format, args);
 
 	va_end(args);
 }
@@ -231,7 +242,7 @@ void Logger::msg(const tchar *format, ...)
 	va_list args;
 	va_start(args, format);
 
-	log(Log::LogLevelMsg, format, args);
+	valog(Log::LogLevelMsg, format, args);
 
 	va_end(args);
 }

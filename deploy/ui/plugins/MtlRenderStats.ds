@@ -3,106 +3,126 @@
     label	"Render Stats"
     parmtag	{ spare_category "Render Stats" }
     parmtag	{ vray_plugin "MtlRenderStats" }
-    parm {
-	name	"camera_visibility"
-	label	"Camera Visibility"
-	type	toggle
-	default	{ "1" }
-	help	"Whether the object is visible from the camera (camera rays)"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "MtlRenderStats" }
-	parmtag	{ "vray_pluginattr" "camera_visibility" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"reflections_visibility"
-	label	"Reflections Visibility"
-	type	toggle
-	default	{ "1" }
-	help	"Whether the object is visible in reflections"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "MtlRenderStats" }
-	parmtag	{ "vray_pluginattr" "reflections_visibility" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"refractions_visibility"
-	label	"Refractions Visibility"
-	type	toggle
-	default	{ "1" }
-	help	"Whether the object is visible in refractions"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "MtlRenderStats" }
-	parmtag	{ "vray_pluginattr" "refractions_visibility" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"gi_visibility"
-	label	"Gi Visibility"
-	type	toggle
-	default	{ "1" }
-	help	"Whether the object is visible to GI (generating and receiving)"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "MtlRenderStats" }
-	parmtag	{ "vray_pluginattr" "gi_visibility" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"shadows_visibility"
-	label	"Shadows Visibility"
-	type	toggle
-	default	{ "1" }
-	help	"Whether the object casts shadows (visible to lights for shadow rays)"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "MtlRenderStats" }
-	parmtag	{ "vray_pluginattr" "shadows_visibility" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"visibility"
-	label	"Visibility"
-	type	float
-	default	{ "1" }
-	help	"Overall visibility"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "MtlRenderStats" }
-	parmtag	{ "vray_pluginattr" "visibility" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"use"
-	label	"Use"
-	type	toggle
-	default	{ "0" }
-	help	"Use Render Stats material"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_custom_handling" "1" }
-    }
-    parm {
-	name	"shadows_receive"
-	label	"Shadows Receive"
-	type	toggle
-	default	{ "1" }
-	help	"Whether the object receives shadows"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "MtlRenderStats" }
-	parmtag	{ "vray_pluginattr" "shadows_receive" }
-	parmtag	{ "vray_type" "boolean" }
-    }
+	
+	groupsimple {
+		name "folder_main"
+		label "Main"
+		
+		parm {
+			name	"use"
+			label	"Use"
+			type	toggle
+			default	{ "1" }
+			help	"Use Render Stats material"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_custom_handling" "1" }
+		}
+		
+		// consider using a toggle instead
+		
+		parm {
+			name	"visibility"
+			label	"Primary Visibility"
+			type	float
+			disablewhen "{ use == 0 }"
+			default	{ "1" }
+			help	"Overall visibility"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "MtlRenderStats" }
+			parmtag	{ "vray_pluginattr" "visibility" }
+			parmtag	{ "vray_type" "float" }
+		}
+		
+		parm {
+			name	"camera_visibility"
+			label	"Camera Visibility"
+			type	toggle
+			disablewhen "{ use == 0 }"
+			default	{ "1" }
+			help	"Whether the object is visible from the camera (camera rays)"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "MtlRenderStats" }
+			parmtag	{ "vray_pluginattr" "camera_visibility" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		parm {
+			name	"reflections_visibility"
+			label	"Reflections Visibility"
+			type	toggle
+			disablewhen "{ use == 0 }"
+			default	{ "1" }
+			help	"Whether the object is visible in reflections"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "MtlRenderStats" }
+			parmtag	{ "vray_pluginattr" "reflections_visibility" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		parm {
+			name	"refractions_visibility"
+			label	"Refractions Visibility"
+			type	toggle
+			disablewhen "{ use == 0 }"
+			default	{ "1" }
+			help	"Whether the object is visible in refractions"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "MtlRenderStats" }
+			parmtag	{ "vray_pluginattr" "refractions_visibility" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		parm {
+			name	"gi_visibility"
+			label	"Gi Visibility"
+			type	toggle
+			disablewhen "{ use == 0 }"
+			default	{ "1" }
+			help	"Whether the object is visible to GI (generating and receiving)"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "MtlRenderStats" }
+			parmtag	{ "vray_pluginattr" "gi_visibility" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		parm {
+			name	"shadows_visibility"
+			label	"Shadows Visibility"
+			type	toggle
+			disablewhen "{ use == 0 }"
+			default	{ "1" }
+			help	"Whether the object casts shadows (visible to lights for shadow rays)"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "MtlRenderStats" }
+			parmtag	{ "vray_pluginattr" "shadows_visibility" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		parm {
+			name	"shadows_receive"
+			label	"Shadows Receive"
+			type	toggle
+			disablewhen "{ use == 0 }"
+			default	{ "1" }
+			help	"Whether the object receives shadows"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "MtlRenderStats" }
+			parmtag	{ "vray_pluginattr" "shadows_receive" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		
+		
+	}
+  
 }

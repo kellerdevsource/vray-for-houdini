@@ -3,50 +3,61 @@
     label	"Scalar Exponential"
     parmtag	{ spare_category "Scalar Exponential" }
     parmtag	{ vray_plugin "TexScalarExponential" }
-    parm {
-	name	"input"
-	label	"Input"
-	type	float
-	default	{ "0" }
-	help	"The value used in the operation"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexScalarExponential" }
-	parmtag	{ "vray_pluginattr" "input" }
-	parmtag	{ "vray_type" "TextureFloat" }
+
+    groupsimple {
+      name "folder_main"
+      label "Main"
+
+      parm {
+      name	"operation"
+      label	"Operation"
+      type	ordinal
+      default	{ "0" }
+      help	"The operation: 0=Exponential, 1=Logarithm, 2=Bias, 3=Gain"
+      menu	{
+        0	"Exponential"
+        1	"Logarithm"
+        2	"Bias"
+        3	"Gain"
+      }
+      range	{ 0 1 }
+      export	none
+      parmtag	{ "cook_dependent" "1" }
+      parmtag	{ "vray_enumkeys" "0,1,2,3" }
+      parmtag	{ "vray_plugin" "TexScalarExponential" }
+      parmtag	{ "vray_pluginattr" "operation" }
+      parmtag	{ "vray_type" "int" }
+      }
+
+      parm {
+      name	"input"
+      label	"Input"
+      type	float
+      default	{ "0" }
+      help	"The value used in the operation"
+      range	{ 0 10 }
+      export	none
+      parmtag	{ "cook_dependent" "1" }
+      parmtag	{ "vray_plugin" "TexScalarExponential" }
+      parmtag	{ "vray_pluginattr" "input" }
+      parmtag	{ "vray_type" "TextureFloat" }
+      }
+
+      parm {
+      name	"factor"
+      label	"Factor"
+      type	float
+      default	{ "0" }
+      help	"The factor to be used in the operation"
+      range	{ 0 10 }
+      export	none
+      parmtag	{ "cook_dependent" "1" }
+      parmtag	{ "vray_plugin" "TexScalarExponential" }
+      parmtag	{ "vray_pluginattr" "factor" }
+      parmtag	{ "vray_type" "TextureFloat" }
+      }
+
     }
-    parm {
-	name	"factor"
-	label	"Factor"
-	type	float
-	default	{ "0" }
-	help	"The factor to be used in the operation"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexScalarExponential" }
-	parmtag	{ "vray_pluginattr" "factor" }
-	parmtag	{ "vray_type" "TextureFloat" }
-    }
-    parm {
-	name	"operation"
-	label	"Operation"
-	type	ordinal
-	default	{ "0" }
-	help	"The operation: 0=Exponential, 1=Logarithm, 2=Bias, 3=Gain"
-	menu	{
-	    "Exponential"	"Exponential"
-	    "Logarithm"	"Logarithm"
-	    "Bias"	"Bias"
-	    "Gain"	"Gain"
-	}
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1,2,3" }
-	parmtag	{ "vray_plugin" "TexScalarExponential" }
-	parmtag	{ "vray_pluginattr" "operation" }
-	parmtag	{ "vray_type" "int" }
-    }
+
+
 }

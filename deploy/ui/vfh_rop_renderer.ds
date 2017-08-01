@@ -1,129 +1,86 @@
-group {
-    name "SettingsOptions"
-    label "Options"
-#include "$VRAY_UI_DS_PATH/rop/plugins/SettingsOptions.ds"
-}
-
-group {
-    name "FolderVRayRendererGI"
-    label "Global Illumination"
-
-    group {
-        name "SettingsGI"
-        label "General"
-#include "$VRAY_UI_DS_PATH/rop/plugins/SettingsGI.ds"
-    }
-
-    group {
-        name "SettingsDMCGI"
-        label "Brute Force"
-#include "$VRAY_UI_DS_PATH/rop/plugins/SettingsDMCGI.ds"
-    }
-
-    group {
-        name "SettingsIrradianceMap"
-        label "Irradiance Map"
-#include "$VRAY_UI_DS_PATH/rop/plugins/SettingsIrradianceMap.ds"
-    }
-
-    group {
-        name "SettingsLightCache"
-        label "Light Cache"
-#include "$VRAY_UI_DS_PATH/rop/plugins/SettingsLightCache.ds"
-    }
-}
 
 group {
     name "FolderVRayRendererSampler"
     label "Sampler"
 
     groupsimple {
-        name "SettingsDMCSampler"
-        label "DMC Sampler"
-#include "$VRAY_UI_DS_PATH/rop/plugins/SettingsDMCSampler.ds"
+        name "SettingsImageSampler"
+        label "Image Sampler"
+#include "$VRAY_UI_DS_PATH/rop/SettingsImageSampler.ds"
     }
 
     groupsimple {
-        name "SettingsImageSampler"
-        label "Image Sampler"
-#include "$VRAY_UI_DS_PATH/rop/plugins/SettingsImageSampler.ds"
+        name "SettingsDMCSampler"
+        label "DMC Sampler"
+#include "$VRAY_UI_DS_PATH/rop/SettingsDMCSampler.ds"
     }
 
     groupsimple {
         name "SettingsRegionsGenerator"
-        label "Buckets"
-#include "$VRAY_UI_DS_PATH/rop/plugins/SettingsRegionsGenerator.ds"
+        label "Render Region Division"
+#include "$VRAY_UI_DS_PATH/rop/SettingsRegionsGenerator.ds"
 
-        hidewhen "{ SettingsImageSampler_type == "Progressive" }"
+        hidewhen "{ SettingsImageSampler_type == 3 }"
     }
+	
+#include "$VRAY_UI_DS_PATH/rop/SettingsColorMapping.ds"
 }
 
 group {
-    name "SettingsColorMapping"
-    label "Color Mapping"
-#include "$VRAY_UI_DS_PATH/rop/plugins/SettingsColorMapping.ds"
+    name "FolderVRayRendererGI"
+    label "Global Illumination"
+#include "$VRAY_UI_DS_PATH/rop/SettingsGI.ds"
+#include "$VRAY_UI_DS_PATH/rop/SettingsIrradianceMap.ds"
+#include "$VRAY_UI_DS_PATH/rop/SettingsDMCGI.ds"
+#include "$VRAY_UI_DS_PATH/rop/SettingsLightCache.ds"
+#include "$VRAY_UI_DS_PATH/rop/SettingsCaustics.ds"
+
 }
 
 group {
     name "FolderVRayRendererCamera"
     label "Camera"
+#include "$VRAY_UI_DS_PATH/rop/SettingsCamera.ds"
+#include "$VRAY_UI_DS_PATH/rop/SettingsCameraDof.ds"
+#include "$VRAY_UI_DS_PATH/rop/SettingsMotionBlur.ds"
+#include "$VRAY_UI_DS_PATH/rop/VRayStereoscopicSettings.ds"
 
-    group {
-        name "SettingsCamera"
-        label "General"
-#include "$VRAY_UI_DS_PATH/rop/plugins/SettingsCamera.ds"
-    }
-
-    group {
-        name "SettingsCameraDof"
-        label "Depth Of Field"
-#include "$VRAY_UI_DS_PATH/rop/plugins/SettingsCameraDof.ds"
-    }
-
-    group {
-        name "SettingsMotionBlur"
-        label "Motion Blur"
-#include "$VRAY_UI_DS_PATH/rop/plugins/SettingsMotionBlur.ds"
-    }
-
-    group {
-        name "VRayStereoscopicSettings"
-        label "Stereo"
-#include "$VRAY_UI_DS_PATH/rop/plugins/VRayStereoscopicSettings.ds"
-    }
 }
+
+/*
+group {
+    name "SettingsColorMapping"
+    label "Color Mapping"
+#include "$VRAY_UI_DS_PATH/rop/SettingsColorMapping.ds"
+}
+*/
+
+group {
+    name "SettingsOptions"
+    label "Options"
+#include "$VRAY_UI_DS_PATH/rop/SettingsOptions.ds"
+#include "$VRAY_UI_DS_PATH/rop/SettingsRaycaster.ds"
+}
+
+/*
+group {
+    name "SettingsDefaultDisplacement"
+    label "Displacement"
+    disablewhen "{ SettingsOptions_geom_displacement == 0 }"
+#include "$VRAY_UI_DS_PATH/rop/SettingsDefaultDisplacement.ds"
+}
+*/
+
+
+group {
+    name "SettingsRTEngine"
+    label "RT"
+#include "$VRAY_UI_DS_PATH/rop/SettingsRTEngine.ds"
+}
+
 
 group {
     name "VRaySettingsDR"
     label "DR"
-#include "$VRAY_UI_DS_PATH/rop/plugins/DRItems.ds"
-}
-
-group {
-    name "FolderVRayRendererAdvanced"
-    label "Advanced"
-
-    group {
-        name "SettingsRaycaster"
-        label "Raycaster"
-#include "$VRAY_UI_DS_PATH/rop/plugins/SettingsRaycaster.ds"
-    }
-
-    group {
-        name "SettingsRTEngine"
-        label "Realtime Engine"
-#include "$VRAY_UI_DS_PATH/rop/plugins/SettingsRTEngine.ds"
-    }
-
-    group {
-        name "SettingsCaustics"
-        label "Caustics"
-#include "$VRAY_UI_DS_PATH/rop/plugins/SettingsCaustics.ds"
-    }
-
-    group {
-        name "SettingsDefaultDisplacement"
-        label "Displacement"
-#include "$VRAY_UI_DS_PATH/rop/plugins/SettingsDefaultDisplacement.ds"
-    }
+#include "$VRAY_UI_DS_PATH/rop/DRItems.ds"
 }

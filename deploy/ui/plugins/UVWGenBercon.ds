@@ -3,381 +3,423 @@
     label	"Bercon"
     parmtag	{ spare_category "Bercon" }
     parmtag	{ vray_plugin "UVWGenBercon" }
-    parm {
-	name	"offset_x"
-	label	"Offset X"
-	type	float
-	default	{ "0" }
-	help	"the X offset"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "UVWGenBercon" }
-	parmtag	{ "vray_pluginattr" "offset_x" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"offset_y"
-	label	"Offset Y"
-	type	float
-	default	{ "0" }
-	help	"the Y offset"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "UVWGenBercon" }
-	parmtag	{ "vray_pluginattr" "offset_y" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"offset_z"
-	label	"Offset Z"
-	type	float
-	default	{ "0" }
-	help	"the Z offset"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "UVWGenBercon" }
-	parmtag	{ "vray_pluginattr" "offset_z" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"size_x"
-	label	"Size X"
-	type	float
-	default	{ "1" }
-	help	"X size"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "UVWGenBercon" }
-	parmtag	{ "vray_pluginattr" "size_x" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"size_y"
-	label	"Size Y"
-	type	float
-	default	{ "1" }
-	help	"Y size"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "UVWGenBercon" }
-	parmtag	{ "vray_pluginattr" "size_y" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"size_z"
-	label	"Size Z"
-	type	float
-	default	{ "1" }
-	help	"Z size"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "UVWGenBercon" }
-	parmtag	{ "vray_pluginattr" "size_z" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"angle_x"
-	label	"Angle X"
-	type	float
-	default	{ "0" }
-	help	"X angle"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "UVWGenBercon" }
-	parmtag	{ "vray_pluginattr" "angle_x" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"angle_y"
-	label	"Angle Y"
-	type	float
-	default	{ "0" }
-	help	"Y angle"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "UVWGenBercon" }
-	parmtag	{ "vray_pluginattr" "angle_y" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"angle_z"
-	label	"Angle Z"
-	type	float
-	default	{ "0" }
-	help	"Z angle"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "UVWGenBercon" }
-	parmtag	{ "vray_pluginattr" "angle_z" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"tile_x"
-	label	"Tile X"
-	type	integer
-	default	{ "1" }
-	help	"X tiles"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "UVWGenBercon" }
-	parmtag	{ "vray_pluginattr" "tile_x" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"tile_y"
-	label	"Tile Y"
-	type	integer
-	default	{ "1" }
-	help	"Y tiles"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "UVWGenBercon" }
-	parmtag	{ "vray_pluginattr" "tile_y" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"tile_z"
-	label	"Tile Z"
-	type	integer
-	default	{ "1" }
-	help	"Z tiles"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "UVWGenBercon" }
-	parmtag	{ "vray_pluginattr" "tile_z" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"offset_x2"
-	label	"Offset X2"
-	type	float
-	default	{ "0" }
-	help	"second X offset"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "UVWGenBercon" }
-	parmtag	{ "vray_pluginattr" "offset_x2" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"offset_y2"
-	label	"Offset Y2"
-	type	float
-	default	{ "0" }
-	help	"second Y offset"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "UVWGenBercon" }
-	parmtag	{ "vray_pluginattr" "offset_y2" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"offset_z2"
-	label	"Offset Z2"
-	type	float
-	default	{ "0" }
-	help	"second Z offset"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "UVWGenBercon" }
-	parmtag	{ "vray_pluginattr" "offset_z2" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"size_x2"
-	label	"Size X2"
-	type	float
-	default	{ "0" }
-	help	"second X size"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "UVWGenBercon" }
-	parmtag	{ "vray_pluginattr" "size_x2" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"size_y2"
-	label	"Size Y2"
-	type	float
-	default	{ "0" }
-	help	"second Y size"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "UVWGenBercon" }
-	parmtag	{ "vray_pluginattr" "size_y2" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"size_z2"
-	label	"Size Z2"
-	type	float
-	default	{ "0" }
-	help	"second Z size"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "UVWGenBercon" }
-	parmtag	{ "vray_pluginattr" "size_z2" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"angle_x2"
-	label	"Angle X2"
-	type	float
-	default	{ "0" }
-	help	"second X angle"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "UVWGenBercon" }
-	parmtag	{ "vray_pluginattr" "angle_x2" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"angle_y2"
-	label	"Angle Y2"
-	type	float
-	default	{ "0" }
-	help	"second Y angle"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "UVWGenBercon" }
-	parmtag	{ "vray_pluginattr" "angle_y2" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"angle_z2"
-	label	"Angle Z2"
-	type	float
-	default	{ "0" }
-	help	"second Z angle"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "UVWGenBercon" }
-	parmtag	{ "vray_pluginattr" "angle_z2" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"xyz_lock"
-	label	"Xyz Lock"
-	type	integer
-	default	{ "0" }
-	help	"XYZ Lock"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "UVWGenBercon" }
-	parmtag	{ "vray_pluginattr" "xyz_lock" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"seed"
-	label	"Seed"
-	type	integer
-	default	{ "1" }
-	help	"Seed"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "UVWGenBercon" }
-	parmtag	{ "vray_pluginattr" "seed" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"rand_mat"
-	label	"Rand Mat"
-	type	integer
-	default	{ "0" }
-	help	"Random by material"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "UVWGenBercon" }
-	parmtag	{ "vray_pluginattr" "rand_mat" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"rand_obj"
-	label	"Rand Obj"
-	type	integer
-	default	{ "0" }
-	help	"Random by object"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "UVWGenBercon" }
-	parmtag	{ "vray_pluginattr" "rand_obj" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"rand_par"
-	label	"Rand Par"
-	type	integer
-	default	{ "0" }
-	help	"Random by particle"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "UVWGenBercon" }
-	parmtag	{ "vray_pluginattr" "rand_par" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"map"
-	label	"Map"
-	type	integer
-	default	{ "0" }
-	help	"Mapping type"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "UVWGenBercon" }
-	parmtag	{ "vray_pluginattr" "map" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"channel"
-	label	"Channel"
-	type	integer
-	default	{ "0" }
-	help	"Mapping channel"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "UVWGenBercon" }
-	parmtag	{ "vray_pluginattr" "channel" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"filtering"
-	label	"Filtering"
-	type	float
-	default	{ "1" }
-	help	"filtering"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "UVWGenBercon" }
-	parmtag	{ "vray_pluginattr" "filtering" }
-	parmtag	{ "vray_type" "float" }
-    }
+	
+	groupsimple {
+		name "folder_main"
+		label "Main"
+		
+		parm {
+			name	"map"
+			label	"Map"
+			type	integer
+			default	{ "0" }
+			help	"Mapping type"
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "UVWGenBercon" }
+			parmtag	{ "vray_pluginattr" "map" }
+			parmtag	{ "vray_type" "int" }
+		}
+		parm {
+			name	"channel"
+			label	"Channel"
+			type	integer
+			default	{ "0" }
+			help	"Mapping channel"
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "UVWGenBercon" }
+			parmtag	{ "vray_pluginattr" "channel" }
+			parmtag	{ "vray_type" "int" }
+		}
+		parm {
+			name	"filtering"
+			label	"Filtering"
+			type	float
+			default	{ "1" }
+			help	"filtering"
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "UVWGenBercon" }
+			parmtag	{ "vray_pluginattr" "filtering" }
+			parmtag	{ "vray_type" "float" }
+		}
+		parm {
+			name	"rand_mat"
+			label	"Rand Mat"
+			type	integer
+			default	{ "0" }
+			help	"Random by material"
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "UVWGenBercon" }
+			parmtag	{ "vray_pluginattr" "rand_mat" }
+			parmtag	{ "vray_type" "int" }
+		}
+		parm {
+			name	"rand_obj"
+			label	"Rand Obj"
+			type	integer
+			default	{ "0" }
+			help	"Random by object"
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "UVWGenBercon" }
+			parmtag	{ "vray_pluginattr" "rand_obj" }
+			parmtag	{ "vray_type" "int" }
+		}
+			parm {
+			name	"rand_par"
+			label	"Rand Par"
+			type	integer
+			default	{ "0" }
+			help	"Random by particle"
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "UVWGenBercon" }
+			parmtag	{ "vray_pluginattr" "rand_par" }
+			parmtag	{ "vray_type" "int" }
+		}
+		
+		
+		
+	}
+	
+	groupsimple {
+		name "folder_settings"
+		label "Settings"
+		
+		
+		parm {
+			name	"seed"
+			label	"Seed"
+			type	integer
+			default	{ "1" }
+			help	"Seed"
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "UVWGenBercon" }
+			parmtag	{ "vray_pluginattr" "seed" }
+			parmtag	{ "vray_type" "int" }
+		}
+		parm {
+			name	"xyz_lock"
+			label	"Xyz Lock"
+			type	integer
+			default	{ "0" }
+			help	"XYZ Lock"
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "UVWGenBercon" }
+			parmtag	{ "vray_pluginattr" "xyz_lock" }
+			parmtag	{ "vray_type" "int" }
+		}
+		
+		parm {
+			name	"tile_x"
+			label	"Tile XYZ"
+			type	integer
+			joinnext
+			default	{ "1" }
+			help	"X tiles"
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "UVWGenBercon" }
+			parmtag	{ "vray_pluginattr" "tile_x" }
+			parmtag	{ "vray_type" "int" }
+		}
+		parm {
+			name	"tile_y"
+			label	" "
+			type	integer
+			joinnext
+			default	{ "1" }
+			help	"Y tiles"
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "UVWGenBercon" }
+			parmtag	{ "vray_pluginattr" "tile_y" }
+			parmtag	{ "vray_type" "int" }
+		}
+		parm {
+			name	"tile_z"
+			label	" "
+			type	integer
+			default	{ "1" }
+			help	"Z tiles"
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "UVWGenBercon" }
+			parmtag	{ "vray_pluginattr" "tile_z" }
+			parmtag	{ "vray_type" "int" }
+		}
+		
+		parm {
+			name	"size_x"
+			label	"Size XYZ"
+			type	float
+			joinnext
+			default	{ "1" }
+			help	"X size"
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "UVWGenBercon" }
+			parmtag	{ "vray_pluginattr" "size_x" }
+			parmtag	{ "vray_type" "float" }
+		}
+		parm {
+			name	"size_y"
+			label	" "
+			type	float
+			joinnext
+			default	{ "1" }
+			help	"Y size"
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "UVWGenBercon" }
+			parmtag	{ "vray_pluginattr" "size_y" }
+			parmtag	{ "vray_type" "float" }
+		}
+		parm {
+			name	"size_z"
+			label	" "
+			type	float
+			default	{ "1" }
+			help	"Z size"
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "UVWGenBercon" }
+			parmtag	{ "vray_pluginattr" "size_z" }
+			parmtag	{ "vray_type" "float" }
+		}
+		parm {
+			name	"size_x2"
+			label	"Size XYZ 2"
+			type	float
+			joinnext
+			default	{ "0" }
+			help	"second X size"
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "UVWGenBercon" }
+			parmtag	{ "vray_pluginattr" "size_x2" }
+			parmtag	{ "vray_type" "float" }
+		}
+		parm {
+			name	"size_y2"
+			label	" "
+			type	float
+			joinnext
+			default	{ "0" }
+			help	"second Y size"
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "UVWGenBercon" }
+			parmtag	{ "vray_pluginattr" "size_y2" }
+			parmtag	{ "vray_type" "float" }
+		}
+		parm {
+			name	"size_z2"
+			label	" "
+			type	float
+			default	{ "0" }
+			help	"second Z size"
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "UVWGenBercon" }
+			parmtag	{ "vray_pluginattr" "size_z2" }
+			parmtag	{ "vray_type" "float" }
+		}
+		parm {
+			name	"offset_x"
+			label	"Offset XYZ"
+			type	float
+			joinnext
+			default	{ "0" }
+			help	"the X offset"
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "UVWGenBercon" }
+			parmtag	{ "vray_pluginattr" "offset_x" }
+			parmtag	{ "vray_type" "float" }
+		}
+		parm {
+			name	"offset_y"
+			label	" "
+			type	float
+			joinnext
+			default	{ "0" }
+			help	"the Y offset"
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "UVWGenBercon" }
+			parmtag	{ "vray_pluginattr" "offset_y" }
+			parmtag	{ "vray_type" "float" }
+		}
+		parm {
+			name	"offset_z"
+			label	" "
+			type	float
+			default	{ "0" }
+			help	"the Z offset"
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "UVWGenBercon" }
+			parmtag	{ "vray_pluginattr" "offset_z" }
+			parmtag	{ "vray_type" "float" }
+		}
+		parm {
+			name	"offset_x2"
+			label	"Offset XYZ 2"
+			type	float
+			joinnext
+			default	{ "0" }
+			help	"second X offset"
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "UVWGenBercon" }
+			parmtag	{ "vray_pluginattr" "offset_x2" }
+			parmtag	{ "vray_type" "float" }
+		}
+		parm {
+			name	"offset_y2"
+			label	" "
+			type	float
+			joinnext
+			default	{ "0" }
+			help	"second Y offset"
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "UVWGenBercon" }
+			parmtag	{ "vray_pluginattr" "offset_y2" }
+			parmtag	{ "vray_type" "float" }
+		}
+		parm {
+			name	"offset_z2"
+			label	" "
+			type	float
+			default	{ "0" }
+			help	"second Z offset"
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "UVWGenBercon" }
+			parmtag	{ "vray_pluginattr" "offset_z2" }
+			parmtag	{ "vray_type" "float" }
+		}
+		
+		parm {
+			name	"angle_x"
+			label	"Angle XYZ"
+			type	float
+			joinnext
+			default	{ "0" }
+			help	"X angle"
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "UVWGenBercon" }
+			parmtag	{ "vray_pluginattr" "angle_x" }
+			parmtag	{ "vray_type" "float" }
+		}
+		parm {
+			name	"angle_y"
+			label	" "
+			type	float
+			joinnext
+			default	{ "0" }
+			help	"Y angle"
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "UVWGenBercon" }
+			parmtag	{ "vray_pluginattr" "angle_y" }
+			parmtag	{ "vray_type" "float" }
+		}
+		parm {
+			name	"angle_z"
+			label	" "
+			type	float
+			default	{ "0" }
+			help	"Z angle"
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "UVWGenBercon" }
+			parmtag	{ "vray_pluginattr" "angle_z" }
+			parmtag	{ "vray_type" "float" }
+		}
+		
+		
+		
+		parm {
+			name	"angle_x2"
+			label	"Angle XYZ 2"
+			type	float
+			joinnext
+			default	{ "0" }
+			help	"second X angle"
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "UVWGenBercon" }
+			parmtag	{ "vray_pluginattr" "angle_x2" }
+			parmtag	{ "vray_type" "float" }
+		}
+		parm {
+			name	"angle_y2"
+			label	" "
+			type	float
+			joinnext
+			default	{ "0" }
+			help	"second Y angle"
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "UVWGenBercon" }
+			parmtag	{ "vray_pluginattr" "angle_y2" }
+			parmtag	{ "vray_type" "float" }
+		}
+		parm {
+			name	"angle_z2"
+			label	" "
+			type	float
+			default	{ "0" }
+			help	"second Z angle"
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "UVWGenBercon" }
+			parmtag	{ "vray_pluginattr" "angle_z2" }
+			parmtag	{ "vray_type" "float" }
+		}
+		
+	
+	}
+	
+  
+    
+    
 }

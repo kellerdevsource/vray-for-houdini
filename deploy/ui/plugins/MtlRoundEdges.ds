@@ -3,82 +3,91 @@
     label	"Rounded Corners"
     parmtag	{ spare_category "Rounded Corners" }
     parmtag	{ vray_plugin "MtlRoundEdges" }
-    parm {
-	name	"radius"
-	label	"Radius"
-	type	float
-	default	{ "1" }
-	help	"Rounding radius"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "MtlRoundEdges" }
-	parmtag	{ "vray_pluginattr" "radius" }
-	parmtag	{ "vray_type" "TextureFloat" }
-    }
-    parm {
-	name	"radius_mode"
-	label	"Radius Mode"
-	type	ordinal
-	default	{ "0" }
-	help	"0 - the radius parameter is in object space, 1 - the radius parameter is in world space"
-	menu	{
-	    "Object Space"	"Object Space"
-	    "World Space"	"World Space"
+	
+	groupsimple {
+		name "folder_main"
+		label "Main"
+		
+		parm {
+			name	"raytraced_mode"
+			label	"Mode"
+			type	ordinal
+			default	{ "0" }
+			help	"Which corners to smooth: 0 - both convex and concave; 1 - convex only; 2 - concave only"
+			disablewhen	"{ raytraced != 1 }"
+			menu	{
+				"Convex and Concave"	"Convex and Concave"
+				"Convex Only"	"Convex Only"
+				"Concave Only"	"Concave Only"
+			}
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_enumkeys" "0,1,2" }
+			parmtag	{ "vray_plugin" "MtlRoundEdges" }
+			parmtag	{ "vray_pluginattr" "raytraced_mode" }
+			parmtag	{ "vray_type" "int" }
+		}
+		parm {
+			name	"radius_mode"
+			label	"Radius Mode"
+			type	ordinal
+			default	{ "0" }
+			help	"0 - the radius parameter is in object space, 1 - the radius parameter is in world space"
+			menu	{
+				"Object Space"	"Object Space"
+				"World Space"	"World Space"
+			}
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_enumkeys" "0,1" }
+			parmtag	{ "vray_plugin" "MtlRoundEdges" }
+			parmtag	{ "vray_pluginattr" "radius_mode" }
+			parmtag	{ "vray_type" "int" }
+		}
+		parm {
+			name	"radius"
+			label	"Radius"
+			type	float
+			default	{ "1" }
+			help	"Rounding radius"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "MtlRoundEdges" }
+			parmtag	{ "vray_pluginattr" "radius" }
+			parmtag	{ "vray_type" "TextureFloat" }
+		}
+		
+		parm {
+			name	"raytraced"
+			label	"Raytraced"
+			type	toggle
+			default	{ "1" }
+			help	"Use raytracing to compute the rounded corners and false to use static mesh analysis"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "MtlRoundEdges" }
+			parmtag	{ "vray_pluginattr" "raytraced" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		parm {
+			name	"raytraced_consider_same_object_only"
+			label	"Consider Same Object Only"
+			type	toggle
+			default	{ "1" }
+			help	"true to consider only corners on the same object, and false to consider other intersecting objects"
+			disablewhen	"{ raytraced != 1 }"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "MtlRoundEdges" }
+			parmtag	{ "vray_pluginattr" "raytraced_consider_same_object_only" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		
 	}
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1" }
-	parmtag	{ "vray_plugin" "MtlRoundEdges" }
-	parmtag	{ "vray_pluginattr" "radius_mode" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"raytraced"
-	label	"Raytraced"
-	type	toggle
-	default	{ "1" }
-	help	"Use raytracing to compute the rounded corners and false to use static mesh analysis"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "MtlRoundEdges" }
-	parmtag	{ "vray_pluginattr" "raytraced" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"raytraced_consider_same_object_only"
-	label	"Consider Same Object Only"
-	type	toggle
-	default	{ "1" }
-	help	"true to consider only corners on the same object, and false to consider other intersecting objects"
-	disablewhen	"{ raytraced != 1 }"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "MtlRoundEdges" }
-	parmtag	{ "vray_pluginattr" "raytraced_consider_same_object_only" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"raytraced_mode"
-	label	"Mode"
-	type	ordinal
-	default	{ "0" }
-	help	"Which corners to smooth: 0 - both convex and concave; 1 - convex only; 2 - concave only"
-	disablewhen	"{ raytraced != 1 }"
-	menu	{
-	    "Convex and Concave"	"Convex and Concave"
-	    "Convex Only"	"Convex Only"
-	    "Concave Only"	"Concave Only"
-	}
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1,2" }
-	parmtag	{ "vray_plugin" "MtlRoundEdges" }
-	parmtag	{ "vray_pluginattr" "raytraced_mode" }
-	parmtag	{ "vray_type" "int" }
-    }
+  
 }

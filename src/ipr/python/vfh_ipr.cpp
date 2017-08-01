@@ -256,6 +256,7 @@ static PyObject* vfhExportView(PyObject*, PyObject *args, PyObject *keywds)
 
 	// Update pipe if needed.
 	if (oldViewParams.changedSize(viewParams)) {
+		getImdisplay().restart();
 		initImdisplay(exporter.getRenderer().getVRay());
 	}
 
@@ -366,13 +367,13 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 
 	HOM_AutoLock autoLock;
 	
-	setImdisplayPort(port);
+	getImdisplay().setPort(port);
 	
 	if (!stopCallback) {
 		stopCallback = new CallOnceUntilReset([]() {
 			freeExporter();
 		});
-		setImdisplayOnStop(stopCallback->getCallableFunction());
+		getImdisplay().setOnStopCallback(stopCallback->getCallableFunction());
 	}
 
 	if (!stopChecker) {
@@ -388,7 +389,8 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 	OP_Node *ropNode = getOpNodeFromPath(ropPath);
 	if (ropNode) {
 		// Start the imdisplay thread so we can get pipe signals sooner
-		startImdisplay();
+		getImdisplay().init();
+		getImdisplay().restart();
 		const IPROutput iprOutput =
 			static_cast<IPROutput>(ropNode->evalInt("render_rt_output", 0, 0.0));
 
@@ -444,10 +446,29 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 
 static PyObject * vfhIsRopValid(PyObject *)
 {
-	if (getExporter().getRopPtr()) {
-		Py_RETURN_TRUE;
+	if (!vrayExporter || !getExporter().getRopPtr()) {
+		Py_RETURN_FALSE;
 	}
-	Py_RETURN_FALSE;
+	Py_RETURN_TRUE;
+}
+
+static PyObject* vfhLogMessage(PyObject*, PyObject *args, PyObject *keywds)
+{
+	int logLevel;
+	const char * message = nullptr;
+
+	//                                 012345678911
+	//                                           01
+	static const char kwlistTypes[] = "is";
+
+	if (!PyArg_ParseTuple(args, kwlistTypes, &logLevel, &message)) {
+		PyErr_Print();
+		Py_RETURN_NONE;
+	}
+
+	Log::getLog().log(static_cast<Log::LogLevel>(logLevel), message);
+
+	Py_RETURN_NONE;
 }
 
 static PyMethodDef methods[] = {
@@ -480,6 +501,12 @@ static PyMethodDef methods[] = {
 		reinterpret_cast<PyCFunction>(vfhIsRopValid),
 		METH_NOARGS,
 		"Check if current rop is valid."
+	},
+	{
+		"logMessage",
+		reinterpret_cast<PyCFunction>(vfhLogMessage),
+		METH_VARARGS,
+		"Log message."
 	},
 	{ NULL, NULL, 0, NULL }
 };
