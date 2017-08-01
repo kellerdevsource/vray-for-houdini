@@ -22,7 +22,7 @@
       	parmtag	{ "cook_dependent" "1" }
       	parmtag	{ "vray_plugin" "BRDFLayered" }
       	parmtag	{ "vray_pluginattr" "transparency" }
-      	parmtag	{ "vray_type" "Color" }
+      	parmtag	{ "vray_type" "color" }
       }
 
       parm {

@@ -391,7 +391,7 @@
 			parmtag	{ "vray_file_names" "VRayFastSSS2 illumination map" }
 			parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 			parmtag	{ "vray_pluginattr" "prepass_fileName" }
-			parmtag	{ "vray_type" "String" }
+			parmtag	{ "vray_type" "string" }
 		}
 		
 		parm {
@@ -432,7 +432,7 @@
 			parmtag	{ "cook_dependent" "1" }
 			parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 			parmtag	{ "vray_pluginattr" "background_color" }
-			parmtag	{ "vray_type" "Color" }
+			parmtag	{ "vray_type" "color" }
 		}
 		parm {
 			name	"samples_color"
@@ -446,7 +446,7 @@
 			parmtag	{ "cook_dependent" "1" }
 			parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 			parmtag	{ "vray_pluginattr" "samples_color" }
-			parmtag	{ "vray_type" "Color" }
+			parmtag	{ "vray_type" "color" }
 		}
 		
 		

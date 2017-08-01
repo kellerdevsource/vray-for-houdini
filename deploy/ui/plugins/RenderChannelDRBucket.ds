@@ -18,7 +18,7 @@
 			parmtag	{ "cook_dependent" "1" }
 			parmtag	{ "vray_plugin" "RenderChannelDRBucket" }
 			parmtag	{ "vray_pluginattr" "name" }
-			parmtag	{ "vray_type" "String" }
+			parmtag	{ "vray_type" "string" }
 		}
 		parm {
 			name	"text_alignment"

@@ -316,7 +316,7 @@
 			parmtag	{ "cook_dependent" "1" }
 			parmtag	{ "vray_plugin" "GeomStaticSmoothedMesh" }
 			parmtag	{ "vray_pluginattr" "min_bound" }
-			parmtag	{ "vray_type" "Color" }
+			parmtag	{ "vray_type" "color" }
 		}
 		parm {
 			name	"max_bound"
@@ -331,7 +331,7 @@
 			parmtag	{ "cook_dependent" "1" }
 			parmtag	{ "vray_plugin" "GeomStaticSmoothedMesh" }
 			parmtag	{ "vray_pluginattr" "max_bound" }
-			parmtag	{ "vray_type" "Color" }
+			parmtag	{ "vray_type" "color" }
 		}
 	}
 	

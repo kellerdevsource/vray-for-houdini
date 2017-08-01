@@ -165,7 +165,7 @@ groupcollapsible {
     parmtag	{ "cook_dependent" "1" }
     parmtag	{ "vray_plugin" "SettingsColorMapping" }
     parmtag	{ "vray_pluginattr" "exposure" }
-    parmtag	{ "vray_type" "Color" }
+    parmtag	{ "vray_type" "color" }
   }
 
 }

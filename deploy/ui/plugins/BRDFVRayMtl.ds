@@ -379,7 +379,7 @@
             parmtag	{ "cook_dependent" "1" }
             parmtag	{ "vray_plugin" "BRDFVRayMtl" }
             parmtag	{ "vray_pluginattr" "reflect_exit_color" }
-            parmtag	{ "vray_type" "Color" }
+            parmtag	{ "vray_type" "color" }
           }
           parm {
             name	"reflect_depth"
@@ -628,7 +628,7 @@
           parmtag	{ "cook_dependent" "1" }
           parmtag	{ "vray_plugin" "BRDFVRayMtl" }
           parmtag	{ "vray_pluginattr" "fog_color" }
-          parmtag	{ "vray_type" "Color" }
+          parmtag	{ "vray_type" "color" }
         }
         parm {
           name	"map_fog_color"
@@ -850,7 +850,7 @@
               parmtag	{ "cook_dependent" "1" }
               parmtag	{ "vray_plugin" "BRDFVRayMtl" }
               parmtag	{ "vray_pluginattr" "refract_exit_color" }
-              parmtag	{ "vray_type" "Color" }
+              parmtag	{ "vray_type" "color" }
             }
             parm {
               name	"refract_depth"

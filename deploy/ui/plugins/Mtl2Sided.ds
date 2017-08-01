@@ -33,7 +33,7 @@
       	parmtag	{ "cook_dependent" "1" }
       	parmtag	{ "vray_plugin" "Mtl2Sided" }
       	parmtag	{ "vray_pluginattr" "translucency" }
-      	parmtag	{ "vray_type" "Color" }
+      	parmtag	{ "vray_type" "color" }
       }
 
       parm {

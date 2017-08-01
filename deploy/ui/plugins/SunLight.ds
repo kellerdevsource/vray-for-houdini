@@ -138,7 +138,7 @@
       	parmtag	{ "cook_dependent" "1" }
       	parmtag	{ "vray_plugin" "SunLight" }
       	parmtag	{ "vray_pluginattr" "ground_albedo" }
-      	parmtag	{ "vray_type" "Color" }
+      	parmtag	{ "vray_type" "color" }
       }
 
       parm {
@@ -173,7 +173,7 @@
       	parmtag	{ "cook_dependent" "1" }
       	parmtag	{ "vray_plugin" "SunLight" }
       	parmtag	{ "vray_pluginattr" "filter_color" }
-      	parmtag	{ "vray_type" "Color" }
+      	parmtag	{ "vray_type" "color" }
       }
 
       parm {
@@ -241,7 +241,7 @@
         parmtag	{ "cook_dependent" "1" }
         parmtag	{ "vray_plugin" "SunLight" }
         parmtag	{ "vray_pluginattr" "shadow_color" }
-        parmtag	{ "vray_type" "Color" }
+        parmtag	{ "vray_type" "color" }
       }
 
       parm {
