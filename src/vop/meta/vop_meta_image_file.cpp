@@ -20,23 +20,22 @@ struct MetaImageFileOutputSocket {
 	const VOP_TypeInfo typeInfo;
 };
 
+static enum UvwMenuSelection {
+	UVWGenChannel            = 0,
+	UVWGenEnvironment        = 1,
+	UVWGenExplicit           = 2,
+	UVWGenMayaPlace2dTexture = 3,
+	UVWGenObject             = 4,
+	UVWGenObjectBBox         = 5,
+	UVWGenPlanarWorld        = 6,
+	UVWGenProjection         = 7
+};
+
 static MetaImageFileOutputSocket metaImageFileOutputSockets[] = {
-	{ "Output",   VOP_TypeInfo(VOP_TYPE_COLOR) },
 	{ "color", VOP_TypeInfo(VOP_TYPE_COLOR) },
 	{ "color_transperancy", VOP_TypeInfo(VOP_TYPE_COLOR) },
 	{ "out_alpha", VOP_TypeInfo(VOP_TYPE_FLOAT) },
 	{ "out_intensity", VOP_TypeInfo(VOP_TYPE_FLOAT) }
-};
-
-static UT_String pluginIds[] = {
-	"UVWGenChannel",
-	"UVWGenEnvironment",
-	"UVWGenExplicit",
-	"UVWGenMayaPlace2dTexture",
-	"UVWGenObject",
-	"UVWGenObjectBBox",
-	"UVWGenPlanarWorld",
-	"UVWGenProjection"
 };
 
 PRM_Template* VOP::MetaImageFile::GetPrmTemplate()
@@ -70,45 +69,45 @@ OP::VRayNode::PluginResult VOP::MetaImageFile::asPluginDesc(Attrs::PluginDesc &p
 	const int selectedUVGen = evalInt("meta_image_uv_generator", 0, t);
 	UT_String selectedUVWGen = "";
 	switch (selectedUVGen) {
-	case 0:
-		selectedUVWGen = "meta_image_channel";
+	case UVWGenChannel:
+		selectedUVWGen = "UVWGenChannel";
 		break;
 
-	case 1:
-		selectedUVWGen = "meta_image_environment";
+	case UVWGenEnvironment:
+		selectedUVWGen = "UVWGenEnvironment";
 		break;
 
-	case 2:
-		selectedUVWGen = "meta_image_explicit";
+	case UVWGenExplicit:
+		selectedUVWGen = "UVWGenExplicit";
 		break;
 
-	case 3:
-		selectedUVWGen = "meta_image_maya_place_2d";
+	case UVWGenMayaPlace2dTexture:
+		selectedUVWGen = "UVWGenMayaPlace2dTexture";
 		break;
 
-	case 4:
-		selectedUVWGen = "meta_image_object";
+	case UVWGenObject:
+		selectedUVWGen = "UVWGenObject";
 		break;
 
-	case 5:
-		selectedUVWGen = "meta_image_object_bbox";
+	case UVWGenObjectBBox:
+		selectedUVWGen = "UVWGenObjectBBox";
 		break;
 
-	case 6:
-		selectedUVWGen = "meta_image_planar_world";
+	case UVWGenPlanarWorld:
+		selectedUVWGen = "UVWGenPlanarWorld";
 		break;
 
-	case 7:
-		selectedUVWGen = "meta_image_projection";
+	case UVWGenProjection:
+		selectedUVWGen = "UVWGenProjection";
 		break;
 
 	default:
-		selectedUVWGen = "meta_image_channel";
+		selectedUVWGen = "UVWGenChannel";
 		break;
 	}
-	//this probably doesn't work
+	
+	Attrs::PluginDesc selectedUVPluginDesc(VRayExporter::getPluginName(*this, selectedUVWGen.c_str()), selectedUVWGen.c_str());
 	selectedUVWGen += "_";
-	Attrs::PluginDesc selectedUVPluginDesc(VRayExporter::getPluginName(*this, selectedUVWGen.c_str()),pluginIds[selectedUVGen].c_str());
 	exporter.setAttrsFromOpNodePrms(selectedUVPluginDesc, this, selectedUVWGen.c_str());
 
 	pluginDesc.addAttribute(Attrs::PluginAttr("bitmap", exporter.exportPlugin(bitmapBufferDesc)));
@@ -120,17 +119,17 @@ OP::VRayNode::PluginResult VOP::MetaImageFile::asPluginDesc(Attrs::PluginDesc &p
 
 //define outputs
 unsigned VOP::MetaImageFile::getNumVisibleOutputs() const {
-	return 5;
+	return 4;
 }
 
 
 
 unsigned VOP::MetaImageFile::maxOutputs() const {
-	return 5;
+	return 4;
 }
 
 const char* VOP::MetaImageFile::outputLabel(unsigned idx) const {
-	if (idx >= 0 && idx < 5) {
+	if (idx >= 0 && idx < 4) {
 		return metaImageFileOutputSockets[idx].label;
 	}
 
@@ -138,7 +137,7 @@ const char* VOP::MetaImageFile::outputLabel(unsigned idx) const {
 }
 
 void VOP::MetaImageFile::getOutputNameSubclass(UT_String &out, int idx) const {
-	if (idx >= 0 && idx < 5) {
+	if (idx >= 0 && idx < 4) {
 		out = metaImageFileOutputSockets[idx].label;
 	}
 	else {
@@ -148,7 +147,7 @@ void VOP::MetaImageFile::getOutputNameSubclass(UT_String &out, int idx) const {
 }
 
 int VOP::MetaImageFile::getOutputFromName(const UT_String &out) const {
-	for (int idx = 0; idx < 5; idx++) {
+	for (int idx = 0; idx < 4; idx++) {
 		if (out.equal(metaImageFileOutputSockets[idx].label)) {
 			return idx;
 		}
@@ -158,12 +157,13 @@ int VOP::MetaImageFile::getOutputFromName(const UT_String &out) const {
 }
 
 void VOP::MetaImageFile::getOutputTypeInfoSubclass(VOP_TypeInfo &type_info, int idx) {
-	if (idx >= 0 && idx < 5) {
+	if (idx >= 0 && idx < 4) {
 		type_info.setType(metaImageFileOutputSockets[idx].typeInfo.getType());
 	}
 }
 
-//define inputs, we are supposed to have no inputs, only one output
+//define inputs
+//TODO: Change input number and type based on selected UVW
 const char *VOP::MetaImageFile::inputLabel(unsigned idx) const {
 	return nullptr;
 }
@@ -183,4 +183,3 @@ unsigned VOP::MetaImageFile::orderedInputs() const {
 unsigned VOP::MetaImageFile::getNumVisibleInputs() const {
 	return 0;
 }
-//register?
