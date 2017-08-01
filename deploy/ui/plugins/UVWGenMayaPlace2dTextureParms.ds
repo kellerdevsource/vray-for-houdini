@@ -1,0 +1,447 @@
+#ifdef PREFIX
+#define NAMEM(n) \
+	name PREFIX##n##""
+#else
+#define NAMEM(n) \
+	name n##""
+#endif
+
+parm {
+	NAMEM("uvw_channel")
+	label	"Uvw Channel"
+	type	integer
+	default	{ "0" }
+	help	"Optional channel index, if uv_set_name is not found"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenMayaPlace2dTexture" }
+	parmtag	{ "vray_pluginattr" "uvw_channel" }
+	parmtag	{ "vray_type" "int" }
+	
+    }
+    parm {
+	NAMEM("coverage_u_tex")
+	label	"Coverage U"
+	type	float
+	default	{ "1" }
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenMayaPlace2dTexture" }
+	parmtag	{ "vray_pluginattr" "coverage_u_tex" }
+	parmtag	{ "vray_type" "TextureFloat" }
+	
+    }
+    parm {
+	NAMEM("coverage_v_tex")
+	label	"Coverage V"
+	type	float
+	default	{ "1" }
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenMayaPlace2dTexture" }
+	parmtag	{ "vray_pluginattr" "coverage_v_tex" }
+	parmtag	{ "vray_type" "TextureFloat" }
+	
+    }
+    parm {
+	NAMEM("translate_frame_u_tex")
+	label	"Translate Frame U Tex"
+	type	float
+	default	{ "0" }
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenMayaPlace2dTexture" }
+	parmtag	{ "vray_pluginattr" "translate_frame_u_tex" }
+	parmtag	{ "vray_type" "TextureFloat" }
+	
+    }
+    parm {
+	NAMEM("translate_frame_v_tex")
+	label	"Translate Frame V Tex"
+	type	float
+	default	{ "0" }
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenMayaPlace2dTexture" }
+	parmtag	{ "vray_pluginattr" "translate_frame_v_tex" }
+	parmtag	{ "vray_type" "TextureFloat" }
+	
+    }
+    parm {
+	NAMEM("rotate_frame_tex")
+	label	"Rotate Frame Tex"
+	type	float
+	default	{ "0" }
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_custom_handling" "1" }
+	parmtag	{ "vray_plugin" "UVWGenMayaPlace2dTexture" }
+	parmtag	{ "vray_pluginattr" "rotate_frame_tex" }
+	parmtag	{ "vray_type" "TextureFloat" }
+	
+    }
+    parm {
+	NAMEM("mirror_u")
+	label	"Mirror U"
+	type	toggle
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenMayaPlace2dTexture" }
+	parmtag	{ "vray_pluginattr" "mirror_u" }
+	parmtag	{ "vray_type" "boolean" }
+	
+    }
+    parm {
+	NAMEM("mirror_v")
+	label	"Mirror V"
+	type	toggle
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenMayaPlace2dTexture" }
+	parmtag	{ "vray_pluginattr" "mirror_v" }
+	parmtag	{ "vray_type" "boolean" }
+	
+    }
+    parm {
+	NAMEM("wrap_u")
+	label	"Wrap U"
+	type	toggle
+	default	{ "1" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenMayaPlace2dTexture" }
+	parmtag	{ "vray_pluginattr" "wrap_u" }
+	parmtag	{ "vray_type" "boolean" }
+	
+    }
+    parm {
+	NAMEM("wrap_v")
+	label	"Wrap V"
+	type	toggle
+	default	{ "1" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenMayaPlace2dTexture" }
+	parmtag	{ "vray_pluginattr" "wrap_v" }
+	parmtag	{ "vray_type" "boolean" }
+	
+    }
+    parm {
+	NAMEM("stagger")
+	label	"Stagger"
+	type	toggle
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenMayaPlace2dTexture" }
+	parmtag	{ "vray_pluginattr" "stagger" }
+	parmtag	{ "vray_type" "boolean" }
+	
+    }
+    parm {
+	NAMEM("repeat_u_tex")
+	label	"Repeat U"
+	type	float
+	default	{ "1" }
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenMayaPlace2dTexture" }
+	parmtag	{ "vray_pluginattr" "repeat_u_tex" }
+	parmtag	{ "vray_type" "TextureFloat" }
+	
+    }
+    parm {
+	NAMEM("repeat_v_tex")
+	label	"Repeat V"
+	type	float
+	default	{ "1" }
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenMayaPlace2dTexture" }
+	parmtag	{ "vray_pluginattr" "repeat_v_tex" }
+	parmtag	{ "vray_type" "TextureFloat" }
+	
+    }
+    parm {
+	NAMEM("offset_u_tex")
+	label	"Offset U"
+	type	float
+	default	{ "0" }
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenMayaPlace2dTexture" }
+	parmtag	{ "vray_pluginattr" "offset_u_tex" }
+	parmtag	{ "vray_type" "TextureFloat" }
+	
+    }
+    parm {
+	NAMEM("offset_v_tex")
+	label	"Offset V"
+	type	float
+	default	{ "0" }
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenMayaPlace2dTexture" }
+	parmtag	{ "vray_pluginattr" "offset_v_tex" }
+	parmtag	{ "vray_type" "TextureFloat" }
+	
+    }
+    parm {
+	NAMEM("rotate_uv_tex")
+	label	"Rotate Uv"
+	type	float
+	default	{ "0" }
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenMayaPlace2dTexture" }
+	parmtag	{ "vray_pluginattr" "rotate_uv_tex" }
+	parmtag	{ "vray_type" "TextureFloat" }
+	
+    }
+    parm {
+	NAMEM("noise_u_tex")
+	label	"Noise U"
+	type	float
+	default	{ "0" }
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenMayaPlace2dTexture" }
+	parmtag	{ "vray_pluginattr" "noise_u_tex" }
+	parmtag	{ "vray_type" "TextureFloat" }
+	
+    }
+    parm {
+	NAMEM("noise_v_tex")
+	label	"Noise V"
+	type	float
+	default	{ "0" }
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenMayaPlace2dTexture" }
+	parmtag	{ "vray_pluginattr" "noise_v_tex" }
+	parmtag	{ "vray_type" "TextureFloat" }
+	
+    }
+    parm {
+	NAMEM("nsamples")
+	label	"Nsamples"
+	type	integer
+	default	{ "1" }
+	help	"The number of parameter samples to take for motion blur: 0 - means the global value; 1 - means motion blur should be disabled for this plugin"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenMayaPlace2dTexture" }
+	parmtag	{ "vray_pluginattr" "nsamples" }
+	parmtag	{ "vray_type" "int" }
+	
+    }
+    parm {
+	NAMEM("uv_set_name")
+	label	"Uv Set Name"
+	type	string
+	default	{ "" }
+	help	"The name of the uv channel that should be used"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenMayaPlace2dTexture" }
+	parmtag	{ "vray_pluginattr" "uv_set_name" }
+	parmtag	{ "vray_type" "String" }
+	
+    }
+    parm {
+	NAMEM("uvw_channel_tex")
+	label	"Uvw Channel Tex"
+	type	integer
+	default	{ "0" }
+	help	"Used when more than one mesh has UV linking specified for this 2d placement. If present will override uvw_channel"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenMayaPlace2dTexture" }
+	parmtag	{ "vray_pluginattr" "uvw_channel_tex" }
+	parmtag	{ "vray_type" "TextureInt" }
+	
+    }
+    parm {
+	NAMEM("coverage_u")
+	label	"Coverage U"
+	type	float
+	default	{ "1" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenMayaPlace2dTexture" }
+	parmtag	{ "vray_pluginattr" "coverage_u" }
+	parmtag	{ "vray_type" "float" }
+	
+    }
+    parm {
+	NAMEM("coverage_v")
+	label	"Coverage V"
+	type	float
+	default	{ "1" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenMayaPlace2dTexture" }
+	parmtag	{ "vray_pluginattr" "coverage_v" }
+	parmtag	{ "vray_type" "float" }
+	
+    }
+    parm {
+	NAMEM("translate_frame_u")
+	label	"Translate Frame U"
+	type	float
+	default	{ "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenMayaPlace2dTexture" }
+	parmtag	{ "vray_pluginattr" "translate_frame_u" }
+	parmtag	{ "vray_type" "float" }
+	
+    }
+    parm {
+	NAMEM("translate_frame_v")
+	label	"Translate Frame V"
+	type	float
+	default	{ "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenMayaPlace2dTexture" }
+	parmtag	{ "vray_pluginattr" "translate_frame_v" }
+	parmtag	{ "vray_type" "float" }
+	
+    }
+    parm {
+	NAMEM("rotate_frame")
+	label	"Rotate Frame"
+	type	angle
+	default	{ "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenMayaPlace2dTexture" }
+	parmtag	{ "vray_pluginattr" "rotate_frame" }
+	parmtag	{ "vray_type" "float" }
+	parmtag	{ "vray_units" "radians" }
+	
+    }
+    parm {
+	NAMEM("repeat_u")
+	label	"Repeat U"
+	type	float
+	default	{ "1" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenMayaPlace2dTexture" }
+	parmtag	{ "vray_pluginattr" "repeat_u" }
+	parmtag	{ "vray_type" "float" }
+	
+    }
+    parm {
+	NAMEM("repeat_v")
+	label	"Repeat V"
+	type	float
+	default	{ "1" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenMayaPlace2dTexture" }
+	parmtag	{ "vray_pluginattr" "repeat_v" }
+	parmtag	{ "vray_type" "float" }
+	
+    }
+    parm {
+	NAMEM("offset_u")
+	label	"Offset U"
+	type	float
+	default	{ "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenMayaPlace2dTexture" }
+	parmtag	{ "vray_pluginattr" "offset_u" }
+	parmtag	{ "vray_type" "float" }
+	
+    }
+    parm {
+	NAMEM("offset_v")
+	label	"Offset V"
+	type	float
+	default	{ "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenMayaPlace2dTexture" }
+	parmtag	{ "vray_pluginattr" "offset_v" }
+	parmtag	{ "vray_type" "float" }
+	
+    }
+    parm {
+	NAMEM("rotate_uv")
+	label	"Rotate Uv"
+	type	angle
+	default	{ "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenMayaPlace2dTexture" }
+	parmtag	{ "vray_pluginattr" "rotate_uv" }
+	parmtag	{ "vray_type" "float" }
+	parmtag	{ "vray_units" "radians" }
+	
+    }
+    parm {
+	NAMEM("noise_u")
+	label	"Noise U"
+	type	float
+	default	{ "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenMayaPlace2dTexture" }
+	parmtag	{ "vray_pluginattr" "noise_u" }
+	parmtag	{ "vray_type" "float" }
+	
+    }
+    parm {
+	NAMEM("noise_v")
+	label	"Noise V"
+	type	float
+	default	{ "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenMayaPlace2dTexture" }
+	parmtag	{ "vray_pluginattr" "noise_v" }
+	parmtag	{ "vray_type" "float" }
+	
+    }
+
+#undef NAMEM
+#undef PREFIX

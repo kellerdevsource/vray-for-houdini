@@ -1,0 +1,24 @@
+#ifdef PREFIX
+#define NAMEM(n) \
+	name PREFIX##n##""
+#else
+#define NAMEM(n) \
+	name n##""
+#endif
+
+parm {
+	NAMEM("duvw_scale")
+	label	"Duvw Scale"
+	type	float
+	default	{ "1" }
+	help	"Additional scale factor for the texture derivatives"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenObject" }
+	parmtag	{ "vray_pluginattr" "duvw_scale" }
+	parmtag	{ "vray_type" "float" }
+    }
+
+#undef NAMEM
+#undef PREFIX
