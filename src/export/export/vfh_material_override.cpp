@@ -59,43 +59,37 @@ namespace Styles {
 	}
 }
 
-void PrimMaterial::merge(const PrimMaterial &other)
+void PrimMaterial::append(const PrimMaterial &other, OverrideAppendMode mode)
 {
-	if (other.matNode) {
-		matNode = other.matNode;
-	}
-	mergeOverrides(other.overrides);
-}
-
-void PrimMaterial::mergeOverrides(const MtlOverrideItems &items)
-{
-	FOR_CONST_IT (MtlOverrideItems, it, items) {
-		overrides.insert(it.key(), it.data());
-	}
-}
-
-void PrimMaterial::append(const PrimMaterial &other)
-{
-	if (!matNode && other.matNode) {
-		matNode = other.matNode;
-	}
-	appendOverrides(other.overrides);
-}
-
-void PrimMaterial::appendOverrides(const MtlOverrideItems &items)
-{
-	FOR_CONST_IT (MtlOverrideItems, it, items) {
-		if (overrides.find(it.key()) == overrides.end()) {
-			overrides.insert(it.key(), it.data());
+	if (mode == overrideMerge) {
+		if (!matNode && other.matNode) {
+			matNode = other.matNode;
 		}
+	}
+
+	appendOverrides(other.overrides, mode);
+}
+
+void PrimMaterial::appendOverrides(const MtlOverrideItems &items, OverrideAppendMode mode)
+{
+	FOR_CONST_IT (MtlOverrideItems, it, items) {
+		if (mode == overrideAppend) {
+			if (overrides.find(it.key()) != overrides.end()) {
+				continue;
+			}
+		}
+
+		overrides[it.key()] = it.data();
 	}
 }
 
 void MtlOverrideAttrExporter::buildAttributesList(const GA_Detail &gdp, GA_AttributeOwner owner, GEOAttribList &attrList)
 {
 	gdp.getAttributes().matchAttributes(
-		GA_AttributeFilter::selectAnd(GA_AttributeFilter::selectFloatTuple(false),
-			                            GA_AttributeFilter::selectByTupleRange(3,4)),
+		GA_AttributeFilter::selectAnd(GA_AttributeFilter::selectAnd(GA_AttributeFilter::selectFloatTuple(false),
+		                                                            GA_AttributeFilter::selectByTupleRange(3,4)),
+		                              GA_AttributeFilter::selectNot(GA_AttributeFilter::selectByName("N"))
+		),
 		owner, attrList);
 	gdp.getAttributes().matchAttributes(GA_AttributeFilter::selectAlphaNum(), owner, attrList);
 }
@@ -139,7 +133,7 @@ void MtlOverrideAttrExporter::addAttributesAsOverrides(const GEOAttribList &attr
 	}
 }
 
-static void appendOverrideValues(const STY_OverrideValues &styOverrideValues, PrimMaterial &primMaterial, int materialOnly=false)
+static void appendOverrideValues(const STY_OverrideValues &styOverrideValues, PrimMaterial &primMaterial, OverrideAppendMode mode=overrideAppend, int materialOnly=false)
 {
 #if UT_MAJOR_VERSION_INT >= 16
 	UT_Int64Array intVals;
@@ -160,7 +154,11 @@ static void appendOverrideValues(const STY_OverrideValues &styOverrideValues, Pr
 
 				STY_OptionEntryHandle nameOpt = nameValuePair.second.myValue;
 				if (nameOpt->importOption(stringVals)) {
-					primMaterial.matNode = getOpNodeFromPath(stringVals[0].buffer());
+					if (!primMaterial.matNode ||
+						mode == overrideMerge)
+					{
+						primMaterial.matNode = getOpNodeFromPath(stringVals[0].buffer());
+					}
 				}
 			}
 			if (materialOnly) {
@@ -172,9 +170,11 @@ static void appendOverrideValues(const STY_OverrideValues &styOverrideValues, Pr
 				const UT_StringHolder &attrName = value.first;
 				STY_OptionEntryHandle opt = value.second.myValue;
 
-				MtlOverrideItems::iterator moIt = primMaterial.overrides.find(attrName);
-				if (moIt != primMaterial.overrides.end())
-					continue;
+				if (mode == overrideAppend) {
+					MtlOverrideItems::iterator moIt = primMaterial.overrides.find(attrName);
+					if (moIt != primMaterial.overrides.end())
+						continue;
+				}
 
 				MtlOverrideItem overrideItem;
 
@@ -210,7 +210,7 @@ static void appendOverrideValues(const STY_OverrideValues &styOverrideValues, Pr
 				}
 
 				if (overrideItem.getType() != MtlOverrideItem::itemTypeNone) {
-					primMaterial.overrides.insert(attrName.buffer(), overrideItem);
+					primMaterial.overrides[attrName.buffer()] = overrideItem;
 				}
 			}
 		}
@@ -218,7 +218,7 @@ static void appendOverrideValues(const STY_OverrideValues &styOverrideValues, Pr
 #endif
 }
 
-static void appendOverrideValues(const STY_Styler &styler, PrimMaterial &primMaterial, int materialOnly=false)
+void VRayForHoudini::appendOverrideValues(const STY_Styler &styler, PrimMaterial &primMaterial, OverrideAppendMode mode, int materialOnly)
 {
 #if UT_MAJOR_VERSION_INT >= 16
 	static const STY_OverrideValuesFilter styOverrideValuesFilter(nullptr);
@@ -226,12 +226,13 @@ static void appendOverrideValues(const STY_Styler &styler, PrimMaterial &primMat
 	STY_OverrideValues styOverrideValues;
 	styler.getOverrides(styOverrideValues, styOverrideValuesFilter);
 
-	appendOverrideValues(styOverrideValues, primMaterial);
+	appendOverrideValues(styOverrideValues, primMaterial, mode, materialOnly);
 #endif
 }
 
-void VRayForHoudini::appendStyleSheet(PrimMaterial &primMaterial, const UT_StringHolder &styleSheet, fpreal t, int materialOnly)
+void VRayForHoudini::appendStyleSheet(PrimMaterial &primMaterial, const UT_StringHolder &styleSheet, fpreal t, OverrideAppendMode mode, int materialOnly)
 {
+#if UT_MAJOR_VERSION_INT >= 16
 	const char *styleBuf = styleSheet.buffer();
 	if (!UTisstring(styleBuf))
 		return;
@@ -239,7 +240,8 @@ void VRayForHoudini::appendStyleSheet(PrimMaterial &primMaterial, const UT_Strin
 	STY_StyleSheetHandle styStyleSheetHandle(new STY_StyleSheet(styleBuf, NULL, STY_LOAD_FOR_STYLING));
 	STY_Styler styStyler(styStyleSheetHandle);
 
-	appendOverrideValues(styStyler, primMaterial, materialOnly);
+	appendOverrideValues(styStyler, primMaterial, mode, materialOnly);
+#endif
 }
 
 void VRayForHoudini::appendMaterialOverrides(PrimMaterial &primMaterial,
@@ -359,7 +361,11 @@ void VRayForHoudini::getOverridesForPrimitive(const STY_Styler &geoStyler, const
 {
 #if UT_MAJOR_VERSION_INT >= 16
 	STY_Styler primStyler = getStylerForPrimitive(geoStyler, prim);
-	appendOverrideValues(primStyler, primMaterial);
+
+	// If overrides comes from the stylesheet we have to override the values.
+	// This is different from when the stylesheet is a primitive attribute, then
+	// we'll append the values.
+	appendOverrideValues(primStyler, primMaterial, overrideMerge);
 #endif
 }
 
@@ -368,7 +374,11 @@ STY_Styler VRayForHoudini::getStylerForPrimitive(const STY_Styler &geoStyler, co
 #if UT_MAJOR_VERSION_INT < 16
 	return STY_Styler();
 #else
+#if UT_BUILD_VERSION_INT > 633
+	GSTY_SubjectPrim primSubject(&prim, nullptr);
+#else
 	GSTY_SubjectPrim primSubject(&prim);
+#endif
 	return geoStyler.cloneWithSubject(primSubject);
 #endif
 }

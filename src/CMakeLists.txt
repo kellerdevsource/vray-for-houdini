@@ -37,6 +37,7 @@ set(EXPORTER_SOURCES
 	export/export/vfh_export_mesh.cpp
 	export/export/vfh_export_primitive.cpp
 	export/export/vfh_export_vrayproxy.cpp
+	export/export/vfh_export_hdk_shaders.cpp
 	export/export/vfh_material_override.cpp
 	export/utils/vfh_geoutils.cpp
 	export/utils/vfh_tex_utils.cpp
@@ -125,7 +126,7 @@ set(SOURCES
 	vop/rc/vop_rc_container.cpp
 	vop/texture/vop_TexFalloff.cpp
 	vop/texture/vop_TexGradRamp.cpp
-	vop/texture/vop_TexLayered.cpp
+	vop/texture/vop_TexLayeredMax.cpp
 	vop/texture/vop_TexRemap.cpp
 	vop/texture/vop_texture_output.cpp
 	vop/vop_context.cpp
@@ -172,7 +173,7 @@ set(HEADERS
 	vop/rc/vop_rc_def.h
 	vop/texture/vop_TexFalloff.h
 	vop/texture/vop_TexGradRamp.h
-	vop/texture/vop_TexLayered.h
+	vop/texture/vop_TexLayeredMax.h
 	vop/texture/vop_TexRemap.h
 	vop/texture/vop_texture_def.h
 	vop/texture/vop_texture_output.h
@@ -225,19 +226,7 @@ if (Phoenix_FOUND)
 	)
 endif()
 
-set(CGR_SRC_HASH "" CACHE STRING "Sources hash (for Teamcity)")
-
-set(SRC_GIT_HASH ${CGR_SRC_HASH})
-if("${CGR_SRC_HASH}" STREQUAL "")
-	cgr_get_git_hash(${CMAKE_SOURCE_DIR} SRC_GIT_HASH)
-endif()
-
-message(STATUS "Source revision: ${SRC_GIT_HASH}")
 add_definitions(-DCGR_GIT_HASH=${SRC_GIT_HASH})
-
-# Install
-#
-option(INSTALL_RELEASE "Install release build for distribution" OFF)
 
 # Generate launcher with all needed environment variables set.
 #
@@ -326,7 +315,7 @@ function(vfh_install_common _location)
 		install(FILES       ${Phoenix_LIBRARIES}/${CGR_PHOENIX_SHARED}
 							${Phoenix_LIBRARIES}/${CGR_PHOENIX_SHARED_VDB}
 							${Phoenix_LIBRARIES}/${CGR_PHOENIX_SHARED_F3D}
-				DESTINATION ${_location}/vfh_home/vfh_lib
+				DESTINATION ${_location}/vfh_home/libs
 				PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 	endif()
 
@@ -351,20 +340,6 @@ function(vfh_install_common _location)
 endfunction(vfh_install_common)
 
 if(INSTALL_RELEASE)
-	if(NOT "${CMAKE_BUILD_TYPE}" STREQUAL "Release")
-		message(WARNING "INSTALL_RELEASE is ON, but CMAKE_BUILD_TYPE is not \"Release\" (${CMAKE_BUILD_TYPE})!")
-	endif()
-
-	set(INSTALL_RELEASE_ROOT "" CACHE PATH "Release install path")
-	set(INSTALL_RELEASE_SUBDIR "vfh-${SRC_GIT_HASH}${INSTALL_RELEASE_SUFFIX}")
-
-	if("${INSTALL_RELEASE_ROOT}" STREQUAL "")
-		message(FATAL_ERROR "INSTALL_RELEASE is ON, but INSTALL_RELEASE_ROOT is not set!")
-	endif()
-
-	# Set install path
-	set(INSTALL_RELEASE_PATH ${INSTALL_RELEASE_ROOT}/${INSTALL_RELEASE_SUBDIR})
-
 	vfh_install_common(${INSTALL_RELEASE_PATH})
 
 	# Generate launcher file

@@ -3,398 +3,445 @@
     label	"Phong"
     parmtag	{ spare_category "Phong" }
     parmtag	{ vray_plugin "BRDFPhong" }
-    parm {
-	name	"color"
-	label	"Color"
-	type	color
-	size	3
-	default	{ "1" "1" "1" }
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFPhong" }
-	parmtag	{ "vray_pluginattr" "color" }
-	parmtag	{ "vray_type" "Color" }
+	
+	parm {
+		name	"back_side"
+		label	"Double-sided"
+		type	toggle
+		default	{ "0" }
+		range	{ 0 1 }
+		export	none
+		parmtag	{ "cook_dependent" "1" }
+		parmtag	{ "vray_plugin" "BRDFPhong" }
+		parmtag	{ "vray_pluginattr" "back_side" }
+		parmtag	{ "vray_type" "boolean" }
     }
-    parm {
-	name	"color_tex"
-	label	"Color Tex"
-	type	color4
-	size	4
-	default	{ "0" "0" "0" "1" }
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFPhong" }
-	parmtag	{ "vray_pluginattr" "color_tex" }
-	parmtag	{ "vray_type" "Texture" }
-    }
-    parm {
-	name	"color_tex_mult"
-	label	"Color Tex Mult"
-	type	float
-	default	{ "1" }
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFPhong" }
-	parmtag	{ "vray_pluginattr" "color_tex_mult" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"transparency"
-	label	"Transparency"
-	type	color
-	size	3
-	default	{ "0" "0" "0" }
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFPhong" }
-	parmtag	{ "vray_pluginattr" "transparency" }
-	parmtag	{ "vray_type" "Color" }
-    }
-    parm {
-	name	"transparency_tex"
-	label	"Transparency Tex"
-	type	color4
-	size	4
-	default	{ "0" "0" "0" "1" }
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFPhong" }
-	parmtag	{ "vray_pluginattr" "transparency_tex" }
-	parmtag	{ "vray_type" "Texture" }
-    }
-    parm {
-	name	"transparency_tex_mult"
-	label	"Transparency Tex Mult"
-	type	float
-	default	{ "1" }
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFPhong" }
-	parmtag	{ "vray_pluginattr" "transparency_tex_mult" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"cutoff"
-	label	"Cutoff"
-	type	float
-	default	{ "0.01" }
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFPhong" }
-	parmtag	{ "vray_pluginattr" "cutoff" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"back_side"
-	label	"Back Side"
-	type	toggle
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFPhong" }
-	parmtag	{ "vray_pluginattr" "back_side" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"trace_reflections"
-	label	"Trace Reflections"
-	type	toggle
-	default	{ "1" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFPhong" }
-	parmtag	{ "vray_pluginattr" "trace_reflections" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"trace_depth"
-	label	"Trace Depth"
-	type	integer
-	default	{ "-1" }
-	help	"The maximum reflection depth (-1 is controlled by the global options)"
-	disablewhen	"{ trace_reflections != 1 }"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFPhong" }
-	parmtag	{ "vray_pluginattr" "trace_depth" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"affect_alpha"
-	label	"Affect Alpha"
-	type	ordinal
-	default	{ "0" }
-	help	"Specifies how render channels are propagated through the BRDF"
-	menu	{
-	    "Color Only"	"Color Only"
-	    "Color+Alpha"	"Color+Alpha"
-	    "All Channels"	"All Channels"
+	
+	group {
+		name "folder_diffuse"
+		label "Diffuse"
+		
+		parm {
+			name	"color"
+			label	"Color"
+			type	color
+			size	3
+			default	{ "1" "1" "1" }
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFPhong" }
+			parmtag	{ "vray_pluginattr" "color" }
+			parmtag	{ "vray_type" "Color" }
+		}
+		parm {
+			name	"color_tex"
+			label	"Color Tex"
+			type	color4
+			size	4
+			default	{ "0" "0" "0" "1" }
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFPhong" }
+			parmtag	{ "vray_pluginattr" "color_tex" }
+			parmtag	{ "vray_type" "Texture" }
+		}
+		parm {
+			name	"color_tex_mult"
+			label	"Color Tex Mult"
+			type	float
+			default	{ "1" }
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFPhong" }
+			parmtag	{ "vray_pluginattr" "color_tex_mult" }
+			parmtag	{ "vray_type" "float" }
+		}
+		parm {
+			name	"transparency"
+			label	"Transparency"
+			type	color
+			size	3
+			default	{ "0" "0" "0" }
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFPhong" }
+			parmtag	{ "vray_pluginattr" "transparency" }
+			parmtag	{ "vray_type" "Color" }
+		}
+		parm {
+			name	"transparency_tex"
+			label	"Transparency Tex"
+			type	color4
+			size	4
+			default	{ "0" "0" "0" "1" }
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFPhong" }
+			parmtag	{ "vray_pluginattr" "transparency_tex" }
+			parmtag	{ "vray_type" "Texture" }
+		}
+		parm {
+			name	"transparency_tex_mult"
+			label	"Transparency Tex Mult"
+			type	float
+			default	{ "1" }
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFPhong" }
+			parmtag	{ "vray_pluginattr" "transparency_tex_mult" }
+			parmtag	{ "vray_type" "float" }
+		}
+		
+		
+		
 	}
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1,2" }
-	parmtag	{ "vray_plugin" "BRDFPhong" }
-	parmtag	{ "vray_pluginattr" "affect_alpha" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"reflect_exit_color"
-	label	"Reflect Exit Color"
-	type	color4
-	size	4
-	default	{ "0" "0" "0" "0" }
-	help	"The color to use when the maximum depth is reached"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFPhong" }
-	parmtag	{ "vray_pluginattr" "reflect_exit_color" }
-	parmtag	{ "vray_type" "Texture" }
-    }
-    parm {
-	name	"reflect_dim_distance"
-	label	"Reflect Dim Distance"
-	type	float
-	default	{ "1e+18" }
-	help	"How much to dim reflection as length of rays increases"
-	disablewhen	"{ trace_reflections != 1 } { reflect_dim_distance_on != 1 }"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFPhong" }
-	parmtag	{ "vray_pluginattr" "reflect_dim_distance" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"reflect_dim_distance_on"
-	label	"Reflect Dim Distance On"
-	type	toggle
-	default	{ "0" }
-	help	"True to enable dim distance"
-	disablewhen	"{ trace_reflections != 1 }"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFPhong" }
-	parmtag	{ "vray_pluginattr" "reflect_dim_distance_on" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"reflect_dim_distance_falloff"
-	label	"Reflect Dim Distance Falloff"
-	type	float
-	default	{ "0" }
-	help	"Fall off for the dim distance"
-	disablewhen	"{ trace_reflections != 1 } { reflect_dim_distance_on != 1 }"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFPhong" }
-	parmtag	{ "vray_pluginattr" "reflect_dim_distance_falloff" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"hilightGlossiness"
-	label	"Hilightglossiness"
-	type	float
-	default	{ "0.8" }
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFPhong" }
-	parmtag	{ "vray_pluginattr" "hilightGlossiness" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"hilightGlossiness_tex"
-	label	"Hilightglossiness Tex"
-	type	float
-	default	{ "1" }
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFPhong" }
-	parmtag	{ "vray_pluginattr" "hilightGlossiness_tex" }
-	parmtag	{ "vray_type" "TextureFloat" }
-    }
-    parm {
-	name	"hilightGlossiness_tex_mult"
-	label	"Hilightglossiness Tex Mult"
-	type	float
-	default	{ "1" }
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFPhong" }
-	parmtag	{ "vray_pluginattr" "hilightGlossiness_tex_mult" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"reflectionGlossiness"
-	label	"Reflectionglossiness"
-	type	float
-	default	{ "0.8" }
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFPhong" }
-	parmtag	{ "vray_pluginattr" "reflectionGlossiness" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"reflectionGlossiness_tex"
-	label	"Reflectionglossiness Tex"
-	type	float
-	default	{ "1" }
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFPhong" }
-	parmtag	{ "vray_pluginattr" "reflectionGlossiness_tex" }
-	parmtag	{ "vray_type" "TextureFloat" }
-    }
-    parm {
-	name	"reflectionGlossiness_tex_mult"
-	label	"Reflectionglossiness Tex Mult"
-	type	float
-	default	{ "1" }
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFPhong" }
-	parmtag	{ "vray_pluginattr" "reflectionGlossiness_tex_mult" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"subdivs"
-	label	"Subdivs"
-	type	integer
-	default	{ "8" }
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFPhong" }
-	parmtag	{ "vray_pluginattr" "subdivs" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"glossyAsGI"
-	label	"Glossy As Gi"
-	type	ordinal
-	default	{ "1" }
-	help	"Determines if the glossy rays are treated by V-Ray as GI rays"
-	menu	{
-	    "Never"	"Never"
-	    "GI"	"GI"
-	    "Always"	"Always"
+	
+	group {
+		name "folder_reflection"
+		label "Reflection"
+		
+		parm {
+			name	"reflectionGlossiness"
+			label	"Reflectionglossiness"
+			type	float
+			default	{ "0.8" }
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFPhong" }
+			parmtag	{ "vray_pluginattr" "reflectionGlossiness" }
+			parmtag	{ "vray_type" "float" }
+		}
+		parm {
+			name	"reflectionGlossiness_tex"
+			label	"Reflectionglossiness Tex"
+			type	float
+			invisible
+			default	{ "1" }
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFPhong" }
+			parmtag	{ "vray_pluginattr" "reflectionGlossiness_tex" }
+			parmtag	{ "vray_type" "TextureFloat" }
+		}
+		parm {
+			name	"reflectionGlossiness_tex_mult"
+			label	"Reflectionglossiness Tex Mult"
+			type	float
+			default	{ "1" }
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFPhong" }
+			parmtag	{ "vray_pluginattr" "reflectionGlossiness_tex_mult" }
+			parmtag	{ "vray_type" "float" }
+		}		
+		parm {
+			name	"hilightGlossiness"
+			label	"Hilightglossiness"
+			type	float
+			default	{ "0.8" }
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFPhong" }
+			parmtag	{ "vray_pluginattr" "hilightGlossiness" }
+			parmtag	{ "vray_type" "float" }
+		}
+		parm {
+			name	"hilightGlossiness_tex"
+			label	"Hilightglossiness Tex"
+			type	float
+			invisible
+			default	{ "1" }
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFPhong" }
+			parmtag	{ "vray_pluginattr" "hilightGlossiness_tex" }
+			parmtag	{ "vray_type" "TextureFloat" }
+		}
+		parm {
+			name	"hilightGlossiness_tex_mult"
+			label	"Hilightglossiness Tex Mult"
+			type	float
+			default	{ "1" }
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFPhong" }
+			parmtag	{ "vray_pluginattr" "hilightGlossiness_tex_mult" }
+			parmtag	{ "vray_type" "float" }
+		}
+		
+		groupcollapsible {
+			name "folder_refl_advanced"
+			label "Reflection-advanced"
+			
+			parm {
+				name	"trace_reflections"
+				label	"Trace Reflections"
+				type	toggle
+				default	{ "1" }
+				range	{ 0 1 }
+				export	none
+				parmtag	{ "cook_dependent" "1" }
+				parmtag	{ "vray_plugin" "BRDFPhong" }
+				parmtag	{ "vray_pluginattr" "trace_reflections" }
+				parmtag	{ "vray_type" "boolean" }
+			}
+			parm {
+				name	"glossyAsGI"
+				label	"Glossy As Gi"
+				type	ordinal
+				default	{ "1" }
+				help	"Determines if the glossy rays are treated by V-Ray as GI rays"
+				menu	{
+					"Never"	"Never"
+					"GI"	"GI"
+					"Always"	"Always"
+				}
+				range	{ 0 1 }
+				export	none
+				parmtag	{ "cook_dependent" "1" }
+				parmtag	{ "vray_enumkeys" "0,1,2" }
+				parmtag	{ "vray_plugin" "BRDFPhong" }
+				parmtag	{ "vray_pluginattr" "glossyAsGI" }
+				parmtag	{ "vray_type" "int" }
+			}
+			parm {
+				name	"reflect_exit_color"
+				label	"Reflect Exit Color"
+				type	color4
+				size	4
+				default	{ "0" "0" "0" "0" }
+				help	"The color to use when the maximum depth is reached"
+				range	{ 0 1 }
+				export	none
+				parmtag	{ "cook_dependent" "1" }
+				parmtag	{ "vray_plugin" "BRDFPhong" }
+				parmtag	{ "vray_pluginattr" "reflect_exit_color" }
+				parmtag	{ "vray_type" "Texture" }
+			}
+			parm {
+				name	"trace_depth"
+				label	"Trace Depth"
+				type	integer
+				default	{ "-1" }
+				help	"The maximum reflection depth (-1 is controlled by the global options)"
+				disablewhen	"{ trace_reflections != 1 }"
+				range	{ -1 10 }
+				export	none
+				parmtag	{ "cook_dependent" "1" }
+				parmtag	{ "vray_plugin" "BRDFPhong" }
+				parmtag	{ "vray_pluginattr" "trace_depth" }
+				parmtag	{ "vray_type" "int" }
+			}
+			parm {
+				name	"reflect_dim_distance_on"
+				label	"Reflect Dim Distance On"
+				type	toggle
+				default	{ "0" }
+				help	"True to enable dim distance"
+				disablewhen	"{ trace_reflections != 1 }"
+				range	{ 0 1 }
+				export	none
+				parmtag	{ "cook_dependent" "1" }
+				parmtag	{ "vray_plugin" "BRDFPhong" }
+				parmtag	{ "vray_pluginattr" "reflect_dim_distance_on" }
+				parmtag	{ "vray_type" "boolean" }
+			}
+			parm {
+				name	"reflect_dim_distance"
+				label	"Reflect Dim Distance"
+				type	float
+				default	{ "1e+18" }
+				help	"How much to dim reflection as length of rays increases"
+				disablewhen	"{ trace_reflections != 1 } { reflect_dim_distance_on != 1 }"
+				range	{ 0 1e+18 }
+				export	none
+				parmtag	{ "cook_dependent" "1" }
+				parmtag	{ "vray_plugin" "BRDFPhong" }
+				parmtag	{ "vray_pluginattr" "reflect_dim_distance" }
+				parmtag	{ "vray_type" "float" }
+			}
+			parm {
+				name	"reflect_dim_distance_falloff"
+				label	"Reflect Dim Distance Falloff"
+				type	float
+				default	{ "0" }
+				help	"Fall off for the dim distance"
+				disablewhen	"{ trace_reflections != 1 } { reflect_dim_distance_on != 1 }"
+				range	{ 0 64 }
+				export	none
+				parmtag	{ "cook_dependent" "1" }
+				parmtag	{ "vray_plugin" "BRDFPhong" }
+				parmtag	{ "vray_pluginattr" "reflect_dim_distance_falloff" }
+				parmtag	{ "vray_type" "float" }
+			}
+	
+		}
+		
+		groupcollapsible {
+			name "folder_refl_interpolation"
+			label "Reflection Interpolation"
+			
+			parm {
+				name	"interpolation_on"
+				label	"Interpolation On"
+				type	toggle
+				default	{ "0" }
+				range	{ 0 1 }
+				export	none
+				parmtag	{ "cook_dependent" "1" }
+				parmtag	{ "vray_plugin" "BRDFPhong" }
+				parmtag	{ "vray_pluginattr" "interpolation_on" }
+				parmtag	{ "vray_type" "int" }
+			}
+			parm {
+				name	"imap_min_rate"
+				label	"Imap Min Rate"
+				type	integer
+				default	{ "-1" }
+				disablewhen	"{ interpolation_on != 1 }"
+				range	{ 0 64 }
+				export	none
+				parmtag	{ "cook_dependent" "1" }
+				parmtag	{ "vray_plugin" "BRDFPhong" }
+				parmtag	{ "vray_pluginattr" "imap_min_rate" }
+				parmtag	{ "vray_type" "int" }
+			}
+			parm {
+				name	"imap_max_rate"
+				label	"Imap Max Rate"
+				type	integer
+				default	{ "1" }
+				disablewhen	"{ interpolation_on != 1 }"
+				range	{ 0 64 }
+				export	none
+				parmtag	{ "cook_dependent" "1" }
+				parmtag	{ "vray_plugin" "BRDFPhong" }
+				parmtag	{ "vray_pluginattr" "imap_max_rate" }
+				parmtag	{ "vray_type" "int" }
+			}
+			parm {
+				name	"imap_samples"
+				label	"Imap Samples"
+				type	integer
+				default	{ "20" }
+				disablewhen	"{ interpolation_on != 1 }"
+				range	{ 0 64 }
+				export	none
+				parmtag	{ "cook_dependent" "1" }
+				parmtag	{ "vray_plugin" "BRDFPhong" }
+				parmtag	{ "vray_pluginattr" "imap_samples" }
+				parmtag	{ "vray_type" "int" }
+			}
+			parm {
+				name	"imap_color_thresh"
+				label	"Imap Color Thresh"
+				type	float
+				default	{ "0.25" }
+				disablewhen	"{ interpolation_on != 1 }"
+				range	{ 0 64 }
+				export	none
+				parmtag	{ "cook_dependent" "1" }
+				parmtag	{ "vray_plugin" "BRDFPhong" }
+				parmtag	{ "vray_pluginattr" "imap_color_thresh" }
+				parmtag	{ "vray_type" "float" }
+			}
+			parm {
+				name	"imap_norm_thresh"
+				label	"Imap Norm Thresh"
+				type	float
+				default	{ "0.4" }
+				disablewhen	"{ interpolation_on != 1 }"
+				range	{ 0 64 }
+				export	none
+				parmtag	{ "cook_dependent" "1" }
+				parmtag	{ "vray_plugin" "BRDFPhong" }
+				parmtag	{ "vray_pluginattr" "imap_norm_thresh" }
+				parmtag	{ "vray_type" "float" }
+			}	
+		}
+    	
 	}
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1,2" }
-	parmtag	{ "vray_plugin" "BRDFPhong" }
-	parmtag	{ "vray_pluginattr" "glossyAsGI" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"soften_edge"
-	label	"Soften Edge"
-	type	float
-	default	{ "0" }
-	help	"Soften edge of the BRDF at light/shadow transition"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFPhong" }
-	parmtag	{ "vray_pluginattr" "soften_edge" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"interpolation_on"
-	label	"Interpolation On"
-	type	toggle
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFPhong" }
-	parmtag	{ "vray_pluginattr" "interpolation_on" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"imap_min_rate"
-	label	"Imap Min Rate"
-	type	integer
-	default	{ "-1" }
-	disablewhen	"{ interpolation_on != 1 }"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFPhong" }
-	parmtag	{ "vray_pluginattr" "imap_min_rate" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"imap_max_rate"
-	label	"Imap Max Rate"
-	type	integer
-	default	{ "1" }
-	disablewhen	"{ interpolation_on != 1 }"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFPhong" }
-	parmtag	{ "vray_pluginattr" "imap_max_rate" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"imap_color_thresh"
-	label	"Imap Color Thresh"
-	type	float
-	default	{ "0.25" }
-	disablewhen	"{ interpolation_on != 1 }"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFPhong" }
-	parmtag	{ "vray_pluginattr" "imap_color_thresh" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"imap_norm_thresh"
-	label	"Imap Norm Thresh"
-	type	float
-	default	{ "0.4" }
-	disablewhen	"{ interpolation_on != 1 }"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFPhong" }
-	parmtag	{ "vray_pluginattr" "imap_norm_thresh" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"imap_samples"
-	label	"Imap Samples"
-	type	integer
-	default	{ "20" }
-	disablewhen	"{ interpolation_on != 1 }"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFPhong" }
-	parmtag	{ "vray_pluginattr" "imap_samples" }
-	parmtag	{ "vray_type" "int" }
-    }
+	
+	group {
+		name "folder_options"
+		label "Options"
+		
+		parm {
+			name	"soften_edge"
+			label	"Soften Edge"
+			type	float
+			default	{ "0" }
+			help	"Soften edge of the BRDF at light/shadow transition"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFPhong" }
+			parmtag	{ "vray_pluginattr" "soften_edge" }
+			parmtag	{ "vray_type" "float" }
+		}
+		
+		 parm {
+			name	"cutoff"
+			label	"Cutoff"
+			type	float
+			default	{ "0.01" }
+			range	{ 0 0.1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFPhong" }
+			parmtag	{ "vray_pluginattr" "cutoff" }
+			parmtag	{ "vray_type" "float" }
+		}
+		parm {
+			name	"subdivs"
+			label	"Subdivs"
+			type	integer
+			default	{ "8" }
+			range	{ 0 64 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFPhong" }
+			parmtag	{ "vray_pluginattr" "subdivs" }
+			parmtag	{ "vray_type" "int" }
+		}
+		
+		
+		parm {
+			name	"affect_alpha"
+			label	"Affect Alpha"
+			type	ordinal
+			default	{ "0" }
+			help	"Specifies how render channels are propagated through the BRDF"
+			menu	{
+				"Color Only"	"Color Only"
+				"Color+Alpha"	"Color+Alpha"
+				"All Channels"	"All Channels"
+			}
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_enumkeys" "0,1,2" }
+			parmtag	{ "vray_plugin" "BRDFPhong" }
+			parmtag	{ "vray_pluginattr" "affect_alpha" }
+			parmtag	{ "vray_type" "int" }
+		}
+		
+		
+		
+	}
+	
+	
+    
 }

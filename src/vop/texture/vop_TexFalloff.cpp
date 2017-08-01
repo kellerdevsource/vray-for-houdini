@@ -26,8 +26,8 @@ OP::VRayNode::PluginResult VOP::TexFalloff::asPluginDesc(Attrs::PluginDesc &plug
 {
 	if (evalInt("use_blend_curve", 0, 0.0)) {
 		Attrs::PluginDesc subTexFalloffDesc(VRayExporter::getPluginName(this, "SubFalloff"), "TexFalloff");
-		subTexFalloffDesc.pluginAttrs.push_back(Attrs::PluginAttr("use_blend_input", false));
-		subTexFalloffDesc.pluginAttrs.push_back(Attrs::PluginAttr("blend_input", VRay::Plugin()));
+		subTexFalloffDesc.add(Attrs::PluginAttr("use_blend_input", false));
+		subTexFalloffDesc.add(Attrs::PluginAttr("blend_input", VRay::Plugin()));
 
 		VRay::Plugin subFalloffTex = exporter.exportPlugin(subTexFalloffDesc);
 
@@ -36,14 +36,14 @@ OP::VRayNode::PluginResult VOP::TexFalloff::asPluginDesc(Attrs::PluginDesc &plug
 		Texture::getCurveData(exporter, this, "curve", types, points, nullptr, true);
 
 		Attrs::PluginDesc texBezierCurveDesc(VRayExporter::getPluginName(this, "SubCurve"), "TexBezierCurve");
-		texBezierCurveDesc.pluginAttrs.push_back(Attrs::PluginAttr("input_float", subFalloffTex, "blend_output"));
-		texBezierCurveDesc.pluginAttrs.push_back(Attrs::PluginAttr("points", points));
-		texBezierCurveDesc.pluginAttrs.push_back(Attrs::PluginAttr("types", types));
+		texBezierCurveDesc.add(Attrs::PluginAttr("input_float", subFalloffTex, "blend_output"));
+		texBezierCurveDesc.add(Attrs::PluginAttr("points", points));
+		texBezierCurveDesc.add(Attrs::PluginAttr("types", types));
 
 		VRay::Plugin texBezierCurve = exporter.exportPlugin(texBezierCurveDesc);
 
-		pluginDesc.pluginAttrs.push_back(Attrs::PluginAttr("use_blend_input", true));
-		pluginDesc.pluginAttrs.push_back(Attrs::PluginAttr("blend_input", texBezierCurve));
+		pluginDesc.add(Attrs::PluginAttr("use_blend_input", true));
+		pluginDesc.add(Attrs::PluginAttr("blend_input", texBezierCurve));
 	}
 
 	return OP::VRayNode::PluginResultContinue;

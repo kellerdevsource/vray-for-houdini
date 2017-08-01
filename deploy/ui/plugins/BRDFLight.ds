@@ -3,97 +3,113 @@
     label	"Light"
     parmtag	{ spare_category "Light" }
     parmtag	{ vray_plugin "BRDFLight" }
-    parm {
-	name	"color"
-	label	"Light Color"
-	type	color4
-	size	4
-	default	{ "1" "1" "1" "1" }
-	help	"The self-illumination color"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFLight" }
-	parmtag	{ "vray_pluginattr" "color" }
-	parmtag	{ "vray_type" "Texture" }
-    }
-    parm {
-	name	"colorMultiplier"
-	label	"Color Multiplier"
-	type	float
-	default	{ "1" }
-	help	"Color Multiplier"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFLight" }
-	parmtag	{ "vray_pluginattr" "colorMultiplier" }
-	parmtag	{ "vray_type" "TextureFloat" }
-    }
-    parm {
-	name	"transparency"
-	label	"Transparency"
-	type	color4
-	size	4
-	default	{ "0" "0" "0" "1" }
-	help	"Transparency of the BRDF"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFLight" }
-	parmtag	{ "vray_pluginattr" "transparency" }
-	parmtag	{ "vray_type" "Texture" }
-    }
-    parm {
-	name	"doubleSided"
-	label	"Double Sided"
-	type	toggle
-	default	{ "0" }
-	help	"If false, the light color is black for back-facing surfaces"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFLight" }
-	parmtag	{ "vray_pluginattr" "doubleSided" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"emitOnBackSide"
-	label	"Emit On Back Side"
-	type	toggle
-	default	{ "1" }
-	help	"Emit on back side"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFLight" }
-	parmtag	{ "vray_pluginattr" "emitOnBackSide" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"compensateExposure"
-	label	"Compensate Exposure"
-	type	toggle
-	default	{ "0" }
-	help	"Compensate camera exposure"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFLight" }
-	parmtag	{ "vray_pluginattr" "compensateExposure" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"multiplyByOpacity"
-	label	"Multiply By Opacity"
-	type	toggle
-	default	{ "0" }
-	help	"When enabled the color of the light brdf is multiplied by the brdf's opacity (inverse of the brdf's transparency)"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFLight" }
-	parmtag	{ "vray_pluginattr" "multiplyByOpacity" }
-	parmtag	{ "vray_type" "boolean" }
-    }
+	
+	groupsimple {
+		name "folder_main"
+		label "Main"
+		
+		parm {
+			name	"color"
+			label	"Light Color"
+			type	color4
+			size	4
+			default	{ "1" "1" "1" "1" }
+			help	"The self-illumination color"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFLight" }
+			parmtag	{ "vray_pluginattr" "color" }
+			parmtag	{ "vray_type" "Texture" }
+		}
+		parm {
+			name	"colorMultiplier"
+			label	"Color Multiplier"
+			type	float
+			default	{ "1" }
+			help	"Color Multiplier"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFLight" }
+			parmtag	{ "vray_pluginattr" "colorMultiplier" }
+			parmtag	{ "vray_type" "TextureFloat" }
+		}
+		parm {
+			name	"transparency"
+			label	"Transparency"
+			type	color4
+			size	4
+			default	{ "0" "0" "0" "1" }
+			help	"Transparency of the BRDF"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFLight" }
+			parmtag	{ "vray_pluginattr" "transparency" }
+			parmtag	{ "vray_type" "Texture" }
+		}
+		
+		
+	}
+	groupsimple {
+		name "folder_options"
+		label "Options"
+		
+		parm {
+			name	"doubleSided"
+			label	"Double Sided"
+			type	toggle
+			default	{ "0" }
+			help	"If false, the light color is black for back-facing surfaces"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFLight" }
+			parmtag	{ "vray_pluginattr" "doubleSided" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		parm {
+			name	"emitOnBackSide"
+			label	"Emit On Back Side"
+			type	toggle
+			default	{ "1" }
+			help	"Emit on back side"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFLight" }
+			parmtag	{ "vray_pluginattr" "emitOnBackSide" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		parm {
+			name	"compensateExposure"
+			label	"Compensate Exposure"
+			type	toggle
+			default	{ "0" }
+			help	"Compensate camera exposure"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFLight" }
+			parmtag	{ "vray_pluginattr" "compensateExposure" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		parm {
+			name	"multiplyByOpacity"
+			label	"Multiply By Opacity"
+			type	toggle
+			default	{ "0" }
+			help	"When enabled the color of the light brdf is multiplied by the brdf's opacity (inverse of the brdf's transparency)"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFLight" }
+			parmtag	{ "vray_pluginattr" "multiplyByOpacity" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+			
+	}
+  
+	
 }

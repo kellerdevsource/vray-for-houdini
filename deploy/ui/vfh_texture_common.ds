@@ -1,0 +1,230 @@
+parm {
+    name    "compatibility_with"
+    label   "Compatibility With"
+    type    ordinal
+    default { "0" }
+    help    "This is used to differentiate between textures exported from different applications"
+    menu    {
+        "0" "3ds Max"
+        "1" "Maya"
+    }
+    range   { 0 1 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_enumkeys" "0,1" }
+    parmtag { "vray_pluginattr" "compatibility_with" }
+    parmtag { "vray_type" "int" }
+    invisible
+}
+
+#include "$VRAY_UI_DS_PATH/vfh_texture_common_color.ds"
+#include "$VRAY_UI_DS_PATH/vfh_texture_common_alpha.ds"
+
+groupcollapsible {
+    name "VfhTextureCommonPlacement"
+    label "Placement"
+
+    parm {
+        name    "placement_type"
+        label   "Placement Type"
+        type    ordinal
+        default { "0" }
+        help    "The way the valid portion of the texture is applied"
+        menu    {
+            "0" "Full"
+            "1" "Crop"
+            "2" "Place"
+        }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_enumkeys" "0,1,2" }
+        parmtag { "vray_pluginattr" "placement_type" }
+        parmtag { "vray_type" "int" }
+    }
+
+    parm {
+        name    "u"
+        label   "U"
+        type    float
+        default { "0" }
+        help    "U coordinate of the valid texture sector"
+        disablewhen "{ placement_type != Crop placement_type != Place }"
+        range   { 0 64 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_pluginattr" "u" }
+        parmtag { "vray_type" "float" }
+    }
+
+    parm {
+        name    "v"
+        label   "V"
+        type    float
+        default { "0" }
+        help    "V coordinate of the valid texture sector"
+        disablewhen "{ placement_type != Crop placement_type != Place }"
+        range   { 0 64 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_pluginattr" "v" }
+        parmtag { "vray_type" "float" }
+    }
+
+    parm {
+        name    "w"
+        label   "W"
+        type    float
+        default { "1" }
+        help    "Width of the valid texture sector"
+        disablewhen "{ placement_type != Crop placement_type != Place }"
+        range   { 0 64 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_pluginattr" "w" }
+        parmtag { "vray_type" "float" }
+    }
+
+    parm {
+        name    "h"
+        label   "H"
+        type    float
+        default { "1" }
+        help    "Height of the valid texture sector"
+        disablewhen "{ placement_type != Crop placement_type != Place }"
+        range   { 0 64 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_pluginattr" "h" }
+        parmtag { "vray_type" "float" }
+    }
+
+    parm {
+        name    "jitter"
+        label   "Jitter"
+        type    float
+        default { "0" }
+        help    "Amount of random placement variation"
+        disablewhen "{ placement_type != Place }"
+        range   { 0 64 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_pluginattr" "jitter" }
+        parmtag { "vray_type" "float" }
+    }
+
+    parm {
+        name    "tile_u"
+        label   "Tile U"
+        type    toggle
+        default { "1" }
+        help    "If true there is horizontal tiling"
+        disablewhen "{ placement_type != Place }"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_pluginattr" "tile_u" }
+        parmtag { "vray_type" "boolean" }
+    }
+
+    parm {
+        name    "tile_v"
+        label   "Tile V"
+        type    toggle
+        default { "1" }
+        help    "If true there is vertical tiling"
+        disablewhen "{ placement_type != Place }"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_pluginattr" "tile_v" }
+        parmtag { "vray_type" "boolean" }
+    }
+}
+
+groupcollapsible {
+    name "VfhTextureCommonUvNoise"
+    label "UV Noise"
+
+    parm {
+        name    "uv_noise_on"
+        label   "Enabled"
+        type    toggle
+        default { "0" }
+        help    "If true the noise is enabled"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_pluginattr" "uv_noise_on" }
+        parmtag { "vray_type" "boolean" }
+    }
+
+    parm {
+        name    "uv_noise_amount"
+        label   "Amount"
+        type    float
+        default { "1" }
+        help    "UV noise amount"
+        disablewhen "{ uv_noise_on != 1 }"
+        range   { 0 64 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_pluginattr" "uv_noise_amount" }
+        parmtag { "vray_type" "float" }
+    }
+
+    parm {
+        name    "uv_noise_levels"
+        label   "Levels"
+        type    float
+        default { "1" }
+        help    "UV noise iterations"
+        disablewhen "{ uv_noise_on != 1 }"
+        range   { 0 64 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_pluginattr" "uv_noise_levels" }
+        parmtag { "vray_type" "float" }
+    }
+
+    parm {
+        name    "uv_noise_size"
+        label   "Size"
+        type    float
+        default { "1" }
+        help    "UV noise size"
+        disablewhen "{ uv_noise_on != 1 }"
+        range   { 0 64 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_pluginattr" "uv_noise_size" }
+        parmtag { "vray_type" "float" }
+    }
+
+    parm {
+        name    "uv_noise_animate"
+        label   "Animated"
+        type    toggle
+        default { "1" }
+        help    "If true the noise is animated"
+        disablewhen "{ uv_noise_on != 1 }"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_pluginattr" "uv_noise_animate" }
+        parmtag { "vray_type" "boolean" }
+    }
+
+    parm {
+        name    "un_noise_phase"
+        label   "Phase"
+        type    float
+        default { "0" }
+        help    "UV noise phase"
+        disablewhen "{ uv_noise_on != 1 } { uv_noise_animate != 1 }"
+        range   { 0 64 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_pluginattr" "un_noise_phase" }
+        parmtag { "vray_type" "float" }
+    }
+}

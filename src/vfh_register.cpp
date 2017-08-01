@@ -89,8 +89,10 @@ void unregister(void *)
 	deleteVRayInit();
 	Log::Logger::stopLogging();
 
+#ifndef VASSERT_ENABLED
 	Error::ErrorChaser &errChaser = Error::ErrorChaser::getInstance();
 	errChaser.enable(false);
+#endif
 }
 
 
@@ -111,9 +113,10 @@ void newDriverOperator(OP_OperatorTable *table)
 {
 	Log::getLog().info("Build %s from " __DATE__ ", " __TIME__,
 					   STRINGIZE(CGR_GIT_HASH));
-
+#ifndef VASSERT_ENABLED
 	Error::ErrorChaser &errChaser = Error::ErrorChaser::getInstance();
 	errChaser.enable(true);
+#endif
 
 	VRayRendererNode::register_operator(table);
 	VRayProxyROP::register_ropoperator(table),
@@ -293,7 +296,6 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexBerconTile);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexBerconWood);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexBezierCurve);
-	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexBifrostVVMix);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexBillboardParticle);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexBitmap);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexBlend);
@@ -345,7 +347,6 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexInterpLinear);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexInvert);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexInvertFloat);
-	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexLayered);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexLayeredMax);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexLeather);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexLuminance);

@@ -84,7 +84,7 @@ void VRayForHoudini::Texture::exportRampAttribute(VRayExporter &exporter, Attrs:
 		}
 		else {
 			Attrs::PluginDesc colPluginDesc(colPluginName, "TexAColor");
-			colPluginDesc.pluginAttrs.push_back(Attrs::PluginAttr("texture", Attrs::PluginAttr::AttrTypeAColor, colR, colG, colB, 1.0f));
+			colPluginDesc.add(Attrs::PluginAttr("texture", Attrs::PluginAttr::AttrTypeAColor, colR, colG, colB, 1.0f));
 
 			VRay::Plugin colPlugin = exporter.exportPlugin(colPluginDesc);
 			if (colPlugin) {
@@ -98,14 +98,14 @@ void VRayForHoudini::Texture::exportRampAttribute(VRayExporter &exporter, Attrs:
 	}
 
 	if (asColor) {
-		pluginDesc.pluginAttrs.push_back(Attrs::PluginAttr(colAttrName, colorList));
+		pluginDesc.add(Attrs::PluginAttr(colAttrName, colorList));
 	}
 	else {
-		pluginDesc.pluginAttrs.push_back(Attrs::PluginAttr(colAttrName, colorPlugins));
+		pluginDesc.add(Attrs::PluginAttr(colAttrName, colorPlugins));
 	}
-	pluginDesc.pluginAttrs.push_back(Attrs::PluginAttr(posAttrName, positions));
+	pluginDesc.add(Attrs::PluginAttr(posAttrName, positions));
 	if (needTypes) {
-		pluginDesc.pluginAttrs.push_back(Attrs::PluginAttr(typesAttrName, types));
+		pluginDesc.add(Attrs::PluginAttr(typesAttrName, types));
 	}
 }
 

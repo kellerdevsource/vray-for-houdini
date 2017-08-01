@@ -1,191 +1,58 @@
 {
-    name	TexLayeredMax
-    label	"Layered Max"
-    parmtag	{ spare_category "Layered Max" }
-    parmtag	{ vray_plugin "TexLayeredMax" }
-    parm {
-	name	"compatibility_with"
-	label	"Compatibility With"
-	type	ordinal
-	default	{ "1" }
-	help	"This is used to differentiate between textures exported from different applications"
-	menu	{
-	    "Max"	"Max"
-	    "Maya"	"Maya"
-	}
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1" }
-	parmtag	{ "vray_plugin" "TexLayeredMax" }
-	parmtag	{ "vray_pluginattr" "compatibility_with" }
-	parmtag	{ "vray_type" "int" }
+    name TexLayeredMax
+    label "Layered"
+    parmtag { spare_category "Layered" }
+    parmtag { vray_plugin "TexLayeredMax" }
+
+    multiparm {
+        name "textures_count"
+        label "Textures"
+
+        parm {
+            name "tex#blend_amount"
+            label "Blend Amount #"
+            type float
+            default { 1.0 }
+        }
+
+        parm {
+            name "tex#blend_mode"
+            label "Blend Mode #"
+            type ordinal
+
+            menu {
+                "0"  "None"
+                "1"  "Average"
+                "2"  "Add"
+                "3"  "Subtract"
+                "4"  "Darken"
+                "5"  "Multiply"
+                "6"  "Color burn"
+                "7"  "Linear burn"
+                "8"  "Lighten"
+                "9"  "Screen"
+                "10" "Color Dodge"
+                "11" "Linear Dodge"
+                "12" "Spotlite"
+                "13" "Spotlite Blend"
+                "14" "Overlay"
+                "15" "Softlight"
+                "16" "Hardlight"
+                "17" "Pinlight"
+                "18" "Hardmix"
+                "19" "Difference"
+                "20" "Exclusion"
+                "21" "Hue"
+                "22" "Saturation"
+                "23" "Color"
+                "24" "Value"
+            }
+
+            default { "14" }
+        }
     }
-    parm {
-	name	"alpha_from_intensity"
-	label	"Alpha From Intensity"
-	type	ordinal
-	default	{ "1" }
-	help	"If 2 - the alpha is forced to 1.0f; 1 - the resulting alpha is the color intensity (if compatibility_with is 0) or the color luminance (if compatibility_with is 1); 0 - the alpha is taken from the bitmap alpha"
-	menu	{
-	    "Bitmap alpha"	"Bitmap alpha"
-	    "Color intensity/luminance"	"Color intensity/luminance"
-	    "Force opaque"	"Force opaque"
-	}
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1,2" }
-	parmtag	{ "vray_plugin" "TexLayeredMax" }
-	parmtag	{ "vray_pluginattr" "alpha_from_intensity" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"invert"
-	label	"Invert"
-	type	toggle
-	default	{ "0" }
-	help	"If true, the resulting texture color will be inverted"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexLayeredMax" }
-	parmtag	{ "vray_pluginattr" "invert" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"invert_alpha"
-	label	"Invert Alpha"
-	type	toggle
-	default	{ "1" }
-	help	"If true and invert is on, the resulting texture alpha will be inverted too. If false, just the color will be inverted"
-	disablewhen	"{ invert != 1 }"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexLayeredMax" }
-	parmtag	{ "vray_pluginattr" "invert_alpha" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"color_mult"
-	label	"Color Mult"
-	type	color4
-	size	4
-	default	{ "1" "1" "1" "1" }
-	help	"A multiplier for the texture color"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexLayeredMax" }
-	parmtag	{ "vray_pluginattr" "color_mult" }
-	parmtag	{ "vray_type" "Texture" }
-    }
-    parm {
-	name	"color_offset"
-	label	"Color Offset"
-	type	color4
-	size	4
-	default	{ "0" "0" "0" "0" }
-	help	"An additional offset for the texture color"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexLayeredMax" }
-	parmtag	{ "vray_pluginattr" "color_offset" }
-	parmtag	{ "vray_type" "Texture" }
-    }
-    parm {
-	name	"alpha_mult"
-	label	"Alpha Mult"
-	type	float
-	default	{ "1" }
-	help	"A multiplier for the texture alpha"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexLayeredMax" }
-	parmtag	{ "vray_pluginattr" "alpha_mult" }
-	parmtag	{ "vray_type" "TextureFloat" }
-    }
-    parm {
-	name	"alpha_offset"
-	label	"Alpha Offset"
-	type	float
-	default	{ "0" }
-	help	"An additional offset for the texture alpha"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexLayeredMax" }
-	parmtag	{ "vray_pluginattr" "alpha_offset" }
-	parmtag	{ "vray_type" "TextureFloat" }
-    }
-    parm {
-	name	"nouvw_color"
-	label	"No Uvs Color"
-	type	color4
-	size	4
-	default	{ "0.5" "0.5" "0.5" "1" }
-	help	"The color when there are no valid uvw coordinates"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexLayeredMax" }
-	parmtag	{ "vray_pluginattr" "nouvw_color" }
-	parmtag	{ "vray_type" "Texture" }
-    }
-    parm {
-	name	"blend_modes"
-	label	"Blend Modes"
-	type	ordinal
-	default	{ "1" }
-	help	"0:Normal, 1:Average, 2:Add, 3:Subtract, 4:Darken, 5:Multiply, 6:Color burn, 7:Linear burn, 8:Lighten, 9:Screen, 10:Color Dodge, 11:Linear Dodge, 12:Spotlite, 13:Spotlite blend, 14:Overlay, 15:Softlight, 16:Hardlight, 17:Pinlight, 18:Hardmix, 19:Difference, 20:Exclusion, 21:Hue, 22:Saturation, 23:Color, 24:Value"
-	menu	{
-	    "Normal"	"Normal"
-	    "Average"	"Average"
-	    "Add"	"Add"
-	    "Subtract"	"Subtract"
-	    "Darken"	"Darken"
-	    "Multiply"	"Multiply"
-	    "Color burn"	"Color burn"
-	    "Linear burn"	"Linear burn"
-	    "Lighten"	"Lighten"
-	    "Screen"	"Screen"
-	    "Color Dodge"	"Color Dodge"
-	    "Linear Dodge"	"Linear Dodge"
-	    "Spotlite"	"Spotlite"
-	    "Spotlite blend"	"Spotlite blend"
-	    "Overlay"	"Overlay"
-	    "Softlight"	"Softlight"
-	    "Hardlight"	"Hardlight"
-	    "Pinlight"	"Pinlight"
-	    "Hardmix"	"Hardmix"
-	    "Difference"	"Difference"
-	    "Exclusion"	"Exclusion"
-	    "Hue"	"Hue"
-	    "Saturation"	"Saturation"
-	    "Color"	"Color"
-	    "Value"	"Value"
-	}
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24" }
-	parmtag	{ "vray_plugin" "TexLayeredMax" }
-	parmtag	{ "vray_pluginattr" "blend_modes" }
-	parmtag	{ "vray_type" "List<Integer>" }
-    }
-    parm {
-	name	"alpha"
-	label	"Alpha"
-	type	float
-	default	{ "0" }
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexLayeredMax" }
-	parmtag	{ "vray_pluginattr" "alpha" }
-	parmtag	{ "vray_type" "TextureFloat" }
-    }
+
+#include "$VRAY_UI_DS_PATH/vfh_texture_common_color.ds"
+#include "$VRAY_UI_DS_PATH/vfh_texture_common_alpha.ds"
+#include "$VRAY_UI_DS_PATH/vfh_texture_common_outputs.ds"
 }

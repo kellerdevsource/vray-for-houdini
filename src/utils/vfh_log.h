@@ -22,6 +22,8 @@
 
 #include <functional>
 #include <array>
+#include <thread>
+#include <ctime>
 
 namespace VRayForHoudini {
 namespace Log {
@@ -53,6 +55,8 @@ struct Logger {
 	void error(const tchar *format, ...);
 	/// Log string with debug level
 	void debug(const tchar *format, ...);
+	/// Log string with custom level
+	void log(LogLevel level, const tchar *format, ...);
 
 	/// Set max log level to be printed, unless Logger::msg is used where current filter is ignored
 	void setLogLevel(LogLevel logLevel) { m_logLevel = logLevel; }
@@ -66,7 +70,7 @@ struct Logger {
 	static void stopLogging();
 private:
 	/// Implementation for the actual logging
-	void log(LogLevel level, const tchar *format, va_list args);
+	void valog(LogLevel level, const tchar *format, va_list args);
 
 	LogLevel m_logLevel; ///< Current max log level to be shown
 
@@ -76,13 +80,15 @@ public:
 
 	/// Using this pair instead of std::pair, because lockfree::queue requires a template
 	/// argument which has trivial ctor, dtor and assignment operator
-	struct LogPair {
+	struct LogData {
 		LogLevel level; ///< The message's log level
 		LogLineType line; ///< The message data, null terminated
+		time_t time; ///< The time the log was made
+		std::thread::id tid; ///< The thread ID of the caller thread
 	};
 
 private:
-	boost::lockfree::queue<LogPair> m_queue; ///< Queue for messages to be logged
+	boost::lockfree::queue<LogData> m_queue; ///< Queue for messages to be logged
 
 	/// Loop and dump any messages from the queue to stdout
 	/// Used as base for the thread that is processing the messages

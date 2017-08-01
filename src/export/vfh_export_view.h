@@ -123,7 +123,7 @@ struct ViewPluginsDesc {
 		, stereoSettings(stereoSettingsPluginName, "VRayStereoscopicSettings")
 	{}
 
-	int                needReset(const ViewPluginsDesc &other) const;
+	int needReset(const ViewPluginsDesc &other) const;
 
 	Attrs::PluginDesc  settingsCameraDof;
 	Attrs::PluginDesc  settingsMotionBlur;

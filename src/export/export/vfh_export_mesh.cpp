@@ -18,11 +18,59 @@
 #include <GA/GA_PageHandle.h>
 #include <GA/GA_Names.h>
 
+#define USE_GROUP_STYLER 1
+#if USE_GROUP_STYLER
+#  include <GSTY/GSTY_SubjectPrimGroup.h>
+#  include <STY/STY_StylerGroup.h>
+#endif
+
 using namespace VRayForHoudini;
+using namespace Hash;
+
+static boost::format extMapChannelFmt("ExtMapChannels|%i@%s");
+static boost::format texExtMaterialIDFmt("TexExtMaterialID|%i@%s");
+static boost::format mtlMultiFmt("MtlMulti|%i@%s");
 
 /// This is a specific value for TexUserColor / TexUserScalar
 /// to specify that attribute is unset for a particular face.
 static const float ALMOST_FLT_MAX = FLT_MAX;
+
+template <typename T>
+static MHash getVRayValueHash(const VRay::VUtils::PtrArray<T> &idsList)
+{
+	MHash hash;
+	MurmurHash3_x86_32(idsList.get(), idsList.count() * sizeof(T), 42, &hash);
+	return hash;
+}
+
+static MHash getVRayValueHash(const VRay::VUtils::CharString &value)
+{
+	MHash hash;
+	MurmurHash3_x86_32(value.ptr(), value.length() * sizeof(tchar), 42, &hash);
+	return hash;
+}
+
+static MHash getMaterialIdListHash(VRay::VUtils::IntRefList idsList)
+{ 
+	return getVRayValueHash(idsList);
+}
+
+static MHash getMapChannelsHash(VRay::VUtils::ValueRefList mapChannels)
+{ 
+	MHash hash = 0;
+
+	for (int chanIdx = 0; chanIdx < mapChannels.count(); ++chanIdx) {
+		VRay::VUtils::ValueRefList mapChannel = mapChannels[chanIdx].getList();
+
+		const MHash nameHash = getVRayValueHash(mapChannel[0].getString());
+		const MHash vertHash = getVRayValueHash(mapChannel[1].getListVector());
+		const MHash faceHash = getVRayValueHash(mapChannel[2].getListInt());
+
+		hash ^= (nameHash ^ vertHash ^ faceHash);
+	}
+
+	return hash;
+}
 
 /// Helper funtion to copy data from Float3Tuple attribute into a vector list
 /// @param attr[in] - the attribute to copy
@@ -62,7 +110,6 @@ void MeshExporter::reset()
 	normals = VRay::VUtils::VectorRefList();
 	m_faceNormals = VRay::VUtils::IntRefList();
 	velocities = VRay::VUtils::VectorRefList();
-	face_mtlIDs = VRay::VUtils::IntRefList();
 	map_channels_data.clear();
 }
 
@@ -72,11 +119,6 @@ bool MeshExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc &pluginD
 		return false;
 	}
 
-	Log::getLog().debug("Mesh: %i points", gdp.getNumPoints());
-
-	pluginDesc.pluginName = VRayExporter::getPluginName(&objNode, boost::str(Parm::FmtPrefixManual % "GeomStaticMesh" % std::to_string(gdp.getUniqueId())));
-	pluginDesc.pluginID = "GeomStaticMesh";
-
 	if (pluginExporter.isIPR() && pluginExporter.isGPU()) {
 		pluginDesc.addAttribute(Attrs::PluginAttr("dynamic_geometry", true));
 	}
@@ -84,14 +126,6 @@ bool MeshExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc &pluginD
 	pluginDesc.addAttribute(Attrs::PluginAttr("vertices", getVertices()));
 	pluginDesc.addAttribute(Attrs::PluginAttr("faces", getFaces()));
 	pluginDesc.addAttribute(Attrs::PluginAttr("edge_visibility", getEdgeVisibility()));
-
-	if (getNumMtlIDs() > 0) {
-		pluginDesc.addAttribute(Attrs::PluginAttr("face_mtlIDs", getFaceMtlIDs()));
-
-		if (shadersNamesList.count()) {
-			pluginDesc.addAttribute(Attrs::PluginAttr("shaders_names", shadersNamesList));
-		}
-	}
 
 	if (getNumNormals() > 0) {
 		pluginDesc.addAttribute(Attrs::PluginAttr("normals", getNormals()));
@@ -374,19 +408,20 @@ VRay::VUtils::IntRefList& MeshExporter::getEdgeVisibility()
 	return edge_visibility;
 }
 
-VRay::VUtils::IntRefList& MeshExporter::getFaceMtlIDs()
+VRay::Plugin MeshExporter::getMaterial()
 {
-	if (face_mtlIDs.size()) {
-		return face_mtlIDs;
+	const int numFaces = getNumFaces();
+	if (!numFaces) {
+		return VRay::Plugin();
 	}
- 
+
 	PrimMaterial topPrimMaterial;
 	objectExporter.getPrimMaterial(topPrimMaterial);
 
 	OP_Node *objMatNode = topPrimMaterial.matNode
 	                      ? topPrimMaterial.matNode
 	                      : objNode.getMaterialNode(ctx.getTime());
-	material = pluginExporter.exportMaterial(objMatNode);
+	VRay::Plugin objectMaterial = pluginExporter.exportMaterial(objMatNode);
 
 	GA_ROHandleS materialStyleSheetHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTR_MATERIAL_STYLESHEET));
 	GA_ROHandleS materialPathHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GEO_STD_ATTRIB_MATERIAL));
@@ -394,12 +429,7 @@ VRay::VUtils::IntRefList& MeshExporter::getFaceMtlIDs()
 	const int hasStyleSheetAttr = materialStyleSheetHndl.isValid();
 	const int hasMaterialPathAttr = materialPathHndl.isValid();
 
-	const int numFaces = getNumFaces();
-	if (!numFaces) {
-		return face_mtlIDs;
-	}
-
-	face_mtlIDs = VRay::VUtils::IntRefList(numFaces);
+	VRay::VUtils::IntRefList face_mtlIDs(numFaces);
 
 	typedef VUtils::HashMapKey<OP_Node*, VRay::Plugin> OpPluginCache;
 	typedef VUtils::HashMapKey<OP_Node*, int> MatOpToID;
@@ -409,12 +439,18 @@ VRay::VUtils::IntRefList& MeshExporter::getFaceMtlIDs()
 
 	int matIndex = 0;
 
-	if (material) {
-		matPluginCache.insert(objMatNode, material);
+	if (objectMaterial) {
+		matPluginCache.insert(objMatNode, objectMaterial);
 		matNameToID.insert(objMatNode, matIndex++);
 	}
 
 	const STY_Styler &geoStyler = objectExporter.getStyler();
+
+#if USE_GROUP_STYLER
+	GSTY_SubjectPrimGroup primSubjects(gdp, primList);
+	STY_StylerGroup primStylers;
+	primStylers.append(geoStyler, primSubjects);
+#endif
 
 	int faceIndex = 0;
 	for (const GEO_Primitive *prim : primList) {
@@ -422,7 +458,15 @@ VRay::VUtils::IntRefList& MeshExporter::getFaceMtlIDs()
 
 		// Check if material comes from style sheet
 		PrimMaterial primMaterial;
+		primMaterial.matNode = topPrimMaterial.matNode;
+
+#if USE_GROUP_STYLER
+		const GA_Index primIndex = prim->getMapIndex();
+		const STY_Styler &primStyler = primStylers.getStyler(primIndex);
+		appendOverrideValues(primStyler, primMaterial, overrideMerge, true);
+#else
 		getOverridesForPrimitive(geoStyler, *prim, primMaterial);
+#endif
 
 		OP_Node *primMtlNode = primMaterial.matNode;
 
@@ -435,7 +479,7 @@ VRay::VUtils::IntRefList& MeshExporter::getFaceMtlIDs()
 		if (!primMtlNode) {
 			if (hasStyleSheetAttr) {
 				const UT_String styleSheet(materialStyleSheetHndl.get(primOffset), true);
-				appendStyleSheet(topPrimMaterial, styleSheet, ctx.getTime(), true);
+				appendStyleSheet(primMaterial, styleSheet, ctx.getTime(), overrideAppend, true);
 			}
 			else if (hasMaterialPathAttr) {
 				const UT_String &matPath = materialPathHndl.get(primOffset);
@@ -496,60 +540,111 @@ VRay::VUtils::IntRefList& MeshExporter::getFaceMtlIDs()
 	UT_ASSERT(faceIndex == numFaces);
 
 	const int numMaterials = matNameToID.size();
+	if (numMaterials) {
+		ObjectExporter &objExproter = pluginExporter.getObjectExporter();
 
-	if (numMaterials == 1) {
-		OpPluginCache::iterator opIt = matPluginCache.find(matNameToID.begin().key());
-		if (opIt != matPluginCache.end()) {
-			material = opIt.data();
-		}
-	}
-	else if (numMaterials > 1) {
 		VRay::VUtils::ValueRefList materialList(numMaterials);
-		VRay::VUtils::CharStringRefList shaderSetsList(numMaterials);
-
-		shadersNamesList = VRay::VUtils::ValueRefList(numMaterials);
+		VRay::VUtils::IntRefList idsList(numMaterials);
 
 		FOR_IT (MatOpToID, mIt, matNameToID) {
-			const int mtlID = mIt.data();
-
-			OP_Node *matNode = mIt.key();
-			const char *mtlName = "NULL";
 			VRay::Plugin mtlPlugin;
 
-			OpPluginCache::iterator opIt = matPluginCache.find(matNode);
+			OpPluginCache::iterator opIt = matPluginCache.find(mIt.key());
 			if (opIt != matPluginCache.end()) {
 				mtlPlugin = opIt.data();
-				mtlName = mtlPlugin.getName();
 			}
 
-			VRay::VUtils::ValueRefList item(2);
-			item[0].setDouble(mtlID);
-			item[1].setString(mtlName);
-
 			materialList[mItIdx].setPlugin(mtlPlugin);
-			shaderSetsList[mItIdx].set(mtlName);
-			shadersNamesList[mItIdx].setList(item);
+			idsList[mItIdx] = mIt.data();
 		}
 
-		Attrs::PluginDesc mtlMulti(VRayExporter::getPluginName(&objNode, boost::str(Parm::FmtPrefixManual % "Mtl" % std::to_string(gdp.getUniqueId()))),
-								   "MtlMulti");
-		mtlMulti.addAttribute(Attrs::PluginAttr("mtls_list", materialList));
-		mtlMulti.addAttribute(Attrs::PluginAttr("shader_sets_list", shaderSetsList));
+		VRay::Plugin texExtMaterialID;
+		const MHash mtlIdListHash = getMaterialIdListHash(face_mtlIDs);
 
-		material = pluginExporter.exportPlugin(mtlMulti);
+		if (!objExproter.getPluginFromCache(mtlIdListHash, texExtMaterialID)) {
+			Attrs::PluginDesc texExtMaterialIDDesc(boost::str(texExtMaterialIDFmt % mtlIdListHash % objNode.getName().buffer()),
+												   "TexExtMaterialID");
+			texExtMaterialIDDesc.addAttribute(Attrs::PluginAttr("ids_list", face_mtlIDs));
+
+			texExtMaterialID = pluginExporter.exportPlugin(texExtMaterialIDDesc);
+
+			objExproter.addPluginToCache(mtlIdListHash, texExtMaterialID);
+		}
+
+		const MHash mtlMultiIdHash = mtlIdListHash ^ primID;
+
+		if (!objExproter.getPluginFromCache(mtlMultiIdHash, objectMaterial)) {
+			Attrs::PluginDesc mtlMulti(boost::str(mtlMultiFmt % mtlMultiIdHash % objNode.getName().buffer()),
+									   "MtlMulti");
+			mtlMulti.addAttribute(Attrs::PluginAttr("mtls_list", materialList));
+			mtlMulti.addAttribute(Attrs::PluginAttr("ids_list", idsList));
+			mtlMulti.addAttribute(Attrs::PluginAttr("mtlid_gen", texExtMaterialID));
+
+			objectMaterial = pluginExporter.exportPlugin(mtlMulti);
+
+			objExproter.addPluginToCache(mtlMultiIdHash, objectMaterial);
+		}
 	}
 
-	return face_mtlIDs;
+	return objectMaterial;
+}
+
+VRay::Plugin MeshExporter::exportExtMapChannels(const MapChannels &mapChannelOverrides) const
+{
+	if (mapChannelOverrides.size() <= 0)
+		return VRay::Plugin();
+
+	ObjectExporter &objExproter = pluginExporter.getObjectExporter();
+
+	VRay::VUtils::ValueRefList map_channels(mapChannelOverrides.size());
+
+	int i = 0;
+	for (const auto &mcIt : mapChannelOverrides) {
+		const std::string &map_channel_name = mcIt.first;
+		const MapChannel &map_channel_data = mcIt.second;
+
+		VRay::VUtils::ValueRefList map_channel(3);
+		map_channel[0].setString(map_channel_name.c_str());
+		map_channel[1].setListVector(map_channel_data.vertices);
+		map_channel[2].setListInt(map_channel_data.faces);
+
+		map_channels[i].setList(map_channel);
+
+		++i;
+	}
+
+	const MHash mapChannelsHash = getMapChannelsHash(map_channels);
+
+	VRay::Plugin texExtMapChannels;
+	if (!objExproter.getPluginFromCache(mapChannelsHash, texExtMapChannels)) {
+		Attrs::PluginDesc extMapChannels(boost::str(extMapChannelFmt % mapChannelsHash % objNode.getName().buffer()),
+											"ExtMapChannels");
+		extMapChannels.addAttribute(Attrs::PluginAttr("map_channels", map_channels));
+
+		texExtMapChannels = pluginExporter.exportPlugin(extMapChannels);
+
+		objExproter.addPluginToCache(mapChannelsHash, texExtMapChannels);
+	}
+
+	return texExtMapChannels;
+}
+
+VRay::Plugin MeshExporter::getExtMapChannels()
+{
+	MapChannels mapChannelOverrides;
+	getMtlOverrides(mapChannelOverrides);
+	getPointAttrs(mapChannelOverrides, skipMapChannelUV);
+	getVertexAttrs(mapChannelOverrides, skipMapChannelUV);
+
+	return exportExtMapChannels(mapChannelOverrides);
 }
 
 MapChannels& MeshExporter::getMapChannels()
 {
 	if (map_channels_data.size() <= 0) {
-		getVertexAttrs(map_channels_data);
-		getPointAttrs(map_channels_data);
-		getMtlOverrides(map_channels_data);
+		getVertexAttrs(map_channels_data, skipMapChannelNonUV);
+		getPointAttrs(map_channels_data, skipMapChannelNonUV);
 	}
-
 	return map_channels_data;
 }
 
@@ -690,7 +785,7 @@ static void setMapChannelOverrideFaceData(MapChannels &mapChannels, const GEOPri
 	}
 }
 
-void MeshExporter::getMtlOverrides(MapChannels &mapChannels)
+void MeshExporter::getMtlOverrides(MapChannels &mapChannels) const
 {
 	GA_ROHandleS materialStyleSheetHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTR_MATERIAL_STYLESHEET));
 	GA_ROHandleS materialPathHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GEO_STD_ATTRIB_MATERIAL));
@@ -699,16 +794,30 @@ void MeshExporter::getMtlOverrides(MapChannels &mapChannels)
 	int faceIndex = 0;
 
 	MtlOverrideAttrExporter attrExporter(gdp);
+
 	const STY_Styler &geoStyler = objectExporter.getStyler();
+
+#if USE_GROUP_STYLER
+	GSTY_SubjectPrimGroup primSubjects(gdp, primList);
+	STY_StylerGroup primStylers;
+	primStylers.append(geoStyler, primSubjects);
+#endif
 
 	for (const GEO_Primitive *prim : primList) {
 		const GA_Offset primOffset = prim->getMapOffset();
 
+		// Parent override will be exported as user attribute,
+		// so don't merge anything here.
 		PrimMaterial primMaterial;
 
 		// Style sheet overrides.
+#if USE_GROUP_STYLER
+		const GA_Index primIndex = prim->getMapIndex();
+		const STY_Styler &primStyler = primStylers.getStyler(primIndex);
+		appendOverrideValues(primStyler, primMaterial, overrideMerge);
+#else
 		getOverridesForPrimitive(geoStyler, *prim, primMaterial);
-
+#endif
 		// Overrides from primitive style sheet / material attributes.
 		appendMaterialOverride(primMaterial, materialStyleSheetHndl, materialPathHndl, materialOverrideHndl, primOffset, ctx.getTime());
 
@@ -754,7 +863,37 @@ void MeshExporter::getMtlOverrides(MapChannels &mapChannels)
 	}
 }
 
-int MeshExporter::getPointAttrs(MapChannels &mapChannels)
+/// Returns true if we need to skip this attribute.
+/// @param attr Mesh attribute.
+/// @param skipChannels Skip type.
+static int skipMapChannel(const GA_Attribute *attr, SkipMapChannel skipChannels)
+{
+	if (!attr)
+		return true;
+
+	const UT_StringHolder &attrName = attr->getName();
+
+	// "P", "N", "v" attributes are handled separately.
+	const int isMeshAttr = attrName == GEO_STD_ATTRIB_POSITION ||
+	                       attrName == GEO_STD_ATTRIB_NORMAL ||
+	                       attrName == GEO_STD_ATTRIB_VELOCITY;
+	if (isMeshAttr)
+		return true;
+
+	const int isUvAttr = attrName.startsWith(GEO_STD_ATTRIB_TEXTURE);
+
+	if (skipChannels == skipMapChannelUV) {
+		return isUvAttr;
+	}
+
+	if (skipChannels == skipMapChannelNonUV) {
+		return !isUvAttr;
+	}
+
+	return false;
+}
+
+int MeshExporter::getPointAttrs(MapChannels &mapChannels, SkipMapChannel skipChannels)
 {
 	int nMapChannels = 0;
 
@@ -762,37 +901,30 @@ int MeshExporter::getPointAttrs(MapChannels &mapChannels)
 	gdp.getAttributes().matchAttributes(GEOgetV3AttribFilter(), GA_ATTRIB_POINT, attrList);
 
 	for (const GA_Attribute *attr : attrList) {
-		if (!attr) {
+		if (skipMapChannel(attr, skipChannels))
 			continue;
-		}
 
-		// "P","N","v" point attributes are handled separately
-		// as different plugin properties so skip them here
-		if (attr->getName() != GEO_STD_ATTRIB_POSITION &&
-			attr->getName() != GEO_STD_ATTRIB_NORMAL &&
-			attr->getName() != GEO_STD_ATTRIB_VELOCITY)
-		{
-			const std::string attrName = attr->getName().toStdString();
-			if (!mapChannels.count(attrName)) {
-				MapChannel &mapChannel = mapChannels[attrName];
-				mapChannel.name = attrName;
-				mapChannel.vertices = VRay::VUtils::VectorRefList(getNumVertices());
-				// we can use same face indices as for mesh vertices
-				mapChannel.faces = getFaces();
+		const std::string attrName = attr->getName().toStdString();
+		if (mapChannels.count(attrName))
+			continue;
 
-				getDataFromAttribute(attr, mapChannel.vertices);
+		MapChannel &mapChannel = mapChannels[attrName];
+		mapChannel.name = attrName;
+		mapChannel.vertices = VRay::VUtils::VectorRefList(getNumVertices());
+		// We can use the same face indices as for the mesh vertices.
+		mapChannel.faces = getFaces();
 
-				UT_ASSERT(gdp.getNumPoints() == mapChannel.vertices.size());
+		getDataFromAttribute(attr, mapChannel.vertices);
 
-				++nMapChannels;
-			}
-		}
+		UT_ASSERT(gdp.getNumPoints() == mapChannel.vertices.size());
+
+		++nMapChannels;
 	}
 
 	return nMapChannels;
 }
 
-int MeshExporter::getVertexAttrs(MapChannels &mapChannels)
+int MeshExporter::getVertexAttrs(MapChannels &mapChannels, SkipMapChannel skipChannels)
 {
 	int nMapChannels = 0;
 
@@ -800,23 +932,16 @@ int MeshExporter::getVertexAttrs(MapChannels &mapChannels)
 	gdp.getAttributes().matchAttributes(GEOgetV3AttribFilter(), GA_ATTRIB_VERTEX, attrList);
 
 	for (const GA_Attribute *attr : attrList) {
-		if (!attr) {
+		if (skipMapChannel(attr, skipChannels))
 			continue;
-		}
 
-		// "P","N","v" vertex attributes are handled separately
-		// as different plugin properties so skip them here
-		if (attr->getName() != GEO_STD_ATTRIB_POSITION &&
-			attr->getName() != GEO_STD_ATTRIB_NORMAL &&
-			attr->getName() != GEO_STD_ATTRIB_VELOCITY)
-		{
-			const std::string attrName = attr->getName().toStdString();
-			if (!mapChannels.count(attrName)) {
-				MapChannel &map_channel = mapChannels[attrName];
-				getVertexAttrAsMapChannel(*attr, map_channel);
-				++nMapChannels;
-			}
-		}
+		const std::string attrName = attr->getName().toStdString();
+		if (mapChannels.count(attrName))
+			continue;
+
+		MapChannel &map_channel = mapChannels[attrName];
+		getVertexAttrAsMapChannel(*attr, map_channel);
+		++nMapChannels;
 	}
 
 	return nMapChannels;

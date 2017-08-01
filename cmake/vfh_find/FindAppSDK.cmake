@@ -23,9 +23,6 @@ else()
 		if(SDK_PATH)
 			# if vfh sdk path is given use it to deduce AppSDK root path based on version
 			set(_appsdk_root "${SDK_PATH}/appsdk")
-			if(WIN32)
-				set(_appsdk_root "${_appsdk_root}/${HDK_RUNTIME}")
-			endif()
 		else()
 			# otherwise search in default location for AppSDK
 			string(TOLOWER "${CMAKE_HOST_SYSTEM_NAME}" _HOST_SYSTEM_NAME)

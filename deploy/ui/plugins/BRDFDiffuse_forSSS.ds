@@ -3,118 +3,132 @@
     label	"Diffuse For SSS"
     parmtag	{ spare_category "Diffuse For SSS" }
     parmtag	{ vray_plugin "BRDFDiffuse_forSSS" }
-    parm {
-	name	"color"
-	label	"Color"
-	type	color
-	size	3
-	default	{ "1" "1" "1" }
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFDiffuse_forSSS" }
-	parmtag	{ "vray_pluginattr" "color" }
-	parmtag	{ "vray_type" "Color" }
-    }
-    parm {
-	name	"color_tex"
-	label	"Color Tex"
-	type	color4
-	size	4
-	default	{ "0" "0" "0" "1" }
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFDiffuse_forSSS" }
-	parmtag	{ "vray_pluginattr" "color_tex" }
-	parmtag	{ "vray_type" "Texture" }
-    }
-    parm {
-	name	"color_tex_mult"
-	label	"Color Tex Mult"
-	type	float
-	default	{ "1" }
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFDiffuse_forSSS" }
-	parmtag	{ "vray_pluginattr" "color_tex_mult" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"transparency"
-	label	"Transparency"
-	type	color
-	size	3
-	default	{ "0" "0" "0" }
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFDiffuse_forSSS" }
-	parmtag	{ "vray_pluginattr" "transparency" }
-	parmtag	{ "vray_type" "Color" }
-    }
-    parm {
-	name	"transparency_tex"
-	label	"Transparency Tex"
-	type	color4
-	size	4
-	default	{ "0" "0" "0" "1" }
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFDiffuse_forSSS" }
-	parmtag	{ "vray_pluginattr" "transparency_tex" }
-	parmtag	{ "vray_type" "Texture" }
-    }
-    parm {
-	name	"transparency_tex_mult"
-	label	"Transparency Tex Mult"
-	type	float
-	default	{ "1" }
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFDiffuse_forSSS" }
-	parmtag	{ "vray_pluginattr" "transparency_tex_mult" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"back_color"
-	label	"Back Color"
-	type	color4
-	size	4
-	default	{ "1" "1" "1" "1" }
-	help	"Color on the back sides of the material"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFDiffuse_forSSS" }
-	parmtag	{ "vray_pluginattr" "back_color" }
-	parmtag	{ "vray_type" "Texture" }
-    }
-    parm {
-	name	"roughness"
-	label	"Roughness"
-	type	float
-	default	{ "1" }
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFDiffuse_forSSS" }
-	parmtag	{ "vray_pluginattr" "roughness" }
-	parmtag	{ "vray_type" "TextureFloat" }
-    }
-    parm {
-	name	"use_irradiance_map"
-	label	"Use Irradiance Map"
-	type	toggle
-	default	{ "1" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "BRDFDiffuse_forSSS" }
-	parmtag	{ "vray_pluginattr" "use_irradiance_map" }
-	parmtag	{ "vray_type" "boolean" }
-    }
+	
+	groupsimple {
+		name "folder_main"
+		label "Main"
+		
+		parm {
+			name	"roughness"
+			label	"Roughness"
+			type	float
+			default	{ "1" }
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFDiffuse_forSSS" }
+			parmtag	{ "vray_pluginattr" "roughness" }
+			parmtag	{ "vray_type" "TextureFloat" }
+		}
+		
+		parm {
+			name	"color"
+			label	"Color"
+			type	color
+			size	3
+			default	{ "1" "1" "1" }
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFDiffuse_forSSS" }
+			parmtag	{ "vray_pluginattr" "color" }
+			parmtag	{ "vray_type" "Color" }
+		}
+		parm {
+			name	"color_tex"
+			label	"Color Tex"
+			type	color4
+			invisible
+			size	4
+			default	{ "0" "0" "0" "1" }
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFDiffuse_forSSS" }
+			parmtag	{ "vray_pluginattr" "color_tex" }
+			parmtag	{ "vray_type" "Texture" }
+		}
+		parm {
+			name	"color_tex_mult"
+			label	"Color Tex Mult"
+			type	float
+			default	{ "1" }
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFDiffuse_forSSS" }
+			parmtag	{ "vray_pluginattr" "color_tex_mult" }
+			parmtag	{ "vray_type" "float" }
+		}
+		parm {
+			name	"back_color"
+			label	"Back Color"
+			type	color4
+			size	4
+			default	{ "1" "1" "1" "1" }
+			help	"Color on the back sides of the material"
+			range	{ 0 10 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFDiffuse_forSSS" }
+			parmtag	{ "vray_pluginattr" "back_color" }
+			parmtag	{ "vray_type" "Texture" }
+		}
+		
+		parm {
+			name	"transparency"
+			label	"Transparency"
+			type	color
+			size	3
+			default	{ "0" "0" "0" }
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFDiffuse_forSSS" }
+			parmtag	{ "vray_pluginattr" "transparency" }
+			parmtag	{ "vray_type" "Color" }
+		}
+		parm {
+			name	"transparency_tex"
+			label	"Transparency Tex"
+			type	color4
+			invisible
+			size	4
+			default	{ "0" "0" "0" "1" }
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFDiffuse_forSSS" }
+			parmtag	{ "vray_pluginattr" "transparency_tex" }
+			parmtag	{ "vray_type" "Texture" }
+		}
+		parm {
+			name	"transparency_tex_mult"
+			label	"Transparency Tex Mult"
+			type	float
+			default	{ "1" }
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFDiffuse_forSSS" }
+			parmtag	{ "vray_pluginattr" "transparency_tex_mult" }
+			parmtag	{ "vray_type" "float" }
+		}
+		
+		 parm {
+			name	"use_irradiance_map"
+			label	"Use Irradiance Map"
+			type	toggle
+			default	{ "1" }
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFDiffuse_forSSS" }
+			parmtag	{ "vray_pluginattr" "use_irradiance_map" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+	
+	}
+   
+   
 }

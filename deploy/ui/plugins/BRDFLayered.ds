@@ -1,77 +1,92 @@
 {
-    name    BRDFLayered
-    label   "Blend"
-    parmtag { spare_category "Layered" }
-    parmtag { vray_plugin "BRDFLayered" }
+    name	BRDFLayered
+    label	"Blend"
+    parmtag	{ spare_category "Layered" }
+    parmtag	{ vray_plugin "BRDFLayered" }
 
-    multiparm {
+    groupsimple {
+      name "folder_main"
+      label "Main"
+	  
+		
+
+
+      parm {
+      	name	"transparency"
+      	label	"Transparency"
+      	type	color
+      	size	3
+      	default	{ "0" "0" "0" }
+      	range	{ 0 10 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "BRDFLayered" }
+      	parmtag	{ "vray_pluginattr" "transparency" }
+      	parmtag	{ "vray_type" "Color" }
+      }
+
+      parm {
+      	name	"transparency_tex_mult"
+      	label	"Transparency Texture Mult"
+      	type	float
+      	default	{ "1" }
+      	range	{ 0 10 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "BRDFLayered" }
+      	parmtag	{ "vray_pluginattr" "transparency_tex_mult" }
+      	parmtag	{ "vray_type" "float" }
+      }
+
+      parm {
+      	name	"additive_mode"
+      	label	"Additive Mode"
+      	type	ordinal
+      	default	{ "0" }
+      	help	"Weight for the material layers. 0 = Default, 1 = Additive. 2 and 3 used by RT GPU only (2 = MDL normalize, 3 = MDL clamp max)"
+      	menu	{
+      	    0	"Default"
+      	    1	"Additive"
+      	    2	"MDL Normalize"
+      	    3	"MDL Clamp Max"
+      	}
+      	range	{ 0 1 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_enumkeys" "0,1,2,3" }
+      	parmtag	{ "vray_plugin" "BRDFLayered" }
+      	parmtag	{ "vray_pluginattr" "additive_mode" }
+      	parmtag	{ "vray_type" "int" }
+      }
+
+
+		parm {
+			name	"transparency_tex"
+			label	"Transparency"
+			type	color4
+			invisible
+			size	4
+			default	{ "0" "0" "0" "1" }
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "BRDFLayered" }
+			parmtag	{ "vray_pluginattr" "transparency_tex" }
+			parmtag	{ "vray_type" "Texture" }
+
+		}
+
+	}
+	multiparm {
         name "brdf_count"
         label "BRDF Count"
 
-        parm {
-            name "brdf#weight"
-            label "BRDF Weight #"
-            type float
-            default { 1.0 }
-        }
-    }
+		parm {
+			name "brdf#weight"
+			label "BRDF Weight #"
+			type float
+			default { 1.0 }
+		}
+	}	
 
-    parm {
-    name    "transparency_tex"
-    label   "Transparency"
-    type    color4
-    size    4
-    default { "0" "0" "0" "1" }
-    range   { 0 10 }
-    export  none
-    parmtag { "cook_dependent" "1" }
-    parmtag { "vray_plugin" "BRDFLayered" }
-    parmtag { "vray_pluginattr" "transparency_tex" }
-    parmtag { "vray_type" "Texture" }
-    }
-    parm {
-    name    "transparency_tex_mult"
-    label   "Transparency Tex Mult"
-    type    float
-    default { "1" }
-    range   { 0 10 }
-    export  none
-    parmtag { "cook_dependent" "1" }
-    parmtag { "vray_plugin" "BRDFLayered" }
-    parmtag { "vray_pluginattr" "transparency_tex_mult" }
-    parmtag { "vray_type" "float" }
-    }
-    parm {
-    name    "additive_mode"
-    label   "Additive Mode"
-    type    ordinal
-    default { "0" }
-    help    "Weight for the material layers. 0 = Default, 1 = Additive. 2 and 3 used by RT GPU only (2 = MDL normalize, 3 = MDL clamp max)"
-    menu    {
-        "Default"   "Default"
-        "Additive"  "Additive"
-        "MDL Normalize" "MDL Normalize"
-        "MDL Clamp Max" "MDL Clamp Max"
-    }
-    range   { 0 1 }
-    export  none
-    parmtag { "cook_dependent" "1" }
-    parmtag { "vray_enumkeys" "0,1,2,3" }
-    parmtag { "vray_plugin" "BRDFLayered" }
-    parmtag { "vray_pluginattr" "additive_mode" }
-    parmtag { "vray_type" "int" }
-    }
-    parm {
-    name    "transparency"
-    label   "Transparency"
-    type    color
-    size    3
-    default { "0" "0" "0" }
-    range   { 0 10 }
-    export  none
-    parmtag { "cook_dependent" "1" }
-    parmtag { "vray_plugin" "BRDFLayered" }
-    parmtag { "vray_pluginattr" "transparency" }
-    parmtag { "vray_type" "Color" }
-    }
 }

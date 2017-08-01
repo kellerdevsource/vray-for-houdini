@@ -1,0 +1,60 @@
+groupcollapsible {
+    name "VfhTextureCommonColor"
+    label "Color Tweaks"
+
+    parm {
+        name    "nouvw_color"
+        label   "No Uvs Color"
+        type    color4
+        size    4
+        default { "0.5" "0.5" "0.5" "1" }
+        help    "The color when there are no valid uvw coordinates"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_pluginattr" "nouvw_color" }
+        parmtag { "vray_type" "Texture" }
+        invisible
+    }
+
+    parm {
+        name    "color_mult"
+        label   "Color Mult"
+        type    color4
+        size    4
+        default { "1" "1" "1" "1" }
+        help    "A multiplier for the texture color"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_pluginattr" "color_mult" }
+        parmtag { "vray_type" "Texture" }
+    }
+
+    parm {
+        name    "color_offset"
+        label   "Color Offset"
+        type    color4
+        size    4
+        default { "0" "0" "0" "1" }
+        help    "An additional offset for the texture color"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_pluginattr" "color_offset" }
+        parmtag { "vray_type" "Texture" }
+    }
+
+    parm {
+        name    "invert"
+        label   "Invert"
+        type    toggle
+        default { "0" }
+        help    "If true, the resulting texture color will be inverted"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_pluginattr" "invert" }
+        parmtag { "vray_type" "boolean" }
+    }
+}

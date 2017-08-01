@@ -215,7 +215,7 @@ OP::VRayNode::PluginResult VOP::BRDFLayered::asPluginDesc(Attrs::PluginDesc &plu
 					const fpreal weight_value = evalFloatInst("brdf#weight", &i, 0, t);
 
 					Attrs::PluginDesc weight_tex(VRayExporter::getPluginName(this, paramPrefix), "TexAColor");
-					weight_tex.pluginAttrs.push_back(Attrs::PluginAttr("texture", weight_value, weight_value, weight_value, 1.0f));
+					weight_tex.add(Attrs::PluginAttr("texture", weight_value, weight_value, weight_value, 1.0f));
 
 					weight_plugin = exporter.exportPlugin(weight_tex);
 				}
@@ -236,8 +236,8 @@ OP::VRayNode::PluginResult VOP::BRDFLayered::asPluginDesc(Attrs::PluginDesc &plu
 		return PluginResult::PluginResultError;
 	}
 
-	pluginDesc.pluginAttrs.push_back(Attrs::PluginAttr("brdfs", brdfs));
-	pluginDesc.pluginAttrs.push_back(Attrs::PluginAttr("weights", weights));
+	pluginDesc.add(Attrs::PluginAttr("brdfs", brdfs));
+	pluginDesc.add(Attrs::PluginAttr("weights", weights));
 
 	return PluginResult::PluginResultContinue;
 }

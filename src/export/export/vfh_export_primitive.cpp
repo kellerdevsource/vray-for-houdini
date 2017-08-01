@@ -161,7 +161,7 @@ static OP_Node* getPhoenixShaderSimNode(OP_Node *matNode)
 {
 	if (!matNode)
 		return nullptr;
-	return getVRayNodeFromOp(*matNode, "PhxShaderSim", "PhxShaderSim");
+	return getVRayNodeFromOp(*matNode, "Simulation", "PhxShaderSim");
 }
 
 void HoudiniVolumeExporter::exportPrimitive(const PrimitiveItem &item, PluginSet &pluginsSet)
@@ -409,8 +409,6 @@ void VolumeExporter::exportPrimitive(const PrimitiveItem &item, PluginSet &plugi
 	}
 
 	VOP::NodeBase &phxSimVopNode = static_cast<VOP::NodeBase&>(*simVop);
-
-	const int primID = detailID;
 
 	static boost::format phxSimNameFmt("PhxShaderSim|%i@%s");
 	Attrs::PluginDesc phxSim(boost::str(phxSimNameFmt % primID % objNode.getName().buffer()),

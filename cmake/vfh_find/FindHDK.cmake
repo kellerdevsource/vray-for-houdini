@@ -141,15 +141,23 @@ if(HDK_FOUND)
 	set(HDK_INCLUDE_PATH ${HDK_INCLUDES})
 	set(HDK_LIB_PATH     ${HDK_LIBRARIES})
 
+	if (WIN32)
+		set(PYTHON_INCLUDE_PATH ${HDK_PATH}/python27/include)
+		set(PYTHON_LIB_PATH ${HDK_PATH}/python27/libs)
+	else()
+		set(PYTHON_INCLUDE_PATH ${HDK_PATH}/python/include/python2.7)
+		set(PYTHON_LIB_PATH ${HDK_PATH}/python/lib)
+	endif()
+
 	set(HDK_INCLUDES
 		# For Boost spirit
+		${PYTHON_INCLUDE_PATH}
 		${SDK_PATH}/hdk/boost_shared
-		${HDK_PATH}/python27/include
 		${HDK_INCLUDE_PATH}
 	)
 
 	set(HDK_LIBRARIES
-		${HDK_PATH}/python27/libs
+		${PYTHON_LIB_PATH}
 		${HDK_LIB_PATH}
 	)
 

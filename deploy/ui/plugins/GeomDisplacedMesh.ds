@@ -3,377 +3,423 @@
     label	"Displacement"
     parmtag	{ spare_category "Displacement" }
     parmtag	{ vray_plugin "GeomDisplacedMesh" }
+
+
     parm {
-	name	"displacement_tex_color"
-	label	"Color"
-	type	color4
-	size	4
-	default	{ "0" "0" "0" "1" }
-	help	"The displacement texture"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_custom_handling" "1" }
-	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
-	parmtag	{ "vray_pluginattr" "displacement_tex_color" }
-	parmtag	{ "vray_type" "Texture" }
+      name	"displacement_tex_color"
+      label	"Color"
+      type	color4
+      invisible
+      size	4
+      default	{ "0" "0" "0" "1" }
+      help	"The displacement texture"
+      range	{ 0 1 }
+      export	none
+      parmtag	{ "cook_dependent" "1" }
+      parmtag	{ "vray_custom_handling" "1" }
+      parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
+      parmtag	{ "vray_pluginattr" "displacement_tex_color" }
+      parmtag	{ "vray_type" "Texture" }
     }
     parm {
-	name	"displacement_tex_float"
-	label	"Float"
-	type	float
-	default	{ "0" }
-	help	"The displacement texture"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_custom_handling" "1" }
-	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
-	parmtag	{ "vray_pluginattr" "displacement_tex_float" }
-	parmtag	{ "vray_type" "TextureFloat" }
+      name	"displacement_tex_float"
+      label	"Float"
+      type	float
+      invisible
+      default	{ "0" }
+      help	"The displacement texture"
+      range	{ 0 1 }
+      export	none
+      parmtag	{ "cook_dependent" "1" }
+      parmtag	{ "vray_custom_handling" "1" }
+      parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
+      parmtag	{ "vray_pluginattr" "displacement_tex_float" }
+      parmtag	{ "vray_type" "TextureFloat" }
     }
-    parm {
-	name	"displacement_amount"
-	label	"Amount"
-	type	float
-	default	{ "0.25" }
-	help	"Determines the displacement amount for white areas in the displacement map; if use_globals is true this is multiplied by the global displacement amount option"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
-	parmtag	{ "vray_pluginattr" "displacement_amount" }
-	parmtag	{ "vray_type" "float" }
+
+    groupsimple {
+      name "folder_main"
+      label "Main"
+
+      parm {
+      	name	"type"
+      	label	"Mode"
+      	type	ordinal
+      	default	{ "0" }
+      	help	"Displacement type"
+      	menu	{
+      	    0	"Normal"
+      	    1	"2D"
+      	    2	"Vector"
+      	    3	"Vector (Absolute)"
+      	    4	"Vector (Object)"
+      	}
+      	range	{ 0 1 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_custom_handling" "1" }
+      	parmtag	{ "vray_enumkeys" "0,1,2,3,4" }
+      }
+
+      parm {
+      	name	"vector_displacement"
+      	label	"Vector Displacement"
+        type	ordinal
+      	default	{ "0" }
+      	help	"When this is Base 0.5, the red, green and blue channels of displacement_tex_color will be used to perform vector displacement with base 0.5; Otherwise this matches the Mudbox displacement maps"
+        menu	{
+      	    0	"Base 0.5"
+      	    1	"Mudbox"
+      	}
+      	range	{ 0 1 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
+      	parmtag	{ "vray_pluginattr" "vector_displacement" }
+      	parmtag	{ "vray_type" "int" }
+      }
+
+      parm {
+      	name	"displacement_amount"
+      	label	"Displacement Amount"
+      	type	float
+      	default	{ "0.25" }
+      	help	"Determines the displacement amount for white areas in the displacement map; if use_globals is true this is multiplied by the global displacement amount option"
+      	range	{ -1 1 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
+      	parmtag	{ "vray_pluginattr" "displacement_amount" }
+      	parmtag	{ "vray_type" "float" }
+      }
+
+      parm {
+      	name	"displacement_shift"
+      	label	"Shift"
+      	type	float
+      	default	{ "0" }
+      	help	"This constant value is added to the displacement map"
+      	range	{ 0 64 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
+      	parmtag	{ "vray_pluginattr" "displacement_shift" }
+      	parmtag	{ "vray_type" "float" }
+      }
+
+
+
+
+
+
     }
-    parm {
-	name	"displacement_shift"
-	label	"Shift"
-	type	float
-	default	{ "0" }
-	help	"This constant value is added to the displacement map"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
-	parmtag	{ "vray_pluginattr" "displacement_shift" }
-	parmtag	{ "vray_type" "float" }
+
+    groupsimple {
+      name "folder_options"
+      label "Options"
+
+      parm {
+      	name	"use_globals"
+      	label	"Use Global Settings"
+      	type	toggle
+      	default	{ "1" }
+      	help	"If true, the global displacement quality settings will be used"
+      	range	{ 0 1 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
+      	parmtag	{ "vray_pluginattr" "use_globals" }
+      	parmtag	{ "vray_type" "boolean" }
+      }
+      parm {
+      	name	"view_dep"
+      	label	"View Dependent"
+      	type	toggle
+      	default	{ "1" }
+      	help	"If use_globals is false, this determines if view-dependent tesselation is used"
+      	hidewhen	"{ use_globals != 0 }"
+      	range	{ 0 1 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
+      	parmtag	{ "vray_pluginattr" "view_dep" }
+      	parmtag	{ "vray_type" "boolean" }
+      }
+      parm {
+      	name	"edge_length"
+      	label	"Edge Length"
+      	type	float
+      	default	{ "4" }
+      	help	"If use_globals is false, this determines the approximate edge length for the sub-triangles"
+      	hidewhen	"{ use_globals != 0 }"
+      	range	{ 0 64 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
+      	parmtag	{ "vray_pluginattr" "edge_length" }
+      	parmtag	{ "vray_type" "float" }
+      }
+      parm {
+      	name	"max_subdivs"
+      	label	"Max Subdivisions"
+      	type	integer
+      	default	{ "256" }
+      	help	"If use_globals is false, this determines the maximum subdivisions for a triangle of the original mesh"
+      	hidewhen	"{ use_globals != 0 }"
+      	range	{ 0 64 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
+      	parmtag	{ "vray_pluginattr" "max_subdivs" }
+      	parmtag	{ "vray_type" "int" }
+      }
+      parm {
+      	name	"keep_continuity"
+      	label	"Keep Continuity"
+      	type	toggle
+      	default	{ "1" }
+      	help	"If true, the plugin will attempt to keep the continuity of the displaced surface"
+      	range	{ 0 1 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
+      	parmtag	{ "vray_pluginattr" "keep_continuity" }
+      	parmtag	{ "vray_type" "boolean" }
+      }
+
+      parm {
+      	name	"map_channel"
+      	label	"Map Channel"
+      	type	integer
+        invisible
+      	default	{ "0" }
+      	help	"The mapping channel to use for vector and 2d displacement"
+      	range	{ 0 64 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
+      	parmtag	{ "vray_pluginattr" "map_channel" }
+      	parmtag	{ "vray_type" "int" }
+      }
+      parm {
+      	name	"static_displacement"
+      	label	"Static Displacement"
+      	type	toggle
+      	default	{ "0" }
+      	help	"If true, the resulting triangles of the displacement algorithm will be inserted into the rayserver as static geometry"
+      	range	{ 0 1 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
+      	parmtag	{ "vray_pluginattr" "static_displacement" }
+      	parmtag	{ "vray_type" "boolean" }
+      }
+      parm {
+      	name	"object_space_displacement"
+      	label	"Object Space Displacement"
+      	type	toggle
+      	default	{ "0" }
+      	help	"If true, the parent transformation will affect the amount of displacement. Used only when doing 3D displacement"
+      	range	{ 0 1 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
+      	parmtag	{ "vray_pluginattr" "object_space_displacement" }
+      	parmtag	{ "vray_type" "boolean" }
+      }
+      parm {
+      	name	"displace_2d"
+      	label	"2d Displacement"
+      	type	toggle
+      	default	{ "0" }
+      	help	"Use to enable 2d displacement. Overrides the vector_displacement flag"
+      	range	{ 0 1 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
+      	parmtag	{ "vray_pluginattr" "displace_2d" }
+      	parmtag	{ "vray_type" "boolean" }
+      }
+      parm {
+      	name	"displace_2d_multi_tile"
+      	label	"Displace 2d Multi Tile"
+      	type	toggle
+      	default	{ "0" }
+      	help	"Enable or disable support for tiled textures (UDIM/UVTILE) when generating 2d displacement"
+      	hidewhen	"{ displace_2d != 1 }"
+      	range	{ 0 1 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
+      	parmtag	{ "vray_pluginattr" "displace_2d_multi_tile" }
+      	parmtag	{ "vray_type" "boolean" }
+      }
+
+      parm {
+      	name	"resolution"
+      	label	"Resolution"
+      	type	integer
+      	default	{ "256" }
+      	help	"Resolution at which to sample the displacement map for 2d displacement"
+      	hidewhen	"{ displace_2d != 1 }"
+      	range	{ 0 1024 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
+      	parmtag	{ "vray_pluginattr" "resolution" }
+      	parmtag	{ "vray_type" "int" }
+      }
+      parm {
+      	name	"precision"
+      	label	"Precision"
+      	type	integer
+      	default	{ "8" }
+      	help	"Increase for curved surfaces to avoid artifacts"
+      	hidewhen	"{ displace_2d != 1 }"
+      	range	{ 0 64 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
+      	parmtag	{ "vray_pluginattr" "precision" }
+      	parmtag	{ "vray_type" "int" }
+      }
+      parm {
+      	name	"tight_bounds"
+      	label	"Tight Bounds"
+      	type	toggle
+      	default	{ "1" }
+      	help	"When this is on, initialization will be slower, but tighter bounds will be computed for the displaced triangles making rendering faster"
+      	hidewhen	"{ use_globals != 0 } { displace_2d != 1 }"
+      	range	{ 0 1 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
+      	parmtag	{ "vray_pluginattr" "tight_bounds" }
+      	parmtag	{ "vray_type" "boolean" }
+      }
+      parm {
+      	name	"filter_texture"
+      	label	"Filter Texture"
+      	type	toggle
+      	default	{ "0" }
+      	help	"Filter the texture for 2d displacement"
+      	hidewhen	"{ displace_2d != 1 }"
+      	range	{ 0 1 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
+      	parmtag	{ "vray_pluginattr" "filter_texture" }
+      	parmtag	{ "vray_type" "boolean" }
+      }
+      parm {
+      	name	"filter_blur"
+      	label	"Filter Blur"
+      	type	float
+      	default	{ "0.001" }
+      	help	"The amount of UV space to average for filtering purposes. A value of 1.0 will average thw whole texture"
+      	hidewhen	"{ filter_texture != 1 } { displace_2d != 1 }"
+      	range	{ 0 0.1 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
+      	parmtag	{ "vray_pluginattr" "filter_blur" }
+      	parmtag	{ "vray_type" "float" }
+      }
+
+      parm {
+      	name	"cache_normals"
+      	label	"Cache Normals"
+      	type	toggle
+      	default	{ "0" }
+      	help	"If this option is equal to 1 then the normals of the generated triangles are cached"
+      	range	{ 0 1 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
+      	parmtag	{ "vray_pluginattr" "cache_normals" }
+      	parmtag	{ "vray_type" "boolean" }
+      }
+
+      parm {
+      	name	"water_level"
+      	label	"Water Level"
+      	type	float
+      	default	{ "-100000" }
+      	help	"Geometry below this displacement level will be clipped away"
+      	range	{ -1000 0 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
+      	parmtag	{ "vray_pluginattr" "water_level" }
+      	parmtag	{ "vray_type" "float" }
+      }
+
+      parm {
+      	name	"image_width"
+      	label	"Image Width"
+      	type	integer
+      	default	{ "0" }
+      	help	"This parameter overrides the imgWidth paramter from VRayFrameData during the calculation of the subdivision depth"
+      	range	{ 0 1024 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
+      	parmtag	{ "vray_pluginattr" "image_width" }
+      	parmtag	{ "vray_type" "int" }
+      }
+
     }
-    parm {
-	name	"use_globals"
-	label	"Use Global Settings"
-	type	toggle
-	default	{ "1" }
-	help	"If true, the global displacement quality settings will be used"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
-	parmtag	{ "vray_pluginattr" "use_globals" }
-	parmtag	{ "vray_type" "boolean" }
+
+    groupcollapsible {
+      name "folder_bounds"
+      label "Bounds"
+
+      parm {
+      	name	"use_bounds"
+      	label	"Use Bounds"
+      	type	toggle
+      	default	{ "0" }
+      	help	"If true, the min/max values for the displacement texture are specified by the min_bound and max_bound parameters; if false, these are calculated automatically"
+      	range	{ 0 1 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
+      	parmtag	{ "vray_pluginattr" "use_bounds" }
+      	parmtag	{ "vray_type" "boolean" }
+      }
+      parm {
+      	name	"min_bound"
+      	label	"Min Bound"
+      	type	color
+      	size	3
+      	default	{ "0" "0" "0" }
+      	help	"The lowest value for the displacement texture"
+      	hidewhen	"{ use_bounds != 1 }"
+      	range	{ 0 10 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
+      	parmtag	{ "vray_pluginattr" "min_bound" }
+      	parmtag	{ "vray_type" "Color" }
+      }
+      parm {
+      	name	"max_bound"
+      	label	"Max Bound"
+      	type	color
+      	size	3
+      	default	{ "1" "1" "1" }
+      	help	"The biggest value for the displacement texture"
+      	hidewhen	"{ use_bounds != 1 }"
+      	range	{ 0 10 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
+      	parmtag	{ "vray_pluginattr" "max_bound" }
+      	parmtag	{ "vray_type" "Color" }
+      }
+
+
     }
-    parm {
-	name	"view_dep"
-	label	"View Dependent"
-	type	toggle
-	default	{ "1" }
-	help	"If use_globals is false, this determines if view-dependent tesselation is used"
-	disablewhen	"{ use_globals != 0 }"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
-	parmtag	{ "vray_pluginattr" "view_dep" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"edge_length"
-	label	"Edge Length"
-	type	float
-	default	{ "4" }
-	help	"If use_globals is false, this determines the approximate edge length for the sub-triangles"
-	disablewhen	"{ use_globals != 0 }"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
-	parmtag	{ "vray_pluginattr" "edge_length" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"max_subdivs"
-	label	"Max Subdivisions"
-	type	integer
-	default	{ "256" }
-	help	"If use_globals is false, this determines the maximum subdivisions for a triangle of the original mesh"
-	disablewhen	"{ use_globals != 0 }"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
-	parmtag	{ "vray_pluginattr" "max_subdivs" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"keep_continuity"
-	label	"Keep Continuity"
-	type	toggle
-	default	{ "0" }
-	help	"If true, the plugin will attempt to keep the continuity of the displaced surface"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
-	parmtag	{ "vray_pluginattr" "keep_continuity" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"water_level"
-	label	"Water Level"
-	type	float
-	default	{ "-1e+30" }
-	help	"Geometry below this displacement level will be clipped away"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
-	parmtag	{ "vray_pluginattr" "water_level" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"map_channel"
-	label	"Map Channel"
-	type	integer
-	default	{ "0" }
-	help	"The mapping channel to use for vector and 2d displacement"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
-	parmtag	{ "vray_pluginattr" "map_channel" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"static_displacement"
-	label	"Static Displacement"
-	type	toggle
-	default	{ "0" }
-	help	"If true, the resulting triangles of the displacement algorithm will be inserted into the rayserver as static geometry"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
-	parmtag	{ "vray_pluginattr" "static_displacement" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"image_width"
-	label	"Image Width"
-	type	integer
-	default	{ "0" }
-	help	"This parameter overrides the imgWidth paramter from VRayFrameData during the calculation of the subdivision depth"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
-	parmtag	{ "vray_pluginattr" "image_width" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"cache_normals"
-	label	"Cache Normals"
-	type	toggle
-	default	{ "0" }
-	help	"If this option is equal to 1 then the normals of the generated triangles are cached"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
-	parmtag	{ "vray_pluginattr" "cache_normals" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"use_bounds"
-	label	"Use Bounds"
-	type	toggle
-	default	{ "0" }
-	help	"If true, the min/max values for the displacement texture are specified by the min_bound and max_bound parameters; if false, these are calculated automatically"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
-	parmtag	{ "vray_pluginattr" "use_bounds" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"min_bound"
-	label	"Min Bound"
-	type	color
-	size	3
-	default	{ "0" "0" "0" }
-	help	"The lowest value for the displacement texture"
-	disablewhen	"{ use_bounds != 1 }"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
-	parmtag	{ "vray_pluginattr" "min_bound" }
-	parmtag	{ "vray_type" "Color" }
-    }
-    parm {
-	name	"max_bound"
-	label	"Max Bound"
-	type	color
-	size	3
-	default	{ "1" "1" "1" }
-	help	"The biggest value for the displacement texture"
-	disablewhen	"{ use_bounds != 1 }"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
-	parmtag	{ "vray_pluginattr" "max_bound" }
-	parmtag	{ "vray_type" "Color" }
-    }
-    parm {
-	name	"resolution"
-	label	"Resolution"
-	type	integer
-	default	{ "256" }
-	help	"Resolution at which to sample the displacement map for 2d displacement"
-	disablewhen	"{ displace_2d != 1 }"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
-	parmtag	{ "vray_pluginattr" "resolution" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"precision"
-	label	"Precision"
-	type	integer
-	default	{ "8" }
-	help	"Increase for curved surfaces to avoid artifacts"
-	disablewhen	"{ displace_2d != 1 }"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
-	parmtag	{ "vray_pluginattr" "precision" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"tight_bounds"
-	label	"Tight Bounds"
-	type	toggle
-	default	{ "1" }
-	help	"When this is on, initialization will be slower, but tighter bounds will be computed for the displaced triangles making rendering faster"
-	disablewhen	"{ use_globals != 0 } { displace_2d != 1 }"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
-	parmtag	{ "vray_pluginattr" "tight_bounds" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"filter_texture"
-	label	"Filter Texture"
-	type	toggle
-	default	{ "0" }
-	help	"Filter the texture for 2d displacement"
-	disablewhen	"{ displace_2d != 1 }"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
-	parmtag	{ "vray_pluginattr" "filter_texture" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"filter_blur"
-	label	"Filter Blur"
-	type	float
-	default	{ "0.001" }
-	help	"The amount of UV space to average for filtering purposes. A value of 1.0 will average thw whole texture"
-	disablewhen	"{ filter_texture != 1 } { displace_2d != 1 }"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
-	parmtag	{ "vray_pluginattr" "filter_blur" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"type"
-	label	"Mode"
-	type	ordinal
-	default	{ "0" }
-	help	"Displacement type"
-	menu	{
-	    "Normal"	"Normal"
-	    "2D"	"2D"
-	    "Vector"	"Vector"
-	    "Vector (Absolute)"	"Vector (Absolute)"
-	    "Vector (Object)"	"Vector (Object)"
-	}
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_custom_handling" "1" }
-	parmtag	{ "vray_enumkeys" "0,1,2,3,4" }
-    }
-    parm {
-	name	"vector_displacement"
-	label	"Vector Displacement"
-	type	integer
-	default	{ "0" }
-	help	"When this is 1, the red, green and blue channels of displacement_tex_color will be used to perform vector displacement with base 0.5; if this is 2, then the map matches the Mudbox displacement maps"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
-	parmtag	{ "vray_pluginattr" "vector_displacement" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"object_space_displacement"
-	label	"Object Space Displacement"
-	type	toggle
-	default	{ "0" }
-	help	"If true, the parent transformation will affect the amount of displacement. Used only when doing 3D displacement"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
-	parmtag	{ "vray_pluginattr" "object_space_displacement" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"displace_2d"
-	label	"2d Displacement"
-	type	toggle
-	default	{ "0" }
-	help	"Use to enable 2d displacement. Overrides the vector_displacement flag"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
-	parmtag	{ "vray_pluginattr" "displace_2d" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"displace_2d_multi_tile"
-	label	"Displace 2d Multi Tile"
-	type	toggle
-	default	{ "0" }
-	help	"Enable or disable support for tiled textures (UDIM/UVTILE) when generating 2d displacement"
-	disablewhen	"{ displace_2d != 1 }"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "GeomDisplacedMesh" }
-	parmtag	{ "vray_pluginattr" "displace_2d_multi_tile" }
-	parmtag	{ "vray_type" "boolean" }
-    }
+
+
 }

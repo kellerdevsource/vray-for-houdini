@@ -1,10 +1,23 @@
 parm {
+    name    "SettingsRegionsGenerator_lock_size"
+    label   "Lock Region X and Y"
+    type    toggle
+	invisible
+    default { "1" }
+    help    "Lock bucket size (X = Y)"
+    range   { 0 1 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_custom_handling" "1" }
+}
+
+parm {
     name    "SettingsRegionsGenerator_xc"
-    label   "W"
+    label   "X"
     type    integer
-    default { "48" }
+    default { "64" }
     help    "Determines the maximum region width in pixels (Bucket W/H is selected) or the number of regions in the horizontal direction (when Region Count is selected)"
-    range   { 0 64 }
+    range   { 1 256 }
     export  none
     parmtag { "cook_dependent" "1" }
     parmtag { "vray_plugin" "SettingsRegionsGenerator" }
@@ -14,11 +27,11 @@ parm {
 
 parm {
     name    "SettingsRegionsGenerator_yc"
-    label   "H"
+    label   "Y"
     type    integer
-    default { "48" }
+    default { "64" }
     help    "Determines the maximum region height in pixels (Bucket W/H is selected) or the number of regions in the vertical direction (when Region Count is selected)"
-    range   { 0 64 }
+    range   { 1 256 }
     export  none
     parmtag { "cook_dependent" "1" }
     parmtag { "vray_plugin" "SettingsRegionsGenerator" }
@@ -26,83 +39,83 @@ parm {
     parmtag { "vray_type" "int" }
 }
 
-parm {
-    name    "SettingsRegionsGenerator_xymeans"
-    label   "Size In Pixels Or Number Of Regions"
-    type    ordinal
-    default { "0" }
-    help    "Size in pixels or number of regions"
-    menu    {
-        "Bucket W/H"    "Bucket W/H"
-        "Region Count"  "Region Count"
-    }
-    range   { 0 1 }
-    export  none
-    parmtag { "cook_dependent" "1" }
-    parmtag { "vray_enumkeys" "0,1" }
-    parmtag { "vray_plugin" "SettingsRegionsGenerator" }
-    parmtag { "vray_pluginattr" "xymeans" }
-    parmtag { "vray_type" "int" }
+groupcollapsible {
+	name "folder_sampler_buckets_advanced"
+	label "Render Region - Advanced"
+	
+	parm {
+		name    "SettingsRegionsGenerator_dynbuckets"
+		label   "Dynamic Splitting"
+		type    toggle
+		help 	"Dynamically reduces the size of the render buckets when a small part of the image remains to be rendered. This ensures that all rendering cores are utilized when rendering the last few buckets."
+		default { "1" }
+		range   { 0 1 }
+		export  none
+		parmtag { "cook_dependent" "1" }
+		parmtag { "vray_plugin" "SettingsRegionsGenerator" }
+		parmtag { "vray_pluginattr" "dynbuckets" }
+		parmtag { "vray_type" "boolean" }
+	}
+
+	parm {
+		name    "SettingsRegionsGenerator_xymeans"
+		label   "Bucket Type"
+		type    ordinal
+		default { "0" }
+		help    "Size in pixels or number of regions"
+		menu    {
+			"Bucket W/H"    "Bucket W/H"
+			"Region Count"  "Region Count"
+		}
+		range   { 0 1 }
+		export  none
+		parmtag { "cook_dependent" "1" }
+		parmtag { "vray_enumkeys" "0,1" }
+		parmtag { "vray_plugin" "SettingsRegionsGenerator" }
+		parmtag { "vray_pluginattr" "xymeans" }
+		parmtag { "vray_type" "int" }
+	}
+
+	parm {
+		name    "SettingsRegionsGenerator_seqtype"
+		label   "Sequence Type"
+		type    ordinal
+		default { "4" }
+		help    "Determines the order in which the regions are rendered"
+		menu    {
+			"Top-Bottom"    "Top-Bottom"
+			"Left-Right"    "Left-Right"
+			"Checker"   "Checker"
+			"Spiral"    "Spiral"
+			"Triangulation" "Triangulation"
+			"Hilbert"   "Hilbert"
+		}
+		range   { 0 1 }
+		export  none
+		parmtag { "cook_dependent" "1" }
+		parmtag { "vray_enumkeys" "0,1,2,3,4,5" }
+		parmtag { "vray_plugin" "SettingsRegionsGenerator" }
+		parmtag { "vray_pluginattr" "seqtype" }
+		parmtag { "vray_type" "int" }
+	}
+
+	parm {
+		name    "SettingsRegionsGenerator_reverse"
+		label   "Reverse Sequence"
+		type    toggle
+		default { "0" }
+		help    "Reverses the region sequence order"
+		range   { 0 1 }
+		export  none
+		parmtag { "cook_dependent" "1" }
+		parmtag { "vray_plugin" "SettingsRegionsGenerator" }
+		parmtag { "vray_pluginattr" "reverse" }
+		parmtag { "vray_type" "boolean" }
+	}
+
+
+	
+	
 }
 
-parm {
-    name    "SettingsRegionsGenerator_seqtype"
-    label   "Seqtype"
-    type    ordinal
-    default { "4" }
-    help    "Determines the order in which the regions are rendered"
-    menu    {
-        "Top-Bottom"    "Top-Bottom"
-        "Left-Right"    "Left-Right"
-        "Checker"   "Checker"
-        "Spiral"    "Spiral"
-        "Triangulation" "Triangulation"
-        "Hilbert"   "Hilbert"
-    }
-    range   { 0 1 }
-    export  none
-    parmtag { "cook_dependent" "1" }
-    parmtag { "vray_enumkeys" "0,1,2,3,4,5" }
-    parmtag { "vray_plugin" "SettingsRegionsGenerator" }
-    parmtag { "vray_pluginattr" "seqtype" }
-    parmtag { "vray_type" "int" }
-}
 
-parm {
-    name    "SettingsRegionsGenerator_reverse"
-    label   "Reverse"
-    type    toggle
-    default { "0" }
-    help    "Reverses the region sequence order"
-    range   { 0 1 }
-    export  none
-    parmtag { "cook_dependent" "1" }
-    parmtag { "vray_plugin" "SettingsRegionsGenerator" }
-    parmtag { "vray_pluginattr" "reverse" }
-    parmtag { "vray_type" "boolean" }
-}
-
-parm {
-    name    "SettingsRegionsGenerator_dynbuckets"
-    label   "Dynbuckets"
-    type    toggle
-    default { "1" }
-    range   { 0 1 }
-    export  none
-    parmtag { "cook_dependent" "1" }
-    parmtag { "vray_plugin" "SettingsRegionsGenerator" }
-    parmtag { "vray_pluginattr" "dynbuckets" }
-    parmtag { "vray_type" "boolean" }
-}
-
-parm {
-    name    "SettingsRegionsGenerator_lock_size"
-    label   "Lock Size"
-    type    toggle
-    default { "1" }
-    help    "Lock bucket size (X = Y)"
-    range   { 0 1 }
-    export  none
-    parmtag { "cook_dependent" "1" }
-    parmtag { "vray_custom_handling" "1" }
-}

@@ -10,27 +10,30 @@
 #   http://www.sidefx.com/docs/hdk15.5/_h_d_k__s_o_h_o.html
 #
 
-import sys
 
 import traceback
 
-import hou
-
-import soho
-import sohoglue
-import SOHOcommon
-
-import _vfh_ipr
-
-from soho import SohoParm
-
-RENDER_RT_MODE_SOHO = 1
-
 def main():
+    import sys
+    import hou
+
+    import soho
+    import sohoglue
+    import SOHOcommon
+
+    import _vfh_ipr
+
+    from soho import SohoParm
+
+    RENDER_RT_MODE_SOHO = 1
+
+    LogLevel = type('Enum', (), {'Msg':0, 'Info':1, 'Progress':2, 'Warning':3, 'Error':4, 'Debug':5})
+
+    def logMessage(level, fmt, *args):
+        _vfh_ipr.logMessage(level, fmt % args)
+
     def printDebug(fmt, *args):
-        sys.stdout.write("V-Ray For Houdini IPR| ")
-        sys.stdout.write(fmt % args)
-        sys.stdout.write("\n")
+        logMessage(LogLevel.Debug, fmt, *args)
 
     def dumpObjects(listName):
         printDebug("Checking \"%s\"" % listName)
@@ -175,18 +178,21 @@ def main():
         # will list all objects which have been deleted from the scene.
         #
 
-        # Update view.
-        exportView(ropPath, camera, sohoCam, now)
+        if not _vfh_ipr.isRopValid():
+            _vfh_ipr.init(rop=ropPath, port=port, now=now, viewParams=getViewParams(camera, sohoCam, now))
+        else:
+            # Update view.
+            exportView(ropPath, camera, sohoCam, now)
 
-        exportObjects("objlist:dirtyinstance")
-        exportObjects("objlist:dirtylight")
-        # exportObjects("objlist:dirtyspace")
-        # exportObjects("objlist:dirtyfog")
+            exportObjects("objlist:dirtyinstance")
+            exportObjects("objlist:dirtylight")
+            # exportObjects("objlist:dirtyspace")
+            # exportObjects("objlist:dirtyfog")
 
-        deleteObjects("objlist:deletedinstance")
-        deleteObjects("objlist:deletedlight")
-        # deleteObjects("objlist:deletedspace")
-        # deleteObjects("objlist:deletedfog")
+            deleteObjects("objlist:deletedinstance")
+            deleteObjects("objlist:deletedlight")
+            # deleteObjects("objlist:deletedspace")
+            # deleteObjects("objlist:deletedfog")
 
 try:
     main()

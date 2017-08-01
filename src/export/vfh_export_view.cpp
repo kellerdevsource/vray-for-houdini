@@ -82,6 +82,9 @@ void VRayExporter::RtCallbackView(OP_Node *caller, void *callee, OP_EventType ty
 
 static float getLensShift(const OBJ_Node &camera, OP_Context &context)
 {
+#if 1
+	return 0.0f;
+#else
 	const VRay::Transform &tm = VRayExporter::getObjTransform(camera.castToOBJNode(), context);
 	
 	const VRay::Vector &v0 = tm.matrix.v1;
@@ -94,6 +97,7 @@ static float getLensShift(const OBJ_Node &camera, OP_Context &context)
 	const float shift = -d / sqrtf(1.0f - dd);
 
 	return shift;
+#endif
 }
 
 static void aspectCorrectFovOrtho(ViewParams &viewParams)
@@ -152,7 +156,7 @@ void VRayExporter::fillViewParamFromCameraNode(const OBJ_Node &camera, ViewParam
 	viewParams.renderSize.w = imageWidth;
 	viewParams.renderSize.h = imageHeight;
 	viewParams.renderView.fov = fov;
-	viewParams.renderView.tm = VRayExporter::getObjTransform(camera.castToOBJNode(), m_context);
+	viewParams.renderView.tm = getObjTransform(camera.castToOBJNode(), m_context);
 
 	if (!viewParams.renderView.fovOverride) {
 		aspectCorrectFovOrtho(viewParams);
@@ -259,7 +263,7 @@ void VRayExporter::fillSettingsCamera(const ViewParams &viewParams, Attrs::Plugi
 	pluginDesc.add(Attrs::PluginAttr("fov", -1.0f));
 
 	if (viewParams.usePhysicalCamera) {
-		pluginDesc.add(Attrs::PluginAttr("type", 8));
+		pluginDesc.add(Attrs::PluginAttr("type", 0));
 	}
 
 	setAttrsFromOpNodePrms(pluginDesc, m_rop, "SettingsCamera_");
@@ -303,19 +307,18 @@ void VRayExporter::exportView(const ViewParams &newViewParams)
 				viewParams.renderSize.w = viewParams.renderSize.h * aspect;
 			}
 
-			Log::getLog().warning("Houdini Indie render resolution for animations is 1920 x 1080 maximum");
+			Log::getLog().warning("Maximum resolution for animations in Houdini Indie is 1920 x 1080");
 			Log::getLog().warning("Clamping resolution to %i x %i",
 									viewParams.renderSize.w, viewParams.renderSize.h);
 		}
 	}
 
+	const int prevAutoCommit = getRenderer().getVRay().getAutoCommit();
+	getRenderer().setAutoCommit(false);
+
 	const bool needReset = m_viewParams.needReset(viewParams);
 	if (needReset) {
 		Log::getLog().warning("VRayExporter::exportView: Reseting view plugins...");
-
-		const int prevAutoCommit = getRenderer().getVRay().getAutoCommit();
-
-		getRenderer().setAutoCommit(false);
 
 		removePlugin(ViewPluginsDesc::settingsCameraPluginName);
 		removePlugin(ViewPluginsDesc::settingsCameraDofPluginName);
@@ -353,28 +356,29 @@ void VRayExporter::exportView(const ViewParams &newViewParams)
 			getRenderer().setCamera(exportPlugin(viewPlugins.cameraDefault));
 		}
 
-		if (!isIPR() && !isGPU() && viewParams.renderView.stereoParams.use) {
+		if (viewParams.renderView.stereoParams.use && !isIPR() && !isGPU()) {
 			exportPlugin(viewPlugins.stereoSettings);
 		}
 
 		exportPlugin(viewPlugins.renderView);
-
-		getRenderer().commit();
-		getRenderer().setAutoCommit(prevAutoCommit);
 	}
 	else if (m_viewParams.changedParams(viewParams)) {
 		fillRenderView(viewParams, viewPlugins.renderView);
 		exportPlugin(viewPlugins.renderView);
 	}
 
-	if (m_viewParams.changedSize(viewParams) ||
-		m_viewParams.changedCropRegion(viewParams))
-	{
+	getRenderer().commit();
+	getRenderer().setAutoCommit(prevAutoCommit);
+
+	if (m_viewParams.changedCropRegion(viewParams)) {
 		getRenderer().getVRay().setRenderRegion(
 			viewParams.cropRegion.x,
 			viewParams.cropRegion.y,
 			viewParams.cropRegion.width,
 			viewParams.cropRegion.height);
+	}
+
+	if (m_viewParams.changedSize(viewParams)) {
 		setRenderSize(viewParams.renderSize.w, viewParams.renderSize.h);
 	}
 
@@ -386,8 +390,8 @@ int VRayExporter::exportView()
 {
 	Log::getLog().debug("VRayExporter::exportView()");
 
-	static VUtils::FastCriticalSection csect;
-	if (!csect.tryEnter())
+	static VUtils::FastCriticalSection viewCsect;
+	if (!viewCsect.tryEnter())
 		return 1;
 
 	OBJ_Node *camera = getCamera(m_rop);
@@ -404,7 +408,7 @@ int VRayExporter::exportView()
 
 	exportView(viewParams);
 
-	csect.leave();
+	viewCsect.leave();
 
 	return 0;
 }
