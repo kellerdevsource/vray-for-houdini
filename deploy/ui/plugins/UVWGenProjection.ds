@@ -3,6 +3,6 @@
     label	"Projection"
     parmtag	{ spare_category "Projection" }
     parmtag	{ vray_plugin "UVWGenProjection" }
-    
-#include "$VRAY_UI_DS_PATH/plugins/UVWGenProjectionParms.ds"
+
+#include "UVWGenProjectionParms.ds"
 }

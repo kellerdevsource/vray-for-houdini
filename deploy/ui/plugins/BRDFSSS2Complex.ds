@@ -3,11 +3,11 @@
     label	"SSS 2 Complex"
     parmtag	{ spare_category "SSS 2 Complex" }
     parmtag	{ vray_plugin "BRDFSSS2Complex" }
-	
+
 	group {
 		name "folder_main"
 		label "Main"
-		
+
 		parm {
 			name	"scale"
 			label	"Scale"
@@ -46,13 +46,13 @@
 			parmtag	{ "vray_pluginattr" "ior" }
 			parmtag	{ "vray_type" "float" }
 		}
-		
+
 	}
-	
+
 	group {
 		name "folder_diffuse"
 		label "Diffuse"
-		
+
 		parm {
 			name	"color_mode"
 			label	"Color Mode"
@@ -161,16 +161,16 @@
 			parmtag	{ "vray_pluginattr" "phase_function" }
 			parmtag	{ "vray_type" "float" }
 		}
-		
-		
-		
-	
+
+
+
+
 	}
-	
+
 	group {
 		name "folder_specular"
 		label "Specular"
-		
+
 		parm {
 			name	"specular_color"
 			label	"Specular Color"
@@ -256,14 +256,14 @@
 			parmtag	{ "vray_pluginattr" "reflection_depth" }
 			parmtag	{ "vray_type" "int" }
 		}
-		
-	
+
+
 	}
-	
+
 	group {
 		name "folder_multiscattering"
 		label "Multiscatter"
-		
+
 		parm {
 			name	"geometry_based_sampling"
 			label	"Multiple Scattering"
@@ -284,7 +284,7 @@
 			parmtag	{ "vray_pluginattr" "geometry_based_sampling" }
 			parmtag	{ "vray_type" "int" }
 		}
-		
+
 		parm {
 			name	"prepass_rate"
 			label	"Prepass Rate"
@@ -340,7 +340,7 @@
 			parmtag	{ "vray_pluginattr" "samples_per_unit_area" }
 			parmtag	{ "vray_type" "float" }
 		}
-		
+
 		parm {
 			name	"surface_offset"
 			label	"Surface Offset"
@@ -393,7 +393,7 @@
 			parmtag	{ "vray_pluginattr" "prepass_fileName" }
 			parmtag	{ "vray_type" "string" }
 		}
-		
+
 		parm {
 			name	"preview_samples"
 			label	"Preview Samples"
@@ -448,16 +448,16 @@
 			parmtag	{ "vray_pluginattr" "samples_color" }
 			parmtag	{ "vray_type" "color" }
 		}
-		
-		
-		
-	
+
+
+
+
 	}
-	
+
 	group {
 		name "folder_options"
 		label "Options"
-		
+
 		parm {
 			name	"single_scatter"
 			label	"Single Scatter"
@@ -581,12 +581,12 @@
 			parmtag	{ "vray_pluginattr" "linear_workflow" }
 			parmtag	{ "vray_type" "boolean" }
 		}
-		
-		
-	
-	}
-	
 
-	
-	
+
+
+	}
+
+
+
+
 }

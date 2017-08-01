@@ -3,11 +3,11 @@
     label	"Normals"
     parmtag	{ spare_category "Normals" }
     parmtag	{ vray_plugin "RenderChannelNormals" }
-	
+
 	groupsimple {
 		name "folder_main"
 		label "Main"
-		
+
 		parm {
 			name	"name"
 			label	"Name"
@@ -34,10 +34,10 @@
 			parmtag	{ "vray_pluginattr" "filtering" }
 			parmtag	{ "vray_type" "boolean" }
 		}
-		
-		
+
+
 	}
-	
-	
-    
+
+
+
 }

@@ -4,5 +4,5 @@
     parmtag	{ spare_category "World" }
     parmtag	{ vray_plugin "UVWGenPlanarWorld" }
 
-#include "$VRAY_UI_DS_PATH/plugins/UVWGenPlanarWorldParms.ds"
+#include "UVWGenPlanarWorldParms.ds"
 }

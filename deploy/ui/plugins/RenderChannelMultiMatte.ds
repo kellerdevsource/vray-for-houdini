@@ -3,11 +3,11 @@
     label	"MultiMatte"
     parmtag	{ spare_category "MultiMatte" }
     parmtag	{ vray_plugin "RenderChannelMultiMatte" }
-	
+
 	groupsimple {
 		name "folder_main"
 		label "Main"
-		
+
 		parm {
 			name	"name"
 			label	"Name"
@@ -20,7 +20,7 @@
 			parmtag	{ "vray_pluginattr" "name" }
 			parmtag	{ "vray_type" "string" }
 		}
-		
+
 		parm {
 			name	"red_id"
 			label	"Red ID:"
@@ -99,13 +99,13 @@
 			parmtag	{ "vray_pluginattr" "consider_for_aa" }
 			parmtag	{ "vray_type" "boolean" }
 		}
-		
-		
+
+
 	}
-	
-	
-    
-    
-    
-    
+
+
+
+
+
+
 }

@@ -3,7 +3,7 @@
     label	"CSV"
     parmtag	{ spare_category "CSV" }
     parmtag	{ vray_plugin "BRDFCSV" }
-	
+
 	parm {
 	name	"back_side"
 	label	"Double-sided"
@@ -16,11 +16,11 @@
 	parmtag	{ "vray_pluginattr" "back_side" }
 	parmtag	{ "vray_type" "boolean" }
     }
-	
+
 	group {
 		name "folder_main"
 		label "Main"
-		
+
 		parm {
 			name	"csv_path"
 			label	"Csv Path"
@@ -86,16 +86,16 @@
 			parmtag	{ "vray_pluginattr" "transparency_tex_mult" }
 			parmtag	{ "vray_type" "float" }
 		}
-		
-		
-	
-	
+
+
+
+
 	}
-	
+
 	group {
 		name "folder_refl"
 		label "Reflection"
-		
+
 		parm {
 			name	"trace_reflections"
 			label	"Trace Reflections"
@@ -155,7 +155,7 @@
 			parmtag	{ "vray_pluginattr" "trace_depth" }
 			parmtag	{ "vray_type" "int" }
 		}
-		
+
 		parm {
 			name	"reflect_dim_distance_on"
 			label	"Reflect Dim Distance On"
@@ -198,14 +198,14 @@
 			parmtag	{ "vray_pluginattr" "reflect_dim_distance_falloff" }
 			parmtag	{ "vray_type" "float" }
 		}
-		
-		
+
+
 	}
-	
+
 	group {
 		name "folder_options"
 		label "Options"
-		
+
 		parm {
 			name	"cutoff"
 			label	"Cutoff"
@@ -249,10 +249,10 @@
 			parmtag	{ "vray_pluginattr" "affect_alpha" }
 			parmtag	{ "vray_type" "int" }
 		}
-	
-		
+
+
 	}
- 
-    
-    
+
+
+
 }

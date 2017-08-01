@@ -17,7 +17,7 @@ groupsimple {
   name "gi_settings_caustics"
   label "Caustics"
   hidewhen " { SettingsCaustics_on == 0 } "
-  
+
 
   parm {
   	name	"SettingsCaustics_multiplier"

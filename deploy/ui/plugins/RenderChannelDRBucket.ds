@@ -3,11 +3,11 @@
     label	"DR Bucket"
     parmtag	{ spare_category "DR Bucket" }
     parmtag	{ vray_plugin "RenderChannelDRBucket" }
-	
+
 	groupsimple {
 		name "folder_main"
 		label "Main"
-		
+
 		parm {
 			name	"name"
 			label	"Name"
@@ -38,10 +38,10 @@
 			parmtag	{ "vray_pluginattr" "text_alignment" }
 			parmtag	{ "vray_type" "int" }
 		}
-		
-		
+
+
 	}
-	
-   
-	
+
+
+
 }

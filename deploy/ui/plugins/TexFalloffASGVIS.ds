@@ -253,7 +253,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexFalloffASGVIS" }
 	parmtag	{ "vray_pluginattr" "explicit_dir" }
-	parmtag	{ "vray_type" "Vector" }
+	parmtag	{ "vray_type" "vector" }
     }
     parm {
 	name	"use_blend_input"

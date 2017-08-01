@@ -31,7 +31,7 @@
 	parmtag	{ "vray_plugin" "UVWGenChannel" }
 	parmtag	{ "vray_pluginattr" "wrap_u" }
 	parmtag	{ "vray_type" "int" }
-	
+
     }
     parm {
 	NAMEM("wrap_v")
@@ -45,7 +45,7 @@
 	parmtag	{ "vray_plugin" "UVWGenChannel" }
 	parmtag	{ "vray_pluginattr" "wrap_v" }
 	parmtag	{ "vray_type" "int" }
-	
+
     }
     parm {
 	NAMEM("wrap_w")
@@ -59,7 +59,7 @@
 	parmtag	{ "vray_plugin" "UVWGenChannel" }
 	parmtag	{ "vray_pluginattr" "wrap_w" }
 	parmtag	{ "vray_type" "int" }
-	
+
     }
     parm {
 	NAMEM("crop_u")
@@ -73,7 +73,7 @@
 	parmtag	{ "vray_plugin" "UVWGenChannel" }
 	parmtag	{ "vray_pluginattr" "crop_u" }
 	parmtag	{ "vray_type" "int" }
-	
+
     }
     parm {
 	NAMEM("crop_v")
@@ -87,7 +87,7 @@
 	parmtag	{ "vray_plugin" "UVWGenChannel" }
 	parmtag	{ "vray_pluginattr" "crop_v" }
 	parmtag	{ "vray_type" "int" }
-	
+
     }
     parm {
 	NAMEM("crop_w")
@@ -101,7 +101,7 @@
 	parmtag	{ "vray_plugin" "UVWGenChannel" }
 	parmtag	{ "vray_pluginattr" "crop_w" }
 	parmtag	{ "vray_type" "int" }
-	
+
     }
     parm {
 	NAMEM("coverage")
@@ -115,8 +115,8 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "UVWGenChannel" }
 	parmtag	{ "vray_pluginattr" "coverage" }
-	parmtag	{ "vray_type" "Vector" }
-	
+	parmtag	{ "vray_type" "vector" }
+
     }
     parm {
 	NAMEM("wrap_mode")
@@ -135,7 +135,7 @@
 	parmtag	{ "vray_plugin" "UVWGenChannel" }
 	parmtag	{ "vray_pluginattr" "wrap_mode" }
 	parmtag	{ "vray_type" "int" }
-	
+
     }
     parm {
 	NAMEM("duvw_scale")
@@ -149,7 +149,7 @@
 	parmtag	{ "vray_plugin" "UVWGenChannel" }
 	parmtag	{ "vray_pluginattr" "duvw_scale" }
 	parmtag	{ "vray_type" "float" }
-	
+
     }
     parm {
 	NAMEM("uvw_channel")
@@ -162,7 +162,7 @@
 	parmtag	{ "vray_plugin" "UVWGenChannel" }
 	parmtag	{ "vray_pluginattr" "uvw_channel" }
 	parmtag	{ "vray_type" "int" }
-	
+
     }
     parm {
 	NAMEM("use_double_sided_mode")
@@ -176,7 +176,7 @@
 	parmtag	{ "vray_plugin" "UVWGenChannel" }
 	parmtag	{ "vray_pluginattr" "use_double_sided_mode" }
 	parmtag	{ "vray_type" "boolean" }
-	
+
     }
 
 #undef NAMEM

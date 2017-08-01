@@ -389,7 +389,7 @@
       	parmtag	{ "cook_dependent" "1" }
       	parmtag	{ "vray_plugin" "SunLight" }
       	parmtag	{ "vray_pluginattr" "up_vector" }
-      	parmtag	{ "vray_type" "Vector" }
+      	parmtag	{ "vray_type" "vector" }
       }
 
 
@@ -398,7 +398,7 @@
     }
 
 
-    groupcollapsible { 
+    groupcollapsible {
       name "folder_gi"
       label "GI"
 

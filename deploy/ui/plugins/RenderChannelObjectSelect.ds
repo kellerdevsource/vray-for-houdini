@@ -3,11 +3,11 @@
     label	"Object Select"
     parmtag	{ spare_category "Object Select" }
     parmtag	{ vray_plugin "RenderChannelObjectSelect" }
- 
+
 	groupsimple {
 		name "folder_main"
 		label "Main"
-		
+
 		parm {
 			name	"name"
 			label	"Name"
@@ -46,7 +46,7 @@
 			parmtag	{ "vray_pluginattr" "id" }
 			parmtag	{ "vray_type" "int" }
 		}
-		
+
 		parm {
 			name	"affect_matte_objects"
 			label	"Affect Matte Objects"
@@ -86,9 +86,9 @@
 			parmtag	{ "vray_pluginattr" "invert_selection" }
 			parmtag	{ "vray_type" "boolean" }
 		}
-		
-		
+
+
 	}
-	
-	
+
+
 }

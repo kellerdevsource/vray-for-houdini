@@ -4,5 +4,5 @@
     parmtag	{ spare_category "Bounding Box" }
     parmtag	{ vray_plugin "UVWGenObjectBBox" }
 
-#include "$VRAY_UI_DS_PATH/plugins/UVWGenObjectBBoxParms.ds"
+#include "UVWGenObjectBBoxParms.ds"
 }

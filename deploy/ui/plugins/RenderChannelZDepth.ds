@@ -3,11 +3,11 @@
     label	"Z-Depth"
     parmtag	{ spare_category "Z-Depth" }
     parmtag	{ vray_plugin "RenderChannelZDepth" }
-	
+
 	groupsimple {
 		name "folder_main"
 		label "Main"
-		
+
 		parm {
 			name	"name"
 			label	"Name"
@@ -21,7 +21,7 @@
 			parmtag	{ "vray_pluginattr" "name" }
 			parmtag	{ "vray_type" "string" }
 		}
-		
+
 		parm {
 			name	"depth_clamp"
 			label	"Depth Clamp"
@@ -35,7 +35,7 @@
 			parmtag	{ "vray_pluginattr" "depth_clamp" }
 			parmtag	{ "vray_type" "boolean" }
 		}
-		
+
 		parm {
 			name	"depth_from_camera"
 			label	"Use Depth From Camera"
@@ -90,8 +90,8 @@
 			parmtag	{ "vray_pluginattr" "filtering" }
 			parmtag	{ "vray_type" "boolean" }
 		}
-		
+
 	}
-  
-	
+
+
 }

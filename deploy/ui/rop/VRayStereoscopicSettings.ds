@@ -1,7 +1,7 @@
 groupcollapsible {
     name "folder_camera_stereoscopic"
     label "Stereoscopic"
-	
+
 	parm {
 		name	"VRayStereoscopicSettings_use"
 		label	"Enable VRay Stereoscopic camera"
@@ -13,8 +13,8 @@ groupcollapsible {
 		parmtag	{ "cook_dependent" "1" }
 		parmtag	{ "vray_custom_handling" "1" }
 	}
-  
-  
+
+
     parm {
 		name	"VRayStereoscopicSettings_eye_distance"
 		label	"Eye Distance"
@@ -151,7 +151,7 @@ groupcollapsible {
 		parmtag	{ "vray_pluginattr" "bottom_merge_angle" }
 		parmtag	{ "vray_type" "float" }
 	}
-	
+
 	parm {
 		name	"VRayStereoscopicSettings_sm_mode"
 		label	"Sm Mode"
@@ -171,12 +171,12 @@ groupcollapsible {
 		parmtag	{ "vray_pluginattr" "sm_mode" }
 		parmtag	{ "vray_type" "int" }
 	}
-	
+
 	groupsimple {
 		name "folder_camera_stereoscopic_simmode"
 		label "Sim Mode Options"
 		hidewhentab "{ VRayStereoscopicSettings_sm_mode == 0 }"
-		
+
 		parm {
 			name	"VRayStereoscopicSettings_reuse_threshold"
 			label	"Reuse Threshold"
@@ -204,17 +204,17 @@ groupcollapsible {
 			parmtag	{ "vray_pluginattr" "shademap_file" }
 			parmtag	{ "vray_type" "string" }
 		}
-		
-			
-			
-		
+
+
+
+
 	}
-	
-	
+
+
 	groupsimple {
 		name "folder_camera_stereoscopic_options"
 		label "Options"
-		
+
 		parm {
 			name	"VRayStereoscopicSettings_left_camera"
 			label	"Left Camera"
@@ -243,7 +243,7 @@ groupcollapsible {
 			parmtag	{ "vray_pluginattr" "right_camera" }
 			parmtag	{ "vray_type" "Object" }
 		}
-		
+
 		parm {
 			name	"VRayStereoscopicSettings_float_colors_mode"
 			label	"Float Colors Mode"
@@ -294,8 +294,8 @@ groupcollapsible {
 			parmtag	{ "vray_pluginattr" "exr_compression" }
 			parmtag	{ "vray_type" "int" }
 		}
-		
-		
+
+
 		parm {
 			name	"VRayStereoscopicSettings_exclude_list_inclusive"
 			label	"Exclude List Inclusive"
@@ -362,10 +362,10 @@ groupcollapsible {
 			parmtag	{ "vray_type" "float" }
 		}
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 
 }

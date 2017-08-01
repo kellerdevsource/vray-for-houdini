@@ -3,11 +3,11 @@
     label	"ExtraTex"
     parmtag	{ spare_category "ExtraTex" }
     parmtag	{ vray_plugin "RenderChannelExtraTex" }
-	
+
 	groupsimple {
 		name "folder_main"
 		label "Main"
-		
+
 		parm {
 			name	"name"
 			label	"Name"
@@ -86,11 +86,11 @@
 			parmtag	{ "vray_pluginattr" "exclude_list_as_inclusive_set" }
 			parmtag	{ "vray_type" "boolean" }
 		}
-		
-		
-		
+
+
+
 	}
-	
-  
-	
+
+
+
 }

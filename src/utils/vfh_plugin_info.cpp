@@ -84,6 +84,7 @@ static void initVRayParmTypesMap()
 	vrayParmTypes.insert("float", eFloat);
 	vrayParmTypes.insert("color", eColor);
 	vrayParmTypes.insert("string", eString);
+	vrayParmTypes.insert("vector", eVector);
 
 	vrayParmTypes.insert("Texture",       eTextureColor);
 	vrayParmTypes.insert("OutputTexture", eOutputTextureColor);
@@ -200,6 +201,9 @@ static void initAttributes(const PRMList &parmList, VRayPluginInfo &pluginInfo)
 		if (!parmSpare)
 			continue;
 
+		// Storage key.
+		const char *parmKey = parm->getToken();
+
 		const UT_String vrayType(parmSpare->getValue("vray_type"));
 		if (vrayType.isstring()) {
 			// We don't store output and list attributes.
@@ -233,9 +237,9 @@ static void initAttributes(const PRMList &parmList, VRayPluginInfo &pluginInfo)
 			const char *vrayLabel = parmSpare->getValue("vray_label");
 			const char *uiLabel = UTisstring(vrayLabel) ? vrayLabel : parm->getLabel();
 
-			vassert(pluginInfo.attributes.find(vrayPluginAttr) == pluginInfo.attributes.end());			
+			vassert(pluginInfo.attributes.find(parmKey) == pluginInfo.attributes.end());			
 
-			AttrDesc &attrDesc = pluginInfo.attributes[vrayPluginAttr];
+			AttrDesc &attrDesc = pluginInfo.attributes[parmKey];
 			attrDesc.label = uiLabel;
 			attrDesc.attr = vrayPluginAttr;
 			attrDesc.value.type = vrayParmTypes.find(vrayType).data();
@@ -246,7 +250,7 @@ static void initAttributes(const PRMList &parmList, VRayPluginInfo &pluginInfo)
 			const UT_String rampValue(parmSpare->getValue("rampvalues_var"));
 			const UT_String rampInterp(parmSpare->getValue("rampbasis_var"));
 
-			AttrDesc &attrDesc = pluginInfo.attributes[parm->getToken()];
+			AttrDesc &attrDesc = pluginInfo.attributes[parmKey];
 			attrDesc.attr = parm->getToken();
 			attrDesc.label = parm->getLabel();
 

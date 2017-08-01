@@ -3,7 +3,7 @@
     label	"Denoiser"
     parmtag	{ spare_category "Denoiser" }
     parmtag	{ vray_plugin "RenderChannelDenoiser" }
-	
+
 	 parm {
 		name	"enabled"
 		label	"Enabled"
@@ -16,13 +16,13 @@
 		parmtag	{ "vray_pluginattr" "enabled" }
 		parmtag	{ "vray_type" "int" }
     }
-	
-	
+
+
 	groupsimple {
 		name "folder_main"
 		label "Main"
 		hidewhentab "{ enabled == 0 }"
-		
+
 		parm {
 			name	"name"
 			label	"Name"
@@ -165,14 +165,14 @@
 			parmtag	{ "vray_pluginattr" "progressive_update" }
 			parmtag	{ "vray_type" "int" }
 		}
-			
-		
+
+
 	}
-	
-    
-   
-    
-    
-    
-    
+
+
+
+
+
+
+
 }

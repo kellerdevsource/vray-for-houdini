@@ -3,11 +3,11 @@
     label	"Object Bounding"
     parmtag	{ spare_category "Object Bounding" }
     parmtag	{ vray_plugin "MtlObjBBox" }
-	
+
 	groupsimple {
 		name "folder_main"
 		label "Main"
-		
+
 		parm {
 			name	"bbox_min"
 			label	"Min. Bounds"
@@ -20,7 +20,7 @@
 			parmtag	{ "cook_dependent" "1" }
 			parmtag	{ "vray_plugin" "MtlObjBBox" }
 			parmtag	{ "vray_pluginattr" "bbox_min" }
-			parmtag	{ "vray_type" "Vector" }
+			parmtag	{ "vray_type" "vector" }
 		}
 		parm {
 			name	"bbox_max"
@@ -34,11 +34,11 @@
 			parmtag	{ "cook_dependent" "1" }
 			parmtag	{ "vray_plugin" "MtlObjBBox" }
 			parmtag	{ "vray_pluginattr" "bbox_max" }
-			parmtag	{ "vray_type" "Vector" }
+			parmtag	{ "vray_type" "vector" }
 		}
-		
-		
+
+
 	}
-	
-    
+
+
 }

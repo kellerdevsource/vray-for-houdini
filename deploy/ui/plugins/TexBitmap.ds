@@ -4,17 +4,5 @@
     parmtag { spare_category "Image Texture" }
     parmtag { vray_plugin "TexBitmap" }
 
-    parm {
-        name "bitmap"
-        label "Bitmap"
-        type int
-        parmtag { "cook_dependent" "1" }
-        parmtag { "vray_label" "bitmap" }
-        parmtag { "vray_pluginattr" "bitmap" }
-        parmtag { "vray_type" "Plugin" }
-        invisible
-    }
-
 #include "TexBitmapParms.ds"
-#include "vfh_texture_common.ds"
 }

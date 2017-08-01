@@ -3,11 +3,11 @@
     label	"Render ID"
     parmtag	{ spare_category "Render ID" }
     parmtag	{ vray_plugin "RenderChannelRenderID" }
-	
+
 	groupsimple {
 		name "folder_main"
 		label "Main"
-		
+
 		parm {
 			name	"name"
 			label	"Name"
@@ -21,9 +21,9 @@
 			parmtag	{ "vray_pluginattr" "name" }
 			parmtag	{ "vray_type" "string" }
 		}
-		
-	
+
+
 	}
-	
-    
+
+
 }

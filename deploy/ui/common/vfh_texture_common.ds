@@ -1,3 +1,5 @@
+#include "vfh_texture_defines.ds"
+
 #include "vfh_texture_common_color.ds"
 #include "vfh_texture_common_alpha.ds"
 #include "vfh_texture_common_inputs.ds"
@@ -8,7 +10,7 @@ groupcollapsible {
     label "Placement"
 
     parm {
-        name    "placement_type"
+        NAMEM("placement_type")
         label   "Placement Type"
         type    ordinal
         default { "0" }
@@ -26,7 +28,7 @@ groupcollapsible {
     }
 
     parm {
-        name    "u"
+        NAMEM("u")
         label   "U"
         type    float
         default { "0" }
@@ -40,7 +42,7 @@ groupcollapsible {
     }
 
     parm {
-        name    "v"
+        NAMEM("v")
         label   "V"
         type    float
         default { "0" }
@@ -54,7 +56,7 @@ groupcollapsible {
     }
 
     parm {
-        name    "w"
+        NAMEM("w")
         label   "W"
         type    float
         default { "1" }
@@ -68,7 +70,7 @@ groupcollapsible {
     }
 
     parm {
-        name    "h"
+        NAMEM("h")
         label   "H"
         type    float
         default { "1" }
@@ -82,7 +84,7 @@ groupcollapsible {
     }
 
     parm {
-        name    "jitter"
+        NAMEM("jitter")
         label   "Jitter"
         type    float
         default { "0" }
@@ -96,7 +98,7 @@ groupcollapsible {
     }
 
     parm {
-        name    "tile_u"
+        NAMEM("tile_u")
         label   "Tile U"
         type    toggle
         default { "1" }
@@ -110,7 +112,7 @@ groupcollapsible {
     }
 
     parm {
-        name    "tile_v"
+        NAMEM("tile_v")
         label   "Tile V"
         type    toggle
         default { "1" }
@@ -129,7 +131,7 @@ groupcollapsible {
     label "UV Noise"
 
     parm {
-        name    "uv_noise_on"
+        NAMEM("uv_noise_on")
         label   "Enabled"
         type    toggle
         default { "0" }
@@ -142,7 +144,7 @@ groupcollapsible {
     }
 
     parm {
-        name    "uv_noise_amount"
+        NAMEM("uv_noise_amount")
         label   "Amount"
         type    float
         default { "1" }
@@ -156,7 +158,7 @@ groupcollapsible {
     }
 
     parm {
-        name    "uv_noise_levels"
+        NAMEM("uv_noise_levels")
         label   "Levels"
         type    float
         default { "1" }
@@ -170,7 +172,7 @@ groupcollapsible {
     }
 
     parm {
-        name    "uv_noise_size"
+        NAMEM("uv_noise_size")
         label   "Size"
         type    float
         default { "1" }
@@ -184,7 +186,7 @@ groupcollapsible {
     }
 
     parm {
-        name    "uv_noise_animate"
+        NAMEM("uv_noise_animate")
         label   "Animated"
         type    toggle
         default { "1" }
@@ -198,7 +200,7 @@ groupcollapsible {
     }
 
     parm {
-        name    "un_noise_phase"
+        NAMEM("un_noise_phase")
         label   "Phase"
         type    float
         default { "0" }
@@ -213,7 +215,7 @@ groupcollapsible {
 }
 
 parm {
-    name    "compatibility_with"
+    NAMEM("compatibility_with")
     label   "Compatibility With"
     type    ordinal
     default { "0" }

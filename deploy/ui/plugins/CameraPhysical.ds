@@ -3,7 +3,7 @@
     label	"Physical Camera"
     parmtag	{ spare_category "V-Ray Physical Camera" }
     parmtag	{ vray_plugin "CameraPhysical" }
-	
+
 	parm {
 	name	"CameraPhysical_use"
 	label	"Enable"
@@ -15,12 +15,12 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_custom_handling" "1" }
     }
-	
+
 	groupsimple {
 		name "folder_physcam_main"
 		label "Main"
 		hidewhentab "{ CameraPhysical_use == 0 }"
-		
+
 		parm {
 			name	"CameraPhysical_type"
 			label	"Camera Type"
@@ -41,7 +41,7 @@
 			parmtag	{ "vray_pluginattr" "type" }
 			parmtag	{ "vray_type" "int" }
 		}
-	
+
 		parm {
 			name	"CameraPhysical_use_dof"
 			label	"Depth Of Field"
@@ -69,7 +69,7 @@
 			parmtag	{ "vray_pluginattr" "use_moblur" }
 			parmtag	{ "vray_type" "boolean" }
 		}
-		
+
 		parm {
 			name	"CameraPhysical_exposure"
 			label	"Exposure"
@@ -83,7 +83,7 @@
 			parmtag	{ "vray_pluginattr" "exposure" }
 			parmtag	{ "vray_type" "boolean" }
 		}
-		
+
 		parm {
 			name	"CameraPhysical_specify_fov"
 			label	"Specify Fov"
@@ -97,7 +97,7 @@
 			parmtag	{ "vray_pluginattr" "specify_fov" }
 			parmtag	{ "vray_type" "boolean" }
 		}
-		
+
 		parm {
 			name	"CameraPhysical_film_width"
 			label	"Film Width"
@@ -112,7 +112,7 @@
 			parmtag	{ "vray_pluginattr" "film_width" }
 			parmtag	{ "vray_type" "float" }
 		}
-		
+
 		parm {
 			name	"CameraPhysical_focal_length"
 			label	"Focal Length"
@@ -141,8 +141,8 @@
 			parmtag	{ "vray_pluginattr" "fov" }
 			parmtag	{ "vray_type" "float" }
 		}
-		
-		
+
+
 		parm {
 			name	"CameraPhysical_f_number"
 			label	"F - Stop"
@@ -157,7 +157,7 @@
 			parmtag	{ "vray_pluginattr" "f_number" }
 			parmtag	{ "vray_type" "float" }
 		}
-		
+
 		parm {
 			name	"CameraPhysical_shutter_speed"
 			label	"Shutter Speed"
@@ -214,7 +214,7 @@
 			parmtag	{ "vray_pluginattr" "latency" }
 			parmtag	{ "vray_type" "float" }
 		}
-		
+
 		parm {
 			name	"CameraPhysical_ISO"
 			label	"ISO"
@@ -242,7 +242,7 @@
 			parmtag	{ "vray_pluginattr" "zoom_factor" }
 			parmtag	{ "vray_type" "float" }
 		}
-		
+
 		parm {
 			name	"CameraPhysical_specify_focus"
 			label	" "
@@ -277,7 +277,7 @@
 			label	" "
 			type	toggle
 			hidewhen "{ CameraPhysical_use_dof == 0  }"
-			disablewhen "{ CameraPhysical_specify_focus == 1 }" 
+			disablewhen "{ CameraPhysical_specify_focus == 1 }"
 			joinnext
 			default	{ "1" }
 			help	"1-specify a target distance; 0-target distance not specified"
@@ -293,7 +293,7 @@
 			label	"Target Distance"
 			type	float
 			hidewhen "{ CameraPhysical_use_dof == 0 }"
-			disablewhen "{ CameraPhysical_specify_focus == 1 }" 
+			disablewhen "{ CameraPhysical_specify_focus == 1 }"
 			default	{ "200" }
 			help	"target distance"
 			range	{ 0 800 }
@@ -371,7 +371,7 @@
 			parmtag	{ "vray_pluginattr" "subdivs" }
 			parmtag	{ "vray_type" "int" }
 		}
-		
+
 		parm {
 			name	"CameraPhysical_dont_affect_settings"
 			label	"Dont Affect Settings"
@@ -385,17 +385,17 @@
 			parmtag	{ "vray_pluginattr" "dont_affect_settings" }
 			parmtag	{ "vray_type" "boolean" }
 		}
-			
-		
+
+
 	}
-	
-	
-	
+
+
+
 	groupsimple {
 		name "folder_physcam_distortion"
 		label "Distortion"
 		hidewhentab "{ CameraPhysical_use == 0 }"
-		
+
 		parm {
 			name "CameraPhysical_parm_distortion_enable"
 			label "Enable"
@@ -405,8 +405,8 @@
 			range { 0 1 }
 			export none
 		}
-		
-		
+
+
 		parm {
 			name	"CameraPhysical_distortion_type"
 			label	"Distortion Type"
@@ -427,7 +427,7 @@
 			parmtag	{ "vray_pluginattr" "distortion_type" }
 			parmtag	{ "vray_type" "int" }
 		}
-		
+
 		parm {
 			name	"CameraPhysical_distortion"
 			label	"Distortion"
@@ -442,7 +442,7 @@
 			parmtag	{ "vray_pluginattr" "distortion" }
 			parmtag	{ "vray_type" "float" }
 		}
-		
+
 		parm {
 			name	"CameraPhysical_lens_file"
 			label	"Lens File"
@@ -459,7 +459,7 @@
 			parmtag	{ "vray_pluginattr" "lens_file" }
 			parmtag	{ "vray_type" "string" }
 		}
-		
+
 		parm {
 			name	"CameraPhysical_distortion_tex"
 			label	"Distortion Texture"
@@ -476,7 +476,7 @@
 			parmtag	{ "vray_pluginattr" "distortion_tex" }
 			parmtag	{ "vray_type" "Texture" }
 		}
-		
+
 		parm {
 			name	"CameraPhysical_auto_lens_shift"
 			label	"Auto Lens Shift"
@@ -489,7 +489,7 @@
 			parmtag	{ "cook_dependent" "1" }
 			parmtag	{ "vray_custom_handling" "1" }
 		}
-		
+
 		parm {
 			name	"CameraPhysical_lens_shift"
 			label	"Vertical Tilt"
@@ -504,7 +504,7 @@
 			parmtag	{ "vray_pluginattr" "lens_shift" }
 			parmtag	{ "vray_type" "float" }
 		}
-		
+
 		parm {
 			name	"CameraPhysical_horizontal_shift"
 			label	"Horizontal Tilt"
@@ -547,17 +547,17 @@
 			parmtag	{ "vray_pluginattr" "vertical_offset" }
 			parmtag	{ "vray_type" "float" }
 		}
-		
-	
-	}
-	
 
-	
+
+	}
+
+
+
 	groupsimple {
 		name "folder_physcam_bokeh"
 		label "Bokeh"
 		hidewhentab "{ CameraPhysical_use == 0 }"
-		
+
 		parm {
 			name	"CameraPhysical_blades_enable"
 			label	"Enable"
@@ -571,7 +571,7 @@
 			parmtag	{ "vray_pluginattr" "blades_enable" }
 			parmtag	{ "vray_type" "boolean" }
 		}
-		
+
 		parm {
 			name	"CameraPhysical_blades_num"
 			label	"Blades Num"
@@ -628,25 +628,25 @@
 			parmtag	{ "vray_pluginattr" "anisotropy" }
 			parmtag	{ "vray_type" "float" }
 		}
-		
-		
-		
+
+
+
 	}
-    
-    
-    
-    
-    
-    
-    
-    
-    
-	
+
+
+
+
+
+
+
+
+
+
 	groupsimple {
 		name "folder_physcam_bmpapperture"
 		label "Bitmap Apperture"
 		hidewhentab "{ CameraPhysical_use == 0 }"
-		
+
 		parm {
 			name	"CameraPhysical_bmpaperture_enable"
 			label	"Enable"
@@ -702,11 +702,11 @@
 			parmtag	{ "vray_pluginattr" "bmpaperture_tex" }
 			parmtag	{ "vray_type" "Texture" }
 		}
-		
-		
+
+
 	}
 
-	
+
 }
 
 

@@ -15,7 +15,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomInfinitePlane" }
 	parmtag	{ "vray_pluginattr" "origin" }
-	parmtag	{ "vray_type" "Vector" }
+	parmtag	{ "vray_type" "vector" }
     }
     parm {
 	name	"normal"
@@ -29,6 +29,6 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "GeomInfinitePlane" }
 	parmtag	{ "vray_pluginattr" "normal" }
-	parmtag	{ "vray_type" "Vector" }
+	parmtag	{ "vray_type" "vector" }
     }
 }

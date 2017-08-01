@@ -18,7 +18,7 @@ parm {
 	parmtag	{ "vray_plugin" "UVWGenPlanarWorld" }
 	parmtag	{ "vray_pluginattr" "nsamples" }
 	parmtag	{ "vray_type" "int" }
-	
+
     }
     parm {
 	NAMEM("wrap_u")
@@ -32,7 +32,7 @@ parm {
 	parmtag	{ "vray_plugin" "UVWGenPlanarWorld" }
 	parmtag	{ "vray_pluginattr" "wrap_u" }
 	parmtag	{ "vray_type" "int" }
-	
+
     }
     parm {
 	NAMEM("wrap_v")
@@ -46,7 +46,7 @@ parm {
 	parmtag	{ "vray_plugin" "UVWGenPlanarWorld" }
 	parmtag	{ "vray_pluginattr" "wrap_v" }
 	parmtag	{ "vray_type" "int" }
-	
+
     }
     parm {
 	NAMEM("wrap_w")
@@ -60,7 +60,7 @@ parm {
 	parmtag	{ "vray_plugin" "UVWGenPlanarWorld" }
 	parmtag	{ "vray_pluginattr" "wrap_w" }
 	parmtag	{ "vray_type" "int" }
-	
+
     }
     parm {
 	NAMEM("crop_u")
@@ -74,7 +74,7 @@ parm {
 	parmtag	{ "vray_plugin" "UVWGenPlanarWorld" }
 	parmtag	{ "vray_pluginattr" "crop_u" }
 	parmtag	{ "vray_type" "int" }
-	
+
     }
     parm {
 	NAMEM("crop_v")
@@ -88,7 +88,7 @@ parm {
 	parmtag	{ "vray_plugin" "UVWGenPlanarWorld" }
 	parmtag	{ "vray_pluginattr" "crop_v" }
 	parmtag	{ "vray_type" "int" }
-	
+
     }
     parm {
 	NAMEM("crop_w")
@@ -102,7 +102,7 @@ parm {
 	parmtag	{ "vray_plugin" "UVWGenPlanarWorld" }
 	parmtag	{ "vray_pluginattr" "crop_w" }
 	parmtag	{ "vray_type" "int" }
-	
+
     }
     parm {
 	NAMEM("coverage")
@@ -116,8 +116,8 @@ parm {
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "UVWGenPlanarWorld" }
 	parmtag	{ "vray_pluginattr" "coverage" }
-	parmtag	{ "vray_type" "Vector" }
-	
+	parmtag	{ "vray_type" "vector" }
+
     }
     parm {
 	NAMEM("wrap_mode")
@@ -136,7 +136,7 @@ parm {
 	parmtag	{ "vray_plugin" "UVWGenPlanarWorld" }
 	parmtag	{ "vray_pluginattr" "wrap_mode" }
 	parmtag	{ "vray_type" "int" }
-	
+
     }
     parm {
 	NAMEM("duvw_scale")
@@ -150,7 +150,7 @@ parm {
 	parmtag	{ "vray_plugin" "UVWGenPlanarWorld" }
 	parmtag	{ "vray_pluginattr" "duvw_scale" }
 	parmtag	{ "vray_type" "float" }
-	
+
     }
 
 #undef NAMEM

@@ -231,7 +231,7 @@ groupsimple {
     }
 
   }
-  
+
   parm {
 			name	"SettingsIrradianceMap_detailEnhancement_enable"
 			label	"Enable Detail Enhancement"
@@ -245,13 +245,13 @@ groupsimple {
 			parmtag	{ "vray_pluginattr" "detail_enhancement" }
 			parmtag	{ "vray_type" "boolean" }
 	}
-  
+
   groupsimple {
 		name "folder_gi_IRmap_detail"
 		label "Detail Enhancement"
 		hidewhen " { SettingsIrradianceMap_detailEnhancement_enable == 0 } "
 
-		
+
 		parm {
 			name	"SettingsIrradianceMap_detail_scale"
 			label	"Scale"
@@ -299,10 +299,10 @@ groupsimple {
 			parmtag	{ "vray_pluginattr" "detail_subdivs_mult" }
 			parmtag	{ "vray_type" "float" }
 		}
-		
+
 
   }
-  
+
   parm {
 			name	"SettingsIrradianceMap_extraOptions_enabled"
 			label	"Enable Irradiance Map - Advanced"
@@ -313,12 +313,12 @@ groupsimple {
 			export	none
 			parmtag	{ "cook_dependent" "1" }
 	}
-	
+
 	groupsimple {
 		name "folder_gi_IRmap_options"
 		label "Options"
 		hidewhen " { SettingsIrradianceMap_extraOptions_enabled == 0 } "
-		
+
 		parm {
 			name	"SettingsIrradianceMap_show_samples"
 			label	"Show Samples"
@@ -444,7 +444,7 @@ groupsimple {
 
 	  }
 
-	
+
 }
- 
+
 

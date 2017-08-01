@@ -29,8 +29,8 @@
 	parmtag	{ "vray_enumkeys" "angular,cubic,spherical,mirror_ball,screen,max_spherical,spherical_vray,max_cylindrical,max_shrink_wrap" }
 	parmtag	{ "vray_plugin" "UVWGenEnvironment" }
 	parmtag	{ "vray_pluginattr" "mapping_type" }
-	parmtag	{ "vray_type" "String" }
-	
+	parmtag	{ "vray_type" "string" }
+
     }
     parm {
 	NAMEM("wrap_u")
@@ -50,7 +50,7 @@
 	parmtag	{ "vray_plugin" "UVWGenEnvironment" }
 	parmtag	{ "vray_pluginattr" "wrap_u" }
 	parmtag	{ "vray_type" "int" }
-	
+
     }
     parm {
 	NAMEM("wrap_v")
@@ -70,7 +70,7 @@
 	parmtag	{ "vray_plugin" "UVWGenEnvironment" }
 	parmtag	{ "vray_pluginattr" "wrap_v" }
 	parmtag	{ "vray_type" "int" }
-	
+
     }
     parm {
 	NAMEM("wrap_w")
@@ -90,7 +90,7 @@
 	parmtag	{ "vray_plugin" "UVWGenEnvironment" }
 	parmtag	{ "vray_pluginattr" "wrap_w" }
 	parmtag	{ "vray_type" "int" }
-	
+
     }
     parm {
 	NAMEM("crop_u")
@@ -104,7 +104,7 @@
 	parmtag	{ "vray_plugin" "UVWGenEnvironment" }
 	parmtag	{ "vray_pluginattr" "crop_u" }
 	parmtag	{ "vray_type" "int" }
-	
+
     }
     parm {
 	NAMEM("crop_v")
@@ -118,7 +118,7 @@
 	parmtag	{ "vray_plugin" "UVWGenEnvironment" }
 	parmtag	{ "vray_pluginattr" "crop_v" }
 	parmtag	{ "vray_type" "int" }
-	
+
     }
     parm {
 	NAMEM("crop_w")
@@ -132,7 +132,7 @@
 	parmtag	{ "vray_plugin" "UVWGenEnvironment" }
 	parmtag	{ "vray_pluginattr" "crop_w" }
 	parmtag	{ "vray_type" "int" }
-	
+
     }
     parm {
 	NAMEM("duvw_scale")
@@ -146,7 +146,7 @@
 	parmtag	{ "vray_plugin" "UVWGenEnvironment" }
 	parmtag	{ "vray_pluginattr" "duvw_scale" }
 	parmtag	{ "vray_type" "float" }
-	
+
     }
     parm {
 	NAMEM("ground_on")
@@ -159,7 +159,7 @@
 	parmtag	{ "vray_plugin" "UVWGenEnvironment" }
 	parmtag	{ "vray_pluginattr" "ground_on" }
 	parmtag	{ "vray_type" "int" }
-	
+
     }
     parm {
 	NAMEM("ground_radius")
@@ -172,7 +172,7 @@
 	parmtag	{ "vray_plugin" "UVWGenEnvironment" }
 	parmtag	{ "vray_pluginattr" "ground_radius" }
 	parmtag	{ "vray_type" "float" }
-	
+
     }
     parm {
 	NAMEM("ground_position")
@@ -185,8 +185,8 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "UVWGenEnvironment" }
 	parmtag	{ "vray_pluginattr" "ground_position" }
-	parmtag	{ "vray_type" "Vector" }
-	
+	parmtag	{ "vray_type" "vector" }
+
     }
 
 #undef NAMEM

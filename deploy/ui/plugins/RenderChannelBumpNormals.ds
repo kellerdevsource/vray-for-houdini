@@ -3,11 +3,11 @@
     label	"Bump Normals"
     parmtag	{ spare_category "Bump Normals" }
     parmtag	{ vray_plugin "RenderChannelBumpNormals" }
-	
+
 	groupsimple {
 		name "folder_main"
 		label "Main"
-		
+
 		parm {
 			name	"name"
 			label	"Name"
@@ -32,11 +32,11 @@
 			parmtag	{ "vray_pluginattr" "filtering" }
 			parmtag	{ "vray_type" "boolean" }
 		}
-			
-		
+
+
 	}
-	
-   
-	
-	
+
+
+
+
 }

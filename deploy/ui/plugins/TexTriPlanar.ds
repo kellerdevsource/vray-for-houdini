@@ -106,7 +106,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexTriPlanar" }
 	parmtag	{ "vray_pluginattr" "frame_offset" }
-	parmtag	{ "vray_type" "Vector" }
+	parmtag	{ "vray_type" "vector" }
     }
     parm {
 	name	"texture_rotation"
@@ -120,7 +120,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexTriPlanar" }
 	parmtag	{ "vray_pluginattr" "texture_rotation" }
-	parmtag	{ "vray_type" "Vector" }
+	parmtag	{ "vray_type" "vector" }
 	parmtag	{ "vray_units" "degrees" }
     }
     parm {

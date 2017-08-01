@@ -3,11 +3,11 @@
     label	"Glossiness"
     parmtag	{ spare_category "Glossiness" }
     parmtag	{ vray_plugin "RenderChannelGlossiness" }
-	
+
 	groupsimple {
 		name "folder_main"
 		label "Main"
-		
+
 		parm {
 			name	"name"
 			label	"Name"
@@ -44,9 +44,9 @@
 			parmtag	{ "vray_pluginattr" "filtering" }
 			parmtag	{ "vray_type" "boolean" }
 		}
-		
-		
+
+
 	}
-	
-    
+
+
 }

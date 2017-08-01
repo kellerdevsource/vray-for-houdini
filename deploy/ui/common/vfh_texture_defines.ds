@@ -1,3 +1,9 @@
+#ifdef PREFIX
+#define NAMEM(n) name PREFIX##n##""
+#else
+#define NAMEM(n) name n##""
+#endif
+
 #define VFH_TEXTURE_OUTPUT(ATTR) \
 parm { \
     name ATTR \

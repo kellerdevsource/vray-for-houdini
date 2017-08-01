@@ -4,5 +4,5 @@
 	parmtag	{ spare_category "Explicit" }
 	parmtag	{ vray_plugin "UVWGenExplicit" }
 
-#include "$VRAY_UI_DS_PATH/plugins/UVWGenExplicitParms.ds"
+#include "UVWGenExplicitParms.ds"
 }
