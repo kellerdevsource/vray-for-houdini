@@ -38,6 +38,8 @@ static MetaImageFileOutputSocket metaImageFileOutputSockets[] = {
 	{ "out_intensity", VOP_TypeInfo(VOP_TYPE_FLOAT) }
 };
 
+static int ouputSocketCount = COUNT_OF(metaImageFileOutputSockets);
+
 PRM_Template* VOP::MetaImageFile::GetPrmTemplate()
 {
 	static Parm::PRMList myPrmList;
@@ -119,17 +121,17 @@ OP::VRayNode::PluginResult VOP::MetaImageFile::asPluginDesc(Attrs::PluginDesc &p
 
 //define outputs
 unsigned VOP::MetaImageFile::getNumVisibleOutputs() const {
-	return 4;
+	return ouputSocketCount;
 }
 
 
 
 unsigned VOP::MetaImageFile::maxOutputs() const {
-	return 4;
+	return ouputSocketCount;
 }
 
 const char* VOP::MetaImageFile::outputLabel(unsigned idx) const {
-	if (idx >= 0 && idx < 4) {
+	if (idx >= 0 && idx < ouputSocketCount) {
 		return metaImageFileOutputSockets[idx].label;
 	}
 
@@ -137,7 +139,7 @@ const char* VOP::MetaImageFile::outputLabel(unsigned idx) const {
 }
 
 void VOP::MetaImageFile::getOutputNameSubclass(UT_String &out, int idx) const {
-	if (idx >= 0 && idx < 4) {
+	if (idx >= 0 && idx < ouputSocketCount) {
 		out = metaImageFileOutputSockets[idx].label;
 	}
 	else {
@@ -147,7 +149,7 @@ void VOP::MetaImageFile::getOutputNameSubclass(UT_String &out, int idx) const {
 }
 
 int VOP::MetaImageFile::getOutputFromName(const UT_String &out) const {
-	for (int idx = 0; idx < 4; idx++) {
+	for (int idx = 0; idx < ouputSocketCount; idx++) {
 		if (out.equal(metaImageFileOutputSockets[idx].label)) {
 			return idx;
 		}
