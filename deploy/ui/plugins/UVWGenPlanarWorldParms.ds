@@ -1,0 +1,157 @@
+#ifdef PREFIX
+#define NAMEM(n) \
+	name PREFIX##n##""
+#else
+#define NAMEM(n) \
+	name n##""
+#endif
+
+parm {
+	NAMEM("nsamples")
+	label	"Nsamples"
+	type	integer
+	default	{ "0" }
+	help	"Number of uvw transform samples"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenPlanarWorld" }
+	parmtag	{ "vray_pluginattr" "nsamples" }
+	parmtag	{ "vray_type" "int" }
+	
+    }
+    parm {
+	NAMEM("wrap_u")
+	label	"Wrap U"
+	type	integer
+	default	{ "0" }
+	help	"0 - no wrapping, 1 - wrap, 2 - mirror tile"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenPlanarWorld" }
+	parmtag	{ "vray_pluginattr" "wrap_u" }
+	parmtag	{ "vray_type" "int" }
+	
+    }
+    parm {
+	NAMEM("wrap_v")
+	label	"Wrap V"
+	type	integer
+	default	{ "0" }
+	help	"0 - no wrapping, 1 - wrap, 2 - mirror tile"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenPlanarWorld" }
+	parmtag	{ "vray_pluginattr" "wrap_v" }
+	parmtag	{ "vray_type" "int" }
+	
+    }
+    parm {
+	NAMEM("wrap_w")
+	label	"Wrap W"
+	type	integer
+	default	{ "0" }
+	help	"0 - no wrapping, 1 - wrap, 2 - mirror tile"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenPlanarWorld" }
+	parmtag	{ "vray_pluginattr" "wrap_w" }
+	parmtag	{ "vray_type" "int" }
+	
+    }
+    parm {
+	NAMEM("crop_u")
+	label	"Crop U"
+	type	integer
+	default	{ "0" }
+	help	"1 to crop in the u-direction"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenPlanarWorld" }
+	parmtag	{ "vray_pluginattr" "crop_u" }
+	parmtag	{ "vray_type" "int" }
+	
+    }
+    parm {
+	NAMEM("crop_v")
+	label	"Crop V"
+	type	integer
+	default	{ "0" }
+	help	"1 to crop in the v-direction"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenPlanarWorld" }
+	parmtag	{ "vray_pluginattr" "crop_v" }
+	parmtag	{ "vray_type" "int" }
+	
+    }
+    parm {
+	NAMEM("crop_w")
+	label	"Crop W"
+	type	integer
+	default	{ "0" }
+	help	"1 to crop in the w-direction"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenPlanarWorld" }
+	parmtag	{ "vray_pluginattr" "crop_w" }
+	parmtag	{ "vray_type" "int" }
+	
+    }
+    parm {
+	NAMEM("coverage")
+	label	"Coverage"
+	type	direction
+	size	3
+	default	{ "1" "1" "1" }
+	help	"Coverage"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenPlanarWorld" }
+	parmtag	{ "vray_pluginattr" "coverage" }
+	parmtag	{ "vray_type" "Vector" }
+	
+    }
+    parm {
+	NAMEM("wrap_mode")
+	label	"Wrap Mode"
+	type	integer
+	default	{ "0" }
+	help	"Wrap mode (0 - wrap on 0.5 boundary; 1 - wrap on integer boundary"
+	menu	{
+	    "On 0.5 boundary"	"On 0.5 boundary"
+	    "On integer boundary"	"On integer boundary"
+	}
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_enumkeys" "0,1" }
+	parmtag	{ "vray_plugin" "UVWGenPlanarWorld" }
+	parmtag	{ "vray_pluginattr" "wrap_mode" }
+	parmtag	{ "vray_type" "int" }
+	
+    }
+    parm {
+	NAMEM("duvw_scale")
+	label	"Duvw Scale"
+	type	float
+	default	{ "1" }
+	help	"Additional scale factor for the texture derivatives"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenPlanarWorld" }
+	parmtag	{ "vray_pluginattr" "duvw_scale" }
+	parmtag	{ "vray_type" "float" }
+	
+    }
+
+#undef NAMEM
+#undef PREFIX

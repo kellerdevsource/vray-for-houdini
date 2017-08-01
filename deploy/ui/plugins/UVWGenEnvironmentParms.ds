@@ -1,0 +1,193 @@
+#ifdef PREFIX
+#define NAMEM(n) \
+	name PREFIX##n##""
+#else
+#define NAMEM(n) \
+	name n##""
+#endif
+
+ parm {
+	NAMEM("mapping_type")
+	label	"Mapping Type"
+	type	ordinal
+	default	{ "2" }
+	help	"Mapping type"
+	menu	{
+	    "Angular"	"Angular"
+	    "Cubic"	"Cubic"
+	    "Spherical"	"Spherical"
+	    "Mirror Ball"	"Mirror Ball"
+	    "Screen"	"Screen"
+	    "Spherical (3ds max)"	"Spherical (3ds max)"
+	    "Spherical (V-Ray)"	"Spherical (V-Ray)"
+	    "Cylindrical (3ds max)"	"Cylindrical (3ds max)"
+	    "Shrink Wrap (3ds max)"	"Shrink Wrap (3ds max)"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_enumkeys" "angular,cubic,spherical,mirror_ball,screen,max_spherical,spherical_vray,max_cylindrical,max_shrink_wrap" }
+	parmtag	{ "vray_plugin" "UVWGenEnvironment" }
+	parmtag	{ "vray_pluginattr" "mapping_type" }
+	parmtag	{ "vray_type" "String" }
+	
+    }
+    parm {
+	NAMEM("wrap_u")
+	label	"Wrap U"
+	type	ordinal
+	default	{ "0" }
+	help	"Wrap U"
+	menu	{
+	    "No Wrapping"	"No Wrapping"
+	    "Wrap"	"Wrap"
+	    "Mirror Tile"	"Mirror Tile"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_enumkeys" "0,1,2" }
+	parmtag	{ "vray_plugin" "UVWGenEnvironment" }
+	parmtag	{ "vray_pluginattr" "wrap_u" }
+	parmtag	{ "vray_type" "int" }
+	
+    }
+    parm {
+	NAMEM("wrap_v")
+	label	"Wrap V"
+	type	ordinal
+	default	{ "0" }
+	help	"Wrap V"
+	menu	{
+	    "No Wrapping"	"No Wrapping"
+	    "Wrap"	"Wrap"
+	    "Mirror Tile"	"Mirror Tile"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_enumkeys" "0,1,2" }
+	parmtag	{ "vray_plugin" "UVWGenEnvironment" }
+	parmtag	{ "vray_pluginattr" "wrap_v" }
+	parmtag	{ "vray_type" "int" }
+	
+    }
+    parm {
+	NAMEM("wrap_w")
+	label	"Wrap W"
+	type	ordinal
+	default	{ "0" }
+	help	"Wrap W"
+	menu	{
+	    "No Wrapping"	"No Wrapping"
+	    "Wrap"	"Wrap"
+	    "Mirror Tile"	"Mirror Tile"
+	}
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_enumkeys" "0,1,2" }
+	parmtag	{ "vray_plugin" "UVWGenEnvironment" }
+	parmtag	{ "vray_pluginattr" "wrap_w" }
+	parmtag	{ "vray_type" "int" }
+	
+    }
+    parm {
+	NAMEM("crop_u")
+	label	"Crop U"
+	type	toggle
+	default	{ "0" }
+	help	"Crop in the u-direction"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenEnvironment" }
+	parmtag	{ "vray_pluginattr" "crop_u" }
+	parmtag	{ "vray_type" "int" }
+	
+    }
+    parm {
+	NAMEM("crop_v")
+	label	"Crop V"
+	type	toggle
+	default	{ "0" }
+	help	"Crop in the v-direction"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenEnvironment" }
+	parmtag	{ "vray_pluginattr" "crop_v" }
+	parmtag	{ "vray_type" "int" }
+	
+    }
+    parm {
+	NAMEM("crop_w")
+	label	"Crop W"
+	type	toggle
+	default	{ "0" }
+	help	"Crop in the w-direction"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenEnvironment" }
+	parmtag	{ "vray_pluginattr" "crop_w" }
+	parmtag	{ "vray_type" "int" }
+	
+    }
+    parm {
+	NAMEM("duvw_scale")
+	label	"Duvw Scale"
+	type	float
+	default	{ "1" }
+	help	"Additional scale factor for the texture derivatives"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenEnvironment" }
+	parmtag	{ "vray_pluginattr" "duvw_scale" }
+	parmtag	{ "vray_type" "float" }
+	
+    }
+    parm {
+	NAMEM("ground_on")
+	label	"Ground On"
+	type	integer
+	default	{ "0" }
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenEnvironment" }
+	parmtag	{ "vray_pluginattr" "ground_on" }
+	parmtag	{ "vray_type" "int" }
+	
+    }
+    parm {
+	NAMEM("ground_radius")
+	label	"Ground Radius"
+	type	float
+	default	{ "1000" }
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenEnvironment" }
+	parmtag	{ "vray_pluginattr" "ground_radius" }
+	parmtag	{ "vray_type" "float" }
+	
+    }
+    parm {
+	NAMEM("ground_position")
+	label	"Ground Position"
+	type	direction
+	size	3
+	default	{ "0" "0" "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "UVWGenEnvironment" }
+	parmtag	{ "vray_pluginattr" "ground_position" }
+	parmtag	{ "vray_type" "Vector" }
+	
+    }
+
+#undef NAMEM
+#undef PREFIX
