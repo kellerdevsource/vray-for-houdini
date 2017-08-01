@@ -38,7 +38,7 @@ static MetaImageFileOutputSocket metaImageFileOutputSockets[] = {
 	{ "out_intensity", VOP_TypeInfo(VOP_TYPE_FLOAT) }
 };
 
-static int ouputSocketCount = COUNT_OF(metaImageFileOutputSockets);
+static const int ouputSocketCount = COUNT_OF(metaImageFileOutputSockets);
 
 PRM_Template* VOP::MetaImageFile::GetPrmTemplate()
 {
