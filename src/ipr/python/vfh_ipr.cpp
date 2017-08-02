@@ -125,19 +125,16 @@ static PingPongClient *stopChecker = nullptr;
 static ProcessCheckPtr procCheck = nullptr;
 std::recursive_mutex expMtx;
 
-typedef std::unique_lock<std::recursive_mutex> exporter_lock;
-exporter_lock expLock(expMtx, std::defer_lock);
-
 
 /// RAII wrapper over the lock of the vrayExporter pointer
 /// Has bool cast operator so it can be used directly in if statements
 struct WithExporter {
 	WithExporter() {
-		expLock.lock();
+		expMtx.lock();
 	}
 
 	~WithExporter() {
-		expLock.unlock();
+		expMtx.unlock();
 	}
 
 	explicit operator bool() const & {
