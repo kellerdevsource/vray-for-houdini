@@ -23,7 +23,8 @@ def main():
 
     import sys
     import ctypes
-    sys.setdlopenflags( sys.getdlopenflags() | ctypes.RTLD_GLOBAL )
+    if hasattr(sys, 'setdlopenflags'):
+        sys.setdlopenflags(sys.getdlopenflags() | ctypes.RTLD_GLOBAL)
 
     import _vfh_ipr
 
