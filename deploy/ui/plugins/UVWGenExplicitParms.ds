@@ -1,0 +1,68 @@
+#ifdef PREFIX
+#define NAMEM(n) \
+	name PREFIX##n##""
+#else
+#define NAMEM(n) \
+	name n##""
+#endif
+
+	parm {
+		NAMEM("u")
+		label	"U"
+		type	float
+		default	{ "1" }
+		help	"the U input"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "cook_dependent" "1" }
+		parmtag	{ "vray_plugin" "UVWGenExplicit" }
+		parmtag	{ "vray_pluginattr" "u" }
+		parmtag	{ "vray_type" "TextureFloat" }
+		
+	}
+	parm {
+		NAMEM("v")
+		label	"V"
+		type	float
+		default	{ "1" }
+		help	"the V input"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "cook_dependent" "1" }
+		parmtag	{ "vray_plugin" "UVWGenExplicit" }
+		parmtag	{ "vray_pluginattr" "v" }
+		parmtag	{ "vray_type" "TextureFloat" }
+		
+	}
+	parm {
+		NAMEM("w")
+		label	"W"
+		type	float
+		default	{ "1" }
+		help	"the W input"
+		range	{ 0 64 }
+		export	none
+		parmtag	{ "cook_dependent" "1" }
+		parmtag	{ "vray_plugin" "UVWGenExplicit" }
+		parmtag	{ "vray_pluginattr" "w" }
+		parmtag	{ "vray_type" "TextureFloat" }
+		
+	}
+	parm {
+		NAMEM("uvw")
+		label	"Uvw"
+		type	color4
+		size	4
+		default	{ "0" "0" "0" "1" }
+		range	{ 0 10 }
+		export	none
+		parmtag	{ "cook_dependent" "1" }
+		parmtag	{ "vray_linked_only" "1" }
+		parmtag	{ "vray_plugin" "UVWGenExplicit" }
+		parmtag	{ "vray_pluginattr" "uvw" }
+		parmtag	{ "vray_type" "Texture" }
+		
+	}
+
+#undef NAMEM
+#undef PREFIX

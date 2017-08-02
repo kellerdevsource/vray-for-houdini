@@ -3,76 +3,90 @@
     label	"Velocity"
     parmtag	{ spare_category "Velocity" }
     parmtag	{ vray_plugin "RenderChannelVelocity" }
-    parm {
-	name	"name"
-	label	"Name"
-	type	string
-	default	{ "Velocity" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "RenderChannelVelocity" }
-	parmtag	{ "vray_pluginattr" "name" }
-	parmtag	{ "vray_type" "String" }
-    }
-    parm {
-	name	"clamp_velocity"
-	label	"Clamp Velocity"
-	type	toggle
-	default	{ "1" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "RenderChannelVelocity" }
-	parmtag	{ "vray_pluginattr" "clamp_velocity" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"max_velocity"
-	label	"Max Velocity"
-	type	float
-	default	{ "1" }
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "RenderChannelVelocity" }
-	parmtag	{ "vray_pluginattr" "max_velocity" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"max_velocity_last_frame"
-	label	"Max Velocity Last Frame"
-	type	float
-	default	{ "0" }
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "RenderChannelVelocity" }
-	parmtag	{ "vray_pluginattr" "max_velocity_last_frame" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"ignore_z"
-	label	"Ignore Z"
-	type	toggle
-	default	{ "1" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "RenderChannelVelocity" }
-	parmtag	{ "vray_pluginattr" "ignore_z" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"filtering"
-	label	"Filtering"
-	type	toggle
-	default	{ "1" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "RenderChannelVelocity" }
-	parmtag	{ "vray_pluginattr" "filtering" }
-	parmtag	{ "vray_type" "boolean" }
-    }
+	
+	groupsimple {
+		name "folder_main"
+		label "Main"
+		
+		parm {
+			name	"name"
+			label	"Name"
+			type	string
+			default	{ "Velocity" }
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "RenderChannelVelocity" }
+			parmtag	{ "vray_pluginattr" "name" }
+			parmtag	{ "vray_type" "String" }
+		}
+		parm {
+			name	"clamp_velocity"
+			label	"Clamp Velocity"
+			type	toggle
+			default	{ "1" }
+			range	{ 0 1 }
+			help "Sets the limit for Max Velocity. When enabled, this option limits the max velocity value to 1 for floating point images, 255 for 8-bit images, or 65535 for 16-bit images. This option is useful only when writing to an 8-bit or 16-bit file format."
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "RenderChannelVelocity" }
+			parmtag	{ "vray_pluginattr" "clamp_velocity" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		parm {
+			name	"max_velocity"
+			label	"Max Velocity"
+			type	float
+			default	{ "1" }
+			range	{ 0 3 }
+			help "Used to scale the velocity values written to the render element so that they fit within the range specified by the Clamp Velocity parameter. This is only useful if writing to an 8-bit or 16-bit file format."
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "RenderChannelVelocity" }
+			parmtag	{ "vray_pluginattr" "max_velocity" }
+			parmtag	{ "vray_type" "float" }
+		}
+		parm {
+			name	"max_velocity_last_frame"
+			label	"Max Velocity Last Frame"
+			type	float
+			default	{ "0" }
+			range	{ 0 1 }
+			help "Shows the maximum velocity value that was found while rendering the last image. This is a read-only parameter and can be used as a guide for setting the Max Velocity parameter."
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "RenderChannelVelocity" }
+			parmtag	{ "vray_pluginattr" "max_velocity_last_frame" }
+			parmtag	{ "vray_type" "float" }
+		}
+		parm {
+			name	"ignore_z"
+			label	"Ignore Z"
+			type	toggle
+			default	{ "1" }
+			range	{ 0 1 }
+			help "Disregards motion along the Z axis."
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "RenderChannelVelocity" }
+			parmtag	{ "vray_pluginattr" "ignore_z" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		parm {
+			name	"filtering"
+			label	"Filtering"
+			type	toggle
+			default	{ "1" }
+			range	{ 0 1 }
+			help "Applies the image filter to this channel. Image filter settings are in the Sampler rollout in the Renderer tab of the VRay ROP."
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "RenderChannelVelocity" }
+			parmtag	{ "vray_pluginattr" "filtering" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+		
+		
+	}
+   
 }

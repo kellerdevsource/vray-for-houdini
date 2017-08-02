@@ -20,6 +20,8 @@
 
 #include <HOM/HOM_Module.h>
 
+#include <signal.h>
+
 #include <QThread>
 #include <QByteArray>
 #include <QtNetwork/QTcpSocket>
@@ -525,6 +527,9 @@ static PyMethodDef methods[] = {
 
 PyMODINIT_FUNC init_vfh_ipr()
 {
+#ifndef _WIN32
+	signal(SIGPIPE, SIG_IGN);
+#endif
 	Log::Logger::startLogging();
 	Py_InitModule("_vfh_ipr", methods);
 }

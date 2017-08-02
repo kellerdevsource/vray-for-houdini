@@ -1,63 +1,8 @@
 {
-    name	UVWGenExplicit
-    label	"Explicit"
-    parmtag	{ spare_category "Explicit" }
-    parmtag	{ vray_plugin "UVWGenExplicit" }
-	
-	
-    parm {
-		name	"u"
-		label	"U"
-		type	float
-		default	{ "1" }
-		help	"the U input"
-		range	{ 0 1 }
-		export	none
-		parmtag	{ "cook_dependent" "1" }
-		parmtag	{ "vray_plugin" "UVWGenExplicit" }
-		parmtag	{ "vray_pluginattr" "u" }
-		parmtag	{ "vray_type" "TextureFloat" }
-    }
-    parm {
-		name	"v"
-		label	"V"
-		type	float
-		default	{ "1" }
-		help	"the V input"
-		range	{ 0 1 }
-		export	none
-		parmtag	{ "cook_dependent" "1" }
-		parmtag	{ "vray_plugin" "UVWGenExplicit" }
-		parmtag	{ "vray_pluginattr" "v" }
-		parmtag	{ "vray_type" "TextureFloat" }
-    }
-    parm {
-		name	"w"
-		label	"W"
-		type	float
-		joinnext
-		default	{ "1" }
-		help	"the W input"
-		range	{ 0 1 }
-		export	none
-		parmtag	{ "cook_dependent" "1" }
-		parmtag	{ "vray_plugin" "UVWGenExplicit" }
-		parmtag	{ "vray_pluginattr" "w" }
-		parmtag	{ "vray_type" "TextureFloat" }
-    }
-    parm {
-		name	"uvw"
-		label	"Uvw"
-		type	color4
-		invisible
-		size	4
-		default	{ "0" "0" "0" "1" }
-		range	{ 0 10 }
-		export	none
-		parmtag	{ "cook_dependent" "1" }
-		parmtag	{ "vray_linked_only" "1" }
-		parmtag	{ "vray_plugin" "UVWGenExplicit" }
-		parmtag	{ "vray_pluginattr" "uvw" }
-		parmtag	{ "vray_type" "Texture" }
-    }
+	name	UVWGenExplicit
+	label	"Explicit"
+	parmtag	{ spare_category "Explicit" }
+	parmtag	{ vray_plugin "UVWGenExplicit" }
+
+#include "$VRAY_UI_DS_PATH/plugins/UVWGenExplicitParms.ds"
 }

@@ -3,28 +3,40 @@
     label	"Bump Normals"
     parmtag	{ spare_category "Bump Normals" }
     parmtag	{ vray_plugin "RenderChannelBumpNormals" }
-    parm {
-	name	"name"
-	label	"Name"
-	type	string
-	default	{ "Bump Normals" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "RenderChannelBumpNormals" }
-	parmtag	{ "vray_pluginattr" "name" }
-	parmtag	{ "vray_type" "String" }
-    }
-    parm {
-	name	"filtering"
-	label	"Filtering"
-	type	toggle
-	default	{ "1" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "RenderChannelBumpNormals" }
-	parmtag	{ "vray_pluginattr" "filtering" }
-	parmtag	{ "vray_type" "boolean" }
-    }
+	
+	groupsimple {
+		name "folder_main"
+		label "Main"
+		
+		parm {
+			name	"name"
+			label	"Name"
+			type	string
+			default	{ "Bump_Normals" }
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "RenderChannelBumpNormals" }
+			parmtag	{ "vray_pluginattr" "name" }
+			parmtag	{ "vray_type" "String" }
+		}
+		parm {
+			name	"filtering"
+			label	"Filtering"
+			type	toggle
+			default	{ "1" }
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "RenderChannelBumpNormals" }
+			parmtag	{ "vray_pluginattr" "filtering" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+			
+		
+	}
+	
+   
+	
+	
 }

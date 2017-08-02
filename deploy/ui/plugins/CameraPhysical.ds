@@ -5,7 +5,7 @@
     parmtag	{ vray_plugin "CameraPhysical" }
 	
 	parm {
-	name	"use"
+	name	"CameraPhysical_use"
 	label	"Enable"
 	type	toggle
 	default	{ "1" }
@@ -19,10 +19,10 @@
 	groupsimple {
 		name "folder_physcam_main"
 		label "Main"
-		hidewhentab "{ use == 0 }"
+		hidewhentab "{ CameraPhysical_use == 0 }"
 		
 		parm {
-			name	"type"
+			name	"CameraPhysical_type"
 			label	"Camera Type"
 			type	ordinal
 			joinnext
@@ -43,7 +43,7 @@
 		}
 	
 		parm {
-			name	"use_dof"
+			name	"CameraPhysical_use_dof"
 			label	"Depth Of Field"
 			type	toggle
 			joinnext
@@ -57,10 +57,9 @@
 			parmtag	{ "vray_type" "boolean" }
 		}
 		parm {
-			name	"use_moblur"
+			name	"CameraPhysical_use_moblur"
 			label	"Motion Blur"
 			type	toggle
-			
 			default	{ "0" }
 			help	"Turns on motion blur sampling"
 			range	{ 0 1 }
@@ -72,7 +71,7 @@
 		}
 		
 		parm {
-			name	"exposure"
+			name	"CameraPhysical_exposure"
 			label	"Exposure"
 			type	toggle
 			default	{ "1" }
@@ -86,7 +85,7 @@
 		}
 		
 		parm {
-			name	"specify_fov"
+			name	"CameraPhysical_specify_fov"
 			label	"Specify Fov"
 			type	toggle
 			default	{ "0" }
@@ -100,11 +99,11 @@
 		}
 		
 		parm {
-			name	"film_width"
+			name	"CameraPhysical_film_width"
 			label	"Film Width"
 			type	float
 			default	{ "36" }
-			hidewhen "{ specify_fov == 1 }"
+			hidewhen "{ CameraPhysical_specify_fov == 1 }"
 			help	"Specifies the horizontal size of the film gate in milimeters"
 			range	{ 0 135 }
 			export	none
@@ -115,10 +114,10 @@
 		}
 		
 		parm {
-			name	"focal_length"
+			name	"CameraPhysical_focal_length"
 			label	"Focal Length"
 			type	float
-			hidewhen "{ specify_fov == 1 }"
+			hidewhen "{ CameraPhysical_specify_fov == 1 }"
 			default	{ "50" }
 			help	"Specifies the equivalen focal length of the camera lens"
 			range	{ 0 100 }
@@ -129,10 +128,10 @@
 			parmtag	{ "vray_type" "float" }
 		}
 		parm {
-			name	"fov"
+			name	"CameraPhysical_fov"
 			label	"Field of View"
 			type	float
-			hidewhen "{ specify_fov == 0 }"
+			hidewhen "{ CameraPhysical_specify_fov == 0 }"
 			default	{ "1.5708" }
 			help	"the FOV value (in radians) to use when specify_fov is true"
 			range	{ 0 10 }
@@ -145,10 +144,10 @@
 		
 		
 		parm {
-			name	"f_number"
+			name	"CameraPhysical_f_number"
 			label	"F - Stop"
 			type	float
-			hidewhen "{ exposure != 1 }"
+			hidewhen "{ CameraPhysical_exposure != 1 }"
 			default	{ "16" }
 			help	"Determines the width of the camera aperture and, indirectly, exposure"
 			range	{ 0 16 }
@@ -160,10 +159,10 @@
 		}
 		
 		parm {
-			name	"shutter_speed"
+			name	"CameraPhysical_shutter_speed"
 			label	"Shutter Speed"
 			type	float
-			hidewhen "{ exposure != 1 } { type != Still } "
+			hidewhen "{ CameraPhysical_exposure != 1 } { CameraPhysical_type != Still } "
 			default	{ "100" }
 			help	"The shutter speed, in inverse seconds"
 			range	{ 0 1000 }
@@ -174,10 +173,10 @@
 			parmtag	{ "vray_type" "float" }
 		}
 		parm {
-			name	"shutter_angle"
+			name	"CameraPhysical_shutter_angle"
 			label	"Shutter Angle"
 			type	float
-			hidewhen "{ type != Cinematic }"
+			hidewhen "{ CameraPhysical_type != Cinematic }"
 			default	{ "180" }
 			help	"Shutter angle (in degrees)"
 			range	{ 0 180 }
@@ -188,10 +187,10 @@
 			parmtag	{ "vray_type" "float" }
 		}
 		parm {
-			name	"shutter_offset"
+			name	"CameraPhysical_shutter_offset"
 			label	"Shutter Offset"
 			type	float
-			hidewhen	"{ type != Cinematic }"
+			hidewhen	"{ CameraPhysical_type != Cinematic }"
 			default	{ "0" }
 			help	"Shutter offset (in degress)"
 			range	{ 0 180 }
@@ -202,12 +201,12 @@
 			parmtag	{ "vray_type" "float" }
 		}
 		parm {
-			name	"latency"
+			name	"CameraPhysical_latency"
 			label	"Latency"
 			type	float
 			default	{ "0" }
 			help	"CCD matrix latency, in seconds"
-			hidewhen	"{ type != Video }"
+			hidewhen	"{ CameraPhysical_type != Video }"
 			range	{ 0 2 }
 			export	none
 			parmtag	{ "cook_dependent" "1" }
@@ -217,10 +216,10 @@
 		}
 		
 		parm {
-			name	"ISO"
+			name	"CameraPhysical_ISO"
 			label	"ISO"
 			type	float
-			hidewhen "{ exposure != 1 }"
+			hidewhen "{ CameraPhysical_exposure != 1 }"
 			default	{ "100" }
 			help	"The film power (i.e. sensitivity)"
 			range	{ 0 3200 }
@@ -231,7 +230,7 @@
 			parmtag	{ "vray_type" "float" }
 		}
 		parm {
-			name	"zoom_factor"
+			name	"CameraPhysical_zoom_factor"
 			label	"Zoom Factor"
 			type	float
 			default	{ "1" }
@@ -245,10 +244,10 @@
 		}
 		
 		parm {
-			name	"specify_focus"
+			name	"CameraPhysical_specify_focus"
 			label	" "
 			type	toggle
-			hidewhen "{ use_dof == 0 } "
+			hidewhen "{ CameraPhysical_use_dof == 0 } "
 			joinnext
 			default	{ "1" }
 			range	{ 0 1 }
@@ -259,13 +258,13 @@
 			parmtag	{ "vray_type" "boolean" }
 		}
 		parm {
-			name	"focus_distance"
+			name	"CameraPhysical_focus_distance"
 			label	"Focus Distance"
 			type	float
 			default	{ "200" }
 			help	"focus distance in mm"
-			disablewhen	"{ specify_focus != 1 }"
-			hidewhen "{ use_dof == 0  } "
+			disablewhen	"{ CameraPhysical_specify_focus != 1 }"
+			hidewhen "{ CameraPhysical_use_dof == 0  } "
 			range	{ 0 800 }
 			export	none
 			parmtag	{ "cook_dependent" "1" }
@@ -274,11 +273,11 @@
 			parmtag	{ "vray_type" "float" }
 		}
 		parm {
-			name	"targeted"
+			name	"CameraPhysical_targeted"
 			label	" "
 			type	toggle
-			hidewhen "{ use_dof == 0  }"
-			disablewhen "{ specify_focus == 1 }" 
+			hidewhen "{ CameraPhysical_use_dof == 0  }"
+			disablewhen "{ CameraPhysical_specify_focus == 1 }" 
 			joinnext
 			default	{ "1" }
 			help	"1-specify a target distance; 0-target distance not specified"
@@ -290,11 +289,11 @@
 			parmtag	{ "vray_type" "boolean" }
 		}
 		parm {
-			name	"target_distance"
+			name	"CameraPhysical_target_distance"
 			label	"Target Distance"
 			type	float
-			hidewhen "{ use_dof == 0 }"
-			disablewhen "{ specify_focus == 1 }" 
+			hidewhen "{ CameraPhysical_use_dof == 0 }"
+			disablewhen "{ CameraPhysical_specify_focus == 1 }" 
 			default	{ "200" }
 			help	"target distance"
 			range	{ 0 800 }
@@ -305,7 +304,7 @@
 			parmtag	{ "vray_type" "float" }
 		}
 		parm {
-			name	"dof_display_threshold"
+			name	"CameraPhysical_dof_display_threshold"
 			label	"Dof Display Threshold"
 			type	float
 			invisible
@@ -320,7 +319,7 @@
 		}
 
 		parm {
-			name	"white_balance"
+			name	"CameraPhysical_white_balance"
 			label	"White Balance"
 			type	color
 			size	3
@@ -334,7 +333,7 @@
 			parmtag	{ "vray_type" "Color" }
 		}
 		parm {
-			name	"vignetting"
+			name	"CameraPhysical_vignetting"
 			label	"Vignetting"
 			type	float
 			default	{ "1" }
@@ -347,7 +346,7 @@
 			parmtag	{ "vray_type" "float" }
 		}
 		parm {
-			name	"optical_vignetting"
+			name	"CameraPhysical_optical_vignetting"
 			label	"Optical Vignetting"
 			type	float
 			default	{ "0" }
@@ -360,7 +359,7 @@
 			parmtag	{ "vray_type" "float" }
 		}
 		parm {
-			name	"subdivs"
+			name	"CameraPhysical_subdivs"
 			label	"Subdivs"
 			type	integer
 			default	{ "4" }
@@ -374,7 +373,7 @@
 		}
 		
 		parm {
-			name	"dont_affect_settings"
+			name	"CameraPhysical_dont_affect_settings"
 			label	"Dont Affect Settings"
 			type	toggle
 			default	{ "0" }
@@ -395,10 +394,10 @@
 	groupsimple {
 		name "folder_physcam_distortion"
 		label "Distortion"
-		hidewhentab "{ use == 0 }"
+		hidewhentab "{ CameraPhysical_use == 0 }"
 		
 		parm {
-			name "parm_distortion_enable"
+			name "CameraPhysical_parm_distortion_enable"
 			label "Enable"
 			type toggle
 			default { "0" }
@@ -409,10 +408,10 @@
 		
 		
 		parm {
-			name	"distortion_type"
+			name	"CameraPhysical_distortion_type"
 			label	"Distortion Type"
 			type	ordinal
-			hidewhen "{ parm_distortion_enable == 0 }"
+			hidewhen "{ CameraPhysical_parm_distortion_enable == 0 }"
 			default	{ "0" }
 			help	"Distortion type"
 			menu	{
@@ -430,10 +429,10 @@
 		}
 		
 		parm {
-			name	"distortion"
+			name	"CameraPhysical_distortion"
 			label	"Distortion"
 			type	float
-			hidewhen "{ parm_distortion_enable == 0 } { distortion_type == 2 } "
+			hidewhen "{ CameraPhysical_parm_distortion_enable == 0 } { CameraPhysical_distortion_type == 2 } "
 			default	{ "0" }
 			help	"Specifies the distortion coefficient for the camera lens"
 			range	{ 0 1 }
@@ -445,13 +444,13 @@
 		}
 		
 		parm {
-			name	"lens_file"
+			name	"CameraPhysical_lens_file"
 			label	"Lens File"
 			type	file
-			hidewhen "{ parm_distortion_enable == 0 }"
+			hidewhen "{ CameraPhysical_parm_distortion_enable == 0 }"
 			default	{ "" }
 			help	"LENS file with camera lens-type image distortion description"
-			hidewhen "{ parm_distortion_enable == 0 } { distortion_type != 2 } "
+			hidewhen "{ CameraPhysical_parm_distortion_enable == 0 } { CameraPhysical_distortion_type != 2 } "
 			range	{ 0 1 }
 			export	none
 			parmtag	{ "cook_dependent" "1" }
@@ -462,10 +461,10 @@
 		}
 		
 		parm {
-			name	"distortion_tex"
+			name	"CameraPhysical_distortion_tex"
 			label	"Distortion Texture"
 			type	color4
-			hidewhen "{ parm_distortion_enable == 0 }"
+			hidewhen "{ CameraPhysical_parm_distortion_enable == 0 }"
 			invisible
 			size	4
 			default	{ "0" "0" "0" "1" }
@@ -479,10 +478,10 @@
 		}
 		
 		parm {
-			name	"auto_lens_shift"
+			name	"CameraPhysical_auto_lens_shift"
 			label	"Auto Lens Shift"
 			type	toggle
-			hidewhen "{ parm_distortion_enable == 0 }"
+			hidewhen "{ CameraPhysical_parm_distortion_enable == 0 }"
 			default	{ "0" }
 			help	"Calculate lens shift automatically"
 			range	{ 0 1 }
@@ -492,10 +491,10 @@
 		}
 		
 		parm {
-			name	"lens_shift"
+			name	"CameraPhysical_lens_shift"
 			label	"Vertical Tilt"
 			type	float
-			hidewhen "{ parm_distortion_enable == 0 }"
+			hidewhen "{ CameraPhysical_parm_distortion_enable == 0 }"
 			default	{ "0" }
 			help	"Shift lenses for 2-point perspective"
 			range	{ 0 64 }
@@ -507,10 +506,10 @@
 		}
 		
 		parm {
-			name	"horizontal_shift"
+			name	"CameraPhysical_horizontal_shift"
 			label	"Horizontal Tilt"
 			type	float
-			hidewhen "{ parm_distortion_enable == 0 }"
+			hidewhen "{ CameraPhysical_parm_distortion_enable == 0 }"
 			default	{ "0" }
 			help	"the horizontal lens shift"
 			range	{ 0 64 }
@@ -521,10 +520,10 @@
 			parmtag	{ "vray_type" "float" }
 		}
 		parm {
-			name	"horizontal_offset"
+			name	"CameraPhysical_horizontal_offset"
 			label	"Horizontal Shift"
 			type	float
-			hidewhen "{ parm_distortion_enable == 0 }"
+			hidewhen "{ CameraPhysical_parm_distortion_enable == 0 }"
 			default	{ "0" }
 			help	"The horizontal offset"
 			range	{ 0 64 }
@@ -535,10 +534,10 @@
 			parmtag	{ "vray_type" "float" }
 		}
 		parm {
-			name	"vertical_offset"
+			name	"CameraPhysical_vertical_offset"
 			label	"Vertical Shift"
 			type	float
-			hidewhen "{ parm_distortion_enable == 0 }"
+			hidewhen "{ CameraPhysical_parm_distortion_enable == 0 }"
 			default	{ "0" }
 			help	"The vertical offset"
 			range	{ 0 64 }
@@ -557,10 +556,10 @@
 	groupsimple {
 		name "folder_physcam_bokeh"
 		label "Bokeh"
-		hidewhentab "{ use == 0 }"
+		hidewhentab "{ CameraPhysical_use == 0 }"
 		
 		parm {
-			name	"blades_enable"
+			name	"CameraPhysical_blades_enable"
 			label	"Enable"
 			type	toggle
 			default	{ "0" }
@@ -574,10 +573,10 @@
 		}
 		
 		parm {
-			name	"blades_num"
+			name	"CameraPhysical_blades_num"
 			label	"Blades Num"
 			type	integer
-			hidewhen	"{ blades_enable != 1 }"
+			hidewhen	"{ CameraPhysical_blades_enable != 1 }"
 			default	{ "5" }
 			help	"Number of blades (0 means its disabled)"
 			range	{ 2 20 }
@@ -588,10 +587,10 @@
 			parmtag	{ "vray_type" "int" }
 		}
 		parm {
-			name	"blades_rotation"
+			name	"CameraPhysical_blades_rotation"
 			label	"Blades Rotation"
 			type	float
-			hidewhen	"{ blades_enable != 1 }"
+			hidewhen	"{ CameraPhysical_blades_enable != 1 }"
 			default	{ "0" }
 			help	"Defines the rotation of the blades (in radians)"
 			range	{ 0 64 }
@@ -602,10 +601,10 @@
 			parmtag	{ "vray_type" "float" }
 		}
 		parm {
-			name	"center_bias"
+			name	"CameraPhysical_center_bias"
 			label	"Center Bias"
 			type	float
-			hidewhen	"{ blades_enable != 1 }"
+			hidewhen	"{ CameraPhysical_blades_enable != 1 }"
 			default	{ "0" }
 			help	"Defines a bias shape for the bokeh effects"
 			range	{ 0 64 }
@@ -616,10 +615,10 @@
 			parmtag	{ "vray_type" "float" }
 		}
 		parm {
-			name	"anisotropy"
+			name	"CameraPhysical_anisotropy"
 			label	"Bokeh Anisotropy"
 			type	float
-			hidewhen	"{ blades_enable != 1 }"
+			hidewhen	"{ CameraPhysical_blades_enable != 1 }"
 			default	{ "0" }
 			help	"Allows stretching of the bokeh effect horizontally or vertically to simulate anamorphic lenses"
 			range	{ 0 64 }
@@ -646,10 +645,10 @@
 	groupsimple {
 		name "folder_physcam_bmpapperture"
 		label "Bitmap Apperture"
-		hidewhentab "{ use == 0 }"
+		hidewhentab "{ CameraPhysical_use == 0 }"
 		
 		parm {
-			name	"bmpaperture_enable"
+			name	"CameraPhysical_bmpaperture_enable"
 			label	"Enable"
 			type	toggle
 			default	{ "0" }
@@ -662,12 +661,12 @@
 			parmtag	{ "vray_type" "boolean" }
 		}
 		parm {
-			name	"bmpaperture_affects_exposure"
+			name	"CameraPhysical_bmpaperture_affects_exposure"
 			label	"Bitmap Affects Exposure"
 			type	toggle
 			default	{ "1" }
 			help	"This will make the Bitmap Aperture's size and shape affect the exposure"
-			hidewhen	"{ bmpaperture_enable != 1 }"
+			hidewhen	"{ CameraPhysical_bmpaperture_enable != 1 }"
 			range	{ 0 1 }
 			export	none
 			parmtag	{ "cook_dependent" "1" }
@@ -676,12 +675,12 @@
 			parmtag	{ "vray_type" "boolean" }
 		}
 		parm {
-			name	"bmpaperture_resolution"
+			name	"CameraPhysical_bmpaperture_resolution"
 			label	"Bitmap Resolution"
 			type	integer
 			default	{ "512" }
 			help	"texture sampling resolution for the importance sampling"
-			hidewhen	"{ bmpaperture_enable != 1 }"
+			hidewhen	"{ CameraPhysical_bmpaperture_enable != 1 }"
 			range	{ 0 64 }
 			export	none
 			parmtag	{ "cook_dependent" "1" }
@@ -690,12 +689,12 @@
 			parmtag	{ "vray_type" "int" }
 		}
 		parm {
-			name	"bmpaperture_tex"
+			name	"CameraPhysical_bmpaperture_tex"
 			label	"Bitmap Aperture Texture"
 			type	color4
 			size	4
 			default	{ "0" "0" "0" "1" }
-			hidewhen	"{ bmpaperture_enable != 1 }"
+			hidewhen	"{ CameraPhysical_bmpaperture_enable != 1 }"
 			range	{ 0 10 }
 			export	none
 			parmtag	{ "cook_dependent" "1" }

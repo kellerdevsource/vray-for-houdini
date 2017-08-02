@@ -9,7 +9,7 @@
     	name	"bump_tex_color"
     	label	"Bump Texture(Color)"
     	type	color4
-      invisible
+		invisible
     	size	4
     	default	{ "0" "0" "0" "1" }
     	help	"Bump texture"
@@ -25,7 +25,7 @@
     	name	"bump_tex_float"
     	label	"Bump Texture(Float)"
     	type	float
-      invisible
+		invisible
     	default	{ "1" }
     	help	"Bump texture"
     	range	{ 0 1 }
@@ -44,7 +44,6 @@
         name	"map_type"
         label	"Type"
         type	ordinal
-        joinnext
         default	{ "0" }
         help	"The type of the map"
         menu	{
@@ -65,35 +64,7 @@
         parmtag	{ "vray_type" "int" }
       }
 
-      parm {
-      	name	"bump_shadows"
-      	label	"Bump Shadows"
-      	type	toggle
-        joinnext
-      	default	{ "0" }
-      	help	"true to offset the surface shading point, in addition to the normal"
-      	range	{ 0 1 }
-      	export	none
-      	parmtag	{ "cook_dependent" "1" }
-      	parmtag	{ "vray_plugin" "MtlBump" }
-      	parmtag	{ "vray_pluginattr" "bump_shadows" }
-      	parmtag	{ "vray_type" "boolean" }
-      }
-
-      parm {
-      	name	"compute_bump_for_shadows"
-      	label	"Compute Bump For Shadows"
-      	type	toggle
-      	default	{ "0" }
-      	help	"true to compute bump mapping for shadow rays in case the material is transparent; false to skip the bump map for shadow rays (faster rendering)"
-      	range	{ 0 1 }
-      	export	none
-      	parmtag	{ "cook_dependent" "1" }
-      	parmtag	{ "vray_plugin" "MtlBump" }
-      	parmtag	{ "vray_pluginattr" "compute_bump_for_shadows" }
-      	parmtag	{ "vray_type" "boolean" }
-      }
-
+      
       parm {
       	name	"bump_tex_mult"
       	label	"Bump Amount"
@@ -136,6 +107,34 @@
       	parmtag	{ "vray_pluginattr" "bump_delta_scale" }
       	parmtag	{ "vray_type" "float" }
       }
+	  parm {
+      	name	"bump_shadows"
+      	label	"Bump Shadows"
+      	type	toggle
+      	default	{ "0" }
+      	help	"true to offset the surface shading point, in addition to the normal"
+      	range	{ 0 1 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "MtlBump" }
+      	parmtag	{ "vray_pluginattr" "bump_shadows" }
+      	parmtag	{ "vray_type" "boolean" }
+      }
+
+      parm {
+      	name	"compute_bump_for_shadows"
+      	label	"Compute Bump For Shadows"
+      	type	toggle
+      	default	{ "0" }
+      	help	"true to compute bump mapping for shadow rays in case the material is transparent; false to skip the bump map for shadow rays (faster rendering)"
+      	range	{ 0 1 }
+      	export	none
+      	parmtag	{ "cook_dependent" "1" }
+      	parmtag	{ "vray_plugin" "MtlBump" }
+      	parmtag	{ "vray_pluginattr" "compute_bump_for_shadows" }
+      	parmtag	{ "vray_type" "boolean" }
+      }
+
       parm {
       	name	"maya_compatible"
       	label	"Maya Compatible"
