@@ -20,8 +20,6 @@
 
 #include <HOM/HOM_Module.h>
 
-#include <signal.h>
-
 #include <QThread>
 #include <QByteArray>
 #include <QtNetwork/QTcpSocket>
@@ -526,21 +524,9 @@ static PyMethodDef methods[] = {
 	{ NULL, NULL, 0, NULL }
 };
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <signal.h>
 PyMODINIT_FUNC init_vfh_ipr()
 {
-#ifndef _WIN32
-	struct sigaction sa;
-	sa.sa_handler = SIG_IGN;
-	sa.sa_flags = 0;
-	if (sigaction(SIGPIPE, &sa, 0) == -1) {
-		perror("sigaction MAIN");
-		exit(1);
-	}
-
-#endif
+	disableSIGPIPE();
 	Log::Logger::startLogging();
 	Py_InitModule("_vfh_ipr", methods);
 }

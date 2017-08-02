@@ -312,9 +312,7 @@ void ImdisplayThread::onPipeStateChange(QProcess::ProcessState newState) {
 	stop(true);
 }
 
-#include <signal.h>
-#include <stdlib.h>
-#include <stdio.h>
+
 void ImdisplayThread::run() {
 	/// Pipe to the imdisplay
 	// TODO: consider using make_shared when we support it in linux builds
@@ -342,13 +340,8 @@ void ImdisplayThread::run() {
 	});
 	pipe->start("imdisplay", arguments);
 
-	struct sigaction sa;
-	sa.sa_handler = SIG_IGN;
-	sa.sa_flags = 0;
-	if (sigaction(SIGPIPE, &sa, 0) == -1) {
-		perror("sigaction");
-		exit(1);
-	}
+	// If we don't call this here, sometimes SIGPIPE kills the process on linux (maybe HOU or Qt override it?)
+	disableSIGPIPE();
 
 	connect(pipe.get(), &QProcess::aboutToClose, this, &ImdisplayThread::onPipeClose);
 	connect(pipe.get(), &QProcess::errorOccurred, this, &ImdisplayThread::onPipeError);
@@ -537,12 +530,17 @@ void ImdisplayThread::write(QProcess &pipe, int numElements, int elementSize, co
 		exit();
 	}
 
+	// Do a sync check for the process
+	// NOTE: the process could exit between the check and the write so the write to the pipe can still fail
 	if (!pCheck || !pCheck->isAlive()) {
 		exit();
 	}
+
 	pipe.write(reinterpret_cast<const char*>(data), elementSize * numElements);
 	int maxRetries = 300;
+	// Original delay in waitForBytesWritten is 30sec, so emulate it but check the isRunning flag
 	while (!pipe.waitForBytesWritten(10)) {
+		// TODO: will it be too slow to do pCheck->isAlive() in the loop?
 		if (!isRunning) {
 			// TODO: exit() only works when the thread has it's own event loop but we override run()
 			exit();

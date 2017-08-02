@@ -15,11 +15,24 @@
 #include <cstdio>
 
 #include <sys/wait.h>
+#include <signal.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 #include <thread>
 #include <memory>
 
 using namespace VRayForHoudini;
+
+void disableSIGPIPE() {
+	struct sigaction sa;
+	sa.sa_handler = SIG_IGN;
+	sa.sa_flags = 0;
+	if (sigaction(SIGPIPE, &sa, 0) == -1) {
+		Log::getLog().errror("Failed to disable SIGPIPE error: [%d]", errno);
+	}
+}
+
 
 class LnxProcessCheck:
 	public ProcessCheck

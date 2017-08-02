@@ -13,6 +13,22 @@
 #include <Windows.h>
 #include <TlHelp32.h>
 
+void disableSIGPIPE() {}
+
+/// Type for creating HANDLE that will be close with *CloseHandle*!
+typedef std::shared_ptr<void> shared_handle;
+
+namespace {
+shared_handle make_handle(void *ptr) {
+	return shared_handle(ptr, [](void *handle) {
+		if (handle) {
+			CloseHandle(handle);
+		}
+	});
+}
+}
+
+
 class Win32ProcessCheck:
 	public ProcessCheck
 {
@@ -27,26 +43,22 @@ public:
 
 	bool stop() override;
 
+	bool isAlive() override;
+
 
 	DWORD getPID() const;
 private:
+	/// The pid of the child process
 	DWORD pid;
+	/// Handle to the wait object - needs to be unregistered (so it can't use shared_handle wrapper)
 	HANDLE waitHandle;
+	/// Handle to the child process
+	shared_handle procHandle;
 };
 
 
 ProcessCheckPtr makeProcessChecker(ProcessCheck::OnStop cb, const std::string &name) {
-	return std::make_unique<Win32ProcessCheck>(cb, name);
-}
-
-namespace {
-std::shared_ptr<void> shared_handle(void *ptr) {
-	return std::shared_ptr<void>(ptr, [](void *handle) {
-		if (handle) {
-			CloseHandle(handle);
-		}
-	});
-}
+	return std::make_shared<Win32ProcessCheck>(cb, name);
 }
 
 bool Win32ProcessCheck::start() {
@@ -55,9 +67,9 @@ bool Win32ProcessCheck::start() {
 		return false;
 	}
 
-	auto process = shared_handle(OpenProcess(SYNCHRONIZE, FALSE, pid));
+	procHandle = make_handle(OpenProcess(SYNCHRONIZE | PROCESS_QUERY_INFORMATION, FALSE, pid));
 
-	if (!process) {
+	if (!procHandle) {
 		return false;
 	}
 
@@ -67,11 +79,20 @@ bool Win32ProcessCheck::start() {
 		self->stopCallback();
 	};
 
-	if (!RegisterWaitForSingleObject(&waitHandle, process.get(), callback, this, INFINITE, WT_EXECUTEONLYONCE)) {
+	if (!RegisterWaitForSingleObject(&waitHandle, procHandle.get(), callback, this, INFINITE, WT_EXECUTEONLYONCE)) {
 		return false;
 	}
 
 	return true;
+}
+
+bool Win32ProcessCheck::isAlive() {
+	if (procHandle) {
+		DWORD exitCode = 0;
+		GetExitCodeProcess(procHandle.get(), &exitCode);
+		return exitCode != STILL_ACTIVE;
+	}
+	return false;
 }
 
 bool Win32ProcessCheck::stop() {
@@ -84,7 +105,7 @@ bool Win32ProcessCheck::stop() {
 }
 
 DWORD Win32ProcessCheck::getPID() const {
-	auto snapshot = shared_handle(CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0));
+	auto snapshot = make_handle(CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0));
 	if (!snapshot) {
 		return 0;
 	}

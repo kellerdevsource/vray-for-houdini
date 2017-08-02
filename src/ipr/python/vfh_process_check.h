@@ -32,6 +32,8 @@ public:
 	/// @return false if waiting failed for some reason
 	virtual bool start() = 0;
 
+	/// Do a sync check if the process is running
+	/// @return true if the process is alive
 	virtual bool isAlive() = 0;
 
 	/// Stop waiting for the child
@@ -53,5 +55,9 @@ typedef std::shared_ptr<ProcessCheck> ProcessCheckPtr;
 /// @param cb - the function to be called
 /// @param name - the name of the process to be waited
 ProcessCheckPtr makeProcessChecker(ProcessCheck::OnStop cb, const std::string &name);
+
+/// Set handler to ignore the SIGPIPE signal
+/// NOTE: this is here to make use of the different implementation for win and lnx0
+void disableSIGPIPE();
 
 #endif // VRAY_FOR_HOUDINI_PROCESS_CHECK_H
