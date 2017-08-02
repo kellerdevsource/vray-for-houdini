@@ -230,5 +230,5 @@
         }
     }
 
-#include "$VRAY_UI_DS_PATH/common/vfh_texture_common.ds"
+#include "vfh_texture_common.ds"
 }
