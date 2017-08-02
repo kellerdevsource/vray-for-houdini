@@ -1,18 +1,28 @@
+#ifndef __VFH_TEXTURE_DEFINES_H__
+#define __VFH_TEXTURE_DEFINES_H__
+
 #ifdef PREFIX
 #define NAMEM(n) name PREFIX##n##""
 #else
 #define NAMEM(n) name n##""
 #endif
 
-#define VFH_TEXTURE_OUTPUT(ATTR) \
+#define VFH_TEXTURE_TYPED_OUTPUT(ATTR, VRAY_OUTPUT_TYPE) \
 parm { \
     name ATTR \
     label ATTR \
-    type color4 \
     parmtag { "cook_dependent" "1" } \
     parmtag { "vray_label" ATTR } \
     parmtag { "vray_pluginattr" ATTR } \
-    parmtag { "vray_type" "OutputTexture" } \
+    parmtag { "vray_type" VRAY_OUTPUT_TYPE } \
     export none \
     invisible \
 }
+
+#define VFH_TEXTURE_OUTPUT(ATTR)           VFH_TEXTURE_TYPED_OUTPUT(ATTR, "OutputTexture")
+#define VFH_TEXTURE_OUTPUT_FLOAT(ATTR)     VFH_TEXTURE_TYPED_OUTPUT(ATTR, "OutputTextureFloat")
+#define VFH_TEXTURE_OUTPUT_INT(ATTR)       VFH_TEXTURE_TYPED_OUTPUT(ATTR, "OutputTextureInt")
+#define VFH_TEXTURE_OUTPUT_VECTOR(ATTR)    VFH_TEXTURE_TYPED_OUTPUT(ATTR, "OutputTextureVector")
+#define VFH_TEXTURE_OUTPUT_TRANSFORM(ATTR) VFH_TEXTURE_TYPED_OUTPUT(ATTR, "OutputTextureTransform")
+
+#endif // __VFH_TEXTURE_DEFINES_H__

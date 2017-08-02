@@ -6,7 +6,7 @@
 
     parm {
         name    "uv_set_name"
-        label   "Uv Set Name"
+        label   "UV Name"
         type    string
         default { "uv" }
         help    "The name of the uv channel that should be used"
@@ -20,7 +20,7 @@
 
     parm {
         name    "uv_index"
-        label   "Uv Index"
+        label   "UV Index"
         type    integer
         default { "0" }
         help    "The index of the uv channel that should be used in case there is no uv set name"
@@ -31,4 +31,41 @@
         parmtag { "vray_pluginattr" "uv_index" }
         parmtag { "vray_type" "int" }
     }
+
+#include "vfh_texture_defines.ds"
+
+    VFH_TEXTURE_OUTPUT_VECTOR(point)
+    VFH_TEXTURE_OUTPUT_VECTOR(pointReference)
+    VFH_TEXTURE_OUTPUT_VECTOR(pointObject)
+    VFH_TEXTURE_OUTPUT_VECTOR(pointCamera)
+    VFH_TEXTURE_OUTPUT_VECTOR(normal)
+    VFH_TEXTURE_OUTPUT_VECTOR(normalReference)
+    VFH_TEXTURE_OUTPUT_VECTOR(normalCamera)
+    VFH_TEXTURE_OUTPUT_VECTOR(normalObject)
+    VFH_TEXTURE_OUTPUT_VECTOR(bumpNormal)
+    VFH_TEXTURE_OUTPUT_VECTOR(bumpNormalCamera)
+    VFH_TEXTURE_OUTPUT_VECTOR(bumpNormalObject)
+    VFH_TEXTURE_OUTPUT_VECTOR(gnormal)
+    VFH_TEXTURE_OUTPUT_TRANSFORM(camToWorld)
+    VFH_TEXTURE_OUTPUT_VECTOR(view_dir)
+    VFH_TEXTURE_OUTPUT_FLOAT(frame_time)
+    VFH_TEXTURE_OUTPUT_FLOAT(ray_time)
+    VFH_TEXTURE_OUTPUT_FLOAT(facing_ratio)
+    VFH_TEXTURE_OUTPUT_INT(material_id)
+    VFH_TEXTURE_OUTPUT_FLOAT(flipped_normal)
+    VFH_TEXTURE_OUTPUT_FLOAT(cameraNearClipPlane)
+    VFH_TEXTURE_OUTPUT_FLOAT(cameraFarClipPlane)
+    VFH_TEXTURE_OUTPUT_VECTOR(uvCoord)
+    VFH_TEXTURE_OUTPUT_VECTOR(rayDirection)
+    VFH_TEXTURE_OUTPUT_VECTOR(pixelCenter)
+    VFH_TEXTURE_OUTPUT_VECTOR(tangentUCamera)
+    VFH_TEXTURE_OUTPUT_VECTOR(tangentVCamera)
+    VFH_TEXTURE_OUTPUT_FLOAT(ray_depth)
+    VFH_TEXTURE_OUTPUT_FLOAT(path_length)
+    VFH_TEXTURE_OUTPUT_INT(object_id)
+    VFH_TEXTURE_OUTPUT_INT(parent_object_id)
+    VFH_TEXTURE_OUTPUT_VECTOR(velocity)
+    VFH_TEXTURE_OUTPUT_FLOAT(speed)
+    VFH_TEXTURE_OUTPUT_FLOAT(random_by_renderID)
+    VFH_TEXTURE_OUTPUT_FLOAT(random_by_polyShell)
 }
