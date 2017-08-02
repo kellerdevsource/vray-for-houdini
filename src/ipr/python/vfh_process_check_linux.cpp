@@ -150,7 +150,7 @@ bool LnxProcessCheck::stop() {
 	if (waitThread) {
 		if (std::this_thread::get_id() == waitThread->get_id()) {
 			Log::getLog().error("LnxProcessCheck::stop() called from waiting thread!");
-			assert(false);
+			assert(false && "LnxProcessCheck::stop() called from waiting thread!");
 		} else if (waitThread->joinable()) {
 			Log::getLog().debug("Calling .join() on proc wait thread");
 			waitThread->join();
@@ -158,7 +158,7 @@ bool LnxProcessCheck::stop() {
 			waitThread = nullptr;
 		} else {
 			Log::getLog().error("Can't join LnxProcessCheck's waiting thread - leaking the handle");
-			assert(false);
+			assert(false && "LnxProcessCheck's wait thread is not joinable");
 			waitThread = nullptr;
 		}
 	}
