@@ -13,7 +13,6 @@
 #include "vfh_exporter.h"
 #include "vfh_log.h"
 #include "vfh_ipr_viewer.h"
-#include "vfh_ipr_client.h"
 #include "vfh_vray_instances.h"
 #include "vfh_attr_utils.h"
 #include "vfh_process_check.h"
@@ -120,7 +119,6 @@ FORCEINLINE float getFloat(PyObject *dict, const char *key, float defValue)
 	return PyFloat_AS_DOUBLE(item);
 }
 
-static PingPongClient *stopChecker = nullptr;
 static ProcessCheckPtr procCheck = nullptr;
 
 /// RAII wrapper over the lock of the vrayExporter pointer
@@ -191,9 +189,6 @@ std::recursive_mutex WithExporter::exporterMtx;
 
 static void freeExporter()
 {
-//	UT_ASSERT_MSG(stopChecker, "stopChecker is null in freeExporter()");
-//	stopChecker->stop();
-
 	closeImdisplay();
 
 	if (WithExporter lk{}) {
@@ -208,7 +203,6 @@ static struct VRayExporterIprUnload {
 			// Prevent stop cb from being called here
 			stopCallback->set();
 		}
-		delete stopChecker;
 		deleteVRayInit();
 		Log::Logger::stopLogging();
 	}

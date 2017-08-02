@@ -21,7 +21,6 @@ include_directories(${CMAKE_SOURCE_DIR}/src/utils)
 set(SOURCES
 	vfh_ipr.cpp
 	vfh_ipr_viewer.cpp
-	vfh_ipr_client.cpp
 )
 
 if (WIN32)
@@ -36,19 +35,12 @@ endif()
 
 set(HEADERS
 	vfh_ipr_viewer.h
-	vfh_ipr_client.h
 	vfh_ipr_imdisplay_viewer.h
 	vfh_process_check.h
 )
 
-list(APPEND SOURCES moc_vfh_ipr_client.cpp)
 list(APPEND SOURCES moc_vfh_ipr_imdisplay_viewer.cpp)
 houdini_plugin(${PROJECT_NAME} "${SOURCES};${HEADERS}")
-
-vfh_make_moc(TARGET ${PROJECT_NAME}
-	FILE_IN       ${CMAKE_CURRENT_SOURCE_DIR}/vfh_ipr_client.h
-	FILE_OUT_NAME moc_vfh_ipr_client.cpp
-)
 vfh_make_moc(TARGET ${PROJECT_NAME}
 	FILE_IN       ${CMAKE_CURRENT_SOURCE_DIR}/vfh_ipr_imdisplay_viewer.h
 	FILE_OUT_NAME moc_vfh_ipr_imdisplay_viewer.cpp

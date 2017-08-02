@@ -54,6 +54,7 @@ public:
 
 	void clear();
 
+	/// Set the process checker
 	void setProcCheck(ProcessCheckPtr p) { pCheck = p; };
 
 	/// Set imdisplay port.
@@ -130,6 +131,7 @@ private:
 	/// Callback to be called if pipe closes unexpectedly
 	std::function<void()> onStop;
 
+	/// Pointer to the process checker - used to explicitly check before every write
 	ProcessCheckPtr pCheck;
 
 	VfhDisableCopy(ImdisplayThread)
