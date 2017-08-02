@@ -39,7 +39,7 @@ void logMessage(Logger::LogData data)
 	tchar strTime[100], strDate[100];
 	vutils_timeToStr(strTime, COUNT_OF(strTime), data.time);
 	vutils_dateToStr(strDate, COUNT_OF(strDate), data.time);
-	vutils_cprintf(true, VUTILS_COLOR_BLUE "[%s:%s]" VUTILS_COLOR_MAGENTA "VFH" VUTILS_COLOR_DEFAULT "| ", strDate, strTime);
+	vutils_cprintf(true, "[%s:%s] VFH | ", strDate, strTime);
 
 	VS_DEBUG("V-Ray For Houdini [");
 
