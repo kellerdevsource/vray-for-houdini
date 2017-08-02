@@ -289,11 +289,6 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexAColor);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexAColorChannel);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexAColorOp);
-	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexBerconDistortion);
-	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexBerconGrad);
-	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexBerconNoise);
-	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexBerconTile);
-	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexBerconWood);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexBezierCurve);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexBillboardParticle);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexBitmap);
@@ -373,8 +368,6 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexMultiFloat);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexMultiProjection);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexNoise);
-	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexNoiseMax);
-	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexNoiseMaya);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexNormalMapFlip);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexOCIO);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexOutput);

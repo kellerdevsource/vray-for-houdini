@@ -3479,7 +3479,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexMix', nodename="mix")
 </tool>
 
 
-<tool name="vop_VRayNodeTexNoise" label="Noise (Maya)" icon="ROP_vray">
+<tool name="vop_VRayNodeTexNoise" label="Noise" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -3492,27 +3492,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexMix', nodename="mix")
 <![CDATA[
 
 import voptoolutils;
-voptoolutils.genericTool(kwargs, 'VRayNodeTexNoise', nodename="noise_maya")
-
-]]>
-    </script>
-</tool>
-
-
-<tool name="vop_VRayNodeTexNoiseMax" label="Noise (3ds Max)" icon="ROP_vray">
-    <readOnly/>
-    <toolMenuContext name="viewer">
-        <contextNetType>VOP</contextNetType>
-    </toolMenuContext>
-    <toolMenuContext name="network">
-        <contextOpType>Vop/VRayNodeTexNoiseMax</contextOpType>
-    </toolMenuContext>
-    <toolSubmenu>Texture</toolSubmenu>
-    <script scriptType="python">
-<![CDATA[
-
-import voptoolutils;
-voptoolutils.genericTool(kwargs, 'VRayNodeTexNoiseMax', nodename="noise_3dsmax")
+voptoolutils.genericTool(kwargs, 'VRayNodeTexNoise', nodename="noise")
 
 ]]>
     </script>
