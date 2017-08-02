@@ -73,6 +73,11 @@ bool Win32ProcessCheck::start() {
 		return false;
 	}
 
+	if (!isAlive()) {
+		stopCallback();
+		return true;
+	}
+
 	auto callback = [](PVOID context, BOOLEAN) {
 		auto *self = reinterpret_cast<Win32ProcessCheck*>(context);
 		self->stop();
