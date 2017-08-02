@@ -272,41 +272,44 @@ void VRayPluginRenderer::setImageSize(const int w, const int h)
 
 void VRayPluginRenderer::showVFB(bool show, const char *title)
 {
-	if (   !m_vray
-		|| !m_vray->getOptions().enableFrameBuffer
-		|| show == m_vray->vfb.isShown() )
+	if (!m_vray ||
+		!m_vray->getOptions().enableFrameBuffer ||
+		!HOU::isUIAvailable())
 	{
 		return;
 	}
 
-	QWidget *mainWindow = HOU::getMainQtWindow();
-	if (mainWindow) {
-		// first set VFB parent
-		if (show) {
-			m_vray->vfb.setParentWindow(mainWindow);
-		}
+	VRay::VRayRenderer::VFB &vfb = m_vray->vfb;
 
-		m_vray->vfb.show(show, show);
+	if (!show) {
+		vfb.show(false, false);
+	}
+	else {
+		if (!vfb.isShown()) {
+			QWidget *mainWindow = HOU::getMainQtWindow();
+			vassert(mainWindow);
 
-		// last set VFB window flags to float on top of main Houdini window.
-		// Flags and title should be set after first show of the VFB as
-		// its window handle does not exists beforehand
-		if (show) {
-			QWidget *vfb = reinterpret_cast<QWidget*>(m_vray->vfb.getWindowHandle());
-			if (vfb) {
-				Qt::WindowFlags windowFlags = vfb->windowFlags();
-				windowFlags |= (  Qt::Window
-// Need to set this flag only for Qt4
+			vfb.setParentWindow(mainWindow);
+			vfb.show(show, show);
+
+			QWidget *vfbWindow = reinterpret_cast<QWidget*>(m_vray->vfb.getWindowHandle());
+			vassert(vfbWindow);
+
+			Qt::WindowFlags windowFlags = vfbWindow->windowFlags();
+			windowFlags |= Qt::Window |
+// Need to set this flag only for Linux / Qt4
 #if !defined(_WIN32) && (UT_MAJOR_VERSION_INT < 16)
-								| Qt::WindowStaysOnTopHint
+			               Qt::WindowStaysOnTopHint |
 #endif
-								| Qt::WindowTitleHint
-								| Qt::WindowMinMaxButtonsHint
-								| Qt::WindowCloseButtonHint);
-				vfb->setWindowFlags(windowFlags);
-				m_vray->vfb.setTitlePrefix(title);
-			}
+			               Qt::WindowTitleHint |
+			               Qt::WindowMinMaxButtonsHint |
+			               Qt::WindowCloseButtonHint;
+			vfbWindow->setWindowFlags(windowFlags);
 		}
+
+		vassert(vfb.isShown());
+
+		vfb.setTitlePrefix(title);
 	}
 }
 
