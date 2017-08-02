@@ -49,6 +49,10 @@ int main(int argc, char ** argv)
 		VRayForHoudini::Log::Logger::stopLogging();
 	});
 
+	while (1) {
+		std::this_thread::sleep_for(std::chrono::milliseconds(1));
+	}
+
 	// We need to load "platform" plugins for windows, so we use one from houdini installation
 	QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
 	QString hfsPath = env.value("HFS", "");

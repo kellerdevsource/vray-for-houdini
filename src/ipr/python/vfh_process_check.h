@@ -32,6 +32,8 @@ public:
 	/// @return false if waiting failed for some reason
 	virtual bool start() = 0;
 
+	virtual bool isAlive() = 0;
+
 	/// Stop waiting for the child
 	/// @return true if we actually stopped waiting
 	virtual bool stop() = 0;
@@ -45,7 +47,7 @@ protected:
 	std::string processName;
 };
 
-typedef std::unique_ptr<ProcessCheck> ProcessCheckPtr;
+typedef std::shared_ptr<ProcessCheck> ProcessCheckPtr;
 
 /// Crate instance of ProcessCheck for current platform
 /// @param cb - the function to be called

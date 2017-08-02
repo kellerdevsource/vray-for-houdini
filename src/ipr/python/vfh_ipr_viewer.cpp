@@ -312,9 +312,11 @@ void ImdisplayThread::onPipeStateChange(QProcess::ProcessState newState) {
 	stop(true);
 }
 
-
+#include <signal.h>
+#include <stdlib.h>
+#include <stdio.h>
 void ImdisplayThread::run() {
-	/// Pipe to the imdisplay.
+	/// Pipe to the imdisplay
 	// TODO: consider using make_shared when we support it in linux builds
 	auto pipe = std::shared_ptr<QProcess>(new QProcess(), [this](QProcess * proc) {
 		// Disconnect all signals from pipe so we dont get unnecessary calls
@@ -339,6 +341,14 @@ void ImdisplayThread::run() {
 		}
 	});
 	pipe->start("imdisplay", arguments);
+
+	struct sigaction sa;
+	sa.sa_handler = SIG_IGN;
+	sa.sa_flags = 0;
+	if (sigaction(SIGPIPE, &sa, 0) == -1) {
+		perror("sigaction");
+		exit(1);
+	}
 
 	connect(pipe.get(), &QProcess::aboutToClose, this, &ImdisplayThread::onPipeClose);
 	connect(pipe.get(), &QProcess::errorOccurred, this, &ImdisplayThread::onPipeError);
@@ -527,6 +537,9 @@ void ImdisplayThread::write(QProcess &pipe, int numElements, int elementSize, co
 		exit();
 	}
 
+	if (!pCheck || !pCheck->isAlive()) {
+		exit();
+	}
 	pipe.write(reinterpret_cast<const char*>(data), elementSize * numElements);
 	int maxRetries = 300;
 	while (!pipe.waitForBytesWritten(10)) {

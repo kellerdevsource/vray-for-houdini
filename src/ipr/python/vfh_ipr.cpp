@@ -136,8 +136,8 @@ static VRayExporter& getExporter()
 
 static void freeExporter()
 {
-	UT_ASSERT_MSG(stopChecker, "stopChecker is null in freeExporter()");
-	stopChecker->stop();
+//	UT_ASSERT_MSG(stopChecker, "stopChecker is null in freeExporter()");
+//	stopChecker->stop();
 
 	closeImdisplay();
 
@@ -376,8 +376,8 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 	if (!stopCallback) {
 		stopCallback = new CallOnceUntilReset([]() {
 			if (procCheck) {
-				procCheck->stop();
-				procCheck.reset();
+				//procCheck->stop();
+				//procCheck.reset();
 			}
 			freeExporter();
 		});
@@ -387,12 +387,13 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 	if (!procCheck) {
 		procCheck = makeProcessChecker(stopCallback->getCallableFunction(), "vfh_ipr.exe");
 	}
+	getImdisplay().setProcCheck(procCheck);
 	procCheck->stop();
 	procCheck->start();
 
 	if (!stopChecker) {
-		stopChecker = new PingPongClient();
-		stopChecker->setCallback(stopCallback->getCallableFunction());
+		//stopChecker = new PingPongClient();
+		//stopChecker->setCallback(stopCallback->getCallableFunction());
 	}
 
 	// Reset the cb's flag so it can be called asap
@@ -426,7 +427,7 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 		ViewParams viewParams;
 		fillViewParamsFromDict(viewParamsDict, viewParams);
 
-		exporter.setDRSettings();
+		//exporter.setDRSettings();
 
 		exporter.setRendererMode(getRendererIprMode(*ropNode));
 		exporter.setWorkMode(getExporterWorkMode(*ropNode));
@@ -525,10 +526,20 @@ static PyMethodDef methods[] = {
 	{ NULL, NULL, 0, NULL }
 };
 
+#include <stdlib.h>
+#include <stdio.h>
+#include <signal.h>
 PyMODINIT_FUNC init_vfh_ipr()
 {
 #ifndef _WIN32
-	signal(SIGPIPE, SIG_IGN);
+	struct sigaction sa;
+	sa.sa_handler = SIG_IGN;
+	sa.sa_flags = 0;
+	if (sigaction(SIGPIPE, &sa, 0) == -1) {
+		perror("sigaction MAIN");
+		exit(1);
+	}
+
 #endif
 	Log::Logger::startLogging();
 	Py_InitModule("_vfh_ipr", methods);

@@ -13,6 +13,7 @@
 
 #include "vfh_defines.h"
 #include "vfh_log.h"
+#include "vfh_process_check.h"
 
 #include <QThread>
 #include <QProcess>
@@ -52,6 +53,8 @@ public:
 	void add(TileQueueMessage *msg);
 
 	void clear();
+
+	void setProcCheck(ProcessCheckPtr p) { pCheck = p; };
 
 	/// Set imdisplay port.
 	/// @param value Port.
@@ -126,6 +129,8 @@ private:
 
 	/// Callback to be called if pipe closes unexpectedly
 	std::function<void()> onStop;
+
+	ProcessCheckPtr pCheck;
 
 	VfhDisableCopy(ImdisplayThread)
 };

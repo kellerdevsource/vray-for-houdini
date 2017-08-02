@@ -35,6 +35,8 @@ public:
 	bool start() override;
 
 	bool stop() override;
+	
+	bool isAlive() override;
 private:
 	/// Thread waiting in waitpid
 	std::thread * waitThread;
@@ -50,6 +52,7 @@ ProcessCheckPtr makeProcessChecker(ProcessCheck::OnStop cb, const std::string &n
 
 bool LnxProcessCheck::start() {
 	pid_t myPid = getpid();
+	Log::getLog().debug("Starting LnxProcessCheck from pid %d", (int)myPid);
 	char pidFileName[1024] = {0,};
 	sprintf(pidFileName, "/tmp/%d", static_cast<int>(myPid));
 
@@ -60,12 +63,16 @@ bool LnxProcessCheck::start() {
 	});
 
 	if (!pidFile) {
+		Log::getLog().warning("Trying to start LnxProcessCheck but pid file is missing!");
 		return false;
 	}
 
-	if (!fread(reinterpret_cast<char*>(&childPid), sizeof(childPid), 1, pidFile.get()) != 1) {
+	if (fread(reinterpret_cast<char*>(&childPid), sizeof(childPid), 1, pidFile.get()) != 1) {
+		Log::getLog().warning("Trying to start LnxProcessCheck but can't read from pid file.");
 		return false;
 	}
+
+	Log::getLog().debug("Child vfh_ipr is running with pid %d", (int)childPid);
 
 	int status = 0;
 	pid_t testPid = waitpid(childPid, &status, WNOHANG);
@@ -82,6 +89,8 @@ bool LnxProcessCheck::start() {
 		return true;
 	}
 
+	Log::getLog().debug("Starting thread monitoring child pid");
+
 	checkRunning = true;
 	waitThread = new std::thread([this]() {
 		pid_t resPid = 0;
@@ -91,6 +100,7 @@ bool LnxProcessCheck::start() {
 		}
 
 		if (resPid > 0) {
+			Log::getLog().debug("Child with pid [%d] exited", (int)resPid);
 			checkRunning = false;
 			this->stopCallback();
 		} else {
@@ -101,8 +111,28 @@ bool LnxProcessCheck::start() {
 	return true;
 }
 
+bool LnxProcessCheck::isAlive() {
+	if (childPid > 0) {
+		int status = 0;
+		pid_t resPid = waitpid(childPid, &status, WNOHANG);
+		if (resPid == 0) {
+			return true;
+		} else if (resPid > 0) {
+			Log::getLog().debug("Testing isAlive() - dead");
+		} else {
+			if (errno != ECHILD) {
+				Log::getLog().error("Testing isAlive() error - %d", errno);
+			}
+		}
+	} else {
+		Log::getLog().warning("Testing isAlive() without running child");
+	}
+	return false;
+}
+
 bool LnxProcessCheck::stop() {
 	checkRunning = false;
+	Log::getLog().debug("Trying to stop LnxProcessCheck with thread [%p]", waitThread);
 	if (waitThread) {
 		if (std::this_thread::get_id() == waitThread->get_id()) {
 			Log::getLog().error("LnxProcessCheck::stop() called from waiting thread!");
