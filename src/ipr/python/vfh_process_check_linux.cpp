@@ -29,7 +29,7 @@ void disableSIGPIPE() {
 	sa.sa_handler = SIG_IGN;
 	sa.sa_flags = 0;
 	if (sigaction(SIGPIPE, &sa, 0) == -1) {
-		Log::getLog().errror("Failed to disable SIGPIPE error: [%d]", errno);
+		Log::getLog().error("Failed to disable SIGPIPE error: [%d]", errno);
 	}
 }
 
