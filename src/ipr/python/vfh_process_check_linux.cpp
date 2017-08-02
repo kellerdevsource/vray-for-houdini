@@ -106,6 +106,7 @@ bool LnxProcessCheck::start() {
 
 	checkRunning = true;
 	waitThread = new std::thread([this]() {
+		Log::getLog().debug("Proc wait thread started");
 		pid_t resPid = 0;
 		int status = 0;
 		while ((resPid = waitpid(this->childPid, &status, WNOHANG)) == 0 && this->checkRunning) {
@@ -151,6 +152,7 @@ bool LnxProcessCheck::stop() {
 			Log::getLog().error("LnxProcessCheck::stop() called from waiting thread!");
 			assert(false);
 		} else if (waitThread->joinable()) {
+			Log::getLog().debug("Calling .join() on proc wait thread");
 			waitThread->join();
 			delete waitThread;
 			waitThread = nullptr;
