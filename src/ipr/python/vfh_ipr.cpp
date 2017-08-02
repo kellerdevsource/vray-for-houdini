@@ -453,8 +453,15 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 	OP_Node *ropNode = getOpNodeFromPath(ropPath);
 	if (ropNode) {
 		// Start the imdisplay thread so we can get pipe signals sooner
-		getImdisplay().init();
-		getImdisplay().restart();
+		{
+			WithExporter lk;
+			assert(!lk && "Exporter should be NULL in vfhInit");
+			lk.allocExporter();
+		}
+		if (WithExporter lk{}) {
+			getImdisplay().init();
+			getImdisplay().restart();
+		}
 		const IPROutput iprOutput =
 			static_cast<IPROutput>(ropNode->evalInt("render_rt_output", 0, 0.0));
 
@@ -464,11 +471,7 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 		const int isRenderView = iprOutput == iprOutputRenderView;
 		const int isVFB = iprOutput == iprOutputVFB;
 
-		{
-			WithExporter lk;
-			assert(!lk && "Exporter should be NULL in vfhInit");
-			lk.allocExporter();
-		}
+
 
 		if (WithExporter lk{}) {
 			VRayExporter &exporter = lk.getExporter();
