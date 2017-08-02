@@ -115,11 +115,11 @@ bool LnxProcessCheck::start() {
 
 		if (resPid > 0) {
 			Log::getLog().debug("Child with pid [%d] exited", (int)resPid);
-			checkRunning = false;
-			this->stopCallback();
 		} else {
 			Log::getLog().error("Thread failed waiting for child process - %d", errno);
 		}
+		checkRunning = false;
+		this->stopCallback();
 	});
 
 	return true;
