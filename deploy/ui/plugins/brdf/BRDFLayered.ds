@@ -4,11 +4,13 @@
     parmtag	{ spare_category "Layered" }
     parmtag	{ vray_plugin "BRDFLayered" }
 
+#include "vfh_brdf_common.ds"
+
     groupsimple {
       name "folder_main"
       label "Main"
-	  
-		
+
+
 
 
       parm {
@@ -87,6 +89,6 @@
 			type float
 			default { 1.0 }
 		}
-	}	
+	}
 
 }

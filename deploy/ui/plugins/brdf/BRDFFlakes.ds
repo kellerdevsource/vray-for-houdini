@@ -3,7 +3,9 @@
     label	"Flakes"
     parmtag	{ spare_category "Flakes" }
     parmtag	{ vray_plugin "BRDFFlakes" }
-	
+
+#include "vfh_brdf_common.ds"
+
 	parm {
 		name	"doubleSided"
 		label	"Double-sided"
@@ -16,11 +18,11 @@
 		parmtag	{ "vray_pluginattr" "doubleSided" }
 		parmtag	{ "vray_type" "int" }
     }
-	
+
 	group {
 		name "folder_main"
 		label "Main"
-		
+
 		parm {
 			name	"mapping_type"
 			label	"Mapping Type"
@@ -169,8 +171,8 @@
 			parmtag	{ "vray_pluginattr" "flake_seed" }
 			parmtag	{ "vray_type" "int" }
 		}
-		
-		
+
+
 	}
 	group {
 		name "folder_options"
@@ -266,11 +268,11 @@
 			parmtag	{ "vray_pluginattr" "environment_priority" }
 			parmtag	{ "vray_type" "int" }
 		}
-			
-		
+
+
 	}
-	
-  
-    
-    
+
+
+
+
 }

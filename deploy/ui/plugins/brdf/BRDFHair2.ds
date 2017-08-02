@@ -3,6 +3,9 @@
     label	"Hair 2"
     parmtag	{ spare_category "Hair 2" }
     parmtag	{ vray_plugin "BRDFHair2" }
+
+#include "vfh_brdf_common.ds"
+
     parm {
 	name	"diffuse_color_tex"
 	label	"Diffuse Color"

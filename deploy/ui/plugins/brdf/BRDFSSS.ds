@@ -3,11 +3,13 @@
     label	"SSS"
     parmtag	{ spare_category "SSS" }
     parmtag	{ vray_plugin "BRDFSSS" }
-	
+
+#include "vfh_brdf_common.ds"
+
 	group {
 		name "folder_main"
 		label "Main"
-		
+
 		parm {
 			name	"thickness"
 			label	"Thickness"
@@ -56,15 +58,15 @@
 			parmtag	{ "vray_pluginattr" "subdivs" }
 			parmtag	{ "vray_type" "int" }
 		}
-		
-		
+
+
 	}
-	
-	
+
+
 	group {
 		name "folder_diffuse"
 		label "Diffuse"
-		
+
 		parm {
 			name	"color"
 			label	"Color"
@@ -143,15 +145,15 @@
 			parmtag	{ "vray_pluginattr" "translucency_tex_mult" }
 			parmtag	{ "vray_type" "float" }
 		}
-	
-	
+
+
 	}
-	
-	
+
+
 	group {
 		name "folder_refl"
 		label "Reflection"
-		
+
 		parm {
 			name	"glossiness"
 			label	"Glossiness"
@@ -189,11 +191,11 @@
 			parmtag	{ "vray_pluginattr" "glossiness_tex_mult" }
 			parmtag	{ "vray_type" "float" }
 		}
-		
-		
+
+
 	}
-	
- 
-	
-	
+
+
+
+
 }

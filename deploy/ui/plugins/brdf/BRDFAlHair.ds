@@ -3,11 +3,9 @@
     label	"AlHair"
     parmtag	{ spare_category "AlHair" }
     parmtag	{ vray_plugin "BRDFAlHair" }
-	
-	
-	
-	
-	
+
+#include "vfh_brdf_common.ds"
+
     parm {
 	name	"opacity"
 	label	"Opacity"

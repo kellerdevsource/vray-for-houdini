@@ -3,6 +3,9 @@
     label	"Refraction"
     parmtag	{ spare_category "Refraction" }
     parmtag	{ vray_plugin "BRDFRefraction" }
+
+#include "vfh_brdf_common.ds"
+
     parm {
 	name	"color"
 	label	"Color"

@@ -3,7 +3,9 @@
     label	"Car Paint"
     parmtag	{ spare_category "Car Paint" }
     parmtag	{ vray_plugin "BRDFCarPaint" }
-	
+
+#include "vfh_brdf_common.ds"
+
 	parm {
       	name	"doubleSided"
       	label	"Double Sided"
@@ -250,7 +252,7 @@
       	parmtag	{ "vray_pluginattr" "coat_bump_amount" }
       	parmtag	{ "vray_type" "TextureFloat" }
       }
-      
+
 	  parm {
       	name	"coat_traceReflections"
       	label	"Coat Trace Reflections"
@@ -440,7 +442,7 @@
       name "folder_options"
       label "Options"
 
-      
+
       parm {
       	name	"traceReflections"
       	label	"Trace Reflections"
@@ -477,9 +479,9 @@
       	parmtag	{ "vray_pluginattr" "subdivs" }
       	parmtag	{ "vray_type" "int" }
       }
-      
 
-     
+
+
       parm {
       	name	"use_environment_override"
       	label	"Use Environment Override"

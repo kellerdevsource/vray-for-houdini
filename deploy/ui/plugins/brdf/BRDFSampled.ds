@@ -3,6 +3,9 @@
     label	"Sampled"
     parmtag	{ spare_category "Sampled" }
     parmtag	{ vray_plugin "BRDFSampled" }
+
+#include "vfh_brdf_common.ds"
+
     parm {
 	name	"color"
 	label	"Color"

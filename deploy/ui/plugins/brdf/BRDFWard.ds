@@ -3,6 +3,9 @@
     label	"Ward"
     parmtag	{ spare_category "Ward" }
     parmtag	{ vray_plugin "BRDFWard" }
+
+#include "vfh_brdf_common.ds"
+
     parm {
 	name	"color"
 	label	"Color"

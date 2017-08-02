@@ -3,11 +3,13 @@
     label	"Skin"
     parmtag	{ spare_category "Skin" }
     parmtag	{ vray_plugin "BRDFSkinComplex" }
-	
+
+#include "vfh_brdf_common.ds"
+
 	group {
 		name "folder_general"
 		label "General"
-		
+
 		parm {
 			name	"scale"
 			label	"Scale"
@@ -61,13 +63,13 @@
 			parmtag	{ "vray_pluginattr" "opacity" }
 			parmtag	{ "vray_type" "Texture" }
 		}
-	
+
 	}
-	
+
 	group {
 		name "folder_diffuse"
 		label "Diffuse"
-		
+
 		 parm {
 			name	"diffuse_color"
 			label	"Diffuse Color"
@@ -93,19 +95,19 @@
 			parmtag	{ "vray_pluginattr" "diffuse_amount" }
 			parmtag	{ "vray_type" "TextureFloat" }
 		}
-		
-		
-	
+
+
+
 	}
-	
+
 	group {
 		name "folder_scattering"
 		label "Scattering"
-		
+
 		groupsimple {
 			name "folder_scattering_shallow"
 			label "Shallow"
-			
+
 			parm {
 				name	"shallow_color"
 				label	"Shallow Color"
@@ -144,14 +146,14 @@
 				parmtag	{ "vray_pluginattr" "shallow_radius" }
 				parmtag	{ "vray_type" "TextureFloat" }
 			}
-			
-			
+
+
 		}
-		
+
 		groupsimple {
 			name "folder_scattering_medium"
 			label "Medium"
-			
+
 			 parm {
 				name	"medium_color"
 				label	"Medium Color"
@@ -190,13 +192,13 @@
 				parmtag	{ "vray_pluginattr" "medium_radius" }
 				parmtag	{ "vray_type" "TextureFloat" }
 			}
-					
+
 		}
-		
+
 		groupsimple	{
 			name "folder_scattering_deep"
 			label "Deep"
-			
+
 			parm {
 				name	"deep_color"
 				label	"Deep Color"
@@ -235,20 +237,20 @@
 				parmtag	{ "vray_pluginattr" "deep_radius" }
 				parmtag	{ "vray_type" "TextureFloat" }
 			}
-			
-			
+
+
 		}
-	
+
 	}
-	
+
 	group {
 		name "folder_refl"
 		label "Reflection"
-		
+
 		groupsimple {
 			name "folder_refl_primary"
 			label "Primary"
-			
+
 			parm {
 				name	"primary_reflecton_color"
 				label	"Prim. Refl. Color"
@@ -323,14 +325,14 @@
 				parmtag	{ "vray_pluginattr" "primary_reflection_fresnel_ior" }
 				parmtag	{ "vray_type" "float" }
 			}
-					
-			
+
+
 		}
-		
+
 		groupsimple {
 			name "folder_refl_secondary"
 			label "Secondary"
-			
+
 			parm {
 				name	"secondary_reflecton_color"
 				label	"Sec. Refl. Color"
@@ -405,17 +407,17 @@
 				parmtag	{ "vray_pluginattr" "secondary_reflection_fresnel_ior" }
 				parmtag	{ "vray_type" "float" }
 			}
-			
-			
+
+
 		}
-	
+
 	}
-	
+
 	group {
 		name "folder_multiscatter"
 		label "Multiscatter"
-		
-		    
+
+
 		parm {
 			name	"multiple_scattering"
 			label	"Multiple Scattering"
@@ -611,13 +613,13 @@
 			parmtag	{ "vray_pluginattr" "geom_samples_color" }
 			parmtag	{ "vray_type" "color" }
 		}
-	
+
 	}
-	
+
 	group {
 		name "folder_options"
 		label "Options"
-		
+
 		parm {
 			name	"option_reflections_trace"
 			label	"Trace Reflections"
@@ -656,9 +658,9 @@
 			parmtag	{ "vray_pluginattr" "option_reflections_cutoff" }
 			parmtag	{ "vray_type" "float" }
 		}
-	
-		
+
+
 	}
-	
-	
+
+
 }

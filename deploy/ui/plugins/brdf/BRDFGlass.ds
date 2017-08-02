@@ -3,11 +3,13 @@
     label	"Glass"
     parmtag	{ spare_category "Glass" }
     parmtag	{ vray_plugin "BRDFGlass" }
-	
+
+#include "vfh_brdf_common.ds"
+
 	group {
 		name "folder_diffuse"
 		label "Diffuse"
-		
+
 		parm {
 			name	"color"
 			label	"Color"
@@ -86,16 +88,16 @@
 			parmtag	{ "vray_pluginattr" "transparency_tex_mult" }
 			parmtag	{ "vray_type" "float" }
 		}
-		
-		
-		
-		
+
+
+
+
 	}
-	
+
 	group {
 		name "folder_refr"
 		label "Refraction"
-		
+
 		parm {
 			name	"ior"
 			label	"Index Of Refraction"
@@ -122,11 +124,11 @@
 			parmtag	{ "vray_pluginattr" "ior_tex" }
 			parmtag	{ "vray_type" "TextureFloat" }
 		}
-		
+
 		groupcollapsible {
 			name "folder_refr_advanced"
 			label "Refraction-advanced"
-			
+
 			parm {
 				name	"trace_refractions"
 				label	"Trace Refractions"
@@ -139,8 +141,8 @@
 				parmtag	{ "vray_pluginattr" "trace_refractions" }
 				parmtag	{ "vray_type" "boolean" }
 			}
-			
-			
+
+
 			parm {
 				name	"trace_depth"
 				label	"Max Depth"
@@ -154,19 +156,19 @@
 				parmtag	{ "vray_pluginattr" "trace_depth" }
 				parmtag	{ "vray_type" "int" }
 			}
-			
+
 		}
-		
-			
-		
-		
-		
+
+
+
+
+
 	}
-	
+
 	group {
 		name "folder_options"
 		label "Options"
-		
+
 		parm {
 			name	"cutoff"
 			label	"Cutoff"
@@ -179,7 +181,7 @@
 			parmtag	{ "vray_pluginattr" "cutoff" }
 			parmtag	{ "vray_type" "float" }
 		}
-		
+
 		 parm {
 			name	"exit_color_on"
 			label	"Exit Color On"
@@ -222,7 +224,7 @@
 			parmtag	{ "vray_pluginattr" "refract_exit_color" }
 			parmtag	{ "vray_type" "Texture" }
 		}
-		
+
 		parm {
 			name	"affect_alpha"
 			label	"Affect Alpha"
@@ -254,10 +256,10 @@
 			parmtag	{ "vray_pluginattr" "affect_shadows" }
 			parmtag	{ "vray_type" "boolean" }
 		}
-    
-	
-		
+
+
+
 	}
-	 
-    
+
+
 }

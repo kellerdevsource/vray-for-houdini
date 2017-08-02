@@ -3,7 +3,9 @@
     label	"Phong"
     parmtag	{ spare_category "Phong" }
     parmtag	{ vray_plugin "BRDFPhong" }
-	
+
+#include "vfh_brdf_common.ds"
+
 	parm {
 		name	"back_side"
 		label	"Double-sided"
@@ -16,11 +18,11 @@
 		parmtag	{ "vray_pluginattr" "back_side" }
 		parmtag	{ "vray_type" "boolean" }
     }
-	
+
 	group {
 		name "folder_diffuse"
 		label "Diffuse"
-		
+
 		parm {
 			name	"color"
 			label	"Color"
@@ -97,15 +99,15 @@
 			parmtag	{ "vray_pluginattr" "transparency_tex_mult" }
 			parmtag	{ "vray_type" "float" }
 		}
-		
-		
-		
+
+
+
 	}
-	
+
 	group {
 		name "folder_reflection"
 		label "Reflection"
-		
+
 		parm {
 			name	"reflectionGlossiness"
 			label	"Reflectionglossiness"
@@ -142,7 +144,7 @@
 			parmtag	{ "vray_plugin" "BRDFPhong" }
 			parmtag	{ "vray_pluginattr" "reflectionGlossiness_tex_mult" }
 			parmtag	{ "vray_type" "float" }
-		}		
+		}
 		parm {
 			name	"hilightGlossiness"
 			label	"Hilightglossiness"
@@ -180,11 +182,11 @@
 			parmtag	{ "vray_pluginattr" "hilightGlossiness_tex_mult" }
 			parmtag	{ "vray_type" "float" }
 		}
-		
+
 		groupcollapsible {
 			name "folder_refl_advanced"
 			label "Reflection-advanced"
-			
+
 			parm {
 				name	"trace_reflections"
 				label	"Trace Reflections"
@@ -286,13 +288,13 @@
 				parmtag	{ "vray_pluginattr" "reflect_dim_distance_falloff" }
 				parmtag	{ "vray_type" "float" }
 			}
-	
+
 		}
-		
+
 		groupcollapsible {
 			name "folder_refl_interpolation"
 			label "Reflection Interpolation"
-			
+
 			parm {
 				name	"interpolation_on"
 				label	"Interpolation On"
@@ -369,15 +371,15 @@
 				parmtag	{ "vray_plugin" "BRDFPhong" }
 				parmtag	{ "vray_pluginattr" "imap_norm_thresh" }
 				parmtag	{ "vray_type" "float" }
-			}	
+			}
 		}
-    	
+
 	}
-	
+
 	group {
 		name "folder_options"
 		label "Options"
-		
+
 		parm {
 			name	"soften_edge"
 			label	"Soften Edge"
@@ -391,7 +393,7 @@
 			parmtag	{ "vray_pluginattr" "soften_edge" }
 			parmtag	{ "vray_type" "float" }
 		}
-		
+
 		 parm {
 			name	"cutoff"
 			label	"Cutoff"
@@ -416,8 +418,8 @@
 			parmtag	{ "vray_pluginattr" "subdivs" }
 			parmtag	{ "vray_type" "int" }
 		}
-		
-		
+
+
 		parm {
 			name	"affect_alpha"
 			label	"Affect Alpha"
@@ -437,11 +439,11 @@
 			parmtag	{ "vray_pluginattr" "affect_alpha" }
 			parmtag	{ "vray_type" "int" }
 		}
-		
-		
-		
+
+
+
 	}
-	
-	
-    
+
+
+
 }

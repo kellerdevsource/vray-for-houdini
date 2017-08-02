@@ -3,7 +3,9 @@
     label	"Cook Torrance"
     parmtag	{ spare_category "Cook Torrance" }
     parmtag	{ vray_plugin "BRDFCookTorrance" }
-	
+
+#include "vfh_brdf_common.ds"
+
 	parm {
 		name	"back_side"
 		label	"Double-sided"
@@ -16,11 +18,11 @@
 		parmtag	{ "vray_pluginattr" "back_side" }
 		parmtag	{ "vray_type" "boolean" }
     }
-	
+
 	group {
 		name "folder_diffuse"
 		label "Diffuse"
-		
+
 		parm {
 			name	"color"
 			label	"Color"
@@ -99,15 +101,15 @@
 			parmtag	{ "vray_pluginattr" "transparency_tex_mult" }
 			parmtag	{ "vray_type" "float" }
 		}
-		
-		
-		
+
+
+
 	}
-	
+
 	group {
 		name "folder_refl"
 		label "Reflection"
-		
+
 		parm {
 			name	"reflectionGlossiness"
 			label	"Reflectionglossiness"
@@ -182,14 +184,14 @@
 			parmtag	{ "vray_pluginattr" "hilightGlossiness_tex_mult" }
 			parmtag	{ "vray_type" "float" }
 		}
-		
-    
-    
-		
+
+
+
+
 		groupcollapsible {
 			name "folder_refl_anisotropy"
 			label "Anisotropy"
-			
+
 			parm {
 				name	"anisotropy"
 				label	"Anisotropy"
@@ -216,14 +218,14 @@
 				parmtag	{ "vray_pluginattr" "anisotropy_rotation" }
 				parmtag	{ "vray_type" "TextureFloat" }
 			}
-			
-			
+
+
 		}
-		
+
 		groupcollapsible {
 			name "folder_refl_advanced"
 			label "Reflection-advanced"
-			
+
 			parm {
 				name	"trace_reflections"
 				label	"Trace Reflections"
@@ -236,7 +238,7 @@
 				parmtag	{ "vray_pluginattr" "trace_reflections" }
 				parmtag	{ "vray_type" "boolean" }
 			}
-			
+
 			parm {
 				name	"glossyAsGI"
 				label	"Glossy As Gi"
@@ -311,7 +313,7 @@
 				parmtag	{ "vray_plugin" "BRDFCookTorrance" }
 				parmtag	{ "vray_pluginattr" "reflect_dim_distance" }
 				parmtag	{ "vray_type" "float" }
-			}	
+			}
 			parm {
 				name	"reflect_dim_distance_falloff"
 				label	"Reflect Dim Distance Falloff"
@@ -326,14 +328,14 @@
 				parmtag	{ "vray_pluginattr" "reflect_dim_distance_falloff" }
 				parmtag	{ "vray_type" "float" }
 			}
-	
-	
+
+
 		}
-		
+
 		groupcollapsible {
 			name "folder_refl_interpolation"
 			label "Reflection Interpolation"
-			
+
 			parm {
 				name	"interpolation_on"
 				label	"Interpolation On"
@@ -407,15 +409,15 @@
 				parmtag	{ "vray_type" "float" }
 			}
 		}
-		
-		
-		
+
+
+
 	}
-	
+
 	group {
 		name "folder_advanced"
 		label "Advanced"
-		
+
 		parm {
 			name	"soften_edge"
 			label	"Soften Edge"
@@ -429,7 +431,7 @@
 			parmtag	{ "vray_pluginattr" "soften_edge" }
 			parmtag	{ "vray_type" "float" }
 		}
-		
+
 		parm {
 			name	"subdivs"
 			label	"Subdivs"
@@ -486,9 +488,9 @@
 			parmtag	{ "vray_pluginattr" "affect_alpha" }
 			parmtag	{ "vray_type" "int" }
 		}
-	
-	
+
+
 	}
 
-    
+
 }

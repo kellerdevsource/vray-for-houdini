@@ -3,12 +3,13 @@
     label	"Glass Glossy"
     parmtag	{ spare_category "Glass Glossy" }
     parmtag	{ vray_plugin "BRDFGlassGlossy" }
-	
-	
+
+#include "vfh_brdf_common.ds"
+
 	group {
 		name "folder_diffuse"
 		label "Diffuse"
-		
+
 		parm {
 			name	"color"
 			label	"Color"
@@ -86,14 +87,14 @@
 			parmtag	{ "vray_pluginattr" "transparency_tex_mult" }
 			parmtag	{ "vray_type" "float" }
 		}
-	
-	
+
+
 	}
-	
+
 	group {
 		name "folder_reflection"
 		label "Reflection"
-		
+
 		parm {
 			name	"glossiness"
 			label	"Glossiness"
@@ -131,11 +132,11 @@
 			parmtag	{ "vray_pluginattr" "glossiness_tex_mult" }
 			parmtag	{ "vray_type" "float" }
 		}
-		
+
 		groupcollapsible {
 			name "folder_refl_interpolation"
 			label "Reflection Interpolation"
-			
+
 			parm {
 				name	"interpolation_on"
 				label	"Interpolation On"
@@ -215,13 +216,13 @@
 			}
 		}
 
-		
+
 	}
-	
+
 	group {
 		name "folder_refraction"
 		label "Refraction"
-		
+
 		parm {
 			name	"ior"
 			label	"Index Of Refraction"
@@ -248,7 +249,7 @@
 			parmtag	{ "vray_pluginattr" "ior_tex" }
 			parmtag	{ "vray_type" "TextureFloat" }
 		}
-		
+
 		parm {
 			name	"dispersion_on"
 			label	"Dispersion On"
@@ -274,12 +275,12 @@
 			parmtag	{ "vray_pluginattr" "dispersion" }
 			parmtag	{ "vray_type" "float" }
 		}
-    
-		
+
+
 		groupcollapsible {
 			name "folder_refr_advanced"
 			label "Refraction-advanced"
-			
+
 			parm {
 				name	"trace_refractions"
 				label	"Trace Refractions"
@@ -305,18 +306,18 @@
 				parmtag	{ "vray_pluginattr" "trace_depth" }
 				parmtag	{ "vray_type" "int" }
 			}
-			
+
 		}
-		
-		
-		
-		
+
+
+
+
 	}
-	
+
 	group {
 		name "folder_options"
 		label "Options"
-		
+
 		parm {
 			name	"cutoff"
 			label	"Cutoff"
@@ -341,7 +342,7 @@
 			parmtag	{ "vray_pluginattr" "subdivs" }
 			parmtag	{ "vray_type" "int" }
 		}
-		
+
 		parm {
 			name	"exit_color_on"
 			label	"Exit Color On"
@@ -403,8 +404,8 @@
 			parmtag	{ "vray_pluginattr" "affect_alpha" }
 			parmtag	{ "vray_type" "int" }
 		}
-		
-		
+
+
 		parm {
 			name	"affect_shadows"
 			label	"Affect Shadows"
@@ -417,24 +418,24 @@
 			parmtag	{ "vray_pluginattr" "affect_shadows" }
 			parmtag	{ "vray_type" "boolean" }
 		}
-		
-		
-		
-		
+
+
+
+
 	}
-	
-	
-	
-   
-	
-    
-    
-    
-    
-    
-    
-    
-	
-	
-    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

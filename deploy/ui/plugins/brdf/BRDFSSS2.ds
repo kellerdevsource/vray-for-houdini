@@ -3,11 +3,13 @@
     label	"SSS 2"
     parmtag	{ spare_category "SSS 2" }
     parmtag	{ vray_plugin "BRDFSSS2" }
-	
+
+#include "vfh_brdf_common.ds"
+
 	group {
 		name "folder_diffuse"
 		label "Main"
-		
+
 		parm {
 			name	"scale"
 			label	"Scale"
@@ -33,7 +35,7 @@
 			parmtag	{ "vray_pluginattr" "ior" }
 			parmtag	{ "vray_type" "float" }
 		}
-		
+
 		 parm {
 			name	"color_mode"
 			label	"Color Mode"
@@ -47,7 +49,7 @@
 			parmtag	{ "vray_pluginattr" "color_mode" }
 			parmtag	{ "vray_type" "int" }
 		}
-		
+
 		parm {
 			name	"diffuse_reflectance"
 			label	"Diffuse Reflectance"
@@ -100,14 +102,14 @@
 			parmtag	{ "vray_pluginattr" "phase_function" }
 			parmtag	{ "vray_type" "float" }
 		}
-		
-    
-		
+
+
+
 	}
 	group {
 		name "folder_prepass"
 		label "Prepass"
-		
+
 		parm {
 			name	"prepass_rate"
 			label	"Prepass Rate"
@@ -220,7 +222,7 @@
 			parmtag	{ "vray_pluginattr" "surface_offset" }
 			parmtag	{ "vray_type" "float" }
 		}
-		
+
 		parm {
 			name	"samples_color"
 			label	"Samples Color"
@@ -234,7 +236,7 @@
 			parmtag	{ "vray_pluginattr" "samples_color" }
 			parmtag	{ "vray_type" "color" }
 		}
-		
+
 		parm {
 			name	"background_color"
 			label	"Background Color"
@@ -260,16 +262,16 @@
 			parmtag	{ "vray_pluginattr" "max_distance" }
 			parmtag	{ "vray_type" "float" }
 		}
-		
-	
-		
-		
+
+
+
+
 	}
-	
+
 	group {
 		name "folder_options"
 		label "Options"
-		
+
 		parm {
 			name	"subdivs"
 			label	"Subdivs"
@@ -282,7 +284,7 @@
 			parmtag	{ "vray_pluginattr" "subdivs" }
 			parmtag	{ "vray_type" "int" }
 		}
-	
+
 		parm {
 			name	"scatter_gi"
 			label	"Scatter Gi"
@@ -345,9 +347,9 @@
 			parmtag	{ "vray_pluginattr" "linear_workflow" }
 			parmtag	{ "vray_type" "boolean" }
 		}
-		
-		
+
+
 	}
-	
-	
+
+
 }

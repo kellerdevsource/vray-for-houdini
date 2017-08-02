@@ -3,6 +3,9 @@
     label	"Stochastic Flakes"
     parmtag	{ spare_category "Stochastic Flakes" }
     parmtag	{ vray_plugin "BRDFStochasticFlakes" }
+
+#include "vfh_brdf_common.ds"
+
     parm {
 	name	"enable_flakes"
 	label	"Enable Flakes"

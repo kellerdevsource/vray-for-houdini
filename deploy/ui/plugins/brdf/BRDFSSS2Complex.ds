@@ -4,6 +4,8 @@
     parmtag	{ spare_category "SSS 2 Complex" }
     parmtag	{ vray_plugin "BRDFSSS2Complex" }
 
+#include "vfh_brdf_common.ds"
+
 	group {
 		name "folder_main"
 		label "Main"

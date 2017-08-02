@@ -3,11 +3,13 @@
     label	"Hair 3"
     parmtag	{ spare_category "Hair 3" }
     parmtag	{ vray_plugin "BRDFHair3" }
-	
+
+#include "vfh_brdf_common.ds"
+
 	group {
 		name "folder_main"
 		label "Main"
-		
+
 		parm {
 			name	"overall_color"
 			label	"Overall Color"
@@ -49,7 +51,7 @@
 			parmtag	{ "vray_pluginattr" "light_multiplier" }
 			parmtag	{ "vray_type" "float" }
 		}
-		
+
 		parm {
 			name	"opaque_for_shadows"
 			label	"Opaque For Shadows"
@@ -102,15 +104,15 @@
 			parmtag	{ "vray_pluginattr" "use_cached_gi" }
 			parmtag	{ "vray_type" "boolean" }
 		}
-		
-		
-		
+
+
+
 	}
-	
+
 	group {
 		name "folder_diffuse"
 		label "Diffuse"
-		
+
 		 parm {
 			name	"diffuse_color"
 			label	"Color"
@@ -138,16 +140,16 @@
 			parmtag	{ "vray_pluginattr" "diffuse_amount" }
 			parmtag	{ "vray_type" "TextureFloat" }
 		}
-		
-		
-		
-		
+
+
+
+
 	}
-	
+
 	group {
 		name "folder_prim_spec"
 		label "Specular 1"
-		
+
 		parm {
 			name	"primary_specular"
 			label	"Color"
@@ -188,14 +190,14 @@
 			parmtag	{ "vray_pluginattr" "primary_glossiness" }
 			parmtag	{ "vray_type" "TextureFloat" }
 		}
-		
-		
+
+
 	}
-	
+
 	group {
 		name "folder_sec_spec"
 		label "Specular 2"
-		
+
 		parm {
 			name	"secondary_specular"
 			label	"Color"
@@ -251,15 +253,15 @@
 			parmtag	{ "vray_pluginattr" "secondary_lock_to_transmission" }
 			parmtag	{ "vray_type" "boolean" }
 		}
-		
-		
-		
+
+
+
 	}
-	
+
 	group {
 		name "folder_transmission"
 		label "Transmission"
-		
+
 		 parm {
 			name	"transmission"
 			label	"Color"
@@ -313,15 +315,15 @@
 			parmtag	{ "vray_pluginattr" "transmission_glossiness_width" }
 			parmtag	{ "vray_type" "TextureFloat" }
 		}
-		
-		
-	
+
+
+
 	}
-	
-    
-   
-    
-    
-   
-    
+
+
+
+
+
+
+
 }

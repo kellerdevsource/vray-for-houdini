@@ -3,8 +3,10 @@
     label	"Mirror"
     parmtag	{ spare_category "Mirror" }
     parmtag	{ vray_plugin "BRDFMirror" }
-	
-	
+
+#include "vfh_brdf_common.ds"
+
+
 	parm {
 		name	"back_side"
 		label	"Two-sided"
@@ -17,11 +19,11 @@
 		parmtag	{ "vray_pluginattr" "back_side" }
 		parmtag	{ "vray_type" "boolean" }
     }
-	
+
 	groupsimple {
 		name "folder_main"
 		label "Main"
-		
+
 		parm {
 			name	"color"
 			label	"Color"
@@ -100,11 +102,11 @@
 			parmtag	{ "vray_pluginattr" "transparency_tex_mult" }
 			parmtag	{ "vray_type" "float" }
 		}
-		
+
 		groupcollapsible {
 			name "folder_refl_advanced"
 			label "Reflection-advanced"
-			
+
 			parm {
 				name	"trace_reflections"
 				label	"Trace Reflections"
@@ -187,16 +189,16 @@
 				parmtag	{ "vray_pluginattr" "reflect_dim_distance_falloff" }
 				parmtag	{ "vray_type" "float" }
 			}
-			
+
 		}
-		
+
 	}
-	
-	
+
+
 	groupsimple {
 		name "folder_options"
 		label "Options"
-		
+
 		parm {
 			name	"cutoff"
 			label	"Cutoff"
@@ -209,7 +211,7 @@
 			parmtag	{ "vray_pluginattr" "cutoff" }
 			parmtag	{ "vray_type" "float" }
 		}
-		
+
 		parm {
 			name	"affect_alpha"
 			label	"Affect Alpha"
@@ -229,9 +231,9 @@
 			parmtag	{ "vray_pluginattr" "affect_alpha" }
 			parmtag	{ "vray_type" "int" }
 		}
-	
-		
+
+
 	}
 
-	
+
 }

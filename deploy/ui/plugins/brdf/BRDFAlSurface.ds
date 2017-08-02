@@ -4,6 +4,8 @@
     parmtag	{ spare_category "AlSurface" }
     parmtag	{ vray_plugin "BRDFAlSurface" }
 
+#include "vfh_brdf_common.ds"
+
     group {
       name "folder_general"
       label "General"

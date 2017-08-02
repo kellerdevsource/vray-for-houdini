@@ -4,6 +4,8 @@
     parmtag	{ spare_category "Bump" }
     parmtag	{ vray_plugin "BRDFBump" }
 
+#include "vfh_brdf_common.ds"
+
     groupsimple {
       name "folder_main"
       label "Main"
@@ -104,7 +106,7 @@
       	parmtag	{ "vray_type" "float" }
       }
 
-      
+
 
       parm {
       	name	"bump_map_mult"
@@ -183,7 +185,7 @@
     	parmtag	{ "vray_pluginattr" "additional_bump" }
     	parmtag	{ "vray_type" "Texture" }
     }
-	
+
 	parm {
       	name	"maya_compatible"
       	label	"Maya Compatible"

@@ -4,6 +4,8 @@
     parmtag { spare_category "Scanned" }
     parmtag { vray_plugin "BRDFScanned" }
 
+#include "vfh_brdf_common.ds"
+
     group {
 	name	"folder1"
 	label	"Common"

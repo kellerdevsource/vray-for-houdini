@@ -3,11 +3,13 @@
     label	"Light"
     parmtag	{ spare_category "Light" }
     parmtag	{ vray_plugin "BRDFLight" }
-	
+
+#include "vfh_brdf_common.ds"
+
 	groupsimple {
 		name "folder_main"
 		label "Main"
-		
+
 		parm {
 			name	"color"
 			label	"Light Color"
@@ -49,13 +51,13 @@
 			parmtag	{ "vray_pluginattr" "transparency" }
 			parmtag	{ "vray_type" "Texture" }
 		}
-		
-		
+
+
 	}
 	groupsimple {
 		name "folder_options"
 		label "Options"
-		
+
 		parm {
 			name	"doubleSided"
 			label	"Double Sided"
@@ -108,8 +110,8 @@
 			parmtag	{ "vray_pluginattr" "multiplyByOpacity" }
 			parmtag	{ "vray_type" "boolean" }
 		}
-			
+
 	}
-  
-	
+
+
 }

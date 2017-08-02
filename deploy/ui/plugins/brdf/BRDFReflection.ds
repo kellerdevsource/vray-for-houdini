@@ -3,6 +3,9 @@
     label	"Reflection"
     parmtag	{ spare_category "Reflection" }
     parmtag	{ vray_plugin "BRDFReflection" }
+
+#include "vfh_brdf_common.ds"
+
     parm {
 	name	"color"
 	label	"Color"
