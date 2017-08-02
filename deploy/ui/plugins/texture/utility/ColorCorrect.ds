@@ -3,6 +3,9 @@
     label	"Color Correct"
     parmtag	{ spare_category "Color Correct" }
     parmtag	{ vray_plugin "ColorCorrect" }
+
+#include "vfh_texture_default_output_color.ds"
+
     parm {
 	name	"source_color"
 	label	"Source Color"
