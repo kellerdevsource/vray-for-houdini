@@ -13,22 +13,22 @@ collection
 #include "$VRAY_UI_DS_PATH/vfh_rop.ds"
 
 collection
-#include "$VRAY_UI_DS_PATH/plugins/CameraPhysical.ds"
+#include "$VRAY_UI_DS_PATH/plugins/view/CameraPhysical.ds"
 
 collection
-#include "$VRAY_UI_DS_PATH/plugins/GeomMayaHair.ds"
+#include "$VRAY_UI_DS_PATH/plugins/geometry/GeomMayaHair.ds"
 
 collection
-#include "$VRAY_UI_DS_PATH/plugins/MtlWrapper.ds"
+#include "$VRAY_UI_DS_PATH/plugins/material/MtlWrapper.ds"
 
 collection
-#include "$VRAY_UI_DS_PATH/plugins/MtlRenderStats.ds"
+#include "$VRAY_UI_DS_PATH/plugins/material/MtlRenderStats.ds"
 
 collection
-#include "$VRAY_UI_DS_PATH/plugins/MtlOverride.ds"
+#include "$VRAY_UI_DS_PATH/plugins/material/MtlOverride.ds"
 
 collection
-#include "$VRAY_UI_DS_PATH/plugins/MtlRoundEdges.ds"
+#include "$VRAY_UI_DS_PATH/plugins/material/MtlRoundEdges.ds"
 
 #endif // VRAY_UI_DS_PATH
 

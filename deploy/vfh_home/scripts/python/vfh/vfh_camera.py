@@ -18,7 +18,7 @@ def add_physical_camera_attributes():
     if UI is None:
         return
 
-    physCamDS = os.path.join(UI, "plugins", "CameraPhysical.ds")
+    physCamDS = os.path.join(UI, "plugins", "view", "CameraPhysical.ds")
     if not os.path.exists(physCamDS):
         sys.stderr.write("CameraPhysical.ds is not found!\n")
         return
