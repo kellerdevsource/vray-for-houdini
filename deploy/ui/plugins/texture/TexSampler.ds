@@ -30,6 +30,7 @@
         parmtag { "vray_plugin" "TexSampler" }
         parmtag { "vray_pluginattr" "uv_index" }
         parmtag { "vray_type" "int" }
+        disablewhen "{ uv_set_name != \"\" }"
     }
 
 #include "vfh_texture_defines.ds"
