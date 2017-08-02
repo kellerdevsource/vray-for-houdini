@@ -120,28 +120,59 @@ FORCEINLINE float getFloat(PyObject *dict, const char *key, float defValue)
 	return PyFloat_AS_DOUBLE(item);
 }
 
-static VRayExporter *vrayExporter = nullptr;
 static PingPongClient *stopChecker = nullptr;
 static ProcessCheckPtr procCheck = nullptr;
-std::recursive_mutex expMtx;
-
 
 /// RAII wrapper over the lock of the vrayExporter pointer
 /// Has bool cast operator so it can be used directly in if statements
-struct WithExporter {
+class WithExporter
+{
+public:
+	/// Locks the mutex
 	WithExporter() {
-		expMtx.lock();
+		exporterMtx.lock();
 	}
 
+	/// Unlocks the mutex
 	~WithExporter() {
-		expMtx.unlock();
+		exporterMtx.unlock();
 	}
 
+	/// Return true if the exporter is already allocated
 	explicit operator bool() const & {
-		if (!vrayExporter) {
-			Log::getLog().warning("WithExporter RAII lock - NULL exporter");
+		return !!exporter;
+	}
+
+	/// Dereference the exporter pointer and return it (this must not be called if the pointer is nullptr)
+	VRayExporter & getExporter() {
+		if (!exporter) {
+			Log::getLog().error("Trying to dereference NULL exporter!");
+			assert(false && "Trying to dereference NULL exporter!");
 		}
-		return !!vrayExporter;
+		return *exporter;
+	}
+
+	/// Get copy of the exporter pointer
+	VRayExporter * getPointer() {
+		return exporter;
+	}
+
+	/// Allocate the exporter
+	void allocExporter() {
+		if (!exporter) {
+			exporter = new VRayExporter(nullptr);
+		}
+	}
+
+	/// Free the exporter
+	void freeExporter() {
+		FreePtr(exporter);
+	}
+
+	/// Unguarded static method to access the pointer without locking the mutex
+	/// Used to avoid locking if the exporter is nullptr and it is not needed to do operations with the pointer
+	static VRayExporter * getPointerUnguarded() {
+		return exporter;
 	}
 
 	// make sure we execute this only on variables of this clas
@@ -149,18 +180,14 @@ struct WithExporter {
 	explicit operator bool() && = delete;
 
 	VfhDisableCopy(WithExporter)
+private:
+	static VRayExporter *exporter;
+	static std::recursive_mutex exporterMtx;
 };
 
-static VRayExporter& getOrCreateExporter()
-{
-	{
-		WithExporter lk;
-		if (!vrayExporter) {
-			vrayExporter = new VRayExporter(nullptr);
-		}
-	}
-	return *vrayExporter;
-}
+VRayExporter * WithExporter::exporter = nullptr;
+std::recursive_mutex WithExporter::exporterMtx;
+
 
 static void freeExporter()
 {
@@ -170,10 +197,8 @@ static void freeExporter()
 	closeImdisplay();
 
 	if (WithExporter lk{}) {
-		if (vrayExporter) {
-			vrayExporter->reset();
-			FreePtr(vrayExporter);
-		}
+		lk.getExporter().reset();
+		lk.freeExporter();
 	}
 }
 
@@ -263,8 +288,12 @@ static PyObject* vfhExportView(PyObject*, PyObject *args, PyObject *keywds)
 	}
 
 	HOM_AutoLock autoLock;
+	WithExporter lock;
+	if (!lock) {
+		Py_RETURN_NONE;
+	}
 
-	VRayExporter &exporter = getOrCreateExporter();
+	VRayExporter &exporter = lock.getExporter();
 	exporter.exportDefaultHeadlight(true);
 
 	const char *camera = PyString_AsString(PyDict_GetItemString(viewParamsDict, "camera"));
@@ -315,11 +344,13 @@ static PyObject* vfhDeleteOpNode(PyObject*, PyObject *args, PyObject *keywds)
 	{
 		HOM_AutoLock autoLock;
 
-		if (UTisstring(opNodePath)) {
-			Log::getLog().debug("vfhDeleteOpNode(\"%s\")", opNodePath);
+		if (WithExporter lock{}) {
+			if (UTisstring(opNodePath)) {
+				Log::getLog().debug("vfhDeleteOpNode(\"%s\")", opNodePath);
 
-			ObjectExporter &objExporter = getOrCreateExporter().getObjectExporter();
-			objExporter.removeObject(opNodePath);
+				ObjectExporter &objExporter = lock.getExporter().getObjectExporter();
+				objExporter.removeObject(opNodePath);
+			}
 		}
 	}
 
@@ -343,20 +374,21 @@ static PyObject* vfhExportOpNode(PyObject*, PyObject *args, PyObject *keywds)
 		/* 0 */ &opNodePath))
 	{
 		HOM_AutoLock autoLock;
+		if (WithExporter lock{}) {
+			OBJ_Node *objNode = CAST_OBJNODE(getOpNodeFromPath(opNodePath));
+			if (objNode) {
+				Log::getLog().debug("vfhExportOpNode(\"%s\")", opNodePath);
 
-		OBJ_Node *objNode = CAST_OBJNODE(getOpNodeFromPath(opNodePath));
-		if (objNode) {
-			Log::getLog().debug("vfhExportOpNode(\"%s\")", opNodePath);
+				ObjectExporter &objExporter = lock.getExporter().getObjectExporter();
 
-			ObjectExporter &objExporter = getOrCreateExporter().getObjectExporter();
+				// Otherwise we won't update plugin.
+				objExporter.clearOpPluginCache();
+				objExporter.clearPrimPluginCache();
 
-			// Otherwise we won't update plugin.
-			objExporter.clearOpPluginCache();
-			objExporter.clearPrimPluginCache();
-
-			// Update node
-			objExporter.removeGenerated(*objNode);
-			objExporter.exportObject(*objNode);
+				// Update node
+				objExporter.removeGenerated(*objNode);
+				objExporter.exportObject(*objNode);
+			}
 		}
 	}
 
@@ -432,12 +464,16 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 		const int isRenderView = iprOutput == iprOutputRenderView;
 		const int isVFB = iprOutput == iprOutputVFB;
 
-		VRayExporter &exporter = getOrCreateExporter();
-
-		exporter.setROP(*ropNode);
-		exporter.setIPR(iprMode);
+		{
+			WithExporter lk;
+			assert(!lk && "Exporter should be NULL in vfhInit");
+			lk.allocExporter();
+		}
 
 		if (WithExporter lk{}) {
+			VRayExporter &exporter = lk.getExporter();
+			exporter.setROP(*ropNode);
+			exporter.setIPR(iprMode);
 			if (!exporter.initRenderer(isVFB, false)) {
 				Py_RETURN_NONE;
 			}
@@ -445,6 +481,7 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 
 		ViewParams viewParams;
 		if (WithExporter lk{}) {
+			VRayExporter &exporter = lk.getExporter();
 			fillViewParamsFromDict(viewParamsDict, viewParams);
 
 			exporter.setDRSettings();
@@ -454,6 +491,7 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 		}
 
 		if (WithExporter lk{}) {
+			VRayExporter &exporter = lk.getExporter();
 			exporter.getRenderer().showVFB(isVFB);
 			exporter.getRenderer().getVRay().setOnVFBClosed(isVFB ? onVFBClosed : nullptr);
 			exporter.getRenderer().getVRay().setOnImageReady(isRenderView ? onImageReady : nullptr);
@@ -469,12 +507,14 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 		}
 
 		if (WithExporter lk{}) {
+			VRayExporter &exporter = lk.getExporter();
 			exporter.initExporter(getFrameBufferType(*ropNode), 1, now, now);
 
 			exporter.setFrame(now);
 		}
 
 		if (WithExporter lk{}) {
+			VRayExporter &exporter = lk.getExporter();
 			exporter.exportSettings();
 			exporter.exportScene();
 			exporter.exportView(viewParams);
@@ -488,9 +528,18 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 
 static PyObject * vfhIsRopValid(PyObject *)
 {
-	if (!vrayExporter || !getOrCreateExporter().getRopPtr()) {
+	// First try without locking
+	if (!WithExporter::getPointerUnguarded()) {
 		Py_RETURN_FALSE;
 	}
+
+	// We must lock if we will use the exporter
+	if (WithExporter lk{}) {
+		if (!lk.getExporter().getRopPtr()) {
+			Py_RETURN_FALSE;
+		}
+	}
+
 	Py_RETURN_TRUE;
 }
 
