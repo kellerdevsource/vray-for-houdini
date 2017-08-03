@@ -45,6 +45,12 @@ public:
 		, checkRunning(false)
 	{}
 
+	enum class ChildState {
+		Running, Stopped, Error
+	};
+
+	ChildState getChildState();
+
 	bool start() override;
 
 	bool stop() override;
@@ -61,6 +67,23 @@ private:
 
 ProcessCheckPtr makeProcessChecker(ProcessCheck::OnStop cb, const std::string &name) {
 	return ProcessCheckPtr(new LnxProcessCheck(cb, name));
+}
+
+LnxProcessCheck::::ChildState LnxProcessCheck::getChildState() {
+	if (childPid > 0) {
+		int status = 0;
+		pid_t resPid = waitpid(childPid, &status, WNOHANG);
+		if (resPid == 0) {
+			return ChildState::Running;
+		} else if (resPid > 0) {
+			return ChildState::Stopped;
+		} else {
+			if (errno != ECHILD) {
+				return ChildState::Stopped;
+			}
+		}
+	}
+	return ChildState::Error;
 }
 
 bool LnxProcessCheck::start() {
@@ -87,19 +110,14 @@ bool LnxProcessCheck::start() {
 
 	Log::getLog().debug("Child vfh_ipr is running with pid %d", (int)childPid);
 
-	int status = 0;
-	pid_t testPid = waitpid(childPid, &status, WNOHANG);
-	if (testPid < 0) {
-		if (errno == ECHILD) {
-			Log::getLog().error("Failed waiting for child process - pid no longer child");
-		} else {
-			Log::getLog().error("Failed waiting for child process - %d", errno);
-		}
-		return false;
-	} else if (testPid > 0) {
+	ChildState state = getChildState();
+	if (state == ChildState::Stopped) {
 		Log::getLog().debug("Process closed before waiting for it");
 		stopCallback();
 		return true;
+	} else if (state == ChildState::Error) {
+		Log::getLog().error("Failed waiting for child process - %d", errno);
+		return false;
 	}
 
 	Log::getLog().debug("Starting thread monitoring child pid");
@@ -107,13 +125,12 @@ bool LnxProcessCheck::start() {
 	checkRunning = true;
 	waitThread = new std::thread([this]() {
 		Log::getLog().debug("Proc wait thread started");
-		pid_t resPid = 0;
-		int status = 0;
-		while ((resPid = waitpid(this->childPid, &status, WNOHANG)) == 0 && this->checkRunning) {
+		LnxProcessCheck::ChildState state;
+		while ((state = getChildState()) == ChildState::Running && this->checkRunning) {
 			std::this_thread::sleep_for(std::chrono::milliseconds(1));
 		}
 
-		if (resPid > 0) {
+		if (state == ChildState::Stopped) {
 			Log::getLog().debug("Child with pid [%d] exited", (int)resPid);
 		} else {
 			Log::getLog().error("Thread failed waiting for child process - %d", errno);
@@ -126,22 +143,7 @@ bool LnxProcessCheck::start() {
 }
 
 bool LnxProcessCheck::isAlive() {
-	if (childPid > 0) {
-		int status = 0;
-		pid_t resPid = waitpid(childPid, &status, WNOHANG);
-		if (resPid == 0) {
-			return true;
-		} else if (resPid > 0) {
-			Log::getLog().debug("Testing isAlive() - dead");
-		} else {
-			if (errno != ECHILD) {
-				Log::getLog().error("Testing isAlive() error - %d", errno);
-			}
-		}
-	} else {
-		Log::getLog().warning("Testing isAlive() without running child");
-	}
-	return false;
+	return getChildState() == ChildState::Running;
 }
 
 bool LnxProcessCheck::stop() {
