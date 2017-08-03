@@ -229,22 +229,19 @@ void VRayExporter::setAttrValueFromOpNodePrm(Attrs::PluginDesc &pluginDesc, cons
 			attr.paramValue.valInt = opNode.evalInt(parmName.c_str(), 0, t);
 		}
 		else if (attrDesc.value.type == Parm::eEnum) {
-			const int menuIndex = opNode.evalInt(parmName.c_str(), 0, t);
+			UT_String enumValue;
+			opNode.evalString(enumValue, parmName.c_str(), 0, t);
 
-			if (menuIndex < 0 || menuIndex >= attrDesc.value.enumInfo.size()) {
-				Log::getLog().error("Param enum value out-of-bounds index %s::%s",
-					pluginDesc.pluginID.c_str(), attrDesc.attr.ptr());
+			if (enumValue.isInteger()) {
+				attr.paramType = Attrs::PluginAttr::AttrTypeInt;
+				attr.paramValue.valInt = enumValue.toInt();
 			}
 			else {
-				const Parm::EnumItem &enumItem = attrDesc.value.enumInfo[menuIndex];
-				if (enumItem.valueType == Parm::EnumItem::EnumValueInt) {
-					attr.paramType = Attrs::PluginAttr::AttrTypeInt;
-					attr.paramValue.valInt = enumItem.value;
-				}
-				else {
-					attr.paramType = Attrs::PluginAttr::AttrTypeString;
-					attr.paramValue.valString = enumItem.valueString;
-				}
+				// UVWGenEnvironment is the only plugin with enum with the string keys.
+				vassert(pluginDesc.pluginID == "UVWGenEnvironment");
+
+				attr.paramType = Attrs::PluginAttr::AttrTypeString;
+				attr.paramValue.valString = enumValue.buffer();
 			}
 		}
 		else if (attrDesc.value.type == Parm::eFloat ||
