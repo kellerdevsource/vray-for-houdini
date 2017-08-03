@@ -145,7 +145,7 @@ public:
 	VRayExporter & getExporter() {
 		if (!exporter) {
 			Log::getLog().error("Trying to dereference NULL exporter!");
-			assert(false && "Trying to dereference NULL exporter!");
+			vassert(false && "Trying to dereference NULL exporter!");
 		}
 		return *exporter;
 	}
@@ -449,7 +449,7 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 		// Start the imdisplay thread so we can get pipe signals sooner
 		{
 			WithExporter lk;
-			assert(!lk && "Exporter should be NULL in vfhInit");
+			vassert(!lk && "Exporter should be NULL in vfhInit");
 			lk.allocExporter();
 		}
 		if (WithExporter lk{}) {
