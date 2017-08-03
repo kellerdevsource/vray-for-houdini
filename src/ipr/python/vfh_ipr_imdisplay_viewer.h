@@ -123,7 +123,8 @@ private:
 	TileMessageQueue queue;
 
 	/// Flag set to true when the thread can run, set to false in the stop() method
-	bool isRunning;
+	/// This is volatile to discourage compiler optimizing the read since we dont lock when stopping the thread
+	volatile bool isRunning;
 
 	/// Queue lock.
 	QMutex mutex;

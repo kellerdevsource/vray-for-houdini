@@ -62,7 +62,8 @@ private:
 	/// The pid of the child we are waiting for
 	pid_t childPid;
 	/// Flag keeping the thread running
-	bool checkRunning;
+	/// Volatile to discourage compiler optimizing reads in checker thread
+	volatile bool checkRunning;
 };
 
 ProcessCheckPtr makeProcessChecker(ProcessCheck::OnStop cb, const std::string &name) {
