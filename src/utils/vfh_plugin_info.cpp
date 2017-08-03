@@ -86,6 +86,8 @@ static void initVRayParmTypesMap()
 	vrayParmTypes.insert("string", eString);
 	vrayParmTypes.insert("vector", eVector);
 
+	vrayParmTypes.insert("Object", ePlugin);
+
 	vrayParmTypes.insert("Texture",       eTextureColor);
 	vrayParmTypes.insert("OutputTexture", eOutputTextureColor);
 
