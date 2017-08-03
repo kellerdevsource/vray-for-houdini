@@ -351,6 +351,11 @@ void ImdisplayThread::run() {
 	int maxRetries = 300;
 	// Default wait time is 30 000 ms, so emulate it by also checking running flag
 	while (!pipe->waitForStarted(10)) {
+		// TODO: Should we break or stop if pipe does not start for 30sec?
+		if (--maxRetries <= 0) {
+			Log::getLog().warning("QProcess::waitForStarted never finished!");
+			break;
+		}
 		if (!isRunning) {
 			return;
 		}
