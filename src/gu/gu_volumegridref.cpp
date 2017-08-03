@@ -296,7 +296,7 @@ void VRayVolumeGridRef::initDataCache()
 	// we dont need the evict callback, because the data is in RAII objects and will be freed when evicted from cache
 	// so just print info
 	m_dataCache.setEvictCallback([](const VolumeCacheKey & key, VRayVolumeGridRef::VolumeCacheData &) {
-		Log::getLog().info("Evicting \"%s\" from cache", key.path.c_str());
+		Log::getLog().info("Removing \"%s\" from cache", key.path.c_str());
 	});
 }
 

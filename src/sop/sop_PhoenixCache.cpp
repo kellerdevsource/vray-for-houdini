@@ -55,12 +55,17 @@ OP_ERROR SOP::PhxShaderCache::cookMySop(OP_Context &context)
 
 	const float t = context.getTime();
 
+	// find existing VRayVolumeGridRef primitive
 	VRayVolumeGridRef* gridRefPtr = nullptr;
 	GA_Primitive *prim = nullptr;
 	GA_FOR_ALL_PRIMITIVES(gdp, prim) {
-		if (strcmp(prim->getTypeName(), "VRayVolumeGridRef") == 0) {
-			auto pack = UTverify_cast<VRayVolumeGridRef*>(UTverify_cast<GU_PrimPacked*>(prim)->implementation());
-			gridRefPtr = new VRayVolumeGridRef(std::move(*UTverify_cast<VRayVolumeGridRef*>(UTverify_cast<GU_PrimPacked*>(prim)->implementation())));
+		GA_PrimitiveTypeId vrayVolumeGridRefTypeId = GU_PrimPacked::lookupTypeId("VRayVolumeGridRef");
+		if (prim->getTypeId() == vrayVolumeGridRefTypeId) {
+			if (GU_PrimPacked::isPackedPrimitive(*prim)) {
+				GU_PrimPacked *primPacked = UTverify_cast<GU_PrimPacked*>(prim);
+				VRayVolumeGridRef *oldGridRefPtr = UTverify_cast<VRayVolumeGridRef*>(primPacked->implementation());
+				gridRefPtr = new VRayVolumeGridRef(std::move(*oldGridRefPtr));
+			}
 		}
 	}
 	
@@ -107,7 +112,7 @@ OP_ERROR SOP::PhxShaderCache::cookMySop(OP_Context &context)
 	gridRefPtr->update(options);
 	pack->setPathAttribute(getFullPath());
 
-	//gdp->destroyStashed();
+	gdp->destroyStashed();
 
 	return error();
 }

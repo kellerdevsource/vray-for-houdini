@@ -111,26 +111,19 @@ public:
 	{ clear(); }
 
 	LRUCache(LRUCache&& source)
+		: LRUCache()
 	{
-		m_capacity = source.m_capacity;
-		m_cacheMap = std::move(source.m_cacheMap);
-		m_mlruQueue = std::move(source.m_mlruQueue);
-		m_cbfetchValue = source.m_cbfetchValue;
-		m_cbEvictValue = source.m_cbEvictValue;
-
-		source.m_capacity = 0;
+		*this = std::move(source);
 	}
 
 	LRUCache &operator=(LRUCache&& source)
 	{
 		if (&source != this) {
-			m_capacity = source.m_capacity;
-			m_cacheMap = std::move(source.m_cacheMap);
-			m_mlruQueue = std::move(source.m_mlruQueue);
-			m_cbfetchValue = source.m_cbfetchValue;
-			m_cbEvictValue = source.m_cbEvictValue;
-
-			source.m_capacity = 0;
+			std::swap(m_capacity, source.m_capacity);
+			std::swap(m_cacheMap, std::move(source.m_cacheMap));
+			std::swap(m_mlruQueue, std::move(source.m_mlruQueue));
+			std::swap(m_cbfetchValue, source.m_cbfetchValue);
+			std::swap(m_cbEvictValue, source.m_cbEvictValue);
 		}
 
 		return *this;
