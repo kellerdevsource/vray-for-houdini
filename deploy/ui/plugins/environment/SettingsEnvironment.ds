@@ -1,0 +1,282 @@
+{
+    name    SettingsEnvironment
+    label   "Environment Settings"
+    parmtag { spare_category "SettingsEnvironment" }
+    parmtag { vray_plugin "SettingsEnvironment" }
+
+    parm {
+        name    "global_light_level"
+        label   "Global Light Level"
+        type    color
+        size    3
+        default { "1" "1" "1" }
+        help    "A global light level multiplier for all lights"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "SettingsEnvironment" }
+        parmtag { "vray_pluginattr" "global_light_level" }
+        parmtag { "vray_type" "color" }
+    }
+
+    parm {
+        name    "bg_color"
+        label   "Bg Color"
+        type    color
+        size    3
+        default { "0" "0" "0" }
+        help    "Environment color"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "SettingsEnvironment" }
+        parmtag { "vray_pluginattr" "bg_color" }
+        parmtag { "vray_type" "color" }
+        invisible
+    }
+
+    parm {
+        name    "bg_tex"
+        label   "Background"
+        type    color4
+        size    4
+        default { "0" "0" "0" "1" }
+        help    "Environment map"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "SettingsEnvironment" }
+        parmtag { "vray_pluginattr" "bg_tex" }
+        parmtag { "vray_label" "background" }
+        parmtag { "vray_type" "Texture" }
+    }
+
+    parm {
+        name    "bg_tex_mult"
+        label   "Background Mult"
+        type    float
+        default { "1" }
+        help    "Environment map multiplier"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "SettingsEnvironment" }
+        parmtag { "vray_pluginattr" "bg_tex_mult" }
+        parmtag { "vray_type" "float" }
+    }
+
+    parm {
+        name    "gi_color"
+        label   "GI Color"
+        type    color
+        size    3
+        default { "0" "0" "0" }
+        help    "GI (skylight) color"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "SettingsEnvironment" }
+        parmtag { "vray_pluginattr" "gi_color" }
+        parmtag { "vray_type" "color" }
+        invisible
+    }
+
+    parm {
+        name    "gi_tex"
+        label   "GI"
+        type    color4
+        size    4
+        default { "0" "0" "0" "1" }
+        help    "GI (skylight) map"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "SettingsEnvironment" }
+        parmtag { "vray_pluginattr" "gi_tex" }
+        parmtag { "vray_label" "gi" }
+        parmtag { "vray_type" "Texture" }
+    }
+
+    parm {
+        name    "gi_tex_mult"
+        label   "GI Mult"
+        type    float
+        default { "1" }
+        help    "GI (skylight) map multiplier"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "SettingsEnvironment" }
+        parmtag { "vray_pluginattr" "gi_tex_mult" }
+        parmtag { "vray_type" "float" }
+    }
+
+    parm {
+        name    "reflect_color"
+        label   "Reflection"
+        type    color
+        size    3
+        default { "0" "0" "0" }
+        help    "Reflection color"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "SettingsEnvironment" }
+        parmtag { "vray_pluginattr" "reflect_color" }
+        parmtag { "vray_type" "color" }
+        invisible
+    }
+
+    parm {
+        name    "reflect_tex"
+        label   "Reflection"
+        type    color4
+        size    4
+        default { "0" "0" "0" "1" }
+        help    "Reflection map"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "SettingsEnvironment" }
+        parmtag { "vray_pluginattr" "reflect_tex" }
+        parmtag { "vray_label" "reflection" }
+        parmtag { "vray_type" "Texture" }
+    }
+
+    parm {
+        name    "reflect_tex_mult"
+        label   "Reflection Mult"
+        type    float
+        default { "1" }
+        help    "Reflection map multiplier"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "SettingsEnvironment" }
+        parmtag { "vray_pluginattr" "reflect_tex_mult" }
+        parmtag { "vray_type" "float" }
+    }
+
+    parm {
+        name    "refract_color"
+        label   "Refraction"
+        type    color
+        size    3
+        default { "0" "0" "0" }
+        help    "Refraction color"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "SettingsEnvironment" }
+        parmtag { "vray_pluginattr" "refract_color" }
+        parmtag { "vray_type" "color" }
+        invisible
+    }
+
+    parm {
+        name    "refract_tex"
+        label   "Refraction"
+        type    color4
+        size    4
+        default { "0" "0" "0" "1" }
+        help    "Refraction map"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "SettingsEnvironment" }
+        parmtag { "vray_pluginattr" "refract_tex" }
+        parmtag { "vray_label" "refraction" }
+        parmtag { "vray_type" "Texture" }
+    }
+
+    parm {
+        name    "refract_tex_mult"
+        label   "Refraction Mult"
+        type    float
+        default { "1" }
+        help    "Refraction map multiplier"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "SettingsEnvironment" }
+        parmtag { "vray_pluginattr" "refract_tex_mult" }
+        parmtag { "vray_type" "float" }
+    }
+
+    parm {
+        name    "secondary_matte_color"
+        label   "Secondary Matte Color"
+        type    color
+        size    3
+        default { "0" "0" "0" }
+        help    "Secondary matte color"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "SettingsEnvironment" }
+        parmtag { "vray_pluginattr" "secondary_matte_color" }
+        parmtag { "vray_type" "color" }
+        invisible
+    }
+
+    parm {
+        name    "secondary_matte_tex"
+        label   "Secondary Matte Tex"
+        type    color4
+        size    4
+        default { "0" "0" "0" "1" }
+        help    "Secondary matte texture"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "SettingsEnvironment" }
+        parmtag { "vray_pluginattr" "secondary_matte_tex" }
+        parmtag { "vray_type" "Texture" }
+        invisible
+    }
+
+    parm {
+        name    "secondary_matte_tex_mult"
+        label   "Secondary Matte Tex Mult"
+        type    float
+        default { "1" }
+        help    "Secondary matte texture map multiplier"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "SettingsEnvironment" }
+        parmtag { "vray_pluginattr" "secondary_matte_tex_mult" }
+        parmtag { "vray_type" "float" }
+        invisible
+    }
+
+    parm {
+        name    "num_environment_objects"
+        label   "Num Environment Objects"
+        type    integer
+        default { "0" }
+        help    "Used for implementing image planes"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "SettingsEnvironment" }
+        parmtag { "vray_pluginattr" "num_environment_objects" }
+        parmtag { "vray_type" "int" }
+        invisible
+    }
+
+    parm {
+        name    "use_secondary_matte"
+        label   "Use Secondary Matte"
+        type    toggle
+        default { "1" }
+        help    "Whether to use the secondary matte color/map"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "SettingsEnvironment" }
+        parmtag { "vray_pluginattr" "use_secondary_matte" }
+        parmtag { "vray_type" "boolean" }
+        invisible
+    }
+}
