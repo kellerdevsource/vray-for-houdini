@@ -46,6 +46,7 @@ protected:
 	int getOutputFromName(const UT_String &out) const VRAY_OVERRIDE;
 
 	void getOutputTypeInfoSubclass(VOP_TypeInfo &type_info, int idx) VRAY_OVERRIDE;
+	void getInputTypeInfoSubclass(VOP_TypeInfo &type_info, int idx) VRAY_OVERRIDE;
 };
 
 } // namespace VOP
