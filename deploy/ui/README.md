@@ -16,3 +16,9 @@
 
 * Prefer folder to avoid much scrolling
 * Don't use group titles in labels. If you are grouping attributes under "Refraction" group just use "Color" as the refraction_color label.
+
+## V-Ray Spare Data
+
+### Node Socket Types
+
+

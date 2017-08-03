@@ -1,4 +1,3 @@
-
 group {
     name "FolderVRayRendererSampler"
     label "Sampler"
@@ -6,81 +5,76 @@ group {
     groupsimple {
         name "SettingsImageSampler"
         label "Image Sampler"
-#include "$VRAY_UI_DS_PATH/rop/SettingsImageSampler.ds"
+
+#include "$VRAY_UI_DS_PATH/rop/SettingsImageSamplerParm.ds"
     }
 
     groupsimple {
         name "SettingsDMCSampler"
         label "DMC Sampler"
-#include "$VRAY_UI_DS_PATH/rop/SettingsDMCSampler.ds"
+
+#include "$VRAY_UI_DS_PATH/rop/SettingsDMCSamplerParm.ds"
     }
 
     groupsimple {
         name "SettingsRegionsGenerator"
         label "Render Region Division"
-#include "$VRAY_UI_DS_PATH/rop/SettingsRegionsGenerator.ds"
-
         hidewhen "{ SettingsImageSampler_type == 3 }"
+
+#include "$VRAY_UI_DS_PATH/rop/SettingsRegionsGeneratorParm.ds"
     }
-	
-#include "$VRAY_UI_DS_PATH/rop/SettingsColorMapping.ds"
 }
 
 group {
     name "FolderVRayRendererGI"
     label "Global Illumination"
-#include "$VRAY_UI_DS_PATH/rop/SettingsGI.ds"
-#include "$VRAY_UI_DS_PATH/rop/SettingsIrradianceMap.ds"
-#include "$VRAY_UI_DS_PATH/rop/SettingsDMCGI.ds"
-#include "$VRAY_UI_DS_PATH/rop/SettingsLightCache.ds"
-#include "$VRAY_UI_DS_PATH/rop/SettingsCaustics.ds"
 
+#include "$VRAY_UI_DS_PATH/rop/SettingsGIParm.ds"
+#include "$VRAY_UI_DS_PATH/rop/SettingsIrradianceMapParm.ds"
+#include "$VRAY_UI_DS_PATH/rop/SettingsDMCGIParm.ds"
+#include "$VRAY_UI_DS_PATH/rop/SettingsLightCacheParm.ds"
+#include "$VRAY_UI_DS_PATH/rop/SettingsCausticsParm.ds"
+}
+
+group {
+    name "SettingsColorMapping"
+    label "Color Mapping"
+
+#include "$VRAY_UI_DS_PATH/rop/SettingsColorMappingParm.ds"
 }
 
 group {
     name "FolderVRayRendererCamera"
     label "Camera"
-#include "$VRAY_UI_DS_PATH/rop/SettingsCamera.ds"
-#include "$VRAY_UI_DS_PATH/rop/SettingsCameraDof.ds"
-#include "$VRAY_UI_DS_PATH/rop/SettingsMotionBlur.ds"
-#include "$VRAY_UI_DS_PATH/rop/VRayStereoscopicSettings.ds"
 
+#include "$VRAY_UI_DS_PATH/rop/SettingsCameraParm.ds"
+#include "$VRAY_UI_DS_PATH/rop/SettingsCameraDofParm.ds"
+#include "$VRAY_UI_DS_PATH/rop/SettingsMotionBlurParm.ds"
+#include "$VRAY_UI_DS_PATH/rop/VRayStereoscopicSettingsParm.ds"
 }
 
-/*
 group {
-    name "SettingsColorMapping"
-    label "Color Mapping"
-#include "$VRAY_UI_DS_PATH/rop/SettingsColorMapping.ds"
+    name "SettingsDefaultDisplacement"
+    label "Displacement"
+#include "$VRAY_UI_DS_PATH/rop/SettingsDefaultDisplacementParm.ds"
 }
-*/
 
 group {
     name "SettingsOptions"
     label "Options"
-#include "$VRAY_UI_DS_PATH/rop/SettingsOptions.ds"
-#include "$VRAY_UI_DS_PATH/rop/SettingsRaycaster.ds"
-}
 
-/*
-group {
-    name "SettingsDefaultDisplacement"
-    label "Displacement"
-    disablewhen "{ SettingsOptions_geom_displacement == 0 }"
-#include "$VRAY_UI_DS_PATH/rop/SettingsDefaultDisplacement.ds"
+#include "$VRAY_UI_DS_PATH/rop/SettingsOptionsParm.ds"
+#include "$VRAY_UI_DS_PATH/rop/SettingsRaycasterParm.ds"
 }
-*/
-
 
 group {
     name "SettingsRTEngine"
     label "RT"
-#include "$VRAY_UI_DS_PATH/rop/SettingsRTEngine.ds"
+#include "$VRAY_UI_DS_PATH/rop/SettingsRTEngineParm.ds"
 }
-
 
 group {
     name "VRaySettingsDR"
     label "DR"
-#include "$VRAY_UI_DS_PATH/rop/DRItems.ds"
+#include "$VRAY_UI_DS_PATH/rop/DRItemsParm.ds"
 }

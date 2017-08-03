@@ -1,15 +1,13 @@
-
 groupsimple {
   name "folder_options_dr"
   label "Distributed rendering"
-  
+
   parm {
     name "dr_enabled"
     label "Enable"
     type toggle
     default { 0 }
   }
-
 
   parm {
     name	"SettingsOptions_misc_transferAssets"

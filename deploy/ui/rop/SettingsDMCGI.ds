@@ -1,36 +1,8 @@
-groupsimple {
-  name "folder_gi_bruteForce"
-  label "Brute Force"
-  hidewhen "{ SettingsGI_primary_engine != 1  SettingsGI_secondary_engine != 1 } "
+{
+    name    SettingsDMCGI
+    label   "SettingsDMCGI"
+    parmtag { spare_category "SettingsDMCGI" }
+    parmtag { vray_plugin "SettingsDMCGI" }
 
-  parm {
-      name    "SettingsDMCGI_subdivs"
-      label   "Subdivs"
-      type    integer
-	  disablewhen " { SettingsDMCSampler_use_local_subdivs == 0 } "
-      default { "8" }
-      help    "The number of samples used to approximate GI"
-      range   { 1 16 }
-      export  none
-      parmtag { "cook_dependent" "1" }
-      parmtag { "vray_plugin" "SettingsDMCGI" }
-      parmtag { "vray_pluginattr" "subdivs" }
-      parmtag { "vray_type" "int" }
-  }
-
-  parm {
-      name    "SettingsDMCGI_depth"
-      label   "Depth"
-      type    integer
-	  disablewhen " { SettingsGI_secondary_engine != 1 } "
-      default { "3" }
-      help    "The number of light bounces that will be computed"
-      range   { 1 24 }
-      export  none
-      parmtag { "cook_dependent" "1" }
-      parmtag { "vray_plugin" "SettingsDMCGI" }
-      parmtag { "vray_pluginattr" "depth" }
-      parmtag { "vray_type" "int" }
-  }
-
+#include "SettingsDMCGIParm.ds"
 }
