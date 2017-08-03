@@ -23,7 +23,7 @@ struct MetaImageFileSocket {
 
 static MetaImageFileSocket metaImageFileOutputSockets[] = {
 	{ "color", VOP_TypeInfo(VOP_TYPE_COLOR) },
-	{ "color_transperancy", VOP_TypeInfo(VOP_TYPE_COLOR) },
+	{ "out_transperancy", VOP_TypeInfo(VOP_TYPE_COLOR) },
 	{ "out_alpha", VOP_TypeInfo(VOP_TYPE_FLOAT) },
 	{ "out_intensity", VOP_TypeInfo(VOP_TYPE_FLOAT) }
 };
@@ -125,11 +125,9 @@ OP::VRayNode::PluginResult VOP::MetaImageFile::asPluginDesc(Attrs::PluginDesc &p
 	vassert(selectedUVGen >= 0 && selectedUVGen < COUNT_OF(uvGenOptions));
 
 	UT_String selectedUVWGen = uvGenOptions[selectedUVGen];
-	current = static_cast<MenuOption>(selectedUVGen);
+	MenuOption current = static_cast<MenuOption>(selectedUVGen);
 
 	Attrs::PluginDesc selectedUVPluginDesc(VRayExporter::getPluginName(*this, selectedUVWGen.c_str()), selectedUVWGen.c_str());
-	selectedUVWGen += "_";
-	exporter.setAttrsFromOpNodePrms(selectedUVPluginDesc, this, selectedUVWGen.c_str());
 
 	std::vector<MetaImageFileSocket> temp = inputsMap.at(current);
 	for (int i = 0; i < temp.size(); i++) {
@@ -143,10 +141,12 @@ OP::VRayNode::PluginResult VOP::MetaImageFile::asPluginDesc(Attrs::PluginDesc &p
 			}
 		}
 	}
-	
+	selectedUVWGen += "_";
+	exporter.setAttrsFromOpNodePrms(selectedUVPluginDesc, this, selectedUVWGen.c_str());
+
 	pluginDesc.addAttribute(Attrs::PluginAttr("bitmap", exporter.exportPlugin(bitmapBufferDesc)));
 	pluginDesc.addAttribute(Attrs::PluginAttr("uvwgen", exporter.exportPlugin(selectedUVPluginDesc)));
-	exporter.setAttrsFromOpNodePrms(pluginDesc, this, "meta_image_tex_bitmap_");
+	exporter.setAttrsFromOpNodePrms(pluginDesc, this, "TexBitmap_");
 
 
 
@@ -192,7 +192,7 @@ int VOP::MetaImageFile::getOutputFromName(const UT_String &out) const {
 }
 
 void VOP::MetaImageFile::getOutputTypeInfoSubclass(VOP_TypeInfo &type_info, int idx) {
-	if ( idx >= 0 && idx < ouputSocketCount ) {
+	if (idx >= 0 && idx < ouputSocketCount) {
 		type_info.setType(metaImageFileOutputSockets[idx].typeInfo.getType());
 	}
 }
