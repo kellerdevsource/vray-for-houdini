@@ -79,7 +79,7 @@ LnxProcessCheck::ChildState LnxProcessCheck::getChildState() {
 		} else if (resPid > 0) {
 			return ChildState::Stopped;
 		} else {
-			if (errno != ECHILD) {
+			if (errno == ECHILD) {
 				return ChildState::Stopped;
 			}
 		}

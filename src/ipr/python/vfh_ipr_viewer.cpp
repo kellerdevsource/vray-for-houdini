@@ -337,6 +337,7 @@ void ImdisplayThread::run() {
 			// We should either leak this pointer or connect delete later - but both seem to cause problems on linux
 			connect(proc, static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), proc, &QObject::deleteLater);
 		}
+		Log::getLog().debug("ImdisplayThread::run() returining");
 	});
 	pipe->start("imdisplay", arguments);
 
