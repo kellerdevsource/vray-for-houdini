@@ -242,6 +242,8 @@ static void initAttributes(const PRMList &parmList, VRayPluginInfo &pluginInfo)
 				attrFlags |= attrFlagCustomHandling;
 			}
 
+			const char *vrayEnumKeys = parmSpare->getValue("vray_enumkeys");
+
 			const char *vrayLabel = parmSpare->getValue("vray_label");
 			const char *uiLabel = UTisstring(vrayLabel) ? vrayLabel : parm->getLabel();
 
@@ -250,8 +252,14 @@ static void initAttributes(const PRMList &parmList, VRayPluginInfo &pluginInfo)
 			AttrDesc &attrDesc = pluginInfo.attributes[parmKey];
 			attrDesc.label = uiLabel;
 			attrDesc.attr = vrayPluginAttr;
-			attrDesc.value.type = vrayParmTypes.find(vrayType).data();
 			attrDesc.flags = attrFlags;
+
+			if (UTisstring(vrayEnumKeys)) {
+				attrDesc.value.type = eEnum;
+			}
+			else {
+				attrDesc.value.type = vrayParmTypes[vrayType];
+			}
 		}
 		else if (isCurve || isRamp) {
 			const UT_String rampKeys(parmSpare->getValue("rampkeys_var"));
