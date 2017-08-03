@@ -132,7 +132,7 @@ bool LnxProcessCheck::start() {
 
 		if (state == ChildState::Stopped) {
 			Log::getLog().debug("Child with pid [%d] exited", (int)resPid);
-		} else {
+		} else if (state == ChildState::Error) {
 			Log::getLog().error("Thread failed waiting for child process - %d", errno);
 		}
 		checkRunning = false;
