@@ -323,9 +323,9 @@ void ImdisplayThread::run() {
 		proc->kill();
 		int maxRetries = 15;
 		bool freePtr = true;
-
+		// Wait for max 150 ms, while checking the running flag
 		while (!proc->waitForFinished(10)) {
-			if (!this->isRunning) {
+			if (maxRetries-- <= 0) {
 				freePtr = false;
 				break;
 			}
