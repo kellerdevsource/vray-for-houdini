@@ -54,18 +54,17 @@ OP_ERROR SOP::PhxShaderCache::cookMySop(OP_Context &context)
 
 
 	const float t = context.getTime();
+	
+	const GA_PrimitiveTypeId vrayVolumeGridRefTypeId = GU_PrimPacked::lookupTypeId("VRayVolumeGridRef");
 
 	// find existing VRayVolumeGridRef primitive
 	VRayVolumeGridRef* gridRefPtr = nullptr;
 	GA_Primitive *prim = nullptr;
 	GA_FOR_ALL_PRIMITIVES(gdp, prim) {
-		GA_PrimitiveTypeId vrayVolumeGridRefTypeId = GU_PrimPacked::lookupTypeId("VRayVolumeGridRef");
 		if (prim->getTypeId() == vrayVolumeGridRefTypeId) {
-			if (GU_PrimPacked::isPackedPrimitive(*prim)) {
-				GU_PrimPacked *primPacked = UTverify_cast<GU_PrimPacked*>(prim);
-				VRayVolumeGridRef *oldGridRefPtr = UTverify_cast<VRayVolumeGridRef*>(primPacked->implementation());
-				gridRefPtr = new VRayVolumeGridRef(std::move(*oldGridRefPtr));
-			}
+			GU_PrimPacked *primPacked = UTverify_cast<GU_PrimPacked*>(prim);
+			VRayVolumeGridRef *oldGridRefPtr = UTverify_cast<VRayVolumeGridRef*>(primPacked->implementation());
+			gridRefPtr = new VRayVolumeGridRef(std::move(*oldGridRefPtr));
 		}
 	}
 	

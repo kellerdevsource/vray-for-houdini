@@ -272,14 +272,14 @@ VRayVolumeGridRef::VRayVolumeGridRef(const VRayVolumeGridRef &src)
 }
 
 VRayForHoudini::VRayVolumeGridRef::VRayVolumeGridRef(VRayVolumeGridRef &&src)
-	: m_dataCache(std::move(src.m_dataCache)),
-	m_handle(std::move(src.m_handle)),
-	m_options(std::move(src.m_options)),
-	m_bBox(std::move(src.m_bBox)),
-	m_dirty(std::move(src.m_dirty)),
-	m_channelDirty(std::move(src.m_channelDirty)),
-	m_doFrameReplace(std::move(src.m_doFrameReplace)),
-	m_channelDataRange(std::move(src.m_channelDataRange))
+	: m_dataCache(std::move(src.m_dataCache))
+	, m_handle(std::move(src.m_handle))
+	, m_options(std::move(src.m_options))
+	, m_bBox(std::move(src.m_bBox))
+	, m_dirty(std::move(src.m_dirty))
+	, m_channelDirty(std::move(src.m_channelDirty))
+	, m_doFrameReplace(std::move(src.m_doFrameReplace))
+	, m_channelDataRange(std::move(src.m_channelDataRange))
 {
 }
 
