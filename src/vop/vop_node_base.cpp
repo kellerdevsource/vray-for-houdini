@@ -48,20 +48,20 @@ const char* VOP::NodeBase::inputLabel(unsigned idx) const
 {
 	if (idx >= pluginInfo->inputs.count())
 		return nullptr;
-	return pluginInfo->inputs[idx].label.ptr();
+	return pluginInfo->inputs[idx].socketLabel.ptr();
 }
 
 void VOP::NodeBase::getInputNameSubclass(UT_String &name, int idx) const
 {
 	if (idx < 0 || idx >= pluginInfo->inputs.count())
 		return;
-	name = pluginInfo->inputs[idx].attrName.ptr();
+	name = pluginInfo->inputs[idx].socketLabel.ptr();
 }
 
 int VOP::NodeBase::getInputFromNameSubclass(const UT_String &name) const
 {
 	for (int i = 0; i < pluginInfo->inputs.count(); ++i) {
-		if (name.equal(pluginInfo->inputs[i].attrName.ptr())) {
+		if (name.equal(pluginInfo->inputs[i].socketLabel.ptr())) {
 			return i;
 		}
 	}
@@ -72,7 +72,7 @@ void VOP::NodeBase::getInputTypeInfoSubclass(VOP_TypeInfo &type_info, int idx)
 {
 	if (idx < 0 || idx >= pluginInfo->inputs.count())
 		return;
-	type_info.setType(pluginInfo->inputs[idx].vopType);
+	type_info.setType(pluginInfo->inputs[idx].socketType);
 }
 
 void VOP::NodeBase::getAllowedInputTypeInfosSubclass(unsigned idx, VOP_VopTypeInfoArray &type_infos)
@@ -84,7 +84,7 @@ void VOP::NodeBase::getAllowedInputTypeInfosSubclass(unsigned idx, VOP_VopTypeIn
 
 	const SocketDesc &socketTypeInfo = pluginInfo->inputs[idx];
 
-	const VOP_Type vopType = socketTypeInfo.vopType;
+	const VOP_Type vopType = socketTypeInfo.socketType;
 	type_infos.append(VOP_TypeInfo(vopType));
 
 	if (vopType == VOP_SURFACE_SHADER) {
@@ -110,20 +110,20 @@ const char* VOP::NodeBase::outputLabel(unsigned idx) const
 	if (idx >= pluginInfo->outputs.count())
 		return nullptr;
 
-	return pluginInfo->outputs[idx].label.ptr();
+	return pluginInfo->outputs[idx].socketLabel.ptr();
 }
 
 void VOP::NodeBase::getOutputNameSubclass(UT_String &name, int idx) const
 {
 	if (idx < 0 || idx >= pluginInfo->outputs.count())
 		return;
-	name = pluginInfo->outputs[idx].token.ptr();
+	name = pluginInfo->outputs[idx].socketLabel.ptr();
 }
 
 int VOP::NodeBase::getOutputFromName(const UT_String &name) const
 {
 	for (int i = 0; i < pluginInfo->outputs.count(); ++i) {
-		if (name.equal(pluginInfo->outputs[i].token.ptr())) {
+		if (name.equal(pluginInfo->outputs[i].socketLabel.ptr())) {
 			return i;
 		}
 	}
@@ -134,5 +134,5 @@ void VOP::NodeBase::getOutputTypeInfoSubclass(VOP_TypeInfo &type_info, int idx)
 {
 	if (idx < 0 || idx >= pluginInfo->outputs.count())
 		return;
-	type_info.setType(pluginInfo->outputs[idx].vopType);
+	type_info.setType(pluginInfo->outputs[idx].socketType);
 }

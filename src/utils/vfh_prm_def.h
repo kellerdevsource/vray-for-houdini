@@ -172,32 +172,26 @@ struct AttrDesc {
 typedef VUtils::HashMap<AttrDesc, true, 512, false, 32> AttributeDescs;
 
 struct SocketDesc {
-	explicit SocketDesc(const tchar *label="",
-						const tchar *token="",
-						const tchar *attrName="",
-						VOP_Type vopType=VOP_TYPE_UNDEF)
-		: label(label)
-		, token(token)
-		, attrName(attrName)
-		, type(eUnknown)
-		, vopType(vopType)
+	SocketDesc()
+		: attrType(eUnknown)
+		, socketType(VOP_TYPE_UNDEF)
 	{}
 
 	/// UI label.
 	VUtils::CharString label;
-
-	/// UI token.
-	VUtils::CharString token;
 
 	/// Plugin attribute name.
 	/// May be empty for the default outputs.
 	VUtils::CharString attrName;
 
 	/// Plugin attribute type.
-	ParmType type;
+	ParmType attrType;
+
+	/// UI token.
+	VUtils::CharString socketLabel;
 
 	/// Socket type.
-	VOP_Type vopType;
+	VOP_Type socketType;
 };
 
 typedef VUtils::Table<SocketDesc> VRayNodeSockets;

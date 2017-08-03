@@ -416,21 +416,15 @@ Parm::PRMList& Parm::PRMList::switcherBegin(const char *token, const char *label
 Parm::PRMList& Parm::PRMList::switcherEnd()
 {
 	SwitcherInfo* info = getCurrentSwitcher();
-	if (NOT(info)) {
-		throw std::runtime_error("endSwitcher() called with no corresponding beginSwitcher()");
-	}
-	else {
-		if (info->m_folders.empty()) {
-			throw std::runtime_error("added switcher with no folders");
-		}
-		else {
-			// set correct folder count and folder info on
-			// the current switcher parameter (i.e the one created with last beginSwitcher())
-			PRM_Template& switcherParm = m_prmVec[info->m_parmIdx];
-			switcherParm.assign(switcherParm, info->m_folders.size(), &info->m_folders.front());
-		}
-		m_switcherStack.pop_back();
-	}
+	vassert(info && "endSwitcher() called with no corresponding beginSwitcher()");
+	vassert(!info->m_folders.empty() && "Adding switcher with no folders!");
+
+	// set correct folder count and folder info on
+	// the current switcher parameter (i.e the one created with last beginSwitcher())
+	PRM_Template& switcherParm = m_prmVec[info->m_parmIdx];
+	switcherParm.assign(switcherParm, info->m_folders.size(), &info->m_folders.front());
+
+	m_switcherStack.pop_back();
 
 	return *this;
 }
@@ -439,20 +433,17 @@ Parm::PRMList& Parm::PRMList::switcherEnd()
 Parm::PRMList& Parm::PRMList::addFolder(const char *label)
 {
 	SwitcherInfo *info = getCurrentSwitcher();
-	if (NOT(info)) {
-		throw std::runtime_error("folder added to nonexistent switcher");
-	}
-	else {
-		info->m_folders.emplace_back(/*numParms=*/0, ::strdup(label));
-	}
+	vassert(info && "Adding folder to non-existing switcher!");
+
+	info->m_folders.emplace_back(/*numParms=*/0, ::strdup(label));
 
 	return *this;
 }
 
 
-Parm::PRMList& Parm::PRMList::addFromFile(const char *filepath)
+Parm::PRMList& Parm::PRMList::addFromFile(const char *dsFileName)
 {
-	const QString &dsFilePath = dsFilesLocations.getFilePath(filepath);
+	const QString &dsFilePath = dsFilesLocations.getFilePath(dsFileName);
 	const DsFilesLocations::DsIncludePaths &incPaths = dsFilesLocations.getIncludePaths();
 
 	DS_Stream stream(dsFilePath.toLocal8Bit().constData());
@@ -463,18 +454,15 @@ Parm::PRMList& Parm::PRMList::addFromFile(const char *filepath)
 	// Need to keep all the pages as myTemplate will have references to it.
 	std::shared_ptr<PRM_ScriptGroup> group = std::make_shared<PRM_ScriptGroup>(nullptr);
 
-	int res = -1;
-	while ((res = stream.getOpenBrace()) > 0) {
-		PRM_ScriptPage *currentPage = new PRM_ScriptPage();
+	PRM_ScriptPage *currentPage = new PRM_ScriptPage();
 
-		res = currentPage->parse(stream, false, nullptr, true, true);
-		if (res > 0) {
-			group->addPage(currentPage);
-		}
-		else {
-			Log::getLog().error("Error parsing file: \"%s\"!", filepath);
-			delete currentPage;
-		}
+	int res = currentPage->parse(stream, true, nullptr, true, true);
+	if (res > 0) {
+		group->addPage(currentPage);
+	}
+	else {
+		Log::getLog().error("Error parsing file: \"%s\"!", dsFilePath.toLocal8Bit().constData());
+		delete currentPage;
 	}
 
 	int size = group->computeTemplateSize();
@@ -492,7 +480,7 @@ Parm::PRMList& Parm::PRMList::addFromFile(const char *filepath)
 	// resize to accomodate space for new params
 	m_prmVec.resize(m_prmVec.size() + size);
 
-	PRM_ScriptImports *imports = 0;
+	PRM_ScriptImports *imports = nullptr;
 	group->fillTemplate(m_prmVec.data(), idx, imports, 0);
 
 	UT_ASSERT_MSG(idx == this->size(), "Read unexpected number of params from file.");
@@ -587,16 +575,13 @@ void Parm::PRMList::incCurrentFolderPrmCnt(int cnt)
 		return;
 	}
 
-	if (info->m_folders.empty()) {
-		throw std::runtime_error("parameter added to switcher with no folders");
-	} else {
-		// If a parameter is added to this ParmList while a switcher with at least
-		// one folder is active, increment the folder's parameter count.
-		PRM_Default& def = info->m_folders.back();
-		cnt = std::max(-def.getOrdinal(), cnt);
-		def.setOrdinal(def.getOrdinal() + cnt);
-	}
+	vassert(!info->m_folders.empty() && "parameter added to switcher with no folders");
 
+	// If a parameter is added to this ParmList while a switcher with at least
+	// one folder is active, increment the folder's parameter count.
+	PRM_Default& def = info->m_folders.back();
+	cnt = std::max(-def.getOrdinal(), cnt);
+	def.setOrdinal(def.getOrdinal() + cnt);
 }
 
 

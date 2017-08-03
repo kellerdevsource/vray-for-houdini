@@ -51,8 +51,8 @@ OP::VRayNode::PluginResult VOP::GeomDisplacedMesh::asPluginDesc(Attrs::PluginDes
 			const Parm::SocketDesc *fromSocketInfo = exporter.getConnectedOutputType(this, "displacement_tex_color");
 
 			if (   fromSocketInfo
-				&& fromSocketInfo->type >= Parm::ParmType::eOutputColor
-				&& fromSocketInfo->type  < Parm::ParmType::eUnknown)
+				&& fromSocketInfo->attrType >= Parm::ParmType::eOutputColor
+				&& fromSocketInfo->attrType  < Parm::ParmType::eUnknown)
 			{
 				pluginDesc.addAttribute(Attrs::PluginAttr("displacement_tex_color", texture, fromSocketInfo->attrName.ptr()));
 			}
@@ -97,8 +97,8 @@ OP::VRayNode::PluginResult VOP::GeomDisplacedMesh::asPluginDesc(Attrs::PluginDes
 			const Parm::SocketDesc *fromSocketInfo = exporter.getConnectedOutputType(this, "displacement_tex_float");
 
 			if (   fromSocketInfo
-				&& fromSocketInfo->type >= Parm::ParmType::eOutputColor
-				&& fromSocketInfo->type  < Parm::ParmType::eUnknown)
+				&& fromSocketInfo->attrType >= Parm::ParmType::eOutputColor
+				&& fromSocketInfo->attrType  < Parm::ParmType::eUnknown)
 			{
 				pluginDesc.addAttribute(Attrs::PluginAttr("displacement_tex_float", texture, fromSocketInfo->attrName.ptr()));
 			}

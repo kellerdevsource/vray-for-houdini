@@ -179,11 +179,17 @@ static void initSockets(const PRMList &parmList, VRayPluginInfo &pluginInfo)
 			continue;
 
 		const char *vrayLabel = parmSpare->getValue("vray_label");
-		const char *vraySocketToken = UTisstring(vrayLabel) ? vrayLabel : vrayPluginAttr;
+		const char *vraySocketLabel = UTisstring(vrayLabel) ? vrayLabel : vrayPluginAttr;
+
+		SocketDesc socketDesk;
+		socketDesk.label = parm->getLabel();
+		socketDesk.attrName = vrayPluginAttr;
+		socketDesk.attrType = vrayParmTypes[vrayType];
+		socketDesk.socketLabel = vraySocketLabel;
+		socketDesk.socketType  = vrayVopTypes[vrayType.buffer()];
 
 		VRayNodeSockets &sockets = vrayType.startsWith("Output") ? pluginInfo.outputs : pluginInfo.inputs;
-
-		sockets += SocketDesc(parm->getLabel(), vraySocketToken, vrayPluginAttr, vrayVopTypes[vrayType.buffer()]);
+		sockets += socketDesk;
 	}
 }
 

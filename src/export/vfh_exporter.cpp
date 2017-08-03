@@ -369,7 +369,7 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 				VOP_Node *inpvop = vopNode->findSimpleInput(inpidx);
 				if (inpvop) {
 					if (inpvop->getOperator()->getName() == "makexform") {
-						switch (inSockInfo.type) {
+						switch (inSockInfo.attrType) {
 							case Parm::eMatrix: {
 								pluginDesc.addAttribute(Attrs::PluginAttr(attrName, exportTransformVop(*inpvop, parentContext).matrix));
 								break;
@@ -390,7 +390,7 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 			OP::VRayNode *conVRayNode = dynamic_cast<OP::VRayNode*>(getConnectedNode(vopNode, attrName));
 			if (conVRayNode) {
 				// If we're connecting BRDF to the material socket we need to wrap it into MtlSingleBRDF.
-				if (inSockInfo.vopType == VOP_SURFACE_SHADER && 
+				if (inSockInfo.socketType == VOP_SURFACE_SHADER && 
 					conVRayNode->getVRayPluginType() == VRayPluginType::BRDF)
 				{
 					Attrs::PluginDesc mtlPluginDesc(VRayExporter::getPluginName(vopNode, "Mtl"), "MtlSingleBRDF");
@@ -402,8 +402,8 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 			const Parm::SocketDesc *fromSocketInfo = getConnectedOutputType(vopNode, attrName.c_str());
 
 			if (fromSocketInfo &&
-				fromSocketInfo->type >= Parm::ParmType::eOutputColor &&
-				fromSocketInfo->type  < Parm::ParmType::eUnknown)
+				fromSocketInfo->attrType >= Parm::ParmType::eOutputColor &&
+				fromSocketInfo->attrType  < Parm::ParmType::eUnknown)
 			{
 				pluginDesc.addAttribute(Attrs::PluginAttr(attrName, plugin_value, fromSocketInfo->attrName.ptr()));
 			}
