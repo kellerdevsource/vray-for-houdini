@@ -28,7 +28,7 @@ static MetaImageFileSocket metaImageFileOutputSockets[] = {
 	{ "out_intensity", VOP_TypeInfo(VOP_TYPE_FLOAT) }
 };
 
-static enum menuOption {
+static enum MenuOption {
 	UVWGenMayaPlace2dTexture = 0,
 	UVWGenEnvironment = 1,
 	UVWGenExplicit = 2,
@@ -39,7 +39,7 @@ static enum menuOption {
 	UVWGenProjection = 7
 } current;
 
-static std::map<menuOption, std::vector<MetaImageFileSocket>> inputsMap{
+static std::map<MenuOption, std::vector<MetaImageFileSocket>> inputsMap{
 	{ UVWGenMayaPlace2dTexture, { { "uvwgen", VOP_TypeInfo(VOP_TYPE_VECTOR) },
 									{ "coverage_u_tex", VOP_TypeInfo(VOP_TYPE_FLOAT) },
 									{ "coverage_v_tex", VOP_TypeInfo(VOP_TYPE_FLOAT) },
@@ -75,7 +75,7 @@ static std::map<menuOption, std::vector<MetaImageFileSocket>> inputsMap{
 							{ "tex_transfrom", VOP_TypeInfo(VOP_TYPE_MATRIX4) },
 							{ "coverage", VOP_TypeInfo(VOP_TYPE_VECTOR) } } },
 	{ UVWGenProjection, { { "uvw_transform", VOP_TypeInfo(VOP_TYPE_MATRIX4) },
-							{ "uvw_transform tex", VOP_TypeInfo() },
+							{ "uvw_transform tex", VOP_TypeInfo(VOP_TYPE_UNDEF) },
 							{ "tex_transfrom", VOP_TypeInfo(VOP_TYPE_MATRIX4) }, 
 							{ "camera_settings", VOP_TypeInfo(VOP_TYPE_UNDEF) },
 							{ "camera_view", VOP_TypeInfo(VOP_TYPE_UNDEF) },
@@ -125,15 +125,31 @@ OP::VRayNode::PluginResult VOP::MetaImageFile::asPluginDesc(Attrs::PluginDesc &p
 	vassert(selectedUVGen >= 0 && selectedUVGen < COUNT_OF(uvGenOptions));
 
 	UT_String selectedUVWGen = uvGenOptions[selectedUVGen];
-	current = static_cast<menuOption>(selectedUVGen);
+	current = static_cast<MenuOption>(selectedUVGen);
 
 	Attrs::PluginDesc selectedUVPluginDesc(VRayExporter::getPluginName(*this, selectedUVWGen.c_str()), selectedUVWGen.c_str());
 	selectedUVWGen += "_";
 	exporter.setAttrsFromOpNodePrms(selectedUVPluginDesc, this, selectedUVWGen.c_str());
 
+	std::vector<MetaImageFileSocket> temp = inputsMap.at(current);
+	for (int i = 0; i < temp.size(); i++) {
+		const int idx = getInputFromName(temp.at(i).label);
+		OP_Node *connectedInput = getInput(idx);
+		if (connectedInput) {
+			VRay::Plugin connectedPlugin = exporter.exportVop(connectedInput, parentContext);
+			if (connectedPlugin) {
+				const Parm::SocketDesc *fromSocketInfo = exporter.getConnectedOutputType(this, temp.at(i).label);
+				selectedUVPluginDesc.addAttribute(Attrs::PluginAttr(temp.at(i).label, connectedPlugin, fromSocketInfo->name.getToken()));
+			}
+		}
+	}
+	
 	pluginDesc.addAttribute(Attrs::PluginAttr("bitmap", exporter.exportPlugin(bitmapBufferDesc)));
 	pluginDesc.addAttribute(Attrs::PluginAttr("uvwgen", exporter.exportPlugin(selectedUVPluginDesc)));
-	exporter.setAttrsFromOpNodePrms(pluginDesc, this, "TexBitmap_");
+	exporter.setAttrsFromOpNodePrms(pluginDesc, this, "meta_image_tex_bitmap_");
+
+
+
 
 	return OP::VRayNode::PluginResultContinue;
 }
@@ -182,7 +198,6 @@ void VOP::MetaImageFile::getOutputTypeInfoSubclass(VOP_TypeInfo &type_info, int 
 }
 
 //define inputs
-//TODO: Change input number and type based on selected UVW
 
 const char *VOP::MetaImageFile::inputLabel(unsigned idx) const {
 	return inputsMap.at(current).at(idx).label;
@@ -209,7 +224,7 @@ int VOP::MetaImageFile::getInputFromNameSubclass(const UT_String &out) const {
 }
 
 unsigned VOP::MetaImageFile::getNumVisibleInputs() const {
-	current = static_cast<menuOption>(evalInt("meta_image_uv_generator", 0, 0.0));
+	current = static_cast<MenuOption>(evalInt("meta_image_uv_generator", 0, 0.0));
 	return orderedInputs();
 }
 

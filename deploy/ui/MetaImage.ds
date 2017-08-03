@@ -31,7 +31,8 @@
 	group {
 		name "meta_image_tex_bitmap_folder"
 		label "Texture"
-
+#undef PREFIX
+#define PREFIX "meta_image_tex_bitmap_"
 #include "$VRAY_UI_DS_PATH/plugins/TexBitmapParms.ds"
 	}
 
