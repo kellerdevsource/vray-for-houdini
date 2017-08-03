@@ -724,7 +724,7 @@ void VRayExporter::exportSettings()
 				fillSettingsOutput(pluginDesc);
 			}
 
-			setAttrsFromOpNodePrms(pluginDesc, m_rop);
+			setAttrsFromOpNodePrms(pluginDesc, m_rop, boost::str(Parm::FmtPrefix % sp));
 			exportPlugin(pluginDesc);
 		}
 	}
