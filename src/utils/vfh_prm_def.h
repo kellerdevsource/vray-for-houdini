@@ -194,7 +194,7 @@ struct SocketDesc {
 	VOP_Type socketType;
 };
 
-typedef VUtils::Table<SocketDesc> VRayNodeSockets;
+typedef VUtils::Table<SocketDesc, 10> VRayNodeSockets;
 
 /// Returns true if current parameter template represents V-Ray Plugin parameter.
 /// @param prm PRM_Parm instance. May be nullptr.
