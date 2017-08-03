@@ -148,9 +148,6 @@ OP::VRayNode::PluginResult VOP::MetaImageFile::asPluginDesc(Attrs::PluginDesc &p
 	pluginDesc.addAttribute(Attrs::PluginAttr("uvwgen", exporter.exportPlugin(selectedUVPluginDesc)));
 	exporter.setAttrsFromOpNodePrms(pluginDesc, this, "TexBitmap_");
 
-
-
-
 	return OP::VRayNode::PluginResultContinue;
 }
 
