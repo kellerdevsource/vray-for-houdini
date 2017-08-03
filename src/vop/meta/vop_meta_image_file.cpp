@@ -23,7 +23,7 @@ struct MetaImageFileSocket {
 
 static MetaImageFileSocket metaImageFileOutputSockets[] = {
 	{ "color", VOP_TypeInfo(VOP_TYPE_COLOR) },
-	{ "out_transperancy", VOP_TypeInfo(VOP_TYPE_COLOR) },
+	{ "out_transparency", VOP_TypeInfo(VOP_TYPE_COLOR) },
 	{ "out_alpha", VOP_TypeInfo(VOP_TYPE_FLOAT) },
 	{ "out_intensity", VOP_TypeInfo(VOP_TYPE_FLOAT) }
 };
