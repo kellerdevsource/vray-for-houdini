@@ -200,12 +200,12 @@ static void initAttributes(const PRMList &parmList, VRayPluginInfo &pluginInfo)
 		const PRM_Template *parm = parmList.getPRMTemplate(i);
 		vassert(parm);
 
-		const bool isCurve = parm->getMultiType() == PRM_MULTITYPE_RAMP_FLT;
-		const bool isRamp = parm->getMultiType() == PRM_MULTITYPE_RAMP_RGB;
-
 		const PRM_SpareData *parmSpare = parm->getSparePtr();
 		if (!parmSpare)
 			continue;
+
+		const bool isCurve = parm->getMultiType() == PRM_MULTITYPE_RAMP_FLT;
+		const bool isRamp = parm->getMultiType() == PRM_MULTITYPE_RAMP_RGB;
 
 		// Storage key.
 		const char *parmKey = parm->getToken();
