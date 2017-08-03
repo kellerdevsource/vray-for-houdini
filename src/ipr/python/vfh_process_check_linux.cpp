@@ -69,7 +69,7 @@ ProcessCheckPtr makeProcessChecker(ProcessCheck::OnStop cb, const std::string &n
 	return ProcessCheckPtr(new LnxProcessCheck(cb, name));
 }
 
-LnxProcessCheck::::ChildState LnxProcessCheck::getChildState() {
+LnxProcessCheck::ChildState LnxProcessCheck::getChildState() {
 	if (childPid > 0) {
 		int status = 0;
 		pid_t resPid = waitpid(childPid, &status, WNOHANG);
@@ -131,7 +131,7 @@ bool LnxProcessCheck::start() {
 		}
 
 		if (state == ChildState::Stopped) {
-			Log::getLog().debug("Child with pid [%d] exited", (int)resPid);
+			Log::getLog().debug("Child with pid [%d] exited", (int)childPid);
 		} else if (state == ChildState::Error) {
 			Log::getLog().error("Thread failed waiting for child process - %d", errno);
 		}
