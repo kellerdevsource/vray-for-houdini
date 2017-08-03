@@ -85,6 +85,7 @@ OP_ERROR SOP::PhxShaderCache::cookMySop(OP_Context &context)
 
 	if (NOT(pack)) {
 		addWarning(SOP_MESSAGE, "Can't create packed primitive VRayVolumeGridRef");
+		gdp->destroyStashed();
 		return error();
 	}
 
