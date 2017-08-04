@@ -39,7 +39,7 @@ static enum MenuOption {
 	UVWGenProjection = 7
 } current;
 
-static std::map<MenuOption, std::vector<MetaImageFileSocket>> inputsMap{
+static std::map<MenuOption, std::vector<MetaImageFileSocket>> inputsMap = {
 	{ UVWGenMayaPlace2dTexture, { { "uvwgen", VOP_TypeInfo(VOP_TYPE_VECTOR) },
 									{ "coverage_u_tex", VOP_TypeInfo(VOP_TYPE_FLOAT) },
 									{ "coverage_v_tex", VOP_TypeInfo(VOP_TYPE_FLOAT) },
