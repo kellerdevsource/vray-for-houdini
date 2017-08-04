@@ -56,7 +56,7 @@ const ChannelInfo chInfo[] = {
 const int CHANNEL_COUNT = (sizeof(chInfo) / sizeof(chInfo[0])) - 1;
 
 /// Get ChannelInfo from it's type
-const ChannelInfo & fromType(int type) {
+const ChannelInfo &fromType(int type) {
 	for (int c = 0; c < CHANNEL_COUNT; ++c) {
 		if (static_cast<int>(chInfo[c]) == type) {
 			return chInfo[c];
@@ -66,7 +66,7 @@ const ChannelInfo & fromType(int type) {
 }
 
 /// Get ChannelInfo from it's name
-const ChannelInfo & fromPropName(const char * name) {
+const ChannelInfo &fromPropName(const char *name) {
 	for (int c = 0; c < CHANNEL_COUNT; ++c) {
 		if (!strcmp(name, chInfo[c].propName)) {
 			return chInfo[c];
@@ -134,7 +134,7 @@ public:
 		return  theFactory;
 	}
 
-	GU_PackedImpl* create() const VRAY_OVERRIDE {
+	GU_PackedImpl *create() const VRAY_OVERRIDE {
 		return new VRayVolumeGridRef();
 	}
 
@@ -182,7 +182,7 @@ void VRayForHoudini::VRayVolumeGridRef::fetchData(const VolumeCacheKey &key, Vol
 	using namespace chrono;
 
 	auto tStart = high_resolution_clock::now();
-	IAur * aurPtr;
+	IAur *aurPtr;
 	if (key.map.empty()) {
 		aurPtr = newIAur(key.path.c_str());
 	}
@@ -295,7 +295,7 @@ void VRayVolumeGridRef::initDataCache()
 
 	// we dont need the evict callback, because the data is in RAII objects and will be freed when evicted from cache
 	// so just print info
-	m_dataCache.setEvictCallback([](const VolumeCacheKey & key, VRayVolumeGridRef::VolumeCacheData &) {
+	m_dataCache.setEvictCallback([](const VolumeCacheKey &key, VRayVolumeGridRef::VolumeCacheData &) {
 		Log::getLog().info("Removing \"%s\" from cache", key.path.c_str());
 	});
 }
@@ -617,7 +617,7 @@ std::string VRayVolumeGridRef::getConvertedPath(bool toPhx) const
 	}
 }
 
-int VRayVolumeGridRef::splitPath(const UT_String & path, std::string & prefix, std::string & suffix) const
+int VRayVolumeGridRef::splitPath(const UT_String &path, std::string &prefix, std::string &suffix) const
 {
 	UT_String hPrefix, frame, hSuffix;
 	int result = path.parseNumberedFilename(hPrefix, frame, hSuffix);

@@ -28,7 +28,7 @@ struct VolumeCacheKey {
 	std::string map;
 	bool flipYZ;
 };
-inline bool operator==(const VolumeCacheKey & left, const VolumeCacheKey & right) {
+inline bool operator==(const VolumeCacheKey &left, const VolumeCacheKey &right) {
 	return left.path == right.path && left.map == right.map && left.flipYZ == right.flipYZ;
 }
 }
@@ -36,7 +36,7 @@ inline bool operator==(const VolumeCacheKey & left, const VolumeCacheKey & right
 // extending namespace std with the proper specialization is the "correct" way according to the standard
 namespace std {
 template <> struct hash<VRayForHoudini::VolumeCacheKey> {
-	size_t operator()(const VRayForHoudini::VolumeCacheKey & volumeKey) const {
+	size_t operator()(const VRayForHoudini::VolumeCacheKey &volumeKey) const {
 		VRayForHoudini::Hash::MHash hash = 42;
 		VRayForHoudini::Hash::MurmurHash3_x86_32(volumeKey.path.c_str(), volumeKey.path.length(), hash, &hash);
 		VRayForHoudini::Hash::MurmurHash3_x86_32(volumeKey.map.c_str(), volumeKey.map.length(), hash, &hash);
@@ -190,7 +190,7 @@ private:
 	/// @prefix[out] - everything up to the frame, equal to @path if there is no frame
 	/// @suffix[out] - everything after the frame, empty if @path has no frame
 	/// @return - the number of digits in the frame (0 if no frame)
-	int splitPath(const UT_String & path, std::string & prefix, std::string & suffix) const;
+	int splitPath(const UT_String &path, std::string &prefix, std::string &suffix) const;
 
 	/// Get current cache frame based on current frame + cache play settings
 	int getCurrentCacheFrame() const;
