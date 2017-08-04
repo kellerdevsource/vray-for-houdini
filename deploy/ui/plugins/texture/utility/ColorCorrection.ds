@@ -36,108 +36,96 @@
 	label	"Rewire Red"
 	type	ordinal
 	default	{ "0" }
-	help	"0-red, 1-green, 2-blue, 3-alpha, 4-redinv, 5-greeninv, 6-blueinv, 7-alphainv, 8-monochrome, 9-One, 10-Zero"
+	help	""
 	menu	{
-	    "Red"	"Red"
-	    "Green"	"Green"
-	    "Blue"	"Blue"
-	    "Alpha"	"Alpha"
-	    "Redinv"	"Redinv"
-	    "Greeninv"	"Greeninv"
-	    "Blueinv"	"Blueinv"
-	    "Alphainv"	"Alphainv"
-	    "Monochrome"	"Monochrome"
-	    "One"	"One"
-	    "Zero"	"Zero"
+	    "0"  "Red"
+	    "1"  "Green"
+	    "2"  "Blue"
+	    "3"  "Alpha"
+	    "4"  "Red Invert"
+	    "5"  "Green Invert"
+	    "6"  "Blue Invert"
+	    "7"  "Alpha Invert"
+	    "8"  "Mono"
+	    "9"  "One"
+	    "10" "Zero"
 	}
-	range	{ 0 1 }
-	export	none
 	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7,8,9,10" }
 	parmtag	{ "vray_plugin" "ColorCorrection" }
 	parmtag	{ "vray_pluginattr" "rewire_red" }
-	parmtag	{ "vray_type" "int" }
+	parmtag	{ "vray_type" "enum" }
     }
     parm {
 	name	"rewire_green"
 	label	"Rewire Green"
 	type	ordinal
 	default	{ "1" }
-	help	"0-red, 1-green, 2-blue, 3-alpha, 4-redinv, 5-greeninv, 6-blueinv, 7-alphainv, 8-monochrome, 9-One, 10-Zero"
-	menu	{
-	    "Red"	"Red"
-	    "Green"	"Green"
-	    "Blue"	"Blue"
-	    "Alpha"	"Alpha"
-	    "Redinv"	"Redinv"
-	    "Greeninv"	"Greeninv"
-	    "Blueinv"	"Blueinv"
-	    "Alphainv"	"Alphainv"
-	    "Monochrome"	"Monochrome"
-	    "One"	"One"
-	    "Zero"	"Zero"
+	help	""
+    menu	{
+	    "0"  "Red"
+	    "1"  "Green"
+	    "2"  "Blue"
+	    "3"  "Alpha"
+	    "4"  "Red Invert"
+	    "5"  "Green Invert"
+	    "6"  "Blue Invert"
+	    "7"  "Alpha Invert"
+	    "8"  "Mono"
+	    "9"  "One"
+	    "10" "Zero"
 	}
-	range	{ 0 1 }
-	export	none
 	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7,8,9,10" }
 	parmtag	{ "vray_plugin" "ColorCorrection" }
 	parmtag	{ "vray_pluginattr" "rewire_green" }
-	parmtag	{ "vray_type" "int" }
+	parmtag	{ "vray_type" "enum" }
     }
     parm {
 	name	"rewire_blue"
 	label	"Rewire Blue"
 	type	ordinal
 	default	{ "2" }
-	help	"0-red, 1-green, 2-blue, 3-alpha, 4-redinv, 5-greeninv, 6-blueinv, 7-alphainv, 8-monochrome, 9-One, 10-Zero"
-	menu	{
-	    "Red"	"Red"
-	    "Green"	"Green"
-	    "Blue"	"Blue"
-	    "Alpha"	"Alpha"
-	    "Redinv"	"Redinv"
-	    "Greeninv"	"Greeninv"
-	    "Blueinv"	"Blueinv"
-	    "Alphainv"	"Alphainv"
-	    "Monochrome"	"Monochrome"
-	    "One"	"One"
-	    "Zero"	"Zero"
+	help	""
+    menu	{
+	    "0"  "Red"
+	    "1"  "Green"
+	    "2"  "Blue"
+	    "3"  "Alpha"
+	    "4"  "Red Invert"
+	    "5"  "Green Invert"
+	    "6"  "Blue Invert"
+	    "7"  "Alpha Invert"
+	    "8"  "Mono"
+	    "9"  "One"
+	    "10" "Zero"
 	}
-	range	{ 0 1 }
-	export	none
 	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7,8,9,10" }
 	parmtag	{ "vray_plugin" "ColorCorrection" }
 	parmtag	{ "vray_pluginattr" "rewire_blue" }
-	parmtag	{ "vray_type" "int" }
+	parmtag	{ "vray_type" "enum" }
     }
     parm {
 	name	"rewire_alpha"
 	label	"Rewire Alpha"
 	type	ordinal
 	default	{ "3" }
-	help	"0-red, 1-green, 2-blue, 3-alpha, 4-redinv, 5-greeninv, 6-blueinv, 7-alphainv, 8-monochrome, 9-One, 10-Zero"
-	menu	{
-	    "Red"	"Red"
-	    "Green"	"Green"
-	    "Blue"	"Blue"
-	    "Alpha"	"Alpha"
-	    "Redinv"	"Redinv"
-	    "Greeninv"	"Greeninv"
-	    "Blueinv"	"Blueinv"
-	    "Alphainv"	"Alphainv"
-	    "Monochrome"	"Monochrome"
-	    "One"	"One"
-	    "Zero"	"Zero"
+    help	""
+    menu	{
+	    "0"  "Red"
+	    "1"  "Green"
+	    "2"  "Blue"
+	    "3"  "Alpha"
+	    "4"  "Red Invert"
+	    "5"  "Green Invert"
+	    "6"  "Blue Invert"
+	    "7"  "Alpha Invert"
+	    "8"  "Mono"
+	    "9"  "One"
+	    "10" "Zero"
 	}
-	range	{ 0 1 }
-	export	none
 	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7,8,9,10" }
 	parmtag	{ "vray_plugin" "ColorCorrection" }
 	parmtag	{ "vray_pluginattr" "rewire_alpha" }
-	parmtag	{ "vray_type" "int" }
+	parmtag	{ "vray_type" "enum" }
     }
     parm {
 	name	"hue_shift"
@@ -225,16 +213,13 @@
 	default	{ "0" }
 	help	"Lightness mode"
 	menu	{
-	    "Standard"	"Standard"
-	    "Advanced"	"Advanced"
+	    "0"	"Standard"
+	    "1"	"Advanced"
 	}
-	range	{ 0 1 }
-	export	none
 	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "ColorCorrection" }
 	parmtag	{ "vray_pluginattr" "lightness_mode" }
-	parmtag	{ "vray_type" "int" }
+	parmtag	{ "vray_type" "enum" }
     }
     parm {
 	name	"adv_brightness"

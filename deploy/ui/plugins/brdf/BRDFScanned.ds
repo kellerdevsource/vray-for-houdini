@@ -89,15 +89,14 @@
 	    default	{ "0" }
 	    help	"This option modifies the rendering in order to improve the result for materials without large details"
 	    menu	{
-		"None"	"None"
-		"Average BRDF"	"Average BRDF"
-		"Average Isotropic BRDF"	"Average Isotropic BRDF"
-		"Scramble"	"Scramble"
+    		"0"	"None"
+    		"1"	"Average BRDF"
+    		"2"	"Average Isotropic BRDF"
+    		"3"	"Scramble"
 	    }
-	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_enumkeys" "0,1,2,3" }
+	    parmtag	{ "vray_type" "enum" }
 	}
 	parm {
 	    name	"gamma"
@@ -306,13 +305,13 @@
 	    default	{ "0" }
 	    help	"Uniform reflections distribution"
 	    menu	{
-		"Importance Sampling"	"Importance Sampling"
-		"Uniform Sampling"	"Uniform Sampling"
+    		"0"	"Importance Sampling"
+    		"1"	"Uniform Sampling"
 	    }
-	    range	{ 0 1 }
 	    export	none
 	    parmtag	{ "cook_dependent" "1" }
-	    parmtag	{ "vray_enumkeys" "0,1" }
+        parmtag	{ "vray_pluginattr" "unf_refl" }
+        parmtag	{ "vray_type" "enum" }
 	}
 	parm {
 	    name	"twoside"

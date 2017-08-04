@@ -219,17 +219,14 @@
 	default	{ "0" }
 	help	"Enable stereo rendering and select output layout"
 	menu	{
-	    "Disabled"	"Disabled"
-	    "Enabled, Side-By-Side"	"Enabled, Side-By-Side"
-	    "Enabled, Top-Bottom"	"Enabled, Top-Bottom"
+	    "0"	"Disabled"
+	    "1"	"Enabled, Side-By-Side"
+	    "2"	"Enabled, Top-Bottom"
 	}
-	range	{ 0 1 }
-	export	none
 	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "RenderView" }
 	parmtag	{ "vray_pluginattr" "stereo_on" }
-	parmtag	{ "vray_type" "int" }
+	parmtag	{ "vray_type" "enum" }
     }
     parm {
 	name	"stereo_eye_distance"
@@ -251,17 +248,14 @@
 	default	{ "0" }
 	help	"Specifies the camera position relative to the left and right views: 0 - center, 1 - keep left view, 2 - keep right view"
 	menu	{
-	    "Center"	"Center"
-	    "Keep Left"	"Keep Left"
-	    "Keep Right"	"Keep Right"
+	    "0"	"Center"
+	    "1"	"Keep Left"
+	    "2"	"Keep Right"
 	}
-	range	{ 0 1 }
-	export	none
 	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "RenderView" }
 	parmtag	{ "vray_pluginattr" "stereo_interocular_method" }
-	parmtag	{ "vray_type" "int" }
+	parmtag	{ "vray_type" "enum" }
     }
     parm {
 	name	"stereo_specify_focus"
@@ -296,17 +290,14 @@
 	default	{ "0" }
 	help	"Specifies which view to render"
 	menu	{
-	    "Both"	"Both"
-	    "Left"	"Left"
-	    "Right"	"Right"
+	    "0"	"Both"
+	    "1"	"Left"
+	    "2"	"Right"
 	}
-	range	{ 0 1 }
-	export	none
 	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "RenderView" }
 	parmtag	{ "vray_pluginattr" "stereo_view" }
-	parmtag	{ "vray_type" "int" }
+	parmtag	{ "vray_type" "enum" }
     }
     parm {
 	name	"stereo_focus_method"
@@ -315,16 +306,13 @@
 	default	{ "0" }
 	help	"Specifies which view to render"
 	menu	{
-	    "Parallel"	"Parallel"
-	    "Rotation"	"Rotation"
-	    "Shear"	"Shear"
+	    "0"	"Parallel"
+	    "1"	"Rotation"
+	    "2"	"Shear"
 	}
-	range	{ 0 1 }
-	export	none
 	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "RenderView" }
 	parmtag	{ "vray_pluginattr" "stereo_focus_method" }
-	parmtag	{ "vray_type" "int" }
+	parmtag	{ "vray_type" "enum" }
     }
 }

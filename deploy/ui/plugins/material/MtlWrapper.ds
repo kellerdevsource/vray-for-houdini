@@ -3,7 +3,7 @@
     label	"Wrapper"
     parmtag	{ spare_category "Wrapper" }
     parmtag	{ vray_plugin "MtlWrapper" }
-	
+
 	 parm {
 		name	"use"
 		label	"Use"
@@ -15,12 +15,12 @@
 		parmtag	{ "cook_dependent" "1" }
 		parmtag	{ "vray_custom_handling" "1" }
     }
-	
+
 	groupsimple {
 		name "folder_main"
 		label "Main"
 		hidewhentab "{ use == 0 }"
-		
+
 		parm {
 			name	"use_irrad_map"
 			label	"Use Irradiance Map"
@@ -99,18 +99,18 @@
 			parmtag	{ "vray_pluginattr" "gi_quality_multiplier" }
 			parmtag	{ "vray_type" "float" }
 		}
-		
-		
-		
+
+
+
 	}
-	
+
 
 	groupsimple {
 		name "folder_matte_properties"
 		label "Matte Properties"
 		hidewhentab "{ use == 0 }"
 
-		
+
 		parm {
 			name	"matte_surface"
 			label	"Matte Surface"
@@ -124,7 +124,7 @@
 			parmtag	{ "vray_pluginattr" "matte_surface" }
 			parmtag	{ "vray_type" "boolean" }
 		}
-		
+
 		parm {
 			name	"alpha_contribution"
 			label	"Alpha Contribution"
@@ -151,7 +151,7 @@
 			parmtag	{ "vray_pluginattr" "generate_render_elements" }
 			parmtag	{ "vray_type" "boolean" }
 		}
-		
+
 		parm {
 			name	"shadows"
 			label	"Shadows"
@@ -273,30 +273,25 @@
 			help	"Set this to 1 to make the material act as matte for all secondary rays (reflections and refractions); if set to 2, the material will perform automatic projection mapping of theenvironment map on the matte geometry"
 			disablewhen	"{ matte_surface != 1 }"
 			menu	{
-				"Disable"	"Disable"
-				"Without Projection Mapping"	"Without Projection Mapping"
-				"With Projection Mapping"	"With Projection Mapping"
+				"0"	"Disable"
+				"1"	"Without Projection Mapping"
+				"2"	"With Projection Mapping"
 			}
-			range	{ 0 64 }
-			export	none
 			parmtag	{ "cook_dependent" "1" }
-			parmtag	{ "vray_enumkeys" "0,1,2" }
 			parmtag	{ "vray_plugin" "MtlWrapper" }
 			parmtag	{ "vray_pluginattr" "matte_for_secondary_rays" }
-			parmtag	{ "vray_type" "int" }
+			parmtag	{ "vray_type" "enum" }
 		}
-		
-		
 	}
-	
-	
+
+
 	groupcollapsible {
 		name "folder_options"
 		label "Options"
 		hidewhentab "{ use == 0 }"
 		hidewhen "{ use == 0 }"
 
-		
+
 		parm {
 			name	"maya_background_shader_compatibility"
 			label	"Maya Background Shader Compatibility"
@@ -310,7 +305,7 @@
 			parmtag	{ "vray_pluginattr" "maya_background_shader_compatibility" }
 			parmtag	{ "vray_type" "boolean" }
 		}
-		
+
 		parm {
 			name	"gi_surface_id"
 			label	"Gi Surface Id"
@@ -324,7 +319,7 @@
 			parmtag	{ "vray_pluginattr" "gi_surface_id" }
 			parmtag	{ "vray_type" "int" }
 		}
-		
+
 		parm {
 			name	"trace_depth"
 			label	"Trace Depth"
@@ -364,7 +359,7 @@
 			parmtag	{ "vray_pluginattr" "refraction_list_is_inclusive" }
 			parmtag	{ "vray_type" "boolean" }
 		}
-		
+
 		parm {
 			name	"alpha_contribution_tex"
 			label	"Alpha Contribution Tex"
@@ -407,13 +402,13 @@
 			parmtag	{ "vray_pluginattr" "reflection_filter_tex" }
 			parmtag	{ "vray_type" "Texture" }
 		}
-    
-		
-		
-		
-	}
-	
 
-    
-    
+
+
+
+	}
+
+
+
+
 }

@@ -8,18 +8,17 @@
 	label	"Useparticlesize"
 	type	ordinal
 	default	{ "0" }
-	help	"true : use particle size; false : use particleRadius for size"
+	help	"true : use particle size; false : use particle radius for size"
 	menu	{
-	    "Use particle size"	"Use particle size"
-	    "Use particleRadius for size"	"Use particleRadius for size"
+	    "0"	"Use Size"
+	    "1"	"Use Radius"
 	}
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
 	parmtag	{ "vray_pluginattr" "useParticleSize" }
-	parmtag	{ "vray_type" "int" }
+	parmtag	{ "vray_type" "enum" }
     }
     parm {
 	name	"particleRadius"
@@ -80,22 +79,20 @@
 	default	{ "0" }
 	help	"Distance function - 0: Power of two; 1: Power of three; 2: Power of four; 3: Power of five; 4: Hermit in power of two; 5: Hermit in power of three; 6: Hermit in power of five; 7: Wyvill;"
 	menu	{
-	    "Power of two"	"Power of two"
-	    "Power of three"	"Power of three"
-	    "Power of four"	"Power of four"
-	    "Power of five"	"Power of five"
-	    "Hermit in power of two"	"Hermit in power of two"
-	    "Hermit in power of three"	"Hermit in power of three"
-	    "Hermit in power of five"	"Hermit in power of five"
-	    "Wyvill"	"Wyvill"
+	    "0"	"Power of two"
+	    "1"	"Power of three"
+	    "2"	"Power of four"
+	    "3"	"Power of five"
+	    "4"	"Hermit in power of two"
+	    "5"	"Hermit in power of three"
+	    "6"	"Hermit in power of five"
+	    "7"	"Wyvill"
 	}
-	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7" }
 	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
 	parmtag	{ "vray_pluginattr" "distanceFunction" }
-	parmtag	{ "vray_type" "int" }
+	parmtag	{ "vray_type" "enum" }
     }
     parm {
 	name	"smoothingBumps"
@@ -170,16 +167,15 @@
 	default	{ "0" }
 	help	"0 - Multiplication; 1 - Addition;"
 	menu	{
-	    "Multiplication"	"Multiplication"
-	    "Addition"	"Addition"
+	    "0"	"Multiplication"
+	    "1"	"Addition"
 	}
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "GeomMetaballSystem" }
 	parmtag	{ "vray_pluginattr" "textureFunction" }
-	parmtag	{ "vray_type" "int" }
+	parmtag	{ "vray_type" "enum" }
     }
     parm {
 	name	"textureMultiplier"

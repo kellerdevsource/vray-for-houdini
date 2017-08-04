@@ -36,17 +36,14 @@ parm {
     default	{ "0" }
     help	"Wrap U"
     menu	{
-        "No Wrapping"	"No Wrapping"
-        "Wrap"	"Wrap"
-        "Mirror Tile"	"Mirror Tile"
+        "0"	"No Wrapping"
+        "1"	"Wrap"
+        "2"	"Mirror Tile"
     }
-    range	{ 0 1 }
-    export	none
     parmtag	{ "cook_dependent" "1" }
-    parmtag	{ "vray_enumkeys" "0,1,2" }
     parmtag	{ "vray_plugin" "UVWGenEnvironment" }
     parmtag	{ "vray_pluginattr" "wrap_u" }
-    parmtag	{ "vray_type" "int" }
+    parmtag	{ "vray_type" "enum" }
 }
 
 parm {
@@ -56,17 +53,14 @@ parm {
     default	{ "0" }
     help	"Wrap V"
     menu	{
-        "No Wrapping"	"No Wrapping"
-        "Wrap"	"Wrap"
-        "Mirror Tile"	"Mirror Tile"
+        "0"	"No Wrapping"
+        "1"	"Wrap"
+        "2"	"Mirror Tile"
     }
-    range	{ 0 1 }
-    export	none
     parmtag	{ "cook_dependent" "1" }
-    parmtag	{ "vray_enumkeys" "0,1,2" }
     parmtag	{ "vray_plugin" "UVWGenEnvironment" }
     parmtag	{ "vray_pluginattr" "wrap_v" }
-    parmtag	{ "vray_type" "int" }
+    parmtag	{ "vray_type" "enum" }
 }
 
 parm {
@@ -76,17 +70,14 @@ parm {
     default	{ "0" }
     help	"Wrap W"
     menu	{
-        "No Wrapping"	"No Wrapping"
-        "Wrap"	"Wrap"
-        "Mirror Tile"	"Mirror Tile"
+        "0"	"No Wrapping"
+        "1"	"Wrap"
+        "2"	"Mirror Tile"
     }
-    range	{ 0 1 }
-    export	none
     parmtag	{ "cook_dependent" "1" }
-    parmtag	{ "vray_enumkeys" "0,1,2" }
     parmtag	{ "vray_plugin" "UVWGenEnvironment" }
     parmtag	{ "vray_pluginattr" "wrap_w" }
-    parmtag	{ "vray_type" "int" }
+    parmtag	{ "vray_type" "enum" }
 }
 
 parm {

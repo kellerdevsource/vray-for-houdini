@@ -45,20 +45,18 @@
       	label	"Additive Mode"
       	type	ordinal
       	default	{ "0" }
-      	help	"Weight for the material layers. 0 = Default, 1 = Additive. 2 and 3 used by RT GPU only (2 = MDL normalize, 3 = MDL clamp max)"
+      	help	"Weight for the material layers"
       	menu	{
-      	    0	"Default"
-      	    1	"Additive"
-      	    2	"MDL Normalize"
-      	    3	"MDL Clamp Max"
+      	    "0" "Default"
+      	    "1" "Additive"
+      	    "2" "MDL Normalize (GPU)"
+      	    "3" "MDL Clamp Max (GPU)"
       	}
-      	range	{ 0 1 }
       	export	none
       	parmtag	{ "cook_dependent" "1" }
-      	parmtag	{ "vray_enumkeys" "0,1,2,3" }
       	parmtag	{ "vray_plugin" "BRDFLayered" }
       	parmtag	{ "vray_pluginattr" "additive_mode" }
-      	parmtag	{ "vray_type" "int" }
+      	parmtag	{ "vray_type" "enum" }
       }
 
 

@@ -387,30 +387,27 @@
 	help	"Red channel"
 	disablewhen	"{ rgba_on != 1 }"
 	menu	{
-	    "Red"	"Red"
-	    "Green"	"Green"
-	    "Blue"	"Blue"
-	    "Alpha"	"Alpha"
-	    "Intensity"	"Intensity"
-	    "In Red"	"In Red"
-	    "In Green"	"In Green"
-	    "In Blue"	"In Blue"
-	    "In Alpha"	"In Alpha"
-	    "In Intensity"	"In Intensity"
-	    "HSL Hue"	"HSL Hue"
-	    "HSL Saturation"	"HSL Saturation"
-	    "HSL Lightness"	"HSL Lightness"
-	    "HSV Hue"	"HSV Hue"
-	    "HSV Saturation"	"HSV Saturation"
-	    "HSV Value"	"HSV Value"
+        "0" "Red"
+        "1" "Green"
+        "2" "Blue"
+        "3" "Alpha"
+        "4" "Intensity"
+        "5" "In Red"
+        "6" "In Green"
+        "7" "In Blue"
+        "8" "In Alpha"
+        "9" "In Intensity"
+        "10" "HSL Hue"
+        "11" "HSL Saturation"
+        "12" "HSL Lightness"
+        "13" "HSV Hue"
+        "14" "HSV Saturation"
+        "15" "HSV Value"
 	}
-	range	{ 0 1 }
-	export	none
 	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15" }
 	parmtag	{ "vray_plugin" "ColorCorrect" }
 	parmtag	{ "vray_pluginattr" "red_channel" }
-	parmtag	{ "vray_type" "int" }
+	parmtag	{ "vray_type" "enum" }
     }
     parm {
 	name	"red_offset"
@@ -442,34 +439,31 @@
 	name	"green_channel"
 	label	"Green Channel"
 	type	ordinal
-	default	{ "0" }
+	default	{ "1" }
 	help	"Green channel"
 	disablewhen	"{ rgba_on != 1 }"
 	menu	{
-	    "Red"	"Red"
-	    "Green"	"Green"
-	    "Blue"	"Blue"
-	    "Alpha"	"Alpha"
-	    "Intensity"	"Intensity"
-	    "In Red"	"In Red"
-	    "In Green"	"In Green"
-	    "In Blue"	"In Blue"
-	    "In Alpha"	"In Alpha"
-	    "In Intensity"	"In Intensity"
-	    "HSL Hue"	"HSL Hue"
-	    "HSL Saturation"	"HSL Saturation"
-	    "HSL Lightness"	"HSL Lightness"
-	    "HSV Hue"	"HSV Hue"
-	    "HSV Saturation"	"HSV Saturation"
-	    "HSV Value"	"HSV Value"
+        "0" "Red"
+        "1" "Green"
+        "2" "Blue"
+        "3" "Alpha"
+        "4" "Intensity"
+        "5" "In Red"
+        "6" "In Green"
+        "7" "In Blue"
+        "8" "In Alpha"
+        "9" "In Intensity"
+        "10" "HSL Hue"
+        "11" "HSL Saturation"
+        "12" "HSL Lightness"
+        "13" "HSV Hue"
+        "14" "HSV Saturation"
+        "15" "HSV Value"
 	}
-	range	{ 0 1 }
-	export	none
 	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15" }
 	parmtag	{ "vray_plugin" "ColorCorrect" }
 	parmtag	{ "vray_pluginattr" "green_channel" }
-	parmtag	{ "vray_type" "int" }
+	parmtag	{ "vray_type" "enum" }
     }
     parm {
 	name	"green_offset"
@@ -501,34 +495,31 @@
 	name	"blue_channel"
 	label	"Blue Channel"
 	type	ordinal
-	default	{ "0" }
+	default	{ "2" }
 	help	"Blue channel"
 	disablewhen	"{ rgba_on != 1 }"
-	menu	{
-	    "Red"	"Red"
-	    "Green"	"Green"
-	    "Blue"	"Blue"
-	    "Alpha"	"Alpha"
-	    "Intensity"	"Intensity"
-	    "In Red"	"In Red"
-	    "In Green"	"In Green"
-	    "In Blue"	"In Blue"
-	    "In Alpha"	"In Alpha"
-	    "In Intensity"	"In Intensity"
-	    "HSL Hue"	"HSL Hue"
-	    "HSL Saturation"	"HSL Saturation"
-	    "HSL Lightness"	"HSL Lightness"
-	    "HSV Hue"	"HSV Hue"
-	    "HSV Saturation"	"HSV Saturation"
-	    "HSV Value"	"HSV Value"
+    menu	{
+        "0" "Red"
+        "1" "Green"
+        "2" "Blue"
+        "3" "Alpha"
+        "4" "Intensity"
+        "5" "In Red"
+        "6" "In Green"
+        "7" "In Blue"
+        "8" "In Alpha"
+        "9" "In Intensity"
+        "10" "HSL Hue"
+        "11" "HSL Saturation"
+        "12" "HSL Lightness"
+        "13" "HSV Hue"
+        "14" "HSV Saturation"
+        "15" "HSV Value"
 	}
-	range	{ 0 1 }
-	export	none
 	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15" }
 	parmtag	{ "vray_plugin" "ColorCorrect" }
 	parmtag	{ "vray_pluginattr" "blue_channel" }
-	parmtag	{ "vray_type" "int" }
+	parmtag	{ "vray_type" "enum" }
     }
     parm {
 	name	"blue_offset"
@@ -560,34 +551,31 @@
 	name	"alpha_channel"
 	label	"Alpha Channel"
 	type	ordinal
-	default	{ "0" }
+	default	{ "3" }
 	help	"Alpha channel"
 	disablewhen	"{ rgba_on != 1 }"
-	menu	{
-	    "Red"	"Red"
-	    "Green"	"Green"
-	    "Blue"	"Blue"
-	    "Alpha"	"Alpha"
-	    "Intensity"	"Intensity"
-	    "In Red"	"In Red"
-	    "In Green"	"In Green"
-	    "In Blue"	"In Blue"
-	    "In Alpha"	"In Alpha"
-	    "In Intensity"	"In Intensity"
-	    "HSL Hue"	"HSL Hue"
-	    "HSL Saturation"	"HSL Saturation"
-	    "HSL Lightness"	"HSL Lightness"
-	    "HSV Hue"	"HSV Hue"
-	    "HSV Saturation"	"HSV Saturation"
-	    "HSV Value"	"HSV Value"
+    menu	{
+        "0" "Red"
+        "1" "Green"
+        "2" "Blue"
+        "3" "Alpha"
+        "4" "Intensity"
+        "5" "In Red"
+        "6" "In Green"
+        "7" "In Blue"
+        "8" "In Alpha"
+        "9" "In Intensity"
+        "10" "HSL Hue"
+        "11" "HSL Saturation"
+        "12" "HSL Lightness"
+        "13" "HSV Hue"
+        "14" "HSV Saturation"
+        "15" "HSV Value"
 	}
-	range	{ 0 1 }
-	export	none
 	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15" }
 	parmtag	{ "vray_plugin" "ColorCorrect" }
 	parmtag	{ "vray_pluginattr" "alpha_channel" }
-	parmtag	{ "vray_type" "int" }
+	parmtag	{ "vray_type" "enum" }
     }
     parm {
 	name	"alpha_offset"

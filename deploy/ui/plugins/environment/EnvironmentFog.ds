@@ -3,11 +3,11 @@
     label	"Fog"
     parmtag	{ spare_category "Fog" }
     parmtag	{ vray_plugin "EnvironmentFog" }
-	
+
 	groupsimple {
 		name "folder_main"
 		label "Main"
-		
+
 		parm {
 			name	"enabled"
 			label	"Enabled"
@@ -235,19 +235,17 @@
 			default	{ "1" }
 			help	"Light mode"
 			menu	{
-				"No Lights"	"No Lights"
-				"Per-Gizmo"	"Per-Gizmo"
-				"Override"	"Override Shape Lights"
-				"Intersect"	"Intersect with Shape Lights"
-				"Add"	"Add to Shape Lights"
+				"0"	"No Lights"
+				"1"	"Per-Gizmo"
+				"2"	"Override Shape Lights"
+				"3"	"Intersect with Shape Lights"
+				"4"	"Add to Shape Lights"
 			}
-			range	{ 0 1 }
 			export	none
 			parmtag	{ "cook_dependent" "1" }
-			parmtag	{ "vray_enumkeys" "0,1,2,3,4" }
 			parmtag	{ "vray_plugin" "EnvironmentFog" }
 			parmtag	{ "vray_pluginattr" "light_mode" }
-			parmtag	{ "vray_type" "int" }
+			parmtag	{ "vray_type" "enum" }
 		}
 		parm {
 			name	"ior"
@@ -288,16 +286,16 @@
 			parmtag	{ "vray_pluginattr" "shadow_opacity" }
 			parmtag	{ "vray_type" "float" }
 		}
-		
-		
-		
-	
+
+
+
+
 	}
-	
+
 	groupcollapsible {
 		name "folder_GI"
 		label "Global Illumination"
-		
+
 		parm {
 			name	"scatter_gi"
 			label	"Scatter Gi"
@@ -339,14 +337,14 @@
 			parmtag	{ "vray_pluginattr" "scatter_bounces" }
 			parmtag	{ "vray_type" "int" }
 		}
-		
-		
+
+
 	}
 
 	groupcollapsible {
 		name "folder_raymarching"
 		label "Raymarching"
-		
+
 		parm {
 			name	"step_size"
 			label	"Step Size"
@@ -412,14 +410,12 @@
 			parmtag	{ "vray_pluginattr" "deep_output" }
 			parmtag	{ "vray_type" "boolean" }
 		}
-		
-		
 	}
-	
+
 	groupcollapsible {
 		name "folder_fadeout"
 		label "Fadeout"
-		
+
 		parm {
 			name	"fade_out_mode"
 			label	"Fade Out Mode"
@@ -427,16 +423,15 @@
 			default	{ "0" }
 			help	"Fade out mode"
 			menu	{
-				"Multiply"	"Multiply by Density"
-				"Substract"	"Substract (Add Density to Falloff)"
+				"0"	"Multiply by Density"
+				"1"	"Substract (Add Density to Falloff)"
 			}
 			range	{ 0 1 }
 			export	none
 			parmtag	{ "cook_dependent" "1" }
-			parmtag	{ "vray_enumkeys" "0,1" }
 			parmtag	{ "vray_plugin" "EnvironmentFog" }
 			parmtag	{ "vray_pluginattr" "fade_out_mode" }
-			parmtag	{ "vray_type" "int" }
+			parmtag	{ "vray_type" "enum" }
 		}
 		parm {
 			name	"fade_out_radius"
@@ -464,18 +459,12 @@
 			parmtag	{ "vray_pluginattr" "per_object_fade_out_radius" }
 			parmtag	{ "vray_type" "boolean" }
 		}
-		
-		
-		
-		
 	}
 
-	
-	
 	groupcollapsible {
 		name "folder_options"
 		label "Options"
-		
+
 		parm {
 			name	"jitter"
 			label	"Jitter Samples"
@@ -489,7 +478,7 @@
 			parmtag	{ "vray_pluginattr" "jitter" }
 			parmtag	{ "vray_type" "boolean" }
 		}
-		
+
 		parm {
 			name	"affect_background"
 			label	"Affect Background"
@@ -581,8 +570,8 @@
 			parmtag	{ "vray_pluginattr" "use_shade_instance" }
 			parmtag	{ "vray_type" "boolean" }
 		}
-		
-		
+
+
 		parm {
 			name	"use_shade_data"
 			label	"Use Shade Data"
@@ -623,19 +612,19 @@
 			parmtag	{ "vray_pluginattr" "solid_threshold" }
 			parmtag	{ "vray_type" "float" }
 		}
-		
-		
-		
+
+
+
 	}
-    
-    
-    
-    
-    
-    
-   
-    
-	
-    
-    
+
+
+
+
+
+
+
+
+
+
+
 }

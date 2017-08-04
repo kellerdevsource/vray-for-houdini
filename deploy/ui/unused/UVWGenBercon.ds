@@ -127,7 +127,7 @@
 			name	"tile_x"
 			label	"Tile XYZ"
 			type	integer
-			joinnext
+			
 			default	{ "1" }
 			help	"X tiles"
 			range	{ 0 64 }
@@ -141,7 +141,7 @@
 			name	"tile_y"
 			label	" "
 			type	integer
-			joinnext
+			
 			default	{ "1" }
 			help	"Y tiles"
 			range	{ 0 64 }
@@ -169,7 +169,7 @@
 			name	"size_x"
 			label	"Size XYZ"
 			type	float
-			joinnext
+			
 			default	{ "1" }
 			help	"X size"
 			range	{ 0 64 }
@@ -183,7 +183,7 @@
 			name	"size_y"
 			label	" "
 			type	float
-			joinnext
+			
 			default	{ "1" }
 			help	"Y size"
 			range	{ 0 64 }
@@ -210,7 +210,7 @@
 			name	"size_x2"
 			label	"Size XYZ 2"
 			type	float
-			joinnext
+			
 			default	{ "0" }
 			help	"second X size"
 			range	{ 0 64 }
@@ -224,7 +224,7 @@
 			name	"size_y2"
 			label	" "
 			type	float
-			joinnext
+			
 			default	{ "0" }
 			help	"second Y size"
 			range	{ 0 64 }
@@ -251,7 +251,7 @@
 			name	"offset_x"
 			label	"Offset XYZ"
 			type	float
-			joinnext
+			
 			default	{ "0" }
 			help	"the X offset"
 			range	{ 0 64 }
@@ -265,7 +265,7 @@
 			name	"offset_y"
 			label	" "
 			type	float
-			joinnext
+			
 			default	{ "0" }
 			help	"the Y offset"
 			range	{ 0 64 }
@@ -292,7 +292,7 @@
 			name	"offset_x2"
 			label	"Offset XYZ 2"
 			type	float
-			joinnext
+			
 			default	{ "0" }
 			help	"second X offset"
 			range	{ 0 64 }
@@ -306,7 +306,7 @@
 			name	"offset_y2"
 			label	" "
 			type	float
-			joinnext
+			
 			default	{ "0" }
 			help	"second Y offset"
 			range	{ 0 64 }
@@ -334,7 +334,7 @@
 			name	"angle_x"
 			label	"Angle XYZ"
 			type	float
-			joinnext
+			
 			default	{ "0" }
 			help	"X angle"
 			range	{ 0 64 }
@@ -348,7 +348,7 @@
 			name	"angle_y"
 			label	" "
 			type	float
-			joinnext
+			
 			default	{ "0" }
 			help	"Y angle"
 			range	{ 0 64 }
@@ -378,7 +378,7 @@
 			name	"angle_x2"
 			label	"Angle XYZ 2"
 			type	float
-			joinnext
+			
 			default	{ "0" }
 			help	"second X angle"
 			range	{ 0 64 }
@@ -392,7 +392,7 @@
 			name	"angle_y2"
 			label	" "
 			type	float
-			joinnext
+			
 			default	{ "0" }
 			help	"second Y angle"
 			range	{ 0 64 }

@@ -4,16 +4,16 @@
     parmtag	{ spare_category "V-Ray Physical Camera" }
     parmtag	{ vray_plugin "CameraPhysical" }
 
-	parm {
-	name	"CameraPhysical_use"
-	label	"Enable"
-	type	toggle
-	default	{ "1" }
-	help	"Causes the standard Houdini camera to act as a VRay Physical camera, and enables the remaining parameters."
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_custom_handling" "1" }
+    parm {
+        name	"CameraPhysical_use"
+        label	"Enable"
+        type	toggle
+        default	{ "1" }
+        help	"Causes the standard Houdini camera to act as a VRay Physical camera, and enables the remaining parameters."
+        range	{ 0 1 }
+        export	none
+        parmtag	{ "cook_dependent" "1" }
+        parmtag	{ "vray_custom_handling" "1" }
     }
 
 	groupsimple {
@@ -25,28 +25,22 @@
 			name	"CameraPhysical_type"
 			label	"Camera Type"
 			type	ordinal
-			joinnext
 			default	{ "0" }
 			help	"Determines the type of the physical camera to simulate. This mostly has an effect on the motion blur effect produced by the camera."
 			menu	{
-				"Still"	"Still"
-				"Cinematic"	"Cinematic"
-				"Video"	"Video"
+				"0"	"Still"
+				"1"	"Cinematic"
+				"2"	"Video"
 			}
-			range	{ 0 1 }
-			export	none
-			parmtag	{ "cook_dependent" "1" }
-			parmtag	{ "vray_enumkeys" "0,1,2" }
 			parmtag	{ "vray_plugin" "CameraPhysical" }
 			parmtag	{ "vray_pluginattr" "type" }
-			parmtag	{ "vray_type" "int" }
+			parmtag	{ "vray_type" "enum" }
 		}
 
 		parm {
 			name	"CameraPhysical_use_dof"
 			label	"Depth Of Field"
 			type	toggle
-			joinnext
 			default	{ "0" }
 			help	"Turns on depth of field sampling"
 			range	{ 0 1 }
@@ -248,7 +242,7 @@
 			label	" "
 			type	toggle
 			hidewhen "{ CameraPhysical_use_dof == 0 } "
-			joinnext
+
 			default	{ "1" }
 			range	{ 0 1 }
 			export	none
@@ -278,7 +272,7 @@
 			type	toggle
 			hidewhen "{ CameraPhysical_use_dof == 0  }"
 			disablewhen "{ CameraPhysical_specify_focus == 1 }"
-			joinnext
+
 			default	{ "1" }
 			help	"1-specify a target distance; 0-target distance not specified"
 			range	{ 0 1 }
@@ -385,11 +379,7 @@
 			parmtag	{ "vray_pluginattr" "dont_affect_settings" }
 			parmtag	{ "vray_type" "boolean" }
 		}
-
-
 	}
-
-
 
 	groupsimple {
 		name "folder_physcam_distortion"
@@ -406,7 +396,6 @@
 			export none
 		}
 
-
 		parm {
 			name	"CameraPhysical_distortion_type"
 			label	"Distortion Type"
@@ -422,10 +411,9 @@
 			range	{ 0 1 }
 			export	none
 			parmtag	{ "cook_dependent" "1" }
-			parmtag	{ "vray_enumkeys" "0,1,2" }
 			parmtag	{ "vray_plugin" "CameraPhysical" }
 			parmtag	{ "vray_pluginattr" "distortion_type" }
-			parmtag	{ "vray_type" "int" }
+			parmtag	{ "vray_type" "enum" }
 		}
 
 		parm {
@@ -547,11 +535,7 @@
 			parmtag	{ "vray_pluginattr" "vertical_offset" }
 			parmtag	{ "vray_type" "float" }
 		}
-
-
 	}
-
-
 
 	groupsimple {
 		name "folder_physcam_bokeh"
@@ -628,19 +612,7 @@
 			parmtag	{ "vray_pluginattr" "anisotropy" }
 			parmtag	{ "vray_type" "float" }
 		}
-
-
-
 	}
-
-
-
-
-
-
-
-
-
 
 	groupsimple {
 		name "folder_physcam_bmpapperture"
@@ -702,13 +674,5 @@
 			parmtag	{ "vray_pluginattr" "bmpaperture_tex" }
 			parmtag	{ "vray_type" "Texture" }
 		}
-
-
 	}
-
-
 }
-
-
-
-

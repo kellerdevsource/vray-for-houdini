@@ -3,30 +3,27 @@
     label	"Rounded Corners"
     parmtag	{ spare_category "Rounded Corners" }
     parmtag	{ vray_plugin "MtlRoundEdges" }
-	
+
 	groupsimple {
 		name "folder_main"
 		label "Main"
-		
+
 		parm {
 			name	"raytraced_mode"
 			label	"Mode"
 			type	ordinal
 			default	{ "0" }
-			help	"Which corners to smooth: 0 - both convex and concave; 1 - convex only; 2 - concave only"
+			help	"Which corners to smooth"
 			disablewhen	"{ raytraced != 1 }"
 			menu	{
-				"Convex and Concave"	"Convex and Concave"
-				"Convex Only"	"Convex Only"
-				"Concave Only"	"Concave Only"
+				"0"	"Convex and Concave"
+				"1"	"Convex Only"
+				"2"	"Concave Only"
 			}
-			range	{ 0 1 }
-			export	none
 			parmtag	{ "cook_dependent" "1" }
-			parmtag	{ "vray_enumkeys" "0,1,2" }
 			parmtag	{ "vray_plugin" "MtlRoundEdges" }
 			parmtag	{ "vray_pluginattr" "raytraced_mode" }
-			parmtag	{ "vray_type" "int" }
+			parmtag	{ "vray_type" "enum" }
 		}
 		parm {
 			name	"radius_mode"
@@ -35,16 +32,13 @@
 			default	{ "0" }
 			help	"0 - the radius parameter is in object space, 1 - the radius parameter is in world space"
 			menu	{
-				"Object Space"	"Object Space"
-				"World Space"	"World Space"
+				"0"	"Object Space"
+				"1"	"World Space"
 			}
-			range	{ 0 1 }
-			export	none
 			parmtag	{ "cook_dependent" "1" }
-			parmtag	{ "vray_enumkeys" "0,1" }
 			parmtag	{ "vray_plugin" "MtlRoundEdges" }
 			parmtag	{ "vray_pluginattr" "radius_mode" }
-			parmtag	{ "vray_type" "int" }
+			parmtag	{ "vray_type" "enum" }
 		}
 		parm {
 			name	"radius"
@@ -59,7 +53,7 @@
 			parmtag	{ "vray_pluginattr" "radius" }
 			parmtag	{ "vray_type" "TextureFloat" }
 		}
-		
+
 		parm {
 			name	"raytraced"
 			label	"Raytraced"
@@ -87,7 +81,7 @@
 			parmtag	{ "vray_pluginattr" "raytraced_consider_same_object_only" }
 			parmtag	{ "vray_type" "boolean" }
 		}
-		
+
 	}
-  
+
 }

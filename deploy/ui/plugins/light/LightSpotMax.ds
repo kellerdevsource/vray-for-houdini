@@ -257,25 +257,21 @@
 	parmtag	{ "vray_type" "boolean" }
     }
     parm {
-	name	"units"
-	label	"Units"
-	type	ordinal
-	default	{ "0" }
-	help	"Units for the intensity (0 - default, 1 - lumens, 2 - lm/m/m/sr, 3 - watts, 4 - w/m/m/sr)"
-	menu	{
-	    "Default"	"Default"
-	    "Lumens"	"Lumens"
-	    "Lm/m/m/sr"	"Lm/m/m/sr"
-	    "Watts"	"Watts"
-	    "W/m/m/sr"	"W/m/m/sr"
-	}
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1,2,3,4" }
-	parmtag	{ "vray_plugin" "LightSpotMax" }
-	parmtag	{ "vray_pluginattr" "units" }
-	parmtag	{ "vray_type" "int" }
+        name "units"
+        label "Units"
+        type ordinal
+        help "Intensity units"
+        menu {
+            "0"	"Default"
+            "1"	"Lumens"
+            "2"	"Lm/m/m/sr"
+            "3"	"Watts"
+            "4"	"W/m/m/sr"
+        }
+        default { "0" }
+        parmtag	{ "cook_dependent" "1" }
+        parmtag	{ "vray_pluginattr" "units" }
+        parmtag	{ "vray_type" "enum" }
     }
     parm {
 	name	"intensity"
@@ -392,17 +388,14 @@
 	default	{ "0" }
 	help	"Decay type"
 	menu	{
-	    "No Decay"	"No Decay"
-	    "Linear"	"Linear"
-	    "Square"	"Square"
+	    "0"	"No Decay"
+	    "1"	"Linear"
+	    "2"	"Square"
 	}
-	range	{ 0 1 }
-	export	none
 	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "LightSpotMax" }
 	parmtag	{ "vray_pluginattr" "decay_type" }
-	parmtag	{ "vray_type" "int" }
+	parmtag	{ "vray_type" "enum" }
     }
     parm {
 	name	"decay_start"
@@ -501,16 +494,13 @@
 	default	{ "0" }
 	help	"Shape for soft shadows"
 	menu	{
-	    "Box"	"Box"
-	    "Sphere"	"Sphere"
+	    "0"	"Box"
+	    "1"	"Sphere"
 	}
-	range	{ 0 1 }
-	export	none
 	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "LightSpotMax" }
 	parmtag	{ "vray_pluginattr" "shadowShape" }
-	parmtag	{ "vray_type" "int" }
+	parmtag	{ "vray_type" "enum" }
     }
     parm {
 	name	"shadowRadius1"
@@ -571,16 +561,13 @@
 	default	{ "0" }
 	help	"The shape of the beam"
 	menu	{
-	    "Circular"	"Circular"
-	    "Rectangular"	"Rectangular"
+	    "0"	"Circular"
+	    "1"	"Rectangular"
 	}
-	range	{ 0 1 }
-	export	none
 	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "LightSpotMax" }
 	parmtag	{ "vray_pluginattr" "shape_type" }
-	parmtag	{ "vray_type" "int" }
+	parmtag	{ "vray_type" "enum" }
     }
     parm {
 	name	"rect_aspect"

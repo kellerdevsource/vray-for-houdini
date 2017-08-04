@@ -392,17 +392,15 @@
 			default	{ "0" }
 			help	"Determines how refractions affect the alpha channel"
 			menu	{
-				"Color Only"	"Color Only"
-				"Color+Alpha"	"Color+Alpha"
-				"All Channels"	"All Channels"
+				"0"	"Color Only"
+				"1"	"Color+Alpha"
+				"2"	"All Channels"
 			}
-			range	{ 0 1 }
 			export	none
 			parmtag	{ "cook_dependent" "1" }
-			parmtag	{ "vray_enumkeys" "0,1,2" }
 			parmtag	{ "vray_plugin" "BRDFGlassGlossy" }
 			parmtag	{ "vray_pluginattr" "affect_alpha" }
-			parmtag	{ "vray_type" "int" }
+			parmtag	{ "vray_type" "enum" }
 		}
 
 

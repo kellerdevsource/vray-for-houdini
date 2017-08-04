@@ -28,7 +28,7 @@
         name	"intensity"
         label	"Intensity"
         type	float
-        joinnext
+        
         disablewhen	"{ map_intensity == 1 }"
         default	{ "1" }
         help	"Light intensity"
@@ -71,7 +71,7 @@
         name	"color"
         label	"Color"
         type	color
-        joinnext
+        
         disablewhen "{ map_color == 1 }"
         size	3
         default	{ "1" "1" "1" }
@@ -113,7 +113,7 @@
       	name	"units"
       	label	"Units"
       	type	ordinal
-        joinnext
+        
         default	{ "0" }
       	help	"Units for the intensity (0 - default, 1 - lumens, 2 - lm/m/m/sr, 3 - watts, 4 - w/m/m/sr)"
       	menu	{
@@ -433,7 +433,7 @@
       	label	"Shadowcolor"
       	type	color
         disablewhen "{ map_shadow_color == 1 }"
-        joinnext
+        
       	size	3
       	default	{ "0" "0" "0" }
       	help	"The shadow color. Anything but black is not physically accurate"
@@ -491,7 +491,7 @@
       	label	"Shadowradius"
       	type	float
         disablewhen "{ map_shadow_radius == 1 }"
-        joinnext
+        
       	default	{ "0" }
       	help	"The size of the light; 0.0 is a point light, larger values produces soft (area) shadows"
       	range	{ 0 64 }
@@ -556,7 +556,7 @@
         name	"affectDiffuse"
         label	"Affect Diffuse"
         type	toggle
-        joinnext
+        
         default	{ "1" }
         help	"true if the light produces diffuse lighting and false otherwise"
         range	{ 0 1 }

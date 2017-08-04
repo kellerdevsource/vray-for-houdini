@@ -6,14 +6,14 @@
         type toggle \
         default { 1 } \
         nolabel \
-        joinnext \
+         \
         parmtag { spare_category "Scripts" } \
     } \
     parm { \
         name TOKEN \
         label LABEL \
         type file \
-        joinnext \
+         \
         default { "" } \
         disablewhen { { t##TOKEN == 0 } } \
         parmtag { filechooser_mode  "read" } \

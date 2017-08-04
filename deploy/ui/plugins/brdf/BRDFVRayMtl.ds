@@ -91,21 +91,35 @@
             name  "brdf_type"
             label "BRDF Type"
             type  ordinal
-            default { "1" }
             help  "The BRDF type"
             menu  {
-                "Phong" "Phong"
-                "Blinn" "Blinn"
-                "Ward"  "Ward"
-                "GGX" "GGX"
+                "0" "Phong"
+                "1" "Blinn"
+                "2" "Ward"
+                "4" "GGX"
             }
-            range { 0 1 }
+            default { "4" }
             export  none
             parmtag { "cook_dependent" "1" }
-            parmtag { "vray_enumkeys" "0,1,2,4" }
             parmtag { "vray_plugin" "BRDFVRayMtl" }
             parmtag { "vray_pluginattr" "brdf_type" }
-            parmtag { "vray_type" "int" }
+            parmtag { "vray_type" "enum" }
+        }
+
+        parm {
+            name  "gtr_gamma"
+            label "GGX Tail Falloff"
+            type  float
+            default { "2" }
+            help  "How much to increase/decrease the tail of the glossy highlight when using GGX reflection model"
+            disablewhen "{ brdf_type != GGX }"
+            hidewhen  "{ brdf_type != GGX }"
+            range { 2 10 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "BRDFVRayMtl" }
+            parmtag { "vray_pluginattr" "gtr_gamma" }
+            parmtag { "vray_type" "TextureFloat" }
         }
 
         parm {
@@ -239,22 +253,6 @@
             parmtag { "vray_type" "TextureFloat" }
         }
 
-        parm {
-            name  "gtr_gamma"
-            label "GGX tail falloff"
-            type  float
-            default { "2" }
-            help  "How much to increase/decrease the tail of the glossy highlight when using GGX reflection model"
-            disablewhen "{ brdf_type != GGX }"
-            hidewhen  "{ brdf_type != GGX }"
-            range { 2 10 }
-            export  none
-            parmtag { "cook_dependent" "1" }
-            parmtag { "vray_plugin" "BRDFVRayMtl" }
-            parmtag { "vray_pluginattr" "gtr_gamma" }
-            parmtag { "vray_type" "TextureFloat" }
-        }
-
         groupcollapsible {
             name "folder_refl_anisotropy"
             label "Anisotropy"
@@ -294,16 +292,13 @@
                 default { "0" }
                 help  "What method to use for deriving anisotropy axes"
                 menu  {
-                    "Local Axis"  "Local Axis"
-                    "UVW Generator" "UVW Generator"
+                    "0" "Local Axis"
+                    "1" "UVW Generator"
                 }
-                range { 0 1 }
-                export  none
                 parmtag { "cook_dependent" "1" }
-                parmtag { "vray_enumkeys" "0,1" }
                 parmtag { "vray_plugin" "BRDFVRayMtl" }
                 parmtag { "vray_pluginattr" "anisotropy_derivation" }
-                parmtag { "vray_type" "int" }
+                parmtag { "vray_type" "enum" }
             }
 
             parm {
@@ -314,17 +309,16 @@
                 help  "Which local object axis to use when anisotropy_derivation is 0"
                 disablewhen "{ anisotropy_derivation != \"Local Axis\" }"
                 menu  {
-                    "X" "X"
-                    "Y" "Y"
-                    "Z" "Z"
+                    "0" "X"
+                    "1" "Y"
+                    "2" "Z"
                 }
                 range { 0 1 }
                 export  none
                 parmtag { "cook_dependent" "1" }
-                parmtag { "vray_enumkeys" "0,1,2" }
                 parmtag { "vray_plugin" "BRDFVRayMtl" }
                 parmtag { "vray_pluginattr" "anisotropy_axis" }
-                parmtag { "vray_type" "int" }
+                parmtag { "vray_type" "enum" }
             }
         }
 
@@ -440,105 +434,15 @@
                 default { "0" }
                 help  "Determines how reflections affect the alpha channel"
                 menu  {
-                    "Color Only"  "Color Only"
-                    "Color+Alpha" "Color+Alpha"
-                    "All Channels"  "All Channels"
+                    "0" "Color Only"
+                    "1" "Color+Alpha"
+                    "2" "All Channels"
                 }
-                range { 0 1 }
                 export  none
                 parmtag { "cook_dependent" "1" }
-                parmtag { "vray_enumkeys" "0,1,2" }
                 parmtag { "vray_plugin" "BRDFVRayMtl" }
                 parmtag { "vray_pluginattr" "reflect_affect_alpha" }
-                parmtag { "vray_type" "int" }
-            }
-        }
-
-        groupcollapsible {
-            name "folder_refl_interpolation"
-            label "Reflection Interpolation"
-
-            parm {
-                name  "refl_interpolation_on"
-                label "Use Reflection Interpolation"
-                type  toggle
-                default { "0" }
-                range { 0 1 }
-                export  none
-                parmtag { "cook_dependent" "1" }
-                parmtag { "vray_plugin" "BRDFVRayMtl" }
-                parmtag { "vray_pluginattr" "refl_interpolation_on" }
-                parmtag { "vray_type" "boolean" }
-            }
-
-            parm {
-                name  "refl_imap_min_rate"
-                label "Min Rate"
-                type  integer
-                default { "-1" }
-                disablewhen "{ refl_interpolation_on != 1 }"
-                range { 0 1 }
-                export  none
-                parmtag { "cook_dependent" "1" }
-                parmtag { "vray_plugin" "BRDFVRayMtl" }
-                parmtag { "vray_pluginattr" "refl_imap_min_rate" }
-                parmtag { "vray_type" "int" }
-            }
-
-            parm {
-                name  "refl_imap_max_rate"
-                label "Max Rate"
-                type  integer
-                default { "1" }
-                disablewhen "{ refl_interpolation_on != 1 }"
-                range { 0 5 }
-                export  none
-                parmtag { "cook_dependent" "1" }
-                parmtag { "vray_plugin" "BRDFVRayMtl" }
-                parmtag { "vray_pluginattr" "refl_imap_max_rate" }
-                parmtag { "vray_type" "int" }
-            }
-
-            parm {
-                name  "refl_imap_samples"
-                label "Interpolation Samples"
-                type  integer
-                default { "20" }
-                disablewhen "{ refl_interpolation_on != 1 }"
-                range { 0 32 }
-                export  none
-                parmtag { "cook_dependent" "1" }
-                parmtag { "vray_plugin" "BRDFVRayMtl" }
-                parmtag { "vray_pluginattr" "refl_imap_samples" }
-                parmtag { "vray_type" "int" }
-            }
-
-            parm {
-                name  "refl_imap_color_thresh"
-                label "Color Threshold"
-                type  float
-                default { "0.25" }
-                disablewhen "{ refl_interpolation_on != 1 }"
-                range { 0 1 }
-                export  none
-                parmtag { "cook_dependent" "1" }
-                parmtag { "vray_plugin" "BRDFVRayMtl" }
-                parmtag { "vray_pluginattr" "refl_imap_color_thresh" }
-                parmtag { "vray_type" "float" }
-            }
-
-            parm {
-                name  "refl_imap_norm_thresh"
-                label "Normal Threshold"
-                type  float
-                default { "0.4" }
-                disablewhen "{ refl_interpolation_on != 1 }"
-                range { 0 1 }
-                export  none
-                parmtag { "cook_dependent" "1" }
-                parmtag { "vray_plugin" "BRDFVRayMtl" }
-                parmtag { "vray_pluginattr" "refl_imap_norm_thresh" }
-                parmtag { "vray_type" "float" }
+                parmtag { "vray_type" "enum" }
             }
         }
     }
@@ -699,18 +603,16 @@
                 default { "0" }
                 help  "Translucency mode"
                 menu  {
-                  "None"  "None"
-                  "Hard (wax) model"  "Hard (wax) model"
-                  "Soft (water) model"  "Soft (water) model"
-                  "Hybrid model"  "Hybrid model"
+                  "0"  "None"
+                  "1"  "Hard (wax) model"
+                  "2"  "Soft (water) model"
+                  "3"  "Hybrid model"
                 }
-                range { 0 1 }
                 export  none
                 parmtag { "cook_dependent" "1" }
-                parmtag { "vray_enumkeys" "0,1,2,3" }
                 parmtag { "vray_plugin" "BRDFVRayMtl" }
                 parmtag { "vray_pluginattr" "translucency" }
-                parmtag { "vray_type" "int" }
+                parmtag { "vray_type" "enum" }
             }
 
             parm {
@@ -874,17 +776,15 @@
                 default { "0" }
                 help  "Determines how refractions affect the alpha channel"
                 menu  {
-                    "Color Only"  "Color Only"
-                    "Color+Alpha" "Color+Alpha"
-                    "All Channels"  "All Channels"
+                    "0"  "Color Only"
+                    "1" "Color+Alpha"
+                    "2"  "All Channels"
                 }
-                range { 0 1 }
                 export  none
                 parmtag { "cook_dependent" "1" }
-                parmtag { "vray_enumkeys" "0,1,2" }
                 parmtag { "vray_plugin" "BRDFVRayMtl" }
                 parmtag { "vray_pluginattr" "refract_affect_alpha" }
-                parmtag { "vray_type" "int" }
+                parmtag { "vray_type" "enum" }
             }
 
             parm {
@@ -916,94 +816,6 @@
                 parmtag { "vray_pluginattr" "dispersion" }
                 parmtag { "vray_type" "float" }
              }
-        }
-
-        groupcollapsible {
-            name "folder_refr_interp"
-            label "Refraction Interpolation"
-
-            parm {
-                name  "refr_interpolation_on"
-                label "Use Refraction Interpolation"
-                type  toggle
-                default { "0" }
-                range { 0 1 }
-                export  none
-                parmtag { "cook_dependent" "1" }
-                parmtag { "vray_plugin" "BRDFVRayMtl" }
-                parmtag { "vray_pluginattr" "refr_interpolation_on" }
-                parmtag { "vray_type" "boolean" }
-            }
-
-            parm {
-                name  "refr_imap_min_rate"
-                label "Min Rate"
-                type  integer
-                default { "-1" }
-                disablewhen "{ refr_interpolation_on != 1 }"
-                range { 0 1 }
-                export  none
-                parmtag { "cook_dependent" "1" }
-                parmtag { "vray_plugin" "BRDFVRayMtl" }
-                parmtag { "vray_pluginattr" "refr_imap_min_rate" }
-                parmtag { "vray_type" "int" }
-            }
-
-            parm {
-                name  "refr_imap_max_rate"
-                label "Max Rate"
-                type  integer
-                default { "1" }
-                disablewhen "{ refr_interpolation_on != 1 }"
-                range { 0 5 }
-                export  none
-                parmtag { "cook_dependent" "1" }
-                parmtag { "vray_plugin" "BRDFVRayMtl" }
-                parmtag { "vray_pluginattr" "refr_imap_max_rate" }
-                parmtag { "vray_type" "int" }
-            }
-
-            parm {
-                name  "refr_imap_samples"
-                label "Interpolation Samples"
-                type  integer
-                default { "20" }
-                disablewhen "{ refr_interpolation_on != 1 }"
-                range { 0 32 }
-                export  none
-                parmtag { "cook_dependent" "1" }
-                parmtag { "vray_plugin" "BRDFVRayMtl" }
-                parmtag { "vray_pluginattr" "refr_imap_samples" }
-                parmtag { "vray_type" "int" }
-            }
-
-            parm {
-                name  "refr_imap_color_thresh"
-                label "Color Threshold"
-                type  float
-                default { "0.25" }
-                disablewhen "{ refr_interpolation_on != 1 }"
-                range { 0 1 }
-                export  none
-                parmtag { "cook_dependent" "1" }
-                parmtag { "vray_plugin" "BRDFVRayMtl" }
-                parmtag { "vray_pluginattr" "refr_imap_color_thresh" }
-                parmtag { "vray_type" "float" }
-            }
-
-            parm {
-                name  "refr_imap_norm_thresh"
-                label "Normal Threshold"
-                type  float
-                default { "0.4" }
-                disablewhen "{ refr_interpolation_on != 1 }"
-                range { 0 1 }
-                export  none
-                parmtag { "cook_dependent" "1" }
-                parmtag { "vray_plugin" "BRDFVRayMtl" }
-                parmtag { "vray_pluginattr" "refr_imap_norm_thresh" }
-                parmtag { "vray_type" "float" }
-            }
         }
     }
 
@@ -1085,39 +897,36 @@
             name  "option_energy_mode"
             label "Energy Preservation"
             type  ordinal
-            default { "1" }
+            default { "0" }
             help  "Energy preservation mode for reflections and refractions"
             menu  {
-                "Monochrome"  "Monochrome"
-                "Color" "Color"
+                "0" "Color"
+                "1" "Monochrome"
             }
             range { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
-            parmtag { "vray_enumkeys" "1,0" }
             parmtag { "vray_plugin" "BRDFVRayMtl" }
             parmtag { "vray_pluginattr" "option_energy_mode" }
-            parmtag { "vray_type" "int" }
+            parmtag { "vray_type" "enum" }
         }
 
         parm {
             name  "option_glossy_rays_as_gi"
-            label "Glossy Rays As Gi"
+            label "Glossy Rays As GI"
             type  ordinal
             default { "1" }
             help  "Specifies when to treat GI rays as glossy rays"
             menu  {
-            "Never" "Never"
-            "GI Rays" "GI Rays"
-            "Always"  "Always"
+                "0" "Never"
+                "1" "GI Rays"
+                "2" "Always"
             }
-            range { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
-            parmtag { "vray_enumkeys" "0,1,2" }
             parmtag { "vray_plugin" "BRDFVRayMtl" }
             parmtag { "vray_pluginattr" "option_glossy_rays_as_gi" }
-            parmtag { "vray_type" "int" }
+            parmtag { "vray_type" "enum" }
         }
 
         parm {
@@ -1164,21 +973,6 @@
             parmtag { "vray_plugin" "BRDFVRayMtl" }
             parmtag { "vray_pluginattr" "environment_priority" }
             parmtag { "vray_type" "int" }
-        }
-
-        parm {
-            name  "gtr_oldGamma"
-            label "Gtr Oldgamma"
-            type  toggle
-            default { "0" }
-            help  "true to use the old (and incorrect) shadow masking function when gtr_gamma is different from 2.0"
-            range { 0 1 }
-            export  none
-            parmtag { "cook_dependent" "1" }
-            parmtag { "vray_plugin" "BRDFVRayMtl" }
-            parmtag { "vray_pluginattr" "gtr_oldGamma" }
-            parmtag { "vray_type" "boolean" }
-            invisible
         }
     }
 }

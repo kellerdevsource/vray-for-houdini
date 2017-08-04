@@ -22,17 +22,17 @@
 	name	"mode"
 	label	"Mode"
 	type	ordinal
-	invisible
 	default	{ "0" }
 	help	"Working mode"
 	menu	{
-	    "Objects"	"Objects"
-	    "Camera"	"Camera"
+	    "0"	"Objects"
+	    "1"	"Camera"
 	}
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1" }
+    parmtag	{ "vray_type" "enum" }
+    invisible
     }
     parm {
 	name	"use_transform"
@@ -46,6 +46,7 @@
 	parmtag	{ "vray_plugin" "VRayScene" }
 	parmtag	{ "vray_pluginattr" "use_transform" }
 	parmtag	{ "vray_type" "boolean" }
+    invisible
     }
     parm {
 	name	"add_nodes"
@@ -93,18 +94,15 @@
 	default	{ "0" }
 	help	"Animated proxy playback type"
 	menu	{
-	    "Loop"	"Loop"
-	    "Once"	"Once"
-	    "Ping-pong"	"Ping-pong"
-	    "Still"	"Still"
+	    "0"	"Loop"
+	    "1"	"Once"
+	    "2"	"Ping-pong"
+	    "3"	"Still"
 	}
-	range	{ 0 1 }
-	export	none
 	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1,2,3" }
 	parmtag	{ "vray_plugin" "VRayScene" }
 	parmtag	{ "vray_pluginattr" "anim_type" }
-	parmtag	{ "vray_type" "int" }
+	parmtag	{ "vray_type" "enum" }
     }
     parm {
 	name	"anim_offset"

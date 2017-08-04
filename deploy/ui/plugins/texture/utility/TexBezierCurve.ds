@@ -17,23 +17,14 @@
 	parmtag	{ "vray_type" "TextureFloat" }
     }
     parm {
-	name	"types"
-	label	"Types"
-	type	ordinal
-	default	{ "0" }
-	help	"The type of the control points: 0 - free, 1 - bezier, 2- bezier smooth"
-	menu	{
-	    "Free"	"Free"
-	    "Bezier"	"Bezier"
-	    "Bezier smooth"	"Bezier smooth"
-	}
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1,2" }
-	parmtag	{ "vray_plugin" "TexBezierCurve" }
-	parmtag	{ "vray_pluginattr" "types" }
-	parmtag	{ "vray_type" "List<Integer>" }
+        name	"types"
+        label	"Types"
+        type	ordinal
+        default	{ "0" }
+        help	"The type of the control points (0 - free, 1 - bezier, 2 - bezier smooth)"
+        parmtag	{ "vray_plugin" "TexBezierCurve" }
+        parmtag	{ "vray_pluginattr" "types" }
+        parmtag	{ "vray_type" "List<Integer>" }
     }
     parm {
 	name	"num_bezier_points"

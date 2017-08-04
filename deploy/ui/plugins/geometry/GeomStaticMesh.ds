@@ -103,16 +103,14 @@
 	help	"Type of OpenSubdiv subdivision"
 	disablewhen	"{ osd_subdiv_level <= 0 } { osd_subdiv_enable != 1 }"
 	menu	{
-	    "Catmull-Clark"	"Catmull-Clark"
-	    "Loop"	"Loop"
+	    "0"	"Catmull-Clark"
+	    "1"	"Loop"
 	}
-	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "GeomStaticMesh" }
 	parmtag	{ "vray_pluginattr" "osd_subdiv_type" }
-	parmtag	{ "vray_type" "int" }
+	parmtag	{ "vray_type" "enum" }
     }
     parm {
 	name	"osd_preserve_map_borders"
@@ -122,17 +120,14 @@
 	help	"Different modes for subdividing the uv boundaries with OpenSubdiv"
 	disablewhen	"{ osd_subdiv_level <= 0 } { osd_subdiv_uvs != 1 } { osd_subdiv_enable != 1 }"
 	menu	{
-	    "None"	"None"
-	    "Internal"	"Internal"
-	    "All"	"All"
+	    "0"	"None"
+	    "1"	"Internal"
+	    "2"	"All"
 	}
-	range	{ 0 1 }
-	export	none
 	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1,1" }
 	parmtag	{ "vray_plugin" "GeomStaticMesh" }
 	parmtag	{ "vray_pluginattr" "osd_preserve_map_borders" }
-	parmtag	{ "vray_type" "int" }
+	parmtag	{ "vray_type" "enum" }
     }
     parm {
 	name	"osd_preserve_geometry_borders"

@@ -3,8 +3,8 @@
     label	"Subdivision"
     parmtag	{ spare_category "Subdivision" }
     parmtag	{ vray_plugin "GeomStaticSmoothedMesh" }
-	
-	
+
+
 	parm {
 		name	"displacement_tex_color"
 		label	"Color"
@@ -34,15 +34,11 @@
 		parmtag	{ "vray_pluginattr" "displacement_tex_float" }
 		parmtag	{ "vray_type" "TextureFloat" }
     }
-	
-	
-	
-	
+
 	groupsimple {
 		name "folder_main"
 		label "Main"
-		
-		
+
 		parm {
 			name	"vector_displacement"
 			label	"Mode"
@@ -50,18 +46,15 @@
 			default	{ "0" }
 			help	"Mode"
 			menu	{
-				"Normal"	"Normal"
-				"Vector"	"Vector"
-				"Absolute Tangent"	"Absolute Tangent"
-				"Vector (Object Space)"	"Vector (Object Space)"
+				"0"	"Normal"
+				"1"	"Vector"
+				"2"	"Absolute Tangent"
+				"3	"Vector (Object Space)"
 			}
-			range	{ 0 1 }
-			export	none
 			parmtag	{ "cook_dependent" "1" }
-			parmtag	{ "vray_enumkeys" "0,1,2,3" }
 			parmtag	{ "vray_plugin" "GeomStaticSmoothedMesh" }
 			parmtag	{ "vray_pluginattr" "vector_displacement" }
-			parmtag	{ "vray_type" "int" }
+			parmtag	{ "vray_type" "enum" }
 		}
 		parm {
 			name	"map_channel"
@@ -144,12 +137,12 @@
 			parmtag	{ "vray_pluginattr" "max_subdivs" }
 			parmtag	{ "vray_type" "int" }
 		}
-		
-		
-		
-	
+
+
+
+
 	}
-	
+
 	groupsimple {
 		name "folder_options"
 		label "Options"
@@ -166,7 +159,7 @@
 			parmtag	{ "vray_pluginattr" "use_globals" }
 			parmtag	{ "vray_type" "boolean" }
 		}
-		
+
 		parm {
 			name	"preserve_map_borders"
 			label	"Preserve Map Borders"
@@ -174,18 +167,15 @@
 			default	{ "0" }
 			help	"The valid values"
 			menu	{
-				"Not Set"	"Not Set"
-				"None"	"None"
-				"Internal"	"Internal"
-				"All"	"All"
+				"-1" "Not Set"
+				"0"  "None"
+				"1"  "Internal"
+				"2"  "All"
 			}
-			range	{ 0 1 }
-			export	none
 			parmtag	{ "cook_dependent" "1" }
-			parmtag	{ "vray_enumkeys" "-1,0,1,2" }
 			parmtag	{ "vray_plugin" "GeomStaticSmoothedMesh" }
 			parmtag	{ "vray_pluginattr" "preserve_map_borders" }
-			parmtag	{ "vray_type" "int" }
+			parmtag	{ "vray_type" "enum" }
 		}
 		parm {
 			name	"classic_catmark"
@@ -239,7 +229,7 @@
 			parmtag	{ "vray_pluginattr" "object_space_displacement" }
 			parmtag	{ "vray_type" "boolean" }
 		}
-		
+
 		parm {
 			name	"cache_normals"
 			label	"Cache Normals"
@@ -253,7 +243,7 @@
 			parmtag	{ "vray_pluginattr" "cache_normals" }
 			parmtag	{ "vray_type" "boolean" }
 		}
-		
+
 		parm {
 			name	"water_level"
 			label	"Water Level"
@@ -267,7 +257,7 @@
 			parmtag	{ "vray_pluginattr" "water_level" }
 			parmtag	{ "vray_type" "float" }
 		}
-		
+
 		parm {
 			name	"image_width"
 			label	"Image Width"
@@ -281,15 +271,15 @@
 			parmtag	{ "vray_pluginattr" "image_width" }
 			parmtag	{ "vray_type" "int" }
 		}
-		
-		
-		
+
+
+
 	}
-	
+
 	groupcollapsible {
 		name "folder_bounds"
 		label "Bounds"
-		
+
 		parm {
 			name	"use_bounds"
 			label	"Use Bounds"
@@ -334,6 +324,6 @@
 			parmtag	{ "vray_type" "color" }
 		}
 	}
-	
-    
+
+
 }

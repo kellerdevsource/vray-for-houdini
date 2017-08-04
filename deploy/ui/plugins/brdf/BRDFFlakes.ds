@@ -30,16 +30,13 @@
 			default	{ "0" }
 			help	"The mapping method for the flakes"
 			menu	{
-				"Explicit"	"Explicit"
-				"Triplanar"	"Triplanar"
+				"0"	"Explicit"
+				"1"	"Triplanar"
 			}
-			range	{ 0 1 }
-			export	none
 			parmtag	{ "cook_dependent" "1" }
-			parmtag	{ "vray_enumkeys" "0,1" }
 			parmtag	{ "vray_plugin" "BRDFFlakes" }
 			parmtag	{ "vray_pluginattr" "mapping_type" }
-			parmtag	{ "vray_type" "int" }
+			parmtag	{ "vray_type" "enum" }
 		}
 		parm {
 			name	"mapping_channel"
@@ -147,16 +144,13 @@
 			default	{ "1" }
 			help	"Flake filtering mode"
 			menu	{
-				"Simple"	"Simple"
-				"Directional"	"Directional"
+				"0"	"Simple"
+				"1"	"Directional"
 			}
-			range	{ 0 1 }
-			export	none
 			parmtag	{ "cook_dependent" "1" }
-			parmtag	{ "vray_enumkeys" "0,1" }
 			parmtag	{ "vray_plugin" "BRDFFlakes" }
 			parmtag	{ "vray_pluginattr" "flake_filtering_mode" }
-			parmtag	{ "vray_type" "int" }
+			parmtag	{ "vray_type" "enum" }
 		}
 		parm {
 			name	"flake_seed"

@@ -3,12 +3,12 @@
     label	"Toon"
     parmtag	{ spare_category "Toon" }
     parmtag	{ vray_plugin "VolumeVRayToon" }
-	
-	
+
+
 	groupsimple {
 		name "folder_main"
 		label "Main"
-		
+
 		parm {
 			name	"lineColor"
 			label	"Line Color"
@@ -45,16 +45,15 @@
 			default	{ "0" }
 			help	"0:Pixels; 1:World"
 			menu	{
-				"Pixels"	"Pixels"
-				"World"	"World"
+				"0"	"Pixels"
+				"1"	"World"
 			}
 			range	{ 0 1 }
 			export	none
 			parmtag	{ "cook_dependent" "1" }
-			parmtag	{ "vray_enumkeys" "0,1" }
 			parmtag	{ "vray_plugin" "VolumeVRayToon" }
 			parmtag	{ "vray_pluginattr" "widthType" }
-			parmtag	{ "vray_type" "int" }
+			parmtag	{ "vray_type" "enum" }
 		}
 		parm {
 			name	"lineWidth"
@@ -114,7 +113,7 @@
 	groupcollapsible {
 		name "folder_options"
 		label "Options"
-	
+
 		 parm {
 			name	"compensateExposure"
 			label	"Compensate Exposure"
@@ -195,21 +194,19 @@
 		}
 		parm {
 			name	"excludeType"
-			label	"As Inclusive List"
+			label	"List Type"
 			type	ordinal
 			default	{ "0" }
 			help	"Exclude list behavior"
 			menu	{
-				"Exclude"	"Exclude"
-				"Include"	"Include"
+				"0"	"Exclude"
+				"1"	"Include"
 			}
-			range	{ 0 1 }
 			export	none
 			parmtag	{ "cook_dependent" "1" }
-			parmtag	{ "vray_enumkeys" "0,1" }
 			parmtag	{ "vray_plugin" "VolumeVRayToon" }
 			parmtag	{ "vray_pluginattr" "excludeType" }
-			parmtag	{ "vray_type" "boolean" }
+			parmtag	{ "vray_type" "enum" }
 		}
 		parm {
 			name	"distortion_tex"
@@ -225,11 +222,11 @@
 			parmtag	{ "vray_pluginattr" "distortion_tex" }
 			parmtag	{ "vray_type" "TextureFloat" }
 		}
-	
-	
+
+
 	}
-	
-   
-    
-    
+
+
+
+
 }

@@ -91,17 +91,14 @@
 	default	{ "0" }
 	help	"Animation mode"
 	menu	{
-	    "Standard"	"Standard"
-	    "Direct Frame Index"	"Direct Frame Index"
-	    "Loop"	"Loop"
+	    "0"	"Standard"
+	    "1"	"Direct Frame Index"
+	    "2"	"Loop"
 	}
-	range	{ 0 1 }
-	export	none
 	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "PhxShaderCache" }
 	parmtag	{ "vray_pluginattr" "anim_mode" }
-	parmtag	{ "vray_type" "int" }
+	parmtag	{ "vray_type" "enum" }
     }
     parm {
 	name	"loop_overlap"
@@ -124,16 +121,13 @@
 	default	{ "0" }
 	help	"Frame Blending"
 	menu	{
-	    "Interpolation"	"Interpolation"
-	    "Velocity"	"Velocity"
+	    "0"	"Interpolation"
+	    "1"	"Velocity"
 	}
-	range	{ 0 10 }
-	export	none
 	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "PhxShaderCache" }
 	parmtag	{ "vray_pluginattr" "blend_method" }
-	parmtag	{ "vray_type" "int" }
+	parmtag	{ "vray_type" "enum" }
     }
     parm {
 	name	"read_offset"

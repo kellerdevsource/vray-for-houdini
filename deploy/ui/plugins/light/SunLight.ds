@@ -12,7 +12,7 @@
       	name	"enabled"
       	label	"Enabled"
       	type	toggle
-        joinnext
+
       	default	{ "1" }
       	help	"true if the light is casting light (turned on) and false otherwise; it only makes sense to use this parameter if it is animated, or if another object depends on this node but it must not be rendered"
       	range	{ 0 1 }
@@ -44,18 +44,15 @@
       	default	{ "3" }
       	help	"Selects the procedural model used to simulate the TexSky texture"
       	menu	{
-      	    "Preetham et al."	"Preetham et al."
-      	    "CIE Clear"	"CIE Clear"
-      	    "CIE Overcast"	"CIE Overcast"
-      	    "Hosek et al"	"Hosek et al"
+      	    "0"	"Preetham et al."
+      	    "1"	"CIE Clear"
+      	    "2"	"CIE Overcast"
+      	    "3"	"Hosek et al."
       	}
-      	range	{ 0 1 }
-      	export	none
       	parmtag	{ "cook_dependent" "1" }
-      	parmtag	{ "vray_enumkeys" "0,1,2,3" }
       	parmtag	{ "vray_plugin" "SunLight" }
       	parmtag	{ "vray_pluginattr" "sky_model" }
-      	parmtag	{ "vray_type" "int" }
+      	parmtag	{ "vray_type" "enum" }
       }
 
       parm {
@@ -148,17 +145,14 @@
       	default	{ "0" }
       	help	"This option affects the way the color in the Filter color parameter affects the color of the sun"
       	menu	{
-      	    "Filter"	"Filter"
-      	    "Direct"	"Direct"
-      	    "Override"	"Override"
+      	    "0"	"Filter"
+      	    "1"	"Direct"
+      	    "2"	"Override"
       	}
-      	range	{ 0 1 }
-      	export	none
       	parmtag	{ "cook_dependent" "1" }
-      	parmtag	{ "vray_enumkeys" "0,1,2" }
       	parmtag	{ "vray_plugin" "SunLight" }
       	parmtag	{ "vray_pluginattr" "color_mode" }
-      	parmtag	{ "vray_type" "int" }
+      	parmtag	{ "vray_type" "enum" }
       }
 
       parm {
@@ -202,7 +196,7 @@
         name	"shadows"
         label	"Shadows"
         type	toggle
-        joinnext
+
         default	{ "1" }
         help	"true if the light casts shadows and false otherwise"
         range	{ 0 1 }
@@ -232,7 +226,7 @@
         label	"Shadowcolor"
         type	color
         disablewhen "{ map_shadow_color == 1 }"
-        joinnext
+
         size	3
         default	{ "0" "0" "0" }
         help	"The shadow color. Anything but black is not physically accurate"
@@ -309,7 +303,7 @@
         name	"affectDiffuse"
         label	"Affectdiffuse"
         type	toggle
-        joinnext
+
         default	{ "1" }
         help	"true if the light produces diffuse lighting and false otherwise"
         range	{ 0 1 }

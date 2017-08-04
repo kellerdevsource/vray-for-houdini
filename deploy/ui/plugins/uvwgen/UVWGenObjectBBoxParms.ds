@@ -117,26 +117,21 @@ parm {
 	parmtag	{ "vray_plugin" "UVWGenObjectBBox" }
 	parmtag	{ "vray_pluginattr" "coverage" }
 	parmtag	{ "vray_type" "vector" }
-
     }
     parm {
 	NAMEM("wrap_mode")
 	label	"Wrap Mode"
 	type	integer
 	default	{ "0" }
-	help	"Wrap mode (0 - wrap on 0.5 boundary; 1 - wrap on integer boundary"
+	help	"Wrap mode"
 	menu	{
-	    "On 0.5 boundary"	"On 0.5 boundary"
-	    "On integer boundary"	"On integer boundary"
+	    "0"	"On 0.5 Boundary"
+	    "1"	"On Integer Boundary"
 	}
-	range	{ 0 64 }
-	export	none
 	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "UVWGenObjectBBox" }
 	parmtag	{ "vray_pluginattr" "wrap_mode" }
-	parmtag	{ "vray_type" "int" }
-
+	parmtag	{ "vray_type" "enum" }
     }
     parm {
 	NAMEM("duvw_scale")

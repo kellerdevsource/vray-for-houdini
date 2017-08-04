@@ -425,17 +425,15 @@
 			default	{ "2" }
 			help	"The algorithm used to compute multiple scattering"
 			menu	{
-				"Prepass - Based"	"Prepass - Based"
-				"Object Space"	"Object Space"
-				"Raytraced"	"Raytraced"
+				"0"	"Prepass - Based"
+				"1"	"Object Space"
+				"2"	"Raytraced"
 			}
-			range	{ 0 1 }
 			export	none
 			parmtag	{ "cook_dependent" "1" }
-			parmtag	{ "vray_enumkeys" "0,1,2" }
 			parmtag	{ "vray_plugin" "BRDFSkinComplex" }
 			parmtag	{ "vray_pluginattr" "multiple_scattering" }
-			parmtag	{ "vray_type" "int" }
+			parmtag	{ "vray_type" "enum" }
 		}
 		parm {
 			name	"scatter_gi"

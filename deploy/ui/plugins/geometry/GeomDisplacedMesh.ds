@@ -54,11 +54,10 @@
       	    3	"Vector (Absolute)"
       	    4	"Vector (Object)"
       	}
-      	range	{ 0 1 }
       	export	none
       	parmtag	{ "cook_dependent" "1" }
       	parmtag	{ "vray_custom_handling" "1" }
-      	parmtag	{ "vray_enumkeys" "0,1,2,3,4" }
+      	parmtag	{ "vray_type" "enum" }
       }
 
       parm {

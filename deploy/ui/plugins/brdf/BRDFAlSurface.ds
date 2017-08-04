@@ -73,21 +73,20 @@
       	default	{ "0" }
       	help	"The type of the map (0 - from regular texture output, 1 - normal map in tangent space, 2 - normal map in object space, 3 - normal map in camera space, 4 - normal map in world space, 5 - from texture bump output, 6 - explicit normal)"
       	menu	{
-      	    "Bump Map"	"Bump Map"
-      	    "Normal map in tangent space"	"Normal map in tangent space"
-      	    "Normal map in object space"	"Normal map in object space"
-      	    "Normal map in screen space"	"Normal map in screen space"
-      	    "Normal map in world space"	"Normal map in world space"
-      	    "From texture bump output"	"From texture bump output"
-      	    "Explicit normal"	"Explicit normal"
+      	    "0"	"Bump Map"
+      	    "1"	"Normal map in tangent space"
+      	    "2"	"Normal map in object space"
+      	    "3"	"Normal map in screen space"
+      	    "4"	"Normal map in world space"
+      	    "5"	"From texture bump output"
+      	    "6"	"Explicit normal"
       	}
       	range	{ 0 1 }
       	export	none
       	parmtag	{ "cook_dependent" "1" }
-      	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6" }
       	parmtag	{ "vray_plugin" "BRDFAlSurface" }
       	parmtag	{ "vray_pluginattr" "bump_type" }
-      	parmtag	{ "vray_type" "int" }
+      	parmtag	{ "vray_type" "enum" }
       }
 
 
@@ -161,21 +160,20 @@
       	help	"The type of the map (0 - from regular texture output, 1 - normal map in tangent space, 2 - normal map in object space, 3 - normal map in camera space, 4 - normal map in world space, 5 - from texture bump output, 6 - explicit normal)"
       	disablewhen	"{ diffuse_strength <= 0 }"
       	menu	{
-      	    "Bump Map"	"Bump Map"
-      	    "Normal map in tangent space"	"Normal map in tangent space"
-      	    "Normal map in object space"	"Normal map in object space"
-      	    "Normal map in screen space"	"Normal map in screen space"
-      	    "Normal map in world space"	"Normal map in world space"
-      	    "From texture bump output"	"From texture bump output"
-      	    "Explicit normal"	"Explicit normal"
+      	    "0"	"Bump Map"
+      	    "1"	"Normal map in tangent space"
+      	    "2"	"Normal map in object space"
+      	    "3"	"Normal map in screen space"
+      	    "4"	"Normal map in world space"
+      	    "5"	"From texture bump output"
+      	    "6"	"Explicit normal"
       	}
       	range	{ 0 1 }
       	export	none
       	parmtag	{ "cook_dependent" "1" }
-      	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6" }
       	parmtag	{ "vray_plugin" "BRDFAlSurface" }
       	parmtag	{ "vray_pluginattr" "diffuse_bump_type" }
-      	parmtag	{ "vray_type" "int" }
+      	parmtag	{ "vray_type" "enum" }
       }
       parm {
       	name	"sss_mix"
@@ -198,16 +196,13 @@
       	help	"Sub-surface scattering mode (0 - diffusion; 1 - directional)"
       	disablewhen	"{ sss_mix <= 0 }"
       	menu	{
-      	    "Diffusion"	"Diffusion"
-      	    "Directional"	"Directional"
+      	    "0"	"Diffusion"
+      	    "1"	"Directional"
       	}
-      	range	{ 0 1 }
-      	export	none
       	parmtag	{ "cook_dependent" "1" }
-      	parmtag	{ "vray_enumkeys" "0,1" }
       	parmtag	{ "vray_plugin" "BRDFAlSurface" }
       	parmtag	{ "vray_pluginattr" "sss_mode" }
-      	parmtag	{ "vray_type" "int" }
+      	parmtag	{ "vray_type" "enum" }
       }
 
     }
@@ -433,16 +428,13 @@
         help	"The BRDF distribution type for the first specular component (0 - Beckmann, 1 - GGX)"
         disablewhen	"{ reflect1_strength <= 0 }"
         menu	{
-            "Beckmann"	"Beckmann"
-            "GGX"	"GGX"
+            "0"	"Beckmann"
+            "1"	"GGX"
         }
-        range	{ 0 1 }
-        export	none
         parmtag	{ "cook_dependent" "1" }
-        parmtag	{ "vray_enumkeys" "0,1" }
         parmtag	{ "vray_plugin" "BRDFAlSurface" }
         parmtag	{ "vray_pluginattr" "reflect1_distribution" }
-        parmtag	{ "vray_type" "int" }
+        parmtag	{ "vray_type" "enum" }
       }
       parm {
         name	"reflect1_bump_map"
@@ -481,24 +473,22 @@
         help	"The type of the map (0 - from regular texture output, 1 - normal map in tangent space, 2 - normal map in object space, 3 - normal map in camera space, 4 - normal map in world space, 5 - from texture bump output, 6 - explicit normal)"
         disablewhen	"{ reflect1_strength <= 0 }"
         menu	{
-            "Bump Map"	"Bump Map"
-            "Normal map in tangent space"	"Normal map in tangent space"
-            "Normal map in object space"	"Normal map in object space"
-            "Normal map in screen space"	"Normal map in screen space"
-            "Normal map in world space"	"Normal map in world space"
-            "From texture bump output"	"From texture bump output"
-            "Explicit normal"	"Explicit normal"
+            "0"	"Bump Map"
+            "1"	"Normal map in tangent space"
+            "2"	"Normal map in object space"
+            "3"	"Normal map in screen space"
+            "4"	"Normal map in world space"
+            "5"	"From texture bump output"
+            "6"	"Explicit normal"
         }
         range	{ 0 1 }
         export	none
         parmtag	{ "cook_dependent" "1" }
-        parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6" }
         parmtag	{ "vray_plugin" "BRDFAlSurface" }
         parmtag	{ "vray_pluginattr" "reflect1_bump_type" }
-        parmtag	{ "vray_type" "int" }
+        parmtag	{ "vray_type" "enum" }
       }
-
-    }
+      }
 
 
     group {
@@ -569,16 +559,13 @@
       	help	"The BRDF distribution type for the second specular component (0 - Beckmann, 1 - GGX)"
       	disablewhen	"{ reflect2_strength <= 0 }"
       	menu	{
-      	    "Beckmann"	"Beckmann"
-      	    "GGX"	"GGX"
+      	    "0"	"Beckmann"
+      	    "1"	"GGX"
       	}
-      	range	{ 0 1 }
-      	export	none
       	parmtag	{ "cook_dependent" "1" }
-      	parmtag	{ "vray_enumkeys" "0,1" }
       	parmtag	{ "vray_plugin" "BRDFAlSurface" }
       	parmtag	{ "vray_pluginattr" "reflect2_distribution" }
-      	parmtag	{ "vray_type" "int" }
+      	parmtag	{ "vray_type" "enum" }
       }
       parm {
       	name	"reflect2_bump_map"
@@ -613,25 +600,22 @@
       	name	"reflect2_bump_type"
       	label	"Reflect 2 Bump Type"
       	type	ordinal
-      	default	{ "0" }
       	help	"The type of the map (0 - from regular texture output, 1 - normal map in tangent space, 2 - normal map in object space, 3 - normal map in camera space, 4 - normal map in world space, 5 - from texture bump output, 6 - explicit normal)"
       	disablewhen	"{ reflect2_strength <= 0 }"
       	menu	{
-      	    "Bump Map"	"Bump Map"
-      	    "Normal map in tangent space"	"Normal map in tangent space"
-      	    "Normal map in object space"	"Normal map in object space"
-      	    "Normal map in screen space"	"Normal map in screen space"
-      	    "Normal map in world space"	"Normal map in world space"
-      	    "From texture bump output"	"From texture bump output"
-      	    "Explicit normal"	"Explicit normal"
+      	    "0"	"Bump Map"
+      	    "1"	"Normal map in tangent space"
+      	    "2"	"Normal map in object space"
+      	    "3"	"Normal map in screen space"
+      	    "4"	"Normal map in world space"
+      	    "5"	"From texture bump output"
+      	    "6"	"Explicit normal"
       	}
-      	range	{ 0 1 }
-      	export	none
+        default	{ "0" }
       	parmtag	{ "cook_dependent" "1" }
-      	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6" }
       	parmtag	{ "vray_plugin" "BRDFAlSurface" }
       	parmtag	{ "vray_pluginattr" "reflect2_bump_type" }
-      	parmtag	{ "vray_type" "int" }
+      	parmtag	{ "vray_type" "enum" }
       }
 
     }

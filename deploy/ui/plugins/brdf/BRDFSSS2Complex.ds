@@ -62,16 +62,14 @@
 			default	{ "0" }
 			help	"Determines the meaning of the two colors: 0 - diffuse surface reflectance and scatter radius; 1 - scatter coefficient and fog color"
 			menu	{
-				"Diffuse surface reflectance and scatter radius"	"Diffuse surface reflectance and scatter radius"
-				"Scatter coefficient and fog color"	"Scatter coefficient and fog color"
+				"0"	"Diffuse surface reflectance and scatter radius"
+				"1"	"Scatter coefficient and fog color"
 			}
-			range	{ 0 1 }
 			export	none
 			parmtag	{ "cook_dependent" "1" }
-			parmtag	{ "vray_enumkeys" "0,1" }
 			parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 			parmtag	{ "vray_pluginattr" "color_mode" }
-			parmtag	{ "vray_type" "int" }
+			parmtag	{ "vray_type" "enum" }
 		}
 		parm {
 			name	"overall_color"
@@ -273,18 +271,17 @@
 			default	{ "2" }
 			help	"0 - Prepass-based illumination map; 1 - Object-based illumination map; 2 - Raytraced; 3 - None (diffuse approx.);"
 			menu	{
-				"Prepass-Based Illumination Map"	"Prepass-Based Illumination Map"
-				"Object-Based Illumination Map"	"Object-Based Illumination Map"
-				"Raytraced"	"Raytraced"
-				"None (Diffuse Approximation)"	"None (Diffuse Approximation)"
+				"0"	"Prepass-Based Illumination Map"
+				"1"	"Object-Based Illumination Map"
+				"2"
+				"3"	"None (Diffuse Approximation)"
 			}
 			range	{ 0 1 }
 			export	none
 			parmtag	{ "cook_dependent" "1" }
-			parmtag	{ "vray_enumkeys" "0,1,2,3" }
 			parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 			parmtag	{ "vray_pluginattr" "geometry_based_sampling" }
-			parmtag	{ "vray_type" "int" }
+			parmtag	{ "vray_type" "enum" }
 		}
 
 		parm {
@@ -365,19 +362,16 @@
 			help	"Prepass mode"
 			hidewhen	"{ geometry_based_sampling == \"Raytraced\"} { geometry_based_sampling == \"None (Diffuse Approximation)\" } "
 			menu	{
-				"New"	"New"
-				"Save (Per-Frame)"	"Save (Per-Frame)"
-				"Load (Per-Frame)"	"Load (Per-Frame)"
-				"Save (First Frame)"	"Save (First Frame)"
-				"Load (First Frame)"	"Load (First Frame)"
+				"0"	"New"
+				"1"	"Save (Per-Frame)"
+				"2"	"Load (Per-Frame)"
+				"3"	"Save (First Frame)"
+				"4"	"Load (First Frame)"
 			}
-			range	{ 0 1 }
-			export	none
 			parmtag	{ "cook_dependent" "1" }
-			parmtag	{ "vray_enumkeys" "0,1,2,3,4" }
 			parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 			parmtag	{ "vray_pluginattr" "prepass_mode" }
-			parmtag	{ "vray_type" "int" }
+			parmtag	{ "vray_type" "enum" }
 		}
 		parm {
 			name	"prepass_fileName"
@@ -450,10 +444,6 @@
 			parmtag	{ "vray_pluginattr" "samples_color" }
 			parmtag	{ "vray_type" "color" }
 		}
-
-
-
-
 	}
 
 	group {
@@ -465,20 +455,17 @@
 			label	"Single Scatter"
 			type	ordinal
 			default	{ "1" }
-			help	"0 - None; 1 - Simple; 2 - Raytraced(solid); 3 - Raytraced(refractive)"
+			help	""
 			menu	{
-				"None"	"None"
-				"Simple"	"Simple"
-				"Raytraced (Solid)"	"Raytraced (Solid)"
-				"Raytraced (Refractive)"	"Raytraced (Refractive)"
+				"0"	"None"
+				"1"	"Simple"
+				"2"	"Raytraced (Solid)"
+				"3"	"Raytraced (Refractive)"
 			}
-			range	{ 0 1 }
-			export	none
 			parmtag	{ "cook_dependent" "1" }
-			parmtag	{ "vray_enumkeys" "0,1,2,3" }
 			parmtag	{ "vray_plugin" "BRDFSSS2Complex" }
 			parmtag	{ "vray_pluginattr" "single_scatter" }
-			parmtag	{ "vray_type" "int" }
+			parmtag	{ "vray_type" "enum" }
 		}
 		parm {
 			name	"subdivs"

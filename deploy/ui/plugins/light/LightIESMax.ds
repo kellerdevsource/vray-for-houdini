@@ -348,32 +348,28 @@
 	parmtag	{ "vray_type" "float" }
     }
     parm {
-	name	"ies_light_shape"
-	label	"Ies Light Shape"
-	type	ordinal
-	default	{ "0" }
-	help	"IES light shape"
-	menu	{
-	    "From File"	"From File"
-	    "Point"	"Point"
-	    "Rectangular"	"Rectangular"
-	    "Circular"	"Circular"
-	    "Sphere"	"Sphere"
-	    "Vertical cylinder"	"Vertical cylinder"
-	    "Horizontal Cylinder Oriented Along Lum. Length"	"Horizontal Cylinder Oriented Along Lum. Length"
-	    "Horizontal Cylinder Oriented Along Lum. Width"	"Horizontal Cylinder Oriented Along Lum. Width"
-	    "Ellipse Oriented Along Luminaire Length"	"Ellipse Oriented Along Luminaire Length"
-	    "Ellipse Oriented Along Luminaire Width"	"Ellipse Oriented Along Luminaire Width"
-	    "Ellipsoid Oriented Along Luminaire Length"	"Ellipsoid Oriented Along Luminaire Length"
-	    "Ellipsoid Oriented Along Luminaire Width"	"Ellipsoid Oriented Along Luminaire Width"
-	}
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "-1,0,1,2,3,4,5,6,7,8,9,10" }
-	parmtag	{ "vray_plugin" "LightIESMax" }
-	parmtag	{ "vray_pluginattr" "ies_light_shape" }
-	parmtag	{ "vray_type" "int" }
+        name	"ies_light_shape"
+        label	"Ies Light Shape"
+        type	ordinal
+        default	{ "0" }
+        help	"IES light shape"
+        menu	{
+            "-1" "From File"
+            "0" "Point"
+            "1" "Rectangular"
+            "2" "Circular"
+            "3" "Sphere"
+            "4" "Vertical cylinder"
+            "5" "Horizontal Cylinder Oriented Along Lum. Length"
+            "6" "Horizontal Cylinder Oriented Along Lum. Width"
+            "7" "Ellipse Oriented Along Luminaire Length"
+            "8" "Ellipse Oriented Along Luminaire Width"
+            "9" "Ellipsoid Oriented Along Luminaire Length"
+            "10" "Ellipsoid Oriented Along Luminaire Width"
+        }
+        parmtag	{ "cook_dependent" "1" }
+        parmtag	{ "vray_pluginattr" "ies_light_shape" }
+        parmtag	{ "vray_type" "enum" }
     }
     parm {
 	name	"ies_light_width"

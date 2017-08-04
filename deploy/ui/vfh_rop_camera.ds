@@ -43,7 +43,7 @@ parm {
     default { 1280 720 }
     disablewhen "{ res_fraction != \"specific\" }"
     hidewhen    "{ override_camerares == 0 }"
-    joinnext
+    
 }
 
 parm {

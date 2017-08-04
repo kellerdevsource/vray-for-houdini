@@ -11,24 +11,21 @@
         default { "0" }
         help    "Which output should be considered for the 'Output'"
         menu    {
-            "Result A"  "Result A"
-            "Result B"  "Result B"
-            "Product"   "Product"
-            "Sum"   "Sum"
-            "Difference"    "Difference"
-            "Power" "Power"
-            "Division"  "Division"
-            "Minimum"   "Minimum"
-            "Maximum"   "Maximum"
-            "Absolute Difference"   "Absolute Difference"
+            "0" "Result A"
+            "1" "Result B"
+            "2" "Product"
+            "3" "Sum"
+            "4" "Difference"
+            "5" "Power"
+            "6" "Division"
+            "7" "Minimum"
+            "8" "Maximum"
+            "9" "Absolute Difference"
         }
-        range   { 0 1 }
-        export  none
         parmtag { "cook_dependent" "1" }
-        parmtag { "vray_enumkeys" "0,1,2,3,4,5,6,7,8,9" }
         parmtag { "vray_plugin" "TexAColorOp" }
         parmtag { "vray_pluginattr" "mode" }
-        parmtag { "vray_type" "int" }
+        parmtag { "vray_type" "enum" }
     }
 
     parm {

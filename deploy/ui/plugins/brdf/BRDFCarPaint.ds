@@ -68,21 +68,20 @@
       	default	{ "0" }
       	help	"The type of bump mapping (see BRDFBump for more details)"
       	menu	{
-      	    0	"Bump"
-      	    1	"Normal (Tangent)"
-      	    2	"Normal (Object)"
-      	    3	"Normal (Camera)"
-      	    4	"Normal (World)"
-      	    5	"From Bump Output"
-      	    6	"Explicit Normal"
+      	    "0" "Bump"
+      	    "1" "Normal (Tangent)"
+      	    "2" "Normal (Object)"
+      	    "3" "Normal (Camera)"
+      	    "4" "Normal (World)"
+      	    "5" "From Bump Output"
+      	    "6" "Explicit Normal"
       	}
       	range	{ 0 1 }
       	export	none
       	parmtag	{ "cook_dependent" "1" }
-      	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6" }
       	parmtag	{ "vray_plugin" "BRDFCarPaint" }
       	parmtag	{ "vray_pluginattr" "base_bump_type" }
-      	parmtag	{ "vray_type" "int" }
+      	parmtag	{ "vray_type" "enum" }
       }
 
       parm {
@@ -194,21 +193,20 @@
       	default	{ "0" }
       	help	"The type of bump mapping"
       	menu	{
-      	    "Bump"	"Bump"
-      	    "Normal (Tangent)"	"Normal (Tangent)"
-      	    "Normal (Object)"	"Normal (Object)"
-      	    "Normal (Camera)"	"Normal (Camera)"
-      	    "Normal (World)"	"Normal (World)"
-      	    "From Bump Output"	"From Bump Output"
-      	    "Explicit Normal"	"Explicit Normal"
+      	    "0"	"Bump"
+      	    "1"	"Normal (Tangent)"
+      	    "2"	"Normal (Object)"
+      	    "3"	"Normal (Camera)"
+      	    "4"	"Normal (World)"
+            "5"	"From Bump Output"
+            "6"	"Explicit Normal"
       	}
       	range	{ 0 1 }
       	export	none
       	parmtag	{ "cook_dependent" "1" }
-      	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6" }
       	parmtag	{ "vray_plugin" "BRDFCarPaint" }
       	parmtag	{ "vray_pluginattr" "coat_bump_type" }
-      	parmtag	{ "vray_type" "int" }
+      	parmtag	{ "vray_type" "enum" }
       }
       parm {
       	name	"coat_bump_float"
@@ -280,16 +278,14 @@
       	default	{ "0" }
       	help	"The mapping method for the flakes"
       	menu	{
-      	    0	"Explicit"
-      	    1	"Triplanar"
+      	    "0" "Explicit"
+      	    "1" "Triplanar"
       	}
-      	range	{ 0 1 }
       	export	none
       	parmtag	{ "cook_dependent" "1" }
-      	parmtag	{ "vray_enumkeys" "0,1" }
       	parmtag	{ "vray_plugin" "BRDFCarPaint" }
       	parmtag	{ "vray_pluginattr" "mapping_type" }
-      	parmtag	{ "vray_type" "int" }
+      	parmtag	{ "vray_type" "enum" }
       }
 	   parm {
       	name	"mapping_channel"
@@ -398,16 +394,13 @@
       	default	{ "1" }
       	help	"Flake filtering mode"
       	menu	{
-      	    "Simple"	"Simple"
-      	    "Directional"	"Directional"
+      	    "0" "Simple"
+      	    "1" "Directional"
       	}
-      	range	{ 0 1 }
-      	export	none
       	parmtag	{ "cook_dependent" "1" }
-      	parmtag	{ "vray_enumkeys" "0,1" }
       	parmtag	{ "vray_plugin" "BRDFCarPaint" }
       	parmtag	{ "vray_pluginattr" "flake_filtering_mode" }
-      	parmtag	{ "vray_type" "int" }
+      	parmtag	{ "vray_type" "enum" }
       }
       parm {
       	name	"flake_seed"

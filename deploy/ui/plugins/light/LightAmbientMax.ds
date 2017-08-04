@@ -23,17 +23,14 @@
 	default	{ "0" }
 	help	"light mode"
 	menu	{
-	    "Color"	"Color"
-	    "Direct"	"Direct"
-	    "Indirect"	"Indirect"
+	    "0"	"Color"
+	    "1"	"Direct"
+	    "2"	"Indirect"
 	}
-	range	{ 0 1 }
-	export	none
 	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "LightAmbientMax" }
 	parmtag	{ "vray_pluginattr" "mode" }
-	parmtag	{ "vray_type" "int" }
+	parmtag	{ "vray_type" "enum" }
     }
     parm {
 	name	"gi_min_distance"

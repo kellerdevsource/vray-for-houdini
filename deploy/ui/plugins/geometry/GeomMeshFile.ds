@@ -72,18 +72,16 @@
         default { "0" }
         help    "Animated proxy playback type"
         menu    {
-            "Loop"  "Loop"
-            "Once"  "Once"
-            "Ping-pong" "Ping-pong"
-            "Still" "Still"
+            "0"  "Loop"
+            "1"  "Once"
+            "2" "Ping-pong"
+            "3" "Still"
         }
-        range   { 0 1 }
         export  none
         parmtag { "cook_dependent" "1" }
-        parmtag { "vray_enumkeys" "0,1,2,3" }
         parmtag { "vray_plugin" "GeomMeshFile" }
         parmtag { "vray_pluginattr" "anim_type" }
-        parmtag { "vray_type" "int" }
+        parmtag { "vray_type" "enum" }
     }
 
     parm {
@@ -349,16 +347,14 @@
         default { "0" }
         help    "Specifies the type of both names and ids lists"
         menu    {
-            "Exclude"   "Exclude"
-            "Include"   "Include"
+            "0"   "Exclude"
+            "1"   "Include"
         }
-        range   { 0 1 }
         export  none
         parmtag { "cook_dependent" "1" }
-        parmtag { "vray_enumkeys" "0,1" }
         parmtag { "vray_plugin" "GeomMeshFile" }
         parmtag { "vray_pluginattr" "visibility_lists_type" }
-        parmtag { "vray_type" "int" }
+        parmtag { "vray_type" "enum" }
     }
 
     parm {
@@ -368,16 +364,14 @@
         default { "0" }
         help    "Specifies the type of both names and ids lists"
         menu    {
-            "Exclude"   "Exclude"
-            "Include"   "Include"
+            "0"   "Exclude"
+            "1"   "Include"
         }
-        range   { 0 1 }
         export  none
         parmtag { "cook_dependent" "1" }
-        parmtag { "vray_enumkeys" "0,1" }
         parmtag { "vray_plugin" "GeomMeshFile" }
         parmtag { "vray_pluginattr" "hair_visibility_lists_type" }
-        parmtag { "vray_type" "int" }
+        parmtag { "vray_type" "enum" }
     }
 
     parm {
@@ -429,16 +423,14 @@
         default { "1" }
         help    "Specifies the type of both names and ids lists. 0 - exclude; 1 - include"
         menu    {
-            "Exclude"   "Exclude"
-            "Include"   "Include"
+            "0"   "Exclude"
+            "1"   "Include"
         }
-        range   { 0 1 }
         export  none
         parmtag { "cook_dependent" "1" }
-        parmtag { "vray_enumkeys" "0,1" }
         parmtag { "vray_plugin" "GeomMeshFile" }
         parmtag { "vray_pluginattr" "particle_visibility_lists_type" }
-        parmtag { "vray_type" "int" }
+        parmtag { "vray_type" "enum" }
     }
 
     parm {
@@ -476,16 +468,15 @@
         default { "1" }
         help    "Set to 0 to render particles as spheres. Set it to 1 to render them as points"
         menu    {
-            "Spheres"   "Spheres"
-            "Points"    "Points"
+            "0"   "Spheres"
+            "1"    "Points"
         }
         range   { 0 1 }
         export  none
         parmtag { "cook_dependent" "1" }
-        parmtag { "vray_enumkeys" "0,1" }
         parmtag { "vray_plugin" "GeomMeshFile" }
         parmtag { "vray_pluginattr" "particle_render_mode" }
-        parmtag { "vray_type" "int" }
+        parmtag { "vray_type" "enum" }
     }
 
     parm {
@@ -607,17 +598,15 @@
         default { "1" }
         help    "Determines the smoothing mode of the mapping channels' borders. 0-None, 1-Internal and 2-All"
         menu    {
-            "None"  "None"
-            "Internal"  "Internal"
-            "All"   "All"
+            "0"  "None"
+            "1"  "Internal"
+            "2"  "All"
         }
-        range   { 0 1 }
         export  none
         parmtag { "cook_dependent" "1" }
-        parmtag { "vray_enumkeys" "0,1,2" }
         parmtag { "vray_plugin" "GeomMeshFile" }
         parmtag { "vray_pluginattr" "subdiv_preserve_map_borders" }
-        parmtag { "vray_type" "int" }
+        parmtag { "vray_type" "enum" }
     }
 
     parm {

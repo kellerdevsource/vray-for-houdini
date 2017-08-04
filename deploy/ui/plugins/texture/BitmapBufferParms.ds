@@ -22,43 +22,39 @@ parm {
 }
 
 parm {
-    NAMEM("interpolation")
-    label   "Interpolation"
-    type    ordinal
-    default { "0" }
-    help    "Interpolation method for the Mip-Map filtering"
-    menu    {
-        "Bilinear"  "Bilinear"
-        "Bicubic"   "Bicubic"
-        "Quadratic" "Quadratic"
-    }
-    range   { 0 1 }
-    export  none
-    parmtag { "cook_dependent" "1" }
-    parmtag { "vray_enumkeys" "0,1,2" }
-    parmtag { "vray_plugin" "BitmapBuffer" }
-    parmtag { "vray_pluginattr" "interpolation" }
-    parmtag { "vray_type" "int" }
-}
-
-parm {
     NAMEM("filter_type")
     label   "Filter"
     type    ordinal
     default { "1" }
     help    "Filtering"
     menu    {
-        "Nearest"   "Nearest"
-        "None"  "None"
-        "Mip-Map"   "Mip-Map"
-        "Area"  "Area"
+        "-1" "Nearest"
+        "0" "None"
+        "1" "Mip-Map"
+        "2" "Area"
     }
-    export  none
     parmtag { "cook_dependent" "1" }
-    parmtag { "vray_enumkeys" "-1,0,1,2" }
     parmtag { "vray_plugin" "BitmapBuffer" }
     parmtag { "vray_pluginattr" "filter_type" }
-    parmtag { "vray_type" "int" }
+    parmtag { "vray_type" "enum" }
+}
+
+parm {
+    NAMEM("interpolation")
+    label   "Interpolation"
+    type    ordinal
+    default { "0" }
+    help    "Interpolation method for the Mip-Map filtering"
+    menu    {
+        "0" "Bilinear"
+        "1" "Bicubic"
+        "2" "Quadratic"
+    }
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "BitmapBuffer" }
+    parmtag { "vray_pluginattr" "interpolation" }
+    parmtag { "vray_type" "enum" }
+    disablewhen "{ filter_type != 1 }"
 }
 
 parm {
@@ -82,17 +78,14 @@ parm {
     default { "2" }
     help    "Color space"
     menu    {
-        "Linear" "Linear"
-        "Gamma corrected" "Gamma Corrected"
-        "sRGB" "sRGB"
+        "0" "Linear"
+        "1" "Gamma Corrected"
+        "2" "sRGB"
     }
-    range   { 0 1 }
-    export  none
     parmtag { "cook_dependent" "1" }
-    parmtag { "vray_enumkeys" "0,1,2" }
     parmtag { "vray_plugin" "BitmapBuffer" }
     parmtag { "vray_pluginattr" "color_space" }
-    parmtag { "vray_type" "int" }
+    parmtag { "vray_type" "enum" }
 }
 
 parm {
@@ -278,17 +271,14 @@ parm {
     default { "0" }
     help    "Image file list (IFL) end condition"
     menu    {
-        "Loop"  "Loop"
-        "Ping Pong" "Ping Pong"
-        "Hold"  "Hold"
+        "0" "Loop"
+        "1" "Ping Pong"
+        "2" "Hold"
     }
-    range   { 0 1 }
-    export  none
     parmtag { "cook_dependent" "1" }
-    parmtag { "vray_enumkeys" "0,1,2" }
     parmtag { "vray_plugin" "BitmapBuffer" }
     parmtag { "vray_pluginattr" "ifl_end_condition" }
-    parmtag { "vray_type" "int" }
+    parmtag { "vray_type" "enum" }
     invisible
 }
 

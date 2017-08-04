@@ -274,17 +274,14 @@
 				default	{ "1" }
 				help	"Determines if the glossy rays are treated by V-Ray as GI rays"
 				menu	{
-					"Never"	"Never"
-					"GI"	"GI"
-					"Always"	"Always"
+					"0"	"Never"
+					"1"	"GI"
+					"2"	"Always"
 				}
-				range	{ 0 1 }
-				export	none
 				parmtag	{ "cook_dependent" "1" }
-				parmtag	{ "vray_enumkeys" "0,1,2" }
 				parmtag	{ "vray_plugin" "BRDFGGX" }
 				parmtag	{ "vray_pluginattr" "glossyAsGI" }
-				parmtag	{ "vray_type" "int" }
+				parmtag	{ "vray_type" "enum" }
 			}
 			parm {
 				name	"reflect_exit_color"

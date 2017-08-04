@@ -27,7 +27,7 @@
       name	"intensity"
       label	"Intensity"
       type	float
-      joinnext
+      
       disablewhen	"{ map_intensity == 1 }"
       default	{ "1" }
       help	"Light intensity"
@@ -69,7 +69,7 @@
         name	"color"
         label	"Color"
         type	color
-        joinnext
+        
         disablewhen "{ map_color == 1 }"
         size	3
         default	{ "1" "1" "1" }
@@ -113,23 +113,22 @@
       	name	"units"
       	label	"Units"
       	type	ordinal
-        joinnext
+        
       	default	{ "0" }
-      	help	"Units for the intensity (0 - default, 1 - lumens, 2 - lm/m/m/sr, 3 - watts, 4 - w/m/m/sr)"
+      	help	"Units for the intensity"
       	menu	{
-      	    "Default"	"Default"
-      	    "Lumens"	"Lumens"
-      	    "Lm/m/m/sr"	"Lm/m/m/sr"
-      	    "Watts"	"Watts"
-      	    "W/m/m/sr"	"W/m/m/sr"
+      	    "0"	"Default"
+      	    "1"	"Lumens"
+      	    "2"	"Lm/m/m/sr"
+      	    "3"	"Watts"
+      	    "4"	"W/m/m/sr"
       	}
       	range	{ 0 1 }
       	export	none
       	parmtag	{ "cook_dependent" "1" }
-      	parmtag	{ "vray_enumkeys" "0,1,2,3,4" }
       	parmtag	{ "vray_plugin" "LightAmbient" }
       	parmtag	{ "vray_pluginattr" "units" }
-      	parmtag	{ "vray_type" "int" }
+      	parmtag	{ "vray_type" "enum" }
       }
 
       parm {
@@ -200,7 +199,7 @@
         	label	"Shadowcolor"
         	type	color
           disablewhen "{ map_shadow_color == 1 }"
-          joinnext
+          
         	size	3
         	default	{ "0" "0" "0" }
         	help	"The shadow color. Anything but black is not physically accurate"
@@ -244,7 +243,7 @@
           name	"shadowRadius"
           label	"Shadowradius"
           type	float
-          joinnext
+          
           disablewhen "{ map_shadow_radius == 1 }"
           default	{ "0" }
           help	"The size of the light; 0.0 is a point light, larger values produces soft (area) shadows"

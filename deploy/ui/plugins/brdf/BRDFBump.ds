@@ -10,12 +10,11 @@
       name "folder_main"
       label "Main"
 
-
       parm {
       	name	"map_type"
       	label	"Type"
       	type	ordinal
-        joinnext
+        
       	default	{ "0" }
       	help	"The type of the map"
       	menu	{
@@ -27,19 +26,16 @@
       	    5	"From Bump"
       	    6	"Explicit Normal"
       	}
-      	range	{ 0 1 }
-      	export	none
       	parmtag	{ "cook_dependent" "1" }
-      	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6" }
       	parmtag	{ "vray_plugin" "BRDFBump" }
       	parmtag	{ "vray_pluginattr" "map_type" }
-      	parmtag	{ "vray_type" "int" }
+      	parmtag	{ "vray_type" "enum" }
       }
       parm {
       	name	"bump_shadows"
       	label	"Bump Shadows"
       	type	toggle
-        joinnext
+        
       	default	{ "0" }
       	help	"true to offset the surface shading point, in addition to the normal"
       	range	{ 0 1 }

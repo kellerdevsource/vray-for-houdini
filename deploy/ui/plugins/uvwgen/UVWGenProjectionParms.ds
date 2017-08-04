@@ -13,44 +13,38 @@ parm {
 	default	{ "1" }
 	help	"Mapping type"
 	menu	{
-	    "None"	"None"
-	    "Planar"	"Planar"
-	    "Spherical"	"Spherical"
-	    "Cylindrical"	"Cylindrical"
-	    "Ball"	"Ball"
-	    "Cubic"	"Cubic"
-	    "Triplanar"	"Triplanar"
-	    "Perspective"	"Perspective"
+	    "0"	"None"
+	    "1"	"Planar"
+	    "2"	"Spherical"
+	    "3"	"Cylindrical"
+	    "4"	"Ball"
+	    "5"	"Cubic"
+	    "6"	"Triplanar"
+	    "7"	"Perspective"
 	}
-	range	{ 0 1 }
-	export	none
 	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,8" }
 	parmtag	{ "vray_plugin" "UVWGenProjection" }
 	parmtag	{ "vray_pluginattr" "type" }
-	parmtag	{ "vray_type" "int" }
-	
-    }
-    parm {
+	parmtag	{ "vray_type" "enum" }
+}
+
+parm {
 	NAMEM("fitfill")
 	label	"Fit Fill"
 	type	ordinal
 	default	{ "0" }
 	help	"Fit fill"
 	menu	{
-	    "Fit Fill"	"Fit Fill"
-	    "Horizontal"	"Horizontal"
-	    "Vertical"	"Vertical"
+	    "0"	"Fit Fill"
+	    "1"	"Horizontal"
+	    "2"	"Vertical"
 	}
-	range	{ 0 1 }
-	export	none
 	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "UVWGenProjection" }
 	parmtag	{ "vray_pluginattr" "fitfill" }
-	parmtag	{ "vray_type" "int" }
-	
-    }
+	parmtag	{ "vray_type" "enum" }
+}
+
     parm {
 	NAMEM("fittype")
 	label	"Fit Type"
@@ -58,18 +52,15 @@ parm {
 	default	{ "0" }
 	help	"Fit type"
 	menu	{
-	    "None"	"None"
-	    "Match camera film gate"	"Match camera film gate"
-	    "Match camera resolution"	"Match camera resolution"
+	    "0"	"None"
+	    "1"	"Match camera film gate"
+	    "2"	"Match camera resolution"
 	}
-	range	{ 0 1 }
-	export	none
 	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1,2" }
 	parmtag	{ "vray_plugin" "UVWGenProjection" }
 	parmtag	{ "vray_pluginattr" "fittype" }
-	parmtag	{ "vray_type" "int" }
-	
+	parmtag	{ "vray_type" "enum" }
+
     }
     parm {
 	NAMEM("u_angle")
@@ -82,7 +73,7 @@ parm {
 	parmtag	{ "vray_plugin" "UVWGenProjection" }
 	parmtag	{ "vray_pluginattr" "u_angle" }
 	parmtag	{ "vray_type" "float" }
-	
+
     }
     parm {
 	NAMEM("v_angle")
@@ -95,7 +86,7 @@ parm {
 	parmtag	{ "vray_plugin" "UVWGenProjection" }
 	parmtag	{ "vray_pluginattr" "v_angle" }
 	parmtag	{ "vray_type" "float" }
-	
+
     }
     parm {
 	NAMEM("film_gate_w")
@@ -108,7 +99,7 @@ parm {
 	parmtag	{ "vray_plugin" "UVWGenProjection" }
 	parmtag	{ "vray_pluginattr" "film_gate_w" }
 	parmtag	{ "vray_type" "float" }
-	
+
     }
     parm {
 	NAMEM("film_gate_h")
@@ -121,7 +112,7 @@ parm {
 	parmtag	{ "vray_plugin" "UVWGenProjection" }
 	parmtag	{ "vray_pluginattr" "film_gate_h" }
 	parmtag	{ "vray_type" "float" }
-	
+
     }
     parm {
 	NAMEM("hide_backface")
@@ -135,7 +126,7 @@ parm {
 	parmtag	{ "vray_plugin" "UVWGenProjection" }
 	parmtag	{ "vray_pluginattr" "hide_backface" }
 	parmtag	{ "vray_type" "boolean" }
-	
+
     }
     parm {
 	NAMEM("hide_occluded")
@@ -149,7 +140,7 @@ parm {
 	parmtag	{ "vray_plugin" "UVWGenProjection" }
 	parmtag	{ "vray_pluginattr" "hide_occluded" }
 	parmtag	{ "vray_type" "boolean" }
-	
+
     }
     parm {
 	NAMEM("object_space")
@@ -163,7 +154,7 @@ parm {
 	parmtag	{ "vray_plugin" "UVWGenProjection" }
 	parmtag	{ "vray_pluginattr" "object_space" }
 	parmtag	{ "vray_type" "boolean" }
-	
+
     }
 
 #undef NAMEM

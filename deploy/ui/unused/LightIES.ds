@@ -26,7 +26,7 @@
         name	"power"
         label	"Power"
         type	float
-        joinnext
+        
         default	{ "0" }
         help	"Limuous power (in lm); if zero, the default lumious power from the IES profile is used"
         range	{ 0 64 }
@@ -85,7 +85,7 @@
         name	"color"
         label	"Color"
         type	color
-        joinnext
+        
         disablewhen "{ map_color == 1 }"
         size	3
         default	{ "1" "1" "1" }
@@ -269,7 +269,7 @@
         label	"Shadowcolor"
         type	color
         disablewhen "{ map_shadow_color == 1 }"
-        joinnext
+        
         size	3
         default	{ "0" "0" "0" }
         help	"The shadow color. Anything but black is not physically accurate"

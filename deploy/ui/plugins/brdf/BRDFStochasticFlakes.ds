@@ -92,16 +92,14 @@
 	help	"The mapping method for the flakes (0 - explicit mapping channel, 1 - triplanar projection in object space)"
 	disablewhen	"{ enable_flakes != 1 }"
 	menu	{
-	    "Mapping channel"	"Mapping channel"
-	    "Triplanar"	"Triplanar"
+	    "0"	"Mapping Channel"
+	    "1"	"Triplanar"
 	}
-	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "BRDFStochasticFlakes" }
 	parmtag	{ "vray_pluginattr" "mapping_type" }
-	parmtag	{ "vray_type" "int" }
+	parmtag	{ "vray_type" "enum" }
     }
     parm {
 	name	"map_channel"
@@ -136,18 +134,15 @@
 	label	"Brdf Type"
 	type	ordinal
 	default	{ "1" }
-	help	"BRDF type (0 - Beckmann, 1 - GGX)"
+	help	"BRDF type"
 	menu	{
-	    "Beckmann"	"Beckmann"
-	    "GGX"	"GGX"
+	    "0"	"Beckmann"
+	    "1"	"GGX"
 	}
-	range	{ 0 1 }
-	export	none
 	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1" }
 	parmtag	{ "vray_plugin" "BRDFStochasticFlakes" }
 	parmtag	{ "vray_pluginattr" "brdf_type" }
-	parmtag	{ "vray_type" "int" }
+	parmtag	{ "vray_type" "enum" }
     }
     parm {
 	name	"random_hue"
