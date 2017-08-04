@@ -1899,7 +1899,7 @@ void MotionBlurParams::calcParams(fpreal currFrame)
 {
 	mb_start = currFrame - (mb_duration * (0.5 - mb_interval_center));
 	mb_end   = mb_start + mb_duration;
-	mb_frame_inc = mb_duration / std::max(mb_geom_samples - 1, 1);
+	mb_frame_inc = mb_duration / VUtils::Max(mb_geom_samples - 1, 1);
 
 	Log::getLog().info("  MB time: %.3f", currFrame);
 	Log::getLog().info("  MB duration: %.3f", mb_duration);
@@ -1910,7 +1910,7 @@ void MotionBlurParams::calcParams(fpreal currFrame)
 	Log::getLog().info("  MB inc:   %.3f", mb_frame_inc);
 }
 
-void VRayExporter::setFrame(fpreal time)
+void VRayExporter::setTime(fpreal time)
 {
 	m_context.setTime(time);
 }
@@ -1920,7 +1920,7 @@ void VRayExporter::exportFrame(fpreal time)
 	Log::getLog().debug("VRayExporter::exportFrame(%.3f)",
 						m_context.getFloatFrame());
 
-	setFrame(time);
+	setTime(time);
 
 	if (   !m_isMotionBlur
 		&& !m_isVelocityOn)
@@ -1958,7 +1958,7 @@ void VRayExporter::exportFrame(fpreal time)
 		}
 
 		// Set time back to original time for rendering
-		m_context.setTime(time);
+		setTime(time);
 	}
 
 	if (isAborted()) {

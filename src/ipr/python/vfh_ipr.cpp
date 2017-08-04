@@ -432,7 +432,7 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 
 		exporter.initExporter(getFrameBufferType(*ropNode), 1, now, now);
 
-		exporter.setFrame(now);
+		exporter.setTime(now);
 
 		exporter.exportSettings();
 		exporter.exportScene();

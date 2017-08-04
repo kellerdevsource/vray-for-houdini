@@ -40,6 +40,7 @@ struct PrimitiveItem {
 		, geometry(geometry)
 		, material(material)
 		, tm(1)
+		, vel(1)
 		, objectID(objectIdUndefined)
 		, t(0.0)
 		, flags(itemFlagsNone)
@@ -65,6 +66,9 @@ struct PrimitiveItem {
 
 	/// Transform.
 	VRay::Transform tm;
+
+	/// Velocity.
+	VRay::Transform vel;
 
 	/// Object ID.
 	int objectID;
