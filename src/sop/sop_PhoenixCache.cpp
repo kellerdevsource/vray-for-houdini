@@ -12,7 +12,6 @@
 
 #include "sop_PhoenixCache.h"
 #include "vfh_prm_templates.h"
-#include "gu_volumegridref.h"
 
 #include <GU/GU_PrimVolume.h>
 #include <GU/GU_PrimPacked.h>
@@ -34,6 +33,43 @@ PRM_Template* SOP::PhxShaderCache::GetPrmTemplate()
 	}
 
 	return AttrItems;
+}
+
+void SOP::PhxShaderCache::updateVRayVolumeGridRefPrim(VRayVolumeGridRef *gridRefPtr, GU_PrimPacked *pack, OP_Context &context, const float t)
+{
+	if (!gridRefPtr) {
+		// if we don't have previous gridref use the new one
+		gridRefPtr = UTverify_cast<VRayVolumeGridRef*>(pack->implementation());
+	}
+	else {
+		// if we have previous gridref move its cache to the new one
+		UTverify_cast<VRayVolumeGridRef*>(pack->implementation())->m_dataCache = std::move(gridRefPtr->m_dataCache);
+		delete gridRefPtr;
+		gridRefPtr = UTverify_cast<VRayVolumeGridRef*>(pack->implementation());
+	}
+
+	// Set the location of the packed primitive's point.
+	UT_Vector3 pivot(0, 0, 0);
+	pack->setPivot(pivot);
+	gdp->setPos3(pack->getPointOffset(0), pivot);
+
+	// Set the options on the primitive
+	OP_Options options;
+	for (int i = 0; i < getParmList()->getEntries(); ++i) {
+		const PRM_Parm &prm = getParm(i);
+		options.setOptionFromTemplate(this, prm, *prm.getTemplatePtr(), t);
+	}
+
+	// Check if file contains frame pattern "$F". If it does,
+	// then we need to replace it with Phoenix compatible pattern (####).
+	UT_String raw, parsed;
+	evalStringRaw(raw, "cache_path", 0, t);
+	options.setOptionB("literal_cache_path", !raw.findString("$F", false, false));
+
+	options.setOptionF("current_frame", context.getFloatFrame());
+
+	gridRefPtr->update(options);
+	pack->setPathAttribute(getFullPath());
 }
 
 
@@ -72,45 +108,12 @@ OP_ERROR SOP::PhxShaderCache::cookMySop(OP_Context &context)
 	
 	// Create a packed primitive
 	GU_PrimPacked *pack = GU_PrimPacked::build(*gdp, "VRayVolumeGridRef");
-	if (!gridRefPtr) {
-		// if we don't have previous gridref use the new one
-		gridRefPtr = UTverify_cast<VRayVolumeGridRef*>(pack->implementation());
+	if (pack) {
+		updateVRayVolumeGridRefPrim(gridRefPtr, pack, context, t);
 	}
 	else {
-		// if we have previous gridref move its cache to the new one
-		UTverify_cast<VRayVolumeGridRef*>(pack->implementation())->m_dataCache = std::move(gridRefPtr->m_dataCache);
-		delete gridRefPtr;
-		gridRefPtr = UTverify_cast<VRayVolumeGridRef*>(pack->implementation());
-	}
-
-	if (NOT(pack)) {
 		addWarning(SOP_MESSAGE, "Can't create packed primitive VRayVolumeGridRef");
-		gdp->destroyStashed();
-		return error();
 	}
-
-	// Set the location of the packed primitive's point.
-	UT_Vector3 pivot(0, 0, 0);
-	pack->setPivot(pivot);
-	gdp->setPos3(pack->getPointOffset(0), pivot);
-
-	// Set the options on the primitive
-	OP_Options options;
-	for (int i = 0; i < getParmList()->getEntries(); ++i) {
-		const PRM_Parm &prm = getParm(i);
-		options.setOptionFromTemplate(this, prm, *prm.getTemplatePtr(), t);
-	}
-
-	// Check if file contains frame pattern "$F". If it does,
-	// then we need to replace it with Phoenix compatible pattern (####).
-	UT_String raw, parsed;
-	evalStringRaw(raw, "cache_path", 0, t);
-	options.setOptionB("literal_cache_path", !raw.findString("$F", false, false));
-
-	options.setOptionF("current_frame", context.getFloatFrame());
-
-	gridRefPtr->update(options);
-	pack->setPathAttribute(getFullPath());
 
 	gdp->destroyStashed();
 

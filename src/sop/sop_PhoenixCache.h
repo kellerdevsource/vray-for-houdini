@@ -13,6 +13,7 @@
 #ifdef  CGR_HAS_AUR
 
 #include "sop_node_base.h"
+#include "gu_volumegridref.h"
 
 namespace VRayForHoudini {
 namespace SOP {
@@ -32,6 +33,14 @@ public:
 
 protected:
 	virtual void              setPluginType() VRAY_OVERRIDE;
+
+private:
+	/// Updates gridRefPtr with the options taken from this primitive
+	/// @param gridRefPtr Pointer to existing VRayVolumeGridRef instance. If there is no existing instance is nullptr
+	/// @param pack Pointer to the packed primitive of type VRayVolumegridRef
+	/// @param context
+	/// @param time
+	void                      updateVRayVolumeGridRefPrim(VRayVolumeGridRef *gridRefPtr, GU_PrimPacked *pack, OP_Context &context, const float t);
 
 private:
 	UT_StringArray            m_serializedChannels;
