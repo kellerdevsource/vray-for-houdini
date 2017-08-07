@@ -13,9 +13,9 @@
 #include "vfh_exporter.h"
 #include "vfh_log.h"
 #include "vfh_ipr_viewer.h"
-#include "vfh_ipr_client.h"
 #include "vfh_vray_instances.h"
 #include "vfh_attr_utils.h"
+#include "vfh_process_check.h"
 
 #include <HOM/HOM_Module.h>
 
@@ -119,27 +119,81 @@ FORCEINLINE float getFloat(PyObject *dict, const char *key, float defValue)
 	return PyFloat_AS_DOUBLE(item);
 }
 
-static VRayExporter *vrayExporter = nullptr;
-static PingPongClient *stopChecker = nullptr;
+static ProcessCheckPtr procCheck = nullptr;
 
-static VRayExporter& getExporter()
+/// RAII wrapper over the lock of the vrayExporter pointer
+/// Has bool cast operator so it can be used directly in if statements
+class WithExporter
 {
-	if (!vrayExporter) {
-		vrayExporter = new VRayExporter(nullptr);
+public:
+	/// Locks the mutex
+	WithExporter() {
+		exporterMtx.lock();
 	}
-	return *vrayExporter;
-}
+
+	/// Unlocks the mutex
+	~WithExporter() {
+		exporterMtx.unlock();
+	}
+
+	/// Return true if the exporter is already allocated
+	explicit operator bool() const & {
+		return !!exporter;
+	}
+
+	/// Dereference the exporter pointer and return it (this must not be called if the pointer is nullptr)
+	VRayExporter & getExporter() {
+		if (!exporter) {
+			Log::getLog().error("Trying to dereference NULL exporter!");
+			vassert(false && "Trying to dereference NULL exporter!");
+		}
+		return *exporter;
+	}
+
+	/// Get copy of the exporter pointer
+	VRayExporter * getPointer() {
+		return exporter;
+	}
+
+	/// Allocate the exporter
+	void allocExporter() {
+		if (!exporter) {
+			exporter = new VRayExporter(nullptr);
+		}
+	}
+
+	/// Free the exporter
+	void freeExporter() {
+		FreePtr(exporter);
+	}
+
+	/// Unguarded static method to access the pointer without locking the mutex
+	/// Used to avoid locking if the exporter is nullptr and it is not needed to do operations with the pointer
+	static VRayExporter * getPointerUnguarded() {
+		return exporter;
+	}
+
+	// make sure we execute this only on variables of this clas
+	// NOTE: dissalows this: if (WithExporter()) {...} which will not hold lock inside the if body
+	explicit operator bool() && = delete;
+
+	VfhDisableCopy(WithExporter)
+private:
+	static VRayExporter *exporter;
+	static std::recursive_mutex exporterMtx;
+};
+
+VRayExporter * WithExporter::exporter = nullptr;
+std::recursive_mutex WithExporter::exporterMtx;
+
 
 static void freeExporter()
 {
-	UT_ASSERT_MSG(stopChecker, "stopChecker is null in freeExporter()");
-	stopChecker->stop();
-
 	closeImdisplay();
 
-	if (vrayExporter) {
-		vrayExporter->reset();
-		FreePtr(vrayExporter);
+	if (WithExporter lk{}) {
+		lk.getExporter().reset();
+		lk.freeExporter();
 	}
 }
 
@@ -149,7 +203,6 @@ static struct VRayExporterIprUnload {
 			// Prevent stop cb from being called here
 			stopCallback->set();
 		}
-		delete stopChecker;
 		deleteVRayInit();
 		Log::Logger::stopLogging();
 	}
@@ -229,8 +282,12 @@ static PyObject* vfhExportView(PyObject*, PyObject *args, PyObject *keywds)
 	}
 
 	HOM_AutoLock autoLock;
+	WithExporter lock;
+	if (!lock) {
+		Py_RETURN_NONE;
+	}
 
-	VRayExporter &exporter = getExporter();
+	VRayExporter &exporter = lock.getExporter();
 	exporter.exportDefaultHeadlight(true);
 
 	const char *camera = PyString_AsString(PyDict_GetItemString(viewParamsDict, "camera"));
@@ -281,11 +338,13 @@ static PyObject* vfhDeleteOpNode(PyObject*, PyObject *args, PyObject *keywds)
 	{
 		HOM_AutoLock autoLock;
 
-		if (UTisstring(opNodePath)) {
-			Log::getLog().debug("vfhDeleteOpNode(\"%s\")", opNodePath);
+		if (WithExporter lock{}) {
+			if (UTisstring(opNodePath)) {
+				Log::getLog().debug("vfhDeleteOpNode(\"%s\")", opNodePath);
 
-			ObjectExporter &objExporter = getExporter().getObjectExporter();
-			objExporter.removeObject(opNodePath);
+				ObjectExporter &objExporter = lock.getExporter().getObjectExporter();
+				objExporter.removeObject(opNodePath);
+			}
 		}
 	}
 
@@ -309,20 +368,21 @@ static PyObject* vfhExportOpNode(PyObject*, PyObject *args, PyObject *keywds)
 		/* 0 */ &opNodePath))
 	{
 		HOM_AutoLock autoLock;
+		if (WithExporter lock{}) {
+			OBJ_Node *objNode = CAST_OBJNODE(getOpNodeFromPath(opNodePath));
+			if (objNode) {
+				Log::getLog().debug("vfhExportOpNode(\"%s\")", opNodePath);
 
-		OBJ_Node *objNode = CAST_OBJNODE(getOpNodeFromPath(opNodePath));
-		if (objNode) {
-			Log::getLog().debug("vfhExportOpNode(\"%s\")", opNodePath);
+				ObjectExporter &objExporter = lock.getExporter().getObjectExporter();
 
-			ObjectExporter &objExporter = getExporter().getObjectExporter();
+				// Otherwise we won't update plugin.
+				objExporter.clearOpPluginCache();
+				objExporter.clearPrimPluginCache();
 
-			// Otherwise we won't update plugin.
-			objExporter.clearOpPluginCache();
-			objExporter.clearPrimPluginCache();
-
-			// Update node
-			objExporter.removeGenerated(*objNode);
-			objExporter.exportObject(*objNode);
+				// Update node
+				objExporter.removeGenerated(*objNode);
+				objExporter.exportObject(*objNode);
+			}
 		}
 	}
 
@@ -370,27 +430,32 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 	getImdisplay().setPort(port);
 	
 	if (!stopCallback) {
-		stopCallback = new CallOnceUntilReset([]() {
-			freeExporter();
-		});
+		stopCallback = new CallOnceUntilReset(freeExporter);
 		getImdisplay().setOnStopCallback(stopCallback->getCallableFunction());
 	}
 
-	if (!stopChecker) {
-		stopChecker = new PingPongClient();
-		stopChecker->setCallback(stopCallback->getCallableFunction());
+	if (!procCheck) {
+		procCheck = makeProcessChecker(stopCallback->getCallableFunction(), "vfh_ipr.exe");
 	}
-
+	getImdisplay().setProcCheck(procCheck);
+	procCheck->stop();
+	procCheck->start();
 	// Reset the cb's flag so it can be called asap
 	stopCallback->reset();
-	stopChecker->start();
 
 	UT_String ropPath(rop);
 	OP_Node *ropNode = getOpNodeFromPath(ropPath);
 	if (ropNode) {
 		// Start the imdisplay thread so we can get pipe signals sooner
-		getImdisplay().init();
-		getImdisplay().restart();
+		{
+			WithExporter lk;
+			vassert(!lk && "Exporter should be NULL in vfhInit");
+			lk.allocExporter();
+		}
+		if (WithExporter lk{}) {
+			getImdisplay().init();
+			getImdisplay().restart();
+		}
 		const IPROutput iprOutput =
 			static_cast<IPROutput>(ropNode->evalInt("render_rt_output", 0, 0.0));
 
@@ -400,45 +465,59 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 		const int isRenderView = iprOutput == iprOutputRenderView;
 		const int isVFB = iprOutput == iprOutputVFB;
 
-		VRayExporter &exporter = getExporter();
-
-		exporter.setROP(*ropNode);
-		exporter.setIPR(iprMode);
 
 
-		if (!exporter.initRenderer(isVFB, false)) {
-			Py_RETURN_NONE;
+		if (WithExporter lk{}) {
+			VRayExporter &exporter = lk.getExporter();
+			exporter.setROP(*ropNode);
+			exporter.setIPR(iprMode);
+			if (!exporter.initRenderer(isVFB, false)) {
+				Py_RETURN_NONE;
+			}
 		}
+
 		ViewParams viewParams;
-		fillViewParamsFromDict(viewParamsDict, viewParams);
+		if (WithExporter lk{}) {
+			VRayExporter &exporter = lk.getExporter();
+			fillViewParamsFromDict(viewParamsDict, viewParams);
 
-		exporter.setDRSettings();
+			exporter.setDRSettings();
 
-		exporter.setRendererMode(getRendererIprMode(*ropNode));
-		exporter.setWorkMode(getExporterWorkMode(*ropNode));
-
-		exporter.getRenderer().showVFB(isVFB);
-		exporter.getRenderer().getVRay().setOnVFBClosed(isVFB ? onVFBClosed : nullptr);
-		exporter.getRenderer().getVRay().setOnImageReady(isRenderView ? onImageReady : nullptr);
-		exporter.getRenderer().getVRay().setOnRTImageUpdated(isRenderView? onRTImageUpdated : nullptr);
-		exporter.getRenderer().getVRay().setOnBucketReady(isRenderView ? onBucketReady : nullptr);
-
-		exporter.getRenderer().getVRay().setKeepBucketsInCallback(isRenderView);
-		exporter.getRenderer().getVRay().setKeepRTframesInCallback(isRenderView);
-
-		if (isRenderView) {
-			exporter.getRenderer().getVRay().setRTImageUpdateTimeout(250);
+			exporter.setRendererMode(getRendererIprMode(*ropNode));
+			exporter.setWorkMode(getExporterWorkMode(*ropNode));
 		}
 
-		exporter.initExporter(getFrameBufferType(*ropNode), 1, now, now);
+		if (WithExporter lk{}) {
+			VRayExporter &exporter = lk.getExporter();
+			exporter.getRenderer().showVFB(isVFB);
+			exporter.getRenderer().getVRay().setOnVFBClosed(isVFB ? onVFBClosed : nullptr);
+			exporter.getRenderer().getVRay().setOnImageReady(isRenderView ? onImageReady : nullptr);
+			exporter.getRenderer().getVRay().setOnRTImageUpdated(isRenderView ? onRTImageUpdated : nullptr);
+			exporter.getRenderer().getVRay().setOnBucketReady(isRenderView ? onBucketReady : nullptr);
 
-		exporter.setFrame(now);
+			exporter.getRenderer().getVRay().setKeepBucketsInCallback(isRenderView);
+			exporter.getRenderer().getVRay().setKeepRTframesInCallback(isRenderView);
 
-		exporter.exportSettings();
-		exporter.exportScene();
-		exporter.exportView(viewParams);
-		exporter.renderFrame();
-		initImdisplay(exporter.getRenderer().getVRay());
+			if (isRenderView) {
+				exporter.getRenderer().getVRay().setRTImageUpdateTimeout(250);
+			}
+		}
+
+		if (WithExporter lk{}) {
+			VRayExporter &exporter = lk.getExporter();
+			exporter.initExporter(getFrameBufferType(*ropNode), 1, now, now);
+
+			exporter.setFrame(now);
+		}
+
+		if (WithExporter lk{}) {
+			VRayExporter &exporter = lk.getExporter();
+			exporter.exportSettings();
+			exporter.exportScene();
+			exporter.exportView(viewParams);
+			exporter.renderFrame();
+			initImdisplay(exporter.getRenderer().getVRay());
+		}
 	}
 	
     Py_RETURN_NONE;
@@ -446,9 +525,18 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 
 static PyObject * vfhIsRopValid(PyObject *)
 {
-	if (!vrayExporter || !getExporter().getRopPtr()) {
+	// First try without locking
+	if (!WithExporter::getPointerUnguarded()) {
 		Py_RETURN_FALSE;
 	}
+
+	// We must lock if we will use the exporter
+	if (WithExporter lk{}) {
+		if (!lk.getExporter().getRopPtr()) {
+			Py_RETURN_FALSE;
+		}
+	}
+
 	Py_RETURN_TRUE;
 }
 
@@ -513,6 +601,7 @@ static PyMethodDef methods[] = {
 
 PyMODINIT_FUNC init_vfh_ipr()
 {
+	disableSIGPIPE();
 	Log::Logger::startLogging();
 	Py_InitModule("_vfh_ipr", methods);
 }

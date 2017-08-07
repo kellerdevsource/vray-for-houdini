@@ -29,4 +29,6 @@ set PATH=%HFS%\bin;@VFH_BIN_DIRPATH@;%VRAY_APPSDK%\bin;%PATH%;%VRAY_FOR_HOUDINI_
 where /Q dbgcore.dll
 IF ERRORLEVEL 1 set PATH=%VRAY_APPSDK%\bin\compat;%PATH%
 
+set QT_QPA_PLATFORM_PLUGIN_PATH=%HFS%\bin\Qt_plugins\platforms
+
 @HFS_BIN@ %*
