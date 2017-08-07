@@ -52,6 +52,8 @@ using namespace VRayForHoudini;
 
 static boost::format FmtPluginNameWithPrefix("%s@%s");
 
+static StringSet RenderSettingsPlugins;
+
 void VRayExporter::reset()
 {
 	objectExporter.clearPrimPluginCache();
@@ -711,7 +713,23 @@ void VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 
 void VRayExporter::exportSettings()
 {
-	for (const auto &sp : Parm::RenderSettingsPlugins) {
+	if (RenderSettingsPlugins.empty()) {
+		RenderSettingsPlugins.insert("SettingsOptions");
+		RenderSettingsPlugins.insert("SettingsColorMapping");
+		RenderSettingsPlugins.insert("SettingsDMCSampler");
+		RenderSettingsPlugins.insert("SettingsImageSampler");
+		RenderSettingsPlugins.insert("SettingsGI");
+		RenderSettingsPlugins.insert("SettingsIrradianceMap");
+		RenderSettingsPlugins.insert("SettingsLightCache");
+		RenderSettingsPlugins.insert("SettingsDMCGI");
+		RenderSettingsPlugins.insert("SettingsRaycaster");
+		RenderSettingsPlugins.insert("SettingsRegionsGenerator");
+		RenderSettingsPlugins.insert("SettingsOutput");
+		RenderSettingsPlugins.insert("SettingsCaustics");
+		RenderSettingsPlugins.insert("SettingsDefaultDisplacement");
+	}
+
+	for (const auto &sp : RenderSettingsPlugins) {
 		const Parm::VRayPluginInfo *pluginInfo = Parm::GetVRayPluginInfo(sp);
 		if (!pluginInfo) {
 			Log::getLog().error("Plugin \"%s\" description is not found!",

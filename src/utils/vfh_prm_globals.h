@@ -11,18 +11,4 @@
 #ifndef VRAY_FOR_HOUDINI_PRM_GLOBALS_H
 #define VRAY_FOR_HOUDINI_PRM_GLOBALS_H
 
-#include "vfh_typedefs.h"
-
-#include <PRM/PRM_Name.h>
-#include <PRM/PRM_ChoiceList.h>
-
-namespace VRayForHoudini {
-namespace Parm {
-
-extern StringSet RenderSettingsPlugins;
-extern StringSet RenderGIPlugins;
-
-} // namespace Parm
-} // namespace VRayForHoudini
-
 #endif // VRAY_FOR_HOUDINI_PRM_GLOBALS_H
