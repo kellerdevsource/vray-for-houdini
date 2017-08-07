@@ -341,14 +341,6 @@ int getParmInt(const OP_Node &node, const std::string &attrName, fpreal t=0.0);
 /// @return the value of the param
 float getParmFloat(const OP_Node &node, const std::string &attrName, fpreal t=0.0);
 
-/// Find and eval node's param as enum
-/// @node - the node which will be used for eval
-/// @attrDesc - to check the enum value
-/// @attrName - the name of the param
-/// @t - the time at which to eval at
-/// @return the value of the param
-int getParmEnumExt(const OP_Node &node, const AttrDesc &attrDesc, const std::string &attrName, fpreal t=0.0);
-
 } // namespace Parm
 } // namespace VRayForHoudini
 

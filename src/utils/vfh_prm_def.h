@@ -75,63 +75,28 @@ enum ParmSubtype {
 	eNone
 };
 
-/// Descriptor for a color ramp param
-struct ParmRampDesc {
-	std::string  colors; ///< The name of the property for values
-	std::string  positions; ///< The name of the property for positions
-	std::string  interpolations; ///< The name of the property for interpolations
-};
-
-/// Descriptor for a curve param
-struct ParmCurveDesc {
-	std::string  positions; ///< The name of the property for positions
-	std::string  values; ///< The name of the property for values
-	std::string  interpolations; ///< The name of the property for itnerpolations
-};
-
-/// Descriptor for enum param
-struct ParmEnumItem {
-	std::string  value; ///< The value as string for the param
-	std::string  label; ///< The display label for this valu
-	std::string  desc; ///< The desctription for the value
-};
-typedef std::vector<ParmEnumItem> ParmEnumItems;
-
-/// Descriptor for enum plugin parameter
-struct EnumItem {
-	enum EnumValueType {
-		EnumValueInt = 0,
-		EnumValueString
-	};
-
-	EnumItem()
-		: valueType(EnumItem::EnumValueInt)
-		, value(0)
-	{}
-
-	std::string    label; ///< The label for this enum
-	std::string    desc; ///< The desctiption
-
-	EnumValueType  valueType; ///< The type of the enum
-	int            value; ///< Value as int
-
-	/// For string enum
-	/// NOTE: UVWGenEnvironment "mapping_type" only
-	std::string    valueString;
-};
-typedef std::vector<EnumItem> EnumItems;
-
 /// Factory for PRM_Default objects based on provided values
 struct ParmDefValue {
+	/// Descriptor for a color ramp param
+	struct ParmRampDesc {
+		std::string colors; ///< The name of the property for values
+		std::string positions; ///< The name of the property for positions
+		std::string interpolations; ///< The name of the property for interpolations
+	};
+
+	/// Descriptor for a curve param
+	struct ParmCurveDesc {
+		std::string positions; ///< The name of the property for positions
+		std::string values; ///< The name of the property for values
+		std::string interpolations; ///< The name of the property for itnerpolations
+	};
+
 	ParmDefValue()
 		: type(eUnknown)
 	{}
 
 	/// Parameter type.
 	ParmType type;
-
-	/// Data for remapping enum values.
-	EnumItems enumInfo;
 
 	/// Data for exporting color ramp.
 	ParmRampDesc colorRampInfo;

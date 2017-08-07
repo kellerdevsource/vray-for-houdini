@@ -540,15 +540,8 @@ bool VRayExporter::setAttrsFromUTOptions(Attrs::PluginDesc &pluginDesc, const UT
 			attr.paramValue.valInt = options.getOptionI(attrName);
 		}
 		else if (attrDesc.value.type == Parm::eEnum) {
-			const Parm::EnumItem &enumItem = attrDesc.value.enumInfo.at(0);
-			if (enumItem.valueType == Parm::EnumItem::EnumValueInt) {
-				attr.paramType = Attrs::PluginAttr::AttrTypeInt;
-				attr.paramValue.valInt = options.getOptionI(attrName);
-			}
-			else {
-				attr.paramType = Attrs::PluginAttr::AttrTypeString;
-				attr.paramValue.valString = options.getOptionS(attrName);
-			}
+			attr.paramType = Attrs::PluginAttr::AttrTypeInt;
+			attr.paramValue.valInt = options.getOptionI(attrName);
 		}
 		else if (   attrDesc.value.type == Parm::eFloat
 				 || attrDesc.value.type == Parm::eTextureFloat)
