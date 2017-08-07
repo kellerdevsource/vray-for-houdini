@@ -42,75 +42,69 @@ static enum MenuOption {
 
 static std::map<MenuOption, std::vector<MetaImageFileSocket>> inputsMap;
 
+typedef std::vector<MetaImageFileSocket> SocketsTable;
+
 static const int ouputSocketCount = COUNT_OF(metaImageFileOutputSockets);
 
 PRM_Template* VOP::MetaImageFile::GetPrmTemplate()
 {
 	if (inputsMap.empty()) {
 
-		std::vector<MetaImageFileSocket> temp;
-		temp.push_back(MetaImageFileSocket("uvwgen", VOP_TypeInfo(VOP_TYPE_VECTOR)));
-		temp.push_back(MetaImageFileSocket("coverage_u_tex", VOP_TypeInfo(VOP_TYPE_FLOAT)));
-		temp.push_back(MetaImageFileSocket("coverage_v_tex", VOP_TypeInfo(VOP_TYPE_FLOAT)));
-		temp.push_back(MetaImageFileSocket( "translate_frame_u_tex", VOP_TypeInfo(VOP_TYPE_FLOAT)));
-		temp.push_back(MetaImageFileSocket( "translate_frame_v_tex", VOP_TypeInfo(VOP_TYPE_FLOAT)));
-		temp.push_back(MetaImageFileSocket( "rotate_frame_tex", VOP_TypeInfo(VOP_TYPE_FLOAT)));
-		temp.push_back(MetaImageFileSocket("repeat_u_tex", VOP_TypeInfo(VOP_TYPE_FLOAT)));
-		temp.push_back(MetaImageFileSocket("repeat_v_tex", VOP_TypeInfo(VOP_TYPE_FLOAT)));
-		temp.push_back(MetaImageFileSocket("offset_u_tex", VOP_TypeInfo(VOP_TYPE_FLOAT)));
-		temp.push_back(MetaImageFileSocket("offset_v_tex", VOP_TypeInfo(VOP_TYPE_FLOAT)));
-		temp.push_back(MetaImageFileSocket("rotate_uv_tex", VOP_TypeInfo(VOP_TYPE_FLOAT)));
-		temp.push_back(MetaImageFileSocket("noise_u_tex", VOP_TypeInfo(VOP_TYPE_FLOAT)));
-		temp.push_back(MetaImageFileSocket("noise_v_tex", VOP_TypeInfo(VOP_TYPE_FLOAT)));
-		temp.push_back(MetaImageFileSocket("uvw_channel_tex", VOP_TypeInfo(VOP_TYPE_INTEGER)));
-		inputsMap.insert(std::pair<MenuOption, std::vector<MetaImageFileSocket>>( UVWGenMayaPlace2dTexture,std::vector<MetaImageFileSocket>(temp)));
+		SocketsTable &mayeSockets = inputsMap[UVWGenMayaPlace2dTexture];
+		mayeSockets.push_back(MetaImageFileSocket("uvwgen", VOP_TypeInfo(VOP_TYPE_VECTOR)));
+		mayeSockets.push_back(MetaImageFileSocket("coverage_u_tex", VOP_TypeInfo(VOP_TYPE_FLOAT)));
+		mayeSockets.push_back(MetaImageFileSocket("coverage_v_tex", VOP_TypeInfo(VOP_TYPE_FLOAT)));
+		mayeSockets.push_back(MetaImageFileSocket( "translate_frame_u_tex", VOP_TypeInfo(VOP_TYPE_FLOAT)));
+		mayeSockets.push_back(MetaImageFileSocket( "translate_frame_v_tex", VOP_TypeInfo(VOP_TYPE_FLOAT)));
+		mayeSockets.push_back(MetaImageFileSocket( "rotate_frame_tex", VOP_TypeInfo(VOP_TYPE_FLOAT)));
+		mayeSockets.push_back(MetaImageFileSocket("repeat_u_tex", VOP_TypeInfo(VOP_TYPE_FLOAT)));
+		mayeSockets.push_back(MetaImageFileSocket("repeat_v_tex", VOP_TypeInfo(VOP_TYPE_FLOAT)));
+		mayeSockets.push_back(MetaImageFileSocket("offset_u_tex", VOP_TypeInfo(VOP_TYPE_FLOAT)));
+		mayeSockets.push_back(MetaImageFileSocket("offset_v_tex", VOP_TypeInfo(VOP_TYPE_FLOAT)));
+		mayeSockets.push_back(MetaImageFileSocket("rotate_uv_tex", VOP_TypeInfo(VOP_TYPE_FLOAT)));
+		mayeSockets.push_back(MetaImageFileSocket("noise_u_tex", VOP_TypeInfo(VOP_TYPE_FLOAT)));
+		mayeSockets.push_back(MetaImageFileSocket("noise_v_tex", VOP_TypeInfo(VOP_TYPE_FLOAT)));
+		mayeSockets.push_back(MetaImageFileSocket("uvw_channel_tex", VOP_TypeInfo(VOP_TYPE_INTEGER)));
 		
-		temp.clear();
-		temp.push_back(MetaImageFileSocket("uvw_matrix", VOP_TypeInfo(VOP_TYPE_MATRIX3)));
-		temp.push_back(MetaImageFileSocket("uvw_transform", VOP_TypeInfo(VOP_TYPE_MATRIX4)));
-		temp.push_back(MetaImageFileSocket("ground_position", VOP_TypeInfo(VOP_TYPE_VECTOR)));
-		inputsMap.insert(std::pair<MenuOption, std::vector<MetaImageFileSocket>>( UVWGenEnvironment,std::vector<MetaImageFileSocket>(temp)));
+		SocketsTable &environmentSockets = inputsMap[UVWGenEnvironment];
+		environmentSockets.push_back(MetaImageFileSocket("uvw_matrix", VOP_TypeInfo(VOP_TYPE_MATRIX3)));
+		environmentSockets.push_back(MetaImageFileSocket("uvw_transform", VOP_TypeInfo(VOP_TYPE_MATRIX4)));
+		environmentSockets.push_back(MetaImageFileSocket("ground_position", VOP_TypeInfo(VOP_TYPE_VECTOR)));
 		
-		temp.clear();
-		temp.push_back(MetaImageFileSocket("u", VOP_TypeInfo(VOP_TYPE_FLOAT)));
-		temp.push_back(MetaImageFileSocket("v", VOP_TypeInfo(VOP_TYPE_FLOAT)));
-		temp.push_back(MetaImageFileSocket("w", VOP_TypeInfo(VOP_TYPE_FLOAT)));
-		temp.push_back(MetaImageFileSocket("uvw", VOP_TypeInfo(VOP_TYPE_COLOR)));
-		inputsMap.insert(std::pair<MenuOption, std::vector<MetaImageFileSocket>>(UVWGenExplicit, std::vector<MetaImageFileSocket>(temp)));
+		SocketsTable &explicitSockets = inputsMap[UVWGenExplicit];
+		explicitSockets.push_back(MetaImageFileSocket("u", VOP_TypeInfo(VOP_TYPE_FLOAT)));
+		explicitSockets.push_back(MetaImageFileSocket("v", VOP_TypeInfo(VOP_TYPE_FLOAT)));
+		explicitSockets.push_back(MetaImageFileSocket("w", VOP_TypeInfo(VOP_TYPE_FLOAT)));
+		explicitSockets.push_back(MetaImageFileSocket("uvw", VOP_TypeInfo(VOP_TYPE_COLOR)));
 
-		temp.clear();
-		temp.push_back(MetaImageFileSocket("uvw_transform", VOP_TypeInfo(VOP_TYPE_MATRIX4)));
-		temp.push_back(MetaImageFileSocket("uvw_transform tex", VOP_TypeInfo()));
-		temp.push_back(MetaImageFileSocket("tex_transfrom", VOP_TypeInfo(VOP_TYPE_MATRIX4)));
-		temp.push_back(MetaImageFileSocket("coverage", VOP_TypeInfo(VOP_TYPE_VECTOR)));
-		temp.push_back(MetaImageFileSocket("uvwgen", VOP_TypeInfo(VOP_TYPE_VECTOR)));
-		inputsMap.insert(std::pair<MenuOption, std::vector<MetaImageFileSocket>>(UVWGenChannel, std::vector<MetaImageFileSocket>(temp)));
+		SocketsTable &channelSockets = inputsMap[UVWGenChannel];
+		channelSockets.push_back(MetaImageFileSocket("uvw_transform", VOP_TypeInfo(VOP_TYPE_MATRIX4)));
+		channelSockets.push_back(MetaImageFileSocket("uvw_transform tex", VOP_TypeInfo()));
+		channelSockets.push_back(MetaImageFileSocket("tex_transfrom", VOP_TypeInfo(VOP_TYPE_MATRIX4)));
+		channelSockets.push_back(MetaImageFileSocket("coverage", VOP_TypeInfo(VOP_TYPE_VECTOR)));
+		channelSockets.push_back(MetaImageFileSocket("uvwgen", VOP_TypeInfo(VOP_TYPE_VECTOR)));
 
-		temp.clear();
-		temp.push_back(MetaImageFileSocket("uvw_transform", VOP_TypeInfo(VOP_TYPE_MATRIX4)));
-		inputsMap.insert(std::pair<MenuOption, std::vector<MetaImageFileSocket>>(UVWGenObject, std::vector<MetaImageFileSocket>(temp)));
+		SocketsTable &objectSockets= inputsMap[UVWGenObject];
+		objectSockets.push_back(MetaImageFileSocket("uvw_transform", VOP_TypeInfo(VOP_TYPE_MATRIX4)));
 
-		temp.clear();
-		temp.push_back(MetaImageFileSocket("bbox_min", VOP_TypeInfo(VOP_TYPE_VECTOR)));
-		temp.push_back(MetaImageFileSocket("bbox_max", VOP_TypeInfo(VOP_TYPE_VECTOR)));
-		temp.push_back(MetaImageFileSocket("basemtl", VOP_TypeInfo(VOP_TYPE_UNDEF)));
-		inputsMap.insert(std::pair<MenuOption, std::vector<MetaImageFileSocket>>(UVWGenObjectBBox, std::vector<MetaImageFileSocket>(temp)));
+		SocketsTable &bboxSockets = inputsMap[UVWGenObjectBBox];
+		bboxSockets.push_back(MetaImageFileSocket("bbox_min", VOP_TypeInfo(VOP_TYPE_VECTOR)));
+		bboxSockets.push_back(MetaImageFileSocket("bbox_max", VOP_TypeInfo(VOP_TYPE_VECTOR)));
+		bboxSockets.push_back(MetaImageFileSocket("basemtl", VOP_TypeInfo(VOP_TYPE_UNDEF)));
 
-		temp.clear();
-		temp.push_back(MetaImageFileSocket("uvw_transform", VOP_TypeInfo(VOP_TYPE_MATRIX4)));
-		temp.push_back(MetaImageFileSocket("uvw_transform tex", VOP_TypeInfo()));
-		temp.push_back(MetaImageFileSocket("tex_transfrom", VOP_TypeInfo(VOP_TYPE_MATRIX4)));
-		temp.push_back(MetaImageFileSocket("coverage", VOP_TypeInfo(VOP_TYPE_VECTOR)));
-		inputsMap.insert(std::pair<MenuOption, std::vector<MetaImageFileSocket>>(UVWGenPlanarWorld, std::vector<MetaImageFileSocket>(temp)));
+		SocketsTable &worldSockets = inputsMap[UVWGenPlanarWorld];
+		worldSockets.push_back(MetaImageFileSocket("uvw_transform", VOP_TypeInfo(VOP_TYPE_MATRIX4)));
+		worldSockets.push_back(MetaImageFileSocket("uvw_transform tex", VOP_TypeInfo()));
+		worldSockets.push_back(MetaImageFileSocket("tex_transfrom", VOP_TypeInfo(VOP_TYPE_MATRIX4)));
+		worldSockets.push_back(MetaImageFileSocket("coverage", VOP_TypeInfo(VOP_TYPE_VECTOR)));
 
-		temp.clear();
-		temp.push_back(MetaImageFileSocket("uvw_transform", VOP_TypeInfo(VOP_TYPE_MATRIX4)));
-		temp.push_back(MetaImageFileSocket("uvw_transform tex", VOP_TypeInfo(VOP_TYPE_UNDEF)));
-		temp.push_back(MetaImageFileSocket("tex_transfrom", VOP_TypeInfo(VOP_TYPE_MATRIX4)));
-		temp.push_back(MetaImageFileSocket("camera_settings", VOP_TypeInfo(VOP_TYPE_UNDEF)));
-		temp.push_back(MetaImageFileSocket("camera_view", VOP_TypeInfo(VOP_TYPE_UNDEF)));
-		temp.push_back(MetaImageFileSocket("bitmap", VOP_TypeInfo(VOP_TYPE_UNDEF)));
-		inputsMap.insert(std::pair<MenuOption, std::vector<MetaImageFileSocket>>(UVWGenProjection, std::vector<MetaImageFileSocket>(temp)));
+		SocketsTable &projectionSockets = inputsMap[UVWGenProjection];
+		projectionSockets.push_back(MetaImageFileSocket("uvw_transform", VOP_TypeInfo(VOP_TYPE_MATRIX4)));
+		projectionSockets.push_back(MetaImageFileSocket("uvw_transform tex", VOP_TypeInfo(VOP_TYPE_UNDEF)));
+		projectionSockets.push_back(MetaImageFileSocket("tex_transfrom", VOP_TypeInfo(VOP_TYPE_MATRIX4)));
+		projectionSockets.push_back(MetaImageFileSocket("camera_settings", VOP_TypeInfo(VOP_TYPE_UNDEF)));
+		projectionSockets.push_back(MetaImageFileSocket("camera_view", VOP_TypeInfo(VOP_TYPE_UNDEF)));
+		projectionSockets.push_back(MetaImageFileSocket("bitmap", VOP_TypeInfo(VOP_TYPE_UNDEF)));
 	}
 
 	static Parm::PRMList myPrmList;
