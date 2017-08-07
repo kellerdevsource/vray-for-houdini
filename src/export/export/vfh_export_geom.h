@@ -44,28 +44,18 @@ enum VMRenderPointsAs {
 /// Used for non-Instancer objects like volumes and lights.
 struct PrimContext {
 	explicit PrimContext(OP_Node *generator=nullptr,
-						 VRay::Transform tm=VRay::Transform(1),
-						 exint detailID=0,
-						 PrimMaterial primMaterial=PrimMaterial(),
+						 PrimitiveItem parentItem=PrimitiveItem(),
 						 STY_Styler styler=STY_Styler())
 		: objNode(generator)
-		, tm(tm)
-		, primID(detailID)
-		, primMaterial(primMaterial)
+		, parentItem(parentItem)
 		, styler(styler)
 	{}
 
 	/// Primitive generator.
 	OP_Node *objNode;
 
-	/// Transform.
-	VRay::Transform tm;
-
-	/// Primitive ID.
-	exint primID;
-
-	/// Material overrides.
-	PrimMaterial primMaterial;
+	/// Parent item.
+	PrimitiveItem parentItem;
 
 	/// Current level styler.
 	STY_Styler styler;
@@ -235,6 +225,9 @@ public:
 
 	/// Returns transform from the primitive context stack.
 	VRay::Transform getTm() const;
+
+	/// Returns velocity from the primitive context stack.
+	VRay::Transform getVel() const;
 
 	/// Returns primitive ID from the primitive context stack.
 	exint getDetailID() const;

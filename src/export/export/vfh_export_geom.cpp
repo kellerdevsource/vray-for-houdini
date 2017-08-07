@@ -86,6 +86,9 @@ static const UT_String vrayPluginTypeNode = "Node";
 /// Identity transform.
 static VRay::Transform identityTm(1);
 
+/// Zero transform.
+static VRay::Transform zeroTm(0);
+
 /// A bit-set for detecting unconnected points.
 typedef std::vector<bool> DynamicBitset;
 
@@ -166,10 +169,22 @@ VRay::Transform ObjectExporter::getTm() const
 
 	PrimContextIt it(primContextStack);
 	while (it.hasNext()) {
-		tm = it.next().tm * tm;
+		tm = it.next().parentItem.tm * tm;
 	}
 
 	return tm;
+}
+
+VRay::Transform ObjectExporter::getVel() const
+{
+	VRay::Transform vel(1);
+
+	PrimContextIt it(primContextStack);
+	while (it.hasNext()) {
+		vel = it.next().parentItem.vel * vel;
+	}
+
+	return vel;
 }
 
 exint ObjectExporter::getDetailID() const
@@ -178,7 +193,7 @@ exint ObjectExporter::getDetailID() const
 
 	PrimContextIt it(primContextStack);
 	while (it.hasNext()) {
-		detailID ^= it.next().primID;
+		detailID ^= it.next().parentItem.primID;
 	}
 
 	return detailID;
@@ -197,7 +212,7 @@ void ObjectExporter::getPrimMaterial(PrimMaterial &primMaterial) const
 	PrimContextIt it(primContextStack);
 	it.toBack();
 	while (it.hasPrevious()) {
-		const PrimMaterial &primMtl(it.previous().primMaterial);
+		const PrimMaterial &primMtl(it.previous().parentItem.primMaterial);
 		if (primMtl.matNode) {
 			primMaterial.matNode = primMtl.matNode;
 		}
@@ -547,6 +562,8 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp)
 
 	const STY_Styler &geoStyler = getStyler();
 
+	GA_ROHandleV3 velocityHndl(gdp.findAttribute(GA_ATTRIB_POINT, GEO_STD_ATTRIB_VELOCITY));
+
 	GA_ROHandleS materialStyleSheetHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTR_MATERIAL_STYLESHEET));
 	GA_ROHandleS materialOverrideHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTR_MATERIAL_OVERRIDE));
 	GA_ROHandleS materialPathHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GA_Names::shop_materialpath));
@@ -578,6 +595,7 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp)
 		item.prim = prim;
 		item.primID = getDetailID() ^ gdp.getUniqueId() ^ primOffset;
 		item.tm = getTm();
+		item.vel = getVel();
 
 		if (objectIdHndl.isValid()) {
 			item.objectID = objectIdHndl.get(primOffset);
@@ -618,7 +636,19 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp)
 			// Point attributes for packed instancing.
 			if (numPoints == numPrims) {
 				const GA_Offset pointOffset = gdp.pointOffset(primIndex);
+
 				attrExp.fromPoint(item.primMaterial.overrides, pointOffset);
+
+				if (velocityHndl.isValid()) {
+					UT_Vector3F v = velocityHndl.get(pointOffset);
+					// XXX: Magic scaling!
+					v *= 0.175f;
+
+					VRay::Transform primVel;
+					primVel.offset.set(v(0), v(1), v(2));
+
+					item.vel = item.vel * primVel;
+				}
 			}
 		}
 
@@ -632,7 +662,7 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp)
 		getPrimMaterial(item.primMaterial);
 
 		if (isVolumePrim) {
-			pushContext(PrimContext(&objNode, item.tm, item.primID, item.primMaterial, primStyler));
+			pushContext(PrimContext(&objNode, item, primStyler));
 			exportPrimVolume(objNode, item);
 			popContext();
 		}
@@ -645,7 +675,7 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp)
 				getPrimPluginFromCache(primKey, item.geometry);
 			}
 			if (!item.geometry) {
-				pushContext(PrimContext(&objNode, item.tm, item.primID, item.primMaterial, primStyler));
+				pushContext(PrimContext(&objNode, item, primStyler));
 				item.geometry = exportPrimPacked(objNode, primPacked);
 				popContext();
 				if (primKey > 0 && item.geometry) {
@@ -788,11 +818,17 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_D
 		// Index + TM + VEL_TM + AdditionalParams + Node + AdditionalParamsMembers
 		const int itemSize = 5 + VUtils::__popcnt(additional_params_flags);
 
+		VRay::Transform vel = primItem.vel;
+		vel.matrix.makeZero();
+
+		VRay::Transform tm = primItem.tm;
+		tm.offset -= vel.offset;
+
 		VRay::VUtils::ValueRefList item(itemSize);
 		int indexOffs = 0;
 		item[indexOffs++].setDouble(instanceIdx++);
-		item[indexOffs++].setTransform(primItem.tm);
-		item[indexOffs++].setTransform(VRay::Transform(0));
+		item[indexOffs++].setTransform(tm);
+		item[indexOffs++].setTransform(vel);
 		item[indexOffs++].setDouble(additional_params_flags);
 		item[indexOffs++].setDouble(primItem.objectID != objectIdUndefined ? primItem.objectID : objectID);
 		if (additional_params_flags & VRay::InstancerParamFlags::useUserAttributes) {
@@ -842,9 +878,13 @@ void ObjectExporter::exportHair(OBJ_Node &objNode, const GU_Detail &gdp, const G
 	if (!hairExporter.hasData())
 		return;
 
+	// The top of the stack contains the final tranform.
+	const PrimitiveItem topItem(primContextStack.back().parentItem);
+
 	PrimitiveItem item;
 	getPrimMaterial(item.primMaterial);
-	item.tm = primContextStack.back().tm;
+	item.tm = topItem.tm;
+	item.vel = topItem.vel;
 	item.primID = gdp.getUniqueId() ^ keyDataHair;
 
 	if (doExportGeometry) {
@@ -873,11 +913,13 @@ void ObjectExporter::exportPolyMesh(OBJ_Node &objNode, const GU_Detail &gdp, con
 	const DisplacementType subdivType = hasSubdivApplied(objNode);
 	const bool hasSubdivApplied = subdivType != displacementTypeNone;
 
+	// The top of the stack contains the final tranform.
+	const PrimitiveItem topItem(primContextStack.back().parentItem);
+
 	PrimitiveItem item;
 	getPrimMaterial(item.primMaterial);
-
-	// The top of the stack contains the final tranform.
-	item.tm = primContextStack.back().tm;
+	item.tm = topItem.tm;
+	item.vel = topItem.vel;
 	item.primID = gdp.getUniqueId() ^ keyDataPoly;
 
 	polyMeshExporter.setSubdivApplied(hasSubdivApplied);
@@ -1404,6 +1446,9 @@ void ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_Detail &gd
 
 		PrimitiveItem item;
 
+		// Use offset as ID.
+		item.primID = gdp.getUniqueId() ^ pointOffset;
+
 		// Particle transform.
 		item.tm = getPointInstanceTM(gdp, pointInstanceAttrs, pointOffset);
 
@@ -1421,7 +1466,7 @@ void ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_Detail &gd
 		objTm.offset.makeZero();
 		item.tm = item.tm * objTm;
 
-		pushContext(PrimContext(&objNode, item.tm, pointOffset, item.primMaterial));
+		pushContext(PrimContext(&objNode, item));
 		item.geometry = pluginExporter.exportObject(instaceObjNode);
 		popContext();
 
@@ -1443,7 +1488,10 @@ VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode, SOP_Node &sopNode
 
 	const GU_Detail &gdp = *gdl;
 
-	PrimContext primContext(&objNode, identityTm, gdp.getUniqueId());
+	PrimitiveItem rootItem;
+	rootItem.primID = gdp.getUniqueId();
+
+	PrimContext primContext(&objNode, rootItem);
 
 	STY_Styler currentStyler = getStyler();
 	STY_Styler objectStyler = getStylerForObject(objNode, ctx.getTime());
@@ -1669,9 +1717,10 @@ VRay::Plugin ObjectExporter::exportObject(OBJ_Node &objNode)
 
 	OBJ_Light *objLight = objNode.castToOBJLight();
 	if (objLight) {
-		const VRay::Transform tm = pluginExporter.getObjTransform(&objNode, ctx);
+		PrimitiveItem rootItem;
+		rootItem.tm = pluginExporter.getObjTransform(&objNode, ctx);
 
-		pushContext(PrimContext(&objNode, tm));
+		pushContext(PrimContext(&objNode, rootItem));
 
 		plugin = exportLight(*objLight);
 

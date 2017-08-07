@@ -507,7 +507,7 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 			VRayExporter &exporter = lk.getExporter();
 			exporter.initExporter(getFrameBufferType(*ropNode), 1, now, now);
 
-			exporter.setFrame(now);
+			exporter.setTime(now);
 		}
 
 		if (WithExporter lk{}) {
