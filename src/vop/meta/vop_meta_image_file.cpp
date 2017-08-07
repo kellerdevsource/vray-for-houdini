@@ -39,53 +39,55 @@ static enum MenuOption {
 	UVWGenProjection = 7
 } current;
 
-static std::map<MenuOption, std::vector<MetaImageFileSocket>> inputsMap = {
-	{ UVWGenMayaPlace2dTexture, { { "uvwgen", VOP_TypeInfo(VOP_TYPE_VECTOR) },
-									{ "coverage_u_tex", VOP_TypeInfo(VOP_TYPE_FLOAT) },
-									{ "coverage_v_tex", VOP_TypeInfo(VOP_TYPE_FLOAT) },
-									{ "translate_frame_u_tex", VOP_TypeInfo(VOP_TYPE_FLOAT) },
-									{ "translate_frame_v_tex", VOP_TypeInfo(VOP_TYPE_FLOAT) },
-									{ "rotate_frame_tex", VOP_TypeInfo(VOP_TYPE_FLOAT) },
-									{ "repeat_u_tex", VOP_TypeInfo(VOP_TYPE_FLOAT) },
-									{ "repeat_v_tex", VOP_TypeInfo(VOP_TYPE_FLOAT) },
-									{ "offset_u_tex", VOP_TypeInfo(VOP_TYPE_FLOAT) },
-									{ "offset_v_tex", VOP_TypeInfo(VOP_TYPE_FLOAT) },
-									{ "rotate_uv_tex", VOP_TypeInfo(VOP_TYPE_FLOAT) },
-									{ "noise_u_tex", VOP_TypeInfo(VOP_TYPE_FLOAT) },
-									{ "noise_v_tex", VOP_TypeInfo(VOP_TYPE_FLOAT) },
-									{ "uvw_channel_tex", VOP_TypeInfo(VOP_TYPE_INTEGER) } }},
-	{ UVWGenEnvironment, { { "uvw_matrix", VOP_TypeInfo(VOP_TYPE_MATRIX3) }, 
-							{ "uvw_transform", VOP_TypeInfo(VOP_TYPE_MATRIX4) },
-							{ "ground_position", VOP_TypeInfo(VOP_TYPE_VECTOR) } }},
-	{ UVWGenExplicit,{ { "u", VOP_TypeInfo(VOP_TYPE_FLOAT) },
-						{ "v", VOP_TypeInfo(VOP_TYPE_FLOAT) },
-						{ "w", VOP_TypeInfo(VOP_TYPE_FLOAT) },
-						{ "uvw", VOP_TypeInfo(VOP_TYPE_COLOR) } }},
-	{ UVWGenChannel, { { "uvw_transform", VOP_TypeInfo(VOP_TYPE_MATRIX4) }, 
-						{ "uvw_transform tex", VOP_TypeInfo() },
-						{ "tex_transfrom", VOP_TypeInfo(VOP_TYPE_MATRIX4) },
-						{ "coverage", VOP_TypeInfo(VOP_TYPE_VECTOR) },
-						{ "uvwgen", VOP_TypeInfo(VOP_TYPE_VECTOR) }	}},
-	{ UVWGenObject, { { "uvw_transform", VOP_TypeInfo(VOP_TYPE_MATRIX4) } }},
-	{ UVWGenObjectBBox, { { "bbox_min", VOP_TypeInfo(VOP_TYPE_VECTOR) },
-							{ "bbox_max", VOP_TypeInfo(VOP_TYPE_VECTOR) },
-							{ "basemtl", VOP_TypeInfo(VOP_TYPE_UNDEF) } }},
-	{ UVWGenPlanarWorld, { { "uvw_transform", VOP_TypeInfo(VOP_TYPE_MATRIX4) }, 
-							{ "uvw_transform tex", VOP_TypeInfo() },
-							{ "tex_transfrom", VOP_TypeInfo(VOP_TYPE_MATRIX4) },
-							{ "coverage", VOP_TypeInfo(VOP_TYPE_VECTOR) } } },
-	{ UVWGenProjection, { { "uvw_transform", VOP_TypeInfo(VOP_TYPE_MATRIX4) },
-							{ "uvw_transform tex", VOP_TypeInfo(VOP_TYPE_UNDEF) },
-							{ "tex_transfrom", VOP_TypeInfo(VOP_TYPE_MATRIX4) }, 
-							{ "camera_settings", VOP_TypeInfo(VOP_TYPE_UNDEF) },
-							{ "camera_view", VOP_TypeInfo(VOP_TYPE_UNDEF) },
-							{ "bitmap", VOP_TypeInfo(VOP_TYPE_UNDEF) } } }
-};
+static std::map<MenuOption, std::vector<MetaImageFileSocket>> inputsMap;
 
 static const int ouputSocketCount = COUNT_OF(metaImageFileOutputSockets);
 
 PRM_Template* VOP::MetaImageFile::GetPrmTemplate()
 {
+	if (inputsMap.empty()) {
+		inputsMap.insert({ UVWGenMayaPlace2dTexture,{ { "uvwgen", VOP_TypeInfo(VOP_TYPE_VECTOR) },
+														{ "coverage_u_tex", VOP_TypeInfo(VOP_TYPE_FLOAT) },
+														{ "coverage_v_tex", VOP_TypeInfo(VOP_TYPE_FLOAT) },
+														{ "translate_frame_u_tex", VOP_TypeInfo(VOP_TYPE_FLOAT) },
+														{ "translate_frame_v_tex", VOP_TypeInfo(VOP_TYPE_FLOAT) },
+														{ "rotate_frame_tex", VOP_TypeInfo(VOP_TYPE_FLOAT) },
+														{ "repeat_u_tex", VOP_TypeInfo(VOP_TYPE_FLOAT) },
+														{ "repeat_v_tex", VOP_TypeInfo(VOP_TYPE_FLOAT) },
+														{ "offset_u_tex", VOP_TypeInfo(VOP_TYPE_FLOAT) },
+														{ "offset_v_tex", VOP_TypeInfo(VOP_TYPE_FLOAT) },
+														{ "rotate_uv_tex", VOP_TypeInfo(VOP_TYPE_FLOAT) },
+														{ "noise_u_tex", VOP_TypeInfo(VOP_TYPE_FLOAT) },
+														{ "noise_v_tex", VOP_TypeInfo(VOP_TYPE_FLOAT) },
+														{ "uvw_channel_tex", VOP_TypeInfo(VOP_TYPE_INTEGER) } } });
+		inputsMap.insert({ UVWGenEnvironment,{ { "uvw_matrix", VOP_TypeInfo(VOP_TYPE_MATRIX3) },
+													{ "uvw_transform", VOP_TypeInfo(VOP_TYPE_MATRIX4) },
+													{ "ground_position", VOP_TypeInfo(VOP_TYPE_VECTOR) } } });
+		inputsMap.insert({ UVWGenExplicit,{ { "u", VOP_TypeInfo(VOP_TYPE_FLOAT) },
+											{ "v", VOP_TypeInfo(VOP_TYPE_FLOAT) },
+											{ "w", VOP_TypeInfo(VOP_TYPE_FLOAT) },
+											{ "uvw", VOP_TypeInfo(VOP_TYPE_COLOR) } } });
+		inputsMap.insert({ UVWGenChannel,{ { "uvw_transform", VOP_TypeInfo(VOP_TYPE_MATRIX4) },
+											{ "uvw_transform tex", VOP_TypeInfo() },
+											{ "tex_transfrom", VOP_TypeInfo(VOP_TYPE_MATRIX4) },
+											{ "coverage", VOP_TypeInfo(VOP_TYPE_VECTOR) },
+											{ "uvwgen", VOP_TypeInfo(VOP_TYPE_VECTOR) } } });
+		inputsMap.insert({ UVWGenObject,{ { "uvw_transform", VOP_TypeInfo(VOP_TYPE_MATRIX4) } } });
+		inputsMap.insert({ UVWGenObjectBBox,{ { "bbox_min", VOP_TypeInfo(VOP_TYPE_VECTOR) },
+												{ "bbox_max", VOP_TypeInfo(VOP_TYPE_VECTOR) },
+												{ "basemtl", VOP_TypeInfo(VOP_TYPE_UNDEF) } } });
+		inputsMap.insert({ UVWGenPlanarWorld,{ { "uvw_transform", VOP_TypeInfo(VOP_TYPE_MATRIX4) },
+												{ "uvw_transform tex", VOP_TypeInfo() },
+												{ "tex_transfrom", VOP_TypeInfo(VOP_TYPE_MATRIX4) },
+												{ "coverage", VOP_TypeInfo(VOP_TYPE_VECTOR) } } });
+		inputsMap.insert({ UVWGenProjection,{ { "uvw_transform", VOP_TypeInfo(VOP_TYPE_MATRIX4) },
+												{ "uvw_transform tex", VOP_TypeInfo(VOP_TYPE_UNDEF) },
+												{ "tex_transfrom", VOP_TypeInfo(VOP_TYPE_MATRIX4) },
+												{ "camera_settings", VOP_TypeInfo(VOP_TYPE_UNDEF) },
+												{ "camera_view", VOP_TypeInfo(VOP_TYPE_UNDEF) },
+												{ "bitmap", VOP_TypeInfo(VOP_TYPE_UNDEF) } } });
+	}
+
 	static Parm::PRMList myPrmList;
 	if (myPrmList.empty()) {
 		UT_String uiPath = getenv("VRAY_UI_DS_PATH");
