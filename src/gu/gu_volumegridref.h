@@ -27,6 +27,8 @@ struct VolumeCacheKey {
 	std::string path;
 	std::string map;
 	bool flipYZ;
+
+	bool isValid() const;
 };
 inline bool operator==(const VolumeCacheKey &left, const VolumeCacheKey &right) {
 	return left.path == right.path && left.map == right.map && left.flipYZ == right.flipYZ;
@@ -48,6 +50,8 @@ template <> struct hash<VRayForHoudini::VolumeCacheKey> {
 
 
 namespace VRayForHoudini {
+
+static const int MAX_RESOLUTION = 255;
 
 // these are the parameters (intrisics) that will be exposed to Houdini, all are filled from the associated PhxShaderCache node
 // format for each one is (type, name, default_value)
@@ -113,6 +117,8 @@ public:
 	static void install(GA_PrimitiveFactory *gafactory);
 	/// Fetch data from key
 	static void fetchData(const VolumeCacheKey &key, VolumeCacheData &data);
+	/// Fetch data (or only info) from key downsampled to voxelsCount 
+	static void fetchDataMaxVox(const VolumeCacheKey &key, VolumeCacheData &data, const i64 voxelCount, const bool infoOnly);
 private:
 	static GA_PrimitiveTypeId theTypeId; ///< The type id for the primitive
 
@@ -152,6 +158,9 @@ public:
 
 	/// Load or get from cache pointer to the AUR cache
 	CachePtr                       getCache() const;
+	/// Load or get from cache VolumeCacheData with given key
+	/// REQUIRES: key to be valid
+	VolumeCacheData                getCache(const VolumeCacheKey &key) const;
 
 	/// Get the world TM
 	UT_Matrix4F                    toWorldTm(CachePtr cache) const;
@@ -176,6 +185,9 @@ public:
 private:
 	/// Sets fetch and evict callback
 	void initDataCache();
+	/// Generates VolumeCacheKey from current data
+	VolumeCacheKey genKey() const;
+
 	/// updateFrom() will update from UT_Options only
 	bool updateFrom(const UT_Options &options);
 	void clearDetail() { m_handle = GU_DetailHandle(); }
@@ -194,6 +206,13 @@ private:
 
 	/// Get current cache frame based on current frame + cache play settings
 	int getCurrentCacheFrame() const;
+
+	/// Gets resolution of cache (from UI)
+	int getResolution() const;
+	/// Gets count of voxels in cache (in full resolution)
+	i64 getFullCacheVoxelCount() const;
+	/// Gets count of voxels in cache (in current resolution)
+	i64 getCurrentCacheVoxelCount() const;
 
 	/// Build channel mapping, should be called after update to cache or ui mappings
 	void buildMapping();
