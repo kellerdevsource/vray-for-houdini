@@ -49,7 +49,7 @@
 				"0"	"Normal"
 				"1"	"Vector"
 				"2"	"Absolute Tangent"
-				"3	"Vector (Object Space)"
+				"3"	"Vector (Object Space)"
 			}
 			parmtag	{ "cook_dependent" "1" }
 			parmtag	{ "vray_plugin" "GeomStaticSmoothedMesh" }

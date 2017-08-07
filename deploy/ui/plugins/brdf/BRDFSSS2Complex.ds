@@ -273,7 +273,7 @@
 			menu	{
 				"0"	"Prepass-Based Illumination Map"
 				"1"	"Object-Based Illumination Map"
-				"2"
+				"2"	"Raytraced"
 				"3"	"None (Diffuse Approximation)"
 			}
 			range	{ 0 1 }
