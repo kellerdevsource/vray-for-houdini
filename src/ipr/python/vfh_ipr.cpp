@@ -303,7 +303,7 @@ static PyObject* vfhExportView(PyObject*, PyObject *args, PyObject *keywds)
 	}
 	else {
 		fillViewParamsFromDict(viewParamsDict, viewParams);
-		// Pass explicit TM here becayse if we rotate the viewport while render region is active the camera
+		// Pass explicit TM here because if we rotate the viewport while render region is active the camera
 		// will not move but we need to move the default headlight
 		exporter.exportDefaultHeadlight(true, &viewParams.renderView.tm);
 	}
