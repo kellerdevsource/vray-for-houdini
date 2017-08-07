@@ -21,6 +21,7 @@
 #include <aurinterface.h>
 
 #include <GU/GU_PackedImpl.h>
+
 namespace VRayForHoudini {
 struct VolumeCacheKey {
 	std::string path;
@@ -110,17 +111,15 @@ public:
 	static GA_PrimitiveTypeId typeId() { return theTypeId; }
 	/// Register this factory
 	static void install(GA_PrimitiveFactory *gafactory);
-
-	/// Data cache used to cache last 10 volumes loaded
-	/// The load callback is set in VRayVolumeGridFactory::VRayVolumeGridFactory() because it is called before
-	/// any VRayVolumeGridRef instance is created
-	static VolumeCache dataCache;
+	/// Fetch data from key
+	static void fetchData(const VolumeCacheKey &key, VolumeCacheData &data);
 private:
 	static GA_PrimitiveTypeId theTypeId; ///< The type id for the primitive
 
 public:
 	VRayVolumeGridRef();
 	VRayVolumeGridRef(const VRayVolumeGridRef &src);
+	VRayVolumeGridRef(VRayVolumeGridRef &&src);
 	virtual ~VRayVolumeGridRef();
 
 	/// @{
@@ -175,6 +174,8 @@ public:
 	const DataRangeMap &          getChannelDataRanges() const { return m_channelDataRange; }
 
 private:
+	/// Sets fetch and evict callback
+	void initDataCache();
 	/// updateFrom() will update from UT_Options only
 	bool updateFrom(const UT_Options &options);
 	void clearDetail() { m_handle = GU_DetailHandle(); }
@@ -196,6 +197,8 @@ private:
 
 	/// Build channel mapping, should be called after update to cache or ui mappings
 	void buildMapping();
+public:
+	mutable VolumeCache    m_dataCache; ///< Data cache used to cache last 10 volumes loaded, mutable(needs to be updated from const functions not changing other (immutable)members)
 private:
 	GU_DetailHandle        m_handle; ///< Detail handle - passed to HDK
 	UT_Options             m_options; ///< All params from VFH_VOLUME_GRID_PARAMS are defined in this map

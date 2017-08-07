@@ -12,7 +12,6 @@
 
 #include "sop_PhoenixCache.h"
 #include "vfh_prm_templates.h"
-#include "gu_volumegridref.h"
 
 #include <GU/GU_PrimVolume.h>
 #include <GU/GU_PrimPacked.h>
@@ -36,32 +35,17 @@ PRM_Template* SOP::PhxShaderCache::GetPrmTemplate()
 	return AttrItems;
 }
 
-
-void SOP::PhxShaderCache::setPluginType()
+void SOP::PhxShaderCache::updateVRayVolumeGridRefPrim(VRayVolumeGridRef *gridRefPtr, GU_PrimPacked *pack, OP_Context &context, const float t)
 {
-	pluginType = VRayPluginType::GEOMETRY;
-	pluginID   = "CustomPhxShaderCache";
-}
-
-
-
-OP_ERROR SOP::PhxShaderCache::cookMySop(OP_Context &context)
-{
-	Log::getLog().info("%s cookMySop(%.3f)",
-					   getName().buffer(), context.getTime());
-
-	flags().setTimeDep(true);
-
-	gdp->stashAll();
-
-	const float t = context.getTime();
-
-	// Create a packed primitive
-	GU_PrimPacked *pack = GU_PrimPacked::build(*gdp, "VRayVolumeGridRef");
-	auto gridRefPtr = UTverify_cast<VRayVolumeGridRef*>(pack->implementation());
-	if (NOT(pack)) {
-		addWarning(SOP_MESSAGE, "Can't create packed primitive VRayVolumeGridRef");
-		return error();
+	if (!gridRefPtr) {
+		// if we don't have previous gridref use the new one
+		gridRefPtr = UTverify_cast<VRayVolumeGridRef*>(pack->implementation());
+	}
+	else {
+		// if we have previous gridref move its cache to the new one
+		UTverify_cast<VRayVolumeGridRef*>(pack->implementation())->m_dataCache = std::move(gridRefPtr->m_dataCache);
+		delete gridRefPtr;
+		gridRefPtr = UTverify_cast<VRayVolumeGridRef*>(pack->implementation());
 	}
 
 	// Set the location of the packed primitive's point.
@@ -86,6 +70,50 @@ OP_ERROR SOP::PhxShaderCache::cookMySop(OP_Context &context)
 
 	gridRefPtr->update(options);
 	pack->setPathAttribute(getFullPath());
+}
+
+
+void SOP::PhxShaderCache::setPluginType()
+{
+	pluginType = VRayPluginType::GEOMETRY;
+	pluginID   = "CustomPhxShaderCache";
+}
+
+
+
+OP_ERROR SOP::PhxShaderCache::cookMySop(OP_Context &context)
+{
+	Log::getLog().info("%s cookMySop(%.3f)",
+					   getName().buffer(), context.getTime());
+
+	flags().setTimeDep(true);
+
+
+	const float t = context.getTime();
+	
+	const GA_PrimitiveTypeId vrayVolumeGridRefTypeId = GU_PrimPacked::lookupTypeId("VRayVolumeGridRef");
+
+	// find existing VRayVolumeGridRef primitive
+	VRayVolumeGridRef* gridRefPtr = nullptr;
+	GA_Primitive *prim = nullptr;
+	GA_FOR_ALL_PRIMITIVES(gdp, prim) {
+		if (prim->getTypeId() == vrayVolumeGridRefTypeId) {
+			GU_PrimPacked *primPacked = UTverify_cast<GU_PrimPacked*>(prim);
+			VRayVolumeGridRef *oldGridRefPtr = UTverify_cast<VRayVolumeGridRef*>(primPacked->implementation());
+			gridRefPtr = new VRayVolumeGridRef(std::move(*oldGridRefPtr));
+		}
+	}
+	
+	gdp->stashAll();
+	
+	// Create a packed primitive
+	GU_PrimPacked *pack = GU_PrimPacked::build(*gdp, "VRayVolumeGridRef");
+	if (pack) {
+		updateVRayVolumeGridRefPrim(gridRefPtr, pack, context, t);
+	}
+	else {
+		addWarning(SOP_MESSAGE, "Can't create packed primitive VRayVolumeGridRef");
+	}
 
 	gdp->destroyStashed();
 
