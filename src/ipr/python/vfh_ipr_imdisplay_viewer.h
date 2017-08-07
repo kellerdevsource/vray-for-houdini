@@ -13,6 +13,7 @@
 
 #include "vfh_defines.h"
 #include "vfh_log.h"
+#include "vfh_process_check.h"
 
 #include <QThread>
 #include <QProcess>
@@ -52,6 +53,9 @@ public:
 	void add(TileQueueMessage *msg);
 
 	void clear();
+
+	/// Set the process checker
+	void setProcCheck(ProcessCheckPtr p) { pCheck = p; };
 
 	/// Set imdisplay port.
 	/// @param value Port.
@@ -119,13 +123,17 @@ private:
 	TileMessageQueue queue;
 
 	/// Flag set to true when the thread can run, set to false in the stop() method
-	bool isRunning;
+	/// This is volatile to discourage compiler optimizing the read since we dont lock when stopping the thread
+	volatile bool isRunning;
 
 	/// Queue lock.
 	QMutex mutex;
 
 	/// Callback to be called if pipe closes unexpectedly
 	std::function<void()> onStop;
+
+	/// Pointer to the process checker - used to explicitly check before every write
+	ProcessCheckPtr pCheck;
 
 	VfhDisableCopy(ImdisplayThread)
 };
