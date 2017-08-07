@@ -452,6 +452,7 @@ GU_ConstDetailHandle VRayVolumeGridRef::getPackedDetail(GU_PackedContext *contex
 
 	VolumeCacheData &data = getCache(key);
 
+
 	if (!data.aurPtr) {
 		gdp->clearAndDestroy();
 		return getDetail();
@@ -727,11 +728,10 @@ bool VRayVolumeGridRef::updateFrom(const UT_Options &options)
 
 	m_channelDirty = m_channelDirty || pathChange;
 
-	m_dirty = pathChange || m_dirty || options.hasOption("flip_yz") && options.getOptionI("flip_yz") != this->get_flip_yz();
+	m_dirty = pathChange || m_dirty || options.hasOption("flip_yz") && options.getOptionI("flip_yz") != this->get_flip_yz()
+		|| options.hasOption("res_mode") && options.hasOption("preview_res") && getResolution() != (options.getOptionI("res_mode") == 0 ? MAX_RESOLUTION : options.getOptionI("preview_res"));
 
 	m_options.merge(options);
-
-	Log::getLog().msg("resolution: %i", getResolution());
 
 	this->set_current_cache_path(getConvertedPath(false).c_str());
 	this->set_cache_path(getConvertedPath(true).c_str());
