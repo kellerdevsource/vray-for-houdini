@@ -90,8 +90,7 @@ PRM_Template* VOP::MetaImageFile::GetPrmTemplate()
 
 	static Parm::PRMList myPrmList;
 	if (myPrmList.empty()) {
-		UT_String uiPath = getenv("VRAY_UI_DS_PATH");
-		myPrmList.addFromFile(Parm::expandUiPath("MetaImage.ds").c_str(), uiPath.buffer());
+		myPrmList.addFromFile("MetaImageFile");
 	}
 
 	return myPrmList.getPRMTemplate();
@@ -108,7 +107,7 @@ void VOP::MetaImageFile::setPluginType()
 OP::VRayNode::PluginResult VOP::MetaImageFile::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
 {
 	Attrs::PluginDesc bitmapBufferDesc(VRayExporter::getPluginName(*this, "BitmapBuffer"), "BitmapBuffer");
-	exporter.setAttrsFromOpNodePrms(bitmapBufferDesc, this, "meta_image_bimap_buffer_");
+	exporter.setAttrsFromOpNodePrms(bitmapBufferDesc, this, "BitmapBuffer_");
 
 	const fpreal &t = exporter.getContext().getTime();
 	const int selectedUVGen = evalInt("meta_image_uv_generator", 0, t);
@@ -139,7 +138,7 @@ OP::VRayNode::PluginResult VOP::MetaImageFile::asPluginDesc(Attrs::PluginDesc &p
 			VRay::Plugin connectedPlugin = exporter.exportVop(connectedInput, parentContext);
 			if (connectedPlugin) {
 				const Parm::SocketDesc *fromSocketInfo = exporter.getConnectedOutputType(this, temp.at(i).label);
-				selectedUVPluginDesc.addAttribute(Attrs::PluginAttr(temp.at(i).label, connectedPlugin, fromSocketInfo->name.getToken()));
+				selectedUVPluginDesc.addAttribute(Attrs::PluginAttr(temp.at(i).label, connectedPlugin, fromSocketInfo->attrName.ptr()));
 			}
 		}
 	}
