@@ -54,7 +54,7 @@ void VRayExporter::RtCallbackLight(OP_Node *caller, void *callee, OP_EventType t
 	csect.leave();
 }
 
-VRay::Plugin VRayExporter::exportDefaultHeadlight(bool update)
+VRay::Plugin VRayExporter::exportDefaultHeadlight(bool update, const VRay::Transform * overrideTm)
 {
 	static const UT_StringRef theHeadlightNameToken = "DefaultHeadlight";
 
@@ -82,7 +82,11 @@ VRay::Plugin VRayExporter::exportDefaultHeadlight(bool update)
 	}
 
 	Attrs::PluginDesc pluginDesc(theHeadlightNameToken.buffer(), "LightDirect");
-	pluginDesc.addAttribute(Attrs::PluginAttr("transform", getObjTransform(cam, getContext())));
+	if (overrideTm) {
+		pluginDesc.addAttribute(Attrs::PluginAttr("transform", *overrideTm));
+	} else {
+		pluginDesc.addAttribute(Attrs::PluginAttr("transform", getObjTransform(cam, getContext())));
+	}
 
 	return exportPlugin(pluginDesc);
 }

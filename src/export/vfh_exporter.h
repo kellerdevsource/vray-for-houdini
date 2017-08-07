@@ -279,7 +279,7 @@ public:
 	/// Export the default light created when there are no lights in the scene
 	/// @param update[in] - flags whether this is called from IPR callback
 	/// @retval V-Ray plugin for default light
-	VRay::Plugin exportDefaultHeadlight(bool update = false);
+	VRay::Plugin exportDefaultHeadlight(bool update = false, const VRay::Transform * overrideTm = nullptr);
 
 	/// Export defaull V-Ray material. This is used when no valid material is found
 	/// for the object
