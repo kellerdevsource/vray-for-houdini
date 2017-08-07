@@ -52,6 +52,8 @@ using namespace VRayForHoudini;
 
 static boost::format FmtPluginNameWithPrefix("%s@%s");
 
+static StringSet RenderSettingsPlugins;
+
 void VRayExporter::reset()
 {
 	objectExporter.clearPrimPluginCache();
@@ -709,7 +711,23 @@ void VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 
 void VRayExporter::exportSettings()
 {
-	for (const auto &sp : Parm::RenderSettingsPlugins) {
+	if (RenderSettingsPlugins.empty()) {
+		RenderSettingsPlugins.insert("SettingsOptions");
+		RenderSettingsPlugins.insert("SettingsColorMapping");
+		RenderSettingsPlugins.insert("SettingsDMCSampler");
+		RenderSettingsPlugins.insert("SettingsImageSampler");
+		RenderSettingsPlugins.insert("SettingsGI");
+		RenderSettingsPlugins.insert("SettingsIrradianceMap");
+		RenderSettingsPlugins.insert("SettingsLightCache");
+		RenderSettingsPlugins.insert("SettingsDMCGI");
+		RenderSettingsPlugins.insert("SettingsRaycaster");
+		RenderSettingsPlugins.insert("SettingsRegionsGenerator");
+		RenderSettingsPlugins.insert("SettingsOutput");
+		RenderSettingsPlugins.insert("SettingsCaustics");
+		RenderSettingsPlugins.insert("SettingsDefaultDisplacement");
+	}
+
+	for (const auto &sp : RenderSettingsPlugins) {
 		const Parm::VRayPluginInfo *pluginInfo = Parm::getVRayPluginInfo(sp.c_str());
 		if (!pluginInfo) {
 			Log::getLog().error("Plugin \"%s\" description is not found!",
@@ -1897,7 +1915,7 @@ void MotionBlurParams::calcParams(fpreal currFrame)
 {
 	mb_start = currFrame - (mb_duration * (0.5 - mb_interval_center));
 	mb_end   = mb_start + mb_duration;
-	mb_frame_inc = mb_duration / std::max(mb_geom_samples - 1, 1);
+	mb_frame_inc = mb_duration / VUtils::Max(mb_geom_samples - 1, 1);
 
 	Log::getLog().info("  MB time: %.3f", currFrame);
 	Log::getLog().info("  MB duration: %.3f", mb_duration);
@@ -1908,7 +1926,7 @@ void MotionBlurParams::calcParams(fpreal currFrame)
 	Log::getLog().info("  MB inc:   %.3f", mb_frame_inc);
 }
 
-void VRayExporter::setFrame(fpreal time)
+void VRayExporter::setTime(fpreal time)
 {
 	m_context.setTime(time);
 }
@@ -1918,7 +1936,7 @@ void VRayExporter::exportFrame(fpreal time)
 	Log::getLog().debug("VRayExporter::exportFrame(%.3f)",
 						m_context.getFloatFrame());
 
-	setFrame(time);
+	setTime(time);
 
 	if (   !m_isMotionBlur
 		&& !m_isVelocityOn)
@@ -1956,7 +1974,7 @@ void VRayExporter::exportFrame(fpreal time)
 		}
 
 		// Set time back to original time for rendering
-		m_context.setTime(time);
+		setTime(time);
 	}
 
 	if (isAborted()) {

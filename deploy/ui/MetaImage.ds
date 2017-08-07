@@ -1,0 +1,134 @@
+#define UVWG_CHANNEL_CONDITIONS "{ meta_image_uv_generator != "3" } "
+
+#define UVWG_ENVIRONMENT_CONDITIONS "{ meta_image_uv_generator != "1" } "
+
+#define UVWG_EXPLICIT_CONDITIONS "{ meta_image_uv_generator != "2" } "
+
+#define UVWG_MAYA_PLACE_2D_CONDITIONS "{ meta_image_uv_generator != "0" } "
+
+#define UVWG_OBJECT_CONDITIONS "{ meta_image_uv_generator != "4" } "
+
+#define UVWG_OBJECTBBOX_CONDITIONS "{meta_image_uv_generator != "5" } "
+
+#define UVWG_PLANAR_WORLD_CONDITIONS "{meta_image_uv_generator != "6" } "
+
+#define UVWG_PROJECTION_CONDITIONS "{meta_image_uv_generator != "7" } "
+
+#define PREFIX "meta_image_"
+
+{
+	name "meta_image"
+	label "Meta Image"
+
+	group {
+		name "meta_image_bitmap_folder"
+		label "Bitmap"
+#undef PREFIX
+#define PREFIX "meta_image_bimap_buffer_"
+#include "$VRAY_UI_DS_PATH/plugins/BitmapBufferParms.ds"
+	}
+
+	group {
+		name "meta_image_tex_bitmap_folder"
+		label "Texture"
+#undef PREFIX
+#define PREFIX "TexBitmap_"
+#include "$VRAY_UI_DS_PATH/plugins/TexBitmapParms.ds"
+	}
+
+	group {
+		name "meta_image_uv_generator_folder"
+		label "UVGenerator"
+
+		parm {
+			name "meta_image_uv_generator"
+			label "UVGenerator"
+			menu {
+				"0" "Channel (Named)"
+				"1" "Environment"
+				"2" "Explicit"
+				"3" "Channel"
+				"4" "Object"
+				"5" "ObjectBBox"
+				"6" "PlanarWorld"
+				"7" "Projection"
+			}
+
+			parmtag { "cook_dependent" "1" }
+			default { "0" }
+		}
+
+		groupsimple {
+			name "meta_image_maya_place_2d"
+			label "Channel (Named)"
+#undef PREFIX
+#define PREFIX "UVWGenMayaPlace2dTexture_"
+#include "$VRAY_UI_DS_PATH/plugins/UVWGenMayaPlace2dTextureParms.ds"
+		hidewhen UVWG_MAYA_PLACE_2D_CONDITIONS
+		}
+		
+
+		groupsimple {
+			name "meta_image_environment"
+			label "Environment"
+#undef PREFIX
+#define PREFIX "UVWGenEnvironment_"
+#include "$VRAY_UI_DS_PATH/plugins/UVWGenEnvironmentParms.ds"
+		hidewhen UVWG_ENVIRONMENT_CONDITIONS
+		}
+
+		groupsimple {
+			name "meta_image_explicit"
+			label "Explicit"
+#undef PREFIX
+#define PREFIX "UVWGenExplicit_"
+#include "$VRAY_UI_DS_PATH/plugins/UVWGenExplicitParms.ds"
+		hidewhen UVWG_EXPLICIT_CONDITIONS
+		}
+
+		groupsimple {
+			name "meta_image_channel"
+			label "Channel"
+#undef PREFIX
+#define PREFIX "UVWGenChannel_"
+#include "$VRAY_UI_DS_PATH/plugins/UVWGenChannelParms.ds"
+		hidewhen UVWG_CHANNEL_CONDITIONS
+		}
+			
+		groupsimple {
+			name "meta_image_object"
+			label "Object"
+#undef PREFIX
+#define PREFIX "UVWGenObject_"
+#include "$VRAY_UI_DS_PATH/plugins/UVWGenObjectParms.ds"
+		hidewhen UVWG_OBJECT_CONDITIONS
+		}
+			
+		groupsimple {
+			name "meta_image_object_bbox"
+			label "Object BBox"
+#undef PREFIX
+#define PREFIX "UVWGenObjectBBox_"
+#include "$VRAY_UI_DS_PATH/plugins/UVWGenObjectBBoxParms.ds"
+		hidewhen UVWG_OBJECTBBOX_CONDITIONS
+		}
+			
+		groupsimple {
+			name "meta_image_planar_world"
+			label "Planar World"
+#undef PREFIX
+#define PREFIX "UVWGenPlanarWorld_"
+#include "$VRAY_UI_DS_PATH/plugins/UVWGenPlanarWorldParms.ds"
+		hidewhen UVWG_PLANAR_WORLD_CONDITIONS
+		}
+			
+		groupsimple {
+			name "meta_image_projection"
+			label "Projection"
+#undef PREFIX
+#define PREFIX "UVWGenProjection_"
+#include "$VRAY_UI_DS_PATH/plugins/UVWGenProjectionParms.ds"
+		hidewhen UVWG_PROJECTION_CONDITIONS
+		}
+	}
+}

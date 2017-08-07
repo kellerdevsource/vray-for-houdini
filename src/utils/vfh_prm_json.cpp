@@ -73,12 +73,110 @@ using namespace VRayForHoudini;
 using namespace VRayForHoudini::Parm;
 
 
+typedef boost::property_tree::ptree       JsonTree;
+typedef JsonTree::value_type              JsonItem;
+typedef std::map<std::string, JsonTree>   JsonDescs;
+
+
+struct JsonPluginDescGenerator {
+public:
+	JsonPluginDescGenerator() {}
+	~JsonPluginDescGenerator() { freeData(); }
+
+	/// Get a json object for given pluginID
+	/// @pluginID - the requested plugin's ID
+	/// @return pointer - to the json describing the plugin
+	///         nullptr - json not found for given plugin ID
+	JsonTree *getTree(const std::string &pluginID);
+
+	/// Check if we already loaded data from files
+	bool hasData() { return parsedData.size(); }
+	/// Load data from json files
+	void parseData();
+	/// Free all loaded data
+	void freeData();
+
+private:
+	JsonDescs  parsedData; ///< Json objects for all plugins
+
+	VfhDisableCopy(JsonPluginDescGenerator)
+} JsonPluginInfoParser;
+
+void JsonPluginDescGenerator::parseData()
+{
+	Log::getLog().info("Parse plugin description data...");
+
+	const char *jsonDescsFilepath = getenv("VRAY_PLUGIN_DESC_PATH");
+	if (NOT(jsonDescsFilepath)) {
+		Log::getLog().error("VRAY_PLUGIN_DESC_PATH environment variable is not found!");
+		return;
+	}
+
+	QDirIterator it(jsonDescsFilepath, QDirIterator::Subdirectories);
+	while (it.hasNext()) {
+		const QString &filePath = it.next();
+		if (filePath.endsWith(".json")) {
+			QFileInfo fileInfo(filePath);
+
+#ifdef __APPLE__
+			std::ifstream fileStream(filePath.toAscii().constData());
+#else
+			std::ifstream fileStream(filePath.toStdString());
+#endif
+			const std::string &fileName = fileInfo.baseName().toStdString();
+
+			try {
+				JsonTree &pTree = parsedData[fileName];
+				boost::property_tree::json_parser::read_json(fileStream, pTree);
+			}
+			catch (...) {
+				Log::getLog().error("Error parsing %s",
+							fileName.c_str());
+			}
+		}
+	}
+
+	if (NOT(parsedData.size())) {
+		Log::getLog().error("No descriptions parsed! May be VRAY_PLUGIN_DESC_PATH points to an empty / incorrect directory?");
+	}
+}
+
+
+JsonTree* JsonPluginDescGenerator::getTree(const std::string &pluginID)
+{
+	return parsedData.count(pluginID) ? &parsedData[pluginID] : nullptr;
+}
+
+
+void JsonPluginDescGenerator::freeData()
+{
+	parsedData.clear();
+}
+
+
+static void makeSpaceSeparatedTitleCase(std::string &attrName)
+{
+	// Title case and "_" to space
+	for (int i = 0; i < attrName.length(); ++i) {
+		const char &c = attrName[i];
+		if (!(c >= 'A' && c <= 'Z')) {
+			if ((i == 0) || (attrName[i-1] == '_')) {
+				if (i) {
+					attrName[i-1] = ' ';
+				}
+				// Don't modify digits
+				if (!(c >= '0' && c <= '9')) {
+					attrName[i] -= 32;
+				}
+			}
+		}
+	}
+}
 
 
 VRayPluginInfo* Parm::generatePluginInfo(const std::string &pluginID)
 {
 	if (!JsonPluginInfoParser.hasData()) {
-		JsonPluginInfoParser.init();
 		JsonPluginInfoParser.parseData();
 	}
 

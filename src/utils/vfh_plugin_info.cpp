@@ -45,34 +45,6 @@ static struct VRayPluginsInfoRAII
 	}
 } pluginsInfo;
 
-// XXX: Move elsewhere...
-static void initVRaySettingsNames()
-{
-	if (RenderSettingsPlugins.empty()) {
-		RenderSettingsPlugins.insert("SettingsOptions");
-		RenderSettingsPlugins.insert("SettingsColorMapping");
-		RenderSettingsPlugins.insert("SettingsDMCSampler");
-		RenderSettingsPlugins.insert("SettingsImageSampler");
-		RenderSettingsPlugins.insert("SettingsGI");
-		RenderSettingsPlugins.insert("SettingsIrradianceMap");
-		RenderSettingsPlugins.insert("SettingsLightCache");
-		RenderSettingsPlugins.insert("SettingsDMCGI");
-		RenderSettingsPlugins.insert("SettingsRaycaster");
-		RenderSettingsPlugins.insert("SettingsRegionsGenerator");
-		RenderSettingsPlugins.insert("SettingsOutput");
-		RenderSettingsPlugins.insert("SettingsCaustics");
-		RenderSettingsPlugins.insert("SettingsDefaultDisplacement");
-		// RenderSettingsPlugins.insert("SettingsRTEngine");
-	}
-
-	if (RenderGIPlugins.empty()) {
-		RenderGIPlugins.insert("SettingsGI");
-		RenderGIPlugins.insert("SettingsLightCache");
-		RenderGIPlugins.insert("SettingsIrradianceMap");
-		RenderGIPlugins.insert("SettingsDMCGI");
-	}
-}
-
 static void initVRayParmTypesMap()
 {
 	if (!vrayParmTypes.empty())
@@ -153,7 +125,6 @@ static void initVRayTypeMaps()
 {
 	initVRayVopTypesMap();
 	initVRayParmTypesMap();
-	initVRaySettingsNames();
 }
 
 /// Collect sockets from parameter's spare data.

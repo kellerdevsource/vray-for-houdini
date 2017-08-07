@@ -7,8 +7,3 @@
 //
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
-
-#include "vfh_prm_globals.h"
-
-StringSet VRayForHoudini::Parm::RenderSettingsPlugins;
-StringSet VRayForHoudini::Parm::RenderGIPlugins;
