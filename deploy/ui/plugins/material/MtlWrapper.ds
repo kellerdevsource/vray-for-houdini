@@ -4,6 +4,19 @@
     parmtag	{ spare_category "Wrapper" }
     parmtag	{ vray_plugin "MtlWrapper" }
 
+
+#include "vfh_material_common.ds"
+
+	parm {
+	    name "material"
+	    label "Material"
+	    type int
+	    parmtag { "cook_dependent" "1" }
+	    parmtag { "vray_pluginattr" "base_mtl" }
+	    parmtag { "vray_type" "PluginMaterial" }
+	    invisible
+	}
+
 	 parm {
 		name	"use"
 		label	"Use"

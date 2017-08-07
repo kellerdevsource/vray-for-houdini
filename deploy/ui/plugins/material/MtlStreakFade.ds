@@ -3,6 +3,20 @@
     label	"Streak Fade"
     parmtag	{ spare_category "Streak Fade" }
     parmtag	{ vray_plugin "MtlStreakFade" }
+
+#include "vfh_material_common.ds"
+
+	parm {
+	    name "base_mtl"
+	    label "Material"
+	    type int
+	    parmtag { "cook_dependent" "1" }
+	    parmtag { "vray_label" "base_mtl" }
+	    parmtag { "vray_pluginattr" "" }
+	    parmtag { "vray_type" "PluginMaterial" }
+	    invisible
+	}
+
     parm {
 		name	"fade"
 		label	"Fade"

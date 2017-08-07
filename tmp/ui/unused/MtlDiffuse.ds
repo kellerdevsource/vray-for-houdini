@@ -3,6 +3,9 @@
     label	"Diffuse"
     parmtag	{ spare_category "Diffuse" }
     parmtag	{ vray_plugin "MtlDiffuse" }
+
+#include "vfh_material_common.ds"
+
     parm {
 	name	"diffuse"
 	label	"Diffuse"

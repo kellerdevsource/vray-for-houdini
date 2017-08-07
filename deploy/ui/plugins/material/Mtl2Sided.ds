@@ -4,16 +4,28 @@
     parmtag	{ spare_category "Two Sided" }
     parmtag	{ vray_plugin "Mtl2Sided" }
 
+#include "vfh_material_common.ds"
+
     parm {
-    name	"use"
-    label	"Use"
-    type	toggle
-    default	{ "1" }
-    help	"Use Two Sided material"
-    range	{ 0 1 }
-    export	none
-    parmtag	{ "cook_dependent" "1" }
-    parmtag	{ "vray_custom_handling" "1" }
+        name "front"
+        label "Front"
+        type int
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_label" "front" }
+        parmtag { "vray_pluginattr" "front" }
+        parmtag { "vray_type" "PluginMaterial" }
+        invisible
+    }
+
+    parm {
+        name "back"
+        label "Back"
+        type int
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_label" "back" }
+        parmtag { "vray_pluginattr" "back" }
+        parmtag { "vray_type" "PluginMaterial" }
+        invisible
     }
 
     groupsimple {

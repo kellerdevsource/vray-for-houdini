@@ -15,18 +15,17 @@
             default { "0" }
             help    "Noise type"
             menu    {
-                "Noise" "Noise"
-                "Perlin Noise"  "Perlin Noise"
-                "Inflected Perlin Noise"    "Inflected Perlin Noise"
-                "Marble (With Perlin)"  "Marble (With Perlin)"
+                "0" "Noise"
+                "1" "Perlin Noise"
+                "2" "Inflected Perlin Noise"
+                "3" "Marble (With Perlin)"
             }
             range   { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
-            parmtag { "vray_enumkeys" "0,1,2,3" }
             parmtag { "vray_plugin" "TexNoise" }
             parmtag { "vray_pluginattr" "noiseType" }
-            parmtag { "vray_type" "int" }
+            parmtag { "vray_type" "enum" }
         }
 
         parm {

@@ -1,32 +1,41 @@
 {
-    name	TexDistanceBetween
-    label	"Distance Between"
-    parmtag	{ spare_category "Distance Between" }
-    parmtag	{ vray_plugin "TexDistanceBetween" }
+    name    TexDistanceBetween
+    label   "Distance Between"
+    parmtag { spare_category "Distance Between" }
+    parmtag { vray_plugin "TexDistanceBetween" }
+
+#include "vfh_texture_defines.ds"
+
     parm {
-	name	"point1"
-	label	"Point1"
-	type	color4
-	size	4
-	default	{ "0" "0" "0" "0" }
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexDistanceBetween" }
-	parmtag	{ "vray_pluginattr" "point1" }
-	parmtag	{ "vray_type" "Texture" }
+        name    "point1"
+        label   "Point 1"
+        type    color4
+        size    4
+        default { "0" "0" "0" "0" }
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexDistanceBetween" }
+        parmtag { "vray_pluginattr" "point1" }
+        parmtag { "vray_type" "Texture" }
     }
+
     parm {
-	name	"point2"
-	label	"Point2"
-	type	color4
-	size	4
-	default	{ "0" "0" "0" "0" }
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexDistanceBetween" }
-	parmtag	{ "vray_pluginattr" "point2" }
-	parmtag	{ "vray_type" "Texture" }
+        name    "point2"
+        label   "Point 2"
+        type    color4
+        size    4
+        default { "0" "0" "0" "0" }
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexDistanceBetween" }
+        parmtag { "vray_pluginattr" "point2" }
+        parmtag { "vray_type" "Texture" }
     }
+
+    VFH_TEXTURE_INPUT_TRANSFORM(transform1)
+    VFH_TEXTURE_INPUT_TRANSFORM(transform2)
+
+    VFH_TEXTURE_OUTPUT_FLOAT(distance)
 }

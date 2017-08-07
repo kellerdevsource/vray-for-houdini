@@ -7,6 +7,18 @@
 #define NAMEM(n) name n##""
 #endif
 
+#define VFH_TEXTURE_TYPED_INPUT(ATTR, VRAY_INPUT_TYPE) \
+parm { \
+    name ATTR \
+    label ATTR \
+    parmtag { "cook_dependent" "1" } \
+    parmtag { "vray_label" ATTR } \
+    parmtag { "vray_pluginattr" ATTR } \
+    parmtag { "vray_type" VRAY_INPUT_TYPE } \
+    export none \
+    invisible \
+}
+
 #define VFH_TEXTURE_TYPED_OUTPUT(ATTR, VRAY_OUTPUT_TYPE) \
 parm { \
     name ATTR \
@@ -18,6 +30,12 @@ parm { \
     export none \
     invisible \
 }
+
+#define VFH_TEXTURE_INPUT(ATTR)            VFH_TEXTURE_TYPED_INPUT(ATTR, "Texture")
+#define VFH_TEXTURE_INPUT_FLOAT(ATTR)      VFH_TEXTURE_TYPED_INPUT(ATTR, "TextureFloat")
+#define VFH_TEXTURE_INPUT_INT(ATTR)        VFH_TEXTURE_TYPED_INPUT(ATTR, "TextureInt")
+#define VFH_TEXTURE_INPUT_VECTOR(ATTR)     VFH_TEXTURE_TYPED_INPUT(ATTR, "TextureVector")
+#define VFH_TEXTURE_INPUT_TRANSFORM(ATTR)  VFH_TEXTURE_TYPED_INPUT(ATTR, "TextureTransform")
 
 #define VFH_TEXTURE_OUTPUT(ATTR)           VFH_TEXTURE_TYPED_OUTPUT(ATTR, "OutputTexture")
 #define VFH_TEXTURE_OUTPUT_FLOAT(ATTR)     VFH_TEXTURE_TYPED_OUTPUT(ATTR, "OutputTextureFloat")

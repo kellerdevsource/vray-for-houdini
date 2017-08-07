@@ -3,6 +3,29 @@
     label	"Angle Blend"
     parmtag	{ spare_category "Angle Blend" }
     parmtag	{ vray_plugin "MtlAngleBlend" }
+
+#include "vfh_material_common.ds"
+
+    parm {
+        name "first"
+        label "First"
+        type int
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_pluginattr" "mtl_one" }
+        parmtag { "vray_type" "PluginMaterial" }
+        invisible
+    }
+
+    parm {
+        name "second"
+        label "Second"
+        type int
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_pluginattr" "mtl_two" }
+        parmtag { "vray_type" "PluginMaterial" }
+        invisible
+    }
+
     parm {
 	name	"start_angle"
 	label	"Start Angle"

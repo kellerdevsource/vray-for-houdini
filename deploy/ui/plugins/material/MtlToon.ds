@@ -3,6 +3,19 @@
     label	"Toon"
     parmtag	{ spare_category "Toon" }
     parmtag	{ vray_plugin "MtlToon" }
+
+#include "vfh_material_common.ds"
+
+	parm {
+	    name "material"
+	    label "Material"
+	    type int
+	    parmtag { "cook_dependent" "1" }
+	    parmtag { "vray_pluginattr" "base_mtl" }
+	    parmtag { "vray_type" "PluginMaterial" }
+	    invisible
+	}
+
     parm {
 	name	"lineWidth"
 	label	"Linewidth"

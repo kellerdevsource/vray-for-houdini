@@ -221,23 +221,19 @@ void newVopOperator(OP_OperatorTable *table)
 
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFBlinn);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFBump);
-	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFCSV);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFCarPaint);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFCookTorrance);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFDiffuse);
-	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFDiffuse_forSSS);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFFlakes);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFGGX);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFGlass);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFGlassGlossy);
-	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFHOPS);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFHair);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFHair2);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFHair3);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFLayered);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFLight);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFMirror);
-	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFMultiBump);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFPhong);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFSSS);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFSSS2);
@@ -255,14 +251,8 @@ void newVopOperator(OP_OperatorTable *table)
 #endif
 
 	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", Mtl2Sided);
-	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", MtlBump);
-	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", MtlDiffuse);
-	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", MtlDoubleSided);
-	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", MtlLayeredBRDF);
 	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", MtlMaterialID);
-	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", MtlMayaRamp);
 	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", MtlMulti);
-	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", MtlObjBBox);
 	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", MtlOverride);
 	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", MtlRenderStats);
 	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", MtlRoundEdges);
@@ -270,22 +260,13 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", MtlStreakFade);
 	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", MtlVRmat);
 	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", MtlWrapper);
-	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", MtlWrapperMaya);
 
 	VFH_VOP_ADD_OPERATOR(table, VRayPluginType::GEOMETRY, GeomDisplacedMesh);
 	VFH_VOP_ADD_OPERATOR(table, VRayPluginType::GEOMETRY, GeomStaticSmoothedMesh);
 
-	// TODO: need to enable this at some point.
-	// TextureOutput is intended to serve same purposes as MaterialOutput for materials
-	// but used for textures in this case
-	// VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TextureOutput);
-	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", MetaImageFile);
-
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", BitmapBuffer);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", ColorTextureToMono);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", FloatToTex);
-	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", MayaProjectionTex);
-	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", ParticleTex);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexAColor);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexAColorChannel);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexAColorOp);
@@ -298,7 +279,6 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexCellular);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexChecker);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexClamp);
-	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexCloth);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexColor2Scalar);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexColor8Mix);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexColorAndAlpha);
@@ -315,7 +295,6 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexCondition);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexCondition2);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexCurvature);
-	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexCustomBitmap);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexDirt);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexDisplacacementRestrict);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexDistance);
@@ -328,37 +307,20 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexFloatToColor);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexFresnel);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexGradRamp);
-	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexGradient);
-	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexGranite);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexGrid);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexHSVToRGB);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexHairRootSampler);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexHairSampler);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexICC);
-	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexIDIntegerMap);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexInt);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexIntToFloat);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexInterpLinear);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexInvert);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexInvertFloat);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexLayeredMax);
-	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexLeather);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexLuminance);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexLut);
-	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexMarble);
-	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexMarbleMax);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexMaskMax);
-	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexMaxGamma);
-	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexMaxHairInfo);
-	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexMayaContrast);
-	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexMayaConversion);
-	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexMayaFluid);
-	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexMayaFluidCombined);
-	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexMayaFluidProcedural);
-	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexMayaFluidTransformed);
-	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexMayaHairColor);
-	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexMayaHairIncandescence);
-	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexMayaHairTransparency);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexMeshVertexColor);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexMeshVertexColorChannel);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexMeshVertexColorWithDefault);
@@ -384,7 +346,6 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexRamp);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexRaySwitch);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexRemap);
-	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexRemapFloat);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexRgbaCombine);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexRgbaSplit);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexRock);
@@ -401,7 +362,6 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexSpeckle);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexSplat);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexStencil);
-	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexStucco);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexSurfIncidence);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexSurfaceLuminance);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexSwirl);
@@ -418,19 +378,16 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexUVWGenToTexture);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexUserColor);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexUserScalar);
-	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexVRayFurSampler);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexVectorOp);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexVectorProduct);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexVectorToColor);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexVertexColorDirect);
-	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexVoxelData);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexWater);
-	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexWood);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TransformToTex);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", texRenderHair);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexTriPlanar);
+	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", MetaImageFile);
 
-	VFH_VOP_ADD_OPERATOR(table, "UVWGEN", UVWGenBercon);
 	VFH_VOP_ADD_OPERATOR(table, "UVWGEN", UVWGenChannel);
 	VFH_VOP_ADD_OPERATOR(table, "UVWGEN", UVWGenEnvironment);
 	VFH_VOP_ADD_OPERATOR(table, "UVWGEN", UVWGenExplicit);
@@ -439,7 +396,6 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "UVWGEN", UVWGenObjectBBox);
 	VFH_VOP_ADD_OPERATOR(table, "UVWGEN", UVWGenPlanarWorld);
 	VFH_VOP_ADD_OPERATOR(table, "UVWGEN", UVWGenProjection);
-	VFH_VOP_ADD_OPERATOR(table, "UVWGEN", UVWGenSwitch);
 }
 
 

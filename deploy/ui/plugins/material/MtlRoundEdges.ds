@@ -4,6 +4,19 @@
     parmtag	{ spare_category "Rounded Corners" }
     parmtag	{ vray_plugin "MtlRoundEdges" }
 
+#include "vfh_material_common.ds"
+
+	parm {
+	    name "material"
+	    label "Material"
+	    type int
+	    parmtag { "cook_dependent" "1" }
+	    parmtag { "vray_label" "material" }
+	    parmtag { "vray_pluginattr" "base_mtl" }
+	    parmtag { "vray_type" "PluginMaterial" }
+	    invisible
+	}
+
 	groupsimple {
 		name "folder_main"
 		label "Main"

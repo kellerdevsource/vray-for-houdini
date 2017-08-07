@@ -4,107 +4,86 @@
     parmtag { spare_category "Gradient Ramp" }
     parmtag { vray_plugin "TexGradRamp" }
 
-    parm {
-        name    "gradient_type"
-        label   "Type"
-        type    ordinal
-        default { "0" }
-        help    "Gradient type"
-        menu    {
-            "Four corner"   "Four corner"
-            "Box"   "Box"
-            "Diagonal"  "Diagonal"
-            "Lighting"  "Lighting"
-            "Linear"    "Linear"
-            "Mapped"    "Mapped"
-            "Normal"    "Normal"
-            "Pong"  "Pong"
-            "Radial"    "Radial"
-            "Spiral"    "Spiral"
-            "Sweep" "Sweep"
-            "Tartan"    "Tartan"
-            "Position"  "Position"
+    groupsimple {
+        name "TexDistanceSettings"
+        label "Settings"
+
+        parm {
+            name    "gradient_type"
+            label   "Type"
+            type    ordinal
+            default { "0" }
+            help    "Gradient type"
+            menu    {
+                "0"  "Four corner"
+                "1"  "Box"
+                "2"  "Diagonal"
+                "3"  "Lighting"
+                "4"  "Linear"
+                "5"  "Mapped"
+                "6"  "Normal"
+                "7"  "Pong"
+                "8"  "Radial"
+                "9"  "Spiral"
+                "10" "Sweep"
+                "11" "Tartan"
+                "12" "Position"
+            }
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexGradRamp" }
+            parmtag { "vray_pluginattr" "gradient_type" }
+            parmtag { "vray_type" "enum" }
         }
-        range   { 0 1 }
-        export  none
-        parmtag { "cook_dependent" "1" }
-        parmtag { "vray_enumkeys" "0,1,2,3,4,5,6,7,8,9,10,11,12" }
-        parmtag { "vray_plugin" "TexGradRamp" }
-        parmtag { "vray_pluginattr" "gradient_type" }
-        parmtag { "vray_type" "int" }
-    }
 
-    parm {
-        name    "interpolation"
-        label   "Interpolation"
-        type    ordinal
-        default { "1" }
-        help    "Interpolation"
-        menu    {
-            "None"  "None"
-            "Linear"    "Linear"
-            "Exponent Up"   "Exponent Up"
-            "Exponent Down" "Exponent Down"
-            "Smooth"    "Smooth"
-            "Bump"  "Bump"
-            "Spike" "Spike"
+        parm {
+            name    "color_ramp"
+            label   "Color Ramp"
+            type    ramp_rgb
+            default { "2" }
+            help    "Color Ramp"
+            range   { 1! 10 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "rampbasisdefault" "linear" }
+            parmtag { "rampcolordefault" "1pos ( 0 ) 1c ( 0 0 1 ) 1interp ( linear )  2pos ( 1 ) 2c ( 1 0 0 ) 2interp ( linear )" }
+            parmtag { "rampkeys_var" "positions" }
+            parmtag { "rampvalues_var" "colors" }
+            parmtag { "rampbasis_var" "interpolation" }
         }
-        range   { 0 1 }
-        export  none
-        parmtag { "cook_dependent" "1" }
-        parmtag { "vray_enumkeys" "0,1,2,3,4,5,6" }
-        parmtag { "vray_plugin" "TexGradRamp" }
-        parmtag { "vray_pluginattr" "interpolation" }
-        parmtag { "vray_type" "List<Integer>" }
-        invisible
-    }
 
-    parm {
-        name    "color_ramp"
-        label   "Color Ramp"
-        type    ramp_rgb
-        default { "2" }
-        help    "Color Ramp"
-        range   { 1! 10 }
-        export  none
-        parmtag { "cook_dependent" "1" }
-        parmtag { "rampbasisdefault" "linear" }
-        parmtag { "rampcolordefault" "1pos ( 0 ) 1c ( 0 0 1 ) 1interp ( linear )  2pos ( 1 ) 2c ( 1 0 0 ) 2interp ( linear )" }
-        parmtag { "rampkeys_var" "positions" }
-        parmtag { "rampvalues_var" "colors" }
-        parmtag { "rampbasis_var" "interpolation" }        
-    }
+        parm {
+            name    "gradient_position"
+            label   "Gradient Position"
+            type    float
+            default { "0" }
+            help    "When 'gradient_type' is 'position' this will specify the position of color in gradient to return"
+            range   { 0 64 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexGradRamp" }
+            parmtag { "vray_pluginattr" "gradient_position" }
+            parmtag { "vray_type" "TextureFloat" }
+            hidewhen "{ gradient_type != "12" }"
+        }
 
-    parm {
-        name    "gradient_position"
-        label   "Gradient Position"
-        type    float
-        default { "0" }
-        help    "When 'gradient_type' is 'position' this will specify the position of color in gradient to return"
-        range   { 0 64 }
-        export  none
-        parmtag { "cook_dependent" "1" }
-        parmtag { "vray_plugin" "TexGradRamp" }
-        parmtag { "vray_pluginattr" "gradient_position" }
-        parmtag { "vray_type" "TextureFloat" }
-        hidewhen "{ gradient_type != "Position" }"
-    }
-
-    parm {
-        name    "texture_map"
-        label   "Texture Map"
-        type    color4
-        size    4
-        default { "0" "0" "0" "1" }
-        help    "The texture used for mapped gradient ramp"
-        range   { 0 10 }
-        export  none
-        parmtag { "cook_dependent" "1" }
-        parmtag { "vray_linked_only" "1" }
-        parmtag { "vray_plugin" "TexGradRamp" }
-        parmtag { "vray_pluginattr" "texture_map" }
-        parmtag { "vray_type" "Texture" }
-        invisible
+        parm {
+            name    "texture_map"
+            label   "Texture Map"
+            type    color4
+            size    4
+            default { "0" "0" "0" "1" }
+            help    "The texture used for mapped gradient ramp"
+            range   { 0 10 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_linked_only" "1" }
+            parmtag { "vray_plugin" "TexGradRamp" }
+            parmtag { "vray_pluginattr" "texture_map" }
+            parmtag { "vray_type" "Texture" }
+            invisible
+        }
     }
 
     groupcollapsible {
@@ -118,17 +97,16 @@
             default { "0" }
             help    ""
             menu    {
-                "0"   "Regular"
-                "1"   "Fractal"
-                "2"    "Turbulence"
+                "0" "Regular"
+                "1" "Fractal"
+                "2" "Turbulence"
             }
             range   { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
-            parmtag { "vray_enumkeys" "0,1,2" }
             parmtag { "vray_plugin" "TexGradRamp" }
             parmtag { "vray_pluginattr" "noise_type" }
-            parmtag { "vray_type" "int" }
+            parmtag { "vray_type" "enum" }
         }
 
         parm {

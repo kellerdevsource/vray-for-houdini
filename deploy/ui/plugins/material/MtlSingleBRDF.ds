@@ -4,6 +4,19 @@
     parmtag { spare_category "Single" }
     parmtag { vray_plugin "MtlSingleBRDF" }
 
+#include "vfh_material_common.ds"
+
+    parm {
+        name "brdf"
+        label "brdf"
+        type int
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_label" "brdf" }
+        parmtag { "vray_pluginattr" "brdf" }
+        parmtag { "vray_type" "PluginBRDF" }
+        invisible
+    }
+
     groupsimple {
         name "folder_main"
         label "Main"
@@ -55,17 +68,4 @@
             parmtag { "vray_type" "boolean" }
         }
     }
-
-    parm {
-        name "brdf"
-        label "brdf"
-        type int
-        parmtag { "cook_dependent" "1" }
-        parmtag { "vray_label" "brdf" }
-        parmtag { "vray_pluginattr" "brdf" }
-        parmtag { "vray_type" "PluginBRDF" }
-        invisible
-    }
-
-#include "vfh_material_common.ds"
 }
