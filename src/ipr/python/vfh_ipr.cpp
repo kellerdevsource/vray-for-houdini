@@ -298,14 +298,10 @@ static PyObject* vfhExportView(PyObject*, PyObject *args, PyObject *keywds)
 
 	ViewParams viewParams(cameraNode);
 	if (cameraNode && !cameraNode->getName().contains("ipr_camera")) {
-		exporter.exportDefaultHeadlight(true);
 		exporter.fillViewParamFromCameraNode(*cameraNode, viewParams);
 	}
 	else {
 		fillViewParamsFromDict(viewParamsDict, viewParams);
-		// Pass explicit TM here because if we rotate the viewport while render region is active the camera
-		// will not move but we need to move the default headlight
-		exporter.exportDefaultHeadlight(true, &viewParams.renderView.tm);
 	}
 
 	// Copy params; no const ref!
@@ -313,6 +309,7 @@ static PyObject* vfhExportView(PyObject*, PyObject *args, PyObject *keywds)
 
 	// Update view.
 	exporter.exportView(viewParams);
+	exporter.exportDefaultHeadlight(true);
 
 	// Update pipe if needed.
 	if (oldViewParams.changedSize(viewParams)) {
