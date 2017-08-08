@@ -239,8 +239,10 @@ void VRayExporter::setAttrValueFromOpNodePrm(Attrs::PluginDesc &pluginDesc, cons
 				attr.paramValue.valInt = enumValue.toInt();
 			}
 			else {
+				Log::getLog().error("Incorrect enum: %s.%s!", pluginDesc.pluginID.c_str(), attrDesc.attr.ptr());
+
 				// UVWGenEnvironment is the only plugin with enum with the string keys.
-				vassert(pluginDesc.pluginID == "UVWGenEnvironment");
+				vassert(pluginDesc.pluginID == "UVWGenEnvironment" && "Incorrect enum!");
 
 				attr.paramType = Attrs::PluginAttr::AttrTypeString;
 				attr.paramValue.valString = enumValue.buffer();
