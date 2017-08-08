@@ -5,7 +5,7 @@
     parmtag	{ vray_plugin "MtlWrapper" }
 
 
-#include "vfh_material_common.ds"
+#include "$VRAY_UI_DS_PATH/common/vfh_material_common.ds"
 
 	parm {
 	    name "material"

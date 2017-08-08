@@ -113,6 +113,6 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "TexOpenVDB" }
 	parmtag	{ "vray_pluginattr" "vector_mult" }
-	parmtag	{ "vray_type" "AColor" }
+	parmtag	{ "vray_type" "acolor" }
     }
 }

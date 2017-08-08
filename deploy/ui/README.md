@@ -55,9 +55,43 @@ Example:
 
 ### Parameters
 
+#### Types
+
+* Attribute type is specified with the "vray_type" spare tag.
+* Allowed parameter types:
+    - "boolean"
+    - "int"
+    - "enum"
+    - "float"
+    - "color"
+    - "acolor"
+    - "string"
+    - "vector"
+
+* The following types will produce a node socket in addition to a parameter interface:
+    - "Plugin"
+    - "PluginBRDF"
+    - "PluginMaterial"
+    - "Texture"
+    - "TextureFloat"
+    - "TextureInt"
+    - "TextureMatrix"
+    - "TextureTransform"
+    - "TextureVector"
+    - "Object" (deprecated, use "Plugin" or more specific type)
+    - "OutputPlugin"
+    - "OutputPluginBRDF"
+    - "OutputPluginMaterial"
+    - "OutputTexture"
+    - "OutputTextureFloat"
+    - "OutputTextureInt"
+    - "OutputTextureMatrix"
+    - "OutputTextureTransform"
+    - "OutputTextureVector"
+
 #### Enum (Menu)
 
-* Use `parmtag { "vray_type" "enum" }` for enums
+* Use `parmtag { "vray_type" "enum" }` for enums, otherwise the exported value will be incorrect.
 * Use integer keys with the exact values as specified in V-Ray plugin.
 
 ### Sockets

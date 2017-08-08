@@ -4,7 +4,7 @@
     parmtag { spare_category "Single" }
     parmtag { vray_plugin "MtlSingleBRDF" }
 
-#include "vfh_material_common.ds"
+#include "$VRAY_UI_DS_PATH/common/vfh_material_common.ds"
 
     parm {
         name "brdf"

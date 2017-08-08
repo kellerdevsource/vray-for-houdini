@@ -4,7 +4,7 @@
     parmtag	{ spare_category "Toon" }
     parmtag	{ vray_plugin "MtlToon" }
 
-#include "vfh_material_common.ds"
+#include "$VRAY_UI_DS_PATH/common/vfh_material_common.ds"
 
 	parm {
 	    name "material"

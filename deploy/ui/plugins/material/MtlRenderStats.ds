@@ -4,7 +4,8 @@
     parmtag	{ spare_category "Render Stats" }
     parmtag	{ vray_plugin "MtlRenderStats" }
 
-#include "vfh_material_common.ds"
+// NOTE: Using full path here because it's included in VRay.ds
+#include "$VRAY_UI_DS_PATH/common/vfh_material_common.ds"
 
 	parm {
 	    name "material"
@@ -20,7 +21,7 @@
 	groupsimple {
 		name "folder_main"
 		label "Main"
-		
+
 		parm {
 			name	"use"
 			label	"Use"
@@ -32,9 +33,9 @@
 			parmtag	{ "cook_dependent" "1" }
 			parmtag	{ "vray_custom_handling" "1" }
 		}
-		
+
 		// consider using a toggle instead
-		
+
 		parm {
 			name	"visibility"
 			label	"Primary Visibility"
@@ -49,7 +50,7 @@
 			parmtag	{ "vray_pluginattr" "visibility" }
 			parmtag	{ "vray_type" "float" }
 		}
-		
+
 		parm {
 			name	"camera_visibility"
 			label	"Camera Visibility"
@@ -134,8 +135,8 @@
 			parmtag	{ "vray_pluginattr" "shadows_receive" }
 			parmtag	{ "vray_type" "boolean" }
 		}
-		
-		
+
+
 	}
-  
+
 }

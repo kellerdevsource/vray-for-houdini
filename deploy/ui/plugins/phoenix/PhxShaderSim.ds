@@ -855,7 +855,7 @@
 	parmtag	{ "cook_dependent" "1" }
 	parmtag	{ "vray_plugin" "PhxShaderSim" }
 	parmtag	{ "vray_pluginattr" "simple_color" }
-	parmtag	{ "vray_type" "AColor" }
+	parmtag	{ "vray_type" "acolor" }
     }
     parm {
 	name	"mod_t"
