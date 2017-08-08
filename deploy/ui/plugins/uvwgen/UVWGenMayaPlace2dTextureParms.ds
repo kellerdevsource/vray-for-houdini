@@ -210,7 +210,7 @@ parm {
 
 parm {
     NAMEM("nsamples")
-    label   "Nsamples"
+    label   "Samples"
     type    integer
     default { "1" }
     help    "The number of parameter samples to take for motion blur: 0 - means the global value; 1 - means motion blur should be disabled for this plugin"
@@ -220,6 +220,7 @@ parm {
     parmtag { "vray_plugin" "UVWGenMayaPlace2dTexture" }
     parmtag { "vray_pluginattr" "nsamples" }
     parmtag { "vray_type" "int" }
+    invisible
 }
 
 parm {

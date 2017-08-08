@@ -206,12 +206,60 @@ groupcollapsible {
 }
 
 groupcollapsible {
+    name "VfhBitmapBufferIFD"
+    label "Image File List"
+
+    parm {
+        NAMEM("ifl_start_frame")
+        label   "Start Frame"
+        type    integer
+        default { "0" }
+        range   { 0 64 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "BitmapBuffer" }
+        parmtag { "vray_pluginattr" "ifl_start_frame" }
+        parmtag { "vray_type" "int" }
+    }
+
+    parm {
+        NAMEM("ifl_playback_rate")
+        label   "Playback Rate"
+        type    float
+        default { "1" }
+        range   { 0 64 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "BitmapBuffer" }
+        parmtag { "vray_pluginattr" "ifl_playback_rate" }
+        parmtag { "vray_type" "float" }
+    }
+
+    parm {
+        NAMEM("ifl_end_condition")
+        label   "End Condition"
+        type    ordinal
+        default { "0" }
+        help    "Image file list (IFL) end condition"
+        menu    {
+            "0" "Loop"
+            "1" "Ping Pong"
+            "2" "Hold"
+        }
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "BitmapBuffer" }
+        parmtag { "vray_pluginattr" "ifl_end_condition" }
+        parmtag { "vray_type" "enum" }
+    }
+}
+
+groupcollapsible {
     name "VfhBitmapBufferPSD"
     label "PSD"
 
     parm {
         NAMEM("psd_group_name")
-        label   "Psd Group Name"
+        label   "Group Name"
         type    string
         default { "" }
         range   { 0 1 }
@@ -224,7 +272,7 @@ groupcollapsible {
 
     parm {
         NAMEM("psd_alpha_name")
-        label   "Psd Alpha Name"
+        label   "Alpha Name"
         type    string
         default { "" }
         range   { 0 1 }
@@ -234,52 +282,6 @@ groupcollapsible {
         parmtag { "vray_pluginattr" "psd_alpha_name" }
         parmtag { "vray_type" "List<Integer>" }
     }
-}
-
-parm {
-    NAMEM("ifl_start_frame")
-    label   "Ifl Start Frame"
-    type    integer
-    default { "0" }
-    range   { 0 64 }
-    export  none
-    parmtag { "cook_dependent" "1" }
-    parmtag { "vray_plugin" "BitmapBuffer" }
-    parmtag { "vray_pluginattr" "ifl_start_frame" }
-    parmtag { "vray_type" "int" }
-    invisible
-}
-
-parm {
-    NAMEM("ifl_playback_rate")
-    label   "Ifl Playback Rate"
-    type    float
-    default { "1" }
-    range   { 0 64 }
-    export  none
-    parmtag { "cook_dependent" "1" }
-    parmtag { "vray_plugin" "BitmapBuffer" }
-    parmtag { "vray_pluginattr" "ifl_playback_rate" }
-    parmtag { "vray_type" "float" }
-    invisible
-}
-
-parm {
-    NAMEM("ifl_end_condition")
-    label   "Ifl End Condition"
-    type    ordinal
-    default { "0" }
-    help    "Image file list (IFL) end condition"
-    menu    {
-        "0" "Loop"
-        "1" "Ping Pong"
-        "2" "Hold"
-    }
-    parmtag { "cook_dependent" "1" }
-    parmtag { "vray_plugin" "BitmapBuffer" }
-    parmtag { "vray_pluginattr" "ifl_end_condition" }
-    parmtag { "vray_type" "enum" }
-    invisible
 }
 
 parm {

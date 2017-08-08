@@ -31,18 +31,18 @@
 
 	group {
 		name "meta_image_uv_generator_folder"
-		label "UVGenerator"
+		label "UV"
 
 		parm {
 			name "meta_image_uv_generator"
-			label "UVGenerator"
+			label "Type"
 			menu {
 				"0" "Channel (Named)"
 				"1" "Environment"
 				"2" "Explicit"
 				"3" "Channel"
 				"4" "Object"
-				"5" "ObjectBBox"
+				"5" "Object BBox"
 				"6" "PlanarWorld"
 				"7" "Projection"
 			}
@@ -77,7 +77,7 @@
 
 		groupsimple {
 			name "meta_image_maya_place_2d"
-			label "Maya Place 2d"
+			label "Channel (Named)"
 #undef PREFIX
 #define PREFIX "UVWGenMayaPlace2dTexture_"
 #include "UVWGenMayaPlace2dTextureParms.ds"
