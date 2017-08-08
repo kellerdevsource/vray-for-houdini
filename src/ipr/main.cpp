@@ -9,17 +9,20 @@
 //
 
 #include "vfh_log.h"
+#include "vfh_process_check.h"
 
 #include <unistd.h>
 #include <cstdio>
+#include <string>
 
 void initLinux()
 {
 #ifndef WIN32
+	std::string tmpDir = getTempDir();
 	pid_t parentPID = getppid();
 	pid_t myPID = getpid();
 	char fname[1024] = {0,};
-	sprintf(fname, "/tmp/%d", static_cast<int>(parentPID));
+	sprintf(fname, "%s/%d", tmpDir.c_str(), static_cast<int>(parentPID));
 
 	FILE * pidFile = fopen(fname, "wb");
 	if (!pidFile) {

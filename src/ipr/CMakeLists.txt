@@ -24,6 +24,7 @@ use_vray_sdk()
 include_directories(${CMAKE_SOURCE_DIR}/src)
 include_directories(${CMAKE_SOURCE_DIR}/src/export)
 include_directories(${CMAKE_SOURCE_DIR}/src/utils)
+include_directories(${CMAKE_SOURCE_DIR}/src/ipr/python)
 
 add_executable(${PROJECT_NAME} "${SOURCES};${HEADERS}")
 
