@@ -296,7 +296,6 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexCondition2);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexCurvature);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexDirt);
-	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexDisplacacementRestrict);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexDistance);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexDistanceBetween);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexEdges);
