@@ -43,7 +43,7 @@ std::string getTempDir() {
 		return defaultTmp;
 	}
 
-	const char *envTmp[3] = {"TMP", "TEMP", "TMPDIR", "TEMPDIR"};
+	const char *envTmp[] = {"TMP", "TEMP", "TMPDIR", "TEMPDIR"};
 	const int envCount = sizeof(envTmp) / sizeof(envTmp[0]);
 	for (int c = 0; c < envCount; c++) {
 		const char *envVal = getenv(envTmp[c]);
