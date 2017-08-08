@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2016, Chaos Software Ltd
+// Copyright (c) 2015-2017, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -11,101 +11,104 @@
 #include "vop_meta_image_file.h"
 #include "vfh_prm_templates.h"
 #include "vfh_tex_utils.h"
+
 #include <map>
 #include <vector>
 
 using namespace VRayForHoudini;
+using namespace VOP;
 
-struct MetaImageFileSocket {
-	MetaImageFileSocket(const char *l, const VOP_TypeInfo tI):label(l), typeInfo(tI){}
-	const char *label;
-	const VOP_TypeInfo typeInfo;
+static MetaImageFile::UVWGenSocket metaImageFileOutputSockets[] = {
+	MetaImageFile::UVWGenSocket("color", VOP_TypeInfo(VOP_TYPE_COLOR)),
+	MetaImageFile::UVWGenSocket("out_transparency", VOP_TypeInfo(VOP_TYPE_COLOR)),
+	MetaImageFile::UVWGenSocket("out_alpha", VOP_TypeInfo(VOP_TYPE_FLOAT)),
+	MetaImageFile::UVWGenSocket("out_intensity", VOP_TypeInfo(VOP_TYPE_FLOAT))
 };
-
-static MetaImageFileSocket metaImageFileOutputSockets[] = {
-	MetaImageFileSocket( "color", VOP_TypeInfo(VOP_TYPE_COLOR) ),
-	MetaImageFileSocket( "out_transparency", VOP_TypeInfo(VOP_TYPE_COLOR) ),
-	MetaImageFileSocket( "out_alpha", VOP_TypeInfo(VOP_TYPE_FLOAT) ),
-	MetaImageFileSocket( "out_intensity", VOP_TypeInfo(VOP_TYPE_FLOAT) )
-};
-
-static enum MenuOption {
-	UVWGenMayaPlace2dTexture = 0,
-	UVWGenEnvironment = 1,
-	UVWGenExplicit = 2,
-	UVWGenChannel = 3,
-	UVWGenObject = 4,
-	UVWGenObjectBBox = 5,
-	UVWGenPlanarWorld = 6,
-	UVWGenProjection = 7
-} current;
-
-static std::map<MenuOption, std::vector<MetaImageFileSocket>> inputsMap;
-
-typedef std::vector<MetaImageFileSocket> SocketsTable;
 
 static const int ouputSocketCount = COUNT_OF(metaImageFileOutputSockets);
 
-PRM_Template* VOP::MetaImageFile::GetPrmTemplate()
+typedef std::map<MetaImageFile::UVWGenType, MetaImageFile::UVWGenSocketsTable> UVWGenSocketsMap;
+
+/// A map of sockets per UVG generator type.
+static UVWGenSocketsMap uvwGenInputsMap;
+
+// NOTE: Keep in sync with MetaImageFile::UVWGenType.
+static const UT_String uvwGenPluginIDs[] = {
+	"UVWGenMayaPlace2dTexture",
+	"UVWGenEnvironment",
+	"UVWGenExplicit",
+	"UVWGenChannel",
+	"UVWGenObject",
+	"UVWGenObjectBBox",
+	"UVWGenPlanarWorld",
+	"UVWGenProjection",
+};
+
+static void initInputsMap()
 {
-	if (inputsMap.empty()) {
+	if (!uvwGenInputsMap.empty())
+		return;
 
-		SocketsTable &mayeSockets = inputsMap[UVWGenMayaPlace2dTexture];
-		mayeSockets.push_back(MetaImageFileSocket("uvwgen", VOP_TypeInfo(VOP_TYPE_VECTOR)));
-		mayeSockets.push_back(MetaImageFileSocket("coverage_u_tex", VOP_TypeInfo(VOP_TYPE_FLOAT)));
-		mayeSockets.push_back(MetaImageFileSocket("coverage_v_tex", VOP_TypeInfo(VOP_TYPE_FLOAT)));
-		mayeSockets.push_back(MetaImageFileSocket( "translate_frame_u_tex", VOP_TypeInfo(VOP_TYPE_FLOAT)));
-		mayeSockets.push_back(MetaImageFileSocket( "translate_frame_v_tex", VOP_TypeInfo(VOP_TYPE_FLOAT)));
-		mayeSockets.push_back(MetaImageFileSocket( "rotate_frame_tex", VOP_TypeInfo(VOP_TYPE_FLOAT)));
-		mayeSockets.push_back(MetaImageFileSocket("repeat_u_tex", VOP_TypeInfo(VOP_TYPE_FLOAT)));
-		mayeSockets.push_back(MetaImageFileSocket("repeat_v_tex", VOP_TypeInfo(VOP_TYPE_FLOAT)));
-		mayeSockets.push_back(MetaImageFileSocket("offset_u_tex", VOP_TypeInfo(VOP_TYPE_FLOAT)));
-		mayeSockets.push_back(MetaImageFileSocket("offset_v_tex", VOP_TypeInfo(VOP_TYPE_FLOAT)));
-		mayeSockets.push_back(MetaImageFileSocket("rotate_uv_tex", VOP_TypeInfo(VOP_TYPE_FLOAT)));
-		mayeSockets.push_back(MetaImageFileSocket("noise_u_tex", VOP_TypeInfo(VOP_TYPE_FLOAT)));
-		mayeSockets.push_back(MetaImageFileSocket("noise_v_tex", VOP_TypeInfo(VOP_TYPE_FLOAT)));
-		mayeSockets.push_back(MetaImageFileSocket("uvw_channel_tex", VOP_TypeInfo(VOP_TYPE_INTEGER)));
-		
-		SocketsTable &environmentSockets = inputsMap[UVWGenEnvironment];
-		environmentSockets.push_back(MetaImageFileSocket("uvw_matrix", VOP_TypeInfo(VOP_TYPE_MATRIX3)));
-		environmentSockets.push_back(MetaImageFileSocket("uvw_transform", VOP_TypeInfo(VOP_TYPE_MATRIX4)));
-		environmentSockets.push_back(MetaImageFileSocket("ground_position", VOP_TypeInfo(VOP_TYPE_VECTOR)));
-		
-		SocketsTable &explicitSockets = inputsMap[UVWGenExplicit];
-		explicitSockets.push_back(MetaImageFileSocket("u", VOP_TypeInfo(VOP_TYPE_FLOAT)));
-		explicitSockets.push_back(MetaImageFileSocket("v", VOP_TypeInfo(VOP_TYPE_FLOAT)));
-		explicitSockets.push_back(MetaImageFileSocket("w", VOP_TypeInfo(VOP_TYPE_FLOAT)));
-		explicitSockets.push_back(MetaImageFileSocket("uvw", VOP_TypeInfo(VOP_TYPE_COLOR)));
+	MetaImageFile::UVWGenSocketsTable &mayeSockets = uvwGenInputsMap[MetaImageFile::UVWGenMayaPlace2dTexture];
+	mayeSockets.push_back(MetaImageFile::UVWGenSocket("uvwgen", VOP_TypeInfo(VOP_TYPE_VECTOR)));
+	mayeSockets.push_back(MetaImageFile::UVWGenSocket("coverage_u_tex", VOP_TypeInfo(VOP_TYPE_FLOAT)));
+	mayeSockets.push_back(MetaImageFile::UVWGenSocket("coverage_v_tex", VOP_TypeInfo(VOP_TYPE_FLOAT)));
+	mayeSockets.push_back(MetaImageFile::UVWGenSocket("translate_frame_u_tex", VOP_TypeInfo(VOP_TYPE_FLOAT)));
+	mayeSockets.push_back(MetaImageFile::UVWGenSocket("translate_frame_v_tex", VOP_TypeInfo(VOP_TYPE_FLOAT)));
+	mayeSockets.push_back(MetaImageFile::UVWGenSocket("rotate_frame_tex", VOP_TypeInfo(VOP_TYPE_FLOAT)));
+	mayeSockets.push_back(MetaImageFile::UVWGenSocket("repeat_u_tex", VOP_TypeInfo(VOP_TYPE_FLOAT)));
+	mayeSockets.push_back(MetaImageFile::UVWGenSocket("repeat_v_tex", VOP_TypeInfo(VOP_TYPE_FLOAT)));
+	mayeSockets.push_back(MetaImageFile::UVWGenSocket("offset_u_tex", VOP_TypeInfo(VOP_TYPE_FLOAT)));
+	mayeSockets.push_back(MetaImageFile::UVWGenSocket("offset_v_tex", VOP_TypeInfo(VOP_TYPE_FLOAT)));
+	mayeSockets.push_back(MetaImageFile::UVWGenSocket("rotate_uv_tex", VOP_TypeInfo(VOP_TYPE_FLOAT)));
+	mayeSockets.push_back(MetaImageFile::UVWGenSocket("noise_u_tex", VOP_TypeInfo(VOP_TYPE_FLOAT)));
+	mayeSockets.push_back(MetaImageFile::UVWGenSocket("noise_v_tex", VOP_TypeInfo(VOP_TYPE_FLOAT)));
+	mayeSockets.push_back(MetaImageFile::UVWGenSocket("uvw_channel_tex", VOP_TypeInfo(VOP_TYPE_INTEGER)));
 
-		SocketsTable &channelSockets = inputsMap[UVWGenChannel];
-		channelSockets.push_back(MetaImageFileSocket("uvw_transform", VOP_TypeInfo(VOP_TYPE_MATRIX4)));
-		channelSockets.push_back(MetaImageFileSocket("uvw_transform tex", VOP_TypeInfo()));
-		channelSockets.push_back(MetaImageFileSocket("tex_transfrom", VOP_TypeInfo(VOP_TYPE_MATRIX4)));
-		channelSockets.push_back(MetaImageFileSocket("coverage", VOP_TypeInfo(VOP_TYPE_VECTOR)));
-		channelSockets.push_back(MetaImageFileSocket("uvwgen", VOP_TypeInfo(VOP_TYPE_VECTOR)));
+	MetaImageFile::UVWGenSocketsTable &environmentSockets = uvwGenInputsMap[MetaImageFile::UVWGenEnvironment];
+	environmentSockets.push_back(MetaImageFile::UVWGenSocket("uvw_matrix", VOP_TypeInfo(VOP_TYPE_MATRIX3)));
+	environmentSockets.push_back(MetaImageFile::UVWGenSocket("uvw_transform", VOP_TypeInfo(VOP_TYPE_MATRIX4)));
+	environmentSockets.push_back(MetaImageFile::UVWGenSocket("ground_position", VOP_TypeInfo(VOP_TYPE_VECTOR)));
 
-		SocketsTable &objectSockets= inputsMap[UVWGenObject];
-		objectSockets.push_back(MetaImageFileSocket("uvw_transform", VOP_TypeInfo(VOP_TYPE_MATRIX4)));
+	MetaImageFile::UVWGenSocketsTable &explicitSockets = uvwGenInputsMap[MetaImageFile::UVWGenExplicit];
+	explicitSockets.push_back(MetaImageFile::UVWGenSocket("u", VOP_TypeInfo(VOP_TYPE_FLOAT)));
+	explicitSockets.push_back(MetaImageFile::UVWGenSocket("v", VOP_TypeInfo(VOP_TYPE_FLOAT)));
+	explicitSockets.push_back(MetaImageFile::UVWGenSocket("w", VOP_TypeInfo(VOP_TYPE_FLOAT)));
+	explicitSockets.push_back(MetaImageFile::UVWGenSocket("uvw", VOP_TypeInfo(VOP_TYPE_COLOR)));
 
-		SocketsTable &bboxSockets = inputsMap[UVWGenObjectBBox];
-		bboxSockets.push_back(MetaImageFileSocket("bbox_min", VOP_TypeInfo(VOP_TYPE_VECTOR)));
-		bboxSockets.push_back(MetaImageFileSocket("bbox_max", VOP_TypeInfo(VOP_TYPE_VECTOR)));
-		bboxSockets.push_back(MetaImageFileSocket("basemtl", VOP_TypeInfo(VOP_TYPE_UNDEF)));
+	MetaImageFile::UVWGenSocketsTable &channelSockets = uvwGenInputsMap[MetaImageFile::UVWGenChannel];
+	channelSockets.push_back(MetaImageFile::UVWGenSocket("uvw_transform", VOP_TypeInfo(VOP_TYPE_MATRIX4)));
+	channelSockets.push_back(MetaImageFile::UVWGenSocket("uvw_transform tex", VOP_TypeInfo()));
+	channelSockets.push_back(MetaImageFile::UVWGenSocket("tex_transfrom", VOP_TypeInfo(VOP_TYPE_MATRIX4)));
+	channelSockets.push_back(MetaImageFile::UVWGenSocket("coverage", VOP_TypeInfo(VOP_TYPE_VECTOR)));
+	channelSockets.push_back(MetaImageFile::UVWGenSocket("uvwgen", VOP_TypeInfo(VOP_TYPE_VECTOR)));
 
-		SocketsTable &worldSockets = inputsMap[UVWGenPlanarWorld];
-		worldSockets.push_back(MetaImageFileSocket("uvw_transform", VOP_TypeInfo(VOP_TYPE_MATRIX4)));
-		worldSockets.push_back(MetaImageFileSocket("uvw_transform tex", VOP_TypeInfo()));
-		worldSockets.push_back(MetaImageFileSocket("tex_transfrom", VOP_TypeInfo(VOP_TYPE_MATRIX4)));
-		worldSockets.push_back(MetaImageFileSocket("coverage", VOP_TypeInfo(VOP_TYPE_VECTOR)));
+	MetaImageFile::UVWGenSocketsTable &objectSockets= uvwGenInputsMap[MetaImageFile::UVWGenObject];
+	objectSockets.push_back(MetaImageFile::UVWGenSocket("uvw_transform", VOP_TypeInfo(VOP_TYPE_MATRIX4)));
 
-		SocketsTable &projectionSockets = inputsMap[UVWGenProjection];
-		projectionSockets.push_back(MetaImageFileSocket("uvw_transform", VOP_TypeInfo(VOP_TYPE_MATRIX4)));
-		projectionSockets.push_back(MetaImageFileSocket("uvw_transform tex", VOP_TypeInfo(VOP_TYPE_UNDEF)));
-		projectionSockets.push_back(MetaImageFileSocket("tex_transfrom", VOP_TypeInfo(VOP_TYPE_MATRIX4)));
-		projectionSockets.push_back(MetaImageFileSocket("camera_settings", VOP_TypeInfo(VOP_TYPE_UNDEF)));
-		projectionSockets.push_back(MetaImageFileSocket("camera_view", VOP_TypeInfo(VOP_TYPE_UNDEF)));
-		projectionSockets.push_back(MetaImageFileSocket("bitmap", VOP_TypeInfo(VOP_TYPE_UNDEF)));
-	}
+	MetaImageFile::UVWGenSocketsTable &bboxSockets = uvwGenInputsMap[MetaImageFile::UVWGenObjectBBox];
+	bboxSockets.push_back(MetaImageFile::UVWGenSocket("bbox_min", VOP_TypeInfo(VOP_TYPE_VECTOR)));
+	bboxSockets.push_back(MetaImageFile::UVWGenSocket("bbox_max", VOP_TypeInfo(VOP_TYPE_VECTOR)));
+	bboxSockets.push_back(MetaImageFile::UVWGenSocket("basemtl", VOP_TypeInfo(VOP_TYPE_UNDEF)));
+
+	MetaImageFile::UVWGenSocketsTable &worldSockets = uvwGenInputsMap[MetaImageFile::UVWGenPlanarWorld];
+	worldSockets.push_back(MetaImageFile::UVWGenSocket("uvw_transform", VOP_TypeInfo(VOP_TYPE_MATRIX4)));
+	worldSockets.push_back(MetaImageFile::UVWGenSocket("uvw_transform tex", VOP_TypeInfo()));
+	worldSockets.push_back(MetaImageFile::UVWGenSocket("tex_transfrom", VOP_TypeInfo(VOP_TYPE_MATRIX4)));
+	worldSockets.push_back(MetaImageFile::UVWGenSocket("coverage", VOP_TypeInfo(VOP_TYPE_VECTOR)));
+
+	MetaImageFile::UVWGenSocketsTable &projectionSockets = uvwGenInputsMap[MetaImageFile::UVWGenProjection];
+	projectionSockets.push_back(MetaImageFile::UVWGenSocket("uvw_transform", VOP_TypeInfo(VOP_TYPE_MATRIX4)));
+	projectionSockets.push_back(MetaImageFile::UVWGenSocket("uvw_transform tex", VOP_TypeInfo(VOP_TYPE_UNDEF)));
+	projectionSockets.push_back(MetaImageFile::UVWGenSocket("tex_transfrom", VOP_TypeInfo(VOP_TYPE_MATRIX4)));
+	projectionSockets.push_back(MetaImageFile::UVWGenSocket("camera_settings", VOP_TypeInfo(VOP_TYPE_UNDEF)));
+	projectionSockets.push_back(MetaImageFile::UVWGenSocket("camera_view", VOP_TypeInfo(VOP_TYPE_UNDEF)));
+	projectionSockets.push_back(MetaImageFile::UVWGenSocket("bitmap", VOP_TypeInfo(VOP_TYPE_UNDEF)));
+}
+
+PRM_Template* MetaImageFile::GetPrmTemplate()
+{
+	initInputsMap();
 
 	static Parm::PRMList myPrmList;
 	if (myPrmList.empty()) {
@@ -115,7 +118,7 @@ PRM_Template* VOP::MetaImageFile::GetPrmTemplate()
 	return myPrmList.getPRMTemplate();
 }
 
-void VOP::MetaImageFile::setPluginType()
+void MetaImageFile::setPluginType()
 {
 	pluginType = VRayPluginType::TEXTURE;
 
@@ -123,46 +126,31 @@ void VOP::MetaImageFile::setPluginType()
 	pluginID = "TexBitmap";
 }
 
-OP::VRayNode::PluginResult VOP::MetaImageFile::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
+OP::VRayNode::PluginResult MetaImageFile::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
 {
-	Attrs::PluginDesc bitmapBufferDesc(VRayExporter::getPluginName(*this, "BitmapBuffer"), "BitmapBuffer");
-	exporter.setAttrsFromOpNodePrms(bitmapBufferDesc, this, "BitmapBuffer_");
+	const UVWGenSocketsTable &selectedUVWGen = getUVWGenInputs();
 
-	const fpreal &t = exporter.getContext().getTime();
-	const int selectedUVGen = evalInt("meta_image_uv_generator", 0, t);
-	
-	const UT_String uvGenOptions[] = {
-		"UVWGenMayaPlace2dTexture",
-		"UVWGenEnvironment",
-		"UVWGenExplicit",
-		"UVWGenChannel",
-		"UVWGenObject",
-		"UVWGenObjectBBox",
-		"UVWGenPlanarWorld",
-		"UVWGenProjection"
-	};
+	const UVWGenType current = getUVWGenType();
+	const UT_String &selectedUVWGenName = uvwGenPluginIDs[current];
 
-	vassert(selectedUVGen >= 0 && selectedUVGen < COUNT_OF(uvGenOptions));
+	Attrs::PluginDesc selectedUVPluginDesc(VRayExporter::getPluginName(*this, selectedUVWGenName.c_str()), selectedUVWGenName.c_str());
 
-	UT_String selectedUVWGen = uvGenOptions[selectedUVGen];
-	MenuOption current = static_cast<MenuOption>(selectedUVGen);
-
-	Attrs::PluginDesc selectedUVPluginDesc(VRayExporter::getPluginName(*this, selectedUVWGen.c_str()), selectedUVWGen.c_str());
-
-	std::vector<MetaImageFileSocket> temp = inputsMap.at(current);
-	for (int i = 0; i < temp.size(); i++) {
-		const int idx = getInputFromName(temp.at(i).label);
+	for (int i = 0; i < selectedUVWGen.size(); i++) {
+		const int idx = getInputFromName(selectedUVWGen[i].label);
 		OP_Node *connectedInput = getInput(idx);
 		if (connectedInput) {
 			VRay::Plugin connectedPlugin = exporter.exportVop(connectedInput, parentContext);
 			if (connectedPlugin) {
-				const Parm::SocketDesc *fromSocketInfo = exporter.getConnectedOutputType(this, temp.at(i).label);
-				selectedUVPluginDesc.addAttribute(Attrs::PluginAttr(temp.at(i).label, connectedPlugin, fromSocketInfo->attrName.ptr()));
+				const Parm::SocketDesc *fromSocketInfo = exporter.getConnectedOutputType(this, selectedUVWGen.at(i).label);
+				selectedUVPluginDesc.addAttribute(Attrs::PluginAttr(selectedUVWGen.at(i).label, connectedPlugin, fromSocketInfo->attrName.ptr()));
 			}
 		}
 	}
-	selectedUVWGen += "_";
-	exporter.setAttrsFromOpNodePrms(selectedUVPluginDesc, this, selectedUVWGen.c_str());
+
+	exporter.setAttrsFromOpNodePrms(selectedUVPluginDesc, this, boost::str(Parm::FmtPrefix % selectedUVWGenName.buffer()).c_str());
+
+	Attrs::PluginDesc bitmapBufferDesc(VRayExporter::getPluginName(*this, "BitmapBuffer"), "BitmapBuffer");
+	exporter.setAttrsFromOpNodePrms(bitmapBufferDesc, this, "BitmapBuffer_");
 
 	pluginDesc.addAttribute(Attrs::PluginAttr("bitmap", exporter.exportPlugin(bitmapBufferDesc)));
 	pluginDesc.addAttribute(Attrs::PluginAttr("uvwgen", exporter.exportPlugin(selectedUVPluginDesc)));
@@ -171,16 +159,18 @@ OP::VRayNode::PluginResult VOP::MetaImageFile::asPluginDesc(Attrs::PluginDesc &p
 	return OP::VRayNode::PluginResultContinue;
 }
 
-//define outputs
-unsigned VOP::MetaImageFile::getNumVisibleOutputs() const {
+unsigned MetaImageFile::getNumVisibleOutputs() const
+{
 	return ouputSocketCount;
 }
 
-unsigned VOP::MetaImageFile::maxOutputs() const {
+unsigned MetaImageFile::maxOutputs() const
+{
 	return ouputSocketCount;
 }
 
-const char* VOP::MetaImageFile::outputLabel(unsigned idx) const {
+const char* MetaImageFile::outputLabel(unsigned idx) const
+{
 	if (idx >= 0 && idx < ouputSocketCount) {
 		return metaImageFileOutputSockets[idx].label;
 	}
@@ -188,17 +178,18 @@ const char* VOP::MetaImageFile::outputLabel(unsigned idx) const {
 	return nullptr;
 }
 
-void VOP::MetaImageFile::getOutputNameSubclass(UT_String &out, int idx) const {
+void MetaImageFile::getOutputNameSubclass(UT_String &out, int idx) const
+{
 	if (idx >= 0 && idx < ouputSocketCount) {
 		out = metaImageFileOutputSockets[idx].label;
 	}
 	else {
 		out = "unknown";
 	}
-
 }
 
-int VOP::MetaImageFile::getOutputFromName(const UT_String &out) const {
+int MetaImageFile::getOutputFromName(const UT_String &out) const
+{
 	for (int idx = 0; idx < ouputSocketCount; idx++) {
 		if (out.equal(metaImageFileOutputSockets[idx].label)) {
 			return idx;
@@ -208,47 +199,71 @@ int VOP::MetaImageFile::getOutputFromName(const UT_String &out) const {
 	return -1;
 }
 
-void VOP::MetaImageFile::getOutputTypeInfoSubclass(VOP_TypeInfo &type_info, int idx) {
+void MetaImageFile::getOutputTypeInfoSubclass(VOP_TypeInfo &type_info, int idx)
+{
 	if (idx >= 0 && idx < ouputSocketCount) {
 		type_info.setType(metaImageFileOutputSockets[idx].typeInfo.getType());
 	}
 }
 
-//define inputs
-
-const char *VOP::MetaImageFile::inputLabel(unsigned idx) const {
-	return inputsMap.at(current).at(idx).label;
+const char *MetaImageFile::inputLabel(unsigned idx) const
+{
+	const UVWGenSocketsTable &uvwGenInput = getUVWGenInputs();
+	vassert(idx >= 0 && idx < uvwGenInput.size());
+	return uvwGenInput[idx].label;
 }
 
-void VOP::MetaImageFile::getInputNameSubclass(UT_String &in, int idx) const {
-	if (idx < inputsMap.at(current).size() || idx >= 0) {
-		in = inputsMap.at(current).at(idx).label;
+void MetaImageFile::getInputNameSubclass(UT_String &in, int idx) const
+{
+	const UVWGenSocketsTable &uvwGenInput = getUVWGenInputs();
+	if (idx >= 0 && idx < uvwGenInput.size()) {
+		in = uvwGenInput[idx].label;
 	}
 	else {
 		in = "unknown";
 	}
 }
 
-int VOP::MetaImageFile::getInputFromNameSubclass(const UT_String &out) const {
-	const std::vector<MetaImageFileSocket> &temp = inputsMap.at(current);
-
-	for (int i = 0; i < temp.size(); i++) {
-		if (out == temp.at(i).label)
+int MetaImageFile::getInputFromNameSubclass(const UT_String &out) const
+{
+	const UVWGenSocketsTable &uvwGenInput = getUVWGenInputs();
+	for (int i = 0; i < uvwGenInput.size(); i++) {
+		if (out.equal(uvwGenInput[i].label))
 			return i;
 	}
-	
 	return -1;
 }
 
-unsigned VOP::MetaImageFile::getNumVisibleInputs() const {
-	current = static_cast<MenuOption>(evalInt("meta_image_uv_generator", 0, 0.0));
+unsigned MetaImageFile::getNumVisibleInputs() const
+{
 	return orderedInputs();
 }
 
-unsigned VOP::MetaImageFile::orderedInputs() const {
-	return inputsMap.at(current).size();
+unsigned MetaImageFile::orderedInputs() const
+{
+	const UVWGenSocketsTable &uvwGenInput = getUVWGenInputs();
+	return uvwGenInput.size();
 }
 
-void VOP::MetaImageFile::getInputTypeInfoSubclass(VOP_TypeInfo &type_info, int idx) {
-	type_info = inputsMap.at(current).at(idx).typeInfo;
+void MetaImageFile::getInputTypeInfoSubclass(VOP_TypeInfo &type_info, int idx)
+{
+	const UVWGenSocketsTable &uvwGenInput = getUVWGenInputs();
+	vassert(idx >= 0 && idx < uvwGenInput.size());
+	type_info = uvwGenInput[idx].typeInfo;
+}
+
+MetaImageFile::UVWGenType MetaImageFile::getUVWGenType() const
+{
+	initInputsMap();
+	return static_cast<UVWGenType>(evalInt("meta_image_uv_generator", 0, 0.0));
+}
+
+const MetaImageFile::UVWGenSocketsTable &MetaImageFile::getUVWGenInputs() const
+{
+	const UVWGenType currentUVWGen = getUVWGenType();
+
+	UVWGenSocketsMap::const_iterator it = uvwGenInputsMap.find(currentUVWGen);
+	vassert(it != uvwGenInputsMap.end());
+
+	return it->second;
 }
