@@ -55,6 +55,7 @@ static void initVRayParmTypesMap()
 	vrayParmTypes.insert("enum", eEnum);
 	vrayParmTypes.insert("float", eFloat);
 	vrayParmTypes.insert("color", eColor);
+	vrayParmTypes.insert("acolor", eAColor);
 	vrayParmTypes.insert("string", eString);
 	vrayParmTypes.insert("vector", eVector);
 
