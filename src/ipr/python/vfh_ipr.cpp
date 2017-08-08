@@ -288,7 +288,6 @@ static PyObject* vfhExportView(PyObject*, PyObject *args, PyObject *keywds)
 	}
 
 	VRayExporter &exporter = lock.getExporter();
-	exporter.exportDefaultHeadlight(true);
 
 	const char *camera = PyString_AsString(PyDict_GetItemString(viewParamsDict, "camera"));
 
@@ -310,6 +309,7 @@ static PyObject* vfhExportView(PyObject*, PyObject *args, PyObject *keywds)
 
 	// Update view.
 	exporter.exportView(viewParams);
+	exporter.exportDefaultHeadlight(true);
 
 	// Update pipe if needed.
 	if (oldViewParams.changedSize(viewParams)) {
