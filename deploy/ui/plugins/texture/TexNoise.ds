@@ -5,8 +5,8 @@
     parmtag { vray_plugin "TexNoise" }
 
     groupsimple {
-        name "VfhTexNoiseMain"
-        label "Noise Settings"
+        name "VfhTexMain"
+        label "Settings"
 
         parm {
             name    "noiseType"
