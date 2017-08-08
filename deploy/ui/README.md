@@ -51,6 +51,10 @@ Example:
 * Prefer folder to avoid much scrolling
 * Don't use group title in labels. If you are grouping attributes under "Refraction" group just use "Color" as the refraction_color label.
 
+## Shelfs
+
+* All V-Ray nodes must be prefixed with "V-Ray" for fast keyboard access.
+
 ## V-Ray Spare Data
 
 ### Parameters
