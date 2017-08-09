@@ -110,8 +110,10 @@ public:
 	~LRUCache()
 	{ clear(); }
 
-	LRUCache(LRUCache&& source)
-		: LRUCache()
+	LRUCache(LRUCache&& source) :
+		m_capacity(defaultCapacity),
+		m_cacheMap(defaultCapacity),
+		m_mlruQueue(0)
 	{
 		*this = std::move(source);
 	}
