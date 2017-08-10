@@ -160,13 +160,14 @@ public:
 	CachePtr                       getCache() const;
 	/// Load or get from cache VolumeCacheData with given key
 	/// REQUIRES: key to be valid
-	VolumeCacheData                getCache(const VolumeCacheKey &key) const;
+	VolumeCacheData &              getCache(const VolumeCacheKey &key) const;
 
 	/// Get the world TM
 	UT_Matrix4F                    toWorldTm(CachePtr cache) const;
 
 	/// Get all channels present in the current cache
 	UT_StringArray                 getCacheChannels() const;
+	VolumeCache &                  getCachedData() const;
 
 	/// @{
 	/// Member data accessors for intrinsics
@@ -210,15 +211,18 @@ private:
 	/// Gets resolution of cache (from UI)
 	int getResolution() const;
 	/// Gets count of voxels in cache (in full resolution)
+	/// @return - -1 if generated key is invalid
 	i64 getFullCacheVoxelCount() const;
 	/// Gets count of voxels in cache (in current resolution)
+	/// @return - -1 if in full resolution, negative not equal to -1 if invalid key
 	i64 getCurrentCacheVoxelCount() const;
 
 	/// Build channel mapping, should be called after update to cache or ui mappings
 	void buildMapping();
-public:
-	mutable VolumeCache    m_dataCache; ///< Data cache used to cache last 10 volumes loaded, mutable(needs to be updated from const functions not changing other (immutable)members)
+
 private:
+	mutable VolumeCache    m_dataCache; ///< Data cache used to cache last 10 volumes loaded, mutable(needs to be updated from const functions not changing other (immutable)members)
+	mutable VolumeCacheData m_currentData;
 	GU_DetailHandle        m_handle; ///< Detail handle - passed to HDK
 	UT_Options             m_options; ///< All params from VFH_VOLUME_GRID_PARAMS are defined in this map
 

@@ -357,17 +357,22 @@ VRayVolumeGridRef::CachePtr VRayVolumeGridRef::getCache() const
 	return getCache(key).aurPtr;
 }
 
-VRayVolumeGridRef::VolumeCacheData VRayVolumeGridRef::getCache(const VolumeCacheKey &key) const
+VRayVolumeGridRef::VolumeCacheData &VRayVolumeGridRef::getCache(const VolumeCacheKey &key) const
 {
-	VolumeCacheData data;
-	if (getResolution() == MAX_RESOLUTION) {
-		data = m_dataCache[key];
-	}
-	else {
-		fetchDataMaxVox(key, data, getCurrentCacheVoxelCount(), false);
+	if (!m_dirty) {
+		return m_currentData;
 	}
 
-	return data;
+	// should be cached
+	if (getResolution() == MAX_RESOLUTION
+		&& getFullCacheVoxelCount() != -1) {
+		m_currentData = m_dataCache[key];
+	}
+	else {
+		fetchDataMaxVox(key, m_currentData, getCurrentCacheVoxelCount(), false);
+	}
+
+	return m_currentData;
 }
 
 
@@ -442,7 +447,6 @@ GU_ConstDetailHandle VRayVolumeGridRef::getPackedDetail(GU_PackedContext *contex
 	GU_DetailHandleAutoWriteLock rLock(SYSconst_cast(this)->m_handle);
 	GU_Detail *gdp = rLock.getGdp();
 	gdp->stashAll();
-	self->m_dirty = false;
 
 	VolumeCacheKey key = genKey();
 	if (!key.isValid()) {
@@ -451,7 +455,7 @@ GU_ConstDetailHandle VRayVolumeGridRef::getPackedDetail(GU_PackedContext *contex
 	}
 
 	VolumeCacheData &data = getCache(key);
-
+	self->m_dirty = false;
 
 	if (!data.aurPtr) {
 		gdp->clearAndDestroy();
@@ -520,6 +524,11 @@ UT_StringArray VRayVolumeGridRef::getCacheChannels() const {
 	SYSconst_cast(this)->m_channelDirty = false;
 	SYSconst_cast(this)->setPhxChannelMap(channels);
 	return channels;
+}
+
+VRayVolumeGridRef::VolumeCache &VRayVolumeGridRef::getCachedData() const
+{
+	return m_dataCache;
 }
 
 void VRayVolumeGridRef::buildMapping() {
@@ -639,6 +648,11 @@ i64 VRayVolumeGridRef::getFullCacheVoxelCount() const
 		aurPtr = newIAurMaxVox(key.path.c_str(), -1, true);
 	}
 	else {
+		return -1;
+	}
+
+	// cache is empty
+	if (!aurPtr) {
 		return -1;
 	}
 
