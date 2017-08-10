@@ -662,7 +662,7 @@ i64 VRayVolumeGridRef::getFullCacheVoxelCount() const
 	return static_cast<i64>(gridDimensions[0]) * gridDimensions[1] * gridDimensions[2];
 }
 
-i64 VRayVolumeGridRef::getCurrentCacheVoxelCount() const
+long long VRayVolumeGridRef::getCurrentCacheVoxelCount() const
 {
 	return (getResolution() == MAX_RESOLUTION) ?
 		-1 :
@@ -737,13 +737,19 @@ bool VRayVolumeGridRef::updateFrom(const UT_Options &options)
 	if (m_doFrameReplace) {
 		// if we aren't replacing frame we don't care if frame changes
 		// this means user hardcoded a path for a specific frame 
-		pathChange = pathChange || (options.hasOption("current_frame") && options.getOptionI("current_frame") != this->get_current_frame());
+		pathChange = pathChange 
+			|| (options.hasOption("current_frame") && options.getOptionI("current_frame") != this->get_current_frame());
 	}
 
 	m_channelDirty = m_channelDirty || pathChange;
 
-	m_dirty = pathChange || m_dirty || options.hasOption("flip_yz") && options.getOptionI("flip_yz") != this->get_flip_yz()
-		|| options.hasOption("res_mode") && options.hasOption("preview_res") && getResolution() != (options.getOptionI("res_mode") == 0 ? MAX_RESOLUTION : options.getOptionI("preview_res"));
+	bool newResolution = (options.getOptionI("res_mode") == 0 ? MAX_RESOLUTION : options.getOptionI("preview_res"));
+	m_dirty = m_dirty
+		|| pathChange 
+		|| (options.hasOption("flip_yz") 
+			&& options.getOptionI("flip_yz") != this->get_flip_yz())
+		|| (options.hasOption("res_mode") && options.hasOption("preview_res") 
+			&& getResolution() != newResolution);
 
 	m_options.merge(options);
 
