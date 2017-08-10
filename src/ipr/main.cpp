@@ -18,9 +18,9 @@
 void initLinux()
 {
 #ifndef WIN32
-	std::string tmpDir = getTempDir();
-	pid_t parentPID = getppid();
-	pid_t myPID = getpid();
+	const std::string tmpDir = getTempDir();
+	const pid_t parentPID = getppid();
+	const pid_t myPID = getpid();
 	char fname[1024] = {0,};
 	sprintf(fname, "%s/%d", tmpDir.c_str(), static_cast<int>(parentPID));
 
