@@ -513,8 +513,8 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 		if (WithExporter lk{}) {
 			VRayExporter &exporter = lk.getExporter();
 			exporter.exportSettings();
-			exporter.exportScene();
 			exporter.exportView(viewParams);
+			exporter.exportScene();
 			exporter.renderFrame();
 			initImdisplay(exporter.getRenderer().getVRay());
 		}
