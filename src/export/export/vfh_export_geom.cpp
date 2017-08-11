@@ -157,6 +157,20 @@ static void addPluginToCacheImpl(ContainerType &container, const KeyType &key, V
 	container.insert(key, plugin);
 }
 
+static VRay::VUtils::CharStringRefList getSceneName(const OP_Node &opNode, int primID=-1)
+{
+	const UT_String nodeName(opNode.getName());
+
+	UT_String nodePath;
+	opNode.getFullPath(nodePath);
+
+	VRay::VUtils::CharStringRefList sceneName(2);
+	sceneName[0] = nodeName.buffer();
+	sceneName[1] = nodePath.buffer();
+
+	return sceneName;
+}
+
 ObjectExporter::ObjectExporter(VRayExporter &pluginExporter)
 	: pluginExporter(pluginExporter)
 	, ctx(pluginExporter.getContext())
@@ -382,7 +396,7 @@ VRay::Plugin ObjectExporter::getNodeForInstancerGeometry(VRay::Plugin geometry, 
 
 	// Wrap into Node plugin.
 	Attrs::PluginDesc nodeDesc(boost::str(nodeNameFmt % geometry.getName()),
-							   "Node");
+							   vrayPluginTypeNode.buffer());
 	nodeDesc.addAttribute(Attrs::PluginAttr("geometry", geometry));
 	nodeDesc.addAttribute(Attrs::PluginAttr("material", objMaterial));
 	nodeDesc.addAttribute(Attrs::PluginAttr("transform", VRay::Transform(1)));
@@ -639,10 +653,9 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp)
 
 				attrExp.fromPoint(item.primMaterial.overrides, pointOffset);
 
-				if (velocityHndl.isValid()) {
+				if (ctx.hasMotionBlur && velocityHndl.isValid()) {
 					UT_Vector3F v = velocityHndl.get(pointOffset);
-					// XXX: Magic scaling!
-					v *= 0.175f;
+					v /= OPgetDirector()->getChannelManager()->getSamplesPerSec();
 
 					VRay::Transform primVel;
 					primVel.offset.set(v(0), v(1), v(2));
@@ -754,9 +767,11 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_D
 		objectID = objNode.evalInt(VFH_ATTRIB_OBJECTID, 0, ctx.getTime());
 	}
 
+	const float instancerTime = ctx.hasMotionBlur ? ctx.mbParams.mb_start : ctx.getFloatFrame();
+
 	// +1 because first value is time.
 	VRay::VUtils::ValueRefList instances(numParticles+1);
-	instances[instancesListIdx++].setDouble(0.0);
+	instances[instancesListIdx++].setDouble(instancerTime);
 
 	for (int i = 0; i < instancerItems.count(); ++i) {
 		const PrimitiveItem &primItem = instancerItems[i];
@@ -1643,7 +1658,7 @@ VRay::Plugin ObjectExporter::exportNode(OBJ_Node &objNode)
 	using namespace Attrs;
 
 	PluginDesc nodeDesc(VRayExporter::getPluginName(objNode, "Node"),
-						"Node");
+						vrayPluginTypeNode.buffer());
 
 	VRay::Plugin geometry = exportGeometry(objNode);
 	if (geometry) {
@@ -1652,6 +1667,7 @@ VRay::Plugin ObjectExporter::exportNode(OBJ_Node &objNode)
 	nodeDesc.add(PluginAttr("material", pluginExporter.exportDefaultMaterial()));
 	nodeDesc.add(PluginAttr("transform", pluginExporter.getObjTransform(&objNode, ctx)));
 	nodeDesc.add(PluginAttr("visible", isNodeVisible(objNode)));
+	nodeDesc.add(PluginAttr("scene_name", getSceneName(objNode)));
 
 	return pluginExporter.exportPlugin(nodeDesc);
 }

@@ -1684,7 +1684,7 @@ void VRayExporter::setWorkMode(VRayExporter::ExpWorkMode mode)
 }
 
 
-void VRayExporter::setContext(const OP_Context &ctx)
+void VRayExporter::setContext(const VRayOpContext &ctx)
 {
 	m_context = ctx;
 }
@@ -1933,14 +1933,14 @@ void VRayExporter::exportFrame(fpreal time)
 
 	setTime(time);
 
-	if (   !m_isMotionBlur
-		&& !m_isVelocityOn)
-	{
+	m_context.hasMotionBlur = m_isMotionBlur || m_isVelocityOn;
+
+	if (!m_context.hasMotionBlur) {
 		clearKeyFrames(m_context.getFloatFrame());
 		exportScene();
 	}
 	else {
-		MotionBlurParams mbParams;
+		MotionBlurParams &mbParams = m_context.mbParams;
 		fillMotionBlurParams(mbParams);
 		mbParams.calcParams(m_context.getFloatFrame());
 

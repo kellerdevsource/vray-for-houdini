@@ -40,6 +40,44 @@ enum VMRenderPointsAs {
 	vmRenderPointsAsCirle, ///< Render points as circles. Maps GeomParticleSystem "render_type" 6 (Points).
 };
 
+struct MotionBlurParams {
+	MotionBlurParams()
+		: mb_geom_samples(1)
+		, mb_duration(0.)
+		, mb_interval_center(0.)
+		, mb_start(0)
+		, mb_end(0)
+		, mb_frame_inc(0)
+	{}
+
+	void   calcParams(fpreal currFrame);
+
+	int    mb_geom_samples;
+
+	/// Motion blur duration in frames.
+	fpreal mb_duration;
+
+	/// Motion blur interval center in frames.
+	fpreal mb_interval_center;
+
+	fpreal mb_start;
+	fpreal mb_end;
+	fpreal mb_frame_inc;
+};
+
+struct VRayOpContext
+	: OP_Context
+{
+	VRayOpContext(const OP_Context &other=OP_Context())
+		: OP_Context(other)
+		, hasMotionBlur(false)
+	{}
+
+	MotionBlurParams mbParams;
+
+	int hasMotionBlur;
+};
+
 /// Primitive export context item.
 /// Used for non-Instancer objects like volumes and lights.
 struct PrimContext {
@@ -274,7 +312,7 @@ private:
 	VRayExporter &pluginExporter;
 
 	/// Exporting context.
-	OP_Context &ctx;
+	VRayOpContext &ctx;
 
 	/// A flag if we should export the actual geometry from the render
 	/// detail or only update corresponding Nodes' properties. This is

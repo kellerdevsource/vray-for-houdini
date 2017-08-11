@@ -81,31 +81,6 @@ struct OpInterestItem {
 
 typedef std::vector<OpInterestItem> CbItems;
 
-struct MotionBlurParams {
-	MotionBlurParams()
-		: mb_geom_samples(1)
-		, mb_duration(0.)
-		, mb_interval_center(0.)
-		, mb_start(0)
-		, mb_end(0)
-		, mb_frame_inc(0)
-	{}
-
-	void   calcParams(fpreal currFrame);
-
-	int    mb_geom_samples;
-
-	/// Motion blur duration in frames.
-	fpreal mb_duration;
-
-	/// Motion blur interval center in frames.
-	fpreal mb_interval_center;
-
-	fpreal mb_start;
-	fpreal mb_end;
-	fpreal mb_frame_inc;
-};
-
 /// Vfh main exporter. This is the main class responsible for translating
 /// Houdini geometry and nodes to V-Ray plugins, intilizing and starting
 /// the rendering process
@@ -360,7 +335,7 @@ public:
 	void setWorkMode(ExpWorkMode mode);
 
 	/// Set current export context
-	void setContext(const OP_Context &ctx);
+	void setContext(const VRayOpContext &ctx);
 
 	/// Abort rendering at first possible time
 	void setAbort();
@@ -372,7 +347,7 @@ public:
 	void setSettingsRtEngine();
 
 	/// Get current export context
-	OP_Context& getContext() { return m_context; }
+	VRayOpContext &getContext() { return m_context; }
 
 	/// Get vfh plugin renderer
 	VRayPluginRenderer& getRenderer() { return m_renderer; }
@@ -552,7 +527,7 @@ private:
 	OP_Node *m_rop;
 
 	VRayPluginRenderer             m_renderer; ///< the plugin renderer
-	OP_Context                     m_context; ///< current export context
+	VRayOpContext                  m_context; ///< current export context
 	int                            m_renderMode; ///< rend
 	int                            m_isAborted; ///< flag whether rendering should be aborted when possible
 	ViewParams                     m_viewParams; ///< used to gather view data from the ROP and camera
