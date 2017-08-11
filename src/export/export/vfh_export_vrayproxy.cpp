@@ -129,7 +129,7 @@ VUtils::ErrorCode VRayProxyExporter::init()
 
 	const OP_Context &context(m_options.m_context);
 
-	OP_Context ctx(context);
+	VRayOpContext ctx(context);
 	if (m_options.m_exportVelocity) {
 		ctx.setFrame(context.getFloatFrame() + m_options.m_velocityStart);
 	}
