@@ -639,10 +639,9 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp)
 
 				attrExp.fromPoint(item.primMaterial.overrides, pointOffset);
 
-				if (velocityHndl.isValid()) {
+				if (ctx.hasMotionBlur && velocityHndl.isValid()) {
 					UT_Vector3F v = velocityHndl.get(pointOffset);
-					// XXX: Magic scaling!
-					v *= 0.175f;
+					v /= OPgetDirector()->getChannelManager()->getSamplesPerSec();
 
 					VRay::Transform primVel;
 					primVel.offset.set(v(0), v(1), v(2));
@@ -754,9 +753,11 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_D
 		objectID = objNode.evalInt(VFH_ATTRIB_OBJECTID, 0, ctx.getTime());
 	}
 
+	const float instancerTime = ctx.hasMotionBlur ? ctx.mbParams.mb_start : ctx.getFloatFrame();
+
 	// +1 because first value is time.
 	VRay::VUtils::ValueRefList instances(numParticles+1);
-	instances[instancesListIdx++].setDouble(0.0);
+	instances[instancesListIdx++].setDouble(instancerTime);
 
 	for (int i = 0; i < instancerItems.count(); ++i) {
 		const PrimitiveItem &primItem = instancerItems[i];

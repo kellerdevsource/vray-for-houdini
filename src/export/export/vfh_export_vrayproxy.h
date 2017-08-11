@@ -123,7 +123,7 @@ public:
 		, pluginExporter(*this, data)
 	{}
 
-	void setContext(const OP_Context &value) { pluginExporter.setContext(value); }
+	void setContext(const VRayOpContext &value) { pluginExporter.setContext(value); }
 
 private:
 	VRayExporterProxy pluginExporter;
