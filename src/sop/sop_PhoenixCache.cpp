@@ -43,8 +43,10 @@ void SOP::PhxShaderCache::updateVRayVolumeGridRefPrim(VRayVolumeGridRef *gridRef
 	}
 	else {
 		// if we have previous gridref move its cache to the new one
-		UTverify_cast<VRayVolumeGridRef*>(pack->implementation())->getCachedData() = std::move(gridRefPtr->getCachedData());
+		VRayVolumeGridRef::VolumeCache &newCachedData = UTverify_cast<VRayVolumeGridRef*>(pack->implementation())->getCachedData();
+		newCachedData = std::move(gridRefPtr->getCachedData());
 		delete gridRefPtr;
+
 		gridRefPtr = UTverify_cast<VRayVolumeGridRef*>(pack->implementation());
 	}
 

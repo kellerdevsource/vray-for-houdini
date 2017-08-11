@@ -743,7 +743,7 @@ bool VRayVolumeGridRef::updateFrom(const UT_Options &options)
 
 	m_channelDirty = m_channelDirty || pathChange;
 
-	bool newResolution = (options.getOptionI("res_mode") == 0 ? MAX_RESOLUTION : options.getOptionI("preview_res"));
+	int newResolution = (options.getOptionI("res_mode") == 0 ? MAX_RESOLUTION : options.getOptionI("preview_res"));
 	m_dirty = m_dirty
 		|| pathChange 
 		|| (options.hasOption("flip_yz") 
