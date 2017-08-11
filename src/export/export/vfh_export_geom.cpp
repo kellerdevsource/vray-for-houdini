@@ -157,6 +157,20 @@ static void addPluginToCacheImpl(ContainerType &container, const KeyType &key, V
 	container.insert(key, plugin);
 }
 
+static VRay::VUtils::CharStringRefList getSceneName(const OP_Node &opNode, int primID=-1)
+{
+	const UT_String nodeName(opNode.getName());
+
+	UT_String nodePath;
+	opNode.getFullPath(nodePath);
+
+	VRay::VUtils::CharStringRefList sceneName(2);
+	sceneName[0] = nodeName.buffer();
+	sceneName[1] = nodePath.buffer();
+
+	return sceneName;
+}
+
 ObjectExporter::ObjectExporter(VRayExporter &pluginExporter)
 	: pluginExporter(pluginExporter)
 	, ctx(pluginExporter.getContext())
@@ -382,7 +396,7 @@ VRay::Plugin ObjectExporter::getNodeForInstancerGeometry(VRay::Plugin geometry, 
 
 	// Wrap into Node plugin.
 	Attrs::PluginDesc nodeDesc(boost::str(nodeNameFmt % geometry.getName()),
-							   "Node");
+							   vrayPluginTypeNode.buffer());
 	nodeDesc.addAttribute(Attrs::PluginAttr("geometry", geometry));
 	nodeDesc.addAttribute(Attrs::PluginAttr("material", objMaterial));
 	nodeDesc.addAttribute(Attrs::PluginAttr("transform", VRay::Transform(1)));
@@ -1644,7 +1658,7 @@ VRay::Plugin ObjectExporter::exportNode(OBJ_Node &objNode)
 	using namespace Attrs;
 
 	PluginDesc nodeDesc(VRayExporter::getPluginName(objNode, "Node"),
-						"Node");
+						vrayPluginTypeNode.buffer());
 
 	VRay::Plugin geometry = exportGeometry(objNode);
 	if (geometry) {
@@ -1653,6 +1667,7 @@ VRay::Plugin ObjectExporter::exportNode(OBJ_Node &objNode)
 	nodeDesc.add(PluginAttr("material", pluginExporter.exportDefaultMaterial()));
 	nodeDesc.add(PluginAttr("transform", pluginExporter.getObjTransform(&objNode, ctx)));
 	nodeDesc.add(PluginAttr("visible", isNodeVisible(objNode)));
+	nodeDesc.add(PluginAttr("scene_name", getSceneName(objNode)));
 
 	return pluginExporter.exportPlugin(nodeDesc);
 }
