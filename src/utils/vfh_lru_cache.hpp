@@ -122,8 +122,8 @@ public:
 	{
 		if (&source != this) {
 			std::swap(m_capacity, source.m_capacity);
-			std::swap(m_cacheMap, std::move(source.m_cacheMap));
-			std::swap(m_mlruQueue, std::move(source.m_mlruQueue));
+			std::swap(m_cacheMap, source.m_cacheMap);
+			std::swap(m_mlruQueue, source.m_mlruQueue);
 			std::swap(m_cbfetchValue, source.m_cbfetchValue);
 			std::swap(m_cbEvictValue, source.m_cbEvictValue);
 		}
