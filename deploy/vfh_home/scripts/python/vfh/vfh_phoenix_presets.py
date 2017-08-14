@@ -101,7 +101,6 @@ def _set_phx_presets(preset, shaderNode, cacheNode):
 		shaderNode.parm(key).set(vals[key])
 
 	shaderNode.parm('selectedSopPath').set(cacheNode.path())
-	shaderNode.parm('selectedSopPath').pressButton()
 	shaderNode.parm('setPresetParam').set(preset)
 	shaderNode.parm('setPresetParam').pressButton()
 
