@@ -14,6 +14,8 @@
 #include "vfh_vray_instances.h"
 #include "vfh_hou_utils.h"
 
+#include <algorithm>
+
 #include <QSharedMemory>
 #include <QApplication>
 #include <QWidget>
@@ -26,10 +28,20 @@ static QRegExp cssRgbMatch("(\\d+)");
 
 struct InstancesStorage {
 	InstancesStorage()
-		: vrayInit(nullptr)
-	{}
+		: instanceCount(0)
+		, vrayInit(nullptr)
+		, dummyRenderer(nullptr)
+	{
+		memset(vrayInstances, 0, sizeof(vrayInstances));
+	}
 
+	/// Number of allocated renderers inside vrayInstances
+	int instanceCount;
+	/// Pointer to the appsdk vray context
 	VRay::VRayInit* vrayInit;
+	/// Pointer to one dummy renderer, if instanceCount == 0 this must be point to valid renderer
+	VRay::VRayRenderer* dummyRenderer;
+	/// All vray renderer that would exist are stored here
 	VRay::VRayRenderer* vrayInstances[maxInstances];
 };
 
@@ -127,7 +139,6 @@ int VRayForHoudini::newVRayInit()
 	
 	vassert(vrayInstances.isAttached());
 
-	int addDummyRenderer = false;
 	int vrayInitExist = false;
 
 	if (vrayInstances.lock()) {
@@ -140,44 +151,30 @@ int VRayForHoudini::newVRayInit()
 
 			try {
 				is->vrayInit = new VRay::VRayInit(true);
-			}
-			catch (VRay::VRayException &e) {
-				Log::getLog().error("Error initializing V-Ray AppSDK library:\n%s",
-									e.what());
-			}
-
-			if (is->vrayInit) {
-				addDummyRenderer = true;
+				vrayInitExist = true;
 
 				Log::getLog().info("Using V-Ray AppSDK %s", VRay::getSDKVersionDetails());
+
+				VRay::RendererOptions options;
+				options.enableFrameBuffer = false;
+				options.showFrameBuffer = false;
+				options.useDefaultVfbTheme = false;
+				options.vfbDrawStyle = VRay::RendererOptions::ThemeStyleMaya;
+
+				is->dummyRenderer = new VRay::VRayRenderer(options);;
+
+				Log::getLog().info("Using V-Ray %s", VRay::getVRayVersionDetails());
+			} catch (VRay::InitErr &e) {
+				Log::getLog().error("Error initializing V-Ray AppSDK library:\n%s",
+									e.what());
+			} catch (VRay::InstantiationErr &e) {
+				Log::getLog().error("Error initializing VRay::VRayRenderer instance:\n%s",
+				                     e.what());
 			}
+
 		}
 
 		vrayInstances.unlock();
-	}
-
-	if (addDummyRenderer) {
-		VRay::VRayRenderer *instance = nullptr;
-
-		try {
-			VRay::RendererOptions options;
-			options.enableFrameBuffer = false;
-			options.showFrameBuffer = false;
-			options.useDefaultVfbTheme = false;
-			options.vfbDrawStyle = VRay::RendererOptions::ThemeStyleMaya;
-
-			instance = newVRayRenderer(options);
-		}
-		catch (VRay::VRayException &e) {
-			Log::getLog().error("Error initializing VRay::VRayRenderer instance:\n%s",
-								e.what());
-		}
-
-		if (instance) {
-			vrayInitExist = true;
-
-			Log::getLog().info("Using V-Ray %s", VRay::getVRayVersionDetails());
-		}
 	}
 
 	return vrayInitExist;
@@ -192,15 +189,22 @@ void VRayForHoudini::deleteVRayInit()
 			return;
 	}
 
+	dumpSharedMemory();
+
 	if (vrayInstances.lock()) {
 		InstancesStorage *is = reinterpret_cast<InstancesStorage*>(vrayInstances.data());
 
-		for (int i = 0; i < maxInstances; ++i) {
-			VRay::VRayRenderer *vrayInstance = is->vrayInstances[i];
-			if (vrayInstance) {
-				Log::getLog().debug("Deleting VRayRenderer: 0x%X", vrayInstance);
-				FreePtr(vrayInstance);
-				is->vrayInstances[i] = nullptr;
+		if (is->dummyRenderer) {
+			vassert(is->instanceCount == 0 && "Dummy renderer is non NULL and there are instances");
+			Log::getLog().debug("Deleting VRayRenderer: 0x%p", is->dummyRenderer);
+			FreePtr(is->dummyRenderer);
+		}
+
+		for (int i = 0; i < maxInstances && is->instanceCount; ++i) {
+			if (is->vrayInstances[i]) {
+				Log::getLog().debug("Deleting VRayRenderer: 0x%p", is->vrayInstances[i]);
+				FreePtr(is->vrayInstances[i]);
+				is->instanceCount--;
 			}
 		}
 
@@ -223,21 +227,24 @@ VRay::VRayRenderer* VRayForHoudini::newVRayRenderer(const VRay::RendererOptions 
 	if (vrayInstances.lock()) {
 		InstancesStorage *is = reinterpret_cast<InstancesStorage*>(vrayInstances.data());
 
-		try {
-			instance = new VRay::VRayRenderer(options);
-		}
-		catch (VRay::VRayException &e) {
-			Log::getLog().error("Error initializing VRay::VRayRenderer instance:\n%s",
-								e.what());
-		}
-
-		if (instance) {
-			for (int i = 0; i < maxInstances; ++i) {
-				VRay::VRayRenderer* &vrayInstance = is->vrayInstances[i];
-				if (vrayInstance == nullptr) {
-					vrayInstance = reinterpret_cast<VRay::VRayRenderer*>(instance);
-					break;
+		if (is->dummyRenderer) {
+			is->instanceCount++;
+			is->dummyRenderer->setOptions(options);
+			std::swap(is->dummyRenderer, instance);
+		} else {
+			// TODO: no point in using exception if we use it like error code return
+			try {
+				instance = new VRay::VRayRenderer(options);
+				for (int i = 0; i < maxInstances; ++i) {
+					VRay::VRayRenderer* &vrayInstance = is->vrayInstances[i];
+					if (vrayInstance == nullptr) {
+						vrayInstance = reinterpret_cast<VRay::VRayRenderer*>(instance);
+						break;
+					}
 				}
+			} catch (VRay::VRayException &e) {
+				Log::getLog().error("Error initializing VRay::VRayRenderer instance:\n%s",
+					e.what());
 			}
 		}
 
@@ -262,14 +269,28 @@ void VRayForHoudini::deleteVRayRenderer(VRay::VRayRenderer* &instance)
 
 	if (vrayInstances.lock()) {
 		InstancesStorage *is = reinterpret_cast<InstancesStorage*>(vrayInstances.data());
+		auto iter = std::find(std::begin(is->vrayInstances), std::end(is->vrayInstances), nullptr);
+		if (iter == std::end(is->vrayInstances)) {
+			Log::getLog().error("Could not find renderer %p to free", instance);
+		} else {
+			VRay::VRayRenderer *&vrayInstance = *iter;
+			// When instanceCount == 0 and there is no dummy renderer then we must keep this one alive
+			// so we put it in the dummy pointer
+			if (is->instanceCount == 1) {
+				Log::getLog().debug("Stashing last renderer to keep references to plugins");
+				vassert(!is->dummyRenderer && "There should not be dummy renderer if there are real ones");
+				is->instanceCount = 0;
 
-		for (int i = 0; i < maxInstances; ++i) {
-			VRay::VRayRenderer* &vrayInstance = is->vrayInstances[i];
-			if (vrayInstance == instance) {
-				Log::getLog().debug("Deleting VRayRenderer: 0x%X", vrayInstance);
-				FreePtr(vrayInstance);
-				instance = nullptr;
-				break;
+				std::swap(is->dummyRenderer, instance);
+				// TODO: if stop and reset do not clear all state from the object then we will need to re-instantiate renderer here
+				is->dummyRenderer->stop();
+				is->dummyRenderer->reset();
+				// Clear this instance from the pool
+				vrayInstance = nullptr;
+			} else {
+				--is->instanceCount;
+				FreePtr(instance);
+				vrayInstance = nullptr;
 			}
 		}
 
@@ -287,11 +308,12 @@ void VRayForHoudini::dumpSharedMemory()
 	if (vrayInstances.lock()) {
 		InstancesStorage *is = reinterpret_cast<InstancesStorage*>(vrayInstances.data());
 
-		Log::getLog().debug("VRayInit: 0x%X", is->vrayInit);
+		Log::getLog().debug("VRayInit: 0x%p", is->vrayInit);
+		Log::getLog().debug("  VRayRenderer: 0x%p", is->dummyRenderer);
 
 		for (int i = 0; i < maxInstances; ++i) {
 			if (is->vrayInstances[i]) {
-				Log::getLog().debug("  VRayRenderer: 0x%X", is->vrayInstances[i]);
+				Log::getLog().debug("  VRayRenderer: 0x%p", is->vrayInstances[i]);
 			}
 		}
 
