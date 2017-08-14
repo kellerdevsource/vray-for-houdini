@@ -174,18 +174,24 @@ void VRayExporter::fillViewParamFromCameraNode(const OBJ_Node &camera, ViewParam
 	}
 }
 
-void VRayExporter::fillSettingsMotionBlur(ViewParams &viewParams)
+ReturnValue VRayExporter::fillSettingsMotionBlur(ViewParams &viewParams)
 {
 	const fpreal t = m_context.getTime();
 
 	int useCameraSettings = m_rop->evalInt("SettingsMotionBlur_camera_motion_blur", 0, t);
 	if (useCameraSettings) {
 		OBJ_Node *camera = VRayExporter::getCamera(m_rop);
+		if (!camera) {
+			Log::getLog().error("Camera does not exist! In VRayExporter::fillSettingsMotionBlur");
+			return ReturnValue::Error;
+		}
 		const fpreal shutter = camera->evalFloat("shutter", 0, t);
 		viewPlugins.settingsMotionBlur.addAttribute(Attrs::PluginAttr("duration", shutter));
 	}
 
 	setAttrsFromOpNodePrms(viewPlugins.settingsMotionBlur, m_rop, "SettingsMotionBlur_");
+
+	return ReturnValue::Success;
 }
 
 void VRayExporter::fillPhysicalCamera(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc)
@@ -280,7 +286,7 @@ void VRayExporter::fillSettingsCameraDof(const ViewParams &viewParams, Attrs::Pl
 	setAttrsFromOpNodePrms(pluginDesc, m_rop, "SettingsCameraDof_");
 }
 
-void VRayExporter::exportView(const ViewParams &newViewParams)
+ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 {
 	ViewParams viewParams(newViewParams);
 
@@ -315,7 +321,7 @@ void VRayExporter::exportView(const ViewParams &newViewParams)
 	const bool needReset = m_viewParams.needReset(viewParams);
 	if (needReset) {
 		Log::getLog().warning("VRayExporter::exportView: Reseting view plugins...");
-
+		viewPlugins = ViewPluginsDesc();
 		removePlugin(ViewPluginsDesc::settingsCameraPluginName);
 		removePlugin(ViewPluginsDesc::settingsCameraDofPluginName);
 		removePlugin(ViewPluginsDesc::stereoSettingsPluginName);
@@ -323,7 +329,9 @@ void VRayExporter::exportView(const ViewParams &newViewParams)
 		removePlugin(ViewPluginsDesc::cameraDefaultPluginName);
 
 		fillRenderView(viewParams, viewPlugins.renderView);
-		fillSettingsMotionBlur(viewParams);
+		if (fillSettingsMotionBlur(viewParams) == ReturnValue::Error) {
+			return ReturnValue::Error;
+		}
 		fillSettingsCamera(viewParams, viewPlugins.settingsCamera);
 
 		if (!isIPR() && !isGPU()) {
@@ -380,6 +388,7 @@ void VRayExporter::exportView(const ViewParams &newViewParams)
 
 	// Store new params
 	m_viewParams = viewParams;
+	return ReturnValue::Success;
 }
 
 int VRayExporter::exportView()

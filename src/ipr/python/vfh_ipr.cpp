@@ -308,15 +308,15 @@ static PyObject* vfhExportView(PyObject*, PyObject *args, PyObject *keywds)
 	ViewParams oldViewParams = exporter.getViewParams();
 
 	// Update view.
-	exporter.exportView(viewParams);
-	exporter.exportDefaultHeadlight(true);
+	if (exporter.exportView(viewParams) == ReturnValue::Success) {
+		exporter.exportDefaultHeadlight(true);
 
-	// Update pipe if needed.
-	if (oldViewParams.changedSize(viewParams)) {
-		getImdisplay().restart();
-		initImdisplay(exporter.getRenderer().getVRay());
+		// Update pipe if needed.
+		if (oldViewParams.changedSize(viewParams)) {
+			getImdisplay().restart();
+			initImdisplay(exporter.getRenderer().getVRay());
+		}
 	}
-
 	Py_RETURN_NONE;
 }
 
@@ -512,11 +512,12 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 
 		if (WithExporter lk{}) {
 			VRayExporter &exporter = lk.getExporter();
-			exporter.exportSettings();
-			exporter.exportView(viewParams);
-			exporter.exportScene();
-			exporter.renderFrame();
-			initImdisplay(exporter.getRenderer().getVRay());
+			if (exporter.exportSettings() == ReturnValue::Success) {
+				exporter.exportView(viewParams);
+				exporter.exportScene();
+				exporter.renderFrame();
+				initImdisplay(exporter.getRenderer().getVRay());
+			}
 		}
 	}
 	
