@@ -26,11 +26,7 @@ set(SOURCES
 if (WIN32)
 	list(APPEND SOURCES vfh_process_check_win32.cpp)
 else()
-	if (APPLE)
-		message(FATAL_ERROR "vfh_ipr not yet supported for MAC")
-	else()
-		list(APPEND SOURCES vfh_process_check_linux.cpp)
-	endif()
+	list(APPEND SOURCES vfh_process_check_linux.cpp)
 endif()
 
 set(HEADERS

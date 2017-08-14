@@ -13,8 +13,10 @@
 
 #include <unistd.h>
 #include <cstdio>
+#include <cstdlib>
 
 #include <sys/wait.h>
+#include <sys/stat.h>
 #include <signal.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -23,6 +25,37 @@
 #include <memory>
 
 using namespace VRayForHoudini;
+
+namespace {
+bool isDir(const char * path) {
+	if (!path) {
+		return false;
+	}
+
+	struct stat res;
+	return stat(path, &res) == 0 && S_ISDIR(res.st_mode);
+}
+}
+
+std::string getTempDir() {
+	const std::string defaultTmp = "/tmp";
+	if (isDir(defaultTmp.c_str())) {
+		return defaultTmp;
+	}
+
+	const char *envTmp[] = {"TMP", "TEMP", "TMPDIR", "TEMPDIR"};
+	const int envCount = sizeof(envTmp) / sizeof(envTmp[0]);
+	for (int c = 0; c < envCount; c++) {
+		const char *envVal = getenv(envTmp[c]);
+		if (isDir(envVal)) {
+			return envVal;
+		}
+	}
+
+	Log::getLog().error("Failed to find suitable temp dir to write to!");
+	vassert(false && "Failed to find suitable temp dir to write to!");
+	return "."; // try pwd if all else fails
+}
 
 void disableSIGPIPE() {
 	struct sigaction sa;
@@ -43,6 +76,7 @@ public:
 		, waitThread(nullptr)
 		, childPid(0)
 		, checkRunning(false)
+		, tempDir(getTempDir())
 	{}
 
 	enum class ChildState {
@@ -64,6 +98,8 @@ private:
 	/// Flag keeping the thread running
 	/// Volatile to discourage compiler optimizing reads in checker thread
 	volatile bool checkRunning;
+	/// Cache the temp dir returned by getTempDir()
+	std::string tempDir;
 };
 
 ProcessCheckPtr makeProcessChecker(ProcessCheck::OnStop cb, const std::string &name) {
@@ -91,7 +127,7 @@ bool LnxProcessCheck::start() {
 	pid_t myPid = getpid();
 	Log::getLog().debug("Starting LnxProcessCheck from pid %d", (int)myPid);
 	char pidFileName[1024] = {0,};
-	sprintf(pidFileName, "/tmp/%d", static_cast<int>(myPid));
+	sprintf(pidFileName, "%s/%d", tempDir.c_str(), static_cast<int>(myPid));
 
 	auto pidFile = std::shared_ptr<FILE>(fopen(pidFileName, "rb"), [](FILE * file) {
 		if (file) {

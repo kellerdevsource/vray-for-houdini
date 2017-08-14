@@ -60,4 +60,7 @@ ProcessCheckPtr makeProcessChecker(ProcessCheck::OnStop cb, const std::string &n
 /// NOTE: this is here to make use of the different implementation for win and lnx0
 void disableSIGPIPE();
 
+/// Return string containing a path to a directory to put PID file for linux
+std::string getTempDir();
+
 #endif // VRAY_FOR_HOUDINI_PROCESS_CHECK_H

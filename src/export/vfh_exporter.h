@@ -277,6 +277,7 @@ public:
 	VRay::Plugin exportMaterial(OP_Node *node);
 
 	/// Export the default light created when there are no lights in the scene
+	/// NOTE: will use the m_viewParams.renderView.tm for tm of the headlight - it must be set (exportView) before callign this method
 	/// @param update[in] - flags whether this is called from IPR callback
 	/// @retval V-Ray plugin for default light
 	VRay::Plugin exportDefaultHeadlight(bool update = false);
