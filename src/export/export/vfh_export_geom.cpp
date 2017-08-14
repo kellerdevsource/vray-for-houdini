@@ -587,6 +587,8 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 	GA_ROHandleI objectIdHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTRIB_OBJECTID));
 	GA_ROHandleF animOffsetHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTRIB_ANIM_OFFSET));
 
+	GA_ROHandleS pathHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, intrPackedPath));
+
 	MtlOverrideAttrExporter attrExp(gdp);
 
 	const GA_Range &primitiveRange = primRange.isValid() ? primRange : gdp.getPrimitiveRange();
@@ -611,9 +613,14 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 
 		PrimitiveItem item;
 		item.prim = prim;
-		item.primID = getDetailID() ^ gdp.getUniqueId() ^ primOffset;
+		item.primID = getDetailID() ^ primOffset;
 		item.tm = getTm();
 		item.vel = getVel();
+
+		if (pathHndl.isValid()) {
+			const UT_String &path = pathHndl.get(primOffset);
+			item.primID = path.hash();
+		}
 
 		if (objectIdHndl.isValid()) {
 			item.objectID = objectIdHndl.get(primOffset);
@@ -709,12 +716,12 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 			item.tm = item.tm * utMatrixToVRayTransform(tm4);
 
 			// If key is 0 don't check cache.
-			if (primKey) {
+			if (primKey > 0) {
 				getPrimPluginFromCache(primKey, item.geometry);
 			}
-			if (!getPrimPluginFromCache(primKey, item.geometry)) {
+			if (!item.geometry) {
 				item.geometry = exportPrimSphere(objNode, *prim);
-				if (item.geometry) {
+				if (primKey > 0 && item.geometry) {
 					addPrimPluginToCache(primKey, item.geometry);
 				}
 			}
@@ -904,7 +911,7 @@ void ObjectExporter::exportHair(OBJ_Node &objNode, const GU_Detail &gdp, const G
 	getPrimMaterial(item.primMaterial);
 	item.tm = topItem.tm;
 	item.vel = topItem.vel;
-	item.primID = getGEOPrimListHash(primList) ^ gdp.getUniqueId() ^ keyDataHair;
+	item.primID = topItem.primID ^ keyDataHair;
 
 	if (doExportGeometry) {
 		if (!getMeshPluginFromCache(item.primID, item.geometry)) {
@@ -939,7 +946,7 @@ void ObjectExporter::exportPolyMesh(OBJ_Node &objNode, const GU_Detail &gdp, con
 	getPrimMaterial(item.primMaterial);
 	item.tm = topItem.tm;
 	item.vel = topItem.vel;
-	item.primID = getGEOPrimListHash(primList) ^ gdp.getUniqueId() ^ keyDataPoly;
+	item.primID = topItem.primID ^ keyDataPoly;
 
 	polyMeshExporter.setSubdivApplied(hasSubdivApplied);
 	polyMeshExporter.setDetailID(item.primID);
@@ -1146,6 +1153,8 @@ void ObjectExporter::exportPackedFragment(OBJ_Node &objNode, const GU_PrimPacked
 
 	const GU_Detail &gdp = *gaHandle.gdp();
 	const GA_Range &primRange = primFragment->getPrimitiveRange();
+	if (!primRange.isValid())
+		return;
 
 	exportDetail(objNode, gdp, primRange);
 }
