@@ -174,7 +174,7 @@ void VRayExporter::fillViewParamFromCameraNode(const OBJ_Node &camera, ViewParam
 	}
 }
 
-int VRayExporter::fillSettingsMotionBlur(ViewParams &viewParams)
+ReturnValue VRayExporter::fillSettingsMotionBlur(ViewParams &viewParams)
 {
 	const fpreal t = m_context.getTime();
 
@@ -183,7 +183,7 @@ int VRayExporter::fillSettingsMotionBlur(ViewParams &viewParams)
 		OBJ_Node *camera = VRayExporter::getCamera(m_rop);
 		if (!camera) {
 			Log::getLog().error("Camera does not exist! In VRayExporter::fillSettingsMotionBlur");
-			return -1;
+			return ReturnValue::Error;
 		}
 		const fpreal shutter = camera->evalFloat("shutter", 0, t);
 		viewPlugins.settingsMotionBlur.addAttribute(Attrs::PluginAttr("duration", shutter));
@@ -191,7 +191,7 @@ int VRayExporter::fillSettingsMotionBlur(ViewParams &viewParams)
 
 	setAttrsFromOpNodePrms(viewPlugins.settingsMotionBlur, m_rop, "SettingsMotionBlur_");
 
-	return 0;
+	return ReturnValue::Success;
 }
 
 void VRayExporter::fillPhysicalCamera(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc)
@@ -286,7 +286,7 @@ void VRayExporter::fillSettingsCameraDof(const ViewParams &viewParams, Attrs::Pl
 	setAttrsFromOpNodePrms(pluginDesc, m_rop, "SettingsCameraDof_");
 }
 
-int VRayExporter::exportView(const ViewParams &newViewParams)
+ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 {
 	ViewParams viewParams(newViewParams);
 
@@ -329,8 +329,8 @@ int VRayExporter::exportView(const ViewParams &newViewParams)
 		removePlugin(ViewPluginsDesc::cameraDefaultPluginName);
 
 		fillRenderView(viewParams, viewPlugins.renderView);
-		if (fillSettingsMotionBlur(viewParams)) {
-			return -1;
+		if (fillSettingsMotionBlur(viewParams) == ReturnValue::Error) {
+			return ReturnValue::Error;
 		}
 		fillSettingsCamera(viewParams, viewPlugins.settingsCamera);
 
@@ -388,7 +388,7 @@ int VRayExporter::exportView(const ViewParams &newViewParams)
 
 	// Store new params
 	m_viewParams = viewParams;
-	return 0;
+	return ReturnValue::Success;
 }
 
 int VRayExporter::exportView()

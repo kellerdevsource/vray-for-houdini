@@ -308,7 +308,7 @@ static PyObject* vfhExportView(PyObject*, PyObject *args, PyObject *keywds)
 	ViewParams oldViewParams = exporter.getViewParams();
 
 	// Update view.
-	if (!exporter.exportView(viewParams)) {
+	if (exporter.exportView(viewParams) == ReturnValue::Success) {
 		exporter.exportDefaultHeadlight(true);
 
 		// Update pipe if needed.
@@ -512,7 +512,7 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 
 		if (WithExporter lk{}) {
 			VRayExporter &exporter = lk.getExporter();
-			if (!exporter.exportSettings()) {
+			if (exporter.exportSettings() == ReturnValue::Success) {
 				exporter.exportView(viewParams);
 				exporter.exportScene();
 				exporter.renderFrame();

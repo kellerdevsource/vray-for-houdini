@@ -621,14 +621,14 @@ VRayExporter::~VRayExporter()
 }
 
 
-int VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
+ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 {
 	const fpreal t = getContext().getTime();
 	OBJ_Node *camera = VRayExporter::getCamera(m_rop);
 
 	if (!camera) {
 		Log::getLog().error("Camera does not exist! In VrayExporter::fillSettingsOutput");
-		return -1;
+		return ReturnValue::Error;
 	}
 
 	fpreal pixelAspect = camera->evalFloat("aspect", 0, t);
@@ -713,11 +713,11 @@ int VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 	pluginDesc.addAttribute(Attrs::PluginAttr("frames_per_second", 1));
 	pluginDesc.addAttribute(Attrs::PluginAttr("frame_start", animStart));
 	pluginDesc.addAttribute(Attrs::PluginAttr("frames", frames));
-	return 0;
+	return ReturnValue::Success;
 }
 
 
-int VRayExporter::exportSettings()
+ReturnValue VRayExporter::exportSettings()
 {
 	if (RenderSettingsPlugins.empty()) {
 		RenderSettingsPlugins.insert("SettingsOptions");
@@ -744,8 +744,8 @@ int VRayExporter::exportSettings()
 		else {
 			Attrs::PluginDesc pluginDesc(sp, sp);
 			if (sp == "SettingsOutput") {
-				if (fillSettingsOutput(pluginDesc)) {
-					return -1;
+				if (fillSettingsOutput(pluginDesc) == ReturnValue::Error) {
+					return ReturnValue::Error;
 				}
 			}
 
@@ -764,7 +764,7 @@ int VRayExporter::exportSettings()
 											  OPgetDirector()->getChannelManager()->getTimeDelta(1)));
 
 	exportPlugin(pluginDesc);
-	return 0;
+	return ReturnValue::Success;
 }
 
 
