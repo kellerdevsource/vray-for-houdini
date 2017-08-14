@@ -152,7 +152,7 @@ public:
 
 	/// Gather data for motion blur
 	/// @param viewParams[out] - collects motion blur settings
-	void fillSettingsMotionBlur(ViewParams &viewParams);
+	int fillSettingsMotionBlur(ViewParams &viewParams);
 
 	/// Fill in physical camera settings
 	/// @param viewParams[in] - holds data for camera settings
@@ -190,7 +190,7 @@ public:
 
 	/// Fill in output settings
 	/// @param pluginDesc[out] - output settings plugin description
-	void fillSettingsOutput(Attrs::PluginDesc &pluginDesc);
+	int fillSettingsOutput(Attrs::PluginDesc &pluginDesc);
 
 	/// Export camera related settings - camera, dof, motion blur, etc.
 	/// This is called once for each frame we want to render
@@ -200,7 +200,7 @@ public:
 	/// Export view from the specified view parameters.
 	/// Used in SOHO IPR.
 	/// @param viewParams View parameters
-	void exportView(const ViewParams &viewParams);
+	int exportView(const ViewParams &viewParams);
 
 	/// Returns current view parameters.
 	const ViewParams &getViewParams() const { return m_viewParams; }
@@ -212,7 +212,7 @@ public:
 
 	/// Export global renderer settings - color mapping, gi, irradiance cache, etc.
 	/// This is called once when a render session is initililzed.
-	void exportSettings();
+	int exportSettings();
 
 	/// Export active lights in the scene
 	/// This is called once for each frame we want to render
