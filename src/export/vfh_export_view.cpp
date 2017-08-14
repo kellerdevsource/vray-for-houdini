@@ -181,6 +181,10 @@ void VRayExporter::fillSettingsMotionBlur(ViewParams &viewParams)
 	int useCameraSettings = m_rop->evalInt("SettingsMotionBlur_camera_motion_blur", 0, t);
 	if (useCameraSettings) {
 		OBJ_Node *camera = VRayExporter::getCamera(m_rop);
+		if (!camera) {
+			Log::getLog().error("Camera does not exist! In VRayExporter::fillSettingsMotionBlur");
+			return;
+		}
 		const fpreal shutter = camera->evalFloat("shutter", 0, t);
 		viewPlugins.settingsMotionBlur.addAttribute(Attrs::PluginAttr("duration", shutter));
 	}
@@ -214,6 +218,7 @@ void VRayExporter::fillPhysicalCamera(const ViewParams &viewParams, Attrs::Plugi
 	pluginDesc.add(Attrs::PluginAttr("horizontal_offset", horizontal_offset));
 	pluginDesc.add(Attrs::PluginAttr("vertical_offset",   vertical_offset));
 	pluginDesc.add(Attrs::PluginAttr("lens_shift",        lens_shift));
+	//pluginDesc.add(Attrs::PluginAttr("f_number", camera.evalFloat("CameraPhysical_f_number", 0, t)));
 	// pluginDesc.add(Attrs::PluginAttr("specify_focus",     true));
 
 	setAttrsFromOpNodePrms(pluginDesc, &camera, "CameraPhysical_");
@@ -276,6 +281,7 @@ void VRayExporter::fillSettingsCameraDof(const ViewParams &viewParams, Attrs::Pl
 	}
 
 	pluginDesc.addAttribute(Attrs::PluginAttr("focal_dist", focalDist));
+	//pluginDesc.add(Attrs::PluginAttr("aperture", camera->evalFloat("SettingsCameraDof_aperture", 0, t)));
 
 	setAttrsFromOpNodePrms(pluginDesc, m_rop, "SettingsCameraDof_");
 }
@@ -315,7 +321,7 @@ void VRayExporter::exportView(const ViewParams &newViewParams)
 	const bool needReset = m_viewParams.needReset(viewParams);
 	if (needReset) {
 		Log::getLog().warning("VRayExporter::exportView: Reseting view plugins...");
-
+		viewPlugins = ViewPluginsDesc();
 		removePlugin(ViewPluginsDesc::settingsCameraPluginName);
 		removePlugin(ViewPluginsDesc::settingsCameraDofPluginName);
 		removePlugin(ViewPluginsDesc::stereoSettingsPluginName);

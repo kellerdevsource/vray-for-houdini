@@ -626,6 +626,11 @@ void VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 	const fpreal t = getContext().getTime();
 	OBJ_Node *camera = VRayExporter::getCamera(m_rop);
 
+	if (!camera) {
+		Log::getLog().error("Camera does not exist! In VrayExporter::fillSettingsOutput");
+		return;
+	}
+
 	fpreal pixelAspect = camera->evalFloat("aspect", 0, t);
 
 	UT_String resfraction;
