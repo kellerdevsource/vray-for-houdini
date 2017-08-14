@@ -123,6 +123,8 @@ bool GEOgetDataFromAttribute(const GA_Attribute *attr, const GEOPrimList &primLi
 bool GEOgetDataFromAttribute(const GA_Attribute *attr, const GEOPrimList &primList,
 							 VRay::VUtils::ColorRefList &data);
 
+exint getGEOPrimListHash(const GEOPrimList &primList);
+
 } // namespace VRayForHoudini
 
 #endif // VRAY_FOR_HOUDINI_GEOUTILS_H
