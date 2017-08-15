@@ -1231,7 +1231,7 @@ VRay::Plugin ObjectExporter::exportPointParticles(OBJ_Node &objNode, const GU_De
 	switch (renderPointsAs) {
 		case vmRenderPointsAsSphere: {
 			renderType = 7;
-			radiusMult *= 0.01;
+			radiusMult *= 0.05;
 			break;
 		}
 		case vmRenderPointsAsCirle: {
