@@ -137,3 +137,14 @@ bool VRayForHoudini::GEOgetDataFromAttribute(const GA_Attribute *attr,
 											const GEOPrimList &primList,
 											VRay::VUtils::ColorRefList &data)
 { return GEOgetDataFromAttributeT< VRay::VUtils::ColorRefList >(attr, primList, data); }
+
+exint VRayForHoudini::getGEOPrimListHash(const GEOPrimList &primList)
+{
+	exint primListHash = 0;
+
+	for (int i = 0; i < primList.size(); ++i) {
+		primListHash ^= primList(i)->getMapOffset();
+	}
+
+	return primListHash;
+}

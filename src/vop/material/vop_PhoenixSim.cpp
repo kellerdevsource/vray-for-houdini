@@ -110,8 +110,8 @@ struct RampContext {
 	/// @param type - the type of the data inside the context
 	RampContext(AurRamps::RampType type = AurRamps::RampType_None)
 		: m_ui(nullptr)
-		, m_uiType(type)
 		, m_freeUi(false)
+		, m_uiType(type)
 		, m_activeChan(CHANNEL_SMOKE)
 	{
 		for (int c = 0; c < CHANNEL_COUNT; ++c) {
@@ -215,7 +215,7 @@ struct RampContext {
 	std::unique_ptr<RampUi> m_ui;      ///< Pointer to the current UI, nullptr if not open
 	bool                    m_freeUi;  ///< Flag to mark the m_ui for deletion when OnWindowDie is called
 	AurRamps::RampType      m_uiType;  ///< Type is Color Curve or Both since there can be combined ramps
-	MinMaxMap               m_minMax; ///< min max value for each channel
+	MinMaxMap               m_minMax;  ///< min max value for each channel
 private:
 	typedef RampData RampPair[2];
 	RampChannel m_activeChan;          ///< The current active channel as selected in Houdini's UI
@@ -510,7 +510,69 @@ int PhxShaderSim::rampDropDownDependCB(void * data, int index, fpreal64 time, co
 }
 
 
-int PhxShaderSim::rampButtonClickCB(void *data, int index, fpreal64 time, const PRM_Template *tplate)
+void PhxShaderSim::loadDataRanges()
+{
+	const char * token = "selectedSopPath";
+	const VRayVolumeGridRef::MinMaxPair zeroMinMax = {0, 0};
+	// zero out all min/max ranges
+	for (auto &rampIter : m_ramps) {
+		if (auto ramp = rampIter.second) {
+			for (int c = 0; c < RampContext::CHANNEL_COUNT; c++) {
+				ramp->m_minMax[c] = zeroMinMax;
+			}
+			ramp->refreshUi();
+		}
+	}
+
+	UT_String sopPath;
+	evalString(sopPath, token, 0, 0);
+
+	SOP_Node *cacheSop = getSOPNodeFromPath(sopPath);
+	if (!cacheSop || !cacheSop->getOperator()->getName().startsWith("VRayNodePhxShaderCache")) {
+		Log::getLog().warning("Only a V-Ray PhxShaderCache sop can be selected!");
+		return;
+	}
+
+	OP_Context context(CHgetEvalTime());
+	GU_DetailHandleAutoReadLock gdl(cacheSop->getCookedGeoHandle(context));
+	if (!gdl.isValid()) {
+		return;
+	}
+	const GU_Detail &detail = *gdl.getGdp();
+	auto &primList = detail.getPrimitiveList();
+	const int primCount = primList.offsetSize();
+
+	const GA_Primitive *volumePrim = nullptr;
+	// check all primities if we have a VRayVolumeGridRef
+	for (int c = 0; c < primCount; ++c) {
+		auto prim = primList.get(c);
+		if (prim && prim->getTypeId() == VRayVolumeGridRef::typeId()) {
+			volumePrim = prim;
+			break;
+		}
+	}
+
+	if (!volumePrim) {
+		Log::getLog().warning("Selected SOP does not contain a VRayNodePhxShaderCache node!");
+		return;
+	}
+
+	auto *packedPrim = UTverify_cast<const GU_PrimPacked*>(volumePrim);
+	const auto *impl = reinterpret_cast<const VRayVolumeGridRef*>(packedPrim->implementation());
+	const auto &ranges = impl->getChannelDataRanges();
+
+	for (auto &rampIter : m_ramps) {
+		if (auto ramp = rampIter.second) {
+			for (int c = 0; c < RampContext::CHANNEL_COUNT; c++) {
+				ramp->m_minMax[c] = ranges[RampContext::rampChannelToPhxChannel(static_cast<RampContext::RampChannel>(c + 1))];
+			}
+			ramp->refreshUi();
+		}
+	}
+}
+
+
+int PhxShaderSim::rampButtonClickCB(void *data, int, fpreal64, const PRM_Template *tplate)
 {
 	using namespace std;
 	using namespace AurRamps;
@@ -523,6 +585,7 @@ int PhxShaderSim::rampButtonClickCB(void *data, int index, fpreal64 time, const 
 	const string token = tplate->getToken();
 
 	auto simNode = reinterpret_cast<PhxShaderSim*>(data);
+	simNode->loadDataRanges();
 	auto ctx = simNode->m_ramps[token];
 
 	// this should not happen - calling callback on uninited context
@@ -589,68 +652,11 @@ int PhxShaderSim::rampButtonClickCB(void *data, int index, fpreal64 time, const 
 }
 
 
-int PhxShaderSim::setVopPathCB(void *data, int index, fpreal64 time, const PRM_Template *tplate)
+int PhxShaderSim::setVopPathCB(void *data, int, fpreal64, const PRM_Template *)
 {
-	const auto token = tplate->getToken();
 	auto simNode = reinterpret_cast<PhxShaderSim*>(data);
-	const VRayVolumeGridRef::MinMaxPair zeroMinMax = {0, 0};
-	// zero out all min/max ranges
-	for (auto &rampIter : simNode->m_ramps) {
-		if (auto ramp = rampIter.second) {
-			for (int c = 0; c < RampContext::CHANNEL_COUNT; c++) {
-				ramp->m_minMax[c] = zeroMinMax;
-			}
-			ramp->refreshUi();
-		}
-	}
-
-	UT_String sopPath;
-	simNode->evalString(sopPath, token, 0, 0);
-
-	SOP_Node *cacheSop = getSOPNodeFromPath(sopPath);
-	if (!cacheSop || !cacheSop->getOperator()->getName().startsWith("VRayNodePhxShaderCache")) {
-		Log::getLog().warning("Only a V-Ray PhxShaderCache sop can be selected!");
-		return 0;
-	}
-
-	OP_Context context(CHgetEvalTime());
-	GU_DetailHandleAutoReadLock gdl(cacheSop->getCookedGeoHandle(context));
-	if (!gdl.isValid()) {
-		return 0;
-	}
-	const GU_Detail &detail = *gdl.getGdp();
-	auto &primList = detail.getPrimitiveList();
-	const int primCount = primList.offsetSize();
-
-	const GA_Primitive *volumePrim = nullptr;
-	// check all primities if we have a VRayVolumeGridRef
-	for (int c = 0; c < primCount; ++c) {
-		auto prim = primList.get(c);
-		if (prim && prim->getTypeId() == VRayVolumeGridRef::typeId()) {
-			volumePrim = prim;
-			break;
-		}
-	}
-
-	if (!volumePrim) {
-		Log::getLog().warning("Selected SOP does not contain a VRayNodePhxShaderCache node!");
-		return 0;
-	}
-
-	auto *packedPrim = UTverify_cast<const GU_PrimPacked*>(volumePrim);
-	const auto *impl = reinterpret_cast<const VRayVolumeGridRef*>(packedPrim->implementation());
-	const auto &ranges = impl->getChannelDataRanges();
-
-	for (auto &rampIter : simNode->m_ramps) {
-		if (auto ramp = rampIter.second) {
-			for (int c = 0; c < RampContext::CHANNEL_COUNT; c++) {
-				ramp->m_minMax[c] = ranges[RampContext::rampChannelToPhxChannel(static_cast<RampContext::RampChannel>(c + 1))];
-			}
-			ramp->refreshUi();
-		}
-	}
-
-	return 0;
+	simNode->loadDataRanges();
+	return 1;
 }
 
 

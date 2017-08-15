@@ -57,6 +57,8 @@ public:
 
 	virtual PluginResult       asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext=nullptr) VRAY_OVERRIDE;
 
+	/// Load data ranges from the selectedSopPath's value
+	void                       loadDataRanges();
 protected:
 	/// Clear all ramp's points
 	void                       clearRampData();

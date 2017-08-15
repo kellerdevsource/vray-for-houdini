@@ -201,6 +201,8 @@ public:
 
 	VRay::Plugin exportPackedDisk(OBJ_Node &objNode, const GU_PrimPacked &prim);
 
+	void exportPackedFragment(OBJ_Node &objNode, const GU_PrimPacked &prim);
+
 	void exportPackedGeometry(OBJ_Node &objNode, const GU_PrimPacked &prim);
 
 	VRay::Plugin exportPrimPacked(OBJ_Node &objNode, const GU_PrimPacked &prim);
@@ -209,11 +211,11 @@ public:
 
 	void exportPrimVolume(OBJ_Node &objNode, const PrimitiveItem &item);
 
-	void processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp);
+	void processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, const GA_Range &primRange=GA_Range());
 
 	VRay::Plugin exportDetailInstancer(OBJ_Node &objNode, const GU_Detail &gdp, const char *prefix);
 
-	void exportDetail(OBJ_Node &objNode, const GU_Detail &gdp);
+	void exportDetail(OBJ_Node &objNode, const GU_Detail &gdp, const GA_Range &primRange=GA_Range());
 
 	/// Export point particles data.
 	/// @param gdp Detail.
