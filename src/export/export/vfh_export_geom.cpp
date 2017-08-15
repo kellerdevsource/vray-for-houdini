@@ -1152,11 +1152,11 @@ void ObjectExporter::exportPackedFragment(OBJ_Node &objNode, const GU_PrimPacked
 	if (!primFragment)
 		return;
 
-	const GU_ConstDetailHandle &gaHandle = primFragment->detailPtr();
+	const GU_DetailHandleAutoReadLock gaHandle(primFragment->detailPtr());
 	if (!gaHandle.isValid())
 		return;
 
-	const GU_Detail &gdp = *gaHandle.gdp();
+	const GU_Detail &gdp = *gaHandle.getGdp();
 	const GA_Range &primRange = primFragment->getPrimitiveRange();
 	if (!primRange.isValid())
 		return;
