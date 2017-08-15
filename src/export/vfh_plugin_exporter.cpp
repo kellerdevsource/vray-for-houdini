@@ -23,122 +23,102 @@
 using namespace VRayForHoudini;
 using namespace VRayForHoudini::Attrs;
 
+namespace
+{
+template <typename T>
+void CallVoidCallbacks(const CbBase<T> * callbacks)
+{
+	for (auto & cb : callbacks->m_cbVoid) {
+		if (cb) {
+			cb();
+		}
+	}
+}
 
-static void OnDumpMessage(VRay::VRayRenderer &renderer, const char *msg, int level, void *userData)
+template <typename T, typename ...Args>
+void CallCallbacks(const CbBase<T> * callbacks, Args && ...args)
+{
+	for (auto & cb : callbacks->m_cbTyped) {
+		if (cb) {
+			cb(std::forward<Args>(args)...);
+		}
+	}
+	CallVoidCallbacks(callbacks);
+}
+
+void OnDumpMessage(VRay::VRayRenderer &renderer, const char *msg, int level, void *userData)
 {
 	CbSetOnDumpMessage *callbacks = reinterpret_cast<CbSetOnDumpMessage*>(userData);
-	for (CbSetOnDumpMessage::CbTypeArray::const_iterator cbIt = callbacks->m_cbTyped.begin(); cbIt != callbacks->m_cbTyped.end(); ++cbIt) {
-		if (*cbIt) {
-			(*cbIt)(renderer, msg, level);
-		}
-	}
-	for (CbSetOnDumpMessage::CbVoidArray::const_iterator cbIt = callbacks->m_cbVoid.begin(); cbIt != callbacks->m_cbVoid.end(); ++cbIt) {
-		if (*cbIt) {
-			(*cbIt)();
-		}
-	}
+	CallCallbacks(callbacks, renderer, msg, level);
 }
 
 
-static void OnProgress(VRay::VRayRenderer &renderer, const char *msg, int elementNumber, int elementsCount, void *userData)
+void OnProgress(VRay::VRayRenderer &renderer, const char *msg, int elementNumber, int elementsCount, void *userData)
 {
 	CbSetOnProgress *callbacks = reinterpret_cast<CbSetOnProgress*>(userData);
-	for (CbSetOnProgress::CbTypeArray::const_iterator cbIt = callbacks->m_cbTyped.begin(); cbIt != callbacks->m_cbTyped.end(); ++cbIt) {
-		(*cbIt)(renderer, msg, elementNumber, elementsCount);
-	}
-	for (CbSetOnProgress::CbVoidArray::const_iterator cbIt = callbacks->m_cbVoid.begin(); cbIt != callbacks->m_cbVoid.end(); ++cbIt) {
-		(*cbIt)();
-	}
+	CallCallbacks(callbacks, renderer, msg, elementNumber, elementsCount);
 }
 
 
-static void OnRendererClose(VRay::VRayRenderer &renderer, void *userData)
+void OnRendererClose(VRay::VRayRenderer &renderer, void *userData)
 {
 #if PRINT_CALLBACK_CALLS
 	Log::getLog().warning("VRayPluginRenderer::OnRendererClose()");
 #endif
 	CbSetOnRendererClose *callbacks = reinterpret_cast<CbSetOnRendererClose*>(userData);
-	for (CbSetOnRendererClose::CbTypeArray::const_iterator cbIt = callbacks->m_cbTyped.begin(); cbIt != callbacks->m_cbTyped.end(); ++cbIt) {
-		(*cbIt)(renderer);
-	}
-	for (CbSetOnRendererClose::CbVoidArray::const_iterator cbIt = callbacks->m_cbVoid.begin(); cbIt != callbacks->m_cbVoid.end(); ++cbIt) {
-		(*cbIt)();
-	}
+	CallCallbacks(callbacks, renderer);
 }
 
 
-static void OnImageReady(VRay::VRayRenderer &renderer, void *userData)
+void OnImageReady(VRay::VRayRenderer &renderer, void *userData)
 {
 #if PRINT_CALLBACK_CALLS
 	Log::getLog().warning("VRayPluginRenderer::OnImageReady()");
 #endif
 	CbSetOnImageReady *callbacks = reinterpret_cast<CbSetOnImageReady*>(userData);
-	for (CbSetOnImageReady::CbTypeArray::const_iterator cbIt = callbacks->m_cbTyped.begin(); cbIt != callbacks->m_cbTyped.end(); ++cbIt) {
-		(*cbIt)(renderer);
-	}
-	for (CbSetOnImageReady::CbVoidArray::const_iterator cbIt = callbacks->m_cbVoid.begin(); cbIt != callbacks->m_cbVoid.end(); ++cbIt) {
-		(*cbIt)();
-	}
+	CallCallbacks(callbacks, renderer);
 }
 
 
-static void OnRTImageUpdated(VRay::VRayRenderer &renderer, VRay::VRayImage *img , void *userData)
+void OnRTImageUpdated(VRay::VRayRenderer &renderer, VRay::VRayImage *img , void *userData)
 {
 #if PRINT_CALLBACK_CALLS
 	Log::getLog().warning("VRayPluginRenderer::OnRTImageUpdated()");
 #endif
 	CbSetOnRTImageUpdated *callbacks = reinterpret_cast<CbSetOnRTImageUpdated*>(userData);
-	for (CbSetOnRTImageUpdated::CbTypeArray::const_iterator cbIt = callbacks->m_cbTyped.begin(); cbIt != callbacks->m_cbTyped.end(); ++cbIt) {
-		(*cbIt)(renderer, img);
-	}
-	for (CbSetOnRTImageUpdated::CbVoidArray::const_iterator cbIt = callbacks->m_cbVoid.begin(); cbIt != callbacks->m_cbVoid.end(); ++cbIt) {
-		(*cbIt)();
-	}
+	CallCallbacks(callbacks, renderer, img);
 }
 
 
-static void OnBucketInit(VRay::VRayRenderer &renderer, int x, int y, int w, int h, const char *host, void *userData)
+void OnBucketInit(VRay::VRayRenderer &renderer, int x, int y, int w, int h, const char *host, void *userData)
 {
 #if PRINT_CALLBACK_CALLS
 	Log::getLog().warning("VRayPluginRenderer::OnBucketReady()");
 #endif
 	CbSetOnBucketInit *callbacks = reinterpret_cast<CbSetOnBucketInit*>(userData);
-	for (CbSetOnBucketInit::CbTypeArray::const_iterator cbIt = callbacks->m_cbTyped.begin(); cbIt != callbacks->m_cbTyped.end(); ++cbIt) {
-		(*cbIt)(renderer, x, y, w, h, host);
-	}
-	for (CbSetOnBucketInit::CbVoidArray::const_iterator cbIt = callbacks->m_cbVoid.begin(); cbIt != callbacks->m_cbVoid.end(); ++cbIt) {
-		(*cbIt)();
-	}
+	CallCallbacks(callbacks, renderer, x, y, w, h, host);
 }
 
 
-static void OnBucketFailed(VRay::VRayRenderer &renderer, int x, int y, int w, int h, const char *host, void *userData)
+void OnBucketFailed(VRay::VRayRenderer &renderer, int x, int y, int w, int h, const char *host, void *userData)
 {
 #if PRINT_CALLBACK_CALLS
 	Log::getLog().warning("VRayPluginRenderer::OnBucketReady()");
 #endif
 	CbSetOnBucketFailed *callbacks = reinterpret_cast<CbSetOnBucketFailed*>(userData);
-	for (CbSetOnBucketFailed::CbTypeArray::const_iterator cbIt = callbacks->m_cbTyped.begin(); cbIt != callbacks->m_cbTyped.end(); ++cbIt) {
-		(*cbIt)(renderer, x, y, w, h, host);
-	}
-	for (CbSetOnBucketFailed::CbVoidArray::const_iterator cbIt = callbacks->m_cbVoid.begin(); cbIt != callbacks->m_cbVoid.end(); ++cbIt) {
-		(*cbIt)();
-	}
+	CallCallbacks(callbacks, renderer, x, y, w, h, host);
 }
 
 
-static void OnBucketReady(VRay::VRayRenderer &renderer, int x, int y, const char *host, VRay::VRayImage *img, void *userData)
+void OnBucketReady(VRay::VRayRenderer &renderer, int x, int y, const char *host, VRay::VRayImage *img, void *userData)
 {
 #if PRINT_CALLBACK_CALLS
 	Log::getLog().warning("VRayPluginRenderer::OnBucketReady()");
 #endif
 	CbSetOnBucketReady *callbacks = reinterpret_cast<CbSetOnBucketReady*>(userData);
-	for (CbSetOnBucketReady::CbTypeArray::const_iterator cbIt = callbacks->m_cbTyped.begin(); cbIt != callbacks->m_cbTyped.end(); ++cbIt) {
-		(*cbIt)(renderer, x, y, host, img);
-	}
-	for (CbSetOnBucketReady::CbVoidArray::const_iterator cbIt = callbacks->m_cbVoid.begin(); cbIt != callbacks->m_cbVoid.end(); ++cbIt) {
-		(*cbIt)();
-	}
+	CallCallbacks(callbacks, renderer, x, y, host, img);
+}
+
 }
 
 bool VRayPluginRenderer::hasVRScansGUILicense(VRay::ScannedMaterialLicenseError &err)
@@ -232,16 +212,27 @@ int VRayPluginRenderer::initRenderer(int hasUI, int reInit)
 		}
 
 		if (m_vray) {
-			m_vray->setOnDumpMessage(OnDumpMessage,       (void*)&m_callbacks.m_cbOnDumpMessage);
-			m_vray->setOnProgress(OnProgress,             (void*)&m_callbacks.m_cbOnProgress);
-			m_vray->setOnRendererClose(OnRendererClose,   (void*)&m_callbacks.m_cbOnRendererClose);
+			m_vray->setOnDumpMessage(OnDumpMessage,       &m_callbacks.m_cbOnDumpMessage);
+			m_vray->setOnProgress(OnProgress,             &m_callbacks.m_cbOnProgress);
+			m_vray->setOnRendererClose(OnRendererClose,   &m_callbacks.m_cbOnRendererClose);
+
+			m_vray->setOnImageReady([](VRay::VRayRenderer &renderer, void *context) {
+				VRayPluginRenderer * self = reinterpret_cast<VRayPluginRenderer*>(context);
+				if (self->m_vray->getOptions().showFrameBuffer) {
+					OnImageReady(renderer, &self->m_callbacks.m_cbOnImageReady);
+				}
+
+				// Stopping rendering should clear scene data from memory
+				if (renderer.isAborted()) {
+					self->m_vray->reset();
+				}
+			}, this);
 
 			if (hasUI) {
-				m_vray->setOnImageReady(OnImageReady,         (void*)&m_callbacks.m_cbOnImageReady);
-				m_vray->setOnRTImageUpdated(OnRTImageUpdated, (void*)&m_callbacks.m_cbOnRTImageUpdated);
-				m_vray->setOnBucketInit(OnBucketInit,         (void*)&m_callbacks.m_cbOnBucketInit);
-				m_vray->setOnBucketFailed(OnBucketFailed,     (void*)&m_callbacks.m_cbOnBucketFailed);
-				m_vray->setOnBucketReady(OnBucketReady,       (void*)&m_callbacks.m_cbOnBucketReady);
+				m_vray->setOnRTImageUpdated(OnRTImageUpdated, &m_callbacks.m_cbOnRTImageUpdated);
+				m_vray->setOnBucketInit(OnBucketInit,         &m_callbacks.m_cbOnBucketInit);
+				m_vray->setOnBucketFailed(OnBucketFailed,     &m_callbacks.m_cbOnBucketFailed);
+				m_vray->setOnBucketReady(OnBucketReady,       &m_callbacks.m_cbOnBucketReady);
 			}
 		}
 	}
