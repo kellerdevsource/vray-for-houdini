@@ -1,46 +1,111 @@
 {
-    name	TexColorCurve
-    label	"Color Curve"
-    parmtag	{ spare_category "Color Curve" }
-    parmtag	{ vray_plugin "TexColorCurve" }
+    name    TexColorCurve
+    label   "Color Curve"
+    parmtag { spare_category "Color Curve" }
+    parmtag { vray_plugin "TexColorCurve" }
     parm {
-	name	"input"
-	label	"Input"
-	type	color4
-	size	4
-	default	{ "0" "0" "0" "0" }
-	help	"The value from this texture is controlled by the profile curve"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexColorCurve" }
-	parmtag	{ "vray_pluginattr" "input" }
-	parmtag	{ "vray_type" "Texture" }
+        name    "input"
+        label   "Input"
+        type    color4
+        size    4
+        default { "0" "0" "0" "0" }
+        help    "The value from this texture is controlled by the profile curve"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexColorCurve" }
+        parmtag { "vray_pluginattr" "input" }
+        parmtag { "vray_type" "Texture" }
     }
     parm {
-	name	"inputScalar"
-	label	"Inputscalar"
-	type	float
-	default	{ "0" }
-	help	"If present input is ignored, and this is used instead"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexColorCurve" }
-	parmtag	{ "vray_pluginattr" "inputScalar" }
-	parmtag	{ "vray_type" "TextureFloat" }
+        name    "inputScalar"
+        label   "Inputscalar"
+        type    float
+        default { "0" }
+        help    "If present input is ignored, and this is used instead"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexColorCurve" }
+        parmtag { "vray_pluginattr" "inputScalar" }
+        parmtag { "vray_type" "TextureFloat" }
     }
     parm {
-	name	"use_alpha"
-	label	"Use Alpha"
-	type	toggle
-	default	{ "0" }
-	help	"Get alpha from curve"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexColorCurve" }
-	parmtag	{ "vray_pluginattr" "use_alpha" }
-	parmtag	{ "vray_type" "boolean" }
+        name    "use_alpha"
+        label   "Use Alpha"
+        type    toggle
+        default { "0" }
+        help    "Get alpha from curve"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexColorCurve" }
+        parmtag { "vray_pluginattr" "use_alpha" }
+        parmtag { "vray_type" "boolean" }
     }
+    parm {
+        name    "rkeys"
+        label   "R Curve"
+        type    ramp_flt
+        default { "2" }
+        help    "Color Curve"
+        range   { 1 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "rampbasis_var" "interpolations" }
+        parmtag { "rampbasisdefault" "linear" }
+        parmtag { "rampkeys_var" "positions" }
+        parmtag { "rampshowcontrolsdefault" "1" }
+        parmtag { "rampvalues_var" "values" }
+        parmtag { "vray_pluginattr" "rkeys" }
+        parmtag { "vray_type" "float" }
+    }
+    parm {
+        name    "gkeys"
+        label   "G Curve"
+        type    ramp_flt
+        default { "2" }
+        help    "Color Curve"
+        range   { 1 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "rampbasis_var" "interpolations" }
+        parmtag { "rampbasisdefault" "linear" }
+        parmtag { "rampkeys_var" "positions" }
+        parmtag { "rampshowcontrolsdefault" "1" }
+        parmtag { "rampvalues_var" "values" }
+        parmtag { "vray_pluginattr" "gkeys" }
+        parmtag { "vray_type" "float" }
+    }
+        parm {
+        name    "bkeys"
+        label   "B Curve"
+        type    ramp_flt
+        default { "2" }
+        help    "Color Curve"
+        range   { 1 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "rampbasis_var" "interpolations" }
+        parmtag { "rampbasisdefault" "linear" }
+        parmtag { "rampkeys_var" "positions" }
+        parmtag { "vray_pluginattr" "bkeys" }
+        parmtag { "vray_type" "float" }
+    }
+    parm {
+        name    "akeys"
+        label   "A Curve"
+        type    ramp_flt
+        default { "2" }
+        help    "Color Curve"
+        range   { 1 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "rampbasis_var" "interpolations" }
+        parmtag { "rampbasisdefault" "linear" }
+        parmtag { "rampkeys_var" "positions" }
+        parmtag { "vray_pluginattr" "akeys" }
+        parmtag { "vray_type" "float" }
+    }
+#include "vfh_texture_default_output_color.ds"
 }

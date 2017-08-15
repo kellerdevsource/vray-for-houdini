@@ -1,71 +1,72 @@
 {
-    name	TexSetRange
-    label	"Range"
-    parmtag	{ spare_category "Range" }
-    parmtag	{ vray_plugin "TexSetRange" }
+    name    TexSetRange
+    label   "Range"
+    parmtag { spare_category "Range" }
+    parmtag { vray_plugin "TexSetRange" }
     parm {
-	name	"value"
-	label	"Value"
-	type	color4
-	size	4
-	default	{ "0" "0" "0" "0" }
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexSetRange" }
-	parmtag	{ "vray_pluginattr" "value" }
-	parmtag	{ "vray_type" "Texture" }
+        name    "value"
+        label   "Value"
+        type    color4
+        size    4
+        default { "0" "0" "0" "0" }
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexSetRange" }
+        parmtag { "vray_pluginattr" "value" }
+        parmtag { "vray_type" "Texture" }
     }
     parm {
-	name	"oldMin"
-	label	"Oldmin"
-	type	color4
-	size	4
-	default	{ "0" "0" "0" "0" }
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexSetRange" }
-	parmtag	{ "vray_pluginattr" "oldMin" }
-	parmtag	{ "vray_type" "Texture" }
+        name    "oldMin"
+        label   "Old Min"
+        type    color4
+        size    4
+        default { "0" "0" "0" "0" }
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexSetRange" }
+        parmtag { "vray_pluginattr" "oldMin" }
+        parmtag { "vray_type" "Texture" }
     }
     parm {
-	name	"oldMax"
-	label	"Oldmax"
-	type	color4
-	size	4
-	default	{ "0" "0" "0" "0" }
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexSetRange" }
-	parmtag	{ "vray_pluginattr" "oldMax" }
-	parmtag	{ "vray_type" "Texture" }
+        name    "oldMax"
+        label   "Old Max"
+        type    color4
+        size    4
+        default { "1" "1" "1" "0" }
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexSetRange" }
+        parmtag { "vray_pluginattr" "oldMax" }
+        parmtag { "vray_type" "Texture" }
     }
     parm {
-	name	"newMin"
-	label	"Newmin"
-	type	color4
-	size	4
-	default	{ "0" "0" "0" "0" }
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexSetRange" }
-	parmtag	{ "vray_pluginattr" "newMin" }
-	parmtag	{ "vray_type" "Texture" }
+        name    "newMin"
+        label   "New Min"
+        type    color4
+        size    4
+        default { "0" "0" "0" "0" }
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexSetRange" }
+        parmtag { "vray_pluginattr" "newMin" }
+        parmtag { "vray_type" "Texture" }
     }
     parm {
-	name	"newMax"
-	label	"Newmax"
-	type	color4
-	size	4
-	default	{ "0" "0" "0" "0" }
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexSetRange" }
-	parmtag	{ "vray_pluginattr" "newMax" }
-	parmtag	{ "vray_type" "Texture" }
+        name    "newMax"
+        label   "New Max"
+        type    color4
+        size    4
+        default { "1" "1" "1" "0" }
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexSetRange" }
+        parmtag { "vray_pluginattr" "newMax" }
+        parmtag { "vray_type" "Texture" }
     }
+#include "vfh_texture_default_output_color.ds"
 }

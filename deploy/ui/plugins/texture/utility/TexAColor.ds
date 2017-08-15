@@ -3,7 +3,6 @@
     label   "Color"
     parmtag { spare_category "Color" }
     parmtag { vray_plugin "TexAColor" }
-
     parm {
         name    "texture"
         label   "Color"
@@ -16,6 +15,5 @@
         parmtag { "vray_pluginattr" "texture" }
         parmtag { "vray_type" "Texture" }
     }
-
 #include "vfh_texture_default_output_color.ds"
 }

@@ -3,12 +3,11 @@
     label   "User Color"
     parmtag { spare_category "User Color" }
     parmtag { vray_plugin "TexUserColor" }
-
     parm {
         name    "user_attribute"
         label   "User Attribute"
         type    string
-        default { "" }
+        default { "user_color" }
         help    "User attribute name of type float or color"
         range   { 0 1 }
         export  none
@@ -17,7 +16,6 @@
         parmtag { "vray_pluginattr" "user_attribute" }
         parmtag { "vray_type" "string" }
     }
-
     parm {
         name    "default_color"
         label   "Default Color"
@@ -32,7 +30,6 @@
         parmtag { "vray_pluginattr" "default_color" }
         parmtag { "vray_type" "Texture" }
     }
-
     parm {
         name "attribute_priority"
         label "Attribute Priority"
@@ -41,6 +38,8 @@
             "0" "Map Channel"
             "1" "User Attribute"
         }
-        default { "0" }
+        default { "1" }
+        invisible
     }
+#include "vfh_texture_default_output_color.ds"
 }

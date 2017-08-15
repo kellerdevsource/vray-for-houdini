@@ -3,55 +3,53 @@
     label "Layered"
     parmtag { spare_category "Layered" }
     parmtag { vray_plugin "TexLayeredMax" }
-
-    multiparm {
-        name "textures_count"
-        label "Textures"
-
-        parm {
-            name "tex#blend_amount"
-            label "Blend #"
-            type float
-            default { 1.0 }
-        }
-
-        parm {
-            name "tex#blend_mode"
-            label "Mode #"
-            type ordinal
-
-            menu {
-                "0"  "None"
-                "1"  "Average"
-                "2"  "Add"
-                "3"  "Subtract"
-                "4"  "Darken"
-                "5"  "Multiply"
-                "6"  "Color burn"
-                "7"  "Linear burn"
-                "8"  "Lighten"
-                "9"  "Screen"
-                "10" "Color Dodge"
-                "11" "Linear Dodge"
-                "12" "Spotlite"
-                "13" "Spotlite Blend"
-                "14" "Overlay"
-                "15" "Softlight"
-                "16" "Hardlight"
-                "17" "Pinlight"
-                "18" "Hardmix"
-                "19" "Difference"
-                "20" "Exclusion"
-                "21" "Hue"
-                "22" "Saturation"
-                "23" "Color"
-                "24" "Value"
+    groupsimple {
+        name "folder_texlayered_settings"
+        label "Settings"
+        multiparm {
+            name "textures_count"
+            label "Textures"
+            parm {
+                name "tex#blend_amount"
+                label "Blend #"
+                type float
+                default { 1.0 }
             }
-
-            default { "14" }
+            parm {
+                name "tex#blend_mode"
+                label "Mode #"
+                type ordinal
+                menu {
+                    "0"  "None"
+                    "1"  "Average"
+                    "2"  "Add"
+                    "3"  "Subtract"
+                    "4"  "Darken"
+                    "5"  "Multiply"
+                    "6"  "Color burn"
+                    "7"  "Linear burn"
+                    "8"  "Lighten"
+                    "9"  "Screen"
+                    "10" "Color Dodge"
+                    "11" "Linear Dodge"
+                    "12" "Spotlite"
+                    "13" "Spotlite Blend"
+                    "14" "Overlay"
+                    "15" "Softlight"
+                    "16" "Hardlight"
+                    "17" "Pinlight"
+                    "18" "Hardmix"
+                    "19" "Difference"
+                    "20" "Exclusion"
+                    "21" "Hue"
+                    "22" "Saturation"
+                    "23" "Color"
+                    "24" "Value"
+                }
+                default { "14" }
+            }
         }
     }
-
 #include "vfh_texture_common_color.ds"
 #include "vfh_texture_common_alpha.ds"
 #include "vfh_texture_common_outputs.ds"

@@ -1,32 +1,33 @@
 {
-    name	TexInvert
-    label	"Invert"
-    parmtag	{ spare_category "Invert" }
-    parmtag	{ vray_plugin "TexInvert" }
+    name    TexInvert
+    label   "Invert"
+    parmtag { spare_category "Invert" }
+    parmtag { vray_plugin "TexInvert" }
     parm {
-	name	"texture"
-	label	"Texture"
-	type	color4
-	size	4
-	default	{ "0" "0" "0" "1" }
-	help	"The texture to be inverted"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexInvert" }
-	parmtag	{ "vray_pluginattr" "texture" }
-	parmtag	{ "vray_type" "Texture" }
+        name    "texture"
+        label   "Texture"
+        type    color4
+        size    4
+        default { "0" "0" "0" "1" }
+        help    "The texture to be inverted"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexInvert" }
+        parmtag { "vray_pluginattr" "texture" }
+        parmtag { "vray_type" "Texture" }
     }
     parm {
-	name	"invert_alpha"
-	label	"Invert Alpha"
-	type	toggle
-	default	{ "0" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexInvert" }
-	parmtag	{ "vray_pluginattr" "invert_alpha" }
-	parmtag	{ "vray_type" "boolean" }
+        name    "invert_alpha"
+        label   "Invert Alpha"
+        type    toggle
+        default { "0" }
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexInvert" }
+        parmtag { "vray_pluginattr" "invert_alpha" }
+        parmtag { "vray_type" "boolean" }
     }
+#include "vfh_texture_default_output_color.ds"
 }

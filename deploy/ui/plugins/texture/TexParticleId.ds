@@ -1,6 +1,7 @@
 {
-    name	TexParticleId
-label	"Particle ID"
-parmtag	{ spare_category "Particle ID" }
-parmtag	{ vray_plugin "TexParticleId" }
+    name    TexParticleId
+label   "Particle ID"
+parmtag { spare_category "Particle ID" }
+parmtag { vray_plugin "TexParticleId" }
+#include "vfh_texture_default_output_int.ds"
 }

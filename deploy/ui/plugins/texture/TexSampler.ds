@@ -3,7 +3,6 @@
     label   "Sampler"
     parmtag { spare_category "Sampler" }
     parmtag { vray_plugin "TexSampler" }
-
     parm {
         name    "uv_set_name"
         label   "UV Name"
@@ -17,7 +16,6 @@
         parmtag { "vray_pluginattr" "uv_set_name" }
         parmtag { "vray_type" "string" }
     }
-
     parm {
         name    "uv_index"
         label   "UV Index"
@@ -32,9 +30,7 @@
         parmtag { "vray_type" "int" }
         disablewhen "{ uv_set_name != \"\" }"
     }
-
 #include "vfh_texture_defines.ds"
-
     VFH_TEXTURE_OUTPUT_VECTOR(point)
     VFH_TEXTURE_OUTPUT_VECTOR(pointReference)
     VFH_TEXTURE_OUTPUT_VECTOR(pointObject)

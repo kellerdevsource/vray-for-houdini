@@ -1,6 +1,18 @@
 {
-    name	TexUVWGenToTexture
-label	"UVW Gen To Texture"
-parmtag	{ spare_category "UVW Gen To Texture" }
-parmtag	{ vray_plugin "TexUVWGenToTexture" }
+    name    TexUVWGenToTexture
+    label   "UVW Gen To Texture"
+    parmtag { spare_category "UVW Gen To Texture" }
+    parmtag { vray_plugin "TexUVWGenToTexture" }
+    parm {
+        name "input"
+        label "Input"
+        type int
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_label" "input" }
+        parmtag { "vray_plugin" "TexUVWGenToTexture" }
+        parmtag { "vray_pluginattr" "input" }
+        parmtag { "vray_type" "Plugin" }
+        invisible
+    }
+#include "vfh_texture_default_output_color.ds"
 }

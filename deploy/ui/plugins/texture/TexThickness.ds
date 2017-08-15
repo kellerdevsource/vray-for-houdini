@@ -1,19 +1,20 @@
 {
-    name	TexThickness
-    label	"Thickness"
-    parmtag	{ spare_category "Thickness" }
-    parmtag	{ vray_plugin "TexThickness" }
+    name    TexThickness
+    label   "Thickness"
+    parmtag { spare_category "Thickness" }
+    parmtag { vray_plugin "TexThickness" }
     parm {
-	name	"thickness_mult"
-	label	"Thickness Mult"
-	type	float
-	default	{ "1" }
-	help	"The object thickness is multiplied by this value to get the texture color"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexThickness" }
-	parmtag	{ "vray_pluginattr" "thickness_mult" }
-	parmtag	{ "vray_type" "float" }
+        name    "thickness_mult"
+        label   "Thickness Mult"
+        type    float
+        default { "1" }
+        help    "The object thickness is multiplied by this value to get the texture color"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexThickness" }
+        parmtag { "vray_pluginattr" "thickness_mult" }
+        parmtag { "vray_type" "float" }
     }
+#include "vfh_texture_default_output_color.ds"
 }

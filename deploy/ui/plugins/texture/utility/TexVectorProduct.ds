@@ -1,66 +1,70 @@
 {
-    name	TexVectorProduct
-    label	"Vector Product"
-    parmtag	{ spare_category "Vector Product" }
-    parmtag	{ vray_plugin "TexVectorProduct" }
+    name    TexVectorProduct
+    label   "Vector Product"
+    parmtag { spare_category "Vector Product" }
+    parmtag { vray_plugin "TexVectorProduct" }
     parm {
-	name	"operation"
-	label	"Operation"
-	type	ordinal
-	default	{ "1" }
-	help	"Operation"
-	menu	{
-	    "No operation"	"No operation"
-	    "Dot Product"	"Dot Product"
-	    "Cross Product"	"Cross Product"
-	    "Vector Matrix Product"	"Vector Matrix Product"
-	    "Point Matrix Product"	"Point Matrix Product"
-	}
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1,2,3,4" }
-	parmtag	{ "vray_plugin" "TexVectorProduct" }
-	parmtag	{ "vray_pluginattr" "operation" }
-	parmtag	{ "vray_type" "int" }
+        name    "operation"
+        label   "Operation"
+        type    ordinal
+        default { "1" }
+        help    "Operation"
+        menu    {
+            0 "No operation"
+            1 "Dot Product"
+            2 "Cross Product"
+            3 "Vector Matrix Product"
+            4  "Point Matrix Product"
+        }
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_enumkeys" "0,1,2,3,4" }
+        parmtag { "vray_plugin" "TexVectorProduct" }
+        parmtag { "vray_pluginattr" "operation" }
+        parmtag { "vray_type" "enum" }
     }
     parm {
-	name	"input1"
-	label	"Input1"
-	type	color4
-	size	4
-	default	{ "0" "0" "0" "1" }
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexVectorProduct" }
-	parmtag	{ "vray_pluginattr" "input1" }
-	parmtag	{ "vray_type" "Texture" }
+    name    "input1"
+    label   "Input1"
+    type    color4
+    size    4
+    default { "0" "0" "0" "1" }
+    range   { 0 10 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "TexVectorProduct" }
+    parmtag { "vray_pluginattr" "input1" }
+    parmtag { "vray_type" "Texture" }
     }
     parm {
-	name	"input2"
-	label	"Input2"
-	type	color4
-	size	4
-	default	{ "0" "0" "0" "1" }
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexVectorProduct" }
-	parmtag	{ "vray_pluginattr" "input2" }
-	parmtag	{ "vray_type" "Texture" }
+    name    "input2"
+    label   "Input2"
+    type    color4
+    size    4
+    default { "0" "0" "0" "1" }
+    range   { 0 10 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "TexVectorProduct" }
+    parmtag { "vray_pluginattr" "input2" }
+    parmtag { "vray_type" "Texture" }
     }
     parm {
-	name	"normalize"
-	label	"Normalize"
-	type	toggle
-	default	{ "0" }
-	help	"When this is true the output vector will be normalized (in case of dot product, the input vectors are normalized before the operation)"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexVectorProduct" }
-	parmtag	{ "vray_pluginattr" "normalize" }
-	parmtag	{ "vray_type" "boolean" }
+    name    "normalize"
+    label   "Normalize"
+    type    toggle
+    default { "0" }
+    help    "When this is true the output vector will be normalized (in case of dot product, the input vectors are normalized before the operation)"
+    range   { 0 1 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "TexVectorProduct" }
+    parmtag { "vray_pluginattr" "normalize" }
+    parmtag { "vray_type" "boolean" }
     }
+#include "vfh_texture_defines.ds"
+    VFH_TEXTURE_INPUT_TRANSFORM(transform)
+#include "vfh_texture_default_output_color.ds"
+
 }

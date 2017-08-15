@@ -1,19 +1,20 @@
 {
-    name	TexInt
-    label	"Int"
-    parmtag	{ spare_category "Int" }
-    parmtag	{ vray_plugin "TexInt" }
+    name    TexInt
+    label   "Int"
+    parmtag { spare_category "Int" }
+    parmtag { vray_plugin "TexInt" }
     parm {
-	name	"input"
-	label	"Input"
-	type	integer
-	default	{ "0" }
-	help	"input"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexInt" }
-	parmtag	{ "vray_pluginattr" "input" }
-	parmtag	{ "vray_type" "TextureInt" }
+        name    "input"
+        label   "Input"
+        type    integer
+        default { "0" }
+        help    "input"
+        range   { 0 5 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexInt" }
+        parmtag { "vray_pluginattr" "input" }
+        parmtag { "vray_type" "TextureInt" }
     }
+#include "vfh_texture_default_output_int.ds"
 }

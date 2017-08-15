@@ -1,19 +1,22 @@
 {
-    name	TexVectorToColor
-    label	"Vector To Color"
-    parmtag	{ spare_category "Vector To Color" }
-    parmtag	{ vray_plugin "TexVectorToColor" }
+    name    TexVectorToColor
+    label   "Vector To Color"
+    parmtag { spare_category "Vector To Color" }
+    parmtag { vray_plugin "TexVectorToColor" }
     parm {
-	name	"input"
-	label	"Input"
-	type	direction
-	size	3
-	default	{ "1" "1" "1" }
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexVectorToColor" }
-	parmtag	{ "vray_pluginattr" "input" }
-	parmtag	{ "vray_type" "TextureVector" }
+        name    "input"
+        label   "Input"
+        type    direction
+        size    3
+        default { "1" "1" "1" }
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexVectorToColor" }
+        parmtag { "vray_pluginattr" "input" }
+        parmtag { "vray_type" "TextureVector" }
     }
+#include "vfh_texture_default_output_color.ds"
+#include "vfh_texture_defines.ds"
+    VFH_TEXTURE_OUTPUT(color)
 }
