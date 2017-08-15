@@ -1155,11 +1155,11 @@ void ObjectExporter::exportPackedFragment(OBJ_Node &objNode, const GU_PrimPacked
 	if (!primFragment)
 		return;
 
-	const GU_DetailHandleAutoReadLock gaHandle(primFragment->detailPtr());
-	if (!gaHandle.isValid())
+	const GU_DetailHandleAutoReadLock gdl(primFragment->detailPtr());
+	if (!gdl.isValid())
 		return;
 
-	const GU_Detail &gdp = *gaHandle.getGdp();
+	const GU_Detail &gdp = *gdl.getGdp();
 	const GA_Range &primRange = primFragment->getPrimitiveRange();
 	if (!primRange.isValid())
 		return;
@@ -1169,7 +1169,7 @@ void ObjectExporter::exportPackedFragment(OBJ_Node &objNode, const GU_PrimPacked
 
 void ObjectExporter::exportPackedGeometry(OBJ_Node &objNode, const GU_PrimPacked &prim)
 {
-	GU_DetailHandleAutoReadLock gdl(prim.getPackedDetail());
+	const GU_DetailHandleAutoReadLock gdl(prim.getPackedDetail());
 	if (!gdl.isValid())
 		return;
 
@@ -1554,7 +1554,7 @@ void ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_Detail &gd
 
 VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode, SOP_Node &sopNode)
 {
-	GU_DetailHandleAutoReadLock gdl(sopNode.getCookedGeoHandle(ctx));
+	const GU_DetailHandleAutoReadLock gdl(sopNode.getCookedGeoHandle(ctx));
 	if (!gdl.isValid()) {
 		return VRay::Plugin();
 	}
