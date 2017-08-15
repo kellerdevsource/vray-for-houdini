@@ -360,6 +360,9 @@ VRay::Plugin ObjectExporter::exportVRaySOP(OBJ_Node&, SOP_Node &sop)
 
 	Attrs::PluginDesc pluginDesc;
 	switch (vrayNode->asPluginDesc(pluginDesc, pluginExporter, &ctx)) {
+		case OP::VRayNode::PluginResultSuccess: {
+			break;
+		}
 		case OP::VRayNode::PluginResultNA:
 		case OP::VRayNode::PluginResultContinue: {
 			pluginExporter.setAttrsFromOpNodePrms(pluginDesc, vrayNode);
