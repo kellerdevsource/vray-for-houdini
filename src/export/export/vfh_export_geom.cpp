@@ -1281,7 +1281,9 @@ VRay::Plugin ObjectExporter::exportPointParticles(OBJ_Node &objNode, const GU_De
 			positions[positionsIdx].set(point.x(), point.y(), point.z());
 
 			if (velocityHndl.isValid()) {
-				const UT_Vector3F &v = velocityHndl.get(ptOff);
+				UT_Vector3F v = velocityHndl.get(ptOff);
+				v /= OPgetDirector()->getChannelManager()->getSamplesPerSec();
+
 				velocities[positionsIdx].set(v.x(), v.y(), v.z());
 			}
 
