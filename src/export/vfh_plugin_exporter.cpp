@@ -218,6 +218,7 @@ int VRayPluginRenderer::initRenderer(int hasUI, int reInit)
 
 			m_vray->setOnImageReady([](VRay::VRayRenderer &renderer, void *context) {
 				VRayPluginRenderer * self = reinterpret_cast<VRayPluginRenderer*>(context);
+				// Only call callback functions if hasUI is true (it will set showFrameBuffer)
 				if (self->m_vray->getOptions().showFrameBuffer) {
 					OnImageReady(renderer, &self->m_callbacks.m_cbOnImageReady);
 				}
