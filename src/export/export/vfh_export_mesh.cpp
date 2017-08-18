@@ -18,11 +18,8 @@
 #include <GA/GA_PageHandle.h>
 #include <GA/GA_Names.h>
 
-#define USE_GROUP_STYLER 1
-#if USE_GROUP_STYLER
-#  include <GSTY/GSTY_SubjectPrimGroup.h>
-#  include <STY/STY_StylerGroup.h>
-#endif
+#include <GSTY/GSTY_SubjectPrimGroup.h>
+#include <STY/STY_StylerGroup.h>
 
 using namespace VRayForHoudini;
 using namespace Hash;
@@ -92,6 +89,7 @@ static bool getDataFromAttribute(const GA_Attribute *attr, VRay::VUtils::VectorR
 	return aifTuple->getRange(attr, GA_Range(attr->getIndexMap()), &(data.get()->x));
 }
 
+
 MeshExporter::MeshExporter(OBJ_Node &obj, const GU_Detail &gdp, OP_Context &ctx, VRayExporter &exp, ObjectExporter &objectExporter, const GEOPrimList &primList)
 	: PrimitiveExporter(obj, ctx, exp)
 	, primList(primList)
@@ -99,7 +97,7 @@ MeshExporter::MeshExporter(OBJ_Node &obj, const GU_Detail &gdp, OP_Context &ctx,
 	, objectExporter(objectExporter)
 	, m_hasSubdivApplied(false)
 	, numFaces(-1)
-{ }
+{}
 
 void MeshExporter::reset()
 {
@@ -194,7 +192,6 @@ VRay::VUtils::VectorRefList& MeshExporter::getNormals()
 			// second check for vertex attribute
 			nattr = gdp.findNormalAttribute(GA_ATTRIB_VERTEX);
 		}
-
 		if (!nattr) {
 			// last check for Houdini internal normal attribute
 			// which is always a point attribute
@@ -446,13 +443,12 @@ VRay::Plugin MeshExporter::getMaterial()
 
 	const STY_Styler &geoStyler = objectExporter.getStyler();
 
-#if USE_GROUP_STYLER
 	GSTY_SubjectPrimGroup primSubjects(gdp, primList);
 	STY_StylerGroup primStylers;
 	primStylers.append(geoStyler, primSubjects);
-#endif
 
 	int faceIndex = 0;
+	GA_Index primIndex = 0;
 	for (const GEO_Primitive *prim : primList) {
 		const GA_Offset primOffset = prim->getMapOffset();
 
@@ -460,13 +456,8 @@ VRay::Plugin MeshExporter::getMaterial()
 		PrimMaterial primMaterial;
 		primMaterial.matNode = topPrimMaterial.matNode;
 
-#if USE_GROUP_STYLER
-		const GA_Index primIndex = prim->getMapIndex();
 		const STY_Styler &primStyler = primStylers.getStyler(primIndex);
 		appendOverrideValues(primStyler, primMaterial, overrideMerge, true);
-#else
-		getOverridesForPrimitive(geoStyler, *prim, primMaterial);
-#endif
 
 		OP_Node *primMtlNode = primMaterial.matNode;
 
@@ -535,6 +526,8 @@ VRay::Plugin MeshExporter::getMaterial()
 				break;
 			}
 		}
+
+		primIndex++;
 	}
 
 	UT_ASSERT(faceIndex == numFaces);
@@ -648,49 +641,40 @@ MapChannels& MeshExporter::getMapChannels()
 	return map_channels_data;
 }
 
-/// Returns true if face is a tri-face or quad-face.
+/// Returns true if face is at least a tri-face.
 static int validNumVertices(const GA_Size numVertices)
 {
-	return numVertices >= 3 && numVertices <= 4;
+	return numVertices >= 3;
 }
 
 /// Allocated map channel data.
 static void allocateOverrideMapChannel(MapChannel &mapChannel, const GEOPrimList &primList)
 {
-	int numMapVertex = 0;
+	int numFaces = 0;
 
 	for (const GEO_Primitive *prim : primList) {
 		switch (prim->getTypeId().get()) {
-		case GEO_PRIMPOLYSOUP:
-		{
-			const GU_PrimPolySoup *polySoup = static_cast<const GU_PrimPolySoup*>(prim);
-			for (GEO_PrimPolySoup::PolygonIterator pst(*polySoup); !pst.atEnd(); ++pst) {
-				const GA_Size numVertices = pst.getVertexCount();
-				if (validNumVertices(numVertices)) {
-					numMapVertex += (numVertices == 4) ? 6 : 3;
+			case GEO_PRIMPOLYSOUP: {
+				const GU_PrimPolySoup *polySoup = static_cast<const GU_PrimPolySoup*>(prim);
+				for (GEO_PrimPolySoup::PolygonIterator pst(*polySoup); !pst.atEnd(); ++pst) {
+					numFaces += VUtils::Max(pst.getVertexCount() - 2, GA_Size(0));
 				}
+				break;
 			}
-			break;
-		}
-		case GEO_PRIMPOLY:
-		{
-			const GA_Size numVertices = prim->getVertexCount();
-			if (validNumVertices(numVertices)) {
-				numMapVertex += (numVertices == 4) ? 6 : 3;
+			case GEO_PRIMPOLY: {
+				numFaces += VUtils::Max(prim->getVertexCount() - 2, GA_Size(0));
+				break;
 			}
-			break;
-		}
-		default:
-		{
-			UT_ASSERT(false);
-		}
+			default: {
+				UT_ASSERT(false);
+			}
 		}
 	}
 
-	mapChannel.vertices = VRay::VUtils::VectorRefList(numMapVertex);
-	mapChannel.faces = VRay::VUtils::IntRefList(numMapVertex);
+	mapChannel.vertices = VRay::VUtils::VectorRefList(numFaces * 3);
+	mapChannel.faces = VRay::VUtils::IntRefList(numFaces * 3);
 
-	for (int i = 0; i < numMapVertex; ++i) {
+	for (int i = 0; i < numFaces; ++i) {
 		mapChannel.vertices[i].set(ALMOST_FLT_MAX, 0.0f, 0.0f);
 		mapChannel.faces[i] = i;
 	}
@@ -797,12 +781,11 @@ void MeshExporter::getMtlOverrides(MapChannels &mapChannels) const
 
 	const STY_Styler &geoStyler = objectExporter.getStyler();
 
-#if USE_GROUP_STYLER
 	GSTY_SubjectPrimGroup primSubjects(gdp, primList);
 	STY_StylerGroup primStylers;
 	primStylers.append(geoStyler, primSubjects);
-#endif
 
+	GA_Index primIndex = 0;
 	for (const GEO_Primitive *prim : primList) {
 		const GA_Offset primOffset = prim->getMapOffset();
 
@@ -811,13 +794,9 @@ void MeshExporter::getMtlOverrides(MapChannels &mapChannels) const
 		PrimMaterial primMaterial;
 
 		// Style sheet overrides.
-#if USE_GROUP_STYLER
-		const GA_Index primIndex = prim->getMapIndex();
 		const STY_Styler &primStyler = primStylers.getStyler(primIndex);
 		appendOverrideValues(primStyler, primMaterial, overrideMerge);
-#else
-		getOverridesForPrimitive(geoStyler, *prim, primMaterial);
-#endif
+
 		// Overrides from primitive style sheet / material attributes.
 		appendMaterialOverride(primMaterial, materialStyleSheetHndl, materialPathHndl, materialOverrideHndl, primOffset, ctx.getTime());
 
@@ -834,9 +813,7 @@ void MeshExporter::getMtlOverrides(MapChannels &mapChannels) const
 				for (GEO_PrimPolySoup::PolygonIterator pst(*polySoup); !pst.atEnd(); ++pst) {
 					const GA_Size numVertices = pst.getVertexCount();
 					if (validNumVertices(numVertices)) {
-						setMapChannelOverrideFaceData(mapChannels, primList, faceIndex, primMaterial);
-						++faceIndex;
-						if (numVertices == 4) {
+						for (GA_Size i = 1; i < numVertices - 1; ++i) {
 							setMapChannelOverrideFaceData(mapChannels, primList, faceIndex, primMaterial);
 							++faceIndex;
 						}
@@ -847,19 +824,20 @@ void MeshExporter::getMtlOverrides(MapChannels &mapChannels) const
 			case GEO_PRIMPOLY: {
 				const GA_Size numVertices = prim->getVertexCount();
 				if (validNumVertices(numVertices)) {
-					setMapChannelOverrideFaceData(mapChannels, primList, faceIndex, primMaterial);
-					++faceIndex;
-					if (numVertices == 4) {
+					for (GA_Size i = 1; i < numVertices - 1; ++i) {
 						setMapChannelOverrideFaceData(mapChannels, primList, faceIndex, primMaterial);
 						++faceIndex;
 					}
 				}
+
 				break;
 			}
 			default: {
 				UT_ASSERT(false);
 			}
 		}
+
+		primIndex++;
 	}
 }
 
