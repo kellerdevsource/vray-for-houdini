@@ -132,7 +132,7 @@ public:
 
 	/// Gather data for motion blur
 	/// @param viewParams[out] - collects motion blur settings
-	ReturnValue fillSettingsMotionBlur(ViewParams &viewParams);
+	ReturnValue fillSettingsMotionBlur(ViewParams &viewParams, Attrs::PluginDesc &settingsMotionBlur);
 
 	/// Fill in physical camera settings
 	/// @param viewParams[in] - holds data for camera settings
@@ -553,9 +553,6 @@ private:
 
 	/// Object exporter.
 	ObjectExporter objectExporter;
-
-	/// View plugins storage for easier access.
-	ViewPluginsDesc viewPlugins;
 
 public:
 	/// Register event callback for a given node. This callback will be invoked when

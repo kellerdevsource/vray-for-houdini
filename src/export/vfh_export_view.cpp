@@ -17,14 +17,6 @@
 
 using namespace VRayForHoudini;
 
-const std::string VRayForHoudini::ViewPluginsDesc::settingsCameraDofPluginName("settingsCameraDof");
-const std::string VRayForHoudini::ViewPluginsDesc::settingsCameraPluginName("settingsCamera");
-const std::string VRayForHoudini::ViewPluginsDesc::cameraPhysicalPluginName("cameraPhysical");
-const std::string VRayForHoudini::ViewPluginsDesc::cameraDefaultPluginName("cameraDefault");
-const std::string VRayForHoudini::ViewPluginsDesc::renderViewPluginName("renderView");
-const std::string VRayForHoudini::ViewPluginsDesc::stereoSettingsPluginName("stereoSettings");
-const std::string VRayForHoudini::ViewPluginsDesc::settingsMotionBlurPluginName("settingsMotionBlur");
-
 float VRayForHoudini::getFov(float aperture, float focal)
 {
 	// From https://www.sidefx.com/docs/houdini13.0/ref/cameralenses
@@ -174,22 +166,20 @@ void VRayExporter::fillViewParamFromCameraNode(const OBJ_Node &camera, ViewParam
 	}
 }
 
-ReturnValue VRayExporter::fillSettingsMotionBlur(ViewParams &viewParams)
+ReturnValue VRayExporter::fillSettingsMotionBlur(ViewParams &viewParams, Attrs::PluginDesc &settingsMotionBlur)
 {
 	const fpreal t = m_context.getTime();
 
 	int useCameraSettings = m_rop->evalInt("SettingsMotionBlur_camera_motion_blur", 0, t);
-	if (useCameraSettings) {
-		OBJ_Node *camera = VRayExporter::getCamera(m_rop);
-		if (!camera) {
-			Log::getLog().error("Camera does not exist! In VRayExporter::fillSettingsMotionBlur");
-			return ReturnValue::Error;
-		}
-		const fpreal shutter = camera->evalFloat("shutter", 0, t);
-		viewPlugins.settingsMotionBlur.addAttribute(Attrs::PluginAttr("duration", shutter));
+	OBJ_Node *camera = VRayExporter::getCamera(m_rop);
+	if (!camera) {
+		Log::getLog().error("Camera does not exist! In VRayExporter::fillSettingsMotionBlur");
+		return ReturnValue::Error;
 	}
+	const fpreal shutter = camera->evalFloat("shutter", 0, t);
+	settingsMotionBlur.addAttribute(Attrs::PluginAttr("duration", shutter));
 
-	setAttrsFromOpNodePrms(viewPlugins.settingsMotionBlur, m_rop, "SettingsMotionBlur_");
+	setAttrsFromOpNodePrms(settingsMotionBlur, m_rop, "SettingsMotionBlur_");
 
 	return ReturnValue::Success;
 }
@@ -282,7 +272,7 @@ void VRayExporter::fillSettingsCameraDof(const ViewParams &viewParams, Attrs::Pl
 	}
 
 	pluginDesc.addAttribute(Attrs::PluginAttr("focal_dist", focalDist));
-
+	pluginDesc.addAttribute(Attrs::PluginAttr("aperture", (m_rop->evalFloat("SettingsCameraDof_aperture", 0, t))/100.0f));
 	setAttrsFromOpNodePrms(pluginDesc, m_rop, "SettingsCameraDof_");
 }
 
@@ -321,54 +311,54 @@ ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 	const bool needReset = m_viewParams.needReset(viewParams);
 	if (needReset) {
 		Log::getLog().warning("VRayExporter::exportView: Reseting view plugins...");
-		viewPlugins = ViewPluginsDesc();
-		removePlugin(ViewPluginsDesc::settingsCameraPluginName);
-		removePlugin(ViewPluginsDesc::settingsCameraDofPluginName);
-		removePlugin(ViewPluginsDesc::stereoSettingsPluginName);
-		removePlugin(ViewPluginsDesc::cameraPhysicalPluginName);
-		removePlugin(ViewPluginsDesc::cameraDefaultPluginName);
 
-		fillRenderView(viewParams, viewPlugins.renderView);
-		if (fillSettingsMotionBlur(viewParams) == ReturnValue::Error) {
+		Attrs::PluginDesc renderView("renderView", "RenderView");
+		Attrs::PluginDesc settingsMotionBlur("settingsMotionBlur", "SettingsMotionBlur");
+		fillRenderView(viewParams, renderView);
+		if (fillSettingsMotionBlur(viewParams, settingsMotionBlur) == ReturnValue::Error) {
 			return ReturnValue::Error;
 		}
-		fillSettingsCamera(viewParams, viewPlugins.settingsCamera);
-
+		Attrs::PluginDesc settingsCamera("settingsCamera", "SettingsCamera");
+		fillSettingsCamera(viewParams, settingsCamera);
+		Attrs::PluginDesc stereoSettings("stereoSettings", "VRayStereoscopicSettings");
 		if (!isIPR() && !isGPU()) {
-			fillStereoSettings(viewParams, viewPlugins.stereoSettings);
+			fillStereoSettings(viewParams, stereoSettings);
 		}
-
+		Attrs::PluginDesc cameraPhysical("cameraPhysical", "CameraPhysical");
+		Attrs::PluginDesc cameraDefault("cameraDefault", "CameraDefault");
+		Attrs::PluginDesc settingsCameraDof("settingsCameraDof", "SettingsCameraDof");
 		if (viewParams.usePhysicalCamera) {
-			fillPhysicalCamera(viewParams, viewPlugins.cameraPhysical);
+			fillPhysicalCamera(viewParams, cameraPhysical);
 		}
 		else {
-			fillCameraDefault(viewParams, viewPlugins.cameraDefault);
-			fillSettingsCameraDof(viewParams, viewPlugins.settingsCameraDof);
+			fillCameraDefault(viewParams, cameraDefault);
+			fillSettingsCameraDof(viewParams, settingsCameraDof);
 		}
 
-		exportPlugin(viewPlugins.settingsCamera);
-		exportPlugin(viewPlugins.settingsMotionBlur);
+		exportPlugin(settingsCamera);
+		exportPlugin(settingsMotionBlur);
 
 		if (!viewParams.renderView.ortho && !viewParams.usePhysicalCamera) {
-			exportPlugin(viewPlugins.settingsCameraDof);
+			exportPlugin(settingsCameraDof);
 		}
 
 		if (viewParams.usePhysicalCamera) {
-			getRenderer().setCamera(exportPlugin(viewPlugins.cameraPhysical));
+			getRenderer().setCamera(exportPlugin(cameraPhysical));
 		}
 		else {
-			getRenderer().setCamera(exportPlugin(viewPlugins.cameraDefault));
+			getRenderer().setCamera(exportPlugin(cameraDefault));
 		}
 
 		if (viewParams.renderView.stereoParams.use && !isIPR() && !isGPU()) {
-			exportPlugin(viewPlugins.stereoSettings);
+			exportPlugin(stereoSettings);
 		}
 
-		exportPlugin(viewPlugins.renderView);
+		exportPlugin(renderView);
 	}
-	else if (m_viewParams.changedParams(viewParams)) {
-		fillRenderView(viewParams, viewPlugins.renderView);
-		exportPlugin(viewPlugins.renderView);
+	else if (m_viewParams.changedParams(viewParams)) {//this needs to change
+		Attrs::PluginDesc renderView("renderView", "RenderView");
+		fillRenderView(viewParams, renderView);
+		exportPlugin(renderView);
 	}
 
 	getRenderer().commit();
@@ -416,17 +406,6 @@ int VRayExporter::exportView()
 	viewCsect.leave();
 
 	return 0;
-}
-
-int ViewPluginsDesc::needReset(const ViewPluginsDesc &other) const
-{
-	// NOTE: No need to reset on RenderView, we handle it differently
-	//
-	return (settingsCameraDof.isDifferent(other.settingsCameraDof) ||
-			settingsMotionBlur.isDifferent(other.settingsMotionBlur) ||
-			settingsCamera.isDifferent(other.settingsCamera) ||
-			cameraPhysical.isDifferent(other.cameraPhysical) ||
-			cameraDefault.isDifferent(other.cameraDefault));
 }
 
 int ViewParams::changedParams(const ViewParams &other) const
