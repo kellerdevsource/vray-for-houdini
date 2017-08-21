@@ -22,6 +22,7 @@
 #include "sop/sop_node_base.h"
 #include "vop/vop_node_base.h"
 #include "obj/obj_node_base.h"
+#include "SOP/sop_vrayscene.h"
 
 #include <GEO/GEO_Primitive.h>
 #include <GEO/GEO_PrimPoly.h>
@@ -65,6 +66,7 @@ public:
 	GA_PrimitiveTypeId packedGeometry;
 	GA_PrimitiveTypeId vrayProxyRef;
 	GA_PrimitiveTypeId vrayVolumeGridRef;
+	GA_PrimitiveTypeId vrayScene;
 } primPackedTypeIDs;
 
 static boost::format objGeomNameFmt("%s|%i@%s");
@@ -1063,6 +1065,9 @@ VRay::Plugin ObjectExporter::exportPrimPacked(OBJ_Node &objNode, const GU_PrimPa
 	if (primTypeID == primPackedTypeIDs.packedDisk) {
 		return exportPackedDisk(objNode, prim);
 	}
+	if (primTypeID == primPackedTypeIDs.vrayScene) {
+		return exportVRayScene(objNode, prim);
+	}
 
 	const GA_PrimitiveDefinition &lookupTypeDef = prim.getTypeDef();
 
@@ -1150,6 +1155,25 @@ VRay::Plugin ObjectExporter::exportPackedDisk(OBJ_Node &objNode, const GU_PrimPa
 	Attrs::PluginDesc pluginDesc(VRayExporter::getPluginName(objNode, primname.buffer()),
 								 "GeomMeshFile");
 	pluginDesc.addAttribute(Attrs::PluginAttr("file", filename.toStdString()));
+
+	return pluginExporter.exportPlugin(pluginDesc);
+}
+
+VRay::Plugin ObjectExporter::exportVRayScene(OBJ_Node &objNode, const GU_PrimPacked &prim)
+{
+	if (!doExportGeometry) {
+		return VRay::Plugin();
+	}
+
+	UT_String primname;
+	prim.getIntrinsic(prim.findIntrinsic(intrPackedPrimitiveName), primname);
+
+	SOP::VRayScene& vrscene = UTverify_cast<SOP::VRayScene&>(prim.implementation());
+	
+	ExportContext expContext(CT_SOP, pluginExporter, objNode);
+
+	Attrs::PluginDesc pluginDesc;
+	vrscene.asPluginDesc(pluginDesc, pluginExporter, &expContext);
 
 	return pluginExporter.exportPlugin(pluginDesc);
 }
