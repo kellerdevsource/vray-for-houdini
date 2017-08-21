@@ -11,6 +11,27 @@
 	    parmtag	{ "vray_custom_handling" " " }
 	}
 	parm {
+	    name	"res_mode"
+	    label	"Resolution Mode"
+	    type	ordinal
+	    default	{ "0" }
+	    menu	{
+		"0"	"Full Resolution"
+		"1"	"Preview Resolution"
+	    }
+	    range	{ 0 1 }
+	    export	none
+	}
+	parm {
+	    name	"preview_res"
+	    label	"Preview Resolution"
+	    type	integer
+	    default	{ "255" }
+	    disablewhen	"{ res_mode != 1 }"
+	    range	{ 0 255 }
+	    export	none
+	}
+	parm {
 	    name	"cache_load"
 	    label	"Do load cache"
 	    type	integer
