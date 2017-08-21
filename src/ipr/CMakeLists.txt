@@ -15,7 +15,14 @@ set(SOURCES
 	${CMAKE_SOURCE_DIR}/src/utils/vfh_log.cpp
 )
 
+if (WIN32)
+	list(APPEND SOURCES ${CMAKE_SOURCE_DIR}/src/ipr/python/vfh_process_check_win32.cpp)
+else()
+	list(APPEND SOURCES ${CMAKE_SOURCE_DIR}/src/ipr/python/vfh_process_check_linux.cpp)
+endif()
+
 set(HEADERS
+	${CMAKE_SOURCE_DIR}/src/ipr/python/vfh_process_check.h
 	${CMAKE_SOURCE_DIR}/src/utils/vfh_log.h
 )
 
@@ -24,6 +31,7 @@ use_vray_sdk()
 include_directories(${CMAKE_SOURCE_DIR}/src)
 include_directories(${CMAKE_SOURCE_DIR}/src/export)
 include_directories(${CMAKE_SOURCE_DIR}/src/utils)
+include_directories(${CMAKE_SOURCE_DIR}/src/ipr/python)
 
 add_executable(${PROJECT_NAME} "${SOURCES};${HEADERS}")
 

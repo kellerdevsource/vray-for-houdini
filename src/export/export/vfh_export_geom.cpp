@@ -27,6 +27,7 @@
 #include <GEO/GEO_PrimPoly.h>
 #include <GU/GU_Detail.h>
 #include <GU/GU_PrimSphere.h>
+#include <GU/GU_PackedFragment.h>
 #include <OP/OP_Bundle.h>
 #include <GA/GA_Types.h>
 #include <GA/GA_Names.h>
@@ -77,11 +78,14 @@ static const char intrAlembicObjectPath[] = "abcobjectpath";
 static const char intrPackedPrimName[] = "packedprimname";
 static const char intrPackedPrimitiveName[] = "packedprimitivename";
 static const char intrPackedLocalTransform[] = "packedlocaltransform";
+static const char intrPackedPath[] = "path";
 static const char intrGeometryID[] = "geometryid";
 static const char intrFilename[] = "filename";
 
 static const UT_String vrayPluginTypeGeomStaticMesh = "GeomStaticMesh";
 static const UT_String vrayPluginTypeNode = "Node";
+
+static const UT_String vrayUserAttrSceneName = "VRay_Scene_Node_Name";
 
 /// Identity transform.
 static VRay::Transform identityTm(1);
@@ -155,6 +159,20 @@ static void addPluginToCacheImpl(ContainerType &container, const KeyType &key, V
 	vassert(container.find(key) == container.end());
 
 	container.insert(key, plugin);
+}
+
+static VRay::VUtils::CharStringRefList getSceneName(const OP_Node &opNode, int primID=-1)
+{
+	const UT_String nodeName(opNode.getName());
+
+	UT_String nodePath;
+	opNode.getFullPath(nodePath);
+
+	VRay::VUtils::CharStringRefList sceneName(2);
+	sceneName[0] = nodeName.buffer();
+	sceneName[1] = nodePath.buffer();
+
+	return sceneName;
 }
 
 ObjectExporter::ObjectExporter(VRayExporter &pluginExporter)
@@ -344,6 +362,9 @@ VRay::Plugin ObjectExporter::exportVRaySOP(OBJ_Node&, SOP_Node &sop)
 
 	Attrs::PluginDesc pluginDesc;
 	switch (vrayNode->asPluginDesc(pluginDesc, pluginExporter, &ctx)) {
+		case OP::VRayNode::PluginResultSuccess: {
+			break;
+		}
 		case OP::VRayNode::PluginResultNA:
 		case OP::VRayNode::PluginResultContinue: {
 			pluginExporter.setAttrsFromOpNodePrms(pluginDesc, vrayNode);
@@ -382,7 +403,7 @@ VRay::Plugin ObjectExporter::getNodeForInstancerGeometry(VRay::Plugin geometry, 
 
 	// Wrap into Node plugin.
 	Attrs::PluginDesc nodeDesc(boost::str(nodeNameFmt % geometry.getName()),
-							   "Node");
+							   vrayPluginTypeNode.buffer());
 	nodeDesc.addAttribute(Attrs::PluginAttr("geometry", geometry));
 	nodeDesc.addAttribute(Attrs::PluginAttr("material", objMaterial));
 	nodeDesc.addAttribute(Attrs::PluginAttr("transform", VRay::Transform(1)));
@@ -551,7 +572,7 @@ void ObjectExporter::exportPrimVolume(OBJ_Node &objNode, const PrimitiveItem &it
 #endif
 }
 
-void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp)
+void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, const GA_Range &primRange)
 {
 	// TODO: Preallocate at least some space.
 	GEOPrimList polyPrims;
@@ -571,9 +592,13 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp)
 	GA_ROHandleI objectIdHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTRIB_OBJECTID));
 	GA_ROHandleF animOffsetHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTRIB_ANIM_OFFSET));
 
+	GA_ROHandleS pathHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, intrPackedPath));
+
 	MtlOverrideAttrExporter attrExp(gdp);
 
-	for (GA_Iterator jt(gdp.getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
+	const GA_Range &primitiveRange = primRange.isValid() ? primRange : gdp.getPrimitiveRange();
+
+	for (GA_Iterator jt(primitiveRange); !jt.atEnd(); jt.advance()) {
 		const GEO_Primitive *prim = gdp.getGEOPrimitive(*jt);
 		if (!prim) {
 			continue;
@@ -593,9 +618,14 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp)
 
 		PrimitiveItem item;
 		item.prim = prim;
-		item.primID = getDetailID() ^ gdp.getUniqueId() ^ primOffset;
+		item.primID = getDetailID() ^ primOffset;
 		item.tm = getTm();
 		item.vel = getVel();
+
+		if (pathHndl.isValid()) {
+			const UT_String &path = pathHndl.get(primOffset);
+			item.primID = path.hash();
+		}
 
 		if (objectIdHndl.isValid()) {
 			item.objectID = objectIdHndl.get(primOffset);
@@ -639,10 +669,9 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp)
 
 				attrExp.fromPoint(item.primMaterial.overrides, pointOffset);
 
-				if (velocityHndl.isValid()) {
+				if (ctx.hasMotionBlur && velocityHndl.isValid()) {
 					UT_Vector3F v = velocityHndl.get(pointOffset);
-					// XXX: Magic scaling!
-					v *= 0.175f;
+					v /= OPgetDirector()->getChannelManager()->getSamplesPerSec();
 
 					VRay::Transform primVel;
 					primVel.offset.set(v(0), v(1), v(2));
@@ -692,12 +721,12 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp)
 			item.tm = item.tm * utMatrixToVRayTransform(tm4);
 
 			// If key is 0 don't check cache.
-			if (primKey) {
+			if (primKey > 0) {
 				getPrimPluginFromCache(primKey, item.geometry);
 			}
-			if (!getPrimPluginFromCache(primKey, item.geometry)) {
+			if (!item.geometry) {
 				item.geometry = exportPrimSphere(objNode, *prim);
-				if (item.geometry) {
+				if (primKey > 0 && item.geometry) {
 					addPrimPluginToCache(primKey, item.geometry);
 				}
 			}
@@ -733,6 +762,23 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp)
 	exportHair(objNode, gdp, hairPrims);
 }
 
+/// Add object's scene name as user attribute.
+/// @param userAttributes User attributes buffer.
+/// @param opNode Scene node.
+static void appendSceneName(QString &userAttributes, const OP_Node &opNode)
+{
+	const VRay::VUtils::CharStringRefList &sceneName = getSceneName(opNode);
+
+	if (!userAttributes.endsWith(';')) {
+		userAttributes.append(';');
+	}
+	userAttributes.append(vrayUserAttrSceneName);
+	userAttributes.append('=');
+	userAttributes.append(sceneName[0].ptr());
+	userAttributes.append(',');
+	userAttributes.append(sceneName[1].ptr());
+}
+
 VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_Detail &gdp, const char *prefix)
 {
 	using namespace Attrs;
@@ -754,9 +800,11 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_D
 		objectID = objNode.evalInt(VFH_ATTRIB_OBJECTID, 0, ctx.getTime());
 	}
 
+	const float instancerTime = ctx.hasMotionBlur ? ctx.mbParams.mb_start : ctx.getFloatFrame();
+
 	// +1 because first value is time.
 	VRay::VUtils::ValueRefList instances(numParticles+1);
-	instances[instancesListIdx++].setDouble(0.0);
+	instances[instancesListIdx++].setDouble(instancerTime);
 
 	for (int i = 0; i < instancerItems.count(); ++i) {
 		const PrimitiveItem &primItem = instancerItems[i];
@@ -765,6 +813,7 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_D
 
 		QString userAttributes;
 		overrideItemsToUserAttributes(primItem.primMaterial.overrides, userAttributes);
+		appendSceneName(userAttributes, objNode);
 
 		VRay::Plugin material = objMaterial;
 		if (primItem.material) {
@@ -857,7 +906,7 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_D
 }
 
 
-void ObjectExporter::exportDetail(OBJ_Node &objNode, const GU_Detail &gdp)
+void ObjectExporter::exportDetail(OBJ_Node &objNode, const GU_Detail &gdp, const GA_Range &primRange)
 {
 	const VMRenderPoints renderPoints = getParticlesMode(objNode);
 	if (renderPoints != vmRenderPointsNone) {
@@ -868,7 +917,7 @@ void ObjectExporter::exportDetail(OBJ_Node &objNode, const GU_Detail &gdp)
 	}
 
 	if (renderPoints != vmRenderPointsAll) {
-		processPrimitives(objNode, gdp);
+		processPrimitives(objNode, gdp, primRange);
 	}
 }
 
@@ -885,7 +934,7 @@ void ObjectExporter::exportHair(OBJ_Node &objNode, const GU_Detail &gdp, const G
 	getPrimMaterial(item.primMaterial);
 	item.tm = topItem.tm;
 	item.vel = topItem.vel;
-	item.primID = gdp.getUniqueId() ^ keyDataHair;
+	item.primID = topItem.primID ^ keyDataHair;
 
 	if (doExportGeometry) {
 		if (!getMeshPluginFromCache(item.primID, item.geometry)) {
@@ -920,7 +969,7 @@ void ObjectExporter::exportPolyMesh(OBJ_Node &objNode, const GU_Detail &gdp, con
 	getPrimMaterial(item.primMaterial);
 	item.tm = topItem.tm;
 	item.vel = topItem.vel;
-	item.primID = gdp.getUniqueId() ^ keyDataPoly;
+	item.primID = topItem.primID ^ keyDataPoly;
 
 	polyMeshExporter.setSubdivApplied(hasSubdivApplied);
 	polyMeshExporter.setDetailID(item.primID);
@@ -987,6 +1036,21 @@ int ObjectExporter::getPrimPackedID(const GU_PrimPacked &prim) const
 		prim.getIntrinsic(prim.findIntrinsic(intrAlembicFilename), fileName);
 		return objName.hash() ^ fileName.hash();
 	}
+	if (primTypeID == GU_PackedFragment::typeId()) {
+		const GU_PackedFragment *primFragment = UTverify_cast<const GU_PackedFragment*>(prim.implementation());
+		if (!primFragment)
+			return 0;
+		return 0;
+	}
+
+	const GA_PrimitiveDefinition &lookupTypeDef = prim.getTypeDef();
+
+	Log::getLog().error("Unsupported packed primitive type: %s [%s]!",
+#if UT_MAJOR_VERSION_INT < 16
+						lookupTypeDef.getLabel(), lookupTypeDef.getToken());
+#else
+						lookupTypeDef.getLabel().buffer(), lookupTypeDef.getToken().buffer());
+#endif
 
 	UT_ASSERT_MSG(false, "Unsupported packed primitive type!");
 
@@ -1005,6 +1069,13 @@ VRay::Plugin ObjectExporter::exportPrimPacked(OBJ_Node &objNode, const GU_PrimPa
 	}
 	if (primTypeID == primPackedTypeIDs.packedGeometry) {
 		exportPackedGeometry(objNode, prim);
+		// exportPackedGeometry() will add plugins to instances table and
+		// does not return any plugin.
+		return VRay::Plugin();
+	}
+	if (primTypeID == GU_PackedFragment::typeId()) {
+		exportPackedFragment(objNode, prim);
+		return VRay::Plugin();
 	}
 	if (primTypeID == primPackedTypeIDs.alembicRef) {
 		return exportAlembicRef(objNode, prim);
@@ -1012,6 +1083,15 @@ VRay::Plugin ObjectExporter::exportPrimPacked(OBJ_Node &objNode, const GU_PrimPa
 	if (primTypeID == primPackedTypeIDs.packedDisk) {
 		return exportPackedDisk(objNode, prim);
 	}
+
+	const GA_PrimitiveDefinition &lookupTypeDef = prim.getTypeDef();
+
+	Log::getLog().error("Unsupported packed primitive type: %s [%s]!",
+#if UT_MAJOR_VERSION_INT < 16
+						lookupTypeDef.getLabel(), lookupTypeDef.getToken());
+#else
+						lookupTypeDef.getLabel().buffer(), lookupTypeDef.getToken().buffer());
+#endif
 
 	UT_ASSERT_MSG(false, "Unsupported packed primitive type!");
 
@@ -1094,9 +1174,27 @@ VRay::Plugin ObjectExporter::exportPackedDisk(OBJ_Node &objNode, const GU_PrimPa
 	return pluginExporter.exportPlugin(pluginDesc);
 }
 
+void ObjectExporter::exportPackedFragment(OBJ_Node &objNode, const GU_PrimPacked &prim)
+{
+	const GU_PackedFragment *primFragment = UTverify_cast<const GU_PackedFragment*>(prim.implementation());
+	if (!primFragment)
+		return;
+
+	const GU_DetailHandleAutoReadLock gdl(primFragment->detailPtr());
+	if (!gdl.isValid())
+		return;
+
+	const GU_Detail &gdp = *gdl.getGdp();
+	const GA_Range &primRange = primFragment->getPrimitiveRange();
+	if (!primRange.isValid())
+		return;
+
+	exportDetail(objNode, gdp, primRange);
+}
+
 void ObjectExporter::exportPackedGeometry(OBJ_Node &objNode, const GU_PrimPacked &prim)
 {
-	GU_DetailHandleAutoReadLock gdl(prim.getPackedDetail());
+	const GU_DetailHandleAutoReadLock gdl(prim.getPackedDetail());
 	if (!gdl.isValid())
 		return;
 
@@ -1158,7 +1256,7 @@ VRay::Plugin ObjectExporter::exportPointParticles(OBJ_Node &objNode, const GU_De
 	switch (renderPointsAs) {
 		case vmRenderPointsAsSphere: {
 			renderType = 7;
-			radiusMult *= 0.01;
+			radiusMult *= 0.05;
 			break;
 		}
 		case vmRenderPointsAsCirle: {
@@ -1208,7 +1306,9 @@ VRay::Plugin ObjectExporter::exportPointParticles(OBJ_Node &objNode, const GU_De
 			positions[positionsIdx].set(point.x(), point.y(), point.z());
 
 			if (velocityHndl.isValid()) {
-				const UT_Vector3F &v = velocityHndl.get(ptOff);
+				UT_Vector3F v = velocityHndl.get(ptOff);
+				v /= OPgetDirector()->getChannelManager()->getSamplesPerSec();
+
 				velocities[positionsIdx].set(v.x(), v.y(), v.z());
 			}
 
@@ -1481,7 +1581,7 @@ void ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_Detail &gd
 
 VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode, SOP_Node &sopNode)
 {
-	GU_DetailHandleAutoReadLock gdl(sopNode.getCookedGeoHandle(ctx));
+	const GU_DetailHandleAutoReadLock gdl(sopNode.getCookedGeoHandle(ctx));
 	if (!gdl.isValid()) {
 		return VRay::Plugin();
 	}
@@ -1643,7 +1743,7 @@ VRay::Plugin ObjectExporter::exportNode(OBJ_Node &objNode)
 	using namespace Attrs;
 
 	PluginDesc nodeDesc(VRayExporter::getPluginName(objNode, "Node"),
-						"Node");
+						vrayPluginTypeNode.buffer());
 
 	VRay::Plugin geometry = exportGeometry(objNode);
 	if (geometry) {
@@ -1652,6 +1752,7 @@ VRay::Plugin ObjectExporter::exportNode(OBJ_Node &objNode)
 	nodeDesc.add(PluginAttr("material", pluginExporter.exportDefaultMaterial()));
 	nodeDesc.add(PluginAttr("transform", pluginExporter.getObjTransform(&objNode, ctx)));
 	nodeDesc.add(PluginAttr("visible", isNodeVisible(objNode)));
+	nodeDesc.add(PluginAttr("scene_name", getSceneName(objNode)));
 
 	return pluginExporter.exportPlugin(nodeDesc);
 }
