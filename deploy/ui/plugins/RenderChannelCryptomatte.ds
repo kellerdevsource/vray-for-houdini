@@ -1,0 +1,78 @@
+{
+    name    RenderChannelCryptomatte
+    label   "Cryptomatte"
+    parmtag { spare_category "RenderChannelCryptomatte" }
+    parmtag { vray_plugin "RenderChannelCryptomatte" }
+
+    groupsimple {
+        name "RenderChannelCryptomatteMain"
+        label "Main"
+
+        parm {
+            name    "alias"
+            label   "Alias"
+            type    integer
+            default { "157" }
+            parmtag { "vray_pluginattr" "alias" }
+            parmtag { "vray_type" "int" }
+            invisible
+        }
+
+        parm {
+            name    "name"
+            type    string
+            label   "Name"
+            help    "Channel name"
+            default { "VRayCryptomatte" }
+            parmtag { "vray_pluginattr" "name" }
+            parmtag { "vray_type" "string" }
+        }
+
+        parm {
+            name    "id_type"
+            type    ordinal
+            label   "ID Type"
+            help    "Defines which criteria is used to represent individual cryptomatte object"
+            menu    {
+                "0" "Node Name"
+                "1" "Material Name"
+                "2" "Node Name Hierarchy"
+            }
+            default { "0" }
+            parmtag { "vray_enumkeys" "0,1,2" }
+            parmtag { "vray_pluginattr" "id_type" }
+            parmtag { "vray_type" "enum" }
+        }
+    }
+
+    groupsimple {
+        name "RenderChannelCryptomatteAdvanced"
+        label "Advanced"
+
+        parm {
+            name    "write_metadata"
+            type    ordinal
+            label   "EXR Metadata"
+            help    "Controls if metadata will be appended to the EXR extra attributes"
+            menu    {
+                "0" "None"
+                "1" "Required Metadata"
+                "2" "Metadata & Manifest"
+            }
+            default { "2" }
+            parmtag { "vray_enumkeys" "0,1,2" }
+            parmtag { "vray_pluginattr" "write_metadata" }
+            parmtag { "vray_type" "enum" }
+        }
+
+        parm {
+            name    "scene_name_index"
+            type    int
+            label   "Scene Name Index"
+            help    "Optional parameter to override the index used to access the scene_name parameter from the VRayPlugin"
+            default { "-1" }
+            parmtag { "vray_pluginattr" "scene_name_index" }
+            parmtag { "vray_type" "int" }
+        }
+    }
+}
