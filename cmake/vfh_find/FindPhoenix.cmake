@@ -64,7 +64,8 @@ else()
 		set(CGR_PHOENIX_STATIC_LIBS guiwin_qt_s.lib
 									iutils_s.lib
 									aurramps_s.lib
-									aurloader_s.lib)
+									aurloader_s.lib
+									gui_utils_s.lib)
 	else()
 		set(CGR_PHOENIX_SHARED      libaurloader.so)
 		set(CGR_PHOENIX_SHARED_F3D  libfield3dio_phx.so)
@@ -72,7 +73,8 @@ else()
 		set(CGR_PHOENIX_STATIC_LIBS libguiwin_qt_s.a
 									libiutils_s.a
 									libaurramps_s.a
-									libaurloader_s.a)
+									libaurloader_s.a
+									libgui_utils_s.a)
 	endif()
 
 
