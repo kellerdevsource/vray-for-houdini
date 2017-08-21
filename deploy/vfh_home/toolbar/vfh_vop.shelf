@@ -1839,20 +1839,39 @@ voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelMultiMatte', nodename="mu
 </tool>
 
 
-<tool name="vop_VRayNodeRenderChannelNodeID" label="Node ID" icon="ROP_vray">
+<tool name="vop_VRayNodeRenderChannelMultiMatte" label="MultiMatte" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
     </toolMenuContext>
     <toolMenuContext name="network">
-        <contextOpType>Vop/VRayNodeRenderChannelNodeID</contextOpType>
+        <contextOpType>Vop/VRayNodeRenderChannelMultiMatte</contextOpType>
     </toolMenuContext>
     <toolSubmenu>Render Channel</toolSubmenu>
     <script scriptType="python">
 <![CDATA[
 
 import voptoolutils;
-voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelNodeID', nodename="nodeid")
+voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelMultiMatte', nodename="multimatte")
+
+]]>
+    </script>
+</tool>
+
+<tool name="vop_VRayNodeRenderChannelCryptomatte" label="Cryptomatte" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeRenderChannelCryptomatte</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>Render Channel</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelCryptomatte', nodename="cryptomatte")
 
 ]]>
     </script>

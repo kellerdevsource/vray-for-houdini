@@ -20,6 +20,24 @@
         export  none
     }
     parm {
+        name    "res_mode"
+        label   "Resolution Mode"
+        type    ordinal
+        default { "0" }
+        menu    {
+            "0" "Full Resolution"
+            "1" "Preview Resolution"
+        }
+    }
+    parm {
+        name    "preview_res"
+        label   "Preview Resolution"
+        type    integer
+        default { "255" }
+        disablewhen "{ res_mode != 1 }"
+        range   { 1 255 }
+    }
+    parm {
         name    "icr"
         label   "Cache Range"
         type    string
