@@ -1,73 +1,74 @@
 {
-    name	TexCombineColor
-    label	"Combine Color"
-    parmtag	{ spare_category "Combine Color" }
-    parmtag	{ vray_plugin "TexCombineColor" }
+    name    TexCombineColor
+    label   "Combine Color"
+    parmtag { spare_category "Combine Color" }
+    parmtag { vray_plugin "TexCombineColor" }
     parm {
-	name	"color"
-	label	"Color"
-	type	color
-	size	3
-	default	{ "0" "0" "0" }
-	help	"The color value"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexCombineColor" }
-	parmtag	{ "vray_pluginattr" "color" }
-	parmtag	{ "vray_type" "color" }
+        name    "texture"
+        label   "Texture"
+        type    color4
+        size    4
+        default { "0" "0" "0" "1" }
+        help    "The texture"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexCombineColor" }
+        parmtag { "vray_pluginattr" "texture" }
+        parmtag { "vray_type" "Texture" }
     }
     parm {
-	name	"texture"
-	label	"Texture"
-	type	color4
-	size	4
-	default	{ "0" "0" "0" "1" }
-	help	"The texture"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexCombineColor" }
-	parmtag	{ "vray_pluginattr" "texture" }
-	parmtag	{ "vray_type" "Texture" }
+        name    "color"
+        label   "Color"
+        type    color
+        size    3
+        default { "0" "0" "0" }
+        help    "The color value"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexCombineColor" }
+        parmtag { "vray_pluginattr" "color" }
+        parmtag { "vray_type" "color" }
     }
     parm {
-	name	"texture_multiplier"
-	label	"Texture Multiplier"
-	type	float
-	default	{ "1" }
-	help	"The texture multiplier (blends between the value and the texture)"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexCombineColor" }
-	parmtag	{ "vray_pluginattr" "texture_multiplier" }
-	parmtag	{ "vray_type" "float" }
+        name    "texture_multiplier"
+        label   "Texture Multiplier"
+        type    float
+        default { "1" }
+        help    "The texture multiplier (blends between the value and the texture)"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexCombineColor" }
+        parmtag { "vray_pluginattr" "texture_multiplier" }
+        parmtag { "vray_type" "float" }
     }
     parm {
-	name	"result_invert"
-	label	"Result Invert"
-	type	toggle
-	default	{ "0" }
-	help	"true to invert the result"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexCombineColor" }
-	parmtag	{ "vray_pluginattr" "result_invert" }
-	parmtag	{ "vray_type" "boolean" }
+        name    "result_multiplier"
+        label   "Result Multiplier"
+        type    float
+        default { "1" }
+        help    "A multiplier for the resulit (after inversion, if result_invert is true)"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexCombineColor" }
+        parmtag { "vray_pluginattr" "result_multiplier" }
+        parmtag { "vray_type" "float" }
     }
     parm {
-	name	"result_multiplier"
-	label	"Result Multiplier"
-	type	float
-	default	{ "1" }
-	help	"A multiplier for the resulit (after inversion, if result_invert is true)"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexCombineColor" }
-	parmtag	{ "vray_pluginattr" "result_multiplier" }
-	parmtag	{ "vray_type" "float" }
+        name    "result_invert"
+        label   "Invert Result"
+        type    toggle
+        default { "0" }
+        help    "true to invert the result"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexCombineColor" }
+        parmtag { "vray_pluginattr" "result_invert" }
+        parmtag { "vray_type" "boolean" }
     }
+#include "vfh_texture_default_output_color.ds"
 }

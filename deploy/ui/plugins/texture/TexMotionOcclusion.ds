@@ -1,45 +1,49 @@
 {
-    name	TexMotionOcclusion
-    label	"Motion Occlusion"
-    parmtag	{ spare_category "Motion Occlusion" }
-    parmtag	{ vray_plugin "TexMotionOcclusion" }
+    name    TexMotionOcclusion
+    label   "Motion Occlusion"
+    parmtag { spare_category "Motion Occlusion" }
+    parmtag { vray_plugin "TexMotionOcclusion" }
     parm {
-	name	"type"
-	label	"Type"
-	type	integer
-	default	{ "0" }
-	help	"Determines what to output as default texture: 0 - backward occlusion, 1 - forward occlusion"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexMotionOcclusion" }
-	parmtag	{ "vray_pluginattr" "type" }
-	parmtag	{ "vray_type" "int" }
+        name    "type"
+        label   "Type"
+        type    integer
+        default { "0" }
+        help    "Determines what to output as default texture: 0 - backward occlusion, 1 - forward occlusion"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexMotionOcclusion" }
+        parmtag { "vray_pluginattr" "type" }
+        parmtag { "vray_type" "int" }
     }
     parm {
-	name	"near_threshold"
-	label	"Near Threshold"
-	type	float
-	default	{ "1" }
-	help	"Occlusion hits closer than this distance will be ignored for backward and forward motion occlusion"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexMotionOcclusion" }
-	parmtag	{ "vray_pluginattr" "near_threshold" }
-	parmtag	{ "vray_type" "float" }
+        name    "near_threshold"
+        label   "Near Threshold"
+        type    float
+        default { "1" }
+        help    "Occlusion hits closer than this distance will be ignored for backward and forward motion occlusion"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexMotionOcclusion" }
+        parmtag { "vray_pluginattr" "near_threshold" }
+        parmtag { "vray_type" "float" }
     }
     parm {
-	name	"far_threshold"
-	label	"Far Threshold"
-	type	float
-	default	{ "2" }
-	help	"Occlusion hits farther than this distance will be fully considered for backward and forward motion occlusion"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexMotionOcclusion" }
-	parmtag	{ "vray_pluginattr" "far_threshold" }
-	parmtag	{ "vray_type" "float" }
+        name    "far_threshold"
+        label   "Far Threshold"
+        type    float
+        default { "2" }
+        help    "Occlusion hits farther than this distance will be fully considered for backward and forward motion occlusion"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexMotionOcclusion" }
+        parmtag { "vray_pluginattr" "far_threshold" }
+        parmtag { "vray_type" "float" }
     }
+#include "vfh_texture_default_output_color.ds"
+#include "vfh_texture_defines.ds"
+    VFH_TEXTURE_OUTPUT(backward_occlusion)
+    VFH_TEXTURE_OUTPUT(forward_occlusion)
 }

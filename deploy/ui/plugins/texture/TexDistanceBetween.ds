@@ -3,9 +3,6 @@
     label   "Distance Between"
     parmtag { spare_category "Distance Between" }
     parmtag { vray_plugin "TexDistanceBetween" }
-
-#include "vfh_texture_defines.ds"
-
     parm {
         name    "point1"
         label   "Point 1"
@@ -19,7 +16,6 @@
         parmtag { "vray_pluginattr" "point1" }
         parmtag { "vray_type" "Texture" }
     }
-
     parm {
         name    "point2"
         label   "Point 2"
@@ -33,9 +29,8 @@
         parmtag { "vray_pluginattr" "point2" }
         parmtag { "vray_type" "Texture" }
     }
-
+#include "vfh_texture_defines.ds"
     VFH_TEXTURE_INPUT_TRANSFORM(transform1)
     VFH_TEXTURE_INPUT_TRANSFORM(transform2)
-
     VFH_TEXTURE_OUTPUT_FLOAT(distance)
 }

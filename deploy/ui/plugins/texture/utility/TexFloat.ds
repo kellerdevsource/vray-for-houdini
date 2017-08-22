@@ -1,19 +1,20 @@
 {
-    name	TexFloat
-    label	"Float"
-    parmtag	{ spare_category "Float" }
-    parmtag	{ vray_plugin "TexFloat" }
+    name    TexFloat
+    label   "Float"
+    parmtag { spare_category "Float" }
+    parmtag { vray_plugin "TexFloat" }
     parm {
-	name	"input"
-	label	"Input"
-	type	float
-	default	{ "0" }
-	help	"input"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexFloat" }
-	parmtag	{ "vray_pluginattr" "input" }
-	parmtag	{ "vray_type" "TextureFloat" }
+        name    "input"
+        label   "Input"
+        type    float
+        default { "0" }
+        help    "input"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexFloat" }
+        parmtag { "vray_pluginattr" "input" }
+        parmtag { "vray_type" "TextureFloat" }
     }
+#include "vfh_texture_default_output_float.ds"
 }

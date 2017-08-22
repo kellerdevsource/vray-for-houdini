@@ -65,7 +65,7 @@
             type    ordinal
             default { "0" }
             help    "Direction type"
-            disablewhen "{ type < 3 }"
+            hidewhen "{ type < 3 }"
             menu    {
                 "0" "View Z"
                 "1" "View X"
@@ -92,8 +92,8 @@
             type    float
             default { "1.6" }
             help    "IOR for the Fresnel falloff type"
-            disablewhen "{ type != 2 }"
-            range   { 0 64 }
+            hidewhen "{ type != 2 }"
+            range   { 0 5 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "TexFalloff" }
@@ -107,7 +107,7 @@
             type    toggle
             default { "0" }
             help    "Extrapolate for the distance blend falloff type"
-            disablewhen "{ type != 4 }"
+            hidewhen "{ type != 4 }"
             range   { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
@@ -122,7 +122,7 @@
             type    float
             default { "0" }
             help    "Near distance for the distance blend falloff type"
-            disablewhen "{ type != 4 }"
+            hidewhen "{ type != 4 }"
             range   { 0 64 }
             export  none
             parmtag { "cook_dependent" "1" }
@@ -137,7 +137,7 @@
             type    float
             default { "100" }
             help    "Far distance for the distance blend falloff type"
-            disablewhen "{ type != 4 }"
+            hidewhen "{ type != 4 }"
             range   { 0 64 }
             export  none
             parmtag { "cook_dependent" "1" }
@@ -153,7 +153,7 @@
             size    3
             default { "0" "0" "1" }
             help    "Direction for the explicit direction type"
-            disablewhen "{ type == 3 } { type == 4 } { direction_type != 3 }"
+            hidewhen "{ type == 3 } { type == 4 } { direction_type != 3 }"
             range   { 0 10 }
             export  none
             parmtag { "cook_dependent" "1" }
@@ -174,14 +174,13 @@
             parmtag { "vray_pluginattr" "use_blend_input" }
             parmtag { "vray_type" "boolean" }
         }
-
         parm {
             name    "blend_input"
             label   "Blend Input"
             type    float
             default { "0.5" }
             help    "If specified and 'Use Blend Input' is true, the final blending amount will be taken from this texture"
-            disablewhen "{ use_blend_input != 1 }"
+            hidewhen "{ use_blend_input != 1 }"
             range   { 0 64 }
             export  none
             parmtag { "cook_dependent" "1" }
@@ -189,7 +188,6 @@
             parmtag { "vray_pluginattr" "blend_input" }
             parmtag { "vray_type" "TextureFloat" }
         }
-
         parm {
             name    "use_blend_curve"
             label   "Use Blend Curve"
@@ -200,14 +198,13 @@
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_custom_handling" "1" }
         }
-
         parm {
             name    "curve"
             label   "Falloff Curve"
             type    ramp_flt
             default { "2" }
             help    "Falloff Curve"
-            range   { 1! 10 }
+            range   { 1 10 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "rampbasis_var" "interpolations" }
@@ -215,10 +212,12 @@
             parmtag { "rampkeys_var" "positions" }
             parmtag { "rampshowcontrolsdefault" "1" }
             parmtag { "rampvalues_var" "values" }
+            hidewhen "{ use_blend_curve != 1 }"
         }
     }
-
 #include "vfh_texture_common_color.ds"
 #include "vfh_texture_common_alpha.ds"
 #include "vfh_texture_common_outputs.ds"
+#include "vfh_texture_defines.ds"
+    VFH_TEXTURE_OUTPUT_FLOAT(blend_output)
 }

@@ -1,45 +1,46 @@
 {
-    name	TexClamp
-    label	"Clamp"
-    parmtag	{ spare_category "Clamp" }
-    parmtag	{ vray_plugin "TexClamp" }
+    name    TexClamp
+    label   "Clamp"
+    parmtag { spare_category "Clamp" }
+    parmtag { vray_plugin "TexClamp" }
     parm {
-	name	"texture"
-	label	"Texture"
-	type	color4
-	size	4
-	default	{ "0" "0" "0" "0" }
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexClamp" }
-	parmtag	{ "vray_pluginattr" "texture" }
-	parmtag	{ "vray_type" "Texture" }
+        name    "texture"
+        label   "Texture"
+        type    color4
+        size    4
+        default { "0" "0" "0" "0" }
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexClamp" }
+        parmtag { "vray_pluginattr" "texture" }
+        parmtag { "vray_type" "Texture" }
     }
     parm {
-	name	"min_color"
-	label	"Min Color"
-	type	color4
-	size	4
-	default	{ "0" "0" "0" "0" }
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexClamp" }
-	parmtag	{ "vray_pluginattr" "min_color" }
-	parmtag	{ "vray_type" "Texture" }
+        name    "min_color"
+        label   "Min Color"
+        type    color4
+        size    4
+        default { "0" "0" "0" "0" }
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexClamp" }
+        parmtag { "vray_pluginattr" "min_color" }
+        parmtag { "vray_type" "Texture" }
     }
     parm {
-	name	"max_color"
-	label	"Max Color"
-	type	color4
-	size	4
-	default	{ "0" "0" "0" "0" }
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexClamp" }
-	parmtag	{ "vray_pluginattr" "max_color" }
-	parmtag	{ "vray_type" "Texture" }
+        name    "max_color"
+        label   "Max Color"
+        type    color4
+        size    4
+        default { "1" "1" "1" "1" }
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexClamp" }
+        parmtag { "vray_pluginattr" "max_color" }
+        parmtag { "vray_type" "Texture" }
     }
+#include "vfh_texture_default_output_color.ds"
 }

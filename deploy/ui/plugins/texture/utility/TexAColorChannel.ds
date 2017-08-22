@@ -1,36 +1,6 @@
 {
     name    TexAColorChannel
     label   "Color Channel"
-
-    parm {
-        name    "color_a"
-        label   "Color"
-        type    color4
-        size    4
-        default { "1" "1" "1" "1" }
-        help    "The color"
-        range   { 0 10 }
-        export  none
-        parmtag { "cook_dependent" "1" }
-        parmtag { "vray_label" "color" }
-        parmtag { "vray_pluginattr" "color_a" }
-        parmtag { "vray_type" "Texture" }
-    }
-
-    parm {
-        name    "mult_a"
-        label   "Multiplier"
-        type    float
-        default { "0" }
-        help    "Multiplier for the color"
-        range   { 0 10 }
-        export  none
-        parmtag { "cook_dependent" "1" }
-        parmtag { "vray_label" "mult" }
-        parmtag { "vray_pluginattr" "mult_a" }
-        parmtag { "vray_type" "TextureFloat" }
-    }
-
     parm {
         name    "mode"
         label   "Mode"
@@ -48,6 +18,32 @@
         parmtag { "vray_pluginattr" "mode" }
         parmtag { "vray_type" "enum" }
     }
-
+    parm {
+        name    "color_a"
+        label   "Color"
+        type    color4
+        size    4
+        default { "1" "1" "1" "1" }
+        help    "The color"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_label" "color" }
+        parmtag { "vray_pluginattr" "color_a" }
+        parmtag { "vray_type" "Texture" }
+    }
+    parm {
+        name    "mult_a"
+        label   "Multiplier"
+        type    float
+        default { "1" }
+        help    "Multiplier for the color"
+        range   { 0 3 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_label" "mult" }
+        parmtag { "vray_pluginattr" "mult_a" }
+        parmtag { "vray_type" "TextureFloat" }
+    }
 #include "vfh_texture_default_output_float.ds"
 }

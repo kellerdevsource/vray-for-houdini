@@ -1,31 +1,32 @@
 {
-    name	TexVertexColorDirect
-    label	"Vertex Color Direct"
-    parmtag	{ spare_category "Vertex Color Direct" }
-    parmtag	{ vray_plugin "TexVertexColorDirect" }
+    name    TexVertexColorDirect
+    label   "Vertex Color Direct"
+    parmtag { spare_category "Vertex Color Direct" }
+    parmtag { vray_plugin "TexVertexColorDirect" }
     parm {
-	name	"color_set_name"
-	label	"Color Set Name"
-	type	string
-	default	{ "" }
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexVertexColorDirect" }
-	parmtag	{ "vray_pluginattr" "color_set_name" }
-	parmtag	{ "vray_type" "string" }
+        name    "color_set_name"
+        label   "Color Set Name"
+        type    string
+        default { "" }
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexVertexColorDirect" }
+        parmtag { "vray_pluginattr" "color_set_name" }
+        parmtag { "vray_type" "string" }
     }
     parm {
-	name	"default_color"
-	label	"Default Color"
-	type	color4
-	size	4
-	default	{ "0" "0" "0" "1" }
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "TexVertexColorDirect" }
-	parmtag	{ "vray_pluginattr" "default_color" }
-	parmtag	{ "vray_type" "Texture" }
+        name    "default_color"
+        label   "Default Color"
+        type    color4
+        size    4
+        default { "0" "0" "0" "1" }
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexVertexColorDirect" }
+        parmtag { "vray_pluginattr" "default_color" }
+        parmtag { "vray_type" "Texture" }
     }
+#include "vfh_texture_default_output_color.ds"
 }

@@ -115,7 +115,7 @@
             type    float
             default { "0" }
             help    "Distortion noise amount"
-            range   { 0 64 }
+            range   { 0 5 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "TexGradRamp" }
@@ -129,7 +129,7 @@
             type    float
             default { "1" }
             help    ""
-            range   { 0 64 }
+            range   { 0 5 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "TexGradRamp" }
@@ -143,7 +143,7 @@
             type    float
             default { "0" }
             help    ""
-            range   { 0 64 }
+            range   { 0 5 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "TexGradRamp" }
@@ -157,7 +157,7 @@
             type    float
             default { "4" }
             help    ""
-            range   { 0 64 }
+            range   { 0 8 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "TexGradRamp" }
@@ -171,7 +171,7 @@
             type    float
             default { "0" }
             help    "default = 0.0f"
-            range   { 0 64 }
+            range   { 0 0.5 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "TexGradRamp" }
@@ -185,7 +185,7 @@
             type    float
             default { "1" }
             help    ""
-            range   { 0 64 }
+            range   { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "TexGradRamp" }
@@ -199,7 +199,7 @@
             type    float
             default { "0" }
             help    "default = 0.0f"
-            range   { 0 64 }
+            range   { 0 2 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "TexGradRamp" }
