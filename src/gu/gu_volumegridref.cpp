@@ -188,10 +188,11 @@ void VRayVolumeGridRef::fetchData(const VolumeCacheKey &key, VolumeCacheData &da
 }
 
 void VRayForHoudini::VRayVolumeGridRef::fetchDataMaxVox(const VolumeCacheKey &key, VolumeCacheData &data, const i64 voxelCount, const bool infoOnly) {
-	using namespace std;
-	using namespace chrono;
+	using time_point = std::chrono::high_resolution_clock::time_point;
+	using time_clock = std::chrono::high_resolution_clock;
+	using milliseconds = std::chrono::milliseconds;
 
-	time_point<steady_clock> tStart = high_resolution_clock::now();
+	time_point tStart = time_clock::now();
 	IAur *aurPtr;
 	if (key.map.empty()) {
 		aurPtr = newIAurMaxVox(key.path.c_str(), voxelCount, infoOnly);
@@ -200,11 +201,11 @@ void VRayForHoudini::VRayVolumeGridRef::fetchDataMaxVox(const VolumeCacheKey &ke
 		aurPtr = newIAurWithChannelsMappingMaxVox(key.path.c_str(), key.map.c_str(), voxelCount, infoOnly);
 	}
 	data.aurPtr = VRayVolumeGridRef::CachePtr(aurPtr, [](IAur *ptr) { deleteIAur(ptr); });
-	time_point<steady_clock> tEndCache = high_resolution_clock::now();
+	time_point tEndCache = time_clock::now();
 	memset(data.dataRange.data(), 0, VRayVolumeGridRef::DataRangeMapSize);
 
 	if (data.aurPtr) {
-		Log::getLog().info("Loading cache took %dms", (int)duration_cast<milliseconds>(tEndCache - tStart).count());
+		Log::getLog().info("Loading cache took %dms", static_cast<int>(std::chrono::duration_cast<milliseconds>(tEndCache - tStart).count()));
 	}
 	else {
 		Log::getLog().warning("Failed to load cache \"%s\"", key.path.c_str());
@@ -220,7 +221,7 @@ void VRayForHoudini::VRayVolumeGridRef::fetchDataMaxVox(const VolumeCacheKey &ke
 	// what if there are two instances having the same cache but one has the flag set and the other does not?
 	const UT_Matrix4F tm = cacheWorldTm(data.aurPtr, key.flipYZ);
 
-	time_point<steady_clock> tBeginLoop = high_resolution_clock::now();
+	time_point tBeginLoop = time_clock::now();
 	// load each channel from the cache file
 	for (int c = 0; c < CHANNEL_COUNT; ++c) {
 		const ChannelInfo &chan = chInfo[c];
@@ -236,19 +237,19 @@ void VRayForHoudini::VRayVolumeGridRef::fetchDataMaxVox(const VolumeCacheKey &ke
 		UT_VoxelArrayWriteHandleF voxelHandle = volumeGdp->getVoxelWriteHandle();
 		voxelHandle->size(gridDimensions[0], gridDimensions[1], gridDimensions[2]);
 
-		time_point<steady_clock> tStartExpand = high_resolution_clock::now();
+		time_point tStartExpand = time_clock::now();
 		const float *grid = data.aurPtr->ExpandChannel(chan.type);
-		time_point<steady_clock> tEndExpand = high_resolution_clock::now();
+		time_point tEndExpand = time_clock::now();
 
-		int expandTime = duration_cast<milliseconds>(tEndExpand - tStartExpand).count();
+		int expandTime = std::chrono::duration_cast<milliseconds>(tEndExpand - tStartExpand).count();
 
-		time_point<steady_clock> tStartExtract = high_resolution_clock::now();
+		time_point tStartExtract = time_clock::now();
 		voxelHandle->extractFromFlattened(grid, gridDimensions[0], gridDimensions[1] * gridDimensions[0]);
 		data.dataRange[chan.type].min = volumeGdp->calcMinimum();
 		data.dataRange[chan.type].max = volumeGdp->calcMaximum();
-		time_point<steady_clock> tEndExtract = high_resolution_clock::now();
+		time_point tEndExtract = time_clock::now();
 
-		int extractTime = duration_cast<milliseconds>(tEndExtract - tStartExtract).count();
+		int extractTime = std::chrono::duration_cast<milliseconds>(tEndExtract - tStartExtract).count();
 
 		Log::getLog().info("Expanding channel '%s' took %dms, extracting took %dms", chan.displayName, expandTime, extractTime);
 
