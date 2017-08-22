@@ -188,9 +188,9 @@ void VRayVolumeGridRef::fetchData(const VolumeCacheKey &key, VolumeCacheData &da
 }
 
 void VRayForHoudini::VRayVolumeGridRef::fetchDataMaxVox(const VolumeCacheKey &key, VolumeCacheData &data, const i64 voxelCount, const bool infoOnly) {
-	using time_point = std::chrono::high_resolution_clock::time_point;
-	using time_clock = std::chrono::high_resolution_clock;
-	using milliseconds = std::chrono::milliseconds;
+	typedef std::chrono::high_resolution_clock::time_point time_point;
+	typedef std::chrono::high_resolution_clock time_clock;
+	typedef std::chrono::milliseconds milliseconds;
 
 	time_point tStart = time_clock::now();
 	IAur *aurPtr;
