@@ -553,7 +553,7 @@ void VRayVolumeGridRef::buildMapping() {
 			const ChannelInfo &chan = chInfo[c];
 
 			UT_String value(UT_String::ALWAYS_DEEP);
-			long long res = m_options.hasOption(chan.propName) ? m_options.getOptionI(chan.propName) - 1 : -1;
+			int64 res = m_options.hasOption(chan.propName) ? m_options.getOptionI(chan.propName) - 1 : -1;
 			if (res >= 0 && res < channels.size()) {
 				value = channels(res);
 				if (value != "" && value != "0") {
@@ -663,7 +663,7 @@ i64 VRayVolumeGridRef::getFullCacheVoxelCount() const
 	return static_cast<i64>(gridDimensions[0]) * gridDimensions[1] * gridDimensions[2];
 }
 
-long long VRayVolumeGridRef::getCurrentCacheVoxelCount() const
+i64 VRayVolumeGridRef::getCurrentCacheVoxelCount() const
 {
 	return (getResolution() == MAX_RESOLUTION) ?
 		-1 :
