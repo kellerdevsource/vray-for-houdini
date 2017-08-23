@@ -208,7 +208,6 @@ void VRayExporter::fillPhysicalCamera(const ViewParams &viewParams, Attrs::Plugi
 
 	switch(itemSelected) {
 	case 0: {
-		pluginDesc.remove("f_number");//no need for this?
 		pluginDesc.remove("shutter_speed");
 		pluginDesc.remove("ISO");
 
@@ -233,9 +232,6 @@ void VRayExporter::fillPhysicalCamera(const ViewParams &viewParams, Attrs::Plugi
 
 		pluginDesc.add(Attrs::PluginAttr("f_number", camera.evalFloat("fstop", 0, t)));
 		pluginDesc.add(Attrs::PluginAttr("focus_distance", camera.evalFloat("focus", 0, t)));
-		//pluginDesc.add(Attrs::PluginAttr());
-		//pluginDesc.add(Attrs::PluginAttr());
-		//pluginDesc.add(Attrs::PluginAttr());
 
 		break;
 	}
