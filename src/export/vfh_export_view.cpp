@@ -168,17 +168,6 @@ void VRayExporter::fillViewParamFromCameraNode(const OBJ_Node &camera, ViewParam
 
 ReturnValue VRayExporter::fillSettingsMotionBlur(ViewParams &viewParams, Attrs::PluginDesc &settingsMotionBlur)
 {
-	const fpreal t = m_context.getTime();
-
-	int useCameraSettings = m_rop->evalInt("SettingsMotionBlur_camera_motion_blur", 0, t);
-	OBJ_Node *camera = VRayExporter::getCamera(m_rop);
-	if (!camera) {
-		Log::getLog().error("Camera does not exist! In VRayExporter::fillSettingsMotionBlur");
-		return ReturnValue::Error;
-	}
-	const fpreal shutter = camera->evalFloat("shutter", 0, t);
-	settingsMotionBlur.addAttribute(Attrs::PluginAttr("duration", shutter));
-
 	setAttrsFromOpNodePrms(settingsMotionBlur, m_rop, "SettingsMotionBlur_");
 
 	return ReturnValue::Success;
@@ -195,24 +184,72 @@ void VRayExporter::fillPhysicalCamera(const ViewParams &viewParams, Attrs::Plugi
 	const float aspect = float(viewParams.renderSize.w) / float(viewParams.renderSize.h);
 
 	float horizontal_offset = camera.evalFloat("CameraPhysical_horizontal_offset", 0, t);
-	float vertical_offset   = camera.evalFloat("CameraPhysical_vertical_offset", 0, t);
+	float vertical_offset = camera.evalFloat("CameraPhysical_vertical_offset", 0, t);
 	if (aspect < 1.0f) {
 		const float offset_fix = 1.0 / aspect;
 		horizontal_offset *= offset_fix;
-		vertical_offset   *= offset_fix;
+		vertical_offset *= offset_fix;
 	}
 
 	const float lens_shift = camera.evalInt("CameraPhysical_auto_lens_shift", 0, 0.0)
-							 ? getLensShift(camera, getContext())
-							 : camera.evalFloat("CameraPhysical_lens_shift", 0, t);
+		? getLensShift(camera, getContext())
+		: camera.evalFloat("CameraPhysical_lens_shift", 0, t);
 
-	pluginDesc.add(Attrs::PluginAttr("fov", viewParams.renderView.fov));
+	int itemSelected = camera.evalInt("CameraPhysical_something", 0, t);
+	if (itemSelected != 1) {
+		pluginDesc.add(Attrs::PluginAttr("fov", viewParams.renderView.fov));
+	}
 	pluginDesc.add(Attrs::PluginAttr("horizontal_offset", horizontal_offset));
 	pluginDesc.add(Attrs::PluginAttr("vertical_offset",   vertical_offset));
 	pluginDesc.add(Attrs::PluginAttr("lens_shift",        lens_shift));
 	// pluginDesc.add(Attrs::PluginAttr("specify_focus",     true));
 
 	setAttrsFromOpNodePrms(pluginDesc, &camera, "CameraPhysical_");
+
+	switch(itemSelected) {
+	case 0: {
+		pluginDesc.remove("f_number");//no need for this?
+		pluginDesc.remove("shutter_speed");
+		pluginDesc.remove("ISO");
+
+		UT_String temporaryString;
+		camera.evalString(temporaryString, "focalunits", 0, t);
+		double focalLength = camera.evalFloat("focal", 0, t);
+		if (temporaryString.c_str() == "mm") {
+			pluginDesc.add(Attrs::PluginAttr("focal_length", focalLength));
+		}
+		else if (temporaryString.c_str() == "m") {
+			pluginDesc.add(Attrs::PluginAttr("focal_length", focalLength*0.001f));// convert from meters to milimeters
+		}
+		else if (temporaryString.c_str() == "nm") {
+			pluginDesc.add(Attrs::PluginAttr("focal_length", focalLength * 1000000.0f));// convert from nanometers to milimeters
+		}
+		else if (temporaryString.c_str() == "in") {
+			pluginDesc.add(Attrs::PluginAttr("focal_length", focalLength*25.4f));// convert from inches to milimeters
+		}
+		else if (temporaryString.c_str() == "ft") {
+			pluginDesc.add(Attrs::PluginAttr("focal_length", focalLength*304.8f));//convert from feet to milimeters
+		}
+
+		pluginDesc.add(Attrs::PluginAttr("f_number", camera.evalFloat("fstop", 0, t)));
+		pluginDesc.add(Attrs::PluginAttr("focus_distance", camera.evalFloat("focus", 0, t)));
+		//pluginDesc.add(Attrs::PluginAttr());
+		//pluginDesc.add(Attrs::PluginAttr());
+		//pluginDesc.add(Attrs::PluginAttr());
+
+		break;
+	}
+	case 1: {
+		pluginDesc.remove("film_width");
+		pluginDesc.remove("focal_length");
+
+		break;
+	}
+	case 2: {
+		pluginDesc.remove("fov");
+		break;
+	}
+	}
 }
 
 void VRayExporter::fillRenderView(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc)
