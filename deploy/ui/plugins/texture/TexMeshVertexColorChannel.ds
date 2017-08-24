@@ -2,7 +2,7 @@
     name    TexMeshVertexColorChannel
     label   "Mesh Map Channel"
     parmtag { spare_category "Mesh Map Channel" }
-    parmtag { vray_plugin "TexMeshVertexColorChannel" }
+
     parm {
         name    "channel_name"
         label   "Channel Name"
@@ -12,27 +12,9 @@
         range   { 0 1 }
         export  none
         parmtag { "cook_dependent" "1" }
-        parmtag { "vray_plugin" "TexMeshVertexColorChannel" }
-        parmtag { "vray_pluginattr" "channel_name" }
         parmtag { "vray_type" "string" }
     }
-    parm {
-        name    "data_select"
-        label   "Data Select"
-        type    ordinal
-        default { "0" }
-        help    "Use UV"
-        menu    {
-            0    "UV"
-            1 "Color"
-        }
-        range   { 0 1 }
-        export  none
-        parmtag { "cook_dependent" "1" }
-        parmtag { "vray_custom_handling" "1" }
-        parmtag { "vray_enumkeys" "0,1" }
-        parmtag { "vray_type" "enum" }
-    }
+
     parm {
         name    "channelIndex"
         label   "Channel Index"
@@ -41,11 +23,10 @@
         range   { 0 2 }
         export  none
         parmtag { "cook_dependent" "1" }
-        parmtag { "vray_plugin" "TexMeshVertexColorChannel" }
-        parmtag { "vray_pluginattr" "channelIndex" }
         parmtag { "vray_type" "int" }
         invisible
     }
+
     parm {
         name    "default_color"
         label   "Default Color"
@@ -55,9 +36,8 @@
         range   { 0 1 }
         export  none
         parmtag { "cook_dependent" "1" }
-        parmtag { "vray_plugin" "TexMeshVertexColorChannel" }
-        parmtag { "vray_pluginattr" "default_color" }
         parmtag { "vray_type" "Texture" }
     }
+
 #include "vfh_texture_default_output_color.ds"
 }

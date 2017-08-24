@@ -65,7 +65,7 @@ struct DsFilesLocations
 
 		Log::getLog().error("Requested .ds file is not found: \"%s\"!", fileName);
 
-		vassert(false && "Requested .ds file is not found!");
+		// vassert(false && "Requested .ds file is not found!");
 
 		return QString();
 	}
