@@ -172,7 +172,7 @@
     	type	color4
       invisible
     	size	4
-    	default	{ "0" "0" "0" "0" }
+    	default	{ "0" "0" "0" "1" }
     	help	"Texture for additional bump effect"
     	range	{ 0 10 }
     	export	none

@@ -22,7 +22,7 @@
         label   "Shadow Rays Tex"
         type    color4
         size    4
-        default { "0" "0" "0" "0" }
+        default { "0" "0" "0" "1" }
         help    "This texture is used for shadow rays"
         range   { 0 10 }
         export  none
@@ -36,7 +36,7 @@
         label   "Gi Rays Tex"
         type    color4
         size    4
-        default { "0" "0" "0" "0" }
+        default { "0" "0" "0" "1" }
         help    "This texture is used for GI rays"
         range   { 0 10 }
         export  none
@@ -50,7 +50,7 @@
         label   "Reflection Rays Tex"
         type    color4
         size    4
-        default { "0" "0" "0" "0" }
+        default { "0" "0" "0" "1" }
         help    "This texture is used for reflection rays"
         range   { 0 10 }
         export  none
@@ -64,7 +64,7 @@
         label   "Refraction Rays Tex"
         type    color4
         size    4
-        default { "0" "0" "0" "0" }
+        default { "0" "0" "0" "1" }
         help    "This texture is used for refraction rays"
         range   { 0 10 }
         export  none

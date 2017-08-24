@@ -118,7 +118,7 @@
 	label	"Surface Texture"
 	type	color4
 	size	4
-	default	{ "0" "0" "0" "0" }
+	default	{ "0" "0" "0" "1" }
 	help	"Surface Texture"
 	disablewhen	"{ sarg != Texture }"
 	range	{ 0 10 }
@@ -205,7 +205,7 @@
 	label	"Displ0"
 	type	color4
 	size	4
-	default	{ "0" "0" "0" "0" }
+	default	{ "0" "0" "0" "1" }
 	disablewhen	"{ displacement != 1 }"
 	range	{ 0 10 }
 	export	none
@@ -219,7 +219,7 @@
 	label	"Displ1"
 	type	color4
 	size	4
-	default	{ "0" "0" "0" "0" }
+	default	{ "0" "0" "0" "1" }
 	disablewhen	"{ displacement != 1 }"
 	range	{ 0 10 }
 	export	none
@@ -233,7 +233,7 @@
 	label	"Displacement Texture"
 	type	color4
 	size	4
-	default	{ "0" "0" "0" "0" }
+	default	{ "0" "0" "0" "1" }
 	disablewhen	"{ displacement != 1 }"
 	range	{ 0 10 }
 	export	none
@@ -710,7 +710,7 @@
 	label	"Emissive Texture"
 	type	color4
 	size	4
-	default	{ "0" "0" "0" "0" }
+	default	{ "0" "0" "0" "1" }
 	range	{ 0 10 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -808,7 +808,7 @@
 	label	"Diffuse Texture"
 	type	color4
 	size	4
-	default	{ "0" "0" "0" "0" }
+	default	{ "0" "0" "0" "1" }
 	range	{ 0 10 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -897,7 +897,7 @@
 	label	"Opacity Texture"
 	type	color4
 	size	4
-	default	{ "0" "0" "0" "0" }
+	default	{ "0" "0" "0" "1" }
 	range	{ 0 10 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }
@@ -992,7 +992,7 @@
 	label	"Velocity Texture"
 	type	color4
 	size	4
-	default	{ "0" "0" "0" "0" }
+	default	{ "0" "0" "0" "1" }
 	help	"velocity texture"
 	range	{ 0 10 }
 	export	none

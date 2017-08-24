@@ -8,7 +8,7 @@
         label   "Normal Map 1"
         type    color4
         size    4
-        default { "0" "0" "0" "0" }
+        default { "0" "0" "0" "1" }
         help    "First tangent space normal map"
         range   { 0 1 }
         export  none
@@ -35,7 +35,7 @@
         label   "Normal Map 2"
         type    color4
         size    4
-        default { "0" "0" "0" "0" }
+        default { "0" "0" "0" "1" }
         help    "Second tangent space normal map"
         range   { 0 1 }
         export  none
@@ -62,7 +62,7 @@
         label   "Bump Map 1"
         type    color4
         size    4
-        default { "0" "0" "0" "0" }
+        default { "0" "0" "0" "1" }
         help    "First bump map"
         range   { 0 1 }
         export  none
@@ -89,7 +89,7 @@
         label   "Bump Map 2"
         type    color4
         size    4
-        default { "0" "0" "0" "0" }
+        default { "0" "0" "0" "1" }
         help    "Second bump map"
         range   { 0 1 }
         export  none

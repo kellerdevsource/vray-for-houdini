@@ -53,7 +53,7 @@
 	    label	"Paint Color"
 	    type	color4
 	    size	4
-	    default	{ "0" "0" "0" "0" }
+	    default	{ "0" "0" "0" "1" }
 	    help	"Paint replacement color"
 	    range	{ 0 10 }
 	    export	none
@@ -67,7 +67,7 @@
 	    label	"Filter Color"
 	    type	color4
 	    size	4
-	    default	{ "0" "0" "0" "0" }
+	    default	{ "0" "0" "0" "1" }
 	    help	"Filter color"
 	    range	{ 0 10 }
 	    export	none
