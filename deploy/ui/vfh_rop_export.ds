@@ -67,12 +67,12 @@ groupsimple {
             "0" "Install Callbacks"
             "1" "SOHO"
         }
-        default { "1" }
+        default { "0" }
     }
 
     parm {
         name "render_rt"
-        label "Render IPR"
+        label "Render RT"
         type button
         hidewhen "{ render_rt_output == "0" } { render_rt_update_mode == "1" }"
     }
