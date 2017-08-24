@@ -95,7 +95,6 @@ def main():
 
         return viewParams
 
-
     def exportView(rop, camera, sohoCam, t):
         printDebug("exportView()")
 
@@ -164,7 +163,7 @@ def main():
 
         _vfh_ipr.init(rop=ropPath, port=port, now=now, viewParams=getViewParams(camera, sohoCam, now))
 
-    elif render_rt_update_mode == RENDER_RT_MODE_SOHO and mode in {"update"}:
+    elif mode in {"update"}:
         # update: Send updated changes from previous generation
         #
         # In this rendering mode, the special object list parameters:
@@ -189,15 +188,16 @@ def main():
             # Update view.
             exportView(ropPath, camera, sohoCam, now)
 
-            exportObjects("objlist:dirtyinstance")
-            exportObjects("objlist:dirtylight")
-            # exportObjects("objlist:dirtyspace")
-            # exportObjects("objlist:dirtyfog")
+            if render_rt_update_mode == RENDER_RT_MODE_SOHO:
+                exportObjects("objlist:dirtyinstance")
+                exportObjects("objlist:dirtylight")
+                # exportObjects("objlist:dirtyspace")
+                # exportObjects("objlist:dirtyfog")
 
-            deleteObjects("objlist:deletedinstance")
-            deleteObjects("objlist:deletedlight")
-            # deleteObjects("objlist:deletedspace")
-            # deleteObjects("objlist:deletedfog")
+                deleteObjects("objlist:deletedinstance")
+                deleteObjects("objlist:deletedlight")
+                # deleteObjects("objlist:deletedspace")
+                # deleteObjects("objlist:deletedfog")
 
 try:
     main()
