@@ -24,7 +24,7 @@
         label   "Texture X"
         type    color4
         size    4
-        default { "0" "0" "0" "0" }
+        default { "1" "0" "0" "1" }
         help    "The base texture, or the texture for the X axis if texture mode is set to different textures"
         range   { 0 10 }
         export  none
@@ -39,7 +39,7 @@
         label   "Texture Y"
         type    color4
         size    4
-        default { "0" "0" "0" "0" }
+        default { "0" "1" "0" "1" }
         help    "The texture for the Y axis"
         disablewhen "{ texture_mode != 1 }"
         range   { 0 10 }
@@ -55,7 +55,7 @@
         label   "Texture Z"
         type    color4
         size    4
-        default { "0" "0" "0" "0" }
+        default { "0" "0" "1" "1" }
         help    "The texture for the Z axis"
         disablewhen "{ texture_mode != 1 }"
         range   { 0 10 }
@@ -209,6 +209,7 @@
         parmtag { "vray_plugin" "TexTriPlanar" }
         parmtag { "vray_pluginattr" "ref_space" }
         parmtag { "vray_type" "enum" }
+        invisible
     }
 #include "vfh_texture_default_output_color.ds"
 }

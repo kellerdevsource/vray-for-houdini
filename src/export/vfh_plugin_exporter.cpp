@@ -35,6 +35,78 @@ void CallVoidCallbacks(const CbBase<T> * callbacks)
 	}
 }
 
+#ifdef BOOST_NO_CXX11_VARIADIC_TEMPLATES
+/// TODO: Remove this when we drop MSVC 2012 (vc11)
+
+template <typename T, typename Q1, typename Q2, typename Q3, typename Q4, typename Q5, typename Q6>
+void CallCallbacks(const CbBase<T> * callbacks, Q1 && arg1, Q2 && arg2, Q3 && arg3, Q4 && arg4, Q5 && arg5, Q6 && arg6)
+{
+	for (auto & cb : callbacks->m_cbTyped) {
+		if (cb) {
+			cb(std::forward<Q1>(arg1), std::forward<Q2>(arg2), std::forward<Q3>(arg3), std::forward<Q4>(arg4), std::forward<Q5>(arg5), std::forward<Q6>(arg6));
+		}
+	}
+	CallVoidCallbacks(callbacks);
+}
+
+
+template <typename T, typename Q1, typename Q2, typename Q3, typename Q4, typename Q5>
+void CallCallbacks(const CbBase<T> * callbacks, Q1 && arg1, Q2 && arg2, Q3 && arg3, Q4 && arg4, Q5 && arg5)
+{
+	for (auto & cb : callbacks->m_cbTyped) {
+		if (cb) {
+			cb(std::forward<Q1>(arg1), std::forward<Q2>(arg2), std::forward<Q3>(arg3), std::forward<Q4>(arg4), std::forward<Q5>(arg5));
+		}
+	}
+	CallVoidCallbacks(callbacks);
+}
+
+template <typename T, typename Q1, typename Q2, typename Q3, typename Q4>
+void CallCallbacks(const CbBase<T> * callbacks, Q1 && arg1, Q2 && arg2, Q3 && arg3, Q4 && arg4)
+{
+	for (auto & cb : callbacks->m_cbTyped) {
+		if (cb) {
+			cb(std::forward<Q1>(arg1), std::forward<Q2>(arg2), std::forward<Q3>(arg3), std::forward<Q4>(arg4));
+		}
+	}
+	CallVoidCallbacks(callbacks);
+}
+
+template <typename T, typename Q1, typename Q2, typename Q3>
+void CallCallbacks(const CbBase<T> * callbacks, Q1 && arg1, Q2 && arg2, Q3 && arg3)
+{
+	for (auto & cb : callbacks->m_cbTyped) {
+		if (cb) {
+			cb(std::forward<Q1>(arg1), std::forward<Q2>(arg2), std::forward<Q3>(arg3));
+		}
+	}
+	CallVoidCallbacks(callbacks);
+}
+
+template <typename T, typename Q1, typename Q2>
+void CallCallbacks(const CbBase<T> * callbacks, Q1 && arg1, Q2 && arg2)
+{
+	for (auto & cb : callbacks->m_cbTyped) {
+		if (cb) {
+			cb(std::forward<Q1>(arg1), std::forward<Q2>(arg2));
+		}
+	}
+	CallVoidCallbacks(callbacks);
+}
+
+template <typename T, typename Q1>
+void CallCallbacks(const CbBase<T> * callbacks, Q1 && arg1)
+{
+	for (auto & cb : callbacks->m_cbTyped) {
+		if (cb) {
+			cb(std::forward<Q1>(arg1));
+		}
+	}
+	CallVoidCallbacks(callbacks);
+}
+
+#else // BOOST_NO_CXX11_VARIADIC_TEMPLATES
+
 template <typename T, typename ...Args>
 void CallCallbacks(const CbBase<T> * callbacks, Args && ...args)
 {
@@ -45,6 +117,9 @@ void CallCallbacks(const CbBase<T> * callbacks, Args && ...args)
 	}
 	CallVoidCallbacks(callbacks);
 }
+
+#endif // BOOST_NO_CXX11_VARIADIC_TEMPLATES
+
 
 void OnDumpMessage(VRay::VRayRenderer &renderer, const char *msg, int level, void *userData)
 {

@@ -17,7 +17,7 @@ drivertoolutils.genericTool(kwargs, 'rop_vrayproxy', nodename="vrayproxy")
     </script>
 </tool>
 
-<tool name="driver_rop_vray" label="V-Ray ROP" icon="ROP_vray">
+<tool name="driver_rop_vray" label="V-Ray Renderer IPR" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="network">
         <contextOpType>Driver/vray</contextOpType>
@@ -27,7 +27,7 @@ drivertoolutils.genericTool(kwargs, 'rop_vrayproxy', nodename="vrayproxy")
 <![CDATA[
 
 import drivertoolutils
-drivertoolutils.genericTool(kwargs, 'vray', nodename="vray")
+drivertoolutils.genericTool(kwargs, 'vray', nodename="vray_ipr")
 
 ]]>
     </script>

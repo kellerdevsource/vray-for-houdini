@@ -3,12 +3,13 @@
     label   "OCIO"
     parmtag { spare_category "OCIO" }
     parmtag { vray_plugin "TexOCIO" }
+
     parm {
         name    "basemap"
-        label   "Basemap"
+        label   "Color"
         type    color4
         size    4
-        default { "0" "0" "0" "0" }
+        default { "0" "0" "0" "1" }
         range   { 0 10 }
         export  none
         parmtag { "cook_dependent" "1" }
@@ -17,20 +18,21 @@
         parmtag { "vray_type" "Texture" }
     }
     parm {
-    name    "inout_type"
-    label   "Inout Type"
-    type    ordinal
-    default { "0" }
-    help    "This parameter is currently ignored. Input/Output type: 0 - use colorspaces, 1 - use roles"
-    menu    {
-        "0" "Colorspaces"
-        "1" "Roles"
-    }
-    parmtag { "cook_dependent" "1" }
-    parmtag { "vray_enumkeys" "0,1" }
-    parmtag { "vray_plugin" "TexOCIO" }
-    parmtag { "vray_pluginattr" "inout_type" }
-    parmtag { "vray_type" "enum" }
+        name    "inout_type"
+        label   "Inout Type"
+        type    ordinal
+        default { "0" }
+        help    "Input / output type"
+        menu    {
+            "0" "Colorspaces"
+            "1" "Roles"
+        }
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_enumkeys" "0,1" }
+        parmtag { "vray_plugin" "TexOCIO" }
+        parmtag { "vray_pluginattr" "inout_type" }
+        parmtag { "vray_type" "enum" }
+        invisible
     }
     parm {
         name    "config_src"

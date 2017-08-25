@@ -27,8 +27,10 @@ struct VolumeCacheKey {
 	std::string path;
 	std::string map;
 	bool flipYZ;
+
+	bool isValid() const;
 };
-inline bool operator==(const VolumeCacheKey & left, const VolumeCacheKey & right) {
+inline bool operator==(const VolumeCacheKey &left, const VolumeCacheKey &right) {
 	return left.path == right.path && left.map == right.map && left.flipYZ == right.flipYZ;
 }
 }
@@ -36,7 +38,7 @@ inline bool operator==(const VolumeCacheKey & left, const VolumeCacheKey & right
 // extending namespace std with the proper specialization is the "correct" way according to the standard
 namespace std {
 template <> struct hash<VRayForHoudini::VolumeCacheKey> {
-	size_t operator()(const VRayForHoudini::VolumeCacheKey & volumeKey) const {
+	size_t operator()(const VRayForHoudini::VolumeCacheKey &volumeKey) const {
 		VRayForHoudini::Hash::MHash hash = 42;
 		VRayForHoudini::Hash::MurmurHash3_x86_32(volumeKey.path.c_str(), volumeKey.path.length(), hash, &hash);
 		VRayForHoudini::Hash::MurmurHash3_x86_32(volumeKey.map.c_str(), volumeKey.map.length(), hash, &hash);
@@ -48,6 +50,8 @@ template <> struct hash<VRayForHoudini::VolumeCacheKey> {
 
 
 namespace VRayForHoudini {
+
+static const int MAX_RESOLUTION = 255;
 
 // these are the parameters (intrisics) that will be exposed to Houdini, all are filled from the associated PhxShaderCache node
 // format for each one is (type, name, default_value)
@@ -113,6 +117,8 @@ public:
 	static void install(GA_PrimitiveFactory *gafactory);
 	/// Fetch data from key
 	static void fetchData(const VolumeCacheKey &key, VolumeCacheData &data);
+	/// Fetch data (or only info) from key downsampled to voxelsCount 
+	static void fetchDataMaxVox(const VolumeCacheKey &key, VolumeCacheData &data, const i64 voxelCount, const bool infoOnly);
 private:
 	static GA_PrimitiveTypeId theTypeId; ///< The type id for the primitive
 
@@ -152,12 +158,16 @@ public:
 
 	/// Load or get from cache pointer to the AUR cache
 	CachePtr                       getCache() const;
+	/// Load or get from cache VolumeCacheData with given key
+	/// REQUIRES: key to be valid
+	VolumeCacheData &              getCache(const VolumeCacheKey &key) const;
 
 	/// Get the world TM
 	UT_Matrix4F                    toWorldTm(CachePtr cache) const;
 
 	/// Get all channels present in the current cache
 	UT_StringArray                 getCacheChannels() const;
+	VolumeCache &                  getCachedData() const;
 
 	/// @{
 	/// Member data accessors for intrinsics
@@ -176,6 +186,9 @@ public:
 private:
 	/// Sets fetch and evict callback
 	void initDataCache();
+	/// Generates VolumeCacheKey from current data
+	VolumeCacheKey genKey() const;
+
 	/// updateFrom() will update from UT_Options only
 	bool updateFrom(const UT_Options &options);
 	void clearDetail() { m_handle = GU_DetailHandle(); }
@@ -190,16 +203,26 @@ private:
 	/// @prefix[out] - everything up to the frame, equal to @path if there is no frame
 	/// @suffix[out] - everything after the frame, empty if @path has no frame
 	/// @return - the number of digits in the frame (0 if no frame)
-	int splitPath(const UT_String & path, std::string & prefix, std::string & suffix) const;
+	int splitPath(const UT_String &path, std::string &prefix, std::string &suffix) const;
 
 	/// Get current cache frame based on current frame + cache play settings
 	int getCurrentCacheFrame() const;
 
+	/// Gets resolution of cache (from UI)
+	int getResolution() const;
+	/// Gets count of voxels in cache (in full resolution)
+	/// @return - -1 if generated key is invalid
+	i64 getFullCacheVoxelCount() const;
+	/// Gets count of voxels in cache (in current resolution)
+	/// @return - -1 if in full resolution, negative not equal to -1 if invalid key
+	i64 getCurrentCacheVoxelCount() const;
+
 	/// Build channel mapping, should be called after update to cache or ui mappings
 	void buildMapping();
-public:
-	mutable VolumeCache    m_dataCache; ///< Data cache used to cache last 10 volumes loaded, mutable(needs to be updated from const functions not changing other (immutable)members)
+
 private:
+	mutable VolumeCache    m_dataCache; ///< Data cache used to cache last 10 volumes loaded, mutable(needs to be updated from const functions not changing other (immutable)members)
+	mutable VolumeCacheData m_currentData;
 	GU_DetailHandle        m_handle; ///< Detail handle - passed to HDK
 	UT_Options             m_options; ///< All params from VFH_VOLUME_GRID_PARAMS are defined in this map
 

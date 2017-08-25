@@ -57,7 +57,7 @@
         parmtag { "vray_pluginattr" "mult_b" }
         parmtag { "vray_type" "TextureFloat" }
     }
-#include "vfh_texture_default_output_color.ds"
+
 #include "vfh_texture_defines.ds"
     VFH_TEXTURE_OUTPUT_FLOAT(dot_product)
     VFH_TEXTURE_OUTPUT_VECTOR(cross_product)

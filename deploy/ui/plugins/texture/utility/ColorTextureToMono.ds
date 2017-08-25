@@ -9,7 +9,7 @@
         label   "Color Texture"
         type    color4
         size    4
-        default { "0" "0" "0" "0" }
+        default { "0" "0" "0" "1" }
         range   { 0 10 }
         export  none
         parmtag { "cook_dependent" "1" }

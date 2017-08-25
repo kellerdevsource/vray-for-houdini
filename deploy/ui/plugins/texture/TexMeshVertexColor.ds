@@ -1,6 +1,0 @@
-{
-    name	TexMeshVertexColor
-label	"Mesh Vertex Color"
-parmtag	{ spare_category "Mesh Vertex Color" }
-parmtag	{ vray_plugin "TexMeshVertexColor" }
-}

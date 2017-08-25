@@ -225,6 +225,7 @@ if (Phoenix_FOUND)
 		guiwin_qt_s
 		iutils_s
 		aurramps_s
+		gui_utils_s
 	)
 endif()
 

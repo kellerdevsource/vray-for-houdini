@@ -3,9 +3,11 @@
     label   "Dirt"
     parmtag { spare_category "Dirt" }
     parmtag { vray_plugin "TexDirt" }
+
     groupsimple {
         name "VfhTexMain"
         label "Settings"
+
         parm {
             name    "mode"
             label   "Mode"
@@ -22,6 +24,7 @@
             parmtag { "vray_pluginattr" "mode" }
             parmtag { "vray_type" "enum" }
         }
+
         parm {
             name    "white_color"
             label   "Unoccluded"
@@ -33,6 +36,7 @@
             parmtag { "vray_pluginattr" "white_color" }
             parmtag { "vray_type" "Texture" }
         }
+
         parm {
             name    "black_color"
             label   "Occluded"
@@ -44,6 +48,7 @@
             parmtag { "vray_pluginattr" "black_color" }
             parmtag { "vray_type" "Texture" }
         }
+
         parm {
             name    "radius"
             label   "Radius"
@@ -56,6 +61,7 @@
             parmtag { "vray_pluginattr" "radius" }
             parmtag { "vray_type" "TextureFloat" }
         }
+
         parm {
             name    "distribution"
             label   "Distribution"
@@ -69,6 +75,7 @@
             parmtag { "vray_pluginattr" "distribution" }
             parmtag { "vray_type" "float" }
         }
+
         parm {
             name    "falloff"
             label   "Falloff"
@@ -81,6 +88,7 @@
             parmtag { "vray_pluginattr" "falloff" }
             parmtag { "vray_type" "float" }
         }
+
         parm {
             name    "subdivs"
             label   "Subdivs"
@@ -93,6 +101,7 @@
             parmtag { "vray_pluginattr" "subdivs" }
             parmtag { "vray_type" "int" }
         }
+
         parm {
             name    "subdivs_as_samples"
             label   "Subdivs As Samples"
@@ -104,6 +113,7 @@
             parmtag { "vray_pluginattr" "subdivs_as_samples" }
             parmtag { "vray_type" "boolean" }
         }
+
         parm {
             name    "bias_x"
             label   "Bias X"
@@ -116,6 +126,7 @@
             parmtag { "vray_pluginattr" "bias_x" }
             parmtag { "vray_type" "float" }
         }
+
         parm {
             name    "bias_y"
             label   "Bias Y"
@@ -128,6 +139,7 @@
             parmtag { "vray_pluginattr" "bias_y" }
             parmtag { "vray_type" "float" }
         }
+
         parm {
             name    "bias_z"
             label   "Bias Z"
@@ -140,6 +152,7 @@
             parmtag { "vray_pluginattr" "bias_z" }
             parmtag { "vray_type" "float" }
         }
+
         parm {
             name    "glossiness"
             label   "Glossiness"
@@ -154,6 +167,7 @@
             parmtag { "vray_pluginattr" "glossiness" }
             parmtag { "vray_type" "TextureFloat" }
         }
+
         parm {
             name    "ignore_for_gi"
             label   "Ignore For Gi"
@@ -166,6 +180,7 @@
             parmtag { "vray_pluginattr" "ignore_for_gi" }
             parmtag { "vray_type" "boolean" }
         }
+
         parm {
             name    "consider_same_object_only"
             label   "Consider Same Object Only"
@@ -178,6 +193,7 @@
             parmtag { "vray_pluginattr" "consider_same_object_only" }
             parmtag { "vray_type" "boolean" }
         }
+
         parm {
             name    "invert_normal"
             label   "Invert Normal"
@@ -190,6 +206,7 @@
             parmtag { "vray_pluginattr" "invert_normal" }
             parmtag { "vray_type" "boolean" }
         }
+
         parm {
             name    "double_sided"
             label   "Double Sided"
@@ -203,6 +220,7 @@
             parmtag { "vray_pluginattr" "double_sided" }
             parmtag { "vray_type" "boolean" }
         }
+
         parm {
             name    "work_with_transparency"
             label   "Work With Transparency"
@@ -215,6 +233,7 @@
             parmtag { "vray_pluginattr" "work_with_transparency" }
             parmtag { "vray_type" "boolean" }
         }
+
         parm {
             name    "ignore_self_occlusion"
             label   "Ignore Self Occlusion"
@@ -227,6 +246,7 @@
             parmtag { "vray_pluginattr" "ignore_self_occlusion" }
             parmtag { "vray_type" "boolean" }
         }
+
         parm {
             name    "environment_occlusion"
             label   "Environment Occlusion"
@@ -240,6 +260,7 @@
             parmtag { "vray_pluginattr" "environment_occlusion" }
             parmtag { "vray_type" "boolean" }
         }
+
         parm {
             name    "affect_reflection_elements"
             label   "Affect Reflection Elements"
@@ -254,6 +275,7 @@
             parmtag { "vray_pluginattr" "affect_reflection_elements" }
             parmtag { "vray_type" "boolean" }
         }
+
         parm {
             name    "use_texture_for_excluded"
             label   "Use Texture For Excluded"
@@ -267,6 +289,7 @@
             parmtag { "vray_pluginattr" "use_texture_for_excluded" }
             parmtag { "vray_type" "boolean" }
         }
+
         parm {
             name "render_nodes"
             label "Render Nodes"
@@ -274,8 +297,9 @@
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "TexDirt" }
             parmtag { "vray_pluginattr" "render_nodes" }
-            parmtag { "vray_type" "PLUGIN" }
+            parmtag { "vray_type" "List<Plugin>" }
         }
+
         parm {
             name    "render_nodes_inclusive"
             label   "As Inclusive List"
@@ -289,6 +313,7 @@
             parmtag { "vray_pluginattr" "render_nodes_inclusive" }
             parmtag { "vray_type" "boolean" }
         }
+
         parm {
             name "affect_result_nodes"
             label "Affect Result Nodes"
@@ -296,8 +321,9 @@
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "TexDirt" }
             parmtag { "vray_pluginattr" "affect_result_nodes" }
-            parmtag { "vray_type" "PLUGIN" }
+            parmtag { "vray_type" "List<Plugin>" }
         }
+
         parm {
             name    "affect_result_nodes_inclusive"
             label   "As Inclusive List"
@@ -312,6 +338,7 @@
             parmtag { "vray_type" "boolean" }
         }
     }
+
 #include "vfh_texture_common_color.ds"
 #include "vfh_texture_default_output_color.ds"
 }

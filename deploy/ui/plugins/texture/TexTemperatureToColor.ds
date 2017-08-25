@@ -3,6 +3,7 @@
     label   "Temperature To Color"
     parmtag { spare_category "Temperature To Color" }
     parmtag { vray_plugin "TexTemperatureToColor" }
+
     parm {
         name    "input"
         label   "Input"
@@ -16,11 +17,12 @@
         parmtag { "vray_pluginattr" "input" }
         parmtag { "vray_type" "Texture" }
     }
+
     parm {
         name    "temperature"
         label   "Temperature"
         type    float
-        default { "1" }
+        default { "6500" }
         range   { 0 64 }
         export  none
         parmtag { "cook_dependent" "1" }
@@ -28,7 +30,6 @@
         parmtag { "vray_pluginattr" "temperature" }
         parmtag { "vray_type" "float" }
     }
+
 #include "vfh_texture_default_output_color.ds"
-#include "vfh_texture_defines.ds"
-    VFH_TEXTURE_OUTPUT(color)
 }

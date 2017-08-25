@@ -20,9 +20,9 @@ using namespace VOP;
 
 static MetaImageFile::UVWGenSocket metaImageFileOutputSockets[] = {
 	MetaImageFile::UVWGenSocket("color", VOP_TypeInfo(VOP_TYPE_COLOR)),
-	MetaImageFile::UVWGenSocket("out_transparency", VOP_TypeInfo(VOP_TYPE_COLOR)),
-	MetaImageFile::UVWGenSocket("out_alpha", VOP_TypeInfo(VOP_TYPE_FLOAT)),
-	MetaImageFile::UVWGenSocket("out_intensity", VOP_TypeInfo(VOP_TYPE_FLOAT))
+	MetaImageFile::UVWGenSocket("transparency", VOP_TypeInfo(VOP_TYPE_COLOR)),
+	MetaImageFile::UVWGenSocket("alpha", VOP_TypeInfo(VOP_TYPE_FLOAT)),
+	MetaImageFile::UVWGenSocket("intensity", VOP_TypeInfo(VOP_TYPE_FLOAT))
 };
 
 static const int ouputSocketCount = COUNT_OF(metaImageFileOutputSockets);
