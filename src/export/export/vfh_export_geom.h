@@ -197,6 +197,8 @@ public:
 
 	VRay::Plugin exportVRayProxyRef(OBJ_Node &objNode, const GU_PrimPacked &prim);
 
+	VRay::Plugin exportVRaySceneRef(OBJ_Node &objNode, const GU_PrimPacked &prim);
+
 	VRay::Plugin exportAlembicRef(OBJ_Node &objNode, const GU_PrimPacked &prim);
 
 	VRay::Plugin exportPackedDisk(OBJ_Node &objNode, const GU_PrimPacked &prim);

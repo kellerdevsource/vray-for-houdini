@@ -18,6 +18,7 @@
 
 #include "gu/gu_vrayproxyref.h"
 #include "gu/gu_volumegridref.h"
+#include "gu/gu_vraysceneref.h"
 #include "rop/vfh_rop.h"
 #include "sop/sop_node_base.h"
 #include "vop/vop_node_base.h"
@@ -41,6 +42,7 @@ static struct PrimPackedTypeIDs {
 		, packedDisk(0)
 		, packedGeometry(0)
 		, vrayProxyRef(0)
+		, vraySceneRef(0)
 	{}
 
 	void init() {
@@ -52,6 +54,7 @@ static struct PrimPackedTypeIDs {
 		packedGeometry = GU_PrimPacked::lookupTypeId("PackedGeometry");
 		vrayProxyRef = GU_PrimPacked::lookupTypeId("VRayProxyRef");
 		vrayVolumeGridRef = GU_PrimPacked::lookupTypeId("VRayVolumeGridRef");
+		vraySceneRef = GU_PrimPacked::lookupTypeId("VRaySceneRef");
 
 		initialized = true;
 	}
@@ -65,6 +68,7 @@ public:
 	GA_PrimitiveTypeId packedGeometry;
 	GA_PrimitiveTypeId vrayProxyRef;
 	GA_PrimitiveTypeId vrayVolumeGridRef;
+	GA_PrimitiveTypeId vraySceneRef;
 } primPackedTypeIDs;
 
 static boost::format objGeomNameFmt("%s|%i@%s");
@@ -1063,6 +1067,10 @@ VRay::Plugin ObjectExporter::exportPrimPacked(OBJ_Node &objNode, const GU_PrimPa
 	if (primTypeID == primPackedTypeIDs.packedDisk) {
 		return exportPackedDisk(objNode, prim);
 	}
+	if (primTypeID == primPackedTypeIDs.vraySceneRef) {
+		exportVRaySceneRef(objNode, prim);
+		return VRay::Plugin();
+	}
 
 	const GA_PrimitiveDefinition &lookupTypeDef = prim.getTypeDef();
 
@@ -1127,6 +1135,30 @@ VRay::Plugin ObjectExporter::exportVRayProxyRef(OBJ_Node &objNode, const GU_Prim
 	const VRayProxyRef *vrayproxyref = UTverify_cast<const VRayProxyRef*>(prim.implementation());
 
 	UT_Options options = vrayproxyref->getOptions();
+	pluginExporter.setAttrsFromUTOptions(pluginDesc, options);
+
+	// Scale will be exported as primitive transform.
+	pluginDesc.remove("scale");
+
+	return pluginExporter.exportPlugin(pluginDesc);
+}
+
+VRay::Plugin ObjectExporter::exportVRaySceneRef(OBJ_Node &objNode, const GU_PrimPacked &prim)
+{
+	if (!doExportGeometry) {
+		return VRay::Plugin();
+	}
+
+	UT_String primname;
+	prim.getIntrinsic(prim.findIntrinsic(intrPackedPrimitiveName), primname);
+
+	const int key = getPrimPackedID(prim);
+	Attrs::PluginDesc pluginDesc(boost::str(vrmeshNameFmt % key % primname.buffer()),
+		"GeomMeshFile");
+
+	const VRaySceneRef *vraysceneref = UTverify_cast<const VRaySceneRef*>(prim.implementation());
+
+	UT_Options options = vraysceneref->getOptions();
 	pluginExporter.setAttrsFromUTOptions(pluginDesc, options);
 
 	// Scale will be exported as primitive transform.

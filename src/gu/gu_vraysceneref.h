@@ -11,7 +11,8 @@
 #ifndef VRAY_FOR_HOUDINI_VRAYSCENEREF_H
 #define VRAY_FOR_HOUDINI_VRAYSCENEREF_H
 
-#include "systemstuff.h"
+#include "vfh_vray.h"
+#include "vfh_vrayproxyutils.h"
 #include "GU/GU_PackedImpl.h"
 
 namespace VRayForHoudini {
@@ -42,8 +43,7 @@ public:
 	virtual void clearData() VRAY_OVERRIDE;
 
 	/// Give a UT_Options of load data, create resolver data for the primitive
-	virtual bool load(const UT_Options &options,
-		const GA_LoadMap &map) VRAY_OVERRIDE;
+	virtual bool load(const UT_Options &options, const GA_LoadMap &map) VRAY_OVERRIDE;
 	
 	/// Depending on the update, the procedural should call one of:
 	///	- transformDirty()
@@ -64,8 +64,7 @@ public:
 
 	/// When rendering with velocity blur, the renderer needs to know the
 	/// bounds on velocity to accurately compute the bounding box.
-	virtual void getVelocityRange(UT_Vector3 &min,
-		UT_Vector3 &max) const VRAY_OVERRIDE;
+	virtual void getVelocityRange(UT_Vector3 &min, UT_Vector3 &max) const VRAY_OVERRIDE;
 
 	/// When rendering points or curves, the renderer needs to know the bounds
 	/// on the width attribute to accurately compute the bounding box.
@@ -81,6 +80,12 @@ public:
 	/// NOTE: There's nothing outside of sizeof(*this) to count in the
 	///       base class, so it can be pure virtual.
 	virtual void countMemory(UT_MemoryCounter &counter, bool inclusive) const VRAY_OVERRIDE;
+
+public:
+	const UT_Options& getOptions() const
+	{
+		return m_options;
+	}
 
 private:
 	void clearDetail();
