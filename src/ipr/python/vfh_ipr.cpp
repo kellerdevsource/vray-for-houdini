@@ -213,6 +213,27 @@ static void onVFBClosed(VRay::VRayRenderer&, void*)
 	freeExporter();
 }
 
+static void fillRenderRegionFromDict(PyObject *viewParamsDict, ViewParams &viewParams)
+{
+	if (!viewParamsDict)
+		return;
+	if (!PyDict_Check(viewParamsDict))
+		return;
+
+	const float cropLeft   = getFloat(viewParamsDict, "cropl", 0.0f);
+	const float cropRight  = getFloat(viewParamsDict, "cropr", 1.0f);
+	const float cropBottom = getFloat(viewParamsDict, "cropb", 0.0f);
+	const float cropTop    = getFloat(viewParamsDict, "cropt", 1.0f);
+
+	const int resX = viewParams.renderSize.w;
+	const int resY = viewParams.renderSize.h;
+
+	viewParams.cropRegion.x = resX * cropLeft;
+	viewParams.cropRegion.y = resY * (1.0f - cropTop);
+	viewParams.cropRegion.width  = resX * (cropRight - cropLeft);
+	viewParams.cropRegion.height = resY * (cropTop - cropBottom);
+}
+
 static void fillViewParamsFromDict(PyObject *viewParamsDict, ViewParams &viewParams)
 {
 	if (!viewParamsDict)
@@ -223,29 +244,14 @@ static void fillViewParamsFromDict(PyObject *viewParamsDict, ViewParams &viewPar
 	PyObject *transform = PyDict_GetItemString(viewParamsDict, "transform");
 	PyObject *res = PyDict_GetItemString(viewParamsDict, "res");
 
-	const int ortho = getInt(viewParamsDict, "ortho", 0);
-
-	const float cropLeft   = getFloat(viewParamsDict, "cropl", 0.0f);
-	const float cropRight  = getFloat(viewParamsDict, "cropr", 1.0f);
-	const float cropBottom = getFloat(viewParamsDict, "cropb", 0.0f);
-	const float cropTop    = getFloat(viewParamsDict, "cropt", 1.0f);
-
 	const float aperture = getFloat(viewParamsDict, "aperture", 41.4214f);
 	const float focal = getFloat(viewParamsDict, "focal", 50.0f);
 
-	const int resX = getInt(res, 0);
-	const int resY = getInt(res, 1);
-
 	viewParams.renderView.fov = getFov(aperture, focal);
-	viewParams.renderView.ortho = ortho;
+	viewParams.renderView.ortho = getInt(viewParamsDict, "ortho", 0);
 
-	viewParams.renderSize.w = resX;
-	viewParams.renderSize.h = resY;
-
-	viewParams.cropRegion.x = resX * cropLeft;
-	viewParams.cropRegion.y = resY * (1.0f - cropTop);
-	viewParams.cropRegion.width  = resX * (cropRight - cropLeft);
-	viewParams.cropRegion.height = resY * (cropTop - cropBottom);
+	viewParams.renderSize.w = getInt(res, 0);
+	viewParams.renderSize.h = getInt(res, 1);
 
 	if (transform &&
 		PyList_Check(transform) &&
@@ -297,12 +303,14 @@ static PyObject* vfhExportView(PyObject*, PyObject *args, PyObject *keywds)
 	}
 
 	ViewParams viewParams(cameraNode);
-	if (cameraNode && !cameraNode->getName().contains("ipr_camera")) {
+	if (cameraNode && cameraNode->getName().equal("ipr_camera")) {
 		exporter.fillViewParamFromCameraNode(*cameraNode, viewParams);
 	}
 	else {
 		fillViewParamsFromDict(viewParamsDict, viewParams);
 	}
+
+	fillRenderRegionFromDict(viewParamsDict, viewParams);
 
 	// Copy params; no const ref!
 	ViewParams oldViewParams = exporter.getViewParams();
