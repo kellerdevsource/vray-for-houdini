@@ -1,0 +1,9 @@
+parm {
+    name "output_channel"
+    label "output_channel"
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_label" "channel" }
+    parmtag { "vray_pluginattr" "render_channel" }
+    parmtag { "vray_type" "OutputPlugin" }
+    invisible
+}
