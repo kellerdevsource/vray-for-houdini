@@ -5,4 +5,5 @@
     parmtag	{ vray_plugin "UVWGenProjection" }
 
 #include "UVWGenProjectionParms.ds"
+#include "vfh_uvwgen_common.ds"
 }

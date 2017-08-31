@@ -24,10 +24,14 @@ parm {
 parm {
     NAMEM("wrap_u")
     label   "Wrap U"
-    type    integer
+    type    ordinal
     default { "0" }
     help    "0 - no wrapping, 1 - wrap, 2 - mirror tile"
-    range   { 0 64 }
+    menu {
+        0 "No Wrapping"
+        1 "Wrap"
+        2 "Mirror Tile"
+    }
     export  none
     parmtag { "cook_dependent" "1" }
     parmtag { "vray_plugin" "UVWGenObjectBBox" }
@@ -42,7 +46,11 @@ parm {
     type    integer
     default { "0" }
     help    "0 - no wrapping, 1 - wrap, 2 - mirror tile"
-    range   { 0 64 }
+    menu {
+        0 "No Wrapping"
+        1 "Wrap"
+        2 "Mirror Tile"
+    }
     export  none
     parmtag { "cook_dependent" "1" }
     parmtag { "vray_plugin" "UVWGenObjectBBox" }
@@ -57,7 +65,11 @@ parm {
     type    integer
     default { "0" }
     help    "0 - no wrapping, 1 - wrap, 2 - mirror tile"
-    range   { 0 64 }
+    menu {
+        0 "No Wrapping"
+        1 "Wrap"
+        2 "Mirror Tile"
+    }
     export  none
     parmtag { "cook_dependent" "1" }
     parmtag { "vray_plugin" "UVWGenObjectBBox" }
@@ -68,10 +80,10 @@ parm {
 parm {
     NAMEM("crop_u")
     label   "Crop U"
-    type    integer
+    type    toggle
     default { "0" }
     help    "1 to crop in the u-direction"
-    range   { 0 64 }
+    range   { 0 1 }
     export  none
     parmtag { "cook_dependent" "1" }
     parmtag { "vray_plugin" "UVWGenObjectBBox" }
@@ -82,10 +94,10 @@ parm {
 parm {
     NAMEM("crop_v")
     label   "Crop V"
-    type    integer
+    type    toggle
     default { "0" }
     help    "1 to crop in the v-direction"
-    range   { 0 64 }
+    range   { 0 1 }
     export  none
     parmtag { "cook_dependent" "1" }
     parmtag { "vray_plugin" "UVWGenObjectBBox" }
@@ -96,10 +108,10 @@ parm {
 parm {
     NAMEM("crop_w")
     label   "Crop W"
-    type    integer
+    type    toggle
     default { "0" }
     help    "1 to crop in the w-direction"
-    range   { 0 64 }
+    range   { 0 1 }
     export  none
     parmtag { "cook_dependent" "1" }
     parmtag { "vray_plugin" "UVWGenObjectBBox" }
@@ -114,7 +126,7 @@ parm {
     size    3
     default { "1" "1" "1" }
     help    "Coverage"
-    range   { 0 10 }
+    range   { 0 1 }
     export  none
     parmtag { "cook_dependent" "1" }
     parmtag { "vray_plugin" "UVWGenObjectBBox" }

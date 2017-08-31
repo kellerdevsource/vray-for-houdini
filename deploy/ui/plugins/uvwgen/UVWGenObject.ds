@@ -5,4 +5,5 @@
     parmtag	{ vray_plugin "UVWGenObject" }
 
 #include "UVWGenObjectParms.ds"
+#include "vfh_uvwgen_common.ds"
 }

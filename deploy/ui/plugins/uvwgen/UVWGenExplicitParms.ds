@@ -12,7 +12,7 @@ parm {
     type    float
     default { "1" }
     help    "the U input"
-    range   { 0 64 }
+    range   { 0 2 }
     export  none
     parmtag { "cook_dependent" "1" }
     parmtag { "vray_plugin" "UVWGenExplicit" }
@@ -26,7 +26,7 @@ parm {
     type    float
     default { "1" }
     help    "the V input"
-    range   { 0 64 }
+    range   { 0 2 }
     export  none
     parmtag { "cook_dependent" "1" }
     parmtag { "vray_plugin" "UVWGenExplicit" }
@@ -40,7 +40,7 @@ parm {
     type    float
     default { "1" }
     help    "the W input"
-    range   { 0 64 }
+    range   { 0 2 }
     export  none
     parmtag { "cook_dependent" "1" }
     parmtag { "vray_plugin" "UVWGenExplicit" }
