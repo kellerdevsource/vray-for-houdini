@@ -154,10 +154,6 @@ void VRayExporter::fillViewParamFromCameraNode(const OBJ_Node &camera, ViewParam
 	viewParams.renderView.fov = fov;
 	viewParams.renderView.tm = getObjTransform(camera.castToOBJNode(), m_context);
 
-	if (!viewParams.renderView.fovOverride) {
-		aspectCorrectFovOrtho(viewParams);
-	}
-
 	viewParams.renderView.stereoParams.use = Parm::getParmInt(*m_rop, "VRayStereoscopicSettings_use");
 	viewParams.renderView.stereoParams.stereo_eye_distance       = Parm::getParmFloat(*m_rop, "VRayStereoscopicSettings_eye_distance");
 	viewParams.renderView.stereoParams.stereo_interocular_method = Parm::getParmInt(*m_rop,   "VRayStereoscopicSettings_interocular_method");
