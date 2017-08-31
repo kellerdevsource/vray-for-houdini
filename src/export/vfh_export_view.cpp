@@ -399,7 +399,9 @@ int VRayExporter::exportView()
 	if (!camera)
 		return 1;
 
-	addOpCallback(camera, RtCallbackView);
+	if (m_isIPR != iprModeSOHO) {
+		addOpCallback(camera, RtCallbackView);
+	}
 	addOpCallback(m_rop, RtCallbackView);
 
 	ViewParams viewParams(camera);
