@@ -358,11 +358,10 @@ public:
 	/// Get vfh plugin renderer
 	VRayPluginRenderer& getRenderer() { return m_renderer; }
 
-	/// Get the V-Ray ROP bound to this exporter
-	OP_Node& getRop() const { return *m_rop; }
-
 	/// Set the V-Rap ROP bound to this exporter
-	void setROP(OP_Node &value) { m_rop = &value; }
+	void setRopPtr(OP_Node *value) { m_rop = value; }
+
+	OP_Node* getRopPtr() { return m_rop; }
 
 	/// Get pointer to the bound V-Ray ROP
 	const OP_Node * getRopPtr() const { return m_rop; }

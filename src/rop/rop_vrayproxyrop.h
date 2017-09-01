@@ -101,7 +101,7 @@ private:
 	/// @retval true if no errors occur
 	int getExportOptions(fpreal time, VRayProxyExportOptions &options) const;
 
-	VUtils::ErrorCode doExport(const SOPList &sopList) const;
+	VUtils::ErrorCode doExport(const SOPList &sopList);
 
 	VRayProxyExportOptions  m_options; ///< export options to configure .vrmesh exporter
 	SOPList m_sopList; ///< list with geometry that should be exported
