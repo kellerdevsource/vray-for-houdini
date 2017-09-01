@@ -689,8 +689,8 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 	// NOTE: we are exporting animation related properties in frames
 	// and compensating for this by setting SettingsUnitsInfo::seconds_scale
 	// i.e. scaling V-Ray time unit (see function exportSettings())
-	fpreal animStart = CAST_ROPNODE(m_rop)->FSTART();
-	fpreal animEnd = CAST_ROPNODE(m_rop)->FEND();
+	const fpreal animStart = CAST_ROPNODE(m_rop)->FSTART();
+	const fpreal animEnd = CAST_ROPNODE(m_rop)->FEND();
 	VRay::VUtils::ValueRefList frames(1);
 	frames[0].setDouble(animStart);
 	if (m_frames > 1) {
@@ -705,6 +705,15 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 			frameRange[0].setDouble(animStart);
 			frameRange[1].setDouble(animEnd);
 			frames[0].setList(frameRange);
+		}
+	}
+
+	if (imgFormat == imageFormatOpenEXR ||
+		imgFormat == imageFormatVRayImage)
+	{
+		const int relementsSeparateFiles = m_rop->evalInt("SettingsOutput_relements_separateFiles", 0, t);
+		if (relementsSeparateFiles == 0) {
+			pluginDesc.addAttribute(Attrs::PluginAttr("img_rawFile", 1));
 		}
 	}
 
