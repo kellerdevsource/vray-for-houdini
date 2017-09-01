@@ -154,6 +154,8 @@ void VRayExporter::fillViewParamFromCameraNode(const OBJ_Node &camera, ViewParam
 	viewParams.renderView.fov = fov;
 	viewParams.renderView.tm = getObjTransform(camera.castToOBJNode(), m_context);
 
+	// TODO: Correct FOV with "winres"
+
 	const float cropLeft   = camera.evalFloat("cropl", 0, t);
 	const float cropRight  = camera.evalFloat("cropr", 0, t);
 	const float cropBottom = camera.evalFloat("cropb", 0, t);
