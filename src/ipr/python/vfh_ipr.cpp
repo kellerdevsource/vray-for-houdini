@@ -267,6 +267,27 @@ static void fillViewParamsFromDict(PyObject *viewParamsDict, ViewParams &viewPar
 	}
 }
 
+static void fillViewParams(VRayExporter &exporter, PyObject *viewParamsDict, ViewParams &viewParams)
+{
+	const char *camera = PyString_AsString(PyDict_GetItemString(viewParamsDict, "camera"));
+
+	OBJ_Node *cameraNode = nullptr;
+	if (UTisstring(camera)) {
+		cameraNode = CAST_OBJNODE(getOpNodeFromPath(camera));
+	}
+
+	viewParams.setCamera(cameraNode);
+
+	if (cameraNode && cameraNode->getName().equal("ipr_camera")) {
+		exporter.fillViewParamFromCameraNode(*cameraNode, viewParams);
+	}
+	else {
+		fillViewParamsFromDict(viewParamsDict, viewParams);
+	}
+
+	fillRenderRegionFromDict(viewParamsDict, viewParams);
+}
+
 static PyObject* vfhExportView(PyObject*, PyObject *args, PyObject *keywds)
 {
 	PyObject *viewParamsDict = nullptr;
@@ -295,22 +316,8 @@ static PyObject* vfhExportView(PyObject*, PyObject *args, PyObject *keywds)
 
 	VRayExporter &exporter = lock.getExporter();
 
-	const char *camera = PyString_AsString(PyDict_GetItemString(viewParamsDict, "camera"));
-
-	OBJ_Node *cameraNode = nullptr;
-	if (UTisstring(camera)) {
-		cameraNode = CAST_OBJNODE(getOpNodeFromPath(camera));
-	}
-
-	ViewParams viewParams(cameraNode);
-	if (cameraNode && cameraNode->getName().equal("ipr_camera")) {
-		exporter.fillViewParamFromCameraNode(*cameraNode, viewParams);
-	}
-	else {
-		fillViewParamsFromDict(viewParamsDict, viewParams);
-	}
-
-	fillRenderRegionFromDict(viewParamsDict, viewParams);
+	ViewParams viewParams;
+	fillViewParams(exporter, viewParamsDict, viewParams);
 
 	// Copy params; no const ref!
 	ViewParams oldViewParams = exporter.getViewParams();
@@ -325,6 +332,7 @@ static PyObject* vfhExportView(PyObject*, PyObject *args, PyObject *keywds)
 			initImdisplay(exporter.getRenderer().getVRay());
 		}
 	}
+
 	Py_RETURN_NONE;
 }
 
@@ -467,30 +475,22 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 		const IPROutput iprOutput =
 			static_cast<IPROutput>(ropNode->evalInt("render_rt_output", 0, 0.0));
 
-		const int iprModeMenu = ropNode->evalInt("render_rt_update_mode", 0, 0.0);
-		const VRayExporter::IprMode iprMode = iprModeMenu == 0 ? VRayExporter::iprModeRT : VRayExporter::iprModeSOHO;
-
 		const int isRenderView = iprOutput == iprOutputRenderView;
 		const int isVFB = iprOutput == iprOutputVFB;
-
-
 
 		if (WithExporter lk{}) {
 			VRayExporter &exporter = lk.getExporter();
 			exporter.setROP(*ropNode);
-			exporter.setIPR(iprMode);
+			exporter.setIPR(VRayExporter::iprModeSOHO);
 			if (!exporter.initRenderer(isVFB, false)) {
 				Py_RETURN_NONE;
 			}
 		}
 
-		ViewParams viewParams;
 		if (WithExporter lk{}) {
 			VRayExporter &exporter = lk.getExporter();
-			fillViewParamsFromDict(viewParamsDict, viewParams);
 
 			exporter.setDRSettings();
-
 			exporter.setRendererMode(getRendererIprMode(*ropNode));
 			exporter.setWorkMode(getExporterWorkMode(*ropNode));
 		}
@@ -521,7 +521,11 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 		if (WithExporter lk{}) {
 			VRayExporter &exporter = lk.getExporter();
 			if (exporter.exportSettings() == ReturnValue::Success) {
+				ViewParams viewParams;
+				fillViewParamsFromDict(viewParamsDict, viewParams);
+				fillRenderRegionFromDict(viewParamsDict, viewParams);
 				exporter.exportView(viewParams);
+
 				exporter.exportScene();
 				exporter.renderFrame();
 				initImdisplay(exporter.getRenderer().getVRay());
