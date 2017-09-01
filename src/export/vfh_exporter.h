@@ -361,6 +361,7 @@ public:
 	/// Set the V-Rap ROP bound to this exporter
 	void setRopPtr(OP_Node *value) { m_rop = value; }
 
+	/// Get pointer to the bound V-Ray ROP
 	OP_Node* getRopPtr() { return m_rop; }
 
 	/// Get pointer to the bound V-Ray ROP

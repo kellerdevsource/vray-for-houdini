@@ -124,7 +124,8 @@ public:
 	{}
 
 	void setContext(const VRayOpContext &value) { pluginExporter.setContext(value); }
-
+	
+	/// Get the underlying pluginExporter
 	VRayExporterProxy &getPluginExporter() { return pluginExporter; }
 private:
 	VRayExporterProxy pluginExporter;
