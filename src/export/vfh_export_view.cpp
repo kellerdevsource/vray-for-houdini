@@ -382,16 +382,16 @@ ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 	getRenderer().commit();
 	getRenderer().setAutoCommit(prevAutoCommit);
 
+	if (m_viewParams.changedSize(viewParams)) {
+		setRenderSize(viewParams.renderSize.w, viewParams.renderSize.h);
+	}
+
 	if (m_viewParams.changedCropRegion(viewParams)) {
 		getRenderer().getVRay().setRenderRegion(
 			viewParams.cropRegion.x,
 			viewParams.cropRegion.y,
 			viewParams.cropRegion.width,
 			viewParams.cropRegion.height);
-	}
-
-	if (m_viewParams.changedSize(viewParams)) {
-		setRenderSize(viewParams.renderSize.w, viewParams.renderSize.h);
 	}
 
 	// Store new params
