@@ -10,7 +10,6 @@
 #   http://www.sidefx.com/docs/hdk15.5/_h_d_k__s_o_h_o.html
 #
 
-
 import traceback
 
 def main():
