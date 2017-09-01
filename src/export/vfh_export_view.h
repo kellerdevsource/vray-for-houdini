@@ -146,6 +146,8 @@ struct ViewParams {
 	int               needReset(const ViewParams &other) const;
 	int               changedCropRegion(const ViewParams &other) const;
 
+	void setCamera(OBJ_Node *camera) { cameraObject = camera; }
+
 	RenderSizeParams  renderSize;
 	RenderViewParams  renderView;
 	RenderCropRegionParams cropRegion;

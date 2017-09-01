@@ -1384,8 +1384,7 @@ void VRayExporter::resetOpCallbacks()
 
 void VRayExporter::addOpCallback(OP_Node *op_node, OP_EventMethod cb)
 {
-	// Install callbacks only for interactive session
-	if (isIPR() != iprModeRT)
+	if (!m_isIPR)
 		return;
 
 	if (!op_node->hasOpInterest(this, cb)) {
