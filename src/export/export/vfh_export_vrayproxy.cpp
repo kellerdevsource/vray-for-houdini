@@ -87,8 +87,9 @@ const Attrs::PluginAttr& GeometryDescription::getAttr(const char *attrName) cons
 	return *attr;
 }
 
-VRayProxyExporter::VRayProxyExporter(const VRayProxyExportOptions &options, const SOPList &sopList)
+VRayProxyExporter::VRayProxyExporter(const VRayProxyExportOptions &options, const SOPList &sopList, ROP_Node *ropNode)
 	: sopList(sopList)
+	, m_rop(ropNode)
 	, m_options(options)
 	, m_previewVerts(nullptr)
 	, m_previewFaces(nullptr)
@@ -136,6 +137,7 @@ VUtils::ErrorCode VRayProxyExporter::init()
 
 	VRayProxyObjectExporter objectExporter(geometryDescriptions);
 	objectExporter.setContext(ctx);
+	objectExporter.getPluginExporter().setRopPtr(m_rop);
 
 	for (int i = 0; i < sopList.size(); ++i) {
 		SOP_Node *sopNode = sopList(i);
@@ -187,7 +189,7 @@ void VRayProxyExporter::cleanup()
 
 static VUtils::ErrorCode _doExport(VRayProxyExportOptions &options, const SOPList &sopList)
 {
-	VRayProxyExporter exporter(options, sopList);
+	VRayProxyExporter exporter(options, sopList, nullptr);
 
 	VUtils::ErrorCode err = exporter.init();
 	if (!err.error()) {

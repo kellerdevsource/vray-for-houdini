@@ -480,7 +480,7 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 
 		if (WithExporter lk{}) {
 			VRayExporter &exporter = lk.getExporter();
-			exporter.setROP(*ropNode);
+			exporter.setRopPtr(ropNode);
 			exporter.setIPR(VRayExporter::iprModeSOHO);
 			if (!exporter.initRenderer(isVFB, false)) {
 				Py_RETURN_NONE;
