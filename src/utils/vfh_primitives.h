@@ -145,8 +145,8 @@ inline GU_PackedImpl::F64VectorGetter PackedImplGetterCast(GU_PackedFactory * se
 // $type get_$name() const { ... } // returns the default if $name is not previously set
 #define VFH_ACCESSORS(r, state) \
 	VFH_CURRENT_TYPE(state) VFH_TOKENIZE2(get_, VFH_CURRENT_NAME(state))() const {\
-		const char * _name = VFH_STRINGIZE(VFH_CURRENT_NAME(state));\
-		return m_options.hasOption(_name) ? VRayForHoudini::UT_Options_getter<VFH_CURRENT_TYPE(state)>(m_options, _name) : VFH_CURRENT_DEFAULT(state);\
+		const char * name = VFH_STRINGIZE(VFH_CURRENT_NAME(state));\
+		return m_options.hasOption(name) ? VRayForHoudini::UT_Options_getter<VFH_CURRENT_TYPE(state)>(m_options, name) : VFH_CURRENT_DEFAULT(state);\
 	} \
 	void VFH_TOKENIZE2(set_, VFH_CURRENT_NAME(state))(VFH_CURRENT_TYPE(state) val) {\
 		VRayForHoudini::UT_Options_setter<VFH_CURRENT_TYPE(state)>(m_options, VFH_STRINGIZE(VFH_CURRENT_NAME(state)), val);\
@@ -160,15 +160,15 @@ inline GU_PackedImpl::F64VectorGetter PackedImplGetterCast(GU_PackedFactory * se
 		return val;\
 	}\
 	void VFH_TOKENIZE2(_get_, VFH_CURRENT_NAME(state))(VFH_CURRENT_TYPE(state) & val) const {\
-		const char * _name = VFH_STRINGIZE(VFH_CURRENT_NAME(state));\
-		val =  m_options.hasOption(_name) ? VRayForHoudini::UT_Options_getter<VFH_CURRENT_TYPE(state)>(m_options, _name) : VFH_CURRENT_DEFAULT(state);\
+		const char * name = VFH_STRINGIZE(VFH_CURRENT_NAME(state));\
+		val =  m_options.hasOption(name) ? VRayForHoudini::UT_Options_getter<VFH_CURRENT_TYPE(state)>(m_options, name) : VFH_CURRENT_DEFAULT(state);\
 	}\
 	void VFH_TOKENIZE2(set_, VFH_CURRENT_NAME(state))(const VFH_CURRENT_TYPE(state) & val) {\
 		VRayForHoudini::UT_Options_setter<VFH_CURRENT_TYPE(state)>(m_options, VFH_STRINGIZE(VFH_CURRENT_NAME(state)), val);\
 	}\
 	exint VFH_TOKENIZE3(get_, VFH_CURRENT_NAME(state), _size)() const {\
-		const char * _name = VFH_STRINGIZE(VFH_CURRENT_NAME(state));\
-		return m_options.hasOption(_name) ? VRayForHoudini::UT_Options_getter<VFH_CURRENT_TYPE(state)>(m_options, _name).size() : 0;\
+		const char * name = VFH_STRINGIZE(VFH_CURRENT_NAME(state));\
+		return m_options.hasOption(name) ? VRayForHoudini::UT_Options_getter<VFH_CURRENT_TYPE(state)>(m_options, name).size() : 0;\
 	}
 
 // generates register call for the current paramter
