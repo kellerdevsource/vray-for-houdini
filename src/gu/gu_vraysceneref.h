@@ -12,10 +12,69 @@
 #define VRAY_FOR_HOUDINI_VRAYSCENEREF_H
 
 #include "vfh_vray.h"
-#include "vfh_vrayproxyutils.h"
+#include "vfh_primitives.h"
 #include "GU/GU_PackedImpl.h"
 
 namespace VRayForHoudini {
+
+#define VFH_VRAY_SCENE_PARAMS_COUNT 47
+#define VFH_VRAY_SCENE_PARAMS (\
+	(const char *, filepath, ""),\
+	(bool, add_nodes, true),\
+	(bool, add_lights, true),\
+	(bool, anim_override, false),\
+	(fpreal, anim_speed, 1),\
+	(exint, anim_type, 0),\
+	(fpreal, anim_offset, 0),\
+	(exint, anim_start, 0),\
+	(exint, anim_length, 0),\
+	(const char *, material_override, ""),\
+	(bool, disable, false),\
+	(exint, objectID, -1),\
+	(bool, mw_use, false),\
+	(bool, mw_use_irrad_map, true),\
+	(fpreal, mw_generate_gi, 1),\
+	(fpreal, mw_receive_gi, 1),\
+	(fpreal, mw_generate_caustics, 1),\
+	(fpreal, mw_receive_caustics, 1),\
+	(fpreal, mw_alpha_contribution, 1),\
+	(bool, mw_matte_surface, false),\
+	(bool, mw_shadows, false),\
+	(bool, mw_affect_alpha, false),\
+	(fpreal, mw_shadow_brightness, 1),\
+	(fpreal, mw_reflectio_amount, 1),\
+	(fpreal, mw_refraction_amount, 1),\
+	(fpreal, mw_gi_amount, 1),\
+	(bool, mw_no_gi_on_other_mattes, true),\
+	(bool, mw_matte_for_secondary_rays, 0),\
+	(exint, mw_gi_surface_id, 0),\
+	(fpreal, mw_gi_quality_multiplier, 1),\
+	(bool, mw_maya_background_shader_compability, false),\
+	(exint, mw_trace_depth, -1),\
+	(bool, mw_generate_render_elements, true),\
+	(bool, mw_reflection_list_is_inclusive, false),\
+	(bool, mw_refraction_list_is_inclusive, false),\
+	(bool, mrs_use, false),\
+	(bool, mrs_camera_visibility, true),\
+	(bool, mrs_reflections_visibility, true),\
+	(bool, mrs_refraction_visibility, true),\
+	(bool, mrs_gi_visibility, true),\
+	(bool, mrs_shadows_visibility, true),\
+	(bool, mrs_shadows_receive, true),\
+	(fpreal, mrs_visibility, 1),\
+	(exint, flip_axis, 0),\
+	(bool, use_overrides, false),\
+	(const char *, override_snippet, ""),\
+	(const char *, override_filepath, "")\
+)
+
+#define VFH_VRAY_SCENE_PARAMS_TUPLES_COUNT 4
+#define VFH_VRAY_SCENE_PARAMS_TUPLES (\
+	(UT_StringArray, hidden_objects, UT_StringArray()),\
+	(UT_StringArray, mw_channels, UT_StringArray()),\
+	(UT_StringArray, mw_reflection_exclude, UT_StringArray()),\
+	(UT_StringArray, mw_refraction_exclude, UT_StringArray())\
+)
 
 // Represents VRayScene file
 // Implemented as a packed primitive
@@ -81,6 +140,10 @@ public:
 	///       base class, so it can be pure virtual.
 	virtual void countMemory(UT_MemoryCounter &counter, bool inclusive) const VRAY_OVERRIDE;
 
+public:
+	VFH_MAKE_ACCESSORS(VFH_VRAY_SCENE_PARAMS, VFH_VRAY_SCENE_PARAMS_COUNT)
+	VFH_MAKE_ACCESSORS_TUPLE(VFH_VRAY_SCENE_PARAMS_TUPLES, VFH_VRAY_SCENE_PARAMS_TUPLES_COUNT)
+	
 public:
 	const UT_Options& getOptions() const
 	{

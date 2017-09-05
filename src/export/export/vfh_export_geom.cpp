@@ -1006,6 +1006,10 @@ int ObjectExporter::getPrimPackedID(const GU_PrimPacked &prim) const
 		const VRayProxyRef *vrayProxyRref = UTverify_cast<const VRayProxyRef*>(prim.implementation());
 		return vrayProxyRref->getOptions().hash();
 	}
+	if (primTypeID == primPackedTypeIDs.vraySceneRef) {
+		const VRaySceneRef *vraySceneRef = UTverify_cast<const VRaySceneRef*>(prim.implementation());
+		return vraySceneRef->getOptions().hash();
+	}
 	if (primTypeID == primPackedTypeIDs.packedGeometry) {
 		int geoID = -1;
 		prim.getIntrinsic(prim.findIntrinsic(intrGeometryID), geoID);
@@ -1153,16 +1157,14 @@ VRay::Plugin ObjectExporter::exportVRaySceneRef(OBJ_Node &objNode, const GU_Prim
 	prim.getIntrinsic(prim.findIntrinsic(intrPackedPrimitiveName), primname);
 
 	const int key = getPrimPackedID(prim);
-	Attrs::PluginDesc pluginDesc(boost::str(vrmeshNameFmt % key % primname.buffer()),
-		"GeomMeshFile");
+	Attrs::PluginDesc pluginDesc(boost::str(vrmeshNameFmt % key % primname.buffer()), "VRaySceneFile");
 
 	const VRaySceneRef *vraysceneref = UTverify_cast<const VRaySceneRef*>(prim.implementation());
 
 	UT_Options options = vraysceneref->getOptions();
 	pluginExporter.setAttrsFromUTOptions(pluginDesc, options);
 
-	// Scale will be exported as primitive transform.
-	pluginDesc.remove("scale");
+	pluginDesc.get("transform")->paramValue.valTransform = getTm();
 
 	return pluginExporter.exportPlugin(pluginDesc);
 }
