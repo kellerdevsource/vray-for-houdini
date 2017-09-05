@@ -49,28 +49,6 @@ groupsimple {
     }
 
     parm {
-        name "render_rt_output"
-        label "Output"
-        type ordinal
-        menu {
-            "0" "Render View"
-            "1" "VFB"
-        }
-        default { "0" }
-    }
-
-    parm {
-        name "render_rt_update_mode"
-        label "Callback"
-        type ordinal
-        menu {
-            "0" "Install Callbacks"
-            "1" "SOHO"
-        }
-        default { "0" }
-    }
-
-    parm {
         name "render_rt"
         label "Render RT"
         type button

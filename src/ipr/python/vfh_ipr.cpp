@@ -436,11 +436,6 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 		Py_RETURN_NONE;
 	}
 
-	enum IPROutput {
-		iprOutputRenderView = 0,
-		iprOutputVFB,
-	};
-
 	HOM_AutoLock autoLock;
 	
 	getImdisplay().setPort(port);
@@ -472,17 +467,12 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 			getImdisplay().init();
 			getImdisplay().restart();
 		}
-		const IPROutput iprOutput =
-			static_cast<IPROutput>(ropNode->evalInt("render_rt_output", 0, 0.0));
-
-		const int isRenderView = iprOutput == iprOutputRenderView;
-		const int isVFB = iprOutput == iprOutputVFB;
 
 		if (WithExporter lk{}) {
 			VRayExporter &exporter = lk.getExporter();
 			exporter.setRopPtr(ropNode);
 			exporter.setIPR(VRayExporter::iprModeSOHO);
-			if (!exporter.initRenderer(isVFB, false)) {
+			if (!exporter.initRenderer(false, false)) {
 				Py_RETURN_NONE;
 			}
 		}
@@ -497,18 +487,13 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 
 		if (WithExporter lk{}) {
 			VRayExporter &exporter = lk.getExporter();
-			exporter.getRenderer().showVFB(isVFB);
-			exporter.getRenderer().getVRay().setOnVFBClosed(isVFB ? onVFBClosed : nullptr);
-			exporter.getRenderer().getVRay().setOnImageReady(isRenderView ? onImageReady : nullptr);
-			exporter.getRenderer().getVRay().setOnRTImageUpdated(isRenderView ? onRTImageUpdated : nullptr);
-			exporter.getRenderer().getVRay().setOnBucketReady(isRenderView ? onBucketReady : nullptr);
+			exporter.getRenderer().getVRay().setOnImageReady(onImageReady);
+			exporter.getRenderer().getVRay().setOnRTImageUpdated(onRTImageUpdated);
+			exporter.getRenderer().getVRay().setOnBucketReady(onBucketReady);
 
-			exporter.getRenderer().getVRay().setKeepBucketsInCallback(isRenderView);
-			exporter.getRenderer().getVRay().setKeepRTframesInCallback(isRenderView);
-
-			if (isRenderView) {
-				exporter.getRenderer().getVRay().setRTImageUpdateTimeout(250);
-			}
+			exporter.getRenderer().getVRay().setKeepBucketsInCallback(true);
+			exporter.getRenderer().getVRay().setKeepRTframesInCallback(true);
+			exporter.getRenderer().getVRay().setRTImageUpdateTimeout(250);
 		}
 
 		if (WithExporter lk{}) {
