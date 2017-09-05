@@ -451,7 +451,12 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 	}
 
 	if (!procCheck) {
-		procCheck = makeProcessChecker(stopCallback->getCallableFunction(), "vfh_ipr.exe");
+#ifdef _WIN32
+		const char * ipr_proc_exe = "vfh_ipr.exe";
+#else
+		const char * ipr_proc_exe = "vfh_ipr";
+#endif
+		procCheck = makeProcessChecker(stopCallback->getCallableFunction(), ipr_proc_exe);
 	}
 	getImdisplay().setProcCheck(procCheck);
 	procCheck->stop();
