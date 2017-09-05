@@ -100,7 +100,7 @@ void Logger::writeMessages()
 			std::this_thread::sleep_for(std::chrono::milliseconds(1));
 		}
 		LogData data;
-		while (log.m_queue.pop(data)) {
+		while (!isStoppedLogger && log.m_queue.pop(data)) {
 			logMessage(data);
 		}
 	}
