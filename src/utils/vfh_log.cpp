@@ -127,8 +127,10 @@ void Logger::stopLogging()
 			std::lock_guard<std::mutex> lock(mtx);
 			isStoppedLogger = true;
 			if (loggerThread) {
-				loggerThread->terminate();
-				loggerThread->wait();
+				if (!loggerThread->wait(50)) {
+					loggerThread->terminate();
+					loggerThread->wait();
+				}
 				delete loggerThread;
 				loggerThread = nullptr;
 			}
