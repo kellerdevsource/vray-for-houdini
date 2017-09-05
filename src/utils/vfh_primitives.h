@@ -151,15 +151,12 @@ inline GU_PackedImpl::StringArrayGetter PackedImplGetterCast(GU_PackedFactory * 
 		VFH_TOKENIZE2(_, VFH_TOKENIZE2(get_, VFH_CURRENT_NAME(state)))(val);\
 		return val;\
 	}\
-	void VFH_TOKENIZE2(set_, VFH_CURRENT_NAME(state))(VFH_CURRENT_TYPE(state) val) {\
+	void VFH_TOKENIZE2(set_, VFH_CURRENT_NAME(state))(const VFH_CURRENT_TYPE(state) & val) {\
 		VRayForHoudini::UT_Options_setter<VFH_CURRENT_TYPE(state)>(m_options, VFH_STRINGIZE(VFH_CURRENT_NAME(state)), val);\
 	}\
 	exint VFH_TOKENIZE3(get_, VFH_CURRENT_NAME(state), _size)() const {\
 		const char * _name = VFH_STRINGIZE(VFH_CURRENT_NAME(state));\
 		return m_options.hasOption(_name) ? VRayForHoudini::UT_Options_getter<VFH_CURRENT_TYPE(state)>(m_options, _name).size() : 0;\
-	}\
-	void VFH_TOKENIZE2(_set_, VFH_CURRENT_NAME(state))(const VFH_CURRENT_TYPE(state) & val) {\
-		VRayForHoudini::UT_Options_setter<VFH_CURRENT_TYPE(state)>(m_options, VFH_STRINGIZE(VFH_CURRENT_NAME(state)), val);\
 	}\
 	void VFH_TOKENIZE2(_get_, VFH_CURRENT_NAME(state))(VFH_CURRENT_TYPE(state) & val) const {\
 		const char * _name = VFH_STRINGIZE(VFH_CURRENT_NAME(state));\
@@ -179,7 +176,7 @@ inline GU_PackedImpl::StringArrayGetter PackedImplGetterCast(GU_PackedFactory * 
 		VFH_STRINGIZE(VFH_CURRENT_NAME(state)),\
 		PackedImplGetterCast<VFH_PARAMS_CLASS(state)>(this, & VFH_PARAMS_CLASS(state) :: VFH_TOKENIZE3(get_, VFH_CURRENT_NAME(state), _size)),\
 		PackedImplGetterCast<VFH_PARAMS_CLASS(state)>(this, & VFH_PARAMS_CLASS(state) :: VFH_TOKENIZE2(_get_, VFH_CURRENT_NAME(state))),\
-		PackedImplSetterCast<VFH_PARAMS_CLASS(state)>(this, & VFH_PARAMS_CLASS(state) :: VFH_TOKENIZE2(_set_, VFH_CURRENT_NAME(state))));
+		PackedImplSetterCast<VFH_PARAMS_CLASS(state)>(this, & VFH_PARAMS_CLASS(state) :: VFH_TOKENIZE2(set_, VFH_CURRENT_NAME(state))));
 
 #define VFH_MAKE_REGISTERS(params, params_count, class_name) BOOST_PP_FOR((0, params, params_count, class_name), VFH_PRED, VFH_OP, VFH_REGISTERS)
 #define VFH_MAKE_REGISTERS_TUPLE(params, params_count, class_name) BOOST_PP_FOR((0, params, params_count, class_name), VFH_PRED, VFH_OP, VFH_REGISTERS_TUPLE)
