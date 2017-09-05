@@ -29,8 +29,6 @@ def main():
 
     from soho import SohoParm
 
-    RENDER_RT_MODE_SOHO = 1
-
     LogLevel = type('Enum', (), {'Msg':0, 'Info':1, 'Progress':2, 'Warning':3, 'Error':4, 'Debug':5})
 
     def logMessage(level, fmt, *args):
@@ -114,9 +112,6 @@ def main():
     ropPath = soho.getOutputDriver().getName()
     ropNode = hou.node(ropPath)
 
-    # Use callbacks or SOHO
-    render_rt_update_mode = hou.evalParm("render_rt_update_mode")
-
     printDebug("Initialize SOHO...")
 
     # Initialize SOHO with the camera.
@@ -183,17 +178,6 @@ def main():
         else:
             # Update view.
             exportView(ropPath, camera, sohoCam, now)
-
-            if render_rt_update_mode == RENDER_RT_MODE_SOHO:
-                exportObjects("objlist:dirtyinstance")
-                exportObjects("objlist:dirtylight")
-                # exportObjects("objlist:dirtyspace")
-                # exportObjects("objlist:dirtyfog")
-
-                deleteObjects("objlist:deletedinstance")
-                deleteObjects("objlist:deletedlight")
-                # deleteObjects("objlist:deletedspace")
-                # deleteObjects("objlist:deletedfog")
 
 try:
     main()
