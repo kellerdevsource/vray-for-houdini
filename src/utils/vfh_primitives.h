@@ -31,7 +31,6 @@ template <> inline void UT_Options_setter<UT_StringHolder>(UT_Options & opt, con
 template <> inline void UT_Options_setter<const char *>   (UT_Options & opt, const char * name, const char * const & val)    { opt.setOptionS(name, val); }
 template <> inline void UT_Options_setter<bool>           (UT_Options & opt, const char * name, const bool & val)            { opt.setOptionB(name, val); }
 template <> inline void UT_Options_setter<UT_StringArray> (UT_Options & opt, const char * name, const UT_StringArray & val)  { opt.setOptionSArray(name, val); }
-//template <> inline void UT_Options_setter<UT_Vector3D>    (UT_Options & opt, const char * name, const UT_Vector3D & val)     { opt.setOptionV3(name, val); }
  
 // setters
 template <typename T> T UT_Options_getter(const UT_Options & opt, const char * name);
@@ -42,7 +41,6 @@ template <> inline UT_StringHolder UT_Options_getter<UT_StringHolder>(const UT_O
 template <> inline const char *    UT_Options_getter<const char *>   (const UT_Options & opt, const char * name) { return opt.getOptionS(name).nonNullBuffer(); }
 template <> inline bool            UT_Options_getter<bool>           (const UT_Options & opt, const char * name) { return opt.getOptionB(name); }
 template <> inline UT_StringArray  UT_Options_getter<UT_StringArray> (const UT_Options & opt, const char * name) { return opt.getOptionSArray(name); }
-
 
 template <typename CLASS, typename T, typename Q>
 inline Q PackedImplSetterCast(GU_PackedFactory * self, void (CLASS::*method)(T));
@@ -70,6 +68,11 @@ inline GU_PackedImpl::BoolSetter PackedImplSetterCast(GU_PackedFactory * self, v
 template <typename CLASS>
 inline GU_PackedImpl::StringArraySetter PackedImplSetterCast(GU_PackedFactory * self, void (CLASS::*method)(const UT_StringArray &)) {
 	return self->StringArraySetterCast(method);
+}
+
+template <typename CLASS>
+inline GU_PackedImpl::F64VectorSetter PackedImplSetterCast(GU_PackedFactory * self, void (CLASS::*method)(const UT_Vector3D &)) {
+	return self->F64VectorSetter(method);
 }
 
 template <typename CLASS, typename T, typename Q>
@@ -100,8 +103,12 @@ inline GU_PackedImpl::StringArrayGetter PackedImplGetterCast(GU_PackedFactory * 
 	return self->StringArrayGetterCast(method);
 }
 
+template <typename CLASS>
+inline GU_PackedImpl::F64VectorGetter PackedImplGetterCast(GU_PackedFactory * self, void (CLASS::*method)(UT_Vector3D &) const) {
+	return self->F64VectorGetterCast(method);
 }
 
+}
 
 #define VFH_STRINGIZE_HELPER(name) #name
 #define VFH_STRINGIZE(name) VFH_STRINGIZE_HELPER(name)
@@ -145,11 +152,16 @@ inline GU_PackedImpl::StringArrayGetter PackedImplGetterCast(GU_PackedFactory * 
 		VRayForHoudini::UT_Options_setter<VFH_CURRENT_TYPE(state)>(m_options, VFH_STRINGIZE(VFH_CURRENT_NAME(state)), val);\
 	}
 
+// generates getter that returns by value, getter that returns by input argument, size of tuple getter and setter
 #define VFH_ACCESSORS_TUPLE(r, state) \
 	VFH_CURRENT_TYPE(state) VFH_TOKENIZE2(get_, VFH_CURRENT_NAME(state))() const {\
 		VFH_CURRENT_TYPE(state) val;\
-		VFH_TOKENIZE2(_, VFH_TOKENIZE2(get_, VFH_CURRENT_NAME(state)))(val);\
+		VFH_TOKENIZE2(_get_, VFH_CURRENT_NAME(state))(val);\
 		return val;\
+	}\
+	void VFH_TOKENIZE2(_get_, VFH_CURRENT_NAME(state))(VFH_CURRENT_TYPE(state) & val) const {\
+		const char * _name = VFH_STRINGIZE(VFH_CURRENT_NAME(state));\
+		val =  m_options.hasOption(_name) ? VRayForHoudini::UT_Options_getter<VFH_CURRENT_TYPE(state)>(m_options, _name) : VFH_CURRENT_DEFAULT(state);\
 	}\
 	void VFH_TOKENIZE2(set_, VFH_CURRENT_NAME(state))(const VFH_CURRENT_TYPE(state) & val) {\
 		VRayForHoudini::UT_Options_setter<VFH_CURRENT_TYPE(state)>(m_options, VFH_STRINGIZE(VFH_CURRENT_NAME(state)), val);\
@@ -157,11 +169,7 @@ inline GU_PackedImpl::StringArrayGetter PackedImplGetterCast(GU_PackedFactory * 
 	exint VFH_TOKENIZE3(get_, VFH_CURRENT_NAME(state), _size)() const {\
 		const char * _name = VFH_STRINGIZE(VFH_CURRENT_NAME(state));\
 		return m_options.hasOption(_name) ? VRayForHoudini::UT_Options_getter<VFH_CURRENT_TYPE(state)>(m_options, _name).size() : 0;\
-	}\
-	void VFH_TOKENIZE2(_get_, VFH_CURRENT_NAME(state))(VFH_CURRENT_TYPE(state) & val) const {\
-		const char * _name = VFH_STRINGIZE(VFH_CURRENT_NAME(state));\
-		val =  m_options.hasOption(_name) ? VRayForHoudini::UT_Options_getter<VFH_CURRENT_TYPE(state)>(m_options, _name) : VFH_CURRENT_DEFAULT(state);\
-	}\
+	}
 
 // generates register call for the current paramter
 // use the passed class_name to find the appropriate setter and getter

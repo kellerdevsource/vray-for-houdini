@@ -141,8 +141,34 @@ public:
 	virtual void countMemory(UT_MemoryCounter &counter, bool inclusive) const VRAY_OVERRIDE;
 
 public:
-	VFH_MAKE_ACCESSORS(VFH_VRAY_SCENE_PARAMS, VFH_VRAY_SCENE_PARAMS_COUNT)
-	VFH_MAKE_ACCESSORS_TUPLE(VFH_VRAY_SCENE_PARAMS_TUPLES, VFH_VRAY_SCENE_PARAMS_TUPLES_COUNT)
+	VFH_MAKE_ACCESSORS(VFH_VRAY_SCENE_PARAMS, VFH_VRAY_SCENE_PARAMS_COUNT);
+	VFH_MAKE_ACCESSORS_TUPLE(VFH_VRAY_SCENE_PARAMS_TUPLES, VFH_VRAY_SCENE_PARAMS_TUPLES_COUNT);
+
+	UT_Vector3D get_mw_shadow_tint_color() const
+	{
+		fpreal64 v[3];
+		_get_mw_shadow_tint_color(v, 3);
+		return UT_Vector3D(v[0], v[1], v[2]);
+	}
+	void _get_mw_shadow_tint_color(fpreal64 * v, exint size) const
+	{
+		const char * name = "mw_shadow_tint_color";
+		UT_Vector3D val = m_options.hasOption(name) ? m_options.getOptionV3(name) : UT_Vector3D();
+		v[0] = val[0]; v[1] = val[1]; v[2] = val[2];
+	}
+	exint get_mw_shadow_tint_color_size() const
+	{
+		const char * name = "mw_shadow_tint_color";
+		return m_options.hasOption(name) ? m_options.getOptionV3(name).theSize : 0;
+	}
+	void set_mw_shadow_tint_color(const UT_Vector3D & val)
+	{
+		m_options.setOptionV3("mw_shadow_tint_color", val);
+	}
+	void _set_mw_shadow_tint_color(const fpreal64 * v, exint size)
+	{
+		m_options.setOptionV3("mw_shadow_tint_color", v[0], v[1], v[2]);
+	}
 	
 public:
 	const UT_Options& getOptions() const

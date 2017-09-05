@@ -31,6 +31,13 @@ VRaySceneFactory::VRaySceneFactory() :
 {
 	VFH_MAKE_REGISTERS(VFH_VRAY_SCENE_PARAMS, VFH_VRAY_SCENE_PARAMS_COUNT, VRaySceneRef)
 	VFH_MAKE_REGISTERS_TUPLE(VFH_VRAY_SCENE_PARAMS_TUPLES, VFH_VRAY_SCENE_PARAMS_TUPLES_COUNT, VRaySceneRef)
+
+	registerTupleIntrinsic(
+		"mw_shadow_tint_color",
+		IntGetterCast(&VRaySceneRef::get_mw_shadow_tint_color_size),
+		F64VectorGetterCast(&VRaySceneRef::_get_mw_shadow_tint_color),
+		F64VectorSetterCast(&VRaySceneRef::_set_mw_shadow_tint_color)
+	);
 }
 
 VRaySceneRef::VRaySceneRef():
