@@ -164,7 +164,7 @@ void Logger::valog(LogLevel level, const char *format, va_list args)
 			}
 			std::this_thread::yield();
 		}
-		// 10 spins did not work - try sleep for 5ms
+		// 10 spins did not work - try sleep for 10ms
 		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 		if (!m_queue.bounded_push(data)) {
 			// just log the message from this thread
