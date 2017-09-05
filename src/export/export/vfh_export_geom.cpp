@@ -1157,7 +1157,7 @@ VRay::Plugin ObjectExporter::exportVRaySceneRef(OBJ_Node &objNode, const GU_Prim
 	prim.getIntrinsic(prim.findIntrinsic(intrPackedPrimitiveName), primname);
 
 	const int key = getPrimPackedID(prim);
-	Attrs::PluginDesc pluginDesc(boost::str(vrmeshNameFmt % key % primname.buffer()), "VRaySceneFile");
+	Attrs::PluginDesc pluginDesc(boost::str(vrmeshNameFmt % key % primname.buffer()), "VRayScene");
 
 	const VRaySceneRef *vraysceneref = UTverify_cast<const VRaySceneRef*>(prim.implementation());
 
