@@ -7,6 +7,8 @@
 
 using namespace VRayForHoudini;
 
+const char * VRaySceneRef::mw_shadow_tint_color_param_name = "mw_shadow_tint_color";
+
 class VRaySceneFactory
 	: public GU_PackedFactory
 {
@@ -33,7 +35,7 @@ VRaySceneFactory::VRaySceneFactory() :
 	VFH_MAKE_REGISTERS_TUPLE(VFH_VRAY_SCENE_PARAMS_TUPLES, VFH_VRAY_SCENE_PARAMS_TUPLES_COUNT, VRaySceneRef)
 
 	registerTupleIntrinsic(
-		"mw_shadow_tint_color",
+		VRaySceneRef::mw_shadow_tint_color_param_name,
 		IntGetterCast(&VRaySceneRef::get_mw_shadow_tint_color_size),
 		F64VectorGetterCast(&VRaySceneRef::_get_mw_shadow_tint_color),
 		F64VectorSetterCast(&VRaySceneRef::_set_mw_shadow_tint_color)

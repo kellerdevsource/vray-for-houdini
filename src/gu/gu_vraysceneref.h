@@ -82,6 +82,9 @@ class VRaySceneRef :
 	public GU_PackedImpl
 {
 public:
+	static const char * mw_shadow_tint_color_param_name;
+
+public:
 	VRaySceneRef();
 	VRaySceneRef(const VRaySceneRef &src);
 	virtual ~VRaySceneRef();
@@ -152,22 +155,22 @@ public:
 	}
 	void _get_mw_shadow_tint_color(fpreal64 * v, exint size) const
 	{
-		const char * name = "mw_shadow_tint_color";
-		UT_Vector3D val = m_options.hasOption(name) ? m_options.getOptionV3(name) : UT_Vector3D();
+		UT_Vector3D val = m_options.hasOption(mw_shadow_tint_color_param_name) ?
+			m_options.getOptionV3(mw_shadow_tint_color_param_name) : UT_Vector3D();
 		v[0] = val[0]; v[1] = val[1]; v[2] = val[2];
 	}
 	exint get_mw_shadow_tint_color_size() const
 	{
-		const char * name = "mw_shadow_tint_color";
-		return m_options.hasOption(name) ? m_options.getOptionV3(name).theSize : 0;
+		return m_options.hasOption(mw_shadow_tint_color_param_name) ?
+			m_options.getOptionV3(mw_shadow_tint_color_param_name).theSize : 0;
 	}
 	void set_mw_shadow_tint_color(const UT_Vector3D & val)
 	{
-		m_options.setOptionV3("mw_shadow_tint_color", val);
+		m_options.setOptionV3(mw_shadow_tint_color_param_name, val);
 	}
 	void _set_mw_shadow_tint_color(const fpreal64 * v, exint size)
 	{
-		m_options.setOptionV3("mw_shadow_tint_color", v[0], v[1], v[2]);
+		m_options.setOptionV3(mw_shadow_tint_color_param_name, v[0], v[1], v[2]);
 	}
 	
 public:
