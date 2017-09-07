@@ -11,11 +11,11 @@
 #ifdef CGR_HAS_VRAYSCENE
 
 #include "sop_vrayscene.h"
+#include "gu_vraysceneref.h"
 
 #include <GEO/GEO_Point.h>
 #include <GU/GU_PrimPoly.h>
 #include <OP/OP_Options.h>
-
 
 using namespace VRayForHoudini;
 
@@ -79,7 +79,8 @@ OP_ERROR SOP::VRayScene::cookMySop(OP_Context &context)
 						options.setOptionFromTemplate(this, prm, *prm.getTemplatePtr(), t);
 					}
 
-					// TODO: update option mw_shadow_tint_color
+					const PRM_Parm &prm = getParm(VRaySceneRef::mw_shadow_tint_color_param_name);
+					options.setOptionFromTemplate(this, prm, *prm.getTemplatePtr(), t);
 
 					pack->implementation()->update(options);
 					pack->setPathAttribute(getFullPath());
