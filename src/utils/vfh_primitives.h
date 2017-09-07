@@ -192,7 +192,7 @@ inline GU_PackedImpl::F64VectorGetter PackedImplGetterCast(GU_PackedFactory * se
 #define VFH_MAKE_ACCESSORS_TUPLE(params, params_count) BOOST_PP_FOR((0, params, params_count),  VFH_PRED, VFH_OP, VFH_ACCESSORS_TUPLE)
 
 // How to use:
-// Define paramters tupe: #define params ( (type1, name1, default1), (type2, name2, default2)...)
+// Define paramters type: #define params ( (type1, name1, default1), (type2, name2, default2)...)
 // Currently supported types are (exint, fpreal, const char *)
 // Define parameters count: #define params_count 2
 
