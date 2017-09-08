@@ -136,7 +136,7 @@ void Logger::stopLogging()
 	}
 }
 
-void Logger::valog(LogLevel level, const char *format, va_list args)
+void Logger::valog(LogLevel level, const tchar *format, va_list args)
 {
 	const bool showMessage = level == LogLevelMsg
 		? true
