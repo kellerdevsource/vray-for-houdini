@@ -82,7 +82,7 @@ OP_ERROR SOP::VRayScene::cookMySop(OP_Context &context)
 								// detail for the mesh
 								GU_Detail *gdmp = new GU_Detail();
 								
-								// create mesh
+								// create preview mesh
 								Vrscene::Preview::VrsceneObjectDataMesh *mesh = static_cast<Vrscene::Preview::VrsceneObjectDataMesh*>(nodeData);
 								const VUtils::VectorRefList &vertices = mesh->getVertices(t);
 								const VUtils::IntRefList    &faces = mesh->getFaces(t);
