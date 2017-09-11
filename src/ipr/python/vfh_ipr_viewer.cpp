@@ -13,6 +13,8 @@
 #include "vfh_ipr_viewer.h"
 #include "vfh_ipr_imdisplay_viewer.h"
 
+#include "TIL\TIL_Tags.h"
+
 #include <QtCore>
 
 #include <UT/UT_WritePipe.h>
@@ -312,6 +314,11 @@ void ImdisplayThread::onPipeStateChange(QProcess::ProcessState newState) {
 	stop(true);
 }
 
+struct Tag {
+	int type;
+	int valueCount;
+	const char * values;
+};
 
 void ImdisplayThread::run() {
 	/// Pipe to the imdisplay
@@ -386,6 +393,12 @@ void ImdisplayThread::run() {
 
 		switch (msg->type()) {
 			case TileQueueMessage::messageTypeImageHeader: {
+				//make tag here
+				Tag tag;
+				tag.type = TIL_TAG_PROGRESS;
+				tag.valueCount = 1;
+				tag.values = "42";
+				writeHeader(*pipe, tag);
 				processImageHeaderMessage(*pipe, static_cast<ImageHeaderMessage&>(*msg));
 				break;
 			}

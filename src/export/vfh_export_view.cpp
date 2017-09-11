@@ -17,6 +17,13 @@
 
 using namespace VRayForHoudini;
 
+
+enum MenuItemSelected {
+	HoudiniCameraSettings = 0,
+	UseFieldOfView = 1,
+	UsePhysicallCameraSettings = 2
+};
+
 float VRayForHoudini::getFov(float aperture, float focal)
 {
 	// From https://www.sidefx.com/docs/houdini13.0/ref/cameralenses
@@ -195,7 +202,7 @@ void VRayExporter::fillPhysicalCamera(const ViewParams &viewParams, Attrs::Plugi
 		? getLensShift(camera, getContext())
 		: camera.evalFloat("CameraPhysical_lens_shift", 0, t);
 
-	int itemSelected = camera.evalInt("CameraPhysical_something", 0, t);
+	const int itemSelected = camera.evalInt("CameraPhysical_mode_select", 0, t);
 	if (itemSelected != 1) {
 		pluginDesc.add(Attrs::PluginAttr("fov", viewParams.renderView.fov));
 	}
@@ -207,9 +214,9 @@ void VRayExporter::fillPhysicalCamera(const ViewParams &viewParams, Attrs::Plugi
 	setAttrsFromOpNodePrms(pluginDesc, &camera, "CameraPhysical_");
 
 	switch(itemSelected) {
-	case 0: {
+	case MenuItemSelected::HoudiniCameraSettings: {
 		pluginDesc.remove("shutter_speed");
-		pluginDesc.remove("ISO");
+		pluginDesc.remove("ISO");//can't recall why i am deleting this
 
 		UT_String temporaryString;
 		camera.evalString(temporaryString, "focalunits", 0, t);
@@ -218,16 +225,20 @@ void VRayExporter::fillPhysicalCamera(const ViewParams &viewParams, Attrs::Plugi
 			pluginDesc.add(Attrs::PluginAttr("focal_length", focalLength));
 		}
 		else if (temporaryString.c_str() == "m") {
-			pluginDesc.add(Attrs::PluginAttr("focal_length", focalLength*0.001f));// convert from meters to milimeters
+			const double resultValue = focalLength*0.001f;// convert from meters to milimeters
+			pluginDesc.add(Attrs::PluginAttr("focal_length", resultValue));
 		}
 		else if (temporaryString.c_str() == "nm") {
-			pluginDesc.add(Attrs::PluginAttr("focal_length", focalLength * 1000000.0f));// convert from nanometers to milimeters
+			const double resultValue = focalLength * 1000000.0f;// convert from nanometers to milimeters
+			pluginDesc.add(Attrs::PluginAttr("focal_length", resultValue));
 		}
 		else if (temporaryString.c_str() == "in") {
-			pluginDesc.add(Attrs::PluginAttr("focal_length", focalLength*25.4f));// convert from inches to milimeters
+			const double resultValue = focalLength*25.4f;// convert from inches to milimeters
+			pluginDesc.add(Attrs::PluginAttr("focal_length", resultValue));
 		}
 		else if (temporaryString.c_str() == "ft") {
-			pluginDesc.add(Attrs::PluginAttr("focal_length", focalLength*304.8f));//convert from feet to milimeters
+			const double resultValue = focalLength*304.8f;//convert from feet to milimeters
+			pluginDesc.add(Attrs::PluginAttr("focal_length", resultValue));
 		}
 
 		pluginDesc.add(Attrs::PluginAttr("f_number", camera.evalFloat("fstop", 0, t)));
@@ -235,13 +246,13 @@ void VRayExporter::fillPhysicalCamera(const ViewParams &viewParams, Attrs::Plugi
 
 		break;
 	}
-	case 1: {
+	case MenuItemSelected::UseFieldOfView: {
 		pluginDesc.remove("film_width");
 		pluginDesc.remove("focal_length");
 
 		break;
 	}
-	case 2: {
+	case MenuItemSelected::UsePhysicallCameraSettings: {
 		pluginDesc.remove("fov");
 		break;
 	}
