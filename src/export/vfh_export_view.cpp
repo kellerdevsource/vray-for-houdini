@@ -220,7 +220,7 @@ void VRayExporter::fillPhysicalCamera(const ViewParams &viewParams, Attrs::Plugi
 
 		UT_String temporaryString;
 		camera.evalString(temporaryString, "focalunits", 0, t);
-		double focalLength = camera.evalFloat("focal", 0, t);
+		const double focalLength = camera.evalFloat("focal", 0, t);
 		if (temporaryString.c_str() == "mm") {
 			pluginDesc.add(Attrs::PluginAttr("focal_length", focalLength));
 		}
