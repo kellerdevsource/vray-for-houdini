@@ -72,7 +72,7 @@ inline GU_PackedImpl::StringArraySetter PackedImplSetterCast(GU_PackedFactory * 
 
 template <typename CLASS>
 inline GU_PackedImpl::F64VectorSetter PackedImplSetterCast(GU_PackedFactory * self, void (CLASS::*method)(const UT_Vector3D &)) {
-	return self->F64VectorSetter(method);
+	return self->F64VectorSetterCast(method);
 }
 
 template <typename CLASS, typename T, typename Q>
