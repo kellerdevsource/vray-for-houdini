@@ -203,7 +203,7 @@ void VRayExporter::fillPhysicalCamera(const ViewParams &viewParams, Attrs::Plugi
 		: camera.evalFloat("CameraPhysical_lens_shift", 0, t);
 
 	const int itemSelected = camera.evalInt("CameraPhysical_mode_select", 0, 0.0);
-	if (itemSelected != 1) {
+	if (itemSelected != MenuItemSelected::UseFieldOfView) {
 		pluginDesc.add(Attrs::PluginAttr("fov", viewParams.renderView.fov));
 	}
 	pluginDesc.add(Attrs::PluginAttr("horizontal_offset", horizontal_offset));
@@ -221,20 +221,20 @@ void VRayExporter::fillPhysicalCamera(const ViewParams &viewParams, Attrs::Plugi
 		camera.evalString(temporaryString, "focalunits", 0, t);
 		const double focalLength = camera.evalFloat("focal", 0, t);
 		double resultValue;
-		if (temporaryString.c_str() == "mm") {
-			pluginDesc.add(Attrs::PluginAttr("focal_length", focalLength));
+		if (temporaryString == "mm") {
+			resultValue = focalLength;
 		}
-		else if (temporaryString.c_str() == "m") {
-			resultValue = focalLength*0.001f;// convert from meters to milimeters
+		else if (temporaryString == "m") {
+			resultValue = focalLength*0.001f; // Convert from meters to milimeters
 		}
-		else if (temporaryString.c_str() == "nm") {
-			resultValue = focalLength * 1000000.0f;// convert from nanometers to milimeters
+		else if (temporaryString == "nm") {
+			resultValue = focalLength * 1000000.0f; // Convert from nanometers to milimeters
 		}
-		else if (temporaryString.c_str() == "in") {
-			resultValue = focalLength*25.4f;// convert from inches to milimeters
+		else if (temporaryString == "in") {
+			resultValue = focalLength*25.4f; // Convert from inches to milimeters
 		}
-		else if (temporaryString.c_str() == "ft") {
-			resultValue = focalLength*304.8f;//convert from feet to milimeters
+		else if (temporaryString == "ft") {
+			resultValue = focalLength*304.8f; // Convert from feet to milimeters
 		}
 
 		pluginDesc.add(Attrs::PluginAttr("focal_length", resultValue));
@@ -246,11 +246,12 @@ void VRayExporter::fillPhysicalCamera(const ViewParams &viewParams, Attrs::Plugi
 	case MenuItemSelected::UseFieldOfView: {
 		pluginDesc.remove("film_width");
 		pluginDesc.remove("focal_length");
-
+		pluginDesc.add(Attrs::PluginAttr("specify_fov", 1));
 		break;
 	}
 	case MenuItemSelected::UsePhysicallCameraSettings: {
 		pluginDesc.remove("fov");
+		pluginDesc.add(Attrs::PluginAttr("specify_fov", 0));
 		break;
 	}
 	}
@@ -402,7 +403,7 @@ ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 
 		exportPlugin(renderView);
 	}
-	else if (m_viewParams.changedParams(viewParams)) {//this needs to change
+	else if (m_viewParams.changedParams(viewParams)) {
 		Attrs::PluginDesc renderView("renderView", "RenderView");
 		fillRenderView(viewParams, renderView);
 		exportPlugin(renderView);
