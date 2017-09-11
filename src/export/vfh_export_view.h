@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2016, Chaos Software Ltd
+// Copyright (c) 2015-2017, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -145,6 +145,8 @@ struct ViewParams {
 	int               changedSize(const ViewParams &other) const;
 	int               needReset(const ViewParams &other) const;
 	int               changedCropRegion(const ViewParams &other) const;
+
+	void setCamera(OBJ_Node *camera) { cameraObject = camera; }
 
 	RenderSizeParams  renderSize;
 	RenderViewParams  renderView;

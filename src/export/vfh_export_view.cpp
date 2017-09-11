@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2016, Chaos Software Ltd
+// Copyright (c) 2015-2017, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -154,9 +154,17 @@ void VRayExporter::fillViewParamFromCameraNode(const OBJ_Node &camera, ViewParam
 	viewParams.renderView.fov = fov;
 	viewParams.renderView.tm = getObjTransform(camera.castToOBJNode(), m_context);
 
-	if (!viewParams.renderView.fovOverride) {
-		aspectCorrectFovOrtho(viewParams);
-	}
+	// TODO: Correct FOV with "winres"
+
+	const float cropLeft   = camera.evalFloat("cropl", 0, t);
+	const float cropRight  = camera.evalFloat("cropr", 0, t);
+	const float cropBottom = camera.evalFloat("cropb", 0, t);
+	const float cropTop    = camera.evalFloat("cropt", 0, t);
+
+	viewParams.cropRegion.x = imageWidth * cropLeft;
+	viewParams.cropRegion.y = imageHeight * (1.0f - cropTop);
+	viewParams.cropRegion.width  = imageWidth * (cropRight - cropLeft);
+	viewParams.cropRegion.height = imageHeight * (cropTop - cropBottom);
 
 	viewParams.renderView.stereoParams.use = Parm::getParmInt(*m_rop, "VRayStereoscopicSettings_use");
 	viewParams.renderView.stereoParams.stereo_eye_distance       = Parm::getParmFloat(*m_rop, "VRayStereoscopicSettings_eye_distance");
@@ -374,16 +382,16 @@ ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 	getRenderer().commit();
 	getRenderer().setAutoCommit(prevAutoCommit);
 
+	if (m_viewParams.changedSize(viewParams)) {
+		setRenderSize(viewParams.renderSize.w, viewParams.renderSize.h);
+	}
+
 	if (m_viewParams.changedCropRegion(viewParams)) {
 		getRenderer().getVRay().setRenderRegion(
 			viewParams.cropRegion.x,
 			viewParams.cropRegion.y,
 			viewParams.cropRegion.width,
 			viewParams.cropRegion.height);
-	}
-
-	if (m_viewParams.changedSize(viewParams)) {
-		setRenderSize(viewParams.renderSize.w, viewParams.renderSize.h);
 	}
 
 	// Store new params
@@ -393,6 +401,9 @@ ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 
 int VRayExporter::exportView()
 {
+	// We should not use this for IPR.
+	vassert(m_isIPR != iprModeSOHO);
+
 	Log::getLog().debug("VRayExporter::exportView()");
 
 	static VUtils::FastCriticalSection viewCsect;
@@ -402,9 +413,6 @@ int VRayExporter::exportView()
 	OBJ_Node *camera = getCamera(m_rop);
 	if (!camera)
 		return 1;
-
-	addOpCallback(camera, RtCallbackView);
-	addOpCallback(m_rop, RtCallbackView);
 
 	ViewParams viewParams(camera);
 	viewParams.usePhysicalCamera = isPhysicalView(*camera);

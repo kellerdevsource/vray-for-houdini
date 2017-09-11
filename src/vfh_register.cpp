@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2016, Chaos Software Ltd
+// Copyright (c) 2015-2017, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -218,6 +218,7 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "RENDERCHANNEL", RenderChannelZDepth);
 	VFH_VOP_ADD_OPERATOR(table, "RENDERCHANNEL", RenderChannelDenoiser);
 	VFH_VOP_ADD_OPERATOR(table, "RENDERCHANNEL", RenderChannelMultiMatte);
+	VFH_VOP_ADD_OPERATOR(table, "RENDERCHANNEL", RenderChannelCryptomatte);
 
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFBlinn);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFBump);

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2016, Chaos Software Ltd
+// Copyright (c) 2015-2017, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -88,6 +88,8 @@ static const char intrFilename[] = "filename";
 
 static const UT_String vrayPluginTypeGeomStaticMesh = "GeomStaticMesh";
 static const UT_String vrayPluginTypeNode = "Node";
+
+static const UT_String vrayUserAttrSceneName = "VRay_Scene_Node_Name";
 
 /// Identity transform.
 static VRay::Transform identityTm(1);
@@ -331,12 +333,15 @@ int ObjectExporter::isNodeVisible(OP_Node &rop, OBJ_Node &objNode, fpreal t)
 
 int ObjectExporter::isNodeVisible(OBJ_Node &objNode) const
 {
-	return isNodeVisible(pluginExporter.getRop(), objNode, ctx.getTime());
+	if (pluginExporter.getRopPtr()) {
+		return isNodeVisible(*pluginExporter.getRopPtr(), objNode, ctx.getTime());
+	}
+	return false;
 }
 
 int ObjectExporter::isNodeMatte(OBJ_Node &objNode) const
 {
-	OP_Bundle *bundle = getMatteGeometryBundle(pluginExporter.getRop(), ctx.getTime());
+	OP_Bundle *bundle = getMatteGeometryBundle(*pluginExporter.getRopPtr(), ctx.getTime());
 	if (!bundle) {
 		return false;
 	}
@@ -345,7 +350,7 @@ int ObjectExporter::isNodeMatte(OBJ_Node &objNode) const
 
 int ObjectExporter::isNodePhantom(OBJ_Node &objNode) const
 {
-	OP_Bundle *bundle = getPhantomGeometryBundle(pluginExporter.getRop(), ctx.getTime());
+	OP_Bundle *bundle = getPhantomGeometryBundle(*pluginExporter.getRopPtr(), ctx.getTime());
 	if (!bundle) {
 		return false;
 	}
@@ -764,6 +769,23 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 	exportHair(objNode, gdp, hairPrims);
 }
 
+/// Add object's scene name as user attribute.
+/// @param userAttributes User attributes buffer.
+/// @param opNode Scene node.
+static void appendSceneName(QString &userAttributes, const OP_Node &opNode)
+{
+	const VRay::VUtils::CharStringRefList &sceneName = getSceneName(opNode);
+
+	if (!userAttributes.endsWith(';')) {
+		userAttributes.append(';');
+	}
+	userAttributes.append(vrayUserAttrSceneName);
+	userAttributes.append('=');
+	userAttributes.append(sceneName[0].ptr());
+	userAttributes.append(',');
+	userAttributes.append(sceneName[1].ptr());
+}
+
 VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_Detail &gdp, const char *prefix)
 {
 	using namespace Attrs;
@@ -798,6 +820,7 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_D
 
 		QString userAttributes;
 		overrideItemsToUserAttributes(primItem.primMaterial.overrides, userAttributes);
+		appendSceneName(userAttributes, objNode);
 
 		VRay::Plugin material = objMaterial;
 		if (primItem.material) {
@@ -1651,7 +1674,7 @@ int ObjectExporter::isLightEnabled(OBJ_Node &objLight) const
 	int enabled = 0;
 	objLight.evalParameterOrProperty("enabled", 0, ctx.getTime(), enabled);
 
-	OP_Bundle *bundle = getForcedLightsBundle(pluginExporter.getRop(), ctx.getTime());
+	OP_Bundle *bundle = getForcedLightsBundle(*pluginExporter.getRopPtr(), ctx.getTime());
 	return bundle && (bundle->contains(&objLight, false) || (enabled > 0));
 }
 

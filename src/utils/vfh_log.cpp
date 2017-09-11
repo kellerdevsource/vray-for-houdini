@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2016, Chaos Software Ltd
+// Copyright (c) 2015-2017, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -136,7 +136,7 @@ void Logger::stopLogging()
 	}
 }
 
-void Logger::valog(LogLevel level, const char *format, va_list args)
+void Logger::valog(LogLevel level, const tchar *format, va_list args)
 {
 	const bool showMessage = level == LogLevelMsg
 		? true
@@ -160,11 +160,14 @@ void Logger::valog(LogLevel level, const char *format, va_list args)
 			if (m_queue.bounded_push(data)) {
 				return;
 			}
-			// TODO: is it worth to sleep(1) after 5 attempts?
 			std::this_thread::yield();
 		}
-		// At this point we tried 10 pushes but did not work, so just log the message from this thread
-		logMessage(data);
+		// 10 spins did not work - try sleep for 5ms
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+		if (!m_queue.bounded_push(data)) {
+			// just log the message from this thread
+			logMessage(data);
+		}
 	} else {
 		logMessage(data);
 	}

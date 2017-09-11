@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2016, Chaos Software Ltd
+// Copyright (c) 2015-2017, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -33,6 +33,7 @@ RC_DEF(RenderChannelVelocity)
 RC_DEF(RenderChannelZDepth)
 RC_DEF(RenderChannelDenoiser)
 RC_DEF(RenderChannelMultiMatte)
+RC_DEF(RenderChannelCryptomatte)
 
 } // namespace VOP
 } // namespace VRayForHoudini

@@ -213,6 +213,27 @@ static void onVFBClosed(VRay::VRayRenderer&, void*)
 	freeExporter();
 }
 
+static void fillRenderRegionFromDict(PyObject *viewParamsDict, ViewParams &viewParams)
+{
+	if (!viewParamsDict)
+		return;
+	if (!PyDict_Check(viewParamsDict))
+		return;
+
+	const float cropLeft   = getFloat(viewParamsDict, "cropl", 0.0f);
+	const float cropRight  = getFloat(viewParamsDict, "cropr", 1.0f);
+	const float cropBottom = getFloat(viewParamsDict, "cropb", 0.0f);
+	const float cropTop    = getFloat(viewParamsDict, "cropt", 1.0f);
+
+	const int resX = viewParams.renderSize.w;
+	const int resY = viewParams.renderSize.h;
+
+	viewParams.cropRegion.x = resX * cropLeft;
+	viewParams.cropRegion.y = resY * (1.0f - cropTop);
+	viewParams.cropRegion.width  = resX * (cropRight - cropLeft);
+	viewParams.cropRegion.height = resY * (cropTop - cropBottom);
+}
+
 static void fillViewParamsFromDict(PyObject *viewParamsDict, ViewParams &viewParams)
 {
 	if (!viewParamsDict)
@@ -223,29 +244,14 @@ static void fillViewParamsFromDict(PyObject *viewParamsDict, ViewParams &viewPar
 	PyObject *transform = PyDict_GetItemString(viewParamsDict, "transform");
 	PyObject *res = PyDict_GetItemString(viewParamsDict, "res");
 
-	const int ortho = getInt(viewParamsDict, "ortho", 0);
-
-	const float cropLeft   = getFloat(viewParamsDict, "cropl", 0.0f);
-	const float cropRight  = getFloat(viewParamsDict, "cropr", 1.0f);
-	const float cropBottom = getFloat(viewParamsDict, "cropb", 0.0f);
-	const float cropTop    = getFloat(viewParamsDict, "cropt", 1.0f);
-
 	const float aperture = getFloat(viewParamsDict, "aperture", 41.4214f);
 	const float focal = getFloat(viewParamsDict, "focal", 50.0f);
 
-	const int resX = getInt(res, 0);
-	const int resY = getInt(res, 1);
-
 	viewParams.renderView.fov = getFov(aperture, focal);
-	viewParams.renderView.ortho = ortho;
+	viewParams.renderView.ortho = getInt(viewParamsDict, "ortho", 0);
 
-	viewParams.renderSize.w = resX;
-	viewParams.renderSize.h = resY;
-
-	viewParams.cropRegion.x = resX * cropLeft;
-	viewParams.cropRegion.y = resY * (1.0f - cropTop);
-	viewParams.cropRegion.width  = resX * (cropRight - cropLeft);
-	viewParams.cropRegion.height = resY * (cropTop - cropBottom);
+	viewParams.renderSize.w = getInt(res, 0);
+	viewParams.renderSize.h = getInt(res, 1);
 
 	if (transform &&
 		PyList_Check(transform) &&
@@ -259,6 +265,27 @@ static void fillViewParamsFromDict(PyObject *viewParamsDict, ViewParams &viewPar
 
 		viewParams.renderView.tm = tm;
 	}
+}
+
+static void fillViewParams(VRayExporter &exporter, PyObject *viewParamsDict, ViewParams &viewParams)
+{
+	const char *camera = PyString_AsString(PyDict_GetItemString(viewParamsDict, "camera"));
+
+	OBJ_Node *cameraNode = nullptr;
+	if (UTisstring(camera)) {
+		cameraNode = CAST_OBJNODE(getOpNodeFromPath(camera));
+	}
+
+	viewParams.setCamera(cameraNode);
+
+	if (cameraNode && cameraNode->getName().equal("ipr_camera")) {
+		exporter.fillViewParamFromCameraNode(*cameraNode, viewParams);
+	}
+	else {
+		fillViewParamsFromDict(viewParamsDict, viewParams);
+	}
+
+	fillRenderRegionFromDict(viewParamsDict, viewParams);
 }
 
 static PyObject* vfhExportView(PyObject*, PyObject *args, PyObject *keywds)
@@ -289,20 +316,8 @@ static PyObject* vfhExportView(PyObject*, PyObject *args, PyObject *keywds)
 
 	VRayExporter &exporter = lock.getExporter();
 
-	const char *camera = PyString_AsString(PyDict_GetItemString(viewParamsDict, "camera"));
-
-	OBJ_Node *cameraNode = nullptr;
-	if (UTisstring(camera)) {
-		cameraNode = CAST_OBJNODE(getOpNodeFromPath(camera));
-	}
-
-	ViewParams viewParams(cameraNode);
-	if (cameraNode && !cameraNode->getName().contains("ipr_camera")) {
-		exporter.fillViewParamFromCameraNode(*cameraNode, viewParams);
-	}
-	else {
-		fillViewParamsFromDict(viewParamsDict, viewParams);
-	}
+	ViewParams viewParams;
+	fillViewParams(exporter, viewParamsDict, viewParams);
 
 	// Copy params; no const ref!
 	ViewParams oldViewParams = exporter.getViewParams();
@@ -317,6 +332,7 @@ static PyObject* vfhExportView(PyObject*, PyObject *args, PyObject *keywds)
 			initImdisplay(exporter.getRenderer().getVRay());
 		}
 	}
+
 	Py_RETURN_NONE;
 }
 
@@ -420,11 +436,6 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 		Py_RETURN_NONE;
 	}
 
-	enum IPROutput {
-		iprOutputRenderView = 0,
-		iprOutputVFB,
-	};
-
 	HOM_AutoLock autoLock;
 	
 	getImdisplay().setPort(port);
@@ -435,7 +446,12 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 	}
 
 	if (!procCheck) {
-		procCheck = makeProcessChecker(stopCallback->getCallableFunction(), "vfh_ipr.exe");
+#ifdef _WIN32
+		const char * ipr_proc_exe = "vfh_ipr.exe";
+#else
+		const char * ipr_proc_exe = "vfh_ipr";
+#endif
+		procCheck = makeProcessChecker(stopCallback->getCallableFunction(), ipr_proc_exe);
 	}
 	getImdisplay().setProcCheck(procCheck);
 	procCheck->stop();
@@ -456,51 +472,33 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 			getImdisplay().init();
 			getImdisplay().restart();
 		}
-		const IPROutput iprOutput =
-			static_cast<IPROutput>(ropNode->evalInt("render_rt_output", 0, 0.0));
-
-		const int iprModeMenu = ropNode->evalInt("render_rt_update_mode", 0, 0.0);
-		const VRayExporter::IprMode iprMode = iprModeMenu == 0 ? VRayExporter::iprModeRT : VRayExporter::iprModeSOHO;
-
-		const int isRenderView = iprOutput == iprOutputRenderView;
-		const int isVFB = iprOutput == iprOutputVFB;
-
-
 
 		if (WithExporter lk{}) {
 			VRayExporter &exporter = lk.getExporter();
-			exporter.setROP(*ropNode);
-			exporter.setIPR(iprMode);
-			if (!exporter.initRenderer(isVFB, false)) {
+			exporter.setRopPtr(ropNode);
+			exporter.setIPR(VRayExporter::iprModeSOHO);
+			if (!exporter.initRenderer(false, false)) {
 				Py_RETURN_NONE;
 			}
 		}
 
-		ViewParams viewParams;
 		if (WithExporter lk{}) {
 			VRayExporter &exporter = lk.getExporter();
-			fillViewParamsFromDict(viewParamsDict, viewParams);
 
 			exporter.setDRSettings();
-
 			exporter.setRendererMode(getRendererIprMode(*ropNode));
 			exporter.setWorkMode(getExporterWorkMode(*ropNode));
 		}
 
 		if (WithExporter lk{}) {
 			VRayExporter &exporter = lk.getExporter();
-			exporter.getRenderer().showVFB(isVFB);
-			exporter.getRenderer().getVRay().setOnVFBClosed(isVFB ? onVFBClosed : nullptr);
-			exporter.getRenderer().getVRay().setOnImageReady(isRenderView ? onImageReady : nullptr);
-			exporter.getRenderer().getVRay().setOnRTImageUpdated(isRenderView ? onRTImageUpdated : nullptr);
-			exporter.getRenderer().getVRay().setOnBucketReady(isRenderView ? onBucketReady : nullptr);
+			exporter.getRenderer().getVRay().setOnImageReady(onImageReady);
+			exporter.getRenderer().getVRay().setOnRTImageUpdated(onRTImageUpdated);
+			exporter.getRenderer().getVRay().setOnBucketReady(onBucketReady);
 
-			exporter.getRenderer().getVRay().setKeepBucketsInCallback(isRenderView);
-			exporter.getRenderer().getVRay().setKeepRTframesInCallback(isRenderView);
-
-			if (isRenderView) {
-				exporter.getRenderer().getVRay().setRTImageUpdateTimeout(250);
-			}
+			exporter.getRenderer().getVRay().setKeepBucketsInCallback(true);
+			exporter.getRenderer().getVRay().setKeepRTframesInCallback(true);
+			exporter.getRenderer().getVRay().setRTImageUpdateTimeout(250);
 		}
 
 		if (WithExporter lk{}) {
@@ -513,7 +511,11 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 		if (WithExporter lk{}) {
 			VRayExporter &exporter = lk.getExporter();
 			if (exporter.exportSettings() == ReturnValue::Success) {
+				ViewParams viewParams;
+				fillViewParamsFromDict(viewParamsDict, viewParams);
+				fillRenderRegionFromDict(viewParamsDict, viewParams);
 				exporter.exportView(viewParams);
+
 				exporter.exportScene();
 				exporter.renderFrame();
 				initImdisplay(exporter.getRenderer().getVRay());
