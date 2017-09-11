@@ -202,7 +202,7 @@ void VRayExporter::fillPhysicalCamera(const ViewParams &viewParams, Attrs::Plugi
 		? getLensShift(camera, getContext())
 		: camera.evalFloat("CameraPhysical_lens_shift", 0, t);
 
-	const int itemSelected = camera.evalInt("CameraPhysical_mode_select", 0, t);
+	const int itemSelected = camera.evalInt("CameraPhysical_mode_select", 0, 0.0);
 	if (itemSelected != 1) {
 		pluginDesc.add(Attrs::PluginAttr("fov", viewParams.renderView.fov));
 	}
@@ -216,31 +216,28 @@ void VRayExporter::fillPhysicalCamera(const ViewParams &viewParams, Attrs::Plugi
 	switch(itemSelected) {
 	case MenuItemSelected::HoudiniCameraSettings: {
 		pluginDesc.remove("shutter_speed");
-		pluginDesc.remove("ISO");//can't recall why i am deleting this
 
 		UT_String temporaryString;
 		camera.evalString(temporaryString, "focalunits", 0, t);
 		const double focalLength = camera.evalFloat("focal", 0, t);
+		double resultValue;
 		if (temporaryString.c_str() == "mm") {
 			pluginDesc.add(Attrs::PluginAttr("focal_length", focalLength));
 		}
 		else if (temporaryString.c_str() == "m") {
-			const double resultValue = focalLength*0.001f;// convert from meters to milimeters
-			pluginDesc.add(Attrs::PluginAttr("focal_length", resultValue));
+			resultValue = focalLength*0.001f;// convert from meters to milimeters
 		}
 		else if (temporaryString.c_str() == "nm") {
-			const double resultValue = focalLength * 1000000.0f;// convert from nanometers to milimeters
-			pluginDesc.add(Attrs::PluginAttr("focal_length", resultValue));
+			resultValue = focalLength * 1000000.0f;// convert from nanometers to milimeters
 		}
 		else if (temporaryString.c_str() == "in") {
-			const double resultValue = focalLength*25.4f;// convert from inches to milimeters
-			pluginDesc.add(Attrs::PluginAttr("focal_length", resultValue));
+			resultValue = focalLength*25.4f;// convert from inches to milimeters
 		}
 		else if (temporaryString.c_str() == "ft") {
-			const double resultValue = focalLength*304.8f;//convert from feet to milimeters
-			pluginDesc.add(Attrs::PluginAttr("focal_length", resultValue));
+			resultValue = focalLength*304.8f;//convert from feet to milimeters
 		}
 
+		pluginDesc.add(Attrs::PluginAttr("focal_length", resultValue));
 		pluginDesc.add(Attrs::PluginAttr("f_number", camera.evalFloat("fstop", 0, t)));
 		pluginDesc.add(Attrs::PluginAttr("focus_distance", camera.evalFloat("focus", 0, t)));
 
@@ -355,6 +352,12 @@ ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 	const bool needReset = m_viewParams.needReset(viewParams);
 	if (needReset) {
 		Log::getLog().warning("VRayExporter::exportView: Reseting view plugins...");
+
+		removePlugin("settingsCamera");
+		removePlugin("settingsCameraDof");
+		removePlugin("stereoSettings");
+		removePlugin("cameraPhysical");
+		removePlugin("cameraDefault");
 
 		Attrs::PluginDesc renderView("renderView", "RenderView");
 		Attrs::PluginDesc settingsMotionBlur("settingsMotionBlur", "SettingsMotionBlur");

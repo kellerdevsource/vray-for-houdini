@@ -164,7 +164,7 @@
 			name	"CameraPhysical_shutter_speed"
 			label	"Shutter Speed"
 			type	float
-			hidewhen "{ CameraPhysical_exposure != 1 } { CameraPhysical_type != Still } { CameraPhysical == 0 }"
+			hidewhen "{ CameraPhysical_exposure != 1 } { CameraPhysical_type != Still } { CameraPhysical_mode_select == 0 }"
 			default	{ "100" }
 			help	"The shutter speed, in inverse seconds"
 			range	{ 0 1000 }
