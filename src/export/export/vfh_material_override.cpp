@@ -26,6 +26,7 @@
 #include <STY/STY_Subject.h>
 #include <GSTY/GSTY_SubjectPrim.h>
 #include <GSTY/GSTY_SubjectPrimGroup.h>
+#include <OP/OP_StyleManager.h>
 #include <UT/UT_Version.h>
 
 using namespace VRayForHoudini;
@@ -383,26 +384,37 @@ STY_Styler VRayForHoudini::getStylerForPrimitive(const STY_Styler &geoStyler, co
 #endif
 }
 
+static STY_Styler cloneWithStyleSheet(const STY_Styler &styStyler, const char *styleSheetBuffer)
+{
+	if (!UTisstring(styleSheetBuffer))
+		return styStyler;
+	return styStyler.cloneWithAddedStyleSheet(new STY_StyleSheet(styleSheetBuffer, NULL, STY_LOAD_FOR_STYLING));
+}
+
 STY_Styler VRayForHoudini::getStylerForObject(OBJ_Node &objNode, fpreal t)
 {
 #if UT_MAJOR_VERSION_INT < 16
 	return STY_Styler();
 #else
-	if (!Parm::isParmExist(objNode, VFH_ATTR_SHOP_MATERIAL_STYLESHEET))
-		return STY_Styler();
+	STY_Styler geoStyler;
 
-	UT_String styleSheet;
-	objNode.evalString(styleSheet, VFH_ATTR_SHOP_MATERIAL_STYLESHEET, 0, t);
+	const UT_StringArray &globalStyles =
+		OPgetDirector()->getStyleManager()->getStyleNames();
 
-	const char *styleBuf = styleSheet.buffer();
-	if (!UTisstring(styleBuf))
-		return STY_Styler();
+	for (const UT_StringHolder &globalStyle : globalStyles) {
+		const UT_StringHolder &globalSheet =
+			OPgetDirector()->getStyleManager()->getStyleSheet(globalStyle);
 
-	Log::getLog().debug("getStylerForObject(%s)", objNode.getName().buffer()); 
+		geoStyler = cloneWithStyleSheet(geoStyler, globalSheet.buffer());
+	}
 
-	STY_StyleSheetHandle styStyleSheetHandle(new STY_StyleSheet(styleBuf, NULL, STY_LOAD_FOR_STYLING));
-	STY_Styler styStyler(styStyleSheetHandle);
+	if (Parm::isParmExist(objNode, VFH_ATTR_SHOP_MATERIAL_STYLESHEET)) {
+		UT_String objStyleSheet;
+		objNode.evalString(objStyleSheet, VFH_ATTR_SHOP_MATERIAL_STYLESHEET, 0, t);
 
-	return styStyler;
+		geoStyler = cloneWithStyleSheet(geoStyler, objStyleSheet.buffer());
+	}
+
+	return geoStyler;
 #endif
 }
