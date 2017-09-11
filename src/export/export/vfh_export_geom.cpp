@@ -1188,14 +1188,7 @@ VRay::Plugin ObjectExporter::exportVRaySceneRef(OBJ_Node &objNode, const GU_Prim
 	UT_Options options = vraysceneref->getOptions();
 	pluginExporter.setAttrsFromUTOptions(pluginDesc, options);
 
-	Attrs::PluginAttr *transformAttr = pluginDesc.get("transform");
-	if (transformAttr) {
-		pluginDesc.get("transform")->paramValue.valTransform = getTm();
-	}
-	else {
-		Attrs::PluginAttr transformAttr("transform", getTm());
-		pluginDesc.addAttribute(transformAttr);
-	}
+	pluginDesc.add(Attrs::PluginAttr("transform", getTm()));
 
 	return pluginExporter.exportPlugin(pluginDesc);
 }
