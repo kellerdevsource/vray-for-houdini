@@ -153,7 +153,7 @@ static void appendOverrideValues(const STY_OverrideValues &styOverrideValues, Pr
 			if (nameIt != values.end()) {
 				const auto &nameValuePair = *nameIt;
 
-				STY_OptionEntryHandle nameOpt = nameValuePair.second.myValue;
+				const STY_OptionEntryHandle &nameOpt = nameValuePair.second.myValue;
 				if (nameOpt->importOption(stringVals)) {
 					if (!primMaterial.matNode ||
 						mode == overrideMerge)
