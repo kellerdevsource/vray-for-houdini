@@ -76,6 +76,7 @@ static boost::format hairNameFmt("GeomMayaHair|%i@%s");
 static boost::format polyNameFmt("GeomStaticMesh|%i@%s");
 static boost::format alembicNameFmt("Alembic|%i@%s");
 static boost::format vrmeshNameFmt("VRayProxy|%i@%s");
+static boost::format vrsceneNameFmt("VRayScene|%i@s");
 
 static const char intrAlembicFilename[] = "abcfilename";
 static const char intrAlembicObjectPath[] = "abcobjectpath";
@@ -1180,14 +1181,21 @@ VRay::Plugin ObjectExporter::exportVRaySceneRef(OBJ_Node &objNode, const GU_Prim
 	prim.getIntrinsic(prim.findIntrinsic(intrPackedPrimitiveName), primname);
 
 	const int key = getPrimPackedID(prim);
-	Attrs::PluginDesc pluginDesc(boost::str(vrmeshNameFmt % key % primname.buffer()), "VRayScene");
+	Attrs::PluginDesc pluginDesc(boost::str(vrsceneNameFmt % key % primname.buffer()), "VRayScene");
 
 	const VRaySceneRef *vraysceneref = UTverify_cast<const VRaySceneRef*>(prim.implementation());
 
 	UT_Options options = vraysceneref->getOptions();
 	pluginExporter.setAttrsFromUTOptions(pluginDesc, options);
 
-	pluginDesc.get("transform")->paramValue.valTransform = getTm();
+	Attrs::PluginAttr *transformAttr = pluginDesc.get("transform");
+	if (transformAttr) {
+		pluginDesc.get("transform")->paramValue.valTransform = getTm();
+	}
+	else {
+		Attrs::PluginAttr transformAttr("transform", getTm());
+		pluginDesc.addAttribute(transformAttr);
+	}
 
 	return pluginExporter.exportPlugin(pluginDesc);
 }
