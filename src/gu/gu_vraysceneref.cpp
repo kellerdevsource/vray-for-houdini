@@ -153,16 +153,6 @@ void VRaySceneRef::countMemory(UT_MemoryCounter &counter, bool inclusive) const
 		UT_MEMORY_DEBUG_LOG(theFactory->name(), int64(mem));
 		counter.countUnshared(mem);
 	}
-
-	// The UT_MemoryCounter interface needs to be enhanced to efficiently count
-	// shared memory for details. Skip this for now.
-#if 0
-	if (detail().isValid())
-	{
-		GU_DetailHandleAutoReadLock gdh(detail());
-		gdh.getGdp()->countMemory(counter, true);
-	}
-#endif
 }
 
 void VRaySceneRef::clearDetail()
