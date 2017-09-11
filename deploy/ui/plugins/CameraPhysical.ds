@@ -75,9 +75,9 @@
 			label "Source Data"
 			type ordinal
 			menu {
-				"0" "Houdini Cam Settings"
+				"0" "Houdini Camera Settings"
 				"1" "Use Field of View"
-				"2" "Use film Width etc"
+				"2" "Use Physical Camera Settings"
 			}
 			help "Pick between utilizing the default Houdini camera settings, V-Ray Field of View settings or full V-Ray Settings with film width and assiciated values"
 			range	{ 0 1 }
