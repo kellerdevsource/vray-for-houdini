@@ -104,6 +104,7 @@ set(SOURCES
 	cmd/vfh_cmd_vrayproxy.cpp
 	gu/gu_volumegridref.cpp
 	gu/gu_vrayproxyref.cpp
+	gu/gu_vraysceneref.cpp
 	io/io_vrmesh.cpp
 	obj/obj_node_base.cpp
 	rop/rop_vrayproxyrop.cpp
@@ -139,6 +140,7 @@ set(HEADERS
 	cmd/vfh_cmd_vrayproxy.h
 	gu/gu_volumegridref.h
 	gu/gu_vrayproxyref.h
+	gu/gu_vraysceneref.h
 	io/io_vrmesh.h
 	obj/obj_node_base.h
 	obj/obj_node_def.h
