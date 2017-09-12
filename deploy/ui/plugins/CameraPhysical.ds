@@ -71,10 +71,26 @@
 		}
 		
 		parm {
+			name "CameraPhysical_mode_select"
+			label "Source Data"
+			type ordinal
+			menu {
+				"0" "Houdini Camera Settings"
+				"1" "Use Field of View"
+				"2" "Use Physical Camera Settings"
+			}
+			help "Pick between utilizing the default Houdini camera settings, V-Ray Field of View settings or full V-Ray Settings with film width and assiciated values"
+			range	{ 0 1 }
+			export	none
+			default { "0" }
+		}
+
+		parm {
 			name	"CameraPhysical_exposure"
 			label	"Exposure"
 			type	toggle
 			default	{ "1" }
+			hidewhen "{ CameraPhysical_mode_select == 0}"
 			help	"When this option is on, the F-Number, Shutter Speed and ISO settings will affect the image brightness"
 			range	{ 0 1 }
 			export	none
@@ -83,27 +99,13 @@
 			parmtag	{ "vray_pluginattr" "exposure" }
 			parmtag	{ "vray_type" "boolean" }
 		}
-		
-		parm {
-			name	"CameraPhysical_specify_fov"
-			label	"Specify Fov"
-			type	toggle
-			default	{ "0" }
-			help	"Use field of view instead of using the focal length, film width, scale etc"
-			range	{ 0 1 }
-			export	none
-			parmtag	{ "cook_dependent" "1" }
-			parmtag	{ "vray_plugin" "CameraPhysical" }
-			parmtag	{ "vray_pluginattr" "specify_fov" }
-			parmtag	{ "vray_type" "boolean" }
-		}
-		
+
 		parm {
 			name	"CameraPhysical_film_width"
 			label	"Film Width"
 			type	float
 			default	{ "36" }
-			hidewhen "{ CameraPhysical_specify_fov == 1 }"
+			hidewhen "{ CameraPhysical_mode_select != 2 }"
 			help	"Specifies the horizontal size of the film gate in milimeters"
 			range	{ 0 135 }
 			export	none
@@ -117,7 +119,7 @@
 			name	"CameraPhysical_focal_length"
 			label	"Focal Length"
 			type	float
-			hidewhen "{ CameraPhysical_specify_fov == 1 }"
+			hidewhen "{ CameraPhysical_mode_select != 2 }"
 			default	{ "50" }
 			help	"Specifies the equivalen focal length of the camera lens"
 			range	{ 0 100 }
@@ -131,9 +133,9 @@
 			name	"CameraPhysical_fov"
 			label	"Field of View"
 			type	float
-			hidewhen "{ CameraPhysical_specify_fov == 0 }"
+			hidewhen "{ CameraPhysical_mode_select != 1}"
 			default	{ "1.5708" }
-			help	"the FOV value (in radians) to use when specify_fov is true"
+			help	"the FOV value (in radians)"
 			range	{ 0 10 }
 			export	none
 			parmtag	{ "cook_dependent" "1" }
@@ -147,7 +149,7 @@
 			name	"CameraPhysical_f_number"
 			label	"F - Stop"
 			type	float
-			hidewhen "{ CameraPhysical_exposure != 1 }"
+			hidewhen "{ CameraPhysical_exposure != 1 } { CameraPhysical_mode_select == 0 }"
 			default	{ "16" }
 			help	"Determines the width of the camera aperture and, indirectly, exposure"
 			range	{ 0 16 }
@@ -162,7 +164,7 @@
 			name	"CameraPhysical_shutter_speed"
 			label	"Shutter Speed"
 			type	float
-			hidewhen "{ CameraPhysical_exposure != 1 } { CameraPhysical_type != Still } "
+			hidewhen "{ CameraPhysical_exposure != 1 } { CameraPhysical_type != Still } { CameraPhysical_mode_select == 0 }"
 			default	{ "100" }
 			help	"The shutter speed, in inverse seconds"
 			range	{ 0 1000 }
@@ -219,7 +221,7 @@
 			name	"CameraPhysical_ISO"
 			label	"ISO"
 			type	float
-			hidewhen "{ CameraPhysical_exposure != 1 }"
+			hidewhen "{ CameraPhysical_exposure != 1 } { CameraPhysical_mode_select == 0 }"
 			default	{ "100" }
 			help	"The film power (i.e. sensitivity)"
 			range	{ 0 3200 }
