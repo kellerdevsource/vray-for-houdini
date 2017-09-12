@@ -453,6 +453,8 @@ int VRayExporter::exportView()
 	if (!camera)
 		return 1;
 
+	addOpCallback(camera, RtCallbackView);
+
 	ViewParams viewParams(camera);
 	viewParams.usePhysicalCamera = isPhysicalView(*camera);
 
