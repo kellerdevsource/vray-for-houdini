@@ -167,6 +167,7 @@ static VRay::VUtils::CharStringRefList getSceneName(const OP_Node &opNode, int p
 
 	UT_String nodePath;
 	opNode.getFullPath(nodePath);
+	nodePath.prepend("scene"); // getFullPath returns path starting with /
 
 	VRay::VUtils::CharStringRefList sceneName(2);
 	sceneName[0] = nodeName.buffer();
