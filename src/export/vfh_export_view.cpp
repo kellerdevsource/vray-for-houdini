@@ -212,7 +212,7 @@ void VRayExporter::fillPhysicalCamera(const ViewParams &viewParams, Attrs::Plugi
 	// pluginDesc.add(Attrs::PluginAttr("specify_focus",     true));
 
 	setAttrsFromOpNodePrms(pluginDesc, &camera, "CameraPhysical_");
-
+	int specifyFovValue = 0;
 	switch(itemSelected) {
 	case MenuItemSelected::HoudiniCameraSettings: {
 		pluginDesc.remove("shutter_speed");
@@ -225,16 +225,16 @@ void VRayExporter::fillPhysicalCamera(const ViewParams &viewParams, Attrs::Plugi
 			resultValue = focalLength;
 		}
 		else if (temporaryString == "m") {
-			resultValue = focalLength*0.001f; // Convert from meters to milimeters
+			resultValue = focalLength * 0.001f; // Convert from meters to milimeters
 		}
 		else if (temporaryString == "nm") {
 			resultValue = focalLength * 1000000.0f; // Convert from nanometers to milimeters
 		}
 		else if (temporaryString == "in") {
-			resultValue = focalLength*25.4f; // Convert from inches to milimeters
+			resultValue = focalLength * 25.4f; // Convert from inches to milimeters
 		}
 		else if (temporaryString == "ft") {
-			resultValue = focalLength*304.8f; // Convert from feet to milimeters
+			resultValue = focalLength * 304.8f; // Convert from feet to milimeters
 		}
 
 		pluginDesc.add(Attrs::PluginAttr("focal_length", resultValue));
@@ -246,15 +246,16 @@ void VRayExporter::fillPhysicalCamera(const ViewParams &viewParams, Attrs::Plugi
 	case MenuItemSelected::UseFieldOfView: {
 		pluginDesc.remove("film_width");
 		pluginDesc.remove("focal_length");
-		pluginDesc.add(Attrs::PluginAttr("specify_fov", 1));
+		specifyFovValue = 1;
 		break;
 	}
 	case MenuItemSelected::UsePhysicallCameraSettings: {
 		pluginDesc.remove("fov");
-		pluginDesc.add(Attrs::PluginAttr("specify_fov", 0));
+		specifyFovValue = 0;
 		break;
 	}
 	}
+	pluginDesc.add(Attrs::PluginAttr("specify_fov", specifyFovValue)); // Use fov value or not based on menu option selected
 }
 
 void VRayExporter::fillRenderView(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc)
@@ -314,7 +315,7 @@ void VRayExporter::fillSettingsCameraDof(const ViewParams &viewParams, Attrs::Pl
 	}
 
 	pluginDesc.addAttribute(Attrs::PluginAttr("focal_dist", focalDist));
-	pluginDesc.addAttribute(Attrs::PluginAttr("aperture", (m_rop->evalFloat("SettingsCameraDof_aperture", 0, t))/100.0f));
+	pluginDesc.addAttribute(Attrs::PluginAttr("aperture", (m_rop->evalFloat("SettingsCameraDof_aperture", 0, t)) / 100.0f));
 	setAttrsFromOpNodePrms(pluginDesc, m_rop, "SettingsCameraDof_");
 }
 
