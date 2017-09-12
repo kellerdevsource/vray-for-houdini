@@ -395,6 +395,12 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 				plugin_value = exportPlugin(mtlPluginDesc);
 			}
 
+			if (!strcmp(plugin_value.getType(), "MtlSingleBRDF")) {
+				VRay::ValueList sceneName(1);
+				sceneName[0] = VRay::Value(vopNode->getName().buffer());
+				plugin_value.setValue("scene_name", sceneName);
+			}
+
 			Log::getLog().info("  Setting plugin value: %s = %s",
 							   attrName.c_str(), plugin_value.getName());
 
