@@ -47,12 +47,13 @@ endif()
 set(INSTALL_RELEASE_PATH ${INSTALL_RELEASE_ROOT}/${INSTALL_RELEASE_SUBDIR})
 
 include(vfh_compiler)
+
+project(vray_for_houdini)
+
 include(vfh_houdini)
 include(vfh_vrayappsdk)
 include(vfh_vraysdk)
 include(vfh_phoenix)
-
-project(vray_for_houdini)
 
 set_compiler_flags()
 
