@@ -31,6 +31,84 @@ struct RenderSizeParams {
 	int  h;
 };
 
+enum MenuItemSelected {
+	HoudiniCameraSettings = 0,
+	UseFieldOfView = 1,
+	UsePhysicallCameraSettings = 2
+};
+
+enum PhysicalCameraType {
+	Still = 0,
+	Cinematic = 1,
+	Video = 2
+};
+
+struct PhysicalCameraParams {
+	PhysicalCameraParams()
+		:use(0)
+		, type(PhysicalCameraType::Still)
+		, useDof(0)
+		, useMoBlur(0)
+		, selectedItem(HoudiniCameraSettings)
+		, exposure(1)
+		, filmWidth(36)
+		, focalLength(50)
+		, fov(1.5708)
+		, fNumber(16)
+		, shutterSpeed(100)
+		, shutterAngle(180)
+		, shutterOffset(0)
+		, latency(0)
+		, ISO(100)
+		, zoomFactor(1)
+		, specifyFocus(1)
+		, focusDistance(200)
+		, targeted(1)
+		, targetDistance(200)
+		, vignetting(1)
+		, opticalVignetting(0)
+		, subdivisions(4)
+		, dontAffectSettings(0)
+		, focalUnits("mm")
+		, houdiniFocalLength(50)
+		, houdiniFNumber(5.6)
+		, houdiniFocusDistance(5)
+	{}
+
+	bool operator == (const PhysicalCameraParams &other) const;
+
+	bool use;
+	PhysicalCameraType type;
+	bool useDof;
+	bool useMoBlur;
+	MenuItemSelected selectedItem;
+	bool exposure;
+	float filmWidth;
+	float focalLength;
+	float fov;
+	float fNumber;
+	float shutterSpeed;
+	float shutterAngle;
+	float shutterOffset;
+	float latency;
+	float ISO;
+	float zoomFactor;
+	bool specifyFocus;
+	float focusDistance;
+	bool targeted;
+	float targetDistance;
+	//colour? (white balance)
+	float vignetting;
+	float opticalVignetting;
+	int subdivisions;
+	bool dontAffectSettings;
+	// Houdini Params
+	UT_String focalUnits;
+	float houdiniFocalLength;
+	float houdiniFNumber;
+	float houdiniFocusDistance;
+};
+
 struct RenderCropRegionParams {
 	RenderCropRegionParams()
 		: x(0)
@@ -120,6 +198,7 @@ struct ViewParams {
 	RenderSizeParams  renderSize;
 	RenderViewParams  renderView;
 	RenderCropRegionParams cropRegion;
+	PhysicalCameraParams physCam;
 
 	int               usePhysicalCamera;
 	OBJ_Node         *cameraObject;

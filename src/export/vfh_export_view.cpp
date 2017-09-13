@@ -18,11 +18,7 @@
 using namespace VRayForHoudini;
 
 
-enum MenuItemSelected {
-	HoudiniCameraSettings = 0,
-	UseFieldOfView = 1,
-	UsePhysicallCameraSettings = 2
-};
+
 
 float VRayForHoudini::getFov(float aperture, float focal)
 {
@@ -179,6 +175,39 @@ void VRayExporter::fillViewParamFromCameraNode(const OBJ_Node &camera, ViewParam
 	{
 		viewParams.renderSize.w *= 2;
 	}
+
+	viewParams.physCam.use = Parm::getParmInt(camera, "CameraPhysical_use");
+	viewParams.physCam.type = PhysicalCameraType(Parm::getParmInt(camera, "CameraPhysical_type"));
+	viewParams.physCam.useDof = Parm::getParmInt(camera, "CameraPhysical_use_dof");
+	viewParams.physCam.useMoBlur = Parm::getParmInt(camera, "CameraPhysical_use_moblur");
+	viewParams.physCam.selectedItem = MenuItemSelected(Parm::getParmInt(camera, "CameraPhysical_mode_select")); // Add a check for range?
+	if (viewParams.physCam.selectedItem == MenuItemSelected::HoudiniCameraSettings) {
+		camera.evalString(viewParams.physCam.focalUnits, "focalunits", 0, 0.0);
+		viewParams.physCam.houdiniFNumber = camera.evalFloat("fstop", 0, t);
+		viewParams.physCam.houdiniFocalLength = camera.evalFloat("focal", 0, t);
+		viewParams.physCam.houdiniFocusDistance = camera.evalFloat("focus", 0, t);
+	}
+	else {
+		viewParams.physCam.exposure = Parm::getParmInt(camera, "CameraPhysical_exposure");
+		viewParams.physCam.focalLength = Parm::getParmFloat(camera, "CameraPhysical_focal_length");
+		viewParams.physCam.fNumber = Parm::getParmFloat(camera, "CameraPhysical_f_number");
+		viewParams.physCam.shutterSpeed = Parm::getParmFloat(camera, "CameraPhysical_shutter_speed");
+	}
+	viewParams.physCam.filmWidth = Parm::getParmFloat(camera, "CameraPhysical_film_width");
+	viewParams.physCam.fov = Parm::getParmFloat(camera, "CameraPhysical_fov");
+	viewParams.physCam.shutterAngle = Parm::getParmFloat(camera, "CameraPhysical_shutter_angle");
+	viewParams.physCam.shutterOffset = Parm::getParmFloat(camera, "CameraPhysical_shutter_offset");
+	viewParams.physCam.latency = Parm::getParmFloat(camera, "CameraPhysical_latency");
+	viewParams.physCam.ISO = Parm::getParmFloat(camera, "CameraPhysical_ISO");
+	viewParams.physCam.zoomFactor = Parm::getParmFloat(camera, "CameraPhysical_zoom_factor");
+	viewParams.physCam.specifyFocus = Parm::getParmInt(camera, "CameraPhysical_specify_focus");
+	viewParams.physCam.focusDistance = Parm::getParmFloat(camera, "CameraPhysical_focus_distance");
+	viewParams.physCam.targeted = Parm::getParmInt(camera, "CameraPhysical_targeted");
+	viewParams.physCam.targetDistance = Parm::getParmFloat(camera, "CameraPhysical_target_distance");
+	viewParams.physCam.vignetting = Parm::getParmFloat(camera, "CameraPhysical_vignetting");
+	viewParams.physCam.opticalVignetting = Parm::getParmFloat(camera, "CameraPhysical_optical_vignetting");
+	viewParams.physCam.subdivisions = Parm::getParmFloat(camera, "CameraPhysical_subdivs");
+	viewParams.physCam.dontAffectSettings = Parm::getParmInt(camera, "CameraPhysical_dont_affect_settings");
 }
 
 ReturnValue VRayExporter::fillSettingsMotionBlur(ViewParams &viewParams, Attrs::PluginDesc &settingsMotionBlur)
@@ -482,6 +511,7 @@ int ViewParams::needReset(const ViewParams &other) const
 {
 	return (MemberNotEq(usePhysicalCamera) ||
 			MemberNotEq(cameraObject) ||
+			MemberNotEq(physCam) ||
 			renderView.needReset(other.renderView));
 }
 
@@ -507,6 +537,36 @@ bool StereoViewParams::operator ==(const StereoViewParams &other) const
 bool StereoViewParams::operator !=(const StereoViewParams &other) const
 {
 	return !(*this == other);
+}
+
+bool PhysicalCameraParams::operator ==(const PhysicalCameraParams &other) const 
+{
+	return (MemberEq(use) &&
+			MemberEq(type) &&
+			MemberEq(useDof) &&
+			MemberEq(useMoBlur) && 
+			MemberEq(selectedItem) &&
+			MemberEq(exposure) &&
+			MemberFloatEq(filmWidth) &&
+			MemberFloatEq(focalLength) &&
+			MemberFloatEq(fov) &&
+			MemberFloatEq(fNumber) &&
+			MemberFloatEq(shutterSpeed) &&
+			MemberFloatEq(shutterAngle) &&
+			MemberFloatEq(shutterOffset) &&
+			MemberFloatEq(latency) &&
+			MemberFloatEq(ISO) &&
+			MemberFloatEq(zoomFactor) &&
+			MemberFloatEq(focusDistance) &&
+			MemberFloatEq(targetDistance) &&
+			MemberFloatEq(vignetting) &&
+			MemberFloatEq(opticalVignetting) &&
+			MemberEq(subdivisions) &&
+			MemberEq(dontAffectSettings) &&
+			MemberEq(focalUnits) &&
+			MemberFloatEq(houdiniFocalLength) &&
+			MemberFloatEq(houdiniFocusDistance) &&
+			MemberFloatEq(houdiniFNumber));
 }
 
 bool RenderViewParams::operator ==(const RenderViewParams &other) const
