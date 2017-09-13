@@ -220,7 +220,6 @@ link_with_vray_sdk(${PROJECT_NAME})
 link_with_vray(${PROJECT_NAME})
 link_with_vray_appsdk(${PROJECT_NAME})
 link_with_boost(${PROJECT_NAME})
-link_with_boost(vray_for_houdini_exporter)
 
 if (Phoenix_FOUND)
 	target_link_libraries(${PROJECT_NAME} ${Phoenix_LIBS})
