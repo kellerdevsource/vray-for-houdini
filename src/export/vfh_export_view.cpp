@@ -204,9 +204,9 @@ void VRayExporter::fillViewParamFromCameraNode(const OBJ_Node &camera, ViewParam
 	viewParams.physCam.focusDistance = Parm::getParmFloat(camera, "CameraPhysical_focus_distance");
 	viewParams.physCam.targeted = Parm::getParmInt(camera, "CameraPhysical_targeted");
 	viewParams.physCam.targetDistance = Parm::getParmFloat(camera, "CameraPhysical_target_distance");
-	viewParams.physCam.balancer = camera.evalFloat("CameraPhysical_white_balancer", 0, 0.0);
-	viewParams.physCam.balanceg = camera.evalFloat("CameraPhysical_white_balanceg", 0, 0.0);
-	viewParams.physCam.balanceb = camera.evalFloat("CameraPhysical_white_balanceb", 0, 0.0);
+	viewParams.physCam.balance.r = camera.evalFloat("CameraPhysical_white_balancer", 0, 0.0);
+	viewParams.physCam.balance.g = camera.evalFloat("CameraPhysical_white_balanceg", 0, 0.0);
+	viewParams.physCam.balance.b = camera.evalFloat("CameraPhysical_white_balanceb", 0, 0.0);
 	viewParams.physCam.vignetting = Parm::getParmFloat(camera, "CameraPhysical_vignetting");
 	viewParams.physCam.opticalVignetting = Parm::getParmFloat(camera, "CameraPhysical_optical_vignetting");
 	viewParams.physCam.subdivisions = Parm::getParmFloat(camera, "CameraPhysical_subdivs");
@@ -562,9 +562,7 @@ bool PhysicalCameraParams::operator ==(const PhysicalCameraParams &other) const
 			MemberFloatEq(zoomFactor) &&
 			MemberFloatEq(focusDistance) &&
 			MemberFloatEq(targetDistance) &&
-			MemberFloatEq(balancer) &&
-			MemberFloatEq(balanceg) &&
-			MemberFloatEq(balanceb) &&
+			MemberEq(balance) &&
 			MemberFloatEq(vignetting) &&
 			MemberFloatEq(opticalVignetting) &&
 			MemberEq(subdivisions) &&

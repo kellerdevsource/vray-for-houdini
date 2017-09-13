@@ -49,33 +49,31 @@ struct PhysicalCameraParams {
 		, type(PhysicalCameraType::Still)
 		, useDof(0)
 		, useMoBlur(0)
-		, selectedItem(HoudiniCameraSettings)
+		, selectedItem(MenuItemSelected::HoudiniCameraSettings)
 		, exposure(1)
-		, filmWidth(36)
-		, focalLength(50)
-		, fov(1.5708)
-		, fNumber(16)
-		, shutterSpeed(100)
-		, shutterAngle(180)
-		, shutterOffset(0)
-		, latency(0)
-		, ISO(100)
-		, zoomFactor(1)
+		, filmWidth(36.0f)
+		, focalLength(50.0f)
+		, fov(1.5708f)
+		, fNumber(16.0f)
+		, shutterSpeed(100.0f)
+		, shutterAngle(180.0f)
+		, shutterOffset(0.0f)
+		, latency(0.0f)
+		, ISO(100.0f)
+		, zoomFactor(1.0f)
 		, specifyFocus(1)
-		, focusDistance(200)
+		, focusDistance(200.0f)
 		, targeted(1)
-		, targetDistance(200)
-		, balancer(1.0)
-		, balanceg(1.0)
-		, balanceb(1.0)
-		, vignetting(1)
-		, opticalVignetting(0)
+		, targetDistance(200.0f)
+		, balance(1.0f)
+		, vignetting(1.0f)
+		, opticalVignetting(0.0f)
 		, subdivisions(4)
 		, dontAffectSettings(0)
 		, focalUnits("mm")
-		, houdiniFocalLength(50)
-		, houdiniFNumber(5.6)
-		, houdiniFocusDistance(5)
+		, houdiniFocalLength(50.0f)
+		, houdiniFNumber(5.6f)
+		, houdiniFocusDistance(5.0f)
 	{}
 
 	bool operator == (const PhysicalCameraParams &other) const;
@@ -100,7 +98,7 @@ struct PhysicalCameraParams {
 	float focusDistance;
 	bool targeted;
 	float targetDistance;
-	//colour? (white balance)
+	VRay::Color balance;
 	float balancer;
 	float balanceg;
 	float balanceb;
