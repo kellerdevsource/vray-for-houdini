@@ -12,18 +12,16 @@
 #define VRAY_FOR_HOUDINI_EXPORT_VRAYPROXY_H
 
 #include "vfh_exporter.h"
-#include "vfh_plugin_attrs.h"
 
 #include <SOP/SOP_Node.h>
 
-#include <mesh_file.h>
 #include <simplifier.h>
+
 
 namespace VRayForHoudini {
 
 /// SOP node array type.
 typedef UT_ValArray<SOP_Node*> SOPList;
-
 
 /// VRayProxyExportOptions wraps all options necessary to export .vrmesh file(s).
 /// "vrayproxy" hscript cmd and "V-Ray Proxy ROP" create and configure an instance
@@ -152,6 +150,7 @@ struct VRayProxyExportOptions {
 	fpreal m_pointSize;
 };
 
+
 /// VRayProxyExporter wraps the geometry export of a single frame into a single .vrmesh file
 class VRayProxyExporter
 {
@@ -184,12 +183,10 @@ public:
 
 private:
 	/// Input SOP list.
-	const SOPList &sopList;
-	ROP_Node *m_rop;
-
-	VRayExporter exporter;
-
-	const VRayProxyExportOptions &m_options; ///< export options
+	const SOPList &sopList; ///< List of all SOP nodes that we need to export as proxies
+	ROP_Node *m_rop; ///< Pointer to the Proxy ROP that called us
+	const VRayProxyExportOptions &m_options; ///< Export options
+	VRayExporter exporter; ///< The exporter used to generate the intermediate .vrscene
 
 	VUTILS_DISABLE_COPY(VRayProxyExporter)
 };

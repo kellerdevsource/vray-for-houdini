@@ -18,8 +18,6 @@
 #include <FS/FS_FileSystem.h>
 #include <UT/UT_Assert.h>
 
-#include <uni.h>
-#include <voxelsubdivider.h>
 
 using namespace VRayForHoudini;
 
