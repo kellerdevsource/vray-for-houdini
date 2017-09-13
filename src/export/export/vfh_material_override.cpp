@@ -23,10 +23,11 @@
 #include <STY/STY_TargetMatchStatus.h>
 #include <STY/STY_OverrideValues.h>
 #include <STY/STY_OverrideValuesFilter.h>
-#include <STY/STY_Subject.h>
 #include <GSTY/GSTY_SubjectPrim.h>
-#include <GSTY/GSTY_SubjectPrimGroup.h>
+#include <GSTY/GSTY_SubjectGeoObject.h>
+#include <GSTY/GSTY_BundleMap.h>
 #include <OP/OP_StyleManager.h>
+
 #include <UT/UT_Version.h>
 
 using namespace VRayForHoudini;
@@ -136,7 +137,6 @@ void MtlOverrideAttrExporter::addAttributesAsOverrides(const GEOAttribList &attr
 
 static void appendOverrideValues(const STY_OverrideValues &styOverrideValues, PrimMaterial &primMaterial, OverrideAppendMode mode=overrideAppend, int materialOnly=false)
 {
-#if UT_MAJOR_VERSION_INT >= 16
 	UT_Int64Array intVals;
 	UT_Fpreal64Array floatVals;
 	UT_StringArray stringVals;
@@ -216,33 +216,28 @@ static void appendOverrideValues(const STY_OverrideValues &styOverrideValues, Pr
 			}
 		}
 	}
-#endif
 }
 
 void VRayForHoudini::appendOverrideValues(const STY_Styler &styler, PrimMaterial &primMaterial, OverrideAppendMode mode, int materialOnly)
 {
-#if UT_MAJOR_VERSION_INT >= 16
 	static const STY_OverrideValuesFilter styOverrideValuesFilter(nullptr);
 
 	STY_OverrideValues styOverrideValues;
 	styler.getOverrides(styOverrideValues, styOverrideValuesFilter);
 
 	appendOverrideValues(styOverrideValues, primMaterial, mode, materialOnly);
-#endif
 }
 
 void VRayForHoudini::appendStyleSheet(PrimMaterial &primMaterial, const UT_StringHolder &styleSheet, fpreal t, OverrideAppendMode mode, int materialOnly)
 {
-#if UT_MAJOR_VERSION_INT >= 16
 	const char *styleBuf = styleSheet.buffer();
 	if (!UTisstring(styleBuf))
 		return;
 
-	STY_StyleSheetHandle styStyleSheetHandle(new STY_StyleSheet(styleBuf, NULL, STY_LOAD_FOR_STYLING));
-	STY_Styler styStyler(styStyleSheetHandle);
+	const STY_StyleSheetHandle styStyleSheetHandle(new STY_StyleSheet(styleBuf, NULL, STY_LOAD_FOR_STYLING));
+	const STY_Styler styStyler(styStyleSheetHandle);
 
 	appendOverrideValues(styStyler, primMaterial, mode, materialOnly);
-#endif
 }
 
 void VRayForHoudini::appendMaterialOverrides(PrimMaterial &primMaterial,
@@ -360,43 +355,45 @@ void VRayForHoudini::appendMaterialOverride(PrimMaterial &primMaterial,
 
 void VRayForHoudini::getOverridesForPrimitive(const STY_Styler &geoStyler, const GEO_Primitive &prim, PrimMaterial &primMaterial)
 {
-#if UT_MAJOR_VERSION_INT >= 16
-	STY_Styler primStyler = getStylerForPrimitive(geoStyler, prim);
+	const STY_Styler &primStyler = getStylerForPrimitive(geoStyler, prim);
 
 	// If overrides comes from the stylesheet we have to override the values.
 	// This is different from when the stylesheet is a primitive attribute, then
 	// we'll append the values.
 	appendOverrideValues(primStyler, primMaterial, overrideMerge);
-#endif
 }
 
 STY_Styler VRayForHoudini::getStylerForPrimitive(const STY_Styler &geoStyler, const GEO_Primitive &prim)
 {
-#if UT_MAJOR_VERSION_INT < 16
-	return STY_Styler();
-#else
 #if UT_BUILD_VERSION_INT > 633
-	GSTY_SubjectPrim primSubject(&prim, nullptr);
+	const GSTY_SubjectPrim primSubject(&prim, nullptr);
 #else
-	GSTY_SubjectPrim primSubject(&prim);
+	const GSTY_SubjectPrim primSubject(&prim);
 #endif
 	return geoStyler.cloneWithSubject(primSubject);
-#endif
 }
 
-static STY_Styler cloneWithStyleSheet(const STY_Styler &styStyler, const char *styleSheetBuffer)
+STY_Styler VRayForHoudini::getStylerForObject(const STY_Styler &topStyler, const OP_Node &opNode)
+{
+	const UT_TagListPtr tags;
+	const GSTY_BundleMap bundles;
+	const UT_StringHolder stylesheet;
+
+	const GSTY_SubjectGeoObject geoSubject(opNode.getFullPath(), tags, bundles, stylesheet);
+
+	return topStyler.cloneWithSubject(geoSubject);
+}
+
+static STY_Styler cloneWithStyleSheet(const STY_Styler &topStyler, const char *styleSheetBuffer)
 {
 	if (!UTisstring(styleSheetBuffer))
-		return styStyler;
-	return styStyler.cloneWithAddedStyleSheet(new STY_StyleSheet(styleSheetBuffer, NULL, STY_LOAD_FOR_STYLING));
+		return topStyler;
+	return topStyler.cloneWithAddedStyleSheet(new STY_StyleSheet(styleSheetBuffer, NULL, STY_LOAD_FOR_STYLING));
 }
 
 STY_Styler VRayForHoudini::getStylerForObject(OBJ_Node &objNode, fpreal t)
 {
-#if UT_MAJOR_VERSION_INT < 16
-	return STY_Styler();
-#else
-	STY_Styler geoStyler;
+	STY_Styler styStyler;
 
 	const UT_StringArray &globalStyles =
 		OPgetDirector()->getStyleManager()->getStyleNames();
@@ -405,16 +402,15 @@ STY_Styler VRayForHoudini::getStylerForObject(OBJ_Node &objNode, fpreal t)
 		const UT_StringHolder &globalSheet =
 			OPgetDirector()->getStyleManager()->getStyleSheet(globalStyle);
 
-		geoStyler = cloneWithStyleSheet(geoStyler, globalSheet.buffer());
+		styStyler = cloneWithStyleSheet(styStyler, globalSheet.buffer());
 	}
 
 	if (Parm::isParmExist(objNode, VFH_ATTR_SHOP_MATERIAL_STYLESHEET)) {
 		UT_String objStyleSheet;
 		objNode.evalString(objStyleSheet, VFH_ATTR_SHOP_MATERIAL_STYLESHEET, 0, t);
 
-		geoStyler = cloneWithStyleSheet(geoStyler, objStyleSheet.buffer());
+		styStyler = cloneWithStyleSheet(styStyler, objStyleSheet.buffer());
 	}
 
-	return geoStyler;
-#endif
+	return styStyler;
 }
