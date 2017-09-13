@@ -219,14 +219,7 @@ link_with_vray_appsdk(${PROJECT_NAME})
 link_with_boost(${PROJECT_NAME})
 
 if (Phoenix_FOUND)
-	target_link_libraries(${PROJECT_NAME}
-		aurloader_s
-		aurloader
-		guiwin_qt_s
-		iutils_s
-		aurramps_s
-		gui_utils_s
-	)
+	target_link_libraries(${PROJECT_NAME} ${Phoenix_LIBS})
 endif()
 
 add_definitions(-DCGR_GIT_HASH=${SRC_GIT_HASH})
