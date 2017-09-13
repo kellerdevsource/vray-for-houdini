@@ -45,7 +45,7 @@ enum PhysicalCameraType {
 
 struct PhysicalCameraParams {
 	PhysicalCameraParams()
-		:use(0)
+		: use(0)
 		, type(PhysicalCameraType::Still)
 		, useDof(0)
 		, useMoBlur(0)
