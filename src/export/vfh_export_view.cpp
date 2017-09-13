@@ -180,12 +180,12 @@ void VRayExporter::fillViewParamFromCameraNode(const OBJ_Node &camera, ViewParam
 	viewParams.physCam.type = PhysicalCameraType(Parm::getParmInt(camera, "CameraPhysical_type"));
 	viewParams.physCam.useDof = Parm::getParmInt(camera, "CameraPhysical_use_dof");
 	viewParams.physCam.useMoBlur = Parm::getParmInt(camera, "CameraPhysical_use_moblur");
-	viewParams.physCam.selectedItem = MenuItemSelected(Parm::getParmInt(camera, "CameraPhysical_mode_select")); // Add a check for range?
+	viewParams.physCam.selectedItem = MenuItemSelected(Parm::getParmInt(camera, "CameraPhysical_mode_select"));
 	if (viewParams.physCam.selectedItem == MenuItemSelected::HoudiniCameraSettings) {
 		camera.evalString(viewParams.physCam.focalUnits, "focalunits", 0, 0.0);
-		viewParams.physCam.houdiniFNumber = camera.evalFloat("fstop", 0, t);
-		viewParams.physCam.houdiniFocalLength = camera.evalFloat("focal", 0, t);
-		viewParams.physCam.houdiniFocusDistance = camera.evalFloat("focus", 0, t);
+		viewParams.physCam.houdiniFNumber = camera.evalFloat("fstop", 0, 0.0);
+		viewParams.physCam.houdiniFocalLength = camera.evalFloat("focal", 0, 0.0);
+		viewParams.physCam.houdiniFocusDistance = camera.evalFloat("focus", 0, 0.0);
 	}
 	else {
 		viewParams.physCam.exposure = Parm::getParmInt(camera, "CameraPhysical_exposure");
@@ -204,6 +204,9 @@ void VRayExporter::fillViewParamFromCameraNode(const OBJ_Node &camera, ViewParam
 	viewParams.physCam.focusDistance = Parm::getParmFloat(camera, "CameraPhysical_focus_distance");
 	viewParams.physCam.targeted = Parm::getParmInt(camera, "CameraPhysical_targeted");
 	viewParams.physCam.targetDistance = Parm::getParmFloat(camera, "CameraPhysical_target_distance");
+	viewParams.physCam.balancer = camera.evalFloat("CameraPhysical_white_balancer", 0, 0.0);
+	viewParams.physCam.balanceg = camera.evalFloat("CameraPhysical_white_balanceg", 0, 0.0);
+	viewParams.physCam.balanceb = camera.evalFloat("CameraPhysical_white_balanceb", 0, 0.0);
 	viewParams.physCam.vignetting = Parm::getParmFloat(camera, "CameraPhysical_vignetting");
 	viewParams.physCam.opticalVignetting = Parm::getParmFloat(camera, "CameraPhysical_optical_vignetting");
 	viewParams.physCam.subdivisions = Parm::getParmFloat(camera, "CameraPhysical_subdivs");
@@ -559,6 +562,9 @@ bool PhysicalCameraParams::operator ==(const PhysicalCameraParams &other) const
 			MemberFloatEq(zoomFactor) &&
 			MemberFloatEq(focusDistance) &&
 			MemberFloatEq(targetDistance) &&
+			MemberFloatEq(balancer) &&
+			MemberFloatEq(balanceg) &&
+			MemberFloatEq(balanceb) &&
 			MemberFloatEq(vignetting) &&
 			MemberFloatEq(opticalVignetting) &&
 			MemberEq(subdivisions) &&

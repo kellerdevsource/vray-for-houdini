@@ -65,6 +65,9 @@ struct PhysicalCameraParams {
 		, focusDistance(200)
 		, targeted(1)
 		, targetDistance(200)
+		, balancer(1.0)
+		, balanceg(1.0)
+		, balanceb(1.0)
 		, vignetting(1)
 		, opticalVignetting(0)
 		, subdivisions(4)
@@ -98,6 +101,9 @@ struct PhysicalCameraParams {
 	bool targeted;
 	float targetDistance;
 	//colour? (white balance)
+	float balancer;
+	float balanceg;
+	float balanceb;
 	float vignetting;
 	float opticalVignetting;
 	int subdivisions;
