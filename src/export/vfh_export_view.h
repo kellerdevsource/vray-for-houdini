@@ -104,37 +104,6 @@ struct RenderViewParams {
 };
 
 
-struct ViewPluginsDesc {
-	static const std::string settingsCameraDofPluginName;
-	static const std::string settingsMotionBlurPluginName;
-	static const std::string settingsCameraPluginName;
-	static const std::string cameraPhysicalPluginName;
-	static const std::string cameraDefaultPluginName;
-	static const std::string renderViewPluginName;
-	static const std::string stereoSettingsPluginName;
-
-	ViewPluginsDesc()
-		: settingsCameraDof(settingsCameraDofPluginName, "SettingsCameraDof")
-		, settingsMotionBlur(settingsMotionBlurPluginName, "SettingsMotionBlur")
-		, settingsCamera(settingsCameraPluginName, "SettingsCamera")
-		, cameraPhysical(cameraPhysicalPluginName, "CameraPhysical")
-		, cameraDefault(cameraDefaultPluginName, "CameraDefault")
-		, renderView(renderViewPluginName, "RenderView")
-		, stereoSettings(stereoSettingsPluginName, "VRayStereoscopicSettings")
-	{}
-
-	int needReset(const ViewPluginsDesc &other) const;
-
-	Attrs::PluginDesc  settingsCameraDof;
-	Attrs::PluginDesc  settingsMotionBlur;
-	Attrs::PluginDesc  settingsCamera;
-	Attrs::PluginDesc  cameraPhysical;
-	Attrs::PluginDesc  cameraDefault;
-	Attrs::PluginDesc  renderView;
-	Attrs::PluginDesc  stereoSettings;
-};
-
-
 struct ViewParams {
 	explicit ViewParams(OBJ_Node *camera=nullptr)
 		: usePhysicalCamera(false)

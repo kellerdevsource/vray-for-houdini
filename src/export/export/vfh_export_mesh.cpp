@@ -674,7 +674,7 @@ static void allocateOverrideMapChannel(MapChannel &mapChannel, const GEOPrimList
 	mapChannel.vertices = VRay::VUtils::VectorRefList(numFaces * 3);
 	mapChannel.faces = VRay::VUtils::IntRefList(numFaces * 3);
 
-	for (int i = 0; i < numFaces; ++i) {
+	for (int i = 0; i < mapChannel.vertices.count(); ++i) {
 		mapChannel.vertices[i].set(ALMOST_FLT_MAX, 0.0f, 0.0f);
 		mapChannel.faces[i] = i;
 	}

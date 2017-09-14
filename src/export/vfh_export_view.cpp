@@ -17,13 +17,12 @@
 
 using namespace VRayForHoudini;
 
-const std::string VRayForHoudini::ViewPluginsDesc::settingsCameraDofPluginName("settingsCameraDof");
-const std::string VRayForHoudini::ViewPluginsDesc::settingsCameraPluginName("settingsCamera");
-const std::string VRayForHoudini::ViewPluginsDesc::cameraPhysicalPluginName("cameraPhysical");
-const std::string VRayForHoudini::ViewPluginsDesc::cameraDefaultPluginName("cameraDefault");
-const std::string VRayForHoudini::ViewPluginsDesc::renderViewPluginName("renderView");
-const std::string VRayForHoudini::ViewPluginsDesc::stereoSettingsPluginName("stereoSettings");
-const std::string VRayForHoudini::ViewPluginsDesc::settingsMotionBlurPluginName("settingsMotionBlur");
+
+enum MenuItemSelected {
+	HoudiniCameraSettings = 0,
+	UseFieldOfView = 1,
+	UsePhysicallCameraSettings = 2
+};
 
 float VRayForHoudini::getFov(float aperture, float focal)
 {
@@ -182,22 +181,9 @@ void VRayExporter::fillViewParamFromCameraNode(const OBJ_Node &camera, ViewParam
 	}
 }
 
-ReturnValue VRayExporter::fillSettingsMotionBlur(ViewParams &viewParams)
+ReturnValue VRayExporter::fillSettingsMotionBlur(ViewParams &viewParams, Attrs::PluginDesc &settingsMotionBlur)
 {
-	const fpreal t = m_context.getTime();
-
-	int useCameraSettings = m_rop->evalInt("SettingsMotionBlur_camera_motion_blur", 0, t);
-	if (useCameraSettings) {
-		OBJ_Node *camera = VRayExporter::getCamera(m_rop);
-		if (!camera) {
-			Log::getLog().error("Camera does not exist! In VRayExporter::fillSettingsMotionBlur");
-			return ReturnValue::Error;
-		}
-		const fpreal shutter = camera->evalFloat("shutter", 0, t);
-		viewPlugins.settingsMotionBlur.addAttribute(Attrs::PluginAttr("duration", shutter));
-	}
-
-	setAttrsFromOpNodePrms(viewPlugins.settingsMotionBlur, m_rop, "SettingsMotionBlur_");
+	setAttrsFromOpNodePrms(settingsMotionBlur, m_rop, "SettingsMotionBlur_");
 
 	return ReturnValue::Success;
 }
@@ -213,24 +199,71 @@ void VRayExporter::fillPhysicalCamera(const ViewParams &viewParams, Attrs::Plugi
 	const float aspect = float(viewParams.renderSize.w) / float(viewParams.renderSize.h);
 
 	float horizontal_offset = camera.evalFloat("CameraPhysical_horizontal_offset", 0, t);
-	float vertical_offset   = camera.evalFloat("CameraPhysical_vertical_offset", 0, t);
+	float vertical_offset = camera.evalFloat("CameraPhysical_vertical_offset", 0, t);
 	if (aspect < 1.0f) {
 		const float offset_fix = 1.0 / aspect;
 		horizontal_offset *= offset_fix;
-		vertical_offset   *= offset_fix;
+		vertical_offset *= offset_fix;
 	}
 
 	const float lens_shift = camera.evalInt("CameraPhysical_auto_lens_shift", 0, 0.0)
-							 ? getLensShift(camera, getContext())
-							 : camera.evalFloat("CameraPhysical_lens_shift", 0, t);
+		? getLensShift(camera, getContext())
+		: camera.evalFloat("CameraPhysical_lens_shift", 0, t);
 
-	pluginDesc.add(Attrs::PluginAttr("fov", viewParams.renderView.fov));
+	const int itemSelected = camera.evalInt("CameraPhysical_mode_select", 0, 0.0);
+	if (itemSelected != MenuItemSelected::UseFieldOfView) {
+		pluginDesc.add(Attrs::PluginAttr("fov", viewParams.renderView.fov));
+	}
 	pluginDesc.add(Attrs::PluginAttr("horizontal_offset", horizontal_offset));
 	pluginDesc.add(Attrs::PluginAttr("vertical_offset",   vertical_offset));
 	pluginDesc.add(Attrs::PluginAttr("lens_shift",        lens_shift));
 	// pluginDesc.add(Attrs::PluginAttr("specify_focus",     true));
 
 	setAttrsFromOpNodePrms(pluginDesc, &camera, "CameraPhysical_");
+	int specifyFovValue = 0;
+	switch(itemSelected) {
+	case MenuItemSelected::HoudiniCameraSettings: {
+		pluginDesc.remove("shutter_speed");
+
+		UT_String temporaryString;
+		camera.evalString(temporaryString, "focalunits", 0, t);
+		const double focalLength = camera.evalFloat("focal", 0, t);
+		double resultValue;
+		if (temporaryString == "mm") {
+			resultValue = focalLength;
+		}
+		else if (temporaryString == "m") {
+			resultValue = focalLength * 0.001f; // Convert from meters to milimeters
+		}
+		else if (temporaryString == "nm") {
+			resultValue = focalLength * 1000000.0f; // Convert from nanometers to milimeters
+		}
+		else if (temporaryString == "in") {
+			resultValue = focalLength * 25.4f; // Convert from inches to milimeters
+		}
+		else if (temporaryString == "ft") {
+			resultValue = focalLength * 304.8f; // Convert from feet to milimeters
+		}
+
+		pluginDesc.add(Attrs::PluginAttr("focal_length", resultValue));
+		pluginDesc.add(Attrs::PluginAttr("f_number", camera.evalFloat("fstop", 0, t)));
+		pluginDesc.add(Attrs::PluginAttr("focus_distance", camera.evalFloat("focus", 0, t)));
+
+		break;
+	}
+	case MenuItemSelected::UseFieldOfView: {
+		pluginDesc.remove("film_width");
+		pluginDesc.remove("focal_length");
+		specifyFovValue = 1;
+		break;
+	}
+	case MenuItemSelected::UsePhysicallCameraSettings: {
+		pluginDesc.remove("fov");
+		specifyFovValue = 0;
+		break;
+	}
+	}
+	pluginDesc.add(Attrs::PluginAttr("specify_fov", specifyFovValue)); // Use fov value or not based on menu option selected
 }
 
 void VRayExporter::fillRenderView(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc)
@@ -290,7 +323,7 @@ void VRayExporter::fillSettingsCameraDof(const ViewParams &viewParams, Attrs::Pl
 	}
 
 	pluginDesc.addAttribute(Attrs::PluginAttr("focal_dist", focalDist));
-
+	pluginDesc.addAttribute(Attrs::PluginAttr("aperture", (m_rop->evalFloat("SettingsCameraDof_aperture", 0, t)) / 100.0f));
 	setAttrsFromOpNodePrms(pluginDesc, m_rop, "SettingsCameraDof_");
 }
 
@@ -329,54 +362,60 @@ ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 	const bool needReset = m_viewParams.needReset(viewParams);
 	if (needReset) {
 		Log::getLog().warning("VRayExporter::exportView: Reseting view plugins...");
-		viewPlugins = ViewPluginsDesc();
-		removePlugin(ViewPluginsDesc::settingsCameraPluginName);
-		removePlugin(ViewPluginsDesc::settingsCameraDofPluginName);
-		removePlugin(ViewPluginsDesc::stereoSettingsPluginName);
-		removePlugin(ViewPluginsDesc::cameraPhysicalPluginName);
-		removePlugin(ViewPluginsDesc::cameraDefaultPluginName);
 
-		fillRenderView(viewParams, viewPlugins.renderView);
-		if (fillSettingsMotionBlur(viewParams) == ReturnValue::Error) {
+		removePlugin("settingsCamera");
+		removePlugin("settingsCameraDof");
+		removePlugin("stereoSettings");
+		removePlugin("cameraPhysical");
+		removePlugin("cameraDefault");
+
+		Attrs::PluginDesc renderView("renderView", "RenderView");
+		Attrs::PluginDesc settingsMotionBlur("settingsMotionBlur", "SettingsMotionBlur");
+		fillRenderView(viewParams, renderView);
+		if (fillSettingsMotionBlur(viewParams, settingsMotionBlur) == ReturnValue::Error) {
 			return ReturnValue::Error;
 		}
-		fillSettingsCamera(viewParams, viewPlugins.settingsCamera);
-
+		Attrs::PluginDesc settingsCamera("settingsCamera", "SettingsCamera");
+		fillSettingsCamera(viewParams, settingsCamera);
+		Attrs::PluginDesc stereoSettings("stereoSettings", "VRayStereoscopicSettings");
 		if (!isIPR() && !isGPU()) {
-			fillStereoSettings(viewParams, viewPlugins.stereoSettings);
+			fillStereoSettings(viewParams, stereoSettings);
 		}
-
+		Attrs::PluginDesc cameraPhysical("cameraPhysical", "CameraPhysical");
+		Attrs::PluginDesc cameraDefault("cameraDefault", "CameraDefault");
+		Attrs::PluginDesc settingsCameraDof("settingsCameraDof", "SettingsCameraDof");
 		if (viewParams.usePhysicalCamera) {
-			fillPhysicalCamera(viewParams, viewPlugins.cameraPhysical);
+			fillPhysicalCamera(viewParams, cameraPhysical);
 		}
 		else {
-			fillCameraDefault(viewParams, viewPlugins.cameraDefault);
-			fillSettingsCameraDof(viewParams, viewPlugins.settingsCameraDof);
+			fillCameraDefault(viewParams, cameraDefault);
+			fillSettingsCameraDof(viewParams, settingsCameraDof);
 		}
 
-		exportPlugin(viewPlugins.settingsCamera);
-		exportPlugin(viewPlugins.settingsMotionBlur);
+		exportPlugin(settingsCamera);
+		exportPlugin(settingsMotionBlur);
 
 		if (!viewParams.renderView.ortho && !viewParams.usePhysicalCamera) {
-			exportPlugin(viewPlugins.settingsCameraDof);
+			exportPlugin(settingsCameraDof);
 		}
 
 		if (viewParams.usePhysicalCamera) {
-			getRenderer().setCamera(exportPlugin(viewPlugins.cameraPhysical));
+			getRenderer().setCamera(exportPlugin(cameraPhysical));
 		}
 		else {
-			getRenderer().setCamera(exportPlugin(viewPlugins.cameraDefault));
+			getRenderer().setCamera(exportPlugin(cameraDefault));
 		}
 
 		if (viewParams.renderView.stereoParams.use && !isIPR() && !isGPU()) {
-			exportPlugin(viewPlugins.stereoSettings);
+			exportPlugin(stereoSettings);
 		}
 
-		exportPlugin(viewPlugins.renderView);
+		exportPlugin(renderView);
 	}
 	else if (m_viewParams.changedParams(viewParams)) {
-		fillRenderView(viewParams, viewPlugins.renderView);
-		exportPlugin(viewPlugins.renderView);
+		Attrs::PluginDesc renderView("renderView", "RenderView");
+		fillRenderView(viewParams, renderView);
+		exportPlugin(renderView);
 	}
 
 	getRenderer().commit();
@@ -414,6 +453,8 @@ int VRayExporter::exportView()
 	if (!camera)
 		return 1;
 
+	addOpCallback(camera, RtCallbackView);
+
 	ViewParams viewParams(camera);
 	viewParams.usePhysicalCamera = isPhysicalView(*camera);
 
@@ -424,17 +465,6 @@ int VRayExporter::exportView()
 	viewCsect.leave();
 
 	return 0;
-}
-
-int ViewPluginsDesc::needReset(const ViewPluginsDesc &other) const
-{
-	// NOTE: No need to reset on RenderView, we handle it differently
-	//
-	return (settingsCameraDof.isDifferent(other.settingsCameraDof) ||
-			settingsMotionBlur.isDifferent(other.settingsMotionBlur) ||
-			settingsCamera.isDifferent(other.settingsCamera) ||
-			cameraPhysical.isDifferent(other.cameraPhysical) ||
-			cameraDefault.isDifferent(other.cameraDefault));
 }
 
 int ViewParams::changedParams(const ViewParams &other) const

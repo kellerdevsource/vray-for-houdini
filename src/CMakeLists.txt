@@ -104,6 +104,7 @@ set(SOURCES
 	cmd/vfh_cmd_vrayproxy.cpp
 	gu/gu_volumegridref.cpp
 	gu/gu_vrayproxyref.cpp
+	gu/gu_vraysceneref.cpp
 	io/io_vrmesh.cpp
 	obj/obj_node_base.cpp
 	rop/rop_vrayproxyrop.cpp
@@ -139,6 +140,7 @@ set(HEADERS
 	cmd/vfh_cmd_vrayproxy.h
 	gu/gu_volumegridref.h
 	gu/gu_vrayproxyref.h
+	gu/gu_vraysceneref.h
 	io/io_vrmesh.h
 	obj/obj_node_base.h
 	obj/obj_node_def.h
@@ -217,14 +219,7 @@ link_with_vray_appsdk(${PROJECT_NAME})
 link_with_boost(${PROJECT_NAME})
 
 if (Phoenix_FOUND)
-	target_link_libraries(${PROJECT_NAME}
-		aurloader_s
-		aurloader
-		guiwin_qt_s
-		iutils_s
-		aurramps_s
-		gui_utils_s
-	)
+	target_link_libraries(${PROJECT_NAME} ${Phoenix_LIBS})
 endif()
 
 add_definitions(-DCGR_GIT_HASH=${SRC_GIT_HASH})
@@ -313,11 +308,15 @@ endfunction()
 function(vfh_install_common _location)
 	# Copy Phoenix cache file loader library
 	if (Phoenix_FOUND)
-		install(FILES       ${Phoenix_LIBRARIES}/${CGR_PHOENIX_SHARED}
-							${Phoenix_LIBRARIES}/${CGR_PHOENIX_SHARED_VDB}
-							${Phoenix_LIBRARIES}/${CGR_PHOENIX_SHARED_F3D}
-				DESTINATION ${_location}/vfh_home/libs
-				PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+		install(
+			FILES
+				${CGR_PHOENIX_SHARED}
+				${CGR_PHOENIX_SHARED_VDB}
+				${CGR_PHOENIX_SHARED_F3D}
+			DESTINATION
+				${_location}/vfh_home/libs
+			PERMISSIONS
+				OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 	endif()
 
 	# Copy plugin

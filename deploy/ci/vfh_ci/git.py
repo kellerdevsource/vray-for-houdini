@@ -12,7 +12,7 @@ from . import utils
 
 def getHash(repoDirPath):
     cmd = ['git', 'rev-parse', '--short', 'HEAD']
-    return utils.getCmdOutput(cmd, cwd=repoDirPath)
+    return utils.getCmdOutput(cmd, cwd=repoDirPath)[:7]
 
 def getBranch(repoDirPath):
     cmd = ['git', 'rev-parse', '--abbrev-ref', 'HEAD']

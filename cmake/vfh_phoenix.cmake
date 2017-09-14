@@ -16,6 +16,8 @@ if(Phoenix_FOUND)
 
 	set(PHOENIX_LOADERS "${CGR_PHOENIX_SHARED};${CGR_PHOENIX_SHARED_F3D};${CGR_PHOENIX_SHARED_VDB}")
 	message_array("Using Phoenix loaders" PHOENIX_LOADERS)
+
+	message_array("Using Phoenix libraries" Phoenix_LIBS)
 endif()
 
 macro(use_phx_sdk)

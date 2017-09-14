@@ -10,7 +10,6 @@
 
 include(FindGit)
 
-
 macro(link_with_boost _name)
 	if(WIN32)
 		if(HOUDINI_VERSION VERSION_LESS 15.5)
@@ -86,4 +85,50 @@ function(vfh_make_moc)
 
 	# For target to find output moc files
 	target_include_directories(${PAR_TARGET} PRIVATE ${FILE_OUT_DIR})
+endfunction()
+
+
+function(vfh_find_library)
+	cmake_parse_arguments(ARG "" "VAR" "NAMES;PATHS" ${ARGN})
+
+	find_library(${ARG_VAR}
+		NAMES
+			${ARG_NAMES}
+		PATHS
+			${ARG_PATHS}
+		NO_DEFAULT_PATH
+		NO_CMAKE_ENVIRONMENT_PATH
+		NO_CMAKE_PATH
+		NO_SYSTEM_ENVIRONMENT_PATH
+		NO_CMAKE_SYSTEM_PATH
+	)
+
+	set(${ARG_VAR} ${${ARG_VAR}} PARENT_SCOPE)
+
+	if(NOT ${ARG_VAR})
+		message(WARNING "Phoenix SDK part \"${ARG_NAMES}\" is not found under \"${ARG_PATHS}\"!")
+	endif()
+endfunction()
+
+
+function(vfh_find_file)
+	cmake_parse_arguments(ARG "" "VAR" "NAMES;PATHS" ${ARGN})
+
+	find_file(${ARG_VAR}
+		NAMES
+			${ARG_NAMES}
+		PATHS
+			${ARG_PATHS}
+		NO_DEFAULT_PATH
+		NO_CMAKE_ENVIRONMENT_PATH
+		NO_CMAKE_PATH
+		NO_SYSTEM_ENVIRONMENT_PATH
+		NO_CMAKE_SYSTEM_PATH
+	)
+
+	set(${ARG_VAR} ${${ARG_VAR}} PARENT_SCOPE)
+
+	if(NOT ${ARG_VAR})
+		message(WARNING "Phoenix SDK part \"${ARG_NAMES}\" is not found under \"${ARG_PATHS}\"!")
+	endif()
 endfunction()
