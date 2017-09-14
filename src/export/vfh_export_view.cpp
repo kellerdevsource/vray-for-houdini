@@ -176,11 +176,11 @@ void VRayExporter::fillViewParamFromCameraNode(const OBJ_Node &camera, ViewParam
 		viewParams.renderSize.w *= 2;
 	}
 
-	viewParams.physCam.use = Parm::getParmInt(camera, "CameraPhysical_use");
-	viewParams.physCam.type = PhysicalCameraType(Parm::getParmInt(camera, "CameraPhysical_type"));
-	viewParams.physCam.useDof = Parm::getParmInt(camera, "CameraPhysical_use_dof");
-	viewParams.physCam.useMoBlur = Parm::getParmInt(camera, "CameraPhysical_use_moblur");
-	viewParams.physCam.selectedItem = MenuItemSelected(Parm::getParmInt(camera, "CameraPhysical_mode_select"));
+	viewParams.physCam.use = camera.evalInt("CameraPhysical_use", 0, t);
+	viewParams.physCam.type = PhysicalCameraType(camera.evalInt("CameraPhysical_type", 0, t));
+	viewParams.physCam.useDof = camera.evalInt("CameraPhysical_use_dof", 0, t);
+	viewParams.physCam.useMoBlur = camera.evalInt("CameraPhysical_use_moblur", 0, t);
+	viewParams.physCam.selectedItem = MenuItemSelected(camera.evalInt("CameraPhysical_mode_select", 0, t));
 	if (viewParams.physCam.selectedItem == MenuItemSelected::HoudiniCameraSettings) {
 		camera.evalString(viewParams.physCam.focalUnits, "focalunits", 0, t);
 		viewParams.physCam.houdiniFNumber = camera.evalFloat("fstop", 0, t);
@@ -188,29 +188,29 @@ void VRayExporter::fillViewParamFromCameraNode(const OBJ_Node &camera, ViewParam
 		viewParams.physCam.houdiniFocusDistance = camera.evalFloat("focus", 0, t);
 	}
 	else {
-		viewParams.physCam.exposure = Parm::getParmInt(camera, "CameraPhysical_exposure");
-		viewParams.physCam.focalLength = Parm::getParmFloat(camera, "CameraPhysical_focal_length");
-		viewParams.physCam.fNumber = Parm::getParmFloat(camera, "CameraPhysical_f_number");
-		viewParams.physCam.shutterSpeed = Parm::getParmFloat(camera, "CameraPhysical_shutter_speed");
+		viewParams.physCam.exposure = camera.evalInt("CameraPhysical_exposure", 0, t);
+		viewParams.physCam.focalLength = camera.evalFloat("CameraPhysical_focal_length", 0, t);
+		viewParams.physCam.fNumber = camera.evalFloat("CameraPhysical_f_number", 0, t);
+		viewParams.physCam.shutterSpeed = camera.evalFloat("CameraPhysical_shutter_speed", 0, t);
 	}
-	viewParams.physCam.filmWidth = Parm::getParmFloat(camera, "CameraPhysical_film_width");
-	viewParams.physCam.fov = Parm::getParmFloat(camera, "CameraPhysical_fov");
-	viewParams.physCam.shutterAngle = Parm::getParmFloat(camera, "CameraPhysical_shutter_angle");
-	viewParams.physCam.shutterOffset = Parm::getParmFloat(camera, "CameraPhysical_shutter_offset");
-	viewParams.physCam.latency = Parm::getParmFloat(camera, "CameraPhysical_latency");
-	viewParams.physCam.ISO = Parm::getParmFloat(camera, "CameraPhysical_ISO");
-	viewParams.physCam.zoomFactor = Parm::getParmFloat(camera, "CameraPhysical_zoom_factor");
-	viewParams.physCam.specifyFocus = Parm::getParmInt(camera, "CameraPhysical_specify_focus");
-	viewParams.physCam.focusDistance = Parm::getParmFloat(camera, "CameraPhysical_focus_distance");
-	viewParams.physCam.targeted = Parm::getParmInt(camera, "CameraPhysical_targeted");
-	viewParams.physCam.targetDistance = Parm::getParmFloat(camera, "CameraPhysical_target_distance");
+	viewParams.physCam.filmWidth = camera.evalFloat("CameraPhysical_film_width", 0, t);
+	viewParams.physCam.fov = camera.evalFloat("CameraPhysical_fov", 0, t);
+	viewParams.physCam.shutterAngle = camera.evalFloat("CameraPhysical_shutter_angle", 0, t);
+	viewParams.physCam.shutterOffset = camera.evalFloat("CameraPhysical_shutter_offset", 0, t);
+	viewParams.physCam.latency = camera.evalFloat("CameraPhysical_latency", 0, t);
+	viewParams.physCam.ISO = camera.evalFloat("CameraPhysical_ISO", 9, t);
+	viewParams.physCam.zoomFactor = camera.evalFloat("CameraPhysical_zoom_factor", 0, t);
+	viewParams.physCam.specifyFocus = camera.evalInt("CameraPhysical_specify_focus", 0, t);
+	viewParams.physCam.focusDistance = camera.evalFloat("CameraPhysical_focus_distance", 0, t);
+	viewParams.physCam.targeted = camera.evalInt("CameraPhysical_targeted", 0, t);
+	viewParams.physCam.targetDistance = camera.evalFloat("CameraPhysical_target_distance", 0, t);
 	viewParams.physCam.balance.r = camera.evalFloat("CameraPhysical_white_balancer", 0, t);
 	viewParams.physCam.balance.g = camera.evalFloat("CameraPhysical_white_balanceg", 0, t);
 	viewParams.physCam.balance.b = camera.evalFloat("CameraPhysical_white_balanceb", 0, t);
-	viewParams.physCam.vignetting = Parm::getParmFloat(camera, "CameraPhysical_vignetting");
-	viewParams.physCam.opticalVignetting = Parm::getParmFloat(camera, "CameraPhysical_optical_vignetting");
-	viewParams.physCam.subdivisions = Parm::getParmFloat(camera, "CameraPhysical_subdivs");
-	viewParams.physCam.dontAffectSettings = Parm::getParmInt(camera, "CameraPhysical_dont_affect_settings");
+	viewParams.physCam.vignetting = camera.evalFloat("CameraPhysical_vignetting", 0, t);
+	viewParams.physCam.opticalVignetting = camera.evalFloat("CameraPhysical_optical_vignetting", 0, t);
+	viewParams.physCam.subdivisions = camera.evalFloat("CameraPhysical_subdivs", 0, t);
+	viewParams.physCam.dontAffectSettings = camera.evalInt("CameraPhysical_dont_affect_settings", 0, t);
 }
 
 ReturnValue VRayExporter::fillSettingsMotionBlur(ViewParams &viewParams, Attrs::PluginDesc &settingsMotionBlur)
@@ -265,10 +265,10 @@ void VRayExporter::fillPhysicalCamera(const ViewParams &viewParams, Attrs::Plugi
 			resultValue = focalLength;
 		}
 		else if (temporaryString == "m") {
-			resultValue = focalLength * 0.001f; // Convert from meters to milimeters
+			resultValue = focalLength * 1000.0f; // Convert from meters to milimeters
 		}
 		else if (temporaryString == "nm") {
-			resultValue = focalLength * 1000000.0f; // Convert from nanometers to milimeters
+			resultValue = focalLength * 0.0000001f; // Convert from nanometers to milimeters
 		}
 		else if (temporaryString == "in") {
 			resultValue = focalLength * 25.4f; // Convert from inches to milimeters
@@ -391,7 +391,7 @@ ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 	const int prevAutoCommit = getRenderer().getVRay().getAutoCommit();
 	getRenderer().setAutoCommit(false);
 
-	const bool needReset = m_viewParams.needReset(viewParams); // Removed physCam check from needReset, but where do i put it now?
+	const bool needReset = m_viewParams.needReset(viewParams);
 	if (needReset) {
 		Log::getLog().warning("VRayExporter::exportView: Reseting view plugins...");
 
@@ -449,11 +449,11 @@ ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 		fillRenderView(viewParams, renderView);
 		exportPlugin(renderView);
 	}
-	else if (/*check physCam here or if we are usingPhysicalCamera*/m_viewParams.changedPhysCam(viewParams)) {
-		removePlugin("cameraPhysical");
+	else if (m_viewParams.changedPhysCam(viewParams)) {
+		removePlugin("cameraPhysical"); // RenderRT does not update on param change if this is gone
 		Attrs::PluginDesc cameraPhysical("cameraPhysical", "CameraPhysical");
 		fillPhysicalCamera(viewParams, cameraPhysical);
-		getRenderer().setCamera(exportPlugin(cameraPhysical));
+		exportPlugin(cameraPhysical);
 	}
 
 	getRenderer().commit();
@@ -554,7 +554,7 @@ bool StereoViewParams::operator !=(const StereoViewParams &other) const
 
 bool PhysicalCameraParams::operator ==(const PhysicalCameraParams &other) const 
 {
-	return (MemberEq(use) &&
+	return (/*MemberEq(use) &&*/
 			MemberEq(type) &&
 			MemberEq(useDof) &&
 			MemberEq(useMoBlur) && 
