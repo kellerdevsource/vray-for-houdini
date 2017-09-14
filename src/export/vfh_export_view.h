@@ -43,10 +43,17 @@ enum PhysicalCameraType {
 	Video = 2
 };
 
+enum HoudiniFocalUnits {
+	Millimeters = 0,
+	Meters = 1,
+	Nanometers = 2,
+	Inches = 3,
+	Feet = 4
+};
+
 struct PhysicalCameraParams {
 	PhysicalCameraParams()
-		: use(0)
-		, type(PhysicalCameraType::Still)
+		: type(PhysicalCameraType::Still)
 		, useDof(0)
 		, useMoBlur(0)
 		, selectedItem(MenuItemSelected::HoudiniCameraSettings)
@@ -70,7 +77,7 @@ struct PhysicalCameraParams {
 		, opticalVignetting(0.0f)
 		, subdivisions(4)
 		, dontAffectSettings(0)
-		, focalUnits("mm")
+		, focalUnits(HoudiniFocalUnits::Millimeters)
 		, houdiniFocalLength(50.0f)
 		, houdiniFNumber(5.6f)
 		, houdiniFocusDistance(5.0f)
@@ -78,7 +85,6 @@ struct PhysicalCameraParams {
 
 	bool operator == (const PhysicalCameraParams &other) const;
 
-	bool use;
 	PhysicalCameraType type;
 	bool useDof;
 	bool useMoBlur;
@@ -107,7 +113,7 @@ struct PhysicalCameraParams {
 	int subdivisions;
 	bool dontAffectSettings;
 	// Houdini Params
-	UT_String focalUnits;
+	HoudiniFocalUnits focalUnits;
 	float houdiniFocalLength;
 	float houdiniFNumber;
 	float houdiniFocusDistance;

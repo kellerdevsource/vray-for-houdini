@@ -176,13 +176,12 @@ void VRayExporter::fillViewParamFromCameraNode(const OBJ_Node &camera, ViewParam
 		viewParams.renderSize.w *= 2;
 	}
 
-	viewParams.physCam.use = camera.evalInt("CameraPhysical_use", 0, t);
 	viewParams.physCam.type = PhysicalCameraType(camera.evalInt("CameraPhysical_type", 0, t));
 	viewParams.physCam.useDof = camera.evalInt("CameraPhysical_use_dof", 0, t);
 	viewParams.physCam.useMoBlur = camera.evalInt("CameraPhysical_use_moblur", 0, t);
 	viewParams.physCam.selectedItem = MenuItemSelected(camera.evalInt("CameraPhysical_mode_select", 0, t));
 	if (viewParams.physCam.selectedItem == MenuItemSelected::HoudiniCameraSettings) {
-		camera.evalString(viewParams.physCam.focalUnits, "focalunits", 0, t);
+		viewParams.physCam.focalUnits = HoudiniFocalUnits(camera.evalInt("focalunits", 0, t));
 		viewParams.physCam.houdiniFNumber = camera.evalFloat("fstop", 0, t);
 		viewParams.physCam.houdiniFocalLength = camera.evalFloat("focal", 0, t);
 		viewParams.physCam.houdiniFocusDistance = camera.evalFloat("focus", 0, t);
@@ -198,7 +197,7 @@ void VRayExporter::fillViewParamFromCameraNode(const OBJ_Node &camera, ViewParam
 	viewParams.physCam.shutterAngle = camera.evalFloat("CameraPhysical_shutter_angle", 0, t);
 	viewParams.physCam.shutterOffset = camera.evalFloat("CameraPhysical_shutter_offset", 0, t);
 	viewParams.physCam.latency = camera.evalFloat("CameraPhysical_latency", 0, t);
-	viewParams.physCam.ISO = camera.evalFloat("CameraPhysical_ISO", 9, t);
+	viewParams.physCam.ISO = camera.evalFloat("CameraPhysical_ISO", 0, t);
 	viewParams.physCam.zoomFactor = camera.evalFloat("CameraPhysical_zoom_factor", 0, t);
 	viewParams.physCam.specifyFocus = camera.evalInt("CameraPhysical_specify_focus", 0, t);
 	viewParams.physCam.focusDistance = camera.evalFloat("CameraPhysical_focus_distance", 0, t);
@@ -554,8 +553,7 @@ bool StereoViewParams::operator !=(const StereoViewParams &other) const
 
 bool PhysicalCameraParams::operator ==(const PhysicalCameraParams &other) const 
 {
-	return (/*MemberEq(use) &&*/
-			MemberEq(type) &&
+	return (MemberEq(type) &&
 			MemberEq(useDof) &&
 			MemberEq(useMoBlur) && 
 			MemberEq(selectedItem) &&
