@@ -182,10 +182,10 @@ void VRayExporter::fillViewParamFromCameraNode(const OBJ_Node &camera, ViewParam
 	viewParams.physCam.useMoBlur = Parm::getParmInt(camera, "CameraPhysical_use_moblur");
 	viewParams.physCam.selectedItem = MenuItemSelected(Parm::getParmInt(camera, "CameraPhysical_mode_select"));
 	if (viewParams.physCam.selectedItem == MenuItemSelected::HoudiniCameraSettings) {
-		camera.evalString(viewParams.physCam.focalUnits, "focalunits", 0, 0.0);
-		viewParams.physCam.houdiniFNumber = camera.evalFloat("fstop", 0, 0.0);
-		viewParams.physCam.houdiniFocalLength = camera.evalFloat("focal", 0, 0.0);
-		viewParams.physCam.houdiniFocusDistance = camera.evalFloat("focus", 0, 0.0);
+		camera.evalString(viewParams.physCam.focalUnits, "focalunits", 0, t);
+		viewParams.physCam.houdiniFNumber = camera.evalFloat("fstop", 0, t);
+		viewParams.physCam.houdiniFocalLength = camera.evalFloat("focal", 0, t);
+		viewParams.physCam.houdiniFocusDistance = camera.evalFloat("focus", 0, t);
 	}
 	else {
 		viewParams.physCam.exposure = Parm::getParmInt(camera, "CameraPhysical_exposure");
@@ -204,9 +204,9 @@ void VRayExporter::fillViewParamFromCameraNode(const OBJ_Node &camera, ViewParam
 	viewParams.physCam.focusDistance = Parm::getParmFloat(camera, "CameraPhysical_focus_distance");
 	viewParams.physCam.targeted = Parm::getParmInt(camera, "CameraPhysical_targeted");
 	viewParams.physCam.targetDistance = Parm::getParmFloat(camera, "CameraPhysical_target_distance");
-	viewParams.physCam.balance.r = camera.evalFloat("CameraPhysical_white_balancer", 0, 0.0);
-	viewParams.physCam.balance.g = camera.evalFloat("CameraPhysical_white_balanceg", 0, 0.0);
-	viewParams.physCam.balance.b = camera.evalFloat("CameraPhysical_white_balanceb", 0, 0.0);
+	viewParams.physCam.balance.r = camera.evalFloat("CameraPhysical_white_balancer", 0, t);
+	viewParams.physCam.balance.g = camera.evalFloat("CameraPhysical_white_balanceg", 0, t);
+	viewParams.physCam.balance.b = camera.evalFloat("CameraPhysical_white_balanceb", 0, t);
 	viewParams.physCam.vignetting = Parm::getParmFloat(camera, "CameraPhysical_vignetting");
 	viewParams.physCam.opticalVignetting = Parm::getParmFloat(camera, "CameraPhysical_optical_vignetting");
 	viewParams.physCam.subdivisions = Parm::getParmFloat(camera, "CameraPhysical_subdivs");
@@ -391,7 +391,7 @@ ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 	const int prevAutoCommit = getRenderer().getVRay().getAutoCommit();
 	getRenderer().setAutoCommit(false);
 
-	const bool needReset = m_viewParams.needReset(viewParams);
+	const bool needReset = m_viewParams.needReset(viewParams); // Removed physCam check from needReset, but where do i put it now?
 	if (needReset) {
 		Log::getLog().warning("VRayExporter::exportView: Reseting view plugins...");
 
@@ -448,6 +448,12 @@ ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 		Attrs::PluginDesc renderView("renderView", "RenderView");
 		fillRenderView(viewParams, renderView);
 		exportPlugin(renderView);
+	}
+	else if (/*check physCam here or if we are usingPhysicalCamera*/m_viewParams.changedPhysCam(viewParams)) {
+		removePlugin("cameraPhysical");
+		Attrs::PluginDesc cameraPhysical("cameraPhysical", "CameraPhysical");
+		fillPhysicalCamera(viewParams, cameraPhysical);
+		getRenderer().setCamera(exportPlugin(cameraPhysical));
 	}
 
 	getRenderer().commit();
@@ -514,7 +520,6 @@ int ViewParams::needReset(const ViewParams &other) const
 {
 	return (MemberNotEq(usePhysicalCamera) ||
 			MemberNotEq(cameraObject) ||
-			MemberNotEq(physCam) ||
 			renderView.needReset(other.renderView));
 }
 
@@ -524,6 +529,11 @@ int ViewParams::changedCropRegion(const ViewParams & other) const
 			MemberNotEq(cropRegion.y) ||
 			MemberNotEq(cropRegion.width) ||
 			MemberNotEq(cropRegion.height));
+}
+
+int ViewParams::changedPhysCam(const ViewParams &other) const
+{
+	return (MemberNotEq(physCam));
 }
 
 bool StereoViewParams::operator ==(const StereoViewParams &other) const
@@ -562,7 +572,9 @@ bool PhysicalCameraParams::operator ==(const PhysicalCameraParams &other) const
 			MemberFloatEq(zoomFactor) &&
 			MemberFloatEq(focusDistance) &&
 			MemberFloatEq(targetDistance) &&
-			MemberEq(balance) &&
+			MemberFloatEq(balance.r) &&
+			MemberFloatEq(balance.g) &&
+			MemberFloatEq(balance.b) &&
 			MemberFloatEq(vignetting) &&
 			MemberFloatEq(opticalVignetting) &&
 			MemberEq(subdivisions) &&

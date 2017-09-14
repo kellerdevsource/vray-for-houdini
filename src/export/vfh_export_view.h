@@ -196,6 +196,7 @@ struct ViewParams {
 	int               changedSize(const ViewParams &other) const;
 	int               needReset(const ViewParams &other) const;
 	int               changedCropRegion(const ViewParams &other) const;
+	int changedPhysCam(const ViewParams &other) const;
 
 	void setCamera(OBJ_Node *camera) { cameraObject = camera; }
 
