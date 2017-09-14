@@ -89,9 +89,6 @@ static std::once_flag startLogger; ///< Flag to ensure we start the thread only 
 static volatile bool isStoppedLogger = false; ///< Stop flag for the thread
 static VUtils::GetEnvVarInt threadedLogger("VFH_THREADED_LOGGER", 1);
 
-std::mutex loggerMtx;
-std::condition_variable loggerCondVar;
-
 void Logger::writeMessages()
 {
 	if (threadedLogger.getValue() == 0) {
@@ -100,16 +97,16 @@ void Logger::writeMessages()
 	auto & log = getLog();
 	while (!isStoppedLogger) {
 		if (log.m_queue.empty()) {
-			std::unique_lock<std::mutex> lock(loggerMtx);
+			std::unique_lock<std::mutex> lock(log.m_mtx);
 			if (log.m_queue.empty()) {
-				loggerCondVar.wait(lock, [&log]() {
+				log.m_condVar.wait(lock, [&log]() {
 					return !isStoppedLogger && log.m_queue.empty();
 				});
 			}
 		}
 
 		{
-			std::lock_guard<std::mutex> lock(loggerMtx);
+			std::lock_guard<std::mutex> lock(log.m_mtx);
 			while (!isStoppedLogger && !log.m_queue.empty()) {
 				LogData data = log.m_queue.front();
 				log.m_queue.pop_front();
@@ -142,10 +139,10 @@ void Logger::stopLogging()
 			}
 
 			{
-				std::lock_guard<std::mutex> loggerLock(loggerMtx);
+				std::lock_guard<std::mutex> loggerLock(getLog().m_mtx);
 				isStoppedLogger = true;
 			}
-			loggerCondVar.notify_all();
+			getLog().m_condVar.notify_all();
 			if (!loggerThread->wait(100)) {
 				loggerThread->terminate();
 				loggerThread->wait();
@@ -175,12 +172,12 @@ void Logger::valog(LogLevel level, const tchar *format, va_list args)
 
 	if (threadedLogger.getValue() && !isStoppedLogger) {
 		{
-			std::lock_guard<std::mutex> lock(loggerMtx);
+			std::lock_guard<std::mutex> lock(m_mtx);
 			if (!isStoppedLogger) {
 				m_queue.push_back(data);
 			}
 		}
-		loggerCondVar.notify_one();
+		m_condVar.notify_one();
 	} else {
 		logMessage(data);
 	}

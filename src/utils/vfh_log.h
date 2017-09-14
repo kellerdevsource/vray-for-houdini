@@ -90,8 +90,9 @@ public:
 	};
 
 private:
-	// boost::lockfree::queue<LogData> m_queue; ///< Queue for messages to be logged
-	std::deque<LogData> m_queue;
+	std::deque<LogData> m_queue; ///< The messages queue
+	std::mutex m_mtx; ///< Protects m_queue
+	std::condition_variable m_condVar; ///< Wakes up the logger thread to quit or log messages
 
 	/// Loop and dump any messages from the queue to stdout
 	/// Used as base for the thread that is processing the messages
