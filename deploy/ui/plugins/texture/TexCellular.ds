@@ -25,13 +25,26 @@
             parmtag { "vray_pluginattr" "type" }
             parmtag { "vray_type" "enum" }
         }
+        parm {
+            name    "bg_color"
+            label   "Background Color"
+            type    color4
+            size    4
+            default { "0" "0" "0" "1" }
+            range   { 0 10 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexCellular" }
+            parmtag { "vray_pluginattr" "bg_color" }
+            parmtag { "vray_type" "Texture" }
+        }
 
         parm {
             name    "center_color"
             label   "Center Color"
             type    color4
             size    4
-            default { "1" "1" "1" "1" }
+            default { "1" "0.1" "1" "1" }
             range   { 0 10 }
             export  none
             parmtag { "cook_dependent" "1" }
@@ -45,7 +58,7 @@
             label   "Edge Color"
             type    color4
             size    4
-            default { "0" "0" "0" "1" }
+            default { "1" "1" "0" "1" }
             range   { 0 10 }
             export  none
             parmtag { "cook_dependent" "1" }
@@ -53,27 +66,12 @@
             parmtag { "vray_pluginattr" "edge_color" }
             parmtag { "vray_type" "Texture" }
         }
-
-        parm {
-            name    "bg_color"
-            label   "Background Color"
-            type    color4
-            size    4
-            default { "0.5" "0.5" "0.5" "1" }
-            range   { 0 10 }
-            export  none
-            parmtag { "cook_dependent" "1" }
-            parmtag { "vray_plugin" "TexCellular" }
-            parmtag { "vray_pluginattr" "bg_color" }
-            parmtag { "vray_type" "Texture" }
-        }
-
         parm {
             name    "size"
             label   "Size"
             type    float
-            default { "0.2" }
-            range   { 0 64 }
+            default { "0.1" }
+            range   { 0.01 1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "TexCellular" }
@@ -85,8 +83,8 @@
             name    "spread"
             label   "Spread"
             type    float
-            default { "0.5" }
-            range   { 0 64 }
+            default { "0.1" }
+            range   { 0.01 1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "TexCellular" }
@@ -98,8 +96,8 @@
             name    "density"
             label   "Density"
             type    float
-            default { "0.25" }
-            range   { 0 64 }
+            default { "1" }
+            range   { 0.1 5 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "TexCellular" }
@@ -114,7 +112,7 @@
             default { "0" }
             help    "Low threshold (for the bg color)"
             disablewhen "{ type < 2 }"
-            range   { 0 64 }
+            range   { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "TexCellular" }
@@ -129,7 +127,7 @@
             default { "0.5" }
             help    "Middle threshold (for the edge color)"
             disablewhen "{ type < 2 }"
-            range   { 0 64 }
+            range   { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "TexCellular" }
@@ -144,7 +142,7 @@
             default { "1" }
             help    "High threshold (for the center color)"
             disablewhen "{ type < 2 }"
-            range   { 0 64 }
+            range   { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "TexCellular" }
@@ -157,7 +155,6 @@
             label   "Fractal"
             type    toggle
             default { "0" }
-            disablewhen "{ type < 2 }"
             range   { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
@@ -172,8 +169,8 @@
             type    float
             default { "3" }
             help    "The number of fractal iterations"
-            disablewhen "{ type < 2 } { fractal == 0 }"
-            range   { 0 64 }
+            disablewhen " { fractal == 0 }"
+            range   { 0 9 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "TexCellular" }
@@ -185,10 +182,10 @@
             name    "fractal_roughness"
             label   "Fractal Roughness"
             type    float
-            default { "0" }
+            default { "0.6" }
             help    "The fractal roughness (0.0f is very rough; 1.0 is smooth - i.e. no fractal)"
-            disablewhen "{ type < 2 } { fractal == 0 }"
-            range   { 0 64 }
+            disablewhen " { fractal == 0 }"
+            range   { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "TexCellular" }

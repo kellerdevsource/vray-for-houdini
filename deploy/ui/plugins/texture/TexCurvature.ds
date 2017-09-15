@@ -7,8 +7,9 @@
         name    "trace_distance"
         label   "Trace Distance"
         type    float
-        default { "5" }
+        default { "1" }
         help    "The maximum distance to search for intersections. Bigger values will decrease the performance, but may produce more correct result."
+        range { 0.001 10 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "TexCurvature" }
@@ -21,7 +22,7 @@
         type    float
         default { "0.1" }
         help    "Sampling radius"
-        range   { 0 1000 }
+        range   { 0.001 1 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "TexCurvature" }
@@ -34,6 +35,7 @@
         type    float
         default { "1" }
         help    "The scale relative to which the curvature is computed"
+        range { 0.01 10 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "TexCurvature" }
@@ -82,9 +84,9 @@
         name    "subdivs"
         label   "Subdivs"
         type    integer
-        default { "8" }
+        default { "4" }
         help    "Number of samples to take when sampling normals around intersection (subdivs*subdivs)"
-        range   { 1 128 }
+        range   { 1 32 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "TexCurvature" }
