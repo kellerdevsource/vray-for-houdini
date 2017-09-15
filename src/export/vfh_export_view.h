@@ -105,9 +105,6 @@ struct PhysicalCameraParams {
 	bool targeted;
 	float targetDistance;
 	VRay::Color balance;
-	float balancer;
-	float balanceg;
-	float balanceb;
 	float vignetting;
 	float opticalVignetting;
 	int subdivisions;

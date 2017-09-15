@@ -203,9 +203,9 @@ void VRayExporter::fillViewParamFromCameraNode(const OBJ_Node &camera, ViewParam
 	viewParams.physCam.focusDistance = camera.evalFloat("CameraPhysical_focus_distance", 0, t);
 	viewParams.physCam.targeted = camera.evalInt("CameraPhysical_targeted", 0, t);
 	viewParams.physCam.targetDistance = camera.evalFloat("CameraPhysical_target_distance", 0, t);
-	viewParams.physCam.balance.r = camera.evalFloat("CameraPhysical_white_balancer", 0, t);
-	viewParams.physCam.balance.g = camera.evalFloat("CameraPhysical_white_balanceg", 0, t);
-	viewParams.physCam.balance.b = camera.evalFloat("CameraPhysical_white_balanceb", 0, t);
+	viewParams.physCam.balance.r = camera.evalFloat("CameraPhysical_white_balance", 0, t);
+	viewParams.physCam.balance.g = camera.evalFloat("CameraPhysical_white_balance", 1, t);
+	viewParams.physCam.balance.b = camera.evalFloat("CameraPhysical_white_balance", 2, t);
 	viewParams.physCam.vignetting = camera.evalFloat("CameraPhysical_vignetting", 0, t);
 	viewParams.physCam.opticalVignetting = camera.evalFloat("CameraPhysical_optical_vignetting", 0, t);
 	viewParams.physCam.subdivisions = camera.evalFloat("CameraPhysical_subdivs", 0, t);

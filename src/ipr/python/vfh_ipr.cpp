@@ -278,7 +278,7 @@ static void fillViewParams(VRayExporter &exporter, PyObject *viewParamsDict, Vie
 
 	viewParams.setCamera(cameraNode);
 
-	if (cameraNode && cameraNode->getName().equal("ipr_camera")) {
+	if (cameraNode && (cameraNode->getName().equal("ipr_camera") || cameraNode->evalInt("CameraPhysical_use", 0, 0.0f))) {// If Physical Camera use is enabled, update parameters from it
 		exporter.fillViewParamFromCameraNode(*cameraNode, viewParams);
 	}
 	else {
