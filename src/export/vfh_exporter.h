@@ -139,6 +139,9 @@ public:
 	/// @param pluginDesc[out] - physical camera plugin description
 	void fillPhysicalCamera(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc);
 
+	/// Recreate physical camera
+	VRay::Plugin recreatePhysicalCamera(const ViewParams &viewParams);
+
 	/// Fill in depth of field settings
 	/// @param viewParams[in] - holds data for camera settings
 	/// @param pluginDesc[out] - depth of field plugin description
