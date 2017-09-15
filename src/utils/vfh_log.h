@@ -18,11 +18,13 @@
 /// It was introduced because the old implementation of atomic (before vs 2015 update 2) is bugged
 /// if the atomic variables are not properly aligned
 #define _ENABLE_ATOMIC_ALIGNMENT_FIX
-#include <boost/lockfree/queue.hpp>
 
 #include <functional>
 #include <array>
 #include <thread>
+#include <mutex>
+#include <queue>
+#include <condition_variable>
 #include <ctime>
 
 namespace VRayForHoudini {
@@ -88,7 +90,9 @@ public:
 	};
 
 private:
-	boost::lockfree::queue<LogData> m_queue; ///< Queue for messages to be logged
+	std::deque<LogData> m_queue; ///< The messages queue
+	std::mutex m_mtx; ///< Protects m_queue
+	std::condition_variable m_condVar; ///< Wakes up the logger thread to quit or log messages
 
 	/// Loop and dump any messages from the queue to stdout
 	/// Used as base for the thread that is processing the messages
