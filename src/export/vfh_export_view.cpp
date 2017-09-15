@@ -358,6 +358,13 @@ void VRayExporter::fillSettingsCameraDof(const ViewParams &viewParams, Attrs::Pl
 	setAttrsFromOpNodePrms(pluginDesc, m_rop, "SettingsCameraDof_");
 }
 
+VRay::Plugin VRayExporter::recreatePhysicalCamera(const ViewParams &viewParams) {
+	removePlugin("cameraPhysical");
+	Attrs::PluginDesc cameraPhysical("cameraPhysical", "CameraPhysical");
+	fillPhysicalCamera(viewParams, cameraPhysical);
+	return exportPlugin(cameraPhysical);
+}
+
 ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 {
 	ViewParams viewParams(newViewParams);
@@ -415,25 +422,19 @@ ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 		Attrs::PluginDesc cameraPhysical("cameraPhysical", "CameraPhysical");
 		Attrs::PluginDesc cameraDefault("cameraDefault", "CameraDefault");
 		Attrs::PluginDesc settingsCameraDof("settingsCameraDof", "SettingsCameraDof");
-		if (viewParams.usePhysicalCamera) {
-			fillPhysicalCamera(viewParams, cameraPhysical);
-		}
-		else {
-			fillCameraDefault(viewParams, cameraDefault);
-			fillSettingsCameraDof(viewParams, settingsCameraDof);
-		}
 
 		exportPlugin(settingsCamera);
 		exportPlugin(settingsMotionBlur);
 
-		if (!viewParams.renderView.ortho && !viewParams.usePhysicalCamera) {
-			exportPlugin(settingsCameraDof);
-		}
-
 		if (viewParams.usePhysicalCamera) {
-			getRenderer().setCamera(exportPlugin(cameraPhysical));
+			getRenderer().setCamera(recreatePhysicalCamera(viewParams));
 		}
 		else {
+			fillCameraDefault(viewParams, cameraDefault);
+			fillSettingsCameraDof(viewParams, settingsCameraDof);
+			if (!viewParams.renderView.ortho) {
+				exportPlugin(settingsCameraDof);
+			}
 			getRenderer().setCamera(exportPlugin(cameraDefault));
 		}
 
@@ -449,10 +450,7 @@ ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 		exportPlugin(renderView);
 	}
 	else if (m_viewParams.changedPhysCam(viewParams)) {
-		removePlugin("cameraPhysical"); // RenderRT does not update on param change if this is gone
-		Attrs::PluginDesc cameraPhysical("cameraPhysical", "CameraPhysical");
-		fillPhysicalCamera(viewParams, cameraPhysical);
-		exportPlugin(cameraPhysical);
+		recreatePhysicalCamera(viewParams);
 	}
 
 	getRenderer().commit();
