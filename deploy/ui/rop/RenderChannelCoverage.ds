@@ -3,9 +3,6 @@
     label   "Coverage"
     parmtag { spare_category "Coverage" }
     parmtag { vray_plugin "RenderChannelCoverage" }
-    groupsimple {
-    name "folder_main"
-    label "Main"
     parm {
         name    "name"
         label   "Name"
@@ -18,7 +15,7 @@
         parmtag { "vray_plugin" "RenderChannelCoverage" }
         parmtag { "vray_pluginattr" "name" }
         parmtag { "vray_type" "string" }
-        }
     }
+
 #include "vfh_renderchannel_common.ds"
 }
