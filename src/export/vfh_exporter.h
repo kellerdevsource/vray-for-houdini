@@ -226,10 +226,6 @@ public:
 	/// @retval V-Ray plugin created for that node
 	VRay::Plugin exportObject(OP_Node *opNode);
 
-	/// Export only one SOP from OP node
-	/// @retval V-Ray plugin created for that node
-	VRay::Plugin exportSOP(OBJ_Node *objNode, SOP_Node *sopNode);
-
 	/// Export VRayClipper node
 	/// @retval V-Ray plugin created for that node
 	VRay::Plugin exportVRayClipper(OBJ_Node &clipperNode);

@@ -293,28 +293,6 @@ VRay::Plugin VRayExporter::exportObject(OP_Node *opNode)
 }
 
 
-VRay::Plugin VRayExporter::exportSOP(OBJ_Node *objNode, SOP_Node *sopNode)
-{
-	if (!getRopPtr()) {
-		return VRay::Plugin();
-	}
-
-	VRay::Plugin plugin = objectExporter.exportGeometry(*objNode, *sopNode);
-
-	if (!plugin) {
-		const UT_String &objOpType = objNode->getOperator()->getName();
-		Log::getLog().error("Error exporting OBJ: %s [%s]",
-			objNode->getName().buffer(),
-			objOpType.buffer());
-		Log::getLog().error("  Render OP: %s:\"%s\"",
-			getRopPtr()->getName().buffer(),
-			getRopPtr()->getOperator()->getName().buffer());
-	}
-
-	return plugin;
-}
-
-
 VRay::Plugin VRayExporter::exportVRayClipper(OBJ_Node &clipperNode)
 {
 	addOpCallback(&clipperNode, VRayExporter::RtCallbackVRayClipper);

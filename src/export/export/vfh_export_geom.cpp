@@ -1678,9 +1678,9 @@ VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode, SOP_Node &sopNode
 	return geometry;
 }
 
-VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode)
+VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode, SOP_Node *specificSop)
 {
-	SOP_Node *renderSOP = objNode.getRenderSopPtr();
+	SOP_Node *renderSOP = specificSop ? specificSop : objNode.getRenderSopPtr();
 	if (!renderSOP) {
 		return VRay::Plugin();
 	}
@@ -1805,14 +1805,14 @@ VRay::Plugin ObjectExporter::exportLight(OBJ_Light &objLight)
 	return pluginExporter.exportPlugin(pluginDesc);
 }
 
-VRay::Plugin ObjectExporter::exportNode(OBJ_Node &objNode)
+VRay::Plugin ObjectExporter::exportNode(OBJ_Node &objNode, SOP_Node *specificSop)
 {
 	using namespace Attrs;
 
 	PluginDesc nodeDesc(VRayExporter::getPluginName(objNode, "Node"),
 						vrayPluginTypeNode.buffer());
 
-	VRay::Plugin geometry = exportGeometry(objNode);
+	VRay::Plugin geometry = exportGeometry(objNode, specificSop);
 	if (geometry) {
 		nodeDesc.add(PluginAttr("geometry", geometry));
 	}

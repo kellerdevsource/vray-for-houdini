@@ -18,6 +18,8 @@
 #include <FS/FS_FileSystem.h>
 #include <UT/UT_Assert.h>
 
+#include <QProcess>
+#include <QStringList>
 
 using namespace VRayForHoudini;
 
@@ -88,7 +90,7 @@ VUtils::ErrorCode VRayProxyExporter::init()
 		if (sopNode) {
 			OBJ_Node *objNode = CAST_OBJNODE(sopNode->getParentNetwork());
 			if (objNode) {
-				if (!exporter.exportSOP(objNode, sopNode)) {
+				if (!exporter.getObjectExporter().exportNode(*objNode, sopNode)) {
 					err.setError(__FUNCTION__,
 						SOP_ERR_FILEGEO,
 						"Could not export \"%s\" as proxy.", sopNode->getName().c_str());
@@ -179,10 +181,10 @@ VUtils::ErrorCode VRayProxyExporter::doExportFrame()
 
 	SOP_Node *sopNode = sopList(0);
 
-	UT_String filepath = m_options.getFilepath(*sopNode);
+	UT_String vrmeshPath = m_options.getFilepath(*sopNode);
 	bool isAppendMode = m_options.isAppendMode();
 
-	FS_Info fsInfo(filepath);
+	FS_Info fsInfo(vrmeshPath);
 	if (   fsInfo.fileExists()
 		&& NOT(isAppendMode)
 		&& NOT(m_options.m_overwrite)
@@ -190,22 +192,33 @@ VUtils::ErrorCode VRayProxyExporter::doExportFrame()
 	{
 		err.setError(__FUNCTION__,
 					 ROP_FILE_EXISTS,
-					 "File already exists: %s", filepath.buffer());
+					 "File already exists: %s", vrmeshPath.buffer());
 		return err;
 	}
-	std::string sceneName = filepath.toStdString();
-	sceneName.replace(sceneName.begin() + sceneName.rfind(".vrmesh"), sceneName.end(), ".vrscene");
+	std::string vrscenePath = vrmeshPath.toStdString();
+	vrscenePath.replace(vrscenePath.begin() + vrscenePath.rfind(".vrmesh"), vrscenePath.end(), ".vrscene");
 
 	VRay::VRayExportSettings settings;
 	settings.compressed = true;
 	settings.framesInSeparateFiles = false;
 	settings.renderElementsSeparateFolders = false;
-	if (exporter.exportVrscene(sceneName, settings) != 0) {
+	if (exporter.exportVrscene(vrscenePath, settings) != 0) {
 		err.setError(__FUNCTION__,
 		             ROP_SAVE_ERROR,
-		             "Failed to write intermediate file: %s", sceneName.c_str());
+		             "Failed to write intermediate file: %s", vrscenePath.c_str());
 		return err;
 	}
+	exporter.getRenderer().reset();
+
+	QStringList arguments;
+	arguments << vrscenePath.c_str() << vrmeshPath.c_str() << "-vrsceneWholeScene" << "-vrsceneFrames" << "0-200";
+	QProcess ply2vrmesh;
+	ply2vrmesh.start("D:/sc/ply2vrmesh.exe", arguments);
+	ply2vrmesh.waitForStarted();
+	ply2vrmesh.waitForFinished();
+	auto line = arguments.join(" ").toStdString();
+	auto out = ply2vrmesh.readAll().toStdString();
+
 
 	// TODO: run ply2vrmesh for the exported vrscene
 	//std::remove(sceneName.c_str());
