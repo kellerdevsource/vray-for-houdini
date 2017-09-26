@@ -6,7 +6,7 @@
 
 #include "vfh_brdf_common.ds"
 
-    group {
+    groupsimple {
         name "folder_main"
         label "Main"
         parm {
@@ -21,21 +21,21 @@
             parmtag { "vray_plugin" "BRDFGlass" }
             parmtag { "vray_pluginattr" "color" }
             parmtag { "vray_type" "color" }
-            parmtag { "ogl_diff" "1" }
+            invisible
         }
         parm {
             name    "color_tex"
-            label   "Color Tex"
+            label   "Color"
             type    color4
             size    4
-            default { "0" "0" "0" "1" }
+            default { "1" "1" "1" "1" }
             range   { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFGlass" }
             parmtag { "vray_pluginattr" "color_tex" }
             parmtag { "vray_type" "Texture" }
-            invisible
+            parmtag { "ogl_diff" "1" }
         }
         parm {
             name    "color_tex_mult"
@@ -55,17 +55,18 @@
             label   "Transparency"
             type    color
             size    3
-            default { "0" "0" "0" }
+            default { "1" "1" "1" }
             range   { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFGlass" }
             parmtag { "vray_pluginattr" "transparency" }
             parmtag { "vray_type" "color" }
+            invisible
         }
         parm {
             name    "transparency_tex"
-            label   "Transparency Tex"
+            label   "Transparency"
             type    color4
             size    4
             default { "0" "0" "0" "1" }
@@ -75,7 +76,6 @@
             parmtag { "vray_plugin" "BRDFGlass" }
             parmtag { "vray_pluginattr" "transparency_tex" }
             parmtag { "vray_type" "Texture" }
-            invisible
         }
         parm {
             name    "transparency_tex_mult"
@@ -94,7 +94,7 @@
             name    "ior"
             label   "Index Of Refraction"
             type    float
-            default { "1.55" }
+            default { "1" }
             help    "IOR for the glass; this is ignored if the surface has a volume shader (the volume IOR is used)"
             range   { 0 10 }
             export  none
@@ -102,14 +102,14 @@
             parmtag { "vray_plugin" "BRDFGlass" }
             parmtag { "vray_pluginattr" "ior" }
             parmtag { "vray_type" "float" }
+            invisible
         }
         parm {
             name    "ior_tex"
-            label   "Ior Tex"
+            label   "Index Of Refraction"
             type    float
-            invisible
-            default { "1" }
-            range   { 0 1 }
+            default { "1.55" }
+            range   { 0 5 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFGlass" }
@@ -129,7 +129,7 @@
             parmtag { "vray_type" "boolean" }
         }
     }
-    group {
+    groupsimple {
         name "folder_options"
         label "Options"
         parm {
@@ -156,7 +156,7 @@
             parmtag { "vray_plugin" "BRDFGlass" }
             parmtag { "vray_pluginattr" "trace_depth" }
             parmtag { "vray_type" "int" }
-            disablewhen "{ trace_refractions == 0 }"
+            hidewhen "{ trace_refractions == 0 }"
         }
         parm {
             name    "cutoff"
@@ -189,7 +189,7 @@
             size    4
             default { "0" "0" "0" "1" }
             help    "The color to use when the maximum depth is reached"
-            disablewhen "{ exit_color_on != 1 }"
+            hidewhen "{ exit_color_on != 1 }"
             range   { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
@@ -204,7 +204,7 @@
             size    4
             default { "0" "0" "0" "1" }
             help    "The color to use when maximum depth is reached when exit_color_on is true"
-            disablewhen "{ exit_color_on != 1 }"
+            hidewhen "{ exit_color_on != 1 }"
             range   { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
