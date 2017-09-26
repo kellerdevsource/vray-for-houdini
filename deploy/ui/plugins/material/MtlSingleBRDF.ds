@@ -16,56 +16,48 @@
         parmtag { "vray_type" "PluginBRDF" }
         invisible
     }
-
-    groupsimple {
-        name "folder_main"
-        label "Main"
-
-        parm {
-            name    "filter"
-            label   "Filter"
-            type    color
-            size    3
-            default { "1" "1" "1" }
-            range   { 0 10 }
-            export  none
-            parmtag { "cook_dependent" "1" }
-            parmtag { "vray_plugin" "MtlSingleBRDF" }
-            parmtag { "vray_pluginattr" "filter" }
-            parmtag { "vray_type" "color" }
+    parm {
+        name    "double_sided"
+        label   "Mode"
+        type    ordinal
+        default { "1" }
+        help    "0 - single sided, 1 - to make the material double-sided, 2 - make back faces pointing at camera transparent for camera rays, 3 - make back faces transparent for all ray types except shadow rays, 4 - same as 3 but back faces are also visible to rays that have been refracted(and are not GI or reflection rays"
+        menu    {
+            "0" "Single-sided"
+            "1" "Double-sided"
+            "2" "Transparent For Camera Rays"
+            "3" "Transparent Except For Shadow Rays"
+            "4" "Transparent Except For Shadow/Refracted Rays"
         }
-
-        parm {
-            name    "double_sided"
-            label   "Mode"
-            type    ordinal
-            default { "1" }
-            help    "0 - single sided, 1 - to make the material double-sided, 2 - make back faces pointing at camera transparent for camera rays, 3 - make back faces transparent for all ray types except shadow rays, 4 - same as 3 but back faces are also visible to rays that have been refracted(and are not GI or reflection rays"
-            menu    {
-                "0" "Single-sided"
-                "1" "Double-sided"
-                "2" "Transparent For Camera Rays"
-                "3" "Transparent Except For Shadow Rays"
-                "4" "Transparent Except For Shadow/Refracted Rays"
-            }
-            parmtag { "cook_dependent" "1" }
-            parmtag { "vray_plugin" "MtlSingleBRDF" }
-            parmtag { "vray_pluginattr" "double_sided" }
-            parmtag { "vray_type" "enum" }
-        }
-
-        parm {
-            name    "allow_negative_colors"
-            label   "Allow Negative Colors"
-            type    toggle
-            default { "0" }
-            help    "true to allow negative color components; otherwise they will be clamped to 0"
-            range   { 0 1 }
-            export  none
-            parmtag { "cook_dependent" "1" }
-            parmtag { "vray_plugin" "MtlSingleBRDF" }
-            parmtag { "vray_pluginattr" "allow_negative_colors" }
-            parmtag { "vray_type" "boolean" }
-        }
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "MtlSingleBRDF" }
+        parmtag { "vray_pluginattr" "double_sided" }
+        parmtag { "vray_type" "enum" }
+    }
+    parm {
+        name    "filter"
+        label   "Filter"
+        type    color
+        size    3
+        default { "1" "1" "1" }
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "MtlSingleBRDF" }
+        parmtag { "vray_pluginattr" "filter" }
+        parmtag { "vray_type" "color" }
+    }
+    parm {
+        name    "allow_negative_colors"
+        label   "Allow Negative Colors"
+        type    toggle
+        default { "0" }
+        help    "true to allow negative color components; otherwise they will be clamped to 0"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "MtlSingleBRDF" }
+        parmtag { "vray_pluginattr" "allow_negative_colors" }
+        parmtag { "vray_type" "boolean" }
     }
 }

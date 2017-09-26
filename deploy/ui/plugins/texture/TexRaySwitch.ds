@@ -5,7 +5,7 @@
     parmtag { vray_plugin "TexRaySwitch" }
     parm {
         name    "default_texture"
-        label   "Default Tex"
+        label   "Default"
         type    color4
         size    4
         default { "0" "0" "0" "1" }
@@ -19,7 +19,7 @@
     }
     parm {
         name    "shadow_ray_texture"
-        label   "Shadow Rays Tex"
+        label   "Shadow Rays"
         type    color4
         size    4
         default { "0" "0" "0" "1" }
@@ -33,7 +33,7 @@
     }
     parm {
         name    "gi_ray_texture"
-        label   "Gi Rays Tex"
+        label   "GI Rays"
         type    color4
         size    4
         default { "0" "0" "0" "1" }
@@ -47,7 +47,7 @@
     }
     parm {
         name    "reflect_ray_texture"
-        label   "Reflection Rays Tex"
+        label   "Reflection Rays"
         type    color4
         size    4
         default { "0" "0" "0" "1" }
@@ -61,7 +61,7 @@
     }
     parm {
         name    "refract_ray_texture"
-        label   "Refraction Rays Tex"
+        label   "Refraction Rays"
         type    color4
         size    4
         default { "0" "0" "0" "1" }

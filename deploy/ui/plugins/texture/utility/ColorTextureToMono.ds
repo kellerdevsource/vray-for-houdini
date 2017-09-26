@@ -17,7 +17,6 @@
         parmtag { "vray_pluginattr" "color_texture" }
         parmtag { "vray_type" "Texture" }
     }
-
     parm {
         name    "value"
         label   "Value"

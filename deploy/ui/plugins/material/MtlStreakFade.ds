@@ -1,33 +1,32 @@
 {
-    name	MtlStreakFade
-    label	"Streak Fade"
-    parmtag	{ spare_category "Streak Fade" }
-    parmtag	{ vray_plugin "MtlStreakFade" }
+    name    MtlStreakFade
+    label   "Streak Fade"
+    parmtag { spare_category "Streak Fade" }
+    parmtag { vray_plugin "MtlStreakFade" }
 
 #include "$VRAY_UI_DS_PATH/common/vfh_material_common.ds"
 
-	parm {
-	    name "base_mtl"
-	    label "Material"
-	    type int
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_label" "base_mtl" }
-	    parmtag { "vray_pluginattr" "" }
-	    parmtag { "vray_type" "PluginMaterial" }
-	    invisible
-	}
-
     parm {
-		name	"fade"
-		label	"Fade"
-		type	float
-		default	{ "1" }
-		help	"1.0f - no fade, < 1.0f - fade"
-		range	{ 0 1 }
-		export	none
-		parmtag	{ "cook_dependent" "1" }
-		parmtag	{ "vray_plugin" "MtlStreakFade" }
-		parmtag	{ "vray_pluginattr" "fade" }
-		parmtag	{ "vray_type" "float" }
+        name "base_mtl"
+        label "Material"
+        type int
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_label" "base_mtl" }
+        parmtag { "vray_pluginattr" "" }
+        parmtag { "vray_type" "PluginMaterial" }
+        invisible
+    }
+    parm {
+        name    "fade"
+        label   "Fade"
+        type    float
+        default { "1" }
+        help    "1.0f - no fade, < 1.0f - fade"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "MtlStreakFade" }
+        parmtag { "vray_pluginattr" "fade" }
+        parmtag { "vray_type" "float" }
     }
 }

@@ -1,8 +1,8 @@
 {
-    name	Mtl2Sided
-    label	"Two Sided"
-    parmtag	{ spare_category "Two Sided" }
-    parmtag	{ vray_plugin "Mtl2Sided" }
+    name    Mtl2Sided
+    label   "Two Sided"
+    parmtag { spare_category "Two Sided" }
+    parmtag { vray_plugin "Mtl2Sided" }
 
 // NOTE: Using full path here because it's included in VRay.ds
 #include "$VRAY_UI_DS_PATH/common/vfh_material_common.ds"
@@ -17,7 +17,6 @@
         parmtag { "vray_type" "PluginMaterial" }
         invisible
     }
-
     parm {
         name "back"
         label "Back"
@@ -28,86 +27,73 @@
         parmtag { "vray_type" "PluginMaterial" }
         invisible
     }
-
-    groupsimple {
-      name "folder_main"
-      label "Main"
-	  hidewhentab "{ use == 0 }"
-
-      parm {
-      	name	"translucency"
-      	label	"Translucency"
-      	type	color
-      	size	3
-      	default	{ "0" "0" "0" }
-      	help	"Translucency between front and back"
-      	range	{ 0 10 }
-      	export	none
-      	parmtag	{ "cook_dependent" "1" }
-      	parmtag	{ "vray_plugin" "Mtl2Sided" }
-      	parmtag	{ "vray_pluginattr" "translucency" }
-      	parmtag	{ "vray_type" "color" }
-      }
-
-      parm {
-        name	"translucency_tex"
-        label	"Translucency Texture"
-        type	color4
-		invisible
-        size	4
-        default	{ "0.5" "0.5" "0.5" "1" }
-        help	"Translucency texture"
-        range	{ 0 10 }
-        export	none
-        parmtag	{ "cook_dependent" "1" }
-        parmtag	{ "vray_plugin" "Mtl2Sided" }
-        parmtag	{ "vray_pluginattr" "translucency_tex" }
-        parmtag	{ "vray_type" "Texture" }
-      }
-
-      parm {
-        name	"translucency_tex_mult"
-        label	"Texture Multiplier"
-        type	float
-        default	{ "1" }
-        help	"Multiplier for the translucency texture"
-        range	{ 0 1 }
-        export	none
-        parmtag	{ "cook_dependent" "1" }
-        parmtag	{ "vray_plugin" "Mtl2Sided" }
-        parmtag	{ "vray_pluginattr" "translucency_tex_mult" }
-        parmtag	{ "vray_type" "float" }
-      }
-
-      parm {
-      	name	"mult_by_front_diffuse"
-      	label	"Multiply by Front Diffuse"
-      	type	toggle
-      	default	{ "0" }
-      	help	"True to multiply the back side color by the cached diffuse color of the front BRDF"
-      	range	{ 0 1 }
-      	export	none
-      	parmtag	{ "cook_dependent" "1" }
-      	parmtag	{ "vray_plugin" "Mtl2Sided" }
-      	parmtag	{ "vray_pluginattr" "mult_by_front_diffuse" }
-      	parmtag	{ "vray_type" "boolean" }
-      }
-
-      parm {
-      	name	"force_1sided"
-      	label	"Force Single-sided Sub-materials"
-      	type	toggle
-      	default	{ "1" }
-      	help	"True to make the sub-materials one-sided"
-      	range	{ 0 1 }
-      	export	none
-      	parmtag	{ "cook_dependent" "1" }
-      	parmtag	{ "vray_plugin" "Mtl2Sided" }
-      	parmtag	{ "vray_pluginattr" "force_1sided" }
-      	parmtag	{ "vray_type" "boolean" }
-      }
-
-
+    parm {
+        name    "translucency"
+        label   "Translucency"
+        type    color
+        size    3
+        default { "1" "1" "1" }
+        help    "Translucency between front and back"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "Mtl2Sided" }
+        parmtag { "vray_pluginattr" "translucency" }
+        parmtag { "vray_type" "color" }
+        invisible
     }
-
+    parm {
+        name    "translucency_tex"
+        label   "Translucency"
+        type    color4
+        size    4
+        default { "0.5" "0.5" "0.5" "1" }
+        help    "Translucency texture"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "Mtl2Sided" }
+        parmtag { "vray_pluginattr" "translucency_tex" }
+        parmtag { "vray_type" "Texture" }
+    }
+    parm {
+        name    "translucency_tex_mult"
+        label   "Texture Multiplier"
+        type    float
+        default { "1" }
+        help    "Multiplier for the translucency texture"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "Mtl2Sided" }
+        parmtag { "vray_pluginattr" "translucency_tex_mult" }
+        parmtag { "vray_type" "float" }
+        invisible
+    }
+    parm {
+        name    "mult_by_front_diffuse"
+        label   "Multiply by Front Diffuse"
+        type    toggle
+        default { "0" }
+        help    "True to multiply the back side color by the cached diffuse color of the front BRDF"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "Mtl2Sided" }
+        parmtag { "vray_pluginattr" "mult_by_front_diffuse" }
+        parmtag { "vray_type" "boolean" }
+    }
+    parm {
+        name    "force_1sided"
+        label   "Force Single-sided Sub-materials"
+        type    toggle
+        default { "1" }
+        help    "True to make the sub-materials one-sided"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "Mtl2Sided" }
+        parmtag { "vray_pluginattr" "force_1sided" }
+        parmtag { "vray_type" "boolean" }
+    }
 }

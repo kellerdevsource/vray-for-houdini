@@ -5,11 +5,11 @@
     parmtag { vray_plugin "TexIntToFloat" }
     parm {
         name    "input"
-        label   "Input"
+        label   "Int"
         type    integer
         default { "0" }
         help    "The integer value"
-        range   { 0 3 }
+        range   { -1 1 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "TexIntToFloat" }
