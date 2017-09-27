@@ -24,7 +24,7 @@
         label   "Bg Color"
         type    color
         size    3
-        default { "0" "0" "0" }
+        default { "1" "1" "1" }
         help    "Environment color"
         range   { 0 10 }
         export  none
@@ -57,12 +57,13 @@
         type    float
         default { "1" }
         help    "Environment map multiplier"
-        range   { 0 10 }
+        range   { 0 1 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "SettingsEnvironment" }
         parmtag { "vray_pluginattr" "bg_tex_mult" }
         parmtag { "vray_type" "float" }
+        invisible
     }
 
     parm {
@@ -70,7 +71,7 @@
         label   "GI Color"
         type    color
         size    3
-        default { "0" "0" "0" }
+        default { "1" "1" "1" }
         help    "GI (skylight) color"
         range   { 0 10 }
         export  none
@@ -103,12 +104,13 @@
         type    float
         default { "1" }
         help    "GI (skylight) map multiplier"
-        range   { 0 10 }
+        range   { 0 1 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "SettingsEnvironment" }
         parmtag { "vray_pluginattr" "gi_tex_mult" }
         parmtag { "vray_type" "float" }
+        invisible
     }
 
     parm {
@@ -116,7 +118,7 @@
         label   "Reflection"
         type    color
         size    3
-        default { "0" "0" "0" }
+        default { "1" "1" "1" }
         help    "Reflection color"
         range   { 0 10 }
         export  none
@@ -155,6 +157,7 @@
         parmtag { "vray_plugin" "SettingsEnvironment" }
         parmtag { "vray_pluginattr" "reflect_tex_mult" }
         parmtag { "vray_type" "float" }
+        invisible
     }
 
     parm {
@@ -162,7 +165,7 @@
         label   "Refraction"
         type    color
         size    3
-        default { "0" "0" "0" }
+        default { "1" "1" "1" }
         help    "Refraction color"
         range   { 0 10 }
         export  none
@@ -201,6 +204,7 @@
         parmtag { "vray_plugin" "SettingsEnvironment" }
         parmtag { "vray_pluginattr" "refract_tex_mult" }
         parmtag { "vray_type" "float" }
+        invisible
     }
 
     parm {
@@ -208,7 +212,7 @@
         label   "Secondary Matte Color"
         type    color
         size    3
-        default { "0" "0" "0" }
+        default { "1" "1" "1" }
         help    "Secondary matte color"
         range   { 0 10 }
         export  none
@@ -221,7 +225,7 @@
 
     parm {
         name    "secondary_matte_tex"
-        label   "Secondary Matte Tex"
+        label   "Secondary Matte"
         type    color4
         size    4
         default { "0" "0" "0" "1" }
@@ -232,7 +236,7 @@
         parmtag { "vray_plugin" "SettingsEnvironment" }
         parmtag { "vray_pluginattr" "secondary_matte_tex" }
         parmtag { "vray_type" "Texture" }
-        invisible
+        disablewhen " { use_secondary_matte == 0 } "
     }
 
     parm {
@@ -277,6 +281,5 @@
         parmtag { "vray_plugin" "SettingsEnvironment" }
         parmtag { "vray_pluginattr" "use_secondary_matte" }
         parmtag { "vray_type" "boolean" }
-        invisible
     }
 }
