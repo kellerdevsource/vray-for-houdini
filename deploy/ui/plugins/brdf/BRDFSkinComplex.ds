@@ -249,7 +249,7 @@
                 parmtag { "vray_type" "TextureFloat" }
             }
             parm {
-                name    "primary_reflecton_color"
+                name    "primary_reflection_color"
                 label   "Color"
                 type    color4
                 size    4
@@ -258,7 +258,7 @@
                 export  none
                 parmtag { "cook_dependent" "1" }
                 parmtag { "vray_plugin" "BRDFSkinComplex" }
-                parmtag { "vray_pluginattr" "primary_reflecton_color" }
+                parmtag { "vray_pluginattr" "primary_reflection_color" }
                 parmtag { "vray_type" "Texture" }
                 disablewhen "{ primary_reflection_amount == 0 }"
             }
@@ -332,7 +332,7 @@
                 parmtag { "vray_type" "TextureFloat" }
             }
             parm {
-                name    "secondary_reflecton_color"
+                name    "secondary_reflection_color"
                 label   "Color"
                 type    color4
                 size    4
@@ -341,7 +341,7 @@
                 export  none
                 parmtag { "cook_dependent" "1" }
                 parmtag { "vray_plugin" "BRDFSkinComplex" }
-                parmtag { "vray_pluginattr" "secondary_reflecton_color" }
+                parmtag { "vray_pluginattr" "secondary_reflection_color" }
                 parmtag { "vray_type" "Texture" }
                 disablewhen "{ secondary_reflection_amount == 0 }"
             }
