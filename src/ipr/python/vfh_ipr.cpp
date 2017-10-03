@@ -441,9 +441,9 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 	}
 
 	HOM_AutoLock autoLock;
-	
+
 	getImdisplay().setPort(port);
-	
+
 	if (!stopCallback) {
 		stopCallback = new CallOnceUntilReset(freeExporter);
 		getImdisplay().setOnStopCallback(stopCallback->getCallableFunction());
@@ -526,7 +526,7 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 			}
 		}
 	}
-	
+
     Py_RETURN_NONE;
 }
 
