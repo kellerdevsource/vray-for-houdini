@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2016, Chaos Software Ltd
+// Copyright (c) 2015-2017, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -97,11 +97,21 @@ void Logger::writeMessages()
 	auto & log = getLog();
 	while (!isStoppedLogger) {
 		if (log.m_queue.empty()) {
-			std::this_thread::sleep_for(std::chrono::milliseconds(1));
+			std::unique_lock<std::mutex> lock(log.m_mtx);
+			if (log.m_queue.empty()) {
+				log.m_condVar.wait(lock, [&log]() {
+					return !isStoppedLogger && log.m_queue.empty();
+				});
+			}
 		}
-		LogData data;
-		while (log.m_queue.pop(data)) {
-			logMessage(data);
+
+		{
+			std::lock_guard<std::mutex> lock(log.m_mtx);
+			while (!isStoppedLogger && !log.m_queue.empty()) {
+				LogData data = log.m_queue.front();
+				log.m_queue.pop_front();
+				logMessage(data);
+			}
 		}
 	}
 }
@@ -111,8 +121,6 @@ void Logger::startLogging()
 	if (threadedLogger.getValue()) {
 		Logger & log = getLog();
 		std::call_once(startLogger, [&log]() {
-			// We can use unsafe here since we are the only thread accessing it
-			log.m_queue.reserve_unsafe(128);
 			loggerThread = new ThreadedLogger(&Logger::writeMessages);
 			loggerThread->start();
 		});
@@ -122,21 +130,30 @@ void Logger::startLogging()
 void Logger::stopLogging()
 {
 	if (threadedLogger.getValue()) {
+		// this protects stopping
 		static std::mutex mtx;
 		if (loggerThread) {
 			std::lock_guard<std::mutex> lock(mtx);
-			isStoppedLogger = true;
-			if (loggerThread) {
+			if (!loggerThread) {
+				return;
+			}
+
+			{
+				std::lock_guard<std::mutex> loggerLock(getLog().m_mtx);
+				isStoppedLogger = true;
+			}
+			getLog().m_condVar.notify_all();
+			if (!loggerThread->wait(100)) {
 				loggerThread->terminate();
 				loggerThread->wait();
-				delete loggerThread;
-				loggerThread = nullptr;
 			}
+			delete loggerThread;
+			loggerThread = nullptr;
 		}
 	}
 }
 
-void Logger::valog(LogLevel level, const char *format, va_list args)
+void Logger::valog(LogLevel level, const tchar *format, va_list args)
 {
 	const bool showMessage = level == LogLevelMsg
 		? true
@@ -153,18 +170,14 @@ void Logger::valog(LogLevel level, const char *format, va_list args)
 
 	vsnprintf(data.line.data(), data.line.size(), format, args);
 
-	if (threadedLogger.getValue()) {
-		// Try to push 10 times and relent the thread after each unsuccessfull attempt
-		// This will prevent endless loop in normal push
-		for (int c = 0; c < 10; c++) {
-			if (m_queue.bounded_push(data)) {
-				return;
+	if (threadedLogger.getValue() && !isStoppedLogger) {
+		{
+			std::lock_guard<std::mutex> lock(m_mtx);
+			if (!isStoppedLogger) {
+				m_queue.push_back(data);
 			}
-			// TODO: is it worth to sleep(1) after 5 attempts?
-			std::this_thread::yield();
 		}
-		// At this point we tried 10 pushes but did not work, so just log the message from this thread
-		logMessage(data);
+		m_condVar.notify_one();
 	} else {
 		logMessage(data);
 	}

@@ -10,7 +10,6 @@
 #   http://www.sidefx.com/docs/hdk15.5/_h_d_k__s_o_h_o.html
 #
 
-
 import traceback
 
 def main():
@@ -29,8 +28,6 @@ def main():
     import _vfh_ipr
 
     from soho import SohoParm
-
-    RENDER_RT_MODE_SOHO = 1
 
     LogLevel = type('Enum', (), {'Msg':0, 'Info':1, 'Progress':2, 'Warning':3, 'Error':4, 'Debug':5})
 
@@ -63,10 +60,10 @@ def main():
             'far'         : SohoParm('far',         'real',   [1000],          False),
             'res'         : SohoParm('res',         'int',    [640,480],       False),
             'projection'  : SohoParm('projection',  'string', ["perspective"], False),
-            'cropLeft'    : SohoParm('cropl',       'real',   [-1],            False),
-            'cropRight'   : SohoParm('cropr',       'real',   [-1],            False),
-            'cropBottom'  : SohoParm('cropb',       'real',   [-1],            False),
-            'cropTop'     : SohoParm('cropt',       'real',   [-1],            False),
+            'cropl'       : SohoParm('cropl',       'real',   [-1],            False),
+            'cropr'       : SohoParm('cropr',       'real',   [-1],            False),
+            'cropb'       : SohoParm('cropb',       'real',   [-1],            False),
+            'cropt'       : SohoParm('cropt',       'real',   [-1],            False),
             'camera'      : SohoParm('camera',      'string', ['/obj/cam1'],   False)
         }
 
@@ -74,16 +71,13 @@ def main():
         if not camParmsEval:
             return {}
 
-        viewParams = {
-            'camera'    : camera,
-            'transform' : camParmsEval['space:world'].Value,
-            'ortho'     : 1 if camParmsEval['projection'].Value[0] in {'ortho'} else 0,
-            'res'       : camParmsEval['res'].Value,
-            'cropl'     : camParmsEval['cropl'].Value[0],
-            'cropr'     : camParmsEval['cropr'].Value[0],
-            'cropt'     : camParmsEval['cropt'].Value[0],
-            'cropb'     : camParmsEval['cropb'].Value[0],
-        }
+        viewParams = {}
+        for key in camParmsEval:
+            viewParams[key] = camParmsEval[key].Value[0]
+
+        viewParams['transform'] = camParmsEval['space:world'].Value
+        viewParams['ortho']     = 1 if camParmsEval['projection'].Value[0] in {'ortho'} else 0
+        viewParams['res']       = camParmsEval['res'].Value
 
         cropX = viewParams['res'][0] * viewParams['cropl']
         cropY = viewParams['res'][1] * (1.0 - viewParams['cropt'])
@@ -117,9 +111,6 @@ def main():
     # ROP node.
     ropPath = soho.getOutputDriver().getName()
     ropNode = hou.node(ropPath)
-
-    # Use callbacks or SOHO
-    render_rt_update_mode = hou.evalParm("render_rt_update_mode")
 
     printDebug("Initialize SOHO...")
 
@@ -187,17 +178,6 @@ def main():
         else:
             # Update view.
             exportView(ropPath, camera, sohoCam, now)
-
-            if render_rt_update_mode == RENDER_RT_MODE_SOHO:
-                exportObjects("objlist:dirtyinstance")
-                exportObjects("objlist:dirtylight")
-                # exportObjects("objlist:dirtyspace")
-                # exportObjects("objlist:dirtyfog")
-
-                deleteObjects("objlist:deletedinstance")
-                deleteObjects("objlist:deletedlight")
-                # deleteObjects("objlist:deletedspace")
-                # deleteObjects("objlist:deletedfog")
 
 try:
     main()

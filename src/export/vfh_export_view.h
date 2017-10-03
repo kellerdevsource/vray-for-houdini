@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2016, Chaos Software Ltd
+// Copyright (c) 2015-2017, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -29,6 +29,91 @@ struct RenderSizeParams {
 
 	int  w;
 	int  h;
+};
+
+enum MenuItemSelected {
+	HoudiniCameraSettings = 0,
+	UseFieldOfView = 1,
+	UsePhysicallCameraSettings = 2
+};
+
+enum PhysicalCameraType {
+	Still = 0,
+	Cinematic = 1,
+	Video = 2
+};
+
+enum HoudiniFocalUnits {
+	Millimeters = 0,
+	Meters = 1,
+	Nanometers = 2,
+	Inches = 3,
+	Feet = 4
+};
+
+struct PhysicalCameraParams {
+	PhysicalCameraParams()
+		: type(PhysicalCameraType::Still)
+		, useDof(0)
+		, useMoBlur(0)
+		, selectedItem(MenuItemSelected::HoudiniCameraSettings)
+		, exposure(1)
+		, filmWidth(36.0f)
+		, focalLength(50.0f)
+		, fov(1.5708f)
+		, fNumber(16.0f)
+		, shutterSpeed(100.0f)
+		, shutterAngle(180.0f)
+		, shutterOffset(0.0f)
+		, latency(0.0f)
+		, ISO(100.0f)
+		, zoomFactor(1.0f)
+		, specifyFocus(1)
+		, focusDistance(200.0f)
+		, targeted(1)
+		, targetDistance(200.0f)
+		, balance(1.0f)
+		, vignetting(1.0f)
+		, opticalVignetting(0.0f)
+		, subdivisions(4)
+		, dontAffectSettings(0)
+		, focalUnits(HoudiniFocalUnits::Millimeters)
+		, houdiniFocalLength(50.0f)
+		, houdiniFNumber(5.6f)
+		, houdiniFocusDistance(5.0f)
+	{}
+
+	bool operator == (const PhysicalCameraParams &other) const;
+
+	PhysicalCameraType type;
+	bool useDof;
+	bool useMoBlur;
+	MenuItemSelected selectedItem;
+	bool exposure;
+	float filmWidth;
+	float focalLength;
+	float fov;
+	float fNumber;
+	float shutterSpeed;
+	float shutterAngle;
+	float shutterOffset;
+	float latency;
+	float ISO;
+	float zoomFactor;
+	bool specifyFocus;
+	float focusDistance;
+	bool targeted;
+	float targetDistance;
+	VRay::Color balance;
+	float vignetting;
+	float opticalVignetting;
+	int subdivisions;
+	bool dontAffectSettings;
+	// Houdini Params
+	HoudiniFocalUnits focalUnits;
+	float houdiniFocalLength;
+	float houdiniFNumber;
+	float houdiniFocusDistance;
 };
 
 struct RenderCropRegionParams {
@@ -104,37 +189,6 @@ struct RenderViewParams {
 };
 
 
-struct ViewPluginsDesc {
-	static const std::string settingsCameraDofPluginName;
-	static const std::string settingsMotionBlurPluginName;
-	static const std::string settingsCameraPluginName;
-	static const std::string cameraPhysicalPluginName;
-	static const std::string cameraDefaultPluginName;
-	static const std::string renderViewPluginName;
-	static const std::string stereoSettingsPluginName;
-
-	ViewPluginsDesc()
-		: settingsCameraDof(settingsCameraDofPluginName, "SettingsCameraDof")
-		, settingsMotionBlur(settingsMotionBlurPluginName, "SettingsMotionBlur")
-		, settingsCamera(settingsCameraPluginName, "SettingsCamera")
-		, cameraPhysical(cameraPhysicalPluginName, "CameraPhysical")
-		, cameraDefault(cameraDefaultPluginName, "CameraDefault")
-		, renderView(renderViewPluginName, "RenderView")
-		, stereoSettings(stereoSettingsPluginName, "VRayStereoscopicSettings")
-	{}
-
-	int needReset(const ViewPluginsDesc &other) const;
-
-	Attrs::PluginDesc  settingsCameraDof;
-	Attrs::PluginDesc  settingsMotionBlur;
-	Attrs::PluginDesc  settingsCamera;
-	Attrs::PluginDesc  cameraPhysical;
-	Attrs::PluginDesc  cameraDefault;
-	Attrs::PluginDesc  renderView;
-	Attrs::PluginDesc  stereoSettings;
-};
-
-
 struct ViewParams {
 	explicit ViewParams(OBJ_Node *camera=nullptr)
 		: usePhysicalCamera(false)
@@ -145,10 +199,14 @@ struct ViewParams {
 	int               changedSize(const ViewParams &other) const;
 	int               needReset(const ViewParams &other) const;
 	int               changedCropRegion(const ViewParams &other) const;
+	int changedPhysCam(const ViewParams &other) const;
+
+	void setCamera(OBJ_Node *camera) { cameraObject = camera; }
 
 	RenderSizeParams  renderSize;
 	RenderViewParams  renderView;
 	RenderCropRegionParams cropRegion;
+	PhysicalCameraParams physCam;
 
 	int               usePhysicalCamera;
 	OBJ_Node         *cameraObject;

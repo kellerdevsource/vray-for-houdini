@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2016, Chaos Software Ltd
+// Copyright (c) 2015-2017, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -18,6 +18,7 @@
 
 #include "gu/gu_vrayproxyref.h"
 #include "gu/gu_volumegridref.h"
+#include "gu/gu_vraysceneref.h"
 #include "rop/vfh_rop.h"
 #include "sop/sop_node_base.h"
 #include "vop/vop_node_base.h"
@@ -41,6 +42,7 @@ static struct PrimPackedTypeIDs {
 		, packedDisk(0)
 		, packedGeometry(0)
 		, vrayProxyRef(0)
+		, vraySceneRef(0)
 	{}
 
 	void init() {
@@ -52,6 +54,7 @@ static struct PrimPackedTypeIDs {
 		packedGeometry = GU_PrimPacked::lookupTypeId("PackedGeometry");
 		vrayProxyRef = GU_PrimPacked::lookupTypeId("VRayProxyRef");
 		vrayVolumeGridRef = GU_PrimPacked::lookupTypeId("VRayVolumeGridRef");
+		vraySceneRef = GU_PrimPacked::lookupTypeId("VRaySceneRef");
 
 		initialized = true;
 	}
@@ -65,6 +68,7 @@ public:
 	GA_PrimitiveTypeId packedGeometry;
 	GA_PrimitiveTypeId vrayProxyRef;
 	GA_PrimitiveTypeId vrayVolumeGridRef;
+	GA_PrimitiveTypeId vraySceneRef;
 } primPackedTypeIDs;
 
 static boost::format objGeomNameFmt("%s|%i@%s");
@@ -72,6 +76,7 @@ static boost::format hairNameFmt("GeomMayaHair|%i@%s");
 static boost::format polyNameFmt("GeomStaticMesh|%i@%s");
 static boost::format alembicNameFmt("Alembic|%i@%s");
 static boost::format vrmeshNameFmt("VRayProxy|%i@%s");
+static boost::format vrsceneNameFmt("VRayScene|%i@s");
 
 static const char intrAlembicFilename[] = "abcfilename";
 static const char intrAlembicObjectPath[] = "abcobjectpath";
@@ -167,6 +172,7 @@ static VRay::VUtils::CharStringRefList getSceneName(const OP_Node &opNode, int p
 
 	UT_String nodePath;
 	opNode.getFullPath(nodePath);
+	nodePath.prepend("scene"); // getFullPath returns path starting with /
 
 	VRay::VUtils::CharStringRefList sceneName(2);
 	sceneName[0] = nodeName.buffer();
@@ -329,12 +335,15 @@ int ObjectExporter::isNodeVisible(OP_Node &rop, OBJ_Node &objNode, fpreal t)
 
 int ObjectExporter::isNodeVisible(OBJ_Node &objNode) const
 {
-	return isNodeVisible(pluginExporter.getRop(), objNode, ctx.getTime());
+	if (pluginExporter.getRopPtr()) {
+		return isNodeVisible(*pluginExporter.getRopPtr(), objNode, ctx.getTime());
+	}
+	return false;
 }
 
 int ObjectExporter::isNodeMatte(OBJ_Node &objNode) const
 {
-	OP_Bundle *bundle = getMatteGeometryBundle(pluginExporter.getRop(), ctx.getTime());
+	OP_Bundle *bundle = getMatteGeometryBundle(*pluginExporter.getRopPtr(), ctx.getTime());
 	if (!bundle) {
 		return false;
 	}
@@ -343,7 +352,7 @@ int ObjectExporter::isNodeMatte(OBJ_Node &objNode) const
 
 int ObjectExporter::isNodePhantom(OBJ_Node &objNode) const
 {
-	OP_Bundle *bundle = getPhantomGeometryBundle(pluginExporter.getRop(), ctx.getTime());
+	OP_Bundle *bundle = getPhantomGeometryBundle(*pluginExporter.getRopPtr(), ctx.getTime());
 	if (!bundle) {
 		return false;
 	}
@@ -581,18 +590,15 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 	const GA_Size numPoints = gdp.getNumPoints();
 	const GA_Size numPrims = gdp.getNumPrimitives();
 
-	const STY_Styler &geoStyler = getStyler();
+	const STY_Styler &geoStyler = getStylerForObject(getStyler(), objNode);
 
-	GA_ROHandleV3 velocityHndl(gdp.findAttribute(GA_ATTRIB_POINT, GEO_STD_ATTRIB_VELOCITY));
-
-	GA_ROHandleS materialStyleSheetHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTR_MATERIAL_STYLESHEET));
-	GA_ROHandleS materialOverrideHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTR_MATERIAL_OVERRIDE));
-	GA_ROHandleS materialPathHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GA_Names::shop_materialpath));
-
-	GA_ROHandleI objectIdHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTRIB_OBJECTID));
-	GA_ROHandleF animOffsetHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTRIB_ANIM_OFFSET));
-
-	GA_ROHandleS pathHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, intrPackedPath));
+	const GA_ROHandleV3 velocityHndl(gdp.findAttribute(GA_ATTRIB_POINT, GEO_STD_ATTRIB_VELOCITY));
+	const GA_ROHandleS materialStyleSheetHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTR_MATERIAL_STYLESHEET));
+	const GA_ROHandleS materialOverrideHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTR_MATERIAL_OVERRIDE));
+	const GA_ROHandleS materialPathHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GA_Names::shop_materialpath));
+	const GA_ROHandleI objectIdHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTRIB_OBJECTID));
+	const GA_ROHandleF animOffsetHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTRIB_ANIM_OFFSET));
+	const GA_ROHandleS pathHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, intrPackedPath));
 
 	MtlOverrideAttrExporter attrExp(gdp);
 
@@ -1022,6 +1028,10 @@ int ObjectExporter::getPrimPackedID(const GU_PrimPacked &prim) const
 		const VRayProxyRef *vrayProxyRref = UTverify_cast<const VRayProxyRef*>(prim.implementation());
 		return vrayProxyRref->getOptions().hash();
 	}
+	if (primTypeID == primPackedTypeIDs.vraySceneRef) {
+		const VRaySceneRef *vraySceneRef = UTverify_cast<const VRaySceneRef*>(prim.implementation());
+		return vraySceneRef->getOptions().hash();
+	}
 	if (primTypeID == primPackedTypeIDs.packedGeometry) {
 		int geoID = -1;
 		prim.getIntrinsic(prim.findIntrinsic(intrGeometryID), geoID);
@@ -1082,6 +1092,10 @@ VRay::Plugin ObjectExporter::exportPrimPacked(OBJ_Node &objNode, const GU_PrimPa
 	}
 	if (primTypeID == primPackedTypeIDs.packedDisk) {
 		return exportPackedDisk(objNode, prim);
+	}
+	if (primTypeID == primPackedTypeIDs.vraySceneRef) {
+		exportVRaySceneRef(objNode, prim);
+		return VRay::Plugin();
 	}
 
 	const GA_PrimitiveDefinition &lookupTypeDef = prim.getTypeDef();
@@ -1151,6 +1165,28 @@ VRay::Plugin ObjectExporter::exportVRayProxyRef(OBJ_Node &objNode, const GU_Prim
 
 	// Scale will be exported as primitive transform.
 	pluginDesc.remove("scale");
+
+	return pluginExporter.exportPlugin(pluginDesc);
+}
+
+VRay::Plugin ObjectExporter::exportVRaySceneRef(OBJ_Node &objNode, const GU_PrimPacked &prim)
+{
+	if (!doExportGeometry) {
+		return VRay::Plugin();
+	}
+
+	UT_String primname;
+	prim.getIntrinsic(prim.findIntrinsic(intrPackedPrimitiveName), primname);
+
+	const int key = getPrimPackedID(prim);
+	Attrs::PluginDesc pluginDesc(boost::str(vrsceneNameFmt % key % primname.buffer()), "VRayScene");
+
+	const VRaySceneRef *vraysceneref = UTverify_cast<const VRaySceneRef*>(prim.implementation());
+
+	UT_Options options = vraysceneref->getOptions();
+	pluginExporter.setAttrsFromUTOptions(pluginDesc, options);
+
+	pluginDesc.add(Attrs::PluginAttr("transform", getTm()));
 
 	return pluginExporter.exportPlugin(pluginDesc);
 }
@@ -1637,7 +1673,7 @@ int ObjectExporter::isLightEnabled(OBJ_Node &objLight) const
 	int enabled = 0;
 	objLight.evalParameterOrProperty("enabled", 0, ctx.getTime(), enabled);
 
-	OP_Bundle *bundle = getForcedLightsBundle(pluginExporter.getRop(), ctx.getTime());
+	OP_Bundle *bundle = getForcedLightsBundle(*pluginExporter.getRopPtr(), ctx.getTime());
 	return bundle && (bundle->contains(&objLight, false) || (enabled > 0));
 }
 

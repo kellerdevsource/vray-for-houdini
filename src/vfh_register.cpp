@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2016, Chaos Software Ltd
+// Copyright (c) 2015-2017, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -45,7 +45,9 @@
 #include <GU/GU_Detail.h>
 
 #ifdef CGR_HAS_AUR
+#  include <threads.h>
 #  include <aurloader.h>
+VUtils::ThreadManager * aurThreadManager = nullptr;
 #endif
 
 using namespace VRayForHoudini;
@@ -88,6 +90,11 @@ void unregister(void *)
 {
 	deleteVRayInit();
 	Log::Logger::stopLogging();
+
+#ifdef CGR_HAS_AUR
+	finalizeAuraLoader();
+	destroyDefaultThreadManager(aurThreadManager);
+#endif
 
 #ifndef VASSERT_ENABLED
 	Error::ErrorChaser &errChaser = Error::ErrorChaser::getInstance();
@@ -141,7 +148,11 @@ void newSopOperator(OP_OperatorTable *table)
 	if (vfhPhoenixLoaderDir && *vfhPhoenixLoaderDir) {
 		Log::getLog().info("Loading Phoenix cache loader plugins from \"%s\"...",
 						   vfhPhoenixLoaderDir);
-		if (!initalizeAuraLoader(vfhPhoenixLoaderDir, "phx", 2)) {
+		aurThreadManager = createDefaultThreadManager();
+		if (!aurThreadManager) {
+			Log::getLog().error("Failed to create thread manager for aurloader - loading will be single threaded!");
+		}
+		if (!initalizeAuraLoader(vfhPhoenixLoaderDir, "phx", 2, aurThreadManager)) {
 			Log::getLog().error("Failed to load Phoenix cache loader plugins from \"%s\"!",
 								vfhPhoenixLoaderDir);
 		}

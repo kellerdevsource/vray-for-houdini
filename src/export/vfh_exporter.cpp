@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2016, Chaos Software Ltd
+// Copyright (c) 2015-2017, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -400,6 +400,15 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 				}
 			}
 
+			if (!strcmp(plugin_value.getType(), "MtlSingleBRDF")) {
+				VRay::ValueList sceneName(1);
+				sceneName[0] = VRay::Value(vopNode->getName().buffer());
+				plugin_value.setValue("scene_name", sceneName);
+			}
+
+			Log::getLog().info("  Setting plugin value: %s = %s",
+							   attrName.c_str(), plugin_value.getName());
+
 			const Parm::SocketDesc *fromSocketInfo = getConnectedOutputType(vopNode, attrName.c_str());
 
 			if (fromSocketInfo &&
@@ -682,8 +691,8 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 	// NOTE: we are exporting animation related properties in frames
 	// and compensating for this by setting SettingsUnitsInfo::seconds_scale
 	// i.e. scaling V-Ray time unit (see function exportSettings())
-	fpreal animStart = CAST_ROPNODE(m_rop)->FSTART();
-	fpreal animEnd = CAST_ROPNODE(m_rop)->FEND();
+	const fpreal animStart = CAST_ROPNODE(m_rop)->FSTART();
+	const fpreal animEnd = CAST_ROPNODE(m_rop)->FEND();
 	VRay::VUtils::ValueRefList frames(1);
 	frames[0].setDouble(animStart);
 	if (m_frames > 1) {
@@ -698,6 +707,15 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 			frameRange[0].setDouble(animStart);
 			frameRange[1].setDouble(animEnd);
 			frames[0].setList(frameRange);
+		}
+	}
+
+	if (imgFormat == imageFormatOpenEXR ||
+		imgFormat == imageFormatVRayImage)
+	{
+		const int relementsSeparateFiles = m_rop->evalInt("SettingsOutput_relements_separateFiles", 0, t);
+		if (relementsSeparateFiles == 0) {
+			pluginDesc.addAttribute(Attrs::PluginAttr("img_rawFile", 1));
 		}
 	}
 
@@ -1377,8 +1395,7 @@ void VRayExporter::resetOpCallbacks()
 
 void VRayExporter::addOpCallback(OP_Node *op_node, OP_EventMethod cb)
 {
-	// Install callbacks only for interactive session
-	if (isIPR() != iprModeRT)
+	if (!m_isIPR)
 		return;
 
 	if (!op_node->hasOpInterest(this, cb)) {

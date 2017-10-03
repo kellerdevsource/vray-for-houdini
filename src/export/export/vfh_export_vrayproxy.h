@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2016, Chaos Software Ltd
+// Copyright (c) 2015-2017, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -124,7 +124,9 @@ public:
 	{}
 
 	void setContext(const VRayOpContext &value) { pluginExporter.setContext(value); }
-
+	
+	/// Get the underlying pluginExporter
+	VRayExporterProxy &getPluginExporter() { return pluginExporter; }
 private:
 	VRayExporterProxy pluginExporter;
 };
@@ -276,7 +278,7 @@ public:
 	///                    nodes should be a valid pointer
 	/// @param nodeCnt[in] - number of nodes that should be taken from the list
 	///                      nodeCnt should be > 0
-	VRayProxyExporter(const VRayProxyExportOptions &options, const SOPList &sopList);
+	VRayProxyExporter(const VRayProxyExportOptions &options, const SOPList &sopList, ROP_Node *ropNode);
 	~VRayProxyExporter();
 
 	/// Initilize the exporter for the current time (based on what is set in m_options.m_context)
@@ -398,6 +400,7 @@ public:
 private:
 	/// Input SOP list.
 	const SOPList &sopList;
+	ROP_Node *m_rop;
 
 	/// SOP geometry descriptions to make vrmesh from.
 	GeometryDescriptions geometryDescriptions;
