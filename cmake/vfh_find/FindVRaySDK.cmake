@@ -126,4 +126,7 @@ if(NOT VRaySDK_FOUND)
 
 	set(VRaySDK_INCLUDES VRaySDK_INCLUDES-NOTFOUND)
 	set(VRaySDK_LIBRARIES VRaySDK_LIBRARIES-NOTFOUND)
+else()
+	message_array("Using V-Ray SDK include path" VRaySDK_INCLUDES)
+	message_array("Using V-Ray SDK library path" VRaySDK_LIBRARIES)
 endif()

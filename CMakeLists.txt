@@ -59,12 +59,12 @@ include(vfh_vrayappsdk)
 include(vfh_vraysdk)
 include(vfh_phoenix)
 
-set_compiler_flags()
-
 use_houdini_sdk()
 use_vray_sdk()
 use_vray_appsdk()
 use_phx_sdk()
+
+set_compiler_flags()
 
 if(BUILD_TESTING)
 	include(CTest)
