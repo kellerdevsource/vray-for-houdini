@@ -10,9 +10,14 @@
 
 cmake_minimum_required(VERSION 3.7.0)
 
-set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_CURRENT_SOURCE_DIR}/cmake;${CMAKE_CURRENT_SOURCE_DIR}/cmake/vfh_find")
+list(APPEND CMAKE_MODULE_PATH
+	${CMAKE_CURRENT_SOURCE_DIR}/cmake
+	${CMAKE_CURRENT_SOURCE_DIR}/cmake/vfh_find
+)
 
 include(vfh_macro)
+
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 option(WITH_VRAY_FOR_HOUDINI "Build V-Ray For Houdini plugin"             ON)
 option(WITH_SOHO             "Build V-Ray For Houdini SOHO Python module" ON)
@@ -20,8 +25,7 @@ option(WITH_SOHO             "Build V-Ray For Houdini SOHO Python module" ON)
 option(BUILD_TESTING         "Enable build testing"           OFF)
 option(WITH_TESTS            "Run tests"                      OFF)
 option(WITH_TEST_APP         "Build AppSDK test applications" OFF)
-# Install
-#
+
 option(INSTALL_RELEASE "Install release build for distribution" OFF)
 if(INSTALL_RELEASE AND NOT "${CMAKE_BUILD_TYPE}" STREQUAL "Release" AND "${CMAKE_GENERATOR}" STREQUAL "Ninja")
 	message(WARNING "INSTALL_RELEASE is ON, but CMAKE_BUILD_TYPE is not \"Release\" (${CMAKE_BUILD_TYPE})!")
