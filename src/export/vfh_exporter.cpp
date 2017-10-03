@@ -406,6 +406,15 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 
 			const Parm::SocketDesc *fromSocketInfo = getConnectedOutputType(vopNode, attrName.c_str());
 
+			//insert TexColorToFloat if a color output is plugged into a float input
+			if (inSockInfo.type == Parm::ParmType::eTextureFloat) {
+				if (fromSocketInfo && fromSocketInfo->vopType == VOP_Type::VOP_TYPE_COLOR) {
+					Attrs::PluginDesc texColorToFloatDesc(VRayExporter::getPluginName(vopNode, inSockInfo.name.getLabel()), "TexColorToFloat");
+					texColorToFloatDesc.addAttribute(Attrs::PluginAttr("input", plugin_value));
+					plugin_value = exportPlugin(texColorToFloatDesc);
+				}
+			}
+
 			if (fromSocketInfo &&
 				fromSocketInfo->type >= Parm::ParmType::eOutputColor &&
 				fromSocketInfo->type  < Parm::ParmType::eUnknown)
