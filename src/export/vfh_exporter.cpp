@@ -209,17 +209,12 @@ void VRayExporter::setAttrValueFromOpNodePrm(Attrs::PluginDesc &pluginDesc, cons
 	if (Parm::isParmExist(opNode, parmName)) {
 		const PRM_Parm *parm = Parm::getParm(opNode, parmName);
 		if (parm->getParmOwner()->isPendingOverride()) {
-			Log::getLog().msg("Pending override: %s %s",
-							  opNode.getName().buffer(), parmName.c_str());
+			Log::getLog().debug("Pending override: %s %s",
+								opNode.getName().buffer(), parmName.c_str());
 		}
 
-		const fpreal &t = m_context.getTime();
-#if 0
-		Log::getLog().info("Setting: [%s] %s_%s (from %s_%s)",
-						   pluginDesc.pluginID.c_str(),
-						   pluginDesc.pluginName.c_str(), attrDesc.attr.c_str(),
-						   opNode.getName().buffer(), parmName.c_str());
-#endif
+		const fpreal t = m_context.getTime();
+
 		Attrs::PluginAttr attr;
 		attr.paramName = attrDesc.attr.ptr();
 
@@ -238,14 +233,15 @@ void VRayExporter::setAttrValueFromOpNodePrm(Attrs::PluginDesc &pluginDesc, cons
 				attr.paramType = Attrs::PluginAttr::AttrTypeInt;
 				attr.paramValue.valInt = enumValue.toInt();
 			}
-			else {
-				Log::getLog().error("Incorrect enum: %s.%s!", pluginDesc.pluginID.c_str(), attrDesc.attr.ptr());
-
+			else if (pluginDesc.pluginID == "UVWGenEnvironment") {
 				// UVWGenEnvironment is the only plugin with enum with the string keys.
-				vassert(pluginDesc.pluginID == "UVWGenEnvironment" && "Incorrect enum!");
-
 				attr.paramType = Attrs::PluginAttr::AttrTypeString;
 				attr.paramValue.valString = enumValue.buffer();
+			}
+			else {
+				Log::getLog().error("Incorrect enum: %s.%s!",
+									pluginDesc.pluginID.c_str(),
+									attrDesc.attr.ptr());
 			}
 		}
 		else if (attrDesc.value.type == Parm::eFloat ||
