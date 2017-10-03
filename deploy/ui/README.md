@@ -19,7 +19,6 @@ Example:
 
         parm {
             name "noiseType"
-            type ordinal
             label "Type"
             help "Noise type"
             menu {
@@ -28,6 +27,7 @@ Example:
                 "2" "Inflected Perlin Noise"
                 "3" "Marble (With Perlin)"
             }
+            type string
             default { "0" }
             parmtag { "vray_pluginattr" "noiseType" }
             parmtag { "vray_type" "enum" }
