@@ -48,7 +48,7 @@
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_pluginattr" "mult_a" }
-        parmtag { "vray_type" "TextureFloat" }
+        invisible
     }
     parm {
         name    "color_b"
@@ -73,7 +73,7 @@
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_pluginattr" "mult_b" }
-        parmtag { "vray_type" "TextureFloat" }
+        invisible
     }
     parm {
         name    "result_alpha"
@@ -86,6 +86,7 @@
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_pluginattr" "result_alpha" }
         parmtag { "vray_type" "TextureFloat" }
+        invisible
     }
 #include "vfh_texture_default_output_color.ds"
 #include "vfh_texture_defines.ds"

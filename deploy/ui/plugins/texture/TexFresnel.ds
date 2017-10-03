@@ -9,7 +9,7 @@
         label   "Front Color"
         type    color4
         size    4
-        default { "0" "0" "0" "1" }
+        default { "1" "0" "0" "1" }
         help    "Refraction (front) color"
         range   { 0 10 }
         export  none
@@ -25,7 +25,7 @@
         label   "Side Color"
         type    color4
         size    4
-        default { "0" "0" "0" "1" }
+        default { "0" "1" "0" "1" }
         help    "Reflection (side) color"
         range   { 0 10 }
         export  none
@@ -42,7 +42,7 @@
         type    float
         default { "1.55" }
         help    "Fresnel ior"
-        range   { 0 64 }
+        range   { 0.001 5 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "TexFresnel" }
@@ -55,7 +55,7 @@
         label   "Fresnel IOR"
         type    float
         default { "1" }
-        range   { 0 64 }
+        range   { 0.001 5 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "TexFresnel" }
@@ -72,7 +72,7 @@
         type    float
         default { "1.55" }
         help    "Refraction ior of the underlying surface; this is ignored if the surface has a volume shader"
-        range   { 0 64 }
+        range   { 0.001 5 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "TexFresnel" }
@@ -85,7 +85,7 @@
         label   "Refract IOR"
         type    float
         default { "1" }
-        range   { 0 64 }
+        range   { 0 1 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "TexFresnel" }
@@ -98,7 +98,7 @@
 
     parm {
         name    contribute_to_fresnel_ior_re
-        label   "Affect Fresnel IOR Render Element"
+        label   "Contribute to Fresnel IOR Render Element"
         help    "Flag that allows the texture to contribute to the Fresnel IOR render element."
         type    toggle
         default { "0" }

@@ -9,36 +9,6 @@
         label "Settings"
 
         parm {
-            name    "color1"
-            label   "Color1"
-            type    color4
-            size    4
-            default { "1" "1" "1" "1" }
-            help    "First color"
-            range   { 0 10 }
-            export  none
-            parmtag { "cook_dependent" "1" }
-            parmtag { "vray_plugin" "TexFalloff" }
-            parmtag { "vray_pluginattr" "color1" }
-            parmtag { "vray_type" "Texture" }
-        }
-
-        parm {
-            name    "color2"
-            label   "Color2"
-            type    color4
-            size    4
-            default { "0" "0" "0" "1" }
-            help    "Second color"
-            range   { 0 10 }
-            export  none
-            parmtag { "cook_dependent" "1" }
-            parmtag { "vray_plugin" "TexFalloff" }
-            parmtag { "vray_pluginattr" "color2" }
-            parmtag { "vray_type" "Texture" }
-        }
-
-        parm {
             name    "type"
             label   "Type"
             type    ordinal
@@ -57,6 +27,36 @@
             parmtag { "vray_plugin" "TexFalloff" }
             parmtag { "vray_pluginattr" "type" }
             parmtag { "vray_type" "enum" }
+        }
+
+        parm {
+            name    "color1"
+            label   "Color1"
+            type    color4
+            size    4
+            default { "1" "0" "0" "1" }
+            help    "First color"
+            range   { 0 10 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexFalloff" }
+            parmtag { "vray_pluginattr" "color1" }
+            parmtag { "vray_type" "Texture" }
+        }
+
+        parm {
+            name    "color2"
+            label   "Color2"
+            type    color4
+            size    4
+            default { "0" "1" "0" "1" }
+            help    "Second color"
+            range   { 0 10 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexFalloff" }
+            parmtag { "vray_pluginattr" "color2" }
+            parmtag { "vray_type" "Texture" }
         }
 
         parm {
@@ -120,10 +120,10 @@
             name    "dist_near"
             label   "Distance Near"
             type    float
-            default { "0" }
+            default { "1" }
             help    "Near distance for the distance blend falloff type"
             hidewhen "{ type != 4 }"
-            range   { 0 64 }
+            range   { 0 10 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "TexFalloff" }
@@ -135,10 +135,10 @@
             name    "dist_far"
             label   "Distance Far"
             type    float
-            default { "100" }
+            default { "10" }
             help    "Far distance for the distance blend falloff type"
             hidewhen "{ type != 4 }"
-            range   { 0 64 }
+            range   { 0 100 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "TexFalloff" }
@@ -181,7 +181,7 @@
             default { "0.5" }
             help    "If specified and 'Use Blend Input' is true, the final blending amount will be taken from this texture"
             hidewhen "{ use_blend_input != 1 }"
-            range   { 0 64 }
+            range   { 0 11 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "TexFalloff" }

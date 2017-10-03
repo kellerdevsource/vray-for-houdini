@@ -37,7 +37,12 @@ parm {
 parm {
     NAMEM("wrap_u")
     label   "Wrap U"
-    type    integer
+    type    ordinal
+    menu {
+        "0" "No Wrapping"
+        "1" "Wrap"
+        "2" "Mirror Tile"
+    }
     default { "0" }
     help    "0 - no wrapping, 1 - wrap, 2 - mirror tile"
     range   { 0 64 }
@@ -51,7 +56,12 @@ parm {
 parm {
     NAMEM("wrap_v")
     label   "Wrap V"
-    type    integer
+    type    ordinal
+    menu {
+        "0" "No Wrapping"
+        "1" "Wrap"
+        "2" "Mirror Tile"
+    }
     default { "0" }
     help    "0 - no wrapping, 1 - wrap, 2 - mirror tile"
     range   { 0 64 }
@@ -65,7 +75,12 @@ parm {
 parm {
     NAMEM("wrap_w")
     label   "Wrap W"
-    type    integer
+    type    ordinal
+    menu {
+        "0" "No Wrapping"
+        "1" "Wrap"
+        "2" "Mirror Tile"
+    }
     default { "0" }
     help    "0 - no wrapping, 1 - wrap, 2 - mirror tile"
     range   { 0 64 }

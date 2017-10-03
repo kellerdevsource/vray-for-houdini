@@ -11,7 +11,7 @@
             label   "Line Color"
             type    color4
             size    4
-            default { "0" "0" "0" "1" }
+            default { "1" "1" "1" "1" }
             range   { 0 10 }
             export  none
             parmtag { "cook_dependent" "1" }
@@ -36,9 +36,9 @@
             name    "u_width"
             label   "U Width"
             type    float
-            default { "0.1" }
+            default { "0.01" }
             help    "U Width"
-            range   { 0 1 }
+            range   { 0 0.1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "TexGrid" }
@@ -49,9 +49,9 @@
             name    "v_width"
             label   "V Width"
             type    float
-            default { "0.1" }
+            default { "0.01" }
             help    "V Width"
-            range   { 0 1 }
+            range   { 0 0.1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "TexGrid" }

@@ -38,8 +38,8 @@
         default { "2" }
         help    "Alpha mode (0 - from color_a, 1 - from color_b, 2 - multiply"
         menu    {
-            "0"  "From color_a"
-            "1"  "From color_b"
+            "0"  "From Color A"
+            "1"  "From Color B"
             "2"  "Multiply"
         }
         parmtag { "cook_dependent" "1" }

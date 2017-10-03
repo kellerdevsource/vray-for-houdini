@@ -1,6 +1,20 @@
 {
-    name	TransformToTex
-label	"Transform To Tex"
-parmtag	{ spare_category "Transform To Tex" }
-parmtag	{ vray_plugin "TransformToTex" }
+    name    TransformToTex
+    label   "Transform To Tex"
+    parmtag { spare_category "Transform To Tex" }
+    parmtag { vray_plugin "TransformToTex" }
+    parm {
+        name "output"
+        label "output"
+        type color4
+        parmtag { "cook_dependent" "0" }
+        parmtag { "vray_label" "output" }
+        parmtag { "vray_pluginattr" "" }
+        parmtag { "vray_type" "OutputTextureTransform" }
+        export none
+        invisible
+    }
+
+#include "vfh_texture_defines.ds"
+    VFH_TEXTURE_INPUT_TRANSFORM(input)
 }

@@ -48,7 +48,7 @@
     }
     parm {
         name    "pixel_width"
-        label   "Pixel Width"
+        label   "Width"
         type    float
         default { "1" }
         hidewhen "{ width_type != 1 }"
@@ -61,7 +61,7 @@
     }
     parm {
         name    "world_width"
-        label   "World Width"
+        label   "Width"
         type    float
         default { "1" }
         hidewhen "{ width_type != 0 }"

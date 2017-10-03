@@ -5,11 +5,11 @@
     parmtag { vray_plugin "TexInvertFloat" }
     parm {
         name    "texture"
-        label   "Texture"
+        label   "Float"
         type    float
         default { "0" }
-        help    "The texture to be inverted"
-        range   { 0 1 }
+        help    "The value to be inverted"
+        range   { -1 1 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "TexInvertFloat" }

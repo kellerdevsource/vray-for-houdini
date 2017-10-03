@@ -62,8 +62,8 @@ parm {
     label   "Blur"
     type    float
     default { "1" }
-    disablewhen "{ filter_type == None }"
-    range   { 0 64 }
+    disablewhen "{ filter_type == 0 }"
+    range   { 0 3 }
     export  none
     parmtag { "cook_dependent" "1" }
     parmtag { "vray_plugin" "BitmapBuffer" }
@@ -93,8 +93,8 @@ parm {
     label   "Gamma"
     type    float
     default { "1" }
-    disablewhen "{ color_space != \"Gamma corrected\" }"
-    range   { 0 64 }
+    disablewhen "{ color_space != 1 }"
+    range   { 0.4545 2.2 }
     export  none
     parmtag { "cook_dependent" "1" }
     parmtag { "vray_plugin" "BitmapBuffer" }
@@ -182,7 +182,7 @@ groupcollapsible {
         type    integer
         default { "0" }
         help    "When working with image sequences, this parameter specifies which image out of the sequence should be used.  If parameter is omitted or defaulted, the frame number depends on the current frame time value."
-        range   { 0 64 }
+        range   { 0 10 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "BitmapBuffer" }
@@ -196,7 +196,7 @@ groupcollapsible {
         type    integer
         default { "0" }
         help    "Start frame offset for image sequences"
-        range   { 0 64 }
+        range   { 0 10 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "BitmapBuffer" }
@@ -214,7 +214,7 @@ groupcollapsible {
         label   "Start Frame"
         type    integer
         default { "0" }
-        range   { 0 64 }
+        range   { 0 10 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "BitmapBuffer" }
@@ -227,7 +227,7 @@ groupcollapsible {
         label   "Playback Rate"
         type    float
         default { "1" }
-        range   { 0 64 }
+        range   { 0 3 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "BitmapBuffer" }

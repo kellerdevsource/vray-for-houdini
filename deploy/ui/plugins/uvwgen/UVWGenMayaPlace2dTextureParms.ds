@@ -444,7 +444,7 @@ parm {
     label   "Noise U"
     type    float
     default { "0" }
-    range   { 0 64 }
+    range   { 0 0.1 }
     export  none
     parmtag { "cook_dependent" "1" }
     parmtag { "vray_plugin" "UVWGenMayaPlace2dTexture" }
@@ -459,7 +459,7 @@ parm {
     label   "Noise V"
     type    float
     default { "0" }
-    range   { 0 64 }
+    range   { 0 0.1 }
     export  none
     parmtag { "cook_dependent" "1" }
     parmtag { "vray_plugin" "UVWGenMayaPlace2dTexture" }

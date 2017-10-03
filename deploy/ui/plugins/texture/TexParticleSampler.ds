@@ -5,7 +5,7 @@
     parmtag { vray_plugin "TexParticleSampler" }
     parm {
         name    "def_color_tex"
-        label   "Def Color Tex"
+        label   "Default Color"
         type    color4
         size    4
         default { "0" "0" "0" "1" }

@@ -1,33 +1,36 @@
 {
-    name	MtlVRmat
-    label	"VRmat"
-    parmtag	{ spare_category "VRmat" }
-    parmtag	{ vray_plugin "MtlVRmat" }
+    name    MtlVRmat
+    label   "VRmat"
+    parmtag { spare_category "VRmat" }
+    parmtag { vray_plugin "MtlVRmat" }
+
+#include "$VRAY_UI_DS_PATH/common/vfh_material_common.ds"
+
     parm {
-	name	"filename"
-	label	"Material File"
-	type	file
-	default	{ "" }
-	help	"Filepath"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "filechooser_pattern" "*.vrmat,*.vismat,*.vrscene" }
-	parmtag	{ "vray_plugin" "MtlVRmat" }
-	parmtag	{ "vray_pluginattr" "filename" }
-	parmtag	{ "vray_type" "string" }
+        name    "filename"
+        label   "Material File"
+        type    file
+        default { "" }
+        help    "Filepath"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "filechooser_pattern" "*.vrmat,*.vismat,*.vrscene" }
+        parmtag { "vray_plugin" "MtlVRmat" }
+        parmtag { "vray_pluginattr" "filename" }
+        parmtag { "vray_type" "string" }
     }
     parm {
-	name	"mtlname"
-	label	"Material Name"
-	type	string
-	default	{ "" }
-	help	"Material name"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "MtlVRmat" }
-	parmtag	{ "vray_pluginattr" "mtlname" }
-	parmtag	{ "vray_type" "string" }
+        name    "mtlname"
+        label   "Material Name"
+        type    string
+        default { "" }
+        help    "Material name"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "MtlVRmat" }
+        parmtag { "vray_pluginattr" "mtlname" }
+        parmtag { "vray_type" "string" }
     }
 }

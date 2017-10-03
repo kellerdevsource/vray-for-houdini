@@ -5,7 +5,7 @@
     parmtag { vray_plugin "TexRGBToHSV" }
     parm {
         name    "inRgb"
-        label   "Inrgb"
+        label   "RGB"
         type    color4
         size    4
         default { "0" "0" "0" "1" }
