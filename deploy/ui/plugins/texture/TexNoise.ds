@@ -10,8 +10,7 @@
         parm {
             name    "noiseType"
             label   "Type"
-            type    ordinal
-            default { "0" }
+            type    string
             help    "Noise type"
             menu    {
                 "0" "Noise"
@@ -19,28 +18,20 @@
                 "2" "Inflected Perlin Noise"
                 "3" "Marble (With Perlin)"
             }
-            range   { 0 1 }
-            export  none
-            parmtag { "cook_dependent" "1" }
-            parmtag { "vray_plugin" "TexNoise" }
+            default { "0" }
             parmtag { "vray_pluginattr" "noiseType" }
             parmtag { "vray_type" "enum" }
         }
         parm {
             name    "dimensions"
             label   "Dimensions"
-            type    ordinal
-            default { "0" }
+            type    string
             help    "Two or Three dimensional noise"
             menu    {
                 "0"    "2D"
                 "1"    "3D"
             }
-            range   { 0 1 }
-            export  none
-            parmtag { "cook_dependent" "1" }
-            parmtag { "vray_enumkeys" "2,3" }
-            parmtag { "vray_plugin" "TexNoise" }
+            default { "0" }
             parmtag { "vray_pluginattr" "dimensions" }
             parmtag { "vray_type" "enum" }
         }
@@ -50,10 +41,6 @@
             type    color
             size    3
             default { "0" "0" "0" }
-            range   { 0 10 }
-            export  none
-            parmtag { "cook_dependent" "1" }
-            parmtag { "vray_plugin" "TexNoise" }
             parmtag { "vray_pluginattr" "color1" }
             parmtag { "vray_type" "color" }
             invisible
@@ -64,10 +51,6 @@
             type    color4
             size    4
             default { "0" "0" "0" "1" }
-            range   { 0 10 }
-            export  none
-            parmtag { "cook_dependent" "1" }
-            parmtag { "vray_plugin" "TexNoise" }
             parmtag { "vray_pluginattr" "color1_tex" }
             parmtag { "vray_type" "Texture" }
         }
@@ -76,10 +59,6 @@
             label   "Color A Mult"
             type    float
             default { "1" }
-            range   { 0 10 }
-            export  none
-            parmtag { "cook_dependent" "1" }
-            parmtag { "vray_plugin" "TexNoise" }
             parmtag { "vray_pluginattr" "color1_tex_mult" }
             parmtag { "vray_type" "float" }
             invisible
@@ -90,10 +69,6 @@
             type    color
             size    3
             default { "1" "1" "1" }
-            range   { 0 10 }
-            export  none
-            parmtag { "cook_dependent" "1" }
-            parmtag { "vray_plugin" "TexNoise" }
             parmtag { "vray_pluginattr" "color2" }
             parmtag { "vray_type" "color" }
             invisible
@@ -104,10 +79,6 @@
             type    color4
             size    4
             default { "1" "1" "1" "1" }
-            range   { 0 10 }
-            export  none
-            parmtag { "cook_dependent" "1" }
-            parmtag { "vray_plugin" "TexNoise" }
             parmtag { "vray_pluginattr" "color2_tex" }
             parmtag { "vray_type" "Texture" }
         }
@@ -116,10 +87,6 @@
             label   "Color B Mult"
             type    float
             default { "1" }
-            range   { 0 10 }
-            export  none
-            parmtag { "cook_dependent" "1" }
-            parmtag { "vray_plugin" "TexNoise" }
             parmtag { "vray_pluginattr" "color2_tex_mult" }
             parmtag { "vray_type" "float" }
             invisible
@@ -130,10 +97,6 @@
             type    float
             default { "1" }
             help    "The starting amplitude"
-            range   { 0 5 }
-            export  none
-            parmtag { "cook_dependent" "1" }
-            parmtag { "vray_plugin" "TexNoise" }
             parmtag { "vray_pluginattr" "amplitude1" }
             parmtag { "vray_type" "float" }
         }
@@ -143,10 +106,6 @@
             type    float
             default { "0" }
             help    "Value added to the noise function, noise function values above 1.0 are clamped"
-            range   { 0 1 }
-            export  none
-            parmtag { "cook_dependent" "1" }
-            parmtag { "vray_plugin" "TexNoise" }
             parmtag { "vray_pluginattr" "threshold" }
             parmtag { "vray_type" "TextureFloat" }
         }
@@ -155,10 +114,6 @@
             label   "Amplitude Mult"
             type    float
             default { "1" }
-            range   { 0 5 }
-            export  none
-            parmtag { "cook_dependent" "1" }
-            parmtag { "vray_plugin" "TexNoise" }
             parmtag { "vray_pluginattr" "amplitude_mult" }
             parmtag { "vray_type" "float" }
             invisible
@@ -169,10 +124,6 @@
             type    float
             default { "2" }
             help    "amplitude(i+1) = amplitude(i) / persistence"
-            range   { 1 3 }
-            export  none
-            parmtag { "cook_dependent" "1" }
-            parmtag { "vray_plugin" "TexNoise" }
             parmtag { "vray_pluginattr" "persistence" }
             parmtag { "vray_type" "float" }
             invisible
@@ -183,24 +134,17 @@
             type    float
             default { "1" }
             help    "amplitude(i+1) = amplitude(i) * amplitude_ratio"
-            range   { 0 64 }
-            export  none
-            parmtag { "cook_dependent" "1" }
-            parmtag { "vray_plugin" "TexNoise" }
             parmtag { "vray_pluginattr" "amplitude_ratio" }
             parmtag { "vray_type" "float" }
             invisible
         }
+
         parm {
             name    "frequency1"
             label   "Frequency"
             type    float
             default { "100" }
             help    "The starting frequency"
-            range   { 50 500 }
-            export  none
-            parmtag { "cook_dependent" "1" }
-            parmtag { "vray_plugin" "TexNoise" }
             parmtag { "vray_pluginattr" "frequency1" }
             parmtag { "vray_type" "float" }
         }
@@ -210,10 +154,6 @@
             type    float
             default { "2.0123" }
             help    "frequency(i+1) = frequency(i) * frequency_ratio"
-            range   { 0 2.3 }
-            export  none
-            parmtag { "cook_dependent" "1" }
-            parmtag { "vray_plugin" "TexNoise" }
             parmtag { "vray_pluginattr" "frequency_ratio" }
             parmtag { "vray_type" "float" }
         }
@@ -222,10 +162,6 @@
             label   "Frequency Mult"
             type    float
             default { "0.001" }
-            range   { 0 1 }
-            export  none
-            parmtag { "cook_dependent" "1" }
-            parmtag { "vray_plugin" "TexNoise" }
             parmtag { "vray_pluginattr" "frequency_mult" }
             parmtag { "vray_type" "float" }
             invisible
@@ -235,10 +171,6 @@
             label   "Octaves"
             type    integer
             default { "3" }
-            range   { 0 8 }
-            export  none
-            parmtag { "cook_dependent" "1" }
-            parmtag { "vray_plugin" "TexNoise" }
             parmtag { "vray_pluginattr" "octaves" }
             parmtag { "vray_type" "int" }
         }
@@ -248,10 +180,6 @@
             type    float
             default { "0" }
             help    "The time of the noise, this will act as a third or fourth dimension to the noise generating function"
-            range   { 0 10 }
-            export  none
-            parmtag { "cook_dependent" "1" }
-            parmtag { "vray_plugin" "TexNoise" }
             parmtag { "vray_pluginattr" "time" }
             parmtag { "vray_type" "float" }
         }
@@ -261,10 +189,6 @@
             type    toggle
             default { "0" }
             help    "Inflection"
-            range   { 0 1 }
-            export  none
-            parmtag { "cook_dependent" "1" }
-            parmtag { "vray_plugin" "TexNoise" }
             parmtag { "vray_pluginattr" "inflection" }
             parmtag { "vray_type" "int" }
         }
@@ -273,10 +197,6 @@
             label   "Clamp"
             type    toggle
             default { "1" }
-            range   { 0 1 }
-            export  none
-            parmtag { "cook_dependent" "1" }
-            parmtag { "vray_plugin" "TexNoise" }
             parmtag { "vray_pluginattr" "clamp" }
             parmtag { "vray_type" "boolean" }
         }
@@ -286,10 +206,6 @@
             type    float
             default { "0" }
             help    "Amount of implode performed on the UVW coordinates"
-            range   { 0 3 }
-            export  none
-            parmtag { "cook_dependent" "1" }
-            parmtag { "vray_plugin" "TexNoise" }
             parmtag { "vray_pluginattr" "implode" }
             parmtag { "vray_type" "TextureFloat" }
         }
@@ -300,10 +216,6 @@
             size    4
             default { "0" "0" "0" "1" }
             help    "The center of the implode effect"
-            range   { 0 10 }
-            export  none
-            parmtag { "cook_dependent" "1" }
-            parmtag { "vray_plugin" "TexNoise" }
             parmtag { "vray_pluginattr" "implode_center" }
             parmtag { "vray_type" "Texture" }
         }
@@ -314,10 +226,6 @@
             size    4
             default { "0" "0" "0" "1" }
             help    "Translation for the noise UVW coordinates"
-            range   { 0 10 }
-            export  none
-            parmtag { "cook_dependent" "1" }
-            parmtag { "vray_plugin" "TexNoise" }
             parmtag { "vray_pluginattr" "origin" }
             parmtag { "vray_type" "Texture" }
         }
@@ -328,10 +236,6 @@
             size    4
             default { "0.01" "0.01" "0.01" "1" }
             help    "Scale for the noise UVW coordinates"
-            range   { 0 0.1 }
-            export  none
-            parmtag { "cook_dependent" "1" }
-            parmtag { "vray_plugin" "TexNoise" }
             parmtag { "vray_pluginattr" "scale" }
             parmtag { "vray_type" "Texture" }
         }
@@ -340,10 +244,6 @@
             label   "Wrap"
             type    toggle
             default { "1" }
-            range   { 0 1 }
-            export  none
-            parmtag { "cook_dependent" "1" }
-            parmtag { "vray_plugin" "TexNoise" }
             parmtag { "vray_pluginattr" "wrap" }
             parmtag { "vray_type" "boolean" }
         }
