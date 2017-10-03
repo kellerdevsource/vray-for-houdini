@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2016, Chaos Software Ltd
+// Copyright (c) 2015-2017, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -151,15 +151,20 @@ void appendMaterialOverride(PrimMaterial &primMaterial,
 STY_Styler getStylerForObject(OBJ_Node &objNode, fpreal t);
 
 /// Get styler for the primitive.
-/// @param geoStyler Current top level styler.
+/// @param topStyler Current top level styler.
 /// @param prim Primitive instance.
-STY_Styler getStylerForPrimitive(const STY_Styler &geoStyler, const GEO_Primitive &prim);
+STY_Styler getStylerForPrimitive(const STY_Styler &topStyler, const GEO_Primitive &prim);
+
+/// Get styler for the object.
+/// @param topStyler Current top level styler.
+/// @param opNode Object node.
+STY_Styler getStylerForObject(const STY_Styler &topStyler, const OP_Node &opNode);
 
 /// Fills style sheet material overrides for a primitive.
-/// @param geoStyler Current top level styler.
+/// @param topStyler Current top level styler.
 /// @param prim Primitive instance.
 /// @param primMaterial Material override to append to.
-void getOverridesForPrimitive(const STY_Styler &geoStyler, const GEO_Primitive &prim, PrimMaterial &primMaterial);
+void getOverridesForPrimitive(const STY_Styler &topStyler, const GEO_Primitive &prim, PrimMaterial &primMaterial);
 
 } // namespace VRayForHoudini
 

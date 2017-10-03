@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2016, Chaos Software Ltd
+// Copyright (c) 2015-2017, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -52,6 +52,9 @@ VRay::Plugin VRayExporter::exportMaterial(VOP_Node *vopNode)
 		// Wrap BRDF into MtlSingleBRDF for RT GPU to work properly.
 		Attrs::PluginDesc mtlPluginDesc(getPluginName(vopNode, "MtlSingle"), "MtlSingleBRDF");
 		mtlPluginDesc.addAttribute(Attrs::PluginAttr("brdf", material));
+		VRay::ValueList sceneName(1);
+		sceneName[0] = VRay::Value(vopNode->getName().buffer());
+		mtlPluginDesc.addAttribute(Attrs::PluginAttr("scene_name", sceneName));
 		material = exportPlugin(mtlPluginDesc);
 	}
 
@@ -118,7 +121,9 @@ VRay::Plugin VRayExporter::exportDefaultMaterial()
 
 		Attrs::PluginDesc mtlDesc(clayMaterial, "MtlSingleBRDF");
 		mtlDesc.addAttribute(Attrs::PluginAttr("brdf", exportPlugin(brdfDesc)));
-
+		VRay::ValueList sceneName(1);
+		sceneName[0] = VRay::Value("DEFAULT_MATERIAL");
+		mtlDesc.addAttribute(Attrs::PluginAttr("scene_name", sceneName));
 		material = exportPlugin(mtlDesc);
 
 		objectExporter.addPluginToCache(clayMaterial, material);

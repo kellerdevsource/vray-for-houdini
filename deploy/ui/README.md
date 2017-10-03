@@ -19,7 +19,6 @@ Example:
 
         parm {
             name "noiseType"
-            type ordinal
             label "Type"
             help "Noise type"
             menu {
@@ -28,6 +27,7 @@ Example:
                 "2" "Inflected Perlin Noise"
                 "3" "Marble (With Perlin)"
             }
+            type string
             default { "0" }
             parmtag { "vray_pluginattr" "noiseType" }
             parmtag { "vray_type" "enum" }
@@ -95,6 +95,7 @@ Example:
 
 #### Enum (Menu)
 
+* Use `type string`.
 * Use `parmtag { "vray_type" "enum" }` for enums, otherwise the exported value will be incorrect.
 * Use integer keys with the exact values as specified in V-Ray plugin.
 

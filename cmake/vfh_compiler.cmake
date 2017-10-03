@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015-2016, Chaos Software Ltd
+# Copyright (c) 2015-2017, Chaos Software Ltd
 #
 # V-Ray For Houdini
 #
@@ -7,6 +7,8 @@
 #
 # Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 #
+
+option(WITH_WARNINGS "Enable all warnings" OFF)
 
 if(APPLE)
 	set(CMAKE_OSX_DEPLOYMENT_TARGET 10.9)
@@ -58,10 +60,12 @@ macro(set_compiler_flags)
 		set(CMAKE_CXX_FLAGS "/EHsc /GT /bigobj")
 
 		# Houdini specific warnings
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4355 /w14996 /wd4800 /wd4244")
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4396 /wd4018 /wd4267 /wd4146")
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4800 /wd4838 /wd4805 /wd4290")
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4305 /wd4244 /wd4305 /wd4275")
+		if(NOT WITH_WARNINGS)
+			set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4355 /w14996 /wd4800 /wd4244")
+			set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4396 /wd4018 /wd4267 /wd4146")
+			set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4800 /wd4838 /wd4805 /wd4290")
+			set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4305 /wd4244 /wd4305 /wd4275")
+		endif()
 
 		# Enable multi core compilation
 		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")

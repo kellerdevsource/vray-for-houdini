@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2016, Chaos Software Ltd
+// Copyright (c) 2015-2017, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -196,6 +196,8 @@ public:
 	VRay::Plugin exportVRaySOP(OBJ_Node &objNode, SOP_Node &sop);
 
 	VRay::Plugin exportVRayProxyRef(OBJ_Node &objNode, const GU_PrimPacked &prim);
+
+	VRay::Plugin exportVRaySceneRef(OBJ_Node &objNode, const GU_PrimPacked &prim);
 
 	VRay::Plugin exportAlembicRef(OBJ_Node &objNode, const GU_PrimPacked &prim);
 

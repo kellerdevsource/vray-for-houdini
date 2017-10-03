@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2016, Chaos Software Ltd
+// Copyright (c) 2015-2017, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -209,17 +209,12 @@ void VRayExporter::setAttrValueFromOpNodePrm(Attrs::PluginDesc &pluginDesc, cons
 	if (Parm::isParmExist(opNode, parmName)) {
 		const PRM_Parm *parm = Parm::getParm(opNode, parmName);
 		if (parm->getParmOwner()->isPendingOverride()) {
-			Log::getLog().msg("Pending override: %s %s",
-							  opNode.getName().buffer(), parmName.c_str());
+			Log::getLog().debug("Pending override: %s %s",
+								opNode.getName().buffer(), parmName.c_str());
 		}
 
-		const fpreal &t = m_context.getTime();
-#if 0
-		Log::getLog().info("Setting: [%s] %s_%s (from %s_%s)",
-						   pluginDesc.pluginID.c_str(),
-						   pluginDesc.pluginName.c_str(), attrDesc.attr.c_str(),
-						   opNode.getName().buffer(), parmName.c_str());
-#endif
+		const fpreal t = m_context.getTime();
+
 		Attrs::PluginAttr attr;
 		attr.paramName = attrDesc.attr.ptr();
 
@@ -238,14 +233,15 @@ void VRayExporter::setAttrValueFromOpNodePrm(Attrs::PluginDesc &pluginDesc, cons
 				attr.paramType = Attrs::PluginAttr::AttrTypeInt;
 				attr.paramValue.valInt = enumValue.toInt();
 			}
-			else {
-				Log::getLog().error("Incorrect enum: %s.%s!", pluginDesc.pluginID.c_str(), attrDesc.attr.ptr());
-
+			else if (pluginDesc.pluginID == "UVWGenEnvironment") {
 				// UVWGenEnvironment is the only plugin with enum with the string keys.
-				vassert(pluginDesc.pluginID == "UVWGenEnvironment" && "Incorrect enum!");
-
 				attr.paramType = Attrs::PluginAttr::AttrTypeString;
 				attr.paramValue.valString = enumValue.buffer();
+			}
+			else {
+				Log::getLog().error("Incorrect enum: %s.%s!",
+									pluginDesc.pluginID.c_str(),
+									attrDesc.attr.ptr());
 			}
 		}
 		else if (attrDesc.value.type == Parm::eFloat ||
@@ -399,6 +395,15 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 					plugin_value = exportPlugin(mtlPluginDesc);
 				}
 			}
+
+			if (!strcmp(plugin_value.getType(), "MtlSingleBRDF")) {
+				VRay::ValueList sceneName(1);
+				sceneName[0] = VRay::Value(vopNode->getName().buffer());
+				plugin_value.setValue("scene_name", sceneName);
+			}
+
+			Log::getLog().info("  Setting plugin value: %s = %s",
+							   attrName.c_str(), plugin_value.getName());
 
 			const Parm::SocketDesc *fromSocketInfo = getConnectedOutputType(vopNode, attrName.c_str());
 
@@ -682,8 +687,8 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 	// NOTE: we are exporting animation related properties in frames
 	// and compensating for this by setting SettingsUnitsInfo::seconds_scale
 	// i.e. scaling V-Ray time unit (see function exportSettings())
-	fpreal animStart = CAST_ROPNODE(m_rop)->FSTART();
-	fpreal animEnd = CAST_ROPNODE(m_rop)->FEND();
+	const fpreal animStart = CAST_ROPNODE(m_rop)->FSTART();
+	const fpreal animEnd = CAST_ROPNODE(m_rop)->FEND();
 	VRay::VUtils::ValueRefList frames(1);
 	frames[0].setDouble(animStart);
 	if (m_frames > 1) {
@@ -698,6 +703,15 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 			frameRange[0].setDouble(animStart);
 			frameRange[1].setDouble(animEnd);
 			frames[0].setList(frameRange);
+		}
+	}
+
+	if (imgFormat == imageFormatOpenEXR ||
+		imgFormat == imageFormatVRayImage)
+	{
+		const int relementsSeparateFiles = m_rop->evalInt("SettingsOutput_relements_separateFiles", 0, t);
+		if (relementsSeparateFiles == 0) {
+			pluginDesc.addAttribute(Attrs::PluginAttr("img_rawFile", 1));
 		}
 	}
 
@@ -1377,8 +1391,7 @@ void VRayExporter::resetOpCallbacks()
 
 void VRayExporter::addOpCallback(OP_Node *op_node, OP_EventMethod cb)
 {
-	// Install callbacks only for interactive session
-	if (isIPR() != iprModeRT)
+	if (!m_isIPR)
 		return;
 
 	if (!op_node->hasOpInterest(this, cb)) {

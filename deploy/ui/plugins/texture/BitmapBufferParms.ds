@@ -24,7 +24,7 @@ parm {
 parm {
     NAMEM("filter_type")
     label   "Filter"
-    type    ordinal
+    type    string
     default { "1" }
     help    "Filtering"
     menu    {
@@ -33,8 +33,6 @@ parm {
         "1" "Mip-Map"
         "2" "Area"
     }
-    parmtag { "cook_dependent" "1" }
-    parmtag { "vray_plugin" "BitmapBuffer" }
     parmtag { "vray_pluginattr" "filter_type" }
     parmtag { "vray_type" "enum" }
 }
@@ -42,7 +40,7 @@ parm {
 parm {
     NAMEM("interpolation")
     label   "Interpolation"
-    type    ordinal
+    type    string
     default { "0" }
     help    "Interpolation method for the Mip-Map filtering"
     menu    {
@@ -50,8 +48,6 @@ parm {
         "1" "Bicubic"
         "2" "Quadratic"
     }
-    parmtag { "cook_dependent" "1" }
-    parmtag { "vray_plugin" "BitmapBuffer" }
     parmtag { "vray_pluginattr" "interpolation" }
     parmtag { "vray_type" "enum" }
     disablewhen "{ filter_type != 1 }"
@@ -74,7 +70,7 @@ parm {
 parm {
     NAMEM("color_space")
     label   "Color Space"
-    type    ordinal
+    type    string
     default { "2" }
     help    "Color space"
     menu    {
@@ -238,7 +234,7 @@ groupcollapsible {
     parm {
         NAMEM("ifl_end_condition")
         label   "End Condition"
-        type    ordinal
+        type    string
         default { "0" }
         help    "Image file list (IFL) end condition"
         menu    {

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2016, Chaos Software Ltd
+// Copyright (c) 2015-2017, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -132,12 +132,15 @@ public:
 
 	/// Gather data for motion blur
 	/// @param viewParams[out] - collects motion blur settings
-	ReturnValue fillSettingsMotionBlur(ViewParams &viewParams);
+	ReturnValue fillSettingsMotionBlur(ViewParams &viewParams, Attrs::PluginDesc &settingsMotionBlur);
 
 	/// Fill in physical camera settings
 	/// @param viewParams[in] - holds data for camera settings
 	/// @param pluginDesc[out] - physical camera plugin description
 	void fillPhysicalCamera(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc);
+
+	/// Recreate physical camera
+	VRay::Plugin recreatePhysicalCamera(const ViewParams &viewParams);
 
 	/// Fill in depth of field settings
 	/// @param viewParams[in] - holds data for camera settings
@@ -358,11 +361,11 @@ public:
 	/// Get vfh plugin renderer
 	VRayPluginRenderer& getRenderer() { return m_renderer; }
 
-	/// Get the V-Ray ROP bound to this exporter
-	OP_Node& getRop() const { return *m_rop; }
-
 	/// Set the V-Rap ROP bound to this exporter
-	void setROP(OP_Node &value) { m_rop = &value; }
+	void setRopPtr(OP_Node *value) { m_rop = value; }
+
+	/// Get pointer to the bound V-Ray ROP
+	OP_Node* getRopPtr() { return m_rop; }
 
 	/// Get pointer to the bound V-Ray ROP
 	const OP_Node * getRopPtr() const { return m_rop; }
@@ -553,9 +556,6 @@ private:
 
 	/// Object exporter.
 	ObjectExporter objectExporter;
-
-	/// View plugins storage for easier access.
-	ViewPluginsDesc viewPlugins;
 
 public:
 	/// Register event callback for a given node. This callback will be invoked when

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2016, Chaos Software Ltd
+// Copyright (c) 2015-2017, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -97,9 +97,9 @@ int VRayProxyROP::startRender(int nframes, fpreal tstart, fpreal tend)
 	return ROP_CONTINUE_RENDER;
 }
 
-VUtils::ErrorCode VRayProxyROP::doExport(const SOPList &sopList) const
+VUtils::ErrorCode VRayProxyROP::doExport(const SOPList &sopList)
 {
-	VRayProxyExporter exporter(m_options, sopList);
+	VRayProxyExporter exporter(m_options, sopList, this);
 
 	VUtils::ErrorCode err = exporter.init();
 	if (!err.error()) {
