@@ -392,7 +392,7 @@ public:
 
 	/// Test if we are using physical camera
 	/// @param camera[in] - camera object to read parameters from
-	int isPhysicalView(const OBJ_Node &camera) const;
+	static int isPhysicalCamera(const OBJ_Node &camera);
 
 	/// Test if a node is animated
 	int isNodeAnimated(OP_Node *op_node);

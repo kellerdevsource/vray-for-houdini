@@ -1560,7 +1560,7 @@ void VRayExporter::exportScene()
 void VRayExporter::fillMotionBlurParams(MotionBlurParams &mbParams)
 {
 	OBJ_Node *camera = getCamera(m_rop);
-	if (camera && isPhysicalView(*camera)) {
+	if (camera && isPhysicalCamera(*camera)) {
 		const int cameraType = Parm::getParmInt(*camera, "CameraPhysical_type");
 		const fpreal frameDuration = OPgetDirector()->getChannelManager()->getSecsPerSample();
 
@@ -1915,7 +1915,7 @@ int VRayExporter::hasVelocityOn(OP_Node &rop) const
 int VRayExporter::hasMotionBlur(OP_Node &rop, OBJ_Node &camera) const
 {
 	int hasMB = false;
-	if (isPhysicalView(camera)) {
+	if (isPhysicalCamera(camera)) {
 		hasMB = camera.evalInt("CameraPhysical_use_moblur", 0, 0.0);
 	}
 	else {

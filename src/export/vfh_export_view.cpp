@@ -100,7 +100,7 @@ static void aspectCorrectFovOrtho(ViewParams &viewParams)
 	}
 }
 
-int VRayExporter::isPhysicalView(const OBJ_Node &camera) const
+int VRayExporter::isPhysicalCamera(const OBJ_Node &camera)
 {
 	static const std::string paramUsePhysCam("CameraPhysical_use");
 
@@ -491,7 +491,7 @@ int VRayExporter::exportView()
 	addOpCallback(camera, RtCallbackView);
 
 	ViewParams viewParams(camera);
-	viewParams.usePhysicalCamera = isPhysicalView(*camera);
+	viewParams.usePhysicalCamera = isPhysicalCamera(*camera);
 
 	fillViewParamFromCameraNode(*camera, viewParams);
 
