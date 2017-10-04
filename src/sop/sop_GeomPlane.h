@@ -20,26 +20,17 @@ namespace SOP {
 
 /// SOP node that creates V-Ray infinite plane geometry
 /// TODO: this has to generate custom primitive for the plane geo
-class GeomPlane:
-		public SOP::NodeBase
+class GeomPlane
+	: public SOP::NodeBase
 {
 public:
-	/// Callback to add any custom parameters to our template list
-	/// @note called from Parm::generatePrmTemplate()
-	///       TODO : use corrsponding .ds file to configure GUI for this node
-	/// @param prmTemplate[out] - append your custom templates here
-	static void addPrmTemplate(Parm::PRMList &prmTemplate);
-
-public:
-	GeomPlane(OP_Network *parent, const char *name, OP_Operator *entry):
-		NodeBase(parent, name, entry)
-	{ }
-	virtual ~GeomPlane()
-	{ }
+	GeomPlane(OP_Network *parent, const char *name, OP_Operator *entry)
+		: NodeBase(parent, name, entry)
+	{}
 
 	/// Houdini callback to cook custom geometry for this node
 	/// @param context[in] - cook time
-	virtual OP_ERROR cookMySop(OP_Context &context) VRAY_OVERRIDE;
+	OP_ERROR cookMySop(OP_Context &context) VRAY_OVERRIDE;
 
 	/// Callback called by vfh exporter when exporting the node
 	/// @param pluginDesc[out] - dynamic map containing plugin (property, value) pairs
@@ -50,12 +41,11 @@ public:
 	///         PluginResultSuccess - on success
 	///         PluginResultContinue - on success, but singnals that not all relevant properties have been added
 	///         PluginResultError- there has been an error
-	virtual PluginResult asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext=nullptr) VRAY_OVERRIDE;
+	PluginResult asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext=nullptr) VRAY_OVERRIDE;
 
 protected:
 	/// Set custom plugin id and type for this node
-	virtual void setPluginType() VRAY_OVERRIDE;
-
+	void setPluginType() VRAY_OVERRIDE;
 };
 
 } // namespace SOP

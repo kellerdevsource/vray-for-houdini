@@ -10,7 +10,6 @@
 
 #include "sop_GeomPlane.h"
 
-#include <GEO/GEO_Point.h>
 #include <GU/GU_PrimPoly.h>
 
 using namespace VRayForHoudini;
@@ -23,11 +22,7 @@ void SOP::GeomPlane::setPluginType()
 
 OP_ERROR SOP::GeomPlane::cookMySop(OP_Context &context)
 {
-	Log::getLog().info("SOP::GeomPlane::cookMySop()");
-
-	if(error() < UT_ERROR_ABORT) {
-		gdp->clearAndDestroy();
-	}
+	gdp->stashAll();
 
 	const float size = evalFloat("plane_size", 0, 0.0);
 
@@ -50,6 +45,8 @@ OP_ERROR SOP::GeomPlane::cookMySop(OP_Context &context)
 	poly->setVertexPoint(3, pOff);
 
 	poly->reverse();
+
+	gdp->destroyStashed();
 
 	return error();
 }
