@@ -52,6 +52,9 @@ using namespace VRayForHoudini;
 
 static boost::format FmtPluginNameWithPrefix("%s@%s");
 
+/// Type converter name template: "TexColorToFloat@<CurrentPluginName>|<ParameterName>"
+static boost::format fmtPluginTypeConverterName("%s@%s|%s");
+
 static StringSet RenderSettingsPlugins;
 
 void VRayExporter::reset()
@@ -324,6 +327,35 @@ VRay::Transform VRayExporter::exportTransformVop(VOP_Node &vop_node, ExportConte
 	return Matrix4ToTransform(m4);
 }
 
+struct ConnectedPluginInfo {
+	explicit ConnectedPluginInfo(VRay::Plugin plugin=VRay::Plugin(), const std::string &output="")
+		: plugin(plugin)
+		, output(output)
+	{}
+
+	/// Connected plugin.
+	VRay::Plugin plugin;
+
+	/// Connected output. May be empty.
+	std::string output;
+};
+
+/// Sets attribute plugin value to a specific output based on ConnectedPluginInfo.
+/// @param pluginDesc Plugin description to add parameter on.
+/// @param attrName Attribute name.
+/// @param conPluginInfo Connected plugin info.
+static void setPluginValueFromConnectedPluginInfo(Attrs::PluginDesc &pluginDesc, const std::string &attrName, const ConnectedPluginInfo &conPluginInfo)
+{
+	if (!conPluginInfo.plugin)
+		return;
+
+	if (!conPluginInfo.output.empty()) {
+		pluginDesc.addAttribute(Attrs::PluginAttr(attrName, conPluginInfo.plugin, conPluginInfo.output));
+	}
+	else {
+		pluginDesc.addAttribute(Attrs::PluginAttr(attrName, conPluginInfo.plugin));
+	}
+}
 
 void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDesc, VOP_Node *vopNode, ExportContext *parentContext)
 {
@@ -415,17 +447,47 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 				}
 			}
 
-			if (fromSocketInfo &&
-				fromSocketInfo->type >= Parm::ParmType::eOutputColor &&
-				fromSocketInfo->type  < Parm::ParmType::eUnknown)
-			{
-				Log::getLog().info("    Using output: %s (\"%s\")",
-								   fromSocketInfo->name.getToken(), fromSocketInfo->name.getLabel());
-				pluginDesc.addAttribute(Attrs::PluginAttr(attrName, plugin_value, fromSocketInfo->name.getToken()));
+			ConnectedPluginInfo conPluginInfo(plugin_value);
+
+			// Check if some specific output was connected.
+			if (fromSocketInfo) {
+				if (fromSocketInfo->type >= Parm::ParmType::eOutputColor &&
+				    fromSocketInfo->type  < Parm::ParmType::eUnknown)
+				{
+					conPluginInfo.output = fromSocketInfo->name.getToken();
+				}
+
+				// Check if we need to auto-convert color / float.
+				std::string floatColorConverterType;
+
+				if (fromSocketInfo->vopType == VOP_TYPE_COLOR &&
+				    inSockInfo.vopType      == VOP_TYPE_FLOAT)
+				{
+					floatColorConverterType = "TexColorToFloat";
+				}
+				else if (fromSocketInfo->vopType == VOP_TYPE_FLOAT &&
+				         inSockInfo.vopType      == VOP_TYPE_COLOR)
+				{
+					floatColorConverterType = "TexFloatToColor";
+				}
+
+				if (!floatColorConverterType.empty()) {
+					const std::string &convName = str(fmtPluginTypeConverterName
+					                                  % pluginDesc.pluginName
+					                                  % floatColorConverterType
+					                                  % attrName);
+
+					Attrs::PluginDesc convDesc(convName, floatColorConverterType);
+					setPluginValueFromConnectedPluginInfo(convDesc, "input", conPluginInfo);
+
+					conPluginInfo.plugin = exportPlugin(convDesc);
+
+					// We've stored the original connected output in the "input" of the converter.
+					conPluginInfo.output.clear();
+				}
 			}
-			else {
-				pluginDesc.addAttribute(Attrs::PluginAttr(attrName, plugin_value));
-			}
+
+			setPluginValueFromConnectedPluginInfo(pluginDesc, attrName, conPluginInfo);
 		}
 	}
 }
