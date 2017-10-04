@@ -136,7 +136,7 @@ def main():
     printDebug("Processing Mode: \"%s\"" % mode)
 
     if mode in {"generate"}:
-        # generate: Generation phase of IPR rendering 
+        # generate: Generation phase of IPR rendering
         # In generate mode, SOHO will keep the pipe (soho_pipecmd)
         # command open between invocations of the soho_program.
         #   objlist:all
@@ -178,6 +178,9 @@ def main():
         else:
             # Update view.
             exportView(ropPath, camera, sohoCam, now)
+
+        # exportObjects("objlist:dirtyinstance")
+        # exportObjects("objlist:dirtylight")
 
 try:
     main()

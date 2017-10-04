@@ -11,15 +11,11 @@
 #ifndef VRAY_FOR_HOUDINI_EXPORT_VIEW_H
 #define VRAY_FOR_HOUDINI_EXPORT_VIEW_H
 
-#include "vfh_defines.h"
 #include "vfh_vray.h"
-#include "vfh_plugin_attrs.h"
 
 #include <OP/OP_Node.h>
 
-
 namespace VRayForHoudini {
-
 
 struct RenderSizeParams {
 	RenderSizeParams()
@@ -32,15 +28,15 @@ struct RenderSizeParams {
 };
 
 enum MenuItemSelected {
-	HoudiniCameraSettings = 0,
-	UseFieldOfView = 1,
-	UsePhysicallCameraSettings = 2
+	physicalCameraUseHoudiniCameraSettings = 0,
+	physicalCameraUseFieldOfView = 1,
+	physicalCameraUsePhysicalCameraSettings = 2,
 };
 
 enum PhysicalCameraType {
 	Still = 0,
 	Cinematic = 1,
-	Video = 2
+	Video = 2,
 };
 
 enum HoudiniFocalUnits {
@@ -48,16 +44,16 @@ enum HoudiniFocalUnits {
 	Meters = 1,
 	Nanometers = 2,
 	Inches = 3,
-	Feet = 4
+	Feet = 4,
 };
 
 struct PhysicalCameraParams {
 	PhysicalCameraParams()
-		: type(PhysicalCameraType::Still)
-		, useDof(0)
-		, useMoBlur(0)
-		, selectedItem(MenuItemSelected::HoudiniCameraSettings)
-		, exposure(1)
+		: type(Still)
+		, useDof(false)
+		, useMoBlur(false)
+		, selectedItem(physicalCameraUseHoudiniCameraSettings)
+		, exposure(true)
 		, filmWidth(36.0f)
 		, focalLength(50.0f)
 		, fov(1.5708f)
@@ -68,7 +64,7 @@ struct PhysicalCameraParams {
 		, latency(0.0f)
 		, ISO(100.0f)
 		, zoomFactor(1.0f)
-		, specifyFocus(1)
+		, specifyFocus(true)
 		, focusDistance(200.0f)
 		, targeted(1)
 		, targetDistance(200.0f)
@@ -76,8 +72,8 @@ struct PhysicalCameraParams {
 		, vignetting(1.0f)
 		, opticalVignetting(0.0f)
 		, subdivisions(4)
-		, dontAffectSettings(0)
-		, focalUnits(HoudiniFocalUnits::Millimeters)
+		, dontAffectSettings(false)
+		, focalUnits(Millimeters)
 		, houdiniFocalLength(50.0f)
 		, houdiniFNumber(5.6f)
 		, houdiniFocusDistance(5.0f)

@@ -19,12 +19,6 @@
 
 #include <HOM/HOM_Module.h>
 
-#include <QThread>
-#include <QByteArray>
-#include <QtNetwork/QTcpSocket>
-#include <QtNetwork/QHostAddress>
-#include <QApplication>
-
 #include <mutex>
 
 using namespace VRayForHoudini;
@@ -36,7 +30,7 @@ class CallOnceUntilReset {
 public:
 	typedef std::function<void()> CB;
 
-	CallOnceUntilReset(CB callback)
+	explicit CallOnceUntilReset(CB callback)
 		: m_isCalled(false)
 		, m_callback(callback)
 	{}
@@ -142,7 +136,7 @@ public:
 	}
 
 	/// Dereference the exporter pointer and return it (this must not be called if the pointer is nullptr)
-	VRayExporter & getExporter() {
+	static VRayExporter &getExporter() {
 		if (!exporter) {
 			Log::getLog().error("Trying to dereference NULL exporter!");
 			vassert(false && "Trying to dereference NULL exporter!");
@@ -151,25 +145,25 @@ public:
 	}
 
 	/// Get copy of the exporter pointer
-	VRayExporter * getPointer() {
+	static VRayExporter *getPointer() {
 		return exporter;
 	}
 
 	/// Allocate the exporter
-	void allocExporter() {
+	static void allocExporter() {
 		if (!exporter) {
 			exporter = new VRayExporter(nullptr);
 		}
 	}
 
 	/// Free the exporter
-	void freeExporter() {
+	static void freeExporter() {
 		FreePtr(exporter);
 	}
 
 	/// Unguarded static method to access the pointer without locking the mutex
 	/// Used to avoid locking if the exporter is nullptr and it is not needed to do operations with the pointer
-	static VRayExporter * getPointerUnguarded() {
+	static VRayExporter *getPointerUnguarded() {
 		return exporter;
 	}
 
@@ -177,15 +171,15 @@ public:
 	// NOTE: dissalows this: if (WithExporter()) {...} which will not hold lock inside the if body
 	explicit operator bool() && = delete;
 
-	VfhDisableCopy(WithExporter)
 private:
 	static VRayExporter *exporter;
 	static std::recursive_mutex exporterMtx;
+
+	VfhDisableCopy(WithExporter)
 };
 
-VRayExporter * WithExporter::exporter = nullptr;
+VRayExporter* WithExporter::exporter = nullptr;
 std::recursive_mutex WithExporter::exporterMtx;
-
 
 static void freeExporter()
 {
@@ -197,7 +191,7 @@ static void freeExporter()
 	}
 }
 
-static struct VRayExporterIprUnload {
+struct VRayExporterIprUnload {
 	~VRayExporterIprUnload() {
 		if (stopCallback) {
 			// Prevent stop cb from being called here
@@ -206,12 +200,17 @@ static struct VRayExporterIprUnload {
 		deleteVRayInit();
 		Log::Logger::stopLogging();
 	}
-} exporterUnload;
+};
 
+static const VRayExporterIprUnload exporterUnload;
+
+// TODO: Check if this is still useful.
+#if 0
 static void onVFBClosed(VRay::VRayRenderer&, void*)
 {
 	freeExporter();
 }
+#endif
 
 static void fillRenderRegionFromDict(PyObject *viewParamsDict, ViewParams &viewParams)
 {
@@ -278,18 +277,15 @@ static void fillViewParams(VRayExporter &exporter, PyObject *viewParamsDict, Vie
 
 	viewParams.setCamera(cameraNode);
 
-	if (cameraNode) {
-		// If Physical Camera use is enabled, update parameters from it.
-		if (cameraNode->getName().equal("ipr_camera") ||
-		    VRayExporter::isPhysicalCamera(*cameraNode)) {
-			exporter.fillViewParamFromCameraNode(*cameraNode, viewParams);
-		}
-	}
-	else {
-		fillViewParamsFromDict(viewParamsDict, viewParams);
-	}
-
+	fillViewParamsFromDict(viewParamsDict, viewParams);
 	fillRenderRegionFromDict(viewParamsDict, viewParams);
+
+	if (cameraNode && (cameraNode->getName().equal("ipr_camera") ||
+	                   VRayExporter::isPhysicalCamera(*cameraNode)))
+	{
+		// If Physical Camera use is enabled, update parameters from it.
+		exporter.fillViewParamFromCameraNode(*cameraNode, viewParams);
+	}
 }
 
 static PyObject* vfhExportView(PyObject*, PyObject *args, PyObject *keywds)
