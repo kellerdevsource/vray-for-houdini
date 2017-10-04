@@ -55,6 +55,9 @@ static boost::format FmtPluginNameWithPrefix("%s@%s");
 /// Type converter name template: "TexColorToFloat@<CurrentPluginName>|<ParameterName>"
 static boost::format fmtPluginTypeConverterName("%s@%s|%s");
 
+/// Type converter name template: "<CurrentPluginName>|<ParameterName>"
+static boost::format fmtPluginTypeConverterName2("%s|%s");
+
 static StringSet RenderSettingsPlugins;
 
 void VRayExporter::reset()
@@ -360,88 +363,86 @@ static void setPluginValueFromConnectedPluginInfo(Attrs::PluginDesc &pluginDesc,
 void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDesc, VOP_Node *vopNode, ExportContext *parentContext)
 {
 	const Parm::VRayPluginInfo *pluginInfo = Parm::GetVRayPluginInfo( pluginDesc.pluginID );
-	
-	if (NOT(pluginInfo)) {
+	if (!pluginInfo) {
 		Log::getLog().error("Node \"%s\": Plugin \"%s\" description is not found!",
 							vopNode->getName().buffer(), pluginDesc.pluginID.c_str());
 		return;
 	}
 
-	// handle connected VOP inputs
-	for (const auto &inSockInfo : pluginInfo->inputs) {
-		const std::string attrName = inSockInfo.name.getToken();
-		if (   NOT(pluginInfo->attributes.count(attrName))
-			|| pluginDesc.contains(attrName) )
+	for (const Parm::SocketDesc &curSockInfo : pluginInfo->inputs) {
+		const std::string attrName = curSockInfo.name.getToken();
+
+		if (!pluginInfo->attributes.count(attrName) ||
+			pluginDesc.contains(attrName))
 		{
 			continue;
 		}
 
 		const Parm::AttrDesc &attrDesc = pluginInfo->attributes.at(attrName);
-		if ( attrDesc.custom_handling ) {
+		if (attrDesc.custom_handling) {
 			continue;
 		}
 
-		VRay::Plugin plugin_value = exportConnectedVop(vopNode, attrName.c_str(), parentContext);
-
-		if (NOT(plugin_value)) {
-
-			if (  NOT(attrDesc.linked_only)
-				&& pluginInfo->pluginType == Parm::PluginTypeTexture
-				&& attrName == "uvwgen" )
+		VRay::Plugin conPlugin = exportConnectedVop(vopNode, attrName.c_str(), parentContext);
+		if (!conPlugin) {
+			if (!attrDesc.linked_only &&
+				pluginInfo->pluginType == Parm::PluginTypeTexture &&
+				attrName == "uvwgen")
 			{
-				Attrs::PluginDesc uvwGen(VRayExporter::getPluginName(vopNode, "Uvw"), "UVWGenObject");
-				plugin_value = exportPlugin(uvwGen);
+				const Attrs::PluginDesc uvwGen(getPluginName(vopNode, "Uvw"), "UVWGenObject");
+				conPlugin = exportPlugin(uvwGen);
 			}
 			else {
 				const unsigned inpidx = vopNode->getInputFromName(attrName.c_str());
 				VOP_Node *inpvop = vopNode->findSimpleInput(inpidx);
 				if (inpvop) {
 					if (inpvop->getOperator()->getName() == "makexform") {
-						switch (inSockInfo.type) {
-							case Parm::eMatrix:
-							{
+						switch (curSockInfo.type) {
+							case Parm::eMatrix: {
 								pluginDesc.addAttribute(Attrs::PluginAttr(attrName, exportTransformVop(*inpvop, parentContext).matrix));
 								break;
 							}
-							case Parm::eTransform:
-							{
+							case Parm::eTransform: {
 								pluginDesc.addAttribute(Attrs::PluginAttr(attrName, exportTransformVop(*inpvop, parentContext)));
 								break;
 							}
+							default:
+								break;
 						}
 					}
 				}
 			}
 		}
 
-		if (plugin_value) {
-			// If plugin value is type brdf insert single
-			const Parm::VRayPluginInfo *childPluginInfo = Parm::GetVRayPluginInfo( plugin_value.getType() );
+		if (conPlugin) {
+			ConnectedPluginInfo conPluginInfo(conPlugin);
+			const Parm::VRayPluginInfo &conPluginDescInfo = *Parm::GetVRayPluginInfo(conPlugin.getType());
 
-			if(childPluginInfo->pluginType == Parm::PluginType::PluginTypeBRDF 
-					&& pluginDesc.pluginID != "MtlSingleBRDF" 
-					&& pluginInfo->pluginType == Parm::PluginType::PluginTypeMaterial)
+			// If connected plugin type is BRDF, but we expect a Material, wrap it into "MtlSingleBRDF".
+			if (conPluginDescInfo.pluginType == Parm::PluginType::PluginTypeBRDF &&
+				curSockInfo.vopType          == VOP_SURFACE_SHADER)
 			{
-				Attrs::PluginDesc mtlPluginDesc(VRayExporter::getPluginName(vopNode, "Mtl"), "MtlSingleBRDF");
-				mtlPluginDesc.addAttribute(Attrs::PluginAttr("brdf", plugin_value));
-				plugin_value = exportPlugin(mtlPluginDesc);
+				const std::string &convName = str(fmtPluginTypeConverterName2
+												  % pluginDesc.pluginName
+												  % attrName);
+
+				Attrs::PluginDesc brdfToMtl(convName, "MtlSingleBRDF");
+				brdfToMtl.addAttribute(Attrs::PluginAttr("brdf", conPluginInfo.plugin));
+
+				conPluginInfo.plugin = exportPlugin(brdfToMtl);
+				conPluginInfo.output.clear();
 			}
 
-			if (!strcmp(plugin_value.getType(), "MtlSingleBRDF")) {
+			// Set "scene_name" for Cryptomatte.
+			if (vutils_strcmp(conPlugin.getType(), "MtlSingleBRDF") == 0) {
 				VRay::ValueList sceneName(1);
 				sceneName[0] = VRay::Value(vopNode->getName().buffer());
-				plugin_value.setValue("scene_name", sceneName);
+				conPlugin.setValue("scene_name", sceneName);
 			}
 
-			Log::getLog().info("  Setting plugin value: %s = %s",
-							   attrName.c_str(), plugin_value.getName());
-
 			const Parm::SocketDesc *fromSocketInfo = getConnectedOutputType(vopNode, attrName.c_str());
-
-			ConnectedPluginInfo conPluginInfo(plugin_value);
-
-			// Check if some specific output was connected.
 			if (fromSocketInfo) {
+				// Check if some specific output was connected.
 				if (fromSocketInfo->type >= Parm::ParmType::eOutputColor &&
 				    fromSocketInfo->type  < Parm::ParmType::eUnknown)
 				{
@@ -452,12 +453,12 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 				std::string floatColorConverterType;
 
 				if (fromSocketInfo->vopType == VOP_TYPE_COLOR &&
-				    inSockInfo.vopType      == VOP_TYPE_FLOAT)
+				    curSockInfo.vopType     == VOP_TYPE_FLOAT)
 				{
 					floatColorConverterType = "TexColorToFloat";
 				}
 				else if (fromSocketInfo->vopType == VOP_TYPE_FLOAT &&
-				         inSockInfo.vopType      == VOP_TYPE_COLOR)
+				         curSockInfo.vopType     == VOP_TYPE_COLOR)
 				{
 					floatColorConverterType = "TexFloatToColor";
 				}
