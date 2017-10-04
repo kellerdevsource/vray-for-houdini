@@ -415,7 +415,7 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 		}
 
 		if (plugin_value) {
-			//if plugin value is type brdf insert single
+			// If plugin value is type brdf insert single
 			const Parm::VRayPluginInfo *childPluginInfo = Parm::GetVRayPluginInfo( plugin_value.getType() );
 
 			if(childPluginInfo->pluginType == Parm::PluginType::PluginTypeBRDF 
@@ -437,15 +437,6 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 							   attrName.c_str(), plugin_value.getName());
 
 			const Parm::SocketDesc *fromSocketInfo = getConnectedOutputType(vopNode, attrName.c_str());
-
-			//insert TexColorToFloat if a color output is plugged into a float input
-			if (inSockInfo.type == Parm::ParmType::eTextureFloat) {
-				if (fromSocketInfo && fromSocketInfo->vopType == VOP_Type::VOP_TYPE_COLOR) {
-					Attrs::PluginDesc texColorToFloatDesc(VRayExporter::getPluginName(vopNode, inSockInfo.name.getLabel()), "TexColorToFloat");
-					texColorToFloatDesc.addAttribute(Attrs::PluginAttr("input", plugin_value));
-					plugin_value = exportPlugin(texColorToFloatDesc);
-				}
-			}
 
 			ConnectedPluginInfo conPluginInfo(plugin_value);
 
