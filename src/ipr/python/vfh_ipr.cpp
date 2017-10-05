@@ -181,6 +181,15 @@ private:
 VRayExporter* WithExporter::exporter = nullptr;
 std::recursive_mutex WithExporter::exporterMtx;
 
+static float lastExportTime = 0.0;
+
+static void setExportTime(VRayExporter &exp, float time)
+{
+	exp.setTime(time);
+
+	lastExportTime = time;
+}
+
 static void freeExporter()
 {
 	closeImdisplay();
@@ -505,7 +514,7 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 			VRayExporter &exporter = lk.getExporter();
 			exporter.initExporter(getFrameBufferType(*ropNode), 1, now, now);
 
-			exporter.setTime(now);
+			setExportTime(exporter, now);
 		}
 
 		if (WithExporter lk{}) {
@@ -543,7 +552,29 @@ static PyObject * vfhIsRopValid(PyObject *)
 	Py_RETURN_TRUE;
 }
 
-static PyObject* vfhLogMessage(PyObject*, PyObject *args, PyObject *keywds)
+static PyObject *vfhSetTime(PyObject*, PyObject *args, PyObject*)
+{
+	float time;
+
+	static const char kwlistTypes[] = "f";
+
+	if (!PyArg_ParseTuple(args, kwlistTypes, &time)) {
+		PyErr_Print();
+	}
+	else {
+		const bool isSameTime = IsFloatEq(time, lastExportTime);
+		if (!isSameTime) {
+			if (WithExporter lk{}) {
+				setExportTime(lk.getExporter(), time);
+			}
+			Py_RETURN_TRUE;
+		}
+	}
+
+	Py_RETURN_FALSE;
+}
+
+static PyObject* vfhLogMessage(PyObject*, PyObject *args, PyObject*)
 {
 	int logLevel;
 	const char * message = nullptr;
@@ -592,6 +623,12 @@ static PyMethodDef methods[] = {
 		reinterpret_cast<PyCFunction>(vfhIsRopValid),
 		METH_NOARGS,
 		"Check if current rop is valid."
+	},
+	{
+		"setTime",
+		reinterpret_cast<PyCFunction>(vfhSetTime),
+		METH_VARARGS,
+		"Sets export time. Returns True if time has changed, False otherwise."
 	},
 	{
 		"logMessage",
