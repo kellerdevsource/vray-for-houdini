@@ -75,6 +75,7 @@ struct PhysicalCameraParams {
 		, dontAffectSettings(false)
 		, focalUnits(Millimeters)
 		, houdiniFocalLength(50.0f)
+		, houdiniAperture(41.4214f)
 		, houdiniFNumber(5.6f)
 		, houdiniFocusDistance(5.0f)
 	{}
@@ -108,6 +109,7 @@ struct PhysicalCameraParams {
 	// Houdini Params
 	HoudiniFocalUnits focalUnits;
 	float houdiniFocalLength;
+	float houdiniAperture;
 	float houdiniFNumber;
 	float houdiniFocusDistance;
 };
