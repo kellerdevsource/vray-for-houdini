@@ -463,6 +463,7 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "UVWGEN", UVWGenSwitch);
 
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", ColorCorrect);
+	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", ColorCorrection);
 }
 
 

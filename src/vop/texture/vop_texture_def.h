@@ -178,6 +178,7 @@ TEX_DEF(texRenderHair)
 TEX_DEF(TexTriPlanar)
 
 TEX_DEF(ColorCorrect)
+TEX_DEF(ColorCorrection)
 
 } // namespace VOP
 } // namespace VRayForHoudini
