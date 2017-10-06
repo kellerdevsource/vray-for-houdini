@@ -334,6 +334,7 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexCondition2);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexCurvature);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexCustomBitmap);
+	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexColorCorrect);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexDirt);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexDisplacacementRestrict);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexDistance);
@@ -460,6 +461,8 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "UVWGEN", UVWGenPlanarWorld);
 	VFH_VOP_ADD_OPERATOR(table, "UVWGEN", UVWGenProjection);
 	VFH_VOP_ADD_OPERATOR(table, "UVWGEN", UVWGenSwitch);
+
+	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", ColorCorrect);
 }
 
 
