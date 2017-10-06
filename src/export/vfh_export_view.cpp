@@ -263,7 +263,6 @@ void VRayExporter::fillPhysicalCamera(const ViewParams &viewParams, Attrs::Plugi
 
 	switch (itemSelected) {
 		case physicalCameraUseHoudiniCameraSettings: {
-			pluginDesc.remove("shutter_speed");
 			UT_String focalUnits;
 			camera.evalString(focalUnits, "focalunits", 0, t);
 
@@ -299,13 +298,10 @@ void VRayExporter::fillPhysicalCamera(const ViewParams &viewParams, Attrs::Plugi
 			break;
 		}
 		case physicalCameraUseFieldOfView: {
-			pluginDesc.remove("film_width");
-			pluginDesc.remove("focal_length");
 			specifyFovValue = 1;
 			break;
 		}
 		case physicalCameraUsePhysicalCameraSettings: {
-			pluginDesc.remove("fov");
 			specifyFovValue = 0;
 			break;
 		}
