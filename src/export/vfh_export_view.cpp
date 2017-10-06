@@ -291,7 +291,6 @@ void VRayExporter::fillPhysicalCamera(const ViewParams &viewParams, Attrs::Plugi
 
 			pluginDesc.add(Attrs::PluginAttr("focal_length", resultValue));
 			specifyFovValue = 1;
-			pluginDesc.add(Attrs::PluginAttr("fov", viewParams.renderView.fov));
 			pluginDesc.add(Attrs::PluginAttr("f_number", camera.evalFloat("fstop", 0, t)));
 			pluginDesc.add(Attrs::PluginAttr("focus_distance", camera.evalFloat("focus", 0, t)));
 
