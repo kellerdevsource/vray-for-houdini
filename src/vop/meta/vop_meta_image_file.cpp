@@ -130,7 +130,7 @@ OP::VRayNode::PluginResult MetaImageFile::asPluginDesc(Attrs::PluginDesc &plugin
 		const int idx = getInputFromName(selectedUVWGen[i].label);
 		OP_Node *connectedInput = getInput(idx);
 		if (connectedInput) {
-			VRay::Plugin connectedPlugin = exporter.exportVop(connectedInput, parentContext);
+			const VRay::Plugin connectedPlugin = exporter.exportVop(connectedInput, parentContext);
 			if (connectedPlugin) {
 				const Parm::SocketDesc *fromSocketInfo = exporter.getConnectedOutputType(this, selectedUVWGen.at(i).label);
 				selectedUVPluginDesc.addAttribute(Attrs::PluginAttr(selectedUVWGen.at(i).label, connectedPlugin, fromSocketInfo->attrName.ptr()));
@@ -192,7 +192,9 @@ unsigned MetaImageFile::orderedInputs() const
 void MetaImageFile::getInputTypeInfoSubclass(VOP_TypeInfo &type_info, int idx)
 {
 	const UVWGenSocketsTable &uvwGenInput = getUVWGenInputs();
+
 	vassert(idx >= 0 && idx < uvwGenInput.size());
+
 	type_info = uvwGenInput[idx].typeInfo;
 }
 
@@ -206,7 +208,7 @@ const MetaImageFile::UVWGenSocketsTable &MetaImageFile::getUVWGenInputs() const
 {
 	const UVWGenType currentUVWGen = getUVWGenType();
 
-	UVWGenSocketsMap::const_iterator it = uvwGenInputsMap.find(currentUVWGen);
+	const UVWGenSocketsMap::const_iterator it = uvwGenInputsMap.find(currentUVWGen);
 	vassert(it != uvwGenInputsMap.end());
 
 	return it->second;
