@@ -39,6 +39,21 @@
             parmtag { "ogl_diff_rough" "1" }
         }
         parm {
+            name  "roughness_model"
+            label "Roughness Model"
+            help  "The roughness model"
+            type  string
+            menu  {
+                "0" "Gamma Based"
+                "1" "Oren-Nayar"
+            }
+            default { "0" }
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "BRDFVRayMtl" }
+            parmtag { "vray_pluginattr" "brdf_type" }
+            parmtag { "vray_type" "enum" }
+        }
+        parm {
             name  "opacity"
             label "Opacity"
             type  float
@@ -91,7 +106,7 @@
                 "0" "Phong"
                 "1" "Blinn"
                 "2" "Ward"
-                "4" "GGX"
+                "4" "Microfacet GTR (GGX)"
             }
             default { "4" }
             export  none
@@ -102,13 +117,12 @@
         }
         parm {
             name  "gtr_gamma"
-            label "GGX Tail Falloff"
+            label "GTR  Tail Falloff"
             type  float
             default { "2" }
             help  "How much to increase/decrease the tail of the glossy highlight when using GGX reflection model"
-            disablewhen "{ brdf_type != GGX }"
-            hidewhen  "{ brdf_type != GGX }"
-            range { 2 10 }
+            disablewhen "{ brdf_type != 4 }"
+            hidewhen  "{ brdf_type != 4 }"
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFVRayMtl" }
@@ -850,6 +864,21 @@
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFVRayMtl" }
             parmtag { "vray_pluginattr" "option_glossy_rays_as_gi" }
+            parmtag { "vray_type" "enum" }
+        }
+        parm {
+            name  "option_use_roughness"
+            label "Refl. Gloss. Interpretation"
+            help  "These options control how RGlossiness (reflection glossiness) is interpreted. When Use glossiness is selected, the RGlossiness value is used as is, and a high RGlossiness value (such as 1.0) will result in sharp reflection highlights. When Use roughness is selected, the RGlossiness inverse value is used. For example, if RGlossiness is set to 1.0 and Use roughness is selected, this will result in diffuse shading. Conversely, if RGlossiness is set to 0.0 and Use roughness is selected, this will result in sharp highlights. Note that the Roughness parameter itself has no bearing on the results of this option."
+            type  string
+            menu  {
+                "0" "Use Glossiness"
+                "1" "Use oughness"
+            }
+            default { "0" }
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "BRDFVRayMtl" }
+            parmtag { "vray_pluginattr" "option_use_roughness" }
             parmtag { "vray_type" "enum" }
         }
         parm {
