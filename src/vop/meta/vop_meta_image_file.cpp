@@ -18,15 +18,6 @@
 using namespace VRayForHoudini;
 using namespace VOP;
 
-static MetaImageFile::UVWGenSocket metaImageFileOutputSockets[] = {
-	MetaImageFile::UVWGenSocket("color", VOP_TypeInfo(VOP_TYPE_COLOR)),
-	MetaImageFile::UVWGenSocket("transparency", VOP_TypeInfo(VOP_TYPE_COLOR)),
-	MetaImageFile::UVWGenSocket("alpha", VOP_TypeInfo(VOP_TYPE_FLOAT)),
-	MetaImageFile::UVWGenSocket("intensity", VOP_TypeInfo(VOP_TYPE_FLOAT))
-};
-
-static const int ouputSocketCount = COUNT_OF(metaImageFileOutputSockets);
-
 typedef std::map<MetaImageFile::UVWGenType, MetaImageFile::UVWGenSocketsTable> UVWGenSocketsMap;
 
 /// A map of sockets per UVG generator type.
@@ -157,53 +148,6 @@ OP::VRayNode::PluginResult MetaImageFile::asPluginDesc(Attrs::PluginDesc &plugin
 	exporter.setAttrsFromOpNodePrms(pluginDesc, this, "TexBitmap_");
 
 	return OP::VRayNode::PluginResultContinue;
-}
-
-unsigned MetaImageFile::getNumVisibleOutputs() const
-{
-	return ouputSocketCount;
-}
-
-unsigned MetaImageFile::maxOutputs() const
-{
-	return ouputSocketCount;
-}
-
-const char* MetaImageFile::outputLabel(unsigned idx) const
-{
-	if (idx >= 0 && idx < ouputSocketCount) {
-		return metaImageFileOutputSockets[idx].label;
-	}
-
-	return nullptr;
-}
-
-void MetaImageFile::getOutputNameSubclass(UT_String &out, int idx) const
-{
-	if (idx >= 0 && idx < ouputSocketCount) {
-		out = metaImageFileOutputSockets[idx].label;
-	}
-	else {
-		out = "unknown";
-	}
-}
-
-int MetaImageFile::getOutputFromName(const UT_String &out) const
-{
-	for (int idx = 0; idx < ouputSocketCount; idx++) {
-		if (out.equal(metaImageFileOutputSockets[idx].label)) {
-			return idx;
-		}
-	}
-
-	return -1;
-}
-
-void MetaImageFile::getOutputTypeInfoSubclass(VOP_TypeInfo &type_info, int idx)
-{
-	if (idx >= 0 && idx < ouputSocketCount) {
-		type_info.setType(metaImageFileOutputSockets[idx].typeInfo.getType());
-	}
 }
 
 const char *MetaImageFile::inputLabel(unsigned idx) const
