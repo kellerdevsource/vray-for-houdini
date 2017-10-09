@@ -526,11 +526,18 @@ public:
 
 	/// Returns object exporter.
 	ObjectExporter& getObjectExporter() { return objectExporter; }
+
 private:
 	/// Export V-Ray material from VOP node.
 	/// @param node VOP node.
 	/// @returns V-Ray plugin.
 	VRay::Plugin exportMaterial(VOP_Node *node);
+
+	/// Saves VFB state.
+	void saveVfbState();
+
+	/// Restores VFB state.
+	void restoreVfbState();
 
 	/// The driver node bound to this exporter.
 	OP_Node *m_rop;

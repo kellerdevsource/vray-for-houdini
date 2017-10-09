@@ -1912,6 +1912,8 @@ void VRayExporter::initExporter(int hasUI, int nframes, fpreal tstart, fpreal te
 	resetOpCallbacks();
 
 	if (hasUI) {
+		restoreVfbState();
+
 		getRenderer().showVFB(m_workMode != ExpExport, m_rop->getFullPath());
 	}
 
@@ -1924,6 +1926,10 @@ void VRayExporter::initExporter(int hasUI, int nframes, fpreal tstart, fpreal te
 	else if (isIPR()) {
 		m_renderer.addCbOnImageReady(CbVoid(boost::bind(&VRayExporter::resetOpCallbacks, this)));
 		m_renderer.addCbOnRendererClose(CbVoid(boost::bind(&VRayExporter::resetOpCallbacks, this)));
+	}
+
+	if (hasUI) {
+		m_renderer.addCbOnRendererClose(CbVoid(boost::bind(&VRayExporter::saveVfbState, this)));
 	}
 
 	m_isMotionBlur = hasMotionBlur(*m_rop, *camera);
@@ -2143,4 +2149,27 @@ int VRayForHoudini::isBackground()
 int VRayForHoudini::getFrameBufferType(OP_Node &rop)
 {
 	return isBackground() ? 0 : 1;
+}
+
+void VRayExporter::saveVfbState()
+{
+	if (!m_rop)
+		return;
+
+	QString buf;
+	getRenderer().saveVfbState(buf);
+
+	PRM_Parm &vfbSettingsParm = m_rop->getParm("_vfb_settings");
+	vfbSettingsParm.setValue(0.0, buf.toLocal8Bit().constData(), CH_STRING_LITERAL);
+}
+
+void VRayExporter::restoreVfbState()
+{
+	if (!m_rop)
+		return;
+
+	UT_String vfbState;
+	m_rop->evalString(vfbState, "_vfb_settings", 0, 0.0);
+
+	getRenderer().restoreVfbState(vfbState.buffer());
 }

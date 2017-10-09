@@ -711,3 +711,28 @@ void VRayPluginRenderer::reset() const
 	m_vray->stop();
 	m_vray->reset();
 }
+
+void VRayPluginRenderer::saveVfbState(QString &stateData) const
+{
+	if (!m_vray)
+		return;
+
+	size_t stateDataSize = 0;
+
+	VRay::VFBState *vfbState = m_vray->vfb.getState(stateDataSize);
+	if (vfbState && stateDataSize) {
+		const QByteArray vfbStateData(reinterpret_cast<const char*>(vfbState->getData()), stateDataSize);
+
+		stateData = vfbStateData.toBase64();
+	}
+}
+
+void VRayPluginRenderer::restoreVfbState(const QString &stateData) const
+{
+	if (!m_vray)
+		return;
+
+	const QByteArray vfbStateData(QByteArray::fromBase64(stateData.toLocal8Bit()));
+
+	m_vray->vfb.setState(reinterpret_cast<const void*>(vfbStateData.constData()), vfbStateData.length());
+}
