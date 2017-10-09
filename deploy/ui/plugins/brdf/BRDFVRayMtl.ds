@@ -477,13 +477,10 @@
         parm {
             name  "fog_color"
             label "Fog Color"
+            help  "The absorption (fog) color"
             type  color
-            disablewhen "{ map_fog_color == 1 }"
             size  3
             default { "1" "1" "1" }
-            help  "The absorption (fog) color"
-            range { 0 1 }
-            export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFVRayMtl" }
             parmtag { "vray_pluginattr" "fog_color" }
@@ -492,15 +489,14 @@
         parm {
             name  "fog_color_tex"
             label "Fog Color Texture"
+            help  "The absorption (fog) color texture"
             type  color4
             size  4
             default { "1" "1" "1" "1" }
-            help  "The absorption (fog) color texture"
-            range { 0 1 }
-            export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFVRayMtl" }
             parmtag { "vray_pluginattr" "fog_color_tex" }
+            parmtag { "vray_linked_only" "1" }
             parmtag { "vray_type" "Texture" }
             invisible
         }
