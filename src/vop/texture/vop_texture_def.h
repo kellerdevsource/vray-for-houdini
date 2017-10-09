@@ -64,6 +64,7 @@ TEX_DEF(TexCondition)
 TEX_DEF(TexCondition2)
 TEX_DEF(TexCurvature)
 TEX_DEF(TexCustomBitmap)
+TEX_DEF(TexColorCorrect)
 TEX_DEF(TexDirt)
 TEX_DEF(TexDisplacacementRestrict)
 TEX_DEF(TexDistance)
@@ -175,6 +176,9 @@ TEX_DEF(TexWood)
 TEX_DEF(TransformToTex)
 TEX_DEF(texRenderHair)
 TEX_DEF(TexTriPlanar)
+
+TEX_DEF(ColorCorrect)
+TEX_DEF(ColorCorrection)
 
 } // namespace VOP
 } // namespace VRayForHoudini
