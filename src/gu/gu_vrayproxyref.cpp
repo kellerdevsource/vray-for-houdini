@@ -24,9 +24,6 @@
 #include <UT/UT_MemoryCounter.h>
 #include <FS/UT_DSO.h>
 
-#include <OpenEXR/ImathLimits.h>
-#include <OpenEXR/ImathMath.h>
-
 #include <unordered_set>
 
 
@@ -254,9 +251,10 @@ bool VRayProxyRef::save(UT_Options &options, const GA_SaveMap &map) const
 
 bool VRayProxyRef::getLocalTransform(UT_Matrix4D &m) const
 {
-	fpreal64 scale = m_options.getScale();
-	if (   Imath::equalWithAbsError((float)scale, 1.f, Imath::limits<float>::epsilon())
-		&& NOT(m_options.getFlipAxis()) )
+	const fpreal64 scale = m_options.getScale();
+
+	if (IsFloatEq(static_cast<float>(scale), 1.0f) &&
+		!m_options.getFlipAxis())
 	{
 		return false;
 	}
@@ -265,12 +263,13 @@ bool VRayProxyRef::getLocalTransform(UT_Matrix4D &m) const
 	m.scale(scale, scale, scale);
 
 	if (m_options.getFlipAxis()) {
-		VUtils::swap(m(1,0), m(2,0));
-		VUtils::swap(m(1,1), m(2,1));
-		VUtils::swap(m(1,2), m(2,2));
-		m(2,0) = -m(2,0);
-		m(2,1) = -m(2,1);
-		m(2,2) = -m(2,2);
+		UT_Matrix4D flipTm(0.0);
+		flipTm(0,0) =  1.0;
+		flipTm(1,2) = -1.0;
+		flipTm(2,1) =  1.0;
+		flipTm(3,3) =  1.0;
+
+		m = flipTm * m;
 	}
 
 	return true;

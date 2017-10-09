@@ -392,7 +392,7 @@ public:
 
 	/// Test if we are using physical camera
 	/// @param camera[in] - camera object to read parameters from
-	int isPhysicalView(const OBJ_Node &camera) const;
+	static int isPhysicalCamera(const OBJ_Node &camera);
 
 	/// Test if a node is animated
 	int isNodeAnimated(OP_Node *op_node);
@@ -526,11 +526,18 @@ public:
 
 	/// Returns object exporter.
 	ObjectExporter& getObjectExporter() { return objectExporter; }
+
 private:
 	/// Export V-Ray material from VOP node.
 	/// @param node VOP node.
 	/// @returns V-Ray plugin.
 	VRay::Plugin exportMaterial(VOP_Node *node);
+
+	/// Saves VFB state.
+	void saveVfbState();
+
+	/// Restores VFB state.
+	void restoreVfbState();
 
 	/// The driver node bound to this exporter.
 	OP_Node *m_rop;

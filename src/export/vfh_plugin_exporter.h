@@ -17,6 +17,7 @@
 #include "vfh_plugin_attrs.h"
 
 #include <boost/function.hpp>
+#include <QString>
 
 namespace VRayForHoudini {
 
@@ -242,6 +243,14 @@ public:
 
 	/// Reset scene data.
 	void reset() const;
+
+	/// Saves VFB state.
+	/// @param stateData State data as Base64 string.
+	void saveVfbState(QString &stateData) const;
+
+	/// Restores VFB state.
+	/// @param stateData State data as Base64 string.
+	void restoreVfbState(const QString &stateData) const;
 
 private:
 	struct RenderRegion {

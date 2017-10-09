@@ -1160,11 +1160,14 @@ VRay::Plugin ObjectExporter::exportVRayProxyRef(OBJ_Node &objNode, const GU_Prim
 
 	const VRayProxyRef *vrayproxyref = UTverify_cast<const VRayProxyRef*>(prim.implementation());
 
-	UT_Options options = vrayproxyref->getOptions();
-	pluginExporter.setAttrsFromUTOptions(pluginDesc, options);
-
 	// Scale will be exported as primitive transform.
-	pluginDesc.remove("scale");
+	pluginDesc.add(Attrs::PluginAttr("scale", 1.0f));
+
+	// Axis flipping is also baked into primitive transform.
+	pluginDesc.add(Attrs::PluginAttr("flip_axis", 0));
+
+	const UT_Options &options = vrayproxyref->getOptions();
+	pluginExporter.setAttrsFromUTOptions(pluginDesc, options);
 
 	return pluginExporter.exportPlugin(pluginDesc);
 }

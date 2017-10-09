@@ -88,6 +88,7 @@ static float getLensShift(const OBJ_Node &camera, OP_Context &context)
 	return shift;
 }
 
+#if 0
 static void aspectCorrectFovOrtho(ViewParams &viewParams)
 {
 	const float aspect = float(viewParams.renderSize.w) / float(viewParams.renderSize.h);
@@ -96,8 +97,9 @@ static void aspectCorrectFovOrtho(ViewParams &viewParams)
 		viewParams.renderView.ortho_width *= aspect;
 	}
 }
+#endif
 
-int VRayExporter::isPhysicalView(const OBJ_Node &camera) const
+int VRayExporter::isPhysicalCamera(const OBJ_Node &camera)
 {
 	static const std::string paramUsePhysCam("CameraPhysical_use");
 
@@ -119,7 +121,7 @@ void VRayExporter::fillViewParamFromCameraNode(const OBJ_Node &camera, ViewParam
 		UT_String resfraction;
 		m_rop->evalString(resfraction, "res_fraction", 0, t);
 		if (resfraction.isFloat()) {
-			fpreal k = resfraction.toFloat();
+			const fpreal k = resfraction.toFloat();
 			imageWidth  *= k;
 			imageHeight *= k;
 		}
@@ -129,7 +131,7 @@ void VRayExporter::fillViewParamFromCameraNode(const OBJ_Node &camera, ViewParam
 		}
 	}
 
-	float fov = 0.785398f;
+	float fov;
 
 	viewParams.renderView.fovOverride = Parm::getParmInt(*m_rop, "SettingsCamera_override_fov");
 	if (viewParams.renderView.fovOverride) {
@@ -172,40 +174,45 @@ void VRayExporter::fillViewParamFromCameraNode(const OBJ_Node &camera, ViewParam
 		viewParams.renderSize.w *= 2;
 	}
 
-	viewParams.physCam.type = PhysicalCameraType(camera.evalInt("CameraPhysical_type", 0, t));
-	viewParams.physCam.useDof = camera.evalInt("CameraPhysical_use_dof", 0, t);
-	viewParams.physCam.useMoBlur = camera.evalInt("CameraPhysical_use_moblur", 0, t);
-	viewParams.physCam.selectedItem = MenuItemSelected(camera.evalInt("CameraPhysical_mode_select", 0, t));
-	if (viewParams.physCam.selectedItem == MenuItemSelected::HoudiniCameraSettings) {
-		viewParams.physCam.focalUnits = HoudiniFocalUnits(camera.evalInt("focalunits", 0, t));
-		viewParams.physCam.houdiniFNumber = camera.evalFloat("fstop", 0, t);
-		viewParams.physCam.houdiniFocalLength = camera.evalFloat("focal", 0, t);
-		viewParams.physCam.houdiniFocusDistance = camera.evalFloat("focus", 0, t);
+	viewParams.usePhysicalCamera = isPhysicalCamera(camera);
+	if (viewParams.usePhysicalCamera) {
+		viewParams.physCam.type = static_cast<PhysicalCameraType>(camera.evalInt("CameraPhysical_type", 0, t));
+		viewParams.physCam.useDof = camera.evalInt("CameraPhysical_use_dof", 0, t);
+		viewParams.physCam.useMoBlur = camera.evalInt("CameraPhysical_use_moblur", 0, t);
+		viewParams.physCam.selectedItem = static_cast<MenuItemSelected>(camera.evalInt("CameraPhysical_mode_select", 0, t));
+
+		if (viewParams.physCam.selectedItem == physicalCameraUseHoudiniCameraSettings) {
+			viewParams.physCam.focalUnits = static_cast<HoudiniFocalUnits>(camera.evalInt("focalunits", 0, t));
+			viewParams.physCam.houdiniFNumber = camera.evalFloat("fstop", 0, t);
+			viewParams.physCam.houdiniFocalLength = camera.evalFloat("focal", 0, t);
+			viewParams.physCam.houdiniFocusDistance = camera.evalFloat("focus", 0, t);
+		}
+		else if (viewParams.physCam.selectedItem == physicalCameraUsePhysicalCameraSettings) {
+			viewParams.physCam.exposure = camera.evalInt("CameraPhysical_exposure", 0, t);
+			viewParams.physCam.focalLength = camera.evalFloat("CameraPhysical_focal_length", 0, t);
+			viewParams.physCam.fNumber = camera.evalFloat("CameraPhysical_f_number", 0, t);
+			viewParams.physCam.shutterSpeed = camera.evalFloat("CameraPhysical_shutter_speed", 0, t);
+		}
+
+		viewParams.physCam.filmWidth = camera.evalFloat("CameraPhysical_film_width", 0, t);
+		viewParams.physCam.fov = camera.evalFloat("CameraPhysical_fov", 0, t);
+		viewParams.physCam.shutterAngle = camera.evalFloat("CameraPhysical_shutter_angle", 0, t);
+		viewParams.physCam.shutterOffset = camera.evalFloat("CameraPhysical_shutter_offset", 0, t);
+		viewParams.physCam.latency = camera.evalFloat("CameraPhysical_latency", 0, t);
+		viewParams.physCam.ISO = camera.evalFloat("CameraPhysical_ISO", 0, t);
+		viewParams.physCam.zoomFactor = camera.evalFloat("CameraPhysical_zoom_factor", 0, t);
+		viewParams.physCam.specifyFocus = camera.evalInt("CameraPhysical_specify_focus", 0, t);
+		viewParams.physCam.focusDistance = camera.evalFloat("CameraPhysical_focus_distance", 0, t);
+		viewParams.physCam.targeted = camera.evalInt("CameraPhysical_targeted", 0, t);
+		viewParams.physCam.targetDistance = camera.evalFloat("CameraPhysical_target_distance", 0, t);
+		viewParams.physCam.balance.r = camera.evalFloat("CameraPhysical_white_balance", 0, t);
+		viewParams.physCam.balance.g = camera.evalFloat("CameraPhysical_white_balance", 1, t);
+		viewParams.physCam.balance.b = camera.evalFloat("CameraPhysical_white_balance", 2, t);
+		viewParams.physCam.vignetting = camera.evalFloat("CameraPhysical_vignetting", 0, t);
+		viewParams.physCam.opticalVignetting = camera.evalFloat("CameraPhysical_optical_vignetting", 0, t);
+		viewParams.physCam.subdivisions = camera.evalFloat("CameraPhysical_subdivs", 0, t);
+		viewParams.physCam.dontAffectSettings = camera.evalInt("CameraPhysical_dont_affect_settings", 0, t);
 	}
-	else {
-		viewParams.physCam.exposure = camera.evalInt("CameraPhysical_exposure", 0, t);
-		viewParams.physCam.focalLength = camera.evalFloat("CameraPhysical_focal_length", 0, t);
-		viewParams.physCam.fNumber = camera.evalFloat("CameraPhysical_f_number", 0, t);
-		viewParams.physCam.shutterSpeed = camera.evalFloat("CameraPhysical_shutter_speed", 0, t);
-	}
-	viewParams.physCam.filmWidth = camera.evalFloat("CameraPhysical_film_width", 0, t);
-	viewParams.physCam.fov = camera.evalFloat("CameraPhysical_fov", 0, t);
-	viewParams.physCam.shutterAngle = camera.evalFloat("CameraPhysical_shutter_angle", 0, t);
-	viewParams.physCam.shutterOffset = camera.evalFloat("CameraPhysical_shutter_offset", 0, t);
-	viewParams.physCam.latency = camera.evalFloat("CameraPhysical_latency", 0, t);
-	viewParams.physCam.ISO = camera.evalFloat("CameraPhysical_ISO", 0, t);
-	viewParams.physCam.zoomFactor = camera.evalFloat("CameraPhysical_zoom_factor", 0, t);
-	viewParams.physCam.specifyFocus = camera.evalInt("CameraPhysical_specify_focus", 0, t);
-	viewParams.physCam.focusDistance = camera.evalFloat("CameraPhysical_focus_distance", 0, t);
-	viewParams.physCam.targeted = camera.evalInt("CameraPhysical_targeted", 0, t);
-	viewParams.physCam.targetDistance = camera.evalFloat("CameraPhysical_target_distance", 0, t);
-	viewParams.physCam.balance.r = camera.evalFloat("CameraPhysical_white_balance", 0, t);
-	viewParams.physCam.balance.g = camera.evalFloat("CameraPhysical_white_balance", 1, t);
-	viewParams.physCam.balance.b = camera.evalFloat("CameraPhysical_white_balance", 2, t);
-	viewParams.physCam.vignetting = camera.evalFloat("CameraPhysical_vignetting", 0, t);
-	viewParams.physCam.opticalVignetting = camera.evalFloat("CameraPhysical_optical_vignetting", 0, t);
-	viewParams.physCam.subdivisions = camera.evalFloat("CameraPhysical_subdivs", 0, t);
-	viewParams.physCam.dontAffectSettings = camera.evalInt("CameraPhysical_dont_affect_settings", 0, t);
 }
 
 ReturnValue VRayExporter::fillSettingsMotionBlur(ViewParams &viewParams, Attrs::PluginDesc &settingsMotionBlur)
@@ -225,72 +232,84 @@ void VRayExporter::fillPhysicalCamera(const ViewParams &viewParams, Attrs::Plugi
 
 	const float aspect = float(viewParams.renderSize.w) / float(viewParams.renderSize.h);
 
-	float horizontal_offset = camera.evalFloat("CameraPhysical_horizontal_offset", 0, t);
-	float vertical_offset = camera.evalFloat("CameraPhysical_vertical_offset", 0, t);
+	float horizontalOffset = camera.evalFloat("CameraPhysical_horizontal_offset", 0, t);
+	float verticalOffset = camera.evalFloat("CameraPhysical_vertical_offset", 0, t);
 	if (aspect < 1.0f) {
-		const float offset_fix = 1.0 / aspect;
-		horizontal_offset *= offset_fix;
-		vertical_offset *= offset_fix;
+		const float offsetFix = 1.0 / aspect;
+		horizontalOffset *= offsetFix;
+		verticalOffset *= offsetFix;
 	}
 
 	const float lens_shift = camera.evalInt("CameraPhysical_auto_lens_shift", 0, 0.0)
 		? getLensShift(camera, getContext())
 		: camera.evalFloat("CameraPhysical_lens_shift", 0, t);
 
-	const int itemSelected = camera.evalInt("CameraPhysical_mode_select", 0, 0.0);
-	if (itemSelected != MenuItemSelected::UseFieldOfView) {
+	const MenuItemSelected itemSelected =
+		static_cast<MenuItemSelected>(camera.evalInt("CameraPhysical_mode_select", 0, 0.0));
+
+	if (itemSelected != physicalCameraUseFieldOfView) {
 		pluginDesc.add(Attrs::PluginAttr("fov", viewParams.renderView.fov));
 	}
-	pluginDesc.add(Attrs::PluginAttr("horizontal_offset", horizontal_offset));
-	pluginDesc.add(Attrs::PluginAttr("vertical_offset",   vertical_offset));
+
+	pluginDesc.add(Attrs::PluginAttr("horizontal_offset", horizontalOffset));
+	pluginDesc.add(Attrs::PluginAttr("vertical_offset",   verticalOffset));
 	pluginDesc.add(Attrs::PluginAttr("lens_shift",        lens_shift));
-	// pluginDesc.add(Attrs::PluginAttr("specify_focus",     true));
 
 	setAttrsFromOpNodePrms(pluginDesc, &camera, "CameraPhysical_");
+
 	int specifyFovValue = 0;
-	switch(itemSelected) {
-	case MenuItemSelected::HoudiniCameraSettings: {
-		pluginDesc.remove("shutter_speed");
 
-		UT_String temporaryString;
-		camera.evalString(temporaryString, "focalunits", 0, t);
-		const double focalLength = camera.evalFloat("focal", 0, t);
-		double resultValue;
-		if (temporaryString == "mm") {
-			resultValue = focalLength;
-		}
-		else if (temporaryString == "m") {
-			resultValue = focalLength * 1000.0f; // Convert from meters to milimeters
-		}
-		else if (temporaryString == "nm") {
-			resultValue = focalLength * 0.0000001f; // Convert from nanometers to milimeters
-		}
-		else if (temporaryString == "in") {
-			resultValue = focalLength * 25.4f; // Convert from inches to milimeters
-		}
-		else if (temporaryString == "ft") {
-			resultValue = focalLength * 304.8f; // Convert from feet to milimeters
-		}
+	switch (itemSelected) {
+		case physicalCameraUseHoudiniCameraSettings: {
+			pluginDesc.remove("shutter_speed");
 
-		pluginDesc.add(Attrs::PluginAttr("focal_length", resultValue));
-		pluginDesc.add(Attrs::PluginAttr("f_number", camera.evalFloat("fstop", 0, t)));
-		pluginDesc.add(Attrs::PluginAttr("focus_distance", camera.evalFloat("focus", 0, t)));
+			UT_String focalUnits;
+			camera.evalString(focalUnits, "focalunits", 0, t);
 
-		break;
+			const double focalLength = camera.evalFloat("focal", 0, t);
+
+			double resultValue;
+			if (focalUnits == "mm") {
+				resultValue = focalLength;
+			}
+			else if (focalUnits == "m") {
+				// Convert from meters to milimeters
+				resultValue = focalLength * 1000.0f;
+			}
+			else if (focalUnits == "nm") {
+				// Convert from nanometers to milimeters
+				resultValue = focalLength * 0.0000001f;
+			}
+			else if (focalUnits == "in") {
+				// Convert from inches to milimeters
+				resultValue = focalLength * 25.4f;
+			}
+			else if (focalUnits == "ft") {
+				// Convert from feet to milimeters
+				resultValue = focalLength * 304.8f;
+			}
+
+			pluginDesc.add(Attrs::PluginAttr("focal_length", resultValue));
+			pluginDesc.add(Attrs::PluginAttr("f_number", camera.evalFloat("fstop", 0, t)));
+			pluginDesc.add(Attrs::PluginAttr("focus_distance", camera.evalFloat("focus", 0, t)));
+
+			break;
+		}
+		case physicalCameraUseFieldOfView: {
+			pluginDesc.remove("film_width");
+			pluginDesc.remove("focal_length");
+			specifyFovValue = 1;
+			break;
+		}
+		case physicalCameraUsePhysicalCameraSettings: {
+			pluginDesc.remove("fov");
+			specifyFovValue = 0;
+			break;
+		}
 	}
-	case MenuItemSelected::UseFieldOfView: {
-		pluginDesc.remove("film_width");
-		pluginDesc.remove("focal_length");
-		specifyFovValue = 1;
-		break;
-	}
-	case MenuItemSelected::UsePhysicallCameraSettings: {
-		pluginDesc.remove("fov");
-		specifyFovValue = 0;
-		break;
-	}
-	}
-	pluginDesc.add(Attrs::PluginAttr("specify_fov", specifyFovValue)); // Use fov value or not based on menu option selected
+
+	// Use fov value or not based on menu option selected
+	pluginDesc.add(Attrs::PluginAttr("specify_fov", specifyFovValue));
 }
 
 void VRayExporter::fillRenderView(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc)
@@ -487,8 +506,6 @@ int VRayExporter::exportView()
 	addOpCallback(camera, RtCallbackView);
 
 	ViewParams viewParams(camera);
-	viewParams.usePhysicalCamera = isPhysicalView(*camera);
-
 	fillViewParamFromCameraNode(*camera, viewParams);
 
 	exportView(viewParams);
