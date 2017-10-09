@@ -596,7 +596,9 @@ bool VRayExporter::setAttrsFromUTOptions(Attrs::PluginDesc &pluginDesc, const UT
 		const std::string    &attrName = aIt.first;
 		const Parm::AttrDesc &attrDesc = aIt.second;
 
-		if (NOT(options.hasOption(attrName))) {
+		if (!options.hasOption(attrName) ||
+			pluginDesc.contains(attrName))
+		{
 			continue;
 		}
 
