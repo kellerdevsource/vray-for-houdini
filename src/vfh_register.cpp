@@ -30,6 +30,7 @@
 #include "cmd/vfh_cmd_register.h"
 #include "gu_volumegridref.h"
 #include "gu_vrayproxyref.h"
+#include "gu_vraysceneref.h"
 #include "io/io_vrmesh.h"
 
 // For newShopOperator()
@@ -100,6 +101,7 @@ void unregister(void *)
 /// @param gafactory[out] - primitive factory for DSO defined primitives
 void newGeometryPrim(GA_PrimitiveFactory *gafactory)
 {
+	VRaySceneRef::install(gafactory);
 	VRayProxyRef::install(gafactory);
 #ifdef CGR_HAS_AUR
 	VRayVolumeGridRef::install(gafactory);

@@ -64,60 +64,35 @@ OP_ERROR SOP::VRayScene::cookMySop(OP_Context &context)
 
 		if (boss) {
 			if (boss->opStart("Building V-Ray Scene Preview Mesh")) {
-				using namespace VUtils;
-				const Vrscene::Preview::VrsceneSettings &vrsceneSettings = getVrsceneSettings();
-				Vrscene::Preview::VrsceneDesc *vrsceneDesc = m_vrsceneMan.getVrsceneDesc(path.buffer(), &vrsceneSettings);
-				if (vrsceneDesc) {
-					const bool flipAxis = evalInt("flip_axis", 0, 0.0);
-					unsigned meshVertexOffset = 0;
-
-					for (Vrscene::Preview::VrsceneObjects::iterator obIt = vrsceneDesc->m_objects.begin(); obIt != vrsceneDesc->m_objects.end(); ++obIt) {
-						Vrscene::Preview::VrsceneObjectBase *ob = obIt.data();
-						if (ob && ob->getType() == Vrscene::Preview::ObjectTypeNode) {
-							const TraceTransform &tm = ob->getTransform(t);
-
-							Vrscene::Preview::VrsceneObjectNode     *node = static_cast<Vrscene::Preview::VrsceneObjectNode*>(ob);
-							Vrscene::Preview::VrsceneObjectDataBase *nodeData = vrsceneDesc->getObjectData(node->getDataName().ptr());
-							if (nodeData && nodeData->getDataType() == Vrscene::Preview::ObjectDataTypeMesh) {
-								// detail for the mesh
-								GU_Detail *gdmp = new GU_Detail();
-								
-								// create preview mesh
-								Vrscene::Preview::VrsceneObjectDataMesh *mesh = static_cast<Vrscene::Preview::VrsceneObjectDataMesh*>(nodeData);
-								const VUtils::VectorRefList &vertices = mesh->getVertices(t);
-								const VUtils::IntRefList    &faces = mesh->getFaces(t);
-								for (int v = 0; v < vertices.count(); ++v) {
-									Vector vert = tm * vertices[v];
-									if (flipAxis) {
-										vert = Vrscene::Preview::flipMatrix * vert;
-									}
-
-									GA_Offset pointOffs = gdmp->appendPoint();
-									gdmp->setPos3(pointOffs, UT_Vector3(vert.x, vert.y, vert.z));
-								}
-
-								for (int f = 0; f < faces.count(); f += 3) {
-									GU_PrimPoly *poly = GU_PrimPoly::build(gdmp, 3, GU_POLY_CLOSED, 0);
-									for (int c = 0; c < 3; ++c) {
-										poly->setVertexPoint(c, meshVertexOffset + faces[f + c]);
-									}
-									poly->reverse();
-								}
-
-								meshVertexOffset += vertices.count();
-
-								// handle
-								GU_DetailHandle gdmh;
-								gdmh.allocateAndSet(gdmp);
-
-								// pack the geometry in the scene detail
-								GU_PackedGeometry::packGeometry(*gdp, gdmh);
-							}
-						}
-					}
+				// Create a packed primitive
+				GU_PrimPacked *pack = GU_PrimPacked::build(*gdp, "VRaySceneRef");
+				if (NOT(pack)) {
+					addWarning(SOP_MESSAGE, "Can't create packed primitive VRaySceneRef");
 				}
+				else {
+					// Set the location of the packed primitive's point.
+					UT_Vector3 pivot(0, 0, 0);
+					pack->setPivot(pivot);
+					gdp->setPos3(pack->getPointOffset(0), pivot);
+
+					UT_String objectPath;
+					evalString(objectPath, "object_path", 0, t);
+
+					UT_String velocityColorSet;
+					evalString(velocityColorSet, "velocity_color_set", 0, t);
+
+					// Set the options on the primitive
+					OP_Options options;
+					for (int i = 0; i < getParmList()->getEntries(); ++i) {
+						const PRM_Parm &prm = getParm(i);
+						options.setOptionFromTemplate(this, prm, *prm.getTemplatePtr(), t);
+					}
+
+					pack->implementation()->update(options);
+					pack->setPathAttribute(getFullPath());
+				}
+				boss->opEnd();
 			}
-			boss->opEnd();
 		}
 	}
 
