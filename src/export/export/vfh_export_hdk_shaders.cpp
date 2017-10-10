@@ -74,16 +74,3 @@ VRay::Plugin VRayExporter::exportPrincipledShader(OP_Node &opNode, ExportContext
 
 	return exportPlugin(mtlSingleBRDF);
 }
-
-VRay::Plugin VRayExporter::exportNodeParameter(OP_Node &opNode, ExportContext*)
-{
-#if 0
-	int parmType;
-	opNode.evalInt("parmtype", 0, 0.0);
-#endif
-
-	UT_String paramName;
-	opNode.evalString(paramName, "parmname", 0, 0.0);
-
-	return exportTexUserColor(*this, opNode, paramName.buffer());
-}

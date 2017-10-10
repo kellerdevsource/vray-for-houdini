@@ -270,6 +270,13 @@ public:
 	/// @retval V-Ray plugin for default material
 	VRay::Plugin exportDefaultMaterial();
 
+	/// Exports node selected with "op:" syntax.
+	/// @param value String value to check against "op:".
+	VRay::Plugin exportOpPath(const UT_String &value);
+
+	///	Exports COP node as RawBitmapBuffer.
+	/// @param copNode COP2 node.
+	VRay::Plugin exportCopNode(COP2_Node &copNode);
 
 #ifdef CGR_HAS_VRAYSCENE
 	VRay::Plugin exportVRayScene(OBJ_Node *obj_node, SOP_Node *geom_node);
@@ -508,7 +515,6 @@ public:
 	VRay::Plugin exportConnectedVop(VOP_Node *vop_node, const UT_String &inputName, ExportContext *parentContext = nullptr);
 
 	VRay::Plugin exportPrincipledShader(OP_Node &opNode, ExportContext *parentContext=nullptr);
-	VRay::Plugin exportNodeParameter(OP_Node &opNode, ExportContext *parentContext=nullptr);
 
 	/// Export input parameter VOPs for a given VOP node as V-Ray user textures.
 	/// Default values for the textures will be queried from the corresponding
