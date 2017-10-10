@@ -10,6 +10,7 @@
 
 #include "vfh_exporter.h"
 #include "vfh_op_utils.h"
+#include "vfh_attr_utils.h"
 
 #include "vop/material/vop_mtl_def.h"
 
@@ -17,7 +18,57 @@
 #include <VOP/VOP_ParmGenerator.h>
 #include <OP/OP_Options.h>
 
+#include <COP2/COP2_Node.h>
+#include <TIL/TIL_Raster.h>
+
 using namespace VRayForHoudini;
+
+/// Test COP function.
+/// Taken from: https://www.sidefx.com/docs/hdk/_h_d_k__data_flow__c_o_p.html
+///
+static TIL_Raster *getImageFromCop(COP2_Node *cop, float time, const char *pname = "C")
+{
+	TIL_Raster *image = NULL;
+
+	short key;
+	const OP_ERROR err = cop->open(key);
+
+	if (err == UT_ERROR_NONE) {
+		const TIL_Sequence *seq = cop->getSequenceInfo();
+		if (seq) {
+			const TIL_Plane *plane = seq->getPlane(pname);
+
+			int xres = 0;
+			int yres = 0;
+			seq->getRes(xres, yres);
+
+			if (plane) {
+				image = new TIL_Raster(PACK_RGB, plane->getFormat(), xres, yres);
+
+				if (seq->getImageIndex(time) == -1) {
+					// out of frame range - black frame
+					float black[4] = {0, 0, 0, 0};
+					image->clearNormal(black);
+				}
+				else {
+					OP_Context context(time);
+					context.setXres(xres);
+					context.setYres(yres);
+
+					if (!cop->cookToRaster(image, context, plane)) {
+						delete image;
+						image = NULL;
+					}
+				}
+			}
+		}
+	}
+
+	// Must be called even if open() failed.
+	cop->close(key);
+
+	return image;
+}
 
 void VRayExporter::RtCallbackSurfaceShop(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
@@ -150,7 +201,7 @@ void VRayExporter::setAttrsFromSHOPOverrides(Attrs::PluginDesc &pluginDesc, VOP_
 	VOP_ParmGeneratorList prmVOPs;
 	vopNode.getParmInputs(prmVOPs);
 	for (VOP_ParmGenerator *prmVOP : prmVOPs) {
-		int inpidx = vopNode.whichInputIs(prmVOP);
+		const int inpidx = vopNode.whichInputIs(prmVOP);
 		if (inpidx < 0) {
 			continue;
 		}
@@ -166,15 +217,28 @@ void VRayExporter::setAttrsFromSHOPOverrides(Attrs::PluginDesc &pluginDesc, VOP_
 			continue;
 		}
 
-		UT_String prmToken = prmVOP->getParmNameCache();
-		const PRM_Parm *prm = creator->getParmList()->getParmPtr(prmToken);
-		// no such parameter on the parent SHOP node or
-		// parameter is not floating point
-		if (   NOT(prm)
-			|| NOT(prm->getType().isFloatType()) )
-		{
+		const UT_String &prmToken = prmVOP->getParmNameCache();
+
+		const PRM_Parm *prm = creator->getParmList()->getParmPtr(prmToken.buffer());
+		if (!prm)
 			continue;
+
+		const PRM_Type prmType = prm->getType();
+		if (prmType.isStringType()) {
+			UT_String path;
+			creator->evalString(path, prm, 0, t);
+
+			if (path.startsWith(OPREF_PREFIX)) {
+				COP2_Node *copNode = getCOP2NodeFromPath(path);
+				if (copNode) {
+					TIL_Raster *raster = getImageFromCop(copNode, t);
+					delete raster;
+				}
+			}
 		}
+
+		if (!prmType.isFloatType())
+			continue;
 
 		const Parm::AttrDesc &attrDesc = pluginInfo->attributes.at(attrName);
 		switch (attrDesc.value.type) {
