@@ -65,7 +65,7 @@ OP_ERROR SOP::VRayScene::cookMySop(OP_Context &context)
 		if (boss) {
 			if (boss->opStart("Building V-Ray Scene Preview Mesh")) {
 				// Create a packed primitive
-				GU_PrimPacked *pack = GU_PrimPacked::build(*gdp, "VRayScene");
+				GU_PrimPacked *pack = GU_PrimPacked::build(*gdp, "VRaySceneRef");
 				if (NOT(pack)) {
 					addWarning(SOP_MESSAGE, "Can't create packed primitive VRaySceneRef");
 				}

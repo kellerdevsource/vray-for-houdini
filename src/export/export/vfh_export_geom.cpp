@@ -54,7 +54,7 @@ static struct PrimPackedTypeIDs {
 		packedGeometry = GU_PrimPacked::lookupTypeId("PackedGeometry");
 		vrayProxyRef = GU_PrimPacked::lookupTypeId("VRayProxyRef");
 		vrayVolumeGridRef = GU_PrimPacked::lookupTypeId("VRayVolumeGridRef");
-		vraySceneRef = GU_PrimPacked::lookupTypeId("VRayScene");
+		vraySceneRef = GU_PrimPacked::lookupTypeId("VRaySceneRef");
 
 		initialized = true;
 	}
