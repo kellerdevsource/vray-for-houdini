@@ -520,10 +520,10 @@ void VRayExporter::setAttrsFromOpNodePrms(Attrs::PluginDesc &pluginDesc, OP_Node
 					&& parm
 					&& parm->getType().isStringType())
 				{
-					UT_String parmVal;
-					opNode->evalString(parmVal, parm->getToken(), 0, 0.0f);
+					UT_String opPath;
+					opNode->evalString(opPath, parm->getToken(), 0, 0.0f);
 
-					VRay::Plugin opPlugin = exportOpPath(parmVal);
+					const VRay::Plugin opPlugin = exportNodeFromPath(opPath);
 					if (opPlugin) {
 						pluginDesc.addAttribute(Attrs::PluginAttr(attrName, opPlugin));
 					}

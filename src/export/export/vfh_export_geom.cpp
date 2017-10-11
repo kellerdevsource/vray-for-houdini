@@ -1712,6 +1712,7 @@ VRay::Plugin ObjectExporter::exportLight(OBJ_Light &objLight)
 		VRay::Transform tm = getTm();
 
 		if (isDomeLight) {
+			tm.makeIdentity();
 			VUtils::swap(tm.matrix[1], tm.matrix[2]);
 		}
 

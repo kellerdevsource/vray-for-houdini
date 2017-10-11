@@ -179,7 +179,7 @@ void VRayExporter::setAttrsFromSHOPOverrides(Attrs::PluginDesc &pluginDesc, VOP_
 			UT_String path;
 			creator->evalString(path, prm, 0, t);
 
-			const VRay::Plugin opPlugin = exportOpPath(path);
+			const VRay::Plugin opPlugin = exportNodeFromPath(path);
 			if (opPlugin) {
 				pluginDesc.addAttribute(Attrs::PluginAttr(attrName, opPlugin));
 			}
