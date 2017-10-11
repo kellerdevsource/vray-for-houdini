@@ -75,12 +75,6 @@ OP_ERROR SOP::VRayScene::cookMySop(OP_Context &context)
 					pack->setPivot(pivot);
 					gdp->setPos3(pack->getPointOffset(0), pivot);
 
-					UT_String objectPath;
-					evalString(objectPath, "object_path", 0, t);
-
-					UT_String velocityColorSet;
-					evalString(velocityColorSet, "velocity_color_set", 0, t);
-
 					// Set the options on the primitive
 					OP_Options options;
 					for (int i = 0; i < getParmList()->getEntries(); ++i) {

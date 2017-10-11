@@ -167,81 +167,83 @@ bool VRaySceneRef::unpack(GU_Detail &destgdp) const
 
 GU_ConstDetailHandle VRaySceneRef::getPackedDetail(GU_PackedContext *context) const
 {
-	if (m_dirty) {
-		// Create geometry on demand. If the user only requests the
-		// bounding box (i.e. the viewport LOD is set to "box"), then we never
-		// have to actually create the proxy's geometry.
-		VRaySceneRef *me = const_cast< VRaySceneRef * >(this);
+	if (!m_dirty) {
+		return getDetail();
+	}
 
-		using namespace VUtils;
-		VUtils::Vrscene::Preview::VrsceneSettings vrsceneSettings;
-		vrsceneSettings.usePreview = true;
-		vrsceneSettings.previewFacesCount = 100000;
-		vrsceneSettings.cacheSettings.cacheType = (VUtils::Vrscene::Preview::VrsceneCacheSettings::VrsceneCacheType)2;
+	// Create geometry on demand. If the user only requests the
+	// bounding box (i.e. the viewport LOD is set to "box"), then we never
+	// have to actually create the proxy's geometry.
+	VRaySceneRef *me = const_cast< VRaySceneRef * >(this);
 
-		GU_DetailHandle gdh;
+	using namespace VUtils;
+	VUtils::Vrscene::Preview::VrsceneSettings vrsceneSettings;
+	vrsceneSettings.usePreview = true;
+	vrsceneSettings.previewFacesCount = 100000;
+	vrsceneSettings.cacheSettings.cacheType = VUtils::Vrscene::Preview::VrsceneCacheSettings::VrsceneCacheType::VrsceneCacheTypeRam;
 
-		Vrscene::Preview::VrsceneDesc *vrsceneDesc = VRaySceneRef::vrsceneMan.getVrsceneDesc(get_filepath(), &vrsceneSettings);
-		if (vrsceneDesc) {
-			const bool flipAxis = get_flip_axis();
-			unsigned meshVertexOffset = 0;
+	GU_DetailHandle gdh;
 
-			for (Vrscene::Preview::VrsceneObjects::iterator obIt = vrsceneDesc->m_objects.begin(); obIt != vrsceneDesc->m_objects.end(); ++obIt) {
-				Vrscene::Preview::VrsceneObjectBase *ob = obIt.data();
-				if (ob && ob->getType() == Vrscene::Preview::ObjectTypeNode) {
-					const TraceTransform &tm = ob->getTransform(get_current_frame());
+	Vrscene::Preview::VrsceneDesc *vrsceneDesc = VRaySceneRef::vrsceneMan.getVrsceneDesc(get_filepath(), &vrsceneSettings);
+	if (vrsceneDesc) {
+		const bool flipAxis = get_flip_axis();
+		unsigned meshVertexOffset = 0;
 
-					Vrscene::Preview::VrsceneObjectNode     *node = static_cast<Vrscene::Preview::VrsceneObjectNode*>(ob);
-					Vrscene::Preview::VrsceneObjectDataBase *nodeData = vrsceneDesc->getObjectData(node->getDataName().ptr());
-					if (nodeData && nodeData->getDataType() == Vrscene::Preview::ObjectDataTypeMesh) {
-						// detail for the mesh
-						GU_Detail *gdmp = new GU_Detail();
+		for (Vrscene::Preview::VrsceneObjects::iterator obIt = vrsceneDesc->m_objects.begin(); obIt != vrsceneDesc->m_objects.end(); ++obIt) {
+			Vrscene::Preview::VrsceneObjectBase *ob = obIt.data();
+			if (ob && ob->getType() == Vrscene::Preview::ObjectTypeNode) {
+				const TraceTransform &tm = ob->getTransform(get_current_frame());
 
-						// create preview mesh
-						Vrscene::Preview::VrsceneObjectDataMesh *mesh = static_cast<Vrscene::Preview::VrsceneObjectDataMesh*>(nodeData);
-						const VUtils::VectorRefList &vertices = mesh->getVertices(get_current_frame());
-						const VUtils::IntRefList    &faces = mesh->getFaces(get_current_frame());
-						for (int v = 0; v < vertices.count(); ++v) {
-							Vector vert = tm * vertices[v];
-							if (flipAxis) {
-								vert = Vrscene::Preview::flipMatrix * vert;
-							}
+				Vrscene::Preview::VrsceneObjectNode     *node = static_cast<Vrscene::Preview::VrsceneObjectNode*>(ob);
+				Vrscene::Preview::VrsceneObjectDataBase *nodeData = vrsceneDesc->getObjectData(node->getDataName().ptr());
+				if (nodeData && nodeData->getDataType() == Vrscene::Preview::ObjectDataTypeMesh) {
+					// detail for the mesh
+					GU_Detail *gdmp = new GU_Detail();
 
-							GA_Offset pointOffs = gdmp->appendPoint();
-							gdmp->setPos3(pointOffs, UT_Vector3(vert.x, vert.y, vert.z));
+					// create preview mesh
+					Vrscene::Preview::VrsceneObjectDataMesh *mesh = static_cast<Vrscene::Preview::VrsceneObjectDataMesh*>(nodeData);
+					const VUtils::VectorRefList &vertices = mesh->getVertices(get_current_frame());
+					const VUtils::IntRefList    &faces = mesh->getFaces(get_current_frame());
+					for (int v = 0; v < vertices.count(); ++v) {
+						Vector vert = tm * vertices[v];
+						if (flipAxis) {
+							vert = Vrscene::Preview::flipMatrix * vert;
 						}
 
-						for (int f = 0; f < faces.count(); f += 3) {
-							GU_PrimPoly *poly = GU_PrimPoly::build(gdmp, 3, GU_POLY_CLOSED, 0);
-							for (int c = 0; c < 3; ++c) {
-								poly->setVertexPoint(c, meshVertexOffset + faces[f + c]);
-							}
-							poly->reverse();
-						}
-
-						meshVertexOffset += vertices.count();
-
-						// handle
-						GU_DetailHandle gdmh;
-						gdmh.allocateAndSet(gdmp);
-
-						// pack the geometry in the scene detail
-						GU_Detail *gdp = new GU_Detail();
-						GU_PackedGeometry::packGeometry(*gdp, gdmh);
-						gdh.allocateAndSet(gdp);
+						GA_Offset pointOffs = gdmp->appendPoint();
+						gdmp->setPos3(pointOffs, UT_Vector3(vert.x, vert.y, vert.z));
 					}
+
+					for (int f = 0; f < faces.count(); f += 3) {
+						GU_PrimPoly *poly = GU_PrimPoly::build(gdmp, 3, GU_POLY_CLOSED, 0);
+						for (int c = 0; c < 3; ++c) {
+							poly->setVertexPoint(c, meshVertexOffset + faces[f + c]);
+						}
+						poly->reverse();
+					}
+
+					meshVertexOffset += vertices.count();
+
+					// handle
+					GU_DetailHandle gdmh;
+					gdmh.allocateAndSet(gdmp);
+
+					// pack the geometry in the scene detail
+					GU_Detail *gdp = new GU_Detail();
+					GU_PackedGeometry::packGeometry(*gdp, gdmh);
+					gdh.allocateAndSet(gdp);
 				}
 			}
 		}
-
-
-		if (GU_ConstDetailHandle(gdh) != getDetail()) {
-			me->setDetail(gdh);
-			getPrim()->getParent()->getPrimitiveList().bumpDataId();
-		}
-
-		me->m_dirty = false;
 	}
+
+
+	if (GU_ConstDetailHandle(gdh) != getDetail()) {
+		me->setDetail(gdh);
+		getPrim()->getParent()->getPrimitiveList().bumpDataId();
+	}
+
+	me->m_dirty = false;
 
 	return getDetail();
 }
