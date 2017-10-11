@@ -215,6 +215,52 @@ OP::VRayNode::PluginResult LightNodeBase< VRayPluginID::SunLight >::asPluginDesc
 	return OP::VRayNode::PluginResultContinue;
 }
 
+static VRay::Plugin exportAttributeFromPathAuto(VRayExporter &exporter,
+                                                const OP_Node &node,
+                                                const char *attrName,
+                                                VRayExporter::DefaultMappingType mappingType,
+                                                Attrs::PluginDesc &pluginDesc)
+{
+	static boost::format fmtToggle("use_%s_tex");
+	static boost::format fmtTex("%s_tex");
+
+	const std::string toggleAttrName(str(fmtToggle % attrName));
+	const std::string texAttrName(str(fmtTex % attrName));
+
+	const OP_Context &ctx = exporter.getContext();
+	const fpreal t = ctx.getTime();
+
+	if (!node.evalInt(toggleAttrName.c_str(), 0, t))
+		return VRay::Plugin();
+
+	UT_String texPath;
+	node.evalString(texPath, texAttrName.c_str(), 0, t);
+
+	const VRay::Plugin texPlugin = exporter.exportNodeFromPathWithDefaultMapping(texPath, mappingType);
+	if (texPlugin) {
+		pluginDesc.addAttribute(Attrs::PluginAttr(texAttrName, texPlugin));
+	}
+
+	return texPlugin;
+}
+
+template<>
+OP::VRayNode::PluginResult LightNodeBase<VRayPluginID::LightDome>::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext* /*parentContext*/)
+{
+	pluginDesc.pluginID = pluginID.c_str();
+	pluginDesc.pluginName = VRayExporter::getPluginName(this);
+
+	const VRay::Plugin domeTex = exportAttributeFromPathAuto(exporter, *this, "dome", VRayExporter::defaultMappingSpherical, pluginDesc);
+	if (!domeTex) {
+		pluginDesc.add(Attrs::PluginAttr("use_dome_tex", false));
+	}
+
+	exportAttributeFromPathAuto(exporter, *this, "color",       VRayExporter::defaultMappingSpherical, pluginDesc);
+	exportAttributeFromPathAuto(exporter, *this, "intensity",   VRayExporter::defaultMappingSpherical, pluginDesc);
+	exportAttributeFromPathAuto(exporter, *this, "shadowColor", VRayExporter::defaultMappingSpherical, pluginDesc);
+
+	return PluginResultContinue;
+}
 
 // explicitly instantiate op node classes for light plugins
 template class LightNodeBase< VRayPluginID::SunLight >;

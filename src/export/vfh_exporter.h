@@ -270,6 +270,42 @@ public:
 	/// @retval V-Ray plugin for default material
 	VRay::Plugin exportDefaultMaterial();
 
+	/// Exports node from "op:" or file path.
+	/// @param path String value: file or node path.
+	VRay::Plugin exportNodeFromPath(const UT_String &path);
+
+	///	Exports COP node as RawBitmapBuffer.
+	/// @param copNode COP2 node.
+	VRay::Plugin exportCopNodeBitmapBuffer(COP2_Node &copNode);
+
+	/// Default mapping type.
+	enum DefaultMappingType {
+		defaultMappingChannel = 0,
+		defaultMappingChannelName,
+		defaultMappingSpherical,
+		defaultMappingTriPlanar,
+	};
+
+	/// Fills defualt settings for default mapping.
+	void fillDefaultMappingDesc(DefaultMappingType mappingType, Attrs::PluginDesc &uvwgenDesc);
+
+	/// Exports image texture from "op:" or file path.
+	/// @param path String value: file or node path.
+	/// @param mappingType Default mapping type.
+	VRay::Plugin exportNodeFromPathWithDefaultMapping(const UT_String &path, DefaultMappingType mappingType);
+
+	///	Exports COP node as TexBitmap.
+	/// @param copNode COP2 node.
+	/// @param mappingType Default mapping type.
+	VRay::Plugin exportCopNodeWithDefaultMapping(COP2_Node &copNode, DefaultMappingType mappingType);
+
+	///	Exports file path as RawBitmapBuffer.
+	/// @param filePath File path.
+	VRay::Plugin exportFileTextureBitmapBuffer(const UT_String &filePath);
+
+	/// Exports file path as TexBitmap with default mapping.
+	/// @param filePath File path.
+	VRay::Plugin exportFileTextureWithDefaultMapping(const UT_String &filePath, DefaultMappingType mappingType);
 
 #ifdef CGR_HAS_VRAYSCENE
 	VRay::Plugin exportVRayScene(OBJ_Node *obj_node, SOP_Node *geom_node);
@@ -508,7 +544,6 @@ public:
 	VRay::Plugin exportConnectedVop(VOP_Node *vop_node, const UT_String &inputName, ExportContext *parentContext = nullptr);
 
 	VRay::Plugin exportPrincipledShader(OP_Node &opNode, ExportContext *parentContext=nullptr);
-	VRay::Plugin exportNodeParameter(OP_Node &opNode, ExportContext *parentContext=nullptr);
 
 	/// Export input parameter VOPs for a given VOP node as V-Ray user textures.
 	/// Default values for the textures will be queried from the corresponding

@@ -1696,6 +1696,8 @@ VRay::Plugin ObjectExporter::exportLight(OBJ_Light &objLight)
 		ExportContext expContext(CT_OBJ, pluginExporter, objLight);
 		OP::VRayNode::PluginResult res = vrayNode->asPluginDesc(pluginDesc, pluginExporter, &expContext);
 
+		const int isDomeLight = vrayNode->getVRayPluginID() == getVRayPluginIDName(VRayPluginID::LightDome);
+
 		if (res == OP::VRayNode::PluginResultError) {
 			Log::getLog().error("Error creating plugin descripion for node: \"%s\" [%s]",
 						objLight.getName().buffer(),
@@ -1709,8 +1711,8 @@ VRay::Plugin ObjectExporter::exportLight(OBJ_Light &objLight)
 
 		VRay::Transform tm = getTm();
 
-		const bool flipTM = vrayNode->getVRayPluginID() == getVRayPluginIDName(VRayPluginID::LightDome);
-		if (flipTM) {
+		if (isDomeLight) {
+			tm.makeIdentity();
 			VUtils::swap(tm.matrix[1], tm.matrix[2]);
 		}
 

@@ -514,14 +514,12 @@ void VRayExporter::setAttrsFromOpNodePrms(Attrs::PluginDesc &pluginDesc, OP_Node
 					&& parm
 					&& parm->getType().isStringType())
 				{
-					UT_String parmVal;
-					opNode->evalString(parmVal, parm->getToken(), 0, 0.0f);
-					OP_Node *tex_node = getOpNodeFromPath(parmVal);
-					if (tex_node) {
-						VRay::Plugin texPlugin = exportVop(tex_node);
-						if (texPlugin) {
-							pluginDesc.addAttribute(Attrs::PluginAttr(attrName, texPlugin));
-						}
+					UT_String opPath;
+					opNode->evalString(opPath, parm->getToken(), 0, 0.0f);
+
+					const VRay::Plugin opPlugin = exportNodeFromPath(opPath);
+					if (opPlugin) {
+						pluginDesc.addAttribute(Attrs::PluginAttr(attrName, opPlugin));
 					}
 				}
 				else if (!(attrDesc.flags & Parm::attrFlagLinkedOnly)) {
@@ -2148,13 +2146,19 @@ void VRayExporter::saveVfbState()
 	QString buf;
 	getRenderer().saveVfbState(buf);
 
-	PRM_Parm &vfbSettingsParm = m_rop->getParm("_vfb_settings");
-	vfbSettingsParm.setValue(0.0, buf.toLocal8Bit().constData(), CH_STRING_LITERAL);
+	PRM_Parm *vfbSettingsParm = m_rop->getParmPtr("_vfb_settings");
+	if (vfbSettingsParm) {
+		vfbSettingsParm->setValue(0.0, buf.toLocal8Bit().constData(), CH_STRING_LITERAL);
+	}
 }
 
 void VRayExporter::restoreVfbState()
 {
 	if (!m_rop)
+		return;
+
+	PRM_Parm *vfbSettingsParm = m_rop->getParmPtr("_vfb_settings");
+	if (!vfbSettingsParm)
 		return;
 
 	UT_String vfbState;
