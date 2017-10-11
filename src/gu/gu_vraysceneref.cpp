@@ -39,7 +39,7 @@ private:
 };
 
 VRaySceneFactory::VRaySceneFactory() :
-	GU_PackedFactory("VRaySceneRef", "VRaySceneRef")
+	GU_PackedFactory("VRayScene", "VRayScene")
 {
 	VFH_MAKE_REGISTERS(VFH_VRAY_SCENE_PARAMS, VFH_VRAY_SCENE_PARAMS_COUNT, VRaySceneRef)
 	VFH_MAKE_REGISTERS_TUPLE(VFH_VRAY_SCENE_PARAMS_TUPLES, VFH_VRAY_SCENE_PARAMS_TUPLES_COUNT, VRaySceneRef)

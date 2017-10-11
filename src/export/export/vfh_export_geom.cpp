@@ -54,7 +54,7 @@ static struct PrimPackedTypeIDs {
 		packedGeometry = GU_PrimPacked::lookupTypeId("PackedGeometry");
 		vrayProxyRef = GU_PrimPacked::lookupTypeId("VRayProxyRef");
 		vrayVolumeGridRef = GU_PrimPacked::lookupTypeId("VRayVolumeGridRef");
-		vraySceneRef = GU_PrimPacked::lookupTypeId("VRaySceneRef");
+		vraySceneRef = GU_PrimPacked::lookupTypeId("VRayScene");
 
 		initialized = true;
 	}
@@ -76,7 +76,7 @@ static boost::format hairNameFmt("GeomMayaHair|%i@%s");
 static boost::format polyNameFmt("GeomStaticMesh|%i@%s");
 static boost::format alembicNameFmt("Alembic|%i@%s");
 static boost::format vrmeshNameFmt("VRayProxy|%i@%s");
-static boost::format vrsceneNameFmt("VRayScene|%i@s");
+static boost::format vrsceneNameFmt("VRayScene|%i@%s");
 
 static const char intrAlembicFilename[] = "abcfilename";
 static const char intrAlembicObjectPath[] = "abcobjectpath";
