@@ -215,6 +215,27 @@ OP::VRayNode::PluginResult LightNodeBase< VRayPluginID::SunLight >::asPluginDesc
 	return OP::VRayNode::PluginResultContinue;
 }
 
+template<>
+OP::VRayNode::PluginResult LightNodeBase<VRayPluginID::LightDome>::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext* /*parentContext*/)
+{
+	pluginDesc.pluginID = pluginID.c_str();
+	pluginDesc.pluginName = VRayExporter::getPluginName(this);
+
+	if (evalInt("use_dome_tex", 0, 0.0)) {
+		UT_String domeTex;
+		evalString(domeTex, "dome_tex", 0, 0.0);
+
+		COP2_Node *copNode = getCOP2NodeFromPath(domeTex, exporter.getContext().getTime());
+		if (copNode) {
+			const VRay::Plugin imgTex = exporter.exportCopNodeWithDefaultMapping(*copNode, VRayExporter::defaultMappingSpherical);
+			if (imgTex) {
+				pluginDesc.addAttribute(Attrs::PluginAttr("dome_tex", imgTex));
+			}
+		}
+	}
+
+	return PluginResultContinue;
+}
 
 // explicitly instantiate op node classes for light plugins
 template class LightNodeBase< VRayPluginID::SunLight >;
