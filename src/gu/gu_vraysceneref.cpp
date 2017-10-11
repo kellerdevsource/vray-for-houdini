@@ -200,18 +200,24 @@ GU_ConstDetailHandle VRaySceneRef::getPackedDetail(GU_PackedContext *context) co
 					// detail for the mesh
 					GU_Detail *gdmp = new GU_Detail();
 
+
 					// create preview mesh
 					Vrscene::Preview::VrsceneObjectDataMesh *mesh = static_cast<Vrscene::Preview::VrsceneObjectDataMesh*>(nodeData);
 					const VUtils::VectorRefList &vertices = mesh->getVertices(get_current_frame());
 					const VUtils::IntRefList    &faces = mesh->getFaces(get_current_frame());
-					for (int v = 0; v < vertices.count(); ++v) {
+
+					// allocate the points, this is the offset of the first one
+					GA_Offset pointOffset = gdmp->appendPointBlock(vertices.count());
+					// iterate through points by their offsets
+					for (int v = 0; v < vertices.count();
+						++v, ++pointOffset) {
+
 						Vector vert = tm * vertices[v];
 						if (flipAxis) {
 							vert = Vrscene::Preview::flipMatrix * vert;
 						}
 
-						GA_Offset pointOffs = gdmp->appendPoint();
-						gdmp->setPos3(pointOffs, UT_Vector3(vert.x, vert.y, vert.z));
+						gdmp->setPos3(pointOffset, UT_Vector3(vert.x, vert.y, vert.z));
 					}
 
 					for (int f = 0; f < faces.count(); f += 3) {
