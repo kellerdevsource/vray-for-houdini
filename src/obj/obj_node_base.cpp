@@ -230,7 +230,7 @@ static VRay::Plugin exportAttributeFromPathAuto(VRayExporter &exporter,
 	const OP_Context &ctx = exporter.getContext();
 	const fpreal t = ctx.getTime();
 
-	if (node.evalInt(toggleAttrName.c_str(), 0, t))
+	if (!node.evalInt(toggleAttrName.c_str(), 0, t))
 		return VRay::Plugin();
 
 	UT_String texPath;
