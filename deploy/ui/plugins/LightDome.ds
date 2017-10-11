@@ -4,9 +4,7 @@
     parmtag	{ spare_category "Dome" }
     parmtag	{ vray_plugin "LightDome" }
 
-
-
-    groupsimple { //-----------------------------------------------------------------------------------------------------------------------------------
+    groupsimple {
     name	"folder_main"
     label	"Main"
 
@@ -58,7 +56,7 @@
         label	"Intensity"
         type	float
         joinnext
-        disablewhen	"{ map_intensity == 1 }"
+        disablewhen	"{ use_intensity_tex == 1 }"
         default	{ "1" }
         help	"Light intensity"
         range	{ 0 8 }
@@ -70,8 +68,8 @@
       }
 
       parm {
-        name	"map_intensity"
-        label	"Map"
+        name	"use_intensity_tex"
+        label	"Texture"
         type	toggle
         default	{ "0" }
         help	"Enable to map intensity"
@@ -81,109 +79,83 @@
 
       parm {
         name	"intensity_tex"
-        label	"Intensity Tex"
-        type	oppath
-        hidewhen	"{ map_intensity == 0 }"
+        label	"Intensity"
+        help  "A float texture that if present will override the intensity parameter"
+        type	file
         default	{ "" }
-        help	"A float texture that if present will override the intensity parameter"
-        range	{ 0 1 }
-        export	none
         parmtag	{ "cook_dependent" "1" }
         parmtag	{ "oprelative" "." }
         parmtag	{ "vray_linked_only" "1" }
         parmtag	{ "vray_plugin" "LightDome" }
         parmtag	{ "vray_pluginattr" "intensity_tex" }
         parmtag	{ "vray_type" "TextureFloat" }
+        hidewhen  "{ use_intensity_tex == 0 }"
       }
 
       parm {
         name	"color"
         label	"Color"
+        help  "Color of the light"
         type	color
-        joinnext
-        disablewhen "{ map_color == 1 }"
         size	3
         default	{ "1" "1" "1" }
-        help	"Color of the light"
-        range	{ 0 10 }
-        export	none
         parmtag	{ "cook_dependent" "1" }
         parmtag	{ "vray_plugin" "LightDome" }
         parmtag	{ "vray_pluginattr" "color" }
         parmtag	{ "vray_type" "Color" }
-      }
-
-      parm {
-        name	"map_color"
-        label	"Map"
-        type	toggle
-        default	{ "0" }
-        help	"Enable to map color"
-        range	{ 0 1 }
-        export	none
-      }
-
-      parm {
-        name	"color_tex"
-        label	"Color Tex"
-        type	oppath
-        hidewhen "{ map_color == 0 }"
-        default	{ "" }
-        help	"A color texture that if present will override the color parameter"
-        range	{ 0 1 }
-        export	none
-        parmtag	{ "cook_dependent" "1" }
-        parmtag	{ "oprelative" "." }
-        parmtag	{ "vray_linked_only" "1" }
-        parmtag	{ "vray_plugin" "LightDome" }
-        parmtag	{ "vray_pluginattr" "color_tex" }
-        parmtag	{ "vray_type" "Texture" }
-      }
-
-      parm {
-        name	"use_dome_tex"
-        label	"Use Texture"
-        type	toggle
+        disablewhen "{ use_color_tex == 1 }"
+        hidewhen "{ use_dome_tex == 1 }"
         joinnext
-        default	{ "0" }
-        help	"True if the texture should be used"
-        range	{ 0 1 }
-        export	none
-        parmtag	{ "cook_dependent" "1" }
-        parmtag	{ "vray_plugin" "LightDome" }
-        parmtag	{ "vray_pluginattr" "use_dome_tex" }
-        parmtag	{ "vray_type" "boolean" }
+      }
+
+      parm {
+        name  "use_color_tex"
+        label "Texture"
+        help  "Use color texture"
+        type  toggle
+        default { "0" }
+        hidewhen "{ use_dome_tex == 1 }"
+      }
+
+      parm {
+        name  "color_tex"
+        label "Color"
+        help  "The color texture"
+        type  file
+        default { "" }
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_linked_only" "1" }
+        parmtag { "vray_plugin" "LightDome" }
+        parmtag { "vray_pluginattr" "color_tex" }
+        parmtag { "vray_type" "Texture" }
+        hidewhen "{ use_color_tex == 0 } { use_dome_tex == 1 }"
       }
 
       parm {
         name	"dome_tex"
-        label	"Dome Tex"
-        disablewhen	"{ use_dome_tex == 0 }"
+        label	"Dome Texture"
         type	file
         default	{ "" }
-        range	{ 0 1 }
-        export	none
         parmtag	{ "cook_dependent" "1" }
         parmtag	{ "oprelative" "." }
         parmtag	{ "vray_linked_only" "1" }
         parmtag	{ "vray_plugin" "LightDome" }
         parmtag	{ "vray_pluginattr" "dome_tex" }
         parmtag	{ "vray_type" "Texture" }
+        disablewhen "{ use_dome_tex == 0 }"
+        joinnext
       }
 
       parm {
-        name	"tex_resolution"
-        label	"Texture Resolution"
-        disablewhen	"{ use_dome_tex == 0 }"
-        type	integer
-        default	{ "1024" }
-        help	"The texture presampling resolution"
-        range	{ 0 64 }
-        export	none
-        parmtag	{ "cook_dependent" "1" }
-        parmtag	{ "vray_plugin" "LightDome" }
-        parmtag	{ "vray_pluginattr" "tex_resolution" }
-        parmtag	{ "vray_type" "int" }
+        name  "use_dome_tex"
+        label "Texture"
+        help  "Use Dome texture"
+        type  toggle
+        default { "0" }
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "LightDome" }
+        parmtag { "vray_pluginattr" "use_dome_tex" }
+        parmtag { "vray_type" "boolean" }
       }
 
       parm {
@@ -253,7 +225,7 @@
   }
 
 
-  groupcollapsible {//-----------------------------------------------------------------------------------------------------------------------------------
+  groupcollapsible {
     name "folder_shadows"
     label "Shadows"
 
@@ -277,7 +249,7 @@
     	name	"shadowColor"
     	label	"Shadow Color"
     	type	color
-      disablewhen "{ map_shadow_color == 1 }"
+      disablewhen "{ use_shadowColor_tex == 1 }"
       joinnext
     	size	3
     	default	{ "0" "0" "0" }
@@ -291,8 +263,8 @@
     }
 
     parm {
-      name	"map_shadow_color"
-      label	"Map"
+      name	"use_shadowColor_tex"
+      label	"Texture"
       type	toggle
       default	{ "0" }
       help	"Enable to map shadow color"
@@ -300,12 +272,11 @@
       export	none
     }
 
-
     parm {
     	name	"shadowColor_tex"
     	label	"Shadow Color Texture"
     	type	oppath
-      hidewhen "{ map_shadow_color == 0 }"
+      hidewhen "{ use_shadowColor_tex == 0 }"
     	default	{ "" }
     	help	"A color texture that if present will override the shadowColor parameter"
     	range	{ 0 1 }
@@ -334,9 +305,7 @@
 
   }
 
-
-
-  groupcollapsible { //-----------------------------------------------------------------------------------------------------------------------------------
+  groupcollapsible {
     name "folder_advanced"
     label "Advanced"
 
@@ -505,6 +474,21 @@
       parmtag	{ "vray_plugin" "LightDome" }
       parmtag	{ "vray_pluginattr" "dome_rayDistanceMode" }
       parmtag	{ "vray_type" "int" }
+    }
+
+    parm {
+      name  "tex_resolution"
+      label "Dome Texture Resolution"
+      disablewhen "{ use_dome_tex == 0 }"
+      type  integer
+      default { "1024" }
+      help  "The texture presampling resolution"
+      range { 0 64 }
+      export  none
+      parmtag { "cook_dependent" "1" }
+      parmtag { "vray_plugin" "LightDome" }
+      parmtag { "vray_pluginattr" "tex_resolution" }
+      parmtag { "vray_type" "int" }
     }
 
     parm {
