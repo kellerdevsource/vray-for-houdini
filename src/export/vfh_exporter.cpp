@@ -522,12 +522,10 @@ void VRayExporter::setAttrsFromOpNodePrms(Attrs::PluginDesc &pluginDesc, OP_Node
 				{
 					UT_String parmVal;
 					opNode->evalString(parmVal, parm->getToken(), 0, 0.0f);
-					OP_Node *tex_node = getOpNodeFromPath(parmVal);
-					if (tex_node) {
-						VRay::Plugin texPlugin = exportVop(tex_node);
-						if (texPlugin) {
-							pluginDesc.addAttribute(Attrs::PluginAttr(attrName, texPlugin));
-						}
+
+					VRay::Plugin opPlugin = exportOpPath(parmVal);
+					if (opPlugin) {
+						pluginDesc.addAttribute(Attrs::PluginAttr(attrName, opPlugin));
 					}
 				}
 				else if (!attrDesc.linked_only) {

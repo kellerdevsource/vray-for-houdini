@@ -63,7 +63,7 @@ static TIL_Raster *getImageFromCop(COP2_Node &copNode, double time, const char *
 	return image;
 }
 
-VRay::Plugin VRayExporter::exportCopNode(COP2_Node &copNode)
+VRay::Plugin VRayExporter::exportCopNodeBitmapBuffer(COP2_Node &copNode)
 {
 	VRay::Plugin res;
 
@@ -79,36 +79,82 @@ VRay::Plugin VRayExporter::exportCopNode(COP2_Node &copNode)
 			const int numInts = numPixelBytes / sizeof(int);
 
 			VRay::VUtils::IntRefList pixels(numInts);
-			memcpy(pixels.get(), raster->getPixels(), numPixelBytes);
+			vutils_memcpy(pixels.get(), raster->getPixels(), numPixelBytes);
 
 			Attrs::PluginDesc rawBitmapBuffer(getPluginName(&copNode, "RawBitmapBuffer"), "RawBitmapBuffer");
 			rawBitmapBuffer.addAttribute(PluginAttr("pixels", pixels));
 			rawBitmapBuffer.addAttribute(PluginAttr("pixels_type", pixelFormat));
 			rawBitmapBuffer.addAttribute(PluginAttr("width", raster->getXres()));
 			rawBitmapBuffer.addAttribute(PluginAttr("height", raster->getYres()));
-#if 0
-			VRay::VUtils::IntRefList alpha_pixels(numPixels);
-			rawBitmapBuffer.addAttribute(PluginAttr("alpha_pixels", alpha_pixels));
-#endif
-			Attrs::PluginDesc uvwgen(getPluginName(&copNode, "UVWGenChannel"), "UVWGenChannel");
-			uvwgen.addAttribute(PluginAttr("uvw_channel", 0));
 
-			// Data needs flipping for some reason.
-			VRay::Matrix uvwTm(1);
-			uvwTm.v1.set(0.0f, -1.0f, 0.0f);
-			uvwgen.addAttribute(PluginAttr("uvw_transform", VRay::Transform(uvwTm, VRay::Vector(0.0f, 0.0f, 0.0f))));
-
-			Attrs::PluginDesc texBitmap(getPluginName(&copNode, "TexBitmap"), "TexBitmap");
-			texBitmap.addAttribute(PluginAttr("bitmap", exportPlugin(rawBitmapBuffer)));
-			texBitmap.addAttribute(PluginAttr("uvwgen", exportPlugin(uvwgen)));
-
-			res = exportPlugin(texBitmap);
+			res = exportPlugin(rawBitmapBuffer);
 		}
 
 		delete raster;
 	}
 
 	return res;
+}
+
+VRay::Plugin VRayExporter::exportCopNodeWithDefaultMapping(COP2_Node &copNode, DefaultMappingType mappingType)
+{
+	VRay::Plugin res;
+
+	const VRay::Plugin bitmapBuffer = exportCopNodeBitmapBuffer(copNode);
+	if (bitmapBuffer) {
+		// Bitmap data needs flipping for some reason.
+		VRay::Matrix uvwTm(1);
+		uvwTm.v1.set(0.0f, -1.0f, 0.0f);
+
+		VRay::Plugin uvwgen;
+
+		switch (mappingType) {
+			case defaultMappingChannel: {
+				Attrs::PluginDesc uvwgenDesc(getPluginName(&copNode, "UVWGenChannel"),
+											 "UVWGenChannel");
+				uvwgenDesc.addAttribute(PluginAttr("uvw_channel", 0));
+				uvwgenDesc.addAttribute(PluginAttr("uvw_transform", VRay::Transform(uvwTm, VRay::Vector(0.0f, 0.0f, 0.0f))));
+
+				uvwgen = exportPlugin(uvwgenDesc);
+				break;
+			}
+			case defaultMappingChannelName: {
+				Attrs::PluginDesc uvwgenDesc(getPluginName(&copNode, "UVWGenMayaPlace2dTexture"),
+											 "UVWGenMayaPlace2dTexture");
+				uvwgenDesc.addAttribute(PluginAttr("uv_set_name", "uv"));
+				uvwgenDesc.addAttribute(PluginAttr("mirror_v", true));
+
+				uvwgen = exportPlugin(uvwgenDesc);
+				break;
+			}
+			case defaultMappingSpherical: {
+				Attrs::PluginDesc uvwgenDesc(getPluginName(&copNode, "UVWGenEnvironment"),
+											 "UVWGenEnvironment");
+				uvwgenDesc.addAttribute(PluginAttr("mapping_type", "spherical"));
+				uvwgenDesc.addAttribute(PluginAttr("uvw_matrix", uvwTm));
+
+				uvwgen = exportPlugin(uvwgenDesc);
+				break;
+			}
+			default:
+				break;
+		}
+
+		if (uvwgen) {
+			Attrs::PluginDesc texBitmap(getPluginName(&copNode, "TexBitmap"), "TexBitmap");
+			texBitmap.addAttribute(PluginAttr("bitmap", bitmapBuffer));
+			texBitmap.addAttribute(PluginAttr("uvwgen", uvwgen));
+
+			res = exportPlugin(texBitmap);
+		}
+	}
+
+	return res;
+}
+
+VRay::Plugin VRayExporter::exportCopNode(COP2_Node &copNode)
+{
+	return exportCopNodeWithDefaultMapping(copNode, defaultMappingChannel);
 }
 
 VRay::Plugin VRayExporter::exportOpPath(const UT_String &path)
@@ -119,8 +165,12 @@ VRay::Plugin VRayExporter::exportOpPath(const UT_String &path)
 		OP_Node *opNode = getOpNodeFromPath(path, getContext().getTime());
 		if (opNode) {
 			COP2_Node *copNode = opNode->castToCOP2Node();
+			VOP_Node *vopNode = opNode->castToVOPNode();
 			if (copNode) {
 				res = exportCopNode(*copNode);
+			}
+			else if (vopNode) {
+				res = exportVop(vopNode);
 			}
 		}
 	}

@@ -274,9 +274,24 @@ public:
 	/// @param value String value to check against "op:".
 	VRay::Plugin exportOpPath(const UT_String &value);
 
-	///	Exports COP node as RawBitmapBuffer.
+	///	Exports COP node as default TexBitmap.
 	/// @param copNode COP2 node.
 	VRay::Plugin exportCopNode(COP2_Node &copNode);
+
+	///	Exports COP node as RawBitmapBuffer.
+	/// @param copNode COP2 node.
+	VRay::Plugin exportCopNodeBitmapBuffer(COP2_Node &copNode);
+
+	/// Defautl mapping type.
+	enum DefaultMappingType {
+		defaultMappingChannel = 0,
+		defaultMappingChannelName,
+		defaultMappingSpherical,
+	};
+
+	///	Exports COP node as TexBitmap.
+	/// @param copNode COP2 node.
+	VRay::Plugin exportCopNodeWithDefaultMapping(COP2_Node &copNode, DefaultMappingType mappingType);
 
 #ifdef CGR_HAS_VRAYSCENE
 	VRay::Plugin exportVRayScene(OBJ_Node *obj_node, SOP_Node *geom_node);
