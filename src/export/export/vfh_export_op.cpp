@@ -251,5 +251,4 @@ VRay::Plugin VRayExporter::exportNodeFromPathWithDefaultMapping(const UT_String 
 VRay::Plugin VRayExporter::exportNodeFromPath(const UT_String &path)
 {
 	return exportNodeFromPathWithDefaultMapping(path, defaultMappingTriPlanar);
-
 }
