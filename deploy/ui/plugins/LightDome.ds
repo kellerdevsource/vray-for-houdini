@@ -159,7 +159,7 @@
         name	"dome_tex"
         label	"Dome Tex"
         disablewhen	"{ use_dome_tex == 0 }"
-        type	oppath
+        type	file
         default	{ "" }
         range	{ 0 1 }
         export	none
