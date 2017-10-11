@@ -225,12 +225,9 @@ OP::VRayNode::PluginResult LightNodeBase<VRayPluginID::LightDome>::asPluginDesc(
 		UT_String domeTex;
 		evalString(domeTex, "dome_tex", 0, 0.0);
 
-		COP2_Node *copNode = getCOP2NodeFromPath(domeTex, exporter.getContext().getTime());
-		if (copNode) {
-			const VRay::Plugin imgTex = exporter.exportCopNodeWithDefaultMapping(*copNode, VRayExporter::defaultMappingSpherical);
-			if (imgTex) {
-				pluginDesc.addAttribute(Attrs::PluginAttr("dome_tex", imgTex));
-			}
+		const VRay::Plugin imgTex = exporter.exportNodeFromPathWithDefaultMapping(domeTex, VRayExporter::defaultMappingSpherical);
+		if (imgTex) {
+			pluginDesc.addAttribute(Attrs::PluginAttr("dome_tex", imgTex));
 		}
 	}
 
