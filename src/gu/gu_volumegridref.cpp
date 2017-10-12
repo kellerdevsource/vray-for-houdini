@@ -179,6 +179,7 @@ void VRayVolumeGridRef::install(GA_PrimitiveFactory *gafactory)
 		return;
 	}
 
+	SYSconst_cast(theFactory.typeDef()).setHasLocalTransform(true);
 	theTypeId = theFactory.typeDef().getId();
 }
 

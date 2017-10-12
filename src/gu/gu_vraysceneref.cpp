@@ -171,10 +171,7 @@ GU_ConstDetailHandle VRaySceneRef::getPackedDetail(GU_PackedContext *context) co
 		return getDetail();
 	}
 
-	// Create geometry on demand. If the user only requests the
-	// bounding box (i.e. the viewport LOD is set to "box"), then we never
-	// have to actually create the proxy's geometry.
-	VRaySceneRef *me = const_cast< VRaySceneRef * >(this);
+	VRaySceneRef *me = SYSconst_cast(this);
 
 	using namespace VUtils;
 	VUtils::Vrscene::Preview::VrsceneSettings vrsceneSettings;
@@ -199,7 +196,6 @@ GU_ConstDetailHandle VRaySceneRef::getPackedDetail(GU_PackedContext *context) co
 				if (nodeData && nodeData->getDataType() == Vrscene::Preview::ObjectDataTypeMesh) {
 					// detail for the mesh
 					GU_Detail *gdmp = new GU_Detail();
-
 
 					// create preview mesh
 					Vrscene::Preview::VrsceneObjectDataMesh *mesh = static_cast<Vrscene::Preview::VrsceneObjectDataMesh*>(nodeData);
