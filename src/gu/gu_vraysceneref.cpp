@@ -205,8 +205,7 @@ GU_ConstDetailHandle VRaySceneRef::getPackedDetail(GU_PackedContext *context) co
 					// allocate the points, this is the offset of the first one
 					GA_Offset pointOffset = gdmp->appendPointBlock(vertices.count());
 					// iterate through points by their offsets
-					for (int v = 0; v < vertices.count();
-						++v, ++pointOffset) {
+					for (int v = 0; v < vertices.count(); ++v, ++pointOffset) {
 
 						Vector vert = tm * vertices[v];
 						if (flipAxis) {
