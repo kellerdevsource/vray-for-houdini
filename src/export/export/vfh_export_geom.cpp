@@ -43,6 +43,7 @@ static struct PrimPackedTypeIDs {
 		, packedGeometry(0)
 		, vrayProxyRef(0)
 		, vraySceneRef(0)
+		, geomPlaneRef(0)
 	{}
 
 	void init() {
@@ -55,6 +56,7 @@ static struct PrimPackedTypeIDs {
 		vrayProxyRef = GU_PrimPacked::lookupTypeId("VRayProxyRef");
 		vrayVolumeGridRef = GU_PrimPacked::lookupTypeId("VRayVolumeGridRef");
 		vraySceneRef = GU_PrimPacked::lookupTypeId("VRaySceneRef");
+		geomPlaneRef = GU_PrimPacked::lookupTypeId("GeomInfinitePlaneRef");
 
 		initialized = true;
 	}
@@ -69,6 +71,7 @@ public:
 	GA_PrimitiveTypeId vrayProxyRef;
 	GA_PrimitiveTypeId vrayVolumeGridRef;
 	GA_PrimitiveTypeId vraySceneRef;
+	GA_PrimitiveTypeId geomPlaneRef;
 } primPackedTypeIDs;
 
 static boost::format objGeomNameFmt("%s|%i@%s");
@@ -77,6 +80,7 @@ static boost::format polyNameFmt("GeomStaticMesh|%i@%s");
 static boost::format alembicNameFmt("Alembic|%i@%s");
 static boost::format vrmeshNameFmt("VRayProxy|%i@%s");
 static boost::format vrsceneNameFmt("VRayScene|%i@%s");
+static boost::format geomplaneNameFmt("GeomInfinitePlane|%i@%s");
 
 static const char intrAlembicFilename[] = "abcfilename";
 static const char intrAlembicObjectPath[] = "abcobjectpath";
@@ -1190,6 +1194,26 @@ VRay::Plugin ObjectExporter::exportVRaySceneRef(OBJ_Node &objNode, const GU_Prim
 	pluginExporter.setAttrsFromUTOptions(pluginDesc, options);
 
 	pluginDesc.add(Attrs::PluginAttr("transform", getTm()));
+
+	return pluginExporter.exportPlugin(pluginDesc);
+}
+
+VRay::Plugin ObjectExporter::exportGeomPlaneRef(OBJ_Node &objNode, const GU_PrimPacked &prim)
+{
+	if (!doExportGeometry) {
+		return VRay::Plugin();
+	}
+
+	UT_String primname;
+	prim.getIntrinsic(prim.findIntrinsic(intrPackedPrimitiveName), primname);
+
+	const int key = getPrimPackedID(prim);
+	Attrs::PluginDesc pluginDesc(boost::str(vrsceneNameFmt % key % primname.buffer()), "GeomInfinitePlane");
+
+	const VRaySceneRef *geomplaneref = UTverify_cast<const VRaySceneRef*>(prim.implementation());
+
+	UT_Options options = geomplaneref->getOptions();
+	pluginExporter.setAttrsFromUTOptions(pluginDesc, options);
 
 	return pluginExporter.exportPlugin(pluginDesc);
 }
