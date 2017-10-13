@@ -76,7 +76,7 @@ static boost::format hairNameFmt("GeomMayaHair|%i@%s");
 static boost::format polyNameFmt("GeomStaticMesh|%i@%s");
 static boost::format alembicNameFmt("Alembic|%i@%s");
 static boost::format vrmeshNameFmt("VRayProxy|%i@%s");
-static boost::format vrsceneNameFmt("VRayScene|%i@s");
+static boost::format vrsceneNameFmt("VRayScene|%i@%s");
 
 static const char intrAlembicFilename[] = "abcfilename";
 static const char intrAlembicObjectPath[] = "abcobjectpath";
