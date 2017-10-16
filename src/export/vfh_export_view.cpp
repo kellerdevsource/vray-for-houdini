@@ -192,10 +192,10 @@ void VRayExporter::fillViewParamFromCameraNode(const OBJ_Node &camera, ViewParam
 		else if (viewParams.physCam.selectedItem == physicalCameraUsePhysicalCameraSettings) {
 			viewParams.physCam.exposure = camera.evalInt("CameraPhysical_exposure", 0, t);
 			viewParams.physCam.focalLength = camera.evalFloat("CameraPhysical_focal_length", 0, t);
-			viewParams.physCam.fNumber = camera.evalFloat("CameraPhysical_f_number", 0, t);
-			viewParams.physCam.shutterSpeed = camera.evalFloat("CameraPhysical_shutter_speed", 0, t);
 		}
 
+		viewParams.physCam.shutterSpeed = camera.evalFloat("CameraPhysical_shutter_speed", 0, t);
+		viewParams.physCam.fNumber = camera.evalFloat("CameraPhysical_f_number", 0, t);
 		viewParams.physCam.filmWidth = camera.evalFloat("CameraPhysical_film_width", 0, t);
 		viewParams.physCam.fov = camera.evalFloat("CameraPhysical_fov", 0, t);
 		viewParams.physCam.shutterAngle = camera.evalFloat("CameraPhysical_shutter_angle", 0, t);
@@ -226,6 +226,7 @@ ReturnValue VRayExporter::fillSettingsMotionBlur(ViewParams &viewParams, Attrs::
 
 void VRayExporter::fillPhysicalCamera(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc)
 {
+	//zoom_factor darkens the edges of the render whenever anuthing but use physical camera settings is selected
 	if (!viewParams.cameraObject)
 		return;
 
@@ -298,6 +299,7 @@ void VRayExporter::fillPhysicalCamera(const ViewParams &viewParams, Attrs::Plugi
 		}
 		case physicalCameraUseFieldOfView: {
 			specifyFovValue = 1;
+			pluginDesc.add(Attrs::PluginAttr("fov", SYSdegToRad(viewParams.physCam.fov)));//use the fov from the phys cam ui
 			break;
 		}
 		case physicalCameraUsePhysicalCameraSettings: {
