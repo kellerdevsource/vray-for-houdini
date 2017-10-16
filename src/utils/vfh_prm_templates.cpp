@@ -431,7 +431,7 @@ Parm::PRMList& Parm::PRMList::addFromFile(const char *filepath, const char *incl
 			group->addPage(currentPage);
 		}
 		else {
-			Log::getLog().warning("Parse error in file %s.", filepath);
+			Log::getLog().error("Parse error in file %s.", filepath);
 			delete currentPage;
 		}
 	}

@@ -400,7 +400,7 @@ VRay::Plugin VRayPluginRenderer::exportPlugin(const Attrs::PluginDesc &pluginDes
 
 	if (pluginDesc.pluginID.empty()) {
 		// NOTE: Could be done intentionally to skip plugin creation
-		Log::getLog().warning("[%s] PluginDesc.pluginID is not set!",
+		Log::getLog().debug("[%s] PluginDesc.pluginID is not set!",
 							  pluginDesc.pluginName.c_str());
 		return VRay::Plugin();
 	}

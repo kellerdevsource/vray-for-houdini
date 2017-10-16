@@ -963,7 +963,7 @@ void VRayExporter::RtCallbackVop(OP_Node *caller, void *callee, OP_EventType typ
 
 	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
 
-	Log::getLog().info("RtCallbackVop: %s from \"%s\"",
+	Log::getLog().debug("RtCallbackVop: %s from \"%s\"",
 					   OPeventToString(type), caller->getName().buffer());
 
 	switch (type) {
@@ -998,7 +998,7 @@ VRay::Plugin VRayExporter::exportVop(OP_Node *opNode, ExportContext *parentConte
 
 	const UT_String &opType = vop_node->getOperator()->getName();
 
-	Log::getLog().info("Exporting node \"%s\" [%s]...",
+	Log::getLog().debug("Exporting node \"%s\" [%s]...",
 					   vop_node->getName().buffer(),
 					   opType.buffer());
 
@@ -1103,7 +1103,7 @@ void VRayExporter::RtCallbackDisplacementObj(OP_Node *caller, void *callee, OP_E
 
 	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
 
-	Log::getLog().info("RtCallbackDisplacementObj: %s from \"%s\"",
+	Log::getLog().debug("RtCallbackDisplacementObj: %s from \"%s\"",
 					   OPeventToString(type), caller->getName().buffer());
 
 	switch (type) {
@@ -1146,7 +1146,7 @@ void VRayExporter::RtCallbackDisplacementShop(OP_Node *caller, void *callee, OP_
 
 	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
 
-	Log::getLog().info("RtCallbackDisplacementShop: %s from \"%s\"",
+	Log::getLog().debug("RtCallbackDisplacementShop: %s from \"%s\"",
 					   OPeventToString(type), caller->getName().buffer());
 
 	if (type == OP_INPUT_REWIRED) {
@@ -1189,7 +1189,7 @@ void VRayExporter::RtCallbackDisplacementVop(OP_Node *caller, void *callee, OP_E
 
 	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
 
-	Log::getLog().info("RtCallbackDisplacementVop: %s from \"%s\"",
+	Log::getLog().debug("RtCallbackDisplacementVop: %s from \"%s\"",
 					   OPeventToString(type), caller->getName().buffer());
 
 	switch (type) {
@@ -1466,7 +1466,7 @@ void VRayExporter::addOpCallback(OP_Node *op_node, OP_EventMethod cb)
 		return;
 
 	if (!op_node->hasOpInterest(this, cb)) {
-		Log::getLog().info("addOpInterest(%s)",
+		Log::getLog().debug("addOpInterest(%s)",
 							op_node->getName().buffer());
 
 		op_node->addOpInterest(this, cb);
@@ -1480,7 +1480,7 @@ void VRayExporter::addOpCallback(OP_Node *op_node, OP_EventMethod cb)
 void VRayExporter::delOpCallback(OP_Node *op_node, OP_EventMethod cb)
 {
 	if (op_node->hasOpInterest(this, cb)) {
-		Log::getLog().info("removeOpInterest(%s)",
+		Log::getLog().debug("removeOpInterest(%s)",
 						   op_node->getName().buffer());
 
 		op_node->removeOpInterest(this, cb);

@@ -71,7 +71,7 @@ GA_Detail::IOStatus Vrmesh::fileLoad(GEO_Detail *geo, UT_IStream &stream, bool /
 		return GA_Detail::IOStatus(false);
 	}
 
-	Log::getLog().info("Vrmesh::fileLoad(%s)", filepath);
+	Log::getLog().debug("Vrmesh::fileLoad(%s)", filepath);
 
 	GU_PrimPacked *pack = GU_PrimPacked::build(*gdp, "VRayProxyRef");
 	if (NOT(pack)) {
