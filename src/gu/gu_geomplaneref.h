@@ -137,19 +137,7 @@ private:
 	{
 		m_detail = GU_ConstDetailHandle();
 	}
-	bool updateFrom(const UT_Options &options)
-	{
-		if (m_options == options) {
-			return false;
-		}
-
-		m_options = options;
-		m_dirty = true;
-		// Notify base primitive that topology has changed
-		topologyDirty();
-
-		return true;
-	}
+	bool updateFrom(const UT_Options &options);
 
 private:
 	GU_ConstDetailHandle   m_detail;  ///< detail handle for viewport geometry

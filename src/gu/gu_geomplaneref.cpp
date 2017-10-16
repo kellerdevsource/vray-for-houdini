@@ -200,3 +200,18 @@ void GeomPlaneRef::countMemory(UT_MemoryCounter &counter, bool inclusive) const
 		counter.countUnshared(mem);
 	}
 }
+
+bool GeomPlaneRef::updateFrom(const UT_Options &options)
+{
+	if (m_options == options) {
+		return false;
+	}
+
+	m_options.merge(options);
+	m_dirty = true;
+
+	// Notify base primitive that topology has changed
+	topologyDirty();
+
+	return true;
+}

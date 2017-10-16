@@ -19,6 +19,7 @@
 #include "gu/gu_vrayproxyref.h"
 #include "gu/gu_volumegridref.h"
 #include "gu/gu_vraysceneref.h"
+#include "gu/gu_geomplaneref.h"
 #include "rop/vfh_rop.h"
 #include "sop/sop_node_base.h"
 #include "vop/vop_node_base.h"
@@ -1101,6 +1102,10 @@ VRay::Plugin ObjectExporter::exportPrimPacked(OBJ_Node &objNode, const GU_PrimPa
 		exportVRaySceneRef(objNode, prim);
 		return VRay::Plugin();
 	}
+	if (primTypeID == primPackedTypeIDs.geomPlaneRef) {
+		return exportGeomPlaneRef(objNode, prim);
+		return VRay::Plugin();
+	}
 
 	const GA_PrimitiveDefinition &lookupTypeDef = prim.getTypeDef();
 
@@ -1190,10 +1195,10 @@ VRay::Plugin ObjectExporter::exportVRaySceneRef(OBJ_Node &objNode, const GU_Prim
 
 	const VRaySceneRef *vraysceneref = UTverify_cast<const VRaySceneRef*>(prim.implementation());
 
+	pluginDesc.add(Attrs::PluginAttr("transform", getTm()));
+
 	UT_Options options = vraysceneref->getOptions();
 	pluginExporter.setAttrsFromUTOptions(pluginDesc, options);
-
-	pluginDesc.add(Attrs::PluginAttr("transform", getTm()));
 
 	return pluginExporter.exportPlugin(pluginDesc);
 }
@@ -1210,10 +1215,7 @@ VRay::Plugin ObjectExporter::exportGeomPlaneRef(OBJ_Node &objNode, const GU_Prim
 	const int key = getPrimPackedID(prim);
 	Attrs::PluginDesc pluginDesc(boost::str(vrsceneNameFmt % key % primname.buffer()), "GeomInfinitePlane");
 
-	const VRaySceneRef *geomplaneref = UTverify_cast<const VRaySceneRef*>(prim.implementation());
-
-	UT_Options options = geomplaneref->getOptions();
-	pluginExporter.setAttrsFromUTOptions(pluginDesc, options);
+	pluginDesc.addAttribute(Attrs::PluginAttr("normal", VRay::Vector(0.f, 1.f, 0.f)));
 
 	return pluginExporter.exportPlugin(pluginDesc);
 }
@@ -1687,7 +1689,8 @@ VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode)
 	const UT_String &renderOpType = renderSOP->getOperator()->getName();
 	if (renderOpType.startsWith("VRayNode") &&
 		!renderOpType.equal("VRayNodePhxShaderCache") &&
-		!renderOpType.equal("VRayNodeVRayProxy"))
+		!renderOpType.equal("VRayNodeVRayProxy") &&
+		!renderOpType.equal("VRayNodeGeomPlane"))
 	{
 		return exportVRaySOP(objNode, *renderSOP);
 	}
