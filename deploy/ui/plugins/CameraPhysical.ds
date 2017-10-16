@@ -134,9 +134,9 @@
 			label	"Field of View"
 			type	float
 			hidewhen "{ CameraPhysical_mode_select != 1}"
-			default	{ "1.5708" }
-			help	"the FOV value (in radians)"
-			range	{ 0 10 }
+			default	{ "43" }
+			help	"the FOV value (in degrees)"
+			range	{ 0 360 }
 			export	none
 			parmtag	{ "cook_dependent" "1" }
 			parmtag	{ "vray_plugin" "CameraPhysical" }
@@ -249,7 +249,7 @@
 			name	"CameraPhysical_specify_focus"
 			label	" "
 			type	toggle
-			hidewhen "{ CameraPhysical_use_dof == 0 } "
+			hidewhen "{ CameraPhysical_use_dof == 0 } {CameraPhysical_mode_select == 0}"
 			joinnext
 			default	{ "1" }
 			range	{ 0 1 }
@@ -265,7 +265,7 @@
 			type	float
 			default	{ "200" }
 			help	"focus distance in mm"
-			disablewhen	"{ CameraPhysical_specify_focus != 1 }"
+			disablewhen	"{ CameraPhysical_specify_focus != 1 } {CameraPhysical_mode_select == 0}"
 			hidewhen "{ CameraPhysical_use_dof == 0  } "
 			range	{ 0 800 }
 			export	none

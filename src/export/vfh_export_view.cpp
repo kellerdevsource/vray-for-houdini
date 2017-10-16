@@ -186,15 +186,16 @@ void VRayExporter::fillViewParamFromCameraNode(const OBJ_Node &camera, ViewParam
 			viewParams.physCam.focalUnits = static_cast<HoudiniFocalUnits>(camera.evalInt("focalunits", 0, t));
 			viewParams.physCam.houdiniFNumber = camera.evalFloat("fstop", 0, t);
 			viewParams.physCam.houdiniFocalLength = camera.evalFloat("focal", 0, t);
+			viewParams.physCam.houdiniAperture = camera.evalFloat("aperture", 0, t);
 			viewParams.physCam.houdiniFocusDistance = camera.evalFloat("focus", 0, t);
 		}
 		else if (viewParams.physCam.selectedItem == physicalCameraUsePhysicalCameraSettings) {
 			viewParams.physCam.exposure = camera.evalInt("CameraPhysical_exposure", 0, t);
 			viewParams.physCam.focalLength = camera.evalFloat("CameraPhysical_focal_length", 0, t);
-			viewParams.physCam.fNumber = camera.evalFloat("CameraPhysical_f_number", 0, t);
-			viewParams.physCam.shutterSpeed = camera.evalFloat("CameraPhysical_shutter_speed", 0, t);
 		}
 
+		viewParams.physCam.shutterSpeed = camera.evalFloat("CameraPhysical_shutter_speed", 0, t);
+		viewParams.physCam.fNumber = camera.evalFloat("CameraPhysical_f_number", 0, t);
 		viewParams.physCam.filmWidth = camera.evalFloat("CameraPhysical_film_width", 0, t);
 		viewParams.physCam.fov = camera.evalFloat("CameraPhysical_fov", 0, t);
 		viewParams.physCam.shutterAngle = camera.evalFloat("CameraPhysical_shutter_angle", 0, t);
@@ -225,6 +226,7 @@ ReturnValue VRayExporter::fillSettingsMotionBlur(ViewParams &viewParams, Attrs::
 
 void VRayExporter::fillPhysicalCamera(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc)
 {
+	//zoom_factor darkens the edges of the render whenever anuthing but use physical camera settings is selected
 	if (!viewParams.cameraObject)
 		return;
 
@@ -262,8 +264,6 @@ void VRayExporter::fillPhysicalCamera(const ViewParams &viewParams, Attrs::Plugi
 
 	switch (itemSelected) {
 		case physicalCameraUseHoudiniCameraSettings: {
-			pluginDesc.remove("shutter_speed");
-
 			UT_String focalUnits;
 			camera.evalString(focalUnits, "focalunits", 0, t);
 
@@ -291,19 +291,18 @@ void VRayExporter::fillPhysicalCamera(const ViewParams &viewParams, Attrs::Plugi
 			}
 
 			pluginDesc.add(Attrs::PluginAttr("focal_length", resultValue));
+			specifyFovValue = 1;
 			pluginDesc.add(Attrs::PluginAttr("f_number", camera.evalFloat("fstop", 0, t)));
 			pluginDesc.add(Attrs::PluginAttr("focus_distance", camera.evalFloat("focus", 0, t)));
 
 			break;
 		}
 		case physicalCameraUseFieldOfView: {
-			pluginDesc.remove("film_width");
-			pluginDesc.remove("focal_length");
 			specifyFovValue = 1;
+			pluginDesc.add(Attrs::PluginAttr("fov", SYSdegToRad(viewParams.physCam.fov)));//use the fov from the phys cam ui
 			break;
 		}
 		case physicalCameraUsePhysicalCameraSettings: {
-			pluginDesc.remove("fov");
 			specifyFovValue = 0;
 			break;
 		}
@@ -435,7 +434,6 @@ ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 		if (!isIPR() && !isGPU()) {
 			fillStereoSettings(viewParams, stereoSettings);
 		}
-		Attrs::PluginDesc cameraPhysical("cameraPhysical", "CameraPhysical");
 		Attrs::PluginDesc cameraDefault("cameraDefault", "CameraDefault");
 		Attrs::PluginDesc settingsCameraDof("settingsCameraDof", "SettingsCameraDof");
 
@@ -465,7 +463,7 @@ ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 		fillRenderView(viewParams, renderView);
 		exportPlugin(renderView);
 	}
-	else if (m_viewParams.changedPhysCam(viewParams)) {
+	if (m_viewParams.changedPhysCam(viewParams)) {
 		recreatePhysicalCamera(viewParams);
 	}
 
@@ -591,6 +589,7 @@ bool PhysicalCameraParams::operator ==(const PhysicalCameraParams &other) const
 			MemberEq(dontAffectSettings) &&
 			MemberEq(focalUnits) &&
 			MemberFloatEq(houdiniFocalLength) &&
+			MemberFloatEq(houdiniAperture) &&
 			MemberFloatEq(houdiniFocusDistance) &&
 			MemberFloatEq(houdiniFNumber));
 }
