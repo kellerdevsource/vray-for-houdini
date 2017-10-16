@@ -136,11 +136,11 @@ public:
 
 	/// Delete plugin for a given plugin description
 	/// @param pluginDesc - plugin description with plugin name set
-	void removePlugin(const Attrs::PluginDesc &pluginDesc);
+	void removePlugin(const Attrs::PluginDesc &pluginDesc, int checkExisting=true);
 
 	/// Delete plugin with the given name
 	/// @param pluginName - plugin name
-	void removePlugin(const std::string &pluginName);
+	void removePlugin(const std::string &pluginName, int checkExisting=true);
 
 	/// Delete plugin.
 	/// @param plugin V-Ray plugin instance.

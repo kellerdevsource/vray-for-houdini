@@ -417,11 +417,11 @@ ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 	if (needReset) {
 		Log::getLog().warning("VRayExporter::exportView: Reseting view plugins...");
 
-		removePlugin("settingsCamera");
-		removePlugin("settingsCameraDof");
-		removePlugin("stereoSettings");
-		removePlugin("cameraPhysical");
-		removePlugin("cameraDefault");
+		removePlugin("settingsCamera", false);
+		removePlugin("settingsCameraDof", false);
+		removePlugin("stereoSettings", false);
+		removePlugin("cameraPhysical", false);
+		removePlugin("cameraDefault", false);
 
 		Attrs::PluginDesc renderView("renderView", "RenderView");
 		Attrs::PluginDesc settingsMotionBlur("settingsMotionBlur", "SettingsMotionBlur");

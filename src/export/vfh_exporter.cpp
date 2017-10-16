@@ -1668,19 +1668,19 @@ void VRayExporter::exportPluginProperties(VRay::Plugin &plugin, const Attrs::Plu
 }
 
 
-void VRayExporter::removePlugin(OBJ_Node *node)
+void VRayExporter::removePlugin(OBJ_Node *node, int checkExisting)
 {
-	removePlugin(Attrs::PluginDesc(VRayExporter::getPluginName(node), ""));
+	removePlugin(Attrs::PluginDesc(VRayExporter::getPluginName(node), ""), checkExisting);
 }
 
 
-void VRayExporter::removePlugin(const std::string &pluginName)
+void VRayExporter::removePlugin(const std::string &pluginName, int checkExisting)
 {
-	removePlugin(Attrs::PluginDesc(pluginName, ""));
+	removePlugin(Attrs::PluginDesc(pluginName, ""), checkExisting);
 }
 
 
-void VRayExporter::removePlugin(const Attrs::PluginDesc &pluginDesc)
+void VRayExporter::removePlugin(const Attrs::PluginDesc &pluginDesc, int checkExisting)
 {
 	m_renderer.removePlugin(pluginDesc);
 }
@@ -1825,13 +1825,16 @@ int VRayExporter::renderFrame(int locked)
 
 	Log::getLog().debug("VRayExporter::renderFrame(%.3f)", m_context.getFloatFrame());
 
-	if (m_workMode == ExpWorkMode::ExpExport || m_workMode == ExpWorkMode::ExpExportRender) {
+	if (m_workMode == ExpExport || m_workMode == ExpExportRender) {
 		const fpreal t = getContext().getTime();
 
 		UT_String exportFilepath;
 		m_rop->evalString(exportFilepath, "render_export_filepath", 0, t);
 
-		if (exportFilepath.isstring()) {
+		if (!exportFilepath.isstring()) {
+			Log::getLog().error("Export mode is selected, but no filepath specified!");
+		}
+		else {
 			VRay::VRayExportSettings expSettings;
 			expSettings.framesInSeparateFiles = m_rop->evalInt("exp_separatefiles", 0, t);
 			expSettings.useHexFormat = m_rop->evalInt("exp_hexdata", 0, t);
@@ -1839,12 +1842,9 @@ int VRayExporter::renderFrame(int locked)
 
 			exportVrscene(exportFilepath.toStdString(), expSettings);
 		}
-		else {
-			Log::getLog().error("Export mode is selected, but no filepath specified!");
-		}
 	}
 
-	if (m_workMode == ExpWorkMode::ExpRender || m_workMode == ExpWorkMode::ExpExportRender) {
+	if (m_workMode == ExpRender || m_workMode == ExpExportRender) {
 		m_renderer.startRender(locked);
 	}
 
@@ -1869,7 +1869,6 @@ void VRayExporter::clearKeyFrames(float toTime)
 	Log::getLog().debug("VRayExporter::clearKeyFrames(%.3f)",
 						toTime);
 
-	// TODO: Replace with clearFramesUpToFrame()
 	// m_renderer.clearFrames(toTime);
 }
 

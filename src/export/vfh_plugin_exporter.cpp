@@ -560,9 +560,9 @@ void VRayPluginRenderer::setRendererMode(int mode)
 }
 
 
-void VRayPluginRenderer::removePlugin(const Attrs::PluginDesc &pluginDesc)
+void VRayPluginRenderer::removePlugin(const Attrs::PluginDesc &pluginDesc, int checkExisting)
 {
-	removePlugin(pluginDesc.pluginName);
+	removePlugin(pluginDesc.pluginName, checkExisting);
 }
 
 
@@ -574,11 +574,11 @@ void VRayPluginRenderer::removePlugin(VRay::Plugin plugin)
 }
 
 
-void VRayPluginRenderer::removePlugin(const std::string &pluginName)
+void VRayPluginRenderer::removePlugin(const std::string &pluginName, int checkExisting)
 {
 	if (m_vray) {
 		VRay::Plugin plugin = m_vray->getPlugin(pluginName);
-		if (!plugin) {
+		if (!plugin && checkExisting) {
 			Log::getLog().warning("VRayPluginRenderer::removePlugin: Plugin \"%s\" is not found!",
 								  pluginName.c_str());
 		}

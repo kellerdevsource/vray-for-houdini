@@ -330,13 +330,13 @@ public:
 	int exportVrscene(const std::string &filepath, VRay::VRayExportSettings &settings);
 
 	/// Delete plugins created for the given OBJ node.
-	void removePlugin(OBJ_Node *node);
+	void removePlugin(OBJ_Node *node, int checkExisting=true);
 
 	/// Delete plugin with the given name
-	void removePlugin(const std::string &pluginName);
+	void removePlugin(const std::string &pluginName, int checkExisting=true);
 
 	/// Delete plugin for the plugin description
-	void removePlugin(const Attrs::PluginDesc &pluginDesc);
+	void removePlugin(const Attrs::PluginDesc &pluginDesc, int checkExisting=true);
 
 	/// Delete plugin.
 	/// @param plugin V-Ray plugin instance.
