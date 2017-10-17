@@ -8,7 +8,7 @@
 # Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 #
 
-project(vhf_launcher)
+project(vfh_launcher)
 
 vfh_generate_launcher(TEMPLATE_FILENAME "string_defines.h.in"
 					  FILENAME "string_defines.h"
