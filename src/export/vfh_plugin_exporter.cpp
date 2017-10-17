@@ -578,9 +578,11 @@ void VRayPluginRenderer::removePlugin(const std::string &pluginName, int checkEx
 {
 	if (m_vray) {
 		VRay::Plugin plugin = m_vray->getPlugin(pluginName);
-		if (!plugin && checkExisting) {
-			Log::getLog().warning("VRayPluginRenderer::removePlugin: Plugin \"%s\" is not found!",
-								  pluginName.c_str());
+		if (!plugin) {
+			if (checkExisting) {
+				Log::getLog().warning("VRayPluginRenderer::removePlugin: Plugin \"%s\" is not found!",
+									  pluginName.c_str());
+			}
 		}
 		else {
 			m_vray->removePlugin(plugin);

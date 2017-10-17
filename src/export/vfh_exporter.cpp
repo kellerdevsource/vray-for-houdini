@@ -1682,7 +1682,7 @@ void VRayExporter::removePlugin(const std::string &pluginName, int checkExisting
 
 void VRayExporter::removePlugin(const Attrs::PluginDesc &pluginDesc, int checkExisting)
 {
-	m_renderer.removePlugin(pluginDesc);
+	m_renderer.removePlugin(pluginDesc, checkExisting);
 }
 
 void VRayExporter::removePlugin(VRay::Plugin plugin)
