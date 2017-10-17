@@ -106,6 +106,7 @@ set(SOURCES
 	gu/gu_volumegridref.cpp
 	gu/gu_vrayproxyref.cpp
 	gu/gu_vraysceneref.cpp
+	gu/gu_geomplaneref.cpp
 	io/io_vrmesh.cpp
 	obj/obj_node_base.cpp
 	rop/rop_vrayproxyrop.cpp
@@ -142,6 +143,7 @@ set(HEADERS
 	gu/gu_volumegridref.h
 	gu/gu_vrayproxyref.h
 	gu/gu_vraysceneref.h
+	gu/gu_geomplaneref.h
 	io/io_vrmesh.h
 	obj/obj_node_base.h
 	obj/obj_node_def.h
