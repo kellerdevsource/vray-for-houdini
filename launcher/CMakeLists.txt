@@ -13,7 +13,7 @@ project(vhf_launcher)
 vfh_generate_launcher(TEMPLATE_FILENAME "string_defines.h.in"
 					  FILENAME "string_defines.h"
 					  TEMPLATE_DIR ${CMAKE_SOURCE_DIR}/launcher
-					  COPY_INSTEAD)
+					  CPP_LAUNCHER)
 
 set(SOURCES
 	launcher.cpp
