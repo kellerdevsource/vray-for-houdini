@@ -86,7 +86,14 @@ int main() {
 	char *const argv[] = {
 		VFH_LAUNCHER_HFS, nullptr
 	};
+	// NOTE: for this to work in Visual Studio this extension is needed: https://marketplace.visualstudio.com/items?itemName=GreggMiskelly.MicrosoftChildProcessDebuggingPowerTool
+	// it will attach to the created executable
+	// for gdb: set follow-fork-mode child
 	int res = execvpe(VFH_LAUNCHER_HFS_BIN, argv, envItems.data());
+	if (res != 0) {
+		// intentinally thrown here so debugger can break and show
+		throw "Failed to launch houdini, please check string_defines.h";
+	}
 
 	return 0;
 }
