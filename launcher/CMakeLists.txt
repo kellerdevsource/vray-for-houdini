@@ -35,7 +35,7 @@ if(WITH_SOHO)
 	add_dependencies(${PROJECT_NAME} vray_for_houdini_ipr vray_for_houdini_python_ipr)
 endif()
 
-if(MSVC)
+if(MSVC AND NOT ${CMAKE_GENERATOR} STREQUAL "Ninja")
 	# Only Visual Studio generator produces INSTALL target
 	add_dependencies(${PROJECT_NAME} INSTALL)
 endif()
