@@ -692,6 +692,10 @@ VRayExporter::~VRayExporter()
 
 ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 {
+	if (m_isIPR != iprModeNone) {
+		return ReturnValue::Success;
+	}
+
 	const fpreal t = getContext().getTime();
 	OBJ_Node *camera = VRayExporter::getCamera(m_rop);
 
@@ -820,6 +824,11 @@ ReturnValue VRayExporter::exportSettings()
 								sp.c_str());
 		}
 		else {
+			if (m_isIPR != iprModeNone) {
+				if (sp == "SettingsOutput")
+					continue;
+			}
+
 			Attrs::PluginDesc pluginDesc(sp, sp);
 			if (sp == "SettingsOutput") {
 				if (fillSettingsOutput(pluginDesc) == ReturnValue::Error) {
