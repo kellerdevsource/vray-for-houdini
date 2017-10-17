@@ -76,6 +76,7 @@ if(WITH_VRAY_FOR_HOUDINI)
 		add_subdirectory(src/ipr)
 	endif()
 	add_subdirectory(src)
+	add_subdirectory(launcher)
 endif()
 
 if(WITH_TESTS)
