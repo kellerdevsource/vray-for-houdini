@@ -13,28 +13,15 @@
 #include <vector>
 #include <algorithm>
 
+#include <QProcessEnvironment>
+
 typedef std::map<std::string, std::string> EnvMap;
 
 EnvMap getCurrent() {
 	EnvMap map;
-	char * prevEnv = GetEnvironmentStrings();
-	char * iter = prevEnv;
-	std::vector<char> buffer(4096, 0);
-	while (true) {
-		const int len = strlen(iter);
-		if (!len) {
-			break;
-		}
-		buffer.resize(std::max<int>(len, buffer.size()));
-		strcpy(buffer.data(), iter);
-		char * ptr = strchr(buffer.data(), '=');
-		*ptr = 0;
-		++ptr;
-		if (strlen(buffer.data())) {
-			map[buffer.data()] = ptr;
-		}
-
-		iter += len + 1;
+	auto ourEnv = QProcessEnvironment::systemEnvironment();
+	for (const auto & key : ourEnv.keys()) {
+		map[key.toStdString()] = ourEnv.value(key).toStdString();
 	}
 	return map;
 }
