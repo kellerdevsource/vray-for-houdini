@@ -25,8 +25,17 @@ set(HEADERS
 
 include_directories(${CMAKE_BINARY_DIR})
 
+# This project must be excluded from all since INSTALL depends on ALL and it will create circular dependency
 add_executable(${PROJECT_NAME} EXCLUDE_FROM_ALL "${SOURCES};${HEADERS}")
 
 # This is to make sure other projects are built when 'vfh_launcher' is startup project
-add_dependencies(${PROJECT_NAME} vray_for_houdini INSTALL)
+add_dependencies(${PROJECT_NAME} vray_for_houdini)
 
+if(WITH_SOHO)
+	add_dependencies(${PROJECT_NAME} vray_for_houdini_ipr vray_for_houdini_python_ipr)
+endif()
+
+if(MSVC)
+	# Only Visual Studio generator produces INSTALL target
+	add_dependencies(${PROJECT_NAME} INSTALL)
+endif()
