@@ -394,6 +394,9 @@ public:
 	/// Get current export context
 	VRayOpContext &getContext() { return m_context; }
 
+	/// Get current export context
+	const VRayOpContext &getContext() const { return m_context; }
+
 	/// Get vfh plugin renderer
 	VRayPluginRenderer& getRenderer() { return m_renderer; }
 
@@ -428,7 +431,7 @@ public:
 
 	/// Test if we are using physical camera
 	/// @param camera[in] - camera object to read parameters from
-	static int isPhysicalCamera(const OBJ_Node &camera);
+	PhysicalCameraMode usePhysicalCamera(const OBJ_Node &camera) const;
 
 	/// Test if a node is animated
 	int isNodeAnimated(OP_Node *op_node);

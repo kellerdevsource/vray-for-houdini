@@ -1632,27 +1632,29 @@ void VRayExporter::exportScene()
 void VRayExporter::fillMotionBlurParams(MotionBlurParams &mbParams)
 {
 	OBJ_Node *camera = getCamera(m_rop);
-	if (camera && isPhysicalCamera(*camera)) {
-		const int cameraType = Parm::getParmInt(*camera, "CameraPhysical_type");
+
+	if (camera && usePhysicalCamera(*camera) != PhysicalCameraMode::modeNone) {
+		const PhysicalCameraType cameraType = static_cast<PhysicalCameraType>(Parm::getParmInt(*camera, "CameraPhysical_type"));
 		const fpreal frameDuration = OPgetDirector()->getChannelManager()->getSecsPerSample();
 
 		switch (cameraType) {
-			// Still camera
-			case 0: {
+			case PhysicalCameraType::typeStill: {
 				mbParams.mb_duration        = 1.0f / (Parm::getParmFloat(*camera, "CameraPhysical_shutter_speed") * frameDuration);
 				mbParams.mb_interval_center = mbParams.mb_duration * 0.5f;
 				break;
 			}
-				// Cinematic camera
-			case 1: {
+			case PhysicalCameraType::typeCinematic: {
 				mbParams.mb_duration        = Parm::getParmFloat(*camera, "CameraPhysical_shutter_angle") / 360.0f;
 				mbParams.mb_interval_center = Parm::getParmFloat(*camera, "CameraPhysical_shutter_offset") / 360.0f + mbParams.mb_duration * 0.5f;
 				break;
 			}
-				// Video camera
-			case 2: {
+			case PhysicalCameraType::typeVideo: {
 				mbParams.mb_duration        = 1.0f + Parm::getParmFloat(*camera, "CameraPhysical_latency") / frameDuration;
 				mbParams.mb_interval_center = -mbParams.mb_duration * 0.5f;
+				break;
+			}
+			default: {
+				vassert(false);
 				break;
 			}
 		}
@@ -1991,14 +1993,16 @@ int VRayExporter::hasVelocityOn(OP_Node &rop) const
 
 int VRayExporter::hasMotionBlur(OP_Node &rop, OBJ_Node &camera) const
 {
-	int hasMB = false;
-	if (isPhysicalCamera(camera)) {
-		hasMB = camera.evalInt("CameraPhysical_use_moblur", 0, 0.0);
+	int hasMoBlur;
+
+	if (usePhysicalCamera(camera) == PhysicalCameraMode::modeUser) {
+		hasMoBlur = camera.evalInt("CameraPhysical_use_moblur", 0, 0.0);
 	}
 	else {
-		hasMB = rop.evalInt("SettingsMotionBlur_on", 0, 0.0);
+		hasMoBlur = rop.evalInt("SettingsMotionBlur_on", 0, 0.0);
 	}
-	return hasMB;
+
+	return hasMoBlur;
 }
 
 

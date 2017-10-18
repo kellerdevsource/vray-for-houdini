@@ -27,91 +27,92 @@ struct RenderSizeParams {
 	int  h;
 };
 
-enum MenuItemSelected {
-	physicalCameraUseHoudiniCameraSettings = 0,
-	physicalCameraUseFieldOfView = 1,
-	physicalCameraUsePhysicalCameraSettings = 2,
+enum class CameraFovMode {
+	/// Use Houdini camera settings.
+	useHoudini = 0,
+
+	/// Use Physical camera native settings.
+	usePhysical,
+
+	/// FOV override.
+	useFovOverride,
 };
 
-enum PhysicalCameraType {
-	Still = 0,
-	Cinematic = 1,
-	Video = 2,
+enum class PhysicalCameraMode {
+	/// Non physical camera.
+	modeNone = 0,
+
+	/// User have added physical camera properties.
+	modeUser,
+
+	/// Some Houdini camera properties could be implemented only
+	/// utilizing physical camera plugin.
+	modeAuto,
 };
 
-enum HoudiniFocalUnits {
-	Millimeters = 0,
-	Meters = 1,
-	Nanometers = 2,
-	Inches = 3,
-	Feet = 4,
+enum class PhysicalCameraType {
+	typeStill = 0,
+	typeCinematic,
+	typeVideo,
+};
+
+enum class HoudiniFocalUnits {
+	millimeters = 0,
+	meters = 1,
+	nanometers = 2,
+	inches = 3,
+	feet = 4,
 };
 
 struct PhysicalCameraParams {
-	PhysicalCameraParams()
-		: type(Still)
-		, useDof(false)
-		, useMoBlur(false)
-		, selectedItem(physicalCameraUseHoudiniCameraSettings)
-		, exposure(true)
-		, filmWidth(36.0f)
-		, focalLength(50.0f)
-		, fov(1.5708f)
-		, fNumber(16.0f)
-		, shutterSpeed(100.0f)
-		, shutterAngle(180.0f)
-		, shutterOffset(0.0f)
-		, latency(0.0f)
-		, ISO(100.0f)
-		, zoomFactor(1.0f)
-		, specifyFocus(true)
-		, focusDistance(200.0f)
-		, targeted(1)
-		, targetDistance(200.0f)
-		, balance(1.0f)
-		, vignetting(1.0f)
-		, opticalVignetting(0.0f)
-		, subdivisions(4)
-		, dontAffectSettings(false)
-		, focalUnits(Millimeters)
-		, houdiniFocalLength(50.0f)
-		, houdiniAperture(41.4214f)
-		, houdiniFNumber(5.6f)
-		, houdiniFocusDistance(5.0f)
-	{}
+	CameraFovMode fovMode = CameraFovMode::useHoudini;
+	HoudiniFocalUnits focalUnits = HoudiniFocalUnits::millimeters;
+
+	PhysicalCameraType type = PhysicalCameraType::typeStill;
+	float film_width = 36.0f;
+	float focal_length = 40.0f;
+	float zoom_factor = 1.0f;
+	float distortion = 0.0f;
+	int distortion_type = 0;
+	float f_number = 8.0f;
+	float lens_shift = 0.0f;
+	float shutter_speed = 300.0f;
+	float shutter_angle = 180.0f;
+	float shutter_offset = 0.0f;
+	float latency = 0.0f;
+	float ISO = 200.0f;
+	int specify_focus = true;
+	float focus_distance = 200.0f;
+	int targeted = false; ///< If camera object has a target. Unused. Set to "False"
+	float target_distance = 200.0f; ///< Camera object target distance. Unused.
+	float dof_display_threshold = 0.001f;
+	int exposure = true;
+	VRay::Color white_balance = VRay::Color(1.0f, 1.0f, 1.0f);
+	float vignetting = 1.0f;
+	int blades_enable = false;
+	int blades_num = 5;
+	float blades_rotation = 0.0f;
+	float center_bias = 0.0f;
+	float anisotropy = 0.0f;
+	int use_dof = false;
+	int use_moblur = false;
+	int subdivs = 1;
+	int dont_affect_settings = false;
+	UT_String lens_file = "";
+	int specify_fov = false;
+	float fov = 1.5708f;
+	float horizontal_shift = 0.0f;
+	float horizontal_offset = 0.0f;
+	float vertical_offset = 0.0f;
+	UT_String distortion_tex = "";
+	int bmpaperture_enable = false;
+	int bmpaperture_resolution = 512;
+	UT_String bmpaperture_tex = "";
+	float optical_vignetting = 0.0f;
+	int bmpaperture_affects_exposure = true;
+	int enable_thin_lens_equation = true;
 
 	bool operator == (const PhysicalCameraParams &other) const;
-
-	PhysicalCameraType type;
-	bool useDof;
-	bool useMoBlur;
-	MenuItemSelected selectedItem;
-	bool exposure;
-	float filmWidth;
-	float focalLength;
-	float fov;
-	float fNumber;
-	float shutterSpeed;
-	float shutterAngle;
-	float shutterOffset;
-	float latency;
-	float ISO;
-	float zoomFactor;
-	bool specifyFocus;
-	float focusDistance;
-	bool targeted;
-	float targetDistance;
-	VRay::Color balance;
-	float vignetting;
-	float opticalVignetting;
-	int subdivisions;
-	bool dontAffectSettings;
-	// Houdini Params
-	HoudiniFocalUnits focalUnits;
-	float houdiniFocalLength;
-	float houdiniAperture;
-	float houdiniFNumber;
-	float houdiniFocusDistance;
 };
 
 struct RenderCropRegionParams {
@@ -186,28 +187,29 @@ struct RenderViewParams {
 	StereoViewParams stereoParams;
 };
 
-
 struct ViewParams {
 	explicit ViewParams(OBJ_Node *camera=nullptr)
-		: usePhysicalCamera(false)
+		: useCameraPhysical(PhysicalCameraMode::modeNone)
 		, cameraObject(camera)
 	{}
 
-	int               changedParams(const ViewParams &other) const;
-	int               changedSize(const ViewParams &other) const;
-	int               needReset(const ViewParams &other) const;
-	int               changedCropRegion(const ViewParams &other) const;
+	int needReset(const ViewParams &other) const;
+
+	int changedParams(const ViewParams &other) const;
+	int changedSize(const ViewParams &other) const;
+	int changedCropRegion(const ViewParams &other) const;
 	int changedPhysCam(const ViewParams &other) const;
 
 	void setCamera(OBJ_Node *camera) { cameraObject = camera; }
 
-	RenderSizeParams  renderSize;
-	RenderViewParams  renderView;
+	RenderSizeParams renderSize;
+	RenderViewParams renderView;
 	RenderCropRegionParams cropRegion;
-	PhysicalCameraParams physCam;
 
-	int               usePhysicalCamera;
-	OBJ_Node         *cameraObject;
+	PhysicalCameraMode useCameraPhysical;
+	PhysicalCameraParams cameraPhysical;
+
+	OBJ_Node *cameraObject;
 };
 
 /// Returns FOV value based on aperture and focal.
