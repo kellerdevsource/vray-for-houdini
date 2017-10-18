@@ -27,7 +27,6 @@ include_directories(${CMAKE_BINARY_DIR})
 
 # This project must be excluded from all since INSTALL depends on ALL and it will create circular dependency
 add_executable(${PROJECT_NAME} EXCLUDE_FROM_ALL "${SOURCES};${HEADERS}")
-target_link_libraries(${PROJECT_NAME} Qt5Core)
 
 # This is to make sure other projects are built when 'vfh_launcher' is startup project
 add_dependencies(${PROJECT_NAME} vray_for_houdini)
