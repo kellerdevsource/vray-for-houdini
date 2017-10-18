@@ -1,0 +1,25 @@
+#pragma once
+
+// Auto-generated file
+
+// all these are c++11 raw strings because cmake will paste some unescaped backslashes
+// the dlimiter is '!' since it cannot be contained in any path
+
+#define VFH_LAUNCHER_VRAY_APPSDK R"!(@APPSDK_ROOT@)!"
+#define VFH_LAUNCHER_VRAY_PLUGIN_DESC_PATH R"!(@CMAKE_SOURCE_DIR@/deploy/plugins_desc)!"
+#define VFH_LAUNCHER_VRAY_UI_DS_PATH R"!(@CMAKE_SOURCE_DIR@/deploy/ui)!"
+#define VFH_LAUNCHER_VRAY_FOR_HOUDINI_AURA_LOADERS R"!(@Phoenix_LIBRARIES@)!"
+#define VFH_LAUNCHER_PYTHONPATH R"!(@VFH_PYTHON_DIRPATH@;&)!"
+#define VFH_LAUNCHER_HFS R"!(@HOUDINI_INSTALL_ROOT@)!"
+#define VFH_LAUNCHER_HFS_BIN R"!(@HFS_BIN@)!"
+#define VFH_LAUNCHER_HOUDINI_PATH R"!(@CMAKE_SOURCE_DIR@/deploy/vfh_home;&)!"
+#define VFH_LAUNCHER_HOUDINI_DSO_PATH R"!(@VFH_DSO_DIRPATH@;&)!"
+#define VFH_LAUNCHER_HOUDINI13_VOLUME_COMPATIBILITY R"!(1)!"
+#define VFH_LAUNCHER_HOUDINI_DSO_ERROR R"!(1)!"
+#define VFH_LAUNCHER_HOUDINI_SOHO_DEVELOPER R"!(1)!"
+#define VFH_LAUNCHER_HOUDINI_DISABLE_CONSOLE R"!(0)!"
+#define VFH_LAUNCHER_HOUDINI_TEXT_CONSOLE R"!(1)!"
+#define VFH_LAUNCHER_HOUDINI_WINDOW_CONSOLE R"!(0)!"
+#define VFH_LAUNCHER_HOUDINI_VERBOSE_ERROR R"!(1)!"
+#define VFH_LAUNCHER_PATH R"!(@HOUDINI_INSTALL_ROOT@/bin;@VFH_BIN_DIRPATH@;@APPSDK_ROOT@/bin;@Phoenix_LIBRARIES@)!"
+#define VFH_LAUNCHER_QT_QPA_PLATFORM_PLUGIN_PATH R"!(@HOUDINI_INSTALL_ROOT@/bin/Qt_plugins/platforms)!"
