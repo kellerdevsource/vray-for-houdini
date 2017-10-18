@@ -358,14 +358,11 @@ public:
 	/// @retval 0 - no error
 	int renderSequence(int start, int end, int step, int locked=false);
 
-	void clearKeyFrames(float toTime);
+	void clearKeyFrames(double toTime);
 
 	/// Set if we are exporting animation
 	/// @note also used for motion blur
 	void setAnimation(bool on);
-
-	/// Set current export time
-	void setCurrentTime(fpreal time);
 
 	/// Set if we are exporting for IPR
 	void setIPR(int isIPR);

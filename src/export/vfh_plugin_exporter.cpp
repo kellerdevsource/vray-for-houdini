@@ -690,11 +690,11 @@ void VRayForHoudini::VRayPluginRenderer::setCurrentTime(fpreal fframe)
 }
 
 
-void VRayPluginRenderer::clearFrames(float toTime)
+void VRayPluginRenderer::clearFrames(double toTime) const
 {
-	if (m_vray) {
-		m_vray->clearAllPropertyValuesUpToTime(toTime);
-	}
+	if (!m_vray)
+		return;
+	m_vray->clearAllPropertyValuesUpToTime(toTime);
 }
 
 

@@ -470,17 +470,21 @@ ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 
 	int physCamRecreated = false;
 
-	const bool needReset = m_viewParams.needReset(viewParams);
+	// NOTE: For animation we need to export keyframes everytime,
+	// real data will be wiped with "clearKeyFrames()" otherwise.
+	const bool needReset = isAnimation() || m_viewParams.needReset(viewParams);
 	if (needReset) {
 		Log::getLog().debug("VRayExporter::exportView: Resetting view...");
 
-		removePlugin("renderView", false);
-		removePlugin("settingsCamera", false);
-		removePlugin("settingsCameraDof", false);
-		removePlugin("settingsMotionBlur", false);
-		removePlugin("stereoSettings", false);
-		removePlugin("cameraPhysical", false);
-		removePlugin("cameraDefault", false);
+		if (!isAnimation()) {
+			removePlugin("renderView", false);
+			removePlugin("settingsCamera", false);
+			removePlugin("settingsCameraDof", false);
+			removePlugin("settingsMotionBlur", false);
+			removePlugin("stereoSettings", false);
+			removePlugin("cameraPhysical", false);
+			removePlugin("cameraDefault", false);
+		}
 
 		Attrs::PluginDesc renderView("renderView", "RenderView");
 		Attrs::PluginDesc settingsMotionBlur("settingsMotionBlur", "SettingsMotionBlur");
