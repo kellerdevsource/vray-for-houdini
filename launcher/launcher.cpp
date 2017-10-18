@@ -1,13 +1,9 @@
 #include "string_defines.h"
 
 #include <windows.h>
-#include <stdio.h>
 #include <tchar.h>
-#include <cstdlib>
-
-#include <stdio.h>  
-#include <conio.h>  
 #include <process.h> 
+#include <unistd.h>
 
 #include <map>
 #include <vector>
@@ -15,10 +11,13 @@
 
 typedef std::map<std::string, std::string> EnvMap;
 
+
 EnvMap getCurrent() {
 	EnvMap map;
-	char * prevEnv = GetEnvironmentStrings();
 	std::vector<char> buffer(4096, 0);
+
+#ifdef WIN32
+	char * prevEnv = GetEnvironmentStrings();
 
 	for (const char * iter = prevEnv; *iter; /**/) {
 		const int len = strlen(iter);
@@ -33,6 +32,22 @@ EnvMap getCurrent() {
 
 		iter += len + 1;
 	}
+#else
+	for (char ** iter = environ; *iter; iter++) {
+		const int len = strlen(*iter);
+		if (!len) {
+			break;
+		}
+		buffer.resize(std::max<int>(len, buffer.size()));
+		strcpy(buffer.data(), *iter);
+		char * ptr = strchr(buffer.data(), '=');
+		*ptr = 0;
+		++ptr;
+		if (strlen(buffer.data())) {
+			map[buffer.data()] = ptr;
+		}
+}
+#endif
 
 	return map;
 }
