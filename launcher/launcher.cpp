@@ -18,13 +18,10 @@ typedef std::map<std::string, std::string> EnvMap;
 EnvMap getCurrent() {
 	EnvMap map;
 	char * prevEnv = GetEnvironmentStrings();
-	char * iter = prevEnv;
 	std::vector<char> buffer(4096, 0);
-	while (true) {
+
+	for (const char * iter = prevEnv; *iter; /**/) {
 		const int len = strlen(iter);
-		if (!len) {
-			break;
-		}
 		buffer.resize(std::max<int>(len, buffer.size()));
 		strcpy(buffer.data(), iter);
 		char * ptr = strchr(buffer.data(), '=');
@@ -36,6 +33,7 @@ EnvMap getCurrent() {
 
 		iter += len + 1;
 	}
+
 	return map;
 }
 
