@@ -99,7 +99,7 @@ void Logger::writeMessages()
 		if (log.m_queue.empty()) {
 			std::unique_lock<std::mutex> lock(log.m_mtx);
 			if (log.m_queue.empty()) {
-				while (!isStoppedLogger || log.m_queue.empty()) {
+				while (!isStoppedLogger && log.m_queue.empty()) {
 					log.m_condVar.wait(lock);
 				}
 			}
