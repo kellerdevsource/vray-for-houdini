@@ -88,17 +88,6 @@ static float getLensShift(const OBJ_Node &camera, OP_Context &context)
 	return shift;
 }
 
-#if 0
-static void aspectCorrectFovOrtho(ViewParams &viewParams)
-{
-	const float aspect = float(viewParams.renderSize.w) / float(viewParams.renderSize.h);
-	if (aspect < 1.0f) {
-		viewParams.renderView.fov = 2.0f * atanf(tanf(viewParams.renderView.fov / 2.0f) * aspect);
-		viewParams.renderView.ortho_width *= aspect;
-	}
-}
-#endif
-
 PhysicalCameraMode VRayExporter::usePhysicalCamera(const OBJ_Node &camera) const
 {
 	static const std::string paramUsePhysCam("CameraPhysical_use");
