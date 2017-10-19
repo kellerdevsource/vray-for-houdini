@@ -289,11 +289,12 @@ static void fillViewParams(VRayExporter &exporter, PyObject *viewParamsDict, Vie
 	fillViewParamsFromDict(viewParamsDict, viewParams);
 	fillRenderRegionFromDict(viewParamsDict, viewParams);
 
-	if (cameraNode && (cameraNode->getName().equal("ipr_camera") ||
-	                   VRayExporter::isPhysicalCamera(*cameraNode)))
-	{
-		// If Physical Camera use is enabled, update parameters from it.
-		exporter.fillViewParamFromCameraNode(*cameraNode, viewParams);
+	if (cameraNode) {
+		if (cameraNode->getName().equal("ipr_camera") ||
+			exporter.usePhysicalCamera(*cameraNode) != PhysicalCameraMode::modeNone)
+		{
+			exporter.fillViewParamFromCameraNode(*cameraNode, viewParams);
+		}
 	}
 }
 
@@ -521,8 +522,8 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 			VRayExporter &exporter = lk.getExporter();
 			if (exporter.exportSettings() == ReturnValue::Success) {
 				ViewParams viewParams;
-				fillViewParamsFromDict(viewParamsDict, viewParams);
-				fillRenderRegionFromDict(viewParamsDict, viewParams);
+				fillViewParams(exporter, viewParamsDict, viewParams);
+
 				exporter.exportView(viewParams);
 
 				exporter.exportScene();

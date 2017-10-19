@@ -43,11 +43,11 @@ enum VMRenderPointsAs {
 struct MotionBlurParams {
 	MotionBlurParams()
 		: mb_geom_samples(1)
-		, mb_duration(0.)
-		, mb_interval_center(0.)
-		, mb_start(0)
-		, mb_end(0)
-		, mb_frame_inc(0)
+		, mb_duration(0.0)
+		, mb_interval_center(0.0)
+		, mb_start(0.0)
+		, mb_end(0.0)
+		, mb_frame_inc(0.0)
 	{}
 
 	void   calcParams(fpreal currFrame);

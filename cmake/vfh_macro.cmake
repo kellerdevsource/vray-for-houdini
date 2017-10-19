@@ -132,3 +132,115 @@ function(vfh_find_file)
 		message(WARNING "Phoenix SDK part \"${ARG_NAMES}\" is not found under \"${ARG_PATHS}\"!")
 	endif()
 endfunction()
+
+# Generate launcher with all needed environment variables set.
+# NOTE: used to generate .bat launchers and also used in c++ launcher
+function(vfh_generate_launcher)
+	cmake_parse_arguments(ARG "BATCH;RELEASE;CPP_LAUNCHER" "TEMPLATE_FILENAME;FILENAME;DESTINATION;BIN;TEMPLATE_DIR" "" ${ARGN})
+
+	if(NOT ARG_BIN)
+		if(ARG_CPP_LAUNCHER)
+			# Set executable file
+			if(ARG_BATCH)
+				set(EXE_FILE hbatch)
+			else()
+				set(EXE_FILE houdini)
+			endif()
+
+			# Set working dir and executable extension
+			if(WIN32)
+				set(EXE_EXT ".exe")
+				set(HFS_DIR ${HOUDINI_INSTALL_ROOT})
+			else()
+				set(EXE_EXT "")
+				set(HFS_DIR ${HFS})
+			endif()
+
+			set(ARG_BIN ${HFS_DIR}/bin/${EXE_FILE}${EXE_EXT})
+		else()
+			if(WIN32)
+				if(ARG_BATCH)
+					set(ARG_BIN "\"%HFS%\\bin\\hbatch.exe\"")
+				else()
+					set(ARG_BIN "start \"V-Ray For Houdini\" /D \"%USERPROFILE%\\Desktop\" \"%HFS%\\bin\\houdini.exe\"")
+				endif()
+			elseif(APPLE)
+			else()
+				if(ARG_BATCH)
+					set(ARG_BIN "\"\${HFS}/bin/hbatch\"")
+				else()
+					set(ARG_BIN "\"\${HFS}/bin/houdini\" -foreground")
+				endif()
+			endif()
+		endif()
+	endif()
+
+	if(NOT ARG_TEMPLATE_FILENAME)
+		if(WIN32)
+			set(ARG_TEMPLATE_FILENAME "hfs.bat.in")
+		elseif(APPLE)
+			set(ARG_TEMPLATE_FILENAME "hfs_osx.sh.in")
+		else()
+			set(ARG_TEMPLATE_FILENAME "hfs_linux.sh.in")
+		endif()
+	endif()
+
+	if(NOT ARG_DESTINATION)
+		set(ARG_DESTINATION ${CMAKE_BINARY_DIR})
+	endif()
+
+	if(NOT ARG_FILENAME)
+		if(ARG_RELEASE)
+			if(ARG_BATCH)
+				set(FILENAME_PREFIX hbatch)
+			else()
+				set(FILENAME_PREFIX hfs)
+			endif()
+			set(FILENAME_PREFIX ${FILENAME_PREFIX}${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD})
+		else()
+			if(ARG_BATCH)
+				set(FILENAME_PREFIX vfh_hbatch)
+			else()
+				set(FILENAME_PREFIX vfh_hfs)
+			endif()
+		endif()
+
+		if(WIN32)
+			set(ARG_FILENAME ${FILENAME_PREFIX}.bat)
+		else()
+			set(ARG_FILENAME ${FILENAME_PREFIX}.sh)
+		endif()
+	endif()
+
+	if(NOT ARG_TEMPLATE_DIR)
+		set(ARG_TEMPLATE_DIR ${CMAKE_SOURCE_DIR}/deploy)
+	endif()
+
+	file(TO_NATIVE_PATH ${CMAKE_SOURCE_DIR} CMAKE_SOURCE_DIR)
+	file(TO_NATIVE_PATH ${APPSDK_ROOT} APPSDK_ROOT)
+	file(TO_NATIVE_PATH ${Phoenix_LIBRARIES} Phoenix_LIBRARIES)
+	set(HFS_BIN ${ARG_BIN})
+
+	set(TMP_FILEPATH ${CMAKE_BINARY_DIR}/tmp/${ARG_FILENAME})
+
+	configure_file(${ARG_TEMPLATE_DIR}/${ARG_TEMPLATE_FILENAME}
+	               ${TMP_FILEPATH}
+	               @ONLY)
+
+	if(ARG_CPP_LAUNCHER)
+		# For cpp launcher we need to make the template now so we COPY instead of INSTALL
+		file(COPY ${TMP_FILEPATH}
+			DESTINATION
+				${ARG_DESTINATION})
+	else()
+		file(INSTALL ${TMP_FILEPATH}
+			DESTINATION
+				${ARG_DESTINATION}
+			FILE_PERMISSIONS
+				OWNER_READ OWNER_WRITE OWNER_EXECUTE
+				GROUP_READ GROUP_EXECUTE
+				WORLD_READ WORLD_EXECUTE)
+	endif()
+
+	file(REMOVE ${TMP_FILEPATH})
+endfunction()

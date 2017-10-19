@@ -76,6 +76,8 @@ if(WITH_VRAY_FOR_HOUDINI)
 		add_subdirectory(src/ipr)
 	endif()
 	add_subdirectory(src)
+	add_subdirectory(launcher)
+	set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT "vfh_launcher")
 endif()
 
 if(WITH_TESTS)

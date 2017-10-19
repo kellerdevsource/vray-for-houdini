@@ -358,14 +358,11 @@ public:
 	/// @retval 0 - no error
 	int renderSequence(int start, int end, int step, int locked=false);
 
-	void clearKeyFrames(float toTime);
+	void clearKeyFrames(double toTime);
 
 	/// Set if we are exporting animation
 	/// @note also used for motion blur
 	void setAnimation(bool on);
-
-	/// Set current export time
-	void setCurrentTime(fpreal time);
 
 	/// Set if we are exporting for IPR
 	void setIPR(int isIPR);
@@ -393,6 +390,9 @@ public:
 
 	/// Get current export context
 	VRayOpContext &getContext() { return m_context; }
+
+	/// Get current export context
+	const VRayOpContext &getContext() const { return m_context; }
 
 	/// Get vfh plugin renderer
 	VRayPluginRenderer& getRenderer() { return m_renderer; }
@@ -428,7 +428,7 @@ public:
 
 	/// Test if we are using physical camera
 	/// @param camera[in] - camera object to read parameters from
-	static int isPhysicalCamera(const OBJ_Node &camera);
+	PhysicalCameraMode usePhysicalCamera(const OBJ_Node &camera) const;
 
 	/// Test if a node is animated
 	int isNodeAnimated(OP_Node *op_node);

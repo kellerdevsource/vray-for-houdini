@@ -182,7 +182,7 @@ public:
 	void showVFB(bool show=true, const char *title=nullptr);
 
 	/// Removes all keyframe values at times less than 'toTime'
-	void clearFrames(float toTime);
+	void clearFrames(double toTime) const;
 
 	/// Start rendering at the current time.
 	/// @param locked[in] - when true this will force the current thread to block

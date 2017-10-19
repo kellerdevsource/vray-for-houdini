@@ -578,9 +578,11 @@ void VRayPluginRenderer::removePlugin(const std::string &pluginName, int checkEx
 {
 	if (m_vray) {
 		VRay::Plugin plugin = m_vray->getPlugin(pluginName);
-		if (!plugin && checkExisting) {
-			Log::getLog().warning("VRayPluginRenderer::removePlugin: Plugin \"%s\" is not found!",
-								  pluginName.c_str());
+		if (!plugin) {
+			if (checkExisting) {
+				Log::getLog().warning("VRayPluginRenderer::removePlugin: Plugin \"%s\" is not found!",
+									  pluginName.c_str());
+			}
 		}
 		else {
 			m_vray->removePlugin(plugin);
@@ -688,11 +690,11 @@ void VRayForHoudini::VRayPluginRenderer::setCurrentTime(fpreal fframe)
 }
 
 
-void VRayPluginRenderer::clearFrames(float toTime)
+void VRayPluginRenderer::clearFrames(double toTime) const
 {
-	if (m_vray) {
-		m_vray->clearAllPropertyValuesUpToTime(toTime);
-	}
+	if (!m_vray)
+		return;
+	m_vray->clearAllPropertyValuesUpToTime(toTime);
 }
 
 
