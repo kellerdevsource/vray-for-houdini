@@ -131,6 +131,40 @@ void VOP::NodeBase::getAllowedInputTypeInfosSubclass(unsigned idx, VOP_VopTypeIn
 	}
 }
 
+void VOP::NodeBase::getAllowedInputTypesSubclass(unsigned idx, VOP_VopTypeArray &type_infos)
+{
+	if (hasPluginInfo() && (idx >= 0) && (idx < pluginInfo->inputs.size())) {
+		const SocketDesc &socketTypeInfo = pluginInfo->inputs[idx];
+
+		type_infos.clear();
+
+		const VOP_Type vopType = socketTypeInfo.vopType;
+		type_infos.append(vopType);
+
+		if (vopType == VOP_SURFACE_SHADER) {
+			type_infos.append(VOP_TYPE_BSDF);
+		}
+		if (vopType == VOP_TYPE_BSDF) {
+			type_infos.append(VOP_SURFACE_SHADER);
+		}
+	}
+}
+
+bool VOP::NodeBase::willAutoconvertInputType(int idx)
+{
+	if (hasPluginInfo() && (idx >= 0) && (idx < pluginInfo->inputs.size())) {
+		const SocketDesc &socketTypeInfo = pluginInfo->inputs[idx];
+
+		const VOP_Type vopType = socketTypeInfo.vopType;
+		if (vopType == VOP_SURFACE_SHADER ||
+			vopType == VOP_TYPE_BSDF)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
 
 unsigned VOP::NodeBase::getNumVisibleOutputs() const
 {
