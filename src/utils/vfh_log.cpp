@@ -72,7 +72,10 @@ static void logMessage(const Logger::LogData &data)
 	vutils_timeToStr(strTime, CountOf(strTime), data.time);
 	vutils_dateToStr(strDate, CountOf(strDate), data.time);
 
-	const QString timeStamp(QString::asprintf("[%s:%s]", strDate, strTime));
+	// Because there is no "formatter.sprintf()" in Qt4...
+	QString formatter;
+
+	const QString timeStamp(formatter.sprintf("[%s:%s]", strDate, strTime));
 
 	QString colorTimeStamp(VUTILS_COLOR_BLUE);
 	colorTimeStamp.append(timeStamp);
@@ -81,18 +84,18 @@ static void logMessage(const Logger::LogData &data)
 	// Message with aligned components for console fixed font.
 	QString consoleMsg(colorTimeStamp);
 	consoleMsg.append(" VFH ");
-	consoleMsg.append(QString::asprintf("|%s%8s" VUTILS_COLOR_DEFAULT "| ",
+	consoleMsg.append(formatter.sprintf("|%s%8s" VUTILS_COLOR_DEFAULT "| ",
 					  logLevelAsColor(data.level), logLevelAsString(data.level)));
 
 	// Un-aligned message.
 	QString guiMsg("VFH ");
-	guiMsg.append(QString::asprintf("[%s] ", logLevelAsString(data.level)));
+	guiMsg.append(formatter.sprintf("[%s] ", logLevelAsString(data.level)));
 
 #ifdef VFH_DEBUG
 	const unsigned tid = std::hash<std::thread::id>()(data.tid) % 10000;
 
-	consoleMsg.append(QString::asprintf("(%s%4u) ", data.tid == MAIN_TID ? "#" : " ", tid));
-	guiMsg.append(QString::asprintf("(%s%u) ",      data.tid == MAIN_TID ? "#" : "",  tid));
+	consoleMsg.append(formatter.sprintf("(%s%4u) ", data.tid == MAIN_TID ? "#" : " ", tid));
+	guiMsg.append(formatter.sprintf("(%s%u) ",      data.tid == MAIN_TID ? "#" : "",  tid));
 #endif
 	
 	consoleMsg.append(logLevelAsColor(data.level));
