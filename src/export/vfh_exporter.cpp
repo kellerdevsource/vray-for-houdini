@@ -732,6 +732,11 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 	UT_String fileName;
 	m_rop->evalString(fileName, "SettingsOutput_img_file", 0, t);
 
+	if (m_rop->evalInt("SettingsOutput_img_file_needFrameNumber", 0, 0.0)) {
+		// NOTE: Remove after AppSDK update.
+		fileName.append(".");
+	}
+
 	fileName.append(".");
 
 	switch (imgFormat) {
