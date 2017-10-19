@@ -470,8 +470,8 @@ ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 
 	int physCamRecreated = false;
 
-	// NOTE: For animation we need to export keyframes everytime,
-	// real data will be wiped with "clearKeyFrames()" otherwise.
+	// NOTE: For animation we need to export keyframes everytime
+	// or data will be wiped with "clearKeyFrames()".
 	const bool needReset = isAnimation() || m_viewParams.needReset(viewParams);
 	if (needReset) {
 		Log::getLog().debug("VRayExporter::exportView: Resetting view...");
