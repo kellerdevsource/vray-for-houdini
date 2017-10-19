@@ -138,8 +138,7 @@ void VRayExporter::fillViewParamFromCameraNode(const OBJ_Node &camera, ViewParam
 	viewParams.renderSize.h = imageHeight;
 	viewParams.renderView.tm = getObjTransform(camera.castToOBJNode(), m_context);
 
-	viewParams.renderView.fovOverride = Parm::getParmInt(*m_rop, "SettingsCamera_override_fov");
-	if (viewParams.renderView.fovOverride) {
+	if (Parm::getParmInt(*m_rop, "SettingsCamera_override_fov")) {
 		viewParams.renderView.fov = Parm::getParmFloat(*m_rop, "SettingsCamera_fov");
 	}
 	else {
@@ -160,6 +159,9 @@ void VRayExporter::fillViewParamFromCameraNode(const OBJ_Node &camera, ViewParam
 
 		viewParams.renderView.fov = getFov(aperture, focal);
 	}
+
+	viewParams.renderView.clip_start = camera.evalFloat("near", 0, t);
+	viewParams.renderView.clip_end   = camera.evalFloat("far", 0, t);
 
 	const float cropLeft   = camera.evalFloat("cropl", 0, t);
 	const float cropRight  = camera.evalFloat("cropr", 0, t);
@@ -416,8 +418,18 @@ void VRayExporter::fillSettingsCameraDof(const ViewParams &viewParams, Attrs::Pl
 	setAttrsFromOpNodePrms(pluginDesc, m_rop, "SettingsCameraDof_");
 }
 
-VRay::Plugin VRayExporter::recreatePhysicalCamera(const ViewParams &viewParams) {
-	removePlugin("cameraPhysical", false);
+void VRayExporter::exportRenderView(const ViewParams &viewParams)
+{
+	Attrs::PluginDesc renderView("renderView", "RenderView");
+	fillRenderView(viewParams, renderView);
+	exportPlugin(renderView);
+}
+
+VRay::Plugin VRayExporter::exportPhysicalCamera(const ViewParams &viewParams, int needRemoval)
+{
+	if (needRemoval) {
+		removePlugin("cameraPhysical", false);
+	}
 
 	Attrs::PluginDesc cameraPhysical("cameraPhysical", "CameraPhysical");
 	fillPhysicalCamera(viewParams, cameraPhysical);
@@ -457,8 +469,6 @@ ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 	const int prevAutoCommit = getRenderer().getVRay().getAutoCommit();
 	getRenderer().setAutoCommit(false);
 
-	int physCamRecreated = false;
-
 	// NOTE: For animation we need to export keyframes everytime
 	// or data will be wiped with "clearKeyFrames()".
 	const bool needReset = isAnimation() || m_viewParams.needReset(viewParams);
@@ -475,53 +485,44 @@ ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 			removePlugin("cameraDefault", false);
 		}
 
-		Attrs::PluginDesc renderView("renderView", "RenderView");
-		Attrs::PluginDesc settingsMotionBlur("settingsMotionBlur", "SettingsMotionBlur");
-		fillRenderView(viewParams, renderView);
-		if (fillSettingsMotionBlur(viewParams, settingsMotionBlur) == ReturnValue::Error) {
-			return ReturnValue::Error;
-		}
 		Attrs::PluginDesc settingsCamera("settingsCamera", "SettingsCamera");
 		fillSettingsCamera(viewParams, settingsCamera);
-		Attrs::PluginDesc stereoSettings("stereoSettings", "VRayStereoscopicSettings");
-		if (!isIPR() && !isGPU()) {
-			fillStereoSettings(viewParams, stereoSettings);
-		}
-		Attrs::PluginDesc cameraDefault("cameraDefault", "CameraDefault");
-		Attrs::PluginDesc settingsCameraDof("settingsCameraDof", "SettingsCameraDof");
-
 		exportPlugin(settingsCamera);
-		exportPlugin(settingsMotionBlur);
 
 		if (viewParams.useCameraPhysical != PhysicalCameraMode::modeNone) {
-			getRenderer().setCamera(recreatePhysicalCamera(viewParams));
-			physCamRecreated = true;
+			getRenderer().setCamera(exportPhysicalCamera(viewParams, false));
 		}
 		else {
-			fillCameraDefault(viewParams, cameraDefault);
-			fillSettingsCameraDof(viewParams, settingsCameraDof);
+			Attrs::PluginDesc settingsMotionBlur("settingsMotionBlur", "SettingsMotionBlur");
+			fillSettingsMotionBlur(viewParams, settingsMotionBlur);
+			exportPlugin(settingsMotionBlur);
+
 			if (!viewParams.renderView.ortho) {
+				Attrs::PluginDesc settingsCameraDof("settingsCameraDof", "SettingsCameraDof");
+				fillSettingsCameraDof(viewParams, settingsCameraDof);
 				exportPlugin(settingsCameraDof);
 			}
+
+			Attrs::PluginDesc cameraDefault("cameraDefault", "CameraDefault");
+			fillCameraDefault(viewParams, cameraDefault);
 			getRenderer().setCamera(exportPlugin(cameraDefault));
 		}
 
-		if (viewParams.renderView.stereoParams.use && !isIPR() && !isGPU()) {
+		if (viewParams.renderView.stereoParams.use && isIPR() != iprModeSOHO && !isGPU()) {
+			Attrs::PluginDesc stereoSettings("stereoSettings", "VRayStereoscopicSettings");
+			fillStereoSettings(viewParams, stereoSettings);
 			exportPlugin(stereoSettings);
 		}
 
-		exportPlugin(renderView);
+		exportRenderView(viewParams);
 	}
-	else if (m_viewParams.changedParams(viewParams)) {
-		Attrs::PluginDesc renderView("renderView", "RenderView");
-		fillRenderView(viewParams, renderView);
-		exportPlugin(renderView);
-	}
-
-	if (m_viewParams.changedPhysCam(viewParams) &&
-		!physCamRecreated)
-	{
-		recreatePhysicalCamera(viewParams);
+	else {
+		if (m_viewParams.changedParams(viewParams)) {
+			exportRenderView(viewParams);
+		}
+		if (m_viewParams.changedPhysCam(viewParams)) {
+			getRenderer().setCamera(exportPhysicalCamera(viewParams, true));
+		}
 	}
 
 	getRenderer().commit();
@@ -562,7 +563,7 @@ int VRayExporter::exportView()
 
 	addOpCallback(camera, RtCallbackView);
 
-	ViewParams viewParams(camera);
+	ViewParams viewParams;
 	fillViewParamFromCameraNode(*camera, viewParams);
 
 	exportView(viewParams);
@@ -588,7 +589,6 @@ int ViewParams::needReset(const ViewParams &other) const
 {
 	return
 		MemberNotEq(useCameraPhysical) ||
-		MemberNotEq(cameraObject) ||
 		renderView.needReset(other.renderView);
 }
 
