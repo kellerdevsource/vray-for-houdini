@@ -416,7 +416,7 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 
 		if (conPlugin) {
 			ConnectedPluginInfo conPluginInfo(conPlugin);
-			const Parm::VRayPluginInfo &conPluginDescInfo = *Parm::GetVRayPluginInfo(conPlugin.getType());
+			const Parm::VRayPluginInfo &conPluginDescInfo = *Parm::GetVRayPluginInfo(conPluginInfo.plugin.getType());
 
 			// If connected plugin type is BRDF, but we expect a Material, wrap it into "MtlSingleBRDF".
 			if (conPluginDescInfo.pluginType == Parm::PluginType::PluginTypeBRDF &&
@@ -434,10 +434,10 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 			}
 
 			// Set "scene_name" for Cryptomatte.
-			if (vutils_strcmp(conPlugin.getType(), "MtlSingleBRDF") == 0) {
+			if (vutils_strcmp(conPluginInfo.plugin.getType(), "MtlSingleBRDF") == 0) {
 				VRay::ValueList sceneName(1);
 				sceneName[0] = VRay::Value(vopNode->getName().buffer());
-				conPlugin.setValue("scene_name", sceneName);
+				conPluginInfo.plugin.setValue("scene_name", sceneName);
 			}
 
 			const Parm::SocketDesc *fromSocketInfo = getConnectedOutputType(vopNode, attrName.c_str());
