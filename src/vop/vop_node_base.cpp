@@ -215,8 +215,6 @@ int VOP::NodeBase::getOutputFromName(const UT_String &out) const
 	if (hasPluginInfo()) {
 		for (int i = 0; i < pluginInfo->outputs.size(); ++i) {
 			if (out == pluginInfo->outputs[i].name.getToken()) {
-				printf(" %s => %i\n",
-					   out.buffer(), i);
 				return i;
 			}
 		}
