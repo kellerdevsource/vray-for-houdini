@@ -179,6 +179,7 @@ void VRayVolumeGridRef::install(GA_PrimitiveFactory *gafactory)
 		return;
 	}
 
+	SYSconst_cast(theFactory.typeDef()).setHasLocalTransform(true);
 	theTypeId = theFactory.typeDef().getId();
 }
 
@@ -205,10 +206,10 @@ void VRayForHoudini::VRayVolumeGridRef::fetchDataMaxVox(const VolumeCacheKey &ke
 	memset(data.dataRange.data(), 0, VRayVolumeGridRef::DataRangeMapSize);
 
 	if (data.aurPtr) {
-		Log::getLog().info("Loading cache took %dms", static_cast<int>(std::chrono::duration_cast<milliseconds>(tEndCache - tStart).count()));
+		Log::getLog().debug("Loading cache took %dms", static_cast<int>(std::chrono::duration_cast<milliseconds>(tEndCache - tStart).count()));
 	}
 	else {
-		Log::getLog().warning("Failed to load cache \"%s\"", key.path.c_str());
+		Log::getLog().error("Failed to load cache \"%s\"", key.path.c_str());
 		return;
 	}
 
@@ -251,7 +252,7 @@ void VRayForHoudini::VRayVolumeGridRef::fetchDataMaxVox(const VolumeCacheKey &ke
 
 		int extractTime = std::chrono::duration_cast<milliseconds>(tEndExtract - tStartExtract).count();
 
-		Log::getLog().info("Expanding channel '%s' took %dms, extracting took %dms", chan.displayName, expandTime, extractTime);
+		Log::getLog().debug("Expanding channel '%s' took %dms, extracting took %dms", chan.displayName, expandTime, extractTime);
 
 		volumeGdp->setTransform4(tm);
 	}
@@ -307,7 +308,7 @@ void VRayVolumeGridRef::initDataCache()
 	// we dont need the evict callback, because the data is in RAII objects and will be freed when evicted from cache
 	// so just print info
 	m_dataCache.setEvictCallback([](const VolumeCacheKey &key, VRayVolumeGridRef::VolumeCacheData &) {
-		Log::getLog().info("Removing \"%s\" from cache", key.path.c_str());
+		Log::getLog().debug("Removing \"%s\" from cache", key.path.c_str());
 	});
 }
 

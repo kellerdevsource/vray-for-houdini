@@ -27,7 +27,7 @@ void VRayExporter::RtCallbackSurfaceShop(OP_Node *caller, void *callee, OP_Event
 
 	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
 
-	Log::getLog().info("RtCallbackSurfaceShop: %s from \"%s\"",
+	Log::getLog().debug("RtCallbackSurfaceShop: %s from \"%s\"",
 					   OPeventToString(type), caller->getName().buffer());
 
 	if (type == OP_INPUT_REWIRED) {

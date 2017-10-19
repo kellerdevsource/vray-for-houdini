@@ -400,7 +400,7 @@ VRay::Plugin VRayPluginRenderer::exportPlugin(const Attrs::PluginDesc &pluginDes
 
 	if (pluginDesc.pluginID.empty()) {
 		// NOTE: Could be done intentionally to skip plugin creation
-		Log::getLog().warning("[%s] PluginDesc.pluginID is not set!",
+		Log::getLog().debug("[%s] PluginDesc.pluginID is not set!",
 							  pluginDesc.pluginName.c_str());
 		return VRay::Plugin();
 	}
@@ -560,9 +560,9 @@ void VRayPluginRenderer::setRendererMode(int mode)
 }
 
 
-void VRayPluginRenderer::removePlugin(const Attrs::PluginDesc &pluginDesc)
+void VRayPluginRenderer::removePlugin(const Attrs::PluginDesc &pluginDesc, int checkExisting)
 {
-	removePlugin(pluginDesc.pluginName);
+	removePlugin(pluginDesc.pluginName, checkExisting);
 }
 
 
@@ -574,13 +574,15 @@ void VRayPluginRenderer::removePlugin(VRay::Plugin plugin)
 }
 
 
-void VRayPluginRenderer::removePlugin(const std::string &pluginName)
+void VRayPluginRenderer::removePlugin(const std::string &pluginName, int checkExisting)
 {
 	if (m_vray) {
 		VRay::Plugin plugin = m_vray->getPlugin(pluginName);
 		if (!plugin) {
-			Log::getLog().warning("VRayPluginRenderer::removePlugin: Plugin \"%s\" is not found!",
-								  pluginName.c_str());
+			if (checkExisting) {
+				Log::getLog().warning("VRayPluginRenderer::removePlugin: Plugin \"%s\" is not found!",
+									  pluginName.c_str());
+			}
 		}
 		else {
 			m_vray->removePlugin(plugin);
@@ -688,11 +690,11 @@ void VRayForHoudini::VRayPluginRenderer::setCurrentTime(fpreal fframe)
 }
 
 
-void VRayPluginRenderer::clearFrames(float toTime)
+void VRayPluginRenderer::clearFrames(double toTime) const
 {
-	if (m_vray) {
-		m_vray->clearAllPropertyValuesUpToTime(toTime);
-	}
+	if (!m_vray)
+		return;
+	m_vray->clearAllPropertyValuesUpToTime(toTime);
 }
 
 

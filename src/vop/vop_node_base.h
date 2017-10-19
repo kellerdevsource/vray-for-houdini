@@ -81,6 +81,12 @@ protected:
 	/// this method should return valid vop types even when nothing is
 	/// connected to the corresponding input.
 	void getAllowedInputTypeInfosSubclass(unsigned idx, VOP_VopTypeInfoArray &type_infos) VRAY_OVERRIDE;
+	void getAllowedInputTypesSubclass(unsigned idx, VOP_VopTypeArray &voptypes) VRAY_OVERRIDE;
+	bool willAutoconvertInputType(int input_idx) VRAY_OVERRIDE;
+
+private:
+	bool                      hasPluginInfo() const;
+
 }; // NodeBase
 
 

@@ -23,8 +23,6 @@ void VOP::GeomDisplacedMesh::setPluginType()
 
 OP::VRayNode::PluginResult VOP::GeomDisplacedMesh::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
 {
-	Log::getLog().warning("OP::GeomDisplacedMesh::asPluginDesc()");
-
 	ECFnOBJNode fnObjContext(parentContext);
 	if (NOT(fnObjContext.isValid())) {
 		return OP::VRayNode::PluginResultError;

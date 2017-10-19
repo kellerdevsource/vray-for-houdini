@@ -679,6 +679,10 @@ VRayExporter::~VRayExporter()
 
 ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 {
+	if (m_isIPR != iprModeNone) {
+		return ReturnValue::Success;
+	}
+
 	const fpreal t = getContext().getTime();
 	OBJ_Node *camera = VRayExporter::getCamera(m_rop);
 
@@ -715,6 +719,11 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 	UT_String fileName;
 	m_rop->evalString(fileName, "SettingsOutput_img_file", 0, t);
 
+	if (m_rop->evalInt("SettingsOutput_img_file_needFrameNumber", 0, 0.0)) {
+		// NOTE: Remove after AppSDK update.
+		fileName.append(".");
+	}
+
 	fileName.append(".");
 
 	switch (imgFormat) {
@@ -742,9 +751,6 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 	pluginDesc.addAttribute(Attrs::PluginAttr("img_dir", dirPath.toStdString()));
 	pluginDesc.addAttribute(Attrs::PluginAttr("img_file", fileName.toStdString()));
 
-	// NOTE: we are exporting animation related properties in frames
-	// and compensating for this by setting SettingsUnitsInfo::seconds_scale
-	// i.e. scaling V-Ray time unit (see function exportSettings())
 	const fpreal animStart = CAST_ROPNODE(m_rop)->FSTART();
 	const fpreal animEnd = CAST_ROPNODE(m_rop)->FEND();
 	VRay::VUtils::ValueRefList frames(1);
@@ -773,11 +779,13 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 		}
 	}
 
-	pluginDesc.addAttribute(Attrs::PluginAttr("anim_start", animStart));
-	pluginDesc.addAttribute(Attrs::PluginAttr("anim_end", animEnd));
-	pluginDesc.addAttribute(Attrs::PluginAttr("frames_per_second", 1));
-	pluginDesc.addAttribute(Attrs::PluginAttr("frame_start", animStart));
+	pluginDesc.addAttribute(Attrs::PluginAttr("anim_start", OPgetDirector()->getChannelManager()->getTime(animStart)));
+	pluginDesc.addAttribute(Attrs::PluginAttr("anim_end", OPgetDirector()->getChannelManager()->getTime(animEnd)));
+	pluginDesc.addAttribute(Attrs::PluginAttr("frame_start", VUtils::fast_floor(animStart)));
+	pluginDesc.addAttribute(Attrs::PluginAttr("frame_end", VUtils::fast_floor(animEnd)));
+	pluginDesc.addAttribute(Attrs::PluginAttr("frames_per_second", OPgetDirector()->getChannelManager()->getSamplesPerSec()));
 	pluginDesc.addAttribute(Attrs::PluginAttr("frames", frames));
+
 	return ReturnValue::Success;
 }
 
@@ -807,6 +815,11 @@ ReturnValue VRayExporter::exportSettings()
 								sp.c_str());
 		}
 		else {
+			if (m_isIPR != iprModeNone) {
+				if (sp == "SettingsOutput")
+					continue;
+			}
+
 			Attrs::PluginDesc pluginDesc(sp, sp);
 			if (sp == "SettingsOutput") {
 				if (fillSettingsOutput(pluginDesc) == ReturnValue::Error) {
@@ -820,15 +833,12 @@ ReturnValue VRayExporter::exportSettings()
 	}
 
 	Attrs::PluginDesc pluginDesc("settingsUnitsInfo", "SettingsUnitsInfo");
-	// Houdini's time unit is fixed to second
-	// so SettingsUnitsInfo::seconds_scale shhould always be 1
 	pluginDesc.addAttribute(Attrs::PluginAttr("scene_upDir", VRay::Vector(0.0f, 1.0f, 0.0f)));
 	pluginDesc.addAttribute(Attrs::PluginAttr("meters_scale",
 											  OPgetDirector()->getChannelManager()->getUnitLength()));
-	pluginDesc.addAttribute(Attrs::PluginAttr("seconds_scale",
-											  OPgetDirector()->getChannelManager()->getTimeDelta(1)));
 
 	exportPlugin(pluginDesc);
+
 	return ReturnValue::Success;
 }
 
@@ -950,7 +960,7 @@ void VRayExporter::RtCallbackVop(OP_Node *caller, void *callee, OP_EventType typ
 
 	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
 
-	Log::getLog().info("RtCallbackVop: %s from \"%s\"",
+	Log::getLog().debug("RtCallbackVop: %s from \"%s\"",
 					   OPeventToString(type), caller->getName().buffer());
 
 	switch (type) {
@@ -985,7 +995,7 @@ VRay::Plugin VRayExporter::exportVop(OP_Node *opNode, ExportContext *parentConte
 
 	const UT_String &opType = vop_node->getOperator()->getName();
 
-	Log::getLog().info("Exporting node \"%s\" [%s]...",
+	Log::getLog().debug("Exporting node \"%s\" [%s]...",
 					   vop_node->getName().buffer(),
 					   opType.buffer());
 
@@ -1090,7 +1100,7 @@ void VRayExporter::RtCallbackDisplacementObj(OP_Node *caller, void *callee, OP_E
 
 	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
 
-	Log::getLog().info("RtCallbackDisplacementObj: %s from \"%s\"",
+	Log::getLog().debug("RtCallbackDisplacementObj: %s from \"%s\"",
 					   OPeventToString(type), caller->getName().buffer());
 
 	switch (type) {
@@ -1133,7 +1143,7 @@ void VRayExporter::RtCallbackDisplacementShop(OP_Node *caller, void *callee, OP_
 
 	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
 
-	Log::getLog().info("RtCallbackDisplacementShop: %s from \"%s\"",
+	Log::getLog().debug("RtCallbackDisplacementShop: %s from \"%s\"",
 					   OPeventToString(type), caller->getName().buffer());
 
 	if (type == OP_INPUT_REWIRED) {
@@ -1176,7 +1186,7 @@ void VRayExporter::RtCallbackDisplacementVop(OP_Node *caller, void *callee, OP_E
 
 	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
 
-	Log::getLog().info("RtCallbackDisplacementVop: %s from \"%s\"",
+	Log::getLog().debug("RtCallbackDisplacementVop: %s from \"%s\"",
 					   OPeventToString(type), caller->getName().buffer());
 
 	switch (type) {
@@ -1453,7 +1463,7 @@ void VRayExporter::addOpCallback(OP_Node *op_node, OP_EventMethod cb)
 		return;
 
 	if (!op_node->hasOpInterest(this, cb)) {
-		Log::getLog().info("addOpInterest(%s)",
+		Log::getLog().debug("addOpInterest(%s)",
 							op_node->getName().buffer());
 
 		op_node->addOpInterest(this, cb);
@@ -1467,7 +1477,7 @@ void VRayExporter::addOpCallback(OP_Node *op_node, OP_EventMethod cb)
 void VRayExporter::delOpCallback(OP_Node *op_node, OP_EventMethod cb)
 {
 	if (op_node->hasOpInterest(this, cb)) {
-		Log::getLog().info("removeOpInterest(%s)",
+		Log::getLog().debug("removeOpInterest(%s)",
 						   op_node->getName().buffer());
 
 		op_node->removeOpInterest(this, cb);
@@ -1517,17 +1527,13 @@ void VRayExporter::onAbort(VRay::VRayRenderer &renderer)
 {
 	if (renderer.isAborted()) {
 		setAbort();
+		reset();
 	}
-
-	reset();
 }
 
 void VRayExporter::exportScene()
 {
-	setCurrentTime(m_context.getFloatFrame());
-
-	Log::getLog().debug("VRayExporter::exportScene(%.3f)",
-						m_context.getFloatFrame());
+	Log::getLog().debug("VRayExporter::exportScene()");
 
 	if (m_isIPR != iprModeSOHO) {
 		exportView();
@@ -1610,27 +1616,29 @@ void VRayExporter::exportScene()
 void VRayExporter::fillMotionBlurParams(MotionBlurParams &mbParams)
 {
 	OBJ_Node *camera = getCamera(m_rop);
-	if (camera && isPhysicalCamera(*camera)) {
-		const int cameraType = Parm::getParmInt(*camera, "CameraPhysical_type");
+
+	if (camera && usePhysicalCamera(*camera) != PhysicalCameraMode::modeNone) {
+		const PhysicalCameraType cameraType = static_cast<PhysicalCameraType>(Parm::getParmInt(*camera, "CameraPhysical_type"));
 		const fpreal frameDuration = OPgetDirector()->getChannelManager()->getSecsPerSample();
 
 		switch (cameraType) {
-			// Still camera
-			case 0: {
+			case PhysicalCameraType::typeStill: {
 				mbParams.mb_duration        = 1.0f / (Parm::getParmFloat(*camera, "CameraPhysical_shutter_speed") * frameDuration);
 				mbParams.mb_interval_center = mbParams.mb_duration * 0.5f;
 				break;
 			}
-				// Cinematic camera
-			case 1: {
+			case PhysicalCameraType::typeCinematic: {
 				mbParams.mb_duration        = Parm::getParmFloat(*camera, "CameraPhysical_shutter_angle") / 360.0f;
 				mbParams.mb_interval_center = Parm::getParmFloat(*camera, "CameraPhysical_shutter_offset") / 360.0f + mbParams.mb_duration * 0.5f;
 				break;
 			}
-				// Video camera
-			case 2: {
+			case PhysicalCameraType::typeVideo: {
 				mbParams.mb_duration        = 1.0f + Parm::getParmFloat(*camera, "CameraPhysical_latency") / frameDuration;
 				mbParams.mb_interval_center = -mbParams.mb_duration * 0.5f;
+				break;
+			}
+			default: {
+				vassert(false);
 				break;
 			}
 		}
@@ -1655,33 +1663,27 @@ void VRayExporter::exportPluginProperties(VRay::Plugin &plugin, const Attrs::Plu
 }
 
 
-void VRayExporter::removePlugin(OBJ_Node *node)
+void VRayExporter::removePlugin(OBJ_Node *node, int checkExisting)
 {
-	removePlugin(Attrs::PluginDesc(VRayExporter::getPluginName(node), ""));
+	removePlugin(Attrs::PluginDesc(VRayExporter::getPluginName(node), ""), checkExisting);
 }
 
 
-void VRayExporter::removePlugin(const std::string &pluginName)
+void VRayExporter::removePlugin(const std::string &pluginName, int checkExisting)
 {
-	removePlugin(Attrs::PluginDesc(pluginName, ""));
+	removePlugin(Attrs::PluginDesc(pluginName, ""), checkExisting);
 }
 
 
-void VRayExporter::removePlugin(const Attrs::PluginDesc &pluginDesc)
+void VRayExporter::removePlugin(const Attrs::PluginDesc &pluginDesc, int checkExisting)
 {
-	m_renderer.removePlugin(pluginDesc);
+	m_renderer.removePlugin(pluginDesc, checkExisting);
 }
 
 void VRayExporter::removePlugin(VRay::Plugin plugin)
 {
 	m_renderer.removePlugin(plugin);
 }
-
-void VRayExporter::setCurrentTime(fpreal time)
-{
-	m_renderer.setCurrentTime(time);
-}
-
 
 void VRayExporter::setIPR(int isIPR)
 {
@@ -1808,17 +1810,18 @@ int VRayExporter::isStereoView() const
 
 int VRayExporter::renderFrame(int locked)
 {
-	setCurrentTime(getContext().getFloatFrame());
-
 	Log::getLog().debug("VRayExporter::renderFrame(%.3f)", m_context.getFloatFrame());
 
-	if (m_workMode == ExpWorkMode::ExpExport || m_workMode == ExpWorkMode::ExpExportRender) {
+	if (m_workMode == ExpExport || m_workMode == ExpExportRender) {
 		const fpreal t = getContext().getTime();
 
 		UT_String exportFilepath;
 		m_rop->evalString(exportFilepath, "render_export_filepath", 0, t);
 
-		if (exportFilepath.isstring()) {
+		if (!exportFilepath.isstring()) {
+			Log::getLog().error("Export mode is selected, but no filepath specified!");
+		}
+		else {
 			VRay::VRayExportSettings expSettings;
 			expSettings.framesInSeparateFiles = m_rop->evalInt("exp_separatefiles", 0, t);
 			expSettings.useHexFormat = m_rop->evalInt("exp_hexdata", 0, t);
@@ -1826,12 +1829,9 @@ int VRayExporter::renderFrame(int locked)
 
 			exportVrscene(exportFilepath.toStdString(), expSettings);
 		}
-		else {
-			Log::getLog().error("Export mode is selected, but no filepath specified!");
-		}
 	}
 
-	if (m_workMode == ExpWorkMode::ExpRender || m_workMode == ExpWorkMode::ExpExportRender) {
+	if (m_workMode == ExpRender || m_workMode == ExpExportRender) {
 		m_renderer.startRender(locked);
 	}
 
@@ -1851,13 +1851,11 @@ int VRayExporter::exportVrscene(const std::string &filepath, VRay::VRayExportSet
 }
 
 
-void VRayExporter::clearKeyFrames(float toTime)
+void VRayExporter::clearKeyFrames(double toTime)
 {
 	Log::getLog().debug("VRayExporter::clearKeyFrames(%.3f)",
 						toTime);
-
-	// TODO: Replace with clearFramesUpToFrame()
-	// m_renderer.clearFrames(toTime);
+	m_renderer.clearFrames(toTime);
 }
 
 
@@ -1970,14 +1968,16 @@ int VRayExporter::hasVelocityOn(OP_Node &rop) const
 
 int VRayExporter::hasMotionBlur(OP_Node &rop, OBJ_Node &camera) const
 {
-	int hasMB = false;
-	if (isPhysicalCamera(camera)) {
-		hasMB = camera.evalInt("CameraPhysical_use_moblur", 0, 0.0);
+	int hasMoBlur;
+
+	if (usePhysicalCamera(camera) == PhysicalCameraMode::modeUser) {
+		hasMoBlur = camera.evalInt("CameraPhysical_use_moblur", 0, 0.0);
 	}
 	else {
-		hasMB = rop.evalInt("SettingsMotionBlur_on", 0, 0.0);
+		hasMoBlur = rop.evalInt("SettingsMotionBlur_on", 0, 0.0);
 	}
-	return hasMB;
+
+	return hasMoBlur;
 }
 
 
@@ -2010,19 +2010,19 @@ void MotionBlurParams::calcParams(fpreal currFrame)
 void VRayExporter::setTime(fpreal time)
 {
 	m_context.setTime(time);
+	getRenderer().getVRay().setCurrentTime(time);
 }
 
 void VRayExporter::exportFrame(fpreal time)
 {
-	Log::getLog().debug("VRayExporter::exportFrame(%.3f)",
-						m_context.getFloatFrame());
+	Log::getLog().debug("VRayExporter::exportFrame(time=%.3f)", time);
 
 	setTime(time);
 
 	m_context.hasMotionBlur = m_isMotionBlur || m_isVelocityOn;
 
 	if (!m_context.hasMotionBlur) {
-		clearKeyFrames(m_context.getFloatFrame());
+		clearKeyFrames(time);
 		exportScene();
 	}
 	else {
@@ -2031,7 +2031,11 @@ void VRayExporter::exportFrame(fpreal time)
 		mbParams.calcParams(m_context.getFloatFrame());
 
 		// We don't need this data anymore
-		clearKeyFrames(mbParams.mb_start);
+		{
+			OP_Context timeCtx;
+			timeCtx.setFrame(mbParams.mb_start);
+			clearKeyFrames(timeCtx.getTime());
+		}
 
 		for (FloatSet::iterator tIt = m_exportedFrames.begin(); tIt != m_exportedFrames.end();) {
 			if (*tIt < mbParams.mb_start) {
@@ -2047,7 +2051,11 @@ void VRayExporter::exportFrame(fpreal time)
 		while (!isAborted() && (subframe <= mbParams.mb_end)) {
 			if (!m_exportedFrames.count(subframe)) {
 				m_exportedFrames.insert(subframe);
-				m_context.setFrame(subframe);
+
+				OP_Context timeCtx;
+				timeCtx.setFrame(subframe);
+				setTime(timeCtx.getTime());
+
 				exportScene();
 			}
 

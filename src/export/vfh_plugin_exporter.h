@@ -136,11 +136,11 @@ public:
 
 	/// Delete plugin for a given plugin description
 	/// @param pluginDesc - plugin description with plugin name set
-	void removePlugin(const Attrs::PluginDesc &pluginDesc);
+	void removePlugin(const Attrs::PluginDesc &pluginDesc, int checkExisting=true);
 
 	/// Delete plugin with the given name
 	/// @param pluginName - plugin name
-	void removePlugin(const std::string &pluginName);
+	void removePlugin(const std::string &pluginName, int checkExisting=true);
 
 	/// Delete plugin.
 	/// @param plugin V-Ray plugin instance.
@@ -182,7 +182,7 @@ public:
 	void showVFB(bool show=true, const char *title=nullptr);
 
 	/// Removes all keyframe values at times less than 'toTime'
-	void clearFrames(float toTime);
+	void clearFrames(double toTime) const;
 
 	/// Start rendering at the current time.
 	/// @param locked[in] - when true this will force the current thread to block

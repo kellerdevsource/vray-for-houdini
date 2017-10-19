@@ -19,6 +19,7 @@
 #include "gu/gu_vrayproxyref.h"
 #include "gu/gu_volumegridref.h"
 #include "gu/gu_vraysceneref.h"
+#include "gu/gu_geomplaneref.h"
 #include "rop/vfh_rop.h"
 #include "sop/sop_node_base.h"
 #include "vop/vop_node_base.h"
@@ -43,6 +44,7 @@ static struct PrimPackedTypeIDs {
 		, packedGeometry(0)
 		, vrayProxyRef(0)
 		, vraySceneRef(0)
+		, geomPlaneRef(0)
 	{}
 
 	void init() {
@@ -55,6 +57,7 @@ static struct PrimPackedTypeIDs {
 		vrayProxyRef = GU_PrimPacked::lookupTypeId("VRayProxyRef");
 		vrayVolumeGridRef = GU_PrimPacked::lookupTypeId("VRayVolumeGridRef");
 		vraySceneRef = GU_PrimPacked::lookupTypeId("VRaySceneRef");
+		geomPlaneRef = GU_PrimPacked::lookupTypeId("GeomInfinitePlaneRef");
 
 		initialized = true;
 	}
@@ -69,6 +72,7 @@ public:
 	GA_PrimitiveTypeId vrayProxyRef;
 	GA_PrimitiveTypeId vrayVolumeGridRef;
 	GA_PrimitiveTypeId vraySceneRef;
+	GA_PrimitiveTypeId geomPlaneRef;
 } primPackedTypeIDs;
 
 static boost::format objGeomNameFmt("%s|%i@%s");
@@ -76,7 +80,8 @@ static boost::format hairNameFmt("GeomMayaHair|%i@%s");
 static boost::format polyNameFmt("GeomStaticMesh|%i@%s");
 static boost::format alembicNameFmt("Alembic|%i@%s");
 static boost::format vrmeshNameFmt("VRayProxy|%i@%s");
-static boost::format vrsceneNameFmt("VRayScene|%i@s");
+static boost::format vrsceneNameFmt("VRayScene|%i@%s");
+static boost::format geomplaneNameFmt("GeomInfinitePlane|%i@%s");
 
 static const char intrAlembicFilename[] = "abcfilename";
 static const char intrAlembicObjectPath[] = "abcobjectpath";
@@ -463,6 +468,12 @@ static void overrideItemsToUserAttributes(const MtlOverrideItems &overrides, QSt
 				userAttributes += buf.sprintf("%s=%.3f,%.3f,%.3f;",
 											  overrideName,
 											  overrideItem.valueVector.x, overrideItem.valueVector.y, overrideItem.valueVector.z);
+				break;
+			}
+			case MtlOverrideItem::itemTypeString: {
+				userAttributes += buf.sprintf("%s=%s;",
+											  overrideName,
+											  overrideItem.valueString.toLocal8Bit().constData());
 				break;
 			}
 			default: {
@@ -1097,6 +1108,10 @@ VRay::Plugin ObjectExporter::exportPrimPacked(OBJ_Node &objNode, const GU_PrimPa
 		exportVRaySceneRef(objNode, prim);
 		return VRay::Plugin();
 	}
+	if (primTypeID == primPackedTypeIDs.geomPlaneRef) {
+		return exportGeomPlaneRef(objNode, prim);
+		return VRay::Plugin();
+	}
 
 	const GA_PrimitiveDefinition &lookupTypeDef = prim.getTypeDef();
 
@@ -1186,10 +1201,27 @@ VRay::Plugin ObjectExporter::exportVRaySceneRef(OBJ_Node &objNode, const GU_Prim
 
 	const VRaySceneRef *vraysceneref = UTverify_cast<const VRaySceneRef*>(prim.implementation());
 
+	pluginDesc.add(Attrs::PluginAttr("transform", getTm()));
+
 	UT_Options options = vraysceneref->getOptions();
 	pluginExporter.setAttrsFromUTOptions(pluginDesc, options);
 
-	pluginDesc.add(Attrs::PluginAttr("transform", getTm()));
+	return pluginExporter.exportPlugin(pluginDesc);
+}
+
+VRay::Plugin ObjectExporter::exportGeomPlaneRef(OBJ_Node &objNode, const GU_PrimPacked &prim)
+{
+	if (!doExportGeometry) {
+		return VRay::Plugin();
+	}
+
+	UT_String primname;
+	prim.getIntrinsic(prim.findIntrinsic(intrPackedPrimitiveName), primname);
+
+	const int key = getPrimPackedID(prim);
+	Attrs::PluginDesc pluginDesc(boost::str(vrsceneNameFmt % key % primname.buffer()), "GeomInfinitePlane");
+
+	pluginDesc.addAttribute(Attrs::PluginAttr("normal", VRay::Vector(0.f, 1.f, 0.f)));
 
 	return pluginExporter.exportPlugin(pluginDesc);
 }
@@ -1663,7 +1695,8 @@ VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode)
 	const UT_String &renderOpType = renderSOP->getOperator()->getName();
 	if (renderOpType.startsWith("VRayNode") &&
 		!renderOpType.equal("VRayNodePhxShaderCache") &&
-		!renderOpType.equal("VRayNodeVRayProxy"))
+		!renderOpType.equal("VRayNodeVRayProxy") &&
+		!renderOpType.equal("VRayNodeGeomPlane"))
 	{
 		return exportVRaySOP(objNode, *renderSOP);
 	}

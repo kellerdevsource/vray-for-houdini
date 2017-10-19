@@ -139,8 +139,14 @@ public:
 	/// @param pluginDesc[out] - physical camera plugin description
 	void fillPhysicalCamera(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc);
 
-	/// Recreate physical camera
-	VRay::Plugin recreatePhysicalCamera(const ViewParams &viewParams);
+	/// Recreates physical camera
+	/// @param viewParams View settings.
+	/// @param needRemoval If plugin has to be removed.
+	VRay::Plugin exportPhysicalCamera(const ViewParams &viewParams, int needRemoval=true);
+
+	/// Exports RenderView plugin.
+	/// @param viewParams View settings.
+	void exportRenderView(const ViewParams &viewParams);
 
 	/// Fill in depth of field settings
 	/// @param viewParams[in] - holds data for camera settings
@@ -330,13 +336,13 @@ public:
 	int exportVrscene(const std::string &filepath, VRay::VRayExportSettings &settings);
 
 	/// Delete plugins created for the given OBJ node.
-	void removePlugin(OBJ_Node *node);
+	void removePlugin(OBJ_Node *node, int checkExisting=true);
 
 	/// Delete plugin with the given name
-	void removePlugin(const std::string &pluginName);
+	void removePlugin(const std::string &pluginName, int checkExisting=true);
 
 	/// Delete plugin for the plugin description
-	void removePlugin(const Attrs::PluginDesc &pluginDesc);
+	void removePlugin(const Attrs::PluginDesc &pluginDesc, int checkExisting=true);
 
 	/// Delete plugin.
 	/// @param plugin V-Ray plugin instance.
@@ -358,14 +364,11 @@ public:
 	/// @retval 0 - no error
 	int renderSequence(int start, int end, int step, int locked=false);
 
-	void clearKeyFrames(float toTime);
+	void clearKeyFrames(double toTime);
 
 	/// Set if we are exporting animation
 	/// @note also used for motion blur
 	void setAnimation(bool on);
-
-	/// Set current export time
-	void setCurrentTime(fpreal time);
 
 	/// Set if we are exporting for IPR
 	void setIPR(int isIPR);
@@ -393,6 +396,9 @@ public:
 
 	/// Get current export context
 	VRayOpContext &getContext() { return m_context; }
+
+	/// Get current export context
+	const VRayOpContext &getContext() const { return m_context; }
 
 	/// Get vfh plugin renderer
 	VRayPluginRenderer& getRenderer() { return m_renderer; }
@@ -428,7 +434,7 @@ public:
 
 	/// Test if we are using physical camera
 	/// @param camera[in] - camera object to read parameters from
-	static int isPhysicalCamera(const OBJ_Node &camera);
+	PhysicalCameraMode usePhysicalCamera(const OBJ_Node &camera) const;
 
 	/// Test if a node is animated
 	int isNodeAnimated(OP_Node *op_node);
