@@ -470,6 +470,12 @@ static void overrideItemsToUserAttributes(const MtlOverrideItems &overrides, QSt
 											  overrideItem.valueVector.x, overrideItem.valueVector.y, overrideItem.valueVector.z);
 				break;
 			}
+			case MtlOverrideItem::itemTypeString: {
+				userAttributes += buf.sprintf("%s=%s;",
+											  overrideName,
+											  overrideItem.valueString.toLocal8Bit().constData());
+				break;
+			}
 			default: {
 				break;
 			}
