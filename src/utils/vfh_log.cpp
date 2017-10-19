@@ -14,14 +14,11 @@
 #include <stdarg.h>
 
 #include <thread>
-#include <chrono>
 #include <condition_variable>
 #include <atomic>
 #include <array>
 
 #include <QThread>
-
-#include <boost/aligned_storage.hpp>
 
 #ifdef _WIN32
 #define VS_DEBUG(...) VUtils::debug(__VA_ARGS__)
@@ -34,57 +31,114 @@ using namespace VRayForHoudini::Log;
 
 const std::thread::id MAIN_TID = std::this_thread::get_id(); ///< The ID of the main thread - used to distingquish in log
 
-void logMessage(Logger::LogData data)
+static const char* logLevelAsString(LogLevel level)
 {
-	tchar strTime[100], strDate[100];
-	vutils_timeToStr(strTime, COUNT_OF(strTime), data.time);
-	vutils_dateToStr(strDate, COUNT_OF(strDate), data.time);
-	vutils_cprintf(true, VUTILS_COLOR_BLUE "[%s:%s]" VUTILS_COLOR_MAGENTA "VFH" VUTILS_COLOR_DEFAULT "| ", strDate, strTime);
-
-	VS_DEBUG("V-Ray For Houdini [");
-
-	switch (data.level) {
-	case LogLevelInfo:     { vutils_cprintf(true, VUTILS_COLOR_BLUE   "    Info" VUTILS_COLOR_DEFAULT "| ");                     VS_DEBUG("Info"); break; }
-	case LogLevelProgress: { vutils_cprintf(true, VUTILS_COLOR_BLUE   "Progress" VUTILS_COLOR_DEFAULT "| ");                     VS_DEBUG("Progress"); break; }
-	case LogLevelWarning:  { vutils_cprintf(true, VUTILS_COLOR_YELLOW " Warning" VUTILS_COLOR_DEFAULT "| " VUTILS_COLOR_YELLOW); VS_DEBUG("Warning"); break; }
-	case LogLevelError:    { vutils_cprintf(true, VUTILS_COLOR_RED    "   Error" VUTILS_COLOR_DEFAULT "| " VUTILS_COLOR_RED);    VS_DEBUG("Error"); break; }
-	case LogLevelDebug:    { vutils_cprintf(true, VUTILS_COLOR_CYAN   "   Debug" VUTILS_COLOR_DEFAULT "| " VUTILS_COLOR_CYAN);   VS_DEBUG("Debug"); break; }
-	case LogLevelMsg:      { vutils_cprintf(true, VUTILS_COLOR_GREEN  "     Msg" VUTILS_COLOR_DEFAULT "| " VUTILS_COLOR_GREEN);  VS_DEBUG("Msg"); break; }
+	switch (level) {
+		case LogLevelMsg:      return "Message";
+		case LogLevelInfo:     return "Info";
+		case LogLevelProgress: return "Progress";
+		case LogLevelWarning:  return "Warning";
+		case LogLevelError:    return "Error";
+		case LogLevelDebug:    return "Debug";
+		default:               return "Unknown";
 	}
-
-	if (data.level == LogLevelDebug) {
-		const unsigned tid = std::hash<std::thread::id>()(data.tid) % 10000;
-		if (data.tid == MAIN_TID) {
-			vutils_cprintf(true, VUTILS_COLOR_YELLOW "(#%4u) " VUTILS_COLOR_DEFAULT, tid);
-		} else {
-			vutils_cprintf(true, VUTILS_COLOR_YELLOW "(%4u) " VUTILS_COLOR_DEFAULT, tid);
-		}
-	}
-
-	vutils_cprintf(true, "%s\n" VUTILS_COLOR_DEFAULT, data.line.data());
-	VS_DEBUG("] %s\n", data.line.data());
-
-	fflush(stdout);
-	fflush(stderr);
 }
 
+static const char* logLevelAsColor(LogLevel level)
+{
+	switch (level) {
+		case LogLevelMsg:      return VUTILS_COLOR_DEFAULT;
+		case LogLevelInfo:     return VUTILS_COLOR_DEFAULT;
+		case LogLevelProgress: return VUTILS_COLOR_GREEN;
+		case LogLevelWarning:  return VUTILS_COLOR_YELLOW;
+		case LogLevelError:    return VUTILS_COLOR_RED;
+		case LogLevelDebug:    return VUTILS_COLOR_CYAN;
+		default:               return VUTILS_COLOR_DEFAULT;
+	}
+}
+
+static void logMessage(const Logger::LogData &data)
+{
+#ifdef _WIN32
+	const int isDebuggerAttached = IsDebuggerPresent();
+	const int isConsoleAttached = !!GetConsoleWindow();
+#else
+	const int isDebuggerAttached = false;
+	const int isConsoleAttached = true;
+#endif
+
+	tchar strTime[100];
+	tchar strDate[100];
+	vutils_timeToStr(strTime, CountOf(strTime), data.time);
+	vutils_dateToStr(strDate, CountOf(strDate), data.time);
+
+	const QString timeStamp(QString::asprintf("[%s:%s]", strDate, strTime));
+
+	QString colorTimeStamp(VUTILS_COLOR_BLUE);
+	colorTimeStamp.append(timeStamp);
+	colorTimeStamp.append(VUTILS_COLOR_DEFAULT);
+
+	// Message with aligned components for console fixed font.
+	QString consoleMsg(colorTimeStamp);
+	consoleMsg.append(" VFH ");
+	consoleMsg.append(QString::asprintf("|%s%8s" VUTILS_COLOR_DEFAULT "| ",
+					  logLevelAsColor(data.level), logLevelAsString(data.level)));
+
+	// Un-aligned message.
+	QString guiMsg("VFH ");
+	guiMsg.append(QString::asprintf("[%s] ", logLevelAsString(data.level)));
+
+#ifdef VFH_DEBUG
+	const unsigned tid = std::hash<std::thread::id>()(data.tid) % 10000;
+
+	consoleMsg.append(QString::asprintf("(%s%4u) ", data.tid == MAIN_TID ? "#" : " ", tid));
+	guiMsg.append(QString::asprintf("(%s%u) ",      data.tid == MAIN_TID ? "#" : "",  tid));
+#endif
+	
+	consoleMsg.append(logLevelAsColor(data.level));
+
+	const QString message(QString(data.line.data()).simplified());
+
+	consoleMsg.append(message);
+	consoleMsg.append(VUTILS_COLOR_DEFAULT);
+
+	guiMsg.append(message);
+
+	if (isDebuggerAttached) {
+		VS_DEBUG("%s\n", guiMsg.toLocal8Bit().constData());
+	}
+
+	guiMsg.prepend(" ");
+	guiMsg.prepend(timeStamp);
+
+	const QString &printMessage = isConsoleAttached ? consoleMsg : guiMsg;
+
+	vutils_cprintf(true, "%s\n", printMessage.toLocal8Bit().constData());
+
+	if (isConsoleAttached) {
+		fflush(stdout);
+		fflush(stderr);
+	}
+}
 
 /// Thread logging any messages pushed in the Logger's queue
-class ThreadedLogger:
-	public QThread
+class ThreadedLogger
+	: public QThread
 {
 public:
-	ThreadedLogger(std::function<void()> cb): runFunction(cb) {
+	explicit ThreadedLogger(std::function<void()> cb)
+		: runFunction(cb)
+	{}
 
-	}
 protected:
 	void run() VRAY_OVERRIDE {
 		runFunction();
 	}
+
 	std::function<void()> runFunction;
 };
 
-static ThreadedLogger * loggerThread = nullptr; ///< The thread used for logging
+static ThreadedLogger *loggerThread = nullptr; ///< The thread used for logging
 static std::once_flag startLogger; ///< Flag to ensure we start the thread only once
 static volatile bool isStoppedLogger = false; ///< Stop flag for the thread
 static VUtils::GetEnvVarInt threadedLogger("VFH_THREADED_LOGGER", 1);
@@ -104,11 +158,10 @@ void Logger::writeMessages()
 				}
 			}
 		}
-
 		{
 			std::lock_guard<std::mutex> lock(log.m_mtx);
 			while (!isStoppedLogger && !log.m_queue.empty()) {
-				LogData data = log.m_queue.front();
+				const LogData data = log.m_queue.front();
 				log.m_queue.pop_front();
 				logMessage(data);
 			}
@@ -137,24 +190,27 @@ void Logger::stopLogging()
 			if (!loggerThread) {
 				return;
 			}
-
 			{
 				std::lock_guard<std::mutex> loggerLock(getLog().m_mtx);
 				isStoppedLogger = true;
 			}
+
 			getLog().m_condVar.notify_all();
+
 			if (!loggerThread->wait(100)) {
 				loggerThread->terminate();
 				loggerThread->wait();
 			}
-			delete loggerThread;
-			loggerThread = nullptr;
+
+			FreePtr(loggerThread);
 		}
 	}
 }
 
 void Logger::valog(LogLevel level, const tchar *format, va_list args)
 {
+	// Show all messages in debug.
+#ifndef VFH_DEBUG
 	const bool showMessage = level == LogLevelMsg
 		? true
 		: level <= m_logLevel;
@@ -162,6 +218,7 @@ void Logger::valog(LogLevel level, const tchar *format, va_list args)
 	if (!showMessage) {
 		return;
 	}
+#endif
 
 	LogData data;
 	time(&data.time);
@@ -178,7 +235,8 @@ void Logger::valog(LogLevel level, const tchar *format, va_list args)
 			}
 		}
 		m_condVar.notify_one();
-	} else {
+	}
+	else {
 		logMessage(data);
 	}
 }
