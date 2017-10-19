@@ -104,7 +104,7 @@ void VOP::NodeBase::getAllowedInputTypesSubclass(unsigned idx, VOP_VopTypeArray 
 
 	const SocketDesc &socketTypeInfo = pluginInfo->inputs[idx];
 
-	const VOP_Type vopType = socketTypeInfo.vopType;
+	const VOP_Type vopType = socketTypeInfo.socketType;
 	type_infos.append(vopType);
 
 	if (vopType == VOP_SURFACE_SHADER) {
@@ -120,7 +120,7 @@ bool VOP::NodeBase::willAutoconvertInputType(int idx)
 	if (idx < pluginInfo->inputs.count()) {
 		const SocketDesc &socketTypeInfo = pluginInfo->inputs[idx];
 
-		const VOP_Type vopType = socketTypeInfo.vopType;
+		const VOP_Type vopType = socketTypeInfo.socketType;
 		if (vopType == VOP_SURFACE_SHADER ||
 			vopType == VOP_TYPE_BSDF)
 		{
