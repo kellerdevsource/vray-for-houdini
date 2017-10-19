@@ -70,12 +70,12 @@ macro(set_compiler_flags)
 		# Enable multi core compilation
 		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
 
-		set(CMAKE_CXX_FLAGS_DEBUG "/MD /Od /Zi /DNDEBUG")
+		set(CMAKE_CXX_FLAGS_DEBUG "/MD /Od /Zi /DNDEBUG /DVFH_DEBUG")
 
 		add_definitions(-DOPENEXR_DLL)
 	else()
 		set(CMAKE_CXX_FLAGS "-fPIC -std=c++11")
-		set(CMAKE_CXX_FLAGS_DEBUG "-g -DNDEBUG")
+		set(CMAKE_CXX_FLAGS_DEBUG "-g -DNDEBUG -DVFH_DEBUG")
 		set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG")
 
 		if (APPLE)
