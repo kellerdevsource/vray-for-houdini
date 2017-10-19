@@ -67,6 +67,22 @@
             parmtag { "vray_type" "TextureFloat" }
         }
         parm {
+            name "opacity_mode"
+            label "Opacity Mode"
+            help "Opacity evaluation mode"
+            type string
+            menu {
+                "0" "Normal"
+                "1" "Clip"
+                "2" "Stochastic"
+            }
+            default { "0" }
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "BRDFVRayMtl" }
+            parmtag { "vray_pluginattr" "opacity_mode" }
+            parmtag { "vray_type" "enum" }
+        }
+        parm {
             name  "self_illumination"
             label "Self - Illumination Color"
             type  color4
