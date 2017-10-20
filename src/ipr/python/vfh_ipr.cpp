@@ -213,14 +213,6 @@ struct VRayExporterIprUnload {
 
 static const VRayExporterIprUnload exporterUnload;
 
-// TODO: Check if this is still useful.
-#if 0
-static void onVFBClosed(VRay::VRayRenderer&, void*)
-{
-	freeExporter();
-}
-#endif
-
 static void fillRenderRegionFromDict(PyObject *viewParamsDict, ViewParams &viewParams)
 {
 	if (!viewParamsDict)
@@ -277,17 +269,15 @@ static void fillViewParamsFromDict(PyObject *viewParamsDict, ViewParams &viewPar
 
 static void fillViewParams(VRayExporter &exporter, PyObject *viewParamsDict, ViewParams &viewParams)
 {
-	const char *camera = PyString_AsString(PyDict_GetItemString(viewParamsDict, "camera"));
+	fillViewParamsFromDict(viewParamsDict, viewParams);
+	fillRenderRegionFromDict(viewParamsDict, viewParams);
 
 	OBJ_Node *cameraNode = nullptr;
+
+	const char *camera = PyString_AsString(PyDict_GetItemString(viewParamsDict, "camera"));
 	if (UTisstring(camera)) {
 		cameraNode = CAST_OBJNODE(getOpNodeFromPath(camera));
 	}
-
-	viewParams.setCamera(cameraNode);
-
-	fillViewParamsFromDict(viewParamsDict, viewParams);
-	fillRenderRegionFromDict(viewParamsDict, viewParams);
 
 	if (cameraNode) {
 		if (cameraNode->getName().equal("ipr_camera") ||

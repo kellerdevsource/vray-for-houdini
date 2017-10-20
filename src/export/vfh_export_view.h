@@ -13,8 +13,6 @@
 
 #include "vfh_vray.h"
 
-#include <OP/OP_Node.h>
-
 namespace VRayForHoudini {
 
 struct RenderSizeParams {
@@ -23,8 +21,8 @@ struct RenderSizeParams {
 		, h(0)
 	{}
 
-	int  w;
-	int  h;
+	int w;
+	int h;
 };
 
 enum class CameraFovMode {
@@ -144,53 +142,47 @@ struct StereoViewParams {
 	bool operator == (const StereoViewParams &other) const;
 	bool operator != (const StereoViewParams &other) const;
 
-	int    use;
-	float  stereo_eye_distance;
-	int    stereo_interocular_method;
-	int    stereo_specify_focus;
-	float  stereo_focus_distance;
-	int    stereo_focus_method;
-	int    stereo_view;
-	int    adjust_resolution;
+	int use;
+	float stereo_eye_distance;
+	int stereo_interocular_method;
+	int stereo_specify_focus;
+	float stereo_focus_distance;
+	int stereo_focus_method;
+	int stereo_view;
+	int adjust_resolution;
 };
-
 
 struct RenderViewParams {
 	RenderViewParams()
 		: fov(0.785398f)
-		, fovOverride(false)
 		, ortho(false)
 		, ortho_width(1.0f)
-		, use_clip_start(false)
+		, use_clip_start(true)
 		, clip_start(0.0f)
-		, use_clip_end(false)
+		, use_clip_end(true)
 		, clip_end(1.0f)
 	{}
 
 	bool operator == (const RenderViewParams &other) const;
 	bool operator != (const RenderViewParams &other) const;
 
-	int              needReset(const RenderViewParams &other) const;
+	int needReset(const RenderViewParams &other) const;
 
-	float            fov;
-	int              fovOverride;
-	VRay::Transform  tm;
-
-	int              ortho;
-	float            ortho_width;
-
-	int              use_clip_start;
-	float            clip_start;
-	int              use_clip_end;
-	float            clip_end;
+	float fov;
+	VRay::Transform tm;
+	int ortho;
+	float ortho_width;
+	int use_clip_start;
+	float clip_start;
+	int use_clip_end;
+	float clip_end;
 
 	StereoViewParams stereoParams;
 };
 
 struct ViewParams {
-	explicit ViewParams(OBJ_Node *camera=nullptr)
+	ViewParams()
 		: useCameraPhysical(PhysicalCameraMode::modeNone)
-		, cameraObject(camera)
 	{}
 
 	int needReset(const ViewParams &other) const;
@@ -200,16 +192,12 @@ struct ViewParams {
 	int changedCropRegion(const ViewParams &other) const;
 	int changedPhysCam(const ViewParams &other) const;
 
-	void setCamera(OBJ_Node *camera) { cameraObject = camera; }
-
 	RenderSizeParams renderSize;
 	RenderViewParams renderView;
 	RenderCropRegionParams cropRegion;
 
 	PhysicalCameraMode useCameraPhysical;
 	PhysicalCameraParams cameraPhysical;
-
-	OBJ_Node *cameraObject;
 };
 
 /// Returns FOV value based on aperture and focal.

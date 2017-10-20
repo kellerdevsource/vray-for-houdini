@@ -139,8 +139,14 @@ public:
 	/// @param pluginDesc[out] - physical camera plugin description
 	void fillPhysicalCamera(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc);
 
-	/// Recreate physical camera
-	VRay::Plugin recreatePhysicalCamera(const ViewParams &viewParams);
+	/// Recreates physical camera
+	/// @param viewParams View settings.
+	/// @param needRemoval If plugin has to be removed.
+	VRay::Plugin exportPhysicalCamera(const ViewParams &viewParams, int needRemoval=true);
+
+	/// Exports RenderView plugin.
+	/// @param viewParams View settings.
+	void exportRenderView(const ViewParams &viewParams);
 
 	/// Fill in depth of field settings
 	/// @param viewParams[in] - holds data for camera settings
