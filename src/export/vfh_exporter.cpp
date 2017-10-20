@@ -416,7 +416,7 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 
 		if (conPlugin) {
 			ConnectedPluginInfo conPluginInfo(conPlugin);
-			const Parm::VRayPluginInfo &conPluginDescInfo = *Parm::GetVRayPluginInfo(conPlugin.getType());
+			const Parm::VRayPluginInfo &conPluginDescInfo = *Parm::GetVRayPluginInfo(conPluginInfo.plugin.getType());
 
 			// If connected plugin type is BRDF, but we expect a Material, wrap it into "MtlSingleBRDF".
 			if (conPluginDescInfo.pluginType == Parm::PluginType::PluginTypeBRDF &&
@@ -434,10 +434,10 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 			}
 
 			// Set "scene_name" for Cryptomatte.
-			if (vutils_strcmp(conPlugin.getType(), "MtlSingleBRDF") == 0) {
+			if (vutils_strcmp(conPluginInfo.plugin.getType(), "MtlSingleBRDF") == 0) {
 				VRay::ValueList sceneName(1);
 				sceneName[0] = VRay::Value(vopNode->getName().buffer());
-				conPlugin.setValue("scene_name", sceneName);
+				conPluginInfo.plugin.setValue("scene_name", sceneName);
 			}
 
 			const Parm::SocketDesc *fromSocketInfo = getConnectedOutputType(vopNode, attrName.c_str());
@@ -716,53 +716,68 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 
 	pluginDesc.addAttribute(Attrs::PluginAttr("img_pixelAspect", pixelAspect));
 
-	enum ImageFormat {
-		imageFormatPNG = 0,
-		imageFormatJPEG,
-		imageFormatTIFF,
-		imageFormatTGA,
-		imageFormatSGI,
-		imageFormatOpenEXR,
-		imageFormatVRayImage,
-	};
+	if (!m_rop->evalInt("SettingsOutput_img_save", 0, 0.0)) {
+		pluginDesc.addAttribute(Attrs::PluginAttr("img_dir", Attrs::PluginAttr::AttrTypeIgnore));
+		pluginDesc.addAttribute(Attrs::PluginAttr("img_file", Attrs::PluginAttr::AttrTypeIgnore));
+	}
+	else {
+		enum ImageFormat {
+			imageFormatPNG = 0,
+			imageFormatJPEG,
+			imageFormatTIFF,
+			imageFormatTGA,
+			imageFormatSGI,
+			imageFormatOpenEXR,
+			imageFormatVRayImage,
+		};
 
-	const ImageFormat imgFormat =
-		static_cast<ImageFormat>(m_rop->evalInt("SettingsOutput_img_format", 0, t));
+		const ImageFormat imgFormat =
+			static_cast<ImageFormat>(m_rop->evalInt("SettingsOutput_img_format", 0, t));
 
-	UT_String fileName;
-	m_rop->evalString(fileName, "SettingsOutput_img_file", 0, t);
+		UT_String fileName;
+		m_rop->evalString(fileName, "SettingsOutput_img_file", 0, t);
 
-	if (m_rop->evalInt("SettingsOutput_img_file_needFrameNumber", 0, 0.0)) {
-		// NOTE: Remove after AppSDK update.
+		if (m_rop->evalInt("SettingsOutput_img_file_needFrameNumber", 0, 0.0)) {
+			// NOTE: Remove after AppSDK update.
+			fileName.append(".");
+		}
+
 		fileName.append(".");
+
+		switch (imgFormat) {
+			case imageFormatPNG: fileName.append("png"); break;
+			case imageFormatJPEG: fileName.append("jpg"); break;
+			case imageFormatTIFF: fileName.append("tiff"); break;
+			case imageFormatTGA: fileName.append("tga"); break;
+			case imageFormatSGI: fileName.append("sgi"); break;
+			case imageFormatOpenEXR: fileName.append("exr"); break;
+			case imageFormatVRayImage: fileName.append("vrimg"); break;
+			default: fileName.append("tmp"); break;
+		}
+
+		UT_String dirPath;
+		m_rop->evalString(dirPath, "SettingsOutput_img_dir", 0, t);
+
+		// Create output directory.
+		VUtils::uniMakeDir(dirPath.buffer());
+
+		// Ensure slash at the end.
+		if (!dirPath.endsWith("/")) {
+			dirPath.append("/");
+		}
+
+		if (imgFormat == imageFormatOpenEXR ||
+			imgFormat == imageFormatVRayImage)
+		{
+			const int relementsSeparateFiles = m_rop->evalInt("SettingsOutput_relements_separateFiles", 0, t);
+			if (relementsSeparateFiles == 0) {
+				pluginDesc.addAttribute(Attrs::PluginAttr("img_rawFile", 1));
+			}
+		}
+
+		pluginDesc.addAttribute(Attrs::PluginAttr("img_dir", dirPath.toStdString()));
+		pluginDesc.addAttribute(Attrs::PluginAttr("img_file", fileName.toStdString()));
 	}
-
-	fileName.append(".");
-
-	switch (imgFormat) {
-		case imageFormatPNG: fileName.append("png"); break;
-		case imageFormatJPEG: fileName.append("jpg"); break;
-		case imageFormatTIFF: fileName.append("tiff"); break;
-		case imageFormatTGA: fileName.append("tga"); break;
-		case imageFormatSGI: fileName.append("sgi"); break;
-		case imageFormatOpenEXR: fileName.append("exr"); break;
-		case imageFormatVRayImage: fileName.append("vrimg"); break;
-		default: fileName.append("tmp"); break;
-	}
-
-	UT_String dirPath;
-	m_rop->evalString(dirPath, "SettingsOutput_img_dir", 0, t);
-
-	// Create output directory.
-	VUtils::uniMakeDir(dirPath.buffer());
-
-	// Ensure slash at the end.
-	if (!dirPath.endsWith("/")) {
-		dirPath.append("/");
-	}
-
-	pluginDesc.addAttribute(Attrs::PluginAttr("img_dir", dirPath.toStdString()));
-	pluginDesc.addAttribute(Attrs::PluginAttr("img_file", fileName.toStdString()));
 
 	const fpreal animStart = CAST_ROPNODE(m_rop)->FSTART();
 	const fpreal animEnd = CAST_ROPNODE(m_rop)->FEND();
@@ -780,15 +795,6 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 			frameRange[0].setDouble(animStart);
 			frameRange[1].setDouble(animEnd);
 			frames[0].setList(frameRange);
-		}
-	}
-
-	if (imgFormat == imageFormatOpenEXR ||
-		imgFormat == imageFormatVRayImage)
-	{
-		const int relementsSeparateFiles = m_rop->evalInt("SettingsOutput_relements_separateFiles", 0, t);
-		if (relementsSeparateFiles == 0) {
-			pluginDesc.addAttribute(Attrs::PluginAttr("img_rawFile", 1));
 		}
 	}
 
@@ -1845,6 +1851,11 @@ int VRayExporter::renderFrame(int locked)
 	}
 
 	if (m_workMode == ExpRender || m_workMode == ExpExportRender) {
+		if (vfbSettings.isRenderRegionValid) {
+			getRenderer().getVRay().setRenderRegion(vfbSettings.rrLeft, vfbSettings.rrTop,
+													vfbSettings.rrWidth, vfbSettings.rrHeight);
+		}
+
 		m_renderer.startRender(locked);
 	}
 
@@ -1910,9 +1921,17 @@ void VRayExporter::initExporter(int hasUI, int nframes, fpreal tstart, fpreal te
 	resetOpCallbacks();
 
 	if (hasUI) {
-		restoreVfbState();
+		if (!getRenderer().getVRay().vfb.isShown()) {
+			restoreVfbState();
+		}
 
+		getRenderer().getVfbSettings(vfbSettings);
 		getRenderer().showVFB(m_workMode != ExpExport, m_rop->getFullPath());
+
+		m_renderer.addCbOnImageReady(CbVoid(boost::bind(&VRayExporter::saveVfbState, this)));
+		m_renderer.addCbOnRendererClose(CbVoid(boost::bind(&VRayExporter::saveVfbState, this)));
+		m_renderer.addCbOnVfbClose(CbVoid(boost::bind(&VRayExporter::saveVfbState, this)));
+		m_renderer.addCbOnRenderLast(CbVoid(boost::bind(&VRayExporter::renderLast, this)));
 	}
 
 	m_renderer.addCbOnProgress(CbOnProgress(boost::bind(&VRayExporter::onProgress, this, _1, _2, _3, _4)));
@@ -1924,10 +1943,6 @@ void VRayExporter::initExporter(int hasUI, int nframes, fpreal tstart, fpreal te
 	else if (isIPR()) {
 		m_renderer.addCbOnImageReady(CbVoid(boost::bind(&VRayExporter::resetOpCallbacks, this)));
 		m_renderer.addCbOnRendererClose(CbVoid(boost::bind(&VRayExporter::resetOpCallbacks, this)));
-	}
-
-	if (hasUI) {
-		m_renderer.addCbOnRendererClose(CbVoid(boost::bind(&VRayExporter::saveVfbState, this)));
 	}
 
 	m_isMotionBlur = hasMotionBlur(*m_rop, *camera);
@@ -2185,5 +2200,16 @@ void VRayExporter::restoreVfbState()
 	UT_String vfbState;
 	m_rop->evalString(vfbState, "_vfb_settings", 0, 0.0);
 
-	getRenderer().restoreVfbState(vfbState.buffer());
+	if (vfbState.isstring()) {
+		getRenderer().restoreVfbState(vfbState.buffer());
+	}
+}
+
+void VRayExporter::renderLast()
+{
+	if (!m_rop)
+		return;
+
+	initExporter(true, m_frames, m_timeStart, m_timeEnd);
+	exportFrame(m_context.getTime());
 }

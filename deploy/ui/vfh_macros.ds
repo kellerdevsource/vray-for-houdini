@@ -9,7 +9,8 @@
     type TYPE \
     default { DEFAULT } \
     parmtag { spare_category "VfhUI" } \
-    parmtag { "cook_dependent" "1" }
+    parmtag { "cook_dependent" "1" } \
+    parmtag { "vray_custom_handling" "1" }
 
 #define VRAY_UI_PARM_EX(NAME, LABEL, HELP, TYPE, SIZE, DEFAULT) \
 parm { \

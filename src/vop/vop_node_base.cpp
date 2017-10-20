@@ -128,6 +128,12 @@ void VOP::NodeBase::getAllowedInputTypeInfosSubclass(unsigned idx, VOP_VopTypeIn
 		if (vopType == VOP_TYPE_BSDF) {
 			type_infos.append(VOP_TypeInfo(VOP_SURFACE_SHADER));
 		}
+		if (vopType == VOP_TYPE_COLOR) {
+			type_infos.append(VOP_TypeInfo(VOP_TYPE_FLOAT));
+		}
+		if (vopType == VOP_TYPE_FLOAT) {
+			type_infos.append(VOP_TypeInfo(VOP_TYPE_COLOR));
+		}
 	}
 }
 
@@ -147,6 +153,12 @@ void VOP::NodeBase::getAllowedInputTypesSubclass(unsigned idx, VOP_VopTypeArray 
 		if (vopType == VOP_TYPE_BSDF) {
 			type_infos.append(VOP_SURFACE_SHADER);
 		}
+		if (vopType == VOP_TYPE_COLOR) {
+			type_infos.append(VOP_TYPE_FLOAT);
+		}
+		if (vopType == VOP_TYPE_FLOAT) {
+			type_infos.append(VOP_TYPE_COLOR);
+		}
 	}
 }
 
@@ -157,7 +169,9 @@ bool VOP::NodeBase::willAutoconvertInputType(int idx)
 
 		const VOP_Type vopType = socketTypeInfo.vopType;
 		if (vopType == VOP_SURFACE_SHADER ||
-			vopType == VOP_TYPE_BSDF)
+		    vopType == VOP_TYPE_BSDF ||
+		    vopType == VOP_TYPE_COLOR ||
+		    vopType == VOP_TYPE_FLOAT)
 		{
 			return true;
 		}
@@ -215,8 +229,6 @@ int VOP::NodeBase::getOutputFromName(const UT_String &out) const
 	if (hasPluginInfo()) {
 		for (int i = 0; i < pluginInfo->outputs.size(); ++i) {
 			if (out == pluginInfo->outputs[i].name.getToken()) {
-				printf(" %s => %i\n",
-					   out.buffer(), i);
 				return i;
 			}
 		}
