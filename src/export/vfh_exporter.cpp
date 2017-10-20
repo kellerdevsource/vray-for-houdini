@@ -716,53 +716,68 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 
 	pluginDesc.addAttribute(Attrs::PluginAttr("img_pixelAspect", pixelAspect));
 
-	enum ImageFormat {
-		imageFormatPNG = 0,
-		imageFormatJPEG,
-		imageFormatTIFF,
-		imageFormatTGA,
-		imageFormatSGI,
-		imageFormatOpenEXR,
-		imageFormatVRayImage,
-	};
+	if (!m_rop->evalInt("SettingsOutput_img_save", 0, 0.0)) {
+		pluginDesc.addAttribute(Attrs::PluginAttr("img_dir", Attrs::PluginAttr::AttrTypeIgnore));
+		pluginDesc.addAttribute(Attrs::PluginAttr("img_file", Attrs::PluginAttr::AttrTypeIgnore));
+	}
+	else {
+		enum ImageFormat {
+			imageFormatPNG = 0,
+			imageFormatJPEG,
+			imageFormatTIFF,
+			imageFormatTGA,
+			imageFormatSGI,
+			imageFormatOpenEXR,
+			imageFormatVRayImage,
+		};
 
-	const ImageFormat imgFormat =
-		static_cast<ImageFormat>(m_rop->evalInt("SettingsOutput_img_format", 0, t));
+		const ImageFormat imgFormat =
+			static_cast<ImageFormat>(m_rop->evalInt("SettingsOutput_img_format", 0, t));
 
-	UT_String fileName;
-	m_rop->evalString(fileName, "SettingsOutput_img_file", 0, t);
+		UT_String fileName;
+		m_rop->evalString(fileName, "SettingsOutput_img_file", 0, t);
 
-	if (m_rop->evalInt("SettingsOutput_img_file_needFrameNumber", 0, 0.0)) {
-		// NOTE: Remove after AppSDK update.
+		if (m_rop->evalInt("SettingsOutput_img_file_needFrameNumber", 0, 0.0)) {
+			// NOTE: Remove after AppSDK update.
+			fileName.append(".");
+		}
+
 		fileName.append(".");
+
+		switch (imgFormat) {
+			case imageFormatPNG: fileName.append("png"); break;
+			case imageFormatJPEG: fileName.append("jpg"); break;
+			case imageFormatTIFF: fileName.append("tiff"); break;
+			case imageFormatTGA: fileName.append("tga"); break;
+			case imageFormatSGI: fileName.append("sgi"); break;
+			case imageFormatOpenEXR: fileName.append("exr"); break;
+			case imageFormatVRayImage: fileName.append("vrimg"); break;
+			default: fileName.append("tmp"); break;
+		}
+
+		UT_String dirPath;
+		m_rop->evalString(dirPath, "SettingsOutput_img_dir", 0, t);
+
+		// Create output directory.
+		VUtils::uniMakeDir(dirPath.buffer());
+
+		// Ensure slash at the end.
+		if (!dirPath.endsWith("/")) {
+			dirPath.append("/");
+		}
+
+		if (imgFormat == imageFormatOpenEXR ||
+			imgFormat == imageFormatVRayImage)
+		{
+			const int relementsSeparateFiles = m_rop->evalInt("SettingsOutput_relements_separateFiles", 0, t);
+			if (relementsSeparateFiles == 0) {
+				pluginDesc.addAttribute(Attrs::PluginAttr("img_rawFile", 1));
+			}
+		}
+
+		pluginDesc.addAttribute(Attrs::PluginAttr("img_dir", dirPath.toStdString()));
+		pluginDesc.addAttribute(Attrs::PluginAttr("img_file", fileName.toStdString()));
 	}
-
-	fileName.append(".");
-
-	switch (imgFormat) {
-		case imageFormatPNG: fileName.append("png"); break;
-		case imageFormatJPEG: fileName.append("jpg"); break;
-		case imageFormatTIFF: fileName.append("tiff"); break;
-		case imageFormatTGA: fileName.append("tga"); break;
-		case imageFormatSGI: fileName.append("sgi"); break;
-		case imageFormatOpenEXR: fileName.append("exr"); break;
-		case imageFormatVRayImage: fileName.append("vrimg"); break;
-		default: fileName.append("tmp"); break;
-	}
-
-	UT_String dirPath;
-	m_rop->evalString(dirPath, "SettingsOutput_img_dir", 0, t);
-
-	// Create output directory.
-	VUtils::uniMakeDir(dirPath.buffer());
-
-	// Ensure slash at the end.
-	if (!dirPath.endsWith("/")) {
-		dirPath.append("/");
-	}
-
-	pluginDesc.addAttribute(Attrs::PluginAttr("img_dir", dirPath.toStdString()));
-	pluginDesc.addAttribute(Attrs::PluginAttr("img_file", fileName.toStdString()));
 
 	const fpreal animStart = CAST_ROPNODE(m_rop)->FSTART();
 	const fpreal animEnd = CAST_ROPNODE(m_rop)->FEND();
@@ -780,15 +795,6 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 			frameRange[0].setDouble(animStart);
 			frameRange[1].setDouble(animEnd);
 			frames[0].setList(frameRange);
-		}
-	}
-
-	if (imgFormat == imageFormatOpenEXR ||
-		imgFormat == imageFormatVRayImage)
-	{
-		const int relementsSeparateFiles = m_rop->evalInt("SettingsOutput_relements_separateFiles", 0, t);
-		if (relementsSeparateFiles == 0) {
-			pluginDesc.addAttribute(Attrs::PluginAttr("img_rawFile", 1));
 		}
 	}
 
