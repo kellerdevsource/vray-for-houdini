@@ -735,6 +735,7 @@ void VRayPluginRenderer::restoreVfbState(const QString &stateData) const
 		return;
 
 	const QByteArray vfbStateData(QByteArray::fromBase64(stateData.toLocal8Bit()));
-
+#if 0
 	m_vray->vfb.setState(reinterpret_cast<const void*>(vfbStateData.constData()), vfbStateData.length());
+#endif
 }
