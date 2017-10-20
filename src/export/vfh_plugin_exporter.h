@@ -30,6 +30,8 @@ typedef boost::function<void (VRay::VRayRenderer&, int, int, int, int, const cha
 typedef boost::function<void (VRay::VRayRenderer&, int, int, const char*, VRay::VRayImage*)>  CbOnBucketReady;
 typedef boost::function<void (VRay::VRayRenderer&, const char*, int)>                         CbOnDumpMessage;
 typedef boost::function<void (VRay::VRayRenderer&, const char*, int, int)>                    CbOnProgress;
+typedef boost::function<void (VRay::VRayRenderer&, bool isRendering)>                         CbOnRenderLast;
+typedef boost::function<void (VRay::VRayRenderer&)>                                           CbOnVFBClosed;
 
 
 template <typename CbT>
@@ -62,6 +64,8 @@ typedef CbBase<CbOnBucketFailed>    CbSetOnBucketFailed;
 typedef CbBase<CbOnBucketReady>     CbSetOnBucketReady;
 typedef CbBase<CbOnDumpMessage>     CbSetOnDumpMessage;
 typedef CbBase<CbOnProgress>        CbSetOnProgress;
+typedef CbBase<CbOnRenderLast>      CbSetOnRenderLast;
+typedef CbBase<CbOnVFBClosed>       CbSetOnVFBClosed;
 
 
 struct CbCollection {
@@ -76,6 +80,8 @@ struct CbCollection {
 		m_cbOnBucketReady.clear();
 		m_cbOnDumpMessage.clear();
 		m_cbOnProgress.clear();
+		onRenderLast.clear();
+		onVFBClosed.clear();
 	}
 
 	CbSetOnRendererClose   m_cbOnRendererClose;
@@ -87,7 +93,44 @@ struct CbCollection {
 	CbSetOnDumpMessage     m_cbOnDumpMessage;
 	CbSetOnProgress        m_cbOnProgress;
 
+	CbSetOnRenderLast onRenderLast;
+	CbSetOnVFBClosed onVFBClosed;
+
 	VfhDisableCopy(CbCollection)
+};
+
+
+/// V-Ray Frame Buffer settings.
+struct VFBSettings {
+	int structVersion = 0;
+	int vfbx = 0;
+	int vfby = 0;
+	int vfbWidth = 0;
+	int vfbHeight = 0;
+	int ccx = 0;
+	int ccy = 0;
+	int infox = 0;
+	int infoy = 0;
+	int lex = 0;
+	int ley = 0;
+	uint64 flags64 = 0;
+	int flagsrollouts = 0;
+	int posSaved = false;
+	int isRenderRegionValid = false;
+	int rrLeft = 0;
+	int rrTop = 0;
+	int rrWidth = 0;
+	int rrHeight = 0;
+	double rrLeftNorm = 0.0;
+	double rrTopNorm = 0.0;
+	double rrWidthNorm = 0.0;
+	double rrHeightNorm = 0.0;
+
+	/// Fills VFBSettings from state buffer.
+	/// @param stateBuf Buffer obtained with VFB::getState().
+	/// @param stateBufSize Buffer size.
+	/// @param settings Output VFBSettings struct.
+	static void fillVfbSettings(void *stateBuf, int stateBufSize, VFBSettings &settings);
 };
 
 /// Wraps around VRay::VRayRenderer to provide some commonly used
@@ -232,6 +275,12 @@ public:
 	void addCbOnProgress(CbOnProgress cb)             { m_callbacks.m_cbOnProgress.add(cb); }
 	void addCbOnProgress(CbVoid cb)                   { m_callbacks.m_cbOnProgress.add(cb); }
 
+	void addCbOnVfbClose(CbOnVFBClosed cb) { m_callbacks.onVFBClosed.add(cb); }
+	void addCbOnVfbClose(CbVoid cb)        { m_callbacks.onVFBClosed.add(cb); }
+
+	void addCbOnRenderLast(CbOnRenderLast cb) { m_callbacks.onRenderLast.add(cb); }
+	void addCbOnRenderLast(CbVoid cb)         { m_callbacks.onRenderLast.add(cb); }
+
 	/// Clear registered render callbacks
 	void resetCallbacks();
 
@@ -245,37 +294,23 @@ public:
 	void reset() const;
 
 	/// Saves VFB state.
-	/// @param stateData State data as Base64 string.
+	/// @param stateData Output state as Base64 string.
 	void saveVfbState(QString &stateData) const;
 
 	/// Restores VFB state.
 	/// @param stateData State data as Base64 string.
 	void restoreVfbState(const QString &stateData) const;
 
+	/// Obtains VFB state as VFBSettings.
+	/// @param settings Output state as VFBSettings.
+	void getVfbSettings(VFBSettings &settings) const;
+
 private:
-	struct RenderRegion {
-		RenderRegion()
-			: left(-1)
-			, top(-1)
-			, width(-1)
-			, height(-1)
-			, saved(false)
-		{}
+	/// V-Ray renderer instance.
+	VRay::VRayRenderer *m_vray;
 
-		bool isValid() const {
-			return saved && left >= 0 && top >= 0 && width > 0 && height > 0;
-		}
-
-		int left;
-		int top;
-		int width;
-		int height;
-		bool saved;
-	};
-
-	RenderRegion                  m_savedRegion; ///< Saves render regions between renders
-	VRay::VRayRenderer           *m_vray; ///< V-Ray renderer instance
-	CbCollection                  m_callbacks; ///< collection of registered render callbacks
+	/// A collection of registered render callbacks.
+	CbCollection m_callbacks;
 };
 
 } // namespace VRayForHoudini

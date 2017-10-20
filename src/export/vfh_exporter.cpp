@@ -1845,6 +1845,11 @@ int VRayExporter::renderFrame(int locked)
 	}
 
 	if (m_workMode == ExpRender || m_workMode == ExpExportRender) {
+		if (vfbSettings.isRenderRegionValid) {
+			getRenderer().getVRay().setRenderRegion(vfbSettings.rrLeft, vfbSettings.rrTop,
+													vfbSettings.rrWidth, vfbSettings.rrHeight);
+		}
+
 		m_renderer.startRender(locked);
 	}
 
@@ -1910,9 +1915,17 @@ void VRayExporter::initExporter(int hasUI, int nframes, fpreal tstart, fpreal te
 	resetOpCallbacks();
 
 	if (hasUI) {
-		restoreVfbState();
+		if (!getRenderer().getVRay().vfb.isShown()) {
+			restoreVfbState();
+		}
 
+		getRenderer().getVfbSettings(vfbSettings);
 		getRenderer().showVFB(m_workMode != ExpExport, m_rop->getFullPath());
+
+		m_renderer.addCbOnImageReady(CbVoid(boost::bind(&VRayExporter::saveVfbState, this)));
+		m_renderer.addCbOnRendererClose(CbVoid(boost::bind(&VRayExporter::saveVfbState, this)));
+		m_renderer.addCbOnVfbClose(CbVoid(boost::bind(&VRayExporter::saveVfbState, this)));
+		m_renderer.addCbOnRenderLast(CbVoid(boost::bind(&VRayExporter::renderLast, this)));
 	}
 
 	m_renderer.addCbOnProgress(CbOnProgress(boost::bind(&VRayExporter::onProgress, this, _1, _2, _3, _4)));
@@ -1924,10 +1937,6 @@ void VRayExporter::initExporter(int hasUI, int nframes, fpreal tstart, fpreal te
 	else if (isIPR()) {
 		m_renderer.addCbOnImageReady(CbVoid(boost::bind(&VRayExporter::resetOpCallbacks, this)));
 		m_renderer.addCbOnRendererClose(CbVoid(boost::bind(&VRayExporter::resetOpCallbacks, this)));
-	}
-
-	if (hasUI) {
-		m_renderer.addCbOnRendererClose(CbVoid(boost::bind(&VRayExporter::saveVfbState, this)));
 	}
 
 	m_isMotionBlur = hasMotionBlur(*m_rop, *camera);
@@ -2185,5 +2194,16 @@ void VRayExporter::restoreVfbState()
 	UT_String vfbState;
 	m_rop->evalString(vfbState, "_vfb_settings", 0, 0.0);
 
-	getRenderer().restoreVfbState(vfbState.buffer());
+	if (vfbState.isstring()) {
+		getRenderer().restoreVfbState(vfbState.buffer());
+	}
+}
+
+void VRayExporter::renderLast()
+{
+	if (!m_rop)
+		return;
+
+	initExporter(true, m_frames, m_timeStart, m_timeEnd);
+	exportFrame(m_context.getTime());
 }
