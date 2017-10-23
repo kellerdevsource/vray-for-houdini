@@ -28,96 +28,94 @@
 #include <chrono>
 
 namespace {
-/// Info for a single channel, could be casted to int to obtain the channel type for PHX
-struct ChannelInfo {
-	const char * propName; ///< the name of the property in the plugin
-	const char * displayName; ///< the displayed name for the channel
-	GridChannels::Enum type; ///< Value of the channel for PHX
+	/// Info for a single channel, could be casted to int to obtain the channel type for PHX
+	struct ChannelInfo {
+		const char * propName; ///< the name of the property in the plugin
+		const char * displayName; ///< the displayed name for the channel
+		GridChannels::Enum type; ///< Value of the channel for PHX
 
-	/// Get channel type
-	operator int() const {
-		return static_cast<int>(type);
-	}
-};
-
-const ChannelInfo chInfo[] = {
-	{ "channel_smoke", "Smoke",       GridChannels::ChSm       },
-	{ "channel_temp",  "Temperature", GridChannels::ChT        },
-	{ "channel_fuel",  "Fuel",        GridChannels::ChFl       },
-	{ "channel_vel_x", "Velocity X",  GridChannels::ChVx       },
-	{ "channel_vel_y", "Velocity Y",  GridChannels::ChVy       },
-	{ "channel_vel_z", "Velocity Z",  GridChannels::ChVz       },
-	{ "channel_red",   "Color R",     GridChannels::ChU        },
-	{ "channel_green", "Color G",     GridChannels::ChV        },
-	{ "channel_blue",  "Color B",     GridChannels::ChW        },
-	{ "INVALID",       "INVALID",     GridChannels::ChReserved },
-};
-/// number of valid channels
-const int CHANNEL_COUNT = (sizeof(chInfo) / sizeof(chInfo[0])) - 1;
-
-/// Get ChannelInfo from it's type
-const ChannelInfo &fromType(int type) {
-	for (int c = 0; c < CHANNEL_COUNT; ++c) {
-		if (static_cast<int>(chInfo[c]) == type) {
-			return chInfo[c];
+								 /// Get channel type
+		operator int() const {
+			return static_cast<int>(type);
 		}
-	}
-	return chInfo[CHANNEL_COUNT];
-}
+	};
 
-/// Get ChannelInfo from it's name
-const ChannelInfo &fromPropName(const char *name) {
-	for (int c = 0; c < CHANNEL_COUNT; ++c) {
-		if (!strcmp(name, chInfo[c].propName)) {
-			return chInfo[c];
+	const ChannelInfo chInfo[] = {
+		{ "channel_smoke", "Smoke",       GridChannels::ChSm },
+		{ "channel_temp",  "Temperature", GridChannels::ChT },
+		{ "channel_fuel",  "Fuel",        GridChannels::ChFl },
+		{ "channel_vel_x", "Velocity X",  GridChannels::ChVx },
+		{ "channel_vel_y", "Velocity Y",  GridChannels::ChVy },
+		{ "channel_vel_z", "Velocity Z",  GridChannels::ChVz },
+		{ "channel_red",   "Color R",     GridChannels::ChU },
+		{ "channel_green", "Color G",     GridChannels::ChV },
+		{ "channel_blue",  "Color B",     GridChannels::ChW },
+		{ "INVALID",       "INVALID",     GridChannels::ChReserved },
+	};
+	/// number of valid channels
+	const int CHANNEL_COUNT = (sizeof(chInfo) / sizeof(chInfo[0])) - 1;
+
+	/// Get ChannelInfo from it's type
+	const ChannelInfo &fromType(int type) {
+		for (int c = 0; c < CHANNEL_COUNT; ++c) {
+			if (static_cast<int>(chInfo[c]) == type) {
+				return chInfo[c];
+			}
 		}
-	}
-	return chInfo[CHANNEL_COUNT - 1];
-}
-
-UT_Matrix4F cacheWorldTm(VRayForHoudini::VRayVolumeGridRef::CachePtr cache, bool flipYZ) {
-	if (!cache) {
-		return UT_Matrix4F(1.f);
+		return chInfo[CHANNEL_COUNT];
 	}
 
-	float flTransform[12];
-	cache->GetObject2GridTransform(flTransform);
-
-	// houdini translations is in last row instead of last col
-	UT_Matrix4F m4(
-		flTransform[0], flTransform[1], flTransform[2], 0.f,
-		flTransform[3], flTransform[4], flTransform[5], 0.f,
-		flTransform[6], flTransform[7], flTransform[8], 0.f,
-		flTransform[9], flTransform[10], flTransform[11], 1.0
-	);
-
-	if (flipYZ) {
-		for (int c = 0; c < 4; ++c) {
-			fpreal32 old = m4(1, c);
-			m4(1, c) = -m4(2, c);
-			m4(2, c) = old;
+	/// Get ChannelInfo from it's name
+	const ChannelInfo &fromPropName(const char *name) {
+		for (int c = 0; c < CHANNEL_COUNT; ++c) {
+			if (!strcmp(name, chInfo[c].propName)) {
+				return chInfo[c];
+			}
 		}
+		return chInfo[CHANNEL_COUNT - 1];
 	}
 
-	m4.invert();
+	UT_Matrix4F cacheWorldTm(VRayForHoudini::VRayVolumeGridRef::CachePtr cache, bool flipYZ) {
+		if (!cache) {
+			return UT_Matrix4F(1.f);
+		}
 
-	int gridDimensions[3];
-	cache->GetDim(gridDimensions);
+		float flTransform[12];
+		cache->GetObject2GridTransform(flTransform);
 
-	// houdini simulations are 2x2x2 box from (-1,-1,-1) to (1,1,1)
-	// this will transform houdini box to grid dimentions
-	UT_Matrix4F hou2phx(1.f);
+		// houdini translations is in last row instead of last col
+		UT_Matrix4F m4(
+			flTransform[0], flTransform[1], flTransform[2], 0.f,
+			flTransform[3], flTransform[4], flTransform[5], 0.f,
+			flTransform[6], flTransform[7], flTransform[8], 0.f,
+			flTransform[9], flTransform[10], flTransform[11], 1.0
+		);
 
-	for (int c = 0; c < 3; ++c) {
-		hou2phx(3, c) = gridDimensions[c] * 0.5f;
-		hou2phx(c, c) = gridDimensions[c] * 0.5f;
+		if (flipYZ) {
+			for (int c = 0; c < 4; ++c) {
+				fpreal32 old = m4(1, c);
+				m4(1, c) = -m4(2, c);
+				m4(2, c) = old;
+			}
+		}
+
+		m4.invert();
+
+		int gridDimensions[3];
+		cache->GetDim(gridDimensions);
+
+		// houdini simulations are 2x2x2 box from (-1,-1,-1) to (1,1,1)
+		// this will transform houdini box to grid dimentions
+		UT_Matrix4F hou2phx(1.f);
+
+		for (int c = 0; c < 3; ++c) {
+			hou2phx(3, c) = gridDimensions[c] * 0.5f;
+			hou2phx(c, c) = gridDimensions[c] * 0.5f;
+		}
+
+		return hou2phx * m4;
 	}
-
-	return hou2phx * m4;
 }
-
-}
-
 
 using namespace VRayForHoudini;
 
@@ -149,18 +147,18 @@ private:
 	VUTILS_DISABLE_COPY(VRayVolumeGridFactory);
 };
 
-VRayVolumeGridFactory::VRayVolumeGridFactory():
+VRayVolumeGridFactory::VRayVolumeGridFactory() :
 	GU_PackedFactory("VRayVolumeGridRef", "VRayVolumeGridRef")
 {
 	/// Register all properties from VFH_VOLUME_GRID_PARAMS
 	VFH_MAKE_REGISTERS(VFH_VOLUME_GRID_PARAMS, VFH_VOLUME_GRID_PARAMS_COUNT, VRayVolumeGridRef)
 
-	registerTupleIntrinsic(
+		registerTupleIntrinsic(
 			"phx_channel_map",
 			IntGetterCast(&VRayVolumeGridRef::getPhxChannelMapSize),
 			StringArrayGetterCast(&VRayVolumeGridRef::getPhxChannelMap),
 			StringArraySetterCast(&VRayVolumeGridRef::setPhxChannelMap)
-			);
+		);
 }
 
 void VRayVolumeGridRef::install(GA_PrimitiveFactory *gafactory)
@@ -168,14 +166,14 @@ void VRayVolumeGridRef::install(GA_PrimitiveFactory *gafactory)
 	VRayVolumeGridFactory &theFactory = VRayVolumeGridFactory::getInstance();
 	if (theFactory.isRegistered()) {
 		Log::getLog().debug("Multiple attempts to install packed primitive %s from %s",
-							static_cast<const char *>(theFactory.name()), UT_DSO::getRunningFile());
+			static_cast<const char *>(theFactory.name()), UT_DSO::getRunningFile());
 		return;
 	}
 
 	GU_PrimPacked::registerPacked(gafactory, &theFactory);
 	if (NOT(theFactory.isRegistered())) {
 		Log::getLog().error("Unable to register packed primitive %s from %s",
-							static_cast<const char *>(theFactory.name()), UT_DSO::getRunningFile());
+			static_cast<const char *>(theFactory.name()), UT_DSO::getRunningFile());
 		return;
 	}
 
@@ -186,6 +184,17 @@ void VRayVolumeGridRef::install(GA_PrimitiveFactory *gafactory)
 void VRayVolumeGridRef::fetchData(const VolumeCacheKey &key, VolumeCacheData &data)
 {
 	VRayVolumeGridRef::fetchDataMaxVox(key, data, -1, false);
+}
+
+static inline float
+sphereVal(int i, int j, int k, int xres, int yres, int zres)
+{
+	float	x, y, z;
+
+	x = 2.0F * (i - 0.5F*xres + 0.5F) / xres;
+	y = 2.0F * (j - 0.5F*yres + 0.5F) / yres;
+	z = 2.0F * (k - 0.5F*zres + 0.5F) / zres;
+	return SYSsqrt(x*x + y*y + z*z) < 1.0F ? 1.0F : 0;
 }
 
 void VRayForHoudini::VRayVolumeGridRef::fetchDataMaxVox(const VolumeCacheKey &key, VolumeCacheData &data, const i64 voxelCount, const bool infoOnly) {
@@ -214,7 +223,6 @@ void VRayForHoudini::VRayVolumeGridRef::fetchDataMaxVox(const VolumeCacheKey &ke
 	}
 
 	GU_Detail *gdp = new GU_Detail();
-	data.detailHandle.allocateAndSet(gdp, true);
 
 	int gridDimensions[3];
 	data.aurPtr->GetDim(gridDimensions);
@@ -227,12 +235,13 @@ void VRayForHoudini::VRayVolumeGridRef::fetchDataMaxVox(const VolumeCacheKey &ke
 	for (int c = 0; c < CHANNEL_COUNT; ++c) {
 		const ChannelInfo &chan = chInfo[c];
 
-		if (!data.aurPtr->ChannelPresent(chan.type)) {
+		if (!data.aurPtr->ChannelPresent(chan.type)
+			|| chan.type != GridChannels::ChSm) {
 			continue;
 		}
 		GU_PrimVolume *volumeGdp = (GU_PrimVolume *)GU_PrimVolume::build(gdp);
 
-		GEO_VolumeVis visType = chan.type == GridChannels::ChSm ? GEO_VOLUMEVIS_SMOKE : GEO_VOLUMEVIS_INVISIBLE;
+		GEO_VolumeVis visType = GEO_VOLUMEVIS_SMOKE; // only export visible
 		volumeGdp->setVisualization(visType, volumeGdp->getVisIso(), volumeGdp->getVisDensity());
 
 		UT_VoxelArrayWriteHandleF voxelHandle = volumeGdp->getVoxelWriteHandle();
@@ -256,8 +265,9 @@ void VRayForHoudini::VRayVolumeGridRef::fetchDataMaxVox(const VolumeCacheKey &ke
 
 		volumeGdp->setTransform4(tm);
 	}
-}
 
+	data.detailHandle.allocateAndSet(gdp);
+}
 
 VRayVolumeGridRef::VRayVolumeGridRef()
 	: GU_PackedImpl()
@@ -326,7 +336,6 @@ GU_PackedFactory* VRayVolumeGridRef::getFactory() const
 	return &VRayVolumeGridFactory::getInstance();
 }
 
-
 void VRayVolumeGridRef::clearData()
 {
 	// This method is called when primitives are "stashed" during the cooking
@@ -335,17 +344,9 @@ void VRayVolumeGridRef::clearData()
 	// We can just leave our data.
 }
 
-
 bool VRayVolumeGridRef::save(UT_Options &options, const GA_SaveMap &map) const
 {
 	options.merge(m_options);
-	return true;
-}
-
-
-bool VRayVolumeGridRef::getLocalTransform(UT_Matrix4D &m) const
-{
-	m = toWorldTm(getCache());
 	return true;
 }
 
@@ -377,12 +378,10 @@ VRayVolumeGridRef::VolumeCacheData &VRayVolumeGridRef::getCache(const VolumeCach
 	return m_currentData;
 }
 
-
 UT_Matrix4F VRayVolumeGridRef::toWorldTm(CachePtr cache) const
 {
 	return cacheWorldTm(cache, this->get_flip_yz());
 }
-
 
 bool VRayVolumeGridRef::getBounds(UT_BoundingBox &box) const
 {
@@ -391,13 +390,9 @@ bool VRayVolumeGridRef::getBounds(UT_BoundingBox &box) const
 		return false;
 	}
 
-	UT_Vector3F min(-1, -1, -1), max(1, 1, 1);
-	box.initBounds(min, max);
-	SYSconst_cast(this)->setBoxCache(box);
-
+	m_handle.gdp()->getBBox(&box);
 	return true;
 }
-
 
 bool VRayVolumeGridRef::getRenderingBounds(UT_BoundingBox &box) const
 {
@@ -406,21 +401,17 @@ bool VRayVolumeGridRef::getRenderingBounds(UT_BoundingBox &box) const
 	return getBounds(box);
 }
 
-
 void VRayVolumeGridRef::getVelocityRange(UT_Vector3 &min, UT_Vector3 &max) const
 {
 	// No velocity attribute on geometry
-	min = 0;
-	max = 0;
+	min = max = 0;
 }
-
 
 void VRayVolumeGridRef::getWidthRange(fpreal &min, fpreal &max) const
 {
 	// Width is only important for curves/points.
 	min = max = 0;
 }
-
 
 bool VRayVolumeGridRef::unpack(GU_Detail &destgdp) const
 {
@@ -474,7 +465,6 @@ GU_ConstDetailHandle VRayVolumeGridRef::getPackedDetail(GU_PackedContext *contex
 	return getDetail();
 }
 
-
 int64 VRayVolumeGridRef::getMemoryUsage(bool inclusive) const
 {
 	int64 mem = inclusive ? sizeof(*this) : 0;
@@ -484,11 +474,10 @@ int64 VRayVolumeGridRef::getMemoryUsage(bool inclusive) const
 	return mem;
 }
 
-
 void VRayVolumeGridRef::countMemory(UT_MemoryCounter &counter, bool inclusive) const
 {
 	if (counter.mustCountUnshared()) {
-		size_t mem = (inclusive)? sizeof(*this) : 0;
+		size_t mem = (inclusive) ? sizeof(*this) : 0;
 		mem += getDetail().getMemoryUsage(false);
 		UT_MEMORY_DEBUG_LOG(theFactory->name(), int64(mem));
 		counter.countUnshared(mem);
@@ -505,7 +494,8 @@ std::string getDefaultMapping(const char *cachePath) {
 	char buff[MAX_CHAN_MAP_LEN];
 	if (1 == aurGenerateDefaultChannelMappings(buff, MAX_CHAN_MAP_LEN, cachePath)) {
 		return std::string(buff);
-	} else {
+	}
+	else {
 		return "";
 	}
 }
@@ -519,7 +509,7 @@ UT_StringArray VRayVolumeGridRef::getCacheChannels() const {
 
 	int chanIndex = 0, isChannelVector3D;
 	char chanName[MAX_CHAN_MAP_LEN];
-	while(1 == aurGet3rdPartyChannelName(chanName, MAX_CHAN_MAP_LEN, &isChannelVector3D, this->get_current_cache_path(), chanIndex++)) {
+	while (1 == aurGet3rdPartyChannelName(chanName, MAX_CHAN_MAP_LEN, &isChannelVector3D, this->get_current_cache_path(), chanIndex++)) {
 		channels.append(chanName);
 	}
 
@@ -544,7 +534,8 @@ void VRayVolumeGridRef::buildMapping() {
 	if (UT_String(path).endsWith(".aur")) {
 		chanMap = "";
 		this->setPhxChannelMap(UT_StringArray());
-	} else {
+	}
+	else {
 		UT_StringArray channels = getCacheChannels();
 
 		// will hold names so we can use pointers to them
@@ -564,12 +555,12 @@ void VRayVolumeGridRef::buildMapping() {
 			}
 		}
 
-		const char *inputNames[CHANNEL_COUNT] = {0};
+		const char *inputNames[CHANNEL_COUNT] = { 0 };
 		for (int c = 0; c < names.size(); ++c) {
 			inputNames[c] = names[c].c_str();
 		}
 
-		char usrchmap[MAX_CHAN_MAP_LEN] = {0,};
+		char usrchmap[MAX_CHAN_MAP_LEN] = { 0, };
 		if (1 == aurComposeChannelMappingsString(usrchmap, MAX_CHAN_MAP_LEN, ids.data(), const_cast<char * const *>(inputNames), names.size())) {
 			chanMap = usrchmap;
 		}
@@ -580,7 +571,7 @@ void VRayVolumeGridRef::buildMapping() {
 		}
 	}
 
-	if(m_dirty || chanMap != this->get_usrchmap()) {
+	if (m_dirty || chanMap != this->get_usrchmap()) {
 		this->set_usrchmap(chanMap);
 	}
 }
@@ -604,7 +595,8 @@ int VRayVolumeGridRef::getCurrentCacheFrame() const
 				if (get_load_nearest()) {
 					// clamp frame in [0, animLen]
 					frame = std::max(0.f, std::min(fractionalLen, frame));
-				} else {
+				}
+				else {
 					frame = INT_MIN;
 				}
 			}
@@ -687,7 +679,8 @@ std::string VRayVolumeGridRef::getConvertedPath(bool toPhx) const
 
 	if (toPhx) {
 		return prefix + std::string(width, '#') + suffix;
-	} else {
+	}
+	else {
 		char frameStr[64];
 		sprintf(frameStr, "%0*d", width, getCurrentCacheFrame());
 		return std::string(prefix) + frameStr + suffix;
@@ -703,11 +696,13 @@ int VRayVolumeGridRef::splitPath(const UT_String &path, std::string &prefix, std
 		if (m_doFrameReplace) {
 			prefix = hPrefix.toStdString();
 			suffix = hSuffix.toStdString();
-		} else {
+		}
+		else {
 			prefix = path.toStdString();
 			suffix = "";
 		}
-	} else {
+	}
+	else {
 		prefix = suffix = "";
 	}
 
@@ -728,8 +723,8 @@ bool VRayVolumeGridRef::updateFrom(const UT_Options &options)
 		int frameWidth = splitPath(options.getOptionS("cache_path").c_str(), prefix, suffix);
 
 		pathChange = frameWidth != this->get_frame_number_width() ||
-		             prefix     != this->get_cache_path_prefix() ||
-		             suffix     != this->get_cache_path_suffix();
+			prefix != this->get_cache_path_prefix() ||
+			suffix != this->get_cache_path_suffix();
 
 		this->set_cache_path_prefix(prefix.c_str());
 		this->set_cache_path_suffix(suffix.c_str());
@@ -739,7 +734,7 @@ bool VRayVolumeGridRef::updateFrom(const UT_Options &options)
 	if (m_doFrameReplace) {
 		// if we aren't replacing frame we don't care if frame changes
 		// this means user hardcoded a path for a specific frame 
-		pathChange = pathChange 
+		pathChange = pathChange
 			|| (options.hasOption("current_frame") && options.getOptionI("current_frame") != this->get_current_frame());
 	}
 
@@ -747,10 +742,10 @@ bool VRayVolumeGridRef::updateFrom(const UT_Options &options)
 
 	int newResolution = (options.getOptionI("res_mode") == 0 ? MAX_RESOLUTION : options.getOptionI("preview_res"));
 	m_dirty = m_dirty
-		|| pathChange 
-		|| (options.hasOption("flip_yz") 
+		|| pathChange
+		|| (options.hasOption("flip_yz")
 			&& options.getOptionI("flip_yz") != this->get_flip_yz())
-		|| (options.hasOption("res_mode") && options.hasOption("preview_res") 
+		|| (options.hasOption("res_mode") && options.hasOption("preview_res")
 			&& getResolution() != newResolution);
 
 	m_options.merge(options);
