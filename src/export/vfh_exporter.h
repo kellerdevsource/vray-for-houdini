@@ -580,6 +580,9 @@ private:
 	/// Restores VFB state.
 	void restoreVfbState();
 
+	/// Executed when user presses "Render" button in the VFB.
+	void renderLast();
+
 	/// The driver node bound to this exporter.
 	OP_Node *m_rop;
 
@@ -604,6 +607,9 @@ private:
 
 	/// Object exporter.
 	ObjectExporter objectExporter;
+
+	/// Frame buffer settings.
+	VFBSettings vfbSettings;
 
 public:
 	/// Register event callback for a given node. This callback will be invoked when

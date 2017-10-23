@@ -120,6 +120,17 @@ void CallCallbacks(const CbBase<T> * callbacks, Args && ...args)
 
 #endif // BOOST_NO_CXX11_VARIADIC_TEMPLATES
 
+void OnRenderLast(VRay::VRayRenderer &renderer, bool isRendering, void *userData)
+{
+	CbSetOnRenderLast *callbacks = reinterpret_cast<CbSetOnRenderLast*>(userData);
+	CallCallbacks(callbacks, renderer, isRendering);
+}
+
+void OnVFBClosed(VRay::VRayRenderer &renderer, void *userData)
+{
+	CbSetOnVFBClosed *callbacks = reinterpret_cast<CbSetOnVFBClosed*>(userData);
+	CallCallbacks(callbacks, renderer);
+}
 
 void OnDumpMessage(VRay::VRayRenderer &renderer, const char *msg, int level, void *userData)
 {
@@ -251,17 +262,6 @@ int VRayPluginRenderer::initRenderer(int hasUI, int reInit)
 		resetCallbacks();
 	}
 	else if (m_vray) {
-		// Workaround to make render regions persist trough renders
-		m_savedRegion.saved = false;
-
-		const bool gotRegion = m_vray->getRenderRegion(m_savedRegion.left, m_savedRegion.top, m_savedRegion.width, m_savedRegion.height);
-		int width = 0, height = 0;
-		if (gotRegion && m_vray->getImageSize(width, height)) {
-			if (m_savedRegion.width != width || m_savedRegion.height != height) {
-				m_savedRegion.saved = true;
-			}
-		}
-
 		m_vray->stop();
 		m_vray->reset();
 	}
@@ -309,6 +309,8 @@ int VRayPluginRenderer::initRenderer(int hasUI, int reInit)
 				m_vray->setOnBucketInit(OnBucketInit,         &m_callbacks.m_cbOnBucketInit);
 				m_vray->setOnBucketFailed(OnBucketFailed,     &m_callbacks.m_cbOnBucketFailed);
 				m_vray->setOnBucketReady(OnBucketReady,       &m_callbacks.m_cbOnBucketReady);
+				m_vray->setOnRenderLast(OnRenderLast, &m_callbacks.onRenderLast);
+				m_vray->setOnVFBClosed(OnVFBClosed, &m_callbacks.onVFBClosed);
 			}
 		}
 	}
@@ -621,19 +623,15 @@ int VRayPluginRenderer::exportScene(const std::string &filepath, VRay::VRayExpor
 
 int VRayPluginRenderer::startRender(int locked)
 {
-	if (m_vray) {
-		Log::getLog().info("Starting render for frame %.3f...", m_vray->getCurrentTime());
+	if (!m_vray)
+		return 1;
 
-		// TODO: unhack this when appsdk saves render regions after m_vray->reset()
-		if (m_savedRegion.isValid()) {
-			m_vray->setRenderRegion(m_savedRegion.left, m_savedRegion.top, m_savedRegion.width, m_savedRegion.height);
-		}
+	Log::getLog().info("Starting render for frame %.3f...", m_vray->getCurrentTime());
 
-		m_vray->startSync();
+	m_vray->startSync();
 
-		if (locked) {
-			m_vray->waitForImageReady();
-		}
+	if (locked) {
+		m_vray->waitForImageReady();
 	}
 
 	return 0;
@@ -714,6 +712,79 @@ void VRayPluginRenderer::reset() const
 	m_vray->reset();
 }
 
+void VFBSettings::fillVfbSettings(void *stateBuf, int stateBufSize, VFBSettings &settings)
+{
+	const int VFBS_CURR_VER = 16;
+
+	int rd;
+
+	PBufStream stream;
+	stream.SetBuf(stateBuf, stateBufSize);
+	stream.Open();
+
+	{
+		uint32 histInfoSize = 0;
+		stream.Read(&histInfoSize, sizeof(histInfoSize), rd);
+		uint8 *histBuf = new uint8[histInfoSize];
+		stream.Read(histBuf, sizeof(uint8) * histInfoSize, rd);
+		FreePtr(histBuf);
+	}
+	{
+		uint32 stateSize = 0;
+		stream.Read(&stateSize, sizeof(stateSize), rd);
+	}
+
+	stream.Read(&settings.structVersion, sizeof(settings.structVersion), rd);
+
+	stream.Read(&settings.vfbx, sizeof(settings.vfbx), rd);
+	stream.Read(&settings.vfby, sizeof(settings.vfby), rd);
+	stream.Read(&settings.vfbWidth, sizeof(settings.vfbWidth), rd);
+	stream.Read(&settings.vfbHeight, sizeof(settings.vfbHeight), rd);
+	stream.Read(&settings.ccx, sizeof(settings.ccx), rd);
+	stream.Read(&settings.ccy, sizeof(settings.ccy), rd);
+	stream.Read(&settings.infox, sizeof(settings.infox), rd);
+	stream.Read(&settings.infoy, sizeof(settings.infoy), rd);
+	uint32 flagsL = 0;
+	stream.ReadBinaryData(flagsL);
+	settings.flags64=flagsL;
+	stream.Read(&settings.posSaved, sizeof(settings.posSaved), rd);
+
+	if (settings.structVersion <= VFBS_CURR_VER) {
+		if (settings.structVersion >= 7) {
+			stream.Read(&settings.lex, sizeof(settings.lex), rd);
+			stream.Read(&settings.ley, sizeof(settings.ley), rd);
+		}
+
+		if (settings.structVersion >= 4) {
+			stream.Read(&settings.isRenderRegionValid, sizeof(settings.isRenderRegionValid), rd);
+			stream.Read(&settings.rrLeft, sizeof(settings.rrLeft), rd);
+			stream.Read(&settings.rrTop, sizeof(settings.rrTop), rd);
+			stream.Read(&settings.rrWidth, sizeof(settings.rrWidth), rd);
+			stream.Read(&settings.rrHeight, sizeof(settings.rrHeight), rd);
+		}
+
+		if(settings.structVersion >= 10) {
+			stream.Read(&settings.flagsrollouts, sizeof(settings.flagsrollouts), rd);
+		}
+
+		if(settings.structVersion >= 14) {
+			stream.Read(&settings.rrLeftNorm, sizeof(settings.rrLeftNorm), rd);
+			stream.Read(&settings.rrTopNorm, sizeof(settings.rrTopNorm), rd);
+			stream.Read(&settings.rrWidthNorm, sizeof(settings.rrWidthNorm), rd);
+			stream.Read(&settings.rrHeightNorm, sizeof(settings.rrHeightNorm), rd);
+		}
+		else {
+			settings.rrLeftNorm=settings.rrTopNorm=settings.rrWidthNorm=settings.rrHeightNorm=-1;
+		}
+
+		if(settings.structVersion >= 16) {
+			uint32 flagsH=0;
+			stream.ReadBinaryData(flagsH);
+			settings.flags64 |= static_cast<uint64>(flagsH)<<32;
+		}
+	}
+}
+
 void VRayPluginRenderer::saveVfbState(QString &stateData) const
 {
 	if (!m_vray)
@@ -726,6 +797,8 @@ void VRayPluginRenderer::saveVfbState(QString &stateData) const
 		const QByteArray vfbStateData(reinterpret_cast<const char*>(vfbState->getData()), stateDataSize);
 
 		stateData = vfbStateData.toBase64();
+
+		FreePtr(vfbState);
 	}
 }
 
@@ -737,4 +810,18 @@ void VRayPluginRenderer::restoreVfbState(const QString &stateData) const
 	const QByteArray vfbStateData(QByteArray::fromBase64(stateData.toLocal8Bit()));
 
 	m_vray->vfb.setState(reinterpret_cast<const void*>(vfbStateData.constData()), vfbStateData.length());
+}
+
+void VRayPluginRenderer::getVfbSettings(VFBSettings &settings) const
+{
+	if (!m_vray)
+		return;
+
+	size_t vfbStateSize = 0;
+	VRay::VFBState *vfbState = m_vray->vfb.getState(vfbStateSize);
+
+	if (vfbState && vfbStateSize) {
+		VFBSettings::fillVfbSettings(vfbState->getData(), vfbStateSize, settings);
+		FreePtr(vfbState);
+	}
 }
