@@ -153,12 +153,12 @@ VRayVolumeGridFactory::VRayVolumeGridFactory() :
 	/// Register all properties from VFH_VOLUME_GRID_PARAMS
 	VFH_MAKE_REGISTERS(VFH_VOLUME_GRID_PARAMS, VFH_VOLUME_GRID_PARAMS_COUNT, VRayVolumeGridRef)
 
-		registerTupleIntrinsic(
-			"phx_channel_map",
-			IntGetterCast(&VRayVolumeGridRef::getPhxChannelMapSize),
-			StringArrayGetterCast(&VRayVolumeGridRef::getPhxChannelMap),
-			StringArraySetterCast(&VRayVolumeGridRef::setPhxChannelMap)
-		);
+	registerTupleIntrinsic(
+		"phx_channel_map",
+		IntGetterCast(&VRayVolumeGridRef::getPhxChannelMapSize),
+		StringArrayGetterCast(&VRayVolumeGridRef::getPhxChannelMap),
+		StringArraySetterCast(&VRayVolumeGridRef::setPhxChannelMap)
+	);
 }
 
 void VRayVolumeGridRef::install(GA_PrimitiveFactory *gafactory)
