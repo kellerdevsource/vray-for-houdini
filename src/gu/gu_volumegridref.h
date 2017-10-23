@@ -23,29 +23,29 @@
 #include <GU/GU_PackedImpl.h>
 
 namespace VRayForHoudini {
-	struct VolumeCacheKey {
-		std::string path;
-		std::string map;
-		bool flipYZ;
+struct VolumeCacheKey {
+	std::string path;
+	std::string map;
+	bool flipYZ;
 
-		bool isValid() const;
-	};
-	inline bool operator==(const VolumeCacheKey &left, const VolumeCacheKey &right) {
-		return left.path == right.path && left.map == right.map && left.flipYZ == right.flipYZ;
-	}
+	bool isValid() const;
+};
+inline bool operator==(const VolumeCacheKey &left, const VolumeCacheKey &right) {
+	return left.path == right.path && left.map == right.map && left.flipYZ == right.flipYZ;
+}
 }
 
 // extending namespace std with the proper specialization is the "correct" way according to the standard
 namespace std {
-	template <> struct hash<VRayForHoudini::VolumeCacheKey> {
-		size_t operator()(const VRayForHoudini::VolumeCacheKey &volumeKey) const {
-			VRayForHoudini::Hash::MHash hash = 42;
-			VRayForHoudini::Hash::MurmurHash3_x86_32(volumeKey.path.c_str(), volumeKey.path.length(), hash, &hash);
-			VRayForHoudini::Hash::MurmurHash3_x86_32(volumeKey.map.c_str(), volumeKey.map.length(), hash, &hash);
-			VRayForHoudini::Hash::MurmurHash3_x86_32(&volumeKey.flipYZ, sizeof(volumeKey.flipYZ), hash, &hash);
-			return hash;
-		}
-	};
+template <> struct hash<VRayForHoudini::VolumeCacheKey> {
+	size_t operator()(const VRayForHoudini::VolumeCacheKey &volumeKey) const {
+		VRayForHoudini::Hash::MHash hash = 42;
+		VRayForHoudini::Hash::MurmurHash3_x86_32(volumeKey.path.c_str(), volumeKey.path.length(), hash, &hash);
+		VRayForHoudini::Hash::MurmurHash3_x86_32(volumeKey.map.c_str(), volumeKey.map.length(), hash, &hash);
+		VRayForHoudini::Hash::MurmurHash3_x86_32(&volumeKey.flipYZ, sizeof(volumeKey.flipYZ), hash, &hash);
+		return hash;
+	}
+};
 };
 
 
