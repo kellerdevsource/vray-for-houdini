@@ -186,17 +186,6 @@ void VRayVolumeGridRef::fetchData(const VolumeCacheKey &key, VolumeCacheData &da
 	VRayVolumeGridRef::fetchDataMaxVox(key, data, -1, false);
 }
 
-static inline float
-sphereVal(int i, int j, int k, int xres, int yres, int zres)
-{
-	float	x, y, z;
-
-	x = 2.0F * (i - 0.5F*xres + 0.5F) / xres;
-	y = 2.0F * (j - 0.5F*yres + 0.5F) / yres;
-	z = 2.0F * (k - 0.5F*zres + 0.5F) / zres;
-	return SYSsqrt(x*x + y*y + z*z) < 1.0F ? 1.0F : 0;
-}
-
 void VRayForHoudini::VRayVolumeGridRef::fetchDataMaxVox(const VolumeCacheKey &key, VolumeCacheData &data, const i64 voxelCount, const bool infoOnly) {
 	typedef std::chrono::high_resolution_clock::time_point time_point;
 	typedef std::chrono::high_resolution_clock time_clock;
@@ -276,32 +265,28 @@ VRayVolumeGridRef::VRayVolumeGridRef()
 	, m_doFrameReplace(false)
 {
 	GU_Detail *gdp = new GU_Detail;
-	m_handle.allocateAndSet(gdp, true);
-	memset(m_channelDataRange.data(), 0, DataRangeMapSize);
+	getDetail().allocateAndSet(gdp, true);
+	memset(getChannelDataRanges().data(), 0, DataRangeMapSize);
 	this->initDataCache();
 }
 
 VRayVolumeGridRef::VRayVolumeGridRef(const VRayVolumeGridRef &src)
 	: GU_PackedImpl(src)
-	, m_handle(src.m_handle)
 	, m_options(src.m_options)
 	, m_dirty(false)
 	, m_channelDirty(false)
 	, m_doFrameReplace(src.m_doFrameReplace)
-	, m_channelDataRange(src.m_channelDataRange)
 {
 	this->initDataCache();
 }
 
 VRayForHoudini::VRayVolumeGridRef::VRayVolumeGridRef(VRayVolumeGridRef &&src)
 	: m_dataCache(std::move(src.m_dataCache))
-	, m_handle(std::move(src.m_handle))
 	, m_options(std::move(src.m_options))
 	, m_bBox(std::move(src.m_bBox))
 	, m_dirty(std::move(src.m_dirty))
 	, m_channelDirty(std::move(src.m_channelDirty))
 	, m_doFrameReplace(std::move(src.m_doFrameReplace))
-	, m_channelDataRange(std::move(src.m_channelDataRange))
 {
 }
 
@@ -390,7 +375,7 @@ bool VRayVolumeGridRef::getBounds(UT_BoundingBox &box) const
 		return false;
 	}
 
-	m_handle.gdp()->getBBox(&box);
+	getDetail().gdp()->getBBox(&box);
 	return true;
 }
 
@@ -435,9 +420,9 @@ GU_ConstDetailHandle VRayVolumeGridRef::getPackedDetail(GU_PackedContext *contex
 
 	VRayVolumeGridRef *self = SYSconst_cast(this);
 
-	memset(self->m_channelDataRange.data(), 0, DataRangeMapSize);
+	memset(self->getChannelDataRanges().data(), 0, DataRangeMapSize);
 
-	GU_DetailHandleAutoWriteLock rLock(SYSconst_cast(this)->m_handle);
+	GU_DetailHandleAutoWriteLock rLock(self->getDetail());
 	GU_Detail *gdp = rLock.getGdp();
 	gdp->stashAll();
 
@@ -455,12 +440,12 @@ GU_ConstDetailHandle VRayVolumeGridRef::getPackedDetail(GU_PackedContext *contex
 		return getDetail();
 	}
 
-	if (data.detailHandle == m_handle) {
+	if (data.detailHandle == getDetail()) {
 		return getDetail();
 	}
 
-	self->m_handle = data.detailHandle;
-	memcpy(self->m_channelDataRange.data(), data.dataRange.data(), DataRangeMapSize);
+	self->setDetail(data.detailHandle);
+	memcpy(self->getChannelDataRanges().data(), data.dataRange.data(), DataRangeMapSize);
 
 	return getDetail();
 }
