@@ -2099,8 +2099,7 @@ void VRayExporter::exportFrame(fpreal time)
 		m_error = ROP_ABORT_RENDER;
 	}
 	else {
-		bool lock = (!HOU::isUIAvailable() || isAnimation());
-		renderFrame(lock);
+		renderFrame(!isIPR());
 	}
 }
 
