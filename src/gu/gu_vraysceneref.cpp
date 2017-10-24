@@ -3,6 +3,7 @@
 #include "gu_vraysceneref.h"
 #include <vrscene_preview.h>
 
+#include "vfh_defines.h"
 #include "vfh_log.h"
 
 #include <GU/GU_PackedFactory.h>
