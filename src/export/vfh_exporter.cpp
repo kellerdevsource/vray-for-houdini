@@ -1950,7 +1950,7 @@ void VRayExporter::initExporter(int hasUI, int nframes, fpreal tstart, fpreal te
 
 	// NOTE: Force animated values for motion blur
 	if (!isAnimation()) {
-		m_renderer.setAnimation(m_isMotionBlur || m_isVelocityOn);
+		setAnimation(m_isMotionBlur || m_isVelocityOn);
 	}
 
 	m_error = ROP_CONTINUE_RENDER;
@@ -2082,7 +2082,8 @@ void VRayExporter::exportFrame(fpreal time)
 
 				OP_Context timeCtx;
 				timeCtx.setFrame(subframe);
-				setTime(timeCtx.getTime());
+				fpreal tt = timeCtx.getTime();
+				setTime(tt >= 0.0f? tt:0.0f);
 
 				exportScene();
 			}
