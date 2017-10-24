@@ -234,10 +234,8 @@ private:
 	UT_BoundingBox         m_bBox; ///< The volume bounding box
 	bool                   m_dirty; ///< True if any parameters that might affect preview are changed
 	bool                   m_channelDirty; ///< True if channel mapping have changed since we last built them
-
-											/// if true we will replace frame number with ### for PHX
-											/// otherwise user hardcoded frame number and we should not change it
-	bool                   m_doFrameReplace;
+	bool                   m_doFrameReplace; ///< If true we will replace frame number with ### for PHX
+	                                         /// otherwise user hardcoded frame number and we should not change it
 };
 
 } // namespace VRayForHoudini

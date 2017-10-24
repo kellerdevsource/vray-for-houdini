@@ -28,94 +28,96 @@
 #include <chrono>
 
 namespace {
-	/// Info for a single channel, could be casted to int to obtain the channel type for PHX
-	struct ChannelInfo {
-		const char * propName; ///< the name of the property in the plugin
-		const char * displayName; ///< the displayed name for the channel
-		GridChannels::Enum type; ///< Value of the channel for PHX
 
-								 /// Get channel type
-		operator int() const {
-			return static_cast<int>(type);
-		}
-	};
+/// Info for a single channel, could be casted to int to obtain the channel type for PHX
+struct ChannelInfo {
+	const char * propName; ///< the name of the property in the plugin
+	const char * displayName; ///< the displayed name for the channel
+	GridChannels::Enum type; ///< Value of the channel for PHX
 
-	const ChannelInfo chInfo[] = {
-		{ "channel_smoke", "Smoke",       GridChannels::ChSm },
-		{ "channel_temp",  "Temperature", GridChannels::ChT },
-		{ "channel_fuel",  "Fuel",        GridChannels::ChFl },
-		{ "channel_vel_x", "Velocity X",  GridChannels::ChVx },
-		{ "channel_vel_y", "Velocity Y",  GridChannels::ChVy },
-		{ "channel_vel_z", "Velocity Z",  GridChannels::ChVz },
-		{ "channel_red",   "Color R",     GridChannels::ChU },
-		{ "channel_green", "Color G",     GridChannels::ChV },
-		{ "channel_blue",  "Color B",     GridChannels::ChW },
-		{ "INVALID",       "INVALID",     GridChannels::ChReserved },
-	};
-	/// number of valid channels
-	const int CHANNEL_COUNT = (sizeof(chInfo) / sizeof(chInfo[0])) - 1;
-
-	/// Get ChannelInfo from it's type
-	const ChannelInfo &fromType(int type) {
-		for (int c = 0; c < CHANNEL_COUNT; ++c) {
-			if (static_cast<int>(chInfo[c]) == type) {
-				return chInfo[c];
-			}
-		}
-		return chInfo[CHANNEL_COUNT];
+								/// Get channel type
+	operator int() const {
+		return static_cast<int>(type);
 	}
+};
 
-	/// Get ChannelInfo from it's name
-	const ChannelInfo &fromPropName(const char *name) {
-		for (int c = 0; c < CHANNEL_COUNT; ++c) {
-			if (!strcmp(name, chInfo[c].propName)) {
-				return chInfo[c];
-			}
+const ChannelInfo chInfo[] = {
+	{ "channel_smoke", "Smoke",       GridChannels::ChSm },
+	{ "channel_temp",  "Temperature", GridChannels::ChT },
+	{ "channel_fuel",  "Fuel",        GridChannels::ChFl },
+	{ "channel_vel_x", "Velocity X",  GridChannels::ChVx },
+	{ "channel_vel_y", "Velocity Y",  GridChannels::ChVy },
+	{ "channel_vel_z", "Velocity Z",  GridChannels::ChVz },
+	{ "channel_red",   "Color R",     GridChannels::ChU },
+	{ "channel_green", "Color G",     GridChannels::ChV },
+	{ "channel_blue",  "Color B",     GridChannels::ChW },
+	{ "INVALID",       "INVALID",     GridChannels::ChReserved },
+};
+/// number of valid channels
+const int CHANNEL_COUNT = (sizeof(chInfo) / sizeof(chInfo[0])) - 1;
+
+/// Get ChannelInfo from it's type
+const ChannelInfo &fromType(int type) {
+	for (int c = 0; c < CHANNEL_COUNT; ++c) {
+		if (static_cast<int>(chInfo[c]) == type) {
+			return chInfo[c];
 		}
-		return chInfo[CHANNEL_COUNT - 1];
 	}
-
-	UT_Matrix4F cacheWorldTm(VRayForHoudini::VRayVolumeGridRef::CachePtr cache, bool flipYZ) {
-		if (!cache) {
-			return UT_Matrix4F(1.f);
-		}
-
-		float flTransform[12];
-		cache->GetObject2GridTransform(flTransform);
-
-		// houdini translations is in last row instead of last col
-		UT_Matrix4F m4(
-			flTransform[0], flTransform[1], flTransform[2], 0.f,
-			flTransform[3], flTransform[4], flTransform[5], 0.f,
-			flTransform[6], flTransform[7], flTransform[8], 0.f,
-			flTransform[9], flTransform[10], flTransform[11], 1.0
-		);
-
-		if (flipYZ) {
-			for (int c = 0; c < 4; ++c) {
-				fpreal32 old = m4(1, c);
-				m4(1, c) = -m4(2, c);
-				m4(2, c) = old;
-			}
-		}
-
-		m4.invert();
-
-		int gridDimensions[3];
-		cache->GetDim(gridDimensions);
-
-		// houdini simulations are 2x2x2 box from (-1,-1,-1) to (1,1,1)
-		// this will transform houdini box to grid dimentions
-		UT_Matrix4F hou2phx(1.f);
-
-		for (int c = 0; c < 3; ++c) {
-			hou2phx(3, c) = gridDimensions[c] * 0.5f;
-			hou2phx(c, c) = gridDimensions[c] * 0.5f;
-		}
-
-		return hou2phx * m4;
-	}
+	return chInfo[CHANNEL_COUNT];
 }
+
+/// Get ChannelInfo from it's name
+const ChannelInfo &fromPropName(const char *name) {
+	for (int c = 0; c < CHANNEL_COUNT; ++c) {
+		if (!strcmp(name, chInfo[c].propName)) {
+			return chInfo[c];
+		}
+	}
+	return chInfo[CHANNEL_COUNT - 1];
+}
+
+UT_Matrix4F getCacheTm(VRayForHoudini::VRayVolumeGridRef::CachePtr cache, bool flipYZ) {
+	if (!cache) {
+		return UT_Matrix4F(1.f);
+	}
+
+	float flTransform[12];
+	cache->GetObject2GridTransform(flTransform);
+
+	// houdini translations is in last row instead of last col
+	UT_Matrix4F m4(
+		flTransform[0], flTransform[1], flTransform[2], 0.f,
+		flTransform[3], flTransform[4], flTransform[5], 0.f,
+		flTransform[6], flTransform[7], flTransform[8], 0.f,
+		flTransform[9], flTransform[10], flTransform[11], 1.0
+	);
+
+	if (flipYZ) {
+		for (int c = 0; c < 4; ++c) {
+			fpreal32 old = m4(1, c);
+			m4(1, c) = -m4(2, c);
+			m4(2, c) = old;
+		}
+	}
+
+	m4.invert();
+
+	int gridDimensions[3];
+	cache->GetDim(gridDimensions);
+
+	// houdini simulations are 2x2x2 box from (-1,-1,-1) to (1,1,1)
+	// this will transform houdini box to grid dimentions
+	UT_Matrix4F hou2phx(1.f);
+
+	for (int c = 0; c < 3; ++c) {
+		hou2phx(3, c) = gridDimensions[c] * 0.5f;
+		hou2phx(c, c) = gridDimensions[c] * 0.5f;
+	}
+
+	return hou2phx * m4;
+}
+
+} // !namespace
 
 using namespace VRayForHoudini;
 
@@ -217,20 +219,19 @@ void VRayForHoudini::VRayVolumeGridRef::fetchDataMaxVox(const VolumeCacheKey &ke
 	data.aurPtr->GetDim(gridDimensions);
 	// TODO: maybe the flip YZ flag should be part of the key?
 	// what if there are two instances having the same cache but one has the flag set and the other does not?
-	const UT_Matrix4F tm = cacheWorldTm(data.aurPtr, key.flipYZ);
+	const UT_Matrix4F tm = getCacheTm(data.aurPtr, key.flipYZ);
 
 	time_point tBeginLoop = time_clock::now();
 	// load each channel from the cache file
 	for (int c = 0; c < CHANNEL_COUNT; ++c) {
 		const ChannelInfo &chan = chInfo[c];
 
-		if (!data.aurPtr->ChannelPresent(chan.type)
-			|| chan.type != GridChannels::ChSm) {
+		if (!data.aurPtr->ChannelPresent(chan.type)) {
 			continue;
 		}
 		GU_PrimVolume *volumeGdp = (GU_PrimVolume *)GU_PrimVolume::build(gdp);
 
-		GEO_VolumeVis visType = GEO_VOLUMEVIS_SMOKE; // only export visible
+		GEO_VolumeVis visType = chan.type == GridChannels::ChSm ? GEO_VOLUMEVIS_SMOKE : GEO_VOLUMEVIS_INVISIBLE;
 		volumeGdp->setVisualization(visType, volumeGdp->getVisIso(), volumeGdp->getVisDensity());
 
 		UT_VoxelArrayWriteHandleF voxelHandle = volumeGdp->getVoxelWriteHandle();
@@ -365,7 +366,7 @@ VRayVolumeGridRef::VolumeCacheData &VRayVolumeGridRef::getCache(const VolumeCach
 
 UT_Matrix4F VRayVolumeGridRef::toWorldTm(CachePtr cache) const
 {
-	return cacheWorldTm(cache, this->get_flip_yz());
+	return getCacheTm(cache, this->get_flip_yz());
 }
 
 bool VRayVolumeGridRef::getBounds(UT_BoundingBox &box) const
