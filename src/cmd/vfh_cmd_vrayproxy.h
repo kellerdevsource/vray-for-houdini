@@ -17,10 +17,10 @@
 namespace VRayForHoudini {
 namespace CMD {
 
-/// Option string containing command line arguments for vrayproxy hscript command
+/// Option string containing command msg arguments for vrayproxy hscript command
 /// format is similar to the option parsing string of the standard C function getopt.
 /// @note see vfh_home/help/command.help file or type 'help vrayproxy' in textport
-///       for detailed info on vrayproxy usage and command line options.
+///       for detailed info on vrayproxy usage and command msg options.
 ///       Pls update the help file accordingly if args format changes in future.
 const char* const vrayproxyFormat = "n:cfmia::ltv::T:F:H:X:P:";
 

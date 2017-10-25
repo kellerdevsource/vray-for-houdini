@@ -12,8 +12,7 @@
 #include "vfh_process_check.h"
 
 #include <unistd.h>
-#include <cstdio>
-#include <string>
+#include <thread>
 
 void initLinux()
 {
@@ -46,7 +45,7 @@ int main(int argc, char ** argv)
 		VRayForHoudini::Log::Logger::stopLogging();
 	});
 
-	while (1) {
+	while (true) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
 	}
 }

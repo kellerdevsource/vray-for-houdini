@@ -2039,6 +2039,11 @@ void VRayExporter::setTime(fpreal time)
 {
 	m_context.setTime(time);
 	getRenderer().getVRay().setCurrentTime(time);
+
+	Log::getLog().debug("Time:  %g", m_context.getTime());
+	Log::getLog().debug("Frame: %i", m_context.getFrame());
+	Log::getLog().debug("V-Ray time:  %g", getRenderer().getVRay().getCurrentTime());
+	Log::getLog().debug("V-Ray frame: %i", getRenderer().getVRay().getCurrentFrame());
 }
 
 void VRayExporter::exportFrame(fpreal time)

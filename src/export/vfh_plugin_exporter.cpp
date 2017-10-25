@@ -626,7 +626,8 @@ int VRayPluginRenderer::startRender(int locked)
 	if (!m_vray)
 		return 1;
 
-	Log::getLog().info("Starting render for frame %.3f...", m_vray->getCurrentTime());
+	Log::getLog().info("Starting render for frame %i [%.3f]...",
+					   m_vray->getCurrentFrame(), m_vray->getCurrentTime());
 
 	m_vray->startSync();
 
@@ -680,10 +681,10 @@ void VRayForHoudini::VRayPluginRenderer::setAnimation(bool on)
 }
 
 
-void VRayForHoudini::VRayPluginRenderer::setCurrentTime(fpreal fframe)
+void VRayForHoudini::VRayPluginRenderer::setCurrentTime(fpreal frame)
 {
 	if (m_vray) {
-		m_vray->setCurrentTime(fframe);
+		m_vray->setCurrentTime(frame);
 	}
 }
 
