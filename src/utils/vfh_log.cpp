@@ -13,6 +13,8 @@
 #include <QQueue>
 #include <QApplication>
 
+#include <thread>
+
 #include "vfh_defines.h"
 #include "vfh_log.h"
 
@@ -24,6 +26,9 @@
 
 using namespace VRayForHoudini;
 using namespace VRayForHoudini::Log;
+
+/// The ID of the main thread - used to distingquish in log.
+const std::thread::id mainThreadID = std::this_thread::get_id();
 
 static const char* logLevelAsString(LogLevel level)
 {
@@ -108,7 +113,7 @@ static void logMessage(const VfhLogMessage &data)
 	consoleMsg.append(data.message.simplified());
 	consoleMsg.append(VUTILS_COLOR_DEFAULT);
 
-	guiMsg.append(data.message);
+	guiMsg.append(data.message.simplified());
 
 	if (isDebuggerAttached) {
 		VS_DEBUG("%s\n", guiMsg.toLocal8Bit().constData());
@@ -132,7 +137,9 @@ class VfhLogThread
 {
 public:
 	~VfhLogThread() {
+		stopLogging();
 		quit();
+		wait();
 	}
 
 	void add(const VfhLogMessage &msg) {
@@ -140,9 +147,17 @@ public:
 		queue.enqueue(msg);
 	}
 
+	void startLogging() {
+		isWorking = true;
+	}
+
+	void stopLogging() {
+		isWorking = false;
+	}
+
 protected:
 	void run() VRAY_OVERRIDE {
-		while (isRunning()) {
+		while (isWorking) {
 			if (queue.isEmpty()) {
 				msleep(100);
 				continue;
@@ -162,6 +177,7 @@ private:
 
 	/// Queue lock.
 	QMutex mutex;
+	QAtomicInt isWorking;
 
 	/// Log message queue.
 	VfhLogQueue queue;
@@ -169,12 +185,15 @@ private:
 
 void Logger::startLogging()
 {
+	logThread.startLogging();
 	logThread.start(QThread::LowestPriority);
 }
 
 void Logger::stopLogging()
 {
+	logThread.stopLogging();
 	logThread.quit();
+	logThread.wait();
 }
 
 void Logger::valog(LogLevel level, const tchar *format, va_list args)
@@ -193,7 +212,7 @@ void Logger::valog(LogLevel level, const tchar *format, va_list args)
 	time(&msg.time);
 	msg.level = level;
 	msg.message = msgBuf;
-	msg.fromMain = qApp->thread() == QThread::currentThread();
+	msg.fromMain = std::this_thread::get_id() == mainThreadID;
 
 	logThread.add(msg);
 }
