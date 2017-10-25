@@ -64,7 +64,7 @@ def main():
             'cropr'       : SohoParm('cropr',       'real',   [-1],            False),
             'cropb'       : SohoParm('cropb',       'real',   [-1],            False),
             'cropt'       : SohoParm('cropt',       'real',   [-1],            False),
-            'camera'      : SohoParm('camera',      'string', ['/obj/cam1'],   False)
+            'camera'      : SohoParm('camera',      'string', ['/obj/cam1'],   False),
         }
 
         camParmsEval = sohoCam.evaluate(camParms, t)
@@ -85,7 +85,8 @@ def main():
         cropH = viewParams['res'][1] * (viewParams['cropt'] - viewParams['cropb'])
 
         printDebug("  Res: %s" % viewParams['res'])
-        printDebug("  Crop: %i-%i %i x %i " % (cropX, cropY, cropW, cropH))
+        printDebug("  Crop: %i-%i %i x %i" % (cropX, cropY, cropW, cropH))
+        printDebug("  Camera: %s" % camera)
 
         return viewParams
 
