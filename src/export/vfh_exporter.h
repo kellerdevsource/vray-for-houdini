@@ -130,6 +130,11 @@ public:
 	/// @param viewParams[out] - collects camera settings
 	void fillViewParamFromCameraNode(const OBJ_Node &camera, ViewParams &viewParams);
 
+	/// Sets parameretrs for physical camera.
+	/// @param camera Camera
+	/// @param viewParams ViewParams to fill.
+	void fillPhysicalViewParamFromCameraNode(const OBJ_Node &camera, ViewParams &viewParams);
+
 	/// Gather data for motion blur
 	/// @param viewParams[out] - collects motion blur settings
 	ReturnValue fillSettingsMotionBlur(ViewParams &viewParams, Attrs::PluginDesc &settingsMotionBlur);
