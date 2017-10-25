@@ -229,24 +229,33 @@ void VRayForHoudini::VRayVolumeGridRef::fetchDataMaxVox(const VolumeCacheKey &ke
 		if (!data.aurPtr->ChannelPresent(chan.type)) {
 			continue;
 		}
-		GU_PrimVolume *volumeGdp = (GU_PrimVolume *)GU_PrimVolume::build(gdp);
 
+		// get data range of channel
+		const float *grid = data.aurPtr->ExpandChannel(chan.type);
+		i64 cacheVoxelsCount = gridDimensions[0] * gridDimensions[1] * gridDimensions[2];
+		std::pair<const float *, const float *> dataRange = std::minmax_element(grid, grid + cacheVoxelsCount);
+		data.dataRange[chan.type].min = *dataRange.first;
+		data.dataRange[chan.type].max = *dataRange.second;
+
+		// do not save invisible channels
 		GEO_VolumeVis visType = chan.type == GridChannels::ChSm ? GEO_VOLUMEVIS_SMOKE : GEO_VOLUMEVIS_INVISIBLE;
+		if (visType == GEO_VOLUMEVIS_INVISIBLE) {
+			continue;
+		}
+
+		GU_PrimVolume *volumeGdp = (GU_PrimVolume *)GU_PrimVolume::build(gdp);
 		volumeGdp->setVisualization(visType, volumeGdp->getVisIso(), volumeGdp->getVisDensity());
 
 		UT_VoxelArrayWriteHandleF voxelHandle = volumeGdp->getVoxelWriteHandle();
 		voxelHandle->size(gridDimensions[0], gridDimensions[1], gridDimensions[2]);
 
 		time_point tStartExpand = time_clock::now();
-		const float *grid = data.aurPtr->ExpandChannel(chan.type);
 		time_point tEndExpand = time_clock::now();
 
 		int expandTime = std::chrono::duration_cast<milliseconds>(tEndExpand - tStartExpand).count();
 
 		time_point tStartExtract = time_clock::now();
 		voxelHandle->extractFromFlattened(grid, gridDimensions[0], gridDimensions[1] * gridDimensions[0]);
-		data.dataRange[chan.type].min = volumeGdp->calcMinimum();
-		data.dataRange[chan.type].max = volumeGdp->calcMaximum();
 		time_point tEndExtract = time_clock::now();
 
 		int extractTime = std::chrono::duration_cast<milliseconds>(tEndExtract - tStartExtract).count();
