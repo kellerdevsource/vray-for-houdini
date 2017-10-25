@@ -2082,8 +2082,8 @@ void VRayExporter::exportFrame(fpreal time)
 
 				OP_Context timeCtx;
 				timeCtx.setFrame(subframe);
-				fpreal tt = timeCtx.getTime();
-				setTime(tt >= 0.0f? tt:0.0f);
+				fpreal currentTime = timeCtx.getTime();
+				setTime(currentTime >= 0.0f ? currentTime : 0.0f);
 
 				exportScene();
 			}

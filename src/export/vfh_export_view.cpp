@@ -427,17 +427,14 @@ void VRayExporter::exportRenderView(const ViewParams &viewParams)
 
 VRay::Plugin VRayExporter::exportPhysicalCamera(const ViewParams &viewParams, int needRemoval)
 {
-	if (viewParams.useCameraPhysical != PhysicalCameraMode::modeNone) {
-		if (needRemoval) {
-			removePlugin("cameraPhysical", false);
-		}
-
-		Attrs::PluginDesc cameraPhysical("cameraPhysical", "CameraPhysical");
-		fillPhysicalCamera(viewParams, cameraPhysical);
-
-		return exportPlugin(cameraPhysical);
+	if (needRemoval) {
+		removePlugin("cameraPhysical", false);
 	}
-	return VRay::Plugin();
+
+	Attrs::PluginDesc cameraPhysical("cameraPhysical", "CameraPhysical");
+	fillPhysicalCamera(viewParams, cameraPhysical);
+
+	return exportPlugin(cameraPhysical);
 }
 
 ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
