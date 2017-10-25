@@ -13,21 +13,192 @@
 
 #include "vfh_defines.h"
 #include "vfh_log.h"
-#include "vfh_process_check.h"
 
 #include <QThread>
 #include <QProcess>
 #include <QQueue>
 #include <QMutex>
 
+#include <UT/UT_Args.h>
+#include <UT/UT_WorkBuffer.h>
+#include <IMG/IMG_TileDevice.h>
+#include <IMG/IMG_TileOptions.h>
+
+#include <TIL/TIL_TileMPlay.h>
+
 #include <functional>
 
-class TileQueueMessage;
-class ImageHeaderMessage;
-class TileImageMessage;
-class TileImage;
+/// Write image as buckets.
+#define USE_BUCKETS 1
 
-// TODO: use smart pointers for the messages
+/// Write render channels in IRP.
+#define USE_RENDER_CHANNELS 0
+
+struct ImageHeader {
+	ImageHeader()
+		: magic_number(('h' << 24) + ('M' << 16) + ('P' << 8) + '0')
+		, xres(0)
+		, yres(0)
+		, single_image_storage(0)
+		, single_image_array_size(0)
+		, multi_plane_count(0)
+	{}
+
+	const int magic_number;
+	int xres;
+	int yres;
+
+	/// Pixel format:
+	///  0 = Floating point data
+	///  1 = Unsigned char data
+	///  2 = Unsigned short data
+	///  4 = Unsigned int data
+	int single_image_storage;
+
+	/// Channles per pixel
+	///  1 = A single channel image
+	///  3 = RGB data
+	///  4 = RGBA data
+	int single_image_array_size;
+
+	int multi_plane_count;
+
+	int reserved[2];
+};
+
+struct PlaneDefinition {
+	PlaneDefinition()
+		: plane_number(0)
+		, name_length(0)
+		, data_format(0)
+		, array_size(0)
+	{}
+
+	/// Sequentially increasing integer
+	int plane_number;
+
+	/// The length of the plane name
+	int name_length;
+
+	/// Format of the data
+	int data_format;
+
+	/// Array size of the data
+	int array_size;
+
+	int reserved[4];
+};
+
+struct PlaneSelect {
+	PlaneSelect()
+		: plane_marker(-1)
+		, plane_index(0)
+	{}
+
+	const int plane_marker;
+
+	int plane_index;
+
+	int reserved[2];
+};
+
+struct TileHeader {
+	TileHeader()
+		: x0(0)
+		, x1(0)
+		, y0(0)
+		, y1(0)
+	{}
+	int	x0;
+	int x1;
+	int	y0;
+	int y1;
+};
+
+struct TileImage {
+	explicit TileImage(VRay::VRayImage *image=nullptr, const QString &name="C")
+		: image(image)
+		, name(name)
+		, x0(0)
+		, x1(0)
+		, y0(0)
+		, y1(0)
+	{}
+
+	~TileImage() {
+		FreePtr(image);
+	}
+
+	void setRegion(const VRay::ImageRegion &region) {
+		x0 = region.getX();
+		y0 = region.getY();
+
+		// Those are inclusive.
+		x1 = x0 + region.getWidth() - 1;
+		y1 = y0 + region.getHeight() - 1;
+	}
+
+	VRay::VRayImage *image;
+	QString name;
+
+	int x0;
+	int x1;
+	int y0;
+	int y1;
+};
+
+/// A list of images planes.
+typedef QList<TileImage*> PlaneImages;
+
+/// Queue message base.
+struct TileQueueMessage {
+	enum TileQueueMessageType {
+		messageTypeNone = -1,
+		messageTypeImageHeader = 0,
+		messageTypeImageTiles,
+	};
+
+	virtual ~TileQueueMessage() {}
+
+	/// Returns message type.
+	virtual TileQueueMessageType type() const = 0;
+};
+
+/// Image header message.
+struct ImageHeaderMessage
+	: TileQueueMessage
+{
+	ImageHeaderMessage()
+		: imageWidth(0)
+		, imageHeight(0)
+	{}
+
+	TileQueueMessageType type() const VRAY_OVERRIDE { return messageTypeImageHeader; }
+
+	int imageWidth;
+	int imageHeight;
+	QList<QString> planeNames;
+};
+
+/// Image planes message.
+struct TileImageMessage
+	: TileQueueMessage
+{
+	explicit TileImageMessage(const PlaneImages &images)
+		: images(images)
+	{}
+
+	virtual ~TileImageMessage() {
+		for (const TileImage *image : images) {
+			delete image;
+		}
+	}
+
+	TileQueueMessageType type() const VRAY_OVERRIDE { return messageTypeImageTiles; }
+
+	PlaneImages images;
+};
+
 /// A queue of pipe writing tasks.
 typedef QQueue<TileQueueMessage*> TileMessageQueue;
 
@@ -36,10 +207,9 @@ class ImdisplayThread
 	: public QThread
 {
 	Q_OBJECT
+
 public:
 	ImdisplayThread();
-
-	void init();
 
 	void restart();
 	
@@ -54,23 +224,12 @@ public:
 
 	void clear();
 
-	/// Set the process checker
-	void setProcCheck(ProcessCheckPtr p) { pCheck = p; };
-
 	/// Set imdisplay port.
 	/// @param value Port.
 	void setPort(int value);
 
 	/// Returns current imdisplay port.
 	int getPort() const;
-
-protected Q_SLOTS:
-	void onPipeClose();
-
-	void onPipeError(QProcess::ProcessError error);
-
-	void onPipeStateChange(QProcess::ProcessState newState);
-
 
 protected:
 	void run() VRAY_OVERRIDE;
@@ -79,42 +238,22 @@ private:
 	/// Writes image header data to the pipe.
 	/// @param pipe Process pipe.
 	/// @param msg ImageHeaderMessage message.
-	void processImageHeaderMessage(QProcess &pipe, ImageHeaderMessage &msg);
+	void processImageHeaderMessage(ImageHeaderMessage &msg);
 
 	/// Writes image tile message to the pipe.
 	/// @param pipe Process pipe.
 	/// @param msg TileImageMessage message.
-	void processTileMessage(QProcess &pipe, TileImageMessage &msg);
+	void processTileMessage(TileImageMessage &msg);
 
 	/// Writes image tile to the pipe splitted into buckets.
 	/// @param pipe Process pipe.
 	/// @param image Image data.
-	void writeTileBuckets(QProcess &pipe, const TileImage &image);
+	void writeTileBuckets(const TileImage &image);
 
 	/// Writes image tile to the pipe. Frees allocated image data.
 	/// @param pipe Process pipe.
 	/// @param image Image data.
-	void writeTile(QProcess &pipe, const TileImage &image);
-
-	/// Writes end of file marker to the pipe.
-	/// @param pipe Process pipe.
-	void writeEOF(QProcess &pipe);
-
-	/// Write specified header to pipe.
-	/// @param header Imdisplay header.
-	template <typename HeaderType>
-	void writeHeader(QProcess &pipe, const HeaderType &header) {
-		write(pipe, 1, sizeof(HeaderType), &header);
-	}
-
-	/// Write to pipe.
-	/// @param numElements Elements count.
-	/// @param elementSize Element size.
-	/// @param data Data pointer.
-	void write(QProcess &pipe, int numElements, int elementSize, const void *data);
-
-	/// Arguments to be passed to the started process
-	QStringList arguments;
+	void writeTile(const TileImage &image);
 
 	/// Imdisplay port.
 	int port;
@@ -122,9 +261,8 @@ private:
 	/// Message queue.
 	TileMessageQueue queue;
 
-	/// Flag set to true when the thread can run, set to false in the stop() method
-	/// This is volatile to discourage compiler optimizing the read since we dont lock when stopping the thread
-	volatile bool isRunning;
+	/// Flag set to true when the thread can run, set to false in the stop() method.
+	QAtomicInt isRunning = true;
 
 	/// Queue lock.
 	QMutex mutex;
@@ -132,8 +270,7 @@ private:
 	/// Callback to be called if pipe closes unexpectedly
 	std::function<void()> onStop;
 
-	/// Pointer to the process checker - used to explicitly check before every write
-	ProcessCheckPtr pCheck;
+	TIL_TileMPlay *device = nullptr;
 
 	VfhDisableCopy(ImdisplayThread)
 };

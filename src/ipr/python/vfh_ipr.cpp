@@ -15,7 +15,6 @@
 #include "vfh_ipr_viewer.h"
 #include "vfh_vray_instances.h"
 #include "vfh_attr_utils.h"
-#include "vfh_process_check.h"
 
 #include <HOM/HOM_Module.h>
 
@@ -112,8 +111,6 @@ FORCEINLINE float getFloat(PyObject *dict, const char *key, float defValue)
 		return defValue;
 	return PyFloat_AS_DOUBLE(item);
 }
-
-static ProcessCheckPtr procCheck = nullptr;
 
 /// RAII wrapper over the lock of the vrayExporter pointer
 /// Has bool cast operator so it can be used directly in if statements
@@ -445,17 +442,6 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 		getImdisplay().setOnStopCallback(stopCallback->getCallableFunction());
 	}
 
-	if (!procCheck) {
-#ifdef _WIN32
-		const char * ipr_proc_exe = "vfh_ipr.exe";
-#else
-		const char * ipr_proc_exe = "vfh_ipr";
-#endif
-		procCheck = makeProcessChecker(stopCallback->getCallableFunction(), ipr_proc_exe);
-	}
-	getImdisplay().setProcCheck(procCheck);
-	procCheck->stop();
-	procCheck->start();
 	// Reset the cb's flag so it can be called asap
 	stopCallback->reset();
 
@@ -469,7 +455,6 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 			lk.allocExporter();
 		}
 		if (WithExporter lk{}) {
-			getImdisplay().init();
 			getImdisplay().restart();
 		}
 
@@ -498,7 +483,7 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 
 			exporter.getRenderer().getVRay().setKeepBucketsInCallback(true);
 			exporter.getRenderer().getVRay().setKeepRTframesInCallback(true);
-			exporter.getRenderer().getVRay().setRTImageUpdateTimeout(250);
+			exporter.getRenderer().getVRay().setRTImageUpdateTimeout(1000);
 		}
 
 		if (WithExporter lk{}) {
@@ -632,7 +617,6 @@ static PyMethodDef methods[] = {
 
 PyMODINIT_FUNC init_vfh_ipr()
 {
-	disableSIGPIPE();
 	Log::Logger::startLogging();
 	Py_InitModule("_vfh_ipr", methods);
 }

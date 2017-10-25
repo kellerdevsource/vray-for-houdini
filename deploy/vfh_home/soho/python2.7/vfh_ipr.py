@@ -107,6 +107,7 @@ def main():
     camera = soho.getDefaultedString('camera', ['/obj/cam1'])[0]
 
     # MPlay / Render View port.
+    host = soho.getDefaultedString("vm_image_mplay_sockethost", [0])[0]
     port = soho.getDefaultedInt("vm_image_mplay_socketport", [0])[0]
 
     # ROP node.
@@ -148,7 +149,7 @@ def main():
         #   objlist:space
         #   objlist:mat
         #
-        printDebug("IPR Port: %s" % port)
+        printDebug("IPR Host: %s:%s" % (host, port))
         printDebug("Driver: %s" % ropPath)
         printDebug("Camera: %s" % camera)
         printDebug("Now: %.3f" % now)
