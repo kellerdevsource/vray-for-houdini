@@ -110,6 +110,11 @@ protected: \
 	virtual void setPluginType() VRAY_OVERRIDE { \
 		pluginType = VRayPluginType::OpPluginType; \
 		pluginID = STRINGIZE(OpPluginID); \
+		if (pluginType == VRayPluginType::BRDF || \
+			pluginType == VRayPluginType::MATERIAL) \
+		{ \
+			setMaterialFlag(true); \
+		} \
 	} \
 };
 
