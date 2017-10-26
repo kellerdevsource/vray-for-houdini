@@ -1,0 +1,37 @@
+#ifndef __VFH_PREFIX_DS__
+#define __VFH_PREFIX_DS__
+
+#ifdef PREFIX
+
+#define VFH_NAME(parmName) name PREFIX##parmName##""
+
+#define VFH_HIDE_WHEN_PARAM_TRUE(name)  hidewhen "{ "PREFIX##name##" == 1 }"
+#define VFH_HIDE_WHEN_PARAM_FALSE(name) hidewhen "{ "PREFIX##name##" == 0 }"
+
+#define VFH_DISABLE_WHEN_PARAM_TRUE(name)  disablewhen "{ "PREFIX##name##" == 1 }"
+#define VFH_DISABLE_WHEN_PARAM_FALSE(name) disablewhen "{ "PREFIX##name##" == 0 }"
+
+#define VFH_HIDE_WHEN_PARAM_EQUALS(name, value)      hidewhen "{ "PREFIX##name##" == "##value##"}"
+#define VFH_HIDE_WHEN_PARAM_NOT_EQUALS(name, value)  hidewhen "{ "PREFIX##name##" == "##value##"}"
+
+#define VFH_HIDE_WHEN_2(n1, op1, v1, n2, op2, v2) \
+hidewhen "{ "PREFIX##n1##" "##op1##" "##v1##"} { "PREFIX##n2##" "##op2##" "##v2##"} "
+
+#else // No name prefix
+
+#define VFH_NAME(parmName) name parmName##""
+
+#define VFH_HIDE_WHEN_PARAM_FALSE(name) hidewhen "{ "##name##" == 0 }"
+#define VFH_HIDE_WHEN_PARAM_TRUE(name)  hidewhen "{ "##name##" == 1 }"
+
+#define VFH_DISABLE_WHEN_PARAM_TRUE(name)  disablewhen "{ "##name##" == 1 }"
+#define VFH_DISABLE_WHEN_PARAM_FALSE(name) disablewhen "{ "##name##" == 0 }"
+
+#define VFH_HIDE_WHEN_PARAM_EQUALS(name, value)      hidewhen "{ "##name##" == "##value##"}"
+#define VFH_HIDE_WHEN_PARAM_NOT_EQUALS(name, value)  hidewhen "{ "##name##" != "##value##"}"
+
+#define VFH_HIDE_WHEN_2(n1, op1, v1, n2, op2, v2) \
+hidewhen "{ "##n1##" "##op1##" "##v1##"} { "##n2##" "##op2##" "##v2##"} "
+
+#endif // !PREFIX
+#endif // __VFH_PREFIX_DS__
