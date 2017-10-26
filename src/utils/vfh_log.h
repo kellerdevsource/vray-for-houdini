@@ -65,7 +65,7 @@ struct Logger {
 
 private:
 	/// Implementation for the actual logging.
-	static void valog(LogLevel level, const tchar *format, va_list args);
+	void valog(LogLevel level, const tchar *format, va_list args) const;
 
 	/// Current max log level to be shown.
 	LogLevel logLevel;

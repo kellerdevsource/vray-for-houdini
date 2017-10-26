@@ -196,7 +196,7 @@ void Logger::stopLogging()
 	logThread.wait();
 }
 
-void Logger::valog(LogLevel level, const tchar *format, va_list args)
+void Logger::valog(LogLevel level, const tchar *format, va_list args) const
 {
 	// Show all messages in debug.
 #ifndef VFH_DEBUG
