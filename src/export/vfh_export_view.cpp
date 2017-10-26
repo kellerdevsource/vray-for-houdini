@@ -187,98 +187,104 @@ void VRayExporter::fillViewParamFromCameraNode(const OBJ_Node &camera, ViewParam
 	{
 		viewParams.renderSize.w *= 2;
 	}
+}
+
+void VRayExporter::fillPhysicalViewParamFromCameraNode(const OBJ_Node &camera, ViewParams &viewParams)
+{
+	const fpreal t = getContext().getTime();
 
 	viewParams.useCameraPhysical = static_cast<PhysicalCameraMode>(usePhysicalCamera(camera));
-	if (viewParams.useCameraPhysical != PhysicalCameraMode::modeNone) {
-		if (viewParams.useCameraPhysical == PhysicalCameraMode::modeAuto) {
-			viewParams.cameraPhysical.exposure = false;
-			viewParams.cameraPhysical.specify_fov = true;
-			viewParams.cameraPhysical.fov = viewParams.renderView.fov;
-			viewParams.cameraPhysical.horizontal_offset = -camera.evalFloat("win", 0, t);
-			viewParams.cameraPhysical.vertical_offset   = -camera.evalFloat("win", 1, t);
+	if (viewParams.useCameraPhysical == PhysicalCameraMode::modeNone)
+		return;
+
+	if (viewParams.useCameraPhysical == PhysicalCameraMode::modeAuto) {
+		viewParams.cameraPhysical.exposure = false;
+		viewParams.cameraPhysical.specify_fov = true;
+		viewParams.cameraPhysical.fov = viewParams.renderView.fov;
+		viewParams.cameraPhysical.horizontal_offset = -camera.evalFloat("win", 0, t);
+		viewParams.cameraPhysical.vertical_offset   = -camera.evalFloat("win", 1, t);
+	}
+	else if (viewParams.useCameraPhysical == PhysicalCameraMode::modeUser) {
+		viewParams.cameraPhysical.fovMode =
+			static_cast<CameraFovMode>(camera.evalInt("CameraPhysical_fov_mode", 0, 0.0));
+
+		switch (viewParams.cameraPhysical.fovMode) {
+			case CameraFovMode::useHoudini: {
+				viewParams.cameraPhysical.specify_fov = true;
+				viewParams.cameraPhysical.fov = viewParams.renderView.fov;
+				break;
+			}
+			case CameraFovMode::usePhysical: {
+				viewParams.cameraPhysical.specify_fov = false;
+				break;
+			}
+			case CameraFovMode::useFovOverride: {
+				viewParams.cameraPhysical.specify_fov = true;
+				viewParams.cameraPhysical.fov = SYSdegToRad(camera.evalFloat("CameraPhysical_fov", 0, t));
+				break;
+			}
 		}
-		else if (viewParams.useCameraPhysical == PhysicalCameraMode::modeUser) {
-			viewParams.cameraPhysical.fovMode =
-				static_cast<CameraFovMode>(camera.evalInt("CameraPhysical_fov_mode", 0, 0.0));
 
-			switch (viewParams.cameraPhysical.fovMode) {
-				case CameraFovMode::useHoudini: {
-					viewParams.cameraPhysical.specify_fov = true;
-					viewParams.cameraPhysical.fov = viewParams.renderView.fov;
-					break;
-				}
-				case CameraFovMode::usePhysical: {
-					viewParams.cameraPhysical.specify_fov = false;
-					break;
-				}
-				case CameraFovMode::useFovOverride: {
-					viewParams.cameraPhysical.specify_fov = true;
-					viewParams.cameraPhysical.fov = SYSdegToRad(camera.evalFloat("CameraPhysical_fov", 0, t));
-					break;
-				}
-			}
+		viewParams.cameraPhysical.lens_shift = camera.evalInt("CameraPhysical_auto_lens_shift", 0, 0.0)
+				                                    ? getLensShift(camera, getContext())
+				                                    : camera.evalFloat("CameraPhysical_lens_shift", 0, t);
+		viewParams.cameraPhysical.horizontal_shift = camera.evalFloat("CameraPhysical_horizontal_shift", 0, t);
 
-			viewParams.cameraPhysical.lens_shift = camera.evalInt("CameraPhysical_auto_lens_shift", 0, 0.0)
-				                                       ? getLensShift(camera, getContext())
-				                                       : camera.evalFloat("CameraPhysical_lens_shift", 0, t);
-			viewParams.cameraPhysical.horizontal_shift = camera.evalFloat("CameraPhysical_horizontal_shift", 0, t);
+		viewParams.cameraPhysical.type = static_cast<PhysicalCameraType>(camera.evalInt("CameraPhysical_type", 0, t));
+		viewParams.cameraPhysical.film_width = camera.evalFloat("CameraPhysical_film_width", 0, t);
+		viewParams.cameraPhysical.focal_length = camera.evalFloat("CameraPhysical_focal_length", 0, t);
+		viewParams.cameraPhysical.zoom_factor = camera.evalFloat("CameraPhysical_zoom_factor", 0, t);
+		viewParams.cameraPhysical.focus_distance = camera.evalFloat("CameraPhysical_focus_distance", 0, t);
 
-			viewParams.cameraPhysical.type = static_cast<PhysicalCameraType>(camera.evalInt("CameraPhysical_type", 0, t));
-			viewParams.cameraPhysical.film_width = camera.evalFloat("CameraPhysical_film_width", 0, t);
-			viewParams.cameraPhysical.focal_length = camera.evalFloat("CameraPhysical_focal_length", 0, t);
-			viewParams.cameraPhysical.zoom_factor = camera.evalFloat("CameraPhysical_zoom_factor", 0, t);
-			viewParams.cameraPhysical.focus_distance = camera.evalFloat("CameraPhysical_focus_distance", 0, t);
+		viewParams.cameraPhysical.distortion_type = camera.evalInt("CameraPhysical_distortion_type", 0, t);
 
-			viewParams.cameraPhysical.distortion_type = camera.evalInt("CameraPhysical_distortion_type", 0, t);
-
-			if (!camera.evalInt("CameraPhysical_parm_distortion_enable", 0, t)) {
-				viewParams.cameraPhysical.distortion = 0.0f;
-				viewParams.cameraPhysical.distortion_tex.clear();
-			}
-			else {
-				viewParams.cameraPhysical.distortion = camera.evalFloat("CameraPhysical_distortion", 0, t);
-				camera.evalString(viewParams.cameraPhysical.distortion_tex, "CameraPhysical_distortion_tex", 0, t);
-			}
-
-			viewParams.cameraPhysical.f_number = camera.evalFloat("CameraPhysical_f_number", 0, t);
-			viewParams.cameraPhysical.shutter_speed = camera.evalFloat("CameraPhysical_shutter_speed", 0, t);
-			viewParams.cameraPhysical.shutter_angle = camera.evalFloat("CameraPhysical_shutter_angle", 0, t);
-			viewParams.cameraPhysical.shutter_offset = camera.evalFloat("CameraPhysical_shutter_offset", 0, t);
-			viewParams.cameraPhysical.latency = camera.evalFloat("CameraPhysical_latency", 0, t);
-			viewParams.cameraPhysical.ISO = camera.evalFloat("CameraPhysical_ISO", 0, t);
-
-			viewParams.cameraPhysical.dof_display_threshold = camera.evalFloat("CameraPhysical_dof_display_threshold", 0, t);
-			viewParams.cameraPhysical.exposure = camera.evalInt("CameraPhysical_exposure", 0, t);
-
-			viewParams.cameraPhysical.white_balance.r = camera.evalFloat("CameraPhysical_white_balance", 0, t);
-			viewParams.cameraPhysical.white_balance.g = camera.evalFloat("CameraPhysical_white_balance", 1, t);
-			viewParams.cameraPhysical.white_balance.b = camera.evalFloat("CameraPhysical_white_balance", 2, t);
-
-			viewParams.cameraPhysical.vignetting = camera.evalFloat("CameraPhysical_vignetting", 0, t);
-			viewParams.cameraPhysical.blades_enable = camera.evalInt("CameraPhysical_blades_enable", 0, t);
-			viewParams.cameraPhysical.blades_num = camera.evalInt("CameraPhysical_blades_num", 0, t);
-			viewParams.cameraPhysical.blades_rotation = SYSdegToRad(camera.evalFloat("CameraPhysical_blades_rotation", 0, t));
-			viewParams.cameraPhysical.center_bias = camera.evalFloat("CameraPhysical_center_bias", 0, t);
-			viewParams.cameraPhysical.anisotropy = camera.evalFloat("CameraPhysical_anisotropy", 0, t);
-			viewParams.cameraPhysical.use_dof = camera.evalInt("CameraPhysical_use_dof", 0, t);
-			viewParams.cameraPhysical.use_moblur = camera.evalInt("CameraPhysical_use_moblur", 0, t);
-			viewParams.cameraPhysical.subdivs = camera.evalInt("CameraPhysical_subdivs", 0, t);
-			viewParams.cameraPhysical.dont_affect_settings = camera.evalInt("CameraPhysical_dont_affect_settings", 0, t);
-
-			camera.evalString(viewParams.cameraPhysical.lens_file, "CameraPhysical_lens_file", 0, t);
-
-			viewParams.cameraPhysical.horizontal_offset = camera.evalFloat("CameraPhysical_horizontal_offset", 0, t);
-			viewParams.cameraPhysical.vertical_offset = camera.evalFloat("CameraPhysical_vertical_offset", 0, t);
-
-			viewParams.cameraPhysical.bmpaperture_enable = camera.evalInt("CameraPhysical_bmpaperture_enable", 0, t);
-			viewParams.cameraPhysical.bmpaperture_resolution = camera.evalInt("CameraPhysical_bmpaperture_resolution", 0, t);
-
-			camera.evalString(viewParams.cameraPhysical.bmpaperture_tex, "CameraPhysical_bmpaperture_tex", 0, t);
-
-			viewParams.cameraPhysical.optical_vignetting = camera.evalFloat("CameraPhysical_optical_vignetting", 0, t);
-			viewParams.cameraPhysical.bmpaperture_affects_exposure = camera.evalInt("CameraPhysical_bmpaperture_affects_exposure", 0, t);
-			viewParams.cameraPhysical.enable_thin_lens_equation = camera.evalInt("CameraPhysical_enable_thin_lens_equation", 0, t);
+		if (!camera.evalInt("CameraPhysical_parm_distortion_enable", 0, t)) {
+			viewParams.cameraPhysical.distortion = 0.0f;
+			viewParams.cameraPhysical.distortion_tex.clear();
 		}
+		else {
+			viewParams.cameraPhysical.distortion = camera.evalFloat("CameraPhysical_distortion", 0, t);
+			camera.evalString(viewParams.cameraPhysical.distortion_tex, "CameraPhysical_distortion_tex", 0, t);
+		}
+
+		viewParams.cameraPhysical.f_number = camera.evalFloat("CameraPhysical_f_number", 0, t);
+		viewParams.cameraPhysical.shutter_speed = camera.evalFloat("CameraPhysical_shutter_speed", 0, t);
+		viewParams.cameraPhysical.shutter_angle = camera.evalFloat("CameraPhysical_shutter_angle", 0, t);
+		viewParams.cameraPhysical.shutter_offset = camera.evalFloat("CameraPhysical_shutter_offset", 0, t);
+		viewParams.cameraPhysical.latency = camera.evalFloat("CameraPhysical_latency", 0, t);
+		viewParams.cameraPhysical.ISO = camera.evalFloat("CameraPhysical_ISO", 0, t);
+
+		viewParams.cameraPhysical.dof_display_threshold = camera.evalFloat("CameraPhysical_dof_display_threshold", 0, t);
+		viewParams.cameraPhysical.exposure = camera.evalInt("CameraPhysical_exposure", 0, t);
+
+		viewParams.cameraPhysical.white_balance.r = camera.evalFloat("CameraPhysical_white_balance", 0, t);
+		viewParams.cameraPhysical.white_balance.g = camera.evalFloat("CameraPhysical_white_balance", 1, t);
+		viewParams.cameraPhysical.white_balance.b = camera.evalFloat("CameraPhysical_white_balance", 2, t);
+
+		viewParams.cameraPhysical.vignetting = camera.evalFloat("CameraPhysical_vignetting", 0, t);
+		viewParams.cameraPhysical.blades_enable = camera.evalInt("CameraPhysical_blades_enable", 0, t);
+		viewParams.cameraPhysical.blades_num = camera.evalInt("CameraPhysical_blades_num", 0, t);
+		viewParams.cameraPhysical.blades_rotation = SYSdegToRad(camera.evalFloat("CameraPhysical_blades_rotation", 0, t));
+		viewParams.cameraPhysical.center_bias = camera.evalFloat("CameraPhysical_center_bias", 0, t);
+		viewParams.cameraPhysical.anisotropy = camera.evalFloat("CameraPhysical_anisotropy", 0, t);
+		viewParams.cameraPhysical.use_dof = camera.evalInt("CameraPhysical_use_dof", 0, t);
+		viewParams.cameraPhysical.use_moblur = camera.evalInt("CameraPhysical_use_moblur", 0, t);
+		viewParams.cameraPhysical.subdivs = camera.evalInt("CameraPhysical_subdivs", 0, t);
+		viewParams.cameraPhysical.dont_affect_settings = camera.evalInt("CameraPhysical_dont_affect_settings", 0, t);
+
+		camera.evalString(viewParams.cameraPhysical.lens_file, "CameraPhysical_lens_file", 0, t);
+
+		viewParams.cameraPhysical.horizontal_offset = camera.evalFloat("CameraPhysical_horizontal_offset", 0, t);
+		viewParams.cameraPhysical.vertical_offset = camera.evalFloat("CameraPhysical_vertical_offset", 0, t);
+
+		viewParams.cameraPhysical.bmpaperture_enable = camera.evalInt("CameraPhysical_bmpaperture_enable", 0, t);
+		viewParams.cameraPhysical.bmpaperture_resolution = camera.evalInt("CameraPhysical_bmpaperture_resolution", 0, t);
+
+		camera.evalString(viewParams.cameraPhysical.bmpaperture_tex, "CameraPhysical_bmpaperture_tex", 0, t);
+
+		viewParams.cameraPhysical.optical_vignetting = camera.evalFloat("CameraPhysical_optical_vignetting", 0, t);
+		viewParams.cameraPhysical.bmpaperture_affects_exposure = camera.evalInt("CameraPhysical_bmpaperture_affects_exposure", 0, t);
+		viewParams.cameraPhysical.enable_thin_lens_equation = camera.evalInt("CameraPhysical_enable_thin_lens_equation", 0, t);
 	}
 }
 
@@ -565,6 +571,7 @@ int VRayExporter::exportView()
 
 	ViewParams viewParams;
 	fillViewParamFromCameraNode(*camera, viewParams);
+	fillPhysicalViewParamFromCameraNode(*camera, viewParams);
 
 	exportView(viewParams);
 

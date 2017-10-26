@@ -269,9 +269,6 @@ static void fillViewParamsFromDict(PyObject *viewParamsDict, ViewParams &viewPar
 
 static void fillViewParams(VRayExporter &exporter, PyObject *viewParamsDict, ViewParams &viewParams)
 {
-	fillViewParamsFromDict(viewParamsDict, viewParams);
-	fillRenderRegionFromDict(viewParamsDict, viewParams);
-
 	OBJ_Node *cameraNode = nullptr;
 
 	const char *camera = PyString_AsString(PyDict_GetItemString(viewParamsDict, "camera"));
@@ -280,11 +277,14 @@ static void fillViewParams(VRayExporter &exporter, PyObject *viewParamsDict, Vie
 	}
 
 	if (cameraNode) {
-		if (cameraNode->getName().equal("ipr_camera") ||
-			exporter.usePhysicalCamera(*cameraNode) != PhysicalCameraMode::modeNone)
-		{
-			exporter.fillViewParamFromCameraNode(*cameraNode, viewParams);
-		}
+		exporter.fillViewParamFromCameraNode(*cameraNode, viewParams);
+	}
+
+	fillViewParamsFromDict(viewParamsDict, viewParams);
+	fillRenderRegionFromDict(viewParamsDict, viewParams);
+
+	if (cameraNode) {
+		exporter.fillPhysicalViewParamFromCameraNode(*cameraNode, viewParams);
 	}
 }
 

@@ -50,7 +50,6 @@ template <> struct hash<VRayForHoudini::VolumeCacheKey> {
 
 
 namespace VRayForHoudini {
-
 static const int MAX_RESOLUTION = 255;
 
 // these are the parameters (intrisics) that will be exposed to Houdini, all are filled from the associated PhxShaderCache node
@@ -74,13 +73,12 @@ static const int MAX_RESOLUTION = 255;
 	(exint,        frame_number_width, 1),\
 	(fpreal,       current_frame, 0),\
 	(const char *, current_cache_path, "")\
-	)
-
+)
 #define VFH_VOLUME_GRID_PARAMS_COUNT 18
 
 /// Implementation for a volume grid packed primitive
-class VRayVolumeGridRef:
-		public GU_PackedImpl
+class VRayVolumeGridRef 
+	: public GU_PackedImpl
 {
 	// These *must* match phx's values
 	enum AnimationMode {
@@ -88,6 +86,7 @@ class VRayVolumeGridRef:
 		DirectIndex = 1,
 		Loop = 2,
 	};
+
 public:
 	typedef std::shared_ptr<IAur> CachePtr;
 
@@ -105,9 +104,7 @@ public:
 		GU_DetailHandle detailHandle;
 		DataRangeMap dataRange;
 	};
-
 	typedef Caches::LRUCache<VolumeCacheKey, VolumeCacheData, std::hash<VolumeCacheKey>, std::equal_to<VolumeCacheKey>, 10> VolumeCache;
-
 
 	VFH_MAKE_ACCESSORS(VFH_VOLUME_GRID_PARAMS, VFH_VOLUME_GRID_PARAMS_COUNT)
 
@@ -115,10 +112,13 @@ public:
 	static GA_PrimitiveTypeId typeId() { return theTypeId; }
 	/// Register this factory
 	static void install(GA_PrimitiveFactory *gafactory);
+
+private:
 	/// Fetch data from key
 	static void fetchData(const VolumeCacheKey &key, VolumeCacheData &data);
 	/// Fetch data (or only info) from key downsampled to voxelsCount 
 	static void fetchDataMaxVox(const VolumeCacheKey &key, VolumeCacheData &data, const i64 voxelCount, const bool infoOnly);
+	
 private:
 	static GA_PrimitiveTypeId theTypeId; ///< The type id for the primitive
 
@@ -132,16 +132,19 @@ public:
 	/// Virtual interface from GU_PackedImpl interface
 	virtual GU_PackedFactory* getFactory() const VRAY_OVERRIDE;
 	virtual GU_PackedImpl*    copy() const VRAY_OVERRIDE { return new VRayVolumeGridRef(*this); }
-	virtual bool              isValid() const VRAY_OVERRIDE { return m_handle.isValid(); }
+	virtual bool              isValid() const VRAY_OVERRIDE { return getDetail().isValid(); }
 	virtual void              clearData() VRAY_OVERRIDE;
 
 	virtual bool   load(const UT_Options &options, const GA_LoadMap &) VRAY_OVERRIDE
-	{ return updateFrom(options); }
+	{
+		return updateFrom(options);
+	}
 	virtual void   update(const UT_Options &options) VRAY_OVERRIDE
-	{ updateFrom(options); }
+	{
+		updateFrom(options);
+	}
 	virtual bool   save(UT_Options &options, const GA_SaveMap &map) const VRAY_OVERRIDE;
 
-	virtual bool                   getLocalTransform(UT_Matrix4D &m) const VRAY_OVERRIDE;
 	virtual bool                   getBounds(UT_BoundingBox &box) const VRAY_OVERRIDE;
 	virtual bool                   getRenderingBounds(UT_BoundingBox &box) const VRAY_OVERRIDE;
 	virtual bool                   saveCachedBBox() const VRAY_OVERRIDE { return true; }
@@ -171,7 +174,9 @@ public:
 
 	/// @{
 	/// Member data accessors for intrinsics
-	const GU_ConstDetailHandle    getDetail() const { return m_handle; }
+	const GU_DetailHandle &   getDetail() const    { return m_currentData.detailHandle; }
+	GU_DetailHandle &         getDetail()          { return m_currentData.detailHandle; }
+	void setDetail(const GU_ConstDetailHandle &detail) { m_currentData.detailHandle = detail.castAwayConst(); }
 
 	inline const UT_Options &     getOptions() const { return m_options; }
 
@@ -181,7 +186,8 @@ public:
 	void                          setPhxChannelMap(const UT_StringArray &map) { m_options.setOptionSArray("phx_channel_map", map); }
 	/// @}
 
-	const DataRangeMap &          getChannelDataRanges() const { return m_channelDataRange; }
+	const DataRangeMap &          getChannelDataRanges() const { return m_currentData.dataRange; }
+	DataRangeMap &                getChannelDataRanges()       { return m_currentData.dataRange; }
 
 private:
 	/// Sets fetch and evict callback
@@ -191,7 +197,7 @@ private:
 
 	/// updateFrom() will update from UT_Options only
 	bool updateFrom(const UT_Options &options);
-	void clearDetail() { m_handle = GU_DetailHandle(); }
+	void clearDetail() { setDetail(GU_DetailHandle()); }
 
 	/// Builds the cache path according to current settings
 	/// @param toPhx - if true frame will be replaced with '#'s otherwise with current cache frame
@@ -223,20 +229,14 @@ private:
 private:
 	mutable VolumeCache    m_dataCache; ///< Data cache used to cache last 10 volumes loaded, mutable(needs to be updated from const functions not changing other (immutable)members)
 	mutable VolumeCacheData m_currentData;
-	GU_DetailHandle        m_handle; ///< Detail handle - passed to HDK
 	UT_Options             m_options; ///< All params from VFH_VOLUME_GRID_PARAMS are defined in this map
 
 	UT_BoundingBox         m_bBox; ///< The volume bounding box
 	bool                   m_dirty; ///< True if any parameters that might affect preview are changed
 	bool                   m_channelDirty; ///< True if channel mapping have changed since we last built them
-
-	/// if true we will replace frame number with ### for PHX
-	/// otherwise user hardcoded frame number and we should not change it
-	bool                   m_doFrameReplace;
-
-	DataRangeMap           m_channelDataRange;
+	bool                   m_doFrameReplace; ///< If true we will replace frame number with ### for PHX
+	                                         /// otherwise user hardcoded frame number and we should not change it
 };
-
 
 } // namespace VRayForHoudini
 
@@ -244,10 +244,10 @@ private:
 #include <GU/GU_PackedImpl.h>
 /// Define this empty class here so primitive exporters can be compiled without additional ifdefs there
 namespace VRayForHoudini {
-class VRayVolumeGridRef: public GU_PackedImpl {
-public:
-	static GA_PrimitiveTypeId typeId() { return GA_PrimitiveTypeId(); }
-};
+	class VRayVolumeGridRef : public GU_PackedImpl {
+	public:
+		static GA_PrimitiveTypeId typeId() { return GA_PrimitiveTypeId(); }
+	};
 }
 #endif // CGR_HAS_AUR
 

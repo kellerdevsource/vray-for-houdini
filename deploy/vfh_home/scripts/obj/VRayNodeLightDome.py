@@ -71,4 +71,3 @@ cnode.setRenderFlag(True)
 cnode.setDisplayFlag(True)
 
 node.layoutChildren()
-node.setName("vraylightdome")
