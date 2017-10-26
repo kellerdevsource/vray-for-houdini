@@ -98,14 +98,8 @@ int ImdisplayThread::getPort() const
 void ImdisplayThread::run()
 {
 	device = static_cast<TIL_TileMPlay*>(IMG_TileDevice::newMPlayDevice(0));
-	device->terminateOnConnectionLost(true);
 
 	while (isRunning) {
-		if (device->wasRemoteQuitRequested()) {
-			Log::getLog().debug("Remote interrupt requested...");
-			break;
-		}
-
 		TileQueueMessage *msg = nullptr; {
 			QMutexLocker locker(&mutex);
 			if (!queue.isEmpty()) {
@@ -116,6 +110,11 @@ void ImdisplayThread::run()
 		if (!msg) {
 			msleep(100);
 			continue;
+		}
+
+		if (device->wasRemoteQuitRequested()) {
+			Log::getLog().debug("Remote interrupt requested...");
+			break;
 		}
 
 		switch (msg->type()) {
@@ -167,6 +166,7 @@ void ImdisplayThread::processImageHeaderMessage(ImageHeaderMessage &msg)
 		Log::getLog().error("Error opening tile device!");
 	}
 	else {
+		device->terminateOnConnectionLost(false);
 		device->flush();
 	}
 }
