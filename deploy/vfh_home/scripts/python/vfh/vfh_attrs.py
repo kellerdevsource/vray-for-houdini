@@ -166,13 +166,9 @@ def insertInFolderAfterLastTab(ptg, ptf, pt):
     p = getFirstNonTabParmTemplate(ptf)
     if p:
         ptg.insertBefore(p, pt)
-        return
-
-    if isinstance(ptf, hou.ParmTemplateGroup):
+    elif isinstance(ptf, hou.ParmTemplateGroup):
         ptg.append(pt)
-        return
-
-    if isinstance(ptf, hou.FolderParmTemplate):
+    elif isinstance(ptf, hou.FolderParmTemplate):
         ptg.appendToFolder(ptf, pt)
 
 
