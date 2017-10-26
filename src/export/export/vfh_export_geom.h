@@ -24,9 +24,9 @@ namespace VRayForHoudini {
 
 enum DisplacementType {
 	displacementTypeNone = -1,
-	displacementTypeFromMat = 0,
-	displacementTypeDisplace,
+	displacementTypeDisplace = 0,
 	displacementTypeSmooth,
+	displacementTypeFromMat,
 };
 
 enum VMRenderPoints {

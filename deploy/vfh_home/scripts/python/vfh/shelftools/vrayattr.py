@@ -38,12 +38,13 @@ def _getPluginParmTemplates(pluginName):
         return
 
     pluginPtg = hou.ParmTemplateGroup()
-    pluginPtg.setToDialogScript(open(pluginDs, 'r').read())
 
-    for pt in ptgParmTemplatesIt(pluginPtg):
-        ptName = pt.name()
-        pt.setName("%s_%s" % (pluginName, ptName))
-        pluginPtg.replace(ptName, pt)
+    # This will make attribute manes prefixed with plugin ID name.
+    pluginPrefixDef = "#define PREFIX \"%s_\"\n\n" % (pluginName)
+    dsContents = pluginPrefixDef + open(pluginDs, 'r').read()
+    print dsContents
+
+    pluginPtg.setToDialogScript(dsContents)
 
     return pluginPtg.parmTemplates()
 
@@ -63,7 +64,6 @@ def _removeVRayDisplacementAttributes(ptg, folderLabel):
     for pt in ptgParmTemplatesIt(ptg):
         attrName = pt.name()
         if attrName.startswith(("vray_displ_", "GeomDisplacedMesh_", "GeomStaticSmoothedMesh_")):
-            print attrName
             removeTmpl.append(attrName)
 
     for attrName in removeTmpl:
@@ -82,8 +82,6 @@ def _addVRayFolder(ptg):
 
     vrayFolder = ptg.findFolder(VRAY_FOLDER)
     vrayFolder.setName("vray_folder")
-
-    print "vrayFolder", vrayFolder.name()
 
 def _addVRayDisplacementFolder(ptg):
     vrayFolder = ptg.findFolder(VRAY_FOLDER)
@@ -137,7 +135,7 @@ def _addDisplacementControls(ptg, vrayFolder):
 
     ptg.appendToFolder(vrayFolder, hou.FolderParmTemplate("vray_displ_folder_shopnet", "From SHOP", **{
         'parm_templates' : ([
-            hou.StringParmTemplate("vray_displshoppath", "SHOP", 1, **{
+            hou.StringParmTemplate("vray_displ_shoppath", "SHOP", 1, **{
                 'string_type' : hou.stringParmType.NodeReference,
                 'tags' : {
                     'spare_category': 'vray',
@@ -159,17 +157,15 @@ def addVRayDisplamentParamTemplate(ptg):
     if UI is None:
         return
 
-    print "addVRayDisplamentParamTemplate"
-
     _removeVRayDisplacementAttributes(ptg, DISPLACEMENT_FOLDER)
     _removeVRayDisplacementAttributes(ptg, VRAY_FOLDER)
 
-    # _addVRayFolder(ptg)
-    # _addVRayDisplacementFolder(ptg)
+    _addVRayFolder(ptg)
+    _addVRayDisplacementFolder(ptg)
 
     assert ptg.findFolder(DISPLACEMENT_FOLDER)
 
-    #_addDisplacementControls(ptg, DISPLACEMENT_FOLDER)
+    _addDisplacementControls(ptg, DISPLACEMENT_FOLDER)
 
 def addVRayDisplamentParams(node):
     ptg = node.parmTemplateGroup()
@@ -177,7 +173,3 @@ def addVRayDisplamentParams(node):
     addVRayDisplamentParamTemplate(ptg)
 
     node.setParmTemplateGroup(ptg)
-
-    for pt in ptgParmTemplatesIt(node.parmTemplateGroup()):
-        # print "pt.name()", pt.name()
-        pass

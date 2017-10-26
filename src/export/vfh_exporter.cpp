@@ -1131,14 +1131,8 @@ void VRayExporter::RtCallbackDisplacementObj(OP_Node *caller, void *callee, OP_E
 			const PRM_Parm *parm = Parm::getParm(*caller, reinterpret_cast<intptr_t>(data));
 			if (parm) {
 				OBJ_Node *obj_node = caller->castToOBJNode();
-				if (boost::equals(parm->getToken(), "vray_use_displ") ||
-					boost::equals(parm->getToken(), "vray_displ_type"))
-				{
+				if (obj_node) {
 					exporter.exportObject(obj_node);
-				}
-				else {
-					VRay::Plugin geom;
-					exporter.exportDisplacement(obj_node, geom);
 				}
 			}
 			break;
@@ -1216,21 +1210,16 @@ void VRayExporter::RtCallbackDisplacementVop(OP_Node *caller, void *callee, OP_E
 		}
 		case OP_INPUT_REWIRED: {
 			const int idx = reinterpret_cast<intptr_t>(data);
+
 			SHOP_Node *shop_node = caller->getParent()->castToSHOPNode();
 			if (idx >= 0 && shop_node) {
-				UT_String shopPath;
-				shop_node->getFullPath(shopPath);
-
 				OP_NodeList refs;
 				shop_node->getExistingOpDependents(refs, true);
-				for (OP_Node *node : refs) {
-					UT_String nodePath;
-					node->getFullPath(nodePath);
 
+				for (OP_Node *node : refs) {
 					OBJ_Node *obj_node = node->castToOBJNode();
 					if (obj_node) {
-						VRay::Plugin geom;
-						exporter.exportDisplacement(obj_node, geom);
+						exporter.exportObject(obj_node);
 					}
 				}
 			}
@@ -1247,128 +1236,181 @@ void VRayExporter::RtCallbackDisplacementVop(OP_Node *caller, void *callee, OP_E
 	csect.leave();
 }
 
-
-void VRayExporter::exportDisplacementDesc(OBJ_Node *obj_node, Attrs::PluginDesc &pluginDesc)
+int VRayExporter::setDisplacementTextureFromPath(OP_Node &opNode, Attrs::PluginDesc &pluginDesc, const std::string &parmNamePrefix)
 {
-	const std::string parmPrefix = boost::str(Parm::FmtPrefixManual % pluginDesc.pluginID % "_");
-	const PRM_Parm *parm = Parm::getParm(*obj_node, boost::str(Parm::FmtPrefixManual % parmPrefix % "displacement_tex_color"));
-	if (parm) {
-		UT_String texpath;
-		obj_node->evalString(texpath, parm, 0, 0.0f);
-		OP_Node *tex_node = getOpNodeFromPath(texpath);
-		if (tex_node) {
-			VRay::Plugin texture = exportVop(tex_node);
-			if (texture) {
-				pluginDesc.add(Attrs::PluginAttr("displacement_tex_color", texture));
+	const PRM_Parm *parm = Parm::getParm(opNode, str(Parm::FmtPrefixManual % parmNamePrefix % "displacement_texture"));
+	if (!parm)
+		return false;
 
-				// Check if plugin has "out_intensity" output
-				bool hasOutIntensity = false;
-				const Parm::VRayPluginInfo *texPluginInfo = Parm::GetVRayPluginInfo(texture.getType());
-				if (NOT(texPluginInfo)) {
-					Log::getLog().error("Node \"%s\": Plugin \"%s\" description is not found!",
-										obj_node->getName().buffer(), texture.getType());
-					return;
-				}
-				if (texPluginInfo->outputs.size()) {
-					for (const auto &sock : texPluginInfo->outputs) {
-						if (StrEq(sock.name.getToken(), "out_intensity")) {
-							hasOutIntensity = true;
-							break;
-						}
-					}
-				}
+	const fpreal t = getContext().getTime();
 
-				// Wrap texture with TexOutput
-				if (NOT(hasOutIntensity)) {
-					Attrs::PluginDesc texOutputDesc(VRayExporter::getPluginName(tex_node, "Out@"), "TexOutput");
-					texOutputDesc.add(Attrs::PluginAttr("texmap", texture));
+	UT_String texPath;
+	opNode.evalString(texPath, parm, 0, t);
 
-					texture = exportPlugin(texOutputDesc);
-					pluginDesc.add(Attrs::PluginAttr("displacement_tex_float", texture, "out_intensity"));
-				}
+	VRay::Plugin texture = exportNodeFromPathWithDefaultMapping(texPath, defaultMappingChannelName);
+	if (!texture)
+		return false;
+
+	// Check if plugin has "out_intensity" output
+	bool hasOutIntensity = false;
+
+	const Parm::VRayPluginInfo *texPluginInfo = Parm::GetVRayPluginInfo(texture.getType());
+	if (!texPluginInfo) {
+		Log::getLog().error("Node \"%s\": Plugin \"%s\" description is not found!",
+							opNode.getName().buffer(), texture.getType());
+		return false;
+	}
+
+	if (texPluginInfo->outputs.size()) {
+		for (const auto &sock : texPluginInfo->outputs) {
+			if (StrEq(sock.name.getToken(), "out_intensity")) {
+				hasOutIntensity = true;
+				break;
 			}
 		}
 	}
 
-	setAttrsFromOpNodePrms(pluginDesc, obj_node, parmPrefix);
+	// Wrap texture with TexOutput
+	if (!hasOutIntensity) {
+		Attrs::PluginDesc texOutputDesc(str(FmtPluginNameWithPrefix % "Out" % texture.getName()),
+										"TexOutput");
+		texOutputDesc.add(Attrs::PluginAttr("texmap", texture));
+
+		texture = exportPlugin(texOutputDesc);
+	}
+
+	pluginDesc.add(Attrs::PluginAttr("displacement_tex_color", texture));
+	pluginDesc.add(Attrs::PluginAttr("displacement_tex_float", texture, "out_intensity"));
+
+	return true;
+}
+
+int VRayExporter::exportDisplacementFromOBJ(OBJ_Node &objNode, Attrs::PluginDesc &pluginDesc)
+{
+	const std::string parmNamePrefix = str(Parm::FmtPrefix % pluginDesc.pluginID);
+	
+	if (!setDisplacementTextureFromPath(objNode, pluginDesc, parmNamePrefix))
+		return false;
+
+	if (pluginDesc.pluginID == "GeomDisplacedMesh") {
+		UT_String dispTypeMenu;
+		objNode.evalString(dispTypeMenu, "GeomDisplacedMesh_type", 0, 0.0);
+
+		if (dispTypeMenu.isInteger()) {
+			enum VRayDisplacementType {
+				displ_type_2d = 0,
+				displ_type_3d = 1,
+				displ_type_vector = 2,
+				displ_type_vector_signed = 3,
+				displ_type_vector_object = 4,
+			};
+
+			const VRayDisplacementType displaceType =
+				static_cast<VRayDisplacementType>(dispTypeMenu.toInt());
+
+			if (displaceType == displ_type_2d) {
+				pluginDesc.add(Attrs::PluginAttr("displace_2d", true));
+				pluginDesc.add(Attrs::PluginAttr("vector_displacement", 0));
+			}
+			else if (displaceType == displ_type_vector) {
+				pluginDesc.add(Attrs::PluginAttr("displace_2d", false));
+				pluginDesc.add(Attrs::PluginAttr("vector_displacement", 1));
+			}
+			else if (displaceType == displ_type_vector_signed) {
+				pluginDesc.add(Attrs::PluginAttr("displace_2d", false));
+				pluginDesc.add(Attrs::PluginAttr("vector_displacement", 2));
+			}
+			else if (displaceType == displ_type_vector_object) {
+				pluginDesc.add(Attrs::PluginAttr("displace_2d", false));
+				pluginDesc.add(Attrs::PluginAttr("vector_displacement", 3));
+			}
+		}
+	}
+
+	setAttrsFromOpNodePrms(pluginDesc, &objNode, parmNamePrefix);
+
+	return true;
 }
 
 
-VRay::Plugin VRayExporter::exportDisplacement(OBJ_Node *obj_node, VRay::Plugin &geomPlugin)
+VRay::Plugin VRayExporter::exportDisplacement(OBJ_Node &objNode, VRay::Plugin &geomPlugin)
 {
-	VRay::Plugin plugin;
+	const DisplacementType displacementType = objectExporter.hasSubdivApplied(objNode);
+	if (displacementType == displacementTypeNone)
+		return geomPlugin;
 
-	addOpCallback(obj_node, VRayExporter::RtCallbackDisplacementObj);
+	Attrs::PluginDesc pluginDesc;
+	VRay::Plugin plugin = geomPlugin;
 
-	bool useDisplacement = Parm::isParmExist(*obj_node, "vray_use_displ") && obj_node->evalInt("vray_use_displ", 0, 0.0);
-	if (useDisplacement) {
-		Attrs::PluginDesc pluginDesc;
-		const int displType = obj_node->evalInt("vray_displ_type", 0, 0.0);
-		switch (displType) {
-			case displacementTypeFromMat: {
-				UT_String shopPath;
-				obj_node->evalString(shopPath, "vray_displshoppath", 0, 0.0);
-				OP_Node *matNode = getOpNodeFromPath(shopPath);
-				if (matNode) {
-					VOP_Node *matVopNode = CAST_VOPNODE(getVRayNodeFromOp(*matNode, "geometry"));
-					if (!matVopNode) {
-						Log::getLog().error("Can't find a valid V-Ray node for \"%s\"!",
-											matNode->getName().buffer());
+	switch (displacementType) {
+		case displacementTypeFromMat: {
+			UT_String shopPath;
+			objNode.evalString(shopPath, "vray_displ_shoppath", 0, 0.0);
+
+			SHOP_Node *matNode = getSHOPNodeFromPath(shopPath);
+			if (matNode) {
+				VOP_Node *matVopNode = CAST_VOPNODE(getVRayNodeFromOp(*matNode, "geometry"));
+				if (!matVopNode) {
+					Log::getLog().error("Can't find a valid V-Ray node for \"%s\"!",
+										matNode->getName().buffer());
+				}
+				else {
+					VOP::NodeBase *vrayVopNode = static_cast<VOP::NodeBase*>(matVopNode);
+
+					addOpCallback(vrayVopNode, RtCallbackDisplacementVop);
+
+					ExportContext expContext(CT_OBJ, *this, objNode);
+
+					const OP::VRayNode::PluginResult res = vrayVopNode->asPluginDesc(pluginDesc, *this, &expContext);
+					if (res == OP::VRayNode::PluginResultError) {
+						Log::getLog().error("Error creating plugin descripion for node: \"%s\" [%s]",
+											vrayVopNode->getName().buffer(), vrayVopNode->getOperator()->getName().buffer());
 					}
-					else {
-						VOP::NodeBase *vrayVopNode = static_cast<VOP::NodeBase*>(matVopNode);
-						if (vrayVopNode) {
-							addOpCallback(vrayVopNode, RtCallbackDisplacementVop);
+					else if (res == OP::VRayNode::PluginResultNA ||
+							 res == OP::VRayNode::PluginResultContinue)
+					{
+						pluginDesc.addAttribute(Attrs::PluginAttr("mesh", geomPlugin));
 
-							ExportContext expContext(CT_OBJ, *this, *obj_node);
+						// No prefix in this case.
+						setDisplacementTextureFromPath(objNode, pluginDesc, "");
 
-							OP::VRayNode::PluginResult res = vrayVopNode->asPluginDesc(pluginDesc, *this, &expContext);
-							if (res == OP::VRayNode::PluginResultError) {
-								Log::getLog().error("Error creating plugin descripion for node: \"%s\" [%s]",
-													vrayVopNode->getName().buffer(), vrayVopNode->getOperator()->getName().buffer());
-							}
-							else if (res == OP::VRayNode::PluginResultNA ||
-									 res == OP::VRayNode::PluginResultContinue)
-							{
-								if (geomPlugin) {
-									pluginDesc.addAttribute(Attrs::PluginAttr("mesh", geomPlugin));
-								}
-
-								setAttrsFromOpNodeConnectedInputs(pluginDesc, vrayVopNode);
-								setAttrsFromOpNodePrms(pluginDesc, vrayVopNode);
-							}
-
-							plugin = exportPlugin(pluginDesc);
-						}
+						setAttrsFromOpNodeConnectedInputs(pluginDesc, vrayVopNode);
+						setAttrsFromOpNodePrms(pluginDesc, vrayVopNode);
 					}
-				}
-				break;
-			}
-			case displacementTypeDisplace: {
-				pluginDesc.pluginName = VRayExporter::getPluginName(obj_node, "GeomDisplacedMesh@");
-				pluginDesc.pluginID = "GeomDisplacedMesh";
-				if (geomPlugin) {
-					pluginDesc.addAttribute(Attrs::PluginAttr("mesh", geomPlugin));
-				}
-				exportDisplacementDesc(obj_node, pluginDesc);
 
-				plugin = exportPlugin(pluginDesc);
-				break;
-			}
-			case displacementTypeSmooth: {
-				pluginDesc.pluginName = VRayExporter::getPluginName(obj_node, "GeomStaticSmoothedMesh@");
-				pluginDesc.pluginID = "GeomStaticSmoothedMesh";
-				if (geomPlugin) {
-					pluginDesc.addAttribute(Attrs::PluginAttr("mesh", geomPlugin));
+					plugin = exportPlugin(pluginDesc);
 				}
-				exportDisplacementDesc(obj_node, pluginDesc);
-
-				plugin = exportPlugin(pluginDesc);
-				break;
 			}
-			default:
-				break;
+			break;
 		}
+		case displacementTypeDisplace: {
+			pluginDesc.pluginName = str(FmtPluginNameWithPrefix % "GeomDisplacedMesh" % geomPlugin.getName());
+			pluginDesc.pluginID = "GeomDisplacedMesh";
+
+			pluginDesc.addAttribute(Attrs::PluginAttr("mesh", geomPlugin));
+
+			if (exportDisplacementFromOBJ(objNode, pluginDesc)) {
+				plugin = exportPlugin(pluginDesc);
+			}
+			break;
+		}
+		case displacementTypeSmooth: {
+			pluginDesc.pluginName = str(FmtPluginNameWithPrefix % "GeomStaticSmoothedMesh" % geomPlugin.getName());
+			pluginDesc.pluginID = "GeomStaticSmoothedMesh";
+
+			pluginDesc.addAttribute(Attrs::PluginAttr("mesh", geomPlugin));
+
+			if (exportDisplacementFromOBJ(objNode, pluginDesc)) {
+				plugin = exportPlugin(pluginDesc);
+			}
+			break;
+		}
+		default:
+			break;
+	}
+
+	if (plugin) {
+		addOpCallback(&objNode, RtCallbackDisplacementObj);
 	}
 
 	return plugin;
