@@ -8,17 +8,15 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
-#include "vfh_log.h"
-#include "getenvvars.h"
-
-#include <stdarg.h>
+#include <QThread>
+#include <QMutexLocker>
+#include <QQueue>
+#include <QApplication>
 
 #include <thread>
-#include <condition_variable>
-#include <atomic>
-#include <array>
 
-#include <QThread>
+#include "vfh_defines.h"
+#include "vfh_log.h"
 
 #ifdef _WIN32
 #define VS_DEBUG(...) VUtils::debug(__VA_ARGS__)
@@ -29,7 +27,8 @@
 using namespace VRayForHoudini;
 using namespace VRayForHoudini::Log;
 
-const std::thread::id MAIN_TID = std::this_thread::get_id(); ///< The ID of the main thread - used to distingquish in log
+/// The ID of the main thread - used to distingquish in log.
+const std::thread::id mainThreadID = std::this_thread::get_id();
 
 static const char* logLevelAsString(LogLevel level)
 {
@@ -57,7 +56,21 @@ static const char* logLevelAsColor(LogLevel level)
 	}
 }
 
-static void logMessage(const Logger::LogData &data)
+struct VfhLogMessage {
+	/// The message's log level.
+	LogLevel level;
+
+	/// The message.
+	QString message;
+
+	/// The time the log was made.
+	time_t time;
+
+	/// The thread ID of the caller thread.
+	int fromMain;
+};
+
+static void logMessage(const VfhLogMessage &data)
 {
 #ifdef _WIN32
 	const int isDebuggerAttached = IsDebuggerPresent();
@@ -92,20 +105,15 @@ static void logMessage(const Logger::LogData &data)
 	guiMsg.append(formatter.sprintf("[%s] ", logLevelAsString(data.level)));
 
 #ifdef VFH_DEBUG
-	const unsigned tid = std::hash<std::thread::id>()(data.tid) % 10000;
-
-	consoleMsg.append(formatter.sprintf("(%s%4u) ", data.tid == MAIN_TID ? "#" : " ", tid));
-	guiMsg.append(formatter.sprintf("(%s%u) ",      data.tid == MAIN_TID ? "#" : "",  tid));
+	consoleMsg.append(data.fromMain ? "* " : "  ");
+	guiMsg.append(    data.fromMain ? "* " : "");
 #endif
-	
+
 	consoleMsg.append(logLevelAsColor(data.level));
-
-	const QString message(QString(data.line.data()).simplified());
-
-	consoleMsg.append(message);
+	consoleMsg.append(data.message.simplified());
 	consoleMsg.append(VUTILS_COLOR_DEFAULT);
 
-	guiMsg.append(message);
+	guiMsg.append(data.message.simplified());
 
 	if (isDebuggerAttached) {
 		VS_DEBUG("%s\n", guiMsg.toLocal8Bit().constData());
@@ -124,128 +132,92 @@ static void logMessage(const Logger::LogData &data)
 	}
 }
 
-/// Thread logging any messages pushed in the Logger's queue
-class ThreadedLogger
+class VfhLogThread
 	: public QThread
 {
 public:
-	explicit ThreadedLogger(std::function<void()> cb)
-		: runFunction(cb)
-	{}
+	~VfhLogThread() {
+		stopLogging();
+		quit();
+		wait();
+	}
+
+	void add(const VfhLogMessage &msg) {
+		QMutexLocker lock(&mutex);
+		queue.enqueue(msg);
+	}
+
+	void startLogging() {
+		isWorking = true;
+	}
+
+	void stopLogging() {
+		isWorking = false;
+	}
 
 protected:
 	void run() VRAY_OVERRIDE {
-		runFunction();
-	}
-
-	std::function<void()> runFunction;
-};
-
-static ThreadedLogger *loggerThread = nullptr; ///< The thread used for logging
-static std::once_flag startLogger; ///< Flag to ensure we start the thread only once
-static volatile bool isStoppedLogger = false; ///< Stop flag for the thread
-static VUtils::GetEnvVarInt threadedLogger("VFH_THREADED_LOGGER", 1);
-
-void Logger::writeMessages()
-{
-	if (threadedLogger.getValue() == 0) {
-		return;
-	}
-	auto & log = getLog();
-	while (!isStoppedLogger) {
-		if (log.m_queue.empty()) {
-			std::unique_lock<std::mutex> lock(log.m_mtx);
-			if (log.m_queue.empty()) {
-				while (!isStoppedLogger && log.m_queue.empty()) {
-					log.m_condVar.wait(lock);
-				}
+		while (isWorking) {
+			if (queue.isEmpty()) {
+				msleep(100);
+				continue;
 			}
-		}
-		{
-			std::lock_guard<std::mutex> lock(log.m_mtx);
-			while (!isStoppedLogger && !log.m_queue.empty()) {
-				const LogData data = log.m_queue.front();
-				log.m_queue.pop_front();
-				logMessage(data);
+
+			VfhLogMessage msg; {
+				QMutexLocker locker(&mutex);
+				msg = queue.dequeue();
 			}
+
+			logMessage(msg);
 		}
 	}
-}
+
+private:
+	typedef QQueue<VfhLogMessage> VfhLogQueue;
+
+	/// Queue lock.
+	QMutex mutex;
+	QAtomicInt isWorking;
+
+	/// Log message queue.
+	VfhLogQueue queue;
+} logThread;
 
 void Logger::startLogging()
 {
-	if (threadedLogger.getValue()) {
-		Logger & log = getLog();
-		std::call_once(startLogger, [&log]() {
-			loggerThread = new ThreadedLogger(&Logger::writeMessages);
-			loggerThread->start();
-		});
-	}
+	logThread.startLogging();
+	logThread.start(QThread::LowestPriority);
 }
 
 void Logger::stopLogging()
 {
-	if (threadedLogger.getValue()) {
-		// this protects stopping
-		static std::mutex mtx;
-		if (loggerThread) {
-			std::lock_guard<std::mutex> lock(mtx);
-			if (!loggerThread) {
-				return;
-			}
-			{
-				std::lock_guard<std::mutex> loggerLock(getLog().m_mtx);
-				isStoppedLogger = true;
-			}
-
-			getLog().m_condVar.notify_all();
-
-			if (!loggerThread->wait(100)) {
-				loggerThread->terminate();
-				loggerThread->wait();
-			}
-
-			FreePtr(loggerThread);
-		}
-	}
+	logThread.stopLogging();
+	logThread.quit();
+	logThread.wait();
 }
 
 void Logger::valog(LogLevel level, const tchar *format, va_list args)
 {
 	// Show all messages in debug.
 #ifndef VFH_DEBUG
-	const bool showMessage = level == LogLevelMsg
-		? true
-		: level <= m_logLevel;
-
-	if (!showMessage) {
+	const bool showMessage = level == LogLevelMsg ? true : level <= logLevel;
+	if (!showMessage)
 		return;
-	}
 #endif
 
-	LogData data;
-	time(&data.time);
-	data.tid = std::this_thread::get_id();
-	data.level = level;
+	tchar msgBuf[2048];
+	vsnprintf(msgBuf, CountOf(msgBuf), format, args);
 
-	vsnprintf(data.line.data(), data.line.size(), format, args);
+	VfhLogMessage msg;
+	time(&msg.time);
+	msg.level = level;
+	msg.message = msgBuf;
+	msg.fromMain = std::this_thread::get_id() == mainThreadID;
 
-	if (threadedLogger.getValue() && !isStoppedLogger) {
-		{
-			std::lock_guard<std::mutex> lock(m_mtx);
-			if (!isStoppedLogger) {
-				m_queue.push_back(data);
-			}
-		}
-		m_condVar.notify_one();
-	}
-	else {
-		logMessage(data);
-	}
+	logThread.add(msg);
 }
 
-
-void Logger::log(LogLevel level, const tchar *format, ...)
+void Logger::log(LogLevel level, const tchar *format, ...) const
 {
 	va_list args;
 	va_start(args, format);
@@ -255,8 +227,7 @@ void Logger::log(LogLevel level, const tchar *format, ...)
 	va_end(args);
 }
 
-
-void Logger::info(const tchar *format, ...)
+void Logger::info(const tchar *format, ...) const
 {
 	va_list args;
 	va_start(args, format);
@@ -266,8 +237,7 @@ void Logger::info(const tchar *format, ...)
 	va_end(args);
 }
 
-
-void Logger::warning(const tchar *format, ...)
+void Logger::warning(const tchar *format, ...) const
 {
 	va_list args;
 	va_start(args, format);
@@ -277,8 +247,7 @@ void Logger::warning(const tchar *format, ...)
 	va_end(args);
 }
 
-
-void Logger::error(const tchar *format, ...)
+void Logger::error(const tchar *format, ...) const
 {
 	va_list args;
 	va_start(args, format);
@@ -288,8 +257,7 @@ void Logger::error(const tchar *format, ...)
 	va_end(args);
 }
 
-
-void Logger::debug(const tchar *format, ...)
+void Logger::debug(const tchar *format, ...) const
 {
 	va_list args;
 	va_start(args, format);
@@ -299,8 +267,7 @@ void Logger::debug(const tchar *format, ...)
 	va_end(args);
 }
 
-
-void Logger::progress(const tchar *format, ...)
+void Logger::progress(const tchar *format, ...) const
 {
 	va_list args;
 	va_start(args, format);
@@ -310,8 +277,7 @@ void Logger::progress(const tchar *format, ...)
 	va_end(args);
 }
 
-
-void Logger::msg(const tchar *format, ...)
+void Logger::msg(const tchar *format, ...) const
 {
 	va_list args;
 	va_start(args, format);
@@ -320,7 +286,6 @@ void Logger::msg(const tchar *format, ...)
 
 	va_end(args);
 }
-
 
 VRayForHoudini::Log::Logger &VRayForHoudini::Log::getLog()
 {

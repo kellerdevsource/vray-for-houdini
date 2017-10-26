@@ -5,6 +5,7 @@
 #include <UT/UT_MemoryCounter.h>
 #include <FS/UT_DSO.h>
 
+#include "vfh_defines.h"
 #include "vfh_log.h"
 #include "vfh_primitives.h"
 

@@ -9,6 +9,7 @@
 //  https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
+#include "vfh_defines.h"
 #include "vfh_vray.h"
 #include "vfh_log.h"
 #include "vfh_vray_instances.h"

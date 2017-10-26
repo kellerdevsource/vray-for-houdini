@@ -79,9 +79,8 @@ static boost::format objGeomNameFmt("%s|%i@%s");
 static boost::format hairNameFmt("GeomMayaHair|%i@%s");
 static boost::format polyNameFmt("GeomStaticMesh|%i@%s");
 static boost::format alembicNameFmt("Alembic|%i@%s");
-static boost::format vrmeshNameFmt("VRayProxy|%i@%s");
+static boost::format vrmeshNameFmt("VRayProxy|%i");
 static boost::format vrsceneNameFmt("VRayScene|%i@%s");
-static boost::format geomplaneNameFmt("GeomInfinitePlane|%i@%s");
 
 static const char intrAlembicFilename[] = "abcfilename";
 static const char intrAlembicObjectPath[] = "abcobjectpath";
@@ -1170,7 +1169,7 @@ VRay::Plugin ObjectExporter::exportVRayProxyRef(OBJ_Node &objNode, const GU_Prim
 
 	const int key = getPrimPackedID(prim);
 
-	Attrs::PluginDesc pluginDesc(boost::str(vrmeshNameFmt % key % primname.buffer()),
+	Attrs::PluginDesc pluginDesc(boost::str(vrmeshNameFmt % key),
 								 "GeomMeshFile");
 
 	const VRayProxyRef *vrayproxyref = UTverify_cast<const VRayProxyRef*>(prim.implementation());

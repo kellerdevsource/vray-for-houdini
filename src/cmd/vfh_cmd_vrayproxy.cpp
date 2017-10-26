@@ -28,10 +28,10 @@ enum CMDError {
 };
 
 
-/// Parse command line arguments passed to vrayproxy cmd
+/// Parse command msg arguments passed to vrayproxy cmd
 /// and return export options for the vray proxy exporter
-/// @param[in] args - command line arguments passed to vrayproxy cmd
-/// @param[out] options - command line arguments parsed as proxy export options
+/// @param[in] args - command msg arguments passed to vrayproxy cmd
+/// @param[out] options - command msg arguments parsed as proxy export options
 /// @retval CMD_ARG_OK == no error or error code for invalid arguments/error while parsing
 static CMDError parseExportOptions(const CMD_Args &args, VRayProxyExportOptions &options)
 {
@@ -129,8 +129,8 @@ static CMDError parseExportOptions(const CMD_Args &args, VRayProxyExportOptions 
 
 
 /// Return list of SOP nodes passed to vrayproxy command that should be exported to a .vrmesh file
-/// @param[in] args - command line arguments passed to vrayproxy cmd
-/// @param[out] sopList - SOP nodes matching the criterias from command line aruments
+/// @param[in] args - command msg arguments passed to vrayproxy cmd
+/// @param[out] sopList - SOP nodes matching the criterias from command msg aruments
 ///                       will be appended to this list
 /// @retval number of SOPs found
 static int getSOPList(CMD_Args &args, SOPList &sopList)
