@@ -282,15 +282,17 @@ static void fillViewParams(VRayExporter &exporter, PyObject *viewParamsDict, Vie
 
 	fillViewParamsFromDict(viewParamsDict, viewParams);
 	fillRenderRegionFromDict(viewParamsDict, viewParams);
-
-	ROP_Node* iprRop = CAST_ROPNODE(getOpNodeFromPath("/out/vray_ipr")); // This should possibly be replaced with a pattern search for "vray*"
+	
+	ROP_Node* iprRop = CAST_ROPNODE(exporter.getRopPtr());
 
 	if (iprRop) {
-		UT_String cameraPath;
+		if (iprRop->evalInt("use_camera_settings", 0, 0)) {
+			UT_String cameraPath;
 
-		iprRop->evalString(cameraPath, "render_camera", 0, 0);
+			iprRop->evalString(cameraPath, "render_camera", 0, 0);
 
-		cameraNode = CAST_OBJNODE(getOpNodeFromPath(cameraPath));
+			cameraNode = CAST_OBJNODE(getOpNodeFromPath(cameraPath));
+		}
 	}
 	
 	if (cameraNode) {
