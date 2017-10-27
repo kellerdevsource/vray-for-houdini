@@ -1,3 +1,4 @@
+#include "$VRAY_UI_DS_PATH/vfh_macros.ds"
 /*
 groupsimple {
 	name "VrayRendererFolderUIStyle"
@@ -48,12 +49,7 @@ groupsimple {
         default { "0" }
     }
 
-    parm {
-        name "vfh_use_camera_settings"
-        label "Use Physical Camera Settings for Viewport IPR"
-        type toggle
-        default { 1 }
-    }
+    VFH_UI_PARM_TOGGLE("vfh_use_camera_settings", "Use Physical Camera Settings for Viewport IPR", "", 1)
 
     parm {
         name "render_rt"
