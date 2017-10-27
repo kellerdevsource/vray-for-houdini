@@ -286,10 +286,10 @@ static void fillViewParams(VRayExporter &exporter, PyObject *viewParamsDict, Vie
 	ROP_Node* iprRop = CAST_ROPNODE(exporter.getRopPtr());
 
 	if (iprRop) {
-		if (iprRop->evalInt("use_camera_settings", 0, 0.0f)) {
+		if (iprRop->evalInt("vfh_use_camera_settings", 0, 0.0)) {
 			UT_String cameraPath;
 
-			iprRop->evalString(cameraPath, "render_camera", 0, 0.0f);
+			iprRop->evalString(cameraPath, "render_camera", 0, 0.0);
 
 			cameraNode = CAST_OBJNODE(getOpNodeFromPath(cameraPath));
 		}

@@ -8,13 +8,6 @@ parm {
 }
 
 parm {
-    name "use_camera_settings"
-    label "Use camera settings"
-    type toggle
-    default { 1 }
-}
-
-parm {
     name    override_camerares
     label   "Override Camera Resolution"
     parmtag { spare_category "Output" }
