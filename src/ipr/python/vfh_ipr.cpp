@@ -277,7 +277,6 @@ static void fillViewParams(VRayExporter &exporter, PyObject *viewParamsDict, Vie
 	}
 
 	ROP_Node* iprRop = CAST_ROPNODE(exporter.getRopPtr());
-
 	if (iprRop) {
 		if (iprRop->evalInt("vfh_use_camera_settings", 0, 0.0)) {
 			UT_String cameraPath;
