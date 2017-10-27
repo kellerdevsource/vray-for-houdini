@@ -481,7 +481,7 @@ ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 	if (needReset) {
 		Log::getLog().debug("VRayExporter::exportView: Resetting view...");
 
-		if (!isAnimation()) {
+		if (isIPR()) {
 			removePlugin("renderView", false);
 			removePlugin("settingsCamera", false);
 			removePlugin("settingsCameraDof", false);

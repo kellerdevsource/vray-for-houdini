@@ -1592,6 +1592,13 @@ void VRayExporter::onAbort(VRay::VRayRenderer &renderer)
 	}
 }
 
+void VRayExporter::onVfbClose()
+{
+	exportEnd();
+	saveVfbState();
+	reset();
+}
+
 void VRayExporter::exportScene()
 {
 	Log::getLog().debug("VRayExporter::exportScene()");
@@ -1919,7 +1926,7 @@ int VRayExporter::exportVrscene(const std::string &filepath, VRay::VRayExportSet
 
 void VRayExporter::clearKeyFrames(double toTime)
 {
-	Log::getLog().debug("VRayExporter::clearKeyFrames(%.3f)",
+	Log::getLog().debug("VRayExporter::clearKeyFrames(toTime = %.3f)",
 						toTime);
 	m_renderer.clearFrames(toTime);
 }
@@ -1982,9 +1989,14 @@ void VRayExporter::initExporter(int hasUI, int nframes, fpreal tstart, fpreal te
 	if (isAnimation()) {
 		m_renderer.addCbOnImageReady(CbOnImageReady(boost::bind(&VRayExporter::onAbort, this, _1)));
 	}
-	else if (isIPR()) {
+	else if (isIPR() == iprModeSOHO) {
+		m_renderer.addCbOnVfbClose(CbVoid(boost::bind(&VRayExporter::onVfbClose, this)));
 		m_renderer.addCbOnImageReady(CbVoid(boost::bind(&VRayExporter::resetOpCallbacks, this)));
 		m_renderer.addCbOnRendererClose(CbVoid(boost::bind(&VRayExporter::resetOpCallbacks, this)));
+	}
+	else if (isIPR() == iprModeRT) {
+		m_renderer.addCbOnVfbClose(CbVoid(boost::bind(&VRayExporter::onVfbClose, this)));
+		m_renderer.addCbOnImageReady(CbVoid(boost::bind(&VRayExporter::saveVfbState, this)));
 	}
 
 	m_isMotionBlur = hasMotionBlur(*m_rop, *camera);
@@ -2155,9 +2167,8 @@ void VRayExporter::exportEnd()
 {
 	Log::getLog().debug("VRayExporter::exportEnd()");
 
-	if (isAnimation()) {
-		clearKeyFrames(SYS_FP64_MAX);
-	}
+	clearKeyFrames(SYS_FP64_MAX);
+	reset();
 
 	m_error = ROP_CONTINUE_RENDER;
 }

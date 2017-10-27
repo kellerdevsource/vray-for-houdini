@@ -87,8 +87,8 @@ struct OpInterestItem {
 typedef std::vector<OpInterestItem> CbItems;
 
 /// Vfh main exporter. This is the main class responsible for translating
-/// Houdini geometry and nodes to V-Ray plugins, intilizing and starting
-/// the rendering process
+/// Houdini geometry and nodes to V-Ray plugins, initializing and starting
+/// the rendering process.
 class VRayExporter
 {
 public:
@@ -650,6 +650,9 @@ public:
 
 	/// Callback function for the event when rendering has finished, successfully or not.
 	void onAbort(VRay::VRayRenderer &renderer);
+
+	/// Callback function to stop rendering of VFB close.
+	void onVfbClose();
 
 	/// Callbacks for tracking changes on different types of nodes
 	static void RtCallbackLight(OP_Node *caller, void *callee, OP_EventType type, void *data);

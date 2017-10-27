@@ -67,6 +67,11 @@ OP_VariablePair* VRayRendererNode::getVariablePair()
 	return pair;
 }
 
+OP_Node *VRayRendererNode::myConstructor(OP_Network *parent, const char *name, OP_Operator *entry)
+{
+	return new VRayRendererNode(parent, name, entry);
+}
+
 VRayRendererNode::VRayRendererNode(OP_Network *net, const char *name, OP_Operator *entry)
 	: ROP_Node(net, name, entry)
 	, m_exporter(this)
@@ -79,12 +84,6 @@ VRayRendererNode::VRayRendererNode(OP_Network *net, const char *name, OP_Operato
 VRayRendererNode::~VRayRendererNode()
 {
 	Log::getLog().debug("~VRayRendererNode()");
-}
-
-bool VRayRendererNode::updateParmsFlags()
-{
-	bool changed = ROP_Node::updateParmsFlags();
-	return changed;
 }
 
 void VRayRendererNode::RtCallbackRop(OP_Node *caller, void *callee, OP_EventType type, void *data)
@@ -101,7 +100,7 @@ void VRayRendererNode::RtCallbackRop(OP_Node *caller, void *callee, OP_EventType
 			if (   prm.getSparePtr()
 				&& prm.getSparePtr()->getValue(RT_UPDATE_SPARE_TAG))
 			{
-				rop.startIPR(exporter.getContext().getTime());
+				rop.startRT(exporter.getContext().getTime());
 			}
 			break;
 		}
@@ -118,7 +117,7 @@ void VRayRendererNode::RtCallbackRop(OP_Node *caller, void *callee, OP_EventType
 int VRayRendererNode::RtStartSession(void *data, int /*index*/, fpreal t, const PRM_Template* /*tplate*/)
 {
 	VRayRendererNode &rop = *reinterpret_cast<VRayRendererNode*>(data);
-	rop.startIPR(t);
+	rop.startRT(t);
 	return 1;
 }
 
@@ -143,8 +142,6 @@ int VRayRendererNode::initSession(int interactive, int nframes, fpreal tstart, f
 		// Store end time for endRender() executePostRenderScript()
 		m_tstart = tstart;
 		m_tend = tend;
-
-		executePreRenderScript(tstart);
 
 		// Renderer mode (CPU / GPU)
 		const int rendererMode = interactive
@@ -183,7 +180,7 @@ int VRayRendererNode::initSession(int interactive, int nframes, fpreal tstart, f
 	return error;
 }
 
-void VRayRendererNode::startIPR(fpreal time)
+void VRayRendererNode::startRT(fpreal time)
 {
 	if (HOU::isApprentice()) {
 		Log::getLog().error(apprenticeLimitMsg);
@@ -204,15 +201,17 @@ int VRayRendererNode::startRender(int nframes, fpreal tstart, fpreal tend)
 		return ROP_ABORT_RENDER;
 	}
 
-	Log::getLog().debug("VRayRendererNode::startRender(%i, %.3f, %.3f)", nframes, tstart, tend);
+	Log::getLog().debug("VRayRendererNode::startRender(nframes = %i, tstart = %.3f, tend = %.3f)",
+						nframes, tstart, tend);
 
-	int err = initSession(false, nframes, tstart, tend);
-	return err;
+	executePreRenderScript(tstart);
+
+	return initSession(false, nframes, tstart, tend);
 }
 
-ROP_RENDER_CODE VRayRendererNode::renderFrame(fpreal time, UT_Interrupt *boss)
+ROP_RENDER_CODE VRayRendererNode::renderFrame(fpreal time, UT_Interrupt*)
 {
-	Log::getLog().debug("VRayRendererNode::renderFrame(%.3f)", time);
+	Log::getLog().debug("VRayRendererNode::renderFrame(time = %.3f)", time);
 
 	executePreFrameScript(time);
 
@@ -238,11 +237,11 @@ void VRayRendererNode::register_operator(OP_OperatorTable *table)
 {
 	OP_Operator *rop = new OP_Operator(/* Internal name     */ "vray_renderer",
 									   /* UI name           */ "V-Ray Renderer",
-									   /* How to create one */ VRayRendererNode::myConstructor,
-									   /* Parm definitions  */ VRayRendererNode::getTemplatePair(),
+									   /* How to create one */ myConstructor,
+									   /* Parm definitions  */ getTemplatePair(),
 									   /* Min # of inputs   */ 0,
 									   /* Max # of inputs   */ 256,
-									   /* Var definitions   */ VRayRendererNode::getVariablePair(),
+									   /* Var definitions   */ getVariablePair(),
 									   /* OP flags          */ OP_FLAG_GENERATOR);
 
 	// Set icon

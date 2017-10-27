@@ -22,35 +22,35 @@ class OP_VariablePair;
 
 namespace VRayForHoudini {
 
-class VRayRendererNode:
-		public ROP_Node
+enum class VRaySessionType {
+	vraySessionProduction = 0,
+	vraySessionRT,
+};
+
+class VRayRendererNode
+	: public ROP_Node
 {
 public:
 	/// Provide access to the ROP parameter templates (custom + generic ROP ones)
-	/// @retval pointer to a OP_TemplatePair instance
-	///         might be nullptr (no parameters)
+	/// @returns pointer to a OP_TemplatePair instance
+	/// might be nullptr (no parameters).
 	static OP_TemplatePair* getTemplatePair();
 
 	/// Provide access to the ROP variables
-	/// @retval pointer to a OP_VariablePair instance
-	///         might be nullptr (no variables)
+	/// @returns pointer to a OP_VariablePair instance
+	/// might be nullptr (no variables)
 	static OP_VariablePair* getVariablePair();
 
 	/// Create new instance of V-Ray ROP
 	/// @param parent[in] - parent network for the node
 	/// @param name[in] - node name
 	/// @param op[in] - operator type for the node
-	/// @retval pointer to the newly created node
-	static OP_Node* myConstructor(OP_Network *net, const char*name, OP_Operator *op)
-	{ return new VRayRendererNode(net, name, op); }
+	/// @returns pointer to the newly created node
+	static OP_Node *myConstructor(OP_Network *parent, const char *name, OP_Operator *entry);
 
-	/// Update ROP parameter flags such as enable/visible state, time dependency, etc.
-	/// @retval false if no change was made
-	virtual bool updateParmsFlags() VRAY_OVERRIDE;
-
-	/// Start a rendering session in IPR mode. We always use RT GPU engine for IPR
-	/// @param time[in] - current time
-	void startIPR(fpreal time);
+	/// Starts RT rendering session.
+	/// @param time Current time.
+	void startRT(fpreal time);
 
 protected:
 	/// Hide constructor/destructor for this class
@@ -59,27 +59,27 @@ protected:
 
 	/// Called before the rendering begins to verify Houdini license,
 	/// initialize a rendering session and call any prerender scripts.
-	/// @param nframes[in] - number of frames to be exported
-	/// @param tstart[in] - start time of export
-	/// @param tend[in] - end time of export
-	/// @retval return false if the rendering process is aborted, true otherwise
-	virtual int startRender(int nframes, fpreal s, fpreal e) VRAY_OVERRIDE;
+	/// @param nframes Number of frames to be exported
+	/// @param tstart Start time of export
+	/// @param tend End time of export
+	/// @returns False if the rendering process is aborted, true otherwise.
+	int startRender(int nframes, fpreal tstart, fpreal tend) VRAY_OVERRIDE;
 
 	/// Called for each frame, executes per frame scripts and calls the exporter to export
 	/// the scene for the current time
 	/// @param time[in] - current export time
 	/// @param boss[in] - used to interrrupt the export process for long operations
 	///        (if the user presses ESC for example)
-	/// @retval one of three return codes
+	/// @returns one of three return codes
 	///         ROP_ABORT_RENDER, ROP_CONTINUE_RENDER, ROP_RETRY_RENDER
 	///         which tell Houdini whether to stop rendering, continue, or retry the frame
-	virtual ROP_RENDER_CODE renderFrame(fpreal time, UT_Interrupt *boss) VRAY_OVERRIDE;
+	ROP_RENDER_CODE renderFrame(fpreal time, UT_Interrupt *boss) VRAY_OVERRIDE;
 
 	/// Called after the rendering of all frames is done. Finalizes the export and
 	/// rendering and calls any post render scripts
-	/// @retval one of three return codes to indicate the result of its operations
+	/// @returns one of three return codes to indicate the result of its operations
 	///         ROP_ABORT_RENDER, ROP_CONTINUE_RENDER, ROP_RETRY_RENDER
-	virtual ROP_RENDER_CODE endRender() VRAY_OVERRIDE;
+	ROP_RENDER_CODE endRender() VRAY_OVERRIDE;
 
 	/// Initialize a rendering session - intitlize the renderer, setup DR (if enabled)
 	/// init the exporter and export global rendering settings.
@@ -87,13 +87,18 @@ protected:
 	/// @param nframes[in] - number of frames to be exported
 	/// @param tstart[in] - start time of export
 	/// @param tend[in] - end time of export
-	/// @retval ROP_RENDER_CODE as int
+	/// @returns ROP_RENDER_CODE as int
 	int initSession(int interactive, int nframes, fpreal tstart, fpreal tend);
 
 private:
-	VRayExporter                 m_exporter; ///< vfh main exporter bound to this ROP node
-	fpreal                       m_tstart; ///< start render time
-	fpreal                       m_tend; ///< end render time
+	/// Scene exporter.
+	VRayExporter m_exporter;
+
+	/// Start render time.
+	fpreal m_tstart;
+
+	/// End render time.
+	fpreal m_tend;
 
 public:
 	/// Register this node type as ROP operator
