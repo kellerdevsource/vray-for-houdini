@@ -362,30 +362,20 @@ void HoudiniVolumeExporter::exportPrimitive(const PrimitiveItem &item, PluginSet
 #endif
 }
 
-void VolumeExporter::setDescAttrsFromOptions(Attrs::PluginDesc &pluginDesc, const UT_Options &opts) const
-{
-	pluginExporter.setAttrsFromUTOptions(pluginDesc, opts);
-	// export the play_speed and read_offset in vray time measures
-	// NOTE: we don't need checks because this intrinsics are explicitly set in class VRayVolumeGridRef
-	UT_ASSERT_MSG(opts.hasOption("play_speed") && opts.hasOption("play_at") && opts.hasOption("read_offset"),
-		"Can not get attributes play_speed, play_speed, read_offset of volume!");
-	int playSpeed = opts.getOptionI("play_speed") * OPgetDirector()->getChannelManager()->getSamplesPerSec();
-	pluginDesc.add(Attrs::PluginAttr("play_speed", playSpeed));
-	pluginDesc.add(Attrs::PluginAttr("read_offset", opts.getOptionI("read_offset") + playSpeed * opts.getOptionI("play_at")));
-}
-
 VRay::Plugin VolumeExporter::exportVRayVolumeGridRef(OBJ_Node &objNode, const GU_PrimPacked &prim) const
 {
 	static boost::format phxCacheNameFmt("PhxShaderCache|%i@%s");
 
 	UT_Options opts;
 	prim.saveOptions(opts, GA_SaveMap(prim.getDetail(), nullptr));
+	convertPlaySpeedToVRayTime(opts);
+	convertReadOffsetToVRayTime(opts);
 
 	const VRayVolumeGridRef *vrayVolumeGridRef = UTverify_cast<const VRayVolumeGridRef*>(prim.implementation());
 	const int primID = vrayVolumeGridRef->getOptions().hash();
 
 	Attrs::PluginDesc phxCache(boost::str(phxCacheNameFmt % primID % objNode.getName().buffer()), "PhxShaderCache");
-	setDescAttrsFromOptions(phxCache, opts);
+	pluginExporter.setAttrsFromUTOptions(phxCache, opts);
 
 	return pluginExporter.exportPlugin(phxCache);
 }
@@ -478,6 +468,21 @@ void VolumeExporter::exportPrimitive(const PrimitiveItem &item, PluginSet &plugi
 			pluginExporter.exportPlugin(node);
 		}
 	}
+}
+
+void VolumeExporter::convertPlaySpeedToVRayTime(UT_Options &opts) const
+{
+	UT_ASSERT_MSG(opts.hasOption("play_speed"), "Can not get attribute play_speed of volume!");
+	opts.setOptionI("play_speed",
+		opts.getOptionI("play_speed") * OPgetDirector()->getChannelManager()->getSamplesPerSec());
+}
+// NOTE: requires play_speed to be in vray time
+void VolumeExporter::convertReadOffsetToVRayTime(UT_Options &opts) const
+{
+	UT_ASSERT_MSG(opts.hasOption("play_speed") && opts.hasOption("play_at") && opts.hasOption("read_offset"),
+		"Can not get attributes play_speed, play_speed, read_offset of volume!");
+	opts.setOptionI("read_offset",
+		opts.getOptionI("read_offset") + opts.getOptionI("play_speed") * opts.getOptionI("play_at"));
 }
 
 #endif // CGR_HAS_AUR
