@@ -520,9 +520,8 @@
             name  "fog_color_tex"
             label "Fog Color Texture"
             help  "The absorption (fog) color texture"
-            type  color4
-            size  4
-            default { "1" "1" "1" "1" }
+            type  color
+            default { "1" "1" "1" }
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFVRayMtl" }
             parmtag { "vray_pluginattr" "fog_color_tex" }
@@ -533,11 +532,10 @@
         parm {
             name  "fog_mult"
             label "Fog Multiplier"
-            type  float
-            default { "0" }
             help  "Multiplier for the absorption"
+            type  float
+            default { "1" }
             range { 0 1 }
-            export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFVRayMtl" }
             parmtag { "vray_pluginattr" "fog_mult" }
@@ -558,7 +556,7 @@
         }
         parm {
             name  "fog_unit_scale_on"
-            label "Fog Multiplier In Centimeters^-1"
+            label "Fog Units Scaling"
             type  toggle
             default { "1" }
             help  "Enable unit scale multiplication, when calculating absorption"

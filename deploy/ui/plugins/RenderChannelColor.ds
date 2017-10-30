@@ -1,0 +1,166 @@
+{
+	name	RenderChannelColor
+	label	"Color Channel"
+	parmtag	{ spare_category "Color Channel" }
+	parmtag	{ vray_plugin "RenderChannelColor" }
+
+	groupsimple {
+		name "folder_main"
+		label "Main"
+
+		parm {
+			name	"alias"
+			label	"Type"
+			type	ordinal
+			default	{ "1" }
+			menu	{
+				"Atmosphere"	"Atmosphere"
+				"Diffuse"	"Diffuse"
+				"Reflection"	"Reflection"
+				"Refraction"	"Refraction"
+				"Self Illumination"	"Self Illumination"
+				"Shadow"	"Shadow"
+				"Specular"	"Specular"
+				"Lighting"	"Lighting"
+				"GI"	"GI"
+				"Caustics"	"Caustics"
+				"Raw GI"	"Raw GI"
+				"Raw Lightning"	"Raw Lightning"
+				"Raw Shadow"	"Raw Shadow"
+				"Velocity"	"Velocity"
+				"Render ID"	"Render ID"
+				"Material ID"	"Material ID"
+				"Node ID"	"Node ID"
+				"Z-Depth"	"Z-Depth"
+				"Reflection Filter"	"Reflection Filter"
+				"Raw Reflection"	"Raw Reflection"
+				"Refraction Filter"	"Refraction Filter"
+				"Raw Refraction"	"Raw Refraction"
+				"Real Color"	"Real Color"
+				"Normal"	"Normal"
+				"Background"	"Background"
+				"Alpha"	"Alpha"
+				"Color"	"Color"
+				"Wire Color"	"Wire Color"
+				"Matte / Shadow"	"Matte / Shadow"
+				"Total Lightning"	"Total Lightning"
+				"Raw Total Lightning"	"Raw Total Lightning"
+				"Bump / Normal"	"Bump / Normal"
+				"Samplerate"	"Samplerate"
+				"SSS"	"SSS"
+				"DR Bucket"	"DR Bucket"
+				"Reflection Glossiness"	"Reflection Glossiness"
+				"Reflection Hilights"	"Reflection Hilights"
+				"Refraction Glossiness"	"Refraction Glossiness"
+				"Shademap Export"	"Shademap Export"
+				"Reflection Alpha"	"Reflection Alpha"
+				"Reflection IOR"	"Reflection IOR"
+				"Material Render ID"	"Material Render ID"
+				"Noise Level"	"Noise Level"
+			}
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_enumkeys" "100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142" }
+			parmtag	{ "vray_plugin" "RenderChannelColor" }
+			parmtag	{ "vray_pluginattr" "alias" }
+			parmtag	{ "vray_type" "int" }
+		}
+
+		parm {
+			name	"name"
+			label	"Name"
+			type	string
+			default	{ "Channel_Name" }
+			help	"Channel name"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "RenderChannelColor" }
+			parmtag	{ "vray_pluginattr" "name" }
+			parmtag	{ "vray_type" "String" }
+		}
+
+		parm {
+			name	"consider_for_aa"
+			label	"Consider For Anti-Aliasing"
+			type	toggle
+			default	{ "0" }
+			help	"Consider this render element for antialiasing (may slow down rendering)"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "RenderChannelColor" }
+			parmtag	{ "vray_pluginattr" "consider_for_aa" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+
+		parm {
+			name	"filtering"
+			label	"Filtering"
+			type	toggle
+			default	{ "1" }
+			help	"Filtering"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "RenderChannelColor" }
+			parmtag	{ "vray_pluginattr" "filtering" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+
+		parm {
+			name	"color_mapping"
+			label	"Color Mapping"
+			type	toggle
+			default	{ "0" }
+			help	"Color Mapping"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "RenderChannelColor" }
+			parmtag	{ "vray_pluginattr" "color_mapping" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+
+		parm {
+			name	"enableDeepOutput"
+			label	"Deep Output"
+			help	"Enable deep output"
+			type	toggle
+			default	{ "1" }
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "RenderChannelColor" }
+			parmtag	{ "vray_pluginattr" "enableDeepOutput" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+
+		parm {
+			name	"derive_raw_channels"
+			label	"Derive Raw Channels"
+			type	toggle
+			default	{ "1" }
+			help	"true if raw channels should be derived from the respective color and filter channel"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "RenderChannelColor" }
+			parmtag	{ "vray_pluginattr" "derive_raw_channels" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+
+		parm {
+			name	"vfb_color_corrections"
+			label	"VFB Color Corrections"
+			type	toggle
+			default	{ "1" }
+			help	"False to disable ALL VFB color corrections(sRGB, curves, white balance, etc...) when saving the channel data to a file or showing it on a display. True to apply VFB color corrections when saving the channel data to a file or showing it on a display. If true some color corrections might still be disabled, based on the type of file being saved"
+			range	{ 0 1 }
+			export	none
+			parmtag	{ "cook_dependent" "1" }
+			parmtag	{ "vray_plugin" "RenderChannelColor" }
+			parmtag	{ "vray_pluginattr" "vfb_color_corrections" }
+			parmtag	{ "vray_type" "boolean" }
+		}
+	}
+}

@@ -269,9 +269,6 @@ static void fillViewParamsFromDict(PyObject *viewParamsDict, ViewParams &viewPar
 
 static void fillViewParams(VRayExporter &exporter, PyObject *viewParamsDict, ViewParams &viewParams)
 {
-	fillViewParamsFromDict(viewParamsDict, viewParams);
-	fillRenderRegionFromDict(viewParamsDict, viewParams);
-
 	OBJ_Node *cameraNode = nullptr;
 
 	const char *camera = PyString_AsString(PyDict_GetItemString(viewParamsDict, "camera"));
@@ -279,12 +276,27 @@ static void fillViewParams(VRayExporter &exporter, PyObject *viewParamsDict, Vie
 		cameraNode = CAST_OBJNODE(getOpNodeFromPath(camera));
 	}
 
-	if (cameraNode) {
-		if (cameraNode->getName().equal("ipr_camera") ||
-			exporter.usePhysicalCamera(*cameraNode) != PhysicalCameraMode::modeNone)
-		{
-			exporter.fillViewParamFromCameraNode(*cameraNode, viewParams);
+	ROP_Node *iprRop = CAST_ROPNODE(exporter.getRopPtr());
+	if (iprRop) {
+		exporter.fillViewParamsFromRopNode(*iprRop, viewParams);
+
+		if (iprRop->evalInt("vfh_use_camera_settings", 0, 0.0)) {
+			UT_String cameraPath;
+			iprRop->evalString(cameraPath, "render_camera", 0, 0.0);
+
+			cameraNode = CAST_OBJNODE(getOpNodeFromPath(cameraPath));
 		}
+	}
+
+	if (cameraNode) {
+		exporter.fillViewParamsFromCameraNode(*cameraNode, viewParams);
+	}
+
+	fillViewParamsFromDict(viewParamsDict, viewParams);
+	fillRenderRegionFromDict(viewParamsDict, viewParams);
+	
+	if (cameraNode) {
+		exporter.fillPhysicalViewParamsFromCameraNode(*cameraNode, viewParams);
 	}
 }
 

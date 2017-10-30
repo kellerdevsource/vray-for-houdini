@@ -79,9 +79,8 @@ static boost::format objGeomNameFmt("%s|%i@%s");
 static boost::format hairNameFmt("GeomMayaHair|%i@%s");
 static boost::format polyNameFmt("GeomStaticMesh|%i@%s");
 static boost::format alembicNameFmt("Alembic|%i@%s");
-static boost::format vrmeshNameFmt("VRayProxy|%i@%s");
+static boost::format vrmeshNameFmt("VRayProxy|%i");
 static boost::format vrsceneNameFmt("VRayScene|%i@%s");
-static boost::format geomplaneNameFmt("GeomInfinitePlane|%i@%s");
 
 static const char intrAlembicFilename[] = "abcfilename";
 static const char intrAlembicObjectPath[] = "abcobjectpath";
@@ -297,20 +296,26 @@ DisplacementType ObjectExporter::hasSubdivApplied(OBJ_Node &objNode) const
 	// 1. as a custom VOP available in V-Ray material context
 	// 2. as spare parameters added to the object node.
 
-	const fpreal t = ctx.getTime();
-
-	const bool hasDispl = objNode.hasParm("vray_use_displ") && objNode.evalInt("vray_use_displ", 0, t);
+	const bool hasDispl = objNode.hasParm("vray_displ_use") && objNode.evalInt("vray_displ_use", 0, 0.0);
 	if (!hasDispl)
 		return displacementTypeNone;
 
-	DisplacementType displType = static_cast<DisplacementType>(objNode.evalInt("vray_displ_type", 0, t));
+	DisplacementType displType = static_cast<DisplacementType>(objNode.evalInt("vray_displ_type", 0, 0.0));
 	switch (displType) {
 		case displacementTypeFromMat: {
 			UT_String shopPath;
-			objNode.evalString(shopPath, "vray_displshoppath", 0, t);
-			OP_Node *shop = getOpNodeFromPath(shopPath, t);
+			objNode.evalString(shopPath, "vray_displ_shoppath", 0, 0.0);
+
+			OP_Node *shop = getOpNodeFromPath(shopPath, 0.0);
 			if (shop) {
-				if (!getVRayNodeFromOp(*shop, "Geometry", "GeomStaticSmoothedMesh")) {
+				if (getVRayNodeFromOp(*shop, "Geometry", "GeomStaticSmoothedMesh")) {
+					displType = displacementTypeSmooth;
+				}
+				else if (getVRayNodeFromOp(*shop, "Geometry", "GeomDisplacedMesh")) {
+					displType = displacementTypeDisplace;
+				}
+				else {
+					Log::getLog().warning("Compatible displacement node is not found at the \"Geometry\" input.");
 					displType = displacementTypeNone;
 				}
 			}
@@ -1001,20 +1006,8 @@ void ObjectExporter::exportPolyMesh(OBJ_Node &objNode, const GU_Detail &gdp, con
 									   "GeomStaticMesh");
 			if (polyMeshExporter.asPluginDesc(gdp, geomDesc)) {
 				item.geometry = pluginExporter.exportPlugin(geomDesc);
-				if (item.geometry) {
-					if (hasSubdivApplied) {
-						const std::string subdivPluginType = subdivType == displacementTypeDisplace
-							                                ? "GeomDisplacedMesh"
-							                                : "GeomStaticSmoothedMesh";
-
-						Attrs::PluginDesc subdivDesc(boost::str(Parm::FmtPrefixManual % subdivPluginType % item.geometry.getName()),
-													 subdivPluginType);
-						subdivDesc.addAttribute(Attrs::PluginAttr("mesh", item.geometry));
-
-						pluginExporter.exportDisplacementDesc(&objNode, subdivDesc);
-
-						item.geometry = pluginExporter.exportPlugin(subdivDesc);
-					}
+				if (item.geometry && hasSubdivApplied) {
+					item.geometry = pluginExporter.exportDisplacement(objNode, item.geometry);
 				}
 			}
 
@@ -1170,7 +1163,7 @@ VRay::Plugin ObjectExporter::exportVRayProxyRef(OBJ_Node &objNode, const GU_Prim
 
 	const int key = getPrimPackedID(prim);
 
-	Attrs::PluginDesc pluginDesc(boost::str(vrmeshNameFmt % key % primname.buffer()),
+	Attrs::PluginDesc pluginDesc(boost::str(vrmeshNameFmt % key),
 								 "GeomMeshFile");
 
 	const VRayProxyRef *vrayproxyref = UTverify_cast<const VRayProxyRef*>(prim.implementation());

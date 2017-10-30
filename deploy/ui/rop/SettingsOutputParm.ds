@@ -1,8 +1,12 @@
+#include "$VRAY_UI_DS_PATH/vfh_macros.ds"
+
 parm {
     name "show_current_vfb"
     label "Show Frame Buffer"
     type button
 }
+
+VFH_UI_PARM_TOGGLE("SettingsOutput_img_save", "Save Image", "Save rendered image to file", 1)
 
 parm {
     name    "SettingsOutput_img_format"

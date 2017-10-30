@@ -1,15 +1,18 @@
 #ifndef __VFH_MACROS_DS__
 #define __VFH_MACROS_DS__
 
+#include "$VRAY_UI_DS_PATH/vfh_prefix.ds"
+
 #define VRAY_UI_PARM(NAME, LABEL, HELP, TYPE, SIZE, DEFAULT) \
-    name NAME \
+    VFH_NAME(NAME) \
     label LABEL \
     help HELP \
     size SIZE \
     type TYPE \
     default { DEFAULT } \
     parmtag { spare_category "VfhUI" } \
-    parmtag { "cook_dependent" "1" }
+    parmtag { "cook_dependent" "1" } \
+    parmtag { "vray_custom_handling" "1" }
 
 #define VRAY_UI_PARM_EX(NAME, LABEL, HELP, TYPE, SIZE, DEFAULT) \
 parm { \

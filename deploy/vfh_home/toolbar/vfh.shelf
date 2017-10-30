@@ -74,7 +74,13 @@ vfh_camera.add_physical_camera_attributes()
     <script scriptType="python">
 <![CDATA[
 
+import os
 import vfh.shelftools.vrayattr as vrayattr
+
+HOUDINI_SOHO_DEVELOPER = os.environ.get("HOUDINI_SOHO_DEVELOPER", False)
+if HOUDINI_SOHO_DEVELOPER:
+    print "Reloading: %s" % (vrayattr)
+    reload(vrayattr)
 
 geoList = filter(lambda item: item.type().category().typeName() == 'OBJ' and item.type().name() == 'geo', hou.selectedNodes())
 map(vrayattr.addVRayDisplamentParams, geoList)

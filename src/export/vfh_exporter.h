@@ -125,19 +125,25 @@ public:
 	/// @param tend[in] - end export time
 	void initExporter(int hasUI, int nframes, fpreal tstart, fpreal tend);
 
-	/// Gather data for camera settings
-	/// @param camera[in] - the active camera
-	/// @param viewParams[out] - collects camera settings
-	void fillViewParamFromCameraNode(const OBJ_Node &camera, ViewParams &viewParams);
+	/// Fills view settings from camera node.
+	/// @param camera Camera node.
+	/// @param viewParams ViewParams to fill.
+	void fillViewParamsFromCameraNode(const OBJ_Node &camera, ViewParams &viewParams);
 
-	/// Gather data for motion blur
-	/// @param viewParams[out] - collects motion blur settings
-	ReturnValue fillSettingsMotionBlur(ViewParams &viewParams, Attrs::PluginDesc &settingsMotionBlur);
+	/// Sets parameretrs for physical camera.
+	/// @param camera Camera node.
+	/// @param viewParams ViewParams to fill.
+	void fillPhysicalViewParamsFromCameraNode(const OBJ_Node &camera, ViewParams &viewParams);
 
-	/// Fill in physical camera settings
+	/// Fills view settings from ROP node.
+	/// @param ropNode V-Ray ROP node.
+	/// @param viewParams ViewParams to fill.
+	void fillViewParamsFromRopNode(const OP_Node &ropNode, ViewParams &viewParams);
+
+	/// Fills CameraPhysical plugin attributes..
 	/// @param viewParams[in] - holds data for camera settings
 	/// @param pluginDesc[out] - physical camera plugin description
-	void fillPhysicalCamera(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc);
+	void fillDescPhysicalCamera(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc);
 
 	/// Recreates physical camera
 	/// @param viewParams View settings.
@@ -148,25 +154,10 @@ public:
 	/// @param viewParams View settings.
 	void exportRenderView(const ViewParams &viewParams);
 
-	/// Fill in depth of field settings
-	/// @param viewParams[in] - holds data for camera settings
-	/// @param pluginDesc[out] - depth of field plugin description
-	void fillSettingsCameraDof(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc);
-
-	/// Fill in default camera settings
-	/// @param viewParams[in] - holds data for camera settings
-	/// @param pluginDesc[out] - default camera plugin description
-	void fillCameraDefault(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc);
-
-	/// Fill in camera settings
-	/// @param viewParams[in] - holds data for camera settings
-	/// @param pluginDesc[out] - camera settings plugin description
-	void fillSettingsCamera(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc);
-
 	/// Fill in render view settings
 	/// @param viewParams[in] - holds data for camera settings
 	/// @param pluginDesc[out] - render view settings plugin description
-	void fillRenderView(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc);
+	void fillDescRenderView(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc) const;
 
 	/// Fill in stereoscopic settings
 	/// @param viewParams[in] - holds data for camera settings
@@ -242,14 +233,18 @@ public:
 	/// Fill in displacement/subdivision render properties for the given node
 	/// @param obj_node[in] - the OBJ_Geometry node
 	/// @param pluginDesc[out] - diplacement/subdivision plugin description
-	void exportDisplacementDesc(OBJ_Node *obj_node, Attrs::PluginDesc &pluginDesc);
+	int exportDisplacementFromOBJ(OBJ_Node &obj_node, Attrs::PluginDesc &pluginDesc);
+
+	/// Tries to set displacement texture from path attribute.
+	/// Otherwise texture connected to socket will be used if found.
+	int setDisplacementTextureFromPath(OP_Node &opNode, Attrs::PluginDesc &pluginDesc, const std::string &parmNamePrefix);
 
 	/// Export the given geomtry with displacement/subdivision at render time
 	/// @param obj_node[in] - the OBJ_Geometry node owner of displacement/subdivision
 	///        render properties
 	/// @param geomPlugin[in] - geometry to displace/subdivide
 	/// @retval V-Ray displacement/subdivision plugin
-	VRay::Plugin exportDisplacement(OBJ_Node *obj_node, VRay::Plugin &geomPlugin);
+	VRay::Plugin exportDisplacement(OBJ_Node &obj_node, VRay::Plugin &geomPlugin);
 
 	/// Export VOP node
 	/// @param opNode VOP node instance.
@@ -580,6 +575,9 @@ private:
 	/// Restores VFB state.
 	void restoreVfbState();
 
+	/// Executed when user presses "Render" button in the VFB.
+	void renderLast();
+
 	/// The driver node bound to this exporter.
 	OP_Node *m_rop;
 
@@ -604,6 +602,9 @@ private:
 
 	/// Object exporter.
 	ObjectExporter objectExporter;
+
+	/// Frame buffer settings.
+	VFBSettings vfbSettings;
 
 public:
 	/// Register event callback for a given node. This callback will be invoked when

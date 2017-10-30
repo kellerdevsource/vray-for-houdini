@@ -239,7 +239,7 @@ void VRayRendererNode::register_operator(OP_OperatorTable *table)
 									   /* How to create one */ VRayRendererNode::myConstructor,
 									   /* Parm definitions  */ VRayRendererNode::getTemplatePair(),
 									   /* Min # of inputs   */ 0,
-									   /* Max # of inputs   */ 0,
+									   /* Max # of inputs   */ 256,
 									   /* Var definitions   */ VRayRendererNode::getVariablePair(),
 									   /* OP flags          */ OP_FLAG_GENERATOR);
 

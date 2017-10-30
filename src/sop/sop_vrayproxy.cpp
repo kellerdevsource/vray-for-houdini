@@ -50,7 +50,7 @@ SOP::VRayProxy::VRayProxy(OP_Network *parent, const char *name, OP_Operator *ent
 	// so that Houdini can identify what attributes may have changed,
 	// e.g. to reduce work for the viewport, or other SOPs that
 	// check whether data IDs have changed.
-	// By default, (i.e. if this line weren't here), all data IDs
+	// By default, (i.e. if this msg weren't here), all data IDs
 	// would be bumped after the SOP cook, to indicate that
 	// everything might have changed.
 	// If some data IDs don't get bumped properly, the viewport

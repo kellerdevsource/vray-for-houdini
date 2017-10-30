@@ -3,95 +3,173 @@
 #
 # V-Ray For Houdini
 #
-# Andrei Izrantcev <andrei.izrantcev@chaosgroup.com>
-#
 # ACCESSIBLE SOURCE CODE WITHOUT DISTRIBUTION OF MODIFICATION LICENSE
 #
 # Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 #
 
-
 import hou
+import os
 
-from vfh import vfh_json
 from vfh import vfh_attrs
+from vfh import vfh_json
 
+HOUDINI_SOHO_DEVELOPER = os.environ.get("HOUDINI_SOHO_DEVELOPER", False)
+if HOUDINI_SOHO_DEVELOPER:
+    reload(vfh_attrs)
+    reload(vfh_json)
+
+UI = os.environ.get('VRAY_UI_DS_PATH', None)
+
+VRAY_FOLDER = "V-Ray"
+DISPLACEMENT_FOLDER = ("V-Ray", "Displacement")
+
+def ptgParmTemplatesIt(ptg):
+    for pt in ptg.parmTemplates():
+        yield pt
+
+        if pt.type() == hou.parmTemplateType.Folder and pt.isActualFolder():
+            for _pt in ptgParmTemplatesIt(pt):
+                yield _pt
+
+def _getPluginParmTemplates(pluginName):
+    pluginDs = os.path.join(UI, "plugins", "%s.ds" % pluginName)
+    if not os.path.exists(pluginDs):
+        return
+
+    pluginPtg = hou.ParmTemplateGroup()
+
+    # This will make attribute manes prefixed with plugin ID name.
+    pluginPrefixDef = "#define PREFIX \"%s_\"\n\n" % (pluginName)
+    dsContents = pluginPrefixDef + open(pluginDs, 'r').read()
+    print dsContents
+
+    pluginPtg.setToDialogScript(dsContents)
+
+    return pluginPtg.parmTemplates()
+
+def _removeVRayDisplacementAttributes(ptg, folderLabel):
+    folder = ptg.findFolder(folderLabel)
+    if folder:
+        try:
+            ptg.remove(folder.name())
+        except hou.OperationFailed as e:
+            print "Error removing folder \"%s\": %s" % (folder.name(), e.instanceMessage())
+        except:
+            print "Error removing folder \"%s\"" % (folder.name())
+
+    return
+
+    removeTmpl = []
+    for pt in ptgParmTemplatesIt(ptg):
+        attrName = pt.name()
+        if attrName.startswith(("vray_displ_", "GeomDisplacedMesh_", "GeomStaticSmoothedMesh_")):
+            removeTmpl.append(attrName)
+
+    for attrName in removeTmpl:
+        try:
+            print ptg.find(attrName)
+            ptg.remove(attrName)
+        except hou.OperationFailed as e:
+            print "Error removing \"%s\": %s" % (attrName, e.instanceMessage())
+        except:
+            print "Error removing \"%s\"" % (attrName)
+
+def _addVRayFolder(ptg):
+    vrayFolder = hou.FolderParmTemplate("vray_folder", VRAY_FOLDER)
+
+    vfh_attrs.insertInFolderAfterLastTab(ptg, ptg, vrayFolder)
+
+    vrayFolder = ptg.findFolder(VRAY_FOLDER)
+    vrayFolder.setName("vray_folder")
+
+def _addVRayDisplacementFolder(ptg):
+    vrayFolder = ptg.findFolder(VRAY_FOLDER)
+    assert vrayFolder
+
+    dispFolder = hou.FolderParmTemplate("vray_displ_folder_main", "Displacement")
+    dispFolder.setName("vray_displ_folder_main")
+
+    vfh_attrs.insertInFolderAfterLastTab(ptg, vrayFolder, dispFolder)
+
+def _addDisplacementControls(ptg, vrayFolder):
+    ptg.appendToFolder(vrayFolder, hou.ToggleParmTemplate("vray_displ_use", "Use Displacement", **{
+        'tags' : {
+            'spare_category': 'vray'
+        },
+        'default_value' : True,
+    }))
+
+    ptg.appendToFolder(vrayFolder, hou.MenuParmTemplate("vray_displ_type", "Type", (['0', '1', '2']), **{
+        'tags' : {
+            'spare_category': 'vray'
+        },
+        'menu_labels' : (["Displacement", "Subdivision", "From SHOP"]),
+        'default_value' : 0,
+        'conditionals' : {
+            hou.parmCondType.DisableWhen : "{ vray_displ_use == 0 }",
+        },
+    }))
+
+    ptg.appendToFolder(vrayFolder, hou.FolderParmTemplate("vray_displ_folder_GeomDisplacedMesh", "Displacement", **{
+        'parm_templates' : (_getPluginParmTemplates("GeomDisplacedMesh")),
+        'folder_type' : hou.folderType.Simple,
+        'tags' : {
+            'spare_category': 'vray'
+        },
+        'conditionals' : {
+            hou.parmCondType.HideWhen : "{ vray_displ_use == 0 } { vray_displ_type != 0 }"
+        },
+    }))
+
+    ptg.appendToFolder(vrayFolder, hou.FolderParmTemplate("vray_displ_folder_GeomStaticSmoothedMesh", "Subdivision", **{
+        'parm_templates' : (_getPluginParmTemplates("GeomStaticSmoothedMesh")),
+        'folder_type' : hou.folderType.Simple,
+        'tags' : {
+            'spare_category': 'vray'
+        },
+        'conditionals' : {
+            hou.parmCondType.HideWhen : "{ vray_displ_use == 0 } { vray_displ_type != 1 }"
+        },
+    }))
+
+    ptg.appendToFolder(vrayFolder, hou.FolderParmTemplate("vray_displ_folder_shopnet", "From SHOP", **{
+        'parm_templates' : ([
+            hou.StringParmTemplate("vray_displ_shoppath", "SHOP", 1, **{
+                'string_type' : hou.stringParmType.NodeReference,
+                'tags' : {
+                    'spare_category': 'vray',
+                    'opfilter': '!!SHOP!!',
+                    'oprelative': '.',
+                }
+            })
+        ]),
+        'folder_type' : hou.folderType.Simple,
+        'tags' : {
+            'spare_category': 'vray',
+        },
+        'conditionals' : {
+            hou.parmCondType.HideWhen : "{ vray_displ_use == 0 } { vray_displ_type != 2 }",
+        },
+    }))
 
 def addVRayDisplamentParamTemplate(ptg):
-    if not ptg.findFolder("V-Ray"):
-        vfh_attrs.insertInFolderAfterLastTab(ptg, ptg, hou.FolderParmTemplate("vray", "V-Ray"))
+    if UI is None:
+        return
 
-    if not ptg.findFolder(("V-Ray", "Displacement")):
-        vfh_attrs.insertInFolderAfterLastTab(ptg, ptg.findFolder('V-Ray'), hou.FolderParmTemplate("vray", "Displacement"))
+    _removeVRayDisplacementAttributes(ptg, DISPLACEMENT_FOLDER)
+    _removeVRayDisplacementAttributes(ptg, VRAY_FOLDER)
 
-    folder = ("V-Ray", "Displacement")
-    # enable displacement
-    if not ptg.find("vray_use_displ"):
-        params = { }
-        params["tags"] = {'spare_category': 'vray'}
-        params["default_value"] = False
-        params["script_callback_language"] = hou.scriptLanguage.Python
-        ptg.appendToFolder(folder, hou.ToggleParmTemplate("vray_use_displ", "Use Displacement", **params))
+    _addVRayFolder(ptg)
+    _addVRayDisplacementFolder(ptg)
 
-    # displacement type
-    if not ptg.find("vray_displ_type"):
-        params = { }
-        params["tags"] = {'spare_category': 'vray'}
-        params["default_value"] = 0
-        params["menu_items"]=(['0', '1', '2'])
-        params["menu_labels"]=(['From Shop Net', 'Displaced', 'Smoothed'])
-        params["conditionals"]={hou.parmCondType.DisableWhen: "{ vray_use_displ == 0 }"}
-        params["script_callback_language"] = hou.scriptLanguage.Python
-        ptg.appendToFolder(folder, hou.MenuParmTemplate("vray_displ_type", "Displacement Type", **params))
+    assert ptg.findFolder(DISPLACEMENT_FOLDER)
 
-    # params for vray_displ_type = 'shopnet'
-    if not ptg.findFolder("shopnet"):
-        params = { }
-        params["tags"] = {'spare_category': 'vray'}
-        params["folder_type"] = hou.folderType.Simple
-        params["conditionals"]={hou.parmCondType.HideWhen: "{ vray_displ_type != 0 }"}
-        ptg.appendToFolder(folder, hou.FolderParmTemplate("vray", "shopnet",**params))
-
-    shopnetFolder = ("V-Ray", "Displacement", "shopnet")
-    if not ptg.find("vray_displshoppath"):
-        params = { }
-        params["string_type"] = hou.stringParmType.NodeReference
-        params["tags"] = {'spare_category': 'vray', 'opfilter': '!!SHOP!!', 'oprelative': '.'}
-        params["script_callback_language"] = hou.scriptLanguage.Python
-        params["conditionals"]={hou.parmCondType.HideWhen: "{ vray_displ_type != 0 }", hou.parmCondType.DisableWhen: "{ vray_use_displ == 0 }"}
-        ptg.appendToFolder(shopnetFolder, hou.StringParmTemplate("vray_displshoppath", "Shop path", 1, **params))
-
-        # params for vray_displ_type = 'GeomDisplacedMesh'
-    if not ptg.findFolder("gdm"):
-        params = { }
-        params["tags"] = {'spare_category': 'vray'}
-        params["folder_type"] = hou.folderType.Simple
-        params["conditionals"]={hou.parmCondType.HideWhen: "{ vray_displ_type != 1 }"}
-        ptg.appendToFolder(folder, hou.FolderParmTemplate("vray", "gdm",**params))
-
-    gdmFolder = ("V-Ray", "Displacement", "gdm")
-    displDesc = vfh_json.getPluginDesc('GeomDisplacedMesh')
-    paramDescList = filter(lambda parmDesc: parmDesc['attr'] != 'displacement_tex_float', displDesc['PluginParams'])
-    for parmDesc in paramDescList:
-        vfh_attrs.addPluginParm(ptg, parmDesc, parmPrefix = 'GeomDisplacedMesh', parmFolder = gdmFolder)
-
-    # params for vray_displ_type = 'GeomStaticSmoothedMesh'
-    if not ptg.findFolder("gssm"):
-        params = { }
-        params["tags"] = {'spare_category': 'vray'}
-        params["folder_type"] = hou.folderType.Simple
-        params["conditionals"]={hou.parmCondType.HideWhen: "{ vray_displ_type != 2}"}
-        ptg.appendToFolder(folder, hou.FolderParmTemplate("vray", "gssm",**params))
-
-    gssmFolder = ("V-Ray", "Displacement", "gssm")
-
-    subdivDesc = vfh_json.getPluginDesc('GeomStaticSmoothedMesh')
-    paramDescList = filter(lambda parmDesc: parmDesc['attr'] != 'displacement_tex_float', subdivDesc['PluginParams'])
-    for parmDesc in paramDescList:
-        vfh_attrs.addPluginParm(ptg, parmDesc, parmPrefix = 'GeomStaticSmoothedMesh', parmFolder = gssmFolder)
-
+    _addDisplacementControls(ptg, DISPLACEMENT_FOLDER)
 
 def addVRayDisplamentParams(node):
     ptg = node.parmTemplateGroup()
+
     addVRayDisplamentParamTemplate(ptg)
+
     node.setParmTemplateGroup(ptg)
