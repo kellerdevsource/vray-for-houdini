@@ -143,10 +143,7 @@ protected:
 	VRay::Plugin exportVRayVolumeGridRef(OBJ_Node &objNode, const GU_PrimPacked &prim) const;
 
 private:
-	void convertPlaySpeedToVRayTime(UT_Options &opts) const;
-	// NOTE: requires play_speed to be in vray time
-	void convertReadOffsetToVRayTime(UT_Options &opts) const;
-
+	fpreal convertToVRayTime(fpreal t) const;
 };
 
 /// Specialization for exporting Houdini's volumes as textures
