@@ -15,24 +15,16 @@
 #include "vfh_log.h"
 
 #include <QThread>
-#include <QProcess>
 #include <QQueue>
 #include <QMutex>
-
-#include <UT/UT_Args.h>
-#include <UT/UT_WorkBuffer.h>
-#include <IMG/IMG_TileDevice.h>
-#include <IMG/IMG_TileOptions.h>
-
-#include <TIL/TIL_TileMPlay.h>
-
-#include <functional>
 
 /// Write image as buckets.
 #define USE_BUCKETS 1
 
 /// Write render channels in IRP.
 #define USE_RENDER_CHANNELS 0
+
+class TIL_TileMPlay;
 
 struct ImageHeader {
 	ImageHeader()
@@ -138,7 +130,10 @@ struct TileImage {
 		y1 = y0 + region.getHeight() - 1;
 	}
 
-	VRay::VRayImage *image;
+	/// Flips image rows.
+	void flipImage() const;
+
+	mutable VRay::VRayImage *image;
 	QString name;
 
 	int x0;
@@ -177,6 +172,7 @@ struct ImageHeaderMessage
 
 	int imageWidth;
 	int imageHeight;
+	QString ropName;
 	QList<QString> planeNames;
 };
 
@@ -210,19 +206,10 @@ class ImdisplayThread
 
 public:
 	ImdisplayThread();
+	~ImdisplayThread();
 
+	/// Restarts image writer thread.
 	void restart();
-	
-	/// Stop the thread
-	/// tries to stop gracefully for 250ms, after that calls terminate() if thread has not stopped
-	/// @param callCallback - if true it will also call the onStop callback
-	void stop(bool callCallback = false);
-
-	void setOnStopCallback(std::function<void()> cb);
-
-	void add(TileQueueMessage *msg);
-
-	void clear();
 
 	/// Set imdisplay port.
 	/// @param value Port.
@@ -231,45 +218,45 @@ public:
 	/// Returns current imdisplay port.
 	int getPort() const;
 
+	/// Adds new message to the queue.
+	void add(TileQueueMessage *msg);
+
+	/// Clears message queue.
+	void clear();
+
 protected:
 	void run() VRAY_OVERRIDE;
 
 private:
 	/// Writes image header data to the pipe.
-	/// @param pipe Process pipe.
 	/// @param msg ImageHeaderMessage message.
-	void processImageHeaderMessage(ImageHeaderMessage &msg);
+	void processImageHeaderMessage(ImageHeaderMessage &msg) const;
 
 	/// Writes image tile message to the pipe.
-	/// @param pipe Process pipe.
 	/// @param msg TileImageMessage message.
 	void processTileMessage(TileImageMessage &msg);
 
 	/// Writes image tile to the pipe splitted into buckets.
-	/// @param pipe Process pipe.
 	/// @param image Image data.
 	void writeTileBuckets(const TileImage &image);
 
 	/// Writes image tile to the pipe. Frees allocated image data.
-	/// @param pipe Process pipe.
 	/// @param image Image data.
 	void writeTile(const TileImage &image);
 
-	/// Imdisplay port.
-	int port;
+	/// MPlay Port.
+	int port = 0;
 
 	/// Message queue.
 	TileMessageQueue queue;
 
 	/// Flag set to true when the thread can run, set to false in the stop() method.
-	QAtomicInt isRunning = true;
+	QAtomicInt isRunning = false;
 
 	/// Queue lock.
 	QMutex mutex;
 
-	/// Callback to be called if pipe closes unexpectedly
-	std::function<void()> onStop;
-
+	/// Tile image writing device.
 	TIL_TileMPlay *device = nullptr;
 
 	VfhDisableCopy(ImdisplayThread)

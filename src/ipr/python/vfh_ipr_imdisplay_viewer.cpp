@@ -11,37 +11,33 @@
 #include "vfh_ipr_imdisplay_viewer.h"
 #include "vfh_log.h"
 
+#include <IMG/IMG_TileDevice.h>
+#include <IMG/IMG_TileOptions.h>
+#include <TIL/TIL_TileMPlay.h>
+
 using namespace VRayForHoudini;
 
 static const int tileSize = 64;
 
 ImdisplayThread::ImdisplayThread()
-	: port(0)
-	, onStop([]() {})
 {
-	setObjectName("ImdisplayPipe");
+	setObjectName("ImdisplayThread");
+}
+
+ImdisplayThread::~ImdisplayThread()
+{
+	isRunning = false;
+
+	quit();
+	wait();
 }
 
 void ImdisplayThread::restart()
 {
-	clear();
 	isRunning = true;
 
+	clear();
 	start(LowPriority);
-}
-
-void ImdisplayThread::stop(bool callCallback)
-{
-	if (callCallback) {
-		onStop();
-	}
-
-	isRunning = false;
-}
-
-void ImdisplayThread::setOnStopCallback(std::function<void()> cb)
-{
-	onStop = cb;
 }
 
 void ImdisplayThread::add(TileQueueMessage *msg)
@@ -49,14 +45,14 @@ void ImdisplayThread::add(TileQueueMessage *msg)
 	QMutexLocker locker(&mutex);
 
 	if (msg->type() == TileQueueMessage::TileQueueMessageType::messageTypeImageHeader) {
-		/// Clear the queue if new resolution comes
+		// Clear the queue if new resolution comes.
 		for (TileQueueMessage *message : queue) {
 			delete message;
 		}
 		queue.clear();
 	}
 	else {
-		/// Remove previous messages of the same type.
+		// Remove previous messages of the same type.
 		QList<int> indexesToRemove;
 		int indexToRemove = 0;
 		for (const TileQueueMessage *queueMsg : queue) {
@@ -98,6 +94,8 @@ int ImdisplayThread::getPort() const
 void ImdisplayThread::run()
 {
 	device = static_cast<TIL_TileMPlay*>(IMG_TileDevice::newMPlayDevice(0));
+	device->setSendPIDFlag(false);
+	device->terminateOnConnectionLost(false);
 
 	while (isRunning) {
 		TileQueueMessage *msg = nullptr; {
@@ -110,11 +108,6 @@ void ImdisplayThread::run()
 		if (!msg) {
 			msleep(100);
 			continue;
-		}
-
-		if (device->wasRemoteQuitRequested()) {
-			Log::getLog().debug("Remote interrupt requested...");
-			break;
 		}
 
 		switch (msg->type()) {
@@ -134,19 +127,45 @@ void ImdisplayThread::run()
 		FreePtr(msg);
 	}
 
-	Log::getLog().debug("Deleting tile device...");
-	FreePtr(device);
-
 	clear();
+
+	FreePtr(device);
 }
 
-void ImdisplayThread::processImageHeaderMessage(ImageHeaderMessage &msg)
+void TileImage::flipImage() const
+{
+	int w = 0;
+	int h = 0;
+	image->getSize(w, h);
+
+	VRay::AColor *pixels = image->getPixelData();
+
+	const int halfH = h / 2;
+
+	const int rowItems = w;
+	const int rowBytes = rowItems * sizeof(VRay::AColor);
+
+	VRay::AColor *rowBuf = new VRay::AColor[rowItems];
+
+	for (int i = 0; i < halfH; ++i) {
+		VRay::AColor *toRow   = pixels + i       * rowItems;
+		VRay::AColor *fromRow = pixels + (h-i-1) * rowItems;
+
+		vutils_memcpy(rowBuf,  toRow,   rowBytes);
+		vutils_memcpy(toRow,   fromRow, rowBytes);
+		vutils_memcpy(fromRow, rowBuf,  rowBytes);
+	}
+
+	FreePtr(rowBuf);
+}
+
+void ImdisplayThread::processImageHeaderMessage(ImageHeaderMessage &msg) const
 {
 	IMG_TileOptionList tileOptionList;
 
 	for (const QString &planeName : msg.planeNames) {
 		IMG_TileOptions	*tileOptions = new IMG_TileOptions();
-		tileOptions->setPlaneInfo("ip",
+		tileOptions->setPlaneInfo(msg.ropName.toLocal8Bit().constData(),
 								  planeName.toLocal8Bit().constData(),
 								  0,
 								  IMG_FLOAT32,
@@ -166,25 +185,23 @@ void ImdisplayThread::processImageHeaderMessage(ImageHeaderMessage &msg)
 		Log::getLog().error("Error opening tile device!");
 	}
 	else {
-		device->terminateOnConnectionLost(false);
 		device->flush();
 	}
 }
 
-void ImdisplayThread::processTileMessage(TileImageMessage &msg)
+void ImdisplayThread::processTileMessage(TileImageMessage &msg) 
 {
-	int imageIdx = 0;
 	for (const TileImage *image : msg.images) {
-		if (!isRunning) {
+		if (!isRunning)
 			return;
-		}
+
+		image->flipImage();
 
 #if USE_BUCKETS
 		writeTileBuckets(*image);
 #else
 		writeTile(*image);
 #endif
-		imageIdx++;
 	}
 }
 
@@ -207,14 +224,8 @@ void ImdisplayThread::writeTileBuckets(const TileImage &image)
 			std::unique_ptr<VRay::VRayImage> cropImage =
 				std::unique_ptr<VRay::VRayImage>(image.image->crop(currentIRes,
 												 currentMRes,
-												 maxXRes - currentIRes
-												 + 1,
-												 maxYRes - currentMRes
-												 + 1));
-
-			if (!isRunning) {
-				return;
-			}
+												 maxXRes - currentIRes + 1,
+												 maxYRes - currentMRes + 1));
 
 			const std::unique_ptr<TileImage> imageBucket =
 				std::make_unique<TileImage>(cropImage.release(), image.name);
@@ -230,26 +241,19 @@ void ImdisplayThread::writeTileBuckets(const TileImage &image)
 
 void ImdisplayThread::writeTile(const TileImage &image)
 {
-	if (!device->isOpen() ||
-		device->wasRemoteQuitRequested())
-	{
+	if (!device->isOpen() || device->wasRemoteQuitRequested()) {
+		// We are using failed write as close event.
 		isRunning = false;
-	}
-	if (!isRunning) {
-		return;
 	}
 
-	try {
-		if (!device->writeTile(image.image->getPixelData(), image.x0, image.x1, image.y0, image.y1)) {
-			Log::getLog().debug("Error writing tile data \"%s\" [%d %d %d %d]!\n",
-								image.name.toLocal8Bit().constData(),
-								image.x0, image.x1, image.y0, image.y1);
-		}
-		else {
-			device->flush();
-		}
-	}
-	catch (...) {
+	if (!isRunning)
+		return;
+
+	if (!device->writeTile(image.image->getPixelData(), image.x0, image.x1, image.y0, image.y1)) {
+		// We are using failed write as close event.
 		isRunning = false;
+	}
+	else {
+		device->flush();
 	}
 }

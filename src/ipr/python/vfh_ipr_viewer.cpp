@@ -76,7 +76,7 @@ ImdisplayThread & VRayForHoudini::getImdisplay()
 	return imdisplayThread;
 }
 
-void VRayForHoudini::initImdisplay(VRay::VRayRenderer &renderer)
+void VRayForHoudini::initImdisplay(VRay::VRayRenderer &renderer, const char *ropName)
 {
 	Log::getLog().debug("initImdisplay()");
 
@@ -86,6 +86,7 @@ void VRayForHoudini::initImdisplay(VRay::VRayRenderer &renderer)
 	imageHeaderMsg->imageWidth = rendererOptions.imageWidth;
 	imageHeaderMsg->imageHeight = rendererOptions.imageHeight;
 	imageHeaderMsg->planeNames.append("C");
+	imageHeaderMsg->ropName = ropName;
 
 #if USE_RENDER_CHANNELS
 	const VRay::RenderElements &reMan = renderer.getRenderElements();
@@ -95,12 +96,4 @@ void VRayForHoudini::initImdisplay(VRay::VRayRenderer &renderer)
 #endif
 
 	imdisplayThread.add(imageHeaderMsg);
-}
-
-void VRayForHoudini::closeImdisplay()
-{
-	Log::getLog().debug("closeImdisplay()");
-
-	imdisplayThread.clear();
-	imdisplayThread.stop();
 }

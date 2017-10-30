@@ -22,66 +22,6 @@
 
 using namespace VRayForHoudini;
 
-/// Class wrapping callback function and flag to call it only once
-/// the flag is protected by mutex so the callback is called only once
-/// NOTE: consider doing this with atomic bool
-class CallOnceUntilReset {
-public:
-	typedef std::function<void()> CB;
-
-	explicit CallOnceUntilReset(CB callback)
-		: m_isCalled(false)
-		, m_callback(callback)
-	{}
-
-	/// Get function that when called will inturn call the callback if flag is not set
-	/// Used to avoid the need to pass the object and function pointer
-	CB getCallableFunction() {
-		return std::bind(&CallOnceUntilReset::call, this);
-	}
-
-	/// Reset the "called" flag to false
-	void reset() {
-		std::lock_guard<std::mutex> lock(m_mtx);
-		m_isCalled = false;
-	}
-
-	/// Manually set the "called" flag to false
-	void set() {
-		std::lock_guard<std::mutex> lock(m_mtx);
-		m_isCalled = true;
-	}
-
-	/// Manually call the saved callback if the "called" flag is false
-	/// This function call's are serialized with mutex
-	void call() {
-		if (!m_isCalled) {
-			std::lock_guard<std::mutex> lock(m_mtx);
-			if (!m_isCalled) {
-				m_isCalled = true;
-				m_callback();
-			}
-		}
-	}
-
-	/// Return the "called" flag
-	/// NOTE: until this function returns the flag could have changed already
-	bool isCalled() const {
-		return m_isCalled;
-	}
-
-	CallOnceUntilReset(const CallOnceUntilReset &) = delete;
-	CallOnceUntilReset & operator=(const CallOnceUntilReset &) = delete;
-
-private:
-	/// Lock protecting the called flag
-	std::mutex m_mtx;
-	/// Flag so that we call the callback only once
-	bool m_isCalled;
-	/// The saved callback function
-	CB m_callback;
-} * stopCallback;
-
 FORCEINLINE int getInt(PyObject *list, int idx)
 {
 	return PyInt_AS_LONG(PyList_GET_ITEM(list, idx));
@@ -189,8 +129,6 @@ static void setExportTime(VRayExporter &exp, float time)
 
 static void freeExporter()
 {
-	closeImdisplay();
-
 	if (WithExporter lk{}) {
 		lk.getExporter().reset();
 		lk.freeExporter();
@@ -199,10 +137,6 @@ static void freeExporter()
 
 struct VRayExporterIprUnload {
 	~VRayExporterIprUnload() {
-		if (stopCallback) {
-			// Prevent stop cb from being called here
-			stopCallback->set();
-		}
 		deleteVRayInit();
 		Log::Logger::stopLogging();
 	}
@@ -326,7 +260,7 @@ static PyObject* vfhExportView(PyObject*, PyObject *args, PyObject *keywds)
 		// Update pipe if needed.
 		if (oldViewParams.changedSize(viewParams)) {
 			getImdisplay().restart();
-			initImdisplay(exporter.getRenderer().getVRay());
+			initImdisplay(exporter.getRenderer().getVRay(), exporter.getRopPtr()->getFullPath().buffer());
 		}
 	}
 
@@ -435,16 +369,6 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 
 	HOM_AutoLock autoLock;
 
-	getImdisplay().setPort(port);
-
-	if (!stopCallback) {
-		stopCallback = new CallOnceUntilReset(freeExporter);
-		getImdisplay().setOnStopCallback(stopCallback->getCallableFunction());
-	}
-
-	// Reset the cb's flag so it can be called asap
-	stopCallback->reset();
-
 	UT_String ropPath(rop);
 	OP_Node *ropNode = getOpNodeFromPath(ropPath);
 	if (ropNode) {
@@ -453,9 +377,6 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 			WithExporter lk;
 			vassert(!lk && "Exporter should be NULL in vfhInit");
 			lk.allocExporter();
-		}
-		if (WithExporter lk{}) {
-			getImdisplay().restart();
 		}
 
 		if (WithExporter lk{}) {
@@ -503,7 +424,13 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 
 				exporter.exportScene();
 				exporter.renderFrame();
-				initImdisplay(exporter.getRenderer().getVRay());
+
+				getImdisplay().setPort(port);
+				getImdisplay().restart();
+
+				QObject::connect(&getImdisplay(), &QThread::finished, freeExporter);
+
+				initImdisplay(exporter.getRenderer().getVRay(), exporter.getRopPtr()->getFullPath().buffer());
 			}
 		}
 	}
