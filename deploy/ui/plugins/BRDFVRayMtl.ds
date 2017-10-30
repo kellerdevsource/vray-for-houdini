@@ -688,7 +688,7 @@
           name	"fog_unit_scale_on"
           label	"Fog Multiplier In Centimeters^-1"
           type	toggle
-          default	{ "1" }
+          default	{ "0" }
           help	"Enable unit scale multiplication, when calculating absorption"
           range	{ 0 1 }
           export	none
