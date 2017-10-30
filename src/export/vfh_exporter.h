@@ -125,24 +125,25 @@ public:
 	/// @param tend[in] - end export time
 	void initExporter(int hasUI, int nframes, fpreal tstart, fpreal tend);
 
-	/// Gather data for camera settings
-	/// @param camera[in] - the active camera
-	/// @param viewParams[out] - collects camera settings
-	void fillViewParamFromCameraNode(const OBJ_Node &camera, ViewParams &viewParams);
+	/// Fills view settings from camera node.
+	/// @param camera Camera node.
+	/// @param viewParams ViewParams to fill.
+	void fillViewParamsFromCameraNode(const OBJ_Node &camera, ViewParams &viewParams);
 
 	/// Sets parameretrs for physical camera.
-	/// @param camera Camera
+	/// @param camera Camera node.
 	/// @param viewParams ViewParams to fill.
-	void fillPhysicalViewParamFromCameraNode(const OBJ_Node &camera, ViewParams &viewParams);
+	void fillPhysicalViewParamsFromCameraNode(const OBJ_Node &camera, ViewParams &viewParams);
 
-	/// Gather data for motion blur
-	/// @param viewParams[out] - collects motion blur settings
-	ReturnValue fillSettingsMotionBlur(ViewParams &viewParams, Attrs::PluginDesc &settingsMotionBlur);
+	/// Fills view settings from ROP node.
+	/// @param ropNode V-Ray ROP node.
+	/// @param viewParams ViewParams to fill.
+	void fillViewParamsFromRopNode(const OP_Node &ropNode, ViewParams &viewParams);
 
-	/// Fill in physical camera settings
+	/// Fills CameraPhysical plugin attributes..
 	/// @param viewParams[in] - holds data for camera settings
 	/// @param pluginDesc[out] - physical camera plugin description
-	void fillPhysicalCamera(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc);
+	void fillDescPhysicalCamera(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc);
 
 	/// Recreates physical camera
 	/// @param viewParams View settings.
@@ -153,25 +154,10 @@ public:
 	/// @param viewParams View settings.
 	void exportRenderView(const ViewParams &viewParams);
 
-	/// Fill in depth of field settings
-	/// @param viewParams[in] - holds data for camera settings
-	/// @param pluginDesc[out] - depth of field plugin description
-	void fillSettingsCameraDof(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc);
-
-	/// Fill in default camera settings
-	/// @param viewParams[in] - holds data for camera settings
-	/// @param pluginDesc[out] - default camera plugin description
-	void fillCameraDefault(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc);
-
-	/// Fill in camera settings
-	/// @param viewParams[in] - holds data for camera settings
-	/// @param pluginDesc[out] - camera settings plugin description
-	void fillSettingsCamera(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc);
-
 	/// Fill in render view settings
 	/// @param viewParams[in] - holds data for camera settings
 	/// @param pluginDesc[out] - render view settings plugin description
-	void fillRenderView(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc);
+	void fillDescRenderView(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc) const;
 
 	/// Fill in stereoscopic settings
 	/// @param viewParams[in] - holds data for camera settings
