@@ -608,99 +608,7 @@
             parmtag { "vray_pluginattr" "refract_affect_shadows" }
             parmtag { "vray_type" "boolean" }
         }
-        groupcollapsible {
-            name "folder_refr_sss"
-            label "Subsurface scattering"
-            parm {
-                name  "translucency"
-                label "Translucency Type"
-                type  ordinal
-                default { "0" }
-                help  "Translucency mode"
-                menu  {
-                  "0"  "None"
-                  "1"  "Hard (wax) model"
-                  "2"  "Soft (water) model"
-                  "3"  "Hybrid model"
-                }
-                export  none
-                parmtag { "cook_dependent" "1" }
-                parmtag { "vray_plugin" "BRDFVRayMtl" }
-                parmtag { "vray_pluginattr" "translucency" }
-                parmtag { "vray_type" "enum" }
-            }
-            parm {
-                name  "translucency_color"
-                label "Translucency Color"
-                type  color4
-                size  4
-                default { "1" "1" "1" "1" }
-                help  "Filter color for the translucency effect"
-                disablewhen "{ translucency == 0 }"
-                range { 0 1 }
-                export  none
-                parmtag { "cook_dependent" "1" }
-                parmtag { "vray_plugin" "BRDFVRayMtl" }
-                parmtag { "vray_pluginattr" "translucency_color" }
-                parmtag { "vray_type" "Texture" }
-            }
-            parm {
-                name  "translucency_scatter_dir"
-                label "Fwd/back coeff"
-                type  float
-                default { "1" }
-                help  "Scatter direction (0.0f is backward, 1.0f is forward)"
-                disablewhen "{ translucency == 0 }"
-                range { 0 1 }
-                export  none
-                parmtag { "cook_dependent" "1" }
-                parmtag { "vray_plugin" "BRDFVRayMtl" }
-                parmtag { "vray_pluginattr" "translucency_scatter_dir" }
-                parmtag { "vray_type" "float" }
-            }
-            parm {
-                name  "translucency_light_mult"
-                label "Light Multiplier"
-                type  float
-                default { "1" }
-                help  "A multiplier for the calculated lighting for the translucency effect"
-                disablewhen "{ translucency == 0 }"
-                range { 0 8 }
-                export  none
-                parmtag { "cook_dependent" "1" }
-                parmtag { "vray_plugin" "BRDFVRayMtl" }
-                parmtag { "vray_pluginattr" "translucency_light_mult" }
-                parmtag { "vray_type" "float" }
-            }
-            parm {
-                name  "translucency_scatter_coeff"
-                label "Scatter Coeff"
-                type  float
-                default { "0" }
-                help  "Scattering cone (0.0f - no scattering, 1.0f - full scattering"
-                disablewhen "{ translucency == 0 }"
-                range { 0 1 }
-                export  none
-                parmtag { "cook_dependent" "1" }
-                parmtag { "vray_plugin" "BRDFVRayMtl" }
-                parmtag { "vray_pluginattr" "translucency_scatter_coeff" }
-                parmtag { "vray_type" "float" }
-            }
-            parm {
-                name  "translucency_thickness"
-                label "Maximum Thickness"
-                type  float
-                default { "1000" }
-                help  "Maximum distance to trace inside the object"
-                disablewhen "{ translucency == 0 }"
-                range { 0 1000 }
-                export  none
-                parmtag { "cook_dependent" "1" }
-                parmtag { "vray_plugin" "BRDFVRayMtl" }
-                parmtag { "vray_pluginattr" "translucency_thickness" }
-                parmtag { "vray_type" "float" }
-            }
-        }
+
         groupcollapsible {
             name "folder_refr_advanced"
             label "Advanced"
@@ -778,6 +686,101 @@
             }
         }
     }
+
+    group {
+        name "folder_refr_sss"
+        label "Translucency"
+        parm {
+            name  "translucency"
+            label "Type"
+            type  ordinal
+            default { "0" }
+            help  "Translucency Type"
+            menu  {
+              "0"  "None"
+              "1"  "Hard (wax) model"
+              "2"  "Soft (water) model"
+              "3"  "Hybrid model"
+            }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "BRDFVRayMtl" }
+            parmtag { "vray_pluginattr" "translucency" }
+            parmtag { "vray_type" "enum" }
+        }
+        parm {
+            name  "translucency_color"
+            label "Color"
+            type  color4
+            size  4
+            default { "1" "1" "1" "1" }
+            help  "Filter color for the translucency effect"
+            disablewhen "{ translucency == 0 }"
+            range { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "BRDFVRayMtl" }
+            parmtag { "vray_pluginattr" "translucency_color" }
+            parmtag { "vray_type" "Texture" }
+        }
+        parm {
+            name  "translucency_scatter_dir"
+            label "Fwd / Back coeff"
+            type  float
+            default { "1" }
+            help  "Scatter direction (0.0f is backward, 1.0f is forward)"
+            disablewhen "{ translucency == 0 }"
+            range { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "BRDFVRayMtl" }
+            parmtag { "vray_pluginattr" "translucency_scatter_dir" }
+            parmtag { "vray_type" "float" }
+        }
+        parm {
+            name  "translucency_light_mult"
+            label "Light Multiplier"
+            type  float
+            default { "1" }
+            help  "A multiplier for the calculated lighting for the translucency effect"
+            disablewhen "{ translucency == 0 }"
+            range { 0 8 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "BRDFVRayMtl" }
+            parmtag { "vray_pluginattr" "translucency_light_mult" }
+            parmtag { "vray_type" "float" }
+        }
+        parm {
+            name  "translucency_scatter_coeff"
+            label "Scatter Coeff"
+            type  float
+            default { "0" }
+            help  "Scattering cone (0.0f - no scattering, 1.0f - full scattering"
+            disablewhen "{ translucency == 0 }"
+            range { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "BRDFVRayMtl" }
+            parmtag { "vray_pluginattr" "translucency_scatter_coeff" }
+            parmtag { "vray_type" "float" }
+        }
+        parm {
+            name  "translucency_thickness"
+            label "Maximum Thickness"
+            type  float
+            default { "1000" }
+            help  "Maximum distance to trace inside the object"
+            disablewhen "{ translucency == 0 }"
+            range { 0 1000 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "BRDFVRayMtl" }
+            parmtag { "vray_pluginattr" "translucency_thickness" }
+            parmtag { "vray_type" "float" }
+        }
+    }
+
     group {
         name "folder_options"
         label "Options"
