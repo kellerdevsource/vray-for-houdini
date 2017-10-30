@@ -362,6 +362,18 @@ void HoudiniVolumeExporter::exportPrimitive(const PrimitiveItem &item, PluginSet
 #endif
 }
 
+void VolumeExporter::setDescAttrsFromOptions(Attrs::PluginDesc &pluginDesc, const UT_Options &opts) const
+{
+	pluginExporter.setAttrsFromUTOptions(pluginDesc, opts);
+	// export the play_speed and read_offset in vray time measures
+	// NOTE: we don't need checks because this intrinsics are explicitly set in class VRayVolumeGridRef
+	UT_ASSERT_MSG(opts.hasOption("play_speed") && opts.hasOption("play_at") && opts.hasOption("read_offset"),
+		"Can not get attributes play_speed, play_speed, read_offset of volume!");
+	int playSpeed = opts.getOptionI("play_speed") * OPgetDirector()->getChannelManager()->getSamplesPerSec();
+	pluginDesc.add(Attrs::PluginAttr("play_speed", playSpeed));
+	pluginDesc.add(Attrs::PluginAttr("read_offset", opts.getOptionI("read_offset") + playSpeed * opts.getOptionI("play_at")));
+}
+
 VRay::Plugin VolumeExporter::exportVRayVolumeGridRef(OBJ_Node &objNode, const GU_PrimPacked &prim) const
 {
 	static boost::format phxCacheNameFmt("PhxShaderCache|%i@%s");
@@ -372,16 +384,8 @@ VRay::Plugin VolumeExporter::exportVRayVolumeGridRef(OBJ_Node &objNode, const GU
 	const VRayVolumeGridRef *vrayVolumeGridRef = UTverify_cast<const VRayVolumeGridRef*>(prim.implementation());
 	const int primID = vrayVolumeGridRef->getOptions().hash();
 
-	Attrs::PluginDesc phxCache(boost::str(phxCacheNameFmt % primID % objNode.getName().buffer()),
-							   "PhxShaderCache");
-	pluginExporter.setAttrsFromUTOptions(phxCache, opts);
-	// export the play_speed and read_offset in vray time measures
-	// NOTE: we don't need checks because this intrinsics are explicitly set in class VRayVolumeGridRef
-	UT_ASSERT_MSG(opts.hasOption("play_speed") && opts.hasOption("play_at") && opts.hasOption("read_offset"),
-		"Can not get attributes play_speed, play_speed, read_offset of volume!");
-	int playSpeed = opts.getOptionI("play_speed") * OPgetDirector()->getChannelManager()->getSamplesPerSec();
-	phxCache.add(Attrs::PluginAttr("play_speed", playSpeed));
-	phxCache.add(Attrs::PluginAttr("read_offset", opts.getOptionI("read_offset") + playSpeed * opts.getOptionI("play_at")));
+	Attrs::PluginDesc phxCache(boost::str(phxCacheNameFmt % primID % objNode.getName().buffer()), "PhxShaderCache");
+	setDescAttrsFromOptions(phxCache, opts);
 
 	return pluginExporter.exportPlugin(phxCache);
 }

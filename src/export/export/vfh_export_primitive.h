@@ -140,6 +140,7 @@ public:
 	void exportPrimitive(const PrimitiveItem &item, PluginSet &pluginsSet) VRAY_OVERRIDE;
 
 protected:
+	void setDescAttrsFromOptions(Attrs::PluginDesc &pluginDesc, const UT_Options &opts) const;
 	VRay::Plugin exportVRayVolumeGridRef(OBJ_Node &objNode, const GU_PrimPacked &prim) const;
 };
 
