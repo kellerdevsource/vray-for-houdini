@@ -635,41 +635,28 @@
           name	"fog_color"
           label	"Fog Color"
           type	color
-          disablewhen	"{ map_fog_color == 1 }"
-          joinnext
           size	3
           default	{ "1" "1" "1" }
           help	"The absorption (fog) color"
-          range	{ 0 1 }
-          export	none
           parmtag	{ "cook_dependent" "1" }
           parmtag	{ "vray_plugin" "BRDFVRayMtl" }
           parmtag	{ "vray_pluginattr" "fog_color" }
           parmtag	{ "vray_type" "Color" }
         }
-        parm {
-          name	"map_fog_color"
-          label	"Map"
-          type	toggle
-          default	{ "0" }
-          help	"Enable to map intensity"
-          range	{ 0 1 }
-          export	none
-        }
+
         parm {
           name	"fog_color_tex"
           label	"Fog Color Texture"
-          type	color4
-          hidewhen	"{ map_fog_color == 0 }"
-          size	4
-          default	{ "1" "1" "1" "1" }
+          type	color
+          size	3
+          default	{ "1" "1" "1" }
           help	"The absorption (fog) color texture"
-          range	{ 0 1 }
-          export	none
           parmtag	{ "cook_dependent" "1" }
           parmtag	{ "vray_plugin" "BRDFVRayMtl" }
           parmtag	{ "vray_pluginattr" "fog_color_tex" }
           parmtag	{ "vray_type" "Texture" }
+          parmtag { "vray_linked_only" "1" }
+          invisible
         }
         parm {
           name	"fog_mult"
