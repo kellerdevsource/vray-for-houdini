@@ -8,6 +8,8 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
+#include <QDir>
+
 #include "vfh_defines.h"
 #include "vfh_exporter.h"
 #include "vfh_prm_globals.h"
@@ -49,6 +51,9 @@
 
 using namespace VRayForHoudini;
 
+/// Directory hierarchy creator.
+/// Using static variable, because QDir::mkpath is not static.
+static QDir directoryCreator;
 
 static boost::format FmtPluginNameWithPrefix("%s@%s");
 
@@ -758,13 +763,13 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 		UT_String dirPath;
 		m_rop->evalString(dirPath, "SettingsOutput_img_dir", 0, t);
 
-		// Create output directory.
-		VUtils::uniMakeDir(dirPath.buffer());
-
 		// Ensure slash at the end.
 		if (!dirPath.endsWith("/")) {
 			dirPath.append("/");
 		}
+
+		// Create output directory.
+		directoryCreator.mkpath(dirPath.buffer());
 
 		if (imgFormat == imageFormatOpenEXR ||
 			imgFormat == imageFormatVRayImage)
