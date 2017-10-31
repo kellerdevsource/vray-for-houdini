@@ -288,13 +288,13 @@ static void fillViewParams(VRayExporter &exporter, PyObject *viewParamsDict, Vie
 		}
 	}
 
+	fillViewParamsFromDict(viewParamsDict, viewParams);
+	fillRenderRegionFromDict(viewParamsDict, viewParams);
+
 	if (cameraNode) {
 		exporter.fillViewParamsFromCameraNode(*cameraNode, viewParams);
 	}
 
-	fillViewParamsFromDict(viewParamsDict, viewParams);
-	fillRenderRegionFromDict(viewParamsDict, viewParams);
-	
 	if (cameraNode) {
 		exporter.fillPhysicalViewParamsFromCameraNode(*cameraNode, viewParams);
 	}
