@@ -284,7 +284,6 @@ void VRayExporter::fillPhysicalViewParamsFromCameraNode(const OBJ_Node &camera, 
 		viewParams.cameraPhysical.focal_length = camera.evalFloat("CameraPhysical_focal_length", 0, t);
 		viewParams.cameraPhysical.zoom_factor = camera.evalFloat("CameraPhysical_zoom_factor", 0, t);
 		viewParams.cameraPhysical.focus_distance = camera.evalFloat("CameraPhysical_focus_distance", 0, t);
-
 		viewParams.cameraPhysical.distortion_type = camera.evalInt("CameraPhysical_distortion_type", 0, t);
 
 		if (!camera.evalInt("CameraPhysical_parm_distortion_enable", 0, t)) {
@@ -549,10 +548,6 @@ ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 			removePlugin("cameraDefault", false);
 		}
 
-		Attrs::PluginDesc settingsCamera("settingsCamera", "SettingsCamera");
-		fillDescSettingsCamera(viewParams, settingsCamera);
-		exportPlugin(settingsCamera);
-
 		if (viewParams.useCameraPhysical != PhysicalCameraMode::modeNone) {
 			getRenderer().setCamera(exportPhysicalCamera(viewParams, false));
 		}
@@ -571,6 +566,10 @@ ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 			fillDescCameraDefault(viewParams, cameraDefault);
 			getRenderer().setCamera(exportPlugin(cameraDefault));
 		}
+
+		Attrs::PluginDesc settingsCamera("settingsCamera", "SettingsCamera");
+		fillDescSettingsCamera(viewParams, settingsCamera);
+		exportPlugin(settingsCamera);
 
 		if (viewParams.renderView.stereoParams.use && isIPR() != iprModeSOHO && !isGPU()) {
 			Attrs::PluginDesc stereoSettings("stereoSettings", "VRayStereoscopicSettings");
