@@ -29,14 +29,14 @@ Build archive name description:
 Houdini License Restrictions
 ----------------------------
 
-# Houdini Apprentice
+* Apprentice
 
-* Apprentice version does not allow third-party rendering engines.
+    - Apprentice version does not allow third-party rendering engines.
 
-# Houdini Indie
+* Indie
 
-* Maximum render size for animations is 1920 x 1080.
-* *.vrscene file export is not allowed.
+    - Maximum render size for animations is 1920 x 1080.
+    - *.vrscene file export is not allowed.
 
 Building From Source
 --------------------

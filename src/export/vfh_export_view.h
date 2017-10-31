@@ -15,16 +15,6 @@
 
 namespace VRayForHoudini {
 
-struct RenderSizeParams {
-	RenderSizeParams()
-		: w(0)
-		, h(0)
-	{}
-
-	int w;
-	int h;
-};
-
 enum class CameraFovMode {
 	/// Use Houdini camera settings.
 	useHoudini = 0,
@@ -49,9 +39,9 @@ enum class PhysicalCameraMode {
 };
 
 enum class PhysicalCameraType {
-	typeStill = 0,
-	typeCinematic,
-	typeVideo,
+	still = 0,
+	cinematic,
+	video,
 };
 
 enum class HoudiniFocalUnits {
@@ -62,11 +52,35 @@ enum class HoudiniFocalUnits {
 	feet = 4,
 };
 
+struct RenderSizeParams {
+	RenderSizeParams()
+		: w(0)
+		, h(0)
+	{}
+
+	int w;
+	int h;
+};
+
+struct RenderCropRegionParams {
+	RenderCropRegionParams()
+		: x(0)
+		, y(0)
+		, width(0)
+		, height(0)
+	{}
+
+	int x;
+	int y;
+	int width;
+	int height;
+};
+
 struct PhysicalCameraParams {
 	CameraFovMode fovMode = CameraFovMode::useHoudini;
 	HoudiniFocalUnits focalUnits = HoudiniFocalUnits::millimeters;
 
-	PhysicalCameraType type = PhysicalCameraType::typeStill;
+	PhysicalCameraType type = PhysicalCameraType::still;
 	float film_width = 36.0f;
 	float focal_length = 40.0f;
 	float zoom_factor = 1.0f;
@@ -113,20 +127,6 @@ struct PhysicalCameraParams {
 	bool operator == (const PhysicalCameraParams &other) const;
 };
 
-struct RenderCropRegionParams {
-	RenderCropRegionParams()
-		: x(0)
-		, y(0)
-		, width(0)
-		, height(0)
-	{}
-
-	int x;
-	int y;
-	int width;
-	int height;
-};
-
 struct StereoViewParams {
 	StereoViewParams()
 		: use(false)
@@ -140,7 +140,6 @@ struct StereoViewParams {
 	{}
 
 	bool operator == (const StereoViewParams &other) const;
-	bool operator != (const StereoViewParams &other) const;
 
 	int use;
 	float stereo_eye_distance;
@@ -164,10 +163,10 @@ struct RenderViewParams {
 	{}
 
 	bool operator == (const RenderViewParams &other) const;
-	bool operator != (const RenderViewParams &other) const;
 
 	int needReset(const RenderViewParams &other) const;
 
+	int fovRopOverride = false;
 	float fov;
 	VRay::Transform tm;
 	int ortho;
@@ -178,6 +177,46 @@ struct RenderViewParams {
 	float clip_end;
 
 	StereoViewParams stereoParams;
+};
+
+struct SettingsCamera {
+	int type = 0;
+	float height = 400.0f;
+	float dist = 2.0f;
+	float fov = 0.785398f; ///< Unused. FOV is set up in RenderView.
+	bool auto_fit = true;
+	float curve = 1.0f;
+
+	bool operator ==(const SettingsCamera &other) const;
+};
+
+struct SettingsCameraDof {
+	bool on = false;
+	float aperture = 5.0f;
+	float center_bias = 0.0f;
+	float focal_dist = 200.0f;
+	int sides_on = false;
+	int sides_num = 5;
+	float rotation = 0.0f;
+	float anisotropy = 0.0f;
+	int subdivs = 1;
+
+	bool operator ==(const SettingsCameraDof &other) const;
+};
+
+struct SettingsMotionBlur {
+	bool on = false;
+	int geom_samples = 2;
+	int low_samples = 1;
+	float duration = 1.0f;
+	int subdivs = 1;
+	float bias = 0.0f;
+	float shutter_efficiency = 1.0f;
+	float interval_center = 0.5f;
+	int camera_motion_blur = true;
+	int sampling_type = 0;
+
+	bool operator ==(const SettingsMotionBlur &other) const;
 };
 
 struct ViewParams {
@@ -198,6 +237,10 @@ struct ViewParams {
 
 	PhysicalCameraMode useCameraPhysical;
 	PhysicalCameraParams cameraPhysical;
+
+	SettingsCamera settingsCamera;
+	SettingsCameraDof settingsCameraDof;
+	SettingsMotionBlur settingsMotionBlur;
 };
 
 /// Returns FOV value based on aperture and focal.

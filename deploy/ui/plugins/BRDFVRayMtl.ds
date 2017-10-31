@@ -686,7 +686,7 @@
         }
         parm {
           name	"fog_unit_scale_on"
-          label	"Fog Multiplier In Centimeters^-1"
+          label	"Fog Units Scaling"
           type	toggle
           default	{ "1" }
           help	"Enable unit scale multiplication, when calculating absorption"

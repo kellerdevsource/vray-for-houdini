@@ -1683,17 +1683,17 @@ void VRayExporter::fillMotionBlurParams(MotionBlurParams &mbParams)
 		const fpreal frameDuration = OPgetDirector()->getChannelManager()->getSecsPerSample();
 
 		switch (cameraType) {
-			case PhysicalCameraType::typeStill: {
+			case PhysicalCameraType::still: {
 				mbParams.mb_duration        = 1.0f / (Parm::getParmFloat(*camera, "CameraPhysical_shutter_speed") * frameDuration);
 				mbParams.mb_interval_center = mbParams.mb_duration * 0.5f;
 				break;
 			}
-			case PhysicalCameraType::typeCinematic: {
+			case PhysicalCameraType::cinematic: {
 				mbParams.mb_duration        = Parm::getParmFloat(*camera, "CameraPhysical_shutter_angle") / 360.0f;
 				mbParams.mb_interval_center = Parm::getParmFloat(*camera, "CameraPhysical_shutter_offset") / 360.0f + mbParams.mb_duration * 0.5f;
 				break;
 			}
-			case PhysicalCameraType::typeVideo: {
+			case PhysicalCameraType::video: {
 				mbParams.mb_duration        = 1.0f + Parm::getParmFloat(*camera, "CameraPhysical_latency") / frameDuration;
 				mbParams.mb_interval_center = -mbParams.mb_duration * 0.5f;
 				break;
