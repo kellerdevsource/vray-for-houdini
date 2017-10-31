@@ -287,22 +287,18 @@ static void fillViewParams(VRayExporter &exporter, PyObject *viewParamsDict, Vie
 			cameraNode = CAST_OBJNODE(getOpNodeFromPath(cameraPath));
 		}
 	}
+
+	if (cameraNode) {
+		exporter.fillViewParamsFromCameraNode(*cameraNode, viewParams);
+	}
+
+	fillViewParamsFromDict(viewParamsDict, viewParams);
+	fillRenderRegionFromDict(viewParamsDict, viewParams);
+	
 	if (strcmp("/obj/ipr_camera", camera)) {
-		fillViewParamsFromDict(viewParamsDict, viewParams);
-		fillRenderRegionFromDict(viewParamsDict, viewParams);
-
-		if (cameraNode) {
-			exporter.fillViewParamsFromCameraNode(*cameraNode, viewParams);
-		}
+		exporter.fillViewParamsResFromCameraNode(*cameraNode, viewParams);
 	}
-	else {
-		if (cameraNode) {
-			exporter.fillViewParamsFromCameraNode(*cameraNode, viewParams);
-		}
 
-		fillViewParamsFromDict(viewParamsDict, viewParams);
-		fillRenderRegionFromDict(viewParamsDict, viewParams);
-	}
 	if (cameraNode) {
 		exporter.fillPhysicalViewParamsFromCameraNode(*cameraNode, viewParams);
 	}
