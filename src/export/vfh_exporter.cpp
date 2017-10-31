@@ -1949,6 +1949,8 @@ void VRayExporter::initExporter(int hasUI, int nframes, fpreal tstart, fpreal te
 		return;
 	}
 
+	resetOpCallbacks();
+
 	m_viewParams = ViewParams();
 	m_exportedFrames.clear();
 	m_phxSimulations.clear();
@@ -1956,11 +1958,12 @@ void VRayExporter::initExporter(int hasUI, int nframes, fpreal tstart, fpreal te
 	m_timeStart = tstart;
 	m_timeEnd   = tend;
 	m_isAborted = false;
+	m_isMotionBlur = hasMotionBlur(*m_rop, *camera);
+	m_isVelocityOn = hasVelocityOn(*m_rop);
 
-	setAnimation(nframes > 1);
+	setAnimation(nframes > 1 || m_isMotionBlur || m_isVelocityOn);
 
 	getRenderer().resetCallbacks();
-	resetOpCallbacks();
 
 	if (hasUI) {
 		if (!getRenderer().getVRay().vfb.isShown()) {
@@ -1985,14 +1988,6 @@ void VRayExporter::initExporter(int hasUI, int nframes, fpreal tstart, fpreal te
 	else if (isIPR()) {
 		m_renderer.addCbOnImageReady(CbVoid(boost::bind(&VRayExporter::resetOpCallbacks, this)));
 		m_renderer.addCbOnRendererClose(CbVoid(boost::bind(&VRayExporter::resetOpCallbacks, this)));
-	}
-
-	m_isMotionBlur = hasMotionBlur(*m_rop, *camera);
-	m_isVelocityOn = hasVelocityOn(*m_rop);
-
-	// NOTE: Force animated values for motion blur
-	if (!isAnimation()) {
-		setAnimation(m_isMotionBlur || m_isVelocityOn);
 	}
 
 	m_error = ROP_CONTINUE_RENDER;
