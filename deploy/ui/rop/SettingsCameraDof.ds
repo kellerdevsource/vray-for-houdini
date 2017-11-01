@@ -49,7 +49,7 @@ groupsimple {
 	label	"Get Focus Distance From Camera"
 	type	toggle
 	hidewhen "{ SettingsCameraDof_on == 0 }"
-	default	{ "0" }
+	default	{ "1" }
 	help	"Get Focus Distance From Camera"
 	range	{ 0 1 }
 	export	none
