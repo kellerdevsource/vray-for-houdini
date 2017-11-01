@@ -118,6 +118,7 @@ void VRayExporter::fillDefaultMappingDesc(DefaultMappingType mappingType, Attrs:
 		case defaultMappingSpherical: {
 			VRay::Matrix uvwTm(1);
 			VUtils::swap(uvwTm[1], uvwTm[2]);
+			uvwTm[2] = -uvwTm[2];
 
 			uvwgenDesc.pluginID = "UVWGenEnvironment";
 			uvwgenDesc.addAttribute(PluginAttr("mapping_type", "spherical"));
