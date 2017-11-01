@@ -295,6 +295,10 @@ static void fillViewParams(VRayExporter &exporter, PyObject *viewParamsDict, Vie
 	fillViewParamsFromDict(viewParamsDict, viewParams);
 	fillRenderRegionFromDict(viewParamsDict, viewParams);
 	
+	if (strcmp("/obj/ipr_camera", camera)) {
+		exporter.fillViewParamsResFromCameraNode(*cameraNode, viewParams);
+	}
+
 	if (cameraNode) {
 		exporter.fillPhysicalViewParamsFromCameraNode(*cameraNode, viewParams);
 	}

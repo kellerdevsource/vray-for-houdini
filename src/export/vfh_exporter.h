@@ -125,6 +125,8 @@ public:
 	/// @param tend[in] - end export time
 	void initExporter(int hasUI, int nframes, fpreal tstart, fpreal tend);
 
+	void fillViewParamsResFromCameraNode(const OBJ_Node &camera, ViewParams &viewParams);
+
 	/// Fills view settings from camera node.
 	/// @param camera Camera node.
 	/// @param viewParams ViewParams to fill.

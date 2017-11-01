@@ -114,29 +114,45 @@ PhysicalCameraMode VRayExporter::usePhysicalCamera(const OBJ_Node &camera) const
 
 	return physCamMode;
 }
-
-void VRayExporter::fillViewParamsFromCameraNode(const OBJ_Node &camera, ViewParams &viewParams)
-{
+void VRayExporter::fillViewParamsResFromCameraNode(const OBJ_Node &camera, ViewParams &viewParams) {
 	const fpreal t = getContext().getTime();
-
-	int imageWidth  = camera.evalInt("res", 0, t);
+	
+	int imageWidth = camera.evalInt("res", 0, t);
 	int imageHeight = camera.evalInt("res", 1, t);
 	if (m_rop->evalInt("override_camerares", 0, t)) {
 		UT_String resfraction;
 		m_rop->evalString(resfraction, "res_fraction", 0, t);
 		if (resfraction.isFloat()) {
 			const fpreal k = resfraction.toFloat();
-			imageWidth  *= k;
+			imageWidth *= k;
 			imageHeight *= k;
 		}
 		else {
-			imageWidth  = m_rop->evalInt("res_override", 0, t);
+			imageWidth = m_rop->evalInt("res_override", 0, t);
 			imageHeight = m_rop->evalInt("res_override", 1, t);
 		}
 	}
 
 	viewParams.renderSize.w = imageWidth;
 	viewParams.renderSize.h = imageHeight;
+
+	const float cropLeft = camera.evalFloat("cropl", 0, t);
+	const float cropRight = camera.evalFloat("cropr", 0, t);
+	const float cropBottom = camera.evalFloat("cropb", 0, t);
+	const float cropTop = camera.evalFloat("cropt", 0, t);
+
+	viewParams.cropRegion.x = imageWidth * cropLeft;
+	viewParams.cropRegion.y = imageHeight * (1.0f - cropTop);
+	viewParams.cropRegion.width = imageWidth * (cropRight - cropLeft);
+	viewParams.cropRegion.height = imageHeight * (cropTop - cropBottom);
+}
+
+void VRayExporter::fillViewParamsFromCameraNode(const OBJ_Node &camera, ViewParams &viewParams)
+{
+	const fpreal t = getContext().getTime();
+
+	fillViewParamsResFromCameraNode(camera, viewParams);
+	
 	viewParams.renderView.tm = getObjTransform(camera.castToOBJNode(), m_context);
 
 	viewParams.renderView.fovRopOverride = Parm::getParmInt(*m_rop, "SettingsCamera_override_fov");
@@ -165,15 +181,7 @@ void VRayExporter::fillViewParamsFromCameraNode(const OBJ_Node &camera, ViewPara
 	viewParams.renderView.clip_start = camera.evalFloat("near", 0, t);
 	viewParams.renderView.clip_end   = camera.evalFloat("far", 0, t);
 
-	const float cropLeft   = camera.evalFloat("cropl", 0, t);
-	const float cropRight  = camera.evalFloat("cropr", 0, t);
-	const float cropBottom = camera.evalFloat("cropb", 0, t);
-	const float cropTop    = camera.evalFloat("cropt", 0, t);
-
-	viewParams.cropRegion.x = imageWidth * cropLeft;
-	viewParams.cropRegion.y = imageHeight * (1.0f - cropTop);
-	viewParams.cropRegion.width  = imageWidth * (cropRight - cropLeft);
-	viewParams.cropRegion.height = imageHeight * (cropTop - cropBottom);
+	
 
 	viewParams.renderView.stereoParams.use = Parm::getParmInt(*m_rop, "VRayStereoscopicSettings_use");
 	viewParams.renderView.stereoParams.stereo_eye_distance       = Parm::getParmFloat(*m_rop, "VRayStereoscopicSettings_eye_distance");
