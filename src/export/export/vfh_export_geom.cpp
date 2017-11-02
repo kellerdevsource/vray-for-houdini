@@ -1194,9 +1194,10 @@ VRay::Plugin ObjectExporter::exportVRaySceneRef(OBJ_Node &objNode, const GU_Prim
 
 	const VRaySceneRef *vraysceneref = UTverify_cast<const VRaySceneRef*>(prim.implementation());
 
-	pluginDesc.add(Attrs::PluginAttr("transform", getTm()));
+	const VRay::Transform fullTm = pluginExporter.getObjTransform(&objNode, ctx) * getTm();
+	pluginDesc.add(Attrs::PluginAttr("transform", fullTm));
 
-	UT_Options options = vraysceneref->getOptions();
+	const UT_Options &options = vraysceneref->getOptions();
 	pluginExporter.setAttrsFromUTOptions(pluginDesc, options);
 
 	return pluginExporter.exportPlugin(pluginDesc);
