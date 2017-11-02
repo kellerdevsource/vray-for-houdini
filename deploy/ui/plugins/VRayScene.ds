@@ -128,6 +128,29 @@
 
         VFH_PLUGIN_PARM_TOGGLE("VRayScene", "use_overrides", "Use Plugin Overrides", "Use runtime overrides", 0)
 
+        multiparm {
+            name "plugin_mapping"
+            label "Num. Mappings"
+
+            parm {
+                name "plugin_mapping#op_path"
+                label "Op. Path #"
+                type oppath
+                default { "" }
+                VFH_DISABLE_WHEN_PARAM_FALSE("use_overrides")
+            }
+
+            parm {
+                name "plugin_mapping#plugin_name"
+                label "Plugin Name #"
+                type string
+                default { "" }
+                VFH_DISABLE_WHEN_PARAM_FALSE("use_overrides")
+            }
+
+            VFH_DISABLE_WHEN_PARAM_FALSE("use_overrides")
+        }
+
         parm {
             name "override_snippet"
             label "Snippet (*.vrscene)"

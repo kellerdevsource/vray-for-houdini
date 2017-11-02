@@ -34,6 +34,8 @@
 #include <GA/GA_Types.h>
 #include <GA/GA_Names.h>
 
+#include <parse.h>
+
 using namespace VRayForHoudini;
 
 static struct PrimPackedTypeIDs {
@@ -1198,6 +1200,68 @@ VRay::Plugin ObjectExporter::exportVRaySceneRef(OBJ_Node &objNode, const GU_Prim
 	pluginDesc.add(Attrs::PluginAttr("transform", fullTm));
 
 	const UT_Options &options = vraysceneref->getOptions();
+
+	if (options.getOptionI("use_overrides")) {
+		const UT_StringHolder &overrideSnippet = options.getOptionS("override_snippet"); 
+		const UT_StringHolder &overrideFilePath = options.getOptionS("override_filepath"); 
+
+		const int hasOverrideSnippet = overrideSnippet.isstring();
+		const int hasOverrideFile = overrideFilePath.isstring();
+
+		const int hasOverrideData = hasOverrideSnippet || hasOverrideFile; 
+
+		if (hasOverrideData) {
+			// Export plugin mappings.
+			const UT_StringHolder &pluginMappings = options.getOptionS("plugin_mapping");
+			if (pluginMappings.isstring()) {
+				VUtils::Table<VUtils::CharString> pluginMappingPairs;
+				VUtils::tokenize(pluginMappings.buffer(), ";", pluginMappingPairs);
+
+				for (int i = 0; i < pluginMappingPairs.count(); ++i) {
+					const VUtils::CharString pluginMappingPairStr = pluginMappingPairs[i];
+
+					VUtils::Table<VUtils::CharString> pluginMappingPair;
+					VUtils::tokenize(pluginMappingPairStr.ptr(), "=", pluginMappingPair);
+
+					if (pluginMappingPair.count() == 2) {
+						const UT_String opPath              = pluginMappingPair[0].ptr();
+						const VUtils::CharString pluginName = pluginMappingPair[1].ptr();
+
+						OP_Node *opNode = getOpNodeFromPath(opPath, ctx.getTime());
+						if (opNode) {
+							VRay::Plugin opPlugin;
+							if (!getPluginFromCache(*opNode, opPlugin)) {
+								// XXX: Move this to method.
+								COP2_Node *copNode = opNode->castToCOP2Node();
+								VOP_Node *vopNode = opNode->castToVOPNode();
+								if (copNode) {
+									opPlugin = pluginExporter.exportCopNodeWithDefaultMapping(*copNode, VRayExporter::defaultMappingTriPlanar);
+								}
+								else if (vopNode) {
+									opPlugin = pluginExporter.exportVop(vopNode);
+								}
+
+								if (opPlugin) {
+									opPlugin.setName(pluginName.ptr());
+
+									addPluginToCache(*opNode, opPlugin);
+								}
+							}
+						}
+					}
+				}
+			}
+
+			if (hasOverrideSnippet) {
+				// Fix illegal chars
+				VUtils::CharString snippetText(overrideSnippet.buffer());
+				vutils_replaceTokenWithValue(snippetText, "\"", "'");
+
+				pluginDesc.add(Attrs::PluginAttr("override_snippet", snippetText.ptr()));
+			}
+		}
+	}
+
 	pluginExporter.setAttrsFromUTOptions(pluginDesc, options);
 
 	return pluginExporter.exportPlugin(pluginDesc);

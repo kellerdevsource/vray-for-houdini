@@ -59,7 +59,26 @@ OP_ERROR SOP::VRayScene::cookMySop(OP_Context &context)
 			options.setOptionFromTemplate(this, prm, *prm.getTemplatePtr(), t);
 		}
 
+		UT_String pluginMappings;
+
+		const int numMappings = evalInt("plugin_mapping", 0, 0.0);
+		for (int i = 1; i <= numMappings; ++i) {
+			UT_String opPath;
+			evalStringInst("plugin_mapping#op_path", &i, opPath, 0, 0.0f);
+
+			UT_String pluginName;
+			evalStringInst("plugin_mapping#plugin_name", &i, pluginName, 0, 0.0f);
+
+			pluginMappings.append(opPath.buffer());
+			pluginMappings.append('=');
+			pluginMappings.append(pluginName.buffer());
+			pluginMappings.append(';');
+		}
+
+		options.setOptionS("plugin_mapping", pluginMappings);
+
 		pack->implementation()->update(options);
+
 		pack->setPathAttribute(getFullPath());
 	}
 
