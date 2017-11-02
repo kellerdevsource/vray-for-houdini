@@ -218,16 +218,24 @@
             parmtag { "vray_type" "Color" }
         }
 
+        VFH_UI_PARM_TOGGLE(
+            "CameraPhysical_use_vignetting",
+            "Use Vignetting",
+            "Use vignetting effect",
+            0
+        )
+
         parm {
             name    "CameraPhysical_vignetting"
             label   "Vignetting"
             help    "Strength of vignetting effect"
             type    float
-            default { "0" }
+            default { "1.0" }
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "CameraPhysical" }
             parmtag { "vray_pluginattr" "vignetting" }
             parmtag { "vray_type" "float" }
+            disablewhen "{ CameraPhysical_use_vignetting == 0 }"
         }
 
         parm {

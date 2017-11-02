@@ -301,7 +301,8 @@ void VRayExporter::fillPhysicalViewParamsFromCameraNode(const OBJ_Node &camera, 
 		viewParams.cameraPhysical.white_balance.g = camera.evalFloat("CameraPhysical_white_balance", 1, t);
 		viewParams.cameraPhysical.white_balance.b = camera.evalFloat("CameraPhysical_white_balance", 2, t);
 
-		viewParams.cameraPhysical.vignetting = camera.evalFloat("CameraPhysical_vignetting", 0, t);
+		viewParams.cameraPhysical.vignetting = camera.evalInt("CameraPhysical_use_vignetting", 0, t) ? camera.evalFloat("CameraPhysical_vignetting", 0, t) : 0.0f;
+
 		viewParams.cameraPhysical.blades_enable = camera.evalInt("CameraPhysical_blades_enable", 0, t);
 		viewParams.cameraPhysical.blades_num = camera.evalInt("CameraPhysical_blades_num", 0, t);
 		viewParams.cameraPhysical.blades_rotation = SYSdegToRad(camera.evalFloat("CameraPhysical_blades_rotation", 0, t));
