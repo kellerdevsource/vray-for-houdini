@@ -1754,6 +1754,7 @@ VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode)
 	if (renderOpType.startsWith("VRayNode") &&
 		!renderOpType.equal("VRayNodePhxShaderCache") &&
 		!renderOpType.equal("VRayNodeVRayProxy") &&
+		!renderOpType.equal("VRayNodeVRayScene") &&
 		!renderOpType.equal("VRayNodeGeomPlane"))
 	{
 		return exportVRaySOP(objNode, *renderSOP);
