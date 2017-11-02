@@ -258,28 +258,12 @@ void VRayExporter::fillPhysicalViewParamsFromCameraNode(const OBJ_Node &camera, 
 	}
 	else if (viewParams.useCameraPhysical == PhysicalCameraMode::modeUser) {
 		if (viewParams.renderView.fovRopOverride) {
+			viewParams.cameraPhysical.specify_fov = true;
 			viewParams.cameraPhysical.fov = viewParams.renderView.fov;
 		}
 		else {
-			viewParams.cameraPhysical.fovMode =
-				static_cast<CameraFovMode>(camera.evalInt("CameraPhysical_fov_mode", 0, 0.0));
-
-			switch (viewParams.cameraPhysical.fovMode) {
-				case CameraFovMode::useHoudini: {
-					viewParams.cameraPhysical.specify_fov = true;
-					viewParams.cameraPhysical.fov = viewParams.renderView.fov;
-					break;
-				}
-				case CameraFovMode::usePhysical: {
-					viewParams.cameraPhysical.specify_fov = false;
-					break;
-				}
-				case CameraFovMode::useFovOverride: {
-					viewParams.cameraPhysical.specify_fov = true;
-					viewParams.cameraPhysical.fov = SYSdegToRad(camera.evalFloat("CameraPhysical_fov", 0, t));
-					break;
-				}
-			}
+			viewParams.cameraPhysical.specify_fov = camera.evalInt("CameraPhysical_specify_fov", 0, t);
+			viewParams.cameraPhysical.fov = SYSdegToRad(camera.evalFloat("CameraPhysical_fov", 0, t));
 		}
 
 		viewParams.cameraPhysical.lens_shift = camera.evalInt("CameraPhysical_auto_lens_shift", 0, 0.0)
@@ -290,7 +274,7 @@ void VRayExporter::fillPhysicalViewParamsFromCameraNode(const OBJ_Node &camera, 
 		viewParams.cameraPhysical.type = static_cast<PhysicalCameraType>(camera.evalInt("CameraPhysical_type", 0, t));
 		viewParams.cameraPhysical.film_width = camera.evalFloat("CameraPhysical_film_width", 0, t);
 		viewParams.cameraPhysical.focal_length = camera.evalFloat("CameraPhysical_focal_length", 0, t);
-		viewParams.cameraPhysical.zoom_factor = camera.evalFloat("CameraPhysical_zoom_factor", 0, t);
+		viewParams.cameraPhysical.zoom_factor = viewParams.cameraPhysical.specify_fov ? 1.0f : camera.evalFloat("CameraPhysical_zoom_factor", 0, t);
 		viewParams.cameraPhysical.focus_distance = camera.evalFloat("CameraPhysical_focus_distance", 0, t);
 		viewParams.cameraPhysical.distortion_type = camera.evalInt("CameraPhysical_distortion_type", 0, t);
 
@@ -700,7 +684,6 @@ bool StereoViewParams::operator == (const StereoViewParams &other) const
 bool PhysicalCameraParams::operator == (const PhysicalCameraParams &other) const 
 {
 	return
-		MemberEq(fovMode) &&
 		MemberEq(focalUnits) &&
 		MemberEq(type) &&
 		MemberFloatEq(film_width) &&

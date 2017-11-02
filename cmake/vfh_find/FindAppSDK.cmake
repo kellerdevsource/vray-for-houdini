@@ -40,7 +40,12 @@ if((NOT _appsdk_root) OR (NOT EXISTS ${_appsdk_root}))
 	set(AppSDK_FOUND FALSE)
 else()
 	set(AppSDK_FOUND TRUE)
-	set(AppSDK_INCLUDES "${_appsdk_root}/cpp/include")
+
+	if (EXISTS ${_appsdk_root}/appsdk)
+		set(AppSDK_INCLUDES "${_appsdk_root}/appsdk/cpp/include")
+	else()
+		set(AppSDK_INCLUDES "${_appsdk_root}/cpp/include")
+	endif()
 	set(AppSDK_LIBRARIES "${_appsdk_root}/bin")
 
 	if(WIN32)

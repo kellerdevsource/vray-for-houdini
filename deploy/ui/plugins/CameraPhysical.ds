@@ -40,17 +40,14 @@
         }
 
         parm {
-            name "CameraPhysical_fov_mode"
-            label "FOV Mode"
-            help "FOV mode"
-            type string
-            menu {
-                "0" "From Houdini"
-                "1" "From Physical Camera"
-                "2" "Override FOV"
-            }
+            name    "CameraPhysical_specify_fov"
+            label   "Specify FOV"
+            help    "Overrides field of view"
+            type    toggle
             default { "0" }
-            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "CameraPhysical" }
+            parmtag { "vray_pluginattr" "specify_fov" }
+            parmtag { "vray_type" "boolean" }
         }
 
         parm {
@@ -64,7 +61,7 @@
             parmtag { "vray_plugin" "CameraPhysical" }
             parmtag { "vray_pluginattr" "fov" }
             parmtag { "vray_type" "float" }
-            hidewhen "{ CameraPhysical_fov_mode != 2 }"
+            disablewhen "{ CameraPhysical_specify_fov == 0 }"
         }
 
         parm {
@@ -79,7 +76,6 @@
             parmtag { "vray_plugin" "CameraPhysical" }
             parmtag { "vray_pluginattr" "film_width" }
             parmtag { "vray_type" "float" }
-            hidewhen "{ CameraPhysical_fov_mode != 1 }"
         }
 
         parm {
@@ -94,34 +90,19 @@
             parmtag { "vray_plugin" "CameraPhysical" }
             parmtag { "vray_pluginattr" "focal_length" }
             parmtag { "vray_type" "float" }
-            hidewhen "{ CameraPhysical_fov_mode != 1 }"
         }
 
         parm {
-            name    "CameraPhysical_f_number"
-            label   "F-Stop"
-            help    "Determines the width of the camera aperture and, indirectly, exposure"
+            name    "CameraPhysical_zoom_factor"
+            label   "Zoom"
+            help    "Zoom factor"
             type    float
-            default { "16" }
-            range   { 0 32 }
+            default { "1" }
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "CameraPhysical" }
-            parmtag { "vray_pluginattr" "f_number" }
+            parmtag { "vray_pluginattr" "zoom_factor" }
             parmtag { "vray_type" "float" }
-        }
-
-        parm {
-            name    "CameraPhysical_use_moblur"
-            label   "Motion Blur"
-            type    toggle
-            default { "0" }
-            help    "Turns on motion blur sampling"
-            range   { 0 1 }
-            export  none
-            parmtag { "cook_dependent" "1" }
-            parmtag { "vray_plugin" "CameraPhysical" }
-            parmtag { "vray_pluginattr" "use_moblur" }
-            parmtag { "vray_type" "boolean" }
+            disablewhen "{ CameraPhysical_specify_fov == 1 }"
         }
 
         parm {
@@ -139,16 +120,45 @@
         }
 
         parm {
+            name    "CameraPhysical_f_number"
+            label   "F-Number"
+            help    "Determines the width of the camera aperture and, indirectly, exposure"
+            type    float
+            default { "8" }
+            range   { !1 32 }
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "CameraPhysical" }
+            parmtag { "vray_pluginattr" "f_number" }
+            parmtag { "vray_type" "float" }
+            disablewhen "{ CameraPhysical_exposure == 0 CameraPhysical_use_dof == 0 }"
+        }
+
+        parm {
+            name    "CameraPhysical_ISO"
+            label   "ISO"
+            help    "The film power (i.e. sensitivity)"
+            type    float
+            default { "100" }
+            range   { 0 3200 }
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "CameraPhysical" }
+            parmtag { "vray_pluginattr" "ISO" }
+            parmtag { "vray_type" "float" }
+            disablewhen "{ CameraPhysical_exposure == 0 }"
+        }
+
+        parm {
             name    "CameraPhysical_shutter_speed"
             label   "Shutter Speed"
             help    "The shutter speed, in inverse seconds"
             type    float
-            default { "100" }
+            default { "200" }
             range   { 0 1000 }
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "CameraPhysical" }
             parmtag { "vray_pluginattr" "shutter_speed" }
             parmtag { "vray_type" "float" }
+            disablewhen "{ CameraPhysical_exposure == 0 }"
         }
 
         parm {
@@ -196,31 +206,6 @@
         }
 
         parm {
-            name    "CameraPhysical_ISO"
-            label   "ISO"
-            help    "The film power (i.e. sensitivity)"
-            type    float
-            default { "100" }
-            range   { 0 3200 }
-            parmtag { "cook_dependent" "1" }
-            parmtag { "vray_plugin" "CameraPhysical" }
-            parmtag { "vray_pluginattr" "ISO" }
-            parmtag { "vray_type" "float" }
-        }
-
-        parm {
-            name    "CameraPhysical_zoom_factor"
-            label   "Zoom Factor"
-            help    "Zoom factor"
-            type    float
-            default { "1" }
-            parmtag { "cook_dependent" "1" }
-            parmtag { "vray_plugin" "CameraPhysical" }
-            parmtag { "vray_pluginattr" "zoom_factor" }
-            parmtag { "vray_type" "float" }
-        }
-
-        parm {
             name    "CameraPhysical_white_balance"
             label   "White Balance"
             help    "White balance"
@@ -236,11 +221,9 @@
         parm {
             name    "CameraPhysical_vignetting"
             label   "Vignetting"
-            type    float
-            default { "1" }
             help    "Strength of vignetting effect"
-            range   { 0 1 }
-            export  none
+            type    float
+            default { "0" }
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "CameraPhysical" }
             parmtag { "vray_pluginattr" "vignetting" }
@@ -250,11 +233,9 @@
         parm {
             name    "CameraPhysical_optical_vignetting"
             label   "Optical Vignetting"
+            help    "Optical vignetting (\"Cat's Eye Bokeh\") amount"
             type    float
             default { "0" }
-            help    "Optical vignetting (\"Cat's Eye Bokeh\") amount"
-            range   { 0 1 }
-            export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "CameraPhysical" }
             parmtag { "vray_pluginattr" "optical_vignetting" }
@@ -297,6 +278,19 @@
         }
 
         parm {
+            name    "CameraPhysical_lens_file"
+            label   "Lens File"
+            help    "LENS file with camera lens-type image distortion description"
+            type    file
+            default { "" }
+            parmtag { "cook_dependent" "1" }
+            parmtag { "filechooser_pattern" "*.vrlens" }
+            parmtag { "vray_plugin" "CameraPhysical" }
+            parmtag { "vray_pluginattr" "lens_file" }
+            parmtag { "vray_type" "String" }
+        }
+
+        parm {
             name    "CameraPhysical_horizontal_offset"
             label   "Horizontal Offset"
             help    "The horizontal offset"
@@ -321,19 +315,6 @@
         }
 
         parm {
-            name    "CameraPhysical_lens_file"
-            label   "Lens File"
-            help    "LENS file with camera lens-type image distortion description"
-            type    file
-            default { "" }
-            parmtag { "cook_dependent" "1" }
-            parmtag { "filechooser_pattern" "*.vrlens" }
-            parmtag { "vray_plugin" "CameraPhysical" }
-            parmtag { "vray_pluginattr" "lens_file" }
-            parmtag { "vray_type" "String" }
-        }
-
-        parm {
             name    "CameraPhysical_subdivs"
             label   "Subdivs"
             help    "The number of samples for calculating depth of field and/or motion blur"
@@ -345,12 +326,26 @@
             parmtag { "vray_type" "int" }
         }
 
+        parm {
+            name    "CameraPhysical_use_moblur"
+            label   "Motion Blur"
+            type    toggle
+            default { "0" }
+            help    "Turns on motion blur sampling"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "CameraPhysical" }
+            parmtag { "vray_pluginattr" "use_moblur" }
+            parmtag { "vray_type" "boolean" }
+        }
+
         VFH_PLUGIN_PARM_TOGGLE(
             "CameraPhysical",
             "CameraPhysical_enable_thin_lens_equation",
             "Thin Lens Equation",
             "Use Thin Lens Equation",
-            1)
+            0)
     }
 
     group {
@@ -618,18 +613,6 @@
         default { "1" }
         parmtag { "vray_plugin" "CameraPhysical" }
         parmtag { "vray_pluginattr" "specify_focus" }
-        parmtag { "vray_type" "boolean" }
-        invisible
-    }
-
-    parm {
-        name    "CameraPhysical_specify_fov"
-        label   "Override FOV"
-        help    "Overrides field of view"
-        type    toggle
-        default { "0" }
-        parmtag { "vray_plugin" "CameraPhysical" }
-        parmtag { "vray_pluginattr" "specify_fov" }
         parmtag { "vray_type" "boolean" }
         invisible
     }
