@@ -181,10 +181,12 @@ GU_ConstDetailHandle VRaySceneRef::getPackedDetail(GU_PackedContext *context) co
 	vrsceneSettings.cacheSettings.cacheType = VUtils::Vrscene::Preview::VrsceneCacheSettings::VrsceneCacheType::VrsceneCacheTypeRam;
 
 	GU_DetailHandle gdh;
+	// detail for the mesh
+	GU_Detail *gdmp = new GU_Detail();
 
 	Vrscene::Preview::VrsceneDesc *vrsceneDesc = VRaySceneRef::vrsceneMan.getVrsceneDesc(get_filepath(), &vrsceneSettings);
 	if (vrsceneDesc) {
-		const bool flipAxis = get_flip_axis();
+		const Vrscene::Preview::VrsceneUpAxis flipAxis = vrsceneDesc->getUpAxis();
 		unsigned meshVertexOffset = 0;
 
 		for (Vrscene::Preview::VrsceneObjects::iterator obIt = vrsceneDesc->m_objects.begin(); obIt != vrsceneDesc->m_objects.end(); ++obIt) {
@@ -195,8 +197,6 @@ GU_ConstDetailHandle VRaySceneRef::getPackedDetail(GU_PackedContext *context) co
 				Vrscene::Preview::VrsceneObjectNode     *node = static_cast<Vrscene::Preview::VrsceneObjectNode*>(ob);
 				Vrscene::Preview::VrsceneObjectDataBase *nodeData = vrsceneDesc->getObjectData(node->getDataName().ptr());
 				if (nodeData && nodeData->getDataType() == Vrscene::Preview::ObjectDataTypeMesh) {
-					// detail for the mesh
-					GU_Detail *gdmp = new GU_Detail();
 
 					// create preview mesh
 					Vrscene::Preview::VrsceneObjectDataMesh *mesh = static_cast<Vrscene::Preview::VrsceneObjectDataMesh*>(nodeData);
@@ -209,7 +209,7 @@ GU_ConstDetailHandle VRaySceneRef::getPackedDetail(GU_PackedContext *context) co
 					for (int v = 0; v < vertices.count(); ++v, ++pointOffset) {
 
 						Vector vert = tm * vertices[v];
-						if (flipAxis) {
+						if (flipAxis == Vrscene::Preview::vrsceneUpAxisZ) {
 							vert = Vrscene::Preview::flipMatrix * vert;
 						}
 
@@ -225,18 +225,18 @@ GU_ConstDetailHandle VRaySceneRef::getPackedDetail(GU_PackedContext *context) co
 					}
 
 					meshVertexOffset += vertices.count();
-
-					// handle
-					GU_DetailHandle gdmh;
-					gdmh.allocateAndSet(gdmp);
-
-					// pack the geometry in the scene detail
-					GU_Detail *gdp = new GU_Detail();
-					GU_PackedGeometry::packGeometry(*gdp, gdmh);
-					gdh.allocateAndSet(gdp);
 				}
 			}
 		}
+
+		// handle
+		GU_DetailHandle gdmh;
+		gdmh.allocateAndSet(gdmp);
+
+		// pack the geometry in the scene detail
+		GU_Detail *gdp = new GU_Detail();
+		GU_PackedGeometry::packGeometry(*gdp, gdmh);
+		gdh.allocateAndSet(gdp);
 	}
 
 
