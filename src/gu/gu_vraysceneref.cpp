@@ -187,6 +187,10 @@ GU_ConstDetailHandle VRaySceneRef::getPackedDetail(GU_PackedContext *context) co
 	Vrscene::Preview::VrsceneDesc *vrsceneDesc = VRaySceneRef::vrsceneMan.getVrsceneDesc(get_filepath(), &vrsceneSettings);
 	if (vrsceneDesc) {
 		const std::string flipAxis = get_flip_axis();
+		const bool should_flip = (flipAxis == "1" /* auto flip axis */ && vrsceneDesc->getUpAxis() == Vrscene::Preview::vrsceneUpAxisZ
+			|| flipAxis == "2" /* force flip axis */);
+		me->set_should_flip(should_flip);
+
 		unsigned meshVertexOffset = 0;
 
 		for (Vrscene::Preview::VrsceneObjects::iterator obIt = vrsceneDesc->m_objects.begin(); obIt != vrsceneDesc->m_objects.end(); ++obIt) {
@@ -209,8 +213,7 @@ GU_ConstDetailHandle VRaySceneRef::getPackedDetail(GU_PackedContext *context) co
 					for (int v = 0; v < vertices.count(); ++v, ++pointOffset) {
 
 						Vector vert = tm * vertices[v];
-						if (flipAxis == "1" /* auto flip axis */ && vrsceneDesc->getUpAxis() == Vrscene::Preview::vrsceneUpAxisZ
-							|| flipAxis == "2" /* force flip axis */) {
+						if (should_flip) {
 							vert = Vrscene::Preview::flipMatrix * vert;
 						}
 
