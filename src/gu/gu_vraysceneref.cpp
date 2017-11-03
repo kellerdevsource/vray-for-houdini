@@ -180,7 +180,7 @@ GU_ConstDetailHandle VRaySceneRef::getPackedDetail(GU_PackedContext *context) co
 	vrsceneSettings.previewFacesCount = 100000;
 	vrsceneSettings.cacheSettings.cacheType = VUtils::Vrscene::Preview::VrsceneCacheSettings::VrsceneCacheType::VrsceneCacheTypeRam;
 
-	GU_DetailHandle gdh;
+	GU_DetailHandle vrsceneDetailHandle;
 	// Detail for the mesh
 	GU_Detail *meshDetail = new GU_Detail();
 
@@ -188,8 +188,8 @@ GU_ConstDetailHandle VRaySceneRef::getPackedDetail(GU_PackedContext *context) co
 	if (vrsceneDesc) {
 		const UT_String flipAxisS = get_flip_axis();
 		const FlipAxisMode flipAxis = parseFlipAxisMode(flipAxisS);
-		const bool shouldFlip = (flipAxis == FlipAxisMode::flipZY 
-			|| flipAxis == FlipAxisMode::automatic && vrsceneDesc->getUpAxis() == Vrscene::Preview::vrsceneUpAxisZ);
+		const bool shouldFlip = flipAxis == FlipAxisMode::flipZY || 
+		                        flipAxis == FlipAxisMode::automatic && vrsceneDesc->getUpAxis() == Vrscene::Preview::vrsceneUpAxisZ;
 		me->set_should_flip(shouldFlip);
 
 		unsigned meshVertexOffset = 0;
@@ -234,18 +234,17 @@ GU_ConstDetailHandle VRaySceneRef::getPackedDetail(GU_PackedContext *context) co
 			}
 		}
 
-		GU_DetailHandle gdmh;
-		gdmh.allocateAndSet(meshDetail);
+		GU_DetailHandle meshDetailHandle;
+		meshDetailHandle.allocateAndSet(meshDetail);
 
 		// Pack the geometry in the scene detail
-		GU_Detail *gdp = new GU_Detail();
-		GU_PackedGeometry::packGeometry(*gdp, gdmh);
-		gdh.allocateAndSet(gdp);
+		GU_Detail *vrsceneDetail = new GU_Detail();
+		GU_PackedGeometry::packGeometry(*vrsceneDetail, meshDetailHandle);
+		vrsceneDetailHandle.allocateAndSet(vrsceneDetail);
 	}
 
-
-	if (GU_ConstDetailHandle(gdh) != getDetail()) {
-		me->setDetail(gdh);
+	if (GU_ConstDetailHandle(vrsceneDetailHandle) != getDetail()) {
+		me->setDetail(vrsceneDetailHandle);
 		getPrim()->getParent()->getPrimitiveList().bumpDataId();
 	}
 

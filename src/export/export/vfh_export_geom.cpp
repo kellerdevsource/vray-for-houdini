@@ -40,11 +40,12 @@ using namespace VRayForHoudini;
 
 /// Used for flipping Y and Z axis
 static const VRay::Transform flipYZTm{ {
-		VRay::Vector(1, 0, 0),
-		VRay::Vector(0, 0, -1),
-		VRay::Vector(0, 1, 0)
-	},
-	{ VRay::Vector(0, 0, 0) }
+		VRay::Vector(1.f, 0.f,  0.f),
+		VRay::Vector(0.f, 0.f, -1.f),
+		VRay::Vector(0.f, 1.f,  0.f)
+	}, {
+		VRay::Vector(0.f, 0.f,  0.f)
+	}
 };
 
 static struct PrimPackedTypeIDs {
@@ -1207,14 +1208,12 @@ VRay::Plugin ObjectExporter::exportVRaySceneRef(OBJ_Node &objNode, const GU_Prim
 
 	const UT_Options &options = vraysceneref->getOptions();
 
-	{
-		VRay::Transform fullTm = pluginExporter.getObjTransform(&objNode, ctx) * getTm();
-		const bool shouldFlip = options.getOptionS("should_flip");
-		if (shouldFlip) {
-			fullTm = flipYZTm * fullTm;
-		}
-		pluginDesc.add(Attrs::PluginAttr("transform", fullTm));
+	VRay::Transform fullTm = pluginExporter.getObjTransform(&objNode, ctx) * getTm();
+	const bool shouldFlip = options.getOptionS("should_flip");
+	if (shouldFlip) {
+		fullTm = flipYZTm * fullTm;
 	}
+	pluginDesc.add(Attrs::PluginAttr("transform", fullTm));
 
 	if (options.getOptionI("use_overrides")) {
 		const UT_StringHolder &overrideSnippet = options.getOptionS("override_snippet"); 

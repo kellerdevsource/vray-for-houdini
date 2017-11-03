@@ -20,7 +20,7 @@
 namespace VRayForHoudini {
 
 enum FlipAxisMode {
-	none=0,    ///< No flipping
+	none = 0,  ///< No flipping
 	automatic, ///< Gets the flipping from the vrscene description
 	flipZY     ///< Force the scene to flip the Z and Y axis
 };
@@ -29,7 +29,7 @@ enum FlipAxisMode {
 ///      or FlipAxisMode::none if the string is not number
 /// @param flipAxisModeS The value of the flip_axis parameter
 /// @returns The corresponding to flipAxisModeS enum value
-inline FlipAxisMode parseFlipAxisMode(const UT_String &flipAxisModeS)
+FORCEINLINE FlipAxisMode parseFlipAxisMode(const UT_String &flipAxisModeS)
 {
 	FlipAxisMode mode = FlipAxisMode::none;
 
@@ -186,7 +186,7 @@ public:
 
 	/// Count memory usage using a UT_MemoryCounter in order to count
 	/// shared memory correctly.
-	/// NOTE: There'flipAxisModeS nothing outside of sizeof(*this) to count in the
+	/// NOTE: There's nothing outside of sizeof(*this) to count in the
 	///       base class, so it can be pure virtual.
 	virtual void countMemory(UT_MemoryCounter &counter, bool inclusive) const VRAY_OVERRIDE;
 
