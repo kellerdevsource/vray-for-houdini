@@ -353,6 +353,9 @@ int ObjectExporter::isNodeVisible(OBJ_Node &objNode) const
 
 int ObjectExporter::isNodeMatte(OBJ_Node &objNode) const
 {
+	if (!pluginExporter.getRopPtr()) {
+		return false;
+	}
 	OP_Bundle *bundle = getMatteGeometryBundle(*pluginExporter.getRopPtr(), ctx.getTime());
 	if (!bundle) {
 		return false;
@@ -362,6 +365,9 @@ int ObjectExporter::isNodeMatte(OBJ_Node &objNode) const
 
 int ObjectExporter::isNodePhantom(OBJ_Node &objNode) const
 {
+	if (!pluginExporter.getRopPtr()) {
+		return false;
+	}
 	OP_Bundle *bundle = getPhantomGeometryBundle(*pluginExporter.getRopPtr(), ctx.getTime());
 	if (!bundle) {
 		return false;
@@ -1701,7 +1707,9 @@ int ObjectExporter::isLightEnabled(OBJ_Node &objLight) const
 {
 	int enabled = 0;
 	objLight.evalParameterOrProperty("enabled", 0, ctx.getTime(), enabled);
-
+	if (!pluginExporter.getRopPtr()) {
+		return enabled;
+	}
 	OP_Bundle *bundle = getForcedLightsBundle(*pluginExporter.getRopPtr(), ctx.getTime());
 	return bundle && (bundle->contains(&objLight, false) || (enabled > 0));
 }
