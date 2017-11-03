@@ -348,7 +348,8 @@ int ObjectExporter::isNodeVisible(OBJ_Node &objNode) const
 	if (pluginExporter.getRopPtr()) {
 		return isNodeVisible(*pluginExporter.getRopPtr(), objNode, ctx.getTime());
 	}
-	return false;
+	// If there is no ROP - there is no option to hide the obj
+	return true;
 }
 
 int ObjectExporter::isNodeMatte(OBJ_Node &objNode) const
