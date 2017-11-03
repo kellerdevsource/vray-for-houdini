@@ -181,7 +181,7 @@ GU_ConstDetailHandle VRaySceneRef::getPackedDetail(GU_PackedContext *context) co
 	vrsceneSettings.cacheSettings.cacheType = VUtils::Vrscene::Preview::VrsceneCacheSettings::VrsceneCacheType::VrsceneCacheTypeRam;
 
 	GU_DetailHandle gdh;
-	// detail for the mesh
+	// Detail for the mesh
 	GU_Detail *meshDetail = new GU_Detail();
 
 	Vrscene::Preview::VrsceneDesc *vrsceneDesc = VRaySceneRef::vrsceneMan.getVrsceneDesc(get_filepath(), &vrsceneSettings);
@@ -202,14 +202,14 @@ GU_ConstDetailHandle VRaySceneRef::getPackedDetail(GU_PackedContext *context) co
 				Vrscene::Preview::VrsceneObjectDataBase *nodeData = vrsceneDesc->getObjectData(node->getDataName().ptr());
 				if (nodeData && nodeData->getDataType() == Vrscene::Preview::ObjectDataTypeMesh) {
 
-					// create preview mesh
+					// Create preview mesh
 					Vrscene::Preview::VrsceneObjectDataMesh *mesh = static_cast<Vrscene::Preview::VrsceneObjectDataMesh*>(nodeData);
 					const VUtils::VectorRefList &vertices = mesh->getVertices(get_current_frame());
 					const VUtils::IntRefList    &faces = mesh->getFaces(get_current_frame());
 
-					// allocate the points, this is the offset of the first one
+					// Allocate the points, this is the offset of the first one
 					GA_Offset pointOffset = meshDetail->appendPointBlock(vertices.count());
-					// iterate through points by their offsets
+					// Iterate through points by their offsets
 					for (int v = 0; v < vertices.count(); ++v, ++pointOffset) {
 
 						Vector vert = tm * vertices[v];
@@ -233,11 +233,10 @@ GU_ConstDetailHandle VRaySceneRef::getPackedDetail(GU_PackedContext *context) co
 			}
 		}
 
-		// handle
 		GU_DetailHandle gdmh;
 		gdmh.allocateAndSet(meshDetail);
 
-		// pack the geometry in the scene detail
+		// Pack the geometry in the scene detail
 		GU_Detail *gdp = new GU_Detail();
 		GU_PackedGeometry::packGeometry(*gdp, gdmh);
 		gdh.allocateAndSet(gdp);
