@@ -103,7 +103,7 @@ VUtils::ErrorCode VRayProxyROP::doExport(const SOPList &sopList)
 
 	VUtils::ErrorCode err = exporter.init();
 	if (!err.error()) {
-		err = exporter.doExportFrame();
+		err = exporter.doExport(m_options, sopList);
 	}
 
 	return err;

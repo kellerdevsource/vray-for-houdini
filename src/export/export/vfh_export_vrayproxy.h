@@ -161,7 +161,7 @@ public:
 	///                       if we are exporting animation
 	/// @retval error code - use ErrorCode::error() to check for errors
 	///                      and ErrorCode::getErrorString() to get the error message
-	static VUtils::ErrorCode doExport(VRayProxyExportOptions &options, const SOPList &sopList);
+	VUtils::ErrorCode doExport(VRayProxyExportOptions &options, const SOPList &sopList);
 
 	/// Constructor
 	/// @note at this point m_geomDescrList is only partially initilized and the number of voxels is determined
@@ -176,10 +176,10 @@ public:
 	///                      and ErrorCode::getErrorString() to get the error message
 	VUtils::ErrorCode init();
 
-	/// Export cached data for the current time to .vrmesh file
+	/// Export data from renderer to .vrscene file and start ply2vrmesh on it
 	/// @retval error code - use ErrorCode::error() to check for errors
 	///                      and ErrorCode::getErrorString() to get the error message
-	VUtils::ErrorCode doExportFrame();
+	VUtils::ErrorCode convertData(float start, float end);
 
 private:
 	/// Input SOP list.

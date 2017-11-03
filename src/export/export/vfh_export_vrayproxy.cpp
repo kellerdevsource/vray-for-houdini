@@ -12,6 +12,9 @@
 #include "vfh_export_mesh.h"
 #include "vfh_export_hair.h"
 
+#include "getenvvars.h"
+#include "voxelsubdivider.h"
+
 #include <ROP/ROP_Error.h>
 #include <OBJ/OBJ_Node.h>
 #include <FS/FS_Info.h>
@@ -20,6 +23,7 @@
 
 #include <QProcess>
 #include <QStringList>
+#include <CH/CH_Segment.h>
 
 using namespace VRayForHoudini;
 
@@ -83,37 +87,9 @@ VRayProxyExporter::VRayProxyExporter(const VRayProxyExportOptions &options, cons
 VUtils::ErrorCode VRayProxyExporter::init()
 {
 	exporter.getRenderer().initRenderer(false, true);
-	VUtils::ErrorCode err;
-
-	for (int i = 0; i < sopList.size(); ++i) {
-		SOP_Node *sopNode = sopList(i);
-		if (sopNode) {
-			OBJ_Node *objNode = CAST_OBJNODE(sopNode->getParentNetwork());
-			if (objNode) {
-				if (!exporter.getObjectExporter().exportNode(*objNode, sopNode)) {
-					err.setError(__FUNCTION__,
-						SOP_ERR_FILEGEO,
-						"Could not export \"%s\" as proxy.", sopNode->getName().c_str());
-				}
-			}
-		}
-	}
-
-	return err;
+	return VUtils::ErrorCode();
 }
 
-
-static VUtils::ErrorCode _doExport(VRayProxyExportOptions &options, const SOPList &sopList)
-{
-	VRayProxyExporter exporter(options, sopList, nullptr);
-
-	VUtils::ErrorCode err = exporter.init();
-	if (!err.error()) {
-		err = exporter.doExportFrame();
-	}
-
-	return err;
-}
 
 VUtils::ErrorCode VRayProxyExporter::doExport(VRayProxyExportOptions &options, const SOPList &sopList)
 {
@@ -151,6 +127,8 @@ VUtils::ErrorCode VRayProxyExporter::doExport(VRayProxyExportOptions &options, c
 		}
 	}
 
+	float startFrame = FLT_MAX;
+	float endFrame = -FLT_MAX;
 	for (int f = 0; f < options.m_animFrames; ++f) {
 		if (err.error()) {
 			break;
@@ -159,23 +137,36 @@ VUtils::ErrorCode VRayProxyExporter::doExport(VRayProxyExportOptions &options, c
 		options.m_context.setTime(options.m_animStart);
 		options.m_context.setFrame(options.m_context.getFrame() + f);
 
-		if (options.m_exportAsSingle) {
-			err = _doExport(options, sopList);
-		}
-		else {
-			for (int sopIdx = 0; sopIdx < sopList.size(); ++sopIdx) {
-				SOPList singleItem;
-				singleItem.append(sopList(sopIdx));
+		// find first and last float frame with data
+		startFrame = VUtils::Min(startFrame, static_cast<float>(options.m_context.getFloatFrame()));
+		endFrame = VUtils::Max(endFrame, static_cast<float>(options.m_context.getFloatFrame()));
 
-				err = _doExport(options, singleItem);
+		// set context here so we have frame data when exporting
+		exporter.setContext(options.m_context);
+
+		// export all items in the sop list
+		for (int i = 0; i < sopList.size(); ++i) {
+			SOP_Node *sopNode = sopList(i);
+			if (sopNode) {
+				OBJ_Node *objNode = CAST_OBJNODE(sopNode->getParentNetwork());
+				if (objNode) {
+					if (!exporter.getObjectExporter().exportNode(*objNode, sopNode)) {
+						err.setError(__FUNCTION__,
+							SOP_ERR_FILEGEO,
+							"Could not export \"%s\" as proxy.", sopNode->getName().c_str());
+					}
+				}
 			}
 		}
 	}
 
+	// convert data to .vrmesh file
+	convertData(startFrame, endFrame);
+
 	return err;
 }
 
-VUtils::ErrorCode VRayProxyExporter::doExportFrame()
+VUtils::ErrorCode VRayProxyExporter::convertData(float start, float end)
 {
 	VUtils::ErrorCode err;
 
@@ -210,21 +201,73 @@ VUtils::ErrorCode VRayProxyExporter::doExportFrame()
 	}
 	exporter.getRenderer().reset();
 
+	// NOTE: Keep the order of theese, the enum value is used to index the array
+	static const char * simplificationType[] = {
+		"face_sampling", // VUtils::SimplificationType::SIMPLIFY_FACE_SAMPLING
+		"clustering",    // VUtils::SimplificationType::SIMPLIFY_CLUSTERING
+		"edge_collapse", // VUtils::SimplificationType::SIMPLIFY_EDGE_COLLAPSE
+		"combined",      // VUtils::SimplificationType::SIMPLIFY_COMBINED
+	};
+
+
 	QStringList arguments;
-	arguments << vrscenePath.c_str() << vrmeshPath.c_str() << "-vrsceneWholeScene" << "-vrsceneFrames" << "0-200";
+	arguments << vrscenePath.c_str() << vrmeshPath.c_str()
+		<< "-vrsceneWholeScene"
+		<< "-facesPerVoxel" << QString::number(m_options.m_maxFacesPerVoxel > 0 ? m_options.m_maxFacesPerVoxel : INT_MAX)
+		<< "-previewFaces"  << QString::number(m_options.m_maxPreviewFaces)
+		<< "-previewHairs"  << QString::number(m_options.m_maxPreviewStrands);
+
+	if (m_options.m_simplificationType >= VUtils::SimplificationType::SIMPLIFY_FACE_SAMPLING
+		&& m_options.m_simplificationType <= VUtils::SimplificationType::SIMPLIFY_COMBINED) {
+		arguments << "-previewType" << simplificationType[m_options.m_simplificationType];
+	}
+
+	const int frameStart = static_cast<int>(start);
+	// Round up here because if we have mblur data that is not on integer frame we will need to export it too
+	const int frameEnd = static_cast<int>(end + 0.5);
+
+	arguments << "-vrsceneFrames" << (QString::number(frameStart) + "-" + QString::number(frameEnd));
+
+	static VUtils::GetEnvVar appsdkPathVar("VRAY_APPSDK", "");
+	const QString appsdkPath = QString(appsdkPathVar.getValue().ptr());
+	if (appsdkPath.isEmpty() || appsdkPath.isNull()) {
+		err.setError(__FUNCTION__,
+		             ROP_EXECUTE_ERROR, // TODO: any better code?
+			         "Missing env variable VFH_THREADED_LOGGER");
+		return err;
+	}
+
+#ifdef WIN32
+	QString ply2vrmeshExe = "ply2vrmesh.exe";
+#else
+	QString ply2vrmeshExe = "ply2vrmesh.bin";
+#endif
+
+	Log::getLog().debug("ply2vrmesh %s", arguments.join(" ").toStdString().c_str());
+
 	QProcess ply2vrmesh;
-	ply2vrmesh.start("D:/sc/ply2vrmesh.exe", arguments);
-	ply2vrmesh.waitForStarted();
-	ply2vrmesh.waitForFinished();
-	auto line = arguments.join(" ").toStdString();
-	auto out = ply2vrmesh.readAll().toStdString();
+	ply2vrmesh.start(appsdkPath + "/tools/" + ply2vrmeshExe, arguments);
+	const bool started = ply2vrmesh.waitForStarted();
+	const bool finished = ply2vrmesh.waitForFinished(-1);
 
+	if (!started || !finished) {
+		err.setError(__FUNCTION__, ROP_EXECUTE_ERROR,
+			"Failed to execute ply2vrmesh (started %s, finished %s)",
+			                               started ? "true" : "false",
+			                               finished ? "true" : "false");
+	}
 
-	// TODO: run ply2vrmesh for the exported vrscene
-	//std::remove(sceneName.c_str());
+	// We split this in lines since vfh_log has 1k max message size
+	const auto outLines = ply2vrmesh.readAll().split('\n');
+	for (const auto & line : outLines) {
+		Log::getLog().debug("pl2vrmesh: %s", line.toStdString().c_str());
+	}
 
-//	VUtils::SubdivisionParams subdivParams;
-//	subdivParams.facesPerVoxel = (m_options.m_maxFacesPerVoxel > 0)? m_options.m_maxFacesPerVoxel : INT_MAX;
+	// Keep the .vrscene file arround when debugging - usefull to check if it is missing data
+	// or if the ply2vrmesh did not convert correctly
+#ifndef VFH_DEBUG
+	std::remove(vrscenePath.c_str());
+#endif
 
 	return err;
 }

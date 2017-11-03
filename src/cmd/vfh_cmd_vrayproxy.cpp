@@ -209,10 +209,11 @@ void CMD::vrayproxy(CMD_Args &args)
 		return;
 	}
 
-	VUtils::ErrorCode err = VRayProxyExporter::doExport(options, sopList);
-	if (err.error()) {
-		args.err() << err.getErrorString().ptr() << "\n";
-	}
+	// TODO: FIX ME
+	//VUtils::ErrorCode err = VRayProxyExporter::doExport(options, sopList);
+	//if (err.error()) {
+	//	args.err() << err.getErrorString().ptr() << "\n";
+	//}
 
 	args.out() << "vrayproxy DONE" << std::endl;
 }
