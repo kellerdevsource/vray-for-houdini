@@ -186,9 +186,10 @@ GU_ConstDetailHandle VRaySceneRef::getPackedDetail(GU_PackedContext *context) co
 
 	Vrscene::Preview::VrsceneDesc *vrsceneDesc = VRaySceneRef::vrsceneMan.getVrsceneDesc(get_filepath(), &vrsceneSettings);
 	if (vrsceneDesc) {
-		const std::string flipAxis = get_flip_axis();
-		const bool should_flip = (flipAxis == "1" /* auto flip axis */ && vrsceneDesc->getUpAxis() == Vrscene::Preview::vrsceneUpAxisZ
-			|| flipAxis == "2" /* force flip axis */);
+		const UT_String flipAxisS = get_flip_axis();
+		const FlipAxisMode flipAxis = parseFlipAxisMode(flipAxisS);
+		const bool should_flip = (flipAxis == FlipAxisMode::flipZY 
+			|| flipAxis == FlipAxisMode::automatic && vrsceneDesc->getUpAxis() == Vrscene::Preview::vrsceneUpAxisZ);
 		me->set_should_flip(should_flip);
 
 		unsigned meshVertexOffset = 0;

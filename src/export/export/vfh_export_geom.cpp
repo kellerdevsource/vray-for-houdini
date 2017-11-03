@@ -38,6 +38,15 @@
 
 using namespace VRayForHoudini;
 
+/// Used for flipping Y and Z axis
+static const VRay::Transform flipYZTm{ {
+		VRay::Vector(1, 0, 0),
+		VRay::Vector(0, 0, -1),
+		VRay::Vector(0, 1, 0)
+	},
+	{ VRay::Vector(0, 0, 0) }
+};
+
 static struct PrimPackedTypeIDs {
 	PrimPackedTypeIDs()
 		: initialized(false)
@@ -1202,15 +1211,7 @@ VRay::Plugin ObjectExporter::exportVRaySceneRef(OBJ_Node &objNode, const GU_Prim
 		VRay::Transform fullTm = pluginExporter.getObjTransform(&objNode, ctx) * getTm();
 		const bool shouldFlip = options.getOptionS("should_flip");
 		if (shouldFlip) {
-
-			VRay::Matrix m = {
-				VRay::Vector(1, 0, 0),
-				VRay::Vector(0, 0, -1),
-				VRay::Vector(0, 1, 0)
-			};
-			VRay::Transform flipTm = { m, VRay::Vector(0, 0, 0) };
-
-			fullTm = flipTm * fullTm;
+			fullTm = flipYZTm * fullTm;
 		}
 		pluginDesc.add(Attrs::PluginAttr("transform", fullTm));
 	}
