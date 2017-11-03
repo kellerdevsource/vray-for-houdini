@@ -95,5 +95,9 @@ def add_physical_camera_attributes():
                     parm.setExpression("-ch(\"./winx\")")
                 elif attrName in {"CameraPhysical_vertical_offset"}:
                     parm.setExpression("-ch(\"./winy\")")
+                elif attrName in {"CameraPhysical_focal_length"}:
+                    parm.setExpression("ch(\"./focal\")")
+                elif attrName in {"CameraPhysical_film_width"}:
+                    parm.setExpression("ch(\"./aperture\")")
             except:
                 pass

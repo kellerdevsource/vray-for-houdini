@@ -8,6 +8,8 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
+#include <QDir>
+
 #include "vfh_defines.h"
 #include "vfh_exporter.h"
 #include "vfh_prm_globals.h"
@@ -49,6 +51,9 @@
 
 using namespace VRayForHoudini;
 
+/// Directory hierarchy creator.
+/// Using static variable, because QDir::mkpath is not static.
+static QDir directoryCreator;
 
 static boost::format FmtPluginNameWithPrefix("%s@%s");
 
@@ -758,13 +763,13 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 		UT_String dirPath;
 		m_rop->evalString(dirPath, "SettingsOutput_img_dir", 0, t);
 
-		// Create output directory.
-		VUtils::uniMakeDir(dirPath.buffer());
-
 		// Ensure slash at the end.
 		if (!dirPath.endsWith("/")) {
 			dirPath.append("/");
 		}
+
+		// Create output directory.
+		directoryCreator.mkpath(dirPath.buffer());
 
 		if (imgFormat == imageFormatOpenEXR ||
 			imgFormat == imageFormatVRayImage)
@@ -1956,6 +1961,8 @@ void VRayExporter::initExporter(int hasUI, int nframes, fpreal tstart, fpreal te
 		return;
 	}
 
+	resetOpCallbacks();
+
 	m_viewParams = ViewParams();
 	m_exportedFrames.clear();
 	m_phxSimulations.clear();
@@ -1963,11 +1970,12 @@ void VRayExporter::initExporter(int hasUI, int nframes, fpreal tstart, fpreal te
 	m_timeStart = tstart;
 	m_timeEnd   = tend;
 	m_isAborted = false;
+	m_isMotionBlur = hasMotionBlur(*m_rop, *camera);
+	m_isVelocityOn = hasVelocityOn(*m_rop);
 
-	setAnimation(nframes > 1);
+	setAnimation(nframes > 1 || m_isMotionBlur || m_isVelocityOn);
 
 	getRenderer().resetCallbacks();
-	resetOpCallbacks();
 
 	if (hasUI) {
 		if (!getRenderer().getVRay().vfb.isShown()) {
@@ -1997,14 +2005,6 @@ void VRayExporter::initExporter(int hasUI, int nframes, fpreal tstart, fpreal te
 	else if (isIPR() == iprModeRT) {
 		m_renderer.addCbOnVfbClose(CbVoid(boost::bind(&VRayExporter::onVfbClose, this)));
 		m_renderer.addCbOnImageReady(CbVoid(boost::bind(&VRayExporter::saveVfbState, this)));
-	}
-
-	m_isMotionBlur = hasMotionBlur(*m_rop, *camera);
-	m_isVelocityOn = hasVelocityOn(*m_rop);
-
-	// NOTE: Force animated values for motion blur
-	if (!isAnimation()) {
-		setAnimation(m_isMotionBlur || m_isVelocityOn);
 	}
 
 	m_error = ROP_CONTINUE_RENDER;
