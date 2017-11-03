@@ -182,7 +182,7 @@ GU_ConstDetailHandle VRaySceneRef::getPackedDetail(GU_PackedContext *context) co
 
 	GU_DetailHandle gdh;
 	// detail for the mesh
-	GU_Detail *gdmp = new GU_Detail();
+	GU_Detail *meshDetail = new GU_Detail();
 
 	Vrscene::Preview::VrsceneDesc *vrsceneDesc = VRaySceneRef::vrsceneMan.getVrsceneDesc(get_filepath(), &vrsceneSettings);
 	if (vrsceneDesc) {
@@ -208,7 +208,7 @@ GU_ConstDetailHandle VRaySceneRef::getPackedDetail(GU_PackedContext *context) co
 					const VUtils::IntRefList    &faces = mesh->getFaces(get_current_frame());
 
 					// allocate the points, this is the offset of the first one
-					GA_Offset pointOffset = gdmp->appendPointBlock(vertices.count());
+					GA_Offset pointOffset = meshDetail->appendPointBlock(vertices.count());
 					// iterate through points by their offsets
 					for (int v = 0; v < vertices.count(); ++v, ++pointOffset) {
 
@@ -217,11 +217,11 @@ GU_ConstDetailHandle VRaySceneRef::getPackedDetail(GU_PackedContext *context) co
 							vert = Vrscene::Preview::flipMatrix * vert;
 						}
 
-						gdmp->setPos3(pointOffset, UT_Vector3(vert.x, vert.y, vert.z));
+						meshDetail->setPos3(pointOffset, UT_Vector3(vert.x, vert.y, vert.z));
 					}
 
 					for (int f = 0; f < faces.count(); f += 3) {
-						GU_PrimPoly *poly = GU_PrimPoly::build(gdmp, 3, GU_POLY_CLOSED, 0);
+						GU_PrimPoly *poly = GU_PrimPoly::build(meshDetail, 3, GU_POLY_CLOSED, 0);
 						for (int c = 0; c < 3; ++c) {
 							poly->setVertexPoint(c, meshVertexOffset + faces[f + c]);
 						}
@@ -235,7 +235,7 @@ GU_ConstDetailHandle VRaySceneRef::getPackedDetail(GU_PackedContext *context) co
 
 		// handle
 		GU_DetailHandle gdmh;
-		gdmh.allocateAndSet(gdmp);
+		gdmh.allocateAndSet(meshDetail);
 
 		// pack the geometry in the scene detail
 		GU_Detail *gdp = new GU_Detail();
