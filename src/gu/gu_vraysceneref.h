@@ -64,7 +64,7 @@ namespace VRayForHoudini {
 	(bool,   mrs_shadows_visibility,     true),\
 	(bool,   mrs_shadows_receive,        true),\
 	(fpreal, mrs_visibility, 1),\
-	(exint,  flip_axis,      0),\
+	(const char *, flip_axis, 0),\
 	(bool,   use_overrides, false),\
 	(const char *, plugin_mapping, ""),\
 	(const char *, override_snippet,  ""),\
