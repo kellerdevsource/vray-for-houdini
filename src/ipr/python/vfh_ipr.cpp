@@ -492,7 +492,7 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 		if (WithExporter lk{}) {
 			VRayExporter &exporter = lk.getExporter();
 			exporter.setRopPtr(ropNode);
-			exporter.setIPR(VRayExporter::iprModeSOHO);
+			exporter.setSessionType(VfhSessionType::ipr);
 			if (!exporter.initRenderer(false, false)) {
 				Py_RETURN_NONE;
 			}
@@ -502,8 +502,8 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 			VRayExporter &exporter = lk.getExporter();
 
 			exporter.setDRSettings();
-			exporter.setRendererMode(getRendererIprMode(*ropNode));
-			exporter.setWorkMode(getExporterWorkMode(*ropNode));
+			exporter.setRenderMode(getRendererIprMode(*ropNode));
+			exporter.setExportMode(getExportMode(*ropNode));
 		}
 
 		if (WithExporter lk{}) {

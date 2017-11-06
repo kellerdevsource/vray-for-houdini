@@ -29,6 +29,21 @@ namespace VRayForHoudini {
 
 class VRayRendererNode;
 
+enum class VfhSessionType {
+	production = 0, ///< Production rendering mode. Same as "Render To Disk".
+	rt, ///< RT session with VFB. 
+	ipr, ///< IPR mode. Used for "Render View" and viewport rendering.
+};
+
+struct VfhSessionData {
+	/// Scene's active take.
+	/// Used to restore scene take after IPR / RT sessions.
+	TAKE_Take *sceneTake = nullptr;
+
+	/// Session type.
+	VfhSessionType type = VfhSessionType::production;
+};
+
 enum class ReturnValue {
 	Error,
 	Success
@@ -98,12 +113,6 @@ public:
 		ExpRender = 0, ///< only render
 		ExpExportRender, ///< export a vrscene and render
 		ExpExport, ///< export a vrscene
-	};
-
-	enum IprMode {
-		iprModeNone = 0,
-		iprModeRT,
-		iprModeSOHO,
 	};
 
 	explicit VRayExporter(OP_Node *rop);
@@ -368,16 +377,16 @@ public:
 	void setAnimation(bool on);
 
 	/// Set if we are exporting for IPR
-	void setIPR(int isIPR);
+	void setSessionType(VfhSessionType value);
 
 	/// Adjust DR options and hosts based on what is set in the ROP parameters
 	void setDRSettings();
 
 	/// Set the render mode: Production/RT CPU/RT GPU
-	void setRendererMode(int mode);
+	void setRenderMode(VRay::RendererOptions::RenderMode mode);
 
-	/// Set the work mode: export vrscene/render/both
-	void setWorkMode(ExpWorkMode mode);
+	/// Sets export mode: export vrscene/render/both
+	void setExportMode(ExpWorkMode mode);
 
 	/// Set current export context
 	void setContext(const VRayOpContext &ctx);
@@ -410,14 +419,14 @@ public:
 	const OP_Node * getRopPtr() const { return m_rop; }
 
 	/// Get ROP error code. This is called from the V-Ray ROP on every frame
-	/// to check if rendering should be aborted
+	/// to check if rendering should be abo=rted
 	ROP_RENDER_CODE getError() const { return m_error; }
 
 	/// Test if we are using the GPU engine
 	int isGPU() const { return m_isGPU; }
 
 	/// Test if we are rendering in IPR mode
-	int isIPR() const { return m_isIPR; }
+	bool isInteractive() const { return sessionType != VfhSessionType::production; }
 
 	/// Test if we need to abort the rendering
 	int isAborted() const { return m_isAborted; }
@@ -565,6 +574,14 @@ public:
 	/// Returns object exporter.
 	ObjectExporter& getObjectExporter() { return objectExporter; }
 
+	/// Applies which take to use for scene export.
+	/// @param take Take name. If not specified ROP's take will be used (if ROP is a VRayRendererNode instance).
+	void applyTake(const char *take=nullptr);
+
+	/// Restores "system" take.
+	/// @param take Take instance. If NULL stored take instance will be used.
+	void restoreTake(TAKE_Take *take = nullptr);
+
 private:
 	/// Export V-Ray material from VOP node.
 	/// @param node VOP node.
@@ -593,7 +610,10 @@ private:
 	ExpWorkMode                    m_workMode; ///< what should the exporter do- export vrscene, render or both
 	CbItems                        m_opRegCallbacks; ///< holds registered node callbacks for live IPR updates
 	Hash::PluginHashSet            m_phxSimulations; ///< accumulates volumetric data to pass to PhxShaderSimVol
-	int                            m_isIPR; ///< if we are rendering in IPR mode, i.e. we are tracking live node updates
+
+	/// Rendering session type.
+	VfhSessionType sessionType;
+
 	int                            m_isGPU; ///< if we are using RT GPU rendering engine
 	int                            m_isAnimation; ///< if we should export the scene at more than one time
 	int                            m_isMotionBlur; ///< if motion blur is turned on
@@ -607,6 +627,9 @@ private:
 
 	/// Frame buffer settings.
 	VFBSettings vfbSettings;
+
+	/// Scene take selected in UI. Used to restore selected take after export.
+	TAKE_Take *uiTake{nullptr};
 
 public:
 	/// Register event callback for a given node. This callback will be invoked when
@@ -660,10 +683,17 @@ public:
 
 const char *getVRayPluginIDName(VRayPluginID pluginID);
 
+// XXX: Rename or remove.
 int getFrameBufferType(OP_Node &rop);
-int getRendererMode(OP_Node &rop);
-int getRendererIprMode(OP_Node &rop);
-VRayExporter::ExpWorkMode getExporterWorkMode(OP_Node &rop);
+
+/// Returns render mode/device for the production rendering from the ROP node.
+VRay::RendererOptions::RenderMode getRendererMode(const OP_Node &rop);
+
+/// Returns render mode/device for the interactive rendering from the ROP node.
+VRay::RendererOptions::RenderMode getRendererIprMode(const OP_Node &rop);
+
+/// Returns export mode from the ROP node.
+VRayExporter::ExpWorkMode getExportMode(const OP_Node &rop);
 
 int isBackground();
 

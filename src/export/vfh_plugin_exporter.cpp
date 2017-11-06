@@ -252,21 +252,23 @@ VRayPluginRenderer::~VRayPluginRenderer()
 }
 
 
-int VRayPluginRenderer::initRenderer(int hasUI, int reInit)
+int VRayPluginRenderer::initRenderer(int hasUI, int /*reInit*/)
 {
 	if (!newVRayInit())
 		return 0;
-
+#if 0
 	if (reInit) {
 		freeMem();
-		resetCallbacks();
 	}
-	else if (m_vray) {
+#endif
+
+	resetCallbacks();
+
+	if (m_vray) {
 		m_vray->stop();
 		m_vray->reset();
 	}
-
-	if (!m_vray) {
+	else {
 		try {
 			VRay::RendererOptions options;
 			options.enableFrameBuffer = hasUI;
@@ -285,47 +287,48 @@ int VRayPluginRenderer::initRenderer(int hasUI, int reInit)
 								e.what());
 			freeMem();
 		}
+	}
 
-		if (m_vray) {
-			m_vray->setOnDumpMessage(OnDumpMessage,       &m_callbacks.m_cbOnDumpMessage);
-			m_vray->setOnProgress(OnProgress,             &m_callbacks.m_cbOnProgress);
-			m_vray->setOnRendererClose(OnRendererClose,   &m_callbacks.m_cbOnRendererClose);
+	if (m_vray) {
+		m_vray->setOnDumpMessage(OnDumpMessage,       &m_callbacks.m_cbOnDumpMessage);
+		m_vray->setOnProgress(OnProgress,             &m_callbacks.m_cbOnProgress);
+		m_vray->setOnRendererClose(OnRendererClose,   &m_callbacks.m_cbOnRendererClose);
 
-			m_vray->setOnImageReady([](VRay::VRayRenderer &renderer, void *context) {
-				VRayPluginRenderer * self = reinterpret_cast<VRayPluginRenderer*>(context);
-				// Only call callback functions if hasUI is true (it will set showFrameBuffer)
-				if (self->m_vray->getOptions().showFrameBuffer) {
-					OnImageReady(renderer, &self->m_callbacks.m_cbOnImageReady);
-				}
+		m_vray->setOnImageReady([](VRay::VRayRenderer &renderer, void *context) {
+			VRayPluginRenderer * self = reinterpret_cast<VRayPluginRenderer*>(context);
 
-				// Stopping rendering should clear scene data from memory
-				if (renderer.isAborted()) {
-					self->m_vray->reset();
-				}
-			}, this);
-
-			if (hasUI) {
-				m_vray->setOnRTImageUpdated(OnRTImageUpdated, &m_callbacks.m_cbOnRTImageUpdated);
-				m_vray->setOnBucketInit(OnBucketInit,         &m_callbacks.m_cbOnBucketInit);
-				m_vray->setOnBucketFailed(OnBucketFailed,     &m_callbacks.m_cbOnBucketFailed);
-				m_vray->setOnBucketReady(OnBucketReady,       &m_callbacks.m_cbOnBucketReady);
-				m_vray->setOnRenderLast(OnRenderLast, &m_callbacks.onRenderLast);
-				m_vray->setOnVFBClosed(OnVFBClosed, &m_callbacks.onVFBClosed);
+			if (HOU::isUIAvailable()) {
+				OnImageReady(renderer, &self->m_callbacks.m_cbOnImageReady);
 			}
+
+			// Stopping rendering should clear scene data from memory
+			if (renderer.isAborted()) {
+				self->m_vray->reset();
+			}
+		}, this);
+
+		if (hasUI) {
+			m_vray->setOnRTImageUpdated(OnRTImageUpdated, &m_callbacks.m_cbOnRTImageUpdated);
+			m_vray->setOnBucketInit(OnBucketInit,         &m_callbacks.m_cbOnBucketInit);
+			m_vray->setOnBucketFailed(OnBucketFailed,     &m_callbacks.m_cbOnBucketFailed);
+			m_vray->setOnBucketReady(OnBucketReady,       &m_callbacks.m_cbOnBucketReady);
+			m_vray->setOnRenderLast(OnRenderLast,         &m_callbacks.onRenderLast);
+			m_vray->setOnVFBClosed(OnVFBClosed,           &m_callbacks.onVFBClosed);
 		}
 	}
 
-	return !!(m_vray);
+	return !!m_vray;
 }
 
 
 void VRayPluginRenderer::freeMem()
 {
+	if (!m_vray)
+		return;
+
 	Log::getLog().debug("VRayPluginRenderer::freeMem()");
 
-	if (m_vray) {
-		m_vray->stop();
-	}
+	m_vray->stop();
 
 	deleteVRayRenderer(m_vray);
 }
@@ -333,9 +336,10 @@ void VRayPluginRenderer::freeMem()
 
 void VRayPluginRenderer::setImageSize(const int w, const int h)
 {
-	if (m_vray) {
-		m_vray->setImageSize(w, h);
-	}
+	if (!m_vray)
+		return;
+
+	m_vray->setImageSize(w, h);
 }
 
 
@@ -541,24 +545,24 @@ void VRayPluginRenderer::setCamera(VRay::Plugin camera)
 }
 
 
-void VRayPluginRenderer::setRendererMode(int mode)
+void VRayPluginRenderer::setRendererMode(VRay::RendererOptions::RenderMode mode)
 {
-	if (m_vray) {
-		VRay::RendererOptions::RenderMode renderMode = static_cast<VRay::RendererOptions::RenderMode>(mode);
+	if (!m_vray)
+		return;
 
-		if (renderMode >= VRay::RendererOptions::RENDER_MODE_RT_CPU) {
-			VRay::RendererOptions options = m_vray->getOptions();
-			options.numThreads = VUtils::getNumProcessors() - 1;
-			options.keepRTRunning = true;
-			options.rtNoiseThreshold = 0.0f;
-			options.rtSampleLevel = INT_MAX;
-			options.rtTimeout = 0;
-
-			m_vray->setOptions(options);
-		}
-
-		m_vray->setRenderMode(renderMode);
+	if (mode >= VRay::RendererOptions::RENDER_MODE_RT_CPU &&
+		mode <= VRay::RendererOptions::RENDER_MODE_PRODUCTION_OPENCL)
+	{
+		VRay::RendererOptions options(m_vray->getOptions());
+		options.numThreads = VUtils::Max(1, VUtils::getNumProcessors() - 1);
+		options.keepRTRunning = true;
+		options.rtNoiseThreshold = 0.0f;
+		options.rtSampleLevel = INT_MAX;
+		options.rtTimeout = 0;
+		m_vray->setOptions(options);
 	}
+
+	m_vray->setRenderMode(mode);
 }
 
 

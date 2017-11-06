@@ -407,7 +407,7 @@ void VRayExporter::fillDescRenderView(const ViewParams &viewParams, Attrs::Plugi
 	pluginDesc.add(Attrs::PluginAttr("orthographic", viewParams.renderView.ortho));
 	pluginDesc.add(Attrs::PluginAttr("orthographicWidth", viewParams.renderView.ortho_width));
 
-	if (isIPR()) {
+	if (isInteractive()) {
 		pluginDesc.add(Attrs::PluginAttr("use_scene_offset", false));
 	}
 
@@ -519,19 +519,19 @@ ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 
 	int prevAutoCommit = false;
 
-	if (isIPR()) {
+	if (isInteractive()) {
 		prevAutoCommit = getRenderer().getVRay().getAutoCommit();
 		getRenderer().setAutoCommit(false);
 	}
 
-	// NOTE: For animation we need to export keyframes everytime
+	// NOTE: For animation we need to export keyframes every time
 	// or data will be wiped with "clearKeyFrames()".
-	const bool needReset = !isIPR() || isAnimation() || m_viewParams.needReset(viewParams);
-	if (needReset) {
+	const bool needReExport = isAnimation() || isInteractive() && m_viewParams.needReset(viewParams);
+	if (needReExport) {
 		Log::getLog().debug("VRayExporter::exportView: Resetting view...");
 
 		// Need to remove plugins only for RT session.
-		if (isIPR()) {
+		if (isInteractive()) {
 			removePlugin("renderView", false);
 			removePlugin("settingsCamera", false);
 			removePlugin("settingsCameraDof", false);
@@ -564,7 +564,7 @@ ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 		fillDescSettingsCamera(viewParams, settingsCamera);
 		exportPlugin(settingsCamera);
 
-		if (viewParams.renderView.stereoParams.use && isIPR() != iprModeSOHO && !isGPU()) {
+		if (viewParams.renderView.stereoParams.use && !isGPU()) {
 			Attrs::PluginDesc stereoSettings("stereoSettings", "VRayStereoscopicSettings");
 			fillStereoSettings(viewParams, stereoSettings);
 			exportPlugin(stereoSettings);
@@ -572,7 +572,7 @@ ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 
 		exportRenderView(viewParams);
 	}
-	else {
+	else if (isInteractive()) {
 		if (m_viewParams.changedParams(viewParams)) {
 			exportRenderView(viewParams);
 		}
@@ -581,7 +581,7 @@ ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 		}
 	}
 
-	if (isIPR()) {
+	if (isInteractive()) {
 		getRenderer().commit();
 		getRenderer().setAutoCommit(prevAutoCommit);
 	}
@@ -607,7 +607,7 @@ ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 int VRayExporter::exportView()
 {
 	// We should not use this for IPR.
-	vassert(m_isIPR != iprModeSOHO);
+	vassert(sessionType != VfhSessionType::ipr);
 
 	Log::getLog().debug("VRayExporter::exportView()");
 
