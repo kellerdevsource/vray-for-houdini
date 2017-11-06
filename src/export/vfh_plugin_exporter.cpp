@@ -265,8 +265,7 @@ int VRayPluginRenderer::initRenderer(int hasUI, int /*reInit*/)
 	resetCallbacks();
 
 	if (m_vray) {
-		m_vray->stop();
-		m_vray->reset();
+		reset();
 	}
 	else {
 		try {
@@ -712,6 +711,11 @@ void VRayPluginRenderer::reset() const
 {
 	if (!m_vray)
 		return;
+
+#ifdef VFH_DEBUG
+	// Error just to be more visible.
+	Log::getLog().error("VRayPluginRenderer::reset()");
+#endif
 
 	m_vray->stop();
 	m_vray->reset();
