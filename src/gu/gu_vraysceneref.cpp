@@ -180,11 +180,18 @@ GU_ConstDetailHandle VRaySceneRef::getPackedDetail(GU_PackedContext *context) co
 	vrsceneSettings.previewFacesCount = 100000;
 	vrsceneSettings.cacheSettings.cacheType = VUtils::Vrscene::Preview::VrsceneCacheSettings::VrsceneCacheType::VrsceneCacheTypeRam;
 
-	GU_DetailHandle gdh;
+	GU_DetailHandle vrsceneDetailHandle;
+	// Detail for the mesh
+	GU_Detail *meshDetail = new GU_Detail();
 
 	Vrscene::Preview::VrsceneDesc *vrsceneDesc = VRaySceneRef::vrsceneMan.getVrsceneDesc(get_filepath(), &vrsceneSettings);
 	if (vrsceneDesc) {
-		const bool flipAxis = get_flip_axis();
+		const UT_String flipAxisS = get_flip_axis();
+		const FlipAxisMode flipAxis = parseFlipAxisMode(flipAxisS);
+		const bool shouldFlip = flipAxis == FlipAxisMode::flipZY || 
+		                        flipAxis == FlipAxisMode::automatic && vrsceneDesc->getUpAxis() == Vrscene::Preview::vrsceneUpAxisZ;
+		me->set_should_flip(shouldFlip);
+
 		unsigned meshVertexOffset = 0;
 
 		for (Vrscene::Preview::VrsceneObjects::iterator obIt = vrsceneDesc->m_objects.begin(); obIt != vrsceneDesc->m_objects.end(); ++obIt) {
@@ -195,29 +202,27 @@ GU_ConstDetailHandle VRaySceneRef::getPackedDetail(GU_PackedContext *context) co
 				Vrscene::Preview::VrsceneObjectNode     *node = static_cast<Vrscene::Preview::VrsceneObjectNode*>(ob);
 				Vrscene::Preview::VrsceneObjectDataBase *nodeData = vrsceneDesc->getObjectData(node->getDataName().ptr());
 				if (nodeData && nodeData->getDataType() == Vrscene::Preview::ObjectDataTypeMesh) {
-					// detail for the mesh
-					GU_Detail *gdmp = new GU_Detail();
 
-					// create preview mesh
+					// Create preview mesh
 					Vrscene::Preview::VrsceneObjectDataMesh *mesh = static_cast<Vrscene::Preview::VrsceneObjectDataMesh*>(nodeData);
 					const VUtils::VectorRefList &vertices = mesh->getVertices(get_current_frame());
 					const VUtils::IntRefList    &faces = mesh->getFaces(get_current_frame());
 
-					// allocate the points, this is the offset of the first one
-					GA_Offset pointOffset = gdmp->appendPointBlock(vertices.count());
-					// iterate through points by their offsets
+					// Allocate the points, this is the offset of the first one
+					GA_Offset pointOffset = meshDetail->appendPointBlock(vertices.count());
+					// Iterate through points by their offsets
 					for (int v = 0; v < vertices.count(); ++v, ++pointOffset) {
 
 						Vector vert = tm * vertices[v];
-						if (flipAxis) {
+						if (shouldFlip) {
 							vert = Vrscene::Preview::flipMatrix * vert;
 						}
 
-						gdmp->setPos3(pointOffset, UT_Vector3(vert.x, vert.y, vert.z));
+						meshDetail->setPos3(pointOffset, UT_Vector3(vert.x, vert.y, vert.z));
 					}
 
 					for (int f = 0; f < faces.count(); f += 3) {
-						GU_PrimPoly *poly = GU_PrimPoly::build(gdmp, 3, GU_POLY_CLOSED, 0);
+						GU_PrimPoly *poly = GU_PrimPoly::build(meshDetail, 3, GU_POLY_CLOSED, 0);
 						for (int c = 0; c < 3; ++c) {
 							poly->setVertexPoint(c, meshVertexOffset + faces[f + c]);
 						}
@@ -225,23 +230,21 @@ GU_ConstDetailHandle VRaySceneRef::getPackedDetail(GU_PackedContext *context) co
 					}
 
 					meshVertexOffset += vertices.count();
-
-					// handle
-					GU_DetailHandle gdmh;
-					gdmh.allocateAndSet(gdmp);
-
-					// pack the geometry in the scene detail
-					GU_Detail *gdp = new GU_Detail();
-					GU_PackedGeometry::packGeometry(*gdp, gdmh);
-					gdh.allocateAndSet(gdp);
 				}
 			}
 		}
+
+		GU_DetailHandle meshDetailHandle;
+		meshDetailHandle.allocateAndSet(meshDetail);
+
+		// Pack the geometry in the scene detail
+		GU_Detail *vrsceneDetail = new GU_Detail();
+		GU_PackedGeometry::packGeometry(*vrsceneDetail, meshDetailHandle);
+		vrsceneDetailHandle.allocateAndSet(vrsceneDetail);
 	}
 
-
-	if (GU_ConstDetailHandle(gdh) != getDetail()) {
-		me->setDetail(gdh);
+	if (GU_ConstDetailHandle(vrsceneDetailHandle) != getDetail()) {
+		me->setDetail(vrsceneDetailHandle);
 		getPrim()->getParent()->getPrimitiveList().bumpDataId();
 	}
 
