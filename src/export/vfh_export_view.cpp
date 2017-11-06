@@ -526,7 +526,7 @@ ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 
 	// NOTE: For animation we need to export keyframes every time
 	// or data will be wiped with "clearKeyFrames()".
-	const bool needReExport = isAnimation() || isInteractive() && m_viewParams.needReset(viewParams);
+	const bool needReExport = isAnimation() || isInteractive() || m_viewParams.needReset(viewParams);
 	if (needReExport) {
 		Log::getLog().debug("VRayExporter::exportView: Resetting view...");
 
