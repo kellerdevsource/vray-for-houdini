@@ -19,7 +19,7 @@
 
 namespace VRayForHoudini {
 
-#define VFH_VRAY_SCENE_PARAMS_COUNT 48
+#define VFH_VRAY_SCENE_PARAMS_COUNT 49
 #define VFH_VRAY_SCENE_PARAMS (\
 	(const char *, filepath, ""),\
 	(bool,   add_nodes,     true),\
@@ -66,6 +66,7 @@ namespace VRayForHoudini {
 	(fpreal, mrs_visibility, 1),\
 	(exint,  flip_axis,      0),\
 	(bool,   use_overrides, false),\
+	(const char *, plugin_mapping, ""),\
 	(const char *, override_snippet,  ""),\
 	(const char *, override_filepath, ""),\
 	(fpreal, current_frame, 0)\

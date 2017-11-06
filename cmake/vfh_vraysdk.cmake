@@ -36,10 +36,6 @@ macro(use_vray_sdk)
 	if (CGR_HAS_VRSCENE)
 		add_definitions(-DCGR_HAS_VRAYSCENE)
 	endif()
-
-	if(WIN32)
-		set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /DVASSERT_ENABLED")
-	endif()
 endmacro()
 
 
