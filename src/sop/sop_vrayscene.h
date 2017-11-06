@@ -14,7 +14,7 @@
 
 #include "sop_node_base.h"
 
-#include <vrscene_preview.h>
+#include <OP/OP_Options.h>
 
 namespace VRayForHoudini {
 namespace SOP {
@@ -27,13 +27,29 @@ public:
 		: NodeBase(parent, name, entry)
 	{}
 
-	/// Houdini callback to cook custom geometry for this node.
-	/// @param context Cooking context.
+	// From SOP_Node.
 	OP_ERROR cookMySop(OP_Context &context) VRAY_OVERRIDE;
 
 protected:
-	/// Set custom plugin id and type for this node.
+	// From VRayNode.
 	void setPluginType() VRAY_OVERRIDE;
+
+private:
+	/// Set node time dependent flag based on UI settings.
+	void setTimeDependent();
+
+	/// Setup / update primitive data based.
+	/// @param context Cooking context.
+	void updatePrimitive(const OP_Context &context);
+
+	/// Packed primitive with the preview data.
+	GU_PrimPacked *m_vrayScenePrim{nullptr};
+
+	/// Current options set.
+	OP_Options m_primOptions;
+
+	/// Show preview mesh animation.
+	int previewMeshAnimated{0};
 };
 
 } // namespace SOP

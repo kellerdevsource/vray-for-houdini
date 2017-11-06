@@ -11,11 +11,17 @@
 #ifndef VRAY_FOR_HOUDINI_VRAYSCENEREF_H
 #define VRAY_FOR_HOUDINI_VRAYSCENEREF_H
 
-#include <vrscene_preview.h>
-
-#include "vfh_vray.h"
 #include "vfh_primitives.h"
-#include "GU/GU_PackedImpl.h"
+
+#include <GU/GU_PackedImpl.h>
+
+namespace VUtils {
+namespace Vrscene {
+namespace Preview {
+struct VrsceneDesc;
+} // Preview
+} // Vrscene
+}
 
 namespace VRayForHoudini {
 
@@ -24,21 +30,6 @@ enum FlipAxisMode {
 	automatic, ///< Gets the flipping from the vrscene description
 	flipZY     ///< Force the scene to flip the Z and Y axis
 };
-/// flip_axis is saved as a string parameter that contains a number
-/// This function parses a string to its corresponding enum value
-///      or FlipAxisMode::none if the string is not number
-/// @param flipAxisModeS The value of the flip_axis parameter
-/// @returns The corresponding to flipAxisModeS enum value
-FORCEINLINE FlipAxisMode parseFlipAxisMode(const UT_String &flipAxisModeS)
-{
-	FlipAxisMode mode = FlipAxisMode::none;
-
-	if (flipAxisModeS.isInteger()) {
-		mode = static_cast<FlipAxisMode>(flipAxisModeS.toInt());
-	}
-
-	return mode;
-}
 
 #define VFH_VRAY_SCENE_PARAMS_COUNT 50
 #define VFH_VRAY_SCENE_PARAMS (\
@@ -102,144 +93,75 @@ FORCEINLINE FlipAxisMode parseFlipAxisMode(const UT_String &flipAxisModeS)
 	(UT_StringArray, mw_refraction_exclude, UT_StringArray())\
 )
 
-// Represents VRayScene file
-// Implemented as a packed primitive
-class VRaySceneRef :
-	public GU_PackedImpl
+/// VRayScene preview mesh implemented as a packed primitive.
+class VRaySceneRef
+	: public GU_PackedImpl
 {
 public:
-	static const char *mw_shadow_tint_color_param_name;
-
-	/// Get the type ID for the VRaySceneRef primitive.
-	static GA_PrimitiveTypeId typeId() { return theTypeId; }
-
-	/// Register the primitive with gafactory
-	/// @param gafactory[out] - Houdini primitive factory for custom plugin primitives
+	static GA_PrimitiveTypeId typeId();
 	static void install(GA_PrimitiveFactory *gafactory);
 
-	/// vrscene manager
-	static VUtils::Vrscene::Preview::VrsceneDescManager vrsceneMan; 
-
-private:
-	/// type id for this primitive
-	/// custom primitive types receive their type id at runtime
-	/// when registering the primitive as opposed to houdini native primitives
-	/// which are known at compile time
-	static GA_PrimitiveTypeId theTypeId;
-
-public:
 	VRaySceneRef();
 	VRaySceneRef(const VRaySceneRef &src);
-	virtual ~VRaySceneRef();
+	~VRaySceneRef();
 
-public:
-	/// Get the factory associated with this procedural
-	virtual GU_PackedFactory *getFactory() const VRAY_OVERRIDE;
+	GU_PackedFactory *getFactory() const VRAY_OVERRIDE;
+	GU_PackedImpl *copy() const VRAY_OVERRIDE;
 
-	/// Create a copy of this resolver
-	virtual GU_PackedImpl *copy() const VRAY_OVERRIDE;
-
-	/// Test whether the deferred load primitive data is valid
-	virtual bool isValid() const VRAY_OVERRIDE;
-
-	/// The clearData() method is called when the primitives are stashed during
-	/// the cook of a SOP.  See GA_Primitive::stashed().  This gives the
-	/// primitive to optionally clear some data during the stashing process.
-	virtual void clearData() VRAY_OVERRIDE;
-
-	/// Give a UT_Options of load data, create resolver data for the primitive
-	virtual bool load(const UT_Options &options, const GA_LoadMap &map) VRAY_OVERRIDE;
-	
-	/// Depending on the update, the procedural should call one of:
-	///	- transformDirty()
-	///	- attributeDirty()
-	///	- topologyDirty()
-	virtual void update(const UT_Options &options) VRAY_OVERRIDE;
-
-	/// Copy the resolver data into the UT_Options for saving
-	virtual bool save(UT_Options &options, const GA_SaveMap &map) const VRAY_OVERRIDE;
-
-	/// Get the bounding box for the geometry (not including transforms)
-	virtual bool getBounds(UT_BoundingBox &box) const VRAY_OVERRIDE;
-
-	/// Get the rendering bounding box for the geometry (not including
-	/// transforms).  For curve and point geometry, this needs to include any
-	/// "width" attributes.
-	virtual bool getRenderingBounds(UT_BoundingBox &box) const VRAY_OVERRIDE;
-
-	/// When rendering with velocity blur, the renderer needs to know the
-	/// bounds on velocity to accurately compute the bounding box.
-	virtual void getVelocityRange(UT_Vector3 &min, UT_Vector3 &max) const VRAY_OVERRIDE;
-
-	/// When rendering points or curves, the renderer needs to know the bounds
-	/// on the width attribute to accurately compute the bounding box.
-	virtual void getWidthRange(fpreal &wmin, fpreal &wmax) const VRAY_OVERRIDE;
-
-	virtual bool unpack(GU_Detail &destgdp) const VRAY_OVERRIDE;
-
-	/// Get a reference to a const GU_Detail for the packed geometry to display in vewport.
-	/// @param context[in/out] - read/write primitive shared data if necessary
-	virtual GU_ConstDetailHandle getPackedDetail(GU_PackedContext *context = 0) const VRAY_OVERRIDE;
-
-	/// Report memory usage (includes all shared memory)
-	virtual int64 getMemoryUsage(bool inclusive) const VRAY_OVERRIDE;
-
-	/// Count memory usage using a UT_MemoryCounter in order to count
-	/// shared memory correctly.
-	/// NOTE: There's nothing outside of sizeof(*this) to count in the
-	///       base class, so it can be pure virtual.
-	virtual void countMemory(UT_MemoryCounter &counter, bool inclusive) const VRAY_OVERRIDE;
-
-public:
-	/// Get/set detail handle for this primitive
-	const GU_ConstDetailHandle& getDetail() const { return m_detail; }
-	VRaySceneRef& setDetail(const GU_ConstDetailHandle &h) { m_detail = h; return *this; }
+	bool isValid() const VRAY_OVERRIDE;
+	void clearData() VRAY_OVERRIDE;
+	bool save(UT_Options &options, const GA_SaveMap &map) const VRAY_OVERRIDE;
+	bool load(const UT_Options &options, const GA_LoadMap &map) VRAY_OVERRIDE;
+	void update(const UT_Options &options) VRAY_OVERRIDE;
+	bool getBounds(UT_BoundingBox &box) const VRAY_OVERRIDE;
+	bool getRenderingBounds(UT_BoundingBox &box) const VRAY_OVERRIDE;
+	void getVelocityRange(UT_Vector3 &min, UT_Vector3 &max) const VRAY_OVERRIDE;
+	void getWidthRange(fpreal &wmin, fpreal &wmax) const VRAY_OVERRIDE;
+	bool unpack(GU_Detail &destgdp) const VRAY_OVERRIDE;
+	GU_ConstDetailHandle getPackedDetail(GU_PackedContext *context = 0) const VRAY_OVERRIDE;
+	int64 getMemoryUsage(bool inclusive) const VRAY_OVERRIDE;
+	void countMemory(UT_MemoryCounter &counter, bool inclusive) const VRAY_OVERRIDE;
 
 	VFH_MAKE_ACCESSORS(VFH_VRAY_SCENE_PARAMS, VFH_VRAY_SCENE_PARAMS_COUNT);
 	VFH_MAKE_ACCESSORS_TUPLE(VFH_VRAY_SCENE_PARAMS_TUPLES, VFH_VRAY_SCENE_PARAMS_TUPLES_COUNT);
 
-	UT_Vector3D get_mw_shadow_tint_color() const
-	{
-		fpreal64 v[3];
-		_get_mw_shadow_tint_color(v, 3);
-		return UT_Vector3D(v[0], v[1], v[2]);
-	}
-	void _get_mw_shadow_tint_color(fpreal64 * v, exint size) const
-	{
-		UT_Vector3D val = m_options.hasOption(mw_shadow_tint_color_param_name) ?
-			m_options.getOptionV3(mw_shadow_tint_color_param_name) : UT_Vector3D();
-		v[0] = val[0]; v[1] = val[1]; v[2] = val[2];
-	}
-	exint get_mw_shadow_tint_color_size() const
-	{
-		return m_options.hasOption(mw_shadow_tint_color_param_name) ?
-			m_options.getOptionV3(mw_shadow_tint_color_param_name).theSize : 0;
-	}
-	void set_mw_shadow_tint_color(const UT_Vector3D & val)
-	{
-		m_options.setOptionV3(mw_shadow_tint_color_param_name, val);
-	}
-	void _set_mw_shadow_tint_color(const fpreal64 * v, exint size)
-	{
-		m_options.setOptionV3(mw_shadow_tint_color_param_name, v[0], v[1], v[2]);
-	}
-	
-public:
-	const UT_Options& getOptions() const
-	{
-		return m_options;
-	}
+	UT_Vector3D get_mw_shadow_tint_color() const;
+	void _get_mw_shadow_tint_color(fpreal64 * v, exint size) const;
+	exint get_mw_shadow_tint_color_size() const;
+	void set_mw_shadow_tint_color(const UT_Vector3D & val);
+	void _set_mw_shadow_tint_color(const fpreal64 * v, exint size);
+
+	/// Returns current options.
+	const UT_Options &getOptions() const { return m_options; }
+
+	/// Returns mesh sample time based on animation overrides settings.
+	/// @param t Current time.
+	double VRaySceneRef::getFrame(fpreal t) const;
 
 private:
-	void clearDetail();
-	bool updateFrom(const UT_Options &options);
+	/// Build packed detail.
+	/// @param vrsceneDesc *.vrscene file preview data.
+	/// @param flipAxis Flip axis Z-Y.
+	void detailBuild(VUtils::Vrscene::Preview::VrsceneDesc *vrsceneDesc, int flipAxis);
 
-private:
-	GU_ConstDetailHandle   m_detail; ///< detail handle for viewport geometry
-	UT_Options             m_options; ///< holds params for vrscene
-	int                    m_dirty; ///< flags if the detail handle needs update
-}; // !class VRaySceneRef
+	/// Clear detail.
+	void detailClear();
 
-} // !namespace VRayForHoudini
+	/// Update detail from options.
+	/// @param options New options set.
+	/// @returns True if detail was changed, false - otherwise.
+	int updateFrom(const UT_Options &options);
+
+	/// Preview mesh bbox.
+	UT_BoundingBox m_bbox;
+
+	/// Geometry detail.
+	GU_ConstDetailHandle m_detail;
+
+	/// Current options set.
+	UT_Options m_options;
+};
+
+} // namespace VRayForHoudini
 
 #endif // !VRAY_FOR_HOUDINI_VRAYSCENEREF_H
