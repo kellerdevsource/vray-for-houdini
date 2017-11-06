@@ -1209,7 +1209,7 @@ VRay::Plugin ObjectExporter::exportVRaySceneRef(OBJ_Node &objNode, const GU_Prim
 	const UT_Options &options = vraysceneref->getOptions();
 
 	VRay::Transform fullTm = pluginExporter.getObjTransform(&objNode, ctx) * getTm();
-	const bool shouldFlip = options.getOptionS("should_flip");
+	const bool shouldFlip = options.getOptionB("should_flip");
 	if (shouldFlip) {
 		fullTm = flipYZTm * fullTm;
 	}
