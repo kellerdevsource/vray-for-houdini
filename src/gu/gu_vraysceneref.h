@@ -136,7 +136,7 @@ public:
 
 	/// Returns mesh sample time based on animation overrides settings.
 	/// @param t Current time.
-	double VRaySceneRef::getFrame(fpreal t) const;
+	double getFrame(fpreal t) const;
 
 private:
 	/// Build packed detail.
