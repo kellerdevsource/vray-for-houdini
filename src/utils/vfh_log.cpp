@@ -19,9 +19,9 @@
 #include "vfh_log.h"
 
 #ifdef _WIN32
-#define VS_DEBUG(...) VUtils::debug(__VA_ARGS__)
+#define VUtilsPrintVisualStudio(...) VUtils::debug(__VA_ARGS__)
 #else
-#define VS_DEBUG(...)
+#define VUtilsPrintVisualStudio(...)
 #endif
 
 using namespace VRayForHoudini;
@@ -70,65 +70,66 @@ struct VfhLogMessage {
 	int fromMain;
 };
 
-static void logMessage(const VfhLogMessage &data)
-{
+/// Because there is no "formatter.asprintf()" in Qt4...
+static QString formatter;
+
+/// Timestamp buffers.
+static tchar strTime[100];
+static tchar strDate[100];
+
 #ifdef _WIN32
-	const int isDebuggerAttached = IsDebuggerPresent();
-	const int isConsoleAttached = !!GetConsoleWindow();
+static const int isDebuggerAttached = IsDebuggerPresent();
+static const int isConsoleAttached = !!GetConsoleWindow();
 #else
-	const int isDebuggerAttached = false;
-	const int isConsoleAttached = true;
+static const int isDebuggerAttached = false;
+static const int isConsoleAttached = true;
 #endif
 
-	tchar strTime[100];
-	tchar strDate[100];
+static void logMessage(const VfhLogMessage &data)
+{
 	vutils_timeToStr(strTime, CountOf(strTime), data.time);
 	vutils_dateToStr(strDate, CountOf(strDate), data.time);
 
-	// Because there is no "formatter.sprintf()" in Qt4...
-	QString formatter;
+	const char *msgEnd = data.message.endsWith('\r') && isConsoleAttached ? "\r" : "\n";
+	const QString msgSimplified = data.message.simplified();
 
 	const QString timeStamp(formatter.sprintf("[%s:%s]", strDate, strTime));
-
-	QString colorTimeStamp(VUTILS_COLOR_BLUE);
-	colorTimeStamp.append(timeStamp);
-	colorTimeStamp.append(VUTILS_COLOR_DEFAULT);
-
-	// Message with aligned components for console fixed font.
-	QString consoleMsg(colorTimeStamp);
-	consoleMsg.append(" VFH ");
-	consoleMsg.append(formatter.sprintf("|%s%8s" VUTILS_COLOR_DEFAULT "| ",
-					  logLevelAsColor(data.level), logLevelAsString(data.level)));
 
 	// Un-aligned message.
 	QString guiMsg("VFH ");
 	guiMsg.append(formatter.sprintf("[%s] ", logLevelAsString(data.level)));
-
 #ifdef VFH_DEBUG
-	consoleMsg.append(data.fromMain ? "* " : "  ");
-	guiMsg.append(    data.fromMain ? "* " : "");
+	guiMsg.append(data.fromMain ? "* " : "");
 #endif
-
-	consoleMsg.append(logLevelAsColor(data.level));
-	consoleMsg.append(data.message.simplified());
-	consoleMsg.append(VUTILS_COLOR_DEFAULT);
-
-	guiMsg.append(data.message.simplified());
-
-	if (isDebuggerAttached) {
-		VS_DEBUG("%s\n", guiMsg.toLocal8Bit().constData());
-	}
-
-	guiMsg.prepend(" ");
-	guiMsg.prepend(timeStamp);
-
-	const QString &printMessage = isConsoleAttached ? consoleMsg : guiMsg;
-
-	vutils_cprintf(true, "%s\n", printMessage.toLocal8Bit().constData());
+	guiMsg.append(msgSimplified);
 
 	if (isConsoleAttached) {
+		// Message with aligned components for console fixed font.
+		QString consoleMsg(VUTILS_COLOR_BLUE);
+		consoleMsg.append(timeStamp);
+		consoleMsg.append(VUTILS_COLOR_DEFAULT);
+		consoleMsg.append(formatter.sprintf(" VFH |%s%8s" VUTILS_COLOR_DEFAULT "| ",
+						  logLevelAsColor(data.level), logLevelAsString(data.level)));
+#ifdef VFH_DEBUG
+		consoleMsg.append(data.fromMain ? "* " : "  ");
+#endif
+		consoleMsg.append(logLevelAsColor(data.level));
+		consoleMsg.append(msgSimplified);
+		consoleMsg.append(VUTILS_COLOR_DEFAULT);
+
+		vutils_cprintf(true, "%s%s", consoleMsg.toLocal8Bit().constData(), msgEnd);
 		fflush(stdout);
-		fflush(stderr);
+	}
+
+	// Print to debugger without timestamp.
+	if (isDebuggerAttached) {
+		VUtilsPrintVisualStudio("%s\n", guiMsg.toLocal8Bit().constData());
+	}
+
+	if (!isConsoleAttached) {
+		guiMsg.prepend(" ");
+		guiMsg.prepend(timeStamp);
+		printf("%s\n", guiMsg.toLocal8Bit().constData());
 	}
 }
 
@@ -143,8 +144,13 @@ public:
 	}
 
 	void add(const VfhLogMessage &msg) {
-		QMutexLocker lock(&mutex);
-		queue.enqueue(msg);
+		if (isConsoleAttached) {
+			QMutexLocker lock(&mutex);
+			queue.enqueue(msg);
+		}
+		else {
+			logMessage(msg);
+		}
 	}
 
 	void startLogging() {
@@ -160,15 +166,18 @@ protected:
 		while (isWorking) {
 			if (queue.isEmpty()) {
 				msleep(100);
-				continue;
 			}
+			else {
+				VfhLogQueue logBatch; {
+					QMutexLocker locker(&mutex);
+					logBatch = queue;
+					queue.clear();
+				}
 
-			VfhLogMessage msg; {
-				QMutexLocker locker(&mutex);
-				msg = queue.dequeue();
+				for (const VfhLogMessage &msg : logBatch) {
+					logMessage(msg);
+				}
 			}
-
-			logMessage(msg);
 		}
 	}
 

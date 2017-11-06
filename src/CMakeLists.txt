@@ -65,6 +65,7 @@ set(EXPORTER_SOURCES
 	utils/vfh_prm_templates.cpp
 	lib/vfh_vray_instances.cpp
 	op/op_node_base.cpp
+	rop/vfh_rop.cpp
 )
 
 set(EXPORTER_HEADERS
@@ -98,6 +99,7 @@ set(EXPORTER_HEADERS
 	utils/vfh_prm_templates.h
 	lib/vfh_vray_instances.h
 	op/op_node_base.h
+	rop/vfh_rop.h
 )
 
 set(SOURCES
@@ -110,7 +112,6 @@ set(SOURCES
 	io/io_vrmesh.cpp
 	obj/obj_node_base.cpp
 	rop/rop_vrayproxyrop.cpp
-	rop/vfh_rop.cpp
 	sop/sop_GeomPlane.cpp
 	sop/sop_PhoenixCache.cpp
 	sop/sop_vrayproxy.cpp
@@ -148,7 +149,6 @@ set(HEADERS
 	obj/obj_node_base.h
 	obj/obj_node_def.h
 	rop/rop_vrayproxyrop.h
-	rop/vfh_rop.h
 	sop/sop_GeomPlane.h
 	sop/sop_node_base.h
 	sop/sop_node_def.h
