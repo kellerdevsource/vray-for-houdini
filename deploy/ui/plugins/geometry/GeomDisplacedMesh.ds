@@ -4,5 +4,5 @@
     parmtag { spare_category "Displacement" }
     parmtag { vray_plugin "GeomDisplacedMesh" }
 
-#include "$VRAY_UI_DS_PATH/plugins/GeomDisplacedMeshParms.ds"
+#include "$VRAY_UI_DS_PATH/plugins/geometry/GeomDisplacedMeshParms.ds"
 }

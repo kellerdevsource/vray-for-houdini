@@ -4,5 +4,5 @@
     parmtag { spare_category "Subdivision" }
     parmtag { vray_plugin "GeomStaticSmoothedMesh" }
 
-#include "$VRAY_UI_DS_PATH/plugins/GeomStaticSmoothedMeshParms.ds"
+#include "$VRAY_UI_DS_PATH/plugins/geometry/GeomStaticSmoothedMeshParms.ds"
 }

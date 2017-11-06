@@ -21,7 +21,7 @@
             parmtag { "vray_file_names" "V-Ray Scene, fileAssetOp=load, displayName=File Path" }
             parmtag { "vray_plugin" "VRayScene" }
             parmtag { "vray_pluginattr" "filepath" }
-            parmtag { "vray_type" "String" }
+            parmtag { "vray_type" "string" }
         }
 
         parm {
@@ -175,7 +175,7 @@
             parmtag { "vray_file_names" "V-Ray Scene, fileAssetOp=load, displayName=File Path" }
             parmtag { "vray_plugin" "VRayScene" }
             parmtag { "vray_pluginattr" "override_filepath" }
-            parmtag { "vray_type" "String" }
+            parmtag { "vray_type" "string" }
             VFH_DISABLE_WHEN_PARAM_FALSE("use_overrides")
         }
     }
