@@ -22,6 +22,9 @@
 #include <OP/OP_Director.h>
 #include <OP/OP_BundleList.h>
 #include <OP/OP_Bundle.h>
+
+#include <TAKE/TAKE_Manager.h>
+
 #include <UT/UT_Interrupt.h>
 
 using namespace VRayForHoudini;
@@ -30,6 +33,24 @@ static const UT_StringRef RT_UPDATE_SPARE_TAG = "rt_update";
 static const UT_StringRef apprenticeLimitMsg = "Third-party render engines are not allowed in Houdini Apprentice!";
 
 static Parm::PRMList prmList;
+
+/// Callback for the "Render RT" button on the ROP node.
+/// This will start the renderer in IPR mode.
+static int RtStartSession(void *data, int /*index*/, fpreal t, const PRM_Template* /*tplate*/)
+{
+	VRayRendererNode &rop = *reinterpret_cast<VRayRendererNode*>(data);
+	rop.startRenderRT(t);
+	return 1;
+}
+
+/// Callback for the "Show VFB" button on the ROP node.
+/// Shows VFB window if there is one.
+static int RendererShowVFB(void *data, int /*index*/, fpreal /*t*/, const PRM_Template* /*tplate*/)
+{
+	VRayRendererNode &rop = *reinterpret_cast<VRayRendererNode*>(data);
+	rop.showVFB();
+	return 1;
+}
 
 OP_TemplatePair* VRayRendererNode::getTemplatePair()
 {
@@ -53,6 +74,7 @@ OP_TemplatePair* VRayRendererNode::getTemplatePair()
 
 		ropPair = new OP_TemplatePair(getROPbaseTemplate(), new OP_TemplatePair(prmList.getPRMTemplate()));
 	}
+
 	return ropPair;
 }
 
@@ -63,6 +85,11 @@ OP_VariablePair* VRayRendererNode::getVariablePair()
 		pair = new OP_VariablePair(ROP_Node::myVariableList);
 	}
 	return pair;
+}
+
+OP_Node* VRayRendererNode::myConstructor(OP_Network *parent, const char *name, OP_Operator *entry)
+{
+	return new VRayRendererNode(parent, name, entry);
 }
 
 VRayRendererNode::VRayRendererNode(OP_Network *net, const char *name, OP_Operator *entry)
@@ -79,27 +106,22 @@ VRayRendererNode::~VRayRendererNode()
 	Log::getLog().debug("~VRayRendererNode()");
 }
 
-bool VRayRendererNode::updateParmsFlags()
-{
-	bool changed = ROP_Node::updateParmsFlags();
-	return changed;
-}
-
 void VRayRendererNode::RtCallbackRop(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
 	Log::getLog().debug("RtCallbackRop: %s from \"%s\"", OPeventToString(type), caller->getName().buffer());
 
-	VRayExporter &exporter = *reinterpret_cast< VRayExporter* >(callee);
-	VRayRendererNode &rop = *UTverify_cast< VRayRendererNode* >(caller);
+	VRayRendererNode &rop = *UTverify_cast<VRayRendererNode*>(caller);
+	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
 
 	switch (type) {
 		case OP_PARM_CHANGED: {
-			const long prmIdx = reinterpret_cast<intptr_t>(data);
+			const int prmIdx = static_cast<int>(reinterpret_cast<intptr_t>(data));
+
 			PRM_Parm &prm = caller->getParm(prmIdx);
-			if (   prm.getSparePtr()
-				&& prm.getSparePtr()->getValue(RT_UPDATE_SPARE_TAG))
+			if (prm.getSparePtr() &&
+				prm.getSparePtr()->getValue(RT_UPDATE_SPARE_TAG))
 			{
-				rop.startIPR(exporter.getContext().getTime());
+				rop.startRenderRT(exporter.getContext().getTime());
 			}
 			break;
 		}
@@ -113,75 +135,82 @@ void VRayRendererNode::RtCallbackRop(OP_Node *caller, void *callee, OP_EventType
 	}
 }
 
-int VRayRendererNode::RtStartSession(void *data, int /*index*/, fpreal t, const PRM_Template* /*tplate*/)
+/// Returns render mode/device from the ROP node depending on the session type.
+/// @param ropNode ROP node instance. May be V-Ray IPR asset.
+/// @param sessionType Session type.
+static VRay::RendererOptions::RenderMode getRenderModeFromROP(const OP_Node &ropNode, VfhSessionType sessionType)
 {
-	VRayRendererNode &rop = *reinterpret_cast<VRayRendererNode*>(data);
-	rop.startIPR(t);
-	return 1;
+	if (sessionType == VfhSessionType::production)
+		return getRendererMode(ropNode);
+	return getRendererIprMode(ropNode);
 }
 
-int VRayRendererNode::RendererShowVFB(void *data, int /*index*/, fpreal /*t*/, const PRM_Template* /*tplate*/) {
-	VRayRendererNode &rop = *reinterpret_cast<VRayRendererNode*>(data);
-	if (!isBackground()) {
-		rop.m_exporter.showVFB();
-	}
-	return 1;
-}
-
-int VRayRendererNode::initSession(int interactive, int nframes, fpreal tstart, fpreal tend)
+int VRayRendererNode::initSession(VfhSessionType sessionType, int nframes, fpreal tstart, fpreal tend)
 {
-	Log::getLog().debug("VRayRendererNode::initSession(%i, %i, %.3ff, %.3f)", interactive, nframes, tstart, tend);
+	Log::getLog().debug("VRayRendererNode::initSession(%i, %i, %.3ff, %.3f)", sessionType, nframes, tstart, tend);
 
 	ROP_RENDER_CODE error = ROP_ABORT_RENDER;
+
+	// Store end time for endRender() executePostRenderScript()
+	m_tstart = tstart;
+	m_tend = tend;
+
+	const int hasUI = HOU::isUIAvailable();
 
 	if (!VRayExporter::getCamera(this)) {
 		Log::getLog().error("Camera is not set!");
 	}
-	else {
-		// Store end time for endRender() executePostRenderScript()
-		m_tstart = tstart;
-		m_tend = tend;
-
-		executePreRenderScript(tstart);
-
-		// Renderer mode (CPU / GPU)
-		const int rendererMode = interactive
-								 ? getRendererIprMode(*this)
-								 : getRendererMode(*this);
-
-		// Interactive mode
-		const int wasRT = m_exporter.isIPR();
-		const int isRT  = (!isBackground() && interactive);
-
-		// Rendering device
-		const int wasGPU = m_exporter.isGPU();
-		const int isGPU  = (rendererMode > VRay::RendererOptions::RENDER_MODE_RT_CPU);
-
-		// Whether to re-create V-Ray renderer
-		const int reCreate = (wasRT != isRT) || (wasGPU != isGPU);
-
-		m_exporter.setIPR(isRT);
-
-		if (m_exporter.initRenderer(!isBackground(), reCreate)) {
-			// Add RT update callbacks to detect scene export changes.
-			m_exporter.addOpCallback(this, RtCallbackRop);
-
-			m_exporter.setRendererMode(rendererMode);
-			m_exporter.setDRSettings();
-
-			m_exporter.setWorkMode(getExporterWorkMode(*this));
-			m_exporter.initExporter(getFrameBufferType(*this), nframes, tstart, tend);
-
-			m_exporter.exportSettings();
-
-			error = m_exporter.getError();
+	else if (m_exporter.initRenderer(hasUI, false)) {
+		// Force production mode for background rendering.
+		if (!hasUI) {
+			sessionType = VfhSessionType::production;
 		}
+
+		const VRay::RendererOptions::RenderMode renderMode =
+			getRenderModeFromROP(*this, sessionType);
+
+		m_exporter.setRopPtr(this);
+
+		m_exporter.setSessionType(sessionType);
+		m_exporter.setExportMode(getExportMode(*this));
+		m_exporter.setRenderMode(renderMode);
+		m_exporter.setDRSettings();
+
+		m_exporter.initExporter(getFrameBufferType(*this), nframes, tstart, tend);
+
+		// SOHO IPR handles this differently for now.
+		if (sessionType == VfhSessionType::rt) {
+			m_exporter.addOpCallback(this, RtCallbackRop);
+		}
+
+		error = m_exporter.getError();
 	}
 
 	return error;
 }
 
-void VRayRendererNode::startIPR(fpreal time)
+void VRayRendererNode::showVFB()
+{
+	if (isBackground())
+		return;
+	m_exporter.showVFB();
+}
+
+TAKE_Take* VRayRendererNode::applyTake(const char *take)
+{
+	if (!UTisstring(take))
+		return nullptr;
+	return applyRenderTake(take);
+}
+
+void VRayRendererNode::restoreTake(TAKE_Take *take)
+{
+	if (!take)
+		return;
+	restoreTake(take);
+}
+
+void VRayRendererNode::startRenderRT(fpreal time)
 {
 	if (HOU::isApprentice()) {
 		Log::getLog().error(apprenticeLimitMsg);
@@ -189,7 +218,10 @@ void VRayRendererNode::startIPR(fpreal time)
 		return;
 	}
 
-	if (initSession(true, 1, time, time)) {
+	Log::getLog().debug("VRayRendererNode::startRenderRT(time = %.3f)",
+						time);
+
+	if (initSession(VfhSessionType::rt, 1, time, time)) {
 		m_exporter.exportFrame(time);
 	}
 }
@@ -202,15 +234,17 @@ int VRayRendererNode::startRender(int nframes, fpreal tstart, fpreal tend)
 		return ROP_ABORT_RENDER;
 	}
 
-	Log::getLog().debug("VRayRendererNode::startRender(%i, %.3f, %.3f)", nframes, tstart, tend);
+	Log::getLog().debug("VRayRendererNode::startRender(nframes = %i, tstart = %.3f, tend = %.3f)",
+						nframes, tstart, tend);
 
-	int err = initSession(false, nframes, tstart, tend);
-	return err;
+	executePreRenderScript(tstart);
+
+	return initSession(VfhSessionType::production, nframes, tstart, tend);
 }
 
-ROP_RENDER_CODE VRayRendererNode::renderFrame(fpreal time, UT_Interrupt *boss)
+ROP_RENDER_CODE VRayRendererNode::renderFrame(fpreal time, UT_Interrupt*)
 {
-	Log::getLog().debug("VRayRendererNode::renderFrame(%.3f)", time);
+	Log::getLog().debug("VRayRendererNode::renderFrame(time = %.3f)", time);
 
 	executePreFrameScript(time);
 
@@ -236,11 +270,11 @@ void VRayRendererNode::register_operator(OP_OperatorTable *table)
 {
 	OP_Operator *rop = new OP_Operator(/* Internal name     */ "vray_renderer",
 									   /* UI name           */ "V-Ray Renderer",
-									   /* How to create one */ VRayRendererNode::myConstructor,
-									   /* Parm definitions  */ VRayRendererNode::getTemplatePair(),
+									   /* How to create one */ myConstructor,
+									   /* Parm definitions  */ getTemplatePair(),
 									   /* Min # of inputs   */ 0,
 									   /* Max # of inputs   */ 256,
-									   /* Var definitions   */ VRayRendererNode::getVariablePair(),
+									   /* Var definitions   */ getVariablePair(),
 									   /* OP flags          */ OP_FLAG_GENERATOR);
 
 	// Set icon

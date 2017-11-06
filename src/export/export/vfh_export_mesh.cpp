@@ -117,7 +117,7 @@ bool MeshExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc &pluginD
 		return false;
 	}
 
-	if (pluginExporter.isIPR() && pluginExporter.isGPU()) {
+	if (pluginExporter.isInteractive() && pluginExporter.isGPU()) {
 		pluginDesc.addAttribute(Attrs::PluginAttr("dynamic_geometry", true));
 	}
 

@@ -80,7 +80,7 @@ if(WITH_VRAY_FOR_HOUDINI)
 	add_subdirectory(src)
 	if(WITH_LAUNCHER)
 		add_subdirectory(launcher)
-		set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT "vfh_launcher")
+		set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT "vray_for_houdini_launcher")
 	endif()
 endif()
 

@@ -15,17 +15,6 @@
 
 namespace VRayForHoudini {
 
-enum class CameraFovMode {
-	/// Use Houdini camera settings.
-	useHoudini = 0,
-
-	/// Use Physical camera native settings.
-	usePhysical,
-
-	/// FOV override.
-	useFovOverride,
-};
-
 enum class PhysicalCameraMode {
 	/// Non physical camera.
 	modeNone = 0,
@@ -77,7 +66,6 @@ struct RenderCropRegionParams {
 };
 
 struct PhysicalCameraParams {
-	CameraFovMode fovMode = CameraFovMode::useHoudini;
 	HoudiniFocalUnits focalUnits = HoudiniFocalUnits::millimeters;
 
 	PhysicalCameraType type = PhysicalCameraType::still;

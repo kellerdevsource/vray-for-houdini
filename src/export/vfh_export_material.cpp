@@ -59,7 +59,7 @@ VRay::Plugin VRayExporter::exportMaterial(VOP_Node *vopNode)
 		material = exportPlugin(mtlPluginDesc);
 	}
 
-	if (material && isIPR()) {
+	if (material && isInteractive()) {
 		// Wrap material into MtlRenderStats to always have the same material name.
 		// Used when rewiring materials when running interactive RT session.
 		Attrs::PluginDesc pluginDesc(getPluginName(vopNode, "MtlStats"), "MtlRenderStats");

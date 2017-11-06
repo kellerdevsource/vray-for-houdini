@@ -8,6 +8,8 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
+#include <QDir>
+
 #include "vfh_defines.h"
 #include "vfh_exporter.h"
 #include "vfh_prm_globals.h"
@@ -49,6 +51,9 @@
 
 using namespace VRayForHoudini;
 
+/// Directory hierarchy creator.
+/// Using static variable, because QDir::mkpath is not static.
+static QDir directoryCreator;
 
 static boost::format FmtPluginNameWithPrefix("%s@%s");
 
@@ -657,7 +662,7 @@ VRayExporter::VRayExporter(OP_Node *rop)
 	, m_frames(0)
 	, m_error(ROP_CONTINUE_RENDER)
 	, m_workMode(ExpRender)
-	, m_isIPR(iprModeNone)
+	, sessionType(VfhSessionType::production)
 	, m_isGPU(0)
 	, m_isAnimation(false)
 	, m_isMotionBlur(0)
@@ -679,9 +684,8 @@ VRayExporter::~VRayExporter()
 
 ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 {
-	if (m_isIPR != iprModeNone) {
+	if (sessionType != VfhSessionType::production)
 		return ReturnValue::Success;
-	}
 
 	const fpreal t = getContext().getTime();
 	OBJ_Node *camera = VRayExporter::getCamera(m_rop);
@@ -745,13 +749,13 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 		UT_String dirPath;
 		m_rop->evalString(dirPath, "SettingsOutput_img_dir", 0, t);
 
-		// Create output directory.
-		VUtils::uniMakeDir(dirPath.buffer());
-
 		// Ensure slash at the end.
 		if (!dirPath.endsWith("/")) {
 			dirPath.append("/");
 		}
+
+		// Create output directory.
+		directoryCreator.mkpath(dirPath.buffer());
 
 		if (imgFormat == imageFormatOpenEXR ||
 			imgFormat == imageFormatVRayImage)
@@ -821,7 +825,7 @@ ReturnValue VRayExporter::exportSettings()
 								sp.c_str());
 		}
 		else {
-			if (m_isIPR != iprModeNone) {
+			if (sessionType != VfhSessionType::production) {
 				if (sp == "SettingsOutput")
 					continue;
 			}
@@ -1506,18 +1510,18 @@ void VRayExporter::resetOpCallbacks()
 
 void VRayExporter::addOpCallback(OP_Node *op_node, OP_EventMethod cb)
 {
-	if (!m_isIPR)
+	if (sessionType == VfhSessionType::production)
+		return;
+	if (op_node->hasOpInterest(this, cb))
 		return;
 
-	if (!op_node->hasOpInterest(this, cb)) {
-		Log::getLog().debug("addOpInterest(%s)",
-							op_node->getName().buffer());
+	Log::getLog().debug("addOpInterest(%s)",
+						op_node->getName().buffer());
 
-		op_node->addOpInterest(this, cb);
+	op_node->addOpInterest(this, cb);
 
-		// Store registered callback for faster removal
-		m_opRegCallbacks.push_back(OpInterestItem(op_node, cb, this));
-	}
+	// Store registered callback for faster removal
+	m_opRegCallbacks.push_back(OpInterestItem(op_node, cb, this));
 }
 
 
@@ -1578,11 +1582,18 @@ void VRayExporter::onAbort(VRay::VRayRenderer &renderer)
 	}
 }
 
+void VRayExporter::onVfbClose()
+{
+	exportEnd();
+	saveVfbState();
+	reset();
+}
+
 void VRayExporter::exportScene()
 {
 	Log::getLog().debug("VRayExporter::exportScene()");
 
-	if (m_isIPR != iprModeSOHO) {
+	if (sessionType != VfhSessionType::ipr) {
 		exportView();
 	}
 
@@ -1732,11 +1743,10 @@ void VRayExporter::removePlugin(VRay::Plugin plugin)
 	m_renderer.removePlugin(plugin);
 }
 
-void VRayExporter::setIPR(int isIPR)
+void VRayExporter::setSessionType(VfhSessionType value)
 {
-	m_isIPR = isIPR;
+	sessionType = value;
 }
-
 
 void VRayExporter::setDRSettings()
 {
@@ -1796,18 +1806,21 @@ void VRayExporter::setDRSettings()
 }
 
 
-void VRayExporter::setRendererMode(int mode)
+void VRayExporter::setRenderMode(VRay::RendererOptions::RenderMode mode)
 {
 	m_renderer.setRendererMode(mode);
-	m_isGPU = (mode >= 1);
 
-	if (mode >= 0) {
+	m_isGPU = mode >= VRay::RendererOptions::RENDER_MODE_RT_GPU_OPENCL;
+
+	if (mode >= VRay::RendererOptions::RENDER_MODE_RT_CPU &&
+		mode <= VRay::RendererOptions::RENDER_MODE_RT_GPU)
+	{
 		setSettingsRtEngine();
 	}
 }
 
 
-void VRayExporter::setWorkMode(VRayExporter::ExpWorkMode mode)
+void VRayExporter::setExportMode(VRayExporter::ExpWorkMode mode)
 {
 	m_workMode = mode;
 }
@@ -1879,11 +1892,6 @@ int VRayExporter::renderFrame(int locked)
 	}
 
 	if (m_workMode == ExpRender || m_workMode == ExpExportRender) {
-		if (vfbSettings.isRenderRegionValid) {
-			getRenderer().getVRay().setRenderRegion(vfbSettings.rrLeft, vfbSettings.rrTop,
-													vfbSettings.rrWidth, vfbSettings.rrHeight);
-		}
-
 		m_renderer.startRender(locked);
 	}
 
@@ -1905,7 +1913,7 @@ int VRayExporter::exportVrscene(const std::string &filepath, VRay::VRayExportSet
 
 void VRayExporter::clearKeyFrames(double toTime)
 {
-	Log::getLog().debug("VRayExporter::clearKeyFrames(%.3f)",
+	Log::getLog().debug("VRayExporter::clearKeyFrames(toTime = %.3f)",
 						toTime);
 	m_renderer.clearFrames(toTime);
 }
@@ -1921,10 +1929,8 @@ void VRayExporter::setAnimation(bool on)
 
 int VRayExporter::initRenderer(int hasUI, int reInit)
 {
-	m_renderer.stopRender();
 	return m_renderer.initRenderer(hasUI, reInit);
 }
-
 
 void VRayExporter::initExporter(int hasUI, int nframes, fpreal tstart, fpreal tend)
 {
@@ -1935,6 +1941,8 @@ void VRayExporter::initExporter(int hasUI, int nframes, fpreal tstart, fpreal te
 		return;
 	}
 
+	resetOpCallbacks();
+
 	m_viewParams = ViewParams();
 	m_exportedFrames.clear();
 	m_phxSimulations.clear();
@@ -1942,11 +1950,13 @@ void VRayExporter::initExporter(int hasUI, int nframes, fpreal tstart, fpreal te
 	m_timeStart = tstart;
 	m_timeEnd   = tend;
 	m_isAborted = false;
+	m_isMotionBlur = hasMotionBlur(*m_rop, *camera);
+	m_isVelocityOn = hasVelocityOn(*m_rop);
 
-	setAnimation(nframes > 1);
+	setAnimation(sessionType == VfhSessionType::production &&
+		(nframes > 1 || m_isMotionBlur || m_isVelocityOn));
 
 	getRenderer().resetCallbacks();
-	resetOpCallbacks();
 
 	if (hasUI) {
 		if (!getRenderer().getVRay().vfb.isShown()) {
@@ -1968,18 +1978,18 @@ void VRayExporter::initExporter(int hasUI, int nframes, fpreal tstart, fpreal te
 	if (isAnimation()) {
 		m_renderer.addCbOnImageReady(CbOnImageReady(boost::bind(&VRayExporter::onAbort, this, _1)));
 	}
-	else if (isIPR()) {
+	else if (sessionType == VfhSessionType::ipr) {
+		m_renderer.addCbOnVfbClose(CbVoid(boost::bind(&VRayExporter::onVfbClose, this)));
 		m_renderer.addCbOnImageReady(CbVoid(boost::bind(&VRayExporter::resetOpCallbacks, this)));
 		m_renderer.addCbOnRendererClose(CbVoid(boost::bind(&VRayExporter::resetOpCallbacks, this)));
 	}
-
-	m_isMotionBlur = hasMotionBlur(*m_rop, *camera);
-	m_isVelocityOn = hasVelocityOn(*m_rop);
-
-	// NOTE: Force animated values for motion blur
-	if (!isAnimation()) {
-		setAnimation(m_isMotionBlur || m_isVelocityOn);
+	else if (sessionType == VfhSessionType::rt) {
+		m_renderer.addCbOnVfbClose(CbVoid(boost::bind(&VRayExporter::onVfbClose, this)));
+		m_renderer.addCbOnImageReady(CbVoid(boost::bind(&VRayExporter::saveVfbState, this)));
 	}
+
+	// Export renderer settings on session initialization.
+	exportSettings();
 
 	m_error = ROP_CONTINUE_RENDER;
 }
@@ -2074,9 +2084,52 @@ void VRayExporter::setTime(fpreal time)
 	Log::getLog().debug("V-Ray frame: %i", getRenderer().getVRay().getCurrentFrame());
 }
 
+void VRayExporter::applyTake(const char *takeName)
+{
+	if (m_rop && CAST_ROPNODE(m_rop)) {
+		VRayRendererNode &vrayROP = *static_cast<VRayRendererNode*>(m_rop);
+
+		UT_String selectedTake(takeName);
+ 
+		if (!selectedTake.isstring()) {
+			vrayROP.evalString(selectedTake, "take", 0, 0.0f);
+		}
+		if (selectedTake.isstring()) {
+			uiTake = vrayROP.applyTake(selectedTake.buffer());
+		}
+	}
+	else {
+		// TODO: Use Take manager.
+	}
+}
+
+void VRayExporter::restoreTake(TAKE_Take *take)
+{
+	if (!take) {
+		take = uiTake;
+		uiTake = nullptr;
+	}
+	if (!take)
+		return;
+
+	if (m_rop && CAST_ROPNODE(m_rop)) {
+		VRayRendererNode &vrayROP = *static_cast<VRayRendererNode*>(m_rop);
+		vrayROP.restoreTake(take);
+	}
+	else {
+		// TODO: Use Take manager.
+	}
+}
+
 void VRayExporter::exportFrame(fpreal time)
 {
 	Log::getLog().debug("VRayExporter::exportFrame(time=%.3f)", time);
+
+	// Houdini handles this automatically for production rendering,
+	// since we've inherited from ROP_Node.
+	if (sessionType != VfhSessionType::production) {
+		applyTake();
+	}
 
 	setTime(time);
 
@@ -2133,7 +2186,11 @@ void VRayExporter::exportFrame(fpreal time)
 		m_error = ROP_ABORT_RENDER;
 	}
 	else {
-		renderFrame(!isIPR());
+		renderFrame(!isInteractive());
+	}
+
+	if (sessionType != VfhSessionType::production) {
+		restoreTake();
 	}
 }
 
@@ -2142,9 +2199,8 @@ void VRayExporter::exportEnd()
 {
 	Log::getLog().debug("VRayExporter::exportEnd()");
 
-	if (isAnimation()) {
-		clearKeyFrames(SYS_FP64_MAX);
-	}
+	clearKeyFrames(SYS_FP64_MAX);
+	reset();
 
 	m_error = ROP_CONTINUE_RENDER;
 }
@@ -2168,31 +2224,45 @@ const char* VRayForHoudini::getVRayPluginIDName(VRayPluginID pluginID)
 	return (pluginID < VRayPluginID::MAX_PLUGINID) ? pluginIDNames[static_cast<std::underlying_type<VRayPluginID>::type>(pluginID)] : nullptr;
 }
 
-int VRayForHoudini::getRendererMode(OP_Node &rop)
+enum class VfhRenderModeMenu {
+	cpu = 0,
+	cuda,
+	opencl,
+};
+
+VRay::RendererOptions::RenderMode VRayForHoudini::getRendererMode(const OP_Node &rop)
 {
-	int renderMode = rop.evalInt("render_render_mode", 0, 0.0);
+	const VfhRenderModeMenu renderMode =
+		static_cast<VfhRenderModeMenu>(rop.evalInt("render_render_mode", 0, 0.0));
+
 	switch (renderMode) {
-		case 0: renderMode = -1; break; // Production CPU
-		case 1: renderMode =  1; break; // RT GPU (OpenCL)
-		case 2: renderMode =  4; break; // RT GPU (CUDA)
-		default: renderMode = -1; break;
+		case VfhRenderModeMenu::cpu:    return VRay::RendererOptions::RENDER_MODE_PRODUCTION;
+		case VfhRenderModeMenu::cuda:   return VRay::RendererOptions::RENDER_MODE_PRODUCTION_CUDA;
+		case VfhRenderModeMenu::opencl: return VRay::RendererOptions::RENDER_MODE_PRODUCTION_OPENCL;
 	}
-	return renderMode;
+
+	vassert(false && "VRayForHoudini::getRendererMode(): Incorrect \"render_render_mode\" value!");
+
+	return VRay::RendererOptions::RENDER_MODE_PRODUCTION;
 }
 
-int VRayForHoudini::getRendererIprMode(OP_Node &rop)
+VRay::RendererOptions::RenderMode VRayForHoudini::getRendererIprMode(const OP_Node &rop)
 {
-	int renderMode = rop.evalInt("render_rt_mode", 0, 0.0);
+	const VfhRenderModeMenu renderMode =
+		static_cast<VfhRenderModeMenu>(rop.evalInt("render_rt_mode", 0, 0.0));
+
 	switch (renderMode) {
-		case 0: renderMode =  0; break; // RT CPU
-		case 1: renderMode =  1; break; // RT GPU (OpenCL)
-		case 2: renderMode =  4; break; // RT GPU (CUDA)
-		default: renderMode = 0; break;
+		case VfhRenderModeMenu::cpu:    return VRay::RendererOptions::RENDER_MODE_RT_CPU;
+		case VfhRenderModeMenu::cuda:   return VRay::RendererOptions::RENDER_MODE_RT_GPU_CUDA;
+		case VfhRenderModeMenu::opencl: return VRay::RendererOptions::RENDER_MODE_RT_GPU_OPENCL;
 	}
-	return renderMode;
+
+	vassert(false && "VRayForHoudini::getRendererIprMode(): Incorrect \"render_rt_mode\" value!");
+
+	return VRay::RendererOptions::RENDER_MODE_PRODUCTION;
 }
 
-VRayExporter::ExpWorkMode VRayForHoudini::getExporterWorkMode(OP_Node &rop)
+VRayExporter::ExpWorkMode VRayForHoudini::getExportMode(const OP_Node &rop)
 {
 	return static_cast<VRayExporter::ExpWorkMode>(rop.evalInt("render_export_mode", 0, 0.0));
 }
