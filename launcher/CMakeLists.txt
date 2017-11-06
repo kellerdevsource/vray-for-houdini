@@ -36,9 +36,11 @@ set_target_properties(${PROJECT_NAME}
 
 # This is to make sure other projects are built when 'vfh_launcher' is startup project
 add_dependencies(${PROJECT_NAME} vray_for_houdini)
+add_dependencies(${PROJECT_NAME} vray_for_houdini_exporter)
 
 if(WITH_SOHO)
-	add_dependencies(${PROJECT_NAME} vray_for_houdini_ipr vray_for_houdini_python_ipr)
+	add_dependencies(${PROJECT_NAME} vray_for_houdini_ipr)
+	add_dependencies(${PROJECT_NAME} vray_for_houdini_python_ipr)
 endif()
 
 if(MSVC AND NOT ${CMAKE_GENERATOR} STREQUAL "Ninja")
