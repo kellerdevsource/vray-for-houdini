@@ -627,6 +627,14 @@ int VRayExporter::exportView()
 	fillViewParamsFromRopNode(*m_rop, viewParams);
 	fillPhysicalViewParamsFromCameraNode(*camera, viewParams);
 
+	// Set render region from VFB settings. Only sessions using VFB.
+	if (vfbSettings.isRenderRegionValid) {
+		viewParams.cropRegion.x = vfbSettings.rrLeft;
+		viewParams.cropRegion.y = vfbSettings.rrTop;
+		viewParams.cropRegion.width = vfbSettings.rrWidth;
+		viewParams.cropRegion.height = vfbSettings.rrHeight;
+	}
+
 	exportView(viewParams);
 
 	viewCsect.leave();

@@ -1906,11 +1906,6 @@ int VRayExporter::renderFrame(int locked)
 	}
 
 	if (m_workMode == ExpRender || m_workMode == ExpExportRender) {
-		if (vfbSettings.isRenderRegionValid) {
-			getRenderer().getVRay().setRenderRegion(vfbSettings.rrLeft, vfbSettings.rrTop,
-													vfbSettings.rrWidth, vfbSettings.rrHeight);
-		}
-
 		m_renderer.startRender(locked);
 	}
 
