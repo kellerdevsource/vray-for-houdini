@@ -105,10 +105,6 @@ int main() {
 		nullptr
 	};
 
-	// NOTE: for this to work in Visual Studio this extension is needed:
-	//   https://marketplace.visualstudio.com/items?itemName=GreggMiskelly.MicrosoftChildProcessDebuggingPowerTool
-	// It'll attach to the created executable.
-	// For gdb: set follow-fork-mode child
 	const int res = execvpe(VFH_LAUNCHER_HFS_BIN, argv, envItems.data());
 	if (res != 0) {
 		// Intentinally thrown here so debugger can break and show.
