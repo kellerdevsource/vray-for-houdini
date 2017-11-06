@@ -171,14 +171,14 @@ int VRayRendererNode::initSession(VfhSessionType sessionType, int nframes, fprea
 		const VRay::RendererOptions::RenderMode renderMode =
 			getRenderModeFromROP(*this, sessionType);
 
+		m_exporter.setRopPtr(this);
+
 		m_exporter.setSessionType(sessionType);
 		m_exporter.setExportMode(getExportMode(*this));
 		m_exporter.setRenderMode(renderMode);
 		m_exporter.setDRSettings();
 
 		m_exporter.initExporter(getFrameBufferType(*this), nframes, tstart, tend);
-
-		m_exporter.exportSettings();
 
 		// SOHO IPR handles this differently for now.
 		if (sessionType == VfhSessionType::rt) {

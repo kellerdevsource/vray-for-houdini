@@ -251,8 +251,39 @@ VRayPluginRenderer::~VRayPluginRenderer()
 	freeMem();
 }
 
+void VRayPluginRenderer::attachCallbacks()
+{
+	if (!m_vray)
+		return;
 
-int VRayPluginRenderer::initRenderer(int hasUI, int /*reInit*/)
+	m_vray->setOnDumpMessage(OnDumpMessage,       &m_callbacks.m_cbOnDumpMessage);
+	m_vray->setOnProgress(OnProgress,             &m_callbacks.m_cbOnProgress);
+	m_vray->setOnRendererClose(OnRendererClose,   &m_callbacks.m_cbOnRendererClose);
+
+	m_vray->setOnImageReady([](VRay::VRayRenderer &renderer, void *context) {
+		VRayPluginRenderer &self = *reinterpret_cast<VRayPluginRenderer*>(context);
+
+		if (self.m_enableVFB) {
+			OnImageReady(renderer, &self.m_callbacks.m_cbOnImageReady);
+		}
+
+		// Stopping rendering should clear scene data from memory
+		if (renderer.isAborted()) {
+			self.m_vray->reset();
+		}
+	}, this);
+
+	if (m_enableVFB) {
+		m_vray->setOnRTImageUpdated(OnRTImageUpdated, &m_callbacks.m_cbOnRTImageUpdated);
+		m_vray->setOnBucketInit(OnBucketInit,         &m_callbacks.m_cbOnBucketInit);
+		m_vray->setOnBucketFailed(OnBucketFailed,     &m_callbacks.m_cbOnBucketFailed);
+		m_vray->setOnBucketReady(OnBucketReady,       &m_callbacks.m_cbOnBucketReady);
+		m_vray->setOnRenderLast(OnRenderLast,         &m_callbacks.onRenderLast);
+		m_vray->setOnVFBClosed(OnVFBClosed,           &m_callbacks.onVFBClosed);
+	}
+}
+
+int VRayPluginRenderer::initRenderer(int enableVFB, int /*reInit*/)
 {
 	if (!newVRayInit())
 		return 0;
@@ -262,6 +293,8 @@ int VRayPluginRenderer::initRenderer(int hasUI, int /*reInit*/)
 	}
 #endif
 
+	m_enableVFB = enableVFB;
+
 	resetCallbacks();
 
 	if (m_vray) {
@@ -270,7 +303,7 @@ int VRayPluginRenderer::initRenderer(int hasUI, int /*reInit*/)
 	else {
 		try {
 			VRay::RendererOptions options;
-			options.enableFrameBuffer = hasUI;
+			options.enableFrameBuffer = m_enableVFB;
 			options.showFrameBuffer = false;
 			options.useDefaultVfbTheme = false;
 			options.vfbDrawStyle = VRay::RendererOptions::ThemeStyleMaya;
@@ -288,33 +321,7 @@ int VRayPluginRenderer::initRenderer(int hasUI, int /*reInit*/)
 		}
 	}
 
-	if (m_vray) {
-		m_vray->setOnDumpMessage(OnDumpMessage,       &m_callbacks.m_cbOnDumpMessage);
-		m_vray->setOnProgress(OnProgress,             &m_callbacks.m_cbOnProgress);
-		m_vray->setOnRendererClose(OnRendererClose,   &m_callbacks.m_cbOnRendererClose);
-
-		m_vray->setOnImageReady([](VRay::VRayRenderer &renderer, void *context) {
-			VRayPluginRenderer * self = reinterpret_cast<VRayPluginRenderer*>(context);
-
-			if (HOU::isUIAvailable()) {
-				OnImageReady(renderer, &self->m_callbacks.m_cbOnImageReady);
-			}
-
-			// Stopping rendering should clear scene data from memory
-			if (renderer.isAborted()) {
-				self->m_vray->reset();
-			}
-		}, this);
-
-		if (hasUI) {
-			m_vray->setOnRTImageUpdated(OnRTImageUpdated, &m_callbacks.m_cbOnRTImageUpdated);
-			m_vray->setOnBucketInit(OnBucketInit,         &m_callbacks.m_cbOnBucketInit);
-			m_vray->setOnBucketFailed(OnBucketFailed,     &m_callbacks.m_cbOnBucketFailed);
-			m_vray->setOnBucketReady(OnBucketReady,       &m_callbacks.m_cbOnBucketReady);
-			m_vray->setOnRenderLast(OnRenderLast,         &m_callbacks.onRenderLast);
-			m_vray->setOnVFBClosed(OnVFBClosed,           &m_callbacks.onVFBClosed);
-		}
-	}
+	attachCallbacks();
 
 	return !!m_vray;
 }
@@ -675,6 +682,17 @@ void VRayPluginRenderer::resetCallbacks()
 	m_callbacks.clear();
 }
 
+bool VRayPluginRenderer::isRendering() const
+{
+	if (!m_vray)
+		return false;
+
+	const VRay::RendererState state = m_vray->getState();
+	if (state == VRay::UNKNOWN)
+		return false;
+
+	return state > VRay::UNKNOWN && state <= VRay::IDLE_DONE;
+}
 
 void VRayForHoudini::VRayPluginRenderer::setAnimation(bool on)
 {
@@ -707,7 +725,7 @@ void VRayPluginRenderer::setAutoCommit(const bool enable)
 	}
 }
 
-void VRayPluginRenderer::reset() const
+void VRayPluginRenderer::reset()
 {
 	if (!m_vray)
 		return;
@@ -719,6 +737,9 @@ void VRayPluginRenderer::reset() const
 
 	m_vray->stop();
 	m_vray->reset();
+
+	// Re-attach callbacks. "Render Last" won't work otherwise.
+	attachCallbacks();
 }
 
 void VFBSettings::fillVfbSettings(void *stateBuf, int stateBufSize, VFBSettings &settings)

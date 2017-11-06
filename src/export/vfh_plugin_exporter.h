@@ -151,12 +151,10 @@ public:
 	~VRayPluginRenderer();
 
 	/// Create and initilize or reset the V-Ray renderer instance.
-	/// @param hasUI[in] - true to enable the VFB, false if VFB is not needed
-	///        for example when running Houdini in non-GUI mode
-	/// @param reInit[in] - true to re-create the V-Ray renderer instance
-	///        otherwise it only resets the existing instance
-	/// @retval true on success
-	int initRenderer(int hasUI, int reInit);
+	/// @param enableVFB Enable VFB
+	/// @param reInit Re-create V-Ray instance.
+	/// @returns true on success.
+	int initRenderer(int enableVFB, int reInit);
 
 	/// Delete the V-Ray renderer instance (if any)
 	void freeMem();
@@ -287,11 +285,17 @@ public:
 	/// Check if VRay::VRayRenderer is instantiated
 	bool isVRayInit() const { return !!m_vray; }
 
+	/// Checks rendering is in progress.
+	bool isRendering() const;
+
 	/// Get the actual renderer instance
 	VRay::VRayRenderer& getVRay() { return *m_vray; }
 
 	/// Reset scene data.
-	void reset() const;
+	void reset();
+
+	/// Checks if VFB is enabled for this instance.
+	bool isVfbEnabled() const { return m_enableVFB; }
 
 	/// Saves VFB state.
 	/// @param stateData Output state as Base64 string.
@@ -306,11 +310,17 @@ public:
 	void getVfbSettings(VFBSettings &settings) const;
 
 private:
+	/// Attach callbacks to the renderer.
+	void attachCallbacks();
+
 	/// V-Ray renderer instance.
 	VRay::VRayRenderer *m_vray;
 
 	/// A collection of registered render callbacks.
 	CbCollection m_callbacks;
+
+	/// Flag indicating that we should use/init VFB related options.
+	int m_enableVFB{false};
 };
 
 } // namespace VRayForHoudini

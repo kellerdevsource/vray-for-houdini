@@ -2002,6 +2002,9 @@ void VRayExporter::initExporter(int hasUI, int nframes, fpreal tstart, fpreal te
 		m_renderer.addCbOnImageReady(CbVoid(boost::bind(&VRayExporter::saveVfbState, this)));
 	}
 
+	// Export renderer settings on session initialization.
+	exportSettings();
+
 	m_error = ROP_CONTINUE_RENDER;
 }
 
