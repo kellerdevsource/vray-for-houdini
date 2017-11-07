@@ -404,7 +404,18 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 					if (inpvop->getOperator()->getName() == "makexform") {
 						switch (curSockInfo.type) {
 							case Parm::eMatrix: {
-								pluginDesc.addAttribute(Attrs::PluginAttr(attrName, exportTransformVop(*inpvop, parentContext).matrix));
+								VRay::Transform transform;
+								if (pluginInfo->pluginType == Parm::PluginTypeUvwgen) {
+									transform = exportTransformVop(*inpvop, parentContext);
+
+									VUtils::swap(transform.matrix[1], transform.matrix[2]);
+									transform.matrix[2].y = -transform.matrix[2].y;
+								}
+								else {
+									transform = exportTransformVop(*inpvop, parentContext);
+								}
+
+								pluginDesc.addAttribute(Attrs::PluginAttr(attrName, transform.matrix));
 								break;
 							}
 							case Parm::eTransform: {
@@ -1099,9 +1110,9 @@ VRay::Plugin VRayExporter::exportVop(OP_Node *opNode, ExportContext *parentConte
 				&& NOT(pluginDesc.contains("uvw_matrix")))
 			{
 				VRay::Transform envMatrix;
-				envMatrix.matrix.setCol(0, VRay::Vector(0.f,1.f,0.f));
+				envMatrix.matrix.setCol(0, VRay::Vector(1.f,0.f,0.f));
 				envMatrix.matrix.setCol(1, VRay::Vector(0.f,0.f,1.f));
-				envMatrix.matrix.setCol(2, VRay::Vector(1.f,0.f,0.f));
+				envMatrix.matrix.setCol(2, VRay::Vector(0.f,-1.f,0.f));
 				envMatrix.offset.makeZero();
 				pluginDesc.addAttribute(Attrs::PluginAttr("uvw_matrix", envMatrix));
 			}
