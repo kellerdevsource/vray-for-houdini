@@ -11,201 +11,12 @@
 #include "vfh_hou_utils.h"
 #include "vfh_plugin_exporter.h"
 #include "vfh_vray_instances.h"
+#include "vfh_log.h"
 
-#include <QtGui>
 #include <QWidget>
-#include <QApplication>
-#include <boost/bind.hpp>
-
-#define PRINT_CALLBACK_CALLS  0
-
 
 using namespace VRayForHoudini;
-using namespace VRayForHoudini::Attrs;
-
-namespace
-{
-template <typename T>
-void CallVoidCallbacks(const CbBase<T> * callbacks)
-{
-	for (auto & cb : callbacks->m_cbVoid) {
-		if (cb) {
-			cb();
-		}
-	}
-}
-
-#ifdef BOOST_NO_CXX11_VARIADIC_TEMPLATES
-/// TODO: Remove this when we drop MSVC 2012 (vc11)
-
-template <typename T, typename Q1, typename Q2, typename Q3, typename Q4, typename Q5, typename Q6>
-void CallCallbacks(const CbBase<T> * callbacks, Q1 && arg1, Q2 && arg2, Q3 && arg3, Q4 && arg4, Q5 && arg5, Q6 && arg6)
-{
-	for (auto & cb : callbacks->m_cbTyped) {
-		if (cb) {
-			cb(std::forward<Q1>(arg1), std::forward<Q2>(arg2), std::forward<Q3>(arg3), std::forward<Q4>(arg4), std::forward<Q5>(arg5), std::forward<Q6>(arg6));
-		}
-	}
-	CallVoidCallbacks(callbacks);
-}
-
-
-template <typename T, typename Q1, typename Q2, typename Q3, typename Q4, typename Q5>
-void CallCallbacks(const CbBase<T> * callbacks, Q1 && arg1, Q2 && arg2, Q3 && arg3, Q4 && arg4, Q5 && arg5)
-{
-	for (auto & cb : callbacks->m_cbTyped) {
-		if (cb) {
-			cb(std::forward<Q1>(arg1), std::forward<Q2>(arg2), std::forward<Q3>(arg3), std::forward<Q4>(arg4), std::forward<Q5>(arg5));
-		}
-	}
-	CallVoidCallbacks(callbacks);
-}
-
-template <typename T, typename Q1, typename Q2, typename Q3, typename Q4>
-void CallCallbacks(const CbBase<T> * callbacks, Q1 && arg1, Q2 && arg2, Q3 && arg3, Q4 && arg4)
-{
-	for (auto & cb : callbacks->m_cbTyped) {
-		if (cb) {
-			cb(std::forward<Q1>(arg1), std::forward<Q2>(arg2), std::forward<Q3>(arg3), std::forward<Q4>(arg4));
-		}
-	}
-	CallVoidCallbacks(callbacks);
-}
-
-template <typename T, typename Q1, typename Q2, typename Q3>
-void CallCallbacks(const CbBase<T> * callbacks, Q1 && arg1, Q2 && arg2, Q3 && arg3)
-{
-	for (auto & cb : callbacks->m_cbTyped) {
-		if (cb) {
-			cb(std::forward<Q1>(arg1), std::forward<Q2>(arg2), std::forward<Q3>(arg3));
-		}
-	}
-	CallVoidCallbacks(callbacks);
-}
-
-template <typename T, typename Q1, typename Q2>
-void CallCallbacks(const CbBase<T> * callbacks, Q1 && arg1, Q2 && arg2)
-{
-	for (auto & cb : callbacks->m_cbTyped) {
-		if (cb) {
-			cb(std::forward<Q1>(arg1), std::forward<Q2>(arg2));
-		}
-	}
-	CallVoidCallbacks(callbacks);
-}
-
-template <typename T, typename Q1>
-void CallCallbacks(const CbBase<T> * callbacks, Q1 && arg1)
-{
-	for (auto & cb : callbacks->m_cbTyped) {
-		if (cb) {
-			cb(std::forward<Q1>(arg1));
-		}
-	}
-	CallVoidCallbacks(callbacks);
-}
-
-#else // BOOST_NO_CXX11_VARIADIC_TEMPLATES
-
-template <typename T, typename ...Args>
-void CallCallbacks(const CbBase<T> * callbacks, Args && ...args)
-{
-	for (auto & cb : callbacks->m_cbTyped) {
-		if (cb) {
-			cb(std::forward<Args>(args)...);
-		}
-	}
-	CallVoidCallbacks(callbacks);
-}
-
-#endif // BOOST_NO_CXX11_VARIADIC_TEMPLATES
-
-void OnRenderLast(VRay::VRayRenderer &renderer, bool isRendering, void *userData)
-{
-	CbSetOnRenderLast *callbacks = reinterpret_cast<CbSetOnRenderLast*>(userData);
-	CallCallbacks(callbacks, renderer, isRendering);
-}
-
-void OnVFBClosed(VRay::VRayRenderer &renderer, void *userData)
-{
-	CbSetOnVFBClosed *callbacks = reinterpret_cast<CbSetOnVFBClosed*>(userData);
-	CallCallbacks(callbacks, renderer);
-}
-
-void OnDumpMessage(VRay::VRayRenderer &renderer, const char *msg, int level, void *userData)
-{
-	CbSetOnDumpMessage *callbacks = reinterpret_cast<CbSetOnDumpMessage*>(userData);
-	CallCallbacks(callbacks, renderer, msg, level);
-}
-
-
-void OnProgress(VRay::VRayRenderer &renderer, const char *msg, int elementNumber, int elementsCount, void *userData)
-{
-	CbSetOnProgress *callbacks = reinterpret_cast<CbSetOnProgress*>(userData);
-	CallCallbacks(callbacks, renderer, msg, elementNumber, elementsCount);
-}
-
-
-void OnRendererClose(VRay::VRayRenderer &renderer, void *userData)
-{
-#if PRINT_CALLBACK_CALLS
-	Log::getLog().warning("VRayPluginRenderer::OnRendererClose()");
-#endif
-	CbSetOnRendererClose *callbacks = reinterpret_cast<CbSetOnRendererClose*>(userData);
-	CallCallbacks(callbacks, renderer);
-}
-
-
-void OnImageReady(VRay::VRayRenderer &renderer, void *userData)
-{
-#if PRINT_CALLBACK_CALLS
-	Log::getLog().warning("VRayPluginRenderer::OnImageReady()");
-#endif
-	CbSetOnImageReady *callbacks = reinterpret_cast<CbSetOnImageReady*>(userData);
-	CallCallbacks(callbacks, renderer);
-}
-
-
-void OnRTImageUpdated(VRay::VRayRenderer &renderer, VRay::VRayImage *img , void *userData)
-{
-#if PRINT_CALLBACK_CALLS
-	Log::getLog().warning("VRayPluginRenderer::OnRTImageUpdated()");
-#endif
-	CbSetOnRTImageUpdated *callbacks = reinterpret_cast<CbSetOnRTImageUpdated*>(userData);
-	CallCallbacks(callbacks, renderer, img);
-}
-
-
-void OnBucketInit(VRay::VRayRenderer &renderer, int x, int y, int w, int h, const char *host, void *userData)
-{
-#if PRINT_CALLBACK_CALLS
-	Log::getLog().warning("VRayPluginRenderer::OnBucketReady()");
-#endif
-	CbSetOnBucketInit *callbacks = reinterpret_cast<CbSetOnBucketInit*>(userData);
-	CallCallbacks(callbacks, renderer, x, y, w, h, host);
-}
-
-
-void OnBucketFailed(VRay::VRayRenderer &renderer, int x, int y, int w, int h, const char *host, void *userData)
-{
-#if PRINT_CALLBACK_CALLS
-	Log::getLog().warning("VRayPluginRenderer::OnBucketReady()");
-#endif
-	CbSetOnBucketFailed *callbacks = reinterpret_cast<CbSetOnBucketFailed*>(userData);
-	CallCallbacks(callbacks, renderer, x, y, w, h, host);
-}
-
-
-void OnBucketReady(VRay::VRayRenderer &renderer, int x, int y, const char *host, VRay::VRayImage *img, void *userData)
-{
-#if PRINT_CALLBACK_CALLS
-	Log::getLog().warning("VRayPluginRenderer::OnBucketReady()");
-#endif
-	CbSetOnBucketReady *callbacks = reinterpret_cast<CbSetOnBucketReady*>(userData);
-	CallCallbacks(callbacks, renderer, x, y, host, img);
-}
-
-}
+using namespace Attrs;
 
 bool VRayPluginRenderer::hasVRScansGUILicense(VRay::ScannedMaterialLicenseError &err)
 {
@@ -238,7 +49,6 @@ bool VRayPluginRenderer::hasVRScansGUILicense(VRay::ScannedMaterialLicenseError 
 
 
 VRayPluginRenderer::VRayPluginRenderer()
-	: m_vray(nullptr)
 {
 	Log::getLog().debug("VRayPluginRenderer()");
 }
@@ -247,40 +57,7 @@ VRayPluginRenderer::VRayPluginRenderer()
 VRayPluginRenderer::~VRayPluginRenderer()
 {
 	Log::getLog().debug("~VRayPluginRenderer()");
-
 	freeMem();
-}
-
-void VRayPluginRenderer::attachCallbacks()
-{
-	if (!m_vray)
-		return;
-
-	m_vray->setOnDumpMessage(OnDumpMessage,       &m_callbacks.m_cbOnDumpMessage);
-	m_vray->setOnProgress(OnProgress,             &m_callbacks.m_cbOnProgress);
-	m_vray->setOnRendererClose(OnRendererClose,   &m_callbacks.m_cbOnRendererClose);
-
-	m_vray->setOnImageReady([](VRay::VRayRenderer &renderer, void *context) {
-		VRayPluginRenderer &self = *reinterpret_cast<VRayPluginRenderer*>(context);
-
-		if (self.m_enableVFB) {
-			OnImageReady(renderer, &self.m_callbacks.m_cbOnImageReady);
-		}
-
-		// Stopping rendering should clear scene data from memory
-		if (renderer.isAborted()) {
-			self.m_vray->reset();
-		}
-	}, this);
-
-	if (m_enableVFB) {
-		m_vray->setOnRTImageUpdated(OnRTImageUpdated, &m_callbacks.m_cbOnRTImageUpdated);
-		m_vray->setOnBucketInit(OnBucketInit,         &m_callbacks.m_cbOnBucketInit);
-		m_vray->setOnBucketFailed(OnBucketFailed,     &m_callbacks.m_cbOnBucketFailed);
-		m_vray->setOnBucketReady(OnBucketReady,       &m_callbacks.m_cbOnBucketReady);
-		m_vray->setOnRenderLast(OnRenderLast,         &m_callbacks.onRenderLast);
-		m_vray->setOnVFBClosed(OnVFBClosed,           &m_callbacks.onVFBClosed);
-	}
 }
 
 int VRayPluginRenderer::initRenderer(int enableVFB, int /*reInit*/)
@@ -295,10 +72,8 @@ int VRayPluginRenderer::initRenderer(int enableVFB, int /*reInit*/)
 
 	m_enableVFB = enableVFB;
 
-	resetCallbacks();
-
 	if (m_vray) {
-		reset();
+		m_vray->reset();
 	}
 	else {
 		try {
@@ -320,8 +95,6 @@ int VRayPluginRenderer::initRenderer(int enableVFB, int /*reInit*/)
 			freeMem();
 		}
 	}
-
-	attachCallbacks();
 
 	return !!m_vray;
 }
@@ -351,10 +124,7 @@ void VRayPluginRenderer::setImageSize(const int w, const int h)
 
 void VRayPluginRenderer::showVFB(bool show, const char *title)
 {
-	if (!m_vray ||
-		!m_vray->getOptions().enableFrameBuffer ||
-		!HOU::isUIAvailable())
-	{
+	if (!m_vray || !m_enableVFB || !HOU::isUIAvailable()) {
 		return;
 	}
 
@@ -676,12 +446,6 @@ void VRayPluginRenderer::stopRender()
 	}
 }
 
-
-void VRayPluginRenderer::resetCallbacks()
-{
-	m_callbacks.clear();
-}
-
 bool VRayPluginRenderer::isRendering() const
 {
 	if (!m_vray)
@@ -694,7 +458,7 @@ bool VRayPluginRenderer::isRendering() const
 	return state > VRay::UNKNOWN && state <= VRay::IDLE_DONE;
 }
 
-void VRayForHoudini::VRayPluginRenderer::setAnimation(bool on)
+void VRayPluginRenderer::setAnimation(bool on)
 {
 	if (m_vray) {
 		m_vray->useAnimatedValues(on);
@@ -702,7 +466,7 @@ void VRayForHoudini::VRayPluginRenderer::setAnimation(bool on)
 }
 
 
-void VRayForHoudini::VRayPluginRenderer::setCurrentTime(fpreal frame)
+void VRayPluginRenderer::setCurrentTime(fpreal frame)
 {
 	if (m_vray) {
 		m_vray->setCurrentTime(frame);
@@ -735,11 +499,17 @@ void VRayPluginRenderer::reset()
 	Log::getLog().error("VRayPluginRenderer::reset()");
 #endif
 
-	m_vray->stop();
-	m_vray->reset();
+	// Remove all callbacks except "setOnRenderLast()"
+#if 0
+	m_vray->setOnImageReady(nullptr);
+	m_vray->setOnProgress(nullptr);
+	m_vray->setOnDumpMessage(nullptr);
+	m_vray->setOnVFBClosed(nullptr);
+	m_vray->setOnRendererClose(nullptr);
+#endif
 
-	// Re-attach callbacks. "Render Last" won't work otherwise.
-	attachCallbacks();
+	m_vray->stop();
+	m_vray->reset(m_vray->getOptions());
 }
 
 void VFBSettings::fillVfbSettings(void *stateBuf, int stateBufSize, VFBSettings &settings)

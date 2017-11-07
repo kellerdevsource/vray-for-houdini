@@ -16,6 +16,7 @@
 #include "vfh_prm_templates.h"
 #include "vfh_export_geom.h"
 #include "vfh_attr_utils.h"
+#include "vfh_log.h"
 
 #include <PRM/PRM_Parm.h>
 #include <OP/OP_Bundle.h>
