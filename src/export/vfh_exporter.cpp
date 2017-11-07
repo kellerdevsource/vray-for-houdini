@@ -1624,9 +1624,17 @@ static void onVfbClosed(VRay::VRayRenderer& /*renderer*/, void *data)
 	VRayExporter &self = *reinterpret_cast<VRayExporter*>(data);
 
 	switch (self.getSessionType()) {
-		case VfhSessionType::production:
+		case VfhSessionType::production: {
+			self.saveVfbState();
+			break;
+		}
 		case VfhSessionType::rt: {
 			self.saveVfbState();
+
+			// Could be closed with out stopping the renderer.
+			if (self.getRenderer().isRendering()) {
+				self.exportEnd();
+			}
 			break;
 		}
 		case VfhSessionType::ipr: {

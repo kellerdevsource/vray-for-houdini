@@ -73,7 +73,7 @@ int VRayPluginRenderer::initRenderer(int enableVFB, int /*reInit*/)
 	m_enableVFB = enableVFB;
 
 	if (m_vray) {
-		m_vray->reset();
+		reset();
 	}
 	else {
 		try {
@@ -452,10 +452,8 @@ bool VRayPluginRenderer::isRendering() const
 		return false;
 
 	const VRay::RendererState state = m_vray->getState();
-	if (state == VRay::UNKNOWN)
-		return false;
 
-	return state > VRay::UNKNOWN && state <= VRay::IDLE_DONE;
+	return state >= VRay::PREPARING && state <= VRay::RENDERING_PAUSED;
 }
 
 void VRayPluginRenderer::setAnimation(bool on)
@@ -499,17 +497,14 @@ void VRayPluginRenderer::reset()
 	Log::getLog().error("VRayPluginRenderer::reset()");
 #endif
 
-	// Remove all callbacks except "setOnRenderLast()"
-#if 0
+	// Remove callbacked except OnVFBClosed and OnRenderLast.
 	m_vray->setOnImageReady(nullptr);
 	m_vray->setOnProgress(nullptr);
 	m_vray->setOnDumpMessage(nullptr);
-	m_vray->setOnVFBClosed(nullptr);
 	m_vray->setOnRendererClose(nullptr);
-#endif
 
 	m_vray->stop();
-	m_vray->reset(m_vray->getOptions());
+	m_vray->reset();
 }
 
 void VFBSettings::fillVfbSettings(void *stateBuf, int stateBufSize, VFBSettings &settings)
