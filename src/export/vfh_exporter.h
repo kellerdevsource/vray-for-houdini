@@ -580,7 +580,7 @@ public:
 
 	/// Restores "system" take.
 	/// @param take Take instance. If NULL stored take instance will be used.
-	void restoreTake(TAKE_Take *take = nullptr);
+	void restoreCurrentTake();
 
 private:
 	/// Export V-Ray material from VOP node.
@@ -629,7 +629,7 @@ private:
 	VFBSettings vfbSettings;
 
 	/// Scene take selected in UI. Used to restore selected take after export.
-	TAKE_Take *uiTake{nullptr};
+	TAKE_Take *currentTake{nullptr};
 
 public:
 	/// Register event callback for a given node. This callback will be invoked when

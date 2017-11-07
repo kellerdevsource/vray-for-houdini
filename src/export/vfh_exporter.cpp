@@ -29,6 +29,7 @@
 #include <OP/OP_Options.h>
 #include <OP/OP_Node.h>
 #include <OP/OP_Bundle.h>
+#include <OP/OP_Take.h>
 #include <ROP/ROP_Node.h>
 #include <SHOP/SHOP_Node.h>
 #include <SOP/SOP_Node.h>
@@ -72,6 +73,10 @@ void VRayExporter::reset()
 	objectExporter.clearOpPluginCache();
 
 	m_renderer.reset();
+
+	resetOpCallbacks();
+
+	restoreCurrentTake();
 }
 
 std::string VRayExporter::getPluginName(const OP_Node &opNode, const char *prefix)
@@ -1976,31 +1981,20 @@ void VRayExporter::initExporter(int hasUI, int nframes, fpreal tstart, fpreal te
 		if (!getRenderer().getVRay().vfb.isShown()) {
 			restoreVfbState();
 		}
-
 		getRenderer().getVfbSettings(vfbSettings);
 		getRenderer().showVFB(m_workMode != ExpExport, m_rop->getFullPath());
-
-		m_renderer.addCbOnImageReady(CbVoid(boost::bind(&VRayExporter::saveVfbState, this)));
-		m_renderer.addCbOnRendererClose(CbVoid(boost::bind(&VRayExporter::saveVfbState, this)));
-		m_renderer.addCbOnVfbClose(CbVoid(boost::bind(&VRayExporter::saveVfbState, this)));
-		m_renderer.addCbOnRenderLast(CbVoid(boost::bind(&VRayExporter::renderLast, this)));
 	}
 
 	m_renderer.addCbOnProgress(CbOnProgress(boost::bind(&VRayExporter::onProgress, this, _1, _2, _3, _4)));
 	m_renderer.addCbOnDumpMessage(CbOnDumpMessage(boost::bind(&VRayExporter::onDumpMessage, this, _1, _2, _3)));
-
-	if (isAnimation()) {
-		m_renderer.addCbOnImageReady(CbOnImageReady(boost::bind(&VRayExporter::onAbort, this, _1)));
-	}
-	else if (sessionType == VfhSessionType::ipr) {
-		m_renderer.addCbOnVfbClose(CbVoid(boost::bind(&VRayExporter::onVfbClose, this)));
-		m_renderer.addCbOnImageReady(CbVoid(boost::bind(&VRayExporter::resetOpCallbacks, this)));
-		m_renderer.addCbOnRendererClose(CbVoid(boost::bind(&VRayExporter::resetOpCallbacks, this)));
-	}
-	else if (sessionType == VfhSessionType::rt) {
-		m_renderer.addCbOnVfbClose(CbVoid(boost::bind(&VRayExporter::onVfbClose, this)));
-		m_renderer.addCbOnImageReady(CbVoid(boost::bind(&VRayExporter::saveVfbState, this)));
-	}
+	m_renderer.addCbOnImageReady(CbOnImageReady(boost::bind(&VRayExporter::onAbort, this, _1)));
+	m_renderer.addCbOnImageReady(CbVoid(boost::bind(&VRayExporter::saveVfbState, this)));
+	m_renderer.addCbOnRendererClose(CbVoid(boost::bind(&VRayExporter::saveVfbState, this)));
+	m_renderer.addCbOnVfbClose(CbVoid(boost::bind(&VRayExporter::saveVfbState, this)));
+	m_renderer.addCbOnRenderLast(CbVoid(boost::bind(&VRayExporter::renderLast, this)));
+	m_renderer.addCbOnVfbClose(CbVoid(boost::bind(&VRayExporter::onVfbClose, this)));
+	m_renderer.addCbOnImageReady(CbVoid(boost::bind(&VRayExporter::resetOpCallbacks, this)));
+	m_renderer.addCbOnRendererClose(CbVoid(boost::bind(&VRayExporter::resetOpCallbacks, this)));
 
 	// Export renderer settings on session initialization.
 	exportSettings();
@@ -2100,50 +2094,56 @@ void VRayExporter::setTime(fpreal time)
 
 void VRayExporter::applyTake(const char *takeName)
 {
+	// Houdini handles this automatically for production rendering,
+	// since we've inherited from ROP_Node.
+	if (sessionType == VfhSessionType::production)
+		return;
+
+	UT_String toTakeName(takeName);
+
 	if (m_rop && CAST_ROPNODE(m_rop)) {
 		VRayRendererNode &vrayROP = *static_cast<VRayRendererNode*>(m_rop);
-
-		UT_String selectedTake(takeName);
- 
-		if (!selectedTake.isstring()) {
-			vrayROP.evalString(selectedTake, "take", 0, 0.0f);
-		}
-		if (selectedTake.isstring()) {
-			uiTake = vrayROP.applyTake(selectedTake.buffer());
-		}
+		if (!toTakeName.isstring())
+			vrayROP.evalString(toTakeName, "take", 0, 0.0f);
 	}
-	else {
-		// TODO: Use Take manager.
+
+	if (!toTakeName.isstring())
+		return;
+
+	OP_Take *takeMan = OPgetDirector()->getTakeManager();
+	if (takeMan) {
+		if (!currentTake) {
+			currentTake = takeMan->getCurrentTake();
+		}
+		TAKE_Take *toTake = takeMan->findTake(toTakeName.buffer());
+		if (toTake) {
+			takeMan->switchToTake(toTake);
+		}
 	}
 }
 
-void VRayExporter::restoreTake(TAKE_Take *take)
+void VRayExporter::restoreCurrentTake()
 {
-	if (!take) {
-		take = uiTake;
-		uiTake = nullptr;
-	}
-	if (!take)
+	// Houdini handles this automatically for production rendering,
+	// since we've inherited from ROP_Node.
+	if (sessionType == VfhSessionType::production)
+		return;
+	if (!currentTake)
 		return;
 
-	if (m_rop && CAST_ROPNODE(m_rop)) {
-		VRayRendererNode &vrayROP = *static_cast<VRayRendererNode*>(m_rop);
-		vrayROP.restoreTake(take);
+	OP_Take *takeMan = OPgetDirector()->getTakeManager();
+	if (takeMan) {
+		takeMan->takeRestoreCurrent(currentTake);
 	}
-	else {
-		// TODO: Use Take manager.
-	}
+
+	currentTake = nullptr;
 }
 
 void VRayExporter::exportFrame(fpreal time)
 {
 	Log::getLog().debug("VRayExporter::exportFrame(time=%.3f)", time);
 
-	// Houdini handles this automatically for production rendering,
-	// since we've inherited from ROP_Node.
-	if (sessionType != VfhSessionType::production) {
-		applyTake();
-	}
+	applyTake();
 
 	setTime(time);
 
@@ -2201,10 +2201,6 @@ void VRayExporter::exportFrame(fpreal time)
 	}
 	else {
 		renderFrame(!isInteractive());
-	}
-
-	if (sessionType != VfhSessionType::production) {
-		restoreTake();
 	}
 }
 
