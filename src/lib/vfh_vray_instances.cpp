@@ -121,6 +121,24 @@ static int getCreateSharedMemory()
 	return 1;
 }
 
+VRay::RendererOptions VRayForHoudini::getDefaultOptions(int initVFB)
+{
+	const QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+
+	VRay::RendererOptions options;
+	options.enableFrameBuffer = initVFB;
+	options.showFrameBuffer = false;
+	options.useDefaultVfbTheme = false;
+	options.vfbDrawStyle = VRay::RendererOptions::ThemeStyleMaya;
+	options.keepRTRunning = true;
+	options.rtNoiseThreshold = 0.0f;
+	options.rtSampleLevel = INT_MAX;
+	options.rtTimeout = 0;
+	options.pluginLibraryPath = env.value("VRAY_FOR_HOUDINI_PLUGINS", "").toStdString();
+
+	return options;
+}
+
 int VRayForHoudini::newVRayInit()
 {
 	Log::getLog().debug("newVRayInit()");
@@ -159,18 +177,10 @@ int VRayForHoudini::newVRayInit()
 	}
 
 	if (addDummyRenderer) {
-		const QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-
 		VRay::VRayRenderer *instance = nullptr;
 
 		try {
-			VRay::RendererOptions options;
-			options.enableFrameBuffer = false;
-			options.showFrameBuffer = false;
-			options.useDefaultVfbTheme = false;
-			options.vfbDrawStyle = VRay::RendererOptions::ThemeStyleMaya;
-			options.pluginLibraryPath = env.value("VRAY_FOR_HOUDINI_PLUGINS", "").toStdString();
-
+			const VRay::RendererOptions options = getDefaultOptions(false);
 			instance = newVRayRenderer(options);
 		}
 		catch (VRay::VRayException &e) {

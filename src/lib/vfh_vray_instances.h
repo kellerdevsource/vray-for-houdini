@@ -23,6 +23,8 @@ void deleteVRayInit();
 VRay::VRayRenderer* newVRayRenderer(const VRay::RendererOptions &options);
 void deleteVRayRenderer(VRay::VRayRenderer* &instance);
 
+VRay::RendererOptions getDefaultOptions(int initVFB);
+
 void dumpSharedMemory();
 
 } // namespace VRayForHoudini

@@ -77,16 +77,7 @@ int VRayPluginRenderer::initRenderer(int enableVFB, int /*reInit*/)
 	}
 	else {
 		try {
-			VRay::RendererOptions options;
-			options.enableFrameBuffer = m_enableVFB;
-			options.showFrameBuffer = false;
-			options.useDefaultVfbTheme = false;
-			options.vfbDrawStyle = VRay::RendererOptions::ThemeStyleMaya;
-			options.keepRTRunning = true;
-			options.rtNoiseThreshold = 0.0f;
-			options.rtSampleLevel = INT_MAX;
-			options.rtTimeout = 0;
-
+			const VRay::RendererOptions options = getDefaultOptions(m_enableVFB);
 			m_vray = newVRayRenderer(options);
 		}
 		catch (VRay::VRayException &e) {
