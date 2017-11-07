@@ -18,6 +18,7 @@
 #include <QSharedMemory>
 #include <QApplication>
 #include <QWidget>
+#include <QProcess>
 
 using namespace VRayForHoudini;
 
@@ -158,6 +159,8 @@ int VRayForHoudini::newVRayInit()
 	}
 
 	if (addDummyRenderer) {
+		const QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+
 		VRay::VRayRenderer *instance = nullptr;
 
 		try {
@@ -166,6 +169,7 @@ int VRayForHoudini::newVRayInit()
 			options.showFrameBuffer = false;
 			options.useDefaultVfbTheme = false;
 			options.vfbDrawStyle = VRay::RendererOptions::ThemeStyleMaya;
+			options.pluginLibraryPath = env.value("VRAY_FOR_HOUDINI_PLUGINS", "").toStdString();
 
 			instance = newVRayRenderer(options);
 		}
