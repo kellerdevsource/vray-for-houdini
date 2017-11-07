@@ -43,7 +43,7 @@ private:
 	void updatePrimitive(const OP_Context &context);
 
 	/// Packed primitive with the preview data.
-	GU_PrimPacked *m_vrayScenePrim{nullptr};
+	GU_PrimPacked *m_primPacked{nullptr};
 
 	/// Current options set.
 	OP_Options m_primOptions;

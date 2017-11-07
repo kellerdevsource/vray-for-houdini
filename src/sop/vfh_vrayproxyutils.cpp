@@ -124,6 +124,7 @@ const UT_StringRef VRayProxyParms::theAnimStartToken    = "anim_start";
 const UT_StringRef VRayProxyParms::theAnimLengthToken   = "anim_length";
 const UT_StringRef VRayProxyParms::theScaleToken        = "scale";
 const UT_StringRef VRayProxyParms::theFlipAxisToken     = "flip_axis";
+const UT_StringRef VRayProxyParms::theCurrentFrame      = "current_frame";
 
 
 VRayProxyCache::GeometryHash::result_type VRayProxyCache::GeometryHash::operator()(const argument_type &val) const
@@ -605,27 +606,28 @@ void VRayProxyCache::updateDetailCacheForKeys(const HashKeys &voxelKeys)
 
 VRayProxyCache::FrameKey VRayProxyCache::getFrameIdx(const VRayProxyParms &options) const
 {
-	UT_ASSERT( m_proxy );
+	vassert(m_proxy);
 
-	// calc true .vrmesh frame in range [0, animation length] from proxy options
-	const exint    animType   = options.getAnimType();
+	const float f = options.getCurrentFrame();
+
+	const int animType = options.getAnimType();
 	const fpreal64 animOffset = options.getAnimOffset();
-	const fpreal64 animSpeed  = options.getAnimSpeed();
+	const fpreal64 animSpeed = options.getAnimSpeed();
 
-	const bool  animOverride = options.getAnimOverride();
-	const exint animStart  = (animOverride)? options.getAnimStart() : 0;
-	exint       animLength = (animOverride)? options.getAnimLength() : 0;
+	const bool animOverride = options.getAnimOverride();
+	const int animStart  = animOverride ? options.getAnimStart() : 0;
+	int animLength = animOverride ? options.getAnimLength() : 0;
 	if (animLength <= 0) {
-		animLength = std::max(m_proxy->getNumFrames(), 1);
+		animLength = VUtils::Max(m_proxy->getNumFrames(), 1);
 	}
 
-
-	return static_cast<FrameKey>(VUtils::fast_round((VUtils::calcFrameIndex(0,
-														static_cast<VUtils::MeshFileAnimType::Enum>(animType),
-														animStart,
-														animLength,
-														animOffset,
-														animSpeed))));
+	return static_cast<FrameKey>(
+		VUtils::fast_round(calcFrameIndex(f,
+			static_cast<VUtils::MeshFileAnimType::Enum>(animType),
+			animStart,
+			animLength,
+			animOffset,
+			animSpeed)));
 }
 
 

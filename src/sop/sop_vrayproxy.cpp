@@ -8,13 +8,11 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
-#include "sop_vrayproxy.h"
-#include "vfh_log.h"
 #include "vfh_prm_templates.h"
+#include "sop_vrayproxy.h"
 #include "gu_vrayproxyref.h"
 
 #include <GU/GU_PrimPacked.h>
-#include <EXPR/EXPR_Lock.h>
 
 using namespace VRayForHoudini;
 
@@ -38,7 +36,9 @@ int SOP::VRayProxy::cbClearCache(void *data, int /*index*/, fpreal t, const PRM_
 	UT_String filepath;
 	node->evalString(filepath, "file", 0, t);
 
-	ClearVRayProxyCache(filepath);
+	if (filepath.isstring()) {
+		ClearVRayProxyCache(filepath);
+	}
 
 	return 0;
 }
@@ -65,118 +65,115 @@ void SOP::VRayProxy::setPluginType()
 	pluginID   = "GeomMeshFile";
 }
 
-OP_ERROR SOP::VRayProxy::cookMySop(OP_Context &context)
+void SOP::VRayProxy::setTimeDependent()
 {
-	if (NOT(gdp)) {
-		addError(SOP_MESSAGE, "Invalid geometry detail.");
-		return error();
+	const VUtils::MeshFileAnimType::Enum animType =
+		static_cast<VUtils::MeshFileAnimType::Enum>(evalInt("anim_type", 0, 0.0));
+
+	previewMeshAnimated = animType != VUtils::MeshFileAnimType::Still;
+
+	flags().setTimeDep(previewMeshAnimated);
+}
+
+void SOP::VRayProxy::updatePrimitive(const OP_Context &context)
+{
+	vassert(m_primPacked);
+
+	const fpreal t = context.getTime();
+
+	// Set the options on the primitive
+#if 1
+	OP_Options primOptions;
+	for (int i = 0; i < getParmList()->getEntries(); ++i) {
+		const PRM_Parm &prm = getParm(i);
+		primOptions.setOptionFromTemplate(this, prm, *prm.getTemplatePtr(), t);
 	}
 
-	const float t = context.getTime();
+	UT_String viewportlod;
+	evalString(viewportlod, "viewportlod", 0, 0.0);
+	m_primPacked->setViewportLOD(GEOviewportLOD(viewportlod));
+	primOptions.setOptionS("viewportlod", viewportlod);
 
-	gdp->stashAll();
+	UT_String objectPath;
+	evalString(objectPath, "object_path", 0, 0.0);
+	primOptions.setOptionS("object_path", objectPath);
 
+	primOptions.setOptionI("lod", true ? LOD_PREVIEW : evalInt("loadtype", 0, 0.0));
+	primOptions.setOptionF("current_frame", previewMeshAnimated ? context.getFloatFrame() : 0.0f);
+#else
 	UT_String path;
 	evalString(path, "file", 0, t);
-	if (path.equal("")) {
-		UT_String missingfile;
-		evalString(missingfile, "missingfile", 0, t);
-		if (missingfile == "error") {
-			addError(SOP_ERR_FILEGEO, "Invalid file path!");
-		}
 
-		gdp->destroyStashed();
-		return error();
+	UT_Options primOptions;
+	primOptions
+		.setOptionI("lod", evalInt("loadtype", 0, t))
+		.setOptionS("file", path)
+		.setOptionI("anim_type", evalInt("anim_type", 0, t))
+		.setOptionF("anim_offset", evalFloat("anim_offset", 0, t))
+		.setOptionF("anim_speed", evalFloat("anim_speed", 0, t))
+		.setOptionB("anim_override", evalInt("anim_override", 0, t))
+		.setOptionI("anim_start", evalInt("anim_start", 0, t))
+		.setOptionI("anim_length", evalInt("anim_length", 0, t))
+		.setOptionB("compute_bbox", evalInt("compute_bbox", 0, t))
+		.setOptionB("compute_normals", evalInt("compute_normals", 0, t))
+		.setOptionI("first_map_channel", evalInt("first_map_channel", 0, t))
+		.setOptionI("flip_axis", evalInt("flip_axis", 0, t))
+		.setOptionB("flip_normals", evalInt("flip_normals", 0, t))
+		.setOptionI("hair_visibility_lists_type", evalInt("hair_visibility_lists_type", 0, t))
+		.setOptionF("hair_width_multiplier", evalFloat("hair_width_multiplier", 0, t))
+		.setOptionB("instancing", evalInt("instancing", 0, t))
+		.setOptionI("num_preview_faces", evalInt("num_preview_faces", 0, t))
+		.setOptionS("object_path", objectPath)
+		.setOptionI("particle_render_mode", evalInt("particle_render_mode", 0, t))
+		.setOptionI("particle_visibility_lists_type", evalInt("particle_visibility_lists_type", 0, t))
+		.setOptionF("particle_width_multiplier", evalFloat("particle_width_multiplier", 0, t))
+		.setOptionF("point_cloud_mult", evalFloat("point_cloud_mult", 0, t))
+		.setOptionB("primary_visibility", evalInt("primary_visibility", 0, t))
+		.setOptionF("scale", evalFloat("scale", 0, t))
+		.setOptionF("smooth_angle", evalFloat("smooth_angle", 0, t))
+		.setOptionB("smooth_uv", evalInt("smooth_uv", 0, t))
+		.setOptionB("smooth_uv_borders", evalInt("smooth_uv_borders", 0, t))
+		.setOptionI("sort_voxels", evalInt("sort_voxels", 0, t))
+		.setOptionB("subdiv_all_meshes", evalInt("subdiv_all_meshes", 0, t))
+		.setOptionI("subdiv_level", evalInt("subdiv_level", 0, t))
+		.setOptionB("subdiv_preserve_geom_borders", evalInt("subdiv_preserve_geom_borders", 0, t))
+		.setOptionB("subdiv_preserve_map_borders", evalInt("subdiv_preserve_map_borders", 0, t))
+		.setOptionI("subdiv_type", evalInt("subdiv_type", 0, t))
+		.setOptionB("subdiv_uvs", evalInt("subdiv_uvs", 0, t))
+		.setOptionB("use_alembic_offset", evalInt("use_alembic_offset", 0, t))
+		.setOptionB("use_face_sets", evalInt("use_face_sets", 0, t))
+		.setOptionB("use_full_names", evalInt("use_full_names", 0, t))
+		.setOptionB("use_point_cloud", evalInt("use_point_cloud", 0, t))
+		.setOptionS("velocity_color_set", velocityColorSet)
+		.setOptionF("velocity_multiplier", evalFloat("velocity_multiplier", 0, t))
+		.setOptionI("visibility_lists_type", evalInt("visibility_lists_type", 0, t))
+	;
+#endif
+
+	if (m_primOptions != primOptions) {
+		m_primOptions = primOptions;
+
+		m_primPacked->implementation()->update(m_primOptions);
+	}
+}
+
+OP_ERROR SOP::VRayProxy::cookMySop(OP_Context &context)
+{
+	Log::getLog().debug("SOP::VRayProxy::cookMySop()");
+
+	if (!m_primPacked) {
+		m_primPacked = GU_PrimPacked::build(*gdp, "VRayProxyRef");
+
+		// Set the location of the packed primitive point.
+		const UT_Vector3 pivot(0.0, 0.0, 0.0);
+		m_primPacked->setPivot(pivot);
+		gdp->setPos3(m_primPacked->getPointOffset(0), pivot);
 	}
 
-	if (error() < UT_ERROR_ABORT) {
-		const auto animType = static_cast<VUtils::MeshFileAnimType::Enum>(evalInt("anim_type", 0, t));
-		const bool is_animated = (animType != VUtils::MeshFileAnimType::Still);
-		flags().setTimeDep(is_animated);
+	vassert(m_primPacked);
 
-		UT_Interrupt *boss = UTgetInterrupt();
-		if (boss) {
-			if(boss->opStart("Building V-Ray Scene Preview Mesh")) {
-				// Create a packed primitive
-				GU_PrimPacked *pack = GU_PrimPacked::build(*gdp, "VRayProxyRef");
-				if (NOT(pack)) {
-					addWarning(SOP_MESSAGE, "Can't create packed primitive VRayProxyRef");
-				}
-				else {
-					// Set the location of the packed primitive's point.
-					UT_Vector3 pivot(0, 0, 0);
-					pack->setPivot(pivot);
-					gdp->setPos3(pack->getPointOffset(0), pivot);
-
-					UT_String viewportlod;
-					evalString(viewportlod, "viewportlod", 0, t);
-					pack->setViewportLOD(GEOviewportLOD(viewportlod));
-
-					UT_String objectPath;
-					evalString(objectPath, "object_path", 0, t);
-
-					UT_String velocityColorSet;
-					evalString(velocityColorSet, "velocity_color_set", 0, t);
-
-					// Set the options on the primitive
-					UT_Options options;
-					options.setOptionI("lod", evalInt("loadtype", 0, t))
-							.setOptionS("file", path)
-							.setOptionI("anim_type", evalInt("anim_type", 0, t))
-							.setOptionF("anim_offset", evalFloat("anim_offset", 0, t) + context.getFrame())
-							.setOptionF("anim_speed", evalFloat("anim_speed", 0, t))
-							.setOptionB("anim_override", evalInt("anim_override", 0, t))
-							.setOptionI("anim_start", evalInt("anim_start", 0, t))
-							.setOptionI("anim_length", evalInt("anim_length", 0, t))
-							.setOptionB("compute_bbox", evalInt("compute_bbox", 0, t))
-							.setOptionB("compute_normals", evalInt("compute_normals", 0, t))
-							.setOptionI("first_map_channel", evalInt("first_map_channel", 0, t))
-							.setOptionI("flip_axis", evalInt("flip_axis", 0, t))
-							.setOptionB("flip_normals", evalInt("flip_normals", 0, t))
-							.setOptionI("hair_visibility_lists_type", evalInt("hair_visibility_lists_type", 0, t))
-							.setOptionF("hair_width_multiplier", evalFloat("hair_width_multiplier", 0, t))
-							.setOptionB("instancing", evalInt("instancing", 0, t))
-							.setOptionI("num_preview_faces", evalInt("num_preview_faces", 0, t))
-							.setOptionS("object_path", objectPath)
-							.setOptionI("particle_render_mode", evalInt("particle_render_mode", 0, t))
-							.setOptionI("particle_visibility_lists_type", evalInt("particle_visibility_lists_type", 0, t))
-							.setOptionF("particle_width_multiplier", evalFloat("particle_width_multiplier", 0, t))
-							.setOptionF("point_cloud_mult", evalFloat("point_cloud_mult", 0, t))
-							.setOptionB("primary_visibility", evalInt("primary_visibility", 0, t))
-							.setOptionF("scale", evalFloat("scale", 0, t))
-							.setOptionF("smooth_angle", evalFloat("smooth_angle", 0, t))
-							.setOptionB("smooth_uv", evalInt("smooth_uv", 0, t))
-							.setOptionB("smooth_uv_borders", evalInt("smooth_uv_borders", 0, t))
-							.setOptionI("sort_voxels", evalInt("sort_voxels", 0, t))
-							.setOptionB("subdiv_all_meshes", evalInt("subdiv_all_meshes", 0, t))
-							.setOptionI("subdiv_level", evalInt("subdiv_level", 0, t))
-							.setOptionB("subdiv_preserve_geom_borders", evalInt("subdiv_preserve_geom_borders", 0, t))
-							.setOptionB("subdiv_preserve_map_borders", evalInt("subdiv_preserve_map_borders", 0, t))
-							.setOptionI("subdiv_type", evalInt("subdiv_type", 0, t))
-							.setOptionB("subdiv_uvs", evalInt("subdiv_uvs", 0, t))
-							.setOptionB("use_alembic_offset", evalInt("use_alembic_offset", 0, t))
-							.setOptionB("use_face_sets", evalInt("use_face_sets", 0, t))
-							.setOptionB("use_full_names", evalInt("use_full_names", 0, t))
-							.setOptionB("use_point_cloud", evalInt("use_point_cloud", 0, t))
-							.setOptionS("velocity_color_set", velocityColorSet)
-							.setOptionF("velocity_multiplier", evalFloat("velocity_multiplier", 0, t))
-							.setOptionI("visibility_lists_type", evalInt("visibility_lists_type", 0, t))
-							;
-
-					pack->implementation()->update(options);
-					pack->setPathAttribute(getFullPath());
-				}
-			}
-			boss->opEnd();
-		}
-	}
-
-	gdp->destroyStashed();
-
-	// Set the node selection for this primitive. This will highlight all
-	// primitives generated by the node, but only if the highlight flag for this
-	// node is on and the node is selected.
-	select(GA_GROUP_PRIMITIVE);
+	setTimeDependent();
+	updatePrimitive(context);
 
 	return error();
 }

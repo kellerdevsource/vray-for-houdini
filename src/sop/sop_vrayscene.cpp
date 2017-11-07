@@ -41,13 +41,7 @@ void SOP::VRayScene::setTimeDependent()
 
 void SOP::VRayScene::updatePrimitive(const OP_Context &context)
 {
-	vassert(m_vrayScenePrim);
-
-	// Set the location of the packed primitive point.
-	const UT_Vector3 pivot(0.0, 0.0, 0.0);
-	m_vrayScenePrim->setPivot(pivot);
-
-	gdp->setPos3(m_vrayScenePrim->getPointOffset(0), pivot);
+	vassert(m_primPacked);
 
 	// Set the options on the primitive
 	OP_Options primOptions;
@@ -78,7 +72,7 @@ void SOP::VRayScene::updatePrimitive(const OP_Context &context)
 	if (m_primOptions != primOptions) {
 		m_primOptions = primOptions;
 
-		m_vrayScenePrim->implementation()->update(m_primOptions);
+		m_primPacked->implementation()->update(m_primOptions);
 	}
 }
 
@@ -86,16 +80,20 @@ OP_ERROR SOP::VRayScene::cookMySop(OP_Context &context)
 {
 	Log::getLog().debug("SOP::VRayScene::cookMySop()");
 
-	if (!m_vrayScenePrim) {
-		m_vrayScenePrim = GU_PrimPacked::build(*gdp, "VRaySceneRef");
+	if (!m_primPacked) {
+		m_primPacked = GU_PrimPacked::build(*gdp, "VRaySceneRef");
+
+		// Set the location of the packed primitive point.
+		const UT_Vector3 pivot(0.0, 0.0, 0.0);
+		m_primPacked->setPivot(pivot);
+
+		gdp->setPos3(m_primPacked->getPointOffset(0), pivot);
 	}
-	if (!m_vrayScenePrim) {
-		addWarning(SOP_MESSAGE, "Can't create packed primitive VRaySceneRef");
-	}
-	else {
-		setTimeDependent();
-		updatePrimitive(context);
-	}
+
+	vassert(m_primPacked);
+
+	setTimeDependent();
+	updatePrimitive(context);
 
 	return error();
 }
