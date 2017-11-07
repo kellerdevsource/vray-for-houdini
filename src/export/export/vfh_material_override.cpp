@@ -104,10 +104,11 @@ void MtlOverrideAttrExporter::addAttributesAsOverrides(const GEOAttribList &attr
 
 		const char *attrName = attr->getName().buffer();
 
-		MtlOverrideItems::iterator moIt = overrides.find(attrName);
+		const MtlOverrideItems::iterator moIt = overrides.find(attrName);
 		if (moIt != overrides.end())
 			continue;
-		MtlOverrideItem &overrideItem = overrides[attrName];
+
+		MtlOverrideItem overrideItem;
 
 		GA_ROHandleV3 v3Hndl(attr);
 		GA_ROHandleV4 v4Hndl(attr);
@@ -125,12 +126,21 @@ void MtlOverrideAttrExporter::addAttributesAsOverrides(const GEOAttribList &attr
 			overrideItem.valueVector = utVectorVRayVector(c);
 		}
 		else if (sHndl.isValid()) {
-			overrideItem.setType(MtlOverrideItem::itemTypeString);
-			overrideItem.valueString = sHndl.get(offs);
+			const QString stringAttr = QString(sHndl.get(offs)).simplified();
+
+			// Ignore stylesheet attributes.
+			if (!stringAttr.startsWith('{')) {
+				overrideItem.setType(MtlOverrideItem::itemTypeString);
+				overrideItem.valueString = stringAttr;
+			}
 		}
 		else if (fHndl.isValid()) {
 			overrideItem.setType(MtlOverrideItem::itemTypeDouble);
 			overrideItem.valueDouble = fHndl.get(offs);
+		}
+
+		if (overrideItem.getType() != MtlOverrideItem::itemTypeNone) {
+			overrides[attrName] = overrideItem;
 		}
 	}
 }
