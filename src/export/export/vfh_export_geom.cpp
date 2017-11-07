@@ -15,6 +15,7 @@
 #include "vfh_attr_utils.h"
 #include "vfh_exporter.h"
 #include "vfh_geoutils.h"
+#include "vfh_log.h"
 
 #include "gu/gu_vrayproxyref.h"
 #include "gu/gu_volumegridref.h"
