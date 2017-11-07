@@ -1040,6 +1040,9 @@ int ObjectExporter::getPrimPackedID(const GU_PrimPacked &prim) const
 		// 0 means don't cache.
 		return 0;
 	}
+	if (primTypeID == primPackedTypeIDs.geomPlaneRef) {
+		return 0;
+	}
 	if (primTypeID == primPackedTypeIDs.vrayProxyRef) {
 		const VRayProxyRef *vrayProxyRref = UTverify_cast<const VRayProxyRef*>(prim.implementation());
 		return vrayProxyRref->getOptions().hash();
@@ -1068,7 +1071,6 @@ int ObjectExporter::getPrimPackedID(const GU_PrimPacked &prim) const
 			return 0;
 		return 0;
 	}
-
 	const GA_PrimitiveDefinition &lookupTypeDef = prim.getTypeDef();
 
 	Log::getLog().error("Unsupported packed primitive type: %s [%s]!",
@@ -1115,7 +1117,6 @@ VRay::Plugin ObjectExporter::exportPrimPacked(OBJ_Node &objNode, const GU_PrimPa
 	}
 	if (primTypeID == primPackedTypeIDs.geomPlaneRef) {
 		return exportGeomPlaneRef(objNode, prim);
-		return VRay::Plugin();
 	}
 
 	const GA_PrimitiveDefinition &lookupTypeDef = prim.getTypeDef();
@@ -1892,14 +1893,14 @@ VRay::Plugin ObjectExporter::exportNode(OBJ_Node &objNode)
 	PluginDesc nodeDesc(VRayExporter::getPluginName(objNode, "Node"),
 						vrayPluginTypeNode.buffer());
 
-	VRay::Plugin geometry = exportGeometry(objNode);
+	const VRay::Plugin geometry = exportGeometry(objNode);
+	// May be NULL if geometry was not re-exported during RT sessions.
 	if (geometry) {
 		nodeDesc.add(PluginAttr("geometry", geometry));
 	}
 	nodeDesc.add(PluginAttr("material", pluginExporter.exportDefaultMaterial()));
 	nodeDesc.add(PluginAttr("transform", pluginExporter.getObjTransform(&objNode, ctx)));
 	nodeDesc.add(PluginAttr("visible", isNodeVisible(objNode)));
-	nodeDesc.add(PluginAttr("scene_name", getSceneName(objNode)));
 
 	return pluginExporter.exportPlugin(nodeDesc);
 }
