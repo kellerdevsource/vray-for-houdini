@@ -111,6 +111,7 @@ set(SOURCES
 	gu/gu_geomplaneref.cpp
 	gu/gu_pgyeti.cpp
 	io/io_vrmesh.cpp
+	io/io_vrscene.cpp
 	obj/obj_node_base.cpp
 	rop/rop_vrayproxyrop.cpp
 	sop/sop_GeomPlane.cpp
@@ -149,6 +150,7 @@ set(HEADERS
 	gu/gu_geomplaneref.h
 	gu/gu_pgyeti.h
 	io/io_vrmesh.h
+	io/io_vrscene.h
 	obj/obj_node_base.h
 	obj/obj_node_def.h
 	rop/rop_vrayproxyrop.h
