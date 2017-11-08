@@ -192,7 +192,7 @@ VRay::Plugin VRayExporter::exportFileTextureBitmapBuffer(const UT_String &filePa
 {
 	Attrs::PluginDesc bitmapBufferDesc(str(fmtHash % VUtils::hashlittle(filePath.buffer(), filePath.length())),
 									   "BitmapBuffer");
-	bitmapBufferDesc.addAttribute(PluginAttr("color_space", 0));
+	bitmapBufferDesc.addAttribute(PluginAttr("color_space", 2));// 0 - linear, 1 - gamma corrected, 2 - sRGB
 	bitmapBufferDesc.addAttribute(PluginAttr("file", filePath.toStdString()));
 
 	return exportPlugin(bitmapBufferDesc);

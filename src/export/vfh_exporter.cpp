@@ -407,9 +407,24 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 								VRay::Transform transform;
 								if (pluginInfo->pluginType == Parm::PluginTypeUvwgen) {
 									transform = exportTransformVop(*inpvop, parentContext);
+									
+									UT_DMatrix4 rotMatrix(1, 0, 0, 0,
+															0, 0, 1, 0,
+															0, 1, 0, 0,
+															0, 0, 0, 0);
 
-									VUtils::swap(transform.matrix[1], transform.matrix[2]);
-									transform.matrix[2].y = -transform.matrix[2].y;
+									//Matrix4ToTransform(rotMatrix * rotMatrix);
+									VRay::Matrix tempMatrix(0);
+									for (int row = 0; row < 3; row++) {
+										for (int column = 0; column < 3; column++) {
+											for (int i = 0; i < 3; i++) {
+												tempMatrix[row][column] += transform.matrix[row][i] * rotMatrix[i][column];
+											}
+										}
+									}
+
+									transform.matrix = tempMatrix;
+									transform.matrix[2] *= -1;
 								}
 								else {
 									transform = exportTransformVop(*inpvop, parentContext);
