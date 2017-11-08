@@ -15,6 +15,7 @@
 #include "vfh_attr_utils.h"
 #include "vfh_exporter.h"
 #include "vfh_geoutils.h"
+#include "vfh_log.h"
 
 #include "gu/gu_vrayproxyref.h"
 #include "gu/gu_volumegridref.h"
@@ -37,6 +38,16 @@
 #include <parse.h>
 
 using namespace VRayForHoudini;
+
+/// Used for flipping Y and Z axis
+static const VRay::Transform flipYZTm{ {
+		VRay::Vector(1.f, 0.f,  0.f),
+		VRay::Vector(0.f, 0.f, -1.f),
+		VRay::Vector(0.f, 1.f,  0.f)
+	}, {
+		VRay::Vector(0.f, 0.f,  0.f)
+	}
+};
 
 static struct PrimPackedTypeIDs {
 	PrimPackedTypeIDs()
@@ -1030,6 +1041,9 @@ int ObjectExporter::getPrimPackedID(const GU_PrimPacked &prim) const
 		// 0 means don't cache.
 		return 0;
 	}
+	if (primTypeID == primPackedTypeIDs.geomPlaneRef) {
+		return 0;
+	}
 	if (primTypeID == primPackedTypeIDs.vrayProxyRef) {
 		const VRayProxyRef *vrayProxyRref = UTverify_cast<const VRayProxyRef*>(prim.implementation());
 		return vrayProxyRref->getOptions().hash();
@@ -1058,7 +1072,6 @@ int ObjectExporter::getPrimPackedID(const GU_PrimPacked &prim) const
 			return 0;
 		return 0;
 	}
-
 	const GA_PrimitiveDefinition &lookupTypeDef = prim.getTypeDef();
 
 	Log::getLog().error("Unsupported packed primitive type: %s [%s]!",
@@ -1105,7 +1118,6 @@ VRay::Plugin ObjectExporter::exportPrimPacked(OBJ_Node &objNode, const GU_PrimPa
 	}
 	if (primTypeID == primPackedTypeIDs.geomPlaneRef) {
 		return exportGeomPlaneRef(objNode, prim);
-		return VRay::Plugin();
 	}
 
 	const GA_PrimitiveDefinition &lookupTypeDef = prim.getTypeDef();
@@ -1196,10 +1208,14 @@ VRay::Plugin ObjectExporter::exportVRaySceneRef(OBJ_Node &objNode, const GU_Prim
 
 	const VRaySceneRef *vraysceneref = UTverify_cast<const VRaySceneRef*>(prim.implementation());
 
-	const VRay::Transform fullTm = pluginExporter.getObjTransform(&objNode, ctx) * getTm();
-	pluginDesc.add(Attrs::PluginAttr("transform", fullTm));
-
 	const UT_Options &options = vraysceneref->getOptions();
+
+	VRay::Transform fullTm = pluginExporter.getObjTransform(&objNode, ctx) * getTm();
+	const bool shouldFlip = options.getOptionB("should_flip");
+	if (shouldFlip) {
+		fullTm = flipYZTm * fullTm;
+	}
+	pluginDesc.add(Attrs::PluginAttr("transform", fullTm));
 
 	if (options.getOptionI("use_overrides")) {
 		const UT_StringHolder &overrideSnippet = options.getOptionS("override_snippet"); 
@@ -1878,14 +1894,14 @@ VRay::Plugin ObjectExporter::exportNode(OBJ_Node &objNode)
 	PluginDesc nodeDesc(VRayExporter::getPluginName(objNode, "Node"),
 						vrayPluginTypeNode.buffer());
 
-	VRay::Plugin geometry = exportGeometry(objNode);
+	const VRay::Plugin geometry = exportGeometry(objNode);
+	// May be NULL if geometry was not re-exported during RT sessions.
 	if (geometry) {
 		nodeDesc.add(PluginAttr("geometry", geometry));
 	}
 	nodeDesc.add(PluginAttr("material", pluginExporter.exportDefaultMaterial()));
 	nodeDesc.add(PluginAttr("transform", pluginExporter.getObjTransform(&objNode, ctx)));
 	nodeDesc.add(PluginAttr("visible", isNodeVisible(objNode)));
-	nodeDesc.add(PluginAttr("scene_name", getSceneName(objNode)));
 
 	return pluginExporter.exportPlugin(nodeDesc);
 }

@@ -11,94 +11,12 @@
 #ifndef VRAY_FOR_HOUDINI_PLUGIN_EXPORTER_H
 #define VRAY_FOR_HOUDINI_PLUGIN_EXPORTER_H
 
-#include "vfh_defines.h"
 #include "vfh_vray.h"
-#include "vfh_log.h"
 #include "vfh_plugin_attrs.h"
 
-#include <boost/function.hpp>
 #include <QString>
 
 namespace VRayForHoudini {
-
-typedef boost::function<void (void)>                                                          CbVoid;
-typedef boost::function<void (VRay::VRayRenderer&)>                                           CbOnRendererClose;
-typedef boost::function<void (VRay::VRayRenderer&)>                                           CbOnImageReady;
-typedef boost::function<void (VRay::VRayRenderer&, VRay::VRayImage*)>                         CbOnRTImageUpdated;
-typedef boost::function<void (VRay::VRayRenderer&, int, int, int, int, const char*)>          CbOnBucketInit;
-typedef boost::function<void (VRay::VRayRenderer&, int, int, int, int, const char*)>          CbOnBucketFailed;
-typedef boost::function<void (VRay::VRayRenderer&, int, int, const char*, VRay::VRayImage*)>  CbOnBucketReady;
-typedef boost::function<void (VRay::VRayRenderer&, const char*, int)>                         CbOnDumpMessage;
-typedef boost::function<void (VRay::VRayRenderer&, const char*, int, int)>                    CbOnProgress;
-typedef boost::function<void (VRay::VRayRenderer&, bool isRendering)>                         CbOnRenderLast;
-typedef boost::function<void (VRay::VRayRenderer&)>                                           CbOnVFBClosed;
-
-
-template <typename CbT>
-struct CbBase
-{
-	CbBase() {}
-
-	typedef std::vector<CbVoid>  CbVoidArray;
-	typedef std::vector<CbT>     CbTypeArray;
-
-	void add(CbT cb)    { m_cbTyped.push_back(cb); }
-	void add(CbVoid cb) { m_cbVoid.push_back(cb);  }
-
-	void clear() {
-		m_cbVoid.clear();
-		m_cbTyped.clear();
-	}
-
-	CbVoidArray m_cbVoid;
-	CbTypeArray m_cbTyped;
-
-	VfhDisableCopy(CbBase)
-};
-
-typedef CbBase<CbOnRendererClose>   CbSetOnRendererClose;
-typedef CbBase<CbOnImageReady>      CbSetOnImageReady;
-typedef CbBase<CbOnRTImageUpdated>  CbSetOnRTImageUpdated;
-typedef CbBase<CbOnBucketInit>      CbSetOnBucketInit;
-typedef CbBase<CbOnBucketFailed>    CbSetOnBucketFailed;
-typedef CbBase<CbOnBucketReady>     CbSetOnBucketReady;
-typedef CbBase<CbOnDumpMessage>     CbSetOnDumpMessage;
-typedef CbBase<CbOnProgress>        CbSetOnProgress;
-typedef CbBase<CbOnRenderLast>      CbSetOnRenderLast;
-typedef CbBase<CbOnVFBClosed>       CbSetOnVFBClosed;
-
-
-struct CbCollection {
-	CbCollection() {}
-
-	void clear() {
-		m_cbOnRendererClose.clear();
-		m_cbOnImageReady.clear();
-		m_cbOnRTImageUpdated.clear();
-		m_cbOnBucketInit.clear();
-		m_cbOnBucketFailed.clear();
-		m_cbOnBucketReady.clear();
-		m_cbOnDumpMessage.clear();
-		m_cbOnProgress.clear();
-		onRenderLast.clear();
-		onVFBClosed.clear();
-	}
-
-	CbSetOnRendererClose   m_cbOnRendererClose;
-	CbSetOnImageReady      m_cbOnImageReady;
-	CbSetOnRTImageUpdated  m_cbOnRTImageUpdated;
-	CbSetOnBucketInit      m_cbOnBucketInit;
-	CbSetOnBucketFailed    m_cbOnBucketFailed;
-	CbSetOnBucketReady     m_cbOnBucketReady;
-	CbSetOnDumpMessage     m_cbOnDumpMessage;
-	CbSetOnProgress        m_cbOnProgress;
-
-	CbSetOnRenderLast onRenderLast;
-	CbSetOnVFBClosed onVFBClosed;
-
-	VfhDisableCopy(CbCollection)
-};
-
 
 /// V-Ray Frame Buffer settings.
 struct VFBSettings {
@@ -146,7 +64,6 @@ public:
 	/// @retval true if we do, false on no license or error
 	static bool hasVRScansGUILicense(VRay::ScannedMaterialLicenseError &err);
 
-public:
 	VRayPluginRenderer();
 	~VRayPluginRenderer();
 
@@ -251,37 +168,6 @@ public:
 	/// @retval 0 - no error
 	int exportScene(const std::string &filepath, VRay::VRayExportSettings &settings);
 
-	/// Register callbacks on different events dispatched from the renderer.
-	/// More than one callback per event can be registered. The order of invocation
-	/// will follow the order of registration. Each event supports 2 types of callbacks:
-	/// 1. a callback that does require any arguments
-	/// 2. a callback that accepts strongly typed arguments
-	void addCbOnRendererClose(CbOnRendererClose cb)   { m_callbacks.m_cbOnRendererClose.add(cb); }
-	void addCbOnRendererClose(CbVoid cb)              { m_callbacks.m_cbOnRendererClose.add(cb); }
-	void addCbOnImageReady(CbOnImageReady cb)         { m_callbacks.m_cbOnImageReady.add(cb); }
-	void addCbOnImageReady(CbVoid cb)                 { m_callbacks.m_cbOnImageReady.add(cb); }
-	void addCbOnRTImageUpdated(CbOnRTImageUpdated cb) { m_callbacks.m_cbOnRTImageUpdated.add(cb); }
-	void addCbOnRTImageUpdated(CbVoid cb)             { m_callbacks.m_cbOnRTImageUpdated.add(cb); }
-	void addCbOnBucketInit(CbOnBucketInit cb)         { m_callbacks.m_cbOnBucketInit.add(cb); }
-	void addCbOnBucketInit(CbVoid cb)                 { m_callbacks.m_cbOnBucketInit.add(cb); }
-	void addCbOnBucketReady(CbOnBucketReady cb)       { m_callbacks.m_cbOnBucketReady.add(cb); }
-	void addCbOnBucketReady(CbVoid cb)                { m_callbacks.m_cbOnBucketReady.add(cb); }
-	void addCbOnBucketFailed(CbOnBucketFailed cb)     { m_callbacks.m_cbOnBucketFailed.add(cb); }
-	void addCbOnBucketFailed(CbVoid cb)               { m_callbacks.m_cbOnBucketFailed.add(cb); }
-	void addCbOnDumpMessage(CbOnDumpMessage cb)       { m_callbacks.m_cbOnDumpMessage.add(cb); }
-	void addCbOnDumpMessage(CbVoid cb)                { m_callbacks.m_cbOnDumpMessage.add(cb); }
-	void addCbOnProgress(CbOnProgress cb)             { m_callbacks.m_cbOnProgress.add(cb); }
-	void addCbOnProgress(CbVoid cb)                   { m_callbacks.m_cbOnProgress.add(cb); }
-
-	void addCbOnVfbClose(CbOnVFBClosed cb) { m_callbacks.onVFBClosed.add(cb); }
-	void addCbOnVfbClose(CbVoid cb)        { m_callbacks.onVFBClosed.add(cb); }
-
-	void addCbOnRenderLast(CbOnRenderLast cb) { m_callbacks.onRenderLast.add(cb); }
-	void addCbOnRenderLast(CbVoid cb)         { m_callbacks.onRenderLast.add(cb); }
-
-	/// Clear registered render callbacks
-	void resetCallbacks();
-
 	/// Check if VRay::VRayRenderer is instantiated
 	bool isVRayInit() const { return !!m_vray; }
 
@@ -289,7 +175,7 @@ public:
 	bool isRendering() const;
 
 	/// Get the actual renderer instance
-	VRay::VRayRenderer& getVRay() { return *m_vray; }
+	VRay::VRayRenderer &getVRay() const { return *m_vray; }
 
 	/// Reset scene data.
 	void reset();
@@ -310,14 +196,8 @@ public:
 	void getVfbSettings(VFBSettings &settings) const;
 
 private:
-	/// Attach callbacks to the renderer.
-	void attachCallbacks();
-
 	/// V-Ray renderer instance.
-	VRay::VRayRenderer *m_vray;
-
-	/// A collection of registered render callbacks.
-	CbCollection m_callbacks;
+	VRay::VRayRenderer *m_vray{nullptr};
 
 	/// Flag indicating that we should use/init VFB related options.
 	int m_enableVFB{false};
