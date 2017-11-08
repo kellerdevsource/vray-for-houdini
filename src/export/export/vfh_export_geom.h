@@ -195,6 +195,8 @@ public:
 	/// @returns V-Ray plugin instance.
 	VRay::Plugin exportVRaySOP(OBJ_Node &objNode, SOP_Node &sop);
 
+	VRay::Plugin exportPgYetiRef(OBJ_Node &objNode, const GU_PrimPacked &prim);
+
 	VRay::Plugin exportVRayProxyRef(OBJ_Node &objNode, const GU_PrimPacked &prim);
 
 	VRay::Plugin exportVRaySceneRef(OBJ_Node &objNode, const GU_PrimPacked &prim);

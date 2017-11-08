@@ -109,6 +109,7 @@ set(SOURCES
 	gu/gu_vrayproxyref.cpp
 	gu/gu_vraysceneref.cpp
 	gu/gu_geomplaneref.cpp
+	gu/gu_pgyeti.cpp
 	io/io_vrmesh.cpp
 	obj/obj_node_base.cpp
 	rop/rop_vrayproxyrop.cpp
@@ -116,6 +117,7 @@ set(SOURCES
 	sop/sop_PhoenixCache.cpp
 	sop/sop_vrayproxy.cpp
 	sop/sop_vrayscene.cpp
+	sop/sop_pgyeti.cpp
 	sop/vfh_vrayproxyutils.cpp
 	vfh_register.cpp
 	vop/brdf/vop_BRDFLayered.cpp
@@ -145,6 +147,7 @@ set(HEADERS
 	gu/gu_vrayproxyref.h
 	gu/gu_vraysceneref.h
 	gu/gu_geomplaneref.h
+	gu/gu_pgyeti.h
 	io/io_vrmesh.h
 	obj/obj_node_base.h
 	obj/obj_node_def.h
@@ -155,6 +158,7 @@ set(HEADERS
 	sop/sop_PhoenixCache.h
 	sop/sop_vrayproxy.h
 	sop/sop_vrayscene.h
+	sop/sop_pgyeti.h
 	sop/vfh_vrayproxyutils.h
 	vfh_class_utils.h
 	vfh_defines.h

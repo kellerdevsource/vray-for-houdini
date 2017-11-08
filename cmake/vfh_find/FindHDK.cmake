@@ -150,8 +150,8 @@ if(HDK_FOUND)
 	endif()
 
 	set(HDK_INCLUDES
-		# For Boost spirit
 		${PYTHON_INCLUDE_PATH}
+		# For Boost spirit
 		${SDK_PATH}/hdk/boost_shared
 		${HDK_INCLUDE_PATH}
 	)
@@ -207,12 +207,21 @@ if(HDK_FOUND)
 		endif()
 
 		file(GLOB HDK_LIBS_A "${HDK_LIB_PATH}/*.a")
+		list(REMOVE_ITEM HDK_LIBS_A "${HDK_LIB_PATH}/libHARC32.a")
+
+		list(APPEND HDK_INCLUDES
+			${SDK_PATH}/hdk/hdf5/include/cpp
+			${HDK_INCLUDE_PATH}/OpenEXR
+		)
 
 		set(HDK_LIBS
 			${HDK_LIBS_A}
 			$<$<CONFIG:Release>:Half.lib>
 			$<$<CONFIG:RelWithDebInfo>:Half.lib>
 			openvdb_sesi.lib
+
+			${SDK_PATH}/hdk/hdf5/lib/libhdf5_cpp$<$<CONFIG:Debug>:_D>.lib
+			${SDK_PATH}/hdk/hdf5/lib/libhdf5$<$<CONFIG:Debug>:_D>.lib
 		)
 
 		if(HOUDINI_QT_VERSION VERSION_GREATER 4)
