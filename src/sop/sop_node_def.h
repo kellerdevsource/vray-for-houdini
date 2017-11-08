@@ -15,5 +15,6 @@
 #include "sop_vrayproxy.h"
 #include "sop_GeomPlane.h"
 #include "sop_PhoenixCache.h"
+#include "sop_pgyeti.h"
 
 #endif // VRAY_FOR_HOUDINI_SOP_NODE_DEF_H

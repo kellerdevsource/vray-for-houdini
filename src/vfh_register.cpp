@@ -32,6 +32,7 @@
 #include "gu_vrayproxyref.h"
 #include "gu_vraysceneref.h"
 #include "gu_geomplaneref.h"
+#include "gu_pgyeti.h"
 #include "io/io_vrmesh.h"
 
 // For newShopOperator()
@@ -109,12 +110,15 @@ void unregister(void *)
 /// @param gafactory[out] - primitive factory for DSO defined primitives
 void newGeometryPrim(GA_PrimitiveFactory *gafactory)
 {
+#ifdef CGR_HAS_VRAYSCENE
 	VRaySceneRef::install(gafactory);
+#endif
 	VRayProxyRef::install(gafactory);
 	GeomPlaneRef::install(gafactory);
 #ifdef CGR_HAS_AUR
 	VRayVolumeGridRef::install(gafactory);
 #endif
+	VRayPgYetiRef::install(gafactory);
 }
 
 
@@ -168,6 +172,7 @@ void newSopOperator(OP_OperatorTable *table)
 #ifdef CGR_HAS_VRAYSCENE
 	VFH_ADD_SOP_GENERATOR(table, VRayScene);
 #endif
+	VFH_ADD_SOP_GENERATOR(table, VRayPgYeti);
 
 	VFH_ADD_SOP_GENERATOR(table, GeomPlane);
 	VFH_ADD_SOP_GENERATOR_CUSTOM(table, VRayProxy, VRayProxy::getPrmTemplate());
