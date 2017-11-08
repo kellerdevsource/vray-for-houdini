@@ -14,9 +14,9 @@
 #ifdef CGR_HAS_AUR
 #include "vfh_vray.h"
 #include "vfh_primitives.h"
-
 #include "vfh_lru_cache.hpp"
 #include "vfh_hashes.h"
+#include "vfh_includes.h"
 
 #include <aurinterface.h>
 
@@ -135,14 +135,14 @@ public:
 	virtual bool              isValid() const VRAY_OVERRIDE { return getDetail().isValid(); }
 	virtual void              clearData() VRAY_OVERRIDE;
 
-	virtual bool   load(const UT_Options &options, const GA_LoadMap &) VRAY_OVERRIDE
-	{
-		return updateFrom(options);
-	}
-	virtual void   update(const UT_Options &options) VRAY_OVERRIDE
-	{
-		updateFrom(options);
-	}
+#if HDK_16_5
+	void update(GU_PrimPacked *prim, const UT_Options &options) VRAY_OVERRIDE { updateFrom(options); }
+	bool load(GU_PrimPacked *prim, const UT_Options &options, const GA_LoadMap &map) VRAY_OVERRIDE { return updateFrom(options); }
+#else
+	bool load(const UT_Options &options, const GA_LoadMap &map) VRAY_OVERRIDE { return updateFrom(options); }
+	void update(const UT_Options &options) VRAY_OVERRIDE { updateFrom(options); }
+#endif
+
 	virtual bool   save(UT_Options &options, const GA_SaveMap &map) const VRAY_OVERRIDE;
 
 	virtual bool                   getBounds(UT_BoundingBox &box) const VRAY_OVERRIDE;

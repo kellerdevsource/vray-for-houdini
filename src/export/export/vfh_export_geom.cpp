@@ -652,7 +652,7 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 		item.vel = getVel();
 
 		if (pathHndl.isValid()) {
-			const UT_String &path = pathHndl.get(primOffset);
+			const UT_String path(pathHndl.get(primOffset));
 			item.primID = path.hash();
 		}
 

@@ -13,6 +13,7 @@
 
 #include "vfh_vray.h"
 #include "vfh_vrayproxyutils.h"
+#include "vfh_includes.h"
 #include <GU/GU_PackedImpl.h>
 
 
@@ -63,13 +64,19 @@ public:
 	/// @param map[in] - load options (for shared primititve data)
 	///                  not used
 	/// @retval true on success
-	virtual bool load(const UT_Options &options, const GA_LoadMap &map) VRAY_OVERRIDE
-	{ return updateFrom(options); }
+#if HDK_16_5
+	bool load(GU_PrimPacked *prim, const UT_Options &options, const GA_LoadMap &map) VRAY_OVERRIDE { return updateFrom(options); }
+#else
+	bool load(const UT_Options &options, const GA_LoadMap &map) VRAY_OVERRIDE { return updateFrom(options); }
+#endif
 
 	/// Update proxy primitive from options passed as UT_Options
 	/// @param options[in] - options for the proxy primitive
-	virtual void update(const UT_Options &options) VRAY_OVERRIDE
-	{ updateFrom(options); }
+#if HDK_16_5
+	void update(GU_PrimPacked *prim, const UT_Options &options) VRAY_OVERRIDE { updateFrom(options); }
+#else
+	void update(const UT_Options &options) VRAY_OVERRIDE { updateFrom(options); }
+#endif
 
 	/// Save proxy primitive as UT_Options
 	/// @param options[out] - options for the proxy primitive

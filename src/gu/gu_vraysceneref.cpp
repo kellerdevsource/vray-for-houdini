@@ -164,16 +164,6 @@ void VRaySceneRef::clearData()
 {
 }
 
-bool VRaySceneRef::load(const UT_Options &options, const GA_LoadMap&)
-{
-	return updateFrom(options);
-}
-
-void VRaySceneRef::update(const UT_Options &options)
-{
-	updateFrom(options);
-}
-
 bool VRaySceneRef::save(UT_Options &options, const GA_SaveMap&) const
 {
 	options.merge(m_options);
@@ -344,7 +334,7 @@ int VRaySceneRef::updateFrom(const UT_Options &options)
 	}
 	else {
 		// Update flip axis intrinsic.
-		const FlipAxisMode flipAxis = parseFlipAxisMode(get_flip_axis());
+		const FlipAxisMode flipAxis = parseFlipAxisMode(get_flip_axis(this));
 		const bool shouldFlip = flipAxis == flipZY ||
 			                    flipAxis == automatic && vrsceneDesc->getUpAxis() == vrsceneUpAxisZ;
 		set_should_flip(shouldFlip);

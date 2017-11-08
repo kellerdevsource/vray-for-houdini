@@ -85,16 +85,6 @@ void GeomPlaneRef::clearData()
 	// We can just leave our data.
 }
 
-bool GeomPlaneRef::load(const UT_Options &options, const GA_LoadMap &map)
-{
-	return updateFrom(options);
-}
-
-void GeomPlaneRef::update(const UT_Options &options)
-{
-	updateFrom(options);
-}
-
 bool GeomPlaneRef::save(UT_Options &options, const GA_SaveMap &map) const
 {
 	options.merge(m_options);

@@ -117,16 +117,6 @@ void VRayPgYetiRef::clearData()
 {
 }
 
-bool VRayPgYetiRef::load(const UT_Options &options, const GA_LoadMap&)
-{
-	return updateFrom(options);
-}
-
-void VRayPgYetiRef::update(const UT_Options &options)
-{
-	updateFrom(options);
-}
-
 bool VRayPgYetiRef::save(UT_Options &options, const GA_SaveMap&) const
 {
 	options.merge(m_options);

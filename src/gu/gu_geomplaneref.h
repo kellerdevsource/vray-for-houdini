@@ -11,8 +11,9 @@
 #ifndef VRAY_FOR_HOUDINI_GEOMPLANEREF_H
 #define VRAY_FOR_HOUDINI_GEOMPLANEREF_H
 
+#include "vfh_includes.h"
+
 #include <GU/GU_PackedImpl.h>
-#include "vfh_vray.h"
 
 namespace VRayForHoudini
 {
@@ -68,14 +69,13 @@ public:
 	/// primitive to optionally clear some data during the stashing process.
 	virtual void clearData() VRAY_OVERRIDE;
 
-	/// Give a UT_Options of load data, create resolver data for the primitive
-	virtual bool load(const UT_Options &options, const GA_LoadMap &map) VRAY_OVERRIDE;
-
-	/// Depending on the update, the procedural should call one of:
-	///	- transformDirty()
-	///	- attributeDirty()
-	///	- topologyDirty()
-	virtual void update(const UT_Options &options) VRAY_OVERRIDE;
+#if HDK_16_5
+	void update(GU_PrimPacked *prim, const UT_Options &options) VRAY_OVERRIDE { updateFrom(options); }
+	bool load(GU_PrimPacked *prim, const UT_Options &options, const GA_LoadMap &map) VRAY_OVERRIDE { return updateFrom(options); }
+#else
+	bool load(const UT_Options &options, const GA_LoadMap &map) VRAY_OVERRIDE { return updateFrom(options); }
+	void update(const UT_Options &options) VRAY_OVERRIDE { updateFrom(options); }
+#endif
 
 	/// Copy the resolver data into the UT_Options for saving
 	virtual bool save(UT_Options &options, const GA_SaveMap &map) const VRAY_OVERRIDE;

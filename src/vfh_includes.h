@@ -14,4 +14,6 @@
 #include <UT/UT_Version.h>
 #include <UT/UT_Interrupt.h>
 
+#define HDK_16_5 UT_MAJOR_VERSION_INT >= 16 && UT_MINOR_VERSION_INT >= 5
+
 #endif // VRAY_FOR_HOUDINI_INCLUDES_H
