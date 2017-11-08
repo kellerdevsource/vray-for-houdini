@@ -312,17 +312,7 @@ void VRaySceneRef::detailBuild(VrsceneDesc *vrsceneDesc, int shouldFlip)
 	GU_DetailHandle meshDetailHandle;
 	meshDetailHandle.allocateAndSet(meshDetail);
 
-	// Pack the geometry in the scene detail
-	GU_Detail *packedDetail = new GU_Detail();
-	GU_PackedGeometry::packGeometry(*packedDetail, meshDetailHandle);
-
-	GU_DetailHandle packedDetailHandle;
-	packedDetailHandle.allocateAndSet(packedDetail);
-
-	m_detail = packedDetailHandle;
-
-	// XXX: Check if this is still needed.
-	// getPrim()->getParent()->getPrimitiveList().bumpDataId();
+	m_detail = meshDetailHandle;
 }
 
 int VRaySceneRef::updateFrom(const UT_Options &options)
