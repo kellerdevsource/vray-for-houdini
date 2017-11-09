@@ -80,28 +80,28 @@ VRaySceneFactory::VRaySceneFactory() :
 	);
 }
 
-UT_Vector3D VRaySceneRef::get_mw_shadow_tint_color() const {
+UT_Vector3D VRaySceneRef::get_mw_shadow_tint_color(GET_SET_ARG_PRIM_SINGLE) const {
 	fpreal64 v[3];
-	_get_mw_shadow_tint_color(v, 3);
+	_get_mw_shadow_tint_color(GET_SET_ARG_PRIM_FWD GET_SET_ARG_SEP v, 3);
 	return UT_Vector3D(v[0], v[1], v[2]);
 }
 
-void VRaySceneRef::_get_mw_shadow_tint_color(fpreal64 * v, exint size) const {
+void VRaySceneRef::_get_mw_shadow_tint_color(GET_SET_ARG_PRIM fpreal64 * v, exint size) const {
 	UT_Vector3D val = m_options.hasOption(mw_shadow_tint_color_param_name) ?
 		m_options.getOptionV3(mw_shadow_tint_color_param_name) : UT_Vector3D();
 	v[0] = val[0]; v[1] = val[1]; v[2] = val[2];
 }
 
-exint VRaySceneRef::get_mw_shadow_tint_color_size() const {
+exint VRaySceneRef::get_mw_shadow_tint_color_size(GET_SET_ARG_PRIM_SINGLE) const {
 	return m_options.hasOption(mw_shadow_tint_color_param_name) ?
 		m_options.getOptionV3(mw_shadow_tint_color_param_name).theSize : 0;
 }
 
-void VRaySceneRef::set_mw_shadow_tint_color(const UT_Vector3D & val) {
+void VRaySceneRef::set_mw_shadow_tint_color(SET_ARG_PRIM const UT_Vector3D & val) {
 	m_options.setOptionV3(mw_shadow_tint_color_param_name, val);
 }
 
-void VRaySceneRef::_set_mw_shadow_tint_color(const fpreal64 * v, exint size) {
+void VRaySceneRef::_set_mw_shadow_tint_color(SET_ARG_PRIM const fpreal64 * v, exint size) {
 	m_options.setOptionV3(mw_shadow_tint_color_param_name, v[0], v[1], v[2]);
 }
 
@@ -324,7 +324,7 @@ int VRaySceneRef::updateFrom(const UT_Options &options)
 	}
 	else {
 		// Update flip axis intrinsic.
-		const FlipAxisMode flipAxis = parseFlipAxisMode(get_flip_axis(this));
+		const FlipAxisMode flipAxis = parseFlipAxisMode(get_flip_axis());
 		const bool shouldFlip = flipAxis == flipZY ||
 			                    flipAxis == automatic && vrsceneDesc->getUpAxis() == vrsceneUpAxisZ;
 		set_should_flip(shouldFlip);

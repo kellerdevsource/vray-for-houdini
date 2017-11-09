@@ -276,7 +276,7 @@ VRayVolumeGridRef::VRayVolumeGridRef()
 {
 	GU_Detail *gdp = new GU_Detail;
 	getDetail().allocateAndSet(gdp, true);
-	memset(getChannelDataRanges().data(), 0, DataRangeMapSize);
+	memset(getChannelDataRanges(GET_PRIM_SINGLE).data(), 0, DataRangeMapSize);
 	this->initDataCache();
 }
 
@@ -430,7 +430,7 @@ GU_ConstDetailHandle VRayVolumeGridRef::getPackedDetail(GU_PackedContext *contex
 
 	VRayVolumeGridRef *self = SYSconst_cast(this);
 
-	memset(self->getChannelDataRanges().data(), 0, DataRangeMapSize);
+	memset(self->getChannelDataRanges(GET_PRIM_SINGLE).data(), 0, DataRangeMapSize);
 
 	GU_DetailHandleAutoWriteLock rLock(self->getDetail());
 	GU_Detail *gdp = rLock.getGdp();
@@ -455,7 +455,7 @@ GU_ConstDetailHandle VRayVolumeGridRef::getPackedDetail(GU_PackedContext *contex
 	}
 
 	self->setDetail(data.detailHandle);
-	memcpy(self->getChannelDataRanges().data(), data.dataRange.data(), DataRangeMapSize);
+	memcpy(self->getChannelDataRanges(GET_PRIM_SINGLE).data(), data.dataRange.data(), DataRangeMapSize);
 
 	return getDetail();
 }
@@ -498,7 +498,7 @@ std::string getDefaultMapping(const char *cachePath) {
 UT_StringArray VRayVolumeGridRef::getCacheChannels() const {
 	UT_StringArray channels;
 	if (!m_channelDirty) {
-		getPhxChannelMap(channels);
+		getPhxChannelMap(GET_PRIM channels);
 		return channels;
 	}
 
@@ -509,7 +509,7 @@ UT_StringArray VRayVolumeGridRef::getCacheChannels() const {
 	}
 
 	SYSconst_cast(this)->m_channelDirty = false;
-	SYSconst_cast(this)->setPhxChannelMap(channels);
+	SYSconst_cast(this)->setPhxChannelMap(GET_PRIM channels);
 	return channels;
 }
 
@@ -528,7 +528,7 @@ void VRayVolumeGridRef::buildMapping() {
 	// aur cache has no need for mappings
 	if (UT_String(path).endsWith(".aur")) {
 		chanMap = "";
-		this->setPhxChannelMap(UT_StringArray());
+		this->setPhxChannelMap(GET_PRIM UT_StringArray());
 	}
 	else {
 		UT_StringArray channels = getCacheChannels();
@@ -757,11 +757,19 @@ bool VRayVolumeGridRef::updateFrom(const UT_Options &options)
 	}
 
 	if (m_dirty) {
+#if HDK_16_5
+		getPrim()->transformDirty();
+#else
 		transformDirty();
+#endif
 	}
 
 	if (diffHash) {
+#if HDK_16_5
+		getPrim()->attributeDirty();
+#else
 		attributeDirty();
+#endif
 	}
 
 	return true;

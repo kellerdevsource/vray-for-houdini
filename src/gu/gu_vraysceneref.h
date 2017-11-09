@@ -131,11 +131,11 @@ public:
 	VFH_MAKE_ACCESSORS(VFH_VRAY_SCENE_PARAMS, VFH_VRAY_SCENE_PARAMS_COUNT);
 	VFH_MAKE_ACCESSORS_TUPLE(VFH_VRAY_SCENE_PARAMS_TUPLES, VFH_VRAY_SCENE_PARAMS_TUPLES_COUNT);
 
-	UT_Vector3D get_mw_shadow_tint_color() const;
-	void _get_mw_shadow_tint_color(fpreal64 * v, exint size) const;
-	exint get_mw_shadow_tint_color_size() const;
-	void set_mw_shadow_tint_color(const UT_Vector3D & val);
-	void _set_mw_shadow_tint_color(const fpreal64 * v, exint size);
+	UT_Vector3D get_mw_shadow_tint_color(GET_SET_ARG_PRIM_SINGLE) const;
+	void _get_mw_shadow_tint_color(GET_SET_ARG_PRIM fpreal64 * v, exint size) const;
+	exint get_mw_shadow_tint_color_size(GET_SET_ARG_PRIM_SINGLE) const;
+	void set_mw_shadow_tint_color(SET_ARG_PRIM  const UT_Vector3D & val);
+	void _set_mw_shadow_tint_color(SET_ARG_PRIM const fpreal64 * v, exint size);
 
 	/// Returns current options.
 	const UT_Options &getOptions() const { return m_options; }

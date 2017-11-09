@@ -559,7 +559,7 @@ void PhxShaderSim::loadDataRanges()
 
 	auto *packedPrim = UTverify_cast<const GU_PrimPacked*>(volumePrim);
 	const auto *impl = reinterpret_cast<const VRayVolumeGridRef*>(packedPrim->implementation());
-	const auto &ranges = impl->getChannelDataRanges();
+	const auto &ranges = impl->getChannelDataRanges(impl->getPrim());
 
 	for (auto &rampIter : m_ramps) {
 		if (auto ramp = rampIter.second) {

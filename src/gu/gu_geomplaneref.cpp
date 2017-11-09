@@ -133,7 +133,7 @@ GU_ConstDetailHandle GeomPlaneRef::getPackedDetail(GU_PackedContext *context) co
 	GU_Detail* gdmp = new GU_Detail();
 	GU_PrimPoly *poly = GU_PrimPoly::build(gdmp, 4, GU_POLY_CLOSED, 0);
 
-	const float size = get_plane_size();
+	const float size = get_plane_size(GET_PRIM_SINGLE);
 
 	GA_Offset pOff = gdmp->appendPoint();
 	gdmp->setPos3(pOff, UT_Vector3(-size, 0.0f, -size));

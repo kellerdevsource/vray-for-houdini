@@ -19,13 +19,28 @@
 #include <boost/preprocessor.hpp>
 
 #if HDK_16_5
-#define GET_SET_ARG_PRIM prim
-#define GET_SET_ARGS const GU_PrimPacked *prim
-#define GET_SET_JOIN ,
+#define GET_SET_ARG_SEP ,
+#define GET_SET_ARG_PRIM_FWD prim
+
+#define GET_SET_ARG_PRIM_SINGLE const GU_PrimPacked *prim
+#define GET_SET_ARG_PRIM GET_SET_ARG_PRIM_SINGLE,
+ 
+#define SET_ARG_PRIM_SINGLE GU_PrimPacked *prim
+#define SET_ARG_PRIM SET_ARG_PRIM_SINGLE GET_SET_ARG_SEP
+
+#define GET_PRIM_SINGLE const_cast<GU_PrimPacked*>(getPrim())
+#define GET_PRIM GET_PRIM_SINGLE GET_SET_ARG_SEP
 #else
+#define GET_SET_ARG_SEP
+#define GET_SET_ARG_PRIM_FWD
+
+#define GET_SET_ARG_PRIM_SINGLE
 #define GET_SET_ARG_PRIM
-#define GET_SET_ARGS
-#define GET_SET_JOIN
+
+#define SET_ARG_PRIM_SINGLE
+#define SET_ARG_PRIM
+
+#define GET_PRIM
 #endif
 
 namespace VRayForHoudini {
@@ -57,32 +72,32 @@ template <typename CLASS, typename T, typename Q>
 inline Q PackedImplSetterCast(GU_PackedFactory * self, void (CLASS::*method)(T));
 
 template <typename CLASS>
-inline GU_PackedImpl::IntSetter PackedImplSetterCast(GU_PackedFactory * self, void (CLASS::*method)(GET_SET_ARGS GET_SET_JOIN GA_Size)) {
+inline GU_PackedImpl::IntSetter PackedImplSetterCast(GU_PackedFactory * self, void (CLASS::*method)(SET_ARG_PRIM GA_Size)) {
 	return self->IntSetterCast(method);
 }
 
 template <typename CLASS>
-inline GU_PackedImpl::FloatSetter PackedImplSetterCast(GU_PackedFactory * self, void (CLASS::*method)(GET_SET_ARGS GET_SET_JOIN fpreal)) {
+inline GU_PackedImpl::FloatSetter PackedImplSetterCast(GU_PackedFactory * self, void (CLASS::*method)(GET_SET_ARG_PRIM fpreal)) {
 	return self->FloatSetterCast(method);
 }
 
 template <typename CLASS>
-inline GU_PackedImpl::StringSetter PackedImplSetterCast(GU_PackedFactory * self, void (CLASS::*method)(GET_SET_ARGS GET_SET_JOIN const char *)) {
+inline GU_PackedImpl::StringSetter PackedImplSetterCast(GU_PackedFactory * self, void (CLASS::*method)(SET_ARG_PRIM const char *)) {
 	return self->StringSetterCast(method);
 }
 
 template <typename CLASS>
-inline GU_PackedImpl::BoolSetter PackedImplSetterCast(GU_PackedFactory * self, void (CLASS::*method)(GET_SET_ARGS GET_SET_JOIN bool)) {
+inline GU_PackedImpl::BoolSetter PackedImplSetterCast(GU_PackedFactory * self, void (CLASS::*method)(SET_ARG_PRIM bool)) {
 	return self->BoolSetterCast(method);
 }
 
 template <typename CLASS>
-inline GU_PackedImpl::StringArraySetter PackedImplSetterCast(GU_PackedFactory * self, void (CLASS::*method)(GET_SET_ARGS GET_SET_JOIN const UT_StringArray &)) {
+inline GU_PackedImpl::StringArraySetter PackedImplSetterCast(GU_PackedFactory * self, void (CLASS::*method)(SET_ARG_PRIM const UT_StringArray &)) {
 	return self->StringArraySetterCast(method);
 }
 
 template <typename CLASS>
-inline GU_PackedImpl::F64VectorSetter PackedImplSetterCast(GU_PackedFactory * self, void (CLASS::*method)(GET_SET_ARGS GET_SET_JOIN const UT_Vector3D &)) {
+inline GU_PackedImpl::F64VectorSetter PackedImplSetterCast(GU_PackedFactory * self, void (CLASS::*method)(SET_ARG_PRIM const UT_Vector3D &)) {
 	return self->F64VectorSetterCast(method);
 }
 
@@ -90,32 +105,32 @@ template <typename CLASS, typename T, typename Q>
 inline Q PackedImplGetterCast(GU_PackedFactory * self, void (CLASS::*method)(T));
 
 template <typename CLASS>
-inline GU_PackedImpl::IntGetter PackedImplGetterCast(GU_PackedFactory * self, GA_Size (CLASS::*method)(GET_SET_ARGS) const) {
+inline GU_PackedImpl::IntGetter PackedImplGetterCast(GU_PackedFactory * self, GA_Size (CLASS::*method)(GET_SET_ARG_PRIM_SINGLE) const) {
 	return self->IntGetterCast(method);
 }
 
 template <typename CLASS>
-inline GU_PackedImpl::FloatGetter PackedImplGetterCast(GU_PackedFactory * self, fpreal (CLASS::*method)(GET_SET_ARGS) const) {
+inline GU_PackedImpl::FloatGetter PackedImplGetterCast(GU_PackedFactory * self, fpreal (CLASS::*method)(GET_SET_ARG_PRIM_SINGLE) const) {
 	return self->FloatGetterCast(method);
 }
 
 template <typename CLASS>
-inline GU_PackedImpl::StringGetter PackedImplGetterCast(GU_PackedFactory * self, const char * (CLASS::*method)(GET_SET_ARGS) const) {
+inline GU_PackedImpl::StringGetter PackedImplGetterCast(GU_PackedFactory * self, const char * (CLASS::*method)(GET_SET_ARG_PRIM_SINGLE) const) {
 	return self->StringGetterCast(method);
 }
 
 template <typename CLASS>
-inline GU_PackedImpl::BoolGetter PackedImplGetterCast(GU_PackedFactory * self, bool (CLASS::*method)(GET_SET_ARGS) const) {
+inline GU_PackedImpl::BoolGetter PackedImplGetterCast(GU_PackedFactory * self, bool (CLASS::*method)(GET_SET_ARG_PRIM_SINGLE) const) {
 	return self->BoolGetterCast(method);
 }
 
 template <typename CLASS>
-inline GU_PackedImpl::StringArrayGetter PackedImplGetterCast(GU_PackedFactory * self, void (CLASS::*method)(GET_SET_ARGS  GET_SET_JOIN UT_StringArray &) const) {
+inline GU_PackedImpl::StringArrayGetter PackedImplGetterCast(GU_PackedFactory * self, void (CLASS::*method)(GET_SET_ARG_PRIM UT_StringArray &) const) {
 	return self->StringArrayGetterCast(method);
 }
 
 template <typename CLASS>
-inline GU_PackedImpl::F64VectorGetter PackedImplGetterCast(GU_PackedFactory * self, void (CLASS::*method)(GET_SET_ARGS GET_SET_JOIN UT_Vector3D &) const) {
+inline GU_PackedImpl::F64VectorGetter PackedImplGetterCast(GU_PackedFactory * self, void (CLASS::*method)(GET_SET_ARG_PRIM UT_Vector3D &) const) {
 	return self->F64VectorGetterCast(method);
 }
 
@@ -155,42 +170,76 @@ inline GU_PackedImpl::F64VectorGetter PackedImplGetterCast(GU_PackedFactory * se
 // void set_$name(const $type & val) { ... }
 // $type get_$name() const { ... } // returns the default if $name is not previously set
 #define VFH_ACCESSORS(r, state) \
-	VFH_CURRENT_TYPE(state) VFH_TOKENIZE2(get_, VFH_CURRENT_NAME(state))(GET_SET_ARGS) const {\
+\
+	VFH_CURRENT_TYPE(state) VFH_TOKENIZE2(get_, VFH_CURRENT_NAME(state))() const {\
+		const char *name = VFH_STRINGIZE(VFH_CURRENT_NAME(state));\
+		if (!m_options.hasOption(name))\
+			return VFH_CURRENT_DEFAULT(state);\
+		return VRayForHoudini::UT_Options_getter<VFH_CURRENT_TYPE(state)>(m_options, name);\
+	}\
+\
+	VFH_CURRENT_TYPE(state) VFH_TOKENIZE2(get_, VFH_CURRENT_NAME(state))(GET_SET_ARG_PRIM_SINGLE) const {\
 		const char * name = VFH_STRINGIZE(VFH_CURRENT_NAME(state));\
-		return m_options.hasOption(name) ? VRayForHoudini::UT_Options_getter<VFH_CURRENT_TYPE(state)>(m_options, name) : VFH_CURRENT_DEFAULT(state);\
-	} \
-	void VFH_TOKENIZE2(set_, VFH_CURRENT_NAME(state))(GET_SET_ARGS GET_SET_JOIN VFH_CURRENT_TYPE(state) val) {\
+		if (!m_options.hasOption(name))\
+			return VFH_CURRENT_DEFAULT(state);\
+		return VRayForHoudini::UT_Options_getter<VFH_CURRENT_TYPE(state)>(m_options, name);\
+	}\
+\
+	void VFH_TOKENIZE2(set_, VFH_CURRENT_NAME(state))(VFH_CURRENT_TYPE(state) val) {\
+		VRayForHoudini::UT_Options_setter<VFH_CURRENT_TYPE(state)>(m_options, VFH_STRINGIZE(VFH_CURRENT_NAME(state)), val);\
+	}\
+\
+	void VFH_TOKENIZE2(set_, VFH_CURRENT_NAME(state))(SET_ARG_PRIM VFH_CURRENT_TYPE(state) val) {\
 		VRayForHoudini::UT_Options_setter<VFH_CURRENT_TYPE(state)>(m_options, VFH_STRINGIZE(VFH_CURRENT_NAME(state)), val);\
 	}
 
 // generates getter that returns by value, getter that returns by input argument, size of tuple getter and setter
 #define VFH_ACCESSORS_TUPLE(r, state) \
-	VFH_CURRENT_TYPE(state) VFH_TOKENIZE2(get_, VFH_CURRENT_NAME(state))(GET_SET_ARGS) const {\
+\
+	VFH_CURRENT_TYPE(state) VFH_TOKENIZE2(get_, VFH_CURRENT_NAME(state))() const {\
 		VFH_CURRENT_TYPE(state) val;\
-		VFH_TOKENIZE2(_get_, VFH_CURRENT_NAME(state))(GET_SET_ARG_PRIM GET_SET_JOIN val);\
+		VFH_TOKENIZE2(_get_, VFH_CURRENT_NAME(state))(getPrim(), val);\
 		return val;\
 	}\
-	void VFH_TOKENIZE2(_get_, VFH_CURRENT_NAME(state))(GET_SET_ARGS GET_SET_JOIN VFH_CURRENT_TYPE(state) & val) const {\
-		const char * name = VFH_STRINGIZE(VFH_CURRENT_NAME(state));\
-		val =  m_options.hasOption(name) ? VRayForHoudini::UT_Options_getter<VFH_CURRENT_TYPE(state)>(m_options, name) : VFH_CURRENT_DEFAULT(state);\
+\
+	VFH_CURRENT_TYPE(state) VFH_TOKENIZE2(get_, VFH_CURRENT_NAME(state))(GET_SET_ARG_PRIM_SINGLE) const {\
+		VFH_CURRENT_TYPE(state) val;\
+		VFH_TOKENIZE2(_get_, VFH_CURRENT_NAME(state))(GET_SET_ARG_PRIM_FWD GET_SET_ARG_SEP val);\
+		return val;\
 	}\
-	void VFH_TOKENIZE2(set_, VFH_CURRENT_NAME(state))(GET_SET_ARGS GET_SET_JOIN const VFH_CURRENT_TYPE(state) & val) {\
+\
+	void VFH_TOKENIZE2(_get_, VFH_CURRENT_NAME(state))(GET_SET_ARG_PRIM VFH_CURRENT_TYPE(state) & val) const {\
+		const char * name = VFH_STRINGIZE(VFH_CURRENT_NAME(state));\
+		if (m_options.hasOption(name)) {\
+			val = VRayForHoudini::UT_Options_getter<VFH_CURRENT_TYPE(state)>(m_options, name);\
+		}\
+		else {\
+			val = VFH_CURRENT_DEFAULT(state);\
+		}\
+	}\
+\
+	void VFH_TOKENIZE2(set_, VFH_CURRENT_NAME(state))(SET_ARG_PRIM const VFH_CURRENT_TYPE(state) & val) {\
 		VRayForHoudini::UT_Options_setter<VFH_CURRENT_TYPE(state)>(m_options, VFH_STRINGIZE(VFH_CURRENT_NAME(state)), val);\
 	}\
-	exint VFH_TOKENIZE3(get_, VFH_CURRENT_NAME(state), _size)(GET_SET_ARGS) const {\
+\
+	exint VFH_TOKENIZE3(get_, VFH_CURRENT_NAME(state), _size)(GET_SET_ARG_PRIM_SINGLE) const {\
 		const char * name = VFH_STRINGIZE(VFH_CURRENT_NAME(state));\
-		return m_options.hasOption(name) ? VRayForHoudini::UT_Options_getter<VFH_CURRENT_TYPE(state)>(m_options, name).size() : 0;\
+		if (!m_options.hasOption(name))\
+			return 0;\
+		return VRayForHoudini::UT_Options_getter<VFH_CURRENT_TYPE(state)>(m_options, name).size();\
 	}
 
 // generates register call for the current paramter
 // use the passed class_name to find the appropriate setter and getter
 #define VFH_REGISTERS(r, state)\
+\
 	registerIntrinsic(\
 		VFH_STRINGIZE(VFH_CURRENT_NAME(state)),\
 		PackedImplGetterCast<VFH_PARAMS_CLASS(state)>(this, & VFH_PARAMS_CLASS(state) :: VFH_TOKENIZE2(get_, VFH_CURRENT_NAME(state))),\
 		PackedImplSetterCast<VFH_PARAMS_CLASS(state)>(this, & VFH_PARAMS_CLASS(state) :: VFH_TOKENIZE2(set_, VFH_CURRENT_NAME(state))));
 
 #define VFH_REGISTERS_TUPLE(r, state)\
+\
 	registerTupleIntrinsic(\
 		VFH_STRINGIZE(VFH_CURRENT_NAME(state)),\
 		PackedImplGetterCast<VFH_PARAMS_CLASS(state)>(this, & VFH_PARAMS_CLASS(state) :: VFH_TOKENIZE3(get_, VFH_CURRENT_NAME(state), _size)),\

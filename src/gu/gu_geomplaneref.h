@@ -12,6 +12,7 @@
 #define VRAY_FOR_HOUDINI_GEOMPLANEREF_H
 
 #include "vfh_includes.h"
+#include "vfh_primitives.h"
 
 #include <GU/GU_PackedImpl.h>
 
@@ -113,11 +114,11 @@ public:
 	virtual void countMemory(UT_MemoryCounter &counter, bool inclusive) const VRAY_OVERRIDE;
 
 public:
-	fpreal get_plane_size() const
+	fpreal get_plane_size(GET_SET_ARG_PRIM_SINGLE) const
 	{
 		return m_options.hasOption("plane_size") ? m_options.getOptionF("plane_size") : 0;
 	}
-	void set_plane_size(fpreal plane_size)
+	void set_plane_size(SET_ARG_PRIM fpreal plane_size)
 	{
 		m_options.setOptionF("plane_size", plane_size);
 	}

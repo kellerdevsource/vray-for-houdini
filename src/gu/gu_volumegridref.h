@@ -181,13 +181,13 @@ public:
 	inline const UT_Options &     getOptions() const { return m_options; }
 
 
-	exint                         getPhxChannelMapSize() const { return m_options.hasOption("phx_channel_map") ? m_options.getOptionSArray("phx_channel_map").size() : 0; }
-	void                          getPhxChannelMap(UT_StringArray &map) const { map = m_options.hasOption("phx_channel_map") ? m_options.getOptionSArray("phx_channel_map") : map; }
-	void                          setPhxChannelMap(const UT_StringArray &map) { m_options.setOptionSArray("phx_channel_map", map); }
+	exint                         getPhxChannelMapSize(GET_SET_ARG_PRIM_SINGLE) const { return m_options.hasOption("phx_channel_map") ? m_options.getOptionSArray("phx_channel_map").size() : 0; }
+	void                          getPhxChannelMap(GET_SET_ARG_PRIM UT_StringArray &map) const { map = m_options.hasOption("phx_channel_map") ? m_options.getOptionSArray("phx_channel_map") : map; }
+	void                          setPhxChannelMap(SET_ARG_PRIM const UT_StringArray &map) { m_options.setOptionSArray("phx_channel_map", map); }
 	/// @}
 
-	const DataRangeMap &          getChannelDataRanges() const { return m_currentData.dataRange; }
-	DataRangeMap &                getChannelDataRanges()       { return m_currentData.dataRange; }
+	const DataRangeMap &          getChannelDataRanges(GET_SET_ARG_PRIM_SINGLE) const { return m_currentData.dataRange; }
+	DataRangeMap &                getChannelDataRanges(GET_SET_ARG_PRIM_SINGLE)       { return m_currentData.dataRange; }
 
 private:
 	/// Sets fetch and evict callback
