@@ -7,7 +7,6 @@
 
 #include "vfh_defines.h"
 #include "vfh_log.h"
-#include "vfh_primitives.h"
 
 #include "gu_geomplaneref.h"
 
@@ -30,11 +29,7 @@ private:
 	GeomPlaneFactory()
 		: GU_PackedFactory("GeomInfinitePlaneRef", "GeomInfinitePlaneRef")
 	{
-		registerIntrinsic(
-			"plane_size",
-			FloatGetterCast(&GeomPlaneRef::get_plane_size),
-			FloatSetterCast(&GeomPlaneRef::set_plane_size)
-		);
+		GeomPlaneRef::registerIntrinsics<GeomPlaneRef>(*this);
 	}
 
 	VUTILS_DISABLE_COPY(GeomPlaneFactory);
@@ -42,7 +37,7 @@ private:
 
 GA_PrimitiveTypeId GeomPlaneRef::theTypeId(-1);
 
-void VRayForHoudini::GeomPlaneRef::install(GA_PrimitiveFactory *gafactory)
+void GeomPlaneRef::install(GA_PrimitiveFactory *gafactory)
 {
 	GeomPlaneFactory &theFactory = GeomPlaneFactory::getInstance();
 	if (theFactory.isRegistered()) {
@@ -115,13 +110,7 @@ void GeomPlaneRef::getWidthRange(fpreal &wmin, fpreal &wmax) const
 
 bool GeomPlaneRef::unpack(GU_Detail &destgdp) const
 {
-	// This may allocate geometry for the primitive
-	GU_DetailHandleAutoReadLock gdl(getPackedDetail());
-	if (!gdl.isValid()) {
-		return false;
-	}
-
-	return unpackToDetail(destgdp, gdl.getGdp());
+	return false;
 }
 
 GU_ConstDetailHandle GeomPlaneRef::getPackedDetail(GU_PackedContext *context) const
@@ -133,7 +122,7 @@ GU_ConstDetailHandle GeomPlaneRef::getPackedDetail(GU_PackedContext *context) co
 	GU_Detail* gdmp = new GU_Detail();
 	GU_PrimPoly *poly = GU_PrimPoly::build(gdmp, 4, GU_POLY_CLOSED, 0);
 
-	const float size = get_plane_size(GET_PRIM_SINGLE);
+	const float size = getPlaneSize();
 
 	GA_Offset pOff = gdmp->appendPoint();
 	gdmp->setPos3(pOff, UT_Vector3(-size, 0.0f, -size));

@@ -11,27 +11,17 @@
 #ifndef VRAY_FOR_HOUDINI_GU_PGYETI_H
 #define VRAY_FOR_HOUDINI_GU_PGYETI_H
 
-#include "vfh_primitives.h"
 #include "vfh_includes.h"
+#include "vfh_VRayPgYetiRefOptions.h"
 
 #include <GU/GU_PackedImpl.h>
 
 namespace VRayForHoudini {
 
-#define VFH_VRAY_YETI_PARAMS_COUNT 7
-#define VFH_VRAY_YETI_PARAMS (\
-(const char *, file, ""),\
-(const char *, imageSearchPath, ""),\
-(fpreal, density, 1.0),\
-(fpreal, length, 1.0),\
-(fpreal, width, 1.0),\
-(bool, dynamicHairTesselation, true),\
-(fpreal, segmentLength, 4.0)\
-)
-
 /// Yeti hair preview implemented as a packed primitive.
 class VRayPgYetiRef
 	: public GU_PackedImpl
+	, public VRayPgYetiRefOptions
 {
 public:
 	static GA_PrimitiveTypeId typeId();
@@ -40,8 +30,6 @@ public:
 	VRayPgYetiRef();
 	VRayPgYetiRef(const VRayPgYetiRef &src);
 	~VRayPgYetiRef();
-
-	VFH_MAKE_ACCESSORS(VFH_VRAY_YETI_PARAMS, VFH_VRAY_YETI_PARAMS_COUNT)
 
 	GU_PackedFactory *getFactory() const VRAY_OVERRIDE;
 	GU_PackedImpl *copy() const VRAY_OVERRIDE;
@@ -64,9 +52,6 @@ public:
 	int64 getMemoryUsage(bool inclusive) const VRAY_OVERRIDE;
 	void countMemory(UT_MemoryCounter &counter, bool inclusive) const VRAY_OVERRIDE;
 
-	/// Returns current options.
-	const UT_Options &getOptions() const { return m_options; }
-
 private:
 	/// Build packed detail.
 	void detailBuild();
@@ -84,9 +69,6 @@ private:
 
 	/// Geometry detail.
 	GU_ConstDetailHandle m_detail;
-
-	/// Current options set.
-	UT_Options m_options;
 };
 
 } // namespace VRayForHoudini

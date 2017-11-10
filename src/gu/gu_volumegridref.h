@@ -13,10 +13,11 @@
 
 #ifdef CGR_HAS_AUR
 #include "vfh_vray.h"
-#include "vfh_primitives.h"
+
 #include "vfh_lru_cache.hpp"
 #include "vfh_hashes.h"
 #include "vfh_includes.h"
+#include "vfh_VRayVolumeGridRefOptions.h"
 
 #include <aurinterface.h>
 
@@ -50,35 +51,13 @@ template <> struct hash<VRayForHoudini::VolumeCacheKey> {
 
 
 namespace VRayForHoudini {
-static const int MAX_RESOLUTION = 255;
 
-// these are the parameters (intrisics) that will be exposed to Houdini, all are filled from the associated PhxShaderCache node
-// format for each one is (type, name, default_value)
-#define VFH_VOLUME_GRID_PARAMS (\
-	(exint,  cache_load,   1),\
-	(exint,  anim_mode,    0),\
-	(fpreal, t2f,          1),\
-	(exint,  loop_overlap, 0),\
-	(exint,  read_offset,  1),\
-	(exint,  play_at,      1),\
-	(exint,  max_length,   0),\
-	(fpreal, play_speed,   1),\
-	(exint,  blend_method, 0),\
-	(exint,  load_nearest, 0),\
-	(exint,  flip_yz,      0),\
-	(const char *, cache_path,  ""),\
-	(const char *, usrchmap,  ""),\
-	(const char *, cache_path_prefix, ""),\
-	(const char *, cache_path_suffix, ""),\
-	(exint,        frame_number_width, 1),\
-	(fpreal,       current_frame, 0),\
-	(const char *, current_cache_path, "")\
-)
-#define VFH_VOLUME_GRID_PARAMS_COUNT 18
+static const int MAX_RESOLUTION = 255;
 
 /// Implementation for a volume grid packed primitive
 class VRayVolumeGridRef 
 	: public GU_PackedImpl
+	, public VRayVolumeGridRefOptions
 {
 	// These *must* match phx's values
 	enum AnimationMode {
@@ -106,8 +85,6 @@ public:
 	};
 	typedef Caches::LRUCache<VolumeCacheKey, VolumeCacheData, std::hash<VolumeCacheKey>, std::equal_to<VolumeCacheKey>, 10> VolumeCache;
 
-	VFH_MAKE_ACCESSORS(VFH_VOLUME_GRID_PARAMS, VFH_VOLUME_GRID_PARAMS_COUNT)
-
 	/// Get the type ID for the VRayProxy primitive type.
 	static GA_PrimitiveTypeId typeId() { return theTypeId; }
 	/// Register this factory
@@ -125,7 +102,7 @@ private:
 public:
 	VRayVolumeGridRef();
 	VRayVolumeGridRef(const VRayVolumeGridRef &src);
-	VRayVolumeGridRef(VRayVolumeGridRef &&src);
+	VRayVolumeGridRef(VRayVolumeGridRef &&src) noexcept;
 	virtual ~VRayVolumeGridRef();
 
 	/// @{
@@ -177,17 +154,10 @@ public:
 	const GU_DetailHandle &   getDetail() const    { return m_currentData.detailHandle; }
 	GU_DetailHandle &         getDetail()          { return m_currentData.detailHandle; }
 	void setDetail(const GU_ConstDetailHandle &detail) { m_currentData.detailHandle = detail.castAwayConst(); }
-
-	inline const UT_Options &     getOptions() const { return m_options; }
-
-
-	exint                         getPhxChannelMapSize(GET_SET_ARG_PRIM_SINGLE) const { return m_options.hasOption("phx_channel_map") ? m_options.getOptionSArray("phx_channel_map").size() : 0; }
-	void                          getPhxChannelMap(GET_SET_ARG_PRIM UT_StringArray &map) const { map = m_options.hasOption("phx_channel_map") ? m_options.getOptionSArray("phx_channel_map") : map; }
-	void                          setPhxChannelMap(SET_ARG_PRIM const UT_StringArray &map) { m_options.setOptionSArray("phx_channel_map", map); }
 	/// @}
 
-	const DataRangeMap &          getChannelDataRanges(GET_SET_ARG_PRIM_SINGLE) const { return m_currentData.dataRange; }
-	DataRangeMap &                getChannelDataRanges(GET_SET_ARG_PRIM_SINGLE)       { return m_currentData.dataRange; }
+	const DataRangeMap &          getChannelDataRanges() const { return m_currentData.dataRange; }
+	DataRangeMap &                getChannelDataRanges()       { return m_currentData.dataRange; }
 
 private:
 	/// Sets fetch and evict callback
@@ -229,7 +199,6 @@ private:
 private:
 	mutable VolumeCache    m_dataCache; ///< Data cache used to cache last 10 volumes loaded, mutable(needs to be updated from const functions not changing other (immutable)members)
 	mutable VolumeCacheData m_currentData;
-	UT_Options             m_options; ///< All params from VFH_VOLUME_GRID_PARAMS are defined in this map
 
 	UT_BoundingBox         m_bBox; ///< The volume bounding box
 	bool                   m_dirty; ///< True if any parameters that might affect preview are changed

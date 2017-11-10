@@ -151,8 +151,6 @@ if(HDK_FOUND)
 
 	set(HDK_INCLUDES
 		${PYTHON_INCLUDE_PATH}
-		# For Boost spirit
-		${SDK_PATH}/hdk/boost_shared
 		${HDK_INCLUDE_PATH}
 	)
 
@@ -184,6 +182,25 @@ if(HDK_FOUND)
 		)
 	endif()
 
+	# For HDF5
+	list(APPEND HDK_INCLUDES
+		${SDK_PATH}/hdk/hdf5/include/cpp
+		${HDK_INCLUDE_PATH}/OpenEXR
+	)
+
+	# Boost
+	if("${HDK_MAJOR_VERSION}.${HDK_MINOR_VERSION}" VERSION_GREATER 16.0)
+		# Since 16.5 Boost is not shipped anymore
+		include_directories(${SDK_PATH}/hdk/boost/include)
+		list(APPEND HDK_LIBRARIES
+			${SDK_PATH}/hdk/boost/lib/vc14
+		)
+	else()
+		list(APPEND HDK_INCLUDES
+			${SDK_PATH}/hdk/boost_shared
+		)
+	endif()
+
 	if(WIN32)
 		list(APPEND HDK_DEFINITIONS
 			-DI386
@@ -208,11 +225,6 @@ if(HDK_FOUND)
 
 		file(GLOB HDK_LIBS_A "${HDK_LIB_PATH}/*.a")
 		list(REMOVE_ITEM HDK_LIBS_A "${HDK_LIB_PATH}/libHARC32.a")
-
-		list(APPEND HDK_INCLUDES
-			${SDK_PATH}/hdk/hdf5/include/cpp
-			${HDK_INCLUDE_PATH}/OpenEXR
-		)
 
 		set(HDK_LIBS
 			${HDK_LIBS_A}
@@ -304,6 +316,9 @@ if(HDK_FOUND)
 			)
 
 			list(APPEND HDK_LIBS
+				${SDK_PATH}/hdk/hdf5/lib/libhdf5_cpp$<$<CONFIG:Debug>:_debug>.a
+				${SDK_PATH}/hdk/hdf5/lib/libhdf5$<$<CONFIG:Debug>:_debug>.a
+
 				GLU
 				GL
 				X11

@@ -29,7 +29,6 @@
 #include <H5Cpp.h>
 
 using namespace VRayForHoudini;
-using namespace VUtils;
 
 static GA_PrimitiveTypeId theTypeId(-1);
 
@@ -55,7 +54,7 @@ private:
 VRayPgYetiFactory::VRayPgYetiFactory()
 	: GU_PackedFactory("VRayPgYetiRef", "VRayPgYetiRef")
 {
-	VFH_MAKE_REGISTERS(VFH_VRAY_YETI_PARAMS, VFH_VRAY_YETI_PARAMS_COUNT, VRayPgYetiRef)
+	VRayPgYetiRefOptions::registerIntrinsics<VRayPgYetiRefOptions>(*this);
 }
 
 void VRayPgYetiRef::install(GA_PrimitiveFactory *gafactory)
@@ -80,15 +79,13 @@ void VRayPgYetiRef::install(GA_PrimitiveFactory *gafactory)
 VRayPgYetiRef::VRayPgYetiRef()
 	: GU_PackedImpl()
 	, m_detail()
-	, m_options()
 {}
 
 VRayPgYetiRef::VRayPgYetiRef(const VRayPgYetiRef &src)
 	: GU_PackedImpl(src)
+	, VRayPgYetiRefOptions(src)
 	, m_detail(src.m_detail)
-	, m_options(src.m_options)
-{
-}
+{}
 
 VRayPgYetiRef::~VRayPgYetiRef()
 {}
@@ -282,7 +279,7 @@ void VRayPgYetiRef::detailBuild()
 {
 	GU_Detail *gdp = new GU_Detail();
 
-	const UT_String filePath(get_file());
+	const UT_String filePath(getFile());
 	if (filePath.isstring()) {
 		try {
 			using namespace H5;
