@@ -315,10 +315,10 @@ DisplacementType ObjectExporter::hasSubdivApplied(OBJ_Node &objNode) const
 
 			OP_Node *shop = getOpNodeFromPath(shopPath, 0.0);
 			if (shop) {
-				if (getVRayNodeFromOp(*shop, "Geometry", "GeomStaticSmoothedMesh")) {
+				if (getVRayNodeFromOp(*shop, "Surface", "GeomStaticSmoothedMesh")) {
 					displType = displacementTypeSmooth;
 				}
-				else if (getVRayNodeFromOp(*shop, "Geometry", "GeomDisplacedMesh")) {
+				else if (getVRayNodeFromOp(*shop, "Surface", "GeomDisplacedMesh")) {
 					displType = displacementTypeDisplace;
 				}
 				else {
