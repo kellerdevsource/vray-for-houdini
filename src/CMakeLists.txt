@@ -14,6 +14,7 @@ include_directories(.)
 include_directories(io)
 include_directories(op)
 include_directories(gu)
+include_directories(gu/options)
 include_directories(sop)
 include_directories(vop)
 include_directories(rop)
@@ -40,6 +41,11 @@ set(EXPORTER_SOURCES
 	export/export/vfh_export_hdk_shaders.cpp
 	export/export/vfh_export_op.cpp
 	export/export/vfh_material_override.cpp
+	gu/gu_volumegridref.cpp
+	gu/gu_vrayproxyref.cpp
+	gu/gu_vraysceneref.cpp
+	gu/gu_geomplaneref.cpp
+	gu/gu_pgyeti.cpp
 	export/utils/vfh_geoutils.cpp
 	export/utils/vfh_tex_utils.cpp
 	export/utils/vfh_utils_vrmesh.cpp
@@ -84,6 +90,11 @@ set(EXPORTER_HEADERS
 	export/vfh_plugin_attrs.h
 	export/vfh_plugin_exporter.h
 	export/vfh_vray.h
+	gu/gu_volumegridref.h
+	gu/gu_vrayproxyref.h
+	gu/gu_vraysceneref.h
+	gu/gu_geomplaneref.h
+	gu/gu_pgyeti.h
 	utils/vfh_attr_utils.h
 	utils/vfh_error.h
 	utils/vfh_hashes.h
@@ -91,7 +102,6 @@ set(EXPORTER_HEADERS
 	utils/vfh_log.h
 	utils/vfh_op_utils.h
 	utils/vfh_plugin_info.h
-	utils/vfh_primitives.h
 	utils/vfh_prm_def.h
 	utils/vfh_prm_defaults.h
 	utils/vfh_prm_globals.h
@@ -105,11 +115,6 @@ set(EXPORTER_HEADERS
 set(SOURCES
 	cmd/vfh_cmd_register.cpp
 	cmd/vfh_cmd_vrayproxy.cpp
-	gu/gu_volumegridref.cpp
-	gu/gu_vrayproxyref.cpp
-	gu/gu_vraysceneref.cpp
-	gu/gu_geomplaneref.cpp
-	gu/gu_pgyeti.cpp
 	io/io_vrmesh.cpp
 	io/io_vrscene.cpp
 	obj/obj_node_base.cpp
@@ -144,11 +149,6 @@ set(SOURCES
 set(HEADERS
 	cmd/vfh_cmd_register.h
 	cmd/vfh_cmd_vrayproxy.h
-	gu/gu_volumegridref.h
-	gu/gu_vrayproxyref.h
-	gu/gu_vraysceneref.h
-	gu/gu_geomplaneref.h
-	gu/gu_pgyeti.h
 	io/io_vrmesh.h
 	io/io_vrscene.h
 	obj/obj_node_base.h
@@ -219,6 +219,46 @@ endif()
 
 houdini_library(vray_for_houdini_exporter "${EXPORTER_SOURCES};${EXPORTER_HEADERS}")
 houdini_plugin(${PROJECT_NAME} "${SOURCES};${HEADERS}")
+
+# Generate GU intrinsics.
+#
+function(vfh_generate_gu_options _libTarget _dsoTarget)
+	set(FILE_OUT_DIR ${CMAKE_CURRENT_BINARY_DIR})
+	set(GU_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/gu/options/vfh_gu_options.py)
+
+	file(GLOB JSON_INPUT "gu/options/json/*.json")
+
+	foreach(jsonFile ${JSON_INPUT})
+		get_filename_component(CLASS_NAME ${jsonFile} NAME_WE)
+		set(FILE_OUT_NAME "vfh_${CLASS_NAME}Options.cpp")
+
+		add_custom_command(
+			OUTPUT
+				${FILE_OUT_DIR}/${FILE_OUT_NAME}
+			COMMAND
+				python ${GU_SCRIPT} --hdk=${HOUDINI_VERSION} --jsonFile=${jsonFile} --outDir=${FILE_OUT_DIR}
+			DEPENDS
+				${GU_SCRIPT}
+				${jsonFile}
+			WORKING_DIRECTORY
+				${FILE_OUT_DIR}
+			COMMENT
+				"Generating options for ${CLASS_NAME}..."
+			VERBATIM
+		)
+
+		target_sources(${_libTarget}
+			PRIVATE
+				${FILE_OUT_DIR}/${FILE_OUT_NAME}
+				${jsonFile}
+		)
+	endforeach()
+
+	target_include_directories(${_libTarget} PRIVATE ${FILE_OUT_DIR})
+	target_include_directories(${_dsoTarget} PRIVATE ${FILE_OUT_DIR})
+endfunction()
+
+vfh_generate_gu_options(vray_for_houdini_exporter vray_for_houdini)
 
 target_link_libraries(${PROJECT_NAME} vray_for_houdini_exporter)
 

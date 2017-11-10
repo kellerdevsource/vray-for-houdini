@@ -1,0 +1,6 @@
+{
+    "class_name" : "GeomPlaneRef",
+    "intrinsics" : [
+        { "type" : "FLOAT", "name" : "plane_size", "value" : 4 }
+    ]
+}
