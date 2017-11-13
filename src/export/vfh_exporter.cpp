@@ -67,7 +67,7 @@ static StringSet RenderSettingsPlugins;
 
 static UT_DMatrix4 yAxisUpRotationMatrix(1.0, 0.0, 0.0, 0.0,
 										0.0, 0.0, 1.0, 0.0,
-										0.0, 1.0, 0.0, 0.0,
+										0.0, -1.0, 0.0, 0.0,
 										0.0, 0.0, 0.0, 0.0);
 
 void VRayExporter::reset()
@@ -413,14 +413,7 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 						switch (curSockInfo.type) {
 							case Parm::eMatrix: {
 								VRay::Transform transform;
-								if (pluginInfo->pluginType == Parm::PluginTypeUvwgen) {
-									transform = exportTransformVop(*inpvop, parentContext, true);
-									transform.matrix[2] *= -1;
-								}
-								else {
-									transform = exportTransformVop(*inpvop, parentContext);
-								}
-
+								transform = exportTransformVop(*inpvop, parentContext, pluginInfo->pluginType == Parm::PluginTypeUvwgen);
 								pluginDesc.addAttribute(Attrs::PluginAttr(attrName, transform.matrix));
 								break;
 							}
