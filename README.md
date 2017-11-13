@@ -57,6 +57,8 @@ Building From Source
 
 * CMake (> 3.7.x)
 
+* Python in `%PATH%`
+
 * Ninja (> 1.5.x, optional)
 
 

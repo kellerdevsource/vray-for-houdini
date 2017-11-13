@@ -32,7 +32,9 @@
 #include "gu_vrayproxyref.h"
 #include "gu_vraysceneref.h"
 #include "gu_geomplaneref.h"
+#include "gu_pgyeti.h"
 #include "io/io_vrmesh.h"
+#include "io/io_vrscene.h"
 
 // For newShopOperator()
 #include <SHOP/SHOP_Node.h>
@@ -64,14 +66,25 @@ using namespace VRayForHoudini;
 ///      http://archive.sidefx.com/docs/hdk15.5/_h_d_k__op_basics__overview__registration.html
 
 
-/// Register file extensions that could be handled by vfh custom translators
+/// Register file extension that could be handled by vfh custom translators.
+static void registerExtension(UT_ExtensionList &extList, const char *ext)
+{
+	if (!extList.findExtension(ext)) {
+		extList.addExtension(ext);
+	}
+}
+
+/// Register file extensions that could be handled by vfh custom translators.
 static void registerExtensions()
 {
 	Log::Logger::startLogging();
-	UT_ExtensionList *geoextension = UTgetGeoExtensions();
-	if (geoextension && !geoextension->findExtension(IO::Vrmesh::extension)) {
-		geoextension->addExtension(IO::Vrmesh::extension);
-	}
+
+	UT_ExtensionList *geoExtensions = UTgetGeoExtensions();
+	if (!geoExtensions)
+		return;
+
+	registerExtension(*geoExtensions, IO::Vrmesh::extension);
+	registerExtension(*geoExtensions, IO::Vrscene::fileExtension);
 }
 
 
@@ -79,6 +92,7 @@ static void registerExtensions()
 void newGeometryIO(void *)
 {
 	GU_Detail::registerIOTranslator(new IO::Vrmesh());
+	GU_Detail::registerIOTranslator(new IO::Vrscene());
 
 	// Note: due to the just-in-time loading of GeometryIO,
 	// the .vrmesh extension won't be added until after your first .vrmesh save/load.
@@ -109,12 +123,15 @@ void unregister(void *)
 /// @param gafactory[out] - primitive factory for DSO defined primitives
 void newGeometryPrim(GA_PrimitiveFactory *gafactory)
 {
+#ifdef CGR_HAS_VRAYSCENE
 	VRaySceneRef::install(gafactory);
+#endif
 	VRayProxyRef::install(gafactory);
 	GeomPlaneRef::install(gafactory);
 #ifdef CGR_HAS_AUR
 	VRayVolumeGridRef::install(gafactory);
 #endif
+	VRayPgYetiRef::install(gafactory);
 }
 
 
@@ -168,6 +185,7 @@ void newSopOperator(OP_OperatorTable *table)
 #ifdef CGR_HAS_VRAYSCENE
 	VFH_ADD_SOP_GENERATOR(table, VRayScene);
 #endif
+	VFH_ADD_SOP_GENERATOR(table, VRayPgYeti);
 
 	VFH_ADD_SOP_GENERATOR(table, GeomPlane);
 	VFH_ADD_SOP_GENERATOR_CUSTOM(table, VRayProxy, VRayProxy::getPrmTemplate());

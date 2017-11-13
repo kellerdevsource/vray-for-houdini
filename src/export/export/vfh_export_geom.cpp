@@ -36,6 +36,7 @@
 #include <GA/GA_Names.h>
 
 #include <parse.h>
+#include <gu_pgyeti.h>
 
 using namespace VRayForHoudini;
 
@@ -50,16 +51,6 @@ static const VRay::Transform flipYZTm{ {
 };
 
 static struct PrimPackedTypeIDs {
-	PrimPackedTypeIDs()
-		: initialized(false)
-		, alembicRef(0)
-		, packedDisk(0)
-		, packedGeometry(0)
-		, vrayProxyRef(0)
-		, vraySceneRef(0)
-		, geomPlaneRef(0)
-	{}
-
 	void init() {
 		if (initialized)
 			return;
@@ -71,21 +62,23 @@ static struct PrimPackedTypeIDs {
 		vrayVolumeGridRef = GU_PrimPacked::lookupTypeId("VRayVolumeGridRef");
 		vraySceneRef = GU_PrimPacked::lookupTypeId("VRaySceneRef");
 		geomPlaneRef = GU_PrimPacked::lookupTypeId("GeomInfinitePlaneRef");
+		pgYetiRef = GU_PrimPacked::lookupTypeId("VRayPgYetiRef");
 
 		initialized = true;
 	}
 
 private:
-	int initialized;
+	int initialized{false};
 
 public:
-	GA_PrimitiveTypeId alembicRef;
-	GA_PrimitiveTypeId packedDisk;
-	GA_PrimitiveTypeId packedGeometry;
-	GA_PrimitiveTypeId vrayProxyRef;
-	GA_PrimitiveTypeId vrayVolumeGridRef;
-	GA_PrimitiveTypeId vraySceneRef;
-	GA_PrimitiveTypeId geomPlaneRef;
+	GA_PrimitiveTypeId alembicRef{0};
+	GA_PrimitiveTypeId packedDisk{0};
+	GA_PrimitiveTypeId packedGeometry{0};
+	GA_PrimitiveTypeId vrayProxyRef{0};
+	GA_PrimitiveTypeId vrayVolumeGridRef{0};
+	GA_PrimitiveTypeId vraySceneRef{0};
+	GA_PrimitiveTypeId geomPlaneRef{0};
+	GA_PrimitiveTypeId pgYetiRef{0};
 } primPackedTypeIDs;
 
 static boost::format objGeomNameFmt("%s|%i@%s");
@@ -94,6 +87,7 @@ static boost::format polyNameFmt("GeomStaticMesh|%i@%s");
 static boost::format alembicNameFmt("Alembic|%i@%s");
 static boost::format vrmeshNameFmt("VRayProxy|%i");
 static boost::format vrsceneNameFmt("VRayScene|%i@%s");
+static boost::format pgYetiNameFmt("VRayPgYeti|%i@%s");
 
 static const char intrAlembicFilename[] = "abcfilename";
 static const char intrAlembicObjectPath[] = "abcobjectpath";
@@ -321,10 +315,10 @@ DisplacementType ObjectExporter::hasSubdivApplied(OBJ_Node &objNode) const
 
 			OP_Node *shop = getOpNodeFromPath(shopPath, 0.0);
 			if (shop) {
-				if (getVRayNodeFromOp(*shop, "Geometry", "GeomStaticSmoothedMesh")) {
+				if (getVRayNodeFromOp(*shop, "Surface", "GeomStaticSmoothedMesh")) {
 					displType = displacementTypeSmooth;
 				}
-				else if (getVRayNodeFromOp(*shop, "Geometry", "GeomDisplacedMesh")) {
+				else if (getVRayNodeFromOp(*shop, "Surface", "GeomDisplacedMesh")) {
 					displType = displacementTypeDisplace;
 				}
 				else {
@@ -1066,6 +1060,11 @@ int ObjectExporter::getPrimPackedID(const GU_PrimPacked &prim) const
 		prim.getIntrinsic(prim.findIntrinsic(intrAlembicFilename), fileName);
 		return objName.hash() ^ fileName.hash();
 	}
+	if (primTypeID == primPackedTypeIDs.pgYetiRef) {
+		const VRayPgYetiRef *pgYetiRef =
+			UTverify_cast<const VRayPgYetiRef*>(prim.implementation());
+		return pgYetiRef->getOptions().hash();
+	}
 	if (primTypeID == GU_PackedFragment::typeId()) {
 		const GU_PackedFragment *primFragment = UTverify_cast<const GU_PackedFragment*>(prim.implementation());
 		if (!primFragment)
@@ -1118,6 +1117,9 @@ VRay::Plugin ObjectExporter::exportPrimPacked(OBJ_Node &objNode, const GU_PrimPa
 	}
 	if (primTypeID == primPackedTypeIDs.geomPlaneRef) {
 		return exportGeomPlaneRef(objNode, prim);
+	}
+	if (primTypeID == primPackedTypeIDs.pgYetiRef) {
+		return exportPgYetiRef(objNode, prim);;
 	}
 
 	const GA_PrimitiveDefinition &lookupTypeDef = prim.getTypeDef();
@@ -1192,6 +1194,37 @@ VRay::Plugin ObjectExporter::exportVRayProxyRef(OBJ_Node &objNode, const GU_Prim
 	pluginExporter.setAttrsFromUTOptions(pluginDesc, options);
 
 	return pluginExporter.exportPlugin(pluginDesc);
+}
+
+VRay::Plugin ObjectExporter::exportPgYetiRef(OBJ_Node &objNode, const GU_PrimPacked &prim)
+{
+	if (!doExportGeometry)
+		return VRay::Plugin();
+
+	UT_String primname;
+	prim.getIntrinsic(prim.findIntrinsic(intrPackedPrimitiveName), primname);
+
+	const int key = getPrimPackedID(prim);
+
+	const VRayPgYetiRef *pgYetiRef =
+		UTverify_cast<const VRayPgYetiRef*>(prim.implementation());
+
+	const UT_Options &options = pgYetiRef->getOptions();
+
+	Attrs::PluginDesc pluginDesc(str(pgYetiNameFmt % key % primname.buffer()),
+								 "pgYetiVRay");
+	pluginDesc.add(Attrs::PluginAttr("file", options.getOptionS("file").buffer()));
+	pluginDesc.add(Attrs::PluginAttr("imageSearchPath", options.getOptionS("imageSearchPath").buffer()));
+	pluginDesc.add(Attrs::PluginAttr("density", options.getOptionF("density")));
+	pluginDesc.add(Attrs::PluginAttr("length", options.getOptionF("length")));
+	pluginDesc.add(Attrs::PluginAttr("width", options.getOptionF("width")));
+	pluginDesc.add(Attrs::PluginAttr("dynamicHairTesselation", options.getOptionB("dynamicHairTesselation")));
+	pluginDesc.add(Attrs::PluginAttr("segmentLength", options.getOptionB("segmentLength")));
+
+	pluginDesc.add(Attrs::PluginAttr("verbosity", 0));
+	pluginDesc.add(Attrs::PluginAttr("threads", 0));
+
+	return pluginExporter.exportPlugin(pluginDesc); 
 }
 
 VRay::Plugin ObjectExporter::exportVRaySceneRef(OBJ_Node &objNode, const GU_PrimPacked &prim)
@@ -1771,6 +1804,7 @@ VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode)
 		!renderOpType.equal("VRayNodePhxShaderCache") &&
 		!renderOpType.equal("VRayNodeVRayProxy") &&
 		!renderOpType.equal("VRayNodeVRayScene") &&
+		!renderOpType.equal("VRayNodeVRayPgYeti") &&
 		!renderOpType.equal("VRayNodeGeomPlane"))
 	{
 		return exportVRaySOP(objNode, *renderSOP);
