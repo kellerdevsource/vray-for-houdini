@@ -14,7 +14,6 @@
 #include "vfh_vray.h"
 #include "vfh_vrayproxyutils.h"
 #include "vfh_includes.h"
-#include "vfh_primitives.h"
 
 #include <GU/GU_PackedImpl.h>
 
