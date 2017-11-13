@@ -65,6 +65,11 @@ static boost::format fmtPluginTypeConverterName2("%s|%s");
 
 static StringSet RenderSettingsPlugins;
 
+static UT_DMatrix4 yAxisUpRotationMatrix(1.0, 0.0, 0.0, 0.0,
+										0.0, 0.0, 1.0, 0.0,
+										0.0, 1.0, 0.0, 0.0,
+										0.0, 0.0, 0.0, 0.0);
+
 void VRayExporter::reset()
 {
 	objectExporter.clearPrimPluginCache();
@@ -332,10 +337,7 @@ VRay::Transform VRayExporter::exportTransformVop(VOP_Node &vop_node, ExportConte
 						options.getOptionV3("pivot").x(), options.getOptionV3("pivot").y(), options.getOptionV3("pivot").z(),
 						m4);
 	if (rotate) {
-		return Matrix4ToTransform(m4 * UT_DMatrix4(1, 0, 0, 0,
-													0, 0, 1, 0,
-													0, 1, 0, 0,
-													0, 0, 0, 0));
+		return Matrix4ToTransform(m4 * yAxisUpRotationMatrix);
 	}
 
 	return Matrix4ToTransform(m4);
