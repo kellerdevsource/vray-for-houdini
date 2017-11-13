@@ -126,6 +126,8 @@ if(HDK_FOUND)
 		-DFBX_ENABLED=1
 		-DOPENCL_ENABLED=1
 		-DOPENVDB_ENABLED=1
+		-DBOOST_ALL_NO_LIB
+		-DHBOOST_ALL_NO_LIB
 	)
 
 	if(HDK_MAJOR_VERSION VERSION_GREATER 15.0)
@@ -142,11 +144,13 @@ if(HDK_FOUND)
 	set(HDK_LIB_PATH     ${HDK_LIBRARIES})
 
 	if (WIN32)
-		set(PYTHON_INCLUDE_PATH ${HDK_PATH}/python27/include)
-		set(PYTHON_LIB_PATH ${HDK_PATH}/python27/libs)
+		set(PYTHON_ROOT         ${HDK_PATH}/python27)
+		set(PYTHON_INCLUDE_PATH ${PYTHON_ROOT}/include)
+		set(PYTHON_LIB_PATH     ${PYTHON_ROOT}/libs)
 	else()
-		set(PYTHON_INCLUDE_PATH ${HDK_PATH}/python/include/python2.7)
-		set(PYTHON_LIB_PATH ${HDK_PATH}/python/lib)
+		set(PYTHON_ROOT         ${HDK_PATH}/python)
+		set(PYTHON_INCLUDE_PATH ${PYTHON_ROOT}/include/python2.7)
+		set(PYTHON_LIB_PATH     ${PYTHON_ROOT}/lib)
 	endif()
 
 	set(HDK_INCLUDES
@@ -223,11 +227,7 @@ if(HDK_FOUND)
 			set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /D UT_ASSERT_LEVEL=1")
 		endif()
 
-		file(GLOB HDK_LIBS_A "${HDK_LIB_PATH}/*.a")
-		list(REMOVE_ITEM HDK_LIBS_A "${HDK_LIB_PATH}/libHARC32.a")
-
 		set(HDK_LIBS
-			${HDK_LIBS_A}
 			$<$<CONFIG:Release>:Half.lib>
 			$<$<CONFIG:RelWithDebInfo>:Half.lib>
 			openvdb_sesi.lib
@@ -235,6 +235,148 @@ if(HDK_FOUND)
 			${SDK_PATH}/hdk/hdf5/lib/libhdf5_cpp$<$<CONFIG:Debug>:_D>.lib
 			${SDK_PATH}/hdk/hdf5/lib/libhdf5$<$<CONFIG:Debug>:_D>.lib
 		)
+
+		if("${HDK_MAJOR_VERSION}.${HDK_MINOR_VERSION}" VERSION_GREATER 16.0)
+			list(APPEND HDK_LIBS
+				${HDK_LIB_PATH}/libARR.lib
+				${HDK_LIB_PATH}/libAU.lib
+				${HDK_LIB_PATH}/libBM.lib
+				${HDK_LIB_PATH}/libBR.lib
+				${HDK_LIB_PATH}/libBV.lib
+				${HDK_LIB_PATH}/libCE.lib
+				${HDK_LIB_PATH}/libCH.lib
+				${HDK_LIB_PATH}/libCHOP.lib
+				${HDK_LIB_PATH}/libCHOPNET.lib
+				${HDK_LIB_PATH}/libCHOPZ.lib
+				${HDK_LIB_PATH}/libCHUI.lib
+				${HDK_LIB_PATH}/libCL.lib
+				${HDK_LIB_PATH}/libCLO.lib
+				${HDK_LIB_PATH}/libCMD.lib
+				${HDK_LIB_PATH}/libCOP2.lib
+				${HDK_LIB_PATH}/libCOPNET.lib
+				${HDK_LIB_PATH}/libCOPZ.lib
+				${HDK_LIB_PATH}/libcurlwrap.lib
+				${HDK_LIB_PATH}/libCV.lib
+				${HDK_LIB_PATH}/libCVEX.lib
+				${HDK_LIB_PATH}/libDAE.lib
+				${HDK_LIB_PATH}/libDD.lib
+				${HDK_LIB_PATH}/libDEP.lib
+				${HDK_LIB_PATH}/libDM.lib
+				${HDK_LIB_PATH}/libDOP.lib
+				${HDK_LIB_PATH}/libDOPZ.lib
+				${HDK_LIB_PATH}/libDTUI.lib
+				${HDK_LIB_PATH}/libEXPR.lib
+				${HDK_LIB_PATH}/libFBX.lib
+				${HDK_LIB_PATH}/libFONT.lib
+				${HDK_LIB_PATH}/libFS.lib
+				${HDK_LIB_PATH}/libFUI.lib
+				${HDK_LIB_PATH}/libFUSE.lib
+				${HDK_LIB_PATH}/libGA.lib
+				${HDK_LIB_PATH}/libGABC.lib
+				${HDK_LIB_PATH}/libGAS.lib
+				${HDK_LIB_PATH}/libGD.lib
+				${HDK_LIB_PATH}/libGDT.lib
+				${HDK_LIB_PATH}/libGEO.lib
+				${HDK_LIB_PATH}/libGOP.lib
+				${HDK_LIB_PATH}/libGP.lib
+				${HDK_LIB_PATH}/libGQ.lib
+				${HDK_LIB_PATH}/libGR.lib
+				${HDK_LIB_PATH}/libGSTY.lib
+				${HDK_LIB_PATH}/libGT.lib
+				${HDK_LIB_PATH}/libGU.lib
+				${HDK_LIB_PATH}/libGUI.lib
+				${HDK_LIB_PATH}/libGVEX.lib
+				${HDK_LIB_PATH}/libHAPIL.lib
+				${HDK_LIB_PATH}/libHARD.lib
+				${HDK_LIB_PATH}/libHOM.lib
+				${HDK_LIB_PATH}/libHOMF.lib
+				${HDK_LIB_PATH}/libHOMUI.lib
+				${HDK_LIB_PATH}/libhptex.lib
+				${HDK_LIB_PATH}/libIM.lib
+				${HDK_LIB_PATH}/libIMG.lib
+				${HDK_LIB_PATH}/libIMG3D.lib
+				${HDK_LIB_PATH}/libIMGUI.lib
+				${HDK_LIB_PATH}/libIMH.lib
+				${HDK_LIB_PATH}/libIMP.lib
+				${HDK_LIB_PATH}/libIMS.lib
+				${HDK_LIB_PATH}/libIPR.lib
+				${HDK_LIB_PATH}/libJEDI.lib
+				${HDK_LIB_PATH}/libJIVE.lib
+				${HDK_LIB_PATH}/libKIN.lib
+				${HDK_LIB_PATH}/libLM.lib
+				${HDK_LIB_PATH}/libMATUI.lib
+				${HDK_LIB_PATH}/libMCS.lib
+				${HDK_LIB_PATH}/libMDS.lib
+				${HDK_LIB_PATH}/libMGR.lib
+				${HDK_LIB_PATH}/libMH.lib
+				${HDK_LIB_PATH}/libMIDI.lib
+				${HDK_LIB_PATH}/libMOT.lib
+				${HDK_LIB_PATH}/libMPI.lib
+				${HDK_LIB_PATH}/libMSS.lib
+				${HDK_LIB_PATH}/libMT.lib
+				${HDK_LIB_PATH}/libMWS.lib
+				${HDK_LIB_PATH}/libOBJ.lib
+				${HDK_LIB_PATH}/libOH.lib
+				${HDK_LIB_PATH}/libOP.lib
+				${HDK_LIB_PATH}/libOP3D.lib
+				${HDK_LIB_PATH}/libOPUI.lib
+				${HDK_LIB_PATH}/libPBR.lib
+				${HDK_LIB_PATH}/libPI.lib
+				${HDK_LIB_PATH}/libPOP.lib
+				${HDK_LIB_PATH}/libPOPNET.lib
+				${HDK_LIB_PATH}/libPOPZ.lib
+				${HDK_LIB_PATH}/libPRM.lib
+				${HDK_LIB_PATH}/libPSI2.lib
+				${HDK_LIB_PATH}/libPXL.lib
+				${HDK_LIB_PATH}/libPY.lib
+				${HDK_LIB_PATH}/libPYP.lib
+				${HDK_LIB_PATH}/libRAY.lib
+				${HDK_LIB_PATH}/libRBD.lib
+				${HDK_LIB_PATH}/libRE.lib
+				${HDK_LIB_PATH}/libROP.lib
+				${HDK_LIB_PATH}/libRU.lib
+				${HDK_LIB_PATH}/libSHLF.lib
+				${HDK_LIB_PATH}/libSHLFUI.lib
+				${HDK_LIB_PATH}/libSHOP.lib
+				${HDK_LIB_PATH}/libSI.lib
+				${HDK_LIB_PATH}/libSIM.lib
+				${HDK_LIB_PATH}/libSIMZ.lib
+				${HDK_LIB_PATH}/libSOHO.lib
+				${HDK_LIB_PATH}/libSOP.lib
+				${HDK_LIB_PATH}/libSOPTG.lib
+				${HDK_LIB_PATH}/libSOPZ.lib
+				${HDK_LIB_PATH}/libSS.lib
+				${HDK_LIB_PATH}/libSTM.lib
+				${HDK_LIB_PATH}/libSTOR.lib
+				${HDK_LIB_PATH}/libSTORUI.lib
+				${HDK_LIB_PATH}/libSTY.lib
+				${HDK_LIB_PATH}/libSYS.lib
+				${HDK_LIB_PATH}/libTAKE.lib
+				${HDK_LIB_PATH}/libTBF.lib
+				${HDK_LIB_PATH}/libTHOR.lib
+				${HDK_LIB_PATH}/libTIL.lib
+				${HDK_LIB_PATH}/libtools.lib
+				${HDK_LIB_PATH}/libTS.lib
+				${HDK_LIB_PATH}/libUI.lib
+				${HDK_LIB_PATH}/libUT.lib
+				${HDK_LIB_PATH}/libVCC.lib
+				${HDK_LIB_PATH}/libVEX.lib
+				${HDK_LIB_PATH}/libVGEO.lib
+				${HDK_LIB_PATH}/libVIS.lib
+				${HDK_LIB_PATH}/libVISF.lib
+				${HDK_LIB_PATH}/libVM.lib
+				${HDK_LIB_PATH}/libVOP.lib
+				${HDK_LIB_PATH}/libVOPNET.lib
+				${HDK_LIB_PATH}/libVPRM.lib
+				${HDK_LIB_PATH}/libWIRE.lib
+				${HDK_LIB_PATH}/tbb.lib
+				${HDK_LIB_PATH}/tbbmalloc.lib
+			)
+		else()
+			file(GLOB HDK_LIBS_A "${HDK_LIB_PATH}/*.a")
+			list(REMOVE_ITEM HDK_LIBS_A "${HDK_LIB_PATH}/libHARC32.a")
+			list(APPEND HDK_LIBS ${HDK_LIBS_A})
+		endif()
 
 		if(HOUDINI_QT_VERSION VERSION_GREATER 4)
 			list(APPEND HDK_LIBS
