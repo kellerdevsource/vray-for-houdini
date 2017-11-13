@@ -12,6 +12,7 @@
 
 #include <HOM/HOM_Module.h>
 #include <HOM/HOM_EnumModules.h>
+#include <HOM/HOM_ui.h>
 #include <UT/UT_Version.h>
 
 
@@ -39,7 +40,6 @@ int VRayForHoudini::HOU::isUIAvailable()
 	return (HOM().isUIAvailable());
 }
 
-
 QWidget* VRayForHoudini::HOU::getMainQtWindow()
 {
 #if UT_MAJOR_VERSION_INT >= 16
@@ -47,4 +47,9 @@ QWidget* VRayForHoudini::HOU::getMainQtWindow()
 #else
 	return RE_QtWindow::mainQtWindow();
 #endif
+}
+
+float VRayForHoudini::HOU::getUiScaling()
+{
+	return HOM().ui().globalScaleFactor();
 }
