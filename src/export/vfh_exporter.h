@@ -263,6 +263,7 @@ public:
 	VRay::Plugin exportVop(OP_Node *opNode, ExportContext *parentContext=nullptr);
 
 	/// Export Make transform VOP node
+	/// @param rotate rotate matrix so that y-axis is up
 	/// @retval V-Ray transform for that node
 	VRay::Transform exportTransformVop(VOP_Node &vop_node, ExportContext *parentContext = nullptr, bool rotate = false);
 
