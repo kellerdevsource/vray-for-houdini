@@ -54,7 +54,7 @@ private:
 VRayPgYetiFactory::VRayPgYetiFactory()
 	: GU_PackedFactory("VRayPgYetiRef", "VRayPgYetiRef")
 {
-	VRayPgYetiRefOptions::registerIntrinsics<VRayPgYetiRefOptions>(*this);
+	VRayPgYetiRef::registerIntrinsics<VRayPgYetiRef>(*this);
 }
 
 void VRayPgYetiRef::install(GA_PrimitiveFactory *gafactory)
