@@ -9,7 +9,6 @@
 #
 
 import os
-import enum
 import sys
 
 global HDK
