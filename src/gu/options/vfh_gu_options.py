@@ -9,7 +9,6 @@
 #
 
 import os
-import enum
 import sys
 
 global HDK
@@ -55,13 +54,8 @@ def getIntrAttrGetSizeArgs(intrAttr):
 
 def getIntrAttrGetArgs(intrAttr):
 	args = ""
-	if HDK > 16.0:
-		args += "const GU_PrimPacked *prim"
 
 	if intrAttr.intrSize != 1:
-		if args:
-			args += ","
-
 		if intrAttr.intrType == CHAR:
 			args += "UT_StringArray &value"
 		elif intrAttr.intrType == VECTOR:
@@ -75,13 +69,7 @@ def getIntrAttrRetType(intrAttr):
 	return "void"
 
 def getIntrAttrSetArgs(intrAttr):
-	args = "" if HDK == 16.0 else "GU_PrimPacked *prim, "
-	if HDK > 16.0:
-		if intrAttr.intrType == FLOAT:
-			args = "const %s" % args
-	if args:
-		args += ","
-
+	args = ""
 
 	if intrAttr.intrSize == 1:
 		args += "%s value" % intrAttr.intrType
@@ -235,16 +223,13 @@ class %CLASS_NAME%
 public:
 	%CLASS_NAME%::%CLASS_NAME%()
 	{}
-
 	%CLASS_NAME%::%CLASS_NAME%(const %CLASS_NAME% &other)
 		: m_options(other.m_options)
 	{}
-
 	%CLASS_NAME%::%CLASS_NAME%(%CLASS_NAME% &&other) noexcept
 		: m_options(std::move(other.m_options))
 	{}
-
-	%METHODS%
+%METHODS%
 	%REG_METHODS%
 	/// Returns current options.
 	const UT_Options& getOptions() const { return m_options; }
@@ -294,8 +279,8 @@ using namespace VRayForHoudini;
 	for intrAttr in intrAttrs:
 		funcName = toCamelCase(intrAttr.intrName)
 
-		intrGetter = "get%s" % (funcName)
-		intrSetter = "set%s" % (funcName)
+		intrGetter = "get%s%s" % (funcName, "Prim" if HDK > 16.0 else "")
+		intrSetter = "set%s%s" % (funcName, "Prim" if HDK > 16.0 else "")
 
 		intrAttrMethods = {
 			'intr' : intrAttr,
@@ -303,54 +288,67 @@ using namespace VRayForHoudini;
 			'setter' : intrSetter,
 		}
 
-		getSetTmpl = "/// Returns \"%ATTR_NAME%\" intrinsic value."
-		if HDK > 16.0:
-			getSetTmpl += "\n\t/// @param prim Packed primitive instance."
-		getSetTmpl += """
-	%TYPE% %GET_METHOD_NAME%(%GET_ARGS%) const {
-		if (!m_options.hasOption(IntrinsicNames::%ATTR_NAME%)) {"""
+		getSetTmpl = ""
 
-		if intrAttr.intrSize != 1:
-			if intrAttr.intrType == VECTOR:
-				getSetTmpl += r"""
-			return;
-		}
-		const UT_Vector3D &vector = m_options.getOptionV3(IntrinsicNames::%ATTR_NAME%);
-		value[0] = vector.x();
-		value[1] = vector.y();
-		value[2] = vector.z();"""
+		def getGetterImpl(intrAttr, getArgs, primAttr = False):
+			getSetTmpl = "\n\t/// Returns \"%ATTR_NAME%\" intrinsic value."
+			if primAttr:
+				getSetTmpl += "\n\t/// @param prim Packed primitive instance."
+			getSetTmpl += "\n\t%TYPE% %GET_METHOD_NAME%"
+			if primAttr:
+				getSetTmpl += "Prim"
+			getSetTmpl += "("
+			if primAttr:
+				getSetTmpl += "const GU_PrimPacked *prim"
+				if getArgs:
+					getSetTmpl += ", "
+			getSetTmpl += getArgs;
+			getSetTmpl += ") const {"
+			getSetTmpl += "\n\t\tif (!m_options.hasOption(IntrinsicNames::%ATTR_NAME%)) {"
+
+			if intrAttr.intrSize != 1:
+				if intrAttr.intrType == VECTOR:
+					getSetTmpl += "\n\t\t\treturn;"
+					getSetTmpl += "\n\t\t}"
+					getSetTmpl += "\n\t\tconst UT_Vector3D &vector = m_options.getOptionV3(IntrinsicNames::%ATTR_NAME%);"
+					getSetTmpl += "\n\t\tvalue[0] = vector.x();"
+					getSetTmpl += "\n\t\tvalue[1] = vector.y();"
+					getSetTmpl += "\n\t\tvalue[2] = vector.z();"
+				else:
+					getSetTmpl += "\n\t\t\treturn;"
+					getSetTmpl += "\n\t\t}"
+					getSetTmpl += "\n\t\tvalue = m_options.%GETTER%(IntrinsicNames::%ATTR_NAME%);"
 			else:
-				getSetTmpl += r"""
-			return;
-		}
-		value = m_options.%GETTER%(IntrinsicNames::%ATTR_NAME%);"""
-		else:
-			getSetTmpl += r"""
-			return %ATTR_DEF%;
-		}
-		return m_options.%GETTER%(IntrinsicNames::%ATTR_NAME%);"""
+				getSetTmpl += "\n\t\t\treturn %ATTR_DEF%;"
+				getSetTmpl += "\n\t\t}"
+				getSetTmpl += "\n\t\treturn m_options.%GETTER%(IntrinsicNames::%ATTR_NAME%);"
 
-		getSetTmpl += r"""
-	}
-"""
+			getSetTmpl += "\n\t}\n"
+			return getSetTmpl
+
+		getSetTmpl += getGetterImpl(intrAttr, getIntrAttrGetArgs(intrAttr), HDK > 16.0)
+		if HDK > 16.0:
+			getSetTmpl += getGetterImpl(intrAttr, getIntrAttrGetArgs(intrAttr), False)
+
 		# Add size method.
 		if intrAttr.intrSize != 1:
 			intrAttrMethods['getterSize'] = "%sSize" % intrGetter
 
-			getSetTmpl += r"""
-	/// Returns "%ATTR_NAME%" intrinsic array size.
-	exint %GET_METHOD_NAME%Size(%GET_SIZE_ARGS%) const {
-		if (!m_options.hasOption(IntrinsicNames::%ATTR_NAME%))
-			return 0;
-		"""
+			getSetTmpl += "\n\t/// Returns \"%ATTR_NAME%\" intrinsic array size."
+			getSetTmpl += "\n\texint %GET_METHOD_NAME%"
+			if HDK > 16.0:
+				getSetTmpl += "Prim"
+			getSetTmpl += "Size(%GET_SIZE_ARGS%) const {"
+			getSetTmpl += "\n\t\tif (!m_options.hasOption(IntrinsicNames::%ATTR_NAME%)) {"
+			getSetTmpl += "\n\t\t\treturn 0;"
+			getSetTmpl += "\n\t\t}"
 			if intrAttr.intrType == VECTOR:
-				getSetTmpl += "return %ATTR_SIZE%;"
+				getSetTmpl += "\n\t\treturn %ATTR_SIZE%;"
 			else:
-				getSetTmpl += "return m_options.%GETTER%(IntrinsicNames::%ATTR_NAME%).size();"
+				getSetTmpl += "\n\t\treturn m_options.%GETTER%(IntrinsicNames::%ATTR_NAME%).size();"
 
-			getSetTmpl += r"""
-	}
-"""
+			getSetTmpl += "\n\t}\n"
+
 		def getOptionsGetterImpl(intrAttr):
 			pass
 
@@ -359,18 +357,36 @@ using namespace VRayForHoudini;
 				return "m_options.setOptionV3(IntrinsicNames::%ATTR_NAME%, value[0], value[1], value[2])"
 			return "m_options.%SETTER%(IntrinsicNames::%ATTR_NAME%, value)"
 
-		getSetTmpl += "\n\t/// Sets \"%ATTR_NAME%\" intrinsic value."
+		def getSetterImpl(intrAttr, setArgs, primAttr = False):
+			getSetTmpl = "\n\t/// Sets \"%ATTR_NAME%\" intrinsic value."
+			if primAttr:
+				getSetTmpl += "\n\t/// @param prim Packed primitive instance."
+
+			getSetTmpl += "\n\t/// @param value Value for \"%ATTR_NAME%\" intrinsic."
+			getSetTmpl += "\n\tvoid %SET_METHOD_NAME%"
+			if primAttr:
+				getSetTmpl += "Prim"
+			getSetTmpl += "("
+			if primAttr:
+				if intrAttr.intrType == "FLOAT":
+					getSetTmpl += "const "
+				getSetTmpl += "GU_PrimPacked *prim"
+				if setArgs:
+					getSetTmpl += ", "
+			getSetTmpl += setArgs
+
+			getSetTmpl += ") {"
+			getSetTmpl += "\n\t\t%OPTION_SETTER_IMPL%;"
+			getSetTmpl += "\n\t}\n"
+
+			getSetTmpl = replaceByDict(getSetTmpl, {
+				'OPTION_SETTER_IMPL' : getOptionsSetterImpl(intrAttr),
+			})
+			return getSetTmpl
+
+		getSetTmpl += getSetterImpl(intrAttr, getIntrAttrSetArgs(intrAttr), HDK > 16.0)
 		if HDK > 16.0:
-			getSetTmpl += "\n\t/// @param prim Packed primitive instance."
-		getSetTmpl += """
-	/// @param value Value for \"%ATTR_NAME%\" intrinsic.
-	void %SET_METHOD_NAME%(%SET_ARGS%) {
-		%OPTION_SETTER_IMPL%;
-	}
-"""
-		getSetTmpl = replaceByDict(getSetTmpl, {
-			'OPTION_SETTER_IMPL' : getOptionsSetterImpl(intrAttr),
-		})
+			getSetTmpl += getSetterImpl(intrAttr, getIntrAttrSetArgs(intrAttr), False)
 
 		intrMethodsArr.append(intrAttrMethods)
 
@@ -380,10 +396,10 @@ using namespace VRayForHoudini;
 			'ATTR_SIZE' : str(intrAttr.intrSize),
 			'ATTR_DEF' : getIntrAttrDefValue(intrAttr),
 			'GET_SIZE_ARGS' : getIntrAttrGetSizeArgs(intrAttr),
-			'GET_METHOD_NAME' : intrGetter,
+			'GET_METHOD_NAME' : intrGetter[:-4] if intrGetter.endswith("Prim") else intrGetter,
 			'GET_ARGS' : getIntrAttrGetArgs(intrAttr),
 			'GETTER' : getIntrAttrOptionsGetter(intrAttr),
-			'SET_METHOD_NAME' : intrSetter,
+			'SET_METHOD_NAME' : intrSetter[:-4] if intrSetter.endswith("Prim") else intrSetter,
 			'SET_ARGS' : getIntrAttrSetArgs(intrAttr),
 			'SETTER' : getIntrAttrOptionsSetter(intrAttr),
 		}
@@ -439,7 +455,7 @@ using namespace VRayForHoudini;
 	classDict = {
 		'CLASS_NAME' : OPT_CLASS_NAME,
 		'CLASS_NAME_UPPER': OPT_CLASS_NAME.upper(),
-		'METHODS' : "\n\t".join(intrMethods),
+		'METHODS' : "".join(intrMethods),
 		'INTR_NAMES' : "\n\t".join(intrNames),
 		'REG_METHODS' : replaceByDict(regTmpl, regDict),
 	}
@@ -462,7 +478,7 @@ if __name__ == '__main__':
 	import argparse
 
 	parser = argparse.ArgumentParser()
-	parser.add_argument("--hdk", default=16.0)
+	parser.add_argument("--hdk", default=16.5)
 	parser.add_argument("--jsonFile")
 	parser.add_argument("--outDir")
 

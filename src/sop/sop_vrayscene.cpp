@@ -78,7 +78,14 @@ void SOP::VRayScene::updatePrimitive(const OP_Context &context)
 	if (m_primOptions != primOptions) {
 		m_primOptions = primOptions;
 
-		m_vrayScenePrim->implementation()->update(m_primOptions);
+		GU_PackedImpl *primImpl = m_vrayScenePrim->implementation();
+		if (primImpl) {
+#if HDK_16_5
+			primImpl->update(m_vrayScenePrim, m_primOptions);
+#else
+			primImpl->update(m_primOptions);
+#endif
+		}
 	}
 }
 

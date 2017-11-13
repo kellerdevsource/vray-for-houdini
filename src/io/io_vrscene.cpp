@@ -11,6 +11,7 @@
 #include "io_vrscene.h"
 
 #include "vfh_log.h"
+#include "vfh_includes.h"
 
 #include <CH/CH_Manager.h>
 #include <GU/GU_Detail.h>
@@ -80,9 +81,13 @@ GA_Detail::IOStatus Vrscene::fileLoad(GEO_Detail *geo, UT_IStream &stream, bool)
 	UT_Options options;
 	options.setOptionS("filepath", filepath);
 
-	GU_PackedImpl *packedImpl = pack->implementation();
-	if (packedImpl) {
-		packedImpl->update(options);
+	GU_PackedImpl *primImpl = pack->implementation();
+	if (primImpl) {
+#if HDK_16_5
+		primImpl->update(pack, options);
+#else
+		primImpl->update(options);
+#endif
 	}
 
 	return GA_Detail::IOStatus(true);

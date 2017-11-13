@@ -29,7 +29,6 @@
 #include <H5Cpp.h>
 
 using namespace VRayForHoudini;
-using namespace VUtils;
 
 static GA_PrimitiveTypeId theTypeId(-1);
 
@@ -113,16 +112,6 @@ bool VRayPgYetiRef::isValid() const
 
 void VRayPgYetiRef::clearData()
 {
-}
-
-bool VRayPgYetiRef::load(const UT_Options &options, const GA_LoadMap&)
-{
-	return updateFrom(options);
-}
-
-void VRayPgYetiRef::update(const UT_Options &options)
-{
-	updateFrom(options);
 }
 
 bool VRayPgYetiRef::save(UT_Options &options, const GA_SaveMap&) const

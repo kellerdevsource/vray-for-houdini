@@ -11,6 +11,7 @@
 #ifndef VRAY_FOR_HOUDINI_GEOMPLANEREF_H
 #define VRAY_FOR_HOUDINI_GEOMPLANEREF_H
 
+#include "vfh_includes.h"
 #include "vfh_GeomPlaneRefOptions.h"
 
 #include <GU/GU_PackedImpl.h>
@@ -66,14 +67,13 @@ public:
 	/// primitive to optionally clear some data during the stashing process.
 	void clearData() VRAY_OVERRIDE;
 
-	/// Give a UT_Options of load data, create resolver data for the primitive
-	bool load(const UT_Options &options, const GA_LoadMap &map) VRAY_OVERRIDE;
-
-	/// Depending on the update, the procedural should call one of:
-	///	- transformDirty()
-	///	- attributeDirty()
-	///	- topologyDirty()
-	void update(const UT_Options &options) VRAY_OVERRIDE;
+#if HDK_16_5
+	void update(GU_PrimPacked *prim, const UT_Options &options) VRAY_OVERRIDE { updateFrom(options); }
+	bool load(GU_PrimPacked *prim, const UT_Options &options, const GA_LoadMap &map) VRAY_OVERRIDE { return updateFrom(options); }
+#else
+	bool load(const UT_Options &options, const GA_LoadMap &map) VRAY_OVERRIDE { return updateFrom(options); }
+	void update(const UT_Options &options) VRAY_OVERRIDE { updateFrom(options); }
+#endif
 
 	/// Copy the resolver data into the UT_Options for saving
 	bool save(UT_Options &options, const GA_SaveMap &map) const VRAY_OVERRIDE;
@@ -109,6 +109,7 @@ public:
 	///       base class, so it can be pure virtual.
 	void countMemory(UT_MemoryCounter &counter, bool inclusive) const VRAY_OVERRIDE;
 
+public:
 	/// Get/set detail handle for this primitive
 	const GU_ConstDetailHandle& getDetail() const { return m_detail; }
 	GeomPlaneRef& setDetail(const GU_ConstDetailHandle &h) { m_detail = h; return *this; }

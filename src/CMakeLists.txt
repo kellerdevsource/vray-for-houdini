@@ -228,6 +228,9 @@ function(vfh_generate_gu_options _libTarget _dsoTarget)
 
 	file(GLOB JSON_INPUT "gu/options/json/*.json")
 
+	set(PYTHON_BIN ${PYTHON_ROOT}/python${CMAKE_EXECUTABLE_SUFFIX})
+	message(STATUS "Using Python: ${PYTHON_BIN}")
+
 	foreach(jsonFile ${JSON_INPUT})
 		get_filename_component(CLASS_NAME ${jsonFile} NAME_WE)
 		set(FILE_OUT_NAME "vfh_${CLASS_NAME}Options.cpp")
@@ -236,7 +239,7 @@ function(vfh_generate_gu_options _libTarget _dsoTarget)
 			OUTPUT
 				${FILE_OUT_DIR}/${FILE_OUT_NAME}
 			COMMAND
-				python ${GU_SCRIPT} --hdk=${HOUDINI_VERSION} --jsonFile=${jsonFile} --outDir=${FILE_OUT_DIR}
+				${PYTHON_BIN} ${GU_SCRIPT} --hdk=${HOUDINI_VERSION} --jsonFile=${jsonFile} --outDir=${FILE_OUT_DIR}
 			DEPENDS
 				${GU_SCRIPT}
 				${jsonFile}

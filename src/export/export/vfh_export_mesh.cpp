@@ -473,7 +473,7 @@ VRay::Plugin MeshExporter::getMaterial()
 				appendStyleSheet(primMaterial, styleSheet, ctx.getTime(), overrideAppend, true);
 			}
 			else if (hasMaterialPathAttr) {
-				const UT_String &matPath = materialPathHndl.get(primOffset);
+				const UT_String matPath(materialPathHndl.get(primOffset));
 				if (!matPath.equal("")) {
 					primMtlNode = getOpNodeFromPath(matPath, ctx.getTime());
 				}
