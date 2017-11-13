@@ -14,6 +14,7 @@
 #include "vfh_log.h"
 #include "vfh_vray_instances.h"
 #include "vfh_hou_utils.h"
+#include "vfh_includes.h"
 
 #include <QSharedMemory>
 #include <QApplication>
@@ -71,6 +72,10 @@ static QColor getSelectionColor(const QString &styleSheet)
 /// Must be called before VRay::VRayInit().
 static void initVFBTheme()
 {
+#if HDK_16_5
+	qputenv("VRAY_VFB_UI_SCALE", QString("%1").arg(HOU::getUiScaling()).toLocal8Bit());
+#endif
+
 	QWidget *mainWindow = HOU::getMainQtWindow();
 	if (mainWindow) {
 		QPalette houdiniPalette = mainWindow->palette();
