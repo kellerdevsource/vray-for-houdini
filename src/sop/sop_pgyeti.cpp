@@ -40,7 +40,11 @@ void VRayPgYeti::updatePrimitive(const OP_Context &context)
 
 		GU_PackedImpl *primImpl = m_primPacked->implementation();
 		if (primImpl) {
+#if HDK_16_5
+			primImpl->update(m_primPacked, m_primOptions);
+#else
 			primImpl->update(m_primOptions);
+#endif
 		}
 	}
 }

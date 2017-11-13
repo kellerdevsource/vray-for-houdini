@@ -163,7 +163,15 @@ OP_ERROR SOP::VRayProxy::cookMySop(OP_Context &context)
 							.setOptionI("visibility_lists_type", evalInt("visibility_lists_type", 0, t))
 							;
 
-					pack->implementation()->update(options);
+					GU_PackedImpl *primImpl = pack->implementation();
+					if (primImpl) {
+#if HDK_16_5
+						primImpl->update(pack, options);
+#else
+						primImpl->update(options);
+#endif
+					}
+
 					pack->setPathAttribute(getFullPath());
 				}
 			}

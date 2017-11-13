@@ -748,11 +748,19 @@ bool VRayVolumeGridRef::updateFrom(const UT_Options &options)
 	}
 
 	if (m_dirty) {
+#if HDK_16_5
+		getPrim()->transformDirty();
+#else
 		transformDirty();
+#endif
 	}
 
 	if (diffHash) {
+#if HDK_16_5
+		getPrim()->attributeDirty();
+#else
 		attributeDirty();
+#endif
 	}
 
 	return true;

@@ -14,6 +14,8 @@
 #include "vfh_log.h"
 #include "gu_vraysceneref.h"
 
+#include <vrscene_preview.h>
+
 #include <GU/GU_PackedFactory.h>
 #include <GU/GU_PrimPacked.h>
 #include <GU/GU_PrimPoly.h>
@@ -22,11 +24,9 @@
 #include <UT/UT_MemoryCounter.h>
 #include <FS/UT_DSO.h>
 
-#include <vrscene_preview.h>
-
 using namespace VRayForHoudini;
-using namespace VUtils;
-using namespace Vrscene::Preview;
+// using namespace VUtils; // XXX: VUtils::swap() causes issues.
+using namespace VUtils::Vrscene::Preview;
 
 /// Converts "flip_axis" saved as a string parameter to its corresponding
 /// FlipAxisMode enum value.
@@ -43,7 +43,6 @@ static FlipAxisMode parseFlipAxisMode(const UT_String &flipAxisModeS)
 	return mode;
 }
 
-static const char mw_shadow_tint_color_param_name[] = "mw_shadow_tint_color";
 static VrsceneDescManager vrsceneMan;
 static GA_PrimitiveTypeId theTypeId(-1);
 
@@ -130,16 +129,6 @@ void VRaySceneRef::clearData()
 {
 }
 
-bool VRaySceneRef::load(const UT_Options &options, const GA_LoadMap&)
-{
-	return updateFrom(options);
-}
-
-void VRaySceneRef::update(const UT_Options &options)
-{
-	updateFrom(options);
-}
-
 bool VRaySceneRef::save(UT_Options &options, const GA_SaveMap&) const
 {
 	options.merge(m_options);
@@ -206,8 +195,9 @@ double VRaySceneRef::getFrame(fpreal t) const
 {
 	const int useAnimOverrides = getAnimOverride();
 	if (useAnimOverrides) {
-		t = calcFrameIndex(t,
-			static_cast<MeshFileAnimType::Enum>(getAnimType()),
+		t = VUtils::calcFrameIndex(t,
+			static_cast<VUtils::MeshFileAnimType::Enum>(
+								   getAnimType()),
 								   getAnimStart(),
 								   getAnimLength(),
 								   getAnimOffset(),
@@ -235,22 +225,22 @@ void VRaySceneRef::detailBuild(VrsceneDesc *vrsceneDesc, int shouldFlip)
 	for (VrsceneObjects::iterator obIt = vrsceneDesc->m_objects.begin(); obIt != vrsceneDesc->m_objects.end(); ++obIt) {
 		VrsceneObjectBase *ob = obIt.data();
 		if (ob && ob->getType() == ObjectTypeNode) {
-			const TraceTransform &tm = ob->getTransform(t);
+			const VUtils::TraceTransform &tm = ob->getTransform(t);
 
 			VrsceneObjectNode     *node = static_cast<VrsceneObjectNode*>(ob);
 			VrsceneObjectDataBase *nodeData = vrsceneDesc->getObjectData(node->getDataName().ptr());
 			if (nodeData && nodeData->getDataType() == ObjectDataTypeMesh) {
 				VrsceneObjectDataMesh *mesh = static_cast<VrsceneObjectDataMesh*>(nodeData);
 
-				const VectorRefList &vertices = mesh->getVertices(t);
-				const IntRefList    &faces = mesh->getFaces(t);
+				const VUtils::VectorRefList &vertices = mesh->getVertices(t);
+				const VUtils::IntRefList    &faces = mesh->getFaces(t);
 
 				// Allocate the points, this is the offset of the first one
 				GA_Offset pointOffset = meshDetail->appendPointBlock(vertices.count());
 
 				// Iterate through points by their offsets
 				for (int v = 0; v < vertices.count(); ++v, ++pointOffset) {
-					Vector vert = tm * vertices[v];
+					VUtils::Vector vert = tm * vertices[v];
 					if (shouldFlip) {
 						vert = flipMatrixZY * vert;
 					}

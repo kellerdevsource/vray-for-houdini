@@ -16,6 +16,7 @@
 
 #include "vfh_lru_cache.hpp"
 #include "vfh_hashes.h"
+#include "vfh_includes.h"
 #include "vfh_VRayVolumeGridRefOptions.h"
 
 #include <aurinterface.h>
@@ -111,14 +112,14 @@ public:
 	virtual bool              isValid() const VRAY_OVERRIDE { return getDetail().isValid(); }
 	virtual void              clearData() VRAY_OVERRIDE;
 
-	virtual bool   load(const UT_Options &options, const GA_LoadMap &) VRAY_OVERRIDE
-	{
-		return updateFrom(options);
-	}
-	virtual void   update(const UT_Options &options) VRAY_OVERRIDE
-	{
-		updateFrom(options);
-	}
+#if HDK_16_5
+	void update(GU_PrimPacked *prim, const UT_Options &options) VRAY_OVERRIDE { updateFrom(options); }
+	bool load(GU_PrimPacked *prim, const UT_Options &options, const GA_LoadMap &map) VRAY_OVERRIDE { return updateFrom(options); }
+#else
+	bool load(const UT_Options &options, const GA_LoadMap &map) VRAY_OVERRIDE { return updateFrom(options); }
+	void update(const UT_Options &options) VRAY_OVERRIDE { updateFrom(options); }
+#endif
+
 	virtual bool   save(UT_Options &options, const GA_SaveMap &map) const VRAY_OVERRIDE;
 
 	virtual bool                   getBounds(UT_BoundingBox &box) const VRAY_OVERRIDE;
@@ -153,7 +154,6 @@ public:
 	const GU_DetailHandle &   getDetail() const    { return m_currentData.detailHandle; }
 	GU_DetailHandle &         getDetail()          { return m_currentData.detailHandle; }
 	void setDetail(const GU_ConstDetailHandle &detail) { m_currentData.detailHandle = detail.castAwayConst(); }
-
 	/// @}
 
 	const DataRangeMap &          getChannelDataRanges() const { return m_currentData.dataRange; }

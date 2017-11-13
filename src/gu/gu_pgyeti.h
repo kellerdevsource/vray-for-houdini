@@ -11,6 +11,7 @@
 #ifndef VRAY_FOR_HOUDINI_GU_PGYETI_H
 #define VRAY_FOR_HOUDINI_GU_PGYETI_H
 
+#include "vfh_includes.h"
 #include "vfh_VRayPgYetiRefOptions.h"
 
 #include <GU/GU_PackedImpl.h>
@@ -35,8 +36,13 @@ public:
 	bool isValid() const VRAY_OVERRIDE;
 	void clearData() VRAY_OVERRIDE;
 	bool save(UT_Options &options, const GA_SaveMap &map) const VRAY_OVERRIDE;
-	bool load(const UT_Options &options, const GA_LoadMap &map) VRAY_OVERRIDE;
-	void update(const UT_Options &options) VRAY_OVERRIDE;
+#if HDK_16_5
+	void update(GU_PrimPacked *prim, const UT_Options &options) VRAY_OVERRIDE { updateFrom(options); }
+	bool load(GU_PrimPacked *prim, const UT_Options &options, const GA_LoadMap &map) VRAY_OVERRIDE { return updateFrom(options); }
+#else
+	bool load(const UT_Options &options, const GA_LoadMap &map) VRAY_OVERRIDE { return updateFrom(options); }
+	void update(const UT_Options &options) VRAY_OVERRIDE { updateFrom(options); }
+#endif
 	bool getBounds(UT_BoundingBox &box) const VRAY_OVERRIDE;
 	bool getRenderingBounds(UT_BoundingBox &box) const VRAY_OVERRIDE;
 	void getVelocityRange(UT_Vector3 &min, UT_Vector3 &max) const VRAY_OVERRIDE;
