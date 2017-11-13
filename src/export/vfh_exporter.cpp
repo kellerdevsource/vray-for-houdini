@@ -313,7 +313,7 @@ void VRayExporter::setAttrValueFromOpNodePrm(Attrs::PluginDesc &pluginDesc, cons
 }
 
 
-VRay::Transform VRayExporter::exportTransformVop(VOP_Node &vop_node, ExportContext *parentContext)
+VRay::Transform VRayExporter::exportTransformVop(VOP_Node &vop_node, ExportContext *parentContext, bool rotate)
 {
 	const fpreal t = getContext().getTime();
 
@@ -331,6 +331,12 @@ VRay::Transform VRayExporter::exportTransformVop(VOP_Node &vop_node, ExportConte
 						options.getOptionV3("scale").x(), options.getOptionV3("scale").y(), options.getOptionV3("scale").z(),
 						options.getOptionV3("pivot").x(), options.getOptionV3("pivot").y(), options.getOptionV3("pivot").z(),
 						m4);
+	if (rotate) {
+		return Matrix4ToTransform(m4 * UT_DMatrix4(1, 0, 0, 0,
+													0, 0, 1, 0,
+													0, 1, 0, 0,
+													0, 0, 0, 0));
+	}
 
 	return Matrix4ToTransform(m4);
 }
@@ -406,24 +412,7 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 							case Parm::eMatrix: {
 								VRay::Transform transform;
 								if (pluginInfo->pluginType == Parm::PluginTypeUvwgen) {
-									transform = exportTransformVop(*inpvop, parentContext);
-									
-									UT_DMatrix4 rotMatrix(1, 0, 0, 0,
-															0, 0, 1, 0,
-															0, 1, 0, 0,
-															0, 0, 0, 0);
-
-									//Matrix4ToTransform(rotMatrix * rotMatrix);
-									VRay::Matrix tempMatrix(0);
-									for (int row = 0; row < 3; row++) {
-										for (int column = 0; column < 3; column++) {
-											for (int i = 0; i < 3; i++) {
-												tempMatrix[row][column] += transform.matrix[row][i] * rotMatrix[i][column];
-											}
-										}
-									}
-
-									transform.matrix = tempMatrix;
+									transform = exportTransformVop(*inpvop, parentContext, true);
 									transform.matrix[2] *= -1;
 								}
 								else {
