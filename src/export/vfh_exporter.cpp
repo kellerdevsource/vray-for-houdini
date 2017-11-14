@@ -17,6 +17,7 @@
 #include "vfh_tex_utils.h"
 #include "vfh_hou_utils.h"
 #include "vfh_attr_utils.h"
+#include "vfh_log.h"
 
 #include "obj/obj_node_base.h"
 #include "vop/vop_node_base.h"
@@ -29,6 +30,7 @@
 #include <OP/OP_Options.h>
 #include <OP/OP_Node.h>
 #include <OP/OP_Bundle.h>
+#include <OP/OP_Take.h>
 #include <ROP/ROP_Node.h>
 #include <SHOP/SHOP_Node.h>
 #include <SOP/SOP_Node.h>
@@ -80,6 +82,9 @@ void VRayExporter::reset()
 	objectExporter.clearPrimPluginCache();
 	objectExporter.clearOpDepPluginCache();
 	objectExporter.clearOpPluginCache();
+
+	resetOpCallbacks();
+	restoreCurrentTake();
 
 	m_renderer.reset();
 }
@@ -977,19 +982,6 @@ VRay::Plugin VRayExporter::exportConnectedVop(VOP_Node *vop_node, const UT_Strin
 }
 
 
-int VRayExporter::isNodeAnimated(OP_Node *op_node)
-{
-	int process = true;
-
-	if (isAnimation() && (m_context.getTime() > m_timeStart)) {
-		// TODO: Detect animation
-		// process = op_node->hasAnimatedParms();
-	}
-
-	return process;
-}
-
-
 void VRayExporter::RtCallbackVop(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
 	if (!csect.tryEnter())
@@ -1550,12 +1542,15 @@ void VRayExporter::addOpCallback(OP_Node *op_node, OP_EventMethod cb)
 
 void VRayExporter::delOpCallback(OP_Node *op_node, OP_EventMethod cb)
 {
-	if (op_node->hasOpInterest(this, cb)) {
-		Log::getLog().debug("removeOpInterest(%s)",
-						   op_node->getName().buffer());
+	if (sessionType == VfhSessionType::production)
+		return;
+	if (!op_node->hasOpInterest(this, cb))
+		return;
 
-		op_node->removeOpInterest(this, cb);
-	}
+	Log::getLog().debug("removeOpInterest(%s)",
+						op_node->getName().buffer());
+
+	op_node->removeOpInterest(this, cb);
 }
 
 
@@ -1565,11 +1560,10 @@ void VRayExporter::delOpCallbacks(OP_Node *op_node)
 										  [op_node](OpInterestItem &item) { return item.op_node == op_node; }), m_opRegCallbacks.end());
 }
 
-
-void VRayExporter::onDumpMessage(VRay::VRayRenderer& /*renderer*/, const char *msg, int level)
+/// Callback function for the event when V-Ray logs a text message.
+static void onDumpMessage(VRay::VRayRenderer& /*renderer*/, const char *msg, int level, void *data)
 {
-	QString message(msg);
-	message = message.simplified();
+	const QString message(QString(msg).simplified());
 
 	if (level <= VRay::MessageError) {
 		Log::getLog().error("V-Ray: %s", message.toLocal8Bit().constData());
@@ -1582,11 +1576,10 @@ void VRayExporter::onDumpMessage(VRay::VRayRenderer& /*renderer*/, const char *m
 	}
 }
 
-
-void VRayExporter::onProgress(VRay::VRayRenderer& /*renderer*/, const char *msg, int elementNumber, int elementsCount)
+/// Callback function for the event when V-Ray updates its current computation task and the number of workunits done.
+static void onProgress(VRay::VRayRenderer& /*renderer*/, const char *msg, int elementNumber, int elementsCount, void *data)
 {
-	QString message(msg);
-	message = message.simplified();
+	const QString message(QString(msg).simplified());
 
 	const float percentage = 100.0f * elementNumber / elementsCount;
 
@@ -1596,20 +1589,73 @@ void VRayExporter::onProgress(VRay::VRayRenderer& /*renderer*/, const char *msg,
 						   (elementNumber >= elementsCount) ? "\n" : "\r");
 }
 
-
-void VRayExporter::onAbort(VRay::VRayRenderer &renderer)
+/// Callback function for the event when rendering has finished, successfully or not.
+static void onImageReady(VRay::VRayRenderer &renderer, void *data)
 {
+	Log::getLog().debug("onImageReady");
+
+	VRayExporter &self = *reinterpret_cast<VRayExporter*>(data);
+
+	// Check abort from "Stop" button or Esc key.
 	if (renderer.isAborted()) {
-		setAbort();
-		reset();
+		self.setAbort();
+	}
+
+	switch (self.getSessionType()) {
+		case VfhSessionType::production: {
+			// ROP_Node will call "VRayExporter::exportEnd()" and we'll free stuff there.
+			break;
+		}
+		case VfhSessionType::rt: {
+			self.exportEnd();
+			break;
+		}
+		case VfhSessionType::ipr: {
+			// Handled separately for the IPR session.
+			break;
+		}
+	}
+}
+/// Callback function for the "Render Last" button in the VFB.
+static void onRenderLast(VRay::VRayRenderer& /*renderer*/, bool /*isRendering*/, void *data)
+{
+	Log::getLog().debug("onRenderLast");
+
+	VRayExporter &self = *reinterpret_cast<VRayExporter*>(data);
+	self.renderLast();
+}
+
+/// Callback function when VFB closes.
+static void onVfbClosed(VRay::VRayRenderer& /*renderer*/, void *data)
+{
+	Log::getLog().debug("onVfbClosed");
+
+	VRayExporter &self = *reinterpret_cast<VRayExporter*>(data);
+
+	switch (self.getSessionType()) {
+		case VfhSessionType::production: {
+			self.saveVfbState();
+			break;
+		}
+		case VfhSessionType::rt: {
+			self.saveVfbState();
+
+			// Could be closed with out stopping the renderer.
+			if (self.getRenderer().isRendering()) {
+				self.exportEnd();
+			}
+			break;
+		}
+		case VfhSessionType::ipr: {
+			// No VFB for the IPR session.
+			break;
+		}
 	}
 }
 
-void VRayExporter::onVfbClose()
+static void onRendererClosed(VRay::VRayRenderer& /*renderer*/, void *data)
 {
-	exportEnd();
-	saveVfbState();
-	reset();
+	Log::getLog().debug("onRendererClosed");
 }
 
 void VRayExporter::exportScene()
@@ -1936,8 +1982,13 @@ int VRayExporter::exportVrscene(const std::string &filepath, VRay::VRayExportSet
 
 void VRayExporter::clearKeyFrames(double toTime)
 {
-	Log::getLog().debug("VRayExporter::clearKeyFrames(toTime = %.3f)",
-						toTime);
+	if (SYSalmostEqual(toTime, SYS_FP64_MAX)) {
+		Log::getLog().debug("VRayExporter::clearKeyFrames(ALL)");
+	}
+	else {
+		Log::getLog().debug("VRayExporter::clearKeyFrames(toTime = %.3f)", toTime);
+	}
+
 	m_renderer.clearFrames(toTime);
 }
 
@@ -1945,8 +1996,6 @@ void VRayExporter::clearKeyFrames(double toTime)
 void VRayExporter::setAnimation(bool on)
 {
 	Log::getLog().debug("VRayExporter::setAnimation(%i)", on);
-
-	m_isAnimation = on;
 	m_renderer.setAnimation(on);
 }
 
@@ -1973,43 +2022,27 @@ void VRayExporter::initExporter(int hasUI, int nframes, fpreal tstart, fpreal te
 	m_timeStart = tstart;
 	m_timeEnd   = tend;
 	m_isAborted = false;
+	m_isAnimation = nframes > 1;
 	m_isMotionBlur = hasMotionBlur(*m_rop, *camera);
 	m_isVelocityOn = hasVelocityOn(*m_rop);
 
 	setAnimation(sessionType == VfhSessionType::production &&
-		(nframes > 1 || m_isMotionBlur || m_isVelocityOn));
-
-	getRenderer().resetCallbacks();
+		(m_isAnimation || m_isMotionBlur || m_isVelocityOn));
 
 	if (hasUI) {
 		if (!getRenderer().getVRay().vfb.isShown()) {
 			restoreVfbState();
 		}
-
 		getRenderer().getVfbSettings(vfbSettings);
 		getRenderer().showVFB(m_workMode != ExpExport, m_rop->getFullPath());
-
-		m_renderer.addCbOnImageReady(CbVoid(boost::bind(&VRayExporter::saveVfbState, this)));
-		m_renderer.addCbOnRendererClose(CbVoid(boost::bind(&VRayExporter::saveVfbState, this)));
-		m_renderer.addCbOnVfbClose(CbVoid(boost::bind(&VRayExporter::saveVfbState, this)));
-		m_renderer.addCbOnRenderLast(CbVoid(boost::bind(&VRayExporter::renderLast, this)));
 	}
 
-	m_renderer.addCbOnProgress(CbOnProgress(boost::bind(&VRayExporter::onProgress, this, _1, _2, _3, _4)));
-	m_renderer.addCbOnDumpMessage(CbOnDumpMessage(boost::bind(&VRayExporter::onDumpMessage, this, _1, _2, _3)));
-
-	if (isAnimation()) {
-		m_renderer.addCbOnImageReady(CbOnImageReady(boost::bind(&VRayExporter::onAbort, this, _1)));
-	}
-	else if (sessionType == VfhSessionType::ipr) {
-		m_renderer.addCbOnVfbClose(CbVoid(boost::bind(&VRayExporter::onVfbClose, this)));
-		m_renderer.addCbOnImageReady(CbVoid(boost::bind(&VRayExporter::resetOpCallbacks, this)));
-		m_renderer.addCbOnRendererClose(CbVoid(boost::bind(&VRayExporter::resetOpCallbacks, this)));
-	}
-	else if (sessionType == VfhSessionType::rt) {
-		m_renderer.addCbOnVfbClose(CbVoid(boost::bind(&VRayExporter::onVfbClose, this)));
-		m_renderer.addCbOnImageReady(CbVoid(boost::bind(&VRayExporter::saveVfbState, this)));
-	}
+	m_renderer.getVRay().setOnProgress(onProgress, this);
+	m_renderer.getVRay().setOnDumpMessage(onDumpMessage, this);
+	m_renderer.getVRay().setOnImageReady(onImageReady, this);
+	m_renderer.getVRay().setOnVFBClosed(onVfbClosed, this);
+	m_renderer.getVRay().setOnRendererClose(onRendererClosed, this);
+	m_renderer.getVRay().setOnRenderLast(onRenderLast, this);
 
 	// Export renderer settings on session initialization.
 	exportSettings();
@@ -2109,50 +2142,56 @@ void VRayExporter::setTime(fpreal time)
 
 void VRayExporter::applyTake(const char *takeName)
 {
+	// Houdini handles this automatically for production rendering,
+	// since we've inherited from ROP_Node.
+	if (sessionType == VfhSessionType::production)
+		return;
+
+	UT_String toTakeName(takeName);
+
 	if (m_rop && CAST_ROPNODE(m_rop)) {
 		VRayRendererNode &vrayROP = *static_cast<VRayRendererNode*>(m_rop);
-
-		UT_String selectedTake(takeName);
- 
-		if (!selectedTake.isstring()) {
-			vrayROP.evalString(selectedTake, "take", 0, 0.0f);
-		}
-		if (selectedTake.isstring()) {
-			uiTake = vrayROP.applyTake(selectedTake.buffer());
-		}
+		if (!toTakeName.isstring())
+			vrayROP.evalString(toTakeName, "take", 0, 0.0f);
 	}
-	else {
-		// TODO: Use Take manager.
+
+	if (!toTakeName.isstring())
+		return;
+
+	OP_Take *takeMan = OPgetDirector()->getTakeManager();
+	if (takeMan) {
+		if (!currentTake) {
+			currentTake = takeMan->getCurrentTake();
+		}
+		TAKE_Take *toTake = takeMan->findTake(toTakeName.buffer());
+		if (toTake) {
+			takeMan->switchToTake(toTake);
+		}
 	}
 }
 
-void VRayExporter::restoreTake(TAKE_Take *take)
+void VRayExporter::restoreCurrentTake()
 {
-	if (!take) {
-		take = uiTake;
-		uiTake = nullptr;
-	}
-	if (!take)
+	// Houdini handles this automatically for production rendering,
+	// since we've inherited from ROP_Node.
+	if (sessionType == VfhSessionType::production)
+		return;
+	if (!currentTake)
 		return;
 
-	if (m_rop && CAST_ROPNODE(m_rop)) {
-		VRayRendererNode &vrayROP = *static_cast<VRayRendererNode*>(m_rop);
-		vrayROP.restoreTake(take);
+	OP_Take *takeMan = OPgetDirector()->getTakeManager();
+	if (takeMan) {
+		takeMan->takeRestoreCurrent(currentTake);
 	}
-	else {
-		// TODO: Use Take manager.
-	}
+
+	currentTake = nullptr;
 }
 
 void VRayExporter::exportFrame(fpreal time)
 {
 	Log::getLog().debug("VRayExporter::exportFrame(time=%.3f)", time);
 
-	// Houdini handles this automatically for production rendering,
-	// since we've inherited from ROP_Node.
-	if (sessionType != VfhSessionType::production) {
-		applyTake();
-	}
+	applyTake();
 
 	setTime(time);
 
@@ -2210,10 +2249,6 @@ void VRayExporter::exportFrame(fpreal time)
 	}
 	else {
 		renderFrame(!isInteractive());
-	}
-
-	if (sessionType != VfhSessionType::production) {
-		restoreTake();
 	}
 }
 

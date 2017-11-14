@@ -9,42 +9,38 @@
 //
 
 #include "vfh_hou_utils.h"
+#include "vfh_includes.h"
 
 #include <HOM/HOM_Module.h>
 #include <HOM/HOM_EnumModules.h>
-#include <UT/UT_Version.h>
-
-
-#if UT_MAJOR_VERSION_INT >= 16
+#include <HOM/HOM_ui.h>
 #include <RE/RE_Window.h>
-#else
-#include <RE/RE_QtWindow.h>
-#endif
-
 
 int VRayForHoudini::HOU::isApprentice()
 {
-	return (HOM().licenseCategory() == HOM_licenseCategoryType::Apprentice);
+	return HOM().licenseCategory() == HOM_licenseCategoryType::Apprentice;
 }
-
 
 int VRayForHoudini::HOU::isIndie()
 {
-	return (HOM().licenseCategory() == HOM_licenseCategoryType::Indie);
+	return HOM().licenseCategory() == HOM_licenseCategoryType::Indie;
 }
-
 
 int VRayForHoudini::HOU::isUIAvailable()
 {
-	return (HOM().isUIAvailable());
+	return HOM().isUIAvailable();
 }
-
 
 QWidget* VRayForHoudini::HOU::getMainQtWindow()
 {
-#if UT_MAJOR_VERSION_INT >= 16
 	return RE_Window::mainQtWindow();
+}
+
+float VRayForHoudini::HOU::getUiScaling()
+{
+#if HDK_16_5
+	return HOM().ui().globalScaleFactor();
 #else
-	return RE_QtWindow::mainQtWindow();
+	return 1.0f;
 #endif
 }

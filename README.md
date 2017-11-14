@@ -43,7 +43,7 @@ Building From Source
 
 ### Requirements
 
-* **V-Ray Application SDK** nightly Qt build / license (write to support@chaosgroup.com)
+* **V-Ray Application SDK** nightly build / license (write to support@chaosgroup.com)
 
 * **V-Ray SDK** (for example, from **V-Ray For Maya** nightly build)
 
@@ -51,11 +51,13 @@ Building From Source
 
 * Compiler:
 
-    - Windows: MSVC 2012 / MSVC 2015 for Houdini 15.5 and later
+    - Windows: MSVC 2015
     - Linux: GCC 4.8.x
     - OS X: Any available
 
-* CMake 3.3.x
+* CMake (> 3.7.x)
+
+* Python in `%PATH%`
 
 * Ninja (> 1.5.x, optional)
 

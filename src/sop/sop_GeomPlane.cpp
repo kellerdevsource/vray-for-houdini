@@ -46,7 +46,14 @@ OP_ERROR SOP::GeomPlane::cookMySop(OP_Context &context)
 			options.setOptionFromTemplate(this, prm, *prm.getTemplatePtr(), t);
 		}
 
-		pack->implementation()->update(options);
+		GU_PackedImpl *primImpl = pack->implementation();
+		if (primImpl) {
+#if HDK_16_5
+			primImpl->update(pack, options);
+#else
+			primImpl->update(options);
+#endif
+		}
 	}
 
 	gdp->destroyStashed();

@@ -34,7 +34,7 @@
 	label	"Front Color"
 	type	color4
 	size	4
-	default	{ "0" "0" "0" "1" }
+	default	{ "1" "1" "1" "1" }
 	help	"Refraction (front) color"
 	range	{ 0 10 }
 	export	none
@@ -68,6 +68,8 @@
 	parmtag	{ "vray_plugin" "TexFresnel" }
 	parmtag	{ "vray_pluginattr" "fresnel_ior_tex" }
 	parmtag	{ "vray_type" "TextureFloat" }
+	parmtag	{ "vray_linked_only" "1" }
+	invisible
     }
     parm {
 	name	"refract_ior_tex"
@@ -80,5 +82,7 @@
 	parmtag	{ "vray_plugin" "TexFresnel" }
 	parmtag	{ "vray_pluginattr" "refract_ior_tex" }
 	parmtag	{ "vray_type" "TextureFloat" }
+	parmtag	{ "vray_linked_only" "1" }
+	invisible
     }
 }

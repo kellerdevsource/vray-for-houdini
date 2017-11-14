@@ -14,6 +14,7 @@
 #include "vfh_prm_templates.h"
 #include "vfh_log.h"
 #include "vfh_attr_utils.h"
+#include "vfh_includes.h"
 
 #include <SHOP/SHOP_GeoOverride.h>
 #include <GA/GA_AttributeFilter.h>
@@ -21,14 +22,35 @@
 
 #include <STY/STY_StylerGroup.h>
 #include <STY/STY_TargetMatchStatus.h>
+#if HDK_16_5
+#include <STY/STY_Results.h>
+#include <STY/STY_ResultsFilter.h>
+#else
 #include <STY/STY_OverrideValues.h>
 #include <STY/STY_OverrideValuesFilter.h>
+#endif
 #include <GSTY/GSTY_SubjectPrim.h>
 #include <GSTY/GSTY_SubjectGeoObject.h>
 #include <GSTY/GSTY_BundleMap.h>
 #include <OP/OP_StyleManager.h>
 
-#include <UT/UT_Version.h>
+#if HDK_16_5
+typedef STY_OverrideScript STY_OverrideScriptEntry;
+typedef STY_Override STY_OverrideEntry;
+typedef STY_OverrideCategory STY_OverridesEntry;
+typedef STY_OverrideBlock  STY_OverrideSetsEntry;
+typedef STY_Style STY_StyleEntry;
+typedef STY_StyleFlags STY_StyleEntryFlags;
+typedef STY_Material STY_MaterialEntry;
+typedef STY_Result STY_OverrideValue;
+typedef STY_ResultMap STY_OverrideValueMap;
+typedef STY_Results STY_OverrideValues;
+typedef STY_ResultsFilter STY_OverrideValuesFilter;
+typedef STY_Constant STY_Value;
+typedef STY_OverrideHandle STY_OverrideEntryHandle;
+typedef STY_OverrideMap STY_OverrideEntryMap;
+typedef STY_ConstantHandle STY_OptionEntryHandle;
+#endif
 
 using namespace VRayForHoudini;
 
@@ -104,10 +126,11 @@ void MtlOverrideAttrExporter::addAttributesAsOverrides(const GEOAttribList &attr
 
 		const char *attrName = attr->getName().buffer();
 
-		MtlOverrideItems::iterator moIt = overrides.find(attrName);
+		const MtlOverrideItems::iterator moIt = overrides.find(attrName);
 		if (moIt != overrides.end())
 			continue;
-		MtlOverrideItem &overrideItem = overrides[attrName];
+
+		MtlOverrideItem overrideItem;
 
 		GA_ROHandleV3 v3Hndl(attr);
 		GA_ROHandleV4 v4Hndl(attr);
@@ -125,12 +148,21 @@ void MtlOverrideAttrExporter::addAttributesAsOverrides(const GEOAttribList &attr
 			overrideItem.valueVector = utVectorVRayVector(c);
 		}
 		else if (sHndl.isValid()) {
-			overrideItem.setType(MtlOverrideItem::itemTypeString);
-			overrideItem.valueString = sHndl.get(offs);
+			const QString stringAttr = QString(sHndl.get(offs)).simplified();
+
+			// Ignore stylesheet attributes.
+			if (!stringAttr.startsWith('{')) {
+				overrideItem.setType(MtlOverrideItem::itemTypeString);
+				overrideItem.valueString = stringAttr;
+			}
 		}
 		else if (fHndl.isValid()) {
 			overrideItem.setType(MtlOverrideItem::itemTypeDouble);
 			overrideItem.valueDouble = fHndl.get(offs);
+		}
+
+		if (overrideItem.getType() != MtlOverrideItem::itemTypeNone) {
+			overrides[attrName] = overrideItem;
 		}
 	}
 }
@@ -223,7 +255,11 @@ void VRayForHoudini::appendOverrideValues(const STY_Styler &styler, PrimMaterial
 	static const STY_OverrideValuesFilter styOverrideValuesFilter(nullptr);
 
 	STY_OverrideValues styOverrideValues;
+#if HDK_16_5
+	styler.getResults(styOverrideValues, styOverrideValuesFilter);
+#else
 	styler.getOverrides(styOverrideValues, styOverrideValuesFilter);
+#endif
 
 	appendOverrideValues(styOverrideValues, primMaterial, mode, materialOnly);
 }
@@ -340,7 +376,7 @@ void VRayForHoudini::appendMaterialOverride(PrimMaterial &primMaterial,
 		appendStyleSheet(primMaterial, styleSheet, t);
 	}
 	else if (materialPathHndl.isValid()) {
-		const UT_String &matPath = materialPathHndl.get(primOffset);
+		const UT_String matPath(materialPathHndl.get(primOffset));
 
 		UT_String materialOverrides;
 		if (materialOverrideHndl.isValid()) {
@@ -365,7 +401,7 @@ void VRayForHoudini::getOverridesForPrimitive(const STY_Styler &geoStyler, const
 
 STY_Styler VRayForHoudini::getStylerForPrimitive(const STY_Styler &geoStyler, const GEO_Primitive &prim)
 {
-#if UT_BUILD_VERSION_INT > 633
+#if HDK_16_0_633
 	const GSTY_SubjectPrim primSubject(&prim, nullptr);
 #else
 	const GSTY_SubjectPrim primSubject(&prim);

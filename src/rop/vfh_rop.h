@@ -44,6 +44,9 @@ public:
 	/// @param take Take instance.
 	void restoreTake(TAKE_Take *take);
 
+	/// Called when ROP "take" is changed during the RT session.
+	void onRtTakeChange();
+
 protected:
 	VRayRendererNode(OP_Network *net, const char *name, OP_Operator *entry);
 	virtual ~VRayRendererNode();

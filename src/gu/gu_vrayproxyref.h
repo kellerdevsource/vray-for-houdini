@@ -13,11 +13,11 @@
 
 #include "vfh_vray.h"
 #include "vfh_vrayproxyutils.h"
+#include "vfh_includes.h"
+
 #include <GU/GU_PackedImpl.h>
 
-
 namespace VRayForHoudini {
-
 
 /// Custom primitive that represents V-Ray proxy file in Houdini
 /// implemented as packed primitive
@@ -63,13 +63,19 @@ public:
 	/// @param map[in] - load options (for shared primititve data)
 	///                  not used
 	/// @retval true on success
-	virtual bool load(const UT_Options &options, const GA_LoadMap &map) VRAY_OVERRIDE
-	{ return updateFrom(options); }
+#if HDK_16_5
+	bool load(GU_PrimPacked *prim, const UT_Options &options, const GA_LoadMap &map) VRAY_OVERRIDE { return updateFrom(options); }
+#else
+	bool load(const UT_Options &options, const GA_LoadMap &map) VRAY_OVERRIDE { return updateFrom(options); }
+#endif
 
 	/// Update proxy primitive from options passed as UT_Options
 	/// @param options[in] - options for the proxy primitive
-	virtual void update(const UT_Options &options) VRAY_OVERRIDE
-	{ updateFrom(options); }
+#if HDK_16_5
+	void update(GU_PrimPacked *prim, const UT_Options &options) VRAY_OVERRIDE { updateFrom(options); }
+#else
+	void update(const UT_Options &options) VRAY_OVERRIDE { updateFrom(options); }
+#endif
 
 	/// Save proxy primitive as UT_Options
 	/// @param options[out] - options for the proxy primitive
@@ -142,39 +148,40 @@ public:
 
 	/// Member data accessors for primitive intrinsics
 	///
-	inline exint getGeometryid() const;
+	inline exint getGeometryid(GET_SET_ARG_PRIM_SINGLE) const;
 
-	inline const char* getFilepath() const { return m_options.getFilepath(); }
-	inline void setFilepath(const char *filepath);
+	inline const char* getFilepath(GET_SET_ARG_PRIM_SINGLE) const { return m_options.getFilepath(); }
+	inline void setFilepath(SET_ARG_PRIM const char *filepath);
 
-	inline exint getLOD() const { return m_options.getLOD(); }
-	inline void setLOD(exint lod);
-	inline const char* getLODName() const;
+	inline exint getLOD(GET_SET_ARG_PRIM_SINGLE) const { return m_options.getLOD(); }
+	inline void setLOD(SET_ARG_PRIM exint lod);
 
-	inline exint getAnimType() const { return m_options.getAnimType(); }
-	inline void setAnimType(exint animType);
-	inline const char* getAnimTypeName() const;
+	inline exint getAnimType(GET_SET_ARG_PRIM_SINGLE) const { return m_options.getAnimType(); }
+	inline void setAnimType(SET_ARG_PRIM exint animType);
 
-	inline fpreal64 getAnimOffset() const { return m_options.getAnimOffset(); }
-	inline void setAnimOffset(fpreal64 offset);
+	inline fpreal64 getAnimOffset(GET_SET_ARG_PRIM_SINGLE) const { return m_options.getAnimOffset(); }
+	inline void setAnimOffset(SET_ARG_PRIM fpreal64 offset);
 
-	inline fpreal64 getAnimSpeed() const { return m_options.getAnimSpeed(); }
-	inline void setAnimSpeed(fpreal64 speed);
+	inline fpreal64 getAnimSpeed(GET_SET_ARG_PRIM_SINGLE) const { return m_options.getAnimSpeed(); }
+	inline void setAnimSpeed(SET_ARG_PRIM fpreal64 speed);
 
-	inline bool getAnimOverride() const { return m_options.getAnimOverride(); }
-	inline void setAnimOverride(bool override);
+	inline bool getAnimOverride(GET_SET_ARG_PRIM_SINGLE) const { return m_options.getAnimOverride(); }
+	inline void setAnimOverride(SET_ARG_PRIM bool override);
 
-	inline exint getAnimStart() const { return m_options.getAnimStart(); }
-	inline void setAnimStart(exint start);
+	inline exint getAnimStart(GET_SET_ARG_PRIM_SINGLE) const { return m_options.getAnimStart(); }
+	inline void setAnimStart(SET_ARG_PRIM exint start);
 
-	inline exint getAnimLength() const { return m_options.getAnimLength(); }
-	inline void setAnimLength(exint length);
+	inline exint getAnimLength(GET_SET_ARG_PRIM_SINGLE) const { return m_options.getAnimLength(); }
+	inline void setAnimLength(SET_ARG_PRIM exint length);
 
-	inline fpreal64 getScale() const { return m_options.getScale(); }
-	inline void setScale(fpreal64 scale);
+	inline fpreal64 getScale(GET_SET_ARG_PRIM_SINGLE) const { return m_options.getScale(); }
+	inline void setScale(SET_ARG_PRIM fpreal64 scale);
 
-	inline exint getFlipAxis() const { return m_options.getFlipAxis(); }
-	inline void setFlipAxis(exint flip);
+	inline exint getFlipAxis(GET_SET_ARG_PRIM_SINGLE) const { return m_options.getFlipAxis(); }
+	inline void setFlipAxis(SET_ARG_PRIM exint flip);
+
+	inline const char* getLODName(GET_SET_ARG_PRIM_SINGLE) const;
+	inline const char* getAnimTypeName(GET_SET_ARG_PRIM_SINGLE) const;
 
 private:
 	/// Updates primitive options from UT_Options

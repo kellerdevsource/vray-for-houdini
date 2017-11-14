@@ -1,10 +1,20 @@
-#include <SYS/SYS_Types.h>
+//
+// Copyright (c) 2015-2017, Chaos Software Ltd
+//
+// V-Ray For Houdini
+//
+// ACCESSIBLE SOURCE CODE WITHOUT DISTRIBUTION OF MODIFICATION LICENSE
+//
+// Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
+//
 
-#include "gu_vraysceneref.h"
-#include <vrscene_preview.h>
+#include <SYS/SYS_Types.h>
 
 #include "vfh_defines.h"
 #include "vfh_log.h"
+#include "gu_vraysceneref.h"
+
+#include <vrscene_preview.h>
 
 #include <GU/GU_PackedFactory.h>
 #include <GU/GU_PrimPacked.h>
@@ -15,10 +25,26 @@
 #include <FS/UT_DSO.h>
 
 using namespace VRayForHoudini;
+// using namespace VUtils; // XXX: VUtils::swap() causes issues.
+using namespace VUtils::Vrscene::Preview;
 
-const char *VRaySceneRef::mw_shadow_tint_color_param_name = "mw_shadow_tint_color";
-VUtils::Vrscene::Preview::VrsceneDescManager VRaySceneRef::vrsceneMan;
-GA_PrimitiveTypeId VRaySceneRef::theTypeId(-1);
+/// Converts "flip_axis" saved as a string parameter to its corresponding
+/// FlipAxisMode enum value.
+/// @flipAxisModeS The value of the flip_axis parameter
+/// @returns The corresponding to flipAxisModeS enum value
+static FlipAxisMode parseFlipAxisMode(const UT_String &flipAxisModeS)
+{
+	FlipAxisMode mode = FlipAxisMode::none;
+
+	if (flipAxisModeS.isInteger()) {
+		mode = static_cast<FlipAxisMode>(flipAxisModeS.toInt());
+	}
+
+	return mode;
+}
+
+static VrsceneDescManager vrsceneMan;
+static GA_PrimitiveTypeId theTypeId(-1);
 
 class VRaySceneFactory
 	: public GU_PackedFactory
@@ -39,21 +65,13 @@ private:
 	VUTILS_DISABLE_COPY(VRaySceneFactory);
 };
 
-VRaySceneFactory::VRaySceneFactory() :
-	GU_PackedFactory("VRaySceneRef", "VRaySceneRef")
+VRaySceneFactory::VRaySceneFactory()
+	: GU_PackedFactory("VRaySceneRef", "VRaySceneRef")
 {
-	VFH_MAKE_REGISTERS(VFH_VRAY_SCENE_PARAMS, VFH_VRAY_SCENE_PARAMS_COUNT, VRaySceneRef)
-	VFH_MAKE_REGISTERS_TUPLE(VFH_VRAY_SCENE_PARAMS_TUPLES, VFH_VRAY_SCENE_PARAMS_TUPLES_COUNT, VRaySceneRef)
-
-	registerTupleIntrinsic(
-		VRaySceneRef::mw_shadow_tint_color_param_name,
-		IntGetterCast(&VRaySceneRef::get_mw_shadow_tint_color_size),
-		F64VectorGetterCast(&VRaySceneRef::_get_mw_shadow_tint_color),
-		F64VectorSetterCast(&VRaySceneRef::_set_mw_shadow_tint_color)
-	);
+	VRaySceneRef::registerIntrinsics<VRaySceneRef>(*this);
 }
 
-void VRayForHoudini::VRaySceneRef::install(GA_PrimitiveFactory *gafactory)
+void VRaySceneRef::install(GA_PrimitiveFactory *gafactory)
 {
 	VRaySceneFactory &theFactory = VRaySceneFactory::getInstance();
 	if (theFactory.isRegistered()) {
@@ -72,25 +90,24 @@ void VRayForHoudini::VRaySceneRef::install(GA_PrimitiveFactory *gafactory)
 	theTypeId = theFactory.typeDef().getId();
 }
 
-VRaySceneRef::VRaySceneRef():
-	GU_PackedImpl(),
-	m_detail(),
-	m_options(),
-	m_dirty(false)
+VRaySceneRef::VRaySceneRef()
+	: GU_PackedImpl()
+	, m_detail()
 {}
 
-VRaySceneRef::VRaySceneRef(const VRaySceneRef &src):
-	GU_PackedImpl(src),
-	m_detail(),
-	m_options(),
-	m_dirty(false)
+VRaySceneRef::VRaySceneRef(const VRaySceneRef &src)
+	: GU_PackedImpl(src)
+	, VRaySceneRefOptions(src)
+	, m_detail(src.m_detail)
 {
-	updateFrom(src.m_options);
 }
 
 VRaySceneRef::~VRaySceneRef()
+{}
+
+GA_PrimitiveTypeId VRaySceneRef::typeId()
 {
-	clearDetail();
+	return theTypeId;
 }
 
 GU_PackedFactory *VRaySceneRef::getFactory() const
@@ -110,23 +127,9 @@ bool VRaySceneRef::isValid() const
 
 void VRaySceneRef::clearData()
 {
-	// This method is called when primitives are "stashed" during the cooking
-	// process.  However, primitives are typically immediately "unstashed" or
-	// they are deleted if the primitives aren't recreated after the fact.
-	// We can just leave our data.
 }
 
-bool VRaySceneRef::load(const UT_Options &options, const GA_LoadMap &map)
-{
-	return updateFrom(options);
-}
-
-void VRaySceneRef::update(const UT_Options &options)
-{
-	updateFrom(options);
-}
-
-bool VRaySceneRef::save(UT_Options &options, const GA_SaveMap &map) const
+bool VRaySceneRef::save(UT_Options &options, const GA_SaveMap&) const
 {
 	options.merge(m_options);
 	return true;
@@ -134,6 +137,7 @@ bool VRaySceneRef::save(UT_Options &options, const GA_SaveMap &map) const
 
 bool VRaySceneRef::getBounds(UT_BoundingBox &box) const
 {
+	box = m_bbox;
 	return true;
 }
 
@@ -157,132 +161,148 @@ void VRaySceneRef::getWidthRange(fpreal &wmin, fpreal &wmax) const
 
 bool VRaySceneRef::unpack(GU_Detail &destgdp) const
 {
-	// This may allocate geometry for the primitive
 	GU_DetailHandleAutoReadLock gdl(getPackedDetail());
-	if (NOT(gdl.isValid())) {
+	if (!gdl.isValid())
 		return false;
-	}
 
 	return unpackToDetail(destgdp, gdl.getGdp());
 }
 
-GU_ConstDetailHandle VRaySceneRef::getPackedDetail(GU_PackedContext *context) const
+GU_ConstDetailHandle VRaySceneRef::getPackedDetail(GU_PackedContext*) const
 {
-	if (!m_dirty) {
-		return getDetail();
-	}
-
-	VRaySceneRef *me = SYSconst_cast(this);
-
-	using namespace VUtils;
-	VUtils::Vrscene::Preview::VrsceneSettings vrsceneSettings;
-	vrsceneSettings.usePreview = true;
-	vrsceneSettings.previewFacesCount = 100000;
-	vrsceneSettings.cacheSettings.cacheType = VUtils::Vrscene::Preview::VrsceneCacheSettings::VrsceneCacheType::VrsceneCacheTypeRam;
-
-	GU_DetailHandle gdh;
-
-	Vrscene::Preview::VrsceneDesc *vrsceneDesc = VRaySceneRef::vrsceneMan.getVrsceneDesc(get_filepath(), &vrsceneSettings);
-	if (vrsceneDesc) {
-		const bool flipAxis = get_flip_axis();
-		unsigned meshVertexOffset = 0;
-
-		for (Vrscene::Preview::VrsceneObjects::iterator obIt = vrsceneDesc->m_objects.begin(); obIt != vrsceneDesc->m_objects.end(); ++obIt) {
-			Vrscene::Preview::VrsceneObjectBase *ob = obIt.data();
-			if (ob && ob->getType() == Vrscene::Preview::ObjectTypeNode) {
-				const TraceTransform &tm = ob->getTransform(get_current_frame());
-
-				Vrscene::Preview::VrsceneObjectNode     *node = static_cast<Vrscene::Preview::VrsceneObjectNode*>(ob);
-				Vrscene::Preview::VrsceneObjectDataBase *nodeData = vrsceneDesc->getObjectData(node->getDataName().ptr());
-				if (nodeData && nodeData->getDataType() == Vrscene::Preview::ObjectDataTypeMesh) {
-					// detail for the mesh
-					GU_Detail *gdmp = new GU_Detail();
-
-					// create preview mesh
-					Vrscene::Preview::VrsceneObjectDataMesh *mesh = static_cast<Vrscene::Preview::VrsceneObjectDataMesh*>(nodeData);
-					const VUtils::VectorRefList &vertices = mesh->getVertices(get_current_frame());
-					const VUtils::IntRefList    &faces = mesh->getFaces(get_current_frame());
-
-					// allocate the points, this is the offset of the first one
-					GA_Offset pointOffset = gdmp->appendPointBlock(vertices.count());
-					// iterate through points by their offsets
-					for (int v = 0; v < vertices.count(); ++v, ++pointOffset) {
-
-						Vector vert = tm * vertices[v];
-						if (flipAxis) {
-							vert = Vrscene::Preview::flipMatrix * vert;
-						}
-
-						gdmp->setPos3(pointOffset, UT_Vector3(vert.x, vert.y, vert.z));
-					}
-
-					for (int f = 0; f < faces.count(); f += 3) {
-						GU_PrimPoly *poly = GU_PrimPoly::build(gdmp, 3, GU_POLY_CLOSED, 0);
-						for (int c = 0; c < 3; ++c) {
-							poly->setVertexPoint(c, meshVertexOffset + faces[f + c]);
-						}
-						poly->reverse();
-					}
-
-					meshVertexOffset += vertices.count();
-
-					// handle
-					GU_DetailHandle gdmh;
-					gdmh.allocateAndSet(gdmp);
-
-					// pack the geometry in the scene detail
-					GU_Detail *gdp = new GU_Detail();
-					GU_PackedGeometry::packGeometry(*gdp, gdmh);
-					gdh.allocateAndSet(gdp);
-				}
-			}
-		}
-	}
-
-
-	if (GU_ConstDetailHandle(gdh) != getDetail()) {
-		me->setDetail(gdh);
-		getPrim()->getParent()->getPrimitiveList().bumpDataId();
-	}
-
-	me->m_dirty = false;
-
-	return getDetail();
+	return m_detail;
 }
 
 int64 VRaySceneRef::getMemoryUsage(bool inclusive) const
 {
-	int64 mem = inclusive ? sizeof(*this) : 0;
-	// Don't count the (shared) GU_Detail, since that will greatly
-	// over-estimate the overall memory usage.
+	int64 mem = inclusive ? sizeof(VRaySceneRef) : 0;
 	mem += m_detail.getMemoryUsage(false);
+
 	return mem;
 }
 
 void VRaySceneRef::countMemory(UT_MemoryCounter &counter, bool inclusive) const
 {
 	if (counter.mustCountUnshared()) {
-		size_t mem = (inclusive) ? sizeof(*this) : 0;
+		int64 mem = inclusive ? sizeof(VRaySceneRef) : 0;
 		mem += m_detail.getMemoryUsage(false);
-		UT_MEMORY_DEBUG_LOG(theFactory->name(), int64(mem));
+		UT_MEMORY_DEBUG_LOG(theFactory->name(), mem);
 		counter.countUnshared(mem);
 	}
 }
 
-void VRaySceneRef::clearDetail()
+double VRaySceneRef::getFrame(fpreal t) const
 {
+	const int useAnimOverrides = getAnimOverride();
+	if (useAnimOverrides) {
+		t = VUtils::calcFrameIndex(t,
+			static_cast<VUtils::MeshFileAnimType::Enum>(
+								   getAnimType()),
+								   getAnimStart(),
+								   getAnimLength(),
+								   getAnimOffset(),
+								   getAnimSpeed());
+	}
+
+	return t;
+}
+
+void VRaySceneRef::detailClear()
+{
+	m_bbox.initBounds();
 	m_detail = GU_ConstDetailHandle();
 }
 
-bool VRaySceneRef::updateFrom(const UT_Options &options)
+void VRaySceneRef::detailBuild(VrsceneDesc *vrsceneDesc, int shouldFlip)
 {
-	if (m_options == options) {
-		return false;
+	const fpreal t = getFrame(getCurrentFrame());
+
+	// Detail for the mesh
+	GU_Detail *meshDetail = new GU_Detail();
+
+	int meshVertexOffset = 0;
+
+	for (VrsceneObjects::iterator obIt = vrsceneDesc->m_objects.begin(); obIt != vrsceneDesc->m_objects.end(); ++obIt) {
+		VrsceneObjectBase *ob = obIt.data();
+		if (ob && ob->getType() == ObjectTypeNode) {
+			const VUtils::TraceTransform &tm = ob->getTransform(t);
+
+			VrsceneObjectNode     *node = static_cast<VrsceneObjectNode*>(ob);
+			VrsceneObjectDataBase *nodeData = vrsceneDesc->getObjectData(node->getDataName().ptr());
+			if (nodeData && nodeData->getDataType() == ObjectDataTypeMesh) {
+				VrsceneObjectDataMesh *mesh = static_cast<VrsceneObjectDataMesh*>(nodeData);
+
+				const VUtils::VectorRefList &vertices = mesh->getVertices(t);
+				const VUtils::IntRefList    &faces = mesh->getFaces(t);
+
+				// Allocate the points, this is the offset of the first one
+				GA_Offset pointOffset = meshDetail->appendPointBlock(vertices.count());
+
+				// Iterate through points by their offsets
+				for (int v = 0; v < vertices.count(); ++v, ++pointOffset) {
+					VUtils::Vector vert = tm * vertices[v];
+					if (shouldFlip) {
+						vert = flipMatrixZY * vert;
+					}
+
+					const UT_Vector3 utVert(vert.x, vert.y, vert.z);
+
+					m_bbox.enlargeBounds(utVert);
+
+					meshDetail->setPos3(pointOffset, utVert);
+				}
+
+				for (int f = 0; f < faces.count(); f += 3) {
+					GU_PrimPoly *poly = GU_PrimPoly::build(meshDetail, 3, GU_POLY_CLOSED, 0);
+					for (int c = 0; c < 3; ++c) {
+						poly->setVertexPoint(c, meshVertexOffset + faces[f + c]);
+					}
+					poly->reverse();
+				}
+
+				meshVertexOffset += vertices.count();
+			}
+		}
 	}
 
+	GU_DetailHandle meshDetailHandle;
+	meshDetailHandle.allocateAndSet(meshDetail);
+
+	m_detail = meshDetailHandle;
+}
+
+int VRaySceneRef::updateFrom(const UT_Options &options)
+{
+	if (m_options == options)
+		return false;
+
+	// Store new options
 	m_options = options;
-	m_dirty = true;
-	// Notify base primitive that topology has changed
+
+	VrsceneSettings vrsceneSettings;
+	vrsceneSettings.usePreview = true;
+	vrsceneSettings.previewFacesCount = 100000;
+	vrsceneSettings.cacheSettings.cacheType = VrsceneCacheSettings::VrsceneCacheType::VrsceneCacheTypeRam;
+
+	VrsceneDesc *vrsceneDesc = vrsceneMan.getVrsceneDesc(getFilepath(), &vrsceneSettings);
+	if (!vrsceneDesc) {
+		detailClear();
+	}
+	else {
+		// Update flip axis intrinsic.
+		const FlipAxisMode flipAxis = parseFlipAxisMode(getFlipAxis());
+		const bool shouldFlip = flipAxis == flipZY ||
+			                    flipAxis == automatic && vrsceneDesc->getUpAxis() == vrsceneUpAxisZ;
+		setShouldFlip(shouldFlip);
+
+		if (!getAddNodes()) {
+			detailClear();
+		}
+		else {
+			detailBuild(vrsceneDesc, shouldFlip);
+		}
+	}
+
 	topologyDirty();
 
 	return true;

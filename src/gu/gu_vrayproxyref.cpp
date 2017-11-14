@@ -387,7 +387,7 @@ bool VRayProxyRef::updateFrom(const T &options)
 }
 
 
-void VRayProxyRef::setFilepath(const char *filepath)
+void VRayProxyRef::setFilepath(SET_ARG_PRIM const char *filepath)
 {
 	m_options.getOptions().setOptionS(VRayProxyParms::theFileToken, filepath);
 	m_dirty = true;
@@ -395,7 +395,7 @@ void VRayProxyRef::setFilepath(const char *filepath)
 }
 
 
-void VRayProxyRef::setLOD(exint lod)
+void VRayProxyRef::setLOD(SET_ARG_PRIM exint lod)
 {
 	m_options.getOptions().setOptionI(VRayProxyParms::theLODToken, lod);
 	m_dirty = true;
@@ -403,7 +403,7 @@ void VRayProxyRef::setLOD(exint lod)
 }
 
 
-void VRayProxyRef::setAnimType(exint animType)
+void VRayProxyRef::setAnimType(SET_ARG_PRIM exint animType)
 {
 	m_options.getOptions().setOptionI(VRayProxyParms::theAnimTypeToken, animType);
 	m_dirty = true;
@@ -411,7 +411,7 @@ void VRayProxyRef::setAnimType(exint animType)
 }
 
 
-void VRayProxyRef::setAnimOffset(fpreal64 offset)
+void VRayProxyRef::setAnimOffset(SET_ARG_PRIM fpreal64 offset)
 {
 	m_options.getOptions().setOptionF(VRayProxyParms::theAnimOffsetToken, offset);
 	m_dirty = true;
@@ -419,7 +419,7 @@ void VRayProxyRef::setAnimOffset(fpreal64 offset)
 }
 
 
-void VRayProxyRef::setAnimSpeed(fpreal64 speed)
+void VRayProxyRef::setAnimSpeed(SET_ARG_PRIM fpreal64 speed)
 {
 	m_options.getOptions().setOptionF(VRayProxyParms::theAnimSpeedToken, speed);
 	m_dirty = true;
@@ -427,7 +427,7 @@ void VRayProxyRef::setAnimSpeed(fpreal64 speed)
 }
 
 
-void VRayProxyRef::setAnimOverride(bool override)
+void VRayProxyRef::setAnimOverride(SET_ARG_PRIM bool override)
 {
 	m_options.getOptions().setOptionB(VRayProxyParms::theAnimOverrideToken, override);
 	m_dirty = true;
@@ -435,7 +435,7 @@ void VRayProxyRef::setAnimOverride(bool override)
 }
 
 
-void VRayProxyRef::setAnimStart(exint start)
+void VRayProxyRef::setAnimStart(SET_ARG_PRIM exint start)
 {
 	m_options.getOptions().setOptionI(VRayProxyParms::theAnimStartToken, start);
 	m_dirty = true;
@@ -443,7 +443,7 @@ void VRayProxyRef::setAnimStart(exint start)
 }
 
 
-void VRayProxyRef::setAnimLength(exint length)
+void VRayProxyRef::setAnimLength(SET_ARG_PRIM exint length)
 {
 	m_options.getOptions().setOptionI(VRayProxyParms::theAnimLengthToken, length);
 	m_dirty = true;
@@ -451,21 +451,33 @@ void VRayProxyRef::setAnimLength(exint length)
 }
 
 
-void VRayProxyRef::setScale(fpreal64 scale)
+void VRayProxyRef::setScale(SET_ARG_PRIM fpreal64 scale)
 {
 	m_options.getOptions().setOptionF(VRayProxyParms::theScaleToken, scale);
-	transformDirty();
+	if (m_dirty) {
+#if HDK_16_5
+		getPrim()->transformDirty();
+#else
+		transformDirty();
+#endif
+	}
 }
 
 
-void VRayProxyRef::setFlipAxis(exint flip)
+void VRayProxyRef::setFlipAxis(SET_ARG_PRIM exint flip)
 {
 	m_options.getOptions().setOptionI(VRayProxyParms::theFlipAxisToken, flip);
-	transformDirty();
+	if (m_dirty) {
+#if HDK_16_5
+		getPrim()->transformDirty();
+#else
+		transformDirty();
+#endif
+	}
 }
 
 
-const char * VRayProxyRef::getLODName() const
+const char * VRayProxyRef::getLODName(GET_SET_ARG_PRIM_SINGLE) const
 {
 	switch (m_options.getLOD()) {
 		case LOD_BBOX:
@@ -486,7 +498,7 @@ const char * VRayProxyRef::getLODName() const
 }
 
 
-const char * VRayProxyRef::getAnimTypeName() const
+const char * VRayProxyRef::getAnimTypeName(GET_SET_ARG_PRIM_SINGLE) const
 {
 	switch (m_options.getAnimType()) {
 		case VUtils::MeshFileAnimType::Loop:
@@ -511,7 +523,7 @@ const char * VRayProxyRef::getAnimTypeName() const
 }
 
 
-exint VRayProxyRef::getGeometryid() const
+exint VRayProxyRef::getGeometryid(GET_SET_ARG_PRIM_SINGLE) const
 {
 	GU_DetailHandleAutoReadLock gdl(getPackedDetail());
 	return (gdl.isValid())? gdl.getGdp()->getUniqueId() : -1;
