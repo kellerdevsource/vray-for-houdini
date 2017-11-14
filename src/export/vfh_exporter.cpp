@@ -70,6 +70,11 @@ static UT_DMatrix4 yAxisUpRotationMatrix(1.0, 0.0, 0.0, 0.0,
 										0.0, -1.0, 0.0, 0.0,
 										0.0, 0.0, 0.0, 0.0);
 
+static const VRay::Transform envMatrix(VRay::Matrix(VRay::Vector(1.f, 0.f,0.f),
+												VRay::Vector(0.f, 0.f, 1.f),
+												VRay::Vector(0.f, -1.f, 0.f)),
+												VRay::Vector(0.f));
+
 void VRayExporter::reset()
 {
 	objectExporter.clearPrimPluginCache();
@@ -337,7 +342,7 @@ VRay::Transform VRayExporter::exportTransformVop(VOP_Node &vop_node, ExportConte
 						options.getOptionV3("pivot").x(), options.getOptionV3("pivot").y(), options.getOptionV3("pivot").z(),
 						m4);
 	if (rotate) {
-		return Matrix4ToTransform(m4 * yAxisUpRotationMatrix);
+		m4 =  m4 * yAxisUpRotationMatrix	;
 	}
 
 	return Matrix4ToTransform(m4);
@@ -412,8 +417,7 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 					if (inpvop->getOperator()->getName() == "makexform") {
 						switch (curSockInfo.type) {
 							case Parm::eMatrix: {
-								VRay::Transform transform;
-								transform = exportTransformVop(*inpvop, parentContext, pluginInfo->pluginType == Parm::PluginTypeUvwgen);
+								VRay::Transform transform = exportTransformVop(*inpvop, parentContext, pluginInfo->pluginType == Parm::PluginTypeUvwgen);
 								pluginDesc.addAttribute(Attrs::PluginAttr(attrName, transform.matrix));
 								break;
 							}
@@ -1108,11 +1112,6 @@ VRay::Plugin VRayExporter::exportVop(OP_Node *opNode, ExportContext *parentConte
 			if (   pluginDesc.pluginID == "UVWGenEnvironment"
 				&& NOT(pluginDesc.contains("uvw_matrix")))
 			{
-				VRay::Transform envMatrix;
-				envMatrix.matrix.setCol(0, VRay::Vector(1.f,0.f,0.f));
-				envMatrix.matrix.setCol(1, VRay::Vector(0.f,0.f,1.f));
-				envMatrix.matrix.setCol(2, VRay::Vector(0.f,-1.f,0.f));
-				envMatrix.offset.makeZero();
 				pluginDesc.addAttribute(Attrs::PluginAttr("uvw_matrix", envMatrix));
 			}
 
