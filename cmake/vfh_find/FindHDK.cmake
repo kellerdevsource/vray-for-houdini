@@ -489,7 +489,8 @@ if(HDK_FOUND)
 
 			list(APPEND HDK_LIBS
 				${SDK_PATH}/hdk/hdf5/lib/libhdf5_cpp$<$<CONFIG:Debug>:_debug>.a
-				${SDK_PATH}/hdk/hdf5/lib/libhdf5$<$<CONFIG:Debug>:_debug>.a
+				# NOTE: Our alembic_s will provide this.
+				# ${SDK_PATH}/hdk/hdf5/lib/libhdf5$<$<CONFIG:Debug>:_debug>.a
 
 				GLU
 				GL
