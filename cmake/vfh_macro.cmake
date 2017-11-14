@@ -12,9 +12,7 @@ include(FindGit)
 
 macro(link_with_boost _name)
 	if(WIN32)
-		if(HOUDINI_VERSION VERSION_LESS 15.5)
-			set(BOOST_LIBS boost_system-vc110-mt-1_55)
-		elseif(HOUDINI_VERSION VERSION_GREATER 16.0)
+		if(HOUDINI_VERSION VERSION_GREATER 16.0)
 			set(BOOST_LIBS
 				# HDK Boost
 				hboost_chrono-mt
@@ -34,6 +32,18 @@ macro(link_with_boost _name)
 		endif()
 	else()
 		set(BOOST_LIBS boost_system)
+
+		if(HOUDINI_VERSION VERSION_GREATER 16.0)
+			list(APPEND BOOST_LIBS
+				hboost_chrono
+				hboost_filesystem
+				hboost_iostreams
+				hboost_program_options
+				hboost_regex
+				hboost_system
+				hboost_thread
+			)
+		endif()
 	endif()
 	target_link_libraries(${_name} ${BOOST_LIBS})
 endmacro()
