@@ -1074,11 +1074,7 @@ int ObjectExporter::getPrimPackedID(const GU_PrimPacked &prim) const
 	const GA_PrimitiveDefinition &lookupTypeDef = prim.getTypeDef();
 
 	Log::getLog().error("Unsupported packed primitive type: %s [%s]!",
-#if UT_MAJOR_VERSION_INT < 16
-						lookupTypeDef.getLabel(), lookupTypeDef.getToken());
-#else
 						lookupTypeDef.getLabel().buffer(), lookupTypeDef.getToken().buffer());
-#endif
 
 	UT_ASSERT_MSG(false, "Unsupported packed primitive type!");
 
@@ -1125,11 +1121,7 @@ VRay::Plugin ObjectExporter::exportPrimPacked(OBJ_Node &objNode, const GU_PrimPa
 	const GA_PrimitiveDefinition &lookupTypeDef = prim.getTypeDef();
 
 	Log::getLog().error("Unsupported packed primitive type: %s [%s]!",
-#if UT_MAJOR_VERSION_INT < 16
-						lookupTypeDef.getLabel(), lookupTypeDef.getToken());
-#else
 						lookupTypeDef.getLabel().buffer(), lookupTypeDef.getToken().buffer());
-#endif
 
 	UT_ASSERT_MSG(false, "Unsupported packed primitive type!");
 
