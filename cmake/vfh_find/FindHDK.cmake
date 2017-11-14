@@ -115,6 +115,22 @@ if(HOUDINI_QT_VERSION VERSION_GREATER 4)
 	set(HDK_QT_ROOT "${SDK_PATH}/hdk/qt/5.6.1" CACHE PATH "Qt 5.x for Houdini SDK root")
 endif()
 
+function(vfh_python_shell_wrapper _binVar _ldPath)
+	set(filePath ${${_binVar}})
+	get_filename_component(fileName ${filePath} NAME)
+
+	set(outShellFilePath ${CMAKE_BINARY_DIR}/bin/${fileName})
+
+	set(MY_LD_LIBRARY_PATH ${_ldPath})
+	set(MY_PROCESS ${filePath})
+
+	configure_file(${CMAKE_SOURCE_DIR}/cmake/vfh_shell_wrapper.cmake.in ${outShellFilePath} @ONLY)
+
+	execute_process(COMMAND chmod +x ${outShellFilePath})
+
+	set(${_binVar} ${outShellFilePath} PARENT_SCOPE)
+endfunction()
+
 if(HDK_FOUND)
 	# NOTE: The exact list of compiler/linker flags can be obtained with:
 	#   "hcustom --cflags / --ldflags"
@@ -158,6 +174,10 @@ if(HDK_FOUND)
 	if(NOT EXISTS ${PYTHON_BIN})
 		message(FATAL_ERROR "Python \"${PYTHON_BIN}\" is not found!")
 	else()
+		if(NOT WIN32)
+			vfh_python_shell_wrapper(PYTHON_BIN ${PYTHON_LIB_PATH})
+		endif()
+
 		message(STATUS "Using Python: ${PYTHON_BIN}")
 	endif()
 
