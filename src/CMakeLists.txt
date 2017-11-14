@@ -229,7 +229,11 @@ function(vfh_generate_gu_options _libTarget _dsoTarget)
 	file(GLOB JSON_INPUT "gu/options/json/*.json")
 
 	set(PYTHON_BIN ${PYTHON_ROOT}/python${CMAKE_EXECUTABLE_SUFFIX})
-	message(STATUS "Using Python: ${PYTHON_BIN}")
+	if(NOT EXISTS ${PYTHON_BIN})
+		message(FATAL_ERROR "Python \"${PYTHON_BIN}\" is not found!")
+	else()
+		message(STATUS "Using Python: ${PYTHON_BIN}")
+	endif()
 
 	foreach(jsonFile ${JSON_INPUT})
 		get_filename_component(CLASS_NAME ${jsonFile} NAME_WE)
