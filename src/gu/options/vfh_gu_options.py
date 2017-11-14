@@ -221,12 +221,12 @@ namespace VRayForHoudini {
 class %CLASS_NAME%
 {
 public:
-	%CLASS_NAME%::%CLASS_NAME%()
+	%CLASS_NAME%()
 	{}
-	%CLASS_NAME%::%CLASS_NAME%(const %CLASS_NAME% &other)
+	%CLASS_NAME%(const %CLASS_NAME% &other)
 		: m_options(other.m_options)
 	{}
-	%CLASS_NAME%::%CLASS_NAME%(%CLASS_NAME% &&other) noexcept
+	%CLASS_NAME%(%CLASS_NAME% &&other) noexcept
 		: m_options(std::move(other.m_options))
 	{}
 %METHODS%
