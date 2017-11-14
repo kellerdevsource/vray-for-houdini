@@ -47,9 +47,7 @@ void MaterialOutput::register_operator(OP_OperatorTable *table)
 {
 	VOP_Operator *op = new VOP_Operator("vray_material_output", "V-Ray Material Output",
 										MaterialOutput::creator, templates,
-#if UT_MAJOR_VERSION_INT >= 16
 										nullptr,
-#endif
 										3, 3,
 										"VRay",
 										nullptr,

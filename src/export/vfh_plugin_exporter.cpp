@@ -138,8 +138,10 @@ void VRayPluginRenderer::showVFB(bool show, const char *title)
 			Qt::WindowFlags windowFlags = vfbWindow->windowFlags();
 			windowFlags |= Qt::Window |
 // Need to set this flag only for Linux / Qt4
-#if !defined(_WIN32) && (UT_MAJOR_VERSION_INT < 16)
+#ifndef _WIN32
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 			               Qt::WindowStaysOnTopHint |
+#endif
 #endif
 			               Qt::WindowTitleHint |
 			               Qt::WindowMinMaxButtonsHint |

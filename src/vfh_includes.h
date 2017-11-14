@@ -14,7 +14,7 @@
 #include <UT/UT_Version.h>
 #include <UT/UT_Interrupt.h>
 
-#define HDK_16_0_633 UT_MAJOR_VERSION_INT >= 16 && UT_MINOR_VERSION_INT >= 0
+#define HDK_16_0_633 UT_MAJOR_VERSION_INT >= 16 && UT_MINOR_VERSION_INT >= 0 && UT_BUILD_VERSION_INT >= 633
 #define HDK_16_5 UT_MAJOR_VERSION_INT >= 16 && UT_MINOR_VERSION_INT >= 5
 
 #if HDK_16_5
