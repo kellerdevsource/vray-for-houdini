@@ -204,9 +204,11 @@ if(HDK_FOUND)
 	if("${HDK_MAJOR_VERSION}.${HDK_MINOR_VERSION}" VERSION_GREATER 16.0)
 		# Since 16.5 Boost is not shipped anymore
 		include_directories(${SDK_PATH}/hdk/boost/include)
-		list(APPEND HDK_LIBRARIES
-			${SDK_PATH}/hdk/boost/lib/vc14
-		)
+		if(WIN32)
+			list(APPEND HDK_LIBRARIES ${SDK_PATH}/hdk/boost/lib/vc14)
+		else()
+			list(APPEND HDK_LIBRARIES ${SDK_PATH}/hdk/boost/lib/linux_x64/gcc-4.4)
+		endif()
 	else()
 		list(APPEND HDK_INCLUDES
 			${SDK_PATH}/hdk/boost_shared
