@@ -401,7 +401,7 @@ void VRayForHoudini::getOverridesForPrimitive(const STY_Styler &geoStyler, const
 
 STY_Styler VRayForHoudini::getStylerForPrimitive(const STY_Styler &geoStyler, const GEO_Primitive &prim)
 {
-#if HDK_16_0_633
+#if HDK_16_0_633 || HDK_16_5
 	const GSTY_SubjectPrim primSubject(&prim, nullptr);
 #else
 	const GSTY_SubjectPrim primSubject(&prim);
