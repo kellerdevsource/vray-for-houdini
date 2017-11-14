@@ -278,6 +278,43 @@ OP::VRayNode::PluginResult LightNodeBase<VRayPluginID::LightRectangle>::asPlugin
 	if (!rectTex) {
 		pluginDesc.add(Attrs::PluginAttr("use_rect_tex", false));
 	}
+	else {
+		const int useTexAlpha = evalInt("use_rect_tex_alpha", 0, 0.0);
+		const int clipTexAlpha = evalInt("use_rect_tex_alpha_clip", 0, 0.0);
+		const float texAlphaOverride = evalFloat("tex_alpha", 0, t);
+
+		static boost::format fmtPrefix("%s|%s");
+
+		Attrs::PluginDesc applyAlphaDesc(str(fmtPrefix % "AlphaCombine" % rectTex.getName()),
+											"TexAColorOp");
+
+		if (!clipTexAlpha) {
+			applyAlphaDesc.add(Attrs::PluginAttr("color_a", rectTex));
+		}
+		else {
+			Attrs::PluginDesc clipAlphaDesc(str(fmtPrefix % "AlphaClip" % rectTex.getName()),
+											"TexAColorOp");
+			clipAlphaDesc.add(Attrs::PluginAttr("mode", 0));
+			clipAlphaDesc.add(Attrs::PluginAttr("color_a", rectTex));
+			if (useTexAlpha) {
+				clipAlphaDesc.add(Attrs::PluginAttr("mult_a", rectTex, "out_alpha"));
+			}
+			else {
+				clipAlphaDesc.add(Attrs::PluginAttr("mult_a", texAlphaOverride));
+			}
+
+			applyAlphaDesc.add(Attrs::PluginAttr("color_a", exporter.exportPlugin(clipAlphaDesc)));
+		}
+
+		if (useTexAlpha) {
+			applyAlphaDesc.add(Attrs::PluginAttr("result_alpha", rectTex, "out_alpha"));
+		}
+		else {
+			applyAlphaDesc.add(Attrs::PluginAttr("result_alpha", texAlphaOverride));
+		}
+
+		pluginDesc.add(Attrs::PluginAttr("rect_tex", exporter.exportPlugin(applyAlphaDesc)));
+	}
 
 	exportAttributeFromPathAuto(exporter, *this, "color",       rectMapping, pluginDesc);
 	exportAttributeFromPathAuto(exporter, *this, "intensity",   rectMapping, pluginDesc);

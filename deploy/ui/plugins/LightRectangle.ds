@@ -1,3 +1,5 @@
+#include "$VRAY_UI_DS_PATH/vfh_macros.ds"
+
 {
     name  LightRectangle
     label "Rectangle"
@@ -221,7 +223,23 @@
         parmtag { "vray_plugin" "LightRectangle" }
         parmtag { "vray_pluginattr" "use_rect_tex" }
         parmtag { "vray_type" "boolean" }
+        joinnext
       }
+
+    parm {
+        VRAY_UI_PARM("use_rect_tex_alpha", "Texture Alpha", "Use alpha channel from the texture", toggle, 1, 1)
+        VFH_DISABLE_WHEN_PARAM_FALSE("use_rect_tex")
+    }
+
+    parm {
+        VRAY_UI_PARM("tex_alpha", "Alpha", "Alpha override value", float, 1, 1.0)
+        VFH_DISABLE_WHEN_PARAM_TRUE("use_rect_tex_alpha")
+    }
+
+    parm {
+        VRAY_UI_PARM("use_rect_tex_alpha_clip", "Clip By Alpha", "Clip light shape by alpha", toggle, 1, 1)
+        VFH_DISABLE_WHEN_PARAM_FALSE("use_rect_tex")
+    }
 
       parm {
         name  "tex_resolution"
