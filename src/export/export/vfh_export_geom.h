@@ -245,7 +245,7 @@ public:
 
 	void processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, const GA_Range &primRange=GA_Range());
 
-	VRay::Plugin exportDetailInstancer(OBJ_Node &objNode, const GU_Detail &gdp, const char *prefix);
+	VRay::Plugin exportDetailInstancer(OBJ_Node &objNode);
 
 	void exportDetail(OBJ_Node &objNode, const GU_Detail &gdp, const GA_Range &primRange=GA_Range());
 
@@ -278,9 +278,14 @@ public:
 	/// @returns Geometry plugin.
 	VRay::Plugin exportGeometry(OBJ_Node &objNode);
 
+	/// Export object geometry into a set of plugins.
+	/// @param objNode OBJ node.
+	/// @param items Output geometry list.
+	void exportGeometry(OBJ_Node &objNode, PrimitiveItems &items);
+
 	/// Export SOP geometry.
 	/// @returns Geometry plugin.
-	VRay::Plugin exportGeometry(OBJ_Node &objNode, SOP_Node &sopNode);
+	void exportGeometry(OBJ_Node &objNode, SOP_Node &sopNode);
 
 	/// Export object.
 	/// @returns Node plugin.

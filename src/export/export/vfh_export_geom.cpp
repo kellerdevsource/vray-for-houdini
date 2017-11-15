@@ -82,6 +82,7 @@ public:
 } primPackedTypeIDs;
 
 static boost::format objGeomNameFmt("%s|%i@%s");
+static boost::format objInstancerNameFmt("Instancer@%s");
 static boost::format hairNameFmt("GeomMayaHair|%i@%s");
 static boost::format polyNameFmt("GeomStaticMesh|%i@%s");
 static boost::format alembicNameFmt("Alembic|%i@%s");
@@ -812,7 +813,7 @@ static void appendSceneName(QString &userAttributes, const OP_Node &opNode)
 	userAttributes.append(sceneName[1].ptr());
 }
 
-VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_Detail &gdp, const char *prefix)
+VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode)
 {
 	using namespace Attrs;
 
@@ -929,7 +930,7 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_D
 
 	instancerItems.clear();
 
-	Attrs::PluginDesc instancer2(boost::str(objGeomNameFmt % prefix % gdp.getUniqueId() % objNode.getName().buffer()),
+	Attrs::PluginDesc instancer2(str(objInstancerNameFmt % objNode.getName().buffer()),
 								 "Instancer2");
 	instancer2.addAttribute(Attrs::PluginAttr("instances", instances, pluginExporter.isAnimation()));
 	instancer2.addAttribute(Attrs::PluginAttr("use_additional_params", true));
@@ -1752,11 +1753,11 @@ void ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_Detail &gd
 	}
 }
 
-VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode, SOP_Node &sopNode)
+void ObjectExporter::exportGeometry(OBJ_Node &objNode, SOP_Node &sopNode)
 {
 	const GU_DetailHandleAutoReadLock gdl(sopNode.getCookedGeoHandle(ctx));
 	if (!gdl.isValid()) {
-		return VRay::Plugin();
+		return;
 	}
 
 	const GU_Detail &gdp = *gdl;
@@ -1780,11 +1781,18 @@ VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode, SOP_Node &sopNode
 		exportDetail(objNode, gdp);
 	}
 
-	VRay::Plugin geometry = exportDetailInstancer(objNode, gdp, "Instancer");
-
 	popContext();
+}
 
-	return geometry;
+void ObjectExporter::exportGeometry(OBJ_Node &objNode, PrimitiveItems &items)
+{
+	SOP_Node *renderSOP = objNode.getRenderSopPtr();
+	if (!renderSOP)
+		return;
+
+	exportGeometry(objNode, *renderSOP);
+
+	items.swap(instancerItems);
 }
 
 VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode)
@@ -1793,7 +1801,9 @@ VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode)
 	if (!renderSOP)
 		return VRay::Plugin();
 
-	return exportGeometry(objNode, *renderSOP);
+	exportGeometry(objNode, instancerItems);
+
+	return exportDetailInstancer(objNode);
 }
 
 int ObjectExporter::isLightEnabled(OBJ_Node &objLight) const

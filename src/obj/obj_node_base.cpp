@@ -160,12 +160,9 @@ int LightNodeBase< VRayPluginID::LightDome >::GetMyPrmTemplate(Parm::PRMList &my
 
 
 template<>
-OP::VRayNode::PluginResult LightNodeBase< VRayPluginID::LightMesh >::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext* /*parentContext*/)
+OP::VRayNode::PluginResult LightNodeBase< VRayPluginID::LightMesh >::asPluginDesc(Attrs::PluginDesc&, VRayExporter &exporter, ExportContext*)
 {
 	const fpreal t = exporter.getContext().getTime();
-
-	pluginDesc.pluginID   = pluginID.c_str();
-	pluginDesc.pluginName = VRayExporter::getPluginName(this);
 
 	UT_String geometrypath;
 	evalString(geometrypath, "geometry", 0, t);
@@ -180,15 +177,37 @@ OP::VRayNode::PluginResult LightNodeBase< VRayPluginID::LightMesh >::asPluginDes
 				Log::getLog().error("Geometry node export failed!");
 			}
 			else {
-				VRay::Plugin geometry = exporter.getObjectExporter().exportGeometry(*obj_node);
-				if (geometry) {
-					pluginDesc.addAttribute(Attrs::PluginAttr("geometry", geometry));
+				PrimitiveItems geomList;
+				exporter.getObjectExporter().exportGeometry(*obj_node, geomList);
+
+				const VRay::Transform &objTm =
+					VRayExporter::getObjTransform(this, exporter.getContext());
+
+				for (int i = 0; i < geomList.count(); ++i) {
+					const PrimitiveItem &item = geomList[i];
+					if (!item.geometry /* || !isMeshLightSupportedGeometryType(item.geometry) */)
+						continue;
+
+					const std::string meshLightName =
+						VRayExporter::getPluginName(this) + "|" + std::to_string(i) + "|" + item.geometry.getName();
+
+					Attrs::PluginDesc meshLightDesc(meshLightName, pluginID);
+					meshLightDesc.addAttribute(Attrs::PluginAttr("geometry", item.geometry));
+					meshLightDesc.addAttribute(Attrs::PluginAttr("transform", objTm * item.tm));
+					if (item.objectID != objectIdUndefined) {
+						meshLightDesc.addAttribute(Attrs::PluginAttr("objectID", item.objectID));
+					}
+
+					exporter.setAttrsFromOpNodePrms(meshLightDesc, this);
+					exporter.exportPlugin(meshLightDesc);
 				}
+
+				return PluginResultSuccess;
 			}
 		}
 	}
 
-	return OP::VRayNode::PluginResultContinue;
+	return PluginResultError;
 }
 
 
