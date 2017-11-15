@@ -15,6 +15,7 @@
 #include "vfh_tex_utils.h"
 #include "vfh_hou_utils.h"
 #include "vfh_attr_utils.h"
+#include "vfh_op_utils.h"
 
 #include "obj/obj_node_base.h"
 #include "vop/vop_node_base.h"
@@ -798,11 +799,11 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 		}
 	}
 
-	pluginDesc.addAttribute(Attrs::PluginAttr("anim_start", OPgetDirector()->getChannelManager()->getTime(animStart)));
-	pluginDesc.addAttribute(Attrs::PluginAttr("anim_end", OPgetDirector()->getChannelManager()->getTime(animEnd)));
+	pluginDesc.addAttribute(Attrs::PluginAttr("anim_start", animStart));
+	pluginDesc.addAttribute(Attrs::PluginAttr("anim_end", animEnd));
 	pluginDesc.addAttribute(Attrs::PluginAttr("frame_start", VUtils::fast_floor(animStart)));
 	pluginDesc.addAttribute(Attrs::PluginAttr("frame_end", VUtils::fast_floor(animEnd)));
-	pluginDesc.addAttribute(Attrs::PluginAttr("frames_per_second", OPgetDirector()->getChannelManager()->getSamplesPerSec()));
+	pluginDesc.addAttribute(Attrs::PluginAttr("frames_per_second", 1));
 	pluginDesc.addAttribute(Attrs::PluginAttr("frames", frames));
 
 	return ReturnValue::Success;
@@ -2038,7 +2039,7 @@ void MotionBlurParams::calcParams(fpreal currFrame)
 void VRayExporter::setTime(fpreal time)
 {
 	m_context.setTime(time);
-	getRenderer().getVRay().setCurrentTime(time);
+	getRenderer().getVRay().setCurrentTime(convertHouTimeToVRayTime(time));
 
 	Log::getLog().debug("Time:  %g", m_context.getTime());
 	Log::getLog().debug("Frame: %i", m_context.getFrame());
@@ -2215,5 +2216,5 @@ void VRayExporter::renderLast()
 		return;
 
 	initExporter(true, m_frames, m_timeStart, m_timeEnd);
-	exportFrame(m_context.getTime());
+	exportFrame(m_context.getFloatFrame());
 }

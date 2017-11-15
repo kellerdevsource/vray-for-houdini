@@ -43,6 +43,9 @@ OP_Bundle* getMatteGeometryBundle(OP_Node &rop, fpreal t);
 /// Get the internal budle holding phantom geometry set on the V-Ray ROP Object tab
 OP_Bundle* getPhantomGeometryBundle(OP_Node &rop, fpreal t);
 
+/// Convert from Houdini time units to VRay time units
+fpreal convertHouTimeToVRayTime(fpreal t);
+
 } // namespace VRayForHoudini
 
 #endif // VRAY_FOR_HOUDINI_VFH_OP_UTILS_H

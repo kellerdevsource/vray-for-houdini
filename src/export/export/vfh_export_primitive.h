@@ -141,9 +141,6 @@ public:
 
 protected:
 	VRay::Plugin exportVRayVolumeGridRef(OBJ_Node &objNode, const GU_PrimPacked &prim) const;
-
-private:
-	fpreal convertToVRayTime(fpreal t) const;
 };
 
 /// Specialization for exporting Houdini's volumes as textures

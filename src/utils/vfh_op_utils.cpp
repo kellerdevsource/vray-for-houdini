@@ -263,3 +263,8 @@ OP_Bundle* VRayForHoudini::getPhantomGeometryBundle(OP_Node &rop, fpreal t)
 {
 	return getBundleFromOpNodePrm(rop, "phantom_objects", t);
 }
+
+fpreal VRayForHoudini::convertHouTimeToVRayTime(fpreal t)
+{
+	return t * OPgetDirector()->getChannelManager()->getSamplesPerSec() + 1;
+}

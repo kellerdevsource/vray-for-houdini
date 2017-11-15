@@ -375,13 +375,6 @@ VRay::Plugin VolumeExporter::exportVRayVolumeGridRef(OBJ_Node &objNode, const GU
 	Attrs::PluginDesc phxCache(boost::str(phxCacheNameFmt % primID % objNode.getName().buffer()),
 		"PhxShaderCache");
 	pluginExporter.setAttrsFromUTOptions(phxCache, opts);
-	// export the play_speed and read_offset in vray time measures
-	// NOTE: we don't need checks because this intrinsics are explicitly set in class VRayVolumeGridRef
-	UT_ASSERT_MSG(opts.hasOption("play_speed") && opts.hasOption("play_at") && opts.hasOption("read_offset"),
-		"Can not get attributes play_speed, play_speed, read_offset of volume!");
-	int playSpeed = convertToVRayTime(opts.getOptionI("play_speed"));
-	phxCache.add(Attrs::PluginAttr("play_speed", playSpeed));
-	phxCache.add(Attrs::PluginAttr("read_offset", opts.getOptionI("read_offset") + playSpeed * opts.getOptionI("play_at")));
 
 	return pluginExporter.exportPlugin(phxCache);
 }
@@ -474,11 +467,6 @@ void VolumeExporter::exportPrimitive(const PrimitiveItem &item, PluginSet &plugi
 			pluginExporter.exportPlugin(node);
 		}
 	}
-}
-
-fpreal VolumeExporter::convertToVRayTime(fpreal t) const
-{
-	return t * OPgetDirector()->getChannelManager()->getSamplesPerSec();
 }
 
 #endif // CGR_HAS_AUR
