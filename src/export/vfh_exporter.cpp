@@ -803,7 +803,7 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 	pluginDesc.addAttribute(Attrs::PluginAttr("anim_end", animEnd));
 	pluginDesc.addAttribute(Attrs::PluginAttr("frame_start", VUtils::fast_floor(animStart)));
 	pluginDesc.addAttribute(Attrs::PluginAttr("frame_end", VUtils::fast_floor(animEnd)));
-	pluginDesc.addAttribute(Attrs::PluginAttr("frames_per_second", 1));
+	pluginDesc.addAttribute(Attrs::PluginAttr("frames_per_second", OPgetDirector()->getChannelManager()->getSamplesPerSec()));
 	pluginDesc.addAttribute(Attrs::PluginAttr("frames", frames));
 
 	return ReturnValue::Success;
@@ -2216,5 +2216,5 @@ void VRayExporter::renderLast()
 		return;
 
 	initExporter(true, m_frames, m_timeStart, m_timeEnd);
-	exportFrame(m_context.getFloatFrame());
+	exportFrame(m_context.getTime());
 }
