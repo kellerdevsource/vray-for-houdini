@@ -73,9 +73,9 @@ static UT_DMatrix4 yAxisUpRotationMatrix(1.0, 0.0, 0.0, 0.0,
 										0.0, 0.0, 0.0, 0.0);
 
 static const VRay::Transform envMatrix(VRay::Matrix(VRay::Vector(1.f, 0.f,0.f),
-												VRay::Vector(0.f, 0.f, 1.f),
-												VRay::Vector(0.f, -1.f, 0.f)),
-												VRay::Vector(0.f));
+                                                    VRay::Vector(0.f, 0.f, 1.f),
+                                                    VRay::Vector(0.f, -1.f, 0.f)),
+                                                    VRay::Vector(0.f));
 
 void VRayExporter::reset()
 {
@@ -347,7 +347,7 @@ VRay::Transform VRayExporter::exportTransformVop(VOP_Node &vop_node, ExportConte
 						options.getOptionV3("pivot").x(), options.getOptionV3("pivot").y(), options.getOptionV3("pivot").z(),
 						m4);
 	if (rotate) {
-		m4 =  m4 * yAxisUpRotationMatrix	;
+		m4 = m4 * yAxisUpRotationMatrix;
 	}
 
 	return Matrix4ToTransform(m4);
