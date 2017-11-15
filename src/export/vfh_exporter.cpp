@@ -68,9 +68,9 @@ static boost::format fmtPluginTypeConverterName2("%s|%s");
 static StringSet RenderSettingsPlugins;
 
 static UT_DMatrix4 yAxisUpRotationMatrix(1.0, 0.0, 0.0, 0.0,
-										0.0, 0.0, 1.0, 0.0,
-										0.0, -1.0, 0.0, 0.0,
-										0.0, 0.0, 0.0, 0.0);
+                                         0.0, 0.0, 1.0, 0.0,
+                                         0.0, -1.0, 0.0, 0.0,
+                                         0.0, 0.0, 0.0, 0.0);
 
 static const VRay::Transform envMatrix(VRay::Matrix(VRay::Vector(1.f, 0.f,0.f),
                                                     VRay::Vector(0.f, 0.f, 1.f),
