@@ -422,7 +422,14 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 					if (inpvop->getOperator()->getName() == "makexform") {
 						switch (curSockInfo.type) {
 							case Parm::eMatrix: {
-								VRay::Transform transform = exportTransformVop(*inpvop, parentContext, pluginInfo->pluginType == Parm::PluginTypeUvwgen);
+								bool shouldRotate = pluginInfo->pluginType == Parm::PluginTypeUvwgen;
+								if (shouldRotate) {
+									shouldRotate = pluginDesc.pluginID == "UVWGenPlanar" ||
+												pluginDesc.pluginID == "UVWGenProjection" || 
+												pluginDesc.pluginID == "UVWGenObject" || 
+												pluginDesc.pluginID == "UVWGenEnvironment";
+								}
+								VRay::Transform transform = exportTransformVop(*inpvop, parentContext, shouldRotate);
 								pluginDesc.addAttribute(Attrs::PluginAttr(attrName, transform.matrix));
 								break;
 							}
