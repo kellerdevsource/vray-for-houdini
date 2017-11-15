@@ -77,6 +77,70 @@ static const VRay::Transform envMatrix(VRay::Matrix(VRay::Vector(1.f, 0.f,0.f),
                                                     VRay::Vector(0.f, -1.f, 0.f)),
                                                     VRay::Vector(0.f));
 
+/// Fills SettingsRTEngine settings from the ROP node.
+/// @param self SettingsRTEngine instance.
+/// @param ropNode ROP node.
+/// @param isStereoView Stereo settings flag.
+static void setSettingsRTEngineFromRopNode(SettingsRTEngine &self, const OP_Node &ropNode, int isStereoView = false)
+{
+	self.coherent_tracing = Parm::getParmInt(ropNode, "SettingsRTEngine_coherent_tracing");
+	self.cpu_bundle_size = Parm::getParmInt(ropNode, "SettingsRTEngine_cpu_bundle_size");
+	self.cpu_samples_per_pixel = Parm::getParmInt(ropNode, "SettingsRTEngine_cpu_samples_per_pixel");
+	self.disable_render_elements = Parm::getParmInt(ropNode, "SettingsRTEngine_disable_render_elements");
+	self.enable_cpu_interop = Parm::getParmInt(ropNode, "SettingsRTEngine_enable_cpu_interop");
+	self.enable_mask = Parm::getParmInt(ropNode, "SettingsRTEngine_enable_mask");
+	self.gi_depth = Parm::getParmInt(ropNode, "SettingsRTEngine_gi_depth");
+	self.gpu_bundle_size = Parm::getParmInt(ropNode, "SettingsRTEngine_gpu_bundle_size");
+	self.gpu_samples_per_pixel = Parm::getParmInt(ropNode, "SettingsRTEngine_gpu_samples_per_pixel");
+	self.interactive = Parm::getParmInt(ropNode, "SettingsRTEngine_interactive");
+	self.low_gpu_thread_priority = Parm::getParmInt(ropNode, "SettingsRTEngine_low_gpu_thread_priority");
+	self.max_draw_interval = Parm::getParmInt(ropNode, "SettingsRTEngine_max_draw_interval");
+	self.max_render_time = Parm::getParmInt(ropNode, "SettingsRTEngine_max_render_time");
+	self.max_sample_level = Parm::getParmInt(ropNode, "SettingsRTEngine_max_sample_level");
+	self.min_draw_interval = Parm::getParmInt(ropNode, "SettingsRTEngine_min_draw_interval");
+	self.noise_threshold = Parm::getParmInt(ropNode, "SettingsRTEngine_noise_threshold");
+	self.opencl_resizeTextures = Parm::getParmInt(ropNode, "SettingsRTEngine_opencl_resizeTextures");
+	self.opencl_texsize = Parm::getParmInt(ropNode, "SettingsRTEngine_opencl_texsize");
+	self.opencl_textureFormat = Parm::getParmInt(ropNode, "SettingsRTEngine_opencl_textureFormat");
+	self.progressive_samples_per_pixel = Parm::getParmInt(ropNode, "SettingsRTEngine_progressive_samples_per_pixel");
+	self.stereo_eye_distance = isStereoView ? Parm::getParmFloat(ropNode, "VRayStereoscopicSettings_eye_distance") : 0;
+	self.stereo_focus = isStereoView ? Parm::getParmInt(ropNode, "VRayStereoscopicSettings_focus_method") : 0;
+	self.stereo_mode = isStereoView ? Parm::getParmInt(ropNode, "VRayStereoscopicSettings_use") : 0;
+	self.trace_depth = Parm::getParmInt(ropNode, "SettingsRTEngine_trace_depth");
+	self.undersampling = Parm::getParmInt(ropNode, "SettingsRTEngine_undersampling");
+}
+
+/// Sets optimized settings for GPU.
+/// @param self SettingsRTEngine instance.
+/// @param ropNode ROP node.
+/// @param mode Render mode.
+static void setSettingsRTEnginetOptimizedGpuSettings(SettingsRTEngine &self, const OP_Node &ropNode, VRay::RendererOptions::RenderMode mode)
+{
+	if (!Parm::getParmInt(ropNode, "SettingsRTEngine_auto"))
+		return;
+
+	// CPU/GPU RT/IPR.
+	if (mode >= VRay::RendererOptions::RENDER_MODE_RT_CPU &&
+        mode <= VRay::RendererOptions::RENDER_MODE_RT_GPU)
+    {
+		self.cpu_samples_per_pixel = 1;
+		self.cpu_bundle_size = 64;
+		self.gpu_samples_per_pixel = 1;
+		self.gpu_bundle_size = 128;
+		self.undersampling = 0;
+		self.progressive_samples_per_pixel = 0;
+    }
+	// GPU Production.
+	else if (mode >= VRay::RendererOptions::RENDER_MODE_PRODUCTION_OPENCL &&
+			 mode <= VRay::RendererOptions::RENDER_MODE_PRODUCTION_CUDA)
+	{
+		self.gpu_samples_per_pixel = 16;
+		self.gpu_bundle_size = 256;
+		self.undersampling = 0;
+		self.progressive_samples_per_pixel = 0;
+	}
+}
+
 void VRayExporter::reset()
 {
 	objectExporter.clearPrimPluginCache();
@@ -1884,15 +1948,13 @@ void VRayExporter::setDRSettings()
 
 void VRayExporter::setRenderMode(VRay::RendererOptions::RenderMode mode)
 {
-	m_renderer.setRendererMode(mode);
+	SettingsRTEngine settingsRTEngine;
+	setSettingsRTEngineFromRopNode(settingsRTEngine, *m_rop, mode);
+	setSettingsRTEnginetOptimizedGpuSettings(settingsRTEngine, *m_rop, mode);
+
+	m_renderer.setRendererMode(settingsRTEngine, mode);
 
 	m_isGPU = mode >= VRay::RendererOptions::RENDER_MODE_RT_GPU_OPENCL;
-
-	if (mode >= VRay::RendererOptions::RENDER_MODE_RT_CPU &&
-		mode <= VRay::RendererOptions::RENDER_MODE_RT_GPU)
-	{
-		setSettingsRtEngine();
-	}
 }
 
 
@@ -1919,22 +1981,6 @@ void VRayExporter::setRenderSize(int w, int h)
 	Log::getLog().info("VRayExporter::setRenderSize(%i, %i)",
 					   w, h);
 	m_renderer.setImageSize(w, h);
-}
-
-
-void VRayExporter::setSettingsRtEngine()
-{
-	VRay::Plugin settingsRTEngine = m_renderer.getVRay().getInstanceOrCreate("SettingsRTEngine");
-
-	Attrs::PluginDesc settingsRTEngineDesc(settingsRTEngine.getName(), "SettingsRTEngine");
-
-	settingsRTEngineDesc.addAttribute(Attrs::PluginAttr("stereo_mode",         isStereoView() ? Parm::getParmInt(*m_rop, "VRayStereoscopicSettings_use") : 0));
-	settingsRTEngineDesc.addAttribute(Attrs::PluginAttr("stereo_eye_distance", isStereoView() ? Parm::getParmFloat(*m_rop, "VRayStereoscopicSettings_eye_distance") : 0));
-	settingsRTEngineDesc.addAttribute(Attrs::PluginAttr("stereo_focus",        isStereoView() ? Parm::getParmInt(*m_rop, "VRayStereoscopicSettings_focus_method") : 0));
-
-	setAttrsFromOpNodePrms(settingsRTEngineDesc, m_rop, "SettingsRTEngine_");
-
-	exportPluginProperties(settingsRTEngine, settingsRTEngineDesc);
 }
 
 

@@ -1,3 +1,5 @@
+#include "$VRAY_UI_DS_PATH/vfh_macros.ds"
+
 groupsimple {
 	name "folder_rt_shading"
 	label "Shading"
@@ -49,7 +51,7 @@ groupsimple {
 		name	"SettingsRTEngine_max_sample_level"
 		label	"Max. Paths Per Pixel"
 		type	integer
-		default	{ "0" }
+		default	{ "10000" }
 		help	"Max sample level (0 = inf)"
 		range	{ 0 64 }
 		parmtag	{ "cook_dependent" "1" }
@@ -69,18 +71,22 @@ groupsimple {
 		parmtag	{ "vray_pluginattr" "noise_threshold" }
 		parmtag	{ "vray_type" "float" }
 	}
+
+	VFH_UI_PARM_TOGGLE("SettingsRTEngine_auto", "Auto. Settings", "Set predefined optimal defaults depending on render mode (IPR / Production)", 1)
 }
 
 
 groupsimple {
 	name "folder_rt_performace"
 	label "Performance"
+
+    VFH_PLUGIN_PARM_TOGGLE("SettingsRTEngine", "SettingsRTEngine_low_gpu_thread_priority", "Low GPU thread priority", "When true, RT GPU tries to utilize the GPUs with attached displays less.", 1)
 	
 	parm {
 		name	"SettingsRTEngine_undersampling"
 		label	"Undersampling"
 		type	integer
-		default	{ "4" }
+		default	{ "0" }
 		help	"Non-zero to use undersampling, 0 otherwise. The value specifies the blur resolution. Value of n means 1/(2^n) initial resolution in each dimension."
 		range	{ 0 5 }
 		parmtag	{ "cook_dependent" "1" }
@@ -92,9 +98,9 @@ groupsimple {
 		name	"SettingsRTEngine_progressive_samples_per_pixel"
 		label	"Progressive RPP"
 		type	integer
-		default	{ "1" }
-		help	"Progressive increase for samples_per_pixel (from 1 to real value). Use this for faster feadback"
-		range	{ 1 10 }
+		default	{ "0" }
+		help	"Progressive increase for samples_per_pixel. Use this for faster feadback"
+		range	{ 0 10 }
 		parmtag	{ "cook_dependent" "1" }
 		parmtag	{ "vray_plugin" "SettingsRTEngine" }
 		parmtag	{ "vray_pluginattr" "progressive_samples_per_pixel" }
@@ -145,9 +151,9 @@ groupsimple {
 			name	"SettingsRTEngine_gpu_bundle_size"
 			label	"Ray Bundle Size"
 			type	integer
-			default	{ "128" }
+			default	{ "256" }
 			help	"Number of samples to transfer over the network for RT-GPU"
-			range	{ 0 64 }
+			range	{ 0 512 }
 			parmtag	{ "cook_dependent" "1" }
 			parmtag	{ "vray_plugin" "SettingsRTEngine" }
 			parmtag	{ "vray_pluginattr" "gpu_bundle_size" }
@@ -157,7 +163,7 @@ groupsimple {
 			name	"SettingsRTEngine_gpu_samples_per_pixel"
 			label	"Rays Per Pixel"
 			type	integer
-			default	{ "1" }
+			default	{ "16" }
 			help	"Number of samples per pixel for RT-GPU"
 			range	{ 0 64 }
 			parmtag	{ "cook_dependent" "1" }

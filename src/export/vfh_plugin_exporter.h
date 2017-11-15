@@ -18,6 +18,84 @@
 
 namespace VRayForHoudini {
 
+struct SettingsRTEngine
+{
+    /// Maximum trace depth for reflections/refractions etc.
+    int trace_depth{5};
+
+    /// Maximum trace depth for GI.
+    int gi_depth{3};
+
+    /// Number of samples to transfer over the network for RT-CPU.
+    int cpu_bundle_size{64};
+
+    /// Number of samples per pixel for RT-CPU.
+    int cpu_samples_per_pixel{4};
+
+    /// Number of samples to transfer over the network for RT-GPU.
+    int gpu_bundle_size{256};
+
+    /// Number of samples per pixel for RT-GPU.
+    int gpu_samples_per_pixel{16};
+
+    /// When true, RT GPU tries to utilize the GPUs with attached displays less. If this is true, it works best with gpu_samples_per_pixel=1 and gpu_bundle_size=64 (or less).
+    bool low_gpu_thread_priority{false};
+
+    /// true to enable coherent tracing of gi/reflections/refractions etc.
+    bool coherent_tracing{false};
+
+    /// Non-zero to enable side-by-side stereo rendering.
+    bool stereo_mode{false};
+
+    /// Distance between the two cameras for stereo mode.
+    float stereo_eye_distance{6.5f};
+
+    /// Focus mode (0 - none, 1 - rotation, 2 - shear).
+    int stereo_focus{2};
+
+    /// OpenCL Single Kernel maximum texture size - bigger textures are scaled to fit this size.
+    int opencl_texsize{512};
+
+    /// Textures transfer mode for the GPU.
+    int opencl_resizeTextures{1};
+
+    /// Format for the textures on the GPU (0 - 32-bit float per channel; 1 - 16-bit half float per channel; 2 - 8-bit per channel).
+    int opencl_textureFormat{1};
+
+    /// Progressive increase for 'Rays per pixel' (from 1 to real value). Use this for faster feadback.
+    int progressive_samples_per_pixel{0};
+
+    /// Non-zero to use undersampling, 0 otherwise. The value specifies the blur resolution. Value of n means 1/(2^n) initial resolution in each dimension.
+    int undersampling{4};
+
+    /// If true, RT will produce only RGBA. Default is false.
+    bool disable_render_elements{false};
+
+    /// Max render time (0 = inf).
+    float max_render_time{0.0f};
+
+    /// Max paths per pixel (0 = inf).
+    int max_sample_level{10000};
+
+    /// Noise threshold for the image sampler (0 = inf).
+    float noise_threshold{0.001f};
+
+    /// Show aa mask.
+    bool enable_mask{false};
+
+    /// Max time, in milliseconds, between (partial) image updates (0=disable partial image updates).
+    int max_draw_interval{0};
+
+    /// Min time, in milliseconds, between image updates (0=show all frames).
+    int min_draw_interval{0};
+
+    /// Flag used to disable some production-only features in interactive mode.
+    int interactive{0};
+
+    /// When using C++/CPU (CUDA), the noise pattern of the render is different compared to when using only CUDA GPU devices. If you want to mix CUDA C++/CPU renders and CUDA GPU renders, this should be set to 1. Otherwise, if you are using only CUDA GPU devices, this should be set to 0 (since the render results will be cleaner).
+    int enable_cpu_interop{0};
+};
+
 /// V-Ray Frame Buffer settings.
 struct VFBSettings {
 	int structVersion = 0;
@@ -131,7 +209,7 @@ public:
 	/// a current rendering running it will not be affected. You can switch between
 	/// Production and RT mode with this without resetting the scene.
 	/// Valid modes are Production, RT CPU, RT GPU (CUDA)
-	void setRendererMode(VRay::RendererOptions::RenderMode mode);
+	void setRendererMode(const SettingsRTEngine &settingsRTEngine, VRay::RendererOptions::RenderMode mode);
 
 	/// Sets the frame buffer width and height.
 	void setImageSize(const int w, const int h);
