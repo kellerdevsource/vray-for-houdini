@@ -402,9 +402,6 @@ public:
 	/// Set image width and height
 	void setRenderSize(int w, int h);
 
-	/// Export RT engine settings
-	void setSettingsRtEngine();
-
 	/// Get current export context
 	VRayOpContext &getContext() { return m_context; }
 

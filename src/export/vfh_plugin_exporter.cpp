@@ -313,24 +313,67 @@ void VRayPluginRenderer::setCamera(VRay::Plugin camera)
 	}
 }
 
+/// Sets plugin parameters from SettingsRTEngine.
+/// @param self Settings.
+/// @param plugin SettingsRTEngine plugin instance.
+static void fillSettingsRTEnginePlugin(const SettingsRTEngine &self, VRay::Plugin plugin)
+{
+	plugin.setValue("coherent_tracing", self.coherent_tracing);
+	plugin.setValue("cpu_bundle_size", self.cpu_bundle_size);
+	plugin.setValue("cpu_samples_per_pixel", self.cpu_samples_per_pixel);
+	plugin.setValue("disable_render_elements", self.disable_render_elements);
+	plugin.setValue("enable_cpu_interop", self.enable_cpu_interop);
+	plugin.setValue("enable_mask", self.enable_mask);
+	plugin.setValue("gi_depth", self.gi_depth);
+	plugin.setValue("gpu_bundle_size", self.gpu_bundle_size);
+	plugin.setValue("gpu_samples_per_pixel", self.gpu_samples_per_pixel);
+	plugin.setValue("interactive", self.interactive);
+	plugin.setValue("low_gpu_thread_priority", self.low_gpu_thread_priority);
+	plugin.setValue("max_draw_interval", self.max_draw_interval);
+	plugin.setValue("max_render_time", self.max_render_time);
+	plugin.setValue("max_sample_level", self.max_sample_level);
+	plugin.setValue("min_draw_interval", self.min_draw_interval);
+	plugin.setValue("noise_threshold", self.noise_threshold);
+	plugin.setValue("opencl_resizeTextures", self.opencl_resizeTextures);
+	plugin.setValue("opencl_texsize", self.opencl_texsize);
+	plugin.setValue("opencl_textureFormat", self.opencl_textureFormat);
+	plugin.setValue("progressive_samples_per_pixel", self.progressive_samples_per_pixel);
+	plugin.setValue("stereo_eye_distance", self.stereo_eye_distance);
+	plugin.setValue("stereo_focus", self.stereo_focus);
+	plugin.setValue("stereo_mode", self.stereo_mode);
+	plugin.setValue("trace_depth", self.trace_depth);
+	plugin.setValue("undersampling", self.undersampling);
+}
 
-void VRayPluginRenderer::setRendererMode(VRay::RendererOptions::RenderMode mode)
+void VRayPluginRenderer::setRendererMode(const SettingsRTEngine &settingsRTEngine, VRay::RendererOptions::RenderMode mode)
 {
 	if (!m_vray)
 		return;
 
-	if (mode >= VRay::RendererOptions::RENDER_MODE_RT_CPU &&
-		mode <= VRay::RendererOptions::RENDER_MODE_PRODUCTION_OPENCL)
-	{
-		VRay::RendererOptions options(m_vray->getOptions());
+	fillSettingsRTEnginePlugin(settingsRTEngine, m_vray->getInstanceOrCreate("SettingsRTEngine"));
+
+	VRay::RendererOptions options(m_vray->getOptions());
+
+	const int isInteractiveMode =
+		mode >= VRay::RendererOptions::RENDER_MODE_RT_CPU &&
+		mode <= VRay::RendererOptions::RENDER_MODE_RT_GPU;
+
+	if (isInteractiveMode) {
 		options.numThreads = VUtils::Max(1, VUtils::getNumProcessors() - 1);
 		options.keepRTRunning = true;
 		options.rtNoiseThreshold = 0.0f;
 		options.rtSampleLevel = INT_MAX;
 		options.rtTimeout = 0;
-		m_vray->setOptions(options);
+	}
+	else {
+		options.numThreads = 0;
+		options.keepRTRunning = false;
+		options.rtNoiseThreshold = settingsRTEngine.noise_threshold;
+		options.rtSampleLevel = settingsRTEngine.max_sample_level;
+		options.rtTimeout = settingsRTEngine.max_render_time;
 	}
 
+	m_vray->setOptions(options);
 	m_vray->setRenderMode(mode);
 }
 
