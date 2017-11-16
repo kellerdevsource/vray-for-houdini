@@ -42,7 +42,6 @@ def _getPluginParmTemplates(pluginName):
     # This will make attribute manes prefixed with plugin ID name.
     pluginPrefixDef = "#define PREFIX \"%s_\"\n\n" % (pluginName)
     dsContents = pluginPrefixDef + open(pluginDs, 'r').read()
-    print dsContents
 
     pluginPtg.setToDialogScript(dsContents)
 
