@@ -376,6 +376,10 @@ VRay::Plugin VolumeExporter::exportVRayVolumeGridRef(OBJ_Node &objNode, const GU
 		"PhxShaderCache");
 	pluginExporter.setAttrsFromUTOptions(phxCache, opts);
 
+	phxCache.add(Attrs::PluginAttr("play_speed", OPgetDirector()->getChannelManager()->getSamplesPerSec()));
+	exint playAt = phxCache.get("play_at")->paramValue.valInt;
+	phxCache.add( Attrs::PluginAttr("play_at", OPgetDirector()->getChannelManager()->getTime(playAt)));
+
 	return pluginExporter.exportPlugin(phxCache);
 }
 

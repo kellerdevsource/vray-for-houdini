@@ -15,7 +15,6 @@
 #include "vfh_tex_utils.h"
 #include "vfh_hou_utils.h"
 #include "vfh_attr_utils.h"
-#include "vfh_op_utils.h"
 
 #include "obj/obj_node_base.h"
 #include "vop/vop_node_base.h"
@@ -780,29 +779,29 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 		pluginDesc.addAttribute(Attrs::PluginAttr("img_file", fileName.toStdString()));
 	}
 
-	const fpreal animStart = CAST_ROPNODE(m_rop)->FSTART();
-	const fpreal animEnd = CAST_ROPNODE(m_rop)->FEND();
+	const fpreal frameStart = CAST_ROPNODE(m_rop)->FSTART();
+	const fpreal frameEnd = CAST_ROPNODE(m_rop)->FEND();
 	VRay::VUtils::ValueRefList frames(1);
-	frames[0].setDouble(animStart);
+	frames[0].setDouble(frameStart);
 	if (m_frames > 1) {
 		if (CAST_ROPNODE(m_rop)->FINC() > 1) {
 			frames = VRay::VUtils::ValueRefList(m_frames);
 			for (int i = 0; i < m_frames; ++i) {
-				frames[i].setDouble(animStart + i * CAST_ROPNODE(m_rop)->FINC());
+				frames[i].setDouble(frameStart + i * CAST_ROPNODE(m_rop)->FINC());
 			}
 		}
 		else {
 			VRay::VUtils::ValueRefList frameRange(2);
-			frameRange[0].setDouble(animStart);
-			frameRange[1].setDouble(animEnd);
+			frameRange[0].setDouble(frameStart);
+			frameRange[1].setDouble(frameEnd);
 			frames[0].setList(frameRange);
 		}
 	}
 
-	pluginDesc.addAttribute(Attrs::PluginAttr("anim_start", animStart));
-	pluginDesc.addAttribute(Attrs::PluginAttr("anim_end", animEnd));
-	pluginDesc.addAttribute(Attrs::PluginAttr("frame_start", VUtils::fast_floor(animStart)));
-	pluginDesc.addAttribute(Attrs::PluginAttr("frame_end", VUtils::fast_floor(animEnd)));
+	pluginDesc.addAttribute(Attrs::PluginAttr("anim_start", OPgetDirector()->getChannelManager()->getTime(frameStart)));
+	pluginDesc.addAttribute(Attrs::PluginAttr("anim_end", OPgetDirector()->getChannelManager()->getTime(frameEnd)));
+	pluginDesc.addAttribute(Attrs::PluginAttr("frame_start", VUtils::fast_floor(frameStart)));
+	pluginDesc.addAttribute(Attrs::PluginAttr("frame_end", VUtils::fast_floor(frameEnd)));
 	pluginDesc.addAttribute(Attrs::PluginAttr("frames_per_second", OPgetDirector()->getChannelManager()->getSamplesPerSec()));
 	pluginDesc.addAttribute(Attrs::PluginAttr("frames", frames));
 
@@ -2039,7 +2038,7 @@ void MotionBlurParams::calcParams(fpreal currFrame)
 void VRayExporter::setTime(fpreal time)
 {
 	m_context.setTime(time);
-	getRenderer().getVRay().setCurrentTime(convertHouTimeToVRayTime(time));
+	getRenderer().getVRay().setCurrentTime(time);
 
 	Log::getLog().debug("Time:  %g", m_context.getTime());
 	Log::getLog().debug("Frame: %i", m_context.getFrame());
