@@ -801,7 +801,6 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 	pluginDesc.addAttribute(Attrs::PluginAttr("anim_start", OPgetDirector()->getChannelManager()->getTime(frameStart)));
 	pluginDesc.addAttribute(Attrs::PluginAttr("anim_end", OPgetDirector()->getChannelManager()->getTime(frameEnd)));
 	pluginDesc.addAttribute(Attrs::PluginAttr("frame_start", VUtils::fast_floor(frameStart)));
-	pluginDesc.addAttribute(Attrs::PluginAttr("frame_end", VUtils::fast_floor(frameEnd)));
 	pluginDesc.addAttribute(Attrs::PluginAttr("frames_per_second", OPgetDirector()->getChannelManager()->getSamplesPerSec()));
 	pluginDesc.addAttribute(Attrs::PluginAttr("frames", frames));
 
