@@ -13,7 +13,6 @@
 
 #include "vop_node_base.h"
 
-
 namespace VRayForHoudini {
 namespace VOP {
 
@@ -21,9 +20,32 @@ class MetaImageFile:
 		public NodeBase
 {
 public:
+	/// UVW generator types.
+	enum UVWGenType {
+		UVWGenMayaPlace2dTexture = 0,
+		UVWGenEnvironment        = 1,
+		UVWGenExplicit           = 2,
+		UVWGenChannel            = 3,
+		UVWGenObject             = 4,
+		UVWGenObjectBBox         = 5,
+		UVWGenPlanarWorld        = 6,
+		UVWGenProjection         = 7,
+	};
+
+	struct UVWGenSocket {
+		UVWGenSocket(const char *label, const VOP_TypeInfo typeInfo)
+			: label(label)
+			, typeInfo(typeInfo)
+		{}
+
+		const char *label;
+		const VOP_TypeInfo typeInfo;
+	};
+
+	typedef std::vector<UVWGenSocket> UVWGenSocketsTable;
+
 	static PRM_Template *GetPrmTemplate();
 
-public:
 	MetaImageFile(OP_Network *parent, const char *name, OP_Operator *entry):NodeBase(parent, name, entry) {}
 	virtual ~MetaImageFile() {}
 
@@ -36,6 +58,7 @@ public:
 	unsigned orderedInputs() const VRAY_OVERRIDE;
 	unsigned maxOutputs() const VRAY_OVERRIDE;
 	unsigned getNumVisibleInputs() const VRAY_OVERRIDE;
+
 protected:
 	void setPluginType() VRAY_OVERRIDE;
 
@@ -47,6 +70,13 @@ protected:
 
 	void getOutputTypeInfoSubclass(VOP_TypeInfo &type_info, int idx) VRAY_OVERRIDE;
 	void getInputTypeInfoSubclass(VOP_TypeInfo &type_info, int idx) VRAY_OVERRIDE;
+
+private:
+	/// Get currently chosed UV generator type.
+	UVWGenType getUVWGenType() const;
+
+	/// Get currently chosed UV generator input sockets array.
+	const UVWGenSocketsTable &getUVWGenInputs() const;
 };
 
 } // namespace VOP

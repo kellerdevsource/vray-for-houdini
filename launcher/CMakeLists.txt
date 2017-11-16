@@ -8,7 +8,7 @@
 # Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 #
 
-project(vfh_launcher)
+project(vray_for_houdini_launcher)
 
 vfh_generate_launcher(TEMPLATE_FILENAME "string_defines.h.in"
 					  FILENAME "string_defines.h"
@@ -16,7 +16,8 @@ vfh_generate_launcher(TEMPLATE_FILENAME "string_defines.h.in"
 					  CPP_LAUNCHER)
 
 set(SOURCES
-	launcher.cpp
+	vfh_launcher.cpp
+	vfh_launcher.rc
 )
 
 set(HEADERS
@@ -28,11 +29,18 @@ include_directories(${CMAKE_BINARY_DIR})
 # This project must be excluded from all since INSTALL depends on ALL and it will create circular dependency
 add_executable(${PROJECT_NAME} EXCLUDE_FROM_ALL "${SOURCES};${HEADERS}")
 
+set_target_properties(${PROJECT_NAME}
+	PROPERTIES
+		OUTPUT_NAME vfh_launcher
+)
+
 # This is to make sure other projects are built when 'vfh_launcher' is startup project
 add_dependencies(${PROJECT_NAME} vray_for_houdini)
+add_dependencies(${PROJECT_NAME} vray_for_houdini_exporter)
 
 if(WITH_SOHO)
-	add_dependencies(${PROJECT_NAME} vray_for_houdini_ipr vray_for_houdini_python_ipr)
+	add_dependencies(${PROJECT_NAME} vray_for_houdini_ipr)
+	add_dependencies(${PROJECT_NAME} vray_for_houdini_python_ipr)
 endif()
 
 if(MSVC AND NOT ${CMAKE_GENERATOR} STREQUAL "Ninja")

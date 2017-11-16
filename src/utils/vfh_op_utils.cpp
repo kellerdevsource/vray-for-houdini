@@ -77,7 +77,7 @@ static OP_Bundle* getBundleFromOpNodePrm(OP_Node &node, const char *pn, fpreal t
 
 	OP_Bundle *bundle = OPgetDirector()->getBundles()->getPattern(bundleName,
 																  opcreator,
-																  opcreator,
+																  &node,
 																  mask,
 																  opfilter,
 																  0,

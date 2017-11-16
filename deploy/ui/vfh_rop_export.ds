@@ -1,3 +1,4 @@
+#include "$VRAY_UI_DS_PATH/vfh_macros.ds"
 /*
 groupsimple {
 	name "VrayRendererFolderUIStyle"
@@ -24,9 +25,9 @@ groupsimple {
         label "Device"
         type ordinal
         menu {
-            "CPU" "CPU"
-            "CUDA" "GPU (CUDA)"
-            "OPENCL" "GPU (OpenCL)"
+            0 "CPU"
+            1 "GPU (CUDA)"
+            2 "GPU (OpenCL)"
         }
         default { "0" }
     }
@@ -47,6 +48,8 @@ groupsimple {
         }
         default { "0" }
     }
+
+    VFH_UI_PARM_TOGGLE("vfh_use_camera_settings", "Use Physical Camera Settings for Viewport IPR", "", 1)
 
     parm {
         name "render_rt"

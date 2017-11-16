@@ -34,7 +34,19 @@
 #include <GA/GA_Types.h>
 #include <GA/GA_Names.h>
 
+#include <parse.h>
+
 using namespace VRayForHoudini;
+
+/// Used for flipping Y and Z axis
+static const VRay::Transform flipYZTm{ {
+		VRay::Vector(1.f, 0.f,  0.f),
+		VRay::Vector(0.f, 0.f, -1.f),
+		VRay::Vector(0.f, 1.f,  0.f)
+	}, {
+		VRay::Vector(0.f, 0.f,  0.f)
+	}
+};
 
 static struct PrimPackedTypeIDs {
 	PrimPackedTypeIDs()
@@ -296,20 +308,26 @@ DisplacementType ObjectExporter::hasSubdivApplied(OBJ_Node &objNode) const
 	// 1. as a custom VOP available in V-Ray material context
 	// 2. as spare parameters added to the object node.
 
-	const fpreal t = ctx.getTime();
-
-	const bool hasDispl = objNode.hasParm("vray_use_displ") && objNode.evalInt("vray_use_displ", 0, t);
+	const bool hasDispl = objNode.hasParm("vray_displ_use") && objNode.evalInt("vray_displ_use", 0, 0.0);
 	if (!hasDispl)
 		return displacementTypeNone;
 
-	DisplacementType displType = static_cast<DisplacementType>(objNode.evalInt("vray_displ_type", 0, t));
+	DisplacementType displType = static_cast<DisplacementType>(objNode.evalInt("vray_displ_type", 0, 0.0));
 	switch (displType) {
 		case displacementTypeFromMat: {
 			UT_String shopPath;
-			objNode.evalString(shopPath, "vray_displshoppath", 0, t);
-			OP_Node *shop = getOpNodeFromPath(shopPath, t);
+			objNode.evalString(shopPath, "vray_displ_shoppath", 0, 0.0);
+
+			OP_Node *shop = getOpNodeFromPath(shopPath, 0.0);
 			if (shop) {
-				if (!getVRayNodeFromOp(*shop, "Geometry", "GeomStaticSmoothedMesh")) {
+				if (getVRayNodeFromOp(*shop, "Geometry", "GeomStaticSmoothedMesh")) {
+					displType = displacementTypeSmooth;
+				}
+				else if (getVRayNodeFromOp(*shop, "Geometry", "GeomDisplacedMesh")) {
+					displType = displacementTypeDisplace;
+				}
+				else {
+					Log::getLog().warning("Compatible displacement node is not found at the \"Geometry\" input.");
 					displType = displacementTypeNone;
 				}
 			}
@@ -1000,20 +1018,8 @@ void ObjectExporter::exportPolyMesh(OBJ_Node &objNode, const GU_Detail &gdp, con
 									   "GeomStaticMesh");
 			if (polyMeshExporter.asPluginDesc(gdp, geomDesc)) {
 				item.geometry = pluginExporter.exportPlugin(geomDesc);
-				if (item.geometry) {
-					if (hasSubdivApplied) {
-						const std::string subdivPluginType = subdivType == displacementTypeDisplace
-							                                ? "GeomDisplacedMesh"
-							                                : "GeomStaticSmoothedMesh";
-
-						Attrs::PluginDesc subdivDesc(boost::str(Parm::FmtPrefixManual % subdivPluginType % item.geometry.getName()),
-													 subdivPluginType);
-						subdivDesc.addAttribute(Attrs::PluginAttr("mesh", item.geometry));
-
-						pluginExporter.exportDisplacementDesc(&objNode, subdivDesc);
-
-						item.geometry = pluginExporter.exportPlugin(subdivDesc);
-					}
+				if (item.geometry && hasSubdivApplied) {
+					item.geometry = pluginExporter.exportDisplacement(objNode, item.geometry);
 				}
 			}
 
@@ -1200,9 +1206,76 @@ VRay::Plugin ObjectExporter::exportVRaySceneRef(OBJ_Node &objNode, const GU_Prim
 
 	const VRaySceneRef *vraysceneref = UTverify_cast<const VRaySceneRef*>(prim.implementation());
 
-	pluginDesc.add(Attrs::PluginAttr("transform", getTm()));
+	const UT_Options &options = vraysceneref->getOptions();
 
-	UT_Options options = vraysceneref->getOptions();
+	VRay::Transform fullTm = pluginExporter.getObjTransform(&objNode, ctx) * getTm();
+	const bool shouldFlip = options.getOptionB("should_flip");
+	if (shouldFlip) {
+		fullTm = flipYZTm * fullTm;
+	}
+	pluginDesc.add(Attrs::PluginAttr("transform", fullTm));
+
+	if (options.getOptionI("use_overrides")) {
+		const UT_StringHolder &overrideSnippet = options.getOptionS("override_snippet"); 
+		const UT_StringHolder &overrideFilePath = options.getOptionS("override_filepath"); 
+
+		const int hasOverrideSnippet = overrideSnippet.isstring();
+		const int hasOverrideFile = overrideFilePath.isstring();
+
+		const int hasOverrideData = hasOverrideSnippet || hasOverrideFile; 
+
+		if (hasOverrideData) {
+			// Export plugin mappings.
+			const UT_StringHolder &pluginMappings = options.getOptionS("plugin_mapping");
+			if (pluginMappings.isstring()) {
+				VUtils::Table<VUtils::CharString> pluginMappingPairs;
+				VUtils::tokenize(pluginMappings.buffer(), ";", pluginMappingPairs);
+
+				for (int i = 0; i < pluginMappingPairs.count(); ++i) {
+					const VUtils::CharString pluginMappingPairStr = pluginMappingPairs[i];
+
+					VUtils::Table<VUtils::CharString> pluginMappingPair;
+					VUtils::tokenize(pluginMappingPairStr.ptr(), "=", pluginMappingPair);
+
+					if (pluginMappingPair.count() == 2) {
+						const UT_String opPath              = pluginMappingPair[0].ptr();
+						const VUtils::CharString pluginName = pluginMappingPair[1].ptr();
+
+						OP_Node *opNode = getOpNodeFromPath(opPath, ctx.getTime());
+						if (opNode) {
+							VRay::Plugin opPlugin;
+							if (!getPluginFromCache(*opNode, opPlugin)) {
+								// XXX: Move this to method.
+								COP2_Node *copNode = opNode->castToCOP2Node();
+								VOP_Node *vopNode = opNode->castToVOPNode();
+								if (copNode) {
+									opPlugin = pluginExporter.exportCopNodeWithDefaultMapping(*copNode, VRayExporter::defaultMappingTriPlanar);
+								}
+								else if (vopNode) {
+									opPlugin = pluginExporter.exportVop(vopNode);
+								}
+
+								if (opPlugin) {
+									opPlugin.setName(pluginName.ptr());
+
+									addPluginToCache(*opNode, opPlugin);
+								}
+							}
+						}
+					}
+				}
+			}
+
+			if (hasOverrideSnippet) {
+				// Fix illegal chars
+				VUtils::CharString snippetText(overrideSnippet.buffer());
+				vutils_replaceTokenWithValue(snippetText, "\"", "'");
+
+				pluginDesc.add(Attrs::PluginAttr("override_snippet", snippetText.ptr()));
+			}
+		}
+	}
+
 	pluginExporter.setAttrsFromUTOptions(pluginDesc, options);
 
 	return pluginExporter.exportPlugin(pluginDesc);
@@ -1695,6 +1768,7 @@ VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode)
 	if (renderOpType.startsWith("VRayNode") &&
 		!renderOpType.equal("VRayNodePhxShaderCache") &&
 		!renderOpType.equal("VRayNodeVRayProxy") &&
+		!renderOpType.equal("VRayNodeVRayScene") &&
 		!renderOpType.equal("VRayNodeGeomPlane"))
 	{
 		return exportVRaySOP(objNode, *renderSOP);

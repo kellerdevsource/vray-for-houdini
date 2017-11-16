@@ -86,7 +86,7 @@ int main() {
 	}
 
 	std::vector<std::string> envItemStrings(env.size());
-	std::vector<const char *> envItems; // these will point to envItemStrings so it must live longer than this
+	std::vector<const char *> envItems; // These will point to envItemStrings so it must live longer than this.
 	int c = 0;
 	for (auto & iter : env) {
 		envItemStrings[c].reserve(iter.first.length() + 1 + iter.second.length() + 2);
@@ -96,16 +96,19 @@ int main() {
 	}
 	envItems.push_back(nullptr);
 
-	char *const argv[] = {
-		VFH_LAUNCHER_HFS, nullptr
+	char * const argv[] = {
+#ifdef _WIN32
+		"C:\\",
+#else
+		"/",
+#endif
+		nullptr
 	};
-	// NOTE: for this to work in Visual Studio this extension is needed: https://marketplace.visualstudio.com/items?itemName=GreggMiskelly.MicrosoftChildProcessDebuggingPowerTool
-	// it will attach to the created executable
-	// for gdb: set follow-fork-mode child
-	int res = execvpe(VFH_LAUNCHER_HFS_BIN, argv, envItems.data());
+
+	const int res = execvpe(VFH_LAUNCHER_HFS_BIN, argv, envItems.data());
 	if (res != 0) {
-		// intentinally thrown here so debugger can break and show
-		throw "Failed to launch houdini, please check string_defines.h";
+		// Intentinally thrown here so debugger can break and show.
+		throw "Failed to launch Houdini, please check string_defines.h";
 	}
 
 	return 0;

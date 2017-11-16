@@ -42,8 +42,11 @@ vfh_make_moc(TARGET ${PROJECT_NAME}
 	FILE_OUT_NAME moc_vfh_ipr_imdisplay_viewer.cpp
 )
 
-target_link_libraries(${PROJECT_NAME} vray_for_houdini_exporter)
-target_link_libraries(${PROJECT_NAME} Qt5Network)
+target_link_libraries(${PROJECT_NAME}
+	vray_for_houdini
+	vray_for_houdini_exporter
+	Qt5Network
+)
 
 link_with_vray_sdk(${PROJECT_NAME})
 link_with_vray(${PROJECT_NAME})

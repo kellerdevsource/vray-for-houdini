@@ -19,7 +19,28 @@
 
 namespace VRayForHoudini {
 
-#define VFH_VRAY_SCENE_PARAMS_COUNT 48
+enum FlipAxisMode {
+	none = 0,  ///< No flipping
+	automatic, ///< Gets the flipping from the vrscene description
+	flipZY     ///< Force the scene to flip the Z and Y axis
+};
+/// flip_axis is saved as a string parameter that contains a number
+/// This function parses a string to its corresponding enum value
+///      or FlipAxisMode::none if the string is not number
+/// @param flipAxisModeS The value of the flip_axis parameter
+/// @returns The corresponding to flipAxisModeS enum value
+FORCEINLINE FlipAxisMode parseFlipAxisMode(const UT_String &flipAxisModeS)
+{
+	FlipAxisMode mode = FlipAxisMode::none;
+
+	if (flipAxisModeS.isInteger()) {
+		mode = static_cast<FlipAxisMode>(flipAxisModeS.toInt());
+	}
+
+	return mode;
+}
+
+#define VFH_VRAY_SCENE_PARAMS_COUNT 50
 #define VFH_VRAY_SCENE_PARAMS (\
 	(const char *, filepath, ""),\
 	(bool,   add_nodes,     true),\
@@ -64,11 +85,13 @@ namespace VRayForHoudini {
 	(bool,   mrs_shadows_visibility,     true),\
 	(bool,   mrs_shadows_receive,        true),\
 	(fpreal, mrs_visibility, 1),\
-	(exint,  flip_axis,      0),\
+	(const char *, flip_axis, 0),\
 	(bool,   use_overrides, false),\
+	(const char *, plugin_mapping, ""),\
 	(const char *, override_snippet,  ""),\
 	(const char *, override_filepath, ""),\
-	(fpreal, current_frame, 0)\
+	(fpreal, current_frame, 0),\
+	(bool, should_flip, false)\
 )
 
 #define VFH_VRAY_SCENE_PARAMS_TUPLES_COUNT 4

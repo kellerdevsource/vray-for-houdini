@@ -49,6 +49,7 @@ void VRayExporter::RtCallbackView(OP_Node *caller, void *callee, OP_EventType ty
 				const PRM_Parm *param = Parm::getParm(*caller, reinterpret_cast<uintptr_t>(data));
 				if (param) {
 					procceedEvent = boost::starts_with(param->getToken(), "SettingsCamera") ||
+									boost::starts_with(param->getToken(), "SettingsCameraDof") ||
 									boost::starts_with(param->getToken(), "SettingsMotionBlur") ||
 									boost::starts_with(param->getToken(), "VRayStereoscopic");
 				}
@@ -113,33 +114,50 @@ PhysicalCameraMode VRayExporter::usePhysicalCamera(const OBJ_Node &camera) const
 
 	return physCamMode;
 }
-
-void VRayExporter::fillViewParamFromCameraNode(const OBJ_Node &camera, ViewParams &viewParams)
-{
+void VRayExporter::fillViewParamsResFromCameraNode(const OBJ_Node &camera, ViewParams &viewParams) {
 	const fpreal t = getContext().getTime();
-
-	int imageWidth  = camera.evalInt("res", 0, t);
+	
+	int imageWidth = camera.evalInt("res", 0, t);
 	int imageHeight = camera.evalInt("res", 1, t);
 	if (m_rop->evalInt("override_camerares", 0, t)) {
 		UT_String resfraction;
 		m_rop->evalString(resfraction, "res_fraction", 0, t);
 		if (resfraction.isFloat()) {
 			const fpreal k = resfraction.toFloat();
-			imageWidth  *= k;
+			imageWidth *= k;
 			imageHeight *= k;
 		}
 		else {
-			imageWidth  = m_rop->evalInt("res_override", 0, t);
+			imageWidth = m_rop->evalInt("res_override", 0, t);
 			imageHeight = m_rop->evalInt("res_override", 1, t);
 		}
 	}
 
 	viewParams.renderSize.w = imageWidth;
 	viewParams.renderSize.h = imageHeight;
+
+	const float cropLeft = camera.evalFloat("cropl", 0, t);
+	const float cropRight = camera.evalFloat("cropr", 0, t);
+	const float cropBottom = camera.evalFloat("cropb", 0, t);
+	const float cropTop = camera.evalFloat("cropt", 0, t);
+
+	viewParams.cropRegion.x = imageWidth * cropLeft;
+	viewParams.cropRegion.y = imageHeight * (1.0f - cropTop);
+	viewParams.cropRegion.width = imageWidth * (cropRight - cropLeft);
+	viewParams.cropRegion.height = imageHeight * (cropTop - cropBottom);
+}
+
+void VRayExporter::fillViewParamsFromCameraNode(const OBJ_Node &camera, ViewParams &viewParams)
+{
+	const fpreal t = getContext().getTime();
+
+	fillViewParamsResFromCameraNode(camera, viewParams);
+	
 	viewParams.renderView.tm = getObjTransform(camera.castToOBJNode(), m_context);
 
-	if (Parm::getParmInt(*m_rop, "SettingsCamera_override_fov")) {
-		viewParams.renderView.fov = Parm::getParmFloat(*m_rop, "SettingsCamera_fov");
+	viewParams.renderView.fovRopOverride = Parm::getParmInt(*m_rop, "SettingsCamera_override_fov");
+	if (viewParams.renderView.fovRopOverride) {
+		viewParams.renderView.fov = SYSdegToRad(Parm::getParmFloat(*m_rop, "SettingsCamera_fov"));
 	}
 	else {
 		const float aperture = camera.evalFloat("aperture", 0, t);
@@ -163,15 +181,7 @@ void VRayExporter::fillViewParamFromCameraNode(const OBJ_Node &camera, ViewParam
 	viewParams.renderView.clip_start = camera.evalFloat("near", 0, t);
 	viewParams.renderView.clip_end   = camera.evalFloat("far", 0, t);
 
-	const float cropLeft   = camera.evalFloat("cropl", 0, t);
-	const float cropRight  = camera.evalFloat("cropr", 0, t);
-	const float cropBottom = camera.evalFloat("cropb", 0, t);
-	const float cropTop    = camera.evalFloat("cropt", 0, t);
-
-	viewParams.cropRegion.x = imageWidth * cropLeft;
-	viewParams.cropRegion.y = imageHeight * (1.0f - cropTop);
-	viewParams.cropRegion.width  = imageWidth * (cropRight - cropLeft);
-	viewParams.cropRegion.height = imageHeight * (cropTop - cropBottom);
+	
 
 	viewParams.renderView.stereoParams.use = Parm::getParmInt(*m_rop, "VRayStereoscopicSettings_use");
 	viewParams.renderView.stereoParams.stereo_eye_distance       = Parm::getParmFloat(*m_rop, "VRayStereoscopicSettings_eye_distance");
@@ -187,109 +197,139 @@ void VRayExporter::fillViewParamFromCameraNode(const OBJ_Node &camera, ViewParam
 	{
 		viewParams.renderSize.w *= 2;
 	}
+}
+
+void VRayExporter::fillViewParamsFromRopNode(const OP_Node &ropNode, ViewParams &viewParams)
+{
+	const fpreal t = getContext().getTime();
+
+	viewParams.settingsCamera.type = ropNode.evalInt("SettingsCamera_type", 0, t);
+	viewParams.settingsCamera.height = ropNode.evalFloat("SettingsCamera_height", 0, t);
+	viewParams.settingsCamera.dist = ropNode.evalFloat("SettingsCamera_dist", 0, t);
+	viewParams.settingsCamera.fov = ropNode.evalFloat("SettingsCamera_fov", 0, t);
+	viewParams.settingsCamera.auto_fit = ropNode.evalInt("SettingsCamera_auto_fit", 0, t);
+	viewParams.settingsCamera.curve = ropNode.evalFloat("SettingsCamera_curve", 0, t);
+
+	viewParams.settingsCameraDof.on = ropNode.evalInt("SettingsCameraDof_on", 0, t);
+	viewParams.settingsCameraDof.aperture = ropNode.evalFloat("SettingsCameraDof_aperture", 0, t) / 100.0f;
+	viewParams.settingsCameraDof.center_bias = ropNode.evalFloat("SettingsCameraDof_center_bias", 0, t);
+
+	fpreal focalDist = ropNode.evalFloat("SettingsCameraDof_focal_dist", 0, t);
+	if (m_rop && m_rop->evalInt("SettingsCameraDof_focus_from_camera", 0, t)) {
+		OBJ_Node *camera = getCamera(m_rop);
+		if (camera) {
+			focalDist = camera->evalFloat("focus", 0, t);
+		}
+	}
+	viewParams.settingsCameraDof.focal_dist = focalDist;
+
+	viewParams.settingsCameraDof.sides_on = ropNode.evalInt("SettingsCameraDof_sides_on", 0, t);
+	viewParams.settingsCameraDof.sides_num = ropNode.evalInt("SettingsCameraDof_sides_num", 0, t);
+	viewParams.settingsCameraDof.rotation = ropNode.evalFloat("SettingsCameraDof_rotation", 0, t);
+	viewParams.settingsCameraDof.anisotropy = ropNode.evalFloat("SettingsCameraDof_anisotropy", 0, t);
+	viewParams.settingsCameraDof.subdivs = ropNode.evalInt("SettingsCameraDof_subdivs", 0, t);
+
+	viewParams.settingsMotionBlur.on = ropNode.evalInt("SettingsMotionBlur_on", 0, t);
+	viewParams.settingsMotionBlur.geom_samples = ropNode.evalInt("SettingsMotionBlur_geom_samples", 0, t);
+	viewParams.settingsMotionBlur.low_samples = ropNode.evalInt("SettingsMotionBlur_low_samples", 0, t);
+	viewParams.settingsMotionBlur.duration = ropNode.evalFloat("SettingsMotionBlur_duration", 0, t);
+	viewParams.settingsMotionBlur.subdivs = ropNode.evalInt("SettingsMotionBlur_subdivs", 0, t);
+	viewParams.settingsMotionBlur.bias = ropNode.evalFloat("SettingsMotionBlur_bias", 0, t);
+	viewParams.settingsMotionBlur.shutter_efficiency = ropNode.evalFloat("SettingsMotionBlur_shutter_efficiency", 0, t);
+	viewParams.settingsMotionBlur.interval_center = ropNode.evalFloat("SettingsMotionBlur_interval_center", 0, t);
+	viewParams.settingsMotionBlur.camera_motion_blur = ropNode.evalInt("SettingsMotionBlur_camera_motion_blur", 0, t);
+	viewParams.settingsMotionBlur.sampling_type = ropNode.evalInt("SettingsMotionBlur_sampling_type", 0, t);
+}
+
+void VRayExporter::fillPhysicalViewParamsFromCameraNode(const OBJ_Node &camera, ViewParams &viewParams)
+{
+	const fpreal t = getContext().getTime();
 
 	viewParams.useCameraPhysical = static_cast<PhysicalCameraMode>(usePhysicalCamera(camera));
-	if (viewParams.useCameraPhysical != PhysicalCameraMode::modeNone) {
-		if (viewParams.useCameraPhysical == PhysicalCameraMode::modeAuto) {
-			viewParams.cameraPhysical.exposure = false;
+	if (viewParams.useCameraPhysical == PhysicalCameraMode::modeNone)
+		return;
+
+	if (viewParams.useCameraPhysical == PhysicalCameraMode::modeAuto) {
+		viewParams.cameraPhysical.exposure = false;
+		viewParams.cameraPhysical.specify_fov = true;
+		viewParams.cameraPhysical.fov = viewParams.renderView.fov;
+		viewParams.cameraPhysical.horizontal_offset = -camera.evalFloat("win", 0, t);
+		viewParams.cameraPhysical.vertical_offset   = -camera.evalFloat("win", 1, t);
+	}
+	else if (viewParams.useCameraPhysical == PhysicalCameraMode::modeUser) {
+		if (viewParams.renderView.fovRopOverride) {
 			viewParams.cameraPhysical.specify_fov = true;
 			viewParams.cameraPhysical.fov = viewParams.renderView.fov;
-			viewParams.cameraPhysical.horizontal_offset = -camera.evalFloat("win", 0, t);
-			viewParams.cameraPhysical.vertical_offset   = -camera.evalFloat("win", 1, t);
 		}
-		else if (viewParams.useCameraPhysical == PhysicalCameraMode::modeUser) {
-			viewParams.cameraPhysical.fovMode =
-				static_cast<CameraFovMode>(camera.evalInt("CameraPhysical_fov_mode", 0, 0.0));
-
-			switch (viewParams.cameraPhysical.fovMode) {
-				case CameraFovMode::useHoudini: {
-					viewParams.cameraPhysical.specify_fov = true;
-					viewParams.cameraPhysical.fov = viewParams.renderView.fov;
-					break;
-				}
-				case CameraFovMode::usePhysical: {
-					viewParams.cameraPhysical.specify_fov = false;
-					break;
-				}
-				case CameraFovMode::useFovOverride: {
-					viewParams.cameraPhysical.specify_fov = true;
-					viewParams.cameraPhysical.fov = SYSdegToRad(camera.evalFloat("CameraPhysical_fov", 0, t));
-					break;
-				}
-			}
-
-			viewParams.cameraPhysical.lens_shift = camera.evalInt("CameraPhysical_auto_lens_shift", 0, 0.0)
-				                                       ? getLensShift(camera, getContext())
-				                                       : camera.evalFloat("CameraPhysical_lens_shift", 0, t);
-			viewParams.cameraPhysical.horizontal_shift = camera.evalFloat("CameraPhysical_horizontal_shift", 0, t);
-
-			viewParams.cameraPhysical.type = static_cast<PhysicalCameraType>(camera.evalInt("CameraPhysical_type", 0, t));
-			viewParams.cameraPhysical.film_width = camera.evalFloat("CameraPhysical_film_width", 0, t);
-			viewParams.cameraPhysical.focal_length = camera.evalFloat("CameraPhysical_focal_length", 0, t);
-			viewParams.cameraPhysical.zoom_factor = camera.evalFloat("CameraPhysical_zoom_factor", 0, t);
-			viewParams.cameraPhysical.focus_distance = camera.evalFloat("CameraPhysical_focus_distance", 0, t);
-
-			viewParams.cameraPhysical.distortion_type = camera.evalInt("CameraPhysical_distortion_type", 0, t);
-
-			if (!camera.evalInt("CameraPhysical_parm_distortion_enable", 0, t)) {
-				viewParams.cameraPhysical.distortion = 0.0f;
-				viewParams.cameraPhysical.distortion_tex.clear();
-			}
-			else {
-				viewParams.cameraPhysical.distortion = camera.evalFloat("CameraPhysical_distortion", 0, t);
-				camera.evalString(viewParams.cameraPhysical.distortion_tex, "CameraPhysical_distortion_tex", 0, t);
-			}
-
-			viewParams.cameraPhysical.f_number = camera.evalFloat("CameraPhysical_f_number", 0, t);
-			viewParams.cameraPhysical.shutter_speed = camera.evalFloat("CameraPhysical_shutter_speed", 0, t);
-			viewParams.cameraPhysical.shutter_angle = camera.evalFloat("CameraPhysical_shutter_angle", 0, t);
-			viewParams.cameraPhysical.shutter_offset = camera.evalFloat("CameraPhysical_shutter_offset", 0, t);
-			viewParams.cameraPhysical.latency = camera.evalFloat("CameraPhysical_latency", 0, t);
-			viewParams.cameraPhysical.ISO = camera.evalFloat("CameraPhysical_ISO", 0, t);
-
-			viewParams.cameraPhysical.dof_display_threshold = camera.evalFloat("CameraPhysical_dof_display_threshold", 0, t);
-			viewParams.cameraPhysical.exposure = camera.evalInt("CameraPhysical_exposure", 0, t);
-
-			viewParams.cameraPhysical.white_balance.r = camera.evalFloat("CameraPhysical_white_balance", 0, t);
-			viewParams.cameraPhysical.white_balance.g = camera.evalFloat("CameraPhysical_white_balance", 1, t);
-			viewParams.cameraPhysical.white_balance.b = camera.evalFloat("CameraPhysical_white_balance", 2, t);
-
-			viewParams.cameraPhysical.vignetting = camera.evalFloat("CameraPhysical_vignetting", 0, t);
-			viewParams.cameraPhysical.blades_enable = camera.evalInt("CameraPhysical_blades_enable", 0, t);
-			viewParams.cameraPhysical.blades_num = camera.evalInt("CameraPhysical_blades_num", 0, t);
-			viewParams.cameraPhysical.blades_rotation = SYSdegToRad(camera.evalFloat("CameraPhysical_blades_rotation", 0, t));
-			viewParams.cameraPhysical.center_bias = camera.evalFloat("CameraPhysical_center_bias", 0, t);
-			viewParams.cameraPhysical.anisotropy = camera.evalFloat("CameraPhysical_anisotropy", 0, t);
-			viewParams.cameraPhysical.use_dof = camera.evalInt("CameraPhysical_use_dof", 0, t);
-			viewParams.cameraPhysical.use_moblur = camera.evalInt("CameraPhysical_use_moblur", 0, t);
-			viewParams.cameraPhysical.subdivs = camera.evalInt("CameraPhysical_subdivs", 0, t);
-			viewParams.cameraPhysical.dont_affect_settings = camera.evalInt("CameraPhysical_dont_affect_settings", 0, t);
-
-			camera.evalString(viewParams.cameraPhysical.lens_file, "CameraPhysical_lens_file", 0, t);
-
-			viewParams.cameraPhysical.horizontal_offset = camera.evalFloat("CameraPhysical_horizontal_offset", 0, t);
-			viewParams.cameraPhysical.vertical_offset = camera.evalFloat("CameraPhysical_vertical_offset", 0, t);
-
-			viewParams.cameraPhysical.bmpaperture_enable = camera.evalInt("CameraPhysical_bmpaperture_enable", 0, t);
-			viewParams.cameraPhysical.bmpaperture_resolution = camera.evalInt("CameraPhysical_bmpaperture_resolution", 0, t);
-
-			camera.evalString(viewParams.cameraPhysical.bmpaperture_tex, "CameraPhysical_bmpaperture_tex", 0, t);
-
-			viewParams.cameraPhysical.optical_vignetting = camera.evalFloat("CameraPhysical_optical_vignetting", 0, t);
-			viewParams.cameraPhysical.bmpaperture_affects_exposure = camera.evalInt("CameraPhysical_bmpaperture_affects_exposure", 0, t);
-			viewParams.cameraPhysical.enable_thin_lens_equation = camera.evalInt("CameraPhysical_enable_thin_lens_equation", 0, t);
+		else {
+			viewParams.cameraPhysical.specify_fov = camera.evalInt("CameraPhysical_specify_fov", 0, t);
+			viewParams.cameraPhysical.fov = SYSdegToRad(camera.evalFloat("CameraPhysical_fov", 0, t));
 		}
+
+		viewParams.cameraPhysical.lens_shift = camera.evalInt("CameraPhysical_auto_lens_shift", 0, 0.0)
+				                                    ? getLensShift(camera, getContext())
+				                                    : camera.evalFloat("CameraPhysical_lens_shift", 0, t);
+		viewParams.cameraPhysical.horizontal_shift = camera.evalFloat("CameraPhysical_horizontal_shift", 0, t);
+
+		viewParams.cameraPhysical.type = static_cast<PhysicalCameraType>(camera.evalInt("CameraPhysical_type", 0, t));
+		viewParams.cameraPhysical.film_width = camera.evalFloat("CameraPhysical_film_width", 0, t);
+		viewParams.cameraPhysical.focal_length = camera.evalFloat("CameraPhysical_focal_length", 0, t);
+		viewParams.cameraPhysical.zoom_factor = viewParams.cameraPhysical.specify_fov ? 1.0f : camera.evalFloat("CameraPhysical_zoom_factor", 0, t);
+		viewParams.cameraPhysical.focus_distance = camera.evalFloat("CameraPhysical_focus_distance", 0, t);
+		viewParams.cameraPhysical.distortion_type = camera.evalInt("CameraPhysical_distortion_type", 0, t);
+
+		if (!camera.evalInt("CameraPhysical_parm_distortion_enable", 0, t)) {
+			viewParams.cameraPhysical.distortion = 0.0f;
+			viewParams.cameraPhysical.distortion_tex.clear();
+		}
+		else {
+			viewParams.cameraPhysical.distortion = camera.evalFloat("CameraPhysical_distortion", 0, t);
+			camera.evalString(viewParams.cameraPhysical.distortion_tex, "CameraPhysical_distortion_tex", 0, t);
+		}
+
+		viewParams.cameraPhysical.f_number = camera.evalFloat("CameraPhysical_f_number", 0, t);
+		viewParams.cameraPhysical.shutter_speed = camera.evalFloat("CameraPhysical_shutter_speed", 0, t);
+		viewParams.cameraPhysical.shutter_angle = camera.evalFloat("CameraPhysical_shutter_angle", 0, t);
+		viewParams.cameraPhysical.shutter_offset = camera.evalFloat("CameraPhysical_shutter_offset", 0, t);
+		viewParams.cameraPhysical.latency = camera.evalFloat("CameraPhysical_latency", 0, t);
+		viewParams.cameraPhysical.ISO = camera.evalFloat("CameraPhysical_ISO", 0, t);
+
+		viewParams.cameraPhysical.dof_display_threshold = camera.evalFloat("CameraPhysical_dof_display_threshold", 0, t);
+		viewParams.cameraPhysical.exposure = camera.evalInt("CameraPhysical_exposure", 0, t);
+
+		viewParams.cameraPhysical.white_balance.r = camera.evalFloat("CameraPhysical_white_balance", 0, t);
+		viewParams.cameraPhysical.white_balance.g = camera.evalFloat("CameraPhysical_white_balance", 1, t);
+		viewParams.cameraPhysical.white_balance.b = camera.evalFloat("CameraPhysical_white_balance", 2, t);
+
+		viewParams.cameraPhysical.vignetting = camera.evalInt("CameraPhysical_use_vignetting", 0, t) ? camera.evalFloat("CameraPhysical_vignetting", 0, t) : 0.0f;
+
+		viewParams.cameraPhysical.blades_enable = camera.evalInt("CameraPhysical_blades_enable", 0, t);
+		viewParams.cameraPhysical.blades_num = camera.evalInt("CameraPhysical_blades_num", 0, t);
+		viewParams.cameraPhysical.blades_rotation = SYSdegToRad(camera.evalFloat("CameraPhysical_blades_rotation", 0, t));
+		viewParams.cameraPhysical.center_bias = camera.evalFloat("CameraPhysical_center_bias", 0, t);
+		viewParams.cameraPhysical.anisotropy = camera.evalFloat("CameraPhysical_anisotropy", 0, t);
+		viewParams.cameraPhysical.use_dof = camera.evalInt("CameraPhysical_use_dof", 0, t);
+		viewParams.cameraPhysical.use_moblur = camera.evalInt("CameraPhysical_use_moblur", 0, t);
+		viewParams.cameraPhysical.subdivs = camera.evalInt("CameraPhysical_subdivs", 0, t);
+		viewParams.cameraPhysical.dont_affect_settings = camera.evalInt("CameraPhysical_dont_affect_settings", 0, t);
+
+		camera.evalString(viewParams.cameraPhysical.lens_file, "CameraPhysical_lens_file", 0, t);
+
+		viewParams.cameraPhysical.horizontal_offset = camera.evalFloat("CameraPhysical_horizontal_offset", 0, t);
+		viewParams.cameraPhysical.vertical_offset = camera.evalFloat("CameraPhysical_vertical_offset", 0, t);
+
+		viewParams.cameraPhysical.bmpaperture_enable = camera.evalInt("CameraPhysical_bmpaperture_enable", 0, t);
+		viewParams.cameraPhysical.bmpaperture_resolution = camera.evalInt("CameraPhysical_bmpaperture_resolution", 0, t);
+
+		camera.evalString(viewParams.cameraPhysical.bmpaperture_tex, "CameraPhysical_bmpaperture_tex", 0, t);
+
+		viewParams.cameraPhysical.optical_vignetting = camera.evalFloat("CameraPhysical_optical_vignetting", 0, t);
+		viewParams.cameraPhysical.bmpaperture_affects_exposure = camera.evalInt("CameraPhysical_bmpaperture_affects_exposure", 0, t);
+		viewParams.cameraPhysical.enable_thin_lens_equation = camera.evalInt("CameraPhysical_enable_thin_lens_equation", 0, t);
 	}
 }
 
-ReturnValue VRayExporter::fillSettingsMotionBlur(ViewParams &viewParams, Attrs::PluginDesc &settingsMotionBlur)
-{
-	setAttrsFromOpNodePrms(settingsMotionBlur, m_rop, "SettingsMotionBlur_");
-
-	return ReturnValue::Success;
-}
-
-void VRayExporter::fillPhysicalCamera(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc)
+void VRayExporter::fillDescPhysicalCamera(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc)
 {
 	const PhysicalCameraParams &cameraPhysical = viewParams.cameraPhysical;
 
@@ -357,7 +397,7 @@ void VRayExporter::fillPhysicalCamera(const ViewParams &viewParams, Attrs::Plugi
 	pluginDesc.add(Attrs::PluginAttr("enable_thin_lens_equation", cameraPhysical.enable_thin_lens_equation));
 }
 
-void VRayExporter::fillRenderView(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc)
+void VRayExporter::fillDescRenderView(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc) const
 {
 	pluginDesc.add(Attrs::PluginAttr("transform", viewParams.renderView.tm));
 	pluginDesc.add(Attrs::PluginAttr("fov", viewParams.renderView.fov));
@@ -367,7 +407,7 @@ void VRayExporter::fillRenderView(const ViewParams &viewParams, Attrs::PluginDes
 	pluginDesc.add(Attrs::PluginAttr("orthographic", viewParams.renderView.ortho));
 	pluginDesc.add(Attrs::PluginAttr("orthographicWidth", viewParams.renderView.ortho_width));
 
-	if (isIPR()) {
+	if (isInteractive()) {
 		pluginDesc.add(Attrs::PluginAttr("use_scene_offset", false));
 	}
 
@@ -387,41 +427,52 @@ void VRayExporter::fillStereoSettings(const ViewParams& /*viewParams*/, Attrs::P
 	setAttrsFromOpNodePrms(pluginDesc, m_rop, "VRayStereoscopicSettings_");
 }
 
-void VRayExporter::fillCameraDefault(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc)
+static void fillDescCameraDefault(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc)
 {
 	pluginDesc.add(Attrs::PluginAttr("orthographic", viewParams.renderView.ortho));
 }
 
-void VRayExporter::fillSettingsCamera(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc)
+static void fillDescSettingsCamera(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc)
 {
+	pluginDesc.add(Attrs::PluginAttr("type", viewParams.settingsCamera.type));
+	pluginDesc.add(Attrs::PluginAttr("height", viewParams.settingsCamera.height));
+	pluginDesc.add(Attrs::PluginAttr("dist", viewParams.settingsCamera.dist));
 	pluginDesc.add(Attrs::PluginAttr("fov", -1.0f));
-
-	if (viewParams.useCameraPhysical != PhysicalCameraMode::modeNone) {
-		pluginDesc.add(Attrs::PluginAttr("type", 0));
-	}
-
-	setAttrsFromOpNodePrms(pluginDesc, m_rop, "SettingsCamera_");
+	pluginDesc.add(Attrs::PluginAttr("auto_fit", viewParams.settingsCamera.auto_fit));
+	pluginDesc.add(Attrs::PluginAttr("curve", viewParams.settingsCamera.curve));
 }
 
-void VRayExporter::fillSettingsCameraDof(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc)
+static void fillDescSettingsCameraDof(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc)
 {
-	const fpreal t = m_context.getTime();
-	OBJ_Node *camera = VRayExporter::getCamera(m_rop);
+	pluginDesc.add(Attrs::PluginAttr("on", viewParams.settingsCameraDof.on));
+	pluginDesc.add(Attrs::PluginAttr("aperture", viewParams.settingsCameraDof.aperture));
+	pluginDesc.add(Attrs::PluginAttr("center_bias", viewParams.settingsCameraDof.center_bias));
+	pluginDesc.add(Attrs::PluginAttr("focal_dist", viewParams.settingsCameraDof.focal_dist));
+	pluginDesc.add(Attrs::PluginAttr("sides_on", viewParams.settingsCameraDof.sides_on));
+	pluginDesc.add(Attrs::PluginAttr("sides_num", viewParams.settingsCameraDof.sides_num));
+	pluginDesc.add(Attrs::PluginAttr("rotation", viewParams.settingsCameraDof.rotation));
+	pluginDesc.add(Attrs::PluginAttr("anisotropy", viewParams.settingsCameraDof.anisotropy));
+	pluginDesc.add(Attrs::PluginAttr("subdivs", viewParams.settingsCameraDof.subdivs));
+}
 
-	fpreal focalDist = m_rop->evalFloat("SettingsCameraDof_focal_dist", 0, t);
-	if (m_rop->evalInt("SettingsCameraDof_focus_from_camera", 0, t)) {
-		focalDist = camera->evalFloat("focus", 0, t);
-	}
-
-	pluginDesc.addAttribute(Attrs::PluginAttr("focal_dist", focalDist));
-	pluginDesc.addAttribute(Attrs::PluginAttr("aperture", (m_rop->evalFloat("SettingsCameraDof_aperture", 0, t)) / 100.0f));
-	setAttrsFromOpNodePrms(pluginDesc, m_rop, "SettingsCameraDof_");
+static void fillDescSettingsMotionBlur(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc)
+{
+	pluginDesc.add(Attrs::PluginAttr("on", viewParams.settingsMotionBlur.on));
+	pluginDesc.add(Attrs::PluginAttr("geom_samples", viewParams.settingsMotionBlur.geom_samples));
+	pluginDesc.add(Attrs::PluginAttr("low_samples", viewParams.settingsMotionBlur.low_samples));
+	pluginDesc.add(Attrs::PluginAttr("duration", viewParams.settingsMotionBlur.duration));
+	pluginDesc.add(Attrs::PluginAttr("subdivs", viewParams.settingsMotionBlur.subdivs));
+	pluginDesc.add(Attrs::PluginAttr("bias", viewParams.settingsMotionBlur.bias));
+	pluginDesc.add(Attrs::PluginAttr("shutter_efficiency", viewParams.settingsMotionBlur.shutter_efficiency));
+	pluginDesc.add(Attrs::PluginAttr("interval_center", viewParams.settingsMotionBlur.interval_center));
+	pluginDesc.add(Attrs::PluginAttr("camera_motion_blur", viewParams.settingsMotionBlur.camera_motion_blur));
+	pluginDesc.add(Attrs::PluginAttr("sampling_type", viewParams.settingsMotionBlur.sampling_type));
 }
 
 void VRayExporter::exportRenderView(const ViewParams &viewParams)
 {
 	Attrs::PluginDesc renderView("renderView", "RenderView");
-	fillRenderView(viewParams, renderView);
+	fillDescRenderView(viewParams, renderView);
 	exportPlugin(renderView);
 }
 
@@ -432,7 +483,7 @@ VRay::Plugin VRayExporter::exportPhysicalCamera(const ViewParams &viewParams, in
 	}
 
 	Attrs::PluginDesc cameraPhysical("cameraPhysical", "CameraPhysical");
-	fillPhysicalCamera(viewParams, cameraPhysical);
+	fillDescPhysicalCamera(viewParams, cameraPhysical);
 
 	return exportPlugin(cameraPhysical);
 }
@@ -466,16 +517,21 @@ ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 		}
 	}
 
-	const int prevAutoCommit = getRenderer().getVRay().getAutoCommit();
-	getRenderer().setAutoCommit(false);
+	int prevAutoCommit = false;
 
-	// NOTE: For animation we need to export keyframes everytime
+	if (isInteractive()) {
+		prevAutoCommit = getRenderer().getVRay().getAutoCommit();
+		getRenderer().setAutoCommit(false);
+	}
+
+	// NOTE: For animation we need to export keyframes every time
 	// or data will be wiped with "clearKeyFrames()".
-	const bool needReset = isAnimation() || m_viewParams.needReset(viewParams);
-	if (needReset) {
+	const bool needReExport = isAnimation() || isInteractive() || m_viewParams.needReset(viewParams);
+	if (needReExport) {
 		Log::getLog().debug("VRayExporter::exportView: Resetting view...");
 
-		if (!isAnimation()) {
+		// Need to remove plugins only for RT session.
+		if (isInteractive()) {
 			removePlugin("renderView", false);
 			removePlugin("settingsCamera", false);
 			removePlugin("settingsCameraDof", false);
@@ -485,30 +541,30 @@ ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 			removePlugin("cameraDefault", false);
 		}
 
-		Attrs::PluginDesc settingsCamera("settingsCamera", "SettingsCamera");
-		fillSettingsCamera(viewParams, settingsCamera);
-		exportPlugin(settingsCamera);
-
 		if (viewParams.useCameraPhysical != PhysicalCameraMode::modeNone) {
 			getRenderer().setCamera(exportPhysicalCamera(viewParams, false));
 		}
 		else {
 			Attrs::PluginDesc settingsMotionBlur("settingsMotionBlur", "SettingsMotionBlur");
-			fillSettingsMotionBlur(viewParams, settingsMotionBlur);
+			fillDescSettingsMotionBlur(viewParams, settingsMotionBlur);
 			exportPlugin(settingsMotionBlur);
 
 			if (!viewParams.renderView.ortho) {
 				Attrs::PluginDesc settingsCameraDof("settingsCameraDof", "SettingsCameraDof");
-				fillSettingsCameraDof(viewParams, settingsCameraDof);
+				fillDescSettingsCameraDof(viewParams, settingsCameraDof);
 				exportPlugin(settingsCameraDof);
 			}
 
 			Attrs::PluginDesc cameraDefault("cameraDefault", "CameraDefault");
-			fillCameraDefault(viewParams, cameraDefault);
+			fillDescCameraDefault(viewParams, cameraDefault);
 			getRenderer().setCamera(exportPlugin(cameraDefault));
 		}
 
-		if (viewParams.renderView.stereoParams.use && isIPR() != iprModeSOHO && !isGPU()) {
+		Attrs::PluginDesc settingsCamera("settingsCamera", "SettingsCamera");
+		fillDescSettingsCamera(viewParams, settingsCamera);
+		exportPlugin(settingsCamera);
+
+		if (viewParams.renderView.stereoParams.use && !isGPU()) {
 			Attrs::PluginDesc stereoSettings("stereoSettings", "VRayStereoscopicSettings");
 			fillStereoSettings(viewParams, stereoSettings);
 			exportPlugin(stereoSettings);
@@ -516,7 +572,7 @@ ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 
 		exportRenderView(viewParams);
 	}
-	else {
+	else if (isInteractive()) {
 		if (m_viewParams.changedParams(viewParams)) {
 			exportRenderView(viewParams);
 		}
@@ -525,8 +581,10 @@ ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 		}
 	}
 
-	getRenderer().commit();
-	getRenderer().setAutoCommit(prevAutoCommit);
+	if (isInteractive()) {
+		getRenderer().commit();
+		getRenderer().setAutoCommit(prevAutoCommit);
+	}
 
 	if (m_viewParams.changedSize(viewParams)) {
 		setRenderSize(viewParams.renderSize.w, viewParams.renderSize.h);
@@ -549,7 +607,7 @@ ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 int VRayExporter::exportView()
 {
 	// We should not use this for IPR.
-	vassert(m_isIPR != iprModeSOHO);
+	vassert(sessionType != VfhSessionType::ipr);
 
 	Log::getLog().debug("VRayExporter::exportView()");
 
@@ -562,9 +620,20 @@ int VRayExporter::exportView()
 		return 1;
 
 	addOpCallback(camera, RtCallbackView);
+	addOpCallback(m_rop, RtCallbackView);
 
 	ViewParams viewParams;
-	fillViewParamFromCameraNode(*camera, viewParams);
+	fillViewParamsFromCameraNode(*camera, viewParams);
+	fillViewParamsFromRopNode(*m_rop, viewParams);
+	fillPhysicalViewParamsFromCameraNode(*camera, viewParams);
+
+	// Set render region from VFB settings. Only sessions using VFB.
+	if (vfbSettings.isRenderRegionValid) {
+		viewParams.cropRegion.x = vfbSettings.rrLeft;
+		viewParams.cropRegion.y = vfbSettings.rrTop;
+		viewParams.cropRegion.width = vfbSettings.rrWidth;
+		viewParams.cropRegion.height = vfbSettings.rrHeight;
+	}
 
 	exportView(viewParams);
 
@@ -589,6 +658,9 @@ int ViewParams::needReset(const ViewParams &other) const
 {
 	return
 		MemberNotEq(useCameraPhysical) ||
+		MemberNotEq(settingsCamera) ||
+		MemberNotEq(settingsCameraDof) ||
+		MemberNotEq(settingsMotionBlur) ||
 		renderView.needReset(other.renderView);
 }
 
@@ -618,15 +690,9 @@ bool StereoViewParams::operator == (const StereoViewParams &other) const
 		MemberEq(stereo_view);
 }
 
-bool StereoViewParams::operator != (const StereoViewParams &other) const
-{
-	return !(*this == other);
-}
-
 bool PhysicalCameraParams::operator == (const PhysicalCameraParams &other) const 
 {
 	return
-		MemberEq(fovMode) &&
 		MemberEq(focalUnits) &&
 		MemberEq(type) &&
 		MemberFloatEq(film_width) &&
@@ -676,6 +742,7 @@ bool PhysicalCameraParams::operator == (const PhysicalCameraParams &other) const
 bool RenderViewParams::operator == (const RenderViewParams &other) const
 {
 	return
+		MemberEq(fovRopOverride) &&
 		MemberFloatEq(fov) &&
 		MemberEq(ortho) &&
 		MemberFloatEq(ortho_width) &&
@@ -686,14 +753,48 @@ bool RenderViewParams::operator == (const RenderViewParams &other) const
 		MemberEq(tm);
 }
 
-bool RenderViewParams::operator != (const RenderViewParams &other) const
-{
-	return !(*this == other);
-}
-
 int RenderViewParams::needReset(const RenderViewParams &other) const
 {
 	return
 		!MemberEq(stereoParams.use) ||
 		other.stereoParams.use && !MemberEq(stereoParams);
+}
+
+bool SettingsCamera::operator == (const SettingsCamera &other) const
+{
+	return
+		MemberEq(type) &&
+		MemberFloatEq(height) &&
+		MemberFloatEq(dist) &&
+		MemberEq(auto_fit) &&
+		MemberFloatEq(curve);
+}
+
+bool SettingsCameraDof::operator==(const SettingsCameraDof &other) const
+{
+	return
+		MemberEq(on) &&
+		MemberFloatEq(aperture) &&
+		MemberFloatEq(center_bias) &&
+		MemberFloatEq(focal_dist) &&
+		MemberEq(sides_on) &&
+		MemberEq(sides_num) &&
+		MemberFloatEq(rotation) &&
+		MemberFloatEq(anisotropy) &&
+		MemberEq(subdivs);
+}
+
+bool SettingsMotionBlur::operator==(const SettingsMotionBlur &other) const
+{
+	return
+		MemberEq(on) &&
+		MemberEq(geom_samples) &&
+		MemberEq(low_samples) &&
+		MemberFloatEq(duration) &&
+		MemberEq(subdivs) &&
+		MemberFloatEq(bias) &&
+		MemberFloatEq(shutter_efficiency) &&
+		MemberFloatEq(interval_center) &&
+		MemberEq(camera_motion_blur) &&
+		MemberEq(sampling_type);
 }

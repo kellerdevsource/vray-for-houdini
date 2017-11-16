@@ -24,7 +24,7 @@
 		name "meta_image_bitmap_folder"
 		label "Bitmap"
 #undef PREFIX
-#define PREFIX "meta_image_bimap_buffer_"
+#define PREFIX "BitmapBuffer_"
 #include "$VRAY_UI_DS_PATH/plugins/BitmapBufferParms.ds"
 	}
 
