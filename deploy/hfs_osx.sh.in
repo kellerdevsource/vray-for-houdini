@@ -40,6 +40,7 @@ export HOUDINI_PATH=@_vfh_deploy_path@/vfh_home:\&
 
 # Report loading errors
 export HOUDINI_DSO_ERROR=1
+export HDF5_DISABLE_VERSION_CHECK=1
 
 # Houdini
 export H="${HFS}"

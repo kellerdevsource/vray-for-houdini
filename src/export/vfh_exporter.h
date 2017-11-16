@@ -18,7 +18,7 @@
 #include "vfh_export_view.h"
 #include "vfh_hashes.h"
 #include "vfh_export_geom.h"
-
+#include "vfh_log.h"
 #include "vfh_export_context.h"
 
 #include <OP/OP_Node.h>
@@ -263,8 +263,9 @@ public:
 	VRay::Plugin exportVop(OP_Node *opNode, ExportContext *parentContext=nullptr);
 
 	/// Export Make transform VOP node
+	/// @param rotate Rotate the transformation matrix so that Y-axis is up.
 	/// @retval V-Ray transform for that node
-	VRay::Transform exportTransformVop(VOP_Node &vop_node, ExportContext *parentContext = nullptr);
+	VRay::Transform exportTransformVop(VOP_Node &vop_node, ExportContext *parentContext = nullptr, bool rotate = false);
 
 	/// Export V-Ray material from SHOP network or VOP node.
 	/// @param node SHOP or VOP node.
@@ -376,8 +377,12 @@ public:
 	/// @note also used for motion blur
 	void setAnimation(bool on);
 
-	/// Set if we are exporting for IPR
+	/// Sets sesstion type.
+	/// @param value Session type.
 	void setSessionType(VfhSessionType value);
+
+	/// Returns sesstion type.
+	VfhSessionType getSessionType() const { return sessionType; }
 
 	/// Adjust DR options and hosts based on what is set in the ROP parameters
 	void setDRSettings();
@@ -396,9 +401,6 @@ public:
 
 	/// Set image width and height
 	void setRenderSize(int w, int h);
-
-	/// Export RT engine settings
-	void setSettingsRtEngine();
 
 	/// Get current export context
 	VRayOpContext &getContext() { return m_context; }
@@ -441,9 +443,6 @@ public:
 	/// Test if we are using physical camera
 	/// @param camera[in] - camera object to read parameters from
 	PhysicalCameraMode usePhysicalCamera(const OBJ_Node &camera) const;
-
-	/// Test if a node is animated
-	int isNodeAnimated(OP_Node *op_node);
 
 	/// Test if velocity channels is enabled
 	/// @param rop[in] - the V-Ray ROP to test for velocity channel enabled
@@ -579,14 +578,7 @@ public:
 	void applyTake(const char *take=nullptr);
 
 	/// Restores "system" take.
-	/// @param take Take instance. If NULL stored take instance will be used.
-	void restoreTake(TAKE_Take *take = nullptr);
-
-private:
-	/// Export V-Ray material from VOP node.
-	/// @param node VOP node.
-	/// @returns V-Ray plugin.
-	VRay::Plugin exportMaterial(VOP_Node *node);
+	void restoreCurrentTake();
 
 	/// Saves VFB state.
 	void saveVfbState();
@@ -596,6 +588,12 @@ private:
 
 	/// Executed when user presses "Render" button in the VFB.
 	void renderLast();
+
+private:
+	/// Export V-Ray material from VOP node.
+	/// @param node VOP node.
+	/// @returns V-Ray plugin.
+	VRay::Plugin exportMaterial(VOP_Node *node);
 
 	/// The driver node bound to this exporter.
 	OP_Node *m_rop;
@@ -629,7 +627,7 @@ private:
 	VFBSettings vfbSettings;
 
 	/// Scene take selected in UI. Used to restore selected take after export.
-	TAKE_Take *uiTake{nullptr};
+	TAKE_Take *currentTake{nullptr};
 
 public:
 	/// Register event callback for a given node. This callback will be invoked when
@@ -652,18 +650,6 @@ public:
 	/// @note this will only remove callbacks that have been registered
 	///       through the callback interface
 	void resetOpCallbacks();
-
-	/// Callback function for the event when V-Ray logs a text message.
-	void onDumpMessage(VRay::VRayRenderer &renderer, const char *msg, int level);
-
-	/// Callback function for the event when V-Ray updates its current computation task and the number of workunits done.
-	void onProgress(VRay::VRayRenderer &renderer, const char *msg, int elementNumber, int elementsCount);
-
-	/// Callback function for the event when rendering has finished, successfully or not.
-	void onAbort(VRay::VRayRenderer &renderer);
-
-	/// Callback function to stop rendering of VFB close.
-	void onVfbClose();
 
 	/// Callbacks for tracking changes on different types of nodes
 	static void RtCallbackLight(OP_Node *caller, void *callee, OP_EventType type, void *data);

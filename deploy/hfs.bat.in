@@ -35,6 +35,7 @@ set HOUDINI_PATH=%LAUNCHER_LOCATION%\vfh_home;^&;
 
 :: Report loading errors
 set HOUDINI_DSO_ERROR=1
+set HDF5_DISABLE_VERSION_CHECK=1
 
 :: Add libs to path
 set PATH=%HFS%\bin;%VRAY_APPSDK%\bin;%LAUNCHER_LOCATION%\vfh_home\bin;%PATH%;%VRAY_FOR_HOUDINI_AURA_LOADERS%

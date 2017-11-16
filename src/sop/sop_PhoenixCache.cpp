@@ -70,7 +70,12 @@ void SOP::PhxShaderCache::updateVRayVolumeGridRefPrim(VRayVolumeGridRef *gridRef
 
 	options.setOptionF("current_frame", context.getFloatFrame());
 
+#if HDK_16_5
+	gridRefPtr->update(pack, options);
+#else
 	gridRefPtr->update(options);
+#endif
+
 	pack->setPathAttribute(getFullPath());
 }
 

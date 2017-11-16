@@ -108,6 +108,12 @@ VRayRendererNode::~VRayRendererNode()
 	Log::getLog().debug("~VRayRendererNode()");
 }
 
+void VRayRendererNode::onRtTakeChange()
+{
+	// Apply currently selected take.
+	m_exporter.applyTake(nullptr);
+}
+
 void VRayRendererNode::RtCallbackRop(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
 	Log::getLog().debug("RtCallbackRop: %s from \"%s\"", OPeventToString(type), caller->getName().buffer());
@@ -124,6 +130,9 @@ void VRayRendererNode::RtCallbackRop(OP_Node *caller, void *callee, OP_EventType
 				prm.getSparePtr()->getValue(RT_UPDATE_SPARE_TAG))
 			{
 				rop.startRenderRT(exporter.getContext().getTime());
+			}
+			else if (vutils_strcmp(prm.getToken(), "take") == 0) {
+				rop.onRtTakeChange();
 			}
 			break;
 		}
@@ -209,7 +218,7 @@ void VRayRendererNode::restoreTake(TAKE_Take *take)
 {
 	if (!take)
 		return;
-	restoreTake(take);
+	restorePreviousTake(take);
 }
 
 void VRayRendererNode::startRenderRT(fpreal time)

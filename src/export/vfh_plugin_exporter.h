@@ -11,94 +11,90 @@
 #ifndef VRAY_FOR_HOUDINI_PLUGIN_EXPORTER_H
 #define VRAY_FOR_HOUDINI_PLUGIN_EXPORTER_H
 
-#include "vfh_defines.h"
 #include "vfh_vray.h"
-#include "vfh_log.h"
 #include "vfh_plugin_attrs.h"
 
-#include <boost/function.hpp>
 #include <QString>
 
 namespace VRayForHoudini {
 
-typedef boost::function<void (void)>                                                          CbVoid;
-typedef boost::function<void (VRay::VRayRenderer&)>                                           CbOnRendererClose;
-typedef boost::function<void (VRay::VRayRenderer&)>                                           CbOnImageReady;
-typedef boost::function<void (VRay::VRayRenderer&, VRay::VRayImage*)>                         CbOnRTImageUpdated;
-typedef boost::function<void (VRay::VRayRenderer&, int, int, int, int, const char*)>          CbOnBucketInit;
-typedef boost::function<void (VRay::VRayRenderer&, int, int, int, int, const char*)>          CbOnBucketFailed;
-typedef boost::function<void (VRay::VRayRenderer&, int, int, const char*, VRay::VRayImage*)>  CbOnBucketReady;
-typedef boost::function<void (VRay::VRayRenderer&, const char*, int)>                         CbOnDumpMessage;
-typedef boost::function<void (VRay::VRayRenderer&, const char*, int, int)>                    CbOnProgress;
-typedef boost::function<void (VRay::VRayRenderer&, bool isRendering)>                         CbOnRenderLast;
-typedef boost::function<void (VRay::VRayRenderer&)>                                           CbOnVFBClosed;
-
-
-template <typename CbT>
-struct CbBase
+struct SettingsRTEngine
 {
-	CbBase() {}
+    /// Maximum trace depth for reflections/refractions etc.
+    int trace_depth{5};
 
-	typedef std::vector<CbVoid>  CbVoidArray;
-	typedef std::vector<CbT>     CbTypeArray;
+    /// Maximum trace depth for GI.
+    int gi_depth{3};
 
-	void add(CbT cb)    { m_cbTyped.push_back(cb); }
-	void add(CbVoid cb) { m_cbVoid.push_back(cb);  }
+    /// Number of samples to transfer over the network for RT-CPU.
+    int cpu_bundle_size{64};
 
-	void clear() {
-		m_cbVoid.clear();
-		m_cbTyped.clear();
-	}
+    /// Number of samples per pixel for RT-CPU.
+    int cpu_samples_per_pixel{4};
 
-	CbVoidArray m_cbVoid;
-	CbTypeArray m_cbTyped;
+    /// Number of samples to transfer over the network for RT-GPU.
+    int gpu_bundle_size{256};
 
-	VfhDisableCopy(CbBase)
+    /// Number of samples per pixel for RT-GPU.
+    int gpu_samples_per_pixel{16};
+
+    /// When true, RT GPU tries to utilize the GPUs with attached displays less. If this is true, it works best with gpu_samples_per_pixel=1 and gpu_bundle_size=64 (or less).
+    bool low_gpu_thread_priority{false};
+
+    /// true to enable coherent tracing of gi/reflections/refractions etc.
+    bool coherent_tracing{false};
+
+    /// Non-zero to enable side-by-side stereo rendering.
+    bool stereo_mode{false};
+
+    /// Distance between the two cameras for stereo mode.
+    float stereo_eye_distance{6.5f};
+
+    /// Focus mode (0 - none, 1 - rotation, 2 - shear).
+    int stereo_focus{2};
+
+    /// OpenCL Single Kernel maximum texture size - bigger textures are scaled to fit this size.
+    int opencl_texsize{512};
+
+    /// Textures transfer mode for the GPU.
+    int opencl_resizeTextures{1};
+
+    /// Format for the textures on the GPU (0 - 32-bit float per channel; 1 - 16-bit half float per channel; 2 - 8-bit per channel).
+    int opencl_textureFormat{1};
+
+    /// Progressive increase for 'Rays per pixel' (from 1 to real value). Use this for faster feadback.
+    int progressive_samples_per_pixel{0};
+
+    /// Non-zero to use undersampling, 0 otherwise. The value specifies the blur resolution. Value of n means 1/(2^n) initial resolution in each dimension.
+    int undersampling{4};
+
+    /// If true, RT will produce only RGBA. Default is false.
+    bool disable_render_elements{false};
+
+    /// Max render time (0 = inf).
+    float max_render_time{0.0f};
+
+    /// Max paths per pixel (0 = inf).
+    int max_sample_level{10000};
+
+    /// Noise threshold for the image sampler (0 = inf).
+    float noise_threshold{0.001f};
+
+    /// Show aa mask.
+    bool enable_mask{false};
+
+    /// Max time, in milliseconds, between (partial) image updates (0=disable partial image updates).
+    int max_draw_interval{0};
+
+    /// Min time, in milliseconds, between image updates (0=show all frames).
+    int min_draw_interval{0};
+
+    /// Flag used to disable some production-only features in interactive mode.
+    int interactive{0};
+
+    /// When using C++/CPU (CUDA), the noise pattern of the render is different compared to when using only CUDA GPU devices. If you want to mix CUDA C++/CPU renders and CUDA GPU renders, this should be set to 1. Otherwise, if you are using only CUDA GPU devices, this should be set to 0 (since the render results will be cleaner).
+    int enable_cpu_interop{0};
 };
-
-typedef CbBase<CbOnRendererClose>   CbSetOnRendererClose;
-typedef CbBase<CbOnImageReady>      CbSetOnImageReady;
-typedef CbBase<CbOnRTImageUpdated>  CbSetOnRTImageUpdated;
-typedef CbBase<CbOnBucketInit>      CbSetOnBucketInit;
-typedef CbBase<CbOnBucketFailed>    CbSetOnBucketFailed;
-typedef CbBase<CbOnBucketReady>     CbSetOnBucketReady;
-typedef CbBase<CbOnDumpMessage>     CbSetOnDumpMessage;
-typedef CbBase<CbOnProgress>        CbSetOnProgress;
-typedef CbBase<CbOnRenderLast>      CbSetOnRenderLast;
-typedef CbBase<CbOnVFBClosed>       CbSetOnVFBClosed;
-
-
-struct CbCollection {
-	CbCollection() {}
-
-	void clear() {
-		m_cbOnRendererClose.clear();
-		m_cbOnImageReady.clear();
-		m_cbOnRTImageUpdated.clear();
-		m_cbOnBucketInit.clear();
-		m_cbOnBucketFailed.clear();
-		m_cbOnBucketReady.clear();
-		m_cbOnDumpMessage.clear();
-		m_cbOnProgress.clear();
-		onRenderLast.clear();
-		onVFBClosed.clear();
-	}
-
-	CbSetOnRendererClose   m_cbOnRendererClose;
-	CbSetOnImageReady      m_cbOnImageReady;
-	CbSetOnRTImageUpdated  m_cbOnRTImageUpdated;
-	CbSetOnBucketInit      m_cbOnBucketInit;
-	CbSetOnBucketFailed    m_cbOnBucketFailed;
-	CbSetOnBucketReady     m_cbOnBucketReady;
-	CbSetOnDumpMessage     m_cbOnDumpMessage;
-	CbSetOnProgress        m_cbOnProgress;
-
-	CbSetOnRenderLast onRenderLast;
-	CbSetOnVFBClosed onVFBClosed;
-
-	VfhDisableCopy(CbCollection)
-};
-
 
 /// V-Ray Frame Buffer settings.
 struct VFBSettings {
@@ -146,7 +142,6 @@ public:
 	/// @retval true if we do, false on no license or error
 	static bool hasVRScansGUILicense(VRay::ScannedMaterialLicenseError &err);
 
-public:
 	VRayPluginRenderer();
 	~VRayPluginRenderer();
 
@@ -214,7 +209,7 @@ public:
 	/// a current rendering running it will not be affected. You can switch between
 	/// Production and RT mode with this without resetting the scene.
 	/// Valid modes are Production, RT CPU, RT GPU (CUDA)
-	void setRendererMode(VRay::RendererOptions::RenderMode mode);
+	void setRendererMode(const SettingsRTEngine &settingsRTEngine, VRay::RendererOptions::RenderMode mode);
 
 	/// Sets the frame buffer width and height.
 	void setImageSize(const int w, const int h);
@@ -251,37 +246,6 @@ public:
 	/// @retval 0 - no error
 	int exportScene(const std::string &filepath, VRay::VRayExportSettings &settings);
 
-	/// Register callbacks on different events dispatched from the renderer.
-	/// More than one callback per event can be registered. The order of invocation
-	/// will follow the order of registration. Each event supports 2 types of callbacks:
-	/// 1. a callback that does require any arguments
-	/// 2. a callback that accepts strongly typed arguments
-	void addCbOnRendererClose(CbOnRendererClose cb)   { m_callbacks.m_cbOnRendererClose.add(cb); }
-	void addCbOnRendererClose(CbVoid cb)              { m_callbacks.m_cbOnRendererClose.add(cb); }
-	void addCbOnImageReady(CbOnImageReady cb)         { m_callbacks.m_cbOnImageReady.add(cb); }
-	void addCbOnImageReady(CbVoid cb)                 { m_callbacks.m_cbOnImageReady.add(cb); }
-	void addCbOnRTImageUpdated(CbOnRTImageUpdated cb) { m_callbacks.m_cbOnRTImageUpdated.add(cb); }
-	void addCbOnRTImageUpdated(CbVoid cb)             { m_callbacks.m_cbOnRTImageUpdated.add(cb); }
-	void addCbOnBucketInit(CbOnBucketInit cb)         { m_callbacks.m_cbOnBucketInit.add(cb); }
-	void addCbOnBucketInit(CbVoid cb)                 { m_callbacks.m_cbOnBucketInit.add(cb); }
-	void addCbOnBucketReady(CbOnBucketReady cb)       { m_callbacks.m_cbOnBucketReady.add(cb); }
-	void addCbOnBucketReady(CbVoid cb)                { m_callbacks.m_cbOnBucketReady.add(cb); }
-	void addCbOnBucketFailed(CbOnBucketFailed cb)     { m_callbacks.m_cbOnBucketFailed.add(cb); }
-	void addCbOnBucketFailed(CbVoid cb)               { m_callbacks.m_cbOnBucketFailed.add(cb); }
-	void addCbOnDumpMessage(CbOnDumpMessage cb)       { m_callbacks.m_cbOnDumpMessage.add(cb); }
-	void addCbOnDumpMessage(CbVoid cb)                { m_callbacks.m_cbOnDumpMessage.add(cb); }
-	void addCbOnProgress(CbOnProgress cb)             { m_callbacks.m_cbOnProgress.add(cb); }
-	void addCbOnProgress(CbVoid cb)                   { m_callbacks.m_cbOnProgress.add(cb); }
-
-	void addCbOnVfbClose(CbOnVFBClosed cb) { m_callbacks.onVFBClosed.add(cb); }
-	void addCbOnVfbClose(CbVoid cb)        { m_callbacks.onVFBClosed.add(cb); }
-
-	void addCbOnRenderLast(CbOnRenderLast cb) { m_callbacks.onRenderLast.add(cb); }
-	void addCbOnRenderLast(CbVoid cb)         { m_callbacks.onRenderLast.add(cb); }
-
-	/// Clear registered render callbacks
-	void resetCallbacks();
-
 	/// Check if VRay::VRayRenderer is instantiated
 	bool isVRayInit() const { return !!m_vray; }
 
@@ -289,7 +253,7 @@ public:
 	bool isRendering() const;
 
 	/// Get the actual renderer instance
-	VRay::VRayRenderer& getVRay() { return *m_vray; }
+	VRay::VRayRenderer &getVRay() const { return *m_vray; }
 
 	/// Reset scene data.
 	void reset();
@@ -310,14 +274,8 @@ public:
 	void getVfbSettings(VFBSettings &settings) const;
 
 private:
-	/// Attach callbacks to the renderer.
-	void attachCallbacks();
-
 	/// V-Ray renderer instance.
-	VRay::VRayRenderer *m_vray;
-
-	/// A collection of registered render callbacks.
-	CbCollection m_callbacks;
+	VRay::VRayRenderer *m_vray{nullptr};
 
 	/// Flag indicating that we should use/init VFB related options.
 	int m_enableVFB{false};

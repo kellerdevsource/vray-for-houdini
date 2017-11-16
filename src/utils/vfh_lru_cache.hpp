@@ -121,11 +121,11 @@ public:
 	LRUCache &operator=(LRUCache&& source)
 	{
 		if (&source != this) {
-			std::swap(m_capacity, source.m_capacity);
-			std::swap(m_cacheMap, source.m_cacheMap);
-			std::swap(m_mlruQueue, source.m_mlruQueue);
-			std::swap(m_cbfetchValue, source.m_cbfetchValue);
-			std::swap(m_cbEvictValue, source.m_cbEvictValue);
+			VUtils::swap(m_capacity, source.m_capacity);
+			VUtils::swap(m_cacheMap, source.m_cacheMap);
+			VUtils::swap(m_mlruQueue, source.m_mlruQueue);
+			VUtils::swap(m_cbfetchValue, source.m_cbfetchValue);
+			VUtils::swap(m_cbEvictValue, source.m_cbEvictValue);
 		}
 
 		return *this;

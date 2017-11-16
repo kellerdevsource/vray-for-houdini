@@ -11,8 +11,10 @@
 #include "io_vrmesh.h"
 
 #include "vfh_log.h"
+#include "vfh_includes.h"
 #include "vfh_vrayproxyutils.h"
-#include "uni.h"
+
+#include <uni.h>
 
 #include <CH/CH_Manager.h>
 #include <OP/OP_Context.h>
@@ -92,7 +94,14 @@ GA_Detail::IOStatus Vrmesh::fileLoad(GEO_Detail *geo, UT_IStream &stream, bool /
 			.setOptionF("frame", context.getFloatFrame())
 			.setOptionS("file", filepath);
 
-	pack->implementation()->update(options);
+	GU_PackedImpl *primImpl = pack->implementation();
+	if (primImpl) {
+#if HDK_16_5
+		primImpl->update(pack, options);
+#else
+		primImpl->update(options);
+#endif
+	}
 
 	return GA_Detail::IOStatus(true);
 }

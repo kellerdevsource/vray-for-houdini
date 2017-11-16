@@ -8,46 +8,31 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
-#ifndef VRAY_FOR_HOUDINI_VRAYSCENEREF_H
-#define VRAY_FOR_HOUDINI_VRAYSCENEREF_H
+#ifndef VRAY_FOR_HOUDINI_GU_PGYETI_H
+#define VRAY_FOR_HOUDINI_GU_PGYETI_H
 
 #include "vfh_includes.h"
-#include "vfh_VRaySceneRefOptions.h"
+#include "vfh_VRayPgYetiRefOptions.h"
 
 #include <GU/GU_PackedImpl.h>
 
-namespace VUtils {
-namespace Vrscene {
-namespace Preview {
-struct VrsceneDesc;
-} // Preview
-} // Vrscene
-}
-
 namespace VRayForHoudini {
 
-enum FlipAxisMode {
-	none = 0,  ///< No flipping
-	automatic, ///< Gets the flipping from the vrscene description
-	flipZY     ///< Force the scene to flip the Z and Y axis
-};
-
-/// VRayScene preview mesh implemented as a packed primitive.
-class VRaySceneRef
+/// Yeti hair preview implemented as a packed primitive.
+class VRayPgYetiRef
 	: public GU_PackedImpl
-	, public VRaySceneRefOptions
+	, public VRayPgYetiRefOptions
 {
 public:
 	static GA_PrimitiveTypeId typeId();
 	static void install(GA_PrimitiveFactory *gafactory);
 
-	VRaySceneRef();
-	VRaySceneRef(const VRaySceneRef &src);
-	~VRaySceneRef();
+	VRayPgYetiRef();
+	VRayPgYetiRef(const VRayPgYetiRef &src);
+	~VRayPgYetiRef();
 
 	GU_PackedFactory *getFactory() const VRAY_OVERRIDE;
 	GU_PackedImpl *copy() const VRAY_OVERRIDE;
-
 	bool isValid() const VRAY_OVERRIDE;
 	void clearData() VRAY_OVERRIDE;
 	bool save(UT_Options &options, const GA_SaveMap &map) const VRAY_OVERRIDE;
@@ -67,15 +52,9 @@ public:
 	int64 getMemoryUsage(bool inclusive) const VRAY_OVERRIDE;
 	void countMemory(UT_MemoryCounter &counter, bool inclusive) const VRAY_OVERRIDE;
 
-	/// Returns mesh sample time based on animation overrides settings.
-	/// @param t Current time.
-	double getFrame(fpreal t) const;
-
 private:
 	/// Build packed detail.
-	/// @param vrsceneDesc *.vrscene file preview data.
-	/// @param flipAxis Flip axis Z-Y.
-	void detailBuild(VUtils::Vrscene::Preview::VrsceneDesc *vrsceneDesc, int flipAxis);
+	void detailBuild();
 
 	/// Clear detail.
 	void detailClear();
@@ -85,7 +64,7 @@ private:
 	/// @returns True if detail was changed, false - otherwise.
 	int updateFrom(const UT_Options &options);
 
-	/// Preview mesh bbox.
+	/// Bbox.
 	UT_BoundingBox m_bbox;
 
 	/// Geometry detail.
@@ -94,4 +73,4 @@ private:
 
 } // namespace VRayForHoudini
 
-#endif // !VRAY_FOR_HOUDINI_VRAYSCENEREF_H
+#endif // VRAY_FOR_HOUDINI_GU_PGYETI_H

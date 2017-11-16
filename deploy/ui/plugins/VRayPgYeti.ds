@@ -1,0 +1,53 @@
+#include "$VRAY_UI_DS_PATH/vfh_macros.ds"
+
+{
+    name VRayPgYeti
+    label "Yeti (V-Ray)"
+    parmtag { spare_category "pgYetiVRay" }
+    parmtag { vray_plugin "pgYetiVRay" }
+
+    group {
+        name "vfhPgYetiVRayFolderMain"
+        label "Main"
+
+        parm {
+            name "file"
+            label "File (*.fur)"
+            help "Path to a *.fur file"
+            type file
+            default { "" }
+            parmtag { "cook_dependent" "1" }
+            parmtag { "filechooser_pattern" "*.fur" }
+            parmtag { "vray_file_names" "Yeti Cache, fileAssetOp=load, displayName=File Path" }
+            parmtag { "vray_plugin" "pgYetiVRay" }
+            parmtag { "vray_pluginattr" "file" }
+            parmtag { "vray_type" "string" }
+        }
+
+        VFH_PLUGIN_PARM_FLOAT("pgYetiVRay", "density", "Density", "Render density", 1.0)
+        VFH_PLUGIN_PARM_FLOAT("pgYetiVRay", "length",  "Length",  "Render length",  1.0)
+        VFH_PLUGIN_PARM_FLOAT("pgYetiVRay", "width",   "Width",   "Render width",   1.0)
+
+        VFH_PLUGIN_PARM_TOGGLE("pgYetiVRay", "dynamicHairTesselation", "Dynamic Tesselation", "Dynamic hair tesselation", 1)
+        VFH_PLUGIN_PARM_INT("pgYetiVRay", "segmentLength", "Segment Length", "Segment length", 4.0)
+    }
+
+    group {
+        name "vfhPgYetiVRayFolderAdvanced"
+        label "Advanced"
+
+        parm {
+            name "imageSearchPath"
+            label "Texture Search Path"
+            help "Texture Search Path"
+            type string
+            default { "" }
+            parmtag { "vray_plugin" "pgYetiVRay" }
+            parmtag { "vray_pluginattr" "imageSearchPath" }
+            parmtag { "vray_type" "string" }
+        }
+
+        VFH_PLUGIN_PARM_INT("pgYetiVRay", "threads", "Threads", "Render threads", 0)
+        VFH_PLUGIN_PARM_INT("pgYetiVRay", "verbosity", "Verbosity", "Verbosity", 0)
+    }
+}

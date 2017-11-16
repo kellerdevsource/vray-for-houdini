@@ -8,9 +8,8 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
-#ifndef VRAY_FOR_HOUDINI_SOP_NODE_VRAYSCENE_H
-#define VRAY_FOR_HOUDINI_SOP_NODE_VRAYSCENE_H
-#ifdef CGR_HAS_VRAYSCENE
+#ifndef VRAY_FOR_HOUDINI_SOP_PGYETI_H
+#define VRAY_FOR_HOUDINI_SOP_PGYETI_H
 
 #include "sop_node_base.h"
 
@@ -19,11 +18,11 @@
 namespace VRayForHoudini {
 namespace SOP {
 
-class VRayScene
+class VRayPgYeti
 	: public NodeBase
 {
 public:
-	VRayScene(OP_Network *parent, const char *name, OP_Operator *entry)
+	VRayPgYeti(OP_Network *parent, const char *name, OP_Operator *entry)
 		: NodeBase(parent, name, entry)
 	{}
 
@@ -43,7 +42,7 @@ private:
 	void updatePrimitive(const OP_Context &context);
 
 	/// Packed primitive with the preview data.
-	GU_PrimPacked *m_vrayScenePrim{nullptr};
+	GU_PrimPacked *m_primPacked{nullptr};
 
 	/// Current options set.
 	OP_Options m_primOptions;
@@ -55,5 +54,4 @@ private:
 } // namespace SOP
 } // namespace VRayForHoudini
 
-#endif // CGR_HAS_VRAYSCENE
-#endif // VRAY_FOR_HOUDINI_SOP_NODE_VRAYSCENE_H
+#endif // VRAY_FOR_HOUDINI_SOP_PGYETI_H
