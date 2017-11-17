@@ -11,23 +11,11 @@
 #ifndef VRAY_FOR_HOUDINI_EXPORT_CONTEXT_H
 #define VRAY_FOR_HOUDINI_EXPORT_CONTEXT_H
 
-
-#include "vfh_vray.h"
-
-#include "OP/OP_Node.h"
-
-#include <unordered_map>
-#include <unordered_set>
-
+#include <OP/OP_Node.h>
 
 namespace VRayForHoudini {
 
-
 class VRayExporter;
-
-class ECFnOBJNode;
-class ECFnSHOPOverrides;
-
 
 enum ContextType {
 	CT_NULL = 0,
@@ -37,7 +25,6 @@ enum ContextType {
 	CT_VOP,
 	CT_MAX
 };
-
 
 class ExportContext
 {
@@ -61,27 +48,6 @@ protected:
 	ExportContext *m_parentContext;
 };
 
-
-enum MTLOverrideType {
-	MTLO_NONE = 0,
-	MTLO_OBJ,
-	MTLO_GEO
-};
-
-
-class ECFnOBJNode
-{
-public:
-	ECFnOBJNode(ExportContext *ctx);
-	~ECFnOBJNode() { }
-
-	bool             isValid() const;
-	OBJ_Node*        getTargetNode() const;
-
-private:
-	ExportContext *m_context;
-};
-
-}
+} // namespace VRayForHoudini
 
 #endif // VRAY_FOR_HOUDINI_EXPORT_CONTEXT_H

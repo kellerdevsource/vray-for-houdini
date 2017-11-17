@@ -22,11 +22,39 @@
 
 namespace VRayForHoudini {
 
-enum DisplacementType {
-	displacementTypeNone = -1,
-	displacementTypeDisplace = 0,
-	displacementTypeSmooth,
-	displacementTypeFromMat,
+enum class ObjSubdivMenu {
+	none = -1, ///< No subdivision.
+	displacement = 0, ///< Displacement.
+	subdivision, ///< Subdivision.
+	fromMat, ///< From specified material.
+};
+
+/// Subdivision plugin type.
+enum class SubdivisionType {
+	none = -1, ///< Invalid.
+	displacement = 0, ///< GeomDisplacedMesh plugin.
+	subdivision, ///< GeomStaticSmoothedMesh plugin.
+};
+
+/// Object subdivision export data.
+struct SubdivInfo {
+	explicit SubdivInfo(OP_Node *parmHolder = nullptr, SubdivisionType type = SubdivisionType::none)
+		: parmHolder(parmHolder)
+		, type(type)
+	{}
+
+	/// Subdivision properties holder (OBJ or VOP node).
+	OP_Node *parmHolder{nullptr};
+
+	/// Subdivision plugin type.
+	SubdivisionType type{SubdivisionType::none};
+
+	/// Returns true if we need to prefix node parameters with the plugin name
+	/// for evaluation.
+	bool needParmNamePrefix() const { return CAST_OBJNODE(parmHolder); }
+
+	/// Returns true if the subdivision data is correct.
+	bool hasSubdiv() const { return parmHolder && type != SubdivisionType::none; }
 };
 
 enum VMRenderPoints {
@@ -156,11 +184,14 @@ public:
 	/// as phantom object (when set as phantom geometry on the V-Ray ROP)
 	int isNodePhantom(OBJ_Node &node) const;
 
-	/// Test if subdivision has been applied to the node at render time
-	/// @note This will affect the export of vertex attributes on mesh
-	///       geometry. Vertex attribute values that have the same value
-	///       will be welded into single one
-	DisplacementType hasSubdivApplied(OBJ_Node &objNode) const;
+	static SubdivInfo getSubdivInfoFromMatNode(OP_Node &matNode);
+
+	static SubdivInfo getSubdivInfoFromVRayMaterialOutput(OP_Node &matNode);
+
+	/// Check if we need to export mesh as subdivision surface (displacement, subdivision).
+	/// @param objNode OBJ node to check for subdivision properties.
+	/// @param matNode VOP node ("vray_material_output") to check for subdivision properties. May be NULL.
+	static SubdivInfo getSubdivInfo(OBJ_Node &objNode, OP_Node *matNode);
 
 	int getPrimKey(const GA_Primitive &prim) const;
 
