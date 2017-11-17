@@ -130,8 +130,6 @@ set(SOURCES
 	vop/brdf/vop_BRDFScanned.cpp
 	vop/brdf/vop_BRDFVRayMtl.cpp
 	vop/env/vop_SettingsEnvironment.cpp
-	vop/material/vop_GeomDisplacedMesh.cpp
-	vop/material/vop_GeomStaticSmoothedMesh.cpp
 	vop/material/vop_MaterialOutput.cpp
 	vop/material/vop_MtlMulti.cpp
 	vop/material/vop_PhoenixSim.cpp
@@ -172,8 +170,6 @@ set(HEADERS
 	vop/brdf/vop_BRDFVRayMtl.h
 	vop/env/vop_env_def.h
 	vop/env/vop_SettingsEnvironment.h
-	vop/material/vop_GeomDisplacedMesh.h
-	vop/material/vop_GeomStaticSmoothedMesh.h
 	vop/material/vop_MaterialOutput.h
 	vop/material/vop_mtl_def.h
 	vop/material/vop_MtlMulti.h

@@ -241,21 +241,18 @@ public:
 	/// @retval V-Ray plugin created for that node
 	VRay::Plugin exportVRayClipper(OBJ_Node &clipperNode);
 
-	/// Fill in displacement/subdivision render properties for the given node
-	/// @param obj_node[in] - the OBJ_Geometry node
-	/// @param pluginDesc[out] - diplacement/subdivision plugin description
-	int exportDisplacementFromOBJ(OBJ_Node &obj_node, Attrs::PluginDesc &pluginDesc);
-
 	/// Tries to set displacement texture from path attribute.
 	/// Otherwise texture connected to socket will be used if found.
-	int setDisplacementTextureFromPath(OP_Node &opNode, Attrs::PluginDesc &pluginDesc, const std::string &parmNamePrefix);
+	int exportDisplacementTexture(OP_Node &opNode, Attrs::PluginDesc &pluginDesc, const std::string &parmNamePrefix);
+
+	int exportDisplacementFromSubdivInfo(const SubdivInfo &subdivInfo, Attrs::PluginDesc &pluginDesc);
 
 	/// Export the given geomtry with displacement/subdivision at render time
 	/// @param obj_node[in] - the OBJ_Geometry node owner of displacement/subdivision
 	///        render properties
 	/// @param geomPlugin[in] - geometry to displace/subdivide
 	/// @retval V-Ray displacement/subdivision plugin
-	VRay::Plugin exportDisplacement(OBJ_Node &obj_node, VRay::Plugin &geomPlugin);
+	VRay::Plugin exportDisplacement(OBJ_Node &obj_node, const VRay::Plugin &geomPlugin, const SubdivInfo &subdivInfo);
 
 	/// Export VOP node
 	/// @param opNode VOP node instance.

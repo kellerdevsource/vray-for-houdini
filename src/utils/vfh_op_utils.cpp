@@ -20,27 +20,45 @@
 
 using namespace VRayForHoudini;
 
+int VRayForHoudini::isOpType(OP_Node &opNode, const char *opName)
+{
+	return opNode.getOperator()->getName().equal(opName);
+}
+
+static int isVRayMaterialOutput(OP_Node &opNode)
+{
+	return isOpType(opNode, vfhNodeMaterialOutput);
+}
+
 OP_Node* VRayForHoudini::getVRayNodeFromOp(OP_Node &matNode, const char *socketName, const char *pluginID)
 {
-	OP_Node *res = &matNode;
+	OP_Node *res = nullptr;
 
-	SHOP_Node *shopNode = CAST_SHOPNODE(res);
-	if (shopNode) {
-		UT_ValArray<OP_Node*> opsByName;
-		if (shopNode->getOpsByName("vray_material_output", opsByName)) {
-			OP_Node *node = opsByName(0);
-			if (node) {
-				const int socketIdx = node->getInputFromName(socketName);
-				res = node->getInput(socketIdx);
-			}
+	OP_Node *vrayMaterialOutput = nullptr;
+
+	if (isVRayMaterialOutput(matNode)) {
+		vrayMaterialOutput = &matNode;
+	}
+	else if (matNode.isNetwork()) {
+		OP_Network &matNetwork = static_cast<OP_Network&>(matNode);
+
+		UT_ValArray<OP_Node*> opList;
+		if (matNetwork.getOpsByName(vfhNodeMaterialOutput, opList)) {
+			vrayMaterialOutput = opList(0);
 		}
 	}
 
-	VOP_Node *vopNode = CAST_VOPNODE(res);
-	if (vopNode && pluginID && vopNode->getOperator()->getName().startsWith("VRayNode")) {
-		VOP::NodeBase *vrayVopNode = static_cast<VOP::NodeBase*>(vopNode);
-		if (vrayVopNode->getVRayPluginID() != pluginID) {
-			return nullptr;
+	if (vrayMaterialOutput) {
+		const int socketIdx = vrayMaterialOutput->getInputFromName(socketName);
+		res = vrayMaterialOutput->getInput(socketIdx);
+	}
+
+	if (pluginID && res) {
+		if (res->getOperator()->getName().startsWith("VRayNode")) {
+			VOP::NodeBase *vrayVopNode = static_cast<VOP::NodeBase*>(res);
+			if (vrayVopNode->getVRayPluginID() != pluginID) {
+				return nullptr;
+			}
 		}
 	}
 

@@ -16,7 +16,15 @@
 
 namespace VRayForHoudini {
 
-/// Returns node of type "pluginID" connected tothe socket "socketName" if matNode is a SHOP node.
+const char vfhNodeMaterialOutput[] = "vray_material_output";
+
+const char vfhSocketMaterialOutputMaterial[]   = "Material";
+const char vfhSocketMaterialOutputSurface[]    = "Surface";
+const char vfhSocketMaterialOutputSimulation[] = "Simulation";
+
+int isOpType(OP_Node &opNode, const char *opName);
+
+/// Returns node of type "pluginID" connected to the socket "socketName" if matNode is a SHOP node.
 /// Otherwize checks type "pluginID" of the matNode.
 /// @param matNode SHOP or VOP node.
 /// @param socketName Socket name for "V-Ray Material Output" node.
