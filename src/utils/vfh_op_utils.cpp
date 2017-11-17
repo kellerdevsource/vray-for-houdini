@@ -42,7 +42,7 @@ OP_Node* VRayForHoudini::getVRayNodeFromOp(OP_Node &matNode, const char *socketN
 	else if (matNode.isNetwork()) {
 		OP_Network &matNetwork = static_cast<OP_Network&>(matNode);
 
-		UT_ValArray<OP_Node*> opList;
+		OP_NodeList opList;
 		if (matNetwork.getOpsByName(vfhNodeMaterialOutput, opList)) {
 			vrayMaterialOutput = opList(0);
 		}

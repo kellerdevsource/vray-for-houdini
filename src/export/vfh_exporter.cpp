@@ -447,6 +447,20 @@ static void setPluginValueFromConnectedPluginInfo(Attrs::PluginDesc &pluginDesc,
 	}
 }
 
+static int isConnectedToTexTriplanar(VOP_Node &vopNode)
+{
+	OP_NodeList outputs;
+	vopNode.getOutputNodes(outputs);
+
+	for (OP_Node *opNode : outputs) {
+		if (isOpType(*opNode, "VRayNodeTexTriPlanar")) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDesc, VOP_Node *vopNode, ExportContext *parentContext)
 {
 	const Parm::VRayPluginInfo *pluginInfo = Parm::GetVRayPluginInfo( pluginDesc.pluginID );
@@ -476,8 +490,14 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 				pluginInfo->pluginType == Parm::PluginTypeTexture &&
 				attrName == "uvwgen")
 			{
-				const Attrs::PluginDesc uvwGen(getPluginName(vopNode, "Uvw"), "UVWGenObject");
-				conPlugin = exportPlugin(uvwGen);
+				if (!isConnectedToTexTriplanar(*vopNode)) {
+					Attrs::PluginDesc defaultUVWGen(getPluginName(vopNode, "DefaultUVWGen"),
+					                                "UVWGenProjection");
+					defaultUVWGen.add(Attrs::PluginAttr("type", 6));
+					defaultUVWGen.add(Attrs::PluginAttr("object_space", true));
+
+					conPlugin = exportPlugin(defaultUVWGen);
+				}
 			}
 			else {
 				const unsigned inpidx = vopNode->getInputFromName(attrName.c_str());
@@ -493,7 +513,7 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 									               pluginDesc.pluginID == "UVWGenObject" ||
 									               pluginDesc.pluginID == "UVWGenEnvironment";
 								}
-								VRay::Transform transform = exportTransformVop(*inpvop, parentContext, shouldRotate);
+								const VRay::Transform &transform = exportTransformVop(*inpvop, parentContext, shouldRotate);
 								pluginDesc.addAttribute(Attrs::PluginAttr(attrName, transform.matrix));
 								break;
 							}
@@ -2139,12 +2159,12 @@ int VRayExporter::hasVelocityOn(OP_Node &rop) const
 		return false;
 	}
 
-	UT_ValArray<OP_Node*> rcOutputList;
+	OP_NodeList rcOutputList;
 	if (!rcNetwork->getOpsByName("VRayNodeRenderChannelsContainer", rcOutputList)) {
 		return false;
 	}
 
-	UT_ValArray<OP_Node*> velVOPList;
+	OP_NodeList velVOPList;
 	if (!rcNetwork->getOpsByName("VRayNodeRenderChannelVelocity", velVOPList)) {
 		return false;
 	}
