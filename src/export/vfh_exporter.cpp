@@ -72,10 +72,10 @@ static UT_DMatrix4 yAxisUpRotationMatrix(1.0, 0.0, 0.0, 0.0,
                                          0.0, -1.0, 0.0, 0.0,
                                          0.0, 0.0, 0.0, 0.0);
 
-static const VRay::Transform envMatrix(VRay::Matrix(VRay::Vector(1.f, 0.f,0.f),
+static const VRay::Transform envMatrix(VRay::Matrix(VRay::Vector(1.f, 0.f, 0.f),
                                                     VRay::Vector(0.f, 0.f, 1.f),
                                                     VRay::Vector(0.f, -1.f, 0.f)),
-                                                    VRay::Vector(0.f));
+                                       VRay::Vector(0.f));
 
 /// Fills SettingsRTEngine settings from the ROP node.
 /// @param self SettingsRTEngine instance.
@@ -489,9 +489,9 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 								bool shouldRotate = pluginInfo->pluginType == Parm::PluginTypeUvwgen;
 								if (shouldRotate) {
 									shouldRotate = pluginDesc.pluginID == "UVWGenPlanar" ||
-												pluginDesc.pluginID == "UVWGenProjection" || 
-												pluginDesc.pluginID == "UVWGenObject" || 
-												pluginDesc.pluginID == "UVWGenEnvironment";
+									               pluginDesc.pluginID == "UVWGenProjection" ||
+									               pluginDesc.pluginID == "UVWGenObject" ||
+									               pluginDesc.pluginID == "UVWGenEnvironment";
 								}
 								VRay::Transform transform = exportTransformVop(*inpvop, parentContext, shouldRotate);
 								pluginDesc.addAttribute(Attrs::PluginAttr(attrName, transform.matrix));
