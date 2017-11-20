@@ -9,6 +9,7 @@
 //
 
 #include "vop_MaterialOutput.h"
+#include "vfh_op_utils.h"
 
 #include <VOP/VOP_Operator.h>
 #include <VOP/VOP_OperatorInfo.h>
@@ -34,9 +35,9 @@ struct MaterialOutputInputSocket {
 };
 
 static MaterialOutputInputSocket materialOutputInputSockets[] = {
-	{ "Material",   VOP_TypeInfo(VOP_SURFACE_SHADER)    },
-	{ "Surface",    VOP_TypeInfo(VOP_GEOMETRY_SHADER)   },
-	{ "Simulation", VOP_TypeInfo(VOP_ATMOSPHERE_SHADER) },
+	{ vfhSocketMaterialOutputMaterial,   VOP_TypeInfo(VOP_SURFACE_SHADER)    },
+	{ vfhSocketMaterialOutputSurface,    VOP_TypeInfo(VOP_GEOMETRY_SHADER)   },
+	{ vfhSocketMaterialOutputSimulation, VOP_TypeInfo(VOP_ATMOSPHERE_SHADER) },
 } ;
 
 static PRM_Template templates[] = {
