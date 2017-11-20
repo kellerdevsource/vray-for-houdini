@@ -57,7 +57,7 @@ unsigned VOP::NodeBase::orderedInputs() const
 unsigned VOP::NodeBase::getNumVisibleInputs() const
 {
 	// printf("%s::getNumVisibleInputs()\n", getName().buffer());
-	return orderedInputs();
+	return NodeBase::orderedInputs();
 }
 
 
@@ -184,7 +184,7 @@ unsigned VOP::NodeBase::getNumVisibleOutputs() const
 {
 	// printf("%s::getNumVisibleOutputs()\n", getName().buffer());
 
-	return maxOutputs();
+	return NodeBase::maxOutputs();
 }
 
 
