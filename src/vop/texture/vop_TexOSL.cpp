@@ -30,13 +30,20 @@ void TexOSL::setPluginType()
 	pluginID = "TexOSL";
 }
 
+
+namespace
+{
+
 class OSLErrorHandle: public VRayOpenImageIO::ErrorHandler
 {
 public:
-	OSLErrorHandle() {}
-	virtual ~OSLErrorHandle() VRAY_OVERRIDE {}
+	OSLErrorHandle()
+	{}
+	virtual ~OSLErrorHandle() VRAY_OVERRIDE
+	{}
 
-	virtual void operator () (int errcode, const std::string &msg) VRAY_OVERRIDE {
+	virtual void operator () (int errcode, const std::string &msg) VRAY_OVERRIDE
+	{
 		const ErrCode code = static_cast<ErrCode>((0xff << 16) & errcode); // code is in high 16 bits
 		const int errorNo = ~(0xff << 16) & errcode;
 		const char * errFormat = "VRayOSL Error (%d): %s";
@@ -76,9 +83,6 @@ static const std::map<VOP_Type, std::string> OSL_PARAM_MAP = {
 	{VOP_TYPE_INTEGER, OSL_PARAM_TYPE_LIST[2]},
 	{VOP_TYPE_FLOAT, OSL_PARAM_TYPE_LIST[3]},
 };
-
-namespace
-{
 std::string mapTypeToParam(VOP_Type type)
 {
 	auto iter = OSL_PARAM_MAP.find(type);
