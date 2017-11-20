@@ -9,6 +9,7 @@
 //
 
 #include "vop_TexOSL.h"
+#include "getenvvars.h"
 
 #include <boost/filesystem.hpp>
 
@@ -120,12 +121,13 @@ void TexOSL::updateParamsIfNeeded() const
 
 	std::string osoCode;
 	{
+		static VUtils::GetEnvVar APPSDK_PATH("VRAY_APPSDK", "");
 		OSLCompiler * compiler = OSLCompiler::create();
 		OSLCompilerInput settings;
 		settings.inputMode = OSL_MEMORY_BUFFER;
 		settings.outputMode = OSL_MEMORY_BUFFER;
 		settings.buffer = std::move(oslCode.toStdString());
-		settings.stdoslpath = "D:/libs/hou_win/appsdk/bin/stdosl.h";
+		settings.stdoslpath = APPSDK_PATH.getValue().ptr() + std::string("/bin/stdosl.h");
 		settings.errorHandler = &staticErrHandle;
 
 		if (!compiler->compile(settings)) {
