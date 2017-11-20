@@ -383,6 +383,7 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexInvert);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexInvertFloat);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexLayeredMax);
+	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexOSL);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexLeather);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexLuminance);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexLut);
