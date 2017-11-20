@@ -164,6 +164,7 @@ void TexOSL::updateParamsIfNeeded() const
 			continue;
 		}
 		ParamInfo info = {param->name, VOP_TYPE_UNDEF};
+		info.validDefault = param->validdefault;
 
 		switch (param->type.vecsemantics) {
 		case TypeDesc::COLOR:
@@ -180,25 +181,33 @@ void TexOSL::updateParamsIfNeeded() const
 			break;
 		}
 
-		if (info.type != VOP_TYPE_UNDEF) {
+		if (param->validdefault) {
+			if (info.type != VOP_TYPE_UNDEF) {
 			// its one of (color, point, vector, normal)
-			for (int r = 0; r < 3; r++) {
-				info.numberDefault[r] = param->fdefault[r];
+				for (int r = 0; r < 3; r++) {
+					info.numberDefault[r] = param->fdefault[r];
+				}
 			}
 		}
 
 		if (param->type.aggregate == TypeDesc::SCALAR) {
 			if (param->type.basetype == TypeDesc::INT) {
 				info.type = VOP_TYPE_INTEGER;
-				info.numberDefault[0] = param->idefault[0];
+				if (param->validdefault) {
+					info.numberDefault[0] = param->idefault[0];
+				}
 			} else if (param->type.basetype == TypeDesc::FLOAT) {
 				info.type = VOP_TYPE_FLOAT;
-				info.numberDefault[0] = param->fdefault[0];
+				if (param->validdefault) {
+					info.numberDefault[0] = param->fdefault[0];
+				}
 			} else if (param->type.basetype == TypeDesc::STRING) {
 				// NOTE: strings are only for plugin inputs
 				// TODO: VOP_TYPE_STRUCT ?
 				info.type = VOP_TYPE_STRING;
-				info.stringDefault = param->sdefault[0];
+				if (param->validdefault) {
+					info.stringDefault = param->sdefault[0];
+				}
 				self->m_inputList.push_back(param->name);
 			}
 		}
@@ -259,24 +268,26 @@ void TexOSL::updateParamsIfNeeded() const
 				Log::getLog().warning("Failed to show %s", paramName);
 			}
 
-			switch (param.type) {
-			case VOP_TYPE_COLOR:
-			case VOP_TYPE_VECTOR:
-			case VOP_TYPE_POINT:
-			case VOP_TYPE_NORMAL:
-				for (int r = 0; r < 3; r++) {
-					self->setFloat(paramName, r, 0, param.numberDefault[r]);
+			if (param.validDefault) {
+				switch (param.type) {
+				case VOP_TYPE_COLOR:
+				case VOP_TYPE_VECTOR:
+				case VOP_TYPE_POINT:
+				case VOP_TYPE_NORMAL:
+					for (int r = 0; r < 3; r++) {
+						self->setFloat(paramName, r, 0, param.numberDefault[r]);
+					}
+					break;
+				case VOP_TYPE_INTEGER:
+					self->setInt(paramName, 0, 0, param.numberDefault[0]);
+					break;
+				case VOP_TYPE_FLOAT:
+					self->setFloat(paramName, 0, 0, param.numberDefault[0]);
+					break;
+				case VOP_TYPE_STRING:
+					self->setString(UT_String(param.stringDefault.c_str(), true), CH_STRING_LITERAL, m_inputList[inputIdx++].c_str(), 0, 0);
+					break;
 				}
-				break;
-			case VOP_TYPE_INTEGER:
-				self->setInt(paramName, 0, 0, param.numberDefault[0]);
-				break;
-			case VOP_TYPE_FLOAT:
-				self->setFloat(paramName, 0, 0, param.numberDefault[0]);
-				break;
-			case VOP_TYPE_STRING:
-				self->setString(UT_String(param.stringDefault.c_str(), true), CH_STRING_LITERAL, m_inputList[inputIdx++].c_str(), 0, 0);
-				break;
 			}
 		}
 
