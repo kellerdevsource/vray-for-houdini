@@ -8,7 +8,7 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
-#include "vop_TexOSL.h"
+#include "vop_node_osl.h"
 #include "getenvvars.h"
 
 #include <boost/filesystem.hpp>
@@ -24,16 +24,22 @@
 using namespace VRayForHoudini;
 using namespace VOP;
 
-
-void TexOSL::setPluginType()
+template <>
+void OSLNodeBase<false>::setPluginType()
 {
 	pluginType = VRayPluginType::TEXTURE;
 	pluginID = "TexOSL";
 }
 
-
-namespace
+template <>
+void OSLNodeBase<true>::setPluginType()
 {
+	pluginType = VRayPluginType::MATERIAL;
+	pluginID = "MtlOSL";
+}
+
+
+namespace {
 
 class OSLErrorHandle: public VRayOpenImageIO::ErrorHandler
 {
@@ -94,7 +100,8 @@ std::string mapTypeToParam(VOP_Type type)
 }
 }
 
-void TexOSL::updateParamsIfNeeded() const
+template <bool MTL>
+void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 {
 	using namespace Hash;
 
@@ -115,6 +122,11 @@ void TexOSL::updateParamsIfNeeded() const
 	self->m_inputList.clear();
 	self->m_outputName = "";
 	self->m_outputNameBuff[0] = 0;
+
+	// not error, just empty code
+	if (oslCode.length() == 0) {
+		return;
+	}
 
 	using namespace OIIO;
 	using namespace VRayOSL;
@@ -152,7 +164,11 @@ void TexOSL::updateParamsIfNeeded() const
 
 		if (param->isoutput) {
 			if (param->isclosure) {
-				// TODO: error
+				if (MTL) {
+					self->m_outputName = param->name;
+				} else {
+					// TODO: error
+				}
 			} else {
 
 				if (param->type.vecsemantics == TypeDesc::COLOR) {
@@ -183,7 +199,7 @@ void TexOSL::updateParamsIfNeeded() const
 
 		if (param->validdefault) {
 			if (info.type != VOP_TYPE_UNDEF) {
-			// its one of (color, point, vector, normal)
+				// its one of (color, point, vector, normal)
 				for (int r = 0; r < 3; r++) {
 					info.numberDefault[r] = param->fdefault[r];
 				}
@@ -215,6 +231,10 @@ void TexOSL::updateParamsIfNeeded() const
 		if (info.type != VOP_TYPE_UNDEF) {
 			self->m_paramList.push_back(info);
 		}
+	}
+
+	if (MTL && m_outputName == "") {
+		self->m_outputName = "Ci";
 	}
 
 	for (int c = 0; c < prevParamCount; c++) {
@@ -300,13 +320,15 @@ void TexOSL::updateParamsIfNeeded() const
 	self->m_codeHash = sourceHash;
 }
 
-const char * TexOSL::getOutputName() const
+template <bool MTL>
+const char * OSLNodeBase<MTL>::getOutputName() const
 {
 	strcpy(m_outputNameBuff, m_outputName.c_str());
 	return m_outputNameBuff;
 }
 
-const char * TexOSL::outputLabel(unsigned idx) const
+template <bool MTL>
+const char * OSLNodeBase<MTL>::outputLabel(unsigned idx) const
 {
 	const int numBaseOut = NodeBase::getNumVisibleOutputs();
 	if (idx < numBaseOut) {
@@ -315,14 +337,15 @@ const char * TexOSL::outputLabel(unsigned idx) const
 
 	updateParamsIfNeeded();
 	if (m_outputName != "") {
-		return getOutputName();
+		return OSLNodeBase<MTL>::getOutputName();
 	} else {
 		Log::getLog().warning("outputLabel(%d) out of range", idx);
 	}
 	return "UNDEFINED";
 }
 
-const char* TexOSL::inputLabel(unsigned idx) const
+template <bool MTL>
+const char* OSLNodeBase<MTL>::inputLabel(unsigned idx) const
 {
 	const int numBaseInputs = NodeBase::orderedInputs();
 
@@ -341,21 +364,24 @@ const char* TexOSL::inputLabel(unsigned idx) const
 	return "UNDEFINED";
 }
 
-int TexOSL::getInputFromName(const UT_String &in) const
+template <bool MTL>
+int OSLNodeBase<MTL>::getInputFromName(const UT_String &in) const
 {
-	return getInputFromNameSubclass(in);
+	return OSLNodeBase<MTL>::getInputFromNameSubclass(in);
 }
 
-int	TexOSL::getOutputFromName(const UT_String &out) const
+template <bool MTL>
+int	OSLNodeBase<MTL>::getOutputFromName(const UT_String &out) const
 {
 	updateParamsIfNeeded();
 	if (out.equal(m_outputName)) {
-		return getNumVisibleOutputs() + 0; // this is index so number of outputs before us is our index
+		return OSLNodeBase<MTL>::getNumVisibleOutputs() + 0; // this is index so number of outputs before us is our index
 	}
 	return NodeBase::getOutputFromName(out);
 }
 
-void TexOSL::getInputNameSubclass(UT_String &in, int idx) const
+template <bool MTL>
+void OSLNodeBase<MTL>::getInputNameSubclass(UT_String &in, int idx) const
 {
 	const int numBaseInputs = NodeBase::orderedInputs();
 
@@ -363,11 +389,12 @@ void TexOSL::getInputNameSubclass(UT_String &in, int idx) const
 		NodeBase::getInputNameSubclass(in, idx);
 	} else {
 		// name and label are the same
-		in = inputLabel(idx);
+		in = OSLNodeBase<MTL>::inputLabel(idx);
 	}
 }
 
-void TexOSL::getOutputNameSubclass(UT_String &out, int idx) const
+template <bool MTL>
+void OSLNodeBase<MTL>::getOutputNameSubclass(UT_String &out, int idx) const
 {
 	if (idx >= NodeBase::getNumVisibleOutputs()) {
 		updateParamsIfNeeded();
@@ -381,7 +408,8 @@ void TexOSL::getOutputNameSubclass(UT_String &out, int idx) const
 	}
 }
 
-int TexOSL::getInputFromNameSubclass(const UT_String &in) const
+template <bool MTL>
+int OSLNodeBase<MTL>::getInputFromNameSubclass(const UT_String &in) const
 {
 	updateParamsIfNeeded();
 	const int numBaseInputs = NodeBase::orderedInputs();
@@ -394,7 +422,8 @@ int TexOSL::getInputFromNameSubclass(const UT_String &in) const
 	return NodeBase::getInputFromNameSubclass(in);
 }
 
-void TexOSL::getInputTypeInfoSubclass(VOP_TypeInfo &typeInfo, int idx)
+template <bool MTL>
+void OSLNodeBase<MTL>::getInputTypeInfoSubclass(VOP_TypeInfo &typeInfo, int idx)
 {
 	const int numBaseInputs = NodeBase::orderedInputs();
 
@@ -413,12 +442,25 @@ void TexOSL::getInputTypeInfoSubclass(VOP_TypeInfo &typeInfo, int idx)
 	}
 }
 
-void TexOSL::getOutputTypeInfoSubclass(VOP_TypeInfo &type_info, int idx)
+template <>
+VOP_Type OSLNodeBase<true>::getOutputType() const
+{
+	return VOP_TYPE_BSDF;
+}
+
+template <>
+VOP_Type OSLNodeBase<false>::getOutputType() const
+{
+	return VOP_TYPE_COLOR;
+}
+
+template <bool MTL>
+void OSLNodeBase<MTL>::getOutputTypeInfoSubclass(VOP_TypeInfo &type_info, int idx)
 {
 	if (idx >= NodeBase::getNumVisibleOutputs()) {
 		updateParamsIfNeeded();
 		if (m_outputName != "") {
-			type_info.setType(VOP_TYPE_COLOR);
+			type_info.setType(OSLNodeBase<MTL>::getOutputType());
 		} else {
 			Log::getLog().warning("Trying to get output type of non-existent output!");
 		}
@@ -427,7 +469,8 @@ void TexOSL::getOutputTypeInfoSubclass(VOP_TypeInfo &type_info, int idx)
 	}
 }
 
-void TexOSL::getAllowedInputTypeInfosSubclass(unsigned idx, VOP_VopTypeInfoArray &typeInfoList)
+template <bool MTL>
+void OSLNodeBase<MTL>::getAllowedInputTypeInfosSubclass(unsigned idx, VOP_VopTypeInfoArray &typeInfoList)
 {
 	const int numBaseInputs = NodeBase::orderedInputs();
 
@@ -435,28 +478,32 @@ void TexOSL::getAllowedInputTypeInfosSubclass(unsigned idx, VOP_VopTypeInfoArray
 		NodeBase::getAllowedInputTypeInfosSubclass(idx, typeInfoList);
 	} else {
 		VOP_TypeInfo typeInfo;
-		getInputTypeInfoSubclass(typeInfo, idx);
+		OSLNodeBase<MTL>::getInputTypeInfoSubclass(typeInfo, idx);
 		typeInfoList.append(typeInfo);
 	}
 }
 
-int TexOSL::customInputsCount() const
+template <bool MTL>
+int OSLNodeBase<MTL>::customInputsCount() const
 {
 	updateParamsIfNeeded();
 	return m_inputList.size();
 }
 
-unsigned TexOSL::getNumVisibleOutputs() const
+template <bool MTL>
+unsigned OSLNodeBase<MTL>::getNumVisibleOutputs() const
 {
-	return maxOutputs();
+	return OSLNodeBase<MTL>::maxOutputs();
 }
 
-unsigned TexOSL::getNumVisibleInputs() const
+template <bool MTL>
+unsigned OSLNodeBase<MTL>::getNumVisibleInputs() const
 {
-	return orderedInputs();
+	return OSLNodeBase<MTL>::orderedInputs();
 }
 
-unsigned TexOSL::orderedInputs() const
+template <bool MTL>
+unsigned OSLNodeBase<MTL>::orderedInputs() const
 {
 	int orderedInputs = NodeBase::orderedInputs();
 	orderedInputs += customInputsCount();
@@ -464,15 +511,18 @@ unsigned TexOSL::orderedInputs() const
 	return orderedInputs;
 }
 
-unsigned TexOSL::maxOutputs() const
+template <bool MTL>
+unsigned OSLNodeBase<MTL>::maxOutputs() const
 {
 	updateParamsIfNeeded();
 	return NodeBase::maxOutputs() + (m_outputName != "");
 }
 
-OP::VRayNode::PluginResult TexOSL::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
+template <bool MTL>
+OP::VRayNode::PluginResult OSLNodeBase<MTL>::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
 {
 	if (m_codeHash == 0) {
+		Log::getLog().warning("Exporting \"%s\" does not have valid OSL code.", getName().c_str());
 		return PluginResult::PluginResultContinue;
 	}
 	const fpreal t = exporter.getContext().getTime();
@@ -502,8 +552,7 @@ OP::VRayNode::PluginResult TexOSL::asPluginDesc(Attrs::PluginDesc &pluginDesc, V
 		case VOP_TYPE_COLOR:
 		case VOP_TYPE_VECTOR:
 		case VOP_TYPE_POINT:
-		case VOP_TYPE_NORMAL:
-			{
+		case VOP_TYPE_NORMAL: {
 				VRay::FloatList list; // OSL param is always list
 				for (int vi = 0; vi < 3; vi++) {
 					list.push_back(evalFloatInst(paramName.c_str(), &paramIdx, vi, t));

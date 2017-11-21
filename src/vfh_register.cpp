@@ -19,7 +19,7 @@
 #include "obj/obj_node_def.h"
 #include "sop/sop_node_def.h"
 #include "vop/vop_context.h"
-#include "vop/material/vop_PhoenixSim.h"
+#include "vop/vop_node_osl.h"
 #include "vop/brdf/vop_brdf_def.h"
 #include "vop/material/vop_mtl_def.h"
 #include "vop/texture/vop_texture_def.h"
@@ -296,6 +296,7 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", MtlMaterialID);
 	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", MtlMayaRamp);
 	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", MtlMulti);
+	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", MtlOSL);
 	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", MtlObjBBox);
 	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", MtlOverride);
 	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", MtlRenderStats);

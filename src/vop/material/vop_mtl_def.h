@@ -16,6 +16,7 @@
 #include "vop_GeomDisplacedMesh.h"
 #include "vop_GeomStaticSmoothedMesh.h"
 #include "vop_MaterialOutput.h"
+#include "vop_PhoenixSim.h"
 
 namespace VRayForHoudini {
 namespace VOP {

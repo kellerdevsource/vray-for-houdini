@@ -1,0 +1,8 @@
+{
+    name MtlOSL
+    label "OSL"
+    parmtag { spare_category "OSL" }
+    parmtag { vray_plugin "MtlOSL" }
+
+#include "$VRAY_UI_DS_PATH/vfh_osl_base.ds"
+}

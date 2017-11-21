@@ -187,7 +187,6 @@ set(HEADERS
 	vop/rc/vop_rc_container.h
 	vop/rc/vop_rc_def.h
 	vop/texture/vop_TexFalloff.h
-	vop/texture/vop_TexOSL.h
 	vop/texture/vop_TexGradRamp.h
 	vop/texture/vop_TexLayeredMax.h
 	vop/texture/vop_TexRemap.h
@@ -199,8 +198,11 @@ set(HEADERS
 )
 
 if (WITH_OSL)
-	list(APPEND SOURCES vop/texture/vop_TexOSL.cpp)
-	list(APPEND HEADERS vop/texture/vop_TexOSL.h)
+	list(APPEND SOURCES
+		vop/vop_node_osl.cpp)
+
+	list(APPEND HEADERS
+		vop/vop_node_osl.h)
 endif()
 
 if (WIN32)
