@@ -16,6 +16,15 @@ group {
         parmtag { "editor" "1" }
         parmtag { "editorlang" "vex" }
     }
+
+    parm {
+        name    "disable_label"
+        label   "Label"
+        type    toggle
+        invisible
+        nolabel
+        default { "1" }
+    }
 }
 
 multiparm {
@@ -33,10 +42,14 @@ multiparm {
 
     parm {
         name    "osl#label"
-        label   "Param #"
-        type    label
+        label   "Param name"
+        type    string
         default { "" }
+        disablewhen "{ disable_label == 1 }"
+        parmtag { "editor" "0" }
+        parmtag { "export_disable" "1" }
     }
+
     parm {
         name        "osl#color_param"
         label       "Color"
@@ -55,7 +68,7 @@ multiparm {
     }
     parm {
         name        "osl#float_param"
-        label       "Label"
+        label       "Float"
         type        float
         default     { "0" }
         range       { 0 10 }

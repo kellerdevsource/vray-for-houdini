@@ -256,7 +256,7 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 
 	int paramIdx = 1;
 	int inputIdx = 0;
-	for (const auto & param : m_paramList) {
+	for (const ParamInfo & param : m_paramList) {
 		if (param.type == VOP_TYPE_UNDEF) {
 			continue;
 		}
@@ -273,6 +273,10 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 			}
 		}
 
+		// Set the param name in string field becasue we cant change labels of params
+		self->setStringInst(UT_String(param.name.c_str(), param.name.length()),
+			CH_StringMeaning::CH_STRING_LITERAL, "osl#label", &paramIdx, 0, 0);
+
 		// show only the type this param is
 		const std::string & oslParamName = mapTypeToParam(param.type);
 		if (oslParamName != "") {
@@ -284,6 +288,8 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 					Log::getLog().warning("Failed to show %s", paramName);
 				}
 			}
+
+
 			// the appropriate param for the type
 			sprintf(paramName, "osl%d%s", paramIdx, oslParamName.c_str());
 			if (!self->setVisibleState(paramName, true)) {
@@ -316,9 +322,7 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 		paramIdx++;
 	}
 
-
 	self->addOrRemoveMultiparmInstance();
-
 	self->m_codeHash = sourceHash;
 }
 
