@@ -540,7 +540,13 @@ OP::VRayNode::PluginResult OSLNodeBase<MTL>::asPluginDesc(Attrs::PluginDesc &plu
 		}
 	}
 	pluginDesc.add(Attrs::PluginAttr("shader_file", oslCodePath.string()));
-	pluginDesc.add(Attrs::PluginAttr("output_color", m_outputName));
+	if (MTL) {
+		// TODO: if output is not closure, we can insert MTL single here
+		pluginDesc.add(Attrs::PluginAttr("output_closure", m_outputName));
+	} else {
+		// TODO: TexOSL supports output_alpha also
+		pluginDesc.add(Attrs::PluginAttr("output_color", m_outputName));
+	}
 	VRay::ValueList oslParams;
 	int inputIdx = 0;
 	for (int c = 0; c < m_paramList.size(); c++) {
