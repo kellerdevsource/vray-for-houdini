@@ -116,7 +116,6 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 	}
 
 	auto * self = SYSconst_cast(this);
-	const int prevParamCount = m_paramList.size();
 	self->m_codeHash = 0;
 	self->m_paramList.clear();
 	self->m_inputList.clear();
@@ -237,7 +236,9 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 		self->m_outputName = "Ci";
 	}
 
-	for (int c = 0; c < prevParamCount; c++) {
+	// TODO: find if there is way to query number of instances
+	//       or use max(prevCount, currentCount)
+	for (int c = 0; c < 100; c++) {
 		self->removeMultiParmItem("osl_input_params", c);
 	}
 
