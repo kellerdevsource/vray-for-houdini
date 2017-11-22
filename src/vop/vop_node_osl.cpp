@@ -111,6 +111,7 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 	MHash sourceHash;
 	MurmurHash3_x86_32(oslCode.buffer(), oslCode.length(), 42, &sourceHash);
 
+	// nothing changed since last run
 	if (sourceHash == m_codeHash) {
 		return;
 	}
