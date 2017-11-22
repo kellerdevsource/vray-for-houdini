@@ -416,7 +416,7 @@ int OSLNodeBase<MTL>::getInputFromNameSubclass(const UT_String &in) const
 	const int numBaseInputs = NodeBase::orderedInputs();
 	for (int c = 0; c < m_inputList.size(); c++) {
 		if (in.equal(m_inputList[c].c_str())) {
-			return c + numBaseInputs + 1;
+			return c + numBaseInputs;
 		}
 	}
 
