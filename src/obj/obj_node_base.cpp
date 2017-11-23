@@ -158,9 +158,8 @@ int LightNodeBase< VRayPluginID::LightDome >::GetMyPrmTemplate(Parm::PRMList &my
 	return myPrmList.size() - idx;
 }
 
-
 template<>
-OP::VRayNode::PluginResult LightNodeBase< VRayPluginID::LightMesh >::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext* /*parentContext*/)
+OP::VRayNode::PluginResult LightNodeBase< VRayPluginID::LightMesh >::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext* parentContext)
 {
 	const fpreal t = exporter.getContext().getTime();
 
@@ -180,10 +179,42 @@ OP::VRayNode::PluginResult LightNodeBase< VRayPluginID::LightMesh >::asPluginDes
 				Log::getLog().error("Geometry node export failed!");
 			}
 			else {
-				VRay::Plugin geometry = exporter.getObjectExporter().exportGeometry(*obj_node);
+				exporter.getObjectExporter().setupGeometryExport(*obj_node, *obj_node->getRenderSopPtr());
+				PrimitiveItem item = exporter.getObjectExporter().getInstancerItem(0);
+				VRay::Plugin geometry = item.geometry;
+				int instancesCount = exporter.getObjectExporter().getInstancerItemsCount();
+				if (instancesCount < 2) {// If there is only one instance, clear the list
+					exporter.getObjectExporter().clearInstancerItems();
+				}
+
 				if (geometry) {
 					pluginDesc.addAttribute(Attrs::PluginAttr("geometry", geometry));
+					pluginDesc.addAttribute(Attrs::PluginAttr("transform", item.tm));
 				}
+
+				OP_Node *target = parentContext->getTarget();
+				OBJ_Light *light = target->castToOBJNode()->castToOBJLight();
+
+				for (int i = 1; i < exporter.getObjectExporter().getInstancerItemsCount(); i++) {
+					Attrs::PluginDesc lightMeshDesc;
+
+					lightMeshDesc.pluginID = pluginDesc.pluginID;
+					lightMeshDesc.pluginName = pluginDesc.pluginName;
+					lightMeshDesc.pluginName += std::to_string(i);// Make sure that the new LightMesh has an unique name
+
+					PrimitiveItem tempItem = exporter.getObjectExporter().getInstancerItem(i);
+					VRay::Plugin test = tempItem.geometry;
+					
+					if (test) {
+						lightMeshDesc.addAttribute(Attrs::PluginAttr("geometry", test));
+						lightMeshDesc.addAttribute(Attrs::PluginAttr("transform", tempItem.tm));
+					}
+
+					parentContext->getExporter()->setAttrsFromOpNodePrms(lightMeshDesc, light);// Fill new LightMesh with settings of the original
+
+					exporter.exportPlugin(lightMeshDesc);
+				}
+				exporter.getObjectExporter().clearInstancerItems();
 			}
 		}
 	}

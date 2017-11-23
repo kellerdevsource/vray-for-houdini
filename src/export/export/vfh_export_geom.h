@@ -252,6 +252,16 @@ public:
 
 	VRay::Plugin exportDetailInstancer(OBJ_Node &objNode, const GU_Detail &gdp, const char *prefix);
 
+	VRay::VUtils::ValueRefList exportDetailInstancerRefList(OBJ_Node &objNode, const GU_Detail &gdp, const char *prefix);
+
+	int getInstancerItemsCount();
+
+	void clearInstancerItems();
+
+	PrimitiveItem ObjectExporter::getInstancerItem(int i);
+
+	VRay::Plugin ObjectExporter::getInstancerItemGeometry(int i);
+
 	void exportDetail(OBJ_Node &objNode, const GU_Detail &gdp, const GA_Range &primRange=GA_Range());
 
 	/// Export point particles data.
@@ -286,6 +296,8 @@ public:
 	/// Export SOP geometry.
 	/// @returns Geometry plugin.
 	VRay::Plugin exportGeometry(OBJ_Node &objNode, SOP_Node &sopNode);
+
+	void setupGeometryExport(OBJ_Node &objNode, SOP_Node &sopNode);
 
 	/// Export object.
 	/// @returns Node plugin.

@@ -843,6 +843,17 @@ static void appendSceneName(QString &userAttributes, const OP_Node &opNode)
 	userAttributes.append(sceneName[1].ptr());
 }
 
+void ObjectExporter::clearInstancerItems() {
+	instancerItems.clear();
+}
+
+int ObjectExporter::getInstancerItemsCount() {
+	return instancerItems.count();
+}
+
+PrimitiveItem ObjectExporter::getInstancerItem(int i) {
+	return instancerItems[i];
+}
 VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_Detail &gdp, const char *prefix)
 {
 	using namespace Attrs;
@@ -867,7 +878,7 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_D
 	const float instancerTime = ctx.hasMotionBlur ? ctx.mbParams.mb_start : ctx.getFloatFrame();
 
 	// +1 because first value is time.
-	VRay::VUtils::ValueRefList instances(numParticles+1);
+	VRay::VUtils::ValueRefList instances(numParticles + 1);
 	instances[instancesListIdx++].setDouble(instancerTime);
 
 	for (int i = 0; i < instancerItems.count(); ++i) {
@@ -889,7 +900,7 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_D
 
 		if (isNodeMatte(objNode)) {
 			PluginDesc mtlWrapperDesc(VRayExporter::getPluginName(&objNode, "MtlWrapper"),
-									  "MtlWrapper");
+				"MtlWrapper");
 
 			mtlWrapperDesc.addAttribute(PluginAttr("base_material", material));
 			mtlWrapperDesc.addAttribute(PluginAttr("matte_surface", 1));
@@ -903,7 +914,7 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_D
 
 		if (isNodePhantom(objNode)) {
 			PluginDesc mtlStatsDesc(VRayExporter::getPluginName(&objNode, "MtlRenderStats"),
-									"MtlRenderStats");
+				"MtlRenderStats");
 			mtlStatsDesc.addAttribute(PluginAttr("base_mtl", material));
 			mtlStatsDesc.addAttribute(PluginAttr("camera_visibility", 0));
 
@@ -1783,6 +1794,32 @@ void ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_Detail &gd
 	}
 }
 
+void ObjectExporter::setupGeometryExport(OBJ_Node &objNode, SOP_Node &sopNode) 
+{
+	const GU_DetailHandleAutoReadLock gdl(sopNode.getCookedGeoHandle(ctx));
+	if (!gdl.isValid()) {
+		return;
+	}
+
+	const GU_Detail &gdp = *gdl;
+
+	PrimitiveItem rootItem;
+	rootItem.primID = gdp.getUniqueId();
+
+	PrimContext primContext(&objNode, rootItem);
+
+	STY_Styler currentStyler = getStyler();
+	STY_Styler objectStyler = getStylerForObject(objNode, ctx.getTime());
+	primContext.styler = objectStyler.cloneWithAddedStyler(currentStyler, STY_TargetHandle());
+
+	pushContext(primContext);
+
+	const int isInstance = isInstanceNode(objNode);
+	exportDetail(objNode, gdp);
+
+	popContext();
+}
+
 VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode, SOP_Node &sopNode)
 {
 	const GU_DetailHandleAutoReadLock gdl(sopNode.getCookedGeoHandle(ctx));
@@ -1863,7 +1900,7 @@ VRay::Plugin ObjectExporter::exportLight(OBJ_Light &objLight)
 
 		ExportContext expContext(CT_OBJ, pluginExporter, objLight);
 		OP::VRayNode::PluginResult res = vrayNode->asPluginDesc(pluginDesc, pluginExporter, &expContext);
-
+		// check if it's a meshLight, create many MeshLights based on 
 		const int isDomeLight = vrayNode->getVRayPluginID() == getVRayPluginIDName(VRayPluginID::LightDome);
 
 		if (res == OP::VRayNode::PluginResultError) {
