@@ -4,15 +4,29 @@ group {
     label   "OSL Code"
 
     parm {
-        name    "source_file"
-        label   ".oso/.osl file"
+        name    "osl_source"
+        label   "OSL Source"
+        type    ordinal
+        default { "OSL" }
+        menu    {
+            "OSL"  "Inline OSL"
+            "PATH" "File path (.oso/.osl)"
+        }
+    }
+
+    parm {
+        name    "osl_file"
+        label   "Path to .oso/.osl file"
+        hidewhen "{ osl_source == \"OSL\" }"
         type    file
     }
+
     parm {
         name    "osl_code"
         label   "OSL Code"
         type    string
         default { "" }
+        hidewhen "{ osl_source == \"PATH\" }"
         parmtag { "editor" "1" }
         parmtag { "editorlang" "vex" }
     }

@@ -88,6 +88,8 @@ protected:
 	/// Check if the OSL code hash changed and if needed, re-parse it
 	void updateParamsIfNeeded() const;
 
+	void getOSLCode(UT_String & oslCode, bool &needCompile) const;
+
 	/// Get the name of the output color param
 	/// NOTE: Use this when the result pointer will be passed to houdini!!
 	///       This will copy the data in a buffer that will not move (reallocate)

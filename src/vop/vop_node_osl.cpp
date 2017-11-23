@@ -101,12 +101,47 @@ std::string mapTypeToParam(VOP_Type type)
 }
 
 template <bool MTL>
+void OSLNodeBase<MTL>::getOSLCode(UT_String & oslCode, bool &needCompile) const
+{
+	UT_String oslSourceLocation;
+	evalString(oslSourceLocation, "osl_source", 0, 0.f);
+	if (oslSourceLocation == "OSL") {
+		evalString(oslCode, "osl_code", 0, 0.f);
+		needCompile = true;
+	} else {
+		UT_String filePath;
+		evalString(filePath, "osl_file", 0, 0.f);
+		needCompile = filePath.endsWith(".osl");
+
+		// TODO: is it worth it to cache path + last change time
+		std::ifstream oslFile(filePath, std::ios::binary);
+		if (!oslFile) {
+			return;
+		}
+
+		oslFile.seekg(0, std::ios::end);
+		const int size = oslFile.tellg().seekpos();
+		std::unique_ptr<char[]> data = std::unique_ptr<char[]>(new char[size + 1]);
+		oslFile.seekg(0, std::ios::beg);
+		if (!oslFile.read(data.get(), size)) {
+			Log::getLog().error("Failed to read \"%s\" selected as osl source file", filePath.nonNullBuffer());
+			return;
+		}
+
+		data[size] = 0;
+		oslCode.adopt(data.release());
+	}
+}
+
+
+template <bool MTL>
 void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 {
 	using namespace Hash;
 
 	UT_String oslCode;
-	evalString(oslCode, "osl_code", 0, 0.f);
+	bool needCompile = false;
+	getOSLCode(oslCode, needCompile);
 
 	MHash sourceHash;
 	MurmurHash3_x86_32(oslCode.buffer(), oslCode.length(), 42, &sourceHash);
@@ -132,7 +167,7 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 	using namespace VRayOSL;
 
 	std::string osoCode;
-	{
+	if (needCompile) {
 		static VUtils::GetEnvVar APPSDK_PATH("VRAY_APPSDK", "");
 		OSLCompiler * compiler = OSLCompiler::create();
 		OSLCompilerInput settings;
@@ -151,6 +186,8 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 		osoCode.resize(size + 1, ' ');
 		const int written = compiler->get_compiled_shader_code(&osoCode[0], size + 1);
 		UT_ASSERT_MSG(written == size, "Subsequent calls to get_compiled_shader_code return different size");
+	} else {
+		osoCode = std::move(oslCode.toStdString());
 	}
 
 	OSLQuery query;
