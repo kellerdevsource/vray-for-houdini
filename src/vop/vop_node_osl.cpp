@@ -234,7 +234,7 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 				if (MTL) {
 					self->m_outputName = param->name;
 				} else {
-					// TODO: error
+					Log::getLog().warning("TexOSL \"%s\" does not support closure color as output parameter!", this->getName().nonNullBuffer());
 				}
 			} else {
 
@@ -520,10 +520,9 @@ void OSLNodeBase<MTL>::getInputTypeInfoSubclass(VOP_TypeInfo &typeInfo, int idx)
 		updateParamsIfNeeded();
 		typeInfo.setType(VOP_TYPE_COLOR);
 		const int sockIdx = idx - numBaseInputs;
-		// TODO: figgure out why Houdini queries 1 more input type than there are
-		//if (sockIdx >= customInputsCount()) {
-		//	Log::getLog().warning("getInputTypeInfoSubclass(%d [%d]) out of range", idx, sockIdx);
-		//}
+		if (sockIdx >= customInputsCount()) {
+			Log::getLog().warning("getInputTypeInfoSubclass(%d [%d]) out of range", idx, sockIdx);
+		}
 
 	}
 }
@@ -622,7 +621,7 @@ OP::VRayNode::PluginResult OSLNodeBase<MTL>::asPluginDesc(Attrs::PluginDesc &plu
 		{
 			std::ofstream tmpFile(oslCodePath.c_str(), std::ios::trunc | std::ios::binary);
 			if (!tmpFile || !tmpFile.write(oslCode.c_str(), oslCode.length())) {
-				// TODO: Log err
+				Log::getLog().error("Failed to save inline OSL code from \"%s\"", this->getName().nonNullBuffer());
 				return PluginResult::PluginResultError;
 			}
 		}
@@ -677,6 +676,8 @@ OP::VRayNode::PluginResult OSLNodeBase<MTL>::asPluginDesc(Attrs::PluginDesc &plu
 				evalStringInst(paramName.c_str(), &paramIdx, stringVal, 0, t);
 				paramValue = VRay::Value(stringVal.nonNullBuffer());
 			} else {
+				// TODO: if exporting .vrscene file, appsdk will export empty element here which is incorrect for .vrscene
+				//       it is possible to patch this by setting some dummy plugin that will return always black (to preserve default OSL behaviour)
 				paramValue = VRay::Value(exporter.exportConnectedVop(this, UT_String(m_inputList[inputIdx++].c_str(), true), parentContext));
 			}
 			break;
