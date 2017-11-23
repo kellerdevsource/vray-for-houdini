@@ -864,7 +864,7 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_D
 		objectID = objNode.evalInt(VFH_ATTRIB_OBJECTID, 0, ctx.getTime());
 	}
 
-	const float instancerTime = ctx.hasMotionBlur ? ctx.mbParams.mb_start : ctx.getFloatFrame();
+	const fpreal instancerTime = ctx.hasMotionBlur ? ctx.mbParams.mb_start : ctx.getTime();
 
 	// +1 because first value is time.
 	VRay::VUtils::ValueRefList instances(numParticles+1);
