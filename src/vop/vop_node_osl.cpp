@@ -597,18 +597,26 @@ OP::VRayNode::PluginResult OSLNodeBase<MTL>::asPluginDesc(Attrs::PluginDesc &plu
 	}
 	const fpreal t = exporter.getContext().getTime();
 
-	boost::filesystem::path oslCodePath = boost::filesystem::temp_directory_path() / boost::filesystem::unique_path("%%%%-%%%%-%%%%-%%%%.osl");
-
-	UT_String oslCode;
-	evalString(oslCode, "osl_code", 0, 0);
-	{
-		std::ofstream tmpFile(oslCodePath.c_str(), std::ios::trunc | std::ios::binary);
-		if (!tmpFile || !tmpFile.write(oslCode.c_str(), oslCode.length())) {
-			// TODO: Log err
-			return PluginResult::PluginResultError;
+	UT_String oslSource;
+	evalString(oslSource, "osl_source", 0, 0);
+	if (oslSource == "OSL") {
+		boost::filesystem::path oslCodePath = boost::filesystem::temp_directory_path() / boost::filesystem::unique_path("%%%%-%%%%-%%%%-%%%%.osl");
+		UT_String oslCode;
+		evalString(oslCode, "osl_code", 0, 0);
+		{
+			std::ofstream tmpFile(oslCodePath.c_str(), std::ios::trunc | std::ios::binary);
+			if (!tmpFile || !tmpFile.write(oslCode.c_str(), oslCode.length())) {
+				// TODO: Log err
+				return PluginResult::PluginResultError;
+			}
 		}
+		pluginDesc.add(Attrs::PluginAttr("shader_file", oslCodePath.string()));
+	} else {
+		UT_String oslPath;
+		evalString(oslPath, "osl_file", 0, 0);
+		pluginDesc.add(Attrs::PluginAttr("shader_file", oslPath.nonNullBuffer()));
 	}
-	pluginDesc.add(Attrs::PluginAttr("shader_file", oslCodePath.string()));
+
 	if (MTL) {
 		// TODO: if output is not closure, we can insert MTL single here
 		pluginDesc.add(Attrs::PluginAttr("output_closure", m_outputName));
