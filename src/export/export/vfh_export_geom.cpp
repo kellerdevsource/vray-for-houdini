@@ -851,9 +851,10 @@ int ObjectExporter::getInstancerItemsCount() {
 	return instancerItems.count();
 }
 
-PrimitiveItem ObjectExporter::getInstancerItem(int i) {
-	return instancerItems[i];
+PrimitiveItems& ObjectExporter::getInstancerItem() {
+	return instancerItems;
 }
+
 VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_Detail &gdp, const char *prefix)
 {
 	using namespace Attrs;
@@ -1855,6 +1856,16 @@ VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode, SOP_Node &sopNode
 	return geometry;
 }
 
+int ObjectExporter::setupGeometryExport(OBJ_Node &objNode) {
+	SOP_Node *renderSOP = objNode.getRenderSopPtr();
+	if (!renderSOP) {
+		return 1;
+	}
+
+	setupGeometryExport(objNode, *renderSOP);
+	return 0;
+}
+
 VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode)
 {
 	SOP_Node *renderSOP = objNode.getRenderSopPtr();
@@ -1900,7 +1911,6 @@ VRay::Plugin ObjectExporter::exportLight(OBJ_Light &objLight)
 
 		ExportContext expContext(CT_OBJ, pluginExporter, objLight);
 		OP::VRayNode::PluginResult res = vrayNode->asPluginDesc(pluginDesc, pluginExporter, &expContext);
-		// check if it's a meshLight, create many MeshLights based on 
 		const int isDomeLight = vrayNode->getVRayPluginID() == getVRayPluginIDName(VRayPluginID::LightDome);
 
 		if (res == OP::VRayNode::PluginResultError) {

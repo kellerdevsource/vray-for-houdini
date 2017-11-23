@@ -251,16 +251,17 @@ public:
 	void processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, const GA_Range &primRange=GA_Range());
 
 	VRay::Plugin exportDetailInstancer(OBJ_Node &objNode, const GU_Detail &gdp, const char *prefix);
-
-	VRay::VUtils::ValueRefList exportDetailInstancerRefList(OBJ_Node &objNode, const GU_Detail &gdp, const char *prefix);
-
+	
+	/// Get number of instances currently held
+	/// @returns Number of held instances
 	int getInstancerItemsCount();
 
+	/// Clears the container
 	void clearInstancerItems();
 
-	PrimitiveItem ObjectExporter::getInstancerItem(int i);
-
-	VRay::Plugin ObjectExporter::getInstancerItemGeometry(int i);
+	/// Obtain the reference to the container
+	/// @returns Reference to InstancerItems container
+	PrimitiveItems& getInstancerItem();
 
 	void exportDetail(OBJ_Node &objNode, const GU_Detail &gdp, const GA_Range &primRange=GA_Range());
 
@@ -288,6 +289,10 @@ public:
 	/// @param geometry Geometry plugin instance.
 	/// @returns Node plugin instance.
 	VRay::Plugin getNodeForInstancerGeometry(VRay::Plugin geometry, VRay::Plugin objMaterial);
+	
+	/// Run needed operations in order to export geometry export, without exporting the geometry
+	/// @returns error code: 0-success, 1-SOP_Node cast returned nullptr
+	int ObjectExporter::setupGeometryExport(OBJ_Node &objNode);
 
 	/// Export object geometry.
 	/// @returns Geometry plugin.
