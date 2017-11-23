@@ -143,7 +143,9 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 	bool needCompile = false;
 	getOSLCode(oslCode, needCompile);
 
+	auto * self = SYSconst_cast(this);
 	if (oslCode.length() <= 0) {
+		self->m_codeHash = 0;
 		return;
 	}
 
@@ -155,7 +157,6 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 		return;
 	}
 
-	auto * self = SYSconst_cast(this);
 	self->m_codeHash = 0;
 	self->m_paramList.clear();
 	self->m_inputList.clear();
