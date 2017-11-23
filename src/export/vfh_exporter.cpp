@@ -2044,7 +2044,6 @@ int VRayExporter::renderFrame(int locked)
 		}
 		else {
 			VRay::VRayExportSettings expSettings;
-			expSettings.framesInSeparateFiles = m_rop->evalInt("exp_separatefiles", 0, t);
 			expSettings.useHexFormat = m_rop->evalInt("exp_hexdata", 0, t);
 			expSettings.compressed = m_rop->evalInt("exp_compressed", 0, t);
 
