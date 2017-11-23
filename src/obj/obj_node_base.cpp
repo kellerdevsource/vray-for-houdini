@@ -159,7 +159,7 @@ int LightNodeBase< VRayPluginID::LightDome >::GetMyPrmTemplate(Parm::PRMList &my
 }
 
 template<>
-OP::VRayNode::PluginResult LightNodeBase< VRayPluginID::LightMesh >::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext* parentContext)
+OP::VRayNode::PluginResult LightNodeBase< VRayPluginID::LightMesh >::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext* /*parentContext*/)
 {
 	const fpreal t = exporter.getContext().getTime();
 
@@ -184,8 +184,6 @@ OP::VRayNode::PluginResult LightNodeBase< VRayPluginID::LightMesh >::asPluginDes
 				}
 
 				PrimitiveItems& items = exporter.getObjectExporter().getInstancerItem();
-				OP_Node *target = parentContext->getTarget();
-				OBJ_Light *light = target->castToOBJNode()->castToOBJLight();
 
 				for (int i = 0; i < items.count(); i++) {
 					Attrs::PluginDesc lightMeshDesc;
@@ -201,7 +199,7 @@ OP::VRayNode::PluginResult LightNodeBase< VRayPluginID::LightMesh >::asPluginDes
 						lightMeshDesc.addAttribute(Attrs::PluginAttr("transform", items[i].tm));
 					}
 
-					exporter.setAttrsFromOpNodePrms(lightMeshDesc, light); // Fill new LightMesh with settings of the original
+					exporter.setAttrsFromOpNodePrms(lightMeshDesc, this); // Fill new LightMesh with settings of the original
 
 					exporter.exportPlugin(lightMeshDesc);
 				}
