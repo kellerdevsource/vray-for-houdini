@@ -103,13 +103,9 @@ multiparm {
     }
     parm {
         name        "osl#bool_param"
-        label       "Toggle"
-        type        ordinal
+        label       "Set"
+        type        toggle
         default     { "0" }
-        menu        {
-            "0"  "Off"
-            "1"  "On"
-        }
     }
 
 }
