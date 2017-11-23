@@ -179,46 +179,38 @@ OP::VRayNode::PluginResult LightNodeBase< VRayPluginID::LightMesh >::asPluginDes
 				Log::getLog().error("Geometry node export failed!");
 			}
 			else {
-				if (!exporter.getObjectExporter().setupGeometryExport(*obj_node)) {
+				if (!exporter.getObjectExporter().exportGeometry(*obj_node, true)) {
 					return OP::VRayNode::PluginResult::PluginResultError;
 				}
 
 				PrimitiveItems& items = exporter.getObjectExporter().getInstancerItem();
-				VRay::Plugin geometry = items[0].geometry;
-
-				if (geometry) {
-					pluginDesc.addAttribute(Attrs::PluginAttr("geometry", geometry));
-					pluginDesc.addAttribute(Attrs::PluginAttr("transform", items[0].tm));
-				}
-
 				OP_Node *target = parentContext->getTarget();
 				OBJ_Light *light = target->castToOBJNode()->castToOBJLight();
 
-				for (int i = 1; i < exporter.getObjectExporter().getInstancerItemsCount(); i++) {
+				for (int i = 0; i < items.count(); i++) {
 					Attrs::PluginDesc lightMeshDesc;
 
 					lightMeshDesc.pluginID = pluginDesc.pluginID;
 					lightMeshDesc.pluginName = pluginDesc.pluginName;
 					lightMeshDesc.pluginName += std::to_string(i); // Make sure that the new LightMesh has an unique name
 
-					PrimitiveItems& tempItem = exporter.getObjectExporter().getInstancerItem();
-					VRay::Plugin geometry = tempItem[i].geometry;
+					VRay::Plugin geometry = items[i].geometry;
 					
 					if (geometry) {
 						lightMeshDesc.addAttribute(Attrs::PluginAttr("geometry", geometry));
-						lightMeshDesc.addAttribute(Attrs::PluginAttr("transform", tempItem[i].tm));
+						lightMeshDesc.addAttribute(Attrs::PluginAttr("transform", items[i].tm));
 					}
 
 					exporter.setAttrsFromOpNodePrms(lightMeshDesc, light); // Fill new LightMesh with settings of the original
 
 					exporter.exportPlugin(lightMeshDesc);
 				}
-				exporter.getObjectExporter().clearInstancerItems();
+				items.clear();
 			}
 		}
 	}
 
-	return OP::VRayNode::PluginResultContinue;
+	return OP::VRayNode::PluginResultSuccess;
 }
 
 

@@ -843,14 +843,6 @@ static void appendSceneName(QString &userAttributes, const OP_Node &opNode)
 	userAttributes.append(sceneName[1].ptr());
 }
 
-void ObjectExporter::clearInstancerItems() {
-	instancerItems.clear();
-}
-
-int ObjectExporter::getInstancerItemsCount() {
-	return instancerItems.count();
-}
-
 PrimitiveItems& ObjectExporter::getInstancerItem() {
 	return instancerItems;
 }
@@ -1795,33 +1787,7 @@ void ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_Detail &gd
 	}
 }
 
-void ObjectExporter::setupGeometryExport(OBJ_Node &objNode, SOP_Node &sopNode) 
-{
-	const GU_DetailHandleAutoReadLock gdl(sopNode.getCookedGeoHandle(ctx));
-	if (!gdl.isValid()) {
-		return;
-	}
-
-	const GU_Detail &gdp = *gdl;
-
-	PrimitiveItem rootItem;
-	rootItem.primID = gdp.getUniqueId();
-
-	PrimContext primContext(&objNode, rootItem);
-
-	STY_Styler currentStyler = getStyler();
-	STY_Styler objectStyler = getStylerForObject(objNode, ctx.getTime());
-	primContext.styler = objectStyler.cloneWithAddedStyler(currentStyler, STY_TargetHandle());
-
-	pushContext(primContext);
-
-	const int isInstance = isInstanceNode(objNode);
-	exportDetail(objNode, gdp);
-
-	popContext();
-}
-
-VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode, SOP_Node &sopNode)
+VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode, SOP_Node &sopNode, bool isLightMesh)
 {
 	const GU_DetailHandleAutoReadLock gdl(sopNode.getCookedGeoHandle(ctx));
 	if (!gdl.isValid()) {
@@ -1849,24 +1815,13 @@ VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode, SOP_Node &sopNode
 		exportDetail(objNode, gdp);
 	}
 
-	VRay::Plugin geometry = exportDetailInstancer(objNode, gdp, "Instancer");
+	VRay::Plugin geometry = isLightMesh ? VRay::Plugin() : exportDetailInstancer(objNode, gdp, "Instancer") ;
 
 	popContext();
 
 	return geometry;
 }
-
-int ObjectExporter::setupGeometryExport(OBJ_Node &objNode) {
-	SOP_Node *renderSOP = objNode.getRenderSopPtr();
-	if (!renderSOP) {
-		return 1;
-	}
-
-	setupGeometryExport(objNode, *renderSOP);
-	return 0;
-}
-
-VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode)
+VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode, bool isLightMesh)
 {
 	SOP_Node *renderSOP = objNode.getRenderSopPtr();
 	if (!renderSOP) {
@@ -1884,7 +1839,7 @@ VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode)
 		return exportVRaySOP(objNode, *renderSOP);
 	}
 
-	return exportGeometry(objNode, *renderSOP);
+	return exportGeometry(objNode, *renderSOP, isLightMesh);
 }
 
 int ObjectExporter::isLightEnabled(OBJ_Node &objLight) const

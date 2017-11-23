@@ -251,16 +251,9 @@ public:
 	void processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, const GA_Range &primRange=GA_Range());
 
 	VRay::Plugin exportDetailInstancer(OBJ_Node &objNode, const GU_Detail &gdp, const char *prefix);
-	
-	/// Get number of instances currently held
-	/// @returns Number of held instances
-	int getInstancerItemsCount();
 
-	/// Clears the container
-	void clearInstancerItems();
-
-	/// Obtain the reference to the container
-	/// @returns Reference to InstancerItems container
+	/// Obtain the reference to the container.
+	/// @returns Reference to InstancerItems container.
 	PrimitiveItems& getInstancerItem();
 
 	void exportDetail(OBJ_Node &objNode, const GU_Detail &gdp, const GA_Range &primRange=GA_Range());
@@ -290,17 +283,17 @@ public:
 	/// @returns Node plugin instance.
 	VRay::Plugin getNodeForInstancerGeometry(VRay::Plugin geometry, VRay::Plugin objMaterial);
 	
-	/// Run needed operations in order to export geometry export, without exporting the geometry
-	/// @returns error code: 0-success, 1-SOP_Node cast returned nullptr
+	/// Run needed operations in order to export geometry export, without exporting the geometry.
+	/// @returns error code: 0-success, 1-SOP_Node cast returned nullptr.
 	int ObjectExporter::setupGeometryExport(OBJ_Node &objNode);
 
 	/// Export object geometry.
 	/// @returns Geometry plugin.
-	VRay::Plugin exportGeometry(OBJ_Node &objNode);
+	VRay::Plugin exportGeometry(OBJ_Node &objNode, bool isLightMesh = false);
 
 	/// Export SOP geometry.
 	/// @returns Geometry plugin.
-	VRay::Plugin exportGeometry(OBJ_Node &objNode, SOP_Node &sopNode);
+	VRay::Plugin exportGeometry(OBJ_Node &objNode, SOP_Node &sopNode, bool isLightMesh = false);
 
 	void setupGeometryExport(OBJ_Node &objNode, SOP_Node &sopNode);
 
