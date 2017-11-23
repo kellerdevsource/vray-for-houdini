@@ -143,6 +143,10 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 	bool needCompile = false;
 	getOSLCode(oslCode, needCompile);
 
+	if (oslCode.length() <= 0) {
+		return;
+	}
+
 	MHash sourceHash;
 	MurmurHash3_x86_32(oslCode.buffer(), oslCode.length(), 42, &sourceHash);
 

@@ -77,6 +77,7 @@ protected:
 	/// The output type (VOP_TYPE_COLOR)
 	virtual void getOutputTypeInfoSubclass(VOP_TypeInfo &type_info, int idx) VRAY_OVERRIDE;
 
+	/// Get the output type depending on template parameter (Mtl or Tex)
 	VOP_Type getOutputType() const;
 
 	/// This returns only VOP_TYPE_COLOR, because this TexOSL only supports texture interface
@@ -88,6 +89,9 @@ protected:
 	/// Check if the OSL code hash changed and if needed, re-parse it
 	void updateParamsIfNeeded() const;
 
+	/// Get the OSL code (either from the UI source field or from selected filepath)
+	/// @param oslCode [out] - the osl code will be put here
+	/// @param needCompile [out] - true if code is osl source and needs to be compiled
 	void getOSLCode(UT_String & oslCode, bool &needCompile) const;
 
 	/// Get the name of the output color param
