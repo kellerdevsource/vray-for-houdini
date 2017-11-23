@@ -196,6 +196,29 @@ private:
 	/// Build channel mapping, should be called after update to cache or ui mappings
 	void buildMapping();
 
+public:
+	/// Returns "phx_channel_map" intrinsic value.
+	void getPhxChannelMap(UT_StringArray &value) const {
+		if (!m_options.hasOption("phx_channel_map")) {
+			return;
+		}
+		value = m_options.getOptionSArray("phx_channel_map");
+	}
+
+	/// Returns "phx_channel_map" intrinsic array size.
+	exint getPhxChannelMapSize() const {
+		if (!m_options.hasOption("phx_channel_map")) {
+			return 0;
+		}
+		return m_options.getOptionSArray("phx_channel_map").size();
+	}
+
+	/// Sets "phx_channel_map" intrinsic value.
+	/// @param value Value for "phx_channel_map" intrinsic.
+	void setPhxChannelMap(const UT_StringArray &value) {
+		m_options.setOptionSArray("phx_channel_map", value);
+	}
+
 private:
 	mutable VolumeCache    m_dataCache; ///< Data cache used to cache last 10 volumes loaded, mutable(needs to be updated from const functions not changing other (immutable)members)
 	mutable VolumeCacheData m_currentData;
