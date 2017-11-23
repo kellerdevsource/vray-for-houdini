@@ -24,21 +24,6 @@
 using namespace VRayForHoudini;
 using namespace VOP;
 
-template <>
-void OSLNodeBase<false>::setPluginType()
-{
-	pluginType = VRayPluginType::TEXTURE;
-	pluginID = "TexOSL";
-}
-
-template <>
-void OSLNodeBase<true>::setPluginType()
-{
-	pluginType = VRayPluginType::MATERIAL;
-	pluginID = "MtlOSL";
-}
-
-
 namespace {
 
 class OSLErrorHandle: public VRayOpenImageIO::ErrorHandler
@@ -78,6 +63,7 @@ const std::string OSL_PARAM_TYPE_LIST[] = {
 	"vector_param",
 	"float_param",
 	"int_param",
+	"string_param",
 };
 
 const int OSL_PARAM_TYPE_COUNT = sizeof(OSL_PARAM_TYPE_LIST) / sizeof(OSL_PARAM_TYPE_LIST[0]);
@@ -89,7 +75,9 @@ static const std::map<VOP_Type, std::string> OSL_PARAM_MAP = {
 	{VOP_TYPE_NORMAL, OSL_PARAM_TYPE_LIST[1]},
 	{VOP_TYPE_INTEGER, OSL_PARAM_TYPE_LIST[2]},
 	{VOP_TYPE_FLOAT, OSL_PARAM_TYPE_LIST[3]},
+	{VOP_TYPE_STRING, OSL_PARAM_TYPE_LIST[4]},
 };
+
 std::string mapTypeToParam(VOP_Type type)
 {
 	auto iter = OSL_PARAM_MAP.find(type);
@@ -98,7 +86,34 @@ std::string mapTypeToParam(VOP_Type type)
 	}
 	return iter->second;
 }
+
+template <bool MTL>
+void parseMetadata(const VRayOSL::OSLQuery::Parameter *param, typename OSLNodeBase<MTL>::ParamInfo & info)
+{
+	using namespace OIIO;
+	using namespace VRayOSL;
+	using namespace std;
+
+	using Widget = OSLNodeBase<MTL>::ParamInfo::WidgetType;
+	info.widget = Widget::Unspecified;
+
+	for (const auto & item : param->metadata) {
+		if (param->type.aggregate == TypeDesc::SCALAR
+			&& param->type.basetype == TypeDesc::STRING
+			&& !stricmp(item.name.c_str(), "widget")) {
+
+			if (item.sdefault[0] == "mapper") {
+				info.widget = Widget::Menu;
+			} else if (item.sdefault[0] == "checkBox") {
+				info.widget = Widget::Checkbox;
+			} else if (item.sdefault[0] == "string") {
+				info.widget = Widget::String;
+			}
+		}
+	}
 }
+
+} // namespace
 
 template <bool MTL>
 void OSLNodeBase<MTL>::getOSLCode(UT_String & oslCode, bool &needCompile) const
@@ -132,7 +147,6 @@ void OSLNodeBase<MTL>::getOSLCode(UT_String & oslCode, bool &needCompile) const
 		oslCode.adopt(data.release());
 	}
 }
-
 
 template <bool MTL>
 void OSLNodeBase<MTL>::updateParamsIfNeeded() const
@@ -203,6 +217,9 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 
 	for (int c = 0; c < query.nparams(); c++) {
 		const OSLQuery::Parameter *param = query.getparam(c);
+		ParamInfo info = {param->name, VOP_TYPE_UNDEF};
+		info.validDefault = param->validdefault;
+		parseMetadata<MTL>(param, info);
 
 		if (param->isoutput) {
 			if (param->isclosure) {
@@ -221,8 +238,6 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 			}
 			continue;
 		}
-		ParamInfo info = {param->name, VOP_TYPE_UNDEF};
-		info.validDefault = param->validdefault;
 
 		switch (param->type.vecsemantics) {
 		case TypeDesc::COLOR:
@@ -266,7 +281,10 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 				if (param->validdefault) {
 					info.stringDefault = param->sdefault[0];
 				}
-				self->m_inputList.push_back(param->name);
+				if (info.widget != ParamInfo::String) {
+					// if the metadata type is string, this means it is not plugin input so don't add to inputs
+					self->m_inputList.push_back(param->name);
+				}
 			}
 		}
 
@@ -299,7 +317,8 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 	int paramIdx = 1;
 	int inputIdx = 0;
 	for (const ParamInfo & param : m_paramList) {
-		if (param.type == VOP_TYPE_UNDEF) {
+		// strings, that are not string widgets are inputs, so dont create params for them
+		if (param.type == VOP_TYPE_UNDEF || (param.type == VOP_TYPE_STRING && param.widget != ParamInfo::String)) {
 			continue;
 		}
 
@@ -355,7 +374,10 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 					self->setFloat(paramName, 0, 0, param.numberDefault[0]);
 					break;
 				case VOP_TYPE_STRING:
-					self->setString(UT_String(param.stringDefault.c_str(), true), CH_STRING_LITERAL, m_inputList[inputIdx++].c_str(), 0, 0);
+					// if metadata widget is String, this is not input
+					if (param.widget == ParamInfo::String) {
+						self->setString(UT_String(param.stringDefault.c_str(), true), CH_STRING_LITERAL, paramName, 0, 0);
+					}
 					break;
 				}
 			}
@@ -621,7 +643,14 @@ OP::VRayNode::PluginResult OSLNodeBase<MTL>::asPluginDesc(Attrs::PluginDesc &plu
 			paramValue = VRay::Value(static_cast<float>(evalFloatInst(paramName.c_str(), &paramIdx, 0, t)));
 			break;
 		case VOP_TYPE_STRING:
-			paramValue = VRay::Value(exporter.exportConnectedVop(this, UT_String(m_inputList[inputIdx++].c_str(), true), parentContext));
+			// if widget is String, this is not input
+			if (m_paramList[c].widget == ParamInfo::String) {
+				paramValue = VRay::Value(exporter.exportConnectedVop(this, UT_String(m_inputList[inputIdx++].c_str(), true), parentContext));
+			} else {
+				UT_String stringVal;
+				evalStringInst(paramName.c_str(), &paramIdx, stringVal, 0, t);
+				paramValue = VRay::Value(stringVal.nonNullBuffer());
+			}
 			break;
 		}
 		oslParams.push_back(paramValue);
@@ -629,4 +658,18 @@ OP::VRayNode::PluginResult OSLNodeBase<MTL>::asPluginDesc(Attrs::PluginDesc &plu
 	pluginDesc.add(Attrs::PluginAttr("input_parameters", oslParams));
 
 	return PluginResult::PluginResultContinue;
+}
+
+template <>
+void OSLNodeBase<false>::setPluginType()
+{
+	pluginType = VRayPluginType::TEXTURE;
+	pluginID = "TexOSL";
+}
+
+template <>
+void OSLNodeBase<true>::setPluginType()
+{
+	pluginType = VRayPluginType::MATERIAL;
+	pluginID = "MtlOSL";
 }

@@ -65,6 +65,13 @@ multiparm {
     }
 
     parm {
+        name        "osl#string_param"
+        label       "String"
+        type        string
+        default     { "" }
+        range       { 0 1 }
+    }
+    parm {
         name        "osl#color_param"
         label       "Color"
         type        color

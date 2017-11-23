@@ -25,8 +25,16 @@ public:
 	/// Description of a single OSL parameter
 	struct ParamInfo
 	{
+		enum WidgetType {
+			Unspecified,
+			Menu, // mapper
+			Checkbox, // checkBox
+			String, // string (readonly, and not plugin input)
+		};
+
 		std::string name; ///< The name of the parameter
 		VOP_Type type; ///< VOP_Type of the parameter (color, vector, point, normal, float, int or string)
+		WidgetType widget; ///< If metadata is present in source, this will hold the type
 		bool validDefault; ///< True if the default value is taken from code
 		double numberDefault[3]; ///< stores (r,g,b) or (x,y,z) or (float) or (int)
 		std::string stringDefault; ///< stores the string default value
