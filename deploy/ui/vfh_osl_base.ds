@@ -101,6 +101,16 @@ multiparm {
         default     { "0" }
         range       { 0 10 }
     }
+    parm {
+        name        "osl#bool_param"
+        label       "Toggle"
+        type        ordinal
+        default     { "0" }
+        menu        {
+            "0"  "Off"
+            "1"  "On"
+        }
+    }
 
 }
 

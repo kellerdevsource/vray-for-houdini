@@ -64,27 +64,35 @@ const std::string OSL_PARAM_TYPE_LIST[] = {
 	"float_param",
 	"int_param",
 	"string_param",
+	"bool_param",
 };
 
 const int OSL_PARAM_TYPE_COUNT = sizeof(OSL_PARAM_TYPE_LIST) / sizeof(OSL_PARAM_TYPE_LIST[0]);
 
-static const std::map<VOP_Type, std::string> OSL_PARAM_MAP = {
-	{VOP_TYPE_COLOR, OSL_PARAM_TYPE_LIST[0]},
-	{VOP_TYPE_VECTOR, OSL_PARAM_TYPE_LIST[1]},
-	{VOP_TYPE_POINT, OSL_PARAM_TYPE_LIST[1]},
-	{VOP_TYPE_NORMAL, OSL_PARAM_TYPE_LIST[1]},
-	{VOP_TYPE_INTEGER, OSL_PARAM_TYPE_LIST[2]},
-	{VOP_TYPE_FLOAT, OSL_PARAM_TYPE_LIST[3]},
-	{VOP_TYPE_STRING, OSL_PARAM_TYPE_LIST[4]},
-};
-
-std::string mapTypeToParam(VOP_Type type)
+template <bool MTL>
+std::string mapTypeToParam(const typename OSLNodeBase<MTL>::ParamInfo & info)
 {
-	auto iter = OSL_PARAM_MAP.find(type);
-	if (iter == OSL_PARAM_MAP.end()) {
-		return "";
+	// keep in-sync with OSL_PARAM_TYPE_LIST and vfh_osl_base.ds
+	switch (info.type) {
+		case VOP_TYPE_COLOR:
+			return "color_param";
+		case VOP_TYPE_VECTOR:
+		case VOP_TYPE_POINT:
+		case VOP_TYPE_NORMAL:
+			return "vector_param";
+		case VOP_TYPE_INTEGER:
+			if (info.widget == OSLNodeBase<MTL>::ParamInfo::Checkbox) {
+				return "bool_param";
+			} else {
+				return "int_param";
+			}
+		case VOP_TYPE_FLOAT:
+			return "float_param";
+		case VOP_TYPE_STRING:
+			return "string_param";
+		default:
+			return "";
 	}
-	return iter->second;
 }
 
 template <bool MTL>
@@ -98,8 +106,8 @@ void parseMetadata(const VRayOSL::OSLQuery::Parameter *param, typename OSLNodeBa
 	info.widget = Widget::Unspecified;
 
 	for (const auto & item : param->metadata) {
-		if (param->type.aggregate == TypeDesc::SCALAR
-			&& param->type.basetype == TypeDesc::STRING
+		if (item.type.aggregate == TypeDesc::SCALAR
+			&& item.type.basetype == TypeDesc::STRING
 			&& !stricmp(item.name.c_str(), "widget")) {
 
 			if (item.sdefault[0] == "mapper") {
@@ -318,7 +326,7 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 	int inputIdx = 0;
 	for (const ParamInfo & param : m_paramList) {
 		// strings, that are not string widgets are inputs, so dont create params for them
-		if (param.type == VOP_TYPE_UNDEF || (param.type == VOP_TYPE_STRING && param.widget != ParamInfo::String)) {
+		if (param.type == VOP_TYPE_UNDEF) {
 			continue;
 		}
 
@@ -334,12 +342,20 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 			}
 		}
 
+		if (param.type == VOP_TYPE_STRING && param.widget != ParamInfo::String) {
+			paramIdx++;
+			// for string params that are not widget string, just leave param here
+			// so input's value is put on correct index
+			continue;
+		}
+
 		// Set the param name in string field becasue we cant change labels of params
 		self->setStringInst(UT_String(param.name.c_str(), param.name.length()),
 			CH_StringMeaning::CH_STRING_LITERAL, "osl#label", &paramIdx, 0, 0);
 
 		// show only the type this param is
-		const std::string & oslParamName = mapTypeToParam(param.type);
+		const std::string & oslParamName = mapTypeToParam<MTL>(param);
+
 		if (oslParamName != "") {
 			char paramName[256] = {0};
 			for (int f = 0; f < (oslParamCount - OSL_PARAM_TYPE_COUNT); f++) {
@@ -630,7 +646,11 @@ OP::VRayNode::PluginResult OSLNodeBase<MTL>::asPluginDesc(Attrs::PluginDesc &plu
 		const int paramIdx = c + 1;
 		oslParams.push_back(VRay::Value(m_paramList[c].name));
 
-		const std::string & paramName = "osl#" + mapTypeToParam(m_paramList[c].type);
+		const std::string & paramTypeName = mapTypeToParam<MTL>(m_paramList[c]);
+		if (paramTypeName == "") {
+			continue;
+		}
+		const std::string & paramName = "osl#" + paramTypeName;
 		VRay::Value paramValue;
 		switch (m_paramList[c].type) {
 		case VOP_TYPE_COLOR:
@@ -653,11 +673,11 @@ OP::VRayNode::PluginResult OSLNodeBase<MTL>::asPluginDesc(Attrs::PluginDesc &plu
 		case VOP_TYPE_STRING:
 			// if widget is String, this is not input
 			if (m_paramList[c].widget == ParamInfo::String) {
-				paramValue = VRay::Value(exporter.exportConnectedVop(this, UT_String(m_inputList[inputIdx++].c_str(), true), parentContext));
-			} else {
 				UT_String stringVal;
 				evalStringInst(paramName.c_str(), &paramIdx, stringVal, 0, t);
 				paramValue = VRay::Value(stringVal.nonNullBuffer());
+			} else {
+				paramValue = VRay::Value(exporter.exportConnectedVop(this, UT_String(m_inputList[inputIdx++].c_str(), true), parentContext));
 			}
 			break;
 		}
