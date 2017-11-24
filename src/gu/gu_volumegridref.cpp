@@ -269,8 +269,6 @@ VRayVolumeGridRef::VRayVolumeGridRef()
 	, m_channelDirty(false)
 	, m_doFrameReplace(false)
 {
-	//GU_Detail *gdp = new GU_Detail;
-	//getDetail().allocateAndSet(gdp, true);
 	memset(getChannelDataRanges().data(), 0, DataRangeMapSize);
 	this->initDataCache();
 }
