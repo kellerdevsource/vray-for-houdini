@@ -109,8 +109,6 @@ protected:
 	const char * getOutputName() const;
 
 protected:
-	// TODO: Add support for .osl/.oso file path
-
 	Hash::MHash m_codeHash; ///< Hash of the OSL code
 	std::vector<std::string> m_inputList; ///< Names of all inputs (string params)
 	OSLParamList m_paramList; ///< All params from OSL code (inputs and params)
