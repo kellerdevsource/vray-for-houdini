@@ -179,11 +179,13 @@ OP::VRayNode::PluginResult LightNodeBase< VRayPluginID::LightMesh >::asPluginDes
 				Log::getLog().error("Geometry node export failed!");
 			}
 			else {
-				if (!exporter.getObjectExporter().exportGeometry(*obj_node, true)) {
+				PrimitiveItems items;
+
+				if (exporter.getObjectExporter().exportGeometry(*obj_node, items)) {
 					return OP::VRayNode::PluginResult::PluginResultError;
 				}
 
-				PrimitiveItems& items = exporter.getObjectExporter().getInstancerItem();
+				//PrimitiveItems& items = exporter.getObjectExporter().getInstancerItem();
 
 				for (int i = 0; i < items.count(); i++) {
 					Attrs::PluginDesc lightMeshDesc;

@@ -1787,7 +1787,7 @@ void ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_Detail &gd
 	}
 }
 
-VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode, SOP_Node &sopNode, bool isLightMesh)
+VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode, SOP_Node &sopNode)
 {
 	const GU_DetailHandleAutoReadLock gdl(sopNode.getCookedGeoHandle(ctx));
 	if (!gdl.isValid()) {
@@ -1815,13 +1815,45 @@ VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode, SOP_Node &sopNode
 		exportDetail(objNode, gdp);
 	}
 
-	VRay::Plugin geometry = isLightMesh ? VRay::Plugin() : exportDetailInstancer(objNode, gdp, "Instancer") ;
+	VRay::Plugin geometry = exportDetailInstancer(objNode, gdp, "Instancer") ;
 
 	popContext();
 
 	return geometry;
 }
-VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode, bool isLightMesh)
+
+int ObjectExporter::exportGeometry(OBJ_Node &objNode, PrimitiveItems &items) {
+	SOP_Node *renderSOP = objNode.getRenderSopPtr();
+	if (!renderSOP) {
+		return 1;
+	}
+
+	const GU_DetailHandleAutoReadLock gdl(renderSOP->getCookedGeoHandle(ctx));
+	if (!gdl.isValid()) {
+		return 2;
+	}
+
+	const GU_Detail &gdp = *gdl;
+
+	PrimitiveItem rootItem;
+	rootItem.primID = gdp.getUniqueId();
+
+	PrimContext primContext(&objNode, rootItem);
+
+	STY_Styler currentStyler = getStyler();
+	STY_Styler objectStyler = getStylerForObject(objNode, ctx.getTime());
+	primContext.styler = objectStyler.cloneWithAddedStyler(currentStyler, STY_TargetHandle());
+
+	pushContext(primContext);
+	exportDetail(objNode, gdp);
+	popContext();
+	
+	instancerItems.swap(items);
+
+	return 0;
+}
+
+VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode)
 {
 	SOP_Node *renderSOP = objNode.getRenderSopPtr();
 	if (!renderSOP) {
@@ -1839,7 +1871,7 @@ VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode, bool isLightMesh)
 		return exportVRaySOP(objNode, *renderSOP);
 	}
 
-	return exportGeometry(objNode, *renderSOP, isLightMesh);
+	return exportGeometry(objNode, *renderSOP);
 }
 
 int ObjectExporter::isLightEnabled(OBJ_Node &objLight) const

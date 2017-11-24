@@ -282,18 +282,16 @@ public:
 	/// @param geometry Geometry plugin instance.
 	/// @returns Node plugin instance.
 	VRay::Plugin getNodeForInstancerGeometry(VRay::Plugin geometry, VRay::Plugin objMaterial);
-	
-	/// Run needed operations in order to export geometry export, without exporting the geometry.
-	/// @returns error code: 0-success, 1-SOP_Node cast returned nullptr.
-	int ObjectExporter::setupGeometryExport(OBJ_Node &objNode);
+
+	int exportGeometry(OBJ_Node &objNode, PrimitiveItems &items);
 
 	/// Export object geometry.
 	/// @returns Geometry plugin.
-	VRay::Plugin exportGeometry(OBJ_Node &objNode, bool isLightMesh = false);
+	VRay::Plugin exportGeometry(OBJ_Node &objNode);
 
 	/// Export SOP geometry.
 	/// @returns Geometry plugin.
-	VRay::Plugin exportGeometry(OBJ_Node &objNode, SOP_Node &sopNode, bool isLightMesh = false);
+	VRay::Plugin exportGeometry(OBJ_Node &objNode, SOP_Node &sopNode);
 
 	void setupGeometryExport(OBJ_Node &objNode, SOP_Node &sopNode);
 
