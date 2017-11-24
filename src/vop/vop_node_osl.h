@@ -22,11 +22,12 @@ class OSLNodeBase
 	: public VOP::NodeBase
 {
 public:
+
 	/// Description of a single OSL parameter
 	struct ParamInfo
 	{
 		enum WidgetType {
-			Unspecified,
+			Unspecified, // for all that don't have metadata
 			Menu, // mapper
 			Checkbox, // checkBox
 			String, // string (readonly, and not plugin input)

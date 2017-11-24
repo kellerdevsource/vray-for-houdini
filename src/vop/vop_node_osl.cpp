@@ -65,6 +65,7 @@ const std::string OSL_PARAM_TYPE_LIST[] = {
 	"int_param",
 	"string_param",
 	"bool_param",
+	"menu_param",
 };
 
 const int OSL_PARAM_TYPE_COUNT = sizeof(OSL_PARAM_TYPE_LIST) / sizeof(OSL_PARAM_TYPE_LIST[0]);
@@ -81,7 +82,9 @@ std::string mapTypeToParam(const typename OSLNodeBase<MTL>::ParamInfo & info)
 		case VOP_TYPE_NORMAL:
 			return "vector_param";
 		case VOP_TYPE_INTEGER:
-			if (info.widget == OSLNodeBase<MTL>::ParamInfo::Checkbox) {
+			if (info.widget== OSLNodeBase<MTL>::ParamInfo::Menu) {
+				return "menu_param";
+			} else if (info.widget == OSLNodeBase<MTL>::ParamInfo::Checkbox) {
 				return "bool_param";
 			} else {
 				return "int_param";
@@ -95,6 +98,16 @@ std::string mapTypeToParam(const typename OSLNodeBase<MTL>::ParamInfo & info)
 	}
 }
 
+typedef std::vector<VRayOSL::OSLQuery::Parameter> param_list;
+typedef param_list::const_iterator param_iter;
+
+param_iter findMetaParam(const param_list & list, const char * key)
+{
+	return std::find_if(list.begin(), list.end(), [key](const VRayOSL::OSLQuery::Parameter & param) {
+		return !stricmp(key, param.name.c_str());
+	});
+}
+
 template <bool MTL>
 void parseMetadata(const VRayOSL::OSLQuery::Parameter *param, typename OSLNodeBase<MTL>::ParamInfo & info)
 {
@@ -102,21 +115,29 @@ void parseMetadata(const VRayOSL::OSLQuery::Parameter *param, typename OSLNodeBa
 	using namespace VRayOSL;
 	using namespace std;
 
-	using Widget = OSLNodeBase<MTL>::ParamInfo::WidgetType;
+	using Widget = typename OSLNodeBase<MTL>::ParamInfo::WidgetType;
 	info.widget = Widget::Unspecified;
 
-	for (const auto & item : param->metadata) {
-		if (item.type.aggregate == TypeDesc::SCALAR
-			&& item.type.basetype == TypeDesc::STRING
-			&& !stricmp(item.name.c_str(), "widget")) {
+	auto notFound = param->metadata.end();
 
-			if (item.sdefault[0] == "mapper") {
+	auto widgetItem = findMetaParam(param->metadata, "widget");
+	if (widgetItem != notFound) {
+		if (   param->type.aggregate == TypeDesc::SCALAR
+			&& param->type.basetype == TypeDesc::INT
+			&& !stricmp(widgetItem->sdefault[0].c_str(), "mapper")) {
+
+			// mapper needs options string which is in this format:  key1:value1|key2:value2|key3:value3
+			auto mapperItem = findMetaParam(param->metadata, "options");
+			if (mapperItem != notFound) {
+				// only set menu type here, so we can display options
 				info.widget = Widget::Menu;
-			} else if (item.sdefault[0] == "checkBox") {
-				info.widget = Widget::Checkbox;
-			} else if (item.sdefault[0] == "string") {
-				info.widget = Widget::String;
+				// save the string default, which is the formatted string with keys and values
+				info.stringDefault = mapperItem->sdefault[0];
 			}
+		} else if (!stricmp(widgetItem->sdefault[0].c_str(), "checkBox")) {
+			info.widget = Widget::Checkbox;
+		} else if (!stricmp(widgetItem->sdefault[0].c_str(), "string")) {
+			info.widget = Widget::String;
 		}
 	}
 }
@@ -384,7 +405,13 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 					}
 					break;
 				case VOP_TYPE_INTEGER:
-					self->setInt(paramName, 0, 0, param.numberDefault[0]);
+					if (param.widget == ParamInfo::Menu) {
+						const std::string & menuParamItems = paramName + std::string("_items");
+						// set osl#menu_param_items to the items string
+						self->setString(UT_String(param.stringDefault.c_str(), true), CH_STRING_LITERAL, menuParamItems.c_str(), 0, 0);
+					} else {
+						self->setInt(paramName, 0, 0, param.numberDefault[0]);
+					}
 					break;
 				case VOP_TYPE_FLOAT:
 					self->setFloat(paramName, 0, 0, param.numberDefault[0]);
@@ -663,9 +690,26 @@ OP::VRayNode::PluginResult OSLNodeBase<MTL>::asPluginDesc(Attrs::PluginDesc &plu
 				paramValue = VRay::Value(list);
 			}
 			break;
-		case VOP_TYPE_INTEGER:
-			paramValue = VRay::Value(static_cast<int>(evalIntInst(paramName.c_str(), &paramIdx, 0, t)));
+		case VOP_TYPE_INTEGER: {
+			int value = -1;
+			// for integers that are menu, we must read the key of the selected menu option
+			// as it was obtained from code
+			if (m_paramList[c].widget == ParamInfo::Menu) {
+				UT_String stringVal;
+				evalStringInst(paramName.c_str(), &paramIdx, stringVal, 0, t);
+				if (stringVal.isInteger(1)) {
+					value = stringVal.toInt();
+				} else {
+					value = evalIntInst(paramName.c_str(), &paramIdx, 0, t);
+				}
+
+			} else {
+				value = evalIntInst(paramName.c_str(), &paramIdx, 0, t);
+			}
+			paramValue = VRay::Value(value);
+
 			break;
+		}
 		case VOP_TYPE_FLOAT:
 			paramValue = VRay::Value(static_cast<float>(evalFloatInst(paramName.c_str(), &paramIdx, 0, t)));
 			break;

@@ -108,6 +108,31 @@ multiparm {
         default     { "0" }
     }
 
+    parm {
+        name        "osl#menu_param_items"
+        label       "String #"
+        type        string
+        invisible
+        default     { "" }
+        range       { 0 1 }
+    }
+
+    parm {
+        name    "osl#menu_param"
+        label   "Menu"
+        type    ordinal
+        default { "" }
+        menu    {
+            [ "menuItems = []" ]
+            [ "parmName = 'osl%dmenu_param_items' % kwargs['script_multiparm_index']" ]
+            [ "itemsString = kwargs['node'].parm(parmName).evalAsString()" ]
+            [ "for pair in itemsString.split('|'):" ]
+            [ "    menuItems.extend(reversed(pair.split(':')))" ]
+            [ "return menuItems if len(menuItems) % 2 == 0 else []" ]
+            language    python
+        }
+    }
+
 }
 
 
