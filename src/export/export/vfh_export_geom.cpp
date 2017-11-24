@@ -296,49 +296,84 @@ void ObjectExporter::clearPrimPluginCache()
 	pluginCache.instancerNodeWrapper.clear();
 }
 
-DisplacementType ObjectExporter::hasSubdivApplied(OBJ_Node &objNode) const
+SubdivInfo ObjectExporter::getSubdivInfoFromMatNode(OP_Node &matNode)
 {
-	// Here we check if subdivision has been assigned to this node
-	// at render time. V-Ray subdivision is implemented in 2 ways:
-	// 1. as a custom VOP available in V-Ray material context
-	// 2. as spare parameters added to the object node.
+	if (isOpType(matNode, "VRayNodeGeomDisplacedMesh")) {
+		return SubdivInfo(&matNode, SubdivisionType::displacement);
+	}
+	if (isOpType(matNode, "VRayNodeGeomStaticSmoothedMesh")) {
+		return SubdivInfo(&matNode, SubdivisionType::subdivision);
+	}
+	return SubdivInfo();
+}
 
-	const bool hasDispl = objNode.hasParm("vray_displ_use") && objNode.evalInt("vray_displ_use", 0, 0.0);
-	if (!hasDispl)
-		return displacementTypeNone;
+SubdivInfo ObjectExporter::getSubdivInfoFromVRayMaterialOutput(OP_Node &matNode)
+{
+	SubdivInfo subdivInfo;
 
-	DisplacementType displType = static_cast<DisplacementType>(objNode.evalInt("vray_displ_type", 0, 0.0));
-	switch (displType) {
-		case displacementTypeFromMat: {
-			UT_String shopPath;
-			objNode.evalString(shopPath, "vray_displ_shoppath", 0, 0.0);
+	OP_Node *dispNode = getVRayNodeFromOp(matNode, vfhSocketMaterialOutputSurface);
+	if (dispNode) {
+		subdivInfo = getSubdivInfoFromMatNode(*dispNode);
+	}
 
-			OP_Node *shop = getOpNodeFromPath(shopPath, 0.0);
-			if (shop) {
-				if (getVRayNodeFromOp(*shop, "Surface", "GeomStaticSmoothedMesh")) {
-					displType = displacementTypeSmooth;
-				}
-				else if (getVRayNodeFromOp(*shop, "Surface", "GeomDisplacedMesh")) {
-					displType = displacementTypeDisplace;
+	return subdivInfo;
+}
+
+static SubdivisionType subdivisionTypeFromMenu(ObjSubdivMenu subdivMenuItem)
+{
+	switch (subdivMenuItem) {
+		case ObjSubdivMenu::displacement: return SubdivisionType::displacement;
+		case ObjSubdivMenu::subdivision:  return SubdivisionType::subdivision;
+		default:
+			return SubdivisionType::none;
+	}
+}
+
+SubdivInfo ObjectExporter::getSubdivInfo(OBJ_Node &objNode, OP_Node *matNode)
+{
+	SubdivInfo subdivInfo;
+
+	if (!Parm::isParmExist(objNode, "vray_displ_use")) {
+		if (matNode) {
+			subdivInfo = getSubdivInfoFromVRayMaterialOutput(*matNode);
+		}
+	}
+	else {
+		const ObjSubdivMenu subdivMenuItem = static_cast<ObjSubdivMenu>(objNode.evalInt("vray_displ_type", 0, 0.0));
+		switch (subdivMenuItem) {
+			case ObjSubdivMenu::fromMat: {
+				UT_String matPath;
+				objNode.evalString(matPath, "vray_displ_shoppath", 0, 0.0);
+
+				if (!matPath.isstring()) {
+					Log::getLog().warning("Material displacement path is not set for \"%s\"",
+										  objNode.getFullPath().buffer());
 				}
 				else {
-					Log::getLog().warning("Compatible displacement node is not found at the \"Geometry\" input.");
-					displType = displacementTypeNone;
+					OP_Node *shopNode = getOpNodeFromPath(matPath, 0.0);
+					if (shopNode) {
+						subdivInfo = getSubdivInfoFromVRayMaterialOutput(*shopNode);
+					}
+
+					if (!subdivInfo.hasSubdiv()) {
+						Log::getLog().warning("Compatible displacement node is not found for \"%s\"",
+							                    shopNode->getFullPath().buffer());
+					}
 				}
+				break;
 			}
-			break;
-		}
-		case displacementTypeDisplace:
-		case displacementTypeSmooth: {
-			break;
-		}
-		default: {
-			displType = displacementTypeNone;
-			break;
+			case ObjSubdivMenu::displacement:
+			case ObjSubdivMenu::subdivision: {
+				subdivInfo.parmHolder = &objNode;
+				subdivInfo.type = subdivisionTypeFromMenu(subdivMenuItem);
+				break;
+			}
+			default:
+				break;
 		}
 	}
 
-	return displType;
+	return subdivInfo;
 }
 
 int ObjectExporter::isNodeVisible(OP_Node &rop, OBJ_Node &objNode, fpreal t)
@@ -988,9 +1023,6 @@ void ObjectExporter::exportPolyMesh(OBJ_Node &objNode, const GU_Detail &gdp, con
 	if (!polyMeshExporter.hasData())
 		return;
 
-	const DisplacementType subdivType = hasSubdivApplied(objNode);
-	const bool hasSubdivApplied = subdivType != displacementTypeNone;
-
 	// The top of the stack contains the final tranform.
 	const PrimitiveItem topItem(primContextStack.back().parentItem);
 
@@ -1000,7 +1032,9 @@ void ObjectExporter::exportPolyMesh(OBJ_Node &objNode, const GU_Detail &gdp, con
 	item.vel = topItem.vel;
 	item.primID = topItem.primID ^ keyDataPoly;
 
-	polyMeshExporter.setSubdivApplied(hasSubdivApplied);
+	const SubdivInfo &subdivInfo = getSubdivInfo(objNode, item.primMaterial.matNode);
+
+	polyMeshExporter.setSubdivApplied(subdivInfo.hasSubdiv());
 	polyMeshExporter.setDetailID(item.primID);
 
 	// This will set/update material/override.
@@ -1013,8 +1047,8 @@ void ObjectExporter::exportPolyMesh(OBJ_Node &objNode, const GU_Detail &gdp, con
 									   "GeomStaticMesh");
 			if (polyMeshExporter.asPluginDesc(gdp, geomDesc)) {
 				item.geometry = pluginExporter.exportPlugin(geomDesc);
-				if (item.geometry && hasSubdivApplied) {
-					item.geometry = pluginExporter.exportDisplacement(objNode, item.geometry);
+				if (item.geometry) {
+					item.geometry = pluginExporter.exportDisplacement(objNode, item.geometry, subdivInfo);
 				}
 			}
 

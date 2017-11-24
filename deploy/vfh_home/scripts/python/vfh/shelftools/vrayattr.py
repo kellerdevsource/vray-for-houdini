@@ -42,7 +42,6 @@ def _getPluginParmTemplates(pluginName):
     # This will make attribute manes prefixed with plugin ID name.
     pluginPrefixDef = "#define PREFIX \"%s_\"\n\n" % (pluginName)
     dsContents = pluginPrefixDef + open(pluginDs, 'r').read()
-    print dsContents
 
     pluginPtg.setToDialogScript(dsContents)
 
@@ -104,7 +103,7 @@ def _addDisplacementControls(ptg, vrayFolder):
         'tags' : {
             'spare_category': 'vray'
         },
-        'menu_labels' : (["Displacement", "Subdivision", "From SHOP"]),
+        'menu_labels' : (["Displacement", "Subdivision", "From Material"]),
         'default_value' : 0,
         'conditionals' : {
             hou.parmCondType.DisableWhen : "{ vray_displ_use == 0 }",
@@ -133,13 +132,13 @@ def _addDisplacementControls(ptg, vrayFolder):
         },
     }))
 
-    ptg.appendToFolder(vrayFolder, hou.FolderParmTemplate("vray_displ_folder_shopnet", "From SHOP", **{
+    ptg.appendToFolder(vrayFolder, hou.FolderParmTemplate("vray_displ_folder_shopnet", "From Material", **{
         'parm_templates' : ([
-            hou.StringParmTemplate("vray_displ_shoppath", "SHOP", 1, **{
+            hou.StringParmTemplate("vray_displ_shoppath", "Material", 1, **{
                 'string_type' : hou.stringParmType.NodeReference,
                 'tags' : {
                     'spare_category': 'vray',
-                    'opfilter': '!!SHOP!!',
+                    'opfilter': '!!VOP!!',
                     'oprelative': '.',
                 }
             })

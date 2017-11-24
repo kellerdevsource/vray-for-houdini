@@ -11,10 +11,7 @@
 #ifndef VRAY_FOR_HOUDINI_VOP_NODE_MTL_DEF_H
 #define VRAY_FOR_HOUDINI_VOP_NODE_MTL_DEF_H
 
-#include "vop_node_base.h"
 #include "vop_MtlMulti.h"
-#include "vop_GeomDisplacedMesh.h"
-#include "vop_GeomStaticSmoothedMesh.h"
 #include "vop_MaterialOutput.h"
 
 namespace VRayForHoudini {
@@ -38,6 +35,9 @@ MTL_DEF(MtlStreakFade)
 MTL_DEF(MtlVRmat)
 MTL_DEF(MtlWrapper)
 MTL_DEF(MtlWrapperMaya)
+
+MTL_DEF(GeomDisplacedMesh)
+MTL_DEF(GeomStaticSmoothedMesh)
 
 } // namespace VOP
 } // namespace VRayForHoudini
