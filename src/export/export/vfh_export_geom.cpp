@@ -962,7 +962,7 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_D
 
 	Attrs::PluginDesc instancer2(boost::str(objGeomNameFmt % prefix % gdp.getUniqueId() % objNode.getName().buffer()),
 								 "Instancer2");
-	instancer2.addAttribute(Attrs::PluginAttr("instances", instances));
+	instancer2.addAttribute(Attrs::PluginAttr("instances", instances, pluginExporter.isAnimation()));
 	instancer2.addAttribute(Attrs::PluginAttr("use_additional_params", true));
 	instancer2.addAttribute(Attrs::PluginAttr("use_time_instancing", false));
 
