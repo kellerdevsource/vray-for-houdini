@@ -32,10 +32,6 @@ include_directories(utils)
 # Qt has JSON modules only in > 5.x version and we need to support 4.x also.
 include_directories(${CMAKE_SOURCE_DIR}/thirdparty/rapidjson/include)
 
-if (WITH_OSL AND SDK_PATH)
-	include_directories(${SDK_PATH}/osl/include)
-endif()
-
 set(EXPORTER_SOURCES
 	export/export/vfh_export_geom.cpp
 	export/export/vfh_export_hair.cpp
@@ -197,7 +193,7 @@ set(HEADERS
 	vop/vop_node_base.h
 )
 
-if (WITH_OSL)
+if (VRayOSL_FOUND)
 	list(APPEND SOURCES
 		vop/vop_node_osl.cpp)
 
@@ -274,20 +270,12 @@ vfh_generate_gu_options(vray_for_houdini_exporter vray_for_houdini)
 
 target_link_libraries(${PROJECT_NAME} vray_for_houdini_exporter)
 
-if (WITH_OSL AND SDK_PATH)
-	set(OSL_LIBS vrayoslquery
-	             vrayoslexec
-	             vrayoslcomp
-	             vrayopenimageio)
-
-	target_link_libraries(vray_for_houdini ${OSL_LIBS})
-endif()
-
 
 link_with_vray_sdk(${PROJECT_NAME})
 link_with_vray(${PROJECT_NAME})
 link_with_vray_appsdk(${PROJECT_NAME})
 link_with_boost(${PROJECT_NAME})
+link_with_vray_osl(${PROJECT_NAME})
 
 if (Phoenix_FOUND)
 	target_link_libraries(${PROJECT_NAME} ${Phoenix_LIBS})

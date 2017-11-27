@@ -27,7 +27,7 @@ option(WITH_TESTS            "Run tests"                      OFF)
 option(WITH_TEST_APP         "Build AppSDK test applications" OFF)
 
 option(WITH_LAUNCHER         "Build development launcher"     OFF)
-option(WITH_OSL              "Enable OSL integration"         OFF)
+
 
 option(INSTALL_RELEASE "Install release build for distribution" OFF)
 if(INSTALL_RELEASE AND NOT "${CMAKE_BUILD_TYPE}" STREQUAL "Release" AND "${CMAKE_GENERATOR}" STREQUAL "Ninja")
@@ -61,15 +61,13 @@ include(vfh_houdini)
 include(vfh_vrayappsdk)
 include(vfh_vraysdk)
 include(vfh_phoenix)
-
-if (WITH_OSL AND SDK_PATH)
-	link_directories(${SDK_PATH}/osl/lib)
-endif()
+include(vfh_vray_osl)
 
 use_houdini_sdk()
 use_vray_sdk()
 use_vray_appsdk()
 use_phx_sdk()
+use_vray_osl()
 
 set_compiler_flags()
 
