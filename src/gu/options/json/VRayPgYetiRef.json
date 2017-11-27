@@ -1,0 +1,12 @@
+{
+    "class_name" : "VRayPgYetiRef",
+    "intrinsics" : [
+        { "type" : "BOOL", "name" : "dynamicHairTesselation", "value" : true },
+        { "type" : "CHAR", "name" : "file", "value" : "" },
+        { "type" : "CHAR", "name" : "imageSearchPath", "value" : "" },
+        { "type" : "FLOAT", "name" : "density", "value" : 1.0 },
+        { "type" : "FLOAT", "name" : "length", "value" : 1.0 },
+        { "type" : "FLOAT", "name" : "segmentLength", "value" : 4.0 },
+        { "type" : "FLOAT", "name" : "width", "value" : 1.0 }
+    ]
+}

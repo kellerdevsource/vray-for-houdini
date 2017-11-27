@@ -113,7 +113,7 @@
             label   "Anim Length"
             help    "Specifies the length of the animation sequence"
             type    integer
-            default { "0" }
+            default { "100" }
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "VRayScene" }
             parmtag { "vray_pluginattr" "anim_length" }

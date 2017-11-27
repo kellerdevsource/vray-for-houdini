@@ -1,0 +1,24 @@
+{
+    "class_name" : "VRayVolumeGridRef",
+    "intrinsics" : [
+        { "type" : "CHAR",  "name" : "cache_path", "value" : "" },
+        { "type" : "CHAR",  "name" : "cache_path_prefix", "value" : "" },
+        { "type" : "CHAR",  "name" : "cache_path_suffix", "value" : "" },
+        { "type" : "CHAR",  "name" : "current_cache_path", "value" :"" },
+        { "type" : "CHAR",  "name" : "phx_channel_map", "value" : "", "size" : 0 },
+        { "type" : "CHAR",  "name" : "usrchmap", "value" : "" },
+        { "type" : "FLOAT", "name" : "current_frame", "value" : 0 },
+        { "type" : "FLOAT", "name" : "t2f", "value" : 1 },
+        { "type" : "FLOAT", "name" : "play_speed", "value" : 1 },
+        { "type" : "INT",   "name" : "blend_method", "value" : 0 },
+        { "type" : "INT",   "name" : "flip_yz", "value" : 0 },
+        { "type" : "INT",   "name" : "frame_number_width", "value" : 1 },
+        { "type" : "INT",   "name" : "load_nearest", "value" : 0 },
+        { "type" : "INT",   "name" : "anim_mode", "value" : 0 },
+        { "type" : "INT",   "name" : "cache_load", "value" : 1 },
+        { "type" : "INT",   "name" : "loop_overlap", "value" : 0 },
+        { "type" : "INT",   "name" : "max_length", "value" : 0 },
+        { "type" : "INT",   "name" : "play_at", "value" : 1 },
+        { "type" : "INT",   "name" : "read_offset", "value" : 1 }
+    ]
+}

@@ -98,7 +98,7 @@ void SOP::VRayProxy::updatePrimitive(const OP_Context &context)
 	evalString(objectPath, "object_path", 0, 0.0);
 	primOptions.setOptionS("object_path", objectPath);
 
-	primOptions.setOptionI("lod", true ? LOD_PREVIEW : evalInt("loadtype", 0, 0.0));
+	primOptions.setOptionI("lod", true ? LOD_PREVIEW : evalInt("loadtype", 0, 0.0)); // XXX: Revert after fix.
 	primOptions.setOptionF("current_frame", previewMeshAnimated ? context.getFloatFrame() : 0.0f);
 #else
 	UT_String path;
@@ -153,7 +153,14 @@ void SOP::VRayProxy::updatePrimitive(const OP_Context &context)
 	if (m_primOptions != primOptions) {
 		m_primOptions = primOptions;
 
-		m_primPacked->implementation()->update(m_primOptions);
+		GU_PackedImpl *primImpl = m_primPacked->implementation();
+		if (primImpl) {
+#if HDK_16_5
+			primImpl->update(pack, options);
+#else
+			primImpl->update(m_primOptions);
+#endif
+		}
 	}
 }
 
@@ -167,6 +174,7 @@ OP_ERROR SOP::VRayProxy::cookMySop(OP_Context &context)
 		// Set the location of the packed primitive point.
 		const UT_Vector3 pivot(0.0, 0.0, 0.0);
 		m_primPacked->setPivot(pivot);
+
 		gdp->setPos3(m_primPacked->getPointOffset(0), pivot);
 	}
 

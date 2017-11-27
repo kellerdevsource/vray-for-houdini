@@ -110,12 +110,4 @@ groupsimple {
         disablewhen "{ render_export_mode == \"No Export\" }"
         hidewhen "{ exp_compressed == 1 }"
     }
-
-    parm {
-        name    "exp_separatefiles"
-        label   "Export Each Frame In Separate File"
-        type    toggle
-        default { "0" }
-        disablewhen "{ render_export_mode == \"No Export\" }"
-    }
 }

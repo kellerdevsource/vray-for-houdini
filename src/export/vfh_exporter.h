@@ -241,21 +241,18 @@ public:
 	/// @retval V-Ray plugin created for that node
 	VRay::Plugin exportVRayClipper(OBJ_Node &clipperNode);
 
-	/// Fill in displacement/subdivision render properties for the given node
-	/// @param obj_node[in] - the OBJ_Geometry node
-	/// @param pluginDesc[out] - diplacement/subdivision plugin description
-	int exportDisplacementFromOBJ(OBJ_Node &obj_node, Attrs::PluginDesc &pluginDesc);
-
 	/// Tries to set displacement texture from path attribute.
 	/// Otherwise texture connected to socket will be used if found.
-	int setDisplacementTextureFromPath(OP_Node &opNode, Attrs::PluginDesc &pluginDesc, const std::string &parmNamePrefix);
+	int exportDisplacementTexture(OP_Node &opNode, Attrs::PluginDesc &pluginDesc, const std::string &parmNamePrefix);
+
+	int exportDisplacementFromSubdivInfo(const SubdivInfo &subdivInfo, Attrs::PluginDesc &pluginDesc);
 
 	/// Export the given geomtry with displacement/subdivision at render time
 	/// @param obj_node[in] - the OBJ_Geometry node owner of displacement/subdivision
 	///        render properties
 	/// @param geomPlugin[in] - geometry to displace/subdivide
 	/// @retval V-Ray displacement/subdivision plugin
-	VRay::Plugin exportDisplacement(OBJ_Node &obj_node, VRay::Plugin &geomPlugin);
+	VRay::Plugin exportDisplacement(OBJ_Node &obj_node, const VRay::Plugin &geomPlugin, const SubdivInfo &subdivInfo);
 
 	/// Export VOP node
 	/// @param opNode VOP node instance.
@@ -263,8 +260,9 @@ public:
 	VRay::Plugin exportVop(OP_Node *opNode, ExportContext *parentContext=nullptr);
 
 	/// Export Make transform VOP node
+	/// @param rotate Rotate the transformation matrix so that Y-axis is up.
 	/// @retval V-Ray transform for that node
-	VRay::Transform exportTransformVop(VOP_Node &vop_node, ExportContext *parentContext = nullptr);
+	VRay::Transform exportTransformVop(VOP_Node &vop_node, ExportContext *parentContext = nullptr, bool rotate = false);
 
 	/// Export V-Ray material from SHOP network or VOP node.
 	/// @param node SHOP or VOP node.
@@ -400,9 +398,6 @@ public:
 
 	/// Set image width and height
 	void setRenderSize(int w, int h);
-
-	/// Export RT engine settings
-	void setSettingsRtEngine();
 
 	/// Get current export context
 	VRayOpContext &getContext() { return m_context; }
@@ -603,7 +598,7 @@ private:
 	VRayPluginRenderer             m_renderer; ///< the plugin renderer
 	VRayOpContext                  m_context; ///< current export context
 	int                            m_renderMode; ///< rend
-	int                            m_isAborted; ///< flag whether rendering should be aborted when possible
+	QAtomicInt                     m_isAborted; ///< flag whether rendering should be aborted when possible
 	ViewParams                     m_viewParams; ///< used to gather view data from the ROP and camera
 	int                            m_frames; ///< how many frames are we going to export
 	ROP_RENDER_CODE                m_error; ///< ROP error to singnal the ROP rendering should be aborted

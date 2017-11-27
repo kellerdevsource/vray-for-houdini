@@ -134,6 +134,9 @@ void VOP::NodeBase::getAllowedInputTypeInfosSubclass(unsigned idx, VOP_VopTypeIn
 		if (vopType == VOP_TYPE_FLOAT) {
 			type_infos.append(VOP_TypeInfo(VOP_TYPE_COLOR));
 		}
+		if (vopType == VOP_TYPE_MATRIX3) {
+			type_infos.append(VOP_TypeInfo(VOP_TYPE_MATRIX4));
+		}
 	}
 }
 
@@ -159,6 +162,9 @@ void VOP::NodeBase::getAllowedInputTypesSubclass(unsigned idx, VOP_VopTypeArray 
 		if (vopType == VOP_TYPE_FLOAT) {
 			type_infos.append(VOP_TYPE_COLOR);
 		}
+		if (vopType == VOP_TYPE_MATRIX3) {
+			type_infos.append(VOP_TYPE_MATRIX4);
+		}
 	}
 }
 
@@ -171,7 +177,8 @@ bool VOP::NodeBase::willAutoconvertInputType(int idx)
 		if (vopType == VOP_SURFACE_SHADER ||
 		    vopType == VOP_TYPE_BSDF ||
 		    vopType == VOP_TYPE_COLOR ||
-		    vopType == VOP_TYPE_FLOAT)
+		    vopType == VOP_TYPE_FLOAT ||
+			vopType == VOP_TYPE_MATRIX3)
 		{
 			return true;
 		}

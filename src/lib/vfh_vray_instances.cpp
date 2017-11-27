@@ -14,6 +14,7 @@
 #include "vfh_log.h"
 #include "vfh_vray_instances.h"
 #include "vfh_hou_utils.h"
+#include "vfh_includes.h"
 
 #include <QSharedMemory>
 #include <QApplication>
@@ -71,6 +72,10 @@ static QColor getSelectionColor(const QString &styleSheet)
 /// Must be called before VRay::VRayInit().
 static void initVFBTheme()
 {
+#if HDK_16_5
+	qputenv("VRAY_VFB_UI_SCALE", QString("%1").arg(HOU::getUiScaling()).toLocal8Bit());
+#endif
+
 	QWidget *mainWindow = HOU::getMainQtWindow();
 	if (mainWindow) {
 		QPalette houdiniPalette = mainWindow->palette();
@@ -121,6 +126,24 @@ static int getCreateSharedMemory()
 	return 1;
 }
 
+VRay::RendererOptions VRayForHoudini::getDefaultOptions(int initVFB)
+{
+	const QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+
+	VRay::RendererOptions options;
+	options.enableFrameBuffer = initVFB;
+	options.showFrameBuffer = false;
+	options.useDefaultVfbTheme = false;
+	options.vfbDrawStyle = VRay::RendererOptions::ThemeStyleMaya;
+	options.keepRTRunning = true;
+	options.rtNoiseThreshold = 0.0f;
+	options.rtSampleLevel = INT_MAX;
+	options.rtTimeout = 0;
+	options.pluginLibraryPath = env.value("VRAY_FOR_HOUDINI_PLUGINS", "").toStdString();
+
+	return options;
+}
+
 int VRayForHoudini::newVRayInit()
 {
 	Log::getLog().debug("newVRayInit()");
@@ -159,18 +182,10 @@ int VRayForHoudini::newVRayInit()
 	}
 
 	if (addDummyRenderer) {
-		const QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-
 		VRay::VRayRenderer *instance = nullptr;
 
 		try {
-			VRay::RendererOptions options;
-			options.enableFrameBuffer = false;
-			options.showFrameBuffer = false;
-			options.useDefaultVfbTheme = false;
-			options.vfbDrawStyle = VRay::RendererOptions::ThemeStyleMaya;
-			options.pluginLibraryPath = env.value("VRAY_FOR_HOUDINI_PLUGINS", "").toStdString();
-
+			const VRay::RendererOptions options = getDefaultOptions(false);
 			instance = newVRayRenderer(options);
 		}
 		catch (VRay::VRayException &e) {

@@ -67,6 +67,80 @@ static boost::format fmtPluginTypeConverterName2("%s|%s");
 
 static StringSet RenderSettingsPlugins;
 
+static UT_DMatrix4 yAxisUpRotationMatrix(1.0, 0.0, 0.0, 0.0,
+                                         0.0, 0.0, 1.0, 0.0,
+                                         0.0, -1.0, 0.0, 0.0,
+                                         0.0, 0.0, 0.0, 0.0);
+
+static const VRay::Transform envMatrix(VRay::Matrix(VRay::Vector(1.f, 0.f, 0.f),
+                                                    VRay::Vector(0.f, 0.f, 1.f),
+                                                    VRay::Vector(0.f, -1.f, 0.f)),
+                                       VRay::Vector(0.f));
+
+/// Fills SettingsRTEngine settings from the ROP node.
+/// @param self SettingsRTEngine instance.
+/// @param ropNode ROP node.
+/// @param isStereoView Stereo settings flag.
+static void setSettingsRTEngineFromRopNode(SettingsRTEngine &self, const OP_Node &ropNode, int isStereoView = false)
+{
+	self.coherent_tracing = Parm::getParmInt(ropNode, "SettingsRTEngine_coherent_tracing");
+	self.cpu_bundle_size = Parm::getParmInt(ropNode, "SettingsRTEngine_cpu_bundle_size");
+	self.cpu_samples_per_pixel = Parm::getParmInt(ropNode, "SettingsRTEngine_cpu_samples_per_pixel");
+	self.disable_render_elements = Parm::getParmInt(ropNode, "SettingsRTEngine_disable_render_elements");
+	self.enable_cpu_interop = Parm::getParmInt(ropNode, "SettingsRTEngine_enable_cpu_interop");
+	self.enable_mask = Parm::getParmInt(ropNode, "SettingsRTEngine_enable_mask");
+	self.gi_depth = Parm::getParmInt(ropNode, "SettingsRTEngine_gi_depth");
+	self.gpu_bundle_size = Parm::getParmInt(ropNode, "SettingsRTEngine_gpu_bundle_size");
+	self.gpu_samples_per_pixel = Parm::getParmInt(ropNode, "SettingsRTEngine_gpu_samples_per_pixel");
+	self.interactive = Parm::getParmInt(ropNode, "SettingsRTEngine_interactive");
+	self.low_gpu_thread_priority = Parm::getParmInt(ropNode, "SettingsRTEngine_low_gpu_thread_priority");
+	self.max_draw_interval = Parm::getParmInt(ropNode, "SettingsRTEngine_max_draw_interval");
+	self.max_render_time = Parm::getParmInt(ropNode, "SettingsRTEngine_max_render_time");
+	self.max_sample_level = Parm::getParmInt(ropNode, "SettingsRTEngine_max_sample_level");
+	self.min_draw_interval = Parm::getParmInt(ropNode, "SettingsRTEngine_min_draw_interval");
+	self.noise_threshold = Parm::getParmInt(ropNode, "SettingsRTEngine_noise_threshold");
+	self.opencl_resizeTextures = Parm::getParmInt(ropNode, "SettingsRTEngine_opencl_resizeTextures");
+	self.opencl_texsize = Parm::getParmInt(ropNode, "SettingsRTEngine_opencl_texsize");
+	self.opencl_textureFormat = Parm::getParmInt(ropNode, "SettingsRTEngine_opencl_textureFormat");
+	self.progressive_samples_per_pixel = Parm::getParmInt(ropNode, "SettingsRTEngine_progressive_samples_per_pixel");
+	self.stereo_eye_distance = isStereoView ? Parm::getParmFloat(ropNode, "VRayStereoscopicSettings_eye_distance") : 0;
+	self.stereo_focus = isStereoView ? Parm::getParmInt(ropNode, "VRayStereoscopicSettings_focus_method") : 0;
+	self.stereo_mode = isStereoView ? Parm::getParmInt(ropNode, "VRayStereoscopicSettings_use") : 0;
+	self.trace_depth = Parm::getParmInt(ropNode, "SettingsRTEngine_trace_depth");
+	self.undersampling = Parm::getParmInt(ropNode, "SettingsRTEngine_undersampling");
+}
+
+/// Sets optimized settings for GPU.
+/// @param self SettingsRTEngine instance.
+/// @param ropNode ROP node.
+/// @param mode Render mode.
+static void setSettingsRTEnginetOptimizedGpuSettings(SettingsRTEngine &self, const OP_Node &ropNode, VRay::RendererOptions::RenderMode mode)
+{
+	if (!Parm::getParmInt(ropNode, "SettingsRTEngine_auto"))
+		return;
+
+	// CPU/GPU RT/IPR.
+	if (mode >= VRay::RendererOptions::RENDER_MODE_RT_CPU &&
+        mode <= VRay::RendererOptions::RENDER_MODE_RT_GPU)
+    {
+		self.cpu_samples_per_pixel = 1;
+		self.cpu_bundle_size = 64;
+		self.gpu_samples_per_pixel = 1;
+		self.gpu_bundle_size = 128;
+		self.undersampling = 0;
+		self.progressive_samples_per_pixel = 0;
+    }
+	// GPU Production.
+	else if (mode >= VRay::RendererOptions::RENDER_MODE_PRODUCTION_OPENCL &&
+			 mode <= VRay::RendererOptions::RENDER_MODE_PRODUCTION_CUDA)
+	{
+		self.gpu_samples_per_pixel = 16;
+		self.gpu_bundle_size = 256;
+		self.undersampling = 0;
+		self.progressive_samples_per_pixel = 0;
+	}
+}
+
 void VRayExporter::reset()
 {
 	objectExporter.clearPrimPluginCache();
@@ -318,7 +392,7 @@ void VRayExporter::setAttrValueFromOpNodePrm(Attrs::PluginDesc &pluginDesc, cons
 }
 
 
-VRay::Transform VRayExporter::exportTransformVop(VOP_Node &vop_node, ExportContext *parentContext)
+VRay::Transform VRayExporter::exportTransformVop(VOP_Node &vop_node, ExportContext *parentContext, bool rotate)
 {
 	const fpreal t = getContext().getTime();
 
@@ -336,6 +410,9 @@ VRay::Transform VRayExporter::exportTransformVop(VOP_Node &vop_node, ExportConte
 						options.getOptionV3("scale").x(), options.getOptionV3("scale").y(), options.getOptionV3("scale").z(),
 						options.getOptionV3("pivot").x(), options.getOptionV3("pivot").y(), options.getOptionV3("pivot").z(),
 						m4);
+	if (rotate) {
+		m4 = m4 * yAxisUpRotationMatrix;
+	}
 
 	return Matrix4ToTransform(m4);
 }
@@ -370,6 +447,20 @@ static void setPluginValueFromConnectedPluginInfo(Attrs::PluginDesc &pluginDesc,
 	}
 }
 
+static int isConnectedToTexTriplanar(VOP_Node &vopNode)
+{
+	OP_NodeList outputs;
+	vopNode.getOutputNodes(outputs);
+
+	for (OP_Node *opNode : outputs) {
+		if (isOpType(*opNode, "VRayNodeTexTriPlanar")) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDesc, VOP_Node *vopNode, ExportContext *parentContext)
 {
 	const Parm::VRayPluginInfo *pluginInfo = Parm::GetVRayPluginInfo( pluginDesc.pluginID );
@@ -399,8 +490,14 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 				pluginInfo->pluginType == Parm::PluginTypeTexture &&
 				attrName == "uvwgen")
 			{
-				const Attrs::PluginDesc uvwGen(getPluginName(vopNode, "Uvw"), "UVWGenObject");
-				conPlugin = exportPlugin(uvwGen);
+				if (!isConnectedToTexTriplanar(*vopNode)) {
+					Attrs::PluginDesc defaultUVWGen(getPluginName(vopNode, "DefaultUVWGen"),
+					                                "UVWGenProjection");
+					defaultUVWGen.add(Attrs::PluginAttr("type", 6));
+					defaultUVWGen.add(Attrs::PluginAttr("object_space", true));
+
+					conPlugin = exportPlugin(defaultUVWGen);
+				}
 			}
 			else {
 				const unsigned inpidx = vopNode->getInputFromName(attrName.c_str());
@@ -409,7 +506,15 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 					if (inpvop->getOperator()->getName() == "makexform") {
 						switch (curSockInfo.type) {
 							case Parm::eMatrix: {
-								pluginDesc.addAttribute(Attrs::PluginAttr(attrName, exportTransformVop(*inpvop, parentContext).matrix));
+								bool shouldRotate = pluginInfo->pluginType == Parm::PluginTypeUvwgen;
+								if (shouldRotate) {
+									shouldRotate = pluginDesc.pluginID == "UVWGenPlanar" ||
+									               pluginDesc.pluginID == "UVWGenProjection" ||
+									               pluginDesc.pluginID == "UVWGenObject" ||
+									               pluginDesc.pluginID == "UVWGenEnvironment";
+								}
+								const VRay::Transform &transform = exportTransformVop(*inpvop, parentContext, shouldRotate);
+								pluginDesc.addAttribute(Attrs::PluginAttr(attrName, transform.matrix));
 								break;
 							}
 							case Parm::eTransform: {
@@ -1032,6 +1137,10 @@ VRay::Plugin VRayExporter::exportVop(OP_Node *opNode, ExportContext *parentConte
 		return exportConnectedVop(vop_node, 0, parentContext);
 	}
 
+	if (opType.equal(vfhNodeMaterialOutput)) {
+		return exportVop(getVRayNodeFromOp(*opNode, vfhSocketMaterialOutputMaterial), parentContext);
+	}
+
 	if (opType.startsWith("VRayNode")) {
 		VOP::NodeBase *vrayNode = static_cast<VOP::NodeBase*>(vop_node);
 
@@ -1090,11 +1199,6 @@ VRay::Plugin VRayExporter::exportVop(OP_Node *opNode, ExportContext *parentConte
 			if (   pluginDesc.pluginID == "UVWGenEnvironment"
 				&& NOT(pluginDesc.contains("uvw_matrix")))
 			{
-				VRay::Transform envMatrix;
-				envMatrix.matrix.setCol(0, VRay::Vector(0.f,1.f,0.f));
-				envMatrix.matrix.setCol(1, VRay::Vector(0.f,0.f,1.f));
-				envMatrix.matrix.setCol(2, VRay::Vector(1.f,0.f,0.f));
-				envMatrix.offset.makeZero();
 				pluginDesc.addAttribute(Attrs::PluginAttr("uvw_matrix", envMatrix));
 			}
 
@@ -1207,15 +1311,15 @@ void VRayExporter::RtCallbackDisplacementVop(OP_Node *caller, void *callee, OP_E
 		case OP_INPUT_REWIRED: {
 			const int idx = reinterpret_cast<intptr_t>(data);
 
-			SHOP_Node *shop_node = caller->getParent()->castToSHOPNode();
-			if (idx >= 0 && shop_node) {
+			OP_Node *matNode = caller->getParent();
+			if (idx >= 0 && matNode) {
 				OP_NodeList refs;
-				shop_node->getExistingOpDependents(refs, true);
+				matNode->getExistingOpDependents(refs, true);
 
 				for (OP_Node *node : refs) {
-					OBJ_Node *obj_node = node->castToOBJNode();
-					if (obj_node) {
-						exporter.exportObject(obj_node);
+					OBJ_Node *objNode = node->castToOBJNode();
+					if (objNode) {
+						exporter.exportObject(objNode);
 					}
 				}
 			}
@@ -1232,184 +1336,199 @@ void VRayExporter::RtCallbackDisplacementVop(OP_Node *caller, void *callee, OP_E
 	csect.leave();
 }
 
-int VRayExporter::setDisplacementTextureFromPath(OP_Node &opNode, Attrs::PluginDesc &pluginDesc, const std::string &parmNamePrefix)
+int VRayExporter::exportDisplacementTexture(OP_Node &opNode, Attrs::PluginDesc &pluginDesc, const std::string &parmNamePrefix)
 {
-	const PRM_Parm *parm = Parm::getParm(opNode, str(Parm::FmtPrefixManual % parmNamePrefix % "displacement_texture"));
-	if (!parm)
-		return false;
-
 	const fpreal t = getContext().getTime();
 
-	UT_String texPath;
-	opNode.evalString(texPath, parm, 0, t);
-
-	VRay::Plugin texture = exportNodeFromPathWithDefaultMapping(texPath, defaultMappingChannelName);
-	if (!texture)
-		return false;
-
-	// Check if plugin has "out_intensity" output
-	bool hasOutIntensity = false;
-
-	const Parm::VRayPluginInfo *texPluginInfo = Parm::GetVRayPluginInfo(texture.getType());
-	if (!texPluginInfo) {
-		Log::getLog().error("Node \"%s\": Plugin \"%s\" description is not found!",
-							opNode.getName().buffer(), texture.getType());
-		return false;
-	}
-
-	if (texPluginInfo->outputs.size()) {
-		for (const auto &sock : texPluginInfo->outputs) {
-			if (StrEq(sock.name.getToken(), "out_intensity")) {
-				hasOutIntensity = true;
-				break;
+	const PRM_Parm *parm = Parm::getParm(opNode, str(Parm::FmtPrefixManual % parmNamePrefix % "displacement_texture"));
+	if (parm) {
+		UT_String texPath;
+		opNode.evalString(texPath, parm, 0, t);
+		if (texPath.isstring()) {
+			VRay::Plugin texture = exportNodeFromPathWithDefaultMapping(texPath, defaultMappingChannelName);
+			if (!texture) {
+				return false;
 			}
+
+			// Check if plugin has "out_intensity" output
+			bool hasOutIntensity = false;
+
+			const Parm::VRayPluginInfo *texPluginInfo = Parm::GetVRayPluginInfo(texture.getType());
+			if (!texPluginInfo) {
+				Log::getLog().error("Node \"%s\": Plugin \"%s\" description is not found!",
+									opNode.getName().buffer(), texture.getType());
+				return false;
+			}
+
+			if (texPluginInfo->outputs.size()) {
+				for (const auto &sock : texPluginInfo->outputs) {
+					if (StrEq(sock.name.getToken(), "out_intensity")) {
+						hasOutIntensity = true;
+						break;
+					}
+				}
+			}
+
+			// Wrap texture with TexOutput
+			if (!hasOutIntensity) {
+				Attrs::PluginDesc texOutputDesc(str(FmtPluginNameWithPrefix % "Out" % texture.getName()),
+												"TexOutput");
+				texOutputDesc.add(Attrs::PluginAttr("texmap", texture));
+
+				texture = exportPlugin(texOutputDesc);
+			}
+
+			pluginDesc.add(Attrs::PluginAttr("displacement_tex_color", texture));
+			pluginDesc.add(Attrs::PluginAttr("displacement_tex_float", texture, "out_intensity"));
+
+			return true;
 		}
 	}
 
-	// Wrap texture with TexOutput
-	if (!hasOutIntensity) {
-		Attrs::PluginDesc texOutputDesc(str(FmtPluginNameWithPrefix % "Out" % texture.getName()),
-										"TexOutput");
-		texOutputDesc.add(Attrs::PluginAttr("texmap", texture));
-
-		texture = exportPlugin(texOutputDesc);
-	}
-
-	pluginDesc.add(Attrs::PluginAttr("displacement_tex_color", texture));
-	pluginDesc.add(Attrs::PluginAttr("displacement_tex_float", texture, "out_intensity"));
-
-	return true;
-}
-
-int VRayExporter::exportDisplacementFromOBJ(OBJ_Node &objNode, Attrs::PluginDesc &pluginDesc)
-{
-	const std::string parmNamePrefix = str(Parm::FmtPrefix % pluginDesc.pluginID);
-	
-	if (!setDisplacementTextureFromPath(objNode, pluginDesc, parmNamePrefix))
-		return false;
-
-	if (pluginDesc.pluginID == "GeomDisplacedMesh") {
-		UT_String dispTypeMenu;
-		objNode.evalString(dispTypeMenu, "GeomDisplacedMesh_type", 0, 0.0);
-
-		if (dispTypeMenu.isInteger()) {
-			enum VRayDisplacementType {
-				displ_type_2d = 0,
-				displ_type_3d = 1,
-				displ_type_vector = 2,
-				displ_type_vector_signed = 3,
-				displ_type_vector_object = 4,
-			};
-
-			const VRayDisplacementType displaceType =
-				static_cast<VRayDisplacementType>(dispTypeMenu.toInt());
-
-			if (displaceType == displ_type_2d) {
-				pluginDesc.add(Attrs::PluginAttr("displace_2d", true));
-				pluginDesc.add(Attrs::PluginAttr("vector_displacement", 0));
-			}
-			else if (displaceType == displ_type_vector) {
-				pluginDesc.add(Attrs::PluginAttr("displace_2d", false));
-				pluginDesc.add(Attrs::PluginAttr("vector_displacement", 1));
-			}
-			else if (displaceType == displ_type_vector_signed) {
-				pluginDesc.add(Attrs::PluginAttr("displace_2d", false));
-				pluginDesc.add(Attrs::PluginAttr("vector_displacement", 2));
-			}
-			else if (displaceType == displ_type_vector_object) {
-				pluginDesc.add(Attrs::PluginAttr("displace_2d", false));
-				pluginDesc.add(Attrs::PluginAttr("vector_displacement", 3));
-			}
-		}
-	}
-
-	setAttrsFromOpNodePrms(pluginDesc, &objNode, parmNamePrefix);
-
-	return true;
-}
-
-
-VRay::Plugin VRayExporter::exportDisplacement(OBJ_Node &objNode, VRay::Plugin &geomPlugin)
-{
-	const DisplacementType displacementType = objectExporter.hasSubdivApplied(objNode);
-	if (displacementType == displacementTypeNone)
-		return geomPlugin;
-
-	Attrs::PluginDesc pluginDesc;
-	VRay::Plugin plugin = geomPlugin;
-
-	switch (displacementType) {
-		case displacementTypeFromMat: {
-			UT_String shopPath;
-			objNode.evalString(shopPath, "vray_displ_shoppath", 0, 0.0);
-
-			SHOP_Node *matNode = getSHOPNodeFromPath(shopPath);
-			if (matNode) {
-				VOP_Node *matVopNode = CAST_VOPNODE(getVRayNodeFromOp(*matNode, "geometry"));
-				if (!matVopNode) {
-					Log::getLog().error("Can't find a valid V-Ray node for \"%s\"!",
-										matNode->getName().buffer());
+	if (CAST_VOPNODE(&opNode)) {
+		const int idxTexCol = opNode.getInputFromName("displacement_tex_color");
+		OP_Node *texCol = opNode.getInput(idxTexCol);
+		const int idxTexFloat = opNode.getInputFromName("displacement_tex_float");
+		OP_Node *texFloat = opNode.getInput(idxTexFloat);
+		if (texCol) {
+			VRay::Plugin texture = exportVop(texCol);
+			if (texture) {
+				const Parm::SocketDesc *fromSocketInfo = getConnectedOutputType(&opNode, "displacement_tex_color");
+				if (fromSocketInfo
+				    && fromSocketInfo->type >= Parm::ParmType::eOutputColor
+				    && fromSocketInfo->type < Parm::ParmType::eUnknown) {
+					pluginDesc.addAttribute(Attrs::PluginAttr("displacement_tex_color", texture, fromSocketInfo->name.getToken()));
 				}
 				else {
-					VOP::NodeBase *vrayVopNode = static_cast<VOP::NodeBase*>(matVopNode);
-
-					addOpCallback(vrayVopNode, RtCallbackDisplacementVop);
-
-					ExportContext expContext(CT_OBJ, *this, objNode);
-
-					const OP::VRayNode::PluginResult res = vrayVopNode->asPluginDesc(pluginDesc, *this, &expContext);
-					if (res == OP::VRayNode::PluginResultError) {
-						Log::getLog().error("Error creating plugin descripion for node: \"%s\" [%s]",
-											vrayVopNode->getName().buffer(), vrayVopNode->getOperator()->getName().buffer());
+					pluginDesc.addAttribute(Attrs::PluginAttr("displacement_tex_color", texture));
+				}
+				if (NOT(texFloat)) {
+					// Check if plugin has "out_intensity" output
+					bool hasOutIntensity = false;
+					const Parm::VRayPluginInfo *texPluginInfo = Parm::GetVRayPluginInfo(texture.getType());
+					if (NOT(texPluginInfo)) {
+						Log::getLog().error("Node \"%s\": Plugin \"%s\" description is not found!",
+						                    opNode.getName().buffer(), texture.getType());
+						return OP::VRayNode::PluginResultError;
 					}
-					else if (res == OP::VRayNode::PluginResultNA ||
-							 res == OP::VRayNode::PluginResultContinue)
-					{
-						pluginDesc.addAttribute(Attrs::PluginAttr("mesh", geomPlugin));
-
-						// No prefix in this case.
-						setDisplacementTextureFromPath(objNode, pluginDesc, "");
-
-						setAttrsFromOpNodeConnectedInputs(pluginDesc, vrayVopNode);
-						setAttrsFromOpNodePrms(pluginDesc, vrayVopNode);
+					if (texPluginInfo->outputs.size()) {
+						for (const auto &sock : texPluginInfo->outputs) {
+							if (StrEq(sock.name.getToken(), "out_intensity")) {
+								hasOutIntensity = true;
+								break;
+							}
+						}
 					}
-
-					plugin = exportPlugin(pluginDesc);
+					// Wrap texture with TexOutput
+					if (NOT(hasOutIntensity)) {
+						Attrs::PluginDesc texOutputDesc(VRayExporter::getPluginName(texCol, "Out@"), "TexOutput");
+						texOutputDesc.add(Attrs::PluginAttr("texmap", texture));
+						texture = exportPlugin(texOutputDesc);
+						pluginDesc.add(Attrs::PluginAttr("displacement_tex_float", texture, "out_intensity"));
+					}
 				}
 			}
-			break;
 		}
-		case displacementTypeDisplace: {
-			pluginDesc.pluginName = str(FmtPluginNameWithPrefix % "GeomDisplacedMesh" % geomPlugin.getName());
-			pluginDesc.pluginID = "GeomDisplacedMesh";
-
-			pluginDesc.addAttribute(Attrs::PluginAttr("mesh", geomPlugin));
-
-			if (exportDisplacementFromOBJ(objNode, pluginDesc)) {
-				plugin = exportPlugin(pluginDesc);
+		if (texFloat) {
+			VRay::Plugin texture = exportVop(texFloat);
+			if (texture) {
+				const Parm::SocketDesc *fromSocketInfo = getConnectedOutputType(&opNode, "displacement_tex_float");
+				if (fromSocketInfo
+				    && fromSocketInfo->type >= Parm::ParmType::eOutputColor
+				    && fromSocketInfo->type < Parm::ParmType::eUnknown) {
+					pluginDesc.addAttribute(Attrs::PluginAttr("displacement_tex_float", texture, fromSocketInfo->name.getToken()));
+				}
+				else {
+					pluginDesc.addAttribute(Attrs::PluginAttr("displacement_tex_float", texture));
+				}
+				pluginDesc.add(Attrs::PluginAttr("displacement_tex_color", texture));
 			}
-			break;
 		}
-		case displacementTypeSmooth: {
-			pluginDesc.pluginName = str(FmtPluginNameWithPrefix % "GeomStaticSmoothedMesh" % geomPlugin.getName());
-			pluginDesc.pluginID = "GeomStaticSmoothedMesh";
+	}
 
-			pluginDesc.addAttribute(Attrs::PluginAttr("mesh", geomPlugin));
+	return true;
+}
 
-			if (exportDisplacementFromOBJ(objNode, pluginDesc)) {
-				plugin = exportPlugin(pluginDesc);
-			}
-			break;
-		}
+static void setGeomDisplacedMeshType(OP_Node &opNode, const std::string &parmTypeName, Attrs::PluginDesc &pluginDesc)
+{
+	UT_String dispTypeMenu;
+	opNode.evalString(dispTypeMenu, parmTypeName.c_str(), 0, 0.0);
+
+	vassert(dispTypeMenu.isInteger());
+
+	enum VRayDisplacementType {
+		displ_type_2d = 0,
+		displ_type_3d = 1,
+		displ_type_vector = 2,
+		displ_type_vector_signed = 3,
+		displ_type_vector_object = 4,
+	};
+
+	const VRayDisplacementType displaceType =
+		static_cast<VRayDisplacementType>(dispTypeMenu.toInt());
+
+	if (displaceType == displ_type_2d) {
+		pluginDesc.add(Attrs::PluginAttr("displace_2d", true));
+		pluginDesc.add(Attrs::PluginAttr("vector_displacement", 0));
+	}
+	else if (displaceType == displ_type_vector) {
+		pluginDesc.add(Attrs::PluginAttr("displace_2d", false));
+		pluginDesc.add(Attrs::PluginAttr("vector_displacement", 1));
+	}
+	else if (displaceType == displ_type_vector_signed) {
+		pluginDesc.add(Attrs::PluginAttr("displace_2d", false));
+		pluginDesc.add(Attrs::PluginAttr("vector_displacement", 2));
+	}
+	else if (displaceType == displ_type_vector_object) {
+		pluginDesc.add(Attrs::PluginAttr("displace_2d", false));
+		pluginDesc.add(Attrs::PluginAttr("vector_displacement", 3));
+	}
+}
+
+int VRayExporter::exportDisplacementFromSubdivInfo(const SubdivInfo &subdivInfo, struct Attrs::PluginDesc &pluginDesc)
+{
+	const std::string parmNamePrefix = subdivInfo.needParmNamePrefix() ? str(Parm::FmtPrefix % pluginDesc.pluginID) : "";
+
+	exportDisplacementTexture(*subdivInfo.parmHolder, pluginDesc, parmNamePrefix);
+
+	if (subdivInfo.type == SubdivisionType::displacement) {
+		setGeomDisplacedMeshType(*subdivInfo.parmHolder, parmNamePrefix + "type", pluginDesc);
+	}
+
+	setAttrsFromOpNodePrms(pluginDesc, subdivInfo.parmHolder, parmNamePrefix);
+
+	return true;
+}
+
+static const char *subdivisionPluginFromType(SubdivisionType subdivType)
+{
+	switch (subdivType) {
+		case SubdivisionType::displacement: return "GeomDisplacedMesh";
+		case SubdivisionType::subdivision:  return "GeomStaticSmoothedMesh";
 		default:
-			break;
+			vassert(false);
 	}
 
-	if (plugin) {
-		addOpCallback(&objNode, RtCallbackDisplacementObj);
-	}
+	return nullptr;
+}
 
-	return plugin;
+VRay::Plugin VRayExporter::exportDisplacement(OBJ_Node &objNode, const VRay::Plugin &geomPlugin, const SubdivInfo &subdivInfo)
+{
+	if (!subdivInfo.hasSubdiv())
+		return geomPlugin; 
+
+	Attrs::PluginDesc pluginDesc;
+	pluginDesc.pluginName = str(FmtPluginNameWithPrefix % "Subdiv" % geomPlugin.getName());
+	pluginDesc.pluginID = subdivisionPluginFromType(subdivInfo.type);
+
+	pluginDesc.addAttribute(Attrs::PluginAttr("mesh", geomPlugin));
+
+	if (!exportDisplacementFromSubdivInfo(subdivInfo, pluginDesc))
+		return geomPlugin; 
+
+	addOpCallback(&objNode, RtCallbackDisplacementObj);
+
+	return exportPlugin(pluginDesc);
 }
 
 
@@ -1624,9 +1743,17 @@ static void onVfbClosed(VRay::VRayRenderer& /*renderer*/, void *data)
 	VRayExporter &self = *reinterpret_cast<VRayExporter*>(data);
 
 	switch (self.getSessionType()) {
-		case VfhSessionType::production:
+		case VfhSessionType::production: {
+			self.saveVfbState();
+			break;
+		}
 		case VfhSessionType::rt: {
 			self.saveVfbState();
+
+			// Could be closed with out stopping the renderer.
+			if (self.getRenderer().isRendering()) {
+				self.exportEnd();
+			}
 			break;
 		}
 		case VfhSessionType::ipr: {
@@ -1860,15 +1987,13 @@ void VRayExporter::setDRSettings()
 
 void VRayExporter::setRenderMode(VRay::RendererOptions::RenderMode mode)
 {
-	m_renderer.setRendererMode(mode);
+	SettingsRTEngine settingsRTEngine;
+	setSettingsRTEngineFromRopNode(settingsRTEngine, *m_rop, mode);
+	setSettingsRTEnginetOptimizedGpuSettings(settingsRTEngine, *m_rop, mode);
+
+	m_renderer.setRendererMode(settingsRTEngine, mode);
 
 	m_isGPU = mode >= VRay::RendererOptions::RENDER_MODE_RT_GPU_OPENCL;
-
-	if (mode >= VRay::RendererOptions::RENDER_MODE_RT_CPU &&
-		mode <= VRay::RendererOptions::RENDER_MODE_RT_GPU)
-	{
-		setSettingsRtEngine();
-	}
 }
 
 
@@ -1898,22 +2023,6 @@ void VRayExporter::setRenderSize(int w, int h)
 }
 
 
-void VRayExporter::setSettingsRtEngine()
-{
-	VRay::Plugin settingsRTEngine = m_renderer.getVRay().getInstanceOrCreate("SettingsRTEngine");
-
-	Attrs::PluginDesc settingsRTEngineDesc(settingsRTEngine.getName(), "SettingsRTEngine");
-
-	settingsRTEngineDesc.addAttribute(Attrs::PluginAttr("stereo_mode",         isStereoView() ? Parm::getParmInt(*m_rop, "VRayStereoscopicSettings_use") : 0));
-	settingsRTEngineDesc.addAttribute(Attrs::PluginAttr("stereo_eye_distance", isStereoView() ? Parm::getParmFloat(*m_rop, "VRayStereoscopicSettings_eye_distance") : 0));
-	settingsRTEngineDesc.addAttribute(Attrs::PluginAttr("stereo_focus",        isStereoView() ? Parm::getParmInt(*m_rop, "VRayStereoscopicSettings_focus_method") : 0));
-
-	setAttrsFromOpNodePrms(settingsRTEngineDesc, m_rop, "SettingsRTEngine_");
-
-	exportPluginProperties(settingsRTEngine, settingsRTEngineDesc);
-}
-
-
 int VRayExporter::isStereoView() const
 {
 	return Parm::getParmInt(*m_rop, "VRayStereoscopicSettings_use");
@@ -1935,7 +2044,6 @@ int VRayExporter::renderFrame(int locked)
 		}
 		else {
 			VRay::VRayExportSettings expSettings;
-			expSettings.framesInSeparateFiles = m_rop->evalInt("exp_separatefiles", 0, t);
 			expSettings.useHexFormat = m_rop->evalInt("exp_hexdata", 0, t);
 			expSettings.compressed = m_rop->evalInt("exp_compressed", 0, t);
 
@@ -2009,6 +2117,8 @@ void VRayExporter::initExporter(int hasUI, int nframes, fpreal tstart, fpreal te
 	m_isMotionBlur = hasMotionBlur(*m_rop, *camera);
 	m_isVelocityOn = hasVelocityOn(*m_rop);
 
+	// Reset time before exporting settings.
+	setTime(0.0);
 	setAnimation(sessionType == VfhSessionType::production &&
 		(m_isAnimation || m_isMotionBlur || m_isVelocityOn));
 
@@ -2050,12 +2160,12 @@ int VRayExporter::hasVelocityOn(OP_Node &rop) const
 		return false;
 	}
 
-	UT_ValArray<OP_Node*> rcOutputList;
+	OP_NodeList rcOutputList;
 	if (!rcNetwork->getOpsByName("VRayNodeRenderChannelsContainer", rcOutputList)) {
 		return false;
 	}
 
-	UT_ValArray<OP_Node*> velVOPList;
+	OP_NodeList velVOPList;
 	if (!rcNetwork->getOpsByName("VRayNodeRenderChannelVelocity", velVOPList)) {
 		return false;
 	}
@@ -2173,6 +2283,12 @@ void VRayExporter::restoreCurrentTake()
 void VRayExporter::exportFrame(fpreal time)
 {
 	Log::getLog().debug("VRayExporter::exportFrame(time=%.3f)", time);
+
+	if (isAborted()) {
+		Log::getLog().info("Operation is aborted by the user!");
+		m_error = ROP_ABORT_RENDER;
+		return;
+	}
 
 	applyTake();
 

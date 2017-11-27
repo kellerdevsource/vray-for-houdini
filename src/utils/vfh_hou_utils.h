@@ -28,6 +28,9 @@ int isUIAvailable();
 /// Get main Houdini Qt window
 QWidget* getMainQtWindow();
 
+/// Returns UI scaling factor.
+float getUiScaling();
+
 } // namespace HOU
 } // namespace VRayForHoudini
 

@@ -73,20 +73,11 @@ int VRayPluginRenderer::initRenderer(int enableVFB, int /*reInit*/)
 	m_enableVFB = enableVFB;
 
 	if (m_vray) {
-		m_vray->reset();
+		reset();
 	}
 	else {
 		try {
-			VRay::RendererOptions options;
-			options.enableFrameBuffer = m_enableVFB;
-			options.showFrameBuffer = false;
-			options.useDefaultVfbTheme = false;
-			options.vfbDrawStyle = VRay::RendererOptions::ThemeStyleMaya;
-			options.keepRTRunning = true;
-			options.rtNoiseThreshold = 0.0f;
-			options.rtSampleLevel = INT_MAX;
-			options.rtTimeout = 0;
-
+			const VRay::RendererOptions options = getDefaultOptions(m_enableVFB);
 			m_vray = newVRayRenderer(options);
 		}
 		catch (VRay::VRayException &e) {
@@ -147,8 +138,10 @@ void VRayPluginRenderer::showVFB(bool show, const char *title)
 			Qt::WindowFlags windowFlags = vfbWindow->windowFlags();
 			windowFlags |= Qt::Window |
 // Need to set this flag only for Linux / Qt4
-#if !defined(_WIN32) && (UT_MAJOR_VERSION_INT < 16)
+#ifndef _WIN32
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 			               Qt::WindowStaysOnTopHint |
+#endif
 #endif
 			               Qt::WindowTitleHint |
 			               Qt::WindowMinMaxButtonsHint |
@@ -294,7 +287,16 @@ void VRayPluginRenderer::exportPluginProperties(VRay::Plugin &plugin, const Attr
 			plugin.setValue(p.paramName, p.paramValue.valRawListCharString);
 		}
 		else if (p.paramType == PluginAttr::AttrTypeRawListValue) {
+			const int curAnimValue = m_vray->getUseAnimatedValuesState();
+
+			// Force animated generic list key-frames.
+			if (curAnimValue >= 1 && p.isAnimatedGenericList) {
+				m_vray->useAnimatedValues(2);
+			}
+
 			plugin.setValue(p.paramName, p.paramValue.valRawListValue);
+
+			m_vray->useAnimatedValues(curAnimValue);
 		}
 
 #if CGR_DEBUG_APPSDK_VALUES
@@ -320,24 +322,67 @@ void VRayPluginRenderer::setCamera(VRay::Plugin camera)
 	}
 }
 
+/// Sets plugin parameters from SettingsRTEngine.
+/// @param self Settings.
+/// @param plugin SettingsRTEngine plugin instance.
+static void fillSettingsRTEnginePlugin(const SettingsRTEngine &self, VRay::Plugin plugin)
+{
+	plugin.setValue("coherent_tracing", self.coherent_tracing);
+	plugin.setValue("cpu_bundle_size", self.cpu_bundle_size);
+	plugin.setValue("cpu_samples_per_pixel", self.cpu_samples_per_pixel);
+	plugin.setValue("disable_render_elements", self.disable_render_elements);
+	plugin.setValue("enable_cpu_interop", self.enable_cpu_interop);
+	plugin.setValue("enable_mask", self.enable_mask);
+	plugin.setValue("gi_depth", self.gi_depth);
+	plugin.setValue("gpu_bundle_size", self.gpu_bundle_size);
+	plugin.setValue("gpu_samples_per_pixel", self.gpu_samples_per_pixel);
+	plugin.setValue("interactive", self.interactive);
+	plugin.setValue("low_gpu_thread_priority", self.low_gpu_thread_priority);
+	plugin.setValue("max_draw_interval", self.max_draw_interval);
+	plugin.setValue("max_render_time", self.max_render_time);
+	plugin.setValue("max_sample_level", self.max_sample_level);
+	plugin.setValue("min_draw_interval", self.min_draw_interval);
+	plugin.setValue("noise_threshold", self.noise_threshold);
+	plugin.setValue("opencl_resizeTextures", self.opencl_resizeTextures);
+	plugin.setValue("opencl_texsize", self.opencl_texsize);
+	plugin.setValue("opencl_textureFormat", self.opencl_textureFormat);
+	plugin.setValue("progressive_samples_per_pixel", self.progressive_samples_per_pixel);
+	plugin.setValue("stereo_eye_distance", self.stereo_eye_distance);
+	plugin.setValue("stereo_focus", self.stereo_focus);
+	plugin.setValue("stereo_mode", self.stereo_mode);
+	plugin.setValue("trace_depth", self.trace_depth);
+	plugin.setValue("undersampling", self.undersampling);
+}
 
-void VRayPluginRenderer::setRendererMode(VRay::RendererOptions::RenderMode mode)
+void VRayPluginRenderer::setRendererMode(const SettingsRTEngine &settingsRTEngine, VRay::RendererOptions::RenderMode mode)
 {
 	if (!m_vray)
 		return;
 
-	if (mode >= VRay::RendererOptions::RENDER_MODE_RT_CPU &&
-		mode <= VRay::RendererOptions::RENDER_MODE_PRODUCTION_OPENCL)
-	{
-		VRay::RendererOptions options(m_vray->getOptions());
+	fillSettingsRTEnginePlugin(settingsRTEngine, m_vray->getInstanceOrCreate("SettingsRTEngine"));
+
+	VRay::RendererOptions options(m_vray->getOptions());
+
+	const int isInteractiveMode =
+		mode >= VRay::RendererOptions::RENDER_MODE_RT_CPU &&
+		mode <= VRay::RendererOptions::RENDER_MODE_RT_GPU;
+
+	if (isInteractiveMode) {
 		options.numThreads = VUtils::Max(1, VUtils::getNumProcessors() - 1);
 		options.keepRTRunning = true;
 		options.rtNoiseThreshold = 0.0f;
 		options.rtSampleLevel = INT_MAX;
 		options.rtTimeout = 0;
-		m_vray->setOptions(options);
+	}
+	else {
+		options.numThreads = 0;
+		options.keepRTRunning = false;
+		options.rtNoiseThreshold = settingsRTEngine.noise_threshold;
+		options.rtSampleLevel = settingsRTEngine.max_sample_level;
+		options.rtTimeout = settingsRTEngine.max_render_time;
 	}
 
+	m_vray->setOptions(options);
 	m_vray->setRenderMode(mode);
 }
 
@@ -452,10 +497,8 @@ bool VRayPluginRenderer::isRendering() const
 		return false;
 
 	const VRay::RendererState state = m_vray->getState();
-	if (state == VRay::UNKNOWN)
-		return false;
 
-	return state > VRay::UNKNOWN && state <= VRay::IDLE_DONE;
+	return state >= VRay::PREPARING && state <= VRay::RENDERING_PAUSED;
 }
 
 void VRayPluginRenderer::setAnimation(bool on)
@@ -499,17 +542,14 @@ void VRayPluginRenderer::reset()
 	Log::getLog().error("VRayPluginRenderer::reset()");
 #endif
 
-	// Remove all callbacks except "setOnRenderLast()"
-#if 0
+	// Remove callbacked except OnVFBClosed and OnRenderLast.
 	m_vray->setOnImageReady(nullptr);
 	m_vray->setOnProgress(nullptr);
 	m_vray->setOnDumpMessage(nullptr);
-	m_vray->setOnVFBClosed(nullptr);
 	m_vray->setOnRendererClose(nullptr);
-#endif
 
 	m_vray->stop();
-	m_vray->reset(m_vray->getOptions());
+	m_vray->reset();
 }
 
 void VFBSettings::fillVfbSettings(void *stateBuf, int stateBufSize, VFBSettings &settings)

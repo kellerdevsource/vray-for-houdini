@@ -149,18 +149,10 @@ private:
 	VUTILS_DISABLE_COPY(VRayVolumeGridFactory);
 };
 
-VRayVolumeGridFactory::VRayVolumeGridFactory() :
-	GU_PackedFactory("VRayVolumeGridRef", "VRayVolumeGridRef")
+VRayVolumeGridFactory::VRayVolumeGridFactory()
+	: GU_PackedFactory("VRayVolumeGridRef", "VRayVolumeGridRef")
 {
-	/// Register all properties from VFH_VOLUME_GRID_PARAMS
-	VFH_MAKE_REGISTERS(VFH_VOLUME_GRID_PARAMS, VFH_VOLUME_GRID_PARAMS_COUNT, VRayVolumeGridRef)
-
-	registerTupleIntrinsic(
-		"phx_channel_map",
-		IntGetterCast(&VRayVolumeGridRef::getPhxChannelMapSize),
-		StringArrayGetterCast(&VRayVolumeGridRef::getPhxChannelMap),
-		StringArraySetterCast(&VRayVolumeGridRef::setPhxChannelMap)
-	);
+	VRayVolumeGridRef::registerIntrinsics<VRayVolumeGridRef>(*this);
 }
 
 void VRayVolumeGridRef::install(GA_PrimitiveFactory *gafactory)
@@ -282,7 +274,7 @@ VRayVolumeGridRef::VRayVolumeGridRef()
 
 VRayVolumeGridRef::VRayVolumeGridRef(const VRayVolumeGridRef &src)
 	: GU_PackedImpl(src)
-	, m_options(src.m_options)
+	, VRayVolumeGridRefOptions(src)
 	, m_dirty(false)
 	, m_channelDirty(false)
 	, m_doFrameReplace(src.m_doFrameReplace)
@@ -290,15 +282,14 @@ VRayVolumeGridRef::VRayVolumeGridRef(const VRayVolumeGridRef &src)
 	this->initDataCache();
 }
 
-VRayForHoudini::VRayVolumeGridRef::VRayVolumeGridRef(VRayVolumeGridRef &&src)
-	: m_dataCache(std::move(src.m_dataCache))
-	, m_options(std::move(src.m_options))
+VRayVolumeGridRef::VRayVolumeGridRef(VRayVolumeGridRef &&src) noexcept
+	: VRayVolumeGridRefOptions(std::move(src))
+	, m_dataCache(std::move(src.m_dataCache))
 	, m_bBox(std::move(src.m_bBox))
 	, m_dirty(std::move(src.m_dirty))
 	, m_channelDirty(std::move(src.m_channelDirty))
 	, m_doFrameReplace(std::move(src.m_doFrameReplace))
-{
-}
+{}
 
 
 VRayVolumeGridRef::~VRayVolumeGridRef()
@@ -319,10 +310,10 @@ void VRayVolumeGridRef::initDataCache()
 
 VolumeCacheKey VRayVolumeGridRef::genKey() const
 {
-	const char *path = this->get_current_cache_path();
-	const char *map = this->get_usrchmap();
+	const char *path = this->getCurrentCachePath();
+	const char *map = this->getUsrchmap();
 
-	VolumeCacheKey key = { path, map ? map : "", this->get_flip_yz() };
+	VolumeCacheKey key = { path, map ? map : "", this->getFlipYz() };
 	return key;
 }
 
@@ -375,7 +366,7 @@ VRayVolumeGridRef::VolumeCacheData &VRayVolumeGridRef::getCache(const VolumeCach
 
 UT_Matrix4F VRayVolumeGridRef::toWorldTm(CachePtr cache) const
 {
-	return getCacheTm(cache, this->get_flip_yz());
+	return getCacheTm(cache, this->getFlipYz());
 }
 
 bool VRayVolumeGridRef::getBounds(UT_BoundingBox &box) const
@@ -504,7 +495,7 @@ UT_StringArray VRayVolumeGridRef::getCacheChannels() const {
 
 	int chanIndex = 0, isChannelVector3D;
 	char chanName[MAX_CHAN_MAP_LEN];
-	while (1 == aurGet3rdPartyChannelName(chanName, MAX_CHAN_MAP_LEN, &isChannelVector3D, this->get_current_cache_path(), chanIndex++)) {
+	while (1 == aurGet3rdPartyChannelName(chanName, MAX_CHAN_MAP_LEN, &isChannelVector3D, this->getCurrentCachePath(), chanIndex++)) {
 		channels.append(chanName);
 	}
 
@@ -519,7 +510,7 @@ VRayVolumeGridRef::VolumeCache &VRayVolumeGridRef::getCachedData() const
 }
 
 void VRayVolumeGridRef::buildMapping() {
-	const char * path = this->get_current_cache_path();
+	const char * path = this->getCurrentCachePath();
 	if (!path) {
 		return;
 	}
@@ -566,28 +557,28 @@ void VRayVolumeGridRef::buildMapping() {
 		}
 	}
 
-	if (m_dirty || chanMap != this->get_usrchmap()) {
-		this->set_usrchmap(chanMap);
+	if (m_dirty || chanMap != this->getUsrchmap()) {
+		this->setUsrchmap(chanMap);
 	}
 }
 
 int VRayVolumeGridRef::getCurrentCacheFrame() const
 {
-	float frame = get_current_frame();
-	const float animLen = get_max_length();
-	const float fractionalLen = animLen * get_play_speed();
+	float frame = getCurrentFrame();
+	const float animLen = getMaxLength();
+	const float fractionalLen = animLen * getPlaySpeed();
 
-	switch (get_anim_mode())
+	switch (getAnimMode())
 	{
 	case AnimationMode::DirectIndex:
-		frame = get_t2f();
+		frame = getT2F();
 		break;
 	case AnimationMode::Standard:
-		frame = get_play_speed() * (frame - get_play_at());
+		frame = getPlaySpeed() * (frame - getPlayAt());
 
 		if (fractionalLen > 1e-4f) {
 			if (frame < 0.f || frame > fractionalLen) {
-				if (get_load_nearest()) {
+				if (getLoadNearest()) {
 					// clamp frame in [0, animLen]
 					frame = std::max(0.f, std::min(fractionalLen, frame));
 				}
@@ -597,10 +588,10 @@ int VRayVolumeGridRef::getCurrentCacheFrame() const
 			}
 		}
 
-		frame += get_read_offset();
+		frame += getReadOffset();
 		break;
 	case AnimationMode::Loop:
-		frame = get_play_speed() * (frame - get_play_at());
+		frame = getPlaySpeed() * (frame - getPlayAt());
 
 		if (fractionalLen > 1e-4f) {
 			while (frame < 0) {
@@ -611,7 +602,7 @@ int VRayVolumeGridRef::getCurrentCacheFrame() const
 			}
 		}
 
-		frame += get_read_offset();
+		frame += getReadOffset();
 		break;
 	default:
 		break;
@@ -660,14 +651,14 @@ i64 VRayVolumeGridRef::getCurrentCacheVoxelCount() const
 
 std::string VRayVolumeGridRef::getConvertedPath(bool toPhx) const
 {
-	const char * prefix = this->get_cache_path_prefix();
-	const char * suffix = this->get_cache_path_suffix();
+	const char * prefix = getCachePathPrefix();
+	const char * suffix = getCachePathSuffix();
 
 	if (!m_doFrameReplace) {
 		return prefix;
 	}
 
-	const int width = this->get_frame_number_width();
+	const int width = getFrameNumberWidth();
 	if (!prefix || !suffix || width < 1) {
 		return "";
 	}
@@ -717,20 +708,20 @@ bool VRayVolumeGridRef::updateFrom(const UT_Options &options)
 		std::string prefix, suffix;
 		int frameWidth = splitPath(options.getOptionS("cache_path").c_str(), prefix, suffix);
 
-		pathChange = frameWidth != this->get_frame_number_width() ||
-			prefix != this->get_cache_path_prefix() ||
-			suffix != this->get_cache_path_suffix();
+		pathChange = frameWidth != this->getFrameNumberWidth() ||
+			prefix != this->getCachePathPrefix() ||
+			suffix != this->getCachePathSuffix();
 
-		this->set_cache_path_prefix(prefix.c_str());
-		this->set_cache_path_suffix(suffix.c_str());
-		this->set_frame_number_width(frameWidth);
+		this->setCachePathPrefix(prefix.c_str());
+		this->setCachePathSuffix(suffix.c_str());
+		this->setFrameNumberWidth(frameWidth);
 	}
 
 	if (m_doFrameReplace) {
 		// if we aren't replacing frame we don't care if frame changes
 		// this means user hardcoded a path for a specific frame 
 		pathChange = pathChange
-			|| (options.hasOption("current_frame") && options.getOptionI("current_frame") != this->get_current_frame());
+			|| (options.hasOption("current_frame") && options.getOptionI("current_frame") != this->getCurrentFrame());
 	}
 
 	m_channelDirty = m_channelDirty || pathChange;
@@ -739,14 +730,14 @@ bool VRayVolumeGridRef::updateFrom(const UT_Options &options)
 	m_dirty = m_dirty
 		|| pathChange
 		|| (options.hasOption("flip_yz")
-			&& options.getOptionI("flip_yz") != this->get_flip_yz())
+			&& options.getOptionI("flip_yz") != this->getFlipYz())
 		|| (options.hasOption("res_mode") && options.hasOption("preview_res")
 			&& getResolution() != newResolution);
 
 	m_options.merge(options);
 
-	this->set_current_cache_path(getConvertedPath(false).c_str());
-	this->set_cache_path(getConvertedPath(true).c_str());
+	this->setCurrentCachePath(getConvertedPath(false).c_str());
+	this->setCachePath(getConvertedPath(true).c_str());
 
 	buildMapping();
 
@@ -757,11 +748,19 @@ bool VRayVolumeGridRef::updateFrom(const UT_Options &options)
 	}
 
 	if (m_dirty) {
+#if HDK_16_5
+		getPrim()->transformDirty();
+#else
 		transformDirty();
+#endif
 	}
 
 	if (diffHash) {
+#if HDK_16_5
+		getPrim()->attributeDirty();
+#else
 		attributeDirty();
+#endif
 	}
 
 	return true;

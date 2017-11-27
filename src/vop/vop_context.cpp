@@ -50,9 +50,6 @@ VOP::VRayMaterialBuilder::VRayMaterialBuilder(OP_Network *parent, const char *na
 	: SHOP_Node(parent, name, entry, shader_type)
 	, m_codeGen(this, new VOP_LanguageContextTypeList(VOP_LANGUAGE_VEX, VOP_CVEX_SHADER), 1, 1)
 {
-#if UT_MAJOR_VERSION_INT < 16
-	setOperatorTable(getOperatorTable(VOP_TABLE_NAME));
-#endif
 }
 
 
@@ -126,9 +123,7 @@ void VOP::VRayMaterialBuilder::register_shop_operator(OP_OperatorTable *table)
 	SHOP_Operator *op = new SHOP_Operator("vray_material", "V-Ray Material",
 										  VOP::VRayMaterialBuilder::creator,
 										  templates,
-#if UT_MAJOR_VERSION_INT >= 16
 										  VOP_TABLE_NAME,
-#endif
 										  0, 0,
 										  VOP_CodeGenerator::theLocalVariables,
 										  OP_FLAG_GENERATOR | OP_FLAG_NETWORK ,
@@ -149,11 +144,7 @@ void VOP::VRayMaterialBuilder::register_shop_operator(OP_OperatorTable *table)
 VOP::VRayVOPContext::VRayVOPContext(OP_Network *parent, const char *name, OP_Operator *entry):
 	VOPNET_Node(parent, name, entry)
 	, m_codeGen(this, new VOP_LanguageContextTypeList(VOP_LANGUAGE_VEX, VOP_CVEX_SHADER), 1, 1)
-{
-#if UT_MAJOR_VERSION_INT < 16
-	setOperatorTable(getOperatorTable(VOP_TABLE_NAME));
-#endif
-}
+{}
 
 
 bool VOP::VRayVOPContext::evalVariableValue(UT_String &value, int index, int thread)
@@ -220,9 +211,7 @@ void VOP::VRayVOPContext::register_operator_vrayenvcontext(OP_OperatorTable *tab
 	OP_Operator *op = new VOP_Operator("vray_environment", "V-Ray Environment",
 									  VOP::VRayVOPContext::creator,
 									  templates,
-#if UT_MAJOR_VERSION_INT >= 16
 									  VOP_TABLE_NAME,
-#endif
 									  0, 0,
 									  "*",
 									  VOP_CodeGenerator::theLocalVariables,
@@ -240,9 +229,7 @@ void VOP::VRayVOPContext::register_operator_vrayrccontext(OP_OperatorTable *tabl
 	OP_Operator *op = new VOP_Operator("vray_render_channels", "V-Ray Render Channels",
 									  VOP::VRayVOPContext::creator,
 									  templates,
-#if UT_MAJOR_VERSION_INT >= 16
 									  VOP_TABLE_NAME,
-#endif
 									  0, 0,
 									  "*",
 									  VOP_CodeGenerator::theLocalVariables,

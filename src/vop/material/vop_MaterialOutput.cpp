@@ -9,6 +9,7 @@
 //
 
 #include "vop_MaterialOutput.h"
+#include "vfh_op_utils.h"
 
 #include <VOP/VOP_Operator.h>
 #include <VOP/VOP_OperatorInfo.h>
@@ -34,9 +35,9 @@ struct MaterialOutputInputSocket {
 };
 
 static MaterialOutputInputSocket materialOutputInputSockets[] = {
-	{ "Material",   VOP_TypeInfo(VOP_SURFACE_SHADER)    },
-	{ "Surface",    VOP_TypeInfo(VOP_GEOMETRY_SHADER)   },
-	{ "Simulation", VOP_TypeInfo(VOP_ATMOSPHERE_SHADER) },
+	{ vfhSocketMaterialOutputMaterial,   VOP_TypeInfo(VOP_SURFACE_SHADER)    },
+	{ vfhSocketMaterialOutputSurface,    VOP_TypeInfo(VOP_GEOMETRY_SHADER)   },
+	{ vfhSocketMaterialOutputSimulation, VOP_TypeInfo(VOP_ATMOSPHERE_SHADER) },
 } ;
 
 static PRM_Template templates[] = {
@@ -47,9 +48,7 @@ void MaterialOutput::register_operator(OP_OperatorTable *table)
 {
 	VOP_Operator *op = new VOP_Operator("vray_material_output", "V-Ray Material Output",
 										MaterialOutput::creator, templates,
-#if UT_MAJOR_VERSION_INT >= 16
 										nullptr,
-#endif
 										3, 3,
 										"VRay",
 										nullptr,
