@@ -219,11 +219,17 @@ struct PluginAttr {
 		paramType = PluginAttr::AttrTypeRawListCharString;
 		paramValue.valRawListCharString = attrValue;
 	}
-
-	PluginAttr(const std::string &attrName, const VRay::VUtils::ValueRefList &attrValue) {
-		paramName = attrName;
-		paramType = PluginAttr::AttrTypeRawListValue;
-		paramValue.valRawListValue = attrValue;
+	
+	/// Override constructor for ValueRefList parameter.
+	/// @param name Plugin parameter name.
+	/// @param value Plugin parameter value as ValueRefList.
+	/// @param isAnimatedGenericList ValueRefList should create key-frames.
+	PluginAttr(const std::string &name, const VRay::VUtils::ValueRefList &value, int isAnimatedGenericList = false)
+		: paramName(name)
+		, paramType(AttrTypeRawListValue)
+		, isAnimatedGenericList(isAnimatedGenericList)
+	{
+		paramValue.valRawListValue = value;
 	}
 
 	/// Get attribute type as string
@@ -257,6 +263,9 @@ struct PluginAttr {
 
 	std::string             paramName; ///< attribute name
 	AttrType                paramType; ///< attribute type
+
+	/// Parameter value needs to be exported as an animated generic list.
+	int isAnimatedGenericList{0};
 };
 
 typedef VUtils::HashMap<PluginAttr, true, 512, false, 50> PluginAttrs;
