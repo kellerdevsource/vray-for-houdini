@@ -11,7 +11,8 @@
 #include "vop_node_osl.h"
 #include "getenvvars.h"
 
-#include <boost/filesystem.hpp>
+#include <QTemporaryFile>
+#include <QDir>
 
 #include <OSL/oslconfig.h>
 #include <OSL/oslcomp.h>
@@ -642,17 +643,22 @@ OP::VRayNode::PluginResult OSLNodeBase<MTL>::asPluginDesc(Attrs::PluginDesc &plu
 	UT_String oslSource;
 	evalString(oslSource, "osl_source", 0, 0);
 	if (oslSource == "OSL") {
-		boost::filesystem::path oslCodePath = boost::filesystem::temp_directory_path() / boost::filesystem::unique_path("%%%%-%%%%-%%%%-%%%%.osl");
+		const QString tmpDir = QDir::tempPath() + "/";
+		QTemporaryFile oslCodeFile(tmpDir + "XXXXXX.osl");
+		oslCodeFile.setAutoRemove(false);
+		if (!oslCodeFile.open()) {
+			Log::getLog().error("Failed to open temp file for OSL \"%s\"", this->getName().nonNullBuffer());
+			return PluginResult::PluginResultError;
+		}
+
 		UT_String oslCode;
 		evalString(oslCode, "osl_code", 0, 0);
-		{
-			std::ofstream tmpFile(oslCodePath.c_str(), std::ios::trunc | std::ios::binary);
-			if (!tmpFile || !tmpFile.write(oslCode.c_str(), oslCode.length())) {
-				Log::getLog().error("Failed to save inline OSL code from \"%s\"", this->getName().nonNullBuffer());
-				return PluginResult::PluginResultError;
-			}
+		if (oslCodeFile.write(oslCode.buffer(), oslCode.length()) != oslCode.length()) {
+			Log::getLog().error("Failed to save inline OSL code from \"%s\"", this->getName().nonNullBuffer());
+			return PluginResult::PluginResultError;
 		}
-		pluginDesc.add(Attrs::PluginAttr("shader_file", oslCodePath.string()));
+		const QString & oslCodePath = oslCodeFile.fileName();
+		pluginDesc.add(Attrs::PluginAttr("shader_file", oslCodePath.toStdString().c_str()));
 	} else {
 		UT_String oslPath;
 		evalString(oslPath, "osl_file", 0, 0);

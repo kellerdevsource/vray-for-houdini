@@ -28,10 +28,7 @@ macro(link_with_boost _name)
 				libboost_thread-vc140-mt-1_61
 			)
 		else()
-			set(BOOST_LIBS
-				boost_system-vc140-mt-1_55
-				boost_filesystem-vc140-mt-1_55
-			)
+			set(BOOST_LIBS boost_system-vc140-mt-1_55)
 		endif()
 	else()
 		set(BOOST_LIBS boost_system)
