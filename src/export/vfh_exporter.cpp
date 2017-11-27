@@ -2117,6 +2117,8 @@ void VRayExporter::initExporter(int hasUI, int nframes, fpreal tstart, fpreal te
 	m_isMotionBlur = hasMotionBlur(*m_rop, *camera);
 	m_isVelocityOn = hasVelocityOn(*m_rop);
 
+	// Reset time before exporting settings.
+	setTime(0.0);
 	setAnimation(sessionType == VfhSessionType::production &&
 		(m_isAnimation || m_isMotionBlur || m_isVelocityOn));
 
@@ -2281,6 +2283,12 @@ void VRayExporter::restoreCurrentTake()
 void VRayExporter::exportFrame(fpreal time)
 {
 	Log::getLog().debug("VRayExporter::exportFrame(time=%.3f)", time);
+
+	if (isAborted()) {
+		Log::getLog().info("Operation is aborted by the user!");
+		m_error = ROP_ABORT_RENDER;
+		return;
+	}
 
 	applyTake();
 
