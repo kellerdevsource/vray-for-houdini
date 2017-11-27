@@ -59,6 +59,7 @@ public:
 	}
 } staticErrHandle;
 
+/// All osl params in OSL multiparam
 const std::string OSL_PARAM_TYPE_LIST[] = {
 	"color_param",
 	"vector_param",
@@ -68,6 +69,11 @@ const std::string OSL_PARAM_TYPE_LIST[] = {
 	"bool_param",
 	"menu_param",
 };
+
+/// Env var reader for APPSDK_PATH
+VUtils::GetEnvVar APPSDK_PATH("VRAY_APPSDK", "");
+/// We ship the stdosl.h that comes with appsdk
+const std::string stdOslPath = APPSDK_PATH.getValue().ptr() + std::string("/bin/stdosl.h");
 
 const int OSL_PARAM_TYPE_COUNT = sizeof(OSL_PARAM_TYPE_LIST) / sizeof(OSL_PARAM_TYPE_LIST[0]);
 
@@ -217,13 +223,12 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 
 	std::string osoCode;
 	if (needCompile) {
-		static VUtils::GetEnvVar APPSDK_PATH("VRAY_APPSDK", "");
 		OSLCompiler * compiler = OSLCompiler::create();
 		OSLCompilerInput settings;
 		settings.inputMode = OSL_MEMORY_BUFFER;
 		settings.outputMode = OSL_MEMORY_BUFFER;
 		settings.buffer = std::move(oslCode.toStdString());
-		settings.stdoslpath = APPSDK_PATH.getValue().ptr() + std::string("/bin/stdosl.h");
+		settings.stdoslpath = stdOslPath;
 		settings.errorHandler = &staticErrHandle;
 
 		if (!compiler->compile(settings)) {
