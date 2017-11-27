@@ -1,6 +1,6 @@
 
 group {
-    name    "folder0"
+    name    "VfhOSLBase"
     label   "OSL Code"
 
     parm {
