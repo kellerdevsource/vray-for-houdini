@@ -224,7 +224,9 @@ VRayPluginInfo* Parm::generatePluginInfo(const std::string &pluginID)
 				break;
 			}
 			case Parm::PluginTypeMaterial: {
-				pluginInfo->outputs.push_back(SocketDesc(PRM_Name("Material", "Material"), VOP_SURFACE_SHADER));
+				if (pluginID != "MtlOSL") {
+					pluginInfo->outputs.push_back(SocketDesc(PRM_Name("Material", "Material"), VOP_SURFACE_SHADER));
+				}
 				break;
 			}
 			case Parm::PluginTypeUvwgen: {
@@ -232,6 +234,9 @@ VRayPluginInfo* Parm::generatePluginInfo(const std::string &pluginID)
 				break;
 			}
 			case Parm::PluginTypeTexture: {
+				if (pluginID == "TexOSL") {
+					break;
+				}
 				if (pluginID == "BitmapBuffer") {
 					pluginInfo->outputs.push_back(SocketDesc(PRM_Name("Bitmap", "Bitmap"), VOP_TYPE_VOID));
 				}
