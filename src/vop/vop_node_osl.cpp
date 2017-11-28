@@ -200,24 +200,23 @@ void OSLNodeBase<MTL>::getOSLCode(UT_String & oslCode, bool &needCompile) const
 	} else {
 		UT_String filePath;
 		evalString(filePath, "osl_file", 0, 0.f);
+
 		needCompile = filePath.endsWith(".osl");
 
 		// TODO: is it worth it to cache path + last change time
 		QFile oslFile(filePath.nonNullBuffer());
 		if (!oslFile.open(QIODevice::ReadOnly)) {
 			Log::getLog().error("Failed to open \"%s\" selected as osl source file", filePath.nonNullBuffer());
-			return;
-		}
-		const int size = oslFile.size();
-		std::unique_ptr<char[]> data = std::unique_ptr<char[]>(new char[size + 1]);
+		} else {
+			QByteArray data = oslFile.readAll();
+			oslFile.close();
 
-		if (size != oslFile.read(data.get(), size)) {
-			Log::getLog().error("Failed to read \"%s\" selected as osl source file", filePath.nonNullBuffer());
-			return;
+			if (!data.size()) {
+				Log::getLog().error("Failed to read \"%s\" selected as osl source file", filePath.nonNullBuffer());
+			} else {
+				oslCode = UT_String(data.constData(), true, data.size());
+			}
 		}
-
-		data[size] = 0;
-		oslCode.adopt(data.release());
 	}
 }
 
