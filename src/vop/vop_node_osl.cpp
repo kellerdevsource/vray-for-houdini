@@ -767,3 +767,8 @@ OP::VRayNode::PluginResult OSLNodeBase<MTL>::asPluginDesc(Attrs::PluginDesc &plu
 
 	return PluginResult::PluginResultContinue;
 }
+
+
+/// Instantiate both versions of the class so all methods can be generated
+template class OSLNodeBase<true>;
+template class OSLNodeBase<false>;

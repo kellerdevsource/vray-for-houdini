@@ -118,10 +118,6 @@ protected:
 	mutable char m_outputNameBuff[1024]; ///< Buffer containing the output parameter name, used so we have pointer that will not move
 };
 
-/// Instantiate both versions of the class so all methods can be generated
-template class OSLNodeBase<true>;
-template class OSLNodeBase<false>;
-
 typedef OSLNodeBase<true> MtlOSL;
 typedef OSLNodeBase<false> TexOSL;
 
