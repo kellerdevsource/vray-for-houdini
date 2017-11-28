@@ -206,6 +206,7 @@ void OSLNodeBase<MTL>::getOSLCode(UT_String & oslCode, bool &needCompile) const
 		QFile oslFile(filePath.nonNullBuffer());
 		if (!oslFile.open(QIODevice::ReadOnly)) {
 			Log::getLog().error("Failed to open \"%s\" selected as osl source file", filePath.nonNullBuffer());
+			return;
 		}
 		const int size = oslFile.size();
 		std::unique_ptr<char[]> data = std::unique_ptr<char[]>(new char[size + 1]);
