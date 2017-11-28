@@ -203,16 +203,22 @@ void OSLNodeBase<MTL>::getOSLCode(UT_String & oslCode, bool &needCompile) const
 		needCompile = filePath.endsWith(".osl");
 
 		// TODO: is it worth it to cache path + last change time
-		std::ifstream oslFile(filePath, std::ios::binary);
+		std::shared_ptr<FILE> oslFile(fopen(filePath.nonNullBuffer(), "rb"), [](FILE * file) {
+			if (file) {
+				fclose(file);
+			}
+		});
 		if (!oslFile) {
 			return;
 		}
-
-		oslFile.seekg(0, std::ios::end);
-		const int size = oslFile.tellg().seekpos();
+		fseek(oslFile.get(), 0, SEEK_END);
+		const int size = ftell(oslFile.get());
+		if (size < 0) {
+			Log::getLog().error("Selected osl file \"%s\" is empty/cat't be read", filePath.nonNullBuffer());
+		}
 		std::unique_ptr<char[]> data = std::unique_ptr<char[]>(new char[size + 1]);
-		oslFile.seekg(0, std::ios::beg);
-		if (!oslFile.read(data.get(), size)) {
+		fseek(oslFile.get(), 0, SEEK_SET);
+		if (size != fread(data.get(), 1, size, oslFile.get())) {
 			Log::getLog().error("Failed to read \"%s\" selected as osl source file", filePath.nonNullBuffer());
 			return;
 		}
