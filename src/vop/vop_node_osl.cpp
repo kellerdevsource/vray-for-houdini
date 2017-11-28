@@ -22,6 +22,44 @@
 #include <OpenImageIO/errorhandler.h>
 #include <OpenImageIO/typedesc.h>
 
+// Template specializations neet to be implemented in the correct namespace!
+namespace VRayForHoudini
+{
+namespace VOP
+{
+template <>
+VOP_Type OSLNodeBase<true>::getOutputType() const
+{
+	return VOP_TYPE_BSDF;
+}
+
+template <>
+VOP_Type OSLNodeBase<false>::getOutputType() const
+{
+	return VOP_TYPE_COLOR;
+}
+
+
+template <>
+void OSLNodeBase<false>::setPluginType()
+{
+	pluginType = VRayPluginType::TEXTURE;
+	pluginID = "TexOSL";
+}
+
+template <>
+void OSLNodeBase<true>::setPluginType()
+{
+	pluginType = VRayPluginType::MATERIAL;
+	pluginID = "MtlOSL";
+}
+
+
+} // namespace VOP
+} // namespace VRayForHoudini
+
+
+
 using namespace VRayForHoudini;
 using namespace VOP;
 
@@ -560,18 +598,6 @@ void OSLNodeBase<MTL>::getInputTypeInfoSubclass(VOP_TypeInfo &typeInfo, int idx)
 	}
 }
 
-template <>
-VOP_Type OSLNodeBase<true>::getOutputType() const
-{
-	return VOP_TYPE_BSDF;
-}
-
-template <>
-VOP_Type OSLNodeBase<false>::getOutputType() const
-{
-	return VOP_TYPE_COLOR;
-}
-
 template <bool MTL>
 void OSLNodeBase<MTL>::getOutputTypeInfoSubclass(VOP_TypeInfo &type_info, int idx)
 {
@@ -742,18 +768,4 @@ OP::VRayNode::PluginResult OSLNodeBase<MTL>::asPluginDesc(Attrs::PluginDesc &plu
 	pluginDesc.add(Attrs::PluginAttr("input_parameters", oslParams));
 
 	return PluginResult::PluginResultContinue;
-}
-
-template <>
-void OSLNodeBase<false>::setPluginType()
-{
-	pluginType = VRayPluginType::TEXTURE;
-	pluginID = "TexOSL";
-}
-
-template <>
-void OSLNodeBase<true>::setPluginType()
-{
-	pluginType = VRayPluginType::MATERIAL;
-	pluginID = "MtlOSL";
 }
