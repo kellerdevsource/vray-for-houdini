@@ -26,117 +26,104 @@
 
 #include <unordered_set>
 
-
 using namespace VRayForHoudini;
-
 
 static const UT_StringRef theGeometryidToken   = "geometryid";
 static const UT_StringRef theAnimTypeNameToken = "animtypename";
 static const UT_StringRef theLODNameToken      = "lodname";
 
-
 GA_PrimitiveTypeId VRayProxyRef::theTypeId(-1);
 
-
-class VRayProxyFactory
+static class VRayProxyFactory
 	: public GU_PackedFactory
 {
 public:
-	static VRayProxyFactory &getInstance() {
-		static VRayProxyFactory theFactory;
-		return theFactory;
+	VRayProxyFactory()
+		: GU_PackedFactory("VRayProxyRef", "VRayProxyRef")
+	{
+		registerIntrinsic(
+					theGeometryidToken,
+					IntGetterCast(&VRayProxyRef::getGeometryid)
+					);
+
+		registerIntrinsic(
+					VRayProxyParms::theFileToken,
+					StringGetterCast(&VRayProxyRef::getFilepath),
+					StringSetterCast(&VRayProxyRef::setFilepath)
+					);
+
+		registerIntrinsic(
+					VRayProxyParms::theLODToken,
+					IntGetterCast(&VRayProxyRef::getLOD),
+					IntSetterCast(&VRayProxyRef::setLOD)
+					);
+
+		registerIntrinsic(
+					theLODNameToken,
+					StringGetterCast(&VRayProxyRef::getLODName)
+					);
+
+		registerIntrinsic(
+					VRayProxyParms::theAnimTypeToken,
+					IntGetterCast(&VRayProxyRef::getAnimType),
+					IntSetterCast(&VRayProxyRef::setAnimType)
+					);
+
+		registerIntrinsic(
+					theAnimTypeNameToken,
+					StringGetterCast(&VRayProxyRef::getAnimTypeName)
+					);
+
+		registerIntrinsic(
+					VRayProxyParms::theAnimOffsetToken,
+					FloatGetterCast(&VRayProxyRef::getAnimOffset),
+					FloatSetterCast(&VRayProxyRef::setAnimOffset)
+					);
+
+		registerIntrinsic(
+					VRayProxyParms::theAnimSpeedToken,
+					FloatGetterCast(&VRayProxyRef::getAnimSpeed),
+					FloatSetterCast(&VRayProxyRef::setAnimSpeed)
+					);
+
+		registerIntrinsic(
+					VRayProxyParms::theAnimOverrideToken,
+					BoolGetterCast(&VRayProxyRef::getAnimOverride),
+					BoolSetterCast(&VRayProxyRef::setAnimOverride)
+					);
+
+		registerIntrinsic(
+					VRayProxyParms::theAnimStartToken,
+					IntGetterCast(&VRayProxyRef::getAnimStart),
+					IntSetterCast(&VRayProxyRef::setAnimStart)
+					);
+
+		registerIntrinsic(
+					VRayProxyParms::theAnimLengthToken,
+					IntGetterCast(&VRayProxyRef::getAnimLength),
+					IntSetterCast(&VRayProxyRef::setAnimLength)
+					);
+
+		registerIntrinsic(
+					VRayProxyParms::theScaleToken,
+					FloatGetterCast(&VRayProxyRef::getScale),
+					FloatSetterCast(&VRayProxyRef::setScale)
+					);
+
+		registerIntrinsic(
+					VRayProxyParms::theFlipAxisToken,
+					IntGetterCast(&VRayProxyRef::getFlipAxis),
+					IntSetterCast(&VRayProxyRef::setFlipAxis)
+					);
 	}
+
 
 	GU_PackedImpl* create() const VRAY_OVERRIDE {
 		return new VRayProxyRef();
 	}
 
-private:
-	VRayProxyFactory();
-
-	VUTILS_DISABLE_COPY(VRayProxyFactory);
-};
-
-
-VRayProxyFactory::VRayProxyFactory():
-	GU_PackedFactory("VRayProxyRef", "VRayProxyRef")
-{
-	registerIntrinsic(
-				theGeometryidToken,
-				IntGetterCast(&VRayProxyRef::getGeometryid)
-				);
-
-	registerIntrinsic(
-				VRayProxyParms::theFileToken,
-				StringGetterCast(&VRayProxyRef::getFilepath),
-				StringSetterCast(&VRayProxyRef::setFilepath)
-				);
-
-	registerIntrinsic(
-				VRayProxyParms::theLODToken,
-				IntGetterCast(&VRayProxyRef::getLOD),
-				IntSetterCast(&VRayProxyRef::setLOD)
-				);
-
-	registerIntrinsic(
-				theLODNameToken,
-				StringGetterCast(&VRayProxyRef::getLODName)
-				);
-
-	registerIntrinsic(
-				VRayProxyParms::theAnimTypeToken,
-				IntGetterCast(&VRayProxyRef::getAnimType),
-				IntSetterCast(&VRayProxyRef::setAnimType)
-				);
-
-	registerIntrinsic(
-				theAnimTypeNameToken,
-				StringGetterCast(&VRayProxyRef::getAnimTypeName)
-				);
-
-	registerIntrinsic(
-				VRayProxyParms::theAnimOffsetToken,
-				FloatGetterCast(&VRayProxyRef::getAnimOffset),
-				FloatSetterCast(&VRayProxyRef::setAnimOffset)
-				);
-
-	registerIntrinsic(
-				VRayProxyParms::theAnimSpeedToken,
-				FloatGetterCast(&VRayProxyRef::getAnimSpeed),
-				FloatSetterCast(&VRayProxyRef::setAnimSpeed)
-				);
-
-	registerIntrinsic(
-				VRayProxyParms::theAnimOverrideToken,
-				BoolGetterCast(&VRayProxyRef::getAnimOverride),
-				BoolSetterCast(&VRayProxyRef::setAnimOverride)
-				);
-
-	registerIntrinsic(
-				VRayProxyParms::theAnimStartToken,
-				IntGetterCast(&VRayProxyRef::getAnimStart),
-				IntSetterCast(&VRayProxyRef::setAnimStart)
-				);
-
-	registerIntrinsic(
-				VRayProxyParms::theAnimLengthToken,
-				IntGetterCast(&VRayProxyRef::getAnimLength),
-				IntSetterCast(&VRayProxyRef::setAnimLength)
-				);
-
-	registerIntrinsic(
-				VRayProxyParms::theScaleToken,
-				FloatGetterCast(&VRayProxyRef::getScale),
-				FloatSetterCast(&VRayProxyRef::setScale)
-				);
-
-	registerIntrinsic(
-				VRayProxyParms::theFlipAxisToken,
-				IntGetterCast(&VRayProxyRef::getFlipAxis),
-				IntSetterCast(&VRayProxyRef::setFlipAxis)
-				);
-}
-
+	VUTILS_DISABLE_COPY(VRayProxyFactory)
+} theFactory;
 
 /// Hook to handle tesselation of proxy primitives
 ///
@@ -184,7 +171,6 @@ private:
 
 void VRayProxyRef::install(GA_PrimitiveFactory *gafactory)
 {
-	VRayProxyFactory &theFactory = VRayProxyFactory::getInstance();
 	if (theFactory.isRegistered()) {
 		Log::getLog().debug("Multiple attempts to install packed primitive %s from %s",
 							static_cast<const char *>(theFactory.name()), UT_DSO::getRunningFile());
@@ -229,7 +215,7 @@ VRayProxyRef::~VRayProxyRef()
 
 GU_PackedFactory* VRayProxyRef::getFactory() const
 {
-	return &VRayProxyFactory::getInstance();
+	return &theFactory;
 }
 
 
