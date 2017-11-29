@@ -912,10 +912,6 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 		}
 	}
 
-	pluginDesc.addAttribute(Attrs::PluginAttr("anim_start", OPgetDirector()->getChannelManager()->getTime(frameStart)));
-	pluginDesc.addAttribute(Attrs::PluginAttr("anim_end", OPgetDirector()->getChannelManager()->getTime(frameEnd)));
-	pluginDesc.addAttribute(Attrs::PluginAttr("frame_start", VUtils::fast_floor(frameStart)));
-	pluginDesc.addAttribute(Attrs::PluginAttr("frames_per_second", OPgetDirector()->getChannelManager()->getSamplesPerSec()));
 	pluginDesc.addAttribute(Attrs::PluginAttr("frames", frames));
 
 	return ReturnValue::Success;
@@ -2224,7 +2220,7 @@ void MotionBlurParams::calcParams(fpreal currFrame)
 void VRayExporter::setTime(fpreal time)
 {
 	m_context.setTime(time);
-	getRenderer().getVRay().setCurrentTime(time);
+	getRenderer().getVRay().setCurrentTime(m_context.getFloatFrame());
 
 	Log::getLog().debug("Time:  %g", m_context.getTime());
 	Log::getLog().debug("Frame: %i", m_context.getFrame());
