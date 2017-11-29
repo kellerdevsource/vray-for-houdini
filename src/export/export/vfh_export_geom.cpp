@@ -734,7 +734,7 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 				exint detailID;
 				exint primOffset;
 			} volumePrimID(getDetailID(), primOffset);
-#pragma pop(push, 1)
+#pragma pack(pop)
 
 			Hash::MurmurHash3_x86_32(&volumePrimID, sizeof(volumePrimID), 42, &item.primID);
 
