@@ -434,6 +434,10 @@ public:
 	/// i.e. animation, motion blur or output velocity channel
 	int isAnimation() const { return m_isAnimation; }
 
+	/// Test if we are going to export data for more that single frame
+	/// i.e. animation, motion blur or output velocity channel
+	int needVelocity() const { return m_isMotionBlur || m_isVelocityOn; }
+
 	/// Test if we are using stereo camera. This is setup on the V-Ray ROP
 	int isStereoView() const;
 
