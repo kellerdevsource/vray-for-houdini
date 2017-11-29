@@ -28,7 +28,7 @@ enum LogLevel {
 /// Simple logger class wrapping over printf.
 struct Logger {
 	Logger()
-		: logLevel(LogLevelDebug)
+		: logLevel(LogLevelError)
 	{}
 
 	/// Log string with msg level, always show not taking current log level into account.
