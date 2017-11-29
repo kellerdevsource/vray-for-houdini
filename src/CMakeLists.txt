@@ -189,6 +189,14 @@ set(HEADERS
 	vop/vop_node_base.h
 )
 
+if (VRayOSL_FOUND)
+	list(APPEND SOURCES
+		vop/vop_node_osl.cpp)
+
+	list(APPEND HEADERS
+		vop/vop_node_osl.h)
+endif()
+
 if (WIN32)
 	function(GroupSources curdir)
 		file(GLOB children RELATIVE ${PROJECT_SOURCE_DIR}/${curdir} ${PROJECT_SOURCE_DIR}/${curdir}/*)
@@ -258,10 +266,12 @@ vfh_generate_gu_options(vray_for_houdini_exporter vray_for_houdini)
 
 target_link_libraries(${PROJECT_NAME} vray_for_houdini_exporter)
 
+
 link_with_vray_sdk(${PROJECT_NAME})
 link_with_vray(${PROJECT_NAME})
 link_with_vray_appsdk(${PROJECT_NAME})
 link_with_boost(${PROJECT_NAME})
+link_with_vray_osl(${PROJECT_NAME})
 
 if (Phoenix_FOUND)
 	target_link_libraries(${PROJECT_NAME} ${Phoenix_LIBS})

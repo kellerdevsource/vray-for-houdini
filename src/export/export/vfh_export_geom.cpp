@@ -82,6 +82,7 @@ public:
 } primPackedTypeIDs;
 
 static boost::format objGeomNameFmt("%s|%i@%s");
+static boost::format objInstancerNameFmt("Instancer@%s");
 static boost::format hairNameFmt("GeomMayaHair|%i@%s");
 static boost::format polyNameFmt("GeomStaticMesh|%i@%s");
 static boost::format alembicNameFmt("Alembic|%i@%s");
@@ -409,37 +410,6 @@ int ObjectExporter::isNodePhantom(OBJ_Node &objNode) const
 		return false;
 	}
 	return bundle->contains(&objNode, false);
-}
-
-VRay::Plugin ObjectExporter::exportVRaySOP(OBJ_Node&, SOP_Node &sop)
-{
-	if (!doExportGeometry) {
-		return VRay::Plugin();
-	}
-
-	SOP::NodeBase *vrayNode = UTverify_cast<SOP::NodeBase*>(&sop);
-
-	ExportContext ctx(CT_OBJ, pluginExporter, *vrayNode->getParent());
-
-	Attrs::PluginDesc pluginDesc;
-	switch (vrayNode->asPluginDesc(pluginDesc, pluginExporter, &ctx)) {
-		case OP::VRayNode::PluginResultSuccess: {
-			break;
-		}
-		case OP::VRayNode::PluginResultNA:
-		case OP::VRayNode::PluginResultContinue: {
-			pluginExporter.setAttrsFromOpNodePrms(pluginDesc, vrayNode);
-			break;
-		}
-		case OP::VRayNode::PluginResultError:
-		default: {
-			Log::getLog().error("Error creating plugin descripion for \"%s\" [%s]",
-								sop.getName().buffer(),
-								sop.getOperator()->getName().buffer());
-		}
-	}
-
-	return pluginExporter.exportPlugin(pluginDesc);
 }
 
 VRay::Plugin ObjectExporter::getNodeForInstancerGeometry(VRay::Plugin geometry, VRay::Plugin)
@@ -843,11 +813,7 @@ static void appendSceneName(QString &userAttributes, const OP_Node &opNode)
 	userAttributes.append(sceneName[1].ptr());
 }
 
-PrimitiveItems& ObjectExporter::getInstancerItem() {
-	return instancerItems;
-}
-
-VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_Detail &gdp, const char *prefix)
+VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode)
 {
 	using namespace Attrs;
 
@@ -868,7 +834,7 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_D
 		objectID = objNode.evalInt(VFH_ATTRIB_OBJECTID, 0, ctx.getTime());
 	}
 
-	const float instancerTime = ctx.hasMotionBlur ? ctx.mbParams.mb_start : ctx.getFloatFrame();
+	const fpreal instancerTime = ctx.hasMotionBlur ? ctx.mbParams.mb_start : ctx.getTime();
 
 	// +1 because first value is time.
 	VRay::VUtils::ValueRefList instances(numParticles + 1);
@@ -964,9 +930,9 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_D
 
 	instancerItems.clear();
 
-	Attrs::PluginDesc instancer2(boost::str(objGeomNameFmt % prefix % gdp.getUniqueId() % objNode.getName().buffer()),
+	Attrs::PluginDesc instancer2(str(objInstancerNameFmt % objNode.getName().buffer()),
 								 "Instancer2");
-	instancer2.addAttribute(Attrs::PluginAttr("instances", instances));
+	instancer2.addAttribute(Attrs::PluginAttr("instances", instances, pluginExporter.isAnimation()));
 	instancer2.addAttribute(Attrs::PluginAttr("use_additional_params", true));
 	instancer2.addAttribute(Attrs::PluginAttr("use_time_instancing", false));
 
@@ -1787,11 +1753,11 @@ void ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_Detail &gd
 	}
 }
 
-VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode, SOP_Node &sopNode)
+void ObjectExporter::exportGeometry(OBJ_Node &objNode, SOP_Node &sopNode)
 {
 	const GU_DetailHandleAutoReadLock gdl(sopNode.getCookedGeoHandle(ctx));
 	if (!gdl.isValid()) {
-		return VRay::Plugin();
+		return;
 	}
 
 	const GU_Detail &gdp = *gdl;
@@ -1815,63 +1781,29 @@ VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode, SOP_Node &sopNode
 		exportDetail(objNode, gdp);
 	}
 
-	VRay::Plugin geometry = exportDetailInstancer(objNode, gdp, "Instancer") ;
-
 	popContext();
-
-	return geometry;
 }
 
-int ObjectExporter::exportGeometry(OBJ_Node &objNode, PrimitiveItems &items) {
+void ObjectExporter::exportGeometry(OBJ_Node &objNode, PrimitiveItems &items)
+{
 	SOP_Node *renderSOP = objNode.getRenderSopPtr();
-	if (!renderSOP) {
-		return 1;
-	}
+	if (!renderSOP)
+		return;
 
-	const GU_DetailHandleAutoReadLock gdl(renderSOP->getCookedGeoHandle(ctx));
-	if (!gdl.isValid()) {
-		return 2;
-	}
+	exportGeometry(objNode, *renderSOP);
 
-	const GU_Detail &gdp = *gdl;
-
-	PrimitiveItem rootItem;
-	rootItem.primID = gdp.getUniqueId();
-
-	PrimContext primContext(&objNode, rootItem);
-
-	STY_Styler currentStyler = getStyler();
-	STY_Styler objectStyler = getStylerForObject(objNode, ctx.getTime());
-	primContext.styler = objectStyler.cloneWithAddedStyler(currentStyler, STY_TargetHandle());
-
-	pushContext(primContext);
-	exportDetail(objNode, gdp);
-	popContext();
-	
-	instancerItems.swap(items);
-
-	return 0;
+	items.swap(instancerItems);
 }
 
 VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode)
 {
 	SOP_Node *renderSOP = objNode.getRenderSopPtr();
-	if (!renderSOP) {
+	if (!renderSOP)
 		return VRay::Plugin();
-	}
 
-	const UT_String &renderOpType = renderSOP->getOperator()->getName();
-	if (renderOpType.startsWith("VRayNode") &&
-		!renderOpType.equal("VRayNodePhxShaderCache") &&
-		!renderOpType.equal("VRayNodeVRayProxy") &&
-		!renderOpType.equal("VRayNodeVRayScene") &&
-		!renderOpType.equal("VRayNodeVRayPgYeti") &&
-		!renderOpType.equal("VRayNodeGeomPlane"))
-	{
-		return exportVRaySOP(objNode, *renderSOP);
-	}
+	exportGeometry(objNode, instancerItems);
 
-	return exportGeometry(objNode, *renderSOP);
+	return exportDetailInstancer(objNode);
 }
 
 int ObjectExporter::isLightEnabled(OBJ_Node &objLight) const

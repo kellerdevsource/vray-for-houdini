@@ -195,11 +195,16 @@ double VRaySceneRef::getFrame(fpreal t) const
 {
 	const int useAnimOverrides = getAnimOverride();
 	if (useAnimOverrides) {
+		int animLength = getAnimLength();
+		if (animLength <= 0) {
+			animLength = 100;
+		}
+
 		t = VUtils::calcFrameIndex(t,
 			static_cast<VUtils::MeshFileAnimType::Enum>(
 								   getAnimType()),
 								   getAnimStart(),
-								   getAnimLength(),
+								   animLength,
 								   getAnimOffset(),
 								   getAnimSpeed());
 	}

@@ -221,11 +221,6 @@ public:
 
 	void exportHair(OBJ_Node &objNode, const GU_Detail &gdp, const GEOPrimList &primList);
 
-	/// A helper function to export geometry from a custom V-Ray SOP node.
-	/// @param sop V-Ray SOP node.
-	/// @returns V-Ray plugin instance.
-	VRay::Plugin exportVRaySOP(OBJ_Node &objNode, SOP_Node &sop);
-
 	VRay::Plugin exportPgYetiRef(OBJ_Node &objNode, const GU_PrimPacked &prim);
 
 	VRay::Plugin exportVRayProxyRef(OBJ_Node &objNode, const GU_PrimPacked &prim);
@@ -250,7 +245,7 @@ public:
 
 	void processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, const GA_Range &primRange=GA_Range());
 
-	VRay::Plugin exportDetailInstancer(OBJ_Node &objNode, const GU_Detail &gdp, const char *prefix);
+	VRay::Plugin exportDetailInstancer(OBJ_Node &objNode);
 
 	/// Obtain the reference to the container.
 	/// @returns Reference to InstancerItems container.
@@ -289,9 +284,14 @@ public:
 	/// @returns Geometry plugin.
 	VRay::Plugin exportGeometry(OBJ_Node &objNode);
 
+	/// Export object geometry into a set of plugins.
+	/// @param objNode OBJ node.
+	/// @param items Output geometry list.
+	void exportGeometry(OBJ_Node &objNode, PrimitiveItems &items);
+
 	/// Export SOP geometry.
 	/// @returns Geometry plugin.
-	VRay::Plugin exportGeometry(OBJ_Node &objNode, SOP_Node &sopNode);
+	void exportGeometry(OBJ_Node &objNode, SOP_Node &sopNode);
 
 	void setupGeometryExport(OBJ_Node &objNode, SOP_Node &sopNode);
 
