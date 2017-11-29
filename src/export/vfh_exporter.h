@@ -626,6 +626,9 @@ private:
 	/// Scene take selected in UI. Used to restore selected take after export.
 	TAKE_Take *currentTake{nullptr};
 
+	/// Export each frame into a separate file.
+	int exportFilePerFrame{0};
+
 public:
 	/// Register event callback for a given node. This callback will be invoked when
 	/// change on the node occurs. The event type will be passed as parameter to the callback

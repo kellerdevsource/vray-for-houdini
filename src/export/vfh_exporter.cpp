@@ -9,6 +9,7 @@
 //
 
 #include <QDir>
+#include <QRegExp>
 
 #include "vfh_defines.h"
 #include "vfh_exporter.h"
@@ -48,6 +49,7 @@
 #include <boost/bind.hpp>
 #include <boost/format.hpp>
 #include <boost/algorithm/string.hpp>
+
 #include "vfh_export_geom.h"
 #include "vfh_op_utils.h"
 
@@ -76,6 +78,17 @@ static const VRay::Transform envMatrix(VRay::Matrix(VRay::Vector(1.f, 0.f, 0.f),
                                                     VRay::Vector(0.f, 0.f, 1.f),
                                                     VRay::Vector(0.f, -1.f, 0.f)),
                                        VRay::Vector(0.f));
+
+static QRegExp frameMatch("\\$[.\\d]*F");
+
+/// Checks if we're exporting frames into separate *.vrscene files.
+static int isExportFramesToSeparateFiles(OP_Node &rop)
+{
+	UT_String exportFilepath;
+	rop.evalStringRaw(exportFilepath, "render_export_filepath", 0, 0.0);
+
+	return frameMatch.indexIn(exportFilepath.buffer()) != -1;
+}
 
 /// Fills SettingsRTEngine settings from the ROP node.
 /// @param self SettingsRTEngine instance.
@@ -893,22 +906,30 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 		pluginDesc.addAttribute(Attrs::PluginAttr("img_file", fileName.toStdString()));
 	}
 
-	const fpreal frameStart = CAST_ROPNODE(m_rop)->FSTART();
-	const fpreal frameEnd = CAST_ROPNODE(m_rop)->FEND();
 	VRay::VUtils::ValueRefList frames(1);
-	frames[0].setDouble(frameStart);
-	if (m_frames > 1) {
-		if (CAST_ROPNODE(m_rop)->FINC() > 1) {
-			frames = VRay::VUtils::ValueRefList(m_frames);
-			for (int i = 0; i < m_frames; ++i) {
-				frames[i].setDouble(frameStart + i * CAST_ROPNODE(m_rop)->FINC());
+
+	if (exportFilePerFrame) {
+		frames[0].setDouble(getContext().getFloatFrame());
+	}
+	else {
+		const fpreal frameStart = CAST_ROPNODE(m_rop)->FSTART();
+		frames[0].setDouble(frameStart);
+
+		if (m_frames > 1) {
+			const fpreal frameEnd = CAST_ROPNODE(m_rop)->FEND();
+
+			if (CAST_ROPNODE(m_rop)->FINC() > 1) {
+				frames = VRay::VUtils::ValueRefList(m_frames);
+				for (int i = 0; i < m_frames; ++i) {
+					frames[i].setDouble(frameStart + i * CAST_ROPNODE(m_rop)->FINC());
+				}
 			}
-		}
-		else {
-			VRay::VUtils::ValueRefList frameRange(2);
-			frameRange[0].setDouble(frameStart);
-			frameRange[1].setDouble(frameEnd);
-			frames[0].setList(frameRange);
+			else {
+				VRay::VUtils::ValueRefList frameRange(2);
+				frameRange[0].setDouble(frameStart);
+				frameRange[1].setDouble(frameEnd);
+				frames[0].setList(frameRange);
+			}
 		}
 	}
 
@@ -2062,13 +2083,24 @@ int VRayExporter::renderSequence(int start, int end, int step, int locked)
 
 int VRayExporter::exportVrscene(const std::string &filepath, VRay::VRayExportSettings &settings)
 {
+	// Create export directory.
+	QFileInfo filePathInfo(filepath.c_str());
+	directoryCreator.mkpath(filePathInfo.absoluteDir().path());
+
 	return m_renderer.exportScene(filepath, settings);
 }
 
 
 void VRayExporter::clearKeyFrames(double toTime)
 {
-	if (SYSalmostEqual(toTime, SYS_FP64_MAX)) {
+	const int clearAll = SYSalmostEqual(toTime, SYS_FP64_MAX);
+
+	// XXX: A bit hacky.
+	// Clear key-frames only if we are exporting to separate files or just rendering without export.
+	if (!clearAll && !exportFilePerFrame)
+		return;
+
+	if (clearAll) {
 		Log::getLog().debug("VRayExporter::clearKeyFrames(ALL)");
 	}
 	else {
@@ -2132,8 +2164,14 @@ void VRayExporter::initExporter(int hasUI, int nframes, fpreal tstart, fpreal te
 	m_renderer.getVRay().setOnRendererClose(onRendererClosed, this);
 	m_renderer.getVRay().setOnRenderLast(onRenderLast, this);
 
-	// Export renderer settings on session initialization.
-	exportSettings();
+	const int isExportMode =
+		m_workMode == ExpExport ||
+		m_workMode == ExpExportRender;
+
+	exportFilePerFrame =
+		isExportMode &&
+		isAnimation() &&
+		isExportFramesToSeparateFiles(*m_rop);
 
 	m_error = ROP_CONTINUE_RENDER;
 }
@@ -2289,10 +2327,12 @@ void VRayExporter::exportFrame(fpreal time)
 
 	setTime(time);
 
+	exportSettings();
+
 	m_context.hasMotionBlur = m_isMotionBlur || m_isVelocityOn;
 
 	if (!m_context.hasMotionBlur) {
-		clearKeyFrames(time);
+		clearKeyFrames(getContext().getFloatFrame());
 		exportScene();
 	}
 	else {
@@ -2301,11 +2341,7 @@ void VRayExporter::exportFrame(fpreal time)
 		mbParams.calcParams(m_context.getFloatFrame());
 
 		// We don't need this data anymore
-		{
-			OP_Context timeCtx;
-			timeCtx.setFrame(mbParams.mb_start);
-			clearKeyFrames(timeCtx.getTime());
-		}
+		clearKeyFrames(mbParams.mb_start);
 
 		for (FloatSet::iterator tIt = m_exportedFrames.begin(); tIt != m_exportedFrames.end();) {
 			if (*tIt < mbParams.mb_start) {
