@@ -82,7 +82,6 @@ void SOP::VRayProxy::updatePrimitive(const OP_Context &context)
 	const fpreal t = context.getTime();
 
 	// Set the options on the primitive
-#if 1
 	OP_Options primOptions;
 	for (int i = 0; i < getParmList()->getEntries(); ++i) {
 		const PRM_Parm &prm = getParm(i);
@@ -100,55 +99,6 @@ void SOP::VRayProxy::updatePrimitive(const OP_Context &context)
 
 	primOptions.setOptionI("lod", true ? LOD_PREVIEW : evalInt("loadtype", 0, 0.0)); // XXX: Revert after fix.
 	primOptions.setOptionF("current_frame", previewMeshAnimated ? context.getFloatFrame() : 0.0f);
-#else
-	UT_String path;
-	evalString(path, "file", 0, t);
-
-	UT_Options primOptions;
-	primOptions
-		.setOptionI("lod", evalInt("loadtype", 0, t))
-		.setOptionS("file", path)
-		.setOptionI("anim_type", evalInt("anim_type", 0, t))
-		.setOptionF("anim_offset", evalFloat("anim_offset", 0, t))
-		.setOptionF("anim_speed", evalFloat("anim_speed", 0, t))
-		.setOptionB("anim_override", evalInt("anim_override", 0, t))
-		.setOptionI("anim_start", evalInt("anim_start", 0, t))
-		.setOptionI("anim_length", evalInt("anim_length", 0, t))
-		.setOptionB("compute_bbox", evalInt("compute_bbox", 0, t))
-		.setOptionB("compute_normals", evalInt("compute_normals", 0, t))
-		.setOptionI("first_map_channel", evalInt("first_map_channel", 0, t))
-		.setOptionI("flip_axis", evalInt("flip_axis", 0, t))
-		.setOptionB("flip_normals", evalInt("flip_normals", 0, t))
-		.setOptionI("hair_visibility_lists_type", evalInt("hair_visibility_lists_type", 0, t))
-		.setOptionF("hair_width_multiplier", evalFloat("hair_width_multiplier", 0, t))
-		.setOptionB("instancing", evalInt("instancing", 0, t))
-		.setOptionI("num_preview_faces", evalInt("num_preview_faces", 0, t))
-		.setOptionS("object_path", objectPath)
-		.setOptionI("particle_render_mode", evalInt("particle_render_mode", 0, t))
-		.setOptionI("particle_visibility_lists_type", evalInt("particle_visibility_lists_type", 0, t))
-		.setOptionF("particle_width_multiplier", evalFloat("particle_width_multiplier", 0, t))
-		.setOptionF("point_cloud_mult", evalFloat("point_cloud_mult", 0, t))
-		.setOptionB("primary_visibility", evalInt("primary_visibility", 0, t))
-		.setOptionF("scale", evalFloat("scale", 0, t))
-		.setOptionF("smooth_angle", evalFloat("smooth_angle", 0, t))
-		.setOptionB("smooth_uv", evalInt("smooth_uv", 0, t))
-		.setOptionB("smooth_uv_borders", evalInt("smooth_uv_borders", 0, t))
-		.setOptionI("sort_voxels", evalInt("sort_voxels", 0, t))
-		.setOptionB("subdiv_all_meshes", evalInt("subdiv_all_meshes", 0, t))
-		.setOptionI("subdiv_level", evalInt("subdiv_level", 0, t))
-		.setOptionB("subdiv_preserve_geom_borders", evalInt("subdiv_preserve_geom_borders", 0, t))
-		.setOptionB("subdiv_preserve_map_borders", evalInt("subdiv_preserve_map_borders", 0, t))
-		.setOptionI("subdiv_type", evalInt("subdiv_type", 0, t))
-		.setOptionB("subdiv_uvs", evalInt("subdiv_uvs", 0, t))
-		.setOptionB("use_alembic_offset", evalInt("use_alembic_offset", 0, t))
-		.setOptionB("use_face_sets", evalInt("use_face_sets", 0, t))
-		.setOptionB("use_full_names", evalInt("use_full_names", 0, t))
-		.setOptionB("use_point_cloud", evalInt("use_point_cloud", 0, t))
-		.setOptionS("velocity_color_set", velocityColorSet)
-		.setOptionF("velocity_multiplier", evalFloat("velocity_multiplier", 0, t))
-		.setOptionI("visibility_lists_type", evalInt("visibility_lists_type", 0, t))
-	;
-#endif
 
 	if (m_primOptions != primOptions) {
 		m_primOptions = primOptions;
