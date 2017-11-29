@@ -893,29 +893,28 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 		pluginDesc.addAttribute(Attrs::PluginAttr("img_file", fileName.toStdString()));
 	}
 
-	const fpreal animStart = CAST_ROPNODE(m_rop)->FSTART();
-	const fpreal animEnd = CAST_ROPNODE(m_rop)->FEND();
+	const fpreal frameStart = CAST_ROPNODE(m_rop)->FSTART();
+	const fpreal frameEnd = CAST_ROPNODE(m_rop)->FEND();
 	VRay::VUtils::ValueRefList frames(1);
-	frames[0].setDouble(animStart);
+	frames[0].setDouble(frameStart);
 	if (m_frames > 1) {
 		if (CAST_ROPNODE(m_rop)->FINC() > 1) {
 			frames = VRay::VUtils::ValueRefList(m_frames);
 			for (int i = 0; i < m_frames; ++i) {
-				frames[i].setDouble(animStart + i * CAST_ROPNODE(m_rop)->FINC());
+				frames[i].setDouble(frameStart + i * CAST_ROPNODE(m_rop)->FINC());
 			}
 		}
 		else {
 			VRay::VUtils::ValueRefList frameRange(2);
-			frameRange[0].setDouble(animStart);
-			frameRange[1].setDouble(animEnd);
+			frameRange[0].setDouble(frameStart);
+			frameRange[1].setDouble(frameEnd);
 			frames[0].setList(frameRange);
 		}
 	}
 
-	pluginDesc.addAttribute(Attrs::PluginAttr("anim_start", OPgetDirector()->getChannelManager()->getTime(animStart)));
-	pluginDesc.addAttribute(Attrs::PluginAttr("anim_end", OPgetDirector()->getChannelManager()->getTime(animEnd)));
-	pluginDesc.addAttribute(Attrs::PluginAttr("frame_start", VUtils::fast_floor(animStart)));
-	pluginDesc.addAttribute(Attrs::PluginAttr("frame_end", VUtils::fast_floor(animEnd)));
+	pluginDesc.addAttribute(Attrs::PluginAttr("anim_start", OPgetDirector()->getChannelManager()->getTime(frameStart)));
+	pluginDesc.addAttribute(Attrs::PluginAttr("anim_end", OPgetDirector()->getChannelManager()->getTime(frameEnd)));
+	pluginDesc.addAttribute(Attrs::PluginAttr("frame_start", VUtils::fast_floor(frameStart)));
 	pluginDesc.addAttribute(Attrs::PluginAttr("frames_per_second", OPgetDirector()->getChannelManager()->getSamplesPerSec()));
 	pluginDesc.addAttribute(Attrs::PluginAttr("frames", frames));
 

@@ -1,0 +1,146 @@
+
+group {
+    name    "VfhOSLBase"
+    label   "OSL Code"
+
+    parm {
+        name    "osl_source"
+        label   "OSL Source"
+        type    ordinal
+        default { "OSL" }
+        menu    {
+            "OSL"  "Inline OSL"
+            "PATH" "File path (.oso/.osl)"
+        }
+    }
+
+    parm {
+        name    "osl_file"
+        label   "Path to .oso/.osl file"
+        hidewhen "{ osl_source == \"OSL\" }"
+        type    file
+    }
+
+    parm {
+        name    "osl_code"
+        label   "OSL Code"
+        type    string
+        default { "" }
+        hidewhen "{ osl_source == \"PATH\" }"
+        parmtag { "editor" "1" }
+        parmtag { "editorlang" "vex" }
+    }
+
+    parm {
+        name    "disable_label"
+        label   "Label"
+        type    toggle
+        invisible
+        nolabel
+        default { "1" }
+    }
+}
+
+multiparm {
+    name    "osl_input_params"
+    label   "OSL Input params"
+    invisible
+    parmtag { "multistartoffset" "1" }
+
+    parm {
+        name    "osl#separator"
+        label   "Separator"
+        type    separator
+        default { "" }
+    }
+
+    parm {
+        name    "osl#label"
+        label   "Param name"
+        type    string
+        default { "" }
+        disablewhen "{ disable_label == 1 }"
+        parmtag { "editor" "0" }
+        parmtag { "export_disable" "1" }
+    }
+
+    parm {
+        name        "osl#string_param"
+        label       "String"
+        type        string
+        default     { "" }
+        range       { 0 1 }
+    }
+    parm {
+        name        "osl#color_param"
+        label       "Color"
+        type        color
+        size        3
+        default     { "1" "1" "1" }
+        range       { 0 1 }
+    }
+    parm {
+        name        "osl#vector_param"
+        label       "Vector"
+        type        vector
+        size        3
+        default     { "0" "0" "0" }
+        range       { -1 1 }
+    }
+    parm {
+        name        "osl#float_param"
+        label       "Float"
+        type        float
+        default     { "0" }
+        range       { 0 10 }
+    }
+    parm {
+        name        "osl#int_param"
+        label       "Integer"
+        type        integer
+        default     { "0" }
+        range       { 0 10 }
+    }
+    parm {
+        name        "osl#bool_param"
+        label       "Set"
+        type        toggle
+        default     { "0" }
+    }
+
+    parm {
+        name        "osl#menu_param_items"
+        label       "String #"
+        type        string
+        invisible
+        default     { "" }
+        range       { 0 1 }
+    }
+
+    parm {
+        name    "osl#menu_param"
+        label   "Menu"
+        type    ordinal
+        default { "" }
+        menu    {
+            [ "menuItems = []" ]
+            [ "parmName = 'osl%dmenu_param_items' % kwargs['script_multiparm_index']" ]
+            [ "itemsString = kwargs['node'].parm(parmName).evalAsString()" ]
+            [ "for pair in itemsString.split('|'):" ]
+            [ "    menuItems.extend(reversed(pair.split(':')))" ]
+            [ "return menuItems if len(menuItems) % 2 == 0 else []" ]
+            language    python
+        }
+    }
+
+}
+
+
+group {
+    name    "folder1"
+    label   "Texture Common"
+
+#include "$VRAY_UI_DS_PATH/vfh_texture_common_color.ds"
+#include "$VRAY_UI_DS_PATH/vfh_texture_common_alpha.ds"
+#include "$VRAY_UI_DS_PATH/vfh_texture_common_outputs.ds"
+}

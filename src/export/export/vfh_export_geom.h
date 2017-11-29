@@ -221,11 +221,6 @@ public:
 
 	void exportHair(OBJ_Node &objNode, const GU_Detail &gdp, const GEOPrimList &primList);
 
-	/// A helper function to export geometry from a custom V-Ray SOP node.
-	/// @param sop V-Ray SOP node.
-	/// @returns V-Ray plugin instance.
-	VRay::Plugin exportVRaySOP(OBJ_Node &objNode, SOP_Node &sop);
-
 	VRay::Plugin exportPgYetiRef(OBJ_Node &objNode, const GU_PrimPacked &prim);
 
 	VRay::Plugin exportVRayProxyRef(OBJ_Node &objNode, const GU_PrimPacked &prim);

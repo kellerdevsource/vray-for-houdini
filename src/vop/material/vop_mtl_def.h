@@ -13,6 +13,7 @@
 
 #include "vop_MtlMulti.h"
 #include "vop_MaterialOutput.h"
+#include "vop_PhoenixSim.h"
 
 namespace VRayForHoudini {
 namespace VOP {

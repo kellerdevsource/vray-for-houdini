@@ -18,6 +18,13 @@ if __name__ == '__main__':
     from vfh_ci import run
     from vfh_ci import utils
 
+    def _cleanIndexLock(dirPath):
+        indexLockFilePath = os.path.join(dirPath, ".git", "index.lock")
+        if os.path.exists(indexLockFilePath):
+            os.remove(indexLockFilePath)
+            run.call("git clean -dxfq", dirPath)
+            run.call("git reset --hard HEAD", dirPath)
+
     compiler.setup_compiler(config.HOUDINI_VERSION, config.KDRIVE_DIR)
 
     nameArgs = {
@@ -41,12 +48,14 @@ if __name__ == '__main__':
     utils.removeDir(utils.p(config.PERMANENT_DIR, "houdini-dependencies"))
 
     log.message("Resetting submodules to origin/master...")
+    _cleanIndexLock(config.SOURCE_DIR)
     run.call("git submodule foreach git clean -dxfq", config.SOURCE_DIR)
     run.call("git submodule foreach git fetch", config.SOURCE_DIR)
     run.call("git submodule foreach git reset --hard origin/master", config.SOURCE_DIR)
 
     log.message("Clone / update SDK...")
     if os.path.exists(config.VFH_SDK_DIR):
+        _cleanIndexLock(config.VFH_SDK_DIR)
         run.call("git clean -dxfq", config.VFH_SDK_DIR)
         run.call("git fetch", config.VFH_SDK_DIR)
         run.call("git reset --hard origin/master", config.VFH_SDK_DIR)

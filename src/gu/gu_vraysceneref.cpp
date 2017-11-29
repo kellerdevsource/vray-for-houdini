@@ -46,34 +46,25 @@ static FlipAxisMode parseFlipAxisMode(const UT_String &flipAxisModeS)
 static VrsceneDescManager vrsceneMan;
 static GA_PrimitiveTypeId theTypeId(-1);
 
-class VRaySceneFactory
+static class VRaySceneFactory
 	: public GU_PackedFactory
 {
 public:
-	static VRaySceneFactory &getInstance() {
-		static VRaySceneFactory theFactory;
-		return theFactory;
+	VRaySceneFactory()
+		: GU_PackedFactory("VRaySceneRef", "VRaySceneRef")
+	{
+		VRaySceneRef::registerIntrinsics<VRaySceneRef>(*this);
 	}
 
 	GU_PackedImpl* create() const VRAY_OVERRIDE {
 		return new VRaySceneRef();
 	}
 
-private:
-	VRaySceneFactory();
-
-	VUTILS_DISABLE_COPY(VRaySceneFactory);
-};
-
-VRaySceneFactory::VRaySceneFactory()
-	: GU_PackedFactory("VRaySceneRef", "VRaySceneRef")
-{
-	VRaySceneRef::registerIntrinsics<VRaySceneRef>(*this);
-}
+	VUTILS_DISABLE_COPY(VRaySceneFactory)
+} theFactory;
 
 void VRaySceneRef::install(GA_PrimitiveFactory *gafactory)
 {
-	VRaySceneFactory &theFactory = VRaySceneFactory::getInstance();
 	if (theFactory.isRegistered()) {
 		Log::getLog().debug("Multiple attempts to install packed primitive %s from %s",
 			static_cast<const char *>(theFactory.name()), UT_DSO::getRunningFile());
@@ -112,7 +103,7 @@ GA_PrimitiveTypeId VRaySceneRef::typeId()
 
 GU_PackedFactory *VRaySceneRef::getFactory() const
 {
-	return &VRaySceneFactory::getInstance();
+	return &theFactory;
 }
 
 GU_PackedImpl *VRaySceneRef::copy() const

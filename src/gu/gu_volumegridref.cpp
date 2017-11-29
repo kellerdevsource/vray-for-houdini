@@ -130,13 +130,14 @@ GA_PrimitiveTypeId VRayVolumeGridRef::theTypeId(-1);
 const int MAX_CHAN_MAP_LEN = 2048;
 
 /// Implemetation for the factory creating VRayVolumeGridRef for HDK
-class VRayVolumeGridFactory
+static class VRayVolumeGridFactory
 	: public GU_PackedFactory
 {
 public:
-	static VRayVolumeGridFactory &getInstance() {
-		static VRayVolumeGridFactory theFactory;
-		return  theFactory;
+	VRayVolumeGridFactory()
+		: GU_PackedFactory("VRayVolumeGridRef", "VRayVolumeGridRef")
+	{
+		VRayVolumeGridRef::registerIntrinsics<VRayVolumeGridRef>(*this);
 	}
 
 	GU_PackedImpl *create() const VRAY_OVERRIDE {
@@ -144,20 +145,11 @@ public:
 	}
 
 private:
-	VRayVolumeGridFactory();
-
 	VUTILS_DISABLE_COPY(VRayVolumeGridFactory);
-};
-
-VRayVolumeGridFactory::VRayVolumeGridFactory()
-	: GU_PackedFactory("VRayVolumeGridRef", "VRayVolumeGridRef")
-{
-	VRayVolumeGridRef::registerIntrinsics<VRayVolumeGridRef>(*this);
-}
+} theFactory;
 
 void VRayVolumeGridRef::install(GA_PrimitiveFactory *gafactory)
 {
-	VRayVolumeGridFactory &theFactory = VRayVolumeGridFactory::getInstance();
 	if (theFactory.isRegistered()) {
 		Log::getLog().debug("Multiple attempts to install packed primitive %s from %s",
 			static_cast<const char *>(theFactory.name()), UT_DSO::getRunningFile());
@@ -262,12 +254,11 @@ void VRayForHoudini::VRayVolumeGridRef::fetchDataMaxVox(const VolumeCacheKey &ke
 
 VRayVolumeGridRef::VRayVolumeGridRef()
 	: GU_PackedImpl()
+	, VRayVolumeGridRefOptions()
 	, m_dirty(false)
 	, m_channelDirty(false)
 	, m_doFrameReplace(false)
 {
-	GU_Detail *gdp = new GU_Detail;
-	getDetail().allocateAndSet(gdp, true);
 	memset(getChannelDataRanges().data(), 0, DataRangeMapSize);
 	this->initDataCache();
 }
@@ -283,7 +274,8 @@ VRayVolumeGridRef::VRayVolumeGridRef(const VRayVolumeGridRef &src)
 }
 
 VRayVolumeGridRef::VRayVolumeGridRef(VRayVolumeGridRef &&src) noexcept
-	: VRayVolumeGridRefOptions(std::move(src))
+	: GU_PackedImpl(std::move(src))
+	, VRayVolumeGridRefOptions(std::move(src))
 	, m_dataCache(std::move(src.m_dataCache))
 	, m_bBox(std::move(src.m_bBox))
 	, m_dirty(std::move(src.m_dirty))
@@ -319,7 +311,7 @@ VolumeCacheKey VRayVolumeGridRef::genKey() const
 
 GU_PackedFactory* VRayVolumeGridRef::getFactory() const
 {
-	return &VRayVolumeGridFactory::getInstance();
+	return &theFactory;
 }
 
 void VRayVolumeGridRef::clearData()
@@ -425,11 +417,9 @@ GU_ConstDetailHandle VRayVolumeGridRef::getPackedDetail(GU_PackedContext *contex
 
 	GU_DetailHandleAutoWriteLock rLock(self->getDetail());
 	GU_Detail *gdp = rLock.getGdp();
-	gdp->stashAll();
 
 	VolumeCacheKey key = genKey();
 	if (!key.isValid()) {
-		gdp->clearAndDestroy();
 		return getDetail();
 	}
 
@@ -437,7 +427,6 @@ GU_ConstDetailHandle VRayVolumeGridRef::getPackedDetail(GU_PackedContext *contex
 	self->m_dirty = false;
 
 	if (!data.aurPtr) {
-		gdp->clearAndDestroy();
 		return getDetail();
 	}
 

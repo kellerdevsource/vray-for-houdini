@@ -411,37 +411,6 @@ int ObjectExporter::isNodePhantom(OBJ_Node &objNode) const
 	return bundle->contains(&objNode, false);
 }
 
-VRay::Plugin ObjectExporter::exportVRaySOP(OBJ_Node&, SOP_Node &sop)
-{
-	if (!doExportGeometry) {
-		return VRay::Plugin();
-	}
-
-	SOP::NodeBase *vrayNode = UTverify_cast<SOP::NodeBase*>(&sop);
-
-	ExportContext ctx(CT_OBJ, pluginExporter, *vrayNode->getParent());
-
-	Attrs::PluginDesc pluginDesc;
-	switch (vrayNode->asPluginDesc(pluginDesc, pluginExporter, &ctx)) {
-		case OP::VRayNode::PluginResultSuccess: {
-			break;
-		}
-		case OP::VRayNode::PluginResultNA:
-		case OP::VRayNode::PluginResultContinue: {
-			pluginExporter.setAttrsFromOpNodePrms(pluginDesc, vrayNode);
-			break;
-		}
-		case OP::VRayNode::PluginResultError:
-		default: {
-			Log::getLog().error("Error creating plugin descripion for \"%s\" [%s]",
-								sop.getName().buffer(),
-								sop.getOperator()->getName().buffer());
-		}
-	}
-
-	return pluginExporter.exportPlugin(pluginDesc);
-}
-
 VRay::Plugin ObjectExporter::getNodeForInstancerGeometry(VRay::Plugin geometry, VRay::Plugin)
 {
 	if (!geometry) {
@@ -1032,7 +1001,11 @@ void ObjectExporter::exportPolyMesh(OBJ_Node &objNode, const GU_Detail &gdp, con
 	item.vel = topItem.vel;
 	item.primID = topItem.primID ^ keyDataPoly;
 
-	const SubdivInfo &subdivInfo = getSubdivInfo(objNode, item.primMaterial.matNode);
+	OP_Node *matNode = item.primMaterial.matNode
+		? item.primMaterial.matNode
+		: objNode.getMaterialNode(ctx.getTime());
+
+	const SubdivInfo &subdivInfo = getSubdivInfo(objNode, matNode);
 
 	polyMeshExporter.setSubdivApplied(subdivInfo.hasSubdiv());
 	polyMeshExporter.setDetailID(item.primID);
@@ -1797,7 +1770,7 @@ VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode, SOP_Node &sopNode
 
 	PrimContext primContext(&objNode, rootItem);
 
-	STY_Styler currentStyler = getStyler();
+	const STY_Styler &currentStyler = getStyler();
 	STY_Styler objectStyler = getStylerForObject(objNode, ctx.getTime());
 	primContext.styler = objectStyler.cloneWithAddedStyler(currentStyler, STY_TargetHandle());
 
@@ -1821,20 +1794,8 @@ VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode, SOP_Node &sopNode
 VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode)
 {
 	SOP_Node *renderSOP = objNode.getRenderSopPtr();
-	if (!renderSOP) {
+	if (!renderSOP)
 		return VRay::Plugin();
-	}
-
-	const UT_String &renderOpType = renderSOP->getOperator()->getName();
-	if (renderOpType.startsWith("VRayNode") &&
-		!renderOpType.equal("VRayNodePhxShaderCache") &&
-		!renderOpType.equal("VRayNodeVRayProxy") &&
-		!renderOpType.equal("VRayNodeVRayScene") &&
-		!renderOpType.equal("VRayNodeVRayPgYeti") &&
-		!renderOpType.equal("VRayNodeGeomPlane"))
-	{
-		return exportVRaySOP(objNode, *renderSOP);
-	}
 
 	return exportGeometry(objNode, *renderSOP);
 }
