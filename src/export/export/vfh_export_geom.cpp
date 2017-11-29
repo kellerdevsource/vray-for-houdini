@@ -724,6 +724,20 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 		getPrimMaterial(item.primMaterial);
 
 		if (isVolumePrim) {
+			// We need to export a separate plugin per volumetric primitive.
+#pragma pack(push, 1)
+			struct VolumePrimID {
+				VolumePrimID(exint detailID, exint primOffset)
+					: detailID(detailID)
+					, primOffset(primOffset)
+				{}
+				exint detailID;
+				exint primOffset;
+			} volumePrimID(getDetailID(), primOffset);
+#pragma pop(push, 1)
+
+			Hash::MurmurHash3_x86_32(&volumePrimID, sizeof(volumePrimID), 42, &item.primID);
+
 			pushContext(PrimContext(&objNode, item, primStyler));
 			exportPrimVolume(objNode, item);
 			popContext();
