@@ -247,10 +247,6 @@ public:
 
 	VRay::Plugin exportDetailInstancer(OBJ_Node &objNode);
 
-	/// Obtain the reference to the container.
-	/// @returns Reference to InstancerItems container.
-	PrimitiveItems& getInstancerItem();
-
 	void exportDetail(OBJ_Node &objNode, const GU_Detail &gdp, const GA_Range &primRange=GA_Range());
 
 	/// Export point particles data.
