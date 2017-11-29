@@ -158,6 +158,22 @@ int LightNodeBase< VRayPluginID::LightDome >::GetMyPrmTemplate(Parm::PRMList &my
 	return myPrmList.size() - idx;
 }
 
+VRay::Plugin extractGeometryPlugin(const VRay::Plugin &geometry)
+{
+	const UT_String &pluginType = geometry.getType();
+	if (!pluginType.compare("Node")) {
+		return extractGeometryPlugin(geometry.getPlugin("geometry"));
+	}
+	else if (!pluginType.compare("Instancer2")) {
+		VRay::ValueList &valueList = geometry.getValueList("instances");
+		VRay::ValueList &secondList = valueList.at(valueList.size() - 1).getValueList();
+		return extractGeometryPlugin(secondList.at(secondList.size() - 1).getPlugin()); // Geometry node is added last to the list in 
+																					// ObjectExporter::exportDetailInstancer
+	}
+	
+	return geometry;
+}
+
 template<>
 OP::VRayNode::PluginResult LightNodeBase< VRayPluginID::LightMesh >::asPluginDesc(Attrs::PluginDesc&, VRayExporter &exporter, ExportContext*)
 {
@@ -190,8 +206,10 @@ OP::VRayNode::PluginResult LightNodeBase< VRayPluginID::LightMesh >::asPluginDes
 					const std::string meshLightName =
 						VRayExporter::getPluginName(this) + "|" + std::to_string(i) + "|" + item.geometry.getName();
 
+					const VRay::Plugin geometry = extractGeometryPlugin(item.geometry);
+
 					Attrs::PluginDesc meshLightDesc(meshLightName, pluginID);
-					meshLightDesc.addAttribute(Attrs::PluginAttr("geometry", item.geometry));
+					meshLightDesc.addAttribute(Attrs::PluginAttr("geometry", geometry));
 					meshLightDesc.addAttribute(Attrs::PluginAttr("transform", objTm * item.tm));
 					if (item.objectID != objectIdUndefined) {
 						meshLightDesc.addAttribute(Attrs::PluginAttr("objectID", item.objectID));

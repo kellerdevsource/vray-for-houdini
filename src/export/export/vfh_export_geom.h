@@ -278,8 +278,6 @@ public:
 	/// @returns Node plugin instance.
 	VRay::Plugin getNodeForInstancerGeometry(VRay::Plugin geometry, VRay::Plugin objMaterial);
 
-	int exportGeometry(OBJ_Node &objNode, PrimitiveItems &items);
-
 	/// Export object geometry.
 	/// @returns Geometry plugin.
 	VRay::Plugin exportGeometry(OBJ_Node &objNode);
@@ -292,8 +290,6 @@ public:
 	/// Export SOP geometry.
 	/// @returns Geometry plugin.
 	void exportGeometry(OBJ_Node &objNode, SOP_Node &sopNode);
-
-	void setupGeometryExport(OBJ_Node &objNode, SOP_Node &sopNode);
 
 	/// Export object.
 	/// @returns Node plugin.
