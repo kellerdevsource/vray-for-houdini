@@ -971,7 +971,7 @@ OP::VRayNode::PluginResult PhxShaderSim::asPluginDesc(Attrs::PluginDesc &pluginD
 
 
 	const auto primVal = evalInt("pmprimary", 0, t);
-	const bool enableProb = (exporter.isIPR() && primVal) || primVal == 2;
+	const bool enableProb = (exporter.isInteractive() && primVal) || primVal == 2;
 	pluginDesc.addAttribute(Attrs::PluginAttr("pmprimary", enableProb));
 
 	const Parm::VRayPluginInfo *pluginInfo = Parm::getVRayPluginInfo(pluginDesc.pluginID.c_str());

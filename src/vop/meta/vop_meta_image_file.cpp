@@ -18,15 +18,6 @@
 using namespace VRayForHoudini;
 using namespace VOP;
 
-static MetaImageFile::UVWGenSocket metaImageFileOutputSockets[] = {
-	MetaImageFile::UVWGenSocket("color", VOP_TypeInfo(VOP_TYPE_COLOR)),
-	MetaImageFile::UVWGenSocket("transparency", VOP_TypeInfo(VOP_TYPE_COLOR)),
-	MetaImageFile::UVWGenSocket("alpha", VOP_TypeInfo(VOP_TYPE_FLOAT)),
-	MetaImageFile::UVWGenSocket("intensity", VOP_TypeInfo(VOP_TYPE_FLOAT))
-};
-
-static const int ouputSocketCount = COUNT_OF(metaImageFileOutputSockets);
-
 typedef std::map<MetaImageFile::UVWGenType, MetaImageFile::UVWGenSocketsTable> UVWGenSocketsMap;
 
 /// A map of sockets per UVG generator type.
@@ -139,7 +130,7 @@ OP::VRayNode::PluginResult MetaImageFile::asPluginDesc(Attrs::PluginDesc &plugin
 		const int idx = getInputFromName(selectedUVWGen[i].label);
 		OP_Node *connectedInput = getInput(idx);
 		if (connectedInput) {
-			VRay::Plugin connectedPlugin = exporter.exportVop(connectedInput, parentContext);
+			const VRay::Plugin connectedPlugin = exporter.exportVop(connectedInput, parentContext);
 			if (connectedPlugin) {
 				const Parm::SocketDesc *fromSocketInfo = exporter.getConnectedOutputType(this, selectedUVWGen.at(i).label);
 				selectedUVPluginDesc.addAttribute(Attrs::PluginAttr(selectedUVWGen.at(i).label, connectedPlugin, fromSocketInfo->attrName.ptr()));
@@ -157,53 +148,6 @@ OP::VRayNode::PluginResult MetaImageFile::asPluginDesc(Attrs::PluginDesc &plugin
 	exporter.setAttrsFromOpNodePrms(pluginDesc, this, "TexBitmap_");
 
 	return OP::VRayNode::PluginResultContinue;
-}
-
-unsigned MetaImageFile::getNumVisibleOutputs() const
-{
-	return ouputSocketCount;
-}
-
-unsigned MetaImageFile::maxOutputs() const
-{
-	return ouputSocketCount;
-}
-
-const char* MetaImageFile::outputLabel(unsigned idx) const
-{
-	if (idx >= 0 && idx < ouputSocketCount) {
-		return metaImageFileOutputSockets[idx].label;
-	}
-
-	return nullptr;
-}
-
-void MetaImageFile::getOutputNameSubclass(UT_String &out, int idx) const
-{
-	if (idx >= 0 && idx < ouputSocketCount) {
-		out = metaImageFileOutputSockets[idx].label;
-	}
-	else {
-		out = "unknown";
-	}
-}
-
-int MetaImageFile::getOutputFromName(const UT_String &out) const
-{
-	for (int idx = 0; idx < ouputSocketCount; idx++) {
-		if (out.equal(metaImageFileOutputSockets[idx].label)) {
-			return idx;
-		}
-	}
-
-	return -1;
-}
-
-void MetaImageFile::getOutputTypeInfoSubclass(VOP_TypeInfo &type_info, int idx)
-{
-	if (idx >= 0 && idx < ouputSocketCount) {
-		type_info.setType(metaImageFileOutputSockets[idx].typeInfo.getType());
-	}
 }
 
 const char *MetaImageFile::inputLabel(unsigned idx) const
@@ -248,7 +192,9 @@ unsigned MetaImageFile::orderedInputs() const
 void MetaImageFile::getInputTypeInfoSubclass(VOP_TypeInfo &type_info, int idx)
 {
 	const UVWGenSocketsTable &uvwGenInput = getUVWGenInputs();
+
 	vassert(idx >= 0 && idx < uvwGenInput.size());
+
 	type_info = uvwGenInput[idx].typeInfo;
 }
 
@@ -262,7 +208,7 @@ const MetaImageFile::UVWGenSocketsTable &MetaImageFile::getUVWGenInputs() const
 {
 	const UVWGenType currentUVWGen = getUVWGenType();
 
-	UVWGenSocketsMap::const_iterator it = uvwGenInputsMap.find(currentUVWGen);
+	const UVWGenSocketsMap::const_iterator it = uvwGenInputsMap.find(currentUVWGen);
 	vassert(it != uvwGenInputsMap.end());
 
 	return it->second;

@@ -72,6 +72,8 @@ FORCEINLINE PREFIX##_Node *get##PREFIX##NodeFromPath(const UT_String &path, fpre
 getCastOpNodeFromPath(OBJ)
 getCastOpNodeFromPath(SOP)
 getCastOpNodeFromPath(VOP)
+getCastOpNodeFromPath(COP2)
+getCastOpNodeFromPath(SHOP)
 
 /// Converts M3 to M4 leaving the offset 0.0.
 /// @param m3 UT_Matrix3T matrix.

@@ -30,17 +30,6 @@ public:
 	/// @param context[in] - cook time
 	OP_ERROR cookMySop(OP_Context &context) VRAY_OVERRIDE;
 
-	/// Callback called by vfh exporter when exporting the node
-	/// @param pluginDesc[out] - dynamic map containing plugin (property, value) pairs
-	/// @param exporter - reference to main vfh exporter
-	/// @param parentContext - context in which this node is exported
-	///                        used to pass some data that will be needed during the export
-	/// @retval result of the export for this node
-	///         PluginResultSuccess - on success
-	///         PluginResultContinue - on success, but singnals that not all relevant properties have been added
-	///         PluginResultError- there has been an error
-	PluginResult asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext=nullptr) VRAY_OVERRIDE;
-
 	/// Callback to clear cache for this node ("Reload Geometry" button in the GUI)
 	/// @param data - pointer to the node it was called on
 	/// @param index - he index of the menu entry

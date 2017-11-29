@@ -64,7 +64,7 @@ def main():
             'cropr'       : SohoParm('cropr',       'real',   [-1],            False),
             'cropb'       : SohoParm('cropb',       'real',   [-1],            False),
             'cropt'       : SohoParm('cropt',       'real',   [-1],            False),
-            'camera'      : SohoParm('camera',      'string', ['/obj/cam1'],   False)
+            'camera'      : SohoParm('camera',      'string', ['/obj/cam1'],   False),
         }
 
         camParmsEval = sohoCam.evaluate(camParms, t)
@@ -85,7 +85,8 @@ def main():
         cropH = viewParams['res'][1] * (viewParams['cropt'] - viewParams['cropb'])
 
         printDebug("  Res: %s" % viewParams['res'])
-        printDebug("  Crop: %i-%i %i x %i " % (cropX, cropY, cropW, cropH))
+        printDebug("  Crop: %i-%i %i x %i" % (cropX, cropY, cropW, cropH))
+        printDebug("  Camera: %s" % camera)
 
         return viewParams
 
@@ -136,7 +137,7 @@ def main():
     printDebug("Processing Mode: \"%s\"" % mode)
 
     if mode in {"generate"}:
-        # generate: Generation phase of IPR rendering 
+        # generate: Generation phase of IPR rendering
         # In generate mode, SOHO will keep the pipe (soho_pipecmd)
         # command open between invocations of the soho_program.
         #   objlist:all
@@ -176,6 +177,11 @@ def main():
         if not _vfh_ipr.isRopValid():
             _vfh_ipr.init(rop=ropPath, port=port, now=now, viewParams=getViewParams(camera, sohoCam, now))
         else:
+            if _vfh_ipr.setTime(now):
+                # Have to handle "time" event manually here.
+                exportObjects("objlist:dirtyinstance")
+                exportObjects("objlist:dirtylight")
+
             # Update view.
             exportView(ropPath, camera, sohoCam, now)
 

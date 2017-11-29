@@ -9,5 +9,6 @@
         label "Viewport Size"
         type float
         default { 2.0 }
+        parmtag { "cook_dependent" "1" }
     }
 }

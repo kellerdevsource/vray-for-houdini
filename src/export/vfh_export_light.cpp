@@ -28,7 +28,7 @@ void VRayExporter::RtCallbackLight(OP_Node *caller, void *callee, OP_EventType t
 
 	OBJ_Node *objNode = caller->castToOBJNode();
 
-	Log::getLog().info("RtCallbackLight: %s from \"%s\"",
+	Log::getLog().debug("RtCallbackLight: %s from \"%s\"",
 			   OPeventToString(type), caller->getName().buffer());
 
 	switch (type) {

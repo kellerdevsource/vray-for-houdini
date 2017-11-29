@@ -215,18 +215,91 @@ OP::VRayNode::PluginResult LightNodeBase< VRayPluginID::SunLight >::asPluginDesc
 	return OP::VRayNode::PluginResultContinue;
 }
 
+static VRay::Plugin exportAttributeFromPathAuto(VRayExporter &exporter,
+                                                const OP_Node &node,
+                                                const char *attrName,
+                                                VRayExporter::DefaultMappingType mappingType,
+                                                Attrs::PluginDesc &pluginDesc)
+{
+	static boost::format fmtToggle("use_%s_tex");
+	static boost::format fmtTex("%s_tex");
 
-// explicitly instantiate op node classes for light plugins
-template class LightNodeBase< VRayPluginID::SunLight >;
-template class LightNodeBase< VRayPluginID::LightDirect >;
-template class LightNodeBase< VRayPluginID::LightAmbient >;
-template class LightNodeBase< VRayPluginID::LightOmni >;
-template class LightNodeBase< VRayPluginID::LightSphere >;
-template class LightNodeBase< VRayPluginID::LightSpot >;
-template class LightNodeBase< VRayPluginID::LightRectangle >;
-template class LightNodeBase< VRayPluginID::LightMesh >;
-template class LightNodeBase< VRayPluginID::LightIES >;
-template class LightNodeBase< VRayPluginID::LightDome >;
+	const std::string toggleAttrName(str(fmtToggle % attrName));
+	const std::string texAttrName(str(fmtTex % attrName));
 
+	const OP_Context &ctx = exporter.getContext();
+	const fpreal t = ctx.getTime();
+
+	if (!node.evalInt(toggleAttrName.c_str(), 0, t))
+		return VRay::Plugin();
+
+	UT_String texPath;
+	node.evalString(texPath, texAttrName.c_str(), 0, t);
+
+	const VRay::Plugin texPlugin = exporter.exportNodeFromPathWithDefaultMapping(texPath, mappingType);
+	if (texPlugin) {
+		pluginDesc.addAttribute(Attrs::PluginAttr(texAttrName, texPlugin));
+	}
+
+	return texPlugin;
 }
+
+template<>
+OP::VRayNode::PluginResult LightNodeBase<VRayPluginID::LightDome>::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext* /*parentContext*/)
+{
+	pluginDesc.pluginID = pluginID.c_str();
+	pluginDesc.pluginName = VRayExporter::getPluginName(this);
+	
+	const VRayExporter::DefaultMappingType domeMapping = VRayExporter::defaultMappingSpherical;
+
+	const VRay::Plugin domeTex = exportAttributeFromPathAuto(exporter, *this, "dome", domeMapping, pluginDesc);
+	if (!domeTex) {
+		pluginDesc.add(Attrs::PluginAttr("use_dome_tex", false));
+	}
+
+	exportAttributeFromPathAuto(exporter, *this, "color",       domeMapping, pluginDesc);
+	exportAttributeFromPathAuto(exporter, *this, "intensity",   domeMapping, pluginDesc);
+	exportAttributeFromPathAuto(exporter, *this, "shadowColor", domeMapping, pluginDesc);
+
+	return PluginResultContinue;
 }
+
+template<>
+OP::VRayNode::PluginResult LightNodeBase<VRayPluginID::LightRectangle>::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext* /*parentContext*/)
+{
+	const fpreal t = exporter.getContext().getTime();
+
+	pluginDesc.pluginID = pluginID.c_str();
+	pluginDesc.pluginName = VRayExporter::getPluginName(this);
+
+	const VRayExporter::DefaultMappingType rectMapping = VRayExporter::defaultMappingChannel;
+
+	const VRay::Plugin rectTex = exportAttributeFromPathAuto(exporter, *this, "rect", rectMapping, pluginDesc);
+	if (!rectTex) {
+		pluginDesc.add(Attrs::PluginAttr("use_rect_tex", false));
+	}
+
+	exportAttributeFromPathAuto(exporter, *this, "color",       rectMapping, pluginDesc);
+	exportAttributeFromPathAuto(exporter, *this, "intensity",   rectMapping, pluginDesc);
+	exportAttributeFromPathAuto(exporter, *this, "shadowColor", rectMapping, pluginDesc);
+
+	pluginDesc.add(Attrs::PluginAttr("u_size", evalFloat("u_size", 0, t) / 2.0f));
+	pluginDesc.add(Attrs::PluginAttr("v_size", evalFloat("v_size", 0, t) / 2.0f));
+
+	return PluginResultContinue;
+}
+
+template class LightNodeBase<VRayPluginID::SunLight>;
+template class LightNodeBase<VRayPluginID::LightDirect>;
+template class LightNodeBase<VRayPluginID::LightAmbient>;
+template class LightNodeBase<VRayPluginID::LightOmni>;
+template class LightNodeBase<VRayPluginID::LightSphere>;
+template class LightNodeBase<VRayPluginID::LightSpot>;
+template class LightNodeBase<VRayPluginID::LightRectangle>;
+template class LightNodeBase<VRayPluginID::LightMesh>;
+template class LightNodeBase<VRayPluginID::LightIES>;
+template class LightNodeBase<VRayPluginID::LightDome>;
+
+} // namespace OBJ
+
+} // namespace VRayForHoudini

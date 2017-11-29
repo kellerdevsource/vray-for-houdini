@@ -117,7 +117,7 @@ bool MeshExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc &pluginD
 		return false;
 	}
 
-	if (pluginExporter.isIPR() && pluginExporter.isGPU()) {
+	if (pluginExporter.isInteractive() && pluginExporter.isGPU()) {
 		pluginDesc.addAttribute(Attrs::PluginAttr("dynamic_geometry", true));
 	}
 
@@ -928,7 +928,7 @@ int MeshExporter::getVertexAttrs(MapChannels &mapChannels, SkipMapChannel skipCh
 void MeshExporter::getVertexAttrAsMapChannel(const GA_Attribute &attr, MapChannel &mapChannel)
 {
 	mapChannel.name = attr.getName();
-	Log::getLog().info("Found map channel: %s", mapChannel.name.c_str());
+	Log::getLog().debug("Found map channel: %s", mapChannel.name.c_str());
 
 	GA_ROPageHandleV3 vaPageHndl(&attr);
 	GA_ROHandleV3 vaHndl(&attr);

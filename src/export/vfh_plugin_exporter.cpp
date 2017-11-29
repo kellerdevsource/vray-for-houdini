@@ -120,6 +120,17 @@ void CallCallbacks(const CbBase<T> * callbacks, Args && ...args)
 
 #endif // BOOST_NO_CXX11_VARIADIC_TEMPLATES
 
+void OnRenderLast(VRay::VRayRenderer &renderer, bool isRendering, void *userData)
+{
+	CbSetOnRenderLast *callbacks = reinterpret_cast<CbSetOnRenderLast*>(userData);
+	CallCallbacks(callbacks, renderer, isRendering);
+}
+
+void OnVFBClosed(VRay::VRayRenderer &renderer, void *userData)
+{
+	CbSetOnVFBClosed *callbacks = reinterpret_cast<CbSetOnVFBClosed*>(userData);
+	CallCallbacks(callbacks, renderer);
+}
 
 void OnDumpMessage(VRay::VRayRenderer &renderer, const char *msg, int level, void *userData)
 {
@@ -240,36 +251,59 @@ VRayPluginRenderer::~VRayPluginRenderer()
 	freeMem();
 }
 
+void VRayPluginRenderer::attachCallbacks()
+{
+	if (!m_vray)
+		return;
 
-int VRayPluginRenderer::initRenderer(int hasUI, int reInit)
+	m_vray->setOnDumpMessage(OnDumpMessage,       &m_callbacks.m_cbOnDumpMessage);
+	m_vray->setOnProgress(OnProgress,             &m_callbacks.m_cbOnProgress);
+	m_vray->setOnRendererClose(OnRendererClose,   &m_callbacks.m_cbOnRendererClose);
+
+	m_vray->setOnImageReady([](VRay::VRayRenderer &renderer, void *context) {
+		VRayPluginRenderer &self = *reinterpret_cast<VRayPluginRenderer*>(context);
+
+		if (self.m_enableVFB) {
+			OnImageReady(renderer, &self.m_callbacks.m_cbOnImageReady);
+		}
+
+		// Stopping rendering should clear scene data from memory
+		if (renderer.isAborted()) {
+			self.m_vray->reset();
+		}
+	}, this);
+
+	if (m_enableVFB) {
+		m_vray->setOnRTImageUpdated(OnRTImageUpdated, &m_callbacks.m_cbOnRTImageUpdated);
+		m_vray->setOnBucketInit(OnBucketInit,         &m_callbacks.m_cbOnBucketInit);
+		m_vray->setOnBucketFailed(OnBucketFailed,     &m_callbacks.m_cbOnBucketFailed);
+		m_vray->setOnBucketReady(OnBucketReady,       &m_callbacks.m_cbOnBucketReady);
+		m_vray->setOnRenderLast(OnRenderLast,         &m_callbacks.onRenderLast);
+		m_vray->setOnVFBClosed(OnVFBClosed,           &m_callbacks.onVFBClosed);
+	}
+}
+
+int VRayPluginRenderer::initRenderer(int enableVFB, int /*reInit*/)
 {
 	if (!newVRayInit())
 		return 0;
-
+#if 0
 	if (reInit) {
 		freeMem();
-		resetCallbacks();
 	}
-	else if (m_vray) {
-		// Workaround to make render regions persist trough renders
-		m_savedRegion.saved = false;
+#endif
 
-		const bool gotRegion = m_vray->getRenderRegion(m_savedRegion.left, m_savedRegion.top, m_savedRegion.width, m_savedRegion.height);
-		int width = 0, height = 0;
-		if (gotRegion && m_vray->getImageSize(width, height)) {
-			if (m_savedRegion.width != width || m_savedRegion.height != height) {
-				m_savedRegion.saved = true;
-			}
-		}
+	m_enableVFB = enableVFB;
 
-		m_vray->stop();
-		m_vray->reset();
+	resetCallbacks();
+
+	if (m_vray) {
+		reset();
 	}
-
-	if (!m_vray) {
+	else {
 		try {
 			VRay::RendererOptions options;
-			options.enableFrameBuffer = hasUI;
+			options.enableFrameBuffer = m_enableVFB;
 			options.showFrameBuffer = false;
 			options.useDefaultVfbTheme = false;
 			options.vfbDrawStyle = VRay::RendererOptions::ThemeStyleMaya;
@@ -285,45 +319,22 @@ int VRayPluginRenderer::initRenderer(int hasUI, int reInit)
 								e.what());
 			freeMem();
 		}
-
-		if (m_vray) {
-			m_vray->setOnDumpMessage(OnDumpMessage,       &m_callbacks.m_cbOnDumpMessage);
-			m_vray->setOnProgress(OnProgress,             &m_callbacks.m_cbOnProgress);
-			m_vray->setOnRendererClose(OnRendererClose,   &m_callbacks.m_cbOnRendererClose);
-
-			m_vray->setOnImageReady([](VRay::VRayRenderer &renderer, void *context) {
-				VRayPluginRenderer * self = reinterpret_cast<VRayPluginRenderer*>(context);
-				// Only call callback functions if hasUI is true (it will set showFrameBuffer)
-				if (self->m_vray->getOptions().showFrameBuffer) {
-					OnImageReady(renderer, &self->m_callbacks.m_cbOnImageReady);
-				}
-
-				// Stopping rendering should clear scene data from memory
-				if (renderer.isAborted()) {
-					self->m_vray->reset();
-				}
-			}, this);
-
-			if (hasUI) {
-				m_vray->setOnRTImageUpdated(OnRTImageUpdated, &m_callbacks.m_cbOnRTImageUpdated);
-				m_vray->setOnBucketInit(OnBucketInit,         &m_callbacks.m_cbOnBucketInit);
-				m_vray->setOnBucketFailed(OnBucketFailed,     &m_callbacks.m_cbOnBucketFailed);
-				m_vray->setOnBucketReady(OnBucketReady,       &m_callbacks.m_cbOnBucketReady);
-			}
-		}
 	}
 
-	return !!(m_vray);
+	attachCallbacks();
+
+	return !!m_vray;
 }
 
 
 void VRayPluginRenderer::freeMem()
 {
+	if (!m_vray)
+		return;
+
 	Log::getLog().debug("VRayPluginRenderer::freeMem()");
 
-	if (m_vray) {
-		m_vray->stop();
-	}
+	m_vray->stop();
 
 	deleteVRayRenderer(m_vray);
 }
@@ -331,9 +342,10 @@ void VRayPluginRenderer::freeMem()
 
 void VRayPluginRenderer::setImageSize(const int w, const int h)
 {
-	if (m_vray) {
-		m_vray->setImageSize(w, h);
-	}
+	if (!m_vray)
+		return;
+
+	m_vray->setImageSize(w, h);
 }
 
 
@@ -400,7 +412,7 @@ VRay::Plugin VRayPluginRenderer::exportPlugin(const Attrs::PluginDesc &pluginDes
 
 	if (pluginDesc.pluginID.empty()) {
 		// NOTE: Could be done intentionally to skip plugin creation
-		Log::getLog().warning("[%s] PluginDesc.pluginID is not set!",
+		Log::getLog().debug("[%s] PluginDesc.pluginID is not set!",
 							  pluginDesc.pluginName.c_str());
 		return VRay::Plugin();
 	}
@@ -539,30 +551,30 @@ void VRayPluginRenderer::setCamera(VRay::Plugin camera)
 }
 
 
-void VRayPluginRenderer::setRendererMode(int mode)
+void VRayPluginRenderer::setRendererMode(VRay::RendererOptions::RenderMode mode)
 {
-	if (m_vray) {
-		VRay::RendererOptions::RenderMode renderMode = static_cast<VRay::RendererOptions::RenderMode>(mode);
+	if (!m_vray)
+		return;
 
-		if (renderMode >= VRay::RendererOptions::RENDER_MODE_RT_CPU) {
-			VRay::RendererOptions options = m_vray->getOptions();
-			options.numThreads = VUtils::getNumProcessors() - 1;
-			options.keepRTRunning = true;
-			options.rtNoiseThreshold = 0.0f;
-			options.rtSampleLevel = INT_MAX;
-			options.rtTimeout = 0;
-
-			m_vray->setOptions(options);
-		}
-
-		m_vray->setRenderMode(renderMode);
+	if (mode >= VRay::RendererOptions::RENDER_MODE_RT_CPU &&
+		mode <= VRay::RendererOptions::RENDER_MODE_PRODUCTION_OPENCL)
+	{
+		VRay::RendererOptions options(m_vray->getOptions());
+		options.numThreads = VUtils::Max(1, VUtils::getNumProcessors() - 1);
+		options.keepRTRunning = true;
+		options.rtNoiseThreshold = 0.0f;
+		options.rtSampleLevel = INT_MAX;
+		options.rtTimeout = 0;
+		m_vray->setOptions(options);
 	}
+
+	m_vray->setRenderMode(mode);
 }
 
 
-void VRayPluginRenderer::removePlugin(const Attrs::PluginDesc &pluginDesc)
+void VRayPluginRenderer::removePlugin(const Attrs::PluginDesc &pluginDesc, int checkExisting)
 {
-	removePlugin(pluginDesc.pluginName);
+	removePlugin(pluginDesc.pluginName, checkExisting);
 }
 
 
@@ -574,13 +586,15 @@ void VRayPluginRenderer::removePlugin(VRay::Plugin plugin)
 }
 
 
-void VRayPluginRenderer::removePlugin(const std::string &pluginName)
+void VRayPluginRenderer::removePlugin(const std::string &pluginName, int checkExisting)
 {
 	if (m_vray) {
 		VRay::Plugin plugin = m_vray->getPlugin(pluginName);
 		if (!plugin) {
-			Log::getLog().warning("VRayPluginRenderer::removePlugin: Plugin \"%s\" is not found!",
-								  pluginName.c_str());
+			if (checkExisting) {
+				Log::getLog().warning("VRayPluginRenderer::removePlugin: Plugin \"%s\" is not found!",
+									  pluginName.c_str());
+			}
 		}
 		else {
 			m_vray->removePlugin(plugin);
@@ -619,19 +633,16 @@ int VRayPluginRenderer::exportScene(const std::string &filepath, VRay::VRayExpor
 
 int VRayPluginRenderer::startRender(int locked)
 {
-	if (m_vray) {
-		Log::getLog().info("Starting render for frame %.3f...", m_vray->getCurrentTime());
+	if (!m_vray)
+		return 1;
 
-		// TODO: unhack this when appsdk saves render regions after m_vray->reset()
-		if (m_savedRegion.isValid()) {
-			m_vray->setRenderRegion(m_savedRegion.left, m_savedRegion.top, m_savedRegion.width, m_savedRegion.height);
-		}
+	Log::getLog().info("Starting render for frame %i [%.3f]...",
+					   m_vray->getCurrentFrame(), m_vray->getCurrentTime());
 
-		m_vray->startSync();
+	m_vray->startSync();
 
-		if (locked) {
-			m_vray->waitForImageReady();
-		}
+	if (locked) {
+		m_vray->waitForImageReady();
 	}
 
 	return 0;
@@ -671,6 +682,17 @@ void VRayPluginRenderer::resetCallbacks()
 	m_callbacks.clear();
 }
 
+bool VRayPluginRenderer::isRendering() const
+{
+	if (!m_vray)
+		return false;
+
+	const VRay::RendererState state = m_vray->getState();
+	if (state == VRay::UNKNOWN)
+		return false;
+
+	return state > VRay::UNKNOWN && state <= VRay::IDLE_DONE;
+}
 
 void VRayForHoudini::VRayPluginRenderer::setAnimation(bool on)
 {
@@ -680,19 +702,19 @@ void VRayForHoudini::VRayPluginRenderer::setAnimation(bool on)
 }
 
 
-void VRayForHoudini::VRayPluginRenderer::setCurrentTime(fpreal fframe)
+void VRayForHoudini::VRayPluginRenderer::setCurrentTime(fpreal frame)
 {
 	if (m_vray) {
-		m_vray->setCurrentTime(fframe);
+		m_vray->setCurrentTime(frame);
 	}
 }
 
 
-void VRayPluginRenderer::clearFrames(float toTime)
+void VRayPluginRenderer::clearFrames(double toTime) const
 {
-	if (m_vray) {
-		m_vray->clearAllPropertyValuesUpToTime(toTime);
-	}
+	if (!m_vray)
+		return;
+	m_vray->clearAllPropertyValuesUpToTime(toTime);
 }
 
 
@@ -703,11 +725,133 @@ void VRayPluginRenderer::setAutoCommit(const bool enable)
 	}
 }
 
-void VRayPluginRenderer::reset() const
+void VRayPluginRenderer::reset()
 {
 	if (!m_vray)
 		return;
 
+#ifdef VFH_DEBUG
+	// Error just to be more visible.
+	Log::getLog().error("VRayPluginRenderer::reset()");
+#endif
+
 	m_vray->stop();
 	m_vray->reset();
+
+	// Re-attach callbacks. "Render Last" won't work otherwise.
+	attachCallbacks();
+}
+
+void VFBSettings::fillVfbSettings(void *stateBuf, int stateBufSize, VFBSettings &settings)
+{
+	const int VFBS_CURR_VER = 16;
+
+	int rd;
+
+	PBufStream stream;
+	stream.SetBuf(stateBuf, stateBufSize);
+	stream.Open();
+
+	{
+		uint32 histInfoSize = 0;
+		stream.Read(&histInfoSize, sizeof(histInfoSize), rd);
+		uint8 *histBuf = new uint8[histInfoSize];
+		stream.Read(histBuf, sizeof(uint8) * histInfoSize, rd);
+		FreePtr(histBuf);
+	}
+	{
+		uint32 stateSize = 0;
+		stream.Read(&stateSize, sizeof(stateSize), rd);
+	}
+
+	stream.Read(&settings.structVersion, sizeof(settings.structVersion), rd);
+
+	stream.Read(&settings.vfbx, sizeof(settings.vfbx), rd);
+	stream.Read(&settings.vfby, sizeof(settings.vfby), rd);
+	stream.Read(&settings.vfbWidth, sizeof(settings.vfbWidth), rd);
+	stream.Read(&settings.vfbHeight, sizeof(settings.vfbHeight), rd);
+	stream.Read(&settings.ccx, sizeof(settings.ccx), rd);
+	stream.Read(&settings.ccy, sizeof(settings.ccy), rd);
+	stream.Read(&settings.infox, sizeof(settings.infox), rd);
+	stream.Read(&settings.infoy, sizeof(settings.infoy), rd);
+	uint32 flagsL = 0;
+	stream.ReadBinaryData(flagsL);
+	settings.flags64=flagsL;
+	stream.Read(&settings.posSaved, sizeof(settings.posSaved), rd);
+
+	if (settings.structVersion <= VFBS_CURR_VER) {
+		if (settings.structVersion >= 7) {
+			stream.Read(&settings.lex, sizeof(settings.lex), rd);
+			stream.Read(&settings.ley, sizeof(settings.ley), rd);
+		}
+
+		if (settings.structVersion >= 4) {
+			stream.Read(&settings.isRenderRegionValid, sizeof(settings.isRenderRegionValid), rd);
+			stream.Read(&settings.rrLeft, sizeof(settings.rrLeft), rd);
+			stream.Read(&settings.rrTop, sizeof(settings.rrTop), rd);
+			stream.Read(&settings.rrWidth, sizeof(settings.rrWidth), rd);
+			stream.Read(&settings.rrHeight, sizeof(settings.rrHeight), rd);
+		}
+
+		if(settings.structVersion >= 10) {
+			stream.Read(&settings.flagsrollouts, sizeof(settings.flagsrollouts), rd);
+		}
+
+		if(settings.structVersion >= 14) {
+			stream.Read(&settings.rrLeftNorm, sizeof(settings.rrLeftNorm), rd);
+			stream.Read(&settings.rrTopNorm, sizeof(settings.rrTopNorm), rd);
+			stream.Read(&settings.rrWidthNorm, sizeof(settings.rrWidthNorm), rd);
+			stream.Read(&settings.rrHeightNorm, sizeof(settings.rrHeightNorm), rd);
+		}
+		else {
+			settings.rrLeftNorm=settings.rrTopNorm=settings.rrWidthNorm=settings.rrHeightNorm=-1;
+		}
+
+		if(settings.structVersion >= 16) {
+			uint32 flagsH=0;
+			stream.ReadBinaryData(flagsH);
+			settings.flags64 |= static_cast<uint64>(flagsH)<<32;
+		}
+	}
+}
+
+void VRayPluginRenderer::saveVfbState(QString &stateData) const
+{
+	if (!m_vray)
+		return;
+
+	size_t stateDataSize = 0;
+
+	VRay::VFBState *vfbState = m_vray->vfb.getState(stateDataSize);
+	if (vfbState && stateDataSize) {
+		const QByteArray vfbStateData(reinterpret_cast<const char*>(vfbState->getData()), stateDataSize);
+
+		stateData = vfbStateData.toBase64();
+
+		FreePtr(vfbState);
+	}
+}
+
+void VRayPluginRenderer::restoreVfbState(const QString &stateData) const
+{
+	if (!m_vray)
+		return;
+
+	const QByteArray vfbStateData(QByteArray::fromBase64(stateData.toLocal8Bit()));
+
+	m_vray->vfb.setState(reinterpret_cast<const void*>(vfbStateData.constData()), vfbStateData.length());
+}
+
+void VRayPluginRenderer::getVfbSettings(VFBSettings &settings) const
+{
+	if (!m_vray)
+		return;
+
+	size_t vfbStateSize = 0;
+	VRay::VFBState *vfbState = m_vray->vfb.getState(vfbStateSize);
+
+	if (vfbState && vfbStateSize) {
+		VFBSettings::fillVfbSettings(vfbState->getData(), vfbStateSize, settings);
+		FreePtr(vfbState);
+	}
 }

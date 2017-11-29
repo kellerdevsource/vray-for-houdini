@@ -45,6 +45,7 @@ TEX_DEF(TexCombineFloat)
 TEX_DEF(TexCompMax)
 TEX_DEF(TexCondition2)
 TEX_DEF(TexCurvature)
+TEX_DEF(TexColorCorrect)
 TEX_DEF(TexDirt)
 TEX_DEF(TexDistance)
 TEX_DEF(TexDistanceBetween)
@@ -102,6 +103,9 @@ TEX_DEF(TexVectorToColor)
 TEX_DEF(TexWater)
 TEX_DEF(TransformToTex)
 TEX_DEF(TexTriPlanar)
+
+TEX_DEF(ColorCorrect)
+TEX_DEF(ColorCorrection)
 
 } // namespace VOP
 } // namespace VRayForHoudini

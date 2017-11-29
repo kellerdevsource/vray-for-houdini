@@ -29,7 +29,7 @@
             label "Bump Type"
             type  ordinal
             default { "0" }
-            help  "The type of the map (0 - from regular texture output, 1 - normal map in tangent space, 2 - normal map in object space, 3 - normal map in camera space, 4 - normal map in world space, 5 - from texture bump output, 6 - explicit normal)"
+            help  "The type of the map"
             menu  {
                 "0" "Bump Map"
                 "1" "Normal map in tangent space"
@@ -126,7 +126,7 @@
             label "Bump Type"
             type  ordinal
             default { "0" }
-            help  "The type of the map (0 - from regular texture output, 1 - normal map in tangent space, 2 - normal map in object space, 3 - normal map in camera space, 4 - normal map in world space, 5 - from texture bump output, 6 - explicit normal)"
+            help  "The type of the map"
             disablewhen "{ diffuse_strength <= 0 }"
             menu  {
                 "0" "Bump Map"
@@ -439,7 +439,7 @@
             label "Bump Type"
             type  ordinal
             default { "0" }
-            help  "The type of the map (0 - from regular texture output, 1 - normal map in tangent space, 2 - normal map in object space, 3 - normal map in camera space, 4 - normal map in world space, 5 - from texture bump output, 6 - explicit normal)"
+            help  "The type of the map"
             disablewhen "{ reflect1_strength <= 0 }"
             menu  {
                 "0" "Bump Map"
@@ -522,7 +522,7 @@
             label "BRDF"
             type  ordinal
             default { "0" }
-            help  "The BRDF distribution type for the second specular component (0 - Beckmann, 1 - GGX)"
+            help  "The BRDF distribution type for the second specular component"
             disablewhen "{ reflect2_strength <= 0 }"
             menu  {
                 "0" "Beckmann"
@@ -567,7 +567,7 @@
             name  "reflect2_bump_type"
             label "Bump Type"
             type  ordinal
-            help  "The type of the map (0 - from regular texture output, 1 - normal map in tangent space, 2 - normal map in object space, 3 - normal map in camera space, 4 - normal map in world space, 5 - from texture bump output, 6 - explicit normal)"
+            help  "The type of the map"
             disablewhen "{ reflect2_strength <= 0 }"
             menu  {
                 "0" "Bump Map"

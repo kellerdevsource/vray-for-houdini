@@ -357,7 +357,6 @@ void VRayProxyExporter::releaseVoxel(VUtils::MeshVoxel *voxel, uint64 *memUsage)
 		}
 
 		voxel->freeMem();
-		Log::getLog().info("Voxel released");
 	}
 }
 

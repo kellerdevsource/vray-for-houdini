@@ -1,0 +1,64 @@
+#ifndef __VFH_MACROS_DS__
+#define __VFH_MACROS_DS__
+
+#include "$VRAY_UI_DS_PATH/vfh_prefix.ds"
+
+#define VRAY_UI_PARM(NAME, LABEL, HELP, TYPE, SIZE, DEFAULT) \
+    VFH_NAME(NAME) \
+    label LABEL \
+    help HELP \
+    size SIZE \
+    type TYPE \
+    default { DEFAULT } \
+    parmtag { spare_category "VfhUI" } \
+    parmtag { "cook_dependent" "1" } \
+    parmtag { "vray_custom_handling" "1" }
+
+#define VRAY_UI_PARM_EX(NAME, LABEL, HELP, TYPE, SIZE, DEFAULT) \
+parm { \
+    VRAY_UI_PARM(NAME, LABEL, HELP, TYPE, SIZE, DEFAULT) \
+}
+
+#define VFH_UI_PARM_TOGGLE(NAME, LABEL, HELP, DEFAULT) \
+    VRAY_UI_PARM_EX(NAME, LABEL, HELP, toggle, 1, DEFAULT)
+
+#define VFH_UI_PARM_INT(NAME, LABEL, HELP, DEFAULT) \
+    VRAY_UI_PARM_EX(NAME, LABEL, HELP, int, 1, DEFAULT)
+
+#define VFH_UI_PARM_FLOAT(NAME, LABEL, HELP, DEFAULT) \
+    VRAY_UI_PARM_EX(NAME, LABEL, HELP, float, 1, DEFAULT)
+
+#define VFH_UI_PARM_FLOAT2(NAME, LABEL, HELP, DEFAULT0, DEFAULT1) \
+    VRAY_UI_PARM_EX(NAME, LABEL, HELP, float, 2, DEFAULT0 DEFAULT1)
+
+#define VFH_UI_PARM_COLOR(NAME, LABEL, HELP, DEFAULT)  \
+    VRAY_UI_PARM_EX(NAME, LABEL, HELP, color, 3, DEFAULT DEFAULT DEFAULT)
+
+#define VFH_UI_PARM_STRING(NAME, LABEL, HELP, DEFAULT) \
+    VRAY_UI_PARM_EX(NAME, LABEL, HELP, string, 1, DEFAULT)
+
+#define VFH_UI_PARM_FILE(NAME, LABEL, HELP, DEFAULT) \
+    VRAY_UI_PARM_EX(NAME, LABEL, HELP, file, 1, DEFAULT)
+
+#define VRAY_PLUGIN_PARM(PLUGIN, NAME, LABEL, HELP, TYPE, VRAY_TYPE, SIZE, DEFAULT) \
+    name NAME \
+    label LABEL \
+    help HELP \
+    size SIZE \
+    type TYPE \
+    default { DEFAULT } \
+    parmtag { spare_category "VfhPluginUI" } \
+    parmtag { "cook_dependent" "1" } \
+    parmtag { "vray_plugin" PLUGIN } \
+    parmtag { "vray_pluginattr" NAME } \
+    parmtag { "vray_type" VRAY_TYPE }
+
+#define VRAY_PLUGIN_PARM_EX(PLUGIN, NAME, LABEL, HELP, TYPE, VRAY_TYPE, SIZE, DEFAULT) \
+parm { \
+    VRAY_PLUGIN_PARM(PLUGIN, NAME, LABEL, HELP, TYPE, VRAY_TYPE, SIZE, DEFAULT) \
+}
+
+#define VFH_PLUGIN_PARM_TOGGLE(PLUGIN, NAME, LABEL, HELP, DEFAULT) \
+    VRAY_PLUGIN_PARM_EX(PLUGIN, NAME, LABEL, HELP, toggle, "int", 1, DEFAULT)
+
+#endif // __VFH_MACROS_DS__

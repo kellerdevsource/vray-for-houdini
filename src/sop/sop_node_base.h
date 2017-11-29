@@ -21,7 +21,6 @@
 
 #include "vfh_vray.h"
 
-
 namespace VRayForHoudini {
 namespace SOP {
 

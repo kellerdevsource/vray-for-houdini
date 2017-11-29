@@ -10,6 +10,7 @@
 
 #include "vfh_exporter.h"
 #include "vfh_op_utils.h"
+#include "vfh_attr_utils.h"
 
 #include "vop/material/vop_mtl_def.h"
 
@@ -26,7 +27,7 @@ void VRayExporter::RtCallbackSurfaceShop(OP_Node *caller, void *callee, OP_Event
 
 	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
 
-	Log::getLog().info("RtCallbackSurfaceShop: %s from \"%s\"",
+	Log::getLog().debug("RtCallbackSurfaceShop: %s from \"%s\"",
 					   OPeventToString(type), caller->getName().buffer());
 
 	if (type == OP_INPUT_REWIRED) {
@@ -58,7 +59,7 @@ VRay::Plugin VRayExporter::exportMaterial(VOP_Node *vopNode)
 		material = exportPlugin(mtlPluginDesc);
 	}
 
-	if (material && isIPR()) {
+	if (material && isInteractive()) {
 		// Wrap material into MtlRenderStats to always have the same material name.
 		// Used when rewiring materials when running interactive RT session.
 		Attrs::PluginDesc pluginDesc(getPluginName(vopNode, "MtlStats"), "MtlRenderStats");
@@ -150,7 +151,7 @@ void VRayExporter::setAttrsFromSHOPOverrides(Attrs::PluginDesc &pluginDesc, VOP_
 	VOP_ParmGeneratorList prmVOPs;
 	vopNode.getParmInputs(prmVOPs);
 	for (VOP_ParmGenerator *prmVOP : prmVOPs) {
-		int inpidx = vopNode.whichInputIs(prmVOP);
+		const int inpidx = vopNode.whichInputIs(prmVOP);
 		if (inpidx < 0) {
 			continue;
 		}
@@ -166,15 +167,26 @@ void VRayExporter::setAttrsFromSHOPOverrides(Attrs::PluginDesc &pluginDesc, VOP_
 			continue;
 		}
 
-		UT_String prmToken = prmVOP->getParmNameCache();
-		const PRM_Parm *prm = creator->getParmList()->getParmPtr(prmToken);
-		// no such parameter on the parent SHOP node or
-		// parameter is not floating point
-		if (   NOT(prm)
-			|| NOT(prm->getType().isFloatType()) )
-		{
+		const UT_String &prmToken = prmVOP->getParmNameCache();
+
+		const PRM_Parm *prm = creator->getParmList()->getParmPtr(prmToken.buffer());
+		if (!prm)
 			continue;
+
+		const PRM_Type prmType = prm->getType();
+
+		if (prmType.isStringType()) {
+			UT_String path;
+			creator->evalString(path, prm, 0, t);
+
+			const VRay::Plugin opPlugin = exportNodeFromPath(path);
+			if (opPlugin) {
+				pluginDesc.addAttribute(Attrs::PluginAttr(attrName, opPlugin));
+			}
 		}
+
+		if (!prmType.isFloatType())
+			continue;
 
 		const Parm::AttrDesc &attrDesc = pluginInfo->getAttribute(attrName.c_str());
 		switch (attrDesc.value.type) {

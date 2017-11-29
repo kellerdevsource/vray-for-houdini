@@ -14,5 +14,3 @@ node = kwargs['node']
 
 node_parm = node.parm("dimmer")
 node_parm.setExpression("if(ch(\"./enabled\"), ch(\"./intensity\"), 0)")
-
-node.setName("vraylightambient")

@@ -43,4 +43,12 @@
         label "Scripts"
 #include "$VRAY_UI_DS_PATH/vfh_rop_scripts.ds"
     }
+
+    parm {
+        name "_vfb_settings"
+        type string
+        default { "" }
+        export none
+        invisible
+    }
 }

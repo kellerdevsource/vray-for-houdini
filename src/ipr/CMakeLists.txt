@@ -24,6 +24,7 @@ endif()
 set(HEADERS
 	${CMAKE_SOURCE_DIR}/src/ipr/python/vfh_process_check.h
 	${CMAKE_SOURCE_DIR}/src/utils/vfh_log.h
+	${CMAKE_SOURCE_DIR}/resources/vray.rc
 )
 
 use_vray_sdk()

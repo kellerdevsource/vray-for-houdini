@@ -50,7 +50,7 @@ SOP::VRayProxy::VRayProxy(OP_Network *parent, const char *name, OP_Operator *ent
 	// so that Houdini can identify what attributes may have changed,
 	// e.g. to reduce work for the viewport, or other SOPs that
 	// check whether data IDs have changed.
-	// By default, (i.e. if this line weren't here), all data IDs
+	// By default, (i.e. if this msg weren't here), all data IDs
 	// would be bumped after the SOP cook, to indicate that
 	// everything might have changed.
 	// If some data IDs don't get bumped properly, the viewport
@@ -179,27 +179,4 @@ OP_ERROR SOP::VRayProxy::cookMySop(OP_Context &context)
 	select(GA_GROUP_PRIMITIVE);
 
 	return error();
-}
-
-OP::VRayNode::PluginResult SOP::VRayProxy::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
-{
-	fpreal t = exporter.getContext().getTime();
-
-	UT_String path;
-	evalString(path, "file", 0, t);
-	if (NOT(path.isstring())) {
-		Log::getLog().error("VRayProxy \"%s\": \"File\" is not set!",
-					getName().buffer());
-		return OP::VRayNode::PluginResultError;
-	}
-
-	pluginDesc.pluginID   = pluginID;
-	pluginDesc.pluginName = VRayExporter::getPluginName(this);
-
-	pluginDesc.add(Attrs::PluginAttr("file", path.buffer()));
-	pluginDesc.add(Attrs::PluginAttr("flip_axis", evalInt("flip_axis", 0, 0.0f)));
-
-	exporter.setAttrsFromOpNodePrms(pluginDesc, this);
-
-	return OP::VRayNode::PluginResultSuccess;
 }

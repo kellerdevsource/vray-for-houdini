@@ -17,6 +17,7 @@
 #include "vfh_plugin_attrs.h"
 
 #include <boost/function.hpp>
+#include <QString>
 
 namespace VRayForHoudini {
 
@@ -29,6 +30,8 @@ typedef boost::function<void (VRay::VRayRenderer&, int, int, int, int, const cha
 typedef boost::function<void (VRay::VRayRenderer&, int, int, const char*, VRay::VRayImage*)>  CbOnBucketReady;
 typedef boost::function<void (VRay::VRayRenderer&, const char*, int)>                         CbOnDumpMessage;
 typedef boost::function<void (VRay::VRayRenderer&, const char*, int, int)>                    CbOnProgress;
+typedef boost::function<void (VRay::VRayRenderer&, bool isRendering)>                         CbOnRenderLast;
+typedef boost::function<void (VRay::VRayRenderer&)>                                           CbOnVFBClosed;
 
 
 template <typename CbT>
@@ -61,6 +64,8 @@ typedef CbBase<CbOnBucketFailed>    CbSetOnBucketFailed;
 typedef CbBase<CbOnBucketReady>     CbSetOnBucketReady;
 typedef CbBase<CbOnDumpMessage>     CbSetOnDumpMessage;
 typedef CbBase<CbOnProgress>        CbSetOnProgress;
+typedef CbBase<CbOnRenderLast>      CbSetOnRenderLast;
+typedef CbBase<CbOnVFBClosed>       CbSetOnVFBClosed;
 
 
 struct CbCollection {
@@ -75,6 +80,8 @@ struct CbCollection {
 		m_cbOnBucketReady.clear();
 		m_cbOnDumpMessage.clear();
 		m_cbOnProgress.clear();
+		onRenderLast.clear();
+		onVFBClosed.clear();
 	}
 
 	CbSetOnRendererClose   m_cbOnRendererClose;
@@ -86,7 +93,44 @@ struct CbCollection {
 	CbSetOnDumpMessage     m_cbOnDumpMessage;
 	CbSetOnProgress        m_cbOnProgress;
 
+	CbSetOnRenderLast onRenderLast;
+	CbSetOnVFBClosed onVFBClosed;
+
 	VfhDisableCopy(CbCollection)
+};
+
+
+/// V-Ray Frame Buffer settings.
+struct VFBSettings {
+	int structVersion = 0;
+	int vfbx = 0;
+	int vfby = 0;
+	int vfbWidth = 0;
+	int vfbHeight = 0;
+	int ccx = 0;
+	int ccy = 0;
+	int infox = 0;
+	int infoy = 0;
+	int lex = 0;
+	int ley = 0;
+	uint64 flags64 = 0;
+	int flagsrollouts = 0;
+	int posSaved = false;
+	int isRenderRegionValid = false;
+	int rrLeft = 0;
+	int rrTop = 0;
+	int rrWidth = 0;
+	int rrHeight = 0;
+	double rrLeftNorm = 0.0;
+	double rrTopNorm = 0.0;
+	double rrWidthNorm = 0.0;
+	double rrHeightNorm = 0.0;
+
+	/// Fills VFBSettings from state buffer.
+	/// @param stateBuf Buffer obtained with VFB::getState().
+	/// @param stateBufSize Buffer size.
+	/// @param settings Output VFBSettings struct.
+	static void fillVfbSettings(void *stateBuf, int stateBufSize, VFBSettings &settings);
 };
 
 /// Wraps around VRay::VRayRenderer to provide some commonly used
@@ -107,12 +151,10 @@ public:
 	~VRayPluginRenderer();
 
 	/// Create and initilize or reset the V-Ray renderer instance.
-	/// @param hasUI[in] - true to enable the VFB, false if VFB is not needed
-	///        for example when running Houdini in non-GUI mode
-	/// @param reInit[in] - true to re-create the V-Ray renderer instance
-	///        otherwise it only resets the existing instance
-	/// @retval true on success
-	int initRenderer(int hasUI, int reInit);
+	/// @param enableVFB Enable VFB
+	/// @param reInit Re-create V-Ray instance.
+	/// @returns true on success.
+	int initRenderer(int enableVFB, int reInit);
 
 	/// Delete the V-Ray renderer instance (if any)
 	void freeMem();
@@ -135,11 +177,11 @@ public:
 
 	/// Delete plugin for a given plugin description
 	/// @param pluginDesc - plugin description with plugin name set
-	void removePlugin(const Attrs::PluginDesc &pluginDesc);
+	void removePlugin(const Attrs::PluginDesc &pluginDesc, int checkExisting=true);
 
 	/// Delete plugin with the given name
 	/// @param pluginName - plugin name
-	void removePlugin(const std::string &pluginName);
+	void removePlugin(const std::string &pluginName, int checkExisting=true);
 
 	/// Delete plugin.
 	/// @param plugin V-Ray plugin instance.
@@ -172,7 +214,7 @@ public:
 	/// a current rendering running it will not be affected. You can switch between
 	/// Production and RT mode with this without resetting the scene.
 	/// Valid modes are Production, RT CPU, RT GPU (CUDA)
-	void setRendererMode(int mode);
+	void setRendererMode(VRay::RendererOptions::RenderMode mode);
 
 	/// Sets the frame buffer width and height.
 	void setImageSize(const int w, const int h);
@@ -181,7 +223,7 @@ public:
 	void showVFB(bool show=true, const char *title=nullptr);
 
 	/// Removes all keyframe values at times less than 'toTime'
-	void clearFrames(float toTime);
+	void clearFrames(double toTime) const;
 
 	/// Start rendering at the current time.
 	/// @param locked[in] - when true this will force the current thread to block
@@ -231,42 +273,54 @@ public:
 	void addCbOnProgress(CbOnProgress cb)             { m_callbacks.m_cbOnProgress.add(cb); }
 	void addCbOnProgress(CbVoid cb)                   { m_callbacks.m_cbOnProgress.add(cb); }
 
+	void addCbOnVfbClose(CbOnVFBClosed cb) { m_callbacks.onVFBClosed.add(cb); }
+	void addCbOnVfbClose(CbVoid cb)        { m_callbacks.onVFBClosed.add(cb); }
+
+	void addCbOnRenderLast(CbOnRenderLast cb) { m_callbacks.onRenderLast.add(cb); }
+	void addCbOnRenderLast(CbVoid cb)         { m_callbacks.onRenderLast.add(cb); }
+
 	/// Clear registered render callbacks
 	void resetCallbacks();
 
 	/// Check if VRay::VRayRenderer is instantiated
 	bool isVRayInit() const { return !!m_vray; }
 
+	/// Checks rendering is in progress.
+	bool isRendering() const;
+
 	/// Get the actual renderer instance
 	VRay::VRayRenderer& getVRay() { return *m_vray; }
 
 	/// Reset scene data.
-	void reset() const;
+	void reset();
+
+	/// Checks if VFB is enabled for this instance.
+	bool isVfbEnabled() const { return m_enableVFB; }
+
+	/// Saves VFB state.
+	/// @param stateData Output state as Base64 string.
+	void saveVfbState(QString &stateData) const;
+
+	/// Restores VFB state.
+	/// @param stateData State data as Base64 string.
+	void restoreVfbState(const QString &stateData) const;
+
+	/// Obtains VFB state as VFBSettings.
+	/// @param settings Output state as VFBSettings.
+	void getVfbSettings(VFBSettings &settings) const;
 
 private:
-	struct RenderRegion {
-		RenderRegion()
-			: left(-1)
-			, top(-1)
-			, width(-1)
-			, height(-1)
-			, saved(false)
-		{}
+	/// Attach callbacks to the renderer.
+	void attachCallbacks();
 
-		bool isValid() const {
-			return saved && left >= 0 && top >= 0 && width > 0 && height > 0;
-		}
+	/// V-Ray renderer instance.
+	VRay::VRayRenderer *m_vray;
 
-		int left;
-		int top;
-		int width;
-		int height;
-		bool saved;
-	};
+	/// A collection of registered render callbacks.
+	CbCollection m_callbacks;
 
-	RenderRegion                  m_savedRegion; ///< Saves render regions between renders
-	VRay::VRayRenderer           *m_vray; ///< V-Ray renderer instance
-	CbCollection                  m_callbacks; ///< collection of registered render callbacks
+	/// Flag indicating that we should use/init VFB related options.
+	int m_enableVFB{false};
 };
 
 } // namespace VRayForHoudini

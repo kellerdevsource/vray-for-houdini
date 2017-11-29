@@ -30,6 +30,8 @@
 #include "cmd/vfh_cmd_register.h"
 #include "gu_volumegridref.h"
 #include "gu_vrayproxyref.h"
+#include "gu_vraysceneref.h"
+#include "gu_geomplaneref.h"
 #include "io/io_vrmesh.h"
 
 // For newShopOperator()
@@ -107,7 +109,9 @@ void unregister(void *)
 /// @param gafactory[out] - primitive factory for DSO defined primitives
 void newGeometryPrim(GA_PrimitiveFactory *gafactory)
 {
+	VRaySceneRef::install(gafactory);
 	VRayProxyRef::install(gafactory);
+	GeomPlaneRef::install(gafactory);
 #ifdef CGR_HAS_AUR
 	VRayVolumeGridRef::install(gafactory);
 #endif
@@ -297,6 +301,7 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexCompMax);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexCondition2);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexCurvature);
+	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexColorCorrect);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexDirt);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexDistance);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexDistanceBetween);
@@ -368,6 +373,9 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "UVWGEN", UVWGenObjectBBox);
 	VFH_VOP_ADD_OPERATOR(table, "UVWGEN", UVWGenPlanarWorld);
 	VFH_VOP_ADD_OPERATOR(table, "UVWGEN", UVWGenProjection);
+
+	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", ColorCorrect);
+	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", ColorCorrection);
 }
 
 

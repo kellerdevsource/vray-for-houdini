@@ -93,6 +93,56 @@ void VOP::NodeBase::getAllowedInputTypeInfosSubclass(unsigned idx, VOP_VopTypeIn
 	if (vopType == VOP_TYPE_BSDF) {
 		type_infos.append(VOP_TypeInfo(VOP_SURFACE_SHADER));
 	}
+	if (vopType == VOP_TYPE_COLOR) {
+		type_infos.append(VOP_TypeInfo(VOP_TYPE_FLOAT));
+	}
+	if (vopType == VOP_TYPE_FLOAT) {
+		type_infos.append(VOP_TypeInfo(VOP_TYPE_COLOR));
+	}
+}
+
+void VOP::NodeBase::getAllowedInputTypesSubclass(unsigned idx, VOP_VopTypeArray &type_infos)
+{
+	type_infos.clear();
+
+	if (idx >= pluginInfo->inputs.count())
+		return;
+
+	const SocketDesc &socketTypeInfo = pluginInfo->inputs[idx];
+
+	const VOP_Type vopType = socketTypeInfo.socketType;
+	type_infos.append(vopType);
+
+	if (vopType == VOP_SURFACE_SHADER) {
+		type_infos.append(VOP_TYPE_BSDF);
+	}
+	if (vopType == VOP_TYPE_BSDF) {
+		type_infos.append(VOP_SURFACE_SHADER);
+	}
+	if (vopType == VOP_TYPE_COLOR) {
+		type_infos.append(VOP_TYPE_FLOAT);
+	}
+	if (vopType == VOP_TYPE_FLOAT) {
+		type_infos.append(VOP_TYPE_COLOR);
+	}
+}
+
+bool VOP::NodeBase::willAutoconvertInputType(int idx)
+{
+	if (idx < pluginInfo->inputs.count()) {
+		const SocketDesc &socketTypeInfo = pluginInfo->inputs[idx];
+
+		const VOP_Type vopType = socketTypeInfo.socketType;
+		if (vopType == VOP_SURFACE_SHADER ||
+		    vopType == VOP_TYPE_BSDF ||
+		    vopType == VOP_TYPE_COLOR ||
+		    vopType == VOP_TYPE_FLOAT)
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
 
 unsigned VOP::NodeBase::getNumVisibleOutputs() const

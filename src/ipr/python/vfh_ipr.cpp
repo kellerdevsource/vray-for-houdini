@@ -19,12 +19,6 @@
 
 #include <HOM/HOM_Module.h>
 
-#include <QThread>
-#include <QByteArray>
-#include <QtNetwork/QTcpSocket>
-#include <QtNetwork/QHostAddress>
-#include <QApplication>
-
 #include <mutex>
 
 using namespace VRayForHoudini;
@@ -36,7 +30,7 @@ class CallOnceUntilReset {
 public:
 	typedef std::function<void()> CB;
 
-	CallOnceUntilReset(CB callback)
+	explicit CallOnceUntilReset(CB callback)
 		: m_isCalled(false)
 		, m_callback(callback)
 	{}
@@ -142,7 +136,7 @@ public:
 	}
 
 	/// Dereference the exporter pointer and return it (this must not be called if the pointer is nullptr)
-	VRayExporter & getExporter() {
+	static VRayExporter &getExporter() {
 		if (!exporter) {
 			Log::getLog().error("Trying to dereference NULL exporter!");
 			vassert(false && "Trying to dereference NULL exporter!");
@@ -151,25 +145,25 @@ public:
 	}
 
 	/// Get copy of the exporter pointer
-	VRayExporter * getPointer() {
+	static VRayExporter *getPointer() {
 		return exporter;
 	}
 
 	/// Allocate the exporter
-	void allocExporter() {
+	static void allocExporter() {
 		if (!exporter) {
 			exporter = new VRayExporter(nullptr);
 		}
 	}
 
 	/// Free the exporter
-	void freeExporter() {
+	static void freeExporter() {
 		FreePtr(exporter);
 	}
 
 	/// Unguarded static method to access the pointer without locking the mutex
 	/// Used to avoid locking if the exporter is nullptr and it is not needed to do operations with the pointer
-	static VRayExporter * getPointerUnguarded() {
+	static VRayExporter *getPointerUnguarded() {
 		return exporter;
 	}
 
@@ -177,15 +171,24 @@ public:
 	// NOTE: dissalows this: if (WithExporter()) {...} which will not hold lock inside the if body
 	explicit operator bool() && = delete;
 
-	VfhDisableCopy(WithExporter)
 private:
 	static VRayExporter *exporter;
 	static std::recursive_mutex exporterMtx;
+
+	VfhDisableCopy(WithExporter)
 };
 
-VRayExporter * WithExporter::exporter = nullptr;
+VRayExporter* WithExporter::exporter = nullptr;
 std::recursive_mutex WithExporter::exporterMtx;
 
+static float lastExportTime = 0.0;
+
+static void setExportTime(VRayExporter &exp, float time)
+{
+	exp.setTime(time);
+
+	lastExportTime = time;
+}
 
 static void freeExporter()
 {
@@ -197,7 +200,7 @@ static void freeExporter()
 	}
 }
 
-static struct VRayExporterIprUnload {
+struct VRayExporterIprUnload {
 	~VRayExporterIprUnload() {
 		if (stopCallback) {
 			// Prevent stop cb from being called here
@@ -206,12 +209,9 @@ static struct VRayExporterIprUnload {
 		deleteVRayInit();
 		Log::Logger::stopLogging();
 	}
-} exporterUnload;
+};
 
-static void onVFBClosed(VRay::VRayRenderer&, void*)
-{
-	freeExporter();
-}
+static const VRayExporterIprUnload exporterUnload;
 
 static void fillRenderRegionFromDict(PyObject *viewParamsDict, ViewParams &viewParams)
 {
@@ -269,23 +269,39 @@ static void fillViewParamsFromDict(PyObject *viewParamsDict, ViewParams &viewPar
 
 static void fillViewParams(VRayExporter &exporter, PyObject *viewParamsDict, ViewParams &viewParams)
 {
-	const char *camera = PyString_AsString(PyDict_GetItemString(viewParamsDict, "camera"));
-
 	OBJ_Node *cameraNode = nullptr;
+
+	const char *camera = PyString_AsString(PyDict_GetItemString(viewParamsDict, "camera"));
 	if (UTisstring(camera)) {
 		cameraNode = CAST_OBJNODE(getOpNodeFromPath(camera));
 	}
 
-	viewParams.setCamera(cameraNode);
+	ROP_Node *iprRop = CAST_ROPNODE(exporter.getRopPtr());
+	if (iprRop) {
+		exporter.fillViewParamsFromRopNode(*iprRop, viewParams);
 
-	if (cameraNode && (cameraNode->getName().equal("ipr_camera") || cameraNode->evalInt("CameraPhysical_use", 0, 0.0f))) {// If Physical Camera use is enabled, update parameters from it
-		exporter.fillViewParamFromCameraNode(*cameraNode, viewParams);
-	}
-	else {
-		fillViewParamsFromDict(viewParamsDict, viewParams);
+		if (iprRop->evalInt("vfh_use_camera_settings", 0, 0.0)) {
+			UT_String cameraPath;
+			iprRop->evalString(cameraPath, "render_camera", 0, 0.0);
+
+			cameraNode = CAST_OBJNODE(getOpNodeFromPath(cameraPath));
+		}
 	}
 
+	if (cameraNode) {
+		exporter.fillViewParamsFromCameraNode(*cameraNode, viewParams);
+	}
+
+	fillViewParamsFromDict(viewParamsDict, viewParams);
 	fillRenderRegionFromDict(viewParamsDict, viewParams);
+	
+	if (strcmp("/obj/ipr_camera", camera)) {
+		exporter.fillViewParamsResFromCameraNode(*cameraNode, viewParams);
+	}
+
+	if (cameraNode) {
+		exporter.fillPhysicalViewParamsFromCameraNode(*cameraNode, viewParams);
+	}
 }
 
 static PyObject* vfhExportView(PyObject*, PyObject *args, PyObject *keywds)
@@ -437,9 +453,9 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 	}
 
 	HOM_AutoLock autoLock;
-	
+
 	getImdisplay().setPort(port);
-	
+
 	if (!stopCallback) {
 		stopCallback = new CallOnceUntilReset(freeExporter);
 		getImdisplay().setOnStopCallback(stopCallback->getCallableFunction());
@@ -476,7 +492,7 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 		if (WithExporter lk{}) {
 			VRayExporter &exporter = lk.getExporter();
 			exporter.setRopPtr(ropNode);
-			exporter.setIPR(VRayExporter::iprModeSOHO);
+			exporter.setSessionType(VfhSessionType::ipr);
 			if (!exporter.initRenderer(false, false)) {
 				Py_RETURN_NONE;
 			}
@@ -486,8 +502,8 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 			VRayExporter &exporter = lk.getExporter();
 
 			exporter.setDRSettings();
-			exporter.setRendererMode(getRendererIprMode(*ropNode));
-			exporter.setWorkMode(getExporterWorkMode(*ropNode));
+			exporter.setRenderMode(getRendererIprMode(*ropNode));
+			exporter.setExportMode(getExportMode(*ropNode));
 		}
 
 		if (WithExporter lk{}) {
@@ -505,15 +521,15 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 			VRayExporter &exporter = lk.getExporter();
 			exporter.initExporter(getFrameBufferType(*ropNode), 1, now, now);
 
-			exporter.setTime(now);
+			setExportTime(exporter, now);
 		}
 
 		if (WithExporter lk{}) {
 			VRayExporter &exporter = lk.getExporter();
 			if (exporter.exportSettings() == ReturnValue::Success) {
 				ViewParams viewParams;
-				fillViewParamsFromDict(viewParamsDict, viewParams);
-				fillRenderRegionFromDict(viewParamsDict, viewParams);
+				fillViewParams(exporter, viewParamsDict, viewParams);
+
 				exporter.exportView(viewParams);
 
 				exporter.exportScene();
@@ -522,7 +538,7 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 			}
 		}
 	}
-	
+
     Py_RETURN_NONE;
 }
 
@@ -543,7 +559,29 @@ static PyObject * vfhIsRopValid(PyObject *)
 	Py_RETURN_TRUE;
 }
 
-static PyObject* vfhLogMessage(PyObject*, PyObject *args, PyObject *keywds)
+static PyObject *vfhSetTime(PyObject*, PyObject *args, PyObject*)
+{
+	float time;
+
+	static const char kwlistTypes[] = "f";
+
+	if (!PyArg_ParseTuple(args, kwlistTypes, &time)) {
+		PyErr_Print();
+	}
+	else {
+		const bool isSameTime = IsFloatEq(time, lastExportTime);
+		if (!isSameTime) {
+			if (WithExporter lk{}) {
+				setExportTime(lk.getExporter(), time);
+			}
+			Py_RETURN_TRUE;
+		}
+	}
+
+	Py_RETURN_FALSE;
+}
+
+static PyObject* vfhLogMessage(PyObject*, PyObject *args, PyObject*)
 {
 	int logLevel;
 	const char * message = nullptr;
@@ -592,6 +630,12 @@ static PyMethodDef methods[] = {
 		reinterpret_cast<PyCFunction>(vfhIsRopValid),
 		METH_NOARGS,
 		"Check if current rop is valid."
+	},
+	{
+		"setTime",
+		reinterpret_cast<PyCFunction>(vfhSetTime),
+		METH_VARARGS,
+		"Sets export time. Returns True if time has changed, False otherwise."
 	},
 	{
 		"logMessage",

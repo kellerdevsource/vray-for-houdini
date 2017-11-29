@@ -8,10 +8,9 @@
 # Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 #
 
+find_package(VRaySDK)
 
 macro(use_vray_sdk)
-	find_package(VRaySDK)
-
 	if(NOT VRaySDK_FOUND)
 		message(FATAL_ERROR "V-Ray SDK NOT found!\n"
 							"To specify V-Ray SDK search path, use one of the following options:\n"
@@ -20,9 +19,6 @@ macro(use_vray_sdk)
 							"or install V-Ray For Maya"
 							)
 	endif()
-
-	message_array("Using V-Ray SDK include path" VRaySDK_INCLUDES)
-	message_array("Using V-Ray SDK library path" VRaySDK_LIBRARIES)
 
 	if(WIN32)
 		# Both V-Ray SDK and HDK defines some basic types,
@@ -39,10 +35,6 @@ macro(use_vray_sdk)
 	# Check if there is vrscene preview library
 	if (CGR_HAS_VRSCENE)
 		add_definitions(-DCGR_HAS_VRAYSCENE)
-	endif()
-
-	if(WIN32)
-		set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /DVASSERT_ENABLED")
 	endif()
 endmacro()
 

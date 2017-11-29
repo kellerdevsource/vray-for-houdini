@@ -8,6 +8,7 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
+#include "vfh_defines.h"
 #include "vfh_prm_templates.h"
 #include "vfh_log.h"
 #include "vfh_sys_utils.h"
@@ -443,13 +444,13 @@ Parm::PRMList& Parm::PRMList::addFromFile(const char *dsFileName)
 
 	PRM_ScriptPage *currentPage = new PRM_ScriptPage();
 
-	int res = currentPage->parse(stream, true, nullptr, true, true);
+	const int res = currentPage->parse(stream, true, nullptr, true, true);
 	if (res > 0) {
 		group->addPage(currentPage);
 	}
 	else {
 		Log::getLog().error("Error parsing file: \"%s\"!", dsFilePath.toLocal8Bit().constData());
-		delete currentPage;
+		FreePtr(currentPage);
 	}
 
 	int size = group->computeTemplateSize();

@@ -38,6 +38,7 @@ set(EXPORTER_SOURCES
 	export/export/vfh_export_primitive.cpp
 	export/export/vfh_export_vrayproxy.cpp
 	export/export/vfh_export_hdk_shaders.cpp
+	export/export/vfh_export_op.cpp
 	export/export/vfh_material_override.cpp
 	export/utils/vfh_geoutils.cpp
 	export/utils/vfh_tex_utils.cpp
@@ -65,6 +66,7 @@ set(EXPORTER_SOURCES
 	utils/vfh_sys_utils.cpp
 	lib/vfh_vray_instances.cpp
 	op/op_node_base.cpp
+	rop/vfh_rop.cpp
 )
 
 set(EXPORTER_HEADERS
@@ -99,6 +101,7 @@ set(EXPORTER_HEADERS
 	utils/vfh_sys_utils.h
 	lib/vfh_vray_instances.h
 	op/op_node_base.h
+	rop/vfh_rop.h
 )
 
 set(SOURCES
@@ -107,10 +110,10 @@ set(SOURCES
 	gu/gu_volumegridref.cpp
 	gu/gu_vrayproxyref.cpp
 	gu/gu_vraysceneref.cpp
+	gu/gu_geomplaneref.cpp
 	io/io_vrmesh.cpp
 	obj/obj_node_base.cpp
 	rop/rop_vrayproxyrop.cpp
-	rop/vfh_rop.cpp
 	sop/sop_GeomPlane.cpp
 	sop/sop_PhoenixCache.cpp
 	sop/sop_vrayproxy.cpp
@@ -143,11 +146,11 @@ set(HEADERS
 	gu/gu_volumegridref.h
 	gu/gu_vrayproxyref.h
 	gu/gu_vraysceneref.h
+	gu/gu_geomplaneref.h
 	io/io_vrmesh.h
 	obj/obj_node_base.h
 	obj/obj_node_def.h
 	rop/rop_vrayproxyrop.h
-	rop/vfh_rop.h
 	sop/sop_GeomPlane.h
 	sop/sop_node_base.h
 	sop/sop_node_def.h
@@ -225,87 +228,6 @@ if (Phoenix_FOUND)
 endif()
 
 add_definitions(-DCGR_GIT_HASH=${SRC_GIT_HASH})
-
-# Generate launcher with all needed environment variables set.
-#
-function(vfh_generate_launcher)
-	cmake_parse_arguments(ARG "BATCH;RELEASE" "TEMPLATE_FILENAME;FILENAME;DESTINATION;BIN" "" ${ARGN})
-
-	if(NOT ARG_BIN)
-		if(WIN32)
-			if(ARG_BATCH)
-				set(ARG_BIN "\"%HFS%\\bin\\hbatch.exe\"")
-			else()
-				set(ARG_BIN "start \"V-Ray For Houdini\" /D \"%USERPROFILE%\\Desktop\" \"%HFS%\\bin\\houdini.exe\"")
-			endif()
-		elseif(APPLE)
-		else()
-			if(ARG_BATCH)
-				set(ARG_BIN "\"\${HFS}/bin/hbatch\"")
-			else()
-				set(ARG_BIN "\"\${HFS}/bin/houdini\" -foreground")
-			endif()
-		endif()
-	endif()
-
-	if(NOT ARG_TEMPLATE_FILENAME)
-		if(WIN32)
-			set(ARG_TEMPLATE_FILENAME "hfs.bat.in")
-		elseif(APPLE)
-			set(ARG_TEMPLATE_FILENAME "hfs_osx.sh.in")
-		else()
-			set(ARG_TEMPLATE_FILENAME "hfs_linux.sh.in")
-		endif()
-	endif()
-
-	if(NOT ARG_DESTINATION)
-		set(ARG_DESTINATION ${CMAKE_BINARY_DIR})
-	endif()
-
-	if(NOT ARG_FILENAME)
-		if(ARG_RELEASE)
-			if(ARG_BATCH)
-				set(FILENAME_PREFIX hbatch)
-			else()
-				set(FILENAME_PREFIX hfs)
-			endif()
-			set(FILENAME_PREFIX ${FILENAME_PREFIX}${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD})
-		else()
-			if(ARG_BATCH)
-				set(FILENAME_PREFIX vfh_hbatch)
-			else()
-				set(FILENAME_PREFIX vfh_hfs)
-			endif()
-		endif()
-
-		if(WIN32)
-			set(ARG_FILENAME ${FILENAME_PREFIX}.bat)
-		else()
-			set(ARG_FILENAME ${FILENAME_PREFIX}.sh)
-		endif()
-	endif()
-
-	file(TO_NATIVE_PATH ${CMAKE_SOURCE_DIR} CMAKE_SOURCE_DIR)
-	file(TO_NATIVE_PATH ${APPSDK_ROOT} APPSDK_ROOT)
-	file(TO_NATIVE_PATH ${Phoenix_LIBRARIES} Phoenix_LIBRARIES)
-	set(HFS_BIN ${ARG_BIN})
-
-	set(TMP_FILEPATH ${CMAKE_BINARY_DIR}/tmp/${ARG_FILENAME})
-
-	configure_file(${CMAKE_SOURCE_DIR}/deploy/${ARG_TEMPLATE_FILENAME}
-	               ${TMP_FILEPATH}
-	               @ONLY)
-
-	file(INSTALL ${TMP_FILEPATH}
-		DESTINATION
-			${ARG_DESTINATION}
-		FILE_PERMISSIONS
-			OWNER_READ OWNER_WRITE OWNER_EXECUTE
-			GROUP_READ GROUP_EXECUTE
-			WORLD_READ WORLD_EXECUTE)
-
-	file(REMOVE ${TMP_FILEPATH})
-endfunction()
 
 function(vfh_install_common _location)
 	# Copy Phoenix cache file loader library

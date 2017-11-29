@@ -24,9 +24,9 @@ namespace VRayForHoudini {
 
 enum DisplacementType {
 	displacementTypeNone = -1,
-	displacementTypeFromMat = 0,
-	displacementTypeDisplace,
+	displacementTypeDisplace = 0,
 	displacementTypeSmooth,
+	displacementTypeFromMat,
 };
 
 enum VMRenderPoints {
@@ -43,11 +43,11 @@ enum VMRenderPointsAs {
 struct MotionBlurParams {
 	MotionBlurParams()
 		: mb_geom_samples(1)
-		, mb_duration(0.)
-		, mb_interval_center(0.)
-		, mb_start(0)
-		, mb_end(0)
-		, mb_frame_inc(0)
+		, mb_duration(0.0)
+		, mb_interval_center(0.0)
+		, mb_start(0.0)
+		, mb_end(0.0)
+		, mb_frame_inc(0.0)
 	{}
 
 	void   calcParams(fpreal currFrame);
@@ -198,6 +198,8 @@ public:
 	VRay::Plugin exportVRayProxyRef(OBJ_Node &objNode, const GU_PrimPacked &prim);
 
 	VRay::Plugin exportVRaySceneRef(OBJ_Node &objNode, const GU_PrimPacked &prim);
+
+	VRay::Plugin exportGeomPlaneRef(OBJ_Node &objNode, const GU_PrimPacked &prim);
 
 	VRay::Plugin exportAlembicRef(OBJ_Node &objNode, const GU_PrimPacked &prim);
 

@@ -19,6 +19,7 @@
 #include "gu/gu_vrayproxyref.h"
 #include "gu/gu_volumegridref.h"
 #include "gu/gu_vraysceneref.h"
+#include "gu/gu_geomplaneref.h"
 #include "rop/vfh_rop.h"
 #include "sop/sop_node_base.h"
 #include "vop/vop_node_base.h"
@@ -33,6 +34,8 @@
 #include <GA/GA_Types.h>
 #include <GA/GA_Names.h>
 
+#include <parse.h>
+
 using namespace VRayForHoudini;
 
 static struct PrimPackedTypeIDs {
@@ -43,6 +46,7 @@ static struct PrimPackedTypeIDs {
 		, packedGeometry(0)
 		, vrayProxyRef(0)
 		, vraySceneRef(0)
+		, geomPlaneRef(0)
 	{}
 
 	void init() {
@@ -55,6 +59,7 @@ static struct PrimPackedTypeIDs {
 		vrayProxyRef = GU_PrimPacked::lookupTypeId("VRayProxyRef");
 		vrayVolumeGridRef = GU_PrimPacked::lookupTypeId("VRayVolumeGridRef");
 		vraySceneRef = GU_PrimPacked::lookupTypeId("VRaySceneRef");
+		geomPlaneRef = GU_PrimPacked::lookupTypeId("GeomInfinitePlaneRef");
 
 		initialized = true;
 	}
@@ -69,14 +74,15 @@ public:
 	GA_PrimitiveTypeId vrayProxyRef;
 	GA_PrimitiveTypeId vrayVolumeGridRef;
 	GA_PrimitiveTypeId vraySceneRef;
+	GA_PrimitiveTypeId geomPlaneRef;
 } primPackedTypeIDs;
 
 static boost::format objGeomNameFmt("%s|%i@%s");
 static boost::format hairNameFmt("GeomMayaHair|%i@%s");
 static boost::format polyNameFmt("GeomStaticMesh|%i@%s");
 static boost::format alembicNameFmt("Alembic|%i@%s");
-static boost::format vrmeshNameFmt("VRayProxy|%i@%s");
-static boost::format vrsceneNameFmt("VRayScene|%i@s");
+static boost::format vrmeshNameFmt("VRayProxy|%i");
+static boost::format vrsceneNameFmt("VRayScene|%i@%s");
 
 static const char intrAlembicFilename[] = "abcfilename";
 static const char intrAlembicObjectPath[] = "abcobjectpath";
@@ -292,20 +298,26 @@ DisplacementType ObjectExporter::hasSubdivApplied(OBJ_Node &objNode) const
 	// 1. as a custom VOP available in V-Ray material context
 	// 2. as spare parameters added to the object node.
 
-	const fpreal t = ctx.getTime();
-
-	const bool hasDispl = objNode.hasParm("vray_use_displ") && objNode.evalInt("vray_use_displ", 0, t);
+	const bool hasDispl = objNode.hasParm("vray_displ_use") && objNode.evalInt("vray_displ_use", 0, 0.0);
 	if (!hasDispl)
 		return displacementTypeNone;
 
-	DisplacementType displType = static_cast<DisplacementType>(objNode.evalInt("vray_displ_type", 0, t));
+	DisplacementType displType = static_cast<DisplacementType>(objNode.evalInt("vray_displ_type", 0, 0.0));
 	switch (displType) {
 		case displacementTypeFromMat: {
 			UT_String shopPath;
-			objNode.evalString(shopPath, "vray_displshoppath", 0, t);
-			OP_Node *shop = getOpNodeFromPath(shopPath, t);
+			objNode.evalString(shopPath, "vray_displ_shoppath", 0, 0.0);
+
+			OP_Node *shop = getOpNodeFromPath(shopPath, 0.0);
 			if (shop) {
-				if (!getVRayNodeFromOp(*shop, "Geometry", "GeomStaticSmoothedMesh")) {
+				if (getVRayNodeFromOp(*shop, "Geometry", "GeomStaticSmoothedMesh")) {
+					displType = displacementTypeSmooth;
+				}
+				else if (getVRayNodeFromOp(*shop, "Geometry", "GeomDisplacedMesh")) {
+					displType = displacementTypeDisplace;
+				}
+				else {
+					Log::getLog().warning("Compatible displacement node is not found at the \"Geometry\" input.");
 					displType = displacementTypeNone;
 				}
 			}
@@ -463,6 +475,12 @@ static void overrideItemsToUserAttributes(const MtlOverrideItems &overrides, QSt
 				userAttributes += buf.sprintf("%s=%.3f,%.3f,%.3f;",
 											  overrideName,
 											  overrideItem.valueVector.x, overrideItem.valueVector.y, overrideItem.valueVector.z);
+				break;
+			}
+			case MtlOverrideItem::itemTypeString: {
+				userAttributes += buf.sprintf("%s=%s;",
+											  overrideName,
+											  overrideItem.valueString.toLocal8Bit().constData());
 				break;
 			}
 			default: {
@@ -990,20 +1008,8 @@ void ObjectExporter::exportPolyMesh(OBJ_Node &objNode, const GU_Detail &gdp, con
 									   "GeomStaticMesh");
 			if (polyMeshExporter.asPluginDesc(gdp, geomDesc)) {
 				item.geometry = pluginExporter.exportPlugin(geomDesc);
-				if (item.geometry) {
-					if (hasSubdivApplied) {
-						const std::string subdivPluginType = subdivType == displacementTypeDisplace
-							                                ? "GeomDisplacedMesh"
-							                                : "GeomStaticSmoothedMesh";
-
-						Attrs::PluginDesc subdivDesc(boost::str(Parm::FmtPrefixManual % subdivPluginType % item.geometry.getName()),
-													 subdivPluginType);
-						subdivDesc.addAttribute(Attrs::PluginAttr("mesh", item.geometry));
-
-						pluginExporter.exportDisplacementDesc(&objNode, subdivDesc);
-
-						item.geometry = pluginExporter.exportPlugin(subdivDesc);
-					}
+				if (item.geometry && hasSubdivApplied) {
+					item.geometry = pluginExporter.exportDisplacement(objNode, item.geometry);
 				}
 			}
 
@@ -1097,6 +1103,10 @@ VRay::Plugin ObjectExporter::exportPrimPacked(OBJ_Node &objNode, const GU_PrimPa
 		exportVRaySceneRef(objNode, prim);
 		return VRay::Plugin();
 	}
+	if (primTypeID == primPackedTypeIDs.geomPlaneRef) {
+		return exportGeomPlaneRef(objNode, prim);
+		return VRay::Plugin();
+	}
 
 	const GA_PrimitiveDefinition &lookupTypeDef = prim.getTypeDef();
 
@@ -1155,16 +1165,19 @@ VRay::Plugin ObjectExporter::exportVRayProxyRef(OBJ_Node &objNode, const GU_Prim
 
 	const int key = getPrimPackedID(prim);
 
-	Attrs::PluginDesc pluginDesc(boost::str(vrmeshNameFmt % key % primname.buffer()),
+	Attrs::PluginDesc pluginDesc(boost::str(vrmeshNameFmt % key),
 								 "GeomMeshFile");
 
 	const VRayProxyRef *vrayproxyref = UTverify_cast<const VRayProxyRef*>(prim.implementation());
 
-	UT_Options options = vrayproxyref->getOptions();
-	pluginExporter.setAttrsFromUTOptions(pluginDesc, options);
-
 	// Scale will be exported as primitive transform.
-	pluginDesc.remove("scale");
+	pluginDesc.add(Attrs::PluginAttr("scale", 1.0f));
+
+	// Axis flipping is also baked into primitive transform.
+	pluginDesc.add(Attrs::PluginAttr("flip_axis", 0));
+
+	const UT_Options &options = vrayproxyref->getOptions();
+	pluginExporter.setAttrsFromUTOptions(pluginDesc, options);
 
 	return pluginExporter.exportPlugin(pluginDesc);
 }
@@ -1183,10 +1196,90 @@ VRay::Plugin ObjectExporter::exportVRaySceneRef(OBJ_Node &objNode, const GU_Prim
 
 	const VRaySceneRef *vraysceneref = UTverify_cast<const VRaySceneRef*>(prim.implementation());
 
-	UT_Options options = vraysceneref->getOptions();
+	const VRay::Transform fullTm = pluginExporter.getObjTransform(&objNode, ctx) * getTm();
+	pluginDesc.add(Attrs::PluginAttr("transform", fullTm));
+
+	const UT_Options &options = vraysceneref->getOptions();
+
+	if (options.getOptionI("use_overrides")) {
+		const UT_StringHolder &overrideSnippet = options.getOptionS("override_snippet"); 
+		const UT_StringHolder &overrideFilePath = options.getOptionS("override_filepath"); 
+
+		const int hasOverrideSnippet = overrideSnippet.isstring();
+		const int hasOverrideFile = overrideFilePath.isstring();
+
+		const int hasOverrideData = hasOverrideSnippet || hasOverrideFile; 
+
+		if (hasOverrideData) {
+			// Export plugin mappings.
+			const UT_StringHolder &pluginMappings = options.getOptionS("plugin_mapping");
+			if (pluginMappings.isstring()) {
+				VUtils::Table<VUtils::CharString> pluginMappingPairs;
+				VUtils::tokenize(pluginMappings.buffer(), ";", pluginMappingPairs);
+
+				for (int i = 0; i < pluginMappingPairs.count(); ++i) {
+					const VUtils::CharString pluginMappingPairStr = pluginMappingPairs[i];
+
+					VUtils::Table<VUtils::CharString> pluginMappingPair;
+					VUtils::tokenize(pluginMappingPairStr.ptr(), "=", pluginMappingPair);
+
+					if (pluginMappingPair.count() == 2) {
+						const UT_String opPath              = pluginMappingPair[0].ptr();
+						const VUtils::CharString pluginName = pluginMappingPair[1].ptr();
+
+						OP_Node *opNode = getOpNodeFromPath(opPath, ctx.getTime());
+						if (opNode) {
+							VRay::Plugin opPlugin;
+							if (!getPluginFromCache(*opNode, opPlugin)) {
+								// XXX: Move this to method.
+								COP2_Node *copNode = opNode->castToCOP2Node();
+								VOP_Node *vopNode = opNode->castToVOPNode();
+								if (copNode) {
+									opPlugin = pluginExporter.exportCopNodeWithDefaultMapping(*copNode, VRayExporter::defaultMappingTriPlanar);
+								}
+								else if (vopNode) {
+									opPlugin = pluginExporter.exportVop(vopNode);
+								}
+
+								if (opPlugin) {
+									opPlugin.setName(pluginName.ptr());
+
+									addPluginToCache(*opNode, opPlugin);
+								}
+							}
+						}
+					}
+				}
+			}
+
+			if (hasOverrideSnippet) {
+				// Fix illegal chars
+				VUtils::CharString snippetText(overrideSnippet.buffer());
+				vutils_replaceTokenWithValue(snippetText, "\"", "'");
+
+				pluginDesc.add(Attrs::PluginAttr("override_snippet", snippetText.ptr()));
+			}
+		}
+	}
+
 	pluginExporter.setAttrsFromUTOptions(pluginDesc, options);
 
-	pluginDesc.add(Attrs::PluginAttr("transform", getTm()));
+	return pluginExporter.exportPlugin(pluginDesc);
+}
+
+VRay::Plugin ObjectExporter::exportGeomPlaneRef(OBJ_Node &objNode, const GU_PrimPacked &prim)
+{
+	if (!doExportGeometry) {
+		return VRay::Plugin();
+	}
+
+	UT_String primname;
+	prim.getIntrinsic(prim.findIntrinsic(intrPackedPrimitiveName), primname);
+
+	const int key = getPrimPackedID(prim);
+	Attrs::PluginDesc pluginDesc(boost::str(vrsceneNameFmt % key % primname.buffer()), "GeomInfinitePlane");
+
+	pluginDesc.addAttribute(Attrs::PluginAttr("normal", VRay::Vector(0.f, 1.f, 0.f)));
 
 	return pluginExporter.exportPlugin(pluginDesc);
 }
@@ -1660,7 +1753,9 @@ VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode)
 	const UT_String &renderOpType = renderSOP->getOperator()->getName();
 	if (renderOpType.startsWith("VRayNode") &&
 		!renderOpType.equal("VRayNodePhxShaderCache") &&
-		!renderOpType.equal("VRayNodeVRayProxy"))
+		!renderOpType.equal("VRayNodeVRayProxy") &&
+		!renderOpType.equal("VRayNodeVRayScene") &&
+		!renderOpType.equal("VRayNodeGeomPlane"))
 	{
 		return exportVRaySOP(objNode, *renderSOP);
 	}
@@ -1693,6 +1788,8 @@ VRay::Plugin ObjectExporter::exportLight(OBJ_Light &objLight)
 		ExportContext expContext(CT_OBJ, pluginExporter, objLight);
 		OP::VRayNode::PluginResult res = vrayNode->asPluginDesc(pluginDesc, pluginExporter, &expContext);
 
+		const int isDomeLight = vrayNode->getVRayPluginID() == getVRayPluginIDName(VRayPluginID::LightDome);
+
 		if (res == OP::VRayNode::PluginResultError) {
 			Log::getLog().error("Error creating plugin descripion for node: \"%s\" [%s]",
 						objLight.getName().buffer(),
@@ -1706,8 +1803,8 @@ VRay::Plugin ObjectExporter::exportLight(OBJ_Light &objLight)
 
 		VRay::Transform tm = getTm();
 
-		const bool flipTM = vrayNode->getVRayPluginID() == getVRayPluginIDName(VRayPluginID::LightDome);
-		if (flipTM) {
+		if (isDomeLight) {
+			tm.makeIdentity();
 			VUtils::swap(tm.matrix[1], tm.matrix[2]);
 		}
 
