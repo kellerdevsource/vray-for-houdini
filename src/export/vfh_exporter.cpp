@@ -2359,7 +2359,12 @@ void VRayExporter::exportFrame(fpreal time)
 
 			if (!m_exportedFrames.count(mbFrame)) {
 				m_exportedFrames.insert(mbFrame);
-				setTime(mbFrame);
+
+				OP_Context mbTime;
+				mbTime.setFrame(mbFrame);
+
+				setTime(mbTime.getTime());
+
 				exportScene();
 			}
 
