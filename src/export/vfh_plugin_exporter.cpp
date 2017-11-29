@@ -287,7 +287,16 @@ void VRayPluginRenderer::exportPluginProperties(VRay::Plugin &plugin, const Attr
 			plugin.setValue(p.paramName, p.paramValue.valRawListCharString);
 		}
 		else if (p.paramType == PluginAttr::AttrTypeRawListValue) {
+			const int curAnimValue = m_vray->getUseAnimatedValuesState();
+
+			// Force animated generic list key-frames.
+			if (curAnimValue >= 1 && p.isAnimatedGenericList) {
+				m_vray->useAnimatedValues(2);
+			}
+
 			plugin.setValue(p.paramName, p.paramValue.valRawListValue);
+
+			m_vray->useAnimatedValues(curAnimValue);
 		}
 
 #if CGR_DEBUG_APPSDK_VALUES

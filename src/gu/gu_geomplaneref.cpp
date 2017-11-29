@@ -12,34 +12,27 @@
 
 using namespace VRayForHoudini;
 
-class GeomPlaneFactory
+static class GeomPlaneFactory
 	: public GU_PackedFactory
 {
 public:
-	static GeomPlaneFactory &getInstance() {
-		static GeomPlaneFactory theFactory;
-		return theFactory;
-	}
-
-	GU_PackedImpl* create() const VRAY_OVERRIDE {
-		return new GeomPlaneRef();
-	}
-
-private:
 	GeomPlaneFactory()
 		: GU_PackedFactory("GeomInfinitePlaneRef", "GeomInfinitePlaneRef")
 	{
 		GeomPlaneRef::registerIntrinsics<GeomPlaneRef>(*this);
 	}
 
-	VUTILS_DISABLE_COPY(GeomPlaneFactory);
-};
+	GU_PackedImpl* create() const VRAY_OVERRIDE {
+		return new GeomPlaneRef();
+	}
+
+	VUTILS_DISABLE_COPY(GeomPlaneFactory)
+} theFactory;
 
 GA_PrimitiveTypeId GeomPlaneRef::theTypeId(-1);
 
 void GeomPlaneRef::install(GA_PrimitiveFactory *gafactory)
 {
-	GeomPlaneFactory &theFactory = GeomPlaneFactory::getInstance();
 	if (theFactory.isRegistered()) {
 		Log::getLog().debug("Multiple attempts to install packed primitive %s from %s",
 			static_cast<const char *>(theFactory.name()), UT_DSO::getRunningFile());
@@ -59,7 +52,7 @@ void GeomPlaneRef::install(GA_PrimitiveFactory *gafactory)
 
 GU_PackedFactory *GeomPlaneRef::getFactory() const
 {
-	return &GeomPlaneFactory::getInstance();
+	return &theFactory;
 }
 
 GU_PackedImpl *GeomPlaneRef::copy() const

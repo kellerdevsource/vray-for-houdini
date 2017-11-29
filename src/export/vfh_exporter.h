@@ -598,7 +598,7 @@ private:
 	VRayPluginRenderer             m_renderer; ///< the plugin renderer
 	VRayOpContext                  m_context; ///< current export context
 	int                            m_renderMode; ///< rend
-	int                            m_isAborted; ///< flag whether rendering should be aborted when possible
+	QAtomicInt                     m_isAborted; ///< flag whether rendering should be aborted when possible
 	ViewParams                     m_viewParams; ///< used to gather view data from the ROP and camera
 	int                            m_frames; ///< how many frames are we going to export
 	ROP_RENDER_CODE                m_error; ///< ROP error to singnal the ROP rendering should be aborted

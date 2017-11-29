@@ -130,13 +130,14 @@ GA_PrimitiveTypeId VRayVolumeGridRef::theTypeId(-1);
 const int MAX_CHAN_MAP_LEN = 2048;
 
 /// Implemetation for the factory creating VRayVolumeGridRef for HDK
-class VRayVolumeGridFactory
+static class VRayVolumeGridFactory
 	: public GU_PackedFactory
 {
 public:
-	static VRayVolumeGridFactory &getInstance() {
-		static VRayVolumeGridFactory theFactory;
-		return  theFactory;
+	VRayVolumeGridFactory()
+		: GU_PackedFactory("VRayVolumeGridRef", "VRayVolumeGridRef")
+	{
+		VRayVolumeGridRef::registerIntrinsics<VRayVolumeGridRef>(*this);
 	}
 
 	GU_PackedImpl *create() const VRAY_OVERRIDE {
@@ -144,22 +145,11 @@ public:
 	}
 
 private:
-	VRayVolumeGridFactory();
-
 	VUTILS_DISABLE_COPY(VRayVolumeGridFactory);
-};
-
-VRayVolumeGridFactory::VRayVolumeGridFactory()
-	: GU_PackedFactory("VRayVolumeGridRef", "VRayVolumeGridRef")
-{
-	VRayVolumeGridRef::registerIntrinsics<VRayVolumeGridRef>(*this);
-
-	registerTupleIntrinsic("phx_channel_map", IntGetterCast(&VRayVolumeGridRef::getPhxChannelMapSize), StringArrayGetterCast(&VRayVolumeGridRef::getPhxChannelMap), StringArraySetterCast(&VRayVolumeGridRef::setPhxChannelMap));
-}
+} theFactory;
 
 void VRayVolumeGridRef::install(GA_PrimitiveFactory *gafactory)
 {
-	VRayVolumeGridFactory &theFactory = VRayVolumeGridFactory::getInstance();
 	if (theFactory.isRegistered()) {
 		Log::getLog().debug("Multiple attempts to install packed primitive %s from %s",
 			static_cast<const char *>(theFactory.name()), UT_DSO::getRunningFile());
@@ -321,7 +311,7 @@ VolumeCacheKey VRayVolumeGridRef::genKey() const
 
 GU_PackedFactory* VRayVolumeGridRef::getFactory() const
 {
-	return &VRayVolumeGridFactory::getInstance();
+	return &theFactory;
 }
 
 void VRayVolumeGridRef::clearData()

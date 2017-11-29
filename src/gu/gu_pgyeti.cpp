@@ -32,34 +32,26 @@ using namespace VRayForHoudini;
 
 static GA_PrimitiveTypeId theTypeId(-1);
 
-class VRayPgYetiFactory
+static class VRayPgYetiFactory
 	: public GU_PackedFactory
 {
 public:
-	static VRayPgYetiFactory &getInstance() {
-		static VRayPgYetiFactory theFactory;
-		return theFactory;
+	VRayPgYetiFactory()
+		: GU_PackedFactory("VRayPgYetiRef", "VRayPgYetiRef")
+	{
+		VRayPgYetiRef::registerIntrinsics<VRayPgYetiRef>(*this);
 	}
 
 	GU_PackedImpl* create() const VRAY_OVERRIDE {
 		return new VRayPgYetiRef();
 	}
 
-private:
-	VRayPgYetiFactory();
+	VUTILS_DISABLE_COPY(VRayPgYetiFactory)
+} theFactory;
 
-	VUTILS_DISABLE_COPY(VRayPgYetiFactory);
-};
-
-VRayPgYetiFactory::VRayPgYetiFactory()
-	: GU_PackedFactory("VRayPgYetiRef", "VRayPgYetiRef")
-{
-	VRayPgYetiRef::registerIntrinsics<VRayPgYetiRef>(*this);
-}
 
 void VRayPgYetiRef::install(GA_PrimitiveFactory *gafactory)
 {
-	VRayPgYetiFactory &theFactory = VRayPgYetiFactory::getInstance();
 	if (theFactory.isRegistered()) {
 		Log::getLog().debug("Multiple attempts to install packed primitive %s from %s",
 			static_cast<const char *>(theFactory.name()), UT_DSO::getRunningFile());
@@ -97,7 +89,7 @@ GA_PrimitiveTypeId VRayPgYetiRef::typeId()
 
 GU_PackedFactory *VRayPgYetiRef::getFactory() const
 {
-	return &VRayPgYetiFactory::getInstance();
+	return &theFactory;
 }
 
 GU_PackedImpl *VRayPgYetiRef::copy() const
