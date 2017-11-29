@@ -275,7 +275,8 @@ VRayVolumeGridRef::VRayVolumeGridRef(const VRayVolumeGridRef &src)
 }
 
 VRayVolumeGridRef::VRayVolumeGridRef(VRayVolumeGridRef &&src) noexcept
-	: m_dataCache(std::move(src.m_dataCache))
+	: VRayVolumeGridRefOptions(std::move(src))
+	, m_dataCache(std::move(src.m_dataCache))
 	, m_bBox(std::move(src.m_bBox))
 	, m_dirty(std::move(src.m_dirty))
 	, m_channelDirty(std::move(src.m_channelDirty))
