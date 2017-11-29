@@ -122,8 +122,7 @@ public:
 	{
 		if (&source != this) {
 			VUtils::swap(m_capacity, source.m_capacity);
-			VUtils::swap(m_cacheMap, source.m_cacheMap);
-			VUtils::swap(m_mlruQueue, source.m_mlruQueue);
+			moveCacheData(std::move(source));
 			VUtils::swap(m_cbfetchValue, source.m_cbfetchValue);
 			VUtils::swap(m_cbEvictValue, source.m_cbEvictValue);
 		}
@@ -131,6 +130,7 @@ public:
 		return *this;
 	}
 
+public:
 	/// Get cache capacity
 	size_type capacity() const { return m_capacity; }
 	/// Get number of items in the cache
@@ -317,6 +317,22 @@ public:
 	{
 		m_mlruQueue.clear();
 		m_cacheMap.clear();
+	}
+
+private:
+	/// Used as helper function for the move constructor
+	void moveCacheData(LRUCache&& source)
+	{
+		VUtils::swap(m_mlruQueue, source.m_mlruQueue);
+		VUtils::swap(m_cacheMap, source.m_cacheMap);
+
+		/// Iterators from the cache map must be redirected to the new queue
+		for (typename MLRUQueue::iterator i = m_mlruQueue.begin(); i != m_mlruQueue.end(); ++i) {
+			m_cacheMap[*i].second = i;
+		}
+		for (typename MLRUQueue::iterator i = source.m_mlruQueue.begin(); i != source.m_mlruQueue.end(); ++i) {
+			source.m_cacheMap[*i].second = i;
+		}
 	}
 
 private:

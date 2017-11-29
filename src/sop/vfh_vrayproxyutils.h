@@ -77,6 +77,7 @@ public:
 	static const UT_StringRef theAnimLengthToken;
 	static const UT_StringRef theScaleToken;
 	static const UT_StringRef theFlipAxisToken;
+	static const UT_StringRef theCurrentFrame;
 
 
 	/// Get the proxy filepath stored in UT_Options
@@ -150,6 +151,10 @@ public:
 		return ((options.hasOption(theFlipAxisToken))? options.getOptionI(theFlipAxisToken) : 0);
 	}
 
+	static float getCurrentFrameImpl(const UT_Options &options) {
+		return options.hasOption(theCurrentFrame) ? options.getOptionF(theCurrentFrame) : 0.0f;
+	}
+
 public:
 	VRayProxyParms()
 	{ }
@@ -202,6 +207,9 @@ public:
 
 	/// Check whether to flip the z axis for the proxy primitive
 	inline exint getFlipAxis() const { return getFlipAxis(m_options); }
+
+	/// Returns current frame.
+	float getCurrentFrame() const { return getCurrentFrameImpl(m_options); }
 
 private:
 	UT_Options m_options; ///< UT_Options for the proxy packed primitive

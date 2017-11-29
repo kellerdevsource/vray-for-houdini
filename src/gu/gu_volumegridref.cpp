@@ -254,12 +254,11 @@ void VRayForHoudini::VRayVolumeGridRef::fetchDataMaxVox(const VolumeCacheKey &ke
 
 VRayVolumeGridRef::VRayVolumeGridRef()
 	: GU_PackedImpl()
+	, VRayVolumeGridRefOptions()
 	, m_dirty(false)
 	, m_channelDirty(false)
 	, m_doFrameReplace(false)
 {
-	GU_Detail *gdp = new GU_Detail;
-	getDetail().allocateAndSet(gdp, true);
 	memset(getChannelDataRanges().data(), 0, DataRangeMapSize);
 	this->initDataCache();
 }
@@ -275,7 +274,8 @@ VRayVolumeGridRef::VRayVolumeGridRef(const VRayVolumeGridRef &src)
 }
 
 VRayVolumeGridRef::VRayVolumeGridRef(VRayVolumeGridRef &&src) noexcept
-	: VRayVolumeGridRefOptions(std::move(src))
+	: GU_PackedImpl(std::move(src))
+	, VRayVolumeGridRefOptions(std::move(src))
 	, m_dataCache(std::move(src.m_dataCache))
 	, m_bBox(std::move(src.m_bBox))
 	, m_dirty(std::move(src.m_dirty))
@@ -417,11 +417,9 @@ GU_ConstDetailHandle VRayVolumeGridRef::getPackedDetail(GU_PackedContext *contex
 
 	GU_DetailHandleAutoWriteLock rLock(self->getDetail());
 	GU_Detail *gdp = rLock.getGdp();
-	gdp->stashAll();
 
 	VolumeCacheKey key = genKey();
 	if (!key.isValid()) {
-		gdp->clearAndDestroy();
 		return getDetail();
 	}
 
@@ -429,7 +427,6 @@ GU_ConstDetailHandle VRayVolumeGridRef::getPackedDetail(GU_PackedContext *contex
 	self->m_dirty = false;
 
 	if (!data.aurPtr) {
-		gdp->clearAndDestroy();
 		return getDetail();
 	}
 
