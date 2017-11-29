@@ -1001,7 +1001,11 @@ void ObjectExporter::exportPolyMesh(OBJ_Node &objNode, const GU_Detail &gdp, con
 	item.vel = topItem.vel;
 	item.primID = topItem.primID ^ keyDataPoly;
 
-	const SubdivInfo &subdivInfo = getSubdivInfo(objNode, item.primMaterial.matNode);
+	OP_Node *matNode = item.primMaterial.matNode
+		? item.primMaterial.matNode
+		: objNode.getMaterialNode(ctx.getTime());
+
+	const SubdivInfo &subdivInfo = getSubdivInfo(objNode, matNode);
 
 	polyMeshExporter.setSubdivApplied(subdivInfo.hasSubdiv());
 	polyMeshExporter.setDetailID(item.primID);
