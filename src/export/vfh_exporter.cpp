@@ -2355,7 +2355,7 @@ void VRayExporter::exportFrame(fpreal time)
 		// Export motion blur data
 		fpreal subframe = mbParams.mb_start;
 		while (!isAborted() && (subframe <= mbParams.mb_end)) {
-			const fpreal mbFrame = subframe >= 0.0f ? subframe;
+			const fpreal mbFrame = subframe >= 0.0 ? subframe : 0.0;
 
 			if (!m_exportedFrames.count(mbFrame)) {
 				m_exportedFrames.insert(mbFrame);
