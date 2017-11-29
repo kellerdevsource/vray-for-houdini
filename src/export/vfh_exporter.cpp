@@ -2355,14 +2355,11 @@ void VRayExporter::exportFrame(fpreal time)
 		// Export motion blur data
 		fpreal subframe = mbParams.mb_start;
 		while (!isAborted() && (subframe <= mbParams.mb_end)) {
-			if (!m_exportedFrames.count(subframe)) {
-				m_exportedFrames.insert(subframe);
+			const fpreal mbFrame = subframe >= 0.0f ? subframe;
 
-				OP_Context timeCtx;
-				timeCtx.setFrame(subframe);
-				fpreal currentTime = timeCtx.getTime();
-				setTime(currentTime >= 0.0f ? currentTime : 0.0f);
-
+			if (!m_exportedFrames.count(mbFrame)) {
+				m_exportedFrames.insert(mbFrame);
+				setTime(mbFrame);
 				exportScene();
 			}
 
