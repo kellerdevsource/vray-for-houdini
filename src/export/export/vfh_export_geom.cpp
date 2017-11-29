@@ -1766,7 +1766,7 @@ VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode, SOP_Node &sopNode
 
 	PrimContext primContext(&objNode, rootItem);
 
-	STY_Styler currentStyler = getStyler();
+	const STY_Styler &currentStyler = getStyler();
 	STY_Styler objectStyler = getStylerForObject(objNode, ctx.getTime());
 	primContext.styler = objectStyler.cloneWithAddedStyler(currentStyler, STY_TargetHandle());
 
