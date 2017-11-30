@@ -158,20 +158,14 @@ int LightNodeBase< VRayPluginID::LightDome >::GetMyPrmTemplate(Parm::PRMList &my
 	return myPrmList.size() - idx;
 }
 
-VRay::Plugin extractGeometryPlugin(const VRay::Plugin &geometry)
-{
-	const UT_String &pluginType = geometry.getType();
-	if (!pluginType.compare("Node")) {
-		return extractGeometryPlugin(geometry.getPlugin("geometry"));
-	}
-	else if (!pluginType.compare("Instancer2")) {
-		VRay::ValueList &valueList = geometry.getValueList("instances");
-		VRay::ValueList &secondList = valueList.at(valueList.size() - 1).getValueList();
-		return extractGeometryPlugin(secondList.at(secondList.size() - 1).getPlugin()); // Geometry node is added last to the list in 
-																					// ObjectExporter::exportDetailInstancer
-	}
+int isMeshLightSupportedGeometryType(const VRay::Plugin &geometry) {
+	const UT_String geometryStaticMesh(geometry.getType());
 	
-	return geometry;
+	if (geometryStaticMesh.equal("GeomStaticMesh")) {
+		return 1;
+	}
+
+	return 0; // Isn't a supported type
 }
 
 template<>
@@ -200,16 +194,15 @@ OP::VRayNode::PluginResult LightNodeBase< VRayPluginID::LightMesh >::asPluginDes
 
 				for (int i = 0; i < geomList.count(); ++i) {
 					const PrimitiveItem &item = geomList[i];
-					if (!item.geometry /* || !isMeshLightSupportedGeometryType(item.geometry) */)
+					if (!item.geometry || !isMeshLightSupportedGeometryType(item.geometry)) {// check if it is geomstaticmesh, otherwise print warning
+						Log::getLog().error("Unsupported geometry type: %s !", item.geometry.getType());
 						continue;
-
+					}
 					const std::string meshLightName =
 						VRayExporter::getPluginName(this) + "|" + std::to_string(i) + "|" + item.geometry.getName();
 
-					const VRay::Plugin geometry = extractGeometryPlugin(item.geometry);
-
 					Attrs::PluginDesc meshLightDesc(meshLightName, pluginID);
-					meshLightDesc.addAttribute(Attrs::PluginAttr("geometry", geometry));
+					meshLightDesc.addAttribute(Attrs::PluginAttr("geometry", item.geometry));
 					meshLightDesc.addAttribute(Attrs::PluginAttr("transform", objTm * item.tm));
 					if (item.objectID != objectIdUndefined) {
 						meshLightDesc.addAttribute(Attrs::PluginAttr("objectID", item.objectID));
