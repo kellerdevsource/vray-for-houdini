@@ -169,7 +169,7 @@ int isMeshLightSupportedGeometryType(const VRay::Plugin &geometry) {
 }
 
 template<>
-OP::VRayNode::PluginResult LightNodeBase< VRayPluginID::LightMesh >::asPluginDesc(Attrs::PluginDesc&, VRayExporter &exporter, ExportContext*)
+OP::VRayNode::PluginResult LightNodeBase< VRayPluginID::LightMesh >::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext*)
 {
 	const fpreal t = exporter.getContext().getTime();
 
@@ -192,7 +192,17 @@ OP::VRayNode::PluginResult LightNodeBase< VRayPluginID::LightMesh >::asPluginDes
 				const VRay::Transform &objTm =
 					VRayExporter::getObjTransform(this, exporter.getContext());
 
-				for (int i = 0; i < geomList.count(); ++i) {
+				pluginDesc.pluginID = pluginID;
+				pluginDesc.pluginName = VRayExporter::getPluginName(this);
+				
+				{
+					const PrimitiveItem &item = geomList[0];
+					if (item.geometry) {
+						pluginDesc.addAttribute(Attrs::PluginAttr("geometry", item.geometry));
+					}
+				}
+
+				for (int i = 1; i < geomList.count(); ++i) {
 					const PrimitiveItem &item = geomList[i];
 					if (!item.geometry || !isMeshLightSupportedGeometryType(item.geometry)) {// check if it is geomstaticmesh, otherwise print warning
 						Log::getLog().error("Unsupported geometry type: %s !", item.geometry.getType());
@@ -212,7 +222,7 @@ OP::VRayNode::PluginResult LightNodeBase< VRayPluginID::LightMesh >::asPluginDes
 					exporter.exportPlugin(meshLightDesc);
 				}
 
-				return PluginResultSuccess;
+				return PluginResultContinue;
 			}
 		}
 	}
