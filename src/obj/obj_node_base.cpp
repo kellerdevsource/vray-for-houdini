@@ -196,9 +196,11 @@ OP::VRayNode::PluginResult LightNodeBase< VRayPluginID::LightMesh >::asPluginDes
 				pluginDesc.pluginName = VRayExporter::getPluginName(this);
 				
 				{
-					const PrimitiveItem &item = geomList[0];
-					if (item.geometry) {
-						pluginDesc.addAttribute(Attrs::PluginAttr("geometry", item.geometry));
+					if (!geomList.count()) {
+						const PrimitiveItem &item = geomList[0];
+						if (item.geometry) {
+							pluginDesc.addAttribute(Attrs::PluginAttr("geometry", item.geometry));
+						}
 					}
 				}
 
