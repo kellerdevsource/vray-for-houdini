@@ -83,8 +83,8 @@ endif()
 # Set include / library paths
 #
 if(APPLE)
-	set(HDK_INCLUDES  "${HDK_PATH}/../Resources/toolkit/include")
-	set(HDK_LIBRARIES "${HDK_PATH}/../Libraries")
+	set(HDK_INCLUDES  "${HDK_PATH}/toolkit/include")
+	set(HDK_LIBRARIES "${HDK_PATH}/Libraries")
 elseif(WIN32)
 	set(HDK_INCLUDES  "${HDK_PATH}/toolkit/include")
 	set(HDK_LIBRARIES "${HDK_PATH}/custom/houdini/dsolib")
@@ -472,14 +472,25 @@ if(HDK_FOUND)
 				-DMBSD_INTEL
 			)
 
+			if(HOUDINI_QT_VERSION VERSION_GREATER 4)
+				list(APPEND HDK_LIBS
+					Qt5Core
+					Qt5Gui
+					Qt5Widgets
+				)
+			else()
+				list(APPEND HDK_LIBS
+					QtCore
+					QtGui
+				)
+			endif()
+
 			list(APPEND HDK_LIBS
 				z
 				dl
 				tbb
 				tbbmalloc
 				pthread
-				QtCore
-				QtGui
 				"-framework Cocoa"
 			)
 		else()
