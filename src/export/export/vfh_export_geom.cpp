@@ -82,6 +82,7 @@ public:
 } primPackedTypeIDs;
 
 static boost::format objGeomNameFmt("%s|%i@%s");
+static boost::format objInstancerNameFmt("Instancer@%s");
 static boost::format hairNameFmt("GeomMayaHair|%i@%s");
 static boost::format polyNameFmt("GeomStaticMesh|%i@%s");
 static boost::format alembicNameFmt("Alembic|%i@%s");
@@ -825,7 +826,7 @@ static void appendSceneName(QString &userAttributes, const OP_Node &opNode)
 	userAttributes.append(sceneName[1].ptr());
 }
 
-VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_Detail &gdp, const char *prefix)
+VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode)
 {
 	using namespace Attrs;
 
@@ -849,7 +850,7 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_D
 	const fpreal instancerTime = ctx.hasMotionBlur ? ctx.mbParams.mb_start : ctx.getFloatFrame();
 
 	// +1 because first value is time.
-	VRay::VUtils::ValueRefList instances(numParticles+1);
+	VRay::VUtils::ValueRefList instances(numParticles + 1);
 	instances[instancesListIdx++].setDouble(instancerTime);
 
 	for (int i = 0; i < instancerItems.count(); ++i) {
@@ -871,7 +872,7 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_D
 
 		if (isNodeMatte(objNode)) {
 			PluginDesc mtlWrapperDesc(VRayExporter::getPluginName(&objNode, "MtlWrapper"),
-									  "MtlWrapper");
+				"MtlWrapper");
 
 			mtlWrapperDesc.addAttribute(PluginAttr("base_material", material));
 			mtlWrapperDesc.addAttribute(PluginAttr("matte_surface", 1));
@@ -885,7 +886,7 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_D
 
 		if (isNodePhantom(objNode)) {
 			PluginDesc mtlStatsDesc(VRayExporter::getPluginName(&objNode, "MtlRenderStats"),
-									"MtlRenderStats");
+				"MtlRenderStats");
 			mtlStatsDesc.addAttribute(PluginAttr("base_mtl", material));
 			mtlStatsDesc.addAttribute(PluginAttr("camera_visibility", 0));
 
@@ -942,7 +943,7 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode, const GU_D
 
 	instancerItems.clear();
 
-	Attrs::PluginDesc instancer2(boost::str(objGeomNameFmt % prefix % gdp.getUniqueId() % objNode.getName().buffer()),
+	Attrs::PluginDesc instancer2(str(objInstancerNameFmt % objNode.getName().buffer()),
 								 "Instancer2");
 
 	const int needKeyFrames = pluginExporter.isAnimation() || pluginExporter.needVelocity();
@@ -1772,11 +1773,11 @@ void ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_Detail &gd
 	}
 }
 
-VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode, SOP_Node &sopNode)
+void ObjectExporter::exportGeometry(OBJ_Node &objNode, SOP_Node &sopNode)
 {
 	const GU_DetailHandleAutoReadLock gdl(sopNode.getCookedGeoHandle(ctx));
 	if (!gdl.isValid()) {
-		return VRay::Plugin();
+		return;
 	}
 
 	const GU_Detail &gdp = *gdl;
@@ -1800,11 +1801,18 @@ VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode, SOP_Node &sopNode
 		exportDetail(objNode, gdp);
 	}
 
-	VRay::Plugin geometry = exportDetailInstancer(objNode, gdp, "Instancer");
-
 	popContext();
+}
 
-	return geometry;
+void ObjectExporter::exportGeometry(OBJ_Node &objNode, PrimitiveItems &items)
+{
+	SOP_Node *renderSOP = objNode.getRenderSopPtr();
+	if (!renderSOP)
+		return;
+
+	exportGeometry(objNode, *renderSOP);
+
+	items.swap(instancerItems);
 }
 
 VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode)
@@ -1813,7 +1821,9 @@ VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode)
 	if (!renderSOP)
 		return VRay::Plugin();
 
-	return exportGeometry(objNode, *renderSOP);
+	exportGeometry(objNode, instancerItems);
+
+	return exportDetailInstancer(objNode);
 }
 
 int ObjectExporter::isLightEnabled(OBJ_Node &objLight) const
@@ -1840,7 +1850,6 @@ VRay::Plugin ObjectExporter::exportLight(OBJ_Light &objLight)
 
 		ExportContext expContext(CT_OBJ, pluginExporter, objLight);
 		OP::VRayNode::PluginResult res = vrayNode->asPluginDesc(pluginDesc, pluginExporter, &expContext);
-
 		const int isDomeLight = vrayNode->getVRayPluginID() == getVRayPluginIDName(VRayPluginID::LightDome);
 
 		if (res == OP::VRayNode::PluginResultError) {
