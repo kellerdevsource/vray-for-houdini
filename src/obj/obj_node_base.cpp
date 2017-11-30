@@ -198,8 +198,12 @@ OP::VRayNode::PluginResult LightNodeBase< VRayPluginID::LightMesh >::asPluginDes
 				{
 					if (!geomList.count()) {
 						const PrimitiveItem &item = geomList[0];
-						if (item.geometry) {
+						if (item.geometry && !isMeshLightSupportedGeometryType(item.geometry)) {
 							pluginDesc.addAttribute(Attrs::PluginAttr("geometry", item.geometry));
+						}
+						pluginDesc.addAttribute(Attrs::PluginAttr("transform", objTm * item.tm));
+						if (item.objectID != objectIdUndefined) {
+							pluginDesc.addAttribute(Attrs::PluginAttr("objectID", item.objectID));
 						}
 					}
 				}
@@ -211,7 +215,7 @@ OP::VRayNode::PluginResult LightNodeBase< VRayPluginID::LightMesh >::asPluginDes
 						continue;
 					}
 					const std::string meshLightName =
-						VRayExporter::getPluginName(this) + "|" + std::to_string(i) + "|" + item.geometry.getName();
+						pluginDesc.pluginName + "|" + std::to_string(i) + "|" + item.geometry.getName();
 
 					Attrs::PluginDesc meshLightDesc(meshLightName, pluginID);
 					meshLightDesc.addAttribute(Attrs::PluginAttr("geometry", item.geometry));
