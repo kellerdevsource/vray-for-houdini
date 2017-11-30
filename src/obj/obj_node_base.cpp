@@ -168,16 +168,17 @@ int isMeshLightSupportedGeometryType(const VRay::Plugin &geometry) {
 	return 0; // Isn't a supported type
 }
 
-void fillPluginDesc(Attrs::PluginDesc &pluginDesc, const PrimitiveItem &item, const VRay::Transform &objTm) {
+int fillPluginDesc(Attrs::PluginDesc &pluginDesc, const PrimitiveItem &item, const VRay::Transform &objTm) {
 	if (!item.geometry || !isMeshLightSupportedGeometryType(item.geometry)) {
 		Log::getLog().warning("Unsupported geometry type: %s !", item.geometry.getType());
-		return;
+		return 0;
 	}
 	pluginDesc.addAttribute(Attrs::PluginAttr("geometry", item.geometry));
 	pluginDesc.addAttribute(Attrs::PluginAttr("transform", objTm * item.tm));
 	if (item.objectID != objectIdUndefined) {
 		pluginDesc.addAttribute(Attrs::PluginAttr("objectID", item.objectID));
 	}
+	return 1;
 }
 
 template<>
@@ -219,7 +220,9 @@ OP::VRayNode::PluginResult LightNodeBase< VRayPluginID::LightMesh >::asPluginDes
 						pluginDesc.pluginName + "|" + std::to_string(i) + "|" + item.geometry.getName();
 
 					Attrs::PluginDesc meshLightDesc(meshLightName, pluginID);
-					fillPluginDesc(meshLightDesc, item, objTm);
+					if (!fillPluginDesc(meshLightDesc, item, objTm)) {
+						continue;
+					}
 
 					exporter.setAttrsFromOpNodePrms(meshLightDesc, this);
 					exporter.exportPlugin(meshLightDesc);
