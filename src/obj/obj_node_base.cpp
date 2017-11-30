@@ -173,14 +173,11 @@ void fillPluginDesc(Attrs::PluginDesc &pluginDesc, const PrimitiveItem &item, co
 		Log::getLog().warning("Unsupported geometry type: %s !", item.geometry.getType());
 		return;
 	}
-	if (item.geometry && !isMeshLightSupportedGeometryType(item.geometry)) {
-		pluginDesc.addAttribute(Attrs::PluginAttr("geometry", item.geometry));
-	}
+	pluginDesc.addAttribute(Attrs::PluginAttr("geometry", item.geometry));
 	pluginDesc.addAttribute(Attrs::PluginAttr("transform", objTm * item.tm));
 	if (item.objectID != objectIdUndefined) {
 		pluginDesc.addAttribute(Attrs::PluginAttr("objectID", item.objectID));
 	}
-
 }
 
 template<>
