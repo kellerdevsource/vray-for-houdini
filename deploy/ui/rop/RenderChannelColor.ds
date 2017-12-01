@@ -64,7 +64,7 @@
         name    "name"
         label   "Name"
         type    string
-        default { "Channel_Name" }
+        default { "`opname('.')`" }
         help    "Channel name"
         range   { 0 1 }
         export  none

@@ -76,7 +76,7 @@ groupsimple {
         type    float
         default { "0.25" }
         help    "Determines the displacement amount for white areas in the displacement map; if use_globals is true this is multiplied by the global displacement amount option"
-        range   { 0 64 }
+        range   { 0 1 }
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "GeomStaticSmoothedMesh" }
         parmtag { "vray_pluginattr" "displacement_amount" }
@@ -89,7 +89,7 @@ groupsimple {
         type    float
         default { "0" }
         help    "This constant value is added to the displacement map"
-        range   { 0 64 }
+        range   { 0 1 }
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "GeomStaticSmoothedMesh" }
         parmtag { "vray_pluginattr" "displacement_shift" }
@@ -247,7 +247,7 @@ groupsimple {
         type    float
         default { "-1e+30" }
         help    "Geometry below this displacement level will be clipped away"
-        range   { 0 64 }
+        range   { -1e+30 0 }
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "GeomStaticSmoothedMesh" }
         parmtag { "vray_pluginattr" "water_level" }
@@ -260,7 +260,7 @@ groupsimple {
         type    integer
         default { "0" }
         help    "This parameter overrides the imgWidth paramter from VRayFrameData during the calculation of the subdivision depth"
-        range   { 0 64 }
+        range   { 0 1024 }
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "GeomStaticSmoothedMesh" }
         parmtag { "vray_pluginattr" "image_width" }

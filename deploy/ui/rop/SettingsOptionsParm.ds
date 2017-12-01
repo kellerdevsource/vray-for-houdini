@@ -2,20 +2,6 @@ groupsimple {
   name "folder_options_geometry"
   label "Geometry"
 
-  parm {
-    name    "SettingsOptions_geom_doHidden"
-    label   "Render Hidden Geometry"
-    type    toggle
-    default { "0" }
-    help    "Render hidden geometry"
-    range   { 0 1 }
-    export  none
-    parmtag { "cook_dependent" "1" }
-    parmtag { "vray_plugin" "SettingsOptions" }
-    parmtag { "vray_pluginattr" "geom_doHidden" }
-    parmtag { "vray_type" "boolean" }
-  }
-
     parm {
         name    "SettingsOptions_geom_displacement"
         label   "Displacement"
@@ -30,6 +16,19 @@ groupsimple {
         parmtag { "vray_type" "boolean" }
     }
 
+  parm {
+    name    "SettingsOptions_geom_doHidden"
+    label   "Render Hidden Geometry"
+    type    toggle
+    default { "0" }
+    help    "Render hidden geometry"
+    range   { 0 1 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "SettingsOptions" }
+    parmtag { "vray_pluginattr" "geom_doHidden" }
+    parmtag { "vray_type" "boolean" }
+  }
 
   parm {
     name    "SettingsOptions_geom_backfaceCull"

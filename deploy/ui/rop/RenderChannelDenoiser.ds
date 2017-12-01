@@ -20,7 +20,19 @@
         name "folder_main"
         label "Controls"
         hidewhentab "{ enabled == 0 }"
-
+        parm {
+            name    "use_gpu"
+            label   "Use GPU"
+            type    toggle
+            default { "0" }
+            help    "Enable usage of GPU version if OpenCL support is found"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "RenderChannelDenoiser" }
+            parmtag { "vray_pluginattr" "use_gpu" }
+            parmtag { "vray_type" "int" }
+        }
         parm {
             name    "name"
             label   "Name"
@@ -32,6 +44,26 @@
             parmtag { "vray_plugin" "RenderChannelDenoiser" }
             parmtag { "vray_pluginattr" "name" }
             parmtag { "vray_type" "string" }
+        }
+        parm {
+            name    "preset"
+            label   "Preset"
+            type    ordinal
+            default { "1" }
+            help    "Specifies one a few predefined presets for the radius and the strength"
+            menu    {
+                "Mild"  "Mild"
+                "Default"   "Default"
+                "Strong"    "Strong"
+                "Custom"    "Custom"
+            }
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_enumkeys" "0,1,2,3" }
+            parmtag { "vray_plugin" "RenderChannelDenoiser" }
+            parmtag { "vray_pluginattr" "preset" }
+            parmtag { "vray_type" "int" }
         }
         parm {
             name    "mode"
@@ -68,26 +100,6 @@
             parmtag { "vray_enumkeys" "0,1" }
             parmtag { "vray_plugin" "RenderChannelDenoiser" }
             parmtag { "vray_pluginattr" "type" }
-            parmtag { "vray_type" "int" }
-        }
-        parm {
-            name    "preset"
-            label   "Preset"
-            type    ordinal
-            default { "1" }
-            help    "Specifies one a few predefined presets for the radius and the strength"
-            menu    {
-                "Mild"  "Mild"
-                "Default"   "Default"
-                "Strong"    "Strong"
-                "Custom"    "Custom"
-            }
-            range   { 0 1 }
-            export  none
-            parmtag { "cook_dependent" "1" }
-            parmtag { "vray_enumkeys" "0,1,2,3" }
-            parmtag { "vray_plugin" "RenderChannelDenoiser" }
-            parmtag { "vray_pluginattr" "preset" }
             parmtag { "vray_type" "int" }
         }
         parm {
@@ -135,19 +147,6 @@
             parmtag { "vray_enumkeys" "0,1,2" }
             parmtag { "vray_plugin" "RenderChannelDenoiser" }
             parmtag { "vray_pluginattr" "generate_render_elements" }
-            parmtag { "vray_type" "int" }
-        }
-        parm {
-            name    "use_gpu"
-            label   "Use GPU"
-            type    toggle
-            default { "0" }
-            help    "Enable usage of GPU version if OpenCL support is found"
-            range   { 0 1 }
-            export  none
-            parmtag { "cook_dependent" "1" }
-            parmtag { "vray_plugin" "RenderChannelDenoiser" }
-            parmtag { "vray_pluginattr" "use_gpu" }
             parmtag { "vray_type" "int" }
         }
         parm {

@@ -4,81 +4,28 @@
     parmtag { spare_category "Sky" }
     parmtag { vray_plugin "TexSky" }
     parm {
-        name    "turbidity"
-        label   "Turbidity"
-        type    float
-        default { "3" }
-        help    "Determines the amount of dust in the air and affects the color of the sun and sky. Smaller values produce a clear/blue sky, larger values yellow and orange"
-        range   { 2 20 }
-        export  none
-        parmtag { "cook_dependent" "1" }
-        parmtag { "vray_plugin" "TexSky" }
-        parmtag { "vray_pluginattr" "turbidity" }
-        parmtag { "vray_type" "float" }
-    }
-    parm {
-        name    "ozone"
-        label   "Ozone"
-        type    float
-        default { "0.35" }
-        help    "Affects the color of the sun light (between 0.0 and 1.0). Smaller values make the sunlight more yellow, larger values make it blue"
-        range   { 0 64 }
-        export  none
-        parmtag { "cook_dependent" "1" }
-        parmtag { "vray_plugin" "TexSky" }
-        parmtag { "vray_pluginattr" "ozone" }
-        parmtag { "vray_type" "float" }
-    }
-    parm {
-        name    "water_vapour"
-        label   "Water Vapour"
-        type    float
-        default { "2" }
-        range   { 0 64 }
-        export  none
-        parmtag { "cook_dependent" "1" }
-        parmtag { "vray_plugin" "TexSky" }
-        parmtag { "vray_pluginattr" "water_vapour" }
-        parmtag { "vray_type" "float" }
-    }
-    parm {
-        name    "intensity_multiplier"
-        label   "Intensity Multiplier"
-        type    float
+        name    "auto_sun"
+        label   "Find Sun Automatically"
+        type    toggle
         default { "1" }
-        range   { 0 64 }
+        help    "Attach Sun automatically and take settings from it"
+        range   { 0 1 }
         export  none
         parmtag { "cook_dependent" "1" }
-        parmtag { "vray_plugin" "TexSky" }
-        parmtag { "vray_pluginattr" "intensity_multiplier" }
-        parmtag { "vray_type" "float" }
+        parmtag { "vray_custom_handling" "1" }
     }
     parm {
-        name    "size_multiplier"
-        label   "Size Multiplier"
-        type    float
-        default { "1" }
-        help    "Controls the visible size of the sun. Affects the appearance of the sun disc as seen by the camera and reflections, as well as the blurriness of the sun shadows"
-        range   { 0 64 }
+        name    "sun_dir_only"
+        label   "Only Use Sun Direction"
+        type    toggle
+        default { "0" }
+        help    "Use only direction of the specified sun (don't inherit all other parameters)"
+        range   { 0 1 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "TexSky" }
-        parmtag { "vray_pluginattr" "size_multiplier" }
-        parmtag { "vray_type" "float" }
-    }
-    parm {
-        name    "filter_color"
-        label   "Filter Color"
-        type    color
-        size    3
-        default { "1" "1" "1" }
-        help    "Sunlight color. Used to add user control to light color definition"
-        range   { 0 10 }
-        export  none
-        parmtag { "cook_dependent" "1" }
-        parmtag { "vray_plugin" "TexSky" }
-        parmtag { "vray_pluginattr" "filter_color" }
-        parmtag { "vray_type" "color" }
+        parmtag { "vray_pluginattr" "sun_dir_only" }
+        parmtag { "vray_type" "int" }
     }
     parm {
         name    "invisible"
@@ -92,20 +39,6 @@
         parmtag { "vray_plugin" "TexSky" }
         parmtag { "vray_pluginattr" "invisible" }
         parmtag { "vray_type" "boolean" }
-    }
-    parm {
-        name    "horiz_illum"
-        label   "Horiz Illum"
-        type    float
-        default { "25000" }
-        help    "Specifies the intensity (in Lx) of the illumination on horizontal surfaces coming from the sky"
-        disablewhen "{ sky_model != =1 sky_model != =2 }"
-        range   { 0 64 }
-        export  none
-        parmtag { "cook_dependent" "1" }
-        parmtag { "vray_plugin" "TexSky" }
-        parmtag { "vray_pluginattr" "horiz_illum" }
-        parmtag { "vray_type" "float" }
     }
     parm {
         name    "sky_model"
@@ -128,28 +61,67 @@
         parmtag { "vray_type" "enum" }
     }
     parm {
-        name    "sun_dir_only"
-        label   "Sun Dir Only"
-        type    toggle
-        default { "0" }
-        help    "Use only direction of the specified sun (don't inherit all other parameters)"
+        name    "intensity_multiplier"
+        label   "Intensity Multiplier"
+        type    float
+        default { "1" }
+        range   { 0 8 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexSky" }
+        parmtag { "vray_pluginattr" "intensity_multiplier" }
+        parmtag { "vray_type" "float" }
+    }
+    parm {
+        name    "size_multiplier"
+        label   "Size Multiplier"
+        type    float
+        default { "1" }
+        help    "Controls the visible size of the sun. Affects the appearance of the sun disc as seen by the camera and reflections, as well as the blurriness of the sun shadows"
+        range   { 0 8 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexSky" }
+        parmtag { "vray_pluginattr" "size_multiplier" }
+        parmtag { "vray_type" "float" }
+    }
+    parm {
+        name    "turbidity"
+        label   "Turbidity"
+        type    float
+        default { "3" }
+        help    "Determines the amount of dust in the air and affects the color of the sun and sky. Smaller values produce a clear/blue sky, larger values yellow and orange"
+        range   { 2 20 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexSky" }
+        parmtag { "vray_pluginattr" "turbidity" }
+        parmtag { "vray_type" "float" }
+    }
+    parm {
+        name    "ozone"
+        label   "Ozone"
+        type    float
+        default { "0.35" }
+        help    "Affects the color of the sun light (between 0.0 and 1.0). Smaller values make the sunlight more yellow, larger values make it blue"
         range   { 0 1 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "TexSky" }
-        parmtag { "vray_pluginattr" "sun_dir_only" }
-        parmtag { "vray_type" "int" }
+        parmtag { "vray_pluginattr" "ozone" }
+        parmtag { "vray_type" "float" }
     }
     parm {
-        name    "auto_sun"
-        label   "Find Sun Automatically"
-        type    toggle
-        default { "1" }
-        help    "Attach Sun automatically and take settings from it"
-        range   { 0 1 }
+        name    "water_vapour"
+        label   "Water Vapour"
+        type    float
+        default { "2" }
+        range   { 0 5 }
         export  none
         parmtag { "cook_dependent" "1" }
-        parmtag { "vray_custom_handling" "1" }
+        parmtag { "vray_plugin" "TexSky" }
+        parmtag { "vray_pluginattr" "water_vapour" }
+        parmtag { "vray_type" "float" }
     }
     parm {
         name    "ground_albedo"
@@ -177,6 +149,34 @@
         parmtag { "vray_plugin" "TexSky" }
         parmtag { "vray_pluginattr" "color_mode" }
         parmtag { "vray_type" "int" }
+    }
+    parm {
+        name    "filter_color"
+        label   "Filter Color"
+        type    color
+        size    3
+        default { "1" "1" "1" }
+        help    "Sunlight color. Used to add user control to light color definition"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexSky" }
+        parmtag { "vray_pluginattr" "filter_color" }
+        parmtag { "vray_type" "color" }
+    }
+    parm {
+        name    "horiz_illum"
+        label   "Horiz. Surface Illum."
+        type    float
+        default { "25000" }
+        help    "Specifies the intensity (in Lx) of the illumination on horizontal surfaces coming from the sky"
+        disablewhen "{ sky_model != =1 sky_model != =2 }"
+        range   { 0 50000 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexSky" }
+        parmtag { "vray_pluginattr" "horiz_illum" }
+        parmtag { "vray_type" "float" }
     }
     parm {
         name    "up_vector"

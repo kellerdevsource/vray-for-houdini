@@ -54,17 +54,18 @@ group {
 }
 
 group {
-    name "SettingsDefaultDisplacement"
-    label "Displacement"
-#include "$VRAY_UI_DS_PATH/rop/SettingsDefaultDisplacementParm.ds"
-}
-
-group {
     name "SettingsOptions"
     label "Options"
 
 #include "$VRAY_UI_DS_PATH/rop/SettingsOptionsParm.ds"
 #include "$VRAY_UI_DS_PATH/rop/SettingsRaycasterParm.ds"
+}
+
+group {
+    name "SettingsDefaultDisplacement"
+    label "Displacement"
+    hidewhentab "{ SettingsOptions_geom_displacement == 0 }"
+#include "$VRAY_UI_DS_PATH/rop/SettingsDefaultDisplacementParm.ds"
 }
 
 group {

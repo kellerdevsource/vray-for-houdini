@@ -19,7 +19,7 @@
     }
     parm {
         name    "color"
-        label   "Color"
+        label   "Custom Color"
         type    color
         size    3
         default { "0" "0" "0" }
@@ -33,7 +33,7 @@
     }
     parm {
         name    "texture_multiplier"
-        label   "Texture Multiplier"
+        label   "Texture / Color Blend"
         type    float
         default { "1" }
         help    "The texture multiplier (blends between the value and the texture)"

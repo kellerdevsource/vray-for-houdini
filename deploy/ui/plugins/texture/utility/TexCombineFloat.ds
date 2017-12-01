@@ -19,7 +19,7 @@
     }
     parm {
         name    "value"
-        label   "Value"
+        label   "Custom Value"
         type    float
         default { "1" }
         help    "The scalar value"
@@ -32,7 +32,7 @@
     }
     parm {
         name    "texture_multiplier"
-        label   "Texture Multiplier"
+        label   "Texture / Value Blend"
         type    float
         default { "1" }
         help    "The texture multiplier (blends between the value and the texture)"

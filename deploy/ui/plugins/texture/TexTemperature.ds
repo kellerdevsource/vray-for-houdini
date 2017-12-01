@@ -23,6 +23,7 @@
         label   "Temperature"
         type    float
         default { "6500" }
+        range { 0 9000 }
         help    "Material temperature in kelvins"
         parmtag { "vray_pluginattr" "temperature" }
         parmtag { "vray_type" "TextureFloat" }
@@ -47,7 +48,7 @@
         type    float
         default { "1" }
         help    "Color multiplier"
-        range   { 0 64 }
+        range   { 0 1 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_pluginattr" "rgb_multiplier" }
