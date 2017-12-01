@@ -251,7 +251,7 @@
         }
         parm {
             disablewhen "{ shadows == 0 }"
-            name    "shadowBias"
+            name    "Bias"
             label   "Bias"
             type    float
             default { "0" }
