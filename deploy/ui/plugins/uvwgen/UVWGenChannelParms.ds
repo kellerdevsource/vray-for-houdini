@@ -11,7 +11,7 @@ parm {
     label   "Channel Index"
     type    integer
     default { "0" }
-    range   { 0 64 }
+    range   { 0 5 }
     export  none
     parmtag { "cook_dependent" "1" }
     parmtag { "vray_plugin" "UVWGenChannel" }
@@ -25,7 +25,7 @@ parm {
     type    integer
     default { "0" }
     help    "Number of uvw transform samples"
-    range   { 0 64 }
+    range   { 0 10 }
     export  none
     parmtag { "cook_dependent" "1" }
     parmtag { "vray_plugin" "UVWGenChannel" }
@@ -45,7 +45,6 @@ parm {
     }
     default { "0" }
     help    "0 - no wrapping, 1 - wrap, 2 - mirror tile"
-    range   { 0 64 }
     export  none
     parmtag { "cook_dependent" "1" }
     parmtag { "vray_plugin" "UVWGenChannel" }
@@ -64,7 +63,6 @@ parm {
     }
     default { "0" }
     help    "0 - no wrapping, 1 - wrap, 2 - mirror tile"
-    range   { 0 64 }
     export  none
     parmtag { "cook_dependent" "1" }
     parmtag { "vray_plugin" "UVWGenChannel" }
@@ -83,7 +81,6 @@ parm {
     }
     default { "0" }
     help    "0 - no wrapping, 1 - wrap, 2 - mirror tile"
-    range   { 0 64 }
     export  none
     parmtag { "cook_dependent" "1" }
     parmtag { "vray_plugin" "UVWGenChannel" }
@@ -94,10 +91,9 @@ parm {
 parm {
     NAMEM("crop_u")
     label   "Crop U"
-    type    integer
+    type    toggle
     default { "0" }
-    help    "1 to crop in the u-direction"
-    range   { 0 64 }
+    help    "Enable to crop in the u-direction"
     export  none
     parmtag { "cook_dependent" "1" }
     parmtag { "vray_plugin" "UVWGenChannel" }
@@ -108,10 +104,9 @@ parm {
 parm {
     NAMEM("crop_v")
     label   "Crop V"
-    type    integer
+    type    toggle
     default { "0" }
-    help    "1 to crop in the v-direction"
-    range   { 0 64 }
+    help    "Enable to crop in the v-direction"
     export  none
     parmtag { "cook_dependent" "1" }
     parmtag { "vray_plugin" "UVWGenChannel" }
@@ -122,10 +117,9 @@ parm {
 parm {
     NAMEM("crop_w")
     label   "Crop W"
-    type    integer
+    type    toggle
     default { "0" }
-    help    "1 to crop in the w-direction"
-    range   { 0 64 }
+    help    "Enable to crop in the w-direction"
     export  none
     parmtag { "cook_dependent" "1" }
     parmtag { "vray_plugin" "UVWGenChannel" }

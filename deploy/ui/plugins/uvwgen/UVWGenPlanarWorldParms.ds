@@ -83,7 +83,7 @@ parm {
     label   "Crop U"
     type    toggle
     default { "0" }
-    help    "1 to crop in the u-direction"
+    help    "Enable to crop in the u-direction"
     range   { 0 64 }
     export  none
     parmtag { "cook_dependent" "1" }
@@ -97,7 +97,7 @@ parm {
     label   "Crop V"
     type    toggle
     default { "0" }
-    help    "1 to crop in the v-direction"
+    help    "Enable to crop in the v-direction"
     range   { 0 64 }
     export  none
     parmtag { "cook_dependent" "1" }
@@ -111,7 +111,7 @@ parm {
     label   "Crop W"
     type    toggle
     default { "0" }
-    help    "1 to crop in the w-direction"
+    help    "Enable to crop in the w-direction"
     range   { 0 64 }
     export  none
     parmtag { "cook_dependent" "1" }

@@ -22,36 +22,9 @@
     }
 
     parm {
-        name    "input_value"
-        label   "Input Value"
-        type    float
-        default { "1" }
-        range   { 0 64 }
-        export  none
-        parmtag { "cook_dependent" "1" }
-        parmtag { "vray_plugin" "TexRemap" }
-        parmtag { "vray_pluginattr" "input_value" }
-        parmtag { "vray_type" "TextureFloat" }
-    }
-
-    parm {
-        name    "input_color"
-        label   "Input Color"
-        type    color4
-        size    4
-        default { "0" "0" "0" "1" }
-        range   { 0 10 }
-        export  none
-        parmtag { "cook_dependent" "1" }
-        parmtag { "vray_plugin" "TexRemap" }
-        parmtag { "vray_pluginattr" "input_color" }
-        parmtag { "vray_type" "Texture" }
-    }
-
-    parm {
         name    "type"
         label   "Type"
-        type    ordinal
+        type    string
         default { "0" }
         help    "type of conversion: 0:RemapValue, 1:RemapColor, 2:RemapHSV"
         menu    {
@@ -64,16 +37,62 @@
     }
 
     parm {
+        name    "input_value"
+        label   "Input Value"
+        type    float
+        default { "1" }
+        range   { 0 1 }
+        help "Used for type Value. Result is out_value or out_color with float_* or color_* parameters respectively"
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexRemap" }
+        parmtag { "vray_pluginattr" "input_value" }
+        parmtag { "vray_type" "TextureFloat" }
+        hidewhen "{ type != 0 }"
+    }
+
+    parm {
+        name    "input_color"
+        label   "Input Color"
+        type    color4
+        size    4
+        default { "0" "0" "0" "1" }
+        range   { 0 1 }
+        help "Used for type Color and type HSV. Result is out_color (or the default output)"
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexRemap" }
+        parmtag { "vray_pluginattr" "input_color" }
+        parmtag { "vray_type" "Texture" }
+    }
+
+    parm {
         name    "input_bias"
         label   "Input Bias"
         type    float
         default { "0" }
-        range   { 0 64 }
+        range   { 0 1 }
+        help "Exponent e=(1-bias)/(1+bias) applied to input_value"
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "TexRemap" }
         parmtag { "vray_pluginattr" "input_bias" }
         parmtag { "vray_type" "float" }
+        invisible
+    }
+
+    parm {
+        name    "input_bias_tex"
+        label   "Input Bias"
+        type    float
+        default { "0" }
+        range   { 0 1 }
+        help "Texture override for input_bias"
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexRemap" }
+        parmtag { "vray_pluginattr" "input_bias_tex" }
+        parmtag { "vray_type" "TextureFloat" }
     }
 
     parm {
@@ -81,12 +100,28 @@
         label   "Input Min"
         type    float
         default { "0" }
-        range   { 0 64 }
+        range   { 0 1 }
+        help " Rescaling parameter for both input_value and input_color components. The formula is (x-input_min)/(input_max-input_min)"
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "TexRemap" }
         parmtag { "vray_pluginattr" "input_min" }
         parmtag { "vray_type" "float" }
+        invisible
+    }
+
+    parm {
+        name    "input_min_tex"
+        label   "Input Min"
+        type    float
+        default { "0" }
+        range   { 0 1 }
+        help "Texture override for input_min"
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexRemap" }
+        parmtag { "vray_pluginattr" "input_min_tex" }
+        parmtag { "vray_type" "TextureFloat" }
     }
 
     parm {
@@ -94,12 +129,28 @@
         label   "Input Max"
         type    float
         default { "1" }
-        range   { 0 64 }
+        range   { 0 1 }
+        help "Rescaling parameter for both input_value and input_color components. The formula is (x-input_min)/(input_max-input_min)"
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "TexRemap" }
         parmtag { "vray_pluginattr" "input_max" }
         parmtag { "vray_type" "float" }
+        invisible
+    }
+
+    parm {
+        name    "input_max_tex"
+        label   "Input Max"
+        type    float
+        default { "1" }
+        range   { 0 1 }
+        help "Texture override for input_max"
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexRemap" }
+        parmtag { "vray_pluginattr" "input_max_tex" }
+        parmtag { "vray_type" "TextureFloat" }
     }
 
     parm {
@@ -107,7 +158,8 @@
         label   "Output Min"
         type    float
         default { "0" }
-        range   { 0 64 }
+        range   { 0 1 }
+        help "Output values and colors are rescaled linearly to fit between output_min and output_max"
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "TexRemap" }
@@ -120,7 +172,8 @@
         label   "Output Max"
         type    float
         default { "1" }
-        range   { 0 64 }
+        range   { 0 1 }
+        help "Output values and colors are rescaled linearly to fit between output_min and output_max"
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "TexRemap" }
@@ -129,32 +182,17 @@
     }
 
     parm {
-        name    "float_values"
-        label   "Float Values"
-        type    float
-        default { "1" }
-        help    "the given float values"
-        range   { 0 64 }
-        export  none
-        parmtag { "cook_dependent" "1" }
-        parmtag { "vray_plugin" "TexRemap" }
-        parmtag { "vray_pluginattr" "float_values" }
-        parmtag { "vray_type" "List<TextureFloat>" }
-    }
-
-    parm {
         name    "float_types"
         label   "Float Types"
         type    integer
         default { "1" }
-        help    "interpolation types for the floats"
+        help    "Interpolation types for each key of the floats (None - 0; Linear - 1; Smooth - 2; Spline - 3)"
         menu    {
             "None"  "None"
             "Linear"    "Linear"
             "Smooth"    "Smooth"
             "Spline"    "Spline"
         }
-        range   { 0 64 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_enumkeys" "0,1,2,3" }
@@ -164,16 +202,16 @@
     }
 
     parm {
-        name    "red_values"
-        label   "Red Values"
+        name    "float_values"
+        label   "Float Values"
         type    float
-        default { "0" }
-        help    "the given values for the red channel"
-        range   { 0 64 }
+        default { "1" }
+        help    "Output float values the key values should map to"
+        range   { 0 1 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "TexRemap" }
-        parmtag { "vray_pluginattr" "red_values" }
+        parmtag { "vray_pluginattr" "float_values" }
         parmtag { "vray_type" "List<TextureFloat>" }
     }
 
@@ -182,14 +220,13 @@
         label   "Red Types"
         type    integer
         default { "0" }
-        help    "interpolation types for the red channel"
+        help    "Interpolation types for each key of the red channel (None - 0; Linear - 1; Smooth - 2; Spline - 3)"
         menu    {
             "None"  "None"
             "Linear"    "Linear"
             "Smooth"    "Smooth"
             "Spline"    "Spline"
         }
-        range   { 0 64 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_enumkeys" "0,1,2,3" }
@@ -199,16 +236,16 @@
     }
 
     parm {
-        name    "green_values"
-        label   "Green Values"
+        name    "red_values"
+        label   "Red Values"
         type    float
         default { "0" }
-        help    "the given values for the green channel"
-        range   { 0 64 }
+        help    "Output float values the key values should map to for the red channel"
+        range   { 0 1 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "TexRemap" }
-        parmtag { "vray_pluginattr" "green_values" }
+        parmtag { "vray_pluginattr" "red_values" }
         parmtag { "vray_type" "List<TextureFloat>" }
     }
 
@@ -217,14 +254,13 @@
         label   "Green Types"
         type    integer
         default { "0" }
-        help    "interpolation types for the green channel"
+        help    "Interpolation types for each key of the green channel (None - 0; Linear - 1; Smooth - 2; Spline - 3)"
         menu    {
             "None"  "None"
             "Linear"    "Linear"
             "Smooth"    "Smooth"
             "Spline"    "Spline"
         }
-        range   { 0 64 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_enumkeys" "0,1,2,3" }
@@ -234,16 +270,16 @@
     }
 
     parm {
-        name    "blue_values"
-        label   "Blue Values"
+        name    "green_values"
+        label   "Green Values"
         type    float
         default { "0" }
-        help    "the given values for the blue channel"
-        range   { 0 64 }
+        help    "Output float values the key values should map to for the green channel"
+        range   { 0 1 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "TexRemap" }
-        parmtag { "vray_pluginattr" "blue_values" }
+        parmtag { "vray_pluginattr" "green_values" }
         parmtag { "vray_type" "List<TextureFloat>" }
     }
 
@@ -252,14 +288,13 @@
         label   "Blue Types"
         type    integer
         default { "0" }
-        help    "interpolation types for the blue channel"
+        help    "Interpolation types for each key of the blue channel (None - 0; Linear - 1; Smooth - 2; Spline - 3)"
         menu    {
             "None"  "None"
             "Linear"    "Linear"
             "Smooth"    "Smooth"
             "Spline"    "Spline"
         }
-        range   { 0 64 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_enumkeys" "0,1,2,3" }
@@ -269,16 +304,16 @@
     }
 
     parm {
-        name    "hue_values"
-        label   "Hue Values"
+        name    "blue_values"
+        label   "Blue Values"
         type    float
         default { "0" }
-        help    "the given values for the hue channel"
-        range   { 0 64 }
+        help    "Output float values the key values should map to for the blue channel"
+        range   { 0 1 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "TexRemap" }
-        parmtag { "vray_pluginattr" "hue_values" }
+        parmtag { "vray_pluginattr" "blue_values" }
         parmtag { "vray_type" "List<TextureFloat>" }
     }
 
@@ -287,14 +322,13 @@
         label   "Hue Types"
         type    integer
         default { "0" }
-        help    "interpolation types for the hue channel"
+        help    "Interpolation types for each key of the hue channel (None - 0; Linear - 1; Smooth - 2; Spline - 3)"
         menu    {
             "None"  "None"
             "Linear"    "Linear"
             "Smooth"    "Smooth"
             "Spline"    "Spline"
         }
-        range   { 0 64 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_enumkeys" "0,1,2,3" }
@@ -304,16 +338,16 @@
     }
 
     parm {
-        name    "saturation_values"
-        label   "Saturation Values"
+        name    "hue_values"
+        label   "Hue Values"
         type    float
         default { "0" }
-        help    "the given values for the saturation channel"
-        range   { 0 64 }
+        help    "Output float values the key values should map to for the hue channel"
+        range   { 0 1 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "TexRemap" }
-        parmtag { "vray_pluginattr" "saturation_values" }
+        parmtag { "vray_pluginattr" "hue_values" }
         parmtag { "vray_type" "List<TextureFloat>" }
     }
 
@@ -322,14 +356,13 @@
         label   "Saturation Types"
         type    integer
         default { "0" }
-        help    "interpolation types for the saturation channel"
+        help    "Interpolation types for each key of the saturation channel (None - 0; Linear - 1; Smooth - 2; Spline - 3)"
         menu    {
             "None"  "None"
             "Linear"    "Linear"
             "Smooth"    "Smooth"
             "Spline"    "Spline"
         }
-        range   { 0 64 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_enumkeys" "0,1,2,3" }
@@ -339,16 +372,16 @@
     }
 
     parm {
-        name    "value_values"
-        label   "Value Values"
+        name    "saturation_values"
+        label   "Saturation Values"
         type    float
         default { "0" }
-        help    "the given values for the value channel"
-        range   { 0 64 }
+        help    "Output float values the key values should map to for the saturation channel"
+        range   { 0 1 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "TexRemap" }
-        parmtag { "vray_pluginattr" "value_values" }
+        parmtag { "vray_pluginattr" "saturation_values" }
         parmtag { "vray_type" "List<TextureFloat>" }
     }
 
@@ -357,20 +390,33 @@
         label   "Value Types"
         type    integer
         default { "0" }
-        help    "interpolation types for the value channel"
+        help    "Interpolation types for each key of the value channel (None - 0; Linear - 1; Smooth - 2; Spline - 3)"
         menu    {
             "None"  "None"
             "Linear"    "Linear"
             "Smooth"    "Smooth"
             "Spline"    "Spline"
         }
-        range   { 0 64 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_enumkeys" "0,1,2,3" }
         parmtag { "vray_plugin" "TexRemap" }
         parmtag { "vray_pluginattr" "value_types" }
         parmtag { "vray_type" "List<Integer>" }
+    }
+
+    parm {
+        name    "value_values"
+        label   "Value Values"
+        type    float
+        default { "0" }
+        help    " Output float values the key values should map to for the value channel"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexRemap" }
+        parmtag { "vray_pluginattr" "value_values" }
+        parmtag { "vray_type" "List<TextureFloat>" }
     }
 
     parm {
@@ -385,44 +431,5 @@
         parmtag { "vray_plugin" "TexRemap" }
         parmtag { "vray_pluginattr" "alpha_from_intensity" }
         parmtag { "vray_type" "boolean" }
-    }
-
-    parm {
-        name    "input_bias_tex"
-        label   "Input Bias Tex"
-        type    float
-        default { "0" }
-        range   { 0 10 }
-        export  none
-        parmtag { "cook_dependent" "1" }
-        parmtag { "vray_plugin" "TexRemap" }
-        parmtag { "vray_pluginattr" "input_bias_tex" }
-        parmtag { "vray_type" "TextureFloat" }
-    }
-
-    parm {
-        name    "input_min_tex"
-        label   "Input Min Tex"
-        type    float
-        default { "0" }
-        range   { 0 10 }
-        export  none
-        parmtag { "cook_dependent" "1" }
-        parmtag { "vray_plugin" "TexRemap" }
-        parmtag { "vray_pluginattr" "input_min_tex" }
-        parmtag { "vray_type" "TextureFloat" }
-    }
-
-    parm {
-        name    "input_max_tex"
-        label   "Input Max Tex"
-        type    float
-        default { "1" }
-        range   { 0 10 }
-        export  none
-        parmtag { "cook_dependent" "1" }
-        parmtag { "vray_plugin" "TexRemap" }
-        parmtag { "vray_pluginattr" "input_max_tex" }
-        parmtag { "vray_type" "TextureFloat" }
     }
 }

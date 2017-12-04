@@ -52,7 +52,7 @@
         type    float
         default { "1" }
         hidewhen "{ width_type != 1 }"
-        range   { 0 64 }
+        range   { 0 10 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "TexEdges" }

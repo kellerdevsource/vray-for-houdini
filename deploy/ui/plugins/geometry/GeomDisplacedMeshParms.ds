@@ -81,7 +81,7 @@ groupsimple {
         type float
         default { "0.25" }
         help "Determines the displacement amount for white areas in the displacement map; if use_globals is true this is multiplied by the global displacement amount option"
-        range { -1 1 }
+        range { 0 1 }
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "GeomDisplacedMesh" }
         parmtag { "vray_pluginattr" "displacement_amount" }
@@ -94,7 +94,7 @@ groupsimple {
         type float
         default { "0" }
         help "This constant value is added to the displacement map"
-        range { 0 64 }
+        range { 0 1 }
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "GeomDisplacedMesh" }
         parmtag { "vray_pluginattr" "displacement_shift" }
@@ -331,9 +331,9 @@ groupsimple {
         VFH_NAME("water_level")
         label "Water Level"
         type float
-        default { "-100000" }
+        default { "-1e+30" }
         help "Geometry below this displacement level will be clipped away"
-        range { -1000 0 }
+        range { -1e+30 0 }
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "GeomDisplacedMesh" }
         parmtag { "vray_pluginattr" "water_level" }

@@ -36,7 +36,7 @@ groupcollapsible {
         default { "0" }
         help    "U coordinate of the valid texture sector"
         disablewhen "{ placement_type == 0 }"
-        range   { 0 64 }
+        range   { 0 1 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_pluginattr" "u" }
@@ -50,7 +50,7 @@ groupcollapsible {
         default { "0" }
         help    "V coordinate of the valid texture sector"
         disablewhen "{ placement_type == 0 }"
-        range   { 0 64 }
+        range   { 0 1 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_pluginattr" "v" }
@@ -64,7 +64,7 @@ groupcollapsible {
         default { "1" }
         help    "Width of the valid texture sector"
         disablewhen "{ placement_type == 0 }"
-        range   { 0 64 }
+        range   { 0 1 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_pluginattr" "w" }
@@ -78,7 +78,7 @@ groupcollapsible {
         default { "1" }
         help    "Height of the valid texture sector"
         disablewhen "{ placement_type == 0 }"
-        range   { 0 64 }
+        range   { 0 1 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_pluginattr" "h" }
@@ -92,7 +92,7 @@ groupcollapsible {
         default { "0" }
         help    "Amount of random placement variation"
         disablewhen "{ placement_type != 2 }"
-        range   { 0 64 }
+        range   { 0 2 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_pluginattr" "jitter" }
@@ -166,7 +166,7 @@ groupcollapsible {
         default { "1" }
         help    "UV noise amount"
         disablewhen "{ uv_noise_on != 1 }"
-        range   { 0 64 }
+        range   { 0 2 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_pluginattr" "uv_noise_amount" }
@@ -180,7 +180,7 @@ groupcollapsible {
         default { "1" }
         help    "UV noise iterations"
         disablewhen "{ uv_noise_on != 1 }"
-        range   { 0 64 }
+        range   { 0 7 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_pluginattr" "uv_noise_levels" }
@@ -194,7 +194,7 @@ groupcollapsible {
         default { "1" }
         help    "UV noise size"
         disablewhen "{ uv_noise_on != 1 }"
-        range   { 0 64 }
+        range   { 0 3 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_pluginattr" "uv_noise_size" }
@@ -222,7 +222,7 @@ groupcollapsible {
         default { "0" }
         help    "UV noise phase"
         disablewhen "{ uv_noise_on != 1 } { uv_noise_animate != 1 }"
-        range   { 0 64 }
+        range   { 0 5 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_pluginattr" "un_noise_phase" }
